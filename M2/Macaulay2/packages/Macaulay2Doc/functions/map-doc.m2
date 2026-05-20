@@ -13,25 +13,32 @@ Node
   Inputs
    F:GaloisField
    G:GaloisField
-    one element of F generating a subfield isomorphic to G
   Outputs
    phi:RingMap
-    carrying 1 to x
+    the canonical inclusion of G into a compatible subfield of F
   Description
     Text
      GF(p^n) contains GF(p^m) if and only if m divides n.
     Text
      The specialized method documented here is @TT "map(F,G)"@.  
     Example
+     F2 = GF 2
      F4 = GF(2^2)
      F8 = GF(2^3)
      F16 = GF(2^4)
+     map(F16, F2)
      map(F16, F4)
-     try map(F16, F8) else "1" -- there is no map of these fields exist, so returns 1
     Text
-     The three-argument form @TT "map(F,G,x)"@ uses the generic ring-map
-     constructor, as in @TO (map,Ring,Ring,List)@.
-     Also, it is possible to "define a map" that is not well-defined:
+     If no compatible subfield exists, then Macaulay2 signals an error:
+    Example
+     try map(F16, F8) else "this map does not exist"
+    Text
+     It is also possible to invoke the generic ring-map constructor with an
+     explicit image for a generator of the source field:
+    Example
+     map(F16, F4, {1})
+    Text
+     Such a map need not be well-defined:
     Example
      phi = map(F16, F4, {1})
      isWellDefined phi
@@ -79,11 +86,11 @@ document {
 	  TO (map,Module,Nothing,Matrix), 
 	  "Creating a map with a different degree",
 	  TO (map,Matrix), 
-     	  "Creating a map between modules over different rings",
+	  "Creating a map between modules over different rings",
 	  TO (map,Module,Module,RingMap,Matrix),
 	  "Creating a map between rings",
-	  TO (map,Ring,Ring),
 	  TO (map,GaloisField,GaloisField),
+	  TO (map,Ring,Ring),
 	  TO (map,Ring,Ring,List),
 	  TO (map,Ring,Ring,Matrix),
 	  -- "Creating a map between chain complexes",

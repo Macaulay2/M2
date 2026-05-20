@@ -22,20 +22,16 @@ Node
       Analytic functions in Macaulay2 include symbolic constants, special
       functions, trigonometric functions, and numerical evaluations over the
       standard inexact number types.
-    Tree
-      :Selected Packages
-        > @TOH "EllipticIntegrals :: EllipticIntegrals"@
-        > @TOH "FormalGroupLaws :: FormalGroupLaws"@
-        > @TOH "EllipticCurves :: EllipticCurves"@
-        > @TOH "NumericalAlgebraicGeometry :: NumericalAlgebraicGeometry"@
-        > @TO2("packages provided with Macaulay2", "browse packages by subject area")@
-      :Core topics
-        > "Constant"
-        > "Gamma"
-        > "zeta"
-        > "sin"
-        > "cos"
-        > "atan2"
+    Text
+      Selected packages include @TO2("EllipticIntegrals :: EllipticIntegrals", "EllipticIntegrals")@,
+      @TO2("FormalGroupLaws :: FormalGroupLaws", "FormalGroupLaws")@,
+      @TO2("EllipticCurves :: EllipticCurves", "EllipticCurves")@, and
+      @TO2("NumericalAlgebraicGeometry :: NumericalAlgebraicGeometry", "NumericalAlgebraicGeometry")@.
+      For a broader catalog, see
+      @TO2("packages provided with Macaulay2", "packages provided with Macaulay2")@.
+    Text
+      Core topics include @TO "Constant"@, @TO "Gamma"@, @TO "zeta"@,
+      @TO "sin"@, @TO "cos"@, and @TO "atan2"@.
   SeeAlso
     "packages provided with Macaulay2"
     "EllipticIntegrals :: EllipticIntegrals"

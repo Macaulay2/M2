@@ -65,33 +65,3 @@ load "./doc_atomic.m2"
 load "./doc_mutex.m2"
 load "./options.m2" -- this must come last
 load "./undocumented.m2"
-
-load "./M2-Singular-Book.m2"
-
-ld := fn -> tutorial get concatenate(currentFileDirectory,fn)
-
-document {
-     Key => "Tutorial: Modules in Macaulay2",
-     ld "tu_modules.m2"
-     }
-document {
-     Key => "Tutorial: Elementary uses of Gröbner bases",
-     ld "tu_elementary.m2"
-     }
-document {
-     Key => "Tutorial: Canonical Embeddings of Plane Curves and Gonality",
-     ld "tu_canEmbed.m2"
-     }
-document {
-     Key => "Tutorial: Divisors",
-     ld "tu_divisors.m2"
-     }
-document {
-     Key => {"Elementary uses of Groebner bases I", "Elementary uses of Groebner bases I. Math 634 Fall 2005"},
-     ld "tu_elementary1.m2"
-     }
-document {
-     Key => "Tutorial: Fano varieties",
-     ld "tu_Fano.m2"
-     }
-load "./tu_NAG.m2"

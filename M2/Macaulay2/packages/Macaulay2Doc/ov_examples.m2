@@ -6,20 +6,16 @@ Node
     Text
       Elementary arithmetic in Macaulay2 includes integer and modular arithmetic,
       factorization, gcd/lcm computations, and finite-field calculations.
-    Tree
-      :Selected Packages
-        > @TOH "ConwayPolynomials :: ConwayPolynomials"@
-        > @TOH "Cyclotomic :: Cyclotomic"@
-        > @TOH "LLLBases :: LLLBases"@
-        > @TOH "EllipticCurves :: EllipticCurves"@
-        > @TOH "Units :: Units"@
-        > @TO2("packages provided with Macaulay2", "browse packages by subject area")@
-      :Core topics
-        > "gcd"
-        > "lcm"
-        > "factor"
-        > "powermod"
-        > "mod"
+    Text
+      Selected packages include @TO2("ConwayPolynomials :: ConwayPolynomials", "ConwayPolynomials")@,
+      @TO2("Cyclotomic :: Cyclotomic", "Cyclotomic")@,
+      @TO2("LLLBases :: LLLBases", "LLLBases")@,
+      @TO2("EllipticCurves :: EllipticCurves", "EllipticCurves")@, and
+      @TO2("Units :: Units", "Units")@. For a broader catalog, see
+      @TO2("packages provided with Macaulay2", "packages provided with Macaulay2")@.
+    Text
+      Core topics include @TO "gcd"@, @TO "lcm"@, @TO "factor"@,
+      @TO "powermod"@, and @TO "mod"@.
   SeeAlso
     "packages provided with Macaulay2"
     "ConwayPolynomials :: ConwayPolynomials"
@@ -27,19 +23,6 @@ Node
     "LLLBases :: LLLBases"
     "EllipticCurves :: EllipticCurves"
     "Units :: Units"
-  Subnodes
-    mod
-    plus
-    minus
-    difference
-    times
-    power
-    powermod
-    (sqrt, ZZ, ZZ)
-    lcm
-    gcd
-    gcdCoefficients
-    factor
 
 Node
   Key
@@ -49,41 +32,19 @@ Node
       Linear algebra in Macaulay2 includes matrix construction, determinants and
       minors, row reduction, matrix decompositions, kernels and inverses, and
       related multilinear constructions.
-    Tree
-      :Selected Packages
-        > @TOH "LLLBases :: LLLBases"@
-        > @TOH "TensorComplexes :: TensorComplexes"@
-        > @TO2("packages provided with Macaulay2", "browse packages by subject area")@
-      :Core topics
-        > "matrix"
-        > "determinants and minors"
-        > "rank"
-        > @TOH "kernel(Matrix)"@
-        > @TOH "inverse(Matrix)"@
-        > "transpose"
-        > "reducedRowEchelonForm"
-        > "LUdecomposition"
-        > "QRDecomposition"
-        > "SVD"
-        > "smithNormalForm"
+    Text
+      Selected packages include @TO2("LLLBases :: LLLBases", "LLLBases")@ and
+      @TO2("TensorComplexes :: TensorComplexes", "TensorComplexes")@. For a broader
+      catalog, see @TO2("packages provided with Macaulay2", "packages provided with Macaulay2")@.
+    Text
+      Core topics include @TO "matrix"@, @TO "determinants and minors"@,
+      @TO "rank"@, @TO "kernel(Matrix)"@, @TO "inverse(Matrix)"@,
+      @TO "transpose"@, @TO "reducedRowEchelonForm"@, @TO "LUdecomposition"@,
+      @TO "QRDecomposition"@, @TO "SVD"@, and @TO "smithNormalForm"@.
   SeeAlso
     "packages provided with Macaulay2"
     "LLLBases :: LLLBases"
     "TensorComplexes :: TensorComplexes"
-  Subnodes
-    @TO "LLLBases :: LLLBases"@
-    @TO "TensorComplexes :: TensorComplexes"@
-    matrix
-    "determinants and minors"
-    rank
-    "kernel(Matrix)"
-    "inverse(Matrix)"
-    transpose
-    reducedRowEchelonForm
-    LUdecomposition
-    QRDecomposition
-    SVD
-    smithNormalForm
 
 Node
   Key
@@ -92,37 +53,32 @@ Node
     Text
       Commutative algebra in Macaulay2 centers on ideals, modules, Groebner bases,
       syzygies, Hilbert invariants, elimination, and resolution techniques.
-    Tree
-      :Tutorials
-        > "Tutorial: Modules in Macaulay2"
-        > "Tutorial: Elementary uses of Gröbner bases"
-        > "Teaching Materials"
-      :Selected Packages
-        > @TOH "IntegralClosure :: IntegralClosure"@
-        > @TOH "PrimaryDecomposition :: PrimaryDecomposition"@
-        > @TOH "ReesAlgebra :: ReesAlgebra"@
-        > @TOH "MinimalPrimes :: MinimalPrimes"@
-        > @TOH "Depth :: Depth"@
-        > @TOH "Elimination :: Elimination"@
-        > @TOH "Saturation :: Saturation"@
-        > @TOH "Regularity :: Regularity"@
-        > @TOH "LocalRings :: LocalRings"@
-        > @TOH "MonomialAlgebras :: MonomialAlgebras"@
-        > @TOH "NoetherNormalization :: NoetherNormalization"@
-        > @TOH "TangentCone :: TangentCone"@
-        > @TO2("packages provided with Macaulay2", "browse packages by subject area")@
-      :Core topics
-        > "Gröbner bases"
-        > "normal forms"
-        > "elimination of variables"
-        > "hilbertFunction"
-        > "hilbertSeries"
-        > "hilbertPolynomial"
-        > @TOH "Complexes :: freeResolution"@
-        > @TOH "MinimalPrimes :: radical"@
-        > @TOH "MinimalPrimes :: minimalPrimes"@
-        > @TOH "PrimaryDecomposition :: primaryDecomposition"@
-        > "regularity"
+    Text
+      Tutorials include @TO2("Tutorials::Tutorial: Modules in Macaulay2", "Tutorial: Modules in Macaulay2")@,
+      @TO2("Tutorials::Tutorial: Elementary uses of Gröbner bases", "Tutorial: Elementary uses of Gröbner bases")@,
+      and @TO2("Tutorials::Teaching Materials", "Teaching Materials")@.
+    Text
+      Selected packages include @TO2("IntegralClosure :: IntegralClosure", "IntegralClosure")@,
+      @TO2("PrimaryDecomposition :: PrimaryDecomposition", "PrimaryDecomposition")@,
+      @TO2("ReesAlgebra :: ReesAlgebra", "ReesAlgebra")@,
+      @TO2("MinimalPrimes :: MinimalPrimes", "MinimalPrimes")@,
+      @TO2("Depth :: Depth", "Depth")@,
+      @TO2("Elimination :: Elimination", "Elimination")@,
+      @TO2("Saturation :: Saturation", "Saturation")@,
+      @TO2("Regularity :: Regularity", "Regularity")@,
+      @TO2("LocalRings :: LocalRings", "LocalRings")@,
+      @TO2("MonomialAlgebras :: MonomialAlgebras", "MonomialAlgebras")@,
+      @TO2("NoetherNormalization :: NoetherNormalization", "NoetherNormalization")@, and
+      @TO2("TangentCone :: TangentCone", "TangentCone")@. For a broader catalog, see
+      @TO2("packages provided with Macaulay2", "packages provided with Macaulay2")@.
+    Text
+      Core topics include @TO "Gröbner bases"@, @TO "normal forms"@,
+      @TO "elimination of variables"@, @TO "hilbertFunction"@,
+      @TO "hilbertSeries"@, @TO "hilbertPolynomial"@,
+      @TO "Complexes :: freeResolution"@, @TO "MinimalPrimes :: radical"@,
+      @TO "MinimalPrimes :: minimalPrimes"@,
+      @TO "PrimaryDecomposition :: primaryDecomposition"@, and
+      @TO "regularity"@.
     Text
       The reference links below are retained for direct access to lower-level commands.
   SeeAlso
@@ -136,56 +92,6 @@ Node
     "Saturation :: Saturation"
     "Regularity :: Regularity"
     "LocalRings :: LocalRings"
-  Subnodes
-    "Gröbner bases"
-    "normal forms"
-    -- Mike wanted this: TO "Hilbert functions"
-    "elimination of variables"
-    -- Mike wanted this: TO "syzygies"
-    -- Mike wanted this: TO "saturation"
-    -- Mike wanted this: TO "fibers of a map between varieties"
-    -- Mike wanted this: TO "solving systems of polynomial equations"
-    --
-    @TO "IntegralClosure :: IntegralClosure"@
-    @TO "PrimaryDecomposition :: PrimaryDecomposition"@
-    --
-    hilbertFunction
-    hilbertSeries
-    hilbertPolynomial
-    syz
-    koszul
-    eagonNorthcott
-    regularity
-    presentation
-    "OldChainComplexes :: resolution"
-    quotient
-    quotient'
-    quotientRemainder
-    quotientRemainder'
-    remainder
-    remainder'
-    pseudoRemainder
-    rank
-    dim
-    codim
-    pdim
-    depth -- contains link to package Depth
-    height -- TODO
-    length
-    complete
-    trim
-    prune
-    numgens
-    mingens
-    minimize
-    minimalPresentation
-    tensor
-    directSum
-    directProduct
-    monomialCurveIdeal
-    isBorel
-    isCommutative
-    isAffineRing
 
 Node
   Key
@@ -195,28 +101,23 @@ Node
       Homological algebra in Macaulay2 covers complexes, maps of complexes,
       homology and cohomology functors, and derived constructions such as Tor and
       Ext.
-    Tree
-      :Tutorials
-        > "Tutorial: Modules in Macaulay2"
-      :Selected Packages
-        > @TOH "Complexes :: Complexes"@
-        > @TOH "OldChainComplexes :: OldChainComplexes"@
-        > @TOH "ChainComplexExtras :: ChainComplexExtras"@
-        > @TOH "DGAlgebras :: DGAlgebras"@
-        > @TOH "TorAlgebra :: TorAlgebra"@
-        > @TOH "SchurFunctors :: SchurFunctors"@
-        > @TOH "TensorComplexes :: TensorComplexes"@
-        > @TOH "MCMApproximations :: MCMApproximations"@
-        > @TOH "KustinMiller :: KustinMiller"@
-        > @TO2("packages provided with Macaulay2", "browse packages by subject area")@
-      :Core topics
-        > "Tor"
-        > "Ext"
-        > "HH"
-        > "isExact"
-        > "kernel"
-        > "cokernel"
-        > "image"
+    Text
+      A good starting tutorial is
+      @TO2("Tutorials::Tutorial: Modules in Macaulay2", "Tutorial: Modules in Macaulay2")@.
+    Text
+      Selected packages include @TO2("Complexes :: Complexes", "Complexes")@,
+      @TO2("OldChainComplexes :: OldChainComplexes", "OldChainComplexes")@,
+      @TO2("ChainComplexExtras :: ChainComplexExtras", "ChainComplexExtras")@,
+      @TO2("DGAlgebras :: DGAlgebras", "DGAlgebras")@,
+      @TO2("TorAlgebra :: TorAlgebra", "TorAlgebra")@,
+      @TO2("SchurFunctors :: SchurFunctors", "SchurFunctors")@,
+      @TO2("TensorComplexes :: TensorComplexes", "TensorComplexes")@,
+      @TO2("MCMApproximations :: MCMApproximations", "MCMApproximations")@, and
+      @TO2("KustinMiller :: KustinMiller", "KustinMiller")@. For a broader catalog, see
+      @TO2("packages provided with Macaulay2", "packages provided with Macaulay2")@.
+    Text
+      Core topics include @TO "Tor"@, @TO "Ext"@, @TO "HH"@,
+      @TO "isExact"@, @TO "kernel"@, @TO "cokernel"@, and @TO "image"@.
   SeeAlso
     "packages provided with Macaulay2"
     "Complexes :: Complexes"
@@ -227,26 +128,6 @@ Node
     "SchurFunctors :: SchurFunctors"
     "TensorComplexes :: TensorComplexes"
     "MCMApproximations :: MCMApproximations"
-  Subnodes
-    kernel
-    cokernel
-    image
-    coimage
-    preimage
-    pullback
-    pushout
-    extend
-    "OldChainComplexes :: nullhomotopy"
-    isExact
-    isInjective
-    isSurjective
-    isIsomorphism
-    inverse
-    ScriptedFunctor
-    id
-    HH
-    Tor
-    Ext
 
 Node
   Key
@@ -256,30 +137,26 @@ Node
       Algebraic geometry in Macaulay2 includes computations with affine and
       projective varieties, toric and Schubert geometry, singularities,
       characteristic classes, and rational points.
-    Tree
-      :Tutorials
-        > "Tutorial: Divisors"
-        > "Tutorial: Canonical Embeddings of Plane Curves and Gonality"
-        > "Tutorial: Fano varieties"
-      :Selected Packages
-        > @TOH "Varieties :: Varieties"@
-        > @TOH "Schubert2 :: Schubert2"@
-        > @TOH "NormalToricVarieties :: NormalToricVarieties"@
-        > @TOH "CharacteristicClasses :: CharacteristicClasses"@
-        > @TOH "HyperplaneArrangements :: HyperplaneArrangements"@
-        > @TOH "Points :: Points"@
-        > @TOH "RationalPoints :: RationalPoints"@
-        > @TOH "PushForward :: PushForward"@
-        > @TOH "ToricVectorBundles :: ToricVectorBundles"@
-        > @TO2("packages provided with Macaulay2", "browse packages by subject area")@
-      :Core topics
-        > "singularLocus"
-        > "Grassmannian"
-        > "Schubert"
-        > "Fano"
-        > "isNormal"
-        > "isSmooth"
-        > "genus"
+    Text
+      Tutorials include @TO2("Tutorials::Tutorial: Divisors", "Tutorial: Divisors")@,
+      @TO2("Tutorials::Tutorial: Canonical Embeddings of Plane Curves and Gonality", "Tutorial: Canonical Embeddings of Plane Curves and Gonality")@,
+      and @TO2("Tutorials::Tutorial: Fano varieties", "Tutorial: Fano varieties")@.
+    Text
+      Selected packages include @TO2("Varieties :: Varieties", "Varieties")@,
+      @TO2("Schubert2 :: Schubert2", "Schubert2")@,
+      @TO2("NormalToricVarieties :: NormalToricVarieties", "NormalToricVarieties")@,
+      @TO2("CharacteristicClasses :: CharacteristicClasses", "CharacteristicClasses")@,
+      @TO2("HyperplaneArrangements :: HyperplaneArrangements", "HyperplaneArrangements")@,
+      @TO2("Points :: Points", "Points")@,
+      @TO2("RationalPoints :: RationalPoints", "RationalPoints")@,
+      @TO2("PushForward :: PushForward", "PushForward")@, and
+      @TO2("ToricVectorBundles :: ToricVectorBundles", "ToricVectorBundles")@.
+      For a broader catalog, see
+      @TO2("packages provided with Macaulay2", "packages provided with Macaulay2")@.
+    Text
+      Core topics include @TO "singularLocus"@, @TO "Grassmannian"@,
+      @TO "Schubert"@, @TO "Fano"@, @TO "isNormal"@,
+      @TO "isSmooth"@, and @TO "genus"@.
     Text
       The reference links below remain available for direct access to core geometry commands.
   SeeAlso
@@ -291,20 +168,6 @@ Node
     "HyperplaneArrangements :: HyperplaneArrangements"
     "RationalPoints :: RationalPoints"
     "ToricVectorBundles :: ToricVectorBundles"
-  Subnodes
-    singularLocus
-    Grassmannian
-    Schubert
-    Fano
-    isNormal
-    isSmooth
-    isVeryAmple
-    randomKRationalPoint
-    chi
-    euler
-    eulers
-    genus
-    genera
 
 Node
   Key
@@ -315,31 +178,30 @@ Node
       functions, Schur and Weyl functors, Lie algebras and their
       representations, highest-weight methods, group actions, invariant
       theory, and related character computations.
-    Tree
-      :Selected Packages
-        > @TOH "SchurRings :: SchurRings"@
-        > @TOH "SchurFunctors :: SchurFunctors"@
-        > @TOH "PieriMaps::PieriMaps"@
-        > @TOH "WeylGroups :: WeylGroups"@
-        > @TOH "LieAlgebraRepresentations :: LieAlgebraRepresentations"@
-        > @TOH "GradedLieAlgebras :: GradedLieAlgebras"@
-        > @TOH "HighestWeights :: HighestWeights"@
-        > @TOH "InvariantRing :: InvariantRing"@
-        > @TOH "BettiCharacters :: BettiCharacters"@
-        > @TO2("packages provided with Macaulay2", "browse packages by subject area")@
-      :Core topics
-        > @TOH "SchurFunctors :: schur"@
-        > @TOH "SchurFunctors :: schurModule"@
-        > @TOH "SchurRings :: plethysm"@
-        > @TOH "SchurRings :: internalProduct"@
-        > @TOH "LieAlgebraRepresentations :: simpleLieAlgebra"@
-        > @TOH "HighestWeights :: setWeights"@
-        > @TO2("HighestWeights :: HighestWeights", "highest-weight decompositions")@
-        > @TO2("InvariantRing :: InvariantRing", "group actions and invariant rings")@
-        > @TO2("BettiCharacters :: BettiCharacters", "characters on resolutions and graded modules")@
-        > @TOH "WeylGroups :: rootSystem"@
-        > @TOH "WeylGroups :: dynkinType"@
-        > @TOH "WeylGroups :: cartanMatrix"@
+    Text
+      Selected packages include @TO2("SchurRings :: SchurRings", "SchurRings")@,
+      @TO2("SchurFunctors :: SchurFunctors", "SchurFunctors")@,
+      @TO2("PieriMaps::PieriMaps", "PieriMaps")@,
+      @TO2("WeylGroups :: WeylGroups", "WeylGroups")@,
+      @TO2("LieAlgebraRepresentations :: LieAlgebraRepresentations", "LieAlgebraRepresentations")@,
+      @TO2("GradedLieAlgebras :: GradedLieAlgebras", "GradedLieAlgebras")@,
+      @TO2("HighestWeights :: HighestWeights", "HighestWeights")@,
+      @TO2("InvariantRing :: InvariantRing", "InvariantRing")@, and
+      @TO2("BettiCharacters :: BettiCharacters", "BettiCharacters")@. For a broader
+      catalog, see @TO2("packages provided with Macaulay2", "packages provided with Macaulay2")@.
+    Text
+      Core topics include @TO "SchurFunctors :: schur"@,
+      @TO "SchurFunctors :: schurModule"@,
+      @TO "SchurRings :: plethysm"@,
+      @TO "SchurRings :: internalProduct"@,
+      @TO "LieAlgebraRepresentations :: simpleLieAlgebra"@,
+      @TO "HighestWeights :: setWeights"@,
+      @TO2("HighestWeights :: HighestWeights", "highest-weight decompositions")@,
+      @TO2("InvariantRing :: InvariantRing", "group actions and invariant rings")@,
+      @TO2("BettiCharacters :: BettiCharacters", "characters on resolutions and graded modules")@,
+      @TO "WeylGroups :: rootSystem"@,
+      @TO "WeylGroups :: dynkinType"@, and
+      @TO "WeylGroups :: cartanMatrix"@.
     Text
       The reference links below remain available for direct access to package
       entry points and core constructions.
@@ -354,25 +216,6 @@ Node
     "HighestWeights :: HighestWeights"
     "InvariantRing :: InvariantRing"
     "BettiCharacters :: BettiCharacters"
-  Subnodes
-    @TO "SchurRings :: SchurRings"@
-    @TO "SchurFunctors :: SchurFunctors"@
-    @TO "PieriMaps::PieriMaps"@
-    @TO "WeylGroups :: WeylGroups"@
-    @TO "LieAlgebraRepresentations :: LieAlgebraRepresentations"@
-    @TO "GradedLieAlgebras :: GradedLieAlgebras"@
-    @TO "HighestWeights :: HighestWeights"@
-    @TO "InvariantRing :: InvariantRing"@
-    @TO "BettiCharacters :: BettiCharacters"@
-    "SchurFunctors :: schur"
-    "SchurFunctors :: schurModule"
-    "SchurRings :: plethysm"
-    "SchurRings :: internalProduct"
-    "LieAlgebraRepresentations :: simpleLieAlgebra"
-    "HighestWeights :: setWeights"
-    "WeylGroups :: rootSystem"
-    "WeylGroups :: dynkinType"
-    "WeylGroups :: cartanMatrix"
 
 Node
   Key
@@ -381,31 +224,26 @@ Node
     Text
       Combinatorics in Macaulay2 spans graphs, posets, simplicial complexes,
       polyhedra, lattice polytopes, and combinatorial commutative algebra.
-    Tree
-      :Selected Packages
-        > @TOH "Graphs :: Graphs"@
-        > @TOH "Posets :: Posets"@
-        > @TOH "Matroids :: Matroids"@
-        > @TOH "EdgeIdeals :: EdgeIdeals"@
-        > @TOH "SimplicialComplexes :: SimplicialComplexes"@
-        > @TOH "Polyhedra :: Polyhedra"@
-        > @TOH "LatticePolytopes :: LatticePolytopes"@
-        > @TOH "StatePolytope :: StatePolytope"@
-        > @TOH "Nauty :: Nauty"@
-        > @TOH "NautyGraphs :: NautyGraphs"@
-        > @TOH "FourTiTwo :: FourTiTwo"@
-        > @TOH "Normaliz :: Normaliz"@
-        > @TOH "SimplicialDecomposability :: SimplicialDecomposability"@
-        > @TO2("packages provided with Macaulay2", "browse packages by subject area")@
-      :Core topics
-        > "partitions"
-        > "compositions"
-        > "binomial"
-        > "Set"
-        > "cone"
-        > "rays"
-        > "normalCone"
-        > "multidegree"
+    Text
+      Selected packages include @TO2("Graphs :: Graphs", "Graphs")@,
+      @TO2("Posets :: Posets", "Posets")@,
+      @TO2("Matroids :: Matroids", "Matroids")@,
+      @TO2("EdgeIdeals :: EdgeIdeals", "EdgeIdeals")@,
+      @TO2("SimplicialComplexes :: SimplicialComplexes", "SimplicialComplexes")@,
+      @TO2("Polyhedra :: Polyhedra", "Polyhedra")@,
+      @TO2("LatticePolytopes :: LatticePolytopes", "LatticePolytopes")@,
+      @TO2("StatePolytope :: StatePolytope", "StatePolytope")@,
+      @TO2("Nauty :: Nauty", "Nauty")@,
+      @TO2("NautyGraphs :: NautyGraphs", "NautyGraphs")@,
+      @TO2("FourTiTwo :: FourTiTwo", "FourTiTwo")@,
+      @TO2("Normaliz :: Normaliz", "Normaliz")@, and
+      @TO2("SimplicialDecomposability :: SimplicialDecomposability", "SimplicialDecomposability")@.
+      For a broader catalog, see
+      @TO2("packages provided with Macaulay2", "packages provided with Macaulay2")@.
+    Text
+      Core topics include @TO "partitions"@, @TO "compositions"@,
+      @TO "binomial"@, @TO "Set"@, @TO "cone"@, @TO "rays"@,
+      @TO "normalCone"@, and @TO "multidegree"@.
   SeeAlso
     "packages provided with Macaulay2"
     "Graphs :: Graphs"
@@ -416,35 +254,4 @@ Node
     "LatticePolytopes :: LatticePolytopes"
     "Nauty :: Nauty"
     "FourTiTwo :: FourTiTwo"
-  Subnodes
-    binomial
-    compositions
-    inversePermutation
-    partitions
-    random
-    shuffle
-    Set
-    rays
-    cone
-    normalCone
-    multidegree
 ///
-
-document {
-     Key => {"Teaching Materials", "A first course in commutative algebra"},
-     "This section collects teaching materials and introductory tutorials
-     for basic commutative algebra in Macaulay2, at roughly the level of
-     Atiyah-Macdonald and Greuel-Pfister.",
-     PARA{},
-     "Use these materials when you want worked examples that connect
-     commutative-algebra topics to first Macaulay2 commands, including
-     Gröbner bases, ideals and modules, Hilbert invariants, elimination,
-     and resolutions.",
-     PARA{},
-     "Macaulay2 examples corresponding to examples in the Greuel-Pfister
-     text may also be found here.",
-     Subnodes => {
-	  TO2("Elementary uses of Groebner bases I", "Elementary uses of Groebner bases"),
-	  TO "M2SingularBook"
-	  }
-     }

@@ -111,6 +111,6 @@ document {
     ),
     SeeAlso => {
 	Grassmannian,
-	"Tutorial: Fano varieties"
+	"Tutorials::Tutorial: Fano varieties"
     }
 }

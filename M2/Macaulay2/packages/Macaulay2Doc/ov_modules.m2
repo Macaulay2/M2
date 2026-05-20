@@ -5,7 +5,7 @@ document {
      Submodules and quotients of free modules are perhaps the most common and important
      modules, and subquotients form the smallest class of modules that naturally includes these cases.",
      PARA{},
-     "See ", TO "Tutorial: Modules in Macaulay2", " for an overview tutorial on modules.",
+     "See ", TO "Tutorials::Tutorial: Modules in Macaulay2", " for an overview tutorial on modules.",
      PARA{},
      "Common module tasks usually start with one of the following pages or commands.",
      UL {
