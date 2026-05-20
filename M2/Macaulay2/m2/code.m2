@@ -10,8 +10,8 @@ needs "nets.m2"
 -----------------------------------------------------------------------------
 -- Global variables
 
-debggerPrintCarets = true
-debggerPrintLineNumbers = true
+debugPrintCarets = false
+debugPrintLineNumbers = false
 
 -----------------------------------------------------------------------------
 
@@ -208,7 +208,7 @@ code FilePosition := opt -> x -> (
 	       );
 	  file = lines file;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
-	  DIV splice { codeAddress(x), codeContent(PrintCaret => debggerPrintCarets, PrintLineNum => debggerPrintLineNumbers, x, start, stop, file) }
+	  DIV splice { codeAddress(x), codeContent(PrintCaret => debugPrintCarets, PrintLineNum => debugPrintLineNumbers, x, start, stop, file) }
 	  ))
 code Symbol     := opt -> ()
 code Pseudocode := opt -> s -> code locate s

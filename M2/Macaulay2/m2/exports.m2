@@ -1351,6 +1351,8 @@ exportMutable {
 	"debugError",
 	"debugLevel",
 	"debuggingMode",
+	"debugPrintCarets",
+	"debugPrintLineNumbers",
 	"defaultPrecision",
 	"dictionaryPath",
 	"engineDebugLevel",
