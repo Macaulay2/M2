@@ -235,7 +235,7 @@ elementaryInvariants := D -> (
 	-- Turn the integer into a vector 
 	c := for j from 0 to t - 1 list ((i // p^j) % p);
 	cand := for k from 0 to n - 1 list (
-	    -- sum over seeds component-wise with wights in c then mod p
+	    -- sum over seeds component-wise with weights in c then mod p
 	    (sum for j from 0 to t - 1 list (c#j) * (seedList#j#k)) % p
 	    );
 	deg := sum cand;
@@ -268,7 +268,7 @@ elementaryInvariants := D -> (
     -- seed list is grown seeds
     seedList = new MutableList from {};
     for a in candidates do (
-	-- if no seeds in the list divide our canidate then its a valid seed so we add it
+	-- if no seeds in the list divide our candidate then its a valid seed so we add it
 	if not any(#seedList, i -> divides(seedList#i, a)) then seedList#(#seedList) = a;
 	);
 
