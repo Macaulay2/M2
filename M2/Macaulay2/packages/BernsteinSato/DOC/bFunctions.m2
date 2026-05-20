@@ -79,11 +79,11 @@ doc ///
 	       },
 	  {BOLD "TryGeneric", " -- checks whether the ideal is generic
 	       and if that is the case uses Alg.5.1.5
-	       in Saito-Sturmfels-Takayama (1999) otherwise is equivalent
+	       in [", TO2 ("WeylAlgebras :: Works Cited", "SST00"), "] otherwise is equivalent
 	       to ", TT "NonGeneric"
 	       },
 	  {BOLD "NonGeneric",
-	       " -- uses 5.1.6 in Saito-Sturmfels-Takayama (1999)"
+	       " -- uses 5.1.6 in [", TO2 ("WeylAlgebras :: Works Cited", "SST00"), "]"
 	       },
 	  {"Default: ", "IntRing"}
 	  }@
@@ -417,9 +417,9 @@ doc ///
   Description
     Text
       Bernstein-Sato polynomial for an arbitrary affine variety was introduced in
-      Budur, Mustata, and Saito, ``Bernstein--Sato polynomials of arbitrary varieties''.
+      [@TO2 ("WeylAlgebras :: Works Cited", "BMS06")@].
       If the option @TO "Exponent"@ is specified, then the m-generalized Bernstein-Sato polynomial is computed.
-      See Berkesch and Leykin, ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for definitions.
+      See [@TO2 ("WeylAlgebras :: Works Cited", "BL10")@] for definitions.
     Example
       W = makeWA(QQ[x_1..x_3]);
       factorBFunction generalB ({x_2^2-x_1*x_3, x_1^3-x_3^2}, x_2)
@@ -482,7 +482,7 @@ doc ///
     specify exponent m for m-generalized Bernstein-Sato polynomial
   Description
     Text
-      See Berkesch and Leykin, ``Algorithms for Bernstein-Sato polynomials and multiplier ideals''.
+      See [@TO2 ("WeylAlgebras :: Works Cited", "BL10")@].
 ///
 
 --- old format (commented out) ---
@@ -947,9 +947,7 @@ doc ///
       describing strata in the parameter space
       corresponding to the Bernstein-Sato polynomials --- each stratum is a constructible set.
 
-      This is an implementation of the algorithmic approach in
-      Anton Leykin, ``Constructibility of the Set of Polynomials with a Fixed Bernstein-Sato Polynomial: an Algorithmic Approach'',
-      Journal of Symbolic Computation, 32(6):663--675, 2001.
+      This is an implementation of the algorithmic approach in [@TO2 ("WeylAlgebras :: Works Cited", "Ley01")@].
     Example
       A = (QQ [a,b,c]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
       paramBpoly(a*x^2 + b*x*y + c*y^2, stdio)

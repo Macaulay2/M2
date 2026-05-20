@@ -52,27 +52,14 @@ doc ///
 	       {BOLD "LocStrategy => null",
 		    " -- used only for ", TT "localCohom(...Ideal...)",
 		    ", localizations are done by straightforward computation of
-		    annihilators and b-polynomials as described in [1]."},
+		    annihilators and b-polynomials as described in [", TO2 ("WeylAlgebras :: Works Cited", "Wal99"), "]."},
 	       {BOLD "LocStrategy => OaTaWa",
-		    " -- localizations are done following Oaku-Takayama-Walther method [2]."},
+		    " -- localizations are done following Oaku-Takayama-Walther method [", TO2 ("WeylAlgebras :: Works Cited", "OTW00"), "]."},
 	       {BOLD "LocStrategy => Oaku",
 		    " -- localizations are done following Oaku's algorithm."},
 	  },
 	  {BOLD "OaTa", " -- restriction from the graph embedding is used,
-	       which is due to T. Oaku and N. Takayama [3]. See ", TO "Drestriction", "."}
-	  }@
-
-      For detailed description of the algorithms see
-
-      @UL {
-	  {BOLD "[1] ", "Walther, ",
-	       EM "Algorithmic computation of local cohomology
-	       modules and the local cohomological dimension of algebraic
-	       varieties (JPAA (139), 1999.)"},
-	  {BOLD "[2] ", "Oaku, Takayama, Walther, ",
-	       EM "A Localization Algorithm for D-modules (J. Symbolic Computation (29), 2000.)"},
-	  {BOLD "[3] ", "Oaku, Takayama, ",
-	       EM "Algorithms for D-modules -- restriction, tensor product, localization, and local cohomology groups (JPAA (156), 2001.)"}
+	       which is due to T. Oaku and N. Takayama [", TO2 ("WeylAlgebras :: Works Cited", "OT01"), "]. See ", TO "Drestriction", "."}
 	  }@
   Caveat
     localCohom(...Ideal, Module...) with the default strategy computes presentations for all the terms in the Cech complex regardless of the requested homological degrees. All strategies use the given generators of the ideal; the user is advised to call @TO "mingens"@ before calling localCohom.
@@ -571,8 +558,7 @@ doc ///
   Description
     Text
       The routine deRhamAll can be used to compute cup product structures
-      as in the paper ``The cup product structure for complements
-      of affine varieties'' by Walther (2000).
+      as in [@TO2 ("WeylAlgebras :: Works Cited", "Wal00")@].
 
       For a more basic functionality see @TO "deRham"@.
     Example
@@ -664,9 +650,7 @@ doc ///
       containing the entries of the form @TT "i=>Mi"@
   Description
     Text
-      The algorithm used appears in the paper ``An algorithm for deRham
-      cohomology groups of the complement of an affine variety via D-module
-      computation'' by Oaku-Takayama (1999).
+      The algorithm used appears in [@TO2 ("WeylAlgebras :: Works Cited", "OT99")@].
       The method is to compute the localization of the polynomial ring
       by $f$, then compute the derived integration of the localization.
     Example

@@ -16,7 +16,7 @@ doc ///
     Text
      This routine computes the ideal of the differential annihilator of a polynomial. This ideal is a left ideal of the ring $D[s]$.  More
      details can be found in 
-     [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapter 5].  
+     [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Chapter 5].
      The computation in the case of the element $f$ is via  Algorithm 5.3.6.
     Example
       makeWA(QQ[x,y])

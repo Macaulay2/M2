@@ -73,7 +73,7 @@ doc ///
 
       The option @BOLD "DegreeLimit"@
       specifies the maximal degree of polynomials to consider for membership in the multiplier ideal.
-      See Berkesch and Leykin, ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for details.
+      See [@TO2 ("WeylAlgebras :: Works Cited", "BL10")@] for details.
     Example
       R = QQ[x_1..x_4];
       multiplierIdeal(ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}, 31/18)
@@ -135,7 +135,7 @@ doc ///
       Computes the jumping coefficients and their multiplier ideals in an open interval $(a,b)$. By default $a = 0$, $b = $ @TO "analyticSpread"@ $I$.
       The options are passed to @TO "multiplierIdeal"@.
 
-      See Berkesch and Leykin, ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for details.
+      See [@TO2 ("WeylAlgebras :: Works Cited", "BL10")@] for details.
     Example
       R = QQ[x_1..x_4];
       jumpingCoefficients ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}
@@ -254,7 +254,7 @@ doc ///
 	   " -- via computation of the m-generalized Bernstein-Sato polynomial"}
 	  }@
 
-      See Berkesch and Leykin, ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for details.
+      See [@TO2 ("WeylAlgebras :: Works Cited", "BL10")@] for details.
     Example
       R = QQ[x_1..x_4];
       isInMultiplierIdeal(x_1, ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}, 31/18)

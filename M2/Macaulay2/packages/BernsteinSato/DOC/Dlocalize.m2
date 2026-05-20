@@ -91,11 +91,8 @@ doc ///
       this is true for all holonomic D-modules.
 
       There are two different algorithms for localization implemented.
-      The first appears in the
-      paper ``A localization algorithm for D-modules'' by Oaku-Takayama-Walther
-      (1999).  The second is due to Oaku and appears in the paper
-      ``Algorithmic computation of local cohomology modules and the
-      cohomological dimension of algebraic varieties'' by Walther (1999).
+      The first appears in [@TO2 ("WeylAlgebras :: Works Cited", "OTW00")@].
+      The second is due to Oaku and appears in [@TO2 ("WeylAlgebras :: Works Cited", "Wal99")@].
     Example
       W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
       M = W^1/(ideal(x*Dx+1, Dy))

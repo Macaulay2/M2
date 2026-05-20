@@ -130,6 +130,7 @@ beginDocumentation()
 load "WeylAlgebras/DOC/main.m2"
 load "WeylAlgebras/DOC/basics.m2"   -- basic commands
 load "WeylAlgebras/DOC/general.m2"
+load "WeylAlgebras/DOC/worksCited.m2"
 
 --------------------------------------------------------------------------------
 

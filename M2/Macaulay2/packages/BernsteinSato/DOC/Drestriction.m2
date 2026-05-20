@@ -164,9 +164,7 @@ doc ///
       a Schreyer resolution in the homogeneous Weyl algebra
       and then dehomogenize.  The second strategy is to homogenize
       with respect to the weight vector.
-      These strategies are described in the paper
-      ``Algorithms for D-modules''
-      by Oaku-Takayama (1999).
+      These strategies are described in [@TO2 ("WeylAlgebras :: Works Cited", "OT01")@].
     Example
       R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
       I = ideal(x_1*D_1+3*x_2*D_2-1, D_1^3-D_2)
@@ -302,8 +300,8 @@ doc ///
       The input weight vector should be a list of $n$ numbers
       to induce the weight $(-w,w)$ on $D$.
 
-      The algorithm used appears in the paper ``Algorithms for D-modules''
-      by Oaku-Takayama (1999).  The method is to compute an adapted resolution
+      The algorithm used appears in [@TO2 ("WeylAlgebras :: Works Cited", "OT01")@].
+      The method is to compute an adapted resolution
       with respect to the weight vector $w$ and use the b-function with respect
       to $w$ to truncate the resolution.
     Example
@@ -867,8 +865,8 @@ doc ///
       The input weight vector should be a list of $n$ numbers
       to induce the weight $(-w,w)$ on $D$.
 
-      The algorithm used appears in the paper ``Algorithms for D-modules''
-      by Oaku-Takayama (1999).  The method is to take the Fourier transform
+      The algorithm used appears in [@TO2 ("WeylAlgebras :: Works Cited", "OT01")@].
+      The method is to take the Fourier transform
       of $M$, then compute the derived restriction, then inverse
       Fourier transform back.
     Example

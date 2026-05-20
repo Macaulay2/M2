@@ -96,8 +96,7 @@ doc ///
       The procedure calls @TO "Drestriction"@, which uses
       $w$ if specified.
 
-      The algorithm used appears in the paper ``Computing homomorphisms
-      between holonomic D-modules'' by Tsai-Walther (2000).
+      The algorithm used appears in [@TO2 ("WeylAlgebras :: Works Cited", "TW01")@].
       The method is to combine isomorphisms of Bjork and Kashiwara with
       the restriction algorithm.
     Example
@@ -275,8 +274,7 @@ doc ///
       The procedure calls @TO "Drestriction"@, which uses
       $w$ if specified.
 
-      The algorithm used appears in the paper ``Polynomial and
-      rational solutions of holonomic systems'' by Oaku-Takayama-Tsai (2000).
+      The algorithm used appears in [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
       The method is to combine isomorphisms of Bjork and Kashiwara with
       the restriction algorithm.
     Example
@@ -442,8 +440,7 @@ doc ///
       and are finite-dimensional vector spaces over the ground field when
       $M$ is holonomic.
 
-      The algorithm used appears in the paper ``Polynomial and
-      rational solutions of holonomic systems'' by Oaku-Takayama-Tsai (2000).
+      The algorithm used appears in [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
       The method is to combine isomorphisms of Bjork and Kashiwara with
       the restriction algorithm.
     Example
@@ -554,8 +551,7 @@ doc ///
       are the derived functors of Hom, and are finite-dimensional
       vector spaces over the ground field when $M$ and $N$ are holonomic.
 
-      The algorithm used appears in the paper ``Polynomial and
-      rational solutions of holonomic systems'' by Oaku-Takayama-Tsai (2000).
+      The algorithm used appears in [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
       The method is to combine isomorphisms of Bjork and Kashiwara with
       the restriction algorithm.
     Example
@@ -602,11 +598,9 @@ doc ///
       finite-dimensional vector space.
       There are two algorithms implemented to get these solutions.
       The first algorithm is based on Gröbner deformations and
-      works for ideals $I$ of PDE's - see the paper {\em Polynomial
-      and rational solutions of a holonomic system} by
-      Oaku, Takayama and Tsai (2000).  The second algorithm is based
-      on homological algebra - see the paper {\em Computing
-      homomorphisms between holonomic D-modules} by Tsai and Walther (2000).
+      works for ideals $I$ of PDE's - see [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
+      The second algorithm is based on homological algebra - see
+      [@TO2 ("WeylAlgebras :: Works Cited", "TW01")@].
     Example
       makeWA(QQ[x])
       I = ideal(dx^2, (x-1)*dx-1)
@@ -717,9 +711,7 @@ doc ///
       are the codimension one components of the singular locus.
       An algorithm to compute rational solutions
       is based on Gröbner deformations and
-      works for ideals $I$ of PDE's - see the paper {\em Polynomial
-      and rational solutions of a holonomic system} by
-      Oaku, Takayama and Tsai (2000).
+      works for ideals $I$ of PDE's - see [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
     Example
       makeWA(QQ[x])
       I = ideal((x+1)*dx+5)

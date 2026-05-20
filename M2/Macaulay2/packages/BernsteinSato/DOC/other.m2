@@ -59,10 +59,8 @@ doc ///
       of $M$ along them, the routine computes the characteristic cycle of $M_f$.
 
       The method is based on a geometric formula given by V. Ginsburg in
-      {\em Characteristic varieties and vanishing cycles}, Invent. Math. 84 (1986), 327--402,
-      and reinterpreted by J. Briancon, P. Maisonobe and M. Merle in
-      {\em Localisation de systemes differentiels, stratifications de
-      Whitney et condition de Thom}, Invent. Math. 117 (1994), 531--550.
+      [@TO2 ("WeylAlgebras :: Works Cited", "Gin86")@] and reinterpreted by
+      J. Brian\c{c}on, P. Maisonobe and M. Merle in [@TO2 ("WeylAlgebras :: Works Cited", "BMM94")@].
     Example
       A = QQ[x_1,x_2,a_1,a_2]
       cc = {ideal A => 1} -- the characteristic ideal of R = CC[x_1,x_2]
@@ -233,7 +231,7 @@ doc ///
   Description
     Text
       For a polynomial $f$ in two variables executes the algorithm described in
-      Castro-Jimenez and Takayama, ``The Computation of the Logarithmic Cohomology for Plane Curves'' (arXiv:0712.0001).
+      [@TO2 ("WeylAlgebras :: Works Cited", "CJT01")@].
     Example
       S = QQ[x,y];
       f = x*y*(x-y);

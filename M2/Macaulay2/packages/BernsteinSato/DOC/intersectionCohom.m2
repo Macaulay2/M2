@@ -70,8 +70,7 @@ Node
        I=ideal(x^2+y^3)
        IHmodule(I)
     Text 
-       When the given generators of $I$ form a regular sequence, use LocStrategy=>CompleteIntersection for a generally faster algorithm, which implements the determination of the IC module in terms of the fundamental class as described in: 
-       D. Barlet and M. Kashiwara, Le réseau $L^2$ d’un système holonome régulier, Invent. Math. 86 (1986), no. 1, 35–62. 
+       When the given generators of $I$ form a regular sequence, use LocStrategy=>CompleteIntersection for a generally faster algorithm, which implements the determination of the IC module in terms of the fundamental class as described in [@TO2 ("WeylAlgebras :: Works Cited", "BK86")@].
     Example
        R=QQ[x,y]
        I=ideal(x^2+y^3)
