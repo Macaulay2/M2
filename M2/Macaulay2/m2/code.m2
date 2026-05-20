@@ -37,69 +37,125 @@ codeFunction := (key, func, level) -> if level <= limit then (
 previousMethodsFound = null
 
 codeAddress = pos -> ( pos, ": --source code:" ) -- [addr]:[line]:[char]-[line]:[char]:
-codeContent = (pos, s, e, filelines) -> (
-    posL := toList(pos);
---   << posL << endl;
---    tmp := stack filelines_{s-1 .. e-1};
 
+
+protect PrintCaret
+protect PrintLineNum
+codeContent = method(
+    Options => {
+	PrintCaret => true,
+	PrintLineNum => true
+    }
+)
+codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
+--codeContent = (pos, s, e, filelines) -> (
+    
+    posL := toList(pos);
     str := "";
     tmp := "";
     tmpInt := 0;
     leftPadding := 3;
     rightPadding := 3;
     padding := "";
+--    firstLine := "";
+    lastLine := "";
     outputList := {};
     maxLen := 0;
 
-    --Get max length of padding
-    for i from s-1 to e-1 do (
-	tmpInt = toString((posL#1+(i-s+1)));
-	maxLen = max(0,length tmpInt);
---	<< "ti = " << tmpInt << ", ml = " << maxLen << endl;
-    );
+--    << posL << endl;
     
-    --Creating carets.
-    str = concatenate ((posL#2):" ");
---    for i from 0 to (posL#2)-1 do str = concatenate(str," ");
-    if (#posL == 3) then (
-	str = concatenate(str,"^");
-	
-    );
-    if (#posL == 5 or #posL == 7) then (
-	tmp = concatenate ((posL#4 - posL#2):"^");
-	str = concatenate(str,tmp);
---	for i from posL#2 to (posL#4)-1 do str = concatenate(str,"^");
-    );
---    << str << endl;
     
---    << filelines_{s-1} << endl;
+    --Get max length of that the integer will take up as a string
+    if (opt.PrintLineNum == true) then (
+	for i from s-1 to e-1 do (
+	    tmpInt = toString((posL#1+(i-s+1)));
+	    maxLen = max(0,length tmpInt);
+	);
+    ) else (
+	maxLen = 0;
+    );
 
---    << "ml = " << maxLen << endl;
-
-
-    if (s != e) then (
+    --Create the first line of output
+    if (s != e and opt.PrintCaret == true) then (
 	outputList = outputList | { concatenate( ((leftPadding + maxLen + rightPadding + posL#2:" ")), "v") };
+    );    
+
+    --Create the middle lines of output, where print out the code.
+    if (opt.PrintLineNum == true) then (
+	for i from s-1 to e-1 do (
+	    tmp = toString((posL#1)+(i-s+1));
+	    outputList = outputList | { concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_i )};
+	);
+    ) else (
+	for i from s-1 to e-1 do (
+	    outputList = outputList | filelines_{i};
+	);
     );
+
+-*    
     for i from s-1 to e-2 do (
 	tmp = toString((posL#1)+(i-s+1));
-	outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{i})};
+	if (opt.PrintLineNum == true) then (
+            outputList = outputList | { concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_i )};
+        ) else (
+	    outputList = outputList | filelines_{i};
+	);
     );
-    tmp = toString((posL#1)+(e-s));
+*-
+    
+    --If there are no carets to print, then we are done.
+    if (opt.PrintCaret == false) then return PRE M2CODE stack( outputList );
+    
+    
+    --Otherwise, there are carets to print, which we now construct.
+    str = "";
+    --Append the padding associated to the line numbers.
+    if (opt.PrintLineNum == true) then ( 
+	str = concatenate(str, ((leftPadding + (maxLen) + rightPadding):" "));
+    );
 
-    if (s == e) then (
-	outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1},"\n", ((leftPadding + maxLen + rightPadding):" "), str)};
-    );
+    --For multiple lines add a single caret.
     if (s != e) then (
-	outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1},"\n", ((leftPadding + maxLen + rightPadding + posL#4-1):" "), "^")};
+	str = concatenate(str, (posL#4-1):" ", "^");
+    ) else if (#posL == 3) then ( --Add a single caret.
+	str = concatenate(str,"^");
+    ) else if (#posL == 5 or #posL == 7) then ( --Add a line of carets.
+	str = concatenate(str, (posL#2):" ", (posL#4 - posL#2):"^");
+    );
+    outputList = outputList | { str };
+
+    -*
+    tmp = toString((posL#1)+(e-s));
+    str = "";
+    if (opt.PrintLineNum == true) then (
+	str = concatenate(str, ((leftPadding + (maxLen - length tmp) + rightPadding):" "));
+    );
+
+    str = concatenate ((posL#2):" "); --Add spaces to get to where the error starts.
+    --Add carets
+    if (#posL == 3) then ( 
+	str = concatenate(str,"^");
+	
+    ) else if (#posL == 5 or #posL == 7) then (
+	tmp = concatenate ((posL#4 - posL#2):"^");
+	str = concatenate(str,tmp);
     );
     
+    if (s == e) then (
+	if (opt.PrintCaret == false) then (
+	    outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1})};
+	) else (
+            outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1},"\n", ((leftPadding + maxLen + rightPadding):" "), str)};
+        );
+    );
+    if (s != e and opt.PrintCaret == true) then (
+	outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1},"\n", ((leftPadding + maxLen + rightPadding + posL#4-1):" "), "^")};
+    ) else (
+        outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1})};
+    );
+    *-
     
-    out := PRE M2CODE stack( outputList  );    
---    out := PRE M2CODE stack((filelines_{s-1 .. e-1}) | {str});
-    out
---    << s << endl;
---    << "s = " << s-1 << endl;
---    << "e = " << e-1 << endl;
+    return PRE M2CODE stack( outputList  );
 );
 
 -- e.g. see code methods(map, Module, List)
@@ -137,7 +193,7 @@ code FilePosition := x -> (
 	       );
 	  file = lines file;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
-	  DIV splice { codeAddress(x), codeContent(x, start, stop, file) }
+	  DIV splice { codeAddress(x), codeContent(PrintCaret => false, PrintLineNum => false, x, start, stop, file) }
 	  ))
 code Symbol     :=
 code Pseudocode := s -> code locate s
