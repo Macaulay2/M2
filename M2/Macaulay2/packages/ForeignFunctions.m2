@@ -20,8 +20,8 @@ newPackage("ForeignFunctions",
     Date => "February 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
     Keywords => {"Interfaces"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",

@@ -26,8 +26,8 @@ newPackage(
     Authors => {
 	{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"
 	    }},
     PackageImports => {"JSON"},
     Keywords => {"System"})

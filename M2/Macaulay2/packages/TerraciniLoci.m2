@@ -42,8 +42,8 @@ newPackage("TerraciniLoci",
 	    HomePage => "https://pierpaolasantarsiero.wixsite.com/pierpaola"},
 	{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"},
 	{
 	    Name => "Ettore Teixeira Turatti",
 	    Email => "e.teixeira-turatti@uw.edu.pl",
