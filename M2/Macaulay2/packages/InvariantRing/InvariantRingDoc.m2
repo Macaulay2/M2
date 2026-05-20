@@ -32,9 +32,10 @@ document {
 		HREF{"https://deepblue.lib.umich.edu/handle/2027.42/151589","Ideals of Subspace Arrangements"}, 
 	   	". Thesis (Ph.D.)-University of Michigan. 2019. ISBN: 978-1392-76291-2. pp 29-34."
 		},
-	    {"A new algorithm for invariants of elementary abelian groups by Arasha, Cassell, Dolorfino, Gandini, Novak, Qin, and Strom. See ",
-		HREF{"https://github.com/gordonovak/algorithms"}, 
-	   	" for more information."
+	    {"A faster algorithm for invariants of elementary abelian groups based on: ",
+		"Arasha S., Cassell M., Dolorfino M., Gandini F., Novak G., Qin D., and Strom S. (2026). ",
+		arXiv("2605.19158","An algorithm for invariants of elementary abelian groups"),
+		". arXiv:2605.19158"
 		},
 	    {"King's algorithm and the linear algebra method for invariants of finite groups: ",
 		"Derksen, H. & Kemper, G. (2015). ",

@@ -248,7 +248,9 @@ document {
 	     },
 	 
         UL { 
-	    {HREF{"https://github.com/gordonovak/algorithms"}}
+	    {"Arasha S., Cassell M., Dolorfino M., Gandini F., Novak G., Qin D., and Strom S. (2026). ",
+		"An algorithm for invariants of elementary abelian groups. ",
+		arXiv "2605.19158"}
         },   
     
     	PARA {
