@@ -607,9 +607,9 @@ toExternalString SharedLibrary := toExternalFormat @@ describe
 -- homebrew, so we try there if the first call to dlopen fails
 importFrom_Core {"isAbsolutePath"}
 if version#"operating system" == "Darwin" then (
-    brewPrefix := replace("\\s+$", "", get "!brew --prefix");
+    brewPrefix := replace("\\s+$", "", try get "!brew --prefix" else "");
     dlopen' = filename -> (
-	if isAbsolutePath filename then dlopen filename
+	if isAbsolutePath filename or brewPrefix == "" then dlopen filename
 	else (
 	    try dlopen filename
 	    else (
