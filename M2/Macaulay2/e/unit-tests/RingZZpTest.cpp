@@ -1,5 +1,33 @@
 // Copyright 2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/RingZZpTest.cpp
+ * @brief gtest coverage for the legacy `Z_mod` ring (modular arithmetic via `ring_elem`).
+ *
+ * Specialises `RingTest.hpp`'s `getElement<Z_mod>` by reusing
+ * the integer-side `getElement<RingZZ>` output and feeding it
+ * through `R.from_int`, which keeps the random source shared
+ * across the legacy `Ring*Test.cpp` suite. The
+ * `TEST(RingZZmod32003, fromStream)` case exercises the
+ * stream-input pipeline (parsing `"+1234 +345 -235*a"` into a
+ * sequence of `ring_elem`s and round-tripping through
+ * `R.elem_text_out`), while the `TEST(RingZZmod101, *)` cases
+ * pin down construction at small primes, `coefficient_type ==
+ * COEFF_BASIC`, the `"ZZ/101"` print name, and the standard
+ * arithmetic battery.
+ *
+ * Companion to `RingZZTest.cpp`, `RingQQTest.cpp`,
+ * `RingRRRTest.cpp`, `RingCCCTest.cpp`, and
+ * `RingTowerTest.cpp` under the same `file-ring-tests`
+ * markdown. The `aring`-side counterpart is `ARingZZpTest.cpp`,
+ * which exercises the templated path.
+ *
+ * @see RingTest.hpp
+ * @see ZZp.hpp
+ * @see ARingZZpTest.cpp
+ * @see fromStream.cpp
+ */
+
 #include "RingTest.hpp"
 #include "ZZp.hpp"
 

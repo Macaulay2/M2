@@ -48,6 +48,29 @@
 #ifndef __MPREAL_H__
 #define __MPREAL_H__
 
+/**
+ * @file mpreal.h
+ * @brief Vendored Holoborodko `mpfr::mpreal` C++ wrapper over MPFR.
+ *
+ * Single-header library (GPL/LGPL) bundled in-tree because most
+ * Linux distributions do not package it. Provides
+ * `mpfr::mpreal`, an `mpfr_t`-backed arbitrary-precision real
+ * type with full C++ operator overloads, the standard
+ * transcendental functions (`sin`, `cos`, `exp`, `log`, ...),
+ * IEEE-754 specials (`nan()`, `inf()`), and stream I/O. Most M2
+ * engine code calls MPFR's C API directly through `ARingRRR`;
+ * this header is consulted in the few places where operator
+ * overloads make code dramatically more readable, including
+ * `boost::multiprecision::mpfr_float`-backed paths.
+ *
+ * The upstream license block above must be preserved verbatim
+ * when updating from a newer release. Track the project at
+ * `http://www.holoborodko.com/pavel/mpfr`; bump only when there
+ * is an MPFR API change the engine needs.
+ *
+ * @see aring-RRR.hpp
+ */
+
 #include <string>
 #include <iostream>
 #include <sstream>

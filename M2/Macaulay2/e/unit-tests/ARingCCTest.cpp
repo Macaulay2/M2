@@ -1,5 +1,33 @@
 // Copyright 2012-2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/ARingCCTest.cpp
+ * @brief gtest coverage for the `complex<double>`-backed `M2::ARingCC` complex aring.
+ *
+ * Plugs `M2::ARingCC` into the `ARingTest.hpp` harness, defines
+ * the complex `almostEqual` that compares the magnitude of
+ * `a - b` against a `2^-nbits` epsilon resolved through the
+ * ring's real-side companion (`C.real_ring()`), and supplies the
+ * `getElement<M2::ARingCC>` specialisation that mixes the
+ * deterministic prefix elements (zero, one, `i`, near-overflow)
+ * with random complex draws. The same arithmetic / equality /
+ * inverse / negation battery `testSomeMore` runs is exercised
+ * over the full plane.
+ *
+ * Companion to `ARingCCCTest.cpp` (MPC arbitrary-precision
+ * complex), `ARingRRTest.cpp`, `ARingRRRTest.cpp`, and
+ * `ARingRRiTest.cpp` --- all under the same
+ * `file-aring-real-complex-tests` markdown. The cross-backend
+ * agreement check that `ARingCCC` at 53 bits stays within
+ * `2^-50` of `ARingCC` is the standard regression guard
+ * developers lean on when touching either of the complex paths.
+ *
+ * @see ARingTest.hpp
+ * @see aring-CC.hpp
+ * @see ARingRRTest.cpp
+ * @see ARingCCCTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

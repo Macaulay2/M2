@@ -727,6 +727,17 @@ void rawDisplayMatrixStream(const Matrix *inputMatrix)
   std::cout << computedStr.str() << std::endl;
 }
 
+/**
+ * @brief mathicgb (`mgb`) callback that polls the engine's interrupt flag
+ * during a long-running GB computation.
+ *
+ * @details Subclass of `mgb::GroebnerConfiguration::Callback` whose `call()`
+ * is invoked periodically by mathicgb. Each call increments
+ * `mCallCount` and checks `system_interrupted()`; on interrupt
+ * it sets `mInterrupted` and returns `StopWithNoOutputAction` so
+ * mathicgb tears down its work cleanly without producing a
+ * partial GB.
+ */
 class MGBCallback : public mgb::GroebnerConfiguration::Callback
 {
  public:

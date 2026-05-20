@@ -1,5 +1,32 @@
 // Copyright 2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/RingQQTest.cpp
+ * @brief gtest coverage for the legacy `RingQQ` rational ring (`globalQQ`).
+ *
+ * Specialises `RingTest.hpp`'s `getElement<RingQQ>` with the
+ * deterministic `[-25, 24]` integer prefix followed by random
+ * rationals drawn from `rawRandomQQ(maxH)` with `maxH = 10^11`;
+ * the `gmp_QQ` result feeds through `R.from_rational` so any
+ * canonicalisation bugs surface in the test loop. Standard
+ * arithmetic and identity assertions run against `globalQQ`
+ * --- the engine's shared `RingQQ` instance --- and double as a
+ * regression check on `aring-glue.hpp`, which threads the
+ * modern `ARingQQ*` backends back into the legacy `Ring`
+ * surface the interpreter still uses.
+ *
+ * Companion to `RingZZTest.cpp`, `RingZZpTest.cpp`,
+ * `RingRRRTest.cpp`, `RingCCCTest.cpp`, and `RingTowerTest.cpp`
+ * (all under the `file-ring-tests` markdown). Cross-checks
+ * against the `aring`-side `ARingQQGmpTest.cpp` /
+ * `ARingQQFlintTest.cpp` keep the two interfaces in sync.
+ *
+ * @see RingTest.hpp
+ * @see aring-glue.hpp
+ * @see ARingQQGmpTest.cpp
+ * @see interface/random.h
+ */
+
 #include "RingTest.hpp"
 
 static bool maxH_initialized = false;

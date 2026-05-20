@@ -1,3 +1,31 @@
+/**
+ * @file unit-tests/ARingRRiTest.cpp
+ * @brief gtest coverage for the MPFI-backed `M2::ARingRRi` real-interval aring.
+ *
+ * Drives `M2::ARingRRi` through the shared `ARingTest.hpp`
+ * harness with a precision-aware `almostEqual` tailored to
+ * interval semantics: an MPFR epsilon scaled to the ring's
+ * `get_precision()` is compared independently against the
+ * differences of the left and right endpoints of each
+ * `mpfi_t`-style element, so both bounds must agree to
+ * `2^-nbits` for the elements to count as equal. Beyond the
+ * standard arithmetic battery, the interval-specific tests
+ * confirm `(a + b)` contains every `a' + b'` with `a' ∈ a` and
+ * `b' ∈ b`, that wide operations widen the result, and that
+ * empty intervals survive arithmetic intact.
+ *
+ * Sibling of `ARingRRTest.cpp`, `ARingRRRTest.cpp`,
+ * `ARingCCTest.cpp`, and `ARingCCCTest.cpp` (all under the
+ * `file-aring-real-complex-tests` markdown). The `aring-glue.hpp`
+ * include pulls in the `ConcreteRing` wrapper so the legacy
+ * `Ring`-API surface routes back to the same MPFI backend.
+ *
+ * @see ARingTest.hpp
+ * @see aring-RRi.hpp
+ * @see aring-RRR.hpp
+ * @see ARingRRTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

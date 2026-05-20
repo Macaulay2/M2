@@ -3,6 +3,31 @@
 #ifndef _ntuple_monomial_hpp_
 #define _ntuple_monomial_hpp_
 
+/**
+ * @file f4/ntuple-monomial.hpp
+ * @brief F4's dense `int64_t` exponent-vector specialisation of `ExponentVector` (legacy).
+ *
+ * Aliases `ntuple_monomials = ExponentVector<int64_t, false>`
+ * for the F4 inner loop's dense monomial encoding: 64-bit
+ * signed exponents indexed by variable, with overflow checking
+ * disabled. The custom `mask` specialisation defined below
+ * derives the F4-side bit-mask used to short-circuit
+ * divisibility tests. Per the header's `CAVEAT`, no overflow
+ * protection happens at this layer --- F4 trades the safe-add
+ * branch for inner-loop speed and relies on sugar tracking,
+ * `GBWeight`, and degree checks higher up to reject unreasonable
+ * inputs before they reach monomial arithmetic.
+ *
+ * Counterpart to the sparse `varpower_monomial`; the TODO at the
+ * top of the file marks this as a planned eventual deletion
+ * once F4 migrates fully to the templated `ExponentVector`
+ * surface.
+ *
+ * @see ExponentVector.hpp
+ * @see varpower-monomial.hpp
+ * @see overflow.hpp
+ */
+
 #include "ExponentVector.hpp"
 
 // CAVEAT: NO overflow checking is done with this class.

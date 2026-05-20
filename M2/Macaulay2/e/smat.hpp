@@ -3,6 +3,31 @@
 #ifndef _smat_hpp_
 #define _smat_hpp_
 
+/**
+ * @file smat.hpp
+ * @brief `SMat<ACoeffRing>` --- column-oriented sparse matrix template, dual of `DMat<R>`.
+ *
+ * Declares `SMat<ACoeffRing>`, the engine's sparse-matrix
+ * template parameterised on a coefficient ring's aring. Storage
+ * is an array of column heads, each pointing at a linked list
+ * of `(row_index, value)` nodes sorted by ascending row index;
+ * memory is `O(non-zeros)` rather than `O(rows * cols)`. The
+ * column-oriented layout matches the engine's matrix algorithms
+ * --- column echelon form, Gauss reduction by column,
+ * column-wise elimination --- which all walk one column at a
+ * time. Row scans are slow by design.
+ *
+ * The class is the sparse counterpart of `dmat.hpp`'s `DMat<R>`
+ * and pairs with `mat-elem-ops.hpp`'s `MatElementaryOps` for
+ * the row / column primitive surface. `MutableMatrix` is the
+ * abstract front-end that hides the dense / sparse choice
+ * behind a uniform virtual interface.
+ *
+ * @see dmat.hpp
+ * @see mat.hpp
+ * @see mat-elem-ops.hpp
+ */
+
 union ring_elem;
 #include "ZZp.hpp"
 

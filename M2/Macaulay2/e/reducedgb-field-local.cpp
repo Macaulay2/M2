@@ -38,6 +38,16 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
     }
 }
 
+/**
+ * @brief Index comparator used to permute `ReducedGB_Field_Local`'s `gb`
+ * array into canonical reduced-GB order for the local-ring path.
+ *
+ * @details Same shape as `ReducedGB_Field_sorter` but with an extra `degs`
+ * vector --- the local-ring code compares first by heuristic
+ * degree (so smaller-degree reducers come earlier) and only
+ * breaks ties with the lead-term comparison. Plugged into
+ * `std::sort` on an indices vector.
+ */
 struct ReducedGB_Field_Local_sorter
 {
   GBRing *R;

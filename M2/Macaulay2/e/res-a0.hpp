@@ -3,6 +3,33 @@
 #ifndef _res2_hh_
 #define _res2_hh_
 
+/**
+ * @file res-a0.hpp
+ * @brief `res2_comp` --- original (1996) free-resolution engine using explicit pair processing.
+ *
+ * Declares `res2_comp`, the engine's first-generation
+ * resolution computation. The class drives a traditional
+ * Schreyer-style algorithm with its own polynomial type
+ * (`res2_poly` from `res-a0-poly.hpp`) and intrusive pair
+ * records (`res2_pair`), stepping through the `RES_SKELETON` /
+ * `RES_MONORDER` / `RES_MONIDEAL` / ... states declared at the
+ * top of the header. The `_2` suffix in the type names is a
+ * historical naming quirk --- this is actually the oldest of
+ * the three legacy engines, but its class names ended up with
+ * the suffix because `res_comp` (in `res-a1.hpp`) was the first
+ * to be touched in a later rework.
+ *
+ * Selected by M2 strategies 0 and 1 via the dispatcher in
+ * `comp-res.hpp`. Kept alongside `res-a1.hpp`, `res-a2.hpp`,
+ * and the modern Schreyer-frame F4 engine in
+ * `schreyer-resolution/` so each strategy covers the cases the
+ * others do not.
+ *
+ * @see comp-res.hpp
+ * @see res-a1.hpp
+ * @see res-a2.hpp
+ */
+
 #include "style.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"

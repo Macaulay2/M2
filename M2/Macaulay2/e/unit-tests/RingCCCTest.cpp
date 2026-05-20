@@ -1,5 +1,32 @@
 // Copyright 2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/RingCCCTest.cpp
+ * @brief gtest coverage for the legacy `RingCCC` --- `ConcreteRing<M2::ARingCCC>` glued back into the `ring_elem` API.
+ *
+ * Tests the MPC-backed arbitrary-precision complex ring
+ * through the legacy `Ring` surface the interpreter still
+ * uses, exercising the `aring-glue.hpp` `ConcreteRing<>`
+ * wrapper end-to-end. The complex `almostEqual` checks the
+ * real (`BIGCC_RE`) and imaginary (`BIGCC_IM`) components of
+ * `R.subtract(a, b)` against an MPFR epsilon built at fixed
+ * 100-bit precision and scaled to `2^-nbits`; both components
+ * must be within tolerance for the elements to count as equal.
+ * `getElement<RingCCC>` follows the family pattern of the
+ * `[-25, 24]` integer prefix plus random complex draws.
+ *
+ * Sibling of `RingRRRTest.cpp` (MPFR real glue) and the modern
+ * counterpart `ARingCCCTest.cpp` (templated path); together
+ * with the rest of the `file-ring-tests` family they keep the
+ * legacy `ring_elem` API in sync with the modern aring
+ * backends.
+ *
+ * @see RingTest.hpp
+ * @see aring-glue.hpp
+ * @see RingRRRTest.cpp
+ * @see ARingCCCTest.cpp
+ */
+
 #include "RingTest.hpp"
 
 #include "ZZp.hpp"

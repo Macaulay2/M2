@@ -1,5 +1,35 @@
 // Copyright 2012-2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/ARingRRTest.cpp
+ * @brief gtest coverage for the 53-bit double-backed `M2::ARingRR` real-number aring.
+ *
+ * Plugs `M2::ARingRR` into the `ARingTest.hpp` harness, defines
+ * the per-backend `almostEqual(R, nbits, a, b)` epsilon checker
+ * the floating-point tests use in place of exact equality, and
+ * provides the `getElement<M2::ARingRR>` specialisation that
+ * feeds the shared `testSomeMore` driver with deterministic
+ * edge-case prefix elements (zero, plus/minus one, near-overflow
+ * exponents) followed by random doubles. The `almostEqual`
+ * helper scales `2^-nbits` to match each test's expected
+ * propagation of round-off; arithmetic tests use ~50 bits,
+ * iterated `sqrt` / `pow` round-trips loosen the tolerance as
+ * needed.
+ *
+ * Sibling files `ARingRRRTest.cpp`, `ARingRRiTest.cpp`,
+ * `ARingCCTest.cpp`, and `ARingCCCTest.cpp` (covered by the
+ * same `file-aring-real-complex-tests` markdown) follow the
+ * same template against MPFR / MPFI / `complex<double>` / MPC
+ * backends, including the cross-backend agreement check that
+ * `ARingRRR` at 53 bits stays within `2^-50` of `ARingRR`.
+ *
+ * @see ARingTest.hpp
+ * @see aring-RR.hpp
+ * @see ARingRRRTest.cpp
+ * @see ARingRRiTest.cpp
+ * @see ARingCCTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

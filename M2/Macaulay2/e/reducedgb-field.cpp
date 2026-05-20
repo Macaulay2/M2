@@ -12,6 +12,15 @@ ReducedGB_Field::~ReducedGB_Field()
 }
 
 void ReducedGB_Field::set_gb(VECTOR(POLY) & polys0) { (void) polys0; }
+/**
+ * @brief Index comparator used to permute `ReducedGB_Field`'s `gb` array
+ * into canonical reduced-GB order over a field.
+ *
+ * @details `operator()(a, b)` compares `gb[a]` and `gb[b]` by lead term
+ * through the `GBRing`, returning true when `a` should come
+ * first. Plugged into `std::sort` on an indices vector to leave
+ * `gb` untouched until the final permutation is applied.
+ */
 struct ReducedGB_Field_sorter
 {
   GBRing *R;

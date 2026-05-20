@@ -1,3 +1,32 @@
+/**
+ * @file interface/polyroots.cpp
+ * @brief `rawRoots(...)` --- univariate polynomial root finder over `RR` / `CC`.
+ *
+ * Implementation behind `interface/factory.h`'s `rawRoots`, the
+ * engine entry point reachable from M2 as `roots(f)` and
+ * `roots(f, Precision => ...)`. Given a univariate polynomial
+ * over `RR_n` or `CC_n`, returns a one-row `Matrix` of all
+ * complex roots (counted with multiplicity); requesting real
+ * roots only is a flag that drops conjugate pairs back at the
+ * M2 level. Low-degree polynomials use closed-form formulas
+ * (degrees 1-4); higher degrees dispatch to MPSolve for
+ * arbitrary precision, FLINT's `arb` complex-roots routine for
+ * MPFR precision, or LAPACK eigenvalues of the companion
+ * matrix for hardware precision on small inputs.
+ *
+ * The MPSolve include neutralises the obsolete C++ `register`
+ * keyword first (`#define register` then `#undef`) so the
+ * vendored header compiles under C++17. The function is bundled
+ * under `interface/factory.h` for historical reasons --- root
+ * finding once travelled with the Factory factorisation
+ * library, even though the heavy lifting has since moved to
+ * MPSolve and FLINT.
+ *
+ * @see interface/factory.h
+ * @see NAG.hpp
+ * @see eigen.hpp
+ */
+
 #include "interface/factory.h"
 #include "interface/ring.h"
 

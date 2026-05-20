@@ -20,6 +20,16 @@ class ReducedGB_Field_Local : public ReducedGB_Field
   // The polynomials themselves are in MinimalGB
   // The monomial ideals are in MinimalGB_Field
  protected:
+  /**
+   * @brief Per-element bookkeeping record used by `ReducedGB_Field_Local`
+   * during local-ring GB minimisation.
+   *
+   * @details `g` is the `(poly, syzygy)` pair, `size` caches the number of
+   * terms (so the minimisation pass can prefer shorter divisors),
+   * and `alpha` records the homogenising shift the local-ring
+   * normal-form computation needs to apply when this element is
+   * used as a tail-reducer.
+   */
   struct divisor_info
   {
     POLY g;

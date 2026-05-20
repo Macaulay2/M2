@@ -3,6 +3,30 @@
 #ifndef _monsort_h_
 #define _monsort_h_
 
+/**
+ * @file monsort.hpp
+ * @brief `QuickSorter<Sorter>` --- ring-agnostic in-place sort over a duck-typed adapter.
+ *
+ * Declares the templated `QuickSorter`, an in-place sort
+ * algorithm parameterised on a `Sorter` adapter that supplies
+ * `Sorter::value` (the element type) and
+ * `Sorter::compare(value, value)` returning a signed integer in
+ * the standard `(neg, 0, pos)` shape. The point of the template
+ * is to keep the comparator local to each call site so the
+ * compiler can inline it; consumers write their own tiny
+ * adapter rather than passing a function pointer or `std::function`.
+ *
+ * Used wherever the engine needs to sort a monomial-keyed
+ * sequence with call-site-specific semantics: F4 column ordering
+ * by leading monomial, frame entries by Schreyer order in
+ * resolution code, deterministic output ordering for printers
+ * and serialisers. The adapter pattern lets each site bring its
+ * own comparison rule (lex, grevlex, Schreyer-tiebreak, ...)
+ * without paying a virtual-dispatch tax in the inner loop.
+ *
+ * @see newdelete.hpp
+ */
+
 #include <cstdio>
 #include <cstdlib>
 #include "newdelete.hpp"

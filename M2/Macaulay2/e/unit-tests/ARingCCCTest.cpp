@@ -1,5 +1,33 @@
 // Copyright 2012-2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/ARingCCCTest.cpp
+ * @brief gtest coverage for the MPC-backed `M2::ARingCCC` arbitrary-precision complex aring.
+ *
+ * Plugs `M2::ARingCCC` into the `ARingTest.hpp` harness with a
+ * precision-aware `almostEqual` that scales `2^-nbits` to the
+ * ring's `get_precision()` and checks the real and imaginary
+ * components of `a - b` against it independently --- so the
+ * tolerance tracks the configured MPFR / MPC precision rather
+ * than being pinned to 53 bits. `getElement<M2::ARingCCC>`
+ * supplies the standard mix of deterministic edge-case prefix
+ * elements (zero, one, `i`, near-overflow exponents) and random
+ * complex draws; `testSomeMore` runs the full arithmetic /
+ * equality / inverse / negation battery on top.
+ *
+ * Counterpart of `ARingCCTest.cpp` (the 53-bit
+ * `complex<double>` companion); together with `ARingRRTest.cpp`
+ * / `ARingRRRTest.cpp` / `ARingRRiTest.cpp` they form the
+ * `file-aring-real-complex-tests` family. The cross-backend
+ * agreement guard is the standard MPC vs. `complex<double>`
+ * convergence check at 53 bits.
+ *
+ * @see ARingTest.hpp
+ * @see aring-CCC.hpp
+ * @see aring-RRR.hpp
+ * @see ARingCCTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

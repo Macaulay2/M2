@@ -1,5 +1,33 @@
 // Copyright 1996  Michael E. Stillman
 
+/**
+ * @file geovec.hpp
+ * @brief `vecHeap` --- geometric heap specialised for accumulating `vec` values.
+ *
+ * Declares `vecHeap`, the free-module-element counterpart of
+ * `polyheap` (`geopoly.hpp`) and the templated `geobucket`
+ * (`geobucket.hpp`). The structure keeps `GEOHEAP_SIZE` (15)
+ * levels of bounded `vecterm` lists, each sorted component-
+ * descending; insertion drops into the smallest level that can
+ * absorb the new contribution and cascades on overflow,
+ * `remove_lead_term` reads off the next term by scanning the
+ * non-empty levels and summing components that match the leading
+ * one. Per-operation cost is amortised `O(log N)` instead of the
+ * `O(N)` a naive merge into a single accumulator would pay --- the
+ * difference that makes large reduction sums tractable.
+ *
+ * Used wherever ring-element-shaped accumulation appears outside
+ * the classical GB inner loop (which prefers the `gbvector`-typed
+ * variant in `gbring.hpp`). Bucket capacities come from the
+ * `heap_size[]` table in `engine.cpp`; `GEOHEAP_SIZE` itself is in
+ * `style.hpp`.
+ *
+ * @see geopoly.hpp
+ * @see geobucket.hpp
+ * @see gbring.hpp
+ * @see style.hpp
+ */
+
 // This should probably be done by:
 // (a) making a type const FreeModule, that FreeModule, and res_poly
 //     both can inherit from: but this is a bit of a kludge...

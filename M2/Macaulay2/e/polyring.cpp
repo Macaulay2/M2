@@ -182,6 +182,17 @@ Matrix *PolynomialRing::getPresentation() const
   return mat.to_matrix();
 }
 
+/**
+ * @brief `SumCollector` implementation that funnels engine-side `ring_elem`
+ * additions through a `polyheap` (geobucket).
+ *
+ * @details Constructed with the target `PolynomialRing*`; each `add(f)`
+ * inserts into the heap and `getValue()` merges all buckets into
+ * a single polynomial. Used as the per-call accumulator returned
+ * by `PolynomialRing::make_SumCollector` so callers that build a
+ * polynomial as a long sum (e.g. ring-map evaluation) avoid
+ * quadratic merge cost.
+ */
 class SumCollectorPolyHeap : public SumCollector
 {
   polyheap H;

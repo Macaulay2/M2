@@ -1,6 +1,35 @@
 #ifndef _NAG_h_
 #  define _NAG_h_
 
+/**
+ * @file interface/NAG.h
+ * @brief Engine-boundary C API for the Numerical Algebraic Geometry subsystem.
+ *
+ * Declares the `extern "C"` entry points that the M2 interpreter
+ * (via `NumericalAlgebraicGeometry`, `MonodromySolver`, and
+ * related packages) uses to drive homotopy continuation, witness-
+ * set construction, and SLP-based polynomial evaluation. Six
+ * opaque handle types (`M2SLProgram`, `M2SLEvaluator`,
+ * `StraightLineProgram`, `M2Homotopy`, `PathTracker`,
+ * `M2PointArray`) hide the C++ classes behind C-callable structs
+ * so the front end can pass them around without seeing their
+ * layout; the same names resolve to the real classes when
+ * compiled as C++.
+ *
+ * The functions cover the full NAG workflow --- `rawSLProgram` /
+ * `rawSLP` build a straight-line program, `rawSLEvaluator` and
+ * `rawCompiledSLEvaluator` wrap it for evaluation,
+ * `rawHomotopy` / `rawHomotopyTrack` run continuation,
+ * `rawPathTracker*` does explicit step-size-controlled tracking,
+ * and `rawPointArray*` manages collections of numerical
+ * solutions. Each handle also has a `*Hash` / `*ToString` pair
+ * the interpreter uses for printing and equality.
+ *
+ * @see NAG.cpp
+ * @see SLP.hpp
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 // TODO: fix this

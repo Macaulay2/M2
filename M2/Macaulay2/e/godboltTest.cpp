@@ -1,3 +1,27 @@
+/**
+ * @file godboltTest.cpp
+ * @brief Standalone log / exp / Zech-table scratch file for `Z/p` at `p = 101`, not part of the build.
+ *
+ * Hardcodes the discrete-log and exponential tables of `(Z/101)^*`
+ * (the primitive root generates the multiplicative group, so each
+ * index `i in [0, p-1)` stores `g^i mod p` in `exp_table[i]` and
+ * inversely in `log_table`), keeps a second variant with the
+ * zero/one boundary adjusted (`exp_table2` / `log_table2`), and
+ * pastes the `subtract_multiple` inner-loop body from
+ * `aring-zzp.hpp` next to them. The intent was to ship a
+ * self-contained example to Compiler Explorer (godbolt) and
+ * inspect the generated assembly for the table-based modular
+ * arithmetic. CMake / autotools exclude this file from the
+ * production build; the tables are not consulted at runtime.
+ *
+ * Retain as a worked-example reference for anyone adding a new
+ * small `Z/p` aring; the production paths live in `aring-zzp.hpp`,
+ * `aring-zzp-flint.hpp`, and `aring-zzp-ffpack.hpp`.
+ *
+ * @see aring-zzp.hpp
+ * @see coeffrings.hpp
+ */
+
 int exp_table[] = {1,2,4,8,16,32,64,27,54,7,14,28,56,11,22,44,88,75,49,98,95,89,77,53,5,10,20,40,80,59,17,34,68,35,70,39,78,55,9,18,36,72,43,86,71,41,82,63,25,50,100,99,97,93,85,69,37,74,47,94,87,73,45,90,79,57,13,26,52,3,6,12,24,48,96,91,81,61,21,42,84,67,33,66,31,62,23,46,92,83,65,29,58,15,30,60,19,38,76,51,0};
 
 int log_table[] = {100,0,1,69,2,24,70,9,3,38,25,13,71,66,10,93,4,30,39,96,26,78,14,86,72,48,67,7,11,91,94,84,5,82,31,33,40,56,97,35,27,45,79,42,15,62,87,58,73,18,49,99,68,23,8,37,12,65,92,29,95,77,85,47,6,90,83,81,32,55,34,44,41,61,57,17,98,22,36,64,28,76,46,89,80,54,43,60,16,21,63,75,88,53,59,20,74,52,19,51,50};

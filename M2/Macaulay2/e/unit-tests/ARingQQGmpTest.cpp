@@ -1,5 +1,30 @@
 // Copyright 2012-2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/ARingQQGmpTest.cpp
+ * @brief gtest coverage for the GMP-backed `M2::ARingQQGMP` rational aring.
+ *
+ * Plugs `M2::ARingQQGMP` into the shared `ARingTest.hpp` harness
+ * via the `getElement<M2::ARingQQGMP>` specialisation, which
+ * uses the deterministic `[-25, 24]` integer prefix for the
+ * first 50 trials and delegates to `R.random(result)` for the
+ * rest --- so the random source is the ring's own `mpq_t` draw
+ * rather than a separately-seeded RNG. `testSomeMore` then
+ * runs arithmetic, equality, inverse, and stream round-trips
+ * against the GMP-canonicalised representation.
+ *
+ * Paired with `ARingQQFlintTest.cpp` (same operations over
+ * FLINT `fmpq_t`); cross-backend agreement between the two is
+ * the regression guard the `file-aring-zz-tests` family
+ * depends on. A historic catch on the GMP side was a rounding
+ * subtlety in `invert(0)` that only the cross-check surfaced.
+ *
+ * @see ARingTest.hpp
+ * @see aring-qq-gmp.hpp
+ * @see ARingQQFlintTest.cpp
+ * @see ARingZZTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

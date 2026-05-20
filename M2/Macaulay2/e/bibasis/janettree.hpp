@@ -10,6 +10,34 @@
 #ifndef BIBASIS_JANETTREE_HPP
 #define BIBASIS_JANETTREE_HPP
 
+/**
+ * @file bibasis/janettree.hpp
+ * @brief `BIBasis::JanetTree<MonomType>` --- the involutive-division index for boolean Gröbner bases.
+ *
+ * Declares and defines the trie that drives the inner loop of
+ * `BooleanInvolutiveBasis`. Each `Node` carries a variable
+ * degree, an optional `Triple`, and `NextDegree` / `NextVariable`
+ * sibling pointers; a monomial of degree `d` traces a path of
+ * length `O(d)` through the tree, branching first by the chosen
+ * variable's exponent and then by the next variable in the
+ * leading-term encoding. `Find` walks the path to locate an
+ * involutive divisor (returning the `Triple` whose monomial Janet-
+ * divides the query), `Insert` lazily allocates fresh nodes along
+ * the path and attaches the triple at the leaf, and `Delete`
+ * bookkeeps "bifurcation" counts to know when removing a
+ * subtree disconnects an interior branch.
+ *
+ * Templated on `MonomType` (`MonomLex`, `MonomDL`, `MonomDRL`)
+ * so the per-variable indexing inlines per ordering, and exposes
+ * a `NonMulti(triple)` traversal that returns the non-
+ * multiplicative variable set the involutive algorithm needs in
+ * order to schedule prolongations.
+ *
+ * @see triple.hpp
+ * @see monom.hpp
+ * @see involutive.hpp
+ */
+
 #include "triple.hpp"
 
 namespace BIBasis

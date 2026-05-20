@@ -1,5 +1,32 @@
 // Copyright 1999  Michael E. Stillman
 
+/**
+ * @file Eschreyer.cpp
+ * @brief Implementation of `GBMatrix` and `GBKernelComputation` --- the polynomial-at-a-time syzygy engine.
+ *
+ * Two halves: the `GBMatrix` constructors and `to_matrix`
+ * conversion that wrap a column collection of `gbvector*`s
+ * (translating to and from the engine's standard `Matrix` /
+ * `FreeModule` pair via `R->translate_gbvector_from_vec`); and
+ * the `GBKernelComputation` driver that walks each input column
+ * through a head-reduction loop (subtracting `(lt(f)/lt(g_i)) *
+ * g_i` and tracking the multiplier as a syzygy basis element)
+ * followed by an optional tail-reduction pass. The output
+ * `gbvector` syzygies form the kernel of the input matrix
+ * modulo the supplied Gröbner basis.
+ *
+ * Walks polynomials term-by-term through the `gbvector` linked-
+ * list representation; the newer `schreyer-resolution/` family
+ * batches the same work into Macaulay matrices and wins on
+ * large inputs. This file stays in the engine for paths that
+ * have not yet migrated; new resolution work targets the
+ * matrix-based engine.
+ *
+ * @see Eschreyer.hpp
+ * @see gbring.hpp
+ * @see schreyer-resolution/res-f4.hpp
+ */
+
 #include "Eschreyer.hpp"
 #include "matrix.hpp"
 #include "monoid.hpp"

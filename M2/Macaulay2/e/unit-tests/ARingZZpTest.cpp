@@ -1,5 +1,31 @@
 // Copyright 2012-2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/ARingZZpTest.cpp
+ * @brief gtest coverage for `M2::ARingZZp` (and indirectly the FFPACK-backed variant).
+ *
+ * Specialises `ARingTest.hpp`'s `getElement<M2::ARingZZp>` with
+ * the deterministic `[-25, 24]` prefix followed by random
+ * `gmp_ZZ` draws, and hosts the file-scoped `getRandomInteger()`
+ * definition that the whole `ARingZZ*` test family pulls in via
+ * `extern`. The bound `maxH = 10^11` keeps the random draws
+ * human-readable in failure messages while still covering the
+ * interesting paths in modular reduction. `aring-zzp-ffpack.hpp`
+ * gets included alongside `aring-zzp.hpp` so a build with FFPACK
+ * exercises that backend in the same test run.
+ *
+ * Sibling files `ARingZZTest.cpp`, `ARingQQGmpTest.cpp`, and
+ * `ARingQQFlintTest.cpp` (covered by the same
+ * `file-aring-zz-tests` markdown) share this random source so
+ * the integer / modular / rational suites stay reproducible
+ * relative to each other.
+ *
+ * @see ARingTest.hpp
+ * @see aring-zzp.hpp
+ * @see aring-zzp-ffpack.hpp
+ * @see ARingZZTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

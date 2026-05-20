@@ -1,4 +1,34 @@
 // Copyright 2013 Michael E. Stillman
+
+/**
+ * @file unit-tests/RingZZTest.cpp
+ * @brief gtest coverage for the legacy `RingZZ` integer ring (`globalZZ`).
+ *
+ * Specialises `RingTest.hpp`'s `getElement<RingZZ>` over the
+ * engine's global integer ring: indices `< 50` give the
+ * deterministic `[-25, 24]` prefix, and the remaining trials
+ * draw a `gmp_ZZ` bounded by `maxH = 10^11` from
+ * `rawRandomInteger`. The static `maxH_initialized` flag keeps
+ * the bound `mpz_t` shared across calls so its allocation is a
+ * one-time cost. The standard arithmetic / equality /
+ * `from_long` / `from_int` tests then run against the legacy
+ * `ring_elem` API and assert `globalZZ` reports the expected
+ * `COEFF_ZZ` kind, `is_ZZ()`, and `"ZZ"` print name.
+ *
+ * Sibling files `RingZZpTest.cpp`, `RingQQTest.cpp`,
+ * `RingRRRTest.cpp`, `RingCCCTest.cpp`, and `RingTowerTest.cpp`
+ * (all covered by the same `file-ring-tests` markdown) exercise
+ * the corresponding legacy backends and the `aring-glue.hpp`
+ * `ConcreteRing<...>` wrapper that bridges the modern aring
+ * rings into the legacy `Ring` API the interpreter still calls
+ * through.
+ *
+ * @see RingTest.hpp
+ * @see ZZ.hpp
+ * @see interface/random.h
+ * @see ARingZZTest.cpp
+ */
+
 #include "RingTest.hpp"
 #include <limits>
 

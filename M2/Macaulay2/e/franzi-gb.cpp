@@ -7,6 +7,16 @@
 
 //#define DEBBBB false;
 
+/**
+ * @brief S-pair record for the Franzi boolean Groebner basis algorithm.
+ *
+ * @details Carries the two basis-element indices `i, j` (a negative `i = -k`
+ * means the field polynomial `x_k^2 + x_k` is being paired
+ * against `F[j]`), the precomputed lead-term `lcm`, and a `good`
+ * flag set false if either parent has been retired from `F`.
+ * Ordered first by `lcm` (lex), then by `j`, then by `i`, so the
+ * enclosing `std::set<Pair>` queue pops the smallest pair next.
+ */
 // pair of indices
 // negative index -i for field polynomial x_i^2+x_i
 class Pair
@@ -89,6 +99,17 @@ class Pair
 // always ordered
 typedef std::set<Pair> Pairs;
 
+/**
+ * @brief Materialised `(f, g)` pair of `BRP` polynomials referenced by a
+ * `Pair` index record.
+ *
+ * @details Resolves the symbolic `Pair` into pointers to the actual
+ * basis elements (`f = F[j]`, `g = F[i]`) or, when `i < 0`, into
+ * the synthetic field polynomial `x_k^2 + x_k` stored in
+ * `fieldpolynomial`. `good` mirrors `Pair::good` but rechecks
+ * against the current `F`. The S-polynomial reducer then operates
+ * on the resolved pointers directly.
+ */
 // functions f and g, corresponding to index pair j and i, respectively
 class FunctionPair
 {
