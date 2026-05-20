@@ -7,6 +7,8 @@
  * @file f4/f4.hpp
  * @brief `F4GB` --- the inner-loop Faugère F4 Groebner-basis algorithm.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `F4GB`, the (non-templated) core class implementing
  * Faugere's linear-algebra GB algorithm. Each outer iteration
  * picks the next degree from `F4SPairSet mSPairSet`, asks for
@@ -134,6 +136,8 @@ class VectorArithmetic;
  * @brief Commutative F4 Groebner-basis driver: degree-by-degree Macaulay
  * matrix construction plus row-reduction over a coefficient ring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Holds the running GB (`mGroebnerBasis`), the original generators
  * (`mGenerators`), and the monomial lookup table for divisor
  * search. Each degree, the driver picks up the pending S-pairs,
@@ -200,6 +204,8 @@ class F4GB : public our_new_delete
   /**
    * @brief Per-degree counters describing the shape and density of the
    * Macaulay matrix that `F4GB` just built.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details The matrix is conceptually split into a (top-left) pivot block
    * and a (bottom-right) non-pivot block; `mTopAndLeft`, `mBottom`,

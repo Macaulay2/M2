@@ -7,6 +7,8 @@
  * @file buffer.hpp
  * @brief Append-only GC-backed byte buffer used throughout the engine for text output.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `buffer` is the lightweight text-output primitive shared by
  * every engine `text_out`, error message, debug trace, and
  * serialised value. Storage is a `char*` allocated via

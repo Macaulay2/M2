@@ -5,6 +5,8 @@
  * @file NCAlgebras/FreeMonoid.hpp
  * @brief `FreeMonoid` --- monoid of length-prefixed non-commutative words with weight-vector prefix.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the word-side counterpart of the commutative
  * `Monoid`: a non-commutative monomial is a sequence of
  * variable indices `[v_1, v_2, ..., v_s]`, and `FreeMonoid`
@@ -56,6 +58,8 @@ class buffer;  // lines 17-17
 /**
  * @brief Static counter for non-commutative monomial comparisons.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Bumped each time `FreeMonoid::compare` is called; useful when
  * profiling the inner loops of `NCGroebner` / `NCF4`. `reset()`
  * zeroes the counter and `operator<<` (declared below) pretty-prints
@@ -82,6 +86,8 @@ std::ostream& operator<<(std::ostream& o, FreeMonoidLogger a);
 /**
  * @brief The free non-commutative monoid on a set of named variables, with
  * monomial ordering and degree / weight machinery.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Owns the variable names, the multi-degree of each variable, a
  * stack of `mNumWeights` weight vectors, and a heft vector. A
@@ -229,6 +235,8 @@ private:
  * @brief Strict comparator on `Monom`s under a `FreeMonoid` order: returns
  * true exactly when the first monomial is *greater than* the second.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Confusingly named ("Eq") but actually a `<` swap-ready comparator
  * for `std::map<Monom, ..., MonomEq>` (used by `MapPolynomialHeap`):
  * `std::map` requires strict-weak order so this returns
@@ -257,6 +265,8 @@ private:
  * @brief Hash functor on `Monom` (or `Word`) suitable for
  * `std::unordered_map` / `std::unordered_set`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Seeds the hash with the first int (length / first word position),
  * then folds each remaining int in with the boost-style mix
  * `hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2)`. Same
@@ -283,6 +293,8 @@ public:
 /**
  * @brief Equality functor on `Monom` (or `Word`), the `KeyEqual` companion
  * of `MonomHash` for `std::unordered_map<Monom, ...>`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The `Monom` overload delegates to `FreeMonoid::isEqual` so the
  * functor needs the monoid pointer (default-constructed instances

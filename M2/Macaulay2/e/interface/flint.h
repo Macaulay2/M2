@@ -5,6 +5,8 @@
  * @file interface/flint.h
  * @brief Engine-boundary C API exposing FLINT's integer primality and factorisation services.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the three `extern "C"` entry points the M2
  * interpreter routes to FLINT for big-integer number theory:
  * `rawZZisPrime` (exact primality via `fmpz_is_prime` ---

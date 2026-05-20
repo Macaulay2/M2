@@ -5,6 +5,8 @@
  * @file interface/ringelement.h
  * @brief Engine-boundary C API for constructing, querying, and operating on `RingElement` values.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points that cover the full
  * life cycle of a `RingElement`. Construction: scalar coercions
  * (`IM2_RingElement_from_Integer` / `_from_rational` /

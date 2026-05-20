@@ -6,6 +6,8 @@
  * @file tower.hpp
  * @brief Legacy `Tower` --- `Ring`-derived iterated extension of `Z/p` (pre-aring).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `Tower`, the original engine class for an iterated
  * finite extension `L_0 = Z/p`, `L_i = L_{i-1}[t_i] / f_i(t_i)`.
  * Each instance carries its `level` in the chain (0 is the
@@ -42,6 +44,8 @@ class DRing;
 /**
  * @brief `Ring` subclass for tower polynomial rings
  * `(Z/p)[x_0][x_1]...[x_{n-1}]` modulo a chain of algebraic extensions.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Owns a `DRing*` (defined in `dpoly.hpp`) that does the actual
  * tower-polynomial arithmetic, and lifts it into the engine's

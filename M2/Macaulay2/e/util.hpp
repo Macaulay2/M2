@@ -5,6 +5,8 @@
  * @file util.hpp
  * @brief Conversion helpers between M2 boundary types and standard C++ containers.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Provides the bidirectional converters every engine boundary
  * needs, all `inline` so call sites stay free. Strings:
  * `string_std_to_M2` / `string_M2_to_std` marshal between

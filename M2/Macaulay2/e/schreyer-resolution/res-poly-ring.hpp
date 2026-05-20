@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-poly-ring.hpp
  * @brief `ResPolyRing` and `ResPolynomial` --- resolution-tuned polynomial-ring view and value type.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the F4 resolution's stripped-down counterpart of
  * `GBRing` / `gbvector`. `ResPolynomial` stores a polynomial as
  * a length counter, a flat `ElementArray` of coefficients
@@ -58,6 +60,8 @@ struct ResSchreyerOrder;
  * @brief Polynomial type used by the F4 resolution engine: parallel
  * coefficient vector and concatenated monomial buffer.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `coeffs` is an `ElementArray` of `len` coefficients managed
  * through `VectorArithmetic`. `monoms` is a flat
  * `std::vector<res_monomial_word>` holding all `len` monomials laid
@@ -98,6 +102,8 @@ class ResPolynomial
 /**
  * @brief The polynomial-ring view the F4 resolution engine reduces against:
  * coefficient arithmetic plus the engine-specific `ResMonoid`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Bundles a `VectorArithmetic` (built from `baseRing`, usually the
  * base field but not required to be for non-minimal complexes), the
@@ -149,6 +155,8 @@ class ResPolyRing : public our_new_delete
 /**
  * @brief Builder that accumulates terms into a `ResPolynomial` and finalises
  * the layout in one shot via `setPoly`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Stages monomials as `res_packed_monomial` pointers in `monoms`
  * and grows a parallel `ElementArray` in `coeffs`. `appendMonicTerm`
@@ -221,6 +229,8 @@ class ResPolynomialConstructor
 
 /**
  * @brief Forward iterator over the terms of a `ResPolynomial`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Carries two cursors: `coeff_index` ticks through `elem.coeffs`
  * one per term, and `monom_index` walks the flat `elem.monoms`

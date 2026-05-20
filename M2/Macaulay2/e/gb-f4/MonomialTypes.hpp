@@ -4,6 +4,8 @@
  * @file gb-f4/MonomialTypes.hpp
  * @brief Typed integer vocabulary for `namespace newf4` (indices, monomial words, hashes, masks).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the strongly-named integer aliases the rest of
  * `gb-f4/` uses in place of bare `int`: `Index` numbers GB
  * basis elements; `MonomialIndex` keys into the

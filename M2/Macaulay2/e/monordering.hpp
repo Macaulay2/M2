@@ -7,6 +7,8 @@
  * @file monordering.hpp
  * @brief `MonomialOrderings` --- C++ factories for the declarative `MonomialOrdering` blocks.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the static-only `MonomialOrderings` class whose
  * members build single `MonomialOrdering` blocks (`Lex` /
  * `Lex2` / `Lex4`, `GRevLex` / `GRevLex2` / `GRevLex4` with or
@@ -40,6 +42,8 @@
 /**
  * @brief Static-method namespace of constructors for the front-end
  * `MonomialOrdering` value type.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds no state --- every method is `static`. Provides factories
  * for the standard monomial orders (`Lex`, `GRevLex`, `RevLex`,

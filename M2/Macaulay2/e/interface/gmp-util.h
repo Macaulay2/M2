@@ -5,6 +5,8 @@
  * @file interface/gmp-util.h
  * @brief Inline helpers that move GMP / MPFR / MPFI limbs from `malloc`-managed storage into the bdwgc heap.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the small family of `mpz_reallocate_limbs` /
  * `mpfr_reallocate_limbs` / `mpfi_reallocate_limbs` rewriters
  * and the typed `moveTo_gmpQQ` / `moveTo_gmpRR` /
@@ -84,6 +86,8 @@ inline void mpfi_reallocate_limbs (mpfi_ptr _z)
    * @brief Immutable view of a complex number as a pair of `mpfr_srcptr`
    *        real and imaginary parts.
    *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
    * @details Read-only twin of `CCmutable_struct`: the `mpfr_srcptr` members
    *          forbid in-place mutation. Used by engine code that needs
    *          to pass an MPFR complex number by reference without
@@ -97,6 +101,8 @@ inline void mpfi_reallocate_limbs (mpfi_ptr _z)
   /**
    * @brief Mutable view of a complex number as a pair of `mpfr_ptr` real
    *        and imaginary parts.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details Companion to `CC_struct`: the `mpfr_ptr` members allow in-place
    *          MPFR arithmetic. The commented-out `gmp_CCmutable` /
@@ -116,6 +122,8 @@ inline void mpfi_reallocate_limbs (mpfi_ptr _z)
  * @brief Immutable view of a complex interval as a pair of `mpfi_srcptr`
  *        real and imaginary parts.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Interval analogue of `CC_struct`: real and imaginary components
  *          are MPFI intervals rather than MPFR scalars, supporting the
  *          `RRi` / `CCi` interval-arithmetic rings.
@@ -128,6 +136,8 @@ typedef struct {
 /**
  * @brief Mutable view of a complex interval as a pair of `mpfi_ptr` real
  *        and imaginary parts.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Companion to `CCi_struct`: the `mpfi_ptr` members allow in-place
  *          interval arithmetic.

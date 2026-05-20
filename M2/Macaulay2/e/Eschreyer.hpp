@@ -6,6 +6,8 @@
  * @file Eschreyer.hpp
  * @brief Older Schreyer-style kernel computation, predecessor of `schreyer-resolution/`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `GBKernelComputation` --- a `Computation` subclass that,
  * given a matrix whose columns `f_1, ..., f_n` are a Groebner basis
  * of their image, produces the kernel as a set of syzygy generators
@@ -39,6 +41,8 @@
  * @brief `gbvector`-side matrix: a target `FreeModule` plus a list of
  * `gbvector*` columns living in it.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Bridges the `Matrix` world (engine-side, `vec`-based) and the
  * `GBRing` world (`gbvector`-based, suited to GB inner loops).
  * Converts back and forth via the `Matrix*` constructor and
@@ -61,6 +65,8 @@ struct GBMatrix : public our_new_delete
 /**
  * @brief Computes the kernel of a Schreyer-encoded `GBMatrix` and returns
  * the syzygies in a Schreyer-compatible free module.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `F` is the target free module (with Schreyer order `SF`); `G` is
  * the source for the resulting syzygies (with order `SG`, which

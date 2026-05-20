@@ -4,6 +4,8 @@
  * @file unit-tests/PointArray.cpp
  * @brief gtest coverage for `PointArray` --- NAG's epsilon-bucketed numerical-point clustering structure.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts the `TEST(PointArray, *)` battery that builds
  * `PointArray` instances at fixed epsilons (`0.0001` and
  * `0.001` in the smoke tests), confirms `lookup` returns `-1`

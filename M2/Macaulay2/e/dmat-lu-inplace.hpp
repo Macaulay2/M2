@@ -7,6 +7,8 @@
  * @file dmat-lu-inplace.hpp
  * @brief `DMatLUinPlace<RT>` --- the LU worker that `DMatLinAlg<RT>` delegates to, with `RR` / `CC` / GF specialisations.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `DMatLUinPlace<RingType>`, the worker class
  * `DMatLinAlg<RingType>::mLUObject` is built from. Its
  * constructor copies the caller's matrix into the private `mLU`

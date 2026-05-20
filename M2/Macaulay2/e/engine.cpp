@@ -4,6 +4,8 @@
  * @file engine.cpp
  * @brief Tiny translation unit that holds the engine's process-global singletons and the `IM2_initialize` boot hook.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Defines (rather than declares) the handful of symbols that
  * need to exist exactly once:
  * `MutableEngineObject::mNextMutableHashValue` (the counter

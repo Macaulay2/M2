@@ -4,6 +4,8 @@
  * @file gb-f4/PolynomialList.hpp
  * @brief Hash-table-keyed polynomial storage for the new F4.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the container and value type the refactored F4 uses
  * for inputs, intermediates, and basis elements. `PolynomialList`
  * owns a `std::vector<Polynomial>` together with non-owning

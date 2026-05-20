@@ -4,6 +4,8 @@
  * @file gb-f4/GBF4Interface.hpp
  * @brief Legacy-to-new-F4 adapter exposing `GBF4Computation` through the engine's `GBComputation` API.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `GBComputation` subclass the M2 interpreter
  * sees plus two `createGBF4Interface` factory overloads (one
  * at global scope taking `int strategy`, one in

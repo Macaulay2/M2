@@ -7,6 +7,8 @@
  * @file aring-RRR.hpp
  * @brief `M2::ARingRRR` --- arbitrary-precision real numbers backed by MPFR.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingRRR` is the precision-flexible sibling of `ARingRR`.
  * Each instance carries a `mPrecision` mantissa bit count
  * (returned by `get_precision()`) and stores each element as a
@@ -54,6 +56,8 @@ namespace M2 {
 /**
  * @brief `aring`-style adapter for arbitrary-precision real numbers, backed
  * by MPFR.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `ElementType` is `__mpfr_struct`. `mPrecision` (set at
  * construction) gives the bit precision used for every operation;

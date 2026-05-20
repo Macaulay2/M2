@@ -4,6 +4,8 @@
  * @file gb-f4/MonomialView.hpp
  * @brief `newf4::MonomialView` --- non-owning view over a `[length, var_1, e_1, ...]`-encoded monomial.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the lightweight pointer-with-helpers type the new F4
  * passes around to refer to a monomial without copying its
  * encoded `MonomialInt` payload. The encoding is `mData[0] =

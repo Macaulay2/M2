@@ -6,6 +6,8 @@
  * @file aring-tower.hpp
  * @brief `M2::ARingTower` --- iterated finite-field extension tower for very large `GF(p^k)`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Builds a finite field as a chain `L_0 = Z/p`,
  * `L_i = L_{i-1}[t_i] / f_i(t_i)`. A field element at level `k`
  * is a polynomial in `t_k` of degree less than `deg(f_k)` whose
@@ -59,6 +61,8 @@ typedef struct ARingPolynomialStruct *ARingPolynomial;
  * @brief Heap-allocated node of an `ARingTower` polynomial: a dense
  * `degree`-indexed coefficient array that recurses through tower levels.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `deg` is the polynomial's degree in the current top variable and
  * `len` is the allocated capacity. The anonymous union picks the
  * coefficient kind by depth: at the bottom level the coefficients
@@ -87,6 +91,8 @@ class DRing;
 /**
  * @brief `aring`-style coefficient ring for tower polynomial rings
  * `(Z/p)[x_0][x_1]...[x_{n-1}]` modulo a chain of extensions.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The `aring` analogue of `DRing` (see `dpoly.hpp`): bundles a
  * base `ARingZZpFFPACK` ring with a list of variable names and a
@@ -145,6 +151,8 @@ class ARingTower : public RingInterface
   /**
    * @brief Fixed-size, owned array of `ElementType`s for the linear-algebra
    * templates that want a flat buffer of tower-polynomial slots.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details Backed by a `std::unique_ptr<ElementType[]>`. Slots are
    * zero-initialised at construction and cleared through

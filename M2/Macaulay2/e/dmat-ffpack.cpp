@@ -4,6 +4,8 @@
  * @file dmat-ffpack.cpp
  * @brief Legacy FFLAS-FFPACK dispatcher for `DMat<R>` --- entirely `#if 0`'d out, retained as a history marker.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Before the engine standardised on `aring-zzp-ffpack.hpp` plus the
  * templated linear-algebra machinery in `mat-linalg.hpp`, each
  * combination of `(coefficient ring, operation)` had its own

@@ -4,6 +4,8 @@
  * @file gb-f4/SPairs.hpp
  * @brief `newf4::SPair` / `SPairSet` --- typed S-pair queue grouped by degree and S-pair flavour.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the per-pair record and the queue the refactored F4
  * will use to schedule the matrix it builds each degree. `SPair`
  * tags each entry with an `SPairType` --- `Ring` (between a

@@ -7,6 +7,8 @@
  * @file matrix-stream.hpp
  * @brief `MatrixStream` --- term-by-term streaming construction of a `Matrix`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the engine's streaming matrix-builder API. A caller
  * constructs `MatrixStream(target_FreeModule)` and drives a
  * hand-rolled state machine:
@@ -74,6 +76,8 @@
  * mathicgb-style stream callbacks (`idealBegin /
  * appendPolynomialBegin / appendTermBegin / appendExponent /
  * appendTermDone / appendPolynomialDone / idealDone`).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Mirrors the `BasicPolyListStreamCollector` shape but produces a
  * proper engine `Matrix*` over a `PolyRing` instead of a portable

@@ -7,6 +7,8 @@
  * @file f4/f4-computation.hpp
  * @brief `F4Computation` --- `GBComputation` adapter around the F4 inner-loop engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `F4Computation`, the `GBComputation` subclass the
  * interpreter sees when F4 is selected. The class holds borrowed
  * pointers to the user's `PolynomialRing` and `FreeModule`
@@ -55,6 +57,8 @@ class buffer;
 /**
  * @brief `GBComputation` subclass that drives an `F4GB` engine instance
  * from the engine-side computation API.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Owns the `F4GB`, the source `PolynomialRing`, the `FreeModule`
  * the GB lives in, and the optional `RingElement*` Hilbert

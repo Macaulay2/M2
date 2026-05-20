@@ -7,6 +7,8 @@
  * @file aring-RRi.hpp
  * @brief `M2::ARingRRi` --- certified real intervals `[a, b]` with MPFR endpoints, MPFI arithmetic.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingRRi` represents a real value as a closed interval
  * `[a, b]` whose endpoints are MPFR floats and whose enclosure
  * is guaranteed to contain the mathematical result. The class
@@ -52,6 +54,8 @@ namespace M2 {
 /**
  * @brief `aring`-style adapter for arbitrary-precision real intervals,
  * backed by MPFI.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `ElementType` is `__mpfi_struct` --- a closed interval `[lo, hi]`
  * of MPFR endpoints, so arithmetic returns rigorous containing

@@ -16,6 +16,8 @@
  * @brief Classic separate-chaining hash table used by the engine's
  *        low-level C code paths.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `size` is the bucket count and `length` the live entry count;
  *          `cmp` / `hash` are the key comparison and hashing function
  *          pointers; `timestamp` is bumped on every mutation so iterators
@@ -33,6 +35,8 @@ struct T
   /**
    * @brief Singly linked-list node holding one `(key, value)` pair in a
    *        hash bucket chain.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    */
   struct binding
   {

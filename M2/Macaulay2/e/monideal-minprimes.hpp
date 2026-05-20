@@ -12,6 +12,8 @@
  * @file monideal-minprimes.hpp
  * @brief `MinimalPrimes` --- minimal primes of a `MonomialIdeal` via a two-phase state machine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `MinimalPrimes`, the cousin of `AssociatedPrimes`
  * specialised to the minimal-codimension primes only. The
  * constructor radicalises the input (minimal primes of `I`

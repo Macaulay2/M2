@@ -14,6 +14,8 @@
  * @file bibasis/polynom.hpp
  * @brief `BIBasis::Polynom<MonomType>` --- linked-list `F_2[x]` polynomial with symmetric-difference arithmetic.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares and defines the polynomial value type used throughout
  * the involutive-basis engine. Terms are kept as a singly-linked
  * `MonomType*` list sorted highest-first under the chosen

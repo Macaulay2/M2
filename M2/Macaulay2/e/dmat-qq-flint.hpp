@@ -7,6 +7,8 @@
  * @file dmat-qq-flint.hpp
  * @brief `DMat<M2::ARingQQFlint>` --- dense rational matrices stored in a FLINT `fmpq_mat_t`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises the dense-matrix template for the FLINT rational
  * aring. Storage is a single `fmpq_mat_t mArray` whose entries
  * are `fmpq` cells (the small-value-inlined pair of `fmpz`s
@@ -57,6 +59,8 @@ class DMat;
 /**
  * @brief Specialisation of `DMat` for `ARingQQFlint` matrices, backed by
  * FLINT's `fmpq_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Rational counterpart of `DMat<ARingZZ>`: wraps an `fmpq_mat_t`
  * and forwards every dense matrix operation to FLINT's

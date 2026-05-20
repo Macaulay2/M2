@@ -264,6 +264,8 @@ void Tower::elem_text_out(buffer &o,
  * @brief `DPolyTraverser` subclass that evaluates a tower polynomial under
  * a `RingMap`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Each `viewTerm(coeff, exp)` callback translates the exponent
  * vector into a `varpower` monomial, evaluates `map`'s images of
  * the relevant variables, multiplies them with the coefficient

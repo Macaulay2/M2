@@ -5,6 +5,8 @@
  * @file NCAlgebras/SuffixTree.hpp
  * @brief `SuffixTree` / `SuffixTreeNode` --- experimental generalised suffix tree for non-commutative leading-word lookup.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the alternative leading-word index for `NCGroebner`
  * and `NCF4`. A generalised suffix tree of the basis's leading
  * words gives `O(|target|)` subword and substring queries
@@ -58,6 +60,8 @@ using Label = std::vector<int>;
 /**
  * @brief One node of a generalised suffix tree built over the inserted
  * non-commutative monomial patterns.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds its parent pointer, a `std::map<Label, SuffixTreeNode*>`
  * of children keyed by the first symbol of each outgoing arc, the
@@ -194,6 +198,8 @@ using SubwordsType = std::tuple<SuffixTreeNode*,
 /**
  * @brief Generalised suffix tree alternative to `WordTable` for indexing
  * non-commutative monomials.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Provides the same query surface as `WordTable` (`subword` /
  * `subwords` / `leftOverlaps` / `rightOverlaps`, etc.) but backed

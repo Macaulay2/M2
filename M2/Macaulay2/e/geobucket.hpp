@@ -4,6 +4,8 @@
  * @file geobucket.hpp
  * @brief `geobucket<FREEMODULETYPE, VECTYPE>` --- size-quadrupling bucket accumulator for fast polynomial sums.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the templated `geobucket` accumulator used wherever
  * the engine adds many small polynomials into a growing
  * accumulator --- the reduction inner loop of every classical

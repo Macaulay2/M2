@@ -5,6 +5,8 @@
  * @file unit-tests/DMatTest.hpp
  * @brief Convention placeholder header that pulls in `dmat.hpp` for the dense-matrix test suite.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Two-line header that exists as a stable include point for the
  * dense-matrix tests: every `DMat*Test.cpp` (currently
  * `DMatZZpTest.cpp`, with more planned) reaches the engine's

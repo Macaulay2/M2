@@ -6,6 +6,8 @@
  * @file f4/f4-spairs.hpp
  * @brief `F4SPairSet` --- priority-queue + pruning logic for F4 S-pairs.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `F4SPairSet`, the structure that manages the S-pair
  * worklist for the F4 inner loop. The pair records live in
  * `std::vector<spair> mSPairs`; an
@@ -50,6 +52,8 @@
 /**
  * @brief S-pair scheduling queue used by `F4GB`: collects pairs, deduplicates
  * them, and hands out the next degree's worth on demand.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Pre-S-pairs are built from each newly inserted GB element and
  * slotted into the working pool. `make_spair` promotes a

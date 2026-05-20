@@ -7,6 +7,8 @@
  * @file pfaff.hpp
  * @brief `PfaffianComputation` --- Pfaffians of skew-symmetric matrices via row expansion.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `PfaffianComputation`, the engine routine that
  * returns `Pf(A)` for a square skew-symmetric `A`. The Pfaffian
  * satisfies `Pf(A)^2 = det(A)` but has half the polynomial

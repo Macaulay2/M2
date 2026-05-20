@@ -4,6 +4,8 @@
  * @file finalize.hpp
  * @brief `intern_*` helpers that register long-lived engine objects with bdwgc finalisers.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `intern_polyring`, `intern_monideal`,
  * `internMutableMatrix`, `intern_GB`, `intern_res`, and
  * `intern_SchreyerOrder`. Each one takes a freshly constructed

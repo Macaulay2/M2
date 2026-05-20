@@ -2,6 +2,8 @@
  * @file overflow-test.cpp
  * @brief Standalone microbenchmark and overflow-trip harness for the `safe::` primitives in `overflow.hpp`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Not part of the engine library --- a separately-compiled
  * binary (`make DEPENDS=no overflow-test`) developers reach for
  * to confirm overflow detection and measure the per-call cost

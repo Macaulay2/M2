@@ -4,6 +4,8 @@
  * @file unit-tests/RingZZpTest.cpp
  * @brief gtest coverage for the legacy `Z_mod` ring (modular arithmetic via `ring_elem`).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises `RingTest.hpp`'s `getElement<Z_mod>` by reusing
  * the integer-side `getElement<RingZZ>` output and feeding it
  * through `R.from_int`, which keeps the random source shared

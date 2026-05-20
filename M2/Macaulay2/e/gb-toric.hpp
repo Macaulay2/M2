@@ -8,6 +8,8 @@
  * @file gb-toric.hpp
  * @brief `binomialGB_comp` --- Buchberger GB specialised to binomial / toric ideals.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `binomialGB_comp` along with its purpose-built value
  * types: `binomial` (a `(lead, tail)` pair of monomial pointers
  * encoding a binomial `m_lead - m_tail`) and `binomial_gb_elem`,

@@ -2,6 +2,8 @@
  * @file BasicPolyListParser.hpp
  * @brief Parsers from text (string or file) into a `BasicPolyList`, including the Msolve input format.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Three free functions read polynomial systems from text and
  * return a portable `BasicPolyList`. `parseMsolveFromString` /
  * `parseMsolveFile` consume the input format of the external

@@ -24,6 +24,8 @@ class ReducedGB_Field_Local : public ReducedGB_Field
    * @brief Per-element bookkeeping record used by `ReducedGB_Field_Local`
    * during local-ring GB minimisation.
    *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
    * @details `g` is the `(poly, syzygy)` pair, `size` caches the number of
    * terms (so the minimisation pass can prefer shorter divisors),
    * and `alpha` records the homogenising shift the local-ring

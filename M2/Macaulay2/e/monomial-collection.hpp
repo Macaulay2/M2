@@ -23,6 +23,8 @@
  * @file monomial-collection.hpp
  * @brief `IntsSet<Configuration>` --- set of monomials with insert / lookup / insertion-ordered iteration.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the templated `IntsSet<Configuration>`, the engine's
  * in-transition "set of monomials" helper used by `M2FreeAlgebra`
  * and the non-commutative arithmetic paths to track which
@@ -140,6 +142,8 @@ void printHashTableState(const T& cont)
  * @brief Strict-weak-order comparator on `ModuleMonom`, used by
  * `IntsSet::sort` to reorder the insertion-ordered `mElements` list.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Defers to `ModuleMonom::compare` and treats anything `<= EQ` as
  * "less than", so equal monomials get a stable position from
  * `std::sort`'s tiebreaker rather than from this comparator.
@@ -156,6 +160,8 @@ public:
 /**
  * @brief Hash functor on `ModuleMonom`, forwarding to `ModuleMonom::hash`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Plugged into the `std::unordered_set<ModuleMonom, ...>` inside
  * `IntsSet` as the `Hash` policy.
  */
@@ -169,6 +175,8 @@ public:
 };
 /**
  * @brief Equality functor on `ModuleMonom`, forwarding to `operator==`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Plugged into the `std::unordered_set<ModuleMonom, ...>` inside
  * `IntsSet` as the `KeyEqual` policy.
@@ -184,6 +192,8 @@ public:
 /**
  * @brief Legacy `IntsSet` configuration that bundles hashing, equality, and
  * a `display` helper into one functor object.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Provides the older single-functor shape (`operator()(m)` for hash,
  * `operator()(a, b)` for equality), with `keysEqual` doing a
@@ -230,6 +240,8 @@ private:
 /**
  * @brief Current `IntsSet` configuration: exposes `Hash` and `Eq` as discrete
  * member functors so the `unordered_set` can use them directly.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Used by the type alias `ModuleMonomialSet = IntsSet<ModuleMonomDefaultConfig>`.
  * The constructor takes the variable count for size accounting; the

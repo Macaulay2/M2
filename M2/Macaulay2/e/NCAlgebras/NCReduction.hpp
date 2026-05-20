@@ -5,6 +5,8 @@
  * @file NCAlgebras/NCReduction.hpp
  * @brief `PolynomialHeap` abstract interface --- batched-subtraction heap for non-commutative reduction.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the pure-virtual surface every `NCGroebner` /
  * `NCF4` reduction uses to combine many tail-polynomial
  * subtractions into a single `O(n log k)` pipeline rather than a
@@ -45,6 +47,8 @@ class Word;
 /**
  * @brief Abstract interface for accumulating a polynomial as a sum of
  * `(coeff, left * poly * right)` contributions in the free algebra.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The standard "geobucket"-shaped API used by `NCGroebner` / `NCF4`
  * reduction loops: `addPolynomial` slots a new contribution in,

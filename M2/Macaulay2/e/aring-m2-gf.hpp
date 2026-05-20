@@ -7,6 +7,8 @@
  * @file aring-m2-gf.hpp
  * @brief `M2::ARingGFM2` --- native engine Galois field, no FLINT dependency.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingGFM2` implements `GF(p^k)` entirely in engine code as
  * a `SimpleARing<ARingGFM2>` with `ElementType = int` --- a
  * `GFElement` log index of a chosen primitive root, with `0`
@@ -106,6 +108,8 @@ class GaloisFieldTable
 /**
  * @brief Pure-M2 (no-FLINT) `aring`-style adapter for `GF(p^n)`, using a
  * discrete-log encoding plus an M2-side primitive table.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Backed by an `M2GFTable` (the file's other class) that owns the
  * `[exp, log, one_table, primitive_element]` machinery for the

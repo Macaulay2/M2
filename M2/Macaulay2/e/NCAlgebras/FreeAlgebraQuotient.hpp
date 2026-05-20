@@ -5,6 +5,8 @@
  * @file NCAlgebras/FreeAlgebraQuotient.hpp
  * @brief A `FreeAlgebra` modulo a two-sided ideal carried by an embedded `NCGroebner`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the non-commutative analogue of `PolyRingQuotient`
  * (the commutative quotient ring lives in `polyquotient.hpp`;
  * the `PolyQuotient` name in `polyring.hpp` is just a stale
@@ -58,6 +60,8 @@ struct RingMap;
 /**
  * @brief Quotient of a `FreeAlgebra` by a Groebner basis up to a fixed
  * degree bound.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Owns the defining basis through an `NCGroebner` and forwards the
  * usual ring operations to `mFreeAlgebra`, then runs
@@ -146,6 +150,8 @@ public:
 /**
  * @brief Owned `Poly` value paired with its `FreeAlgebraQuotient*`,
  * providing operator-overloaded arithmetic for debugging / scripting.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Quotient counterpart of `FreeAlgebraElement`: the destructor calls
  * `FreeAlgebraQuotient::clear`, and the arithmetic operators feed

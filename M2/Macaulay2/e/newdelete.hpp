@@ -5,6 +5,8 @@
  * @file newdelete.hpp
  * @brief `our_new_delete` --- per-class opt-in routing of `new` / `delete` through bdwgc.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `our_new_delete` base class, the
  * destructor-firing `our_gc_cleanup` subclass, the `gc_vector<T>`
  * alias for `std::vector<T, gc_allocator<T>>`, and the

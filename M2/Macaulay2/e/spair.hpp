@@ -6,6 +6,8 @@
  * @file spair.hpp
  * @brief `gb_elem` / `s_pair` / `s_pair_heap` --- basis-element record, S-pair work unit, and S-pair priority queue for Buchberger-style GB.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the three intrusive structures at the heart of `gbA`
  * and its sibling strategies. `gb_elem` carries one basis
  * member: the `gbvector` polynomial `f` plus its syzygy companion

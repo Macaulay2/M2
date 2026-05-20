@@ -2,6 +2,8 @@
  * @file interface/polyroots.cpp
  * @brief `rawRoots(...)` --- univariate polynomial root finder over `RR` / `CC`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Implementation behind `interface/factory.h`'s `rawRoots`, the
  * engine entry point reachable from M2 as `roots(f)` and
  * `roots(f, Precision => ...)`. Given a univariate polynomial

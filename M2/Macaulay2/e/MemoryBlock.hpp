@@ -5,6 +5,8 @@
  * @file MemoryBlock.hpp
  * @brief Bump-pointer arena allocator for transient inner-loop allocations.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `MemoryBlock` is a thin wrapper around `memt::Arena` from the
  * `memtailor` submodule. `allocateArray<T>(nelems)` returns the
  * next `nelems * sizeof(T)` bytes as a `(begin, end)` pair;
@@ -39,6 +41,8 @@
 /**
  * @brief Thin RAII wrapper around `memtailor::Arena` providing bump-pointer
  * array allocation with optional mutex protection.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Heap-allocates the underlying `memt::Arena` so the wrapper has
  * a stable address (the `std::move` overloads are kept commented

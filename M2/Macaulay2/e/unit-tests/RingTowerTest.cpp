@@ -4,6 +4,8 @@
  * @file unit-tests/RingTowerTest.cpp
  * @brief gtest coverage for `Tower` --- iterated polynomial-extension rings used by tower-style finite fields.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts the `TEST(RingTower, *)` battery that builds
  * `Tower::create(101, {"a", "b"})` and checks the resulting
  * ring identifies itself as `"Tower[ZZ/101[a,b]]"`, exposes the

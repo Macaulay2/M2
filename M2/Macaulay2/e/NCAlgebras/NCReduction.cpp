@@ -54,6 +54,8 @@ Possible ways:
  * `int` --- a placeholder used by `makeQueue()` to exercise the
  * geobucket machinery without involving real monomials.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Compare is integer ordering, deduplication is disabled. Useful as a
  * scaffolding/sanity-check configuration when wiring the noncommutative
  * reduction code against the mathic queue templates.
@@ -91,6 +93,8 @@ public:
 /**
  * @brief Variant of `OurQueueConfiguration` with deduplication enabled,
  * used by `makeQueue1()`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `deduplicate(a, b)` returns `a + b + 1000`, a sentinel value chosen
  * so that the geobucket can be observed to call into the deduplicate
@@ -146,6 +150,8 @@ std::unique_ptr<mathic::Geobucket<OurQueueConfiguration1>> makeQueue1()
 /**
  * @brief Baseline `PolynomialHeap` implementation that simply accumulates the
  * pending sum in a single `Poly` and walks it with an iterator.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details No queue, no deduplication: every `addPolynomial` does a
  * `FreeAlgebra::add` of the new terms into the running value, and
@@ -243,6 +249,8 @@ private:
  * `(Monom, ring_elem)` pair compared by the `FreeMonoid` order on
  * the monomial component.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Used by `NaivePolynomialHeap<Queue>`. Deduplication is off, so the
  * heap holds duplicate monomials and only collapses them on lead-term
  * extraction.
@@ -296,6 +304,8 @@ private:
 /**
  * @brief Variant of `NaiveQueueConfiguration` with deduplication enabled:
  * `deduplicate(a, b)` sums the coefficients of two equal monomials.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Lets the underlying geobucket collapse like terms eagerly instead of
  * deferring the addition until lead-term extraction. Combined with
@@ -599,6 +609,8 @@ private:
  * @brief `PolynomialHeap` backed by a `std::map<Monom, ring_elem, MonomEq>`,
  * deduplicating on insert via the map's lookup.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Each `addTerm` does a `map::find` on the monomial; on hit the
  * coefficients are summed in place, on miss the monomial is copied
  * into `mMonomialSpace` (a `MemoryBlock` arena) and inserted. Lead-term
@@ -901,6 +913,8 @@ private:
  * @brief Comparator (and trivial hash) functor wired into the
  * `std::priority_queue` inside `PriorityQueuePolynomialHeap`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `operator()(Entry, Entry)` returns true when the first entry's
  * monomial is `LT` under the `FreeMonoid`'s ordering --- so the
  * priority queue, which extracts max under its `Compare`, yields
@@ -938,6 +952,8 @@ private:
  * @brief `PolynomialHeap` backed by a `std::priority_queue` of
  * `(Monom, ring_elem)` entries, with deduplication done lazily on
  * lead-term extraction.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Insertions copy each `Monom` into `mMonomialSpace` (a `MemoryBlock`
  * arena) and push the entry onto the queue. `isZero()` pops the top

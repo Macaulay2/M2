@@ -7,6 +7,8 @@
  * @file aring.hpp
  * @brief Shared base of the `aring` framework (`namespace M2`) that unifies the engine's coefficient rings.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the pieces every concrete coefficient ring builds on:
  * the `RingID` enum that names each back end
  * (`ring_ZZ`, `ring_ZZFlint`, `ring_QQ` / `_QQFlint`,
@@ -197,6 +199,8 @@ class SimpleARing : public RingInterface
 /**
  * @brief Placeholder `aring` used as a default / fallback for code paths
  * that need an `ARing`-shaped object but no real arithmetic.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Element type is `long` and every operation is a no-op or
  * trivial. `mOriginalRing` carries the actual `PolynomialRing` the

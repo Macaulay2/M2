@@ -6,6 +6,8 @@
  * @file mem.hpp
  * @brief `stash` and `doubling_stash` --- legacy size-class allocator interfaces, now stubbed to plain GC allocation.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the engine's `stash` (fixed-size) and
  * `doubling_stash` (dispatches by size to one of `NDOUBLES = 25`
  * power-of-two `stash`es, capping at `2 * 2^25`) classes. The

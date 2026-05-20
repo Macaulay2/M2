@@ -4,6 +4,8 @@
  * @file geopoly.hpp
  * @brief `polyheap` --- polynomial-specialised geometric heap for reduction accumulators.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `polyheap`, the size-quadrupling bucket structure for
  * adding many small polynomials together as the GB reduction loop
  * does. `GEOHEAP_SIZE` (15) slots each hold a sub-polynomial of

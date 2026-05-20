@@ -5,6 +5,8 @@
  * @file montableZZ.hpp
  * @brief `MonomialTableZZ` --- coefficient-aware leading-monomial index for `ZZ`-coefficient Groebner bases.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * The `ZZ`-coefficient counterpart of `montable.hpp`. Each
  * `mon_term` carries a doubly-linked-list pair (`_next` /
  * `_prev`), the borrowed exponent pointer `_lead` (whose bytes
@@ -61,6 +63,8 @@
 /**
  * @brief `MonomialTable` analogue for monomials carrying a `ZZ` coefficient.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Used by the integer-coefficient GB code path to track lead-term
  * divisibility together with the leading integer coefficient: when
  * the table is consulted to reduce `coeff * exp` against an entry
@@ -77,6 +81,8 @@ class MonomialTableZZ : public our_new_delete
    * @brief `MonomialTable::mon_term` plus an `_coeff` slot pointing at the
    * entry's leading `ZZ` coefficient (or `nullptr` for the
    * coefficient-blind case).
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details The coefficient itself is owned by whatever stored the entry
    * (typically a GB element), so the lifetime of `_coeff` must

@@ -5,6 +5,8 @@
  * @file schreyer-resolution/res-tasking-example.cpp
  * @brief Standalone TBB `flow::graph` sandbox simulating the F4 resolution's `(level, degree)` task DAG.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * A self-contained test program (not part of the engine build)
  * that exercises Intel TBB's `flow::continue_node` primitives
  * in exactly the dependency pattern the production resolution
@@ -47,6 +49,8 @@ std::vector<std::vector<NodePtr>> nodes; // nodes[lev][sldeg] is that particular
 /**
  * @brief Scratch task descriptor used by the standalone TBB
  * dependency-graph example.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Pairs a `(level, slanted_degree)` cell with the half-open range
  * of cells it depends on (`firstDependency` .. `lastDependency`)

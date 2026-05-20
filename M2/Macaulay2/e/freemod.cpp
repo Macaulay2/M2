@@ -333,6 +333,8 @@ FreeModule *FreeModule::exterior(int pp) const
  * @brief Helper functor that builds the `n`-th symmetric power of a
  * `FreeModule` by recursively walking multi-indices.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `symm1(lastn, pow)` walks every weakly increasing index sequence
  * of length `pow` starting at `lastn`, accumulating their degree
  * shifts in `symm1_deg` and appending the resulting component to

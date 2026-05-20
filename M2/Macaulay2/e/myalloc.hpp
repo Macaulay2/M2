@@ -7,6 +7,8 @@
  * @file myalloc.hpp
  * @brief `AllocLogger` / `StatsAllocator` --- single-threaded debug/benchmark instrumentation.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `AllocLogger` with static counters (`mNumAllocs`,
  * `mAllocSize`, `mNumDeallocs`, `mCurrentAllocSize`,
  * `mHighWater`) and the `StatsAllocator` wrapper that bumps
@@ -41,6 +43,8 @@
 /**
  * @brief Process-wide allocation counter used by `StatsAllocator` for
  * debugging and benchmarking.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details All counters (`mNumAllocs`, `mAllocSize`, `mNumDeallocs`,
  * `mCurrentAllocSize`, `mHighWater`) are `static`, so the logger

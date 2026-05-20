@@ -12,6 +12,8 @@
  * @file interface/groebner.h
  * @brief Engine-boundary C API for Gröbner basis, resolution, and Hilbert-series computations.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` factories the M2 interpreter calls
  * to start, drive, and inspect every long-running ideal-theory
  * computation in the engine. Every factory returns the opaque

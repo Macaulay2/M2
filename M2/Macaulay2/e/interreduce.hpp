@@ -7,6 +7,8 @@
  * @file interreduce.hpp
  * @brief `Interreducer` --- skeleton class for inter-reducing a list of `gbvector*` elements (currently unused).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `Interreducer`, the intended helper for bringing a
  * collection of `gbvector*` polynomials into a head-reduced
  * state by applying smaller-pivot cancellation between any
@@ -38,6 +40,8 @@
 /**
  * @brief Interreduces a list of `gbvector*`s in place so that no element's
  * leading term divides any other element's terms.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Owns a `GBRing*` and a target `FreeModule*` plus the working set
  * `G` (a vector of `gbvector*`). `cancelLT(f, g)` reduces the

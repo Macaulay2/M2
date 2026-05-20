@@ -456,6 +456,8 @@ void Ring::increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const
  * @brief Generic `SumCollector` that accumulates into a single `ring_elem`
  * via repeated `Ring::add_to`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Used as the fallback when a `Ring` does not override
  * `make_SumCollector()` to install a faster (geobucket / heap)
  * implementation. `getValue()` returns the running total and

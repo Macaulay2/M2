@@ -5,6 +5,8 @@
  * @file interface/monomial-ideal.h
  * @brief Engine-boundary C API for constructing and operating on `MonomialIdeal`s.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points the M2 interpreter
  * routes to the engine's combinatorial `MonomialIdeal`
  * machinery. `IM2_MonomialIdeal_make(M, n)` builds an ideal

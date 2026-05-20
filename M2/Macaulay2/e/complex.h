@@ -7,6 +7,8 @@
  * @file complex.h
  * @brief `gmp_CC` C primitives: arithmetic on arbitrary-precision complex values (pair of MPFR reals).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the engine's C-style API for `gmp_CC` --- an
  * arbitrary-precision complex number stored as a pair of MPFR
  * floats. The function naming follows MPFR/GMP conventions:

@@ -5,6 +5,8 @@
  * @file NCAlgebras/NCF4.hpp
  * @brief `NCF4` --- non-commutative F4 Gröbner-basis driver building a per-degree Macaulay matrix.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the F4-style alternative to the one-overlap-at-a-time
  * `NCGroebner` reduction loop. Each iteration collects every
  * overlap of the current degree from `OverlapTable mOverlapTable`,
@@ -81,6 +83,8 @@ union ring_elem;
  * @brief Non-commutative F4 Groebner-basis driver: builds a per-degree
  * Macaulay matrix from overlaps and reduces it in bulk.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Replaces the one-overlap-at-a-time `NCGroebner` loop with the F4
  * pattern. Each degree, the driver pulls every overlap of that
  * degree from `mOverlapTable`, builds rows from the overlaps plus
@@ -120,6 +124,8 @@ private:
    * @brief Symbolic description of one row before it is materialised in the
    * matrix: a `left * (something) * right` triple.
    *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
    * @details `preRowType` decides what `preRowIndex` points at:
    * `ReducerPreRow` indexes either `mGroebner` (`>= 0`) or `mInput`
    * (`< 0`, decoded as `-preRowIndex - 1`); `OverlapPreRow` is a
@@ -140,6 +146,8 @@ private:
    * @brief A materialised row of the Macaulay matrix: parallel coefficient and
    * monomial arrays.
    *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
    * @details `coeffVector` carries the coefficients via the `VectorArithmetic`
    * abstraction. `columnWords` holds the monomial of each non-zero
    * entry and is only valid before reduction starts; once columns are
@@ -158,6 +166,8 @@ private:
   /**
    * @brief A column of the Macaulay matrix: the monomial that names it plus
    * the row currently acting as its pivot (or -1 if none).
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details A `Column`'s position in the enclosing `ColumnsVector` is its
    * column index, so `Row::columnIndices` indexes back into this
@@ -187,6 +197,8 @@ private:
   
   /**
    * @brief Per-thread counters tracking how much work the F4 reduction did.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details `numCancellations` is the number of coefficient cancellations
    * the reducer applied, and `numRows` is the number of rows it

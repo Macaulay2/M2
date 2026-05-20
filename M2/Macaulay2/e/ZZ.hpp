@@ -7,6 +7,8 @@
  * @file ZZ.hpp
  * @brief Legacy `RingZZ` --- a `Ring`-derived integer ring backed by GMP `mpz_t`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `RingZZ` is the engine's original integer-ring class,
  * pre-dating the `aring` framework. It inherits from `Ring`
  * directly, uses `mpz_ptr` as its `element_type`, and is the
@@ -59,6 +61,8 @@ extern "C" inline int mask_mpq_cmp_si(mpq_srcptr x, long int i, long int j)
 
 /**
  * @brief Engine-side ring of integers, backed by GMP `mpz_ptr` elements.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Each non-zero element is a heap-allocated `mpz_struct` handed
  * out by `new_elem()`; `coeffR` is the matching `ARingZZGMP`

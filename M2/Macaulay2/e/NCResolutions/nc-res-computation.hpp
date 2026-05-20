@@ -7,6 +7,8 @@
  * @file NCResolutions/nc-res-computation.hpp
  * @brief `NCResComputation` --- placeholder free-resolution driver for modules over a `FreeAlgebraQuotient`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the intended non-commutative counterpart of
  * `F4ResComputation`: a `ResolutionComputation` subclass that
  * **will** compute a free resolution of a right module presented
@@ -55,6 +57,8 @@
 /**
  * @brief `ResolutionComputation` subclass that builds a free resolution over
  * a `FreeAlgebraQuotient` (non-commutative).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Constructor is private; the free function `createNCRes` (declared
  * friend) instantiates the computation from a GB-presented quotient

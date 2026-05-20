@@ -5,6 +5,8 @@
  * @file interface/NAG.h
  * @brief Engine-boundary C API for the Numerical Algebraic Geometry subsystem.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points that the M2 interpreter
  * (via `NumericalAlgebraicGeometry`, `MonodromySolver`, and
  * related packages) uses to drive homotopy continuation, witness-

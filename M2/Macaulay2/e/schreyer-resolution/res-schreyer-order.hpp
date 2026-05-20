@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-schreyer-order.hpp
  * @brief `ResSchreyerOrder` --- per-free-module-summand data implementing the Schreyer order on the next level.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the small struct each `SchreyerFrame` level carries
  * to define the order its child level inherits. For every
  * generator `i` of the current free module, `mTotalMonom[i]`
@@ -42,6 +44,8 @@
 
 /**
  * @brief Per-level Schreyer-order data attached to a `SchreyerFrame::Level`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `mTotalMonom[i]` is the "total monomial" used as the comparison
  * key for the `i`-th frame element at this level: the underlying

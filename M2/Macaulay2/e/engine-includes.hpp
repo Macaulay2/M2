@@ -9,6 +9,8 @@
  * @file engine-includes.hpp
  * @brief Engine-wide include prelude --- a single point of truth for portability shims.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * The header wraps four pieces of glue: `M2/config.h` (autotools
  * / CMake `HAVE_*` macros), `interface/m2-types.h` (the
  * cross-language `M2_arrayint`, `M2_string`, ... types shared with

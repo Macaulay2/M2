@@ -4,6 +4,8 @@
  * @file unit-tests/RingQQTest.cpp
  * @brief gtest coverage for the legacy `RingQQ` rational ring (`globalQQ`).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises `RingTest.hpp`'s `getElement<RingQQ>` with the
  * deterministic `[-25, 24]` integer prefix followed by random
  * rationals drawn from `rawRandomQQ(maxH)` with `maxH = 10^11`;

@@ -7,6 +7,8 @@
  * @file aring-CCC.hpp
  * @brief `M2::ARingCCC` --- arbitrary-precision complex numbers (pair of MPFR floats).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingCCC` is the complex counterpart to `ARingRRR`: a
  * `SimpleARing<ARingCCC>` whose element type is `cc_struct` ---
  * a pair of MPFR floats with mantissa precision chosen at
@@ -55,6 +57,8 @@ namespace M2 {
 /**
  * @brief `aring`-style adapter for arbitrary-precision complex numbers,
  * stored as `(MPFR, MPFR)` pairs.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `ElementType` is `cc_struct` --- two MPFR scalars for the real
  * and imaginary parts. Holds a companion `ARingRRR mRRR` at the

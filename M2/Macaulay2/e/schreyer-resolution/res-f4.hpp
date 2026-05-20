@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-f4.hpp
  * @brief `F4Res` --- F4-style matrix-reduction worker over a `SchreyerFrame`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the per-cell algorithm class `F4ResComputation`
  * invokes to advance the resolution one `(level, degree)` step
  * at a time. `construct(lev, degree)` reads the frame's pending
@@ -65,6 +67,8 @@ class SchreyerFrame;
  * @brief F4-style engine that computes one `(level, degree)` slice of a
  * free resolution into the host `SchreyerFrame`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `construct(lev, degree)` builds the Macaulay matrix whose rows
  * are the symbolic reducers for each frame element of that
  * `(level, degree)` cell, runs `gaussReduce`, and writes the
@@ -101,6 +105,8 @@ class F4Res
  private:
   /**
    * @brief One row of the Macaulay matrix built by `F4Res::construct`.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details `mLeadTerm` is the previous-level monomial that contributed
    * this row, used after reduction to slot the resulting syzygy

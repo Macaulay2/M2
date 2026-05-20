@@ -2,6 +2,8 @@
  * @file matrix-kbasis.cpp
  * @brief `KBasis` --- k-vector-space basis of a graded module restricted to chosen degrees.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Implements the engine code behind M2's `basis(d, M)`: given a
  * graded module `M` and a degree vector (or `(lo, hi)` range),
  * return a single-row `Matrix` whose columns are the standard
@@ -54,6 +56,8 @@
  * @brief Enumerates a k-basis (degree-graded monomial basis) of a module,
  * a finite module's entire basis, or the basis of a map between
  * modules.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `computation_type` picks the mode (`KB_SINGLE` for a fixed
  * degree, `KB_MULTI` for a degree range, `KB_FULL` for the whole

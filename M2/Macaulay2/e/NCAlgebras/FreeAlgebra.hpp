@@ -5,6 +5,8 @@
  * @file NCAlgebras/FreeAlgebra.hpp
  * @brief Free associative algebra `k<x_1,...,x_n>` over an arbitrary coefficient ring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the non-commutative analogue of `PolyRing`: a
  * `FreeAlgebra` pairs a coefficient `Ring` reference with a
  * `shared_ptr<FreeMonoid>` carrying the word side (names,
@@ -51,6 +53,8 @@ class buffer;
 /**
  * @brief Free associative algebra over a coefficient ring: the
  * non-commutative analogue of `PolynomialRing`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Bundles the coefficient ring with a `FreeMonoid` of words on the
  * generators and exposes the operation surface the non-commutative
@@ -253,6 +257,8 @@ public:
  * @brief Owned `Poly` value paired with its `FreeAlgebra*`, providing
  * natural operator-overloaded arithmetic.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Debugging / scripting convenience: wraps a `Poly` so the algebra
  * pointer is implicit and `+`, `-`, `*`, unary `-`, and `^n`
  * (power) can be written directly. The destructor calls
@@ -336,6 +342,8 @@ std::ostream& operator<<(std::ostream& o, const FreeAlgebraElement& f);
  * @brief Geobucket-style accumulator for many `Poly` summands in the free
  * associative algebra.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Maintains `GEOHEAP_SIZE` size-tiered buckets; `add(f)` slots `f`
  * into the smallest non-empty bucket it overflows and merges
  * upward, so an O(`n`) chain of additions costs amortised O(`n log
@@ -366,6 +374,8 @@ class FreeAlgebraHeap
 /**
  * @brief `SumCollector` adapter that funnels engine-side `ring_elem` adds
  * into a `FreeAlgebraHeap`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Used wherever the engine's generic `SumCollector` interface
  * (e.g. for `RingMap` evaluation) needs to accumulate

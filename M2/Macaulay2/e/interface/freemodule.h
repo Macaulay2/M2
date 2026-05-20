@@ -5,6 +5,8 @@
  * @file interface/freemodule.h
  * @brief Engine-boundary C API for constructing and querying `FreeModule`s.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points the M2 interpreter
  * calls to build graded free modules over a given `Ring` and to
  * inspect them once built. Construction comes in plain

@@ -6,6 +6,8 @@
  * @file gauss.hpp
  * @brief `GaussElimComputation` --- Gaussian elimination GB / submodule strategy over a field.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `GaussElimComputation`, a `GBComputation` subclass that
  * row-reduces a sparse matrix of generators to echelon form
  * directly, plus the row-element struct `gm_elem` --- a

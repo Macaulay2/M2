@@ -5,6 +5,8 @@
  * @file exceptions.hpp
  * @brief `namespace exc` --- internal C++ exception types and the `TRY` / `CATCH` macro pair.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares a small hierarchy rooted at `std::runtime_error`:
  * `engine_error` (the base catch-all), `overflow_exception`
  * (arithmetic overflow, thrown by `overflow.hpp`),

@@ -7,6 +7,8 @@
  * @file gb-default.hpp
  * @brief `gbA` --- the engine's default Buchberger-style Groebner-basis algorithm.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `gbA`, the `GBComputation` subclass that the
  * dispatcher in `comp-gb.cpp` falls back to (the `default:`
  * branch of its `algorithm`-keyed switch). The classical

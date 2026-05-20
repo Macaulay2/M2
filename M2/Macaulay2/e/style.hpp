@@ -6,6 +6,8 @@
  * @file style.hpp
  * @brief Engine-wide stylistic constants: `LT` / `EQ` / `GT` codes, `INTSIZE`, `GEOHEAP_SIZE`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Pulls together the boilerplate every engine translation unit
  * needs. The comparison-result codes `LT = -1`, `EQ = 0`, and
  * `GT = 1` are the integer return convention used by every

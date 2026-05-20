@@ -5,6 +5,8 @@
  * @file reader.hpp
  * @brief `M2::Reader<RingType>` --- parse a single ring element from a `std::istream`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the per-ring stream reader: construct with a
  * `RingType&` and call `read(istream, result)` to consume one
  * element's textual form and land its value in

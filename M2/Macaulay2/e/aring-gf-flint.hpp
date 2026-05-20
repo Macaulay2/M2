@@ -7,6 +7,8 @@
  * @file aring-gf-flint.hpp
  * @brief `M2::ARingGFFlint` --- small `GF(p^k)` via FLINT Zech-logarithm tables.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingGFFlint` (registered as `ringID = ring_GFFlintZech`)
  * represents a Galois field `GF(q)` of small order via FLINT's
  * `fq_zech_*` interface. The element type is FLINT's
@@ -70,6 +72,8 @@ namespace M2 {
  * @brief `aring`-style adapter for FLINT's Zech-logarithm representation
  * of small finite fields `GF(p^n)`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `ElementType` is `fq_zech_struct` and every arithmetic call
  * delegates to FLINT's `fq_zech_*` routines through the held
  * `mContext` (`fq_zech_ctx_struct*`). The table-driven Zech
@@ -123,6 +127,8 @@ class ARingGFFlint : public RingInterface
   /**
    * @brief Fixed-size owned array of `fq_zech_struct` slots tied to an
    * `ARingGFFlint` for the matching FLINT context.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details Each slot is `fq_zech_init2`-initialised at construction and
    * `fq_zech_clear`-released in the destructor, so the array owns

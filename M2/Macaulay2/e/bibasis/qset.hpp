@@ -14,6 +14,8 @@
  * @file bibasis/qset.hpp
  * @brief `BIBasis::QSet<MonomType>` --- prolongation work-queue sorted by leading monomial.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares and defines the pending-work container that drives
  * the involutive engine's outer loop. Holds an owned
  * `std::list<Triple*>` kept sorted under `Triple::Compare`

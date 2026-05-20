@@ -7,6 +7,8 @@
  * @file aring-qq.hpp
  * @brief Tiny dispatcher header that picks the default `ARingQQ` from among the QQ aring implementations.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Pulls in both `aring-qq-flint.hpp` and `aring-qq-gmp.hpp`,
  * forward-declares `ARingQQFlint` and `ARingQQGMP`, and aliases the
  * default `ARingQQ` to `ARingQQGMP`. The GMP default is historical:

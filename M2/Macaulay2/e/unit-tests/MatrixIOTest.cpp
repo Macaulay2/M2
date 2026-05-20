@@ -2,6 +2,8 @@
  * @file unit-tests/MatrixIOTest.cpp
  * @brief gtest coverage for `BasicPoly` / `BasicPolyList` round-trips and msolve-format benchmark ingestion.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts the `TEST(MatrixIO, *)` battery covering polynomial
  * I/O: `parseBasicPoly(polyStr, varnames)` round-trips through
  * `toString`, `bytesUsed` reports the expected storage size,

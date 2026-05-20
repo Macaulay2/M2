@@ -2,6 +2,8 @@
  * @file dmat-lu-zzp-flint.hpp
  * @brief `DMatLinAlg<M2::ARingZZpFlint>` --- dense Z/p linear algebra routed through FLINT `nmod_mat_*`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises `DMatLinAlg` for the FLINT-backed Z/p aring,
  * with each public method forwarding to the matching
  * `nmod_mat_*` routine on the underlying `nmod_mat_t`:
@@ -44,6 +46,8 @@
  * @brief Specialisation of `DMatLinAlg` for `ARingZZpFlint` dense matrices,
  * routing rank / determinant / kernel / solve / inverse calls to
  * FLINT's `nmod_mat_*` routines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `DMat<ARingZZpFlint>` already wraps an `nmod_mat_t`, so the
  * linear-algebra layer just hands the underlying FLINT matrix to

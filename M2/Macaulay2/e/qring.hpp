@@ -7,6 +7,8 @@
  * @file qring.hpp
  * @brief `QRingInfo` family --- bookkeeping plus normal-form machinery attached to a `PolyRingQuotient` for `R / I` reductions.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `QRingInfo`, the helper that holds the defining
  * ideal of a polynomial-ring quotient in two redundant forms:
  * `VECTOR(Nterm*) quotient_ideal` for `ring_elem`-side
@@ -57,6 +59,8 @@ class GBRing;
 /**
  * @brief Bookkeeping helper holding the defining ideal of a polynomial-ring
  * quotient `R / I` in the two representations the engine reduces against.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Stores the quotient generators twice: as `Nterm*` for `ring_elem`
  * reduction (`normal_form`) and as `gbvector*` for GB-tuned
@@ -134,6 +138,8 @@ class QRingInfo : public our_new_delete
  * reduction tables: a `MonomialIdeal` for divisibility queries and a
  * `MonomialTable` indexed by `quotient_ideal` slot.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Exposes the tables through `get_quotient_monomials` /
  * `get_quotient_MonomialTable` but leaves `normal_form` itself
  * unimplemented --- that is provided by the two concrete subclasses
@@ -166,6 +172,8 @@ class QRingInfo_field : public QRingInfo
  * @brief `QRingInfo_field` specialisation for basic-field coefficients
  * (everything except `QQ`).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Implements `normal_form` and `gbvector_normal_form` via
  * `reduce_lead_term_basic_field`, which expects field arithmetic
  * with no denominator tracking.
@@ -189,6 +197,8 @@ class QRingInfo_field_basic : public QRingInfo_field
 /**
  * @brief `QRingInfo_field` specialisation for `QQ` coefficients, which need
  * denominator tracking through reductions.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Implements `normal_form` and `gbvector_normal_form` plus the
  * three-argument `gbvector_normal_form(F, f, use_denom, denom)`
@@ -218,6 +228,8 @@ class QRingInfo_field_QQ : public QRingInfo_field
 
 /**
  * @brief `QRingInfo` specialisation for quotients of polynomial rings over `ZZ`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Replaces the field-side `MonomialTable` with a `MonomialTableZZ`
  * and tracks the `is_ZZ_quotient_` / `ZZ_quotient_value_` pair so

@@ -5,6 +5,8 @@
  * @file ExponentList.hpp
  * @brief Variable-length sparse `(variable, exponent)` encoding of monomials.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ExponentList<Exponent, legacy_length>` represents a
  * monomial as `[len, v_1, e_1, ..., v_r, e_r]` with
  * `len = 2r + 1`, variable indices in strictly decreasing

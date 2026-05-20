@@ -2,6 +2,8 @@
  * @file unit-tests/util-polyring-creation.cpp
  * @brief Implementation of the test-side polynomial-ring builders declared in `util-polyring-creation.hpp`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Defines `degreeMonoid(names)` (a `MonomialOrderings::join`
  * of negative-weight, GroupLex, and PositionUp blocks fed
  * through `Monoid::create` against the trivial degree

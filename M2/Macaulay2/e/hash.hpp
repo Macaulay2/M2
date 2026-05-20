@@ -6,6 +6,8 @@
  * @file hash.hpp
  * @brief `EngineObject` / `MutableEngineObject` --- shared bases that supply the hash an M2 interpreter object expects.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares two parallel bases:
  *
  * - `EngineObject` derives from `our_new_delete` (so allocation
@@ -45,6 +47,8 @@
  * @brief Base class for engine objects that are immutable once their hash
  * has been pinned (typically once they cross over to the front end).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Holds a single lazily computed `mHashValue` that defaults to zero
  * and is filled in by `computeHashValue()` (pure virtual --- every
  * subclass supplies its own hashing rule). The non-zero invariant
@@ -80,6 +84,8 @@ class EngineObject : public our_new_delete
 /**
  * @brief Base class for engine objects that may mutate, so their hash must
  * be identity-based rather than content-based.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Pulls a fresh integer from the static counter
  * `mNextMutableHashValue` at construction and keeps it for the

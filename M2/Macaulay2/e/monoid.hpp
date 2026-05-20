@@ -5,6 +5,8 @@
  * @file monoid.hpp
  * @brief `Monoid` --- variable count, naming, grading, and monomial order of a polynomial ring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `Monoid`, the multiplicative-side representation of
  * an M2 polynomial ring. It carries the variable count
  * (`mVariableCount`) and names (`mVariableNames`), the
@@ -70,6 +72,8 @@ typedef const int *const_monomial;
 /**
  * @brief Engine-side commutative monomial monoid: variable names, ordering,
  * multidegree machinery, and monomial encoding/decoding.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Owns the front-end `MonomialOrdering* mo_` plus its compiled
  * `MonomialOrder* monorder_` form, the variable count and names,

@@ -2,6 +2,8 @@
  * @file BasicPoly.hpp
  * @brief Minimal, portable polynomial value type used where heavier engine types would be overkill.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `BasicPoly` stores a polynomial as three parallel `std::vector`s:
  * `mCoefficients` (one `mpz_class` per term), `mComponents` (one
  * `int` per term naming the free-module component, or empty as
@@ -47,6 +49,8 @@
  * @brief Standalone, self-contained polynomial representation independent
  * of any engine `Ring` --- coefficients are bare `mpz_class`
  * (GMP integers).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Three parallel vectors: `mCoefficients` (`mpz_class` per term),
  * `mComponents` (free-module component per term, all-zero when

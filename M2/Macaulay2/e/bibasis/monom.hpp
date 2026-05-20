@@ -14,6 +14,8 @@
  * @file bibasis/monom.hpp
  * @brief `BIBasis::Monom` --- abstract squarefree-monomial base for the three Janet orderings.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the polymorphic root of the BIBasis monomial
  * hierarchy: a singly-linked list of `VarsListNode` records
  * (each carrying a `short int Integer` variable index plus
@@ -52,6 +54,8 @@ namespace BIBasis
      * @brief Abstract base for the BIBasis boolean-coefficient monomial
      * types --- a sorted, singly linked list of variable indices.
      *
+     * @note AI-generated documentation. Verify against the source before relying on it.
+     *
      * @details `Integer` is a 16-bit type because BIBasis caps the number of
      * variables (`DimIndepend`) at 32k. Subclasses
      * (`MonomLex`, `MonomDL`, `MonomDRL`) implement the comparison
@@ -77,6 +81,8 @@ namespace BIBasis
         /**
          * @brief Singly linked-list node of a `Monom`'s variable list, with
          * a per-class slab allocator.
+         *
+         * @note AI-generated documentation. Verify against the source before relying on it.
          *
          * @details `Value` is the variable index, `Next` chains to the next
          * variable in increasing order. The static `Allocator`

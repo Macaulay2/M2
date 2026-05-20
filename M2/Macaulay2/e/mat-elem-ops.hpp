@@ -7,6 +7,8 @@
  * @file mat-elem-ops.hpp
  * @brief `MatElementaryOps<MT>` --- row / column primitives templated over dense or sparse matrix storage.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Provides the building-block operations every linear-algebra
  * algorithm composes: row and column swaps, row / column
  * scaling, row addition (`row_i += c * row_j`), the

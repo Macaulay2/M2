@@ -7,6 +7,8 @@
  * @file f4/ntuple-monomial.hpp
  * @brief F4's dense `int64_t` exponent-vector specialisation of `ExponentVector` (legacy).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Aliases `ntuple_monomials = ExponentVector<int64_t, false>`
  * for the F4 inner loop's dense monomial encoding: 64-bit
  * signed exponents indexed by variable, with overflow checking

@@ -5,6 +5,8 @@
  * @file unit-tests/ARingTest.hpp
  * @brief Shared gtest harness for the `ARing*Test.cpp` suite.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the per-ring testing surface: the primary
  * `getElement<RingType>(R, index, result)` function template
  * (each `ARing*Test.cpp` provides its ring's specialisation),

@@ -7,6 +7,8 @@
  * @file skewpoly.hpp
  * @brief `SkewPolynomialRing` --- polynomial ring with a designated set of anticommuting variables.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `SkewPolynomialRing`, the `PolyRing` subclass for
  * the super-commutative case: a set of variables passed to
  * `create(K, M, skewvars)` anticommutes pairwise and squares to
@@ -45,6 +47,8 @@
  * @brief `PolyRing` subclass for skew-commutative (exterior-style)
  * polynomial rings: the listed `skewvars` anticommute among
  * themselves and square to zero.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Constructed via `create(K, M, skewvars)` --- `skewvars` is the
  * array of variable indices that participate in the

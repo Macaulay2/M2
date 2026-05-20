@@ -7,6 +7,8 @@
  * @file f4/monhashtable.hpp
  * @brief `MonomialHashTable<ValueType>` --- open-addressing intern table for F4 and resolution monomials.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the template class `MonomialHashTable<ValueType>`,
  * a power-of-2 open-addressing hash table whose only public
  * operations are `find_or_insert`, `reset`, `dump`, and `show`
@@ -47,6 +49,8 @@
  * @brief `MonHashTable` trait for `packed_monomial`s that include the
  * component coordinate in equality.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `hash_value` mixes the leading two ints of the packed monomial
  * (the precomputed hash plus the component) so two monomials with
  * the same exponent vector but different components hash to
@@ -68,6 +72,8 @@ class MonomialsWithComponent
 /**
  * @brief `MonHashTable` trait for `packed_monomial`s that fold all components
  * together (used when only the underlying monomial matters).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `hash_value` reads the leading int (the monomial-only hash)
  * without mixing in the component. `is_equal` delegates to
@@ -93,6 +99,8 @@ class MonomialsIgnoringComponent
  * @brief `MonHashTable` trait for the resolution engine's
  * `res_packed_monomial`s, with components included.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Counterpart of `MonomialsWithComponent` for the F4 resolution
  * code: combines the per-monomial hash from `ResMonoid::hash_value`
  * with a `34141 * component` term so two monomials with the same
@@ -117,6 +125,8 @@ class ResMonomialsWithComponent
 /**
  * @brief `MonHashTable` trait for `res_packed_monomial`s with the
  * component coordinate folded out.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Resolution counterpart of `MonomialsIgnoringComponent`:
  * `hash_value` is just the leading int (the monomial-only hash) and

@@ -29,6 +29,8 @@ void ReducedGB_ZZ::set_gb(VECTOR(POLY) & polys0) { (void) polys0; }
  * @brief Index comparator used to permute `ReducedGB_ZZ`'s `gb` array into
  * canonical reduced-GB order over `ZZ`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Captures pointers to the `GBRing`, target `FreeModule`, and the
  * `gb` vector by reference so `operator()(a, b)` can compare
  * `gb[a]` and `gb[b]` by their leading terms (with the

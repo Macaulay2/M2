@@ -7,6 +7,8 @@
  * @file aring-wrap.hpp
  * @brief `RElementWrap<RingType>` and `AConcreteRing<RingType>` --- abandoned scaffolding for an abstract `ARing` / `RElement` base.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares two templates that sketch an alternative aring
  * type-erasure design: `RElementWrap<RingType>` inherits from
  * `RElement` and stores one `RingType::ElementType` value, and

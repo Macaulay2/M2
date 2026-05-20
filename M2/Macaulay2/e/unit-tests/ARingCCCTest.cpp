@@ -4,6 +4,8 @@
  * @file unit-tests/ARingCCCTest.cpp
  * @brief gtest coverage for the MPC-backed `M2::ARingCCC` arbitrary-precision complex aring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Plugs `M2::ARingCCC` into the `ARingTest.hpp` harness with a
  * precision-aware `almostEqual` that scales `2^-nbits` to the
  * ring's `get_precision()` and checks the real and imaginary

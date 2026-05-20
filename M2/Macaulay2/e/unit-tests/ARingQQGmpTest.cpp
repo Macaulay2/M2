@@ -4,6 +4,8 @@
  * @file unit-tests/ARingQQGmpTest.cpp
  * @brief gtest coverage for the GMP-backed `M2::ARingQQGMP` rational aring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Plugs `M2::ARingQQGMP` into the shared `ARingTest.hpp` harness
  * via the `getElement<M2::ARingQQGMP>` specialisation, which
  * uses the deterministic `[-25, 24]` integer prefix for the

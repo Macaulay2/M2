@@ -5,6 +5,8 @@
  * @file dpoly.hpp
  * @brief Native univariate polynomial arithmetic over QQ extensions and finite fields.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `TowerPolynomialStruct` (a `(deg, len, union {long*
  * ints; TowerPolynomial* polys;})` recursive layout that
  * bottoms out at `long` coefficients at level 0 and recurses
@@ -64,6 +66,8 @@ typedef struct TowerPolynomialStruct *TowerPolynomial;
  * @brief Heap-allocated node of a tower polynomial: a dense
  * `degree`-indexed coefficient array that recurses through levels.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `deg` is the polynomial's degree in the current top variable and
  * `len` is the allocated capacity. The `arr` union picks the
  * coefficient kind by depth: at the bottom level the coefficients
@@ -87,6 +91,8 @@ struct TowerPolynomialStruct : public our_new_delete
 /**
  * @brief Arithmetic engine for tower-polynomial rings:
  * `(Z/p)[x_0][x_1]...[x_{nvars-1}]` modulo a chain of `extensions`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds the characteristic `p`, the number of variables, and an
  * `extensions` array --- one tower-polynomial per algebraic level
@@ -244,6 +250,8 @@ class DPoly
 /**
  * @brief Single-level view of a tower-polynomial ring: a `DPoly` plus a
  * fixed working `level` and a `Tower`-flavoured `ring_type` typedef.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Wraps the `DPoly` engine so the rest of the engine can treat a
  * particular variable level as an ordinary ring with operations
@@ -439,6 +447,8 @@ class DRing : public our_new_delete
 /**
  * @brief Visitor base class that walks every term of a `TowerPolynomial`,
  * calling `viewTerm(coeff, exponents)` once per leaf.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Subclasses override `viewTerm` to consume terms (e.g. to convert
  * a tower polynomial to engine `Nterm`s for display or for matrix

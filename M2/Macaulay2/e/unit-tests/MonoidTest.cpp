@@ -2,6 +2,8 @@
  * @file unit-tests/MonoidTest.cpp
  * @brief gtest coverage for the `ExponentVector` exponent-array primitives.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts the `TEST(ExponentVector, All)` battery that exercises
  * the raw `exponents_t` (`int*`) primitives every polynomial
  * multiplication in the engine sits on top of: `copy`, `equal`,

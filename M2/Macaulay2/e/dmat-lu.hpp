@@ -7,6 +7,8 @@
  * @file dmat-lu.hpp
  * @brief Umbrella header for `DMat<R>` LU --- declares `DMatLinAlg<RingType>` and pulls in every back-end variant.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the dispatch template `DMatLinAlg<RingType>` and
  * `#include`s the per-ring LU specialisations:
  * `dmat-lu-inplace.hpp` (the `DMatLUinPlace<RingType>` worker

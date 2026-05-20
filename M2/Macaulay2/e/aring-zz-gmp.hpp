@@ -7,6 +7,8 @@
  * @file aring-zz-gmp.hpp
  * @brief `M2::ARingZZGMP` --- aring integer ring backed straight by GMP `mpz_t`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingZZGMP` is a `SimpleARing<ARingZZGMP>` whose `ElementType`
  * is GMP's `__mpz_struct` (the single-element form of `mpz_t`).
  * Arithmetic is delegated to the corresponding GMP primitives

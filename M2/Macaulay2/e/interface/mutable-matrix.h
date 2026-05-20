@@ -5,6 +5,8 @@
  * @file interface/mutable-matrix.h
  * @brief Engine-boundary C API for the engine's in-place `MutableMatrix`, including dense linear algebra.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points the M2 interpreter
  * routes to the engine's mutable matrix type. Construction
  * (`IM2_MutableMatrix_make`, `IM2_MutableMatrix_identity`,

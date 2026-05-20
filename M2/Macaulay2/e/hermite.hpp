@@ -6,6 +6,8 @@
  * @file hermite.hpp
  * @brief `HermiteComputation` --- Hermite normal form over `ZZ`, the `ZZ`-analogue of `GaussElimComputation`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `HermiteComputation`, a `GBComputation` subclass that
  * reduces a sparse matrix of generators over `ZZ` to a Hermite
  * normal form: each row has a distinct lead component, and the

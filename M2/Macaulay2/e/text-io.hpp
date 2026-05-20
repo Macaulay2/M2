@@ -6,6 +6,8 @@
  * @file text-io.hpp
  * @brief Text-formatting helpers layered on `buffer`: bignum print, line wrapping, `M2_gbTrace`-gated emit.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Provides the engine-wide text utilities every output path
  * reaches for. `bignum_text_out(buffer&, mpz_srcptr)` renders
  * an `mpz_t` integer with M2's display conventions (no

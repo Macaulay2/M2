@@ -4,6 +4,8 @@
  * @file Eschreyer.cpp
  * @brief Implementation of `GBMatrix` and `GBKernelComputation` --- the polynomial-at-a-time syzygy engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Two halves: the `GBMatrix` constructors and `to_matrix`
  * conversion that wrap a column collection of `gbvector*`s
  * (translating to and from the engine's standard `Matrix` /

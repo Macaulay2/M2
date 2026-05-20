@@ -7,6 +7,8 @@
  * @file error.h
  * @brief Engine error-reporting primitives: `ERROR`, `INTERNAL_ERROR`, `error`, `error_message`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the C-linkage error API used throughout the engine.
  * `ERROR(fmt, ...)` is the printf-style entry point that
  * `vsprintf`s its formatted string into a fixed `MAXERROR`-byte

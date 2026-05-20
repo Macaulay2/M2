@@ -7,6 +7,8 @@
  * @file dmat-gf-flint.hpp
  * @brief `DMat<M2::ARingGFFlint>` --- dense GF matrices stored in a FLINT `fq_zech_mat_t`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises the dense-matrix template for the small-`q`
  * Galois-field aring `ARingGFFlint`. Storage is a single
  * `fq_zech_mat_t mArray` whose entries are Zech log indices
@@ -55,6 +57,8 @@ class DMat;
 /**
  * @brief Specialisation of `DMat` for `ARingGFFlint` matrices, backed by
  * FLINT's `fq_zech_mat` (Zech-log) routines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Matrices over `GF(p^n)` for small-field cases: stores entries
  * in FLINT's discrete-log encoding and delegates linear-algebra

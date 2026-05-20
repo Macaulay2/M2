@@ -7,6 +7,8 @@
  * @file sagbi.hpp
  * @brief `sagbi` --- subduction helpers for canonical-subalgebra (SAGBI) bases.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the static-only `sagbi` namespace-class holding the
  * subduction primitives that would drive a native SAGBI engine.
  * Four overloads cover two shapes. The simple

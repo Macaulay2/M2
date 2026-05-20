@@ -8,6 +8,8 @@
  * @file localring.hpp
  * @brief `LocalRing` --- localisation of a polynomial ring at a prime ideal `P`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `LocalRing`, a `Ring` subclass whose value type
  * `local_elem` is a `(numer, denom)` pair (the same fraction
  * shape as `frac.hpp`) but with the denominator restricted to
@@ -49,6 +51,8 @@ struct local_elem
 
 /**
  * @brief Engine-side localisation of a polynomial ring at a prime ideal.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Elements are `local_elem*` pointers holding a `(numer, denom)`
  * pair with `denom` known not to lie in the prime; `is_in_prime`

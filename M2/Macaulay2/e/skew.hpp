@@ -7,6 +7,8 @@
  * @file skew.hpp
  * @brief `SkewMultiplication` --- configuration object naming the skew-commuting variables of a ring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `SkewMultiplication`, the pure-data record a
  * `PolyRing` (and `f4/moninfo.hpp`'s `MonomialInfo`) attaches
  * when the user declares a subset of the variables to
@@ -35,6 +37,8 @@
 /**
  * @brief Sign-rule helper used by every ring that has a skew-commutative
  * subset of variables (exterior factor, full skew ring, ...).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Stores which of the `_n_vars` variables are skew
  * (`_skew_list[0.._n_skew-1]`, with `_skew_exp[i]` a fast

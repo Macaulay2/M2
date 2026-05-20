@@ -31,6 +31,8 @@ std::unique_ptr<WordTable> constructWordTable(const FreeAlgebra& A, const ConstP
  * @brief Non-commutative analogue of `KBasis`: enumerates basis monomials
  * of a `FreeAlgebra` quotient up to a degree / length bound.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Holds the ambient `FreeAlgebra` plus the set of generator
  * variables / their heft degrees (`mVariables`, `mVariableHefts`),
  * a `WordTable` of GB lead terms (so monomials divisible by any

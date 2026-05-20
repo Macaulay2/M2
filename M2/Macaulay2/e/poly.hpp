@@ -7,6 +7,8 @@
  * @file poly.hpp
  * @brief Concrete commutative `PolyRing` --- standard polynomial ring inheriting from `PolyRingFlat`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the concrete `PolyRing` that engine code instantiates
  * whenever it talks about "a polynomial ring." The class
  * descends from the abstract layer in `polyring.hpp` through
@@ -48,6 +50,8 @@ class ChineseRemainder;
  * @brief Concrete `PolyRingFlat` subclass implementing ordinary commutative
  * polynomial rings `K[x_1, ..., x_n]` with a generic coefficient
  * ring `K` and monoid `M`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The default polynomial-ring implementation used by the engine
  * when no special structure (skew, Weyl, solvable, quotient,

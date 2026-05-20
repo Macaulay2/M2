@@ -5,6 +5,8 @@
  * @file timing.hpp
  * @brief Inline `std::chrono::steady_clock` wrappers and elapsed-time conversion helpers.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Provides `timer()` / `now()` (both returning a
  * `std::chrono::steady_clock::time_point`, hard-coded to the
  * steady clock) for capturing high-resolution timestamps, plus

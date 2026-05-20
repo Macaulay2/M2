@@ -4,6 +4,8 @@
  * @file unit-tests/ARingZZTest.cpp
  * @brief gtest coverage for the FLINT-backed `M2::ARingZZ` integer aring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Plugs `M2::ARingZZ` into the shared `ARingTest.hpp` harness
  * and provides the `getElement<M2::ARingZZ>` specialisation:
  * the first 50 indices give the deterministic `[-25, 24]`

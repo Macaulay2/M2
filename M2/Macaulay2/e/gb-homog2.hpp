@@ -6,6 +6,8 @@
  * @file gb-homog2.hpp
  * @brief `GB_comp` --- Buchberger GB specialised to homogeneous input.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the homogeneous-specialised Groebner basis class
  * `GB_comp`, along with its `GB_COMP_*` state constants
  * (`NEWDEGREE`, `NEED_RESIZE`, `S_PAIRS`, `GENS`, `AUTO_REDUCE`,

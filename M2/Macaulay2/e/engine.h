@@ -7,6 +7,8 @@
  * @file engine.h
  * @brief Legacy umbrella header that re-exports the per-area interface headers and carries the still-unmigrated entry points.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `engine.h` historically declared every public entry point in
  * one place. Today it forward-declares the engine's user-facing
  * handle types (`FreeModule`, `Matrix`, `MutableMatrix`,

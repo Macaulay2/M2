@@ -7,6 +7,8 @@
  * @file cra.hpp
  * @brief `ChineseRemainder` --- CRT lifting and rational reconstruction primitives.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `ChineseRemainder`, a static-only collection that
  * combines modular results back into `ZZ` and `QQ`. `CRA0` is
  * the core step: given `a mod m`, `b mod n` with `gcd(m, n) = 1`

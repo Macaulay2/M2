@@ -5,6 +5,8 @@
  * @file NCAlgebras/NCGroebner.hpp
  * @brief `NCGroebner` --- Buchberger-style two-sided Gröbner basis driver over a `FreeAlgebra`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the non-commutative analogue of `gbA`: given a list
  * of input polynomials in a `FreeAlgebra`, the class drives a
  * Buchberger-style loop where the role of S-pairs is taken by
@@ -52,6 +54,8 @@ extern void tryOutMathicCode();
 /**
  * @brief One-overlap-at-a-time Groebner basis driver for the free associative
  * algebra (the "Naive" companion to the F4-style `NCF4`).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Keeps the running GB in `mGroebner` (a `PolyList`) with per-element
  * sugar degrees in `mGroebnerDegrees` (-1 marks a retired entry).

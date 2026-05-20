@@ -7,6 +7,8 @@
  * @file gb-walk.hpp
  * @brief `GBWalker` --- generic Groebner-walk strategy that transports a basis between term orders.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `GBWalker`, a `GBComputation` subclass that
  * implements the Groebner-walk algorithm: given a basis for one
  * monomial ordering, traverse a path of intermediate orderings

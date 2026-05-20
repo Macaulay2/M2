@@ -6,6 +6,8 @@
  * @file interrupted.hpp
  * @brief `system_interrupted()` --- thread-safe polling predicate for Ctrl+C handling.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Exposes the single global function `system_interrupted()`,
  * which reads the thread-local atomic field
  * `interrupts_interruptedFlag` defined in the system

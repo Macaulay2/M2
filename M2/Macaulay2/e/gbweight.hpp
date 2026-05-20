@@ -7,6 +7,8 @@
  * @file gbweight.hpp
  * @brief `GBWeight` --- packed-weight evaluator that drives S-pair selection.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `GBWeight`, the helper that GB code consults to assign
  * a heuristic weight to a `gbvector` or to a single
  * `(monomial, component)` pair. The single constructor takes a
@@ -48,6 +50,8 @@ class gbvector;
 /**
  * @brief Heuristic-weight evaluator for `gbvector`s, used during Groebner
  * basis computation to drive the S-pair sugar strategy.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Caches a per-variable weight vector (`wts_`), an optional flag
  * `use_component_degrees_` that mixes in the target free module's

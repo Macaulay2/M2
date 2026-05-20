@@ -9,6 +9,8 @@
  * @file SLP.hpp
  * @brief Public umbrella header for the templated straight-line-program evaluator (`SLProgram` / `SLEvaluatorConcrete`).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * A straight-line program is a DAG whose nodes are inputs,
  * constants, and gate operations: the `SLProgram::GATE_TYPE`
  * enum in `SLP-defs.hpp` lists exactly `Copy`, `MCopy`, `Sum`,

@@ -7,6 +7,8 @@
  * @file dmat-gf-flint-big.hpp
  * @brief `DMat<M2::ARingGFFlintBig>` --- dense GF matrices stored in a FLINT `fq_nmod_mat_t`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises the dense-matrix template for the large-`q`
  * Galois-field aring `ARingGFFlintBig`. Storage is a single
  * `fq_nmod_mat_t mArray` whose entries are polynomials over
@@ -53,6 +55,8 @@ class DMat;
 /**
  * @brief Specialisation of `DMat` for `ARingGFFlintBig` matrices, backed by
  * FLINT's `fq_nmod_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Big-field counterpart of `DMat<ARingGFFlint>`: for `GF(p^n)`
  * extensions too large for Zech tables, entries are stored as

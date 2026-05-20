@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-monomial-sorter.hpp
  * @brief Schreyer-order column sorters for the F4 resolution Macaulay matrix.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the sort kernel called once per `(level, degree)`
  * cell to permute matrix columns into Schreyer order before
  * reduction. `MonomialSorterObject` captures a `Monoid` plus a
@@ -51,6 +53,8 @@
 /**
  * @brief Strict-weak comparator on integer indices into a `std::vector<int*>`
  * of monomials, used by the resolution code to sort columns.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Each `mMonoms[i]` is laid out as `[tiebreaker, basecomp,
  * actual_monomial...]`. `operator()(a, b)` compares the monomial
@@ -108,6 +112,8 @@ public:
 /**
  * @brief Sorter that orders `res_packed_monomial`s by their *total* (Schreyer)
  * monomial, with a stable tiebreaker derived from input order.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Allocates the `[tiebreaker, basecomp, totalmon]` triples inside
  * its own `memt::Arena` so the sort can run without touching the

@@ -4,6 +4,8 @@
  * @file unit-tests/ARingRRTest.cpp
  * @brief gtest coverage for the 53-bit double-backed `M2::ARingRR` real-number aring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Plugs `M2::ARingRR` into the `ARingTest.hpp` harness, defines
  * the per-backend `almostEqual(R, nbits, a, b)` epsilon checker
  * the floating-point tests use in place of exact equality, and

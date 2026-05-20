@@ -8,6 +8,8 @@
  * @file mutablecomplex.hpp
  * @brief `MutableComplex` --- in-place chain complex of `MutableMatrix` differentials.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `MutableComplex`, a `MutableEngineObject` subclass
  * carrying a sequence of `MutableMatrix*` differentials chained
  * together with a parallel `mBetti` vector of dimensions and
@@ -48,6 +50,8 @@
 /**
  * @brief Sequence of `MutableMatrix` differentials representing an in-progress
  * chain complex, used for engine-side minimisation / pruning.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds the underlying ring (`mRing`), and, if applicable, its
  * `LocalRing` / `PolynomialRing` casts so `prune_*` can switch to
@@ -104,6 +108,8 @@ class MutableComplex : public MutableEngineObject
   /**
    * @brief Cursor pointing at one entry of one differential matrix in the
    * complex: a `(matrix index, (row, col))` triple.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details `mIndex` selects which `MutableMatrix` in `mDifferential` and
    * `mAddr` selects a position inside it. The pruning API uses

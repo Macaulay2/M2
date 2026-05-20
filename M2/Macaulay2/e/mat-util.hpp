@@ -7,6 +7,8 @@
  * @file mat-util.hpp
  * @brief Generic helpers (`displayMat`, `concatenateMatrices`) for `DMat` / `SMat` matrices.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Collects the templated utilities that do not fit naturally
  * into `mat-arith.hpp`, `mat-elem-ops.hpp`, or `mat-linalg.hpp`.
  * `displayMat<Mat>(buffer& o, const Mat& A)` walks any

@@ -5,6 +5,8 @@
  * @file interface/cone.h
  * @brief Engine-boundary C API for rational polyhedral cone operations.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the two `extern "C"` entry points the M2 interpreter
  * uses for cone work, both routed through `libnormaliz` (the
  * in-file section comment confirms "Cone routines (via

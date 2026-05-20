@@ -7,6 +7,8 @@
  * @file interface/random.h
  * @brief Engine-boundary C API for the engine's PRNG and rational / real / complex random draws.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points that seed and consult
  * the engine's pseudo-random number generator:
  * `rawRandomInitialize` resets it, `rawSetRandomSeed(gmp_ZZ)`

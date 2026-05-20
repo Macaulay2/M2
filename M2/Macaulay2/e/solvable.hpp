@@ -7,6 +7,8 @@
  * @file solvable.hpp
  * @brief `SolvableAlgebra` --- scaffolding for a PBW algebra `x_j x_i = x_i x_j + q_{ij}` (multiplication unimplemented).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `SolvableAlgebra`, the `PolyRing` subclass intended
  * to model polynomial-shaped algebras whose generators do not
  * commute but satisfy a PBW-style straightening relation
@@ -41,6 +43,8 @@
  * @brief `PolyRing` subclass for solvable polynomial algebras (PBW-type
  * non-commutative rings where each pair of non-commuting variables
  * satisfies a relation of the form `x_j x_i = c_ij x_i x_j + lower`).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `Q_` is the matrix of `lower` correction terms indexed by
  * variable pairs --- when `mult_by_term1` would normally commute

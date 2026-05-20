@@ -8,6 +8,8 @@
  * @file GF.hpp
  * @brief Legacy `Ring`-based Galois field with explicit Zech-style lookup tables.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `GF` is the engine's original Galois-field implementation,
  * pre-dating the `aring` refactor. It inherits from `Ring`
  * directly (so arithmetic goes through virtual dispatch) and
@@ -40,6 +42,8 @@
 /**
  * @brief Engine-side finite field `GF(p^n)` built on top of `(Z/p)[t] / f(t)`
  * for a primitive element of the resulting field.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Represents non-zero elements by their discrete-logarithm index
  * relative to a chosen primitive `primitive_element`: index 0

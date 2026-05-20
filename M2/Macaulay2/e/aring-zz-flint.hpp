@@ -7,6 +7,8 @@
  * @file aring-zz-flint.hpp
  * @brief `M2::ARingZZ` --- FLINT-backed arbitrary-precision integers with small-value inlining.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingZZ` represents an integer as FLINT's `fmpz` (the
  * single-element form; `fmpz_t` is the array-of-one wrapper). FLINT
  * keeps values fitting in a single 64-bit word inline; only on

@@ -7,6 +7,8 @@
  * @file monomial-sets.hpp
  * @brief `MonomialSetFixedSize` / `MonomialSetVarSize` / `MonomialCollection*` / `MonomialMemorySpace` --- monomial-interning helpers.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares a five-class kit for interning monomials stored as
  * contiguous `int` sequences. `MonomialMemorySpace` wraps a
  * `memt::Arena` (memtailor) and hands out bump-pointer ranges
@@ -65,6 +67,8 @@
 /**
  * @brief Bump-pointer arena for monomial storage, backed by a `memt::Arena`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Hands out contiguous `int` ranges via `alloc(size)` (returns
  * `[begin, end)`). Supports LIFO `popLastAlloc` and `shrinkLastAlloc`
  * so a monomial can be allocated at its maximum length, written in
@@ -113,6 +117,8 @@ private:
  * @brief Combined hash + equality functor for fixed-size monomials, plugged
  * into the `std::unordered_set` inside `MonomialSetFixedSize`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Equality is `std::equal` over `mMonomialSize` ints; the hash is a
  * `TODO` stub that returns 0 (so the underlying hash set degenerates
  * to a single bucket and falls back on the equality comparator).
@@ -145,6 +151,8 @@ private:
 /**
  * @brief Combined hash + equality functor for variable-size monomials, plugged
  * into the `std::unordered_set` inside `MonomialSetVarSize`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Reads the leading int of each monomial as its length, then compares
  * the two ranges with `std::equal`. The hash is the same `TODO` stub
@@ -219,6 +227,8 @@ private:
  * @brief Hash set of interned variable-size monomials --- the variable-length
  * counterpart of `MonomialSetFixedSize`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Each monomial is a contiguous range `[m, m + *m)` where the leading
  * int is the length, so the set itself stores only `const int*`
  * pointers; the storage is owned by the caller (typically a
@@ -263,6 +273,8 @@ private:
 /**
  * @brief Interning collection that pairs a `MonomialSetFixedSize` with its own
  * `MonomialMemorySpace` to own monomial storage.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `findOrInsert(monom)` copies the caller's monomial into the arena,
  * tries to insert the new pointer into the set, and pops the
@@ -335,6 +347,8 @@ private:
 /**
  * @brief Variable-size counterpart of `MonomialCollectionFixedSize`: pairs a
  * `MonomialSetVarSize` with its own `MonomialMemorySpace`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `findOrInsert(monom)` allocates `*monom` ints in the arena, copies
  * the monomial in, attempts to intern the pointer, and pops on

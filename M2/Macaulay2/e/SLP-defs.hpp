@@ -9,6 +9,8 @@
  * @file SLP-defs.hpp
  * @brief Type declarations for the SLP DAG, its evaluator hierarchy, and the homotopy abstraction.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the type lattice the templated SLP machinery is built
  * on:
  *
@@ -52,6 +54,8 @@ class SLProgram;
 /**
  * @brief `MutableEngineObject` wrapper that owns an `SLProgram` via `unique_ptr`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Exposes the unwrapped DAG through `value()` so engine code that holds
  * an `M2SLProgram*` can reach the actual program without leaking its
  * concrete type to interpreter callers.
@@ -68,6 +72,8 @@ public:
 /**
  * @brief A straight-line program: a directed acyclic graph of arithmetic gates
  * over a fixed list of inputs and constants.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The DAG topology is stored in four parallel vectors (`mNodes`,
  * `mNumInputs`, `mInputPositions`, `mOutputPositions`) that wire each
@@ -122,6 +128,8 @@ class Homotopy;
 /**
  * @brief `MutableEngineObject` wrapper that owns a `Homotopy` via `unique_ptr`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Mirrors `M2SLProgram` / `M2SLEvaluator`: the interpreter handles an
  * opaque `M2Homotopy*` while the templated `HomotopyConcrete<RT,
  * Algorithm>` does the numerical path tracking behind `value()`.
@@ -139,6 +147,8 @@ public:
 /**
  * @brief Tag type selecting the no-op homotopy algorithm.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Used as the `Algorithm` template parameter of
  * `HomotopyConcrete<RT, Algorithm>` for rings that have no
  * specialised tracker; the corresponding `track()` body is the
@@ -150,6 +160,8 @@ class TrivialHomotopyAlgorithm
 /**
  * @brief Tag type selecting the fixed-precision homotopy algorithm.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Picked by `HomotopyAlgorithm<RT>` for `M2::ARingCC` and
  * `M2::ARingCCC`, where path tracking runs in a single working
  * precision rather than adapting.
@@ -159,6 +171,8 @@ class FixedPrecisionHomotopyAlgorithm
 };
 /**
  * @brief Tag type selecting the variable-precision homotopy algorithm.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Reserved for adaptive-precision tracking; not yet wired into
  * `HomotopyAlgorithm<RT>` for any current ring.
@@ -170,6 +184,8 @@ class VariablePrecisionHomotopyAlgorithm
 /**
  * @brief Traits class mapping a coefficient ring `RT` to its preferred
  * homotopy algorithm tag.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The primary template selects `TrivialHomotopyAlgorithm`; explicit
  * specialisations override that choice for specific numeric rings.
@@ -185,6 +201,8 @@ struct HomotopyAlgorithm
 /**
  * @brief Selects `FixedPrecisionHomotopyAlgorithm` for the double-precision
  * complex ring `M2::ARingCC`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  */
 template <>
 struct HomotopyAlgorithm<M2::ARingCC>
@@ -194,6 +212,8 @@ struct HomotopyAlgorithm<M2::ARingCC>
 /**
  * @brief Selects `FixedPrecisionHomotopyAlgorithm` for the arbitrary-precision
  * complex ring `M2::ARingCCC`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  */
 template <>
 struct HomotopyAlgorithm<M2::ARingCCC>
@@ -216,6 +236,8 @@ class SLEvaluator;
 /**
  * @brief `MutableEngineObject` wrapper holding a raw `SLEvaluator*`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Stores a raw pointer rather than `unique_ptr` --- per the inline
  * comment, this is a deliberate leak that avoids a heap-corruption bug
  * triggered when ownership is transferred. `value()` returns the
@@ -234,6 +256,8 @@ public:
 
 /**
  * @brief Abstract base for the SLP evaluator hierarchy.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds an `SLProgram*` plus iterators into its gate arrays and
  * declares the pure-virtual interface (`evaluate`, `specialize`,
@@ -322,6 +346,8 @@ class SLEvaluatorConcrete : public SLEvaluator
 
 /**
  * @brief Abstract base for the predictor-corrector path-tracker hierarchy.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The single virtual entry point `track()` walks columns of `inputs`
  * (each carrying an initial solution plus the start value of the

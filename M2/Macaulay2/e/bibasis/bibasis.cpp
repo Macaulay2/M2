@@ -11,6 +11,8 @@
  * @file bibasis/bibasis.cpp
  * @brief `rawBIBasis` --- C entry point bridging M2 to BIBasis's involutive-basis engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Defines the single `extern "C"` symbol `rawBIBasis(Matrix*, int)`
  * that the M2 interpreter (via the `BIBasis` package) calls to
  * compute a Boolean involutive basis. The function constructs a

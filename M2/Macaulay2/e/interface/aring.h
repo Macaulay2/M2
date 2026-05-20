@@ -5,6 +5,8 @@
  * @file interface/aring.h
  * @brief Engine-boundary C API for constructing `aring`-backed coefficient rings.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` `rawARing*` factories the M2
  * interpreter calls (via the generated `d/engine.dd` bindings)
  * whenever the user asks for one of the `aring`-family

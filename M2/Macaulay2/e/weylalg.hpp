@@ -8,6 +8,8 @@
  * @file weylalg.hpp
  * @brief `WeylAlgebra` --- ring of polynomial differential operators with `[d_i, x_i] = 1`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `PolyRing` subclass for the Weyl algebra: each
  * pair `(x_i, d_i)` of coordinate and derivative satisfies
  * `d_i x_i = x_i d_i + 1`, while every other generator commutes
@@ -43,6 +45,8 @@
 /**
  * @brief `PolyRing` subclass for Weyl algebras: polynomial rings with the
  * `[d_i, x_i] = 1` derivative-variable commutation relations.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Tracks a `_derivative[i]` / `_commutative[i]` index pair so the
  * ring knows which variables are partial derivatives and which are

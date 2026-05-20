@@ -6,6 +6,8 @@
  * @file comb.hpp
  * @brief `Subsets` --- combinatorial-number-system encoding of `p`-subsets of `{0,...,n-1}`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `Subsets` enumerates and encodes `q`-element subsets of
  * `{0, 1, ..., n - 1}` (for any `q <= p`) as a single integer index
  * via the standard combinatorial number system. The constructor
@@ -58,6 +60,8 @@ typedef std::vector<size_t> Subset;
 /**
  * @brief Bijective integer encoding of `q`-subsets of `{0, ..., n-1}` via
  * `binomial(a_0, 1) + binomial(a_1, 2) + ... + binomial(a_{q-1}, q)`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Constructed with maximum bounds `(n, p)`; supports encoding and
  * decoding of `q`-subsets for all `q <= p`. The encoding does not

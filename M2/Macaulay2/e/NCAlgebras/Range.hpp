@@ -5,6 +5,8 @@
  * @file NCAlgebras/Range.hpp
  * @brief Home-rolled `std::span` substitute and zipped-range view for the NC engines.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the engine's C++17 stand-in for `std::span`.
  * `Range<T>` is a pair of `T*`s representing `[first, last)`
  * with `begin()` / `end()` accessors so it works in range-`for`,

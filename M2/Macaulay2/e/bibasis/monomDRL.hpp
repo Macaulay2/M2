@@ -14,6 +14,8 @@
  * @file bibasis/monomDRL.hpp
  * @brief `BIBasis::MonomDRL` --- degree-reverse-lex specialisation of the BIBasis monomial type.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Concrete `Monom` subclass whose `Compare`, `operator<`, and
  * `operator>` compare by cached `TotalDegree` first and break
  * ties with reverse-lex on the variable list --- the default
@@ -46,6 +48,8 @@ namespace BIBasis
     /**
      * @brief `Monom` specialisation that orders monomials by degree, then
      * by reverse-lex on the variable list (DegRevLex).
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
      *
      * @details Same layout as `MonomDL` --- a `Monom` plus a per-class
      * `FastAllocator` and a `Next` chaining pointer --- but with

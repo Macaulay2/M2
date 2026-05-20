@@ -285,6 +285,8 @@ M2_arrayint rawMonomialIdealLCM(const MonomialIdeal *I) { return I->lcm(); }
  * @brief `Frobby::IdealConsumer` adapter that collects Frobby's output
  * monomials into an engine `MonomialIdeal`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Holds a scratch `exp` buffer of length `nv` (the variable count)
  * and a `MonomialIdeal* J` accumulator. Each `consume` callback
  * from Frobby converts the incoming `mpz_t**` exponent vector

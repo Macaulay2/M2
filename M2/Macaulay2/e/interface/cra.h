@@ -5,6 +5,8 @@
  * @file interface/cra.h
  * @brief Engine-boundary C API for Chinese-remainder lifting and rational reconstruction.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points the M2 interpreter
  * calls to combine modular results from independent prime-field
  * computations and lift them back to characteristic 0:

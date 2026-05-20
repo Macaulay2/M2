@@ -5,6 +5,8 @@
  * @file f4/varpower-monomial.hpp
  * @brief F4's `(variable, exponent)` sparse-monomial `ExponentList` specialisation (legacy).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Aliases `varpower_monomials = ExponentList<long, false>` and
  * the matching `index_varpower_monomial` iterator, then exposes
  * the F4-side `varpower_word` / `varpower_monomial` /

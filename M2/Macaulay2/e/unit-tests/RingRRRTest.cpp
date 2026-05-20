@@ -4,6 +4,8 @@
  * @file unit-tests/RingRRRTest.cpp
  * @brief gtest coverage for the legacy `RingRRR` --- `ConcreteRing<M2::ARingRRR>` glued back into the `ring_elem` API.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Tests the MPFR-backed arbitrary-precision real ring through
  * the legacy `Ring` surface that the interpreter still uses,
  * which means exercising the `aring-glue.hpp` `ConcreteRing<>`

@@ -7,6 +7,8 @@
  * @file f4/moninfo.hpp
  * @brief `MonomialInfo` --- F4's `packed_monomial` encoding plus operations.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `MonomialInfo`, the F4-side specialised monoid
  * descriptor. A `packed_monomial` is a `monomial_word*` (long
  * pointer) with the layout
@@ -89,6 +91,8 @@ typedef const monomial_word *const_packed_monomial;
 
 /**
  * @brief Per-ring monomial layout / encoding helper used by `F4GB`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds the variable count `nvars` and the encoded monomial word
  * width `nslots`, plus a per-variable hash table (`hashfcn`) and

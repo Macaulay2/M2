@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-f4-monlookup.hpp
  * @brief `ResF4MonomialLookupTableT<Key>` --- tree-structured leading-term index for the F4 resolution.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the resolution counterpart of `f4-monlookup.hpp`: a
  * templated Janet-style binary tree over `res_*_monomial`
  * encodings, parameterised on the `Key` payload returned by

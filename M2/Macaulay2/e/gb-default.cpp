@@ -725,6 +725,8 @@ struct spair_sorter
  * @brief Comparator on `gbA::spair*` used by the default Groebner basis
  * driver to order its S-pair queue.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Orders descending by sugar `deg` (largest first --- the queue
  * processes pairs of equal degree as a cohort), then by `spair`
  * type, then by lead term of the S-polynomial. The two helpers

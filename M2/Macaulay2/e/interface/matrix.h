@@ -5,6 +5,8 @@
  * @file interface/matrix.h
  * @brief Engine-boundary C API for constructing, transforming, and inspecting immutable `Matrix` objects.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points that span the entire
  * life cycle of the engine's immutable `Matrix`. Per-function
  * `/* drg: connected ... */` trailers name the M2-side binding.

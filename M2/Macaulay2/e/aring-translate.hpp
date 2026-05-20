@@ -7,6 +7,8 @@
  * @file aring-translate.hpp
  * @brief Cross-ring coercion templates: `mypromote` / `mylift` between two `aring` rings, and `get_from_*` from an external M2 numeric type into an `aring`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the templated cross-ring coercion routines:
  * `mypromote<RingR, RingS>(R, S, fR, result_fS)` for the
  * forward direction `R -> S` (e.g. `Q -> RR` via

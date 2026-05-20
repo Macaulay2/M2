@@ -4,6 +4,8 @@
  * @file unit-tests/ARingQQFlintTest.cpp
  * @brief gtest coverage for the FLINT-backed `M2::ARingQQFlint` rational aring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Plugs `M2::ARingQQFlint` into the `ARingTest.hpp` harness via
  * the `getElement<M2::ARingQQFlint>` specialisation: indices
  * `< 50` produce the deterministic `[-25, 24]` integer prefix

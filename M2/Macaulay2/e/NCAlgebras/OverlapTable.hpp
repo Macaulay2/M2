@@ -5,6 +5,8 @@
  * @file NCAlgebras/OverlapTable.hpp
  * @brief `OverlapTable` --- degree-sorted queue of pending word overlaps for non-commutative GB drivers.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the non-commutative analogue of the commutative
  * `SPair` set. An `Overlap = std::tuple<int, int, int, bool>`
  * is `(i, j, k, computed)` recording that a suffix of basis
@@ -58,6 +60,8 @@ using OverlapMap = std::map<std::pair<int,bool>,std::deque<Overlap>>;
 /**
  * @brief Per-degree FIFO queue of pending overlaps for the NC Groebner
  * basis driver to process.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `Overlap = (firstIndex, position, secondIndex, computedFlag)`
  * encodes one prefix/suffix overlap of two `mPolyList` entries;

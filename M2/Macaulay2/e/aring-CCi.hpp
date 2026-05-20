@@ -7,6 +7,8 @@
  * @file aring-CCi.hpp
  * @brief `M2::ARingCCi` --- certified complex intervals as Cartesian rectangles of MPFI intervals.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingCCi` represents a complex value as a pair of real
  * intervals `(re_interval, im_interval)` --- i.e. a Cartesian
  * rectangle in the complex plane. Endpoints have arbitrary
@@ -58,6 +60,8 @@ namespace M2 {
 /**
  * @brief `aring`-style adapter for arbitrary-precision complex intervals,
  * stored as `(MPFI, MPFI)` pairs.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `ElementType` is `cci_struct` --- MPFI intervals for the real
  * and imaginary components, so arithmetic yields rigorous

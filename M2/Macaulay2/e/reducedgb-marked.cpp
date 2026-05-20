@@ -24,6 +24,8 @@ void MarkedGB::set_gb(VECTOR(POLY) & polys0) { (void) polys0; }
  * @brief Index comparator for sorting a `MarkedGB`'s `gb` array by the
  * lead-term ordering induced by the user-supplied marking.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Same shape as `ReducedGB_Field_sorter`: captures references to
  * `GBRing`, `FreeModule`, and `gb`, and `operator()(a, b)`
  * dispatches to the lead-term comparator. Used in the marked-GB

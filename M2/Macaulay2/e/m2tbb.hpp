@@ -5,6 +5,8 @@
  * @file m2tbb.hpp
  * @brief Engine TBB shim --- single point of inclusion for every parallel primitive.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Brings in `mathicgb/mtbb.hpp` after consulting `M2/config.h`
  * for the configure-time `WITH_TBB` flag. When TBB is not
  * available the header defines `MATHICGB_NO_TBB`, which routes

@@ -2,6 +2,8 @@
  * @file dmat-lu-zzp-ffpack.hpp
  * @brief `DMatLinAlg<ARingZZpFFPACK>` and the `ffpackInterface` namespace --- FFLAS-FFPACK-backed Z/p linear algebra.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `ffpackInterface` namespace whose free functions
  * (`rank`, `determinant`, two `rankProfile` overloads,
  * `solveLinear`, `inverse`, `nullSpace`) operate on
@@ -57,6 +59,8 @@ size_t nullSpace(const DMatZZpFFPACK& A, DMatZZpFFPACK& result_nullspace);
  * @brief Specialisation of `DMatLinAlg` for `ARingZZpFFPACK` dense matrices,
  * delegating rank / determinant / kernel / solve / inverse to the
  * FFPACK library's tuned `Z/p` routines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details FFPACK gives near-BLAS speed for dense linear algebra over `Z/p`
  * by laying entries out as native floats. The specialisation

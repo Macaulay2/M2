@@ -7,6 +7,8 @@
  * @file imonorder.hpp
  * @brief Internal (runtime) form of a monomial ordering.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Defines the encoded representation walked by the inner loop when two
  * monomials are compared --- the operational counterpart to the declarative
  * `MonomialOrdering` the user writes. The internal form is a list of
@@ -56,6 +58,8 @@ struct mo_block
 /**
  * @brief Internal compiled form of a monomial ordering, derived from a
  * front-end `MonomialOrdering` by `monomialOrderMake`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds the variable count (`nvars`), the encoded monomial word
  * width (`nslots`), the ordered list of `mo_block`s that make up

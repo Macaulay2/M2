@@ -14,6 +14,8 @@
  * @file bibasis/allocator.hpp
  * @brief `BIBasis::FastAllocator` --- per-size-class slab allocator for BIBasis's small objects.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the slab pool that supplies storage for the millions
  * of tiny `Monom`, `Polynom`, and `Triple` records the involutive-
  * basis algorithm churns through. Each `FastAllocator` instance
@@ -40,6 +42,8 @@ namespace BIBasis
     /**
      * @brief Slab allocator handing out fixed-size blocks for one BIBasis
      * type per instance.
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
      *
      * @details Allocates `MemoryPageSize`-byte pages from the system heap
      * and carves each page into `TSize`-byte cells (typically the

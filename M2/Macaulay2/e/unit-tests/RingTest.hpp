@@ -7,6 +7,8 @@
  * @file unit-tests/RingTest.hpp
  * @brief Shared gtest fixture for the legacy `Ring`-based `Ring*Test.cpp` suite.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the harness the legacy-ring tests share: the
  * primary `getElement<RingType>(R, index)` function template
  * (specialised per ring in the corresponding `Ring*Test.cpp`)

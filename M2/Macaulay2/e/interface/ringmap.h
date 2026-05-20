@@ -5,6 +5,8 @@
  * @file interface/ringmap.h
  * @brief Engine-boundary C API for constructing and evaluating `RingMap` homomorphisms.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points the M2 interpreter
  * uses for ring homomorphisms `R -> S`. Construction:
  * `IM2_RingMap_make1(M)` builds a `RingMap*` from an image

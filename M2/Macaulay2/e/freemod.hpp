@@ -7,6 +7,8 @@
  * @file freemod.hpp
  * @brief `FreeModule` --- finite-rank free module `R^n`, the type-level anchor for every `Matrix`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `FreeModule`, an `EngineObject` that holds its base
  * `Ring *R`, the per-generator degree vectors in
  * `gc_vector<monomial> components` (the rank is just
@@ -49,6 +51,8 @@ class GBMatrix;
 
 /**
  * @brief Engine-side free module `R^n` over a `Ring`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds the underlying `Ring*` plus a `components` vector with the
  * multi-degree of each generator; optionally carries a

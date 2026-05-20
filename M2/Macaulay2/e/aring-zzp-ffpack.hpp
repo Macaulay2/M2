@@ -7,6 +7,8 @@
  * @file aring-zzp-ffpack.hpp
  * @brief `M2::ARingZZpFFPACK` --- `Z/p` via FFLAS-FFPACK's `Givaro::Modular<double>` field.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingZZpFFPACK` represents a `Z/p` value as
  * `Givaro::Modular<double>::Element` --- a reduced representative
  * in `[0, p)` stored as a `double`. The `double` choice is

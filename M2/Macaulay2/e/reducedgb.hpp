@@ -7,6 +7,8 @@
  * @file reducedgb.hpp
  * @brief `ReducedGB` --- abstract base for the canonicalising reduction pass that follows GB computation.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `ReducedGB`, a `GBComputation` subclass that takes
  * an already-computed Groebner basis and canonicalises it:
  * leading monomials become distinct, no tail term is divisible

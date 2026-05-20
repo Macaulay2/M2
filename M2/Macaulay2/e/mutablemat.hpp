@@ -7,6 +7,8 @@
  * @file mutablemat.hpp
  * @brief Umbrella header that ties together `MutableMat` declarations, implementations, and the SLP variant.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Pulls in `mutablemat-defs.hpp` (the templated `MutableMat<MatT>`
  * class declarations and the abstract `MutableMatrix` virtuals it
  * implements), `mutablemat-imp.hpp` (the inline template

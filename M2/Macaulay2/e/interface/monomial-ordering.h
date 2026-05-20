@@ -5,6 +5,8 @@
  * @file interface/monomial-ordering.h
  * @brief Engine-boundary C API for assembling block-level `MonomialOrdering`s from declarative pieces.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `MonomialOrdering_type` enum --- `MO_LEX`,
  * `MO_GREVLEX`, packed `MO_LEX2` / `MO_LEX4` /
  * `MO_GREVLEX2` / `MO_GREVLEX4`, weighted GRevLex variants
@@ -83,6 +85,8 @@ typedef struct mon_part_rec_
 /**
  * @brief Front-end-side description of a monomial ordering as a list of
  * `mon_part` blocks.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `_hash` caches the front-end hash so order objects can be
  * compared and deduplicated cheaply; `len` is the number of

@@ -5,6 +5,8 @@
  * @file NCAlgebras/WordTable.hpp
  * @brief `WordTable` / `WordWithDataTable` --- leading-word indices for non-commutative Gröbner basis lookup.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the two structures `NCGroebner` and `NCF4` consult
  * to answer "does some basis leading word occur as a contiguous
  * subword of this target?" --- the non-commutative analogue of
@@ -70,6 +72,8 @@ using Overlap = std::tuple<int,int,int,bool>;
 /**
  * @brief Index of `Word`s (non-commutative monomials) with subword,
  * prefix/suffix, and overlap lookup used by the NC Groebner code.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Stores monomials in `mMonomials` and a parallel `mIndices` slot
  * per entry (-1 marks a retired word the search routines should
@@ -175,6 +179,8 @@ private:
 /**
  * @brief Variant of `WordTable` where each stored monomial carries an
  * additional ecart-degree datum that gates subword matches.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Same skeleton as `WordTable` (parallel `mMonomials` / `mIndices`
  * with -1 marking retired entries), but `subword` queries take an

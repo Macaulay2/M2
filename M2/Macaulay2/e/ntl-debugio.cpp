@@ -4,6 +4,8 @@
  * @file ntl-debugio.cpp
  * @brief Debugger-callable `dntl_*` printers for NTL `mat_ZZ` and `ZZ` values.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Defines two short helpers --- `dntl_matZZ(const NTL::mat_ZZ*)`
  * and `dntl_ZZ(const NTL::ZZ*)` --- that send an NTL matrix or
  * big integer to `std::cout`. They exist solely for interactive

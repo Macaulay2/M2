@@ -5,6 +5,8 @@
  * @file matrix-con.hpp
  * @brief `MatrixConstructor` --- the mutable builder that produces an immutable `Matrix`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `MatrixConstructor`, the builder side of the matrix
  * API (one of `Matrix`'s two `friend` declarations, alongside
  * `FreeModule`). It holds the ring, the target and (optionally)
@@ -41,6 +43,8 @@ class MatrixGenerator;
 /**
  * @brief Mutable builder used to assemble an immutable `Matrix` one column
  * (or one term) at a time.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Held while the matrix is in flux: tracks the target / source
  * `FreeModule`s, the in-progress column vectors in `entries`, a

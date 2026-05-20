@@ -14,6 +14,8 @@
  * @file bibasis/launcher.hpp
  * @brief `BIBasis::Launcher` --- monomial-order dispatcher between the engine boundary and `BooleanInvolutiveBasis`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the single `Launcher` class that the engine's
  * `rawBIBasis` entry calls into. `GetBIBasisMatrix(matrix,
  * toGroebner)` validates the input via `CheckMatrix`, reads the
@@ -45,6 +47,8 @@ namespace BIBasis
      * @brief Top-level entry point that runs a BIBasis (boolean involutive)
      * computation on an engine `Matrix` and returns the result as a
      * `Matrix`.
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
      *
      * @details `GetBIBasisMatrix(matrix, toGroebner)` validates the input
      * via `CheckMatrix`, dispatches to the involutive solver

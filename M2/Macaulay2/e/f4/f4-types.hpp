@@ -7,6 +7,8 @@
  * @file f4/f4-types.hpp
  * @brief Shared type vocabulary used across the F4 engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the inner-loop record types the F4 algorithm
  * shares. Polynomial form: `GBF4Polynomial` (length + opaque
  * `ElementArray coeffs` + flat `monomial_word* monoms` buffer)
@@ -93,6 +95,8 @@ enum class SPairType {
 
 /**
  * @brief Compact polynomial layout used inside the F4 GB engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `len` is the number of terms, `coeffs` is the parallel
  * `ElementArray` of coefficients, and `monoms` is a flat buffer of
@@ -182,6 +186,8 @@ typedef int (MonomialInfo::*CompareFunction)(const monomial_word *,
  * @brief Comparator that orders Macaulay-matrix column indices by the
  * monomial each column represents, using the ambient `MonomialInfo`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Fed to `std::sort` so the F4 matrix builder can put the columns
  * into the monoid's order before reduction. Keeps two static
  * counters (`ncmps`, `ncmps0`) to let profiling code report how
@@ -233,6 +239,8 @@ class ColumnsSorter
  * @brief Comparator that orders indices into the current GB array (`gb_array`)
  * by each `gbelem`'s leading monomial, in increasing order.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `operator()` returns true when `gb[a]`'s leading monomial is
  * strictly less than `gb[b]`'s under `MonomialInfo::compare`. Like
  * `ColumnsSorter` it keeps `ncmps` / `ncmps0` profiling counters.
@@ -282,6 +290,8 @@ class GBSorter
  * @brief Comparator that orders `pre_spair*` pointers by the `quot`
  * varpower monomial of each pre-S-pair.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Uses `varpower_monomials::compare` directly and keeps a single
  * `ncmps` profiling counter. Applied during S-pair generation,
  * before the pre-pairs are promoted to full `spair`s.
@@ -316,6 +326,8 @@ class PreSPairSorter
 /**
  * @brief Comparator on indices into an `spair` table, ordering by sugar
  * degree then by the larger of the two parent indices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Drives the S-pair queue inside the F4 algorithm: largest sugar
  * degree first, then largest `i`. `operator()(s, t)` returns true

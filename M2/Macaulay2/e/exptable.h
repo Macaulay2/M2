@@ -5,6 +5,8 @@
  * @file exptable.h
  * @brief Hash table specialisation for `(exponent vector, unsigned long)` pairs.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises David R. Hanson's generic C `Table_T`
  * (declared in `table.h`) for the case the engine cares about
  * most: keys are fixed-length integer exponent vectors and values

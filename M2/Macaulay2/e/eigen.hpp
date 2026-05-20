@@ -5,6 +5,8 @@
  * @file eigen.hpp
  * @brief `EigenM2` namespace --- Eigen3-backed SVD / eigenvalues / eigenvectors / least-squares for `DMat<R>` over `RR`, `CC`, `RRR`, `CCC`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares aliases `LMatrixRR`, `LMatrixCC`, `LMatrixRRR`,
  * `LMatrixCCC` over the four `DMat<R>` instantiations the engine
  * cares about for numerical linear algebra, then a namespace

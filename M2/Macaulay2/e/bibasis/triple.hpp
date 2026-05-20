@@ -14,6 +14,8 @@
  * @file bibasis/triple.hpp
  * @brief `BIBasis::Triple<MonomType>` --- (polynomial, ancestors, non-multiplicative variables) record driving Janet division.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares and defines the bundle the involutive engine carries
  * around: a `Polynom<MonomType>` together with a cached pointer
  * to its leading monomial, the strong and weak `Ancestor` /

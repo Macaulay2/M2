@@ -5,6 +5,8 @@
  * @file gbring.hpp
  * @brief `GBRing` and `gbvector` --- the GB-tuned polynomial-ring view used by classical Buchberger code.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `gbvector` is the value type: a singly-linked list of
  * `{ gbvector *next; ring_elem coeff; int comp; int monom[1]; }`
  * nodes, with the flexible-array `monom[1]` trailing whatever
@@ -84,6 +86,8 @@ struct gbvector
 /**
  * @brief Pairs a `gbvector` with its evolving syzygy `gbvector`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `f` is the polynomial in the current module and `fsyz` is the
  * syzygy expressing how `f` was built from the original generators.
  * Carried together throughout a Groebner basis computation so that
@@ -100,6 +104,8 @@ typedef int *monomial;
 /**
  * @brief Polynomial-ring view tuned for the inner loop of classical Buchberger
  * Groebner-basis computations.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds the coefficient ring, the (flattened) monoid, and the
  * Schreyer-order machinery, and exposes the `gbvector` arithmetic
@@ -555,6 +561,8 @@ class GBRing : public our_new_delete
 /**
  * @brief `GBRing` specialisation for ordinary commutative polynomial rings.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `mult_by_term1` is the straightforward commutative monomial-by-term
  * multiplication; no reordering or commutator corrections are needed.
  * This is the default `GBRing` returned by `GBRing::create` when the
@@ -576,6 +584,8 @@ class GBRingPoly : public GBRing
 
 /**
  * @brief `GBRing` specialisation for Weyl algebras over a field.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `mult_by_term1` defers to the underlying `WeylAlgebra` to apply the
  * `[d, x] = 1` commutation relations during monomial-by-term
@@ -600,6 +610,8 @@ class GBRingWeyl : public GBRing
 /**
  * @brief `GBRingWeyl` specialisation for Weyl algebras over `ZZ`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Overrides `mult_by_term1` to handle the `ZZ`-coefficient case where
  * the commutator corrections may not divide cleanly and the GB
  * algorithm must track content / primitive parts.
@@ -622,6 +634,8 @@ class GBRingWeylZZ : public GBRingWeyl
 /**
  * @brief `GBRing` specialisation for skew-commutative (exterior-like)
  * polynomial rings.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `mult_by_term1` applies the sign changes prescribed by the
  * `SkewMultiplication` table when monomial variables are reordered,
@@ -646,6 +660,8 @@ class GBRingSkew : public GBRing
  * @brief `GBRing` specialisation for solvable polynomial algebras (PBW-style
  * non-commutative rings whose relations have the form
  * `x_j * x_i = c_ij * x_i * x_j + lower-order terms`).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `mult_by_term1` consults the associated `SolvableAlgebra` to expand
  * the lower-order correction terms whenever a monomial multiplication

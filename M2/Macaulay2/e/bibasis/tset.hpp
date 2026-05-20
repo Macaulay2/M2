@@ -14,6 +14,8 @@
  * @file bibasis/tset.hpp
  * @brief `BIBasis::TSet<MonomType>` --- the running intermediate involutive basis (T-set).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares and defines the container that holds the
  * "intermediate basis" the involutive driver builds incrementally
  * before producing its final answer. Internally a `std::list` of

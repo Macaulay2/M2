@@ -7,6 +7,8 @@
  * @file aring-glue.hpp
  * @brief `ConcreteRing<RingType>` --- the templated bridge between `aring` and the legacy `Ring` API.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ConcreteRing<RingType>` is a `Ring` subclass that owns a
  * `std::unique_ptr<RingType>` to a concrete aring (`ARingZZ`,
  * `ARingZZpFlint`, ...) and implements every `Ring` virtual by
@@ -473,6 +475,8 @@ class ConcreteRing : public Ring
  * @brief `Ring`-level `QQ` ring, a thin specialisation of
  * `ConcreteRing<ARingQQ>` that marks itself with `is_QQ()` and
  * `coefficient_type() == COEFF_QQ`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Owns its `ARingQQ` through the `ConcreteRing` base. The static
  * `create()` factory wires up the zero / one elements, declares

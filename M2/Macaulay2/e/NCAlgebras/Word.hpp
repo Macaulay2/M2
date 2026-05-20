@@ -5,6 +5,8 @@
  * @file NCAlgebras/Word.hpp
  * @brief `Word` and `WordWithData` --- non-owning views over the flat-int encoding of a non-commutative word.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the NC-side lightweight view that every word-table,
  * suffix-tree, overlap, and reduction routine passes around.
  * `Word` carries `mBegin` / `mEnd` pointers plus a cached size
@@ -40,6 +42,8 @@
 /**
  * @brief Non-owning view of a non-commutative word: `[begin, end)` of `int`
  * variable indices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Stores three pointers / lengths (`mBegin`, `mEnd`, `mSize`) into
  * an externally owned buffer (typically a `MemoryBlock` arena in
@@ -93,6 +97,8 @@ std::ostream& operator<<(std::ostream& o, const Word& w);
 /**
  * @brief `Word` plus its ecart degree and heft degree --- the value type
  * `WordWithDataTable` stores.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `mEcartDegree` records the power of an invisible homogenising
  * variable so divisibility checks in `WordWithDataTable::subword`

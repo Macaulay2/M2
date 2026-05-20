@@ -7,6 +7,8 @@
  * @file res-a0.hpp
  * @brief `res2_comp` --- original (1996) free-resolution engine using explicit pair processing.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `res2_comp`, the engine's first-generation
  * resolution computation. The class drives a traditional
  * Schreyer-style algorithm with its own polynomial type

@@ -7,6 +7,8 @@
  * @file unit-tests/fromStream.cpp
  * @brief Per-ring `fromStream` specialisations shared across the legacy `Ring*Test.cpp` suite.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Centralises the explicit-instantiation definitions of the
  * `fromStream<T>(istream, R, result)` family declared in
  * `RingTest.hpp`. `fromStream<M2::ARingZZp>` reads an `int` and

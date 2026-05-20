@@ -12,6 +12,8 @@
  * @file assprime.hpp
  * @brief `AssociatedPrimes` --- codimension and minimal-codimension associated primes of a monomial ideal.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `AssociatedPrimes`, a class that operates on a
  * `MonomialIdeal` (the constructor calls `I->radical()` so the
  * input need not be pre-radicalised). Its `state` enum has two

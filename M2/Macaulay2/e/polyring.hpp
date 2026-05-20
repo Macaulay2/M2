@@ -7,6 +7,8 @@
  * @file polyring.hpp
  * @brief `PolynomialRing` --- abstract polynomial-ring base, the engine's most-reused class.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the abstract `PolynomialRing` (`R[x_1, ..., x_n]`)
  * and the intermediate `PolyRingFlat` further down in the same
  * file --- the latter asserts that the coefficient ring is not
@@ -74,6 +76,8 @@ class GBComputation;
 
 /**
  * @brief Abstract base for the engine's polynomial-ring hierarchy.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Adds polynomial-specific state (graded flag, skew /
  * Weyl / solvable flags and their auxiliary data, coefficient-type
@@ -444,6 +448,8 @@ class PolynomialRing : public Ring
 /**
  * @brief `PolynomialRing` subclass whose elements are represented as a
  * single flat `Nterm*` linked list (no fraction / quotient wrapper).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The fast common case --- ordinary polynomial rings over a base
  * coefficient ring. `numerator(f)` is simply `f.poly_val`, so

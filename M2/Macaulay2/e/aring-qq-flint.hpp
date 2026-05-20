@@ -7,6 +7,8 @@
  * @file aring-qq-flint.hpp
  * @brief `M2::ARingQQFlint` --- rationals backed by FLINT's `fmpq` with small-value inlining.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingQQFlint` represents a rational as FLINT's `fmpq` data
  * struct, a pair of `fmpz`s that therefore inherits the
  * small-value inlining used by `ARingZZ` (`aring-zz-flint.hpp`):

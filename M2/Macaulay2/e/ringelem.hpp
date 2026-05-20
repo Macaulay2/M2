@@ -7,6 +7,8 @@
  * @file ringelem.hpp
  * @brief `ring_elem` --- the universal value type carried by every `Ring*` in the engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `ring_elem` union plus the GMP/MPFR/MPFI const
  * and mutable pointer aliases (`ZZ`, `ZZmutable`, `QQ`,
  * `QQmutable`, `RRRelement`, `RRRmutable`, `RRielement`,
@@ -138,6 +140,8 @@ union ring_elem
 /**
  * @brief Singly linked-list node carrying one term of a polynomial-ring
  * element.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `next` chains to the next term, `coeff` holds the term's
  * coefficient (in the parent ring's `ring_elem` representation),

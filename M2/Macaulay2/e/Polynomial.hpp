@@ -5,6 +5,8 @@
  * @file Polynomial.hpp
  * @brief Modern `Monom` / `Polynomial` value types shared by NC algebras and the refactored F4.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `Monom` is an array-of-ints encoding of a non-commutative word
  * with a degree prefix: `[length, degree, var_1, ..., var_n]`
  * where `length = n + 2`. The length-field-first layout lets a
@@ -43,6 +45,8 @@
 /**
  * @brief Non-owning view onto a `[length, degree, v1, v2, ..., vn]` packed
  * monomial in some externally managed buffer.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details A `Monom` is just a `const int*` cursor; the leading int is the
  * total length (including itself), followed by the degree, then the
@@ -87,6 +91,8 @@ std::ostream& operator<<(std::ostream& o, const Monom& m);
 /**
  * @brief `Monom` extended with a module component, a stored index, and a
  * memoised hash --- the value type of `IntsSet` and friends.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Layout: `[len, value/index, hashval, comp, deg, v1, ..., vr]`.
  * The trailing slice `[len-3, deg, v1, ..., vr]` is exactly a
@@ -316,6 +322,8 @@ private:
 /**
  * @brief Default `CoefficientRingType` parameter for `Polynomial<...>`:
  * a thin trait whose `ElementType` is just `ring_elem`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Used to instantiate the alias `Poly = Polynomial<CoefficientRingType>`
  * --- the non-commutative engine's standard polynomial type that

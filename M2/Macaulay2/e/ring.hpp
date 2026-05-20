@@ -7,6 +7,8 @@
  * @file ring.hpp
  * @brief `Ring` --- the legacy abstract base class for every coefficient and polynomial ring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `Ring`, the virtual base from which every ring in
  * M2's legacy interface descends: `RingZZ`, `Z_mod`, `PolyRing`
  * (with the flavoured subclasses `SkewPolynomialRing`,
@@ -651,6 +653,8 @@ class Ring : public MutableEngineObject
 /**
  * @brief Abstract incremental accumulator that builds a `ring_elem` from
  * many `add(f)` calls.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Provides a single-value `getValue()` entry point that finalises
  * whatever the underlying ring decided to do with the staged

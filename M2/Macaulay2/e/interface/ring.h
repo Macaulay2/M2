@@ -5,6 +5,8 @@
  * @file interface/ring.h
  * @brief Engine-boundary C API for the legacy `Ring` hierarchy --- coefficient, polynomial, and composite rings.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` factories the M2 interpreter calls
  * to build every `Ring` flavour. Coefficient rings:
  * `IM2_Ring_ZZ` / `_QQ` (singleton getters), `IM2_Ring_ZZp(p)`

@@ -6,6 +6,8 @@
  * @file frac.hpp
  * @brief `FractionField` --- field of fractions of an integral domain, with on-the-fly normalisation.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `FractionField` (a `Ring` subclass) along with its
  * value type `frac_elem`, a `(numer, denom)` pair of
  * `ring_elem`s. Construction wraps a base ring `R_` that the
@@ -44,6 +46,8 @@ struct frac_elem
 
 /**
  * @brief Engine-side fraction field of a polynomial domain `R_`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Elements are `frac_elem*` pointers carrying a `(numer, denom)`
  * pair, with `simplify` keeping them in lowest terms whenever

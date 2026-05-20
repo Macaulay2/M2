@@ -4,6 +4,8 @@
  * @file unit-tests/ARingCCTest.cpp
  * @brief gtest coverage for the `complex<double>`-backed `M2::ARingCC` complex aring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Plugs `M2::ARingCC` into the `ARingTest.hpp` harness, defines
  * the complex `almostEqual` that compares the magnitude of
  * `a - b` against a `2^-nbits` epsilon resolved through the

@@ -7,6 +7,8 @@
  * @file aring-RR.hpp
  * @brief `M2::ARingRR` --- machine-precision real numbers (IEEE 754 `double`).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingRR` is the simplest real ring in the aring family: a
  * `SimpleARing<ARingRR>` whose `elem` is plain `double` and whose
  * `get_precision()` returns `53` (the IEEE 754 mantissa width).
@@ -46,6 +48,8 @@ class RingMap;
 namespace M2 {
 /**
  * @brief `aring`-style adapter for double-precision real numbers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `ElementType` is a plain `double`. Fixed precision (53 bits per
  * `get_precision()`), characteristic 0. `ringID = ring_RR`. Hash

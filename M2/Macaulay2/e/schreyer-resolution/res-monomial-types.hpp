@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-monomial-types.hpp
  * @brief Typed-monomial vocabulary shared by `ResMonoid`, `ResPolyRing`, `SchreyerFrame`, and `F4Res`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the typedefs the F4 resolution layer uses in place
  * of raw `int*`. `myword = int32_t` is the per-slot integer;
  * `res_ntuple_monomials = ExponentVector<myword, false>` is

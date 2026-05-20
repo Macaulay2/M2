@@ -10,6 +10,8 @@
  * @file points.hpp
  * @brief `PointsComputation<CoeffRing>::points` --- ideal and standard-monomial basis of a finite point set.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Templated entry point that takes a polynomial ring `R`, its
  * coefficient ring `K`, and a `DMat<CoeffRing>` whose columns are
  * points in `K^n`, and returns generators of the vanishing ideal

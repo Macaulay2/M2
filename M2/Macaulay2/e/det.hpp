@@ -7,6 +7,8 @@
  * @file det.hpp
  * @brief Determinants and minors of `Matrix` values via Bareiss, cofactor, or dynamic-programming strategies.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `DetComputation` and the three integer strategy
  * constants the caller selects between: `DET_BAREISS`,
  * `DET_COFACTOR`, and `DET_DYNAMIC`. Bareiss is the fraction-free

@@ -7,6 +7,8 @@
  * @file relem.hpp
  * @brief `RingElement` --- tagged `(Ring*, ring_elem)` pair, the engine's universal element type.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `RingElement`, the `EngineObject` subclass that
  * stores one element of a ring as a pair `(R, val)`: the
  * `Ring*` pointer tags the value and the opaque `ring_elem`
@@ -49,6 +51,8 @@ class EngineMonomial;
 /**
  * @brief Front-end-visible "ring element" value: an engine `ring_elem`
  * paired with the `Ring*` that gives it meaning.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The interpreter handles ring elements as opaque
  * `RingElement*` pointers and asks the engine to do arithmetic

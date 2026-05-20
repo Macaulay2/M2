@@ -7,6 +7,8 @@
  * @file aring-gf-flint-big.hpp
  * @brief `M2::ARingGFFlintBig` --- arbitrary-degree `GF(p^k)` via FLINT `fq_nmod`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingGFFlintBig` (registered as `ringID = ring_GFFlintBig`)
  * represents a Galois-field element as a degree-less-than-`k`
  * polynomial over `Z/p`, stored in FLINT's `fq_nmod_struct` ---
@@ -70,6 +72,8 @@ namespace M2 {
  * @brief `aring`-style adapter for FLINT's polynomial-quotient representation
  * of finite fields `GF(p^n)` that are too large for Zech tables.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `ElementType` is `fq_nmod_struct` (an `nmod_poly_struct` modulo
  * the defining polynomial) and every arithmetic call delegates to
  * FLINT's `fq_nmod_*` routines through the held `mContext`
@@ -132,6 +136,8 @@ class ARingGFFlintBig : public RingInterface
   /**
    * @brief Fixed-size owned array of `fq_nmod_struct` slots tied to an
    * `ARingGFFlintBig` for the matching FLINT context.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details Each slot is `fq_nmod_init2`-initialised at construction and
    * `fq_nmod_clear`-released in the destructor, so the array owns

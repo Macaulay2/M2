@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-f4-computation.hpp
  * @brief `F4ResComputation` --- top-level Schreyer-frame F4 free-resolution driver.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `ResolutionComputation` subclass that owns a
  * `SchreyerFrame`, walks it homological level by level, and
  * reports Betti tables / free modules / differential matrices
@@ -54,6 +56,8 @@ class SchreyerFrame;
 /**
  * @brief `ResolutionComputation` subclass that drives the F4 resolution
  * engine (`SchreyerFrame` + `F4Res`) from the engine-side API.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Constructor is private; the free function `createF4Res` (declared
  * friend) instantiates it from a GB-presented input matrix plus

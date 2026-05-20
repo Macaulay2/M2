@@ -7,6 +7,8 @@
  * @file aring-zzp-flint.hpp
  * @brief `M2::ARingZZpFlint` --- `Z/p` via FLINT's `nmod_t` precomputed-reciprocal reduction.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingZZpFlint` stores a `Z/p` value as a single `mp_limb_t`
  * reduced representative in `[0, p)`; per the in-source
  * comment, `p` can be any prime that fits in `mp_limb_t` (i.e.,
@@ -62,6 +64,8 @@ namespace M2 {
 /**
  * @brief `aring`-style adapter for `Z/p` with `p` a word-size prime, backed
  * by FLINT's `nmod_*` routines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Elements are residues in `0..p-1`. The largest supported prime
  * is the largest prime below `2^64`, so this covers basically

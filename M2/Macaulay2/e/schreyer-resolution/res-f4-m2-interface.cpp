@@ -383,6 +383,8 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
  * @brief View of one cell of a `SchreyerFrame` as the degree-zero (scalar)
  * part of the differential between two homological levels.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Constructed with the source frame `C`, a `slanted_degree`, and a
  * homological level `lev`. Computes how many rows and columns
  * the degree-zero submap has and builds `mComponentTranslation`,
@@ -454,6 +456,8 @@ public:
   /**
    * @brief Column iterator over the parent `DegreeZeroMapGenerator`'s
    * degree-zero submap.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details Advances through `mThisLevel`'s `FrameElement`s, skipping any
    * whose degree does not match the requested cell. At each step

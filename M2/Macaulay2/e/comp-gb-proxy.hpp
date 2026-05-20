@@ -7,6 +7,8 @@
  * @file comp-gb-proxy.hpp
  * @brief `GBProxy` --- legacy indirection wrapper around another `GBComputation` (deprecated).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `GBProxy` is a `GBComputation` subclass that holds a non-owning
  * `GBComputation* G` and forwards every virtual call to it; the
  * `stop_conditions_ok` override copies `this->stop_` onto `G->stop_`

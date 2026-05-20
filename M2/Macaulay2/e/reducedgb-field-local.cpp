@@ -42,6 +42,8 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
  * @brief Index comparator used to permute `ReducedGB_Field_Local`'s `gb`
  * array into canonical reduced-GB order for the local-ring path.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Same shape as `ReducedGB_Field_sorter` but with an extra `degs`
  * vector --- the local-ring code compares first by heuristic
  * degree (so smaller-degree reducers come earlier) and only

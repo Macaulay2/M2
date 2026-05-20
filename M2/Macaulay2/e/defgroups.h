@@ -2,6 +2,8 @@
  * @file defgroups.h
  * @brief Pure Doxygen scaffolding --- the `\mainpage` text and every `\defgroup` used in engine docs.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `defgroups.h` contains no C++ declarations. Its purpose is to
  * carry the project-level documentation that Doxygen weaves into
  * the generated HTML: the `\mainpage` text that lands on the

@@ -4,6 +4,8 @@
  * @file unit-tests/ARingRRRTest.cpp
  * @brief gtest coverage for the MPFR-backed `M2::ARingRRR` arbitrary-precision real aring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Drives `M2::ARingRRR` through the shared `ARingTest.hpp`
  * harness with a precision-aware `almostEqual` that builds the
  * epsilon directly as an `mpfr_t` via

@@ -2,6 +2,8 @@
  * @file BasicPolyList.hpp
  * @brief Ring-agnostic polynomial-list transport type plus its streaming collector and emitter.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `BasicPolyList` is a `std::vector<BasicPoly>` that acts as the
  * hub format between M2-side `Matrix` values, the F4
  * Groebner-basis engine in `gb-f4/`, file-format readers (msolve,
@@ -58,6 +60,8 @@ long bytesUsed(const BasicPolyList& F);
 /**
  * @brief Streaming consumer that builds a `BasicPolyList` from per-term
  * callbacks, matching the mathicgb / mgb stream interface.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Receives `appendPolynomialBegin / appendTermBegin /
  * appendExponent / appendTermDone / appendPolynomialDone` calls

@@ -4,6 +4,8 @@
  * @file gb-f4/MacaulayMatrix.hpp
  * @brief `newf4::MacaulayMatrix` --- batched matrix of S-polynomials and tail-reducers (refactor stub).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the F4-side Macaulay matrix the new GB engine
  * row-reduces once per degree: rows are S-polynomials together
  * with selected basis tail-reducers, columns are the monomials

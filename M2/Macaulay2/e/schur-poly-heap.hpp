@@ -7,6 +7,8 @@
  * @file schur-poly-heap.hpp
  * @brief `schur_poly_heap` --- geometric-bucket accumulator specialised for `SchurRing2` polynomials.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `schur_poly_heap`, a `GEOHEAP_SIZE` (15)-level
  * size-quadrupling heap of `ring_elem` slots used by `SchurRing2`
  * multiplication to collect the many `c_{lambda mu}^nu s_nu`

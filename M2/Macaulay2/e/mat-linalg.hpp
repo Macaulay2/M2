@@ -7,6 +7,8 @@
  * @file mat-linalg.hpp
  * @brief Templated `DMat<R>` linear algebra: `LU`, `rank`, `determinant`, `solve`, `inverse`, `nullSpace`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the dense linear-algebra surface as free function
  * templates over `RT` (the aring coefficient type) so a single
  * generic body covers every supported ring; specialisations route

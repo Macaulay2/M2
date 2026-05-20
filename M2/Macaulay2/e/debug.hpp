@@ -2,6 +2,8 @@
  * @file debug.hpp
  * @brief Debugger-callable `d*` helpers that pretty-print engine values to stderr.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares short-named global functions --- `dmatrix`,
  * `drelem`, `dfree`, `dringelem`, `dNterm`, `dvec`, `dgbvec`,
  * `drespoly` / `drespoly2`, `dmutablemat`, `dmonideal`,

@@ -5,6 +5,8 @@
  * @file interface/computation.h
  * @brief `ComputationStatusCode` / `StopConditions` / `StrategyValues` / `Algorithms` / `gbTraceValues` --- engine-to-interpreter vocabulary for long-running computations.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the C-side enums and struct the M2 interpreter
  * shares with the engine for long-running computations.
  * `ComputationStatusCode` (18 values: `COMP_DONE`,
@@ -73,6 +75,8 @@ enum ComputationStatusCode {
 /**
  * @brief Bundle of optional early-termination knobs the front end can
  * attach to a long-running `Computation`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Each `*_limit` is consulted by the driver after every increment
  * of the matching counter (basis element, syzygy, S-pair, codim,

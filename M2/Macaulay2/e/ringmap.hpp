@@ -6,6 +6,8 @@
  * @file ringmap.hpp
  * @brief `RingMap` --- engine representation of a ring homomorphism.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `RingMap`, an `EngineObject` that stores a
  * homomorphism via the target ring `R` (with `P` set to its
  * polynomial side and `K` to its coefficient ring) and an
@@ -43,6 +45,8 @@ class Matrix;
  * @brief Engine-side ring homomorphism: stores, for each source-ring
  * variable, the target-ring element it maps to.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Built from a row matrix of target-ring elements (`make(m)`): the
  * `i`-th column gives the image of the `i`-th source variable, kept
  * in pre-factored form as `coeff * monom * bigelem`. The
@@ -57,6 +61,8 @@ class RingMap : public EngineObject
   /**
    * @brief Per-source-variable image record: a factored representation of
    * the target-ring element that variable maps to.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details The image is `coeff * monom * bigelem`. Three independent
    * `is_one` flags let the evaluator skip whichever factors are

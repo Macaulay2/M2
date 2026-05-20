@@ -24,6 +24,8 @@
  * @file schreyer-resolution/res-schreyer-frame.hpp
  * @brief `SchreyerFrame` --- in-progress representation of a free resolution organised by (level, degree).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the state container the F4 resolution engine builds
  * up as it walks homological levels. Each `Level` holds a
  * `std::vector<FrameElement>`, where every `FrameElement`
@@ -79,6 +81,8 @@ namespace SchreyerFrameTypes {
 /**
  * @brief One generator within a `SchreyerFrame::Level`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Carries the leading monomial (`mMonom`, which also encodes
  * component and degree), the actual integer degree (`mDegree`, not
  * the slanted degree), a `[mBegin, mEnd)` half-open range into the
@@ -112,6 +116,8 @@ struct FrameElement
  * pre-sort phase that feeds `SchreyerFrame::insertLevelZero` /
  * `insertLevelOne`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Smaller than a full `FrameElement` --- no descendant slice, no
  * syzygy polynomial --- so the resolution engine can collect and
  * sort the prospective generators before deciding their final
@@ -127,6 +133,8 @@ struct PreElement
 /**
  * @brief State container for the in-progress free resolution built by the
  * F4 resolution engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Organises the resolution as a vector of `Level`s indexed by
  * homological degree; each level holds a vector of `FrameElement`s
@@ -231,6 +239,8 @@ class SchreyerFrame
    * @brief One homological level of the frame: the `FrameElement`s living at
    * that level plus the Schreyer order used to break ties among them.
    *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
    * @details `mElements` is indexed by `component_index`. `mSchreyerOrder`
    * carries the per-level data that the next level's monomial order
    * needs to inherit.
@@ -242,6 +252,8 @@ class SchreyerFrame
   };
   /**
    * @brief The full frame: a vector of `Level`s indexed by homological degree.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details The only state held by the enclosing `SchreyerFrame` --- all the
    * accessors (`level`, `schreyerOrder`, `degree`, ...) reach into

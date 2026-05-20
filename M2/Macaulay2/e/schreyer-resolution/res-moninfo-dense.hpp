@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-moninfo-dense.hpp
  * @brief `ResMonoidDense` --- dense exponent-vector implementation of the resolution monoid.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the implementation `res-moninfo.hpp` currently picks
  * as the production `ResMonoid`. Each monomial is encoded as
  * `[hash, component, weight_1, ..., weight_nweights, exp_0, ...,
@@ -59,6 +61,8 @@
 /**
  * @brief Dense-format `ResMonoid` implementation: monomials laid out as
  * fixed-width exponent vectors.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Each encoded monomial has `nslots` ints: `[hash, comp, w_1, ...,
  * w_r, e_1, ..., e_n]`. Exponents are stored explicitly for

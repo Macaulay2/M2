@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-moninfo-sparse.hpp
  * @brief `ResMonoidSparse` --- sparse-multiset encoding alternative to `ResMonoidDense`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the compact alternative `res-moninfo.hpp` keeps in
  * the codebase for swap-in benchmarking against the production
  * dense layout. Each monomial is encoded as
@@ -70,6 +72,8 @@
 /**
  * @brief Sparse / varpower-format `ResMonoid` implementation: monomials laid
  * out as length-prefixed lists of `(variable, exponent)` pairs.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Each encoded monomial has variable width: `[length, hash, comp,
  * w_1, ..., w_r, v_1, e_1, ..., v_d, e_d]`. Encode / decode walk

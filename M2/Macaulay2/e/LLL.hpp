@@ -7,6 +7,8 @@
  * @file LLL.hpp
  * @brief Lenstra-Lenstra-Lovász integer lattice basis reduction, in place on a `MutableMatrix`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `LLLoperations`, a static-only collection that runs the
  * classical Lenstra-Lenstra-Lovász (1982) algorithm on the columns
  * of a `MutableMatrix` over `ZZ`. The output is an LLL-reduced
@@ -39,6 +41,8 @@
 /**
  * @brief Static-method namespace for the LLL lattice-basis reduction
  * algorithm operating on a `MutableMatrix`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds no state --- every method is `static` --- and implements
  * the standard Lovasz / REDI / SWAPI primitives that the engine's

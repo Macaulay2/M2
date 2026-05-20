@@ -7,6 +7,8 @@
  * @file smat.hpp
  * @brief `SMat<ACoeffRing>` --- column-oriented sparse matrix template, dual of `DMat<R>`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `SMat<ACoeffRing>`, the engine's sparse-matrix
  * template parameterised on a coefficient ring's aring. Storage
  * is an array of column heads, each pointing at a linked list

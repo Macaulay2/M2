@@ -4,6 +4,8 @@
  * @file unit-tests/SubsetTest.cpp
  * @brief gtest coverage for `Subsets` --- the bijection between integers and `k`-subsets of `{0..n-1}`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts the `TEST(Subsets, *)` battery: the `encode1` ...
  * `encode6` cases round-trip every `k`-subset through
  * `Subsets::decode(i, a)` / `Subsets::encode(a)` for small

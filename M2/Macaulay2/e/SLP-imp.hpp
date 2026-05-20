@@ -9,6 +9,8 @@
  * @file SLP-imp.hpp
  * @brief Templated `SLEvaluatorConcrete<RT>` --- the per-ring SLP evaluator implementation.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Provides the out-of-line template implementations of the
  * `SLEvaluatorConcrete<RT>` constructors and methods declared
  * in `SLP-defs.hpp`. There are four constructors: two take a

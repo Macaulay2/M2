@@ -5,6 +5,8 @@
  * @file overflow.hpp
  * @brief Overflow-checked integer arithmetic for monomial exponents and degree sums.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Provides the `safe::` arithmetic helpers (`add`, `add_to`,
  * `sub`, `sub_from`, `sub_pos`, `pos_add`) and the bit-width
  * predicates `fits_7` / `fits_15` / ... that monomial-arithmetic

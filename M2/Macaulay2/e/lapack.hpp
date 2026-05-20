@@ -5,6 +5,8 @@
  * @file lapack.hpp
  * @brief Engine bridge into LAPACK for `RR` / `CC` dense linear algebra.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Defines the four `DMat<R>` aliases the LAPACK path uses
  * (`DMatRR`, `DMatCC`, `DMatRRR`, `DMatCCC`) and declares the
  * Fortran ABI prototypes (`dgesv_`, `dgeev_`, `dsyev_`,
@@ -437,6 +439,8 @@ void cblas_zgemm(
 /**
  * @brief Static-method namespace bridging the engine's `RR` / `CC` / `RRR`
  * / `CCC` dense matrices and LAPACK / BLAS routines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The class holds no state; every method is `static`. Bundles
  * matrix translators (to the column-major scratch buffers LAPACK

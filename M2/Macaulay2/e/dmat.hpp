@@ -7,6 +7,8 @@
  * @file dmat.hpp
  * @brief `DMat<ACoeffRing>` --- dense-matrix template plus the umbrella that wires in every per-ring specialisation.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `DMat<R>` is the engine's dense matrix type, parameterised
  * on the coefficient ring's aring class. The generic
  * instantiation stores entries in a raw `ElementType*`

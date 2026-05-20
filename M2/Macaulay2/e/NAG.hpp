@@ -9,6 +9,8 @@
  * @file NAG.hpp
  * @brief Numerical Algebraic Geometry: homotopy continuation `PathTracker` and supporting numeric types.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Complements the engine's symbolic Groebner-basis / resolution
  * machinery by tracking solutions of a polynomial system
  * `F : C^n -> C^m` over hardware-precision complex numbers.
@@ -76,6 +78,8 @@ class SLProgram;
  * @brief `MutableEngineObject` wrapper that owns a `PointArray` via
  * `unique_ptr`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Same pattern as `M2SLProgram` / `M2Homotopy`: the interpreter
  * holds an opaque `M2PointArray*` while engine code reaches the
  * underlying clustering structure through `value()`.
@@ -93,6 +97,8 @@ public:
  * @brief Container of numerical points equipped with an
  * \f$\varepsilon\f$-tolerance and a random weight vector used to bucket
  * approximately equal points.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details A point hashes to the integer rounding of
  * \f$\sum w_i x_i / \varepsilon\f$, so points within `mEpsilon` of each
@@ -457,6 +463,8 @@ double norm2_complex_array(int n,
  * @brief Field-traits tag used as the template parameter of `SLP<Field>` to
  * pick the `complex` element type.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details The only data is the `element_type` typedef --- field operations
  * (`add`, `mul`, ...) come from free functions on `complex` rather
  * than methods, so the class itself is empty. Acts as the
@@ -593,6 +601,8 @@ class StraightLineProgram : public SLP<ComplexField>
  * @brief One numerical solution produced by a `PathTracker` run, with the
  * full per-path diagnostic record.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `x` is the endpoint of the path (an `n`-vector of `complex`s) and
  * `start_x` is where the path began; `t` is the last value of the
  * continuation parameter, `cond` the reverse condition number of
@@ -627,6 +637,8 @@ struct Solution
 /**
  * @brief Numerical homotopy-continuation path tracker for systems of
  * polynomial equations.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds two homotopy systems (`H` and the `(S, T)` start/target
  * pair) plus their precomputed straight-line evaluators

@@ -14,6 +14,8 @@
  * @file bibasis/settings-manager.hpp
  * @brief `BIBasis::SettingsManager` --- singleton holding the per-run monomial order and variable count.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the lazy singleton (accessed via the free function
  * `GetSettingsManager()`) that carries the subsystem-wide
  * parameters every BIBasis class needs to consult: the active
@@ -40,6 +42,8 @@ namespace BIBasis
     /**
      * @brief Process-wide singleton holding the BIBasis monomial order and
      * variable count.
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
      *
      * @details Hidden constructor / copy disabled --- the only way to reach
      * an instance is through the free function `GetSettingsManager()`,

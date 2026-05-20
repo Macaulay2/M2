@@ -5,6 +5,8 @@
  * @file f4/f4-m2-interface.hpp
  * @brief `F4toM2Interface` --- static translators between engine `vec` / `Matrix` and F4's `GBF4Polynomial`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the static-only `F4toM2Interface` namespace-class
  * that converts each direction across the F4 boundary. Ingest
  * side: `from_M2_vec` packs one engine `vec` into a single
@@ -48,6 +50,8 @@ class MutableMatrix;
 /**
  * @brief Static-method namespace for translating between engine `Matrix` /
  * `vec` polynomials and the F4-internal `GBF4Polynomial` form.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Every method is `static` --- the class holds no state. It bundles
  * the conversion glue (`poly_set_degrees`, `to_M2_vec`,

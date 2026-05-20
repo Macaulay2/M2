@@ -4,6 +4,8 @@
  * @file ring-vecs.cpp
  * @brief `Ring`'s `vec`-shaped operations --- construction, traversal, arithmetic on sparse columns.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Implements the `vec` (sparse `(component, ring_elem)` linked
  * list of `vecterm` nodes) methods declared on `Ring`.
  * Construction / lifecycle: `new_vec`, `remove_vec_node`,

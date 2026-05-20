@@ -7,6 +7,8 @@
  * @file dmat-zzp-flint.hpp
  * @brief `DMat<M2::ARingZZpFlint>` --- dense `Z/p` matrices stored in a FLINT `nmod_mat_t`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises the dense-matrix template for the FLINT-backed
  * `Z/p` aring. Storage is a single `nmod_mat_t mArray` (an
  * `mp_limb_t` buffer of representatives in `[0, p)` carried
@@ -56,6 +58,8 @@ class DMat;
 /**
  * @brief Specialisation of `DMat` for `ARingZZpFlint` matrices, backed by
  * FLINT's `nmod_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Wraps a FLINT `nmod_mat_t` and forwards every dense matrix
  * operation to FLINT's `nmod_mat_*` routines, so the

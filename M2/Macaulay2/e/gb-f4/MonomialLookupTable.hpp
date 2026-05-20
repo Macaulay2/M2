@@ -8,6 +8,8 @@
  * @file gb-f4/MonomialLookupTable.hpp
  * @brief `newf4::MonomialLookupTable` --- divisibility-aware leading-term index for the new F4.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the lookup structure that lets the refactored F4
  * answer "does some basis leading monomial divide this target?"
  * without scanning every basis element. Storage is split into

@@ -7,6 +7,8 @@
  * @file mutablemat-defs.hpp
  * @brief `MutableMat<Mat>` --- the templated bridge from `DMat` / `SMat` to the abstract `MutableMatrix`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `MutableMat<Mat>` (a `MutableMatrix` subclass
  * owning a `Mat`, where `Mat` is one of `DMat<R>` or
  * `SMat<R>`) along with the supporting helpers used in the
@@ -81,6 +83,8 @@ struct EigenTypes
 /**
  * @brief `EigenTypes` specialisation for double-precision real matrices.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details A general (non-Hermitian) `ARingRR` matrix has complex eigenvalues
  * and eigenvectors --- both are promoted to `M2::ARingCC`. The
  * Hermitian path stays real, so `HermitianEigenvalueType` and
@@ -97,6 +101,8 @@ struct EigenTypes<M2::ARingRR>
 
 /**
  * @brief `EigenTypes` specialisation for double-precision complex matrices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The general path stays in `M2::ARingCC`. The Hermitian path drops
  * eigenvalues to `M2::ARingRR` (Hermitian matrices have real
@@ -115,6 +121,8 @@ struct EigenTypes<M2::ARingCC>
  * @brief `EigenTypes` specialisation for arbitrary-precision real (`MPFR`)
  * matrices.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Same logic as the `M2::ARingRR` specialisation lifted to the
  * MPFR/MPC rings: general spectra land in `M2::ARingCCC`, Hermitian
  * spectra stay in `M2::ARingRRR`.
@@ -131,6 +139,8 @@ struct EigenTypes<M2::ARingRRR>
 /**
  * @brief `EigenTypes` specialisation for arbitrary-precision complex
  * (`MPC`) matrices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details General path stays in `M2::ARingCCC`. Hermitian eigenvalues drop
  * to `M2::ARingRRR` (real); Hermitian eigenvectors remain

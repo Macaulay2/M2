@@ -2,6 +2,8 @@
  * @file unit-tests/DMatZZpTest.cpp
  * @brief gtest coverage for `DMat<M2::ARingZZp>` --- dense matrices over `Z/p`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts `TEST(DMatZZp, create)` and `TEST(DMatZZp, submatrix)`
  * over `DMat<M2::ARingZZp>` instances at `Z/101`. `create`
  * pins down construction with `(ring, rows, cols)`,

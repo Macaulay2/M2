@@ -2,6 +2,8 @@
  * @file fplll-interface.hpp
  * @brief Engine-side wrapper around the external fplll lattice-reduction library.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares a single entry point, `fp_LLL(M, U, strategy)`: `M`
  * holds the lattice basis with one basis vector per column and
  * is reduced in place. The current implementation asserts

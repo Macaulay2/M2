@@ -2,6 +2,8 @@
  * @file unit-tests/ARingRRiTest.cpp
  * @brief gtest coverage for the MPFI-backed `M2::ARingRRi` real-interval aring.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Drives `M2::ARingRRi` through the shared `ARingTest.hpp`
  * harness with a precision-aware `almostEqual` tailored to
  * interval semantics: an MPFR epsilon scaled to the ring's

@@ -6,6 +6,8 @@
  * @file int-bag.hpp
  * @brief `int_bag` / `Bag` --- minimal `(payload, varpower monomial)` carrier shared by monomial-ideal code.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `int_bag` (aliased as `Bag` at the bottom --- most
  * engine code refers to it under the alias), a small GC-managed
  * class pairing a `gc_vector<int>` varpower monomial with a

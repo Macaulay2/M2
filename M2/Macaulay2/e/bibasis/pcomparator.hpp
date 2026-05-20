@@ -14,6 +14,8 @@
  * @file bibasis/pcomparator.hpp
  * @brief `BIBasis::PointerLessComparator` / `PointerMoreComparator` --- pointer-deref comparators for STL containers.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Two tiny templated function objects so a `std::sort` or
  * `std::set` over `Polynom*` / `Triple*` collections orders by
  * the pointed-to value rather than the raw pointer address.

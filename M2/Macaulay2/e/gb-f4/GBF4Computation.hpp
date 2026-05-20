@@ -4,6 +4,8 @@
  * @file gb-f4/GBF4Computation.hpp
  * @brief `newf4::GBF4Computation` --- top-level driver for the refactored F4 Gröbner-basis engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the class that owns all of the new F4's state: a
  * `MonomialHashTable mBasisMonomials` for basis monomials and a
  * separate `mSPairMonomials` for S-pair LCMs, a

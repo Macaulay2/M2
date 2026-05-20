@@ -5,6 +5,8 @@
  * @file interface/m2-mem.h
  * @brief Engine-wide GC allocator surface (`getmem` / `getmem_atomic`) and debug-allocation trap.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the small `extern "C"` allocator family every engine
  * translation unit and every generated-C `.dd` glue file calls
  * to allocate memory: `getmem` for pointer-bearing GC blocks,

@@ -2,6 +2,8 @@
  * @file matrix-sort.cpp
  * @brief `MatrixSorter` --- compute the column permutation that sorts a `Matrix` by degree / leading term.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Defines `MatrixSorter`, the helper that the engine-level
  * `Matrix::sort(degorder, ringorder)` (defined at the bottom of
  * this file --- the only external entry point) hands off to.
@@ -33,6 +35,8 @@
 /**
  * @brief Helper that computes a column permutation for an engine `Matrix`
  * by degree-then-monomial-order sort.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `deg_ascending` and `ringorder_ascending` are sign flags; the
  * comparator first orders by `sort_degs[i]` (the column's

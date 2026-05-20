@@ -7,6 +7,8 @@
  * @file matrix.hpp
  * @brief `Matrix` --- the engine's immutable homomorphism `F -> G` between free modules.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `Matrix`, an `EngineObject` whose entries are stored
  * as one `vec` per column over the target free module. State
  * comprises the target and source `FreeModule*`s, a single
@@ -47,6 +49,8 @@ class MatrixConstructor;
 /**
  * @brief Engine-side matrix: a map between two free modules, stored as a
  * column-vector list.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds a target `FreeModule` (rows), a source `FreeModule` (columns),
  * a `mDegreeShift` element of the degree monoid, and a `gc_vector<vec>`
@@ -287,6 +291,8 @@ class Matrix : public EngineObject
    * @brief Reseatable iterator over the non-zero entries of one column of
    * the matrix.
    *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
    * @details Constructed in a "no column" state (`col == -1`, `v == nullptr`)
    * and then `set(col)` aims it at a specific column; `next()`
    * advances through that column's sparse `vec` list. Read-only by
@@ -316,6 +322,8 @@ class Matrix : public EngineObject
   /**
    * @brief Standards-style forward iterator over the `vecterm`s of one
    * column.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details Simpler companion to `iterator`: holds a raw `const vecterm*`
    * cursor, increments it with `operator++`, dereferences with

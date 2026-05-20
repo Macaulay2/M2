@@ -7,6 +7,8 @@
  * @file betti.hpp
  * @brief `BettiDisplay` --- engine-side container and renderer for the Betti table of a free resolution.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `BettiDisplay` holds the graded Betti numbers produced when an
  * engine `ResolutionComputation` finishes: `entry(deg, lev)`
  * reads or writes the count at degree `deg` and homological
@@ -42,6 +44,8 @@
 /**
  * @brief Engine-side Betti table: a `(degree, homological level)` rectangle
  * of integers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Storage is a single flat `int* mValues` of size
  * `(mHiDegree - mLoDegree + 1) * mNLevels`, indexed via
@@ -92,6 +96,8 @@ class BettiDisplay
  * @brief Combined hash + equality functor for `(int*, int)` pairs, used by
  * the resolution code to key an `unordered_set` on `(monomial,
  * component)`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Hash mixes the raw pointer with `13 * comp`; equality is
  * pointer-and-int equality (the monomials behind the pointers are

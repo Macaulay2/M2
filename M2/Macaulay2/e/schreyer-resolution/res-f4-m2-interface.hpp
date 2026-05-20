@@ -5,6 +5,8 @@
  * @file schreyer-resolution/res-f4-m2-interface.hpp
  * @brief Conversion layer between engine `Matrix` / `vec` types and the F4-resolution internal types.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `ResF4toM2Interface`, a static-only helper class
  * that crosses the boundary between the user-facing `Matrix` /
  * `vec` / `FreeModule` / `PolynomialRing` vocabulary and the
@@ -45,6 +47,8 @@ template <typename ACoeffRing> class DMat;
 /**
  * @brief Static-method namespace bridging engine `Matrix` / `vec` values
  * and the resolution engine's `ResPolynomial` representation.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Resolution-side counterpart of `F4toM2Interface`: every method
  * is `static`. Provides `from_M2_vec` / `to_M2_vec` and the

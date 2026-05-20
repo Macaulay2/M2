@@ -2,6 +2,8 @@
  * @file dmat-lu-qq.hpp
  * @brief `DMatLinAlg<M2::ARingQQ>` --- rational dense LU routed through FLINT `fmpq_mat` / `fmpz_mat`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises `DMatLinAlg` for the rational aring `ARingQQ`.
  * Each operation copies the input through `FlintQQMat`
  * (`dmat-qq-interface-flint.hpp`) so a FLINT `fmpq_mat_t` is
@@ -40,6 +42,8 @@
  * @brief Specialisation of `DMatLinAlg` for `ARingQQ` dense matrices,
  * routing every linear-algebra query (rank, determinant, kernel,
  * inverse, solve) through FLINT's `fmpq_mat_*` routines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Constructs `FlintQQMat` translations on demand (via
  * `dmat-qq-interface-flint.hpp`), runs the corresponding FLINT

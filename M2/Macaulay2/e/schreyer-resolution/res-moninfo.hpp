@@ -7,6 +7,8 @@
  * @file schreyer-resolution/res-moninfo.hpp
  * @brief `ResMonoid` dispatcher --- single typedef switch between `ResMonoidDense` and `ResMonoidSparse`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Pulls in both monomial-layout implementations the F4
  * resolution uses and aliases `ResMonoid` to the active one ---
  * `ResMonoidDense` is the live `using` in production, with a

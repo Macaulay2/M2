@@ -14,6 +14,8 @@
  * @file bibasis/involutive.hpp
  * @brief `BIBasis::BooleanInvolutiveBasis<MonomType>` --- Janet-involutive Gröbner driver for `F_2[x]/(x_i^2-x_i)`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares and defines the templated class that runs Zinin's
  * Janet-involutive basis algorithm over a boolean polynomial
  * ring. The constructor seeds an `IntermediateBasis` (a `TSet`

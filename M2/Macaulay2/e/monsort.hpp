@@ -7,6 +7,8 @@
  * @file monsort.hpp
  * @brief `QuickSorter<Sorter>` --- ring-agnostic in-place sort over a duck-typed adapter.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the templated `QuickSorter`, an in-place sort
  * algorithm parameterised on a `Sorter` adapter that supplies
  * `Sorter::value` (the element type) and

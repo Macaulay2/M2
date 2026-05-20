@@ -5,6 +5,8 @@
  * @file unit-tests/NewF4Test.cpp
  * @brief gtest coverage for the refactored F4 engine's hash table, lookup table, and `PolynomialList`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts two gtest suites covering `gb-f4/`'s monomial-side
  * infrastructure: `TEST(NewF4, *)` exercises `HashTableStats`
  * accumulation, `MonomialHashTable` insertion / lookup with

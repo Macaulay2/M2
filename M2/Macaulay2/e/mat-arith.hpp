@@ -7,6 +7,8 @@
  * @file mat-arith.hpp
  * @brief Templated matrix arithmetic for `DMat<R>` / `SMat<R>` plus the `MatrixWindow` / `SubMatrix` view types.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares free-function templates over `DMat<RT>` (and where
  * applicable `SubMatrix<MatType>`): predicates (`isZero`,
  * `isEqual`), in-place ops (`negateInPlace`, `addInPlace`,
@@ -44,6 +46,8 @@ class MatElementaryOps;
 /**
  * @brief Half-open rectangular submatrix descriptor: `[begin_row, end_row) x
  * [begin_column, end_column)`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Constructed as `MatrixWindow(first_row, first_col, nrows, ncols)`
  * to make caller-side window math read naturally. Used by the

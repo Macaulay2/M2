@@ -7,6 +7,8 @@
  * @file comp-res.hpp
  * @brief `ResolutionComputation` --- abstract base for every free-resolution algorithm in the engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ResolutionComputation` is the resolution-side mirror of
  * `GBComputation`: a `Computation` subclass that adds the
  * resolution-specific virtuals `get_free(level)`,

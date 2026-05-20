@@ -4,6 +4,8 @@
  * @file franzi-brp.hpp
  * @brief `brMonomial` --- bit-packed Boolean-ring monomials for the Hinkelmann GB engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `brMonomial = unsigned long`, the bit-set encoding of a
  * monomial in `F_2[x_1, ..., x_n] / (x_i^2 - x_i)`: bit `i` is set
  * iff variable `x_i` appears. Multiplication of monomials is
@@ -59,6 +61,8 @@ typedef std::set<brMonomial, lex> monomials_set;
 /**
  * @brief Boolean (`F_2`-coefficient) polynomial stored as an ordered list of
  * square-free monomials.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Coefficient ring is implicit (always 1 in `F_2`); the polynomial
  * is just the symmetric-difference sum of the listed monomials.

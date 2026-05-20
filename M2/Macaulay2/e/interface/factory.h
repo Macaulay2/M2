@@ -5,6 +5,8 @@
  * @file interface/factory.h
  * @brief Engine-boundary C API for polynomial GCD, factorisation, and root finding.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points the M2 interpreter
  * routes to Singular's Factory library (and MPSolve for
  * numerical complex roots). GCDs:

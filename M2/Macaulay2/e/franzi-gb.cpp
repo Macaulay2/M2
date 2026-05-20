@@ -10,6 +10,8 @@
 /**
  * @brief S-pair record for the Franzi boolean Groebner basis algorithm.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Carries the two basis-element indices `i, j` (a negative `i = -k`
  * means the field polynomial `x_k^2 + x_k` is being paired
  * against `F[j]`), the precomputed lead-term `lcm`, and a `good`
@@ -102,6 +104,8 @@ typedef std::set<Pair> Pairs;
 /**
  * @brief Materialised `(f, g)` pair of `BRP` polynomials referenced by a
  * `Pair` index record.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Resolves the symbolic `Pair` into pointers to the actual
  * basis elements (`f = F[j]`, `g = F[i]`) or, when `i < 0`, into

@@ -4,6 +4,8 @@
  * @file unit-tests/RingCCCTest.cpp
  * @brief gtest coverage for the legacy `RingCCC` --- `ConcreteRing<M2::ARingCCC>` glued back into the `ring_elem` API.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Tests the MPC-backed arbitrary-precision complex ring
  * through the legacy `Ring` surface the interpreter still
  * uses, exercising the `aring-glue.hpp` `ConcreteRing<>`

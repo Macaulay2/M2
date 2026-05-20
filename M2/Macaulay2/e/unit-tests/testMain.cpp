@@ -2,6 +2,8 @@
  * @file unit-tests/testMain.cpp
  * @brief `main()` of the `M2-unit-tests` binary --- boots the engine, then runs gtest.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Three calls in strict order: `IM2_initialize()` brings up the
  * engine's static state (global rings, monoid prefab tables,
  * the bdwgc collector, FLINT / MPFR singletons) so every

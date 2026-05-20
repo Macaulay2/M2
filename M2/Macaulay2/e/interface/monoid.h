@@ -5,6 +5,8 @@
  * @file interface/monoid.h
  * @brief Engine-boundary C API for constructing and inspecting `Monoid` objects.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `extern "C"` entry points the M2 interpreter
  * calls to build the monoid of monomials underneath every
  * polynomial ring. `rawTrivialMonoid()` returns the cached

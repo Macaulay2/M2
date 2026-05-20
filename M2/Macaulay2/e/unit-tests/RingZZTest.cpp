@@ -4,6 +4,8 @@
  * @file unit-tests/RingZZTest.cpp
  * @brief gtest coverage for the legacy `RingZZ` integer ring (`globalZZ`).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises `RingTest.hpp`'s `getElement<RingZZ>` over the
  * engine's global integer ring: indices `< 50` give the
  * deterministic `[-25, 24]` prefix, and the remaining trials

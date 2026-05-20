@@ -7,6 +7,8 @@
  * @file dmat-zz-flint.hpp
  * @brief `DMat<M2::ARingZZ>` --- dense integer matrices stored in a FLINT `fmpz_mat_t`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises the dense-matrix template for the FLINT integer
  * aring. Storage is a single `fmpz_mat_t mArray` of FLINT
  * `fmpz` cells (with the small-value inlining inherited from
@@ -56,6 +58,8 @@ class DMat;
 /**
  * @brief Specialisation of `DMat` for `ARingZZ` matrices, backed by FLINT's
  * `fmpz_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Wraps an `fmpz_mat_t` and dispatches all dense arithmetic to
  * FLINT's `fmpz_mat_*` routines. The class header warns that

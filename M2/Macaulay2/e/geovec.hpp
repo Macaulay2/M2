@@ -4,6 +4,8 @@
  * @file geovec.hpp
  * @brief `vecHeap` --- geometric heap specialised for accumulating `vec` values.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `vecHeap`, the free-module-element counterpart of
  * `polyheap` (`geopoly.hpp`) and the templated `geobucket`
  * (`geobucket.hpp`). The structure keeps `GEOHEAP_SIZE` (15)

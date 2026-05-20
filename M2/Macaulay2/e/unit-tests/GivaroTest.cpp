@@ -8,6 +8,8 @@
  * @file unit-tests/GivaroTest.cpp
  * @brief Adapted-upstream Givaro smoke test exercising `modular`, `montgomery`, `gfq`, `gfqext` templates.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Carries a templated `TestField<Field>(F)` that runs the
  * standard arithmetic / `axpy` / `maxpy` battery against any
  * Givaro field type, then instantiates it for the four

@@ -7,6 +7,8 @@
  * @file coeffrings.hpp
  * @brief Two `SimpleARing`-style coefficient adapters: `CoefficientRingZZp` and `CoefficientRingR`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `CoefficientRingZZp`, the engine's discrete-log
  * `Z/p` implementation: a `SimpleARing<CoefficientRingZZp>`
  * CRTP class that represents each non-zero residue as its
@@ -46,6 +48,8 @@ class Z_mod;
 /**
  * @brief Discrete-log `Z/p` adapter that represents non-zero residues by
  * their exponent index relative to a generator.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds two size-`p` tables: `exp_table` maps an index `a` to the
  * residue `g^a mod p` and `log_table` is its inverse. Multiplication
@@ -238,6 +242,8 @@ class CoefficientRingZZp : public M2::SimpleARing<CoefficientRingZZp>
  * @brief Generic `CoefficientRing` adapter that wraps an arbitrary
  * `const Ring*` and forwards every operation to it.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details The catch-all implementation used wherever code expects the
  * `CoefficientRing` operation surface but talks to a ring without
  * a faster specialisation. All `add` / `mult` / `subtract` /
@@ -262,6 +268,8 @@ class CoefficientRingR
    * @brief Managed scalar value: an `M2::ElementImpl<ring_elem>` that
    * initialises itself through the parent `CoefficientRingR`.
    *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
    * @details Holds the wrapped `ring_elem` so callers do not have to call
    * `init` / `clear` by hand. Constructors initialise to zero or
    * copy from an existing element via the ring.
@@ -279,6 +287,8 @@ class CoefficientRingR
   /**
    * @brief Fixed-size, owned array of `ElementType`s for the linear-algebra
    * templates that want a flat buffer they can `operator[]` into.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details Allocates via `newarray`, initialises every slot through
    * `ring.init`, and frees via `freemem` in the destructor. Used as

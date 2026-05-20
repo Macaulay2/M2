@@ -7,6 +7,8 @@
  * @file f4/f4-monlookup.hpp
  * @brief `F4MonomialLookupTableT<Key>` --- monomial-ideal trie for divisor lookup.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the templated `F4MonomialLookupTableT<Key>`, an
  * explicit monomial-ideal trie used by F4 to answer "does any
  * leading monomial divide this target?" in time proportional to

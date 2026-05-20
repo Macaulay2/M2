@@ -7,6 +7,8 @@
  * @file schorder.hpp
  * @brief `SchreyerOrder` --- per-basis-element data backing the Schreyer order on a free module.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `SchreyerOrder`, the lightweight side-table that
  * lives on a `FreeModule` and supplies the data the engine
  * needs to compare two basis elements under a Schreyer order.
@@ -50,6 +52,8 @@ class Matrix;
 /**
  * @brief Per-component tie-breaker data for a Schreyer monomial order on a
  * `FreeModule`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details For each of the `_rank` components, stores a `compare_num` plus
  * the component's base monomial as a flat

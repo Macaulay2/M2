@@ -5,6 +5,8 @@
  * @file interface/m2-types.h
  * @brief Engine-to-interpreter type vocabulary across the C++ / `.dd` boundary.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the bridging types every `interface/*.h` header
  * uses: scalars (`M2_bool`, `hash_t = uint64_t`); GC-managed
  * length-prefixed arrays (`M2_arrayint`, `M2_string`,
@@ -55,6 +57,8 @@
  * @brief Synthetic documentation entry for the `BASECLASS` preprocessor
  *        macro (no real struct of this name exists).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `BASECLASS` expands to either `: public our_new_delete` (when
  *          included from C++) or to nothing (when included from C or
  *          under `SAFEC_EXPORTS`), and is interpolated between the
@@ -82,6 +86,8 @@ typedef struct M2_string_struct * M2_string;
  * @brief Length-prefixed byte string passed between the M2 front end and
  * the engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `len` is the byte count; `array` is a C99 flexible-array member
  * that follows in the same allocation. Always handled as a
  * pointer (`M2_string`), never as a value, so the trailing
@@ -95,6 +101,8 @@ typedef M2_arrayint M2_arrayintOrNull;
  * @brief Length-prefixed `int` array, the integer counterpart of
  * `M2_string`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Same layout as `M2_string_struct` but with an `int` payload.
  * `M2_arrayintOrNull` is the nullable typedef used in interface
  * signatures where the call may legitimately return nothing.
@@ -105,6 +113,8 @@ typedef struct M2_ArrayString_struct * M2_ArrayString;
 typedef M2_ArrayString M2_ArrayStringOrNull;
 /**
  * @brief Length-prefixed array of `M2_string` pointers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Used to pass a list of strings (variable names, error messages,
  * `Monoid` symbol tables, ...) across the engine boundary. As with

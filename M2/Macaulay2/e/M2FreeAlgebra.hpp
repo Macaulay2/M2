@@ -5,6 +5,8 @@
  * @file M2FreeAlgebra.hpp
  * @brief `Ring`-shaped wrapper that exposes a non-commutative `FreeAlgebra` to the rest of the engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * The non-commutative implementation in `NCAlgebras/FreeAlgebra.hpp`
  * (`class FreeAlgebra : public our_new_delete`) deliberately does
  * not inherit from `Ring` --- it wants clean templates and no
@@ -63,6 +65,8 @@ struct Monoid;
  * @brief Abstract `Ring` subclass that lifts either a `FreeAlgebra` or a
  * `FreeAlgebraQuotient` into the engine's `Ring` hierarchy.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details The common base of `M2FreeAlgebra` (the unquotiented case) and
  * `M2FreeAlgebraQuotient`. Provides the `Ring` overrides that
  * dispatch to the underlying `freeAlgebra()` and the type-safe
@@ -102,6 +106,8 @@ public:
 
 /**
  * @brief Concrete `Ring` wrapper around an owned `FreeAlgebra` (no quotient).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds the wrapped algebra via `std::unique_ptr<FreeAlgebra>` and
  * delegates every `Ring` operation to it. `create()` is the factory

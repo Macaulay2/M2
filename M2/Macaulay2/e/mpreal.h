@@ -52,6 +52,8 @@
  * @file mpreal.h
  * @brief Vendored Holoborodko `mpfr::mpreal` C++ wrapper over MPFR.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Single-header library (GPL/LGPL) bundled in-tree because most
  * Linux distributions do not package it. Provides
  * `mpfr::mpreal`, an `mpfr_t`-backed arbitrary-precision real

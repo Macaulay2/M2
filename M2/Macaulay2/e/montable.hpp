@@ -5,6 +5,8 @@
  * @file montable.hpp
  * @brief `MonomialTable` --- leading-monomial divisor index used by the GB reducer.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `MonomialTable`, the data structure GB code queries
  * thousands of times per reduction: given a monomial `m`, find
  * a basis element whose leading monomial divides `m`. Each
@@ -63,6 +65,8 @@
  * @brief Indexed table of monomials with fast "find a divisor" lookup,
  * keyed by a free integer `val` per entry.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Stores entries as a per-component doubly-linked list of
  * `mon_term`s sorted in increasing lex order. Each entry caches a
  * `_mask` (popcount-style divisibility filter) so divisor searches
@@ -92,6 +96,8 @@ class MonomialTable : public our_new_delete
   /**
    * @brief Doubly-linked-list node of a `MonomialTable`'s per-component
    * monomial list.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
    *
    * @details `_lead` points to the entry's exponent vector (owned by the
    * caller, not by the table), `_mask` is the precomputed

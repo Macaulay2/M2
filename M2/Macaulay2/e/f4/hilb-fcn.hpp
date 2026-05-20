@@ -7,6 +7,8 @@
  * @file f4/hilb-fcn.hpp
  * @brief `HilbertController` --- early-exit driver for F4 given a known Hilbert series.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `HilbertController`, the helper F4 consults when the
  * user supplies the expected Hilbert series of the input ideal.
  * `setDegree(d)` reads the expected number of new generators in
@@ -40,6 +42,8 @@ class RingElement;
  * @brief Hilbert-function-driven early termination helper used by `F4GB`
  * to skip degrees the user-supplied Hilbert series predicts hold no
  * new basis elements.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Constructed with the source `FreeModule` and a `RingElement* hf`
  * encoding the expected Hilbert series. `setDegree(d)` advances

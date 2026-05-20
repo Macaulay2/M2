@@ -5,6 +5,8 @@
  * @file M2FreeAlgebraQuotient.hpp
  * @brief `Ring`-shaped façade around a non-commutative quotient algebra.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `M2FreeAlgebraQuotient` packages a
  * `NCAlgebras/FreeAlgebraQuotient` --- a free associative algebra
  * modulo a two-sided ideal --- in a `Ring`-derived wrapper so the rest
@@ -50,6 +52,8 @@ class buffer;
 /**
  * @brief Concrete `Ring` wrapper around an owned `FreeAlgebraQuotient`
  * (the quotient counterpart of `M2FreeAlgebra`).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Holds a reference to the ambient `M2FreeAlgebra` plus a
  * `std::unique_ptr<FreeAlgebraQuotient>` carrying the

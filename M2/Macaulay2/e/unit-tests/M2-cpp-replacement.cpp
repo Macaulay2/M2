@@ -2,6 +2,8 @@
  * @file unit-tests/M2-cpp-replacement.cpp
  * @brief Single-symbol stub for `system_interrupted()` so the gtest binary links without the M2 interpreter.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts one line: `bool system_interrupted() { return false; }`.
  * The engine calls this hook from inner loops to honour Ctrl+C
  * arriving through the interpreter's `interrupts.d`; the

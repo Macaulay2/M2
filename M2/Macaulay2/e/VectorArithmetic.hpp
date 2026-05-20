@@ -5,6 +5,8 @@
  * @file VectorArithmetic.hpp
  * @brief Coefficient-ring-erased arithmetic dispatcher used by F4, GB, and resolution code.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `VectorArithmetic` is the engine's dispatcher for the inner
  * loop shared across F4-style code paths --- the
  * `accumulator[col] += coeff * scaling` operation that runs
@@ -82,6 +84,8 @@ using ComponentIndex = int;
  * @brief Type-erased owning handle to a dense coefficient vector held by a
  * `ConcreteVectorArithmetic<Ring>`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Stores a single `void*` whose concrete type is the wrapped ring's
  * `ElementContainerType` (e.g. an `std::vector<elem>` or an ARing
  * concrete array). All payload access is funneled through
@@ -115,6 +119,8 @@ private:
 /**
  * @brief Lightweight counter attached to a `ConcreteVectorArithmetic<Ring>`
  * for tracking how many coefficient additions a reduction performed.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The `mNumAdditions` counter is `mutable` so that it can be
  * incremented from within `const` arithmetic methods. `numAdditions()`
@@ -642,6 +648,8 @@ inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArra
 /**
  * @brief Runtime dispatcher that hides the concrete coefficient ring behind
  * a `std::variant` of `ConcreteVectorArithmetic<Ring>*` pointers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Constructed from a `const Ring*`: the `ringID()` switch picks the
  * matching `ConcreteVectorArithmetic<Ring>` and stores it in the

@@ -2,6 +2,8 @@
  * @file godboltTest.cpp
  * @brief Standalone log / exp / Zech-table scratch file for `Z/p` at `p = 101`, not part of the build.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hardcodes the discrete-log and exponential tables of `(Z/101)^*`
  * (the primitive root generates the multiplicative group, so each
  * index `i in [0, p-1)` stores `g^i mod p` in `exp_table[i]` and

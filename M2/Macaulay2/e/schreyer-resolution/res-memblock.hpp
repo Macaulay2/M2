@@ -6,6 +6,8 @@
  * @file schreyer-resolution/res-memblock.hpp
  * @brief `ResMemoryBlock<T, NSLAB>` --- resolution-side templated slab bump allocator.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares and defines the per-type slab allocator the F4
  * resolution loop uses for transient monomial, polynomial-term,
  * and frame-metadata buffers. A linked list of slab records

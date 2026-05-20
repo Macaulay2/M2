@@ -5,6 +5,8 @@
  * @file unit-tests/PolyRingTest.cpp
  * @brief gtest coverage for `MonomialOrdering`, `Monoid`, and `PolynomialRing` construction.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts the `TEST(PolyRing, *)` battery (`createDegreesRing`,
  * `createDegreesRing2`, `create1`, `createSimple`) that walks
  * the polynomial-ring stack from the bottom up: build a degree

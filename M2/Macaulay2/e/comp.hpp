@@ -7,6 +7,8 @@
  * @file comp.hpp
  * @brief Abstract `Computation` base class --- stop-condition machinery for incremental engine work.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `Computation` is the pure-virtual root (inheriting from
  * `MutableEngineObject`) of every long-running engine task ---
  * Groebner basis, resolution, Hilbert series, ... . It carries
@@ -51,6 +53,8 @@ class buffer;
  * @brief Abstract base for long-running, resumable engine computations
  * (`GBComputation`, `ResolutionComputation`, `MutableComplex`,
  * `GBKernelComputation`, ...).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Manages a `ComputationStatusCode` state machine plus a
  * `StopConditions` record so callers can ask for partial progress

@@ -7,6 +7,8 @@
  * @file mat.hpp
  * @brief `MutableMatrix` --- abstract base of every mutable matrix the engine hands across the boundary.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the pure-virtual `MutableMatrix` (a
  * `MutableEngineObject` subclass). The interpreter and most
  * interface code only see this base type: `n_rows`, `n_cols`,
@@ -58,6 +60,8 @@ class MutableMat;
 /**
  * @brief Abstract base class for mutable matrices over an arbitrary engine
  * `Ring`, the in-place counterpart of the immutable `Matrix`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Defines the pure-virtual operation surface
  * (`get_entry` / `set_entry` / `row_op` / `column_op` / `addRow` /

@@ -7,6 +7,8 @@
  * @file monomial.hpp
  * @brief `EngineMonomial` --- opaque single-monomial value type used at the engine boundary.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `EngineMonomial`, the `EngineObject` subclass that
  * stores one monomial as a varpower-encoded `gc_vector<int>` in
  * the standard `[2n + 1, v_1, e_1, ..., v_n, e_n]` layout
@@ -44,6 +46,8 @@
 /**
  * @brief Engine-side immutable monomial value type wrapping a varpower-
  * encoded exponent vector.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Storage is `[2n+1, v_1, e_1, ..., v_n, e_n]` (per
  * `ExponentList.hpp`): leading length, then alternating variable

@@ -14,6 +14,8 @@
  * @file bibasis/monomLex.hpp
  * @brief `BIBasis::MonomLex` --- pure lexicographic specialisation of the BIBasis monomial type.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Concrete `Monom` subclass whose `Compare`, `operator<`, and
  * `operator>` order monomials by walking the variable list from
  * the smallest-index variable upward, with the first disagreement
@@ -49,6 +51,8 @@ namespace BIBasis
     /**
      * @brief `Monom` specialisation that orders monomials by pure lex on
      * their sorted variable lists.
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
      *
      * @details Same layout as `MonomDL` / `MonomDRL` --- a `Monom` plus a
      * per-class `FastAllocator` and a `Next` chaining pointer ---

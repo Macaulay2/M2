@@ -7,6 +7,8 @@
  * @file schur2.hpp
  * @brief `SchurRing2` --- refactored Schur ring with length-prefixed partitions and an explicit `Ring` base.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `SchurRing2`, the second-generation Schur-function
  * ring. Unlike `schur.hpp`'s `SchurRing` (which inherits from
  * `PolyRing`), `SchurRing2` derives directly from `Ring`.
@@ -136,6 +138,8 @@ inline schur_poly::iterator schur_poly::end() const
  * @brief Refactored Schur (symmetric-function) ring whose elements are
  * `schur_poly` sums of partitions over a configurable coefficient
  * ring.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Replaces the older `SchurRing` (in `schur.hpp`) with a leaner
  * implementation: partitions are stored in `schur_partition`

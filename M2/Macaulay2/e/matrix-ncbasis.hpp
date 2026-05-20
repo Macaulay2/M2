@@ -7,6 +7,8 @@
  * @file matrix-ncbasis.hpp
  * @brief `ncBasis` --- non-commutative analogue of `basis(d, M)` over `NCAlgebras/FreeAlgebra`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the entry point `ncBasis(A, gb, lo_degree, hi_degree,
  * limit, result)`. Given a non-commutative free algebra `A`, a
  * Groebner basis `gb` of the defining ideal (only its leading

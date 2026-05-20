@@ -4,6 +4,8 @@
  * @file unit-tests/ARingZZpTest.cpp
  * @brief gtest coverage for `M2::ARingZZp` (and indirectly the FFPACK-backed variant).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Specialises `ARingTest.hpp`'s `getElement<M2::ARingZZp>` with
  * the deterministic `[-25, 24]` prefix followed by random
  * `gmp_ZZ` draws, and hosts the file-scoped `getRandomInteger()`

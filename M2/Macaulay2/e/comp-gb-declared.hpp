@@ -7,6 +7,8 @@
  * @file comp-gb-declared.hpp
  * @brief `GBDeclared` --- a user-asserted Groebner basis the engine accepts without computing.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `GBDeclared` is the `GBComputation` subclass produced by M2's
  * `forceGB`. Two constructors (and matching static `create`
  * factories) cover the two declaration flavours: `(m0, gb,

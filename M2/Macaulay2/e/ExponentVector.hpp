@@ -5,6 +5,8 @@
  * @file ExponentVector.hpp
  * @brief Dense exponent-vector template `[e_0, ..., e_{nvars-1}]` for monomial operations.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ExponentVector<Exponent, overflow_check>` is the engine's
  * dense monomial encoding --- a fixed-length array indexed by
  * variable position, with no in-band length prefix (callers

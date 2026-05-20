@@ -5,6 +5,8 @@
  * @file schreyer-resolution/res-dep-graph.hpp
  * @brief `DependencyGraph` --- TBB flow-graph over (level, slanted-degree) cells of a Schreyer-frame resolution.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the parallel scheduler the F4 resolution driver uses
  * to run multiple homological degrees concurrently while
  * respecting the fill-matrix dependency that cell `(level,

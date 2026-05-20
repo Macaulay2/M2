@@ -251,6 +251,8 @@ SchreyerOrder *SchreyerOrder::exterior(int pp) const
  * @brief Helper functor that builds the `n`-th symmetric power of a
  * `SchreyerOrder` by walking multi-indices.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details `SchreyerOrder` analogue of `FreeModule_symm`: `symm1(lastn,
  * pow)` walks every weakly increasing index sequence of length
  * `pow` starting at `lastn`, accumulates each sequence's

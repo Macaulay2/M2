@@ -6,6 +6,8 @@
  * @file gb-sugarless.hpp
  * @brief `GBinhom_comp` --- Buchberger GB without the sugar heuristic, primarily for inhomogeneous input.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `GBinhom_comp`, a `GBComputation` subclass that runs
  * the same Buchberger loop as `gbA` but selects S-pairs purely
  * by leading-monomial degree instead of by sugar (the degree the

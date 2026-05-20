@@ -7,6 +7,8 @@
  * @file schur.hpp
  * @brief `SchurRing` --- symmetric-function ring with Schur-basis multiplication via Littlewood-Richardson.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `SchurRing`, a `PolyRing` subclass whose elements
  * are Z-linear combinations of Schur functions `s_lambda`
  * indexed by partitions, plus the supporting `tableau` class
@@ -66,6 +68,8 @@ class tableau
  * @brief `PolyRing` subclass implementing the Schur (symmetric-function)
  * ring whose monomials are partitions and whose multiplication is
  * the Littlewood-Richardson rule.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Exponent vectors are interpreted as partitions and converted
  * back and forth via `to_partition` / `from_partition`. Schur

@@ -7,6 +7,8 @@
  * @file aring-CC.hpp
  * @brief `M2::ARingCC` --- machine-precision complex numbers (pair of `double`s).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingCC` is the complex sibling of `ARingRR` in the aring
  * family: a `SimpleARing<ARingCC>` specialisation whose element
  * type is `cc_doubles_struct` (a `(re, im)` pair of `double`s).
@@ -56,6 +58,8 @@ namespace M2 {
 /**
  * @brief `aring`-style adapter for double-precision complex numbers, stored
  * as `(double, double)` pairs.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details `ElementType` is `cc_doubles_struct` --- two IEEE-754 doubles for
  * the real and imaginary parts. Holds a companion `ARingRR mRR`

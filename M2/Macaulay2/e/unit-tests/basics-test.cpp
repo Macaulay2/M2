@@ -4,6 +4,8 @@
  * @file unit-tests/basics-test.cpp
  * @brief Trivial harness-liveness test plus `buffer` / `M2_arrayint` round-trip coverage.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `TEST(Nothing, ideal)` exists to prove the test binary itself
  * is working: if a linker glitch, ABI mismatch, or missing
  * gtest library breaks the build, this test fails first and

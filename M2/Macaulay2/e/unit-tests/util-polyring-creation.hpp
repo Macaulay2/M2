@@ -4,6 +4,8 @@
  * @file unit-tests/util-polyring-creation.hpp
  * @brief One-line helpers for building degree monoids and polynomial rings inside gtest cases.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `degreeMonoid(names)` and the two overloads of
  * `degreeRing(...)` (variable-name list or fixed `ndegrees`)
  * that wrap the engine-side boilerplate of constructing a

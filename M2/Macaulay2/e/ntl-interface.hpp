@@ -5,6 +5,8 @@
  * @file ntl-interface.hpp
  * @brief Engine bridge into NTL --- type conversions and the NTL-backed LLL entry point.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Pulls in `<NTL/ZZ.h>`, `<NTL/mat_ZZ.h>`, and `<NTL/LLL.h>`
  * (with diagnostic pragmas around the include to silence NTL's
  * internal conversion warnings) and declares the engine-side

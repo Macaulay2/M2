@@ -7,6 +7,8 @@
  * @file hilb.hpp
  * @brief Hilbert-series numerator via the Bigatti-Caboara-Robbiano recursion.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `hilb_comp`, which computes the numerator of the
  * Hilbert series for `coker leadterms(M)` (resp. `coker I` when the
  * input is a `MonomialIdeal`) over the standard denominator

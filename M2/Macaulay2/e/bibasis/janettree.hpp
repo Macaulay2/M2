@@ -14,6 +14,8 @@
  * @file bibasis/janettree.hpp
  * @brief `BIBasis::JanetTree<MonomType>` --- the involutive-division index for boolean Gröbner bases.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares and defines the trie that drives the inner loop of
  * `BooleanInvolutiveBasis`. Each `Node` carries a variable
  * degree, an optional `Triple`, and `NextDegree` / `NextVariable`

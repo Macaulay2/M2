@@ -7,6 +7,8 @@
  * @file aring-qq-gmp.hpp
  * @brief `M2::ARingQQGMP` --- arbitrary-precision rationals backed straight by GMP `mpq_t`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingQQGMP` is the GMP counterpart of `ARingQQFlint`: each
  * `ElementType` is a `__mpq_struct` carrying two GMP integers,
  * with the limbs of both numerator and denominator

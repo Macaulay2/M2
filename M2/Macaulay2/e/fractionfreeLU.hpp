@@ -7,6 +7,8 @@
  * @file fractionfreeLU.hpp
  * @brief `FF_LUComputation` --- Bareiss-style fraction-free LU over an integral domain.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `FF_LUComputation`, a private-constructor class that
  * runs Bareiss's algorithm on a `MutableMatrix` whose base ring
  * `R` is asserted to be an integral domain. The Bareiss update
@@ -37,6 +39,8 @@
 /**
  * @brief LU decomposition over a domain using fraction-free Gaussian
  * elimination.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details The classical Bareiss-style algorithm: at each step, the new
  * entry is `(pivot * a - factor * b) / lastpivot`, where the

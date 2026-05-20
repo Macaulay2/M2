@@ -4,6 +4,8 @@
  * @file gb-f4/Basis.hpp
  * @brief `newf4::Basis` --- evolving Gröbner basis container with `GBPolyStatus` per element.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the `Basis` class meant to hold the current Gröbner
  * basis (plus the original generators) while the refactored F4
  * driver runs. Storage is two parallel containers: a

@@ -2,6 +2,8 @@
  * @file unit-tests/NCGroebnerTest.cpp
  * @brief gtest smoke tests covering the non-commutative GB pipeline end-to-end.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Exercises every layer of `NCAlgebras/` together: builds
  * `FreeAlgebra` and `FreeAlgebraQuotient` rings via
  * `util-polyring-creation`, walks `WordTable` and `SuffixTree`

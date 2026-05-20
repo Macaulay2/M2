@@ -186,6 +186,8 @@ Matrix *PolynomialRing::getPresentation() const
  * @brief `SumCollector` implementation that funnels engine-side `ring_elem`
  * additions through a `polyheap` (geobucket).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * @details Constructed with the target `PolynomialRing*`; each `add(f)`
  * inserts into the heap and `getValue()` merges all buckets into
  * a single polynomial. Used as the per-call accumulator returned

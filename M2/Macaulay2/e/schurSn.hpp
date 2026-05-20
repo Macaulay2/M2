@@ -7,6 +7,8 @@
  * @file schurSn.hpp
  * @brief `SchurSnRing` --- `SchurRing2` subclass intended for symmetric-group representation rings (Kronecker product is a stub).
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `SchurSnRing`, a `SchurRing2` subclass meant to
  * carry characters of irreducible `S_n` representations indexed
  * by partitions of `n`. Construction forwards `(A, n)` to
@@ -36,6 +38,8 @@
  * @brief `SchurRing2` subclass implementing the symmetric-group character
  * ring (the "Schur ring of `S_n`"), with multiplication given by
  * inner-product convolution rather than Littlewood-Richardson.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Overrides `mult` to compute the symmetric-group analogue: the
  * coefficient of `s_lambda` in `s_mu * s_nu` is the number of

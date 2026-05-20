@@ -7,6 +7,8 @@
  * @file polyquotient.hpp
  * @brief `PolyRingQuotient` --- polynomial ring modulo an ideal whose Groebner basis is known.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the concrete `PolyRingFlat` subclass for `R / I`
  * (sibling of `PolyRing` from `poly.hpp` --- both inherit
  * directly from `PolyRingFlat`, not from each other), where `R`
@@ -51,6 +53,8 @@ struct RingMap;
 /**
  * @brief `PolyRingFlat` subclass for quotients `R / I` of a polynomial ring
  * by an ideal.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Owns the defining ideal data through the inherited `qinfo_`
  * (`QRingInfo*`, see `qring.hpp`) and adds `normal_form` as the

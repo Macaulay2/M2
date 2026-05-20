@@ -7,6 +7,8 @@
  * @file dmat-qq-interface-flint.hpp
  * @brief Translation bridge that lets GMP-backed `DMat<ARingQQ>` borrow FLINT matrix arithmetic.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `FlintZZMat` (and the corresponding `FlintQQMat` used
  * by neighbouring LU code), small RAII wrappers that hold a FLINT
  * `fmpz_mat_t` / `fmpq_mat_t` and copy entries in from a
@@ -39,6 +41,8 @@
 /**
  * @brief RAII wrapper around FLINT's `fmpz_mat_t` for translating dense
  * `ZZ`-coefficient matrices between the engine and FLINT.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Constructed from a `DMatZZGMP` (or empty with given dimensions),
  * the wrapper holds an initialised `fmpz_mat_t` for the duration
@@ -98,6 +102,8 @@ class FlintZZMat
 /**
  * @brief RAII wrapper around FLINT's `fmpq_mat_t` for translating dense
  * `QQ`-coefficient matrices between the engine and FLINT.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Rational counterpart of `FlintZZMat`: bridges
  * `DMat<M2::ARingQQ>` (GMP-backed) and FLINT's `fmpq_mat_t` via

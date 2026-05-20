@@ -9,6 +9,8 @@
  * @file mutablemat-imp.hpp
  * @brief Template implementations of `MutableMat<Mat>` --- linear-algebra methods plus the SLP-evaluator bridge.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Carries the inline template bodies for `MutableMat<Mat>`
  * declared in `mutablemat-defs.hpp`. The linear-algebra
  * surface --- `rank`, `determinant`, `invert`,

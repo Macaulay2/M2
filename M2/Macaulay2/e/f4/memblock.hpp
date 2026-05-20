@@ -6,6 +6,8 @@
  * @file f4/memblock.hpp
  * @brief `F4MemoryBlock<T, NSLAB>` --- F4's templated slab bump allocator.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `F4MemoryBlock`, the F4-internal slab allocator
  * parameterised on the value type `T` and the slab capacity
  * `NSLAB` (default `4092` chosen so each slab lands near 16 KB

@@ -2,6 +2,8 @@
  * @file memory-status.hpp
  * @brief Placeholder memory-statistics hooks: `memorystat1` / `memorystat2` / `memorystat3`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares three unimplemented `int`-returning functions whose
  * definitions in `memory-status.cpp` return distinct sentinel
  * constants (`123`, `1234`, `12345`). The names are referenced

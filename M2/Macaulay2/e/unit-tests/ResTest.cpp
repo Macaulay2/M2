@@ -4,6 +4,8 @@
  * @file unit-tests/ResTest.cpp
  * @brief gtest coverage for `ResMonoidDense` --- the dense-exponent monoid used by the F4 resolution.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Hosts `TEST(ResMonoidDense, create)` and `TEST(ResMonoidDense,
  * encodeDecode)`, which build `ResMonoidDense` instances under
  * different weight, heft, and ordering combinations (`GRevLex`,

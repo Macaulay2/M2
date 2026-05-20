@@ -14,6 +14,8 @@
  * @file bibasis/monomDL.hpp
  * @brief `BIBasis::MonomDL` --- degree-lex specialisation of the BIBasis monomial type.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Concrete `Monom` subclass whose `Compare`, `operator<`, and
  * `operator>` first compare the cached `TotalDegree` and break
  * ties with lex on the variable list --- the standard degree-
@@ -45,6 +47,8 @@ namespace BIBasis
     /**
      * @brief `Monom` specialisation that orders monomials by degree, then
      * by lex on the variable list (DegLex).
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
      *
      * @details Inherits `Monom`'s sorted-linked-list storage and adds a
      * per-class `FastAllocator` plus a `Next` link so collections

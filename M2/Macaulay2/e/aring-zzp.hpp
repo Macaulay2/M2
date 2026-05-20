@@ -7,6 +7,8 @@
  * @file aring-zzp.hpp
  * @brief `M2::ARingZZp` --- portable `Z/p` for small primes via log / exp tables.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `ARingZZp` is the dependency-free `Z/p` aring: a
  * `SimpleARing<ARingZZp>` whose elements are interpreted as log
  * indices of a chosen primitive root, with `0` reserved for the
@@ -49,6 +51,8 @@ namespace M2 {
  * @brief `aring`-style adapter for `Z/p` using a discrete-log (Zech)
  * representation: every non-zero residue is its index relative to
  * a primitive generator `a`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Encoding: `0` means 0, `p-1` means 1, and `1..p-2` are the
  * exponents of `a^n mod p` covering residues `2..p-1`.

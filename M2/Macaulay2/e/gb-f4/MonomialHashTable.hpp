@@ -6,6 +6,8 @@
  * @file gb-f4/MonomialHashTable.hpp
  * @brief `newf4::MonomialHashFunction` and the new-F4 monomial-to-index hash table.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares the self-contained monomial-canonicalisation surface
  * for the refactored F4. `MonomialHashFunction` ships a
  * compiled-in table of 64 precomputed random 64-bit constants

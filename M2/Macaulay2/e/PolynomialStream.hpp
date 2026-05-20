@@ -4,6 +4,8 @@
  * @file PolynomialStream.hpp
  * @brief Type aliases and the (currently disabled) C++20 concept that streaming polynomial consumers implement.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Declares `newf4::Coefficient`, `VarIndex`, `Exponent`, and
  * `Component` --- the `int32_t` aliases that name the four
  * pieces of every streamed term and that callers throughout the

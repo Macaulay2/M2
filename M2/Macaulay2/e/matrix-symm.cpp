@@ -2,6 +2,8 @@
  * @file matrix-symm.cpp
  * @brief `SymmMatrix` --- compute the `p`-th symmetric power of a one-row `Matrix`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Implements `SymmMatrix`, a file-local class whose only public
  * surface is the static factory
  * `SymmMatrix::symmetricPower(m0, p)`. The factory checks
@@ -39,6 +41,8 @@
 /**
  * @brief Helper that builds the `p`-th symmetric power of a 1-by-`n`
  * matrix.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Invoked through the static `symmetricPower(m, p)` entry point,
  * which validates that the input has exactly one row and then

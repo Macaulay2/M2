@@ -12,6 +12,8 @@ class ARingZZp;
  * @file ZZp.hpp
  * @brief Legacy `Z_mod` --- a `Ring`-derived `Z/p` with log / exp tables.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `Z_mod` is the original `Z/p` class, pre-dating the `aring`
  * framework. Elements are stored as log indices of a chosen
  * primitive root `alpha`, but the encoding differs from the
@@ -43,6 +45,8 @@ class ARingZZp;
 /**
  * @brief Engine-side `Z/p` ring for small primes (`p < 32767`), using a
  * discrete-log (Zech) representation.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * @details Stores non-zero elements as their exponent indices relative to a
  * primitive root, with `_ZERO = p-1` reserved as the encoding of

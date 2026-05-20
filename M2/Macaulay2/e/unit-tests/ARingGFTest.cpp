@@ -4,6 +4,8 @@
  * @file unit-tests/ARingGFTest.cpp
  * @brief gtest coverage for the FLINT-backed Galois-field aring `M2::ARingGFFlint`.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * Plugs `M2::ARingGFFlint` into the `ARingTest.hpp` harness and
  * runs the `TEST(ARingGFFlint, create / random / arithmetic)`
  * battery over fields `GF(5^3)` and `GF(7^2)`. A 200-entry

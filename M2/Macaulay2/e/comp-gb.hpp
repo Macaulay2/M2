@@ -7,6 +7,8 @@
  * @file comp-gb.hpp
  * @brief `GBComputation` --- abstract base of every Groebner-basis algorithm in the engine.
  *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
  * `GBComputation` extends `Computation` with the GB-specific
  * vocabulary the interpreter requests once a basis has been
  * (partially) built: `get_gb`, `get_mingens`, `get_change` (the
