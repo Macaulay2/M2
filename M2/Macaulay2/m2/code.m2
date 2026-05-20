@@ -57,8 +57,6 @@ codeContent = method(
     }
 )
 codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
---codeContent = (pos, s, e, filelines) -> (
-    
     posL := toList(pos);
     str := "";
     tmp := "";
@@ -66,12 +64,9 @@ codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
     leftPadding := 3;
     rightPadding := 3;
     padding := "";
---    firstLine := "";
     lastLine := "";
     outputList := {};
     maxLen := 0;
-
---    << posL << endl;
     
     
     --Get max length of that the integer will take up as a string
@@ -101,16 +96,6 @@ codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
 	);
     );
 
--*    
-    for i from s-1 to e-2 do (
-	tmp = toString((posL#1)+(i-s+1));
-	if (opt.PrintLineNum == true) then (
-            outputList = outputList | { concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_i )};
-        ) else (
-	    outputList = outputList | filelines_{i};
-	);
-    );
-*-
     
     --If there are no carets to print, then we are done.
     if (opt.PrintCaret == false) then return PRE M2CODE stack( outputList );
@@ -132,38 +117,7 @@ codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
 	str = concatenate(str, (posL#2):" ", (posL#4 - posL#2):"^");
     );
     outputList = outputList | { str };
-
-    -*
-    tmp = toString((posL#1)+(e-s));
-    str = "";
-    if (opt.PrintLineNum == true) then (
-	str = concatenate(str, ((leftPadding + (maxLen - length tmp) + rightPadding):" "));
-    );
-
-    str = concatenate ((posL#2):" "); --Add spaces to get to where the error starts.
-    --Add carets
-    if (#posL == 3) then ( 
-	str = concatenate(str,"^");
-	
-    ) else if (#posL == 5 or #posL == 7) then (
-	tmp = concatenate ((posL#4 - posL#2):"^");
-	str = concatenate(str,tmp);
-    );
-    
-    if (s == e) then (
-	if (opt.PrintCaret == false) then (
-	    outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1})};
-	) else (
-            outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1},"\n", ((leftPadding + maxLen + rightPadding):" "), str)};
-        );
-    );
-    if (s != e and opt.PrintCaret == true) then (
-	outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1},"\n", ((leftPadding + maxLen + rightPadding + posL#4-1):" "), "^")};
-    ) else (
-        outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1})};
-    );
-    *-
-    
+   
     return PRE M2CODE stack( outputList  );
 );
 
