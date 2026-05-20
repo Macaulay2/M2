@@ -329,6 +329,17 @@ FreeModule *FreeModule::exterior(int pp) const
   return result;
 }
 
+/**
+ * @brief Helper functor that builds the `n`-th symmetric power of a
+ * `FreeModule` by recursively walking multi-indices.
+ *
+ * @details `symm1(lastn, pow)` walks every weakly increasing index sequence
+ * of length `pow` starting at `lastn`, accumulating their degree
+ * shifts in `symm1_deg` and appending the resulting component to
+ * `symm1_result`. The wrapper `symm()` (defined in the .cpp)
+ * seeds the recursion with `pow = n`. Used only inside
+ * `freemod.cpp`'s `Symm` implementation.
+ */
 struct FreeModule_symm
 {
   const FreeModule *F;  // original one

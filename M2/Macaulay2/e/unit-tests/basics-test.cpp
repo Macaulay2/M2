@@ -1,5 +1,32 @@
 // Copyright 2012 Michael E. Stillman
 
+/**
+ * @file unit-tests/basics-test.cpp
+ * @brief Trivial harness-liveness test plus `buffer` / `M2_arrayint` round-trip coverage.
+ *
+ * `TEST(Nothing, ideal)` exists to prove the test binary itself
+ * is working: if a linker glitch, ABI mismatch, or missing
+ * gtest library breaks the build, this test fails first and
+ * tells CI "engine test infrastructure broken" instead of
+ * burying that message under thousands of unrelated failures
+ * downstream. The remaining `TEST(Buffer, *)` and `TEST(Util,
+ * *)` cases pin down the engine's stream-style `buffer`
+ * accumulator and the `stdvector_to_M2_arrayint` /
+ * `M2_arrayint_to_stdvector<T>` round-trip helpers --- the
+ * primitives every other test (and most of the engine) uses to
+ * cross the C / C++ boundary with int lists.
+ *
+ * Alphabetical ordering makes `basics-test` the first gtest to
+ * execute in a default run, which is the practical reason it
+ * functions as the canary. Companion to `SubsetTest.cpp` and
+ * `PointArray.cpp` under the same `file-misc-tests` markdown.
+ *
+ * @see buffer.hpp
+ * @see util.hpp
+ * @see SubsetTest.cpp
+ * @see PointArray.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

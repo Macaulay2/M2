@@ -3,6 +3,31 @@
 // Givaro is governed by the CeCILL-B license under French law
 // and abiding by the rules of distribution of free software.
 // see the COPYRIGHT file for more details.
+
+/**
+ * @file unit-tests/GivaroTest.cpp
+ * @brief Adapted-upstream Givaro smoke test exercising `modular`, `montgomery`, `gfq`, `gfqext` templates.
+ *
+ * Carries a templated `TestField<Field>(F)` that runs the
+ * standard arithmetic / `axpy` / `maxpy` battery against any
+ * Givaro field type, then instantiates it for the four
+ * Givaro-shipped variants the engine ever consumes
+ * (`Modular<>`, `Montgomery<>`, `GFqDom<>`, `GFqExt<>`). Code
+ * is adapted from Givaro's own example tests (note the
+ * file-header typo `(c) 994-2009`) and lives in M2's tree so
+ * the engine's CI catches Givaro packaging regressions before
+ * they reach `ARingGFGivaro`.
+ *
+ * Companion to `ARingGFTest.cpp` (both under the
+ * `file-aring-gf-tests` markdown): that file tests the
+ * FLINT-backed M2 GF arings, this one is the upstream-library
+ * canary. If `GivaroTest` fails, the problem is in Givaro
+ * itself or the linker recipe, not in any M2 wrapper.
+ *
+ * @see ARingGFTest.cpp
+ * @see aring-gf-flint.hpp
+ */
+
 #include <iostream>
 #include <givaro/modular.h>
 #include <givaro/montgomery.h>

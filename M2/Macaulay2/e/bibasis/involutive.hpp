@@ -10,6 +10,38 @@
 #ifndef BIBASIS_INVOLUTIVE_HPP
 #define BIBASIS_INVOLUTIVE_HPP
 
+/**
+ * @file bibasis/involutive.hpp
+ * @brief `BIBasis::BooleanInvolutiveBasis<MonomType>` --- Janet-involutive Gröbner driver for `F_2[x]/(x_i^2-x_i)`.
+ *
+ * Declares and defines the templated class that runs Zinin's
+ * Janet-involutive basis algorithm over a boolean polynomial
+ * ring. The constructor seeds an `IntermediateBasis` (a `TSet`
+ * indexed by Janet division) and a `ProlongationsSet` (a `QSet`
+ * of pending non-multiplicative prolongations) from the input
+ * `Matrix`, then loops in `ConstructInvolutiveBasis`: pop a
+ * triple, compute its `NormalForm` by repeated head-reduction
+ * against the current basis, and either drop it (if it reduces to
+ * zero) or insert it and harvest its new non-multiplicative
+ * prolongations. A final `ReduceSet` pass collapses the result to
+ * a Pommaret-reduced involutive basis, optionally compressed
+ * further to an ordinary Gröbner basis when `toGroebner` is set.
+ *
+ * Templated on `MonomType` (`MonomLex`, `MonomDL`, or `MonomDRL`)
+ * so the divisibility / comparison kernel inlines per ordering
+ * --- the reduction inner loop runs billions of times on
+ * non-trivial inputs, so virtual dispatch is not an option.
+ * `ToMatrix()` converts the final `Polynom` list back into the
+ * engine's `Matrix` representation for return to the M2
+ * interpreter.
+ *
+ * @see pcomparator.hpp
+ * @see qset.hpp
+ * @see tset.hpp
+ * @see polynom.hpp
+ * @see janettree.hpp
+ */
+
 #include <list>
 #include <algorithm>
 #include "pcomparator.hpp"

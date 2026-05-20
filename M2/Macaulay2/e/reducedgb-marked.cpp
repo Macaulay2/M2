@@ -20,6 +20,17 @@ MarkedGB::~MarkedGB()
 
 void MarkedGB::set_gb(VECTOR(POLY) & polys0) { (void) polys0; }
 
+/**
+ * @brief Index comparator for sorting a `MarkedGB`'s `gb` array by the
+ * lead-term ordering induced by the user-supplied marking.
+ *
+ * @details Same shape as `ReducedGB_Field_sorter`: captures references to
+ * `GBRing`, `FreeModule`, and `gb`, and `operator()(a, b)`
+ * dispatches to the lead-term comparator. Used in the marked-GB
+ * code path where the leading monomials of the basis elements
+ * are pinned by the caller rather than chosen by the monomial
+ * order.
+ */
 struct MarkedGB_sorter
 {
   GBRing *R;

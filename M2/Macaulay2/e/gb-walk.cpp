@@ -16,6 +16,20 @@ class Matrix;
 class buffer;
 class RingElement;
 
+/**
+ * @brief Matrix-form encoding of a `MonomialOrdering` used by the Groebner
+ * walk algorithm.
+ *
+ * @details Every monomial ordering can be expressed as a matrix `M` so
+ * `m_1 < m_2` iff the first non-zero entry of `M (exp(m_2) -
+ * exp(m_1))` is positive. This class extracts that matrix from a
+ * `MonomialOrdering*` and stores each row in `order[i]`.
+ * `value(i, m)` is the inner product `order[i] . exp(m)`,
+ * `compare(m1, m2)` walks the rows until one differs, and
+ * `minpart(m)` returns the first row that takes a non-zero value
+ * on `m`. Used internally by `gb-walk.cpp` to interpolate
+ * between monomial orderings during a GB walk.
+ */
 class MonomialOrderMatrix
 {
   int nvars;

@@ -1,3 +1,28 @@
+/**
+ * @file unit-tests/util-polyring-creation.cpp
+ * @brief Implementation of the test-side polynomial-ring builders declared in `util-polyring-creation.hpp`.
+ *
+ * Defines `degreeMonoid(names)` (a `MonomialOrderings::join`
+ * of negative-weight, GroupLex, and PositionUp blocks fed
+ * through `Monoid::create` against the trivial degree
+ * polynomial ring), the two `degreeRing(...)` overloads
+ * (variable-name list and fixed `ndegrees == 1`), and the two
+ * `simplePolynomialRing(...)` variants that wire a coefficient
+ * ring, monoid, and `MonomialOrdering` into the engine's
+ * `PolyRing::create`. The `Z/p` GRevLex shortcut at the bottom
+ * gives F4 tests one-liner ring construction.
+ *
+ * Companion to the header it implements and to the other
+ * harness files (`testMain.cpp`, `fromStream.cpp`,
+ * `M2-cpp-replacement.cpp`) under the `file-test-harness`
+ * markdown family.
+ *
+ * @see util-polyring-creation.hpp
+ * @see polyring.hpp
+ * @see monoid.hpp
+ * @see interface/monomial-ordering.h
+ */
+
 #include "util-polyring-creation.hpp"
 
 const Monoid* degreeMonoid(const std::vector<std::string>& names)

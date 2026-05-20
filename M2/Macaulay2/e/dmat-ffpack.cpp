@@ -1,5 +1,31 @@
 // Copyright 2005-2012  Michael E. Stillman
 
+/**
+ * @file dmat-ffpack.cpp
+ * @brief Legacy FFLAS-FFPACK dispatcher for `DMat<R>` --- entirely `#if 0`'d out, retained as a history marker.
+ *
+ * Before the engine standardised on `aring-zzp-ffpack.hpp` plus the
+ * templated linear-algebra machinery in `mat-linalg.hpp`, each
+ * combination of `(coefficient ring, operation)` had its own
+ * hand-written dispatcher; this file was the FFLAS-FFPACK branch ---
+ * `rank`, LU, and friends gated by an `enable_if<is_givaro_or_ffpack>`
+ * template guard so only FFLAS-compatible rings (Z/p over FFLAS,
+ * Givaro-backed GF) could instantiate them. The implementations have
+ * since been folded into `dmat.cpp` and the per-ring `DMat<R>`
+ * specialisations, where the back-end calls happen inline rather than
+ * routed through a separate dispatcher.
+ *
+ * The entire body is wrapped in `#if 0` and excluded from the build.
+ * The file is kept so historical grep for "FFPACK" surfaces this code
+ * path's origin and so the `@jakob` notes inside (improvements that
+ * eventually made it into the live path) remain locatable. A future
+ * cleanup pass is expected to delete the file.
+ *
+ * @see dmat.hpp
+ * @see mat-linalg.hpp
+ * @see aring-zzp-ffpack.hpp
+ */
+
 #if 0
 // This file is not in use.  These functions are now in dmat.cpp.
 #if 0

@@ -1,4 +1,24 @@
 /**
+ * @file defgroups.h
+ * @brief Pure Doxygen scaffolding --- the `\mainpage` text and every `\defgroup` used in engine docs.
+ *
+ * `defgroups.h` contains no C++ declarations. Its purpose is to
+ * carry the project-level documentation that Doxygen weaves into
+ * the generated HTML: the `\mainpage` text that lands on the
+ * top-level page, and the cascade of `\defgroup` / `\ingroup`
+ * stanzas that organise the engine's classes into categories
+ * (rings, ringinfo, coeffrings, polynomialrings, matrices, comp,
+ * ...). Other engine headers reference these groups by tagging
+ * their classes with `@ingroup <name>`, and Doxygen knits the
+ * cross-links together at build time.
+ *
+ * Edit this file when adding a new top-level category, when the
+ * project blurb on the front page changes, or when a category
+ * needs a parent/child relationship that an `@ingroup` tag should
+ * inherit.
+ */
+
+/**
     \mainpage Macaulay2 C++ engine documentation
 
     The Macaulay2 engine implements rings, elements in these rings,

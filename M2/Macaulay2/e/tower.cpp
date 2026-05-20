@@ -260,6 +260,17 @@ void Tower::elem_text_out(buffer &o,
   D->elem_text_out(o, TOWER_POLYNOMIAL_VAL(f), p_one, p_plus, p_parens, names);
 }
 
+/**
+ * @brief `DPolyTraverser` subclass that evaluates a tower polynomial under
+ * a `RingMap`.
+ *
+ * @details Each `viewTerm(coeff, exp)` callback translates the exponent
+ * vector into a `varpower` monomial, evaluates `map`'s images of
+ * the relevant variables, multiplies them with the coefficient
+ * (coerced through `K`), and folds the result into the
+ * `SumCollector* H`. After traversal, `H->getValue()` is the
+ * evaluated `ring_elem` in the target ring.
+ */
 class TowerEvaluator : public DPolyTraverser
 {
   const RingMap *map;

@@ -1,5 +1,32 @@
 // Copyright 2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/RingRRRTest.cpp
+ * @brief gtest coverage for the legacy `RingRRR` --- `ConcreteRing<M2::ARingRRR>` glued back into the `ring_elem` API.
+ *
+ * Tests the MPFR-backed arbitrary-precision real ring through
+ * the legacy `Ring` surface that the interpreter still uses,
+ * which means exercising the `aring-glue.hpp` `ConcreteRing<>`
+ * wrapper end-to-end: the `getElement<RingRRR>` specialisation
+ * uses the deterministic `[-25, 24]` prefix plus `R.random()`
+ * for the rest, and `almostEqual` builds an `mpfr_t` epsilon
+ * scaled to `2^-nbits` against `R.subtract(a, b).get_mpfr()`.
+ * Bugs in the glue (`from_long` mappings, `init` / `clear`
+ * lifecycle, `random` plumbing) surface here before they
+ * appear as user-visible misbehaviour through `globalRR`.
+ *
+ * Companion to `RingZZTest.cpp`, `RingZZpTest.cpp`,
+ * `RingQQTest.cpp`, `RingCCCTest.cpp`, and `RingTowerTest.cpp`
+ * (all `file-ring-tests`); the modern aring-only counterpart
+ * is `ARingRRRTest.cpp`, which exercises the same MPFR backend
+ * through the templated path.
+ *
+ * @see RingTest.hpp
+ * @see aring-glue.hpp
+ * @see aring-RRR.hpp
+ * @see ARingRRRTest.cpp
+ */
+
 #include "RingTest.hpp"
 #include "aring-glue.hpp"
 #include "aring-RRR.hpp"

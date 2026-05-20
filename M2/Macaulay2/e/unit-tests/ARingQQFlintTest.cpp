@@ -1,5 +1,32 @@
 // Copyright 2012-2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/ARingQQFlintTest.cpp
+ * @brief gtest coverage for the FLINT-backed `M2::ARingQQFlint` rational aring.
+ *
+ * Plugs `M2::ARingQQFlint` into the `ARingTest.hpp` harness via
+ * the `getElement<M2::ARingQQFlint>` specialisation: indices
+ * `< 50` produce the deterministic `[-25, 24]` integer prefix
+ * (covering zero, plus / minus one, and small integer
+ * canonicalisations of `fmpq_t`), and the rest come from
+ * `R.random(result)` so the random source is the ring's own
+ * FLINT-backed draw. The standard `testSomeMore` battery then
+ * runs arithmetic, equality, inverse, and stream round-trips
+ * against the FLINT canonicalised representation.
+ *
+ * Cross-checks against `ARingQQGmpTest.cpp` (same operations
+ * over GMP `mpq_t`) are the regression net the
+ * `file-aring-zz-tests` family relies on; a divergence between
+ * the two reveals a FLINT regression, a GMP edge case, or a
+ * wrapper bug. Historic catches include a `fmpq_canonicalise`
+ * sign bug on `0/-1`.
+ *
+ * @see ARingTest.hpp
+ * @see aring-qq-flint.hpp
+ * @see ARingQQGmpTest.cpp
+ * @see ARingZZTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

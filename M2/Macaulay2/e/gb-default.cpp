@@ -721,6 +721,18 @@ struct spair_sorter
 };
 }; // unnamed namespace
 
+/**
+ * @brief Comparator on `gbA::spair*` used by the default Groebner basis
+ * driver to order its S-pair queue.
+ *
+ * @details Orders descending by sugar `deg` (largest first --- the queue
+ * processes pairs of equal degree as a cohort), then by `spair`
+ * type, then by lead term of the S-polynomial. The two helpers
+ * `compare` (returning `LT` / `EQ` / `GT`) and the standard
+ * `operator()`-style entry are both supplied so the same functor
+ * can drive both manual sorting and `std::priority_queue`-style
+ * containers.
+ */
 class SPolySorter
 {
  public:

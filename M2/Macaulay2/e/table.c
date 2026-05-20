@@ -11,6 +11,18 @@
 #define FREE(ptr) ((void)(freemem((ptr)), (ptr) = 0))
 
 #define T Table_T
+/**
+ * @struct T
+ * @brief Classic separate-chaining hash table used by the engine's
+ *        low-level C code paths.
+ *
+ * @details `size` is the bucket count and `length` the live entry count;
+ *          `cmp` / `hash` are the key comparison and hashing function
+ *          pointers; `timestamp` is bumped on every mutation so iterators
+ *          can detect concurrent changes. `buckets` is an array of
+ *          `binding*` heads, each chain holding the `(key, value)` pairs
+ *          that hash to that slot.
+ */
 struct T
 {
   int size;
@@ -18,6 +30,10 @@ struct T
   unsigned (*hash)(const void *key);
   int length;
   unsigned timestamp;
+  /**
+   * @brief Singly linked-list node holding one `(key, value)` pair in a
+   *        hash bucket chain.
+   */
   struct binding
   {
     struct binding *link;

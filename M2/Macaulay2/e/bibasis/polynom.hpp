@@ -10,6 +10,35 @@
 #ifndef BIBASIS_POLYNOM_HPP
 #define BIBASIS_POLYNOM_HPP
 
+/**
+ * @file bibasis/polynom.hpp
+ * @brief `BIBasis::Polynom<MonomType>` --- linked-list `F_2[x]` polynomial with symmetric-difference arithmetic.
+ *
+ * Declares and defines the polynomial value type used throughout
+ * the involutive-basis engine. Terms are kept as a singly-linked
+ * `MonomType*` list sorted highest-first under the chosen
+ * ordering, with no coefficients stored --- the ground field is
+ * `F_2`, so addition is symmetric difference and multiplication
+ * is monomial-pair merging with the squarefree relation `x_i^2 =
+ * x_i` collapsing repeats. Each `Polynom` instance allocates from
+ * a per-`MonomType` static `FastAllocator`, since the prolongation
+ * loop creates and destroys millions of short-lived polynomials.
+ *
+ * The arithmetic surface is built around `operator+=` / `*=` /
+ * `MergeWith` (the in-place XOR merge used by `Reduction` and
+ * `HeadReduction`) plus `Lm`, `RidOfLm`, and a binary-search
+ * `Find` for locating a specific monomial. Templated on
+ * `MonomType` so `MonomLex`, `MonomDL`, and `MonomDRL` each get
+ * their own monomorphised arithmetic kernel; the engine's general
+ * `Poly` type is intentionally bypassed here to keep the
+ * Boolean-ring inner loop free of coefficient and packed-monomial
+ * overhead.
+ *
+ * @see monom.hpp
+ * @see allocator.hpp
+ * @see involutive.hpp
+ */
+
 #include <iostream>
 #include "allocator.hpp"
 

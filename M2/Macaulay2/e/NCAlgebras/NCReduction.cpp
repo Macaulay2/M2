@@ -49,6 +49,15 @@ Possible ways:
     F - aGb - cGd - ...
 #endif
 
+/**
+ * @brief Experimental `mathic::Geobucket` configuration whose `Entry` is an
+ * `int` --- a placeholder used by `makeQueue()` to exercise the
+ * geobucket machinery without involving real monomials.
+ *
+ * @details Compare is integer ordering, deduplication is disabled. Useful as a
+ * scaffolding/sanity-check configuration when wiring the noncommutative
+ * reduction code against the mathic queue templates.
+ */
 class OurQueueConfiguration
 {
 public:
@@ -79,6 +88,15 @@ public:
   static const mathic::GeobucketBucketStorage bucketStorage = mathic::GeoStoreSameSizeBuffer;
 };
 
+/**
+ * @brief Variant of `OurQueueConfiguration` with deduplication enabled,
+ * used by `makeQueue1()`.
+ *
+ * @details `deduplicate(a, b)` returns `a + b + 1000`, a sentinel value chosen
+ * so that the geobucket can be observed to call into the deduplicate
+ * path during testing. Like its sibling, this configuration is
+ * scaffolding rather than a real reduction backend.
+ */
 class OurQueueConfiguration1
 {
 public:
@@ -125,9 +143,19 @@ std::unique_ptr<mathic::Geobucket<OurQueueConfiguration1>> makeQueue1()
   return std::make_unique<mathic::Geobucket<OurQueueConfiguration1>>(C);
 }
 
+/**
+ * @brief Baseline `PolynomialHeap` implementation that simply accumulates the
+ * pending sum in a single `Poly` and walks it with an iterator.
+ *
+ * @details No queue, no deduplication: every `addPolynomial` does a
+ * `FreeAlgebra::add` of the new terms into the running value, and
+ * `removeLeadTerm` just advances the iterator. Useful as a correctness
+ * oracle for the geobucket-, map-, and priority-queue-backed heaps
+ * defined later in this file.
+ */
 class TrivialPolynomialHeap : public PolynomialHeap
 {
-public:  
+public:
   TrivialPolynomialHeap(const FreeAlgebra& F)
     : mRing(F),
       mValue{},
@@ -210,6 +238,15 @@ private:
 // NaivePolynomialHeap /////////////
 ////////////////////////////////////
 
+/**
+ * @brief `mathic::Geobucket` configuration whose `Entry` is a
+ * `(Monom, ring_elem)` pair compared by the `FreeMonoid` order on
+ * the monomial component.
+ *
+ * @details Used by `NaivePolynomialHeap<Queue>`. Deduplication is off, so the
+ * heap holds duplicate monomials and only collapses them on lead-term
+ * extraction.
+ */
 class NaiveQueueConfiguration
 {
 public:
@@ -256,6 +293,14 @@ private:
   const FreeAlgebra& mRing;
 };
 
+/**
+ * @brief Variant of `NaiveQueueConfiguration` with deduplication enabled:
+ * `deduplicate(a, b)` sums the coefficients of two equal monomials.
+ *
+ * @details Lets the underlying geobucket collapse like terms eagerly instead of
+ * deferring the addition until lead-term extraction. Combined with
+ * `NaivePolynomialHeap<Queue>` to compare the two strategies.
+ */
 class NaiveDedupQueueConfiguration
 {
 public:
@@ -550,6 +595,16 @@ private:
 };
 
 
+/**
+ * @brief `PolynomialHeap` backed by a `std::map<Monom, ring_elem, MonomEq>`,
+ * deduplicating on insert via the map's lookup.
+ *
+ * @details Each `addTerm` does a `map::find` on the monomial; on hit the
+ * coefficients are summed in place, on miss the monomial is copied
+ * into `mMonomialSpace` (a `MemoryBlock` arena) and inserted. Lead-term
+ * extraction uses `mMap.begin()`, so the map's ordering must agree
+ * with the heap's notion of "leading".
+ */
 class MapPolynomialHeap : public PolynomialHeap
 {
 public:
@@ -842,12 +897,24 @@ private:
 };
 #endif
 
+/**
+ * @brief Comparator (and trivial hash) functor wired into the
+ * `std::priority_queue` inside `PriorityQueuePolynomialHeap`.
+ *
+ * @details `operator()(Entry, Entry)` returns true when the first entry's
+ * monomial is `LT` under the `FreeMonoid`'s ordering --- so the
+ * priority queue, which extracts max under its `Compare`, yields
+ * the largest monomial as the lead term. The `operator()(Monom)`
+ * overload is a placeholder hash that always returns zero; it
+ * exists so the same configuration object can also be used as the
+ * hasher in `std::unordered_map<Monom, ...>`.
+ */
 class EntryConfig
 {
 public:
 
   using Entry = std::pair<Monom,ring_elem>;
-    
+
   EntryConfig(const FreeMonoid& M) : mMonoid(M) {}
 
   size_t operator()(Monom m) const // hash function
@@ -867,6 +934,19 @@ private:
   const FreeMonoid& mMonoid;
 };
 
+/**
+ * @brief `PolynomialHeap` backed by a `std::priority_queue` of
+ * `(Monom, ring_elem)` entries, with deduplication done lazily on
+ * lead-term extraction.
+ *
+ * @details Insertions copy each `Monom` into `mMonomialSpace` (a `MemoryBlock`
+ * arena) and push the entry onto the queue. `isZero()` pops the top
+ * entry and keeps summing in any subsequent entries with the same
+ * monomial until either a smaller monomial appears (giving the next
+ * lead term, cached in `mLeadTerm`) or the running coefficient becomes
+ * zero (in which case the loop continues). The cached `mLeadTerm` is
+ * pushed back onto the queue on the next `addPolynomial` call.
+ */
 class PriorityQueuePolynomialHeap : public PolynomialHeap
 {
 public:

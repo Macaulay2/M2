@@ -1,3 +1,30 @@
+/**
+ * @file unit-tests/MatrixIOTest.cpp
+ * @brief gtest coverage for `BasicPoly` / `BasicPolyList` round-trips and msolve-format benchmark ingestion.
+ *
+ * Hosts the `TEST(MatrixIO, *)` battery covering polynomial
+ * I/O: `parseBasicPoly(polyStr, varnames)` round-trips through
+ * `toString`, `bytesUsed` reports the expected storage size,
+ * and `BasicPolyListParser` ingests the msolve-format benchmark
+ * inputs (`13*x^2*y - x*y - 2` and similar) the new-F4 path
+ * consumes. The Benchmark tests sit behind a hardcoded
+ * `EXAMPLE_DIR` developer path because the msolve files are too
+ * large to ship with the engine; the comment block at the top
+ * marks them as opt-in rather than CI-default.
+ *
+ * Companion files `DMatZZpTest.cpp` and `PolyRingTest.cpp`
+ * (under the same `file-dmat-matrix-tests` markdown) cover
+ * dense-matrix linear algebra and polynomial-ring construction
+ * respectively; this file pins down the parser and serializer
+ * surface those tests --- and the user-facing F4 entry --- sit
+ * on top of.
+ *
+ * @see BasicPolyListParser.hpp
+ * @see gb-f4/PolynomialList.hpp
+ * @see gb-f4/GBF4Interface.hpp
+ * @see NewF4Test.cpp
+ */
+
 #include <iostream>
 #include <memory>
 #include <gtest/gtest.h>

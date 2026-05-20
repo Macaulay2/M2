@@ -1,5 +1,30 @@
 // Copyright 2016 Michael E. Stillman
 
+/**
+ * @file unit-tests/PointArray.cpp
+ * @brief gtest coverage for `PointArray` --- NAG's epsilon-bucketed numerical-point clustering structure.
+ *
+ * Hosts the `TEST(PointArray, *)` battery that builds
+ * `PointArray` instances at fixed epsilons (`0.0001` and
+ * `0.001` in the smoke tests), confirms `lookup` returns `-1`
+ * on misses, `lookup_or_append` adds new clusters and returns
+ * their indices, and re-querying a near-duplicate within
+ * epsilon resolves back to the same bucket. The structure
+ * underpins Numerical Algebraic Geometry's witness-set and
+ * monodromy paths, where the same numerical point can be
+ * encountered repeatedly under floating-point perturbation and
+ * must be identified across orderings of arrival.
+ *
+ * Companion files in the `file-misc-tests` family
+ * (`SubsetTest.cpp` for subset combinatorics,
+ * `basics-test.cpp` for the harness-itself liveness check) get
+ * their own `@file` blocks on separate firings.
+ *
+ * @see NAG.hpp
+ * @see interface/NAG.h
+ * @see SubsetTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

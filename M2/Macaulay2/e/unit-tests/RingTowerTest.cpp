@@ -1,5 +1,31 @@
 // Copyright 2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/RingTowerTest.cpp
+ * @brief gtest coverage for `Tower` --- iterated polynomial-extension rings used by tower-style finite fields.
+ *
+ * Hosts the `TEST(RingTower, *)` battery that builds
+ * `Tower::create(101, {"a", "b"})` and checks the resulting
+ * ring identifies itself as `"Tower[ZZ/101[a,b]]"`, exposes the
+ * expected variable count, and supports the standard
+ * arithmetic, identity, and random-draw surface through
+ * `R.random()`. The `getElement<Tower>` specialisation simply
+ * forwards to `R.random()` since the tower's element space
+ * doesn't reduce cleanly to the integer prefix used elsewhere.
+ *
+ * `Tower` underpins tower constructions like `GF(2^256) =
+ * GF(2)[x]/(x^256 + ...)` --- iterated extensions where each
+ * level adds one variable and quotients by a minimal
+ * polynomial. The file-level comment block sketches the custom
+ * polynomial-text parser the test cases use to keep
+ * input/output readable. Companion to the rest of the
+ * `file-ring-tests` family.
+ *
+ * @see RingTest.hpp
+ * @see tower.hpp
+ * @see RingZZpTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

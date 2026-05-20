@@ -27,6 +27,18 @@ std::unique_ptr<WordTable> constructWordTable(const FreeAlgebra& A, const ConstP
   return W;
 }
 
+/**
+ * @brief Non-commutative analogue of `KBasis`: enumerates basis monomials
+ * of a `FreeAlgebra` quotient up to a degree / length bound.
+ *
+ * @details Holds the ambient `FreeAlgebra` plus the set of generator
+ * variables / their heft degrees (`mVariables`, `mVariableHefts`),
+ * a `WordTable` of GB lead terms (so monomials divisible by any
+ * lead term are skipped), and the recursion scratch state
+ * (`mMonomial` and `mCurrentIndex`). The recursive worker prefixes
+ * each generator in turn and emits a column whenever the partial
+ * word reaches the requested target degree.
+ */
 class NCBasis : public our_new_delete
 {
 private:

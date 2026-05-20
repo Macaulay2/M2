@@ -1,5 +1,34 @@
 // Copyright 2012-2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/ARingRRRTest.cpp
+ * @brief gtest coverage for the MPFR-backed `M2::ARingRRR` arbitrary-precision real aring.
+ *
+ * Drives `M2::ARingRRR` through the shared `ARingTest.hpp`
+ * harness with a precision-aware `almostEqual` that builds the
+ * epsilon directly as an `mpfr_t` via
+ * `mpfr_set_ui_2exp(epsilon, 1, -nbits)` --- so the tolerance
+ * scales with the ring's `get_precision()` rather than being
+ * pinned to 53 bits. `getElement<M2::ARingRRR>` and
+ * `testSomeMore` then exercise arithmetic, equality, inverses,
+ * and stream round-trips at the full configured precision; the
+ * suite also serves as the cross-backend agreement check that
+ * the 53-bit `ARingRR` stays within `2^-50` of an `ARingRRR`
+ * configured at 53 bits.
+ *
+ * Sibling files `ARingRRTest.cpp`, `ARingRRiTest.cpp`,
+ * `ARingCCTest.cpp`, and `ARingCCCTest.cpp` (covered by the
+ * same `file-aring-real-complex-tests` markdown) follow the
+ * same template against `double`, MPFI intervals, and MPC
+ * complex backends. Each carries its own `almostEqual` scaled
+ * to the underlying representation.
+ *
+ * @see ARingTest.hpp
+ * @see aring-RRR.hpp
+ * @see ARingRRTest.cpp
+ * @see ARingCCCTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>
