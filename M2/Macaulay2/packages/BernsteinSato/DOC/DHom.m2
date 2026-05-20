@@ -82,10 +82,10 @@ doc ///
       a positive weight vector
   Outputs
     :HashTable
-      a basis of D-homomorphisms between holonomic D-modules $M$ and $N$
+      a basis of $D$-homomorphisms between holonomic $D$-modules $M$ and $N$
   Description
     Text
-      The set of D-homomorphisms between two holonomic modules $M$
+      The set of $D$-homomorphisms between two holonomic modules $M$
       and $N$ is a finite-dimensional vector space over the ground field.
       Since a homomorphism is defined by where it sends a set of generators,
       the output of this command is a list of matrices whose columns
@@ -160,7 +160,7 @@ doc ///
   Key
     None
   Headline
-    an option for DExt=>Special
+    a value for the @TT "Special"@ option of @TO DExt@
   SeeAlso
     DExt
 ///
@@ -264,10 +264,10 @@ doc ///
       a positive weight vector
   Outputs
     :HashTable
-      the Ext groups between holonomic D-modules $M$ and $N$
+      the Ext groups between holonomic $D$-modules $M$ and $N$
   Description
     Text
-      The Ext groups between D-modules $M$ and $N$
+      The Ext groups between $D$-modules $M$ and $N$
       are the derived functors of Hom, and are finite-dimensional
       vector spaces over the ground field when $M$ and $N$ are holonomic.
 
@@ -283,7 +283,7 @@ doc ///
       N = W^1/ideal((D-1)^2)
       DExt(M,N)
   Caveat
-    Input modules M, N should be holonomic.
+    Input modules $M$, $N$ should be holonomic.
     Does not yet compute explicit representations of Ext groups
     such as Yoneda representation.
   SeeAlso
@@ -340,9 +340,9 @@ doc ///
       the holonomic dual of $M$
   Description
     Text
-      If $M$ is a holonomic left D-module, then
+      If $M$ is a holonomic left $D$-module, then
       $\text{Ext}^n_D(M, D)$
-      is a holonomic right D-module.  The holonomic dual is defined to be the left
+      is a holonomic right $D$-module.  The holonomic dual is defined to be the left
       module associated to
       $\text{Ext}^n_D(M, D)$.
       The dual is obtained by
@@ -353,7 +353,7 @@ doc ///
       Ddual I
   Caveat
     The input module $M$ should be holonomic.  The user should
-    check this manually with the script @TT "Ddim"@.
+    check this manually with the script @TO Ddim@.
   SeeAlso
     Ddim
     Dtransposition
@@ -435,7 +435,7 @@ doc ///
       and the polynomial ring
   Description
     Text
-      The Ext groups between a D-module $M$
+      The Ext groups between a $D$-module $M$
       and the polynomial ring are the derived functors of Hom,
       and are finite-dimensional vector spaces over the ground field when
       $M$ is holonomic.
@@ -547,9 +547,10 @@ doc ///
       (or at $f$ if specified)
   Description
     Text
-      The Ext groups between $M$ and $N$
-      are the derived functors of Hom, and are finite-dimensional
-      vector spaces over the ground field when $M$ and $N$ are holonomic.
+      The Ext groups between a holonomic $D$-module $M$ and the polynomial
+      ring localized at the singular locus of $M$ (or at $f$ if specified)
+      are derived functors of Hom, and are finite-dimensional vector spaces
+      over the ground field.
 
       The algorithm used appears in [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
       The method is to combine isomorphisms of Bjork and Kashiwara with
@@ -598,7 +599,7 @@ doc ///
       finite-dimensional vector space.
       There are two algorithms implemented to get these solutions.
       The first algorithm is based on Gröbner deformations and
-      works for ideals $I$ of PDE's - see [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
+      works for ideals $I$ of PDEs - see [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
       The second algorithm is based on homological algebra - see
       [@TO2 ("WeylAlgebras :: Works Cited", "TW01")@].
     Example
@@ -636,8 +637,8 @@ doc ///
   Description
     Text
       @UL {
-	  {BOLD "GD", " -- uses Groebner deformations"},
-	  {BOLD "Duality", " -- uses homological duality"}
+	  {TT "GD", " -- uses Groebner deformations"},
+	  {TT "Duality", " -- uses homological duality"}
 	  }@
 ///
 
@@ -652,7 +653,7 @@ doc ///
   Key
     GD
   Headline
-    an option for polynomialSolutions=>Alg
+    a value for the @TT "Alg"@ option of @TO polynomialSolutions@
   SeeAlso
     polynomialSolutions
 ///
@@ -668,7 +669,7 @@ doc ///
   Key
     Duality
   Headline
-    an option for polynomialSolutions=>Alg
+    a value for the @TT "Alg"@ option of @TO polynomialSolutions@
   SeeAlso
     polynomialSolutions
 ///
@@ -711,7 +712,7 @@ doc ///
       are the codimension one components of the singular locus.
       An algorithm to compute rational solutions
       is based on Gröbner deformations and
-      works for ideals $I$ of PDE's - see [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
+      works for ideals $I$ of PDEs - see [@TO2 ("WeylAlgebras :: Works Cited", "OTT01")@].
     Example
       makeWA(QQ[x])
       I = ideal((x+1)*dx+5)

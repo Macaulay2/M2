@@ -19,9 +19,9 @@ doc ///
   Description
     Text
       @UL {
-	  {BOLD "Schreyer",
+	  {TT "Schreyer",
 	       " -- uses Schreyer method in homogeneous Weyl algebra"},
-	  {BOLD "Vhomogenize", " -- uses V-homogenization method of Oaku"}
+	  {TT "Vhomogenize", " -- uses V-homogenization method of Oaku"}
 	  }@
 ///
 
@@ -143,11 +143,11 @@ doc ///
       a weight vector
   Outputs
     :Complex
-      a Schreyer resolution of the D-module $M$
+      a Schreyer resolution of the $D$-module $M$
       or a resolution adapted to a weight vector $w$ of the form $(-u,u)$
   Description
     Text
-      This routine computes various resolutions of a D-module.
+      This routine computes various resolutions of a $D$-module.
       If no weight vector is specified, then the command
       produces a resolution by using the Schreyer order implemented
       in the engine.  If a weight vector $w$ of the form $(-u,u)$
@@ -290,13 +290,13 @@ doc ///
       contains entries of the form @TT "i=>NIi"@
   Description
     Text
-      The derived restriction modules of a D-module $M$ are
-      the derived inverse images in the category of D-modules.
+      The derived restriction modules of a $D$-module $M$ are
+      the derived inverse images in the category of $D$-modules.
       This routine computes restrictions to coordinate subspaces,
       where the subspace is determined
       by the strictly positive entries of the weight vector $w$,
       e.g., $\{x_j = 0 : w_j > 0\}$ if
-      $D = \mathbb{C}\langle x_1,\ldots,x_n,d_1,\ldots,d_n\rangle$.
+      $D = \mathbb{C}\langle x_1,\ldots,x_n,dx_1,\ldots,dx_n\rangle$.
       The input weight vector should be a list of $n$ numbers
       to induce the weight $(-w,w)$ on $D$.
 
@@ -855,13 +855,13 @@ doc ///
       contains entries of the form @TT "i=>NIi"@
   Description
     Text
-      The derived integration modules of a D-module $M$ are
-      the derived direct images in the category of D-modules.
+      The derived integration modules of a $D$-module $M$ are
+      the derived direct images in the category of $D$-modules.
       This routine computes integration for projection to
       coordinate subspaces, where the subspace is determined
       by the strictly positive entries of the weight vector $w$,
       e.g., $\{x_j = 0 : w_j > 0\}$ if
-      $D = \mathbb{C}\langle x_1,\ldots,x_n,d_1,\ldots,d_n\rangle$.
+      $D = \mathbb{C}\langle x_1,\ldots,x_n,dx_1,\ldots,dx_n\rangle$.
       The input weight vector should be a list of $n$ numbers
       to induce the weight $(-w,w)$ on $D$.
 

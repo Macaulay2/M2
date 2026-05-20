@@ -47,18 +47,18 @@ doc ///
       @TT "localCohom(...Ideal...)"@ and @TT "localCohom(...Ideal, Module...)"@.
 
       @UL {
-	  {BOLD "Walther", " -- the algorithm of U. Walther that uses Cech complex."},
+	  {TT "Walther", " -- the algorithm of U. Walther that uses Cech complex."},
 	  UL {
-	       {BOLD "LocStrategy => null",
+	       {TT "LocStrategy => null",
 		    " -- used only for ", TT "localCohom(...Ideal...)",
 		    ", localizations are done by straightforward computation of
 		    annihilators and b-polynomials as described in [", TO2 ("WeylAlgebras :: Works Cited", "Wal99"), "]."},
-	       {BOLD "LocStrategy => OaTaWa",
+	       {TT "LocStrategy => OaTaWa",
 		    " -- localizations are done following Oaku-Takayama-Walther method [", TO2 ("WeylAlgebras :: Works Cited", "OTW00"), "]."},
-	       {BOLD "LocStrategy => Oaku",
+	       {TT "LocStrategy => Oaku",
 		    " -- localizations are done following Oaku's algorithm."},
 	  },
-	  {BOLD "OaTa", " -- restriction from the graph embedding is used,
+	  {TT "OaTa", " -- restriction from the graph embedding is used,
 	       which is due to T. Oaku and N. Takayama [", TO2 ("WeylAlgebras :: Works Cited", "OT01"), "]. See ", TO "Drestriction", "."}
 	  }@
   Caveat
@@ -102,7 +102,7 @@ doc ///
   Key
     Walther
   Headline
-    an option for localCohom=>Strategy
+    a value for the @TT "Strategy"@ option of @TO localCohom@
   Description
     Text
       See @TO "localCohom"@.
@@ -119,7 +119,7 @@ doc ///
   Key
     OaTa
   Headline
-    an option for localCohom=>Strategy
+    a value for the @TT "Strategy"@ option of @TO localCohom@
   Description
     Text
       See @TO "localCohom"@.
@@ -136,7 +136,7 @@ doc ///
   Key
     OaTaWa
   Headline
-    an option for localCohom => LocStrategy
+    a value for the @TT "LocStrategy"@ option of @TO localCohom@
   SeeAlso
     localCohom
 ///
@@ -226,7 +226,7 @@ doc ///
       an ideal of $R = k[x_1,\ldots,x_n]$
   Outputs
     H:HashTable
-      each entry of @TT "H"@ has an integer key and
+      each entry of $H$ has an integer key and
       contains the cohomology module in the corresponding degree
   Description
     Example
@@ -270,7 +270,7 @@ doc ///
     I:Ideal
   Outputs
     :HashTable
-      the local cohomology of @TT "I"@ in the degrees specified by $l$
+      the local cohomology of $I$ in the degrees specified by $l$
   Description
     Text
       See @TO (localCohom, Ideal)@ for the full description.
@@ -312,7 +312,7 @@ doc ///
     I:Ideal
   Outputs
     :Module
-      the local cohomology of @TT "I"@ in degree $d$
+      the local cohomology of $I$ in degree $d$
   Description
     Text
       See @TO (localCohom, Ideal)@ for the full description.
@@ -368,10 +368,10 @@ doc ///
     I:Ideal
       an ideal of $R = k[x_1,\ldots,x_n]$
     M:Module
-      a holonomic module over Weyl algebra $A_n(k)$
+      a holonomic module over Weyl algebra $D$
   Outputs
     H:HashTable
-      each entry of @TT "H"@ has an integer key and
+      each entry of $H$ has an integer key and
       contains the cohomology module in the corresponding degree
   Description
     Example
@@ -421,7 +421,7 @@ doc ///
   Outputs
     :HashTable
       the local cohomology $H^d_I(M)$, where $I$
-      is an ideal in a polynomial ring and $M$ is a D-module
+      is an ideal in a polynomial ring and $M$ is a $D$-module
   Description
     Text
       See @TO (localCohom, Ideal, Module)@ for the full description.
@@ -470,7 +470,7 @@ doc ///
   Outputs
     :HashTable
       the local cohomology $H^*_I(M)$ in degrees listed in $l$,
-      where $I$ is an ideal in a polynomial ring and $M$ is a D-module
+      where $I$ is an ideal in a polynomial ring and $M$ is a $D$-module
   Description
     Text
       See @TO (localCohom, Ideal, Module)@ for the full description.
@@ -509,7 +509,7 @@ doc ///
     :HashTable
   Description
     Text
-      This function applies @TO "Dprune"@ to all the keys of @TT "H"@.
+      This function applies @TO "Dprune"@ to all the keys of $H$.
   SeeAlso
     localCohom
     Dprune
@@ -675,9 +675,9 @@ doc ///
   Key
     TransferCycles
   Headline
-    a key in the hashtable created by deRham
+    a key in the hashtable created by deRhamAll
   SeeAlso
-    deRham
+    deRhamAll
 ///
 
 --- old format (commented out) ---
@@ -691,9 +691,9 @@ doc ///
   Key
     CohomologyGroups
   Headline
-    a key in the hashtable created by deRham
+    a key in the hashtable created by deRhamAll
   SeeAlso
-    deRham
+    deRhamAll
 ///
 
 --- old format (commented out) ---
@@ -707,9 +707,9 @@ doc ///
   Key
     PreCycles
   Headline
-    a key in the hashtable created by deRham
+    a key in the hashtable created by deRhamAll
   SeeAlso
-    deRham
+    deRhamAll
 ///
 
 --- old format (commented out) ---
@@ -723,9 +723,9 @@ doc ///
   Key
     LocalizeMap
   Headline
-    a key in the hashtable created by deRham
+    a key in the hashtable created by deRhamAll
   SeeAlso
-    deRham
+    deRhamAll
 ///
 
 --- old format (commented out) ---
@@ -739,7 +739,7 @@ doc ///
   Key
     OmegaRes
   Headline
-    a key in the hashtable created by deRham
+    a key in the hashtable created by deRhamAll
   SeeAlso
-    deRham
+    deRhamAll
 ///
