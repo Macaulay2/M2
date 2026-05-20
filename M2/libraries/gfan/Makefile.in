@@ -13,7 +13,7 @@ CPPFLAGS += -I$(BUILTLIBPATH)/include/cddlib -DGMPRATIONAL
 # system or M2-built elsewhere).
 BUILDOPTIONS = OPTFLAGS="$(CXXFLAGS) $(CPPFLAGS) -ffast-math"  \
 	CDD_LINKOPTIONS="$(LDFLAGS) -lcddgmp"                  \
-	PREFIX=/nowhere cddnoprefix=yes
+	cddnoprefix=yes
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = check
 STRIPFILES = gfan@EXEEXT@
