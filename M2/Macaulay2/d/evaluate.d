@@ -22,6 +22,7 @@ threadLocal export backtrace := true;
 threadLocal export profiling := false;
 threadLocal lastCode := dummyCode;
 threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0));
+export threadLocal finishTargetDepth := -1;
 export chars := new array(Expr) len 256 do (
     i := 0;
     while i<256 do (
@@ -1537,6 +1538,10 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 
 -----------------------------------------------------------------------------
 steppingFurther(c:Code):bool := steppingFlag && (
+	 if finishTargetDepth > 0 then (
+		if recursionDepth > finishTargetDepth then return true;
+		return false;
+		);
      p := codePosition(c);
      if p == dummyPosition || p.loadDepth < errorDepth then return true;
      if stepCount >= 0 then (
@@ -1587,7 +1592,7 @@ export handleError(c:Code,e:Expr):Expr := (
 			 if !err.printed then printError(err);
 			 z := debuggerpointer(localFrame,c);
 			 when z is z:Error do (
-			      if z.message == breakMessage || z.message == finishMessage then buildErrorPacket(unwindMessage)
+			      if z.message == breakMessage then buildErrorPacket(unwindMessage)
 			      else if z.message == returnMessage then (
 				   setSteppingFlag();
      	       	    	      	   lastCodePosition.filename = "";
@@ -1605,7 +1610,12 @@ export handleError(c:Code,e:Expr):Expr := (
 					);
 				   eval(c))
 			      else if z.message == continueMessage then eval(c)
-				  else if z.message == finishMessage then eval(c)
+				  else if z.message == finishMessage then (
+					finishTargetDepth = recursionDepth - 1;
+					setSteppingFlag();
+					lastCodePosition.filename = "";
+					eval(c)
+				  )
 			      else e)
 			 else e)
 		    else (

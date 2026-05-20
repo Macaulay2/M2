@@ -490,6 +490,8 @@ setupfun("commandInterpreter",commandInterpreter);
 currentS := setupvar("current",nullE);
 debugger(f:Frame,c:Code):Expr := (
      -- stdIO << "-- recursionDepth = " << recursionDepth << endl;
+	 oldFinishTargetDepth := finishTargetDepth;
+	 if finishTargetDepth != -1 then finishTargetDepth = -1;
      oldrecursionDepth := recursionDepth;
      recursionDepth = 0;
      setDebuggingMode(false);
@@ -775,6 +777,9 @@ breakpoint(c:Code):Expr := (
 		else if err.message == continueMessage then (eval(c))
 		else if err.message == finishMessage then (
 			printMessage(codePosition(c), "finish has been called");
+			finishTargetDepth = recursionDepth - 1;
+			setSteppingFlag();
+			lastCodePosition.filename = "";
 			eval(c)
 		)
 		else e
