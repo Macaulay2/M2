@@ -262,5 +262,6 @@ Node
       "MonodromySolver"
       "NumericalCertification"
       "NumericalImplicitization"
+      "NumericalSchubertCalculus"
 
 ///
