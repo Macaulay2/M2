@@ -65,6 +65,7 @@ R = QQ[x_1]
 T = diagonalAction(matrix{{1}}, {2}, R)
 invariants0 = set {R_0^2}
 assert(set invariants T === invariants0)
+assert(set invariants(T,Strategy=>"DerkesenGandini") === invariants0)
 assert(isInvariant(R_0^2, T))
 ///
 
@@ -74,6 +75,7 @@ R = QQ[x_1..x_3]
 T = diagonalAction(matrix{{1,0,1},{0,1,1}}, {3,3}, R)
 invariants1 = set {x_3^3, x_2^3, x_1^3, x_1*x_2*x_3^2, x_1^2*x_2^2*x_3}
 assert(set invariants T === invariants1)
+assert(set invariants(T,Strategy=>"DerkesenGandini") === invariants1)
 ///
 
 -- Test 6
@@ -97,10 +99,22 @@ assert(set invariants T0 === invariants0)
 -- Test 8
 TEST ///
 R1 = QQ[x_1..x_4]
+-- torus only
 T1 = diagonalAction(matrix {{-3, -1, 1, 2}}, R1)
 invariants1 =  set {x_2*x_3, x_2^2*x_4, x_1*x_3*x_4, x_1*x_2*x_4^2, x_1^2*x_4^3, x_1*x_3^3}
 assert(first weights T1 === matrix{{-3, -1, 1, 2}})
 assert(set invariants T1 === invariants1)
+assert(set invariants(T1,UsePolyhedra=>true) === invariants1)
+m = product apply(gens R1,{2,3,4,1}, (v,d) -> v^d)
+assert(not isInvariant(m, T1))
+-- abelian group only
+T2 = diagonalAction(matrix{{1,1,1,1},{1,1,0,0}}, {5,5}, R1)
+invariants2 =  set {x_4^5, x_3*x_4^4, x_3^2*x_4^3, x_3^3*x_4^2, x_3^5, x_3^4*x_4, x_2^5,
+    x_1*x_2^4, x_1^2*x_2^3, x_1^3*x_2^2, x_1^5, x_1^4*x_2}
+assert(last weights T2 === matrix{{1,1,1,1},{1,1,0,0}})
+assert(set invariants T2 === invariants2)
+assert(set invariants(T2,Strategy=>"DerksenGandini") === invariants2)
+assert(isInvariant(m, T2))
 ///
 
 -- Test 9
@@ -109,6 +123,8 @@ R2 = QQ[x_1..x_4]
 T2 = diagonalAction(matrix{{0,1,-1,1},{1,0,-1,-1}}, R2)
 invariants2 = set {x_1*x_2*x_3,x_1^2*x_3*x_4}
 assert(set invariants T2 === invariants2)
+assert(set invariants(T2,UsePolyhedra=>true) === invariants2)
+assert(isInvariant(x_1^4*x_2^2*x_3^3*x_4 + x_1^5*x_2*x_3^3*x_4^2,T2))
 ///
      
      

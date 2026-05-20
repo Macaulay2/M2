@@ -82,7 +82,10 @@ document {
 		},
 	    {BOLD "2.3: ", "minor documentation updates."},
 	    {BOLD "2.4: ", "a new algorithm for invariants of elementary
-		abelian $p$-groups."}
+		abelian $p$-groups."},
+	    {BOLD "2.5: ", "the algorithm for elementary abelian $p$-groups
+		is now much faster, and is used by default when possible.
+		Bug fixes."}
 	    },
 	Contributors=>{
 	    "The following people worked on the algorithm for invariants of elementary
