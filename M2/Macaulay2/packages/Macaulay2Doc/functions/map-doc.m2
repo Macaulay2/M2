@@ -5,7 +5,6 @@
 doc ///
 Node
   Key
-   (map, GaloisField, GaloisField, List)
    (map, GaloisField, GaloisField)
   Headline
    maps of Galois fields
@@ -22,7 +21,11 @@ Node
     carrying 1 to x
   Description
     Text
-     GF(p^n) contains GF(p^m) if and only if m divides n
+     GF(p^n) contains GF(p^m) if and only if m divides n.
+    Text
+     The specialized method documented here is @TT "map(F,G)"@.  The
+     three-argument form @TT "map(F,G,x)"@ uses the generic ring-map
+     constructor, as in @TO (map,Ring,Ring,List)@.
     Example
      F4 = GF(2^2)
      F8 = GF(2^3)
@@ -37,6 +40,7 @@ Node
   SeeAlso
    isWellDefined
    GF
+   (map,Ring,Ring,List)
 ///
 
 undocumented {(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing),
