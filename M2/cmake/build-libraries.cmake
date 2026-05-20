@@ -837,14 +837,8 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 # https://users-math.au.dk/~jensen/software/gfan/gfan.html
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
 # TODO: would gfan benefit from enabling the USEFACTORY option?
-# gfan 0.8beta requires GCC (does not build with clang)
-if(NOT GFAN)
-  find_program(GFAN_CXX NAMES g++-15 g++-14 g++-13 g++-12
-    HINTS /opt/homebrew/bin /usr/local/bin)
-  if(NOT GFAN_CXX)
-    message(FATAL_ERROR "GCC (g++) is required to build gfan but was not found")
-  endif()
-endif()
+# gfan 0.8beta's Makefile hardcodes gcc-15/g++-15 on macOS (clang doesn't work),
+# and uses plain gcc/g++ on Linux. We pass the cddlib lib path via CDD_LINKOPTIONS.
 ExternalProject_Add(build-gfan
   URL               https://users-math.au.dk/~jensen/software/gfan/gfan0.8beta.tar.gz
   URL_HASH          SHA256=fa7884e5f317c50f8fb4f37bcf5d419f0fd5f7b90d6037349d1957ea73cebbee
@@ -858,8 +852,7 @@ ExternalProject_Add(build-gfan
                       "GMP_LINKOPTIONS=-L${GMP_LIBRARY_DIRS} -lgmp"
                       "GMP_INCLUDEOPTIONS=-I${GMP_INCLUDE_DIRS}"
                       "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -O2 -ffast-math -I${CDDLIB_INCLUDE_DIR}"
-                      "CCLINKER=${GFAN_CXX} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
-                      "CXX=${GFAN_CXX}"
+                      "CDD_LINKOPTIONS=-L${CDDLIB_LIBRARY_DIR} -lcddgmp"
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/gfan
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE COPYING ${M2_INSTALL_LICENSESDIR}/gfan

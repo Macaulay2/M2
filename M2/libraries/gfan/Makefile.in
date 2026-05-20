@@ -8,20 +8,17 @@ TARDIR = gfan$(VERSION)
 CONFIGURECMD = true
 # adding cddnoprefix=yes here ensures that we include "cdd.h" instead of "cdd/cdd.h", which is necessary when trying to use cddlib as installed by homebrew on the Mac:
 CPPFLAGS += -I$(BUILTLIBPATH)/include/cddlib -DGMPRATIONAL
-BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)" CXX="$(CXX) $(CPPFLAGS)"  \
-	CLINKER="$(CC) $(LDFLAGS)" CCLINKER="$(CXX) $(LDFLAGS)" \
-	OPTFLAGS="$(CXXFLAGS) -ffast-math"                       \
-	PREFIX=/nowhere CDD_LINKOPTIONS=-lcddgmp cddnoprefix=yes
+# gfan's Makefile uses gcc-15/g++-15 on macOS by default, plain gcc/g++ elsewhere.
+# Inject LDFLAGS via CDD_LINKOPTIONS so the linker can find cddlib (homebrew on macOS,
+# system or M2-built elsewhere).
+BUILDOPTIONS = OPTFLAGS="$(CXXFLAGS) $(CPPFLAGS) -ffast-math"  \
+	CDD_LINKOPTIONS="$(LDFLAGS) -lcddgmp"                  \
+	PREFIX=/nowhere cddnoprefix=yes
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = check
 STRIPFILES = gfan@EXEEXT@
 LICENSEFILES = LICENSE COPYING
 include ../Makefile.library
-
-# clang won't work, so we look for gcc
-CXX_CANDIDATES := $(foreach n,$(shell seq 16 -1 9),g++-$(n)) false
-CXX := $(firstword $(foreach c,$(CXX_CANDIDATES), \
-	$(if $(shell command -v $(c) 2>/dev/null),$(c))))
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gfan/Makefile
 # Local Variables:
