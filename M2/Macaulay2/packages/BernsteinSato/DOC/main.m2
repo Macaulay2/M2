@@ -5,12 +5,16 @@ Node
   Headline
     algorithms for b-functions, local cohomology, and intersection cohomology
   Description
+    Text
+      Algorithms surrounding the Bernstein-Sato polynomial of a polynomial
+      $f$, with applications to b-functions, $D$-module restriction and
+      integration, local cohomology, intersection cohomology, and multiplier
+      ideals.
     Tree
       :B-functions
 	@TOH "bFunction"@
 	@TOH "generalB"@
 	@TOH "globalB"@
-	-- TODO: capital F but lowercase o?
 	@TOH "globalBFunction"@
 	@TOH "globalBoperator"@
 	@TOH "localBFunction"@
@@ -35,7 +39,7 @@ Node
 	@TOH "PolyExt"@
 	@TOH "RatExt"@
 
-      :Applications:
+      :Applications
 	@TOH "localCohom"@
 	@TOH "deRham"@
 	@TOH "PolySols"@

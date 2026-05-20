@@ -691,7 +691,7 @@ doc ///
     rationalFunctionSolutions(I,ff,w)
   Inputs
     I:Ideal
-      holonomic ideal in the Weyl algebra @EM "D"@
+      holonomic ideal in the Weyl algebra $D$
     f:RingElement
       a polynomial
     ff:List
@@ -700,8 +700,8 @@ doc ///
       a weight vector
   Outputs
     :List
-      a basis of the rational solutions of @EM "I"@ with poles along @EM "f"@
-      or along the polynomials in @TT "ff"@ using @EM "w"@
+      a basis of the rational solutions of $I$ with poles along $f$
+      or along the polynomials in @TT "ff"@ using $w$
       for Groebner deformations
   Description
     Text

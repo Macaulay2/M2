@@ -61,25 +61,25 @@ doc ///
       multiplier ideal $J_I(c)$ (or a list of)
   Description
     Text
-      Computes the multiplier ideal for given ideal and coefficient.
+      Computes the multiplier ideal for the given ideal and coefficient.
 
-      There are three options for @BOLD "Strategy"@:
+      There are three options for @TT "Strategy"@:
 
       @UL {
-	   { BOLD "ViaElimination", " -- the default;"},
-	   { BOLD "ViaLinearAlgebra", " -- skips one expensive elimination step by using linear algebra;"},
-	   { BOLD "ViaColonIdeal", " -- same as elimination, but may be slightly faster."}
+	   { TT "ViaElimination", " -- the default;"},
+	   { TT "ViaLinearAlgebra", " -- skips one expensive elimination step by using linear algebra;"},
+	   { TT "ViaColonIdeal", " -- same as elimination, but may be slightly faster."}
 	  }@
 
-      The option @BOLD "DegreeLimit"@
+      The option @TT "DegreeLimit"@
       specifies the maximal degree of polynomials to consider for membership in the multiplier ideal.
       See [@TO2 ("WeylAlgebras :: Works Cited", "BL10")@] for details.
     Example
       R = QQ[x_1..x_4];
       multiplierIdeal(ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}, 31/18)
   Caveat
-    When @BOLD "Strategy=>ViaLinearAlgebra"@ the option @BOLD "DegreeLimit"@
-    must be specified. The output is guaranteed to be the whole multiplier ideal only when $\dim(I)=0$.
+    When @TT "Strategy=>ViaLinearAlgebra"@ the option @TT "DegreeLimit"@
+    must be specified. The output is guaranteed to be the whole multiplier ideal only when $\dim(I) = 0$.
     For positive-dimensional input the up-to-specified-degree part of the multiplier ideal is returned.
   SeeAlso
     jumpingCoefficients
@@ -132,7 +132,7 @@ doc ///
       the list of corresponding multiplier ideals
   Description
     Text
-      Computes the jumping coefficients and their multiplier ideals in an open interval $(a,b)$. By default $a = 0$, $b = $ @TO "analyticSpread"@ $I$.
+      Computes the jumping coefficients and their multiplier ideals in an open interval $(a,b)$. By default $a = 0$ and $b$ is the analytic spread of $I$ (see @TO "analyticSpread"@).
       The options are passed to @TO "multiplierIdeal"@.
 
       See [@TO2 ("WeylAlgebras :: Works Cited", "BL10")@] for details.
@@ -176,11 +176,14 @@ doc ///
       a regular sequence (of polynomials)
   Outputs
     b:Boolean
-      answers: are the singularities of the given variety at most rational?
+      true if the singularities of the given variety are at most rational, otherwise false
   Description
+    Text
+      Tests whether the affine variety $V(F)$ cut out by the regular
+      sequence $F$ has at most rational singularities.
     Example
-      R = QQ[x_1..x_4];
-      multiplierIdeal(ideal {x_1^3 - x_2^2, x_2^3 - x_3^2}, 31/18)
+      R = QQ[x_1..x_3];
+      hasRationalSing {x_1^2 + x_2^2 + x_3^2}
   SeeAlso
     jumpingCoefficients
 ///
@@ -239,18 +242,18 @@ doc ///
       coefficient
   Outputs
     b:Boolean
-      answers: is $g$ in the multiplier ideal $J_I(c)$?
+      true if $g$ lies in the multiplier ideal $J_I(c)$, otherwise false
   Description
     Text
-      Test if the given polynomial is in the multiplier ideal for given ideal and coefficient.
+      Test if the given polynomial is in the multiplier ideal for the given ideal and coefficient.
       In general, the test is cheaper than computing the whole multiplier ideal.
 
       There are two options for strategy:
 
       @UL {
-	   { BOLD "generalizedBFunction",
+	   { TT "generalizedBFunction",
 	   " -- via computation of the generalized Bernstein-Sato polynomial"},
-	   { BOLD "mGeneralizedBFunction",
+	   { TT "mGeneralizedBFunction",
 	   " -- via computation of the m-generalized Bernstein-Sato polynomial"}
 	  }@
 

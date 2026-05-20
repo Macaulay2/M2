@@ -24,9 +24,9 @@ doc ///
   Description
     Text
       @UL {
-	  {BOLD "Oaku", " -- use Oaku's algorithm"},
-	  {BOLD "OTW", " -- use Oaku-Takayama-Walther's algorithm"},
-	  {BOLD "OTWcyclic", " -- use Oaku-Takayama-Walther's algorithm for a cyclic module"}
+	  {TT "Oaku", " -- use Oaku's algorithm"},
+	  {TT "OTW", " -- use Oaku-Takayama-Walther's algorithm"},
+	  {TT "OTWcyclic", " -- use Oaku-Takayama-Walther's algorithm for a cyclic module"}
 	  }@
 ///
 
@@ -82,13 +82,13 @@ doc ///
       a polynomial
   Outputs
     :Module
-      the localized module $M_f = M[f^{-1}]$ as a D-module
+      the localized module $M_f = M[f^{-1}]$ as a $D$-module
   Description
     Text
-      One of the nice things about D-modules is that if a finitely
-      generated D-module is specializable along $f$, then its localization
+      One of the nice things about $D$-modules is that if a finitely
+      generated $D$-module is specializable along $f$, then its localization
       with respect to $f$ is also finitely generated.  For instance,
-      this is true for all holonomic D-modules.
+      this is true for all holonomic $D$-modules.
 
       There are two different algorithms for localization implemented.
       The first appears in [@TO2 ("WeylAlgebras :: Works Cited", "OTW00")@].
@@ -184,7 +184,7 @@ doc ///
     	M:Module
 	    over the Weyl algebra $D$
 	I:Ideal
-	    which represents the module $M=D/I$
+	    which represents the module $M = D/I$
 	f:RingElement
 	    a polynomial
     Outputs
@@ -192,21 +192,26 @@ doc ///
 	    which contains the localized module $M_f = M[f^{-1}]$ and some additional information
     Description
     	Text
-	    An extension of @TO Dlocalize@ that in addition computes the localization map
+	    An extension of @TO Dlocalize@ that in addition computes the localization map,
 	    the b-function, and the power $s$ of the generator $f^s$.
 
 	    The keys of the output HashTable depend on which strategy is used. Common to each strategy
-	    are the keys @{TT "LocMap"}@ and @{TT "LocModule"}@, which have the localization map
-	    and the localized module, respectively; and @{TT "GeneratorPower"}@, which is an integer
+	    are the keys @TT "LocMap"@ and @TT "LocModule"@, which have the localization map
+	    and the localized module, respectively; and @TT "GeneratorPower"@, which is an integer
 	    $s$ such that (the images of) the generators of $M$ are $f^{-s}$ times the generators of $M_f$.
+
+	    The other keys depend on @TT "Strategy"@:
+	    @TT "IntegrateBfunction"@ holds the factored Bernstein-Sato polynomial
+	    when using @TT "OTW"@ or @TT "OTWcyclic"@;
+	    @TT "Bfunction"@ holds the same when using @TT "Oaku"@;
+	    @TT "annFS"@ holds the annihilator ideal computed by @TO AnnFs@;
+	    @TT "Boperator"@ holds the operator $P$ satisfying $P f^{s+1} = b(s) f^s$ (Oaku strategy).
 	Example
 	    W = makeWeylAlgebra(QQ[x,y])
 	    M = W^1/ideal(x*dx + 1, dy)
 	    f = x^2 - y^3
 	    Mfall = DlocalizeAll(M, f)
 	    gens image Mfall.LocMap == f^(-Mfall.GeneratorPower) * gens Mfall.LocModule
-	Text
-
     SeeAlso
         Dlocalize
 	AnnFs

@@ -46,7 +46,7 @@ doc ///
     localizeCharacteristicCycle(I, cc)
   Inputs
     cc:List
-      the characteristic cycle of a regular holonomic D-module $M$
+      the characteristic cycle of a regular holonomic $D$-module $M$
     I:Ideal
       representing a simple @TT "cc"@
   Outputs
@@ -123,6 +123,10 @@ doc ///
       W = QQ[x_1..x_6, a_1..a_6];
       I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, 0, 0}});
       cc = {ideal W => 1};
+      M = populateCechComplexCC(I, cc);
+      M#{0,1}
+      pruneCechComplexCC M;
+      M#{0,1}
   Caveat
     The module has to be a regular holonomic complex-analytic module;
     while the holonomicity can be checked by @TO "isHolonomic"@
@@ -182,6 +186,7 @@ doc ///
       W = QQ[x_1..x_6, a_1..a_6];
       I = minors(2, matrix{{x_1, x_2, x_3}, {x_4, 0, 0}});
       cc = {ideal W => 1};
+      populateCechComplexCC(I, cc)
   Caveat
     The module has to be a regular holonomic complex-analytic module;
     while the holonomicity can be checked by @TO "isHolonomic"@
@@ -227,7 +232,10 @@ doc ///
       polynomial in two variables
   Outputs
     :HashTable
-      with entries {VResolution, Input, TransferCycles, CohomologyGroups, PreCycles, OmegaRes, LocalizeMap, BFunction}
+      The logarithmic cohomology groups (key @TT "CohomologyGroups"@) along with
+      intermediate data from the computation: @TT "VResolution"@, @TT "Input"@,
+      @TT "TransferCycles"@, @TT "PreCycles"@, @TT "OmegaRes"@, @TT "LocalizeMap"@,
+      and @TT "BFunction"@.
   Description
     Text
       For a polynomial $f$ in two variables executes the algorithm described in
@@ -253,6 +261,35 @@ doc ///
     (ExternalProduct, Module, Module)
   Headline
     external product of modules or complexes
+  Usage
+    ExternalProduct(M, N)
+    ExternalProduct(F, G)
+  Inputs
+    M:Module
+      a quotient module over a Weyl algebra $W_1$
+    N:Module
+      a quotient module over a Weyl algebra $W_2$
+    F:Complex
+      a complex over a Weyl algebra $W_1$
+    G:Complex
+      a complex over a Weyl algebra $W_2$
+    TwistMap=>Boolean
+      if @TT "true"@ (only valid when $W_1 = W_2$), additionally attaches
+      twist maps to the diagonal; see @TO twistMap@
+  Outputs
+    :Module
+    :Complex
+      the external tensor product over the Weyl algebra $W = W_1 \otimes W_2$.
+      Projection maps back to the factors are attached as @TO projMap1@ and @TO projMap2@.
+  Description
+    Text
+      Forms the external product of two $D$-modules (or complexes thereof).
+      The result lives over a new Weyl algebra $W$ that combines the variables
+      of both inputs.
+
+      When @TT "TwistMap => true"@ is supplied (and both inputs share the
+      same Weyl algebra), additional data is attached to $W$ for working with
+      the diagonal: see @TO twistMap@ and @TO twistInvMap@.
 ///
 
 --- old format (commented out) ---
@@ -295,7 +332,8 @@ doc ///
     a key attached by ExternalProduct
   Description
     Text
-      See @TO "ExternalProduct"@.
+      The twist map $W \to W$ to the diagonal, attached to the new Weyl
+      algebra by @TO ExternalProduct@ when @TT "TwistMap => true"@.
 ///
 
 --- old format (commented out) ---
@@ -312,7 +350,8 @@ doc ///
     a key attached by ExternalProduct
   Description
     Text
-      See @TO "ExternalProduct"@.
+      The inverse of @TO twistMap@, attached to the new Weyl algebra by
+      @TO ExternalProduct@ when @TT "TwistMap => true"@.
 ///
 
 --- old format (commented out) ---
@@ -329,7 +368,8 @@ doc ///
     a key attached by ExternalProduct
   Description
     Text
-      See @TO "ExternalProduct"@.
+      The projection map from the combined Weyl algebra $W = W_1 \otimes W_2$
+      to its first factor $W_1$, attached by @TO ExternalProduct@.
 ///
 
 --- old format (commented out) ---
@@ -346,5 +386,6 @@ doc ///
     a key attached by ExternalProduct
   Description
     Text
-      See @TO "ExternalProduct"@.
+      The projection map from the combined Weyl algebra $W = W_1 \otimes W_2$
+      to its second factor $W_2$, attached by @TO ExternalProduct@.
 ///
