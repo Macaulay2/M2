@@ -1605,6 +1605,7 @@ export handleError(c:Code,e:Expr):Expr := (
 					);
 				   eval(c))
 			      else if z.message == continueMessage then eval(c)
+				  else if z.message == finishMessage then eval(c)
 			      else e)
 			 else e)
 		    else (
@@ -1877,7 +1878,7 @@ breakFun(a:Code):Expr := (
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
 
-finishFun(a:Code):Expr := (
+export finishFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else (
 	  Expr(Error(dummyPosition,
