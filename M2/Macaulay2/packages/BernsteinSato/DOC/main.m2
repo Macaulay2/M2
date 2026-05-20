@@ -50,6 +50,9 @@ Node
 	  @TOH "jumpingCoefficients"@
 	  @TOH "hasRationalSing"@
   Subnodes
+
+  References
+    See the bibliography at @TO "WeylAlgebras :: Works Cited"@.
 ///
 
 end--

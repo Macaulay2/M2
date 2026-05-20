@@ -8,7 +8,7 @@ doc ///
       If D/I is a regular holonomic D-module, the solutions of the system of differential equations
       I can be written as Nilsson series (Puiseux series with logarithms).
       The constructive version of this result is the canonical series method
-      [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST, Sections 2.5, 2.6")@].
+      [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Sections 2.5, 2.6].
       In this tutorial, we illustrate an implementation of this method.
 
     Text
@@ -102,7 +102,7 @@ doc ///
    Outputs
      :{Ideal,RingElement}
        that results from intersecting with the thetaRing of D, as in
-       [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Lemma 2.3.1] to I.
+       [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Lemma 2.3.1] to I.
    Description
     Text
       Given a monomial $x^u \partial^v$, this function rewrites it as a product $x^a p(\theta) \partial^b$,
@@ -143,7 +143,7 @@ doc ///
        that results from intersecting with the thetaRing of D with the result of extending
        the ideal in_(-w,w)(I) with the rational function
        field in the Weyl algebra variables, as in
-       [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Theorem 2.3.9] to I.
+       [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Theorem 2.3.9] to I.
    Description
     Text
       This computes the distraction of a torus fixed D-ideal [SST, Corollary 2.3.5].
@@ -181,7 +181,7 @@ doc ///
      :List
        of exponents of the exponents of the canonical series solutions of I
        in the direction of (-w,w), as in
-       [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Theorem 2.3.11].
+       [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Theorem 2.3.11].
    Description
     Text
       There are examples in the tutorial that can be moved here.
@@ -214,7 +214,7 @@ doc ///
      :List
        of exponents of the starting exponents of the canonical series solutions of I
        in the direction of (-w,w), as in
-       [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Theorem 2.3.11],
+       [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Theorem 2.3.11],
        together with their multiplicities.
    Description
     Text
@@ -254,7 +254,7 @@ doc ///
        $x_i$ as $t_i^{-1}x_i$. The function isTorusFixed verifies whether a D-ideal is
        invariant under this action.
 
-       See [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@],
+       See [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@],
        just before Lemma 2.3.1.
     Example
        W = makeWA(QQ[x_1,x_2])
@@ -282,9 +282,9 @@ doc ///
        containing monomials times logarithms of the variables
    Description
     Text
-      See [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Algorithm 2.3.14].
+      See [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Algorithm 2.3.14].
 
-      Here is [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Example 2.3.16]:
+      Here is [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Example 2.3.16]:
     Example
       R = QQ[t_1..t_5];
       I = ideal(t_1+t_2+t_3+t_4+t_5, t_1+t_2-t_4, t_2+t_3-t_4, t_1*t_3, t_2*t_4);
@@ -315,9 +315,9 @@ doc ///
     Text
       This routine returns the lead terms of the canonical series solutions of $I$ with respect
       to the weight vector $w$.
-      See [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Algorithm 2.3.14 and Lemma 2.5.10].
+      See [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Algorithm 2.3.14 and Lemma 2.5.10].
 
-      Here is [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Example 2.3.16]:
+      Here is [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Example 2.3.16]:
     Example
       needsPackage "FourTiTwo"
       A = matrix{{1,1,1,1,1,1},{-2,0,0,0,0,1},{0,1,0,1,0,0},{1,1,2,0,0,1}}

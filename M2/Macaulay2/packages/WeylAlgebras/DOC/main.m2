@@ -51,6 +51,9 @@ Node
     "DsingularLocus"
 
     "Dtrace"
+
+  References
+    See the bibliography at @TO "Works Cited"@.
 ///
 
 -*

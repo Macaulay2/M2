@@ -17,7 +17,7 @@ doc ///
       A $d \times n$ integer matrix $A$ determines a GKZ hypergeometric system of PDEs 
       in the Weyl algebra $D_n$ over $\mathbb{C}$.  The matrix $A$ is associated to the toric ideal 
       $I_A$ in the polynomial subring $\mathbb{C}[\partial_1,...,\partial_n]$ of $D$.  A field of characteristic zero may be used instead of  $\mathbb{C}$.
-      For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapters 3 and 4].
+      For more details, see [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Chapters 3 and 4].
     Example 
       A = matrix{{1,2,0},{-1,1,3}}
       D = makeWA(QQ[x_1..x_3])
@@ -52,7 +52,7 @@ doc ///
       of the vector (A $\theta$ - b), where $\theta$ is the vector
       $(\theta_1,...,\theta_n)^t$, and $\theta_i = x_i \partial_i$. 
       A field of characteristic zero may be used instead of  $\mathbb{C}$.
-      For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapters 3 and 4].
+      For more details, see [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Chapters 3 and 4].
     Example
       A = matrix{{1,1,1},{0,1,2}}
       b = {3,4}

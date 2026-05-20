@@ -26,6 +26,9 @@ Node
    "AppellF1"
    "Canonical Series Tutorial"
    "diffOps"
+
+  References
+    See the bibliography at @TO "WeylAlgebras :: Works Cited"@.
 ///
 
 end--
