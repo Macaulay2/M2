@@ -15,7 +15,6 @@
 #include "interface/gmp-util.h"
 #include "interface/monoid.h"
 #include "mat.hpp"
-#include "matrix-con.hpp"
 #include "matrix.hpp"
 #include "mutablemat-defs.hpp"
 #include "relem.hpp"
@@ -58,21 +57,7 @@ const RingElement /* or null */ *rawMatrixEntry(const Matrix *M,
 {
   try
     {
-      if (r < 0 || r >= M->n_rows())
-        {
-          ERROR("matrix row index %d out of range 0 .. %d", r, M->n_rows() - 1);
-          return nullptr;
-        }
-      if (c < 0 || c >= M->n_cols())
-        {
-          ERROR("matrix column index %d out of range 0 .. %d",
-                c,
-                M->n_cols() - 1);
-          return nullptr;
-        }
-      ring_elem result;
-      result = M->elem(r, c);
-      return RingElement::make_raw(M->get_ring(), result);
+      return M->entry(r, c);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -288,36 +273,7 @@ const Matrix /* or null */ *rawMatrixConcat(const engine_RawMatrixArray Ms)
 {
   try
     {
-      unsigned int n = Ms->len;
-      if (n == 0)
-        {
-          ERROR("matrix concat: expects at least one matrix");
-          return nullptr;
-        }
-      const FreeModule *F = Ms->array[0]->rows();
-      const Ring *R = F->get_ring();
-      MatrixConstructor mat(Ms->array[0]->rows(), 0);
-      int next = 0;
-      for (unsigned int i = 0; i < n; i++)
-        {
-          const Matrix *M = Ms->array[i];
-          if (R != M->get_ring())
-            {
-              ERROR("matrix concat: different base rings");
-              return nullptr;
-            }
-          if (F->rank() != M->n_rows())
-            {
-              ERROR("matrix concat: row sizes are not equal");
-              return nullptr;
-            }
-          for (int j = 0; j < M->n_cols(); j++)
-            {
-              mat.append(R->copy_vec(M->elem(j)));
-              mat.set_column_degree(next++, M->cols()->degree(j));
-            }
-        }
-      return mat.to_matrix();
+      return Matrix::concat(Ms->len, Ms->array);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -325,31 +281,11 @@ const Matrix /* or null */ *rawMatrixConcat(const engine_RawMatrixArray Ms)
   }
 }
 
-const Matrix /* or null */ *rawMatrixDirectSum(
-    const engine_RawMatrixArray Ms)
+const Matrix /* or null */ *rawMatrixDirectSum(const engine_RawMatrixArray Ms)
 {
   try
     {
-      // Check that the matrices all have the same ring, and that there is
-      // at least one matrix.
-      unsigned int n = Ms->len;
-      if (n == 0)
-        {
-          ERROR("matrix direct sum: expects at least one matrix");
-          return nullptr;
-        }
-      const Matrix *result = Ms->array[0];
-      const Ring *R = result->get_ring();
-      for (unsigned int i = 1; i < n; i++)
-        if (R != Ms->array[i]->get_ring())
-          {
-            ERROR("matrix direct sum: different base rings");
-            return nullptr;
-          }
-      for (unsigned int i = 1; i < n; i++)
-        result = result->direct_sum(Ms->array[i]);
-
-      return result;
+      return Matrix::direct_sum(Ms->len, Ms->array);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -737,25 +673,13 @@ const Matrix /* or null */ *rawMatrixLift(int *success_return,
                                             const FreeModule *newTarget,
                                             const Matrix *f)
 {
+  *success_return = 0;
   try
     {
-      ring_elem a;
-      const Ring *R = f->get_ring();
-      const Ring *S = newTarget->get_ring();
-      MatrixConstructor mat(newTarget, f->n_cols());
-      Matrix::iterator i(f);
-      for (int c = 0; c < f->n_cols(); c++)
-        for (i.set(c); i.valid(); i.next())
-          if (R->lift(S, i.entry(), a))
-            mat.set_entry(i.row(), c, a);
-          else
-            {
-              // ERROR("cannot lift given matrix");
-              return nullptr;
-            }
-      mat.compute_column_degrees();
+      const Matrix *result = f->lift(newTarget);
+      if (result == nullptr) return nullptr;
       *success_return = 1;
-      return mat.to_matrix();
+      return result;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
