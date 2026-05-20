@@ -3,11 +3,11 @@ Node
   Key
     BernsteinSato
   Headline
-    algorithms for b-functions, local cohomology, and intersection cohomology
+    algorithms for $b$-functions, local cohomology, and intersection cohomology
   Description
     Text
       Algorithms surrounding the Bernstein-Sato polynomial of a polynomial
-      $f$, with applications to b-functions, $D$-module restriction and
+      $f$, with applications to $b$-functions, $D$-module restriction and
       integration, local cohomology, intersection cohomology, and multiplier
       ideals.
     Tree

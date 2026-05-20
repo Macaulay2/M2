@@ -193,7 +193,7 @@ doc ///
     Description
     	Text
 	    An extension of @TO Dlocalize@ that in addition computes the localization map,
-	    the b-function, and the power $s$ of the generator $f^s$.
+	    the $b$-function, and the power $s$ of the generator $f^s$.
 
 	    The keys of the output HashTable depend on which strategy is used. Common to each strategy
 	    are the keys @TT "LocMap"@ and @TT "LocModule"@, which have the localization map

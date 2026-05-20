@@ -66,15 +66,15 @@ doc ///
     diffOps (f, k)
   Inputs
     I:Ideal
-      contained in a polynomial ring @EM "R"@
+      contained in a polynomial ring $R$
     f:RingElement
-      an element of a polynomial ring @EM "R"@
+      an element of a polynomial ring $R$
     k:ZZ
       which is nonnegative
   Outputs
     :HashTable
-      the differential operators of order at most @EM "k"@
-      of the quotient ring @EM "R/I"@ (or @EM "R/(f)"@)
+      the differential operators of order at most $k$
+      of the quotient ring $R/I$ (or $R/(f)$)
   Description
     Text
       Given an ideal $I$ of a polynomial ring $R$ the set of
@@ -85,12 +85,12 @@ doc ///
     Text 
       The output is in the form of a hash table.
       The key @TT "BasisElts"@ is a row vector of basic differential operators.
-      The key @TT "PolyGens"@ is a matrix over @EM "R"@ whose column vectors represent
-      differential operators of @EM "R/I"@ in the following way.  For each column
-      vector, consider its image in @TT "R/I"@ then take its dot product with
+      The key @TT "PolyGens"@ is a matrix over $R$ whose column vectors represent
+      differential operators of $R/I$ in the following way.  For each column
+      vector, consider its image in $R/I$ then take its dot product with
       the @TT "BasisElts"@. This gives a differential operator, and
       the set of these operators generates the differential operators of
-      @EM "R/I"@ of order @EM "k"@ or less as an @EM "(R/I)"@-module.
+      $R/I$ of order $k$ or less as an $(R/I)$-module.
     Example
       R = QQ[x,y,z]
       I = ideal(x^2-y*z)

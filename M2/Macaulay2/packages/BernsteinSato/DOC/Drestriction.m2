@@ -154,7 +154,7 @@ doc ///
       is specified, then the command produces a resolution with shifts
       which is adapted to the weight vector $w$.
       These $w$-adapted resolutions are compatible
-      with b-functions and used in the restriction algorithm.
+      with $b$-functions and used in the restriction algorithm.
       For ordinary resolutions, the user may use the command @TT "resolution"@.
       Note that the notion of a minimal resolution is well-defined only in case
       of homogenized Weyl algebra.
@@ -302,7 +302,7 @@ doc ///
 
       The algorithm used appears in [@TO2 ("WeylAlgebras :: Works Cited", "OT01")@].
       The method is to compute an adapted resolution
-      with respect to the weight vector $w$ and use the b-function with respect
+      with respect to the weight vector $w$ and use the $b$-function with respect
       to $w$ to truncate the resolution.
     Example
       R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]
