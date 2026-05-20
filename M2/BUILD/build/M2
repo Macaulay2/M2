@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /home/ubuntu/M2/M2/BUILD/build/usr-dist/x86_64-Linux-Ubuntu-26.04/bin/M2 "$@"
