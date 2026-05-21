@@ -490,7 +490,6 @@ setupfun("commandInterpreter",commandInterpreter);
 currentS := setupvar("current",nullE);
 debugger(f:Frame,c:Code):Expr := (
      -- stdIO << "-- recursionDepth = " << recursionDepth << endl;
-	 oldFinishTargetDepth := finishTargetDepth;
 	 if finishTargetDepth != -1 then finishTargetDepth = -1;
      oldrecursionDepth := recursionDepth;
      recursionDepth = 0;
@@ -749,8 +748,6 @@ historyLength(e:Expr):Expr := (
     else WrongNumArgs(0));
 setupfun("historyLength", historyLength);
 
-threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0));
-
 -- enter the debugger
 breakpoint(c:Code):Expr := (
     e := debuggerpointer(localFrame, c);
@@ -760,11 +757,9 @@ breakpoint(c:Code):Expr := (
 		if err.message == breakMessage then ( buildErrorPacket(unwindMessage) )
 		else if err.message == returnMessage then (
 			setSteppingFlag();
-			lastCodePosition.filename = "";
 			err.value)
 		else if err.message == stepMessage || err.message == stepMessageWithArg then (
 			setSteppingFlag();
-			lastCodePosition.filename = "";
 			stepCount = (
 				when err.value is step:ZZcell do
 					if isInt(step) then toInt(step) else 1
@@ -779,7 +774,6 @@ breakpoint(c:Code):Expr := (
 			printMessage(codePosition(c), "finish has been called");
 			finishTargetDepth = recursionDepth - 1;
 			setSteppingFlag();
-			lastCodePosition.filename = "";
 			eval(c)
 		)
 		else e

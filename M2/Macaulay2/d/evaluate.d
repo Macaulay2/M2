@@ -1563,7 +1563,7 @@ steppingFurther(c:Code):bool := steppingFlag && (
 	  microStepCount >= 0)
      else false);
 
-export handleError(c:Code,e:Expr):Expr := (
+handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
 	  p := codePosition(c);
 	  -- TODO: consider splitting SuppressErrors and the message errors
@@ -1613,7 +1613,6 @@ export handleError(c:Code,e:Expr):Expr := (
 				  else if z.message == finishMessage then (
 					finishTargetDepth = recursionDepth - 1;
 					setSteppingFlag();
-					lastCodePosition.filename = "";
 					eval(c)
 				  )
 			      else e)
@@ -1638,7 +1637,7 @@ export evalraw(c:Code):Expr := (
      e := (
 	  -- at some point we should check !steppingFurther(c)
 	  if test(exceptionFlag) && !steppingFurther(c) then (    -- compare this code to the code in evalexcept() below
-		   if steppingFlag then (
+	       if steppingFlag then (
 		    clearSteppingFlag();
 		    buildErrorPacket(steppingMessage))
 	       else if alarmedFlag then (
