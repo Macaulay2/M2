@@ -10,8 +10,8 @@ needs "nets.m2"
 -----------------------------------------------------------------------------
 -- Global variables
 
-debugPrintCarets = false
-debugPrintLineNumbers = false
+debugPrintCarets = true
+debugPrintLineNumbers = true
 
 -----------------------------------------------------------------------------
 
@@ -65,29 +65,31 @@ codeContent = method(
 -----------------------------------------------------------------------------
 
 codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
-    posL := toList(pos);
-    str := "";
-    tmp := "";
-    tmpInt := 0;
-    leftPadding := 3;
-    rightPadding := 3;
-    padding := "";
-    lastLine := "";
-    outputList := {};
-    maxLen := 0;
+    posL := {}; --List containing the information associated to the error message.
+    str := "";  --String, used for constructing the lines that we are printing out.
+    tmp := "";  --String, temporary variable used for converting an integer to a string.
+    leftPadding := 0; --Integer, which we initialize below to 3, spaces printed to the left of line number.
+    rightPadding := 0; --Integer, which we initialize below to 3, spaces printed to the right of line number.
+    outputList := {}; --List, which contains all of the errors as a string.
+    maxLen := 0; --Integer, maximum length that an integer takes up as a string.
+
+    --Initializing variables.
+    posL = toList(pos);
+    leftPadding = 3;
+    rightPadding = 3;
     
     
-    --Get max length of that the integer will take up as a string
+    --Get max length of the integer that will be printed as a string.
     if (opt.PrintLineNum == true) then (
 	for i from s-1 to e-1 do (
-	    tmpInt = toString((posL#1+(i-s+1)));
-	    maxLen = max(0,length tmpInt);
+	    tmp = toString((posL#1+(i-s+1)));
+	    maxLen = max(0,length tmp);
 	);
     ) else (
 	maxLen = 0;
     );
 
-    --Create the first line of output
+    --Create the first line of output.
     if (s != e and opt.PrintCaret == true) then (
 	outputList = outputList | { concatenate( ((leftPadding + maxLen + rightPadding + posL#2:" ")), "v") };
     );    
@@ -116,8 +118,7 @@ codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
 	str = concatenate(str, ((leftPadding + (maxLen) + rightPadding):" "));
     );
 
-    --For multiple lines add a single caret.
-    if (s != e) then (
+    if (s != e) then ( --For multiple lines add a single caret.
 	str = concatenate(str, (posL#4-1):" ", "^");
     ) else if (#posL == 3) then ( --Add a single caret.
 	str = concatenate(str,"^");
