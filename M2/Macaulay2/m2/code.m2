@@ -9,12 +9,10 @@ needs "nets.m2"
 
 -----------------------------------------------------------------------------
 -- Global variables
+-----------------------------------------------------------------------------
 
 debugPrintCarets = true
 debugPrintLineNumbers = true
-
------------------------------------------------------------------------------
-
 
 -----------------------------------------------------------------------------
 -- code
@@ -65,13 +63,14 @@ codeContent = method(
 -----------------------------------------------------------------------------
 
 codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
-    posL := {}; --List containing the information associated to the error message.
-    str := "";  --String, used for constructing the lines that we are printing out.
-    tmp := "";  --String, temporary variable used for converting an integer to a string.
+    posL := {}; --List, containing the information associated to the error message.
+    strList := {};  --List, used for storing the line numbers as strings.
+    str := ""; -- String, temporary variable used for creating output.
     leftPadding := 0; --Integer, which we initialize below to 3, spaces printed to the left of line number.
     rightPadding := 0; --Integer, which we initialize below to 3, spaces printed to the right of line number.
-    outputList := {}; --List, which contains all of the errors as a string.
+    outputList := {}; --List, which contains each line error as a string.
     maxLen := 0; --Integer, maximum length that an integer takes up as a string.
+    
 
     --Initializing variables.
     posL = toList(pos);
@@ -80,54 +79,45 @@ codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
     
     
     --Get max length of the integer that will be printed as a string.
-    if (opt.PrintLineNum == true) then (
-	for i from s-1 to e-1 do (
-	    tmp = toString((posL#1+(i-s+1)));
-	    maxLen = max(0,length tmp);
-	);
-    ) else (
-	maxLen = 0;
+    if (opt.PrintLineNum === true) then (
+	strList = for i from s-1 to e-1 list toString((posL#1+(i-s+1)));
+	maxLen = max(length\strList)
     );
 
     --Create the first line of output.
-    if (s != e and opt.PrintCaret == true) then (
+    if (s != e and opt.PrintCaret === true) then (
 	outputList = outputList | { concatenate( ((leftPadding + maxLen + rightPadding + posL#2:" ")), "v") };
     );    
 
     --Create the middle lines of output, where print out the code.
-    if (opt.PrintLineNum == true) then (
-	for i from s-1 to e-1 do (
-	    tmp = toString((posL#1)+(i-s+1));
-	    outputList = outputList | { concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_i )};
+    if (opt.PrintLineNum === true) then (
+	outputList = outputList | for i from s-1 to e-1 list (
+	    concatenate( ((leftPadding + (maxLen - length strList#(i-s+1))):" "), strList#(i-s+1), ((rightPadding):" "), filelines_i )
 	);
     ) else (
-	for i from s-1 to e-1 do (
-	    outputList = outputList | filelines_{i};
+	    outputList = outputList | filelines_{s-1..e-1};
+    );
+
+
+    --Check whether there are carets to print.
+    if (opt.PrintCaret === true) then (
+	str = "";
+	--Append the padding associated to the line numbers.
+	if (opt.PrintLineNum === true) then ( 
+	    str = concatenate(str, ((leftPadding + (maxLen) + rightPadding):" "));
 	);
+
+        if (s != e) then ( --For multiple lines add a single caret.
+	    str = concatenate(str, (posL#4-1):" ", "^");
+        ) else if (#posL == 3) then ( --Add a single caret.
+	    str = concatenate(str,"^");
+	) else if (#posL == 5 or #posL == 7) then ( --Add a line of carets.
+	    str = concatenate(str, (posL#2):" ", (posL#4 - posL#2):"^");
+	);
+        outputList = outputList | { str };
     );
 
-    
-    --If there are no carets to print, then we are done.
-    if (opt.PrintCaret == false) then return PRE M2CODE stack( outputList );
-    
-    
-    --Otherwise, there are carets to print, which we now construct.
-    str = "";
-    --Append the padding associated to the line numbers.
-    if (opt.PrintLineNum == true) then ( 
-	str = concatenate(str, ((leftPadding + (maxLen) + rightPadding):" "));
-    );
-
-    if (s != e) then ( --For multiple lines add a single caret.
-	str = concatenate(str, (posL#4-1):" ", "^");
-    ) else if (#posL == 3) then ( --Add a single caret.
-	str = concatenate(str,"^");
-    ) else if (#posL == 5 or #posL == 7) then ( --Add a line of carets.
-	str = concatenate(str, (posL#2):" ", (posL#4 - posL#2):"^");
-    );
-    outputList = outputList | { str };
-   
-    return PRE M2CODE stack( outputList  );
+    PRE M2CODE stack( outputList )
 );
 
 -- e.g. see code methods(map, Module, List)
@@ -173,7 +163,7 @@ code FilePosition := opt -> x -> (
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
 	  DIV splice { codeAddress(x), codeContent(PrintCaret => debugPrintCarets, PrintLineNum => debugPrintLineNumbers, x, start, stop, file) }
 	  ))
-code Symbol     := opt -> ()
+code Symbol     := 
 code Pseudocode := opt -> s -> code locate s
 code Sequence   := opt -> s -> (
     key := select(s, x -> not instance(x, Option));
