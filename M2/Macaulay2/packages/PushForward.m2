@@ -5,32 +5,38 @@
 --           also, are these stashed in that case?  (They are not here, yet).
 
 newPackage(
-        "PushForward",
-        Version => "0.6",
-        Date => "May 14, 2021",
-        Authors => {
-            {Name => "Claudiu Raicu", 
-                Email => "craicu@nd.edu", 
-                HomePage => "http://www3.nd.edu/~craicu"},
-            {Name => "David Eisenbud", 
-                Email => "de@msri.org", 
-                HomePage => "http://www.msri.org/~de"},
-            {Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage => "http://pi.math.cornell.edu/~mike"}
-            },
-        Headline => "push forwards of finite ring maps",
-        Keywords => {"Commutative Algebra"}
-        )
-        
+    "PushForward",
+    Version => "0.6",
+    Date => "May 14, 2021",
+    Authors => {
+        {Name => "Claudiu Raicu",
+            Email => "craicu@nd.edu",
+            HomePage => "http://www3.nd.edu/~craicu"},
+        {Name => "David Eisenbud",
+            Email => "de@msri.org",
+            HomePage => "http://www.msri.org/~de"},
+        {Name => "Mike Stillman",
+            Email => "mike@math.cornell.edu",
+            HomePage => "http://pi.math.cornell.edu/~mike"}
+        },
+    Headline => "push forwards of finite ring maps",
+    Keywords => {"Commutative Algebra"},
+    AuxiliaryFiles => true
+)
+
 -- note, this version has a slight change added by Karl Schwede.  It has an option to turn off the prune calls.
 -- Recently, David Eisenbud and Mike Stillman have extended it, fixing some bugs too.
 
 export {
     "isModuleFinite",
-    "pushFwd", 
-    "NoPrune"
-    }
+    "pushFwd",
+    "NoPrune",
+    "pushforward",
+    "pushforward'"
+}
+protect \ {PUSHFORWARDMODULES, PUSHFORWARDMAPS, PUSHFORWARDMAP'}
+
+
 
 isInclusionOfCoefficientRing = method()
 isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
@@ -298,7 +304,6 @@ pushAuxHgs(RingMap) := (f) -> (
     )
 )
 
-
 ------------------------
 -- internal utilities --
 ------------------------
@@ -363,6 +368,12 @@ getPushFwdModule = (X, f, o) -> (
     -- 0_X is a nice canonical element to pushforward and see where we end up
     -- todo - better strategy for looking up the module which is the pushforward along (f, o)
     if cached =!= null then target cached matrix 0_X
+)
+
+-- in rank 1 free case use THE rank 1 free module for ring N
+getModuleAux = (n) -> (
+    N := module target n;
+    if N == module ring N then module ring N else N
 )
 
 -----------
