@@ -56,6 +56,14 @@ codeContent = method(
 	PrintLineNum => true
     }
 )
+-----------------------------------------------------------------------------
+-- Updates to codeContent developed by Bryson Kagy, Adam LaClair, Olalekan Ogunmefun, Jay Yang
+-- as part of the 2026 workshop "Building the Future of Macaulay2" at Georgia Tech.
+-- Changed the code to print carets and line numbers in the debugger, and added options to toggle these features on and off with the global variables debugPrintLineNumbers and debugPrintCarets.
+-- Also made it clearer when the user is in the debugger by adding a sentence to the documentation and by printing "ENTERING DEBUGGER" when the user enters the debugger and adding "<M2 debugger>" to the input line while in the debugger.
+-- In codeContent, pos is the FilePosition of the error, s and e are the starting and ending line numbers of the error, and filelines is the list of lines in the file of the error. 
+-----------------------------------------------------------------------------
+
 codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
     posL := toList(pos);
     str := "";
