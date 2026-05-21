@@ -20,7 +20,8 @@ Node
       Use the expanded sections below to move from learning the system, to working
       with packages and the language, to guided mathematical examples and subject-area
       references, to developer and internal documentation. For longer walkthroughs,
-      start with @TO2("Tutorials::Tutorials", "Tutorials")@.
+      start with @TO2("Tutorials::Tutorials", "Tutorials")@. For a beginner-friendly
+      worked example, try @HREF{replace("PKG", "Tutorials", currentLayout#"packagehtml") | "___Beginner_sptutorial_co_sp__Shidoku.html", "Beginner tutorial: Shidoku"}@.
     Tree
       :Start Here
         > "setting up Macaulay2"
@@ -35,6 +36,7 @@ Node
       :Doing Mathematics
         :Tutorials and Examples
           * "Tutorials::Tutorials"
+          :@HREF{replace("PKG", "Tutorials", currentLayout#"packagehtml") | "___Beginner_sptutorial_co_sp__Shidoku.html", "Beginner tutorial: Shidoku"}@
         :By Area
           > "elementary arithmetic"
           > "linear algebra"

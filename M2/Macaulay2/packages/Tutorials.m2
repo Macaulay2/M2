@@ -30,6 +30,7 @@ Node
       :Foundational tutorials
         > "Tutorial: Modules in Macaulay2"
         > "Tutorial: Elementary uses of Gröbner bases"
+        > "Beginner tutorial: Shidoku"
         > "Teaching Materials"
       :Geometry tutorials
         > "Tutorial: Divisors"
@@ -65,6 +66,7 @@ document {
      Key => "Tutorial: Fano varieties",
      ld "tu_Fano.m2"
      }
+load "./Tutorials/tu_beginnerSudoku.m2"
 load "./Tutorials/tu_NAG.m2"
 load "./Macaulay2Doc/M2-Singular-Book.m2"
 load "./Tutorials/teaching_materials.m2"

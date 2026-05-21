@@ -126,7 +126,6 @@ o11 = division by zero
 	TO "benchmark",
 	TO "Browse::browse",
 	TO "code",
-	TO "continue",
 	TO "current",
 	TO "currentPosition",
 	TO "lineNumber", -- TODO: rename to currentLineNumber
@@ -172,7 +171,6 @@ o11 = division by zero
 	TO "showStructure",
 	TO "showClassStructure",
 	TO "showUserStructure",
-	TO "trap",
 	TO "userSymbols",
 	TO "listSymbols",
 	TO "lookupCount",
