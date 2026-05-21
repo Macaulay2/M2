@@ -298,6 +298,73 @@ pushAuxHgs(RingMap) := (f) -> (
     )
 )
 
+
+------------------------
+-- internal utilities --
+------------------------
+
+-- cache manipulation --
+-*
+use of cache in this package:
+when the pushforward of a module is computed - pushFwd(f, M) - we also generate
+maps to translate elements between M and pushFwd(f, M) and these methods are
+stored in various caches of related objects.
+
+Caced on M:
+- M.cache.PUSHFORWARDMAPS is a CacheTable whose keys have type (RingMap,
+OptionTable) and whose values are functions. when (f, o) => p then p is a
+function from M to pushWd(f, M, o)
+- M.cache.PUSHFORWARDMODULES is a CacheTable whose keys are Modules and whose
+values are a functions. When pushFwd(f, M) => p, then p is a function M ->
+pushFwd(f, M).
+
+Cached on pushFwd(f, M):
+- when N = pushFwd(f, M), then N.cache.PUSHFORWARDMAP' is a function N -> M
+
+Cached on target f:
+- If R = target f, then when pushFwd(f) is computed, we populate
+R.cache.PUSHFORWARDMAPS is a CacheTable whose kets have type (RingMap,
+OptionTable) and values are functions - the same as the first case for M above.
+*-
+
+-- setters
+setPushforwardCache = (X, f, o, v) -> (
+    X.cache.PUSHFORWARDMAPS ??= new CacheTable;
+    X.cache.PUSHFORWARDMAPS#(f, o) = v;
+)
+setPushforwardCache' = (X, v) -> X.cache.PUSHFORWARDMAP' = v
+setPushforwardByModuleCache = (X, M, p) -> (
+    X.cache.PUSHFORWARDMODULES ??= new CacheTable;
+    X.cache.PUSHFORWARDMODULES#M = p;
+)
+
+-- getters
+getPushforwards = (X, f) -> (
+    -- todo - structure cache in a way that doesn't require this scan over pairs
+    -- nested CacheTable?
+    if X.cache.?PUSHFORWARDMAPS then (
+        fmatches := select(pairs(X.cache.PUSHFORWARDMAPS), (k, v) -> first k === f);
+        apply(fmatches, (k, v) -> v)
+    )
+)
+getPushforwardWithOpts = (X, f, o) -> (
+    if X.cache.?PUSHFORWARDMAPS and X.cache.PUSHFORWARDMAPS#?(f, o) then
+        X.cache.PUSHFORWARDMAPS#(f, o)
+)
+getPushforward' = (X) -> (
+    if X.cache.?PUSHFORWARDMAP' then X.cache.PUSHFORWARDMAP'
+)
+getPushforwardByModule = (X, M) -> (
+    if X.cache.?PUSHFORWARDMODULES and X.cache.PUSHFORWARDMODULES#?M then
+        X.cache.PUSHFORWARDMODULES#M
+)
+getPushFwdModule = (X, f, o) -> (
+    cached := getPushforwardWithOpts(X, f, o);
+    -- 0_X is a nice canonical element to pushforward and see where we end up
+    -- todo - better strategy for looking up the module which is the pushforward along (f, o)
+    if cached =!= null then target cached matrix 0_X
+)
+
 -----------
 -- TESTS --
 -----------
