@@ -2,10 +2,121 @@
 
 document {
     Key => "debugging",
-    "Macaulay2 has a debugger.",
-    UL{
-	TO "the debugger",
+    EM "Debugging ", "means finding out why a computation did not do what you expected.",
+    PARA{},
+    "Macaulay2 has a debugger. In Macaulay2, an error message usually tells you where the computation stopped. ",
+    "The debugger lets you inspect the values of variables at that moment.",
+    PARA{},
+    "We have a Macaulay2 source file with a pair of functions in it that
+    we can use for demonstrating the debugger.  Let's load it so we can
+    run the functions in it.",
+    EXAMPLE PRE ///
+i1 : load "Macaulay2Doc/demos/demo1.m2"
+///,
+    "We can see what functions were provided to us with ", TO "listUserSymbols", ".",
+    EXAMPLE PRE ///
+i2 : listUserSymbols
+
+o2 = symbol  class            value  location of symbol
+     ------  -----            -----  ------------------                   
+     g       FunctionClosure  g      Macaulay2Doc/demos/demo1.m2:11:0-11:1
+///,
+    "Let's peek at the code of the function ", TT "g", ".",
+    EXAMPLE PRE ///
+i3 : code g
+
+o3 = Macaulay2Doc/demos/demo1.m2:11:4-14:9: --source code:
+     g = y -> (
+          c := f(y-1);
+          d := f(y-2);
+          c+d)
+///,
+    "We see that the function ", TT "g", " calls a function ", TT "f", ", but ", TT "f", " is not visible to us
+    (because ", TT "f", " is a local variable).  In Emacs' ", EM "Macaulay2 Interaction Mode", ", pressing
+    return (", TT "RET", " or ", TT "enter", ") after positioning the cursor on the output line displaying the file name and line number
+    will bring up the source code in a new buffer.",
+    PARA{"The first few times we use ", TT "g", ", it seems to work."},
+    EXAMPLE PRE ///
+i4 : g 4
+
+     17
+o4 = --
+      6
+
+o4 : QQ
+
+i5 : g 3
+
+     7
+o5 = -
+     2
+
+o5 : QQ
+///,
+    "However, the following attempt results in an error, and the debugger starts up automatically.",
+    EXAMPLE PRE ///
+i6 : g 2
+Macaulay2Doc/demos/demo1.m2:8:11:(3):[3]: error: division by zero
+Macaulay2Doc/demos/demo1.m2:8:11:(3): entering debugger (enter 'help' to see commands)
+Macaulay2Doc/demos/demo1.m2:8:10-8:13: --source code:
+     b := 1/x;
+
+ii7 :
+///,
+    "When the debugger starts, the prompt changes from ", TT "i", " to ",
+    TT "ii", ".  The extra ", TT "i", " means that you are inside another command interpreter:
+    in this case, the debugger.  If you enter the debugger again from inside the debugger,
+    the prompt may acquire still more ", TT "i", "'s.  It is just Macaulay2 saying: you are one level deeper.",
+    "You may use ", TO "help", ", as instructed, to view the commands available in the debugger.
+    As suggested by the help display, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
+    EXAMPLE PRE ///
+ii7 : listLocalSymbols
+
+oo7 = symbol  class            value                                                 location of symbol
+      ------  -----            -----                                                 ------------------                 
+      a       String           "hi there"                                            Macaulay2Doc/demos/demo1.m2:7:5-7:6
+      b       Nothing          null                                                  Macaulay2Doc/demos/demo1.m2:8:5-8:6
+      x       ZZ               0                                                     Macaulay2Doc/demos/demo1.m2:6:5-6:6
+      f       FunctionClosure  FunctionClosure[Macaulay2Doc/demos/demo1.m2:6:5-9:9]  Macaulay2Doc/demos/demo1.m2:6:0-6:1
+///,
+    "The variable ", TO "errorDepth", " can be used to control how deep inside the code the debugger should be activated. ",
+    "Inside the debugger, some useful commands are:",
+    UL {
+        LI {TO "listLocalSymbols", " -- show local variables and their current values"},
+        LI {TO "code", " -- show the source code of a function"},
+        LI {TO "step", " -- execute one step or line"},
+        LI {TO end, " -- leave the current debugger level"},
+        LI {TO "break", " -- leave the debugger entirely and return to top level"}
     },
+    PARA{},
+    "For example, after an error, one can try",
+    EXAMPLE PRE ///
+ii8 : break
+
+i9 :
+///,
+    "The command ", TT "break", " is often the panic button: it gets you out of the debugger
+    and back to the ordinary top-level prompt.",
+    PARA{},
+    "You can also catch an error without entering the debugger by using ", TO symbol try,
+    " or ", TO symbol trap, ".  This is useful in documentation examples.",
+    EXAMPLE PRE ///
+i9 : try 1/0 else errorMessage
+
+o9 = errorMessage
+
+o9 : Symbol
+
+i10 : (v, err) = trap 1/0
+
+o10 = (, division by zero)
+
+o10 : Sequence
+
+i11 : toString err
+
+o11 = division by zero
+///,
     "Here are some other debugging tools.",
     Subnodes => {
 	TO "the debugger",
