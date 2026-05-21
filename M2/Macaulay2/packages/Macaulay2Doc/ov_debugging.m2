@@ -66,7 +66,7 @@ ii7 :
     "When the debugger starts, the prompt changes from ", TT "i", " to ",
     TT "ii", ".  The extra ", TT "i", " means that you are inside another command interpreter:
     in this case, the debugger.  If you enter the debugger again from inside the debugger,
-    the prompt may acquire still more ", TT "i", "'s.  It is just Macaulay2 saying: you are one level deeper.",
+    the prompt may acquire still more ", TT "i", "'s.  It is just Macaulay2 saying: you are one level deeper. ",
     "You may use ", TO "help", ", as instructed, to view the commands available in the debugger.
     As suggested by the help display, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
     EXAMPLE PRE ///
