@@ -1,0 +1,61 @@
+# `M2/Macaulay2/tests/` — top-level CTest suites
+
+These are the **integration test suites** invoked by CTest in the CMake build.
+Each subdirectory is its own test group with its own CMake registration.
+Package-level tests live with each package under
+[`Macaulay2/packages/`](../packages/README.md); the engine-level gtest suite
+lives under [`Macaulay2/e/unit-tests/`](../e/README.md).
+
+## Suites
+
+| Directory | Purpose | Notes |
+|---|---|---|
+| [`engine/`](engine/README.md) | Engine integration tests written in M2 | Currently skipped in CI; see issue [#1213](https://github.com/Macaulay2/M2/issues/1213) |
+| [`ComputationsBook/`](ComputationsBook/README.md) | Examples from *Computations in Algebraic Geometry with Macaulay 2* | Run with `ctest -R ComputationsBook` |
+| [`normal/`](normal/README.md) | Default-tier regression tests |  |
+| [`slow/`](slow/README.md) | Slower regression tests | Not always run in CI |
+| [`quarantine/`](quarantine/README.md) | Tests temporarily disabled, awaiting fixes |  |
+| [`goals/`](goals/README.md) | Worked exercises and "goal" computations |  |
+| [`gigantic/`](gigantic/README.md) | Stress tests that may need lots of RAM / time |  |
+| [`threads/`](threads/README.md) | Concurrency / thread-supervisor tests |  |
+| [`rationality/`](rationality/README.md) | Tests centered on rationality questions |  |
+
+Plus build glue: `CMakeLists.txt`, `Makefile.in`, `Makefile.test.in`.
+
+## Per-suite catalogue deep dives
+
+| Suite | Deep dive |
+|---|---|
+| `normal/` | [`normal/file-normal-tests-catalogue.md`](normal/file-normal-tests-catalogue.md) — 373-file catalogue, naming conventions, structure |
+| `engine/` | [`engine/file-engine-tests-catalogue.md`](engine/file-engine-tests-catalogue.md) — `raw…()` test family + CI-skipped rationale |
+| `slow/` | [`slow/file-slow-tests-catalogue.md`](slow/file-slow-tests-catalogue.md) — 12 slow tests with topics and per-test runtimes |
+| `goals/`, `gigantic/`, `threads/`, `quarantine/`, `rationality/` | [`file-small-suites-catalogue.md`](file-small-suites-catalogue.md) — consolidated coverage |
+
+**Coverage:** every test suite has either a per-suite catalogue or is covered in the consolidated small-suites doc.
+
+## Running
+
+```sh
+cd M2/BUILD/build
+ctest --output-on-failure -R "ComputationsBook"   # single suite by regex
+ctest --output-on-failure                            # all enabled suites
+```
+
+From inside an installed M2 you can also run the language-level self-check at
+three difficulty levels:
+
+```sh
+M2 -q --check 1   # fast
+M2 -q --check 2   # medium
+M2 -q --check 3   # slow
+```
+
+CI runs all three.
+
+## Related
+
+- [`Macaulay2/e/unit-tests/`](../e/README.md) — gtest suite for the C++ engine.
+- [`Macaulay2/packages/`](../packages/README.md) — per-package tests run via
+  `check "Foo"` or `ctest -R check-Foo`.
+
+[← back to repository TOC](../../../README.md#under-m2macaulay2)

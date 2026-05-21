@@ -1,0 +1,574 @@
+# Package ecosystem
+
+M2 ships ~400 user-contributed **packages** in addition to the
+Core. This document is the **end-to-end reference** for the
+package ecosystem: how packages work, how they relate to Core,
+their lifecycle, conventions, and how to author one.
+
+[← repository TOC](README.md) · [Glossary](GLOSSARY.md) · [Tour](TOUR.md) · [Build](BUILD.md) · [Testing](TESTING.md)
+
+## What a package is
+
+A **package** in M2 is a collection of types, methods, functions,
+documentation, and tests bundled as one or more `.m2` files. The
+canonical structure:
+
+```
+Foo.m2                          ← package entry point
+Foo/                            ← auxiliary files (optional)
+├── tests.m2
+├── examples.m2
+├── doc/
+│   └── Foo-docs.m2
+└── data/
+```
+
+Every distributed package follows this layout. See the full
+conventions in
+[`packages/file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md).
+
+## Core vs distributed
+
+```
+┌──────────────────────────────────────────────────────────┐
+│   Core package                                             │
+│   (defined by ~100 .m2 files in M2/Macaulay2/m2/)         │
+│   Always loaded at startup; every package implicitly       │
+│   inherits.                                                 │
+├──────────────────────────────────────────────────────────┤
+│   Distributed packages                                     │
+│   (~400 in M2/Macaulay2/packages/)                         │
+│   Some auto-load on startup; others via `needsPackage`.   │
+├──────────────────────────────────────────────────────────┤
+│   User packages                                            │
+│   (in ~/.Macaulay2/code/ or anywhere on the load path)    │
+│   Loaded explicitly by the user.                          │
+└──────────────────────────────────────────────────────────┘
+```
+
+The **Core** boundary is firm: types and methods defined in Core
+m2 files (e.g., `Module`, `Matrix`, `Ring`, `gb`, `resolution`)
+are always available. Distributed packages add user-facing
+functionality on top.
+
+## The `=distributed-packages` file
+
+**Source**: `M2/Macaulay2/packages/=distributed-packages`.
+
+A whitespace-sensitive list of packages M2 ships:
+
+```
+A1BrouwerDegrees
+AbstractSimplicialComplexes
+AbstractToricVarieties
+AdjointIdeal
+...
+```
+
+Rules:
+
+- One package name per line.
+- No trailing blank lines.
+- Alphabetical convention (not enforced; for human navigation).
+
+**To add a new package to the distribution**: append its name
+here. To remove: delete the line. The build picks this up at
+configure time.
+
+## `newPackage` declaration
+
+Every package starts with:
+
+```m2
+newPackage("Foo",
+    Version => "1.0",
+    Headline => "one-line description",
+    AuxiliaryFiles => true,            -- if Foo/ subdir exists
+    Authors => {
+        {Name => "...", Email => "...", HomePage => "..."}
+    },
+    Keywords => {"Algebra"},
+    PackageExports => {"Bar"},         -- packages we re-export
+    PackageImports => {"Baz"},         -- packages we need
+    HomePage => "https://...",
+    DebuggingMode => false,
+)
+```
+
+Fields are documented in
+[`packages/file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md).
+
+## Three sections of a package
+
+```m2
+newPackage("Foo", ...)
+
+-- Section 1: Setup
+export { ... }
+importFrom(Core, ...)
+
+-- Section 2: Code
+foo = method(...)
+foo PolynomialRing := R -> ...
+
+-- Section 3: Documentation and tests
+beginDocumentation()
+doc ///
+Key
+   foo
+Headline
+   compute the foo
+Description
+  Text
+    ...
+  Example
+    R = QQ[x, y]
+    foo R
+///
+
+TEST ///
+R = QQ[x, y]
+assert(foo R == expected)
+///
+```
+
+The **`beginDocumentation()`** marker is structural: M2 only
+loads code before it during `loadPackage`; documentation and
+tests load during `installPackage` or `check`.
+
+## `PackageExports` vs `PackageImports`
+
+| Directive | What it does |
+|---|---|
+| `PackageExports => {"Bar"}` | Loading Foo also re-exports Bar's symbols. Users of Foo see Bar's API. |
+| `PackageImports => {"Baz"}` | Foo uses Baz internally but doesn't re-export. Foo's user doesn't see Baz directly. |
+
+Example:
+
+- `Polyhedra` `PackageImports {"FourierMotzkin"}` — uses
+  Fourier-Motzkin internally but the API isn't part of `Polyhedra`'s
+  public surface.
+- `Complexes` `PackageExports {"Truncations"}` — automatically
+  imports `Truncations` because the API is logically combined.
+
+## The four foundational packages
+
+Three packages are "structural" — every distribution includes them:
+
+| Package | Role | Deep dive |
+|---|---|---|
+| `Macaulay2Doc` | The Core documentation. Every built-in type and function gets its `help` content here. | [`packages/file-Macaulay2Doc.md`](M2/Macaulay2/packages/file-Macaulay2Doc.md) |
+| `Style` | HTML/CSS styling for generated docs + `generateGrammar` (used by `editors/`). | [`packages/file-Style.md`](M2/Macaulay2/packages/file-Style.md) |
+| `EngineTests` | Engine-test M2-level suite (in `PACKAGES_DEVEL`, not shipped to users but run by CI). | [`packages/file-EngineTests.md`](M2/Macaulay2/packages/file-EngineTests.md) |
+| `Macaulay2Doc/` | Auxiliary doc files for `Macaulay2Doc`. | (linked above) |
+
+`Macaulay2Doc` and `Style` always ship; `EngineTests` is
+developer-only.
+
+## Documentation DSL
+
+**Source**:
+[`m2/file-document.md`](M2/Macaulay2/m2/file-document.md).
+
+Every package documents its API with the `doc ///...///` DSL:
+
+```m2
+doc ///
+Key
+   (foo, Ring, ZZ)
+Headline
+   compute the foo of a ring at a level
+Usage
+   y = foo(R, n)
+Inputs
+   R:Ring
+      the base ring
+   n:ZZ
+      the level
+Outputs
+   :Sequence
+      a pair of (Matrix, Module)
+Description
+   Text
+      The foo of a ring computes ...
+   Example
+      R = QQ[x, y]
+      foo(R, 3)
+   CannedExample
+      i1 : foo R
+      o1 = ...
+SeeAlso
+   bar
+   baz
+///
+```
+
+**Key invariants**:
+
+- **Cross-references** (`SeeAlso => bar`) are **validated** —
+  unknown references fail at install time.
+- **Example blocks** are **executed during `installPackage`** —
+  outputs are captured. Typos become test failures.
+- **The `Key` is type-checked**: `(foo, Ring, ZZ)` means "the
+  documentation for `foo` with arguments of types `Ring`,
+  `ZZ`."
+
+## TEST blocks
+
+```m2
+TEST ///
+R = QQ[x, y];
+assert(foo(R, 3) == expected)
+assert(rank target M == 5)
+///
+```
+
+Each `TEST ///...///` block registers a test the `check
+"PackageName"` runs. Multiple per package are typical.
+
+See [`TESTING.md`](TESTING.md) section 3 for the test machinery.
+
+## The package lifecycle
+
+### 1. Write
+
+Drop `Foo.m2` (and optional `Foo/`) into
+`M2/Macaulay2/packages/`. Use the
+[conventions](M2/Macaulay2/packages/file-package-conventions.md)
+above.
+
+### 2. Load (iteration)
+
+From inside an M2 session:
+
+```m2
+loadPackage("Foo", Reload => true)
+```
+
+`Reload => true` re-reads the file even if previously loaded —
+the right thing for development iteration.
+
+For code-only changes, this is fast (seconds). It only re-loads
+*code*; docs/tests aren't re-processed.
+
+### 3. Install (slow)
+
+```m2
+installPackage "Foo"
+```
+
+This runs every example, captures every output, builds the HTML
+docs, creates the GDBM info database, and writes everything to
+the install prefix. Slow — minutes for a non-trivial package.
+
+See [`m2/file-installPackage.md`](M2/Macaulay2/m2/file-installPackage.md).
+
+### 4. Test
+
+```m2
+check "Foo"
+```
+
+Runs every `TEST ///...///` block. Typically seconds to minutes.
+
+### 5. Distribute
+
+To make a new package ship with M2:
+
+1. Add the name to
+   `M2/Macaulay2/packages/=distributed-packages`.
+2. If the package needs an external library, add a
+   [`Find<Lib>.cmake`](M2/cmake/file-find-cmakes.md) and a
+   [`libraries/<lib>/`](M2/libraries/file-per-library-subdirs.md)
+   wrapper.
+3. Open a PR.
+4. CI builds and tests the package on every supported platform.
+5. Once merged, the package ships in the next release.
+
+### 6. Update
+
+Edit the package. Re-test. Bump the `Version` field. CI on the
+PR catches regressions. After merge the new version ships in
+the next release.
+
+## Package categories (rough)
+
+```
+~ 60   Computational algebra      (Complexes, Cremona, Groebner, ...)
+~ 50   Algebraic geometry         (NormalToricVarieties, NumericalAG, ...)
+~ 80   Commutative algebra        (LocalRings, Depth, Posets, ...)
+~ 40   Combinatorics              (Polyhedra, Graphs, ...)
+~ 30   Numerical                  (Bertini, NumericalLinearAlgebra, NAGtypes, ...)
+~ ~    Misc utility               (PackageTemplate, Style, ...)
+```
+
+The full set lives in
+[`M2/Macaulay2/packages/`](M2/Macaulay2/packages/README.md).
+
+## External-library dependencies
+
+Some packages need an **external program or library** to function:
+
+| Package | External | Wrapper |
+|---|---|---|
+| `FourTiTwo` | 4ti2 | [`libraries/4ti2/`](M2/libraries/file-per-library-subdirs.md) |
+| `Polyhedra` | lrslib | [`libraries/lrslib/`](M2/libraries/file-per-library-subdirs.md) |
+| `Normaliz` | Normaliz | [`libraries/normaliz/`](M2/libraries/file-per-library-subdirs.md) |
+| `Bertini` | Bertini | [`libraries/bertini/`](M2/libraries/file-per-library-subdirs.md) |
+| `gfanInterface` | gfan | [`libraries/gfan/`](M2/libraries/file-per-library-subdirs.md) |
+| `CohomCalg` | cohomCalg | [`libraries/cohomcalg/`](M2/libraries/file-per-library-subdirs.md) |
+| `Topcom` | TOPCOM | [`libraries/topcom/`](M2/libraries/file-per-library-subdirs.md) |
+
+The CMake build conditionally enables each package based on the
+external availability — see
+[`packages/CMakeLists.txt`](M2/Macaulay2/packages/) for the
+wiring.
+
+## Discovering packages
+
+**From within M2**:
+
+```m2
+help "available packages"   -- list distributed packages
+help PackageName            -- per-package docs
+viewHelp PackageName        -- open HTML docs in browser
+```
+
+**In the source tree**:
+
+- [`M2/Macaulay2/packages/`](M2/Macaulay2/packages/README.md)
+  with one `.m2` file (or `.m2`+subdir) per package.
+- [`=distributed-packages`](M2/Macaulay2/packages/) lists which
+  ones ship.
+
+**Online**:
+
+- [Macaulay2 doc site](https://macaulay2.com/doc/Macaulay2-1.26.05/share/doc/Macaulay2/) — every package's HTML docs.
+- The [GitHub Macaulay2 organisation](https://github.com/Macaulay2)
+  for related repositories.
+
+## Auto-loaded packages
+
+The M2 banner lists packages "with packages: ..." — these are
+**auto-loaded at startup**. The full list (from `Core.m2`'s
+`Core#"preloaded packages"`) is:
+
+```
+Classic, ConwayPolynomials, Elimination, IntegralClosure,
+InverseSystems, Isomorphism, LLLBases, MinimalPrimes, OnlineLookup,
+PackageCitations, PrimaryDecomposition, ReesAlgebra, Saturation,
+SimpleDoc, TangentCone, Varieties
+```
+
+plus `HomologicalAlgebraPackage` (resolves to `Complexes` by
+default) — **17 packages total**.
+
+All 17 now have dedicated deep-dive docs:
+
+| Package | Function | Deep dive |
+|---|---|---|
+| `Classic` | classic-Macaulay polynomial parser (`poly "x2y"`) | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `Complexes` | `freeResolution`, `Ext`, `Tor`, Yoneda — the `HomologicalAlgebraPackage` | [`file-Complexes.md`](M2/Macaulay2/packages/file-Complexes.md) |
+| `ConwayPolynomials` | `conwayPolynomial(p, n)` — `GF(q)` database | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `Elimination` | `eliminate`, `resultant`, `discriminant`, `sylvesterMatrix` | [`file-Elimination.md`](M2/Macaulay2/packages/file-Elimination.md) |
+| `IntegralClosure` | `integralClosure`, `conductor`, `icMap`, `icFractions`, `icFracP` | [`file-IntegralClosure.md`](M2/Macaulay2/packages/file-IntegralClosure.md) |
+| `InverseSystems` | `inverseSystem`, `toDividedPowers` — artinian Gorenstein construction | [`file-InverseSystems.md`](M2/Macaulay2/packages/file-InverseSystems.md) |
+| `Isomorphism` | `isIsomorphic(N, M)`, `isomorphism(N, M)`, `checkDegrees` | [`file-Isomorphism.md`](M2/Macaulay2/packages/file-Isomorphism.md) |
+| `LLLBases` | `LLL`, `kernelLLL`, `hermite`, `gcdLLL` + NTL/fpLLL/Cohen backends | [`file-LLLBases.md`](M2/Macaulay2/packages/file-LLLBases.md) |
+| `MinimalPrimes` | `minimalPrimes`, `radical`, `isPrime` | [`file-MinimalPrimes.md`](M2/Macaulay2/packages/file-MinimalPrimes.md) |
+| `OnlineLookup` | `oeis L`, `isc x` — online math-database lookups | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `PackageCitations` | `cite "Pkg"` — BibTeX entry generation | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `PrimaryDecomposition` | `primaryDecomposition`, `associatedPrimes`, `localize`, `isPrimary` | [`file-PrimaryDecomposition.md`](M2/Macaulay2/packages/file-PrimaryDecomposition.md) |
+| `ReesAlgebra` | `reesIdeal`, `associatedGradedRing`, `specialFiber`, `analyticSpread`, `multiplicity`, `distinguished` | [`file-ReesAlgebra.md`](M2/Macaulay2/packages/file-ReesAlgebra.md) |
+| `Saturation` | `saturate`, `quotient`, `annihilator` + `addHook` strategy-table architecture | [`file-Saturation.md`](M2/Macaulay2/packages/file-Saturation.md) |
+| `SimpleDoc` | `doc ///...///` DSL, `multidoc`, `arXiv`/`stacksProject`/`wikipedia`, `packageTemplate` | [`file-SimpleDoc.md`](M2/Macaulay2/packages/file-SimpleDoc.md) |
+| `TangentCone` | `tangentCone I` | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `Varieties` | `Variety`, `Spec`, `Proj`, `sheaf`, `tangentSheaf`, `HH^i`, `OO_X`, etc. | [`file-Varieties.md`](M2/Macaulay2/packages/file-Varieties.md) |
+
+`Truncations` is also effectively auto-loaded (re-exported by
+`Complexes`); it has its own [deep dive](M2/Macaulay2/packages/file-Truncations.md).
+
+These are foundational enough that they're useful without
+`needsPackage` and small enough that auto-load doesn't bloat
+startup. Adding to this set requires careful consideration of
+startup time impact.
+
+See [`STARTUP.md`](STARTUP.md) phase 8 (Core load) — auto-loaded
+packages are loaded there.
+
+## Non-auto-loaded packages with deep dives
+
+The heavily-used non-auto-loaded packages with dedicated coverage:
+
+| Package | Function | Deep dive |
+|---|---|---|
+| `Truncations` | `truncate(d, M)`, `effCone R`, `nefCone R` — re-exported by `Complexes` so effectively auto-loaded | [`file-Truncations.md`](M2/Macaulay2/packages/file-Truncations.md) |
+| `Polyhedra` | `Cone`, `Polyhedron`, `Fan`, `PolyhedralComplex` + V/H-rep + Fourier-Motzkin; the largest single package | [`file-Polyhedra.md`](M2/Macaulay2/packages/file-Polyhedra.md) |
+| `NormalToricVarieties` | `NormalToricVariety`, `ToricDivisor`, `ToricMap` + the 5-divisor-group diagram + smooth-Fano database through dim 6 | [`file-NormalToricVarieties.md`](M2/Macaulay2/packages/file-NormalToricVarieties.md) |
+| `Schubert2` | `AbstractVariety`, `flagBundle`, `schubertCycle`, `chern`, `blowup` — intersection theory for varieties without equations | [`file-Schubert2.md`](M2/Macaulay2/packages/file-Schubert2.md) |
+| `NumericalAlgebraicGeometry` | `solveSystem`, `track`, witness sets, irreducible decomposition; multi-backend (M2engine / BERTINI / PHCPACK / HOM4PS2) | [`file-NumericalAlgebraicGeometry.md`](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) |
+| `SimplicialComplexes` | `simplicialComplex`, `link`, `star`, `barycentricSubdivision`, monomial-ideal resolutions, named topological examples | [`file-SimplicialComplexes.md`](M2/Macaulay2/packages/file-SimplicialComplexes.md) |
+| `LocalRings` | `localRing(S, P)`, `liftUp`, `hilbertSamuelFunction`, `localResolution`, `localsyz`, `localMingens`, `localPrune` — singularity analysis via lift-and-descend | [`file-LocalRings.md`](M2/Macaulay2/packages/file-LocalRings.md) |
+| `BernsteinSato` | `globalBFunction f`, `multiplierIdeal(f, c)`, `jumpingCoefficients`, full D-module suite (`Dresolution`, `Drestriction`, `Dlocalize`, `DHom`, `DeRham`, `localCohom`, `intersectionCohom`, `WeylClosure`); ~6 600 lines | [`file-BernsteinSato.md`](M2/Macaulay2/packages/file-BernsteinSato.md) |
+| `Graphs` | `Graph`, `Digraph`, ~40+ named graph families (Petersen, Kneser, …), chromatic/clique/independence numbers, `edgeIdeal`/`coverIdeal` bridge to commutative algebra; single-file 5 542-line package | [`file-Graphs.md`](M2/Macaulay2/packages/file-Graphs.md) |
+| `EdgeIdeals` | JSAG-certified `Graph` + `HyperGraph` for edge-ideal-focused workflows: `edgeIdeal`, `coverIdeal`, `cliqueComplex`, `independenceComplex`, good-leaf splitting, Cohen-Macaulay tests | [`file-EdgeIdeals.md`](M2/Macaulay2/packages/file-EdgeIdeals.md) |
+| `FrobeniusThresholds` | JSAG-certified char-p commutative algebra: `fpt f` (F-pure threshold), `isFJumpingExponent`, `frobeniusNu`, Frobenius powers / roots; the char-p analogue of `BernsteinSato` | [`file-FrobeniusThresholds.md`](M2/Macaulay2/packages/file-FrobeniusThresholds.md) |
+| `Posets` | JSAG-certified partially ordered sets: 15 named families (`booleanLattice`, `divisorPoset`, `dominanceLattice`, `lcmLattice I`, …), Möbius function, Hibi ideal, order complex, lattice/Cohen-Macaulay/shellability predicates | [`file-Posets.md`](M2/Macaulay2/packages/file-Posets.md) |
+| `GraphicalModels` | algebraic statistics: `markovRing`/`gaussianRing`, `discreteVanishingIdeal`/`gaussianVanishingIdeal`, `conditionalIndependenceIdeal`, `trekIdeal`/`trekSeparation`, global/local/pair Markov properties | [`file-GraphicalModels.md`](M2/Macaulay2/packages/file-GraphicalModels.md) |
+| `WeylAlgebras` | D-module infrastructure: `makeWeylAlgebra R`, `gbw(I, w)`, `inw(I, w)`, `Ddim M`, `isHolonomic M`, `Fourier`/`FourierInverse`/`Dtransposition`, `makeCyclic M`, `factorWA f` | [`file-WeylAlgebras.md`](M2/Macaulay2/packages/file-WeylAlgebras.md) |
+| `HolonomicSystems` | Holonomic D-module algorithms: GKZ hypergeometric systems (`gkz(A, β)`, `AppellF1`), canonical-series (`cssExpts`, `indicialIdeal`, `solveFrobeniusIdeal`, `truncatedCanonicalSeries`), differential-operator rings (`diffOps`); middle layer between `WeylAlgebras` and `BernsteinSato` | [`file-HolonomicSystems.md`](M2/Macaulay2/packages/file-HolonomicSystems.md) |
+| `Bertini` | Interface to the external Bertini numerical solver: `bertiniZeroDimSolve`, `bertiniPosDimSolve`, `bertiniParameterHomotopy`, `bertiniTrackHomotopy`, `bertiniSample`; backend of `Software => BERTINI` in `NumericalAlgebraicGeometry` | [`file-Bertini.md`](M2/Macaulay2/packages/file-Bertini.md) |
+| `PHCpack` | JSAG-certified interface to the PHCpack polyhedral-homotopy solver: `solveSystem`, `mixedVolume`, `cascade`, `numericalIrreducibleDecomposition`, multi-threaded path tracking; backend of `Software => PHCPACK` | [`file-PHCpack.md`](M2/Macaulay2/packages/file-PHCpack.md) |
+| `FourTiTwo` | Interface to the 4ti2 library: `toricMarkov`/`toricGroebner`/`toricCircuits`/`toricGraver`/`toricGraverDegrees`/`hilbertBasis`/`toBinomial`; foundational toric-ideal toolkit used by `Polyhedra` (re-exports), `BernsteinSato`, `HolonomicSystems`, `GraphicalModels` | [`file-FourTiTwo.md`](M2/Macaulay2/packages/file-FourTiTwo.md) |
+| `Normaliz` | JSAG-certified interface to the Normaliz cone/affine-monoid library: `normalToricRing`, `intclToricRing`, `intclMonIdeal`, `ehrhartRing`, `torusInvariants`, OpenMP-threaded Hilbert basis / integral closure / Ehrhart algorithms | [`file-Normaliz.md`](M2/Macaulay2/packages/file-Normaliz.md) |
+| `gfanInterface` | Interface to Anders Jensen's Gfan: ~60 `gfan*` operations covering Gröbner fans, tropical varieties (`gfanTropicalVariety`, `gfanTropicalBasis`, `gfanTropicalTraverse`), fan refinements / products / Minkowski sums, `MarkedPolynomialList` type | [`file-gfanInterface.md`](M2/Macaulay2/packages/file-gfanInterface.md) |
+| `Tropical` | M2-level tropical geometry: `TropicalCycle` type, `tropicalVariety`, `tropicalPrevariety`, `isTropicalBasis`, `stableIntersection`, `BergmanFan`, `isBalanced`, `multiplicities`, min/max convention switch | [`file-Tropical.md`](M2/Macaulay2/packages/file-Tropical.md) |
+| `Matroids` | JSAG-certified matroid theory: `Matroid` type from matrices/graphs/ideals/axioms, ~97 exported operations (deletion / contraction / duality / minors / Tutte polynomial), `matroidIdeal`, `chowRing M` (Adiprasito-Huh-Katz), database of named matroids | [`file-Matroids.md`](M2/Macaulay2/packages/file-Matroids.md) |
+
+Plus the **3 foundational structural packages** documented at the top of this doc (`Macaulay2Doc`, `Style`, `EngineTests`) and the **conventions doc** ([`file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md)) covering the patterns every package follows.
+
+**Coverage:** all 17 auto-loaded packages + 22 most-used non-auto-loaded + 3 structural + 1 conventions = **43 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
+
+## CMake-side package wiring
+
+**Source**: `M2/Macaulay2/packages/CMakeLists.txt`.
+
+For each distributed package:
+
+```cmake
+# Conditionally enable based on library detection
+if(FFLAS_FFPACK_FOUND OR BUILD_FFLAS_FFPACK)
+  add_package(Schubert2)
+endif()
+```
+
+Packages that need an external library are gated on the
+library's detection. If the library isn't available, the
+package doesn't get installed (but still gets built).
+
+## Special directives
+
+```m2
+newPackage("Foo",
+    DebuggingMode => false,
+    OptionalComponentsPresent => boolean,
+    InfoDirSection => "Macaulay2 and its packages",
+    ...
+)
+```
+
+| Directive | What it does |
+|---|---|
+| `DebuggingMode` | If true, errors drop into the M2 debugger. False for production. |
+| `OptionalComponentsPresent` | Run-time gate: if false, package errors out informatively. |
+| `InfoDirSection` | Where the info database registers the package. |
+| `Reload` (passed to `loadPackage`) | Force re-read even if already loaded. |
+| `Configuration` | Per-user config defaults. |
+
+## How users interact with packages
+
+```m2
+-- Once-per-session: load
+needsPackage "Foo"
+
+-- Always available after that
+foo R
+
+-- Documentation
+help foo
+
+-- See SeeAlso links
+viewHelp foo
+
+-- Per-user package configuration
+options Foo
+
+-- Reload after editing
+loadPackage("Foo", Reload => true)
+```
+
+User-level packages (in `~/.Macaulay2/code/` or wherever the
+user's load path points) work the same way as distributed
+packages. The only difference is whether they ship with M2's
+distribution.
+
+## Common pitfalls
+
+### Forgetting `=distributed-packages`
+
+A new package can be in `packages/Foo.m2` but **not appear in
+`M2`** unless you add `Foo` to the `=distributed-packages`
+list. This is the most common new-package mistake.
+
+### `beginDocumentation()` order
+
+Code before `beginDocumentation()` runs at `loadPackage` time.
+Code after only runs at `installPackage` / `check` time.
+Putting a doc-generation helper before the marker → it runs but
+no docs are produced. Putting algorithm code after the marker →
+the algorithm only exists during install/check.
+
+### `PackageImports` vs `needsPackage`
+
+`PackageImports` is **declarative**: it gets loaded as part of
+your package's setup. `needsPackage` inside your package body is
+**imperative**: it gets loaded when execution reaches that line.
+
+Prefer `PackageImports`.
+
+### Example failures
+
+`Example ...` blocks must succeed. A failing example fails the
+install. Either:
+
+- Fix the example.
+- Use `CannedExample ...` (output is taken literally — useful
+  for examples whose outputs are reproducible-but-tedious).
+
+### Documentation node not found
+
+If you write `SeeAlso => myFunction` and there's no doc node
+for `myFunction`, install fails. Either remove the reference or
+write the missing node.
+
+## Why so many packages?
+
+M2's design is **package-centric**: Core stays small (basics),
+and specialised functionality lives in packages. Benefits:
+
+- Users opt into what they need (`needsPackage`).
+- Different research domains evolve their packages
+  independently.
+- Documentation stays focused (each package has its own
+  manual).
+- Maintenance scales — package authors are responsible for
+  their own packages, not Core maintainers.
+
+The cost: discoverability. The
+[Macaulay2 doc site](https://macaulay2.com/doc/Macaulay2-1.26.05/share/doc/Macaulay2/)
+provides a global index.
+
+## Related
+
+- [`README.md`](README.md) — repository TOC.
+- [`TOUR.md`](TOUR.md) — Path C (package author) covers the
+  full author workflow.
+- [`BUILD.md`](BUILD.md) — phase 7 (`install-packages`,
+  `check-packages`).
+- [`TESTING.md`](TESTING.md) — section 3 (per-package tests).
+- [`STARTUP.md`](STARTUP.md) — phase 8 (Core + auto-loaded
+  packages).
+- [`M2/Macaulay2/packages/README.md`](M2/Macaulay2/packages/README.md)
+  — directory index.
+- [`M2/Macaulay2/packages/file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md)
+  — full conventions reference.
+- [`M2/Macaulay2/packages/file-Macaulay2Doc.md`](M2/Macaulay2/packages/file-Macaulay2Doc.md)
+  · [`file-Style.md`](M2/Macaulay2/packages/file-Style.md)
+  · [`file-EngineTests.md`](M2/Macaulay2/packages/file-EngineTests.md)
+  — foundational-package deep dives.
+- [`M2/Macaulay2/m2/file-document.md`](M2/Macaulay2/m2/file-document.md)
+  — documentation DSL implementation.
+- [`M2/Macaulay2/m2/file-installPackage.md`](M2/Macaulay2/m2/file-installPackage.md)
+  — `installPackage` machinery.
+- Project [Wiki](https://github.com/Macaulay2/M2/wiki) and
+  [doc site](https://macaulay2.com/doc/) for end-user docs.
