@@ -69,7 +69,7 @@ export {
    "spohnCI"
 }
 
--- The version 1.0 of the package has been reviewed and on the track for an acceptance recommendation in Journal of Software for Algebra and Geometry. 
+-- Version 1.0 of the package has been reviewed and is on track for an acceptance recommendation in the Journal of Software for Algebra and Geometry. 
 --***************************************--
 --   METHODS FOR CORRELATED EQUILIBRIA   --
 --***************************************--
