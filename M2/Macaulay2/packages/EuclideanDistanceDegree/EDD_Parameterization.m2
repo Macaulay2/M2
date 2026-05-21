@@ -1,0 +1,93 @@
+rand := () -> random QQ;
+
+parameterOptions = { UseMonodromy => false }
+parameterizedWeightEDDegree = method(Options => parameterOptions)
+parameterizedWeightEDDegree(List, List, List) := o -> (F, U, W) -> (
+    -- print("U: " | toString U | " W: " | toString W);
+    R := ring first F;
+    coef := coefficientRing R;
+    numX := #gens R;
+    n := #F;
+
+    S := R ** coef[apply(n - numX, i->"L"|i)];
+    xList := flatten entries basis({1,0}, S);
+    lamList := flatten entries basis({0,1}, S);
+    M := sub(matrix{F}, S);
+
+    -- Find a spanning set for ker(jacM)
+    jacM := transpose sub(matrix makeJac(apply(F, i->sub(i,S)), xList), S);
+    assert(rank jacM == numX);  -- ensure dim X = d
+    columnVectors := gens kernel jacM;  -- bottleneck
+    evalColumnVectors := sub(columnVectors, apply(xList, x -> x => random(1, 100)));
+
+    A := matrix for i to n-1 list {};
+    count := 0;
+    selectColumns := {};
+    while #selectColumns < n-numX and count < #columnVectors do (
+        B := A | matrix(evalColumnVectors_count);
+        if rank B > rank A then (
+            A = B;
+            selectColumns = selectColumns | {count}
+        );
+        count = count + 1
+    );
+    assert(#selectColumns == n - numX);
+    unscaledMatrix := columnVectors_selectColumns;
+    outMatrix := unscaledMatrix * transpose matrix{lamList};
+
+    gradObjective := 2 * diagonalMatrix(W) * transpose(M - matrix{U});  -- 2w(f - u)
+    criteqs := outMatrix - gradObjective;
+
+    if o.UseMonodromy then (
+        sys := polySystem flatten entries criteqs;
+        sols := sparseMonodromySolve sys;
+        number(points sols, p -> status p === Regular)
+    )
+    else (
+        I := ideal(criteqs);
+        degree I
+    )
+)
+
+parameterizedUnitEDDegree = method(Options => parameterOptions)
+parameterizedUnitEDDegree(List) := o -> (F) -> parameterizedWeightEDDegree(
+    F,
+    apply(#F, i -> rand()),
+    apply(#F, i -> 1_(ring first F)),
+    o
+)
+
+parameterizedGenericEDDegree = method(Options => parameterOptions)
+parameterizedGenericEDDegree(List) := o -> (F) -> parameterizedWeightEDDegree(
+    F,
+    apply(#F, i -> rand()),
+    apply(#F, i -> rand()),
+    o
+)
+
+end
+
+loadPackage "MonodromySolver"
+loadPackage "EuclideanDistanceDegree"
+setRandomSeed(123456);
+makeJac = (system,unknowns) -> for i in system list for j in unknowns list diff(j,i)
+R = QQ[x1,x2,x3,x4,x5];
+F = {x1^2+x4^2, x2^2+x5^2, x3^2+1, x1*x2+x4*x5, x1*x3+x4, x2*x3+x5};
+U = {1,2,3,4,5,6};
+W = {1,1,1,1,1,1};
+parameterizedWeightEDDegree(F,U,W)
+parameterizedWeightEDDegree(F,U,W, UseMonodromy => true)
+
+restart
+loadPackage "EuclideanDistanceDegree"
+makeJac = (system,unknowns) -> for i in system list for j in unknowns list diff(j,i)
+R = QQ[x];
+F = {x^2 - 1, x^3 - x};
+parameterizedGenericEDDegree F
+
+n = #F;
+numX = #gens R;
+S = QQ[gens R] ** QQ[y_1..y_(n-numX), u_1..u_n];
+M = sub(matrix{F}, S);
+imageModel = eliminate(support M, ideal(M - matrix{for i from 1 to n list u_i}));
+determinantalUnitEDDegree((sub(imageModel, QQ[support imageModel]))_*)
