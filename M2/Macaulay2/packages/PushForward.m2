@@ -71,115 +71,187 @@ isFinite1 = (f) -> (
     true
     )
 
-pushFwd=method(Options => {NoPrune => false})
-pushFwd RingMap := Sequence => o -> (f) ->
---pfB is B^1 as an A-module
---matB is the set of monomials in B that form a set of generators as an A-module
---mapf takes as arg an element of B, and returns ??
-(
-     A:=source f;
-     B:=target f;
-     deglenA:=degreeLength A;
-     deglenB:=degreeLength B;
-     (matB, mapfaux) := pushAuxHgs f;
 
-     pfB := makeModule(B^1,f,matB);
-     g := map(pfB,,gens pfB);
-     mapf := (b) -> g*(mapfaux b); 
-     (pfB,matB,mapf)
-     )
-
+-- pushFwd method
+-- central export of this package. compute the push forward of various objects
+-- over a ring map if possible.
+pushFwd = method(Options => {NoPrune => false})
 pushFwd Ring := Sequence => o -> B -> pushFwd(map(B, coefficientRing B), o)
 pushFwd Module := Module => o -> M -> pushFwd(map(ring M, coefficientRing ring M), M, o)
 pushFwd Matrix := Matrix => o -> d -> pushFwd(map(ring d, coefficientRing ring d), d, o)
 
-pushFwd(RingMap,Module):=Module=>o->(f,N)->
+-- output is (pfB, matB, mapf) where
+--   fB is B^1 as an A-module
+--   matB is the set of monomials in B that form a set of generators as an A-module
+--   mapf is a method that takes a ring element of B, and returns an element of pfB
+pushFwd RingMap := Sequence => o -> (f) ->
 (
-     B:=target f;
-     aN:=ann N;
-     C:=B/aN;
-     bc:=map(C,B);
-     g:=bc*f;
-     
-     matB:=(pushAuxHgs g)_0;
-     if (o.NoPrune == false) then prune makeModule(N**C,g,matB) else makeModule(N**C,g,matB)
-     )
+    B := target f;
+    if (cachedModule := getPushFwdModule(B, f, o)) =!= null then (
+        -- the extra complexity of this functions return type necessitates a
+        -- little bit of work on top of the cache.
+        return (
+            cachedModule,
+            pushforward' cachedModule_{0..numgens cachedModule - 1},
+            getPushforwardWithOpts(B, f, o)
+        );
+    );
 
-pushFwd(RingMap,Matrix):=Matrix=>o->(f,d)->
-(
-     A:=source f;
-     B:=target f;
-     pols:=f.matrix;
-     pM:=source d;
-     pN:=target d;
-     
-     amn:=intersect(ann pM,ann pN);
-     C:=B/amn;
-     bc:=map(C,B);
-     g:=bc*f;     
-     M:=pM**C;
-     N:=pN**C;
-   
-     psh:=pushAuxHgs g;
-     matB:=psh_0;
-     mapf:=psh_1;     
-          
-     pushM:=makeModule(M,g,matB);
-     pushN:=makeModule(N,g,matB);
-     
-     matMap:=symbol matMap;
-     gR:=matB**matrix d;
-     c:=numgens source gR;
-     l:=numgens target gR;
-     k := numcols matB;
-     matMap=mutableMatrix(A,k*l,c);
-     
-     for i1 from 0 to c-1 do
-     	  for i2 from 0 to l-1 do
-	  (
-       	       e:=mapf(gR_i1_i2);
-	       for i3 from 0 to k-1 do matMap_(i2+l*i3,i1)=e_0_i3;	       
-	   );
+    (matB, mapfaux) := pushAuxHgs f;
+    (pfB, pfmat', pf) := makeModule(module B, f, matB, mapfaux); -- pf is redundant with mapfaux so is unused below
 
-          if (o.NoPrune == false) then prune map(pushN,pushM,matrix matMap) else map(pushN,pushM,matrix matMap)
-     )
+    g := map(pfB, , gens pfB);
+    ringpf := (b) -> g*(mapfaux b);
+    setPushforwardCache(B, f, o, ringpf);
+    setPushforwardCache(module B, f, o, ringpf);
+    setPushforwardByModuleCache(module B, pfB, ringpf);
+    setPushforwardCache'(pfB, (a) -> (
+        -- coerce to matrix over B
+        coeffs := map(module B, B^(numcols a), pfmat'* a);
+        -- this try is to handle the case where coeffs has a RingMap attached
+        -- which has carried over from the pfmat' construction. in the case
+        -- where f is id_R it carries the RingMap through for some reason even
+        -- though in other cases it does not. If this fails we attempt to
+        -- rebuild the matrix from it's coefficients to get rid of any dangling
+        -- RingMap metadata.
+        try(map(module B, , coeffs)) else map(module B, , matrix entries coeffs)
+    ));
+
+    (pfB, matB, ringpf)
+)
+
+pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
+    if (cachedModule := getPushFwdModule(N, f, o)) =!= null then
+        return cachedModule;
+
+    N' := prune N;
+    outerPruningMap := N'.cache.pruningMap;
+
+    A := source f;
+    B := target f;
+    B' := B/ann N; -- N is finite over A iff A -> B' is a finite ring extension
+    quot := map(B', B);
+    g := quot * f;
+
+    -- you might think we want to just compute pushFwd g inside makeModule but
+    -- that triggers infinite recursion makeModule <> pushFwd(RingMap)
+    pfg := pushFwd g; matB' := pfg#1; ringpf := pfg#2;
+    (pfN, pfmat', pf) := makeModule(N' ** B', g, matB', ringpf);
+
+    -- diagram chase
+    -- pfmat'           : pfN       --> N' ** B
+    -- liftToN'         : N' ** B   --> N'
+    -- outerPruningMap  : N'        --> N
+    liftToN' := map(N', N' ** B', map(B, B'), gens N');
+    auxmat := map(N, pfN, f, outerPruningMap * liftToN' * pfmat');
+
+    -- patch auxmat into a function M -> N
+    mapb := (m) -> (
+        -- m                : A     ---> pfN
+        -- so auxmapb*m     : A^1   ---> N
+        -- since we want    : B^1   ---> N
+        -- we have to do some map shenanigans
+        result := map(N, B^(numcols m), auxmat * m);
+        -- let map fixup degrees to preserve homogeneity if appropriate
+        if isHomogeneous m then map(N, , result) else result
+    );
+    setPushforwardCache'(pfN, mapb);
+
+    -- patch pf into a function N -> M
+    mapf := (n) -> (n' := quot cover(outerPruningMap^-1 * n); pf n');
+    setPushforwardCache(N, f, o, mapf);
+    setPushforwardByModuleCache(N, pfN, mapf);
+
+    if (o.NoPrune == false) then (
+        pfN' := prune pfN;
+        innerPruningMap := pfN'.cache.pruningMap;
+        -- patch up our maps to work with the pruned module instead
+        -- todo(dodgejoel): consider placing this diagram chase in the pushforward / pushforward'
+        -- methods and just returning the bare pruned module here instead?  that
+        -- way you could actually pushforward['] out of a module you pruned by
+        -- hand...
+        p := (n) -> innerPruningMap^-1 * mapf(n);
+        setPushforwardCache(N, f, o, p);
+        setPushforwardCache'(pfN', (m) -> mapb(innerPruningMap * m));
+        setPushforwardByModuleCache(N, pfN', p);
+        pfN'
+    ) else (
+        pfN
+    )
+)
 
 
--- TODO: stash the matB, pf?  Make accessor functions to go to/from gens of R over A, or M to M_A.
--- TODO: given: M = pushFwd N, get the maps from N --> M (i.e. stash it somewhere).
---   also, we want the map going backwards too: given an element of M, lift it to N.
+pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
+    M := pushFwd(f, source F, o);
+    N := pushFwd(f, target F, o);
+    if o.NoPrune == false then (
+        N' := target N.cache.pruningMap;
+        map(N, M, N.cache.pruningMap^-1 * pushforward(N', F * pushforward' M_{0..numgens M - 1}))
+    ) else
+        map(N, M, pushforward(N, F * pushforward' M_{0..numgens M - 1}))
+)
+
 
 
 -- makeModule
 -- internal function which implements the push forward of a module.
--- input: 
---   N     : Module, a module over B
---   f     : RingMap, A --> B
---   matB  : matrix over B, with one row, whose entries form a basis for B over A.
+-- input:
+--   N      : Module, a module over B
+--   f      : RingMap, A --> B
+--   matB   : matrix over B, with one row, whose entries form a basis for B over A.
 --           in fact, it can be any desired subset of A-generators of B, as well.
+--   ringpf : FunctionClosure sending elements of B to elements of pushFwd B
 -- output:
---   the module N as an A-module.
+--   (M, F, p) : Sequence
+--   M      : the module N as an A-module.
+--   F      : Matrix N <- M which provides one direction of the bijection between M and N.
+--   p      : FunctionClosure M <- N providing the inverse of the bijection
 -- notes:
 --   if A is a field, this should be easier?
 --   the map mp is basically
 --     A^k --> auxN (over B)
 --   and its kernel are the A-relations of the elements auxN
+--   TODO: stash the matB, pf?  Make accessor functions to go to/from gens of R over A, or M to M_A.
+makeModule = method()
+makeModule(Module, RingMap, Matrix, FunctionClosure) := (N, f, matB, ringpf) -> (
+    N = prune N;
+    auxN := ambient N/image relations N;
+    A := source f;
+    k := (numgens ambient N) * (numgens source matB);
+    sourceGens := matB**gens N;
+    mp := if isHomogeneous f then
+        try(map(auxN, , f, sourceGens)) else map(auxN, A^k, f, sourceGens)
+    else
+        map(auxN, A^k, f, sourceGens);
 
-makeModule=method()
-makeModule(Module,RingMap,Matrix):=(N,f,matB)->
-(
-     N = trim N;
-     auxN:=ambient N/image relations N;
-     A:=source f;
-     k:=(numgens ambient N) * (numgens source matB);
-     --mp:=try(map(auxN,,f,matB**gens N)) else map(auxN,A^k,f,matB**gens N);
-     mp := if isHomogeneous f then 
-               try(map(auxN,,f,matB**gens N)) else map(auxN,A^k,f,matB**gens N)
-           else
-               map(auxN,A^k,f,matB**gens N);
-     ke:=kernel mp;
-     (super ke)/ke
-     )
+    rels := kernel mp;
+    ambientSpace := super rels;
+
+    -- add in any relations coming from f.
+    -- note we'll get the wrong answer if the kernel is nontrivial but computing it fails.
+    try(kernalAux := kernel f) then rels += kernalAux * ambientSpace;
+
+    -- some rings have can't trim so fallback to not trimming.  can raise `gcd: unimplemented for this ring`.
+    rels = try(trim rels) else rels;
+    M := ambientSpace/rels;
+    pfmat' := N.cache.pruningMap * map(N, M, f, sourceGens);
+
+    pf := (n) -> ( -- pf: N --> M
+        -- transpose without applying antipode
+        n' := transpose matrix for row in entries n list for c in row list antipode(c);
+        results := for i from 0 to numrows n' - 1 list (
+            -- apply ringpf and reshape coefficients to line up with order of basis in construction of M
+            mapped := transpose cover ringpf n'^{i};
+            reshape(A^(numgens M), A^1, mapped)
+        );
+        if isHomogeneous n then
+            map(M, , matrix {results})
+        else
+            map(M, A^(numcols n), matrix {results})
+    );
+
+    (M, pfmat', pf)
+)
 
 -- what if B is an algebra over A (i.e. A is the coefficient ring of B)
 -*
