@@ -105,8 +105,8 @@ graphIdeal RingMap := Ideal => opts -> (cacheValue (symbol graphIdeal => opts)) 
      k := coefficientRing R;
      if not isCommutative S then error "expected source of ring map to be a commutative ring";
      if S === k then return ideal map(R^1,R^0,0);
-     if not isAffineRing R then error "expected an affine ring";
-     if not isAffineRing S then error "expected an affine ring";
+     if not isAffineRing R and not isSkewAffineRing R then error "expected an affine ring";
+     if not isAffineRing S and not isSkewAffineRing S then error "expected an affine ring";
      if not ( k === coefficientRing S ) then error "expected polynomial rings over the same ring";
      gensk := generators(k, CoefficientRing => ZZ);
      if not all(gensk, x -> promote(x,R) == f promote(x,S)) then error "expected ring map to be identity on coefficient ring";

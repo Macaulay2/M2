@@ -246,6 +246,11 @@ isAffineRing Ring := isField
 isAffineRing PolynomialRing := R -> isCommutative R and not (options R).Inverses and isAffineRing coefficientRing R
 isAffineRing QuotientRing := R -> isField R or isAffineRing ambient R
 
+isSkewAffineRing = method(TypicalValue => Boolean)
+isSkewAffineRing Ring := (R) -> false
+isSkewAffineRing PolynomialRing := R -> isSkewCommutative R and isAffineRing newRing(R, SkewCommutative => false)
+isSkewAffineRing QuotientRing := R -> isSkewAffineRing ambient R
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

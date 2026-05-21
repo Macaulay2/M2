@@ -848,6 +848,7 @@ export {
 	"isReal",
 	"isRegularFile",
 	"isRing",
+	"isSkewAffineRing",
 	"isSkewCommutative",
 	"isSmooth",
 	"isSorted",
