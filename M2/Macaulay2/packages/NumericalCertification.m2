@@ -3,7 +3,7 @@ newPackage(
     	Version => "1.6",
     	Date => "May, 2022",
     	Authors => {
-	     {Name => "Kisun Lee", Email => "kil004@ucsd.edu", HomePage => "https://klee669.github.io"}
+	     {Name => "Kisun Lee", Email => "kisunl@clemson.edu", HomePage => "https://klee669.github.io"}
 	     },
     	Headline => "numerical certification",
 	PackageExports => {"NumericalAlgebraicGeometry"},
