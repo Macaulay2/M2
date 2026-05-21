@@ -38,38 +38,45 @@ protect \ {PUSHFORWARDMODULES, PUSHFORWARDMAPS, PUSHFORWARDMAP'}
 
 
 
+-- pushforward method --
+-- map elements from a ring/module to it's pushforward
+pushforward = method()
+pushforward(RingMap, Matrix) := (f, n) -> (
+    N := getModuleAux n;
+    Ps := getPushforwards(N, f);
+    if Ps === null or #Ps == 0 then (
+        M := pushFwd(f, N);
+        P := getPushforwardByModule(N, M);
+        return P n;
+    );
+    if #Ps > 1 then error "more than one pushFwd exists for this ring map. specify pushFwd module.";
 
-isFinite1 = (f) -> (
-    A := source f;
-    B := target f;
-    matB := null;
-    mapf := null;
-    pols := f.matrix;
-    (FA, phiA) := flattenRing A;
-    iFA := ideal FA;
-    varsA := flatten entries phiA^-1 vars FA;
-    RA := try(ring source presentation FA) else FA;
-    (FB, phiB) := flattenRing B;
-    iFB := ideal FB;
-    varsB := flatten entries phiB^-1 vars FB;
-    RB := try(ring source presentation FB) else FB;
-    m := numgens FA;
-    n := numgens FB;
-    pols = pols_{0..(m-1)};
-    R := try(tensor(RB, RA, Join => false)) else tensor(RB, RA, Join => true);
-    xvars := (gens R)_{n..n+m-1};
-    yvars := (gens R)_{0..n-1};
-    iA := sub(ideal FA,matrix{xvars});
-    iB := sub(ideal FB,matrix{yvars});
-    iGraph := ideal(matrix{xvars}-sub(pols,matrix{yvars}));
-    I := iA+iB+iGraph;
-    inI := leadTerm I;
-    r := ideal(sub(inI,matrix{yvars | splice{m:0}}));     
-    for i from 1 to n do
-        if ideal(sub(gens r,matrix{{(i-1):0,1_R,(m+n-i):0}}))!=ideal(1_R) then
-            return false;
-    true
-    )
+    P = first Ps;
+    P n
+)
+pushforward(RingMap, Vector) := (f, v) -> pushforward(f, matrix v)
+pushforward(Matrix) := (n) -> pushforward(map(ring target n, coefficientRing ring target n), n)
+pushforward(Vector) := (v) -> pushforward(matrix v)
+pushforward(RingMap, RingElement) := (f, r) -> pushforward(f, matrix r)
+pushforward(RingElement) := (r) -> pushforward(map(ring r, coefficientRing ring r), r)
+pushforward(Module, Matrix) := (M, n) -> (
+    N := getModuleAux n;
+    P := getPushforwardByModule(N, M);
+    if P === null then error "argument module is not the pushforward of the module of argument element.";
+    P n
+);
+pushforward(Module, Vector) := (M, v) -> pushforward(M, matrix v);
+pushforward(Module, RingElement) := (M, r) -> pushforward(M, matrix r);
+
+-- pushforward' method --
+-- map elements from a pushforward module to the module that was pushed
+pushforward' = method()
+pushforward'(Matrix) := (m) -> (
+    P' := getPushforward'(module target m);
+    if P' === null then error "expected an element of a module of the form pushFwd(N)";
+    P' m
+)
+pushforward'(Vector) := (v) -> pushforward' matrix v
 
 
 -- pushFwd method
