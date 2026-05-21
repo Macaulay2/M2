@@ -90,8 +90,8 @@ document {
     EXAMPLE "g 2",
     "Here it says ENTERING DEBUGGER when you enter the deugger. You may use ", TO "help", ", as instructed, to view the commands available in the debugger.
     While in the debugger, the input line says  \"<M2 debugger>\"  and the line numbers of the error are displayed to the right of the code. 
-    In addition there are carets below the specfic charcters causing the error or below the starting ending charcters if the error is multiple lines.
-    The line numbers and carets can be toggled off by including at the start of your doccument debugPrintLineNumbers = false; and debugPrintCarets = false; respectively.
+    In addition there are carets below the specific characters causing the error or below the starting ending characters if the error is multiple lines.
+    The line numbers and carets can be toggled off by including at the start of your document debugPrintLineNumbers = false; and debugPrintCarets = false; respectively.
     As suggested by the help display, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
     EXAMPLE "listLocalSymbols",
     "We see that the value of ", TT "x", " is 0, and that explains the error message about division by zero.
