@@ -38,12 +38,6 @@ protect \ {PUSHFORWARDMODULES, PUSHFORWARDMAPS, PUSHFORWARDMAP'}
 
 
 
-isInclusionOfCoefficientRing = method()
-isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
-    --checks whether the map is the inclusion of the coefficientRing
-    if source inc =!= coefficientRing target inc then return false;
-    inc vars source inc == promote (vars source inc, target inc)
-    )
 
 isFinite1 = (f) -> (
     A := source f;
@@ -75,19 +69,6 @@ isFinite1 = (f) -> (
         if ideal(sub(gens r,matrix{{(i-1):0,1_R,(m+n-i):0}}))!=ideal(1_R) then
             return false;
     true
-    )
-
-isModuleFinite = method()
-isModuleFinite Ring := Boolean => R -> (
-    I := ideal leadTerm ideal R;
-    ge := flatten select(I_*/support, ell -> #ell == 1);
-    set ge === set gens ring I
-    )
-isModuleFinite RingMap := Boolean => f -> (
-    if isInclusionOfCoefficientRing f then
-        isModuleFinite target f
-    else
-        isFinite1 f
     )
 
 pushFwd=method(Options => {NoPrune => false})
@@ -302,6 +283,46 @@ pushAuxHgs(RingMap) := (f) -> (
     ) else (
         pushFwdRingHelper(f)
     )
+)
+
+isInclusionOfCoefficientRing = method()
+isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
+    -- checks whether the map is the inclusion of the coefficientRing
+    if source inc =!= coefficientRing target inc then return false;
+    inc vars source inc == promote (vars source inc, target inc)
+)
+
+
+-- isModuleFinite method
+-- compute whether a ring is module finite over source of a ring homomorphism
+isModuleFinite = method()
+isModuleFinite Ring := Boolean => R -> (
+    -- flatten R to gather all of the relevant relations
+    (fR, phiR) := flattenRing R;
+    I := leadTerm ideal fR;
+
+    R' := ring I;
+    flatRels := join(
+        flatten select(I_*/support, ell -> #ell == 1),
+        -- skew commuting variables don't contribute to failure of module-finiteness
+        try(apply(R'.SkewCommutative, (i) -> R'_i)) else {}
+    );
+    relsR := apply(flatRels, g -> phiR^-1 g);
+
+    -- these are the variables that relations need to cut down
+    gensR := gens(R, CoefficientRing => coefficientRing R);
+
+    -- this can be a strict subset
+    isEmpty(gensR - set relsR)
+)
+isModuleFinite RingMap := Boolean => (f) -> (
+    if isInclusionOfCoefficientRing f then return isModuleFinite target f;
+
+    (val, err) := trap pushFwdRingHelper(f);
+    if err =!= null then (
+        if toString err === ERRORNOTFINITE then return false else error err;
+    );
+    true
 )
 
 ------------------------
