@@ -24,3 +24,10 @@ G = t -> (
      F(t);
      Z := "Zedd"
 )
+
+h = t -> (
+     x := 1;
+     breakpoint y := t+1;
+     z := 1/t;
+     w := x+t;
+)

@@ -13,9 +13,10 @@ document {
 	TO "assert",
 	TO "generateAssertions",
 	TO "benchmark",
+	TO "breakpoint",
 	TO "Browse::browse",
 	TO "code",
-  TO "finish",
+	TO "finish",
 	TO "current",
 	TO "currentPosition",
 	TO "lineNumber", -- TODO: rename to currentLineNumber
@@ -602,6 +603,27 @@ document {
      meaningfully on the clock, and the garbage collector will be called
      beforehand.",
      }
+
+document {
+  Key => "breakpoint",
+  Headline => "set a breakpoint to stop execution at a particular point in the code and enter the debugger",
+  Inputs => { "s" => String => "a string containing Macaulay2 code" },
+  Usage => "breakpoint s",
+  Consequences => {
+    {"At the time the code including ", TT "breakpoint s", " is executed, the execution will stop right before ",
+    TT "s", ", and the debugger will be entered."},
+  },
+  PARA { "Setting a breakpoint is a way to stop execution at a particular point in the code and enter the debugger.
+  Then, commands like ", TT "step", " ", TT "continue", " ", TT "finish", " and so on as in the following demonstration." },
+  EXAMPLE lines ///
+  load "Macaulay2Doc/demos/demo2.m2"
+  code h
+  h 1 
+  step 
+  finish 
+  ///,
+  SeeAlso => {"step", "continue", "finish", "break", "error"}
+}
 
 undocumented {(code, Nothing)}
 
