@@ -44,14 +44,23 @@ RingElement *RingElement::operator-() const
   return new RingElement(R, R->negate(val));
 }
 
-RingElement *RingElement::invert() const
+RingElement /* or null */ *RingElement::invert() const
 {
   if (is_zero())
     {
       ERROR("ring division: attempt to divide by zero");
       return nullptr;
     }
-  return new RingElement(R, R->invert(val));
+
+  try
+    {
+      return new RingElement(R, R->invert(val));
+    }
+  catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 RingElement /* or null */ *RingElement::operator+(const RingElement &b) const
@@ -61,9 +70,18 @@ RingElement /* or null */ *RingElement::operator+(const RingElement &b) const
       ERROR("ring addition requires both elements to have the same base ring");
       return nullptr;
     }
-  ring_elem result = R->add(get_value(), b.get_value());
-  if (error()) return nullptr;
-  return new RingElement(R, result);
+
+  try
+    {
+      ring_elem result = R->add(get_value(), b.get_value());
+      if (error()) return nullptr;
+      return new RingElement(R, result);
+    }
+  catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 RingElement /* or null */ *RingElement::operator-(const RingElement &b) const
@@ -74,9 +92,18 @@ RingElement /* or null */ *RingElement::operator-(const RingElement &b) const
           "ring subtraction requires both elements to have the same base ring");
       return nullptr;
     }
-  ring_elem result = R->subtract(get_value(), b.get_value());
-  if (error()) return nullptr;
-  return new RingElement(R, result);
+
+  try
+    {
+      ring_elem result = R->subtract(get_value(), b.get_value());
+      if (error()) return nullptr;
+      return new RingElement(R, result);
+    }
+  catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 RingElement /* or null */ *RingElement::operator*(const RingElement &b) const
@@ -88,18 +115,35 @@ RingElement /* or null */ *RingElement::operator*(const RingElement &b) const
           "ring");
       return nullptr;
     }
-  ring_elem result = R->mult(get_value(), b.get_value());
-  if (error()) return nullptr;
-  return new RingElement(R, result);
+
+  try
+    {
+      ring_elem result = R->mult(get_value(), b.get_value());
+      if (error()) return nullptr;
+      return new RingElement(R, result);
+    }
+  catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
-RingElement *RingElement::operator*(int n) const
+RingElement /* or null */ *RingElement::operator*(int n) const
 {
   ring_elem nR = R->from_long(n);
   if (is_zero() || (n == 0))
     return new RingElement(R, ZERO_RINGELEM);
   else
-    return new RingElement(R, R->mult(nR, get_value()));
+    try
+      {
+        return new RingElement(R, R->mult(nR, get_value()));
+      }
+    catch (const exc::engine_error &e)
+      {
+        ERROR(e.what());
+        return nullptr;
+      }
 }
 
 RingElement /* or null */ *RingElement::operator/(const RingElement &b) const
@@ -114,24 +158,48 @@ RingElement /* or null */ *RingElement::operator/(const RingElement &b) const
       ERROR("ring division: attempt to divide by zero");
       return nullptr;
     }
-  ring_elem result = R->divide(get_value(), b.get_value());
-  if (error()) return nullptr;
-  return new RingElement(R, result);
+  try
+    {
+      ring_elem result = R->divide(get_value(), b.get_value());
+      if (error()) return nullptr;
+      return new RingElement(R, result);
+    }
+  catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 RingElement /* or null */ *RingElement::power(int n) const
 {
-  // n negative is handled.
-  ring_elem f = R->power(val, n);
-  if (error()) return nullptr;
-  return new RingElement(R, f);
+  try
+    {
+      // n negative is handled.
+      ring_elem f = R->power(val, n);
+      if (error()) return nullptr;
+      return new RingElement(R, f);
+    }
+  catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 RingElement /* or null */ *RingElement::power(mpz_srcptr n) const
 {
-  ring_elem f = R->power(val, n);
-  if (error()) return nullptr;
-  return new RingElement(R, f);
+  try
+    {
+      ring_elem f = R->power(val, n);
+      if (error()) return nullptr;
+      return new RingElement(R, f);
+    }
+  catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 RingElement *RingElement::random(const Ring *R)
