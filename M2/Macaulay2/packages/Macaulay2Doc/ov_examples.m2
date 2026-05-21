@@ -23,6 +23,26 @@ Node
     "LLLBases :: LLLBases"
     "EllipticCurves :: EllipticCurves"
     "Units :: Units"
+  Subnodes
+    gcd
+    lcm
+    factor
+    gcdCoefficients
+    powermod
+    mod
+    quotient
+    quotient'
+    quotientRemainder
+    quotientRemainder'
+    remainder
+    remainder'
+    pseudoRemainder
+    plus
+    minus
+    times
+    power
+    (sqrt,ZZ,ZZ)
+    random
 
 Node
   Key
@@ -45,6 +65,10 @@ Node
     "packages provided with Macaulay2"
     "LLLBases :: LLLBases"
     "TensorComplexes :: TensorComplexes"
+  Subnodes
+    id
+    inverse
+    rank
 
 Node
   Key
@@ -92,6 +116,28 @@ Node
     "Saturation :: Saturation"
     "Regularity :: Regularity"
     "LocalRings :: LocalRings"
+  Subnodes
+    codim
+    dim
+    depth
+    height
+    "Gröbner bases"
+    "normal forms"
+    "elimination of variables"
+    hilbertFunction
+    hilbertSeries
+    hilbertPolynomial
+    regularity
+    mingens
+    minimalPresentation
+    minimize
+    monomialCurveIdeal
+    numgens
+    pdim
+    trim
+    isAffineRing
+    isBorel
+    isCommutative
 
 Node
   Key
@@ -128,6 +174,26 @@ Node
     "SchurFunctors :: SchurFunctors"
     "TensorComplexes :: TensorComplexes"
     "MCMApproximations :: MCMApproximations"
+  Subnodes
+    cokernel
+    complete
+    directSum
+    eagonNorthcott
+    Ext
+    extend
+    HH
+    image
+    isExact
+    isInjective
+    isIsomorphism
+    isSurjective
+    koszul
+    presentation
+    prune
+    ScriptedFunctor
+    syz
+    tensor
+    Tor
 
 Node
   Key
@@ -168,6 +234,23 @@ Node
     "HyperplaneArrangements :: HyperplaneArrangements"
     "RationalPoints :: RationalPoints"
     "ToricVectorBundles :: ToricVectorBundles"
+  Subnodes
+    chi
+    euler
+    eulers
+    Fano
+    genera
+    genus
+    Grassmannian
+    isNormal
+    isSmooth
+    isVeryAmple
+    preimage
+    pullback
+    pushout
+    randomKRationalPoint
+    Schubert
+    singularLocus
 
 Node
   Key
@@ -254,4 +337,15 @@ Node
     "LatticePolytopes :: LatticePolytopes"
     "Nauty :: Nauty"
     "FourTiTwo :: FourTiTwo"
+  Subnodes
+    binomial
+    compositions
+    cone
+    directProduct
+    inversePermutation
+    multidegree
+    normalCone
+    partitions
+    rays
+    Set
 ///
