@@ -442,6 +442,7 @@ doc///
     MutableList
   :Information about lists
     (length, VisibleList)
+    length
     (symbol #, List)
     isEmpty
   :Accessing list elements
@@ -503,6 +504,7 @@ doc///
     (symbol +, List, List)
     (symbol -, List, List)
     (symbol |, List, List)
+    difference
     join
     append
     prepend
@@ -522,6 +524,7 @@ doc///
     mergePairs
     reverse
     sequence
+    shuffle
     unsequence
     switch
     tally

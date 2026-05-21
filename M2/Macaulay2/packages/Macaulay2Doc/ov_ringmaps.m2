@@ -78,8 +78,7 @@ document {
 	  TO (symbol **, RingMap, Module)
 	  },
      Subnodes => {
-	 TO (symbol SPACE, RingMap, RingElement),
-        TO (kernel, RingMap),
+	  TO (symbol SPACE, RingMap, RingElement),
         TO (source, RingMap),
         TO (target, RingMap),
         TO (symbol ^, RingMap, ZZ),
@@ -403,6 +402,10 @@ document {
 	  graphIdeal,
 	  graphRing,
 	  "elimination of variables"
+	  },
+     Subnodes => {
+	  TO (kernel, RingMap),
+	  TO coimage
 	  }
      }
 undocumented {
