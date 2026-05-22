@@ -20,7 +20,7 @@ doc ///
     OTW
     OTWcyclic
   Headline
-    strategy for computing a localization of a D-module
+    strategy for computing a localization of a $D$-module
   Description
     Text
       @UL {
@@ -69,7 +69,7 @@ doc ///
     (Dlocalize, Ideal, RingElement)
     (Dlocalize, Module, RingElement)
   Headline
-    localization of a D-module
+    localization of a $D$-module
   Usage
     Dlocalize(M, f)
     Dlocalize(I, f)
@@ -135,7 +135,7 @@ doc ///
     (DlocalizeMap, Ideal, RingElement)
     (DlocalizeMap, Module, RingElement)
   Headline
-    localization map from a D-module to its localization
+    localization map from a $D$-module to its localization
   Usage
     DlocalizeMap(M, f)
     DlocalizeMap(I, f)
@@ -176,7 +176,7 @@ doc ///
 	IntegrateBfunction
 	Bfunction
     Headline
-    	localization of a D-module (extended version)
+    	localization of a $D$-module (extended version)
     Usage
     	DlocalizeAll(M,f)
 	DlocalizeAll(I,f)

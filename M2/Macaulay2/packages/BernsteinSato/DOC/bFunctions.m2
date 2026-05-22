@@ -14,7 +14,7 @@ doc ///
   Key
     bFunction
   Headline
-    Bernstein-Sato polynomial of a D-module with respect to a weight
+    Bernstein-Sato polynomial of a $D$-module with respect to a weight
   Description
     Text
       See [@TO2 ("WeylAlgebras :: Works Cited", "OT01")@, Section 4].
@@ -210,7 +210,7 @@ doc ///
   Key
     (bFunction, Module, List, List)
   Headline
-    $b$-function of a holonomic D-module
+    $b$-function of a holonomic $D$-module
   Usage
     b = bFunction(M, w, m)
   Inputs
@@ -778,7 +778,7 @@ doc ///
     (globalB, Ideal, RingElement)
     globalB
   Headline
-    compute global $b$-function and $b$-operator for a D-module and a polynomial
+    compute global $b$-function and $b$-operator for a $D$-module and a polynomial
   Usage
     H = globalB(I, f)
   Inputs

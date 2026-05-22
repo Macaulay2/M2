@@ -64,7 +64,7 @@ doc ///
     (DHom, Module, Module, List)
     (DHom, Ideal, Ideal)
   Headline
-    D-homomorphisms between holonomic D-modules
+    $D$-homomorphisms between holonomic $D$-modules
   Usage
     DHom(M, N)
     DHom(M, N, w)
@@ -326,7 +326,7 @@ doc ///
     (Ddual, Module)
     (Ddual, Ideal)
   Headline
-    holonomic dual of a D-module
+    holonomic dual of a $D$-module
   Usage
     Ddual M
     Ddual I
@@ -521,7 +521,7 @@ doc ///
     (rationalFunctionExt, ZZ, Module)
     (rationalFunctionExt, Module, RingElement)
   Headline
-    Ext(holonomic D-module, polynomial ring localized at the singular locus)
+    Ext(holonomic $D$-module, polynomial ring localized at the singular locus)
   Usage
     rationalFunctionExt M
     rationalFunctionExt I

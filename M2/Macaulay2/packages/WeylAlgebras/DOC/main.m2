@@ -5,7 +5,7 @@ Node
   Key
     WeylAlgebras
   Headline
-    algorithms for D-modules
+    algorithms for $D$-modules
   Description
     Text
       To begin, read the @TO "Dmodules::D-modules tutorial"@.
@@ -21,7 +21,7 @@ Node
 	@TOH "stafford"@
 	@TOH "makeCyclic"@
 	@TOH "Dprune"@
-      :Basic invariants of D-modules
+      :Basic invariants of $D$-modules
 	@TOH "Ddim"@
 	@TOH "isHolonomic"@
 	@TOH "holonomicRank"@
@@ -102,7 +102,7 @@ doc ///
     (Dtrace, ZZ)
     (Dtrace, Sequence)
   Headline
-    set or get the depth of comments made by D-module routines
+    set or get the depth of comments made by $D$-module routines
   Usage
     Dtrace n
     Dtrace()

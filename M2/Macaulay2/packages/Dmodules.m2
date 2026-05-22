@@ -23,7 +23,7 @@ Node
   Key
     Dmodules
   Headline
-    D-modules package collection
+    $D$-modules package collection
   Description
     Text
       To begin, read the @TO "D-modules tutorial"@.
@@ -54,7 +54,7 @@ Node
       hereafter referred to as [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@].
       This is also the best place to learn about computational $D$-module theory. The book
       {\em Computational Algebraic Geometry with Macaulay2} has a chapter on $D$-modules and local cohomology.
-      A good introduction to $D$-module theory is {\em A primer of algebraic D-modules} by Coutinho.
+      A good introduction to $D$-module theory is {\em A primer of algebraic $D$-modules} by Coutinho.
 
       The Weyl algebra $D_n$ is the free associative algebra in $2n$ variables
       $x_1,\dots,x_n$, $dx_1,\dots,dx_n$, subject to the following relations:

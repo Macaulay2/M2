@@ -218,7 +218,7 @@ doc ///
     (Dprune, Module)
     [Dprune, MinimalGenerators]
   Headline
-    prunes a D-module
+    prunes a $D$-module
   Usage
     Dprune M
   Inputs
@@ -230,7 +230,7 @@ doc ///
       of the same type as @TT "M"@
   Description
     Text
-      Finds another (possibly smaller) representation of the D-module $M$.
+      Finds another (possibly smaller) representation of the $D$-module $M$.
       If $M$ is a matrix, $\mathrm{Dprune}$ returns a matrix whose cokernel
       is isomorphic to that of $M$.
     Example
@@ -263,7 +263,7 @@ doc ///
     Text
       The standard transposition is the involution of the Weyl algebra
       which sends $x^a dx^b$ to $(-dx)^b x^a$.
-      It provides the equivalence in the Weyl algebra between left and right D-modules.
+      It provides the equivalence in the Weyl algebra between left and right $D$-modules.
     Example
       makeWeylAlgebra(QQ[x,y])
       L = x^2*dy + y*dy^2 + 3*dx^5*dy
@@ -283,19 +283,19 @@ doc ///
      Generator
      AnnG
    Headline
-     finds a cyclic generator of a D-module
+     finds a cyclic generator of a $D$-module
    Usage
      makeCyclic M
    Inputs
      M:Matrix
-       a presentation matrix whose cokernel is a holonomic D-module
+       a presentation matrix whose cokernel is a holonomic $D$-module
    Outputs
      H:HashTable
        where @TT "H.Generator"@ is a cyclic generator and @TT "H.AnnG"@
        is the annihilator ideal of this generator
    Description
     Text
-      Every finitely-generated holonomic D-module is cyclic, and there is
+      Every finitely-generated holonomic $D$-module is cyclic, and there is
       an algorithm for computing a cyclic generator.
     Example
       makeWA(QQ[x])
@@ -350,7 +350,7 @@ doc ///
     (isHolonomic, Module)
     (isHolonomic, Ideal)
   Headline
-    determines whether a D-module (or ideal in Weyl algebra) is holonomic
+    determines whether a $D$-module (or ideal in Weyl algebra) is holonomic
   Usage
     isHolonomic M
     isHolonomic I
@@ -382,7 +382,7 @@ doc ///
     (DsingularLocus,Module)
     (DsingularLocus,Ideal)
   Headline
-    singular locus of a D-module
+    singular locus of a $D$-module
   Usage
     DsingularLocus M
     DsingularLocus I
@@ -419,7 +419,7 @@ doc ///
     (characteristicIdeal,Ideal)
     (characteristicIdeal,Module)
   Headline
-    characteristic ideal of a D-module
+    characteristic ideal of a $D$-module
   Usage
     characteristicIdeal M
     characteristicIdeal I
@@ -446,7 +446,7 @@ doc ///
       Here the $\xi_i$ is the principal symbol of $dx_i$, that is, the image of $dx_i$
       in the associated graded ring.
       The zero locus of the characteristic ideal is equal to the {\em characteristic variety}
-      of $D/I$ which is an invariant of a D-module.
+      of $D/I$ which is an invariant of a $D$-module.
    Text
       The algorithm to compute the characteristic ideal consists of computing
       the initial ideal of $I$ with respect to the weight vector
@@ -470,7 +470,7 @@ doc ///
     (holonomicRank,Module)
     (holonomicRank,Ideal)
   Headline
-    holonomic rank of a D-module
+    holonomic rank of a $D$-module
   Usage
     holonomicRank M
     holonomicRank I
@@ -484,13 +484,13 @@ doc ///
       the rank of $M$
   Description
     Text
-      The {\em holonomic rank} of a D-module $M = D^r/N$ provides analytic information
+      The {\em holonomic rank} of a $D$-module $M = D^r/N$ provides analytic information
       about the system of PDEs given by $N$. By the Cauchy-Kovalevskii-Kashiwara Theorem,
       the dimension of the space of germs of holomorphic solutions to $N$ in a
       neighborhood of a nonsingular point is equal to the holonomic rank of $M$.
 
     Text
-      The holonomic rank of a D-module is defined algebraically as follows.
+      The holonomic rank of a $D$-module is defined algebraically as follows.
       Let $D$ be the Weyl algebra
       with generators $x_1,\dots,x_n$ and $dx_1,\dots,dx_n$ over $\QQ$,
       and let $R$ denote the ring of differential operators
@@ -518,7 +518,7 @@ doc ///
     (Ddim,Ideal)
     (Ddim,Module)
   Headline
-    dimension of a D-module
+    dimension of a $D$-module
   Usage
     Ddim M
     Ddim I

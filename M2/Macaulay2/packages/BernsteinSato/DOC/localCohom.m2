@@ -361,7 +361,7 @@ doc ///
   Key
     (localCohom, Ideal, Module)
   Headline
-    local cohomology of a D-module
+    local cohomology of a $D$-module
   Usage
     H = localCohom(I, M)
   Inputs
@@ -411,7 +411,7 @@ doc ///
   Key
     (localCohom, ZZ, Ideal, Module)
   Headline
-    local cohomology of a D-module
+    local cohomology of a $D$-module
   Usage
     localCohom(d, I, M)
   Inputs
@@ -460,7 +460,7 @@ doc ///
   Key
     (localCohom, List, Ideal, Module)
   Headline
-    local cohomology of a D-module
+    local cohomology of a $D$-module
   Usage
     localCohom(l, I, M)
   Inputs

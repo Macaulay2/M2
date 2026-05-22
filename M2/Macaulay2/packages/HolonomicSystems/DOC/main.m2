@@ -3,7 +3,7 @@ Node
   Key
     HolonomicSystems
   Headline
-    Examples of Holonomic D-modules
+    Examples of Holonomic $D$-modules
   Description
     Text
       Examples and constructions of holonomic $D$-modules: GKZ
@@ -11,7 +11,7 @@ Node
       method for regular holonomic systems, and the ring of differential
       operators of a quotient ring.
     Tree
-      :Some examples of D-modules
+      :Some examples of $D$-modules
         @TOH "gkz"@
 	@TOH "eulerOperators"@
 	@TOH "toricIdealPartials"@

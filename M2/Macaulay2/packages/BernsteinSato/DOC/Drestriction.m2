@@ -15,7 +15,7 @@ doc ///
     [Dres, Strategy]
     [Dresolution, Strategy]
   Headline
-    strategy for computing a resolution of a D-module
+    strategy for computing a resolution of a $D$-module
   Description
     Text
       @UL {
@@ -38,7 +38,7 @@ doc ///
     [Dres, LengthLimit]
     [Dresolution, LengthLimit]
   Headline
-    the limit for the length of a resolution of a D-module
+    the limit for the length of a resolution of a $D$-module
   Description
     Text
       In case the actual length of the resolution exceeds the limit, it is truncated.
@@ -55,7 +55,7 @@ doc ///
   Key
     Schreyer
   Headline
-    strategy for computing a resolution of a D-module
+    strategy for computing a resolution of a $D$-module
 ///
 
 --- old format (commented out) ---
@@ -68,7 +68,7 @@ doc ///
   Key
     Vhomogenize
   Headline
-    strategy for computing a resolution of a D-module
+    strategy for computing a resolution of a $D$-module
 ///
 
 --- old format (commented out) ---
@@ -128,7 +128,7 @@ doc ///
     (Dresolution, Module, List)
     (Dresolution, Ideal)
   Headline
-    resolution of a D-module
+    resolution of a $D$-module
   Usage
     Dresolution M
     Dresolution I
@@ -264,7 +264,7 @@ doc ///
     (Drestriction, Module, List)
     (Drestriction, ZZ, Ideal, List)
   Headline
-    restriction modules of a D-module
+    restriction modules of a $D$-module
   Usage
     N = Drestriction(M, w)
     NI = Drestriction(I, w)
@@ -353,7 +353,7 @@ doc ///
     DrestrictionIdeal
     (DrestrictionIdeal, Ideal, List)
   Headline
-    restriction ideal of a D-module
+    restriction ideal of a $D$-module
   Usage
     DrestrictionIdeal(I, w)
   Inputs
@@ -419,7 +419,7 @@ doc ///
     (DrestrictionAll, Module, List)
     (DrestrictionAll, Ideal, List)
   Headline
-    restriction modules of a D-module (extended version)
+    restriction modules of a $D$-module (extended version)
   Usage
     N = DrestrictionAll(M, w)
     NI = DrestrictionAll(I, w)
@@ -488,7 +488,7 @@ doc ///
     (DrestrictionComplex, Module, List)
     (DrestrictionComplex, Ideal, List)
   Headline
-    derived restriction complex of a D-module
+    derived restriction complex of a $D$-module
   Usage
     N = DrestrictionComplex(M, w)
     NI = DrestrictionComplex(I, w)
@@ -564,7 +564,7 @@ doc ///
     (DrestrictionClasses, Module, List)
     (DrestrictionClasses, ZZ, Ideal, List)
   Headline
-    restriction classes of a D-module
+    restriction classes of a $D$-module
   Usage
     N = DrestrictionClasses(M, w)
     NI = DrestrictionClasses(I, w)
@@ -829,7 +829,7 @@ doc ///
     (Dintegration, Module, List)
     (Dintegration, ZZ, Ideal, List)
   Headline
-    integration modules of a D-module
+    integration modules of a $D$-module
   Usage
     N = Dintegration(M, w)
     NI = Dintegration(I, w)
@@ -917,7 +917,7 @@ doc ///
     DintegrationIdeal
     (DintegrationIdeal, Ideal, List)
   Headline
-    integration ideal of a D-module
+    integration ideal of a $D$-module
   Usage
     DintegrationIdeal(I, w)
   Inputs
@@ -983,7 +983,7 @@ doc ///
     (DintegrationAll, Module, List)
     (DintegrationAll, Ideal, List)
   Headline
-    integration modules of a D-module (extended version)
+    integration modules of a $D$-module (extended version)
   Usage
     N = DintegrationAll(M, w)
     NI = DintegrationAll(I, w)
@@ -1053,7 +1053,7 @@ doc ///
     (DintegrationComplex, Module, List)
     (DintegrationComplex, Ideal, List)
   Headline
-    derived integration complex of a D-module
+    derived integration complex of a $D$-module
   Usage
     N = DintegrationComplex(M, w)
     NI = DintegrationComplex(I, w)
@@ -1129,7 +1129,7 @@ doc ///
     (DintegrationClasses, Module, List)
     (DintegrationClasses, ZZ, Ideal, List)
   Headline
-    integration classes of a D-module
+    integration classes of a $D$-module
   Usage
     N = DintegrationClasses(M, w)
     NI = DintegrationClasses(I, w)

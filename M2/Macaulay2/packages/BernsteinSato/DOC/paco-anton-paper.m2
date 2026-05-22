@@ -24,7 +24,7 @@ doc ///
     kappaAnnF1PlanarCurve
     (kappaAnnF1PlanarCurve,RingElement)    
   Headline
-    D-annihilator of 1/f for a planar curve
+    $D$-annihilator of 1/f for a planar curve
   Usage
     kappaAnnF1PlanarCurve f
   Inputs
@@ -58,7 +58,7 @@ doc ///
     kOrderAnnFs
     (kOrderAnnFs,ZZ,RingElement)
   Headline
-    k-th order D-annihilator of a power of a polynomial   
+    k-th order $D$-annihilator of a power of a polynomial   
   Usage
     kOrderAnnFa(k,f,a)
     kOrderAnnFs(k,f)
