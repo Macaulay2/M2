@@ -51,7 +51,6 @@ RingElement /* or null */ *RingElement::invert() const
       ERROR("ring division: attempt to divide by zero");
       return nullptr;
     }
-
   try
     {
       return new RingElement(R, R->invert(val));
@@ -70,7 +69,6 @@ RingElement /* or null */ *RingElement::operator+(const RingElement &b) const
       ERROR("ring addition requires both elements to have the same base ring");
       return nullptr;
     }
-
   try
     {
       ring_elem result = R->add(get_value(), b.get_value());
@@ -92,7 +90,6 @@ RingElement /* or null */ *RingElement::operator-(const RingElement &b) const
           "ring subtraction requires both elements to have the same base ring");
       return nullptr;
     }
-
   try
     {
       ring_elem result = R->subtract(get_value(), b.get_value());
@@ -115,7 +112,6 @@ RingElement /* or null */ *RingElement::operator*(const RingElement &b) const
           "ring");
       return nullptr;
     }
-
   try
     {
       ring_elem result = R->mult(get_value(), b.get_value());
