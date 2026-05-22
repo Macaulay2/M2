@@ -27,6 +27,8 @@ Node
  SeeAlso
   "parallelism in engine computations"
   "elapsedTime"
+  AtomicInt
+  Mutex
  Description
   Text
     The simplest way to run computations in parallel is to use @ TO parallelApply @. This works
