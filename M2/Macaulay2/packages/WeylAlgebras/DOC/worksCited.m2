@@ -31,6 +31,9 @@ doc ///
       [Gin86] Ginsburg, Characteristic varieties and vanishing cycles,
       Invent. Math. 84(2):327-402, 1986.
 
+      [GKZ94] Gelfand, Kapranov, Zelevinsky, Discriminants, Resultants, and Multidimensional Determinants,
+      Mathematics: Theory and Applications, Birkh\"{a}user Boston, 1994.
+
       [Ley01] Leykin, Constructibility of the set of polynomials with a fixed
       Bernstein-Sato polynomial: an algorithmic approach, Journal of Symbolic Computation,
       32(6):663-675, 2001.
