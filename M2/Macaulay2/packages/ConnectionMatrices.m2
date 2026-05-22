@@ -1,7 +1,7 @@
 newPackage(
     "ConnectionMatrices",
-    Version => "1.0",
-    Date => "March 2025",
+    Version => "1.1",
+    Date => "May 2026",
     Authors => {
 	{ Name => "Paul Goerlach",           Email => "paul.goerlach@ovgu.de",              HomePage => "" },
 	{ Name => "Joris Koefler",           Email => "joris.koefler@mis.mpg.de",           HomePage => "" },
