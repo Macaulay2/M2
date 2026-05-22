@@ -327,7 +327,7 @@ bumpPrecedence();
      export continueS      := special("continue",     nunaryop, precSpace, wide);
      export stepS          := special("step",         nunaryop, precSpace, wide);
      export finishS        := special("finish",       nunaryop, precSpace, wide);
-	 special("new",   unarynew,   precSpace, narrow);
+     special("new",   unarynew,   precSpace, narrow);
      special("for",   unaryfor,   precSpace, narrow);
      special("while", unarywhile, precSpace, wide);
      special("if",    unaryif,    precSpace, wide);
