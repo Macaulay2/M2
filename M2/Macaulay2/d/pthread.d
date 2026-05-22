@@ -279,6 +279,20 @@ unlock(e:Expr):Expr := (
     else WrongArgMutex());
 setupfun("unlock0", unlock);
 
+withLock(c:Code):Expr := (
+    when c
+    is a:sequenceCode do (
+	if length(a.x) == 2 then (
+	    e := eval(a.x.0);
+	    l := lock(e);
+	    when l is Error do return l else nothing;
+	    r := eval(a.x.1);
+	    u := unlock(e);
+	    when u is Error do u else r)
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupop(withLockS, withLock);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "
 -- End:

@@ -1278,6 +1278,7 @@ export {
 	"when",
 	"while",
 	"width",
+	"withLock",
 	"wrap",
 	"xor",
 	"youngest",

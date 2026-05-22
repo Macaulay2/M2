@@ -101,6 +101,10 @@ assert try tryLock m then true else false
 assert try tryLock m then false else true
 unlock m
 
+withLock(m, assert try tryLock m then false else true)
+assert try tryLock m then true else false
+unlock m
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test threads.out"
 -- End:

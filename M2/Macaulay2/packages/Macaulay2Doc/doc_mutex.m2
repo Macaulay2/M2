@@ -47,6 +47,7 @@ doc ///
     (lock, Mutex)
     (tryLock, Mutex)
     (unlock, Mutex)
+    symbol withLock
 ///
 
 doc ///
@@ -135,4 +136,30 @@ doc ///
   SeeAlso
     (lock, Mutex)
     (tryLock, Mutex)
+///
+
+doc ///
+  Key
+    symbol withLock
+  Headline
+    evaluate an expression while holding a mutex lock
+  Usage
+    withLock(m, c)
+  Inputs
+    m:Mutex
+    c: -- code to evaluate
+  Description
+    Text
+      @M2CODE "withLock"@ is a keyword that locks the mutex @VAR "m"@, evaluates
+      the code @VAR "c"@, unlocks the mutex, and returns the result of
+      evaluating @VAR "c"@.
+
+      Using @M2CODE "withLock"@ is equivalent to surrounding the code with
+      calls to @TO lock@ and @TO unlock@, but with the added guarantee that the
+      mutex is unlocked even if the code raises an error.
+    Example
+      m = new Mutex
+      last trap withLock(m, (print last trap tryLock m; 1/0))
+      tryLock m
+      unlock m
 ///
