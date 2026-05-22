@@ -537,6 +537,8 @@ texMath RR := x -> (
 	)
     )
 texMath RRi := x -> concatenate("\\big[",texMath left x,",",texMath right x,"\\big]",if isEmpty x then "\\text{ (an empty interval)}")
+texMath CCi := x -> texMath realPart x | "+" | texMath imaginaryPart x | texMath ii
+
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;
