@@ -244,6 +244,11 @@ locate Error       :=
 locate Symbol      := FilePosition => locate'
 locate Command     := FilePosition => C -> locate'(C#0)
 locate List        := List     => x -> apply(x, locate)
+locate MethodFunction            :=
+locate MethodFunctionBinary      :=
+locate MethodFunctionSingle      :=
+locate MethodFunctionWithOptions := List => (
+    f -> unique nonnull apply(methods f, locate'))
 protect symbol locate
 
 sortByLocation = sortBy(toString @@ locate)

@@ -17,12 +17,16 @@ Node
    (locate, List)
    (locate, ZZ)
    (locate, Error)
+   (locate, MethodFunction)
+   (locate, MethodFunctionBinary)
+   (locate, MethodFunctionSingle)
+   (locate, MethodFunctionWithOptions)
   Headline
     locate source code
   Usage
     locate f
   Inputs
-    x:{Function,Sequence,Symbol,List,ZZ}
+    f:{Function,Sequence,Symbol,List,ZZ}
   Outputs
     :{FilePosition,List,Nothing}
       {\tt {filename, start,startcol, stop,stopcol, pos,poscol}}, respectively
@@ -43,9 +47,15 @@ Node
     Example
       locate(jacobian, Matrix)
     Text
-      In particular, the output of @TO "methods"@ can be used as an input to @TT "locate"@.
+      If @TT "f"@ is a method function, then a list is returned containing the
+      locations of all the corresponding methods.
     Example
-      locate methods jacobian
+      locate jacobian
+    Text
+      If @TT "f"@ is an integer, then the location of the function at the given
+      position in the last call to @TO methods@, @TO hooks@, or @TO tests@ is
+      returned.
+    Example
       methods doc
       locate 0
       peek oo

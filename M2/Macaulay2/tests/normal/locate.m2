@@ -96,4 +96,6 @@ getcols locate C_1
 getcols locate C_0_0
 getcols locate C_0_1
 
+assert isMember(locate(rank, Matrix), locate rank)
+
 -- TODO: add tests for other kinds of code as well
