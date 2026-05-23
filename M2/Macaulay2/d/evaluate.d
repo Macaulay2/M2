@@ -1538,10 +1538,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 
 -----------------------------------------------------------------------------
 steppingFurther(c:Code):bool := steppingFlag && (
-	 if finishTargetDepth > 0 then (
-		if recursionDepth > finishTargetDepth then return true;
-		return false;
-		);
+    if finishTargetDepth > 0 then return recursionDepth > finishTargetDepth;
      p := codePosition(c);
      if p == dummyPosition || p.loadDepth < errorDepth then return true;
      if stepCount >= 0 then (
