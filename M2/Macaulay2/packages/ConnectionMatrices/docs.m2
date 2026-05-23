@@ -15,15 +15,16 @@ Node
       The systematic computation of connection matrices requires Gröbner basis computations in the rational Weyl algebra
       $$ R_n=\CC(x_1,\ldots,x_n)\langle \partial_1,\ldots,\partial_n \rangle. $$
 
-      The theoretical foundations of our algorithms is described the companion paper to this package, available at @arXiv "2504.01362"@.
+      The theoretical foundations of our algorithms are described in the companion paper to this package, available at @arXiv "2504.01362"@.
+      The package is available with Macaulay2, version 1.25.05 and newer.
     Tree
       :Working with the rational Weyl algebra
         normalForm
 	standardMonomials
 	baseFractionField
       :Computing and displaying $D$-ideals in connection form
-        connectionMatrices
-        connectionMatrix
+        pfaffianSystem
+        connectionForm
       :Changing basis of a system of connection matrices
         gaugeMatrix
         gaugeTransform
@@ -47,8 +48,8 @@ Node
     normalForm
     standardMonomials
     baseFractionField
-    connectionMatrices
-    connectionMatrix
+    pfaffianSystem
+    connectionForm
     gaugeMatrix
     gaugeTransform
     isEpsilonFactorized
@@ -83,9 +84,17 @@ Description
     This method computes the normal form of an element $P$ in the Weyl algebra $D_n$ with respect to another element in the Weyl algebra, or a whole list of such elements.
     The reduction step is carried out over the rational Weyl algebra $R_n$.
   Example
-    D = makeWA(QQ[x,y], {1,1});
+    D = makeWeylAlgebra(QQ[x,y], {1,1});
     P = dx^2 ; Q = x*dx+1;
     normalForm(P, Q)
+  Text
+    We can compute the normal form with respect to the Gröbner basis of a $D$-ideal.
+  Example
+    D = makeWeylAlgebra(QQ[x, y]);
+    I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
+    G = first entries mingens gb I;
+    P = dx;
+    normalForm(P,G)
 References
   See [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, Theorem 1.1.7].
 Caveat
@@ -113,7 +122,7 @@ Description
     Several functions in this package return an object over the fraction field of the base
     polynomial ring of a Weyl algebra. This function extracts that ring.
   Example
-    D = makeWA(frac(QQ[e])[a,b,c, DegreeRank => 0][x,y]);
+    D = makeWeylAlgebra(frac(QQ[e])[a,b,c, DegreeRank => 0][x,y]);
     baseFractionField D
     gens oo
 ///
@@ -151,6 +160,15 @@ Description
     D2 = makeWeylAlgebra(QQ[x, y], w2 = {1, 2});
     SM2 = standardMonomials sub(I, D2)
     gaugeMatrix(I, SM2)
+  Text
+    It is also possible to compute the gauge matrix of a system of connection matrices containing parameters.
+  Example
+    D = makeWeylAlgebra(frac(QQ[a])[x]);
+    I = ideal(x^2*dx^2 + x*dx + (x^2-a^2))
+    standardMonomials I
+    gaugeMatrix(I,{dx,x^2*dx^2+x*dx+x^2})
+  Text
+    See @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
 SeeAlso
   standardMonomials
   gaugeTransform
@@ -159,14 +177,14 @@ SeeAlso
 
 doc ///
 Key
-    connectionMatrices
-    (connectionMatrices, Ideal)
-    (connectionMatrices, Ideal, List)
+     pfaffianSystem
+    (pfaffianSystem, Ideal)
+    (pfaffianSystem, Ideal, List)
 Headline
-    computes the connection matrices of a $D_n$-ideal $I$ for a chosen basis
+    computes the Pfaffian system of a $D_n$-ideal $I$ for a chosen basis
 Usage
-    connectionMatrices I
-    connectionMatrices(I, B)
+    pfaffianSystem I
+    pfaffianSystem(I, B)
 Inputs
     I:Ideal
       $D_n$-ideal
@@ -174,18 +192,34 @@ Inputs
       a basis of $R_n/R_nI$
 Outputs
     A:List
-      the system of connection matrices of $I$ over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$
+      Pfaffian system of $I$ over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$
 Description
   Text
     Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis for $R_n/R_nI$ over the
     @TO2{baseFractionField, "base fraction field"}@ of $D_n$. If no basis is provided by the user,
     the basis is chosen to be the set of standard monomials of a Gröbner basis on $R_nI$ with
     regards to the weighted Lex order $(\partial_1 > \cdots > \partial_n > x_1 > \cdots > x_n)$
-    on the Weyl algebra.
+    on the Weyl algebra. The following example computes the Pfaffian system for the $D$-ideal
+    annihilating $1/x$ and $1/y$.
   Example
     D = makeWeylAlgebra(QQ[x,y], {2, 1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
-    A = connectionMatrices I
+    A = pfaffianSystem I
+  Text
+    The following example computes the Pfaffian system for the $D$-ideal annihilating $sin(xy)$
+    and $cos(xy)$, with respect to the basis $\{1,dx\}$.
+  Example
+    D = makeWeylAlgebra(QQ[x,y]);
+    I = ideal (dx^2-y^2, dy^2-x^2);
+    A = pfaffianSystem(I,{1_D,dx})
+  Text
+    The command @TT "pfaffianSystem(I,B)"@ computes the Pfaffian system of $I$ with
+    respect to the basis of standard monomials of $I$ and then performs a
+    @TO2{"gaugeTransform", "gauge transformation"}@ to the provided basis $B$.
+  Example
+    B = pfaffianSystem(I)
+    M = gaugeMatrix(I,{1_D,dx})
+    A2 = gaugeTransform(M,B)
 References
   For more details, see [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, pp. 37-40].
 ///
@@ -216,11 +250,19 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    A = connectionMatrices I;
+    A = pfaffianSystem I;
     M = matrix {{x,0}, {0,y}};
     gaugeTransform(M, A, D)
   Text
     It is also possible to compute the gauge transform of a system of connection matrices containing parameters.
+  Example
+    D = makeWeylAlgebra(frac(QQ[a])[x]);
+    I = ideal(x^2*dx^2 + x*dx + (x^2-a^2))
+    A = pfaffianSystem I
+    M = gaugeMatrix(I,{dx,x^2*dx^2+x*dx+x^2});
+    gaugeTransform(M,A)
+  Text
+    See @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
 SeeAlso
   gaugeMatrix
   "Cosmological correlator for the 2-site chain"
@@ -228,14 +270,14 @@ SeeAlso
 
 doc ///
 Key
-    connectionMatrix
-    (connectionMatrix, Ideal)
-    (connectionMatrix, List)
+    connectionForm
+    (connectionForm, Ideal)
+    (connectionForm, List)
 Headline
     computes the connection matrix
 Usage
-    connectionMatrix I
-    connectionMatrix A
+    connectionForm I
+    connectionForm A
 Inputs
     I:Ideal
       of the Weyl algebra
@@ -251,11 +293,19 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    connectionMatrix I
+    connectionForm I
+  Text
+    The following example computes the connection matrix of the $D$-ideal annihilating $sin(xy)$
+    and $cos(xy)$
+  Example
+    D = makeWeylAlgebra(QQ[x,y]);
+    I = ideal (dx^2-y^2, dy^2-x^2);
+    A = pfaffianSystem(I,{1_D,dx});
+    connectionForm A
 Caveat
   The output is purely for visualizing purposes.
 SeeAlso
-  connectionMatrices
+  pfaffianSystem
 ///
 
 doc ///
@@ -285,6 +335,12 @@ Description
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
     standardMonomials I
     holonomicRank I
+  Text
+    Changing the order on the Weyl algebra might change the
+    standard monomials of $I$.
+  Example
+    D2 = makeWeylAlgebra(QQ[x,y],{1,10});
+    standardMonomials(sub(I,D2))
 SeeAlso
   "Dmodules::holonomicRank"
   gaugeMatrix
@@ -318,7 +374,12 @@ Description
   Example
     D = makeWeylAlgebra(frac(QQ[ϵ])[x]);
     I = ideal(x*(1-x)*dx^2 - ϵ*(1-x)*dx);
-    A = connectionMatrices(I, {1_D, 1/ϵ*dx})
+    A = pfaffianSystem(I)
+    isEpsilonFactorized(A, ϵ)
+  Text
+    The property of being epsilon factorizable depends on a choice of basis.
+  Example
+    A = pfaffianSystem(I, {1_D, 1/ϵ*dx})
     isEpsilonFactorized(A, ϵ)
 SeeAlso
   isIntegrable
@@ -351,12 +412,18 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y], {1, 2});
     I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-    A = connectionMatrices I;
+    A = pfaffianSystem I;
     assert isIntegrable(D, A)
     assert isIntegrable A
+  Text
+    A trivial example of a non integrable system comes from non-commuting constant matrices.
+  Example
+    R = baseFractionField(D);
+    A = {sub(matrix{{1,1},{1,1}},R),sub(matrix{{1,0},{0,-1}},R)};
+    isIntegrable(D,A)
 Caveat
   The matrices need to be defined over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$.
 SeeAlso
-  connectionMatrices
+  pfaffianSystem
   isEpsilonFactorized
 ///
