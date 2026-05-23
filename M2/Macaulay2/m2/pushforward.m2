@@ -117,19 +117,19 @@ pushNonLinear := (opts, f, M) -> (
     -- given f: R --> S, and M an S-module, finite over R,
     -- returns R-presentation matrix for the pushforward of M
     -- written by Mike Stillman and David Eisenbud
-    (R, S) := (target f, source f);
-    deglen := degreeLength S;
-    n1 := numgens R; -- TODO: what if R is a tower?
+    (S, R) := (target f, source f);
+    deglen := degreeLength R;
+    n1 := numgens S; -- TODO: what if S is a tower?
 
     monorder := opts.MonomialOrder;
-    monorder  = if ordertab#?monorder then (ordertab#monorder)(numgens R, numgens S)
+    monorder  = if ordertab#?monorder then (ordertab#monorder)(numgens S, numgens R)
     else error("pushForward: MonomialOrder option expected one of ",
 	demark_", " \\ toString \ keys ordertab);
 
     J := graphIdeal(f, MonomialOrder => monorder, VariableBaseName => local X);
     G := ring J;
     m := presentation M;
-    xvars := map(G, R, submatrix(vars G, toList(0..n1-1)));
+    xvars := map(G, S, submatrix(vars G, toList(0..n1-1)));
     m1 := presentation (cokernel xvars m  **  cokernel generators J);
 
     if opts.UseHilbertFunction and all({f, m}, isHomogeneous) then (
@@ -143,8 +143,8 @@ pushNonLinear := (opts, f, M) -> (
     mapbackdeg := d -> take(d, -deglen);
     -- that choice of degree map was chosen to make the symmetricPower functor homogeneous, but it doesn't have much
     -- else to recommend it.
-    -- we should really be *lifting* the result to S along the natural map S ---> G
-    mapback := map(S, G, map(S^1, S^n1, 0) | vars S, DegreeMap => mapbackdeg );
+    -- we should really be *lifting* the result to R along the natural map R ---> G
+    mapback := map(R, G, map(R^1, R^n1, 0) | vars R, DegreeMap => mapbackdeg );
 
     -- let's at least check it splits f's degree map:
     for i from 0 to deglen-1 do (
@@ -157,7 +157,7 @@ pushNonLinear := (opts, f, M) -> (
 	DegreeLimit           => opts.DegreeLimit,
 	PairLimit             => opts.PairLimit);
     -- MES: check if the monomial order restricts to S.  If so, then do `` forceGB result ''
-    mapback selectInSubring(if numgens target f > 0 then 1 else 0, generators g))
+    mapback selectInSubring(if numgens S > 0 then 1 else 0, generators g))
 
 -*
 pushLinear := opts -> (f,M) -> (
