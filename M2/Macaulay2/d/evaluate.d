@@ -1884,12 +1884,9 @@ breakFun(a:Code):Expr := (
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
 
-export finishFun(a:Code):Expr := (
+finishFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
-     when e is Error do e else (
-	  Expr(Error(dummyPosition,
-	       finishMessage,
-	       e,false,dummyFrame))));
+     when e is Error do e else Expr(Error(dummyPosition,finishMessage,e,false,dummyFrame)));
 setupop(finishS,finishFun);
 
 addTestS := setupvar("addTest", nullE); -- will be overwritten in testing.m2
