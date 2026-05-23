@@ -1607,10 +1607,10 @@ handleError(c:Code,e:Expr):Expr := (
 					);
 				   eval(c))
 			      else if z.message == continueMessage then eval(c)
-				  else if z.message == finishMessage then (
-					finishTargetDepth = recursionDepth - 1;
-					setSteppingFlag();
-					eval(c)
+			      else if z.message == finishMessage   then (
+				  finishTargetDepth = recursionDepth - 1;
+				  setSteppingFlag();
+				  eval(c)
 				  )
 			      else e)
 			 else e)
