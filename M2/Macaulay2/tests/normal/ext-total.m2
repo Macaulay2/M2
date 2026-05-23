@@ -84,6 +84,8 @@ comp (degs,heft0,degs1,degs2,degDB)
 t = tally degrees target presentation E
 assert ( t === u )
 
+flagInhomogeneity = false
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ext-total.out"
 -- End:
