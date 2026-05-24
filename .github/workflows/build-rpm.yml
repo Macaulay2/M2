@@ -17,16 +17,16 @@ jobs:
           - 8
           - 9
           - 10
-          - 41
           - 42
           - 43
+          - 44
         exclude:
-          - distribution: almalinux
-            release: 41
           - distribution: almalinux
             release: 42
           - distribution: almalinux
             release: 43
+          - distribution: almalinux
+            release: 44
           - distribution: fedora
             release: 8
           - distribution: fedora
