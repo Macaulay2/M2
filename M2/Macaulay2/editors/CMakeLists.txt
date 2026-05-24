@@ -17,8 +17,8 @@ set(GRAMMAR_FILES
   prism/macaulay2.js
   pygments/macaulay2.py
 #  rouge/macaulay2.rb
-  vim/m2.vim.syntax
-  vim/m2.vim.dict
+  vim/syntax/m2.vim
+  vim/dict/m2.vim.dict
   emacs/M2-symbols.el)
 
 set(GRAMMAR_TEMPLATES ${GRAMMAR_FILES})
