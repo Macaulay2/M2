@@ -709,10 +709,8 @@ completionControlPrefixOK(s:string):bool := (
      true);
 
 sendCompletionControlResponse(requestID:string,prefix:string):void := (
-     resp := completionControlResponseStart + requestID;
-     if completionControlPrefixOK(prefix) then (
-	  foreach s in completions(prefix) do resp = resp + "\t" + s;
-	  );
+     resp := completionControlResponseStart + requestID + "\t";
+     resp = resp + if completionControlPrefixOK(prefix) then completionInfoJSON(prefix) else "[]";
      resp = resp + string(completionControlEnd);
      write(STDOUT,resp);
      );
