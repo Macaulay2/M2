@@ -38,6 +38,9 @@ tryLock Mutex := tryLock0
 unlock = method()
 unlock Mutex := unlock0
 
+Mutex.EnterMethod = mutex -> (lock mutex; mutex)
+Mutex.ExitMethod = unlock
+
 -----------------------------------------------------------------------------
 
 parallelApplyRaw = (L, f) ->

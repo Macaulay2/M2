@@ -723,6 +723,12 @@ fraction(RingElement,RingElement) := (r,s) -> (
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s
 
+EngineRing.EnterMethod = R -> first (
+    apply(R.generatorSymbols, symb -> (symb, value symb)),
+    use R)
+
+EngineRing.ExitMethod = vals -> scan(vals, (symb, val) -> symb <- val)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
