@@ -118,6 +118,16 @@ pushNonLinear := (opts, f, M) -> (
     -- returns R-presentation matrix for the pushforward of M
     -- written by Mike Stillman and David Eisenbud
     (S, R) := (target f, source f);
+
+    -- nudge source, target to have same coefficient ring for graphIdeal
+    (S', phiS) := try(flattenRing S) else (S, id_S);
+    (R', phiR) := try(flattenRing R) else (R, id_R);
+    if (S' =!= S) or (R' =!= R) then (
+	f' := phiS * f * phiR^-1;
+	M' := cokernel phiS presentation M;
+	return phiR^-1 pushNonLinear(opts, f', M');
+    );
+
     deglen := degreeLength R;
     n1 := numgens S; -- TODO: what if S is a tower?
 
