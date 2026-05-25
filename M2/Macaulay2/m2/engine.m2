@@ -187,7 +187,7 @@ processWeights = (nvars,weights) -> (
 	       then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt))));
      weights);
 
-makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
+makeMonomialOrdering = lock((monsize,inverses,nvars,degs,weights,ordering) -> (
      -- 'monsize' is the old MonomialSize option, usually 8 or 16, or 'null' if unset
      -- 'inverses' is true or false, and tells whether the old "Inverses => true" option was used.
      -- 'nvars' tells the total number of variables.  Any extra variables will be ordered with GRevLex or GroupLex.
@@ -214,7 +214,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      varcount = 0;
      t := toList nonnull fixup2 t';
      logmo := new FunctionApplication from {rawMonomialOrdering,t};
-     (t,t',value logmo, logmo))
+     (t,t',value logmo, logmo)))
 
 RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering
 
