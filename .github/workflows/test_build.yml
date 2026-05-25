@@ -96,6 +96,27 @@ jobs:
                   msolve libfplll-dev libjansson-dev r-base palp
 
 # ----------------------
+#   Install Bertini
+# ----------------------
+
+      - name: Cache Bertini
+        id: cache-bertini
+        uses: actions/cache@v5
+        with:
+          path: ~/bertini
+          key: bertini-${{ runner.os }}-v1.7
+
+      - name: Download Bertini
+        if: steps.cache-bertini.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/bertini
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            curl -fL https://bertini.nd.edu/BertiniLinux64_v1.7.tar.gz | tar xz --strip-components=1 -C ~/bertini
+          else
+            curl -fL https://bertini.nd.edu/BertiniApple_v1.7.tar.gz | tar xz --strip-components=1 -C ~/bertini
+          fi
+
+# ----------------------
 #   Steps common to all build variants
 # ----------------------
 
@@ -127,6 +148,7 @@ jobs:
                echo `brew --prefix libtool`/libexec/gnubin >> $GITHUB_PATH
                echo `brew --prefix bison`/bin             >> $GITHUB_PATH
           fi
+          echo "$HOME/bertini" >> $GITHUB_PATH
 
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2.23
