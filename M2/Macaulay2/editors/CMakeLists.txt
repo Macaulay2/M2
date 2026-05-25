@@ -4,9 +4,6 @@
 ## - M2-editors generates grammar files
 ## - M2-emacs   generates the M2-mode package for Emacs
 
-# TODO: generate vim grammar
-# TODO: generate textmate grammar
-
 set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
 set(M2_ARGS --script)
 
