@@ -9,7 +9,6 @@ distributions/top/INSTALL
 distributions/top/preremove
 distributions/top/postinstall
 distributions/tar/Makefile
-distributions/dmg/Makefile
 distributions/freebsd/Makefile
 distributions/freebsd/post-install
 distributions/freebsd/post-deinstall
