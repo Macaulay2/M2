@@ -89,6 +89,27 @@ jobs:
                   msolve libfplll-dev libjansson-dev r-base palp
 
 # ----------------------
+#   Install Bertini
+# ----------------------
+
+      - name: Cache Bertini
+        id: cache-bertini
+        uses: actions/cache@v5
+        with:
+          path: ~/bertini
+          key: bertini-${{ runner.os }}-v1.7
+
+      - name: Download Bertini
+        if: steps.cache-bertini.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/bertini
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            curl -fL https://bertini.nd.edu/BertiniLinux64_v1.7.tar.gz | tar xz --strip-components=1 -C ~/bertini
+          else
+            curl -fL https://bertini.nd.edu/BertiniApple_v1.7.tar.gz | tar xz --strip-components=1 -C ~/bertini
+          fi
+
+# ----------------------
 #   Steps common to all build variants
 # ----------------------
 
@@ -122,6 +143,7 @@ jobs:
                echo "CPPFLAGS=-I$(brew --prefix)/include -I$(brew --prefix libomp)/include -I$(brew --prefix readline)/include" >> $GITHUB_ENV
                echo "LDFLAGS= -L$(brew --prefix)/lib     -L$(brew --prefix libomp)/lib     -L$(brew --prefix readline)/lib"     >> $GITHUB_ENV
           fi
+          echo "$HOME/bertini" >> $GITHUB_PATH
 
       - uses: actions/cache@v5
         if: matrix.build-system == 'cmake'
