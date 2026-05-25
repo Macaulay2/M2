@@ -15,6 +15,16 @@ Syntax highlighting and key mappings to send code to a running Macaulay2 session
 cp -r dict ftdetect ftplugin syntax ~/.vim/
 ```
 
+Then, in Macaulay2, generate the symbol files.  You may also do this after a
+new Macaulay2 release to update the files with any new symbols.
+
+```m2
+needsPackage "Style"
+changeDirectory "~/.vim"
+generateGrammar("dict/m2.vim.dict", demark_" ")
+generateGrammar("syntax/m2.vim", demark_" ")
+```
+
 Ensure your `~/.vimrc` contains:
 
 ```vim
