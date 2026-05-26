@@ -1282,7 +1282,7 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 			then AssignNewOfFromFun(CodeSequence(
 				y.newClause, y.ofClause, y.fromClause, c))
 			else ParallelAssignmentErrorAt(i + 1))
-		    is nullCode do nullE
+		    is nullCode do values.i
 		    else ParallelAssignmentErrorAt(i + 1);
 		    when r
 		    is Error do (
@@ -1532,7 +1532,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, c)))
 	is y:unaryCode do (
 	    UnaryInstallValueFun(convertGlobalOperator(y.oper), y.rhs, c))
-	is nullCode do nullE -- for use w/ parallel assignment
+	is nullCode do eval(c) -- for use w/ parallel assignment
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
 
