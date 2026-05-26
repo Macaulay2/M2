@@ -14,6 +14,9 @@
 //#include <tbb/tbb.h>
 #include <tbb/parallel_for.h>
 #include <tbb/task_arena.h>
+#include <atomic>
+#include <mutex>
+#include <string>
 
 // SLEvaluator
 template <typename RT>
@@ -429,8 +432,17 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   tbb::task_arena arena(M2_numTBBThreads == 0
                         ? tbb::task_arena::automatic
                         : M2_numTBBThreads);
+  // Batch paths into ~3·numThreads chunks to amortize per-lambda DMat setup cost.
+  int numThreads = (M2_numTBBThreads == 0) ? arena.max_concurrency()
+                                            : M2_numTBBThreads;
+  int grainSize  = (int)std::max<size_t>(1, n_sols / (3 * numThreads));
+
+  std::atomic<int> bar_done{0};
+  std::mutex        bar_mutex;
+  const int         bar_width = 40;
+
   arena.execute([&]{
-  tbb::parallel_for(tbb::blocked_range<int>(0,n_sols),
+  tbb::parallel_for(tbb::blocked_range<int>(0, (int)n_sols, grainSize),
   [&](tbb::blocked_range<int> r) {
     // Register this TBB worker with the Boehm GC. TBB workers are created
     // inside the prebuilt libtbb dylib, which never sees bdwgc's pthread_create
@@ -781,11 +793,26 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       if (status == PROCESSING) status = REGULAR;
       oe.ring().set_from_long(oe.entry(0, s), status);
       oe.ring().set_from_long(oe.entry(1, s), count);
+      // Update progress bar (at most bar_width redraws per call).
+      if (M2_numericalAlgebraicGeometryTrace > 0 && n_sols > 0) {
+        int done = ++bar_done;
+        if (done * bar_width / (int)n_sols !=
+            (done - 1) * bar_width / (int)n_sols) {
+          std::lock_guard<std::mutex> lk(bar_mutex);
+          int filled = done * bar_width / (int)n_sols;
+          std::cerr << "\r["
+                    << std::string(filled, '#')
+                    << std::string(bar_width - filled, '-')
+                    << "] " << done << "/" << n_sols << std::flush;
+        }
+      }
     }
     if (!gc_was_registered)
       GC_unregister_my_thread();
-  }); //(end) tbb::parallel_for
+  }, tbb::simple_partitioner{}); //(end) tbb::parallel_for
   }); //(end) arena.execute
+  if (M2_numericalAlgebraicGeometryTrace > 0 && n_sols > 0)
+    std::cerr << std::endl;  // finish progress bar line
   
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   if (M2_numericalAlgebraicGeometryTrace > 1)
