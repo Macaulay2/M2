@@ -1,6 +1,8 @@
 #include <Python.h>
 #include "python-exports.h"
-/* pythoncapi_compat.h is a vendored header; suppress warnings we can't fix */
+
+/* vendored from https://github.com/python/pythoncapi-compat
+ * suppress warnings we can't fix */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
 #include "pythoncapi_compat.h"
