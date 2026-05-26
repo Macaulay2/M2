@@ -232,4 +232,7 @@ urlEncode = method()
 urlEncode Nothing := identity
 urlEncode String := s -> concatenate apply(s, c -> (
 	if percentEncoding#?c then percentEncoding#c
-	else percentEncoding#c = "%" | toUpper changeBase(first ascii c, 16)))
+	else (
+	    a := first ascii c;
+	    percentEncoding#c = concatenate("%", if a < 0x10 then "0" else "",
+		toUpper changeBase(a, 16)))))
