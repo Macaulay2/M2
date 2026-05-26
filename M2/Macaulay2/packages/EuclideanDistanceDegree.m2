@@ -16,7 +16,8 @@ newPackage(
   PackageImports => {"Elimination","MonodromySolver"},
   PackageExports => {"Bertini","NumericalAlgebraicGeometry"},
   Configuration => { "Continuation"=>"Bertini" },
-  CacheExampleOutput => false
+  OptionalComponentsPresent => (readPackage "Bertini").OptionalComponentsPresent,
+  CacheExampleOutput => true
 )
  
 randomCC=()->random CC

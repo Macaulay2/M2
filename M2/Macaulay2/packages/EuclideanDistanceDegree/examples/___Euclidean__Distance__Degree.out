@@ -1,0 +1,52 @@
+-- -*- M2-comint -*- hash: 399917589567742851
+
+i1 : R = QQ[x,y];
+
+i2 : F = {x^2 + y^2 - 1};
+
+i3 : determinantalUnitEDDegree(F)
+
+o3 = 2
+
+i4 : leftKernelUnitEDDegree(F)
+Warning: The HomVariableGroup is written first and then the AffVariableGroup is written second.
+
+o4 = 2
+
+i5 : R = QQ[x1,x2,x3,x4];
+
+i6 : F = G = {det genericMatrix(R,2,2)};
+
+i7 : numericGenericEDDegree(F, G)
+-- warning: experimental computation over inexact field begun
+--          results not reliable (one warning given per session)
+
+o7 = 6
+
+i8 : R = QQ[x1,x2,x3,x4,x5,x6];
+
+i9 : F = (minors(2, genericMatrix(R,3,2)))_*;
+
+i10 : G = drop(F, -1);
+
+i11 : #G == codim ideal F;
+
+i12 : numericGenericEDDegree(F, G)
+
+o12 = 10
+
+i13 : R = QQ[x1,x2,x3,x4,x5,x6];
+
+i14 : F = (minors(2, genericMatrix(R,3,2)))_*;
+
+i15 : G = drop(F, -1);
+
+i16 : NCO = newNumericalComputationOptions(F, G);
+
+i17 : NCO#"TargetWeight" = apply(#gens R, i->1);
+
+i18 : homotopyEDDegree(NCO, "Weight", true, true)
+
+o18 = 2
+
+i19 : 
