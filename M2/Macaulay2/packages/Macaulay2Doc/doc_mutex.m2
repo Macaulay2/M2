@@ -87,6 +87,53 @@ doc ///
   SeeAlso
     (tryLock, Mutex)
     (unlock, Mutex)
+  Subnodes
+    (lock, Mutex, Function)
+///
+
+doc ///
+  Key
+    (lock, Mutex, Function)
+    (lock, Function)
+  Headline
+    make a function thread-safe
+  Usage
+    lock(mutex, f)
+    lock f
+  Inputs
+    mutex:Mutex
+    f:Function
+  Outputs
+    :Function
+  Description
+    Text
+      This function creates a thread-safe version of @VAR "f"@.  In particular,
+      it takes @ofClass Mutex@ and returns a new function that locks it when
+      the function is called and unlocks it when complete, even if there is an
+      error.
+
+      If @VAR "mutex"@ is omitted, then a mutex is created behind the scenes.
+      Therefore, it's only necessary to define @VAR "mutex"@ before calling
+      @M2CODE "lock"@ if you plan on sharing it between multiple functions.
+
+      Consider the following example.
+    Example
+      x = 0
+      f = i -> x += 1;
+      parallelApply(1..1000, f);
+      x
+    Text
+      You likely see that @VAR "x"@ ended up less than the expected value of
+      1000.  This is an example of a @EM "race condition"@, as multiple
+      threads were trying to modify the global variable @VAR "x"@ at the same
+      time.
+
+      Let's try again using @M2CODE "lock"@.
+    Example
+      x = 0
+      f = lock f;
+      parallelApply(1..1000, f);
+      x
 ///
 
 doc ///
