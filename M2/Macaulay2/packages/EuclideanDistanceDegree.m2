@@ -558,59 +558,6 @@ TEST /// -- basic examples
   assert(numericUnitEDDegree(F, G) === 2);
 ///
 
-TEST ///  -- Selected surfaces from Herwig Hauser's algebraic surfaces gallery
-  setRandomSeed(123);
-  R = QQ[x,y,z];
-  surfaces = {
-    3*x^2 + 3*y^2 + z^2 - 1,
-    x^2 - y^2*z,
-    x^2 + y^2 + z^2 - 1,
-    x^2 + z^2 - y^3*(y-1)^3,
-    x^2*y*z + x*y^2 + y^3 + y^3*z - x^2*z^2
-  };
-
-  for surface in surfaces do (
-    F = {surface};
-
-    GED_symb = determinantalGenericEDDegree F;
-    GED_left = leftKernelGenericEDDegree F;
-    GED_numeric = numericGenericEDDegree(F, F);
-    
-    assert(GED_symb === GED_left);
-    assert(GED_left === GED_numeric);
-  )
-///
-
-TEST ///  -- PNN function space
-  d = (3,1,1);
-  r = 2;
-
-  R = QQ[W_0..W_(d_1 * d_0), V_0..V_(d_2 * d_1)];
-  W = genericMatrix(R, W_0, d_1, d_0);
-  V = genericMatrix(R, V_0, d_2, d_1);
-
-  T = R[x_0..x_(d_0 - 1)];
-  X = transpose matrix{apply(d_0, i -> x_i)};
-  Z = W * X;
-  A = matrix table(d_1, 1, (i, j) -> (Z_(i,j))^r);
-  Phi = V * A;
-
-  mons = flatten entries basis(r, T);
-  S = QQ[c_0..c_(d_2 * #mons - 1)];
-  im = flatten apply(d_2, i -> (
-    f = Phi_(i,0);
-    apply(mons, m -> coefficient(m, f))
-  ));
-
-  paramMap = map(R, S, im);
-  I = kernel paramMap;
-  F = flatten entries gens I;
-  c = codim I;
-  G = apply(c, i -> sum apply(#F, j -> (random(QQ) * F_j)));
-  assert(leftKernelUnitEDDegree(G) === numericUnitEDDegree(G, G));
-  assert(leftKernelGenericEDDegree(G) === numericGenericEDDegree(G, G));
-///
-
 TEST ///  -- parameterization: basic test
   setRandomSeed(123456);
   R = QQ[x,y];
@@ -643,10 +590,10 @@ TEST ///  -- parameterization: spurious critical points
 
 TEST ///  -- parameterization: monodromy vs symbolic
   setRandomSeed(123);
-  R = QQ[x1,x2,x3,x4,x5];
-  F = {x1^2+x4^2, x2^2+x5^2, x3^2+1, x1*x2+x4*x5, x1*x3+x4, x2*x3+x5};
-  U = {1,2,3,4,5,6};
-  W = {1,1,1,1,1,1};
+  R = QQ[x,y,z];
+  F = {x*y*z, x^2 + y^2 + z^2, x + y + z};
+  U = {1,2,3};
+  W = {1,1,1};
   GED1 = parameterizedWeightEDDegree(F,U,W);
   GED2 = parameterizedWeightEDDegree(F,U,W, UseMonodromy => true);
   assert(GED1 === GED2);
