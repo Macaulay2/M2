@@ -15,9 +15,9 @@ parameterizedWeightEDDegree(List, List, List) := o -> (F, U, W) -> (
     M := sub(matrix{F}, S);
 
     -- Find a spanning set for ker(jacM)
-    jacM := transpose sub(matrix makeJac(apply(F, i->sub(i,S)), xList), S);
-    assert(rank jacM == numX);  -- ensure dim X = d
-    columnVectors := gens kernel jacM;  -- bottleneck
+    jacM := jacobian M;
+    if rank jacM != numX then error "Jacobian is not full rank";
+    columnVectors := gens kernel jacM;
     evalColumnVectors := sub(columnVectors, apply(xList, x -> x => random(1, 100)));
 
     A := matrix for i to n-1 list {};
@@ -31,7 +31,7 @@ parameterizedWeightEDDegree(List, List, List) := o -> (F, U, W) -> (
         );
         count = count + 1
     );
-    assert(#selectColumns == n - numX);
+    if #selectColumns != n-numX then error "Failed to find spanning set of kernel";
     unscaledMatrix := columnVectors_selectColumns;
     outMatrix := unscaledMatrix * transpose matrix{lamList};
 

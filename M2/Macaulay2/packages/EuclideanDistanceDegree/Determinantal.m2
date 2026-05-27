@@ -7,14 +7,14 @@ symbolicWeightEDDegree = method(Options => symbolicOptions)
 symbolicWeightEDDegree(List, List, List) := o-> (F, data, weight) -> (
     I := ideal F;
     xList := gens ring I;
-    jac := matrix makeJac(F, xList);
+    jac := transpose jacobian matrix{F};
     topRow := apply(#weight, i -> 2 * weight_i * (xList_i-data_i));
     M := matrix{topRow} || jac;  -- augmented Jacobian
     c := codim I;
     win := I + minors(c+1, M); -- critical ideal
     sl := ideal singularLocus I;
     win = saturate(win, sl);
-    if o.ReturnCriticalIdeal then return win else return degree win
+    if o.ReturnCriticalIdeal then win else degree win
 )
 
 determinantalUnitEDDegree = method(Options => symbolicOptions)

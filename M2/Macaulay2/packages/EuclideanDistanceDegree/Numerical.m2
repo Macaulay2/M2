@@ -22,15 +22,15 @@ solutionKeys = {"TrackSolutions"}
 outputKeys = {"OutputType", "FinerRestriction"}
 fixValues = {"FixedData", "FixedWeight", "FixedSubmodel", "FixedJacobianSubmodel"}
 
-nocKeys = parameterKeys|jacKeys|modelKeys|degreeKeys|bertiniKeys|coordinateKeys|planeKeys|variableKeys
-nocKeys = nocKeys|directoryKeys|solutionKeys|outputKeys|fixValues
+nocKeys = join(parameterKeys,jacKeys,modelKeys,degreeKeys,bertiniKeys,coordinateKeys,planeKeys,
+    variableKeys,directoryKeys,solutionKeys,outputKeys,fixValues)
 
 newNumericalComputationOptions = method(Options => { TempDirectory => null, Submodel => {}})
 newNumericalComputationOptions(List, List) := o -> (F, G) -> (
     NCO := new NumericalComputationOptions from apply(nocKeys, i -> i=>null);
 
     -- Temp directory for Bertini input file
-    if o.TempDirectory =!= null then dir := o.TempDirectory else dir = temporaryFileName();
+    dir := o.TempDirectory ?? temporaryFileName();
     NCO#"Directory" = dir;
 
     -- Model keys
@@ -83,7 +83,7 @@ newNumericalComputationOptions(List, List) := o -> (F, G) -> (
     NCO#"OutputType"="Standard";
     NCO#"FinerRestriction"={};
 
-    return NCO
+    NCO
 )
 
 possibleHT = {"Weight", "Data", "Submodel"}
@@ -177,7 +177,7 @@ homotopyEDDegree(NumericalComputationOptions, String, Boolean, Boolean) := (NCO,
                 B'NumberCoefficients=>{1},		
                 NameB'Section=>sym_i 
         ))
-	);	
+    );	
 
     -- Pair symbolic vars with their start/target values and set up the homotopy between them
     weight := symbolicWeight := gens vRing(nc,wv,kk0);
@@ -219,12 +219,12 @@ homotopyEDDegree(NumericalComputationOptions, String, Boolean, Boolean) := (NCO,
     --Homogenize cols by multiplying by a diagonal matrix of linear products on the left. 
     generalHyperplaneList:={};
     scan(#degRescale, i -> scan(
-	    degRescale_i, 
-	    j -> (
-            hg:="H"|i|"v"|j;  --wants to be both
-		    rescaling#i = (rescaling#i)|"*"|hg;
-            generalHyperplaneList = generalHyperplaneList|{hg}
-        )
+	degRescale_i, 
+	j -> (
+	    hg:="H"|i|"v"|j;  --wants to be both
+	    rescaling#i = (rescaling#i)|"*"|hg;
+	    generalHyperplaneList = generalHyperplaneList|{hg}
+	)
     ));
     
     -- Reuse previously paired hyperplanes if provided; otherwise pair new ones now.
@@ -314,7 +314,7 @@ homotopyEDDegree(NumericalComputationOptions, String, Boolean, Boolean) := (NCO,
     nameFileFunction:=(stage,case,indexCase,hypersurface,theTrackType)->("input_first_MT_"|case|"_"|indexCase|"_"|theTrackType);
 
     writeIsMembershipFunction := (stage,case,indexCase,hypersurface,theTrackType) -> (
-	    nif := nameFileFunction(stage,case,indexCase,hypersurface,theTrackType);
+	nif := nameFileFunction(stage,case,indexCase,hypersurface,theTrackType);
     	if stage===stageOne then BC:={"TData"=>0,"TWeight"=>0};
     	if stage===stageTwo then BC={"TData"=>1,"TWeight"=>1};
     	if not member(stage,{1,2}) then error"stage is in {1,2}";
@@ -328,7 +328,7 @@ homotopyEDDegree(NumericalComputationOptions, String, Boolean, Boolean) := (NCO,
 	        B'Constants=>jacZero|BC,
 	        --ParameterGroup=>PG,
     	    B'Functions=>BF
-	    )
+	)
     );
 
     -- Example test: isMembershipFunction(stageOne, "TT", 0, "x1*x2-x3*x4")
@@ -346,14 +346,13 @@ homotopyEDDegree(NumericalComputationOptions, String, Boolean, Boolean) := (NCO,
         moveB'File(NCO#"Directory","bertini_session.log","bertini_session_"|nif|".log",CopyB'File => false);
 
         outIM := importIncidenceMatrix(NCO#"Directory");
-        return outIM
+        outIM
     );
     
     -- Filter points using incidence matrix
     filterSolutionFunction:=(nsf,kp,ns,numCoords)->(
         -- member_points structure assumption: first line header, then groups
         -- of (1 + numCoords) lines per solution. Only selected solutions are kept.
-	      
     	firstLine := true;
     	countSol := 0;
     	countLine := 0;
@@ -378,7 +377,7 @@ homotopyEDDegree(NumericalComputationOptions, String, Boolean, Boolean) := (NCO,
         );
         scanLines(scanLineSolutionFunction,(NCO#"Directory")|"/"|"member_points");      
         close sf;
-        return (nsf)
+        nsf
     );
 
     -- positionFilterFunction:
@@ -392,17 +391,16 @@ homotopyEDDegree(NumericalComputationOptions, String, Boolean, Boolean) := (NCO,
     	else if bin==="typeB" then isOffHypersurface = (m->(m=!={}))
 	    else error"last argument is typeA or typeB";
 
-	    imMT := isMembershipFunction(stage,case,indexCase,hypersurface);
-    	kp := {};
-    	scan(#imMT, i -> if isOffHypersurface(imMT_i) then kp=kp|{i});
+	imMT := isMembershipFunction(stage,case,indexCase,hypersurface);
+    	kp := select(#imMT, i -> isOffHypersurface imMT#i);
 
     	ns:= #imMT;
-	    (nsf,nc) := ("filterFile", #flatten {bLagrangeVars,bModelVars});
+	(nsf,nc) := ("filterFile", #flatten {bLagrangeVars,bModelVars});
 
-	    filterSolutionFunction("filterFile",kp,ns,nc);
+	filterSolutionFunction("filterFile",kp,ns,nc);
     	moveB'File(NCO#"Directory","filterFile","member_points",CopyB'File=>true);
-	    return #kp
-	);
+	#kp
+    );
 
     -- stageEDDegBound holds a label and the counts after stage1 and stage2 filtering.
     stageEDDegBound:=new MutableList from {"GEDvUED",null,null};

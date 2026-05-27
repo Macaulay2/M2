@@ -1,8 +1,7 @@
 leftKernelOptions = { TempDirectory => null }
 leftKernelWeightEDDegree = method(Options => leftKernelOptions)
 leftKernelWeightEDDegree(List, List, List) := o-> (F, data, weight) -> (
-    dir := "";
-    if o.TempDirectory === null then dir = temporaryFileName() else dir = o.TempDirectory;
+    dir := o.TempDirectory ?? temporaryFileName();
     if not fileExists dir then mkdir dir;
 
     R := ring first F;
@@ -16,7 +15,7 @@ leftKernelWeightEDDegree(List, List, List) := o-> (F, data, weight) -> (
     wList := flatten entries basis({0,0,0,1}, S);
 
     c := #lamList - 1;
-    jac := sub(matrix makeJac(apply(F, i->sub(i,S)), xList), S);
+    jac := sub(transpose jacobian matrix{F}, S);
     topRow := apply(#weight, i->2*wList_i*(xList_i-uList_i));
     M := matrix{topRow} || jac;  -- augmented Jacobian
     critEq := flatten entries((matrix{lamList} * sub(M, S)));
@@ -41,7 +40,7 @@ leftKernelWeightEDDegree(List, List, List) := o-> (F, data, weight) -> (
     --readFile(dir);
     numSols := null;
     scanLines(ell -> (numSols = value ell; break), dir | "nonsingular_solutions");
-    return numSols
+    numSols
 )
 
 leftKernelUnitEDDegree = method(Options => leftKernelOptions)

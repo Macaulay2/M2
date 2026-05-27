@@ -69,10 +69,6 @@ addSlash = (aString) -> (
   );
   aString
 );
-makeJac = (system,unknowns) -> (
-  -- it is a list of lists of partial derivatives of a polynomial
-  for i in system list for j in unknowns list diff(j,i)
-)
 checkZero = (aSol, eps) -> if aSol/abs//min < eps then false else true
 sortPointFunction = (aSol) -> (if not (apply(aSol,i->{realPart i,imaginaryPart i}/abs//max)//min<1e-8) then true else false);
 
