@@ -17,7 +17,8 @@ newPackage(
   PackageExports => {"Bertini","NumericalAlgebraicGeometry"},
   Configuration => { "Continuation"=>"Bertini" },
   OptionalComponentsPresent => (readPackage "Bertini").OptionalComponentsPresent,
-  CacheExampleOutput => true
+  CacheExampleOutput => true,
+  Keywords => {"Applied Algebraic Geometry"}
 )
  
 randomCC=()->random CC
