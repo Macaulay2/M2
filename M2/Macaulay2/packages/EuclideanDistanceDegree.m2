@@ -131,6 +131,12 @@ doc /// -- Package
       NCO = newNumericalComputationOptions(F, G);
       NCO#"TargetWeight" = apply(#gens R, i->1);
       homotopyEDDegree(NCO, "Weight", true, true)
+  Subnodes
+    symbolicWeightEDDegree
+    leftKernelWeightEDDegree
+    numericWeightEDDegree
+    parameterizedWeightEDDegree
+    averageNumericEDDegree
 ///
 
 doc /// -- symbolic
@@ -194,6 +200,8 @@ doc ///
       UED = determinantalUnitEDDegree F
       GED = determinantalGenericEDDegree F
       ICP = symbolicWeightEDDegree(F, U, W, ReturnCriticalIdeal => true)
+  Subnodes
+    ReturnCriticalIdeal
 ///
 
 doc /// -- parameterized
@@ -256,6 +264,8 @@ doc ///
       UED = parameterizedUnitEDDegree F
       GED = parameterizedGenericEDDegree F
       GED = parameterizedWeightEDDegree(F, U, W)
+  Subnodes
+    UseMonodromy
 ///
 
 doc /// -- TempDirectory
@@ -323,6 +333,8 @@ doc /// -- leftKernel
       GED = leftKernelWeightEDDegree(F, U, W)
   Caveat
     The computed ED degree may be lower than expected due to path tracking.
+  Subnodes
+    TempDirectory
 ///
 
 doc ///  -- NumericalComputationOptions
@@ -423,6 +435,9 @@ doc /// -- homotopy
       UED = homotopyEDDegree(NCO, "Weight", false, true)
   Caveat
     Inaccurate results may be returned if $V(F)$ is contained in $V(L)$. The computed ED degree may be lower than expected due to path tracking.
+  Subnodes
+    NumericalComputationOptions
+    newNumericalComputationOptions
 ///
 
 doc /// -- numeric
@@ -469,6 +484,9 @@ doc /// -- numeric
       GED = numericWeightEDDegree(F, G, U, W)
   Caveat
     Inaccurate results may be returned if $V(F)$ is contained in $V(L)$. The computed ED degree may be lower than expected due to path tracking.
+  Subnodes
+    homotopyEDDegree
+    Submodel
 ///
 
 doc /// -- average
@@ -505,13 +523,13 @@ doc /// -- average
       computes critical points using the @TO homotopyEDDegree@ method. By default, `random(RR)` is used to generate data samples. Points are 
       tested using the @TO realPoints@ function from the @TO NumericalAlgebraicGeometry@ package, a tolerance can be passed along using the
       `Tolerance` option, by default it is 1e-6.
-    Text
-
     Example
       R = QQ[x,y];
       F = G = {x^2 + y^2 - 1};
       sampleGen = () -> apply(#gens R, i -> random(RR));
       aED = averageNumericEDDegree(F, G, 10, SampleGenerator => sampleGen)
+  Subnodes
+    SampleGenerator
 ///
 
 --##########################################################################--
