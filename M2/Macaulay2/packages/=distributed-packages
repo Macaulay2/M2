@@ -38,7 +38,6 @@ Varieties
 Schubert2
 PushForward
 LocalRings
-PruneComplex
 BoijSoederberg
 BGG
 Bruns
@@ -180,7 +179,6 @@ GroebnerWalk
 RandomMonomialIdeals
 Matroids
 NumericalImplicitization
-NonminimalComplexes
 CoincidentRootLoci
 RelativeCanonicalResolution
 RandomCurvesOverVerySmallFiniteFields
@@ -249,6 +247,7 @@ OnlineLookup
 MergeTeX
 Probability
 Isomorphism
+DirectSummands
 CodingTheory
 WhitneyStratifications
 JSON
@@ -288,6 +287,12 @@ AllMarkovBases
 Tableaux
 CpMackeyFunctors
 JSONRPC
+SimplicialModules
 MatrixFactorizations
 PathSignatures
 MacaulayPosets
+MRDI
+EliminationTemplates
+WittVectors
+Padic
+EuclideanDistanceDegree

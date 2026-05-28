@@ -278,6 +278,8 @@ mathML   EngineRing :=   mathML @@ expression
 
 ZZ _ EngineRing := 
 RR _ EngineRing :=
+CC _ EngineRing :=
+CCi _ EngineRing :=
 RRi _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
 
 new RingElement from RawRingElement := (R, f) -> (

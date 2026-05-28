@@ -23,7 +23,7 @@ newPackage(
      Headline => "manipulating finite sets of hyperplanes",
      Keywords => {"Algebraic Geometry", "Matroids"},
      DebuggingMode => false,
-     PackageImports => {"OldChainComplexes"},
+     PackageImports => {"Complexes"},
      PackageExports => {"Matroids"}
      )
 

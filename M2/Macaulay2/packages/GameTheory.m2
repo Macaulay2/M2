@@ -352,7 +352,7 @@ monomialFromIndex (List, ZZ, Ring):= (L, i, R) ->(
 -- for 0<=k<=n-1, k!=u, obtaining a list of d_u - 1 monomials.
 
 -- The function returns the sum of all these lists of d_u - 1 monomials, as a list 
--- of d_u - 1 polynomoials, which are the polynomials of equilibrium conditions 
+-- of d_u - 1 polynomials, which are the polynomials of equilibrium conditions 
 -- from the payoff tensor T of player u.
 
 -- Note: accumulatedHash is not implemented with 'zeroTensor' to avoid pre-filling 

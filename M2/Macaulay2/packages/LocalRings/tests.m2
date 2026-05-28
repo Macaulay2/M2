@@ -1,7 +1,7 @@
 --============================ Tests Sections ===================================--
 
 TEST /// -- test for localRing, res, **, ==
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   R = ZZ/32003[vars(0..3)]
   I = monomialCurveIdeal(R, {1, 3, 4})
   CI = freeResolution I
@@ -190,7 +190,7 @@ TEST /// -- chain homotopy over local rings
 	      x*y^2+5019*x*y+3216*y^2-13233*z^2+3723*x,
 	      13424*x^2*y+936*x*y^2+10667*y*z^2+14913*x^2-8521*x*y-15541*y^2-12289*x}})
 
-  F = chainComplex { gens J, syz gens J, syz syz gens J }
+  F = complex { gens J, syz gens J, syz syz gens J }
   f0 = J_0
   s0 = map(R^1, 0, 0)
   L = for i to 3 list (
@@ -622,6 +622,17 @@ end--
   m1 = mingens Iloc
   m2 = syz m1 -- how long does this take?
   gens gb Iloc
+///
+
+TEST ///
+-- promoting/lifting to/from fraction field
+S = QQ[x]
+p = ideal x
+R = S_p
+F = frac R
+assert(promote(x_R, F) === x_F)
+assert(lift(x_F, R) === x_R)
+assert not liftable(1/x, R)
 ///
 
 end--

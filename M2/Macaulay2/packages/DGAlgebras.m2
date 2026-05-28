@@ -1,16 +1,20 @@
 -*- coding: utf-8 -*-
 newPackage("DGAlgebras",
      Headline => "Data type for DG algebras",
-     Version => "1.1.1--with fix of killCycles and new code and docs for displayBlockDiff and blockDiff",
-     Date => "August 20, 2020",
+     Version => "2.0",
+     Date => "April 27, 2026",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
-	   Email => "moorewf@wfu.edu"}
+	   Email => "moorewf@wfu.edu"},
+	  {Name => "Keller VandeBogert",
+	   HomePage => "https://sites.google.com/view/kellervandebogert/home",
+	   Email => "keller.v@uky.edu"}
        },
      Keywords => {"Commutative Algebra"},
      DebuggingMode => false,
-     PackageExports => {"IntegralClosure", "OldChainComplexes", "Complexes"}
+     PackageExports => {"IntegralClosure", "OldChainComplexes", "Complexes"},
+     AuxiliaryFiles => true
      )
 export {"DGAlgebra", 
         "DGAlgebraMap", 
@@ -20,8 +24,9 @@ export {"DGAlgebra",
 	"natural", 
 	"cycles",
 	"getBasis", 
-	"koszulComplexDGA", 
-	"acyclicClosure", 
+	"koszulComplexDGA",
+	"acyclicClosure",
+	"minimalModel",
 	"toComplex", 
 	"toComplexMap", 
 	"liftToDGMap",
@@ -58,7 +63,74 @@ export {"DGAlgebra",
 	"homologyModule",
 	"dgAlgebraMultMap",
 	"displayBlockDiff",
-        "blockDiff"
+        "blockDiff",
+	-- v1.2 overhaul: accessor / invariant layer
+	"underlyingRing",
+	"underlyingAlgebra",
+	"differential",
+	"generatorDegrees",
+	"isValidDGAlgebra",
+	"isWellDefinedDifferential",
+	"ensureDGAlgebraCaches",
+	"invalidateDGAlgebraCache",
+	-- v1.2 overhaul: ring-manipulation operations
+	"baseChange",
+	"subDGAlgebra",
+	"truncateGenerators",
+	"restrictDifferential",
+	"killHomologyAtDegree",
+	-- v1.2 overhaul: now-public differential helpers
+	"polyDifferential",
+	"polyDiffMonomial",
+	-- v1.2 overhaul: lazy complex accessor
+	"dgComplex",
+	-- v2: DGModule type and constructors
+	"DGModule",
+	"koszulComplexDGM",
+	"moduleDifferential",
+	"isValidDGModule",
+	"freeDGModule",
+	"adjoinGenerators",
+	"semifreeResolution",
+	"minimalSemifreeResolution",
+	"isMinimalSemifreeResolution",
+	"generatorTable",
+	"dgModuleSummary",
+	"moduleBlockDiff",
+	"displayModuleBlockDiff",
+	-- v2: DGModuleMap type and operations
+	"DGModuleMap",
+	"dgModuleMap",
+	"identityDGModuleMap",
+	"zeroDGModuleMap",
+	"liftToDGModuleMap",
+	-- v2: DGAlgebraMap additions
+	"identityDGAlgebraMap",
+	-- v2: tensor-product infrastructure
+	"tensorFactors",
+	"tensorInclusions",
+	-- v2: sub/quotient types + image/kernel/cokernel of DGModuleMap
+	"DGIdeal",
+	"dgIdeal",
+	"DGSubmodule",
+	"dgSubmodule",
+	"DGQuotientModule",
+	"dgQuotientModule",
+	"isDGIdeal",
+	"isDGSubmodule",
+	-- Accessor methods for the new types (also match the symbol keys used
+	-- internally, so `S.inclusion`, `Q.subDGModule`, etc. resolve to the
+	-- same symbol in user scope as in package scope).
+	"inclusion",
+	"subDGModule",
+	"projection",
+	"dgAlgebra",
+	-- v2: basic module-like operations on DG modules
+	"isFreeDGModule",
+	"isZero"
+	-- isQuasiIsomorphism is re-exported from Complexes; we add a method for DGModuleMap.
+	-- image / kernel / cokernel on DGModuleMap extend the core generics.
+	-- A / I (DGAlgebra / DGIdeal), M / S (DGModule / DGSubmodule) use `symbol /`.
 }
 
 -- Questions:
@@ -103,6 +175,8 @@ export {"DGAlgebra",
 -- protected symbols (I don't want to export these symbols, but I use them internally in the code at various places)
 protect diffs
 protect basisAlgebra
+-- dgAlgebra is now exported as an accessor (auto-protected); do not re-protect here
+protect prunedComplex
 
 -- Defining the new type DGAlgebra
 DGAlgebra = new Type of MutableHashTable
@@ -110,9 +184,65 @@ globalAssignment DGAlgebra
 --DGAlgebraMap still in development
 DGAlgebraMap = new Type of MutableHashTable
 globalAssignment DGAlgebraMap
+-- [functionality v2] DGModule: a DG module over a DGAlgebra.
+-- Storage mirrors DGAlgebra:
+--   M.dgAlgebra  -- the DGAlgebra A
+--   M.ring       -- A.ring (convenience copy)
+--   M.natural    -- the underlying graded A.natural-module
+--   M.Degrees    -- list of generator homological-degree vectors
+--   M.diff       -- list of images of the module generators under d_M,
+--                  stored as elements of M.natural (one per generator);
+--                  parallels A.diff's "images on gens" convention.
+--   M.cache      -- MutableHashTable with M.cache.diffs#n caching the
+--                  R-linear differential at hom-degree n.
+-- Constructors (koszulComplexDGM) may attach additional fields such as
+-- M.module (the underlying R-module) for reference.
+DGModule = new Type of MutableHashTable
+globalAssignment DGModule
+
+-- DGModuleMap: a morphism of DG modules over a common DG algebra A.
+-- Storage:
+--   f.source     -- DGModule M (the domain)
+--   f.target     -- DGModule N (the codomain)
+--   f.dgAlgebra  -- the shared DGAlgebra A
+--   f.natural    -- Matrix N.natural <- M.natural; the i-th column
+--                   holds the image of the i-th natural generator of M,
+--                   expressed as an element of N.natural.
+--   f.cache      -- CacheTable (holds e.g. per-degree toComplexMap pieces).
+-- Constructors (see dgModuleMap): accept either a full Matrix N.natural <-
+-- M.natural or a list of image Vectors (one per M-generator).
+DGModuleMap = new Type of MutableHashTable
+globalAssignment DGModuleMap
 
 -- this command is in the core, but we need it here.
 -- spots  = C -> select(keys C, i -> class i === ZZ)
+
+-- Return the underlying Symbol of a variable-like object (Symbol,
+-- IndexedVariable, or a RingElement that is a single generator).
+-- Note: baseName on an IndexedVariable is the identity, so we must peel
+-- into its first slot to reach the Symbol.
+baseSymbolOf = v -> (
+   s := baseName v;
+   if instance(s, IndexedVariable) then s = s#0;
+   s
+)
+
+-- Build a list of doubly-indexed generator symbols base_(i,j), where i is
+-- the homological degree (first entry of the corresponding degree vector)
+-- and j is a running count of generators with that homological degree.
+-- startingCounts is an (optionally empty) HashTable mapping a homological
+-- degree to the number of generators already present at that degree;
+-- numbering continues past those counts.
+makeDoubleIndexSymbols = (baseSym, degList, startingCounts) -> (
+   counters := new MutableHashTable;
+   scan(keys startingCounts, k -> counters#k = startingCounts#k);
+   apply(degList, d -> (
+      i := first d;
+      if not counters#?i then counters#i = 0;
+      counters#i = counters#i + 1;
+      baseSym_(i, counters#i)
+   ))
+)
 
 -- Modify the standard output for a DGAlgebra
 net DGAlgebra := A -> (
@@ -131,11 +261,43 @@ freeDGAlgebra (Ring,List) := opts -> (R,degList) -> (
    -- Input:  A ring, a list of degrees of the variables, and a list that defines the differential
    -- Output:  A hash table of type DGAlgebra
    A := new MutableHashTable;
-   T := getSymbol(opts.Variable);
    A#(symbol ring) = R;
-   varsList := toList (T_1..T_(#degList));
+   -- Build the generator names. Two modes, determined by the Variable option:
+   --   Variable => <String or Symbol>    (default "T")
+   --     Auto-generate doubly-indexed names base_(i,j), where i is the
+   --     homological degree (first entry of a degree vector) and j is the
+   --     running count of generators at that homological degree.
+   --   Variable => <List>
+   --     Use the supplied symbols verbatim (Strings are promoted via
+   --     getSymbol). Length must match #degList. This is the mode used by
+   --     adjoinVariables / acyclicClosure to preserve existing gen identity.
+   varsList := if instance(opts.Variable, VisibleList) then (
+      if #opts.Variable != #degList then
+         error("freeDGAlgebra: Variable list has " | toString(#opts.Variable)
+            | " entries but degree list has " | toString(#degList) | ".");
+      apply(toList opts.Variable, v -> if instance(v, String) then getSymbol v else v)
+   ) else (
+      baseSym := if instance(opts.Variable, Symbol) then opts.Variable
+                 else getSymbol(toString opts.Variable);
+      makeDoubleIndexSymbols(baseSym, degList, hashTable{})
+   );
+   -- Symbol-safety: detect collisions between the DG generator names and
+   -- existing variables in R. Previously silent; surfaced as bizarre
+   -- downstream errors (wrong differentials, stale substitutions).
+   if #varsList > 0 then (
+      existingSymbols := set apply(gens R, g -> toString g);
+      collisions := select(varsList, v -> member(toString v, existingSymbols));
+      if #collisions > 0 then
+         error ("freeDGAlgebra: DG generator name(s) " | toString collisions
+            | " collide with variable(s) already in the base ring. "
+            | "Pass Variable => \"<fresh base name>\" (or an explicit list of symbols) to freeDGAlgebra / koszulComplexDGA to avoid the clash.");
+   );
    A#(symbol diff) = {};
-   if isHomogeneous R then (
+   -- Handle empty degree list: build a trivial polynomial ring over R with no T-generators.
+   if #degList == 0 then (
+      A#(symbol natural) = R[varsList, Join => false];
+   )
+   else if isHomogeneous R then (
       -- make sure the degree list has the right form.
       if #(first degList) != #(first degrees A.ring) + 1 then degList = apply(degList, i -> i | {0});
       A#(symbol natural) = (A.ring)[varsList, Degrees => degList, Join => false, SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
@@ -145,7 +307,10 @@ freeDGAlgebra (Ring,List) := opts -> (R,degList) -> (
    );
    A#(symbol isHomogeneous) = false;
    A.natural.cache = new CacheTable;
-   A.natural.cache#(symbol basisAlgebra) = (A.ring)[varsList, Join => false, MonomialOrder => GRevLex, Degrees => apply(degList, i -> {first i}), SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
+   if #degList == 0 then
+      A.natural.cache#(symbol basisAlgebra) = (A.ring)[varsList, Join => false, DegreeMap => (d -> {0}), MonomialOrder => GRevLex]
+   else
+      A.natural.cache#(symbol basisAlgebra) = (A.ring)[varsList, Join => false, DegreeMap => (d -> {0}), MonomialOrder => GRevLex, Degrees => apply(degList, i -> {first i}), SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
    use A.natural;
    A#(symbol Degrees) = degList;
    A#(symbol cache) = new CacheTable;
@@ -166,18 +331,28 @@ totalOddDegree := A -> sum select(degrees A.natural / first, i -> odd i)
 
 setDiff = method(TypicalValue => DGAlgebra, Options => {InitializeDegreeZeroHomology => true, InitializeComplex => true})
 setDiff (DGAlgebra,List) := opts -> (A,diffList) -> (
-   A.diff = map(A.natural,A.natural, substitute(matrix {diffList}, A.natural));
+   ensureDGAlgebraCaches A;
+   invalidateDGAlgebraCache A;
+   if #diffList == 0 then
+      A.diff = map(A.natural, A.natural, {})
+   else
+      A.diff = map(A.natural,A.natural, substitute(matrix {diffList}, A.natural));
    A.isHomogeneous = isHomogeneous A.ring and checkIsHomogeneous(A);
    if opts.InitializeDegreeZeroHomology then (
-      definingIdeal := ideal mingens (ideal A.ring + sub(ideal polyDifferential(1,A), ambient A.ring));
-      if definingIdeal == ideal vars ambient A.ring then A#(symbol zerothHomology) = coefficientRing A.ring else A#(symbol zerothHomology) = (ambient A.ring)/definingIdeal;
+      if #diffList == 0 then A#(symbol zerothHomology) = A.ring
+      else (
+         definingIdeal := ideal mingens (ideal A.ring + sub(ideal polyDifferential(1,A), ambient A.ring));
+         if definingIdeal == ideal vars ambient A.ring then A#(symbol zerothHomology) = coefficientRing A.ring else A#(symbol zerothHomology) = (ambient A.ring)/definingIdeal;
+      );
    );
-   if opts.InitializeComplex then A.dd = (toComplex(A,totalOddDegree(A)+1)).dd;
+   if opts.InitializeComplex and #diffList > 0 then A.dd = (toComplex(A,totalOddDegree(A)+1)).dd;
    A
 )
 
 setKoszulDiff = method(TypicalValue => DGAlgebra, Options => {InitializeDegreeZeroHomology => true, InitializeComplex => true})
 setKoszulDiff (DGAlgebra,List) := opts -> (A,diffList) -> (
+   ensureDGAlgebraCaches A;
+   invalidateDGAlgebraCache A;
    A.diff = map(A.natural,A.natural, substitute(matrix {diffList}, A.natural));
    A.isHomogeneous = isHomogeneous A.ring and checkIsHomogeneous(A);
    if opts.InitializeDegreeZeroHomology then (
@@ -191,9 +366,10 @@ setKoszulDiff (DGAlgebra,List) := opts -> (A,diffList) -> (
 checkIsHomogeneous = method()
 checkIsHomogeneous DGAlgebra := A -> (
    gensList := gens A.natural;
+   if #gensList == 0 then return true;  -- trivially homogeneous
    diffList := apply(gensList, f -> A.diff(f));
    homDegreeShift := {1} | (toList ((#(degree first gensList)-1):0));
-   all(#diffList, i -> degree gensList#i - homDegreeShift == degree diffList#i)
+   all(#diffList, i -> diffList#i == 0 or degree gensList#i - homDegreeShift == degree diffList#i)
 )
 
 -- cache the basis of a DGAlgebra?
@@ -273,7 +449,7 @@ toComplex DGAlgebra := A -> (
 
 toComplex (DGAlgebra,ZZ) := (A,n) -> complex(apply(n, i -> polyDifferential(i+1,A)))
 
-killCycles = method(TypicalValue=>DGAlgebra,Options => {StartDegree => 1, EndDegree => -1})
+killCycles = method(TypicalValue=>DGAlgebra,Options => {StartDegree => 1, EndDegree => -1, Variable => null})
 killCycles DGAlgebra := opts -> A -> (
    -- for now, this will only work for DG algebras with H_0(A) = k
    retVal := 0;
@@ -295,46 +471,84 @@ killCycles DGAlgebra := opts -> A -> (
       homologyGenerators := entries transpose gens image (nthHomology.cache.pruningMap);
       basisList := flatten entries getBasis(n,A);
       cycleList := apply(homologyGenerators, gen -> sum apply(#gen, i -> gen#i*basisList#i));
-      retVal = adjoinVariables(A,cycleList);
+      retVal = adjoinVariables(A, cycleList, Variable => opts.Variable);
    );
    retVal
 )
 
-adjoinVariables = method(TypicalValue=>DGAlgebra)
-adjoinVariables (DGAlgebra, List) := (A,cycleList) -> (
-   -- this function will add a new variable to make the elements of cycles boundaries in a new DG algebra (semifree over the input)
+adjoinVariables = method(TypicalValue=>DGAlgebra, Options => {Variable => null})
+adjoinVariables (DGAlgebra, List) := opts -> (A, cycleList) -> (
+   -- Add new generators whose differentials are the given cycles, producing
+   -- a new DG algebra semifree over A. Existing generator names/identities
+   -- are preserved; new generators continue the doubly-indexed naming
+   -- base_(i,j) using per-homological-degree counters carried over from A.
    local newDegreesList;
+   local newCycleDegrees;
    tempDegree := {1} | toList ((#(degree first cycleList)-1):0);
    if A.isHomogeneous then
-      newDegreesList = A.Degrees | apply(cycleList, z -> degree z + tempDegree)
+      newCycleDegrees = apply(cycleList, z -> degree z + tempDegree)
    else
-      newDegreesList = A.Degrees | apply(cycleList, z -> {first degree z + 1});
-   B := freeDGAlgebra(A.ring,newDegreesList);
-   phi := map(B.natural,A.natural,matrix {take(gens B.natural, numgens A.natural)});
+      newCycleDegrees = apply(cycleList, z -> {first degree z + 1});
+   newDegreesList = A.Degrees | newCycleDegrees;
+   existingGenNames := apply(gens A.natural, baseName);
+   baseSymForNew := if opts.Variable === null then (
+      if #(gens A.natural) > 0 then baseSymbolOf first gens A.natural
+      else getSymbol "T"
+   ) else if instance(opts.Variable, Symbol) then opts.Variable
+   else getSymbol toString opts.Variable;
+   startingCounts := new MutableHashTable;
+   scan(A.Degrees, d -> (
+      i := first d;
+      if not startingCounts#?i then startingCounts#i = 0;
+      startingCounts#i = startingCounts#i + 1;
+   ));
+   newGenNames := makeDoubleIndexSymbols(baseSymForNew, newCycleDegrees,
+      hashTable pairs startingCounts);
+   allNames := existingGenNames | newGenNames;
+   B := freeDGAlgebra(A.ring, newDegreesList, Variable => allNames);
+   phi := map(B.natural, A.natural, matrix {take(gens B.natural, numgens A.natural)});
    newDiffList := (take(flatten entries matrix A.diff, numgens A.natural) | cycleList) / phi;
-   setDiff(B,newDiffList,InitializeComplex=>false);
+   setDiff(B, newDiffList, InitializeComplex=>false);
    B
 )
 
-acyclicClosure = method(TypicalValue=>DGAlgebra,Options => {StartDegree => 1, EndDegree => 3})
+acyclicClosure = method(TypicalValue=>DGAlgebra, Options => {StartDegree => 1, EndDegree => 3, Variable => null})
 acyclicClosure DGAlgebra := opts -> A -> (
   n := opts.StartDegree;
   endDegree := 3;
   if opts.EndDegree != 3 then endDegree = opts.EndDegree;
   while n <= endDegree do (
-     A = killCycles(A,StartDegree => n);
+     A = killCycles(A, StartDegree => n, Variable => opts.Variable);
      n = n + 1;
   );
   A
 )
 
 acyclicClosure Ring := opts -> R -> (
-   K := koszulComplexDGA(R);
-   acyclicClosure(K, opts)
+   varName := if opts.Variable === null then "T" else opts.Variable;
+   K := koszulComplexDGA(R, Variable => varName);
+   acyclicClosure(K, StartDegree => opts.StartDegree, EndDegree => opts.EndDegree, Variable => opts.Variable)
 )
 
-polyDiffMonomial := (A,m) -> (
+-- minimalModel: build the minimal DG algebra resolution of a quotient ring
+-- R = Q/I over the polynomial ring Q.  For an Ideal I, this is
+-- acyclicClosure(koszulComplexDGA I) -- a DG algebra over ring I whose
+-- degree-0 homology is (ring I)/I and whose higher homology is killed
+-- step by step via Tate's construction.  For a QuotientRing R, we use
+-- the defining ideal of R inside its ambient polynomial ring.
+minimalModel = method(TypicalValue => DGAlgebra,
+     Options => {StartDegree => 1, EndDegree => 3, Variable => null})
+minimalModel Ideal := opts -> I -> (
+   varName := if opts.Variable === null then "T" else opts.Variable;
+   K := koszulComplexDGA(I, Variable => varName);
+   acyclicClosure(K, StartDegree => opts.StartDegree, EndDegree => opts.EndDegree, Variable => opts.Variable)
+)
+minimalModel QuotientRing := opts -> R -> minimalModel(ideal R, opts)
+
+polyDiffMonomial = method()
+polyDiffMonomial (DGAlgebra, RingElement) := (A,m) -> (
   -- uses the Leibniz rule to compute the differential of a traditional monomial
+  if m == 0 then return 0_(A.natural);
   dgSign := 1;
   justMon := first flatten entries first coefficients m;
   justCoeff := substitute(first flatten entries last coefficients m, ring m);
@@ -366,7 +580,13 @@ polyDifferential (ZZ,DGAlgebra) := (n,A) -> (
      targetList = flatten entries targetList;
      mDegree := maxDegree A;
      if (n == mDegree + 1) then newDiffl = map((A.ring)^(targetDegreeList), (A.ring)^0, 0)
-     else if n > mDegree + 1 then newDiffl = map((A.ring)^0,(A.ring)^0,0) else (
+     else if n > mDegree + 1 then newDiffl = map((A.ring)^0,(A.ring)^0,0)
+     -- empty-basis guards: without these, coefficients() below errors on an
+     -- empty monomials list. Formerly users had to override polyDifferential
+     -- (see KoszulHomHelpers.m2:767-791). Fixed upstream in v1.2.
+     else if #sourceList == 0 then newDiffl = map((A.ring)^(targetDegreeList), (A.ring)^0, 0)
+     else if #targetList == 0 then newDiffl = map((A.ring)^0, (A.ring)^(sourceDegreeList), 0)
+     else (
         diffList := matrix {apply(sourceList, m -> polyDiffMonomial(A,m))};
         coeffMatrix := substitute((coefficients(diffList, Monomials => targetList))#1, A.ring);
         newDiffl = map((A.ring)^(targetDegreeList), (A.ring)^(sourceDegreeList), coeffMatrix);
@@ -376,7 +596,11 @@ polyDifferential (ZZ,DGAlgebra) := (n,A) -> (
   )
 )
 
-polyDifferential (DGAlgebra,RingElement) := (A,f) -> sum apply(terms f, m -> polyDiffMonomial(A,m))
+polyDifferential (DGAlgebra,RingElement) := (A,f) -> (
+    ts := terms f;
+    if #ts == 0 then 0_(A.natural)
+    else sum apply(ts, m -> polyDiffMonomial(A,m))
+)
 
 diff (DGAlgebra,RingElement) := (A,f) -> polyDifferential(A,f);
 
@@ -423,9 +647,19 @@ getDegNModule (ZZ,Ring,Ring) := (n,R,A) -> (
    colDegList := degrees source tempMatrix;
    rowDegList := degrees target tempMatrix;
    myCols := select(toList (0..rank source tempMatrix - 1), i -> first colDegList#i == n);
-   myColDegree := apply(colDegList_myCols, h -> -drop(h,1));
+   -- Pad or truncate internal-degree vectors to match degreeLength R so that
+   -- passing an ungraded R (e.g. the coefficient field from zerothHomology of
+   -- a Koszul DGA on a quotient ring) still works.
+   dlR := degreeLength R;
+   adjustDeg := h -> (
+      d := -drop(h,1);
+      if #d == dlR then d
+      else if #d > dlR then take(d, dlR)
+      else d | toList((dlR - #d):0)
+   );
+   myColDegree := apply(colDegList_myCols, adjustDeg);
    tempMatrix = tempMatrix_myCols;
-   myRowDegree = apply(rowDegList, h -> -drop(h,1));
+   myRowDegree = apply(rowDegList, adjustDeg);
    tempMatrix = map(R^myRowDegree, R^myColDegree,substitute(tempMatrix,R));
    prune coker tempMatrix
 )
@@ -510,17 +744,29 @@ deviationsToPoincare HashTable := opts -> devHash -> (
 
 torAlgebra = method(TypicalValue=>Ring, Options=>{GenDegreeLimit=>infinity,RelDegreeLimit=>infinity})
 torAlgebra Ring := opts -> R -> (
+  -- NOTE: This single-argument version returns the *free* graded-commutative
+  -- algebra on the deviations of R. This is the true Tor algebra Tor^R(k,k)
+  -- only when R is a complete intersection (Tate/Gulliksen). For a general
+  -- local ring it only recovers the graded k-vector-space structure (Hilbert
+  -- function); multiplicative relations are NOT computed here. For the actual
+  -- multiplicative structure, use torAlgebra(R, R/ideal vars R).
   n := 3;
   if opts.GenDegreeLimit != infinity then n = opts.GenDegreeLimit;
   baseRing := coefficientRing R;
+  -- precompute a partial free resolution so that deviations/... have something
+  -- finite to chew on; without this, infinite resolutions hang.
   kRes := freeResolution(coker vars R, LengthLimit => n);
   X := getSymbol("X");
-  -- now build the degreeList and skewList out of the output from deviations
   RDevs := deviations(R,DegreeLimit=>opts.GenDegreeLimit);
   degreesList := sort flatten apply(pairs RDevs, p -> toList ((p#1):(flatten{p#0#0,p#0#1})));
   skewList := select(#degreesList, i -> odd first degreesList#i);
   torVars := toList(X_1..X_(#degreesList));
-  baseRing[torVars,Degrees=>degreesList, SkewCommutative=>skewList]
+  polyRing := baseRing[torVars, Degrees => degreesList, SkewCommutative => skewList];
+  -- set up the basisAlgebra cache so getBasis(n, T) works downstream.
+  polyRing' := baseRing[torVars, Degrees => (degreesList / first), SkewCommutative => skewList];
+  polyRing.cache = new CacheTable;
+  polyRing.cache#(symbol basisAlgebra) = polyRing';
+  polyRing
 )
 
 torAlgebra (Ring,Ring) := opts -> (R,S) -> homologyAlgebra(acyclicClosure(R,EndDegree=>opts.GenDegreeLimit) ** S, opts)
@@ -756,17 +1002,26 @@ homologyAlgebra DGAlgebra := opts -> A -> (
   if A.cache.homologyAlgebra#?GenDegreeLimit and A.cache.homologyAlgebra#GenDegreeLimit >= opts.GenDegreeLimit and
      A.cache.homologyAlgebra#?RelDegreeLimit and A.cache.homologyAlgebra#RelDegreeLimit >= opts.RelDegreeLimit then HA = A.cache.homologyAlgebra#homologyAlgebra else (
      maxDeg := maxDegree A;
-  
+
      if maxDeg == infinity and (opts.GenDegreeLimit == infinity or opts.RelDegreeLimit == infinity) then
         return "Must supply upper degree bound on generators and relations if there is a DG algebra generator of even degree.";
      if opts.GenDegreeLimit != infinity then maxDeg = opts.GenDegreeLimit;
-  
-     n := maxDeg;
-     while n <= maxDeg and prune homology(n,A) == 0 do n = n - 1;
-     maxHomologyDegree := n + 1;
-     if opts.RelDegreeLimit != infinity then maxHomologyDegree = opts.RelDegreeLimit;
 
      cycleList := getGenerators(A,DegreeLimit=>maxDeg,Verbosity=>opts.Verbosity);
+
+     -- Default RelDegreeLimit: relations must be searched at least up to
+     -- 2 * maxGenDegree so that products of two top-degree generators are
+     -- reducible. The lastNonZeroH+1 heuristic alone is unsound because
+     -- generators in degree d can produce products in degree 2d that are
+     -- not in H_*(A) and must be killed by relations.
+     maxHomologyDegree := if opts.RelDegreeLimit != infinity then opts.RelDegreeLimit
+        else (
+           n := maxDeg;
+           while n >= 0 and prune homology(n,A) == 0 do n = n - 1;
+           lastNonZero := n;
+           maxGenDeg := if cycleList == {} then 0 else max apply(cycleList, c -> first degree c);
+           max(lastNonZero + 1, 2 * maxGenDeg)
+        );
 
      if cycleList == {} then (
         -- put the cycles that the variables represent in the cache.
@@ -801,8 +1056,9 @@ homologyAlgebra DGAlgebra := opts -> A -> (
 dgAlgebraMultMap = method()
 dgAlgebraMultMap (DGAlgebra,RingElement) := (A,z) -> (
    R := A.ring;
-   d := first degree z;
    cxA := toComplex A;
+   if z == 0 then return map(cxA, cxA, i -> map(cxA_i, cxA_i, 0), Degree => 0);
+   d := first degree z;
    cxA2 := cxA ** R^(-(drop(degree z,1)));
    zChainMap := map(cxA,cxA2,
           i -> map(cxA_(i+d), cxA2_i, sub(last coefficients(z*getBasis(i,A),Monomials=>getBasis(i+d,A)), R)),
@@ -820,50 +1076,62 @@ moduleRelationsFromCycleAction (DGAlgebra,RingElement,Module) := (A,z,M) -> (
    if A.ring =!= R then error "Expected a DGAlgebra and module over same ring.";
    HA := HH(A);
    h := homologyClass(A,z);
-   -- may add ability to provide maxdeg as an optional argument for toComplex later
-   cxA := toComplex A;
-   
-   -- since z is a cycle, left multiplication by z is a chain map on A
+   d := first degree z;
+
+   -- left multiplication by z, tensored with M
    zChainMap := dgAlgebraMultMap(A,z);
-   -- tensoring with M gives the action of z on A ** M
    zCMtensM := zChainMap ** M;
-   -- determine the action of the homology class of z at the level of homology
-   HM := HH(target zCMtensM);  
-   -- prune the homology to ensure we have minimal generators
-   pruneHM := prune HM;
-   pruneZActionHM := prune HH(zCMtensM);
-   -- ll for Loewy length
-   -- ll := #(spots pruneHM);
-   ll := length pruneHM + 1;
+   KM := target zCMtensM;
 
-   -- at this point we have all the multiplication tables, but we need to put them
-   -- together to get a module structure.  Since HM is finite dimensional, this is not
-   -- too bad.  The next part of the code combines all the actions into a large matrix
-   -- representing the full multiplication table by z and uses this to construct a list of relations
-   -- that represent the action of z, of the form ze_j = (z acting on e_j written in terms of basis).
+   -- Pre-compute pruned homology and pruning-map matrices at each hom degree.
+   -- The pruning map (prune H_i).cache.pruningMap : (prune H_i) --> H_i
+   -- lets us translate raw chain-map homology into maps between pruned pieces.
+   (lo,hi) := concentration KM;
+   pruneHM := new MutableHashTable;
+   pruneMapMat := new MutableHashTable;
+   for i from lo to hi do (
+      pruneHM#i = prune HH_i(KM);
+      pruneMapMat#i = matrix (pruneHM#i).cache.pruningMap;
+   );
 
-   -- this next block of code constructs the full multiplication table
-   -- for z on HM.  It constructs it as a block matrix, where the (i,j)th block
-   -- is the left multiplication map M_i --> M_j.  Of course most of these are zero
-   -- since z should be a cycle in a single homological degree.
+   -- Correctly-lifted action matrix on pruned homology, indexed by source hom degree.
+   -- actionOnPruned#i : (prune H_i) --> (prune H_{i+d})
+   -- obtained by:
+   --   (prune H_i) --pruningMap--> H_i --HH_i(z)--> H_{i+d} --lift through pTgt--> (prune H_{i+d})
+   -- This replaces the old (broken) use of (prune HH(zCMtensM))_i, which can
+   -- produce pruning maps inconsistent with those of the individual H_i's,
+   -- yielding action matrices that look like zero after tensoring with HA.
+   actionOnPruned := new MutableHashTable;
+   for i from lo to hi - d do (
+      hhMat := matrix HH_i(zCMtensM);
+      composed := hhMat * pruneMapMat#i;
+      actionOnPruned#i = composed // pruneMapMat#(i+d);
+   );
 
-   -- these commands ensure that the resulting matrix will have the right degrees
-   -- over HA so that the result will be a graded module.
-   (lo,hi) := concentration pruneHM;
-   degsHMTarget := flatten apply(toList(lo..hi), p -> apply(degrees pruneHM_p, d -> {p} | d));
-   degsHMSource := flatten apply(toList(lo..hi), p -> apply(degrees pruneHM_p, d -> ({p} | d) + degree z));
-   
-   -- this function builds the blocks as mentioned above
-   buildBlocks := (i,j) -> (
-       if j + first degree z != i then map(pruneHM_i,pruneHM_j,0)
-       --else if not pruneZActionHM#?j then map(pruneHM_i,pruneHM_j,0)
-       else pruneZActionHM_j
-       );
-   -- use map to build the matrix (using the matrix constructor for block matrices)
-   matActOfZ := map(HA^(-degsHMTarget),HA^(-degsHMSource),tensor(map(HA,R),matrix table(ll,ll,buildBlocks)));
-   -- now subtract from this z times an appropriately graded identity to indicate
-   -- that this matrix is the result of z acting on HM.
-   relsFromZAction := map(HA^(-degsHMTarget),HA^(-degsHMSource),h) - matActOfZ;
+   -- Build the block matrix representing the action on the total graded module.
+   ll := hi - lo + 1;
+   -- Degrees (with internal part) so the HA-module presentation is graded.
+   degsHMTarget := flatten apply(toList(lo..hi),
+       p -> apply(degrees pruneHM#p, dd -> {p} | dd));
+   degsHMSource := flatten apply(toList(lo..hi),
+       p -> apply(degrees pruneHM#p, dd -> ({p} | dd) + degree z));
+
+   -- block (i,j): action from pruneHM#j into pruneHM#i, nonzero only when i = j + d.
+   buildBlock := (iIdx, jIdx) -> (
+      i := lo + iIdx;
+      j := lo + jIdx;
+      if j + d != i then map(pruneHM#i, pruneHM#j, 0)
+      else if not actionOnPruned#?j then map(pruneHM#i, pruneHM#j, 0)
+      else (
+         -- actionOnPruned#j is a matrix; wrap it as a map between the pruned modules
+         aMat := actionOnPruned#j;
+         map(pruneHM#i, pruneHM#j, aMat)
+      )
+   );
+   matActOfZ := map(HA^(-degsHMTarget), HA^(-degsHMSource),
+       tensor(map(HA,R), matrix table(ll, ll, buildBlock)));
+   -- relations: h * e_j - (z acting on e_j) = 0
+   relsFromZAction := map(HA^(-degsHMTarget), HA^(-degsHMSource), h) - matActOfZ;
    relsFromZAction
 )
 
@@ -891,20 +1159,116 @@ isGolodHomomorphism = method(TypicalValue=>Boolean,Options=>{GenDegreeLimit=>inf
 isGolodHomomorphism QuotientRing := opts -> R -> first findTrivialMasseyOperation(acyclicClosure(ambient R, EndDegree=>opts.GenDegreeLimit) ** R, opts)
 
 DGAlgebra ** Ring := (A,S) -> (
+  -- Cache A ** S on A so repeated calls return the same DGAlgebra.
+  -- Essential for functoriality: if f : M -> N is a DGModuleMap and we
+  -- base-change, source(f ** S) and target(f ** S) must live in the
+  -- SAME (A ** S)-world, otherwise their naturals sit over distinct
+  -- rings and matrix assembly fails.
+  if A.cache#?"tensorWithRing" and (A.cache#"tensorWithRing")#?S then
+      return (A.cache#"tensorWithRing")#S;
   B := freeDGAlgebra(S, A.Degrees);
   newDiff := apply(flatten entries matrix (A.diff), f -> substitute(f,B.natural));
   setDiff(B,newDiff);
+  if not A.cache#?"tensorWithRing" then
+      A.cache#"tensorWithRing" = new MutableHashTable;
+  (A.cache#"tensorWithRing")#S = B;
   B
 )
 
-DGAlgebra ** DGAlgebra := (A,B) -> (
-  if A.ring =!= B.ring then error "DGAlgebras must be defined over the same ring.";
-  -- should I use a block ordering here since it is a tensor product?
-  C := freeDGAlgebra(A.ring, A.Degrees | B.Degrees);
-  newDiff := apply(take(flatten entries matrix (A.diff),numgens A.natural), f -> substitute(f,C.natural));
-  newDiff = newDiff | apply(flatten entries matrix (B.diff), f -> substitute(f,C.natural));
-  setDiff(C,newDiff);
-  C
+-- DGAlgebra ** DGAlgebra: tensor product over the common ground ring A.ring.
+-- The result C is a free DGA on the disjoint union of A.Degrees and B.Degrees,
+-- graded-commutative automatically via SkewCommutative on odd-degree generators.
+-- The differential on generators is d(a ⊗ 1) = d_A(a) ⊗ 1 and
+-- d(1 ⊗ b) = 1 ⊗ d_B(b); no sign issues appear on generators (|1|=0),
+-- and the Leibniz rule on products is handled by M2's graded-commutative
+-- multiplication when we set differentials only on generators.
+--
+-- Implementation note: we deliberately avoid `substitute(_, C.natural)` for
+-- this pushforward because substitute matches variables by NAME. When A
+-- and B share variable names (e.g. A === B), substitute silently maps
+-- B's generators onto A's copy inside C and the tensor product comes
+-- out wrong. Using explicit inclusion ring maps `iotaA, iotaB` fixes
+-- this.
+--
+-- On return, C.cache is annotated with:
+--   tensorFactors      : the ordered pair (A, B)
+--   tensorInclusions   : the natural inclusion DGAlgebraMaps (A->C, B->C)
+-- so downstream tensor-product machinery can recover them.
+DGAlgebra ** DGAlgebra := (A, B) -> (
+    if A.ring =!= B.ring then
+        error "DGAlgebras must be defined over the same ring.";
+    -- Cache A ** B on A so that repeated calls return the same object
+    -- (important for UX: (f ** g) has source = A ** B and target =
+    -- A' ** B'; if A == A' and B == B' we want the source and target
+    -- to coincide, not be two fresh copies of the same algebra).
+    if A.cache#?"tensorWith" and (A.cache#"tensorWith")#?B then
+        return (A.cache#"tensorWith")#B;
+    nA := numgens A.natural;
+    nB := numgens B.natural;
+    C := freeDGAlgebra(A.ring, A.Degrees | B.Degrees);
+    Cgens := gens C.natural;
+    iotaA := map(C.natural, A.natural, take(Cgens, nA));
+    iotaB := map(C.natural, B.natural, drop(Cgens, nA));
+    -- Pushforward the differentials on the T-generators. We intentionally
+    -- iterate over `gens X.natural` rather than `matrix (X.diff)` because
+    -- the latter, for a tower ring, also includes images of the base-ring
+    -- generators (d acts as the identity on R, not as zero), which would
+    -- be wrong to thread into C as differentials of new generators.
+    dA := apply(gens A.natural, t -> iotaA (A.diff t));
+    dB := apply(gens B.natural, t -> iotaB (B.diff t));
+    setDiff(C, dA | dB);
+    -- Record factor data and natural inclusions (DGAlgebraMaps) on C.cache.
+    C.cache#(symbol tensorFactors) = (A, B);
+    incAmat := matrix {take(Cgens, nA)};
+    incBmat := matrix {drop(Cgens, nA)};
+    C.cache#(symbol tensorInclusions) = (
+        dgAlgebraMap(C, A, incAmat),
+        dgAlgebraMap(C, B, incBmat)
+    );
+    if not A.cache#?"tensorWith" then
+        A.cache#"tensorWith" = new MutableHashTable;
+    (A.cache#"tensorWith")#B = C;
+    C
+)
+
+-- tensorFactors C: the ordered pair of DGA factors from which C was
+-- built as A ** B. Errors if C was not built as a tensor product.
+tensorFactors = method()
+tensorFactors DGAlgebra := C -> (
+    if not C.cache#?(symbol tensorFactors) then
+        error "tensorFactors DGAlgebra: this DGAlgebra was not built as a tensor product via `DGAlgebra ** DGAlgebra`.";
+    C.cache#(symbol tensorFactors)
+)
+
+-- tensorInclusions C: the pair of natural inclusion DGAlgebraMaps
+-- (A -> C, B -> C). Errors if C was not built as a tensor product.
+tensorInclusions = method()
+tensorInclusions DGAlgebra := C -> (
+    if not C.cache#?(symbol tensorInclusions) then
+        error "tensorInclusions DGAlgebra: this DGAlgebra was not built as a tensor product via `DGAlgebra ** DGAlgebra`.";
+    C.cache#(symbol tensorInclusions)
+)
+
+-- DGAlgebraMap ** DGAlgebraMap: given f : A -> A' and g : B -> B' of
+-- DGAlgebras over the common ring R (assumed), build the tensor-product
+-- DGAlgebraMap A**B -> A'**B' defined on generators by sending each
+-- A-generator to f(·) (embedded in A'**B' via iotaA') and each
+-- B-generator to g(·) (embedded via iotaB').
+DGAlgebraMap ** DGAlgebraMap := (f, g) -> (
+    A := source f; Ap := target f;
+    B := source g; Bp := target g;
+    if A.ring =!= B.ring or Ap.ring =!= Bp.ring then
+        error "DGAlgebraMap **: factors must share a common ground ring on each side.";
+    C := A ** B;
+    Cp := Ap ** Bp;
+    (iotaAp, iotaBp) := tensorInclusions Cp;
+    -- Iterate over actual T-generators of A and B (avoiding the
+    -- base-ring prefix that `matrix f.natural` would include for
+    -- tower rings with Join => false), and lift via the natural
+    -- inclusions into Cp.natural.
+    liftedF := apply(gens A.natural, t -> (iotaAp.natural)(f.natural t));
+    liftedG := apply(gens B.natural, t -> (iotaBp.natural)(g.natural t));
+    dgAlgebraMap(Cp, C, matrix {liftedF | liftedG})
 )
 
 getBoundaryPreimage = method()
@@ -946,7 +1310,16 @@ getBoundaryPreimage (DGAlgebra,List) := (A,boundaryList) -> (
 
 getBoundaryPreimage (DGAlgebra,RingElement) := (A,b) -> (
    (lifted,myLift) := getBoundaryPreimage(A,{b});
-   (lifted,first myLift)
+   if lifted then return (lifted, first myLift);
+   -- Non-boundary: the list form returns a coefficient matrix (reduction
+   -- of the input mod the image of the differential). Convert the single
+   -- column back to an element of A.natural so both branches return a
+   -- RingElement in the second slot.
+   if b == 0 then return (false, 0_(A.natural));
+   d := first degree b;
+   Anbasis := getBasis(d, A);
+   remElement := first flatten entries (Anbasis * substitute(myLift, A.ring));
+   (false, remElement)
 )
 
 findTrivialMasseyOperation = method(TypicalValue=>Sequence, Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
@@ -1149,11 +1522,57 @@ dgAlgebraMap (DGAlgebra,DGAlgebra,Matrix) := (B,A,fnMatrix) -> (
 target DGAlgebraMap := f -> f.target
 source DGAlgebraMap := f -> f.source
 
--- overload isWellDefined for DGAlgebraMap
+-- isWellDefined DGAlgebraMap.  Modeled on `isWellDefined ComplexMap`
+-- (Complexes/ChainComplexMap.m2 line 134): key-shape check, type checks
+-- on each slot, ring compatibility, and the semantic chain-map condition
+-- on every DG generator.  Diagnostic messages are emitted when
+-- `debugLevel > 0`.
 isWellDefined DGAlgebraMap := f -> (
-   A := source f;
-   B := target f;
-   all(apply(gens A.natural, x -> f.natural(A.diff(x)) == B.diff(f.natural(x))), identity)
+    k := keys f;
+    expectedKeys := set {symbol source, symbol target, symbol natural, symbol ringMap, symbol cache};
+    -- `cache` is not always present on legacy DGAlgebraMap objects (net
+    -- and arithmetic constructors predate the cache slot); tolerate its
+    -- absence.
+    kExtra := k - expectedKeys;
+    kMissing := (expectedKeys - set {symbol cache}) - k;
+    if #kExtra > 0 or #kMissing > 0 then (
+        if debugLevel > 0 then (
+            if #kExtra > 0 then << "-- DGAlgebraMap: unexpected key(s): " << toString(toList kExtra) << endl;
+            if #kMissing > 0 then << "-- DGAlgebraMap: missing key(s): " << toString(toList kMissing) << endl;
+        );
+        return false;
+    );
+    if not instance(f.source, DGAlgebra) or not instance(f.target, DGAlgebra) then (
+        if debugLevel > 0 then << "-- DGAlgebraMap: expected source and target to be DGAlgebras" << endl;
+        return false;
+    );
+    if not isWellDefined f.source then (
+        if debugLevel > 0 then << "-- DGAlgebraMap: source is not a well-defined DGAlgebra" << endl;
+        return false;
+    );
+    if not isWellDefined f.target then (
+        if debugLevel > 0 then << "-- DGAlgebraMap: target is not a well-defined DGAlgebra" << endl;
+        return false;
+    );
+    if not instance(f.natural, RingMap) then (
+        if debugLevel > 0 then << "-- DGAlgebraMap: expected f.natural to be a RingMap" << endl;
+        return false;
+    );
+    if source f.natural =!= (f.source).natural or target f.natural =!= (f.target).natural then (
+        if debugLevel > 0 then << "-- DGAlgebraMap: f.natural does not have the expected source/target rings" << endl;
+        return false;
+    );
+    if not instance(f.ringMap, RingMap) then (
+        if debugLevel > 0 then << "-- DGAlgebraMap: expected f.ringMap to be a RingMap" << endl;
+        return false;
+    );
+    -- Semantic: chain-map condition on every DG generator.
+    A := f.source;
+    B := f.target;
+    ok := all(gens A.natural, x -> f.natural(A.diff(x)) == B.diff(f.natural(x)));
+    if not ok and debugLevel > 0 then
+        << "-- DGAlgebraMap: chain-map condition f(d_A x) = d_B(f x) fails on some generator" << endl;
+    ok
 )
 
 toComplexMap = method(TypicalValue=>ComplexMap,Options=>{EndDegree=>-1,AssertWellDefined=>true})
@@ -1186,15 +1605,24 @@ toComplexMap (DGAlgebraMap,ZZ) := opts -> (f,n) -> (
    -- The code below is if the base rings agree.
    aDiff := polyDifferential(n,A);
    bDiff := polyDifferential(n,B);
+   -- At hom-degrees beyond max degree of A or B, the basis is empty; in that
+   -- case short-circuit to the zero map between the (possibly-zero) target
+   -- and source modules so we don't call `coefficients` on an empty matrix.
    if R === S then (
       sourceList = flatten entries getBasis(n,A);
       targetList = flatten entries getBasis(n,B);
+      if sourceList == {} or targetList == {} then
+         return map(source bDiff, source aDiff, 0);
       coeffMatrix = substitute((coefficients(matrix {sourceList / f.natural}, Monomials => targetList))#1, B.ring);
       map(source bDiff, source aDiff, coeffMatrix)
    )
    else (
       sourceList = flatten entries getBasis(n,A);
       targetList = flatten entries getBasis(n,B);
+      if sourceList == {} or targetList == {} then (
+         sPushForward0 := pushForward(f.ringMap,source bDiff);
+         return map(sPushForward0, source aDiff, 0);
+      );
       sCoeffMatrix := substitute((coefficients(matrix {sourceList / f.natural}, Monomials => targetList))#1, B.ring);
       -- the rest of this code converts the matrix over S to a matrix over R.  It's slightly
       -- different than pushForward(RingMap,Matrix), since the map is between free modules over
@@ -1257,6 +1685,8 @@ pushForward(RingMap,Complex) := opts -> (f,C) -> complex toList apply(0..((lengt
 homology DGAlgebraMap := opts -> f -> (
    A := source f;
    B := target f;
+   if not isWellDefined f then
+      error "homology DGAlgebraMap: input is not a DG algebra map (does not commute with differentials); cannot induce a map on homology.";
    -- the following commands will fail if A and B have generators in even degree, since one
    -- needs to specify the degrees to look for gens and relations.
    HA := HH A;
@@ -1343,6 +1773,31 @@ liftToDGMap (DGAlgebra,DGAlgebra,RingMap) := opts -> (B,A,f) -> (
    );
    dgAlgebraMap(B,A,matrix {imageList})
 )
+
+----- DGAlgebraMap arithmetic / composition / equality / identity --------
+-- Ring-map arithmetic is not meaningful for ring maps as a whole (the
+-- sum of two ring maps is not a ring map), so we intentionally skip +/-
+-- and scalar multiplication. The operations below are the analogues of
+-- the DGModuleMap ops that *do* make sense for ring-valued maps.
+
+-- Composition: (g * f) : A -> C for f : A -> B and g : B -> C
+DGAlgebraMap * DGAlgebraMap := (g, f) -> (
+   if (target f).natural =!= (source g).natural then
+      error "DGAlgebraMap composition: target of first does not match source of second.";
+   dgAlgebraMap(target g, source f, matrix (g.natural * f.natural))
+)
+
+-- Equality of DGAlgebraMaps: same source/target DGAlgebras and same
+-- image matrix of A.natural generators in B.natural.
+DGAlgebraMap == DGAlgebraMap := (f, g) -> (
+   (source f) === (source g)
+   and (target f) === (target g)
+   and matrix f.natural == matrix g.natural
+)
+
+-- Identity: sends each A.natural generator to itself.
+identityDGAlgebraMap = method(TypicalValue => DGAlgebraMap)
+identityDGAlgebraMap DGAlgebra := A -> dgAlgebraMap(A, A, vars A.natural)
 
 torMap = method(TypicalValue => RingMap, Options => {GenDegreeLimit=>3})
 torMap RingMap := opts -> f -> (
@@ -1465,2331 +1920,3558 @@ displayBlockDiff(A,  {1,0,3})
 displayBlockDiff(A,  [{1,0,3}])
 ///
 
+------------------------------------------------------------
+-- v1.2 overhaul: accessor / invariant layer               --
+------------------------------------------------------------
+-- Rationale: the original DGAlgebra type is a bare
+-- MutableHashTable with no encapsulation, forcing downstream
+-- code (e.g. KoszulHomHelpers.m2) to reach into A#(symbol …)
+-- and to defensively reinitialize caches. The accessors and
+-- invariant helpers below let callers treat DGAlgebra as an
+-- opaque value with guaranteed cache structure.
+
+-- ensureDGAlgebraCaches(A): guarantee all standard cache
+-- sub-tables exist with the expected types. Idempotent; safe
+-- to call on any DGAlgebra, even one in a partially-built
+-- state (as happens when user code constructs a DGAlgebra by
+-- hand from internal keys).
+ensureDGAlgebraCaches = method(TypicalValue => DGAlgebra)
+ensureDGAlgebraCaches DGAlgebra := A -> (
+    if not A#?(symbol cache)
+       or A#(symbol cache) === null
+       or not instance(A#(symbol cache), CacheTable)
+    then A#(symbol cache) = new CacheTable;
+    if not A.cache#?(symbol homology)
+       or not instance(A.cache#(symbol homology), MutableHashTable)
+    then A.cache#(symbol homology) = new MutableHashTable;
+    if not A.cache#?(symbol homologyAlgebra)
+       or not instance(A.cache#(symbol homologyAlgebra), MutableHashTable)
+    then A.cache#(symbol homologyAlgebra) = new MutableHashTable;
+    if not A.cache#?(symbol diffs)
+       or not instance(A.cache#(symbol diffs), MutableHashTable)
+    then A.cache#(symbol diffs) = new MutableHashTable;
+    A
+)
+
+-- invalidateDGAlgebraCache(A): clear all cached computed
+-- values. Called at the top of setDiff / setKoszulDiff so
+-- re-setting the differential never leaves stale homology or
+-- differential matrices behind.
+invalidateDGAlgebraCache = method(TypicalValue => DGAlgebra)
+invalidateDGAlgebraCache DGAlgebra := A -> (
+    ensureDGAlgebraCaches A;
+    A.cache#(symbol homology) = new MutableHashTable;
+    A.cache#(symbol homologyAlgebra) = new MutableHashTable;
+    A.cache#(symbol diffs) = new MutableHashTable;
+    if A.cache#?(symbol dgComplex) then remove(A.cache, symbol dgComplex);
+    A
+)
+
+-- Public accessors.
+underlyingRing = method(TypicalValue => Ring)
+underlyingRing DGAlgebra := A -> A.ring
+
+underlyingAlgebra = method(TypicalValue => Ring)
+underlyingAlgebra DGAlgebra := A -> A.natural
+
+differential = method()
+differential DGAlgebra := A -> A.diff
+
+generatorDegrees = method(TypicalValue => List)
+generatorDegrees DGAlgebra := A -> A.Degrees
+
+ring DGAlgebra := A -> A.ring
+generators DGAlgebra := opts -> A -> gens A.natural
+numgens DGAlgebra := A -> numgens A.natural
+
+-- isValidDGAlgebra(A): structural invariant check. Returns
+-- true if the object has the required keys with the expected
+-- types. Does *not* verify d^2 = 0; for that use
+-- isWellDefinedDifferential below.
+isValidDGAlgebra = method(TypicalValue => Boolean)
+isValidDGAlgebra DGAlgebra := A -> (
+    if not A#?(symbol ring) or not instance(A#(symbol ring), Ring) then return false;
+    if not A#?(symbol natural) or not instance(A#(symbol natural), Ring) then return false;
+    if not A#?(symbol diff) then return false;
+    if A.diff =!= {} and not instance(A.diff, RingMap) then return false;
+    if not A#?(symbol Degrees) or not instance(A#(symbol Degrees), List) then return false;
+    if #A.Degrees != numgens A.natural then return false;
+    true
+)
+
+-- isWellDefined DGAlgebra.  Modeled on `isWellDefined Complex`
+-- (Complexes/ChainComplex.m2 line 161): key-shape + type checks
+-- via isValidDGAlgebra, then the semantic d^2 = 0 check on every
+-- DG generator.  Diagnostics via debugLevel > 0.
+isWellDefined DGAlgebra := A -> (
+    -- Structural check (keys + types).
+    if not isValidDGAlgebra A then (
+        if debugLevel > 0 then (
+            missing := select(
+                {symbol ring, symbol natural, symbol diff, symbol Degrees},
+                s -> not A#?s);
+            if #missing > 0 then
+                << "-- DGAlgebra: missing required key(s): " << toString missing << endl;
+            if A#?(symbol Degrees) and A#?(symbol natural)
+                and #A.Degrees != numgens A.natural then
+                << "-- DGAlgebra: #A.Degrees (" << #A.Degrees << ") != numgens A.natural ("
+                   << numgens A.natural << ")" << endl;
+            if A#?(symbol diff) and A.diff =!= {} and not instance(A.diff, RingMap) then
+                << "-- DGAlgebra: A.diff is present but not a RingMap or {}" << endl;
+        );
+        return false;
+    );
+    -- Ring consistency: A.natural should be a polynomial-like ring over A.ring.
+    if coefficientRing A.natural =!= A.ring and not (ambient A.natural === A.ring) then (
+        -- Allow the case where A.ring is a quotient or base ring of A.natural's coefficients.
+        -- Soft check: just warn in debug mode.
+        if debugLevel > 1 then
+            << "-- DGAlgebra: coefficientRing A.natural does not equal A.ring (this is usually OK)" << endl;
+    );
+    -- Differential degree: d must shift homological degree by -1 on every generator.
+    if A.diff =!= {} then (
+        for g in gens A.natural do (
+            dg := diff(A, g);
+            if dg != 0 then (
+                degG := first degree g;
+                degDG := first degree dg;
+                if degDG != degG - 1 then (
+                    if debugLevel > 0 then
+                        << "-- DGAlgebra: d(" << g << ") has homological degree "
+                           << degDG << ", expected " << (degG - 1) << endl;
+                    return false;
+                );
+            );
+        );
+    );
+    -- Semantic: d^2 = 0 on every generator (Leibniz extends to all of A.natural).
+    if not isWellDefinedDifferential A then (
+        if debugLevel > 0 then << "-- DGAlgebra: d^2 fails to vanish on some generator" << endl;
+        return false;
+    );
+    true
+)
+
+-- isWellDefinedDifferential(A): semantic check that d^2 = 0
+-- on every DG generator. Sufficient because d is an R-linear
+-- derivation, so d^2 = 0 on generators implies d^2 = 0
+-- globally. Returns true for the trivial (empty-generator)
+-- DG algebra.
+isWellDefinedDifferential = method(TypicalValue => Boolean)
+isWellDefinedDifferential DGAlgebra := A -> (
+    if not isValidDGAlgebra A then return false;
+    if A.diff === {} then return true;
+    gensList := gens A.natural;
+    all(gensList, g -> diff(A, diff(A, g)) == 0)
+)
+
+------------------------------------------------------------
+-- v1.2 overhaul: ring-manipulation operations             --
+------------------------------------------------------------
+-- These expose, as user-level operations, constructions that previously
+-- required downstream code to rebuild the DGAlgebra from
+-- internal hash keys.
+
+-- Private helper: transport an element f of A.natural to
+-- B.natural, given phi : A.ring -> B.ring and a matrix
+-- giving images of the DG generators T_i of A.natural as
+-- elements of B.natural. Coefficients (which live in A.ring)
+-- are mapped via phi; monomials in T_i are mapped via the
+-- supplied image matrix.
+transportNaturalElement := (phi, f, Bnat, genImages) -> (
+    if f == 0 then return 0_Bnat;
+    (mons, coeffs) := coefficients f;
+    monList := flatten entries mons;
+    coeffList := flatten entries coeffs;
+    sum apply(#monList, i -> (
+        c := sub(coeffList#i, source phi);
+        -- sub each monomial in T_i's into Bnat via genImages
+        mImage := sub(monList#i, genImages);
+        (phi c) * mImage
+    ))
+)
+
+-- baseChange(A, phi): given a ring map phi : R -> S where
+-- R = A.ring, produce a DGAlgebra B over S with "the same"
+-- DG generators and differential (after applying phi to the
+-- scalar coefficients appearing in the differential).
+-- Accepts either a RingMap or a target Ring S (in which
+-- case map(S, R) is used).
+baseChange = method(TypicalValue => DGAlgebra,
+    Options => {InitializeDegreeZeroHomology => true, InitializeComplex => false})
+baseChange (DGAlgebra, Ring) := opts -> (A, S) -> baseChange(A, map(S, A.ring), opts)
+baseChange (DGAlgebra, RingMap) := opts -> (A, phi) -> (
+    if source phi =!= A.ring then
+        error "baseChange: source of ring map must equal underlyingRing of DGAlgebra";
+    S := target phi;
+    B := freeDGAlgebra(S, A.Degrees);
+    n := numgens A.natural;
+    -- Images of the T_i of A.natural inside B.natural
+    genImages := matrix {take(gens B.natural, n)};
+    origDiff := take(flatten entries matrix A.diff, n);
+    newDiffList := apply(origDiff, f -> transportNaturalElement(phi, f, B.natural, genImages));
+    setDiff(B, newDiffList,
+        InitializeDegreeZeroHomology => opts.InitializeDegreeZeroHomology,
+        InitializeComplex => opts.InitializeComplex);
+    B
+)
+
+-- subDGAlgebra(A, keepIdx): build a new DGAlgebra over the
+-- same underlying ring whose DG generators are A's generators
+-- at the indices in keepIdx (a List of integers in the range
+-- 0..numgens A.natural-1), with the restricted differential.
+-- Raises an error if the differential of any kept generator
+-- involves a dropped generator (i.e. the subset of indices
+-- does not actually span a sub-DG algebra).
+subDGAlgebra = method(TypicalValue => DGAlgebra,
+    Options => {InitializeDegreeZeroHomology => true, InitializeComplex => false})
+subDGAlgebra (DGAlgebra, List) := opts -> (A, keepIdx) -> (
+    n := numgens A.natural;
+    if not all(keepIdx, i -> instance(i, ZZ) and 0 <= i and i < n) then
+        error "subDGAlgebra: keepIdx must be a List of integers in 0 .. numgens-1";
+    if keepIdx != unique keepIdx then
+        error "subDGAlgebra: keepIdx contains duplicates";
+    keepIdx = sort keepIdx;
+    droppedIdx := select(toList(0..n-1), i -> not member(i, keepIdx));
+    newDegList := A.Degrees_keepIdx;
+    B := freeDGAlgebra(A.ring, newDegList);
+    -- Build a substitution matrix: each kept T_i -> corresponding gen of B.natural;
+    -- each dropped T_i -> 0 in B.natural.
+    subList := for i from 0 to n-1 list (
+        j := position(keepIdx, k -> k == i);
+        if j === null then 0_(B.natural)
+        else (gens B.natural)#j
+    );
+    imageMatrix := matrix {subList};
+    origDiff := take(flatten entries matrix A.diff, n);
+    -- Safety check: a kept generator's differential must not involve a dropped generator.
+    droppedGens := (gens A.natural)_droppedIdx;
+    for i in keepIdx do (
+        f := origDiff#i;
+        suppf := set support f;
+        if any(droppedGens, g -> member(g, suppf)) then
+            error ("subDGAlgebra: differential of generator " | toString (gens A.natural)#i
+                | " involves dropped generator(s) " | toString select(droppedGens, g -> member(g, suppf))
+                | "; the subset does not form a sub-DG algebra");
+    );
+    newDiffList := apply(keepIdx, i -> sub(origDiff#i, imageMatrix));
+    setDiff(B, newDiffList,
+        InitializeDegreeZeroHomology => opts.InitializeDegreeZeroHomology,
+        InitializeComplex => opts.InitializeComplex);
+    B
+)
+
+-- restrictDifferential: alias that takes a list of indices
+-- to KEEP (same semantics as subDGAlgebra). Named to match
+-- the vocabulary used in KoszulHomHelpers.m2.
+restrictDifferential = method(TypicalValue => DGAlgebra,
+    Options => {InitializeDegreeZeroHomology => true, InitializeComplex => false})
+restrictDifferential (DGAlgebra, List) := opts -> (A, keepIdx) -> subDGAlgebra(A, keepIdx, opts)
+
+-- truncateGenerators(A, n): return the sub-DG algebra whose
+-- DG generators are those of A with first homological
+-- degree > n. Replaces the hand-rolled truncateTerm pattern
+-- in KoszulHomHelpers.m2:707.
+truncateGenerators = method(TypicalValue => DGAlgebra,
+    Options => {InitializeDegreeZeroHomology => true, InitializeComplex => false})
+truncateGenerators (DGAlgebra, ZZ) := opts -> (A, n) -> (
+    keepIdx := select(toList(0..#A.Degrees-1), i -> first A.Degrees#i > n);
+    subDGAlgebra(A, keepIdx, opts)
+)
+
+-- killHomologyAtDegree(A, n): find a representing set of
+-- cycles for H_n(A) and adjoin variables to make them
+-- boundaries, returning a new DGAlgebra. Unlike killCycles
+-- (which searches for the first nontrivial degree starting
+-- from StartDegree), this targets a specific degree.
+killHomologyAtDegree = method(TypicalValue => DGAlgebra)
+killHomologyAtDegree (DGAlgebra, ZZ) := (A, n) -> (
+    Hn := prune homology(n, A);
+    if Hn == 0 then return A;
+    homologyGens := entries transpose gens image (Hn.cache.pruningMap);
+    basisList := flatten entries getBasis(n, A);
+    cycleList := apply(homologyGens, gen -> sum apply(#gen, i -> gen#i * basisList#i));
+    adjoinVariables(A, cycleList)
+)
+
+-- dgComplex(A): lazy chain-complex accessor. Computes and caches
+-- a Complex representing A's underlying chain complex of free
+-- A.ring-modules. Unlike setDiff's InitializeComplex option
+-- (which eagerly builds A.dd), this pays only when the caller
+-- actually wants the complex, and reuses it on repeat calls.
+-- Invalidated by invalidateDGAlgebraCache.
+dgComplex = method(TypicalValue => Complex)
+dgComplex DGAlgebra := A -> (
+    ensureDGAlgebraCaches A;
+    if A.cache#?(symbol dgComplex) then return A.cache#(symbol dgComplex);
+    n := maxDegree A;
+    if n === infinity then (
+        -- even generators present; default to totalOddDegree+1 (matches setDiff's choice)
+        n = sum select(degrees A.natural / first, i -> odd i) + 1;
+    );
+    C := toComplex(A, max(n, 1));
+    A.cache#(symbol dgComplex) = C;
+    C
+)
+
+-------------------------------------------------------------------------
+-- DGModule: DG modules over a DGAlgebra.
+--
+-- A DGModule M over a DGAlgebra A is a graded A.natural-module M.natural
+-- together with an R-linear differential of homological degree -1
+-- satisfying the Leibniz rule
+--     d_M(a . x) = d_A(a) . x + (-1)^{|a|} a . d_M(x).
+-- Storage follows the DGAlgebra pattern (see the type declaration).
+--
+-- The first concrete constructor is koszulComplexDGM, producing
+-- K^R \otimes_R M as a DG module over koszulComplexDGA R.
+-------------------------------------------------------------------------
+
+-- Pretty-print a DGModule. Shows base ring, DG algebra, the natural
+-- graded module, and the generator hom-degrees. (Mirrors `net DGAlgebra`.)
+net DGModule := M -> (
+    myOutput := {net "Base ring => " | net M.ring};
+    myOutput = myOutput | {net "DG algebra => " | net M.dgAlgebra.natural};
+    myOutput = myOutput | {net "Natural module => " | net M.natural};
+    myOutput = myOutput | {net "Generator degrees => " | net M.Degrees};
+    myOutput = myOutput | {net "Differentials on gens => " | net M.diff};
+    horizontalJoin flatten ("{", stack myOutput, "}")
+)
+
+-- Accessor methods: extend the v1.2 accessor layer to DGModules.
+underlyingRing DGModule := M -> M.ring
+underlyingAlgebra DGModule := M -> M.natural
+generatorDegrees DGModule := M -> M.Degrees
+differential DGModule := M -> M.diff
+
+-- koszulComplexDGM(M): build K^R \otimes_R M as a DG module over
+-- koszulComplexDGA R. The module generators sit in hom-degree 0
+-- (so d_M vanishes on them) and the full differential is determined by
+-- Leibniz + d on A.natural.
+--
+-- Two forms:
+--   koszulComplexDGM M            -- builds (or reuses) koszulComplexDGA(ring M)
+--   koszulComplexDGM(A, M)        -- use a caller-supplied DG algebra whose
+--                                    ring must match ring M
+koszulComplexDGM = method(TypicalValue => DGModule)
+koszulComplexDGM Module := M -> (
+    R := ring M;
+    A := koszulComplexDGA R;
+    koszulComplexDGM(A, M)
+)
+koszulComplexDGM (DGAlgebra, Module) := (A, M) -> (
+    R := ring M;
+    if A.ring =!= R then
+        error "koszulComplexDGM: DG algebra and module must share the same base ring.";
+    -- Lift the R-presentation of M to an A.natural-presentation, then take
+    -- the cokernel. Relations sit in hom-degree 0, so d(rel) = 0 and the
+    -- differential descends to the quotient.
+    presM := presentation M;
+    numGens := numRows presM;
+    presOverA := sub(presM, A.natural);
+    -- Degree padding: A.natural has one extra degree slot (hom-degree)
+    -- relative to R, so prepend a 0 to each target-row degree of presM.
+    rDegs := if numGens == 0 then {} else (degrees target presM);
+    weightPad := if #rDegs == 0 then (
+        if isHomogeneous A.natural and #degrees A.natural > 0
+            then #(first degrees A.natural) else 1
+    ) else (1 + #(first rDegs));
+    genDegs := if numGens == 0 then {}
+               else apply(rDegs, d -> {0} | d);
+    -- Free graded A.natural-module with generators in hom-degree 0.
+    F := (A.natural)^(-genDegs);
+    naturalModule := coker map(F, , presOverA);
+    result := new MutableHashTable;
+    result#(symbol dgAlgebra) = A;
+    result#(symbol ring) = R;
+    result#(symbol module) = M;
+    result#(symbol natural) = naturalModule;
+    result#(symbol Degrees) = genDegs;
+    -- d vanishes on hom-degree-0 generators (would land in hom-degree -1 = 0).
+    result#(symbol diff) = apply(numGens, i -> 0_(naturalModule));
+    result#(symbol cache) = new CacheTable;
+    result.cache#(symbol diffs) = new MutableHashTable;
+    new DGModule from result
+)
+
+-- moduleBasisPairs(M, n): list of pairs (i, m) describing an A.ring-basis
+-- of the hom-degree-n piece of a free DG module M. Here i indexes a free
+-- generator e_i of M.natural (hom-degree d_i) and m is an A.natural
+-- monomial of hom-degree n - d_i; the corresponding basis element is
+-- m * e_i in M.natural. Used by moduleDifferential's general path.
+moduleBasisPairs = (M, n) -> (
+    A := M.dgAlgebra;
+    numGens := rank M.natural;
+    flatten apply(numGens, i -> (
+        di := first M.Degrees#i;
+        needed := n - di;
+        if needed < 0 then {}
+        else (
+            mons := flatten entries getBasis(needed, A);
+            apply(mons, m -> (i, m))
+        )
+    ))
+)
+
+-- moduleLeibniz(M, i, m): the Leibniz differential of the basis element
+-- m * e_i in a free DG module. Returns a Vector in M.natural.
+--   d(m . e_i) = d_A(m) . e_i + (-1)^|m| m . d_M(e_i)
+-- where |m| is the hom-degree of m in A.
+moduleLeibniz = (M, i, m) -> (
+    A := M.dgAlgebra;
+    ei := (M.natural)_i;
+    term1 := polyDifferential(A, m) * ei;
+    signExp := first degree m;
+    sign := if odd signExp then -1 else 1;
+    term2 := sign * m * M.diff#i;
+    term1 + term2
+)
+
+-- moduleDifferential(n, M): the degree-n piece of the DG module's
+-- differential, returned as an R-linear map M_n -> M_{n-1}.
+--
+-- Two code paths:
+--   * Fast path: when M was built by koszulComplexDGM (M.module is set)
+--     AND d_M vanishes on every generator, the differential is the
+--     tensor d_A \otimes id_M, computed as polyDifferential(n,A) ** M.module.
+--   * General Leibniz path: for free DG modules (freeDGModule output) with
+--     arbitrary differentials on generators. Works monomial-by-monomial
+--     using moduleLeibniz and extracts the R-linear matrix per target
+--     generator via `coefficients`.
+--
+-- Caching: matches polyDifferential — one slot per n in M.cache.diffs.
+moduleDifferential = method(TypicalValue => Matrix)
+moduleDifferential (ZZ, DGModule) := (n, M) -> (
+    if M.cache.diffs#?n then return M.cache.diffs#n;
+    A := M.dgAlgebra;
+    R := A.ring;
+    -- Fast path for koszulComplexDGM-style DG modules: d_A ⊗ id_M.
+    if M.?module and all(M.diff, z -> z == 0) then (
+        dA := polyDifferential(n, A);
+        fastResult := dA ** M.module;
+        M.cache.diffs#n = fastResult;
+        return fastResult;
+    );
+    -- General Leibniz path. Requires M.natural to be a free graded
+    -- A.natural-module (freeDGModule output). Bail for non-free M.natural
+    -- since `entries` on a Vector in a cokernel is not the right semantics.
+    if not isFreeModule M.natural then
+        error "moduleDifferential: general path requires M.natural to be a free module (use freeDGModule).";
+    if n < 0 then return map(R^0, R^0, 0);
+    sourcePairs := moduleBasisPairs(M, n);
+    targetPairs := moduleBasisPairs(M, n-1);
+    numSrc := #sourcePairs;
+    numTgt := #targetPairs;
+    -- R-module degrees (drop hom-degree slot) for source/target
+    pairDegree := p -> (
+        (i, m) := p;
+        totalDeg := degree(m * (M.natural)_i);
+        -drop(totalDeg, 1)
+    );
+    srcDegs := apply(sourcePairs, pairDegree);
+    tgtDegs := apply(targetPairs, pairDegree);
+    if numSrc == 0 then (
+        r0 := map(R^tgtDegs, R^0, 0);
+        M.cache.diffs#n = r0;
+        return r0;
+    );
+    if numTgt == 0 then (
+        r1 := map(R^0, R^srcDegs, 0);
+        M.cache.diffs#n = r1;
+        return r1;
+    );
+    numNatGens := rank M.natural;
+    -- Group target pairs by generator index j; keep original column index.
+    tgtByGen := new MutableHashTable;
+    scan(numNatGens, j -> tgtByGen#j = {});
+    scan(numTgt, k -> (
+        (j, mp) := targetPairs#k;
+        tgtByGen#j = append(tgtByGen#j, (k, mp));
+    ));
+    mat := mutableMatrix(R, numTgt, numSrc);
+    scan(numSrc, c -> (
+        (i, m) := sourcePairs#c;
+        db := moduleLeibniz(M, i, m);
+        dbList := entries db;
+        scan(numNatGens, j -> (
+            fj := dbList#j;
+            if fj == 0 then return;
+            rowsForJ := tgtByGen#j;
+            if #rowsForJ == 0 then return;
+            tgtMonsJ := apply(rowsForJ, pr -> pr#1);
+            coefMat := (coefficients(matrix{{fj}}, Monomials => matrix{tgtMonsJ}))#1;
+            coefMatR := sub(coefMat, R);
+            scan(#rowsForJ, idx -> (
+                rowIdx := (rowsForJ#idx)#0;
+                cij := coefMatR_(idx, 0);
+                if cij != 0 then mat_(rowIdx, c) = cij;
+            ));
+        ));
+    ));
+    result := map(R^tgtDegs, R^srcDegs, matrix mat);
+    M.cache.diffs#n = result;
+    result
+)
+
+-- homology(n, M): H_n(M) as an R-module.
+homology (ZZ, DGModule) := opts -> (n, M) -> (
+    dn := moduleDifferential(n, M);
+    dnplus1 := moduleDifferential(n+1, M);
+    homology(dn, dnplus1)
+)
+
+-------------------------------------------------------------------------
+-- freeDGModule: semifree DG modules over a DGAlgebra.
+--
+-- A free DG module over A is a graded A.natural-module F = A.natural^(-degList)
+-- with an A.ring-linear differential of hom-degree -1 satisfying Leibniz:
+--   d(a . x) = d_A(a) . x + (-1)^|a| a . d_M(x)
+-- Storage mirrors DGAlgebra's freeDGAlgebra (M.natural is a free module
+-- rather than a cokernel, so Leibniz on monomials is well-defined). The
+-- differential is initialized to 0 on every generator; set it via
+-- setDiff(M, diffList).
+-------------------------------------------------------------------------
+freeDGModule = method(TypicalValue => DGModule)
+freeDGModule (DGAlgebra, List) := (A, degList) -> (
+    -- Normalize: each entry of degList should be a list compatible with
+    -- A.natural's degree group. Scalar ZZ is wrapped as {n}; too-short
+    -- lists are right-padded with zeros.
+    degList = apply(degList, d -> if instance(d, ZZ) then {d} else toList d);
+    if #degList > 0 and #(degrees A.natural) > 0 then (
+        aDegLen := #(first degrees A.natural);
+        degList = apply(degList, d -> if #d < aDegLen then d | toList((aDegLen - #d):0) else d);
+    );
+    F := if #degList == 0 then (A.natural)^0 else (A.natural)^(-degList);
+    result := new MutableHashTable;
+    result#(symbol dgAlgebra) = A;
+    result#(symbol ring) = A.ring;
+    result#(symbol natural) = F;
+    result#(symbol Degrees) = degList;
+    result#(symbol diff) = apply(#degList, i -> 0_F);
+    result#(symbol cache) = new CacheTable;
+    result.cache#(symbol diffs) = new MutableHashTable;
+    new DGModule from result
+)
+
+-- setDiff(M, diffList): record the differential of each free generator.
+-- diffList#i is a Vector in M.natural (or an element coercible to one)
+-- living in hom-degree (d_i - 1) where d_i is the hom-degree of the i-th
+-- generator. Invalidates all cached differentials.
+setDiff (DGModule, List) := opts -> (M, diffList) -> (
+    if not isFreeModule M.natural then
+        error "setDiff DGModule: currently only supported for free DG modules (freeDGModule output).";
+    if #diffList != #M.Degrees then
+        error ("setDiff DGModule: expected " | toString(#M.Degrees)
+            | " differentials, got " | toString(#diffList) | ".");
+    ensureDGAlgebraCaches M;
+    invalidateDGAlgebraCache M;
+    -- Coerce each entry to a Vector in M.natural. Accept Vector as-is;
+    -- accept a 1-column Matrix by taking its first column; accept 0.
+    coerced := apply(diffList, e -> (
+        if e === 0 then 0_(M.natural)
+        else if instance(e, Vector) then e
+        else if instance(e, Matrix) and numcols e == 1 then (
+            -- fold the column into a vector in M.natural
+            rowDegs := degrees target e;
+            if rank M.natural != #rowDegs then
+                error "setDiff DGModule: matrix differential has wrong number of rows.";
+            sum apply(#rowDegs, j -> e_(j,0) * (M.natural)_j)
+        )
+        else try (sub(e, M.natural)) else
+            error "setDiff DGModule: could not coerce differential entry to M.natural."
+    ));
+    M.diff = coerced;
+    M
+)
+-- setDiff returns the mutated DGModule for a DGModule input, even though
+-- the method's default TypicalValue is DGAlgebra.  Inform the documentation
+-- system so per-signature doc nodes for (setDiff, DGModule, List) see the
+-- right return type.
+typicalValues#(setDiff, DGModule, List) = DGModule
+
+-------------------------------------------------------------------------
+-- adjoinGenerators / killCycles / semifreeResolution for DGModule.
+-- Module-theoretic analogs of adjoinVariables / killCycles / acyclicClosure
+-- on DGAlgebra.
+-------------------------------------------------------------------------
+
+-- adjoinGenerators(M, cycleList): produce a new free DG module M' that
+-- agrees with M on its existing generators and adds one fresh generator
+-- per element of cycleList, whose differential is the corresponding cycle.
+-- Each cycle must be a Vector in M.natural of hom-degree d; the new
+-- generator has hom-degree d+1.
+-- Existing generator indices and differentials are preserved verbatim.
+adjoinGenerators = method(TypicalValue => DGModule)
+adjoinGenerators (DGModule, List) := (M, cycleList) -> (
+    A := M.dgAlgebra;
+    if #cycleList == 0 then return M;
+    -- Derive new generator degrees: hom-degree = deg(z)#0 + 1; remaining
+    -- degree components copied from z (so the new generator's differential
+    -- is homogeneous w.r.t. the ambient multi-grading).
+    newDegs := apply(cycleList, z -> (
+        d := degree z;
+        {first d + 1} | drop(d, 1)
+    ));
+    combinedDegs := M.Degrees | newDegs;
+    -- Build a fresh free DG module with the combined generator list.
+    Mnew := freeDGModule(A, combinedDegs);
+    -- Lift each existing differential from M.natural to Mnew.natural.
+    -- M.natural has rank r = #M.Degrees; Mnew.natural has rank r + #newDegs.
+    -- The first r generators of Mnew correspond to those of M.
+    r := #M.Degrees;
+    phi := v -> (
+        if v === 0 then 0_(Mnew.natural)
+        else (
+            vEntries := entries v;
+            sum apply(r, j -> (vEntries#j) * (Mnew.natural)_j)
+        )
+    );
+    oldDiffs := apply(M.diff, phi);
+    newDiffs := apply(cycleList, phi);
+    setDiff(Mnew, oldDiffs | newDiffs);
+    -- Cache migration: if all new gens sit at hom-degree >= minNewDeg, then
+    -- F_i(Mnew) = F_i(M) for all i < minNewDeg (new gens don't contribute
+    -- below their own hom-degree, assuming A is nonnegatively graded in
+    -- hom-deg). Reuse the already-computed d_i for those i. Also, since F_i
+    -- and F_{i-1} are literally equal, any downstream code that composes
+    -- the cached matrix still works.
+    -- setDiff above invalidated Mnew's cache, so do this after.
+    if M.cache.?diffs then (
+        minNewDeg := min apply(newDegs, d -> first d);
+        scan(keys M.cache.diffs, n -> (
+            if n < minNewDeg then Mnew.cache.diffs#n = M.cache.diffs#n;
+        ));
+    );
+    Mnew
+)
+
+-- killCycles M: find the smallest n (within the requested range) for which
+-- H_n(M) is nonzero, and adjoin free generators in hom-degree n+1 whose
+-- differentials are representative cycles of a minimal generating set of
+-- H_n(M). Mirrors killCycles DGAlgebra.
+killCycles DGModule := opts -> M -> (
+    endDegree := if opts.EndDegree == -1 then opts.StartDegree else opts.EndDegree;
+    if opts.StartDegree > endDegree then
+        error "killCycles DGModule: StartDegree exceeds EndDegree.";
+    n := opts.StartDegree;
+    foundHomology := false;
+    nthHomology := null;
+    while n <= endDegree and not foundHomology do (
+        nthHomology = prune homology(n, M);
+        if nthHomology == 0 then n = n + 1 else foundHomology = true;
+    );
+    if not foundHomology then return M;
+    -- Lift minimal homology generators from H_n back to cycles in M_n.
+    -- moduleDifferential(n, M) is a map over A.ring from the free A.ring
+    -- basis of M at hom-degree n; cycles are in the kernel of that map.
+    -- We reconstruct cycles as Vectors in M.natural by pairing the kernel
+    -- coefficients with the hom-degree-n basis pairs (i, mon) of M.
+    pruningMap := nthHomology.cache.pruningMap;
+    homGensMat := gens image pruningMap;  -- columns over A.ring
+    sourcePairs := moduleBasisPairs(M, n);
+    if #sourcePairs == 0 then return M;
+    moduleGens := apply(rank M.natural, i -> (M.natural)_i);
+    cycleList := apply(numcols homGensMat, c -> (
+        sum apply(#sourcePairs, k -> (
+            (i, mon) := sourcePairs#k;
+            cK := homGensMat_(k, c);
+            if cK == 0 then 0_(M.natural) else cK * mon * moduleGens#i
+        ))
+    ));
+    -- Drop any accidentally-zero cycles (shouldn't happen, but be safe).
+    cycleList = select(cycleList, z -> z != 0);
+    if #cycleList == 0 then return M;
+    adjoinGenerators(M, cycleList)
+)
+-- killCycles returns a DGModule when given a DGModule, even though
+-- the method's default TypicalValue is DGAlgebra.  Inform the documentation
+-- system so per-signature doc nodes for (killCycles, DGModule) see the
+-- right return type.
+typicalValues#(killCycles, DGModule) = DGModule
+
+-- semifreeResolution(A, M, EndDegree => n): build a semifree DG module
+-- over A approximating a resolution of (an R-module or H_0 shape) M up to
+-- hom-degree n. Starts with a free DG module whose hom-degree-0 generators
+-- match a generating set for M and whose hom-degree-1 differentials are
+-- the presentation matrix columns; iteratively applies killCycles to kill
+-- H_i for i = 1..n.
+-- Mirrors acyclicClosure DGAlgebra: iteratively kills homology up to the
+-- requested degree, producing a semifree DG module resolution.
+semifreeResolution = method(TypicalValue => DGModule, Options => {StartDegree => 1, EndDegree => 3})
+semifreeResolution (DGAlgebra, Module) := opts -> (A, M) -> (
+    R := A.ring;
+    if ring M =!= R then
+        error "semifreeResolution: module must be over the DG algebra's base ring.";
+    -- Free cover: one hom-degree-0 generator per generator of M.
+    numGensM := numgens M;
+    genDegs := apply(numGensM, i -> (
+        rd := (degrees target presentation M)#i;
+        {0} | toList rd
+    ));
+    Mdg := freeDGModule(A, genDegs);
+    -- Kill the presentation relations: adjoin hom-degree-1 gens whose
+    -- differentials are the relations (viewed as elements of M.natural).
+    presM := presentation M;
+    if numcols presM > 0 then (
+        natGens := apply(rank Mdg.natural, i -> (Mdg.natural)_i);
+        presOverA := sub(presM, A.natural);
+        relCycles := apply(numcols presOverA, c -> (
+            sum apply(numGensM, j -> presOverA_(j, c) * natGens#j)
+        ));
+        relCycles = select(relCycles, z -> z != 0);
+        if #relCycles > 0 then Mdg = adjoinGenerators(Mdg, relCycles);
+    );
+    -- Now iterate killCycles from StartDegree up to EndDegree.
+    n := opts.StartDegree;
+    while n <= opts.EndDegree do (
+        Mdg = killCycles(Mdg, StartDegree => n);
+        n = n + 1;
+    );
+    Mdg
+)
+semifreeResolution Module := opts -> M -> (
+    R := ring M;
+    A := koszulComplexDGA R;
+    semifreeResolution(A, M, opts)
+)
+
+-------------------------------------------------------------------------
+-- minimalSemifreeResolution(A, M, EndDegree => n): MINIMAL semifree
+-- resolution of M over A, up to hom-degree n.
+--
+-- "Minimal" here means that when we tensor with the residue field k of
+-- R along the augmentation A -> k (substituting T_i = 0 and reducing mod
+-- m_R), every differential becomes zero. Equivalently, each generator's
+-- differential lives in the augmentation ideal of A.natural.
+--
+-- Strategy:
+--   (1) Start from prune M, giving mu(M) hom-degree-0 generators (minimal
+--       count over R).
+--   (2) Check each column of presentation(prune M) against the DGA-induced
+--       differential: x * e_0 may already be d(T_i * e_0) and thus already
+--       a boundary in F_0. Using getBoundaryPreimage, we compute the
+--       NON-BOUNDARY RESIDUE r of each relation column, and adjoin a
+--       hom-deg-1 generator only when r is nonzero — with differential r,
+--       not the original relation. This is the key step that makes the
+--       resolution minimal OVER A (not just over R): blind adjoinment of
+--       presentation columns duplicates Koszul-style relations and
+--       produces extra cycles at later stages.
+--   (3) Iterate killCycles. The existing killCycles DGModule uses
+--       `prune homology(n, M).cache.pruningMap` to pick representative
+--       cycles, which already gives a MINIMAL generating set of H_n over R
+--       (prune over a graded-local ring = minimal presentation). So each
+--       iteration contributes exactly mu(H_n(M)) new generators.
+--
+-- Efficiency: relies on the cache migration in adjoinGenerators to avoid
+-- recomputing low-degree differentials after each killCycles step.
+--
+-- Precondition: A.ring should be (graded-)local so that prune gives a
+-- minimal presentation. For A = koszulComplexDGA R with R a standard
+-- graded quotient of a polynomial ring over a field, this is satisfied.
+-------------------------------------------------------------------------
+minimalSemifreeResolution = method(TypicalValue => DGModule,
+    Options => {StartDegree => 1, EndDegree => 3})
+minimalSemifreeResolution (DGAlgebra, Module) := opts -> (A, M) -> (
+    R := A.ring;
+    if ring M =!= R then
+        error "minimalSemifreeResolution: module must be over the DG algebra's base ring.";
+    -- Replace M by a minimally-presented copy. prune gives a minimal
+    -- presentation over a (graded-)local ring; over a polynomial ring it
+    -- gives a minimal graded presentation.
+    Mmin := prune M;
+    numGensM := numgens Mmin;
+    presMin := presentation Mmin;
+    -- Generator degrees: copy from the target of the minimal presentation.
+    genDegs := if numGensM == 0 then {}
+               else apply(numGensM, i -> (
+                   rd := (degrees target presMin)#i;
+                   {0} | toList rd
+               ));
+    Mdg := freeDGModule(A, genDegs);
+    -- Hom-deg 1 stage: each minimal relation of M becomes an element of
+    -- F_0(Mdg). If it is already a boundary under the DGA-induced
+    -- differential d_1 (from d(A_1 * e_j) terms), skip; otherwise adjoin
+    -- a hom-deg-1 gen killing the non-boundary RESIDUE (not the original
+    -- column), which is the minimal extension.
+    if numcols presMin > 0 and numGensM > 0 then (
+        natGens := apply(rank Mdg.natural, i -> (Mdg.natural)_i);
+        presOverA := sub(presMin, A.natural);
+        relCycles := apply(numcols presOverA, c -> (
+            sum apply(numGensM, j -> presOverA_(j, c) * natGens#j)
+        ));
+        nonZeroRels := select(relCycles, z -> z != 0);
+        if #nonZeroRels > 0 then (
+            (liftOk, liftsOrResidues) := getBoundaryPreimage(Mdg, nonZeroRels);
+            toAdjoin := if liftOk then {} else
+                select(liftsOrResidues, r -> r != 0);
+            if #toAdjoin > 0 then Mdg = adjoinGenerators(Mdg, toAdjoin);
+        );
+    );
+    -- Iterate killCycles from StartDegree up to EndDegree. The existing
+    -- killCycles DGModule uses prune on H_n and takes representative cycles
+    -- from the pruning map's image — which is a minimal generating set.
+    n := opts.StartDegree;
+    while n <= opts.EndDegree do (
+        Mdg = killCycles(Mdg, StartDegree => n);
+        n = n + 1;
+    );
+    Mdg
+)
+minimalSemifreeResolution Module := opts -> M -> (
+    R := ring M;
+    A := koszulComplexDGA R;
+    minimalSemifreeResolution(A, M, opts)
+)
+
+-------------------------------------------------------------------------
+-- isMinimalSemifreeResolution(M): true iff each generator differential
+-- lies in the augmentation ideal of A.natural. Equivalently: reducing
+-- A.natural modulo (vars R, positive-hom-deg generators), each component
+-- of each M.diff#i collapses to zero.
+--
+-- Does NOT check acyclicity — use isAcyclic with an EndDegree for that.
+-------------------------------------------------------------------------
+isMinimalSemifreeResolution = method(TypicalValue => Boolean)
+isMinimalSemifreeResolution DGModule := M -> (
+    if not isValidDGModule M then return false;
+    if not isFreeModule M.natural then return false;
+    A := M.dgAlgebra;
+    R := A.ring;
+    -- Build the augmentation map A.natural -> k:
+    --   first set all T_i = 0 (sub to R), then reduce mod ideal vars R.
+    killT := map(R, A.natural,
+        matrix{apply(numgens A.natural, i -> 0_R)});
+    mR := if numgens R > 0 then ideal vars R else ideal 0_R;
+    augIsZero := f -> (
+        if f == 0 then true
+        else (killT f) % mR == 0
+    );
+    all(M.diff, v -> (
+        if v == 0 then true
+        else all(entries v, c -> augIsZero c)
+    ))
+)
+
+-------------------------------------------------------------------------
+-- DG module visualization: generatorTable, dgModuleSummary,
+-- moduleBlockDiff, displayModuleBlockDiff.
+--
+-- Parallels the DGAlgebra-side blockDiff / displayBlockDiff machinery but
+-- augments the chunk-vector labels with a module-generator index so each
+-- block knows which generator it belongs to.
+-------------------------------------------------------------------------
+
+-- generatorTable(M): a per-generator table — i, hom-deg, ext-deg, d(e_i).
+-- Useful for eyeballing a semifree resolution's generator list and
+-- differentials at a glance.
+generatorTable = method()
+generatorTable DGModule := M -> (
+    if #M.Degrees == 0 then return netList({{"no generators"}}, Alignment => Center);
+    hdrs := {"i", "hom-deg", "ext-deg", "d(e_i)"};
+    rows := apply(#M.Degrees, i -> (
+        d := M.Degrees#i;
+        hd := first d;
+        ed := drop(d, 1);
+        {i, hd, ed, M.diff#i}
+    ));
+    netList({hdrs} | rows, Alignment => Center, HorizontalSpace => 1, BaseRow => 0)
+)
+
+-- dgModuleSummary(M, n) / dgModuleSummary(M):
+--   Report, for each hom-degree k in [0, n]:
+--     * # A.ring-basis elements of F_k (#moduleBasisPairs)
+--     * # generators of M.natural at hom-degree k (adjoined in that row)
+--   When n is omitted, uses maxDegree(M) if finite, else errors.
+dgModuleSummary = method()
+dgModuleSummary (DGModule, ZZ) := (M, n) -> (
+    if n < 0 then error "dgModuleSummary: degree bound must be nonnegative.";
+    genCounts := new MutableHashTable;
+    scan(M.Degrees, d -> (
+        h := first d;
+        if not genCounts#?h then genCounts#h = 0;
+        genCounts#h = genCounts#h + 1;
+    ));
+    hdrs := {"hom-deg", "#gens adjoined", "rank F_n"};
+    rows := apply(toList(0..n), k -> (
+        g := if genCounts#?k then genCounts#k else 0;
+        rF := #moduleBasisPairs(M, k);
+        {k, g, rF}
+    ));
+    netList({hdrs} | rows, Alignment => Center, HorizontalSpace => 1, BaseRow => 0)
+)
+dgModuleSummary DGModule := M -> (
+    d := maxDegree M;
+    if d === infinity then
+        error "dgModuleSummary: hom-degree is unbounded; supply an integer bound.";
+    dgModuleSummary(M, d)
+)
+
+-- moduleBlockPhiMap(M, i, inVec, j, outVec): the (tgt <- src) block of d_n
+-- where n = (first M.Degrees#i) + sum inVec, mapping
+--   basis of chunk-vec-inVec monomials * e_i  ->
+--   basis of chunk-vec-outVec monomials * e_j.
+-- Returns a matrix over A.ring (or null on degree mismatch).
+moduleBlockPhiMap = (M, i, inVec, j, outVec) -> (
+    A := M.dgAlgebra;
+    R := A.ring;
+    varsA := getVariableChunks A;
+    h := #varsA;
+    if h != #inVec or h != #outVec then return null;
+    srcHomDeg := sum inVec + first M.Degrees#i;
+    tgtHomDeg := sum outVec + first M.Degrees#j;
+    if srcHomDeg - 1 != tgtHomDeg then return null;
+    inBasisMat := if h == 0 then matrix{{1_(A.natural)}}
+                  else tensor apply(h, k -> basis(inVec#k, A.natural, Variables => varsA#k));
+    outBasisMat := if h == 0 then matrix{{1_(A.natural)}}
+                   else tensor apply(h, k -> basis(outVec#k, A.natural, Variables => varsA#k));
+    inMons := flatten entries inBasisMat;
+    outMons := flatten entries outBasisMat;
+    numSrc := #inMons;
+    numTgt := #outMons;
+    shifts := dd -> -drop(dd, 1);
+    srcDegs := apply(inMons, m -> shifts degree(m * (M.natural)_i));
+    tgtDegs := apply(outMons, m -> shifts degree(m * (M.natural)_j));
+    if numSrc == 0 or numTgt == 0 then
+        return map(R^tgtDegs, R^srcDegs, 0);
+    mat := mutableMatrix(R, numTgt, numSrc);
+    scan(numSrc, c -> (
+        m := inMons#c;
+        db := moduleLeibniz(M, i, m);
+        dbEntries := entries db;
+        fj := dbEntries#j;
+        if fj == 0 then return;
+        coefMat := (coefficients(matrix{{fj}}, Monomials => matrix{outMons}))#1;
+        coefMatR := sub(coefMat, R);
+        scan(numTgt, a -> (
+            cij := coefMatR_(a, 0);
+            if cij != 0 then mat_(a, c) = cij;
+        ));
+    ));
+    map(R^tgtDegs, R^srcDegs, matrix mat)
+)
+
+-- moduleDegreeLabels(M, n): sorted list of block labels (i, chunkVec) for
+-- hom-degree n. A label (i, v) means "generator e_i times an A-monomial of
+-- chunk-degree v".
+moduleDegreeLabels = (M, n) -> (
+    A := M.dgAlgebra;
+    sort flatten apply(#M.Degrees, i -> (
+        di := first M.Degrees#i;
+        needed := n - di;
+        if needed < 0 then {}
+        else apply(degreeVecs(A, needed), v -> {i, v})
+    ))
+)
+
+-- moduleBlockDiff(M, n): the hom-degree-n differential of M as a block
+-- matrix indexed by module-gen-chunk labels. Parallels blockDiff(A, n).
+-- Cached in M.cache#"moduleBlockDiffs".
+moduleBlockDiff = method()
+moduleBlockDiff (DGModule, ZZ) := (M, n) -> (
+    ensureDGAlgebraCaches M;
+    if not M.cache#?"moduleBlockDiffs" then
+        M.cache#"moduleBlockDiffs" = new MutableHashTable;
+    if M.cache#"moduleBlockDiffs"#?n then return M.cache#"moduleBlockDiffs"#n;
+    A := M.dgAlgebra;
+    R := A.ring;
+    srcLabels := moduleDegreeLabels(M, n);
+    tgtLabels := moduleDegreeLabels(M, n - 1);
+    numSrc := #srcLabels;
+    numTgt := #tgtLabels;
+    -- Gather per-block matrices.
+    tempM := table(numTgt, numSrc, (a, b) -> (
+        tgtLbl := tgtLabels#a;
+        srcLbl := srcLabels#b;
+        moduleBlockPhiMap(M, srcLbl#0, srcLbl#1, tgtLbl#0, tgtLbl#1)
+    ));
+    -- Helper: build the labeled source free module (one labeled summand per
+    -- src label); or labeled target free module. Used to assemble the
+    -- direct-sum structure even when tempM has no per-block maps to
+    -- derive the components from (empty one side).
+    varsA := getVariableChunks A;
+    labelFreeModule := (lbls, genIdxPos) -> (
+        mods := apply(lbls, lbl -> (
+            gi := lbl#(genIdxPos#0);
+            v := lbl#(genIdxPos#1);
+            basisMat := if #varsA == 0 then matrix{{1_(A.natural)}}
+                else tensor apply(#varsA, k -> basis(v#k, A.natural, Variables => varsA#k));
+            mons := flatten entries basisMat;
+            R^(apply(mons, m -> -drop(degree(m * (M.natural)_gi), 1)))
+        ));
+        if #lbls == 0 then R^0
+        else directSum apply(#lbls, a -> lbls#a => mods#a)
+    );
+    srcLabelFM := labelFreeModule(srcLabels, (0, 1));
+    tgtLabelFM := labelFreeModule(tgtLabels, (0, 1));
+    result := if numSrc == 0 or numTgt == 0 then
+            map(tgtLabelFM, srcLabelFM, 0)
+        else
+            map(tgtLabelFM, srcLabelFM, matrix tempM);
+    M.cache#"moduleBlockDiffs"#n = result;
+    result
+)
+
+-- displayModuleBlockDiff(M, n): pretty-print moduleBlockDiff with block
+-- labels in the header row / column. Mirrors displayBlockDiff(A, d).
+displayModuleBlockDiff = method()
+displayModuleBlockDiff (DGModule, ZZ) := (M, n) -> (
+    dn := moduleBlockDiff(M, n);
+    inputLbls := indices source dn;
+    outputLbls := indices target dn;
+    if #inputLbls == 0 and #outputLbls == 0 then return "(empty)";
+    firstRow := {"."} | inputLbls;
+    if #outputLbls == 0 then return netList({firstRow}, Alignment => Center);
+    body := apply(outputLbls, o -> (
+        {o} | apply(inputLbls, i -> dn^[o]_[i])
+    ));
+    netList({firstRow} | body, Alignment => Center)
+)
+
+-- Expose the underlying label machinery for introspection.
+displayModuleBlockDiff (DGModule, List, List) := (M, srcLbl, tgtLbl) -> (
+    -- srcLbl is a single label {i, v}; tgtLbl is {j, w}.
+    n := (first M.Degrees#(srcLbl#0)) + sum(srcLbl#1);
+    dn := moduleBlockDiff(M, n);
+    dn_[srcLbl]^[tgtLbl]
+)
+
+-------------------------------------------------------------------------
+-- DG module element <-> coefficient-over-A.ring bridge.
+--
+-- A free DG module F = (A.natural)^(-degList) has, at hom-degree n, an
+-- A.ring-basis consisting of pairs (i, m) with m an A.natural monomial of
+-- hom-degree n - d_i. moduleBasisPairs gives these pairs; the two helpers
+-- below convert between Vectors in M.natural and their coefficient
+-- columns over A.ring in that basis.
+-------------------------------------------------------------------------
+-- moduleCoefficients(M, v, n): column vector over A.ring of coefficients
+-- of v (a Vector in M.natural, assumed at hom-degree n) in the F_n basis.
+moduleCoefficients = method()
+moduleCoefficients (DGModule, Vector, ZZ) := (M, v, n) -> (
+    if not isFreeModule M.natural then
+        error "moduleCoefficients: requires a free DGModule (freeDGModule output).";
+    A := M.dgAlgebra;
+    R := A.ring;
+    pairs := moduleBasisPairs(M, n);
+    if #pairs == 0 then return map(R^0, R^1, 0);
+    vEntries := entries v;
+    numNatGens := rank M.natural;
+    byGen := new MutableHashTable;
+    scan(numNatGens, i -> byGen#i = {});
+    scan(#pairs, k -> (
+        (i, mon) := pairs#k;
+        byGen#i = append(byGen#i, (k, mon));
+    ));
+    col := mutableMatrix(R, #pairs, 1);
+    scan(numNatGens, i -> (
+        fi := vEntries#i;
+        if fi == 0 then return;
+        rows := byGen#i;
+        if #rows == 0 then return;
+        tgtMons := apply(rows, pr -> pr#1);
+        coefMat := (coefficients(matrix{{fi}}, Monomials => matrix{tgtMons}))#1;
+        coefMatR := sub(coefMat, R);
+        scan(#rows, idx -> (
+            rowIdx := (rows#idx)#0;
+            col_(rowIdx, 0) = coefMatR_(idx, 0);
+        ));
+    ));
+    matrix col
+)
+
+-- moduleFromCoefficients(M, col, n): reconstitute a Vector in M.natural
+-- (at hom-degree n) from a column vector of A.ring coefficients.
+moduleFromCoefficients = method()
+moduleFromCoefficients (DGModule, Matrix, ZZ) := (M, col, n) -> (
+    if not isFreeModule M.natural then
+        error "moduleFromCoefficients: requires a free DGModule.";
+    pairs := moduleBasisPairs(M, n);
+    if #pairs == 0 then return 0_(M.natural);
+    natGens := apply(rank M.natural, i -> (M.natural)_i);
+    sum apply(#pairs, k -> (
+        (i, mon) := pairs#k;
+        c := col_(k, 0);
+        if c == 0 then 0_(M.natural) else c * mon * natGens#i
+    ))
+)
+
+-- diff(M, v): apply the DG module differential to a Vector v in M.natural.
+-- Uses Leibniz directly (no basis reconstruction needed).
+diff (DGModule, Vector) := (M, v) -> (
+    A := M.dgAlgebra;
+    vEntries := entries v;
+    numGens := rank M.natural;
+    natGens := apply(numGens, i -> (M.natural)_i);
+    sum apply(numGens, i -> (
+        fi := vEntries#i;
+        if fi == 0 then 0_(M.natural)
+        else (
+            term1 := polyDifferential(A, fi) * natGens#i;
+            signExp := first degree fi;
+            sign := if odd signExp then -1 else 1;
+            term2 := sign * fi * M.diff#i;
+            term1 + term2
+        )
+    ))
+)
+
+
+-------------------------------------------------------------------------
+-- getBoundaryPreimage(DGModule, ...): lift a boundary b in M to a
+-- preimage x with d_M(x) = b. Returns a pair
+--   (true, preimage)  -- if b is a boundary
+--   (false, residue)  -- if not; residue is (b - d_M(liftAttempt))
+-- Parallels getBoundaryPreimage(DGAlgebra, ...).
+-------------------------------------------------------------------------
+getBoundaryPreimage (DGModule, List) := (M, boundaryList) -> (
+    if not isFreeModule M.natural then
+        error "getBoundaryPreimage DGModule: requires a free DGModule.";
+    A := M.dgAlgebra;
+    R := A.ring;
+    nonzeros := select(boundaryList, b -> b != 0);
+    if nonzeros == {} then return (true, boundaryList);
+    homDegree := first degree first nonzeros;
+    if any(boundaryList, b -> b != 0 and first degree b != homDegree) then
+        error "getBoundaryPreimage DGModule: boundary elements must share a hom-degree.";
+    srcPairs := moduleBasisPairs(M, homDegree);
+    if #srcPairs == 0 then (
+        -- No basis at this degree => only zero can be a boundary.
+        return (true, apply(#boundaryList, i -> 0_(M.natural)));
+    );
+    coefCols := apply(boundaryList, b ->
+        if b == 0 then map(R^(#srcPairs), R^1, 0) else moduleCoefficients(M, b, homDegree)
+    );
+    boundaryMat := matrix {coefCols};
+    dnplus1 := moduleDifferential(homDegree + 1, M);
+    -- Align boundaryMat's target with dnplus1's target so that // sees
+    -- a common graded target (moduleCoefficients builds an ungraded
+    -- R^(#srcPairs) by default; retarget it to R^(tgtDegs) of dn).
+    dn := moduleDifferential(homDegree, M);
+    boundaryMat = map(source dn, source boundaryMat, boundaryMat);
+    liftMat := boundaryMat // dnplus1;
+    residual := boundaryMat - dnplus1 * liftMat;
+    if residual != 0 then (
+        residueVectors := apply(numcols boundaryMat, j ->
+            moduleFromCoefficients(M, residual_{j}, homDegree));
+        return (false, residueVectors);
+    );
+    preimages := apply(numcols boundaryMat, j ->
+        moduleFromCoefficients(M, liftMat_{j}, homDegree + 1));
+    (true, preimages)
+)
+
+getBoundaryPreimage (DGModule, Vector) := (M, b) -> (
+    (lifted, myLift) := getBoundaryPreimage(M, {b});
+    (lifted, first myLift)
+)
+
+-------------------------------------------------------------------------
+-- homologyClass(DGModule, Vector): given a cycle z of hom-degree d,
+-- return an element of (prune homology(d, M)) representing [z]. Parallels
+-- homologyClass(DGAlgebra, RingElement), but returns per-degree pruned
+-- homology rather than the full H_*(A)-module (the latter requires a
+-- richer cycle-representative cache; see homologyModule DGModule).
+-------------------------------------------------------------------------
+homologyClass (DGModule, Vector) := (M, z) -> (
+    if not isFreeModule M.natural then
+        error "homologyClass DGModule: requires a free DGModule.";
+    if z == 0 then (
+        -- Hom-degree of the zero vector is ambiguous; pick d=0 by convention.
+        return 0_(prune homology(0, M));
+    );
+    d := first degree z;
+    -- Verify z is a cycle (Leibniz-based).
+    if diff(M, z) != 0 then
+        error "homologyClass DGModule: expected a cycle.";
+    H := prune homology(d, M);
+    if H == 0 then return 0_H;
+    zCol := moduleCoefficients(M, z, d);
+    pruneMat := matrix H.cache.pruningMap;
+    boundaryMat := moduleDifferential(d + 1, M);
+    -- Solve zCol = pruneMat * hCoef + boundaryMat * t.
+    -- Concatenate and let M2 do the division.
+    combined := if numcols boundaryMat == 0 then pruneMat else pruneMat | boundaryMat;
+    sol := zCol // combined;
+    if combined * sol != zCol then
+        error "homologyClass DGModule: failed to express cycle in homology basis (cycle not in image of pruning map + boundaries).";
+    hCoef := sol^{0 .. (numcols pruneMat - 1)};
+    -- Build the element: sum h_i * H_i. pruneMat has numcols = numgens H.
+    sum apply(numcols pruneMat, i -> (
+        c := hCoef_(i, 0);
+        if c == 0 then 0_H else c * H_i
+    ))
+)
+
+-------------------------------------------------------------------------
+-- moduleMultMap(M, z): the chain map "left multiplication by z" on
+-- toComplex M, where z is a cycle of hom-degree d in A.natural. Parallels
+-- dgAlgebraMultMap. Source at deg i: F_i; target at deg i+d: F_{i+d}.
+-- Leibniz guarantees this is a chain map when z is a cycle.
+-------------------------------------------------------------------------
+moduleMultMap = method()
+moduleMultMap (DGModule, RingElement) := (M, z) -> (
+    if not isFreeModule M.natural then
+        error "moduleMultMap: requires a free DGModule.";
+    A := M.dgAlgebra;
+    R := A.ring;
+    cxM := toComplex M;
+    if z == 0 then
+        return map(cxM, cxM, i -> map(cxM_i, cxM_i, 0), Degree => 0);
+    d := first degree z;
+    cxM2 := cxM ** R^(-(drop(degree z, 1)));
+    buildDegMap := i -> (
+        srcPairs := moduleBasisPairs(M, i);
+        tgtPairs := moduleBasisPairs(M, i + d);
+        tgtMod := cxM_(i + d);
+        srcMod := cxM2_i;
+        if #srcPairs == 0 or #tgtPairs == 0 then
+            return map(tgtMod, srcMod, 0);
+        tgtByGen := new MutableHashTable;
+        scan(rank M.natural, j -> tgtByGen#j = {});
+        scan(#tgtPairs, k -> (
+            (j, mp) := tgtPairs#k;
+            tgtByGen#j = append(tgtByGen#j, (k, mp));
+        ));
+        mat := mutableMatrix(R, #tgtPairs, #srcPairs);
+        scan(#srcPairs, c -> (
+            (j, mon) := srcPairs#c;
+            zMon := z * mon;
+            if zMon == 0 then return;
+            rows := tgtByGen#j;
+            if #rows == 0 then return;
+            tgtMonsJ := apply(rows, pr -> pr#1);
+            coefMat := (coefficients(matrix{{zMon}}, Monomials => matrix{tgtMonsJ}))#1;
+            coefMatR := sub(coefMat, R);
+            scan(#rows, idx -> (
+                rowIdx := (rows#idx)#0;
+                cij := coefMatR_(idx, 0);
+                if cij != 0 then mat_(rowIdx, c) = cij;
+            ));
+        ));
+        map(tgtMod, srcMod, matrix mat)
+    );
+    map(cxM, cxM2, buildDegMap, Degree => d)
+)
+
+-------------------------------------------------------------------------
+-- moduleRelationsFromCycleActionDGM: DGModule analog of the
+-- ModuleRelationsFromCycleAction helper used by homologyModule. Given a
+-- DGModule M and a cycle z in A = M.dgAlgebra, build the action of the
+-- homology class [z] on H_*(M) as a map over H_*(A), and return the
+-- relation h - z.action (where h is left-mult by [z] in HA).
+-------------------------------------------------------------------------
+moduleRelationsFromCycleActionDGM = (M, z) -> (
+    A := M.dgAlgebra;
+    R := A.ring;
+    HA := HH(A);
+    h := homologyClass(A, z);
+    d := first degree z;
+    zChainMap := moduleMultMap(M, z);
+    cxM := target zChainMap;
+    (lo, hi) := concentration cxM;
+    pruneHM := new MutableHashTable;
+    pruneMapMat := new MutableHashTable;
+    for i from lo to hi do (
+        pruneHM#i = prune HH_i(cxM);
+        pruneMapMat#i = matrix (pruneHM#i).cache.pruningMap;
+    );
+    actionOnPruned := new MutableHashTable;
+    for i from lo to hi - d do (
+        hhMat := matrix HH_i(zChainMap);
+        composed := hhMat * pruneMapMat#i;
+        actionOnPruned#i = composed // pruneMapMat#(i + d);
+    );
+    ll := hi - lo + 1;
+    degsHMTarget := flatten apply(toList(lo..hi),
+        p -> apply(degrees pruneHM#p, dd -> {p} | dd));
+    degsHMSource := flatten apply(toList(lo..hi),
+        p -> apply(degrees pruneHM#p, dd -> ({p} | dd) + degree z));
+    buildBlock := (iIdx, jIdx) -> (
+        i := lo + iIdx;
+        j := lo + jIdx;
+        if j + d != i then map(pruneHM#i, pruneHM#j, 0)
+        else if not actionOnPruned#?j then map(pruneHM#i, pruneHM#j, 0)
+        else map(pruneHM#i, pruneHM#j, actionOnPruned#j)
+    );
+    matActOfZ := map(HA^(-degsHMTarget), HA^(-degsHMSource),
+        tensor(map(HA, R), matrix table(ll, ll, buildBlock)));
+    map(HA^(-degsHMTarget), HA^(-degsHMSource), h) - matActOfZ
+)
+
+-------------------------------------------------------------------------
+-- homologyModule DGModule: generalized to arbitrary free DGModules.
+-- Previously restricted to koszulComplexDGM form (via M.module); now
+-- also supports freeDGModule-built M with general generator differentials.
+--
+-- Fast path: when M.?module and d vanishes on every generator, defer to
+-- homologyModule(A, M.module) (unchanged, uses existing Koszul-tensor logic).
+--
+-- General path: iterate over HA.cache.cycles, use moduleMultMap to build
+-- the action of each cycle class on toComplex M, and assemble the
+-- resulting H_*(A)-module presentation.
+-------------------------------------------------------------------------
+homologyModule DGModule := M -> (
+    A := M.dgAlgebra;
+    if M.?module and all(M.diff, z -> z == 0) then
+        return homologyModule(A, M.module);
+    if not isFreeModule M.natural then
+        error "homologyModule DGModule: non-free DGModules with nonzero differentials are not supported.";
+    HA := HH(A);
+    allActions := apply(HA.cache.cycles, z -> moduleRelationsFromCycleActionDGM(M, z));
+    minimalPresentation coker matrix {allActions}
+)
+
+-------------------------------------------------------------------------
+-- DGModule ** Ring: base change along R -> S. For a free DGModule M
+-- over a DGAlgebra A, builds M \otimes_R S = a free DG module over A \otimes S.
+-- For koszulComplexDGM-built M, base-changes M.module and rebuilds.
+-- Mirrors DGAlgebra ** Ring.
+-------------------------------------------------------------------------
+DGModule ** Ring := (M, S) -> (
+    -- Cache M ** S so repeated base-changes agree (critical for
+    -- DGModuleMap ** Ring to produce source/target in the same world).
+    if M.cache#?"tensorWithRing" and (M.cache#"tensorWithRing")#?S then
+        return (M.cache#"tensorWithRing")#S;
+    A := M.dgAlgebra;
+    B := A ** S;
+    Mnew := null;
+    if M.?module and all(M.diff, z -> z == 0) then (
+        -- koszulComplexDGM form: base-change the underlying R-module.
+        newUnderlying := M.module ** S;
+        Mnew = koszulComplexDGM(B, newUnderlying);
+    ) else (
+        if not isFreeModule M.natural then
+            error "DGModule ** Ring: base change requires either koszulComplexDGM form or a free DGModule.";
+        -- Free path: lift each generator differential into B.natural.
+        Mnew = freeDGModule(B, M.Degrees);
+        numG := rank M.natural;
+        natGensNew := apply(numG, i -> (Mnew.natural)_i);
+        newDiffs := apply(M.diff, v -> (
+            if v === 0 then 0_(Mnew.natural)
+            else (
+                vEntries := entries v;
+                sum apply(numG, i -> (
+                    fi := vEntries#i;
+                    if fi == 0 then 0_(Mnew.natural)
+                    else (sub(fi, B.natural)) * natGensNew#i
+                ))
+            )
+        ));
+        setDiff(Mnew, newDiffs);
+    );
+    if not M.cache#?"tensorWithRing" then
+        M.cache#"tensorWithRing" = new MutableHashTable;
+    (M.cache#"tensorWithRing")#S = Mnew;
+    Mnew
+)
+
+-------------------------------------------------------------------------
+-- DGModule ** DGModule: EXTERIOR tensor product.
+--
+-- Inputs:  M a free DGModule over A, N a free DGModule over B, where
+--          A.ring === B.ring.
+-- Output:  a free DGModule P over C = A ** B of rank (rank M)(rank N).
+--          Generators: e_i ⊗ f_j for 0 ≤ i < rM, 0 ≤ j < rN, ordered
+--          row-major (generator (i, j) has linear index i*rN + j).
+--          Multidegree of e_i ⊗ f_j: M.Degrees#i + N.Degrees#j.
+--          Differential (Koszul sign):
+--            d(e_i ⊗ f_j) = d_M(e_i) ⊗ f_j + (-1)^{|e_i|} e_i ⊗ d_N(f_j)
+--          where |e_i| is the hom-degree (first component) of e_i.
+--
+-- Use cases: build small DGAs and modules over them separately, then
+-- assemble their exterior product to get a DG module over A ** B.
+-- This differs from the internal tensor product M ⊗_A N (which is
+-- NOT what is built here).
+--
+-- Restrictions:
+--   * Both M and N must be free DGModules. koszulComplexDGM-style M
+--     with M.module attached is not (yet) supported.
+--   * A.ring === B.ring required (matches DGAlgebra **).
+-------------------------------------------------------------------------
+DGModule ** DGModule := (M, N) -> (
+    A := M.dgAlgebra;
+    B := N.dgAlgebra;
+    if A.ring =!= B.ring then
+        error "DGModule **: factors must be DGModules over DGAlgebras sharing a common ground ring.";
+    if not isFreeModule M.natural or not isFreeModule N.natural then
+        error "DGModule **: both modules must be free DGModules (koszulComplexDGM/cokernel form not supported).";
+    -- Cache M ** N on M so that repeated calls return the same DGModule
+    -- (important for UX: (F ** G) has source = M ** N, and we want a
+    -- fresh `M ** N` call to agree with the internal one).
+    if M.cache#?"tensorWith" and (M.cache#"tensorWith")#?N then
+        return (M.cache#"tensorWith")#N;
+    C := A ** B;
+    (iotaA, iotaB) := tensorInclusions C;
+    iA := iotaA.natural;  -- RingMap A.natural -> C.natural
+    iB := iotaB.natural;  -- RingMap B.natural -> C.natural
+    rM := rank M.natural;
+    rN := rank N.natural;
+    -- Combined generator multidegrees.
+    combinedDegrees := flatten apply(rM, i -> apply(rN, j -> (
+        dM := M.Degrees#i;
+        dN := N.Degrees#j;
+        apply(#dM, k -> dM#k + dN#k)
+    )));
+    P := freeDGModule(C, combinedDegrees);
+    Pgens := apply(rank P.natural, k -> (P.natural)_k);
+    idxOf := (i, j) -> i * rN + j;
+    -- Leibniz differential on each generator (i, j).
+    diffs := flatten apply(rM, i -> apply(rN, j -> (
+        sign := (-1)^(first M.Degrees#i);
+        dMe := M.diff#i;
+        firstTerm := if dMe == 0 then 0_(P.natural)
+            else (
+                entriesM := entries dMe;
+                sum apply(rM, k -> (
+                    coef := entriesM#k;
+                    if coef == 0 then 0_(P.natural)
+                    else (iA coef) * Pgens#(idxOf(k, j))
+                ))
+            );
+        dNf := N.diff#j;
+        secondTerm := if dNf == 0 then 0_(P.natural)
+            else (
+                entriesN := entries dNf;
+                sum apply(rN, l -> (
+                    coef := entriesN#l;
+                    if coef == 0 then 0_(P.natural)
+                    else sign * (iB coef) * Pgens#(idxOf(i, l))
+                ))
+            );
+        firstTerm + secondTerm
+    )));
+    setDiff(P, diffs);
+    P.cache#"tensorFactors" = (M, N);
+    if not M.cache#?"tensorWith" then
+        M.cache#"tensorWith" = new MutableHashTable;
+    (M.cache#"tensorWith")#N = P;
+    P
+)
+
+-- ring DGModule / numgens DGModule: trivial accessors
+ring DGModule := M -> M.ring
+
+-- maxDegree(M): the max hom-degree in the DG module is the max hom-degree
+-- of the ambient DG algebra plus the largest hom-degree shift of a module
+-- generator. If an even generator is present in A, A has infinite
+-- hom-degree and so does M (return infinity).
+maxDegree DGModule := M -> (
+    A := M.dgAlgebra;
+    aMax := maxDegree A;
+    if aMax === infinity then return infinity;
+    if #M.Degrees == 0 then return aMax;
+    aMax + max(apply(M.Degrees, d -> first d))
+)
+
+-- getBasis(n, M): an A.ring-basis of the hom-degree-n piece of M.natural.
+-- Delegates to basis on the underlying A.natural-module.
+getBasis (ZZ, DGModule) := opts -> (n, M) -> (
+    if opts.Limit == -1 then basis(n, M.natural, Variables => 0 .. numgens (M.dgAlgebra).natural - 1)
+    else basis(n, M.natural, Limit => opts.Limit, Variables => 0 .. numgens (M.dgAlgebra).natural - 1)
+)
+
+-- toComplex(M, n): the chain complex of underlying A.ring-modules,
+-- truncated at hom-degree n.
+-- toComplex(M): use M's maxDegree (errors if infinite, matching DGAlgebra).
+toComplex DGModule := M -> (
+    maxDeg := maxDegree M;
+    if maxDeg === infinity then
+        error "Must specify an upper degree bound if an even generator exists in underlying DG algebra.";
+    toComplex(M, maxDeg)
+)
+toComplex (DGModule, ZZ) := (M, n) -> (
+    if n <= 0 then complex({moduleDifferential(0, M)})
+    else complex(apply(n, i -> moduleDifferential(i+1, M)))
+)
+
+-- dgComplex(M): lazily-cached Complex of free A.ring-modules for M.
+-- Mirrors dgComplex(DGAlgebra). Invalidation: clear M.cache.dgComplex.
+dgComplex DGModule := M -> (
+    ensureDGAlgebraCaches M;
+    if M.cache#?(symbol dgComplex) then return M.cache#(symbol dgComplex);
+    n := maxDegree M;
+    if n === infinity then (
+        A := M.dgAlgebra;
+        n = sum select(degrees A.natural / first, i -> odd i) + 1;
+    );
+    C := toComplex(M, max(n, 1));
+    M.cache#(symbol dgComplex) = C;
+    C
+)
+
+-- homology(M) unary: the full H_*(A)-module structure on H_*(M), matching
+-- the DGAlgebra convention that HH with no integer returns the homology
+-- algebra (line 544: `homology DGAlgebra := A -> homologyAlgebra(A)`).
+-- For a per-degree R-module, use homology(n, M).
+-- (homologyModule DGModule is defined below alongside the general-path
+-- machinery for non-trivial generator differentials.)
+homology DGModule := opts -> M -> homologyModule M
+
+-- isAcyclic(M): H_i(M) = 0 for i >= 1 up to a finite bound. Requires
+-- EndDegree when M has infinite hom-degree, matching isAcyclic DGAlgebra.
+isAcyclic DGModule := opts -> M -> (
+    endDegree := maxDegree M;
+    if endDegree === infinity and opts.EndDegree == -1 then
+        error "Must supply an upper bound to check for acyclicity.";
+    if opts.EndDegree != -1 then endDegree = opts.EndDegree;
+    not any(1..endDegree, i -> prune homology(i, M) != 0)
+)
+
+-- isValidDGModule(M): structural-invariant check on the stored object.
+-- Parallels isValidDGAlgebra: required keys with expected types, and
+-- generator-degree list length matches differential list length. Does
+-- not check d_M^2 = 0 (see isWellDefinedDifferential DGModule).
+isValidDGModule = method(TypicalValue => Boolean)
+isValidDGModule DGModule := M -> (
+    if not M#?(symbol dgAlgebra) or not instance(M#(symbol dgAlgebra), DGAlgebra) then return false;
+    if not isValidDGAlgebra M.dgAlgebra then return false;
+    if not M#?(symbol ring) or not instance(M#(symbol ring), Ring) then return false;
+    if not M#?(symbol natural) or not instance(M#(symbol natural), Module) then return false;
+    if not M#?(symbol Degrees) or not instance(M#(symbol Degrees), List) then return false;
+    if not M#?(symbol diff) or not instance(M#(symbol diff), List) then return false;
+    if #M.diff != #M.Degrees then return false;
+    true
+)
+
+-- isWellDefined DGModule.  Analog of isWellDefined DGAlgebra: checks
+-- keys/types via isValidDGModule, then verifies the ambient DGAlgebra is
+-- well-defined and d_M^2 = 0 up to maxDegree.  Diagnostic messages
+-- emitted when debugLevel > 0.
+isWellDefined DGModule := M -> (
+    if not isValidDGModule M then (
+        if debugLevel > 0 then (
+            missing := select(
+                {symbol dgAlgebra, symbol ring, symbol natural, symbol Degrees, symbol diff},
+                s -> not M#?s);
+            if #missing > 0 then
+                << "-- DGModule: missing required key(s): " << toString missing << endl;
+            if M#?(symbol diff) and M#?(symbol Degrees) and #M.diff != #M.Degrees then
+                << "-- DGModule: #M.diff (" << #M.diff << ") != #M.Degrees (" << #M.Degrees << ")" << endl;
+        );
+        return false;
+    );
+    if not isWellDefined M.dgAlgebra then (
+        if debugLevel > 0 then << "-- DGModule: M.dgAlgebra is not a well-defined DGAlgebra" << endl;
+        return false;
+    );
+    if M.ring =!= M.dgAlgebra.ring then (
+        if debugLevel > 0 then << "-- DGModule: M.ring does not equal M.dgAlgebra.ring" << endl;
+        return false;
+    );
+    -- Each entry of M.diff must be an element of M.natural (or coercible).
+    for i from 0 to #M.diff - 1 do (
+        d := M.diff#i;
+        try (
+            -- Test coercion: the entry should be in M.natural's module structure.
+            if not (instance(d, Vector) or instance(d, Matrix) or d == 0_(M.natural)) then (
+                if debugLevel > 0 then
+                    << "-- DGModule: M.diff#" << i << " is not a module element of M.natural" << endl;
+                return false;
+            );
+        ) else (
+            if debugLevel > 0 then
+                << "-- DGModule: M.diff#" << i << " cannot be interpreted in M.natural" << endl;
+            return false;
+        );
+    );
+    -- Semantic: d_M^2 = 0 up to a finite bound.
+    if not isWellDefinedDifferential M then (
+        if debugLevel > 0 then << "-- DGModule: d_M^2 fails to vanish" << endl;
+        return false;
+    );
+    true
+)
+
+-- isWellDefinedDifferential(M): semantic check d_M^2 = 0.
+-- For a DG module we need this on every hom-degree up to some bound,
+-- since Leibniz-via-A.diff does not reduce the check to generators alone:
+-- d_M(a x) = d_A(a) x + (-1)^|a| a d_M(x) — even if d_M vanishes on x,
+-- we must know d_A^2 = 0 on A to conclude d_M^2 = 0 globally, and in the
+-- general case the generator differentials can mix. We therefore check
+-- d_{n-1} d_n = 0 up to maxDegree.
+isWellDefinedDifferential DGModule := M -> (
+    if not isValidDGModule M then return false;
+    if not isWellDefinedDifferential M.dgAlgebra then return false;
+    n := maxDegree M;
+    if n === infinity then (
+        A := M.dgAlgebra;
+        n = sum select(degrees A.natural / first, i -> odd i) + 1;
+    );
+    all(1..max(n,1), i -> moduleDifferential(i-1, M) * moduleDifferential(i, M) == 0)
+)
+
+-- ensureDGAlgebraCaches(M) / invalidateDGAlgebraCache(M): parallel to
+-- the DGAlgebra versions. Creates the expected cache subtables so later
+-- code can assume they exist; invalidation wipes derived state.
+ensureDGAlgebraCaches DGModule := M -> (
+    if not M#?(symbol cache)
+       or M#(symbol cache) === null
+       or not instance(M#(symbol cache), CacheTable)
+    then M#(symbol cache) = new CacheTable;
+    if not M.cache#?(symbol diffs)
+       or not instance(M.cache#(symbol diffs), MutableHashTable)
+    then M.cache#(symbol diffs) = new MutableHashTable;
+    M
+)
+
+invalidateDGAlgebraCache DGModule := M -> (
+    ensureDGAlgebraCaches M;
+    M.cache#(symbol diffs) = new MutableHashTable;
+    if M.cache#?(symbol dgComplex) then remove(M.cache, symbol dgComplex);
+    if M.cache#?"moduleBlockDiffs" then remove(M.cache, "moduleBlockDiffs");
+    M
+)
+
+-------------------------------------------------------------------------
+-- DGModuleMap: morphisms of DG modules over a common DGAlgebra A.
+--
+-- A DG module map f: M -> N of hom-degree 0 is:
+--   * A-linear:    f(a . m) = a . f(m)          for a in A.natural, m in M
+--   * chain map:   d_N( f(m) ) = f( d_M(m) )
+-- Only same-DGA maps (M.dgAlgebra === N.dgAlgebra) are supported. Degree-
+-- shifted variants and change-of-algebra maps are deferred (moduleMultMap
+-- already provides the degree-shifted ComplexMap use case directly).
+--
+-- A-linearity means the action on a general element is determined by the
+-- images of the natural generators of M:
+--   f( sum a_i e_i ) = sum a_i f(e_i)
+-- So the underlying data is stored as a Matrix N.natural <- M.natural
+-- (A.natural-linear), whose i-th column is f(e_i).
+-------------------------------------------------------------------------
+
+net DGModuleMap := f -> (
+    hdr := {net "Source => " | net f.source.natural};
+    hdr = hdr | {net "Target => " | net f.target.natural};
+    hdr = hdr | {net "Natural => " | net f.natural};
+    horizontalJoin flatten ("{", stack hdr, "}")
+)
+
+target DGModuleMap := f -> f.target
+source DGModuleMap := f -> f.source
+
+-- Internal helper: build a Matrix N.natural <- (A.ring)^(#imgList) whose
+-- columns are the given Vectors in N.natural. Handles zero entries.
+vectorsToColumnMatrix = (N, imgList) -> (
+    if #imgList == 0 then map(N.natural, (ring N.natural)^0, 0)
+    else (
+        -- Each Vector's entries are elements of the ambient ring of N.natural
+        -- (i.e. A.natural); transposing makes them columns.
+        rows := apply(imgList, v -> if v === 0 then apply(rank ambient N.natural, i -> 0) else entries v);
+        transpose matrix rows
+    )
+)
+
+dgModuleMap = method(TypicalValue => DGModuleMap)
+
+-- Primary constructor: image matrix is an A.natural-linear Matrix
+-- N.natural <- M.natural, whose i-th column gives f(e_i).
+dgModuleMap (DGModule, DGModule, Matrix) := (N, M, img) -> (
+    if M.dgAlgebra =!= N.dgAlgebra then
+        error "dgModuleMap: source and target must share the same DG algebra.";
+    A := M.dgAlgebra;
+    -- Coerce the caller-supplied matrix into a proper map N.natural <- M.natural.
+    natMap := try map(N.natural, M.natural, img) else
+        error "dgModuleMap: could not coerce matrix into a map N.natural <- M.natural.";
+    f := new MutableHashTable;
+    f#(symbol source)    = M;
+    f#(symbol target)    = N;
+    f#(symbol dgAlgebra) = A;
+    f#(symbol natural)   = natMap;
+    f#(symbol cache)     = new CacheTable;
+    new DGModuleMap from f
+)
+
+-- Convenience constructor: imgList is a list of Vectors in N.natural (or
+-- 0), one per M-generator.
+dgModuleMap (DGModule, DGModule, List) := (N, M, imgList) -> (
+    if M.dgAlgebra =!= N.dgAlgebra then
+        error "dgModuleMap: source and target must share the same DG algebra.";
+    if #imgList != #M.Degrees then
+        error ("dgModuleMap: expected " | toString(#M.Degrees)
+            | " image entries (one per source generator); got " | toString(#imgList) | ".");
+    -- Coerce entries to Vectors in N.natural.
+    coerced := apply(imgList, v -> (
+        if v === 0 then 0_(N.natural)
+        else if instance(v, Vector) then v
+        else try (sub(v, N.natural)) else
+            error "dgModuleMap: could not coerce image entry to N.natural."
+    ));
+    mat := vectorsToColumnMatrix(N, coerced);
+    dgModuleMap(N, M, mat)
+)
+
+-- identityDGModuleMap M: the identity map M -> M. Useful as the base of
+-- recursive constructions and for testing isWellDefined.
+identityDGModuleMap = method(TypicalValue => DGModuleMap)
+identityDGModuleMap DGModule := M -> dgModuleMap(M, M, id_(M.natural))
+
+-- zeroDGModuleMap(N, M): the zero map M -> N.
+zeroDGModuleMap = method(TypicalValue => DGModuleMap)
+zeroDGModuleMap (DGModule, DGModule) := (N, M) -> (
+    if M.dgAlgebra =!= N.dgAlgebra then
+        error "zeroDGModuleMap: source and target must share the same DG algebra.";
+    dgModuleMap(N, M, map(N.natural, M.natural, 0))
+)
+
+-- Apply a DGModuleMap to an element of M.natural. Returns an element of
+-- N.natural. Because f is A-linear, f(v) = f.natural * v.
+DGModuleMap Vector := (f, v) -> f.natural * v
+
+-- Composition: for g: L -> M and f: M -> N, build f * g: L -> N.
+DGModuleMap * DGModuleMap := (f, g) -> (
+    if target g =!= source f then
+        error "DGModuleMap composition: target of right operand must equal source of left operand.";
+    dgModuleMap(target f, source g, f.natural * g.natural)
+)
+
+-- Scalar multiplication: an element of A.ring scales a DGModuleMap.
+RingElement * DGModuleMap := (r, f) -> (
+    A := f.dgAlgebra;
+    if ring r =!= A.ring and ring r =!= A.natural then
+        error "RingElement * DGModuleMap: scalar ring must agree with A.ring or A.natural.";
+    rA := if ring r === A.natural then r else sub(r, A.natural);
+    dgModuleMap(target f, source f, rA * f.natural)
+)
+
+-- Addition (same source, same target).
+DGModuleMap + DGModuleMap := (f, g) -> (
+    if source f =!= source g or target f =!= target g then
+        error "DGModuleMap +: both maps must have the same source and target.";
+    dgModuleMap(target f, source f, f.natural + g.natural)
+)
+
+DGModuleMap - DGModuleMap := (f, g) -> (
+    if source f =!= source g or target f =!= target g then
+        error "DGModuleMap -: both maps must have the same source and target.";
+    dgModuleMap(target f, source f, f.natural - g.natural)
+)
+
+-- Negation.
+- DGModuleMap := f -> dgModuleMap(target f, source f, - f.natural)
+
+-- DGModuleMap ** DGModuleMap: exterior tensor product of chain maps.
+--
+-- Given F : M -> M' over A and G : N -> N' over B (with A.ring = B.ring),
+-- build F ** G : M ** N -> M' ** N' over A ** B, acting on generators
+-- by (e_i ⊗ f_j) -> F(e_i) ⊗ G(f_j).
+--
+-- Concretely: F.natural is rM' × rM over A.natural, G.natural is rN' × rN
+-- over B.natural. The tensor product has image vectors indexed by (k, l)
+-- in the target's generator set of size rM' * rN', with entries
+--   coef((e_i ⊗ f_j) -> (e'_k ⊗ f'_l)) =
+--       iA(F_{k,i}) * iB(G_{l,j})
+-- where iA, iB are the tensor inclusions into the target's DG algebra.
+DGModuleMap ** DGModuleMap := (F, G) -> (
+    M := source F; Mp := target F;
+    N := source G; Np := target G;
+    if (M.dgAlgebra).ring =!= (N.dgAlgebra).ring or
+       (Mp.dgAlgebra).ring =!= (Np.dgAlgebra).ring then
+        error "DGModuleMap **: factors must share a common ground ring on each side.";
+    P := M ** N;
+    Pp := Mp ** Np;
+    Cp := Pp.dgAlgebra;
+    (iotaAp, iotaBp) := tensorInclusions Cp;
+    iAp := iotaAp.natural;
+    iBp := iotaBp.natural;
+    rM := rank M.natural; rMp := rank Mp.natural;
+    rN := rank N.natural; rNp := rank Np.natural;
+    Fmat := F.natural;
+    Gmat := G.natural;
+    -- Build the image columns.  Column (i,j) of the tensor map sends
+    -- e_i ⊗ f_j to Σ_{k,l} iA(F_{k,i}) iB(G_{l,j}) (e'_k ⊗ f'_l).
+    Pgens := apply(rank Pp.natural, m -> (Pp.natural)_m);
+    idxOf := (k, l) -> k * rNp + l;
+    imgCols := flatten apply(rM, i -> apply(rN, j -> (
+        sum apply(rMp, k -> sum apply(rNp, l -> (
+            fki := Fmat_(k, i);
+            glj := Gmat_(l, j);
+            if fki == 0 or glj == 0 then 0_(Pp.natural)
+            else (iAp fki) * (iBp glj) * Pgens#(idxOf(k, l))
+        )))
+    )));
+    dgModuleMap(Pp, P, imgCols)
+)
+
+-- Equality: same source and target DGModules, and equal natural matrices.
+DGModuleMap == DGModuleMap := (f, g) -> (
+    source f === source g
+    and target f === target g
+    and f.natural == g.natural
+)
+
+-- Right-scalar multiplication by a ring element (mirrors left version).
+DGModuleMap * RingElement := (f, r) -> r * f
+
+-- ZZ / QQ / Number scalar multiplication (coerced through the DG algebra's
+-- underlying polynomial ring so arithmetic lives in A.natural).
+ZZ * DGModuleMap     := (n, f) -> (sub(n, (f.dgAlgebra).natural)) * f
+QQ * DGModuleMap     := (q, f) -> (sub(q, (f.dgAlgebra).natural)) * f
+Number * DGModuleMap := (n, f) -> (sub(n, (f.dgAlgebra).natural)) * f
+DGModuleMap * ZZ     := (f, n) -> n * f
+DGModuleMap * QQ     := (f, q) -> q * f
+DGModuleMap * Number := (f, n) -> n * f
+
+-- Compare a DGModuleMap to 0 (zero map) or 1 (identity on source = target).
+DGModuleMap == ZZ := (f, n) -> (
+    if n == 0 then f.natural == 0
+    else if n == 1 then (source f === target f and f.natural == id_((source f).natural))
+    else error "DGModuleMap == ZZ: comparison only defined against 0 or 1."
+)
+ZZ == DGModuleMap := (n, f) -> f == n
+
+-- Base ring of the underlying DG algebra.
+ring DGModuleMap := f -> (f.dgAlgebra).ring
+
+-- Chain-degree of a DGModuleMap: our DGModuleMaps are always degree-0
+-- chain maps (they commute with d strictly).
+degree DGModuleMap := f -> 0
+
+-- Injective / surjective / isomorphism tests go through the DGSubmodule
+-- and DGQuotientModule machinery.
+isInjective DGModuleMap := f -> isZero kernel f
+isSurjective DGModuleMap := f -> isZero cokernel f
+isIsomorphism DGModuleMap := f -> isInjective f and isSurjective f
+
+-- id_(M) for a DGModule M -- same dispatch pattern used by Complexes for
+-- id_(C).  Produces the identity DGModuleMap M -> M.
+DGModule#id = M -> identityDGModuleMap M
+
+-- isHomogeneous: true iff f.natural is homogeneous as an A.natural-matrix.
+isHomogeneous DGModuleMap := f -> isHomogeneous f.natural
+
+-- map(N, M, ZZ): degree-shifted identity / zero.  Matches the ComplexMap
+-- constructor map(D, C, i) where i=0 builds the identity (and requires
+-- D == C) and i=1 is allowed only when both sides agree generator-by-
+-- generator. For simplicity we support the two common cases:
+--    map(M, M, 1)  ~ identityDGModuleMap M
+--    map(N, M, 0)  ~ zeroDGModuleMap(M, N)
+-- (Note the ComplexMap convention: the target comes first.)
+map (DGModule, DGModule, ZZ) := o -> (N, M, i) -> (
+    if i == 0 then zeroDGModuleMap(N, M)
+    else if i == 1 then (
+        if N =!= M then
+            error "map(N, M, 1): identity requested but source and target differ.";
+        identityDGModuleMap M
+    )
+    else error "map(DGModule, DGModule, ZZ): only 0 (zero map) and 1 (identity) are supported."
+)
+
+-- isQuasiIsomorphism f: defer to the ComplexMap version applied to
+-- toComplexMap f.  Inherits the Concentration option from Complexes.
+isQuasiIsomorphism DGModuleMap := o -> f -> isQuasiIsomorphism(toComplexMap f, o)
+
+-- isQuasiIsomorphism for DGAlgebraMap, same strategy.
+isQuasiIsomorphism DGAlgebraMap := o -> f -> isQuasiIsomorphism(toComplexMap f, o)
+
+-- isWellDefined DGModuleMap.  Modeled on isWellDefined ComplexMap
+-- (Complexes/ChainComplexMap.m2 line 134).  Checks:
+--   (1) expected key shape (source, target, dgAlgebra, natural, cache),
+--   (2) types of each slot,
+--   (3) source/target share the same DGAlgebra,
+--   (4) f.natural is a module map with the right source/target modules,
+--   (5) hom-degrees are preserved (f is a hom-degree-0 chain map),
+--   (6) chain-map condition on every generator: d_N(f(e_i)) == f(d_M(e_i)).
+-- Diagnostic messages emitted when debugLevel > 0.
+isWellDefined DGModuleMap := f -> (
+    k := keys f;
+    expectedKeys := set {symbol source, symbol target, symbol dgAlgebra, symbol natural, symbol cache};
+    if set k =!= expectedKeys then (
+        if debugLevel > 0 then (
+            added := toList(k - expectedKeys);
+            missing := toList(expectedKeys - k);
+            if #added > 0 then << "-- DGModuleMap: unexpected key(s): " << toString added << endl;
+            if #missing > 0 then << "-- DGModuleMap: missing key(s): " << toString missing << endl;
+        );
+        return false;
+    );
+    if not (instance(f.source, DGModule) or instance(f.source, DGQuotientModule)) then (
+        if debugLevel > 0 then << "-- DGModuleMap: f.source is not a DGModule or DGQuotientModule" << endl;
+        return false;
+    );
+    if not (instance(f.target, DGModule) or instance(f.target, DGQuotientModule)) then (
+        if debugLevel > 0 then << "-- DGModuleMap: f.target is not a DGModule or DGQuotientModule" << endl;
+        return false;
+    );
+    if instance(f.source, DGModule) and not isWellDefined f.source then (
+        if debugLevel > 0 then << "-- DGModuleMap: f.source is not a well-defined DGModule" << endl;
+        return false;
+    );
+    if instance(f.source, DGQuotientModule) and not isWellDefined f.source then (
+        if debugLevel > 0 then << "-- DGModuleMap: f.source is not a well-defined DGQuotientModule" << endl;
+        return false;
+    );
+    -- DGQuotientModule targets go through a slightly different path; we
+    -- still require the ambient to be well-defined.
+    if instance(f.target, DGModule) and not isWellDefined f.target then (
+        if debugLevel > 0 then << "-- DGModuleMap: f.target is not a well-defined DGModule" << endl;
+        return false;
+    );
+    if instance(f.target, DGQuotientModule) and not isWellDefined f.target then (
+        if debugLevel > 0 then << "-- DGModuleMap: f.target is not a well-defined DGQuotientModule" << endl;
+        return false;
+    );
+    if f.source.dgAlgebra =!= f.target.dgAlgebra then (
+        if debugLevel > 0 then << "-- DGModuleMap: source and target must share the same DGAlgebra" << endl;
+        return false;
+    );
+    if f.dgAlgebra =!= f.source.dgAlgebra then (
+        if debugLevel > 0 then << "-- DGModuleMap: f.dgAlgebra disagrees with f.source.dgAlgebra" << endl;
+        return false;
+    );
+    if not instance(f.natural, Matrix) then (
+        if debugLevel > 0 then << "-- DGModuleMap: f.natural is not a Matrix" << endl;
+        return false;
+    );
+    if source f.natural =!= (f.source).natural then (
+        if debugLevel > 0 then << "-- DGModuleMap: source of f.natural is not f.source.natural" << endl;
+        return false;
+    );
+    if target f.natural =!= (f.target).natural then (
+        if debugLevel > 0 then << "-- DGModuleMap: target of f.natural is not f.target.natural" << endl;
+        return false;
+    );
+    M := source f;
+    N := target f;
+    -- Hom-degree check: for each M-generator e_i, f(e_i) must sit in
+    -- hom-degree (first M.Degrees#i) of N.natural.  Internal-degree shifts
+    -- are allowed (only the first component matters).
+    homDegOk := all(#M.Degrees, i -> (
+        fei := f.natural * (M.natural)_i;
+        if fei == 0 then true
+        else first degree fei == first M.Degrees#i
+    ));
+    if not homDegOk then (
+        if debugLevel > 0 then << "-- DGModuleMap: f fails to preserve homological degree on some generator" << endl;
+        return false;
+    );
+    -- Chain-map condition, generator by generator.  diff(N, ·) calls
+    -- on DGModule or DGQuotientModule (both supply the Leibniz formula).
+    ok := all(#M.Degrees, i -> (
+        ei    := (M.natural)_i;
+        fei   := f.natural * ei;
+        dMei  := M.diff#i;
+        dNfei := diff(N, fei);
+        fdMei := f.natural * dMei;
+        dNfei == fdMei
+    ));
+    if not ok and debugLevel > 0 then
+        << "-- DGModuleMap: chain-map condition d_N(f e_i) = f(d_M e_i) fails on some generator" << endl;
+    ok
+)
+
+-- toComplexMap(f, n): the n-th component of f as an A.ring-linear map
+-- F_n(M) -> F_n(N), where F_n(M) is the hom-deg-n piece of M.natural
+-- expressed in its A.ring-basis (moduleBasisPairs).
+--
+-- Strategy: enumerate srcPairs = basis of F_n(M); for each (i, mon) in
+-- srcPairs, compute f(mon * e_i) = mon * (f.natural * e_i) in N.natural,
+-- then decompose over the target basis.
+toComplexMap (DGModuleMap, ZZ) := opts -> (f, n) -> (
+    M := source f;
+    N := target f;
+    A := M.dgAlgebra;
+    R := A.ring;
+    srcPairs := moduleBasisPairs(M, n);
+    tgtPairs := moduleBasisPairs(N, n);
+    -- Source/target free R-modules are canonical via moduleDifferential's
+    -- source/target, but we build them independently to avoid forcing the
+    -- differential computation just for module shape.
+    srcDeg := p -> (
+        (i, m) := p;
+        totalDeg := degree(m * (M.natural)_i);
+        -drop(totalDeg, 1)
+    );
+    tgtDeg := p -> (
+        (j, m) := p;
+        totalDeg := degree(m * (N.natural)_j);
+        -drop(totalDeg, 1)
+    );
+    srcDegs := apply(srcPairs, srcDeg);
+    tgtDegs := apply(tgtPairs, tgtDeg);
+    srcMod := R^srcDegs;
+    tgtMod := R^tgtDegs;
+    if #srcPairs == 0 or #tgtPairs == 0 then
+        return map(tgtMod, srcMod, 0);
+    numSrc := #srcPairs;
+    numTgt := #tgtPairs;
+    -- Precompute f(e_i) as Vectors in N.natural.
+    fImages := apply(rank M.natural, i -> f.natural * (M.natural)_i);
+    -- Group target pairs by N-generator index.
+    tgtByGen := new MutableHashTable;
+    scan(rank N.natural, j -> tgtByGen#j = {});
+    scan(numTgt, k -> (
+        (j, mp) := tgtPairs#k;
+        tgtByGen#j = append(tgtByGen#j, (k, mp));
+    ));
+    mat := mutableMatrix(R, numTgt, numSrc);
+    scan(numSrc, c -> (
+        (i, mon) := srcPairs#c;
+        imgVec := mon * fImages#i;
+        if imgVec == 0 then return;
+        imgEntries := entries imgVec;
+        scan(rank N.natural, j -> (
+            fj := imgEntries#j;
+            if fj == 0 then return;
+            rowsForJ := tgtByGen#j;
+            if #rowsForJ == 0 then return;
+            tgtMonsJ := apply(rowsForJ, pr -> pr#1);
+            coefMat := (coefficients(matrix{{fj}}, Monomials => matrix{tgtMonsJ}))#1;
+            coefMatR := sub(coefMat, R);
+            scan(#rowsForJ, idx -> (
+                rowIdx := (rowsForJ#idx)#0;
+                cij := coefMatR_(idx, 0);
+                if cij != 0 then mat_(rowIdx, c) = cij;
+            ));
+        ));
+    ));
+    map(tgtMod, srcMod, matrix mat)
+)
+-- toComplexMap(f, n) returns a Matrix (per-degree component), while the
+-- method's default TypicalValue is ComplexMap.  Inform the documentation
+-- system of the correct per-signature return type.
+typicalValues#(toComplexMap, DGModuleMap, ZZ) = Matrix
+
+-- toComplexMap f: assemble all per-degree pieces into a ComplexMap
+-- toComplex M -> toComplex N. An EndDegree bound is required when either
+-- side has infinite hom-degree.
+toComplexMap DGModuleMap := opts -> f -> (
+    M := source f;
+    N := target f;
+    -- Specialized branch: target is a DGQuotientModule.  At the DGModule
+    -- level a DGQuotientModule has no free basis for `moduleBasisPairs`,
+    -- so the generic per-degree assembly below would give the wrong
+    -- answer.  For the canonical projection f = Q.projection the chain
+    -- map is exactly the induced quotient map from the ambient complex
+    -- to the cokernel of the inclusion.  We only support that case.
+    if instance(N, DGQuotientModule) then (
+        if not (N.?projection and f === N.projection) then
+            error "toComplexMap: into a DGQuotientModule only the canonical projection is supported.";
+        cxI := toComplexMap(N.subDGModule.inclusion, opts);
+        return inducedMap(cokernel cxI, target cxI);
+    );
+    mDeg := maxDegree M;
+    nDeg := maxDegree N;
+    maxDeg := if mDeg === infinity or nDeg === infinity then infinity
+              else max(mDeg, nDeg);
+    if opts.EndDegree != -1 then maxDeg = opts.EndDegree;
+    if maxDeg === infinity then
+        error "toComplexMap DGModuleMap: hom-degrees are unbounded; supply EndDegree.";
+    if opts.AssertWellDefined then assert isWellDefined f;
+    cxM := toComplex(M, maxDeg);
+    cxN := toComplex(N, maxDeg);
+    map(cxN, cxM, i -> toComplexMap(f, i, opts), Degree => 0)
+)
+
+-- homology(f, n): the induced map H_n(M) -> H_n(N) as an R-module map.
+homology (DGModuleMap, ZZ) := opts -> (f, n) -> (
+    M := source f;
+    N := target f;
+    dMn    := moduleDifferential(n, M);
+    dMnp1  := moduleDifferential(n + 1, M);
+    dNn    := moduleDifferential(n, N);
+    dNnp1  := moduleDifferential(n + 1, N);
+    hM := homology(dMn, dMnp1);
+    hN := homology(dNn, dNnp1);
+    cm := toComplexMap(f, n);
+    inducedMap(hN, hM, cm)
+)
+
+-- homology f: the induced H_*(A)-module map H_*(M) -> H_*(N).
+--
+-- Conventions mirror `homology DGAlgebraMap` (which returns a RingMap
+-- HA -> HB). For f : M -> N a DGModuleMap, the underlying A.natural-
+-- linear chain map induces an HA-linear map on H_*(-). We assemble that
+-- map degree-by-degree from the pruned per-degree homologies of
+-- toComplexMap f, then tensor up to HA to match the free HA-presentation
+-- used by `homologyModule DGModule`.
+--
+-- For users who want the bare ComplexMap of homologies (no HA-module
+-- structure), use `HH toComplexMap f` directly.
+--
+-- Restriction: currently requires both M.natural and N.natural to be
+-- free A.natural-modules (this matches the general path of
+-- homologyModule DGModule). The koszulComplexDGM-with-M.module fast
+-- path is not yet handled here.
+homology DGModuleMap := opts -> f -> (
+    M := source f;
+    N := target f;
+    if M.dgAlgebra =!= N.dgAlgebra then
+        error "homology DGModuleMap: source and target must share a DG algebra.";
+    A := M.dgAlgebra;
+    R := A.ring;
+    HA := HH(A);
+    if not isFreeModule M.natural or not isFreeModule N.natural then
+        error "homology DGModuleMap: currently requires both source and target to be free DGModules (koszulComplexDGM form not yet supported).";
+    cm := toComplexMap f;
+    cxM := source cm;
+    cxN := target cm;
+    (loM, hiM) := concentration cxM;
+    (loN, hiN) := concentration cxN;
+    -- Pruned per-degree homologies on each side (matches the basis used
+    -- by moduleRelationsFromCycleActionDGM, so degrees line up).
+    pruneHM := new MutableHashTable;
+    for i from loM to hiM do pruneHM#i = prune HH_i(cxM);
+    pruneHN := new MutableHashTable;
+    for j from loN to hiN do pruneHN#j = prune HH_j(cxN);
+    -- Pruned per-degree maps induced by f.
+    prunedMap := new MutableHashTable;
+    for i from max(loM, loN) to min(hiM, hiN) do
+        prunedMap#i = prune HH_i(cm);
+    -- Target-degree lists of the raw HA-free modules covering
+    -- homologyModule M and homologyModule N, respectively.
+    degsHMSource := flatten apply(toList(loM..hiM),
+        p -> apply(degrees pruneHM#p, dd -> {p} | dd));
+    degsHNTarget := flatten apply(toList(loN..hiN),
+        p -> apply(degrees pruneHN#p, dd -> {p} | dd));
+    rowsCount := hiN - loN + 1;
+    colsCount := hiM - loM + 1;
+    buildBlock := (rowIdx, colIdx) -> (
+        i := loM + colIdx;
+        j := loN + rowIdx;
+        if i != j or not prunedMap#?i then
+            map(pruneHN#j, pruneHM#i, 0)
+        else (
+            pm := prunedMap#i;
+            -- Make sure source / target agree with the pruneHM / pruneHN
+            -- objects (they usually do via M2's caching, but coerce to
+            -- be safe).
+            if source pm === pruneHM#i and target pm === pruneHN#j then pm
+            else map(pruneHN#j, pruneHM#i, matrix pm)
+        )
+    );
+    rawBlock := if rowsCount == 0 or colsCount == 0 then
+        map(R^(-degsHNTarget), R^(-degsHMSource), 0)
+    else
+        matrix table(rowsCount, colsCount, buildBlock);
+    -- Base-change to HA.
+    haBlock := map(HA^(-degsHNTarget), HA^(-degsHMSource),
+        tensor(map(HA, R), rawBlock));
+    -- Build the raw cokers on each side (same construction as
+    -- homologyModule DGModule, but without minimalPresentation), then
+    -- induce the map and prune to match homologyModule's output.
+    HMraw := coker matrix {apply(HA.cache.cycles,
+        z -> moduleRelationsFromCycleActionDGM(M, z))};
+    HNraw := coker matrix {apply(HA.cache.cycles,
+        z -> moduleRelationsFromCycleActionDGM(N, z))};
+    raw := map(HNraw, HMraw, haBlock);
+    minimalPresentation raw
+)
+
+-------------------------------------------------------------------------
+-- liftToDGModuleMap(N, M, h0): lift an R-module map h0 on the degree-0
+-- generator piece of M to a full DGModuleMap M -> N.
+--
+-- Requires:
+--   * M semifree (M.natural a free A.natural-module).
+--   * N acyclic in positive hom-degrees up to EndDegree (so successive
+--     Leibniz-style lifts exist).
+-- h0 is a Matrix over A.natural with:
+--   * rows indexing natural generators of N
+--   * columns indexing the hom-degree-0 generators of M (in positional
+--     order within M.Degrees)
+-- For each hom-degree d >= 1, we lift generator-by-generator: given an
+-- M-generator e_i of hom-degree d, compute bd = f_partial( d_M(e_i) ) in
+-- hom-degree (d-1) of N.natural, then find an x in hom-degree d of
+-- N.natural with d_N(x) = bd. x becomes f(e_i).
+--
+-- EndDegree caps the lift; M-generators of hom-degree > EndDegree are
+-- sent to 0 (and the result may fail isWellDefined beyond EndDegree).
+-------------------------------------------------------------------------
+liftToDGModuleMap = method(TypicalValue => DGModuleMap, Options => {EndDegree => -1})
+liftToDGModuleMap (DGModule, DGModule, Matrix) := opts -> (N, M, h0) -> (
+    if M.dgAlgebra =!= N.dgAlgebra then
+        error "liftToDGModuleMap: source and target must share the same DG algebra.";
+    if not isFreeModule M.natural then
+        error "liftToDGModuleMap: source M must be semifree (use freeDGModule/adjoinGenerators).";
+    numGenM := #M.Degrees;
+    genDegs := apply(M.Degrees, first);
+    maxDeg := if #genDegs == 0 then 0 else max genDegs;
+    if opts.EndDegree != -1 then maxDeg = opts.EndDegree;
+    -- Group M-generator indices by hom-degree.
+    genIdxByDeg := new MutableHashTable;
+    scan(numGenM, i -> (
+        d := genDegs#i;
+        if not genIdxByDeg#?d then genIdxByDeg#d = {};
+        genIdxByDeg#d = append(genIdxByDeg#d, i);
+    ));
+    deg0Indices := if genIdxByDeg#?0 then genIdxByDeg#0 else {};
+    if numcols h0 != #deg0Indices then
+        error ("liftToDGModuleMap: h0 must have " | toString(#deg0Indices)
+            | " columns (one per hom-degree-0 M-generator); got "
+            | toString(numcols h0) | ".");
+    if numrows h0 != rank N.natural then
+        error ("liftToDGModuleMap: h0 must have " | toString(rank N.natural)
+            | " rows (one per natural generator of N); got "
+            | toString(numrows h0) | ".");
+    -- images#i = Vector in N.natural (current image of M-gen i), or null
+    images := new MutableList from apply(numGenM, i -> null);
+    -- Seed hom-deg-0 images from h0.
+    scan(#deg0Indices, k -> (
+        col := apply(rank N.natural, j -> h0_(j, k));
+        vec := sum apply(rank N.natural, j -> col#j * (N.natural)_j);
+        images#(deg0Indices#k) = vec;
+    ));
+    -- Helper: apply partial f to a Vector v in M.natural.
+    applyPartial := v -> (
+        if v === 0 or v == 0 then return 0_(N.natural);
+        vEntries := entries v;
+        sum apply(numGenM, j -> (
+            cj := vEntries#j;
+            if cj == 0 then 0_(N.natural)
+            else if images#j === null then (
+                error "liftToDGModuleMap: encountered M-generator with unassigned image while lifting.";
+            )
+            else cj * images#j
+        ))
+    );
+    for d from 1 to maxDeg do (
+        if not genIdxByDeg#?d then continue;
+        for i in genIdxByDeg#d do (
+            bd := applyPartial(M.diff#i);
+            if bd == 0 then (
+                images#i = 0_(N.natural);
+            )
+            else (
+                (ok, pre) := getBoundaryPreimage(N, bd);
+                if not ok then
+                    error ("liftToDGModuleMap: cannot lift M-generator #" | toString i
+                        | " at hom-degree " | toString d
+                        | " (target N is not acyclic at this degree).");
+                images#i = pre;
+            );
+        );
+    );
+    -- Fill in zeros for any M-generator beyond EndDegree.
+    finalImgs := apply(numGenM, i -> if images#i === null then 0_(N.natural) else images#i);
+    dgModuleMap(N, M, finalImgs)
+)
+
+-- Convenience: if M has exactly one hom-deg-0 generator mapping to a
+-- Vector v in N.natural, accept v directly.
+liftToDGModuleMap (DGModule, DGModule, Vector) := opts -> (N, M, v) -> (
+    genDegs := apply(M.Degrees, first);
+    deg0Count := #select(genDegs, d -> d == 0);
+    if deg0Count != 1 then
+        error ("liftToDGModuleMap(Vector): M has " | toString deg0Count
+            | " hom-degree-0 generators; use the Matrix or List form instead.");
+    liftToDGModuleMap(N, M, {v}, opts)
+)
+
+-- Convenience: pass a list of Vectors, one per hom-degree-0 M-generator.
+liftToDGModuleMap (DGModule, DGModule, List) := opts -> (N, M, vList) -> (
+    if M.dgAlgebra =!= N.dgAlgebra then
+        error "liftToDGModuleMap: source and target must share the same DG algebra.";
+    genDegs := apply(M.Degrees, first);
+    deg0Count := #select(genDegs, d -> d == 0);
+    if #vList != deg0Count then
+        error ("liftToDGModuleMap(List): M has " | toString deg0Count
+            | " hom-degree-0 generators; got " | toString(#vList) | " images.");
+    coerced := apply(vList, v -> (
+        if v === 0 then 0_(N.natural)
+        else if instance(v, Vector) then v
+        else try (sub(v, N.natural)) else
+            error "liftToDGModuleMap(List): could not coerce image to N.natural."
+    ));
+    h0 := if #coerced == 0 then map(N.natural, (N.ring)^0, 0)
+          else vectorsToColumnMatrix(N, coerced);
+    liftToDGModuleMap(N, M, h0, opts)
+)
+
+-------------------------------------------------------------------------
+-- v2: DGIdeal, DGSubmodule, DGQuotientModule, and
+--     image / kernel / cokernel of DGModuleMap.
+--
+-- Conventions.  These types mirror M2's built-in Ideal / Module / quotient
+-- conventions wherever possible, and add a differential-compatibility
+-- layer on top:
+--
+--   * DGIdeal         -- a graded ideal of A.natural closed under d_A.
+--                       `ambient` returns A; `ideal I` returns the
+--                       underlying Ideal.  `A / I` yields a new DGAlgebra.
+--
+--   * DGSubmodule     -- a DGModule S equipped with an inclusion
+--                       DGModuleMap S -> M. S.natural is a free A.natural-
+--                       module on the chosen generators; `inclusion S`
+--                       returns the chain-map S -> M. Because S inherits
+--                       from DGModule, generic DGModule operations apply.
+--
+--   * DGQuotientModule -- quotient M / S of a DGModule M by a DGSubmodule S.
+--                       Q.natural is the cokernel of the inclusion matrix,
+--                       so it is NOT a free module; Q does NOT inherit
+--                       from DGModule (to avoid silently breaking free-
+--                       only operations).  `ambient Q` returns M,
+--                       `subDGModule Q` returns S, `projection Q` returns
+--                       the DGModuleMap M -> Q.
+--
+-- All three carry d-closure invariants; isWellDefined verifies them.
+-------------------------------------------------------------------------
+
+DGIdeal = new Type of MutableHashTable
+globalAssignment DGIdeal
+
+DGSubmodule = new Type of DGModule
+globalAssignment DGSubmodule
+
+DGQuotientModule = new Type of MutableHashTable
+globalAssignment DGQuotientModule
+
+-- Pretty-printing --------------------------------------------------------
+
+net DGIdeal := I -> (
+    hdr := net "DGIdeal of " | net I.dgAlgebra.natural;
+    gs := net I.generators;
+    stack {hdr, net "generators => " | gs}
+)
+
+net DGSubmodule := S -> (
+    stack {
+        net "DGSubmodule of ambient DGModule",
+        net "Degrees  => " | net S.Degrees,
+        net "natural  => " | net S.natural,
+        net "inclusion => " | net S.inclusion.natural
+    }
+)
+
+net DGQuotientModule := Q -> (
+    stack {
+        net "DGQuotientModule Q = M / S",
+        net "Q.natural = " | net Q.natural,
+        net "Degrees   = " | net Q.Degrees
+    }
+)
+
+-------------------------------------------------------------------------
+-- DGIdeal
+--
+--   dgIdeal(A, gens) takes a List or Matrix of homogeneous elements of
+--   A.natural and returns the smallest DG ideal containing them, i.e.
+--   the ideal of A.natural generated by {g, d(g), d^2(g), ...} iterated
+--   until the ideal (as an A.natural-Ideal) stabilizes.
+--
+--   isDGIdeal(A, I) (A:DGAlgebra, I:Ideal) checks d-closure without
+--   saturation.
+-------------------------------------------------------------------------
+
+dgIdeal = method(TypicalValue => DGIdeal)
+
+isDGIdeal = method(TypicalValue => Boolean)
+isDGIdeal (DGAlgebra, Ideal) := (A, I) -> (
+    if ring I =!= A.natural then
+        error "isDGIdeal: ideal must live in A.natural.";
+    all(flatten entries mingens I, g -> (polyDifferential(A, g)) % I == 0)
+)
+
+dgIdeal (DGAlgebra, Ideal) := (A, I) -> (
+    if ring I =!= A.natural then
+        error "dgIdeal: ideal must live in A.natural.";
+    -- Iteratively d-close.
+    curr := I;
+    iter := 0;
+    while (
+        iter = iter + 1;
+        if iter > 200 then error "dgIdeal: d-closure failed to stabilize.";
+        derivs := apply(flatten entries mingens curr, g -> polyDifferential(A, g));
+        newIdeal := curr + ideal derivs;
+        newIdeal != curr
+    ) do curr = trim newIdeal;
+    J := trim curr;
+    result := new MutableHashTable;
+    result#(symbol dgAlgebra) = A;
+    result#(symbol ring) = A.ring;
+    result#(symbol natural) = J;
+    result#(symbol generators) = gens J;
+    result#(symbol cache) = new CacheTable;
+    new DGIdeal from result
+)
+
+dgIdeal (DGAlgebra, Matrix) := (A, m) -> (
+    if ring m =!= A.natural then
+        error "dgIdeal(Matrix): matrix must have entries in A.natural.";
+    dgIdeal(A, ideal m)
+)
+
+dgIdeal (DGAlgebra, List) := (A, gs) -> (
+    if #gs == 0 then dgIdeal(A, ideal(0_(A.natural)))
+    else dgIdeal(A, ideal matrix {apply(gs, g -> sub(g, A.natural))})
+)
+
+ambient DGIdeal := I -> I.dgAlgebra
+ideal DGIdeal := I -> I.natural
+generators DGIdeal := opts -> I -> I.generators
+ring DGIdeal := I -> I.ring
+numgens DGIdeal := I -> numgens I.natural
+
+-- Internal helper: assert two DGIdeals share an ambient DGAlgebra.
+sameAmbientDG := (I, J, opname) -> (
+    if I.dgAlgebra =!= J.dgAlgebra then
+        error(opname | ": DGIdeals must share the same ambient DGAlgebra.");
+)
+
+-- Wrap an Ideal of A.natural as a DGIdeal, running the d-closure
+-- saturation machinery in dgIdeal.  For operations that preserve
+-- d-closure (sum, product, intersection, power, colon) this is an
+-- identity-on-the-ideal pass but still re-creates the DGIdeal wrapper.
+-- The saturation loop terminates immediately when the input is already
+-- d-closed.
+-------------------------------------------------------------------------
+-- Ideal-algebra operations.  Each returns a new DGIdeal whose .natural
+-- is the corresponding Ideal operation result.  d-closure is preserved
+-- by each of these operations (sum: d(I+J) ⊂ dI+dJ ⊂ I+J; product:
+-- d(IJ) ⊂ (dI)J + I(dJ) ⊂ IJ; intersection: direct; power: induction;
+-- colon: if fJ ⊂ I then d(fJ) = (df)J + f(dJ) ⊂ I + f(dJ) ⊂ I + fJ ⊂ I,
+-- so (df)J ⊂ I, i.e. df ∈ I:J).  We run through dgIdeal() anyway so the
+-- saturation loop certifies closure; for already-closed inputs this is
+-- just a re-wrap.
+-------------------------------------------------------------------------
+
+DGIdeal + DGIdeal := (I, J) -> (
+    sameAmbientDG(I, J, "DGIdeal + DGIdeal");
+    dgIdeal(I.dgAlgebra, I.natural + J.natural)
+)
+
+DGIdeal * DGIdeal := (I, J) -> (
+    sameAmbientDG(I, J, "DGIdeal * DGIdeal");
+    dgIdeal(I.dgAlgebra, I.natural * J.natural)
+)
+
+intersect(DGIdeal, DGIdeal) := DGIdeal => {} >> opts -> (I, J) -> (
+    sameAmbientDG(I, J, "intersect DGIdeal");
+    dgIdeal(I.dgAlgebra, intersect(I.natural, J.natural))
+)
+
+DGIdeal : DGIdeal := (I, J) -> (
+    sameAmbientDG(I, J, "DGIdeal : DGIdeal");
+    dgIdeal(I.dgAlgebra, I.natural : J.natural)
+)
+
+DGIdeal ^ ZZ := (I, n) -> (
+    if n < 0 then error "DGIdeal ^ ZZ: exponent must be nonnegative.";
+    if n == 0 then dgIdeal(I.dgAlgebra, ideal 1_(I.dgAlgebra.natural))
+    else dgIdeal(I.dgAlgebra, (I.natural)^n)
+)
+
+-- Containment / equality.  I ⊆ J iff I.natural ⊆ J.natural (both live
+-- in the same ambient A.natural by sameAmbientDG).
+isSubset(DGIdeal, DGIdeal) := (I, J) -> (
+    sameAmbientDG(I, J, "isSubset DGIdeal");
+    isSubset(I.natural, J.natural)
+)
+
+DGIdeal == DGIdeal := (I, J) -> (
+    if I.dgAlgebra =!= J.dgAlgebra then false
+    else I.natural == J.natural
+)
+
+-- mingens: return the A.natural-level minimal generators.  (Note that
+-- trim at the Ideal level doesn't enlarge the d-saturated closure; the
+-- underlying ideal is already d-closed.)
+mingens DGIdeal := opts -> I -> mingens I.natural
+
+-- Reduction of a ring element mod I.
+RingElement % DGIdeal := (f, I) -> f % I.natural
+ZZ % DGIdeal := (n, I) -> (sub(n, I.dgAlgebra.natural)) % I.natural
+
+-- isWellDefined DGIdeal.  Key-shape + type checks, then the semantic
+-- d-closure check (isDGIdeal).  Diagnostic messages via debugLevel > 0.
+isWellDefined DGIdeal := I -> (
+    k := keys I;
+    expectedKeys := set {symbol dgAlgebra, symbol ring, symbol natural, symbol generators, symbol cache};
+    if set k =!= expectedKeys then (
+        if debugLevel > 0 then (
+            added := toList(k - expectedKeys);
+            missing := toList(expectedKeys - k);
+            if #added > 0 then << "-- DGIdeal: unexpected key(s): " << toString added << endl;
+            if #missing > 0 then << "-- DGIdeal: missing key(s): " << toString missing << endl;
+        );
+        return false;
+    );
+    if not instance(I.dgAlgebra, DGAlgebra) then (
+        if debugLevel > 0 then << "-- DGIdeal: I.dgAlgebra is not a DGAlgebra" << endl;
+        return false;
+    );
+    if not isWellDefined I.dgAlgebra then (
+        if debugLevel > 0 then << "-- DGIdeal: I.dgAlgebra is not well-defined" << endl;
+        return false;
+    );
+    if not instance(I.natural, Ideal) then (
+        if debugLevel > 0 then << "-- DGIdeal: I.natural is not an Ideal" << endl;
+        return false;
+    );
+    if ring I.natural =!= I.dgAlgebra.natural then (
+        if debugLevel > 0 then << "-- DGIdeal: I.natural is not an ideal in I.dgAlgebra.natural" << endl;
+        return false;
+    );
+    ok := isDGIdeal(I.dgAlgebra, I.natural);
+    if not ok and debugLevel > 0 then
+        << "-- DGIdeal: I.natural is not d-closed (some generator has d(g) not in I)" << endl;
+    ok
+)
+
+-- toComplex DGIdeal: build the short-exact-sequence-style complex of
+-- I viewed as a DG submodule of the regular DG module A.natural.
+-- Equivalent to the kernel of the canonical chain map A ->> A/I.
+--
+-- NOTE: This requires viewing A.natural as a DGModule over A (the
+-- "regular representation"). We do not yet have a canonical wrapper for
+-- that view, so we defer implementation and emit a clear error.
+--
+-- For now, users can access the ideal's underlying ring-theoretic data
+-- via `ideal I`, the generating matrix via `gens I`, and the quotient
+-- algebra's complex via `toComplex(A/I)`.
+toComplex DGIdeal := I -> error(
+    "toComplex DGIdeal is not yet implemented. "
+    | "Use toComplex(ambient I / I) for the quotient's complex, "
+    | "or access underlying data via `ideal I` and `gens I`."
+)
+
+-- A / I : quotient DGAlgebra.  Builds a fresh DGAlgebra whose underlying
+-- algebra is A.natural / I.natural, and whose differential is inherited
+-- from A (d descends since I is d-closed).
+DGAlgebra / DGIdeal := (A, I) -> (
+    if I.dgAlgebra =!= A then
+        error "DGAlgebra / DGIdeal: ideal must be a DG ideal of the given DG algebra.";
+    Bnat := A.natural / I.natural;
+    proj := map(Bnat, A.natural);
+    result := new MutableHashTable;
+    result#(symbol ring) = A.ring;
+    result#(symbol natural) = Bnat;
+    result#(symbol Degrees) = A.Degrees;
+    -- Descend the differential: for each generator t of Bnat (same names as
+    -- gens A.natural), its image under d is proj(d_A t). A.diff is a
+    -- RingMap A.natural -> A.natural, so A.diff t applies it. Build
+    -- B.diff as a RingMap Bnat -> Bnat.
+    diffImgs := apply(gens A.natural, t -> proj(A.diff t));
+    result#(symbol diff) = map(Bnat, Bnat, matrix {diffImgs});
+    result#(symbol isHomogeneous) = A.isHomogeneous;
+    result#(symbol cache) = new CacheTable;
+    result.cache#(symbol diffs) = new MutableHashTable;
+    result#(symbol zerothHomology) = if A.?zerothHomology then A.zerothHomology else A.ring;
+    new DGAlgebra from result
+)
+
+-------------------------------------------------------------------------
+-- DGSubmodule
+--
+--   dgSubmodule(M, incMat): incMat is a Matrix whose target is M.natural
+--   and whose source is a free A.natural-module; its columns are the
+--   chosen A-generators of the submodule. The constructor d-closes by
+--   iteratively adjoining derivatives of current generators until the
+--   column span is d-stable.
+--
+--   The resulting DGSubmodule S has:
+--     S.natural    -- source (or an extended free module) of the inclusion
+--     S.inclusion  -- DGModuleMap S -> M encoding the inclusion
+--     S.Degrees    -- degree list (one per S.natural generator)
+--     S.diff       -- list of Vectors in S.natural, one per S.natural
+--                     generator, giving d_S
+-------------------------------------------------------------------------
+
+-- Internal helper: columnwise application of d_M, returning a Matrix
+-- with target M.natural and source a free A.natural-module whose i-th
+-- generator's hom-degree is (degrees source incMat)#i with its hom slot
+-- decreased by 1 (d_M lowers hom-degree by 1).  This makes the result a
+-- degree-0 homogeneous matrix and ensures that when new columns get
+-- appended during saturation (`incMat | dMat_newIdx`), the combined
+-- source carries correct degrees for its generators.
+applyDiffColumns := (M, incMat) -> (
+    A := M.dgAlgebra;
+    n := rank M.natural;
+    ncols := numcols incMat;
+    srcDegs := degrees source incMat;
+    shiftedDegs := apply(srcDegs, d -> prepend(first d - 1, drop(d, 1)));
+    srcShifted := if #shiftedDegs == 0 then (A.natural)^0
+                  else (A.natural)^(-shiftedDegs);
+    if ncols == 0 then return map(M.natural, srcShifted, 0);
+    -- For each column, diff returns a Vector in M.natural.  Collect the
+    -- entries of each and assemble a matrix by rows.
+    colEntries := apply(ncols, i -> entries diff(M, (incMat)_i));
+    rowsList := apply(n, r -> apply(ncols, j -> (colEntries#j)#r));
+    map(M.natural, srcShifted, rowsList)
+)
+
+-- isDGSubmodule(M, incMat): test whether image(incMat) is d_M-closed
+-- without saturating. Returns true/false.
+isDGSubmodule = method(TypicalValue => Boolean)
+isDGSubmodule (DGModule, Matrix) := (M, incMat) -> (
+    if target incMat =!= M.natural then
+        error "isDGSubmodule: target of incMat must equal M.natural.";
+    if numcols incMat == 0 then return true;
+    -- Assemble d_M applied column-wise; check containment in the column
+    -- span of incMat via a single `//` solve.
+    dMat := applyDiffColumns(M, incMat);
+    residual := dMat - incMat * (dMat // incMat);
+    residual == 0
+)
+
+dgSubmodule = method(TypicalValue => DGSubmodule)
+
+dgSubmodule (DGModule, Matrix) := (M, incMat0) -> (
+    if target incMat0 =!= M.natural then
+        error "dgSubmodule: target of inclusion matrix must equal M.natural.";
+    A := M.dgAlgebra;
+    -- Step 1: d-saturate. Iteratively compute d of every current generator
+    -- and adjoin only those that are not already in the current column span.
+    incMat := incMat0;
+    iter := 0;
+    notDone := true;
+    while notDone do (
+        iter = iter + 1;
+        if iter > 200 then error "dgSubmodule: d-closure failed to stabilize.";
+        dMat := applyDiffColumns(M, incMat);
+        if numcols dMat == 0 then (notDone = false; break);
+        residual := dMat - incMat * (dMat // incMat);
+        newIdx := select(numcols dMat, j -> residual_{j} != 0);
+        if #newIdx == 0 then (notDone = false; break);
+        incMat = incMat | dMat_newIdx;
+    );
+    -- Step 2: compute degrees of the columns of the final incMat.
+    -- Invariant: for DGModule M, M.Degrees equals degrees M.natural (same
+    -- sign), matching freeDGModule's convention that F = (A.natural)^(-degList)
+    -- has degrees degList.  So S.Degrees should likewise equal degrees F.
+    F := source incMat;
+    nGens := rank F;
+    subDegs := apply(nGens, i -> (degrees F)#i);
+    -- Step 3: compute d_S on each free generator by lifting d_M(col) back
+    -- through incMat.
+    -- Build a single matrix of d_M applied column-wise to incMat, then do
+    -- one bulk `//` solve.  This avoids per-column Vector->Matrix coercion
+    -- and matches the style of the d-saturation loop above.
+    dFullMat := applyDiffColumns(M, incMat);
+    liftFull := dFullMat // incMat;
+    residualFull := dFullMat - incMat * liftFull;
+    if residualFull != 0 then
+        error("dgSubmodule: internal error -- d-closure appeared to fail after saturation.");
+    dSList := apply(nGens, i -> liftFull_i);
+    -- Step 4: package.
+    result := new MutableHashTable;
+    result#(symbol dgAlgebra) = A;
+    result#(symbol ring) = A.ring;
+    result#(symbol natural) = F;
+    result#(symbol Degrees) = subDegs;
+    result#(symbol diff) = dSList;
+    result#(symbol cache) = new CacheTable;
+    result.cache#(symbol diffs) = new MutableHashTable;
+    result#(symbol ambient) = M;
+    S := new DGSubmodule from result;
+    S#(symbol inclusion) = dgModuleMap(M, S, incMat);
+    S
+)
+
+dgSubmodule (DGModule, List) := (M, gs) -> (
+    if #gs == 0 then (
+        -- The empty submodule: target is M.natural (over A.natural), and
+        -- source is a zero-rank free module over the same ring A.natural
+        -- (NOT M.ring = A.ring, which would be a different ring).
+        emptyMat := map(M.natural, (M.dgAlgebra.natural)^0, 0);
+        return dgSubmodule(M, emptyMat);
+    );
+    -- Coerce each entry to a Vector in M.natural.
+    coerced := apply(gs, g -> (
+        if instance(g, Vector) then g
+        else if instance(g, Matrix) and numcols g == 1 then (g)_0
+        else try (g * 1_(M.natural)) else error("dgSubmodule(List): could not coerce generator to M.natural.")
+    ));
+    -- Build a matrix with these columns.
+    cols := matrix {coerced};
+    dgSubmodule(M, cols)
+)
+
+ambient DGSubmodule := S -> S.ambient
+inclusion = method()
+inclusion DGSubmodule := S -> S.inclusion
+-- `module S` returns the underlying A.natural-module (free in this encoding);
+-- for the set-theoretic submodule image, use `image S.inclusion.natural`.
+module DGSubmodule := S -> S.natural
+
+-- isWellDefined DGSubmodule.  Key-shape + type checks, then verify
+-- d-closure: the column span of the inclusion matrix is stable under
+-- d_M.  Diagnostics via debugLevel > 0.
+isWellDefined DGSubmodule := S -> (
+    k := keys S;
+    expectedKeys := set {
+        symbol dgAlgebra, symbol ring, symbol natural, symbol Degrees,
+        symbol diff, symbol cache, symbol ambient, symbol inclusion
+    };
+    if set k =!= expectedKeys then (
+        if debugLevel > 0 then (
+            added := toList(k - expectedKeys);
+            missing := toList(expectedKeys - k);
+            if #added > 0 then << "-- DGSubmodule: unexpected key(s): " << toString added << endl;
+            if #missing > 0 then << "-- DGSubmodule: missing key(s): " << toString missing << endl;
+        );
+        return false;
+    );
+    if not instance(S.ambient, DGModule) then (
+        if debugLevel > 0 then << "-- DGSubmodule: S.ambient is not a DGModule" << endl;
+        return false;
+    );
+    if not isWellDefined S.ambient then (
+        if debugLevel > 0 then << "-- DGSubmodule: S.ambient is not a well-defined DGModule" << endl;
+        return false;
+    );
+    if not instance(S.inclusion, DGModuleMap) then (
+        if debugLevel > 0 then << "-- DGSubmodule: S.inclusion is not a DGModuleMap" << endl;
+        return false;
+    );
+    -- Semantic: the column span of S.inclusion.natural must be d-stable
+    -- in M = S.ambient.  The free presentation S.natural and its lifted
+    -- differential S.diff are derived from that; d-closure fails iff the
+    -- lift has nontrivial residual.
+    M := S.ambient;
+    incMat := S.inclusion.natural;
+    if target incMat =!= M.natural then (
+        if debugLevel > 0 then << "-- DGSubmodule: target of inclusion matrix is not M.natural" << endl;
+        return false;
+    );
+    if numcols incMat == 0 then return true;
+    dMat := applyDiffColumns(M, incMat);
+    residual := dMat - incMat * (dMat // incMat);
+    ok := residual == 0;
+    if not ok and debugLevel > 0 then
+        << "-- DGSubmodule: inclusion's column span is not d-closed in the ambient DGModule" << endl;
+    ok
+)
+
+-------------------------------------------------------------------------
+-- DGQuotientModule
+--
+--   dgQuotientModule(M, S) or `M / S` constructs the quotient Q.
+--   Q.natural   = coker S.inclusion.natural
+--   Q.Degrees   = M.Degrees
+--   Q.projection = DGModuleMap M -> Q with natural = identity composed
+--                  with the quotient map (built via `map(Q.natural, ...)`).
+-------------------------------------------------------------------------
+
+dgQuotientModule = method(TypicalValue => DGQuotientModule)
+dgQuotientModule (DGModule, DGSubmodule) := (M, S) -> (
+    if S.ambient =!= M then
+        error "dgQuotientModule: submodule's ambient must equal the given DGModule.";
+    A := M.dgAlgebra;
+    Qnat := cokernel S.inclusion.natural;
+    -- Projection natural matrix: M.natural -> Qnat, the canonical quotient.
+    projNat := map(Qnat, M.natural, id_(M.natural));
+    result := new MutableHashTable;
+    result#(symbol dgAlgebra) = A;
+    result#(symbol ring) = A.ring;
+    result#(symbol natural) = Qnat;
+    result#(symbol Degrees) = M.Degrees;
+    -- The DGModule-like diff list: for each M-generator, push its image
+    -- in M.natural under d through proj to land in Qnat.
+    result#(symbol diff) = apply(#M.Degrees, i -> projNat * M.diff#i);
+    result#(symbol ambient) = M;
+    result#(symbol subDGModule) = S;
+    result#(symbol cache) = new CacheTable;
+    Q := new DGQuotientModule from result;
+    -- Build the projection DGModuleMap only after Q is instantiated so we
+    -- can point its `target` at Q.
+    -- Note: Q is NOT a DGModule, so we construct a bare DGModuleMap record.
+    projMap := new MutableHashTable;
+    projMap#(symbol source) = M;
+    projMap#(symbol target) = Q;
+    projMap#(symbol dgAlgebra) = A;
+    projMap#(symbol natural) = projNat;
+    projMap#(symbol cache) = new CacheTable;
+    Q#(symbol projection) = new DGModuleMap from projMap;
+    Q
+)
+
+DGModule / DGSubmodule := (M, S) -> dgQuotientModule(M, S)
+
+-- diff(Q, v) for DGQuotientModule Q: the same Leibniz formula used on
+-- DGModule works verbatim because Q has .natural (a cokernel), .diff
+-- (a list of columns in Q.natural), and .dgAlgebra.  Used by
+-- isWellDefined DGModuleMap to verify chain-map conditions when source
+-- or target is a DGQuotientModule.
+diff (DGQuotientModule, Vector) := (Q, v) -> (
+    A := Q.dgAlgebra;
+    vEntries := entries v;
+    -- Use #vEntries (= presentation generator count) rather than rank,
+    -- which would try codim on a cokernel module and may fail over
+    -- non-affine graded ambients.
+    numGens := #vEntries;
+    natGens := apply(numGens, i -> (Q.natural)_i);
+    sum apply(numGens, i -> (
+        fi := vEntries#i;
+        if fi == 0 then 0_(Q.natural)
+        else (
+            term1 := polyDifferential(A, fi) * natGens#i;
+            signExp := first degree fi;
+            sign := if odd signExp then -1 else 1;
+            term2 := sign * fi * Q.diff#i;
+            term1 + term2
+        )
+    ))
+)
+
+ambient DGQuotientModule := Q -> Q.ambient
+subDGModule = method()
+subDGModule DGQuotientModule := Q -> Q.subDGModule
+projection = method()
+projection DGQuotientModule := Q -> Q.projection
+
+-- maxDegree on a DGQuotientModule: inherit from the ambient DGModule.
+-- (DGQuotientModule is not currently a subtype of DGModule, so the
+-- DGModule method at line 3204 does not fire; supply it here so that
+-- toComplexMap can take a DGQuotientModule as target.)
+maxDegree DGQuotientModule := Q -> maxDegree Q.ambient
+
+-- toComplex: build per-degree quotient complex directly from the ambient
+-- DGModule and the submodule's inclusion-as-ComplexMap.  If Q has been
+-- through `prune` (see prune DGQuotientModule), return the cached
+-- minimally-presented complex.
+toComplex DGQuotientModule := Q -> (
+    if Q.cache#?(symbol prunedComplex) then
+        return Q.cache#(symbol prunedComplex);
+    cxM := toComplex Q.ambient;
+    cxIncl := toComplexMap Q.subDGModule.inclusion;
+    cokernel cxIncl
+)
+
+homology (ZZ, DGQuotientModule) := opts -> (n, Q) -> (
+    HH_n (toComplex Q)
+)
+
+-- Unary homology on a DGQuotientModule: the graded HA-module obtained
+-- by taking H_i(toComplex Q) at each hom-degree i ∈ [concentration cxQ]
+-- and packaging the pieces as an HA = HH(A)-module via extension of
+-- scalars along R → HA.
+--
+-- This mirrors homologyModule DGModule, but uses toComplex(Q) directly
+-- because Q.natural is a cokernel rather than a free A.natural-module,
+-- so the moduleMultMap path (which requires a free natural module)
+-- cannot be used generically.  The result therefore captures the
+-- R-module structure and the HA-action induced by R → HA only; any
+-- nontrivial cycle-class action on the quotient must be descended
+-- separately (not yet implemented).
+homologyModule DGQuotientModule := Q -> (
+    A := Q.dgAlgebra;
+    HA := HH A;
+    cxQ := toComplex Q;
+    (lo, hi) := concentration cxQ;
+    if lo > hi then return HA^0;
+    -- Per-degree homology as R-modules, then tensor up to HA-modules.
+    pieces := apply(toList(lo..hi), i -> HA ** prune HH_i cxQ);
+    directSum pieces
+)
+
+homology DGQuotientModule := opts -> Q -> homologyModule Q
+
+-- isAcyclic on a DGQuotientModule: H_i(Q) = 0 for all i >= 1 up to the
+-- finite bound implied by maxDegree Q.ambient (or the user-supplied
+-- EndDegree).  Matches isAcyclic DGModule's semantics.
+isAcyclic DGQuotientModule := opts -> Q -> (
+    endDegree := maxDegree Q;
+    if endDegree === infinity and opts.EndDegree == -1 then
+        error "Must supply an upper bound to check for acyclicity.";
+    if opts.EndDegree != -1 then endDegree = opts.EndDegree;
+    not any(1..endDegree, i -> prune homology(i, Q) != 0)
+)
+
+-- isWellDefined DGQuotientModule.  Key-shape + type checks, then delegate
+-- to the subDGModule's d-closure check (the quotient is well-defined
+-- exactly when the sub is).  Also verifies projection structure.
+isWellDefined DGQuotientModule := Q -> (
+    k := keys Q;
+    expectedKeys := set {
+        symbol dgAlgebra, symbol ring, symbol natural, symbol Degrees,
+        symbol diff, symbol cache, symbol ambient, symbol subDGModule,
+        symbol projection
+    };
+    if set k =!= expectedKeys then (
+        if debugLevel > 0 then (
+            added := toList(k - expectedKeys);
+            missing := toList(expectedKeys - k);
+            if #added > 0 then << "-- DGQuotientModule: unexpected key(s): " << toString added << endl;
+            if #missing > 0 then << "-- DGQuotientModule: missing key(s): " << toString missing << endl;
+        );
+        return false;
+    );
+    if not instance(Q.ambient, DGModule) then (
+        if debugLevel > 0 then << "-- DGQuotientModule: Q.ambient is not a DGModule" << endl;
+        return false;
+    );
+    if not instance(Q.subDGModule, DGSubmodule) then (
+        if debugLevel > 0 then << "-- DGQuotientModule: Q.subDGModule is not a DGSubmodule" << endl;
+        return false;
+    );
+    if Q.subDGModule.ambient =!= Q.ambient then (
+        if debugLevel > 0 then << "-- DGQuotientModule: Q.subDGModule.ambient does not match Q.ambient" << endl;
+        return false;
+    );
+    if not instance(Q.projection, DGModuleMap) then (
+        if debugLevel > 0 then << "-- DGQuotientModule: Q.projection is not a DGModuleMap" << endl;
+        return false;
+    );
+    if source Q.projection =!= Q.ambient or target Q.projection =!= Q then (
+        if debugLevel > 0 then << "-- DGQuotientModule: Q.projection has wrong source/target" << endl;
+        return false;
+    );
+    -- Semantic: delegate to the submodule's well-definedness (which
+    -- verifies d-closure of the relations).
+    ok := isWellDefined Q.subDGModule;
+    if not ok and debugLevel > 0 then
+        << "-- DGQuotientModule: Q.subDGModule is not a well-defined DGSubmodule" << endl;
+    ok
+)
+
+-------------------------------------------------------------------------
+-- prune for DG types.
+--
+-- Modeled on `prune Complex` (Complexes package, ChainComplex.m2 line
+-- 662): that method minimalPresentation's each term, drops trivially-zero
+-- pieces from the concentration, and transports differentials via
+-- minimalPresentation at the ComplexMap level.  We provide DG analogs:
+--
+--   * prune DGModule           : identity on a freeDGModule (M.natural
+--                                is already minimal).  For non-free
+--                                DGModules (currently none), this would
+--                                minimalPresentation M.natural.
+--   * prune DGSubmodule S      : rebuild S using mingens of its inclusion
+--                                matrix (A.natural-level minimization).
+--                                d-closure preserved (span unchanged).
+--   * prune DGQuotientModule Q : (1) prune Q.subDGModule; (2) cache the
+--                                complex-level pruned toComplex inside Q
+--                                so subsequent toComplex Q calls return
+--                                the minimally-presented complex.  This
+--                                closes the commutation gap: on a pruned
+--                                Q we have toComplex Q == prune toComplex Q.
+--                                In particular, trivially-zero cokernels
+--                                now produce the zero complex.
+--   * prune DGIdeal I          : trim I.natural (ideal-level minimization).
+--
+-- The DGQuotientModule branch uses the same transport idea as
+-- `prune Complex` (minimalPresentation commutes with the differential)
+-- without trying to rebuild Q.natural itself -- which would require
+-- changing the ambient module M, a nontrivial refactor.
+-------------------------------------------------------------------------
+
+-- minimalPresentation is the non-prune synonym; both keys installed to
+-- match M2's convention (see ChainComplex.m2 line 661-662 for Complex).
+--
+-- Following the Complex convention (ChainComplex.m2 ~line 685), every
+-- prune method caches a `pruningMap` in the *output* object's cache,
+-- encoding the canonical comparison map (pruned) --> (original).  That
+-- map is a well-defined DGModuleMap / DGAlgebraMap / DGIdealWrapper and
+-- can be verified via isWellDefined.
+--
+-- We do not materialize DGModule-level prune (prune DGModule = identity),
+-- so the cached pruningMap on a DGModule is literally the identity.
+minimalPresentation DGModule := o -> M -> M
+prune DGModule := o -> M -> (
+    M.cache#(symbol pruningMap) = identityDGModuleMap M;
+    M
+)
+
+-- Trivial prune fallbacks for DGAlgebra and maps.  These mirror the
+-- Complexes pattern (prune is the identity on already-minimal objects)
+-- and ensure that prune commutes with every constructor uniformly so
+-- that calling code never has to guard against "prune not defined".
+minimalPresentation DGAlgebra := o -> A -> A
+prune DGAlgebra := o -> A -> A
+minimalPresentation DGAlgebraMap := o -> f -> f
+prune DGAlgebraMap := o -> f -> f
+minimalPresentation DGModuleMap := o -> f -> f
+prune DGModuleMap := o -> f -> f
+
+prune DGSubmodule := o -> S -> (
+    M := S.ambient;
+    incMat := S.inclusion.natural;
+    -- No redundancy to trim if there are no generators or mingens is
+    -- already the same width: cache an identity pruningMap and return.
+    minIm := if numcols incMat == 0 then incMat else mingens image incMat;
+    if numcols minIm == numcols incMat then (
+        S.cache#(symbol pruningMap) = identityDGModuleMap S;
+        return S;
+    );
+    -- Build pruned Sp with fewer generators.
+    Sp := dgSubmodule(M, minIm);
+    -- Build pruningMap: Sp --> S as a DGModuleMap.  Factor minIm = incMat * T
+    -- via `minIm // incMat` (solves the A.natural-linear system), then
+    -- coerce T to a map with the correct degree labels.
+    T := minIm // incMat;
+    Tcoerced := map(S.natural, Sp.natural, T);
+    pm := dgModuleMap(S, Sp, Tcoerced);
+    Sp.cache#(symbol pruningMap) = pm;
+    Sp
+)
+minimalPresentation DGSubmodule := o -> S -> prune S
+
+prune DGQuotientModule := o -> Q -> (
+    -- Step 1: minimize the submodule presentation (A.natural-level prune).
+    prunedS := prune Q.subDGModule;
+    Qp := if prunedS === Q.subDGModule then Q else Q.ambient / prunedS;
+    -- Step 2: build pruningMap: Qp --> Q as a raw DGModuleMap.  Both are
+    -- cokernels of inclusions of the same image(S) in M (equal sets), so
+    -- the identity on M.natural descends to a canonical map
+    -- Qp.natural --> Q.natural.  Construct it directly (dgModuleMap does
+    -- not accept DGQuotientModule source/target because the type doesn't
+    -- inherit from DGModule).
+    idAmb := id_(Q.ambient.natural);
+    pmNat := try inducedMap(Q.natural, Qp.natural, idAmb) else
+             map(Q.natural, Qp.natural, idAmb);
+    pm := new DGModuleMap from {
+        symbol source    => Qp,
+        symbol target    => Q,
+        symbol dgAlgebra => Q.dgAlgebra,
+        symbol natural   => pmNat,
+        symbol cache     => new CacheTable
+    };
+    Qp.cache#(symbol pruningMap) = pm;
+    -- Step 3: compute the complex-level prune and cache it.  This mirrors
+    -- `prune Complex` and closes the commutation gap: after this, calling
+    -- toComplex on Qp returns the minimally-presented complex.
+    cxQ := toComplex Qp;
+    prunedCxQ := prune cxQ;
+    Qp.cache#(symbol prunedComplex) = prunedCxQ;
+    Qp
+)
+
+prune DGIdeal := o -> I -> (
+    A := I.dgAlgebra;
+    minI := trim I.natural;
+    if numgens minI == numgens I.natural then (
+        -- DGIdeals don't support maps directly (no DGIdealMap type); we
+        -- cache the identity as the pruningMap so downstream code can
+        -- share a uniform calling convention.  The pruningMap for a DGIdeal is
+        -- recorded as the identity DGAlgebraMap on the ambient, which is
+        -- well-defined and trivially an iso.
+        I.cache#(symbol pruningMap) = identityDGAlgebraMap A;
+        return I;
+    );
+    Ip := dgIdeal(A, (generators minI)_*);
+    -- For a pruned DGIdeal, the ambient DGAlgebra is unchanged and the
+    -- underlying ideal is equal (as a set) -- mingens just chooses a
+    -- smaller generating set.  So the canonical comparison Ip --> I is
+    -- the identity on the ambient DG algebra.
+    Ip.cache#(symbol pruningMap) = identityDGAlgebraMap A;
+    Ip
+)
+minimalPresentation DGIdeal := o -> I -> prune I
+minimalPresentation DGQuotientModule := o -> Q -> prune Q
+
+-------------------------------------------------------------------------
+-- Basic module-like operations for DGModule / DGSubmodule / DGQuotientModule
+--
+-- These mirror M2's standard Module/Ideal methods (numgens, rank,
+-- degrees, isHomogeneous, isFreeModule, super, cover, relations).
+-- They work uniformly across the DG-module type hierarchy so that
+-- code written against Modules can often be reused on DG objects
+-- without modification.
+-------------------------------------------------------------------------
+
+numgens DGModule := M -> #M.Degrees
+numgens DGSubmodule := S -> #S.Degrees
+numgens DGQuotientModule := Q -> #Q.Degrees
+
+rank DGModule := M -> rank M.natural
+rank DGSubmodule := S -> rank S.natural
+
+-- `rank DGQuotientModule` would ask for rank of a cokernel module, which
+-- triggers codim computations that fail for non-affine graded ambients
+-- (see the diff(DGQuotientModule, ...) rank-vs-numgens note).  Instead,
+-- expose it as numgens of the cokernel presentation.
+numColumnsDGQ := Q -> numgens Q.natural
+
+degrees DGModule := M -> M.Degrees
+degrees DGSubmodule := S -> S.Degrees
+degrees DGQuotientModule := Q -> Q.Degrees
+
+isHomogeneous DGModule := M -> isHomogeneous M.natural
+isHomogeneous DGSubmodule := S -> isHomogeneous S.natural
+isHomogeneous DGQuotientModule := Q -> isHomogeneous Q.natural
+isHomogeneous DGIdeal := I -> isHomogeneous I.natural
+
+-- `isFreeDGModule` — every DGModule in our encoding has M.natural a free
+-- graded A.natural-module, so this returns true unless someone has
+-- manually built one with a non-free natural (which isWellDefined would
+-- still tolerate as long as the differential closes).  We still check
+-- to be safe.
+isFreeDGModule = method(TypicalValue => Boolean)
+isFreeDGModule DGModule := M -> isFreeModule M.natural
+isFreeDGModule DGSubmodule := S -> isFreeModule S.natural
+
+-- M2-style structural accessors on DGSubmodule / DGQuotientModule.
+--   super S       : ambient DGModule of S.
+--   cover Q       : ambient DGModule M (of which Q is a quotient).
+--   relations Q   : inclusion matrix encoding the killed relations.
+-- For a DGSubmodule the relations are (by construction) the zero
+-- submodule of S.natural, since S.natural is a free A.natural-module.
+super DGSubmodule := S -> S.ambient
+super DGQuotientModule := Q -> Q.ambient
+cover DGQuotientModule := Q -> Q.ambient
+relations DGQuotientModule := Q -> Q.subDGModule.inclusion.natural
+
+-- isZero check: does the DG-thing have no generators (or equivalently
+-- numgens == 0 / natural module is zero)?
+isZero = method(TypicalValue => Boolean)
+isZero DGModule := M -> numgens M.natural == 0
+isZero DGSubmodule := S -> numcols S.inclusion.natural == 0 or S.inclusion.natural == 0
+isZero DGQuotientModule := Q -> Q.natural == 0
+isZero DGIdeal := I -> numgens I.natural == 0 or I.natural == 0
+
+-------------------------------------------------------------------------
+-- DGSubmodule algebra: sum, intersection, containment, equality.
+--
+-- All operations are in the same ambient DGModule.  d-closure is
+-- preserved because:
+--   * (S + T) : d(s + t) = d(s) + d(t) ∈ S + T.
+--   * (S ∩ T) : if x ∈ S ∩ T, then d(x) ∈ S and d(x) ∈ T.
+--   * containment / equality are read off from the image submodules.
+-------------------------------------------------------------------------
+
+sameAmbientDGSub := (S, T, opname) -> (
+    if S.ambient =!= T.ambient then
+        error(opname | ": DGSubmodules must share the same ambient DGModule.")
+)
+
+DGSubmodule + DGSubmodule := (S, T) -> (
+    sameAmbientDGSub(S, T, "DGSubmodule +");
+    combined := S.inclusion.natural | T.inclusion.natural;
+    dgSubmodule(S.ambient, combined)
+)
+
+intersect(DGSubmodule, DGSubmodule) := DGSubmodule => {} >> opts -> (S, T) -> (
+    sameAmbientDGSub(S, T, "intersect DGSubmodule");
+    interMod := intersect(image S.inclusion.natural, image T.inclusion.natural);
+    dgSubmodule(S.ambient, generators interMod)
+)
+
+isSubset(DGSubmodule, DGSubmodule) := (S, T) -> (
+    sameAmbientDGSub(S, T, "isSubset DGSubmodule");
+    isSubset(image S.inclusion.natural, image T.inclusion.natural)
+)
+
+DGSubmodule == DGSubmodule := (S, T) -> (
+    if S.ambient =!= T.ambient then false
+    else image S.inclusion.natural == image T.inclusion.natural
+)
+
+-------------------------------------------------------------------------
+-- Scalar ideal action: I * S and I * M.
+--
+-- I * S has generators g · s for g a generator of I, s a generator of S
+-- (viewed in the ambient M.natural).  This is d-closed:
+--   d(g · s) = d(g) · s ± g · d(s) ∈ I·S + I·S = I·S.
+-------------------------------------------------------------------------
+
+DGIdeal * DGSubmodule := (I, S) -> (
+    if S.ambient.dgAlgebra =!= I.dgAlgebra then
+        error "DGIdeal * DGSubmodule: DG algebras disagree between I and S.ambient.";
+    prodMod := I.natural * image S.inclusion.natural;
+    dgSubmodule(S.ambient, generators prodMod)
+)
+
+DGIdeal * DGModule := (I, M) -> (
+    if M.dgAlgebra =!= I.dgAlgebra then
+        error "DGIdeal * DGModule: DG algebras disagree between I and M.";
+    -- Whole-ambient submodule, then scale.
+    I * dgSubmodule(M, id_(M.natural))
+)
+
+-------------------------------------------------------------------------
+-- Annihilator of a DGSubmodule / DGQuotientModule.
+--
+-- Given S ⊂ M, ann(S) = { a ∈ A.natural : a · s = 0 for all s ∈ S }.
+-- This is d-closed: if a · s = 0 for all s, then d(a · s) = 0 = d(a)·s
+-- ± a·d(s), so d(a)·s = ∓ a·d(s).  Since d(s) ∈ S, a·d(s) = 0, hence
+-- d(a)·s = 0 for all s ∈ S, so d(a) ∈ ann(S).  Same argument for Q.
+-------------------------------------------------------------------------
+
+annihilator DGSubmodule := opts -> S -> (
+    annIdeal := annihilator(image S.inclusion.natural, opts);
+    dgIdeal(S.ambient.dgAlgebra, annIdeal)
+)
+
+annihilator DGQuotientModule := opts -> Q -> (
+    annIdeal := annihilator(Q.natural, opts);
+    dgIdeal(Q.dgAlgebra, annIdeal)
+)
+
+-------------------------------------------------------------------------
+-- DGIdeal: `module I` exposes the underlying Module-view of the ideal
+-- (unifying with Ideal in M2, where `module I` returns I.module).
+-------------------------------------------------------------------------
+
+module DGIdeal := I -> module I.natural
+
+-------------------------------------------------------------------------
+-- Direct sum of DGModules: M ++ N.
+--
+-- The natural module is M.natural ++ N.natural (M2 handles the degree
+-- book-keeping).  Hom-degrees are preserved component-wise.  The new
+-- differential acts block-diagonally: d(M ⊕ N)(m, n) = (d_M m, d_N n).
+-------------------------------------------------------------------------
+
+DGModule ++ DGModule := (M, N) -> (
+    if M.dgAlgebra =!= N.dgAlgebra then
+        error "DGModule ++ DGModule: DG algebras must agree.";
+    A := M.dgAlgebra;
+    sumNat := M.natural ++ N.natural;
+    mGens := #M.Degrees;
+    nGens := #N.Degrees;
+    -- Hom-degree/internal-degree labels concatenate: the first mGens
+    -- generators come from M (degrees M.Degrees), the remaining nGens
+    -- come from N (degrees N.Degrees).  This mirrors how M2 handles
+    -- degrees on direct sums of free modules.
+    sumDegrees := M.Degrees | N.Degrees;
+    -- Differentials: d on M sits in the first mGens columns; d on N
+    -- sits in the last nGens columns; each column in sumNat is a
+    -- block vector (M-part, N-part).
+    -- sumNat == M.natural ++ N.natural, indexed so that gens 0..mGens-1
+    -- are M's and gens mGens..mGens+nGens-1 are N's.  Build the diff
+    -- list as per-generator Vectors in sumNat.
+    sumGens := apply(mGens + nGens, i -> (sumNat)_i);
+    mInj := map(sumNat, M.natural, (sumNat)_{0..mGens-1});
+    nInj := map(sumNat, N.natural, (sumNat)_{mGens..mGens+nGens-1});
+    sumDiff := apply(mGens + nGens, i -> (
+        if i < mGens then mInj * M.diff#i
+        else nInj * N.diff#(i - mGens)
+    ));
+    result := new MutableHashTable;
+    result#(symbol dgAlgebra) = A;
+    result#(symbol ring) = A.ring;
+    result#(symbol natural) = sumNat;
+    result#(symbol Degrees) = sumDegrees;
+    result#(symbol diff) = sumDiff;
+    result#(symbol cache) = new CacheTable;
+    -- Initialize the `diffs` caching table that moduleDifferential
+    -- needs (otherwise isWellDefined / toComplex / homology all crash
+    -- on key-not-found).
+    result.cache#(symbol diffs) = new MutableHashTable;
+    -- Record summands for `components`.
+    result.cache#(symbol components) = {M, N};
+    new DGModule from result
+)
+
+-- components DGModule: when M was built via ++ or directSum, return the
+-- summand list; otherwise return {M}.
+components DGModule := M -> (
+    if M.cache#?(symbol components) then M.cache#(symbol components)
+    else {M}
+)
+
+-- directSum of a sequence/list of DGModules.  Mirrors `directSum` for
+-- Modules: fold ++ over the list.  Empty list -> zero DGModule over the
+-- first-available DGAlgebra (error if we cannot infer).
+directSum DGModule := M -> M
+DGModule.directSum = args -> (
+    if #args == 0 then error "directSum DGModule: need at least one summand.";
+    fold((a, b) -> a ++ b, args)
+)
+
+-------------------------------------------------------------------------
+-- image / kernel / cokernel of a DGModuleMap
+--
+--   image F     : DGSubmodule of target F.
+--                 inclusion.natural = F.natural
+--                 S.natural = source F.natural (same as M.natural)
+--                 Since F is a chain map, F.natural's image is d-closed.
+--
+--   kernel F    : DGSubmodule of source F.
+--                 inclusion.natural = gens kernel F.natural
+--                 Closed under d since F is a chain map.
+--
+--   cokernel F  : DGQuotientModule target F / image F.
+-------------------------------------------------------------------------
+
+image DGModuleMap := F -> (
+    -- Construct image(F) as a DG submodule of target(F). F.natural is
+    -- automatically d-closed (F is a chain map), so no saturation is
+    -- needed -- we just need a good free presentation.
+    --
+    -- Convention (matches M2's Matrix-level `image`): drop zero columns so
+    -- that numgens (image F) reflects the rank of the underlying image
+    -- rather than the arbitrary presentation width.  For a 0 map this
+    -- yields the 0 submodule; for an injection the full source.
+    N := target F;
+    nat := F.natural;
+    nz := select(numcols nat, j -> nat_{j} != 0);
+    prunedMat := if #nz == numcols nat then nat
+                 else if #nz == 0 then map(N.natural, (N.dgAlgebra.natural)^0, 0)
+                 else nat_nz;
+    dgSubmodule(N, prunedMat)
+)
+
+kernel DGModuleMap := opts -> F -> (
+    M := source F;
+    kerMat := gens kernel F.natural;
+    dgSubmodule(M, kerMat)
+)
+
+cokernel DGModuleMap := F -> (
+    N := target F;
+    imgF := image F;
+    dgQuotientModule(N, imgF)
+)
+
+-- In M2, `coker` and `cokernel` are aliases for the same MethodFunction
+-- (cokernel = method(); coker = cokernel), so installing at one signature
+-- also installs at the other.  We do NOT add a separate `coker` alias line
+-- because `coker DGModuleMap := cokernel` would silently overwrite the
+-- method with the MethodFunction itself, creating infinite self-recursion.
+
+-------------------------------------------------------------------------
+-- Backward-compatible tensor operations with non-DG types.
+--
+-- Semantics overview:
+--   * `** Ring`   — base-change along the canonical substitute map
+--                   A.ring -> S.  The result inherits the same DG shape
+--                   with coefficients pushed forward to S.  When S is a
+--                   QuotientRing R/I, this is "reduction mod I."
+--   * `** Module` — exterior tensor M ⊗_R N for M a DGModule and N a
+--                   free R-module.  The differential acts as d_M ⊗ id_N.
+--   * `** Ideal`  — sugar for `** module I`.
+--
+-- Functoriality requirements that every implementation satisfies:
+--   * identity  ** S   is isomorphic to the identity on (... ** S).
+--   * (f o g)   ** S   agrees with (f ** S) o (g ** S) at the natural
+--                      matrix level.
+--   * isWellDefined holds on every tensor output (checked in regression).
+-------------------------------------------------------------------------
+
+-- Helper: canonical substitute from (any ring containing the source
+-- generator-names) into a fresh target ring.  Errors out with a
+-- contextualized message rather than the opaque M2 substitute error.
+coerceAcrossRings := (src, tgt, opname) -> (
+    try substitute(src, tgt)
+    else error (opname | ": cannot substitute across rings; ensure the target ring's generator names include the source's.")
+)
+
+-- DGSubmodule ** Ring: base-change of ambient and inclusion.  Invariant:
+-- if S' = S ** R is the base-change of S in ambient M, and M' = M ** R,
+-- then S' is a well-defined DGSubmodule of M' with the pushed-forward
+-- inclusion matrix.  The differential stays d-closed because d (the
+-- base-changed differential on M') sends the S'-image to itself by the
+-- same columns that d(S) landed in.
+DGSubmodule ** Ring := (Sub, S) -> (
+    Mnew := (Sub.ambient) ** S;
+    Bnat := ring Mnew.natural;
+    incOld := Sub.inclusion.natural;
+    newEntries := apply(entries incOld, row ->
+        apply(row, f -> coerceAcrossRings(f, Bnat, "DGSubmodule ** Ring"))
+    );
+    newInc := if numcols incOld == 0 then map(Mnew.natural, (Bnat)^0, 0)
+              else map(Mnew.natural, , matrix newEntries);
+    dgSubmodule(Mnew, newInc)
+)
+
+-- QuotientRing inherits from the Ring method above.
+
+-- DGQuotientModule ** Ring: base-change the ambient and pushforward the
+-- inclusion matrix onto the SAME freshly base-changed ambient, then
+-- requote.  (Calling `(Q.subDGModule) ** S` recursively would build a
+-- second copy of the base-changed ambient and trip the "submodule's
+-- ambient must equal the given DGModule" check in dgQuotientModule.)
+DGQuotientModule ** Ring := (Q, S) -> (
+    Mnew := (Q.ambient) ** S;
+    Bnat := ring Mnew.natural;
+    incOld := Q.subDGModule.inclusion.natural;
+    newEntries := apply(entries incOld, row ->
+        apply(row, f -> coerceAcrossRings(f, Bnat, "DGQuotientModule ** Ring")));
+    newInc := if numcols incOld == 0 then map(Mnew.natural, (Bnat)^0, 0)
+              else map(Mnew.natural, , matrix newEntries);
+    Subnew := dgSubmodule(Mnew, newInc);
+    Mnew / Subnew
+)
+
+-- (QuotientRing handled via its Ring parent.)
+
+-- DGIdeal ** Ring: base-change the ambient DGAlgebra and pushforward the
+-- ideal generators into the new .natural ring.
+DGIdeal ** Ring := (I, S) -> (
+    Anew := (I.dgAlgebra) ** S;
+    Bnat := Anew.natural;
+    oldGens := first entries generators I.natural;
+    newGens := apply(oldGens, g -> coerceAcrossRings(g, Bnat, "DGIdeal ** Ring"));
+    dgIdeal(Anew, newGens)
+)
+
+-- (QuotientRing handled via its Ring parent.)
+
+-- DGAlgebraMap ** Ring: base-change.  Given phi : A -> B, produces
+-- phi ⊗ id_S : A ** S -> B ** S whose natural matrix is the image
+-- matrix pushed into (B ** S).natural.
+DGAlgebraMap ** Ring := (phi, S) -> (
+    Anew := (phi.source) ** S;
+    Bnew := (phi.target) ** S;
+    Bnat := Bnew.natural;
+    oldImgs := first entries matrix phi.natural;
+    newImgs := apply(oldImgs, f ->
+        coerceAcrossRings(f, Bnat, "DGAlgebraMap ** Ring"));
+    dgAlgebraMap(Bnew, Anew, matrix {newImgs})
+)
+
+-- (QuotientRing handled via its Ring parent.)
+
+-- DGModuleMap ** Ring: base-change of a DGModuleMap.  f : M -> N becomes
+-- f ⊗ id_S : M ** S -> N ** S.  The natural matrix entries push forward
+-- via the canonical substitute.
+DGModuleMap ** Ring := (f, S) -> (
+    Mnew := (f.source) ** S;
+    Nnew := (f.target) ** S;
+    Bnat := ring Nnew.natural;
+    oldMat := f.natural;
+    newEntries := apply(entries oldMat, row ->
+        apply(row, g -> coerceAcrossRings(g, Bnat, "DGModuleMap ** Ring")));
+    newMat := if numcols oldMat == 0 then map(Nnew.natural, Mnew.natural, 0)
+              else map(Nnew.natural, Mnew.natural, matrix newEntries);
+    dgModuleMap(Nnew, Mnew, newMat)
+)
+
+-- (QuotientRing handled via its Ring parent.)
+
+-- DGModule ** Module: exterior tensor M ⊗_R N where M is a DGModule over
+-- A and N is a free R-module.  The result is a free DGModule over A,
+-- with generators {e_i ⊗ n_j}, hom-degree deg(e_i) (n_j contributes
+-- internal degree), and differential d(e_i ⊗ n_j) = d(e_i) ⊗ n_j.
+--
+-- We insist N be a free module because M.natural ** N needs to come out
+-- free over A.natural for our DGModule semantics.
+DGModule ** Module := (M, N) -> (
+    -- Cache M ** N on M so repeated calls agree (needed for sub/quot
+    -- compatibility: `(Q.ambient) ** N` must match the ambient we
+    -- expect in consuming operations).
+    if M.cache#?"tensorWithModule" and (M.cache#"tensorWithModule")#?N then
+        return (M.cache#"tensorWithModule")#N;
+    A := M.dgAlgebra;
+    Anat := A.natural;
+    if not isFreeModule M.natural then
+        error "DGModule ** Module: M.natural must be free (koszulComplexDGM/cokernel form not supported).";
+    if not isFreeModule N then
+        error "DGModule ** Module: N must be a free module.";
+    rM := rank M.natural;
+    rN := rank N;
+    Ndegs := degrees N;
+    -- Generator (i, j) of M ⊗_R N has hom-degree = first(M.Degrees#i)
+    -- (N contributes nothing to hom-degree; it's an ordinary R-module)
+    -- and internal degree = rest(M.Degrees#i) + Ndegs#j (component-wise).
+    -- We pad Ndegs#j with zeros if the internal-degree vectors of M are
+    -- longer than the R-degree vectors of N (e.g., multigraded A).
+    padAdd := (lst1, lst2) -> apply(#lst1, k -> (
+        a := lst1#k;
+        b := if k < #lst2 then lst2#k else 0;
+        a + b
+    ));
+    combinedDegrees := flatten apply(rM, i -> apply(rN, j -> (
+        dM := M.Degrees#i;
+        dN := Ndegs#j;
+        {first dM} | padAdd(drop(dM, 1), dN)
+    )));
+    P := freeDGModule(A, combinedDegrees);
+    Pgens := apply(rank P.natural, k -> (P.natural)_k);
+    idxOf := (i, j) -> i * rN + j;
+    newDiffs := flatten apply(rM, i -> apply(rN, j -> (
+        dMe := M.diff#i;
+        if dMe == 0 then 0_(P.natural)
+        else (
+            dEnts := entries dMe;
+            sum apply(rM, k -> (
+                coef := dEnts#k;
+                if coef == 0 then 0_(P.natural)
+                else coef * Pgens#(idxOf(k, j))
+            ))
+        )
+    )));
+    setDiff(P, newDiffs);
+    if not M.cache#?"tensorWithModule" then
+        M.cache#"tensorWithModule" = new MutableHashTable;
+    (M.cache#"tensorWithModule")#N = P;
+    P
+)
+
+-- Commuted form: Module ** DGModule.  By convention the "primary" factor
+-- is the DG one, so we just forward.
+Module ** DGModule := (N, M) -> M ** N
+
+-- DGModule ** Ideal is intentionally NOT defined, because `module I` is
+-- typically non-free and we require free N.  For quotient-style base
+-- changes use `M ** (R/I)`; for I·M inside M use `I' * M` with a DGIdeal
+-- I' whose generators are the ideal generators lifted to A.natural.
+
+-- DGSubmodule ** Module: base-change the ambient by exterior tensor with
+-- N, then pushforward the inclusion to the new natural module.  Column
+-- e_ℓ of the old inclusion becomes (e_ℓ ⊗ n_0, e_ℓ ⊗ n_1, ...) in the
+-- product indexing (flat index ℓ * rN + j) — i.e. one copy per generator
+-- of N.  d-closure is preserved because d does not touch the N-factor.
+DGSubmodule ** Module := (Sub, N) -> (
+    M := Sub.ambient;
+    Mnew := M ** N;
+    if not isFreeModule N then
+        error "DGSubmodule ** Module: N must be a free module.";
+    rN := rank N;
+    rM := rank M.natural;
+    incOld := Sub.inclusion.natural;
+    numCols := numcols incOld;
+    Bnat := ring Mnew.natural;
+    -- Build the (rM*rN) x (numCols*rN) coefficient matrix directly.
+    -- Column index (c, j) with c in 0..numCols-1, j in 0..rN-1 has
+    -- entries: row (i*rN + j') = (incOld)_(i,c) if j' == j, else 0.
+    newRows := apply(rM * rN, r -> (
+        i := r // rN;
+        jprime := r % rN;
+        apply(numCols * rN, colIdx -> (
+            c := colIdx // rN;
+            j := colIdx % rN;
+            if j != jprime then 0_Bnat
+            else sub(incOld_(i, c), Bnat)
+        ))
+    ));
+    newInc := if numCols == 0 then map(Mnew.natural, (Bnat)^0, 0)
+              else map(Mnew.natural, , matrix newRows);
+    dgSubmodule(Mnew, newInc)
+)
+
+-- DGSubmodule ** Ideal: see the note above `DGModule ** Ideal` — not
+-- defined because the ideal's module is typically non-free.
+
+-- DGQuotientModule ** Module: base-change the ambient and pushforward
+-- the killed submodule against the SAME base-changed ambient, then
+-- requote.  (Same subtlety as `** Ring`: two separate ambients would
+-- trip the sub-ambient equality check in dgQuotientModule.)
+DGQuotientModule ** Module := (Q, N) -> (
+    if not isFreeModule N then
+        error "DGQuotientModule ** Module: N must be a free module.";
+    M := Q.ambient;
+    Mnew := M ** N;
+    rN := rank N;
+    rM := rank M.natural;
+    incOld := Q.subDGModule.inclusion.natural;
+    numCols := numcols incOld;
+    Bnat := ring Mnew.natural;
+    newRows := apply(rM * rN, r -> (
+        i := r // rN;
+        jprime := r % rN;
+        apply(numCols * rN, colIdx -> (
+            c := colIdx // rN;
+            j := colIdx % rN;
+            if j != jprime then 0_Bnat
+            else sub(incOld_(i, c), Bnat)
+        ))
+    ));
+    newInc := if numCols == 0 then map(Mnew.natural, (Bnat)^0, 0)
+              else map(Mnew.natural, , matrix newRows);
+    Subnew := dgSubmodule(Mnew, newInc);
+    Mnew / Subnew
+)
+
+-- DGQuotientModule ** Ideal: see the `** Ideal` note above.
+
+-- Commuted forms for sub/quot-module ** Module.
+Module ** DGSubmodule        := (N, Sub) -> Sub ** N
+Module ** DGQuotientModule   := (N, Q)   -> Q ** N
+
 --------------------
 -- Documentation  --
 --------------------
 
 beginDocumentation()
 
-doc ///
-  Key
-    DGAlgebras
-  Headline
-    Data types and basic functions on differential graded (DG) Algebras.
-  Description
-    Text
-      This package is used to define and manipulate DG algebras.
-  Contributors
-    Some documentation was added by Daniel Rostamloo and David Eisenbud.
-  Subnodes
-    "Basic operations on DG Algebras"
-    "The Koszul complex as a DG Algebra"
-    "Basic operations on DG Algebra Maps"
-///
+load "./DGAlgebras/doc.m2"
 
-doc ///
-  Key
-    "Basic operations on DG Algebras"
-  Headline
-    Outlines some basic operations on DG Algebras
-  Description
-    Text
-      There are several ways to define a DGAlgebra.  One can start by defining one 'from scratch'.  One does
-      this by specifying the ring over which the DGAlgebra is defined and the degrees of the generators.  The
-      name of the generators of the DGAlgebra by default is $T_i$, but one may change this by specifying the
-      optional (string) argument 'Variable'.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
-      A = freeDGAlgebra(R,{{1,1},{1,1},{1,1},{1,1}})
-    Text
-      The command freeDGAlgebra only defines the underlying algebra of A, and not the differential.  To set the differential of A,
-      one uses the command setDiff.
-    Example
-      setDiff(A, gens R)
-    Text
-      Note that the above is the (graded) Koszul complex on a set of generators of R.  A much easier way to define this is to use the
-      function koszulComplexDGA.
-    Example
-      B = koszulComplexDGA(R, Variable=>"S")
-    Text
-      One can compute the homology algebra of a DGAlgebra using the homology (or HH) command.
-    Example
-      HB = HH B
-      describe HB
-      degrees HB
-    Text
-      Note that since R is a complete intersection, its Koszul homology algebra is an exterior algebra, which is a
-      free graded commutative algebra.  Note that the internal degree is preserved in the computation of the homology algebra
-      of B.
-    Text
-      One can also adjoin variables to kill cycles in homology.  The command killCycles looks for the first positive degree
-      nonzero homology (say i), and adjoins variables in homological degree i+1 that differentiate to a minimal generating set of this homology, so that the
-      resulting DGAlgebra now only has homology in degree greater than i (note of course this could introduce new homology in higher degrees).
-      The command adjoinVariables allows finer control over this procedure.  See @ TO adjoinVariables @ for an example.
-    Example
-      HB.cache.cycles
-      C = adjoinVariables(B,{first HB.cache.cycles})
-      homologyAlgebra(C,GenDegreeLimit=>4,RelDegreeLimit=>4)
-      C = killCycles(B)
-      homologyAlgebra(C,GenDegreeLimit=>4,RelDegreeLimit=>4)
-    Text
-      Again, note that since R is a complete intersection, once we adjoin the variables in homological degree two to kill the cycles in degree one,
-      we obtain a minimal DG Algebra resolution of the residue field of R.  Also, note that since C has generators in even degree, one must specify the
-      optional arguments GenDegreeLimit and RelDegreeLimit to specify the max degree of the computation.  To do this, one uses the homologyAlgebra command
-      rather than the HH command.
-    Text
-      This computation could have also been done with the command acyclicClosure.  The command acyclicClosure performs the command killCycles sequentially to ensure that the
-      result has homology in higher and higher degrees, thereby computing (part of) a minimal DG Algebra resolution of the residue field.  acyclicClosure has an optional
-      argument EndDegree that allows the user to specify the maximum homological degree with which to perform this adjunction of variables.  The default value of this is 3, since if there
-      are any variables of degree 3 that need to be added, then each subsequent homological degree will require some variables to be adjoined (Halperin's rigidity theorem).
-    Example
-      D = acyclicClosure R
-      R' = ZZ/101[x,y,z]/ideal{x^2,y^2,z^2,x*y*z}
-      E = acyclicClosure(R',EndDegree=>5)
-      tally degrees E.natural
-    Text
-      As you can see, since R' is not a complete intersection, the acyclic closure of E requires infinitely many variables; we display the degrees of the first 6 here.
-      The tally that is displayed gives the deviations of the ring R.  One can compute the deviations directly from any minimal free resolution of the residue field
-      of R', so that using the one provided by res coker vars R is faster.  To do this, use the command @ TO deviations @.
-    Example
-      deviations(R,DegreeLimit=>6)
-      deviations(R',DegreeLimit=>6)
-    Text
-      As a brief warning, the command @ TO poincareN @ which is used in @ TO deviations @ uses the symbols S and T internally, and may cause problems accessing such rings with the user interface.
-///
-
-doc ///
-  Key
-    "The Koszul complex as a DG Algebra"
-  Headline
-    an example
-  Description
-    Text
-      The Koszul complex on a sequence of elements $f_1,\dots,f_r$ is a complex of R-modules whose underlying graded R-module
-      is the exterior algebra on R^r generated in homological degree one.  This algebra structure also respects the boundary map
-      of the complex in the sense that it satisfies the Liebniz rule.  That is, $d(ab) = d(a)b + (-1)^{deg a}ad(b)$.  When one
-      speaks of 'the' Koszul complex of a ring, one means the Koszul complex on a minimal set of generators of the maximal ideal of R.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
-      KR = koszulComplexDGA R
-    Text
-      One can specify the name of the variable to easily handle multiple Koszul complexes at once.
-    Example
-      S = ZZ/101[x,y,z]/ideal{x^3,y^3,z^3,x^2*y^2,y^2*z^2}
-      KS = koszulComplexDGA(S,Variable=>"U")
-    Text
-      To obtain the chain complex associated to the Koszul complex, one may use toComplex.  One can also obtain this complex
-      directly without using the DGAlgebras package by using the command @ TO koszul @.
-    Example
-      cxKR = toComplex KR
-      prune HH cxKR
-    Text
-      Since the Koszul complex is a DG algebra, its homology is itself an algebra.  One can obtain this algebra using the command
-      homology, homologyAlgebra, or HH (all commands work).  This algebra structure can detect whether or not the ring is a complete
-      intersection or Gorenstein.
-    Example
-      HKR = HH KR
-      ideal HKR
-      R' = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3,a*c,a*d,b*c,b*d,a^2*b^2-c^2*d^2}
-      HKR' = HH koszulComplexDGA R'
-      numgens HKR'
-      ann ideal gens HKR'
-    Text
-      Note that since the socle of HKR' is one dimensional, HKR' has Poincare duality, and hence R' is Gorenstein.
-    Text
-      One can also consider the Koszul complex of an ideal, or a sequence of elements.
-    Example
-      Q = ambient R
-      I = ideal {a^3,b^3,c^3,d^3}
-      KI = koszulComplexDGA I
-      HKI = HH KI
-      describe HKI
-      use Q
-      I' = I + ideal{a^2*b^2*c^2*d^2}
-      KI' = koszulComplexDGA I'
-      HKI' = HH KI'
-      describe HKI'
-      HKI'.cache.cycles
-    Text
-      Note that since I is a Q-regular sequence, the Koszul complex is acyclic, and that both homology algebras are algebras over the zeroth homology
-      of the Koszul complex.
-///
-
-doc ///
-  Key
-    "Basic operations on DG Algebra Maps"
-  Headline
-    Outlines some basic operations on DGAlgebraMaps
-  Description
-    Text
-      An algebra map between the underlying graded algebras that satisfies the Leibniz rule is a morphism of DG algebras.  Such objects
-      are created using the DGAlgebraMap class.  As with DGAlgebras, one can define a DGAlgebraMap 'from scratch' using @ TO dgAlgebraMap @.
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
-      K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
-      K2 = koszulComplexDGA(ideal {b,c},Variable=>"T")
-      f = dgAlgebraMap(K2,K1,matrix{{0,T_1,T_2}})
-    Text
-      Once we define the DGAlgebraMap, it is a good idea to check to see if it indeed satisfies the Leibniz rule.  This can be checked by using
-      isWellDefined.
-    Example
-      isWellDefined f
-    Text
-      Oops!  Let's try that again.
-    Example
-      g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
-      isWellDefined g
-    Text
-      One can lift a ring homomorphism in degree zero to a map of DGAlgebras (up to a specified degree) using liftToDGMap.  This is helpful
-      in some of the internal functions of the DGAlgebras package, such as computing the map induced on Tor algebras by a RingMap.
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
-      S = R/ideal{a^2*b^2*c^2}
-      f = map(S,R)
-      A = acyclicClosure(R,EndDegree=>3)
-      B = acyclicClosure(S,EndDegree=>3)
-      phi = liftToDGMap(B,A,f)
-    Text
-      Once one has a DGAlgebraMap, one can also obtain the underlying map of complexes via toComplexMap.
-    Example
-      cmPhi = toComplexMap(phi,EndDegree=>3)
-    Text
-      There are also some auxiliary commands associated with DGAlgebraMaps
-    Example
-      source phi
-      target phi
-    Text
-      One can also obtain the map on homology induced by a DGAlgebra map.
-    Example
-      HHg = HH g
-      matrix HHg
-///
-
-doc ///
-  Key
-    DGAlgebra
-  Headline
-    The class of all DGAlgebras
-  Description
-    Text
-      Some common ways to create DGAlgebras include @ TO koszulComplexDGA @, @ TO freeDGAlgebra @, @ TO setDiff @, and @ TO acyclicClosure @.
-  SeeAlso
-    "Basic operations on DG Algebras"
-///
-
-doc ///
-  Key
-    freeDGAlgebra
-    (freeDGAlgebra,Ring,List)
-    [freeDGAlgebra,Variable]
-  Headline
-    Constructs a DGAlgebra
-  Usage
-    A = freeDGAlgebra(R,degreeList) 
-  Inputs
-    R:Ring 
-      The ring over which the DGAlgebra is defined
-    degreeList:List 
-      A list of degrees of the algebra generators of R.
-  Outputs
-    A:DGAlgebra
-  Description
-    Text
-      This function returns a @ TO DGAlgebra @ A whose underlying algebra is a graded commutative
-      polynomial ring in a number of variables equal to the number of the degrees input.  The current version of this package
-      does not handle algebras A whose underlying algebra is not a polynomial ring.
-    Example
-      R = ZZ/101[x,y,z]
-      A = freeDGAlgebra(R,{{1},{1},{1},{3}})
-      A.natural
-      setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-    Text
-      The resulting @ TO DGAlgebra @ will not be graded since the differential given does not respect the grading due to the degrees assigned in the definition.
-    Example
-      isHomogeneous(A)
-      Add = toComplex A
-      B = freeDGAlgebra(R,{{1,1},{1,1},{1,1},{3,3}})
-      B.natural
-      setDiff(B,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-    Text
-      The result of the above declaration will be graded.
-    Example
-      isHomogeneous(B)
-      Bdd = toComplex B
-    Text  
-      Note that the differential is not passed into the constructor.  The reason for this (at the moment)
-      is that Macaulay2 does not know what ring the differentials are defined over until after the underlying
-      algebra is constructed, so the differential is set later with setDiff.  Many DG algebras that one
-      encounters in commutative algebra have been implemented, however, and do not need to be defined 'by hand'.
-      For example, if one wants to work with the Koszul complex as a DG algebra, then one should see the command @ TO koszulComplexDGA @.
-      Also, if one wishes to specify the name of the variables used, specify the Variable option; see the example in @ TO dgAlgebraMap @.
-  Caveat
-    There is currently a bug handling DG algebras that have no monomials in some degree, but some monomials in a later degree;
-    for example if one replaces the 3 in the above example with a 5.
-///
-
-doc ///
-  Key
-    koszulComplexDGA
-    (koszulComplexDGA,Ring)
-    [koszulComplexDGA,Variable]
-  Headline
-    Returns the Koszul complex as a DGAlgebra
-  Usage
-    A = koszulComplexDGA(R)
-  Inputs
-    R:Ring 
-      Returns the Koszul complex on ideal vars R.
-  Outputs
-    A:DGAlgebra
-  Description
-    Text
-      To construct the Koszul complex of a minimal set of generators as a @ TO DGAlgebra @ one uses
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
-      A = koszulComplexDGA(R)
-      complexA = toComplex A
-      complexA.dd
-      ranks = apply(4, i -> numgens prune HH_i(complexA))
-      ranks == apply(4, i -> numgens prune HH_i(koszul vars R))
-    Text
-      One can also compute the homology of A directly with @ TO (homology,ZZ,DGAlgebra) @.  One may also specify
-      the name of the variable using the Variable option.
-///
-
-doc ///
-  Key
-    (koszulComplexDGA,Ideal)
-  Headline
-    Returns the Koszul complex as a DGAlgebra
-  Usage
-    A = koszulComplexDGA(I)
-  Inputs
-    I:Ideal 
-      An ideal of a ring R
-  Outputs
-    A:DGAlgebra
-  Description
-    Text
-      To construct the Koszul complex on the set of generators of I as a @ TO DGAlgebra @ one uses
-    Example
-      R = ZZ/101[a,b,c]
-      I = ideal{a^3,b^3,c^3,a^2*b^2*c^2}
-      A = koszulComplexDGA(I)
-      complexA = toComplex A
-      complexA.dd
-      ranks = apply(4, i -> numgens prune HH_i(complexA))
-      ranks == apply(4, i -> numgens prune HH_i(koszul gens I))
-    Text
-      One can also compute the homology of A directly with @ TO (homology,ZZ,DGAlgebra) @.
-///
-
-doc ///
-  Key
-    (koszulComplexDGA,List)
-  Headline
-    Define the Koszul complex on a list of elements as a DGAlgebra
-  Usage
-    A = koszulComplexDGA(diffList)
-  Inputs
-    diffList:List
-      A List of RingElements.  The resulting DGAlgebra will be defined over the ring of these elements.
-  Outputs
-    A:DGAlgebra
-///
-
-doc ///
-  Key
-    (homology,ZZ,DGAlgebra)
-  Headline
-    Computes the homology of a DG algebra as a module
-  Usage
-    H = homology(n,A)
-  Inputs
-    n:ZZ
-    A:DGAlgebra 
-  Outputs
-    H:Module
-      The nth homology of A.
-  Description
-    Example
-      R = ZZ/32003[x,y,z]
-      A = koszulComplexDGA(R)
-      apply(numgens R+1, i -> numgens prune homology(i,A))
-///
-
-doc ///
-  Key
-    setDiff
-    (setDiff,DGAlgebra,List)
-    InitializeComplex
-    [setDiff,InitializeComplex]
-    InitializeDegreeZeroHomology
-    [setDiff,InitializeDegreeZeroHomology]
-  Headline
-    Sets the differential of a DGAlgebra manually.
-  Usage
-    d = setDiff(A,diffList)
-  Inputs
-    A:DGAlgebra
-    A:List 
-  Outputs
-    A:DGAlgebra
-      The DGAlgebra with the differential now set.
-  Description
-    Example
-      R = ZZ/101[x,y,z]
-      A = freeDGAlgebra(R,{{1},{1},{1},{3}})
-      setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-      Add = toComplex A
-      Add.dd
-    Text
-      There are two options that are available for this function, and both are designed to bypass certain initializations
-      that take place by default.
-    Text
-      The option InitializeComplex specifies whether or not to compute all differentials of
-      the complex(up to the sum of the degrees of the odd degree generators) before returning from setDiff.  This is useful if
-      your DGAlgebra has a large number of generators in odd degrees, and you are only interested in computing the homology
-      in low degrees.  The default value of this option is true.
-    Text
-      The option InitializeDegreeZeroHomology specifies whether or not to define the quotient ring H_0(A).  This is used when
-      computing HH(A) as a DGAlgebra.  This involves computing a Grobner basis of the image of the first differential of A,
-      and as such, may want to be avoided if there are a large number of DGAlgebra generators in degree 1.  The default value of
-      this options is true.
-///
-
-doc ///
-  Key
-    (isHomogeneous, DGAlgebra)
-  Headline
-    Determine if the DGAlgebra respects the gradings of the ring it is defined over.
-  Usage
-    isHom = isHomogeneous(A)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    isHom:Boolean
-      Whether or not the DGA respects the grading
-  Description
-    Example
-      R = ZZ/101[x,y,z]
-      A = freeDGAlgebra(R,{{1},{1},{1},{3}})
-      setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-      isHomogeneous A
-      B = freeDGAlgebra(R,{{1,1},{1,1},{1,1},{3,3}})
-      setDiff(B,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-      isHomogeneous B
-///
-
-doc ///
-  Key
-    natural
-  Headline
-    The underlying algebra of a DGAlgebra.
-  Usage
-    Anat = A.natural
-  Description
-    Example
-      R = ZZ/101[a,b,c,d]
-      A = koszulComplexDGA(R)
-      A.natural
-///
-
-doc ///
-  Key
-    cycles
-  Headline
-    Cycles chosen when computing the homology algebra of a DGAlgebra
-  Usage
-    A.cycles
-  Description
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^4,c^5,d^6}
-      A = koszulComplexDGA(R)
-      apply(maxDegree A + 1, i -> numgens prune homology(i,A))
-      HA = homologyAlgebra(A)
-      numgens HA
-      HA.cache.cycles
-    Text
-///
-
-doc ///
-  Key
-    getBasis
-    (getBasis,ZZ,DGAlgebra)
-  Headline
-    Get a basis for a particular homological degree of a DG algebra.
-  Usage
-    M = getBasis(n,A)
-  Inputs
-    n:ZZ
-    A:DGAlgebra
-  Outputs
-    M:Matrix
-      The basis of the desired homological degree of the DG Algebra.
-  Description
-    Text
-      This function is to allow for the retrieval of a basis of a particular homological degree of a @ TO DGAlgebra @
-      when the underlying algebra A.natural is multigraded.  In the code, the homological grading is always the first
-      integer in the degree tuple, and so this function returns a matrix consisting of all monomials in homological
-      degree n.  
-    Example
-      R = ZZ/101[a..d, Degrees=>{1,1,1,2}]
-      A =  koszulComplexDGA(R)
-      getBasis(3,A)
-///
-
-doc ///
-  Key
-    (getBasis,ZZ,Ring)
-  Headline
-    Get a basis for a degree of a ring.
-  Usage
-    M = getBasis(n,R)
-  Inputs
-    n:ZZ
-    R:Ring
-  Outputs
-    M:Matrix
-      The basis of the desired degree
-  Description
-    Text
-      This function was not meant for general use, but it fixes the first degree in the degree tuple
-      of the ring R, and finds a basis of that 'slice' of the ring.  It does this by using a cached
-      version of the ring that forgets all other degrees.  A Ring object in Macaulay2 will not have this
-      cached ring by default, but the rings used internally in the DGAlgebras package will.
-///
-
-doc ///
-  Key
-    toComplex
-    (toComplex,DGAlgebra)
-  Headline
-    Converts a DGAlgebra to a Complex
-  Usage
-    C = toComplex A or C = toComplex(A,n)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    C:Complex
-      The DG algebra A as a Complex
-  Description
-    Example
-      R = ZZ/101[x_1..x_10]
-      A = koszulComplexDGA(R)
-      C = toComplex A
-    Text
-      Warning:  The term order that the internal command koszul uses to order the monomials is not GRevLex, and so the differentials
-      used in koszul and koszulComplexDGA will not match up exactly.  Also, this command will only execute if all of the variables
-      of the @ TO DGAlgebra @ A are of odd homological degree.  Otherwise, you need to use the function @ TO (toComplex, DGAlgebra, ZZ) @.
-///
-
-doc ///
-  Key
-    (toComplex,DGAlgebra,ZZ)
-  Headline
-    Converts a DGAlgebra to a Complex
-  Usage
-    C = toComplex A or C = toComplex(A,n)
-  Inputs
-    A:DGAlgebra
-    n:ZZ
-  Outputs
-    C:Complex
-      The DG algebra A as a Complex
-  Description
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
-      A = acyclicClosure(R,EndDegree=>3)
-    Text
-      The above will be a resolution of the residue field over R, since R is a complete intersection.
-    Example
-      C = toComplex(A, 10)
-      apply(10, i -> prune HH_i(C))
-///
-
-doc ///
-  Key
-    acyclicClosure
-    (acyclicClosure,DGAlgebra)
-  Headline
-    Compute the acyclic closure of a DGAlgebra.
-  Usage
-    B = acyclicClosure(A)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    B:DGAlgebra
-      The acyclic closure of the DG Algebra A up to homological degree 
-      provided in the EndDegree option (default value is 3).
-  Description
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
-      A = koszulComplexDGA(R);
-      B = acyclicClosure(A,EndDegree=>3)
-      toComplex(B,8)
-      B.diff
-  SeeAlso
-    (acyclicClosure,Ring)
-///
-
-doc ///
-  Key
-    (acyclicClosure,Ring)
-  Headline
-    Compute the acyclic closure of the residue field of a ring up to a certain degree
-  Usage
-    A = acyclicClosure(R)
-  Inputs
-    R:Ring
-  Outputs
-    A:DGAlgebra
-      The acyclic closure of the ring R up to homological degree provided in the EndDegree option (default value is 3).
-  Description
-    Text
-      This package always chooses the Koszul complex on a generating set for the maximal ideal as a starting
-      point, and then computes from there, using the function @ TO (acyclicClosure,DGAlgebra) @.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^4-d^3}
-      A = acyclicClosure(R,EndDegree=>3)
-      A.diff
-///
-
-doc ///
-  Key
-    (symbol **, DGAlgebra, Ring)
-  Headline
-    Tensor product of a DGAlgebra and another ring.
-  Usage
-    B = A ** S
-  Inputs
-    A:DGAlgebra
-    R:Ring
-  Outputs
-    B:DGAlgebra
-  Description
-    Text
-      Tensor product of a DGAlgebra and another ring (typically a quotient of A.ring).
-    Example
-      R = ZZ/101[a,b,c,d]
-      A = koszulComplexDGA(R)
-      S = R/ideal{a^3,a*b*c}
-      B = A ** S
-      Bdd = toComplex B
-      Bdd.dd
-///
-
-doc ///
-  Key
-    (symbol **, DGAlgebra, DGAlgebra)
-  Headline
-    Tensor product of a DGAlgebra and another ring.
-  Usage
-    C = A ** B
-  Inputs
-    A:DGAlgebra
-    B:DGAlgebra
-  Outputs
-    C:DGAlgebra
-  Description
-    Text
-      Tensor product of a pair of DGAlgebras.
-    Example
-      R = ZZ/101[a,b,c,d]
-      A = koszulComplexDGA({a,b})
-      B = koszulComplexDGA({c,d})
-      C = A ** B
-      Cdd = toComplex C
-      Cdd.dd
-  Caveat
-    Currently, the tensor product function does not create a block order on the variables from A and B.
-///
-
-doc ///
-  Key
-    killCycles
-    (killCycles,DGAlgebra)
-  Headline
-    Adjoins variables to make non-bounding cycles boundaries in the lowest positive degree with nontrivial homology.
-  Usage
-    B = killCycles(A)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    B:DGAlgebra
-  Description
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3-d^4}
-      A = koszulComplexDGA(R)
-      A.diff
-      B = killCycles(A)
-      B.diff
-///
-
-doc ///
-  Key
-    adjoinVariables
-    (adjoinVariables,DGAlgebra,List)
-  Headline
-    Adjoins variables to make the specified cycles boundaries.
-  Usage
-    B = adjoinVariables(A,cycleList)
-  Inputs
-    A:DGAlgebra
-    cycleList:List
-  Outputs
-    B:DGAlgebra
-  Description
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3-d^4}
-      A = koszulComplexDGA(R)
-      A.diff
-      prune homology(1,A)
-      B = adjoinVariables(A,{a^2*T_1})
-      B.diff
-      prune homology(1,B)
-///
-
-doc ///
-  Key
-    homologyAlgebra
-    (homologyAlgebra,DGAlgebra)
-  Headline
-    Compute the homology algebra of a DGAlgebra.
-  Usage
-    HA = homologyAlgebra(A)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    HA:Ring
-  Description
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
-      A = koszulComplexDGA(R)
-      apply(maxDegree A + 1, i -> numgens prune homology(i,A))
-      HA = homologyAlgebra(A)
-    Text
-      Note that HA is a graded commutative polynomial ring (i.e. an exterior algebra) since R is a complete intersection.
-    Example  
-      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4,a^3*b^3*c^3*d^3}
-      A = koszulComplexDGA(R)
-      apply(maxDegree A + 1, i -> numgens prune homology(i,A))
-      HA = homologyAlgebra(A)
-      numgens HA
-      HA.cache.cycles
-    Example
-      Q = ZZ/101[x,y,z]
-      I = ideal{y^3,z*x^2,y*(z^2+y*x),z^3+2*x*y*z,x*(z^2+y*x),z*y^2,x^3,z*(z^2+2*x*y)}
-      R = Q/I
-      A = koszulComplexDGA(R)
-      apply(maxDegree A + 1, i -> numgens prune homology(i,A))
-      HA = homologyAlgebra(A)
-    Text
-      One can check that HA has Poincare duality since R is Gorenstein.
-    Text
-      If your DGAlgebra has generators in even degrees, then one must specify the options GenDegreeLimit and RelDegreeLimit.
-    Example
-      R = ZZ/101[a,b,c,d]
-      S = R/ideal{a^4,b^4,c^4,d^4}
-      A = acyclicClosure(R,EndDegree=>3)
-      B = A ** S
-      HB = homologyAlgebra(B,GenDegreeLimit=>7,RelDegreeLimit=>14)
-///
-
-doc ///
-  Key
-    (homology,DGAlgebra)
-  Headline
-    Compute the homology algebra of a DGAlgebra.
-  Usage
-    HA = homology(A)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    HA:Ring
-  SeeAlso
-    (homologyAlgebra,DGAlgebra)
-///
-
-doc ///
-  Key
-    torAlgebra
-    (torAlgebra,Ring)
-  Headline
-    Computes the Tor algebra of a ring
-  Usage
-    torR = torAlgebra(R)
-  Inputs
-    R:Ring
-  Outputs
-    torR:Ring
-  Description
-    Example
-      R = ZZ/101[a,b,c,d]
-      TorR = torAlgebra(R)
-      S = R/ideal{a^3,b^3,c^3,d^5}
-      TorS = torAlgebra(S, GenDegreeLimit => 3)
-    Text
-      The above example calculates the Tor algebra of R and S up to degree 3, by default.  One can also specify the maximum degree
-      to compute generators of the Tor algebra by specifying the GenDegreeLimit option.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3,a^2*b^2*c^3*d^2}
-      TorR = torAlgebra(R,GenDegreeLimit=>5)
-///
-
-doc ///
-  Key
-    (torAlgebra,Ring,Ring)
-  Headline
-    Computes Tor_R(S,k) up to a specified generating and relating degree.
-  Usage
-    TorRS = torAlgebra(R,S,GenDegreeLimit=>m,RelDegreeLimit=>n)
-  Inputs
-    R:Ring
-    S:Ring
-  Outputs
-    TorRS:Ring
-  Description
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
-      M = coker matrix {{a^3*b^3*c^3*d^3}};
-      S = R/ideal{a^3*b^3*c^3*d^3}
-      HB = torAlgebra(R,S,GenDegreeLimit=>4,RelDegreeLimit=>8)
-      numgens HB
-      apply(5,i -> #(flatten entries getBasis(i,HB)))      
-      Mres = freeResolution(M, LengthLimit=>8)
-    Text
-      Note that in this example, $Tor_*^R(S,k)$ has trivial multiplication, since the
-      map from R to S is a Golod homomorphism by a theorem of Levin and Avramov.
-///
-
-doc ///
-  Key
-    maxDegree
-    (maxDegree,DGAlgebra)
-  Headline
-    Computes the maximum homological degree of a DGAlgebra
-  Usage
-    mDegree = maxDegree(A)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    mDegree:ZZ
-      The maximum degree of the DGAlgebra A (this can be infinite).
-  Description
-    Text
-      Note that if the DGAlgebra A has any generators of even degree, then maxDegree returns infinity.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
-      A = koszulComplexDGA(R)
-      B = acyclicClosure(A,EndDegree=>3)
-      maxDegree(A)
-      maxDegree(B)
-///
-
-doc ///
-  Key
-    isHomologyAlgebraTrivial
-    (isHomologyAlgebraTrivial,DGAlgebra)
-  Headline
-    Determines if the homology algebra of a DGAlgebra is trivial
-  Usage
-    isTriv = isHomologyAlgebraTrivial(A) 
-  Inputs
-    A:DGAlgebra
-  Outputs
-    isTriv:Boolean
-  Description
-    Text
-      This function computes the homology algebra of the DGAlgebra A and determines if the multiplication on H(A) is trivial.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
-      S = R/ideal{a^3*b^3*c^3*d^3}
-      A = acyclicClosure(R,EndDegree=>3)
-      B = A ** S
-      isHomologyAlgebraTrivial(B,GenDegreeLimit=>6)
-    Text
-      The command returns true since R --> S is Golod.  Notice we also used the option GenDegreeLimit here.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
-      A = koszulComplexDGA(R)
-      isHomologyAlgebraTrivial(A)
-    Text
-      The command returns false, since R is Gorenstein, and so HA has Poincare Duality, hence the multiplication
-      is far from trivial.
-///
-
-doc ///
-  Key
-    isAcyclic
-    (isAcyclic,DGAlgebra)
-  Headline
-    Determines if a DGAlgebra is acyclic.
-  Usage
-    isAcyc = isAcyclic(A)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    isAcyc:Boolean
-  Description
-    Text
-      This function determines if the DGAlgebra is acyclic.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^4+b^4+c^4+d^4}
-      isAcyclic(koszulComplexDGA R)
-    Example
-      Q = ZZ/101[a,b,c,d]
-      I = ideal {a^4,b^4,c^4,d^4}
-      isAcyclic(koszulComplexDGA I)
-///
-
-doc ///
-  Key
-    isGolod
-    (isGolod,Ring)
-  Headline
-    Determines if a ring is Golod
-  Usage
-    isGol = isGolod(R)
-  Inputs
-    R:Ring
-  Outputs
-    isGol:Boolean
-  Description
-    Text
-      This function determines if the Koszul complex of a ring R admits a trivial Massey operation.  If one exists, then R is Golod.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^4+b^4+c^4+d^4}
-      isGolod(R)
-    Text
-      Hypersurfaces are Golod, but
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
-      isGolod(R)
-    Text
-      complete intersections of higher codimension are not.  Here is another example:
-    Example
-      Q = ZZ/101[a,b,c,d]
-      R = Q/(ideal vars Q)^2
-      isGolod(R)
-    Text
-      The above is a (CM) ring minimal of minimal multiplicity, hence Golod.  The next example was found
-      by Lukas Katthan, and appears in his arXiv paper 1511.04883.  It is the first known example
-      of an algebra that is not Golod, but whose Koszul complex has a trivial homology product.
-    Example
-      Q = ZZ/101[x_1,x_2,y_1,y_2,z,w]
-      I = ideal {x_1*x_2^2,z^2*w,y_1*y_2^2,x_2^2*z*w,y_2^2*z^2,x_1*x_2*y_1*y_2,x_2^2*y_2^2*z,x_1*y_1*z}
-      R = Q/I
-      isHomologyAlgebraTrivial koszulComplexDGA R
-      isGolod R
-    Text
-      Note that since the Koszul complex is zero in homological degree beyond the embedding dimension, there are only finitely
-      many Massey products that one needs to check to verify that a ring is Golod.
-///
-
-doc ///
-  Key
-    isGolodHomomorphism
-    (isGolodHomomorphism,QuotientRing)
-  Headline
-    Determines if the canonical map from the ambient ring is Golod
-  Usage
-    isGol = isGolodHomomorphism(R)
-  Inputs
-    R:QuotientRing
-  Outputs
-    isGol:Boolean
-  Description
-    Text
-      This function determines if the canonical map from ambient R --> R is Golod.  It does this by computing an acyclic closure of
-      ambient R (which is a @ TO DGAlgebra @), then tensors this with R, and determines if this DG Algebra has a trivial Massey operation
-      up to a certain homological degree provided by the option GenDegreeLimit.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^4+b^4+c^4+d^4}
-      isGolodHomomorphism(R,GenDegreeLimit=>5)
-    Text
-      If R is a Golod ring, then ambient R $\rightarrow$ R is a Golod homomorphism. 
-    Example
-      Q = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
-      R = Q/ideal (a^3*b^3*c^3*d^3)
-      isGolodHomomorphism(R,GenDegreeLimit=>5,TMOLimit=>3)
-    Text
-      The map from Q to R is Golod by a result of Avramov and Levin; we can only find the trivial Massey operations out to a given degree.
-///
-
-doc ///
-  Key
-    getGenerators
-    (getGenerators,DGAlgebra)
-  Headline
-    Returns a list of cycles whose images generate HH(A) as an algebra
-  Usage
-    cycleList = getGenerators(A)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    cycleList:List
-  Description
-    Text
-      This version of the function should only be used if all algebra generators of A are in odd homological degree,
-      provided in the EndDegree option.
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3,a^2*b^2*c^2}
-      A = koszulComplexDGA(R)
-      netList getGenerators(A)
-///
-
-doc ///
-  Key
-    deviations
-    (deviations,Ring)
-    (deviations,Complex)
-    (deviations,RingElement,List)
-  Headline
-    Computes the deviations of the input ring, complex, or power series.
-  Usage
-    devTally = deviations(R)
-  Inputs
-    R:Ring
-  Outputs
-    devTally:Tally
-  Description
-    Text
-      This command computes the deviations of a @ TO Ring @, a @ TO Complex @, or a power series in the form of a @ TO RingElement @.
-      The deviations are the same as the degrees of the generators of the acyclic closure of R, or the degrees of the generators of the
-      Tor algebra of R.  This function takes an option called Limit (default value 3) that specifies the largest deviation to compute.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal {a^3,b^3,c^3,d^3}
-      deviations(R)
-      deviations(R,DegreeLimit=>4)
-      S = R/ideal{a^2*b^2*c^2*d^2}
-      deviations(S,DegreeLimit=>4)
-      T = ZZ/101[a,b]/ideal {a^2-b^3}
-      deviations(T,DegreeLimit=>4)
-    Text
-      Note that the deviations of T are not graded, since T is not graded.  When calling deviations on a Complex, the
-      zeroth free module must be cyclic, and this is checked.  The same goes for the case
-      of a RingElement.
-    Example
-      R = ZZ/101[a,b,c,d]/ideal {a^3,b^3,c^3,d^3}
-      A = degreesRing R
-      kRes = freeResolution(coker vars R, LengthLimit => 4)
-      pSeries = poincareN kRes
-      devA = deviations(R,DegreeLimit=>5)
-      devB = deviations(kRes,DegreeLimit=>5)
-      devC = deviations(pSeries,degrees R, DegreeLimit=>5)
-      devA === devB and devB === devC
-///
-
-doc ///
-  Key
-    deviationsToPoincare
-    (deviationsToPoincare,HashTable)
-    [deviationsToPoincare,DegreeLimit]
-  Headline
-    Computes the power series corresponding to a set of deviations.
-  Usage
-    pSeries = deviationsToPoincare(devHash)
-  Inputs
-    devHash:HashTable
-      HashTable of the same form as the output from @ TO deviations @
-  Outputs
-    pSeries:RingElement
-  Description
-    Text
-      This command takes a HashTable of the same form output from @ TO deviations @ and produces the Poincare series corresponding to it.
-      The (key,value) pairs must be of the form homologicalDegree=>number or (homologicalDegree,internalDegree)=>number.
-      Because 
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
-      RDevs = deviations(R,DegreeLimit=>6)
-      devPSeries = deviationsToPoincare(RDevs,DegreeLimit=>6)
-      pSeries = poincareN (freeResolution(coker vars R, LengthLimit=>6))
-      substitute(devPSeries,ring pSeries) == pSeries
-///
-
-doc ///
-  Key
-    findTrivialMasseyOperation
-    findNaryTrivialMasseyOperation
-    (findTrivialMasseyOperation,DGAlgebra)
-    (findNaryTrivialMasseyOperation,DGAlgebra,List,HashTable,ZZ)
-  Headline
-    Finds a trivial Massey operation on a set of generators of H(A)
-  Usage
-    tmo = findTrivialMasseyOperation(A)
-  Inputs
-    A:DGAlgebra
-  Outputs
-    seq:Sequence
-      A sequence seq whose first entry reports whether a trivial Massey operation has been found, and the second
-      entry is a hash table with keys given by monomials in a generating set of the positive degree homology of
-      A and values the element that bounds the Massey product corresponding to that monomial.
-  Description
-    Text
-      This function the element that bounds all potentially nonzero Massey products (before taking homology class).
-      The maximum degree of a generating cycle is specified in the option GenDegreeLimit, if needed.
-    Text
-      Golod rings are defined by being those rings whose Koszul complex K^R has a trivial Massey operation.
-      Also, the existence of a trivial Massey operation on a DG algebra A forces the multiplication on H(A)
-      to be trivial.  An example of a ring R such that H(K^R) has trivial multiplication, yet K^R does not admit
-      a trivial Massey operation is unknown.  Such an example cannot be monomially defined, by a result of
-      Jollenbeck and Berglund. 
-    Text
-      This is an example of a Golod ring.  It is Golod since it is the Stanley-Reisner ideal of a flag complex
-      whose 1-skeleton is chordal [Jollenbeck-Berglund].
-    Example
-      Q = ZZ/101[x_1..x_6]
-      I = ideal (x_3*x_5,x_4*x_5,x_1*x_6,x_3*x_6,x_4*x_6)
-      R = Q/I
-      A = koszulComplexDGA(R)
-      isHomologyAlgebraTrivial(A,GenDegreeLimit=>3)
-      cycleList = getGenerators(A)
-      (hasTMO, tmoSoFar) = findTrivialMasseyOperation(A)
-      assert(hasTMO)
-    Text
-      Below is an example of a Teter ring (Artinian Gorenstein ring modulo its socle), and the computation in Avramov and Levin's
-      paper shows that H(A) does not have trivial multiplication, hence no trivial Massey operation can exist.
-    Example
-      Q = ZZ/101[x,y,z]
-      I = ideal (x^3,y^3,z^3,x^2*y^2*z^2)
-      R = Q/I
-      A = koszulComplexDGA(R)
-      isHomologyAlgebraTrivial(A)
-      cycleList = getGenerators(A)
-      assert(not first findTrivialMasseyOperation(A))
-    Text
-      The related function @ TO findNaryTrivialMasseyOperation @ find only the nth order trivial Massey operations.
-///
-
-doc ///
-  Key
-    masseyTripleProduct
-    (masseyTripleProduct,DGAlgebra,RingElement,RingElement,RingElement)
-  Headline
-    Computes the Massey triple product of a set of cycles or homology classes
-  Usage
-    h = masseyTripleProduct(A,h1,h2,h3)
-  Inputs
-    A:DGAlgebra
-    h1:RingElement
-    h2:RingElement
-    h3:RingElement
-  Outputs
-    h:RingElement
-      The return value is either the homology class of the Massey triple product defined
-      by the inputs or a cycle representing the homology class.
-  Description
-    Text
-       These functions compute the Massey triple product of either three homology classes
-       or three cycles that represent nonzero homology classes for which the Massey triple product
-       is defined.
-    Text
-       For an example, we return to an example due to Lukas Katthan which was discussed in @ TO isGolod @.
-       First, we define the algebra:
-    Example
-       Q = QQ[x_1,x_2,y_1,y_2,z]
-       I = ideal (x_1*x_2^2,y_1*y_2^2,z^3,x_1*x_2*y_1*y_2,y_2^2*z^2,x_2^2*z^2,x_1*y_1*z,x_2^2*y_2^2*z)
-       R = Q/I
-       KR = koszulComplexDGA R
-    Text
-       The following are cycles:
-    Example
-       z1 = z^2*T_5
-       z2 = y_2^2*T_3
-       z3 = x_2^2*T_1
-    Text
-       and z1*z2, z2*z3 vanish in homology:
-    Example
-       (lifted12,lift12) = getBoundaryPreimage(KR,z1*z2)
-       (lifted23,lift23) = getBoundaryPreimage(KR,z2*z3)
-    Text
-       Note that the first return value of @ TO getBoundaryPreimage @ indicates that the inputs
-       are indeed boundaries, and the second value is the lift of the boundary along the differential.
-    Text
-       Given cycles z1,z2,z3 such that z1*z2 and z2*z3 are boundaries, 
-       the Massey triple product of the homology classes represented by z1,z2 and z3 
-       is the homology class of lift12*z3 + z1*lift23.  To see this, we compute and check:
-    Example
-       z123 = masseyTripleProduct(KR,z1,z2,z3)
-       z123 == lift12*z3 + z1*lift23
-    Text
-       One may also compute Massey triple products directly on elements of the homology
-       algebra itself, as is seen with the command masseyTripleProduct:
-    Example
-       H = HH(KR)
-       h1 = homologyClass(KR,z1)
-       h2 = homologyClass(KR,z2)
-       h3 = homologyClass(KR,z3)
-       h123 = masseyTripleProduct(KR,h1,h2,h3)
-       h123 == homologyClass(KR,z123)
-///
-
-doc ///
-  Key
-    (masseyTripleProduct,DGAlgebra,ZZ,ZZ,ZZ)
-  Headline
-    Computes the matrix representing all triple Massey operations.
-  Usage
-    mat = masseyTripleProduct(A,l,m,n)
-  Inputs
-    A:DGAlgebra
-    l:ZZ
-    m:ZZ
-    n:ZZ
-  Outputs
-    mat:Matrix
-  Description
-    Text
-      Given a triple of homology classes h1,h2,h3, such that h1h2 = h2h3 = 0,
-      the Massey triple product of h1,h2 and h3 may be defined as in
-      @ TO masseyTripleProduct @.  This command computes a basis of the homology
-      algebra of A in degrees l,m and n respectively, and expresses the triple
-      Massey operation of each triple, provided it is defined.  If a triple product
-      is not defined (i.e. if either h1h2 or h2h3 is not zero) then the triple
-      product is reported as zero in the matrix.
-    Text
-      The following example appears in "On the Hopf algebra of a Local Ring" by Avramov
-      as an example of a nonvanishing Massey operation which an algebra generator:
-    Example
-      Q = QQ[t_1,t_2,t_3,t_4]
-      I = ideal (t_1^3,t_2^3,t_3^3-t_1*t_2^2,t_1^2*t_3^2,t_1*t_2*t_3^2,t_2^2*t_4,t_4^2)
-      R = Q/I
-      KR = koszulComplexDGA R
-      H = HH(KR)
-      masseys = masseyTripleProduct(KR,1,1,1);
-      rank masseys
-    Text
-      As you can see, this command is useful to determine the number of linearly independent
-      elements that arise as triple Massey products.
-    Text
-      For example, the following Massey triple product is nonvanishing and is an
-      algebra generator:
-    Example
-      masseyTripleProduct(KR,X_2,X_4,X_1)
-///
-
-doc ///
-  Key
-    expandGeomSeries
-    (expandGeomSeries,List,ZZ)
-    (expandGeomSeries,RingElement,ZZ)
-  Headline
-    Expand a geometric series to a specified degree.
-  Usage
-    pSeries = expandGeomSeries(f,n)
-  Inputs
-    f:RingElement
-      Ratio of the geometric series to be expanded.
-    n:ZZ
-      Degree which to expand the geometric series.
-  Outputs
-    pSeries:RingElement
-      Power series representation of the geometric series.
-  Description
-    Text
-      If the user supplies a list instead of a RingElement as the first argument, the return
-      value is the product of all the each of the geometric series expanded to degree n obtained
-      by calling expandGeomSeries on each element of the list.
-    Example
-      A = ZZ[S,T_0,T_1]
-      f = expandGeomSeries(S^2*T_0^8,10)
-      g = expandGeomSeries(S^4*T_1^15,10)
-      h = expandGeomSeries({S^2*T_0^8,S^4*T_1^15},10)
-      B = A/(first gens A)^11
-      substitute(f*g,B) == h
-///
-
-doc ///
-  Key
-    torMap
-    (torMap,RingMap)
-    [torMap,GenDegreeLimit]
-  Headline
-    Compute the map of Tor algebras associated to a RingMap.
-  Usage
-    torPhi = torMap(phi)
-  Inputs
-    phi:RingMap
-  Outputs
-    torPhi:RingMap
-  Description
-    Text
-      The functor Tor_R(M,N) is also functorial in the ring argument.  Therefore, a ring map phi from A to B induces an algebra map
-      from the Tor algebra of A to the Tor algebra of B.
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3,a^2*b^2*c^2}
-      S = R/ideal{a*b^2*c^2,a^2*b*c^2,a^2*b^2*c}
-      f = map(S,R)
-      fTor = torMap(f,GenDegreeLimit=>3)
-      matrix fTor
-    Text
-      In the following example, the map on Tor is surjective, which means that the ring homomorphism is large (Dress-Kramer).
-    Example
-      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3,a*c,a*d,b*c,b*d}
-      S = ZZ/101[a,b]/ideal{a^3,b^3}
-      f = map(S,R,matrix{{a,b,0,0}})
-      fTor = torMap(f,GenDegreeLimit=>4)
-      matrix fTor      
-///
-
-doc ///
-  Key
-    (diff,DGAlgebra,RingElement)
-  Headline
-    Computes the differential of a ring element in a DGAlgebra
-  Usage
-    b = diff(A,a)
-  Inputs
-    A:DGAlgebra
-    a:RingElement
-  Outputs
-    b:RingElement
-///
-
-doc ///
-  Key
-    getBoundaryPreimage
-    (getBoundaryPreimage,DGAlgebra,RingElement)
-    (getBoundaryPreimage,DGAlgebra,List)
-  Headline
-    Attempt to find a preimage of a boundary under the differential of a DGAlgebra.
-  Usage
-    (lifted,myLift) = getBoundaryPreimage(A,z)
-  Inputs
-    A:DGAlgebra
-    z:RingElement
-  Outputs
-    seq:Sequence
-  Description
-    Text
-      The first element in the return value is a boolean value indicating whether the
-      lift was possible.  If true, the second coordinate of the return value is the lift.
-      If false, then the second coordinate of the return value is the reduction of the
-      input modulo the image.
-    Example
-       Q = QQ[x_1,x_2,y_1,y_2,z]
-       I = ideal (x_1*x_2^2,y_1*y_2^2,z^3,x_1*x_2*y_1*y_2,y_2^2*z^2,x_2^2*z^2,x_1*y_1*z,x_2^2*y_2^2*z)
-       R = Q/I
-       KR = koszulComplexDGA R
-    Text
-       The following are cycles:
-    Example
-       z1 = z^2*T_5
-       z2 = y_2^2*T_3
-       z3 = x_2^2*T_1
-       {diff(KR,z1),diff(KR,z1),diff(KR,z1)}
-    Text
-       and z1*z2, z2*z3 vanish in homology:
-    Example
-       (lifted12,lift12) = getBoundaryPreimage(KR,z1*z2)
-       (lifted23,lift23) = getBoundaryPreimage(KR,z2*z3)
-    Text
-       We can check that the differential of the lift is the supposed boundary:
-    Example
-       diff(KR,lift23) == z2*z3
-///
-
-doc ///
-  Key
-    homologyClass
-    (homologyClass,DGAlgebra,RingElement)
-  Headline
-    Computes the element of the homology algebra corresponding to a cycle in a DGAlgebra.
-  Usage
-    h = homologyClass(A,z)
-  Inputs
-    A:DGAlgebra
-    z:RingElement
-  Outputs
-    h:RingElement
-  Description
-    Text
-      This function computes the element in the homology algebra of a cycle in a @ TO DGAlgebra @.
-      In order to do this, the @ TO homologyAlgebra @ is retrieved (or computed, if it hasn't been
-      already).
-    Example
-      Q = QQ[x,y,z]
-      I = ideal (x^3,y^3,z^3)
-      R = Q/I
-      KR = koszulComplexDGA R
-      z1 = x^2*T_1
-      z2 = y^2*T_2
-      H = HH(KR)
-      homologyClass(KR,z1*z2)
-///
-
-doc ///
-  Key
-    zerothHomology
-    (zerothHomology,DGAlgebra)
-  Headline
-    Compute the zeroth homology of the DGAlgebra A as a ring.
-  Usage
-    HA0 = zerothHomology A
-  Inputs
-    A:DGAlgebra
-  Outputs
-    HA0:Ring
-      HH_0(A) as a ring.
-///
-
-doc ///
-  Key
-    getDegNModule
-    (getDegNModule,ZZ,Ring,Ring)
-  Headline
-    Compute a presentation of M_i as an R-module
-  Usage
-    M' = getDegNModule(N,R,M)
-    M' = getDegNModule(N,R,A)
-  Inputs
-    N:ZZ
-    R:Ring
-    M:Module
-      M is a Module over a ring A, and A must be a graded R-algebra with A_0 = R
-    A:Ring
-      A must be a graded R-algebra, and A_0 = R
-  Outputs
-    M':Module
-      M_N as an R = A_0-module
-///
-
-doc ///
-  Key
-    DGAlgebraMap
-    ringMap
-  Headline
-    The class of all DG Algebra maps
-  Description
-    Text
-      A common way to create a DGAlgebraMap is via @ TO liftToDGMap @.
-///
-
-doc ///
-  Key
-    dgAlgebraMap
-    (isWellDefined,DGAlgebraMap)
-    (dgAlgebraMap,DGAlgebra,DGAlgebra,Matrix)
-  Headline
-    Define a DG algebra map between DG algebras.
-  Usage
-    phi = dgAlgebraMap(B,A,M)
-  Inputs
-    A:DGAlgebra
-       Source
-    B:DGAlgebra
-       Target
-    M:Matrix
-       A matrix representing where the generators of A should be mapped to (akin to ringMap)
-  Outputs
-    phi:DGAlgebraMap
-  Description
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
-      K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
-      K2 = koszulComplexDGA(ideal {b,c},Variable=>"T")
-      g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
-      isWellDefined g
-    Text
-      The function does not check that the DG algebra map is well defined, however.
-    Example
-      f = dgAlgebraMap(K2,K1,matrix{{0,T_1,T_2}})
-      isWellDefined f
-///
-
-doc ///
-  Key
-    toComplexMap
-    (toComplexMap,DGAlgebraMap)
-    (toComplexMap,DGAlgebraMap,ZZ)
-    [toComplexMap,AssertWellDefined]
-    [toComplexMap,EndDegree]
-  Headline
-    Construct the ComplexMap associated to a DGAlgebraMap
-  Usage
-    psi = toComplexMap phi
-  Inputs
-    phi:DGAlgebraMap
-  Outputs
-    psi:ComplexMap
-  Description
-    Example
-       R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
-       K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
-       K2 = koszulComplexDGA(ideal {b,c},Variable=>"T")
-       g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
-       g' = toComplexMap g
-    Text
-      The option @ TO EndDegree @ must be specified if the source of phi has any algebra generators of even degree.  The option @ TO AssertWellDefined @
-      is used if one wishes to assert that the result of this computation is indeed a chain map.  One can construct just the nth map in the
-      chain map by providing the second @ TO ZZ @ parameter.
-    Text
-      This function also works when working over different rings, such as the case when the @ TO DGAlgebraMap @ is produced via
-      @ TO liftToDGMap @ and in the next example.  In this case, the target module is produced via @ TO pushForward @.
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
-      S = R/ideal{a^2*b^2*c^2}
-      f = map(S,R)
-      A = acyclicClosure(R,EndDegree=>3)
-      B = acyclicClosure(S,EndDegree=>3)
-      phi = liftToDGMap(B,A,f)
-      toComplexMap(phi,EndDegree=>3)
-///
-
-doc ///
-  Key
-    liftToDGMap
-    (liftToDGMap,DGAlgebra,DGAlgebra,RingMap)
-    [liftToDGMap,EndDegree]
-  Headline
-    Lift a ring homomorphism in degree zero to a DG algebra morphism
-  Usage
-    phiTilde = liftToDGMap(B,A,phi)
-  Inputs
-    B:DGAlgebra
-      Target
-    A:DGAlgebra
-      Source
-    phi:RingMap
-      Map from A in degree zero to B in degree zero
-  Outputs
-    phiTilde:DGAlgebraMap
-      DGAlgebraMap lifting phi to a map of DGAlgebras.
-  Description
-    Text
-      In order for phiTilde to be defined, phi of the image of the differential of A in degree 1 must lie in the image of the
-      differential of B in degree 1.  At present, this condition is not checked.
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
-      S = R/ideal{a^2*b^2*c^2}
-      f = map(S,R)
-      A = acyclicClosure(R,EndDegree=>3)
-      B = acyclicClosure(S,EndDegree=>3)
-      phi = liftToDGMap(B,A,f)
-      toComplexMap(phi,EndDegree=>3)
-///
-
-doc ///
-  Key
-    (homology,DGAlgebraMap)
-  Headline
-    Computes the homomorphism in homology associated to a DGAlgebraMap.
-  Usage
-    homologyPhi = homology(phi,n)
-  Inputs
-    phi:DGAlgebraMap
-  Outputs
-    homologyPhi:RingMap
-      The map on homology defined by phi.
-  Description
-    Example
-      R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
-      K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
-      K2 = koszulComplexDGA(ideal {b,c},Variable=>"T")
-      f = dgAlgebraMap(K2,K1,matrix{{0,T_1,T_2}})
-      g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
-      toComplexMap g
-      HHg = HH g
-///
-
--- moved this out of the documentation since it is not complete
---    (homology,DGAlgebraMap,ZZ)
-
---    Text
---      One can also supply the second argument (a ZZ) in order to obtain the map on homology in a specified degree.
---      (This is currently not available).
-
-doc ///
-  Key
-    dgAlgebraMultMap
-    (dgAlgebraMultMap,DGAlgebra,RingElement)
-  Headline
-    Returns the chain map corresponding to multiplication by a cycle.
-  Usage
-    phi = dgAlgebraMultMap(A,z)
-  Inputs
-    A:DGAlgebra
-    z:RingElement
-  Outputs
-    phi:ComplexMap
-  Description
-    Text
-      If A is a DGAlgebra, and z is a cycle of A, then left multiplication of A by z gives
-      a chain map from A to A.  This command converts A to a complex using @ TO toComplex @,
-      and constructs a @ TO ComplexMap @ that represents left multiplication by z.
-      This command is used to determine the module structure that is computed in
-      @ TO homologyModule @.
-    Example
-      R = QQ[x,y,z]/ideal{x^3,y^3,z^3}
-      KR = koszulComplexDGA R
-      z1 = x^2*T_1
-      phi = dgAlgebraMultMap(KR,z1)
-    Text
-      As you can see, the degree of phi is the homological degree of z:
-    Example
-      degree phi == first degree z
-    Text
-      Care is also taken to ensure the resulting map is homogeneous if R and z are:
-    Example
-      isHomogeneous phi
-    Text
-      One may then view the action of multiplication by the homology class of z upon
-      taking the induced map in homology:
-    Example
-      Hphi = prune HH(phi); (Hphi_0,Hphi_1,Hphi_2)
-///
-
-doc ///
-  Key
-    homologyModule
-    (homologyModule,DGAlgebra,Module)
-  Headline
-    Compute the homology of a DGModule as a module over a DGAlgebra.
-  Usage
-    HM = homologyModule(A,M)
-  Inputs
-    A:DGAlgebra
-    M:Module
-  Outputs
-    HM:Module
-  Description
-    Text
-      Given a DGAlgebra A over a ring R, and an R-module M, A ** M carries the structure
-      of a left DG module over A.  It follows that H(A ** M) is a module over H(A).
-      Although DGModules have yet to be implemented as objects in Macaulay2 in their own right,
-      the current infrastructure (with a little extra work) allows us to determine the module structure
-      of this type of DG module as a module over the homology algebra of A.
-    Text
-      Currently, this code will only work on DGAlgebras that are finite over their ring
-      of definition, such as Koszul complexes.  (Truncations of) module structures in case
-      of non-finite DGAlgebras may be made available in a future update.
-    Text
-      For an example, we will compute the module structure of the Koszul homology of
-      the canonical module over the Koszul homology algebra.
-    Example
-      Q = QQ[x,y,z,w]
-      I = ideal (w^2, y*w+z*w, x*w, y*z+z^2, y^2+z*w, x*y+x*z, x^2+z*w)
-      R = Q/I
-      KR = koszulComplexDGA R
-      cxKR = toComplex KR
-      HKR = HH(KR)
-    Text
-      The following is the graded canonical module of R:
-    Example
-      degList = first entries vars Q / degree / first
-      M = Ext^4(Q^1/I,Q^{-(sum degList)}) ** R
-    Text
-      We obtain the Koszul homology module using the following command:
-    Example
-      HKM = homologyModule(KR,M);
-    Text
-      One may notice the duality of HKR and HKM by considering their Hilbert series:
-    Example
-      hsHKR = value numerator reduceHilbert hilbertSeries HKR
-      hsHKM = value numerator reduceHilbert hilbertSeries HKM
-      AA = ring hsHKR
-      e = numgens Q
-      hsHKR == T_0^e*T_1^e*sub(hsHKM, {T_0 => T_0^(-1), T_1 => T_1^(-1)})
-///
-
-doc ///
-  Key
-    (source,DGAlgebraMap)
-  Headline
-    Outputs the source of a DGAlgebraMap
-  Usage
-    A = source phi
-  Inputs
-    phi:DGAlgebraMap
-  Outputs
-    A: DGAlgebra
-///
-
-doc ///
-  Key
-    (target,DGAlgebraMap)
-  Headline
-    Outputs the target of a DGAlgebraMap
-  Usage
-    A = target phi
-  Inputs
-    phi:DGAlgebraMap
-  Outputs
-    A: DGAlgebra
-///
-
-doc ///
-  Key
-    AssertWellDefined
-  Headline
-    Option to check whether the lifted map on DGAlgebras is well defined.
-  Usage
-    liftToDGMap(...,AssertWellDefined=>true)
-///
-
-doc ///
-  Key
-    StartDegree
-  Headline
-    Option to specify the degree to start computing the acyclic closure and killing cycles
-  Usage
-    acyclicClosure(...,StartDegree=>n)
-///
-
-doc ///
-  Key
-    EndDegree
-  Headline
-    Option to specify the degree to stop computing killing cycles and acyclic closure 
-  Usage
-    killCycles(...,StartDegree=>n)
-///
-
-doc ///
-  Key
-    GenDegreeLimit
-  Headline
-    Option to specify the maximum degree to look for generators
-  Usage
-    homologyAlgebra(...,GenDegreeLimit=>n)
-///
-
-doc ///
-  Key
-    RelDegreeLimit
-  Headline
-    Option to specify the maximum degree to look for relations
-  Usage
-    homologyAlgebra(...,RelDegreeLimit=>n)
-///
-
-doc ///
-  Key
-    TMOLimit
-  Headline
-    Option to specify the maximum arity of the trivial Massey operation
-  Usage
-    findTrivialMasseyOperation(...,TMOLimit=>n)
-///
-
-doc ///
-  Key
-    [isAcyclic,EndDegree]
-  Headline
-    Option to specify the degree to finish checking acyclicity
-  Usage
-    isAcyclic(...,EndDegree=>n)
-///
-
-doc ///
-  Key
-    [acyclicClosure,StartDegree]
-  Headline
-    Option to specify the degree to start computing the acyclic closure. 
-  Usage
-    acyclicClosure(...,StartDegree=>n)
-  Description 
-   Text
-    The default value is 1.
-///
-
-doc ///
-  Key
-    [acyclicClosure,EndDegree]
-  Headline
-    Option to specify the degree to stop computing the acyclic closure
-  Usage
-    A =  acyclicClosure(B,EndDegree=>n)
-  Inputs
-    B: DGAlgebra
-    n: ZZ
-  Description
-   Text
-    All generators of the acyclic closure will be found up to homological degree n.
-    Note that B can be an ordinary ring, a factor ring of a polynomial ring, treated as
-    a DGAlgebra generated in homological degree 0, as in the following example:
-    
-    The default value of EndDegree is 3.
-   Example
-    R = ZZ/101[x,y,z,w]/(ideal"x3,y3,z3,x2yz")
-    acyclicClosure R
-    acyclicClosure(R,EndDegree => 3)
-///
-
-doc ///
-  Key
-    [getGenerators,StartDegree]
-  Headline
-    Option to specify the degree to start finding generators of HH(DGAlgebra)
-  Usage
-    getGenerators(...,StartDegree=>n)
-///
-
-doc ///
-  Key
-    [getGenerators,DegreeLimit]
-  Headline
-    Option to specify the degree to stop finding generators of HH(DGAlgebra)
-  Usage
-    getGenerators(...,DegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [killCycles,StartDegree]
-  Headline
-    Option to specify the degree to start looking for cycles
-  Usage
-    killCycles(...,StartDegree=>n)
-///
-
-doc ///
-  Key
-    [killCycles,EndDegree]
-  Headline
-    Option to specify the degree to stop looking for cycles
-  Usage
-    killCycles(...,EndDegree=>n)
-///
-
-doc ///
-  Key
-    [getBasis,Limit]
-  Headline
-    Option to specify the maximum number of basis elements to return
-  Usage
-    getBasis(...,Limit=>n)
-///
-
-doc ///
-  Key
-    [homologyAlgebra,GenDegreeLimit]
-  Headline
-    Option to specify the maximum degree to look for generators
-  Usage
-    homologyAlgebra(...,GenDegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [homologyAlgebra,RelDegreeLimit]
-  Headline
-    Option to specify the maximum degree to look for relations
-  Usage
-    homologyAlgebra(...,RelDegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [torAlgebra,GenDegreeLimit]
-  Headline
-    Option to specify the maximum degree to look for generators
-  Usage
-    torAlgebra(...,GenDegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [torAlgebra,RelDegreeLimit]
-  Headline
-    Option to specify the maximum degree to look for relations
-  Usage
-    torAlgebra(...,RelDegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [findTrivialMasseyOperation,GenDegreeLimit]
-  Headline
-    Option to specify the maximum degree to look for generators
-  Usage
-    findTrivialMasseyOperation(...,GenDegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [findTrivialMasseyOperation,TMOLimit]
-  Headline
-    Option to specify the maximum arity of a trivial Massey operation, if one exists.
-  Usage
-    findTrivialMasseyOperation(...,TMOLimit=>n)
-///
-
-doc ///
-  Key
-    [isHomologyAlgebraTrivial,GenDegreeLimit]
-  Headline
-    Option to specify the maximum degree to look for generators
-  Usage
-    isHomologyAlgebraTrivial(...,GenDegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [isGolodHomomorphism,GenDegreeLimit]
-  Headline
-    Option to specify the maximum degree to look for generators
-  Usage
-    isGolodHomomorphism(...,GenDegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [deviations,DegreeLimit]
-  Headline
-    Option to specify the maximum degree to look for generators when computing the deviations
-  Usage
-    deviations(...,DegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [isGolodHomomorphism,TMOLimit]
-  Headline
-    Option to specify the maximum degree to look for generators when computing the deviations
-  Usage
-    isGolodHomomorphism(...,DegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [homologyAlgebra,Verbosity]
-  Headline
-    Option to specify the maximum degree to look for generators when computing the deviations
-  Usage
-    homologyAlgebra(...,DegreeLimit=>n)
-///
-
-doc ///
-  Key
-    [getGenerators,Verbosity]
-  Headline
-    Option to specify the maximum degree to look for generators when computing the deviations
-  Usage
-    getGenerators(...,Verbosity=>n)
-///
-
-doc ///
-  Key
-    (net,DGAlgebra)
-  Headline
-    Outputs the pertinent information about a DGAlgebra
-  Usage
-    net A
-  Inputs
-    A:DGAlgebra
-///
-
-doc ///
-  Key
-    (net,DGAlgebraMap)
-  Headline
-    Outputs the pertinent information about a DGAlgebraMap
-  Usage
-    net phi
-  Inputs
-    phi:DGAlgebraMap
-///
-
-doc///
- Key 
-  displayBlockDiff
-  (displayBlockDiff, DGAlgebra, ZZ)
-  (displayBlockDiff, DGAlgebra, Array, Array)
-  (displayBlockDiff, DGAlgebra, List, List)
-  (displayBlockDiff, DGAlgebra, VisibleList)  
- Headline
-  Shows natural decomposition of a map in the Tate resolution
- Usage
-  displayBlockDiff (A, n)
-  displayBlockDiff (A, LA, LA)
-  displayBlockDiff (A, L, L)
-  displayBlockDiff (A, V)
- Inputs
-  A:DGAlgebra
-   of the sort produced by @TO acyclicClosure@ or @TO killCycles@
-  n:ZZ
-  LA:Array
-     of the form [L] where L is a list representing a multi-index in the complex
-  L:List
-   of indices as above
-  V:VisibleList
-   a list, array or sequence representing a (single) multi-index in the complex defined by A
- Description
-  Text
-   For example, consider the first five steps in the resolution of the residue field
-   in the following example:
-  Example
-   R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
-   G = betti freeResolution (coker vars R, LengthLimit => 5)
-  Text
-   It is a free graded-commutative divided power algebra on generator of each degree starting with 1.
-   We can compute the beginning of the complex corresponding to the first 3 factors with as
-  Example
-   A = acyclicClosure(R,EndDegree => 2)
-   F = toComplex(A, 5);
-   betti F
-   betti F
-  Text
-   Since we gave @TO acyclicClosure @ the EndDegree 2, the complex produced is exact up to
-   step 2; that is betti F and betti G agree up to the column 3. There are 3 chunks of generators
-   in A, of homological degrees 1,2,3. 
-  
-   From the betti table of F 
-   we see the three generators of the exterior algebra K as the linear part of the resolution.
-   The second strand, 4,12,12,4 is the tensor product of K with the 4 generators of A that have
-   homological degree 2 and correspond to the 4 generators of I; thus they have internal degree 3.
-   We also see that A has three generators in homological degree 3 and internal degree 5.
-   K multiplied by these generators accounts for 3,9,9 of the 3rd strand, while the symmetric
-   square of the 4 generators of homological degree 2,  account for 0,10,0 and the product of
-   these with the generators of degree 1 account for the remaining 0,0,30. Finally the 12
-   in the 4th row represents the product of the 4 generators of A in homological degree with
-   the 3 in degree 3.
-  
-   The native display of the differentials of this complex does not distinguish these pieces,
-   but displayBlockDiff allows one to look at them in various ways:
-  Example
-   F.dd_3
-   displayBlockDiff(A,3)
-  Text
-   Here the triples of numbers represent the number of factors from the generators of each of the three chunks of
-   variables: the first index gives the number from the Koszul complex, the second from the 4 variable in homological degree
-   2 and the third the number from the 3 variables of homological degree 3. Thus the sum of the
-   three indices is the homological degree. The sources of the blocks are listed on the top row, the targets
-   are given by the columns.
-   We can see the lists of indices of the source and target with
-    Example
-     indices source blockDiff(A,5)
-     indices target blockDiff(A,5)
-  Text
-   We can extract one or several blocks from F.dd_3 as follows:
-  Example
-   R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
-   A = acyclicClosure(R,EndDegree => 2)
-  Text
-   We can specify a lists of source and target degrees, either as lists representing an 
-   index for th source and an index for the target:
-  Example
-   displayBlockDiff(A,  {0,2,3}, {0,4,0})
-  Text
-   or as a pair of arrays of such lists
-  Example
-   displayBlockDiff(A,  [{0,2,3}], [{1,0,3},{0,4,0}])
-  Text
-   or look at all the blocks with a given target summand with:
-  Example
-   displayBlockDiff(A,  (1,0,3) )
- SeeAlso
-  blockDiff
-  acyclicClosure
-///
-
-doc ///
- Key
-  blockDiff
-  (blockDiff, DGAlgebra, ZZ)
- Headline
-  prepares a map for display
- Usage
-  X = blockDiff(A,n)
- Inputs
-  A: DGAlgebra
-  n: ZZ
- Outputs
-  X:Matrix
-   map between labeled direct sums
- Description
-  Text
-   Use @TO displayBlockDiff@ to display the blocks in various ways.
- SeeAlso
-  displayBlockDiff 
-///
-  
 -------------------------------
 --          Testing          --
 -------------------------------
-TEST ///
-R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
-A = acyclicClosure(R,EndDegree => 2)
-X = blockDiff(A,3)
-Y = blockDiff(A,2)
---reconstruct a composite block:
-assert(0 == Y_[{2,0,0}]^[{1,0,0}] *X^[{2,0,0}]_[{1,2,0}] + Y_[{0,2,0}]^[{1,0,0}] *X^[{0,2,0}]_[{1,2,0}] )
-
-///
-TEST ///
--- test 0 : isHomogeneous, toComplex, maxDegree
-R = ZZ/101[x,y,z]
-A1 = freeDGAlgebra(R,{{1},{1},{1},{3}})
-setDiff(A1,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-assert(not A1.isHomogeneous)
-A1dd = toComplex(A1)
-A1dd.dd
-
-A2 = freeDGAlgebra(R,{{1,1},{1,1},{1,1},{3,3}})
-setDiff(A2,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-assert(A2.isHomogeneous)
-A2dd = toComplex(A2)
-A2dd.dd
-
-B1 = koszulComplexDGA(R)
-assert(B1.isHomogeneous)
-B1dd = toComplex(B1)
-B1dd.dd
-
-R = ZZ/101[x,y,z]
-R2 = R/ideal {x^2-z^3}
-B2 = koszulComplexDGA(R2)
-assert(not B2.isHomogeneous)
-B2dd = toComplex(B2)
-B2dd.dd
-
-R = QQ[x,y,z]
-B = koszulComplexDGA(R)
-toComplex(B)
-degrees B.natural
-A = freeDGAlgebra(R,{{1},{1},{1},{3}})
-setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
-Add = toComplex(A)
-assert(apply(maxDegree(A)+1, i -> prune HH_i(Add)) == {coker vars R,0,0,coker vars R,0,0,0})
-///
-
-TEST ///
--- test 1 : differential tests
-R = ZZ/101[x,y,z, Degrees => {2,2,3}]
-kRes = freeResolution coker vars R
-kRes.dd_3
-A = koszulComplexDGA(R)
-d3 = A.dd_3
-d2 = A.dd_2
-d1 = A.dd_1
-assert(source d1 == target d2)
-assert(source d2 == target d3)
-assert(d1*d2 == 0)
-assert(d2*d3 == 0)
-S1 = R/ideal (x^3-z^2)
-B1 = koszulComplexDGA(S1)
-d3 = B1.dd_3
-d2 = B1.dd_2
-d1 = B1.dd_1
-assert(source d1 == target d2)
-assert(source d2 == target d3)
-assert(d1*d2 == 0)
-assert(d2*d3 == 0)
-use R
-S2 = R/ideal (x^4-z^2)
-B2 = koszulComplexDGA(S2)
-d3 = B2.dd_3
-d2 = B2.dd_2
-d1 = B2.dd_1
-assert(source d1 == target d2)
-assert(source d2 == target d3)
-assert(d1*d2 == 0)
-assert(d2*d3 == 0)
-///
-
-TEST ///
---- test 2 : homology, homologyAlgebra, HH_ZZ, HH
-R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
-koszulR = koszul vars R
-time apply(5,i -> numgens prune HH_i(koszulR))
-A = koszulComplexDGA(R)
-HH_2(A)
-HH(A)
-hh2 = prune HH_2(koszulR)
-hh2' = prune HH_2(A)
-assert(hh2 == hh2')
-///
-
-TEST ///
--- test 3 : torAlgebra, deviations
-R1 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
-TorR1 = torAlgebra(R1,GenDegreeLimit=>4)
-devR1 = deviations(R1,DegreeLimit=>4)
-use R1
-M = coker matrix {{x^2*y^3*z^4}}
-Mres = freeResolution(M, LengthLimit => 7)
-R2 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
-time TorR1R2 = torAlgebra(R1,R2,GenDegreeLimit=>5,RelDegreeLimit=>10)
--- the multiplication is trivial, since the map R3 --> R4 is Golod
-numgens TorR1R2
-numgens ideal TorR1R2
-apply(21, i -> #(flatten entries getBasis(i,TorR1R2)))
-assert(sum oo - 1 == numgens TorR1R2)
-///
-
-TEST ///
--- test 4 : findEasyRelations
-debug DGAlgebras
-R1 = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
-R2 = ZZ/32003[a,b,x,y,Degrees=>{1,1,2,2}]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
-A1 = koszulComplexDGA(R1)
-A2 = koszulComplexDGA(R2)
-cycleList1 = getGenerators(A1,DegreeLimit=>4)
-cycleList2 = getGenerators(A2,DegreeLimit=>4)
-HAEasy1 = findEasyRelations(A1,cycleList1)
-HAEasy2 = findEasyRelations(A2,cycleList2)
-tally ((flatten entries basis HAEasy1) / degree)
-pairs (tally ((flatten entries basis HAEasy1) / degree))
-myList1 = {({4,8},1),({3,4},1),({3,5},6),({3,6},6),({3,7},4),({2,3},4),({2,4},11),({2,5},8),({2,6},4),({1,2},4),({1,3},4),({1,4},1),({0,0},1)}
-myList2 = {({0},1),({1},9),({2},27),({3},17),({4},1)}
-tally ((flatten entries basis HAEasy1) / degree)
-tally myList1
-assert(pairs tally((flatten entries basis HAEasy1) / degree) == myList1)
-assert(pairs tally((flatten entries basis HAEasy2) / degree) == myList2)
-///
-
-TEST ///
--- test 5 : homology of a DGA whose H_0 is not a field
-R = ZZ/32003[a,b]
-I = ideal{a^6,b^6}
-A = koszulComplexDGA(I)
-HA = HH A
-describe HA
-use R
-J = I + ideal {a^4*b^5,a^5*b^4}
-B = koszulComplexDGA(J)
-getGenerators(B)
-apply(5, i -> numgens prune homology(i,B))
-apply(5, i -> prune homology(i,B))
-HB = HH B
-HB2 = zerothHomology B
-HB.cache.cycles
-ideal HB
--- looks right...
-getDegNModule(0,HB2,HB)
-getDegNModule(1,HB2,HB)
-getDegNModule(2,HB2,HB)
-getDegNModule(3,HB2,HB)
-getDegNModule(4,HB2,HB)
-
-R = ZZ/32003[a,b,c]
-I = (ideal vars R)^2
-A = koszulComplexDGA(I)
-apply(10, i -> prune homology(i,A))
-time HA = HH A
-HA2 = zerothHomology A
-tally ((ideal HA)_* / degree / first)
-select ((ideal HA)_*, f -> first degree f == 2)
--- looks right...
-getDegNModule(0,HA2,HA)
-getDegNModule(1,HA2,HA)
-getDegNModule(2,HA2,HA)
-getDegNModule(3,HA2,HA)
--- need to add asserts
-///
-
-TEST ///
--- test 6 : homologyAlgebra
-R = ZZ/32003[a,b,x,y]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
-koszulR = koszul vars R
-time apply(5,i -> numgens prune HH_i(koszulR))
-A = koszulComplexDGA(R)
-time apply(5,i -> numgens prune homology(i,A))
--- ~2.15 seconds on mbp, with graded differentials
-time HA = HH A
-assert(numgens HA == 34)
-assert(numgens ideal HA == 576)
-assert(#(first degrees HA) == 2)
-
--- same example, but not graded because of the degree change.  The homologyAlgebra function
--- will then only return a graded algebra
-R2 = ZZ/32003[a,b,x,y,Degrees=>{1,1,2,2}]/ideal{a^3,b^3,x^3,y^3,a*x,a*y,b*x,b*y,a^2*b^2-x^2*y^2}
-koszulR2 = koszul vars R2
-time apply(5,i -> numgens prune HH_i(koszulR2))
-A2 = koszulComplexDGA(R2)
-time apply(5,i -> numgens prune homology(i,A2))
--- ~2.85 seconds on mbp, with ungraded differentials
-time HA2 = homologyAlgebra A2
-assert(numgens HA2 == 34)
-assert(numgens ideal HA2 == 576)
--- should only be singly graded
-assert(#(first degrees HA2) == 1)
-///
-
-TEST ///
--- test 7 : acyclicClosure, isHomologyAlgebraTrivial, isGolod, isGolodHomomorphism
-R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
-M = coker matrix {{a^3*b^3*c^3*d^3}};
-S = R/ideal{a^3*b^3*c^3*d^3}
-time A = acyclicClosure(R,EndDegree=>6)
-B = A ** S
-assert(isHomologyAlgebraTrivial(B,GenDegreeLimit=>6))
-assert(isGolodHomomorphism(S,GenDegreeLimit=>6,TMOLimit=>3))
--- returns true since R --> S is Golod
-R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
-A = koszulComplexDGA(R)
-assert(not isHomologyAlgebraTrivial(A))
-assert(not isGolod R)
--- false, since R is Gorenstein, and so HA has Poincare Duality
-///
-
-TEST ///
--- test 8 : DGAlgebra ** DGAlgebra - need to add in an assert
-R = ZZ/101[a,b,c,d]
-I = ideal(a,b)
-J = ideal(c,d)
-A = koszulComplexDGA(I)
-B = koszulComplexDGA(J)
-Cdd = toComplex(A ** B)
-Cdd.dd
-///
-
-TEST ///
--- test 9 : isHomologyAlgebraTrivial, getGenerators, findTrivialMasseyOperation
-Q = ZZ/101[x_1..x_6]
-I = ideal (x_3*x_5,x_4*x_5,x_1*x_6,x_3*x_6,x_4*x_6)
-R = Q/I
-A = koszulComplexDGA(R)
-isHomologyAlgebraTrivial(A,GenDegreeLimit=>3)
-cycleList = getGenerators(A)
-assert(first findTrivialMasseyOperation(A))
-
--- this is a Teter ring, and the computation in Avramov and Levin's paper shows
--- H(A) does not have trivial multiplication.
-Q = ZZ/101[x,y,z]
-I = ideal (x^3,y^3,z^3,x^2*y^2*z^2)
-R = Q/I
-A = koszulComplexDGA(R)
-assert(not isHomologyAlgebraTrivial(A,GenDegreeLimit=>3))
-cycleList = getGenerators(A)
-prodList = apply(subsets(cycleList,2), l -> (first degree l#0 + first degree l#1,l#0*l#1));
-assert(not first findTrivialMasseyOperation(A))
-///
-
-TEST ///
--- test 10 : isAcyclic
-R = ZZ/101[a,b,c,d]
-A = koszulComplexDGA(R)
-B = koszulComplexDGA({a^4,b^4,c^4,d^4})
-C = koszulComplexDGA((ideal vars R)^2)
-assert(isAcyclic A)
-assert(isAcyclic B)
-assert(not isAcyclic C)
-///
-
-TEST ///
--- test 11 : isGolod and isHomologyAlgebraTrivial example
--- Interesting case due to Katthan.
-Q = ZZ/101[x_1,x_2,y_1,y_2,z,w]
-I = ideal {x_1*x_2^2,z^2*w,y_1*y_2^2,x_2^2*z*w,y_2^2*z^2,x_1*x_2*y_1*y_2,x_2^2*y_2^2*z,x_1*y_1*z}
-R = Q/I
-assert(isHomologyAlgebraTrivial koszulComplexDGA R == true)
-assert(isGolod R == false)
-///
-
-TEST ///
---- test 12: isGolod and isHomologyAlgebraTrivial example again
---- This example is due to Roos
-S = QQ[x,y,z,u]
-I = ideal(u^3, x*y^2, (x+y)*z^2, x^2*u+z*u^2, y^2*u+x*z*u, y^2*z+y*z^2)
- -- you can see that the mult on the koszul homology will be trivial
-betti (A = freeResolution I)
-R = S/I
-assert(isHomologyAlgebraTrivial koszulComplexDGA R == true)
-assert(isGolod R == false)
-///
+load "./DGAlgebras/tests.m2"
 
 end--
 
@@ -4507,7 +6189,7 @@ needsPackage "DGAlgebras"
 R = ZZ/101[x,y,z]
 A = freeDGAlgebra(R,{{1},{1},{1},{3}})
 A.natural
-setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+setDiff(A,{x,y,z,x*T_(1,2)*T_(1,3)-y*T_(1,1)*T_(1,3)+z*T_(1,1)*T_(1,2)})
 isHomogeneous(A)
 
 
@@ -4587,6 +6269,3 @@ displayBlockDiff(A,  {1,0,3})
 displayBlockDiff(A,  [{1,0,3}])
 
 ///
-displayBlockDiff(DGAlgebra, BasicList) := (A,L) -> displayBlockDiff(A,L)
-
-new Array from [{1}]

@@ -1123,7 +1123,7 @@ doc ///
     	:Boolean    
     Description
         Text
-            Given a list of permutations in 1-line notation, check whether the union of their matrix schubert varieties is an ASM variety. This function uses entrywiseMaxRankTable to construct the rank table that is the entrywise maximum of the rank tables of the input permutations. It then constructs an ASM $A$ from that rank table and uses permSetOfASM to check if the permutation set of $A$ is equal to the input list of permutations.
+            Given a list of permutations in 1-line notation, check whether the union of their matrix Schubert varieties is an ASM variety. This function uses entrywiseMaxRankTable to construct the rank table that is the entrywise maximum of the rank tables of the input permutations. It then constructs an ASM $A$ from that rank table and uses permSetOfASM to check if the permutation set of $A$ is equal to the input list of permutations.
         
 	    If the union of the matrix Schubert varieties of the input list of permutations is an ASM variety, it must be the ASM variety considered by this algorithm.
 	Example 

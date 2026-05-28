@@ -13,7 +13,7 @@ newPackage(
     Date => "July 15, 2020",
     	Authors => {{Name => "Ashleigh Adams", Email => "adams869@umn.edu", HomePage => "http://www.ashleigh-adams.com"}},
     Headline => "Comparing resolutions of Stanley-Reisner rings and computing various systems of parameters",
-    PackageImports => { "OldChainComplexes" },
+    PackageImports => { "Complexes" },
     PackageExports => {"SimplicialComplexes", "Posets", "SimplicialDecomposability"},
     Keywords => { "Combinatorial Commutative Algebra" },
     DebuggingMode => false 

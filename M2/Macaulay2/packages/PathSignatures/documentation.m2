@@ -452,20 +452,18 @@ Node
         @LABEL("[1]","id" => "ref1")@ @HREF {"https://doi.org/10.1007/s13366-020-00493-9","Signatures of paths transformed by polynomial maps (doi.org/10.1007/s13366-020-00493-9)"} @
 Node
     Key
-        shuffle
+        (shuffle, NCRingElement, NCRingElement)
         (symbol **, NCRingElement, NCRingElement)
         (symbol ⧢, NCRingElement, NCRingElement)
-        (shuffle, NCRingElement, NCRingElement)
     Headline
         shuffle product of two words
     Inputs
         w1: NCRingElement 
         w2: NCRingElement
-        R: NCPolynomialRing --The non-commutative polynomial where the operation ought to be carried out
     Outputs
         v: NCRingElement --The shuffle product of w1 and w2
     Usage
-        v = shuffle(w1, w2, R)
+        v = shuffle(w1, w2)
     Description
         Text
             We start with the mathematical definition of this operation, based on @HREF("#ref1","[1]")@. 

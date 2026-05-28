@@ -65,6 +65,7 @@ R = QQ[x_1]
 T = diagonalAction(matrix{{1}}, {2}, R)
 invariants0 = set {R_0^2}
 assert(set invariants T === invariants0)
+assert(set invariants(T,Strategy=>"DerkesenGandini") === invariants0)
 assert(isInvariant(R_0^2, T))
 ///
 
@@ -74,6 +75,7 @@ R = QQ[x_1..x_3]
 T = diagonalAction(matrix{{1,0,1},{0,1,1}}, {3,3}, R)
 invariants1 = set {x_3^3, x_2^3, x_1^3, x_1*x_2*x_3^2, x_1^2*x_2^2*x_3}
 assert(set invariants T === invariants1)
+assert(set invariants(T,Strategy=>"DerkesenGandini") === invariants1)
 ///
 
 -- Test 6
@@ -97,22 +99,33 @@ assert(set invariants T0 === invariants0)
 -- Test 8
 TEST ///
 R1 = QQ[x_1..x_4]
+-- torus only
 T1 = diagonalAction(matrix {{-3, -1, 1, 2}}, R1)
 invariants1 =  set {x_2*x_3, x_2^2*x_4, x_1*x_3*x_4, x_1*x_2*x_4^2, x_1^2*x_4^3, x_1*x_3^3}
 assert(first weights T1 === matrix{{-3, -1, 1, 2}})
 assert(set invariants T1 === invariants1)
+assert(set invariants(T1,UsePolyhedra=>true) === invariants1)
+m = product apply(gens R1,{2,3,4,1}, (v,d) -> v^d)
+assert(not isInvariant(m, T1))
+-- abelian group only
+T2 = diagonalAction(matrix{{1,1,1,1},{1,1,0,0}}, {5,5}, R1)
+invariants2 =  set {x_4^5, x_3*x_4^4, x_3^2*x_4^3, x_3^3*x_4^2, x_3^5, x_3^4*x_4, x_2^5,
+    x_1*x_2^4, x_1^2*x_2^3, x_1^3*x_2^2, x_1^5, x_1^4*x_2}
+assert(last weights T2 === matrix{{1,1,1,1},{1,1,0,0}})
+assert(set invariants T2 === invariants2)
+assert(set invariants(T2,Strategy=>"DerksenGandini") === invariants2)
+assert(isInvariant(m, T2))
 ///
 
 -- Test 9
-
--- this test often fails, because the result depends on what hashcode values are, so we comment it out for now.
-
--- TEST ///
--- R2 = QQ[x_1..x_4]
--- T2 = diagonalAction(matrix{{0,1,-1,1},{1,0,-1,-1}}, R2)
--- invariants2 = set {x_1*x_2*x_3,x_1^2*x_3*x_4}
--- assert(set invariants T2 === invariants2)
--- ///
+TEST ///
+R2 = QQ[x_1..x_4]
+T2 = diagonalAction(matrix{{0,1,-1,1},{1,0,-1,-1}}, R2)
+invariants2 = set {x_1*x_2*x_3,x_1^2*x_3*x_4}
+assert(set invariants T2 === invariants2)
+assert(set invariants(T2,UsePolyhedra=>true) === invariants2)
+assert(isInvariant(x_1^4*x_2^2*x_3^3*x_4 + x_1^5*x_2*x_3^3*x_4^2,T2))
+///
      
      
 -------------------------------------------
@@ -170,7 +183,10 @@ W1 = matrix{{1,0,-1},{0,1,-1}}
 W2 = matrix{{0,1,1},{1,0,1}}
 d = {3,3}
 D = diagonalAction(W1,W2,d,R)
-degRing = degreesRing D
+-- get degree variable
+T = (degreesRing D)_0
+-- get torus character variables
+z = gens coefficientRing degreesRing D
 e = equivariantHilbertSeries D
 assert(value denominator e === 
     1+(-z_0*z_3-z_1*z_2-z_0^(-1)*z_1^(-1)*z_2*z_3)*T+(z_0*z_1*z_
@@ -203,7 +219,10 @@ TEST ///
 R = QQ[x_1..x_4]
 W = matrix{{0,1,-1,1},{1,0,-1,-1}}
 D = diagonalAction(W, R)
-degRing = degreesRing D
+-- get degree variable
+T = (degreesRing D)_0
+-- get torus character variables
+z = gens coefficientRing degreesRing D
 e = equivariantHilbertSeries D
 assert(value denominator e ===
     1+(-z_0-z_0*z_1^(-1)-z_1-z_0^(-1)*z_1^(-1))*T+(z_0^2*z_1^(-1
@@ -245,7 +264,10 @@ R = QQ[x_1..x_3]
 d = {3,3}
 W = matrix{{1,0,1},{0,1,1}}
 D = diagonalAction(W, d, R)
-degRing = degreesRing D
+-- get degree variable
+T = (degreesRing D)_0
+-- get torus character variables
+z = gens coefficientRing degreesRing D
 e = equivariantHilbertSeries D
 assert(value denominator e ===
     1+(-z_0*z_1-z_0-z_1)*T+(z_0^2*z_1+z_0*z_1^2+z_0*z_1)*T^2-z_0
@@ -281,8 +303,8 @@ R=QQ[x_1..x_4]
 S5=finiteAction({A,B},R)
 assert(#(group S5) === 120)
 assert(not isAbelian S5)
-C=permutationMatrix toString 3124
-D=permutationMatrix toString 2143
+C=permutationMatrix [3, 1, 2, 4]
+D=permutationMatrix [2, 1, 4, 3]
 A4=finiteAction({C,D},R)
 assert(#(group A4) === 12)
 assert(not isAbelian A4)
@@ -327,8 +349,8 @@ assert(invariants D4 === {x*y,x^4+y^4})
 
 TEST ///
 R = QQ[x,y,z]
-r=permutationMatrix toString 312
-s=permutationMatrix toString 213
+r=permutationMatrix [3, 1, 2]
+s=permutationMatrix [2, 1, 3]
 S3 = finiteAction({r,s},R)
 assert(isInvariant(x*y*z,S3))
 assert(isInvariant(x+y+z,S3))
@@ -355,8 +377,8 @@ assert(value denominator H === sub((1-T)^3, ring value denominator H))
 TEST ///
 K=GF(101)
 R=K[x,y,z]
-r=permutationMatrix toString 312
-s=permutationMatrix toString 213
+r=permutationMatrix [3, 1, 2]
+s=permutationMatrix [2, 1, 3]
 S3 = finiteAction({r,s},R)
 setRandomSeed 0
 P=primaryInvariants(S3, Dade=>true)
@@ -405,7 +427,7 @@ assert(
  -- Test 23
  -- Checks the dadeHSOP routine by checking that the list of polynomials output
 -- has the expected output. Namely:
--- they are invariant polynomials,
+-- they are invariant polynimials,
 -- they form a homogeneous system of parameters for the polynomial ring
 -- they have degrees equal to the cardinality of the group (which should occur
 -- with probability 1)*
@@ -430,4 +452,22 @@ assert(
 assert(
      apply(P,degree)==toList(#P:{#(group D4)})
      )
+///
+
+------------------------------------------------------------------------
+--- Tests for elementary invarianst strategy (April 2026) --------------
+------------------------------------------------------------------------
+
+-- Test 24
+-- checks that the new strategy for elementary invariants returns
+-- the same results as the previous strategy by Derksen and Gandini
+TEST ///
+p=11
+R = QQ[x_1..x_3]
+W = matrix{{1,0,1},{0,1,1}}
+L = {p,p}
+T = diagonalAction(W,L,R)
+inv = invariants T
+einv = invariants(T, Strategy => "Elementary")
+assert(set inv == set einv)
 ///

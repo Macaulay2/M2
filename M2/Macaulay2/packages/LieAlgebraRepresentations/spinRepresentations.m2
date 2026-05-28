@@ -52,7 +52,11 @@ spinRepresentationMatrices(ZZ) := o -> (n) -> (
     R:=o#CoefficientRing;
     I:=identityMatrix(2^n,R);
     WedgeBasis:=wedgeBasis(n);
-    Hbasis := apply(n, i ->  wedgeByek(i+1,WedgeBasis,R)*contractByemk(i+1,WedgeBasis,R) - (1/2)*I);
+    -- First create the Hs in the first basis I used
+    Hs := apply(n, i ->  wedgeByek(i+1,WedgeBasis,R)*contractByemk(i+1,WedgeBasis,R) - (1/2)*I);
+    -- Now make the basis Ha1..Han
+    Hbasis := apply(n-1, i -> Hs_i-Hs_(i+1));
+    Hbasis = append(Hbasis, Hs_(n-2)+Hs_(n-1));
     Xbasis := flatten apply(n, i -> delete(null,apply(n, j -> if j!=i then wedgeByek(i+1,WedgeBasis,R)*contractByemk(j+1,WedgeBasis,R))));   
     Ybasis := flatten apply(n, i -> delete(null,apply(n, j -> if i<j then wedgeByek(i+1,WedgeBasis,R)*wedgeByek(j+1,WedgeBasis,R)))); 
     Zbasis := flatten apply(n, i -> delete(null,apply(n, j -> if i<j then contractByemk(j+1,WedgeBasis,R)*contractByemk(i+1,WedgeBasis,R)))); 

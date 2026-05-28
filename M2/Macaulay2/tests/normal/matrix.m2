@@ -397,6 +397,13 @@ B = matrix {{f}}
 assert (norm B === 5_QQ)
 assert (norm_2 B === 6.0)
 
+-- 1x1 matrix constructors
+R = QQ[x]
+assert Equation(matrix 1, matrix {{1}})
+assert Equation(matrix(QQ, 1), matrix 1_QQ)
+assert Equation(matrix(RR, 1), matrix 1.0)
+assert Equation(matrix(R, 1), matrix 1_R)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test matrix.out"
 -- End:

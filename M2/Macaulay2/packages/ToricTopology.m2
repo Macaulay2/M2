@@ -29,7 +29,7 @@ newPackage(
 		{Name => "Kumar Sannidhya Shukla", Email => "kshukla5@uwo.ca"}
 	},
 	Keywords => {"Toric Geometry"},
-	PackageImports => { "OldChainComplexes", "SimplicialComplexes" },
+	PackageImports => { "Complexes", "SimplicialComplexes" },
 	Headline => "toric topology"
 )
 
@@ -796,7 +796,7 @@ doc///
 			the Euler characteristic of the moment-angle complex
 	Description
 		Text
-			This method computes the Euler characterisitc of moment-angle
+			This method computes the Euler characteristic of moment-angle
 			complexes.
 		Text
 			The Euler characteristic of a moment-angle complex is $0$ if the

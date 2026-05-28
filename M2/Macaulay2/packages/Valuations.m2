@@ -38,6 +38,8 @@ export{"valuation",
        "OrderedQQVector",
        "orderedQQn"}
 
+importFrom(Core, "isPromotable")
+
 OrderedQQn = new Type of Module
 OrderedQQVector = new Type of Vector
 
@@ -57,7 +59,7 @@ valuation Function := v -> (
     internalValuation(v, null, null)
 )
 
-ourSources := {Ring,Subring,LocalRing,RingOfInvariants}
+ourSources := {Ring,Subring,LocalRing,RingOfInvariants,RingFamily}
 ourTargets := {Ring,Subring,LocalRing,RingOfInvariants,OrderedQQn}
 
 -- Create different valuation functions for various inputs
@@ -89,16 +91,15 @@ ourInputs := {Number, RingElement, Constant}
 -- Other inputs will need to be added to that list, if needed
 for i in ourInputs do (
     Valuation i := (v,t) -> (
-        num := try numerator t then numerator t else t;
-        den := try denominator t then denominator t else 1_(ring t);
-        if (v#source === null) or (ring t) === v#source then
-            v#"function" t
-        else if (isMember(ring t, v#source.baseRings)) then
-            v#"function" promote(t, v#source)
-        else if (ring t) === v#source then
-            v#"function" num - v#"function" den
-        else if (isMember(ring num, v#source.baseRings)) then
-            v#"function" promote(num, v#source) - v#"function" promote(den, v#source)
+	(f, R) := (v#"function", v#source);
+	if R === null then f t
+	else (
+	    if not isPromotable(ring t, R)
+	    then error("expected an element of ", R);
+	    if lookup(numerator, class t) =!= null then (
+		(num, den) := (numerator t, denominator t);
+		f num - f den)
+	    else f t)
     )
 )
 
@@ -222,16 +223,14 @@ countPrimeFactor (ZZ, ZZ) := (p, x) -> (
 )
 
 -- p-adic Valuation valuation construction
--- Allows for inputs to be rationals and computes difference of the
--- valuations for the numerator and denominator
 padicValuation = method()
 padicValuation ZZ := p -> (
     if not isPrime p then error "expected a prime integer";
     func := x -> (
         if x == 0 then infinity
-        else countPrimeFactor(p, numerator x_QQ) - countPrimeFactor(p, denominator x_QQ)
+        else countPrimeFactor(p, x)
     );
-    valuation(func,QQ,QQ)
+    valuation(func,QQ,ZZ)
 )
 
 -- Leading Term Valuation,
@@ -279,7 +278,7 @@ localRingValuation LocalRing := R -> (
         if x == 0 then infinity
         else getMExponent(m, sub(x, S))
     );
-    valuation(func, R, ZZ)
+    valuation(func, frac R, ZZ)
 )
 
 --------------------------------------------------------------------------------

@@ -6,6 +6,7 @@ header "";
 --Functions in this file may make calls to stdio.
 
 use gmp;
+use ballarith;
 use stdio;
 use err;
 
@@ -144,7 +145,19 @@ export format(
 	  concatenate(
 	       array(string)(
 		    if pt == 0 then "." else "",
-		    if l == 0 then "" else new string len l do provide '0',
+		    -- GCC incorrectly infers a zero-size region from the "" branch of
+		    -- this if-else and spuriously warns about the new string allocation.
+		    if l == 0 then "" else (
+			Ccode(void, "
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored \"-Warray-bounds\"
+#pragma GCC diagnostic ignored \"-Wstringop-overflow\"
+(void)0");
+			r := new string len l do provide '0';
+			Ccode(void, "
+#pragma GCC diagnostic pop
+(void)0");
+			r),
 		    substr(mantissa,0,pt),
 		    if pt > 0 && pt < manlen then "." else "",
 		    substr(mantissa,pt,manlen-pt),
@@ -172,6 +185,29 @@ export tostringRRi(x:RRi):string := concatenate(
        	"]",
         if isEmpty(x) then " (an empty interval)" else ""
        	));  
+
+
+export tostringRRiforCCi(x:RRi):string := concatenate( 
+    array(string)(
+       	"[",
+       	tostringRR(leftRR(x)),
+       	",",
+       	tostringRR(rightRR(x)),
+       	"]"
+       	));  
+--tostringRRiforCCipointer = tostringRRiforCCi;  
+
+export tostringCCi(x:CCi):string := (
+     re := tostringRRiforCCi(x.re);
+     im := tostringRRiforCCi(x.im) + "*ii";
+     r := (
+	 if isZero(x.im) then re
+	 else if isZero(x.re) then im
+	 else re + "+" + im);
+     if isEmpty(x) then r = r + " (an empty interval)";
+     r
+);
+tostringCCipointer = tostringCCi;  
 
 numericstr(prec:ulong, str:string, ng:bool):string := (
     "numeric(" + tostring(prec) + ", " + if ng then "-" else "" + str + ")");
@@ -233,6 +269,14 @@ export toExternalString(z:CC):string := concatenate(array(string)(
 	  toExternalString(imaginaryPart(z)),
 	  ")"
 	  ));
+
+export toExternalString(z:CCi):string := concatenate(array(string)(
+     	  "toCCi(",
+       toExternalString(z.re),
+       ",",
+       toExternalString(z.im),
+       ")"
+       ));
 
 
 export (o:file) << (s:charstarOrNull) : file := o << if s == null() then "(null)" else tostring(s);

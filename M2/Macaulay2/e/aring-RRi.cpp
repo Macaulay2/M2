@@ -16,7 +16,7 @@ void ARingRRi::elem_text_out(buffer &o,
 
   // TODO: how do we want to handle -1?  intervals w/ matching endpoints?
   if (p_one || mpfr_cmp_si(&ap.left, 1) != 0 || mpfr_cmp_si(&ap.right, 1) != 0)
-    o << "[" << &ap.left << "," << &ap.right << "]";
+    o << &ap;
 }
 
 };  // end namespace M2

@@ -40,11 +40,12 @@ enum RingID {
   ring_GFM2,
   ring_GFFlintBig,
   ring_GFFlintZech,
-  ring_RRi,
   ring_RR,
   ring_CC,
   ring_RRR,
   ring_CCC,
+  ring_RRi,
+  ring_CCi,
   ring_tower_ZZp,
   ring_old      ///< refers to all rings which are not ConcreteRing's.
 };

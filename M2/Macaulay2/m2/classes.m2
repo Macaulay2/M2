@@ -85,18 +85,17 @@ Command Thing := (x,y) -> x#0 y
 
 -- Now some extra stuff:
 
-apply(Thing, Command)   := VisibleList => (v,f) -> apply(v, i -> f i)
-Command   \ VisibleList :=
+Command   \ VisibleList := VisibleList => (f,v) -> apply(v,f#0)
 Function  \ VisibleList := VisibleList => (f,v) -> apply(v,f)
-Command   \ String      :=
+Command   \ String      := Sequence    => (f,s) -> apply(s,f#0)
 Function  \ String      := Sequence    => (f,s) -> apply(s,f)
-Command  \\ Thing       := 
+Command  \\ Thing       :=
 Function \\ Thing       := VisibleList => (f,v) -> f v
-       List /  Command  :=
+       List /  Command  :=        List => (v,f) -> apply(v,f#0)
        List /  Function :=        List => (v,f) -> apply(v,f) -- just because of conflict with List / Thing!
-VisibleList /  Command  :=
+VisibleList /  Command  := VisibleList => (v,f) -> apply(v,f#0)
 VisibleList /  Function := VisibleList => (v,f) -> apply(v,f)
-     String /  Command  :=
+     String /  Command  := Sequence    => (s,f) -> apply(s,f#0)
      String /  Function := Sequence    => (s,f) -> apply(s,f)
 VisibleList // Command  := -- here to make documentation easier
 VisibleList // Function := -- here to make documentation easier

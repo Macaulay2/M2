@@ -5,17 +5,13 @@ M2_OPTCFILES :=
 M2_EXTRACFILES :=
 M2_MADECFILES :=
 M2_SRCFILES := 
-M2_OPTCFILES += debug.c
-ifeq "@DEBUG@" "yes"
-M2_OBJECTS += debug.o
-endif
 M2_CFILES += gmp_aux.c 
 M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c memdebug.c
 M2_MADECFILES := startup.c
 M2_OBJECTS += $(M2_MADECFILES:.c=.o)
 M2_CCFILES := boost-regex.cpp main.cpp
 M2_OBJECTS += $(M2_CCFILES:.cpp=.o)
-M2_HFILES := getpagesize.h types.h M2mem.h debug.h startup-header.h startup-trailer.h memdebug.h
+M2_HFILES := getpagesize.h types.h M2mem.h startup-header.h startup-trailer.h memdebug.h
 
 M2_DFILES :=
 M2_DFILES += arithmetic.d
@@ -120,7 +116,6 @@ actors5.o basic.o : \
 	@srcdir@/../e/engine.h \
 	@srcdir@/../e/newdelete.hpp \
 	@srcdir@/../d/M2mem.h \
-	@srcdir@/../d/debug.h \
 	../../include/M2/config.h
 
 interface2.o :						\
@@ -132,8 +127,7 @@ interface2.o :						\
 	@srcdir@/../system/supervisorinterface.h	\
 	@srcdir@/../e/engine.h				\
 	@srcdir@/../e/engine-includes.hpp		\
-	@srcdir@/../d/M2mem.h				\
-	@srcdir@/../d/debug.h
+	@srcdir@/../d/M2mem.h
 
 interface.o :						\
 	../../include/M2/config.h			\
@@ -141,7 +135,6 @@ interface.o :						\
 	@srcdir@/../e/newdelete.hpp			\
 	@srcdir@/../d/M2mem.h				\
 	@srcdir@/../c/scc-core.h			\
-	@srcdir@/../d/debug.h				\
 	@srcdir@/../system/supervisorinterface.h	\
 	@srcdir@/../e/engine.h				\
 	@srcdir@/../e/engine-includes.hpp		\
@@ -229,7 +222,6 @@ engine.o :						\
 	@srcdir@/../c/scc-core.h			\
 	@srcdir@/../../include/M2/gc-include.h		\
 	@srcdir@/../c/scc-core.h			\
-	@srcdir@/../d/debug.h				\
 	@srcdir@/../system/supervisorinterface.h	\
 	@srcdir@/../e/error.h				\
 	@srcdir@/../e/exceptions.hpp			\

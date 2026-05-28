@@ -210,6 +210,9 @@ export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
 export dummyMultaryFun(c:CodeSequence):Expr := (
      anywhereError("dummy multary function called");
      nullE);
+export dummyEE(e:Expr,f:Expr):Expr := (
+     anywhereError("dummy binary function called");
+     nullE);
 
 export emptySequence := Sequence();
 export emptySequenceE := Expr(emptySequence);
@@ -346,6 +349,7 @@ export pointerClass := newbasictype();
 export atomicIntClass := newbasictype();
 export pseudocodeClosureClass := newtypeof(pseudocodeClass);
 export mutexClass := newbasictype();
+export CCiClass := newbignumbertype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 

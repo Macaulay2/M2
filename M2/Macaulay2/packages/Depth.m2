@@ -25,7 +25,7 @@ newPackage(
 	  }
 	  },
      Headline => "aids in computations related to depth",
-     PackageImports => {"OldChainComplexes"},
+     PackageExports => {"Complexes"},
      Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
@@ -105,7 +105,7 @@ assert( depth(ideal(1_A),A) === infinity )
 ///
 
 TEST///
-S = ZZ/101[x_1..x_(9)];
+S = ZZ/101[x_1..x_4];
 J = ideal vars S;
 T = S/J^5;
 I = ideal vars T;
@@ -548,7 +548,7 @@ doc ///
      maximal ideal on the module:
     Example
      S = ZZ/101[a,b,c,d]
-     K = koszul vars S
+     K = koszulComplex vars S
      apply(numgens S, i-> depth coker K.dd_(i+1))
     Text
      and here is one computing systems of parameters. The "Density" (a number between
@@ -873,7 +873,7 @@ TEST///
 ///
 TEST///
      S = ZZ/101[a,b,c,d]
-     K = koszul vars S
+     K = koszulComplex vars S
      apply(numgens S, i-> depth coker K.dd_(i+1))
 
      I = ideal"ab,bc,cd,da"

@@ -16,3 +16,4 @@ assert(///A<i><b>B</b><span class="tt">C<a href="D">D</a><em>E</em></span>F</i>G
 assert(///<span class="tt">A<em>B</em>C</span>/// === html TEX{"{\\tt A", EM{"B"}, "C}"})
 assert Equation(urlEncode "https://en.wikipedia.org/wiki/Gröbner basis",
     "https://en.wikipedia.org/wiki/Gr%C3%B6bner%20basis")
+assert Equation(urlEncode newline, "%0A")

@@ -326,6 +326,7 @@ bumpPrecedence();
      export breakS         := special("break",        nunaryop, precSpace, wide);
      export continueS      := special("continue",     nunaryop, precSpace, wide);
      export stepS          := special("step",         nunaryop, precSpace, wide);
+     export finishS        := special("finish",       nunaryop, precSpace, wide);
      special("new",   unarynew,   precSpace, narrow);
      special("for",   unaryfor,   precSpace, narrow);
      special("while", unarywhile, precSpace, wide);
@@ -686,6 +687,12 @@ bindParallelAssignmentItem(e:ParseTree,dictionary:Dictionary,colon:bool):void :=
      else bind(e, dictionary));
 bindParallelAssignmentList(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
+     is unary:Unary do (
+	 if unary.Operator.word == CommaW
+	 then (
+	     bindop(unary.Operator, dictionary);
+	     bindParallelAssignmentItem(unary.rhs, dictionary, colon))
+	 else bind(e, dictionary))
      is binary:Binary do (
 	  if binary.Operator.word == CommaW
 	  then (

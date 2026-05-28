@@ -170,16 +170,21 @@ html MENU := x -> html redoMENU x
 
 html INDENT := x -> html DIV append(toList x, "class"=>"indent")
 
-html TO   := x -> html TO2{tag := x#0, format tag | if x#?1 then x#1 else ""}
+html TO   := x -> html TO2 x
 html TO2  := x -> (
-    tag := getPrimaryTag fixup x#0;
-    fkey := format tag;
-    -- TODO: add this to htmlLiteral?
-    name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
-    if isUndocumented tag or isMissingDoc tag then concatenate(
-	html TT name, " (missing documentation)",
-	html COMMENT("tag: ", toString tag.Key)) else
-    concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, name}))
+    (tag, name) := (x#0, x#1);
+    -- TODO: add this to htmlLiteral? what is it even for?
+    name = if match("^ +$", name) then #name : "&nbsp;&nbsp;" else name;
+    if tag.Format != tag.Package then (
+	-- TODO: the primary tag should be resolved only using the dictionary,
+	-- without loading the package; cf. https://github.com/Macaulay2/M2/issues/4232
+	tag = getPrimaryTag fixup tag;
+	if isUndocumented tag or isMissingDoc tag then return concatenate(
+	    html TT name, " (missing documentation)",
+	    html COMMENT("tag: ", toString tag.Key)));
+    html ANCHOR {
+	"title" => htmlLiteral headline tag,
+	"href"  => toURL htmlFilename tag, name})
 
 ----------------------------------------------------------------------------
 -- html'ing non Hypertext
@@ -227,4 +232,7 @@ urlEncode = method()
 urlEncode Nothing := identity
 urlEncode String := s -> concatenate apply(s, c -> (
 	if percentEncoding#?c then percentEncoding#c
-	else percentEncoding#c = "%" | toUpper changeBase(first ascii c, 16)))
+	else (
+	    a := first ascii c;
+	    percentEncoding#c = concatenate("%", if a < 0x10 then "0" else "",
+		toUpper changeBase(a, 16)))))

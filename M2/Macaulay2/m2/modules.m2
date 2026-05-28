@@ -47,10 +47,12 @@ scan( {ZZ,QQ}, K -> (
 	  ))
 
 scan((
-	  (ZZ, { QQ, RR', CC', RRi' }),
-	  (QQ, { RR', CC', RRi' }),
-	  (RR',{ RR', CC', RRi' }),
-	  (CC', { CC' })
+	  (ZZ, { QQ, RR', CC', RRi', CCi' }),
+	  (QQ, { RR', CC', RRi', CCi' }),
+	  (RR',{ RR', CC', RRi', CCi' }),
+	  (CC', { CC', CCi' }),
+	  (RRi', { RRi', CCi' }),
+	  (CCi', { CCi' })
 	  ), 
      (K,Ls) -> scan(Ls, L -> (
 	       p := makepromoter 0;

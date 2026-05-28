@@ -1,0 +1,156 @@
+# This workflow builds a macOS DMG for distributing Macaulay2.
+# It runs on both Intel (x86_64) and Apple Silicon (arm64) runners.
+#
+# The resulting DMG presents a Macaulay2-VERSION directory alongside a
+# shortcut to /Applications so users can drag it there.  After installation,
+# users add /Applications/Macaulay2-VERSION/bin to their PATH.
+
+name: Build macOS DMG
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'release-*'
+
+defaults:
+  run:
+    working-directory: M2/BUILD/dmg
+
+jobs:
+  build-dmg:
+    name: Build DMG (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            arch: arm64
+            deployment_target: "14.0"
+          - os: macos-15-intel
+            arch: x86_64
+            deployment_target: "15.0"
+
+    steps:
+      - uses: actions/checkout@v6
+
+# ----------------------
+#   Install Homebrew dependencies
+# ----------------------
+
+      - name: Install requirements
+        run: |
+          brew config
+          brew update
+          brew tap macaulay2/tap
+          # Build tools
+          brew install automake bison dylibbundler ccache ctags llvm make yasm googletest r
+          brew install texinfo || true
+          # M2 library dependencies
+          brew install \
+              bdw-gc boost eigen fplll jansson libffi tbb \
+              macaulay2/tap/factory fflas-ffpack flint frobby givaro \
+              mpfi mpsolve ntl \
+              memtailor mathic mathicgb
+          brew link macaulay2/tap/factory --force
+          # External programs bundled into the DMG
+          brew install 4ti2 cohomcalg csdp gfan lrs msolve nauty normaliz topcom
+
+# ----------------------
+#   Set up build environment
+# ----------------------
+
+      - name: Prepare build environment
+        run: |
+          echo "$(brew --prefix ccache)/libexec"         >> $GITHUB_PATH
+          echo "$(brew --prefix make)/libexec/gnubin"    >> $GITHUB_PATH
+          echo "$(brew --prefix libtool)/libexec/gnubin" >> $GITHUB_PATH
+          echo "$(brew --prefix bison)/bin"              >> $GITHUB_PATH
+          echo "CPPFLAGS=-I$(brew --prefix)/include -I$(brew --prefix libomp)/include -I$(brew --prefix readline)/include" >> $GITHUB_ENV
+          echo "LDFLAGS=-L$(brew --prefix)/lib -L$(brew --prefix libomp)/lib -L$(brew --prefix readline)/lib"             >> $GITHUB_ENV
+          M2_VERSION=$(cat ../../VERSION)
+          echo "M2_VERSION=$M2_VERSION"         >> $GITHUB_ENV
+          echo "PKG_NAME=Macaulay2-$M2_VERSION" >> $GITHUB_ENV
+
+# ----------------------
+#   Download external programs not available on Homebrew
+# ----------------------
+
+      - name: Download external programs
+        run: |
+          # phcpack (universal binary)
+          curl -fsSL https://github.com/janverschelde/PHCpack/releases/download/v2.4.92/macphc \
+            -o "$RUNNER_TEMP/phc"
+          chmod +x "$RUNNER_TEMP/phc"
+
+          # bertini (arm64 only)
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            curl -fsSL https://bertini.nd.edu/BertiniApple_v1.7.tar.gz \
+              | tar -xz -C "$RUNNER_TEMP"
+            cp "$RUNNER_TEMP/BertiniApple_v1.7/bertini" "$RUNNER_TEMP/bertini"
+            chmod +x "$RUNNER_TEMP/bertini"
+          fi
+
+# ----------------------
+#   Build Macaulay2 and create DMG
+# ----------------------
+
+      - name: Build and package Macaulay2
+        env:
+          WORKSPACE: ${{ github.workspace }}
+          ARCH: ${{ matrix.arch }}
+          DEPLOYMENT_TARGET: ${{ matrix.deployment_target }}
+        run: make all
+
+# ----------------------
+#   Test the DMG
+# ----------------------
+
+      - name: Install DMG
+        env:
+          WORKSPACE: ${{ github.workspace }}
+          ARCH: ${{ matrix.arch }}
+        run: make install-dmg
+
+      - name: Run basic tests
+        env:
+          WORKSPACE: ${{ github.workspace }}
+          ARCH: ${{ matrix.arch }}
+        run: make run-basic-tests
+
+      - name: Run core tests
+        env:
+          WORKSPACE: ${{ github.workspace }}
+          ARCH: ${{ matrix.arch }}
+        run: make run-core-tests
+
+      - name: Run package tests
+        # x86_64 runners are too slow and time out on --check 3
+        if: matrix.arch == 'arm64'
+        env:
+          WORKSPACE: ${{ github.workspace }}
+          ARCH: ${{ matrix.arch }}
+        run: make run-package-tests
+
+# ----------------------
+#   Upload artifacts
+# ----------------------
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.PKG_NAME }}-${{ matrix.arch }}-logs
+          path: |
+            M2/BUILD/build/config.log
+            M2/BUILD/build/include/*
+            M2/BUILD/build/libraries/*/build/*/config.log
+
+      - name: Upload DMG
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.PKG_NAME }}-${{ matrix.arch }}-macOS
+          path: "*.dmg"
+          retention-days: 7

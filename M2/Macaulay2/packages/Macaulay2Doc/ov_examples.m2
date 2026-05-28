@@ -121,6 +121,7 @@ Node
     inversePermutation
     partitions
     random
+    shuffle
     Set
     rays
     cone

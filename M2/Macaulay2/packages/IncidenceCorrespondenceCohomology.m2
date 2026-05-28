@@ -97,7 +97,7 @@ shiftn = (list3, n) ->(for i from 0 to (#list3-1) list ({list3#i#0-n, list3#i#1,
 tensorfqa = (list3, q, a, det1) ->(
     --list of divided multidegrees
     dividedp := compositions(2, a);
-    --list of frobenius multidegrees of D^aU
+    --list of Frobenius multidegrees of D^aU
     fqa := for i from 0 to a list ({dividedp#i#0*q, dividedp#i#1*q});
     --this will be the new list to be returned
     newlist := flatten for i from 0 to (#fqa -1) list(
@@ -368,7 +368,7 @@ gradedFdr = (S, d, r) ->(
 
 --auxiliary Laurent polynomial ring
 --keeps track of shifts and multiplicities for standard generators
---of the Han-Monsky reprezentation ring
+--of the Han-Monsky representation ring
 q := local q;
 HMRing = ZZ[q,Inverses => true, MonomialOrder=>Lex]
 --if HMRing is a terrible name, we should replace it, ideas?

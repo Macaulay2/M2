@@ -1,5 +1,5 @@
 -- JSONRPC package for Macaulay2
--- Copyright (C) 2025-2026 Doug Torrance <dtorrance@piedmont.edu>
+-- Copyright (C) 2025-2026 Doug Torrance <dtorrance9@gatech.edu>
 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ newPackage("JSONRPC",
     Date => "February 18, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
     Keywords => {"System"},
     PackageImports => {"JSON"})
 

@@ -97,6 +97,18 @@ export rawRandomCC(e:Expr):Expr := (
      else toExpr(Ccode(CC, "rawRandomCC(", toULong(prec.v), ")"))
      else WrongArgZZ());
 setupfun("rawRandomCC",rawRandomCC);
+export rawRandomRRi(e:Expr):Expr := (
+    when e
+    is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallUInteger()
+    else toExpr(Ccode(RRi, "rawRandomRRi(", toULong(prec.v), ")"))
+    else WrongArgZZ());
+setupfun("rawRandomRRi", rawRandomRRi);
+export rawRandomCCi(e:Expr):Expr := (
+    when e
+    is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallUInteger()
+    else toExpr(Ccode(CCi, "rawRandomCCi(", toULong(prec.v), ")"))
+    else WrongArgZZ());
+setupfun("rawRandomCCi", rawRandomCCi);
 
 -----------------------------------------------------------------------------
 -- monomials
@@ -494,6 +506,12 @@ export rawRRi(e:Expr):Expr := (
      else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRi(",toULong(prec),")" ))
      else WrongArgZZ(1));
 setupfun("rawRRi",rawRRi);
+
+export rawCCi(e:Expr):Expr := (
+     when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
+     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_CCi(",toInt(prec),")" ))
+     else WrongArgZZ(1));
+setupfun("rawCCi",rawCCi);
 
 export rawRR(e:Expr):Expr := (
      when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1)
@@ -951,6 +969,7 @@ export rawFromNumber(e:Expr):Expr := (
      is x:RRcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigReal(",R.p,",",x.v,")"))
      is x:CCcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigComplex(",R.p,",",x.v,")"))
      is x:RRicell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_Interval(",R.p,",",x.v,")"))
+     is x:CCicell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_ComplexInterval(",R.p,",",x.v,")"))
      else WrongArg(2,"an integer, real number, or complex number")
      else WrongArg(1,"a raw ring")
      else WrongNumArgs(2)
@@ -1064,6 +1083,13 @@ export rawToRRi(e:Expr):Expr := (
       else
     WrongArg("a raw ring element"));
 setupfun("rawToRRi",rawToRRi);
+
+export rawToCCi(e:Expr):Expr := (
+      when e
+      is x:RawRingElementCell do toExpr(Ccode(CCiorNull, "IM2_RingElement_to_ComplexInterval(",x.p, ")" ))
+      else
+    WrongArg("a raw ring element"));
+setupfun("rawToCCi",rawToCCi);
 
 export rawToCC(e:Expr):Expr := (
      when e

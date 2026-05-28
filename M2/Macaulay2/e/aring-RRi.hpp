@@ -97,7 +97,8 @@ class ARingRRi : public SimpleARing<ARingRRi>
   }
   // 'init', 'init_set' functions
 
-  void init(ElementType &result) const { mpfi_init2(&result, mPrecision); }
+  void init(ElementType &result) const {
+      mpfi_init2(&result, mPrecision); }
   void init_set(ElementType &result, const ElementType &a) const
   {
     init(result);
@@ -326,14 +327,7 @@ class ARingRRi : public SimpleARing<ARingRRi>
     /* rewrite this (in rand.cpp or just copy over?) */
   void random(ElementType &result) const  // redo?
   {
-      mpfr_t val;
-      mpfr_init2(val, mPrecision);
-      randomMpfr(val);
-      mpfi_set_fr(&result,val);
-      
-      randomMpfr(val);
-      mpfi_put_fr(&result,val);
-      mpfr_clear(val);
+    rawSetRandomRRi(&result);
   }
 
     /* Needs to be redone. */

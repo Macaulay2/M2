@@ -1922,7 +1922,7 @@ doc ///
 Key
  (mingens, List)
 Headline
- Find a mininmal set of semigroup generators
+ Find a minimal set of semigroup generators
 Usage
  L' = mingens L
 Inputs

@@ -60,6 +60,28 @@ concentration ComplexMap := Sequence => f -> (
 max Complex := ZZ => C -> max concentration C
 min Complex := ZZ => C -> min concentration C
 
+shiftDegrees = method()
+shiftDegrees List := L -> (
+    if not all(L, x -> instance(x, Matrix)) or not all(L, isHomogeneous) then L
+    else (
+        prevSource := null;
+        for i from 0 to #L-1 list (
+            if i == 0 then (
+                prevSource = source L#0;
+                L#0)
+            else (
+                deg := degrees prevSource - degrees target L#i;
+                if not same deg then error "complex: expected composable differential maps";
+                f := L#i;
+                if #deg > 0 and  not all(deg#0, a -> a === 0) then (
+                    f = map(prevSource, (source f) ** (ring f)^(-deg#0),f);
+                    );
+                prevSource = source f;
+                f)
+            )
+        )
+    )
+    
 complexOptions = {Base => 0}
 complex = method(Options => true)
 complex HashTable := Complex => complexOptions >> opts -> maps -> (
@@ -94,6 +116,7 @@ complex List := Complex => complexOptions >> opts -> L -> (
     if not instance(opts.Base, ZZ) then
       error "expected Base to be an integer";
     if uniform L and isMorphism L#0 then (
+        L = shiftDegrees L; -- doesn't change L unless all are matrices, with unequal source/target pairs, yet after a shift they are equal.
         mapHash := hashTable for i from 0 to #L-1 list opts.Base+i+1 => L#i;
         return complex(mapHash, opts)
         );
@@ -521,6 +544,8 @@ freeResolution = method(Options => {
 	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
 	Strategy		=> null,     	-- 
         ParallelizeByDegree     => false        -- currently: only used by Strategy => Nonminimal, gives warning if true and another Strategy selected
+        -- legacy option, which is deprecated in favor of Strategy => Nonminimsl
+        -- FastNonminimal          => null
 	}
     )
 
@@ -594,8 +619,13 @@ heftfun = (wt1,wt2) -> (
      else d -> 0
      )
 
+importFrom_Core { "rawBetti", "RawComputation" };
 betti Matrix  := opts -> f -> betti(complex f, opts)
 betti Complex := opts -> C -> (
+    if opts.Minimize then (
+        if not C.cache.?Module then error "expected a nonminimal resolution of a module";
+        return minimalBetti C.cache.Module;
+        );
     heftfn := heftfun(opts.Weights, heft ring C);
     (lo,hi) := C.concentration;
     new BettiTally from flatten for i from lo to hi list (
@@ -603,15 +633,18 @@ betti Complex := opts -> C -> (
         )
     )
 
-pdim Module := M -> length freeResolution minimalPresentation M
+-- TODO: should this report infinity in some cases?
+-- c.f. https://github.com/Macaulay2/M2/issues/3656
+pdim Module := M -> length freeResolution liftModule minimalPresentation M
 
 regularity Ideal  := opts -> I -> (
     if I == 0 then -infinity else if I == 1 then 0
-    else 1 + regularity betti(freeResolution comodule I, opts))
+    else 1 + regularity betti(freeResolution liftModule comodule I, opts))
 
+-- cf. https://github.com/Macaulay2/M2/issues/3321
 regularity Module := opts -> M -> (
     if not isHomogeneous M then error "regularity: expected homogeneous module";
-    regularity betti(freeResolution minimalPresentation M, opts))
+    regularity betti(freeResolution liftModule minimalPresentation M, opts))
 
 regularity Complex := opts -> C -> (
     if numgens degreesRing ring C =!= 1 then 
@@ -653,13 +686,16 @@ poincareN Complex := C -> (
     f
     )
 
-rank Complex := ZZ => C -> (
-    (lo, hi) := concentration C;
-    sum for i from lo to hi list (-1)^i * rank C_i
-    )
+rank Complex := C ->
+    sum(pairs C.module, (i, M) -> (-1)^i * rank M)
+
+hilbertPolynomial Complex := o -> C ->
+    sum(pairs C.module, (i, M) -> (-1)^i * hilbertPolynomial(M, o))
+
+euler Complex := C -> euler hilbertPolynomial C
 
 minimalPresentation Complex := 
-prune Complex := Complex => opts -> (cacheValue symbol minimalPresentation)(C -> (
+prune Complex := Complex => opts -> C -> C.cache.minimalPresentation ??= (
     -- opts is ignored here
     -- to be cached: in the input C: cache the result D
     --               in the result: cache pruningMap: D --> C
@@ -685,7 +721,7 @@ prune Complex := Complex => opts -> (cacheValue symbol minimalPresentation)(C ->
     D.cache.pruningMap = map(C,D,pruning);
     D.cache.pruningMap.cache.isCommutative = true;
     D
-    ))
+    )
 
 --------------------------------------------------------------------
 -- truncations -----------------------------------------------------
@@ -751,7 +787,7 @@ canonicalTruncation(Complex,Nothing,ZZ) := Complex => (C,lo,hi) -> canonicalTrun
 importFrom_Truncations { "inducedTruncationMap" }
 
 truncateModuleOpts := options(truncate, List, Module)
-truncate(ZZ,   Complex) :=
+truncate(ZZ,   Complex) := truncate(InfiniteNumber, Complex) :=
 truncate(List, Complex) := Complex => truncateModuleOpts >> opts -> (degs, C) -> (
     (lo, hi) := C.concentration;
     if lo == hi
@@ -1113,13 +1149,10 @@ epicResolutionMap Complex := ComplexMap => opts -> C -> resolutionMapPrivate(C, 
 freeResolution Complex := opts -> C -> source resolutionMap(C, opts)
 
 augmentationMap = method()
-augmentationMap Complex := ComplexMap => 
-    (cacheValue symbol augmentationMap)(C -> (
-            if not C.cache.?Module then error "expected a free resolution";
-            M := C.cache.Module;
-            map(complex M, C, i -> if i === 0 then map(M, C_0, 1))
-            )
-        )
+augmentationMap Complex := ComplexMap => C -> C.cache.augmentationMap ??= (
+    if not C.cache.?Module then error "expected a free resolution";
+    M := C.cache.Module;
+    map(complex M, C, i -> if i === 0 then map(M, C_0, 1)))
 
 -- TODO: get this to work over fields, poly rings, quotients, and also the local case.
 --       improve the performance of this function
@@ -1200,6 +1233,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
     )
 
 yonedaExtension = method()
+yonedaExtension Vector := Complex => f -> yonedaExtension matrix f
 yonedaExtension Matrix := Complex => f -> (
     -- f: R^1 --> Ext^d(M,N) = E
     -- construct the chain complex:
@@ -1341,3 +1375,36 @@ koszulComplex List := Complex => {Concentration => null} >> opts -> L -> (
     if #L === 0 then error "expected a non-empty list";
     koszulComplex(matrix{L}, opts)
     )
+
+eagonNorthcottComplex = method(Options => true)
+eagonNorthcottComplex Matrix := Complex => {} >> opts -> f -> (
+     -- code is by GREG SMITH, but is experimental, and 
+     -- should be replaced by engine code
+     -- Modified by ELIANA DUARTE to fix the grading for matrices 
+     -- with entries of arbitrary degrees.
+     if not isHomogeneous f then error "Matrix not homogeneous.";
+     R := ring f;
+     m := rank source f;
+     n := rank target f;
+     B := hashTable apply(toList(1..m-n+2), 
+     	  i -> {i, flatten table(subsets(m,n+i-1), compositions(n,i-1), 
+	       	    (p,q) -> {p,q})});
+     d1 := map(R^1,, {apply(B#1, r -> determinant f_(r#0))});
+     nextDegrees := toSequence(-flatten degrees source d1);
+     d := {d1};
+     j:=2;
+     while j<m-n+3 do (
+         d=d|{map(source d_(j-2),, table(B#(j-1), B#j, 
+                     (p,q) -> if not isSubset(p#0,q#0) then 0_R
+                     else (
+                         vec := q#1 - p#1;
+                         if any(vec, e -> e < 0 or e > 1) then 0_R 
+                         else (
+                             s := first select(toList(0..#q#0-1), 
+                                 l -> not isMember(q#0#l, p#0));
+                             t := first select(toList(0..n-1), l -> vec#l == 1);
+                             (-1)^(s+1)*f_(t,q#0#s)))))};
+         j += 1
+         );
+     complex d
+     )

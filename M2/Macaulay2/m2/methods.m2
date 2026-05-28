@@ -276,6 +276,7 @@ setupMethods((), {
 	  coefficients, monomials, size, sum, product, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
 	  assign, realPart, imaginaryPart, conjugate,
+	  left, right, lowerLeft, lowerRight, upperLeft, upperRight,
 	  relations, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
 	  norm, clean, fraction, part,

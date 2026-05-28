@@ -69,7 +69,7 @@ toMsolveRing = I -> (
     kk := ultimate(coefficientRing, S0);
     if not instance(S1, PolynomialRing) or instance(kk, GaloisField)
     or not isField kk or char kk > 2^31 or precision kk < infinity
-    then error "msolve: expected an ideal in a polynomial ring over QQ or ZZ/p with chacteristic less than 2^31";
+    then error "msolve: expected an ideal in a polynomial ring over QQ or ZZ/p with characteristic less than 2^31";
     -- resets the variables to p_0...
     S := newRing(S1, Variables => numgens S1);
     S, kk, substitute(I, vars S))

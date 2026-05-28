@@ -12,7 +12,7 @@ newPackage(
 	     }, 
     	Headline => "Betti diagram operations useful for investigating the Boij-Soederberg conjectures",
 	Keywords => {"Commutative Algebra"},
-	PackageExports => {"OldChainComplexes"},
+	PackageExports => {"Complexes"},
     	DebuggingMode => false
     	)
 
@@ -20,7 +20,7 @@ export {
      "mat2betti", -- documented
      "lowestDegrees", -- documented
      "highestDegrees", -- documented
-     "isPure", -- documented
+     --"isPure", -- documented
      "makePureBetti", --documented
      "makePureBettiDiagram", --documented
      "pureBetti", -- documented
@@ -245,7 +245,7 @@ highestDegrees BettiTally := (B) -> (
 	  max apply(B1, k -> k#2)
 	  ))
 
-isPure = method()
+--isPure = method()
 isPure BettiTally := (B) -> lowestDegrees B == highestDegrees B
 
 
@@ -1168,7 +1168,7 @@ assert(dotProduct(A2, mat2betti B2) == 2)
 -* supportFunctional is NOT functional yet *-
 supportFunctional=method()
 
-supportFunctional(ChainComplex, ChainComplex):=(E,F)->(
+supportFunctional(Complex, Complex):=(E,F)->(
      --E should be a chain complex starting in degree 0 and going to negative degrees.
      --F should be a chain complex starting in a positive degree and going to degree 0
      -- the code is meant to execute 
@@ -1179,27 +1179,27 @@ supportFunctional(ChainComplex, ChainComplex):=(E,F)->(
      minF := min degreesF;
      maxF := max degreesF;
      HHE:=HH E;
-     L:=for i from 0 to length E list matrix{{hf(minF..maxF, (HH E)#(-i))}};
+     L:=for i from 0 to length E list matrix{{hf(minF..maxF, HHE_(-i))}};
      A:=transpose L_0;
      for i from 1 to length L -1 do A = A|(transpose L_i);
      AA:=map(ZZ^(maxF-minF-lengthF+1), ZZ^(lengthF+1), (p,q)->
      	  sum(0..min(q,length E), 
-	       j->if HHE#?(-j) then (-1)^(q-j)*hilbertFunction(-p-q, (HHE)#(-j)) else 0));
+	       j->if HHE_(-j) != 0 then (-1)^(q-j)*hilbertFunction(-p-q, (HHE)_(-j)) else 0));
      dotProduct(AA, minF, betti F)
      )
 
-supportFunctional(ChainComplex, BettiTally):=(E,B)->(
+supportFunctional(Complex, BettiTally):=(E,B)->(
      lengthF := max apply(keys B, K->first K);
      degreesF := apply(keys B, K->last K);
      minF := min degreesF;
      maxF := max degreesF;
      HHE := HH E;
-     L := for i from 0 to length E list matrix{{hf(minF..maxF, (HH E)#(-i))}};
+     L := for i from 0 to length E list matrix{{hf(minF..maxF, HHE_(-i))}};
      A := transpose L_0;
      for i from 1 to length L-1 do A = A|(transpose L_i);
      AA := map(ZZ^(maxF-minF-lengthF+1), ZZ^(lengthF+1), (p,q)->
      	  sum(0..min(q,length E), 
-	       j->if HHE#?(-j) then (-1)^(q-j)*hilbertFunction(-p-q, (HHE)#(-j)) else 0));
+	       j->if HHE_(-j) != 0 then (-1)^(q-j)*hilbertFunction(-p-q, HHE_(-j)) else 0));
      dotProduct(AA, minF, B)
      )
 
@@ -1420,7 +1420,7 @@ bott(List, ZZ):=(L,u)->(
      )
 
 bott(List,ZZ,ZZ,Symbol):=(L,low,high,old)->(
-     --produces the betti diagram of the tate resolution of the sheaf S_L(Q),
+     --produces the Betti diagram of the Tate resolution of the sheaf S_L(Q),
      --between the column whose index is "low" and the column whose index is "high"
      n:=#L;
      r:=high-low-n;
@@ -1433,7 +1433,7 @@ bott(List,ZZ,ZZ,Symbol):=(L,low,high,old)->(
      )
 
 bott(List,ZZ,ZZ):=(L,low,high)->(
-     --produces the betti diagram of the tate resolution of the sheaf S_L(Q),
+     --produces the Betti diagram of the Tate resolution of the sheaf S_L(Q),
      --between the column whose index is "low" and the column whose index is "high"
      n:=#L;
      C := for u from low-n to high list (
@@ -1503,7 +1503,7 @@ document { Key => BoijSoederberg,
 	  TO makePureBetti,
 	  TO pureBettiDiagram,
 	  TO makePureBettiDiagram,
-	  TO isPure
+	  TO (isPure, BettiTally)
 	  },
      SUBSECTION "Cohomology tables",
      UL {
@@ -1575,7 +1575,7 @@ document {
 	  B1 = lowestDegrees B
 	  pureBettiDiagram B1
 	  ///,
-     SeeAlso => {highestDegrees,isPure}
+     SeeAlso => {highestDegrees,(isPure, BettiTally)}
      }
 
 document { 
@@ -1594,11 +1594,11 @@ document {
 	  highestDegrees B
 	  lowestDegrees B
 	  ///,
-     SeeAlso => {lowestDegrees,isPure}
+     SeeAlso => {lowestDegrees,(isPure, BettiTally)}
      }
 
 document { 
-     Key => {(isPure,BettiTally),isPure},
+     Key => {(isPure,BettiTally)},
      Headline => "is a Betti diagram pure?",
      Usage => "isBure B",
      Inputs => {
@@ -1922,7 +1922,7 @@ document {
      Caveat => {"Currently, the error messages are not that illuminating.  
 	  The [lowDegree, highDegree], if given, must be 
 	  as large as the actual degree range"},
-     SeeAlso => {mat2betti, lowestDegrees, highestDegrees, isPure, pureBettiDiagram}
+     SeeAlso => {mat2betti, lowestDegrees, highestDegrees, (isPure, BettiTally), pureBettiDiagram}
      }
 
 document { 

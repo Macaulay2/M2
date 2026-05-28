@@ -34,7 +34,7 @@ handleBoostError(x:RRorNull):Expr:=
     is null do buildErrorPacket("Boost Math Toolkit error")
     is y:RR do toExpr(y);
 
--- # typical value: inverseRegularizedGamma, RR, RR, RR
+-- # typical value: inverseRegularizedGamma, InexactNumber, InexactNumber, InexactNumber
 inverseRegularizedGamma(a:RR,q:RR):RRorNull:= (
     prec := min(precision(a), precision(q));
     Ccode(returns, "BOOST_MATH_CALL(gamma_q_inv, ", prec, ", RR_TO_BOOST(", a,
@@ -49,7 +49,7 @@ inverseRegularizedGamma(e:Expr):Expr :=
     else WrongNumArgs(2);
 setupfun("inverseRegularizedGamma",inverseRegularizedGamma).Protected=false;
 
--- # typical value: inverseRegularizedBeta, RR, RR, RR, RR
+-- # typical value: inverseRegularizedBeta, InexactNumber, InexactNumber, InexactNumber, InexactNumber
 inverseRegularizedBeta(p:RR,a:RR,b:RR):RRorNull:= (
     prec := min(precision(p), min(precision(a), precision(b)));
     Ccode(returns, "BOOST_MATH_CALL(ibeta_inv, ", prec, ", RR_TO_BOOST(", a,

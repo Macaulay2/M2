@@ -14,7 +14,7 @@ newPackage(
 	      },
         Headline => "space curves",
 	Keywords => {"Examples and Random Objects"},
-        PackageImports => {"OldChainComplexes"},
+        PackageImports => {"Complexes"},
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -379,7 +379,7 @@ minimalCurveBetti Module := M -> (
 	    continue    
 	)    		
     );
-    betti chainComplex {random(R^1,(target (Q.dd_3)^cols)**R^{-h}),(Q.dd_3)^cols**R^{-h},
+    betti complex {random(R^1,(target (Q.dd_3)^cols)**R^{-h}),(Q.dd_3)^cols**R^{-h},
 	 Q.dd_4**R^{-h}, Q.dd_5**R^{-h}}
 )
 minimalCurveBetti Ideal := I -> minimalCurveBetti raoModule I
@@ -566,7 +566,7 @@ curve (ZZ,ZZ,Ring) := (d,g,R) -> (
     --generates a random curve of degree d and genus g in a given ring
     if 2*g == (d-1)*(d-2) then return ideal(random(1,R),random(d,R));
     L := smoothDivisors(d,g,R);
-    if L != {}  then return curve first random L
+    if L != {}  then return curve randomElement L
     else print "No smooth curve with this degree and genus exists!";   
 )
 curve (ZZ,ZZ) := (d,g) -> (

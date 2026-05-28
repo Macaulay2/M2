@@ -8,7 +8,7 @@ Tests for GKMVarieties.m2
 -- flagGeomTuttePolynomial test
 --------------------------------
 TEST ///
-ML = (random drop(drop(allMatroids 4,1),-1))_{0,1}
+ML = randomSubset(take(allMatroids 4, {1, 15}), 2)
 TML = apply(ML, m -> {tuttePolynomial m, flagGeomTuttePolynomial flagMatroid({m})}) -- 2.5 seconds
 assert all(TML, l -> (map(ring first l, ring last l, gens ring first l))(last l) == first l)
 N = flagMatroid(matrix{{1,1,1},{1,0,0}},{1,2}) 

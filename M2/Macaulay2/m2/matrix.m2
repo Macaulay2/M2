@@ -773,6 +773,27 @@ leadComponent = method()
 leadComponent Matrix := List => m -> nonnull for c to numColumns m - 1 list position(numRows m, r -> m_(r,c) != 0, Reverse => true)
 leadComponent Vector := ZZ   => v -> try first leadComponent matrix v else null
 
+midpoint Module := M -> M.cache.midpoint ??= (
+    R := midpoint ring M;
+    if R === ring M then M
+    else (
+	if not isFreeModule M then error "expected a free module";
+	R^(-degrees M)))
+
+intervalMatrixHelper := (func, f) -> (
+    M := midpoint target f;
+    N := midpoint source f;
+    if M === target f and N === source f then f
+    else map(M, N, apply(entries f, row -> func \ row)))
+
+midpoint   Matrix := f -> intervalMatrixHelper(midpoint,   f)
+left       Matrix := f -> intervalMatrixHelper(left,       f)
+right      Matrix := f -> intervalMatrixHelper(right,      f)
+lowerLeft  Matrix := f -> intervalMatrixHelper(lowerLeft,  f)
+lowerRight Matrix := f -> intervalMatrixHelper(lowerRight, f)
+upperLeft  Matrix := f -> intervalMatrixHelper(upperLeft,  f)
+upperRight Matrix := f -> intervalMatrixHelper(upperRight, f)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

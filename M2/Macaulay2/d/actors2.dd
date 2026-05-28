@@ -709,6 +709,7 @@ exponent(e:Expr):Expr := (
      is x:RRcell do toExpr(exponent(x.v))	      -- # typical value: size2, RR, ZZ
      is x:RRicell do toExpr(exponent(x.v))	      -- # typical value: size2, RRi, ZZ
      is z:CCcell do toExpr(exponent(z.v))	      -- # typical value: size2, CC, ZZ
+     is z:CCicell do toExpr(exponent(z.v))            -- # typical value: size2, CCi, ZZ
      else WrongArg("a number"));
 setupfun("size2",exponent);
 
@@ -718,6 +719,7 @@ realPart(e:Expr):Expr := (
      is RRcell do e
      is RRicell do e
      is z:CCcell do toExpr(realPart(z.v))
+     is z:CCicell do toExpr(realPart(z.v))
      is QQcell do e
      else WrongArg("a number"));
 setupfun("realPart0",realPart);
@@ -728,6 +730,7 @@ imaginaryPart(e:Expr):Expr := (
      is RRcell do zeroE
      is RRicell do zeroE
      is z:CCcell do toExpr(imaginaryPart(z.v))
+     is z:CCicell do toExpr(imaginaryPart(z.v))
      is QQcell do zeroE
      else WrongArg("a number"));
 setupfun("imaginaryPart0",imaginaryPart);

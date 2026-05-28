@@ -6,6 +6,7 @@ needs "quotient.m2"
 
 -----------------------------------------------------------------------------
 
+module RingFamily :=
 module Ring := Module => (cacheValue symbol module)(R -> R^1)
 
 matrix(RingFamily,List) := Matrix => opts -> (R,m) -> matrix(default R, m, opts)
@@ -258,6 +259,10 @@ matrix(Matrix) := Matrix => opts -> (m) -> (
      )
 
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
+matrix(Ring,       RingElement) :=
+matrix(RingFamily, RingElement) :=
+matrix(Ring,       Number)      :=
+matrix(RingFamily, Number)      := opts -> (R, f) -> matrix(R, {{f}}, opts)
 
 matrix List := Matrix => opts -> L -> (
     if #L === 0 then return matrix(ZZ, {});

@@ -15,35 +15,49 @@ monic := t -> (
 gcd(ZZ,RingElement) := (r,s) -> gcd(promote(r,ring s),s)
 gcd(RingElement,ZZ) := (r,s) -> gcd(promote(s,ring r),r)
 
-gcd(RingElement,RingElement) := RingElement => (r,s) -> (
-     R := ring r;
-     if ring s =!= R then error "gcd: expected elements in the same ring";
-     if instance(R,QuotientRing) then error "gcd: unimplemented for this ring";
-     if isField R then if r == 0 and s == 0 then 0_R else 1_R
-     else if factoryAlmostGood R then (
-	  if (options R).Inverses then (r,s) = (numerator r, numerator s);
- 	  new ring r from rawGCD(raw r, raw s))
-     else (
-	 (R1,f,g) := flattenRing(R,Result=>3);
-	 if factoryAlmostGood R1 then g gcd(f r,f s)
-     else if instance(R,PolynomialRing) and numgens R == 1 and isField coefficientRing R then monic (
-	  -- does this depend on the monomial order in R, too?
-	  -- would this code work for more than one variable?
-	  if gbTrace >= 3 then << "gcd via syzygies" << endl;
-	  if r == 0 then s
-	  else if s == 0 then r
-	  else (
-	       a := (syz( matrix{{r,s}}, SyzygyLimit => 1 ))_(0,0);
-	       if s%a != 0 then error "can't find gcd in this ring";
-	       s // a))
-     else notImplemented()))
+gcd(RingElement, RingElement) := RingElement => (r, s) -> (
+    R := ring r;
+    if ring s =!= R then error "gcd: expected elements in the same ring";
+
+    -- GaloisFields are QuotientRings so this line has to go before the QuotientRing check
+    if isField R then return if r == 0 and s == 0 then 0_R else 1_R;
+    if instance(R, QuotientRing) then notImplemented("gcd for quotient rings is");
+
+    if factoryAlmostGood R then (
+        if (options R).Inverses then (r, s) = (numerator r, numerator s);
+        new ring r from rawGCD(raw r, raw s)
+    ) else (
+        (R1, f, g) := flattenRing(R, Result => 3);
+        if factoryAlmostGood R1 then g gcd(f r,f s)
+        else if instance(R, PolynomialRing) and numgens R == 1 and isField coefficientRing R then monic (
+            -- does this depend on the monomial order in R, too?
+            -- would this code work for more than one variable?
+            if gbTrace >= 3 then << "gcd via syzygies" << endl;
+            if r == 0 then s
+            else if s == 0 then r
+            else (
+                a := (syz(matrix{{r, s}}, SyzygyLimit => 1))_(0,0);
+                if s % a != 0 then error "can't find gcd in this ring";
+                s // a
+            )
+        )
+        else notImplemented()
+    )
+)
 gcd RingElement := identity
+
+gcdCoefficientsField := (R, r, s) -> (
+    if (r == 0 and s == 0) then (0_R, 0_R, 0_R)
+        else if r == 0 then (1_R, 0_R, 1/s)
+        else (1_R, 1/r, 0_R)
+)
 
 gcdCoefficients(ZZ, RingElement) := (r, s) -> gcdCoefficients(r_(ring s), s)
 gcdCoefficients(RingElement, ZZ) := (r, s) -> gcdCoefficients(r, s_(ring r))
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
+     if isField R then return gcdCoefficientsField(R, f, g);
      if not isPolynomialRing R then error "expected a polynomial ring";
      if not isField coefficientRing R then error "expected a polynomial ring over a field";
      if numgens R > 1 then error "expected a polynomial ring in at most one variable";

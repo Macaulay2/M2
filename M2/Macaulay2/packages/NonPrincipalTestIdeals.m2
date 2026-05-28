@@ -7,7 +7,7 @@ newPackage(
         {Name => "Karl Schwede", Email => "schwede@math.utah.edu", HomePage => "https://www.math.utah.edu/~schwede/"},
         {Name => "Hunter Simper", Email => "hunter.simper@utah.edu", HomePage => "https://www.huntersimper.com/"}},    
     Headline => "singularities of pairs with non-principal ideals",
-    Keywords => {"Commutative algebra", "Singularities"},
+    Keywords => {"Commutative Algebra", "Singularities"},
     DebuggingMode => false,
     Reload=>false,     
     PackageExports => {"WeilDivisors", "TestIdeals", "FrobeniusThresholds", "ReesAlgebra", "Complexes"}

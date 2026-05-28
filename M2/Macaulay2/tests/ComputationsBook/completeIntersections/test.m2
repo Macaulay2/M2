@@ -1,12 +1,12 @@
 setRandomSeed();
 A = QQ[w,x,y,z]
 U = matrix {{w,x},{y,z}}
-C = chainComplex U
+C = complex U
 L = HH_0 C
 f = -det U
 f * L == 0
 s = nullhomotopy (-f * id_C)
-s * C.dd + C.dd * s == -f
+s * C.dd + C.dd * s == -f * id_C
 V = s_0
 A = QQ[x,y,z];
 f = x^3 + 3*y^3 - 2*y*z^2 + 5*z^3;

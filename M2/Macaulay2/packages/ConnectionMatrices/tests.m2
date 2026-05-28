@@ -26,7 +26,7 @@ TEST /// -- course notes, Example 7.16 (1)
   assert(G == {y*dy+x*dx+1, x^2*dx^2-x*y*dx^2+3*x*dx-y*dx+1, x*dx*dy+x*dx^2+dy+dx });
 
   R = baseFractionField D
-  A = connectionMatrices I;
+  A = pfaffianSystem I;
   assert(A_0 == map(R^2, R^2, {{0, 1}, {(-1)/(x^2-x*y), (-3*x+y)/(x^2-x*y)}}))
   assert(A_1 == map(R^2, R^2, {{(-1)/y, (-x)/y}, {1/(x*y-y^2), (x+y)/(x*y-y^2)}}))
 
@@ -37,6 +37,27 @@ TEST /// -- course notes, Example 7.16 (1)
   -- Grobner basis:
   -- | ydy+xdx+1 xdxdy+xdx^2+dy+dx x2dx^2-xydx^2+3xdx-ydx+1 |
 
+  -- Note: this example also shows that reducing with respect to each
+  -- element of G only once in order doesn't suffice, because after
+  -- reducing by an element, the result may become further reducible
+  -- by an earlier element in the list.
+  debug needsPackage "ConnectionMatrices"
+  D = makeWeylAlgebra(QQ[x,y], w = {2,1});
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)
+  R = rationalWeylAlgebra D
+  G = flatten entries gens gb I
+  f0 = dx_R*dy_R
+  -- first pass
+  f1 = normalForm(f0, G#0) -- does not reduce wrt G#0
+  f2 = normalForm(f1, G#1) -- reduces
+  f3 = normalForm(f2, G#2)
+  assert same {f0, f1, dx_R*dy_R}
+  assert same {f2, f3, -(y_R*x_R^-1)*dy_R^2 - (2*x_R^-1)*dy_R}
+  -- second pass
+  f4 = normalForm(f3, G#0) -- now it reduces wrt G#0!
+  f5 = normalForm(f4, G#1)
+  f6 = normalForm(f5, G#2)
+  assert same {f4, f5, f6, (-x_R-y_R)*(x_R^2-x_R*y_R)^-1*dy_R - (x_R^2-x_R*y_R)^-1}
 ///
 
 TEST /// -- course notes, Example 7.16 (2)
@@ -46,7 +67,7 @@ TEST /// -- course notes, Example 7.16 (2)
   assert(holonomicRank(w, comodule I) == 2);
 
   R = baseFractionField D;
-  A = connectionMatrices I;
+  A = pfaffianSystem I;
   G = flatten entries gens gb I;
 
   SM = standardMonomials I;
@@ -70,7 +91,7 @@ TEST /// -- course notes, Example 7.16 (3)
   assert(holonomicRank(w, comodule I) == 2);
 
   R = baseFractionField D;
-  A = connectionMatrices I;
+  A = pfaffianSystem I;
   G = flatten entries gens gb I;
 
   SM = standardMonomials I;
@@ -102,11 +123,11 @@ TEST /// -- Example from Overleaf
   assert(holonomicRank I == 2)
 
   -- Computing the system of connection matrices w.r.t. weight vector w1
-  C1 = connectionMatrices I;
+  C1 = pfaffianSystem I;
   SM1 = standardMonomials I;
 
   -- Computing the system of connection matrices w.r.t. weight vector w2
-  C2 = connectionMatrices sub(I, D2);
+  C2 = pfaffianSystem sub(I, D2);
   SM2 = standardMonomials sub(I, D2);
 
   R = baseFractionField D2
@@ -163,7 +184,7 @@ TEST /// -- isIntegrable
   -- A connection coming from a D-ideal is integrable:
   D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-  A = connectionMatrices I;
+  A = pfaffianSystem I;
   assert(isIntegrable(D,A));
 
   -- Constant coefficient matrices that don't commute can't come from an integrable system.

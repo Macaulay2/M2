@@ -37,7 +37,7 @@ logComplex = A -> (
      maps := apply(l, i-> (partial_i*genMatrices_i)//f Q//genMatrices_(i+1));
 -- now induce maps on Omega:
      cplx := apply(l, i-> map(OmegaS_(i+1),OmegaS_i,maps_i));
-     chainComplex reverse cplx);
+     complex reverse cplx);
 
 R = QQ[x,y,z]
 X3 = arrangement {x,y,z,x+y,x+z,y+z}
@@ -46,6 +46,6 @@ C = logComplex X3;
 A = ring C;
 (S,f) = selectVariables({6,7,8},A);
 g = map(S,A,{1,2,3,4,5,6,x,y,z})
--- now we have a segmentation fault:
+-- now we have (rather, we used to have) a segmentation fault:
 g(C)
 

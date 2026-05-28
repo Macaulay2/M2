@@ -175,7 +175,7 @@ randomSemistandardTableau (Partition,Partition,ZZ) := (lam,mu,maxEntry) -> (
         --possibleEntries := toList(minEntry .. maxEntry);
         possibleEntries := join toSequence for i from minEntry to maxEntry list toList((2^(i-1)):i);
         
-        T_thePosition = possibleEntries_(random(#possibleEntries));
+        T_thePosition = randomElement possibleEntries;
         );
 
     youngTableau(lam,mu,new List from entries T)
@@ -279,7 +279,7 @@ allTabloids (Partition,Partition) := (lam,mu) -> (
 allTabloids Partition := lam -> allTabloids(lam,new Partition from {})
 
 randomTabloid = method(TypicalValue => Tabloid)
-randomTabloid (Partition,Partition) := (lam,mu) -> tabloid(lam,mu,random toList(1..(size youngTableau(lam,mu))))
+randomTabloid (Partition,Partition) := (lam,mu) -> tabloid(lam,mu,shuffle toList(1..(size youngTableau(lam,mu))))
 randomTabloid Partition := lam -> randomTabloid(lam,new Partition from {})
 
 allSubPartitions = method(TypicalValue => Bag)

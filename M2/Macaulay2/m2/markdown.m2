@@ -46,7 +46,7 @@ markdown TITLE := x -> concatenate("title: ", apply(x, markdown), newline)
 
 markdown BODY  := x -> concatenate(
     "{% raw %}", shorten apply(x, markdown), "{% endraw %}")
-markdown SPAN  := x -> concatenate(apply(x, markdown), newline) -- TODO: should this have a newline?
+markdown SPAN  := x -> concatenate apply(x, markdown)
 markdown PARA  := x -> concatenate(apply(x, markdown), 2:newline)
 markdown DIV   := x -> (
     c := (parseAttr(DIV, x))#"class";
@@ -104,9 +104,28 @@ markdown DD := x -> shorten concatenate(lvl:"   ", ": ", apply(x, markdown))
 
 -- Links
 -- (markdown, TOH) defined in format.m2
-markdown TO     :=
-markdown TO2    :=
-markdown ANCHOR := html
+markdown TO     := x -> markdown TO2 x
+markdown TO2    := x -> (
+    -- TODO: essentially the same as html(TO2) -- de-duplicate?
+    (tag, name) := (x#0, x#1);
+    if tag.Format != tag.Package then tag = getPrimaryTag fixup tag;
+    if (isUndocumented or isMissingDoc) tag
+    then concatenate(markdown TT name, " (missing documentation)")
+    else markdown ANCHOR {
+	"title" => headline tag,
+	"href"  => toURL htmlFilename tag, name})
+markdown ANCHOR := x -> (
+    elems := partition(a -> instance(a, Option), toList x, {true, false});
+    attrs := hashTable elems#true;
+    -- if we have "href" and possibly "title" attributes, then use markdown
+    if (
+	#attrs == 1 and attrs#?"href" or
+	#attrs == 2 and attrs#?"href" and attrs#?"title")
+    then concatenate("[", markdown \ elems#false, "](",
+	attrs#"href",
+	(1, format attrs#"title") ?? "", ")")
+    -- otherwise fall back to html
+    else html x)
 markdown HREF   := x -> concatenate("[", markdown last x, "](", toURL first x, ")")
 
 -- Images

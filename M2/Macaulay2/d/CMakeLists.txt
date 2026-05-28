@@ -18,7 +18,6 @@ set(CLIST
   M2types.c M2lib.c M2mem.c types.h
   scclib.c ../c/scc-core.h
   memdebug.c memdebug.h
-  debug.c debug.h
   getpagesize.h M2mem.h
   gmp_aux.c gmp_aux.h
   gdbm_interface.c
@@ -215,8 +214,6 @@ target_compile_options(M2-interpreter PRIVATE
   -Wno-sign-compare
   -Wno-uninitialized
   -Wno-unused
-  -Wno-array-bounds   # FIXME: caused by scc1's implementation of arrays
-
   # FIXME: mismatched-tags and parentheses-equality errors are caused by scc1
   $<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang>:-Wno-parentheses-equality>
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags -Wno-parentheses-equality>

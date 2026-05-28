@@ -1,38 +1,51 @@
 /* some routines to augment the gmp library */
 #include <M2/config.h>
 #include "M2/math-include.h"
+#include <stdlib.h>
 #include <string.h>
 
-int mpz_hash(mpz_srcptr x) {
-  int h = 0;
-  int n = x->_mp_size;
-  int i;
-  if (n < 0) n = -n;
-  for (i = 0; i<n; i++, h*=3737) h += x->_mp_d[i];
-  if (x->_mp_size < 0) h = -h;
+uint64_t mpz_hash(mpz_srcptr x) {
+  size_t n_bytes, count, i;
+  uint64_t h;
+  unsigned char *buf;
+
+  n_bytes = (mpz_sizeinbase(x, 2) + 7) / 8;
+  buf = malloc(n_bytes + 1);
+  mpz_export(buf, &count, 1, 1, 1, 0, x);
+  h = 0;
+
+  for (i = 0; i < count; i++)
+    h = h * 3737 + buf[i];
+
+  free(buf);
+
+  return h + 6701 * mpz_sgn(x);
+}
+
+uint64_t mpfr_hash(mpfr_srcptr x) {
+  mpfr_exp_t exp;
+  mpz_t sig;
+  uint64_t h;
+
+  h = 3737 * mpfr_get_prec(x);
+
+  if (mpfr_zero_p(x))
+    return h + 6599 * mpfr_signbit(x) + 569;
+  if (mpfr_nan_p(x))
+    return h + 3581;
+  if (mpfr_inf_p(x))
+    return h +  5039 * mpfr_sgn(x) + 9733;
+
+  mpz_init(sig);
+  exp = mpfr_get_z_2exp(sig, x);
+
+  h += 3449 * mpz_hash(sig) + 2143 * exp;
+  mpz_clear(sig);
   return h;
 }
 
-int mpfr_hash(mpfr_srcptr x) {
-  int h = 0;
-  int n = (x->_mpfr_prec+mp_bits_per_limb-1)/mp_bits_per_limb;
-  int i;
-  if (0 != mpfr_sgn(x))
-    for (i = 0; i<n; i++, h*=3737) h += x->_mpfr_d[i];
-  return 777 + h * 3737 + x->_mpfr_exp + 11 * x->_mpfr_sign;
-}
-
-
-int mpfi_hash(mpfi_srcptr x) { // Really not sure if this is doing the right thing.
-    int h = 0;
-    int n_left = (x->left._mpfr_prec+mp_bits_per_limb-1)/mp_bits_per_limb;
-    int n_right = (x->right._mpfr_prec+mp_bits_per_limb-1)/mp_bits_per_limb;
-    int i;
-    if (0 != mpfr_sgn(&x->left))
-    for (i = 0; i<n_left; i++, h*=3737) h += x->left._mpfr_d[i];
-    if (0 != mpfr_sgn(&x->right))
-    for (i = 0; i<n_right; i++, h*=3737) h += x->right._mpfr_d[i];
-    return 777 + h * 3737 + x->left._mpfr_exp + x->right._mpfr_exp + 11 * x->left._mpfr_sign + 11 * x->right._mpfr_sign;
+uint64_t mpfi_hash(mpfi_srcptr x) {
+  return mpfr_hash(&x->left) + 3737 * mpfr_hash(&x->right);
 }
 
 void mp_free_str(char *str){

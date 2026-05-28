@@ -20,12 +20,9 @@ newPackage(
     Headline => "computing with matrix factorizations of different lengths",
     Keywords => {"Commutative Algebra", "Homological Algebra"},
     PackageExports => {
-        "Complexes",
-	--"CompleteIntersectionResolutions",
-	--"TensorComplexes"
+        "Complexes"
     },
     PackageImports => {
-        "Complexes",
 	"CompleteIntersectionResolutions",
 	"PushForward",
 	"TensorComplexes"

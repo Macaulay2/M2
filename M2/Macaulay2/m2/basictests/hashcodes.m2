@@ -5,6 +5,7 @@ assert ( hash {("a","bcd"),("bcd","a")} == 10180479327404092074 )
 
 -- it would also be nice to keep the following hash codes the same
 assert( (hash 123) === 123 )
+assert( hash 2^100 === 3405506911546692669 )
 assert( (hash "asdf") === 3003444 )
 assert( (hash {1,2,3}) === 5292466133541383614 )
 assert( (hash (1,2,3)) === 568179786079386623 )
@@ -18,9 +19,7 @@ assert( (hash Nothing) === 1000069 )
 assert( (hash (1 => 2)) === 1729140528276943882 )
 assert( hash Nothing == 1000069 )
 assert( (hash Boolean) === 1000035 )
-
--- these might change if our floating point implementation changes, but let's check anyway:
-assert( hash 1.23p200 === 18446744072207201388 -* 64-bit *- or hash 1.23p200 == 18446744073069319069 -* 32-bit *- )
+assert( hash 1.23p200 === 10359908877735906505 )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/basictests hashcodes.okay"

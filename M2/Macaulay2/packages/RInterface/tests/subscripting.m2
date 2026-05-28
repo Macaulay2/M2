@@ -1,0 +1,11 @@
+x = RObject {2, 4, 6, 8, 10}
+assert Equation(x_1, RObject 2)
+assert Equation(x_2, RObject 4)
+assert Equation(x_3, RObject 6)
+assert Equation(x_4, RObject 8)
+assert Equation(x_5, RObject 10)
+assert Equation(x[1], RObject 2)
+assert Equation(x[1, 3, 5], RObject {2, 6, 10})
+assert Equation(x_1 = 3, RObject {3, 4, 6, 8, 10})
+assert Equation(x[1, 3, 5] = {3, 7, 11}, RObject {3, 4, 7, 8, 11})
+assert Equation(length x, 5)

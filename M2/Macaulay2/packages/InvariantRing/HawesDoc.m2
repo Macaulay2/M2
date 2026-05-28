@@ -37,8 +37,8 @@ document {
 	  TT "({f", SUB TT "1", TT ",...," , TT "f", SUB TT "n",
 	  TT "}, {g", SUB TT "1", TT ",...," , TT "g", SUB TT "r", TT"})",
 	  " of primary and secondary invariants such that ",
-	  TT "R", SUP TT "G", TT "=A", TT "g", SUB TT "1", TEX "\\oplus", 
-	  TT "...", TEX "\\oplus", TT "A", TT "g", SUB TT "r", ", where ", TT "A=K[", 
+	  TT "R", SUP TT "G", TT "=A", TT "g", SUB TT "1", "$\\oplus$", 
+	  TT "...", "$\\oplus$", TT "A", TT "g", SUB TT "r", ", where ", TT "A=K[", 
 	  TT "f", SUB TT "1", TT ",...," , TT "f", SUB TT "n", TT "]",
 	  " and ", TT "K", " is the field of coefficients of ",
 	  TT "R", "."
@@ -63,7 +63,7 @@ document {
           },  
      PARA{
 	  "From the output one sees that ", TT "QQ[x,y]", SUP(TT "C4"), 
-	  TT "=QQ[f", SUB(TT "1"), TT "f", SUB(TT "2"), TT "]", TEX "\\oplus", TT "QQ[f", 
+	  TT "=QQ[f", SUB(TT "1"), TT "f", SUB(TT "2"), TT "]", "$\\oplus$", TT "QQ[f", 
 	  SUB(TT "1"), TT "f", SUB(TT "2"), TT "](x", SUP(TT "4"), TT "+y", 
 	  SUP(TT "4"), TT ")", ", where ", TT "f", SUB(TT "1"), TT "=x", SUP(TT "2"), 
 	  TT "+y", SUP(TT "2"), " and ",TT "f", SUB(TT "2"), TT "=xy", 

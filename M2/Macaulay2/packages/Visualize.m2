@@ -18,14 +18,14 @@
 
 newPackage(
 	"Visualize",
-	Version => "1.9",
-	Date => "January 2, 2026",
+	Version => "1.10",
+	Date => "May 27, 2026",
     	Authors => {       
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelpi.edu/~bstone/"},
 	     {Name => "Jim Vallandingham", Email => "vlandham@gmail.com", HomePage => "http://vallandingham.me/"},
-	     {Name => "Doug Torrance", Email => "dtorrance@piedmont.edu", HomePage => "https://webwork.piedmont.edu/~dtorrance"}
+	     {Name => "Doug Torrance", Email => "dtorrance9@gatech.edu", HomePage => "https://d-torrance.github.io"}
 -- Contributing Author	     {Name => "Ata Firat Pir", Email => "atafirat@math.tamu.edu"},	     
 -- Contributing Author	     {Name => "Elliot Korte", Email => "ek2872@bard.edu"},	     
 -- Contributing Author	     {Name => "Will Smith", Email => "smithw12321@gmail.com"},		
@@ -67,6 +67,11 @@ export {
 ---------------
 
 -*
+
+1.10 (2026-05-27, M2 1.26.06)
+* bump jquery 4.0.0
+* update my contact info
+* add name field to package.json
 
 1.9 (2026-01-02, M2 1.26.05)
 * bump three.js to 0.182.0 and update 3d ideal code

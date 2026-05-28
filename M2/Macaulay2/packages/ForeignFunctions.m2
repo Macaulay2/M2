@@ -20,8 +20,8 @@ newPackage("ForeignFunctions",
     Date => "February 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
     Keywords => {"Interfaces"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
@@ -45,6 +45,7 @@ newPackage("ForeignFunctions",
 -*
 
 0.7 (2026-02-05, M2 1.26.05)
+* fix garbage collection of mpzT and mpfrT objects
 * update foreignSymbol test so that it doesn't require mpfi since it may not be
   available (e.g., if it's statically linked)
 
@@ -606,9 +607,9 @@ toExternalString SharedLibrary := toExternalFormat @@ describe
 -- homebrew, so we try there if the first call to dlopen fails
 importFrom_Core {"isAbsolutePath"}
 if version#"operating system" == "Darwin" then (
-    brewPrefix := replace("\\s+$", "", get "!brew --prefix");
+    brewPrefix := replace("\\s+$", "", try get "!brew --prefix" else "");
     dlopen' = filename -> (
-	if isAbsolutePath filename then dlopen filename
+	if isAbsolutePath filename or brewPrefix == "" then dlopen filename
 	else (
 	    try dlopen filename
 	    else (

@@ -4,6 +4,9 @@
 
 undocumented {
      	  (presentation,QuotientRing,QuotientRing),	  
+	  (presentation,Ring),
+	  (presentation,InexactField),
+	  (presentation,InexactFieldFamily),
 	  (presentation,PolynomialRing),
 	  (presentation,PolynomialRing,PolynomialRing),
 	  (presentation,QuotientRing,PolynomialRing)

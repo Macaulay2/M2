@@ -28,6 +28,7 @@ class PolyRingFlat;
 class PolynomialRing;
 class RRR;
 class RRi;
+class CCi;
 class RingMap;
 class RingZZ;
 class SchurRing2;
@@ -333,6 +334,8 @@ class Ring : public MutableEngineObject
   virtual bool from_Interval(gmp_RRi a, ring_elem &result) const;
   // The default version calls from_long(0) and returns false.
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
+  // The default version calls from_long(0) and returns false.
+  virtual bool from_ComplexInterval(gmp_CCi z, ring_elem &result) const;
   // Returns false if this ring cannot coerce a double to an element in this
   // ring
   virtual bool from_double(double a, ring_elem &result) const;

@@ -7,11 +7,12 @@
 // Contains functions which are "ring translational" //
 ///////////////////////////////////////////////////////
 
-#include "aring-RRi.hpp"
 #include "aring-RR.hpp"
 #include "aring-CC.hpp"
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
+#include "aring-RRi.hpp"
+#include "aring-CCi.hpp"
 #include "aring-zz-gmp.hpp"
 #include "aring-zzp.hpp"
 #include "aring-zzp-ffpack.hpp"
@@ -42,6 +43,12 @@ bool get_from_Interval(const RT& R, typename RT::ElementType& a, gmp_RRi b)
   (void) a;
   (void) b;
   return false;
+}
+
+template <typename RT>
+bool get_from_ComplexInterval(const RT& R, typename RT::ElementType & a, gmp_CCi b)
+{
+    return false;
 }
 
 template <typename RT>
@@ -143,6 +150,42 @@ inline bool get_from_Interval(const ARingRRi& R,
     return R.set_from_Interval(a, b);
 }
 
+inline bool get_from_ComplexInterval(const ARingCCi& R,
+                              ARingCCi::ElementType& a,
+                              gmp_CCi b)
+{
+    R.set(a, b);
+    return true;
+}
+
+inline bool get_from_double(const ARingCCi& R,
+                            ARingCCi::ElementType& a,
+                            double b)
+{
+   return R.set_from_double(a, b);
+}
+
+inline bool get_from_Interval(const ARingCCi& R,
+                              ARingCCi::ElementType& a,
+                              gmp_RRi b)
+{
+    return R.set_from_Interval(a, b);
+}
+
+inline bool get_from_BigComplex(const ARingCCi& R,
+                                ARingCCi::ElementType& a,
+                                gmp_CC b)
+{
+  return R.set_from_BigComplex(a, b);
+}
+
+inline bool get_from_BigReal(const ARingCCi& R,
+                             ARingCCi::ElementType& a,
+                             gmp_RR b)
+{
+  return R.set_from_BigReal(a, b);
+}
+
 inline bool get_from_double(const ARingRR& R, ARingRR::ElementType& a, double b)
 {
   return R.set_from_double(a, b);
@@ -170,6 +213,14 @@ inline bool get_from_complex_double(const ARingCCC& R,
 
 inline bool get_from_complex_double(const ARingCC& R,
                                     ARingCC::ElementType& a,
+                                    double re,
+                                    double im)
+{
+  return R.set_from_complex_double(a, re, im);
+}
+
+inline bool get_from_complex_double(const ARingCCi& R,
+                                    ARingCCi::ElementType& a,
                                     double re,
                                     double im)
 {
@@ -388,6 +439,57 @@ inline bool mypromote(const ARingCCC& R,
 {
   (void) R;
   S.set(fS, fR);
+  return true;
+}
+/////////////////////////////////////////////////////
+inline bool mypromote(const ARingCCi& R,
+                      const ARingCCi& S,
+                      const ARingCCi::ElementType& fR,
+                      ARingCCi::ElementType& fS)
+{
+  S.set(fS, fR);
+  return true;
+}
+inline bool mypromote(const ARingRR& R,
+                      const ARingCCi& S,
+                      const ARingRR::ElementType& fR,
+                      ARingCCi::ElementType& fS)
+{
+  S.set_from_double(fS, fR);
+  return true;
+}
+
+inline bool mypromote(const ARingRRi& R,
+                      const ARingCCi& S,
+                      const ARingRRi::ElementType& fR,
+                      ARingCCi::ElementType& fS)
+{
+  S.set_from_Interval(fS, &fR);
+  return true;
+}
+
+inline bool mypromote(const ARingRRR& R,
+                      const ARingCCi& S,
+                      const ARingRRR::ElementType& fR,
+                      ARingCCi::ElementType& fS)
+{
+  S.set_from_BigReal(fS, &fR);
+  return true;
+}
+inline bool mypromote(const ARingCC& R,
+                      const ARingCCi& S,
+                      const ARingCC::ElementType& fR,
+                      ARingCCi::ElementType& fS)
+{
+  S.set_from_complex_double(fS, fR.re, fR.im);
+  return true;
+}
+inline bool mypromote(const ARingCCC& R,
+                      const ARingCCi& S,
+                      const ARingCCC::ElementType& fR,
+                      ARingCCi::ElementType& fS)
+{
+  S.set_from_BigComplex(fS, &fR);
   return true;
 }
 /////////////////////////////////////////////////////

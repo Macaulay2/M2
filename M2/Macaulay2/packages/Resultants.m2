@@ -427,7 +427,7 @@ tangentialChowForm (Ideal,ZZ,ZZ) := o -> (I,s,l) -> (
    r := if useDuality then n-l-1 else l; 
    if l >= n or l <=-1 then return 1_(Grass(l,n,K,Variable=>p));
    mnr := o.AffineChartGrass;
-   if mnr === true then mnr = (random toList(0..n))_{0..r};
+   if mnr === true then mnr = shuffle(toList(0..n), r + 1);
    if mnr =!= false then (try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == r+1 and # mnr == r+1) else error("bad value for option AffineChartGrass: expected either boolean value or list of "|toString(r+1)|" distinct integers between 0 and "|toString(n))); 
    if mnr =!= false then mnr = sort mnr; 
    if (class o.AssumeOrdinary =!= Boolean and o.AssumeOrdinary =!= null) then error "expected true or false for option AssumeOrdinary";
@@ -686,7 +686,7 @@ projectionMap (Ring,Boolean) := o -> (G,B) -> (
    psi := map(R,G,gens minors(k+1,M));
    mnr := o.AffineChartGrass;
    if mnr === false then return (psi,M);
-   if mnr === true then mnr = (random toList(0..n))_{0..k};
+   if mnr === true then mnr = shuffle(toList(0..n), k + 1);
    try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == k+1 and # mnr == k+1) else error("bad value for option AffineChartGrass: expected either boolean value or list of "|toString(k+1)|" distinct integers between 0 and "|toString(n)); 
    mnr = sort mnr; 
    R = KK[flatten entries submatrix'(transpose M,mnr)];
@@ -826,7 +826,7 @@ fanoVariety (Ideal,ZZ) := o -> (I,k) -> (
    p := if o.Variable === null then getVariable ring I else getVariable o.Variable;
    G := Grass(k,n,K,Variable=>p);
    mnr := o.AffineChartGrass;
-   if mnr === true then mnr = (random toList(0..n))_{0..k};
+   if mnr === true then mnr = shuffle(toList(0..n), k + 1);
    (f,M) := projectionMap(G,false,Variable=>"fano",AffineChartGrass=>mnr);
    t := local t;
    R := (target f)[t_0..t_k];

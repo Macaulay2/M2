@@ -110,8 +110,8 @@ intersect Set       := Set => {} >> o -> identity
 intersect(Set, Set) := Set => {} >> o -> (x,y) -> x*y
 
 Set - Set := Set => (x,y) -> applyPairs(x, (i,v) -> if not y#?i then (i,v))
-List - Set := List => (x,y) -> select(x, i -> not y#?i)
-Set - List := Set => (x,y) -> x - set y
+VisibleList - Set := List => (x,y) -> select(x, i -> not y#?i)
+Set - VisibleList := Set => (x,y) -> x - set y
 
 --
 sum Set := s -> sum toList s

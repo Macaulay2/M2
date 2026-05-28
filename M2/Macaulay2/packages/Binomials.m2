@@ -30,7 +30,7 @@ newPackage(
 		  HomePage => "http://www.thomas-kahle.de"}},
     	Headline => "specialized routines for binomial ideals",
 	Keywords => {"Commutative Algebra"},
-	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "MinimalPrimes", "Elimination"},
+	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "MinimalPrimes", "Elimination", "Classic"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	     "journal URI" => "https://msp.org/jsag/",
@@ -318,7 +318,7 @@ randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (
 	       	    -ra
 		    );
      	       -- filling with zeros
-	       m = random (m |z);
+	       m = shuffle (m |z);
      	       ge = ge | {makeBinomial (R,m,1)};
   	       );  
 	  )
@@ -331,7 +331,7 @@ randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (
 	       	    ra
 	       	    );
      	       -- filling with zeros
-	       m = random (m |z);
+	       m = shuffle (m |z);
      	       ge = ge | {makeBinomial (R,m,1)};
   	       );
 	  );

@@ -6,7 +6,8 @@ document {
      Key => {ring, (ring,Vector), (ring,RingElement),
 	  (ring, GroebnerBasis),(ring, Number),
 	  (ring,Module),(ring,Matrix),
-	  (ring,MutableMatrix),(ring,Ideal), (ring,CC),(ring,RR),(ring,RRi)
+	  (ring,MutableMatrix),(ring,Ideal), (ring,CC),(ring,RR),(ring,RRi),
+	  (ring,CCi)
 	  },
      Headline => "get the associated ring of an object",
      Usage => "ring M",

@@ -10,7 +10,7 @@ newPackage(
 			   HomePage =>"https://www.math.uni-sb.de/ag/schreyer"}},
 	Headline=> "general canonical curves of genus <= 15 over fields with small characteristic",
 	Keywords => {"Examples and Random Objects"},
-	PackageImports => {"OldChainComplexes", "Elimination","Truncations","Complexes"}
+	PackageImports => {"Elimination","Truncations","Complexes"}
 	)
     
 export{"isSmoothCurve",
@@ -104,7 +104,7 @@ isSmoothCurve (Ideal) := C -> (
 --This function puts everything together
 smoothCanonicalCurve = method(Options => {Details => false, Printing => false})
 smoothCanonicalCurve (ZZ,ZZ) := opt -> (g,p) -> (
-    if p == 57 then error "57 is the Grotehdieck prime number";
+    if p == 57 then error "57 is the Grothendieck prime number";
     if isPrime(p) == false then error "p is not prime";
     if (g > 15) then error"not implemented yet";
     if (g < 11) then (
