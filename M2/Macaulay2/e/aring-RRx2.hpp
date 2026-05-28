@@ -107,6 +107,67 @@ static inline DoubleDouble dd_mul_d(DoubleDouble a, double b)
 { DoubleDouble p = dd_two_prod(a.hi, b); return dd_fast_two_sum(p.hi, std::fma(a.lo, b, p.lo)); }
 static inline DoubleDouble dd_div_d(DoubleDouble a, double b)
 { double qh = a.hi / b; double err = std::fma(-qh, b, a.hi) + a.lo; return dd_fast_two_sum(qh, err / b); }
+
+// ---- optional AVX2 vector primitives (4-wide SIMD on dd) ----
+// On x86_64 targets compiled with AVX2+FMA (-mavx2 -mfma, or -march=native on
+// any reasonably modern CPU), these primitives compute the v3.0 dd operations
+// on 4 dd values in parallel.  Same algorithms as the scalar versions above,
+// applied lane-wise.  Inputs/outputs are structure-of-arrays — one __m256d
+// packs 4 hi-parts, another packs 4 lo-parts.
+//
+// Header-guarded so the rest of aring-RRx2.hpp keeps compiling on non-AVX2
+// targets (older Intel without AVX2, non-x86 archs).  Downstream kernels
+// (e.g., a future dmat<ARingRRx2> SIMD specialisation) can include this
+// section conditionally to opt in.
+#if defined(__AVX2__) && defined(__FMA__)
+#include <immintrin.h>
+
+static inline __m256d v4_two_sum(__m256d a, __m256d b, __m256d* e) {
+  __m256d s  = _mm256_add_pd(a, b);
+  __m256d bb = _mm256_sub_pd(s, a);
+  __m256d aa = _mm256_sub_pd(s, bb);
+  *e = _mm256_add_pd(_mm256_sub_pd(a, aa), _mm256_sub_pd(b, bb));
+  return s;
+}
+static inline __m256d v4_fast_two_sum(__m256d a, __m256d b, __m256d* e) {
+  __m256d s = _mm256_add_pd(a, b);
+  *e = _mm256_sub_pd(b, _mm256_sub_pd(s, a));
+  return s;
+}
+static inline __m256d v4_two_prod(__m256d a, __m256d b, __m256d* e) {
+  __m256d p = _mm256_mul_pd(a, b);
+  *e = _mm256_fmsub_pd(a, b, p);
+  return p;
+}
+
+// 4-wide v3.0 dd_add
+static inline void v4_dd_add(__m256d xhi, __m256d xlo, __m256d yhi, __m256d ylo,
+                              __m256d* zhi, __m256d* zlo)
+{
+  __m256d slo, tlo, ulo;
+  __m256d shi = v4_two_sum(xhi, yhi, &slo);
+  __m256d thi = v4_two_sum(xlo, ylo, &tlo);
+  __m256d uhi = v4_fast_two_sum(shi, thi, &ulo);
+  __m256d bb  = _mm256_add_pd(_mm256_add_pd(slo, tlo), ulo);
+  *zhi = v4_fast_two_sum(uhi, bb, zlo);
+}
+
+// 4-wide v3.0 dd_mul
+static inline void v4_dd_mul(__m256d xhi, __m256d xlo, __m256d yhi, __m256d ylo,
+                              __m256d* zhi, __m256d* zlo)
+{
+  __m256d plo;
+  __m256d phi   = v4_two_prod(xhi, yhi, &plo);
+  __m256d cross = _mm256_fmadd_pd(xhi, ylo, _mm256_mul_pd(xlo, yhi));
+  *zhi = v4_fast_two_sum(phi, _mm256_add_pd(plo, cross), zlo);
+}
+
+// Broadcast a scalar dd across a 4-wide vector
+static inline void v4_dd_broadcast(DoubleDouble a, __m256d* hi, __m256d* lo) {
+  *hi = _mm256_set1_pd(a.hi);
+  *lo = _mm256_set1_pd(a.lo);
+}
+#endif  // __AVX2__ && __FMA__
 static inline int dd_cmp(DoubleDouble a, DoubleDouble b)
 { if (a.hi != b.hi) return a.hi < b.hi ? -1 : 1; if (a.lo != b.lo) return a.lo < b.lo ? -1 : 1; return 0; }
 static inline DoubleDouble dd_from_mpfr(mpfr_srcptr x)
