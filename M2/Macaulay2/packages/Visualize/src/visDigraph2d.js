@@ -1,4 +1,12 @@
 import * as d3 from 'd3';
+import {
+  makeid, getNextAlpha, makeCorsRequest, arraytoM2Matrix, arraytoM2List,
+  dragstart, dragged,
+  checkName, spliceLinksForNode, setAllNodesFixed, setAllNodesUnfixed,
+  hideLabels, showLabels,
+  updateForceCharge, updateForceLinkDist,
+  initSliders, initSideMenu
+} from './visCommonForce.js';
 
  // Initialize variables.
   var width  = null,
@@ -34,7 +42,7 @@ import * as d3 from 'd3';
   var drag = null;
 
  // Helps determine what menu button was clicked.
-  var clickTest = null; 
+  var clickTest = null;
 
   var scriptSource = (function(scripts) {
     var scripts = document.getElementsByTagName('script'),
@@ -46,16 +54,16 @@ import * as d3 from 'd3';
 
     return script.getAttribute('src', -1)
     }());
-    
+
     // Just get the current directory that contains the html file.
     scriptSource = scriptSource.substring(0, scriptSource.length - 18);
-      
+
     //console.log(scriptSource);
 
 function initializeBuilder() {
-    
+
   //console.log("building graph");
-    
+
   // Set up SVG for D3.
   width  = window.innerWidth-document.getElementById("side").clientWidth;
   height = window.innerHeight-10;
@@ -77,7 +85,7 @@ function initializeBuilder() {
   lastNodeId = data.length;
   nodes = [];
   links = [];
-    
+
   // Create the nodes with their appropriate names and id's, and set reflexive to true if and only if there is a 1 in the appropriate
   // spot on the main diagonal.  This represents a loop in the digraph.
   for (var i = 0; i < data.length; i++) {
@@ -93,56 +101,6 @@ function initializeBuilder() {
           }
       }
   }
-  /*
-  for (var i = 1; i<data.length; i++) {
-      for (var j = 0; j < i; j++) {
-          if (data[i][j] != 0) {
- 
-            var foundLink = false;
-            var l = links.length;
-            for(var k = 0; k < l; k++) {              
-              
-              if((links[k].source.id == j) && (links[k].target.id == i)){
-                links[k].left = true;
-                console.log("Added left arrow to existing link.");
-                foundLink = true;
-              } 
-              if(foundLink = false) {
-                links.push( { source: nodes[j], target: nodes[i], left: true, right: false} );
-                console.log("Added new link with left arrow only.");
-              }
-            }
-          }
-      }
-  }
-  */
-
-  //console.log(nodes);
-  //console.log(links);
-    
-  //constrString = digraph2M2Constructor(nodes,links);
-    
-  // (Brett) Removing incidence and adjacency matrices.
-  /*incMatrix = getIncidenceMatrix(nodes,links);
-  adjMatrix = getAdjacencyMatrix(nodes,links);
-  incMatrixString = arraytoM2Matrix(incMatrix);
-  adjMatrixString = arraytoM2Matrix(adjMatrix);*/
-
-  // Add a paragraph containing the Macaulay2 graph constructor string below the svg.
-  /* d3.select("body").append("p")
-  	.text("Macaulay2 Constructor: " + constrString)
-  	.attr("id","constructorString");
-  */
-
-  // (Brett) Removing incidence and adjacency matrices.
-    
-/*  d3.select("body").append("p")
-  	.text("Incidence Matrix: " + incMatrixString)
-  	.attr("id","incString");
-
-  d3.select("body").append("p")
-  	.text("Adjacency Matrix: " + adjMatrixString)
-  	.attr("id","adjString");*/
 
   // Initialize D3 force layout.
   force = d3.forceSimulation(nodes)
@@ -150,11 +108,11 @@ function initializeBuilder() {
       .force('charge', d3.forceManyBody().strength(forceCharge))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .on('tick', tick);
-    
+
   // After the force variable is initialized, set the sliders to update the force variables.
-  chargeSlider.noUiSlider.on('slide', updateForceCharge);
-  linkDistSlider.noUiSlider.on('slide', updateForceLinkDist);
-    
+  chargeSlider.noUiSlider.on('slide', function() { updateForceCharge(force, chargeSlider, toggleForce); });
+  linkDistSlider.noUiSlider.on('slide', function() { updateForceLinkDist(force, linkDistSlider, toggleForce); });
+
   // define arrow markers for graph links
   svg.append('svg:defs').append('svg:marker')
     .attr('id', 'end-arrow')
@@ -198,7 +156,7 @@ function initializeBuilder() {
   mousedown_link = null;
   mousedown_node = null;
   mouseup_node = null;
-    
+
   // Define which functions should be called for various mouse events on the svg.
   svg.on('mousedown', mousedown)
     .on('mousemove', mousemove)
@@ -208,22 +166,9 @@ function initializeBuilder() {
   d3.select(window)
     .on('keydown', keydown)
     .on('keyup', keyup);
-    
+
   // The restart() function updates the graph.
   restart();
-  
-  // Brett: Need to fix this.
-  /*
-  var maxLength = d3.max(nodes, function(d) { return d.name.length; });
-
-  console.log("maxLength: " + maxLength + "\n");
-
-  if(maxLength < 4){
-        document.getElementById("nodeText").style.fill = 'white';
-  } else {
-        document.getElementById("nodeText").style.fill = 'black';
-  }
-  */
 
 }
 
@@ -232,17 +177,6 @@ function resetGraph() {
   forceOn = false;
   toggleForce();
   restart();
-}
-
-function dragstart(d) {
-  // When dragging a node, pin it in place.
-  d.fx = d.x;
-  d.fy = d.y;
-}
-
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
 }
 
 function resetMouseVars() {
@@ -275,7 +209,7 @@ function tick() {
         sourceY = d.source.y + (sourcePadding * normY),
         targetX = d.target.x - (targetPadding * normX),
         targetY = d.target.y - (targetPadding * normY);
-    
+
     // Restrict the padded x and y coordinates of the source and target to be within a 15 pixel margin around the svg.
     if (sourceX > width - 15) {
       sourceX = width - 15;
@@ -321,7 +255,7 @@ function tick() {
     else if (d.y < 15) {
       d.y = 15;
     }
-    
+
     // Visually update the locations of the nodes based on the force simulation.
     return 'translate(' + d.x + ',' + d.y + ')';
   });
@@ -357,21 +291,18 @@ function restart() {
       // If the user clicks on a path while the shift key is not pressed and curEdit is true, set mousedown_link
       // to be the path that the user clicked on.
       mousedown_link = d;
-      
+
       // If the link was already selected, then unselect it.
       if(mousedown_link === selected_link) selected_link = null;
-      
-      // (Brett) Isn't 'if (curEdit)' redundant since we already checked it above?  Remove this line?
-//      else if (curEdit) selected_link = mousedown_link;
-      
+
       // If the link was not already selected, then select it.
       else selected_link = mousedown_link;
-      
+
       // Since we selected or unselected a link, set all nodes to be unselected.
       selected_node = null;
       // If highlighting neighbors is turned on, un-highlight all nodes and links since there is no currently selected node.
       if(curHighlight) unHighlightAll();
-      
+
       // Update all properties of the graph.
       restart();
     });
@@ -423,9 +354,9 @@ function restart() {
 
       // Otherwise, select node.
       mousedown_node = d;
-      
+
       // If the node that the user clicked was already selected, then unselect it.
-      if(mousedown_node === selected_node) { selected_node = null; 
+      if(mousedown_node === selected_node) { selected_node = null;
             if(curHighlight) unHighlightAll(); }
       //Brett: Add the following line back in if we don't want nodes to be brightened in non-editing mode.
       //else if(curEdit) { selected_node = mousedown_node;
@@ -441,7 +372,7 @@ function restart() {
           .classed('hidden', false)
           .attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + mousedown_node.x + ',' + mousedown_node.y);
       }
-          
+
       restart();
     })
     .on('mouseup', function(d) {
@@ -473,7 +404,7 @@ function restart() {
         direction = 'left';
       }
 
-      
+
       var link;
       link = links.filter(function(l) {
         return (l.source === source && l.target === target);
@@ -490,12 +421,6 @@ function restart() {
         // Graph is updated here so we change some items to default.
         menuDefaults();
       }
-
-      //document.getElementById("constructorString").innerHTML = "Macaulay2 Constructor: " + digraph2M2Constructor(nodes,links);
-      
-      // (Brett) Removing incidence and adjacency matrices for now.
-      /*document.getElementById("incString").innerHTML = "Incidence Matrix: " + arraytoM2Matrix(getIncidenceMatrix(nodes,links));
-      document.getElementById("adjString").innerHTML = "Adjacency Matrix: " + arraytoM2Matrix(getAdjacencyMatrix(nodes,links));*/
 
       // select new link
       if (curEdit) selected_link = link;
@@ -517,18 +442,16 @@ function restart() {
         if (name==d.name) {
           return;
         }
-        else if (checkName(name)) {
+        else if (checkName(name, nodes)) {
           alert('Sorry, a node with that name already exists.')
           name = "";
         }
       }
-      
+
       if(name != "null") {
         d.name = name;
-        d3.select(this.parentNode).select("text").text(function(d) {return d.name});          
+        d3.select(this.parentNode).select("text").text(function(d) {return d.name});
       }
-
-      //document.getElementById("constructorString").innerHTML = "Macaulay2 Constructor: " + digraph2M2Constructor(nodes,links);
 
     });
 
@@ -536,22 +459,11 @@ function restart() {
   // show node IDs
     g.append('svg:text')
         .attr('x', 0)
-        .attr('y', 4) 
+        .attr('y', 4)
         .attr('class', 'id noselect')
         .attr("pointer-events", "none")
         .text(function(d) { return d.name; });
   }
-  /*
-  var maxLength = d3.max(nodes, function(d) {
-        return d.name.length;
-  });
-      
-  if(maxLength < 4){
-        document.getElementById("nodeText").style.fill = 'white';
-  } else {
-        document.getElementById("nodeText").style.fill = 'black';
-  }
-  */
 
   // remove old nodes
   circle.exit().remove();
@@ -561,19 +473,6 @@ function restart() {
   force.nodes(nodes);
   force.force('link').links(links);
   force.alpha(0.1).restart();
-}
-
-function checkName(name) {
-  for (var i = 0; i<nodes.length; i++) {
-    if (nodes[i].name == name) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getNextAlpha(alpha) {
-  return String.fromCharCode(alpha.charCodeAt(0) + 1);
 }
 
 function mousedown() {
@@ -589,18 +488,10 @@ function mousedown() {
 
   var point = d3.mouse(this);
   var curName = lastNodeId + 1;
-  while(checkName(curName.toString())){
+  while(checkName(curName.toString(), nodes)){
       curName += 1;
   }
   curName = curName.toString();
-  /*
-  if (checkName(curName)) {
-    curName += 'a';
-  }
-  while (checkName(curName)) {
-    curName = curName.substring(0, curName.length - 1) + getNextAlpha(curName.slice(-1));
-  }
-  */
 
   // Graph Changed :: adding nodes
   var node = {id: ++lastNodeId, name: curName, reflexive: false, highlighted: false};
@@ -612,14 +503,7 @@ function mousedown() {
   }
   nodes.push(node);
   // Graph is updated here so we change some items to default
-  // d3.select("#isCM").html("isCM");
   menuDefaults();
-
-  //document.getElementById("constructorString").innerHTML = "Macaulay2 Constructor: " + digraph2M2Constructor(nodes,links);
-    
-  // (Brett) Removing incidence and adjacency matrices for now.
-  /*document.getElementById("incString").innerHTML = "Incidence Matrix: " + arraytoM2Matrix(getIncidenceMatrix(nodes,links));
-  document.getElementById("adjString").innerHTML = "Adjacency Matrix: " + arraytoM2Matrix(getAdjacencyMatrix(nodes,links));*/
 
   restart();
 }
@@ -651,15 +535,6 @@ function mouseup() {
 
 }
 
-function spliceLinksForNode(node) {
-  var toSplice = links.filter(function(l) {
-    return (l.source === node || l.target === node);
-  });
-  toSplice.map(function(l) {
-    links.splice(links.indexOf(l), 1);
-  });
-}
-
 // only respond once per keydown
 var lastKeyDown = -1;
 
@@ -681,7 +556,7 @@ function keydown() {
     case 46: // delete
       if(curEdit && selected_node) {
         nodes.splice(nodes.indexOf(selected_node), 1);
-        spliceLinksForNode(selected_node);
+        spliceLinksForNode(selected_node, nodes, links);
         if(curHighlight) unHighlightAll();
       } else if(curEdit && selected_link) {
 
@@ -693,17 +568,11 @@ function keydown() {
 
       // Graph Changed :: deleted nodes and links
       // as a result we change some items to default
-      // d3.select("#isCM").html("isCM");      
       menuDefaults();
-
-      //document.getElementById("constructorString").innerHTML = "Macaulay2 Constructor: " + digraph2M2Constructor(nodes,links);
-      // (Brett) Removing incidence and adjacency matrices for now.
-      /*document.getElementById("incString").innerHTML = "Incidence Matrix: " + arraytoM2Matrix(getIncidenceMatrix(nodes,links));
-      document.getElementById("adjString").innerHTML = "Adjacency Matrix: " + arraytoM2Matrix(getAdjacencyMatrix(nodes,links));*/
 
       restart();
       break;
-          
+
       case 66: // B
       if(selected_link) {
         // set link direction to both left and right
@@ -730,7 +599,7 @@ function keydown() {
         selected_link.right = true;
       }
     restart();
-      break;      
+      break;
   }
   restart();
 }
@@ -771,12 +640,12 @@ function unHighlightAll() {
     for (var i = 0; i<nodes.length; i++) {
        nodes[i].highlighted = false;
     }
-    
+
     // Un-highlight all links.
     for (var i = 0; i<links.length; i++) {
        links[i].highlighted = false;
     }
-    
+
     // Update graph based on changes to nodes and links.
     restart();
 }
@@ -787,12 +656,12 @@ function highlightAllNeighbors(n) {
        //console.log(areNeighbors(nodes[i],n));
        nodes[i].highlighted = areNeighbors(nodes[i],n);
     }
-    
+
     // Highlight all links that have the given node n as a source or target.
     for (var i = 0; i<links.length; i++) {
        links[i].highlighted = ((links[i].source === n) || (links[i].target === n));
     }
-    
+
     // Update graph based on changes to nodes and links.
     restart();
 }
@@ -801,37 +670,8 @@ function areNeighbors(node1,node2) {
     return links.some( function(l) {return (((l.source === node1) && (l.target === node2)) || ((l.target === node1) && (l.source === node2)));});
 }
 
-function setAllNodesFixed() {
-  for (var i = 0; i<nodes.length; i++) {
-    nodes[i].fx = nodes[i].x;
-    nodes[i].fy = nodes[i].y;
-  }
-}
-
-function setAllNodesUnfixed() {
-  for (var i = 0; i<nodes.length; i++) {
-    nodes[i].fx = null;
-    nodes[i].fy = null;
-  }
-}
-
-function hideLabels() {
-    circle.select("text").remove();    
-}
-
-function showLabels() {
-     circle.append('svg:text')
-      .attr('x', 0)
-      .attr('y', 4)
-      .attr('class', 'id noselect')
-      .attr("pointer-events", "none")
-      .text(function(d) { return d.name; });
-}
-
 function updateWindowSize2d() {
     //console.log("resizing window");
-    //var svg = document.getElementById("canvasElement2d");
-    
     // get width/height with container selector (body also works)
     // or use other method of calculating desired values
     if(!menuOpen){
@@ -841,7 +681,7 @@ function updateWindowSize2d() {
     }
     height = window.innerHeight-10;
 
-    // set attrs and 'resume' force 
+    // set attrs and 'resume' force
     svg.attr('width', width);
     svg.attr('height', height);
 
@@ -887,7 +727,7 @@ function digraph2M2Constructor( nodeSet, edgeSet ){
       else if(rightEdge){ strEdges = strEdges + "{\"" + (edgeSet[i].source.name).toString() + "\",\"" + (edgeSet[i].target.name).toString() + "\"}}";}
     }
   }
-    
+
   // Handle some extremal cases such as the empty digraph, or digraphs with no edges.
   if(foundReflexive && (edgeSet.length == 0)){
       strEdges = strEdges.slice(0,-2) + "}";
@@ -895,7 +735,7 @@ function digraph2M2Constructor( nodeSet, edgeSet ){
   if((!foundReflexive) && (edgeSet.length == 0)){
       strEdges = "{}";
   }
-    
+
   return "digraph(" + strNodes + "," + strEdges + ")";
 
 }
@@ -964,76 +804,7 @@ function getAdjacencyMatrix (nodeSet, edgeSet){
   return adjMatrix;
 }
 
-function updateForceCharge(){
-    if(!forceOn){toggleForce()};
-    forceCharge = -chargeSlider.noUiSlider.get();
-    force.force('charge', d3.forceManyBody().strength(forceCharge)).alpha(1).restart();
-}
-
-function updateForceLinkDist(){
-    if(!forceOn){toggleForce()};
-    forceLinkDist = linkDistSlider.noUiSlider.get();
-    force.force('link').distance(forceLinkDist);
-    force.alpha(1).restart();
-}
-
-// Takes a rectangular array of arrays and returns a string which can be copy/pasted into M2.
-function arraytoM2Matrix (arr){
-  var str = "matrix{{";
-  for(var i = 0; i < arr.length; i++){
-    for(var j = 0; j < arr[i].length; j++){
-      str = str + arr[i][j].toString();
-      if(j == arr[i].length - 1){
-        str = str + "}";
-            } else {
-        str = str + ",";
-      }
-    }
-    if(i < arr.length-1){
-      str = str + ",{";
-    } else {
-      str = str + "}";
-    }
-  }
-
-  return str;
-}
-
-// Takes a rectangular array of arrays and returns a list which can be copy/pasted into M2.
-function arraytoM2List (arr){
-  var str = "{{";
-  for(var i = 0; i < arr.length; i++){
-    for(var j = 0; j < arr[i].length; j++){
-      str = str + arr[i][j].toString();
-      if(j == arr[i].length - 1){
-        str = str + "}";
-            } else {
-        str = str + ",";
-      }
-    }
-    if(i < arr.length-1){
-      str = str + ",{";
-    } else {
-      str = str + "}";
-    }
-  }
-
-  return str;
-}
-
-
 // for making unique timestamps in LaTeX. Numbers are not allowed in macros.
-function makeid()
-{
-    var randomtext = "";
-    var randompossible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-    for( var i=0; i < 5; i++ )
-        randomtext += randompossible.charAt(Math.floor(Math.random() * randompossible.length));
-
-    return randomtext;
-}
-
 
 function exportTikz (event){
   var points = [];
@@ -1060,8 +831,6 @@ function exportTikz (event){
     }
     edges[j] = [ links[j].source.id.toString()+"/"+links[j].target.id.toString()+"/"+leftright ];
   }
-
-//console.log(links);
 
   var timestamp = makeid();
 
@@ -1099,7 +868,6 @@ function exportTikz (event){
     var tikzButton = document.createElement("button");
     tikzButton.id = "copyButton";
     tikzButton.style = "vertical-align:middle;";
-    //tikzButton.dataClipboardTarget = "#tikzTextBox";
     tikzButton.type = "button";
     var clipboardImg = document.createElement("i");
     clipboardImg.classList.add("fa-solid", "fa-clipboard");
@@ -1112,10 +880,10 @@ function exportTikz (event){
     clipboard = new ClipboardJS('#copyButton');
     clipboard.on('error', function(e) {
         window.alert("Press enter, then CTRL-C or CMD-C to copy")
-    });  
+    });
     tikzGenerated = true;
   }
-  document.getElementById("tikzTextBox").value = tikzTex;    
+  document.getElementById("tikzTextBox").value = tikzTex;
 }
 
 // -----------------------------------------
@@ -1125,23 +893,23 @@ function exportTikz (event){
 
 // Add a response for each id from the side menu
 function onclickResults(m2Response) {
-    
+
     if (clickTest == "hasEulerianTrail"){
       d3.select("#hasEulerianTrail").html("&nbsp;&nbsp; hasEulerianTrail :: <b>"+m2Response+"</b>");
-    } 
+    }
 
     else if (clickTest == "isEulerian") {
-      d3.select("#isEulerian").html("&nbsp;&nbsp; isEulerian :: <b>"+m2Response+"</b>");    
-    }    
+      d3.select("#isEulerian").html("&nbsp;&nbsp; isEulerian :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isStronglyConnected") {
-      d3.select("#isStronglyConnected").html("&nbsp;&nbsp; isStronglyConnected :: <b>"+m2Response+"</b>");    
-    }    
+      d3.select("#isStronglyConnected").html("&nbsp;&nbsp; isStronglyConnected :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isWeaklyConnected") {
-      d3.select("#isWeaklyConnected").html("&nbsp;&nbsp; isWeaklyConnected :: <b>"+m2Response+"</b>");    
-    }    
-    
+      d3.select("#isWeaklyConnected").html("&nbsp;&nbsp; isWeaklyConnected :: <b>"+m2Response+"</b>");
+    }
+
 }
 
 
@@ -1149,59 +917,14 @@ function onclickResults(m2Response) {
 // It changes the menu items to default.
 function menuDefaults() {
   d3.select("#hasEulerianTrail").html("&nbsp;&nbsp; hasEulerianTrail");
-  d3.select("#isEulerian").html("&nbsp;&nbsp; isEulerian");  
-  d3.select("#isStronglyConnected").html("&nbsp;&nbsp; isStronglyConnected");  
+  d3.select("#isEulerian").html("&nbsp;&nbsp; isEulerian");
+  d3.select("#isStronglyConnected").html("&nbsp;&nbsp; isStronglyConnected");
   d3.select("#isWeaklyConnected").html("&nbsp;&nbsp; isWeaklyConnected");
-    
+
   if (tikzGenerated) {
       d3.select("#tikzHolder").node().remove();
       tikzGenerated = false;
   }
-}
-
-
-// Create the XHR object.
-function createCORSRequest(method, url) {
-  var xhr = new XMLHttpRequest();                    
-  if ("withCredentials" in xhr) {
-    // XHR for Chrome/Firefox/Opera/Safari.
-    xhr.open(method, url, true);
-  } else if (typeof XDomainRequest != "undefined") {
-    // XDomainRequest for IE.
-    xhr = new XDomainRequest();
-    xhr.open(method, url);
-  } else {
-    // CORS not supported.
-    xhr = null;
-  }
-
-  return xhr;
-}
- 
-// Make the actual CORS request.
-function makeCorsRequest(method,url,browserData) {
-  // All HTML5 Rocks properties support CORS.
-  // var url ='http://localhost:8000/fcn2/';
- 
-  var xhr = createCORSRequest(method, url);
-  if (!xhr) {
-    alert('CORS not supported');
-    return;
-  }
- 
-  // Response handlers.
-  xhr.onload = function() {
-    var responseText = xhr.responseText;
-
-    onclickResults(responseText);      
-
-  };
- 
-  //xhr.onerror = function() {
-  //  alert('Woops, there was an error making the request.');
-  //};
-
-  xhr.send(browserData);
 }
 
 // -----------------------------------------
@@ -1211,48 +934,14 @@ function makeCorsRequest(method,url,browserData) {
     console.log(dataData);
     console.log(labelData);
     console.log(8081);
-      
+
     // Initialize clipboard.js.
     var clipboard = null;
-      
-//    $('#side').BootSideMenu({side:"right"});
-    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
 
-    // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
-    document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
-            menuOpen = !menuOpen;
-            updateWindowSize2d();    
-    }, false);  
-    
-    //document.getElementById("canvasElement2d").style.width = window.innerWidth;
-    //document.getElementById("canvasElement2d").style.height = window.innerHeight;
-      
-    window.addEventListener("resize", updateWindowSize2d, false);
+    initSideMenu(updateWindowSize2d);
 
-    // Initialize sliders
-    var chargeSlider = document.getElementById('charge-slider');
-    noUiSlider.create(chargeSlider, {
-        start: [1500],
-        //tooltips: true,
-        range: {
-			'min': [0],
-			'max': [6000]
-		}
-    });
-    //chargeSlider.noUiSlider.on('update', updateForceCharge);
-      
-    var linkDistSlider = document.getElementById('linkdist-slider');
-    noUiSlider.create(linkDistSlider, {
-        start: [100],
-        //tooltips: true,
-        range: {
-			'min': [0],
-			'max': [400]
-		}
-    });
-    //chargeSlider.noUiSlider.on('update', updateForceLinkDist);
-      
-      
+    var { chargeSlider, linkDistSlider } = initSliders();
+
     $(document).ready(function(){
 
       $("#editToggle").on("click", function(){
@@ -1266,19 +955,19 @@ function makeCorsRequest(method,url,browserData) {
           enableEditing();
         }
       });
-        
+
       $("#labelToggle").on("click", function(){
         if(!labelsOn) {
           $(this).html("Hide labels");
           labelsOn = !labelsOn;
-          showLabels();
+          showLabels(circle);
         } else {
           $(this).html("Show labels");
           labelsOn = !labelsOn;
-          hideLabels();
+          hideLabels(circle);
         }
       });
-    
+
       $("#highlightToggle").on("click", function(){
         if(curHighlight) {
           $(this).html("Highlight neighbors");
@@ -1292,58 +981,51 @@ function makeCorsRequest(method,url,browserData) {
       });
 
       $("#reset").on("click", resetGraph);
-      
+
       $("#forceToggle").on("click", toggleForce);
-      
+
       $("#exportTikz").on("click", function() {
         exportTikz();
       });
 
       // Begin browser-M2 communication.
-      // For each item, a line in the function `onclickResults()`
-      // located in `visGraph2d.js` must be added. 
-      // 
-      // If you wish to delete the text to make it vanish when the graph is edited
-      // search for 'menuDefaults()'.
 
       // Checks to see if user's graph has an Eulerian trail
       $("#hasEulerianTrail").on("click", function() {
         clickTest = "hasEulerianTrail";
-        makeCorsRequest('POST','http://localhost:'+portData+'/hasEulerianTrail/', digraph2M2Constructor(nodes,links));
+        makeCorsRequest('POST','http://localhost:'+portData+'/hasEulerianTrail/', digraph2M2Constructor(nodes,links), onclickResults);
       });
-        
+
       // Checks to see if users graph is Eulerian
       $("#isEulerian").on("click", function() {
         clickTest = "isEulerian";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isEulerian/', digraph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isEulerian/', digraph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is strongly connected
       $("#isStronglyConnected").on("click", function() {
         clickTest = "isStronglyConnected";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isStronglyConnected/', digraph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isStronglyConnected/', digraph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is weakly connected
       $("#isWeaklyConnected").on("click", function() {
         clickTest = "isWeaklyConnected";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isWeaklyConnected/', digraph2M2Constructor(nodes,links));
-      });      
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isWeaklyConnected/', digraph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Ends the browser session and outputs the information to M2
       $("#endSession").on("click", function() {
         if(activeSession) {
-          //$(this).html("Session Terminated");
-          //$(this).html(<p style="color: #ffffff; background-color: #ff0000">Session terminated</p>);
           document.getElementById("endSession").style.color = 'white';
           document.getElementById("endSession").style.backgroundColor = 'red';
           document.getElementById("endSession").innerHTML = "Session terminated";
-          makeCorsRequest('POST','http://localhost:'+portData+'/end/',digraph2M2Constructor(nodes,links));
+          makeCorsRequest('POST','http://localhost:'+portData+'/end/',digraph2M2Constructor(nodes,links), onclickResults);
           activeSession = !activeSession;
         } else {
           return;
         }
-      });            
+      });
 
       initializeBuilder();
       disableEditing();
@@ -1352,11 +1034,11 @@ function makeCorsRequest(method,url,browserData) {
 
     function toggleForce() {
       if (forceOn) {
-        setAllNodesFixed();
+        setAllNodesFixed(nodes);
         document.getElementById("forceToggle").innerHTML = "Turn on force";
       }
       else {
-        setAllNodesUnfixed();
+        setAllNodesUnfixed(nodes);
         document.getElementById("forceToggle").innerHTML = "Turn off force";
       }
       forceOn = !forceOn;

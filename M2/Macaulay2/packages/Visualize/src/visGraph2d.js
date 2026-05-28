@@ -1,4 +1,12 @@
 import * as d3 from 'd3';
+import {
+  makeid, getNextAlpha, makeCorsRequest, arraytoM2Matrix,
+  dragstart, dragged,
+  checkName, spliceLinksForNode, setAllNodesFixed, setAllNodesUnfixed,
+  hideLabels, showLabels,
+  updateForceCharge, updateForceLinkDist,
+  initSliders, initSideMenu
+} from './visCommonForce.js';
 
   // Initialize variables.
   var width  = null,
@@ -34,7 +42,7 @@ import * as d3 from 'd3';
   var drag = null;
 
  // Helps determine what menu button was clicked.
-  var clickTest = null; 
+  var clickTest = null;
 
   var scriptSource = (function(scripts) {
     var scripts = document.getElementsByTagName('script'),
@@ -46,10 +54,10 @@ import * as d3 from 'd3';
 
     return script.getAttribute('src', -1)
     }());
-    
+
     // Just get the current directory that contains the html file.
     scriptSource = scriptSource.substring(0, scriptSource.length - 16);
-      
+
     //console.log(scriptSource);
 
 function initializeBuilder() {
@@ -85,30 +93,6 @@ function initializeBuilder() {
           }
       }
   }
-    
-  //constrString = graph2M2Constructor(nodes,links);
-    
-  // (Brett) Removing incidence and adjacency matrices.
-  /*incMatrix = getIncidenceMatrix(nodes,links);
-  adjMatrix = getAdjacencyMatrix(nodes,links);
-  incMatrixString = arraytoM2Matrix(incMatrix);
-  adjMatrixString = arraytoM2Matrix(adjMatrix);*/
-
-  // Add a paragraph containing the Macaulay2 graph constructor string below the svg.
-  /* d3.select("body").append("p")
-  	.text("Macaulay2 Constructor: " + constrString)
-  	.attr("id","constructorString");
-  */
-
-  // (Brett) Removing incidence and adjacency matrices.
-    
-/*  d3.select("body").append("p")
-  	.text("Incidence Matrix: " + incMatrixString)
-  	.attr("id","incString");
-
-  d3.select("body").append("p")
-  	.text("Adjacency Matrix: " + adjMatrixString)
-  	.attr("id","adjString");*/
 
   // Initialize D3 force layout.
   force = d3.forceSimulation(nodes)
@@ -116,10 +100,10 @@ function initializeBuilder() {
       .force('charge', d3.forceManyBody().strength(forceCharge))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .on('tick', tick);
-    
+
   // After the force variable is initialized, set the sliders to update the force variables.
-  chargeSlider.noUiSlider.on('slide', updateForceCharge);
-  linkDistSlider.noUiSlider.on('slide', updateForceLinkDist);
+  chargeSlider.noUiSlider.on('slide', function() { updateForceCharge(force, chargeSlider, toggleForce); });
+  linkDistSlider.noUiSlider.on('slide', function() { updateForceLinkDist(force, linkDistSlider, toggleForce); });
 
   // When a node begins to be dragged by the user, call the function dragstart.
   drag = d3.drag()
@@ -141,7 +125,7 @@ function initializeBuilder() {
   mousedown_link = null;
   mousedown_node = null;
   mouseup_node = null;
-    
+
   // Define which functions should be called for various mouse events on the svg.
   svg.on('mousedown', mousedown)
     .on('mousemove', mousemove)
@@ -151,22 +135,9 @@ function initializeBuilder() {
   d3.select(window)
     .on('keydown', keydown)
     .on('keyup', keyup);
-    
+
   // The restart() function updates the graph.
   restart();
-  
-  // Brett: Need to fix this.
-  /*
-  var maxLength = d3.max(nodes, function(d) { return d.name.length; });
-
-  console.log("maxLength: " + maxLength + "\n");
-
-  if(maxLength < 4){
-        document.getElementById("nodeText").style.fill = 'white';
-  } else {
-        document.getElementById("nodeText").style.fill = 'black';
-  }
-  */
 
 }
 
@@ -175,17 +146,6 @@ function resetGraph() {
   forceOn = false;
   toggleForce();
   restart();
-}
-
-function dragstart(d) {
-  // When dragging a node, pin it in place.
-  d.fx = d.x;
-  d.fy = d.y;
-}
-
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
 }
 
 function resetMouseVars() {
@@ -218,7 +178,7 @@ function tick() {
         sourceY = d.source.y + (sourcePadding * normY),
         targetX = d.target.x - (targetPadding * normX),
         targetY = d.target.y - (targetPadding * normY);
-    
+
     // Restrict the padded x and y coordinates of the source and target to be within a 15 pixel margin around the svg.
     if (sourceX > width - 15) {
       sourceX = width - 15;
@@ -264,7 +224,7 @@ function tick() {
     else if (d.y < 15) {
       d.y = 15;
     }
-    
+
     // Visually update the locations of the nodes based on the force simulation.
     return 'translate(' + d.x + ',' + d.y + ')';
   });
@@ -300,21 +260,18 @@ function restart() {
       // If the user clicks on a path while the shift key is not pressed and curEdit is true, set mousedown_link
       // to be the path that the user clicked on.
       mousedown_link = d;
-      
+
       // If the link was already selected, then unselect it.
       if(mousedown_link === selected_link) selected_link = null;
-      
-      // (Brett) Isn't 'if (curEdit)' redundant since we already checked it above?  Remove this line?
-//      else if (curEdit) selected_link = mousedown_link;
-      
+
       // If the link was not already selected, then select it.
       else selected_link = mousedown_link;
-      
+
       // Since we selected or unselected a link, set all nodes to be unselected.
       selected_node = null;
       // If highlighting neighbors is turned on, un-highlight all nodes and links since there is no currently selected node.
       if(curHighlight) unHighlightAll();
-      
+
       // Update all properties of the graph.
       restart();
     });
@@ -363,9 +320,9 @@ function restart() {
 
       // Otherwise, select node.
       mousedown_node = d;
-      
+
       // If the node that the user clicked was already selected, then unselect it.
-      if(mousedown_node === selected_node) { selected_node = null; 
+      if(mousedown_node === selected_node) { selected_node = null;
             if(curHighlight) unHighlightAll(); }
       //Brett: Add the following line back in if we don't want nodes to be brightened in non-editing mode.
       //else if(curEdit) { selected_node = mousedown_node;
@@ -411,7 +368,7 @@ function restart() {
         target = mousedown_node;
         direction = 'left';
       }
-      
+
       var link;
       link = links.filter(function(l) {
         return (l.source === source && l.target === target);
@@ -427,12 +384,6 @@ function restart() {
         // Graph is updated here so we change some items to default.
         menuDefaults();
       }
-
-      //document.getElementById("constructorString").innerHTML = "Macaulay2 Constructor: " + graph2M2Constructor(nodes,links);
-      
-      // (Brett) Removing incidence and adjacency matrices for now.
-      /*document.getElementById("incString").innerHTML = "Incidence Matrix: " + arraytoM2Matrix(getIncidenceMatrix(nodes,links));
-      document.getElementById("adjString").innerHTML = "Adjacency Matrix: " + arraytoM2Matrix(getAdjacencyMatrix(nodes,links));*/
 
       // select new link
       if (curEdit) selected_link = link;
@@ -455,18 +406,16 @@ function restart() {
           return;
         }
         // Check to see whether there already exists a node with the given name.
-        else if (checkName(name)) {
+        else if (checkName(name, nodes)) {
           alert('Sorry, a node with that name already exists.')
           name = "";
         }
       }
-      
+
       if(name != "null") {
         d.name = name;
-        d3.select(this.parentNode).select("text").text(function(d) {return d.name});          
+        d3.select(this.parentNode).select("text").text(function(d) {return d.name});
       }
-
-      //document.getElementById("constructorString").innerHTML = "Macaulay2 Constructor: " + graph2M2Constructor(nodes,links);
 
     });
 
@@ -479,17 +428,6 @@ function restart() {
         .attr("pointer-events", "none")
         .text(function(d) { return d.name; });
   }
-  /*
-  var maxLength = d3.max(nodes, function(d) {
-        return d.name.length;
-  });
-      
-  if(maxLength < 4){
-        document.getElementById("nodeText").style.fill = 'white';
-  } else {
-        document.getElementById("nodeText").style.fill = 'black';
-  }
-  */
 
   // Remove the old nodes.
   circle.exit().remove();
@@ -499,19 +437,6 @@ function restart() {
   force.nodes(nodes);
   force.force('link').links(links);
   force.alpha(0.1).restart();
-}
-
-function checkName(name) {
-  for (var i = 0; i<nodes.length; i++) {
-    if (nodes[i].name == name) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getNextAlpha(alpha) {
-  return String.fromCharCode(alpha.charCodeAt(0) + 1);
 }
 
 function mousedown() {
@@ -528,18 +453,10 @@ function mousedown() {
 
   var point = d3.mouse(this);
   var curName = lastNodeId + 1;
-  while(checkName(curName.toString())){
+  while(checkName(curName.toString(), nodes)){
       curName += 1;
   }
   curName = curName.toString();
-  /*
-  if (checkName(curName)) {
-    curName += 'a';
-  }
-  while (checkName(curName)) {
-    curName = curName.substring(0, curName.length - 1) + getNextAlpha(curName.slice(-1));
-  }
-  */
 
   // Graph Changed :: adding nodes
   var node = {id: lastNodeId++, name: curName};
@@ -550,15 +467,8 @@ function mousedown() {
       node.fy = node.y;
   }
   nodes.push(node);
-  // Graph is updated here so we change some items to default 
-  // d3.select("#isCM").html("isCM");
+  // Graph is updated here so we change some items to default
   menuDefaults();
-
-  //document.getElementById("constructorString").innerHTML = "Macaulay2 Constructor: " + graph2M2Constructor(nodes,links);
-    
-  // (Brett) Removing incidence and adjacency matrices for now.
-  /*document.getElementById("incString").innerHTML = "Incidence Matrix: " + arraytoM2Matrix(getIncidenceMatrix(nodes,links));
-  document.getElementById("adjString").innerHTML = "Adjacency Matrix: " + arraytoM2Matrix(getAdjacencyMatrix(nodes,links));*/
 
   restart();
 }
@@ -590,16 +500,6 @@ function mouseup() {
 
 }
 
-// Remove all links involving a given node.
-function spliceLinksForNode(node) {
-  var toSplice = links.filter(function(l) {
-    return (l.source === node || l.target === node);
-  });
-  toSplice.map(function(l) {
-    links.splice(links.indexOf(l), 1);
-  });
-}
-
 // only respond once per keydown
 var lastKeyDown = -1;
 
@@ -624,7 +524,7 @@ function keydown() {
       // If editing is enabled and there is currently a selected node, delete it from the 'nodes' array and delete all links that involved the deleted node.
       if(curEdit && selected_node) {
         nodes.splice(nodes.indexOf(selected_node), 1);
-        spliceLinksForNode(selected_node);
+        spliceLinksForNode(selected_node, nodes, links);
         if(curHighlight) unHighlightAll();
       } else if(curEdit && selected_link) {
         // If editing is enabled and there is currently a selected link, delete it from the 'links' array.
@@ -680,12 +580,12 @@ function unHighlightAll() {
     for (var i = 0; i<nodes.length; i++) {
        nodes[i].highlighted = false;
     }
-    
+
     // Un-highlight all links.
     for (var i = 0; i<links.length; i++) {
        links[i].highlighted = false;
     }
-    
+
     // Update graph based on changes to nodes and links.
     restart();
 }
@@ -695,12 +595,12 @@ function highlightAllNeighbors(n) {
     for (var i = 0; i<nodes.length; i++) {
        nodes[i].highlighted = areNeighbors(nodes[i],n);
     }
-    
+
     // Highlight all links that have the given node n as a source or target.
     for (var i = 0; i<links.length; i++) {
        links[i].highlighted = ((links[i].source === n) || (links[i].target === n));
     }
-    
+
     // Update graph based on changes to nodes and links.
     restart();
 }
@@ -709,36 +609,7 @@ function areNeighbors(node1,node2) {
     return links.some( function(l) {return (((l.source === node1) && (l.target === node2)) || ((l.target === node1) && (l.source === node2)));});
 }
 
-function setAllNodesFixed() {
-  for (var i = 0; i<nodes.length; i++) {
-    nodes[i].fx = nodes[i].x;
-    nodes[i].fy = nodes[i].y;
-  }
-}
-
-function setAllNodesUnfixed() {
-  for (var i = 0; i<nodes.length; i++) {
-    nodes[i].fx = null;
-    nodes[i].fy = null;
-  }
-}
-
-function hideLabels() {
-    circle.select("text").remove();    
-}
-
-function showLabels() {
-     circle.append('svg:text')
-      .attr('x', 0)
-      .attr('y', 4)
-      .attr('class', 'id noselect')
-      .attr("pointer-events", "none")
-      .text(function(d) { return d.name; });
-}
-
 function updateWindowSize2d() {
-    //var svg = document.getElementById("canvasElement2d");
-    
     // get width/height with container selector (body also works)
     // or use other method of calculating desired values
     if(!menuOpen){
@@ -748,7 +619,7 @@ function updateWindowSize2d() {
     }
     height = window.innerHeight-10;
 
-    // set attrs and 'resume' force 
+    // set attrs and 'resume' force
     svg.attr('width', width);
     svg.attr('height', height);
 
@@ -764,7 +635,7 @@ function graph2M2Constructor( nodeSet, edgeSet ){
   if (d==0) {
       return "graph({})";
   }
-    
+
   var e = edgeSet.length;
   for(var i = 0; i < e; i++ ){
     if(i != e-1){
@@ -860,53 +731,7 @@ function getAdjacencyMatrix (nodeSet, edgeSet){
   return adjMatrix;
 }
 
-function updateForceCharge(){
-    if(!forceOn){toggleForce()};
-    forceCharge = -chargeSlider.noUiSlider.get();
-    force.force('charge', d3.forceManyBody().strength(forceCharge)).alpha(1).restart();
-}
-
-function updateForceLinkDist(){
-    if(!forceOn){toggleForce()};
-    forceLinkDist = linkDistSlider.noUiSlider.get();
-    force.force('link').distance(forceLinkDist);
-    force.alpha(1).restart();
-}
-
-// Takes a rectangular array of arrays and returns a string which can be copy/pasted into M2.
-function arraytoM2Matrix (arr){
-  var str = "matrix{{";
-  for(var i = 0; i < arr.length; i++){
-    for(var j = 0; j < arr[i].length; j++){
-      str = str + arr[i][j].toString();
-      if(j == arr[i].length - 1){
-        str = str + "}";
-            } else {
-        str = str + ",";
-      }
-    }
-    if(i < arr.length-1){
-      str = str + ",{";
-    } else {
-      str = str + "}";
-    }
-  }
-
-  return str;
-}
-
-
 // for making unique timestamps in LaTeX. Numbers are not allowed in macros.
-function makeid()
-{
-    var randomtext = "";
-    var randompossible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-    for( var i=0; i < 5; i++ )
-        randomtext += randompossible.charAt(Math.floor(Math.random() * randompossible.length));
-
-    return randomtext;
-}
 
 function exportTikz (event){
   var points = [];
@@ -921,21 +746,8 @@ function exportTikz (event){
 
   var tikzTex = "";
 
-//  console.log(makeid());
-
   var timestamp = makeid();
 
-// tikzTex =  "\\begin{tikzpicture}\n          "+
-//   "% Point set in the form x-coord/y-coord/node ID/node label\n          "+
-//   "\\newcommand*\\points{"+points+"}\n          % Edge set in the form "+
-//   "Source ID/Target ID\n          \\newcommand*\\edges{"+edges+
-//   "}\n          % Scale to make the picture able to be viewed on the "+
-//   "page\n          \\newcommand*\\scale{0.02}\n          "+
-//   "% Creates nodes\n          \\foreach \\x/\\y/\\z/\\w in \\points {\n"+
-//       "\\node (\\z) at (\\scale*\\x,-\\scale*\\y) [circle,draw] {$\\w$};"+
-//   "\n          }\n          % Creates edges\n          "+
-//   "\\foreach \\x/\\y in \\edges {\n          \\draw (\\x) -- (\\y);"+
-//   "\n          }\n      \\end{tikzpicture}";
   tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+
     "{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+
     "}\n          \\newcommand*\\scale"+timestamp+
@@ -948,7 +760,7 @@ function exportTikz (event){
     "label\n     % \\edges"+timestamp+" is edge set in the form Source ID/"+
     "Target ID\n      % \\scale"+timestamp+" makes the picture able to be "+
     "viewed on the page\n";
-    
+
   if(!tikzGenerated){
     var tikzDiv = document.createElement("div");
     tikzDiv.id = "tikzHolder";
@@ -974,7 +786,7 @@ function exportTikz (event){
     clipboard = new ClipboardJS('#copyButton');
     clipboard.on('error', function(e) {
         window.alert("Press enter, then CTRL-C or CMD-C to copy")
-    });  
+    });
     tikzGenerated = true;
   }
   document.getElementById("tikzTextBox").value = tikzTex;
@@ -986,119 +798,119 @@ function exportTikz (event){
 
 // Add a response for each id from the side menu
 function onclickResults(m2Response) {
-    
+
     if (clickTest == "hasEulerianTrail"){
       d3.select("#hasEulerianTrail").html("&nbsp;&nbsp; hasEulerianTrail :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     if (clickTest == "hasOddHole"){
       d3.select("#hasOddHole").html("&nbsp;&nbsp; hasOddHole :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     if (clickTest == "isBipartite"){
       d3.select("#isBipartite").html("&nbsp;&nbsp; isBipartite :: <b>"+m2Response+"</b>");
-    } 
+    }
 
     else if (clickTest == "isChordal") {
-      d3.select("#isChordal").html("&nbsp;&nbsp; isChordal :: <b>"+m2Response+"</b>");    
-    } 
+      d3.select("#isChordal").html("&nbsp;&nbsp; isChordal :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isCM") {
-      d3.select("#isCM").html("&nbsp;&nbsp; isCM :: <b>"+m2Response+"</b>");    
+      d3.select("#isCM").html("&nbsp;&nbsp; isCM :: <b>"+m2Response+"</b>");
     }
-    
+
     else if (clickTest == "isComparabilityGraph") {
-      d3.select("#isComparabilityGraph").html("&nbsp;&nbsp; isComparabilityGraph :: <b>"+m2Response+"</b>");    
+      d3.select("#isComparabilityGraph").html("&nbsp;&nbsp; isComparabilityGraph :: <b>"+m2Response+"</b>");
     }
-    
+
     else if (clickTest == "isConnected") {
-      d3.select("#isConnected").html("&nbsp;&nbsp; isConnected :: <b>"+m2Response+"</b>");    
-    }    
+      d3.select("#isConnected").html("&nbsp;&nbsp; isConnected :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isCyclic") {
-      d3.select("#isCyclic").html("&nbsp;&nbsp; isCyclic :: <b>"+m2Response+"</b>");    
-    }    
+      d3.select("#isCyclic").html("&nbsp;&nbsp; isCyclic :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isEulerian") {
-      d3.select("#isEulerian").html("&nbsp;&nbsp; isEulerian :: <b>"+m2Response+"</b>");    
-    }    
+      d3.select("#isEulerian").html("&nbsp;&nbsp; isEulerian :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isForest") {
-      d3.select("#isForest").html("&nbsp;&nbsp; isForest :: <b>"+m2Response+"</b>");    
-    }    
+      d3.select("#isForest").html("&nbsp;&nbsp; isForest :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isPerfect") {
-      d3.select("#isPerfect").html("&nbsp;&nbsp; isPerfect :: <b>"+m2Response+"</b>");    
-    }    
+      d3.select("#isPerfect").html("&nbsp;&nbsp; isPerfect :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isRegular") {
-      d3.select("#isRegular").html("&nbsp;&nbsp; isRegular :: <b>"+m2Response+"</b>");    
-    }    
+      d3.select("#isRegular").html("&nbsp;&nbsp; isRegular :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isSimple") {
-      d3.select("#isSimple").html("&nbsp;&nbsp; isSimple :: <b>"+m2Response+"</b>");    
-    }    
+      d3.select("#isSimple").html("&nbsp;&nbsp; isSimple :: <b>"+m2Response+"</b>");
+    }
 
     else if (clickTest == "isTree") {
-      d3.select("#isTree").html("&nbsp;&nbsp; isTree :: <b>"+m2Response+"</b>");    
+      d3.select("#isTree").html("&nbsp;&nbsp; isTree :: <b>"+m2Response+"</b>");
     }
 
     else if (clickTest == "isRigid") {
-      d3.select("#isRigid").html("&nbsp;&nbsp; isRigid :: <b>"+m2Response+"</b>");    
+      d3.select("#isRigid").html("&nbsp;&nbsp; isRigid :: <b>"+m2Response+"</b>");
     }
-    
+
     else if (clickTest == "chromaticNumber") {
-      d3.select("#chromaticNumber").html("&nbsp;&nbsp; chromaticNumber :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#chromaticNumber").html("&nbsp;&nbsp; chromaticNumber :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "independenceNumber") {
-      d3.select("#independenceNumber").html("&nbsp;&nbsp; independenceNumber :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#independenceNumber").html("&nbsp;&nbsp; independenceNumber :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "cliqueNumber") {
-      d3.select("#cliqueNumber").html("&nbsp;&nbsp; cliqueNumber :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#cliqueNumber").html("&nbsp;&nbsp; cliqueNumber :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "degeneracy") {
-      d3.select("#degeneracy").html("&nbsp;&nbsp; degeneracy :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#degeneracy").html("&nbsp;&nbsp; degeneracy :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "density") {
-      d3.select("#density").html("&nbsp;&nbsp; density :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#density").html("&nbsp;&nbsp; density :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "diameter") {
-      d3.select("#diameter").html("&nbsp;&nbsp; diameter :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#diameter").html("&nbsp;&nbsp; diameter :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "edgeConnectivity") {
-      d3.select("#edgeConnectivity").html("&nbsp;&nbsp; edgeConnectivity :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#edgeConnectivity").html("&nbsp;&nbsp; edgeConnectivity :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "minimalDegree") {
-      d3.select("#minimalDegree").html("&nbsp;&nbsp; minimalDegree :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#minimalDegree").html("&nbsp;&nbsp; minimalDegree :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "numberOfComponents") {
-      d3.select("#numberOfComponents").html("&nbsp;&nbsp; numberOfComponents :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#numberOfComponents").html("&nbsp;&nbsp; numberOfComponents :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "numberOfTriangles") {
-      d3.select("#numberOfTriangles").html("&nbsp;&nbsp; numberOfTriangles :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#numberOfTriangles").html("&nbsp;&nbsp; numberOfTriangles :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "radius") {
-      d3.select("#radius").html("&nbsp;&nbsp; radius :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#radius").html("&nbsp;&nbsp; radius :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "vertexConnectivity") {
-      d3.select("#vertexConnectivity").html("&nbsp;&nbsp; vertexConnectivity :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#vertexConnectivity").html("&nbsp;&nbsp; vertexConnectivity :: <b>"+m2Response+"</b>");
+    }
+
     else if (clickTest == "vertexCoverNumber") {
-      d3.select("#vertexCoverNumber").html("&nbsp;&nbsp; vertexCoverNumber :: <b>"+m2Response+"</b>");    
-    }  
-    
+      d3.select("#vertexCoverNumber").html("&nbsp;&nbsp; vertexCoverNumber :: <b>"+m2Response+"</b>");
+    }
+
 }
 
 // Anytime the graph is edited by user we call this function.
@@ -1109,14 +921,14 @@ function menuDefaults() {
   d3.select("#isCM").html("&nbsp;&nbsp; isCM");
   d3.select("#isChordal").html("&nbsp;&nbsp; isChordal");
   d3.select("#isBipartite").html("&nbsp;&nbsp; isBipartite");
-  d3.select("#isComparabilityGraph").html("&nbsp;&nbsp; isComparabilityGraph");  
-  d3.select("#isConnected").html("&nbsp;&nbsp; isConnected");  
-  d3.select("#isCyclic").html("&nbsp;&nbsp; isCyclic");  
-  d3.select("#isEulerian").html("&nbsp;&nbsp; isEulerian");  
-  d3.select("#isForest").html("&nbsp;&nbsp; isForest");  
-  d3.select("#isPerfect").html("&nbsp;&nbsp; isPerfect");  
-  d3.select("#isRegular").html("&nbsp;&nbsp; isRegular");  
-  d3.select("#isSimple").html("&nbsp;&nbsp; isSimple");  
+  d3.select("#isComparabilityGraph").html("&nbsp;&nbsp; isComparabilityGraph");
+  d3.select("#isConnected").html("&nbsp;&nbsp; isConnected");
+  d3.select("#isCyclic").html("&nbsp;&nbsp; isCyclic");
+  d3.select("#isEulerian").html("&nbsp;&nbsp; isEulerian");
+  d3.select("#isForest").html("&nbsp;&nbsp; isForest");
+  d3.select("#isPerfect").html("&nbsp;&nbsp; isPerfect");
+  d3.select("#isRegular").html("&nbsp;&nbsp; isRegular");
+  d3.select("#isSimple").html("&nbsp;&nbsp; isSimple");
   d3.select("#isTree").html("&nbsp;&nbsp; isTree");
   d3.select("#isRigid").html("&nbsp;&nbsp; isRigid");
   d3.select("#chromaticNumber").html("&nbsp;&nbsp; chromaticNumber");
@@ -1138,50 +950,6 @@ function menuDefaults() {
   }
 }
 
-// Create the XHR object.
-function createCORSRequest(method, url) {
-  var xhr = new XMLHttpRequest();                    
-  if ("withCredentials" in xhr) {
-    // XHR for Chrome/Firefox/Opera/Safari.
-    xhr.open(method, url, true);
-  } else if (typeof XDomainRequest != "undefined") {
-    // XDomainRequest for IE.
-    xhr = new XDomainRequest();
-    xhr.open(method, url);
-  } else {
-    // CORS not supported.
-    xhr = null;
-  }
-
-  return xhr;
-}
- 
-// Make the actual CORS request.
-function makeCorsRequest(method,url,browserData) {
-  // All HTML5 Rocks properties support CORS.
-  // var url ='http://localhost:8000/fcn2/';
- 
-  var xhr = createCORSRequest(method, url);
-  if (!xhr) {
-    alert('CORS not supported');
-    return;
-  }
- 
-  // Response handlers.
-  xhr.onload = function() {
-    var responseText = xhr.responseText;
-
-    onclickResults(responseText);      
-
-  };
- 
-  //xhr.onerror = function() {
-  //  alert('Woops, there was an error making the request.');
-  //};
-
-  xhr.send(browserData);
-}
-
 // -----------------------------------------
 // End Server Stuff
 // -----------------------------------------
@@ -1189,43 +957,13 @@ function makeCorsRequest(method,url,browserData) {
     // Initialize clipboard.js.
     var clipboard = null;
 
-//    $('#side').BootSideMenu({side:"right"});
-    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
-    // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
-    document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
-            menuOpen = !menuOpen;
-            updateWindowSize2d();    
-    }, false);
+    initSideMenu(updateWindowSize2d);
 
     document.getElementById("canvasElement2d").style.width = window.innerWidth;
     document.getElementById("canvasElement2d").style.height = window.innerHeight;
-      
-    window.addEventListener("resize", updateWindowSize2d, false);
 
-    // Initialize sliders
-    var chargeSlider = document.getElementById('charge-slider');
-    noUiSlider.create(chargeSlider, {
-        start: [1500],
-        //tooltips: true,
-        range: {
-			'min': [0],
-			'max': [6000]
-		}
-    });
-    //chargeSlider.noUiSlider.on('update', updateForceCharge);
-      
-    var linkDistSlider = document.getElementById('linkdist-slider');
-    noUiSlider.create(linkDistSlider, {
-        start: [100],
-        //tooltips: true,
-        range: {
-			'min': [0],
-			'max': [400]
-		}
-    });
-    //chargeSlider.noUiSlider.on('update', updateForceLinkDist);  
-      
-      
+    var { chargeSlider, linkDistSlider } = initSliders();
+
     $(document).ready(function(){
 
       $("#editToggle").on("click", function(){
@@ -1239,19 +977,19 @@ function makeCorsRequest(method,url,browserData) {
           enableEditing();
         }
       });
-    
+
       $("#labelToggle").on("click", function(){
         if(!labelsOn) {
           $(this).html("Hide labels");
           labelsOn = !labelsOn;
-          showLabels();
+          showLabels(circle);
         } else {
           $(this).html("Show labels");
           labelsOn = !labelsOn;
-          hideLabels();
+          hideLabels(circle);
         }
       });
-    
+
       $("#highlightToggle").on("click", function(){
         if(curHighlight) {
           $(this).html("Highlight neighbors");
@@ -1265,202 +1003,200 @@ function makeCorsRequest(method,url,browserData) {
       });
 
       $("#reset").on("click", resetGraph);
-      
+
       $("#forceToggle").on("click", toggleForce);
-      
+
       $("#exportTikz").on("click", function() {
         exportTikz();
       });
 
       // Begin browser-M2 communication.
       // For each item, a line in the function `onclickResults()`
-      // located in `visGraph2d.js` must be added. 
-      // 
+      // located in `visGraph2d.js` must be added.
+      //
       // If you wish to delete the text to make it vanish when the graph is edited
       // search for 'menuDefaults()'.
 
       // Checks to see if user's graph has an Eulerian trail
       $("#hasEulerianTrail").on("click", function() {
         clickTest = "hasEulerianTrail";
-        makeCorsRequest('POST','http://localhost:'+portData+'/hasEulerianTrail/', graph2M2Constructor(nodes,links));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/hasEulerianTrail/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Checks to see if user's graph has an odd hole
       $("#hasOddHole").on("click", function() {
         clickTest = "hasOddHole";
-        makeCorsRequest('POST','http://localhost:'+portData+'/hasOddHole/', graph2M2Constructor(nodes,links));
-      });    
-      
+        makeCorsRequest('POST','http://localhost:'+portData+'/hasOddHole/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Checks to see if users graph is bipartite
       $("#isBipartite").on("click", function() {
         clickTest = "isBipartite";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isBipartite/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isBipartite/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is chordal
       $("#isChordal").on("click", function() {
         clickTest = "isChordal";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isChordal/', graph2M2Constructor(nodes,links));
-      });                  
+        makeCorsRequest('POST','http://localhost:'+portData+'/isChordal/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is Cohen-Macaulay
       $("#isCM").on("click", function() {
         clickTest = "isCM";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isCM/', graph2M2Constructor(nodes,links));
+        makeCorsRequest('POST','http://localhost:'+portData+'/isCM/', graph2M2Constructor(nodes,links), onclickResults);
       });
-        
+
       // Checks to see if user's graph is a comparability graph of a poset.
       $("#isComparabilityGraph").on("click", function() {
         clickTest = "isComparabilityGraph";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isComparabilityGraph/', graph2M2Constructor(nodes,links));
-      });        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isComparabilityGraph/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is Connected
       $("#isConnected").on("click", function() {
         clickTest = "isConnected";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isConnected/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isConnected/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is Cyclic
       $("#isCyclic").on("click", function() {
         clickTest = "isCyclic";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isCyclic/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isCyclic/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is Eulerian
       $("#isEulerian").on("click", function() {
         clickTest = "isEulerian";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isEulerian/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isEulerian/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is a Forest
       $("#isForest").on("click", function() {
         clickTest = "isForest";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isForest/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isForest/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is Perfect
       $("#isPerfect").on("click", function() {
         clickTest = "isPerfect";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isPerfect/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isPerfect/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is Regular
       $("#isRegular").on("click", function() {
         clickTest = "isRegular";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isRegular/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isRegular/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is Simple
       $("#isSimple").on("click", function() {
         clickTest = "isSimple";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isSimple/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isSimple/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is a Tree
       $("#isTree").on("click", function() {
         clickTest = "isTree";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isTree/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isTree/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Checks to see if users graph is Rigid
       $("#isRigid").on("click", function() {
         clickTest = "isRigid";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isRigid/', graph2M2Constructor(nodes,links));
-      });      
+        makeCorsRequest('POST','http://localhost:'+portData+'/isRigid/', graph2M2Constructor(nodes,links), onclickResults);
+      });
 
       // Computes the chromatic number of the user's graph
       $("#chromaticNumber").on("click", function() {
         clickTest = "chromaticNumber";
-        makeCorsRequest('POST','http://localhost:'+portData+'/chromaticNumber/', graph2M2Constructor(nodes,links));
-      });          
-    
+        makeCorsRequest('POST','http://localhost:'+portData+'/chromaticNumber/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes the independence number of the user's graph
       $("#independenceNumber").on("click", function() {
         clickTest = "independenceNumber";
-        makeCorsRequest('POST','http://localhost:'+portData+'/independenceNumber/', graph2M2Constructor(nodes,links));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/independenceNumber/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes the clique number of the user's graph
       $("#cliqueNumber").on("click", function() {
         clickTest = "cliqueNumber";
-        makeCorsRequest('POST','http://localhost:'+portData+'/cliqueNumber/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/cliqueNumber/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes degeneracy of the user's graph
       $("#degeneracy").on("click", function() {
         clickTest = "degeneracy";
-        makeCorsRequest('POST','http://localhost:'+portData+'/degeneracy/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/degeneracy/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes density of the user's graph
       $("#density").on("click", function() {
         clickTest = "density";
-        makeCorsRequest('POST','http://localhost:'+portData+'/density/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/density/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes diameter of the user's graph
       $("#diameter").on("click", function() {
         clickTest = "diameter";
-        makeCorsRequest('POST','http://localhost:'+portData+'/diameter/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/diameter/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes edge connectivity of the user's graph
       $("#edgeConnectivity").on("click", function() {
         clickTest = "edgeConnectivity";
-        makeCorsRequest('POST','http://localhost:'+portData+'/edgeConnectivity/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/edgeConnectivity/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes minimal degree of the user's graph
       $("#minimalDegree").on("click", function() {
         clickTest = "minimalDegree";
-        makeCorsRequest('POST','http://localhost:'+portData+'/minimalDegree/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/minimalDegree/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes number of components of the user's graph
       $("#numberOfComponents").on("click", function() {
         clickTest = "numberOfComponents";
-        makeCorsRequest('POST','http://localhost:'+portData+'/numberOfComponents/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/numberOfComponents/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes number of triangles of the user's graph
       $("#numberOfTriangles").on("click", function() {
         clickTest = "numberOfTriangles";
-        makeCorsRequest('POST','http://localhost:'+portData+'/numberOfTriangles/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/numberOfTriangles/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes radius of the user's graph
       $("#radius").on("click", function() {
         clickTest = "radius";
-        makeCorsRequest('POST','http://localhost:'+portData+'/radius/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/radius/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes vertex connectivity of the user's graph
       $("#vertexConnectivity").on("click", function() {
         clickTest = "vertexConnectivity";
-        makeCorsRequest('POST','http://localhost:'+portData+'/vertexConnectivity/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/vertexConnectivity/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Computes vertex cover number of the user's graph
       $("#vertexCoverNumber").on("click", function() {
         clickTest = "vertexCoverNumber";
-        makeCorsRequest('POST','http://localhost:'+portData+'/vertexCoverNumber/', graph2M2Constructor(nodes,links));
-      });   
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/vertexCoverNumber/', graph2M2Constructor(nodes,links), onclickResults);
+      });
+
       // Ends the browser session and outputs the information to M2
       $("#endSession").on("click", function() {
         if(activeSession) {
-          //$(this).html("Session Terminated");
-          //$(this).html(<p style="color: #ffffff; background-color: #ff0000">Session terminated</p>);
           document.getElementById("endSession").style.color = 'white';
           document.getElementById("endSession").style.backgroundColor = 'red';
           document.getElementById("endSession").innerHTML = "Session terminated";
-          makeCorsRequest('POST','http://localhost:'+portData+'/end/',graph2M2Constructor(nodes,links));
+          makeCorsRequest('POST','http://localhost:'+portData+'/end/',graph2M2Constructor(nodes,links), onclickResults);
           activeSession = !activeSession;
         } else {
           return;
         }
-      });            
+      });
 
       initializeBuilder();
       disableEditing();
@@ -1469,13 +1205,13 @@ function makeCorsRequest(method,url,browserData) {
 
     function toggleForce() {
       if (forceOn) {
-        setAllNodesFixed();
+        setAllNodesFixed(nodes);
         document.getElementById("forceToggle").innerHTML = "Turn on force";
       }
       else {
-        setAllNodesUnfixed();
+        setAllNodesUnfixed(nodes);
         document.getElementById("forceToggle").innerHTML = "Turn off force";
       }
       forceOn = !forceOn;
     }
-    
+

@@ -1,4 +1,12 @@
 import * as d3 from 'd3';
+import {
+  makeid, getNextAlpha, makeCorsRequest,
+  dragstart, dragged,
+  checkName, spliceLinksForNode, setAllNodesFixed, setAllNodesUnfixed,
+  hideLabels, showLabels,
+  updateForceCharge, updateForceLinkDist,
+  initSliders, initSideMenu
+} from './visCommonForce.js';
 
   // Initialize variables.
   var width  = null,
@@ -39,7 +47,7 @@ import * as d3 from 'd3';
   var drag = null;
 
  // Helps determine what menu button was clicked.
-  var clickTest = null; 
+  var clickTest = null;
 
   var scriptSource = (function(scripts) {
     var scripts = document.getElementsByTagName('script'),
@@ -51,7 +59,7 @@ import * as d3 from 'd3';
 
     return script.getAttribute('src', -1)
     }());
-    
+
     // Just get the current directory that contains the html file.
     scriptSource = scriptSource.substring(0, scriptSource.length - 14);
 
@@ -60,38 +68,38 @@ function initializeBuilder() {
   width  = window.innerWidth-document.getElementById("side").clientWidth;
   height = window.innerHeight-10;
   colors = d3.scaleOrdinal(d3.schemeCategory10);
-  
+
   svg = d3.select('body')
     .append('svg')
     .attr('width', width)
     .attr('height', height)
     .attr('id', 'canvasElement2d');
-    
+
   if(fixExtremalNodes){
       document.getElementById("extremalNodeToggle").text = "Don't fix extremal nodes";
   }
 
   // Compute the minimal covering relations from the poset relation matrix.  This is necessary before computing the group for each node.
   dataCovRel = minimalPosetRelations(dataRelMatrix);
-    
+
   // Calculate appropriate groups for elements based on rank or height and store them in the global variable dataGroupList.
   dataGroupList = computeNodeGroups(dataRelMatrix);
-    
+
   // Compute the maximum level of the nodes in the poset.
   maxGroup = d3.max(dataGroupList);
   // Compute the distance between levels in the poset.  Make sure the denominator is positive.
   rowSep = (height-2*vPadding)/d3.max([maxGroup,1]);
-      
+
   // Set up initial nodes and links
   //  - nodes are known by 'id', not by index in array.
   //  - links are always source < target; edge directions are set by 'left' and 'right'.
   //var data = dataData;
   //var names = labelData;
-    
+
   // Initialize nodes so that they will be equally spaced along each level.
   nodes = nodesFromLabelsGroups(dataLabels,dataGroupList);
   lastNodeId = nodes.length;
-  setAllNodesFixed();
+  setAllNodesFixed(nodes);
 
   // Initialize the links based on the minimal covering relations obtained from the relation matrix.
   links = linksFromNodesRelations(nodes,dataCovRel);
@@ -104,8 +112,8 @@ function initializeBuilder() {
       .on('tick', tick);
 
   // After the force variable is initialized, set the sliders to update the force variables.
-  chargeSlider.noUiSlider.on('slide', updateForceCharge);
-  linkDistSlider.noUiSlider.on('slide', updateForceLinkDist);
+  chargeSlider.noUiSlider.on('slide', function() { updateForceCharge(force, chargeSlider, toggleForce); });
+  linkDistSlider.noUiSlider.on('slide', function() { updateForceLinkDist(force, linkDistSlider, toggleForce); });
 
   // define arrow markers for graph links
   svg.append('svg:defs').append('svg:marker')
@@ -118,7 +126,7 @@ function initializeBuilder() {
     .append('svg:path')
     .attr('d', 'M0,-5L10,0L0,5')
     .attr('fill', '#000');
-    
+
   // When a node begins to be dragged by the user, call the function dragstart.
   drag = d3.drag()
     .on("start", dragstart)
@@ -139,7 +147,7 @@ function initializeBuilder() {
   mousedown_link = null;
   mousedown_node = null;
   mouseup_node = null;
-    
+
   // Define which functions should be called for various mouse events on the svg.
   svg.on('mousedown', mousedown)
     .on('mousemove', mousemove)
@@ -149,10 +157,10 @@ function initializeBuilder() {
   d3.select(window)
     .on('keydown', keydown)
     .on('keyup', keyup);
-    
+
   // The restart() function updates the graph.
   restart();
-  
+
   // Brett: Need to fix this.
   /*
   var maxLength = d3.max(nodes, function(d) { return d.name.length; });
@@ -169,7 +177,7 @@ function initializeBuilder() {
 }
 
 function resetPoset() {
-  
+
   // Set the x-coordinate of each node to the original fixed layout.
   var groupFreq = [];
   var groupCount = [];
@@ -178,33 +186,22 @@ function resetPoset() {
     groupCount.push(0);
   }
   nodes.forEach(function(d){groupFreq[d.group]=groupFreq[d.group]+1;});
-    
+
   for( var i = 0; i < nodes.length; i++ ){
     groupCount[nodes[i].group]=groupCount[nodes[i].group]+1;
     nodes[i].x = groupCount[nodes[i].group]*((width-2*hPadding)/(groupFreq[nodes[i].group]+1));
     nodes[i].px = groupCount[nodes[i].group]*((width-2*hPadding)/(groupFreq[nodes[i].group]+1));
   }
-   
-  setAllNodesFixed();
-  
+
+  setAllNodesFixed(nodes);
+
   // Calling tick() here is crucial so that the locations of the nodes are updated.
   tick();
-    
+
   // Update the side menu bar to reflect that all nodes are now fixed in their original positions.
   if(forceOn) toggleForce();
-  
+
   restart();
-}
-
-function dragstart(d) {
-  // When dragging a node, pin it in place.
-  d.fx = d.x;
-  d.fy = d.y;
-}
-
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
 }
 
 function resetMouseVars() {
@@ -216,13 +213,13 @@ function resetMouseVars() {
 
 // Update force layout (called automatically by the force layout simulation each iteration).
 function tick() {
-  
+
   // Make sure all nodes stay at the height corresponding to their group.
   for( var i = 0; i < nodes.length; i++ ){
     nodes[i].y = height-vPadding-(nodes[i].group)*rowSep;
     nodes[i].py = height-vPadding-(nodes[i].group)*rowSep;
   }
-    
+
     // Restrict the nodes to be contained within a 15 pixel margin around the svg.
   circle.attr('transform', function(d) {
     if (d.x > width - 15) {
@@ -231,11 +228,11 @@ function tick() {
     else if (d.x < 15) {
       d.x = 15;
     }
-    
+
     // Visually update the locations of the nodes based on the force simulation.
     return 'translate(' + d.x + ',' + d.y + ')';
   });
-    
+
   // Draw directed edges with proper padding from node centers.
   path.attr('d', function(d) {
     // For each edge, calculate the distance from the source to the target
@@ -257,7 +254,7 @@ function tick() {
         sourceY = d.source.y + (sourcePadding * normY),
         targetX = d.target.x - (targetPadding * normX),
         targetY = d.target.y - (targetPadding * normY);
-    
+
     // Restrict the padded x and y coordinates of the source and target to be within a 15 pixel margin around the svg.
     if (sourceX > width - 15) {
       sourceX = width - 15;
@@ -321,21 +318,21 @@ function restart() {
       // If the user clicks on a path while the shift key is not pressed and curEdit is true, set mousedown_link
       // to be the path that the user clicked on.
       mousedown_link = d;
-      
+
       // If the link was already selected, then unselect it.
       if(mousedown_link === selected_link) selected_link = null;
-      
+
       // (Brett) Isn't 'if (curEdit)' redundant since we already checked it above?  Remove this line?
 //      else if (curEdit) selected_link = mousedown_link;
-      
+
       // If the link was not already selected, then select it.
       else selected_link = mousedown_link;
-      
+
       // Since we selected or unselected a link, set all nodes to be unselected.
       selected_node = null;
       // If highlighting neighbors is turned on, un-highlight all nodes and links since there is no currently selected node.
       if(curHighlight) unHighlightAll();
-      
+
       // Update all properties of the graph.
       restart();
     });
@@ -354,7 +351,7 @@ function restart() {
     .style('fill', function(d) { return (d === selected_node) ? d3.rgb(colors(d.id)).brighter().toString() : (d.highlighted ? '#FF0000' : colors(d.id)); })
     .classed('highlighted', function(d) { return d.highlighted; })
     .attr('group', function(d) {return d.group;});
-  
+
   // Update the text on each circle with the name of the corresponding node.
   //circle.select("text").text(function(d) {console.log(d.name); return d.name;});
 
@@ -388,9 +385,9 @@ function restart() {
 
       // Otherwise, select node.
       mousedown_node = d;
-      
+
       // If the node that the user clicked was already selected, then unselect it.
-      if(mousedown_node === selected_node) { selected_node = null; 
+      if(mousedown_node === selected_node) { selected_node = null;
             if(curHighlight) unHighlightAll(); }
       //Brett: Add the following line back in if we don't want nodes to be brightened in non-editing mode.
       //else if(curEdit) { selected_node = mousedown_node;
@@ -442,15 +439,15 @@ function restart() {
             maxGroup = d3.max(dataGroupList);
             // Make sure the denominator is positive.
             rowSep = (height-2*vPadding)/d3.max([maxGroup,1]);
-            
+
             // Running restart on empty arrays here clears out the circle and path groups so that they are rebuilt from scratch referring to the new node and links below.
             nodes = [];
             links = [];
             restart();
-            
+
             nodes = nodesFromLabelsGroups(dataLabels,dataGroupList);
             lastNodeId = nodes.length;
-            setAllNodesFixed();
+            setAllNodesFixed(nodes);
             links = linksFromNodesRelations(nodes,dataCovRel);
             force.nodes(nodes);
             force.force('link').links(links);
@@ -461,12 +458,12 @@ function restart() {
             link = links.filter(function(l) {
                 return (l.source.id == d3.min([sourceID,targetID]) && l.target.id == d3.max([sourceID,targetID]));
             })[0];
-                        
+
             // Update the side menu bar to reflect that all nodes are now fixed in their original positions.
             if(forceOn) toggleForce();
         }
       }
-      
+
       // Select the newly created link and unselect the previously selected node.
       if (curEdit) selected_link = link;
       selected_node = null;
@@ -489,12 +486,12 @@ function restart() {
           return;
         }
         // Check to see whether there already exists a node with the given name.
-        else if (checkName(name)) {
+        else if (checkName(name, nodes)) {
           alert('Sorry, a node with that name already exists.')
           name = "";
         }
       }
-            
+
       if(name != "null") {
         d.name = name;
         d3.select(this.parentNode).select("text").text(function(d) {return d.name});
@@ -517,7 +514,7 @@ function restart() {
   var maxLength = d3.max(nodes, function(d) {
         return d.name.length;
   });
-      
+
   if(maxLength < 4){
         document.getElementById("nodeText").style.fill = 'white';
   } else {
@@ -535,19 +532,6 @@ function restart() {
   force.alpha(0.1).restart();
 }
 
-function checkName(name) {
-  for (var i = 0; i<nodes.length; i++) {
-    if (nodes[i].name == name) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getNextAlpha(alpha) {
-  return String.fromCharCode(alpha.charCodeAt(0) + 1);
-}
-
 function mousedown() {
   // prevent I-bar on drag
   //d3.event.preventDefault();
@@ -560,7 +544,7 @@ function mousedown() {
 
   var point = d3.mouse(this);
   var curName = lastNodeId + 1;
-  while(checkName(curName.toString())){
+  while(checkName(curName.toString(), nodes)){
       curName += 1;
   }
   curName = curName.toString();
@@ -586,7 +570,7 @@ function mousedown() {
   dataLabels.push(curName);
   // Add a new row and column to the global array dataRelMatrix with a 1 in the bottom row corresponding to the new node.
   dataRelMatrix = extendMatrix(dataRelMatrix);
-    
+
   // Graph is updated here so we change some items to default.
   menuDefaults();
 
@@ -601,7 +585,7 @@ function mousemove() {
   if(curEdit){
     drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
   }
-    
+
   restart();
 }
 
@@ -623,16 +607,6 @@ function mouseup() {
 
 }
 
-// Remove all links involving a given node.
-function spliceLinksForNode(node) {
-  var toSplice = links.filter(function(l) {
-    return (l.source === node || l.target === node);
-  });
-  toSplice.map(function(l) {
-    links.splice(links.indexOf(l), 1);
-  });
-}
-
 // only respond once per keydown
 var lastKeyDown = -1;
 
@@ -651,9 +625,9 @@ function keydown() {
 
   // The rest of the key presses only apply when a node or link is currently selected.
   if(!selected_node && !selected_link) return;
-    
+
   // -----------------------------------------------------
-    
+
   switch(d3.event.keyCode) {
     case 8: // backspace
     case 46: // delete
@@ -667,14 +641,14 @@ function keydown() {
         maxGroup = d3.max(dataGroupList);
         // Make sure the denominator is positive.
         rowSep = (height-2*vPadding)/d3.max([maxGroup,1]);
-        
+
         nodes = [];
         links = [];
         restart();
-          
+
         nodes = nodesFromLabelsGroups(dataLabels,dataGroupList);
         lastNodeId = nodes.length;
-        setAllNodesFixed();
+        setAllNodesFixed(nodes);
         links = linksFromNodesRelations(nodes,dataCovRel);
         force.nodes(nodes);
         force.force('link').links(links);
@@ -683,7 +657,7 @@ function keydown() {
         if(curHighlight) unHighlightAll();
         // Update the side menu bar to reflect that all nodes are now fixed in their original positions.
         if(forceOn) toggleForce();
-          
+
       } else if(curEdit && selected_link) {
         // Delete the selected link and update the poset.
         var sourceID = selected_link.source.id;
@@ -697,21 +671,21 @@ function keydown() {
         maxGroup = d3.max(dataGroupList);
         // Make sure the denominator is positive.
         rowSep = (height-2*vPadding)/d3.max([maxGroup,1]);
-        
+
         nodes = [];
         links = [];
         restart();
-        
+
         nodes = nodesFromLabelsGroups(dataLabels,dataGroupList);
         lastNodeId = nodes.length;
-        setAllNodesFixed();
+        setAllNodesFixed(nodes);
         links = linksFromNodesRelations(nodes,dataCovRel);
-        force.nodes(nodes)
-          .links(links);
+        force.nodes(nodes);
+        force.force('link').links(links);
         resetMouseVars();
-        
+
         if(curHighlight) unHighlightAll();
-        
+
         // Update the side menu bar to reflect that all nodes are now fixed in their original positions.
         if(forceOn) toggleForce();
       }
@@ -719,9 +693,9 @@ function keydown() {
       if(curEdit) {selected_node = null;}
 
       // Graph Changed :: deleted nodes and links
-      // as a result we change some items to default    
+      // as a result we change some items to default
       menuDefaults();
-     
+
       restart();
       break;
   }
@@ -766,12 +740,12 @@ function unHighlightAll() {
     for (var i = 0; i<nodes.length; i++) {
        nodes[i].highlighted = false;
     }
-    
+
     // Un-highlight all links.
     for (var i = 0; i<links.length; i++) {
        links[i].highlighted = false;
     }
-    
+
     // Update graph based on changes to nodes and links.
     restart();
 }
@@ -790,45 +764,18 @@ function highlightAllComparable(n) {
     for(var i=0; i < compElt.length; i++){
         nodes[compElt[i]].highlighted = true;
     }
-    
+
     // Highlight all links whose source and target are both comparable to n.
     for (var i = 0; i<links.length; i++) {
        links[i].highlighted = (containedIn(links[i].source.id,compElt) && containedIn(links[i].target.id,compElt));
     }
-    
+
     // Update graph based on changes to nodes and links.
     restart();
 }
 
 function areNeighbors(node1,node2) {
     return links.some( function(l) {return (((l.source === node1) && (l.target === node2)) || ((l.target === node1) && (l.source === node2)));});
-}
-
-function setAllNodesFixed() {
-  for (var i = 0; i<nodes.length; i++) {
-    nodes[i].fx = nodes[i].x;
-    nodes[i].fy = nodes[i].y;
-  }
-}
-
-function setAllNodesUnfixed() {
-  for (var i = 0; i<nodes.length; i++) {
-    nodes[i].fx = null;
-    nodes[i].fy = null;
-  }
-}
-
-function hideLabels() {
-    circle.select("text").remove();    
-}
-
-function showLabels() {
-     circle.append('svg:text')
-      .attr('x', 0)
-      .attr('y', 4)
-      .attr('class', 'id noselect')
-      .attr("pointer-events", "none")
-      .text(function(d) { return d.name; });
 }
 
 // This method returns the groups of the nodes based on rank or height, as appropriate.
@@ -857,12 +804,12 @@ function nodesFromLabelsGroups(labelList,groupList) {
     groupCount.push(0);
   }
   temp.forEach(function(d){groupFreq[d.group]=groupFreq[d.group]+1;});
-  
+
   for(var i=0; i < temp.length; i++){
       // Set the nodes as fixed by default and specify their initial x and y values to be evenly spaced along their level.
 	  temp[i].y = height-vPadding-temp[i].group*rowSep;
       temp[i].py = height-vPadding-temp[i].group*rowSep;
-      groupCount[temp[i].group]=groupCount[temp[i].group]+1; 
+      groupCount[temp[i].group]=groupCount[temp[i].group]+1;
       temp[i].x = groupCount[temp[i].group]*((width-2*hPadding)/(groupFreq[temp[i].group]+1));
       temp[i].px = groupCount[temp[i].group]*((width-2*hPadding)/(groupFreq[temp[i].group]+1));
   }
@@ -876,14 +823,14 @@ function linksFromNodesRelations(nodeList,relList){
       // Since the links always go from smaller node id to larger node id, determine which elements in each covering relation have smaller and larger node id.
       var minNode = d3.min(dataCovRel[i]);
       var maxNode = d3.max(dataCovRel[i]);
-      
+
       // If the first element in the covering relation has the smaller node id, then we should set the link to point 'right' (from smaller node id to larger id, which matches the order given in the covering relation).
       //var rightLink = (minNode == dataCovRel[i][0]);
       //var leftLink = !rightLink;
-      
+
       // Brett: Setting left or right to true creates a little padding around the target node.  Do we need to do this now that we are keeping track of the relation matrix?
       // links.push({source: minNode, target: maxNode, left: leftLink, right: rightLink});
-      
+
       temp.push({source: nodeList[minNode], target: nodeList[maxNode], left: false, right: false, highlighted: false});
   }
   return temp;
@@ -891,7 +838,7 @@ function linksFromNodesRelations(nodeList,relList){
 
 function updateWindowSize2d() {
     //var svg = document.getElementById("canvasElement2d");
-    
+
     // get width/height with container selector (body also works)
     // or use other method of calculating desired values
     if(!menuOpen){
@@ -903,7 +850,7 @@ function updateWindowSize2d() {
     // Make sure the denominator is positive.
     rowSep = (height-2*vPadding)/d3.max([maxGroup,1]);
 
-    // set attrs and 'resume' force 
+    // set attrs and 'resume' force
     svg.attr('width', width);
     svg.attr('height', height);
 
@@ -950,19 +897,6 @@ function getAdjacencyMatrix (nodeSet, edgeSet){
   return adjMatrix;
 }
 
-function updateForceCharge(){
-    if(!forceOn){toggleForce()};
-    forceCharge = -chargeSlider.noUiSlider.get();
-    force.force('charge', d3.forceManyBody().strength(forceCharge)).alpha(1).restart();
-}
-
-function updateForceLinkDist(){
-    if(!forceOn){toggleForce()};
-    forceLinkDist = linkDistSlider.noUiSlider.get();
-    force.force('link').distance(forceLinkDist);
-    force.alpha(1).restart();
-}
-
 
 // ----------- Functions for computations with posets ---------
 
@@ -975,7 +909,7 @@ function posetRankFunction(relMatrix){
     }
     var covRel = dataCovRel; // Current minimal covering relations.
     for(var i=0; i < covRel.length; i++){
-        // 
+        //
         var tmp = rk[covRel[i][1]][rk[covRel[i][1]].length-1] - rk[covRel[i][0]][rk[covRel[i][1]].length-1] - 1;
         var u = rk[covRel[i][0]][0];
         var v = rk[covRel[i][1]][0];
@@ -1038,7 +972,7 @@ function posetFiltration(relMatrix){
     // Find indices of all elements that do not minimally cover any element (i.e., the minimal elements in the poset).
     var neu = [];
     for(var i=0; i < cnt.length; i++){
-        if(cnt[i] == 0){neu.push(i)};        
+        if(cnt[i] == 0){neu.push(i)};
     }
     // We need neu.slice() here so that the neu array is cloned and ret points to the new occurrence of neu;
     var ret = [neu.slice()];
@@ -1189,7 +1123,7 @@ function posetIsAntisymmetric(relMatrix){
         for(var j=i+1; j < n; j++){
             if((relMatrix[i][j] == 1) && (relMatrix[j][i] == 1)){
                 return false;
-            }            
+            }
         }
     }
     return true;
@@ -1208,7 +1142,7 @@ function allPosetRelations (relMatrix){
             }
         }
     }
-    
+
     return tempArr;
 }
 
@@ -1228,23 +1162,23 @@ function minimalPosetRelations (relMatrix){
         var gtgtp = [];
         var tempIndices = gtp[i];
         for(var j=0; j < tempIndices.length; j++){
-            gtgtp.push(gtp[tempIndices[j]]);            
+            gtgtp.push(gtp[tempIndices[j]]);
         }
         gtgtp = eliminateDuplicates(flattenArray(gtgtp));
         var trimIndices = setDifference(tempIndices,gtgtp);
         for(var j=0; j < trimIndices.length; j++){
-            outputArr.push([i,trimIndices[j]]);            
-        }        
+            outputArr.push([i,trimIndices[j]]);
+        }
     }
-    
-    return outputArr;    
+
+    return outputArr;
 }
 
 // Given a square array of arrays (representing the relation matrix of a poset) and two distinct non-negative integers r and s, set the (r,s) entry equal to 1 (adding the relation r <= s) and also set all other (i,j) entries such that i <= r and s <= j (under the poset relation) equal to 1.  The method returns null if the resulting matrix is the relation matrix for a non-antisymmetric relation.
 function completeTransitiveClosure(relMatrix,r,s){
     // If we already have s <= r in the poset, then adding the relation r <= s will make it non-antisymmetric.
     if(relMatrix[s][r] == 1){return null;}
-    
+
     var rel = allPosetRelations(relMatrix);
     var pred = [];
     var anc = [];
@@ -1303,7 +1237,7 @@ function setDifference(arr1,arr2) {
     for(var i =0; i < len1; i++){
         for(var j=0; j < len2; j++){
             // If j[i] appears in arr2, then delete it.
-            if(arr1[i] == arr2[j]){delIndices.push(i);}            
+            if(arr1[i] == arr2[j]){delIndices.push(i);}
         }
     }
     delIndices = eliminateDuplicates(delIndices);
@@ -1311,9 +1245,9 @@ function setDifference(arr1,arr2) {
     // Remove all elements of arr1 where common elements with arr2 were found.
     for(var i=0; i < delIndices.length; i++){
         arr1.splice(delIndices[i]-offset,1);
-        offset = offset+1;        
+        offset = offset+1;
     }
-    
+
     return arr1;
 }
 
@@ -1322,7 +1256,7 @@ function lcm(A) {
     var n = A.length, a = Math.abs(A[0]);
     for (var i = 1; i < n; i++)
      { var b = Math.abs(A[i]), c = a;
-       while (a && b){ a > b ? a %= b : b %= a; } 
+       while (a && b){ a > b ? a %= b : b %= a; }
        a = Math.abs(c*A[i])/(a+b);
      }
     return a;
@@ -1382,19 +1316,6 @@ function deleteRowCol (relMatrix,n){
 // -----------------------------------------------------------
 
 
-// for making unique timestamps in LaTeX. Numbers are not allowed in macros.
-function makeid()
-{
-    var randomtext = "";
-    var randompossible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-    for( var i=0; i < 5; i++ )
-        randomtext += randompossible.charAt(Math.floor(Math.random() * randompossible.length));
-
-    return randomtext;
-}
-
-
 function exportTikz (event){
   var points = [];
   for(var i = 0; i < nodes.length; i++){
@@ -1426,7 +1347,7 @@ function exportTikz (event){
     "% \\scale" + timestamp +
     " makes the picture able to be viewed on the page\n";
 
-    
+
   if(!tikzGenerated){
     var tikzDiv = document.createElement("div");
     tikzDiv.id = "tikzHolder";
@@ -1453,10 +1374,10 @@ function exportTikz (event){
     clipboard = new ClipboardJS('#copyButton');
     clipboard.on('error', function(e) {
         window.alert("Press enter, then CTRL-C or CMD-C to copy")
-    });  
+    });
     tikzGenerated = true;
   }
-  document.getElementById("tikzTextBox").value = tikzTex;    
+  document.getElementById("tikzTextBox").value = tikzTex;
 }
 
 // -----------------------------------------
@@ -1465,66 +1386,66 @@ function exportTikz (event){
 
 // Add a response for each id from the side menu
 function onclickResults(m2Response) {
-    
+
     if (clickTest == "isAtomic"){
       d3.select("#isAtomic").html("&nbsp;&nbsp; isAtomic :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isBounded"){
       d3.select("#isBounded").html("&nbsp;&nbsp; isBounded :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isDistributive"){
       d3.select("#isDistributive").html("&nbsp;&nbsp; isDistributive :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isGeometric"){
       d3.select("#isGeometric").html("&nbsp;&nbsp; isGeometric :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isGraded"){
       d3.select("#isGraded").html("&nbsp;&nbsp; isGraded :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isLattice"){
       d3.select("#isLattice").html("&nbsp;&nbsp; isLattice :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isLowerSemilattice"){
       d3.select("#isLowerSemilattice").html("&nbsp;&nbsp; isLowerSemilattice :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isLowerSemimodular"){
       d3.select("#isLowerSemimodular").html("&nbsp;&nbsp; isLowerSemimodular :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isModular"){
       d3.select("#isModular").html("&nbsp;&nbsp; isModular :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isRanked"){
       d3.select("#isRanked").html("&nbsp;&nbsp; isRanked :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isSperner"){
       d3.select("#isSperner").html("&nbsp;&nbsp; isSperner :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isStrictSperner"){
       d3.select("#isStrictSperner").html("&nbsp;&nbsp; isStrictSperner :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isUpperSemilattice"){
       d3.select("#isUpperSemilattice").html("&nbsp;&nbsp; isUpperSemilattice :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "isUpperSemimodular"){
       d3.select("#isUpperSemimodular").html("&nbsp;&nbsp; isUpperSemimodular :: <b>"+m2Response+"</b>");
-    } 
-    
+    }
+
     else if (clickTest == "dilworthNumber"){
       d3.select("#dilworthNumber").html("&nbsp;&nbsp; dilworthNumber :: <b>"+m2Response+"</b>");
-    } 
+    }
 }
 
 // Anytime the graph is edited by user we call this function.
@@ -1551,94 +1472,17 @@ function menuDefaults() {
   }
 }
 
-// Create the XHR object.
-function createCORSRequest(method, url) {
-  var xhr = new XMLHttpRequest();                    
-  if ("withCredentials" in xhr) {
-    // XHR for Chrome/Firefox/Opera/Safari.
-    xhr.open(method, url, true);
-  } else if (typeof XDomainRequest != "undefined") {
-    // XDomainRequest for IE.
-    xhr = new XDomainRequest();
-    xhr.open(method, url);
-  } else {
-    // CORS not supported.
-    xhr = null;
-  }
-
-  return xhr;
-}
- 
-// Make the actual CORS request.
-function makeCorsRequest(method,url,browserData) {
-  // All HTML5 Rocks properties support CORS.
-  // var url ='http://localhost:8000/fcn2/';
- 
-  var xhr = createCORSRequest(method, url);
-  if (!xhr) {
-    alert('CORS not supported');
-    return;
-  }
- 
-  // Response handlers.
-  xhr.onload = function() {
-    var responseText = xhr.responseText;
-
-    onclickResults(responseText);      
-
-  };
- 
-  //xhr.onerror = function() {
-  //  alert('Woops, there was an error making the request.');
-  //};
-
-  xhr.send(browserData);
-}
-
 // -----------------------------------------
 // End Server Stuff
 // -----------------------------------------
 
     // Initialize clipboard.js.
     var clipboard = null;
-      
-//    $('#side').BootSideMenu({side:"right"});
-    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
-    
-    // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
-    document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
-            menuOpen = !menuOpen;
-            updateWindowSize2d();    
-    }, false);
 
-    //document.getElementById("canvasElement2d").style.width = width;
-    //document.getElementById("canvasElement2d").style.height = height;
+    initSideMenu(updateWindowSize2d);
 
-    window.addEventListener('resize', updateWindowSize2d, false);
-      
-    // Initialize sliders
-    var chargeSlider = document.getElementById('charge-slider');
-    noUiSlider.create(chargeSlider, {
-        start: [1500],
-        //tooltips: true,
-        range: {
-			'min': [0],
-			'max': [6000]
-		}
-    });
-    //chargeSlider.noUiSlider.on('update', updateForceCharge);
-      
-    var linkDistSlider = document.getElementById('linkdist-slider');
-    noUiSlider.create(linkDistSlider, {
-        start: [100],
-        //tooltips: true,
-        range: {
-			'min': [0],
-			'max': [400]
-		}
-    });
-    //chargeSlider.noUiSlider.on('update', updateForceLinkDist);
-      
+    var { chargeSlider, linkDistSlider } = initSliders();
+
     $(document).ready(function(){
 
       $("#editToggle").on("click", function(){
@@ -1652,19 +1496,19 @@ function makeCorsRequest(method,url,browserData) {
           enableEditing();
         }
       });
-        
+
       $("#labelToggle").on("click", function(){
         if(!labelsOn) {
           $(this).html("Hide labels");
           labelsOn = !labelsOn;
-          showLabels();
+          showLabels(circle);
         } else {
           $(this).html("Show labels");
           labelsOn = !labelsOn;
-          hideLabels();
+          hideLabels(circle);
         }
       });
-        
+
       $("#highlightToggle").on("click", function(){
         if(curHighlight) {
           $(this).html("Highlight comparable elements");
@@ -1681,139 +1525,139 @@ function makeCorsRequest(method,url,browserData) {
         if(fixExtremalNodes) {
           $(this).html("Fix extremal nodes");
           fixExtremalNodes = !fixExtremalNodes;
-          
+
         } else {
           $(this).html("Don't fix extremal nodes");
           fixExtremalNodes = !fixExtremalNodes;
-          
+
         }
-        
+
         force.stop();
         nodes = [];
         links = [];
         restart();
-          
+
         // Recompute node groups and reinitialize the display.
         dataGroupList = computeNodeGroups(dataRelMatrix);
         maxGroup = d3.max(dataGroupList);
         rowSep = (height-2*vPadding)/maxGroup;
         nodes = nodesFromLabelsGroups(dataLabels,dataGroupList);
-        setAllNodesFixed();
+        setAllNodesFixed(nodes);
         links = linksFromNodesRelations(nodes,dataCovRel);
         force.nodes(nodes);
         force.force('link').links(links);
         tick();
-          
+
         // Update the side menu bar to reflect that all nodes are now fixed in their original positions.
         if(forceOn) toggleForce();
-          
-        // Update the display.  
+
+        // Update the display.
         restart();
-      });    
-        
+      });
+
       $("#reset").on("click", resetPoset);
-        
+
       $("#forceToggle").on("click", toggleForce);
-    
+
       $("#exportTikz").on("click", function() {
         exportTikz();
       })
-      
+
       // Begin browser-M2 communication.
       // For each item, a line in the function `onclickResults()`
-      // located in `visGraph2d.js` must be added. 
-      // 
+      // located in `visGraph2d.js` must be added.
+      //
       // If you wish to delete the text to make it vanish when the graph is edited
       // search for 'menuDefaults()'.
 
       // Checks to see if user's poset is atomic
       $("#isAtomic").on("click", function() {
         clickTest = "isAtomic";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isAtomic/', poset2M2Constructor(dataLabels));
+        makeCorsRequest('POST','http://localhost:'+portData+'/isAtomic/', poset2M2Constructor(dataLabels), onclickResults);
       });
-        
+
       // Checks to see if user's poset is bounded
       $("#isBounded").on("click", function() {
         clickTest = "isBounded";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isBounded/', poset2M2Constructor(dataLabels));
-      }); 
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isBounded/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is distributive
       $("#isDistributive").on("click", function() {
         clickTest = "isDistributive";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isDistributive/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isDistributive/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is geometric
       $("#isGeometric").on("click", function() {
         clickTest = "isGeometric";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isGeometric/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isGeometric/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is graded
       $("#isGraded").on("click", function() {
         clickTest = "isGraded";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isGraded/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isGraded/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is a lattice
       $("#isLattice").on("click", function() {
         clickTest = "isLattice";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isLattice/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isLattice/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is a lower semilattice
       $("#isLowerSemilattice").on("click", function() {
         clickTest = "isLowerSemilattice";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isLowerSemilattice/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isLowerSemilattice/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is lower semimodular
       $("#isLowerSemimodular").on("click", function() {
         clickTest = "isLowerSemimodular";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isLowerSemimodular/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isLowerSemimodular/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is modular
       $("#isModular").on("click", function() {
         clickTest = "isModular";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isModular/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isModular/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is ranked
       $("#isRanked").on("click", function() {
         clickTest = "isRanked";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isRanked/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isRanked/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is Sperner
       $("#isSperner").on("click", function() {
         clickTest = "isSperner";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isSperner/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isSperner/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is strict Sperner
       $("#isStrictSperner").on("click", function() {
         clickTest = "isStrictSperner";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isStrictSperner/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isStrictSperner/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is an upper semilattice
       $("#isUpperSemilattice").on("click", function() {
         clickTest = "isUpperSemilattice";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isUpperSemilattice/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isUpperSemilattice/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Checks to see if user's poset is upper semimodular
       $("#isUpperSemimodular").on("click", function() {
         clickTest = "isUpperSemimodular";
-        makeCorsRequest('POST','http://localhost:'+portData+'/isUpperSemimodular/', poset2M2Constructor(dataLabels));
-      });    
-        
+        makeCorsRequest('POST','http://localhost:'+portData+'/isUpperSemimodular/', poset2M2Constructor(dataLabels), onclickResults);
+      });
+
       // Computes the Dilworth number of the user's poset (the maximal length of an antichain)
       $("#dilworthNumber").on("click", function() {
         clickTest = "dilworthNumber";
-        makeCorsRequest('POST','http://localhost:'+portData+'/dilworthNumber/', poset2M2Constructor(dataLabels));
+        makeCorsRequest('POST','http://localhost:'+portData+'/dilworthNumber/', poset2M2Constructor(dataLabels), onclickResults);
       });
 
       // Ends the browser session and outputs the information to M2
@@ -1824,12 +1668,12 @@ function makeCorsRequest(method,url,browserData) {
           document.getElementById("endSession").style.color = 'white';
           document.getElementById("endSession").style.backgroundColor = 'red';
           document.getElementById("endSession").innerHTML = "Session terminated";
-          makeCorsRequest('POST','http://localhost:'+portData+'/end/',poset2M2Constructor(dataLabels));
+          makeCorsRequest('POST','http://localhost:'+portData+'/end/',poset2M2Constructor(dataLabels), onclickResults);
           activeSession = !activeSession;
         } else {
           return;
         }
-      });      
+      });
 
       initializeBuilder();
       disableEditing();
@@ -1838,11 +1682,11 @@ function makeCorsRequest(method,url,browserData) {
 
     function toggleForce() {
       if (forceOn) {
-        setAllNodesFixed();
+        setAllNodesFixed(nodes);
         document.getElementById("forceToggle").innerHTML = "Turn on force";
       }
       else {
-        setAllNodesUnfixed();
+        setAllNodesUnfixed(nodes);
         restart();
         document.getElementById("forceToggle").innerHTML = "Turn off force";
       }
