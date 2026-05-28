@@ -147,16 +147,23 @@ homotopyEDDegree(NumericalComputationOptions, String, Boolean, Boolean) := (NCO,
     pairRowFunction := (M1, M2, hom) -> (
         arg := flatten entries M1;
         val := flatten entries M2;
-        scan(#arg, i -> if val_i==0 then (
-                jacZero = jacZero|{arg_i=>0};
-                symbolicSystem = sub(symbolicSystem, {arg_i=>0})
-            )
-            else pairJac = pairJac | {makeB'Section(
+
+        idxs := toList(0 .. #arg - 1);
+        zeroVals := select(idxs, i -> val_i == 0);
+        nonzeroVals := select(idxs, i -> val_i != 0);
+        
+        jacZero = jacZero | apply(zeroVals, i -> (
+            symbolicSystem = sub(symbolicSystem, {arg_i=>0});
+            arg_i => 0
+        ));
+        
+        pairJac = pairJac | apply(nonzeroVals, i ->
+            makeB'Section(
                 {val_i},
                 B'NumberCoefficients=>{1},	
                 B'Homogenization=>hom,	
                 NameB'Section=>arg_i
-            )}
+            )
         )
     );
     
@@ -217,15 +224,11 @@ homotopyEDDegree(NumericalComputationOptions, String, Boolean, Boolean) := (NCO,
     
     -- Build generic linear forms H(i,v,j) used to homogenize per-column degrees
     --Homogenize cols by multiplying by a diagonal matrix of linear products on the left. 
-    generalHyperplaneList:={};
-    scan(#degRescale, i -> scan(
-	degRescale_i, 
-	j -> (
-	    hg:="H"|i|"v"|j;  --wants to be both
-	    rescaling#i = (rescaling#i)|"*"|hg;
-	    generalHyperplaneList = generalHyperplaneList|{hg}
-	)
-    ));
+    generalHyperplaneList := flatten apply(#degRescale, i -> apply(degRescale_i, j -> (
+        hg:="H"|i|"v"|j;  --wants to be both
+        rescaling#i = (rescaling#i)|"*"|hg;
+        hg
+    )));
     
     -- Reuse previously paired hyperplanes if provided; otherwise pair new ones now.
     if NCO#"PairGeneralHyperplaneList"=!=null then pairGeneralHyperplanes:=NCO#"PairGeneralHyperplaneList"

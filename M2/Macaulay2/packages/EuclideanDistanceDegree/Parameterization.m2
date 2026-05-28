@@ -22,14 +22,14 @@ parameterizedWeightEDDegree(List, List, List) := o -> (F, U, W) -> (
 
     A := matrix for i to n-1 list {};
     count := 0;
-    selectColumns := {};
-    while #selectColumns < n-numX and count < #columnVectors do (
+    numSelectedCols := 0;
+    selectColumns := while numSelectedCols < n-numX and count < #columnVectors list (
         B := A | matrix(evalColumnVectors_count);
-        if rank B > rank A then (
-            A = B;
-            selectColumns = selectColumns | {count}
-        );
-        count = count + 1
+	count = count + 1;
+	if not rank B > rank A then continue;
+	A = B;
+	numSelectedCols = numSelectedCols + 1;
+	count - 1
     );
     if #selectColumns != n-numX then error "Failed to find spanning set of kernel";
     unscaledMatrix := columnVectors_selectColumns;
@@ -70,7 +70,6 @@ end
 loadPackage "MonodromySolver"
 loadPackage "EuclideanDistanceDegree"
 setRandomSeed(123456);
-makeJac = (system,unknowns) -> for i in system list for j in unknowns list diff(j,i)
 R = QQ[x1,x2,x3,x4,x5];
 F = {x1^2+x4^2, x2^2+x5^2, x3^2+1, x1*x2+x4*x5, x1*x3+x4, x2*x3+x5};
 U = {1,2,3,4,5,6};
@@ -80,9 +79,8 @@ parameterizedWeightEDDegree(F,U,W, UseMonodromy => true)
 
 restart
 loadPackage "EuclideanDistanceDegree"
-makeJac = (system,unknowns) -> for i in system list for j in unknowns list diff(j,i)
 R = QQ[x];
-F = {x^2 - 1, x^3 - x};
+F = {x^2 - 1, x^3 - x, x^6};
 parameterizedGenericEDDegree F
 
 n = #F;
