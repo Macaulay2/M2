@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import * as d3 from "d3";
 
 // Pure utility functions
 
@@ -10,7 +10,9 @@ export function makeid() {
   var randomtext = "";
   var randompossible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   for (var i = 0; i < 5; i++)
-    randomtext += randompossible.charAt(Math.floor(Math.random() * randompossible.length));
+    randomtext += randompossible.charAt(
+      Math.floor(Math.random() * randompossible.length),
+    );
   return randomtext;
 }
 
@@ -30,10 +32,10 @@ function createCORSRequest(method, url) {
 export function makeCorsRequest(method, url, browserData, onclickResults) {
   var xhr = createCORSRequest(method, url);
   if (!xhr) {
-    alert('CORS not supported');
+    alert("CORS not supported");
     return;
   }
-  xhr.onload = function() {
+  xhr.onload = function () {
     onclickResults(xhr.responseText);
   };
   xhr.send(browserData);
@@ -101,10 +103,10 @@ export function checkName(name, nodes) {
 }
 
 export function spliceLinksForNode(node, nodes, links) {
-  var toSplice = links.filter(function(l) {
-    return (l.source === node || l.target === node);
+  var toSplice = links.filter(function (l) {
+    return l.source === node || l.target === node;
   });
-  toSplice.map(function(l) {
+  toSplice.map(function (l) {
     links.splice(links.indexOf(l), 1);
   });
 }
@@ -128,50 +130,68 @@ export function hideLabels(circle) {
 }
 
 export function showLabels(circle) {
-  circle.append('svg:text')
-    .attr('x', 0)
-    .attr('y', 4)
-    .attr('class', 'id noselect')
+  circle
+    .append("svg:text")
+    .attr("x", 0)
+    .attr("y", 4)
+    .attr("class", "id noselect")
     .attr("pointer-events", "none")
-    .text(function(d) { return d.name; });
+    .text(function (d) {
+      return d.name;
+    });
 }
 
 // updateForceCharge and updateForceLinkDist read/write the globals forceOn,
 // forceCharge, forceLinkDist which are set by the HTML template.
 export function updateForceCharge(force, chargeSlider, toggleForceFn) {
-  if (!forceOn) { toggleForceFn(); }
+  if (!forceOn) {
+    toggleForceFn();
+  }
   forceCharge = -chargeSlider.noUiSlider.get();
-  force.force('charge', d3.forceManyBody().strength(forceCharge)).alpha(1).restart();
+  force
+    .force("charge", d3.forceManyBody().strength(forceCharge))
+    .alpha(1)
+    .restart();
 }
 
 export function updateForceLinkDist(force, linkDistSlider, toggleForceFn) {
-  if (!forceOn) { toggleForceFn(); }
+  if (!forceOn) {
+    toggleForceFn();
+  }
   forceLinkDist = linkDistSlider.noUiSlider.get();
-  force.force('link').distance(forceLinkDist);
+  force.force("link").distance(forceLinkDist);
   force.alpha(1).restart();
 }
 
 // DOM setup helpers
 
 export function initSliders() {
-  var chargeSlider = document.getElementById('charge-slider');
+  var chargeSlider = document.getElementById("charge-slider");
   noUiSlider.create(chargeSlider, {
     start: [1500],
-    range: { 'min': [0], 'max': [6000] }
+    range: { min: [0], max: [6000] },
   });
-  var linkDistSlider = document.getElementById('linkdist-slider');
+  var linkDistSlider = document.getElementById("linkdist-slider");
   noUiSlider.create(linkDistSlider, {
     start: [100],
-    range: { 'min': [0], 'max': [400] }
+    range: { min: [0], max: [400] },
   });
   return { chargeSlider: chargeSlider, linkDistSlider: linkDistSlider };
 }
 
 export function initSideMenu(updateWindowSizeFn) {
-  $('#side').BootSideMenu({side: "right", closeOnClick: false, width: "230px"});
-  document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
-    menuOpen = !menuOpen;
-    updateWindowSizeFn();
-  }, false);
+  $("#side").BootSideMenu({
+    side: "right",
+    closeOnClick: false,
+    width: "230px",
+  });
+  document.getElementsByClassName("toggler")[0].addEventListener(
+    "mousedown",
+    function () {
+      menuOpen = !menuOpen;
+      updateWindowSizeFn();
+    },
+    false,
+  );
   window.addEventListener("resize", updateWindowSizeFn, false);
 }
