@@ -1,4 +1,4 @@
-import 'd3';
+import * as d3 from 'd3';
 
     $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
 
@@ -97,11 +97,11 @@ import 'd3';
         
         // i'm not sure but i think the lines we get when switching
         // between convex hull are coming from the scale
-        var xScale = d3.scale.linear();
+        var xScale = d3.scaleLinear();
         xScale.domain([0,xMax+1]);
         xScale.range([sq/2, (xMax+1.5)*sq]);
 
-        var yScale = d3.scale.linear();
+        var yScale = d3.scaleLinear();
         yScale.domain([0, yMax+1]);
         yScale.range([h-1.5*sq, h-(yMax+2.5)*sq]);
 
@@ -129,15 +129,11 @@ import 'd3';
 
         console.log(tri);
 
-        var xAxis = d3.svg.axis()
-                        .scale(xScale)
-                        .ticks(xMax)
-                        .orient("bottom");
+        var xAxis = d3.axisBottom(xScale)
+                        .ticks(xMax);
 
-        var yAxis = d3.svg.axis()
-                        .scale(yScale) 
-                        .ticks(yMax)
-                        .orient("left");
+        var yAxis = d3.axisLeft(yScale)
+                        .ticks(yMax);
 
         var latticePoints= [];
         for (let i = 0; i <= yMax; i++) {

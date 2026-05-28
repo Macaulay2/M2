@@ -1,4 +1,4 @@
-import 'd3';
+import * as d3 from 'd3';
 
  // Initialize variables.
   var width  = null,
@@ -59,7 +59,7 @@ function initializeBuilder() {
   // Set up SVG for D3.
   width  = window.innerWidth-document.getElementById("side").clientWidth;
   height = window.innerHeight-10;
-  colors = d3.scale.category10();
+  colors = d3.scaleOrdinal(d3.schemeCategory10);
 
   svg = d3.select('body')
     .append('svg')
@@ -145,12 +145,10 @@ function initializeBuilder() {
   	.attr("id","adjString");*/
 
   // Initialize D3 force layout.
-  force = d3.layout.force()
-      .nodes(nodes)
-      .links(links)
-      .size([width, height])
-      .linkDistance(forceLinkDist)
-      .charge(forceCharge)
+  force = d3.forceSimulation(nodes)
+      .force('link', d3.forceLink(links).distance(forceLinkDist))
+      .force('charge', d3.forceManyBody().strength(forceCharge))
+      .force('center', d3.forceCenter(width / 2, height / 2))
       .on('tick', tick);
     
   // After the force variable is initialized, set the sliders to update the force variables.
@@ -181,8 +179,9 @@ function initializeBuilder() {
     .attr('fill', '#000');
 
   // When a node begins to be dragged by the user, call the function dragstart.
-  drag = force.drag()
-    .on("dragstart", dragstart);
+  drag = d3.drag()
+    .on("start", dragstart)
+    .on("drag", dragged);
 
   // Line displayed when dragging new nodes.
   drag_line = svg.append('svg:path')
@@ -236,8 +235,14 @@ function resetGraph() {
 }
 
 function dragstart(d) {
-  // When dragging a node, set it to be fixed so that the user can give it a static position.
-  d3.select(this).classed(d.fixed = true);
+  // When dragging a node, pin it in place.
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
 }
 
 function resetMouseVars() {
@@ -336,7 +341,7 @@ function restart() {
     .style('marker-end', function(d) { return d.right ? 'url(#end-arrow)' : ''; });
 
   // Add new links.
-  path.enter().append('svg:path')
+  var pathEnter = path.enter().append('svg:path')
     .attr('class', 'link')
     // If a link should be highlighted, set 'highlighted: true'.
     .classed('highlighted', function(d) {return d.highlighted; })
@@ -373,6 +378,7 @@ function restart() {
 
   // Remove old links.
   path.exit().remove();
+  path = pathEnter.merge(path);
 
   // Create the circle (node) group.
   // Note: the function argument is crucial here!  Nodes are known by id, not by index!
@@ -549,9 +555,12 @@ function restart() {
 
   // remove old nodes
   circle.exit().remove();
+  circle = g.merge(circle);
 
-  // set the graph in motion
-  force.start();
+  // Sync nodes/links into force, then restart.
+  force.nodes(nodes);
+  force.force('link').links(links);
+  force.alpha(0.1).restart();
 }
 
 function checkName(name) {
@@ -594,14 +603,15 @@ function mousedown() {
   */
 
   // Graph Changed :: adding nodes
-  node = {id: ++lastNodeId, name: curName, reflexive: false, highlighted: false};
+  var node = {id: ++lastNodeId, name: curName, reflexive: false, highlighted: false};
   node.x = point[0];
   node.y = point[1];
   if (!forceOn) {
-    node.fixed = true;
+    node.fx = node.x;
+    node.fy = node.y;
   }
   nodes.push(node);
-  // Graph is updated here so we change some items to default 
+  // Graph is updated here so we change some items to default
   // d3.select("#isCM").html("isCM");
   menuDefaults();
 
@@ -730,9 +740,7 @@ function keyup() {
 
   // shift
   if(d3.event.keyCode === 16) {
-    circle
-      .on('mousedown.drag', null)
-      .on('touchstart.drag', null);
+    circle.on('.drag', null);
     svg.classed('shift', false);
   }
 }
@@ -747,9 +755,7 @@ function disableEditing() {
 }
 
 function enableEditing() {
-  circle
-      .on('mousedown.drag', null)
-      .on('touchstart.drag', null);
+  circle.on('.drag', null);
   svg.classed('shift', false);
 }
 
@@ -797,13 +803,15 @@ function areNeighbors(node1,node2) {
 
 function setAllNodesFixed() {
   for (var i = 0; i<nodes.length; i++) {
-    nodes[i].fixed = true;
+    nodes[i].fx = nodes[i].x;
+    nodes[i].fy = nodes[i].y;
   }
 }
 
 function setAllNodesUnfixed() {
   for (var i = 0; i<nodes.length; i++) {
-    nodes[i].fixed = false;
+    nodes[i].fx = null;
+    nodes[i].fy = null;
   }
 }
 
@@ -837,7 +845,7 @@ function updateWindowSize2d() {
     svg.attr('width', width);
     svg.attr('height', height);
 
-    force.size([width, height]).resume();
+    force.force('center', d3.forceCenter(width / 2, height / 2)).alpha(0.3).restart();
 }
 
 // Functions to construct M2 constructors for graph, incidence matrix, and adjacency matrix.
@@ -959,13 +967,14 @@ function getAdjacencyMatrix (nodeSet, edgeSet){
 function updateForceCharge(){
     if(!forceOn){toggleForce()};
     forceCharge = -chargeSlider.noUiSlider.get();
-    force.charge(forceCharge).start();
+    force.force('charge', d3.forceManyBody().strength(forceCharge)).alpha(1).restart();
 }
 
 function updateForceLinkDist(){
     if(!forceOn){toggleForce()};
     forceLinkDist = linkDistSlider.noUiSlider.get();
-    force.linkDistance(forceLinkDist).start();
+    force.force('link').distance(forceLinkDist);
+    force.alpha(1).restart();
 }
 
 // Takes a rectangular array of arrays and returns a string which can be copy/pasted into M2.
