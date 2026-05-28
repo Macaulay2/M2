@@ -72,6 +72,10 @@ export {
 * bump jquery 4.0.0
 * update my contact info
 * add name field to package.json
+* bump to d3 5.16.0
+* extract visCommonForce.js into its own module (common code used by graphs,
+  digraphs, simplicial complexes, and posets)
+* lots of whitespace fixes
 
 1.9 (2026-01-02, M2 1.26.05)
 * bump three.js to 0.182.0 and update 3d ideal code
