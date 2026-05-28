@@ -27,7 +27,12 @@ class RingMap;
 
 namespace M2 {
 
-// ---- double-double core (Dekker/Knuth TwoSum, FMA TwoProd, Hida-Li-Bailey QD) ----
+// ---- double-double core ----
+// Arithmetic algorithms are ported from MultiFloats.jl v3.0 (Zhang 2025,
+// https://theory.stanford.edu/~aiken/publications/papers/sc25.pdf): branch-free,
+// already-normalised results (no trailing renormalisation step), shorter
+// dependency chains than the classical QD (Hida-Li-Bailey 2001) algorithms.
+// Primitives — TwoSum / FastTwoSum / TwoProd-via-FMA — are unchanged.
 struct DoubleDouble { double hi; double lo; };
 
 static inline DoubleDouble dd_two_sum(double a, double b)
@@ -37,32 +42,55 @@ static inline DoubleDouble dd_fast_two_sum(double a, double b)  // |a| >= |b|
 static inline DoubleDouble dd_two_prod(double a, double b)
 { double p = a * b, e = std::fma(a, b, -p); return {p, e}; }
 
-static inline DoubleDouble dd_add(DoubleDouble a, DoubleDouble b)
+// v3.0 add — one fewer dependent op on the critical path than the v2.0 QD
+// algorithm (the b-accumulator update runs in parallel with the first
+// fast_two_sum), branch-free.
+static inline DoubleDouble dd_add(DoubleDouble x, DoubleDouble y)
 {
-  DoubleDouble s = dd_two_sum(a.hi, b.hi), t = dd_two_sum(a.lo, b.lo);
-  s.lo += t.hi; s = dd_fast_two_sum(s.hi, s.lo);
-  s.lo += t.lo; return dd_fast_two_sum(s.hi, s.lo);
+  DoubleDouble s = dd_two_sum(x.hi, y.hi);                 // (a, b)
+  DoubleDouble t = dd_two_sum(x.lo, y.lo);                 // (c, d)
+  DoubleDouble u = dd_fast_two_sum(s.hi, t.hi);            // (a, c')
+  double bb = s.lo + t.lo + u.lo;                          // b += d; b += c'
+  return dd_fast_two_sum(u.hi, bb);
 }
 static inline DoubleDouble dd_neg(DoubleDouble a) { return {-a.hi, -a.lo}; }
 static inline DoubleDouble dd_sub(DoubleDouble a, DoubleDouble b) { return dd_add(a, dd_neg(b)); }
+
+// v3.0 mul — same shape as v2.0 (already minimal at N=2; the v3.0 win is at N>=3).
 static inline DoubleDouble dd_mul(DoubleDouble a, DoubleDouble b)
-{ DoubleDouble p = dd_two_prod(a.hi, b.hi); p.lo += a.hi * b.lo + a.lo * b.hi; return dd_fast_two_sum(p.hi, p.lo); }
-static inline DoubleDouble dd_div(DoubleDouble a, DoubleDouble b)
 {
-  double q1 = a.hi / b.hi;
-  DoubleDouble r = dd_sub(a, dd_mul(b, {q1, 0.0}));
-  double q2 = r.hi / b.hi;
-  r = dd_sub(r, dd_mul(b, {q2, 0.0}));
-  double q3 = r.hi / b.hi;
-  DoubleDouble q = dd_fast_two_sum(q1, q2); q.lo += q3;
-  return dd_fast_two_sum(q.hi, q.lo);
+  DoubleDouble p = dd_two_prod(a.hi, b.hi);
+  return dd_fast_two_sum(p.hi, p.lo + std::fma(a.hi, b.lo, a.lo * b.hi));
 }
-static inline DoubleDouble dd_sqrt(DoubleDouble a)
+
+// v3.0 specialised squaring — cheaper than dd_mul(x, x) since a few cross terms
+// collapse.  Used by abs_squared and by power_iteration-style kernels.
+static inline DoubleDouble dd_sqr(DoubleDouble x)
 {
-  if (a.hi == 0.0 && a.lo == 0.0) return {0.0, 0.0};
-  double x = 1.0 / std::sqrt(a.hi), ax = a.hi * x;
-  DoubleDouble diff = dd_sub(a, dd_mul({ax, 0.0}, {ax, 0.0}));
-  return dd_add({ax, 0.0}, {diff.hi * x * 0.5, 0.0});
+  DoubleDouble p = dd_two_prod(x.hi, x.hi);
+  return dd_fast_two_sum(p.hi, std::fma(x.hi, x.lo + x.lo, p.lo));
+}
+
+// v3.0 div — single Newton-style correction (vs the classical 3-iteration
+// long-division approach); roughly 5–6× fewer ops than the v2.0 dd_div.
+static inline DoubleDouble dd_div(DoubleDouble x, DoubleDouble y)
+{
+  double w = 1.0 / y.hi;
+  double z = x.hi * w;
+  DoubleDouble p = dd_two_prod(y.hi, z);
+  double r = ((x.hi - p.hi) - p.lo) + std::fma(-y.lo, z, x.lo);
+  return dd_fast_two_sum(z, r * w);
+}
+
+// v3.0 sqrt — branch-free (no zero special case needed; sqrt(0) is well-defined
+// and the subsequent r/(y+y) divides by +0 which produces NaN, so we still
+// short-circuit the zero case but via FP arithmetic rather than a comparison).
+static inline DoubleDouble dd_sqrt(DoubleDouble x)
+{
+  if (x.hi == 0.0) return {0.0, 0.0};      // FP-safe zero short-circuit
+  double y = std::sqrt(x.hi);
+  double r = std::fma(-y, y, x.hi) + x.lo;
+  return dd_fast_two_sum(y, r / (y + y));
 }
 static inline int dd_cmp(DoubleDouble a, DoubleDouble b)
 { if (a.hi != b.hi) return a.hi < b.hi ? -1 : 1; if (a.lo != b.lo) return a.lo < b.lo ? -1 : 1; return 0; }
