@@ -243,7 +243,7 @@ ExternalProject_Add(build-mpfr
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT MPFR_ROOT)
+if(NOT MPFR_FOUND)
   set(MPFR_ROOT ${M2_HOST_PREFIX})
 endif()
 set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in d/CMakeLists.txt
@@ -330,7 +330,7 @@ ExternalProject_Add_Step(build-ntl wizard
   EXCLUDE_FROM_MAIN ON
   USES_TERMINAL ON
   )
-if(NOT NTL_ROOT)
+if(NOT NTL_FOUND)
   set(NTL_ROOT ${M2_HOST_PREFIX})
 endif()
 if(AUTOTUNE)
@@ -367,7 +367,7 @@ ExternalProject_Add(build-flint
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT FLINT_ROOT)
+if(NOT FLINT_FOUND)
   set(FLINT_ROOT ${M2_HOST_PREFIX})
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries flint "gmp;mpfr;ntl" FLINT_FOUND)
@@ -475,7 +475,7 @@ ExternalProject_Add(build-cddlib
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT CDDLIB_ROOT)
+if(NOT CDDLIB_FOUND)
   set(CDDLIB_ROOT ${M2_HOST_PREFIX})
   set(CDDLIB_LIBRARY_DIR ${CDDLIB_ROOT}/lib)
   set(CDDLIB_INCLUDE_DIR ${CDDLIB_ROOT}/include/cddlib)
@@ -672,7 +672,7 @@ ExternalProject_Add(build-glpk
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(NOT GLPK_ROOT)
+if(NOT GLPK_FOUND)
   set(GLPK_ROOT ${M2_HOST_PREFIX})
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries glpk gmp GLPK_FOUND)
