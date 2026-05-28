@@ -1,0 +1,176 @@
+// MultiFloats double-double (Float64x2) approximate real field for Macaulay2.
+// ~106-bit precision at a fraction of MPFR's cost: standalone benchmarks show
+// 7-16x faster scalar ops and 7.4x faster dense LU vs ARingRRR(106) (see
+// ~/research/dd-proto/). Modeled on aring-RR.hpp (value-type SimpleARing) for the
+// interface, and aring-RRR.hpp for the ring_elem boxing.
+//
+// ElementType is a 16-byte POD (hi+lo); dmat<ARingRRx2> stores it directly (the fast
+// numerical-LA path where the speedup lands). It is too big for a ring_elem inline
+// slot, so to/from_ring_elem box it losslessly through a 106-bit mpfr (gmp_RR) — the
+// ring_elem path is not performance-critical.
+//
+// TODO(build-verify): add `ring_RRx2` to the RingID enum (aring.hpp) and a front-end
+// ring constructor; until then ringID uses a placeholder. Confirm moveTo_gmpRR/get_mpfr
+// signatures against ringelem.hpp during the first engine compile.
+#ifndef _aring_RRx2_hpp_
+#define _aring_RRx2_hpp_
+
+#include <cmath>
+#include "interface/gmp-util.h"  // moveTo_gmpRR
+#include "interface/random.h"    // randomDouble
+#include "aring.hpp"
+#include "buffer.hpp"
+#include "ringelem.hpp"
+#include "ringmap.hpp"
+
+class RingMap;
+
+namespace M2 {
+
+// ---- double-double core (Dekker/Knuth TwoSum, FMA TwoProd, Hida-Li-Bailey QD) ----
+struct DoubleDouble { double hi; double lo; };
+
+static inline DoubleDouble dd_two_sum(double a, double b)
+{ double s = a + b, bb = s - a, e = (a - (s - bb)) + (b - bb); return {s, e}; }
+static inline DoubleDouble dd_fast_two_sum(double a, double b)  // |a| >= |b|
+{ double s = a + b, e = b - (s - a); return {s, e}; }
+static inline DoubleDouble dd_two_prod(double a, double b)
+{ double p = a * b, e = std::fma(a, b, -p); return {p, e}; }
+
+static inline DoubleDouble dd_add(DoubleDouble a, DoubleDouble b)
+{
+  DoubleDouble s = dd_two_sum(a.hi, b.hi), t = dd_two_sum(a.lo, b.lo);
+  s.lo += t.hi; s = dd_fast_two_sum(s.hi, s.lo);
+  s.lo += t.lo; return dd_fast_two_sum(s.hi, s.lo);
+}
+static inline DoubleDouble dd_neg(DoubleDouble a) { return {-a.hi, -a.lo}; }
+static inline DoubleDouble dd_sub(DoubleDouble a, DoubleDouble b) { return dd_add(a, dd_neg(b)); }
+static inline DoubleDouble dd_mul(DoubleDouble a, DoubleDouble b)
+{ DoubleDouble p = dd_two_prod(a.hi, b.hi); p.lo += a.hi * b.lo + a.lo * b.hi; return dd_fast_two_sum(p.hi, p.lo); }
+static inline DoubleDouble dd_div(DoubleDouble a, DoubleDouble b)
+{
+  double q1 = a.hi / b.hi;
+  DoubleDouble r = dd_sub(a, dd_mul(b, {q1, 0.0}));
+  double q2 = r.hi / b.hi;
+  r = dd_sub(r, dd_mul(b, {q2, 0.0}));
+  double q3 = r.hi / b.hi;
+  DoubleDouble q = dd_fast_two_sum(q1, q2); q.lo += q3;
+  return dd_fast_two_sum(q.hi, q.lo);
+}
+static inline DoubleDouble dd_sqrt(DoubleDouble a)
+{
+  if (a.hi == 0.0 && a.lo == 0.0) return {0.0, 0.0};
+  double x = 1.0 / std::sqrt(a.hi), ax = a.hi * x;
+  DoubleDouble diff = dd_sub(a, dd_mul({ax, 0.0}, {ax, 0.0}));
+  return dd_add({ax, 0.0}, {diff.hi * x * 0.5, 0.0});
+}
+static inline int dd_cmp(DoubleDouble a, DoubleDouble b)
+{ if (a.hi != b.hi) return a.hi < b.hi ? -1 : 1; if (a.lo != b.lo) return a.lo < b.lo ? -1 : 1; return 0; }
+static inline DoubleDouble dd_from_mpfr(mpfr_srcptr x)
+{ double hi = mpfr_get_d(x, MPFR_RNDN); mpfr_t t; mpfr_init2(t, 120); mpfr_sub_d(t, x, hi, MPFR_RNDN);
+  double lo = mpfr_get_d(t, MPFR_RNDN); mpfr_clear(t); return dd_fast_two_sum(hi, lo); }
+
+/**
+\ingroup rings
+*/
+class ARingRRx2 : public SimpleARing<ARingRRx2>
+{
+  // approximate real numbers, double-double (~106-bit), MultiFloats Float64x2.
+ public:
+  static const RingID ringID = ring_RRx2;
+  static const unsigned long PRECISION = 106;
+
+  typedef DoubleDouble elem;
+  typedef elem ElementType;
+
+  ARingRRx2() {}
+  size_t characteristic() const { return 0; }
+  unsigned long get_precision() const { return PRECISION; }
+  void text_out(buffer &o) const;
+
+  unsigned int computeHashValue(const elem &a) const
+  { return static_cast<unsigned int>(a.hi) ^ static_cast<unsigned int>(a.lo); }
+
+  bool is_unit(const ElementType &f) const { return !is_zero(f); }
+  bool is_zero(const ElementType &f) const { return f.hi == 0.0 && f.lo == 0.0; }
+  bool is_equal(const ElementType &f, const ElementType &g) const { return f.hi == g.hi && f.lo == g.lo; }
+  int compare_elems(const ElementType &f, const ElementType &g) const { return dd_cmp(f, g); }
+
+  // ---- to/from ring_elem: box the 16-byte dd losslessly through a 106-bit mpfr ----
+  void to_ring_elem(ring_elem &result, const ElementType &a) const
+  {
+    mpfr_ptr res = getmemstructtype(mpfr_ptr);
+    mpfr_init2(res, PRECISION);
+    mpfr_set_d(res, a.hi, MPFR_RNDN);
+    mpfr_add_d(res, res, a.lo, MPFR_RNDN);
+    result = ring_elem(moveTo_gmpRR(res));
+  }
+  void from_ring_elem(ElementType &result, const ring_elem &a) const { result = dd_from_mpfr(a.get_mpfr()); }
+  ElementType from_ring_elem_const(const ring_elem &a) const { return dd_from_mpfr(a.get_mpfr()); }
+
+  // ---- init/set (trivial: POD value type, like ARingRR) ----
+  void init(ElementType &result) const { result = {0.0, 0.0}; }
+  void init_set(ElementType &result, const ElementType &a) const { result = a; }
+  void set(ElementType &result, const ElementType &a) const { result = a; }
+  void set_zero(ElementType &result) const { result = {0.0, 0.0}; }
+  static void clear(ElementType &result) { (void) result; }
+  void copy(ElementType &result, const ElementType &a) const { result = a; }
+
+  void set_from_long(ElementType &result, long a) const { result = dd_fast_two_sum(static_cast<double>(a), 0.0); }
+  void set_var(ElementType &result, int v) const { (void) v; result = {1.0, 0.0}; }
+  void set_from_mpz(ElementType &result, mpz_srcptr a) const
+  { mpfr_t t; mpfr_init2(t, PRECISION + 8); mpfr_set_z(t, a, MPFR_RNDN); result = dd_from_mpfr(t); mpfr_clear(t); }
+  bool set_from_mpq(ElementType &result, mpq_srcptr a) const
+  { mpfr_t t; mpfr_init2(t, PRECISION + 8); mpfr_set_q(t, a, MPFR_RNDN); result = dd_from_mpfr(t); mpfr_clear(t); return true; }
+  bool set_from_BigReal(ElementType &result, gmp_RR a) const { result = dd_from_mpfr(a); return true; }
+  bool set_from_double(ElementType &result, double a) const { result = {a, 0.0}; return true; }
+
+  // ---- arithmetic ----
+  void negate(ElementType &result, const ElementType &a) const { result = dd_neg(a); }
+  void invert(ElementType &result, const ElementType &a) const { result = dd_div({1.0, 0.0}, a); }
+  void add(ElementType &result, const ElementType &a, const ElementType &b) const { result = dd_add(a, b); }
+  void addMultipleTo(ElementType &result, const ElementType &a, const ElementType &b) const { result = dd_add(result, dd_mul(a, b)); }
+  void subtract(ElementType &result, const ElementType &a, const ElementType &b) const { result = dd_sub(a, b); }
+  void subtract_multiple(ElementType &result, const ElementType &a, const ElementType &b) const { result = dd_sub(result, dd_mul(a, b)); }
+  void mult(ElementType &result, const ElementType &a, const ElementType &b) const { result = dd_mul(a, b); }
+  void divide(ElementType &result, const ElementType &a, const ElementType &b) const { result = dd_div(a, b); }
+  void abs_squared(ElementType &result, const ElementType &a) const { result = dd_mul(a, a); }
+  void abs(ElementType &result, const ElementType &a) const { result = (a.hi < 0.0) ? dd_neg(a) : a; }
+
+  void power(ElementType &result, const ElementType &a, int n) const
+  { ElementType r = {1.0, 0.0}, base = a; bool neg = n < 0; unsigned long e = neg ? -(long)n : n;
+    while (e) { if (e & 1) r = dd_mul(r, base); base = dd_mul(base, base); e >>= 1; }
+    result = neg ? dd_div({1.0, 0.0}, r) : r; }
+  void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
+  { std::pair<bool, int> n1 = RingZZ::get_si(n);
+    if (n1.first) power(result, a, n1.second); else throw exc::engine_error("exponent too large"); }
+
+  void swap(ElementType &a, ElementType &b) const { std::swap(a, b); }
+  void elem_text_out(buffer &o, const ElementType &a, bool p_one = true, bool p_plus = false, bool p_parens = false) const;
+
+  void syzygy(const ElementType &a, const ElementType &b, ElementType &x, ElementType &y) const
+  { set_var(x, 0); if (!is_zero(b)) { set(y, a); negate(y, y); divide(y, y, b); } }
+
+  void random(ElementType &result) const { result = {randomDouble(), 0.0}; }
+
+  void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
+  { (void) first_var; ring_elem tmp; to_ring_elem(tmp, f);
+    if (!map->get_ring()->from_double(coerceToDouble(f), result))
+      { result = map->get_ring()->from_long(0); ERROR("cannot map double-double to ring type"); } }
+
+  void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
+  { if (mpfr_cmp_d(epsilon, std::fabs(a.hi)) > 0) set_zero(a); }
+  void increase_norm(mpfr_ptr norm, const ElementType &a) const
+  { double d = std::fabs(a.hi); if (mpfr_cmp_d(norm, d) < 0) mpfr_set_d(norm, d, MPFR_RNDN); }
+
+  double coerceToDouble(const ElementType &a) const { return a.hi; }
+};
+
+};  // end namespace M2
+
+#endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
+// End:

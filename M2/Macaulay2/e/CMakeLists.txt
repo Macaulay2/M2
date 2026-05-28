@@ -459,6 +459,7 @@ if(BUILD_TESTING)
     unit-tests/ARingRRTest.cpp
     unit-tests/ARingCCTest.cpp
     unit-tests/ARingRRRTest.cpp
+    unit-tests/ARingRRx2Test.cpp
     unit-tests/ARingRRiTest.cpp
     unit-tests/ARingCCCTest.cpp
     unit-tests/NCGroebnerTest.cpp
