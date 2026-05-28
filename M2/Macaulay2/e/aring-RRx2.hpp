@@ -92,6 +92,21 @@ static inline DoubleDouble dd_sqrt(DoubleDouble x)
   double r = std::fma(-y, y, x.hi) + x.lo;
   return dd_fast_two_sum(y, r / (y + y));
 }
+
+// ---- specialised dd × double fast paths ----
+// Hot-loop kernels frequently combine a dd with a precomputed scalar (LU pivot
+// updates, vector scaling, mat-vec normalisation).  The general dd_op(a, dd{x, 0})
+// expression has an a.hi * 0 cross-term the compiler does not always remove;
+// these specialised forms make the saving explicit.  They produce identical
+// answers to dd_op(a, dd{x, 0}) but at roughly half the operation count.
+static inline DoubleDouble dd_add_d(DoubleDouble a, double b)
+{ DoubleDouble s = dd_two_sum(a.hi, b); s.lo += a.lo; return dd_fast_two_sum(s.hi, s.lo); }
+static inline DoubleDouble dd_sub_d(DoubleDouble a, double b)
+{ return dd_add_d(a, -b); }
+static inline DoubleDouble dd_mul_d(DoubleDouble a, double b)
+{ DoubleDouble p = dd_two_prod(a.hi, b); return dd_fast_two_sum(p.hi, std::fma(a.lo, b, p.lo)); }
+static inline DoubleDouble dd_div_d(DoubleDouble a, double b)
+{ double qh = a.hi / b; double err = std::fma(-qh, b, a.hi) + a.lo; return dd_fast_two_sum(qh, err / b); }
 static inline int dd_cmp(DoubleDouble a, DoubleDouble b)
 { if (a.hi != b.hi) return a.hi < b.hi ? -1 : 1; if (a.lo != b.lo) return a.lo < b.lo ? -1 : 1; return 0; }
 static inline DoubleDouble dd_from_mpfr(mpfr_srcptr x)
