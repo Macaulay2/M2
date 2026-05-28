@@ -167,6 +167,42 @@ static inline void v4_dd_broadcast(DoubleDouble a, __m256d* hi, __m256d* lo) {
   *hi = _mm256_set1_pd(a.hi);
   *lo = _mm256_set1_pd(a.lo);
 }
+
+// ---- high-level SIMD dd_axpy ----
+// Computes y[i] -= f * x[i] for i in [0, N), the inner loop of LU pivot
+// updates, dense mat-vec, and the perturbed solves in homotopy continuation.
+// Vectors are in structure-of-arrays layout (separate hi[] / lo[] arrays);
+// SoA is the natural SIMD layout — dmat<ARingRRx2> kernels wanting maximum
+// throughput should adopt it.  AoS callers can pre-split or use the scalar
+// dd_* primitives instead.  Tail elements (when N % 4 != 0) handled by the
+// scalar v3.0 ops.
+static inline void dd_axpy(int N, DoubleDouble f,
+                           const double* xhi, const double* xlo,
+                           double* yhi, double* ylo)
+{
+  __m256d fhi = _mm256_set1_pd(-f.hi);   // y -= f*x  ≡  y += (-f)*x
+  __m256d flo = _mm256_set1_pd(-f.lo);
+  int i = 0;
+  for (; i + 4 <= N; i += 4) {
+    __m256d xh = _mm256_loadu_pd(xhi + i);
+    __m256d xl = _mm256_loadu_pd(xlo + i);
+    __m256d phi, plo;
+    v4_dd_mul(fhi, flo, xh, xl, &phi, &plo);
+    __m256d yh = _mm256_loadu_pd(yhi + i);
+    __m256d yl = _mm256_loadu_pd(ylo + i);
+    __m256d zhi, zlo;
+    v4_dd_add(yh, yl, phi, plo, &zhi, &zlo);
+    _mm256_storeu_pd(yhi + i, zhi);
+    _mm256_storeu_pd(ylo + i, zlo);
+  }
+  // scalar tail
+  DoubleDouble nf = {-f.hi, -f.lo};
+  for (; i < N; i++) {
+    DoubleDouble p = dd_mul(nf, {xhi[i], xlo[i]});
+    DoubleDouble z = dd_add({yhi[i], ylo[i]}, p);
+    yhi[i] = z.hi; ylo[i] = z.lo;
+  }
+}
 #endif  // __AVX2__ && __FMA__
 static inline int dd_cmp(DoubleDouble a, DoubleDouble b)
 { if (a.hi != b.hi) return a.hi < b.hi ? -1 : 1; if (a.lo != b.lo) return a.lo < b.lo ? -1 : 1; return 0; }
