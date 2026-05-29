@@ -4,6 +4,7 @@
 #include "monomials/monordering.hpp"                // for monomialOrderingToMatrix
 #include "newdelete.hpp"                  // for freemem, newarray_atomic
 
+#include <cinttypes>                      // for PRId64
 #include <cstdio>                         // for fprintf, stderr, stdout
 #include <cstdlib>                        // for rand
 #include <iostream>
@@ -116,24 +117,24 @@ void MonomialInfo::show(const_packed_monomial m) const
   for (int v = 1; v < monomial_size(m); v++)
     {
       if (v > 1) fprintf(stderr, " ");
-      fprintf(stderr, "%ld", m[v]);
+      fprintf(stderr, "%" PRId64, m[v]);
     }
   fprintf(stderr, "]");
 }
 
 void MonomialInfo::showAlpha(const_packed_monomial m) const
 {
-  long comp = get_component(m);
+  monomial_word comp = get_component(m);
 
   m += 2 + mNumWeights;  // get by: hashcode, component, weightvals
   for (int i = 0; i < nvars; i++)
     {
-      long e = *m++;
+      monomial_word e = *m++;
       if (e == 0) continue;
       fprintf(stdout, "%c", 'a' + i);
-      if (e > 1) fprintf(stdout, "%ld", e);
+      if (e > 1) fprintf(stdout, "%" PRId64, e);
     }
-  fprintf(stdout, "<%ld>", comp);
+  fprintf(stdout, "<%" PRId64 ">", comp);
 }
 
 // Local Variables:
