@@ -4,16 +4,16 @@
 // ~/research/dd-proto/). Modeled on aring-RR.hpp (value-type SimpleARing) for the
 // interface, and aring-RRR.hpp for the ring_elem boxing.
 //
-// ElementType is a 16-byte POD (hi+lo); dmat<ARingRRx2> stores it directly (the fast
+// ElementType is a 16-byte POD (hi+lo); dmat<ARingRRdd> stores it directly (the fast
 // numerical-LA path where the speedup lands). It is too big for a ring_elem inline
 // slot, so to/from_ring_elem box it losslessly through a 106-bit mpfr (gmp_RR) — the
 // ring_elem path is not performance-critical.
 //
-// TODO(build-verify): add `ring_RRx2` to the RingID enum (aring.hpp) and a front-end
+// TODO(build-verify): add `ring_RRdd` to the RingID enum (aring.hpp) and a front-end
 // ring constructor; until then ringID uses a placeholder. Confirm moveTo_gmpRR/get_mpfr
 // signatures against ringelem.hpp during the first engine compile.
-#ifndef _aring_RRx2_hpp_
-#define _aring_RRx2_hpp_
+#ifndef _aring_RRdd_hpp_
+#define _aring_RRdd_hpp_
 
 #include <cmath>
 #include "interface/gmp-util.h"  // moveTo_gmpRR
@@ -115,9 +115,9 @@ static inline DoubleDouble dd_div_d(DoubleDouble a, double b)
 // applied lane-wise.  Inputs/outputs are structure-of-arrays — one __m256d
 // packs 4 hi-parts, another packs 4 lo-parts.
 //
-// Header-guarded so the rest of aring-RRx2.hpp keeps compiling on non-AVX2
+// Header-guarded so the rest of aring-RRdd.hpp keeps compiling on non-AVX2
 // targets (older Intel without AVX2, non-x86 archs).  Downstream kernels
-// (e.g., a future dmat<ARingRRx2> SIMD specialisation) can include this
+// (e.g., a future dmat<ARingRRdd> SIMD specialisation) can include this
 // section conditionally to opt in.
 //
 // Portability (per review): even when the compiler targets AVX2+FMA, the build
@@ -182,7 +182,7 @@ static inline void v4_dd_broadcast(DoubleDouble a, __m256d* hi, __m256d* lo) {
 // Computes y[i] -= f * x[i] for i in [0, N), the inner loop of LU pivot
 // updates, dense mat-vec, and the perturbed solves in homotopy continuation.
 // Vectors are in structure-of-arrays layout (separate hi[] / lo[] arrays);
-// SoA is the natural SIMD layout — dmat<ARingRRx2> kernels wanting maximum
+// SoA is the natural SIMD layout — dmat<ARingRRdd> kernels wanting maximum
 // throughput should adopt it.  AoS callers can pre-split or use the scalar
 // dd_* primitives instead.  Tail elements (when N % 4 != 0) handled by the
 // scalar v3.0 ops.
@@ -223,17 +223,17 @@ static inline DoubleDouble dd_from_mpfr(mpfr_srcptr x)
 /**
 \ingroup rings
 */
-class ARingRRx2 : public SimpleARing<ARingRRx2>
+class ARingRRdd : public SimpleARing<ARingRRdd>
 {
   // approximate real numbers, double-double (~106-bit), MultiFloats Float64x2.
  public:
-  static const RingID ringID = ring_RRx2;
+  static const RingID ringID = ring_RRdd;
   static const unsigned long PRECISION = 106;
 
   typedef DoubleDouble elem;
   typedef elem ElementType;
 
-  ARingRRx2() {}
+  ARingRRdd() {}
   size_t characteristic() const { return 0; }
   unsigned long get_precision() const { return PRECISION; }
   void text_out(buffer &o) const;

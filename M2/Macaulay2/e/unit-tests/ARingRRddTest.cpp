@@ -1,4 +1,4 @@
-// Unit tests for ARingRRx2 — MultiFloats double-double (~106-bit) approximate real field.
+// Unit tests for ARingRRdd — MultiFloats double-double (~106-bit) approximate real field.
 // Mirrors the structure of ARingRRTest.cpp.
 
 #include <cstdio>
@@ -9,27 +9,27 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "aring-RRx2.hpp"
+#include "aring-RRdd.hpp"
 #include "ARingTest.hpp"
 
 // |a - b| < 2^(-nbits) ? — ElementType is a 16-byte struct, so build epsilon
 // and zero explicitly rather than relying on int → ElementType implicit conv.
-bool almostEqual(const M2::ARingRRx2& R,
+bool almostEqual(const M2::ARingRRdd& R,
                  unsigned long nbits,
-                 const M2::ARingRRx2::ElementType& a,
-                 const M2::ARingRRx2::ElementType& b)
+                 const M2::ARingRRdd::ElementType& a,
+                 const M2::ARingRRdd::ElementType& b)
 {
-  M2::ARingRRx2::ElementType epsilon{pow(2, -static_cast<double>(nbits)), 0.0};
-  M2::ARingRRx2::ElementType c;
+  M2::ARingRRdd::ElementType epsilon{pow(2, -static_cast<double>(nbits)), 0.0};
+  M2::ARingRRdd::ElementType c;
   R.subtract(c, a, b);
   R.abs(c, c);
   return R.compare_elems(c, epsilon) < 0;
 }
 
 template <>
-void getElement<M2::ARingRRx2>(const M2::ARingRRx2& R,
+void getElement<M2::ARingRRdd>(const M2::ARingRRdd& R,
                                int index,
-                               M2::ARingRRx2::ElementType& result)
+                               M2::ARingRRdd::ElementType& result)
 {
   if (index < 50)
     R.set_from_long(result, index - 25);
@@ -37,18 +37,18 @@ void getElement<M2::ARingRRx2>(const M2::ARingRRx2& R,
     R.random(result);
 }
 
-TEST(ARingRRx2, create)
+TEST(ARingRRdd, create)
 {
-  M2::ARingRRx2 R;
+  M2::ARingRRdd R;
   EXPECT_EQ(R.characteristic(), 0u);
   EXPECT_EQ(R.get_precision(), 106u);
 }
 
-TEST(ARingRRx2, negate)
+TEST(ARingRRdd, negate)
 {
-  M2::ARingRRx2 R;
-  ARingElementGenerator<M2::ARingRRx2> gen(R);
-  M2::ARingRRx2::ElementType a, b, c;
+  M2::ARingRRdd R;
+  ARingElementGenerator<M2::ARingRRdd> gen(R);
+  M2::ARingRRdd::ElementType a, b, c;
   R.init(a); R.init(b); R.init(c);
   for (int i = 0; i < ntrials; i++)
   {
@@ -60,12 +60,12 @@ TEST(ARingRRx2, negate)
   R.clear(c); R.clear(b); R.clear(a);
 }
 
-TEST(ARingRRx2, add)
+TEST(ARingRRdd, add)
 {
-  M2::ARingRRx2 R;
+  M2::ARingRRdd R;
   auto nbits = R.get_precision();
-  ARingElementGenerator<M2::ARingRRx2> gen(R);
-  M2::ARingRRx2::ElementType a, b, c, d, e;
+  ARingElementGenerator<M2::ARingRRdd> gen(R);
+  M2::ARingRRdd::ElementType a, b, c, d, e;
   R.init(a); R.init(b); R.init(c); R.init(d); R.init(e);
   for (int i = 0; i < ntrials; i++)
   {
@@ -79,12 +79,12 @@ TEST(ARingRRx2, add)
   R.clear(e); R.clear(d); R.clear(c); R.clear(b); R.clear(a);
 }
 
-TEST(ARingRRx2, subtract)
+TEST(ARingRRdd, subtract)
 {
-  M2::ARingRRx2 R;
+  M2::ARingRRdd R;
   auto nbits = R.get_precision();
-  ARingElementGenerator<M2::ARingRRx2> gen(R);
-  M2::ARingRRx2::ElementType a, b, c, e, zero;
+  ARingElementGenerator<M2::ARingRRdd> gen(R);
+  M2::ARingRRdd::ElementType a, b, c, e, zero;
   R.init(a); R.init(b); R.init(c); R.init(e); R.init(zero);
   R.set_zero(zero);
   for (int i = 0; i < ntrials; i++)
@@ -102,12 +102,12 @@ TEST(ARingRRx2, subtract)
   R.clear(zero); R.clear(e); R.clear(c); R.clear(b); R.clear(a);
 }
 
-TEST(ARingRRx2, multDivide)
+TEST(ARingRRdd, multDivide)
 {
-  M2::ARingRRx2 R;
+  M2::ARingRRdd R;
   auto nbits = R.get_precision();
-  ARingElementGenerator<M2::ARingRRx2> gen(R);
-  M2::ARingRRx2::ElementType a, b, c, d;
+  ARingElementGenerator<M2::ARingRRdd> gen(R);
+  M2::ARingRRdd::ElementType a, b, c, d;
   R.init(a); R.init(b); R.init(c); R.init(d);
   for (int i = 0; i < ntrials; i++)
   {
@@ -124,12 +124,12 @@ TEST(ARingRRx2, multDivide)
   R.clear(d); R.clear(c); R.clear(b); R.clear(a);
 }
 
-TEST(ARingRRx2, axioms)
+TEST(ARingRRdd, axioms)
 {
-  M2::ARingRRx2 R;
+  M2::ARingRRdd R;
   auto nbits = R.get_precision();
-  ARingElementGenerator<M2::ARingRRx2> gen(R);
-  M2::ARingRRx2::ElementType a, b, c, d, e;
+  ARingElementGenerator<M2::ARingRRdd> gen(R);
+  M2::ARingRRdd::ElementType a, b, c, d, e;
   R.init(a); R.init(b); R.init(c); R.init(d); R.init(e);
   for (int i = 0; i < ntrials; i++)
   {
@@ -157,12 +157,12 @@ TEST(ARingRRx2, axioms)
   R.clear(e); R.clear(d); R.clear(c); R.clear(b); R.clear(a);
 }
 
-TEST(ARingRRx2, power_and_invert)
+TEST(ARingRRdd, power_and_invert)
 {
-  M2::ARingRRx2 R;
+  M2::ARingRRdd R;
   auto nbits = R.get_precision();
-  ARingElementGenerator<M2::ARingRRx2> gen(R);
-  M2::ARingRRx2::ElementType a, b, c, d;
+  ARingElementGenerator<M2::ARingRRdd> gen(R);
+  M2::ARingRRdd::ElementType a, b, c, d;
   R.init(a); R.init(b); R.init(c); R.init(d);
   mpz_t gmp1; mpz_init(gmp1);
   for (int i = 0; i < ntrials; i++)
