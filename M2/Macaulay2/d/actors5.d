@@ -1773,12 +1773,8 @@ changeDirectory(dir:string):Expr := (
 changeDirectory(e:Expr):Expr := (
     when e
     is filename:stringCell do changeDirectory(filename.v)
-    is a:Sequence do (
-	if length(a) == 0
-	then changeDirectory("~")
-	else WrongArg("a string or ()"))
-    else WrongArg("a string or ()"));
-setupfun("changeDirectory",changeDirectory);
+    else WrongArgString());
+setupfun("changeDirectory0",changeDirectory);
 
 export debuggerHook := nullE;
 
