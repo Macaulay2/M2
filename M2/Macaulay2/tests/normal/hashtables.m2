@@ -36,6 +36,17 @@ assert(select(2, t, odd) === hashTable {(1, 1), (2, 1)})
 assert(selectPairs(t, (k,v) -> odd(k+v)) === hashTable {(2, 1), (3, 2), (4, 3)})
 assert(selectPairs(2, t, (k,v) -> odd(k+v)) === hashTable {(2, 1), (3, 2)})
 
+ht = x -> new HashTable from x
+t = new MutableHashTable from t
+assert(ht selectKeys(t, odd) === hashTable {(1, 1), (3, 2), (5, 5)})
+assert(ht selectKeys(2, t, odd) === hashTable {(1, 1), (3, 2)})
+assert(ht selectValues(t, odd) === hashTable {(1, 1), (2, 1), (4, 3), (5, 5)})
+assert(ht selectValues(2, t, odd) === hashTable {(1, 1), (2, 1)})
+assert(ht select(t, odd) === hashTable {(1, 1), (2, 1), (4, 3), (5, 5)})
+assert(ht select(2, t, odd) === hashTable {(1, 1), (2, 1)})
+assert(ht selectPairs(t, (k,v) -> odd(k+v)) === hashTable {(2, 1), (3, 2), (4, 3)})
+assert(ht selectPairs(2, t, (k,v) -> odd(k+v)) === hashTable {(2, 1), (3, 2)})
+
 x = set(1..10)
 assert(select(x, odd) === set {1, 3, 5, 7, 9})
 assert(select(2, x, odd) == set {1, 3})

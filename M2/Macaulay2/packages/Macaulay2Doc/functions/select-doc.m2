@@ -144,8 +144,6 @@ document {
 	       yield ", TT "true", " when the function ", TT "f", " is applied to the value ", TT "w", ".",
 	   "If ", TT "n", " is provided, at most ", TT "n", " pairs will be selected."}
 	  },
-     "The hash table ", TT "v", " should be immutable: to scan the values in a mutable hash
-     table, use ", TT "scan(values x, f)", ".",
      EXAMPLE {
 	  "x = new HashTable from { x => 1, y => 2, z => 3 }",
 	  "select(x,odd)",
@@ -237,7 +235,7 @@ doc ///
     selectKeys(n, x, f)
   Inputs
     n:ZZ
-    x:HashTable -- must be immutable
+    x:HashTable
     f:Function
   Outputs
     :HashTable
@@ -286,8 +284,6 @@ doc ///
     Example
       selectPairs(toList(1..10), (i, x) -> even x)
       selectPairs(3, toList(1..10), (i, x) -> even x)
-  Caveat
-    If @CODE "x"@ is a hash table, then it must be immutable.
   SeeAlso
     selectValues
     selectKeys
