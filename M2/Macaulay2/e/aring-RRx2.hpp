@@ -119,7 +119,17 @@ static inline DoubleDouble dd_div_d(DoubleDouble a, double b)
 // targets (older Intel without AVX2, non-x86 archs).  Downstream kernels
 // (e.g., a future dmat<ARingRRx2> SIMD specialisation) can include this
 // section conditionally to opt in.
-#if defined(__AVX2__) && defined(__FMA__)
+//
+// Portability (per review): even when the compiler targets AVX2+FMA, the build
+// can force the scalar path by defining M2_NO_DD_SIMD (e.g. a configure-time
+// --disable-dd-simd). This matters because Macaulay2 is frequently compiled on
+// one machine and run on another: a binary built with -march=native on an AVX2
+// host would otherwise emit AVX2 instructions that fault (SIGILL) on a baseline
+// CPU. Distributions that build for a baseline ISA already won't define
+// __AVX2__, so they get the scalar path automatically; M2_NO_DD_SIMD covers the
+// native-build-then-redistribute case and leaves room for a runtime CPUID
+// dispatch later.
+#if defined(__AVX2__) && defined(__FMA__) && !defined(M2_NO_DD_SIMD)
 #include <immintrin.h>
 
 static inline __m256d v4_two_sum(__m256d a, __m256d b, __m256d* e) {
