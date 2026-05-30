@@ -158,6 +158,8 @@ topcomRegularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
     return if instance(result, Number) then {result} else toList result
     )
 
+-- WARNING! this function requires either homogenized, or an acyclic vector configuration,
+-- and WARNING #2: this is not checked at all.  Instead, garbage answers are returned.
 topcomRegularFineTriangulation = method(Options => options topcomIsRegularTriangulation)
 topcomRegularFineTriangulation Matrix := List => opts -> (A) -> (
     A1 := if opts.Homogenize then augment A else A;
@@ -429,7 +431,7 @@ Description
     ($d$-dimensional), and a set of $d$-simplices with vertices in the set of points is a triangulation
     if (1) their union is the convex hull of the columns of $A$, and (2) the simplices either do not
     intersect, or intersect only along lower dimensional sets.  We represent a triangulation by 
-    the the list of lists of indices for each of these $d$-dimensional simplices.
+    the list of lists of indices for each of these $d$-dimensional simplices.
   Text
     For example, consider a simple example: the square.
   Example
@@ -469,6 +471,10 @@ Description
     topcomNumTriangulations(sq, Fine => true)
     Ts = topcomAllTriangulations(sq, Fine => true);    
     netList Ts
+Caveat
+    If {\tt Homogenize => false} is given, the columns of A form a vector configuration.
+    This function requires that this vector configuration is acyclic! (That is, the cone they generate is a pointed cone).
+    The function silently returns some garbage answer in this case.
 SeeAlso
   (topcomIsTriangulation, Matrix, List)
   (topcomIsRegularTriangulation, Matrix, List)
@@ -1006,18 +1012,34 @@ doc ///
 
 
 
-
-TEST ///
 -*
   restart
-  debug needsPackage "Topcom"
+  needsPackage "Topcom"
 *-
-  -- test of topcomIsRegularTriangulation
+TEST /// -- test of topcomRegularFineTriangulation for fans.
+  -- also tests: topcomIsRegularTriangulation, topcomRegularTriangulationWeights
   A = transpose matrix {{-1,-1,1},{-1,1,1},{1,-1,1},{1,1,1},{0,0,1}}
-  topcomRegularFineTriangulation(A, Homogenize=>false)
-  tri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 3, 4}}
+  tri = topcomRegularFineTriangulation(A, Homogenize=>false)
+  assert(tri == {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 3, 4}})
   assert topcomIsRegularTriangulation(A,tri)
   topcomRegularTriangulationWeights(A,tri,Homogenize=>false) == {1,1,0,0,0}
+
+  -- check correctness not using topcom:
+  needsPackage "NormalToricVarieties"
+  V = normalToricVariety(entries transpose A, tri)
+  assert isWellDefined V
+
+  -- A second example: this one fails.
+  -- Actually: topcomRegularFineTriangulation requires an acyclic vector configuration.
+  vecs = {{-1, -1, 1, 1}, {-1, -1, 1, 2}, {-1, -1, 2, 1}, {-1, 3, -1, -1}, {2, -1, -1, -1}, {-1, 1, 0, 0}}
+  A = transpose matrix vecs
+  C = posHull A
+  isPointed C -- is false.  Therefore the following command gives (or can give) an incorrect answer.
+  t = topcomRegularFineTriangulation(A, Homogenize => false)
+  -- these next 3 lines show that t is not a well defined triangulation!
+  -- needsPackage "NormalToricVarieties"  
+  -- V = normalToricVariety(vecs, t)
+  -- isWellDefined V -- is false, meaning this triangulation does not define a fan, i.e. is not welldefined...
 ///
 
 TEST ///
