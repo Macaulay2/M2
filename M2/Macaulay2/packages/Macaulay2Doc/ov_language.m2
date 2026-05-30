@@ -775,10 +775,6 @@ doc ///
       apply(-5..5, try f else 0)
     Text
       The behavior of interrupts (other than alarms) is unaffected.
-  Caveat
-    We will change the behavior of this function soon so that it will be
-    possible to catch errors of a particular type.  Meanwhile, users are
-    recommended to use this function sparingly, if at all.
   SeeAlso
     symbol trap
 ///
