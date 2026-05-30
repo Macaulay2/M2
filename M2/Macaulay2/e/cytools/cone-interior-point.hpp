@@ -1,4 +1,8 @@
-#pragma once
+// Copyright 2026.  The Macaulay2 authors.
+
+#ifndef _cone_interior_point_hpp_
+#define _cone_interior_point_hpp_
+
 #include <vector>
 
 struct ConeResult {
@@ -9,3 +13,5 @@ struct ConeResult {
 };
 
 ConeResult coneInteriorPoint(int m, int n, const std::vector<int>& A);
+
+#endif // _cone_interior_point_hpp_

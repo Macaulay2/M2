@@ -1,7 +1,6 @@
-
+// Copyright 2026.  The Macaulay2 authors.
 #include "cone-interior-point.hpp"
 #include <glpk.h>
-#include <iostream>
 #include <cmath>
 
 // A is m x n, row-major.  Tests whether {x : Ax >= 0} is full-dimensional.

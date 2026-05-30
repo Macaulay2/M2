@@ -10,16 +10,14 @@
   typedef struct Matrix Matrix;
 #  endif
 
-/**
- * \defgroup cones Cones
- * \brief Cone interface routines (most backed by libnormaliz).
- *
- * Macaulay2's sign convention for inequality matrices is uniformly
- * `A * x <= 0` (or `A * x <= b` in the inhomogeneous case).
- * Implementations negate as needed to adapt to the conventions used by
- * libnormaliz (`A * x >= 0`) and the internal `box_enum` helper
- * (`H * x >= rhs`).
- */
+  /**
+   * \defgroup cones Cones
+   * \brief Cone interface routines (most backed by libnormaliz).
+   *
+   * Different software has different conventions for how a matrix represents a
+   * cone.  Each routine here mentions its own conventions, and also the
+   * conventions of the software (e.g. normaliz) it calls.
+   */
 
 #  if defined(__cplusplus)
 extern "C" {
@@ -35,24 +33,8 @@ extern "C" {
  * defined by linear inequalities. The implementation negates `C` on the
  * way in because libnormaliz uses the opposite convention `A * x >= 0`.
  *
- * \warning The cone is assumed to be pointed (that is, `ker(C) = 0`).
- *          Only extreme rays are returned, so if `C` has a non-trivial
- *          kernel the cone has a non-trivial lineality space and the
- *          positive hull of the returned rays is a *proper* subset of
- *          `{x : C x <= 0}`. Basis vectors for `ker(C)` (and their
- *          negatives) are not emitted.
- *
- * \warning The row/column convention here is the **transpose** of the
- *          pure-M2 `FourierMotzkin` package: that package takes hyperplanes
- *          as **columns** and returns extremal rays as **columns**. This
- *          engine routine takes hyperplanes as **rows** and returns
- *          extremal rays as **rows**. The convention used here may change
- *          in the future to align with the package.
- *
- * \param C An r-by-c matrix over ZZ. Each row is one inequality
- *          `C(i,*) * x <= 0`; columns index the c-dimensional ambient
- *          lattice.
- * \return An n-by-c matrix over ZZ whose **rows** are the extremal rays
+ * \param C An $r \times c$ matrix over ZZ.
+ * \return An $n \times c$ matrix over ZZ whose **rows** are the extremal rays
  *         of the cone, or `nullptr` on engine error.
  *
  * \par Example (M2 top level)
@@ -68,34 +50,24 @@ extern "C" {
  */
 const Matrix /* or null */ *rawFourierMotzkin(const Matrix *C);
 
-/** \brief Hilbert basis of a polyhedral cone given by its rays, via libnormaliz.
+/** \brief Hilbert basis of a polyhedral cone given by its rays, via
+libnormaliz.
  *
  * Computes the Hilbert basis of the cone `pos(rows of C)` in `QQ^c`,
  * i.e. the unique minimal generating set of the additive monoid
- * `pos(rows of C) intersect ZZ^c`. The cone is presented in
- * V-representation (rays as input rows), the dual to the H-representation
- * accepted by `rawFourierMotzkin`.
+ * `posHull(rows of C) intersect ZZ^c`.
  *
  * \warning The cone is assumed to be pointed. For non-pointed cones the
  *          Hilbert basis is not well-defined in the usual minimal-set
  *          sense; libnormaliz will still return generators, but their
  *          interpretation differs.
  *
- * \warning The intended M2 engine convention is **hyperplanes as rows**
- *          and **rays/points as columns**. This routine pre-dates that
- *          convention and uses **rows for both** input rays and output
- *          basis elements. The signature may be transposed in the future
- *          to match the convention; for now the row-based layout is used.
+ * \param C An $r \times c$ integer matrix$.
+ *         The cone is the positive hull of the rows of this matrix, in
+ *         $\mathbb{Q}^c$.
  *
- * \param C An r-by-c matrix over ZZ. Each row is one cone generator
- *          (ray); columns index the c-dimensional ambient lattice.
- * \return An n-by-c matrix over ZZ whose **rows** are the Hilbert basis
+ * \return An $n \times c$ integer matrix whose rows are the Hilbert basis
  *         elements, or `nullptr` on engine error.
- *
- * \todo Validate that `C` is over ZZ (currently assumed).
- * \todo Lift cones over QQ to ZZ before passing to libnormaliz.
- * \todo Expose libnormaliz's support for cones over algebraic number
- *       fields embedded in RR.
  *
  * \par Example (M2 top level)
  * \code{.unparsed}
@@ -106,12 +78,9 @@ const Matrix /* or null */ *rawFourierMotzkin(const Matrix *C);
  *     -- | 1 1 |
  *     -- | 1 2 |
  * \endcode
- * The cone in `ZZ^2` spanned by the rays `(1,0)` and `(1,2)` has
- * Hilbert basis `{(1,0), (1,1), (1,2)}`; the middle element `(1,1)`
- * is the non-trivial lattice point in the half-open parallelepiped
- * spanned by the two primitive rays.
+ * The cone in `QQ^2` spanned by the rays `(1,0)` and `(1,2)` has
+ * Hilbert basis `{(1,0), (1,1), (1,2)}`.
  *
- * \sa rawFourierMotzkin (H-representation counterpart)
  * \ingroup cones
  */
 const Matrix /* or null */ *rawHilbertBasis(const Matrix *C);
@@ -128,12 +97,14 @@ const Matrix /* or null */ *rawHilbertBasis(const Matrix *C);
  *
  * \param curves        Input curves: the curve classes whose GV
  *                      invariants are to be computed. Each inner
- *                      list has length `h11`.
+ *                      list has length `h11`.  These should include
+ *                      the Hilbert basis elements, not just extremal
+ *                      curve classes.
  * \param lightcone     Lightcone curves. Currently non-empty values
  *                      are not yet functional or tested; pass the
  *                      empty list.
  * \param grading       Grading vector.
- * \param Q             GLSM charge matrix.
+ * \param Q             GLSM charge (degree) matrix.
  * \param nefPartition  Nef partition data. Currently non-empty values
  *                      are not yet functional or tested; pass the
  *                      empty list.
@@ -149,17 +120,18 @@ const Matrix /* or null */ *rawHilbertBasis(const Matrix *C);
  *                      - `[2] mode`: enumeration strategy and a
  *                        GV/GW switch; see the bit layout and the
  *                        Normal / Hilbert / Verbatim modes documented
- *                        in `Macaulay2/e/computeGV.cpp`.
+ *                        in `Macaulay2/e/computeGV.cpp`. Setting this to
+ *                        non-zero value is not yet implemented.
  *                      - `[3] min_mem`: **currently ignored** — the
  *                        memory threshold is hardcoded internally
  *                        (notably on macOS); the slot is kept in the
  *                        signature for forward compatibility.
  *
- * \return A MutableMatrix over ZZ with `h11 + 1` rows and one column
- *         per (curve class, GV invariant) pair found by the search:
- *         rows `0..h11-1` hold the curve coordinates and row `h11`
- *         holds the GV invariant (an `mpz_class`, which may be very
- *         large). Returns `nullptr` if `gvcompute` fails.
+ * \return A MutableMatrix over ZZ with `h11 + 1` rows, where each column
+ *         corresponds to a curve class (first h11 entries in the column, and
+ *         the last column contains an integer which is the GV invariant for
+ *         that curve class.  Returns `nullptr` if the data is not in the
+ *         correct format, or for some reason the function fails.
  *
  * \par Reference
  * M. Demirtas, M. Kim, L. McAllister, J. Moritz, A. Rios-Tascon,
@@ -224,10 +196,6 @@ MutableMatrix /* or null */ *rawGVInvariants(M2_arrayint curves,
  * Backed by the cytools `box_enum.h`, written by Nate MacFadden,, which works in C `int`
  * arithmetic. The implementation negates `A` and `b` to convert M2's
  * `A x <= b` into `box_enum`'s `H x >= rhs` convention.
- *
- * \note This routine follows the intended M2 engine convention:
- *       **hyperplanes as rows** of `A`, **lattice points as columns**
- *       of the result.
  *
  * \param A           An m-by-d matrix over ZZ; each row is one
  *                    inequality. All entries must fit in a C `int`.
@@ -327,7 +295,7 @@ MutableMatrix /* or null */ *rawLatticePointsNormaliz(const Matrix *A,
  * works with `{x : A x >= 0}`.
  *
  * \par The LP
- * In the user-facing convention `A x <= 0`, the LP is:
+ * With the cone being `A x <= 0`, the LP is:
  * \code{.unparsed}
  *   maximize     t
  *   subject to   A_i * x  <=  -t        for each row i = 1, ..., m
@@ -341,9 +309,6 @@ MutableMatrix /* or null */ *rawLatticePointsNormaliz(const Matrix *A,
  * the row duals supply a non-negative `y >= 0` with `y^T A = 0`.
  * The `[-1, 1]` box on `x` keeps the LP bounded; without it `t`
  * could scale to infinity along any interior ray.
- *
- * \note Hyperplanes-as-rows convention. Callers whose data is in the
- *       `M x >= 0` form should pass `-M` (in M2: `raw(-M)`).
  *
  * \param A An m-by-n matrix over ZZ; each row is one inequality.
  *          Entries must fit in a C `int`.
@@ -376,8 +341,6 @@ MutableMatrix /* or null */ *rawLatticePointsNormaliz(const Matrix *A,
  * inequalities `x <= 0` and `-x <= 0` collapse the cone to the line
  * `x = 0`.
  *
- * \sa rawFourierMotzkin — consumes the same `A x <= 0` H-representation
- *     and returns the cone's extreme rays.
  * \ingroup cones
  */
 MutableMatrix /* or null */ *rawConeInteriorPoint(const Matrix *A);

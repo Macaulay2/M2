@@ -1,5 +1,5 @@
 // Written in 2021 by Mahrud Sayrafi
-
+// Code added in 2026, Mike Stillman
 #include "interface/cone.h"
 
 #include <M2/math-include.h>
@@ -183,8 +183,6 @@ MutableMatrix *rawGVInvariants(M2_arrayint curves,
       M->set_entry(h11, col, globalZZ->from_int(k.second.get_mpz_t()));
     }
   return M;
-  
-  
   // std::cout << "# curves: " << curveandgvcollection.size() << std::endl;
   // for (auto &k : curveandgvcollection)
   //   {
@@ -194,13 +192,14 @@ MutableMatrix *rawGVInvariants(M2_arrayint curves,
   // return nullptr;
 //  return resultCurvesAndGVs.to_matrix();
 }
-// todo here:
-// 1. add in translate functions (make the function...)
-// 2. create the top level function, call the d level function.
-// 3. deal with the output from gvcompute.
 
-// User-facing convention is A * x <= b. The underlying box_enum function
-// works with H * x >= rhs, so we negate A and b on the way in.
+// Enumerate points in the polyhedron `Ax <= b`., s.t. each entry has absolute
+// value <= B.  max_N_out can be set to obtain a subset of all the points.
+// max_N_nodes is an internal counter that must be set high enough.  If we hit
+// that bound, we throw an error.
+//
+// The underlying box_enum function
+// works with Hx >= b, so we negate A and b on the way in.
 MutableMatrix *rawLatticePoints(const Matrix *A,
                                 const Matrix *b,
                                 int B,
@@ -270,9 +269,10 @@ MutableMatrix *rawLatticePoints(const Matrix *A,
   }
 }
 
-// Same user-facing convention as rawLatticePoints (A*x <= b), but backed by
-// libnormaliz: enumerates ALL lattice points of the polyhedron (no box,
-// no caps, big-int entries supported). The polyhedron must be bounded.
+// Enumerate points in the bounded polyhedron `Ax <= b`.  An error is raised
+// if the polyhedron is not bounded. This function uses libnormaliz.
+// Thus, the entries of A and b may be large integers (not like rawLatticePoints
+// above, where the entries and bounds need to be 32 bit integers.
 MutableMatrix *rawLatticePointsNormaliz(const Matrix *A, const Matrix *b)
 {
   try
@@ -325,12 +325,16 @@ MutableMatrix *rawLatticePointsNormaliz(const Matrix *A, const Matrix *b)
   }
 }
 
-// Macaulay2 convention: rows of A are inequalities A*x <= 0.
-// The helper coneInteriorPoint() works with {x : A x >= 0}, so we negate.
+// This function attempts to find an interior point of the cone `Ax <= 0`.
+// (where A is a matrix over ZZ).  It either finds such a point (if the cone is
+// full dimensional) or if not, it gives non-negative weights certifying that
+// the cone is not full dimensional.
 //
 // Return value is a 1-row MutableMatrix over RR(53):
-//   if full-dimensional: 2 + n columns, [1, tStar, interior point]
-//   else                : 2 + m columns, [0, tStar, dual certificate]
+//   if full-dimensional: 2 + n columns, [1.0, tStar, interior point]
+//   else                : 2 + m columns, [0.0, tStar, dual certificate]
+// I am a little unclear yet when this will give incorrect answers.
+// Returns nullptr and sets ERROR, if an 
 MutableMatrix /* or null */ *rawConeInteriorPoint(const Matrix *A)
 {
   try
@@ -379,42 +383,3 @@ MutableMatrix /* or null */ *rawConeInteriorPoint(const Matrix *A)
       return nullptr;
   }
 }
-
-// struct ConeResult {
-//     bool fullDimensional;
-//     int rank;                        // dimension of the cone
-//     std::vector<mpz_class> interior; // valid if fullDimensional: lattice point with Ax > 0
-// };
-
-// // A is m x n, row-major: cone is { x : A x >= 0 }.
-// ConeResult coneInteriorPointNormaliz(int m, int n, const std::vector<mpz_class>& A) {
-//     // Build the m x n matrix of inequality rows.
-//     std::vector<std::vector<mpz_class>> ineqs(m, std::vector<mpz_class>(n));
-//     for (int i = 0; i < m; ++i)
-//         for (int j = 0; j < n; ++j)
-//             ineqs[i][j] = A[i * n + j];
-
-//     // Construct the cone from inequalities (H-representation).
-//     libnormaliz::Cone<mpz_class> C(libnormaliz::Type::inequalities, ineqs);
-
-//     // Ask for rank and (if full-dim) a witness of the interior.
-//     C.compute(libnormaliz::ConeProperty::Rank,
-//               libnormaliz::ConeProperty::IsPointed,
-//               libnormaliz::ConeProperty::Generators);  // extreme rays, used below
-
-//     ConeResult res;
-//     res.rank = C.getRank();
-//     res.fullDimensional = (res.rank == n);
-
-//     if (res.fullDimensional) {
-//         // Sum of extreme rays lies in the relative interior; since the cone
-//         // is full-dimensional, that's the interior, and it's a lattice point.
-//         const auto& rays = C.getExtremeRays();   // vector<vector<mpz_class>>
-//         std::vector<mpz_class> x(n, 0);
-//         for (const auto& r : rays)
-//             for (int j = 0; j < n; ++j)
-//                 x[j] += r[j];
-//         res.interior = std::move(x);
-//     }
-//     return res;
-// }
