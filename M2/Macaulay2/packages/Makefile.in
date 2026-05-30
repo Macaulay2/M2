@@ -113,6 +113,11 @@ $(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.insta
 $(foreach i, $(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/FirstPackage/.installed))
 $(foreach i, $(patsubst Macaulay2Doc,,$(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES)))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
 
+all: @pre_bindir@/M2-language-server
+
+@pre_bindir@/M2-language-server: LanguageServer/M2-language-server
+	cp $< $@
+
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info
 
