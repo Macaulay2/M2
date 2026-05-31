@@ -492,8 +492,22 @@ flipCandidates(Matrix, List) := (Amat, tri) -> (
     assert all(tri, t -> #t == d);
     if numrows Amat == d-1 then
       Amat = Amat || matrix{ toList(numcols Amat : 1) };
-    c2 := codim2s tri;
-    unique for c in c2 list (
+    -- (d+1)-walls considered are of two kinds:
+    --   (a) codim-2 walls of `tri` (unions of adjacent maximal simplices).
+    --   (b) sigma ∪ {v} for each maximal simplex sigma in `tri` and each
+    --       column v not in vertices(tri).  These are not walls of `tri`,
+    --       but they are supports of bistellar flips that *insert* v; in
+    --       non-acyclic configurations such flips can be the only non-fine
+    --       neighbors of `tri`, missed by the codim-2-wall enumeration.
+    used := set flatten tri;
+    n := numcols Amat;
+    insertWalls := flatten for sigma in tri list
+        for v from 0 to n-1 list (
+            if used#?v then continue;
+            sort append(sigma, v)
+            );
+    walls := unique join(codim2s tri, insertWalls);
+    unique for c in walls list (
         z := flatten entries syz Amat_c;
         rsort {c_(positions(z, zi -> zi > 0)), c_(positions(z, zi -> zi < 0))}
         )
@@ -1801,16 +1815,25 @@ doc ///
       a triangulation of the columns of $A$
   Outputs
     :List
-      of pairs $\{neg, pos\}$, where {\tt neg} and {\tt pos} are disjoint
-      lists of column indices and ${\tt neg} \cup {\tt pos}$ spans a
-      codim-2 wall of the triangulation
+      of pairs $\{neg, pos\}$ of disjoint column-index lists, the negative
+      and positive parts of an affine circuit supported on a $(d{+}1)$-set
+      of columns relevant to flipping $T$
   Description
     Text
-      For each pair of maximal simplices in $T$ that share a common ridge
-      ({\it i.e.} whose union has $d{+}1$ points), this function returns the
-      signed kernel partition of those points, regarded as an affine circuit.
-      Each pair has the form $\{neg, pos\}$, the negative and positive parts
-      of the kernel relation.
+      Two kinds of $(d{+}1)$-sets are considered:
+    Text
+      $\bullet$ codim-2 walls of $T$ -- $(d{+}1)$-sets formed as the union
+      of two adjacent maximal simplices of $T$.  These support the standard
+      "fine" flips that preserve the vertex set.
+    Text
+      $\bullet$ $\sigma \cup \{v\}$ for each maximal simplex $\sigma$ of $T$
+      and each column $v$ not used in $T$.  These are not walls of $T$, but
+      they are the supports of bistellar flips that {\it insert} $v$; in
+      non-acyclic configurations (e.g., complete simplicial fans) such
+      insertion flips can be the only non-fine neighbors of $T$.
+    Text
+      For each $(d{+}1)$-set $c$, the function returns the signed kernel
+      partition of those columns as a pair $\{neg, pos\}$ of column indices.
     Text
       Each returned circuit is a {\bf candidate} input for @TO bistellarFlip@,
       but not all candidates yield a valid flip in $T$; see @TO bistellarFlip@.
@@ -3383,12 +3406,28 @@ TEST /// -- all functions, on a non-acyclic vector configuration.
   flipCandidates t1
   flips t1
   netList for f in flipCandidates t1 list f => bistellarFlip(t1, f)
-  neighbors(t1) === {}
+  assert(neighbors t1 == {}) -- t1 is fine, but every fine flip would change support
   adj = neighbors(t1, Fine => false)
-  assert(set {adj#0#1, adj#1#1} === set {t0, t2})
-  neighbors(t0, Fine => false) -- this doesn't work so well!! BUG?  Same problem with t2.
-  flipGraph(A, Homogenize => false) -- BUG!! Doesn't know where to start.
-  flipGraph(t1, Fine => false)
+  assert(set apply(adj, x -> x#1) === set {t0, t2})
+
+  -- non-fine flips from t0 and t2 must find t1 (insertion-flip enumeration in
+  -- flipCandidates: sigma ∪ {v} for unused v; here v = 5 from t0, v = 0 from t2).
+  adj0 = neighbors(t0, Fine => false)
+  assert(member(t1, apply(adj0, x -> x#1)))
+  adj2 = neighbors(t2, Fine => false)
+  assert(member(t1, apply(adj2, x -> x#1)))
+
+  -- flipGraph(_, Fine => false) reaches all three triangulations from any seed.
+  G0 = flipGraph(t0, Fine => false)
+  G1 = flipGraph(t1, Fine => false)
+  G2 = flipGraph(t2, Fine => false)
+  assert(set G0.Triangulations === set {t0, t1, t2})
+  assert(set G1.Triangulations === set {t0, t1, t2})
+  assert(set G2.Triangulations === set {t0, t1, t2})
+
+  -- flipGraph(A, Homogenize => false) currently fails: regularFineTriangulation
+  -- has no way to find a fine triangulation of a non-acyclic configuration.
+  -- TODO: revisit once flipGraph(Matrix, ...) accepts a seed triangulation.
   -- finding a first (fine, regular) triangulation of an acyclic vector configuration
   
   -- check generateTriangulations, flipGraph, applied to a vector configuration
