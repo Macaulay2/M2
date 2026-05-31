@@ -151,6 +151,16 @@ regularFineStarTriangulation = method(Options => options fineStarTriangulation)
 regularFineStarTriangulation Matrix := List => opts -> (A) ->
     fineStarTriangulation(A, topcomRegularFineTriangulation A, opts)
 
+-- To find a seed fine regular triangulation for a non-acyclic vector configuration,
+-- *if* the columns of A are all on the boundary of convexHull A, and the origin is
+-- an interior point, then we can do the following:
+--  1. find a regular, fine triangulation of convexHull A.
+--  2. use `fineStarTriangulation` to get a star triangulation (with the cone point being
+--    the origin.
+--  3. Remove the cone point from each set.
+-- Note that `fineStarTriangulation` adds the cone point in, so maybe we need this function where
+-- it just doesn't do that?
+    
 -- Let the columns of A be a set of non-zero points in d-space.
 -- Suppose that the origin is in the interior of their convex hull
 -- Suppose all the points of A are boundary points of convexHull A
@@ -3543,7 +3553,10 @@ TEST /// -- all functions, on a non-acyclic vector configuration.
   secondaryCone t0
   secondaryCone t2
   secondaryFan t1
-  
+///
+
+TEST /// -- this is an example of a set of rays with non-regular triangulations 
+
 ///
 end----------------------------------------------------
 
