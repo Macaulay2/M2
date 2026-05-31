@@ -225,7 +225,7 @@ makeModule(Module, RingMap, Matrix, FunctionClosure) := (N, f, matB, ringpf) -> 
     auxN := ambient N/image relations N;
     A := source f;
     k := (numgens ambient N) * (numgens source matB);
-    sourceGens := matB**gens N;
+    sourceGens := gens N ** matB;
     mp := if isHomogeneous f then
         try(map(auxN, , f, sourceGens)) else map(auxN, A^k, f, sourceGens)
     else
@@ -240,17 +240,14 @@ makeModule(Module, RingMap, Matrix, FunctionClosure) := (N, f, matB, ringpf) -> 
 
     -- some rings have can't trim so fallback to not trimming.  can raise `gcd: unimplemented for this ring`.
     rels = try(trim rels) else rels;
-    M := ambientSpace/rels;
+    M := ambientSpace / rels;
     pfmat' := N.cache.pruningMap * map(N, M, f, sourceGens);
 
     pf := (n) -> ( -- pf: N --> M
-        -- transpose without applying antipode
+        -- a bit hacky: we want to transpose without applying antipode
         n' := transpose matrix for row in entries n list for c in row list antipode(c);
-        results := for i from 0 to numrows n' - 1 list (
-            -- apply ringpf and reshape coefficients to line up with order of basis in construction of M
-            mapped := transpose cover ringpf n'^{i};
-            reshape(A^(numgens M), A^1, mapped)
-        );
+        -- apply ringpf and stack as vectors
+        results := for i from 0 to numrows n' - 1 list reshape(A^(numgens M), A^1, ringpf n'^{i});
         if isHomogeneous n then
             map(M, , matrix {results})
         else
