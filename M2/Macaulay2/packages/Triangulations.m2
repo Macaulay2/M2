@@ -69,6 +69,7 @@ export {
     "fineStarTriangulation",
     "regularFineStarTriangulation",
     "naiveIsTriangulation",
+    "someTriangulation",
     
     "ConeIndex",
     "Edges"
@@ -389,6 +390,44 @@ regularFineTriangulation Matrix := Triangulation => opts -> (A) -> (
     tri := topcomRegularFineTriangulation(A, opts);
     if tri === null then null else
         triangulation(A, tri, opts)
+    )
+
+-- Find SOME (not necessarily fine, not necessarily regular)
+-- triangulation of the vector configuration A.  Useful as a seed for
+-- @TO flipGraph@ or @TO generateTriangulations@ when A is non-acyclic
+-- and @TO topcomRegularFineTriangulation@ (Homogenize => false) is
+-- unreliable.
+--
+-- Strategy: triangulate the point configuration `homogenize A` with
+-- topcom (which works correctly for any A) into d-dimensional simplices
+-- (each a (d+1)-subset of columns); the (d-1)-faces that appear in
+-- exactly one polytope simplex are the boundary (d-1)-faces of conv(A).
+-- For a non-acyclic A (0 in the interior of conv(A)) the cones over
+-- these boundary faces form a complete simplicial fan, i.e., a
+-- vector-configuration triangulation of A.  Columns in the strict
+-- interior of conv(A) are missed; insertion flips can be used to add
+-- them if a fine triangulation is required.
+someTriangulation = method()
+someTriangulation Matrix := Triangulation => A -> (
+    d := numrows A;
+    assert(rank A == d);
+    if isPointed posHull A then (
+        -- Acyclic: existing topcom path is reliable for vector configs.
+        T := regularFineTriangulation(A, Homogenize => false);
+        if T === null then error "topcom failed to find a triangulation";
+        return T;
+        );
+    -- Non-acyclic case.
+    polyTri := topcomRegularFineTriangulation(A, Homogenize => true);
+    if polyTri === null then error "topcom failed on homogenized configuration";
+    counts := new MutableHashTable;
+    for sigma in polyTri do
+        for i from 0 to #sigma - 1 do (
+            face := sort drop(sigma, {i, i});
+            counts#face = if counts#?face then counts#face + 1 else 1;
+            );
+    boundary := for k in keys counts list if counts#k == 1 then k else continue;
+    triangulation(A, boundary, Homogenize => false)
     )
 
 -- TODO/BUG: this ASSUMES (A, tri) is a triangulation.
@@ -1175,11 +1214,65 @@ doc ///
       T = regularFineTriangulation A
       isFine T
       isRegularTriangulation T
+  Caveat
+    When called with {\tt Homogenize => false} on a non-acyclic vector
+    configuration, @TO "Topcom::topcomRegularFineTriangulation"@ can
+    return a list of simplices that is not actually a triangulation of
+    $A$.  Use @TO someTriangulation@ for a reliable seed in that case.
   SeeAlso
     triangulation
     isRegularTriangulation
     isFine
+    someTriangulation
     "Topcom::topcomRegularFineTriangulation"
+///
+
+doc ///
+  Key
+    someTriangulation
+    (someTriangulation, Matrix)
+  Headline
+    a triangulation of a point or vector configuration, not necessarily fine or regular
+  Usage
+    T = someTriangulation A
+  Inputs
+    A:Matrix
+      whose columns are the vectors of the configuration; the columns
+      are interpreted as vectors (no homogenization), and $A$ is
+      assumed to have full row rank
+  Outputs
+    T:Triangulation
+      a triangulation of $A$ as a vector configuration
+  Description
+    Text
+      Returns some triangulation of the vector configuration $A$, useful
+      as a seed for @TO flipGraph@ or @TO generateTriangulations@.  Unlike
+      @TO regularFineTriangulation@ with {\tt Homogenize => false}, this
+      function is reliable on non-acyclic configurations (where the
+      origin lies in the interior of $\mathrm{conv}(A)$).  The returned
+      triangulation need not be fine; columns in the strict interior of
+      $\mathrm{conv}(A)$ are omitted.  When @TO posHull@$(A)$ is pointed,
+      this defers to @TO regularFineTriangulation@.
+    Example
+      A = transpose matrix {{-1,-1,1,1},{-1,-1,1,2},{-1,-1,2,1},{-1,3,-1,-1},{2,-1,-1,-1},{-1,1,0,0}}
+      isPointed posHull A
+      T = someTriangulation A
+      isWellDefined T
+      isFine T
+      isRegularTriangulation T
+    Text
+      Strategy: triangulate {\tt homogenize}$(A)$ as a point configuration
+      (which @TO "Topcom::topcomRegularFineTriangulation"@ handles
+      correctly for any $A$); the resulting $d$-dimensional polytope
+      simplices each have $d{+}1$ vertices.  The $(d{-}1)$-subsets
+      appearing in exactly one polytope simplex are the boundary
+      $(d{-}1)$-faces of $\mathrm{conv}(A)$.  For a non-acyclic $A$ the
+      cones over these boundary faces form a complete simplicial fan.
+  SeeAlso
+    regularFineTriangulation
+    triangulation
+    flipGraph
+    generateTriangulations
 ///
 
 doc ///
@@ -3424,6 +3517,12 @@ TEST /// -- all functions, on a non-acyclic vector configuration.
   assert(set G0.Triangulations === set {t0, t1, t2})
   assert(set G1.Triangulations === set {t0, t1, t2})
   assert(set G2.Triangulations === set {t0, t1, t2})
+
+  -- someTriangulation handles non-acyclic A (topcomRegularFineTriangulation
+  -- with Homogenize=>false is unreliable here).
+  T = someTriangulation A
+  assert isWellDefined T
+  assert(T === t1) -- on this example the boundary-faces construction yields the fine star
 
   -- flipGraph(A, Homogenize => false) currently fails: regularFineTriangulation
   -- has no way to find a fine triangulation of a non-acyclic configuration.
