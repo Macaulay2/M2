@@ -22,6 +22,7 @@ threadLocal export backtrace := true;
 threadLocal export profiling := false;
 threadLocal lastCode := dummyCode;
 threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0));
+export threadLocal finishTargetDepth := -1;
 export chars := new array(Expr) len 256 do (
     i := 0;
     while i<256 do (
@@ -1537,6 +1538,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 
 -----------------------------------------------------------------------------
 steppingFurther(c:Code):bool := steppingFlag && (
+    if finishTargetDepth > 0 then return recursionDepth > finishTargetDepth;
      p := codePosition(c);
      if p == dummyPosition || p.loadDepth < errorDepth then return true;
      if stepCount >= 0 then (
@@ -1561,6 +1563,7 @@ steppingFurther(c:Code):bool := steppingFlag && (
 handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
 	  p := codePosition(c);
+	  -- TODO: consider splitting SuppressErrors and the message errors
 	  if SuppressErrors
 	  || err.message == returnMessage
 	  || err.message == continueMessage || err.message == continueMessageWithArg
@@ -1568,6 +1571,7 @@ handleError(c:Code,e:Expr):Expr := (
 	  || err.message == breakMessage
 	  || err.message == unwindMessage
 	  || err.message == throwMessage
+	  || err.message == finishMessage
 	  then (
 	       -- an error message that is really being used to transfer control must be passed up the line
 	       -- the position is plugged in just in case it's unhandled
@@ -1603,6 +1607,11 @@ handleError(c:Code,e:Expr):Expr := (
 					);
 				   eval(c))
 			      else if z.message == continueMessage then eval(c)
+			      else if z.message == finishMessage   then (
+				  finishTargetDepth = recursionDepth - 1;
+				  setSteppingFlag();
+				  eval(c)
+				  )
 			      else e)
 			 else e)
 		    else (
@@ -1623,6 +1632,7 @@ export evalraw(c:Code):Expr := (
      -- better would for cancellation requests to set exceptionFlag:
      -- Ccode(void,"pthread_testcancel()");
      e := (
+	  -- at some point we should check !steppingFurther(c)
 	  if test(exceptionFlag) && !steppingFurther(c) then (    -- compare this code to the code in evalexcept() below
 	       if steppingFlag then (
 		    clearSteppingFlag();
@@ -1861,7 +1871,7 @@ continueFun(a:Code):Expr := (
 	       e,false,dummyFrame)));
 setupop(continueS,continueFun);
 
-stepFun(a:Code):Expr := (
+export stepFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else (
 	  Expr(Error(dummyPosition,
@@ -1873,6 +1883,11 @@ breakFun(a:Code):Expr := (
      e := if a == dummyCode then dummyExpr else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
+
+finishFun(a:Code):Expr := (
+     e := if a == dummyCode then nullE else eval(a);
+     when e is Error do e else Expr(Error(dummyPosition,finishMessage,e,false,dummyFrame)));
+setupop(finishS,finishFun);
 
 addTestS := setupvar("addTest", nullE); -- will be overwritten in testing.m2
 testfun(c:Code):Expr := (

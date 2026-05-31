@@ -18,8 +18,8 @@
 
 newPackage(
 	"Visualize",
-	Version => "1.9",
-	Date => "January 2, 2026",
+	Version => "1.10",
+	Date => "May 27, 2026",
     	Authors => {       
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
@@ -67,6 +67,11 @@ export {
 ---------------
 
 -*
+
+1.10 (2026-05-27, M2 1.26.06)
+* bump jquery 4.0.0
+* update my contact info
+* add name field to package.json
 
 1.9 (2026-01-02, M2 1.26.05)
 * bump three.js to 0.182.0 and update 3d ideal code

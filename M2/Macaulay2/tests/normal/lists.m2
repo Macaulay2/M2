@@ -21,3 +21,8 @@ assert (delete(y, i) == <| x, z |>)
 assert (i_{0,2} == <| x, z |>)
 
 assert isTable table(0, 0, identity)
+
+-- issue #4267
+assert try (1,2,3) == {1,2,3} then false else true
+assert try {1,2,3} == (1,2,3) then false else true
+assert try {1,2,3} == [1,2,3] then false else true

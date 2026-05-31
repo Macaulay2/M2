@@ -124,6 +124,7 @@ static char *M2_completion_generator(const char *text, int state) {
 }
 
 static char **M2_completion(const char *text, int start, int end) {
+  (void)start; (void)end;
   rl_attempted_completion_over = TRUE;
   /* if (start > 0 && rl_line_buffer[start-1] == '"') ... filename completion ... */
   return rl_completion_matches(text, M2_completion_generator);

@@ -184,10 +184,18 @@ document {
 	    "W = matrix{{-1,0,1},{0,-1,1}}",
 	    "T = diagonalAction(W, R)",
 	    "equivariantHilbertSeries T",
-	    "S = equivariantHilbertSeries(T, Order => 7)",
-	    "sub(S, {ζ_0 => 0, ζ_1 => 0})"
+	    "E = equivariantHilbertSeries(T, Order => 7)",
 		},
 	 
+    	PARA {
+	    "The constant part in the ",TEX ///$\zeta$///," variables is the Hilbert series of the invariant ring (up to degree 7)."
+	    },
+	
+	EXAMPLE {
+	    "(Z,phi) = flattenRing ring E;",
+	    "(product toList coefficients(phi E,Monomials=>apply(7,i->Z_0^i)))_(0,0)",
+		},
+	
 	    }
 
 document {

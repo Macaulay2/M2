@@ -21,6 +21,13 @@ assert ( toString net x === x )
 -- https://github.com/Macaulay2/M2/issues/1763
 assert(value toExternalString horizontalJoin() == horizontalJoin())
 
+-- net Hypertext
+needsPackage "Text"
+scan({SPAN,DIV,PRE}, h -> (
+	assert(net h {"a",BR{},"b"} == "a"||"b");
+	assert(net h null == stack());
+	))
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test nets.out"

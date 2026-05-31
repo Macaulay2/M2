@@ -1,0 +1,23 @@
+-- -*- M2-comint -*- hash: 15398408180617996408
+
+i1 : R = QQ[x,y];
+
+i2 : F = G = {x^2+y^2-1};
+
+i3 : NCO = newNumericalComputationOptions(F, G);
+
+i4 : NCO#"TargetWeight" = apply(#gens R, i -> random RR);
+
+i5 : GED = homotopyEDDegree(NCO, "Weight", true, true)
+-- warning: experimental computation over inexact field begun
+--          results not reliable (one warning given per session)
+
+o5 = 4
+
+i6 : NCO#"TargetWeight" = apply(#gens R, i -> 1_R);
+
+i7 : UED = homotopyEDDegree(NCO, "Weight", false, true)
+
+o7 = 2
+
+i8 : 

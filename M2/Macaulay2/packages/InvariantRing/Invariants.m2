@@ -55,6 +55,21 @@ net RingOfInvariants := S -> (
     return n;
     )
 
+texMath RingOfInvariants := S -> (
+    G := gens S;
+    texString := (texMath coefficientRing ambient S);
+    if #G != 0 then (
+	texString |= "\\left[" |
+	concatenate mingle(apply(G, g -> texMath g),toList(#G-1:", ")) | "\\right]";
+	);
+    if not zero ideal ambient S then (
+	L := (ideal ambient S)_*;
+	texString |= " / \\left(" |
+	concatenate mingle(apply(L, l -> texMath l),toList(#L-1:", ")) | "\\right)";
+	);
+    texString
+    )
+
 action = method()
 
 action RingOfInvariants := GroupAction => S -> S.action
