@@ -68,8 +68,10 @@ export {
 
     "fineStarTriangulation",
     "regularFineStarTriangulation",
+    "regularFineFanTriangulation",
     "naiveIsTriangulation",
     "someTriangulation",
+    "makeFine",
     
     "ConeIndex",
     "Edges"
@@ -151,23 +153,35 @@ regularFineStarTriangulation = method(Options => options fineStarTriangulation)
 regularFineStarTriangulation Matrix := List => opts -> (A) ->
     fineStarTriangulation(A, topcomRegularFineTriangulation A, opts)
 
--- To find a seed fine regular triangulation for a non-acyclic vector configuration,
--- *if* the columns of A are all on the boundary of convexHull A, and the origin is
--- an interior point, then we can do the following:
---  1. find a regular, fine triangulation of convexHull A.
---  2. use `fineStarTriangulation` to get a star triangulation (with the cone point being
---    the origin.
---  3. Remove the cone point from each set.
--- Note that `fineStarTriangulation` adds the cone point in, so maybe we need this function where
--- it just doesn't do that?
-    
--- Let the columns of A be a set of non-zero points in d-space.
--- Suppose that the origin is in the interior of their convex hull
--- Suppose all the points of A are boundary points of convexHull A
--- Then the following function computes a regular, star, fine triangulation of A
--- tri, where each element in tri is a list thought of as having the origin as
--- a cone vertex.
-    
+-- For a non-acyclic vector configuration A whose columns all lie on the
+-- boundary of conv(A) and whose origin is interior to conv(A), this
+-- function computes a regular, fine, star fan triangulation of A:
+--   1. regular fine triangulation of conv(A) (as a point configuration);
+--   2. for each polytope simplex f and each boundary facet g of conv(A),
+--      collect the intersection f ∩ g; keep those of size d (these are
+--      the (d-1)-faces of f lying on ∂conv(A) -- equivalently, the
+--      polytope-tri (d-1)-faces on the boundary of conv(A));
+--   3. wrap as a vector-config Triangulation; the origin is the implicit
+--      cone vertex and is not stored.
+-- (This is `fineStarTriangulation` with the cone-index append step
+-- omitted -- the omitted vertex is the implicit origin.)
+regularFineFanTriangulation = method()
+regularFineFanTriangulation Matrix := Triangulation => A -> (
+    polyTri := topcomRegularFineTriangulation A;  -- Homogenize=>true default
+    if polyTri === null then
+        error "topcom failed to triangulate conv(A)";
+    aA := augment A;
+    H := transpose(-(first fourierMotzkin aA));
+    myfacets := for e in entries H list (
+        positions(flatten entries(matrix {e} * aA), x -> x == 0)
+        );
+    tri := sort unique flatten for f in polyTri list for g in myfacets list (
+        a := toList(set g * set f);
+        if #a < numRows A then continue else sort a
+        );
+    triangulation(A, tri, Homogenize => false)
+    )
+
 
 -- TODO: I am not sure that this is correct.
 naiveIsTriangulation = method()
@@ -397,9 +411,76 @@ topcomRegularTriangulationWeights Triangulation := opts -> T -> (
 
 regularFineTriangulation = method(Options => {Homogenize => true})
 regularFineTriangulation Matrix := Triangulation => opts -> (A) -> (
+    -- topcomRegularFineTriangulation with Homogenize => false can return a
+    -- non-triangulation when A is non-acyclic; route around it in that case.
+    if not opts.Homogenize and not isPointed posHull A then (
+        T := regularFineFanTriangulation A;
+        if isFine T then return T;
+        -- No fine triangulation may exist (e.g., a zero column has no role
+        -- as a ray); fall through to null in that case.
+        return try makeFine T else null;
+        );
     tri := topcomRegularFineTriangulation(A, opts);
     if tri === null then null else
         triangulation(A, tri, opts)
+    )
+
+-- Walk T0 to a fine triangulation via support-increasing bistellar
+-- flips: at each step, take a neighbor (via @TO neighbors@ with
+-- {\tt Fine => false}) whose support strictly contains the current
+-- support; repeat until fine.  Errors if no such flip exists at a
+-- non-fine state.
+makeFine = method()
+makeFine Triangulation := Triangulation => T0 -> (
+    T := T0;
+    n := numcols matrix T;
+    while not isFine T do (
+        usedCount := # unique flatten max T;
+        next := null;
+        for cT1 in neighbors(T, Fine => false) do (
+            T1 := cT1#1;
+            if # unique flatten max T1 > usedCount then (
+                next = T1;
+                break;
+                );
+            );
+        if next === null then
+            error("makeFine: no support-increasing flip available at support size "
+                | toString usedCount | " of " | toString n);
+        T = next;
+        );
+    T
+    )
+
+-- regularFineTriangulation(Triangulation): walk to a fine + regular
+-- triangulation via bistellar flips.  Stage 1: support-increasing
+-- flips to reach a fine triangulation (@TO makeFine@).  Stage 2: BFS
+-- over the fine-flip graph until a regular triangulation is reached.
+-- The stage-2 error is not a bug: a fine triangulation that is not
+-- connected to any regular fine triangulation via fine flips is a
+-- known (rare, large) phenomenon worth reporting.
+regularFineTriangulation Triangulation := Triangulation => opts -> T0 -> (
+    T := makeFine T0;
+    if isRegularTriangulation T then return T;
+    seen := new MutableHashTable;
+    seen#T = true;
+    queue := new MutableList from {T};
+    nextIdx := 0;
+    while nextIdx < #queue do (
+        cur := queue#nextIdx;
+        nextIdx = nextIdx + 1;
+        for cT1 in neighbors cur do (
+            T1 := cT1#1;
+            if seen#?T1 then continue;
+            seen#T1 = true;
+            if isRegularTriangulation T1 then return T1;
+            queue#(#queue) = T1;
+            );
+        );
+    error("regularFineTriangulation: the fine triangulation reached is in a "
+        | "connected component of the fine-flip graph with no regular "
+        | "triangulation (visited " | toString #queue | " fine triangulations); "
+        | "this is rare and worth reporting if encountered.")
     )
 
 -- Find SOME (not necessarily fine, not necessarily regular)
@@ -1198,43 +1279,165 @@ doc ///
   Key
     regularFineTriangulation
     (regularFineTriangulation, Matrix)
+    (regularFineTriangulation, Triangulation)
     [regularFineTriangulation, Homogenize]
   Headline
     a regular fine triangulation of a point or vector configuration
   Usage
     T = regularFineTriangulation A
+    T = regularFineTriangulation T0
   Inputs
     A:Matrix
       whose columns are the points of the configuration
+    T0:Triangulation
+      a starting triangulation, possibly neither fine nor regular
     Homogenize => Boolean
       if true (default), $A$ is augmented with a final row of $1$'s and
       treated as a point set; if false, the columns are treated as a
-      vector configuration in their own right
+      vector configuration in their own right; ignored when the input
+      is a @TO Triangulation@
   Outputs
     T:Triangulation
-      a regular triangulation that uses every column of $A$, or
-      @TO null@ if no such triangulation exists
+      a regular fine triangulation, or @TO null@ if no such triangulation
+      exists (Matrix form, when {\tt Homogenize => false})
   Description
     Text
-      Constructs a regular fine triangulation by calling
-      @TO "Topcom::topcomRegularFineTriangulation"@ and wrapping the
-      result in a @TO Triangulation@.
+      With a Matrix input, constructs a regular fine triangulation by
+      calling @TO "Topcom::topcomRegularFineTriangulation"@ and wrapping
+      the result in a @TO Triangulation@.  When {\tt Homogenize => false}
+      and $A$ is non-acyclic, topcom is unreliable; in that case the
+      result is built via @TO regularFineFanTriangulation@ (and, if it
+      is not already fine, refined via @TO makeFine@).
     Example
       A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
       T = regularFineTriangulation A
       isFine T
       isRegularTriangulation T
+    Text
+      Given a @TO Triangulation@ $T_0$ that is not (yet) fine or regular,
+      this walks the bistellar flip graph: first via support-increasing
+      flips (@TO makeFine@) to reach a fine triangulation, then via fine
+      flips until a regular one is encountered.  Errors if the second
+      stage exhausts the fine-flip-connected component without finding a
+      regular triangulation.
+    Example
+      A = transpose matrix {{-1,-1,1,1},{-1,-1,1,2},{-1,-1,2,1},{-1,3,-1,-1},{2,-1,-1,-1},{-1,1,0,0}}
+      t0 = triangulation(A, {{0,1,2,3},{0,1,2,4},{0,1,3,4},{0,2,3,4},{1,2,3,4}})
+      isFine t0
+      T = regularFineTriangulation t0
+      isFine T
+      isRegularTriangulation T
   Caveat
-    When called with {\tt Homogenize => false} on a non-acyclic vector
-    configuration, @TO "Topcom::topcomRegularFineTriangulation"@ can
-    return a list of simplices that is not actually a triangulation of
-    $A$.  Use @TO someTriangulation@ for a reliable seed in that case.
+    On the Matrix form with {\tt Homogenize => false}, the function
+    returns @TO null@ when @TO makeFine@ fails to reach a fine
+    triangulation by support-increasing flips (for instance when $A$
+    has a zero column, which cannot be a ray of any maximal cone).
   SeeAlso
     triangulation
     isRegularTriangulation
     isFine
     someTriangulation
+    regularFineFanTriangulation
+    makeFine
     "Topcom::topcomRegularFineTriangulation"
+///
+
+doc ///
+  Key
+    makeFine
+    (makeFine, Triangulation)
+  Headline
+    walk to a fine triangulation by support-increasing bistellar flips
+  Usage
+    T = makeFine T0
+  Inputs
+    T0:Triangulation
+      a triangulation, possibly non-fine (some columns of $A$ unused)
+  Outputs
+    T:Triangulation
+      a fine triangulation reached from $T_0$ by a sequence of
+      support-increasing bistellar flips
+  Description
+    Text
+      At each step, this function inspects @TO neighbors@$(T, {\tt Fine\, =>\, false})$
+      and follows the first neighbor whose support (set of column indices
+      used by its maximal simplices) is a strict superset of $T$'s
+      support.  It repeats until $T$ is fine, or errors when no
+      support-increasing neighbor is available at the current $T$.
+    Text
+      The greedy choice is cheap to compute and usually reaches a fine
+      triangulation quickly, but it is not exhaustive: it never takes a
+      flip that keeps the support the same size, so it can stall at a
+      non-fine $T$ even when a fine triangulation is reachable via a
+      longer sequence of flips that mixes support-increasing and
+      equal-support steps.  Failure of this function therefore means
+      "the support-monotone walk got stuck," not necessarily "no fine
+      triangulation exists."
+    Example
+      A = transpose matrix {{-1,-1,1,1},{-1,-1,1,2},{-1,-1,2,1},{-1,3,-1,-1},{2,-1,-1,-1},{-1,1,0,0}}
+      t0 = triangulation(A, {{0,1,2,3},{0,1,2,4},{0,1,3,4},{0,2,3,4},{1,2,3,4}})
+      isFine t0
+      T = makeFine t0
+      isFine T
+  SeeAlso
+    neighbors
+    regularFineTriangulation
+    someTriangulation
+    regularFineFanTriangulation
+///
+
+doc ///
+  Key
+    regularFineFanTriangulation
+    (regularFineFanTriangulation, Matrix)
+  Headline
+    a regular fine star fan triangulation of a vector configuration
+  Usage
+    T = regularFineFanTriangulation A
+  Inputs
+    A:Matrix
+      whose columns are nonzero vectors in $\mathbb{Z}^d$ (or $\mathbb{Q}^d$);
+      every column should lie on the boundary of $\mathrm{conv}(A)$ and the
+      origin should be in the interior of $\mathrm{conv}(A)$
+  Outputs
+    T:Triangulation
+      a vector-configuration triangulation of $A$, returned with the origin
+      as the implicit (unstored) cone vertex
+  Description
+    Text
+      Implements the classical "star fan" construction:
+    Text
+      $\bullet$ compute a regular fine triangulation of $\mathrm{conv}(A)$
+      as a point configuration (@TO regularFineTriangulation@);
+    Text
+      $\bullet$ for each polytope simplex $f$ and each boundary facet $g$
+      of $\mathrm{conv}(A)$, take $f \cap g$; the size-$d$ intersections
+      are the $(d{-}1)$-faces of $f$ that lie on $\partial \mathrm{conv}(A)$;
+    Text
+      $\bullet$ return those size-$d$ index sets as a triangulation of
+      $A$ as a vector configuration.
+    Text
+      Under the stated assumptions the cones over these boundary faces
+      form a complete simplicial fan, and the resulting triangulation is
+      regular, fine, and star at the origin.
+    Example
+      A = transpose matrix {{-1,-1,1,1},{-1,-1,1,2},{-1,-1,2,1},{-1,3,-1,-1},{2,-1,-1,-1},{-1,1,0,0}}
+      isPointed posHull A
+      T = regularFineFanTriangulation A
+      isWellDefined T
+      isFine T
+      isRegularTriangulation T
+  Caveat
+    If some column of $A$ lies in the interior of $\mathrm{conv}(A)$, the
+    construction still returns a valid triangulation (and is still
+    regular and star-at-origin), but interior columns are silently
+    omitted, so the result will not be fine.  Use insertion flips
+    (@TO neighbors@ with {\tt Fine => false}) to add them.
+  SeeAlso
+    someTriangulation
+    regularFineTriangulation
+    fineStarTriangulation
+    regularFineStarTriangulation
 ///
 
 doc ///
@@ -3534,9 +3737,25 @@ TEST /// -- all functions, on a non-acyclic vector configuration.
   assert isWellDefined T
   assert(T === t1) -- on this example the boundary-faces construction yields the fine star
 
-  -- flipGraph(A, Homogenize => false) currently fails: regularFineTriangulation
-  -- has no way to find a fine triangulation of a non-acyclic configuration.
-  -- TODO: revisit once flipGraph(Matrix, ...) accepts a seed triangulation.
+  -- regularFineFanTriangulation computes a regular fine fan by computing a
+  -- regular fine triangulation of the convex hull of A (as a point
+  -- configuration), then taking the boundary (d-1)-faces (equivalently:
+  -- the star triangulation at the implicit origin, with the cone vertex
+  -- not stored).
+  assert(regularFineFanTriangulation A === t1)
+
+  -- regularFineTriangulation(A, Homogenize=>false) now routes around the
+  -- topcom path (which can return a non-triangulation on non-acyclic A)
+  -- and returns the fine star fan.
+  assert(regularFineTriangulation(A, Homogenize => false) === t1)
+
+  -- makeFine: starting from t0 (which omits column 5), greedy
+  -- support-increasing flips reach t1.
+  assert(makeFine t0 === t1)
+
+  -- regularFineTriangulation(Triangulation): makeFine to reach a fine
+  -- triangulation, then fine flips to reach a regular one.
+  assert(regularFineTriangulation t0 === t1)
   -- finding a first (fine, regular) triangulation of an acyclic vector configuration
   
   -- check generateTriangulations, flipGraph, applied to a vector configuration
