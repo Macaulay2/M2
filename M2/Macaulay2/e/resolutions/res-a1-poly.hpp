@@ -72,7 +72,6 @@ class res_poly : public our_new_delete
   const Monoid *M;
   const Ring *K;  // Coefficient field of R.
   size_t element_size;
-  stash *resterm_stash;
 
   resterm *new_term() const;
 

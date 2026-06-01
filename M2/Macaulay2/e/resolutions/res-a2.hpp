@@ -115,7 +115,6 @@ class gb2_comp : public gb_node
   const Monoid *M;  // flattened monomials (same as originalR->getMonoid())
   const Ring
       *K;  // flattened coefficients (same as originalR->getCoefficients())
-  stash *mi_stash;  // owned by the creator of this node
 
   FreeModule *F;
   FreeModule *Fsyz;  // This is a Schreyer module
@@ -170,7 +169,6 @@ class gb2_comp : public gb_node
 
  private:
   void setup(FreeModule *Fsyz,
-             stash *mi_stash,
              gb_node *gens,
              int lodegree,
              int origsyz,
@@ -200,7 +198,6 @@ class gb2_comp : public gb_node
 
  public:
   gb2_comp(FreeModule *Fsyz,
-           stash *mi_stash,
            gb_node *gens,
            int lodegree,
            int orig_syz,
@@ -248,7 +245,6 @@ class gbres_comp : public ResolutionComputation
 {
  private:
   const PolynomialRing *originalR;
-  stash *mi_stash;  // for all of the nodes of the computation
   GBRing *GR;
   int n_nodes;
   gb_node **nodes;
