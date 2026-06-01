@@ -131,9 +131,6 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
     if (cachedModule := getPushFwdModule(N, f, o)) =!= null then
         return cachedModule;
 
-    N' := prune N;
-    outerPruningMap := N'.cache.pruningMap;
-
     A := source f;
     B := target f;
     B' := B/ann N; -- N is finite over A iff A -> B' is a finite ring extension
@@ -142,46 +139,43 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
 
     -- you might think we want to just compute pushFwd g inside makeModule but
     -- that triggers infinite recursion makeModule <> pushFwd(RingMap)
-    pfg := pushFwd g; matB' := pfg#1; ringpf := pfg#2;
-    (pfN, pfmat', pf) := makeModule(N' ** B', g, matB', ringpf);
+    (unusedModule, matB, ringpf) := pushFwd g;
+    (pfN, pfmat', pf) := makeModule(N ** B', g, matB, ringpf);
 
     -- diagram chase
-    -- pfmat'           : pfN       --> N' ** B
-    -- liftToN'         : N' ** B   --> N'
-    -- outerPruningMap  : N'        --> N
-    liftToN' := map(N', N' ** B', map(B, B'), gens N');
-    auxmat := map(N, pfN, f, outerPruningMap * liftToN' * pfmat');
+
+    liftToN := map(N, N ** B', map(B, B'), N_{0..numgens N - 1});
+    auxmat := map(N, pfN, f, liftToN * pfmat');
 
     -- patch auxmat into a function M -> N
     mapb := (m) -> (
-        -- m                : A     ---> pfN
-        -- so auxmapb*m     : A^1   ---> N
-        -- since we want    : B^1   ---> N
-        -- we have to do some map shenanigans
+        -- m is a map A^1 -> pfN so auxmapb*m is a map A^1 -> N.
+        -- since we want the source to be B^1 we have to do some shenanigans
+        -- here.
         result := map(N, B^(numcols m), auxmat * m);
-        -- let map fixup degrees to preserve homogeneity if appropriate
+        -- if needed we let map fix the degrees to make the result homogenous.
         if isHomogeneous m then map(N, , result) else result
     );
     setPushforwardCache'(pfN, mapb);
 
     -- patch pf into a function N -> M
-    mapf := (n) -> (n' := quot cover(outerPruningMap^-1 * n); pf n');
+    mapf := (n) -> pf(n ** B');
     setPushforwardCache(N, f, o, mapf);
     setPushforwardByModuleCache(N, pfN, mapf);
 
     if (o.NoPrune == false) then (
-        pfN' := prune pfN;
-        innerPruningMap := pfN'.cache.pruningMap;
+        pfNPruned := prune pfN;
+        pruningmap := pfNPruned.cache.pruningMap;
         -- patch up our maps to work with the pruned module instead
         -- todo(dodgejoel): consider placing this diagram chase in the pushforward / pushforward'
         -- methods and just returning the bare pruned module here instead?  that
         -- way you could actually pushforward['] out of a module you pruned by
         -- hand...
-        p := (n) -> innerPruningMap^-1 * mapf(n);
+        p := (n) -> pruningmap^-1 * mapf(n);
         setPushforwardCache(N, f, o, p);
-        setPushforwardCache'(pfN', (m) -> mapb(innerPruningMap * m));
-        setPushforwardByModuleCache(N, pfN', p);
-        pfN'
+        setPushforwardCache'(pfNPruned, (m) -> mapb(pruningmap * m));
+        setPushforwardByModuleCache(N, pfNPruned, p);
+        pfNPruned
     ) else (
         pfN
     )
@@ -244,6 +238,7 @@ makeModule(Module, RingMap, Matrix, FunctionClosure) := (N, f, matB, ringpf) -> 
     pfmat' := N.cache.pruningMap * map(N, M, f, sourceGens);
 
     pf := (n) -> ( -- pf: N --> M
+        n = N.cache.pruningMap^-1 * n;
         -- a bit hacky: we want to transpose without applying antipode
         n' := transpose matrix for row in entries n list for c in row list antipode(c);
         -- apply ringpf and stack as vectors
