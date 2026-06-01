@@ -273,7 +273,7 @@ lineOnTop := (s) -> concatenate(width s : "-") || s
 expression ComplexMap := Expression => f -> (
     (lo, hi) := concentration f;
     d := degree f;
-    new VerticalList from for i from lo to hi list
+    new Holder from new VerticalList from for i from lo to hi list
         RowExpression {i+d, ":", MapExpression { target f_i, source f_i, f_i }, ":", i}
     )
 

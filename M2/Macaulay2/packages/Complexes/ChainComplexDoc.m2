@@ -812,7 +812,6 @@ doc ///
         get the maps between the terms in a complex
     Usage
         dd^C
-        dd_C
     Inputs
         C:Complex
     Outputs

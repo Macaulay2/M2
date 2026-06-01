@@ -62,12 +62,8 @@ freeResolution Module := Complex => opts -> M -> (
     R := ring M;
     local C;
     if M === R^0 or opts.LengthLimit < 0
-    then (
-        C = complex R^0;
-        if not M.cache.?Resolution then 
-            M.cache.Resolution = C;
-        return C;
-        );
+    then return M.cache.Resolution ??= complex R^0;
+    if isFreeModule M then return M.cache.Resolution ??= complex M;
     if M.cache.?Resolution then (
         C = M.cache.Resolution;
         if not C.cache.?LengthLimit or not C.cache.?DegreeLimit then
@@ -142,17 +138,23 @@ resolutionObjectInEngine = (opts, M, matM) -> (
                 -- we remove the ResolutionObject from M.cache since 
                 -- otherwise it is in an incomplete and unrecoverable state
                 remove(M.cache, symbol ResolutionObject);
-                error "need to provide LengthLimit for free resolutions over skew-commutative rings";
-                );
-            flatR := first flattenRing R;
-            if ideal flatR != 0 then (
-                -- we remove the ResolutionObject from M.cache since 
-                -- otherwise it is in an incomplete and unrecoverable state
-                remove(M.cache, symbol ResolutionObject);
-                error "need to provide LengthLimit for free resolutions over quotients of polynomial rings";
-                );
-            numgens flatR)
+                << "WARNING: since no finite LengthLimit was given, it has been arbitrarily set to be the number of variables" << endl;
+                numgens R
+                --error "need to provide LengthLimit for free resolutions over skew-commutative rings";
+                )
+            else (
+                flatR := first flattenRing R;
+                if ideal flatR != 0 then (
+                    -- we remove the ResolutionObject from M.cache since 
+                    -- otherwise it is in an incomplete and unrecoverable state 
+                    remove(M.cache, symbol ResolutionObject);
+                    << "WARNING: since no finite LengthLimit was given, it has been arbitrarily set to be the number of variables" << endl;
+                    --error "need to provide LengthLimit for free resolutions over quotients of polynomial rings";
+                    );
+                numgens flatR)
+            )
         else opts.LengthLimit;
+
 
     RO.RawComputation = rawResolution(
         raw matM,         -- the matrix
@@ -721,6 +723,7 @@ minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
 
 minimalBetti Module := BettiTally => opts -> M -> (
     R := ring M;
+    if isFreeModule M then return betti complex M;
     degreelimit := opts.DegreeLimit;
     if degreelimit === null then degreelimit = infinity;
     lengthlimit := opts.LengthLimit;
