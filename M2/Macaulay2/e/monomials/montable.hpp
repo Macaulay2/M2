@@ -1,7 +1,6 @@
 #ifndef M2_MONOMIALS___MONTABLE_H
 #define M2_MONOMIALS___MONTABLE_H
 
-#include "mem.hpp"
 #include <vector>
 #include <memory>
 #include <algorithm>

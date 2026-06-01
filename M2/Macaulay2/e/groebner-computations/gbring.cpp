@@ -9,7 +9,6 @@
 #include "basic-rings/aring-glue.hpp"
 #include "coeffrings.hpp"
 #include "free-modules/freemod.hpp"
-#include "mem.hpp"
 #include "rings/ring.hpp"
 #include "free-modules/schreyer-orders.hpp"
 #include "text-io.hpp"

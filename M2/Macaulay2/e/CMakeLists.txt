@@ -218,7 +218,6 @@ set(SRCLIST
   matrices/matrix-con
   matrices/matrix-stream
   matrices/matrix
-  mem
   memory-status
   monomials/monideal-minprimes
   monomials/monideal
