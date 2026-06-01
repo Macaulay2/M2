@@ -153,7 +153,7 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
         -- since we want the source to be B^1 we have to do some shenanigans
         -- here.
         result := map(N, B^(numcols m), auxmat * m);
-        -- if needed we let map fix the degrees to make the result homogenous.
+        -- if needed we let map fix the degrees to make the result homogeneous.
         if isHomogeneous m then map(N, , result) else result
     );
     setPushforwardCache'(pfN, mapb);
