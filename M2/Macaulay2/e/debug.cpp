@@ -135,12 +135,6 @@ void dmonideal(MonomialIdeal *m)
   emit(o.str());
 }
 
-void dstash()
-{
-  buffer o;
-  stash::stats(o);
-  emit(o.str());
-}
 
 void dRRR(gmp_RR a)
 {
