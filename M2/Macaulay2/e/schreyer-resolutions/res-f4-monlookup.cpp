@@ -4,7 +4,6 @@
 
 #include "buffer.hpp"                                     // for buffer
 #include "interface/m2-types.h"                           // for newline
-#include "mem.hpp"                                        // for stash
 #include "schreyer-resolutions/res-monomial-types.hpp"     // for index_res_v...
 #include "style.hpp"                                      // for INTSIZE
 #include "text-io.hpp"                                    // for emit, emit_...
@@ -20,7 +19,7 @@ ResF4MonomialLookupTableT<Key>::new_mi_node(varpower_word v,
                                             varpower_word e,
                                             mi_node *d)
 {
-  mi_node *p = reinterpret_cast<mi_node *>(mi_stash->new_elem());
+  mi_node *p = newarray_clear(mi_node, 1);
   p->var = v;
   p->exp = e;
   p->left = nullptr;
@@ -37,7 +36,7 @@ ResF4MonomialLookupTableT<Key>::new_mi_node(varpower_word v,
                                             varpower_word e,
                                             Key k)
 {
-  mi_node *p = reinterpret_cast<mi_node *>(mi_stash->new_elem());
+  mi_node *p = newarray_clear(mi_node, 1);
   p->var = v;
   p->exp = e;
   p->left = nullptr;
@@ -57,21 +56,13 @@ void ResF4MonomialLookupTableT<Key>::delete_mi_node(mi_node *p)
     {
       if (p->header != p) delete_mi_node(p->down());
     }
-  mi_stash->delete_elem(p);
+  freemem(p);
 }
 
 template <typename Key>
-ResF4MonomialLookupTableT<Key>::ResF4MonomialLookupTableT(int nvars,
-                                                          stash *mi_stash0)
+ResF4MonomialLookupTableT<Key>::ResF4MonomialLookupTableT(int nvars)
 {
   count = 0;
-  mi_stash = mi_stash0;
-  if (mi_stash == nullptr)
-    {
-      count = 1;
-      mi_stash = new stash("mi_node", sizeof(mi_node));
-    }
-
   size_of_exp = nvars;
   exp0 = newarray_atomic_clear(ntuple_word, size_of_exp);
 }
@@ -83,7 +74,6 @@ ResF4MonomialLookupTableT<Key>::~ResF4MonomialLookupTableT()
        i != mis.end();
        i++)
     delete_mi_node(*i);
-  if ((count % 2) == 1) delete mi_stash;
 }
 
 template <typename Key>
@@ -539,8 +529,7 @@ void ResF4MonomialLookupTableT<Key>::text_out(buffer &o) const
 
 void minimalize_res_varpower_monomials(const VECTOR(res_varpower_monomial) &
                                            elems,
-                                       VECTOR(int) & result_minimals,
-                                       stash *mi_stash)
+                                       VECTOR(int) & result_minimals)
 {
   VECTOR(VECTOR(int) *) bins;
   for (int j = 0; j < elems.size(); j++)
@@ -553,8 +542,7 @@ void minimalize_res_varpower_monomials(const VECTOR(res_varpower_monomial) &
     }
 
   // Now insert these into a lookup table
-  ResF4MonomialLookupTableT<int> M(
-      10, mi_stash);  // The 10 is simply a suggested start value
+  ResF4MonomialLookupTableT<int> M(10);  // The 10 is simply a suggested start value
   for (int i = 0; i < bins.size(); i++)
     if (bins[i] != nullptr)
       {

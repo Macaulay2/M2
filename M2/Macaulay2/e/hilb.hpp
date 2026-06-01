@@ -15,8 +15,6 @@ class Matrix;
 class MonomialIdeal;
 class PolynomialRing;
 class RingElement;
-class stash;
-
 class partition_table
 // Partition a monomial ideal into several such that
 // the graph of variables occurring in each is connected.
@@ -33,9 +31,8 @@ class partition_table
   void merge_in(const_varpower m);
   int representative(int x);
 
-  stash *mi_stash;  // for all of the nodes in all of the monomial ideals
  public:
-  partition_table(int nvars, stash *mi_stash0);
+  partition_table(int nvars);
   ~partition_table() {}
   void reset(int nvars);
   void partition(MonomialIdeal *&I,
@@ -64,8 +61,6 @@ class hilb_comp : public MutableEngineObject
   const PolynomialRing *R;  // This is the output degree ring.
   const Monoid *M;          // S->getMonoid()
   const Monoid *D;          // R->getMonoid() == S->degree_monoid()
-
-  stash *mi_stash;  // for all of the nodes in all of the monomial ideals
 
   // Collected values from the matrix
   const Matrix *input_mat;    // The input matrix
