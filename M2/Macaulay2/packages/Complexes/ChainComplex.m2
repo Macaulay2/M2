@@ -16,7 +16,7 @@ Complex = new Type of MutableHashTable --
   --    missing ones are presumed to be the zero module.
   --  cache: a CacheTable
 
-ComplexMap = new Type of HashTable
+ComplexMap = new Type of MutableHashTable
   -- keys:
   --   degree: ZZ
   --   source: Complex over a ring R
@@ -109,6 +109,27 @@ complex HashTable := Complex => complexOptions >> opts -> maps -> (
            symbol cache => new CacheTable
            };
     C.dd = map(C,C,maps,Degree=>-1);
+    C
+    )
+complex(HashTable, Function) := Complex => complexOptions >> opts -> (modules, mapfcn) -> (
+    spots := sort keys modules;
+    if #spots === 0 then
+      error "expected at least one module";
+    if not all(spots, k -> instance(k,ZZ)) then
+      error "expected modules to be labelled by integers";
+    if not uniform values modules then
+      error "expected hash table of modules";
+    if not same(ring \ values modules) then
+      error "expected all modules to be over the same ring";
+    R := ring modules#(spots#0);
+    C := new Complex from {
+	symbol ring => R,
+	-- TODO: rename module to category agnostic term
+           symbol module => new HashTable from modules,
+           symbol concentration => (first spots, last spots),
+           symbol cache => new CacheTable
+           };
+    C.dd = map(C, C, mapfcn, 23982138, Degree=>-1); -- the integer grabs the lazy maps version.
     C
     )
 complex List := Complex => complexOptions >> opts -> L -> (
@@ -258,7 +279,12 @@ isWellDefined Complex := Boolean => C -> (
             );
         return false;
         );
-    if not all(keys (dd^C).map, i -> instance(i,ZZ) and i >= lo+1 and i <= hi) then (
+    if member(symbol Function, keys (dd^C).map) then (
+        if debugLevel > 0 then  (
+            << "-- lazy differential present" << endl;
+            );
+        );
+    if not all(keys (dd^C).map, i -> (i === symbol Function) or (instance(i,ZZ) and i >= lo+1 and i <= hi)) then (
         if debugLevel > 0 then (
             << "-- expected all maps in the differential to be indexed by integers in the concentration [lo+1,hi]" << endl;
             );
@@ -792,8 +818,6 @@ truncate(List, Complex) := Complex => truncateModuleOpts >> opts -> (degs, C) ->
     (lo, hi) := C.concentration;
     if lo == hi
     then complex(truncate(degs, C_lo, opts), Base => lo)
-    -- this is the simplest way to truncate the whole complex:
-    -- else complex applyValues(C.dd.map, f -> truncate(degs, f, opts)))
     else (
 	-- this construction requires ~half as many truncations
 	f := truncate(degs, dd^C_lo, opts);
@@ -814,8 +838,6 @@ basis(List, Complex) := Complex => opts -> (deg, C) -> (
     (lo, hi) := C.concentration;
     if lo == hi
     then complex(image basis(deg, C_lo, opts), Base => lo)
-    -- this is the simplest way to take the basis of the whole complex:
-    -- else complex applyValues(C.dd.map, f -> basis(deg, f, opts)))
     else (
 	-- this construction requires ~half as many basis computations
 	f := basis(deg, dd^C_lo, opts);
@@ -832,9 +854,9 @@ importFrom_Core "residueMap" -- gives a map back to the coefficient ring
 cover' = method()
 cover' Complex := Complex => C -> (
     (lo, hi) := concentration C;
-    if lo == hi
+    if lo === hi
     then complex(cover C_lo, Base => lo)
-    else complex applyValues(C.dd.map, cover))
+    else complex(for i from lo+1 to hi list cover C.dd_i, Base => lo))
 cover' ComplexMap := ComplexMap => f -> (
     map(cover' target f, cover' source f, i -> cover f_i, Degree => degree f))
 

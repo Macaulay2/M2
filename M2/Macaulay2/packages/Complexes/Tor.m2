@@ -11,13 +11,13 @@ Tor(ZZ, Module, Module) := Module => opts -> (i, M, N) -> (
     if i === 0 then M ** N
     else (
 	C := freeResolution(M, LengthLimit => i+1);
-	b := C.dd.map;
-	if b#?i then (
-	    if b#?(i+1)
-	    then homology(b#i ** N, b#(i+1) ** N)
-	    else kernel(b#i ** N))
+	b := C.dd;
+	if b_i != 0 then (
+	    if b_(i+1) != 0
+	    then homology(b_i ** N, b_(i+1) ** N)
+	    else kernel(b_i ** N))
 	else (
-	    if b#?(i+1)
+	    if b_(i+1) != 0
 	    then error "internal error"
 	    else C_i ** N)
 	)

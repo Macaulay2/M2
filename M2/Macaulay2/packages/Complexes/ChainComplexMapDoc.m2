@@ -356,7 +356,7 @@ doc ///
             Using this function to create the identity map
             is the same as using @TO (id, Complex)@.
         Example
-            assert(map(C, C, 1) === id_C)
+            assert(map(C, C, 1) == id_C)
    SeeAlso
         ComplexMap
         (map, Complex, Complex, Function)
@@ -871,8 +871,8 @@ doc ///
             f = g1 ++ g2
             assert isWellDefined f
             L = components f
-            L_0 === g1
-            L_1 === g2
+            L_0 == g1
+            L_1 == g2
             indices f
             f' = (greg => g1) ++ (mike => g2)
             components f'
@@ -1398,7 +1398,7 @@ doc ///
             then the identity map of the corresponding complex is used.
         Example
             fE = f ** E
-            assert(fE === f ** id_E)
+            assert(fE == f ** id_E)
             k = coker vars S
             gk = g ** k
             assert(gk == g ** id_(complex k))
@@ -2130,7 +2130,7 @@ doc ///
         Text
             This is really a shorthand for constructing complex maps via block matrices.
         Example
-            assert(h === map(D, C1 ++ C2, {{f,g}}))
+            assert(h == map(D, C1 ++ C2, {{f,g}}))
     SeeAlso
         (symbol++, Complex, Complex)
         (symbol++, ComplexMap, ComplexMap)
@@ -2173,7 +2173,7 @@ doc ///
         Text
             This is really a shorthand for constructing complex maps via block matrices.
         Example
-            assert(h === map(D1 ++ D2, C, {{f},{g}}))
+            assert(h == map(D1 ++ D2, C, {{f},{g}}))
     SeeAlso
         (symbol++, Complex, Complex)
         (symbol++, ComplexMap, ComplexMap)
@@ -3485,8 +3485,8 @@ doc ///
             f' = map(M, L, 1)
             g' = freeResolution f'
             g'' = freeResolution(f * f')
-            assert(g'' === g * g')
-            assert(freeResolution id_N === id_(freeResolution N))
+            assert(g'' == g * g')
+            assert(freeResolution id_N == id_(freeResolution N))
         Text
             Over a quotient ring, free resolutions are often infinite.
             Use the optional argument {\tt LengthLimit} to obtain

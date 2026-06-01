@@ -120,9 +120,9 @@ support Complex := List => C -> select(spots C, i -> C_i != 0)
 
 pushFwd(RingMap, Complex) := o -> (f, C) -> (
     (lo, hi) := concentration C;
-    if dd^C == 0
-    then complex(for i from lo to hi list pushFwd(f, C_i, o), Base => lo)
-    else complex applyValues(C.dd.map, m -> pushFwd(f, m, o)))
+    if lo === hi then complex(pushFwd(f, C_lo), Base => lo)
+    else complex(for i from lo+1 to hi list pushFwd(f, C.dd_i, o), Base => lo)
+    )
 
 -- e.g. n = 2 means cut 2 from the beginning
 -- and n = -2 means cut 2 from the tail; n = 0 does nothing
@@ -241,10 +241,12 @@ xTensormodules := (p,q,T) -> (
 
 xTensorComplex := (T,p) ->(
     (lo, hi) := concentration T;
-    if lo == hi
+    if lo === hi
     then complex(directSum xTensormodules(p, lo, T), Base => lo)
-    else complex applyPairs(T.dd.map,
-	(i,f) -> i => inducedMap(directSum(xTensormodules(p, i-1, T)), directSum(xTensormodules(p, i, T)), f)))
+    else complex(for i from lo+1 to hi list
+        inducedMap(directSum(xTensormodules(p, i-1, T)), directSum(xTensormodules(p, i, T)), T.dd_i),
+        Base => lo)
+    )
 
 FilteredComplex ** Complex := FilteredComplex => (K,C) -> (
 		     supp := support K_infinity;
@@ -253,10 +255,10 @@ FilteredComplex ** Complex := FilteredComplex => (K,C) -> (
      	  N := max support K_infinity;
 	  P := min support K_infinity;
 	  T := K_infinity ** C;
-filteredComplex(reverse for i from P to (N-1) list 
-     inducedMap(T, xTensorComplex(T,i)), Shift => -P) 
- )
-    else ( if #supp == 1 then
+          filteredComplex(reverse for i from P to (N-1) list 
+              inducedMap(T, xTensorComplex(T,i)), Shift => -P) 
+          )
+     else ( if #supp == 1 then
 	(
 	p := min supp;
 	t := K_infinity ** C;
@@ -278,10 +280,12 @@ yTensorModules := (p,q,T)->(
 
 yTensorComplex := (T,p) -> (
     (lo, hi) := concentration T;
-    if lo == hi
+    if lo === hi
     then complex(directSum(yTensorModules(p, lo, T), Base => lo))
-    else complex applyPairs(T.dd.map,
-	(i,f) -> i => inducedMap(directSum(yTensorModules(p, i-1, T)), directSum(yTensorModules(p, i, T)), f)))
+    else complex(for i from lo+1 to hi list
+        inducedMap(directSum(yTensorModules(p, i-1, T)), directSum(yTensorModules(p, i, T)), T.dd_i),
+        Base => lo)
+    )
 
 Complex ** FilteredComplex := FilteredComplex => (C,K) -> (
 	   supp := support K_infinity;
@@ -315,10 +319,12 @@ xHomModules := (n, d, H)->(
 
 xHomComplex := (T,n) -> (
     (lo, hi) := concentration T;
-    if lo == hi
+    if lo === hi
     then complex(directSum(xHomModules(n, lo, T), Base => lo))
-    else complex applyPairs(T.dd.map,
-	(i,f) -> i => inducedMap(directSum(xHomModules(n, i-1, T)), directSum(xHomModules(n, i, T)), f)))
+    else complex(for i from lo+1 to hi list
+        inducedMap(directSum(xHomModules(n, i-1, T)), directSum(xHomModules(n, i, T)), T.dd_i),
+        Base => lo)
+    )
 
 -- produce the "x-filtration" of the Hom complex.
 Hom (FilteredComplex, Complex):= FilteredComplex => opts -> (K, C) -> (
@@ -358,10 +364,12 @@ yHomModules := (n, d, H) -> (
 
 yHomComplex := (T,n) -> (
     (lo, hi) := concentration T;
-    if lo == hi
+    if lo === hi
     then complex(directSum(yHomModules(n, lo, T), Base => lo))
-    else complex applyPairs(T.dd.map,
-	(i,f) -> i => inducedMap(directSum(yHomModules(n, i-1, T)), directSum(yHomModules(n, i, T)), f)))
+    else complex(for i from lo+1 to hi list
+        inducedMap(directSum(yHomModules(n, i-1, T)), directSum(yHomModules(n, i, T)), T.dd_i),
+        Base => lo)
+    )
 
 Hom (Complex, FilteredComplex) := FilteredComplex => opts -> (C, K) -> (
      supp := support K_infinity;

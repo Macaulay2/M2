@@ -190,23 +190,39 @@ resolutionObjectInEngine = (opts, M, matM) -> (
         lengthlimit <= RO.LengthLimit
         );
 
+    -- Old non-lazy version, to be removed once lazy version is functional
+    -- RO.complex = (lengthlimit) -> (
+    --     -- returns a Complex of length <= lengthlimit
+    --     i := 0;
+    --     modules := while i <= lengthlimit list (
+    --         F := new Module from (R, rawResolutionGetFree(RO.RawComputation, i));
+    --         if F == 0 then break;
+    --         i = i+1;
+    --         F
+    --         );
+    --     if #modules === 0 then return complex R^0;
+    --     if #modules === 1 then return complex(modules#0, Base => 0);
+    --     maps := hashTable for i from 1 to #modules-1 list (
+    --         i => map(modules#(i-1), modules#i, rawResolutionGetMatrix(RO.RawComputation, i))
+    --         );
+    --     complex maps
+    --     );
+
     RO.complex = (lengthlimit) -> (
         -- returns a Complex of length <= lengthlimit
         i := 0;
-        modules := while i <= lengthlimit list (
+        modules := hashTable while i <= lengthlimit list i => (
             F := new Module from (R, rawResolutionGetFree(RO.RawComputation, i));
             if F == 0 then break;
             i = i+1;
             F
             );
-        if #modules === 0 then return complex R^0;
-        if #modules === 1 then return complex(modules#0, Base => 0);
-        maps := hashTable for i from 1 to #modules-1 list (
-            i => map(modules#(i-1), modules#i, rawResolutionGetMatrix(RO.RawComputation, i))
-            );
-        complex maps
+        if #(keys modules) === 0 then return complex R^0;
+        if #(keys modules) === 1 then return complex(modules#0, Base => 0);
+        mapfcn := i -> map(modules#(i-1), modules#i, rawResolutionGetMatrix(RO.RawComputation, i));
+        complex(modules, mapfcn)
         );
-
+    
     if not opts.StopBeforeComputation then
         RO.compute(opts.LengthLimit, opts.DegreeLimit);
     RO.complex(opts.LengthLimit)

@@ -2411,3 +2411,62 @@ TEST ///
   C9 = constantStrand(C, 9)
   assert isWellDefined C9
 ///
+
+TEST /// -- test of lazy maps in a complex map
+  R = ZZ/32003[x,y,z]
+  C = res coker vars R
+  fC = map(C, C, i -> map(C_i, C_i, 1), 893723834);
+  assert(keys fC.map === {symbol Function})
+  assert(fC_1 === fC_1)
+  assert(fC_1 == 1)
+  assert(set keys fC.map === set{1, symbol Function})
+  assert(fC_3 == 1)
+  assert(set keys fC.map === set{1, 3, symbol Function})
+  assert(fC_5 == 0)
+  assert(set keys fC.map === set{1, 3, symbol Function})
+  assert isWellDefined fC
+///
+
+TEST /// -- test construction of complex with lazy differentials.
+restart
+  R = ZZ/32003[x,y,z,w]
+  C = res coker vars R
+  assert(keys (dd^C).map === {symbol Function})
+  assert(C.dd_1 === C.dd_1)
+  assert(set keys C.dd.map === set{1, symbol Function})
+  C.dd_3
+  assert(set keys C.dd.map === set{1, 3, symbol Function})
+  assert(C.dd_5 == 0)
+  assert(set keys C.dd.map === set{1, 3, symbol Function})
+  assert isWellDefined C.dd
+  assert isWellDefined C
+
+  -- now we construct a complex with a lazy differential
+  modules = hashTable for i from 0 to 4 list i => C_i
+  mapfcn = i -> C.dd_i
+  D = complex(modules, mapfcn)
+  assert(D.concentration === (0,4))
+  assert(D.ring === R)
+  assert(D.module === modules)
+  assert(D.dd.source === D)
+  assert(D.dd.target === D)
+  assert(D.dd.degree === -1)
+  assert(keys D.dd.map === {symbol Function})
+  assert all(1..4, i -> mapfcn i == D.dd.map.Function i)
+  assert(keys D.dd.map === {symbol Function})
+  assert isWellDefined D
+///
+
+TEST ///
+restart
+--needsPackage "OldChainComplexes"
+  S = ZZ/101[x_1..x_9];
+  J = ideal vars S;
+  T = S/J^5;
+  elapsedTime C = res coker presentation T
+  debugLevel = 1
+  elapsedTime C.dd_9;
+  elapsedTime C.dd_6;
+  profile (C = res coker presentation T)
+  profileSummary()
+///

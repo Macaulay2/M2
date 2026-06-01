@@ -13,7 +13,7 @@ flattenComplex = C -> C.cache#"flattenComplex" ??= (
     (lo, hi) := C.concentration;
     if lo === hi
     then complex(flattenModule C_lo, Base => lo)
-    else complex applyValues(C.dd.map, flattenMorphism))
+    else complex(for i from lo+1 to hi list flattenMorphism C.dd_i, Base => lo))
 
 clearHom = (M, N) -> (
     H := youngest(M.cache.cache, N.cache.cache);
@@ -40,7 +40,7 @@ tensor(CoherentSheaf, Complex) := Complex => {} >> opts -> (F, C) -> (
     (lo, hi) := concentration C;
     if lo === hi
     then complex(tensor(F, C_lo, opts), Base => lo)
-    else complex applyValues(C.dd.map, f -> tensor(id_F, f, opts)))
+    else complex(for i from lo+1 to hi list tensor(id_F, C.dd_i, opts), Base => lo))
 
 tensor(Complex, CoherentSheaf) := Complex => {} >> opts -> (C, F) -> tensor(F, C, opts)
 
@@ -58,7 +58,7 @@ sheaf Complex := Complex => C -> C.cache.sheaf ??= (
     if isSheafComplex C then return C;
     (lo, hi) := C.concentration;
     if lo === hi then return complex(sheaf C_lo, Base => lo);
-    D := complex applyValues(C.dd.map, sheaf);
+    D := complex(for i from lo+1 to hi list sheaf C.dd_i, Base => lo);
     D.cache.module = C;
     D)
 
@@ -74,8 +74,8 @@ module Complex := Complex => D -> D.cache.module ??= (
     if not isSheafComplex D then return D;
     (lo, hi) := D.concentration;
     if lo === hi then return complex(module D_lo, Base => lo);
-    maxTruncDeg := max apply(values D.dd.map, f -> f.degree);
-    C := complex applyValues(D.dd.map, f -> truncate(maxTruncDeg, f.map));
+    maxTruncDeg := max apply(for i from lo+1 to hi list degree D.dd_i);
+    C := complex(for i from lo+1 to hi list truncate(maxTruncDeg, D.dd_i), Base => lo);
     C.cache.sheaf = D;
     C)
 
@@ -83,8 +83,14 @@ module ComplexMap := ComplexMap => phi -> phi.cache.module ??= (
     S := source phi;
     T := target phi;
     if not isSheafComplex S or not isSheafComplex T then return phi;
-    maxTruncDeg := max ( apply(values S.dd.map, f -> f.degree) | apply(values T.dd.map, f -> f.degree) );
-    sphi := map(truncate(maxTruncDeg,module T), truncate(maxTruncDeg,module S), applyValues(phi.map, i -> truncate(maxTruncDeg, matrix i)));
+    (loS, hiS) := concentration S;
+    (loT, hiT) := concentration T;
+    degsS := for i from loS+1 to hiS list degree S.dd_i;
+    degsT := for i from loT+1 to hiT list degree T.dd_i;
+    maxTruncDeg := max (degsS | degsT);
+    (lo, hi) := concentration phi;
+    sphi := map(truncate(maxTruncDeg,module T), truncate(maxTruncDeg,module S),
+        hashTable for i from lo to hi list i => truncate(maxTruncDeg, matrix phi_i));
     sphi.cache.sheaf = phi;
     sphi)
 
@@ -95,7 +101,10 @@ sheafRes = method(Options => options freeResolution)
 sheafRes Complex       :=
 sheafRes CoherentSheaf := Complex => opts -> F -> sheaf freeResolution'(module F, opts)
 
-Complex(ZZ) := Complex(Sequence) := Complex => (C, a) -> complex applyValues(C.dd.map, f -> f(a))
+Complex(ZZ) := Complex(Sequence) := Complex => (C, a) -> (
+    (lo, hi) := concentration C;
+    if lo === hi then complex(C.lo(a), Base => lo)
+    else complex(for i from lo+1 to hi list C.dd_i(a), Base => lo))
 
 sheafHom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
@@ -225,7 +234,9 @@ Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
 	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
 	r := a - l + 1;
 	M = truncate(r, M));
-    complex applyValues(D.dd.map, f -> part(0, Ext^m(M, matrix f, opts))))
+    (loD, hiD) := concentration D;
+    if loD === hiD then complex(part(0, Ext^m(M, D_loD, opts)), Base => loD)
+    else complex(for i from loD+1 to hiD list part(0, Ext^m(M, matrix D.dd_i, opts)), Base => loD))
 
 cohomology(ZZ, ProjectiveVariety, Complex) := Complex => opts -> (p, X, C) -> (
     C.cache.cohomology   ??= new MutableHashTable;

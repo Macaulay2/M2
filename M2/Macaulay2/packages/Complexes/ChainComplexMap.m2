@@ -6,7 +6,10 @@ target ComplexMap := Complex => f -> f.target
 ring ComplexMap := Complex => f -> ring source f
 degree ComplexMap := ZZ => f -> f.degree
 
-isHomogeneous ComplexMap := (f) -> all(values f.map, isHomogeneous)
+isHomogeneous ComplexMap := (f) -> (
+    (lo, hi) := concentration f;
+    all(lo..hi, i -> isHomogeneous f_i)
+    )
 
 map(Complex, Complex, HashTable) := ComplexMap => opts -> (tar, src, maps) -> (
     R := ring tar;
@@ -80,6 +83,7 @@ map(Complex, Complex, List) := ComplexMap => opts -> (tar, src, maps) -> (
     map(tar,src,mapHash,opts, Degree=>deg)
     )
 
+-- TODO: remove this version
 map(Complex, Complex, Function) := ComplexMap => opts -> (D,C,f) -> (
     deg := if opts.Degree === null then 0 else opts.Degree;
     (loC,hiC) := concentration C;
@@ -93,6 +97,28 @@ map(Complex, Complex, Function) := ComplexMap => opts -> (D,C,f) -> (
     map(D,C,maps,Degree=>deg)
     )
 
+-- the integer 4th argument is a hack to try out lazy evaluation of matrices
+map(Complex, Complex, Function, ZZ) := ComplexMap => opts -> (tar,src,f,ignored) -> (
+    deg := if opts.Degree === null then 0 else opts.Degree;
+    (loSrc,hiSrc) := concentration src;
+    (loTar,hiTar) := concentration tar;
+    mapfcn := i -> (
+        if i < max(loSrc,loTar-deg) or i > min(hiSrc,hiTar-deg) then return null;
+        if src_i == 0 or tar_(i+deg) == 0 then return null;
+        g := f i;
+        if g === null or g == 0 then return null;
+        g
+        );
+    maps := new MutableHashTable from {symbol Function => mapfcn};
+    new ComplexMap from {
+        symbol source => src,
+        symbol target => tar,
+        symbol degree => deg,
+        symbol map => maps,
+        symbol cache => new CacheTable
+        }
+    )
+
 map(Complex, Complex, ZZ) := ComplexMap => opts -> (D, C, j) -> (
     if j === 0 then (
         result := map(D,C,hashTable{},opts);
@@ -103,10 +129,23 @@ map(Complex, Complex, ZZ) := ComplexMap => opts -> (D, C, j) -> (
         return j * id_C;
     error "expected 0 or source and target to be the same")
 
+-- map(Complex, Complex, ComplexMap) := ComplexMap => opts -> (tar, src, f) -> (
+--     deg := if opts.Degree === null then degree f else opts.Degree;
+--     H := hashTable for k in keys f.map list k => map(tar_(deg+k), src_k, f.map#k); -- TODO: fix me
+--     map(tar,src,H, Degree=>deg)
+--     )
+
 map(Complex, Complex, ComplexMap) := ComplexMap => opts -> (tar, src, f) -> (
     deg := if opts.Degree === null then degree f else opts.Degree;
-    H := hashTable for k in keys f.map list k => map(tar_(deg+k), src_k, f.map#k);
-    map(tar,src,H, Degree=>deg)
+    if f.map.?Function then (
+        -- is lazy
+        mapfcn := k -> map(tar_(deg+k), src_k, f.map.Function k);
+        map(tar, src, mapfcn, 324732984, Degree => deg)  -- TODO: get rid of magic number
+        )
+    else (
+        H := hashTable for k in keys f.map list k => map(tar_(deg+k), src_k, f.map#k);
+        map(tar,src,H, Degree=>deg)
+        )
     )
 
 ComplexMap | ComplexMap := ComplexMap => (f,g) -> (
@@ -170,7 +209,12 @@ isWellDefined ComplexMap := f -> (
         return false;
         );
     (lo,hi) := f.source.concentration;
-    if not all(keys f.map, i -> instance(i,ZZ) and i >= lo and i <= hi) then (
+    if member(symbol Function, keys f.map) then (
+        if debugLevel > 0 then  (
+            << "-- lazy maps present" << endl;
+            );
+        );
+    if not all(keys f.map, i -> (i === symbol Function) or (instance(i,ZZ) and i >= lo and i <= hi)) then (
         if debugLevel > 0 then (
             << "-- expected all maps to be indexed by integers in the concentration [lo,hi] of the source" << endl;
             );
@@ -227,32 +271,43 @@ isWellDefined ComplexMap := f -> (
 lineOnTop := (s) -> concatenate(width s : "-") || s
 
 expression ComplexMap := Expression => f -> (
+    (lo, hi) := concentration f;
     d := degree f;
-    s := sort keys f.map;
-    if #s === 0 then 
-        new ZeroExpression from {0}
-    else new VerticalList from for i in s list
+    new VerticalList from for i from lo to hi list
         RowExpression {i+d, ":", MapExpression { target f_i, source f_i, f_i }, ":", i}
     )
 
 net ComplexMap := Net => f -> (
-     v := between("",
-            for i in sort keys f.map list (
-                horizontalJoin(
-		            net (i+f.degree), " : ", net target f_i, " <--",
-		            lineOnTop net f_i,
-		            "-- ", net source f_i, " : ", net i
-                    )
-                ));
-     if # v === 0 then net "0"
-     else stack v
-     )
+    (lo, hi) := concentration f;
+    v := between("",
+        for i from lo to hi list (
+            horizontalJoin(
+                net (i+f.degree), " : ", net target f_i, " <--",
+                lineOnTop net f_i,
+                "-- ", net source f_i, " : ", net i
+                )
+            ));
+    if # v === 0 then net "0"
+    else stack v
+    )
 
 texMath ComplexMap := String => f -> texMath expression f
 mathML ComplexMap := String => f -> mathML expression f
 
+-- ComplexMap _ ZZ := Matrix => (f,i) -> (
+--     if f.map#?i then f.map#i else map((target f)_(i + degree f), (source f)_i, 0))
+
 ComplexMap _ ZZ := Matrix => (f,i) -> (
-    if f.map#?i then f.map#i else map((target f)_(i + degree f), (source f)_i, 0))
+    if f.map#?i then return f.map#i;
+    if f.map.?Function then (
+        if debugLevel > 0 then
+            << "creating " << i << "-th differential" << endl;
+        g := f.map.Function i;
+        if g =!= null then return f.map#i = g
+        );
+    map((target f)_(i + degree f), (source f)_i, 0)
+    )
+
 ComplexMap ^ ZZ := ComplexMap => (f,n) -> (
     (lo,hi) := (source f).concentration;
     df := degree f;
@@ -296,12 +351,12 @@ ComplexMap == ComplexMap := (f,g) -> (
     true    
     )
 ComplexMap == ZZ := Boolean => (f,n) -> (
-    if n === 0 then 
-        all(keys f.map, k -> f.map#k == 0)
+    (lo,hi) := (source f).concentration;
+    if n === 0 then
+        all(lo..hi, k -> f_k == 0)
     else if n === 1 then (
         if source f != target f then return false;
         if degree f =!= 0 then return false;
-        (lo,hi) := (source f).concentration;
         for i from lo to hi do
             if f_i != 1 then return false;
         f.cache.isCommutative = true;  -- this is the identity, after all!        
