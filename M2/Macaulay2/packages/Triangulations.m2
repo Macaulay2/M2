@@ -25,7 +25,7 @@ newPackage(
         PackageImports => {"FourierMotzkin"},
         PackageExports => {
             "Topcom", 
-            "Polyhedra" -- really only needed for `regularSubdivision`?
+            "Polyhedra" -- really only needed for `regularSubdivision`, `isPointed`?
             },
         DebuggingMode => false
         )
@@ -3279,9 +3279,7 @@ TEST ///
 
   A0 = matrix {{1, 1, 1, 1, -11}, {0, 2, 2, 2, -10}, {0, 0, 4, 4, -8}, {0, 0, 0, 12, -12}}
   P2 = polar convexHull A0
-  -- the floowing are the lattice points of P2 (from 'LP = latticePointList P2', but this uses StringTorics...)
-
-
+  -- the following are the lattice points of P2 (from 'LP = latticePointList P2', but this uses StringTorics...)
 
   LP = {{-1, 0, 0, 0}, {-1, 0, 0, 1}, {-1, 0, 3, -1}, {-1, 2, -1, 0}, {1, -1, 0, 0}, {-1, 0, 1, 0}, {-1, 1, 0, 0}, {0, 0, 0, 0}}  
   A  = transpose matrix LP
@@ -3879,9 +3877,48 @@ BENCHMARK ///
   --       
 ///
 
-TEST /// -- this is an example of a set of rays with non-regular triangulations 
+-*
+-- raysQ was generated as follows
+  needsPackage "StringTorics" -- not allowed to use this here though!!
+  tope = KSEntry "4 9  M:13 9 N:23 10 H:20,11 [18] id:6
+    1    0    0    0    0   -1   -1    0    2
+    0    1    0    0   -1    2    1   -2    0
+    0    0    1    0    1    0    1   -1   -1
+    0    0    0    1    1   -1   -1    1   -1
+    "
+  Q = reflexivePolytope tope
+  raysQ = rays Q
 
-///
+  restart
+  needsPackage "Triangulations"
+*-
+TEST /// -- methods to find one FRST of a reflexive polytope.
+  raysQ = {{-1, -1, -1, -1}, {-1, -1, -1, 0}, {-1, -1, 0, -1}, {-1, 0, -1, 0},
+      {-1, 0, 0, -1}, {0, -1, -1, -1}, {0, -1, 2, -1}, {0, 2, -1, 2},
+      {1, 1, 1, 2}, {2, 0, 0, -1}, {0, -1, 0, -1}, {0, -1, 1, -1},
+      {0, 0, -1, 0}, {0, 0, 0, -1}, {0, 0, 0, 1}, {0, 1, -1, 1},
+      {1, 0, 0, -1}, {0, 0, 1, 0}, {0, 1, 0, 1}, {1, 0, 0, 0},
+      {1, 0, 1, 0}, {1, 1, 0, 1}}
+  A = transpose matrix raysQ
+  t = regularFineFanTriangulation A -- should work whenever all columns of A lie on convHull A, and origin is in the interior.
+  assert isWellDefined t
+  assert isFine t
+  assert isRegularTriangulation t
+  t1 = someTriangulation A
+  t1 == t -- same one...  This is not necessarily true.
+  debugLevel = 1
+  --elapsedTime allTriangulations(A, Homogenize => false); -- takes a long time!  Not sure how long, or how many there are...
+  tris = generateTriangulations(t, Limit => 10);
+  #tris == 10
+  assert all(tris/isFine)
+  assert all(tris/isRegularTriangulation)
+  assert all(tris/isWellDefined)
+
+  -- elapsedTime tris = generateTriangulations(t, Limit => 10000);  -- 256 seconds
+  -- #tris == 10000
+  -- tris/isFine//tally
+  -- tris/isRegularTriangulation//tally -- this is using Topcom by default.
+  ///
 end----------------------------------------------------
 
 restart
