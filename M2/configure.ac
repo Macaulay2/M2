@@ -976,10 +976,10 @@ fi
 AC_MSG_CHECKING(whether the package gfan is installed)
 if command -v gfan > /dev/null
 then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
-     AX_COMPARE_VERSION([$gfan_version], [ge], [0.6],
+     AX_COMPARE_VERSION([$gfan_version], [ge], [0.8],
           [AC_MSG_RESULT([yes])
            FILE_PREREQS="$FILE_PREREQS `command -v gfan`"],
-          [AC_MSG_RESULT([yes, but < 0.6, will build])
+          [AC_MSG_RESULT([yes, but < 0.8, will build])
            BUILD_gfan=yes])
 else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
