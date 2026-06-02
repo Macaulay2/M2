@@ -435,7 +435,21 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   // Batch paths into ~3·numThreads chunks to amortize per-lambda DMat setup cost.
   int numThreads = (M2_numTBBThreads == 0) ? arena.max_concurrency()
                                             : M2_numTBBThreads;
-  int grainSize  = (int)std::max<size_t>(1, n_sols / (3 * numThreads));
+  int grainSize  = (int)std::max<size_t>(1, n_sols / (10 * numThreads));
+  std::cout << "-- numThreads = " << numThreads
+            << ", grainSize = " << grainSize << std::endl;
+
+  // Loop-invariant scalars: computed once, read-only inside the parallel_for.
+  RealElement t_step(R), min_step2(R), epsilon2(R), infinity_threshold2(R);
+  R.set_from_BigReal(t_step, init_dt);  // initial step
+  R.set_from_BigReal(min_step2, min_dt);
+  R.mult(min_step2, min_step2, min_step2);  // min_step^2
+  R.set_from_BigReal(epsilon2, epsilon);
+  int tolerance_bits = int(log2(fabs(R.coerceToDouble(epsilon2))));
+  R.mult(epsilon2, epsilon2, epsilon2);  // epsilon^2
+  R.set_from_BigReal(infinity_threshold2, infinity_threshold);
+  R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
+  const int num_successes_before_increase = 3;
 
   std::atomic<int> bar_done{0};
   std::mutex        bar_mutex;
@@ -455,20 +469,10 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       GC_get_stack_base(&sb);
       GC_register_my_thread(&sb);
     }
-    if (M2_numericalAlgebraicGeometryTrace > 9) { 
+    if (M2_numericalAlgebraicGeometryTrace > 9) {
       // `r` seems to be if length one in all experiments so far
       std::cout << "r = [" << r.begin() << "," << r.end() << ")\n";
     }
-    RealElement t_step(R), min_step2(R), epsilon2(R), infinity_threshold2(R);
-    R.set_from_BigReal(t_step, init_dt);  // initial step
-    R.set_from_BigReal(min_step2, min_dt);
-    R.mult(min_step2, min_step2, min_step2);  // min_step^2
-    R.set_from_BigReal(epsilon2, epsilon);
-    int tolerance_bits = int(log2(fabs(R.coerceToDouble(epsilon2))));
-    R.mult(epsilon2, epsilon2, epsilon2);  // epsilon^2
-    R.set_from_BigReal(infinity_threshold2, infinity_threshold);
-    R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
-    int num_successes_before_increase = 3;
 
     RealElement t0(R), dt(R), one_minus_t0(R), dx_norm2(R), x_norm2(R), abs2dc(R);
 

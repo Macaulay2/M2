@@ -38,6 +38,8 @@ try benchSystem("randomSys(5,3)",   randomSystem(5,3,CC_53));  -- 243 paths
 try benchSystem("randomSys(5,4)",   randomSystem(5,4,CC_53));  -- 1024 paths
 try benchSystem("reimer5",          reimer5 CC_53);         -- 720 paths
 try benchSystem("noon5",            noon5 CC_53);           -- 243 paths
--- try benchSystem("butcher",        butcher CC_53);        -- 4608 paths, ~82s each
+try benchSystem("butcher",        butcher CC_53);        -- 4608 paths, ~82s each
 
-exit 0
+end--
+restart
+load "parallel_track_bench.m2"
