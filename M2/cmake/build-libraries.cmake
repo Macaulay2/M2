@@ -1166,6 +1166,36 @@ ExternalProject_Add(build-bertini
   )
 #_ADD_COMPONENT_DEPENDENCY(libraries bertini "gmp;mpfr" BERTINI)
 
+# http://hep.itp.tuwien.ac.at/~kreuzer/CY/CYpalp.html
+set(palp_PROGRAMS
+  class-11d.x  class.x    cws-6d.x    mori-5d.x  nef-4d.x  poly-11d.x  poly.x
+  class-4d.x   cws-11d.x  cws.x       mori-6d.x  nef-5d.x  poly-4d.x
+  class-5d.x   cws-4d.x   mori-11d.x  mori.x     nef-6d.x  poly-5d.x
+  class-6d.x   cws-5d.x   mori-4d.x   nef-11d.x  nef.x     poly-6d.x)
+list(TRANSFORM palp_PROGRAMS PREPEND ${CMAKE_BINARY_DIR}/libraries/palp/build/ OUTPUT_VARIABLE palp_PROGRAMS)
+ExternalProject_Add(build-palp
+  URL               https://hep.itp.tuwien.ac.at/~kreuzer/CY/palp/palp-2.21.tar.gz
+  URL_HASH          SHA256=7e4a7bf219998a844c0bcce0a176e49d0743cb4b505a0e195329bf2ec196ddd7
+  PREFIX            libraries/palp
+  SOURCE_DIR        libraries/palp/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E true
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} all-dims
+                      CC=${CMAKE_C_COMPILER}
+                      CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
+                      LDFLAGS=${LDFLAGS}
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E true
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/palp
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/palp
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${palp_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+
 
 ###############################################################################
 ## Post-build actions
