@@ -2011,11 +2011,8 @@ export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (	-- o is not Mutable
 mapkeysfun(e:Expr):Expr := (
      when      e is a:Sequence do
      if        length(a) == 2 || length(a) == 3
-     then when a.0 is o:HashTable 
-     do        
-     if        o.Mutable
-     then      WrongArgImmutableHashTable()
-     else      if length(a) == 2 then mapkeys(a.1,o) else mapkeysmerge(a.1,o,a.2)
+     then when a.0 is o:HashTable
+     do        if length(a) == 2 then mapkeys(a.1,o) else mapkeysmerge(a.1,o,a.2)
      else      WrongArgHashTable(1)
      else      WrongNumArgs(2,3)
      else      WrongNumArgs(2,3));
@@ -2052,10 +2049,7 @@ mapvaluesfun(e:Expr):Expr := (
      when      e is a:Sequence do
      if        length(a) == 2
      then when a.0 is o:HashTable 
-     do        
-     if        o.Mutable
-     then      WrongArgImmutableHashTable()
-     else      mapvalues(a.1,o)
+     do        mapvalues(a.1,o)
      else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
      else      WrongNumArgs(2));
