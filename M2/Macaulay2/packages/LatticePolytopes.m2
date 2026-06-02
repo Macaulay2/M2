@@ -257,7 +257,7 @@ adjointPolytope(Matrix,ZZ) := (M,k) -> (
 
 adjointPolytope(Polyhedron,ZZ) := (P,k) -> (
     (A,b):=ambientHalfspaces(P);	
-    return intersection(A,b-transpose(matrix{toList(numrows(b):k)})));
+    return polyhedronFromHData(A,b-transpose(matrix{toList(numrows(b):k)})));
 
 
 
