@@ -270,15 +270,6 @@ canUseHilbertHint Ideal :=
 canUseHilbertHint Module :=
 canUseHilbertHint Matrix := Boolean => m -> canUseHilbertHint ring m and isHomogeneous m
 
--- checkHilbertHint = m -> (
---     -- Needed for using Hilbert functions to aid in Groebner basis computation:
---     --    Ring is poly ring over a field (or skew commutative, or quotient ring of such, or both)
---     --    Ring is singly graded, every variable is positive
---     --    Ring is homogeneous in this grading
---     --    Matrix is homogeneous in this grading
---     isHomogeneous m and canUseHilbertHint ring m
---     )
-
 gbGetHilbertHint := (m, opts) -> (
     if opts.Hilbert =!= null then (
         if not canUseHilbertHint m then (
