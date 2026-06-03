@@ -180,7 +180,10 @@ degreeOnCurve CoherentSheaf := F -> (
     -- and a rational number for X in a more general weighted projective space.
     if isStandardGraded ring X then lift(deg, ZZ) else deg)
 
-genus   CoherentSheaf := F -> genus   module F
+genus   CoherentSheaf := F -> (
+    if isStandardGraded ring module F
+    then genus module F
+    else (-1)^(dim F) * (euler F - 1))
 genera  CoherentSheaf := F -> genera  module F
 -- TODO: this is incorrect in higher picard rank
 pdim    CoherentSheaf := F -> tryHooks((pdim,  CoherentSheaf), F, pdim  @@ module)
