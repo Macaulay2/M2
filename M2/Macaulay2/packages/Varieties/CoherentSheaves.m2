@@ -271,6 +271,9 @@ describe   CoherentSheaf := F -> Describe (Subscript { expression sheaf, express
 expression CoherentSheaf := F -> (
     (X, M) := (variety F, module F);
     if M.?relations or M.?generators or numgens M === 0 then return SheafExpression expression M;
+    -- in the affine case, we ignore the grading of M, if any
+    if not isProjective X then return new Superscript from {expression OO_X, expression numgens M};
+    --
     degs := runLengthEncoding(- degrees M); -- a list of O_X^r(d) for each summand
     sums := apply(degs, (r, d) -> (
 	    s := new Superscript from {expression OO_X, expression r};
