@@ -474,7 +474,8 @@ cotangentSheaf ProjectiveVariety := opts -> (cacheValue (symbol cotangentSheaf =
 cotangentSheaf(ZZ, ProjectiveVariety) := opts -> (i, X) -> exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
 tangentSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
-tangentSheaf ProjectiveVariety := opts -> X -> dual cotangentSheaf(X, opts)
+tangentSheaf ProjectiveVariety := opts -> X -> sheaf prune module dual cotangentSheaf(X, opts)
+tangentSheaf AffineVariety := opts -> X -> sheaf prune module dual cotangentSheaf(X, opts)
 
 idealSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
 idealSheaf ProjectiveVariety := opts -> X -> sheaf ideal (ring X).relations
