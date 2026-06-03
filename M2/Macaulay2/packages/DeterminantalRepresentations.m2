@@ -1,7 +1,7 @@
 newPackage("DeterminantalRepresentations",
 	AuxiliaryFiles => false,
 	Version => "1.3.1",
-	Date => "November 8, 2021",
+	LastUpdated => "November 8, 2021",
 	Authors => {
 		{Name => "Justin Chen",
 		Email => "jchen646@gatech.edu"},

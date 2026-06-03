@@ -1,6 +1,6 @@
 newPackage("StronglyStableIdeals",
            Version => "1.1",
-	   Date => "June 2018",
+	   LastUpdated => "June 2018",
            Authors => {
 	               {Name => "Davide Alberelli", Email => "davide.alberelli@gmail.com"},
 	               {Name => "Paolo Lella", Email => "paolo.lella@polimi.it", HomePage => "http://www.paololella.it/"}

@@ -1,7 +1,7 @@
 newPackage(
 	"QuadraticIdealExamplesByRoos",
 	Version => "0.1",
-	Date => "June, 2023",
+	LastUpdated => "June, 2023",
 	AuxiliaryFiles => false,
 	Authors => {{Name => "David Eisenbud", Email => "de@msri.org"},
 	    {Name => "Michael Perlman", Email => "mperlman@umn.edu"}, 

@@ -1,7 +1,7 @@
 newPackage(
 	"WhitneyStratifications",
 	Version => "2.23", 
-    	Date => "June 21, 2025",
+    	LastUpdated => "June 21, 2025",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "martin.helmer@swansea.ac.uk", 
 		  HomePage => "http://martin-helmer.com/"}},

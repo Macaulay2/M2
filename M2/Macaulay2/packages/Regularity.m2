@@ -1,7 +1,7 @@
 newPackage(
    "Regularity",
    Version => "1.0",
-   Date => "February 8, 2009",
+   LastUpdated => "February 8, 2009",
    Authors => {
         {Name => "Alexandra Seceleanu", Email => "asecele2@uiuc.edu"},
         {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}

@@ -7,7 +7,7 @@
 newPackage(
         "PushForward",
         Version => "0.6",
-        Date => "May 14, 2021",
+        LastUpdated => "May 14, 2021",
         Authors => {
             {Name => "Claudiu Raicu", 
                 Email => "craicu@nd.edu", 

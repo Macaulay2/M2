@@ -25,7 +25,7 @@
 newPackage(
   "MultiplierIdeals",
   Version => "1.1", 
-  Date => "April 14, 2015",
+  LastUpdated => "April 14, 2015",
   Authors => {
     {
       Name => "Zach Teitler",

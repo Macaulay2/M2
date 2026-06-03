@@ -2,7 +2,7 @@
 newPackage(
 	"MonodromySolver",
     	Version => "1.16", 
-    	Date => "May 2023",
+    	LastUpdated => "May 2023",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "timduff@uw.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},

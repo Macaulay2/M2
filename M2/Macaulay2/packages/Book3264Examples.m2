@@ -6,7 +6,7 @@
 newPackage(
      "Book3264Examples",
      Version => "0.1",
-     Date => "July 20, 2010",
+     LastUpdated => "July 20, 2010",
      Authors => {{Name => "Charley Crissman",
 	       Email => "charleyc@math.berkeley.edu",
 	       HomePage => "http://math.berkeley.edu/~charleyc/"}},

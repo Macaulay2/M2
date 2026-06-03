@@ -1,7 +1,7 @@
 newPackage(
 	"AInfinity",
     	Version => "0.1", 
-    	Date => "October 4, 2020, rev Feb 2021, rev May 2021",
+    	LastUpdated => "October 4, 2020, rev Feb 2021, rev May 2021",
         Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org", 
                   HomePage => "http://www.msri.org/~de"},

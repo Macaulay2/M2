@@ -1,7 +1,7 @@
 newPackage(
     "NumericalLinearAlgebra",
     Version => "1.16", 
-    Date => "Dec 2020",
+    LastUpdated => "Dec 2020",
     Authors => {
         {Name => "Robert Krone", 
             Email => "krone@math.gatech.edu"},

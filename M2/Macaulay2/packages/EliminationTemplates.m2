@@ -2,7 +2,7 @@
 newPackage(
     "EliminationTemplates",
     Version => "1",
-    Date => "April 30, 2026",
+    LastUpdated => "April 30, 2026",
     Authors => {
     {Name => "Manav Batavia",
     Email => "manavbatavia@gmail.com",

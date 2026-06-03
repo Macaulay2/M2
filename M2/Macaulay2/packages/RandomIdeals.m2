@@ -1,7 +1,7 @@
 newPackage(
 	"RandomIdeals",
     	Version => "2.0", 
-    	Date => "May 9, 2016",
+    	LastUpdated => "May 9, 2016",
         Authors => {
 	    {Name => "Katie Ansaldi",
 		Email => "kansaldi@gmail.com"},

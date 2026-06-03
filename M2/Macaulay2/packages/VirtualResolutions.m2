@@ -13,7 +13,7 @@
 ---------------------------------------------------------------------------
 newPackage ("VirtualResolutions",
     Version => "1.4",
-    Date => "May 06, 2021",
+    LastUpdated => "May 06, 2021",
     Headline => "Methods for virtual resolutions on products of projective spaces",
     Authors =>{
         {Name => "Ayah Almousa",       Email => "aka66@cornell.edu",   HomePage => "http://pi.math.cornell.edu/~aalmousa "},

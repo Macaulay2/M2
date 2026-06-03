@@ -1,7 +1,7 @@
 newPackage(
 	"BoijSoederberg",
     	Version => "1.5", 
-    	Date => "April 01, 2015",
+    	LastUpdated => "April 01, 2015",
     	Authors => { -- This Package was originally written by D. Eisenbud, F. Schreyer, and M. Stillman. 
 	             -- Various revisions and updates were made by C. Gibbons and B. Stone.
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},

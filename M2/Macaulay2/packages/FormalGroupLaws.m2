@@ -3,7 +3,7 @@
 newPackage(
 	"FormalGroupLaws",
 	Version => "0.2",
-	Date => "February 26, 2010",
+	LastUpdated => "February 26, 2010",
 	Authors => {
 		{Name => "Baptiste Calmès",
 		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},

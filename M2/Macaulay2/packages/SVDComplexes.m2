@@ -11,7 +11,7 @@ viewHelp "SVDComplexes"
 newPackage(
         "SVDComplexes",
         Version => "0.3", 
-        Date => "May 23, 2018",
+        LastUpdated => "May 23, 2018",
         Authors => {
             {Name => "Frank-Olaf Schreyer", 
 		        Email => "schreyer@math.uni-sb.de",

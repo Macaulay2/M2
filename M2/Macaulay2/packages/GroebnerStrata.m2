@@ -2,7 +2,7 @@
 newPackage(
 	"GroebnerStrata",
     	Version => "0.9", 
-    	Date => "11 Nov 2021",
+    	LastUpdated => "11 Nov 2021",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
 	     {Name => "Kristine Jones", Email => "kejones84@gmail.com"}},

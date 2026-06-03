@@ -1,6 +1,6 @@
 newPackage("MultigradedBGG",
     Version => "1.2",
-    Date => "11 April 2025",
+    LastUpdated => "11 April 2025",
     Headline => "the multigraded BGG correspondence and differential modules",
     Authors => {
 	{Name => "Maya Banks",         	     Email => "mdbanks@wisc.edu",      HomePage => "https://sites.google.com/wisc.edu/mayabanks" },

@@ -1,7 +1,7 @@
 newPackage(
         "CohomCalg",
         Version => "0.8", 
-        Date => "24 May 2019",
+        LastUpdated => "24 May 2019",
         Authors => {
             {Name => "Michael E. Stillman", 
              Email => "mike@math.cornell.edu", 

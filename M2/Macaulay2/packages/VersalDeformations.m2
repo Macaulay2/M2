@@ -7,7 +7,7 @@
 newPackage("VersalDeformations",
     Headline => "versal deformations and local Hilbert schemes",
     Version => "4.0",
-    Date => "July 9, 2025",
+    LastUpdated => "July 9, 2025",
     Authors => {
         {Name => "Nathan Ilten",
 	  HomePage => "http://www.sfu.ca/~nilten/",

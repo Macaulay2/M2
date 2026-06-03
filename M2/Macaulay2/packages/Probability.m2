@@ -17,7 +17,7 @@
 newPackage("Probability",
     Headline => "basic probability functions",
     Version => "0.7",
-    Date => "January 13, 2026",
+    LastUpdated => "January 13, 2026",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",

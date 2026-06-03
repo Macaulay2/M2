@@ -3,7 +3,7 @@
 newPackage(
 	"Graphics",
 	Version => "0.3",
-	Date => "June 4, 2013",
+	LastUpdated => "June 4, 2013",
 	Authors => {
 		{Name => "Baptiste Calmes",
 		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},

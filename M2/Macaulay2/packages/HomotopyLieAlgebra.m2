@@ -2,7 +2,7 @@ newPackage(
     "HomotopyLieAlgebra",                                                 
                 Headline => "Homotopy Lie algebra",
                 Version => "0.9",                                                
-                Date => "October 19, 2021",                                        
+                LastUpdated => "October 19, 2021",                                        
                 Authors => {                                                     
                     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "https://www.msri.org/~de"}
 		    },

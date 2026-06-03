@@ -6,7 +6,7 @@
 newPackage(
         "AbstractToricVarieties",
         Version => "0.1", 
-        Date => "10 June 2017",
+        LastUpdated => "10 June 2017",
         Authors => {
             {Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 

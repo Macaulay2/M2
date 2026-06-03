@@ -1,7 +1,7 @@
 newPackage(
 	"ToricInvariants",
 	Version => "3.01", 
-    	Date => "July 12, 2018",
+    	LastUpdated => "July 12, 2018",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "m.helmer@math.ku.dk", 
 		  HomePage => "http://martin-helmer.com/"}},

@@ -9,7 +9,7 @@
 newPackage(
      "HyperplaneArrangements",
      Version => "2.0",
-     Date => "4 May 2022",
+     LastUpdated => "4 May 2022",
      Authors => {
 	  {Name => "Graham Denham", 
 	   HomePage => "http://gdenham.math.uwo.ca/"},

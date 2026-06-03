@@ -1,7 +1,7 @@
 newPackage(
 "Pullback",
 Version => "1.03",
-Date => "March 8, 2018",
+LastUpdated => "March 8, 2018",
 Authors => {{Name => "Drew Ellingson"},{Name => "Karl Schwede"}},
 Headline => "pullback of rings",
 Keywords => {"Commutative Algebra"},

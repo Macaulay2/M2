@@ -10,7 +10,7 @@
 
 newPackage("GKMVarieties",
 	Version => "0.1",
-	Date => "August 1, 2020",
+	LastUpdated => "August 1, 2020",
 	Authors => {
 	    {Name => "Chris Eur",
        	     Email => "chriseur@stanford.edu",

@@ -1,6 +1,6 @@
 newPackage ( "TorAlgebra",
     Version => "2.1",
-    Date => "5 November 2020",
+    LastUpdated => "5 November 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",

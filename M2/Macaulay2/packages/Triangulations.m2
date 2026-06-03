@@ -1,7 +1,7 @@
 newPackage(
         "Triangulations",
         Version => "0.2", 
-        Date => "25 Oct 2024",
+        LastUpdated => "25 Oct 2024",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 

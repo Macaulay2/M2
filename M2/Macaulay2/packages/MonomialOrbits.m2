@@ -1,7 +1,7 @@
  newPackage(
     "MonomialOrbits",
     Version => "1.5", 
-    Date => "18 December 2020, last rev 1 June 2021",
+    LastUpdated => "18 December 2020, last rev 1 June 2021",
     Authors => {{Name => "David Eisenbud", 
             Email => "de@msri.org", 
             HomePage => "http://www.msri.org/~de"},

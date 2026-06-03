@@ -1,7 +1,7 @@
 newPackage(
 	"IncidenceCorrespondenceCohomology",
     	Version => "0.1", 
-    	Date => "February 2, 2024",
+    	LastUpdated => "February 2, 2024",
     	Authors => {
 	    {Name => "Annet Kyomuhangi", 
 		  Email => "annet.kyomuhangi@gmail.com", 

@@ -5,7 +5,7 @@
 newPackage(
      "NAGtools",
      Version => "1.9",
-     Date => "Apr 2016",
+     LastUpdated => "Apr 2016",
      Headline => "tools of NumericalAlgebraicGeometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => false,

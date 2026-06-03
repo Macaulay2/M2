@@ -1,6 +1,6 @@
 newPackage("ThreadedGB",
     Version => "1.1",
-    Date => "November 12, 2020",
+    LastUpdated => "November 12, 2020",
     Authors => {
 	{
 	    Name => "Sonja Petrovic",

@@ -9,7 +9,7 @@
 newPackage(
     "Nauty",
     Version => "1.4.3.1",
-    Date => "01. March 2013",
+    LastUpdated => "01. March 2013",
     Authors => {{Name => "David Cook II",
                  Email => "dwcook@eiu.edu",
                  HomePage => "http://ux1.eiu.edu/~dwcook/"}},

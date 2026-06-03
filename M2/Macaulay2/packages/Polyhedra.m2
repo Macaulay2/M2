@@ -9,7 +9,7 @@
 newPackage("Polyhedra",
     Headline => "convex polyhedra",
     Version => "1.10",
-    Date => "November 12, 2018",
+    LastUpdated => "November 12, 2018",
     AuxiliaryFiles => true,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

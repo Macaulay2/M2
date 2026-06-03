@@ -1,7 +1,7 @@
 newPackage(
         "SymbolicPowers",
 	Version => "2.0", 
-	Date => "May 20, 2019",
+	LastUpdated => "May 20, 2019",
 	Authors => {
 	    {Name => "Eloisa Grifo", Email => "grifo@umich.edu", HomePage => "http://www-personal.umich.edu/~grifo/"}
 	    },

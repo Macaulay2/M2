@@ -6,7 +6,7 @@ phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersi
 newPackage(
   "PHCpack",
   Version => "1.8", 
-  Date => "25 May 2016",
+  LastUpdated => "25 May 2016",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "egross7@uic.edu",

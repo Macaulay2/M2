@@ -1,7 +1,7 @@
 newPackage(
     "LinearTruncations",
     Version => "1.0",
-    Date => "May 5, 2021",
+    LastUpdated => "May 5, 2021",
     Authors => {
 	{Name => "Lauren Cranton Heller", Email => "lch@math.berkeley.edu"},
 	{Name => "David Eisenbud", Email => "de@msri.org"},

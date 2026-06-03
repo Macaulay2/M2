@@ -4,7 +4,7 @@
 newPackage(
 	"SchurRingsOld",
     	Version => "0.2", 
-    	Date => "May 23, 2007",
+    	LastUpdated => "May 23, 2007",
     	Authors => {
 	     {Name => "Michael Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
 	     {Name => "Hal Schenck"}

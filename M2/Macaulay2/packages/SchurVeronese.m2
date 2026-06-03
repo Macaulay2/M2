@@ -37,7 +37,7 @@
 
 newPackage("SchurVeronese",
     Version => "1.1",
-    Date => "13 May 2019",
+    LastUpdated => "13 May 2019",
     Headline => "Data for Veronese embeddings of projective space",
     Authors => {
         {Name => "Juliette Bruce",           Email => "jebruce2@wisc.edu",       HomePage => "https://juliettebruce.github.io"},

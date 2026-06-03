@@ -4,7 +4,7 @@
 newPackage(
         "Permanents",
         Version => "0.9", 
-        Date => "July 11, 2014",
+        LastUpdated => "July 11, 2014",
         Authors => {{Name => "Tair Akhmejanov", 
                   Email => "ta328@cornell.edu", 
                   HomePage => "http://www.math.cornell.edu/~takhmejanov"}},

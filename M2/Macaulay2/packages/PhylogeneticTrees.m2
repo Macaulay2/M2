@@ -2,7 +2,7 @@
 newPackage(
      "PhylogeneticTrees",
      Version => "2.0",
-     Date => "November 15, 2019",
+     LastUpdated => "November 15, 2019",
      Headline => "invariants for group-based phylogenetic models",
      --HomePage => "",
      Authors => {

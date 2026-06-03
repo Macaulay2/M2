@@ -19,7 +19,7 @@ newPackage(
     "NormalToricVarieties",
     AuxiliaryFiles => true,
     Version => "1.9",
-    Date => "31 May 2020",
+    LastUpdated => "31 May 2020",
     Authors => {{
         Name => "Gregory G. Smith", 
         Email => "ggsmith@mast.queensu.ca", 

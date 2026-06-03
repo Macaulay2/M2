@@ -1,7 +1,7 @@
 newPackage(
   "MultigradedImplicitization",
   Version => "1.1",
-  Date => "May 15, 2025",
+  LastUpdated => "May 15, 2025",
   Authors => {
     {Name => "Joseph Cummings",
     Email => "josephcummings03@gmail.com",

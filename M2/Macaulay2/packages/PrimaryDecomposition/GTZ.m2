@@ -5,7 +5,7 @@
 -- saturation
 -- 
 
-protect AnswerToDate					    -- unexported ??
+protect AnswerToLastUpdated					    -- unexported ??
 
 primaryDecompositionGTZ = method()
 primaryDecompositionGTZ Ideal := (I) -> (
@@ -29,7 +29,7 @@ primaryDecompositionGTZ Ideal := (I) -> (
 
 protect ans							    -- see below, this can't be right
 
-PD = method(Options=>{AnswerToDate => null})
+PD = method(Options=>{AnswerToLastUpdated => null})
 PD Ideal := opt -> (I) -> (
      result := {}; -- a list of pairs (Q,P).
      indep := independentSets I; -- a list
@@ -40,7 +40,7 @@ PD Ideal := opt -> (I) -> (
      while #indep > 0 and c === codim I do (
 	  );
      -- at this point
-     join(result, PD(I, AnswerToDate => ans))    
+     join(result, PD(I, AnswerToLastUpdated => ans))    
      )
 
 toFractionField = (I,u) -> (

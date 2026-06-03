@@ -17,7 +17,7 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
     Version => "0.7",
-    Date => "February 5, 2026",
+    LastUpdated => "February 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",

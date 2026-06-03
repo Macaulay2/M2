@@ -12,7 +12,7 @@
 newPackage(
     "Posets",
         Version => "1.1.3",
-        Date => "May 15, 2021",
+        LastUpdated => "May 15, 2021",
         Authors => {
             {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},

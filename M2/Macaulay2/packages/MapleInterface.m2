@@ -1,7 +1,7 @@
 newPackage(
 	"MapleInterface",
     	Version => "0.3", 
-    	Date => "June 14, 2010",
+    	LastUpdated => "June 14, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}

@@ -1,7 +1,7 @@
 newPackage(
      "Kronecker",
      Version => "0.3.3",
-     Date => "July 16, 2010",
+     LastUpdated => "July 16, 2010",
      Headline => "Kronecker and rational normal forms",
      Authors => {{Name => "Edward Carter",
                Email => "edward.carter@gmail.com"}},

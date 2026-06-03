@@ -16,7 +16,7 @@
 newPackage(
     "Saturation",
     Version => "0.3",
-    Date => "November 29, 2021",
+    LastUpdated => "November 29, 2021",
     Headline => "quotient, saturation, and annihilator routines for ideals and modules",
     Authors => {
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},

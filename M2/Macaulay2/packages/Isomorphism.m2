@@ -1,7 +1,7 @@
 newPackage(
     "Isomorphism",
     Version => "2.0",
-    Date => "April 30, 2025",
+    LastUpdated => "April 30, 2025",
     Headline => "probabilistic test of isomorphism between modules",
     Authors => {
 	{ Name => "David Eisenbud", Email => "de@berkeley.edu", HomePage => "https://eisenbud.github.io" },

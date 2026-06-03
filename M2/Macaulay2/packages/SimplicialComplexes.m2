@@ -18,7 +18,7 @@
 newPackage(
     "SimplicialComplexes",
     Version => "2.0", 
-    Date => "7 May 2022",
+    LastUpdated => "7 May 2022",
     Authors => {
 	{Name     => "Gregory G. Smith", 
 	 Email    => "ggsmith@mast.queensu.ca", 

@@ -2,7 +2,7 @@
 newPackage(
     "ExteriorExtensions", 
     Version => "1.0", 
-    Date => "April 23, 2025", 
+    LastUpdated => "April 23, 2025", 
     Authors => {
 	{Name => "Luke Oeding", Email => "oeding@auburn.edu", HomePage => "http://webhome.auburn.edu/~lao0004/"}}, 
     Headline => "Builds an algebra extending an exterior algebra", 

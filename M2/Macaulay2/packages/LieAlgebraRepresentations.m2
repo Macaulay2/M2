@@ -3,7 +3,7 @@
 newPackage(
     "LieAlgebraRepresentations",
     Version => "1.01",
-    Date => "May 1, 2026",
+    LastUpdated => "May 1, 2026",
     AuxiliaryFiles=>true,
     Headline => "Lie algebra representations and characters",
     Authors => {

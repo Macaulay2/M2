@@ -16,7 +16,7 @@
 newPackage(
         "Topcom",
         Version => "0.95",
-        Date => "13 Nov 2022",
+        LastUpdated => "13 Nov 2022",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 

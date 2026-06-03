@@ -17,7 +17,7 @@
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
     Version => "0.2",
-    Date => "May 7, 2026",
+    LastUpdated => "May 7, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",

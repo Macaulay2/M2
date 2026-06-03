@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage ("RandomSearch",
        	Version => "0.2", 
-    	Date => "December 2, 2006",
+    	LastUpdated => "December 2, 2006",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu"},
 	     {Name => "David Eisenbud", Email => "de@msri.org"}

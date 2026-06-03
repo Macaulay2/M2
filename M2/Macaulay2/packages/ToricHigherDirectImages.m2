@@ -18,7 +18,7 @@
 newPackage(
     "ToricHigherDirectImages",
     Version => "1.1",
-    Date => "2026 April",
+    LastUpdated => "2026 April",
     Authors => {
 	{Name     => "Sasha Zotine",
 	 Email    => "zotinea@mcmaster.ca",

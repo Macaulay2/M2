@@ -6,7 +6,7 @@ phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersi
 newPackage(
     "NumericalSchubertCalculus",
     Version => "1.17", 
-    Date => "Sep 2020",
+    LastUpdated => "Sep 2020",
     Authors => {
 	{Name => "Anton Leykin", 
 	    Email => "leykin@math.gatech.edu", 

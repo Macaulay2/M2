@@ -8,7 +8,7 @@
 newPackage(
         "ReflexivePolytopesDB",
         Version => "1.0", 
-        Date => "22 May 2019",
+        LastUpdated => "22 May 2019",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 

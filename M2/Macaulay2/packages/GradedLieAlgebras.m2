@@ -9,7 +9,7 @@
 newPackage(
 	"GradedLieAlgebras",  
 	Version => "3.0",
-	Date => "June 2020",
+	LastUpdated => "June 2020",
 	Authors => {
 	    {Name => "Clas Löfwall", Email => "clas.lofwall@gmail.com"},
 	    {Name => "Samuel Lundqvist", Email => "samuel@math.su.se"}},

@@ -1,7 +1,7 @@
 newPackage(
     	"Tropical",
 	Version => "1.0",
-	Date => "July 2019",
+	LastUpdated => "July 2019",
 	Authors => {
 	    	{Name => "Carlos Amendola", Email => "carlos.amendola@tum.de", HomePage=>""},
 	    	{Name => "Kathlen Kohn", Email => "kathlen.korn@gmail.com", HomePage=>""},

@@ -18,7 +18,7 @@
 newPackage(
      "HighestWeights",
      Version => "0.6.5",
-     Date => "July 03, 2015",
+     LastUpdated => "July 03, 2015",
      AuxiliaryFiles => true,
      Authors => {{Name => "Federico Galetto",
      	       Email => "galetto.federico@gmail.com",

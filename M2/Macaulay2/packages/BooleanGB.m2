@@ -1,7 +1,7 @@
 newPackage(
     "BooleanGB",
     Version => "1.0", 
-    Date => "May 9, 2011",
+    LastUpdated => "May 9, 2011",
     Authors => {{Name => "Franziska Hinkelmann", 
     Email => "fhinkel@vt.edu", 
     HomePage => "http://www.math.vt.edu/people/fhinkel/"}, 

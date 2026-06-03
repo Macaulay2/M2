@@ -8,7 +8,7 @@
 newPackage("ToricVectorBundles",
     Headline => "vector bundles on toric varieties",
     Version => "1.3",
-    Date => "April 15, 2025",
+    LastUpdated => "April 15, 2025",
     Authors => {
          {Name => "René Birkner"
 	  },

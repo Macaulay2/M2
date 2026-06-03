@@ -4,7 +4,7 @@ newPackage ( "Browse",
      Authors => {
 	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
 	  },
-     Date => "1996",
+     LastUpdated => "1996",
      Version => "1.0",
      Headline => "a method for browsing and examining Macaulay2 data structures",
      Keywords => {"Miscellaneous"},

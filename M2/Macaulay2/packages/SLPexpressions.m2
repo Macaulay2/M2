@@ -6,7 +6,7 @@
 newPackage(
      "SLPexpressions",
      Version => "1.21",
-     Date => "Nov 2022",
+     LastUpdated => "Nov 2022",
      Headline => "straight line programs and algebraic circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,

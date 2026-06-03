@@ -1,7 +1,7 @@
 newPackage(
     "EigenSolver",
     Version => "0.1", 
-    Date => "June 2020",
+    LastUpdated => "June 2020",
     Authors => {
         {Name => "Laurent Busé", 
         Email => "Laurent.Buse@inria.fr"},

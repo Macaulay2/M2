@@ -2,7 +2,7 @@ newPackage(
         "SagbiGbDetection",
         Headline => "finding term orders for which the given generators of an ideal/algebra form a Gröbner/SAGBI basis",
         Version => "0.1",  
-        Date => "April 11, 2023",
+        LastUpdated => "April 11, 2023",
         Authors => {
             {Name => "Viktoriia Borovik", Email => "vborovik@uni-osnabrueck.de", HomePage => "https://sites.google.com/view/viktoriia-borovik/home"},
             {Name => "Timothy Duff", Email => "timduff@uw.edu", HomePage => "https://timduff35.github.io/timduff35/"},

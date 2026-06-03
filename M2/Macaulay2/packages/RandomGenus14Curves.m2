@@ -1,7 +1,7 @@
 newPackage(
 	"RandomGenus14Curves",
     	Version => "0.6",
-    	Date => "March 4, 2011",
+    	LastUpdated => "March 4, 2011",
     	Authors => {{Name => "Frank-Olaf Schreyer",
 		  Email => "schreyer@math.uni-sb.de",
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},

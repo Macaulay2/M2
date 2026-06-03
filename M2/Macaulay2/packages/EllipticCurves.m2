@@ -2,7 +2,7 @@
 newPackage(
 	"EllipticCurves",
     	Version => "0.1", 
-    	Date => "May 3, 2014",
+    	LastUpdated => "May 3, 2014",
     	Authors => {{Name => "Alessandro Oneto", 
 		  Email => "oneto@math.su.se"},
 	    {Name => "Stefano Marseglia", 

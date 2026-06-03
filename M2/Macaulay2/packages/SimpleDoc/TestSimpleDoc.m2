@@ -1,7 +1,7 @@
 newPackage(
 	"TestSimpleDoc",
     	Version => "0.1", 
-    	Date => "Aug 31, 2010",
+    	LastUpdated => "Aug 31, 2010",
     	Authors => {
 	     {Name => "Dan Grayson", 
 		  Email => "dan@math.uiuc.edu", 

@@ -2,7 +2,7 @@
 newPackage(
 	"SwitchingFields",
     	Version => "1.0", 
-    	Date => "September 11th, 2020",
+    	LastUpdated => "September 11th, 2020",
     	Authors => {
 	     {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"},
 	     {Name => "Sarasij Maitra", Email => "sm3vg@virginia.edu", HomePage => "https://people.virginia.edu/~sm3vg"}

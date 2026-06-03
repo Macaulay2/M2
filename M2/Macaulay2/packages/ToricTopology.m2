@@ -22,7 +22,7 @@
 newPackage(
 	"ToricTopology",
 	Version => "1.1",
-	Date => "November 7, 2025",
+	LastUpdated => "November 7, 2025",
 	Authors => {
 		{Name => "Alvise Trevisan", Email => "a.trevisan@enpicom.com", HomePage => "http://www.enpicom.com"},
 		{Name => "Alexander I. Suciu", Email => "a.suciu@neu.edu"},

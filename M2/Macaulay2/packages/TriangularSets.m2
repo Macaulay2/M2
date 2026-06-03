@@ -2,7 +2,7 @@
 newPackage(
     "TriangularSets",
     Version => "0.1", 
-    Date => "2 September 2017",
+    LastUpdated => "2 September 2017",
     Authors => {
       {Name => "Diego Cifuentes",
        Email => "diegcif@mit.edu",

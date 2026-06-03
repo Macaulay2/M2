@@ -2,7 +2,7 @@
 newPackage(
 	"Triplets",
    	Version => "0.1", 
-   	Date => "January 24, 2013",
+   	LastUpdated => "January 24, 2013",
 	Authors => {
 	     {Name => "Gunnar Floystad", Email => "nmagf@uib.no"}
 	      },

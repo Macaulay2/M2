@@ -1,7 +1,7 @@
 newPackage(
      "EquivariantGB",
      Version =>"0.2",
-     Date => "2014",
+     LastUpdated => "2014",
      Headline => "Equivariant Groebner bases and related algorithms",
      HomePage => "",
      Authors => {

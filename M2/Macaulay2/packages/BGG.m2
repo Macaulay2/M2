@@ -1,7 +1,7 @@
 newPackage(
 	"BGG",
     	Version => "1.4.2", 
-    	Date => "Jan 11, 2016",
+    	LastUpdated => "Jan 11, 2016",
     	Authors => {
 	     {Name => "Hirotachi Abo", Email => "abo@uidaho.edu", HomePage => "http://www.webpages.uidaho.edu/~abo/"},
 	     {Name => "Wolfram Decker", Email => "decker@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/decker/"},

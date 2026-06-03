@@ -1,7 +1,7 @@
 newPackage(
 	"RandomPlaneCurves",
     	Version => "0.6",
-    	Date => "June 20, 2011",
+    	LastUpdated => "June 20, 2011",
     	Authors => {
 	     {Name => "Hans-Christian Graf v. Bothmer",
 	      Email => "bothmer@uni-math.gwdg.de",

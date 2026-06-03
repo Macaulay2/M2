@@ -1,7 +1,7 @@
 newPackage(
      	  "SchurFunctors",
      	  Version => "1.0",
-	  Date => "April 18, 2026",
+	  LastUpdated => "April 18, 2026",
 	  Authors => {
 	       {Name => "Michael E. Stillman",
 		    Email => "mike@math.cornell.edu",

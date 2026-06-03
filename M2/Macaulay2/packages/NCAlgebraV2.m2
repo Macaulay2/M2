@@ -1,7 +1,7 @@
 newPackage(
         "NCAlgebraV2",
         Version => "0.1", 
-        Date => "16 Feb 2016",
+        LastUpdated => "16 Feb 2016",
         Authors => {{Name => "Frank Moore", 
                   Email => "", 
                   HomePage => ""},

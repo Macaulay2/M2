@@ -30,7 +30,7 @@
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
     Version => "0.5",
-    Date => "February 10, 2026",
+    LastUpdated => "February 10, 2026",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",

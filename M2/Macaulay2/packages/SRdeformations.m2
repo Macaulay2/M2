@@ -2,7 +2,7 @@
 newPackage(
 	"SRdeformations",
     	Version => "0.53",
-    	Date => "July 12, 2010",
+    	LastUpdated => "July 12, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}

@@ -4,7 +4,7 @@ polymake := findProgram("polymake", "polymake --version", RaiseError => false)
 newPackage(
 	"StatePolytope",
     	Version => "1.2", 
-    	Date => "October 6, 2008",
+    	LastUpdated => "October 6, 2008",
     	Authors => {
 	     {Name => "Dave Swinarski", Email => "swinarsk@math.columbia.edu"}
 	     },

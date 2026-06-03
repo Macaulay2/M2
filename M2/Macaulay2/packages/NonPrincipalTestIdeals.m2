@@ -1,7 +1,7 @@
 newPackage(
     "NonPrincipalTestIdeals",
     Version => "1.0",
-    Date => "September 28th, 2025",
+    LastUpdated => "September 28th, 2025",
     Authors => {
         {Name => "Trung Chau", Email => "chauchitrung1996@gmail.com", HomePage => "https://trungchaumath.github.io/"}, 
         {Name => "Karl Schwede", Email => "schwede@math.utah.edu", HomePage => "https://www.math.utah.edu/~schwede/"},

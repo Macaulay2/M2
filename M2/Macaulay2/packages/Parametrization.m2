@@ -2,7 +2,7 @@
 newPackage(
 	"Parametrization",
     	Version => "0.6", 
-    	Date => "August 25, 2010",
+    	LastUpdated => "August 25, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"}},

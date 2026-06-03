@@ -1,5 +1,5 @@
 newPackage( "FastMinors",
-Version => "1.2.6", Date => "May 15th, 2023", Authors => {
+Version => "1.2.6", LastUpdated => "May 15th, 2023", Authors => {
     {Name => "Boyana Martinova",
     Email=> "martinova@wisc.edu",
     HomePage=> "https://sites.google.com/view/bmartinova"

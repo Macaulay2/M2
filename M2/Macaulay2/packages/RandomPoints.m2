@@ -2,7 +2,7 @@
 newPackage(
         "RandomPoints",
     	Version => "1.5.3",
-    	Date => "May 17th, 2023",
+    	LastUpdated => "May 17th, 2023",
     	Authors => {
 	     {Name => "Sankhaneel Bisui", Email => "Sankhaneel.Bisui@umanitoba.ca", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
          {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"},

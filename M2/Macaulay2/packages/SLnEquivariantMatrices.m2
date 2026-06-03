@@ -5,7 +5,7 @@
 
 newPackage("SLnEquivariantMatrices",
            Version => "1.0", 
-     	   Date => "April 10, 2018",
+     	   LastUpdated => "April 10, 2018",
      	   Authors => {
 	               {Name => "Ada Boralevi", 
 			   Email => "ada.boralevi@polito.it",

@@ -33,7 +33,7 @@ newPackage(
   "TensorComplexes",
   AuxiliaryFiles => false,
   Version => "1.0",
-  Date => "29 July 2011",
+  LastUpdated => "29 July 2011",
   Authors => {
     {	 
       Name => "David Eisenbud", 

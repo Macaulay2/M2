@@ -26,7 +26,7 @@ Node
 packagetemplate = "newPackage(
     \"%%NAME%%\",
     Version => \"0.1\",
-    Date => \"\",
+    LastUpdated => \"\",
     Headline => \"\",
     Authors => {{ Name => \"\", Email => \"\", HomePage => \"\"}},
     Keywords => {\"\"},

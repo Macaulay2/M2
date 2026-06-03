@@ -11,7 +11,7 @@
 newPackage("OldPolyhedra",
     Headline => "convex polyhedra",
     Version => "1.3",
-    Date => "August 21, 2014",
+    LastUpdated => "August 21, 2014",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "https://msp.org/jsag/",

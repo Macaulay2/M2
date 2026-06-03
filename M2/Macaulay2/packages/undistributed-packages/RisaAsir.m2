@@ -1,7 +1,7 @@
 newPackage(
         "RisaAsir",
         Version => "0.1", 
-        Date => "7 July 2015",
+        LastUpdated => "7 July 2015",
         Authors => {{Name => "", 
                   Email => "", 
                   HomePage => ""}},

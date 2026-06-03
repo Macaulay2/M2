@@ -21,7 +21,7 @@ solutionsHash := new MutableHashTable;
 -- Authors: Anton Leykin
 --          Abraham Martin del Campo
 --
--- Date:  October 29, 2009
+-- LastUpdated:  October 29, 2009
 --
 -- Last Update: October, 2016
 ------------------------------------
@@ -32,7 +32,7 @@ solutionsHash := new MutableHashTable;
 --          Frank Sottile
 --          Jan Verschelde
 --
--- Date: April 5, 2012
+-- LastUpdated: April 5, 2012
 --
 -- Last Update: October 16, 2015
 ------------------------------------

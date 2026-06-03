@@ -3,7 +3,7 @@ newPackage(
     "SubalgebraBases",
     AuxiliaryFiles => true,
     Version => "1.4",
-    Date => "January 2024",
+    LastUpdated => "January 2024",
     Authors => {{
         Name => "Michael Burr",
         Email => "burr2@clemson.edu",

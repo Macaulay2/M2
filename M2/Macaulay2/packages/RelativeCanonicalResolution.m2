@@ -1,7 +1,7 @@
 newPackage(
 	"RelativeCanonicalResolution",
 	Version => "1.0",
-	Date => "June 22, 2020",
+	LastUpdated => "June 22, 2020",
 	Authors => {{Name => "Christian Bopp",
 		     Email => "bopp@math.uni-sb.de",
 		     HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},

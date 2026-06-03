@@ -2,7 +2,7 @@ newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
     Version => "0.71",
-    Date => "25 Jul 2023", -- "22 Mar 2021",
+    LastUpdated => "25 Jul 2023", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},

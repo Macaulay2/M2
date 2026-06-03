@@ -1,7 +1,7 @@
 newPackage(
     "IntegralClosure",
     Version => "1.10", 
-    Date => "31 Dec 2020",
+    LastUpdated => "31 Dec 2020",
     Authors => {
         {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
         {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},

@@ -9,7 +9,7 @@
 newPackage (
    "SimplicialDecomposability",
    Version => "1.0.6",
-   Date => "20. June 2011",
+   LastUpdated => "20. June 2011",
    Authors => {{Name => "David Cook II",
                 Email => "dwcook@eiu.edu",
                 HomePage => "http://ux1.eiu.edu/~dwcook/"}},

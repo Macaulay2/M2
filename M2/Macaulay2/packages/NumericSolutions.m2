@@ -22,7 +22,7 @@
 newPackage (
  "NumericSolutions",
  Version => "1.0",
- Date => "Apr 3, 2017",
+ LastUpdated => "Apr 3, 2017",
  Headline => "solving systems of polynomial equalities",
  Keywords => {"Numerical Algebraic Geometry"},
  Authors => {

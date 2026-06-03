@@ -1,7 +1,7 @@
 newPackage(
 	"Quasidegrees",
     	Version => "1.0", 
-    	Date => "June 24, 2015",
+    	LastUpdated => "June 24, 2015",
     	Authors => {{Name => "Roberto Barrera", 
 		  Email => "rbarrera@math.tamu.edu", 
 		  HomePage => "http://www.math.tamu.edu/~rbarrera/"}},

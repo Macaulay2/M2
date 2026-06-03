@@ -1,7 +1,7 @@
 newPackage(
    "GameTheory",
    Version => "1.0",
-   Date => "May, 2025",
+   LastUpdated => "May, 2025",
    Authors => {
       {Name => "Erin Connelly",
          Email => "erin.connelly@uni-osnabrueck.de",

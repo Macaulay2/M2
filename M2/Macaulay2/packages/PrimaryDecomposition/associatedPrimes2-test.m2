@@ -1,4 +1,4 @@
--- Date: Thu, 27 Feb 2003 15:40:55 -0500 (EST)
+-- LastUpdated: Thu, 27 Feb 2003 15:40:55 -0500 (EST)
 -- From: Greg Smith <ggsmith@cpw.math.columbia.edu>
 -- To: Mike Stillman <mike@polygon.math.cornell.edu>,
 --    Dan Grayson <dan@math.uiuc.edu>

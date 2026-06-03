@@ -5,7 +5,7 @@
 newPackage(
     "QuaternaryQuartics",
     Version => "0.99",
-    Date => "11 Nov 2021",
+    LastUpdated => "11 Nov 2021",
     Headline => "code to support the paper 'Quaternary Quartic Forms and Gorenstein Rings'",
     Authors => {
         {Name => "Gregorz Kapustka"},

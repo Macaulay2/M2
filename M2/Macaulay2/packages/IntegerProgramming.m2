@@ -1,7 +1,7 @@
 newPackage(
     "IntegerProgramming",
     Version => "0.1",
-    Date => "April 21, 2025",
+    LastUpdated => "April 21, 2025",
     Headline => "solving integer programs with Gröbner bases",
     Authors => {{
         Name => "Mike Cummings", 

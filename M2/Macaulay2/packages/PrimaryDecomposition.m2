@@ -15,7 +15,7 @@
 newPackage(
     "PrimaryDecomposition",
     Version => "2.0",
-    Date => "July 4, 2020",
+    LastUpdated => "July 4, 2020",
     Headline => "primary decomposition and associated primes routines",
     Authors => {
 	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},

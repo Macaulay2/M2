@@ -262,7 +262,7 @@ Node
     [newPackage, CacheExampleOutput]
     [newPackage, Certification]
     [newPackage, Configuration]
-    [newPackage, Date]
+    [newPackage, LastUpdated]
     [newPackage, DebuggingMode]
     [newPackage, Headline]
     [newPackage, HomePage]
@@ -287,7 +287,7 @@ Node
     Version=>String
       the version number of the package.
       A version number less than 1.0 indicates that the package is under development, and the user interface may change.
-    Date=>String
+    LastUpdated=>String
       the date of this version of the package
     InfoDirSection=>String
       the title of the section in the info page directory where the menu entry for this package should be made
@@ -371,7 +371,7 @@ Node
       EXAMPLE { PRE ////newPackage("PackageName",
               Headline => "one line description",
               Version => "0.1",
-              Date => "month XX, 20XX",
+              LastUpdated => "month XX, 20XX",
               Authors => {
                   {Name => "author1", Email => "email1", HomePage => "url1"},
                   {Name => "author2", Email => "email2", HomePage => "url2"}},

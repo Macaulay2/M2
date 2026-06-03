@@ -6,7 +6,7 @@ newPackage(
 		  HomePage => "http://www.ub.edu/arcades/ycid.html"}},
     Keywords => {"Commutative Algebra"},
     Version => "0.1",
-    Date => "2018",
+    LastUpdated => "2018",
     DebuggingMode => false,
     Configuration => {},
     PackageImports => {"Complexes", "ReesAlgebra"}

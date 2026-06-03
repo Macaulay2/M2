@@ -2,7 +2,7 @@
 newPackage(
 	"Miura", 
 	Version => "0.2",
-	Date => "5 October 2017",
+	LastUpdated => "5 October 2017",
 	Authors => {
 		{Name => "Joe Suzuki", 
 		     Email => "j-suzuki@sigmath.es.osaka-u.ac.jp", 

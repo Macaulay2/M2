@@ -14,7 +14,7 @@ peek loadedFiles
      newPackage(
              "PencilsOfQuadrics",
     	     Version => "1.0",
-    	     Date => "October 10, 2024",
+    	     LastUpdated => "October 10, 2024",
              Authors => {{Name => "Frank-Olaf Schreyer", 
                        Email => "schreyer@math.uni-sb.de", 
                        HomePage => "https://www.math.uni-sb.de/ag/schreyer/index.php/"},

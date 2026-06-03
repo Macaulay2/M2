@@ -1,7 +1,7 @@
 newPackage(
   "TropicalToric",
 	Version => "1.0",
-	Date => "May 2022",
+	LastUpdated => "May 2022",
 	Authors => {
    		{
         Name => "Alessio Borzì",

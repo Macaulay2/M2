@@ -12,7 +12,7 @@ the License, or any later version.
 newPackage(
            "Normaliz",
            Version=>"2.6",
-           Date=>"February 4, 2023",
+           LastUpdated=>"February 4, 2023",
            Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@uni-osnabrueck.de"},
                     {Name=> "Christof Soeger",

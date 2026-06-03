@@ -1,6 +1,6 @@
 newPackage("BinomialEdgeIdeals",
 	Version => "1.0",
-	Date => "April 2015",
+	LastUpdated => "April 2015",
 	Authors => {
      {Name => "Tobias Windisch",
       Email => "windisch@ovgu.de",

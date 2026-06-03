@@ -9,7 +9,7 @@
 newPackage(
 		"RunExternalM2",
 		Version => "0.83",
-		Date => "January 06, 2016",
+		LastUpdated => "January 06, 2016",
 		Authors => {
 			{Name => "Brian Pike", 
 			Email => "bapike@gmail.com",

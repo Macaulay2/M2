@@ -20,7 +20,7 @@ the License, or any later version.
 newPackage(
      "GraphicalModels",
      Version => "2.0",
-     Date => "November, 2020",
+     LastUpdated => "November, 2020",
      Authors => {
           {Name=> "Carlos Amendola", 
 	   Email=> "carlos.amendola@tum.de",

@@ -4,7 +4,7 @@
 newPackage(
 	"newGTZ",
     	Version => "0.5", 
-    	Date => "June 25, 2009",
+    	LastUpdated => "June 25, 2009",
     	Authors => {{Name => "Frank Moore", 
 		  Email => "frankmoore@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~frankmoore/"},

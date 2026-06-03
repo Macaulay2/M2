@@ -1,7 +1,7 @@
 newPackage(
 	"Msolve",
 	Version => "1.24.06", 
-    	Date => "September 2025",
+    	LastUpdated => "September 2025",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "martin.helmer@swansea.ac.uk", 
 		  HomePage => "http://martin-helmer.com/"}, {Name => "Mike Stillman", 

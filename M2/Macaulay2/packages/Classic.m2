@@ -3,7 +3,7 @@ newPackage ( "Classic",
      Authors => {
 	  { Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/" }
 	  },
-     Date => "June, 2006",
+     LastUpdated => "June, 2006",
      Version => "1.0",
      Headline => "a classic Macaulay parser",
      Keywords => {"System"},

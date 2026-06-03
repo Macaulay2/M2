@@ -1,6 +1,6 @@
 newPackage( "SegreClasses",
     Version =>"1.03",
-    Date => "May 22, 2022",
+    LastUpdated => "May 22, 2022",
     Authors => {
         {Name => "Martin Helmer",
          Email => "mhelmer@ncsu.edu",

@@ -2,7 +2,7 @@
 newPackage(
     "Chordal",
     Version => "0.2",
-    Date => "May 15, 2021",
+    LastUpdated => "May 15, 2021",
     Authors => {
       {Name => "Diego Cifuentes",
        Email => "diegcif@mit.edu",

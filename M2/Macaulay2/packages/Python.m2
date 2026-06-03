@@ -4,7 +4,7 @@ this does not work unless M2 is compiled --with-python
 
 newPackage("Python",
     Version => "1.0",
-    Date => "November 8, 2025",
+    LastUpdated => "November 8, 2025",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",

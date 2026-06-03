@@ -2,7 +2,7 @@
 newPackage(
     "FirstPackage",
     Version => "1.1",
-    Date => "August 5, 2012",
+    LastUpdated => "August 5, 2012",
     Authors => {
 	{Name => "Jane Doe", Email => "doe@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~doe/"}},
     Headline => "an example Macaulay2 package",

@@ -1,7 +1,7 @@
 newPackage(
      "ChainComplexExtras",
      Version => "1.1",
-     Date => "Jan 11, 2016",
+     LastUpdated => "Jan 11, 2016",
      Authors => {
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},

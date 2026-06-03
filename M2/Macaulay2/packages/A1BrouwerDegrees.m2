@@ -2,7 +2,7 @@
 newPackage (
     "A1BrouwerDegrees",
     Version => "2.0",
-    Date => "October 13, 2025",
+    LastUpdated => "October 13, 2025",
     Authors => {
         {Name=> "Stephanie Atherton",
     Email => "satherton@student.otis.edu"},

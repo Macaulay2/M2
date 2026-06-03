@@ -1,7 +1,7 @@
 newPackage(
 	"RandomCurves",
     	Version => "0.6",
-    	Date => "July 5, 2011",
+    	LastUpdated => "July 5, 2011",
     	Authors => {{Name => "Frank-Olaf Schreyer",
 		     Email => "schreyer@math.uni-sb.de",
 		     HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},

@@ -2,7 +2,7 @@
 newPackage(
 	"ReactionNetworks",
     	Version => "1.0",
-    	Date => "June, 2016",
+    	LastUpdated => "June, 2016",
     	Authors => {
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
 	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},

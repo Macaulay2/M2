@@ -3,7 +3,7 @@
 newPackage(
     "SimpleDoc",
     Version => "1.3",
-    Date => "March 13, 2025",
+    LastUpdated => "March 13, 2025",
     Headline => "a simple documentation function",
     Authors => {
 	{ Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "https://faculty.math.illinois.edu/~dan/" },

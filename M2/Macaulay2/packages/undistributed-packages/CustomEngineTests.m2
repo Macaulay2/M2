@@ -8,7 +8,7 @@ newPackage(
         "CustomEngineTests",
     	AuxiliaryFiles => false,
         Version => "0.1", 
-        Date => "29 Aug 2011",
+        LastUpdated => "29 Aug 2011",
 	    Authors => {
             {Name => "Michael E. Stillman", 
 		        Email => "mike@math.cornell.edu", 

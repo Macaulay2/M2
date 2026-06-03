@@ -18,7 +18,7 @@ newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
     Version => "0.6",
-    Date => "February 28, 2026",
+    LastUpdated => "February 28, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",

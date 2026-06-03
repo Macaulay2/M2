@@ -19,7 +19,7 @@
 newPackage(
 	"SchurRings",
     	Version => "2.0",
-    	Date => "April 17, 2026",
+    	LastUpdated => "April 17, 2026",
     	Authors => {
 	     {Name => "Michael Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
 	     {Name => "Hal Schenck"},

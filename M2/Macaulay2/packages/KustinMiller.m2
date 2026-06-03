@@ -3,7 +3,7 @@
 newPackage(
 	"KustinMiller",
     	Version => "1.4",
-    	Date => "May 14, 2012",
+    	LastUpdated => "May 14, 2012",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},

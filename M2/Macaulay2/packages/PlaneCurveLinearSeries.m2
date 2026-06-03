@@ -1,7 +1,7 @@
 newPackage(
           "PlaneCurveLinearSeries",
           Version => "1.0",
-          Date => "February 4, 2024",
+          LastUpdated => "February 4, 2024",
           Headline => "Linear series on the normalization of a plane curve",
           Authors => {{ Name => "David Eisenbud", 
 		  Email => "de@berkeley.edu", 

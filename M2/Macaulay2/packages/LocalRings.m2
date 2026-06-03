@@ -28,7 +28,7 @@
 newPackage(
     "LocalRings",
     Version => "2.1",
-    Date => "May 08, 2021",
+    LastUpdated => "May 08, 2021",
     Authors => {
         {Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud/"},
         {Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},

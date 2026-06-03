@@ -1,7 +1,7 @@
 newPackage(
      "M0nbar",
      Version => "0.3",
-     Date => "April 5, 2014",
+     LastUpdated => "April 5, 2014",
      Authors => {
 	  {Name => "Han-Bom Moon",
 	   Email => "hmoon8@fordham.edu"},

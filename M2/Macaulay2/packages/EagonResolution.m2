@@ -1,7 +1,7 @@
 newPackage(
         "EagonResolution",
         Version => "1.0", 
-        Date => "September 23, 2020",
+        LastUpdated => "September 23, 2020",
         Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org", 
                   HomePage => "http://www.msri.org/~de"},

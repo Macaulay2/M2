@@ -1,7 +1,7 @@
 newPackage(
 	"SchurComplexes",
     	Version => "1.2", 
-    	Date => "November 12, 2025",
+    	LastUpdated => "November 12, 2025",
     	Authors => {
 	    {Name => "Michael K. Brown", 
 		  Email => "mkbrown5@wisc.edu", 

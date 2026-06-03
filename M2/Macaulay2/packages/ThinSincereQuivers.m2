@@ -2,7 +2,7 @@ newPackage(
     "ThinSincereQuivers",
     Headline => "Construction of flow polytopes and their associated quivers",
     Version => "0.1",
-    Date => "January 18, 2025",
+    LastUpdated => "January 18, 2025",
     Authors => {
         {Name => "Mary Barker",
          Email => "marybarker103@gmail.com",

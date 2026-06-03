@@ -1,6 +1,6 @@
 newPackage ("RandomObjects",
       	Version => "0.2",
-    	Date => "June 19, 2011",
+    	LastUpdated => "June 19, 2011",
     	Authors => {
 	     {Name     => "Hans-Christian Graf v. Bothmer",
 	      Email    => "bothmer@uni-math.gwdg.de",

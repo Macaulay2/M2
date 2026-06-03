@@ -17,7 +17,7 @@
 newPackage(
 	"FourTiTwo",
     	Version => "1.0", 
-    	Date => "February 8, 2009",
+    	LastUpdated => "February 8, 2009",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu"},
 	     {Name => "Josephine Yu", Email => "jyu@math.mit.edu"},

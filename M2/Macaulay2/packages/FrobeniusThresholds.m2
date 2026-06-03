@@ -1,6 +1,6 @@
 newPackage( "FrobeniusThresholds",
     Version => "2.1",
-    Date => "June 15th, 2020",
+    LastUpdated => "June 15th, 2020",
     Authors => {
 	 {Name => "Juliette Bruce",
 	 Email => "juliette.bruce@math.wisc.edu",

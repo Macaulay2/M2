@@ -8,7 +8,7 @@
 newPackage("Polyhedra2",
     Headline => "convex polyhedra",
     Version => ".1",
-    Date => "August 5, 2011",
+    LastUpdated => "August 5, 2011",
     Authors => {
          {Name => "Nathan Ilten",
 	  HomePage => "http://math.berkeley.edu/~nilten",

@@ -6,7 +6,7 @@
 newPackage(
 	"gfanInterface",
 	Version => "0.5",
-	Date => "May 15, 2021",
+	LastUpdated => "May 15, 2021",
 	Authors => {
 		{Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
 		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},

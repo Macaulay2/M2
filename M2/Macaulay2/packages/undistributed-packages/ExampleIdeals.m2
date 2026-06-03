@@ -3,7 +3,7 @@ newPackage(
 	"ExampleIdeals",
 	AuxiliaryFiles => true,
     	Version => "0.1", 
-    	Date => "February 8, 2007",
+    	LastUpdated => "February 8, 2007",
     	Authors => {{Name => "Mike Stillman", 
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},

@@ -10,7 +10,7 @@
 newPackage(
     "K3Surfaces",
     Version => "1.1", 
-    Date => "August 13, 2022",
+    LastUpdated => "August 13, 2022",
     Authors => {{Name => "Michael Hoff", 
                  Email => "hahn@math.uni-sb.de"},
                 {Name => "Giovanni Staglianò", 

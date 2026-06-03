@@ -1,7 +1,7 @@
 newPackage(
     "ConformalBlocks",
     Version => "2.4", 
-    Date => "June 22, 2018",
+    LastUpdated => "June 22, 2018",
     Authors => {
 	{Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
 	},

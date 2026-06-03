@@ -17,7 +17,7 @@
 newPackage(
 	"QuillenSuslin",
     	Version => "1.7", 
-    	Date => "May 10, 2013",
+    	LastUpdated => "May 10, 2013",
     	Authors => {
 	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},
 	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://bstone.github.io/"}

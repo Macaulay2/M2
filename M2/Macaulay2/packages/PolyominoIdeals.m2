@@ -1,7 +1,7 @@
 newPackage(
 	"PolyominoIdeals",
 	Version => "2.0",
-	Date => "November, 2025",
+	LastUpdated => "November, 2025",
 	
 	Authors => {
 		{

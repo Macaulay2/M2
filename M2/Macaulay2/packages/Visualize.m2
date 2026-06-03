@@ -19,7 +19,7 @@
 newPackage(
 	"Visualize",
 	Version => "1.9",
-	Date => "January 2, 2026",
+	LastUpdated => "January 2, 2026",
     	Authors => {       
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     

@@ -13,7 +13,7 @@
 newPackage(
      "Functoriality",
      Version => "0.2", 
-     Date => "August 20, 2009",
+     LastUpdated => "August 20, 2009",
      Authors => {
 	  {Name => "Jason McCullough", Email => "jmccullo@math.ucr.edu", HomePage => "http://www.math.ucr.edu/~jmccullo"}
 	  },

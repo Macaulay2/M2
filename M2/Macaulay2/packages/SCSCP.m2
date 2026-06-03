@@ -17,7 +17,7 @@
 newPackage(
 	"SCSCP",
 	Version => "0.2.1", 
-	Date => "March 16, 2011",
+	LastUpdated => "March 16, 2011",
 	Authors => {
 		{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/~danr"}
 	},

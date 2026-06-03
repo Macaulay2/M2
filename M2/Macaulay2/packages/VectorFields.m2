@@ -10,7 +10,7 @@
 newPackage(
 		"VectorFields",
 		Version => "1.80", 
-		Date => "April 7, 2016",
+		LastUpdated => "April 7, 2016",
 		Authors => {
 			{Name => "Brian Pike", 
 			Email => "bapike@gmail.com",

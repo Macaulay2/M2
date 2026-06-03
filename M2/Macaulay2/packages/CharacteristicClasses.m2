@@ -3,7 +3,7 @@
 newPackage(
      	"CharacteristicClasses",
 	Version =>"2.1",
-    	Date => "June 24, 2025",
+    	LastUpdated => "June 24, 2025",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "martin.helmer@swansea.ac.uk", 
 		  HomePage => "http://martin-helmer.com/"},

@@ -12,7 +12,7 @@
 newPackage("LatticePolytopes",
     Headline => "lattice polytopes",
     Version => "1.0",
-    Date => "May 4, 2015",
+    LastUpdated => "May 4, 2015",
     Authors => {
 	{Name => "Anders Lundman",
 	    HomePage => "http://www.math.kth.se/~alundman",

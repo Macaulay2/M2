@@ -10,7 +10,7 @@
 newPackage(
     "MixedMultiplicity",
     Version => "3.0",
-    Date => "May, 2023",
+    LastUpdated => "May, 2023",
     Authors => {
 	{    Name => "Kriti Goel", 
 	    Email => "kritigoel.maths@gmail.com", 

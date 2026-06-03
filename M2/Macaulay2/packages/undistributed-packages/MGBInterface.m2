@@ -1,7 +1,7 @@
 newPackage(
         "MGBInterface",
         Version => "0.1", 
-        Date => "12 April 2013",
+        LastUpdated => "12 April 2013",
         Authors => {{Name => "Mike Stillman", 
                   Email => "", 
                   HomePage => ""}},

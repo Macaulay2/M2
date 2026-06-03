@@ -1,7 +1,7 @@
 newPackage("Matroids",
 	AuxiliaryFiles => true,
 	Version => "1.7.0",
-	Date => "February 6, 2024",
+	LastUpdated => "February 6, 2024",
 	Authors => {{
 		Name => "Justin Chen",
 		Email => "jchen@math.berkeley.edu"}},

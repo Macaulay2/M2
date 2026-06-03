@@ -2,7 +2,7 @@
 newPackage(
     "NoetherianOperators",
     Version => "2.2.1",
-    Date => "Nov 2 2021",
+    LastUpdated => "Nov 2 2021",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},

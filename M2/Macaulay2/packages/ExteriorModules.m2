@@ -2,7 +2,7 @@
 newPackage(
     "ExteriorModules",
     Version => "1.0", 
-    Date => "May 05, 2020",
+    LastUpdated => "May 05, 2020",
     Authors => {{Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http://mat521.unime.it/amata"},
                 {Name => "Marilena Crupi", Email => "mcrupi@unime.it", HomePage => "http://www.unime.it/it/persona/marilena-crupi"}
                 },

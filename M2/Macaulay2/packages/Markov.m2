@@ -8,7 +8,7 @@ newPackage("Markov",
      Keywords => {"Algebraic Statistics"},
      Headline => "Markov ideals arising from Bayesian networks in statistics",
      Version => "1.3",
-     Date => "May 15, 2021",
+     LastUpdated => "May 15, 2021",
      PackageImports => {"Elimination"}
      )
 

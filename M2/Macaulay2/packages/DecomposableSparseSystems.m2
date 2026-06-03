@@ -1,7 +1,7 @@
 newPackage(
     "DecomposableSparseSystems",
     Version=>"1.0.1",
-    Date=>"Jan 17, 2021",
+    LastUpdated=>"Jan 17, 2021",
     Authors=> {
         {Name=>"Taylor Brysiewicz",
 	 Email=>"taylorbrysiewicz@gmail.com",

@@ -11,7 +11,7 @@
 newPackage(
     	  "PieriMaps",
    	  Version => "2.0",
-	  Date => "May 1, 2026",
+	  LastUpdated => "May 1, 2026",
 	  Certification => {
 	       "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	       "journal URI" => "https://msp.org/jsag/",

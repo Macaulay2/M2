@@ -14,7 +14,7 @@
 newPackage(
      "Bruns",
      Version => "2.0",
-     Date => "June 28, 2008",
+     LastUpdated => "June 28, 2008",
      Authors =>{{Name => "David Eisenbud",
 	       Email => "de@msri.org",
 	       HomePage=>"http://www.msri.org/~de"}},

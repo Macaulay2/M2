@@ -6,7 +6,7 @@
 newPackage(
      "ModuleDeformations",
      Version => "1.0",
-     Date => "28 October 2009",
+     LastUpdated => "28 October 2009",
      Authors => {{Name => "Bradford Hovinen",
 	          Email => "hovinen@math.uni-hannover.de"}},
      Headline => "versal deformations of maximal Cohen-Macaulay modules",

@@ -1,7 +1,7 @@
 newPackage(
 	"MonomialAlgebras",
     	Version => "2.3",
-    	Date => "May 11, 2013",
+    	LastUpdated => "May 11, 2013",
     	Authors => {
          {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
          {Name => "Janko Boehm", Email => "boehm@mathematik.uni-kl.de", HomePage => "http://www.mathematik.uni-kl.de/~boehm/"},

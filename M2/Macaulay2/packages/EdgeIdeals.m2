@@ -11,7 +11,7 @@
 newPackage(
 	"EdgeIdeals", 
 	Version => "1.0.2",
-	Date => "March 30, 2011",
+	LastUpdated => "March 30, 2011",
 	PackageExports => {"SimplicialComplexes"},
 	PackageImports => {"GenericInitialIdeal","PrimaryDecomposition"},
 	Certification => {

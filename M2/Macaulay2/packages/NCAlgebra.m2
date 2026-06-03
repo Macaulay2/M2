@@ -1,7 +1,7 @@
 newPackage("NCAlgebra",
      Headline => "data types for noncommutative algebras",
      Version => "1.0",
-     Date => "July 2, 2016",
+     LastUpdated => "July 2, 2016",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",

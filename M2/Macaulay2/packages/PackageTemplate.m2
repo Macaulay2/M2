@@ -2,7 +2,7 @@
 newPackage(
 	"PackageTemplate",
     	Version => "1.0", 
-    	Date => "April 28, 2005",
+    	LastUpdated => "April 28, 2005",
     	Authors => {
 	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
 	     },

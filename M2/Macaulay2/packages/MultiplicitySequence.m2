@@ -1,7 +1,7 @@
 newPackage(
     "MultiplicitySequence",
     Version => "0.7", 
-    Date => "May 8, 2021",
+    LastUpdated => "May 8, 2021",
     Authors => {
         {Name => "Justin Chen", 
             Email => "justin.chen@math.gatech.edu"

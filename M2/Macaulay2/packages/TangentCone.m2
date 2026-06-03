@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage ("TangentCone",
        	Version => "1.0", 
-    	Date => "June 27, 2006",
+    	LastUpdated => "June 27, 2006",
     	Authors => {
 	     {Name => "Craig Huneke", Email => "huneke@math.ku.edu"},
 	     {Name => "David Eisenbud", Email => "de@msri.org"}

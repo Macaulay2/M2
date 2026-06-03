@@ -3,7 +3,7 @@ newPackage(
     	  "PseudomonomialPrimaryDecomposition",
 	  Headline => "Primary decomposition of square free pseudomonomial ideals",
    	  Version => "0.3",
-	  Date => "January, 2022",
+	  LastUpdated => "January, 2022",
 	  Authors => {{
 		    Name => "Alan A. Veliz-Cuba",
 		    Email => "avelizcuba1@udayton.edu",

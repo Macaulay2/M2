@@ -5,7 +5,7 @@
 newPackage(
      "RationalPoints",
      Version => "0.95",
-     Date => "Aug 21, 2009",
+     LastUpdated => "Aug 21, 2009",
      Authors => {
 	  {Name => "Nathaniel Stapleton", Email => "nat.j.stapleton@gmail.com"}
 	  },

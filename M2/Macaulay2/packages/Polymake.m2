@@ -1,7 +1,7 @@
 newPackage(
 	"Polymake",
     	Version => "0.1", 
-    	Date => "March 21, 2008",
+    	LastUpdated => "March 21, 2008",
     	Authors => {{Name => "Josephine Yu", 
 		  Email => "jyu@math.mit.edu", 
 		  HomePage => "http://www.math.mit.edu/~jyu/"}},

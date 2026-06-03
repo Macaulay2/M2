@@ -2,7 +2,7 @@
 newPackage(
     "BernsteinSato",
     Version => "1.0",
-    Date => "February 2023",
+    LastUpdated => "February 2023",
     Headline => "Bernstein-Sato",
     Authors => {
 	{ Name => "Anton Leykin", Email => "leykin@math.gatech.edu" },

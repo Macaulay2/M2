@@ -20,7 +20,7 @@
 newPackage(
 	"ReesAlgebra",
     	Version => "2.3", 
-    	Date => "November 2019",
+    	LastUpdated => "November 2019",
     	Authors => {{
 		  Name => "David Eisenbud",
 		  Email => "de@msri.org"},

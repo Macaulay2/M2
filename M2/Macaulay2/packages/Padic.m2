@@ -1,7 +1,7 @@
 newPackage("Padic",
     Headline => "p-adic numbers",
     Version => "0.1",
-    Date => "April 28, 2026",
+    LastUpdated => "April 28, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",

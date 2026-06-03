@@ -9,7 +9,7 @@ the License, or any later version.
 
 newPackage ( "ResLengthThree",
     Version => "1.0",
-    Date => "3 December 2020",
+    LastUpdated => "3 December 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",

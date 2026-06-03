@@ -10,7 +10,7 @@ the License, or any later version.
 newPackage(
         "StatGraphs",
         Version => "0.1", 
-        Date => "3 August 2020",
+        LastUpdated => "3 August 2020",
         Authors => {{Name=> "Carlos Amendola", 
 	   Email=> "carlos.amendola@tum.de",
 	   HomePage=>"http://www.carlos-amendola.com/"},

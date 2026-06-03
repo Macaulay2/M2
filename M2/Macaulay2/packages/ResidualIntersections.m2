@@ -1,6 +1,6 @@
 newPackage ( "ResidualIntersections",
     Version => "1.1",
-    Date => "07 May 2016",
+    LastUpdated => "07 May 2016",
     Authors => {
 	{Name => "Katie Ansaldi",
 	    Email => "kansaldi@gmail.com"},

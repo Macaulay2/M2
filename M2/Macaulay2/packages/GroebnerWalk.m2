@@ -1,7 +1,7 @@
 newPackage(
         "GroebnerWalk",
         Version => "1.0.0",
-        Date => "November 17, 2017",
+        LastUpdated => "November 17, 2017",
         Authors => {{Name => "Dylan Peifer",
                      Email => "djp282@cornell.edu",
                      HomePage => "https://www.math.cornell.edu/~djp282"}},

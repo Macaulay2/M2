@@ -2,7 +2,7 @@
 newPackage(
     "CpMackeyFunctors",
     Version=>"1.0",
-    Date=>"July 4, 2025",
+    LastUpdated=>"July 4, 2025",
     Authors=>{
         {Name=>"Thomas Brazelton",
             Email=>"brazelton@math.harvard.edu",

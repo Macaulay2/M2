@@ -1,7 +1,7 @@
 newPackage(
         "HigherCIOperators",
         Version => "0.5", 
-        Date => "May 10, 2015",
+        LastUpdated => "May 10, 2015",
         Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org",
                   HomePage => "http://www.msri.org/~de/"}},

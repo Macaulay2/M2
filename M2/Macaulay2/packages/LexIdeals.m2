@@ -2,7 +2,7 @@
 newPackage(
 	"LexIdeals", 
 	Version => "1.2",
-	Date => "13 October 2008",
+	LastUpdated => "13 October 2008",
 	Authors => {
 		{Name => "Chris Francisco", 
 		     Email => "chris@math.okstate.edu", 

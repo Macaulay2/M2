@@ -8,7 +8,7 @@
 newPackage("OldToricVectorBundles",
     Headline => "vector bundles on toric varieties",
     Version => "1.1",
-    Date => "August 21, 2014",
+    LastUpdated => "August 21, 2014",
     Authors => {
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/indexen.htm",

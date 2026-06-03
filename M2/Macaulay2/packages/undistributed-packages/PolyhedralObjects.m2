@@ -8,7 +8,7 @@
 newPackage("PolyhedralObjects",
     Headline => "types for Polyhedra2, gfanInterface, and PolymakeInterface",
     Version => ".1",
-    Date => "August 5, 2011",
+    LastUpdated => "August 5, 2011",
     Authors => {
          {Name => "Nathan Ilten",
 	  HomePage => "http://math.berkeley.edu/~nilten",

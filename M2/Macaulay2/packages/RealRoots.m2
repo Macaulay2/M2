@@ -3,7 +3,7 @@ newPackage(
     "RealRoots",
     Version=>"1.1",
     --updates/corrections to realRootIsolation by Corin Lee (cel34@bath.ac.uk) 2025/05/25
-    Date=>"Oct 9, 2020",
+    LastUpdated=>"Oct 9, 2020",
     Authors=>{
      	{Name=>"Jordy Lopez Garcia",
 	 Email=>"jordy.lopez@tamu.edu",

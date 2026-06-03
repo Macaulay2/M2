@@ -1,7 +1,7 @@
 newPackage(
         "Oscillators",
         Version => "1.0", 
-        Date => "1 May 2025",
+        LastUpdated => "1 May 2025",
         Authors => {
             {
                 Name => "John Cobb", 

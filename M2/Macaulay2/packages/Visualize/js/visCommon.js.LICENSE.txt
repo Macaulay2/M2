@@ -61,5 +61,5 @@
  * Released under the MIT license
  * https://jquery.com/license/
  *
- * Date: 2026-01-18T00:20Z
+ * LastUpdated: 2026-01-18T00:20Z
  */

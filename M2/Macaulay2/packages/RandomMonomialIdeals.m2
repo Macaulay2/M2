@@ -3,7 +3,7 @@
 newPackage(
 	"RandomMonomialIdeals",
     	Version => "1.0",
-    	Date => "January 28, 2019",
+    	LastUpdated => "January 28, 2019",
     	Authors => {
 	    {
 		Name => "Sonja Petrovic",

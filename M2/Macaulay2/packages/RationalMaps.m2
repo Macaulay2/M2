@@ -1,5 +1,5 @@
 newPackage( "RationalMaps",
-    Version => "1.0", Date => "March 11th, 2022", Authors => {
+    Version => "1.0", LastUpdated => "March 11th, 2022", Authors => {
         {Name => "Karl Schwede",
         Email=> "kschwede@gmail.com",
         HomePage=> "http://www.math.utah.edu/~schwede"

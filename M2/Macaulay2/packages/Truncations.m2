@@ -14,7 +14,7 @@
 newPackage(
     "Truncations",
     Version => "1.0",
-    Date => "22 May 2021",
+    LastUpdated => "22 May 2021",
     Headline => "truncation of a module",
     Authors => {
         { Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "https://www.msri.org/~de" },
