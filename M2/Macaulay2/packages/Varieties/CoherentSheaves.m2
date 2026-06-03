@@ -487,9 +487,35 @@ canonicalBundle ProjectiveVariety := opts -> X -> dual dual determinant(cotangen
 -- isLocallyFree
 -----------------------------------------------------------------------------
 
+-- Check whether an ideal I is a factor of a ring R, meaning that R = I x J as rings for some J.
+-- Since R is noetherian, it is equivalent to check whether I = I^2.
+isFactor = I -> isSubset(I,I^2)
+
 isLocallyFree = method(TypicalValue => Boolean)
 isLocallyFree SumOfTwists   := S -> isLocallyFree S#0
 isLocallyFree SheafOfRings  := O -> true
+
+-- Check whether an module M over a ring R is locally free. Here M is finitely generated
+-- and R is noetherian; so it is equivalent to check whether M is projective, or flat.
+-- We do not require R to be a domain; so M may have different ranks on different components
+-- of Spec R.
+isLocallyFree Module := Boolean => M -> (
+    -- M is locally free if and only if all its Fitting ideals are factors of R = ring M.
+    -- Let us first check whether M is locally free of constant rank, the simplest case.
+    if isFreeModule M then return true;
+    rankM := rank M; -- This number is only guaranteed to be reasonable if R is a domain.
+    if instance(rankM, ZZ) and rankM > 0 then (
+	if isMember(1, J:=fittingIdeal(rankM, M)) and fittingIdeal(rankM - 1, M) == 0 then return true;
+	if not isFactor J then return false); -- These cover all cases if R is a domain,
+    -- which should be the most common case. Otherwise, we now check all Fitting ideals.
+    persist := true; i := 0;
+    while persist do (
+	J = fittingIdeal(i, M);
+	if isMember(1, J) then persist = false;
+	if not isFactor J then return false;
+	i = i+1);
+    true)
+
 isLocallyFree CoherentSheaf := F -> (
     if (d := rank F) == 0 then return F == 0;
     if isFreeModule module F then return true;
