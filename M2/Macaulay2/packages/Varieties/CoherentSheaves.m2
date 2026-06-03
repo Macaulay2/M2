@@ -155,6 +155,31 @@ degree CoherentSheaf := F -> (
 -- but is very convenient for sums of line bundles, for instance
 degrees CoherentSheaf := F -> degrees module F
 
+degreeOnCurve = method()
+degreeOnCurve SheafOfRings  := O -> degreeOnCurve O^1
+degreeOnCurve CoherentSheaf := F -> (
+    -- The degree of a vector bundle F (for example, a line bundle) on a projective curve X.
+    -- Beware that this is not directly related to the degree of F as a coherent sheaf on projective space,
+    -- which would just be the rank of F times the degree of X.
+    --
+    -- This function does not check that F is a vector bundle of constant rank;
+    -- if not, the answer may be meaningless. It does check that the variety
+    -- on which F is defined has dimension 1. The function works correctly for a vector bundle
+    -- on a curve X (viewed as a stack) in a weighted projective space,
+    -- in which case the degree of F is a rational number rather than an integer.
+    -- (It is the intersection number  integral_X c_1(F).)
+    X := variety F;
+    if dim X != 1 then error "expected a vector bundle on a curve";
+    hilbF := hilbertPolynomial(F,      Projective => false);
+    hilbO := hilbertPolynomial(OO_X^1, Projective => false);
+    i := (ring hilbO)_0;
+    -- this is the rank of F on a curve
+    rkF := coefficient(i, hilbF) / coefficient(i, hilbO);
+    deg := coefficient(i^0, hilbF) - rkF * coefficient(i^0, hilbO);
+    -- We return an integer if X lives in projective space,
+    -- and a rational number for X in a more general weighted projective space.
+    if isStandardGraded ring X then lift(deg, ZZ) else deg)
+
 genus   CoherentSheaf := F -> genus   module F
 genera  CoherentSheaf := F -> genera  module F
 -- TODO: this is incorrect in higher picard rank
