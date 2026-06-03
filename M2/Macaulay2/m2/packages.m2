@@ -248,23 +248,28 @@ getpkgNoLoad = pkgname -> if isPackageLoaded pkgname then value PackageDictionar
 newPackage = method(
     Dispatch => Thing,
     Options => {
-	Authors                   => {},
-	AuxiliaryFiles            => false,
-	CacheExampleOutput        => null,
-	Certification             => null,
-	Configuration             => {},
-	Date                      => null,
-	DebuggingMode             => false,
-	Headline                  => null,
-	HomePage                  => null,
-	InfoDirSection            => "Macaulay2 and its packages",
-	Keywords                  => {"Uncategorized"},
-	OptionalComponentsPresent => null,
-	PackageExports            => {},
-	PackageImports            => {},
-	Reload                    => false,
-	UseCachedExampleOutput    => null,
-	Version                   => "0.0"
+		Abstract		       		     => null,
+		ComputingClassificationSystem    => {},
+		Areas			       		     => {"Uncategorized"},
+		Authors                          => {},
+		AuxiliaryFiles                   => false,
+		CacheExampleOutput               => null,
+		Certification                    => null,
+		Configuration                    => {},
+		LastUpdated                      => null,
+		DebuggingMode                    => false,
+		Headline                         => null,
+		HomePage                         => null,
+		InfoDirSection                   => "Macaulay2 and its packages",
+		Keywords                         => {},
+		Maintainer		       		     => null,
+		MathematicsSubjectClassification => {},
+		OptionalComponentsPresent        => null,
+		PackageExports                   => {},
+		PackageImports                   => {},
+		Reload                           => false,
+		UseCachedExampleOutput           => null,
+		Version                          => "0.0"
 	})
 newPackage Sequence := opts -> x -> newPackage splice(nonnull x, opts) -- to allow null entries
 newPackage String := opts -> pkgname -> (
@@ -293,10 +298,10 @@ newPackage String := opts -> pkgname -> (
     then error("newPackage: use the Contributors or Acknowledgement keywords to acknowledge contributors of " | pkgname);
     -- optional package values
     scan({
-	    (Keywords, List),
-	    (Date,     String),
-	    (Headline, String),
-	    (HomePage, String)}, (name, type) -> if opts#name =!= null and not instance(opts#name, type) then
+	    (Keywords,      List),
+	    (LastUpdated, String),
+	    (Headline,    String),
+	    (HomePage,    String)}, (name, type) -> if opts#name =!= null and not instance(opts#name, type) then
 	error("newPackage: expected ", toString name, " option of class ", toString type));
     if opts.Keywords =!= null and any(opts.Keywords,
 	keyword -> not instance(keyword, String)) then error "newPackage: expected Keywords to be a list of strings";
