@@ -479,9 +479,11 @@ tangentSheaf ProjectiveVariety := opts -> X -> dual cotangentSheaf(X, opts)
 idealSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
 idealSheaf ProjectiveVariety := opts -> X -> sheaf ideal (ring X).relations
 
--- TODO: document
 canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
-canonicalBundle ProjectiveVariety := opts -> X -> dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy)
+canonicalBundle ProjectiveVariety := opts -> X -> (
+    sheaf prune module dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy))
+canonicalBundle AffineVariety := opts -> X -> (
+    sheaf prune module dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy))
 
 -- This function computes the sheaf of reflexive differentials of a given closed substack X of a weighted projective space.
 -- At least when X is normal and well-formed (not necessarily quasi-smooth), its direct image sheaf
