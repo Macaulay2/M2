@@ -138,8 +138,6 @@ dim CoherentSheaf := F -> (
 -- the variety to the key, like 'euler(X, F)', would be better.
 degree  CoherentSheaf := F -> degree  module F
 degrees CoherentSheaf := F -> degrees module F
-euler   CoherentSheaf := F -> tryHooks((euler, CoherentSheaf), F, euler @@ module)
-eulers  CoherentSheaf := F -> eulers  module F
 genus   CoherentSheaf := F -> genus   module F
 genera  CoherentSheaf := F -> genera  module F
 -- TODO: this is incorrect in higher picard rank
@@ -256,6 +254,76 @@ toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApp
 net SheafExpression := x -> net x#0
 texMath SheafExpression := x -> texMath x#0
 expressionValue SheafExpression := x -> sheaf expressionValue x#0
+
+-----------------------------------------------------------------------------
+-- Hilbert polynomial, Euler characteristic, etc
+-----------------------------------------------------------------------------
+
+-- Compute the Euler characteristic of O(c) on a weighted projective space P, for an integer c.
+-- Here O(c) can be viewed as a line bundle on the stack P. This agrees with the Euler characteristic of the direct image sheaf O(c)
+-- on the coarse moduli space of P, P -> Y. (But be aware that the sheaves O(c) on Y behave better
+-- when P = P^(n-1)(a_0,...,a_(n-1)) is well-formed, meaning that gcd(a_0,...,a_j omitted,...,a_(n-1)) = 1 for each j.
+-- Namely, in that case, O(c+d) on Y is the reflexive tensor product of O(c) and O(d), meaning that O(c+d) = (O(c) tensor O(d))^**.)
+-- The input is the integer c and a positively graded polynomial ring R1, with P = Proj(R1).
+--
+eulerCharOfTwistingSheaf = (c,R1) -> (
+    degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs); -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
+    -- for P = P^{n-1}(a_0,...,a_(n-1)).
+    hilbshort := 0;
+    A := degreesRing R1; -- This will be a ring of the form Z[T].
+    T := A_0; -- This is the variable in the ring A.
+    if c >= 0 then (
+	hilbshort = hilbertSeries(R1, Order=>c+1); -- This is the Hilbert series of P in degrees at most c, as a polynomial.
+	coefficient(T^c, hilbshort)
+	)
+    else (
+	if c > -sumOfWeights then 0
+	else (
+	    d := -c-sumOfWeights; -- We have d >= 0.
+	    hilbshort = hilbertSeries(R1, Order=>d+1);
+	    (-1)^(n-1)*coefficient(T^d, hilbshort)
+	    )
+	)
+    )
+
+-- Compute the Euler characteristic of a coherent sheaf on a closed subspace of a weighted projective space.
+--
+-- The distinction between a WPS as a stack X and its associated coarse moduli space, e: X -> V, does not matter
+-- for this purpose. Indeed, for a coherent sheaf F on the stack X, we have H^i(X, F) = H^i(V, e_*(F)) for every i.
+--
+-- TODO: should be hookified again
+euler SheafOfRings  := ZZ => O -> euler O^1
+euler CoherentSheaf := ZZ => F -> (
+    -- Compute the Euler characteristic chi(X, F) for a coherent sheaf on a closed subspace X of a weighted projective space.
+    shift := 0;
+    if F.cache.?twist then
+    (shift = first F.cache.twist#0;
+	F = F.cache.twist#1);
+    -- Thus we reduce to the case where the sheaf F was not defined as a twist. We now compute chi(X, F(shift)).
+    M := currentModuleBaseRing F;
+    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
+    -- Note that even if R1 is standard-graded, we would need euler(M(shift)) (in general), rather than euler(M).
+    -- To use the cached information about M, we do not form M(shift) explicitly.
+    if isStandardGraded R1 and shift == 0 then return euler M; -- The earlier algorithm should be faster, in the usual projective space.
+    if degreeLength R1 =!= 1 then error "euler expected the ring to be singly graded";
+    numerator := poincare M; -- Thus the Hilbert series of M is: numerator/((1-a_0)...(1-a_(n-1)), where a_0,...,a_(n-1) are the weights.
+    -- This numerator is in ZZ[T], meaning Z[T,T^(-1)].
+    termlist := terms numerator; -- E.g, if numerator = T^(-1)-T^5, then termlist = {T^(-1),-T^5}.
+    thisterm := 0;
+    thisdeg := 0;
+    len := #termlist;
+    i := 0;
+    output := 0;
+    for i from 0 to len-1 do (
+	thisterm = termlist_i; -- This could be of the form -T^5, say.
+	thisdeg = (degree(thisterm))_0; -- Here degree (-T^5) is a list with one element, {5}, and we just want that number.
+	output = output+leadCoefficient(thisterm)*eulerCharOfTwistingSheaf(shift-thisdeg,R1));
+    output)
+-- TODO: should this call assertStandardGraded?
+eulers CoherentSheaf := F -> eulers module F
 
 -----------------------------------------------------------------------------
 -- SumOfTwists type declarations and basic constructors
