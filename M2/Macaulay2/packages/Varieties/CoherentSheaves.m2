@@ -197,12 +197,12 @@ pdim    CoherentSheaf := F -> tryHooks((pdim,  CoherentSheaf), F, pdim  @@ modul
 SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a)
 
 -- If a coherent sheaf is defined as a twist, say G = F(a), then we remember the original sheaf, so we can reuse cached information about it.
--- Namely, G.cache.twist is the sequence ({a}, F) (or the analogous thing if F was itself defined as a twist). Any later calculations made
+-- Namely, G.cache.Twist is the sequence ({a}, F) (or the analogous thing if F was itself defined as a twist). Any later calculations made
 -- about G will be cached as information about F.
 CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> (
     G := F ** (ring F)^{splice{a}};
-    if F.cache.?twist then G.cache.twist = (splice{a} + F.cache.twist#0, F.cache.twist#1)
-    else G.cache.twist = (splice{a}, F);
+    if F.cache.?Twist then G.cache.Twist = (splice{a} + F.cache.Twist#0, F.cache.Twist#1)
+    else G.cache.Twist = (splice{a}, F);
     G)
 Module(ZZ) := Module Sequence := Module => (M, a) -> M ** (ring M)^{splice{a}}
 Matrix(ZZ) := Matrix Sequence := Matrix => (f, a) -> f ** (ring f)^{splice{a}}
@@ -358,9 +358,9 @@ euler SheafOfRings  := ZZ => O -> euler O^1
 euler CoherentSheaf := ZZ => F -> (
     -- Compute the Euler characteristic chi(X, F) for a coherent sheaf on a closed subspace X of a weighted projective space.
     shift := 0;
-    if F.cache.?twist then
-    (shift = first F.cache.twist#0;
-	F = F.cache.twist#1);
+    if F.cache.?Twist then
+    (shift = first F.cache.Twist#0;
+	F = F.cache.Twist#1);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist. We now compute chi(X, F(shift)).
     M := currentModuleBaseRing F;
     R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
@@ -397,9 +397,9 @@ euler(SheafOfRings,  ZZ, ZZ) := RingElement => (O, b1, b2) -> euler(O^1, b1, b2)
 euler(CoherentSheaf, ZZ, ZZ) := RingElement => (F, b1, b2) -> (
     -- Here b1 <= b2 are integers, and F is a coherent sheaf on a closed subspace of a weighted projective space.
     shift := 0;
-    if F.cache.?twist then
-    (shift = first F.cache.twist#0;
-	F = F.cache.twist#1;
+    if F.cache.?Twist then
+    (shift = first F.cache.Twist#0;
+	F = F.cache.Twist#1;
 	b1 = b1 + shift; b2 = b2 + shift);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist. We now compute chi(X, F, b1, b2).
     if b1 > b2 then error "the lower bound should be <= the upper bound";
@@ -499,9 +499,9 @@ hilbertFunctionQ(Ring, ZZ) := memoize(
 --
 hilbertPolynomial CoherentSheaf := opts -> F -> (
     shift := 0;
-    if F.cache.?twist then
-    (shift = first F.cache.twist#0;
-	F = F.cache.twist#1);
+    if F.cache.?Twist then
+    (shift = first F.cache.Twist#0;
+	F = F.cache.Twist#1);
     -- That is, if F was defined as a twist of another sheaf, we have now changed F to that original sheaf,
     -- and we want to compute the Hilbert polynomial of F(shift).
     -- We first compute the Hilbert polynomial of F in Q[i] (if that has not already been done), to cache it.
