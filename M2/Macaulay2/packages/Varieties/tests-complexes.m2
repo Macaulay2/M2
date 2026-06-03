@@ -31,7 +31,7 @@ TEST ///
   assert(target i === source p)
   assert(target p == F)
   assert(prune p === map(OO_X^1(2),OO_X^2(1), map(S^{2}, , {{x, -y}})))
-  assert(prune i === map(OO_X^2(1),OO_X^1, map(S^{2:1}, , {{y}, {-x}})))
+  assert(prune i === map(OO_X^2(1),OO_X^1, map(S^{2:1}, , {{y}, {x}})))
   assert(coker i == F)
   assert(image i == ker p)
   assert(ker p == G)
