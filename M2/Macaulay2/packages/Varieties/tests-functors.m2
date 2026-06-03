@@ -9,10 +9,13 @@ TEST ///
   X = Proj S;
   I = monomialCurveIdeal(S,{1,3,4})
   N = S^1/I;
-  assert(Ext^1(OO_X,N^~(>=-1)) == prune truncate(-1,Ext^1(truncate(1,S^1),N)))
-  assert(Ext^1(OO_X,N^~(>= 0)) == prune truncate(0,Ext^1(truncate(2,S^1),N)))
-  assert(Ext^1(OO_X,N^~(>= 0)) != prune truncate(0,Ext^1(truncate(1,S^1),N)))
+  -- Ext^i(F, G(>=b)) should return a graded module that is correct in degrees at least b.
+  assert(prune truncate(-1, Ext^1(OO_X, N^~(>=-1))) == prune truncate(-1, Ext^1(truncate(3, S^1), N)))
+  assert(prune truncate(0,  Ext^1(OO_X, N^~(>= 0))) == prune truncate(0,  Ext^1(truncate(2, S^1), N)))
+  assert(prune truncate(0,  Ext^1(OO_X, N^~(>= 0))) != prune truncate(0,  Ext^1(truncate(1, S^1), N)))
+///
 
+TEST ///
   -- Example 4.2: locally free sheaves and global Ext.
   S = ZZ/32003[u,v,w,x,y,z];
   I = minors(2,genericSymmetricMatrix(S,u,3));
@@ -20,8 +23,10 @@ TEST ///
   R = ring X;
   Omega = cotangentSheaf X;
   OmegaDual = dual Omega;
-  assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
+  assert(prune truncate(0, Ext^1(OmegaDual, OO_X^1(>= 0))) == prune truncate (0, Ext^1(OO_X^1, Omega(>= 0))))
+///
 
+TEST ///
   -- Example 4.3: Serre-Grothendieck duality.
   S = QQ[v,w,x,y,z];
   X = variety ideal(w*x+y*z,w*y+x*z);
