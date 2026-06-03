@@ -478,6 +478,7 @@ tangentSheaf ProjectiveVariety := opts -> X -> dual cotangentSheaf(X, opts)
 
 idealSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
 idealSheaf ProjectiveVariety := opts -> X -> sheaf ideal (ring X).relations
+idealSheaf AffineVariety := opts -> X -> sheaf ideal (ring X).relations
 
 canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
 canonicalBundle ProjectiveVariety := opts -> X -> (
