@@ -134,10 +134,23 @@ dim CoherentSheaf := F -> (
     -- are restricted to the singly graded case.
     max(-1, dim M - degreeLength ring M))
 
--- TODO: do all need to be hookified? Perhaps prefixing
--- the variety to the key, like 'euler(X, F)', would be better.
-degree  CoherentSheaf := F -> degree  module F
-degrees CoherentSheaf := F -> degrees module F
+degree SheafOfRings  := O -> degree O^1
+degree CoherentSheaf := F -> (
+    -- The degree of a coherent sheaf on a closed subspace of a weighted projective space.
+    -- Beware that the degree of a coherent sheaf is not directly related
+    -- to the notion of the degree of a line bundle on a curve.
+    -- Indeed, every line bundle L on a curve X in projective space has degree
+    -- _as a coherent sheaf_ equal to the degree of X. See degreeOnCurve.
+    -- Note that twisting does not change the degree of F.
+    if F.cache.?Twist then F = F.cache.Twist#1;
+    M := currentModuleBaseRing F;
+    R := assertWeightedZZGraded ring M;
+    -- The degree is an integer if all weights are equal to 1, but otherwise a rational number.
+    -- For example, on X = PP^n(a_0,...,a_n), the structure sheaf OO_X has degree 1/(a_0...a_n).
+    -- This is compatible with the function hilbertPolynomial F.
+    if isStandardGraded R then degree module F
+    else degree M / product flatten degrees R)
+
 genus   CoherentSheaf := F -> genus   module F
 genera  CoherentSheaf := F -> genera  module F
 -- TODO: this is incorrect in higher picard rank
