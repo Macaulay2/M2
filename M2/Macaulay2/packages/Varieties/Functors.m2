@@ -796,30 +796,361 @@ Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n, F, G) -> (
 -----------------------------------------------------------------------------
 -- TODO: HodgeTally for pretty printing the Hodge diamond
 
-hh = new ScriptedFunctor from {
-    superscript => (
-	pq -> new ScriptedFunctor from {
-	    argument => X -> (
-		a := (pq,X);
-		f := lookup_hh ( class \ a );
-		if f === null then error "no method available";
-		f a
-		)
-	    }
-	)
+-- If "functorArgs" is not recognized by Macaulay2, try one of the following commands.
+-- needs "gateway.m2"
+-- needs "Core/gateway.m2"
+
+-- From: gateway.m2
+-- TODO: combine for all functors
+applyMethodWithOpts' = (key, desc, X, opts) -> (
+    if (F := lookup key) =!= null then (F opts) X
+    else error("no method for ", desc, " applied to ", X))
+
+applyMethodWithOpts'' = (F, X, opts) -> (
+    -- TODO: write a variation of lookup to do this
+    key := prepend(F, apply(X, class));
+    applyMethodWithOpts'(key, toString F, X, opts))
+
+-*
+-- From: gateway.m2
+-- flatten the arguments given to a scripted functor
+functorArgs = method()
+functorArgs(Thing,        Sequence) := (i,    args) -> prepend(i, args)
+functorArgs(Thing, Thing, Sequence) := (i, j, args) -> prepend(i, prepend(j, args))
+functorArgs(Thing, Thing, Thing)    :=
+functorArgs(Thing, Thing)           := identity
+*-
+
+hhOptions = new OptionTable from {
+    Degree => 0
     }
 
-hh(Sequence,ProjectiveVariety) := (pq,X) -> if X.cache.?hh and X.cache.hh#?pq then X.cache.hh#pq else (
+-- Modeled on Ext, defined as a ScriptedFunctor in complexes.m2.
+hh = new ScriptedFunctor from {
+    superscript => i -> new ScriptedFunctor from {
+	-- hh^i(F), hh^i(F, a, b), and so on
+	argument => hhOptions >> opts -> X -> applyMethodWithOpts''(hh, functorArgs(i, X), opts)
+	},
+    argument => hhOptions >> opts -> X -> applyMethodWithOpts''(hh, X, opts)
+    }
+
+
+-- DELETE (was in Varieties.m2).
+--hh = new ScriptedFunctor from {
+--     superscript => (
+--	  pq -> new ScriptedFunctor from {
+--	       argument => X -> (
+--		    a := (pq,X);
+--		    f := lookup_hh ( class \ a );
+--		    if f === null then error "no method available";
+--	       	    f a
+--		    )
+--	       }
+--	  )
+--     }
+
+-- The Hodge numbers of a projective variety.
+hh(Sequence, ProjectiveVariety) := opts -> (pq,X) -> if X.cache.?hh and X.cache.hh#?pq then X.cache.hh#pq else (
     (p,q) := pq;
-    if class p =!= ZZ or class q =!= ZZ then error "expected integer superscripts";
+    if not instance(p, ZZ) or not instance(q, ZZ) then error "expected integer superscripts";
     d := dim X;
     pqs := { (p,q), (q,p), (d-p,d-q), (d-q,d-p) };
     (p,q) = min { (p,q), (q,p), (d-p,d-q), (d-q,d-p) };
-    h := rank HH^q cotangentSheaf(p,X);
+    h := hh^q reflexiveDifferentials(p, X);
     if not X.cache.?hh then X.cache.hh = new MutableHashTable;
     scan(pqs, pq -> X.cache.hh#pq = h);
     h)
 
-euler ProjectiveVariety := X -> (
-    d := dim X;
-    sum(0 .. d, j -> hh^(j,j) X + 2 * sum(0 .. j-1, i -> (-1)^(i+j) * hh^(i,j) X)))
+
+-- This function hh^i(F) computes coherent sheaf cohomology for a coherent sheaf
+-- on a closed subspace in a projective space, or more generally in a weighted projective space.
+-- If you want to compute cohomology with many twists, the functions hh^i(F,b1,b2) or hh^i(F(*))
+-- should be faster than running this program repeatedly.
+-- The base ring should be a field. Note that it is usually faster
+-- to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+-- This program computes only the dimension of the cohomology, not the cohomology as a vector space.
+-- The algorithm uses local duality, as the function HH^i(F(>=a)) does when i>0.
+-- It should be faster, in most cases, since it has less to compute.
+--
+-- The distinction between a WPS as a stack X and its associated coarse moduli space, f: X -> V, does not matter
+-- for computing cohomology. Indeed, a finitely generated graded module M determines a coherent sheaf M~
+-- on X, and it is a fact that H^i(X, M~) = H^i(V, f_*(M~)) for every i. Twists are interpreted by tensoring with
+-- the line bundles O(c) on the stack, which ensures that H^i(X,M~(c)) = H^i(X,M(c)~).
+--
+-- We allow the option hh^i(F, Degree => a) to mean hh^i(F(a)). We expect people to use the latter notation,
+-- but (in effect) we translate it into the first notation for better caching. (We only need to store information
+-- about one sheaf, not its twists.)
+--
+hh(ZZ, SheafOfRings)  := ZZ => opts -> (cohodeg, O) -> hh^cohodeg(O^1, opts)
+hh(ZZ, CoherentSheaf) := ZZ => opts -> (cohodeg, F) -> (
+    if not isProjective variety F then ( -- We give a correct answer in the affine case, although that's not our main focus.
+	return if cohodeg != 0 then 0
+	else if dim F > 0 then infinity
+	else degree F);
+    if F.cache.?twist then return hh^cohodeg(F.cache.twist#1, Degree => opts.Degree + first F.cache.twist#0);
+    -- Thus we reduce to the case where the sheaf F was not defined as a twist.
+    R2 := ring module F;
+    M := currentModuleBaseRing F;
+    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
+    if degreeLength R1 =!= 1 then error "expected degree length 1"; -- The ring must be singly graded.
+    A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
+    T := A_0; -- This is the variable in the ring A.
+    degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs); -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
+    -- for P = P^{n-1}(a_0,...,a_(n-1)).
+    R1.cache ??= new MutableHashTable;
+    ww := R1.cache.Dualizing ??= R1^{-sumOfWeights};
+    -- We fix the dualizing module ww, as a graded R1-module. As a result, Macaulay2 automatically remembers Ext^j(M, ww)
+    -- (for a number j) in case another function has computed that module earlier.
+    output := 0;
+    if cohodeg == 0 then (
+	output = hilbertFunction(-(opts.Degree), Ext^(n-1-cohodeg)(M, ww));
+	-- We have arranged that H^0_m(M) = M_tors is zero, so we don't need to subtract its graded dual Ext^(n-cohodeg)(M, ww).
+	output = output + hilbertFunction(opts.Degree, M)
+	)
+    else (
+	output = hilbertFunction(-(opts.Degree), Ext^(n-1-cohodeg)(M, ww))
+	)
+    )
+
+
+-- Replace T by T^{-1} for an element of ZZ[T] (meaning Z[T,T^(-1)]). This replaces
+-- "substitute(f, T => T^(-1))", which is slow.
+invertvar = (f) -> (
+    A := ring f; -- This should be a ring of the form ZZ[T].
+    T := A_0; -- This is the variable in that ring.
+    coeffseq := (coefficients f)_1; -- This is a column matrix of the coefficients (ignoring the monomials).
+    exposeq := flatten exponents f; -- This is the list of exponents of the monomials, in the form {-1, 2, 3}.
+    monseq := {apply(exposeq, x -> T^(-x))}; -- This is the list of inverted monomials, in the form {{T^1, T^-2, T^-3}}.
+    monomialmatrix := matrix monseq; -- This is the corresponding row matrix.
+    (monomialmatrix*coeffseq)_(0,0))
+
+
+-- This function hh^i(F,b1,b2) computes cohomology with coefficients in a coherent sheaf F
+-- on a closed subspace of a weighted projective space, with all twists in an interval [b1,b2].
+-- This should be faster than running hh^i(F(b)) separately for many twists b.
+-- In some cases, you might prefer hh^i(F(*)), which computes the cohomology in all twists.
+-- The base ring should be a field. Note that it is usually faster
+-- to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+-- This program computes only the Hilbert series of the cohomology, not the cohomology as a module.
+-- The algorithm uses local duality, as in the function HH^i(F(>=b)) that computes the module.
+-- It should be faster, in most cases, since it has less to compute.
+--
+-- The distinction between a WPS as a stack X and its associated coarse moduli space, f: X -> V, does not matter
+-- for computing cohomology. Indeed, a finitely generated graded module M determines a coherent sheaf M~
+-- on X, and it is a fact that H^i(X, M~) = H^i(V, f_*(M~)) for every i. Twists are interpreted by tensoring with
+-- the line bundles O(c) on the stack, which ensures that H^i(X,M~(c)) = H^i(X,M(c)~).
+--
+-- We allow the option hh^i(F, b1, b2, Degree => a) to mean hh^i(F(a), b1, b2). We expect people to use the latter notation,
+-- but (in effect) we translate it into the first notation for better caching. (We only need to store information
+-- about one sheaf, not its twists.)
+--
+hh(ZZ, SheafOfRings,  ZZ, ZZ) := RingElement => opts -> (cohodeg, O, b1, b2) -> hh^cohodeg(O^1, b1, b2, opts)
+hh(ZZ, CoherentSheaf, ZZ, ZZ) := RingElement => opts -> (cohodeg, F, b1, b2) -> (
+    checkProjective variety F;
+    if F.cache.?twist then return hh^cohodeg(F.cache.twist#1, b1, b2, Degree => opts.Degree + first F.cache.twist#0);
+    -- Thus we reduce to the case where the sheaf F was not defined as a twist.
+    b1 = opts.Degree + b1; b2 = opts.Degree + b2;
+    if instance(F, SheafOfRings) then F = F^1; -- That makes F a CoherentSheaf.
+    if not instance(F, CoherentSheaf) or not instance(b1, ZZ) or not instance(b2, ZZ) or b1>b2 then (
+	error "the input should be in the form hh^i(F,b1,b2), with F a coherent sheaf and b1 <= b2 integers");
+    R2 := ring module F;
+    M := currentModuleBaseRing F;
+    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
+    if degreeLength R1 =!= 1 then error "expected degree length 1";
+    A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
+    T := A_0; -- This is the variable in the ring A.
+    degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs); -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
+    -- for P = P^{n-1}(a_0,...,a_(n-1)).
+    R1.cache ??= new MutableHashTable;
+    ww := R1.cache.Dualizing ??= R1^{-sumOfWeights};
+    -- We fix the dualizing module ww, as a graded R1-module. As a result, Macaulay2 automatically remembers Ext^j(M, ww)
+    -- (for a number j) in case another function has computed that module earlier.
+    output := 0;
+    extmodule1 := Ext^(n-1-cohodeg)(M, ww);
+    poincare extmodule1; -- This caches the Poincare polynomial of extmodule1 = Ext^(n-1-cohodeg)(M, ww),
+    -- automatically used by hilbertSeries in what follows.
+    if cohodeg == 0 then (
+	-- We have arranged that H^0_m(M) = M_tors is zero, so we don't need to subtract off Ext^n(n-cohodeg)(M, ww),
+	-- the graded dual to H^0_m(M).
+	output = hilbertSeries(extmodule1, Order => -b1+1);
+	output = invertvar(output); -- This is what we want, in degrees at least b1.
+	output = output + hilbertSeries(M, Order => b2+1);
+	output = part(b1, b2, output) -- We remove terms of degree below b1 or above b2.
+	)
+    else (
+	output = hilbertSeries(extmodule1, Order => -b1+1);
+	output = invertvar(output); -- This is the answer, in degrees at least b1.
+	output = part(b1, b2, output) -- We remove terms of degree above b2.
+	);
+    output*T^-(opts.Degree))
+
+-- Compute f1+f2, for f1 a "Divide" (a kind of rational function in a variable T)
+-- and f2 a Laurent polynomial in T (as an element of "ZZ[T]" = Z[T,T^(-1)]. The output is again a Divide.
+--
+add = (f1, f2) -> (
+    num1 := value numerator f1;  -- The numerator is a Laurent polynomial in ZZ[T]. (We need to say "value" because
+    -- if the numerator is, say, T^3 (rather than a bigger polynomial), then its type may be "Power". To allow different
+    -- types of input, we will likewise use value(f2) in what follows.)
+    den1 := denominator f1; -- The denominator is a "Product", something like (1-T^2)(1-T^3).
+    Divide{num1 + (value f2) * (value den1), den1})
+
+-- Compute f1*f2, for f1 a "Divide" (a kind of rational function in a variable T)
+-- and f2 a Laurent polynomial in T (as an element of "ZZ[T]" = Z[T,T^(-1)]. The output is again a Divide.
+--
+mult = (f1, f2) -> Divide(value(numerator f1)*value(f2),denominator f1)
+-- The numerator of f1 is a Laurent polynomial in ZZ[T]. (We need to say "value" because
+-- if the numerator is, say, T^3 (rather than a bigger polynomial), then its type may be "Power". To allow different
+-- types of input, we likewise use value(f2) here.)
+-- The denominator of f1 is a "Product", something like (1-T^2)(1-T^3).
+
+-- Compute the top degree of a series in T and T^{-1}. The input is positiveseries (a "Divide" in a variable T)
+-- and negativeseries (a "Divide" in a variable U, viewed as T^(-1)). It is assumed that all terms of negativeseries
+-- have degree (in terms of T) below the degree of all terms of positiveseries. The output
+-- could be infinity (if positiveseries is not a polynomial in T) or -infinity (if both inputs are 0).
+topDegree = (positiveseries, negativeseries) -> (
+    posseries := reduceHilbert positiveseries;
+    negseries := reduceHilbert negativeseries; -- We simplify the input functions, so we can see whether they are polynomials.
+    A := ring numerator negseries;
+    U := A_0;
+    num := 0;
+    if value(denominator(posseries)) != 1 then infinity
+    else (  -- Here posseries is a polynomial in T.
+	num = numerator(posseries);
+	if num != 0 then (degree(num))_0
+	else ( -- Here posseries is 0.
+	    num = numerator(negseries);
+	    if num != 0 then (degree(substitute(num, U => U^(-1))))_0
+	    else -infinity -- Here both inputs are zero.
+	    )
+	)
+    )
+
+-- This function (usually called as hh^i(F(*)))
+-- computes coherent sheaf cohomology on a closed subspace of a weighted projective space with all twists.
+-- For the input hh^i(F(>=b)), the number b is ignored, as the output explains. The base ring should be a field.
+-- The output is a sequence listing the infimum of weights c such that H^i(X,F(c)) is not zero (possibly -infinity or,
+-- if the cohomology is zero in all weights, infinity), the supremum of such weights,
+-- a rational function in T, and a rational function in U = T^{-1}, such that the sum of these two functions
+-- as Laurent series is sum_c h^i(X, F(c)) T^c (the sum over all integers c). (The two functions do not overlap,
+-- as formal series in T.)
+--
+-- This program computes only the Hilbert series of the cohomology, not the cohomology as a module.
+-- The algorithm, using local duality, is the same as that used for hh^i(F) and hh^i(F,b1,b2),
+-- and slightly different from that used for the module HH^i(F(>=b)). It should be faster, in most cases.
+-- The base ring should be a field. Note that it is usually faster
+-- to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+-- The distinction between a WPS as a stack X and its associated coarse moduli space, f: X -> V, does not matter
+-- for computing cohomology. Indeed, a finitely generated graded module M determines a coherent sheaf M~
+-- on X, and it is a fact that H^i(X, M~) = H^i(V, f_*(M~)) for every i. Twists are interpreted by tensoring with
+-- the line bundles O(c) on the stack, which ensures that H^i(X,M~(c)) = H^i(X,M(c)~).
+--
+-- We allow the option hh^i(F, Degree => a) to mean hh^i(F(a)). We expect people to use the latter notation,
+-- but (in effect) we translate it into the first notation for better caching. (We only need to store information
+-- about one sheaf, not its twists.)
+--
+hh(ZZ, SumOfTwists) := Sequence => opts -> (cohodeg, sumoftwists) -> (
+    -- Compute H^{cohodeg}(X,F(a)) for all integers a, as a sum of two Laurent polynomials,
+    -- where F is a CoherentSheaf (or a SheafOfRings) on a closed subspace of a weighted projective space.
+    F := sumoftwists#0; -- For an input of the form hh^i(F(>=b)), the number b is ignored. Note that,
+    -- if F is input as a SheafOfRings, SumOfTwists automatically turns it into a CoherentSheaf; so that's what this function receives.
+    if F.cache.?twist then return hh^cohodeg((F.cache.twist#1)(*), Degree => opts.Degree + first F.cache.twist#0);
+    -- Thus we reduce to the case where the sheaf F was not defined as a twist.
+    R2 := ring module F;
+    M := currentModuleBaseRing F;
+    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
+    if degreeLength R1 =!= 1 then error "expected degree length 1";
+    A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
+    T := A_0; -- This is the variable in the ring A.
+    U := getSymbol "U";
+    B := newRing(A,Variables=>{U},MonomialOrder=>{MonomialSize=>32,Weights=>{-1},GroupLex=>1,Position=>Up},Inverses=>true);
+    U = B_0;
+    -- Thus B is a ring of the form "ZZ[U]" (meaning Z[U,U^(-1)]). We think of U as meaning T^(-1).
+    degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs); -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
+    -- for P = P^{n-1}(a_0,...,a_(n-1)).
+    R1.cache ??= new MutableHashTable;
+    w := R1.cache.Dualizing ??= R1^{-sumOfWeights};
+    -- We fix the dualizing module w, as a graded R1-module. As a result, Macaulay2 automatically remembers Ext^j(M, w)
+    -- (for a number j) in case another function has computed that module earlier.
+    bottomdeg := 0;
+    topdeg := 0;
+    positiveseries := 0;
+    negativeseries := 0;
+    hilb1 := 0; hilb0 := 0;
+    extmodule1 := Ext^(n-1-cohodeg)(M, w); -- Macaulay2 automatically caches this, in case Ext was computed earlier or will be computed later.
+    poincare extmodule1; -- This caches the Poincare polynomial of extmodule1 = Ext^(n-1-cohodeg)(M, w),
+    -- automatically used by hilbertSeries in what follows.
+    if cohodeg == 0 then (
+	hilbM := mult(hilbertSeries(M, Reduce => true), T^(-opts.Degree)); -- This is a "Divide".
+	if dim extmodule1 <= 0 then ( -- Here H^1_m(M) has finite length, and so (equivalently) H^0(X,F(*)) is bounded below.
+	    -- In this case, we will return the output as a rational function in T.
+	    hilb1 = T^(opts.Degree) * value numerator hilbertSeries(extmodule1, Reduce => true); -- The graded dual of this is local cohomology H^1_m(M),
+	    -- which has finite length in the case at hand. So its Hilbert series is a Laurent polynomial.
+	    -- We arranged that H^0_m(M) = M_tors is zero; so we don't need to subtract off the Hilbert series of Ext^n(M, w),
+	    -- the graded dual of H^0_m(M).
+	    hilb10 := substitute(hilb1, T => T^(-1)); -- This is a Laurent polynomial in ZZ[T] = Z[T, T^(-1)].
+	    positiveseries = add(hilbM, hilb10);
+	    negativeseries = 0;
+	    if value numerator positiveseries == 0 then (  -- In this case, H^0(X,M(*)) = 0.
+		topdeg = -infinity;
+		bottomdeg = infinity)
+	    else (
+		topdeg = infinity;
+		bottomdeg = first min exponents value numerator positiveseries -- This gives the bottom degree of the output, positiveseries.
+		)
+	    )
+	else ( -- Here extmodule1 is not bounded above, and so H^0(X, F(*)) is not bounded below.
+	    -- We will return the output as a rational function in T (of degree >=0 as a series in T) plus a Laurent polynomial in U = T^(-1)
+	    -- (of degree >0 as a series in U, hence of degree <0 as a series in T).
+	    hilb1 = mult(hilbertSeries(extmodule1, Reduce => true), T^(opts.Degree));
+	    pospart1 := hilbertSeries(extmodule1, Order => 1 - opts.Degree) * T^(opts.Degree); -- This is a Laurent polynomial (not series)
+	    -- in degrees <= 0, but we'll change T to T^{-1}; hence the name "pospart1".
+	    negpart1 := add(hilb1, -pospart1); -- This is a "Divide", the part of hilb1 in T-degree > 0.
+	    -- We arranged that H^0_m(M) = M_tors is zero, so we don't need to subtract off a contribution from Ext^n(M,w),
+	    -- the graded dual of H^0_m(M).
+	    pospart10 := substitute(pospart1, T => T^(-1)); -- A polynomial in T.
+	    negpart10 := substitute(negpart1, T => U); -- A "Divide" in U, of U-degree >= 1 as a series.
+	    negpartM := hilbertSeries(M, Order => opts.Degree) * T^(-opts.Degree); -- The part of hilbM of T-degree < 0.
+	    positiveseries = add(hilbM, -negpartM + pospart10);
+	    negativeseries = add(negpart10, substitute(negpartM, T => U^(-1)));
+	    topdeg = topDegree(positiveseries, negativeseries);
+	    bottomdeg = -topDegree(negativeseries, positiveseries) -- This works even if these degrees are infinity or -infinity.
+	    )
+	)
+    else (  -- Here we are computing cohomology in some degree > 0.
+	hilb1 = mult(hilbertSeries(extmodule1, Reduce => true), T^(opts.Degree)); -- Here extmodule1 = Ext^{n-1-cohodeg)(M,w).
+	-- This is a bounded below series in T. It remains to replace T by U = T^(-1),
+	-- compute some properties, and give the output in the form we want. (If H^cohodeg(X, F(*)) is bounded above and below,
+	-- we will write the output in terms of T.)
+	if value numerator hilb1 == 0 then (
+	    bottomdeg = infinity;
+	    topdeg = -infinity;
+	    positiveseries = 0;
+	    negativeseries = 0)
+	else (  -- Here the output is not zero.
+	    topdeg = -first min exponents value numerator hilb1; -- This is minus the bottom degree of the numerator,
+	    -- which is a Laurent polynomial in T.
+	    if value denominator hilb1 == 1 then (  -- In this case, H^(cohodeg)(X, F(*)) is bounded above and below.
+		bottomdeg = -first degree value numerator hilb1;
+		positiveseries = substitute(hilb1, T => T^(-1));
+		negativeseries = 0)
+	    else (
+		bottomdeg = -infinity;
+		positiveseries = 0;
+		negativeseries = substitute(hilb1, T=>U)
+		)
+	    )
+	);
+    ("The following is correct in all degrees. Bottom degree:", bottomdeg, "top degree:", topdeg, "cohomology as a series in T:", positiveseries,
+	"plus cohomology as a series in U = T^(-1):", negativeseries))
