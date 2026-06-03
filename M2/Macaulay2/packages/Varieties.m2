@@ -122,10 +122,6 @@ needsPackage "PushForward"
 -- Local utilities
 -----------------------------------------------------------------------------
 
-checkRing = A -> (
-    -- TODO: make this unnecessary
-    if not degreeLength A === 1 then error "expected degreeLength of ring to be 1")
-
 -- prints the message only if bool is false and debugLevel > 0
 -- TODO: eventually turn into a method and move to Core
 assert' = (bool, msg) -> bool or ( if debugLevel > 0 then printerr msg; false )
@@ -220,6 +216,9 @@ ProjectiveVariety Array := ProjectiveVariety => (X, M) -> Proj((ring X) M)
 isStandardGraded = R -> unique degrees R === {{1}}
 -- true for a singly graded rings with positive grading
 isWeightedZZGraded = R -> degreeLength R === 1 and min flatten degrees R > 0
+
+assertStandardGraded   = R -> if isStandardGraded   R then R else error "expected a subvariety of the projective space"
+assertWeightedZZGraded = R -> if isWeightedZZGraded R then R else error "expected a substack of a weighted projective space"
 
 -- Note: this can be specialized for other types of varieties.
 isWellDefined Variety := X -> (

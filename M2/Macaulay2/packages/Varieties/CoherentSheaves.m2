@@ -353,12 +353,11 @@ euler CoherentSheaf := ZZ => F -> (
 	F = F.cache.twist#1);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist. We now compute chi(X, F(shift)).
     M := currentModuleBaseRing F;
-    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
     -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
     -- Note that even if R1 is standard-graded, we would need euler(M(shift)) (in general), rather than euler(M).
     -- To use the cached information about M, we do not form M(shift) explicitly.
     if isStandardGraded R1 and shift == 0 then return euler M; -- The earlier algorithm should be faster, in the usual projective space.
-    if degreeLength R1 =!= 1 then error "euler expected the ring to be singly graded";
     numerator := poincare M; -- Thus the Hilbert series of M is: numerator/((1-a_0)...(1-a_(n-1)), where a_0,...,a_(n-1) are the weights.
     -- This numerator is in ZZ[T], meaning Z[T,T^(-1)].
     termlist := terms numerator; -- E.g, if numerator = T^(-1)-T^5, then termlist = {T^(-1),-T^5}.
@@ -395,9 +394,8 @@ euler(CoherentSheaf, ZZ, ZZ) := RingElement => (F, b1, b2) -> (
     -- Thus we reduce to the case where the sheaf F was not defined as a twist. We now compute chi(X, F, b1, b2).
     if b1 > b2 then error "the lower bound should be <= the upper bound";
     M := currentModuleBaseRing F;
-    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
     -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
-    if degreeLength R1 =!= 1 then error "expected degree length 1";
     degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
     n := #degs; -- So P = Proj R1 has dimension n-1.
     sumOfWeights := fold(plus, degs); -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
@@ -587,7 +585,7 @@ cotangentSheaf ProjectiveVariety := opts -> (cacheValue (symbol cotangentSheaf =
 	-- in degree 0 of the cotangent complex.
 	-- In that situation, it would be more natural to consider the truncation of the cotangent complex
 	-- to cohomological degrees >= 0 (which lives in degrees 0 and 1), given by naiveCotangentComplex(X).
-	R := ring X; checkRing R;
+	R := assertWeightedZZGraded ring X;
 	-- Here R is a graded ring with some positive integer grading,
 	-- and X = Proj R is the corresponding subspace of a weighted projective space.
 	S := ring (F := presentation R);

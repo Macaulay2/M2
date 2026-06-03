@@ -122,13 +122,12 @@ currentModuleBaseRing = F -> (
 twistedGlobalSectionsModule = (F, bound) -> (
     -- compute global sections module Gamma_(d >= bound)(X, F(d)), for a CoherentSheaf F.
     -- But if H^0(X, F(*)) is bounded below, then return the complete answer, regardless of "bound".
-    A := ring variety F;
+    A := assertWeightedZZGraded ring variety F;
     -- FIXME: this line, as opposed to
     --  cokernel presentation module F
     -- breaks the test added in 975d780470.
     -- However, we need to keep the information
     -- cached in M, for instance if M is a Hom module.
-    if degreeLength A =!= 1 then error "expected degree length 1";
     M := module F;
     quot := currentModuleMap F; -- The map from M to a simplified R2-module N (at least simplified to M/M_tors).
     N := target quot;
@@ -360,9 +359,8 @@ cohomologyDirect = {Print => true} >> opts -> (cohodeg, S) -> (
     quot := currentModuleMap F; -- The map from the original R2-module M to a simplified module N (at least simplified to M/M_tors).
     N := target quot;
     N' := currentModuleBaseRing F;
-    R1 := ring N'; -- R1 is a graded polynomial ring, and N' is N as an R1-module.
+    R1 := assertWeightedZZGraded ring N'; -- R1 is a graded polynomial ring, and N' is N as an R1-module.
     -- In particular, N' is m-torsion-free, where m is the maximal ideal of R1.
-    if degreeLength R1 =!= 1 then error "expected degree length 1";
     output := 0;
     degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}, say.
     n := #degs; -- So P = Proj R1 has dimension n-1.
@@ -738,8 +736,7 @@ Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m, F, S) -> (
 	E.cache.TruncateDegree = E0.cache.TruncateDegree)
     else (-- Now the sheaves F and G were not defined as twists.
 	N := target currentModuleMap G; -- A simplified module that represents G.
-	R2 := ring N;
-	if degreeLength ring N =!= 1 then error "expected degree length 1"; -- The ring must be singly graded.
+	R2 := assertWeightedZZGraded ring N;
 	degs := flatten degrees R2; -- This is a list of the form {1,9,15,22}, say.
 	n := #degs;
 	M := target currentModuleMap F;
@@ -892,9 +889,8 @@ hh(ZZ, CoherentSheaf) := ZZ => opts -> (cohodeg, F) -> (
     -- Thus we reduce to the case where the sheaf F was not defined as a twist.
     R2 := ring module F;
     M := currentModuleBaseRing F;
-    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
     -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
-    if degreeLength R1 =!= 1 then error "expected degree length 1"; -- The ring must be singly graded.
     A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
     T := A_0; -- This is the variable in the ring A.
     degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
@@ -960,9 +956,8 @@ hh(ZZ, CoherentSheaf, ZZ, ZZ) := RingElement => opts -> (cohodeg, F, b1, b2) -> 
 	error "the input should be in the form hh^i(F,b1,b2), with F a coherent sheaf and b1 <= b2 integers");
     R2 := ring module F;
     M := currentModuleBaseRing F;
-    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
     -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
-    if degreeLength R1 =!= 1 then error "expected degree length 1";
     A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
     T := A_0; -- This is the variable in the ring A.
     degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
@@ -1066,9 +1061,8 @@ hh(ZZ, SumOfTwists) := Sequence => opts -> (cohodeg, sumoftwists) -> (
     -- Thus we reduce to the case where the sheaf F was not defined as a twist.
     R2 := ring module F;
     M := currentModuleBaseRing F;
-    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
     -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
-    if degreeLength R1 =!= 1 then error "expected degree length 1";
     A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
     T := A_0; -- This is the variable in the ring A.
     U := getSymbol "U";
