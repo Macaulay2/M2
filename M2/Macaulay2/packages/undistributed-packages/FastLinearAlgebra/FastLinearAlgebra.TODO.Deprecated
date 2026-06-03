@@ -75,7 +75,7 @@ XXXXXXXXXXXXXX
 --    5. Connect linear algebra over ZZ or QQ (linbox).  This includes LLL, Smith normal form, and perhaps other normal forms.
 --      finish (5) in September?
 --    6. Want these linear algebra routines (det, solving, LU, ...) for approximate fields: RRR, CCC (i.e. arbitrary precision real and complex).
---       Other possible approx fields: interval, ball arithmetic. (use mathemagix?  LastUpdated for this one is unspecified).
+--       Other possible approx fields: interval, ball arithmetic. (use mathemagix?  Date for this one is unspecified).
 --
 --   Field  <-- what we have been using
 --   FieldEnvelope <-- wrapper for Field for doing virtual function calls, also a template (takes a Field)

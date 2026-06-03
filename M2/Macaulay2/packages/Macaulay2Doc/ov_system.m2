@@ -1760,7 +1760,7 @@ doc ///
 	i3 : head
 
 	o3 = HTTP/1.1 200 OK
-	     LastUpdated: Thu, 23 Jun 2016 12:10:58 GMT
+	     Date: Thu, 23 Jun 2016 12:10:58 GMT
 	     Server: Apache/2.2
 	     Vary: Accept-Encoding
 	     Connection: close
