@@ -61,10 +61,10 @@ degreeList := M -> (
     H = H // fold(times, apply(n, i -> 1-T^(deglist#i)));
     exponents H / first)
 
--- quotienting by local H_m^0(M) to "saturate" M
+-- quotienting by the local cohomology H_m^0(M) to "saturate" M
 -- TODO: use irrelevant ideal here
-killLocalH0 := -*(cacheValue symbol TorsionFree)*- (
-    M -> if (H0 := saturate(0*M)) == 0 then M else M / H0)
+killLocalH0 = M -> M.cache.TorsionFree ??= if (H0 := saturate(0*M)) == 0 then M else M / H0
+-- We mainly remember M.cache.TorsionFree (as a quotient module of M) for use in SheafMaps.m2.
 
 -- TODO: add tests:
 -- - global sections of sheafHom are Hom
