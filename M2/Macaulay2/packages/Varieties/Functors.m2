@@ -108,65 +108,111 @@ currentModuleBaseRing = F -> (
 -- start with calling a "currentModule" program; so we will not have done significant earlier calculations with M.
 -- And in some cases, our running minimalPresentation here may give a simpler description of the same module.
 
+-- This function "twistedGlobalSectionsModule" returns a sequence (b0, b1, M0) as output,
+-- meaning that M0 is a module that maps to H^0(X, F(*)),
+-- the map is an isomorphism in degrees at least b0, and it is surjective in degrees at least b1.
+-- (These bounds need not be optimal.) Here F can be a coherent sheaf on a closed subspace
+-- of a weighted projective space.
+--
 -- TODO: add tests:
 -- - global sections of sheafHom are Hom
 -- TODO: implement for multigraded ring using emsbound
 -- TODO: this can change F.module to the result!
 -- NOTE: this may have elements in degrees below bound as well, is that a bug?
 twistedGlobalSectionsModule = (F, bound) -> (
-    -- compute global sections module Gamma_(d >= bound)(X, F(d))
+    -- compute global sections module Gamma_(d >= bound)(X, F(d)), for a CoherentSheaf F.
+    -- But if H^0(X, F(*)) is bounded below, then return the complete answer, regardless of "bound".
     A := ring variety F;
     -- FIXME: this line, as opposed to
     --  cokernel presentation module F
     -- breaks the test added in 975d780470.
     -- However, we need to keep the information
     -- cached in M, for instance if M is a Hom module.
-    M := module F;
     if degreeLength A =!= 1 then error "expected degree length 1";
-    -- quotient by HH^0_m(M) to kill the torsion
-    -- TODO: pass the appropriate irrelevant ideal
-    N := killLocalH0 M;
-    -- pushforward to the projective space
-    N' := flattenModule N;
-    S := ring N';
-    -- TODO: both n and w need to be adjusted for the multigraded case
-    n := dim S-1;
-    w := S^{-n-1}; -- canonical sheaf on P^n
-    -- Note: bound=infinity signals that HH^1_m(M) = 0, ie. M is saturated
-    -- in other words, don't search for global sections not already in M
-    -- TODO: what would pdim N' < n, hence En = 0, imply?
-    -- pdim N' < n means N' has depth >= 1 already
-    p := if bound === infinity or pdim N' < n then 0 else (
-	-- En is the dual of the HH^1_m(N'), so its degrees
-	-- tell us how far to look for the extension
-	-- 0 -> N' -> Gamma_*(N'^~) -> HH^1_m(N') -> 0
-	En := Ext^n(N', w); -- the top Ext
-	if dim En <= 0 -- 0-module or 0-dim module (i.e. finite length)
-	then 1 + max degreeList En - min degreeList En
-	else 1 - first min degrees En - bound);
-    -- this can only happen if bound=-infinity, e.g. from calling H^0(F(*)) = H^0(F(>=(-infinity))
+    M := module F;
+    quot := currentModuleMap F; -- The map from M to a simplified R2-module N (at least simplified to M/M_tors).
+    N := target quot;
+    N' := currentModuleBaseRing F; -- This is N as an R1-module.
+    S := ring N'; -- This is a graded polynomial ring.
+    degs := flatten degrees S; -- This is a list of the form {1,9,15,22}, say.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs); -- This is sum_i |x_i|, where S = k[x_0,...,x_(n-1)].
+    S.cache ??= new MutableHashTable;
+    w := S.cache.Dualizing ??= S^{-sumOfWeights};
+    -- We fix the dualizing module w, as a graded S-module. As a result, Macaulay2 automatically remembers Ext^j(M, w)
+    -- (for a number j), or more precisely Ext^j_S(N', w), in case another function has computed that module earlier.
+    --
+    -- Note: bound=infinity may mean that HH^1_m(N) = 0, i.e., N is saturated,
+    -- or just that the user does not want to search for any global sections besides those in N.
+    -- TODO: what would pdim N' < n-1, hence E1 = 0, imply?
+    complete := false;
+    p := 0;
+    if bound < infinity then (
+	p = if pdim N' < n-1 then (
+	    complete = true;
+	    0)
+	else (
+	    E1 := Ext^(n-1)(N', w); -- This is the graded dual of the local cohomology HH^1_m(N').
+	    -- For example, if N' = M/M_tors, then this is isomorphic to HH^1_m(M).
+	    if dim E1 <= 0 then ( -- 0-module or 0-dim module (i.e., finite length))
+		complete = true;
+		degList := degreeList E1;
+		1 + max degList - min degList
+		)
+	    else 1 - (first min exponents poincare E1) - bound
+	    -- Note that "first min degrees E1" would give the smallest degree of a generator for E1,
+	    -- even if that generator is killed by the relations. Instead, we use poincare E1 to find the smallest degree
+	    -- in which E1 is not zero. For example, if poincare E1 = 5T^(-1)+T^2, then exponents poincare E_1 = {{-1},{2}},
+	    -- hence the need for the "first".
+	    )
+	);
+    -- this can only happen if bound=-infinity, that is, from calling H^0(F(*)) = H^0(F(>=(-infinity))
     if p === infinity then error "the global sections module is not finitely generated";
     -- caching these to be used later in prune SheafMap
-    F.cache.TorsionFree = N;
+    F.cache.TorsionFree = M.cache.TorsionFree;
+    -- We mainly remember F.cache.TorsionFree (as a quotient module of M) for use in SheafMaps.m2.
     F.cache.GlobalSectionLimit = max(0, p);
-    -- this is the module Gamma_* F
-    G := minimalPresentation if p <= 0 then N else target(
+    -- this is the module Gamma_* M, as a module over the original ring A.
+    if p <= 0 then (
+	F.cache.SaturationMap = quot; -- The map from M to the simplified A-module N. Since we keep the same module N
+	-- in this case, Macaulay2 remembers any earlier calculations done for N, such as Ext calculations.
+	F.cache.SaturationBaseRing = N'; -- This is N as an S-module.
+	return if complete then (-infinity, -infinity, N)
+	else (p + bound, p + bound, N));
+    G := minimalPresentation target(
 	-- TODO: substitute with appropriate irrelevant ideal here
-	Bp := (ideal vars A)^[p];
-	-- consider the sequence 0 -> B^[p] -> A -> A/B^[p] -> 0
-	inc := inducedMap(module A, module Bp);
+	-- TODO: separate as a helper function
+	M2gens := apply(n, i -> ((S_i)^-((-p)//degs#i)));
+	-- That is, the list M2gens consists of each variable x_i to the power roundup(p/a_i).
+	BpS := ideal M2gens; -- This is the ideal Ip of the form (x_0^(b_0),x_1^(b_1),...,x_(n-1)^(b_(n-1)))
+	-- in the polynomial ring S, viewed as an S-module. In practice, considering this ideal
+	-- in S seemed to make this function faster than considering the analogous ideal in the quotient ring A.
+	incS := inducedMap(module S, module BpS);
+	inc := incS ** A; -- This is the A-linear map  Ip tensor_S A -> A. (So A-linear maps from the first module
+	-- to N (which may be M/M_tors) are equivalent to S-linear maps from Ip to N' = (N as an S-module).)
 	iso := inducedMap(Hom(A, N), N);
 	-- we compute the map N -> Gamma_* F as a limit by
-	-- applying Hom(-,N) to the sequence above
-	-- c.f. the limit from minimalPresentation hook
+	-- applying Hom(-, N) to the sequence above
+	-- cf. the limit from minimalPresentation hook
 	-- and emsbound in NormalToricVarieties/Sheaves.m2
 	phi := Hom(inc, N, MinimalGenerators => true) * iso);
-    -- now we compute the center map in the sequence
-    -- 0 -> HH^0_B(M) -> M -> Gamma_* F -> HH^1_B(M) -> 0
-    iota := inverse G.cache.pruningMap; -- map from Gamma_* F to its minimal presentation
-    quot := inducedMap(N, M);           -- map from M to N = M/HH^0_B(M)
+    -- Note that phi: N -> G is always injective, because we have arranged for N to be m-torsion-free.
+    -- If phi is surjective, hence an isomorphism, then we will take the output to be the original module N rather than G,
+    -- so that Macaulay2 remembers any earlier calculations done for N, such as Ext calculations.
+    if isSurjective phi then (
+	F.cache.SaturationMap = quot; -- The map from M to the simplified A-module N.
+	F.cache.SaturationBaseRing = N';
+	return if complete then (-infinity, -infinity, N)
+	else (bound, bound, N));
+    -- now we compute the center map in the sequence, where m is the maximal ideal of S:
+    -- 0 -> HH^0_m(M) -> M -> Gamma_* M -> HH^1_m(M) -> 0
+    iota := inverse G.cache.pruningMap; -- map from Gamma_* M to its minimal presentation
+    -- quot is the map from M to N (which may be M/M_tors).
     F.cache.SaturationMap = if p <= 0 then iota * quot else iota * phi * quot;
-    G)
+    F.cache.SaturationBaseRing = minimalPresentation flattenModule G;
+    if complete then (-infinity, -infinity, G)
+    else (bound, bound, G))
+
 
 -----------------------------------------------------------------------------
 -- cohomology
