@@ -172,16 +172,28 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 -----------------------------------------------------------------------------
 
 -- This is an approximation of Gamma_* F, at least with an inclusion from Gamma_>=0 F
--- TODO: optimize caching: if HH^0(F>=b) is cached above, does this need to be cached?
--- TODO: should F>=0 be hardcoded?
+-- TODO: optimize caching: if HH^0(F(>=b)) is cached above, does this need to be cached?
+-- TODO: should F>=0 be hardcoded? I think this is OK, especially since the function HH^0(F(>=b))
+-- returns all of H^0(X,F(*)) if that is bounded below.
 minimalPresentation SheafOfRings  := prune SheafOfRings  := SheafOfRings  => opts -> identity
 minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> (
     F -> F.cache#(symbol minimalPresentation => opts) ??= tryHooks(
 	(minimalPresentation, CoherentSheaf), (opts, F), (opts, F) -> (
-	    -- this is the default algorithm
-	    -- it uses twistedGlobalSectionsModule
-	    G := sheaf(F.variety, HH^0 F(>=0));
-	    G.cache.pruningMap = sheaf(F.variety, F.cache.SaturationMap);
+	    if not isProjective variety F then return sheaf minimalPresentation module F;
+	    -- That handles a sheaf on an affine variety.
+	    if F.cache.?twist then (-- Here F was defined as a twist of another sheaf, say F = E(shift). We reduce to the calculation for E.
+		shift := first F.cache.twist#0; -- Here F.cache.twist#0 should be a degree in the form {3}, and then shift would be 3.
+		H := minimalPresentation F.cache.twist#1; -- Here F.cache.twist#1 is the original sheaf E.
+		Gmap := (H.cache.pruningMap)(shift);
+		-- We mainly record F.cache.TorsionFree (as a quotient of F.module) for use in SheafMaps.m2.
+		F.cache.TorsionFree = ((F.cache.twist#1).cache.TorsionFree)(shift);
+	        F.cache.GlobalSectionLimit = -shift + (F.cache.twist#1).cache.GlobalSectionLimit)
+	    -- Now F was not defined as a twist. This is the default algorithm.
+	    else (
+		if not F.cache.?SaturationMap then HH^0(F(>=0), Degree => NonPrint);
+		Gmap = sheaf(F.variety, F.cache.SaturationMap));
+	    G := target Gmap;
+	    G.cache.pruningMap = Gmap;
 	    G)))
 
 -----------------------------------------------------------------------------
