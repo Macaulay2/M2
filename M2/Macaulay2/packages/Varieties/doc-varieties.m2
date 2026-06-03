@@ -384,8 +384,8 @@ Node
       J = minors(1,jacobian ideal Q) + ideal Q
       primaryDecomposition J
     Text
-      As we see in the above, without saturating there is an irrelevant component arising
-      from the ideal $(x^2,y)$ that disappears upon saturating.
+      As we see in the above, without saturating there would be an irrelevant component arising
+      from the ideal $(x^2,y)$.
   SeeAlso
     (singularLocus, Ring)
 ///

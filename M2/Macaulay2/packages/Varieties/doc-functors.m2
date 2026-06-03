@@ -73,8 +73,8 @@ Node
       truncate it with @TO2 {"Truncations::truncate(ZZ,Module)", TT "truncate(d, M)"}@.
       (Note that this may yield a more complicated module, for example with more generators.)
     Text
-      If you only want the dimensions of the cohomology groups, the commands @TT "hh^i(F(*))"@
-      or @TT "hh^i(F,d,e)"@ or @TT "hh^i(F)"@ are usually faster.
+      If you only want the dimensions of the cohomology groups, the commands @TO2{(hh,ZZ,SumOfTwists),"hh^i(F(*))"}@
+      or @TO2{(hh,ZZ,CoherentSheaf,ZZ,ZZ),"hh^i(F,d,e)"}@ or @TO2{(hh,ZZ,CoherentSheaf),"hh^i(F)"}@ are usually faster.
     Text
       The base space of @TT "F"@ may be a closed subspace $X$ of a weighted projective space. The distinction between
       $X$ as a stack and its associated coarse moduli space, $e\colon X \to V$, does not matter
@@ -90,10 +90,10 @@ Node
       X1 = Proj R1;
       HH^0(OO_X1(>=0))
       HH^1(OO_X1(>=0))
-      HH^2(OO_X1(>=-3)) -- this should change to * once implemented
-      TruncDual = HH^2(OO_X1(>=-4))
-      hilbertFunction(-4, TruncDual)
-      hilbertFunction(-3, TruncDual)
+      TruncMinus3 = HH^2(OO_X1(>=-3))
+      hilbertSeries(TruncMinus3, Order => 5)
+      TruncMinus4 = HH^2(OO_X1(>=-4))
+      hilbertSeries(TruncMinus4, Order => 5)
     Text
       As a second example, we compute the $H^1$ cohomology module $T$ of
       the Horrocks-Mumford bundle on projective 4-space, which is
@@ -369,7 +369,7 @@ Node
       The output describes the formal series $\sum_{j\in\mathbb{Z}} h^i(X,F(j))T^j$ by a sequence consisting of
       some text explanation, and also:
       the infimum of the weights j such that $H^i(X,F(j))$ is not zero (possibly $-\infty$ or,
-      if the cohomology is zero in all weights, $\infty$) as entry 1, the supremum of such weights (entry 3)
+      if the cohomology is zero in all weights, $\infty$) as entry 1, the supremum of such weights (entry 3),
       a rational function in $T$ (entry 5), and a rational function in $U = T^{-1}$ (entry 7),
       such that the sum of the latter two functions
       as Laurent series is $\sum_{j\in\mathbb{Z}} h^i(X, F(j)) T^j$. (The two functions do not overlap,
@@ -681,26 +681,26 @@ Node
     g:{SheafMap}
   Outputs
     :Matrix
-      the induced map on global Ext $\mathrm{Ext}^i_X(\mathcal{F} , g)$, where $g$ is some morphism of sheaves
+      the induced map on global Ext $\mathrm{Ext}^i_X(\mathcal{F}, g)$, where $g$ is some morphism of sheaves
   Description
     Text
       As explained in @TO (Ext, ZZ, CoherentSheaf, CoherentSheaf)@, the global Ext module $\mathrm{Ext}^i_X (\mathcal F, \mathcal G)$ is a
       vector space, defined as the $i$th right derived functor of the global Hom functor $\mathrm{Hom}_X (\mathcal{F}, -)$.
       In particular, this implies that for any morphism of sheaves $g : \mathcal{G} \to \mathcal{G}'$ there is an induced map
-      $$\mathrm{Ext}^i_X (\mathcal F , g) : \mathrm{Ext}^i_X (\mathcal F , \mathcal G) \to \mathrm{Ext}^i_X (\mathcal F , \mathcal{G}').$$
+      $$\mathrm{Ext}^i_X (\mathcal F, g) : \mathrm{Ext}^i_X (\mathcal F, \mathcal G) \to \mathrm{Ext}^i_X (\mathcal F, \mathcal{G}').$$
     Text
       In Macaulay2, these vector spaces are not computed using injective resolutions of sheaves.
       Instead, a result of Greg Smith is used that shows that if $\mathcal{F}$ and $\mathcal{G}$ are sheaves
       represented by modules $M$ and $N$, respectively, then there exists an integer $d$ (depending on $M$, $N$, and $i$)
       such that
-      $$\mathrm{Ext}^i_X (\mathcal F, \mathcal G) = \mathrm{Ext}^i_S (M_{\geq d} , N)_0,$$
+      $$\mathrm{Ext}^i_X (\mathcal F, \mathcal G) = \mathrm{Ext}^i_S (M_{\geq d}, N)_0,$$
       where in the above $S$ is some polynomial ring over a field, $M_{\geq d}$ denotes truncation,
       and $(-)_0$ denotes the degree $0$ part of a graded module. Moreover, the modules $M$ and $N$ are being
       viewed as modules over the polynomial ring $S$ via restriction of scalars along the canonical
       surjection $S \to R$, where $X = \mathrm{Proj} (R)$. In particular, if $\mathcal{G}'$ is represented by some module $N'$,
       then after taking $d$ to be the maximum of the integers required to satisfy the assumptions of G. Smith's
       result, the induced map on global Ext may be computed as
-      $$\mathrm{Ext}^i_X (\mathcal F , g) = \mathrm{Ext}_S^i (M_{\geq d} , \widehat{g} )_0,$$
+      $$\mathrm{Ext}^i_X (\mathcal F, g) = \mathrm{Ext}_S^i (M_{\geq d}, \widehat{g} )_0,$$
       where $\widetilde{g}$ is some map of modules whose associated sheaf is equal to $g$.
     Text
       If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is viewed simply as a coherent sheaf.
