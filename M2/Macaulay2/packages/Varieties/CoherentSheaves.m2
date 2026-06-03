@@ -30,9 +30,19 @@ sheaf = method()
 -- and if a variety doesn't already exist then either Proj or Spec should be defined and cached.
 sheaf Ring := Ring^~ := SheafOfRings =>     R  -> sheaf(variety R, R)
 sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
-sheaf(Variety, Ring) := SheafOfRings => (X, R) -> X.cache.sheaf ??= (
+
+sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
     if ring X =!= R then error "sheaf: expected ring of the variety";
-    new SheafOfRings from { symbol variety => X, symbol ring => R } )
+    -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
+    X.sheaf ??= (
+	O := new SheafOfRings from { symbol variety => X, symbol ring => R };
+	O.cache = new MutableHashTable;
+	O.cache.sheaf = sheaf(O.variety, (ring variety O)^1); -- That is, O.cache.sheaf is the CoherentSheaf O^1.
+	-- We cache this so that constructing O^1 at different times will yield the _same_ CoherentSheaf,
+	-- which itself may have cached information over time.
+	O)
+    )
+
 
 -- TODO: should the module of a sheaf be fixed, or should it be allowed to change?
 -- TODO: https://github.com/Macaulay2/M2/issues/1358
@@ -90,7 +100,8 @@ variety CoherentSheaf := F -> F.variety
 ring SheafOfRings  :=
 ring CoherentSheaf := SheafOfRings => F -> sheaf variety F
 
-module SheafOfRings  := Module => F -> module F.ring
+-- This is the module associated to the fixed CoherentSheaf, O^1.
+module SheafOfRings  := Module => O -> module O.cache.sheaf
 module CoherentSheaf := Module => F -> F.module
 
 codim   CoherentSheaf := options(codim, Module) >> o -> F -> codim(F.module, o)
@@ -147,7 +158,12 @@ hilbertPolynomial          CoherentSheaf  := o ->     F  -> hilbertPolynomial(mo
 -- TODO: sheaf should dehomogenize modules on Affine varieties
 SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a)
 CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> F ** (ring F)^{splice{a}}
-SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring variety O)^n)
+
+SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> (
+    if instance(n, ZZ) and n == 1 then O.cache.sheaf -- Thus, O^1 always yields the _same_ coherent sheaf, which may contain cached information.
+    -- We could consider transferring that information to direct sums, but at the moment that is not done.
+    else sheaf(O.variety, (ring variety O)^n))
+
 CoherentSheaf ^ ZZ := CoherentSheaf ^ List   := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
 dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(F.variety, dual(F.module, o))
 
