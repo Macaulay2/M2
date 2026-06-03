@@ -104,7 +104,10 @@ ring CoherentSheaf := SheafOfRings => F -> sheaf variety F
 module SheafOfRings  := Module => O -> module O.cache.sheaf
 module CoherentSheaf := Module => F -> F.module
 
-codim   CoherentSheaf := options(codim, Module) >> o -> F -> codim(F.module, o)
+codim   CoherentSheaf := options(codim, Module) >> o -> F -> (
+    -- If the support of F in its variety is empty,
+    -- we say that the codimension of F is infinity.
+    if dim F <= -1 then infinity else codim(F.module, o))
 rank    CoherentSheaf := F -> rank    F.module
 numgens CoherentSheaf := F -> numgens F.module
 betti   CoherentSheaf := o -> F -> betti(F.module, o)
