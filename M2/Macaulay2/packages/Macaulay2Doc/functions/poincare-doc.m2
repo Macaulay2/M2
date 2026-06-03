@@ -142,6 +142,7 @@ Node
     reduceHilbert
     selectInSubring
     "Elimination::Elimination"
+    [gb,Hilbert]
 
 Node
   Key
