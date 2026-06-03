@@ -224,6 +224,44 @@ cohomology(ZZ,          SheafOfRings) := Module => opts -> (p,    O) -> cohomolo
 cohomology(ZZ, Variety, SheafOfRings) := Module => opts -> (p, X, O) -> cohomology(p,         X, O^1, opts)
 
 -- HH^p(X, F(>=b))
+--
+-- The function HH^p(F(>=b)) computes the cohomology of a coherent sheaf F on a closed subspace X
+-- of a weighted projective space with all twists at least a given number,
+-- as a module. If you just want the Hilbert series of the cohomology,
+-- hh^p(F, b1, b2) or hh^p(F(*)) will probably be faster. The base ring of the output module
+-- will be the positively graded ring corresponding to X, not necessarily a graded polynomial ring.
+-- The function prints to say whether the output is complete or not, unless you use the "NonPrint" options below.
+--
+-- The base ring should be a field. Note that it is usually faster
+-- to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+-- The distinction between a WPS as a stack X and its associated coarse moduli space, f: X -> V, does not matter
+-- for computing cohomology. Indeed, a finitely generated graded module M determines a coherent sheaf M~
+-- on X, and it is a fact that H^i(X, M~) = H^i(V, f_*(M~)) for every i. Twists are interpreted by tensoring with
+-- the line bundles O(c) on the stack, which ensures that H^i(X,M~(c)) = H^i(X,M(c)~).
+--
+-- In more detail, HH^p(F(>=b)) computes a graded module M0 that maps to H^p(X, F(*)) in all degrees.
+-- The map will be an isomorphism in degrees at least b. But if H^p(X, F(*)) is bounded below,
+-- then M0 will be isomorphic to H^p(X, F(*)) in all degrees, and Macaulay2 will say so.
+-- In the case of H^0, there will be a map from M to the output module M0, and the map is stored
+-- as F.cache.SaturationMap.
+--
+-- This function uses "localCohomology", which in turn uses local duality (keeping track of the module structure).
+-- We only reuse an earlier cached calculation when the earlier calculation computed cohomology in all degrees.
+-- Otherwise, the user might want to run the program again
+-- with different inputs (e.g., HH^2(F(>=-3)) is in principle determined by HH^2(F(>=-10)),
+-- but it would give a simpler module, which might be preferable). Also, we try to fix the modules involved,
+-- so that Macaulay2 automatically remembers calculations such as Ext made with those modules.
+--
+-- The option HH^p(F(>=b), Degree => Direct) uses a direct method, rather than local duality.
+-- The two algorithms are similar for H^0, but for H^i with i>0, there can be big differences in speed.
+--
+-- Some other options are "Degree => NonPrint" or "Degree => DirectNonPrint", which avoid printing to the screen
+-- and instead return a sequence (b0, b1, M0) as output, meaning that M0 is a module that maps to H^i(X, F(*)),
+-- the map is an isomorphism in degrees at least b0, and it is surjective in degrees at least b1. (These bounds
+-- need not be optimal.) We recommend using those options when calling this function from another function.
+--
+-*
 cohomology(ZZ,                    SumOfTwists) := Module => opts -> (p,    S) -> cohomology(p, variety S, S, opts)
 cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) -> (
     checkVariety(X, S);
@@ -233,13 +271,232 @@ cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) ->
     F.cache.HH#(p, b) ??= if p == 0
     then twistedGlobalSectionsModule(F, b)
     else HH^(p+1)(module F, Degree => b))
+*-
+cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) -> (
+    checkVariety(X, S);
+    cohomology(p, S, opts))
+cohomology(ZZ, SumOfTwists) := Module => opts -> (p, S) -> (
+    (F, b) := (S#0, S#1#0);
+    if F.cache.?twist then ( -- Here F was defined as a twist of another sheaf, say F = E(shift). We reduce to the calculation for E.
+	shift := first F.cache.twist#0; -- Here F.cache.twist#0 should be a degree in the form {3}, and then shift would be 3.
+	if opts.Degree === Direct or opts.Degree === DirectNonPrint then
+	originalseq := HH^p(F.cache.twist#1(>= b + shift), Degree => DirectNonPrint)
+	else originalseq = HH^p(F.cache.twist#1(>= b + shift), Degree => NonPrint);
+	b0 := -shift + originalseq#0; b1 := -shift + originalseq#1;
+	if p == 0 then F.cache.GlobalSectionLimit = (F.cache.twist#1).cache.GlobalSectionLimit;
+	-- We record this number for use in SheafMaps.m2.
+	output := (originalseq#2)(shift))
+    else ( -- Now the sheaf F was not defined as a twist.
+	F.cache.Hsum        ??= new MutableHashTable;
+	-- TODO: when p>0, HH^p(F(*)) gives a "not implemented yet" error
+	--
+	-- We store as F.cache.Hsum#p a sequence (b0, b1, output), meaning that output is a module that maps to H^p(X,F(*)),
+	-- isomorphically in degrees at least b0 and surjectively in degrees at least b1.
+	-- Moreover, b0 is -infinity if and only if H^p(X,F(*)) is bounded below,
+	-- and in that case, output is all of H^p(X,F(*)).
+	if F.cache.Hsum#?p and ((b0 = F.cache.Hsum#p#0) === -infinity or b == b0) then (b0, b1, output) = F.cache.Hsum#p
+	-- If we cached a complete answer, or if we are computing in exactly the same range as before, then we use the cached answer.
+	else ( -- Otherwise, we compute the answer, even if b0 < b, meaning that we have done a more complete calculation earlier.
+	    -- The point is that computing the answer in a smaller range is often faster than truncating the earlier answer,
+	    -- and it typically gives a simpler module than just repeating the earlier answer.
+	    if opts.Degree === Direct or opts.Degree === DirectNonPrint then (b0, b1, output) = cohomologyDirect(p, S, Print => false)
+	    else if p == 0 then (b0, b1, output) = twistedGlobalSectionsModule(F, b)
+	    else (b0, b1, output) = localCohomology(p+1, F, b);
+	    -- If H^p(X,F(*)) is bounded below,
+	    -- then the output is the whole cohomology, regardless of the given bound "twist".
+	    --
+	    -- Here we compute local cohomology over the base ring of the sheaf F, which need not be a polynomial ring.
+	    -- So the function localCohomology (like Macaulay2's HH^* function)
+	    -- lifts that module to one over a polynomial ring, rather than using our cached module. Nonetheless,
+	    -- that function seems to be fast.
+	    if (not F.cache.Hsum#?p) or b0 < F.cache.Hsum#p#0 then F.cache.Hsum#p = (b0, b1, output) -- If we did not have a cached answer,
+	    -- or if we have computed in a bigger range now, we cache our new answer.
+	    )
+	); -- Now we report the answer, whether F was defined as a twist or not.
+    if opts.Degree === NonPrint or opts.Degree === DirectNonPrint then return (b0, b1, output);
+    if b0 === infinity then (<< "The following module is correct in sufficiently high degrees.")
+    else if b0 === -infinity then (<< "The following module is correct in all degrees.")
+    else if b0 == b1 then (<< "The following module is correct in degrees at least " << b0 << ".")
+    else if b1 === -infinity then (<< "The following module maps isomorphically to the cohomology in degrees >= " << b0
+	<< " and surjectively in all degrees.")
+    else (<< "The following module maps isomorphically to the cohomology in degrees >= " << b0
+	<< " and surjectively in degrees >= " << b1 << ".");
+    output);
+
+-- Alternate version 2 of HH^i(F(>=b)), "cohomologyDirect". This can be called by the usual cohomology function,
+-- for example by "HH^i(F(>=b), Degree => Direct)". Eventually, "cohomology" should allow more options,
+-- so that we can use a better notation such as "HH^i(F(>=b), Strategy => Direct)".
+-- In any case, when i>0, this option uses a completely different algorithm,
+-- based on Ext from an ideal of the form (x_0^(b_0),x_1^(b_1),...x_(n-1)^(b_(n-1))), rather than using local duality.
+-- This can be much faster or much slower than the main function HH^i(F(>=b)); so both options may be worth a try.
+-- One reason for making the other algorithm the main one is that it gives
+-- the complete answer when the cohomology is bounded below. This function only returns a module
+-- which is correct in at least the given degree b (and it prints that fact).
+--
+-- One choice for speed in this function is that it uses the complete intersection ideal
+-- above, rather than the truncations R_(>=j) which have more complicated free resolutions. This function also uses
+-- a bound based on the minimal free resolution of M, which is sharper than just using the regularity of M.
+--
+-- The distinction between a weighted projective space as a stack X and its associated coarse moduli space, f: X -> V,
+-- does not matter for computing cohomology. Indeed, a finitely generated graded module M determines a coherent sheaf M~
+-- on X, and it is a fact that H^i(X, M~) = H^i(V, f_*(M~)) for every i. Twists are interpreted by tensoring with
+-- the line bundles O(c) on the stack, which ensures that H^i(X,M~(c)) = H^i(X,M(c)~).
+--
+-- This function takes more time if you ask for a larger range of twists, even if the cohomology is zero
+-- in part of that range. It might be reasonable to first run hh^i(F*)), which computes
+-- the Hilbert series of cohomology in all degrees, and then (if you want cohomology as a module)
+-- apply this function starting in the lowest degree where the cohomology is not zero.
+--
+-- An option is "Print => false", which avoids printing to the screen
+-- and instead returns a sequence (b0, b1, M0) as output, meaning that M0 is a module that maps to H^i(X, F(*)),
+-- the map is an isomorphism in degrees at least b0, and it is surjective in degrees at least b1. (These bounds
+-- need not be optimal.) That option is recommended when this function is called
+-- by another function, rather than by the user.
+--
+cohomologyDirect = {Print => true} >> opts -> (cohodeg, S) -> (
+    -- Here S should be a SumOfTwists, as in "cohomologyDirect(1,F(>=0))".
+    (F, twist) := (S#0, S#1#0);
+    R2 := ring module F;
+    quot := currentModuleMap F; -- The map from the original R2-module M to a simplified module N (at least simplified to M/M_tors).
+    N := target quot;
+    N' := currentModuleBaseRing F;
+    R1 := ring N'; -- R1 is a graded polynomial ring, and N' is N as an R1-module.
+    -- In particular, N' is m-torsion-free, where m is the maximal ideal of R1.
+    if degreeLength R1 =!= 1 then error "expected degree length 1";
+    output := 0;
+    degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}, say.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs);
+    -- Thus sumOfWeights = sum_i |x_i|, where R1 = k[x_0,...,x_(n-1)].
+    bettitable := betti res(N', LengthLimit => n-cohodeg); -- The Betti numbers of the minimal resolution ... -> F_1 -> F_0 -> N' -> 0,
+    -- correct out to F_{n-cohodeg}.
+    nonzerokeys := select(keys bettitable, k -> bettitable#k != 0);
+    relevantpart0 := select(nonzerokeys, (i,d,h) -> (i == n-cohodeg));
+    relevantpart1 := select(nonzerokeys, (i,d,h) -> (i == n-cohodeg-1));
+    maxdeg0 := max apply(relevantpart0, (i,d,h) -> h); -- The maximum degree of a generator of F_{n-cohodeg}.
+    maxdeg1 := max apply(relevantpart1, (i,d,h) -> h); -- The maximum degree of a generator of F_{n-cohodeg-1}.
+    maxdeg := max(maxdeg0, maxdeg1); -- The maximum degree of a generator of F_{n-cohodeg} or F_{n-cohodeg-1}.
+    -- It is -infinity if those two free modules are zero.
+    -- Then the map Ext^c_R1(M2,N')_a -> H^c(X, F(a)) is an isomorphism for all a >= twist, for any homogeneous ideal M2 in R1 that lives
+    -- in degrees > maxdeg - sumOfWeights - twist and that contains a power of the irrelevant ideal. So, define j by:
+    -- maxdeg+1-sumOfWeights-twist;
+    -- Previous versions took j to be reg_{Symonds}(N') + 1 - cohodeg - twist = reg_{Macaulay2}(N') - sumOfWeights + n + 1 - cohodeg - twist,
+    -- which gave a weaker result.
+    -- Also, for this choice of j and hence M2, the map from Ext^c to H^c is surjective
+    -- in degrees a >= twist - (maxdeg-maxdeg1). That adds information if maxdeg1 < maxdeg0.
+    -- Finally, if cohodeg = 0, then (because N is m-torsion-free) the map from Ext^c to H^c is injective in all degrees.
+    -- So, in this case, we can instead take j = maxdeg1+1-sumOfWeights-twist, and then the map is surjective (hence an isomorphism)
+    -- in degrees >= twist.
+    j := 0;
+    if cohodeg == 0 then j = maxdeg1 + 1 - sumOfWeights - twist
+    else j = maxdeg + 1 - sumOfWeights - twist;
+    --
+    -- We need to construct a homogeneous ideal M2 in the graded polynomial ring R1 that is concentrated
+    -- in degrees at least j and that contains a power of the irrelevant ideal (x_0,...,x_(n-1)). The following
+    -- seems like the best choice for efficiency.
+    if j <= 0 then (
+	-- In this case, we can take M2 = R1, which gives the following results.
+	if cohodeg == 0 then output = N
+	-- output = truncate(twist, N);
+	-- One might prefer to truncate at twist. As it is, we output a module that is only known
+	-- to be correct in degrees at least twist. But this seems OK, especially since we print an explanation.
+	else output = R2^0  -- This is zero, as an R2-module.
+	)
+    else (
+	-- Here j > 0.
+	M2gens := apply(n, i -> ((R1_i)^-((-j)//degs#i)));
+	-- That is, the list M2gens consists of each variable x_i to the power b_i := roundup(j/a_i).
+	M2matrix := matrix {M2gens};
+	if cohodeg == 0 then (
+	    -- If cohodeg = 0, then we know that N < output < H^0(X, F(*)). Thus the output is always
+	    -- at least as good an approximation to H^0(X, F(*)) as N was, and so we will cache it (unless it is equal to N).
+	    M2 := image M2matrix; -- This is an ideal in R1, viewed as a module.
+	    incR1 := inducedMap(module R1, M2);
+	    inc := incR1 ** R2; -- This is the R2-linear map  M2 tensor_R1 R2 -> R2. (So R2-linear maps from the first module
+	    -- to N are equivalent to R1-linear maps from M2 to N' (which is N as an R1-module).)
+	    iso := inducedMap(Hom(R2, N), N);
+	    -- we compute the map N -> Gamma_* F as a limit by
+	    -- applying Hom(-, N) to the sequence above
+	    phi := Hom(inc, N, MinimalGenerators => true) * iso; -- Thus phi: N -> G = Hom_R1(M2, N'), viewed as an R2-module.
+	    -- Note that phi: N -> G is always injective, because we have arranged for N to be m-torsion-free.
+	    -- If phi is surjective, hence an isomorphism, then we will take the output to be the original module N rather than G,
+	    -- so that Macaulay2 remembers any earlier calculations done for N,\ such as Ext calculations.
+	    if isSurjective phi then output = N
+	    else (
+		--output = minimalPresentation target phi; -- This is Hom_R1(M2, N'), viewed as an R2-module. --DELETE.
+		output = target phi; -- This is Hom_R1(M2, N'), viewed as an R2-module. It may be given as a subquotient, which seems fine.
+		-- output = truncate(twist, M3);
+		-- One might prefer to truncate at twist. As it is, we output a module that is only known
+		-- to be correct in degrees at least twist. But this seems OK, especially since we print an explanation.
+		iota := inverse output.cache.pruningMap; -- the map from G to its minimal presentation, output.
+		-- quot is the map from M to N (which may be M/M_tors).
+		F.cache.SaturationMap = iota * phi * quot;
+		F.cache.SaturationBaseRing = minimalPresentation flattenModule output)
+	    )
+	else (
+	    -- Following the advice of the Macaulay2 documentation, for c = cohodeg > 0,
+	    -- we compute the graded module Ext^{c+1}(R1/M2,N'), rather than Ext^c(M2,N') (which is isomorphic).
+	    --
+	    -- Also, since we take M2 to be the complete intersection ideal M2=(x_0^b_0,...,x_(n-1)^b_(n-1)), the minimal free resolution
+	    -- of R1/M2 is a Koszul complex, which is self-dual; so Ext^{c+1}_{R1}(R1/M2, N') = Tor_{n-c-1}^{R1}(R1/M2, N')(sum |x_i^b_i|),
+	    -- keeping track of the grading. That avoids dualizing and hence should be faster.
+	    -- Furthermore, since we compute Tor by resolving R1/M2, it is manifestly computed by a complex of R2-modules
+	    -- (using N in place of N'). That avoids having to tensor with R2 at the end of the calculation, which can be slow,
+	    -- because Macaulay2 would have to convert the Ext module from a subquotient module to a quotient.
+	    M2matrixR2 := M2matrix ** R2; -- This is the row matrix (x_0^b_0,...,x_(n-1)^b_(n-1)) over R2.
+	    K := koszulComplex(M2matrixR2, Concentration => (n-cohodeg-2, n-cohodeg));
+	    Torshift := fold(plus, apply(M2gens, i -> first degree i)); -- This is sum |x_i^b_i|.
+	    output = R2^{Torshift} ** HH_(n-cohodeg-1)(K ** N);
+	    -- output = truncate(twist, output);
+	    -- One might prefer to truncate at twist. As it is, we output a module that is only known
+	    -- to be correct in degrees at least twist. But this seems OK, especially since we print an explanation.
+	    -- Truncating can be slow.
+	    );
+	);
+    -- For c = cohodeg > 0, the map from the output module to H^c(X,F(*)) is an isomorphism in degrees >= twist+min(j,0)
+    -- and surjective in degrees >= twist-(maxdeg-maxdeg1)+min(j,0). Moreover, when cohodeg > 0 and j <= 0,
+    -- the output module is 0, and so surjectivity implies isomorphism in that case.
+    -- For cohodeg = 0, the map from the output module to H^0(X,F(*)) is always injective, and it is surjective
+    -- (hence an isomorphism) in degrees >= twist+min(j,0).
+    -- We draw the following conclusions.
+    if not opts.Print then return (
+	-- When Print => false, we return a sequence (b, c, M0), meaning that M0 is a module that maps to H^cohodeg(X, F(*)),
+	-- the map is an isomorphism in degrees at least b, and it is surjective in degrees at least c.
+	if j === -infinity or (cohodeg > 0 and j <= 0 and maxdeg1 === -infinity) then (-infinity, -infinity, output)
+	else (
+	    if maxdeg1 >= maxdeg0 or cohodeg == 0 then (twist + min(j,0), twist + min(j,0), output)
+	    else ( -- Now we in particular have cohodeg > 0.
+		if maxdeg1 === -infinity then (twist + min(j,0), -infinity, output)
+		else (twist + min(j,0), twist - (maxdeg - maxdeg1) + min(j,0), output))));
+    if j === -infinity or (cohodeg > 0 and j <= 0 and maxdeg1 === -infinity) then (
+	<< "The following module is correct in all degrees.")
+    else (
+	if maxdeg1 >= maxdeg0 or cohodeg == 0 then (
+	    << "The following module is correct in degrees >= " << twist + min(j,0) << ".")
+	else ( -- Now we in particular have cohodeg > 0.
+	    if maxdeg1 === -infinity then (
+		<< "The following module maps isomorphically to the cohomology in degrees >= " << twist + min(j,0)
+		<< " and surjectively in all degrees.")
+	    else (
+		<< "The following module maps isomorphically to the cohomology in degrees >= " << twist + min(j,0)
+		<< " and surjectively in degrees >= " << twist - (maxdeg - maxdeg1) + min(j,0) << ".")
+	    )
+	);
+    output)
 
 -- HH^p(X, F)
+--
+-- The base ring should be a field. Note that it is usually faster
+-- to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+-- As well as caching individual cohomology groups, we try to fix the modules involved,
+-- so that Macaulay2 automatically remembers Ext calculations done with them.
 cohomology(ZZ,                    CoherentSheaf) := Module => opts -> (p,    F) -> cohomology(p, variety F, F, opts)
 cohomology(ZZ,     AffineVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
     checkVariety(X, F);
     if p == 0 then module F else (ring X)^0)
 cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
+    -*
     checkVariety(X, F);
     F.cache.HH   ??= new MutableHashTable;
     if F.cache.HH#?p then return F.cache.HH#p;
@@ -258,6 +515,92 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 	Ext^(n-p)(M, w));
     k := coefficientRing ring X;
     F.cache.HH#p = k^(rank source basis(0, G)))
+    *-
+    checkVariety(X, F);
+    F.cache.HH   ??= new MutableHashTable;
+    if F.cache.HH#?p then return F.cache.HH#p;
+    k := coefficientRing ring variety F;
+    F.cache.HH#p = k^(hh^p(F)))
+
+-- HH^p(OO_X)
+cohomology(ZZ,          SheafOfRings) := Module => opts -> (p,    O) -> cohomology(p, O^1, opts)
+cohomology(ZZ, Variety, SheafOfRings) := Module => opts -> (p, X, O) -> cohomology(p, X, O^1, opts)
+
+-- This function "localCohomology" returns a sequence (b0, b1, M0),
+-- meaning that M0 is a module that maps to H^i(X, F(*)) (with i > 0),
+-- the map is an isomorphism in degrees at least b0 (with b0 <= the input b),
+-- and the map is surjective in degrees at least b1.
+-- (These bounds need not be optimal.) Here F can be a coherent sheaf on a closed subspace
+-- of a weighted projective space.
+--
+-- This is essentially Macaulay2's function for local cohomology from local.m2, adjusted to interpret
+-- the truncation option correctly when the ring has generators in several degrees.
+--
+localCohomology = (i, F, b) -> (
+    -- this is local cohomology for the maximal ideal
+    if b == -infinity then error "not implemented yet";
+    R2 := ring module F;
+    M := currentModuleBaseRing F;
+    R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+    degs := degrees R1;
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := first fold(plus, degs);
+    -- Thus sumOfWeights = sum_i |x_i|, where R1 = k[x_0,...,x_(n-1)].
+    -- Note that degrees R1 should be a list of the form {{1},{9},{15},{22}}, hence the "first".
+    --
+    -- Macaulay2's function for local cohomology (corrected below)
+    -- gives accurate answers even if R has generators in different degrees;
+    -- but the degree from which it starts computing is off by sigma = sumOfWeights - n,
+    -- which explains the change made here to the definition of the dualizing module ww.
+    -- If H^i(X, F(*)) is bounded below, however, then that is irrelevant;
+    -- the output is the whole cohomology, regardless of the given bound "b".
+    R1.cache ??= new MutableHashTable;
+    ww := R1.cache.Dualizing ??= R1^{-sumOfWeights};
+    -- We fix the dualizing module ww, as a graded R-module. As a result, Macaulay2 automatically remembers Ext^(n-i)(M, ww),
+    -- in case another function has computed that module earlier.
+    E := minimalPresentation Ext^(n-i)(M,ww);
+    complete := false;
+    result := if dim E <= 0 then (
+	complete = true;
+	Ext^n(E, ww))
+    else (
+	topdegree := -(first min degrees E); -- In this case, H^i(X, F(*)) is unbounded below,
+	-- and topdegree is the top degree in which it is not zero.
+	if b > topdegree then return (topdegree + 1, topdegree + 1, R2^0);
+	truncatedDual(E, b, sumOfWeights));
+    -- output = minimalPresentation (result ** R2); -- DELETE. (We don't need to return a minimal presentation.)
+    output := result ** R2; -- This can be somewhat slow, because computing the tensor product requires Macaulay2
+    -- to find a presentation of the R1-module "result" (which will usually be given as a subquotient). This happens even though
+    -- "result" is already the R1-module underlying an R2-module. At least Macaulay2's tensor product algorithm
+    -- avoids finding a presentation in the case when R1 = R2.
+    if complete then (-infinity, -infinity, output)
+    else (b, b, output))
+
+-- Given a graded module M over a graded polynomial ring, return a graded module
+-- that agrees with the k-dual of M in degrees >= -e. For speed,
+-- the output may be nonzero in degrees less than e. A precursor of this command
+-- is in Macaulay2's file "local.m2". The polynomial ring may have generators in different degrees.
+-- For convenience, we include the sum of the weights of the ring as a third input.
+truncatedDual = (M, e, sumOfWeights) -> (
+    -- find (k-dual M), truncated in degrees >= e.
+    -- depends on truncate methods
+    R := ring M;
+    n := numgens R;
+    degs := flatten degrees R; -- This is a list of the form {1,9,15,22}, say.
+    R.cache ??= new MutableHashTable;
+    ww := R.cache.Dualizing ??= R^{-sumOfWeights};
+    -- We will define M1 to be a quotient module of M that has finite length and that agrees with M in degrees at most -e.
+    degList := flatten degrees M; -- The degrees of the generators of M, in the form {2,3,...}.
+    gensM := generators M; sourceM := source gensM;
+    gensToKill := positions(degList, i -> (i > -e)); -- We will kill these generators in M1.
+    gensToKeep := positions(degList, i -> (i <= -e));
+    rels1 := apply(gensToKill, i -> M_i);
+    rels2 := flatten apply(gensToKeep, i -> apply(n, j -> ((R_j)^-((degList#i - 1 + e)//degs#j)*(M_i))));
+    -- That is, multiply each generator of M with degree d_i <= -e by each variable x_j to the power roundup((-e+1-d_i)/a_j).
+    rels12 := rels1 | rels2;
+    M1 := minimalPresentation (M / image map(M, , matrix rels12)); -- At the moment, just writing M/rels12 would typically not
+    -- be recognized by Macaulay2 as being homogeneous, hence this more complex formulation.
+    Ext^n(M1,ww))
 
 -----------------------------------------------------------------------------
 -- Module of twisted global sections Γ_*(F)
