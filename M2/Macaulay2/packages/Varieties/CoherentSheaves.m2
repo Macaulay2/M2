@@ -102,6 +102,24 @@ super   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, super   F.module
 ambient CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, ambient F.module)
 cover   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, cover   F.module)
 
+-- TODO: do all of the following need to be hookified? Perhaps prefixing
+-- the variety to the key, like 'dim(X, F)', would be better?
+
+dim SheafOfRings  := O -> dim O^1
+dim CoherentSheaf := F -> (
+    if not isProjective variety F then return dim module F;
+    -- Note that twisting does not change the dimension of F
+    if F.cache.?Twist then F = F.cache.Twist#1;
+    M := currentModuleBaseRing F;
+    -- For a singly graded algebra R, the dimension of F = M^~ on Proj(R) is the
+    -- dimension of M as an R-module minus 1, except that we always return at least -1.
+    -- For an m-graded ring R, this definition views Proj(R)
+    -- as the quotient of an (unspecified) open subset of Spec(R) by a generically stable action
+    -- of a torus of dimension m. That is not the standard definition of Proj; but it may
+    -- be useful if developed further. For now, many commands for projective varieties
+    -- are restricted to the singly graded case.
+    max(-1, dim M - degreeLength ring M))
+
 -- TODO: do all need to be hookified? Perhaps prefixing
 -- the variety to the key, like 'euler(X, F)', would be better.
 degree  CoherentSheaf := F -> degree  module F
