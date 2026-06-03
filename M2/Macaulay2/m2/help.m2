@@ -256,9 +256,12 @@ documentationValue(Symbol, Package, HashTable) := (S, pkg, additionalData) -> if
                             {concatenate("Version ", pkg.Options.Version,
                              if pkg.Options.LastUpdated =!= null then concatenate(", Last Updated: ", pkg.Options.LastUpdated))}
             ),
-            HEADER3 nonnull splice prepend("style" => "text-align:center", 
-                    select({if #areas > 0 then DIV concatenate("Areas: ", demark(", ", areas)),
-                            if #keywords > 0 then DIV concatenate("Keywords: ", demark(", ", keywords))}, i -> i =!= null)
+            DIV nonnull splice prepend("style" => "text-align:center", 
+                -- {demark("\n", select({if #amsMSC > 0 then concatenate("MSC: ", demark(", ", amsMSC)),
+                --                       if #acmCCS > 0 then concatenate("CCS: ", demark(", ", acmCCS)),
+                --                       if #keywords > 0 then concatenate("Keywords: ", demark(", ", keywords))}, i -> i =!= null))}
+                    select({if #areas > 0 then HEADER3 concatenate("Areas: ", demark(", ", areas)),
+                            if #keywords > 0 then HEADER3 concatenate("Keywords: ", demark(", ", keywords))}, i -> i =!= null)
             ),
             if maintainer =!= null then DIV {
                 SUBSECTION "Maintainer", 
