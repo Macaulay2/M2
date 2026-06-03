@@ -94,8 +94,7 @@ doc ///
             chain complex we want to check if is a virtual resolution
     Outputs
         :Boolean
-            true if {\tt C}is a virtual resolution of I
-            false if not
+            whether {\tt C} is a virtual resolution of {\tt I}
     Description
         Text
             Given the irrelevant ideal irr of a NormalToricVariety and a chain complex C, isVirtual returns true if
