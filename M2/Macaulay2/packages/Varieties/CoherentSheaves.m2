@@ -188,17 +188,7 @@ genera  CoherentSheaf := F -> genera  module F
 -- TODO: this is incorrect in higher picard rank
 pdim    CoherentSheaf := F -> tryHooks((pdim,  CoherentSheaf), F, pdim  @@ module)
 
--- c.f. the toric version in NormalToricVariety/Chow.m2
--- and the original definition and hook in m2/hilbert.m2
-addHook((hilbertPolynomial, Module), Strategy => Varieties, (opts, M) ->
-    if M.ring.?variety then return try hilbertPolynomial(M.ring.variety, M, opts))
-hilbertPolynomial(Variety, Module)        := o -> (X, M) -> error "variety does not have a method for computing Hilbert polynomial"
--- TODO: should these be only for ProjectiveVariety and error for affine variety?
-hilbertPolynomial(Variety, Ring)          := o -> (X, S) -> hilbertPolynomial(X, module S, o)
-hilbertPolynomial(Variety, Ideal)         := o -> (X, I) -> hilbertPolynomial(X, comodule I, o)
-hilbertPolynomial(Variety, SheafOfRings)  := o -> (X, O) -> hilbertPolynomial(X, module O, o)
-hilbertPolynomial(Variety, CoherentSheaf) := o -> (X, F) -> hilbertPolynomial(X, module F, o)
-hilbertPolynomial          CoherentSheaf  := o ->     F  -> hilbertPolynomial(module F, o)
+-- hilbertPolynomial CoherentSheaf is defined below, for subspaces of weighted projective spaces.
 
 -- twist and powers
 -- TODO: sheaf should dehomogenize modules on Affine varieties
@@ -434,6 +424,113 @@ euler(CoherentSheaf, ZZ, ZZ) := RingElement => (F, b1, b2) -> (
     -- Thus hilbshort is a Laurent polynomial with coefficients chi(P,O(c)), in at least the range of integers c that we need.
     output = hilbshort * numerator;
     part(b1,b2,output) * T^(-shift))
+
+hilbertFunctionRing = memoize(() -> QQ(monoid [getSymbol "i"]))
+
+-- modified from hilbert.m2 and betti.m2
+hilbertFunctionQ = method()
+
+-- The Hilbert polynomial of a weighted projective space (not the Hilbert function, despite the name).
+-- Namely, for P = Proj R1 such that R1 is a polynomial ring with generators in degrees a_0,...,a_(n-1),
+-- chi(P, O(i)) is a quasipolynomial in i:
+--   chi(P, O(i)) = c_n(i) i^n + ... + c_0(i)
+-- with each c_j(i) a periodic function of i, of period dividing lcm(a_0,...,a_(n-1)).
+-- (Equivalently, h^0(X, O(i)) has this description for i sufficiently large.)
+-- We define the Hilbert polynomial f(i) as the polynomial in QQ[i] obtained by _averaging_ each of these coefficients.
+--
+hilbertFunctionQ Ring := RingElement => R -> (
+    R.cache ??= new MutableHashTable;
+    if R.cache.?hilbertPolynomial then return R.cache.hilbertPolynomial;
+    if not isPolynomialRing R then error "For hilbertFunctionQ, the ring must be a polynomial ring.";
+    degs := flatten degrees R; -- R should be singly graded.
+    n := #degs; -- So the weighted projective space Proj R has dimension n-1.
+    prod := lcm degs; -- The lcm of the weights.
+    -- It suffices to compute the dimension of R_(j.prod+a) for j=0,1,...,n-1 and 0 <= a <= prod-1.
+    truncatedseries := hilbertSeries(R, Order => n*prod); -- The Hilbert series is in a ring ZZ[T].
+    T := (ring truncatedseries)_0;
+    ringi := hilbertFunctionRing();
+    i := ringi_0;
+    wpoly := 0; k := 0; polylist := {}; value := 0; newcoeff := 0; evj := 0; interpolant := 0; total := 0;
+    for a from 0 to prod-1 do ( -- Compute the polynomial of degree n-1 that interpolates dim R_(j.prod+a) for j=0,...,n-1.
+	interpolant = coefficient(T^a, truncatedseries)*1_ringi;
+	-- This is the polynomial of degree 0 that interpolates at 0.prod+a. We use Newton interpolation
+	-- to construct the polynomial of degree j that interpolates at 0*prod+a,1*prod+a,...,j*prod+a, for j up to n-1.
+	for j from 1 to n-1 do (
+	    value = coefficient(T^(j*prod+a), truncatedseries);
+	    polylist = apply(j, k -> i-k*prod-a); -- This gives the list {i-a, i-1*prod-a, ..., i-(j-1)*prod-a} in QQ[i].
+	    wpoly = fold(times, polylist); -- This gives the polynomial (i-a)(i-1*prod-a)...(i-(j-1)*prod-a) in QQ[i].
+	    evj = map(QQ, ringi, {j*prod+a});
+	    newcoeff = (value - evj interpolant)/(evj wpoly);
+	    interpolant = interpolant + newcoeff*wpoly);
+	total=total+interpolant
+	);
+    -- Now average the polynomials "interpolant"; the number of them was "prod".
+    R.cache.hilbertPolynomial = total/prod)
+
+hilbertFunctionQ(Ring, ZZ) := memoize(
+    (R, d) -> (
+	if d === 0 then hilbertFunctionQ(R)
+	else (
+	    i := (hilbertFunctionRing())_0;
+	    substitute(hilbertFunctionQ(R), {i => i+d}))))
+
+-- The Hilbert polynomial of a closed subspace X of a weighted projective space, or of a coherent sheaf F on X. Namely,
+-- for X = Proj R2 such that R2 has generators in degrees a_0,...,a_(n-1), chi(X, F(i)) is a quasipolynomial in i:
+--   chi(X, F(i)) = c_m(i) i^m + ... + c_0(i)
+-- with each c_j(i) a periodic function of i, of period dividing lcm(a_0,...,a_(n-1)).
+-- (Equivalently, h^0(X, F(i)) has this description for i sufficiently large.) Note that the twist F(i) is defined
+-- by tensoring with the line bundle O(i) on X as a stack, when the weights a_j are not all 1.
+-- We define the Hilbert polynomial f(i) as the polynomial in QQ[i] obtained by _averaging_ each of the coefficients c_j(i).
+-- (If the weights a0,...,a_(n-1) are equal to 1, then the default is Projective => true,
+-- meaning that the output is given as a ProjectiveHilbertPolynomial, that is, a Z-linear combination
+-- of the Hilbert polynomials of projective spaces of dimensions 0,...,m.)
+--
+-- For X of dimension m, the Hilbert polynomial in Q[i] has degree m, and its leading coefficient
+-- is degree(X)/m!; this agrees with the function "degree X". Note that the degree of a closed subspace
+-- in a weighted projective space is only a rational number. For example, P^n(a_0,...,a_n) has degree 1/(a_0...a_n).
+--
+hilbertPolynomial CoherentSheaf := opts -> F -> (
+    shift := 0;
+    if F.cache.?twist then
+    (shift = first F.cache.twist#0;
+	F = F.cache.twist#1);
+    -- That is, if F was defined as a twist of another sheaf, we have now changed F to that original sheaf,
+    -- and we want to compute the Hilbert polynomial of F(shift).
+    -- We first compute the Hilbert polynomial of F in Q[i] (if that has not already been done), to cache it.
+    F.cache.hilbertPolynomial ??= (
+	M := currentModuleBaseRing F;
+	R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
+	-- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
+	if isStandardGraded R1 then hilbertPolynomial(M, Projective => false)
+	-- We always cache the version of the Hilbert polynomial in the ring Q[i].
+	else (
+	    p := pairs standardForm poincare M;
+	    if #p === 0 then 0_(hilbertFunctionRing())
+	    else sum(p, (d, c) -> (
+		    if #d === 0 then d = 0 else d = d#0;
+		    c * hilbertFunctionQ(R1, -d)))));
+    output := (if shift === 0 then F.cache.hilbertPolynomial
+	else (
+	    i := (hilbertFunctionRing())_0;
+	    substitute(F.cache.hilbertPolynomial, {i => i+shift}))); -- This is the Hilbert polynomial of F(shift), in Q[i].
+    if isStandardGraded ring module F and opts.Projective then projectiveHilbertPolynomial(output) else output)
+
+hilbertPolynomial SheafOfRings := opts -> O -> degree O^1
+
+-- Translate an integer-valued polynomial in Q[i] to a ProjectiveHilbertPolynomial.
+projectiveHilbertPolynomial RingElement := ProjectiveHilbertPolynomial => poly -> (
+    if poly == 0 then new ProjectiveHilbertPolynomial from {}
+    else (
+	n := first degree poly; -- Here "degree poly" would be of the form {n}.
+	i := (ring poly)_0;
+	c := coefficient(i^n, poly);
+	if n === 0 then lift(c, ZZ) * projectiveHilbertPolynomial(0, 0)
+	else
+	lift(c * n!, ZZ) * projectiveHilbertPolynomial(n, 0) + projectiveHilbertPolynomial(poly-c*fold(times, apply(n, k -> i + k + 1)))))
+-- That "fold" gives the polynomial (i+1)(i+2)...(i+n) in QQ[i], assuming that n > 0.
+
+hilbertPolynomial(ProjectiveVariety, CoherentSheaf) := RingElement => opts -> (X,F) -> hilbertPolynomial(F, opts)
+hilbertPolynomial(ProjectiveVariety, SheafOfRings) := RingElement => opts -> (X,O) -> hilbertPolynomial(O^1, opts)
 
 -----------------------------------------------------------------------------
 -- SumOfTwists type declarations and basic constructors
