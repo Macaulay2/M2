@@ -202,8 +202,20 @@ hilbertPolynomial          CoherentSheaf  := o ->     F  -> hilbertPolynomial(mo
 
 -- twist and powers
 -- TODO: sheaf should dehomogenize modules on Affine varieties
+-- These work correctly even for multigraded rings. E.g., you can write F(2) if the ring is singly graded, or F(2,3) if it is doubly graded.
 SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a)
-CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> F ** (ring F)^{splice{a}}
+
+-- If a coherent sheaf is defined as a twist, say G = F(a), then we remember the original sheaf, so we can reuse cached information about it.
+-- Namely, G.cache.twist is the sequence ({a}, F) (or the analogous thing if F was itself defined as a twist). Any later calculations made
+-- about G will be cached as information about F.
+CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> (
+    G := F ** (ring F)^{splice{a}};
+    if F.cache.?twist then G.cache.twist = (splice{a} + F.cache.twist#0, F.cache.twist#1)
+    else G.cache.twist = (splice{a}, F);
+    G)
+Module(ZZ) := Module Sequence := Module => (M, a) -> M ** (ring M)^{splice{a}}
+Matrix(ZZ) := Matrix Sequence := Matrix => (f, a) -> f ** (ring f)^{splice{a}}
+Ring(ZZ)   := Ring   Sequence := Module => (R, a) -> (R^1) ** R^{splice{a}}
 
 SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> (
     if instance(n, ZZ) and n == 1 then O.cache.sheaf -- Thus, O^1 always yields the _same_ coherent sheaf, which may contain cached information.
