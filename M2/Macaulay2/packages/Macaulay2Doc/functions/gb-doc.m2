@@ -110,7 +110,8 @@ document {
 	 TO gbRemove,
 	 TO "gbTrace",
 	 TO LongPolynomial,
-         TO canUseHilbertHint
+         TO canUseHilbertHint,
+         TO "using a Hilbert hint for a Groebner basis calculation"
          }
      }
 
