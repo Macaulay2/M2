@@ -670,55 +670,123 @@ sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argum
     assertSameVariety(F, G); sheaf(variety F, Ext^i(module F, module G, opts)))
 
 -----------------------------------------------------------------------------
--- The following algorithm appears in:
+-- Global Ext via efficient truncation.
+-- We build on ideas from the algorithm in:
 -- Gregory G. Smith, Computing global extension modules,
 -- Journal of Symbolic Computation, 29 (2000) 729-746.
 -- See documentation of Ext^ZZ(CoherentSheaf,CoherentSheaf) for examples.
 -----------------------------------------------------------------------------
 
+-- Given an integer m, a complex D of graded modules over a singly graded ring R2 (a quotient
+-- of a polynomial ring R1) and an integer b, return an integer e (or -infinity)
+-- such that: if B is any ideal in the polynomial ring R1 such that B contains R1 in sufficiently high degrees
+-- and B is in graded degree >= e, then the map
+--   Ext^m_R1(B, D)_{>=b} -> H^m(X, D~(>=b))
+-- is an isomorphism. Here X = Proj R2. The function returns a sequence (b0, b1, e),
+-- meaning that the output of Ext^m(F, D~(>=b)) (using the number e) will be a module that maps isomorphically
+-- to Ext^m_X(F, D~(*)) in degrees >= b0 and surjectively in degrees >= b1.
+degreeBound = (m, D, b) -> (
+    D' := flattenComplex D; -- This is a complex over a polynomial ring R1.
+    R1 := ring D; -- This should be a singly graded algebra.
+    degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}, say.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs);
+    -- Thus sumOfWeights = sum_i |x_i|, where R1 = k[x_0,...,x_(n-1)].
+    bettitable := betti freeResolution(D', LengthLimit => n - m - min D');
+    -- The Betti numbers of the minimal free resolution ... -> F_(1 + min D') -> F_(min D') -> 0 of D'
+    -- over R1, correct out to F_{n-m}.
+    nonzerokeys := select(keys bettitable, k -> bettitable#k != 0);
+    relevantpart0 := select(nonzerokeys, (i,d,h) -> (i == n-m));
+    relevantpart1 := select(nonzerokeys, (i,d,h) -> (i == n-m-1));
+    maxdeg0 := max apply(relevantpart0, (i,d,h) -> h); -- The maximum degree of a generator of F_{n-m}.
+    maxdeg1 := max apply(relevantpart1, (i,d,h) -> h); -- The maximum degree of a generator of F_{n-m-1}.
+    maxdeg := max(maxdeg0, maxdeg1); -- The maximum degree of a generator of F_{n-m} or F_{n-m-1}.
+    -- It is -infinity if those two free modules are zero. Then the map Ext^c_R1(B, D')_a -> H^c(X, D~(a))
+    -- is an isomorphism for all a >= b, for any homogeneous ideal B in R1 that lives
+    -- in degrees > maxdeg - sumOfWeights - b and that contains a power of the irrelevant ideal.
+    -- So we define e = maxdeg + 1 - sumOfWeights - b.
+    -- Also, for this choice of e and hence M2, the map from Ext^c to H^c is surjective
+    -- in degrees >= b - (maxdeg - maxdeg1). That adds information if maxdeg1 < maxdeg0.
+    e := maxdeg + 1 - sumOfWeights - b;
+    if e === -infinity then b1 := -infinity else b1 = b - (maxdeg - maxdeg1) + min(e,0);
+    (b + min(e,0), b1, maxdeg + 1 - sumOfWeights - b))
+
+
 protect TruncateDegree
--- TODO: implement Ext with DegreeLimit as an optimization
-Ext(ZZ, SheafOfRings,  SumOfTwists) :=
-Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
-    assertSameVariety(F, G');
-    X := variety F;
-    checkProjective X;
-    checkVariety(X, F);
-    G := G'#0;
-    e := G'#1#0;
-    M := module F;
-    N := module G;
-    R := ring M;
-    r := -infinity;
-    E := if dim M === 0 or m < 0 then R^0 else (
-	l := min(dim N, m);
-	P := resolution flattenModule N;
-	p := length P;
-	n := dim ring P - 1;
-	-- global Ext is composition of sheaf Ext and cohomology
-	-- so we compute it as a Grothendieck spectral sequence
-	-- in this case, it degenerates
-	if p < n-l then Ext^m(M, N, opts) else (
-	    a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
-	    r = a+e-m+1;
-	    Ext^m(truncate(r, M), N, opts)));
-    -- When MinimalGenerators => false is given, we don't truncate
-    -- or prune E because the majority of uses of this function are
-    -- for computing Ext of sheaves, in which case only basis(0, E)
-    -- is needed and truncation is an unnecessary computation.
-    E = if opts.MinimalGenerators then prune truncate(e, E) else E;
-    -- This is the degree at which M was truncated, which
-    -- is used later for computing the Yoneda extension.
-    E.cache.TruncateDegree = r;
+-- Ext^m(F, G(>=b)), for coherent sheaves F and G over a projective scheme
+-- (or weighted projective stack) X = Proj R2 and an integer m,
+-- returns a graded R2-module that agrees with Ext^m_X(F, G(*)) in degrees >= b.
+-- If we introduce commands for Ext between complexes of sheaves, this function may need to watch
+-- for the case where F is a sheaf and G is a complex of sheaves. The option "MinimalGenerators => NonPrint"
+-- avoids printing; instead, it returns a sequence (b0, b1, M0) with M0 a module
+-- that maps to Ext^m_X(F, G(*)), isomorphically in degrees >= b0 and surjectively in degrees >= b1.
+Ext(ZZ, SheafOfRings,  SumOfTwists) := Module => opts -> (m, O, S) -> Ext^m(O^1, S)
+Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m, F, S) -> (
+    (G, b) := (S#0, S#1#0); -- Here G should be a coherent sheaf.
+    if F.cache.?twist or G.cache.?twist then ( -- Here F or G was defined as a twist of another sheaf,
+	-- say F = F0(c) and G = G0(d). We reduce to the calculation for F0 and G0, to take advantage of caching.
+	F0 := F; c := 0; G0 := G; d := 0;
+	if F.cache.?twist then (
+	    c = first F.cache.twist#0;
+	    F0 = F.cache.twist#1);
+	if G.cache.?twist then (
+	    d = first G.cache.twist#0;
+	    G0 = G.cache.twist#1);
+	(b0,b1,E0) := Ext^m(F0, G0(>= b + d - c), MinimalGenerators => NonPrint);
+	E := E0(d - c);
+	b0 = b0 - (d - c); b1 = b1 - (d - c);
+	E.cache.TruncateDegree = E0.cache.TruncateDegree)
+    else (-- Now the sheaves F and G were not defined as twists.
+	N := target currentModuleMap G; -- A simplified module that represents G.
+	R2 := ring N;
+	if degreeLength ring N =!= 1 then error "expected degree length 1"; -- The ring must be singly graded.
+	degs := flatten degrees R2; -- This is a list of the form {1,9,15,22}, say.
+	n := #degs;
+	M := target currentModuleMap F;
+	Mres := freeResolution(M, LengthLimit => m+1);
+	HomMN := Hom(Mres, N);
+	e := 0;
+	(b0, b1, e) = degreeBound(m, HomMN, b);
+	-- We need to construct a homogeneous ideal M2 in the graded polynomial ring R1 that is concentrated
+	-- in degrees at least e and that contains a power of the irrelevant ideal (x_0,...,x_(n-1)). The following
+	-- seems like the best choice for efficiency. We tensor the Koszul complex that resolves this ideal
+	-- over R1 with R2, so we can work entirely with R2-modules.
+	if e <= 0 then (
+	    -- In this case, we can take M2 = R1, which gives the following.
+	    E = HH^m(HomMN))
+	else (
+	    -- Here e > 0.
+	    M2gens := apply(n, i -> ((R2_i)^-((-e)//degs#i)));
+	    -- That is, the list M2gens consists of each variable x_i to the power b_i := roundup(e/a_i).
+	    koszulRes := (koszulComplex(M2gens, Concentration => (max(0, n-m-2), n-1)))[n-1];
+	    -- Thus koszulRes is in homological degrees 0, -1, ..., -min(n-1, m+1).
+	    Torshift := fold(plus, apply(M2gens, i -> first degree i)); -- This is sum_i a_i b_i, which is at least ne.
+	    E = (HH^m(koszulRes ** HomMN))(Torshift));
+	-- The map Ext^m_R2(M2 tensor_(R1) R2, Hom(Mres, N)) -> Ext^m_X(F, G(*)) is an isomorphism in graded degrees >= b,
+	-- and so we will return the first module. We don't truncate or prune it; truncating can be slow,
+	-- and this module will often be simpler (in terms of generators and relations) than a truncation
+	-- of it. The user is told what the output means. Eventually, we could add information
+	-- about surjectivity of the map in some degrees, as in cohomologyDirect.
+	E.cache.TruncateDegree = e);
+    -- Here e is the degree at which the polynomial ring R1 was truncated to form M2;
+    -- this may be used later for computing the Yoneda extension.
+    if opts.MinimalGenerators === NonPrint then return (b0, b1, E);
+    if b0 === -infinity then	<< "The following module is correct in all degrees."
+    else if b0 == b1 then << "The following module is correct in degrees >= " << b0 << "."
+    else if b1 === -infinity then << "The following module maps isomorphically to Ext in degrees >= " << b0
+    << " and surjectively in all degrees."
+    else << "The following module maps isomorphically to Ext in degrees >= " << b0
+    << " and surjectively in degrees >= " << b1 << ".";
     E)
 
 Ext(ZZ, SheafOfRings, SheafOfRings)  :=
 Ext(ZZ, SheafOfRings, CoherentSheaf) :=
 Ext(ZZ, CoherentSheaf, SheafOfRings)  :=
-Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n,F,G) -> (
-    E := Ext^n(F, G(>=0), opts ++ { MinimalGenerators => false });
+Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n, F, G) -> (
+    E := (Ext^n(F, G(>=0), opts ++ { MinimalGenerators => NonPrint }))#2;
+    -- With the NonPrint option, Ext returns a sequence (b0,b1,M0), and we just want the module M0.
     k := coefficientRing ring E;
-    V := k^(rank source basis(0, E));
+    V := k^(hilbertFunction(0, E));
     V.cache.formation = FunctionApplication { Ext, (n, F, G) };
     V.cache.TruncateDegree = E.cache.TruncateDegree;
     V)
