@@ -516,8 +516,28 @@ isLocallyFree Module := Boolean => M -> (
 	i = i+1);
     true)
 
+-- Check whether a coherent sheaf F is locally free (that is, a vector bundle).
+-- The following function works if X = variety F  is affine,
+-- or if X is projective or weighted-projective over a field. We do not require X to be integral;
+-- so F may have different ranks on different components of X.
 isLocallyFree CoherentSheaf := F -> (
-    if (d := rank F) == 0 then return F == 0;
-    if isFreeModule module F then return true;
-    dim fittingIdeal(d,   module F) <= 0
-    and fittingIdeal(d-1, module F) == ideal 0_(ring variety F))
+    M := module F;
+    if not isProjective variety F then return isLocallyFree M;
+    -- Now X = variety F is projective. We assume that X = Proj R with the ring R singly graded.
+    -- Then F is locally free if and only if each of its Fitting ideals I has I equal to I^2
+    -- outside the origin of Spec R, that is, if I is contained in the saturation of I^2.
+    if isFreeModule M then return true;
+    rankM := rank M; -- This number is only guaranteed to be reasonable if X is integral.
+    if instance(rankM, ZZ) then (
+	if rankM == 0 then (if dim M <= 0 then return true)
+	else (
+	    if dim(J := fittingIdeal(rankM, M)) <= 0 and fittingIdeal(rankM - 1, M) == 0 then return true;
+	    if not isSubset(J, saturate J^2) then return false)); -- These cover all cases if R is a domain,
+    -- which should be the most common case. Otherwise, we now check all Fitting ideals.
+    persist := true; i := 0;
+    while persist do (
+	J = fittingIdeal(i, M);
+	if dim J <= 0 then persist = false;
+	if not isSubset(J, saturate J^2) then return false;
+	i = i+1);
+    true)
