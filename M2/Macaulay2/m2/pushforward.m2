@@ -113,17 +113,21 @@ ordertab := new HashTable from {
     Lex          => (nR, nS) -> Lex,
     }
 
-pushNonLinear := (opts, f, M) -> (
+pushNonLinear := (opts, f0, M) -> (
     -- given f: R --> S, and M an S-module, finite over R,
     -- returns R-presentation matrix for the pushforward of M
     -- written by Mike Stillman and David Eisenbud
 
     -- first flatten source and target of f so that this computation works for towers.
     -- note this forces us to unflatten the return value when we are done.
-    (R, phiR) := flattenRing target f;
-    (S, phiS) := flattenRing source f;
+    (R, phiR) := flattenRing target f0;
+    (S, phiS) := flattenRing source f0;
     m := phiR presentation M;
-    f = phiR * f * phiS^-1;
+    f := phiR * f0 * phiS^-1;
+
+    -- making sure that homogeneity isn't broken
+    if isHomogeneous M  then assert isHomogeneous m;
+    if isHomogeneous f0 then assert isHomogeneous f;
 
     -- set up some variables that are used throughout
     deglenS := degreeLength S;
