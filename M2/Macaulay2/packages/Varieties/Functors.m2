@@ -66,6 +66,48 @@ degreeList := M -> (
 killLocalH0 = M -> M.cache.TorsionFree ??= if (H0 := saturate(0*M)) == 0 then M else M / H0
 -- We mainly remember M.cache.TorsionFree (as a quotient module of M) for use in SheafMaps.m2.
 
+-- Given a CoherentSheaf F, defined by a graded module M over a positively graded algebra R2,
+-- return the map from M to a possibly simpler R2-module N that represents the same sheaf F. We always simplify
+-- at least to M/M_tors, and if an even "better" module has been cached, we return that.
+-- We expect not to apply this function when F was defined as a twist (i.e., when F.cache.?twist is true), to simplify caching.
+-- The module N can be obtained by "target currentModuleMap F".
+currentModuleMap = F -> (
+    M := module F;
+    R2 := ring M;
+    if F.cache.?SaturationMap then F.cache.SaturationMap
+    else
+    if F.cache.?TorsionFreeMap then F.cache.TorsionFreeMap
+    else (
+	N0 := killLocalH0 M;
+	N := minimalPresentation N0;
+	F.cache.TorsionFreeBaseRing = if isPolynomialRing R2 then N else minimalPresentation flattenModule N;
+	F.cache.TorsionFreeMap = (inverse N.cache.pruningMap) * inducedMap(N0, M)))
+-- In this last step, if M is already torsion-free (but we have not checked that before),
+-- we don't bother to keep literally the same module (in Macaulay2 terms). Indeed, all the cohomology functions
+-- start with calling a "currentModule" program; so we will not have done significant earlier calculations with M.
+-- And in some cases, our running minimalPresentation here may give a simpler description of the same module.
+
+-- Given a CoherentSheaf F, defined by a graded module M over a positively graded algebra R2, a quotient
+-- of a graded polynomial ring R1, return a possibly simpler R1-module N that represents the same sheaf F.
+-- (It will always be the R1-module underlying an R2-module.) We always simplify at least to M/M_tors,
+-- and if an even "better" module has been cached, we return that.
+-- We expect not to apply this function when F was defined as a twist (i.e., when F.cache.?twist is true), to simplify caching.
+currentModuleBaseRing = F -> (
+    M := module F;
+    R2 := ring M;
+    if F.cache.?SaturationBaseRing then F.cache.SaturationBaseRing
+    else
+    if F.cache.?TorsionFreeBaseRing then F.cache.TorsionFreeBaseRing
+    else (
+	N0 := killLocalH0 M;
+	N := minimalPresentation N0;
+	F.cache.TorsionFreeMap = (inverse N.cache.pruningMap) * inducedMap(N0, M);
+	F.cache.TorsionFreeBaseRing = if isPolynomialRing R2 then N else minimalPresentation flattenModule N))
+-- In this last step, if M is already torsion-free (but we have not checked that before),
+-- we don't bother to keep literally the same module (in Macaulay2 terms). Indeed, all the cohomology functions
+-- start with calling a "currentModule" program; so we will not have done significant earlier calculations with M.
+-- And in some cases, our running minimalPresentation here may give a simpler description of the same module.
+
 -- TODO: add tests:
 -- - global sections of sheafHom are Hom
 -- TODO: implement for multigraded ring using emsbound
