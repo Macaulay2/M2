@@ -42,3 +42,9 @@ assert(ans === null)
 -- now it doesn't crash, but the error message is not so good either...
 assert(toString err === "incorrect Hilbert function given")
 
+-- git issue # 4355
+S = QQ[x,y,z];
+f = x^4 + y^4 + z^4;
+R = S / ideal(f);
+I = ideal(x^3, x^2+y^2);
+integralClosure(I) -- crashed, now ok.
