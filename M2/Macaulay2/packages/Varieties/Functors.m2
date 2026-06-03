@@ -52,9 +52,13 @@ pullback(SheafOfRings, Variety) := {Prune => true} >> opts -> (F, X) -> (
 degreeList := M -> (
     -- gives the exponents of the numerator of reduced Hilbert series of M
     if dim M > 0 then error "expected module of finite length";
-    H := poincare M;
+    R2 := ring M; -- This should be singly graded.
+    deglist := flatten degrees R2;
+    n := numgens R2;
+    H := poincare M; -- The Hilbert series of M is (poincare M)/(product_i (1 - T^(a_i))),
+    -- where a_0,...,a_(n-1) are the degrees of the generators of R2, as positive integers.
     T := (ring H)_0;
-    H = H // (1-T)^(numgens ring M);
+    H = H // fold(times, apply(n, i -> 1-T^(deglist#i)));
     exponents H / first)
 
 -- quotienting by local H_m^0(M) to "saturate" M
