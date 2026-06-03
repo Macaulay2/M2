@@ -75,6 +75,12 @@ export {
     "idealSheaf",
     "isProjective",
     "isLocallyFree",
+    "degreeOnCurve",
+    "naiveCotangentComplex",
+    "reflexiveDifferentials",
+    "twistedGlobalSectionsModule",
+    "currentModuleMap",
+    "currentModuleBaseRing",
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
@@ -83,6 +89,17 @@ export {
     "GlobalSectionLimit",
     "SaturationMap",
     "TorsionFree",
+    "Dualizing",
+    "Residue",
+    "TorsionFreeMap",
+    "TorsionFreeBaseRing",
+    "SaturationBaseRing",
+    "twist",
+    "NonPrint",
+    "Direct",
+    "DirectNonPrint",
+    "Hsum",
+    -- "Prune",
     -- "TruncateDegree",
     }
 
@@ -406,6 +423,8 @@ Node
   Contributors
     @HREF("https://academicweb.nd.edu/~craicu/", "Claudiu Raicu")@ contributed to the development of this package.
   SeeAlso
+    "varieties"
+    "coherent sheaves"
     "Schubert2::Schubert2"
     "GKMVarieties::GKMVarieties"
     "NormalToricVarieties::NormalToricVarieties"
