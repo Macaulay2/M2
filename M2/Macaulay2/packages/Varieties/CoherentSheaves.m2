@@ -483,6 +483,26 @@ idealSheaf ProjectiveVariety := opts -> X -> sheaf ideal (ring X).relations
 canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
 canonicalBundle ProjectiveVariety := opts -> X -> dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
+-- This function computes the sheaf of reflexive differentials of a given closed substack X of a weighted projective space.
+-- At least when X is normal and well-formed (not necessarily quasi-smooth), its direct image sheaf
+-- on the coarse moduli space Y of X is the sheaf of reflexive differentials on Y.
+reflexiveDifferentials = method(TypicalValue => CoherentSheaf,
+    Options => options exteriorPower ++ { MinimalGenerators => true })
+reflexiveDifferentials ProjectiveVariety := opts -> (cacheValue (symbol reflexiveDifferentials => opts)) (X -> (
+	sheaf prune module dual dual cotangentSheaf(X, opts)))
+
+reflexiveDifferentials AffineVariety := opts -> (cacheValue (symbol reflexiveDifferentials => opts)) (X -> (
+	sheaf prune module dual dual cotangentSheaf(X, opts)))
+
+-- This function computes the sheaf of reflexive i-forms (for i>=0) on a given closed substack X of a weighted projective space.
+-- At least when X is normal and well-formed (not necessarily quasi-smooth), its direct image sheaf
+-- on the coarse moduli space Y of X is the sheaf of reflexive i-forms on Y.
+reflexiveDifferentials (ZZ, ProjectiveVariety) := opts -> (i, X) -> (
+    answer := sheaf prune module dual dual exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy))
+
+reflexiveDifferentials (ZZ, AffineVariety) := opts -> (i, X) -> (
+    answer := sheaf prune module dual dual exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy))
+
 -----------------------------------------------------------------------------
 -- isLocallyFree
 -----------------------------------------------------------------------------
