@@ -3,14 +3,14 @@ TEST /// -- twisted global section module
   ringP1 = ZZ/101[s,t]
   cubicMap = map(ringP1, ringP3, {s^3, s^2*t, s*t^2, t^3})
   idealCubic = kernel cubicMap
-  Cubic = Proj(ringP3/idealCubic)
+  R1 = ringP3/idealCubic
+  Cubic = Proj R1
   Omega = cotangentSheaf Cubic
-  -- certain changes in the code for twisted global sections
-  -- (e.g. omitting MinimalGenerators => true in calling Hom)
-  -- add random coefficients in the presentation of Omega.
-  -- TODO: can we get back to this output?
+  -- It is not reasonable to insist that module Omega be "equal" (for Macaulay2) to the answer we want,
+  -- because that requires the same choice (and order) of generators for the ambient free module.
+  -- It is a good enough check to make sure that it has the correct Hilbert series.
   --assert(module Omega(1) === coker matrix(ring Cubic, {{-x_3, -x_2, -x_1}, {x_2, x_1, x_0}}))
-  assert(module Omega(1) === coker matrix(ring Cubic, {{-2*x_3, -2*x_2, -2*x_1}, {x_2, x_1, x_0}}))
+  assert(hilbertSeries module Omega(1) === hilbertSeries coker matrix(ring Cubic, {{-x_3, -x_2, -x_1}, {x_2, x_1, x_0}}))
 ///
 
 TEST /// -- twisted cubic curve
