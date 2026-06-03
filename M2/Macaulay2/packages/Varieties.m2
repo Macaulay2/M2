@@ -78,6 +78,7 @@ export {
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
+    "directImage",
     -- Symbols
     "GlobalSectionLimit",
     "SaturationMap",
@@ -96,6 +97,9 @@ importFrom_Core {
     "isMorphism", "isAbelianCategory",
     "BinaryPowerMethod",
     }
+
+-- pushFwd is used in directImage in Functors.m2
+needsPackage "PushForward"
 
 -----------------------------------------------------------------------------
 -- Local utilities

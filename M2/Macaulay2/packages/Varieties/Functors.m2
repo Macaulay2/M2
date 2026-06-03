@@ -16,6 +16,19 @@ flattenComplex = C -> C.cache#"flattenComplex" ??= (
     then complex(flattenModule C_lo, Base => lo)
     else complex applyValues(C.dd.map, flattenMorphism))
 
+-- For F a coherent sheaf on a scheme X, with X a closed subscheme of Y (writing i: X -> Y for the inclusion),
+-- return the direct image sheaf i_*(F) on Y. This function requires (and partly checks)
+-- that X and Y are given as Proj(S/I) and Proj(S/J),
+-- with the same polynomial ring S in both cases, such that J is contained in I; or likewise in the affine case.
+-- This function also works for subspaces of a weighted projective space.
+-- The option Prune => false avoids simplifying the output.
+directImage = {Prune => true} >> opts -> (F, Y) -> (
+    if instance(F, SheafOfRings) then F = F^1; -- That makes F a CoherentSheaf.
+    M := module F;
+    imap := map(ring M, ring Y);
+    if not isWellDefined imap then error "ring map not well defined";
+    if opts.Prune then sheaf pushFwd(imap, M) else sheaf pushFwd(imap, M, NoPrune => true))
+
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring
 degreeList := M -> (
