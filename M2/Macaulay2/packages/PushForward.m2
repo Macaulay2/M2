@@ -42,7 +42,7 @@ protect \ {PUSHFORWARDMODULES, PUSHFORWARDMAPS, PUSHFORWARDMAP'}
 -- map elements from a ring/module to it's pushforward
 pushforward = method()
 pushforward(RingMap, Matrix) := (f, n) -> (
-    N := getModuleAux n;
+    N := module target n;
     Ps := getPushforwards(N, f);
     if Ps === null or #Ps == 0 then (
         M := pushFwd(f, N);
@@ -57,16 +57,16 @@ pushforward(RingMap, Matrix) := (f, n) -> (
 pushforward(RingMap, Vector) := (f, v) -> pushforward(f, matrix v)
 pushforward(Matrix) := (n) -> pushforward(map(ring target n, coefficientRing ring target n), n)
 pushforward(Vector) := (v) -> pushforward(matrix v)
-pushforward(RingMap, RingElement) := (f, r) -> pushforward(f, matrix r)
+pushforward(RingMap, RingElement) := (f, r) -> pushforward(f, map(module ring r, module ring r, matrix r))
 pushforward(RingElement) := (r) -> pushforward(map(ring r, coefficientRing ring r), r)
 pushforward(Module, Matrix) := (M, n) -> (
-    N := getModuleAux n;
+    N := module target n;
     P := getPushforwardByModule(N, M);
     if P === null then error "argument module is not the pushforward of the module of argument element.";
     P n
 );
 pushforward(Module, Vector) := (M, v) -> pushforward(M, matrix v);
-pushforward(Module, RingElement) := (M, r) -> pushforward(M, matrix r);
+pushforward(Module, RingElement) := (M, r) -> pushforward(M, map(module ring r, module ring r, matrix r));
 
 -- pushforward' method --
 -- map elements from a pushforward module to the module that was pushed
@@ -94,38 +94,18 @@ pushFwd Matrix := Matrix => o -> d -> pushFwd(map(ring d, coefficientRing ring d
 pushFwd RingMap := Sequence => o -> (f) ->
 (
     B := target f;
-    if (cachedModule := getPushFwdModule(B, f, o)) =!= null then (
-        -- the extra complexity of this functions return type necessitates a
-        -- little bit of work on top of the cache.
-        return (
-            cachedModule,
-            pushforward' cachedModule_{0..numgens cachedModule - 1},
-            getPushforwardWithOpts(B, f, o)
-        );
+    pfB := pushFwd(f, module B, o);
+    ringpf := getPushforwardWithOpts(B, f, o);
+    if ringpf === null then (
+        modulepf := getPushforwardWithOpts(module B, f, o);
+        ringpf = (b) -> modulepf matrix b;
+        setPushforwardCache(B, f, o, ringpf);
     );
-
-    (matB, mapfaux) := pushAuxHgs f;
-    (pfB, pfmat', pf) := makeModule(module B, f, matB, mapfaux); -- pf is redundant with mapfaux so is unused below
-
-    g := map(pfB, , gens pfB);
-    ringpf := (b) -> g*(mapfaux b);
-    setPushforwardCache(B, f, o, ringpf);
-    setPushforwardCache(module B, f, o, ringpf);
-    setPushforwardByModuleCache(module B, pfB, ringpf);
-    setPushforwardCache'(pfB, (a) -> (
-        -- coerce to matrix over B
-        coeffs := map(module B, B^(numcols a), pfmat'* a);
-        -- this try is to handle the case where coeffs has a RingMap attached
-        -- which has carried over from the pfmat' construction. in the case
-        -- where f is id_R it carries the RingMap through for some reason even
-        -- though in other cases it does not. If this fails we attempt to
-        -- rebuild the matrix from it's coefficients to get rid of any dangling
-        -- RingMap metadata.
-        try(map(module B, , coeffs)) else map(module B, , matrix entries coeffs)
-    ));
+    matB := pushforward' pfB_{0..numgens pfB - 1};
 
     (pfB, matB, ringpf)
 )
+
 
 pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
     if (cachedModule := getPushFwdModule(N, f, o)) =!= null then
@@ -136,11 +116,7 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
     B' := B/ann N; -- N is finite over A iff A -> B' is a finite ring extension
     quot := map(B', B);
     g := quot * f;
-
-    -- you might think we want to just compute pushFwd g inside makeModule but
-    -- that triggers infinite recursion makeModule <> pushFwd(RingMap)
-    (unusedModule, matB, ringpf) := pushFwd g;
-    (pfN, pfmat', pf) := makeModule(N ** B', g, matB, ringpf);
+    (pfN, pfmat', pf) := makeModule(N ** B', g);
 
     -- diagram chase
 
@@ -154,7 +130,9 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
         -- here.
         result := map(N, B^(numcols m), auxmat * m);
         -- if needed we let map fix the degrees to make the result homogeneous.
-        if isHomogeneous m then map(N, , result) else result
+        -- the try here is to handle a strange case when there is a ring map attached to result
+        if isHomogeneous m then (try(map(N, , result)) else map(N, , matrix entries result))
+        else result
     );
     setPushforwardCache'(pfN, mapb);
 
@@ -193,15 +171,11 @@ pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
 )
 
 
-
 -- makeModule
 -- internal function which implements the push forward of a module.
 -- input:
 --   N      : Module, a module over B
 --   f      : RingMap, A --> B
---   matB   : matrix over B, with one row, whose entries form a basis for B over A.
---           in fact, it can be any desired subset of A-generators of B, as well.
---   ringpf : FunctionClosure sending elements of B to elements of pushFwd B
 -- output:
 --   (M, F, p) : Sequence
 --   M      : the module N as an A-module.
@@ -214,7 +188,8 @@ pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
 --   and its kernel are the A-relations of the elements auxN
 --   TODO: stash the matB, pf?  Make accessor functions to go to/from gens of R over A, or M to M_A.
 makeModule = method()
-makeModule(Module, RingMap, Matrix, FunctionClosure) := (N, f, matB, ringpf) -> (
+makeModule(Module, RingMap) := (N, f) -> (
+    (matB, ringpf) := pushAuxHgs(f);
     N = prune N;
     auxN := ambient N/image relations N;
     A := source f;
@@ -460,12 +435,6 @@ getPushFwdModule = (X, f, o) -> (
     -- 0_X is a nice canonical element to pushforward and see where we end up
     -- todo - better strategy for looking up the module which is the pushforward along (f, o)
     if cached =!= null then target cached matrix 0_X
-)
-
--- in rank 1 free case use THE rank 1 free module for ring N
-getModuleAux = (n) -> (
-    N := module target n;
-    if N == module ring N then module ring N else N
 )
 
 -----------

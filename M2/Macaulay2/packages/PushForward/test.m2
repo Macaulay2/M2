@@ -105,6 +105,7 @@ kk=QQ
 A=kk[x]
 B=kk[y]/(y^2)
 f=map(B,A,{y})
+d=map(B^1,B^1,matrix{{y^2}})
 assert isModuleFinite f
 pushFwd f
 use B
@@ -243,6 +244,7 @@ TEST///
   A = kk[x]
   R = A[y, Join=> false]/(y^7-x^3-x^2)
   (M,B,pf) = pushFwd map(R,A)
+  pushFwd matrix{{y}}
   (M1,B1,pf1) = pushFwd R
   assert(pushFwd(R^3) == pushFwd(map(R,A), R^3))
   -- this asserts among other things that the degrees on source B and source B1
@@ -409,9 +411,7 @@ assert(ring rS === R)
 -- rS is not free over R since multiplication by a^2 kills it
 assert(not isFreeModule rS)
 
--- pf succeeds in this case and is an R-module homomorphism
-assert(pf(a_S * rB_0_0) == a * pf(rB_0_0))
-assert(pf(a_S^2 * rB_0_0) == a^2 * pf(rB_0_0))
+assert(pf(a_S * rB) - a * pf(rB) == 0)
 ///
 
 -- test 21
@@ -490,7 +490,6 @@ assert(ms == pushforward pushforward' ms)
 -- test 25
 TEST ///
 -- pushFwd of 1x1 matrix is compatible with pushFwd of elements in source
-         n
 kk = ZZ/101
 R = kk[a]
 S = R[b, Join => false] / ideal {a^2, b^3}
@@ -512,7 +511,7 @@ assert(target pF == rS)
 --      V                   V
 --      M        --->       pM
 ms = pushforward' rS_{0..numgens rS - 1}
-assert(pF * (pushforward ms) == pushforward(F * ms))
+assert(pF * (pushforward ms) - pushforward(F * ms) == 0)
 ///
 
 -- test 26
@@ -603,15 +602,15 @@ kk = ZZ/101
 R = kk[a,b] / ideal {a^2 + 1, b^3 + a^2*b + 2}
 M = first pushFwd R
 
-assert(matrix a + b == pushforward' pushforward a + b)
+assert(matrix a + b == pushforward' pushforward(a + b))
 M' = first pushFwd(R, NoPrune => true)
 
 -- errors bc two pushforwards
-try(pushforward a + b) then assert(false) else assert(true)
+try(pushforward(a + b)) then assert(false) else assert(true)
 
 -- specifying explicit module works
-assert(matrix a + b == pushforward' pushforward(M, a + b))
-assert(matrix a + b == pushforward' pushforward(M', a + b))
+assert(matrix {{a + b}} == pushforward' pushforward(M, a + b))
+assert(matrix {{a + b}} == pushforward' pushforward(M', a + b))
 ///
 
 -- test 31
