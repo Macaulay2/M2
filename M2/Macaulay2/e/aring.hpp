@@ -47,6 +47,7 @@ enum RingID {
   ring_RRi,
   ring_CCi,
   ring_tower_ZZp,
+  ring_RRdd,    ///< MultiFloats double-double (~106-bit) approximate real field
   ring_old      ///< refers to all rings which are not ConcreteRing's.
 };
 
