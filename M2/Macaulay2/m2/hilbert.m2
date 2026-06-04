@@ -267,7 +267,8 @@ addHook((hilbertPolynomial, Module), Strategy => Default, (opts, M) -> (
 -----------------------------------------------------------------------------
 
 euler Ring   := R -> euler module R
-euler Module := M -> euler hilbertPolynomial M
+euler Module := M -> tryHooks((euler, Module), M,
+    M -> euler hilbertPolynomial M)
 
 eulers Ring   := R -> eulers module R
 eulers Module := M -> (

@@ -388,6 +388,9 @@ euler CoherentSheaf := ZZ => F -> (
 	thisdeg = (degree(thisterm))_0; -- Here degree (-T^5) is a list with one element, {5}, and we just want that number.
 	output = output+leadCoefficient(thisterm)*eulerCharOfTwistingSheaf(shift-thisdeg,R1));
     output)
+addHook((euler, Module), Strategy => Varieties, M ->
+    if M.ring.?variety then return try euler sheaf(M.ring.variety, M))
+
 -- TODO: should this call assertStandardGraded?
 eulers CoherentSheaf := F -> eulers module F
 

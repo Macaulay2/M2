@@ -114,6 +114,15 @@ TEST /// -- The (topological) Euler characteristic of projective varieties,
   assert(hh^2(S3,-3,3) == 20*T^(-3)+6*T^(-2));
 ///
 
+TEST /// -- test euler and Hilbert polynomial on a non-standard graded ring
+  A = QQ[a,b,c, Degrees => {1,2,3}]
+  -- Note: currently Proj A must be called first.
+  -- do we want euler or hilbertPolynomial to work regardless?
+  X = Proj A
+  assert(euler A == 1)
+  assert(toString hilbertPolynomial A == "(1/12)*i^2+(1/2)*i+47/72")
+///
+
 end --
 
 
