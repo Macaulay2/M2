@@ -319,73 +319,53 @@ expressionValue SheafExpression := x -> sheaf expressionValue x#0
 -- Euler Characteristic
 -----------------------------------------------------------------------------
 
--- Compute the Euler characteristic of O(c) on a weighted projective space P, for an integer c.
--- Here O(c) can be viewed as a line bundle on the stack P. This agrees with the Euler characteristic of the direct image sheaf O(c)
--- on the coarse moduli space of P, P -> Y. (But be aware that the sheaves O(c) on Y behave better
--- when P = P^(n-1)(a_0,...,a_(n-1)) is well-formed, meaning that gcd(a_0,...,a_j omitted,...,a_(n-1)) = 1 for each j.
--- Namely, in that case, O(c+d) on Y is the reflexive tensor product of O(c) and O(d), meaning that O(c+d) = (O(c) tensor O(d))^**.)
--- The input is the integer c and a positively graded polynomial ring R1, with P = Proj(R1).
---
-eulerCharOfTwistingSheaf = (c,R1) -> (
-    degs := degrees R1; -- This is a list of the form {{1},{9},{15},{22}}.
-    n := #degs; -- So P = Proj R1 has dimension n-1.
-    assert(1 == degreeLength R1);
-    sumOfWeights := first sum degs; -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
-    -- for P = P^{n-1}(a_0,...,a_(n-1)).
-    hilbshort := 0;
-    A := degreesRing R1; -- This will be a ring of the form Z[T].
-    T := A_0; -- This is the variable in the ring A.
-    if c >= 0 then (
-	hilbshort = hilbertSeries(R1, Order=>c+1); -- This is the Hilbert series of P in degrees at most c, as a polynomial.
-	coefficient(T^c, hilbshort)
-	)
-    else (
-	if c > -sumOfWeights then 0
-	else (
-	    d := -c-sumOfWeights; -- We have d >= 0.
-	    hilbshort = hilbertSeries(R1, Order=>d+1);
-	    (-1)^(n-1)*coefficient(T^d, hilbshort)
-	    )
+euler SheafOfRings  := ZZ => O -> euler O^1
+euler CoherentSheaf := ZZ => F -> tryHooks((euler, CoherentSheaf), F,
+    F -> if isWeightedZZGraded(R := ring variety F) then (
+	-- Compute the Euler characteristic of a coherent sheaf
+	-- on a closed subspace of a weighted projective space.
+	--
+	-- The distinction between a WPS as a stack X and its associated
+	-- coarse moduli space e: X -> V, does not matter for this purpose.
+	-- Indeed, for a coherent sheaf F on the stack X, we have
+	-- H^i(X, F) = H^i(V, e_*(F)) for every i.
+	--
+	-- If F = F0(twist), we compute chi(X, F0(twist)) and use F0 to cache
+	(F0, twist) := if F.cache.?BaseTwist then F.cache.BaseTwist else (F, {0});
+	-- TODO: is poincare polynomial the same before the pushforward?
+	-- if so we just need M = module F0, certainly not saturation!
+	M := currentModuleBaseRing F0; -- pushforward the module and kill m-torsion
+	n := numgens R; -- dim X = n-1
+	w := sum degrees R; -- n+sigma in Symoonds's notation
+	hf := hilbertFunction R;
+	eulerCharOfTwistingSheaf := c -> (
+	    -- Compute the Euler characteristic of O(c) on a weighted projective space X,
+	    -- for an integer c. Here O(c) can be viewed as a line bundle on the stack X.
+	    -- This agrees with the Euler characteristic of the direct image sheaf O(c)
+	    -- on the coarse moduli space of X, X -> Y. But be aware that the sheaves O(c)
+	    -- on Y behave better when X = P^(n-1)(a_0,...,a_(n-1)) is well-formed, meaning
+	    -- that gcd(a_0,...,a_j omitted,...,a_(n-1)) = 1 for each j. Namely, in that case,
+	    -- O(c+d) = (O(c) ** O(d))^** is the reflexive tensor product of O(c) and O(d) on Y.
+	    if  c <= -w then hilbertFunction(-c-w) * (-1)^(n-1) else
+	    if {0} <= c then hilbertFunction(c)                 else 0);
+	--
+	-- We compute the Euler characteristic using the Betti numbers of a free resolution of M,
+	-- which are captured in the terms of the poincare polynomial (i.e. numerator of its Hilbert series)
+	sum(listForm poincare M, (e, c) -> c * eulerCharOfTwistingSheaf(twist - e))
 	)
     )
 
--- Compute the Euler characteristic of a coherent sheaf on a closed subspace of a weighted projective space.
---
--- The distinction between a WPS as a stack X and its associated coarse moduli space, e: X -> V, does not matter
--- for this purpose. Indeed, for a coherent sheaf F on the stack X, we have H^i(X, F) = H^i(V, e_*(F)) for every i.
---
--- TODO: should be hookified again
-euler SheafOfRings  := ZZ => O -> euler O^1
-euler CoherentSheaf := ZZ => F -> (
-    -- Compute the Euler characteristic chi(X, F) for a coherent sheaf on a closed subspace X of a weighted projective space.
-    shift := 0;
-    if F.cache.?BaseTwist then
-    (shift = first F.cache.BaseTwist#1;
-	F = F.cache.BaseTwist#0);
-    -- Thus we reduce to the case where the sheaf F was not defined as a twist. We now compute chi(X, F(shift)).
-    M := currentModuleBaseRing F;
-    R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
-    -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
-    -- Note that even if R1 is standard-graded, we would need euler(M(shift)) (in general), rather than euler(M).
-    -- To use the cached information about M, we do not form M(shift) explicitly.
-    if isStandardGraded R1 and shift == 0 then return euler M; -- The earlier algorithm should be faster, in the usual projective space.
-    numerator := poincare M; -- Thus the Hilbert series of M is: numerator/((1-a_0)...(1-a_(n-1)), where a_0,...,a_(n-1) are the weights.
-    -- This numerator is in ZZ[T], meaning Z[T,T^(-1)].
-    termlist := terms numerator; -- E.g, if numerator = T^(-1)-T^5, then termlist = {T^(-1),-T^5}.
-    thisterm := 0;
-    thisdeg := 0;
-    len := #termlist;
-    i := 0;
-    output := 0;
-    for i from 0 to len-1 do (
-	thisterm = termlist_i; -- This could be of the form -T^5, say.
-	thisdeg = (degree(thisterm))_0; -- Here degree (-T^5) is a list with one element, {5}, and we just want that number.
-	output = output+leadCoefficient(thisterm)*eulerCharOfTwistingSheaf(shift-thisdeg,R1));
-    output)
-addHook((euler, Module), Strategy => Varieties, M ->
-    if M.ring.?variety then return try euler sheaf(M.ring.variety, M))
+-- if the ring is standard graded, this is much faster
+addHook((euler, CoherentSheaf), Strategy => "StandardGraded",
+    F -> if isStandardGraded ring variety F then euler module F)
 
--- TODO: should this call assertStandardGraded?
+-- the algorithm above also works in the non-standard graded case,
+-- so we take advantage of it for eulr characteristic of modules.
+addHook((euler, Module), Strategy => Varieties,
+    M -> if M.ring.?variety then return try euler sheaf(M.ring.variety, M))
+
+-- TODO: do these make sense if the ring isn't standard graded?
+eulers SheafOfRings  := O -> eulers module O.ring
 eulers CoherentSheaf := F -> eulers module F
 
 -- Compute the Euler characteristic of all twists in a range of integers [b1,b2]
