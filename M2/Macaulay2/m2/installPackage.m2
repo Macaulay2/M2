@@ -452,6 +452,42 @@ makeTableOfContents := (pkg, verboseLog) -> (
 	       }
 	  } << endl << close)
 
+-- Append search records for pkg to search-data.js in the Style directory.
+-- Style is always installed first in a full docs build, so its install is used
+-- as the signal to clear any existing file and start fresh -- no build system
+-- cooperation needed, and no duplicates across builds.
+installSearchData := (pkg, installPrefix, installLayout, nodes, verboseLog) -> (
+    styleDir := installPrefix | replace("PKG", "Style", installLayout#"package");
+    if not isDirectory styleDir then return;
+    pkgname := pkg#"pkgname";
+    searchDataFile := styleDir | "search-data.js";
+
+    -- Style is installed first; clear the file and write the init line so that
+    -- the file exists before any other package begins writing in parallel.
+    if pkgname === "Style" then (
+	if fileExists searchDataFile then removeFile searchDataFile;
+	searchDataFile << "window.M2SearchData={docs:{}};" << newline << close);
+
+    records := nonnull apply(nodes, tag -> (
+	if isUndocumented tag then return null;
+	if isSecondaryTag tag then return null;
+	fkey    := format tag;
+	tagline := headline tag ?? "";
+	path    := relativizeFilename(styleDir, concatenate htmlFilename tag);
+	toExternalString(pkgname | "::" | fkey) | ":{\"name\":" | toExternalString fkey |
+	    ",\"package\":" | toExternalString pkgname |
+	    ",\"tagline\":" | toExternalString tagline |
+	    ",\"path\":" | toExternalString path | "}"));
+
+    if #records == 0 then return;
+    verboseLog("writing ", #records, " search records for ", pkgname);
+
+    -- Concatenate into one string before writing so the append is a single
+    -- write(2) syscall, which O_APPEND makes atomic across parallel installs.
+    f := openOutAppend searchDataFile;
+    f << ("Object.assign(window.M2SearchData.docs,{" | demark(",", records) | "});\n");
+    close f)
+
 installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationCache, opts) -> (
     topDocumentTag := makeDocumentTag(pkg#"pkgname", Package => pkg);
     nodes := packageTagList(pkg, topDocumentTag);
@@ -486,6 +522,9 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 
     -- make the table of contents
     makeTableOfContents(pkg, verboseLog);
+
+    -- append search records for this package to search-data.js
+    installSearchData(pkg, installPrefix, installLayout, nodes, verboseLog);
     )
 
 -----------------------------------------------------------------------------
