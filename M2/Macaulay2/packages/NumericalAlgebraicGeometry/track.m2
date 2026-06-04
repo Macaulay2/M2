@@ -1131,3 +1131,14 @@ sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 100,CorrectorTolerance=>1
 peek sols 
 assert all(sols, s->status s === Regular)
 ///
+
+TEST /// -- example with speedup from tbb_for loop 
+needsPackage "ExampleSystems"                                                                                     
+T = katsura(10,CC_53)                                                                                             
+(S,solsS) = totalDegreeStartSystem T;                                                                             
+H = segmentHomotopy(ii*S,T)                                                                                       
+NAGtrace 2                                                                                                        
+numTBBThreads = 4                                                                                                 
+elapsedTime sols = trackHomotopy(H,solsS);                                                                        
+assert(#solsS == #sols)
+///

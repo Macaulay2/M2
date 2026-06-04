@@ -5,10 +5,18 @@
 #ifndef _slp_imp_hpp_
 #define _slp_imp_hpp_
 
+//#include "m2tbb.hpp"
 #include <cstdlib>
 #include <algorithm>
 #include <dlfcn.h>
+#include <gc/gc.h>
 #include "timing.hpp"
+//#include <tbb/tbb.h>
+#include <tbb/parallel_for.h>
+#include <tbb/task_arena.h>
+#include <atomic>
+#include <mutex>
+#include <string>
 
 // SLEvaluator
 template <typename RT>
@@ -153,7 +161,11 @@ SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
 }
 
 template <typename RT>
-void SLEvaluatorConcrete<RT>::computeNextNode()
+void SLEvaluatorConcrete<RT>::computeNextNode(
+    std::vector<SLProgram::GATE_TYPE>::iterator& nIt,
+    std::vector<SLProgram::GATE_SIZE>::iterator& numInputsIt,
+    std::vector<SLProgram::GATE_POSITION>::iterator& inputPositionsIt,
+    typename std::vector<ElementType>::iterator& vIt)
 {
   ElementType& v = *vIt;
   switch (*nIt++)
@@ -249,16 +261,17 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs,
       (*compiled_fn)(parametersAndInputs, outputs.unsafeArray());
     }
     return true;
-  } else {                           
+  } else {
+    auto values(this->values);
     size_t i = 0;
     for (size_t r = 0; r < inputs.numRows(); r++)
       for (size_t c = 0; c < inputs.numColumns(); c++)
         ring().set(values[varsPos[i++]], inputs.entry(r, c));
-    nIt = slp->mNodes.begin();
-    numInputsIt = slp->mNumInputs.begin();
-    inputPositionsIt = slp->mInputPositions.begin();
-    for (vIt = values.begin() + slp->inputCounter; vIt != values.end(); ++vIt)
-      computeNextNode();
+    auto nIt = slp->mNodes.begin();
+    auto numInputsIt = slp->mNumInputs.begin();
+    auto inputPositionsIt = slp->mInputPositions.begin();
+    for (auto vIt = values.begin() + slp->inputCounter; vIt != values.end(); ++vIt)
+      computeNextNode(nIt, numInputsIt, inputPositionsIt, vIt);
     i = 0;
     for (size_t r = 0; r < outputs.numRows(); r++)
       for (size_t c = 0; c < outputs.numColumns(); c++)
@@ -361,7 +374,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   std::chrono::steady_clock::time_point start =
       std::chrono::steady_clock::now();
   size_t solveLinearTime = 0, solveLinearCount = 0, evaluateTime = 0;
-
   // std::cout << "inside
   // HomotopyConcrete<RT,FixedPrecisionHomotopyAlgorithm>::track" << std::endl;
   // double the_smallest_number = 1e-13;
@@ -417,6 +429,17 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   typedef typename RT::RealRingType::ElementType RealElementType;
   typedef MatElementaryOps<DMat<RT> > MatOps;
 
+  tbb::task_arena arena(M2_numTBBThreads == 0
+                        ? tbb::task_arena::automatic
+                        : M2_numTBBThreads);
+  // Batch paths into ~3·numThreads chunks to amortize per-lambda DMat setup cost.
+  int numThreads = (M2_numTBBThreads == 0) ? arena.max_concurrency()
+                                            : M2_numTBBThreads;
+  int grainSize  = (int)std::max<size_t>(1, n_sols / (10 * numThreads));
+  std::cout << "-- numThreads = " << numThreads
+            << ", grainSize = " << grainSize << std::endl;
+
+  // Loop-invariant scalars: computed once, read-only inside the parallel_for.
   RealElement t_step(R), min_step2(R), epsilon2(R), infinity_threshold2(R);
   R.set_from_BigReal(t_step, init_dt);  // initial step
   R.set_from_BigReal(min_step2, min_dt);
@@ -426,50 +449,73 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   R.mult(epsilon2, epsilon2, epsilon2);  // epsilon^2
   R.set_from_BigReal(infinity_threshold2, infinity_threshold);
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
-  int num_successes_before_increase = 3;
+  const int num_successes_before_increase = 3;
 
-  RealElement t0(R), dt(R), one_minus_t0(R), dx_norm2(R), x_norm2(R), abs2dc(R);
+  std::atomic<int> bar_done{0};
+  std::mutex        bar_mutex;
+  const int         bar_width = 40;
 
-  // constants
-  RealElement one(R), two(R), four(R), six(R), one_half(R), one_sixth(R);
-  RealElementType& dt_factor = one_half;
-  R.set_from_long(one, 1);
-  R.set_from_long(two, 2);
-  R.set_from_long(four, 4);
-  R.set_from_long(six, 6);
-  R.divide(one_half, one, two);
-  R.divide(one_sixth, one, six);
+  arena.execute([&]{
+  tbb::parallel_for(tbb::blocked_range<int>(0, (int)n_sols, grainSize),
+  [&](tbb::blocked_range<int> r) {
+    // Register this TBB worker with the Boehm GC. TBB workers are created
+    // inside the prebuilt libtbb dylib, which never sees bdwgc's pthread_create
+    // redirect macro, so the workers are unknown to the GC by default; without
+    // this, a collection triggered from inside the loop aborts with
+    // "Collecting from unknown thread".
+    bool gc_was_registered = GC_thread_is_registered();
+    if (!gc_was_registered) {
+      struct GC_stack_base sb;
+      GC_get_stack_base(&sb);
+      GC_register_my_thread(&sb);
+    }
+    if (M2_numericalAlgebraicGeometryTrace > 9) {
+      // `r` seems to be if length one in all experiments so far
+      std::cout << "r = [" << r.begin() << "," << r.end() << ")\n";
+    }
 
-  Element c_init(C), c_end(C), dc(C), one_half_dc(C);
+    RealElement t0(R), dt(R), one_minus_t0(R), dx_norm2(R), x_norm2(R), abs2dc(R);
 
-  // think: x_0..x_(n-1), c
-  // c = the homotopy continuation parameter "t" upstair, varies on a (staight
-  // line) segment of complex plane (from c_init to c_end)
-  // t = a real running in the interval [0,1]
+    // constants
+    RealElement one(R), two(R), four(R), six(R), one_half(R), one_sixth(R);
+    RealElementType& dt_factor = one_half;
+    R.set_from_long(one, 1);
+    R.set_from_long(two, 2);
+    R.set_from_long(four, 4);
+    R.set_from_long(six, 6);
+    R.divide(one_half, one, two);
+    R.divide(one_sixth, one, six);
 
-  DMat<RT> x0c0(C, n + 1, 1);
-  DMat<RT> x1c1(C, n + 1, 1);
-  DMat<RT> xc(C, n + 1, 1);
-  DMat<RT> HxH(C, n, n + 1);
-  DMat<RT>& Hxt = HxH;  // the matrix has the same shape: reuse memory
-  DMat<RT> LHSmat(C, n, n);
-  auto LHS = submatrix(LHSmat);
-  DMat<RT> RHSmat(C, n, 1);
-  auto RHS = submatrix(RHSmat);
-  DMat<RT> dx(C, n, 1);
-  DMat<RT> dx1(C, n, 1);
-  DMat<RT> dx2(C, n, 1);
-  DMat<RT> dx3(C, n, 1);
-  DMat<RT> dx4(C, n, 1);
-  DMat<RT> Jinv_times_random(C, n, 1);
+    Element c_init(C), c_end(C), dc(C), one_half_dc(C);
 
-  ElementType& c0 = x0c0.entry(n, 0);
-  ElementType& c1 = x1c1.entry(n, 0);
-  ElementType& c = xc.entry(n, 0);
-  RealElementType& tol2 = epsilon2;  // current tolerance squared
-  bool linearSolve_success;
-  for (size_t s = 0; s < n_sols; s++)
-    {
+    // think: x_0..x_(n-1), c
+    // c = the homotopy continuation parameter "t" upstair, varies on a (staight
+    // line) segment of complex plane (from c_init to c_end)
+    // t = a real running in the interval [0,1]
+
+    DMat<RT> x0c0(C, n + 1, 1);
+    DMat<RT> x1c1(C, n + 1, 1);
+    DMat<RT> xc(C, n + 1, 1);
+    DMat<RT> HxH(C, n, n + 1);
+    DMat<RT>& Hxt = HxH;  // the matrix has the same shape: reuse memory
+    DMat<RT> LHSmat(C, n, n);
+    auto LHS = submatrix(LHSmat);
+    DMat<RT> RHSmat(C, n, 1);
+    auto RHS = submatrix(RHSmat);
+    DMat<RT> dx(C, n, 1);
+    DMat<RT> dx1(C, n, 1);
+    DMat<RT> dx2(C, n, 1);
+    DMat<RT> dx3(C, n, 1);
+    DMat<RT> dx4(C, n, 1);
+    DMat<RT> Jinv_times_random(C, n, 1);
+
+    ElementType& c0 = x0c0.entry(n, 0);
+    ElementType& c1 = x1c1.entry(n, 0);
+    ElementType& c = xc.entry(n, 0);
+    RealElementType& tol2 = epsilon2;  // current tolerance squared
+    bool linearSolve_success;
+    //end// initial vars setup
+    for (size_t s = r.begin(); s < r.end(); ++s) {
       SolutionStatus status = PROCESSING;
       // set initial solution and initial value of the continuation parameter
       // for(size_t i=0; i<=n; i++)
@@ -751,8 +797,27 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       if (status == PROCESSING) status = REGULAR;
       oe.ring().set_from_long(oe.entry(0, s), status);
       oe.ring().set_from_long(oe.entry(1, s), count);
+      // Update progress bar (at most bar_width redraws per call).
+      if (M2_numericalAlgebraicGeometryTrace > 0 && n_sols > 0) {
+        int done = ++bar_done;
+        if (done * bar_width / (int)n_sols !=
+            (done - 1) * bar_width / (int)n_sols) {
+          std::lock_guard<std::mutex> lk(bar_mutex);
+          int filled = done * bar_width / (int)n_sols;
+          std::cerr << "\r["
+                    << std::string(filled, '#')
+                    << std::string(bar_width - filled, '-')
+                    << "] " << done << "/" << n_sols << std::flush;
+        }
+      }
     }
-
+    if (!gc_was_registered)
+      GC_unregister_my_thread();
+  }, tbb::simple_partitioner{}); //(end) tbb::parallel_for
+  }); //(end) arena.execute
+  if (M2_numericalAlgebraicGeometryTrace > 0 && n_sols > 0)
+    std::cerr << std::endl;  // finish progress bar line
+  
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   if (M2_numericalAlgebraicGeometryTrace > 1)
     {
