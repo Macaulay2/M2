@@ -368,55 +368,37 @@ addHook((euler, Module), Strategy => Varieties,
 eulers SheafOfRings  := O -> eulers module O.ring
 eulers CoherentSheaf := F -> eulers module F
 
--- Compute the Euler characteristic of all twists in a range of integers [b1,b2]
--- of a coherent sheaf F on a closed subspace in a projective space,
--- or more generally in a weighted projective space.
--- We return sum_(c=b1)^b2 chi(X, F(c))T^c in the "degree ring" of R1, which should be of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
---
--- The distinction between a WPS as a stack X and its associated coarse moduli space, e: X -> V, does not matter
--- for this purpose. Indeed, for a coherent sheaf F on the stack X, we have H^i(X, F) = H^i(V, e_*(F)) for every i.
--- Twists are interpreted by tensoring with the line bundles O(c) on the stack.
---
 euler(SheafOfRings,  ZZ, ZZ) := RingElement => (O, b1, b2) -> euler(O^1, b1, b2)
 euler(CoherentSheaf, ZZ, ZZ) := RingElement => (F, b1, b2) -> (
-    -- Here b1 <= b2 are integers, and F is a coherent sheaf on a closed subspace of a weighted projective space.
-    shift := 0;
-    if F.cache.?BaseTwist then
-    (shift = first F.cache.BaseTwist#1;
-	F = F.cache.BaseTwist#0;
-	b1 = b1 + shift; b2 = b2 + shift);
-    -- Thus we reduce to the case where the sheaf F was not defined as a twist. We now compute chi(X, F, b1, b2).
-    if b1 > b2 then error "the lower bound should be <= the upper bound";
-    M := currentModuleBaseRing F;
-    R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
-    -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
-    degs := degrees R1; -- This is a list of the form {{1},{9},{15},{22}}.
-    n := #degs; -- So P = Proj R1 has dimension n-1.
-    assert(1 == degreeLength R1);
-    sumOfWeights := first sum degs; -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
-    -- for P = P^{n-1}(a_0,...,a_(n-1)).
-    A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
-    T := A_0; -- This is the variable in the ring A.
-    numerator := poincare M; -- Thus the Hilbert series of M is: numerator/((1-a_0)...(1-a_(n-1)), where a_0,...,a_(n-1) are the weights.
-    -- This numerator is in Z[T,T^(-1)].
-    termlist := terms numerator; -- E.g, if numerator = T^(-1)-T^5, then termlist = {T^(-1),-T^5}.
-    -- Let P = Proj R1 be the given WPS. We start by computing chi(P, O(c)) for a range of integers c that includes
-    -- what we need. We store this information as a Laurent polynomial, sum_c chi(P,O(c))T^c, over some finite range of integers c.
-    output := 0;
-    thisterm := 0;
-    thisdeg := 0;
-    len := #termlist;
-    if len == 0 then return 0_A; -- Otherwise, termlist is nonempty (that is, M is not 0); so the following definitions make sense.
-    r1 := (degree(termlist_0))_0;
-    r2 := (degree(termlist_(len-1)))_0; -- So numerator = (const)T^(r1)+ ... + (const) T^(r2), with r1 <= r2.
-    -- We need (at least) to compute chi(P,O(c)) for b1-r2 <= c <= b2-r1. To do that, we'll first compute chi(P,O(c)) for 0 <= c <= d,
-    -- for the following number d.
-    d := max(0, b2-r1, -(b1-r2)-sumOfWeights);
-    hilbshort1 := hilbertSeries(R1, Order => d+1); -- This is the Hilbert series of P in degrees at most d, as a polynomial in T.
-    hilbshort := hilbshort1 + (-1)^(n-1)*T^(-sumOfWeights)*substitute(hilbshort1, T => T^(-1));
-    -- Thus hilbshort is a Laurent polynomial with coefficients chi(P,O(c)), in at least the range of integers c that we need.
-    output = hilbshort * numerator;
-    part(b1,b2,output) * T^(-shift))
+    -- Compute the Euler characteristic of a coherent sheaf F
+    -- on a closed subspace of a weighted projective space X
+    -- in a range of integers [b1, b2] as a Laurant polynomial
+    --   sum_(c=b1)^b2 chi(X, F(c)) T^c in the "degree ring" of R.
+    R := assertWeightedZZGraded ring variety F;
+    if b1 > b2 then error "expected a lower bound less than or equal to the upper bound";
+    -- If F = F0(twist), we compute chi(X, F0(twist)) and use F0 to cache
+    (F0, twist) := if F.cache.?BaseTwist then F.cache.BaseTwist else (F, {0});
+    b1 = {b1} + twist; b2 = {b2} + twist;
+    -- TODO: if indeed we can get away with poincare module F0 here,
+    -- be sure to still use the Hilbert series of ambient R below, not R!
+    M := currentModuleBaseRing F0; -- pushforward the module and kill m-torsion
+    S := ring M;
+    n := numgens R; -- dim X = n-1
+    w := sum degrees R; -- n+sigma in Symoonds's notation
+    A := degreesRing R; -- the output is a Laurant polynomial in this ring
+    hp := poincare M;
+    if hp == 0 then return 0_A;
+    -- We want to compute chi(P, O(c)) for a range of integers c that includes what we need.
+    -- We store this as a Laurent polynomial, sum_c chi(P, O(c)) T^c for finitely many c.
+    beta := sort listForm hp; -- Betti numbers of M
+    e1 := first first beta; -- lowest exponent in hp
+    e2 := first last  beta; -- largest exponent in hp
+    -- We need (at least) to compute chi(P, O(c)) for b1-r2 <= c <= b2-r1.
+    -- To do that, we'll first compute chi(P, O(c)) for   0 <= c <= d
+    d := max({0}, b2-e1, -(b1-e2)-w);
+    hs := hilbertSeries(S, Order => d#0 + 1);
+    hs' := hs + (-1)^(n-1) * A_(-w) * sub(hs, A_{1} => A_{-1});
+    A_(-twist) * part(b1#0, b2#0, hs' * hp))
 
 --------------------------------------------------------------------------------
 -- Hilbert Polynomial
