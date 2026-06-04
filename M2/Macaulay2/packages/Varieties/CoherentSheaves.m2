@@ -454,7 +454,8 @@ hilbertFunctionQ(Ring, ZZ) := memoize(
 -- c.f. the toric version in NormalToricVariety/Chow.m2
 -- and the original definition and hook in m2/hilbert.m2
 addHook((hilbertPolynomial, Module), Strategy => Varieties, (opts, M) ->
-    if M.ring.?variety then return try hilbertPolynomial(M.ring.variety, M, opts))
+    if not isStandardGraded M.ring and M.ring.?variety
+    then return try hilbertPolynomial(M.ring.variety, M, opts))
 hilbertPolynomial(Variety, Module)        := o -> (X, M) -> hilbertPolynomial(X, sheaf(X, M), o)
 
 -- these are defined for any Variety, including NormalToricVariety, etc.
@@ -467,43 +468,43 @@ hilbertPolynomial          CoherentSheaf  := o ->     F  -> hilbertPolynomial(F.
 hilbertPolynomial(Variety, SheafOfRings)  := o -> (X, O) -> degree O^1
 hilbertPolynomial          SheafOfRings   := o ->     O  -> degree O^1
 
--- The Hilbert polynomial of a closed subspace X of a weighted projective space, or of a coherent sheaf F on X. Namely,
--- for X = Proj R2 such that R2 has generators in degrees a_0,...,a_(n-1), chi(X, F(i)) is a quasipolynomial in i:
---   chi(X, F(i)) = c_m(i) i^m + ... + c_0(i)
--- with each c_j(i) a periodic function of i, of period dividing lcm(a_0,...,a_(n-1)).
--- (Equivalently, h^0(X, F(i)) has this description for i sufficiently large.) Note that the twist F(i) is defined
--- by tensoring with the line bundle O(i) on X as a stack, when the weights a_j are not all 1.
--- We define the Hilbert polynomial f(i) as the polynomial in QQ[i] obtained by _averaging_ each of the coefficients c_j(i).
--- (If the weights a0,...,a_(n-1) are equal to 1, then the default is Projective => true,
--- meaning that the output is given as a ProjectiveHilbertPolynomial, that is, a Z-linear combination
--- of the Hilbert polynomials of projective spaces of dimensions 0,...,m.)
---
--- For X of dimension m, the Hilbert polynomial in Q[i] has degree m, and its leading coefficient
--- is degree(X)/m!; this agrees with the function "degree X". Note that the degree of a closed subspace
--- in a weighted projective space is only a rational number. For example, P^n(a_0,...,a_n) has degree 1/(a_0...a_n).
-
-hilbertPolynomial(ProjectiveVariety, CoherentSheaf) := opts -> (X, F0) -> (
-    -- If F0 was defined as a twist of another sheaf, F is now that original sheaf,
-    -- and we want to compute the Hilbert polynomial of F0 = F(twist).
-    (F, twist) := if F0.cache.?BaseTwist then F0.cache.BaseTwist else (F0, degree 1_(ring X));
-    -- compute the Hilbert polynomial of F in Q[i] and cache it
-    hp := F.cache.hilbertPolynomial ??= (
-	M := currentModuleBaseRing F;
-	R := ring M; -- R is a graded polynomial ring, and M is a simplified R-module that represents the sheaf F.
-	-- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R_(>0)).
-	if isStandardGraded R then hilbertPolynomial(M, Projective => false)
-	-- We always cache the version of the Hilbert polynomial in the ring Q[i].
-	else (
-	    p := pairs standardForm poincare M;
-	    if #p === 0 then 0_(hilbertFunctionRing())
-	    else sum(p, (d, c) -> (
-		    if #d === 0 then d = 0 else d = d#0;
-		    c * hilbertFunctionQ(R, -d)))));
-    output := if twist === degree 1_(ring X) then hp
-    else substitute(hp, matrix { gens ring hp + twist }); -- This is the Hilbert polynomial of F(twist)
-    -- TODO: update projectiveHilbertPolynomial to handle non-standard gradings
-    -- currently euler(Module) fails because of this line
-    if isStandardGraded ring module F and opts.Projective then projectiveHilbertPolynomial(output) else output)
+hilbertPolynomial(ProjectiveVariety, CoherentSheaf) := opts -> (X, F) -> (
+    -- The Hilbert polynomial of a closed subspace X of a weighted projective space,
+    -- or of a coherent sheaf F on X. Namely, for X = Proj R such that R has generators
+    -- in degrees a_0,...,a_(n-1), chi(X, F(i)) is a quasipolynomial in i:
+    --   chi(X, F(i)) = c_m(i) i^m + ... + c_0(i)
+    -- with each c_j(i) a periodic function of i with period dividing lcm(a_0,...,a_(n-1)).
+    -- (Equivalently, h^0(X, F(i)) has this description for i sufficiently large.)
+    -- Note that the twist F(i) is defined by tensoring with the line bundle O(i)
+    -- on X as a stack, when the weights a_j are not all 1.
+    -- We define the Hilbert polynomial f(i) as the polynomial in QQ[i] obtained
+    -- by _averaging_ each of the coefficients c_j(i).
+    -- (If the weights a0,...,a_(n-1) are equal to 1, then the default is Projective => true,
+    -- meaning that the output is given as a ProjectiveHilbertPolynomial, that is, a ZZ-linear combination
+    -- of the Hilbert polynomials of projective spaces of dimensions 0,...,m.)
+    --
+    -- For X of dimension m, the Hilbert polynomial in QQ[i] has degree m,
+    -- and its leading coefficient is degree(X) / m!; this agrees with the function "degree X".
+    -- Note that the degree of a closed subspace in a weighted projective space is only a rational number.
+    -- For example, PP^n(a_0,...,a_n) has degree 1/(a_0...a_n).
+    R := ring X;
+    z := degree 1_R;
+    -- If F = F0(twist), we compute HP(X, F0(twist)) and use F0 to cache
+    (F0, twist) := if F.cache.?BaseTwist then F.cache.BaseTwist else (F, z);
+    -- if R is standard graded, Core's algorithm is probably faster
+    hp := if isStandardGraded R then hilbertPolynomial(module F0, Projective => false)
+    -- otherwise, we compute the Hilbert polynomial of F0 in QQ[i] and cache it
+    else F0.cache.hilbertPolynomial ??= (
+	M := currentModuleBaseRing F0; -- pushforward the module and kill m-torsion
+	A := hilbertFunctionRing();
+	S := ring M;
+	-- FIXME: make this last piece multigraded friendly
+	0_A + sum(listForm poincare M, (e, c) ->
+	    c * hilbertFunctionQ(S, -e#0)));
+    -- twist according to HP(F, i) = HP(F0(twist), i) = HP(F0, i+twist)
+    if twist != z then hp = sub(hp, matrix { gens ring hp + twist });
+    -- TODO: it's awkward that the option gets ignored depending on the grading input
+    if opts.Projective and isStandardGraded R then projectiveHilbertPolynomial hp else hp)
 
 -----------------------------------------------------------------------------
 -- SumOfTwists type declarations and basic constructors
