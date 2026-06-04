@@ -1,0 +1,108 @@
+################################################################################
+#
+#  Manually-triggered workflow to regenerate committed Style package assets:
+#    - prism.js / prism.js.LICENSE.txt  (syntax-highlighting symbols)
+#    - search-data.js / search-data.json (lunr.js search index)
+#    - lunr.min.js / katex/** / package-lock.json (npm dependencies)
+#
+#  Rather than rebuilding M2 from scratch, this workflow downloads the
+#  style-assets artifact produced by the most recent successful test_build.yml
+#  run on the same commit, verifying that the artifacts match HEAD before
+#  committing.
+#
+#  Trigger via Actions → "Update generated Style assets" → Run workflow.
+#  The workflow commits and pushes the updated files to whichever branch
+#  was selected in the dispatch UI.
+#
+################################################################################
+
+name: Update generated Style assets
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+# ----------------------------------------
+#   Update npm dependencies
+# ----------------------------------------
+
+      - name: Install npm dependencies
+        working-directory: M2/Macaulay2/packages/Style
+        run: npm install
+
+# ----------------------------------------
+#   Find a matching test_build.yml run
+# ----------------------------------------
+
+      - name: Find matching test_build.yml run
+        id: find-run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA=$(git rev-parse HEAD)
+          echo "Searching for a successful test_build.yml run on commit $SHA..."
+          RUN_ID=$(gh run list \
+            --repo "${{ github.repository }}" \
+            --workflow test_build.yml \
+            --status success \
+            --commit "$SHA" \
+            --json databaseId \
+            --jq '.[0].databaseId // empty')
+          if [ -z "$RUN_ID" ]; then
+            echo "::error::No successful test_build.yml run found for commit $SHA."
+            echo "::error::Wait for test_build.yml to finish on this commit, then re-run."
+            exit 1
+          fi
+          echo "Found run: $RUN_ID"
+          echo "run-id=$RUN_ID" >> "$GITHUB_OUTPUT"
+
+# ----------------------------------------
+#   Download and install the artifacts
+# ----------------------------------------
+
+      - name: Download Style assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run download "${{ steps.find-run.outputs.run-id }}" \
+            --repo "${{ github.repository }}" \
+            --name style-assets \
+            --dir artifacts/
+
+      - name: Copy generated files to source tree
+        run: |
+          cp artifacts/prism.js             M2/Macaulay2/packages/Style/
+          cp artifacts/prism.js.LICENSE.txt M2/Macaulay2/packages/Style/
+          cp artifacts/search-data.js       M2/Macaulay2/packages/Style/
+
+# ----------------------------------------
+#   Commit and push
+# ----------------------------------------
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add M2/Macaulay2/packages/Style/prism.js
+          git add M2/Macaulay2/packages/Style/prism.js.LICENSE.txt
+          git add M2/Macaulay2/packages/Style/search-data.js
+          git add M2/Macaulay2/packages/Style/lunr.min.js
+          git add M2/Macaulay2/packages/Style/katex/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            SHA=$(git rev-parse HEAD)
+            git commit -m "Update generated Style assets (built from ${SHA:0:7})"
+            git push
+          fi
