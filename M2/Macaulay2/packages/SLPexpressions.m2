@@ -29,7 +29,7 @@ newPackage(
                 }
 	  },
      Configuration =>  {},	
-     Keywords => {"Numerical Algebraic Geometry"},
+     Areas => {"Numerical Algebraic Geometry"},
      PackageExports => {"NAGtypes"},
      PackageImports => {},
      -- DebuggingMode should be true while developing a package, 

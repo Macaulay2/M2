@@ -14,7 +14,7 @@ newPackage(
 	     },
 --    	HomePage => "http://www.math.uiuc.edu/~doe/", --page not working
         Headline => "reaction networks",
-	Keywords => {"Applied Algebraic Geometry"},
+	Areas => {"Applied Algebraic Geometry"},
 	PackageImports => {"Graphs", "FourTiTwo"},
         DebuggingMode => false,
 --  	DebuggingMode => true,		 -- set to true only during development

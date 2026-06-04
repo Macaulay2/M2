@@ -24,7 +24,7 @@ newPackage(
 	     {Name => "Sonja Petrovic", Email => "petrovic@psu.edu"}
 	     },
     	Headline => "Interface to 4ti2",
-	Keywords => {"Interfaces"},
+	Areas => {"Interfaces"},
 	Configuration => { "path" => "",
 	     "keep files" => true
 	      },

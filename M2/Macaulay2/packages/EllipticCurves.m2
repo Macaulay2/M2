@@ -8,7 +8,7 @@ newPackage(
 	    {Name => "Stefano Marseglia", 
 		  Email => "stefanom@math.su.se"}},
 	PackageImports => {"Varieties"},
-	Keywords => {"Algebraic Number Theory"},
+	Areas => {"Algebraic Number Theory"},
     	Headline => "group law on elliptic curves (and counting points with brute force methods)"
     	)
 

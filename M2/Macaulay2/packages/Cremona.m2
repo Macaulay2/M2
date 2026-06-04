@@ -13,7 +13,7 @@ newPackage(
         LastUpdated => "January 18, 2023",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
-	Keywords => {"Algebraic Geometry"},
+	Areas => {"Algebraic Geometry"},
         AuxiliaryFiles => true,
 	PackageImports => {"Varieties"},
 	Certification => {

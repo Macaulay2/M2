@@ -37,7 +37,7 @@ newPackage(
 	{ Name => "Michael E. Stillman", Email => "mike@math.cornell.edu",   HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html" },
 	{ Name => "Yeongrak Kim",     	 Email => "kim@math.uni-sb.de",      HomePage => "http://sites.google.com/view/yeongrak/"}
 	},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageImports => {"Truncations"},
     PackageExports => {"Isomorphism", "Complexes", "SVDComplexes"},
     DebuggingMode => false

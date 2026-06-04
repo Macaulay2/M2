@@ -11,7 +11,7 @@ newPackage(
 	  },
      Headline => "some additional ChainComplex Functions",
      PackageExports => {"OldChainComplexes"},
-     Keywords => {"Homological Algebra"},
+     Areas => {"Homological Algebra"},
      DebuggingMode =>false
      )
 

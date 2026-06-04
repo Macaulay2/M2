@@ -8,7 +8,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "triangulations of polyhedra and point sets",
-        Keywords => {"Combinatorics"},
+        Areas => {"Combinatorics"},
         PackageImports => {"FourierMotzkin"},
         PackageExports => {
             "Topcom", 

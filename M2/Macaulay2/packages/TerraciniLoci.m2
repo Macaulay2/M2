@@ -49,7 +49,7 @@ newPackage("TerraciniLoci",
 	    Email => "e.teixeira-turatti@uw.edu.pl",
 	    HomePage => "https://turattiettore.wixsite.com/ettoreturatti"}},
     HomePage => "https://github.com/d-torrance/terracini-loci",
-    Keywords => {"Projective Algebraic Geometry"},
+    Areas => {"Projective Algebraic Geometry"},
     PackageImports => {
 	"CorrespondenceScrolls",
 	"FastMinors",

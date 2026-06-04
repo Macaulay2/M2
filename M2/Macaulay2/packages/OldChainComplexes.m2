@@ -4,7 +4,7 @@ newPackage(
     LastUpdated => "7 March 2025",
     Headline => "consolidating legacy chain complex code",
     Authors => { -* { Name => "", Email => "", HomePage => ""}*- },
-    Keywords => {"Homological Algebra"},
+    Areas => {"Homological Algebra"},
     PackageImports => { "LLLBases" },
     AuxiliaryFiles => true,
     DebuggingMode => false

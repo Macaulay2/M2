@@ -22,7 +22,7 @@ newPackage("RInterface",
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"Interfaces"},
+    Areas => {"Interfaces"},
     OptionalComponentsPresent => run("command -v R > /dev/null") == 0,
     AuxiliaryFiles => true,
     PackageImports => {"ForeignFunctions"})

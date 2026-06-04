@@ -13,7 +13,7 @@ newPackage(
     "Varieties",
     LastUpdated     => "28 Feb 2025",
     Version  => "0.3",
-    Keywords => { "Algebraic Geometry", "Homological Algebra" },
+    Areas => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
 	{   Name => "Devlin Mallory",

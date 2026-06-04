@@ -28,7 +28,7 @@ newPackage(
 		{Name => "Alexander I. Suciu", Email => "a.suciu@neu.edu"},
 		{Name => "Kumar Sannidhya Shukla", Email => "kshukla5@uwo.ca"}
 	},
-	Keywords => {"Toric Geometry"},
+	Areas => {"Toric Geometry"},
 	PackageImports => { "Complexes", "SimplicialComplexes" },
 	Headline => "toric topology"
 )

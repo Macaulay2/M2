@@ -16,7 +16,7 @@ newPackage(
 			Email => "bapike@gmail.com",
 			HomePage => "http://www.brianpike.info/"}},
 		Headline => "vector fields",
-		Keywords => {"Commutative Algebra"},
+		Areas => {"Commutative Algebra"},
 		PackageImports => {"PrimaryDecomposition"},		     
 		DebuggingMode => false 
 	)

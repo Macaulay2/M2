@@ -16,7 +16,7 @@ newPackage(
 	  {Name => "AJ Stewart", Email => "stewaral@seattleu.edu"},
 	  {Name => "Robert Walker", Email => "robmarsw@umich.edu"}
 	  },
-     Keywords => {"Applied Algebraic Geometry"},
+     Areas => {"Applied Algebraic Geometry"},
      PackageImports => {
 	 "Isomorphism",	 
 	  "FourTiTwo"

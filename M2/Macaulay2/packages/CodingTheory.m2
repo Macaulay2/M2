@@ -50,7 +50,7 @@ newPackage(
         PackageExports => {
 	    "Graphs"
 	    },
-       Keywords => { "Coding Theory" },
+       Areas => { "Coding Theory" },
        Certification => {
 	    "journal name" => "The Journal of Software for Algebra and Geometry",
 	    "journal URI" => "https://msp.org/jsag/",

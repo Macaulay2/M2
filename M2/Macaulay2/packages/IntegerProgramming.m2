@@ -8,7 +8,7 @@ newPackage(
         Email => "mike.cummings@uwaterloo.ca",
         HomePage => "https://mikecummings.ca"
     }},
-    Keywords => {"Applied Algebraic Geometry"}
+    Areas => {"Applied Algebraic Geometry"}
 )
 
 export {

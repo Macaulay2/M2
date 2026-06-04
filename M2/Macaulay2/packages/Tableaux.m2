@@ -5,7 +5,7 @@ newPackage(
     Authors => {
 	{Name => "John Graf", Email => "jrgraf@udel.edu", HomePage => "https://j-graf.github.io/"}},
     Headline => "constructing Young tableaux",
-    Keywords => {"Combinatorics"},
+    Areas => {"Combinatorics"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
     PackageImports => {"Permutations"}--,

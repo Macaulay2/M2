@@ -5,7 +5,7 @@ newPackage("Markov",
 	  {Name => "Mike Stillman"}
 	  },
      DebuggingMode => false,
-     Keywords => {"Algebraic Statistics"},
+     Areas => {"Algebraic Statistics"},
      Headline => "Markov ideals arising from Bayesian networks in statistics",
      Version => "1.3",
      LastUpdated => "May 15, 2021",

@@ -22,7 +22,7 @@ newPackage(
 	{Name => "Carolyn Yackel", Email => "cyackel@math.indiana.edu"},
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageExports => { "Saturation", "MinimalPrimes" },
     PackageImports => { HomologicalAlgebraPackage, "Elimination" },
     AuxiliaryFiles => true,

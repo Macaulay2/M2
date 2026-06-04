@@ -26,7 +26,7 @@ newPackage(
 		  HomePage => "http://math.nd.edu/people/graduate-students/graduate-directory-with-photos/"} 
 	    },
     	Headline => "Schur functors of complexes",
-	Keywords => {"Representation Theory", "Homological Algebra"},
+	Areas => {"Representation Theory", "Homological Algebra"},
     PackageExports => {"Complexes"},
 	Certification => {
 	     "journal name" => "Journal of Software for Algebra and Geometry",

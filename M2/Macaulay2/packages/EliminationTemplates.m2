@@ -27,7 +27,7 @@ newPackage(
     HomePage => ""}},
     Headline => "Elimination Templates",
     PackageImports => {"EigenSolver", "NumericalAlgebraicGeometry"},
-    Keywords => {"Applied Algebraic Geometry", "Numerical Algebraic Geometry"},
+    Areas => {"Applied Algebraic Geometry", "Numerical Algebraic Geometry"},
     HomePage => "",
     DebuggingMode => false,
     AuxiliaryFiles => true

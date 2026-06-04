@@ -8,7 +8,7 @@ newPackage("Dmodules",
 	{ Name => "Anton Leykin", Email => "leykin@math.gatech.edu" },
 	{ Name => "Harrison Tsai" }
 	},
-    Keywords => { "D-modules" },
+    Areas => { "D-modules" },
     PackageExports => {
 	"WeylAlgebras",
 	"HolonomicSystems",

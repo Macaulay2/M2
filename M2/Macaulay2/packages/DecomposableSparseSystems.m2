@@ -17,7 +17,7 @@ newPackage(
 	 HomePage=>"https://math.tamu.edu/~thomasjyahl"}
         },
     Headline=>"Solving decomposable sparse systems",
-    Keywords => {"Numerical Algebraic Geometry"},
+    Areas => {"Numerical Algebraic Geometry"},
     PackageImports=>{"PHCpack","Polyhedra","DeterminantalRepresentations"},
     PackageExports=>{"NumericalAlgebraicGeometry"},
     AuxiliaryFiles=>true,

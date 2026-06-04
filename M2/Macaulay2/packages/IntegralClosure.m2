@@ -8,7 +8,7 @@ newPackage(
         {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"}
         },
     Headline => "integral closure",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageImports => { 
         "PrimaryDecomposition",  -- only used for an obscure "rad" function
         "ReesAlgebra" -- used for integral closure of an ideal

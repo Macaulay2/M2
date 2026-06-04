@@ -6,7 +6,7 @@ newPackage(
         Authors => {{Name => "Jonathan Niño", 
                   Email => "ja.nino937@uniandes.edu.co", 
                   HomePage => "http://www.uniandes.edu.co"}},
-	Keywords => {"Representation Theory"},
+	Areas => {"Representation Theory"},
         Headline => "invariants for permutation groups",
         DebuggingMode => false
         )

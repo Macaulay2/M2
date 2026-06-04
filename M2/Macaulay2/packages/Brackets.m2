@@ -12,7 +12,7 @@ newPackage(
 	  PackageImports => {},
           AuxiliaryFiles => false,
           DebuggingMode => false,
-	  Keywords => {"Projective Algebraic Geometry"}
+	  Areas => {"Projective Algebraic Geometry"}
           )
 
 export {"Bracket", "AbstractGCRing", "bracketRing", "BracketRing", "GCAlgebra", "normalForm", "gc", "toBracketPolynomial", "GCExpression"}

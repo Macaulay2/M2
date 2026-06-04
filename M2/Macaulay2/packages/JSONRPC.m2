@@ -22,7 +22,7 @@ newPackage("JSONRPC",
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"System"},
+    Areas => {"System"},
     PackageImports => {"JSON"})
 
 ---------------

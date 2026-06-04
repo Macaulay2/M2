@@ -16,7 +16,7 @@ newPackage(
 	      Email => "pzinn@unimelb.edu.au",
 	      HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}
 	  },
-    Keywords => {"Lie Groups and Lie Algebras"},
+    Areas => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},
     PackageExports => {"SpechtModule","Polyhedra","Isomorphism","AssociativeAlgebras"},
     DebuggingMode => false,

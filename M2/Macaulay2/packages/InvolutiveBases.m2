@@ -14,7 +14,7 @@ newPackage(
                   HomePage => "http://wwwb.math.rwth-aachen.de/~daniel/"}},
         Headline => "Methods for Janet bases and Pommaret bases in Macaulay 2",
         PackageExports => { "Complexes" },
-	Keywords => {"Groebner Basis Algorithms"},
+	Areas => {"Groebner Basis Algorithms"},
         DebuggingMode => false
         )
 

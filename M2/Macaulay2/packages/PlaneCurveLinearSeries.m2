@@ -9,7 +9,7 @@ newPackage(
 	  PackageExports => {"IntegralClosure","PrimaryDecomposition"},
           AuxiliaryFiles => false,
           DebuggingMode => false,
-	  Keywords => {"Projective Algebraic Geometry"}
+	  Areas => {"Projective Algebraic Geometry"}
           )
       export {
 	  "canonicalSeries",

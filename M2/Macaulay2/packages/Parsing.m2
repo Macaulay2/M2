@@ -6,7 +6,7 @@ newPackage ( "Parsing",
      LastUpdated => "June, 2006",
      Version => "1.0",
      Headline => "a framework for creating recursive descent parsers",
-     Keywords => {"System"},
+     Areas => {"System"},
      DebuggingMode => false
      )
 

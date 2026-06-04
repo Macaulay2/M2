@@ -9,7 +9,7 @@ newPackage(
 		  HomePage => "https://math.cornell.edu/michael-e-stillman"},{Name => "Anton Leykin", 
 		  Email => "leykin@math.gatech.edu", 
 		  HomePage => "https://antonleykin.math.gatech.edu/"}},
-	  Keywords => {"Groebner Basis Algorithms" , "Interfaces"},
+	  Areas => {"Groebner Basis Algorithms" , "Interfaces"},
 	Headline => "interface to the msolve library for solving multivariate polynomial systems using Groebner Bases",
 	PackageImports => { "Elimination", "Saturation" },
     	AuxiliaryFiles => true,

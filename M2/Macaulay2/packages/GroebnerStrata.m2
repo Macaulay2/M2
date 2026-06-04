@@ -10,7 +10,7 @@ newPackage(
         PackageImports => {"Elimination"},
         PackageExports => {"Complexes"},
     	DebuggingMode => false,
-	Keywords => {"Commutative Algebra"}
+	Areas => {"Commutative Algebra"}
     	)
 
 export { 

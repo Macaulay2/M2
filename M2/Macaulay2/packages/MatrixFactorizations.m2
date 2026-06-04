@@ -18,7 +18,7 @@ newPackage(
             HomePage => "https://sites.google.com/view/kellervandebogert/home"}
     },
     Headline => "computing with matrix factorizations of different lengths",
-    Keywords => {"Commutative Algebra", "Homological Algebra"},
+    Areas => {"Commutative Algebra", "Homological Algebra"},
     PackageExports => {
         "Complexes"
     },

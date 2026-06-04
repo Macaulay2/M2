@@ -19,7 +19,7 @@ newPackage (
 		  HomePage => ""}
 	},
 	Headline => "specialized routines for differential forms",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	Configuration => { 
 		"BaseRing" => null,
 		"VariableName" => "x",

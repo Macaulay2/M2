@@ -14,7 +14,7 @@ newPackage (
                 Email => "dwcook@eiu.edu",
                 HomePage => "http://ux1.eiu.edu/~dwcook/"}},
    Headline => "various decomposability routines for simplicial complexes",
-   Keywords => {"Combinatorial Commutative Algebra"},
+   Areas => {"Combinatorial Commutative Algebra"},
    DebuggingMode => false,
    Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

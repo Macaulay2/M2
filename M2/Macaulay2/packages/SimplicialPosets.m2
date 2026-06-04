@@ -22,7 +22,7 @@ newPackage(
 		    Name => "Nathan Nichols",
 		    Email => "nicho997@umn.edu"}},
         Headline => "constructing Stanley simplicial poset rings",
-	Keywords => {"Combinatorial Commutative Algebra"},
+	Areas => {"Combinatorial Commutative Algebra"},
 	DebuggingMode => false,
 	PackageExports => {
 	    "Posets",

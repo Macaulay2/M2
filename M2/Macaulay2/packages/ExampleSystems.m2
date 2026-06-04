@@ -16,7 +16,7 @@ newPackage(
         },
 	PackageExports => {"NumericalAlgebraicGeometry"},
     	Headline => "database of polynomial systems",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
     	DebuggingMode => false
     	)
 

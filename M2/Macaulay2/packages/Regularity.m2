@@ -7,7 +7,7 @@ newPackage(
         {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
         },
    Headline => "Castelnuovo-Mumford regularity of a homogeneous ideal",
-   Keywords => {"Commutative Algebra"},
+   Areas => {"Commutative Algebra"},
    DebuggingMode => false
    )
 --=========================================================================--

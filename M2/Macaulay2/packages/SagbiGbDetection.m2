@@ -11,7 +11,7 @@ newPackage(
         DebuggingMode => false, 
         PackageExports => { "Polyhedra", "ReesAlgebra", "SubalgebraBases" },   
         PackageImports => { "SubalgebraBases"},   
-	Keywords => {"Commutative Algebra"}
+	Areas => {"Commutative Algebra"}
 )   
 
 

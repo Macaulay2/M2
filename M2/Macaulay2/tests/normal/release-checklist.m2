@@ -3,8 +3,8 @@
 pkglist = sort separate_" " version#"packages";
 pkgopts = hashTable apply(pkglist, pkg -> (pkg, readPackage pkg));
 
-pkgs = select(pkgopts, opts -> isMember("Uncategorized", opts.Keywords))
-if #pkgs > 0 then error("packages without a Keyword: ", demark_", " keys pkgs)
+pkgs = select(pkgopts, opts -> isMember("Uncategorized", opts.Areas))
+if #pkgs > 0 then error("packages without an Area: ", demark_", " keys pkgs)
 
 pkgs = select(pkgopts, opts -> opts.DebuggingMode);
 if #pkgs > 0 then error("packages with 'DebuggingMode' turned on: ", demark_", " keys pkgs)

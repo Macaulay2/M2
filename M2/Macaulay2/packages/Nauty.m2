@@ -14,7 +14,7 @@ newPackage(
                  Email => "dwcook@eiu.edu",
                  HomePage => "http://ux1.eiu.edu/~dwcook/"}},
     Headline => "interface to nauty",
-    Keywords => {"Graph Theory", "Interfaces"},
+    Areas => {"Graph Theory", "Interfaces"},
     Configuration => {"path" => ""},
     PackageExports => {"EdgeIdeals"},
     DebuggingMode => false,

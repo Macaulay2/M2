@@ -13,7 +13,7 @@ newPackage(
 	Authors => {
 	    {Name => "Clas Löfwall", Email => "clas.lofwall@gmail.com"},
 	    {Name => "Samuel Lundqvist", Email => "samuel@math.su.se"}},
-	Keywords => {"Lie Groups and Lie Algebras"},
+	Areas => {"Lie Groups and Lie Algebras"},
 	AuxiliaryFiles => true,
         DebuggingMode => false,
 	Headline => "computations in graded Lie algebras",

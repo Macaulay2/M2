@@ -8,7 +8,7 @@ newPackage(
     	Headline => "Compute Whitney Stratifications",
     	DebuggingMode => false,
 	PackageImports=>{"Elimination","PrimaryDecomposition","Saturation","SegreClasses", "Msolve"},
-	Keywords => {"Algebraic Geometry"}
+	Areas => {"Algebraic Geometry"}
 	);
 export{
     "conormal",

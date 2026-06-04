@@ -11,7 +11,7 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	PackageExports => {"BoijSoederberg", "Complexes"},
 	PackageImports => {"Truncations","Varieties"},
     	DebuggingMode => false

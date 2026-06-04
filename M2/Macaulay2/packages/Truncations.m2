@@ -21,7 +21,7 @@ newPackage(
         { Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "https://www.math.cornell.edu/~mike" },
         { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud" }
         },
-    Keywords => { "Commutative Algebra" },
+    Areas => { "Commutative Algebra" },
     PackageExports => { "Polyhedra" },
     AuxiliaryFiles => true
     )

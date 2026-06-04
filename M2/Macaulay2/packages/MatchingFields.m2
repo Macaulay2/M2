@@ -8,7 +8,7 @@ newPackage(
         {Name => "Oliver Clarke", Email => "oliver.clarke@durham.ac.uk", HomePage => "https://www.oliverclarkemath.com/"}
         },
     Headline => "Toric degenerations of flag varieties via matching fields",
-    Keywords => {"Flag Varieties"},
+    Areas => {"Flag Varieties"},
     DebuggingMode => false,
     PackageExports => {"Polyhedra", "SubalgebraBases", "Matroids", "FourTiTwo", "Graphs"}
     )

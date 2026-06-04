@@ -20,7 +20,7 @@ newPackage(
 		        HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
                     },
         Headline => "random complexes over fields or the integers",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
         PackageExports => {"Complexes", "SimplicialComplexes"},
 	PackageImports => {"LLLBases"}
         )

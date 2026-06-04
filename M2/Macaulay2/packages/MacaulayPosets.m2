@@ -20,7 +20,7 @@ newPackage(
     PackageImports => {
         "Visualize"
     },
-    Keywords => {"Combinatorial Commutative Algebra"}
+    Areas => {"Combinatorial Commutative Algebra"}
 )
 export {
     "PosetMap",

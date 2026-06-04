@@ -6,7 +6,7 @@ newPackage("StronglyStableIdeals",
 	               {Name => "Paolo Lella", Email => "paolo.lella@polimi.it", HomePage => "http://www.paololella.it/"}
     	              },
 	   Headline => "studying strongly stable ideals related to Hilbert polynomials",
-	   Keywords => {"Commutative Algebra"},
+	   Areas => {"Commutative Algebra"},
 	   PackageImports => {"gfanInterface","Truncations"},
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry",

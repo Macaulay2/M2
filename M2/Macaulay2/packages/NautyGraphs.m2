@@ -20,7 +20,7 @@ newPackage(
                  Email => "dcook8@nd.edu",
                  HomePage => "http://www.nd.edu/~dcook8"}},
     Headline => "interface to nauty (Graphs fork)",
-    Keywords => {"Graph Theory", "Interfaces"},
+    Areas => {"Graph Theory", "Interfaces"},
     Configuration => {"path" => ""},
     PackageExports => {"Graphs"},
     DebuggingMode => false,

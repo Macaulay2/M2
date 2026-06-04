@@ -10,7 +10,7 @@ newPackage(
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
-     Keywords => {"Numerical Algebraic Geometry"},
+     Areas => {"Numerical Algebraic Geometry"},
      PackageExports => {"NumericalLinearAlgebra"}, 
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done

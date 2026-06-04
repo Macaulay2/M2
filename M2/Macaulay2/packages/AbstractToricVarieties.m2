@@ -13,7 +13,7 @@ newPackage(
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
         Headline => "links abstract simplicial (normal) toric varieties to Schubert2",
-	Keywords => {"Toric Geometry", "Intersection Theory"},
+	Areas => {"Toric Geometry", "Intersection Theory"},
         PackageExports => {"NormalToricVarieties", "Schubert2"}
         )
 

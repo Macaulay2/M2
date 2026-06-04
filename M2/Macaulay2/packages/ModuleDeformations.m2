@@ -10,7 +10,7 @@ newPackage(
      Authors => {{Name => "Bradford Hovinen",
 	          Email => "hovinen@math.uni-hannover.de"}},
      Headline => "versal deformations of maximal Cohen-Macaulay modules",
-     Keywords => {"Deformation Theory"},
+     Areas => {"Deformation Theory"},
      PackageImports => { "Complexes", "Truncations" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

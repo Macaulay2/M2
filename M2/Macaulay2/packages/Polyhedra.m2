@@ -24,7 +24,7 @@ newPackage("Polyhedra",
 	 "volume number" => "1",
 	 "volume URI" => "https://msp.org/jsag/2009/1-1/"
 	 },
-    Keywords => {"Convex Geometry"},
+    Areas => {"Convex Geometry"},
     Authors => {
       {
          Name => "René Birkner",

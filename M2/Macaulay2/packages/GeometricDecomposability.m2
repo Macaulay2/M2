@@ -17,7 +17,7 @@ newPackage(
                 HomePage => "https://ms.mcmaster.ca/~vantuyl/"
                 }
                 },
-        Keywords => {"Commutative Algebra"},
+        Areas => {"Commutative Algebra"},
         PackageImports => {"Depth", "PrimaryDecomposition"},
 	Certification => {
 	    "journal name" => "Journal of Software for Algebra and Geometry",

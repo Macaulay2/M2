@@ -48,7 +48,7 @@ newPackage(
 	    }
 	},
     	Headline => "Erdos-Renyi-type random monomial ideals",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
      	PackageImports => { "Complexes", "Depth", "BoijSoederberg", "Serialization" },
     	DebuggingMode => false,
 	Certification => {

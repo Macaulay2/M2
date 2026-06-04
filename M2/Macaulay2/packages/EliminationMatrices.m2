@@ -13,7 +13,7 @@ newPackage("EliminationMatrices",
 	     {Name => "Manuel Dubinsky", Email => "manudubinsky@gmail.com" }
 	     },
    Headline => "resultants",
-   Keywords => {"Commutative Algebra"},
+   Areas => {"Commutative Algebra"},
    PackageImports => { "Elimination" },
    PackageExports => { "Complexes" },
    DebuggingMode => false

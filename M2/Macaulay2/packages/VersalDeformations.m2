@@ -14,7 +14,7 @@ newPackage("VersalDeformations",
 	  Email => "nilten@sfu.ca"}},
     Configuration => {"DefaultDefParam"=>"t","DefaultDefParamX"=>"s","DefaultDefParamY"=>"t"},
     PackageImports => {"Varieties"},
-    Keywords => {"Deformation Theory"},
+    Areas => {"Deformation Theory"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "https://msp.org/jsag/",

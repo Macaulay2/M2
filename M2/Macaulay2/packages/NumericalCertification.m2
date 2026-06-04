@@ -9,7 +9,7 @@ newPackage(
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	Configuration => {"ALPHACERTIFIEDexec" => "alphaCertified"},
 	AuxiliaryFiles => true,
-	Keywords => {"Numerical Algebraic Geometry"}
+	Areas => {"Numerical Algebraic Geometry"}
     	)
 
 -- Any symbols or functions that the user is to have access to

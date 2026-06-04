@@ -3,7 +3,7 @@ newPackage("PathSignatures",
          Authors => {{Name => "Felix Lotter", HomePage => "https://felixlotter.gitlab.io"}, {Name => "Oriol Reig"}, {Name => "Angelo El Saliby"}, {Name => "Carlos Amendola"}},
          Headline => "working with algebraic path signatures",
          AuxiliaryFiles => true,
-         Keywords => {"Applied Algebraic Geometry"},
+         Areas => {"Applied Algebraic Geometry"},
          PackageExports => {"NCAlgebra", "Permutations"}
 );
 export {

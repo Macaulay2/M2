@@ -6,7 +6,7 @@ newPackage(
      Authors => {{Name => "Edward Carter",
                Email => "edward.carter@gmail.com"}},
      PackageExports =>{"Complexes"},
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      DebuggingMode => false
      )
     

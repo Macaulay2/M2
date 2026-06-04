@@ -9,7 +9,7 @@ newPackage(
        HomePage => "http://www.mit.edu/~diegcif"}
     },
     Headline => "triangular decompositions of ideals",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     AuxiliaryFiles => true,
     PackageImports => {"Binomials","MapleInterface","Elimination"},
     PackageExports => {}

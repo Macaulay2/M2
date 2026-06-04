@@ -10,7 +10,7 @@ newPackage(
 		    HomePage => "https://sites.google.com/site/alanvelizcuba/"
 		    }},
 	  DebuggingMode => false,
-	  Keywords => {"Commutative Algebra"},
+	  Areas => {"Commutative Algebra"},
 	  Certification => {
 	       "journal name" => "The Journal of Software for Algebra and Geometry",
 	       "journal URI" => "https://msp.org/jsag/",

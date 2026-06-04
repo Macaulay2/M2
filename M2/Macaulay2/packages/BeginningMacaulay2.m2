@@ -5,7 +5,7 @@ newPackage( "BeginningMacaulay2", Version => "1.0", LastUpdated => "November 3, 
 	  {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	  },
      Headline => "Mathematicians' Introduction to Macaulay2",
-     Keywords => {"Documentation"},
+     Areas => {"Documentation"},
      PackageExports => {"Complexes"},
      AuxiliaryFiles => true
      )

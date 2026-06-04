@@ -15,7 +15,7 @@ newPackage(
     Headline => "Comparing resolutions of Stanley-Reisner rings and computing various systems of parameters",
     PackageImports => { "Complexes" },
     PackageExports => {"SimplicialComplexes", "Posets", "SimplicialDecomposability"},
-    Keywords => { "Combinatorial Commutative Algebra" },
+    Areas => { "Combinatorial Commutative Algebra" },
     DebuggingMode => false 
     )
 

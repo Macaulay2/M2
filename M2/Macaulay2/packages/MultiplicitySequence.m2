@@ -14,7 +14,7 @@ newPackage(
         }
     },
     Headline => "computing the multiplicity sequence of an ideal",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageExports => {

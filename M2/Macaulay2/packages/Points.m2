@@ -11,7 +11,7 @@ newPackage(
 	     {Name => "Joseph W. Skelton", Email => "jskelton@tulane.edu"}
 	     },
     	Headline => "sets of points",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
         PackageImports => {"Complexes"},
         PackageExports => {"LexIdeals"},
     	DebuggingMode => false

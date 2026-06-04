@@ -30,7 +30,7 @@ newPackage(
             HomePage=>"https://sites.google.com/view/szotine/home"}
     },
     Headline => "homological algebra with Mackey functors for cyclic groups of prime order",
-    Keywords=>{"Homotopy Theory", "Equivariant Cohomology"},
+    Areas=>{"Homotopy Theory", "Equivariant Cohomology"},
     PackageExports=>{"Complexes"},
     -- Complexes needed to overload `res` (alias for `freeResolution`)
     AuxiliaryFiles => true,

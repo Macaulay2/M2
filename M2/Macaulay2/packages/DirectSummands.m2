@@ -23,7 +23,7 @@ newPackage(
 	{ Name => "Devlin Mallory", Email => "malloryd@math.utah.edu", HomePage => "https://math.utah.edu/~malloryd/"},
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",         HomePage => "https://math.umn.edu/~mahrud/"}
 	},
-    Keywords => { "Commutative Algebra" },
+    Areas => { "Commutative Algebra" },
     PackageImports => {
 	"Polyhedra",       -- for coneFromVData and coneComp
 	"Truncations",     -- for effGenerators

@@ -13,7 +13,7 @@ newPackage(
                   HomePage => "https://math.berkeley.edu/~myzhang/"}
 	      },
         Headline => "space curves",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
         PackageImports => {"Complexes"},
         DebuggingMode => false,
 	Certification => {

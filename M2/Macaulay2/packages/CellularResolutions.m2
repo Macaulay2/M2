@@ -11,7 +11,7 @@ newPackage(
     Headline => "cellular resolutions of monomial ideals",
     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
     PackageExports => {"Polyhedra", "SimplicialComplexes", "Posets"},
-    Keywords => {"Commutative Algebra"}
+    Areas => {"Commutative Algebra"}
     )
 
 export {--types

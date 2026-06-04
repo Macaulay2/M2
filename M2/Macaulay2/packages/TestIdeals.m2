@@ -77,7 +77,7 @@ Authors => {
      }
 },
 Headline => "singularities in positive characteristic",
-Keywords => {"Commutative Algebra"},
+Areas => {"Commutative Algebra"},
 AuxiliaryFiles=>true,
 PackageExports=>{"Depth"},
 PackageImports => {"MinimalPrimes", "Complexes"},

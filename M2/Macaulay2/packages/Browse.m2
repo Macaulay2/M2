@@ -7,7 +7,7 @@ newPackage ( "Browse",
      LastUpdated => "1996",
      Version => "1.0",
      Headline => "a method for browsing and examining Macaulay2 data structures",
-     Keywords => {"Miscellaneous"},
+     Areas => {"Miscellaneous"},
      DebuggingMode => false
      )
 

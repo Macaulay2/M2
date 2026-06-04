@@ -14,7 +14,7 @@ newPackage(
     }, 
     Headline => "computations related to supermatrices", 
     DebuggingMode => false,
-    Keywords => {"Linear Algebra"}
+    Areas => {"Linear Algebra"}
 )
 
 --------------------

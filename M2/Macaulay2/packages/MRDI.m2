@@ -30,7 +30,7 @@ newPackage(
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"
 	    }},
     PackageImports => {"JSON"},
-    Keywords => {"System"})
+    Areas => {"System"})
 
 export {
     -- methods

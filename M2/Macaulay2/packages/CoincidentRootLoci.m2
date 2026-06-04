@@ -7,7 +7,7 @@ newPackage(
         LastUpdated => "January 30, 2021",
     	Headline => "coincident root loci",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
-	Keywords => {"Real Algebraic Geometry", "Interfaces"},
+	Areas => {"Real Algebraic Geometry", "Interfaces"},
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,

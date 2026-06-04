@@ -5,7 +5,7 @@ newPackage(
     Authors => {{Name => "Amy Wiebe", Email => "w.amy.math@gmail.com"},
 	{Name => "Antonio Macchia", Email => "macchia.antonello@gmail.com"}},
     Headline => "Slack ideals of polytopes and matroids",
-    Keywords => {"Commutative Algebra", "Matroids"},
+    Areas => {"Commutative Algebra", "Matroids"},
     PackageExports => {"Polyhedra", "Matroids", "EdgeIdeals", "LLLBases", "Elimination"}
     )
 

@@ -11,7 +11,7 @@ newPackage(
             Email => "anton.leykin@gmail.com"}
     	},
     Headline => "numerically compute local dual space and Hilbert functions",
-    Keywords => {"Numerical Linear Algebra"},
+    Areas => {"Numerical Linear Algebra"},
     PackageExports => {"LLLBases"},
     AuxiliaryFiles => false
 )

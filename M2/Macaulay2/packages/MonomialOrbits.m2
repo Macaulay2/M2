@@ -9,7 +9,7 @@
             Email => "mike@math.cornell.edu", 
             HomePage => "http://pi.math.cornell.edu/~mike"}},
     Headline => "Orbit representatives of monomial ideals",
-    Keywords => {"Combinatorial Commutative Algebra"},
+    Areas => {"Combinatorial Commutative Algebra"},
     PackageExports =>{"Truncations"}, -- for 'truncate'
     DebuggingMode => false
     )

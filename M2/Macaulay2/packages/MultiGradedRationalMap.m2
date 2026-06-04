@@ -4,7 +4,7 @@ newPackage(
     Authors => {{ Name => "Yairon Cid Ruiz", 
 		  Email => "ycid@ub.edu", 
 		  HomePage => "http://www.ub.edu/arcades/ycid.html"}},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     Version => "0.1",
     LastUpdated => "2018",
     DebuggingMode => false,

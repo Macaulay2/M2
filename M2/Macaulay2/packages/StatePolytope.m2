@@ -9,7 +9,7 @@ newPackage(
 	     {Name => "Dave Swinarski", Email => "swinarsk@math.columbia.edu"}
 	     },
     	Headline => "the state polytope of an ideal",
-	Keywords => {"Convex Geometry", "Interfaces"},
+	Areas => {"Convex Geometry", "Interfaces"},
 	-- DebuggingMode should be true while developing a package, 
 	--   but false after it is done
     	DebuggingMode => false,

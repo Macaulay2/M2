@@ -32,7 +32,7 @@ newPackage(
          HomePage => "https://www.felixzhao.com/"}
    },
    Headline => "computing equilibria in game theory",
-   Keywords => {"Game Theory"},
+   Areas => {"Game Theory"},
    PackageExports => {"Polyhedra","GraphicalModels"},
    PackageImports => {"Polyhedra"}
    )

@@ -6,7 +6,7 @@ newPackage(
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
               Headline => "Analyzing Resolutions over a Complete Intersection",
-	      Keywords => {"Commutative Algebra"},
+	      Areas => {"Commutative Algebra"},
 	      PackageImports => {"Truncations"},
 	      PackageExports => {"MCMApproximations","BGG","Complexes"},
 --note: this package requires  MCMApproximations.m2

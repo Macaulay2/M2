@@ -7,7 +7,7 @@ newPackage(
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "Run Macaulay2 code inside a LaTeX file",
-	Keywords => {"System"},
+	Areas => {"System"},
         DebuggingMode => false,
 	AuxiliaryFiles => true
         )

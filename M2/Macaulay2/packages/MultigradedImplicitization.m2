@@ -14,7 +14,7 @@ newPackage(
     HomePage => "https://math.umn.edu/~mahrud"}
   },
   Headline => "solving implicitization problems using multigradings",
-  Keywords => {"Algebraic Statistics", "Commutative Algebra"},
+  Areas => {"Algebraic Statistics", "Commutative Algebra"},
   PackageImports => {"gfanInterface"}
 )
 

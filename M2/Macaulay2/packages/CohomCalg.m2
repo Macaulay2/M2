@@ -8,7 +8,7 @@ newPackage(
              HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"
              }},
         Headline => "interface to cohomCalg software for computing sheaf cohomology of line bundles on toric varieties",
-	Keywords => {"Toric Geometry", "Interfaces"},
+	Areas => {"Toric Geometry", "Interfaces"},
         AuxiliaryFiles => true,
         PackageExports => {"NormalToricVarieties"},
         Configuration => {

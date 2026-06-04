@@ -12,7 +12,7 @@ newPackage(
             HomePage => "http://www.math.cornell.edu/~mike"
             }},
     Headline => "beta testing new version of chain complexes",
-    Keywords => {"Homological Algebra"},
+    Areas => {"Homological Algebra"},
     PackageImports => { "LLLBases" },
     PackageExports => { "Truncations" },
     AuxiliaryFiles => true

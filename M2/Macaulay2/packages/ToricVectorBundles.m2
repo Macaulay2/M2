@@ -17,7 +17,7 @@ newPackage("ToricVectorBundles",
 	  Email => "nilten@sfu.ca"},
          {Name => "Lars Petersen"
 	  }},
-    Keywords => {"Toric Geometry"},
+    Areas => {"Toric Geometry"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "https://msp.org/jsag/",

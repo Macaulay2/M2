@@ -26,7 +26,7 @@ newPackage(
 	  },
      Headline => "aids in computations related to depth",
      PackageExports => {"Complexes"},
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      DebuggingMode => false
      )
 

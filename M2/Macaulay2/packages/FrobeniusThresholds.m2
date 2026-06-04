@@ -28,7 +28,7 @@ newPackage( "FrobeniusThresholds",
 	 }
     },
     Headline => "F-thresholds",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     AuxiliaryFiles => true,
     PackageImports => {"MinimalPrimes"},
     PackageExports => {"TestIdeals"},

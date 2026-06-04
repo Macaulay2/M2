@@ -16,7 +16,7 @@ newPackage( "RationalMaps",
         Email => "cjamesbott@gmail.com",
         HomePage=>"https://www.math.tamu.edu/directory/formalpg.php?user=cbott2"}
     }, --this file is in the public domain
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     Headline => "rational maps between varieties", 
     PackageExports => {"FastMinors", "Varieties"},
     Certification => {

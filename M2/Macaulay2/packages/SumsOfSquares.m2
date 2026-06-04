@@ -17,7 +17,7 @@ newPackage(
       HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
     },
     Headline => "sums of squares",
-    Keywords => {"Real Algebraic Geometry"},
+    Areas => {"Real Algebraic Geometry"},
     AuxiliaryFiles => true,
     PackageImports => {"FourierMotzkin"},
     PackageExports => {"SemidefiniteProgramming"},

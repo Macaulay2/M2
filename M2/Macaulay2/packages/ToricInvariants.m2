@@ -6,7 +6,7 @@ newPackage(
 		  Email => "m.helmer@math.ku.dk", 
 		  HomePage => "http://martin-helmer.com/"}},
 	Headline => "Euclidean distance degrees, polar degrees, and Chern-Mather classes of toric varieties",
-	Keywords => {"Toric Geometry"},
+	Areas => {"Toric Geometry"},
     	DebuggingMode => false,
 	PackageImports => {"LLLBases", "Polyhedra" }
     	);

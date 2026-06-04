@@ -16,7 +16,7 @@ newPackage(
                 {Name => "Giovanni Staglianò", 
                  Email => "giovanni.stagliano@unict.it"}},
     PackageExports => {"SpecialFanoFourfolds"},
-    Keywords => {"Algebraic Geometry"},
+    Areas => {"Algebraic Geometry"},
     Headline => "Explicit constructions of K3 surfaces",
     DebuggingMode => false
 )

@@ -13,7 +13,7 @@ newPackage(
 		    HomePage => "https://sites.google.com/view/kellervandebogert/home"}
 	       },
 	  Headline => "Schur modules and maps between them",
-	  Keywords => {"Homological Algebra", "Representation Theory"},
+	  Areas => {"Homological Algebra", "Representation Theory"},
 	  DebuggingMode => false,
 	  AuxiliaryFiles=>true
      	  )

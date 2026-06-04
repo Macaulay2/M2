@@ -20,7 +20,7 @@ newPackage(
 	    {Name => "Daniel Irving Bernstein", Email=> "dibernst@ncsu.edu", HomePage =>"http://www4.ncsu.edu/~dibernst"}
         },
         Headline => "splines on simplicial complexes, polytopal complexes, and graphs",
-	Keywords => {"Applied Algebraic Geometry"},
+	Areas => {"Applied Algebraic Geometry"},
         Configuration => {},
         DebuggingMode => false,
 	PackageImports => { "Complexes", "Elimination" },

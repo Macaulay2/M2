@@ -25,7 +25,7 @@ newPackage(
 	 HomePage => "https://sites.google.com/view/szotine/home" }
 	},
     Headline => "computations involving pushforwards and higher direct images of toric maps",
-    Keywords => {"Toric Geometry"},
+    Areas => {"Toric Geometry"},
     DebuggingMode => false,
     PackageExports => {"NormalToricVarieties","Complexes"},
     PackageImports => {"FourierMotzkin"}

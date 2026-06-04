@@ -10,7 +10,7 @@ newPackage(
             HomePage => "http://www.math.cornell.edu/~mike"}
         },
     Headline => "Noncommutative algebra",
-    Keywords => {"Noncommutative Algebra"},
+    Areas => {"Noncommutative Algebra"},
     PackageImports =>{"Complexes"},
     PackageExports =>{"IntegralClosure"},
     AuxiliaryFiles => true

@@ -24,7 +24,7 @@ newPackage(
         },
     AuxiliaryFiles => true,
     DebuggingMode => false,
-    Keywords => {"Examples and Random Objects"}
+    Areas => {"Examples and Random Objects"}
     )
 
 export {

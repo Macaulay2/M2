@@ -29,7 +29,7 @@ newPackage(
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageImports => {"Complexes"},
-    Keywords => {"Combinatorial Commutative Algebra"},
+    Areas => {"Combinatorial Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

@@ -13,7 +13,7 @@ newPackage(
 	     },
     	HomePage => "http://www.math.gatech.edu/~leykin",
     	Headline => "solving polynomial systems via monodromy",
-	Keywords => {"Numerical Algebraic Geometry"},
+	Areas => {"Numerical Algebraic Geometry"},
 	PackageImports => {"gfanInterface","NAGtypes"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true,

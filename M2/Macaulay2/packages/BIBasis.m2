@@ -13,7 +13,7 @@ newPackage(
         {Name => "Mikhail Zinin", Email => "mzinin@gmail.com"}
     },
     Headline => "involutive Pommaret basis in a Boolean ring",
-    Keywords => {"Groebner Basis Algorithms"},
+    Areas => {"Groebner Basis Algorithms"},
     PackageImports => {"BooleanGB"},
     DebuggingMode => false
     )

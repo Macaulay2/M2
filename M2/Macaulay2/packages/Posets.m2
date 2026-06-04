@@ -19,7 +19,7 @@ newPackage(
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
         },
         Headline => "partially ordered sets (posets)",
-	Keywords => {"Combinatorics"},
+	Areas => {"Combinatorics"},
         Configuration => {
             "DefaultPrecompute" => true,
             "DefaultSuppressLabels" => true

@@ -26,7 +26,7 @@ newPackage(
 	     {Name => "Claudiu Raicu", Email => "craicu@nd.edu", HomePage => "http://math.berkeley.edu/~claudiu/"},
 	     {Name => "Keller VandeBogert", Email => "keller.v@uky.edu", HomePage => "https://sites.google.com/view/kellervandebogert/home"}
 	     },
-	Keywords => {"Representation Theory"},
+	Areas => {"Representation Theory"},
     	Headline => "representation rings of general linear groups and of symmetric groups",
 	DebuggingMode => false
     	)

@@ -10,7 +10,7 @@ newPackage(
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "commutative formal group laws",
-	Keywords => {"Group Theory"},
+	Areas => {"Group Theory"},
 	PackageImports => {"Truncations"},
 	DebuggingMode => false)
 

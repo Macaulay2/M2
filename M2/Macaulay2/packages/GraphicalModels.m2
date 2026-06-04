@@ -55,7 +55,7 @@ newPackage(
 	  -- HomePage=>""}      
 	  },
      Headline => "discrete and Gaussian graphical models",
-     Keywords => {"Algebraic Statistics", "Graph Theory"},
+     Areas => {"Algebraic Statistics", "Graph Theory"},
      PackageExports => { "Graphs","StatGraphs" },
      PackageImports => { "IntegralClosure", "Elimination" },
      Certification => {

@@ -20,7 +20,7 @@ Version => "1.2.6", LastUpdated => "May 15th, 2023", Authors => {
     PackageImports => {"Complexes"},
     PackageExports => {"RandomPoints"},
     DebuggingMode => false, Reload=>false,
-Keywords => {"Linear Algebra"},
+Areas => {"Linear Algebra"},
 Certification => {
     "journal name" => "Journal of Software for Algebra and Geometry",
     "journal URI" => "https://msp.org/jsag/",

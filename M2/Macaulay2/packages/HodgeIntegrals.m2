@@ -22,7 +22,7 @@ newPackage(
 	    HomePage => "http://www.stephanieyang.com"}
          },
    Headline => "Hodge integrals on the moduli space of curves",
-   Keywords => {"Commutative Algebra"},
+   Areas => {"Commutative Algebra"},
    DebuggingMode => false
    )
 

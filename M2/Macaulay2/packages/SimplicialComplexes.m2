@@ -30,7 +30,7 @@ newPackage(
 	 HomePage => "https://sites.google.com/view/szotine/home" }
      },
     Headline => "exploring abstract simplicial complexes within commutative algebra",
-    Keywords => {"Combinatorial Commutative Algebra"},
+    Areas => {"Combinatorial Commutative Algebra"},
     PackageExports => { "Polyhedra", "Complexes" },
     AuxiliaryFiles => true,
     Certification => {

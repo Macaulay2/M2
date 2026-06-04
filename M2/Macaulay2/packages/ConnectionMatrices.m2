@@ -12,7 +12,7 @@ newPackage(
 	{ Name => "Francesca Zaffalon",      Email => "francesca.zaffalon@mis.mpg.de",      HomePage => "" }
     },
     Headline => "connection matrices and integrable systems from D-ideals",
-    Keywords => { "D-modules" },
+    Areas => { "D-modules" },
     PackageExports => { "Dmodules" },
     AuxiliaryFiles => true,
     DebuggingMode => false,

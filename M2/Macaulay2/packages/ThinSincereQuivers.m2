@@ -13,7 +13,7 @@ newPackage(
         }
     },
     PackageImports => {"Graphs", "Polyhedra", "LatticePolytopes"},
-    Keywords => {"Toric Geometry"},
+    Areas => {"Toric Geometry"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

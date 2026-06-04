@@ -47,7 +47,7 @@ newPackage (
     PackageExports => {},
     AuxiliaryFiles => true,
 	DebuggingMode => false,
-	Keywords => {"Homotopy Theory","Commutative Algebra"},
+	Areas => {"Homotopy Theory","Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

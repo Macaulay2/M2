@@ -17,7 +17,7 @@ newPackage(
         Email => "pirnes@wisc.edu"}
     },
     Headline => "polynomial system solver via eigen-computations",
-    Keywords => {"Numerical Algebraic Geometry"},
+    Areas => {"Numerical Algebraic Geometry"},
     PackageExports => {"NAGtypes"},
     AuxiliaryFiles => false,
     DebuggingMode => false

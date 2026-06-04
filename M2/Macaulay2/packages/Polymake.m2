@@ -6,7 +6,7 @@ newPackage(
 		  Email => "jyu@math.mit.edu", 
 		  HomePage => "http://www.math.mit.edu/~jyu/"}},
     	Headline => "interfacing with polymake",
-	Keywords => {"Interfaces"},
+	Areas => {"Interfaces"},
     	DebuggingMode => false
     	)
 

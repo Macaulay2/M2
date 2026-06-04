@@ -23,7 +23,7 @@ newPackage(
 	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://bstone.github.io/"}
 	     },
     	Headline => "the Quillen-Suslin algorithm for bases of projective modules",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",

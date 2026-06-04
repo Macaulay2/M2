@@ -12,7 +12,7 @@ newPackage(
 		  HomePage => "http://www.math.ist.utl.pt/~papadak/"}
                    },
     	Headline => "unprojection and the Kustin-Miller complex construction",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	PackageExports => {"SimplicialComplexes", "Complexes"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

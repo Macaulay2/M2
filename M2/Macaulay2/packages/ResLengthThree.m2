@@ -30,7 +30,7 @@ newPackage ( "ResLengthThree",
     Headline => "Multiplication in free resolutions of length three",
     Reload => false,
     DebuggingMode => false,
-    Keywords => { "Homological Algebra" },
+    Areas => { "Homological Algebra" },
     PackageExports => { "Complexes" }
     )
 

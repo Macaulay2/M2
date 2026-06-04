@@ -8,7 +8,7 @@ newPackage(
 		    },
                 DebuggingMode => false,
 		PackageExports => {"DGAlgebras"},
-		Keywords => {"Lie Groups and Lie Algebras"}
+		Areas => {"Lie Groups and Lie Algebras"}
                 )                                      
 
 

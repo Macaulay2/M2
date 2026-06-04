@@ -12,7 +12,7 @@ newPackage(
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu", HomePage => "https://people.math.gatech.edu/~aleykin3"},
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
 	  },
-     Keywords => {"Numerical Algebraic Geometry"},
+     Areas => {"Numerical Algebraic Geometry"},
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      PackageExports => {"NAGtypes",
 	 "NumericalLinearAlgebra",

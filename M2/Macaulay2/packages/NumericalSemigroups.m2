@@ -8,7 +8,7 @@ newPackage(
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageExports => {"FourierMotzkin","Normaliz", "IntegralClosure", "FastMinors",  "RandomPoints"},
-    Keywords => {"Commutative Algebra", "Algebraic Geometry", "Combinatorics"}
+    Areas => {"Commutative Algebra", "Algebraic Geometry", "Combinatorics"}
     )
 ///
 restart

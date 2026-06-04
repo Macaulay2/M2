@@ -20,7 +20,7 @@ newPackage(
 			}
 	},
 	Headline => "Collections of cells and binomial ideals",
-	Keywords => {"Combinatorial Commutative Algebra"},
+	Areas => {"Combinatorial Commutative Algebra"},
 	PackageImports => { "Graphs", "gfanInterface" }
 )
 

@@ -15,7 +15,7 @@ newPackage(
     LastUpdated => "April 18, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
-    Keywords => {"Projective Algebraic Geometry"},
+    Areas => {"Projective Algebraic Geometry"},
     PackageImports => {"PrimaryDecomposition","TangentCone"},
     PackageExports => {"Cremona","SparseResultants","Varieties"},
     DebuggingMode => false,

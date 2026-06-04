@@ -20,7 +20,7 @@ newPackage(
                 }
             },
         Headline => "code to analyze graph oscillators",
-        Keywords => {"Applied Algebraic Geometry"},
+        Areas => {"Applied Algebraic Geometry"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
         PackageExports => {

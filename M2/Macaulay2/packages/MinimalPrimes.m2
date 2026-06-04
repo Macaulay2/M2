@@ -27,7 +27,7 @@ newPackage(
 	{Name => "Franziska Hinkelmann"},
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageImports => { "Elimination" },
     AuxiliaryFiles => true,
     DebuggingMode => false

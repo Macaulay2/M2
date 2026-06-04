@@ -6,7 +6,7 @@ newPackage("Padic",
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"Algebraic Number Theory"},
+    Areas => {"Algebraic Number Theory"},
     PackageExports => {"Valuations"},
     PackageImports => {"ForeignFunctions"})
 

@@ -6,7 +6,7 @@ newPackage(
     Authors => {
 	{Name => "Luke Oeding", Email => "oeding@auburn.edu", HomePage => "http://webhome.auburn.edu/~lao0004/"}}, 
     Headline => "Builds an algebra extending an exterior algebra", 
-    Keywords => {"Lie Groups and Lie Algebras"},
+    Areas => {"Lie Groups and Lie Algebras"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

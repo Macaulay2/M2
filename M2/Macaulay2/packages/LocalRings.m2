@@ -35,7 +35,7 @@ newPackage(
         {Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "http://www.msri.org/~de/"}
         },
     Headline => "operations over a local ring R_p",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageExports => {"Saturation", "Complexes"},
     AuxiliaryFiles => true
     )

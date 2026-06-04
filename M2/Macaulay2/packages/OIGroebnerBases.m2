@@ -14,7 +14,7 @@ newPackage("OIGroebnerBases",
     Headline => "OI-modules over Noetherian polynomial OI-algebras",
     Version => "1.0.0",
     LastUpdated => "September 6, 2023",
-    Keywords => { "Commutative Algebra" },
+    Areas => { "Commutative Algebra" },
     Authors => {
         { Name => "Michael Morrow", HomePage => "https://michaelmorrow.me", Email => "michaelhmorrow98@gmail.com" }
     },

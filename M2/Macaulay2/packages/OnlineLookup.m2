@@ -7,7 +7,7 @@ newPackage(
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "Look up mathematical information online",
-	Keywords => {"System"},
+	Areas => {"System"},
         DebuggingMode => false,
 	AuxiliaryFiles => true,
 	CacheExampleOutput => true,

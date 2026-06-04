@@ -27,7 +27,7 @@ newPackage(
      Headline => "finite group characters on free resolutions and graded modules",
      DebuggingMode => false,
      PackageExports => {"Complexes"},
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      Certification => {
 	 "journal name" => "Journal of Software for Algebra and Geometry",
 	 "journal URI" => "https://msp.org/jsag/",

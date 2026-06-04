@@ -36,7 +36,7 @@ newPackage(
 		    HomePage => "https://sites.nd.edu/kellerv/"
 		    }},
 	  Headline => "Pieri inclusions and projections between Schur modules with multiple basis conventions",
-	  Keywords => {"Representation Theory"},
+	  Areas => {"Representation Theory"},
 	  DebuggingMode => false,
 	  AuxiliaryFiles => true
 	  )

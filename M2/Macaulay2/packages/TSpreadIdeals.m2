@@ -6,7 +6,7 @@ LastUpdated => "February 01, 2021",
 Authors => {{Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http://mat521.unime.it/amata"}
            },
 Headline => "t-spread ideals of a polynomial ring",
-Keywords => {"Commutative Algebra"},
+Areas => {"Commutative Algebra"},
 PackageImports => {"Complexes"},
 DebuggingMode => false
 )

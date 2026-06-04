@@ -3,7 +3,7 @@ newPackage ("Macaulay2Doc",
     Headline => "Macaulay2 documentation",
     HomePage => "https://macaulay2.com/",
     Authors => { -* see the contributors listed on the main page *- },
-    Keywords => { "Documentation" },
+    Areas => { "Documentation" },
     InfoDirSection => "Macaulay2 and its packages",
     AuxiliaryFiles => true
 )

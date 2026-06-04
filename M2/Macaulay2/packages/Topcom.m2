@@ -23,7 +23,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "interface to the topcom software package which in particular computes triangulations",
-        Keywords => {"Interfaces"},
+        Areas => {"Interfaces"},
         DebuggingMode => false
         )
 

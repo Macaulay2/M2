@@ -7,7 +7,7 @@ newPackage(
 		  Email => "dan@math.uiuc.edu", 
 		  HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "uniformization of elliptic curves",
-	Keywords => {"Complex Analytic Geometry", "Numerical Algebraic Geometry"},
+	Areas => {"Complex Analytic Geometry", "Numerical Algebraic Geometry"},
 	PackageImports => {"Varieties"},
     	DebuggingMode => false
     	)

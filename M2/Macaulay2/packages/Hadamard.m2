@@ -14,7 +14,7 @@ newPackage(
     DebuggingMode => false,
     Reload => false,
     PackageExports => {"Points"},
-    Keywords => {"Commutative Algebra"}
+    Areas => {"Commutative Algebra"}
     )
 export {
     -- types

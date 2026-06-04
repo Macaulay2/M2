@@ -45,7 +45,7 @@ newPackage(
 		}
 	},
 	Headline => "edge ideals",
-	Keywords => {"Edge Ideals"},
+	Areas => {"Edge Ideals"},
 	DebuggingMode => false
 )
 

@@ -9,7 +9,7 @@ newPackage("WeylAlgebras",
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	  {Name => "Harrison Tsai"}
 	  },
-     Keywords => {"D-modules"},
+     Areas => {"D-modules"},
      DebuggingMode => false,
      PackageImports => {
 	 "PrimaryDecomposition",

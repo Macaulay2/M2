@@ -36,7 +36,7 @@ newPackage (
             {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"}
         },
         Headline => "graphs and directed graphs (digraphs)",
-	Keywords => {"Graph Theory"},
+	Areas => {"Graph Theory"},
         Configuration => {
             "DotBinary" => "dot"
             },

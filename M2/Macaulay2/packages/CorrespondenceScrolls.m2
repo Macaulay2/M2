@@ -22,7 +22,7 @@ newPackage(
 		   -- Email => "",
 		   HomePage => ""}},
     	Headline => "correspondence scrolls",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	PackageImports => { "Elimination", "Complexes" }
 	)
 

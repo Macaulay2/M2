@@ -19,7 +19,7 @@ newPackage(
      HomePage => "http://www.math.uic.edu/~jan"}
   },
   Headline => "interface to PHCpack",
-  Keywords => {"Numerical Algebraic Geometry", "Interfaces"},
+  Areas => {"Numerical Algebraic Geometry", "Interfaces"},
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

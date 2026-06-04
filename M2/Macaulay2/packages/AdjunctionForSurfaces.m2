@@ -25,7 +25,7 @@ newPackage(
 	         },
     	Headline => "Adjunction for Surfaces",
         PackageImports => {"Complexes"},
-	Keywords => {"Projective Algebraic Geometry"}
+	Areas => {"Projective Algebraic Geometry"}
     	)
 
 export {

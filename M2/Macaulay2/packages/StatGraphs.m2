@@ -31,7 +31,7 @@ newPackage(
 	   Email=> "harshitmotwani2015@gmail.com",
 	   HomePage=> "https://sites.google.com/view/harshitjmotwani/home"}},
         Headline => "Graphs specific for algebraic statistics",
-	Keywords => {"Algebraic Statistics", "Graph Theory"},
+	Areas => {"Algebraic Statistics", "Graph Theory"},
         DebuggingMode => false,
 	PackageExports => {"Graphs"}
         )

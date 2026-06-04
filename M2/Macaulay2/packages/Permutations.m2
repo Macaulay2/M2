@@ -3,7 +3,7 @@ newPackage(
     AuxiliaryFiles => true,
     Version => "1.1", 
     LastUpdated => "May 13, 2025",
-    Keywords => {"Combinatorics"},
+    Areas => {"Combinatorics"},
     Authors => {
         {Name => "Sean Grate", 
          Email => "sean.grate@auburn.edu", 

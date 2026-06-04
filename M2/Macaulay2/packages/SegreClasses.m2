@@ -10,7 +10,7 @@ newPackage( "SegreClasses",
          HomePage => "http://coreyharris.name"}
     },
     Headline => "Segre class computations for containment of varieties and Fulton-MacPherson intersection products",
-    Keywords => {"Intersection Theory"},
+    Areas => {"Intersection Theory"},
     DebuggingMode => false
 );
 

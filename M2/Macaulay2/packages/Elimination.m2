@@ -3,7 +3,7 @@ newPackage("Elimination",
      Version => "1.0", 
      LastUpdated => "January 5, 2005",
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      Headline => "elimination of variables"
      )
 

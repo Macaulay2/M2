@@ -17,7 +17,7 @@ newPackage(
 		  HomePage => "https://sites.google.com/view/ethan-reed/home"}
 	    },
     	Headline => "Cohomology on the incidence correspondence, bundle of principal parts, and Lefschetz properties",
-	Keywords => {"Algebraic Geometry", "Commutative Algebra", "Flag Varieties"}
+	Areas => {"Algebraic Geometry", "Commutative Algebra", "Flag Varieties"}
 	--Certification => {
 	  --   "journal name" => "",
 	    -- "journal URI" => "",

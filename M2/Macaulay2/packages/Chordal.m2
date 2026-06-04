@@ -12,7 +12,7 @@ newPackage(
        HomePage => "http://www.mit.edu/~parrilo/"}
     },
     Headline => "routines that exploit chordal structure",
-    Keywords => {"Commutative Algebra", "Graph Theory"},
+    Areas => {"Commutative Algebra", "Graph Theory"},
     AuxiliaryFiles => true,
     PackageImports => {"PrimaryDecomposition"},
     PackageExports => {"Graphs","TriangularSets"}

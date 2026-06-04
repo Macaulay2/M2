@@ -7,7 +7,7 @@ newPackage(
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"}},
     	Headline => "rational parametrization of rational plane curves and related computations",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
     	DebuggingMode => false,
 	CacheExampleOutput => true,
 	AuxiliaryFiles => true,

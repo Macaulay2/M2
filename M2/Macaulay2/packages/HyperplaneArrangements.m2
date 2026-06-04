@@ -21,7 +21,7 @@ newPackage(
 	   HomePage => "https://sites.google.com/view/avi-steiner"}
 	  },
      Headline => "manipulating finite sets of hyperplanes",
-     Keywords => {"Algebraic Geometry", "Matroids"},
+     Areas => {"Algebraic Geometry", "Matroids"},
      DebuggingMode => false,
      PackageImports => {"Complexes"},
      PackageExports => {"Matroids"}
