@@ -151,6 +151,10 @@ degree CoherentSheaf := F -> (
     if isStandardGraded R then degree module F
     else degree M / product flatten degrees R)
 
+-- this function is not an invariant of sheaves,
+-- but is very convenient for sums of line bundles, for instance
+degrees CoherentSheaf := F -> degrees module F
+
 genus   CoherentSheaf := F -> genus   module F
 genera  CoherentSheaf := F -> genera  module F
 -- TODO: this is incorrect in higher picard rank
