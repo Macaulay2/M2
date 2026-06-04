@@ -261,6 +261,8 @@ tauMaps(Ring,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
 -- TESTS
 --===================================================================================================
 
+-- resLengthThreeAlg: products in the resolution algebra (default e/f/g
+-- basis symbols), for an ideal whose resolution has length three.
 TEST ///
 Q = QQ[x,y,z];
 F = freeResolution ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
@@ -269,69 +271,71 @@ assert ( e_1*e_2 == y*f_1 )
 assert ( e_1*f_4 == -x*g_1 )
 ///
 
-TEST ///
-Q = QQ[x,y,z];
-F = freeResolution ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-G = resLengthThreeAlg F
-assert ( e_1*e_2 == y*f_1 )
-assert ( e_1*f_4 == -x*g_1 )
-///
-
+-- resLengthThreeTorAlgClass: an ideal of class B.
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y,z^2,y*z,z^2)
 assert( resLengthThreeTorAlgClass I === "B" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class C(3).
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal (u*v,w*x,y*z)
 assert( resLengthThreeTorAlgClass I === "C(3)" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class G(7).
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^3,x^2*z,x*(z^2+x*y),z^3-2*x*y*z,y*(z^2+x*y),y^2*z,y^3)
 assert( resLengthThreeTorAlgClass I === "G(7)" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class G(2).
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x*y^2,x*y*z,y*z^2,x^4-y^3*z,x*z^3-y^4)
 assert( resLengthThreeTorAlgClass I === "G(2)" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class H(0,0), via the Complex overload.
 TEST ///
 Q = QQ[x,y,z]
-I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
+I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)
 assert( resLengthThreeTorAlgClass freeResolution I === "H(0,0)" )
 ///
 
+-- resLengthThreeTorAlgClass: the same ideal of class H(0,0), via the Ideal overload.
 TEST ///
 Q = QQ[x,y,z]
-I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
+I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)
 assert( resLengthThreeTorAlgClass I === "H(0,0)" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class T.
 TEST ///
 Q = QQ[x,y,z]
-I = ideal(x^3,y^3,z^3,x*y*z)  
+I = ideal(x^3,y^3,z^3,x*y*z)
 assert( resLengthThreeTorAlgClass I === "T" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class H(6,5).
 TEST ///
 Q = QQ[x,y,z]
-I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)  
+I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)
 assert( resLengthThreeTorAlgClass I === "H(6,5)" )
 ///
 
+-- makeRes builds a length-three resolution from three matrices; the
+-- degree-two products from resLengthThreeAlg vanish in the Tor algebra.
 TEST ///
 Q = QQ[x,y,z]
 d1 = matrix{{-x^2,z^2-x*y,-y^2,-x*z,-y*z}}
 d2 = matrix{{0,0,z,0,-y},{0,0,0,-y,x},{-z,0,0,x,0},{0,y,-x,0,z},{y,-x,0,-z,0}}
 d3 = transpose d1
 F = makeRes(d1,d2,d3)
-A = resLengthThreeAlg F 
+A = resLengthThreeAlg F
 assert(e_2*e_4===y*f_3+z*f_5)
 assert(e_1*e_2===-z*f_3-x*f_5)
 assert(e_3*e_5===-y*f_1)
@@ -341,6 +345,8 @@ assert(e_1*e_2===sub(0,T))
 assert(e_3*e_5===sub(0,T))
 ///
 
+-- resLengthThreeAlg: a full set of degree-one products e_i*e_j and the
+-- degree-one-times-degree-two products e_i*f_j.
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x*y, y*z, x^3, y^3-x*z^2,x^2*z, z^3)
@@ -357,6 +363,38 @@ assert( e_1*f_4 == -x*g_1 )
 assert( e_1*f_5 == 0 )
 assert( e_1*f_6 == g_2 )
 assert( e_1*f_7 == 0 )
+///
+
+-- the Labels and Compact options of multTableOneOne and multTableOneTwo.
+TEST ///
+Q = QQ[x,y,z]
+A = resLengthThreeAlg freeResolution ideal(x^2,y^2,z^2)
+-- Labels => true (the default) prefixes a basis-label row and column
+assert(first multTableOneOne A == {" ", e_1, e_2, e_3})
+assert(# multTableOneOne A == 1 + # multTableOneOne(A, Labels => false))
+-- Labels => false returns the bare 3-by-3 product table
+assert(multTableOneOne(A, Labels => false) == {{0,f_1,f_2},{-f_1,0,f_3},{-f_2,-f_3,0}})
+-- Compact => true prints "." for the products e_i*e_j with i > j
+assert(multTableOneOne(A, Compact => true, Labels => false) == {{0,f_1,f_2},{".",0,f_3},{".",".",0}})
+-- Compact leaves the diagonal and above-diagonal entries unchanged
+assert(multTableOneOne(A, Compact => false, Labels => false) == multTableOneOne(A, Labels => false))
+-- multTableOneTwo honors Labels the same way
+assert(# multTableOneTwo A == 1 + # multTableOneTwo(A, Labels => false))
+///
+
+-- error tests: the exported functions reject malformed input.
+TEST ///
+Q = QQ[x,y,z]
+S = QQ[w]
+-- multTableOneOne / multTableOneTwo need an algebra from a resLengthThree routine
+assert(try (multTableOneOne S; false) else true)
+assert(try (multTableOneTwo S; false) else true)
+-- resLengthThreeAlg needs a length-three resolution
+assert(try (resLengthThreeAlg freeResolution ideal(x^2); false) else true)
+-- resLengthThreeAlg needs a list of exactly three symbols
+assert(try (resLengthThreeAlg(freeResolution ideal(x^2,y^2,z^2), {getSymbol "e", getSymbol "f"}); false) else true)
+-- makeRes rejects matrices that do not form a resolution
+assert(try (makeRes(matrix{{x}}, matrix{{y}}, matrix{{z}}); false) else true)
 ///
 
 --==========================================================================

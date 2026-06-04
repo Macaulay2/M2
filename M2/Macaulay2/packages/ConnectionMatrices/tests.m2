@@ -132,6 +132,9 @@ TEST /// -- Example from Overleaf
 
   R = baseFractionField D2
   -- TODO: this should work once frac acts like baseFractionField
+  -- (baseFractionField is cached per-D, so two Weyl algebras differing only in their weight
+  -- order currently produce ===-distinct fraction fields even though the underlying field is
+  -- the same; reviving the assertion below requires Core to canonicalize these.)
   -- assert(R === baseFractionField D1)
 
   -- Compute Groebner Basis
@@ -260,4 +263,76 @@ for i in 0..#Plist-1 do (
 )
 assert(Q == 0);
 
+///
+
+TEST /// -- connectionMatrix (Ideal / List) is documented but had no direct assertion before
+  D = makeWeylAlgebra(QQ[x,y], w = {1,2});
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+
+  -- The visualization-only output is a Net combining the connection matrices times their dx_i
+  cm = connectionMatrix I;
+  assert(class cm === Net);
+
+  -- the (Ideal) overload agrees with the (List) overload run on the same input
+  A = connectionMatrices I;
+  assert(cm == connectionMatrix A);
+
+  -- mismatched-ring list of matrices is rejected (ConnectionMatrices.m2:116)
+  D' = makeWeylAlgebra(QQ[u,v], {1,1});
+  F' = baseFractionField D';
+  A' = sub(matrix{{0_F', 1_F'}, {0_F', 0_F'}}, F');
+  assert(try (connectionMatrix {A_0, A'}; false) else true);
+
+  -- list whose length does not match the number of differential variables is rejected
+  -- (ConnectionMatrices.m2:118)
+  assert(try (connectionMatrix {A_0}; false) else true);
+///
+
+TEST /// -- normalForm(P, G): pin reductions over the rational Weyl algebra (Example 1.3, w = {1,2})
+  D = makeWeylAlgebra(QQ[x,y], w = {1,2});
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+  debug needsPackage "ConnectionMatrices";
+  R = rationalWeylAlgebra D;
+  G = flatten entries gens gb I;
+  -- access the coefficient-ring generators via F_i / R_i: the bare names x,y after `use R`
+  -- still refer to D's non-commutative Weyl-algebra generators, not F's commutative fractions.
+  F = coefficientRing R;
+  xF = F_0; yF = F_1;
+  dxR = R_0; dyR = R_1;
+
+  -- normalForm(0, G) = 0
+  assert(normalForm(0_R, G) == 0_R);
+
+  -- standard monomials reduce to themselves (here {1, dx})
+  SM = standardMonomials I;
+  assert all(SM, m -> normalForm(sub(m, R), G) == sub(m, R));
+
+  -- Pin specific reductions. These mirror the post-end-- worked examples in
+  -- ConnectionMatrices/normalForm.m2 and the connection matrices already asserted in
+  -- "course notes, Example 7.16 (1)" above.
+  assert(normalForm(dyR, G)        == -(xF/yF)*dxR - 1/yF);
+  assert(normalForm(dxR*dyR, G)    == ((xF+yF)/(xF*yF - yF^2))*dxR + 1/(xF*yF - yF^2));
+  assert(normalForm(dxR^2, G)      == ((-3*xF + yF)/(xF^2 - xF*yF))*dxR - 1/(xF^2 - xF*yF));
+  assert(normalForm(dyR^2, G)      == ((xF^2 - 3*xF*yF)/(xF*yF^2 - yF^3))*dxR + (xF - 2*yF)/(xF*yF^2 - yF^3));
+///
+
+TEST /// -- normalForm(P, g): single-generator reductions (Example 1.3, w = {1,2})
+  D = makeWeylAlgebra(QQ[x,y], w = {1,2});
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+  debug needsPackage "ConnectionMatrices";
+  R = rationalWeylAlgebra D;
+  G = flatten entries gens gb I;
+  F = coefficientRing R;
+  xF = F_0; yF = F_1;
+  dxR = R_0; dyR = R_1;
+
+  -- with the single generator G#0 = y*dy + x*dx + 1: dx is irreducible
+  assert(normalForm(dxR, G#0) == dxR);
+
+  -- dx*dy reduces (recursively, single-generator) to a polynomial in dx with rational
+  -- coefficients in x, y
+  assert(normalForm(dxR*dyR, G#0) == -(xF/yF)*dxR^2 - (2/yF)*dxR);
+
+  -- dy^2 likewise reduces to a polynomial in dx alone
+  assert(normalForm(dyR^2, G#0)   == (xF^2/yF^2)*dxR^2 + (4*xF/yF^2)*dxR + 2/yF^2);
 ///

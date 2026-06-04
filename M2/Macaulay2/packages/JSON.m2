@@ -384,7 +384,11 @@ doc ///
 ///
 
 -- generate parsing test file
-///
+-- (Wrapped in -* ... *- below so the block is treated as a comment by M2
+-- rather than as a top-level string literal that is evaluated and
+-- discarded at load time. Run this snippet by hand to regenerate
+-- JSON/tests/parse.m2 from the upstream JSONTestSuite.)
+-*
 tmpdir = temporaryFileName()
 makeDirectory tmpdir
 run("cd " | tmpdir |" && git clone https://github.com/nst/JSONTestSuite")
@@ -412,4 +416,4 @@ for tst in sort select(tsts, f -> match("^y_", f)) do (
     outfile << "assert BinaryOperation(symbol ===, fromJSON " <<
     format testjson << ", " << toExternalString fromJSON testjson << ")" << endl)
 close outfile
-///
+*-

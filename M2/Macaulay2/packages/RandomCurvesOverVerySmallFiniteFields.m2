@@ -1301,10 +1301,63 @@ doc ///
 	       Enabling this option also enable the option {\tt Printing}.
   SeeAlso
     Printing
-    smoothCanonicalCurve 
+    smoothCanonicalCurve
     smoothCanonicalCurveGenus14
-    smoothCanonicalCurveGenus15  
+    smoothCanonicalCurveGenus15
 ///
+
+----------------------------------------------------------------------
+-- Tests.  Prior to this PR the package had zero registered TEST blocks
+-- (a "TEST ///" sat after "end" at the bottom of the file, hidden from
+-- the test runner).  Add three fast deterministic tests for the light,
+-- pure-arithmetic exports; the heavy random-curve constructors can be
+-- exercised separately when the package's known clock-dependent random
+-- seeding and the genus-14 / p=2 crash are resolved.
+----------------------------------------------------------------------
+
+TEST ///
+-- expectedBetti(g, r, d) returns the expected Betti table of a canonical
+-- curve of degree d and genus g in P^r.  Verified against the classical
+-- complete-intersection table for the canonical g=4 curve (a (2,3)-CI in
+-- P^3) and the 1, 3, 3, 1 table of the canonical g=5 curve in P^4.
+b1 = expectedBetti(4, 3, 6);
+assert(instance(b1, BettiTally));
+assert(b1#(0,{0},0) == 1);
+assert(b1#(1,{2},2) == 1);
+assert(b1#(1,{3},3) == 1);
+assert(b1#(2,{5},5) == 1);
+b2 = expectedBetti(5, 4, 8);
+assert(b2#(0,{0},0) == 1);
+assert(b2#(1,{2},2) == 3);
+assert(b2#(2,{4},4) == 3);
+assert(b2#(3,{6},6) == 1);
+///
+
+TEST ///
+-- hilbertNumerator(L, r, t): given a Hilbert-function prefix L (truncated at
+-- some degree) and an ambient dimension r, return the numerator polynomial of
+-- the corresponding Hilbert series.  Verify on a small example.
+T = QQ[t];
+hn = hilbertNumerator({1,4,7,13,19,25}, 3, t);
+assert(hn == 3*t^5 - 6*t^4 + 5*t^3 - 3*t^2 + 1);
+-- the List/r form of expectedBetti agrees with the (g, r, d) form when the
+-- input list is the Hilbert function of a canonical genus-4 curve in P^3
+-- (a (2,3) complete intersection, with Hilbert function {1, 4, 9, 15, 21, ...}).
+L = apply(10, i -> if i > 1 then 6*i + 1 - 4 else binomial(3+i, 3));
+assert(expectedBetti(L, 3) == expectedBetti(4, 3, 6));
+///
+
+TEST ///
+-- isSmoothCurve: true on the twisted cubic (a smooth rational curve in P^3),
+-- false on the cuspidal cubic y^2*z - x^3 in P^2 (singular at the origin).
+S = QQ[x,y,z,w];
+twistedCubic = minors(2, matrix{{x,y,z},{y,z,w}});
+assert(isSmoothCurve twistedCubic);
+S2 = QQ[x,y,z];
+cuspidalCubic = ideal(y^2*z - x^3);
+assert(not isSmoothCurve cuspidalCubic);
+///
+
 end
 
 restart

@@ -3315,8 +3315,6 @@ doc ///
         Example
             assert(Hom(f, C) == Hom(f, id_C))
             assert(Hom(C, f) == Hom(id_C, f))
-        Text
-            XXX write this text after writing doc for homomorphism and homomorphism'.
         Example
             e = randomFactorizationMap(source h, ZZdfactorization(S^1, 2, Base => 1))
             phi = homomorphism e
@@ -5527,43 +5525,6 @@ doc ///
             isdFactorization K'
 ///
 
--*
-doc ///
-    Key
-        eulerChi
-        (eulerChi, ZZdFactorization)
-    Headline
-        Calculates the Euler characteristic of a ZZdFactorization
-    Usage
-        eulerChi(ZZdFactorization)
-    Inputs
-        ZZdFactorization:ZZdFactorization
-            A ZZdFactorization object representing a complex
-    Outputs
-        :ZZ
-    Description
-         Text
-            Calculates the Euler characteristic of a ZZdFactorization. To be well-defined, the input should be a complex.
-            This method calculates the Euler characteristic by computing
-	    $$\ell_R (H_0 (C)) - \ell_R (H_1 (C))$$
-	    where $C$ is some ZZ/2-graded complex. An easy way to construct such complexes is to take
-	    the endomorphisms of a matrix factorization arising from an isolated singularity.
-         Example
-            S = ZZ/101[a..c]
-	    C = koszulMF(a^3+b^3+c^3)
-	    E = Hom(C,C)
-	    prune HH E
-	    eulerChi E
-	    Q = ZZ/101[a,b,c,d]
-	    D = koszulMF(a*b - c*d)
-	    F = Hom(D,D)
-	    eulerChi(F)
-    Caveat
-        In order to be well-defined, the input should be a complex (ie, the differential should square to 0).
-    SeeAlso
-        "Making ZZdFactorizations"
-///
-*-
 
 doc ///
     Key
@@ -6278,42 +6239,6 @@ doc ///
 	"Preprogrammed examples and operations"
 ///
 
--*
-doc ///
-    Key
-        rk1MCM3gen
-        (rk1MCM3gen, ZZ, ZZ)
-	(rk1MCM3gen, ZZ)
-    Headline
-        Constructs a rank 1, 3-generated maximal Cohen-Macaulay module
-    Usage
-        rk1MCM2gen(p, d)
-    Inputs
-        p: List
-            Specifies characteristic of base field (assumes QQ if d is not specified)
-        d: ZZ
-            an integer, determining the type of factorization
-    Outputs
-        : ZZdFactorization
-            The constructed factorization that determines a rank 1, 3-generated maximal Cohen-Macaulay module
-    Description
-        Text
-            This method constructs a rank 1, 3-generated maximal Cohen-Macaulay module based on the input parameters specified by a list.
-            The integer d specifies the characteristic of the base field (default is 0, representing QQ).
-            It generates the module based on the input parameters and returns the corresponding factorization.
-        Example
-            F = rk1MCM2gen({2,2,2},0)
-	    diffs = F.dd
-	    diffs^2
-	    F' = rk1MCM2gen({1,2,4},0)
-	    isdFactorization(F')
-    SeeAlso
-        mooreMF
-	rk1MCM2gen
-	classicalAdjoint
-	"Preprogrammed examples and operations"
-///
-*-
 
 
 

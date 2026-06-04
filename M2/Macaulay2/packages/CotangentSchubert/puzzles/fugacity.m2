@@ -107,6 +107,7 @@ fugacityK0 = p -> (
 
 fugacity = true >> o -> p -> (
     if #o>0 then p = p ++ o; -- change options
+    -- TODO: the d>3 limitation thrown below is not mentioned user-facing.
     if p.Separation === null and p#Steps > 3 then error "fugacities not implemented yet for d>3";
     if not p.Equivariant and not p.Ktheory then return 1; -- ha
     if not p.Generic and not p.Equivariant then return (-1)^(inversion nwside p+inversion neside p-inversion bottom p); -- difference of inversion numbers -- careful with multinumber on bdry

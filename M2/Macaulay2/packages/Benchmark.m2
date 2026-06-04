@@ -259,6 +259,28 @@ beginDocumentation()
 
 scan(keys benchmarks, b -> TEST ("runBenchmarks "|format b))
 
+-- the runBenchmarks Command dispatches on String, List, and Function (`all`).
+-- The auto-generated TESTs above cover the String path; this covers the
+-- List path with a single fast benchmark and the Function path indirectly.
+TEST ///
+needsPackage "Benchmark";
+-- List form should accept a singleton list (and runs the same way as
+-- runBenchmarks "res39").
+assert(try (runBenchmarks {"res39"}; true) else false);
+///
+
+-- error paths: bad benchmark name, wrong type, wrong Function.
+TEST ///
+needsPackage "Benchmark";
+-- a string that is not a benchmark key should raise rather than silently
+-- return null.
+assert(try (runBenchmarks "no_such_benchmark"; false) else true);
+-- a non-string, non-list, non-function input should not dispatch.
+assert(try (runBenchmarks 42; false) else true);
+-- only the Function `all` is valid; any other Function errors.
+assert(try (runBenchmarks identity; false) else true);
+///
+
 multidoc ///
 Node
  Key

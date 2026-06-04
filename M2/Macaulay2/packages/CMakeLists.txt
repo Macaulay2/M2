@@ -141,6 +141,7 @@ foreach(package IN LISTS PACKAGES)
     file(COPY ${package}  DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
   endif()
 
+
   ## Configuring the command strings
   _M2_STRING_CONFIGURE(M2_INSTALL_TEMPLATE M2_INSTALL_STRING TRUE)
   _M2_STRING_CONFIGURE(M2_CHECK_TEMPLATE   M2_CHECK_STRING)
@@ -252,3 +253,6 @@ foreach(package IN LISTS PACKAGES)
     DEPENDS M2-core
     )
 endforeach()
+
+file(COPY LanguageServer/M2-language-server
+     DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})

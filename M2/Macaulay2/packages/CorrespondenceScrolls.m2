@@ -793,6 +793,134 @@ assert(I ==ideal  {-x_(0,1)*x_(1,0)+x_(0,0)*x_(1,1),
        -x_(0,1)*x_(2,0)+x_(0,0)*x_(2,1), -x_(1,1)*x_(2,0)+x_(1,0)*x_(2,1)})
 ///       
 
+------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: direct coverage
+-- for the previously-untested multiHilbertPolynomial export,
+-- structural (non-toString) coverage for hankelMatrix /
+-- irrelevantIdeal / schemeInProduct / correspondencePolynomial,
+-- option propagation, and carpet structural invariants.
+------------------------------------------------------------
+
+-- multiHilbertPolynomial -- the only export with no existing TEST.  For a
+-- product of projective spaces P^{a_1} x ... x P^{a_n} the Hilbert polynomial
+-- is the product of (s_i + a_i choose a_i); for a bidegree-(1,1) hypersurface
+-- in P^1 x P^2 a single term drops.
+TEST ///
+S = productOfProjectiveSpaces{1,2}
+g = multiHilbertPolynomial S^1
+Tg = ring g
+assert(g == (Tg_0+1)*(Tg_1+1)*(Tg_1+2)/2)
+I = ideal(x_(0,0)*x_(1,0))
+h = multiHilbertPolynomial(S^1/I)
+Th = ring h
+assert(h == Th_0*(Th_1+1) + (Th_1+1)*(Th_1+2)/2)
+S2 = productOfProjectiveSpaces{1,1}
+g2 = multiHilbertPolynomial S2^1
+T2 = ring g2
+assert(g2 == (T2_0+1)*(T2_1+1))
+///
+
+-- correspondencePolynomial: structural assertions matching the existing
+-- toString test.  For S = P^1 x P^1, correspondencePolynomial(S^1, {a,b})
+-- equals (a*s+1)*(b*s+1); the list length must match the degree length.
+TEST ///
+S = productOfProjectiveSpaces{1,1}
+p11 = correspondencePolynomial(S^1, {1,1})
+T1 = ring p11
+assert(p11 == (T1_0+1)^2)
+p23 = correspondencePolynomial(S^1, {2,3})
+T23 = ring p23
+assert(p23 == (2*T23_0+1)*(3*T23_0+1))
+assert(try (correspondencePolynomial(S^1, {1}); false) else true)
+assert(try (correspondencePolynomial(S^1, {1,1,1}); false) else true)
+///
+
+-- hankelMatrix structural assertions matching the existing toString test:
+-- dimensions, the Hankel symmetry H_(i,j) = H_(i',j') whenever i+j = i'+j',
+-- the count of 2x2 minors, the alternative ring-constructor form, and the
+-- boundary cases (0 rows is allowed; negative dimensions are rejected).
+TEST ///
+H = hankelMatrix(2,3,"t")
+assert(numRows H == 2 and numColumns H == 3)
+assert(H_(0,1) == H_(1,0))
+assert(H_(0,2) == H_(1,1))
+assert(#gens ring H == 4)
+assert(all(gens ring H, v -> match("t", toString v)))
+-- a 2 x n Hankel has binomial(n,2) two-by-two minors
+M = hankelMatrix(2,4)
+assert(numgens minors(2,M) == binomial(4,2))
+-- the Ring constructor uses the ring's own variables
+R = QQ[x_0..x_5]
+H2 = hankelMatrix(R, 2, 3)
+assert(numRows H2 == 2 and numColumns H2 == 3 and ring H2 === R)
+-- boundary cases
+assert(numRows hankelMatrix(0,3) == 0 and numColumns hankelMatrix(0,3) == 3)
+assert(try (hankelMatrix(-1, 3); false) else true)
+///
+
+-- irrelevantIdeal: structural assertions matching the existing toString test.
+-- The irrelevant ideal of P^{a_1} x ... x P^{a_n} is monomial with
+-- prod (a_i + 1) generators, and equals the intersection of the per-factor
+-- variable ideals.
+TEST ///
+P = productOfProjectiveSpaces({1,2}, VariableName => "s")
+J = irrelevantIdeal P
+assert(numgens J == 2*3)
+assert(isMonomialIdeal J)
+fac0 = ideal select(gens P, v -> (degree v)#0 == 1)
+fac1 = ideal select(gens P, v -> (degree v)#1 == 1)
+assert(J == intersect(fac0, fac1))
+///
+
+-- schemeInProduct structural assertions matching the existing toString test,
+-- plus coverage for the three-argument form that takes an explicit product
+-- ring.  Both forms cut out the diagonal of P^1 x P^1 with a single quadric.
+TEST ///
+S = ZZ/101[a,b]
+I = ideal 0_S
+f0 = matrix"a,b"; f1 = matrix"a,b"
+J = schemeInProduct(I, {f0,f1}, VariableName => "Y")
+assert(numgens J == 1 and isHomogeneous J)
+PP = productOfProjectiveSpaces({1,1}, CoefficientField => ZZ/101, VariableName => "Z")
+J2 = schemeInProduct(I, {f0,f1}, PP)
+assert(numgens J2 == 1 and isHomogeneous J2)
+///
+
+-- option propagation.  VariableName changes the variable symbol used in the
+-- result ring of productOfProjectiveSpaces and correspondenceScroll;
+-- CoefficientField changes the coefficient ring of productOfProjectiveSpaces.
+TEST ///
+R = productOfProjectiveSpaces({1,2}, VariableName => "y")
+assert(all(gens R, v -> match("y", toString v)))
+assert(#gens R == 2 + 3)
+Q = productOfProjectiveSpaces({1,1}, CoefficientField => QQ)
+assert(coefficientRing Q === QQ)
+-- the ZZ overload of productOfProjectiveSpaces yields a product of P^1s
+P = productOfProjectiveSpaces 1; assert(#gens P == 2)
+P3 = productOfProjectiveSpaces 3; assert(#gens P3 == 6)
+-- correspondenceScroll propagates VariableName to its result ring
+S = productOfProjectiveSpaces{1,2}
+I = ideal(x_(0,0)*x_(1,0))
+J = correspondenceScroll(I, {1,1}, VariableName => "z")
+assert(all(gens ring J, v -> match("z", toString v)))
+///
+
+-- carpet({a,b}) stress: structural invariants for several parameter pairs.
+-- carpet is defined as correspondenceScroll(Delta^2, L) where Delta is the
+-- small diagonal of P^1 x P^1; their structural invariants match (the two
+-- ideals live in independently constructed rings but have the same Betti table).
+TEST ///
+C23 = carpet({2,3}, CoefficientField => QQ)
+assert(isHomogeneous C23 and numgens C23 == 6 and codim C23 == 4 and degree C23 == 10)
+C12 = carpet({1,2}, CoefficientField => QQ)
+assert(isHomogeneous C12 and numgens C12 == 2 and codim C12 == 2 and degree C12 == 6)
+P = productOfProjectiveSpaces(2, CoefficientField => QQ)
+Delta = smallDiagonal P
+J23 = correspondenceScroll(Delta^2, {2,3})
+assert(numgens J23 == 6 and codim J23 == 4 and degree J23 == 10)
+assert(betti res C23 == betti res J23)
+///
+
 end--
 
 

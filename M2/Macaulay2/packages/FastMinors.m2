@@ -2464,7 +2464,10 @@ assert(regularInCodimension(1, R, Strategy=>StrategyPoints, MinMinorsFunction =>
 TEST /// --check #17 (checking multi-graded support)
     S = ZZ/101[x,y, Degrees => {{1,0},{0,2}}]
     M = random(S^4, S^{5:{-3,-4}})
-    chooseGoodMinors(10, 2, M)
+    J = chooseGoodMinors(10, 2, M)
+    assert(instance(J, Ideal))
+    assert(numgens J == 10)
+    assert(ring J === S)
 ///
 
 TEST ///--check #18 (doing a projdim check)
@@ -2488,7 +2491,49 @@ TEST ///--check #19 (checking [regularInCodim, VerifyNonRegular])
     assert(not regularInCodimension(1, C, VerifyNonRegular=>true))
 ///
 
+TEST /// --check #20 (recursiveMinors agrees with the built-in minors)
+    -- recursiveMinors is a public-API parallel to "minors"; the two must agree
+    -- as ideals for every minor size and matrix.
+    R = QQ[a,b,c,d];
+    M = matrix{{a,b,c},{c,d,a},{b,a,d}};
+    assert(recursiveMinors(2, M) == minors(2, M));
+    assert(recursiveMinors(3, M) == minors(3, M));
+    assert(instance(recursiveMinors(2, M), Ideal));
+    S = ZZ/101[x_1..x_4];
+    M2 = matrix{{x_1, x_2, x_3, x_4}, {x_2, x_3, x_4, x_1}, {x_3, x_4, x_1, x_2}};
+    assert(recursiveMinors(2, M2) == minors(2, M2));
+///
 
+TEST /// --check #21 (chooseRandomSubmatrix and getSubmatrixOfRank)
+    -- both return a length-2 list of row and column index lists; the
+    -- submatrix returned by getSubmatrixOfRank must actually have the
+    -- requested rank.
+    setRandomSeed 0;
+    T = ZZ/101[x,y,z];
+    M = random(T^4, T^{-3,-4,-2,-3});
+    sub1 = chooseRandomSubmatrix(2, M);
+    assert(instance(sub1, List) and #sub1 == 2);
+    assert(#(sub1#0) == 2 and #(sub1#1) == 2);
+    g1 = getSubmatrixOfRank(3, M);
+    assert(instance(g1, List) and #g1 == 2);
+    assert(#(g1#0) == 3 and #(g1#1) == 3);
+    assert(isRankAtLeast(3, M^(g1#0)_(g1#1)));
+///
+
+TEST /// --check #22 (selector-symbol Strategies for regularInCodimension)
+    -- the eight bare selector symbols are each valid as Strategy values
+    -- (in addition to the bundled hash-table strategies exercised in #16);
+    -- each one independently confirms regularity in codimension 1 on a cone.
+    U = QQ[x,y,z]/ideal(x^2-y*z);
+    assert(regularInCodimension(1, U, Strategy=>LexLargest));
+    assert(regularInCodimension(1, U, Strategy=>LexSmallest));
+    assert(regularInCodimension(1, U, Strategy=>LexSmallestTerm));
+    assert(regularInCodimension(1, U, Strategy=>GRevLexLargest));
+    assert(regularInCodimension(1, U, Strategy=>GRevLexSmallest));
+    assert(regularInCodimension(1, U, Strategy=>GRevLexSmallestTerm));
+    assert(regularInCodimension(1, U, Strategy=>Random));
+    assert(regularInCodimension(1, U, Strategy=>RandomNonzero));
+///
 
 end
 T = ZZ/101[x1,x2,x3,x4,x5,x6,x7];

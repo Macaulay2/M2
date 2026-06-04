@@ -1093,4 +1093,50 @@ assert(isNormal T)
 assert(2 == #minimalPrimes ideal T)
 ///
 
+TEST /// --#12 flattenVarDegrees sums each multidegree vector into a single grading
+R = QQ[x,y, Degrees=>{{1,2},{3,4}}];
+S = flattenVarDegrees R;
+assert(instance(S, Ring));
+assert(degrees S == {{3},{7}});
+R2 = QQ[a,b,c, Degrees=>{{1,0},{0,1},{1,1}}];
+assert(degrees flattenVarDegrees R2 == {{1},{1},{2}});
+///
+
+TEST /// --#13 conductorOfRingMap on the identity is the unit ideal; on the
+-- cusp normalization x = t^2, y = t^3 it is the maximal ideal at the cusp.
+R = QQ[x,y]/(y^2 - x^3);
+phiId = map(R, R, gens R);
+assert(instance(conductorOfRingMap phiId, Ideal));
+assert(conductorOfRingMap phiId == ideal 1_R);
+A = QQ[x,y]/(y^2 - x^3);
+B = QQ[t];
+phi = map(B, A, {t^2, t^3});
+assert(conductorOfRingMap phi == ideal(x, y));
+///
+
+TEST /// --#14 findElementMappingToTarget recovers a preimage f in R with
+-- phi(f) = g; checked for phi: QQ[x] -> QQ[y]/(y^3), x |-> y on g = y and g = y + y^2.
+R = QQ[x];
+S = QQ[y]/(y^3);
+phi = map(S, R, {y});
+assert(phi findElementMappingToTarget(phi, y) == y);
+assert(phi findElementMappingToTarget(phi, y + y^2) == y + y^2);
+///
+
+TEST /// --#15 ringToAlgebraMap writes the target as an algebra over the source
+-- and returns a paired list {newB, map B -> newB} with the expected sources
+-- and targets; the two-argument form (different index) also returns a valid pair.
+A = QQ[x];
+B = QQ[x,y]/(y^2 - x);
+phi = map(B, A, {x});
+out = ringToAlgebraMap phi;
+assert(instance(out, List) and #out == 2);
+assert(instance(out#0, Ring));
+assert(instance(out#1, RingMap));
+assert(source out#1 === B);
+assert(target out#1 === out#0);
+out2 = ringToAlgebraMap(phi, 5);
+assert(#out2 == 2 and instance(out2#0, Ring));
+///
+
 end

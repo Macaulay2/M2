@@ -858,3 +858,83 @@ H = makeHyperbolicUnstableForm GF(27);
 assert(isIsomorphicForm(alpha, H));
 assert(isIsomorphicForm(beta, H));
 ///
+
+--The following tests were added during M2-GT 2026
+-- Test 44. getRank test
+
+TEST ///
+-- Rank equals the matrix size, regardless of the entries.
+alpha = makeGWClass matrix(QQ, {{1/1, 0, 0}, {0, -2, 0}, {0, 0, 5}});
+assert(getRank alpha == 3);
+
+beta = makeGWClass matrix(RR, {{1.0, 0}, {0, -1.0}});
+assert(getRank beta == 2);
+
+gamma = makeGWClass matrix(CC, {{1*ii, 0, 0, 0}, {0, -2, 0, 0}, {0, 0, 3, 0}, {0, 0, 0, 5}});
+assert(getRank gamma == 4);
+
+delta = makeGWClass matrix(GF(7), {{1, 0}, {0, 3}});
+assert(getRank delta == 2);
+
+-- getRank on a form built by makeDiagonalForm
+epsilon = makeDiagonalForm(QQ, (2, -3, 5, -7));
+assert(getRank epsilon == 4);
+
+-- getRank on the hyperbolic plane
+H = makeHyperbolicForm QQ;
+assert(getRank H == 2);
+///
+
+--Test 45. getAnisotropicDimension over QQ
+TEST ///
+-- Hyperbolic plane: anisotropic dimension 0
+H = makeHyperbolicForm QQ;
+assert(getAnisotropicDimension H == 0);
+
+-- <1,1> is anisotropic over QQ (no rational solution to x^2 + y^2 = 0)
+twoPos = makeDiagonalForm(QQ, (1, 1));
+assert(getAnisotropicDimension twoPos == 2);
+
+-- <1,-1> is isomorphic to H, so anisotropic dimension 0
+hyp = makeDiagonalForm(QQ, (1, -1));
+assert(getAnisotropicDimension hyp == 0);
+
+-- <1,1,1,1> over QQ: by the four-square theorem this is not hyperbolic in GW(QQ)
+-- Its Witt index is 0 (no isotropic vector over QQ for the positive-definite form)
+fourPos = makeDiagonalForm(QQ, (1, 1, 1, 1));
+assert(getAnisotropicDimension fourPos == 4);
+
+-- Consistency: anisotropic dimension + 2 * Witt index == rank
+M = makeGWClass matrix(QQ, {{1/1, 0, 0}, {0, -2, 0}, {0, 0, 3}});
+assert(getAnisotropicDimension M + 2 * getWittIndex M == getRank M);
+///
+
+-- Test 46 getAnisotropicDimensionQQp
+TEST ///
+-- <1,1> at p=2: 1+1=2 is not a norm from QQ_2*, so the form is anisotropic
+twoPos = makeDiagonalForm(QQ, (1, 1));
+assert(getAnisotropicDimensionQQp(twoPos, 2) == 2);
+
+-- <1,-1> is the hyperbolic plane, always isotropic: anisotropic part is trivial
+hyp = makeDiagonalForm(QQ, (1, -1));
+assert(getAnisotropicDimensionQQp(hyp, 3) == 0);
+///
+
+
+-- Test 47 getAnisotropicPart
+TEST ///
+-- Anisotropic part of the hyperbolic plane is the zero form (empty diagonal).
+H = makeHyperbolicForm QQ;
+aH = getAnisotropicPart H;
+assert(getRank aH == 0);
+
+-- Anisotropic part of <1,1> over QQ is <1,1> itself (the form is anisotropic).
+twoPos = makeDiagonalForm(QQ, (1, 1));
+aTwo = getAnisotropicPart twoPos;
+assert(isIsomorphicForm(aTwo, twoPos));
+
+-- Anisotropic part of 2H = <1,-1,1,-1> is the zero form.
+twoH = makeDiagonalForm(QQ, (1, -1, 1, -1));
+aTwoH = getAnisotropicPart twoH;
+assert(getRank aTwoH == 0);
+///

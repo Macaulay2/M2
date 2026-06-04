@@ -406,3 +406,26 @@ assert(computationStatus T == 3)
 assert instance(T'(1,1),LatticePolarizationOnK3Surface)
 assert((polarizedK3surface(T,Strategy=>"SpecialCurve"))(1,1) === E)
 ///
+
+TEST /// -- test 29 isAdmissible
+-- The admissible discriminants of special cubic fourfolds in [0,150]
+-- match the known list (cf. Hassett's classification): 14, 26, 38, 42, 62,
+-- 74, 78, 86, 98, 114, 122, 134, 146.
+assert(select(150, isAdmissible) == {14, 26, 38, 42, 62, 74, 78, 86, 98, 114, 122, 134, 146});
+assert(isAdmissible 14);
+assert(not isAdmissible 6);    -- d must exceed 6
+assert(not isAdmissible 7);    -- d must be even
+assert(not isAdmissible 8);    -- d % 4 must be nonzero
+assert(not isAdmissible 18);   -- d % 9 must be nonzero
+///
+
+TEST /// -- test 30 isAdmissibleGM
+-- The admissible discriminants of Gushel-Mukai fourfolds in [0,150]
+-- match the known list.
+assert(select(150, isAdmissibleGM) == {10, 20, 26, 34, 50, 52, 58, 68, 74, 82, 100, 106, 116, 122, 130, 146, 148});
+assert(isAdmissibleGM 10);
+assert(isAdmissibleGM 20);
+assert(not isAdmissibleGM 8);   -- d must exceed 8
+assert(not isAdmissibleGM 12);  -- a small prime in d with the wrong residue mod 4
+assert(not isAdmissibleGM 16);  -- d % 8 must not be 0
+///

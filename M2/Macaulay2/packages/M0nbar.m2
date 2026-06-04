@@ -2494,7 +2494,32 @@ TEST ///
     H2=D2#"DivisorExpression";
     H3=new HashTable from {{3, 5} => -3, {1, 5} => 1}
     assert(H2 === H3)
-///   
+///
+
+TEST ///
+-- Fcurves cardinality at n=7 matches the Stirling number S(7,4) = 350
+assert(# Fcurves 7 === 350)
+///
+
+TEST ///
+-- permute identity and inverse round-trip on a curve class representative
+L = {{{{2,1},{3},{4},{5}},-2}, {{{1,3},{2},{4},{5}},-7}, {{{1,4},{2},{3},{5}},1}};
+C = curveClassRepresentativeM0nbar(5,L);
+assert((permute({1,2,3,4,5}, C))#"CurveExpression" === C#"CurveExpression")
+sig = {5,2,1,3,4};
+sigInv = {3,2,4,5,1};
+assert((permute(sigInv, permute(sig, C)))#"CurveExpression" === C#"CurveExpression")
+///
+
+TEST ///
+-- permute identity and inverse round-trip on a divisor class representative
+LD = {{{1,3},1}, {{1,4},-3}};
+D = divisorClassRepresentativeM0nbar(5,LD);
+assert((permute({1,2,3,4,5}, D))#"DivisorExpression" === D#"DivisorExpression")
+sig = {5,2,1,3,4};
+sigInv = {3,2,4,5,1};
+assert((permute(sigInv, permute(sig, D)))#"DivisorExpression" === D#"DivisorExpression")
+///
 --------------------------------------
 --------------------------------------
 end

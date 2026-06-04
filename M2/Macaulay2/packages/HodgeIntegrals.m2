@@ -26,7 +26,7 @@ newPackage(
    DebuggingMode => false
    )
 
-   export {"hodgeRing", "wittenTau", "integral", "kappa", "lambda", "psi", "ch"}
+export {"hodgeRing", "wittenTau", "integral", "kappa", "lambda", "psi", "ch"}
 
 ------------------------------------------------------------------------
 
@@ -34,14 +34,6 @@ newPackage(
 List ! := a -> product(a, r -> r!)
 
 -- extends the binomial function to Lists of ZZ
-
---OLD CODE
---binomial (List, List) := ZZ => (n, i) -> (
---     if #n =!= #i then error "expected lists with the same length";
---     product(#n, j -> binomial(n#j, i#j))
---     )
-
---BETTER CODE
 binomial (List, List) := ZZ => (n, i) -> product(n, i, binomial)
 
 -- these two functions allow one to convert between the following
@@ -164,9 +156,6 @@ hodgeRing = (g,n) -> (
 
 
 -- multiply the frequencies of all elements of a tally by an integer n
---  original code
---  ZZ * Tally := (n, T) -> new Tally from apply(keys T, x -> (x => (n * T#x)))
--- Here is a better suggestion
 ZZ * Tally := (n,T) -> if n == 0 then new Tally else applyValues(T, x->n*x)
 
 -- convert from a List of subscripts or superscript to a monomial
@@ -198,17 +187,6 @@ dimCheck = memoize (
 -- convert la_n to an expression in ch_i using the formula
 -- sum(1..n, i -> lambda_i) = exp sum((n + 1)//2, i -> (2 * i)! * ch_(2 * i + 1));
 -- NOTE: according to Mumford's paper, ch_(2 * i)=0
---
---oldlambdaToCh = memoize (
---     (n, R) -> (
---  	  ChRing := QQ[ch_1..ch_n, Degrees=>{1..n}];
---  	  I := ideal basis(n + 1, 2 * n - 1, ChRing);
---  	  ChRing = ChRing/I;
---  	  f := sum((n + 1)//2, i -> (2 * i)! * ch_(2 * i + 1));
---  	  sub(part(n, sum(1..n, i -> (1/i!) * f^i)), R)
---   	  )
---     )
-
 lambdaToCh = memoize (
      (n, R) -> (
   	  tempChRing := QQ[local tempCh_1..local tempCh_n, Degrees=>{1..n}];
@@ -574,7 +552,7 @@ document {
      Key => {integral},
      Headline => "evaluate Hodge integrals",
      Usage => "integral(g, n, klp)",
-     Inputs => {"g" => ZZ, "n"=> ZZ},
+     Inputs => {"g" => ZZ, "n" => ZZ, "klp" => RingElement => {"a polynomial in the ", TO kappa, ", ", TO lambda, ", ", TO psi, ", and ", TO ch, " classes of the ring returned by ", TO hodgeRing}},
      Outputs => {QQ},
      PARA {
      	  TEX ///
@@ -590,7 +568,7 @@ document {
 	  TT "g",
 	  " and ",
 	  TT "n",
-	  " at least as large as those to be used.,"
+	  " at least as large as those to be used."
 	  },
      SUBSECTION "Examples",
      	  PARA {
@@ -644,7 +622,7 @@ document {
           The list $\{a_0,a_1,...,a_k\}$ is the argument for
 	  ///,
 	  TT "wittenTau",
-	  ". These integrals are computed recursively using the string equation, dilation equation, and an effective genus recursion formula of Liu and Xu [LX].",
+	  ". These integrals are computed recursively using the string equation, dilaton equation, and an effective genus recursion formula of Liu and Xu [LX].",
 	  },	
      PARA {     
      	  "The genus is an optional parameter. If it is omitted, the genus is automatically calculated.",
@@ -708,13 +686,13 @@ document {
 
 document {
      Key => {kappa},
-     Headline => "Miller-Morita-Mumford classes",
+     Headline => "Mumford-Morita-Miller classes",
      Usage => "kappa_a",
      Inputs => { "a" => ZZ },
      Outputs => { RingElement },
      "This is an element in the ring created by ",
      TT "hodgeRing",
-     ". It is the Miller-Morita-Mumford class discussed in [AC].",
+     ". It is the Mumford-Morita-Miller class discussed in [AC].",
      PARA {
 	  TEX ///
 	  Here is a simple example which calculates $\int_{{\bar M}_{1,1}} k_1$.
@@ -745,7 +723,7 @@ document {
      TT "hodgeRing",
      ".",
      TEX ///
-     It is the $a$-th Chern class of the Hodge bundle on ${\bar M}_{g,n}$.,
+     It is the $a$-th Chern class of the Hodge bundle on ${\bar M}_{g,n}$.
      ///,
      PARA {
 	  TEX ///
@@ -812,7 +790,7 @@ assert(integral (4, 0, lambda_1^9) == 1/113400)
 ///
 
 -- Examples from the documentation for wittenTau
-TEST///
+TEST ///
 assert(wittenTau (0,{3}) == 1)
 assert(wittenTau (0,{4, 1, 1}) == 3)
 assert(wittenTau (0,{5, 0, 2}) == 6)
@@ -822,12 +800,130 @@ assert(wittenTau (5,{0,0,0,0,0,3}) == 41873/255467520)
 ///
 
 -- Examples from the documentation for ch, lambda, kappa, and psi
-TEST///
+TEST ///
 R = hodgeRing (1, 1);
 assert(integral(1, 1, ch_1) == 1/24)
 assert(integral(1, 1, lambda_1) == 1/24)
 assert(integral(1, 1, kappa_1) == 1/24)
 assert(integral(1, 1, psi_1) == 1/24)
+///
+
+-- Edge cases of integral and dimension-mismatch silent zero.
+-- integral returns 0 outside the moduli-space's stable range, on a negative
+-- genus, and on a class whose total codimension does not equal the dimension
+-- 3g - 3 + n of M_{g,n}.  This block locks the silent-0 behavior in.
+TEST ///
+R = hodgeRing(4, 4)
+-- Unstable / nonexistent moduli spaces
+assert(integral(0, 2, 1) == 0)             -- M_{0,2} does not exist
+assert(integral(0, 0, 1) == 0)             -- M_{0,0} does not exist
+assert(integral(-1, 3, 1) == 0)            -- negative genus
+-- M_{0,3} is a point, so integral(0, 3, 1) = 1
+assert(integral(0, 3, 1) == 1)
+-- M_{1,1} has dim 1.  Codim-0, codim-2 classes integrate to 0.
+assert(integral(1, 1, 1) == 0)
+assert(integral(1, 1, lambda_1^2) == 0)
+assert(integral(1, 1, lambda_1 * psi_1) == 0)
+assert(integral(1, 1, kappa_1 * lambda_1) == 0)
+-- M_{2,0} has dim 3.  lambda_1 has codim 1, lambda_1^3 has codim 3.
+assert(integral(2, 0, lambda_1) == 0)
+assert(integral(2, 0, lambda_1^3) == 1/2880)
+-- Genus 0 has no Hodge bundle, so any class with a lambda integrates to 0.
+assert(integral(0, 5, lambda_1 * psi_1) == 0)
+///
+
+-- Mumford's relation ch_(2i) = 0 in the cohomology of M_{g,n}.  Any product
+-- with an even-index ch factor (regardless of dimensional considerations)
+-- should integrate to 0.  See the source comment at lines 195-197.
+TEST ///
+R = hodgeRing(4, 2)
+-- Single even-ch class.  M_{2,0} has dim 3, ch_2 has codim 2 — mismatch *and*
+-- vanishing — both give 0 here.
+assert(integral(2, 0, ch_2) == 0)
+-- Even-ch class with codim padded to match dim: vanishing is what makes the
+-- integral 0.  M_{2,1} has dim 4, ch_2*psi_1^2 has codim 4 — dim matches but
+-- ch_2 = 0.
+assert(integral(2, 1, ch_2*psi_1^2) == 0)
+-- M_{3,0} has dim 6, ch_2*ch_1^4 has codim 6 — dim matches but ch_2 = 0.
+assert(integral(3, 0, ch_2*ch_1^4) == 0)
+-- Odd-index ch can be nonzero.  M_{2,0} dim 3, ch_3 codim 3.
+assert(integral(2, 0, ch_3) == -1/34560)
+-- M_{3,0} dim 6, ch_3^2 codim 6.
+assert(integral(3, 0, ch_3^2) == -1/26127360)
+///
+
+-- Cross-check between integral and wittenTau on pure-psi monomials.  For
+-- psi_1^{e_1} ... psi_n^{e_n} on M_{g,n}, the integral equals
+--   wittenTau(g, a) where a is the tally of (e_1, ..., e_n) extended to a list
+-- indexed by tau-exponent.  This is the defining identity used inside klp.
+TEST ///
+R = hodgeRing(3, 4)
+-- M_{1,1}: psi_1 ↔ a = {0, 1}
+assert(integral(1, 1, psi_1) == wittenTau(1, {0, 1}))
+-- M_{1,2}: psi_1*psi_2 ↔ a = {0, 2}
+assert(integral(1, 2, psi_1*psi_2) == wittenTau(1, {0, 2}))
+-- M_{1,2}: psi_1^2 ↔ a = {1, 0, 1}
+assert(integral(1, 2, psi_1^2) == wittenTau(1, {1, 0, 1}))
+-- M_{2,1}: psi_1^4 ↔ a = {0,0,0,0,1}
+assert(integral(2, 1, psi_1^4) == wittenTau(2, {0,0,0,0,1}))
+-- M_{2,3}: psi_1*psi_2^2*psi_3^3 ↔ a = {0, 1, 1, 1}
+assert(integral(2, 3, psi_1*psi_2^2*psi_3^3) == wittenTau(2, {0, 1, 1, 1}))
+-- M_{0,5}: psi_1^2 ↔ a = {4, 0, 1}
+assert(integral(0, 5, psi_1^2) == wittenTau(0, {4, 0, 1}))
+-- The 1-argument form of wittenTau auto-deduces the genus
+assert(wittenTau {0, 1} == wittenTau(1, {0, 1}))
+assert(wittenTau {3} == wittenTau(0, {3}))
+///
+
+-- Witten's conjecture (Kontsevich's theorem) closed form for genus 0:
+--   wittenTau(0, a) = (n - 3)! / (prod_i (a_i)!)   when n = sum a_i and the
+--   codim 3g-3+n = sum i*a_i, i.e., sum (i-1) a_i = -3, i.e., sum a_i ones is
+--   special-cased; we instead verify the equivalent (n-3)! / e!
+-- formula for monomials in psi, which is wittenTau(0, exponentsToTauList).
+TEST ///
+R = hodgeRing(2, 6)
+-- integral(0, n, psi_1^{e_1}...psi_n^{e_n}) = (n - 3)! / (e_1! ... e_n!)
+-- when sum e_i = n - 3.
+-- n = 5, e = (2, 0, 0, 0, 0): (5-3)!/2!/0!/0!/0!/0! = 1
+assert(integral(0, 5, psi_1^2) == 1)
+-- n = 5, e = (1, 1, 0, 0, 0): 2!/(1!1!) = 2
+assert(integral(0, 5, psi_1*psi_2) == 2)
+-- n = 6, e = (1, 1, 1, 0, 0, 0): 3!/(1!1!1!) = 6
+assert(integral(0, 6, psi_1*psi_2*psi_3) == 6)
+-- n = 6, e = (3, 0, 0, 0, 0, 0): 3!/3! = 1
+assert(integral(0, 6, psi_1^3) == 1)
+///
+
+-- Tautological-relations consistency check, promoted from the scratch REPL
+-- block at the very end of HodgeIntegrals.m2 (after `end`).  The matrix
+-- whose entry (i, j) is the integral of the i-th klp-monomial against the
+-- j-th boundary tally has full row rank 5 and a 2-dimensional kernel,
+-- corresponding to the two independent linear relations among these
+-- tautological boundary integrals on M_{3, 0}.  A regression in any of
+-- integral / klp / wittenTau / dProduct / kappaListToProduct could change
+-- either of these numbers.
+TEST ///
+R = hodgeRing(3, 0)
+-- (We only need the locally-scoped helper inside the TEST.)
+List * List := (A, B) -> apply(A, B, (x, y) -> x * y);
+tempFactors := (FactorList, n) -> (
+     if #FactorList === 0 then return {splice{n : 1}} else (
+	  tempList := tempFactors(drop(FactorList, 1), n);
+	  a := first FactorList;
+	  newList := new List;
+	  for i from 1 to n do (
+	       aList := splice{i - 1 : 1, a, n - i : 1};
+	       newList = append(newList, apply(tempList, x -> aList * x)));
+          return flatten newList));
+gnList := {{(1,1), (1,2), (0,3)}, {(1,1), (1,1), (0,4)}, {(0,6)}, {(1,3), (0,3)},
+         {(1,3), (0,3)}, {(1,2), (0,4)}, {(1,1), (0,5)}};
+klpList := {{kappa_3}, {kappa_1, kappa_2}, {kappa_1, kappa_1, kappa_1},
+     {kappa_2, lambda_1}, {kappa_1, kappa_1, lambda_1}};
+M := matrix table(klpList, gnList, (x,y) -> (sum(tempFactors(x,#y),
+	  z-> product(#y, i -> integral(y#i#0, y#i#1, z#i)))));
+assert(numrows M == 5 and numcols M == 7)
+assert(rank M == 5)
+assert(numgens kernel M == 2)
 ///
 
 end
@@ -837,26 +933,13 @@ uninstallPackage "HodgeIntegrals"
 installPackage "HodgeIntegrals"
 check "HodgeIntegrals"
 
+-- Larger-genus timing experiments (slow):
 loadPackage "HodgeIntegrals";
 R = hodgeRing(15,0);
 time integral(15,0,kappa_42)
 time integral(4,0,lambda_1^9)
 time integral(5,0,lambda_1^12)
-R = hodgeRing(3,0);
-List * List := (A, B) -> apply(A, B, (x, y) -> x * y);
-tempFactors = (FactorList, n) -> (
-     if #FactorList === 0 then return {splice{n : 1}} else ( 
-	  tempList := tempFactors(drop(FactorList, 1), n);
-	  a := first FactorList;
-	  newList := new List;
-	  for i from 1 to n do (
-	       aList = splice{i - 1 : 1, a, n - i : 1};
-	       newList = append(newList, apply(tempList, x -> aList * x)));
-          return flatten newList));
-gnList = {{(1,1), (1,2), (0,3)}, {(1,1), (1,1), (0,4)}, {(0,6)}, {(1,3), (0,3)},
-         {(1,3), (0,3)}, {(1,2), (0,4)}, {(1,1), (0,5)}};
-klpList = {{kappa_3}, {kappa_1, kappa_2}, {kappa_1, kappa_1, kappa_1},
-     {kappa_2, lambda_1}, {kappa_1, kappa_1, lambda_1}};
-M = matrix table(klpList, gnList, (x,y) -> (sum(tempFactors(x,#y),
-	  z-> product(#y, i -> integral(y#i#0, y#i#1, z#i)))));
-kernel M     
+
+-- The tautological-relations consistency check that used to live here (a
+-- table of integrals followed by `kernel M`) has been promoted to a TEST
+-- block above.

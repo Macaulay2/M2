@@ -279,6 +279,32 @@ unlock(e:Expr):Expr := (
     else WrongArgMutex());
 setupfun("unlock0", unlock);
 
+-- env.0 = the mutex to lock/unlock
+-- env.1 = the function to call
+lockedFunction(e:Expr, env:Sequence):Expr := (
+    if length(env) == 2 then (
+	l := lock(env.0);
+	when l is Error do return l else nothing;
+	r := applyEE(env.1, e);
+	u := unlock(env.0);
+	when u is Error do u else r)
+    else buildErrorPacket("internal error: expected 2 values in environment"));
+
+lockFunction(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is mutexCell do (
+		if isFunction(a.1)
+		then Expr(CompiledFunctionClosure(
+			lockedFunction, nextHash(), a))
+		else WrongArg(2, "a function"))
+	    else WrongArg(1, "a mutex"))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("lockFunction", lockFunction);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "
 -- End:

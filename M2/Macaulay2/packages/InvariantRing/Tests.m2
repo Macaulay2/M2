@@ -471,3 +471,90 @@ inv = invariants T
 einv = invariants(T, Strategy => "Elementary")
 assert(set inv == set einv)
 ///
+
+------------------------------------------------------------------------
+--- Tests for previously untested exports ------------------------------
+------------------------------------------------------------------------
+
+-- Test 25
+-- invariantRing produces a RingOfInvariants; action/ambient/generators/definingIdeal accessors
+TEST ///
+R = QQ[x_1..x_4]
+W = matrix{{0,1,-1,1},{1,0,-1,-1}}
+T = diagonalAction(W, R)
+assert instance(T, GroupAction)
+S = invariantRing T
+assert instance(S, RingOfInvariants)
+assert(action S === T)
+assert(ambient S === R)
+assert(set gens S === set invariants T)
+assert instance(definingIdeal S, Ideal)
+assert(definingIdeal S == 0)
+assert instance(R^T, RingOfInvariants)
+///
+
+-- Test 26
+-- schreierGraph and words of a finite group action
+TEST ///
+R = QQ[x_1..x_3]
+L = {matrix{{0,1,0},{1,0,0},{0,0,1}}, matrix{{0,0,1},{0,1,0},{1,0,0}}}
+G = finiteAction(L, R)
+sg = schreierGraph G
+assert instance(sg, HashTable)
+assert(#keys sg == 2)
+w = words G
+assert instance(w, HashTable)
+assert(#keys w == #(group G))
+///
+
+-- Test 27
+-- cyclicFactors of an abelian action; the equivariantHilbert cache key
+TEST ///
+R = QQ[x_1..x_3]
+A = diagonalAction(matrix{{1,0,1},{0,1,1}}, {3,3}, R)
+assert(cyclicFactors A === {3,3})
+T = diagonalAction(matrix{{-1,0,1},{0,-1,1}}, R)
+assert(not T.cache.?equivariantHilbert)
+equivariantHilbertSeries(T, Order => 5);
+assert(T.cache.?equivariantHilbert)
+///
+
+-- Test 28
+-- actionMatrix and groupIdeal recover the data of a linearly reductive action
+TEST ///
+S = QQ[z]
+I = ideal(z^2 - 1)
+M = matrix{{(z+1)/2, (1-z)/2},{(1-z)/2, (z+1)/2}}
+R = QQ[x,y]
+L = linearlyReductiveAction(I, M, R)
+assert instance(L, LinearlyReductiveAction)
+assert(actionMatrix L == M)
+assert(groupIdeal L == I)
+///
+
+-- Test 29
+-- UsePolyhedra and UseCoefficientRing options for invariants of a torus
+TEST ///
+R = QQ[x_1..x_4]
+T = diagonalAction(matrix{{0,1,-1,1},{1,0,-1,-1}}, R)
+assert(set invariants(T, UsePolyhedra => true) === set invariants T)
+assert instance(invariantRing(T, UseCoefficientRing => true), RingOfInvariants)
+///
+
+-- Test 30
+-- DegreeBound, DegreeVector, and PrintDegreePolynomial options for finite group actions
+TEST ///
+S3 = finiteAction({permutationMatrix [3,1,2], permutationMatrix [2,1,3]}, QQ[a,b,c])
+assert(set invariants(S3, DegreeBound => 3) === set invariants S3)
+A = matrix{{0,1,0},{0,0,1},{1,0,0}}
+B = matrix{{0,1,0},{1,0,0},{0,0,1}}
+G = finiteAction({A,B}, QQ[x,y,z])
+P = primaryInvariants(G, DegreeVector => {3,3,4})
+assert(sort(P / degree / first) === {3,3,4})
+assert(dim((ring first P)/ideal P) == 0)
+K = toField(QQ[d]/(d^2+d+1))
+RK = K[s,t]
+D6 = finiteAction({matrix{{d,0},{0,d^2}}, sub(matrix{{0,1},{1,0}}, K)}, RK)
+Pd = {s^3+t^3, -(s^3-t^3)^2}
+assert(secondaryInvariants(Pd, D6, PrintDegreePolynomial => true) === secondaryInvariants(Pd, D6))
+///

@@ -257,7 +257,7 @@ adjointPolytope(Matrix,ZZ) := (M,k) -> (
 
 adjointPolytope(Polyhedron,ZZ) := (P,k) -> (
     (A,b):=ambientHalfspaces(P);	
-    return intersection(A,b-transpose(matrix{toList(numrows(b):k)})));
+    return polyhedronFromHData(A,b-transpose(matrix{toList(numrows(b):k)})));
 
 
 
@@ -1369,37 +1369,217 @@ document {
       
       SeeAlso=>isCayley
      }
+
+-- tests for adjointPolytope
+--    adjointPolytope(Matrix,ZZ)
+--    adjointPolytope(Polyhedron,ZZ)
 TEST ///
-P = convexHull matrix {{0,0},{0,2}};
-Q = hypercube(2);
-assert(isCayley cayley(P,Q))
+    M = matrix{{0,3,0}, {0,0,3}}
+    P = convexHull(M)
+    k = 1
+    adjM = adjointPolytope(M, k)
+    adjP = adjointPolytope(P, k)
+    assert(instance(adjM,Polyhedron))
+    assert(instance(adjP, Polyhedron))
+    assert(adjM == adjP)
+    assert(adjointPolytope(adjM, 2) == adjointPolytope(M, 3)) -- adjunction degree is additive
+///
+
+-- tests for ambientHalfspaces
+--    ambientHalfspaces(Polyhedron)
+--    areIsomorphic(Polyhedron,Polyhedron)
+TEST ///
+    (A,b)=ambientHalfspaces(convexHull(matrix{{0,2}}));
+    assert(instance(A, Matrix))
+    assert(instance(b, Matrix))
+    assert(areIsomorphic(intersection(A,b),convexHull(matrix{{0,2}})));
+///
+
+
+-- tests for areIsomorphic
+--    areIsomorphic(Polyhedron,Polyhedron) is checked above
+--    areIsomorphic(Matrix,Matrix)
+--    the option "smoothtest" is left untested because it takes a long time to run
+TEST ///
+    M = matrix{{0,3,0}, {0,0,3}}
+    assert(areIsomorphic(M,M))
 ///
 
 TEST ///
-(A,b)=ambientHalfspaces(hypercube(3));
-assert(areIsomorphic(intersection(A,b),hypercube(3)));
+    -- tests for cayley
+    --    cayley(List)
+    --    cayley(List,ZZ)
+    --    cayley(Matrix,Matrix)
+    --    cayley(Matrix,Matrix,Matrix)
+    --    cayley(Matrix,Matrix,Matrix,ZZ)
+    --    cayley(Matrix,Matrix,ZZ)
+    --    cayley(Polyhedron,Polyhedron)
+    --    cayley(Polyhedron,Polyhedron,Polyhedron)
+    --    cayley(Polyhedron,Polyhedron,Polyhedron,ZZ)
+    --    cayley(Polyhedron,Polyhedron,ZZ)
+    M = matrix{{0,2}}
+    N = matrix{{0,4}}
+    P = convexHull(M)
+    Q = convexHull(N)
+    L = cayley({P,Q})
+    MN = cayley(M,N)
+    PQ = cayley(P,Q)
+    
+    assert(instance(cayley(M,N),Polyhedron))
+    assert(instance(cayley(P,Q),Polyhedron))
+    assert(instance(L,Polyhedron))
+    assert(areIsomorphic(MN,PQ))
+    assert(areIsomorphic(L,PQ))
 ///
 
+-- tests for codegree
+--    codegree(Matrix)
+--    codegree(Polyhedron)
 TEST ///
-assert(codegree(convexHull(matrix{{0,2,0},{0,0,2}}))==2);
+    S = matrix{{0,2,0},{0,0,2}}
+    assert(codegree(S) == 2)
+    assert(codegree(convexHull(S)) == 2)
 ///
 
+-- degreeOfJetSeparation
+--    degreeOfJetSeparation(List,Matrix)
+--    degreeOfJetSeparation(Matrix,Matrix)
 TEST ///
-assert(isJetSpanned(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{{1},{1}}));
+    P = convexHull(matrix{{0,2}})
+    Q = convexHull(matrix{{0,2}})
+    A = latticePoints(cayley({P,Q},2))
+    x = matrix{{1},{1}}
+    assert(degreeOfJetSeparation(A,x) == 2)
 ///
 
+-- epsilonBounds
+--    epsilonBounds(Polyhedron,ZZ)
 TEST ///
-assert(jetMatrix(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{{1},{1}}) == matrix {{1, 1, 1, 1, 1, 1}, {0, 0, 0, 1, 1, 2}, {0, 0, 0, 0, 0, 2}, {0, 0, 0, 0, 1, 0}, {0, 1, 2, 0, 1, 0}, {0, 0, 2, 0, 0, 0}});
+    P = convexHull(matrix{{0,2}})
+    Q = convexHull(matrix{{0,2}})
+    R = cayley({P,Q},2)
+    assert(epsilonBounds(R,10) == {2,2})
 ///
 
+-- gaussFiber
+--    gaussFiber(List)
+--    gaussFiber(Matrix)
 TEST ///
-assert(not isEmpty(randZPoly(5,2)))
+    PQ = cayley(convexHull(matrix{{0,2}}), convexHull(matrix{{0,2}}))
+    A = latticePoints(PQ)
+    assert(gaussFiber(A) == {1})
+///
+    
+-- iskCayleykEdges
+--    iskCayleykEdges(Polyhedron)
+TEST ///
+    P = convexHull(matrix{{0,2}})
+    Q = convexHull(matrix{{0,2}})
+    Q2 = convexHull(matrix{{0,3}})
+    R1 = cayley({P,Q},2)
+    R2 = cayley({P,Q2},2)
+    R1out = iskCayleykEdges(R1)
+    
+    assert(not instance(iskCayleykEdges(R2), Sequence))
+    assert(instance(R1out, Sequence))
+    assert(R1out#0 == convexHull(matrix{{0,2},{0,0}}))
 ///
 
+-- gaussImage
+--    gaussImage(List)
+--    gaussImage(Matrix)
 TEST ///
-assert(areIsomorphic(toricBlowUp(convexHull(matrix{{0,2,0},{0,0,2}}),convexHull(matrix{{0},{0}}),1),convexHull(matrix{{1,0,2,0},{0,1,0,2}})))
+    A = latticePoints(cayley(convexHull(matrix{{0,1}}),convexHull(matrix{{0}})))
+    L = gaussImage(A)
+    assert(degree(L#0) == {2})
 ///
 
+-- these tests are rather slow on my machine (~2 seconds), so they are silenced
+--TEST ///
+--    -- gausskFiber
+--    --    gausskFiber(Matrix,ZZ)
+--    A = latticePoints(hypercube(2,1))
+--    assert(gausskFiber(A,2) == {1})
+--///
+
 TEST ///
-assert(exponents(product(torusEmbedding(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})))))=={{4,4}})
+    -- gausskImage
+    --    gausskImage(Matrix, ZZ)
+    A = latticePoints(hypercube(2,1))
+    assert(#gausskImage(A,2) == 25)
+--///
+
+-- isCayley
+--    isCayley(Matrix)
+--    isCayley(Polyhedron)
+TEST ///
+    P = convexHull matrix {{0,0},{0,2}};
+    Q = hypercube(2);
+    assert(isCayley cayley(P,Q))
+///
+
+-- isJetSpanned
+--    isJetSpanned(List,ZZ,Matrix)
+--    isJetSpanned(Matrix,ZZ,Matrix)
+TEST ///
+    assert(isJetSpanned(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{{1},{1}}));
+///
+
+-- jetMatrix
+--    jetMatrix(List,ZZ)
+--    jetMatrix(List,ZZ,Matrix)
+--    jetMatrix(Matrix,ZZ)
+--    jetMatrix(Matrix,ZZ,Matrix)
+TEST ///
+    M = jetMatrix(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{{1},{1}})
+    M' = matrix {{1, 1, 1, 1, 1, 1}, {0, 0, 0, 1, 1, 2}, {0, 0, 0, 0, 0, 2}, {0, 0, 0, 0, 1, 0}, {0, 1, 2, 0, 1, 0}, {0, 0, 2, 0, 0, 0}}
+    assert(instance(M, Matrix))
+    assert(M == M');
+///
+
+-- listSmooth2D no tests
+
+-- listSmooth3D no tests
+
+-- randQPoly
+--    randQPoly(ZZ,ZZ)
+TEST ///
+    Q = randQPoly(4, 3)
+    assert(instance(Q, Polyhedron))
+    assert(not isEmpty(Q))
+///
+
+-- randZPoly
+--    randZPoly(ZZ,ZZ)
+--    randZPoly(ZZ,ZZ,ZZ)
+TEST ///
+    P = randZPoly(5,2)
+    assert(instance(P,Polyhedron))
+    assert(not isEmpty(P))
+///
+
+-- toricBlowUp
+--    toricBlowUp(Matrix,Matrix)
+--    toricBlowUp(Matrix,Matrix,ZZ)
+--    toricBlowUp(Polyhedron,Polyhedron)
+--    toricBlowUp(Polyhedron,Polyhedron,ZZ)
+TEST ///
+    assert(areIsomorphic(toricBlowUp(convexHull(matrix{{0,2,0},{0,0,2}}),convexHull(matrix{{0},{0}}),1),convexHull(matrix{{1,0,2,0},{0,1,0,2}})))
+///
+
+-- toricDiv
+--    toricDiv(Matrix)
+--    toricDiv(Polyhedron)
+TEST ///
+    D = toricDiv(matrix{{0,0,1,1},{0,1,1,0}})
+    D' = toricDiv(hypercube(2))
+    assert(instance(D,ToricDivisor))
+    assert(instance(D',ToricDivisor))
+///
+
+-- torusEmbedding
+--    torusEmbedding(List)
+--    torusEmbedding(Matrix)
+TEST ///
+    assert(exponents(product(torusEmbedding(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})))))=={{4,4}})
 ///

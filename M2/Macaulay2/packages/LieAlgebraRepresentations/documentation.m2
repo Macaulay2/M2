@@ -3036,3 +3036,60 @@ undocumented ( {
      (highestRoot,String,ZZ),(highestRoot,Sequence,Sequence)
     })
 
+--tests the fraktur shorthand for simple Lie algebras and the omega shorthand for fundamental weights
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    assert(𝔞_2 === g)
+    assert(𝔟_2 === simpleLieAlgebra("B",2))
+    assert(𝔠_3 === simpleLieAlgebra("C",3))
+    assert(𝔡_4 === simpleLieAlgebra("D",4))
+    assert(𝔢_6 === simpleLieAlgebra("E",6))
+    assert(𝔣_4 === simpleLieAlgebra("F",4))
+    assert(𝔤_2 === simpleLieAlgebra("G",2))
+    --ω_i is the i-th fundamental weight, so LL_(ω_i)(g) is the corresponding irreducible module
+    assert(LL_(ω_1)(g) === irreducibleLieAlgebraModule(g,{1,0}))
+    assert(LL_(ω_2)(g) === irreducibleLieAlgebraModule(g,{0,1}))
+    assert(LL_(ω_1+ω_2)(g) === irreducibleLieAlgebraModule(g,{1,1}))
+///
+
+--tests characterRing
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    R = characterRing g
+    assert instance(R, Ring)
+    --the character ring has one variable per node of the Dynkin diagram
+    assert(numgens R == rank g)
+    --characterRing is memoized: repeated calls return the identical ring
+    assert(characterRing g === R)
+    --the character of a module is an element of the character ring
+    V = irreducibleLieAlgebraModule(g,{1,1})
+    assert(ring character V === R)
+///
+
+--tests LieAlgebraModuleFromWeights
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    V = irreducibleLieAlgebraModule(g,{1,1})
+    M = V ** V
+    --LieAlgebraModuleFromWeights recovers a module from its weight diagram
+    assert(LieAlgebraModuleFromWeights(weightDiagram M, g) === M)
+    --and equivalently from its character
+    assert(LieAlgebraModuleFromWeights(character M, g) === M)
+    --a character from a different Lie algebra's ring is rejected
+    assert(try (LieAlgebraModuleFromWeights(character M, simpleLieAlgebra("B",2)); false) else true)
+///
+
+--tests adams (Adams operations on Lie algebra modules)
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    V = irreducibleLieAlgebraModule(g,{1,1})
+    S = standardModule g
+    --the 1st Adams operation is the identity; the 0th gives the zero module
+    assert(adams(1,V) === V)
+    assert(adams(0,V) === zeroModule g)
+    --the (-1)st Adams operation is the dual: the dual of the sl_3 standard module {1,0} is {0,1}
+    assert(adams(-1,S) === irreducibleLieAlgebraModule(g,{0,1}))
+    --Adams operations permute the weight diagram, so they preserve dimension
+    assert(dim adams(2,S) == dim S)
+///
+

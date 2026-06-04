@@ -1497,3 +1497,64 @@ X = continuousProbabilityDistribution(
 assert(abs(probability_X 0 - 0.187167) < 1e-7)
 assert(abs(quantile_X 0.3 - 1.546915) < 1e-7) 
 ///
+
+-- bernoulliDistribution function
+TEST ///
+X = binomialDistribution(1, 0.1)
+Y = bernoulliDistribution 0.1
+assert(density_X 2==density_Y 2)
+assert(probability_X 3==probability_Y 3)
+///
+
+-- probability and quantile LowerTail option
+TEST ///
+Z = normalDistribution();
+X = binomialDistribution(10, 0.25);
+p=probability_Z(1.96, LowerTail => false);
+q=quantile_Z(0.95, LowerTail => false);
+assert(p<=0.025)
+assert(p>=0.0249)
+assert(quantile_X(0.75, LowerTail => false)==2)
+assert(q>=-1.65)
+assert(q<=-1.644)
+///
+
+-- Description and Quantile option on CPD
+TEST ///
+X = continuousProbabilityDistribution(x -> 2 * x, Support => (0, 1),
+         DistributionFunction => x -> x^2,
+         QuantileFunction => p -> sqrt p,
+         Description => "triangular distribution")
+bool1=instance(X, ContinuousProbabilityDistribution)
+assert(bool1)
+assert(net X=="triangular distribution")
+
+Y=continuousProbabilityDistribution(x -> 2 * x, Support => (0, 1))
+d= quantile_X 0.1-quantile_Y 0.1;
+assert(abs(d)<=0.000000001)
+///
+
+-- Description DPD
+TEST ///
+X = discreteProbabilityDistribution(x -> 1/6, Support => (1, 6),
+         DistributionFunction => x -> x / 6,
+         QuantileFunction => p -> 6 * p,
+         Description => "six-sided die")
+Y = discreteProbabilityDistribution(x -> 1/6, Support => (1, 6),
+    DistributionFunction => x -> x / 6)
+
+bool1=instance(X, DiscreteProbabilityDistribution)
+assert(bool1)
+assert(net X=="six-sided die")
+///
+
+-- RandomGeneration option on DPD and CPD
+TEST ///
+X = discreteProbabilityDistribution(x -> 1/6, Support => (1, 6),
+    RandomGeneration => () -> 4);
+assert(random X==4)
+
+Y = continuousProbabilityDistribution(x -> 2 * x, Support => (0, 1),
+    RandomGeneration => () -> 4);
+assert(random Y==4)
+///

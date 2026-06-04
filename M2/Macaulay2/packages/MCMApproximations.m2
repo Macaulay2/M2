@@ -29,12 +29,6 @@ export {
     "setupModules"
     }
 
--* test: The following code crashes M2 v 8.2
-S = ZZ/101[a]
-R = S/ideal(a^2)
-freeResolution (coker vars R, LengthLimit => 0)
-*-
-
 depth Module := M-> profondeur M
 
 socleDegrees = method()
@@ -307,11 +301,6 @@ Description
 ///
 
 
-///
-restart
-loadPackage("MCMApproximations", Reload=>true)
-///
-
 doc ///
    Key
     socleDegrees
@@ -330,9 +319,9 @@ doc ///
      L = {} if the socle is 0.
     Example
      R = ZZ/101[x,y,z]
-     M0 = R^1/(ideal(x,y,z)*ideal (x,y));
-     M1 = coker random(R^{1,2}, R^{0,-1,-2}); -- dim 1
-     M2 = coker random(R^{1,2}, R^{0,-1,-2,-4}); -- dim 0
+     socleDegrees(coker vars R)
+     socleDegrees(R^1/(ideal vars R)^2)
+     socleDegrees(R^1/(ideal(x,y,z)*ideal(x,y)))
    ///
 
 doc ///
@@ -820,11 +809,24 @@ assert(profondeur M'' == dim ring M'') -- an MCM module
 assert(betti freeResolution(prune M'', LengthLimit => 10) == betti freeResolution(source approximation(prune M'', Total=>false), LengthLimit => 10)) -- no free summands
 assert(2 == length freeResolution(N, LengthLimit =>10)) -- projective dimension <\infty
 ///
-///TEST
-setRandomSeed 100
-assert( (approximation M) === (map(image map((R)^1,(R)^{{-1},{-1}},{{a, b}}),cokernel map((R)^{{-1},{-1}},(R)^{{-2},{-2}},{{-a, b}, {0, a}}),{{-1, 0}, {0, 1}}),map(image map((R)^1,(R)^{{-1},{-1}},{{a, b}}),(R)^0,0)) );
-assert( (approximation(M, Total=>false)) === map(image map((R)^1,(R)^{{-1},{-1}},{{a,b}}),cokernel map((R)^{{-1},{-1}},(R)^{{-2},{-2}},{{-a, b}, {0, a}}),{{-1, 0}, {0, 1}}) );
-assert( (approximation(M, CoDepth => 0)) === (map(image map((R)^1,(R)^{{-1},{-1}},{{a,b}}),cokernel map((R)^{{-1},{-1}},(R)^{{-2},{-2}},{{a, -b}, {0, a}}),{{1, 0}, {0,1}}),map(image map((R)^1,(R)^{{-1},{-1}},{{a, b}}),(R)^0,0)) );
+-- approximation, with its options Total and CoDepth.  approximation M
+-- returns the pair (phi,psi) of the MCM approximation; the total map
+-- (phi|psi) is a surjection onto M, and psi maps from a free module.
+TEST///
+R = ZZ/101[a,b]/ideal(a^2)
+M = image vars R
+ap = approximation M
+assert(class ap === Sequence)
+(phi,psi) = ap
+assert(target phi === M and target psi === M)
+assert(isSurjective(phi | psi))
+assert(isFreeModule source psi)
+-- Total => false returns only the essential (non-free) component phi
+apf = approximation(M, Total => false)
+assert(class apf === Matrix)
+assert(apf === phi)
+-- CoDepth is a computation hint; the (phi,psi) pair is still returned
+assert(class approximation(M, CoDepth => 0) === Sequence)
 ///
 TEST///
 setRandomSeed 100
@@ -908,6 +910,45 @@ Ea = approximationSequence M;
 Ec = coApproximationSequence M;
 assert(isFreeModule prune Ea_3 ===true)
 assert(length freeResolution(prune Ec_2, LengthLimit => 10) == 1)
+///
+
+-- regression: freeResolution(..., LengthLimit => 0) over a hypersurface
+-- once crashed M2 v8.2.  It must now build a length-0 free complex.
+TEST///
+S = ZZ/101[a]
+R = S/ideal(a^2)
+F = freeResolution(coker vars R, LengthLimit => 0)
+assert(length F == 0)
+assert(rank F_0 == 1)
+///
+
+-- socleDegrees: the degrees (with multiplicity) of the socle generators.
+TEST///
+R = ZZ/101[x,y,z]
+-- residue field: socle is the field itself, in degree 0
+assert(socleDegrees(coker vars R) == {0})
+-- a free module has zero socle, hence the empty list
+assert(socleDegrees(R^1) == {})
+-- R/((x,y,z)(x,y)): a 2-dimensional socle, both generators in degree 1
+assert(socleDegrees(R^1/(ideal(x,y,z)*ideal(x,y))) == {1,1})
+-- error test: socleDegrees requires the coefficient ring to be a field
+assert(try (socleDegrees((ZZ[t])^1/ideal(t^2)); false) else true)
+///
+
+-- setupRings options.  Characteristic sets the coefficient field; with
+-- Randomize => false the regular sequence is the pure d-th powers.
+TEST///
+setRandomSeed 0
+assert(char first setupRings(2,2) == 101)
+assert(char first setupRings(2,2, Characteristic => 5) == 5)
+T = setupRings(2,3, Randomize => false)
+assert(#T == 3)
+-- Randomize => false: every defining-ideal generator is a single monomial
+assert(all(flatten entries gens ideal last T, g -> size g == 1))
+-- CoDepth: a correct codepth hint leaves syzygyModule's result unchanged
+R = (setupRings(2,2))_2
+M = coker vars R
+assert(betti syzygyModule(-2,M) == betti syzygyModule(-2,M, CoDepth => 2))
 ///
 
 end--

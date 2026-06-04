@@ -215,18 +215,32 @@ pruneUnit(List, ZZ, Sequence, List) := opts -> (mComplex, n, unit, pruningMorph)
 -- TODO: handle the case of twisted complexes and free modules with degrees (both are OK in the engine)
 pruneDiff = method(Options => {PruningMap => true, UnitTest => isUnit})
 pruneDiff(Complex, ZZ) := opts -> (C, n) -> (
-    if opts.PruningMap === true then (
-        (D, pruningMorph) := pruneDiff(toMutableComplex C, n, opts);
-        return (toChainComplex D, pruningMorph);
-        );
-    toChainComplex pruneDiff(toMutableComplex C, n, opts)
+    m := min C;
+    -- The pruning morphism is computed internally regardless of the PruningMap
+    -- option, since it is needed to grade the result correctly; PruningMap
+    -- only controls whether it is also returned to the caller.
+    (D, pruningMorph) := pruneDiff(toMutableComplex C, n,
+        PruningMap => true, UnitTest => opts.UnitTest);
+    F := source map(target C.dd_(m+1), , matrix pruningMorph#0);
+    if opts.PruningMap === true then return (toChainComplex(D, F), pruningMorph);
+    toChainComplex(D, F)
     )
 pruneDiff(Complex, ZZ, List) := opts -> (C, n, M) -> (
+    m := min C;
+    -- The leftmost module changes only when the 0-th differential is pruned;
+    -- in that case the pruning morphism is needed to recover its grading.
     if opts.PruningMap === true then (
         (D, pruningMorph) := pruneDiff(toMutableComplex C, n, M, opts);
-        return (toChainComplex D, pruningMorph);
+        F := target C.dd_(m+1);
+        if n == 0 and pruningMorph#0 =!= null then
+          F = source map(F, , matrix pruningMorph#0);
+        return (toChainComplex(D, F), pruningMorph);
         );
-    toChainComplex pruneDiff(toMutableComplex C, n, M, opts)
+    (D', M') := pruneDiff(toMutableComplex C, n,
+        PruningMap => true, UnitTest => opts.UnitTest);
+    F' := target C.dd_(m+1);
+    if n == 0 then F' = source map(F', , matrix M'#0);
+    toChainComplex(D', F')
     )
 pruneDiff(List, ZZ)         := opts -> (mComplex, n) -> (
     pruningMorph := new MutableList;
@@ -258,17 +272,20 @@ pruneComplex = method(
     Options => {
         Strategy => Engine, -- set to null to use the methods above
         Direction => "left",
-        PruningMap => true, -- TODO: grading may be incorrect if this is set to false
+        PruningMap => true, -- whether to expose the pruning morphism in D.cache.pruningMap
         UnitTest => isUnit -- TODO: detect when all units are scalars and choose that
         })
 pruneComplex Complex      := opts ->  C          -> pruneComplex(C, -1, opts)
 pruneComplex(Complex, ZZ) := opts -> (C, nsteps) -> (
     m := min C;
     mComplex := toMutableComplex C;
-    (D, M) := pruneComplex(mComplex, nsteps, opts);
-    F := if opts.PruningMap == true
-    then source map(target C.dd_(m+1), , matrix M#0)
-    else target matrix D#0;
+    -- The pruning morphism is computed internally regardless of the PruningMap
+    -- option, since it is needed to grade the pruned complex correctly;
+    -- PruningMap only controls whether it is exposed in D.cache.pruningMap.
+    (D, M) := pruneComplex(mComplex, nsteps,
+        Strategy => opts.Strategy, Direction => opts.Direction,
+        PruningMap => true, UnitTest => opts.UnitTest);
+    F := source map(target C.dd_(m+1), , matrix M#0);
     D = (toChainComplex(D, F))[-m];
     R := ring D;
     if opts.PruningMap == true then

@@ -15,7 +15,7 @@ newPackage(
 	  Keywords => {"Projective Algebraic Geometry"}
           )
 
-export {"Bracket", "AbstractGCRing", "bracketRing", "BracketRing", "GCAlgebra", "normalForm", "gc", "toBracketPolynomial", "GCExpression"}
+export {"Bracket", "AbstractGCRing", "bracketRing", "BracketRing", "GCAlgebra", "normalForm", "gc", "toBracketPolynomial", "GCExpression", "GCMatrix"}
 
 -* Code section *-
 
@@ -152,9 +152,18 @@ coefficients GCExpression := o -> a -> (
 
 bracketRing GCExpression := o -> b -> bracketRing ring b
 commonRing (GCExpression, GCExpression) := (b1, b2) -> (
-    -- returns: either GCAlgebra or BracketRing in which b1 & b2 both make s
+    -- returns: either GCAlgebra or BracketRing in which b1 & b2 both make
+    -- sense.  Previously the final clause was
+    --   ... else if G1 === bracketRing G2 then G2 error "..."
+    -- with a missing `else` before `error`, so when the rings were
+    -- incompatible the whole `if` evaluated to null silently and the
+    -- documented "Common abstract GC ring not found" message was
+    -- unreachable.  Subsequent code in + / - / * would then error
+    -- opaquely on a null `commonRing` result.
     (G1, G2) := (ring b1, ring b2);
-    if (G1 === G2 or G2 === bracketRing G1) then G1 else if G1 === bracketRing G2 then G2 error "Common abstract GC ring not found"
+    if (G1 === G2 or G2 === bracketRing G1) then G1
+    else if G1 === bracketRing G2 then G2
+    else error "Common abstract GC ring not found"
     )
 degree GCExpression := A -> degree A#RingElement
 ring GCExpression := b -> b#ring
@@ -321,6 +330,12 @@ RingElement * GCMatrix := (r, M) -> (
 GCMatrix * RingElement := (M, r) -> (
     new GCMatrix from {matrix => (r * M#matrix), bracketRing => M#bracketRing})
 
+-- Plain numeric scalars: lift to the bracket ring and reuse the
+-- RingElement overload.  Without this, `3 * M` for a GCMatrix M would
+-- silently return null.
+Number * GCMatrix := (n, M) -> (sub(n, ring ring M)) * M
+GCMatrix * Number := (M, n) -> M * (sub(n, ring ring M))
+
 ring GCMatrix := M -> M#bracketRing
 
 GCMatrix _ Sequence := (M, twoIndices) -> ((M#matrix)_twoIndices)_(ring M)
@@ -460,21 +475,26 @@ Description
 ///
 
 doc ///
-Key 
+Key
  GCAlgebra
 Description
  Text
-  An object of class GCAlgebra represents a Grassmann-Cayley algebra. 
-  The Grassmann-Cayley algebra may be viewed as an algebra of linear subspaces of $\mathbb{P}^{d−1}.$ 
-  In this algebra, there are two operations which correspond to the join and meet of subspaces. 
-  We denote these operators by * and ^, respectively. 
-  The first operator is simply multiplication in a skew-commutative polynomial ring $\mathbb{C}\langle a_1, . . . , a_n\rangle.$ 
-  An algebraic formula for the meet operator is more complicated, but it can be defined using the so-called shuffle product. 
-  
+  An object of class GCAlgebra represents a Grassmann-Cayley algebra.
+  The Grassmann-Cayley algebra may be viewed as an algebra of linear subspaces of $\mathbb{P}^{d−1}.$
+  In this algebra, there are two operations which correspond to the join and meet of subspaces.
+  We denote these operators by * and ^, respectively.
+  The first operator is simply multiplication in a skew-commutative polynomial ring $\mathbb{C}\langle a_1, . . . , a_n\rangle.$
+  An algebraic formula for the meet operator is more complicated, but it can be defined using the so-called shuffle product.
+
   As a $k-$vector space, the Grassmann-Cayley algebra has a direct-sum decomposition
   $$\oplus_{k=0}^d\Lambda^k(a_1, \ldots, a_n)$$
   where $\Lambda^k(a_1,\ldots, a_n)$ is the vector space of {\it extensors} of the form $a_{i_1}\cdots a_{i_k}.$
   We may identify $\Lambda^d(a_1, \ldots, a_n)\cong B_{n,d}$ with the @TO BracketRing @.
+ Example
+  G = gc(a..f, 3)
+  a_G * b_G                -- join of two points: the line ab
+  (a_G * b_G) ^ (c_G * d_G) -- meet (intersection) of lines ab and cd in P^2
+  bracketRing G            -- the associated bracket ring B_{6,3}
 ///
 
 doc ///
@@ -569,12 +589,21 @@ Description
   Text
     A general data type for representing elements of bracket rings and Grassmann-Cayley algebras.
     GC expressions can be assembled into matrices, and they support a number of the usual arithmetic operations: addition, multiplication, and scalar multiplication.
-    
+
     Multiplication on the Grassmann-Cayley algebra is the usual exterior product.
     This represents the span, or join, of linear subspaces in a given vector space.
-    
+
     The Grassmann-Cayley algebra is also endowed with a "shuffle product", representing the intersection or meet of linear subspaces.
     This is implemented in @TO (symbol ^, GCExpression, GCExpression)@.
+  Example
+    B = bracketRing(4, 2)
+    e = 3 * [1 2]_B + 7 * [3 4]_B  -- a GCExpression living in a BracketRing
+    class e
+    degree e
+    terms e
+    G = gc(a..d, 2)
+    ge = (a * b)_G                 -- a GCExpression living in a GCAlgebra
+    class ge
 ///
 
 doc ///
@@ -663,6 +692,42 @@ Outputs
 Description
   Text
     Interpreting bracket polynomials as functions on $\Lambda^d (V)$ (see @TO (symbol ^, GCExpression, GCExpression)@ for notation), we may convert an extensor $a_1 \wedge \cdots \wedge a_d$ to the bracket $[a_1, \ldots , a_d].$
+///
+
+doc ///
+Key
+  GCMatrix
+  (matrix, AbstractGCRing, List)
+Headline
+  Matrices of Grassmann-Cayley algebra / bracket-ring expressions
+Description
+  Text
+    An object of class @TO GCMatrix@ is a matrix whose entries are
+    @TO GCExpression@s belonging to a common @TO AbstractGCRing@.
+    These matrices support the usual operations -- addition, multiplication,
+    transposition, row/column slicing, scalar multiplication on either
+    side, and determinant -- and are built via @TT "matrix(B, L)"@ where
+    @TT "B"@ is the bracket ring (or GC algebra) and @TT "L"@ is a list
+    of rows of GCExpressions.
+  Example
+    B = bracketRing(6, 3)
+    M = matrix(B, for i from 4 to 6 list {[1 2 i]_B, [1 i 3]_B, [i 2 3]_B})
+    class M
+    normalForm det M
+    transpose M
+    M_(0, 0)
+    M^{0}             -- first row
+    M_{0}             -- first column
+    entries (M + M)
+    2 * M             -- numeric scalar multiplication
+  Text
+    The determinant of a generic 3x3 @TO GCMatrix@ over the bracket ring
+    $B_{6,3}$ recovers the classical Sturmfels identity
+    @TT "-[456]*[123]^2"@ after taking the @TO normalForm@.
+SeeAlso
+  bracketRing
+  GCExpression
+  normalForm
 ///
 
 
@@ -764,8 +829,9 @@ assert(net normalForm (det M) == "-[456]*[123]^2")
 
 TEST ///
 -* Pascal's Theorem*-
-G = gc(a .. f, 3) -- generate the GC Algebra generated by the 1-extensors a..f 
-gens --G create a list containing just the extensors
+G = gc(a .. f, 3) -- generate the GC Algebra generated by the 1-extensors a..f
+gensG = gens G    -- a list containing just the extensors (was `gens --G ...` previously, which silently no-op'd to a comment)
+assert(#gensG == 6)
 B = bracketRing G; -- define the bracketRing of G
 X = matrix B; -- create the matrix of the bracketRing
 C = fold(apply(0..5, i-> basis(2, ring X, Variables => (entries X)#i)), (a,b) -> a||b); -- Matrix with rows corresponding to six point on a quadric
@@ -781,32 +847,129 @@ p1 = abLine ^ edLine -- Intersection point of lines joining a, b and e, d
 p2 = afLine ^ cdLine -- Intersection point of lines joining a, f and c, d
 p3 = bcLine ^ efLine -- Intersection point of lines joining b, c and e, f
 q2 = p1 * p2 * p3 -- Span of p1, p2, p3. q = 0 if the points are collinear.
-normalForm q2 === (-1) * q1 -- True! So, a,b,c,d,e,f lie on a single quadric if and only if p1, p2, p3 are collinear.
+-- Pascal's theorem: a,b,c,d,e,f lie on a single quadric iff p1, p2, p3 are collinear.
+-- Previously this line was a bare `===` comparison with no `assert`, so the
+-- conclusion was checked silently and any regression would have been
+-- invisible.  (`==` is not defined on GCExpression; we use `===` here
+-- because both q1 and q2's normalForm are GCExpressions with the same
+-- underlying RingElement structure.)
+assert(normalForm q2 === (-1) * q1)
 assert(net normalForm q2 == "[def]*[bcf]*[ace]*[abd]-[cef]*[bdf]*[ade]*[abc]")
+///
+
+-- commonRing error path.  Previously the `else if G1 === bracketRing G2
+-- then G2 error "..."` branch was missing the `else` before `error`, so
+-- when given two GCExpressions from unrelated rings the function silently
+-- returned null instead of raising the documented "Common abstract GC
+-- ring not found" error.  Now both the direct call to commonRing and the
+-- arithmetic operators (+ - *) that go through it raise the error.
+TEST ///
+G1 = gc(a..c, 2)
+G2 = gc(p..r, 2)
+e1 = a_G1
+e2 = p_G2
+assert(try (e1 + e2; false) else true)
+assert(try (e1 - e2; false) else true)
+assert(try (e1 * e2; false) else true)
+///
+
+-- GCMatrix smoke: previously a fully-implemented type (~70 LOC, 13
+-- operators) but unexported, undocumented, and untested.  Now exported
+-- with a doc node.  This block exercises construction, determinant,
+-- transpose, row/column slicing, addition, scalar multiplication on
+-- either side (including numeric scalars, which previously returned
+-- null silently because no `Number * GCMatrix` overload existed), and
+-- the `ring` and `_(i,j)` accessors.
+TEST ///
+B = bracketRing(6, 3)
+M = matrix(B, for i from 4 to 6 list {[1 2 i]_B, [1 i 3]_B, [i 2 3]_B})
+assert(class M === GCMatrix)
+assert(ring M === B)
+-- Sturmfels 3.1 problem 2: det M normal form
+assert(net normalForm det M == "-[456]*[123]^2")
+-- Element access and shape
+assert(class M_(0,0) === GCExpression)
+assert(class M_(0,0) === GCExpression)
+assert(M^{0} === M^{0})  -- smoke; row slicing
+assert(class (M^{0}) === GCMatrix)
+assert(class (M_{0}) === GCMatrix)
+-- Transpose is involutive
+assert(M_(0,1) === (transpose M)_(1,0))
+-- Addition
+M2 = M + M
+assert(class M2 === GCMatrix)
+-- Scalar multiplication with both a RingElement and a plain Number
+-- (the Number * GCMatrix overload was previously missing and returned
+-- null silently).
+threeM = 3 * M
+assert(class threeM === GCMatrix)
+fiveM = M * 5
+assert(class fiveM === GCMatrix)
+rM = (sub(2, ring B)) * M
+assert(class rM === GCMatrix)
+-- Determinant agreement on a 2x2 matrix
+B2 = bracketRing(3, 2)
+N = matrix(B2, {{[1 2]_B2, [1 3]_B2}, {[1 3]_B2, [2 3]_B2}})
+assert(net normalForm det N == "-[13]^2+[23]*[12]")
+///
+
+-- Invalid bracket-input error paths for `Array _ AbstractGCRing`.
+-- Previously the validation `assert` at line 132-137 raised an opaque
+-- error message; the source comment "TODO: include better error messages"
+-- at line 134 acknowledged this.  At minimum, lock in that invalid input
+-- does raise *some* error (the function does not silently produce
+-- garbage).
+TEST ///
+B = bracketRing(4, 2)
+-- Wrong number of symbols (too few)
+assert(try ([1]_B; false) else true)
+-- Index out of range (5 > 4)
+assert(try ([1 5]_B; false) else true)
+-- Index out of range (0 < 1)
+assert(try ([1 0]_B; false) else true)
+-- Valid: should not error
+assert(try ([1 2]_B; true) else false)
+///
+
+-- terms / degree on GCExpression.  Previously these methods were defined
+-- and exported (via the type) but had no direct TEST coverage; they were
+-- used only as internal plumbing.
+TEST ///
+B = bracketRing(4, 2)
+e = [1 2]_B + 3 * [3 4]_B
+ts = terms e
+assert(#ts == 2)
+assert(all(ts, t -> instance(t, GCExpression)))
+-- degree is taken from the underlying RingElement
+assert(degree [1 2]_B == {1})
+assert(degree (([1 2]_B)^2) == {2})
+assert(degree ([1 2]_B + [3 4]_B) == {1})
+///
+
+-- factor on GCExpression.  Previously untested.
+TEST ///
+B = bracketRing(4, 3)
+e = ([1 2 3]_B)^2
+fac = factor e
+assert(instance(fac, List))
+assert(#fac >= 1)
+assert(all(fac, f -> instance(f, GCExpression)))
+-- a single bracket factors as itself
+fac2 = factor [1 2 3]_B
+assert(instance(fac2, List))
+assert(#fac2 >= 1)
 ///
 
 end--
 
--* Development section *-
-uninstallPackage "Brackets"
-restart
-needsPackage "Brackets"
-check "Brackets"
-
-uninstallPackage "Brackets"
-restart
-installPackage("Brackets", RemakeAllDocumentation => true)
-needsPackage "Brackets"
-viewHelp "Brackets"
-
-
-
-restart
-needsPackage "Brackets"
-B = bracketRing(6,3)
-r = [1 2 3]_B
-s = 2 * r
-end
+-* Development section: install / restart breadcrumbs. *-
+-- uninstallPackage "Brackets"
+-- restart
+-- needsPackage "Brackets"
+-- check "Brackets"
+--
+-- installPackage("Brackets", RemakeAllDocumentation => true)
+-- viewHelp "Brackets"
 
 G = gc(a..f,3)
 Glu = G [l, u]

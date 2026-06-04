@@ -623,6 +623,52 @@ TEST ///
   assert((isHilbSegment I)#0);
 ///
 
+-- negative segment-test cases
+TEST ///
+  -- ideal(x^2, x*y^3, y^4) is a generation segment but neither a regularity
+  -- segment nor a Hilbert segment, exercising the "false" branch of two of
+  -- the three segment predicates.
+  QQ[x,y,z];
+  I = ideal(x^2, x*y^3, y^4);
+  assert((isGenSegment I)#0);
+  assert(not (isRegSegment I)#0);
+  assert(not (isHilbSegment I)#0);
+///
+
+-- OrderVariables option for lexIdeal and stronglyStableIdeals
+TEST ///
+  -- OrderVariables=>Up reverses the variable order from the default Down,
+  -- producing a ring with the opposite variable ordering.  The count of
+  -- strongly stable ideals does not depend on this choice, but the rings do.
+  QQ[t];
+  Ldown = lexIdeal(3, 3, OrderVariables=>Down);
+  Lup = lexIdeal(3, 3, OrderVariables=>Up);
+  assert(ring Ldown =!= ring Lup);
+  SSdown = stronglyStableIdeals(3*t, 3, OrderVariables=>Down);
+  SSup = stronglyStableIdeals(3*t, 3, OrderVariables=>Up);
+  assert(#SSdown == #SSup);
+  assert(ring(SSdown#0) =!= ring(SSup#0));
+  -- unknown values are rejected
+  assert(try (lexIdeal(3, 3, OrderVariables=>Sideways); false) else true);
+///
+
+-- MaxRegularity option for stronglyStableIdeals
+TEST ///
+  -- MaxRegularity bounds the regularity of the returned ideals; tighter
+  -- bounds give subsets, and non-positive values are rejected.
+  QQ[t];
+  allssi = stronglyStableIdeals(4*t, 4);
+  assert(#allssi == 4);
+  restricted4 = stronglyStableIdeals(4*t, 4, MaxRegularity=>4);
+  restricted3 = stronglyStableIdeals(4*t, 4, MaxRegularity=>3);
+  assert(#restricted4 == 2);
+  assert(#restricted3 == 1);
+  assert(#restricted3 <= #restricted4);
+  assert(#restricted4 <= #allssi);
+  assert(try (stronglyStableIdeals(4*t, 4, MaxRegularity=>0); false) else true);
+  assert(try (stronglyStableIdeals(4*t, 4, MaxRegularity=>-1); false) else true);
+///
+
 -------------------------------------------
 -----          DOCUMENTATION          -----
 -------------------------------------------

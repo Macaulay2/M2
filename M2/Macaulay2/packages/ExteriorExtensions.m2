@@ -837,6 +837,107 @@ Description
     If you don't name the Lie algebra something it has an annoying printout.
 ///
 
+--------------------------------------------------------------------------------
+-- TESTS
+--------------------------------------------------------------------------------
+
+TEST ///
+-- exteriorExtension: all four dispatches build an ExteriorExtension;
+-- inexact base fields (RR, CC) are documented as unsupported and must error
+assert instance(exteriorExtension(2, 4), ExteriorExtension)
+assert instance(exteriorExtension(2, 4, QQ), ExteriorExtension)
+assert instance(exteriorExtension(2, 4, symbol e), ExteriorExtension)
+assert instance(exteriorExtension(2, 4, symbol e, QQ), ExteriorExtension)
+assert(try (exteriorExtension(2, 4, RR); false) else true)
+assert(try (exteriorExtension(2, 4, CC); false) else true)
+///
+
+TEST ///
+-- getDiagonal extracts the diagonal entries; makeTraceless projects a
+-- matrix onto the traceless matrices and is idempotent
+assert(getDiagonal diagonalMatrix{1,2,3,4} == {1,2,3,4})
+assert(getDiagonal matrix{{5,9},{8,7}} == {5,7})
+A = random(QQ^5, QQ^5)
+assert(trace makeTraceless A == 0)
+assert(makeTraceless A == makeTraceless makeTraceless A)
+///
+
+TEST ///
+-- the bracket satisfies the Lie algebra axioms in every grade: it is
+-- skew-commutative, and ad is a representation (ad[A,B] = [ad A, ad B])
+ea = exteriorExtension(2, 4, QQ)
+A0 = makeTraceless random(QQ^4, QQ^4)
+B0 = makeTraceless random(QQ^4, QQ^4)
+A1 = random(2, ea.appendage)
+B1 = random(2, ea.appendage)
+assert(ea.bracket(A0, B0) + ea.bracket(B0, A0) == 0)
+assert(ea.bracket(A1, B1) + ea.bracket(B1, A1) == 0)
+assert(ea.bracket(A0, B1) + ea.bracket(B1, A0) == 0)
+assert(ea.ad(ea.bracket(A0, B0)) - ea.bracket(ea.ad(A0), ea.ad(B0)) == 0)
+assert(ea.ad(ea.bracket(A1, B1)) - ea.bracket(ea.ad(A1), ea.ad(B1)) == 0)
+assert(ea.ad(ea.bracket(A0, B1)) - ea.bracket(ea.ad(A0), ea.ad(B1)) == 0)
+///
+
+TEST ///
+-- the Killing matrix of exteriorExtension(2,4) is 21x21, symmetric, and
+-- nondegenerate -- this identifies the algebra as sp_6
+ea = exteriorExtension(2, 4, QQ)
+K = KillingMatrix ea
+assert(numRows K == 21 and numColumns K == 21)
+assert(K - transpose K == 0)
+assert(rank K == 21)
+///
+
+TEST ///
+-- structureTensor returns the nonzero structure constants as a hashtable
+ea = exteriorExtension(2, 4, QQ)
+B = structureTensor ea
+assert instance(B, HashTable)
+assert(#keys B == 238)
+///
+
+TEST ///
+-- bracket2's branch conditions are exhaustive: no pair of basis elements
+-- of exteriorExtension(2,4) produces a null return
+ea = exteriorExtension(2, 4, QQ)
+allBasis = flatten apply(#ea.bases, i -> ea.bases#i)
+assert all(allBasis, X -> all(allBasis, Y -> ea.bracket(X, Y) =!= null))
+M = ea.ad(first ea.bases#1)
+assert(instance(M, Matrix) and numRows M == numColumns M)
+///
+
+TEST ///
+-- the graded bases: grade 0 is sl_4 (dim 15), grade 1 is wedge^2 of C^4
+-- (dim 6); findGrade reports the graded piece an element lies in
+ea = exteriorExtension(2, 4, QQ)
+assert(#ea.bases == 2)
+assert(#ea.bases#0 == 15)
+assert(#ea.bases#1 == 6)
+assert(ea.findGrade(first ea.bases#0) == 0)
+assert(ea.findGrade(first ea.bases#1) == 1)
+assert(ring ea.HodgeStar(first ea.bases#1) === ea.appendage)
+assert(instance(ea.appendage, Ring) and instance(ea.LieAlgebra, Ring))
+///
+
+TEST ///
+-- matrix2LieAlg and LieAlg2Matrix are mutually inverse on the Lie algebra
+ea = exteriorExtension(2, 4, QQ)
+assert all(gens ea.LieAlgebra, g -> ea.matrix2LieAlg(ea.LieAlg2Matrix g) == g)
+assert instance(ea.LieAlg2Matrix first gens ea.LieAlgebra, Matrix)
+assert(ring ea.matrix2LieAlg first ea.bases#0 === ea.LieAlgebra)
+///
+
+TEST ///
+-- rank/trace invariants of an adjoint operator
+ea = exteriorExtension(2, 4, QQ)
+A = ea.ad(first ea.bases#1)
+assert instance(ea.powerRanks A, List)
+assert instance(ea.blockPowerRanks A, List)
+assert instance(ea.powerTraces A, Net)
+assert instance(ea.prettyBlockPowerRanks A, Net)
+assert instance(ea.getBlock(0, 0, A), Matrix)
+///
+
 end
 --------------------------------------------------------------------------------
 -- Examples
@@ -1020,3 +1121,9 @@ viewHelp ExteriorExtensions
  ea = exteriorExtension(3, 6, QQ);
 B = structureTensor(ea);
 #keys B
+
+TEST ///
+    t = symbol t
+    E = exteriorExtension(2, 4, t, QQ)
+    assert(instance(E, ExteriorExtension))    
+///

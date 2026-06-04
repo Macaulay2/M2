@@ -160,3 +160,78 @@ TEST /// -- allSemistandardTableaux, numSemistandardTableaux
 
   assert(# allSubPartitions(new Partition from {4,3,1}, new Partition from {2,1}) == 16)
 ///
+
+TEST /// -- youngDiagram, ferrersDiagram, verticalNet, horizontalNet
+
+  T = youngTableau(new Partition from {4,3,1}, new Partition from {2,1}, {1,2,3,4,5})
+  yd = youngDiagram T
+  fd = ferrersDiagram T
+  assert(class yd === Net and class fd === Net)
+  assert((width yd, height yd) == (17, 2))
+  assert((width fd, height fd) == (8, 1))
+  ydp = youngDiagram(new Partition from {3,2})
+  assert((width ydp, height ydp) == (13, 2))
+  T1 = youngTableau(new Partition from {3,1})
+  T2 = youngTableau(new Partition from {2})
+  vn = verticalNet {T1, T2}
+  hn = horizontalNet {T1, T2}
+  assert(class vn === Net and class hn === Net)
+  assert((width vn, height vn) == (13, 2))
+  assert((width hn, height hn) == (22, 2))
+
+///
+
+TEST /// -- drawInnerShape (toggles whether net draws the inner shape)
+
+  assert(drawInnerShape true === true)
+  assert(drawInnerShape false === false)
+  T = youngTableau(new Partition from {5,4,1}, new Partition from {2,1,1}, toList(1..6))
+  drawInnerShape true
+  netOn = toString net T
+  drawInnerShape false
+  netOff = toString net T
+  assert(netOn != netOff)
+
+///
+
+TEST /// -- toPartitionChain
+
+  T = youngTableau(new Partition from {3,2}, {1,1,2,2,3})
+  chain = toPartitionChain T
+  assert(class chain === Sequence)
+  assert(apply(toList chain, p -> toList trim p) == {{}, {2}, {3,1}, {3,2}})
+  assert(toList trim last chain == toList trim shape T)
+
+///
+
+TEST /// -- toIndex (inverse of toPosition, both argument orders)
+
+  T = youngTableau(new Partition from {6,3,2}, new Partition from {2}, toList(10..18))
+  assert(all(toList(0..size T - 1), k -> toIndex(toPosition(T,k),T) == k))
+  assert(all(toList(0..size T - 1), k -> toIndex(T,toPosition(T,k)) == k))
+
+///
+
+TEST /// -- rowStabilizer, columnStabilizer (orders are Young-subgroup products)
+
+  T = youngTableau(new Partition from {2,2,1}, {1,4,2,5,3})
+  rs = rowStabilizer T
+  cs = columnStabilizer T
+  assert(# rs == product(toList rowRange T, i -> (# rowEntries(T,i))!))
+  assert(# cs == product(toList columnRange T, j -> (# columnEntries(T,j))!))
+  assert(# rs == # unique rs)
+  assert(# cs == # unique cs)
+
+///
+
+TEST /// -- shift, unshift
+
+  T = youngTableau(new Partition from {6,6,5,3,1})
+  S = shift T
+  assert(toList innerShape S == {0,1,2,3,4})
+  assert(toList outerShape S == {6,7,7,6,5})
+  assert(toList innerShape shift(T,2) == {2,3,4,5,6})
+  assert(unshift S == T)
+  assert(unshift(shift(T,2),2) == T)
+
+///

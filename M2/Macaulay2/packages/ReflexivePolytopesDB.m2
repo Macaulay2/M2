@@ -1167,6 +1167,77 @@ TEST ///
   netList (set1/description)
 ///
 
+------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: direct coverage
+-- for availableOffline, description, the kreuzerSkarke String
+-- dispatch / KSEntry SelfInitializingType, and the Limit and
+-- H12 options on the offline-data path.
+------------------------------------------------------------
+
+-- availableOffline: returns a HashTable whose keys describe the bundled
+-- offline kreuzerSkarke calls and whose values are paths to existing files.
+-- The bundled offline databases are the ten listed in the package source.
+TEST ///
+  ao = availableOffline()
+  assert(class ao === HashTable)
+  assert(#(keys ao) == 10)
+  assert(all(keys ao, k -> match("^kreuzerSkarke\\(", k)))
+  assert(all(values ao, v -> fileExists v))
+  -- a few of the expected keys must be present
+  assert(member("kreuzerSkarke(1)", keys ao))
+  assert(member("kreuzerSkarke(491)", keys ao))
+  assert(member("kreuzerSkarke(11,24)", keys ao))
+///
+
+-- description on a KSEntry recovers the first (header) line; KSEntry's
+-- SelfInitializingType-from-String constructor and the kreuzerSkarke String
+-- dispatch round-trip raw entry text into KSEntries with matrices of the
+-- declared dimensions.
+TEST ///
+  ent = first kreuzerSkarke 1
+  assert(class ent === KSEntry)
+  d = description ent
+  assert(class d === String)
+  assert(match("^4 5  M:", d))         -- "4 5" => 4-row, 5-column matrix
+  m = matrix ent
+  assert(numRows m == 4 and numColumns m == 5)
+  -- KSEntry String constructor + kreuzerSkarke String dispatch
+  str = "4 5  M:53 5 N:9 5 H:3,43 [-80] id:0
+   1   0   2   4 -10
+   0   1   3   5 -10
+   0   0   4   0  -4
+   0   0   0   8  -8"
+  e2 = KSEntry str
+  assert(class e2 === KSEntry)
+  assert(match("^4 5  M:53", description e2))
+  parsed = kreuzerSkarke str
+  assert(class parsed === List)
+  assert(#parsed == 1)
+  m2 = matrix first parsed
+  assert(numRows m2 == 4 and numColumns m2 == 5)
+///
+
+-- The Limit and H12 options on the offline-data path.  Limit caps the
+-- returned list to the requested size; H12 selects the (h11, h12) database
+-- and agrees with the two-argument call form.
+TEST ///
+  -- Limit caps the count when below the database size
+  assert(#kreuzerSkarke(2, Limit => 3) == 3)
+  assert(#kreuzerSkarke(2, Limit => 10) == 10)
+  assert(#kreuzerSkarke(11, 24, Limit => 5) == 5)
+  -- Total counts from the bundled offline databases match
+  assert(#kreuzerSkarke 1 == 5)
+  assert(#kreuzerSkarke 2 == 36)
+  assert(#kreuzerSkarke 491 == 1)
+  assert(#kreuzerSkarke(9, 21) == 10)
+  assert(#kreuzerSkarke 300 == 20)
+  assert(#kreuzerSkarke(11, 24) == 200)
+  -- H12 => h12 form agrees with the two-argument form
+  e0 = first kreuzerSkarke(11, H12 => 24, Limit => 1)
+  e1 = first kreuzerSkarke(11, 24, Limit => 1)
+  assert(toString e0 == toString e1)
+///
+
 end--
 
 restart

@@ -819,4 +819,38 @@ EE:=toShortWForm toWeierstrass({-1,0,0,0,0,-1,0,1,0,-2},{1,2,1},K);
 FF:=ellCurve(1,2,K);
 assert(jInvariant(FF) == jInvariant(EE));
 ///
+
+TEST ///
+-- isOnEllCurve recognizes the point at infinity {0,1,0} on every elliptic
+-- curve; recognizes affine points satisfying the curve equation; rejects
+-- points that do not.  Works on both short Weierstrass and full Weierstrass.
+E = ellCurve(3, 8, GF(13));
+assert(isOnEllCurve({0, 1, 0}, E));
+assert(isOnEllCurve({1, 5, 1}, E));
+assert(not isOnEllCurve({2, 2, 1}, E));
+EW = ellCurve({1, 2, 3, 4, 6}, GF(29));
+assert(isOnEllCurve({0, 1, 0}, EW));
+///
+
+TEST ///
+-- bruteForceRationalPoints returns a list of EllPoints over the finite-field
+-- elliptic curve.  Its length should equal bruteForceGroupOrder; for
+-- y^2 = x^3 + 3x + 8 over F_13, both equal 9.
+E = ellCurve(3, 8, GF(13));
+pts = bruteForceRationalPoints E;
+assert(instance(pts, List));
+assert(#pts == bruteForceGroupOrder E);
+assert(#pts == 9);
+assert(all(pts, p -> instance(p, EllPoint)));
+///
+
+TEST ///
+-- isElliptic detects whether a homogeneous ideal in QQ[x,y,z] defines a
+-- smooth genus-1 curve (true on a standard Weierstrass equation, false on
+-- the cuspidal cubic y^2 z = x^3).
+S = QQ[x,y,z];
+assert(isElliptic ideal(y^2*z - x^3 - x*z^2 - z^3));
+assert(not isElliptic ideal(y^2*z - x^3));
+///
+
 end

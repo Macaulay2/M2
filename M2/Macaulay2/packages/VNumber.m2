@@ -659,7 +659,10 @@ TEST ///
 S = QQ[x_1..x_3]
 I = ideal(x_1,x_2)*ideal(x_1,x_3)*ideal(x_2,x_3)
 p = ideal(x_1,x_2,x_3)
-assert(vFunctionP(I,p) == {3,-1})
+v1 = vFunctionP(I,p)
+v2 = vFunctionP(I,p,control=>3)
+assert(v1== {3,-1})
+assert(v1==v2)
 ///
 
 ----------------------------
@@ -677,5 +680,57 @@ assert(vFunction I == {2,-1})
 TEST ///
 S = QQ[x_1..x_3]
 I = ideal(x_1,x_2)*ideal(x_1,x_3)*ideal(x_2,x_3)
-assert(vFunction I == {3,-1})
+v1 = vFunction(I)
+v2 = vFunction(I,control=>3)
+assert(v1 == {3,-1})
+assert(v1 == v2)
+///
+
+----------------------------
+-- Test reesMap
+----------------------------
+TEST ///
+S = QQ[x,y,z]
+I = ideal(x*y,x*z,y*z)
+
+f = reesMap I;
+
+T = source f;
+R = target f;
+
+-- variables x,y,z are fixed
+assert(f(T_0) == R_0)
+assert(f(T_1) == R_1)
+assert(f(T_2) == R_2)
+
+-- Rees variables map to generators times t
+assert(f(T_3) == R_0*R_1*R_3)
+assert(f(T_4) == R_0*R_2*R_3)
+assert(f(T_5) == R_1*R_2*R_3)
+///
+
+----------------------------
+-- Test soc
+----------------------------
+TEST ///
+S = QQ[x_1..x_3]
+I = ideal(x_1*x_2,x_1*x_3,x_2*x_3)
+p = ideal(x_1,x_2)
+
+M = soc(I,p)
+
+-- soc(I,p) should be a nonzero graded module
+assert(M =!= 0)
+assert(numgens M > 0)
+///
+
+TEST ///
+S = QQ[x,y,z]
+I = ideal(x*y,x*z,y*z)
+p = ideal(x,y,z)
+
+M = soc(I,p)
+
+-- maximal stable prime case
+assert(numgens M > 0)
 ///

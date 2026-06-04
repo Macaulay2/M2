@@ -1275,3 +1275,99 @@ TEST ///
   assert(differential foldComplex(K, 0) == map(S^{{0}, 2:{-1}, {-2}},S^{{0}, 2:{-1}, {-2}},{{0, x, y, 0}, {0, 0, 0, -y}, {0, 0, 0, x}, {0, 0, 0, 0}}))
   assert(differential foldComplex(dual K, 0) == map(S^{{2}, 2:{1}, {0}},S^{{2}, 2:{1}, {0}},{{0, -y, x, 0}, {0, 0, 0, x}, {0, 0, 0, y}, {0, 0, 0, 0}}))
 ///
+
+--------------------------------------------------
+--- Added coverage, compatibility, and stress tests
+--------------------------------------------------
+
+TEST ///
+-- DifferentialModule is a subtype of Complex: a differential module must be
+-- usable as a Complex, and the Matrix and Complex constructors must agree.
+S = QQ[x,y]
+phi = map(S^{0,1,1,2}, S^{0,1,1,2}, matrix{{0,x,y,1},{0,0,0,-y},{0,0,0,x},{0,0,0,0}}, Degree=>2)
+D = differentialModule phi
+assert(instance(D, DifferentialModule))
+assert(instance(D, Complex))
+assert(class D === DifferentialModule)
+assert(parent DifferentialModule === Complex)
+assert(instance(D_0, Module))
+assert(D == differentialModule(complex({-phi,-phi})[1]))
+///
+
+TEST ///
+-- Compatibility: the one-argument resDM(D) convenience form must agree with
+-- the explicit two-argument resDM(D, dim ring D + 1).
+S = QQ[x,y]
+phi = map(S^2, S^2, matrix{{x*y,y^2},{-x^2,-x*y}}, Degree=>2)
+D = differentialModule phi
+assert(resDM D == resDM(D, dim ring D + 1))
+///
+
+TEST ///
+-- dualRingToric round-trip: the Koszul dual of the Koszul dual recovers the
+-- grading and variable count; the SkewVariable option names the dual variables.
+S = ring hirzebruchSurface 3
+E = dualRingToric(S, SkewVariable => f)
+assert(isSkewCommutative E)
+assert(apply(gens E, toString) == {"f_0","f_1","f_2","f_3"})
+SD = dualRingToric E
+assert(not isSkewCommutative SD)
+assert(degrees SD == degrees S)
+assert(numgens SD == numgens S)
+assert(coefficientRing SD === coefficientRing S)
+///
+
+TEST ///
+-- foldComplex produces a differential module of the requested degree, and
+-- unfold produces a complex whose differentials are all the folded one.
+S = QQ[x,y,z]
+K = koszulComplex vars S
+F = foldComplex(K, 2)
+assert(instance(F, DifferentialModule))
+assert(degree F == {2})
+assert((F.dd_0)^2 == 0)
+phi = map(S^{1,1}, S^{1,1}, matrix{{x^2*y,x*y^2},{-x^3,-x^2*y}}, Degree=>3)
+DM = differentialModule phi
+C = unfold(DM, -2, 3)
+assert(instance(C, Complex))
+assert(concentration C == (-2, 4))
+assert(C.dd_0 == DM.dd_0)
+assert(C.dd_1 == C.dd_0)
+assert(degree C.dd_0 == {3})
+///
+
+TEST ///
+-- Stress test: toricRR of the residue field of several toric Cox rings, and of
+-- a random module, yields a differential module whose differential squares to
+-- zero, is homogeneous, and has homological degree -1.
+for X in {hirzebruchSurface 2, hirzebruchSurface 3, weightedProjectiveSpace {1,1,2}} do (
+   SX := ring X;
+   D := toricRR coker vars SX;
+   assert(instance(D, DifferentialModule));
+   assert((D.dd)^2 == 0);
+   assert(isHomogeneous D.dd_0);
+   assert(last degree D == -1);
+   )
+S = ring hirzebruchSurface 2
+D = toricRR coker random(S^1, S^{2:{-2,-1}})
+assert(instance(D, DifferentialModule))
+assert((D.dd)^2 == 0)
+assert(last degree D == -1)
+///
+
+TEST ///
+-- Stress test: toricLL of several modules over a Koszul-dual exterior algebra
+-- yields a homogeneous complex whose differential squares to zero; likewise the
+-- strongly linear strand.
+S = ring hirzebruchSurface 3
+E = dualRingToric S
+for N in {E^1, coker vars E, coker matrix{{e_0,e_1}}} do (
+   C := toricLL N;
+   assert(instance(C, Complex));
+   assert(isHomogeneous C);
+   assert((C.dd)^2 == 0);
+   )
+L = stronglyLinearStrand coker vars S
+assert(instance(L, Complex))
+assert((L.dd)^2 == 0)
+///

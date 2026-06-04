@@ -21,6 +21,12 @@ newPackage(
     AuxiliaryFiles => true
     )
 
+-- TODO: the symbols `overring` (line below), `overringMap`, `wittGenerators`,
+-- and `WittOverring` (exported in WittConversion.m2:10) are used only as
+-- internal cache-key symbols (e.g. W.cache.overringMap).  They have no
+-- doc nodes and no direct TEST coverage.  Following the pattern used for
+-- `tuple`, `wittRings`, and `wittSub`, consider moving them to the
+-- `protect` block below and dropping them from the export list.
 export{
 "witt",
 "wittOverring",
@@ -34,8 +40,6 @@ export{
 "wittRingIdeal",
 "unWitt",
 "overringMap",
-"WittRing",
-"wittSub",
 "WittPolynomialRing",
 "WittRingMap",
 "baseMap",
@@ -54,12 +58,12 @@ export{
 "fSplittingHeight",
 "overring",
 "wittFrobenius",
-"truncation",
 "makeCoefficientFieldPrime",
 }
 
 protect tuple
 protect wittRings
+protect wittSub
 
 load "./WittVectors/WittConstructor.m2"
 load "./WittVectors/Kernels.m2"

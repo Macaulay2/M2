@@ -2713,6 +2713,81 @@ H=source phi; SR=target phi; use SR;
 assert(apply(gens H,g->phi(g))=={X_0-X_3, X_1-X_4, X_2-X_5, X_2^2, X_1^2, X_3^2})
 ///
 
+-- Tests added in the 2026 test-audit pass.  The audit found that several
+-- option-symbol exports (BaseRing, InputType, RingType, ByLinearForms,
+-- VariableName, GenVar, IdempotentVar) were used in the codebase but had
+-- no direct assertions pinning their effect.  The blocks below exercise
+-- each of those code paths.
+
+TEST /// -- generalizedSplines with RingType => integer: splines on ZZ/n
+  -- when RingType is an integer n, the underlying ring is ZZ/n and the
+  -- edge labels are integer ideals in ZZ/n.
+  E = {{0,1},{1,2},{2,0}}
+  M = generalizedSplines(E, {1,2,3}, RingType => 6)
+  -- the result is a Module over ZZ[]/6
+  assert(class M === Module)
+  -- ZZ/6 ambient: the ambient module has rank 3 (one per vertex)
+  assert(rank ambient M == 3)
+///
+
+TEST /// -- generalizedSplines with RingType => "Ambient": ideals in an
+-- explicit polynomial ring (the user supplies the ring via the ideals)
+  S = QQ[x,y]
+  E = {{0,1},{1,2},{2,0}}
+  ideals = {ideal x, ideal y, ideal(x-y)}
+  M = generalizedSplines(E, ideals, RingType => "Ambient")
+  assert(class M === Module)
+  assert(ring M === S)
+  assert(rank ambient M == 3)
+///
+
+TEST /// -- splineMatrix InputType => "ByLinearForms": construct from a dual
+-- graph with edges labeled by linear forms.  The doc Example at L1689-1693
+-- shows this case but no TEST pinned the output matrix.
+  R = QQ[x,y]
+  B = {{0,1},{1,2},{2,3},{3,4},{4,0}}
+  H = {x-y, y, x, y-2*x, x+y}
+  sm = splineMatrix(B, H, 1, InputType => "ByLinearForms")
+  assert(class sm === Matrix)
+  -- one row per edge of the dual graph (B has 5 edges) and columns:
+  -- one per vertex (5) + one per edge (5) = 10
+  assert(numgens target sm == 5)
+  assert(numgens source sm == 10)
+  -- each linear form is squared in the (r+1)-power slot (continuity 1 means squares)
+  assert(sm == matrix {{1, -1, 0, 0, 0, x^2-2*x*y+y^2, 0, 0, 0, 0},
+                        {0, 1, -1, 0, 0, 0, y^2, 0, 0, 0},
+                        {0, 0, 1, -1, 0, 0, 0, x^2, 0, 0},
+                        {0, 0, 0, 1, -1, 0, 0, 0, 4*x^2-4*x*y+y^2, 0},
+                        {-1, 0, 0, 0, 1, 0, 0, 0, 0, x^2+2*x*y+y^2}})
+///
+
+TEST /// -- splineMatrix with VariableName override picks up the user's symbol
+  V = {{0,0},{1,0},{1,1},{-1,1},{-2,-1},{0,-1}}
+  F = {{0,2,1},{0,2,3},{0,3,4},{0,4,5},{0,1,5}}
+  E = {{0,1},{0,2},{0,3},{0,4},{0,5}}
+  sm = splineMatrix(V, F, E, 0, VariableName => getSymbol "s")
+  -- the auto-built ring uses s_0, s_1, s_2 instead of the default t_0, t_1, t_2
+  assert(toString first gens ring sm == "s_0")
+  -- and the matrix is the same up to renaming (compare to the default-name version)
+  smDefault = splineMatrix(V, F, E, 0)
+  assert(sub(sm, vars ring smDefault) == smDefault)
+///
+
+TEST /// -- ringStructure with GenVar and IdempotentVar overrides
+  V = {{0,0},{0,1},{-1,-1},{1,0}}
+  F = {{0,1,2},{0,2,3},{0,1,3}}
+  R = QQ[x,y]
+  M = splineModule(V, F, 0, BaseRing => R, Homogenize => false)
+  phi = ringStructure(M, GenVar => getSymbol "A", IdempotentVar => getSymbol "b")
+  -- source has variables A_0, ..., A_(n-1)
+  assert(all(gens source phi, v -> match("^A_", toString v)))
+  -- target ring contains the idempotents b_0, b_1, b_2 plus x, y
+  tgtvars = apply(gens target phi, toString)
+  assert(member("b_0", tgtvars))
+  assert(member("b_1", tgtvars))
+  assert(member("b_2", tgtvars))
+///
+
 end
 
 --may restore to documentation in future iterations

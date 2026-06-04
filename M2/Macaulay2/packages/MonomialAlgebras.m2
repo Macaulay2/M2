@@ -941,6 +941,53 @@ assert(coefficientRing affineAlgebra({{1, 2}, {3, 4}},
 	CoefficientField => QQ) === QQ)
 ///
 
+-- SetSeed threads a fixed random seed through randomSemigroup / randomMonomialAlgebra,
+-- making the otherwise-random output reproducible (integer seed and SetSeed => true)
+TEST ///
+B = randomSemigroup(5,3,7,SetSeed=>42);
+assert(B === randomSemigroup(5,3,7,SetSeed=>42));
+assert(#B == 10 and all(B, g -> #g == 3 and sum g == 5));
+assert(codimMA B == 7);
+assert(degrees randomMonomialAlgebra(5,3,7,SetSeed=>42) === B);
+assert(randomSemigroup(5,3,7,SetSeed=>true) === randomSemigroup(5,3,7,SetSeed=>true));
+///
+
+-- Simplicial => true makes randomSemigroup / randomMonomialAlgebra return a simplicial semigroup
+TEST ///
+B = randomSemigroup(5,3,7,Simplicial=>true,SetSeed=>42);
+assert(isSimplicialMA B);
+assert(#B == 10 and all(B, g -> #g == 3 and sum g == 5));
+assert(isSimplicialMA randomMonomialAlgebra(5,3,7,Simplicial=>true,SetSeed=>42));
+///
+
+-- Decomposition => dc lets regularityMA reuse a precomputed decomposition instead of
+-- recomputing it; the regularity must match the from-scratch result, on both the
+-- monomial-curve and the higher-dimensional code paths
+TEST ///
+Bc = {{5,0},{0,5},{1,4},{4,1}};
+Rc = QQ[x_0..x_3, Degrees=>Bc];
+dcc = decomposeMonomialAlgebra Rc;
+assert(first regularityMA(Bc,Decomposition=>dcc) == first regularityMA Bc);
+assert(first regularityMA(Rc,Decomposition=>dcc) == first regularityMA Rc);
+Bn = {{2,2,1},{1,1,3},{1,2,2},{2,0,3},{1,4,0},{2,3,0},{1,3,1}};
+Rn = QQ[y_1..y_7, Degrees=>Bn];
+dcn = decomposeMonomialAlgebra Rn;
+assert(first regularityMA(Bn,Decomposition=>dcn) == first regularityMA Bn);
+assert(first regularityMA(Rn,Decomposition=>dcn) == first regularityMA Rn);
+///
+
+-- ReturnMingens => true makes decomposeMonomialAlgebra return the {RingMap, degree-list}
+-- pair (used internally by isNormalMA / isSeminormalMA) rather than the decomposition hash table
+TEST ///
+B = {{1,0,0},{0,2,0},{0,0,2},{1,0,1},{0,1,1}};
+R = QQ[x_0..x_4, Degrees=>B];
+fBA = decomposeMonomialAlgebra(R, ReturnMingens=>true);
+assert(class fBA === List and #fBA == 2);
+assert(instance(fBA#0, RingMap) and target fBA#0 === R);
+assert(instance(fBA#1, List));
+assert(class decomposeMonomialAlgebra R === HashTable);
+///
+
 doc ///
   Key
     MonomialAlgebras

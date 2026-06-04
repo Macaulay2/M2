@@ -97,7 +97,7 @@ ideal "xz, y2, yu, z2, zu, u2",
 ideal "xy, xz, y2, yu, z2, zu",
 ideal "x2, xy, xz,y2, yz, z2",
 ideal "x2, xz, xu, xy-zu, yz, z2",
-ideal "x2, xy, xz xu, y2, yz",
+ideal "x2, xy, xz, xu, y2, yz",
 ideal "x2, y2, z2, u2, xy, zu, yz+xu",
 ideal "x2-y2, xy, yz, zu, z2, xz+yu, xu",
 ideal "x2, y2, z2, u2, zu, yu, xu",
@@ -406,6 +406,89 @@ TEST///
    F = res (coker vars R, LengthLimit =>4)
    assert( betti F === new BettiTally from {(0,{0},0) => 1, (1,{1},1) => 6, (2,{2},2) => 26, (3,{3},3) => 104, (3,{4},4) => 1,
       (4,{4},4) => 404, (4,{5},5) => 10})
+///
+
+-- roosTable: a HashTable of all 83 of Roos' quadratic-ideal examples, keyed
+-- 1..83, every value a degree-2-generated ideal of the common ring QQ[x,y,z,u].
+-- The final assert is a regression guard against missing-comma typos in the
+-- source (a stray space turns two quadrics into one higher-degree generator).
+TEST///
+H = roosTable
+assert(instance(H, HashTable))
+assert(#H == 83)
+assert(sort keys H == toList(1..83))
+assert(all(values H, I -> instance(I, Ideal)))
+assert(#unique apply(values H, ring) == 1)
+assert(numgens ring H#1 == 4)
+assert(all(values H, I -> numgens I == 0 or max flatten degrees I <= 2))
+///
+
+-- higherDepthTable: the subtable of roosTable at the positive-depth indices.
+-- Property test: every entry has positive depth, and each entry is identical
+-- to the corresponding roosTable entry.
+TEST///
+H = higherDepthTable
+assert(instance(H, HashTable))
+assert(sort keys H == {1,2,3,4,5,6,8,9,10,23,26,27,50,52,68})
+assert(all(keys H, i -> H#i === roosTable#i))
+assert(all(values H, I -> depth((ring I)/I) > 0))
+///
+
+-- depthZeroTable: the subtable of roosTable at the depth-zero indices;
+-- together with higherDepthTable it partitions the 83 keys.
+-- Property test: every entry has depth zero, and each entry matches roosTable.
+TEST///
+H = depthZeroTable
+assert(instance(H, HashTable))
+assert(#H == 68)
+assert(all(keys H, i -> H#i === roosTable#i))
+assert(all(keys H, i -> depth((ring H#i)/(H#i)) == 0))
+assert(sort(keys higherDepthTable | keys depthZeroTable) == toList(1..83))
+assert(#(set keys higherDepthTable * set keys depthZeroTable) == 0)
+///
+
+-- roosIsotopes: a HashTable of Roos' quadratic "isotopes", keyed by Roos'
+-- alphanumeric names. Property test: every value is a quadratic ideal of
+-- depth zero, as stated in the documentation.
+TEST///
+H = roosIsotopes
+assert(instance(H, HashTable))
+assert(#H == 21)
+assert(all(keys H, k -> instance(k, String)))
+assert(H#?"59va")
+assert(all(values H, I -> instance(I, Ideal) and max flatten degrees I <= 2))
+assert(all(values H, I -> depth((ring I)/I) == 0))
+///
+
+-- onedim/twodimToricIrrationalPoincare: toric ideals whose quotient rings have
+-- irrational Poincare series. Property test: each is a homogeneous prime ideal
+-- and the quotient has the dimension named by the export (1 and 2).
+TEST///
+I1 = onedimToricIrrationalPoincare
+assert(instance(I1, Ideal))
+assert(isHomogeneous I1 and isPrime I1)
+assert(numgens ring I1 == 7)
+assert(dim((ring I1)/I1) == 1 and codim I1 == 6)
+I2 = twodimToricIrrationalPoincare
+assert(instance(I2, Ideal))
+assert(isHomogeneous I2 and isPrime I2)
+assert(numgens ring I2 == 9)
+assert(dim((ring I2)/I2) == 2 and codim I2 == 7)
+///
+
+-- almostKoszul(kk,a): Roos' family of rings. Property test: the output is a
+-- ring on 6 variables defined by a homogeneous quadratic ideal and (per the
+-- documentation) is 2-dimensional of depth zero. error test: wrong argument
+-- types are rejected.
+TEST///
+R = almostKoszul(QQ, 3)
+assert(instance(R, Ring))
+J = ideal R
+assert(isHomogeneous J)
+assert(max flatten degrees J == 2)
+assert(numgens ring J == 6)
+assert(dim R == 2 and depth R == 0)
+assert(try (almostKoszul(QQ, QQ); false) else true)
 ///
 
 end--

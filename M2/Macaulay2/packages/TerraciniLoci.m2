@@ -295,3 +295,32 @@ assert Equation(
 	primaryDecomposition terraciniLocus(2, segreVeronese({1, 1}, {1, 2})),
 	I -> dim I - 4), {3, 3})
 ///
+
+-- Direct cover for the (ZZ, Matrix, Ideal) overload. Previous TESTs
+-- all went through (ZZ, RingMap) or (ZZ, Ideal), which delegate to
+-- this overload after computing a Jacobian; exercise it on a simple
+-- rational normal curve of degree 4 (with empty ideal in P^4).
+TEST ///
+R := QQ[x_0..x_4];
+-- The rational normal curve nu_4: P^1 -> P^4 has parametrization
+-- [s:t] -> [s^4, s^3 t, s^2 t^2, s t^3, t^4]. Its Jacobian wrt
+-- s, t can be encoded as a 2-by-5 matrix in QQ[s,t] -> R indirectly,
+-- but for a Matrix-level test we just use any rank-2 Jacobian.
+S := QQ[s, t];
+nu := matrix {{s^4, s^3*t, s^2*t^2, s*t^3, t^4}};
+A := jacobian nu;
+J := terraciniLocus(2, A, ideal 0_S);
+assert(class J === Ideal);
+-- The 1-Terracini locus is always the unit ideal (returns ideal 1_Q
+-- at line 104).
+J1 := terraciniLocus(1, A, ideal 0_S);
+assert(J1 == ideal 1_(ring J1));
+///
+
+-- Error path: r < 1 must raise (line 94 of TerraciniLoci.m2).
+TEST ///
+R := QQ[x, y];
+A := jacobian matrix {{x^2, x*y, y^2}};
+assert(try (terraciniLocus(0, A, ideal 0_R); false) else true);
+assert(try (terraciniLocus(-1, A, ideal 0_R); false) else true);
+///

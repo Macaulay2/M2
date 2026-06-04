@@ -744,58 +744,57 @@ doc ///
 
 --check that the bounds are right
 TEST///
-S= QQ[a,b,c]
-d= 3
-f = product(3,i->S_i^(d-1))
-I = ideal apply(3, i->S_i^d)
+-- inverseSystem of a monomial; and the degree bound for the round trip
+S = QQ[a,b,c]
+d = 3
+f = product(3, i -> S_i^(d-1))
+I = ideal apply(3, i -> S_i^d)
 assert(I == inverseSystem f)
-assert (I == inverseSystem inverseSystem(3, I))
+assert(instance(inverseSystem f, Ideal))            -- output is an ideal when r = 1
+assert(I == inverseSystem inverseSystem(3, I))
 ///
 
 TEST///
+-- isStandardGradedPolynomialRing: field coefficients, every variable in degree 1
 R = ZZ/101[a,b]
 assert(isStandardGradedPolynomialRing R)
-assert(not isStandardGradedPolynomialRing (R[x]))
-assert(not isStandardGradedPolynomialRing (ZZ[x]))
-assert(not isStandardGradedPolynomialRing (R[x, Degrees =>{{1,1}}]))
+assert(instance(isStandardGradedPolynomialRing R, Boolean))      -- output type
+assert(not isStandardGradedPolynomialRing (R[x]))                -- coefficient ring not a field
+assert(not isStandardGradedPolynomialRing (ZZ[x]))               -- ZZ is not a field
+assert(not isStandardGradedPolynomialRing (R[x, Degrees =>{{1,1}}]))   -- variable not in degree {1}
+assert(not isStandardGradedPolynomialRing (QQ[x, Degrees =>{2}]))      -- variable in degree 2
 ///       
 
 --fromDividedPowers and toDividedPowers are inverse to one another
 TEST///
+-- toDividedPowers / fromDividedPowers are mutually inverse change-of-basis maps
 setRandomSeed 0
-kk = QQ
-n = 3
-S = kk[a,b,c]
+S = QQ[a,b,c]
 p = (a+b)^2
 q = toDividedPowers p
-assert(q == 2*a^2+2*a*b+2*b^2)
-assert(p ==fromDividedPowers q)
+assert(q == 2*a^2+2*a*b+2*b^2)             -- (a+b)^2 in the divided-power basis
+assert(p == fromDividedPowers q)
 
-P = (random(S^{0,1},S^{-2,-3}))
-Q = fromDividedPowers toDividedPowers P
-R = toDividedPowers fromDividedPowers P
-assert(P==Q)
-assert(P == R)
+-- round trip on a matrix of polynomials
+P = random(S^{0,1}, S^{-2,-3})
+assert(P == fromDividedPowers toDividedPowers P)
+assert(P == toDividedPowers fromDividedPowers P)
 
-setRandomSeed 0
-kk = QQ
-n = 3
-S = kk[a,b,c]
+-- round trip on a random square matrix (these two were bare booleans -- never asserted)
 g = random(S^3, S^3)
-testmap = map(S,S,(vars S)*g)
-g == fromDividedPowers toDividedPowers g
-g == toDividedPowers fromDividedPowers g
+assert(g == fromDividedPowers toDividedPowers g)
+assert(g == toDividedPowers fromDividedPowers g)
 ///
 
 --with or without divided powers,
 --applying inverseSystem twice should be 
 --the identity on ideals AND on submodules of the dual, represented as matrices.
 TEST///
+-- applying inverseSystem twice is the identity, on ideals and on matrices
 setRandomSeed 0
 S = QQ[a,b]
 G = random(S^2,S^2)
 GG = map(S,S,(vars S)*G)
-GG' = map(S,S,(vars S)*transpose G^-1)
 f = a^2
 g = b^3
 h = GG matrix{{f,g}}
@@ -823,17 +822,14 @@ assert(
 
 --inverseSystem is equivariant on matrices
 TEST///
+-- inverseSystem on the zero matrix, and GL-equivariance on matrices
 setRandomSeed 0
-kk = QQ
-n = 3
-S = kk[a,b,c]
+S = QQ[a,b,c]
 assert(inverseSystem matrix{{0_S}} == ideal(1_S))
 
 g = random(S^3, S^3)
 testmap = map(S,S,(vars S)*g)
 testmap' = map(S,S,(vars S)*(dual g)^-1)
-
-f = matrix{{a,b^3}}
 
 f = random(S^1, S^{-2,-2,-3});
 assert(inverseSystem testmap' inverseSystem(5,f) == 
@@ -846,10 +842,9 @@ assert(inverseSystem testmap' inverseSystem(5,f) ==
 --inverseSystem is equivariant on 0-dimensional ideals 
 --(and, up to the given degree, on arbitrary ideals)
 TEST///
+-- inverseSystem is GL-equivariant on 0-dimensional ideals (and, up to degree, on arbitrary ideals)
 setRandomSeed 0
-kk = QQ
-n = 3
-S = kk[a,b,c]
+S = QQ[a,b,c]
 g = random(S^3, S^3)
 testmap = map(S,S,(vars S)*g)
 testmap' = map(S,S,(vars S)*(dual g)^-1)
@@ -865,7 +860,6 @@ assert( inverseSystem testmap'  inverseSystem (4,f) ==
 		)
 
 mm=ideal vars S
-f = ideal(a,b^3)
 f = ideal random(S^1, S^{-2,-3});
 assert(mm^5+inverseSystem testmap'  inverseSystem (4,f) == 
        mm^5+inverseSystem inverseSystem (4, testmap f)
@@ -892,32 +886,23 @@ M'' = inverseSystem(7,I,DividedPowers => true)
 assert(I ==inverseSystem (M'',DividedPowers => true))
 
 assert(M'!= M'')
----
-S = QQ[x,y]
-I = ideal"x3,xy+y4+y5"+(ideal vars S)^7
-
-M' = inverseSystem(7, I)
-assert(I ==inverseSystem M')
-
-M'' = inverseSystem(7,I, DividedPowers => true)
-assert(I ==inverseSystem (M'',DividedPowers => true))
-
-assert(M'!= M'')
 ///
 TEST///
-kk = ZZ/32003
-S = kk[a,b,c]
+-- fromDual is stable under a toDual round trip; output is a matrix
+S = ZZ/32003[a,b,c]
 f = matrix"a3+b3+c3"
-assert(fromDual f == fromDual toDual(10,fromDual f))
-f = f++f
-assert(fromDual f == fromDual toDual(10,fromDual f))
-f = random(S^{1,2,3},S^{0,-1,-2})
-assert(fromDual f == fromDual toDual(10,fromDual f))
+assert(instance(fromDual f, Matrix))
+assert(fromDual f == fromDual toDual(10, fromDual f))
+f = f ++ f
+assert(fromDual f == fromDual toDual(10, fromDual f))
+f = random(S^{1,2,3}, S^{0,-1,-2})
+assert(fromDual f == fromDual toDual(10, fromDual f))
 ///
 
 
      
 TEST ///
+-- fromDual of a random quartic: a Gorenstein artinian ideal, self-dual resolution 1,7,7,1
 setRandomSeed 0
           R = ZZ/32003[x_1..x_3];
 	  g = random(R^1, R^{-4})
@@ -926,16 +911,15 @@ setRandomSeed 0
 	  assert(apply(4, i->rank F_i) == {1,7,7,1})
           ///
 TEST ///
-    R = ZZ/101[a..d]
-    f = matrix{{a^3 + b^3 + c^3 + d^3 + (a+b+c)^3}}
-    fdual = fromDual f
-    assert(f == toDual(4, fdual))
+-- f is recovered by toDual(d, fromDual f) once d is large enough
+R = ZZ/101[a..d]
+f = matrix{{a^3 + b^3 + c^3 + d^3 + (a+b+c)^3}}
+assert(f == toDual(4, fromDual f))
 ///
 
 TEST///
      	  R = ZZ/32003[a..e];
 	  f = matrix{{a^2, b^2, c^2, d^2, e^3, a*d-e^2}}
-	  betti res coker f
 	  g = toDual(1,f)
 	  assert((ideal fromDual g == ideal f) ==false)
 	  g = toDual(2,f)
@@ -945,10 +929,11 @@ TEST///
 	  ///
 
 TEST ///
---a case where the ideal is not 0-dimensional
- R = QQ[a,b,c]
- f= matrix"a-b,c"
-toDual(2,f) == matrix {{a^2+a*b+b^2}}
+-- toDual still works when the input ideal is not 0-dimensional
+R = QQ[a,b,c]
+f = matrix"a-b,c"
+assert(instance(toDual(2,f), Matrix))
+assert(toDual(2,f) == matrix {{a^2+a*b+b^2}})
 ///
 
 end--

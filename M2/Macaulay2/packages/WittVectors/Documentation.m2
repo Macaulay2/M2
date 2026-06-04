@@ -352,6 +352,11 @@ doc ///
 --------- fSplittingHeight
 --------------------------------
 
+-- TODO: the fSplittingHeight doc node below has misaligned Text/Example
+-- pairings: the "should give infinity" Example only assigns S and I and
+-- never calls fSplittingHeight, and the "should give 1" Text actually
+-- describes the regular-sequence Example that follows (which errors).
+-- Fix the pairing or remove the stale examples.
 doc ///
 	Key
 	 fSplittingHeight
@@ -527,7 +532,7 @@ doc ///
 	Example
             R = ZZ/5[x,y]
             w = witt{x,y}
-            verschiebung(w) -- same as wittFrobenius(w)
+            verschiebung(w)
 ///
 
 doc ///
@@ -570,7 +575,7 @@ doc ///
             the product of w1 and w2
     Description
 	Text
-            Given Witt vectors w1 and w2, this computes their sum (corresponding to the multiplication operation inherited via the ghost maps)
+            Given Witt vectors w1 and w2, this computes their product (corresponding to the multiplication operation inherited via the ghost maps)
 	Example
             R = ZZ/5[x,y,z,w]
             w1 = witt{x,y}

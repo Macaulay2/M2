@@ -20,6 +20,9 @@ wittOverring(ZZ, Ring) := (n, R) -> R.cache#(symbol WittOverring, n) ??= (
         S := ambient ambient R;
         OS := wittOverring(n, S);
 	OSvars := flatten entries vars OS;
+	-- FIXME: this RingMap is constructed but is not a genuine ring
+	-- homomorphism; it is used as a cache-key map only.  Document the
+	-- invariant or wrap construction in a private helper.
 	WittSub := map(OS, makeCoefficientFieldPrime R, OSvars); -- WARNING: not a real map!
 	OS.cache.wittSub = WittSub;
 	OS.cache.unWitt = R;
@@ -32,6 +35,8 @@ wittOverring(ZZ, Ring) := (n, R) -> R.cache#(symbol WittOverring, n) ??= (
 	    error "wittVectors currently only implemented for quotients of polynomial rings; consider flattening before applying witt"
 	    );
 	OS = wittOverring(n, newRing S);
+	-- FIXME: same caveat as above -- this RingMap is not a genuine ring
+	-- homomorphism; ensure no downstream code calls isWellDefined on it.
 	WittSub = map(OS, makeCoefficientFieldPrime R, OS.cache.wittSub); -- WARNING: not a real map!
 	OS.cache.wittSub = WittSub;
 	OS.cache.unWitt = R;
@@ -50,6 +55,8 @@ wittOverring(ZZ, Ring) := (n, R) -> R.cache#(symbol WittOverring, n) ??= (
 	OR := ZZ[T_1 .. T_d] / p^n;
 	OR.cache = new CacheTable;
 	ORvars := flatten entries vars OR;
+	-- FIXME: as in the two earlier branches, this RingMap is not a
+	-- genuine homomorphism; it is only used as a cache-stored helper.
 	WittSub = map(OR, R', ORvars); -- WARNING: this is not a "real" map!
 	OR.cache.wittSub = WittSub;
 	OR.cache.unWitt = R;

@@ -128,7 +128,9 @@ LatticePolarizedK3surface Sequence := (S,ab) -> (
     if f#"image" === null and char coefficientRing S <= 65521 and genus(S,1,0) > 3 then image(f,"F4");
     T := new EmbeddedK3surface from image f;
     if dim ambient T <= 2 then error "the linear system is not very ample";
-    -- (???) this fixes a bug in conversion of output to net, but it is a bit dangerous.
+    -- TODO: this fixes a bug in conversion of output to net by manually setting "dimVariety" = 2,
+    -- but the assignment is fragile (it pokes at an internal cache key). A regression test pinning
+    -- the net / texMath round-trip would make the danger observable if the internals change.
     T#"dimVariety" = 2;
     T.cache#"sectionalGenus" = genus(S,a,b);
     -- if degrees T =!= {({2},binomial(genus(T)-2,2))} then <<"--warning: the degrees for the generators are not as expected"<<endl;
@@ -1125,9 +1127,50 @@ for g from 3 to 7 do (
 ///
 
 TEST ///
-for g in {3,4,5,6,7,8,9} do (<<"g = "<<g<<endl; time K3 g); 
+for g in {3,4,5,6,7,8,9} do (<<"g = "<<g<<endl; time K3 g);
 ///;
 
+TEST ///
+-- LatticePolarizedK3surface / EmbeddedK3surface type instances, and the map+image assertion previously held only inside the doc EXAMPLE at :970
+S = K3(3,1,-2);
+assert(instance(S, LatticePolarizedK3surface));
+assert(instance(S(1,0), EmbeddedK3surface));
+f = map(S,2,1);
+assert(isMorphism f);
+assert(image f == S(2,1));
+///
+
+TEST ///
+-- project returns an EmbeddedProjectiveVariety
+S = K3(5,2,-2);
+P = project({1}, S, 1, 0);
+assert(instance(P, EmbeddedProjectiveVariety));
+///
+
+TEST ///
+-- mukaiModel g has degree 2g-2 and sectional genus g for the documented range
+X = mukaiModel 7;
+assert(degree X == 12);
+assert(sectionalGenus X == 7);
+Y = mukaiModel 8;
+assert(degree Y == 14);
+assert(sectionalGenus Y == 8);
+///
+
+TEST ///
+-- trigonalK3, tetragonalK3, pentagonalK3 each return a LatticePolarizedK3surface
+assert(instance(trigonalK3 6, LatticePolarizedK3surface));
+assert(instance(tetragonalK3 7, LatticePolarizedK3surface));
+assert(instance(pentagonalK3 8, LatticePolarizedK3surface));
+///
+
+-- TODO: this `end;` silently demotes every TEST block below to unreachable code -- they are
+-- never seen by `check`. Decide whether to (a) revive them as live tests (some compute K3s of
+-- genus 20-22 and need a slow-test gate), or (b) delete them as stale.
+-- TODO: two of the dead TESTs below are duplicates of live ones already in this file --
+--   `-- randomMukaiThreefoldContainingLine` (live at line 1097, dead clone below)
+--   `-- randomPointedMukaiThreefold`        (live at line 1082, dead clone below)
+-- If the post-`end;` region is revived, those duplicates should be reconciled first.
 end;
 
 -- Hard tests

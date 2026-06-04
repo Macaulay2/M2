@@ -1,5 +1,4 @@
 Makefile
-check-configure/Makefile
 include/config.Makefile
 include/configuration
 distributions/Makefile

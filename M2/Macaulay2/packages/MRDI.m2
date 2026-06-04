@@ -553,7 +553,7 @@ Description
     saveMRDI(5, Namespace => "Oscar")
   Text
     Setting @TT "ToString => false"@ returns the hash table
-    representation instead of a JSON string.  This 
+    representation instead of a JSON string.
   Example
     saveMRDI(5, ToString => false)
   Text
@@ -756,7 +756,7 @@ Inputs
     the namespace to register this method under
 Description
   Text
-    This methods registers a deserialization method so that @TO loadMRDI@
+    This method registers a deserialization method so that @TO loadMRDI@
     knows how to reconstruct objects of a given type within a
     given namespace.
 
@@ -1066,4 +1066,25 @@ checkError(
 checkError(
     "[1,2,3]",
     "expected an object, but got {1,2,3}")
+///
+
+-- Save-path error: only ZZ, QQ, and finite prime fields are currently
+-- supported as base rings. Pin the documented "not implemented yet"
+-- behavior for a non-finite-prime-field quotient (audit notes:
+-- MRDI.m2:188 and :193).
+TEST ///
+R := QQ[x];
+Q := R / ideal(x^2);
+-- Quotient of QQ[x] by a non-zero-dimensional polynomial ideal: not a
+-- finite prime field.
+assert(try (saveMRDI Q; false) else true);
+-- For a more direct test we hit the QuotientRing dispatch on a quotient
+-- that is *not* isFinitePrimeField.
+S := QQ[y];
+Q2 := S / ideal(y^3 - 1);
+assert(try (saveMRDI Q2; false) else true);
+-- And the same default Ring dispatch: anything that is not ZZ/QQ that
+-- somehow reaches the Ring save method also errors.
+T := frac(QQ[t]);
+assert(try (saveMRDI T; false) else true);
 ///
