@@ -3,8 +3,33 @@
 #ifndef __imonorder_h_
 #define __imonorder_h_
 
-/* This is the internal form of the monomial ordering */
-/* Used in monomial encoding/decoding/comparison */
+/**
+ * @file imonorder.hpp
+ * @brief Internal (runtime) form of a monomial ordering.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Defines the encoded representation walked by the inner loop when two
+ * monomials are compared --- the operational counterpart to the declarative
+ * `MonomialOrdering` the user writes. The internal form is a list of
+ * `mo_block`s; each block has a type (`MO_LEX`, `MO_GREVLEX`,
+ * `MO_WEIGHTS`, `MO_REVLEX`, `MO_POSITION_UP`/`DOWN`, ...), a variable
+ * count, and block-specific data. A comparison walks the block list and
+ * returns at the first block that breaks the tie. Encoded monomials are
+ * laid out so that the common case --- a leading degree or weight sum ---
+ * resolves after reading a single slot, and many orderings reduce to a
+ * `memcmp` on the packed bytes.
+ *
+ * Translation from the declarative `MonomialOrdering` to this internal
+ * form happens once, at `Monoid` construction; the resulting
+ * `MonomialOrder*` is then frozen and reused on every inner-loop compare.
+ * Degrees and weights are 32-bit signed (`deg_t`); intermediate-degree
+ * overflows are caught by `overflow.hpp`.
+ *
+ * @see interface/monomial-ordering.h
+ * @see monordering.hpp
+ * @see overflow.hpp
+ */
 
 #include <vector>
 
@@ -30,6 +55,22 @@ struct mo_block
   deg_t *weights;
 };
 
+/**
+ * @brief Internal compiled form of a monomial ordering, derived from a
+ * front-end `MonomialOrdering` by `monomialOrderMake`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds the variable count (`nvars`), the encoded monomial word
+ * width (`nslots`), the ordered list of `mo_block`s that make up
+ * the order, the per-variable heuristic degree vector (`degs`),
+ * and a `is_laurent[i]` flag per variable. `component_up` plus
+ * the `*_before_component` slot counts decide where the
+ * component slot sits in the encoded monomial. The companion
+ * encode / decode functions translate between actual exponent
+ * vectors and the packed monomial words the engine uses for fast
+ * comparisons.
+ */
 struct MonomialOrder_rec
 {
   int nvars;

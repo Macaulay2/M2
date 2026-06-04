@@ -3,6 +3,50 @@
 #ifndef _aring_hpp_
 #define _aring_hpp_
 
+/**
+ * @file aring.hpp
+ * @brief Shared base of the `aring` framework (`namespace M2`) that unifies the engine's coefficient rings.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the pieces every concrete coefficient ring builds on:
+ * the `RingID` enum that names each back end
+ * (`ring_ZZ`, `ring_ZZFlint`, `ring_QQ` / `_QQFlint`,
+ * `ring_ZZp` / `_ZZpFfpack` / `_ZZpFlint`,
+ * `ring_GFM2` / `_GFFlintBig` / `_GFFlintZech`,
+ * `ring_RR` / `_CC` / `_RRR` / `_CCC` / `_RRi` / `_CCi`,
+ * `ring_tower_ZZp`, plus `ring_old` for everything still on the
+ * legacy `Ring` API), the empty `RingInterface : our_new_delete`
+ * inheritance tag that every `ConcreteRing` template parameter
+ * must derive from, the plain templated `ElementImpl<ElementType>`
+ * base that wraps a raw element with conversion operators
+ * (templated on the raw element type, **not** the derived class
+ * --- so not CRTP), and the genuinely CRTP-typed
+ * `SimpleARing<ARing>` template that gives a concrete ring
+ * (e.g. `CoefficientRingZZp`) ready-made `Element` and
+ * `ElementArray` wrappers calling back into the derived class
+ * for `init` / `clear` / `init_set`. The placeholder `DummyRing`
+ * subclass is a fully-stubbed `SimpleARing<DummyRing>` used as a
+ * no-op implementation.
+ *
+ * The `aring` framework coexists permanently with the older
+ * `Ring` API: existing engine code reads `Ring*`,
+ * performance-critical paths take a `ARing<R>` template
+ * parameter so the per-element arithmetic inlines instead of
+ * going through a virtual, and the bridges in `aring-glue.hpp`
+ * (vertical wrapper `ConcreteRing<R>` to `Ring*`) and
+ * `aring-translate.hpp` (horizontal cross-ring `mypromote` /
+ * `mylift`) move values between the two worlds. The file also
+ * carries the `HAVE_FLINT_RAND_INIT` compatibility shim that
+ * aring users touch when bumping the FLINT submodule version
+ * (`flint_rand_init` vs. `flint_randinit`).
+ *
+ * @see aring-glue.hpp
+ * @see aring-translate.hpp
+ * @see coeffrings.hpp
+ * @see ring.hpp
+ */
+
 #include <cassert>
 #include <memory>
 #include "ringelem.hpp"
@@ -152,6 +196,19 @@ class SimpleARing : public RingInterface
   };
 };
 
+/**
+ * @brief Placeholder `aring` used as a default / fallback for code paths
+ * that need an `ARing`-shaped object but no real arithmetic.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Element type is `long` and every operation is a no-op or
+ * trivial. `mOriginalRing` carries the actual `PolynomialRing` the
+ * dummy is standing in for so callers can still locate the "real"
+ * ring for fall-through queries. Appears as a variant alternative
+ * in `VectorArithmetic`'s `std::variant` so templated code that
+ * does not understand a given ring still has a valid instantiation.
+ */
 class DummyRing : public SimpleARing<DummyRing>
 {
  public:

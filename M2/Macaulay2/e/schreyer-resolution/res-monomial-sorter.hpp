@@ -3,6 +3,41 @@
 #ifndef _res_monomial_sorter_hpp_
 #define _res_monomial_sorter_hpp_
 
+/**
+ * @file schreyer-resolution/res-monomial-sorter.hpp
+ * @brief Schreyer-order column sorters for the F4 resolution Macaulay matrix.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the sort kernel called once per `(level, degree)`
+ * cell to permute matrix columns into Schreyer order before
+ * reduction. `MonomialSorterObject` captures a `Monoid` plus a
+ * `vector<int*>` of encoded monomials and exposes
+ * `operator()(int a, int b)` as the comparator that walks the
+ * encoded order then applies the Schreyer tie-breaker stored
+ * in the first slot of each monomial; a static
+ * `mNumComparisons` counter tracks comparator calls for
+ * profiling.
+ *
+ * `ResMonomialSorter` is the wrapper the engine calls in
+ * practice: it takes the level-1 `ResSchreyerOrder` and a
+ * vector of level-side `res_packed_monomial`s, expands each
+ * column through the Schreyer "total monomial" composition
+ * `var_expvec(column) * var_expvec(orderTotal[comp])` into a
+ * `[tiebreaker, basecomp, encoded monomial]` row in an
+ * arena-allocated buffer, and runs `std::stable_sort` to
+ * return an index permutation. Stable sort preserves relative
+ * order among equal monomials, which the tiebreaker relies on.
+ * The `#if 0`'d `ResMonomialTransformer` records an earlier
+ * API shape kept for reference.
+ *
+ * @see res-moninfo.hpp
+ * @see res-schreyer-order.hpp
+ * @see res-monomial-types.hpp
+ * @see monoid.hpp
+ * @see res-f4-computation.hpp
+ */
+
 #include "ExponentVector.hpp"                          // for ntuple
 #include "monoid.hpp"                                  // for Monoid
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
@@ -15,6 +50,20 @@
 #include <utility>                                     // for pair
 #include <vector>                                      // for vector
 
+/**
+ * @brief Strict-weak comparator on integer indices into a `std::vector<int*>`
+ * of monomials, used by the resolution code to sort columns.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Each `mMonoms[i]` is laid out as `[tiebreaker, basecomp,
+ * actual_monomial...]`. `operator()(a, b)` compares the monomial
+ * bodies via `Monoid::compare`, returning the corresponding
+ * `bool`; on `EQ` it falls back to the `tiebreaker` slot. The
+ * static `mNumComparisons` counter records how many comparisons
+ * the sort performed --- handy when profiling a large frame's
+ * column-sort cost.
+ */
 class MonomialSorterObject
 {
 private:
@@ -60,6 +109,20 @@ public:
   long numComparisons() const { return mNumComparisons; }
 };
 
+/**
+ * @brief Sorter that orders `res_packed_monomial`s by their *total* (Schreyer)
+ * monomial, with a stable tiebreaker derived from input order.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Allocates the `[tiebreaker, basecomp, totalmon]` triples inside
+ * its own `memt::Arena` so the sort can run without touching the
+ * caller's monomial storage. `mSchreyerOrder` supplies the
+ * per-component multiplier that turns each `mColumns[i]` into its
+ * total monomial; the result is held in `mMonoms` and the
+ * permutation in `mPositions`. Keeps a `mNumComparisons` counter
+ * for profiling.
+ */
 class ResMonomialSorter
 {
 private:

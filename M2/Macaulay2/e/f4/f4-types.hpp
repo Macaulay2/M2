@@ -3,6 +3,59 @@
 #ifndef _F4types_h_
 #define _F4types_h_
 
+/**
+ * @file f4/f4-types.hpp
+ * @brief Shared type vocabulary used across the F4 engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the inner-loop record types the F4 algorithm
+ * shares. Polynomial form: `GBF4Polynomial` (length + opaque
+ * `ElementArray coeffs` + flat `monomial_word* monoms` buffer)
+ * is what each basis element stores. Basis side: `gbelem`
+ * wraps a `GBF4Polynomial` with `deg`, `alpha` (homogenising
+ * degree), and a `gbelem_type` tag --- `ELEM_IN_RING` /
+ * `ELEM_POSSIBLE_MINGEN` / `ELEM_MIN_GB` / `ELEM_NON_MIN_GB`
+ * --- and `gb_array = std::vector<gbelem*>` is the basis list.
+ * Pair side: `pre_spair` is the proto-pair staged before full
+ * materialisation; `spair` carries `(type, deg, i, j,
+ * monomial_word* lcm)` where the lcm is a pointer to an
+ * externally-allocated `MemoryBlock` slot (the file also
+ * defines a vestigial `sizeofspair(s, len)` macro from an
+ * older design where `lcm` was a flexible array member --- the
+ * only call site is now commented out in `f4-spairs.cpp`). Two
+ * pair-type enums coexist: the legacy `spair_type` (with
+ * `F4_SPAIR_GCD_ZZ`, `F4_SPAIR_RING`, `F4_SPAIR_SKEW`,
+ * `F4_SPAIR_GEN`, `F4_SPAIR_ELEM`, `F4_SPAIR_SPAIR`) and the
+ * modern `enum class SPairType { SPair, Generator, Retired }`
+ * with a TODO to absorb the remaining cases.
+ *
+ * Macaulay matrix: `coefficient_matrix` is a `(row_array,
+ * column_array)` pair; each `row_elem` holds an opaque
+ * `ElementArray coeffs` plus a `comps[len]` index array (`new[]`-
+ * allocated, no longer arena-backed), and each `column_elem`
+ * tracks the pivoting `head` row. The transient
+ * `sparse_row` mirrors `row_elem` with the `comps` allocated
+ * from a memory block. The sorters --- `ColumnsSorter` (sorts
+ * column indices by `MonomialInfo::compare` on the column
+ * monomials), `GBSorter` (sorts basis indices by leading
+ * monomial), `PreSPairSorter` (sorts pre-pairs by varpower
+ * quotient) and `SPairCompare` (degree first, `i` tiebreak,
+ * driving `f4-spairs.hpp`'s priority queue) --- all carry
+ * static comparison counters. `MonomialLookupTable` is the
+ * `F4MonomialLookupTableT<int32_t>` instantiation.
+ *
+ * Pulls together the encoded-monomial layer (`moninfo.hpp`,
+ * `varpower-monomial.hpp`), the lookup-table type
+ * (`f4-monlookup.hpp`), and the templated coefficient
+ * arithmetic (`VectorArithmetic.hpp`). Counterpart to the new
+ * F4 engine's `gb-f4/MonomialTypes.hpp`.
+ *
+ * @see f4.hpp
+ * @see f4-spairs.hpp
+ * @see moninfo.hpp
+ */
+
 
 #include <climits>                   // for INT_MIN
 #include "VectorArithmetic.hpp"      // for ElementArray
@@ -40,7 +93,17 @@ enum class SPairType {
   // later we would also like GCDZZ, Ring, Skew to handle those cases as well
 };
 
-struct GBF4Polynomial 
+/**
+ * @brief Compact polynomial layout used inside the F4 GB engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `len` is the number of terms, `coeffs` is the parallel
+ * `ElementArray` of coefficients, and `monoms` is a flat buffer of
+ * `monomial_word`s with every term's monomial laid out contiguously.
+ * Owned by an enclosing memory block; no destructor needed.
+ */
+struct GBF4Polynomial
 {
   int len;
   ElementArray coeffs;
@@ -119,6 +182,17 @@ struct coefficient_matrix
 typedef int (MonomialInfo::*CompareFunction)(const monomial_word *,
                                              const monomial_word *) const;
 
+/**
+ * @brief Comparator that orders Macaulay-matrix column indices by the
+ * monomial each column represents, using the ambient `MonomialInfo`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Fed to `std::sort` so the F4 matrix builder can put the columns
+ * into the monoid's order before reduction. Keeps two static
+ * counters (`ncmps`, `ncmps0`) to let profiling code report how
+ * many comparisons the sort took.
+ */
 class ColumnsSorter
 {
  public:
@@ -161,6 +235,16 @@ class ColumnsSorter
   ~ColumnsSorter() {}
 };
 
+/**
+ * @brief Comparator that orders indices into the current GB array (`gb_array`)
+ * by each `gbelem`'s leading monomial, in increasing order.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `operator()` returns true when `gb[a]`'s leading monomial is
+ * strictly less than `gb[b]`'s under `MonomialInfo::compare`. Like
+ * `ColumnsSorter` it keeps `ncmps` / `ncmps0` profiling counters.
+ */
 class GBSorter
 {
  public:
@@ -202,6 +286,16 @@ class GBSorter
   ~GBSorter() {}
 };
 
+/**
+ * @brief Comparator that orders `pre_spair*` pointers by the `quot`
+ * varpower monomial of each pre-S-pair.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Uses `varpower_monomials::compare` directly and keeps a single
+ * `ncmps` profiling counter. Applied during S-pair generation,
+ * before the pre-pairs are promoted to full `spair`s.
+ */
 class PreSPairSorter
 {
  public:
@@ -229,6 +323,17 @@ class PreSPairSorter
   ~PreSPairSorter() {}
 };
 
+/**
+ * @brief Comparator on indices into an `spair` table, ordering by sugar
+ * degree then by the larger of the two parent indices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Drives the S-pair queue inside the F4 algorithm: largest sugar
+ * degree first, then largest `i`. `operator()(s, t)` returns true
+ * when `s` should come before `t` under that order, so it's wired
+ * straight into `std::priority_queue` and friends.
+ */
 class SPairCompare
 {
 public:

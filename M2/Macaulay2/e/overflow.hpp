@@ -1,6 +1,37 @@
 #ifndef _overflow_h_
 #define _overflow_h_
 
+/**
+ * @file overflow.hpp
+ * @brief Overflow-checked integer arithmetic for monomial exponents and degree sums.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Provides the `safe::` arithmetic helpers (`add`, `add_to`,
+ * `sub`, `sub_from`, `sub_pos`, `pos_add`) and the bit-width
+ * predicates `fits_7` / `fits_15` / ... that monomial-arithmetic
+ * paths in the engine route through. Exponents are stored as
+ * `int32_t`; a silent wraparound in `e + e'` would not just
+ * produce a wrong answer but would put the result *below* either
+ * input, breaking the monomial-order invariant and potentially
+ * making a Groebner basis loop forever or reduce to a non-zero
+ * canonical form. Each helper performs the operation, checks
+ * the bound, and on failure calls `safe::ov(msg)` --- which
+ * (in `overflow.cpp`) throws `exc::overflow_exception`.
+ *
+ * The bound checks are bit-pattern tests against a high-bit
+ * mask (e.g. `((uint32_t)x & ~0x7f) != 0`), not compiler
+ * overflow intrinsics; the header pulls in `__has_builtin` only
+ * to wire `expect_false` / `expect_true` macros around the bad
+ * path via `__builtin_expect`, so the success path stays
+ * branch-predicted. Callers include the `aring-*` family, the
+ * GB variants, the resolution engines, and the monoid /
+ * monomial-order machinery.
+ *
+ * @see exceptions.hpp
+ * @see imonorder.hpp
+ */
+
 #ifdef SIGNAL_ERROR
 #error SIGNAL_ERROR
 #endif

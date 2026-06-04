@@ -3,6 +3,39 @@
 #ifndef _aring_QQ_flint_hpp_
 #define _aring_QQ_flint_hpp_
 
+/**
+ * @file aring-qq-flint.hpp
+ * @brief `M2::ARingQQFlint` --- rationals backed by FLINT's `fmpq` with small-value inlining.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingQQFlint` represents a rational as FLINT's `fmpq` data
+ * struct, a pair of `fmpz`s that therefore inherits the
+ * small-value inlining used by `ARingZZ` (`aring-zz-flint.hpp`):
+ * when both numerator and denominator fit in a single machine
+ * word the value lives inline, with heap allocation only on
+ * blowup. Arithmetic uses `fmpq_add`, `fmpq_mul`, ..., which
+ * canonicalise after every operation, so `(1/2) + (1/2)` is
+ * stored as `1` rather than `2/2`. The matching GMP `mpq_t`-backed
+ * sibling `aring-qq-gmp.hpp` is what `aring-qq.hpp`'s
+ * `typedef ARingQQ` currently aliases as the engine-wide default.
+ *
+ * The FLINT-include dance routes its malloc hooks through bdwgc
+ * via `M2/gc-include.h` (which must precede every FLINT header),
+ * guards conversion warnings with diagnostic pragmas, and
+ * currently still pulls in `ring.hpp` for cross-ring promotion
+ * --- the in-source comment "promote needs ring.hpp. After
+ * moving promote out, remove it here!" flags the intended
+ * refactor (promotion is meant to migrate to
+ * `aring-translate.hpp`). Engine consumers are
+ * `dmat-qq-flint.hpp` and the QQ paths in `mat-linalg.hpp`.
+ *
+ * @see aring-qq.hpp
+ * @see aring-qq-gmp.hpp
+ * @see aring-zz-flint.hpp
+ * @see aring.hpp
+ */
+
 #include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 
 // The following needs to be included before any flint files are included.

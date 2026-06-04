@@ -3,6 +3,40 @@
 #ifndef _aring_RRi_hpp_
 #define _aring_RRi_hpp_
 
+/**
+ * @file aring-RRi.hpp
+ * @brief `M2::ARingRRi` --- certified real intervals `[a, b]` with MPFR endpoints, MPFI arithmetic.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingRRi` represents a real value as a closed interval
+ * `[a, b]` whose endpoints are MPFR floats and whose enclosure
+ * is guaranteed to contain the mathematical result. The class
+ * is a `SimpleARing<ARingRRi>` whose element type is
+ * `__mpfi_struct`; the only stored state on the class is
+ * `mPrecision`, the per-endpoint mantissa bit width. Arithmetic
+ * routes through MPFI (`mpfi_add`, `mpfi_sub`, `mpfi_mul`,
+ * `mpfi_div`, `mpfi_abs`, `mpfi_mul_si`, ...), so outward
+ * rounding is handled automatically: `[a,b] + [c,d] -> [a+c, b+d]`
+ * widened to the next representable bounds, and analogous
+ * sign-cased formulas for multiplication and division.
+ *
+ * Distinct precisions form distinct rings. The class pulls in
+ * `aring-RRR.hpp` so its interop helpers can exchange data with
+ * MPFR-precision reals: `is_member`, `midpoint`, `diameter`,
+ * `left`, and `right` accept or produce `ARingRRR::ElementType`
+ * values. The M2-side factory `IM2_Ring_RRi(prec)` in
+ * `interface/ring.cpp` always returns
+ * `ConcreteRing<ARingRRi>(prec)` --- there is no hardware-precision
+ * shortcut for the interval variant. The complex counterpart is
+ * `ARingCCi`.
+ *
+ * @see aring-RRR.hpp
+ * @see aring-RR.hpp
+ * @see aring-CCi.hpp
+ * @see aring.hpp
+ */
+
 #include <iostream>
 
 #include <mpfi.h>
@@ -18,8 +52,19 @@ class RingMap;
 
 namespace M2 {
 /**
-\ingroup rings
-*/
+ * @brief `aring`-style adapter for arbitrary-precision real intervals,
+ * backed by MPFI.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `ElementType` is `__mpfi_struct` --- a closed interval `[lo, hi]`
+ * of MPFR endpoints, so arithmetic returns rigorous containing
+ * intervals. `mPrecision` sets the per-endpoint MPFR precision;
+ * characteristic is 0. `ringID = ring_RRi`. Forms the real
+ * component of `ARingCCi`.
+ *
+ * @ingroup rings
+ */
 class ARingRRi : public SimpleARing<ARingRRi>
 {
   // Higher precision real intervals

@@ -1,6 +1,59 @@
 #ifndef _matrix_h_
 #  define _matrix_h_
 
+/**
+ * @file interface/matrix.h
+ * @brief Engine-boundary C API for constructing, transforming, and inspecting immutable `Matrix` objects.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `extern "C"` entry points that span the entire
+ * life cycle of the engine's immutable `Matrix`. Per-function
+ * `/* drg: connected ... */` trailers name the M2-side binding.
+ * Promotion / lifting between coefficient rings:
+ * `IM2_Matrix_promote` / `IM2_Matrix_lift` (`rawPromote` /
+ * `rawLift`). Inspection: `IM2_Matrix_get_target` / `_get_source`
+ * (`rawTarget` / `rawSource`), `IM2_Matrix_n_rows` / `_n_cols`
+ * (`rawNumberOfRows` / `rawNumberOfColumns`),
+ * `IM2_Matrix_get_degree` (`rawMultiDegree`),
+ * `IM2_Matrix_get_entry` (`rawMatrixEntry`),
+ * `IM2_Matrix_is_zero` / `_is_equal` / `_is_homogeneous`
+ * (`rawIsZero` / `rawIsEqual` / `rawIsHomogeneous`), plus
+ * `rawIsDense`. Construction: `rawIdentity`, `rawZero`,
+ * `rawMatrix1` / `rawMatrix2` (vec-list and ring-element-list
+ * variants), `rawSparseMatrix1` / `rawSparseMatrix2`,
+ * `rawMatrixRemake1` / `rawMatrixRemake2`,
+ * `rawRandomConstantMatrix`, plus
+ * `rawMatrixReadMsolveString` / `rawMatrixReadMsolveFile`
+ * for ingesting MSolve-format text.
+ *
+ * Combinators: `rawConcat`, `rawDirectSum`, `rawTensor`,
+ * `rawDual`, `rawReshape`, `rawFlip`, `rawWedgeProduct`,
+ * `rawSubmatrix`, `rawKoszul` / `rawKoszulMonomials`,
+ * `rawSymmetricPower`, `rawExteriorPower`, `rawSortColumns`.
+ * Determinantal: `rawMinors`, `rawPfaffians`. Cleanup /
+ * compression: `rawMatrixCompress`,
+ * `rawRemoveMonomialFactors`, `rawRemoveContent`.
+ * Differential and polynomial-term operations:
+ * `rawMatrixDiff`, `rawMatrixContract`, `rawHomogenize`,
+ * `rawCoefficients`, `rawMonomials`, `rawInitial`,
+ * `rawTopCoefficients`, `rawEliminateVariables`,
+ * `rawKeepVariables`, `rawDivideByVariable`. There are **no**
+ * element-wise `add` / `subtract` / `multiply` bindings in
+ * this header --- those operations live at the M2 interpreter
+ * level.
+ *
+ * `Matrix` is immutable, so every transformation returns a
+ * fresh pointer; the implementation in `matrix.cpp` validates
+ * ring and dimension agreement before delegating to
+ * `MatrixConstructor`, and reports failures through the engine
+ * `error()` channel.
+ *
+ * @see matrix.cpp
+ * @see mutable-matrix.h
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 // TODO: fix this

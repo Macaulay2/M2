@@ -1,5 +1,45 @@
 // Copyright 2003  Michael E. Stillman
 
+/**
+ * @file ring-vecs.cpp
+ * @brief `Ring`'s `vec`-shaped operations --- construction, traversal, arithmetic on sparse columns.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Implements the `vec` (sparse `(component, ring_elem)` linked
+ * list of `vecterm` nodes, kept in strictly decreasing order of
+ * `comp` with zero-coefficient entries omitted) methods declared
+ * on `Ring`.
+ * Construction / lifecycle: `new_vec`, `remove_vec_node`,
+ * `make_vec`, `make_vec_from_array`, `e_sub_i`, `copy_vec`,
+ * `remove_vec`. Inspection / traversal: `is_equal`,
+ * `compare_vecs`, `n_nonzero_terms`, the two `get_entry`
+ * overloads, and `vec_lead_term(nparts, F, v)`. Arithmetic:
+ * `negate_vec`, `add_vec`, `subtract_vec`, the two `mult_vec`
+ * overloads (by `int` scalar and by `ring_elem`),
+ * `rightmult_vec`, the in-place
+ * `mult_vec_to` / `mult_row` / `divide_vec_to`, and
+ * `mult_vec_matrix`. Shape transforms:
+ * `sub_vector`, `component_shift`, `tensor_shift`, `tensor`.
+ * Floating-point hygiene for RR/CC vectors:
+ * `vec_zeroize_tiny`, `vec_increase_maxnorm`. Display / mapping:
+ * `vec_text_out`, `vec_eval`. Each operation is `virtual` on
+ * `Ring` so polynomial-ring subclasses (`PolyRing`,
+ * `PolyRingQuotient`, `FractionField`, ...) can override --- the
+ * generic implementations live here.
+ *
+ * `vec` is the value shape that backs every `Matrix` column and
+ * every `FreeModule` element. The in-file header note codifies
+ * an invariant the rest of the engine relies on: `ring_elem`
+ * values are treated as **immutable**, so vec terms can share
+ * references freely without defensive copies --- arithmetic
+ * always produces new values rather than mutating in place.
+ *
+ * @see ring.hpp
+ * @see matrix.hpp
+ * @see freemod.hpp
+ */
+
 #include "ring.hpp"
 #include "text-io.hpp"
 #include <vector>

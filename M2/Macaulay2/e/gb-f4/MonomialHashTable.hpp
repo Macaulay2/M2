@@ -2,6 +2,53 @@
 
 #pragma once
 
+/**
+ * @file gb-f4/MonomialHashTable.hpp
+ * @brief `newf4::MonomialHashFunction` and the new-F4 monomial-to-index hash table.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the self-contained monomial-canonicalisation surface
+ * for the refactored F4. `MonomialHashFunction` ships a
+ * compiled-in table of 64 precomputed random 64-bit constants
+ * and folds a `MonomialView` into a single `HashInt` as
+ * `sum_i mHashValues[i.var() % 64] * i.power()` over the
+ * sparse `(var, power)` pairs --- so variables that share the
+ * same residue mod 64 collide on the same constant; an
+ * in-source TODO flags that the table should grow when an
+ * out-of-range variable arrives. The constants are baked in so
+ * identical inputs across runs produce identical hash
+ * sequences (determinism of GB output, not floating-point
+ * sensitivity --- F4 here runs over exact rings).
+ *
+ * The accompanying `MonomialHashTable` class stores monomial
+ * bytes in a `MemoryBlock mMonomialSpace`, with two parallel
+ * indexed arrays --- `std::vector<MonomialView> mMonomialPointers`
+ * and `std::vector<HashInt> mHashValues` (slot `0` reserved as
+ * "empty") --- and an open-addressed `std::vector<MonomialIndex>
+ * mBuckets` of size `2^mLog2Size` masked by `mHashMask` whose
+ * slots hold either `0` (empty) or a `MonomialIndex >= 1` into
+ * the parallel arrays. `find(view)` hashes, probes, and
+ * returns the existing index or inserts a fresh copy of the
+ * view's bytes; the table grows when `size() >= mThreshold`.
+ * A `HashTableStats` substruct counts `n_calls_find`,
+ * `n_clashes`, `max_run_length`, `monequal_count`, and
+ * `monequal_fails` for the `dump()` diagnostic. Every monomial
+ * the algorithm encounters --- basis leading terms, S-pair
+ * LCMs, Macaulay-matrix column heads --- gets a single
+ * canonical `MonomialIndex` here, so the rest of the engine
+ * works on integer indices. Modern successor to
+ * `f4/monhashtable.hpp` (which is itself an in-house
+ * open-addressing `MonomialHashTable<ValueType>` over packed
+ * monomials, not a mathic wrapper).
+ *
+ * @see MonomialView.hpp
+ * @see MonomialTypes.hpp
+ * @see MemoryBlock.hpp
+ * @see MonomialLookupTable.hpp
+ * @see GBF4Computation.hpp
+ */
+
 #include "MonomialTypes.hpp"
 #include "../MemoryBlock.hpp"
 #include "MonomialView.hpp"

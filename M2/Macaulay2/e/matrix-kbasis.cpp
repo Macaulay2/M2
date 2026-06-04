@@ -1,3 +1,36 @@
+/**
+ * @file matrix-kbasis.cpp
+ * @brief `KBasis` --- k-vector-space basis of a graded module restricted to chosen degrees.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Implements the engine code behind M2's `basis(d, M)`: given a
+ * graded module `M` and a degree vector (or `(lo, hi)` range),
+ * return a single-row `Matrix` whose columns are the standard
+ * monomials of `M` in the requested degrees. The algorithm
+ * computes the leading-term monomial ideal of `M`'s presentation
+ * and enumerates standard monomials by complement, walking the
+ * monomial-ideal tree once rather than the naive variable-
+ * exponentiation that would blow up exponentially. The `KBasis`
+ * class tags its three modes via a private
+ * `enum { KB_FULL, KB_SINGLE, KB_MULTI } computation_type` ---
+ * full (finite-basis) collection, a single requested degree, or
+ * a `(lo_degree, hi_degree)` range --- and `do_truncation`
+ * switches between returning the basis vs the truncation. The
+ * single public entry `Matrix::basis(lo, hi, heft, vars,
+ * do_truncation, limit)` (defined at the bottom) hands its
+ * arguments off to `KBasis::k_basis`.
+ *
+ * The Hilbert-function counts in `hilb.hpp` are derived from
+ * exactly these basis sizes; the non-commutative analogue lives
+ * in `matrix-ncbasis.cpp` because the NC monomial structure is
+ * different.
+ *
+ * @see matrix-con.hpp
+ * @see monideal.hpp
+ * @see hilb.hpp
+ */
+
 #include <stddef.h>  // for NULL
 #include <vector>    // for vector
 
@@ -19,6 +52,20 @@
 #include "style.hpp"            // for EQ
 #include "util.hpp"             // for M2_arrayint_to_stdvector
 
+/**
+ * @brief Enumerates a k-basis (degree-graded monomial basis) of a module,
+ * a finite module's entire basis, or the basis of a map between
+ * modules.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `computation_type` picks the mode (`KB_SINGLE` for a fixed
+ * degree, `KB_MULTI` for a degree range, `KB_FULL` for the whole
+ * finite-dimensional basis). The result is accumulated in `mat`
+ * (a `MatrixConstructor`); the recursive `do_kbasis` worker
+ * walks variable / degree combinations against the polynomial
+ * ring's monoid and emits one column per basis monomial.
+ */
 class KBasis
 {
   // A class for construction of

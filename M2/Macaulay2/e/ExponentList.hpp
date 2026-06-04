@@ -1,6 +1,39 @@
 /* Copyright 2006 by Michael E. Stillman */
 #pragma once
 
+/**
+ * @file ExponentList.hpp
+ * @brief Variable-length sparse `(variable, exponent)` encoding of monomials.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ExponentList<Exponent, legacy_length>` represents a
+ * monomial as `[len, v_1, e_1, ..., v_r, e_r]` with
+ * `len = 2r + 1`, variable indices in strictly decreasing
+ * order (`v_1 > v_2 > ... > v_r >= 0`), and all `e_i > 0`. The
+ * layout is dense in support but sparse in the ambient
+ * variable count, so monomials of low support stay compact and
+ * divisibility / equality reduce to a single linear walk
+ * through the canonical form. An `ExponentList` is a view ---
+ * the class is a bag of static functions including
+ * `computeHashValue` and `elem_text_out`, plus a companion
+ * `ExponentListIterator<Exponent, legacy_length>` that walks
+ * the `(var, exp)` pairs. The `legacy_length` template flag
+ * selects between length conventions for callers still on the
+ * older layout.
+ *
+ * Conceptually a parallel encoding lives in
+ * `f4/varpower-monomial.hpp` for the F4 inner loop, and the
+ * dense counterpart is `ExponentVector.hpp`. Newer `gb-f4/`
+ * code is consolidating these onto its own `MonomialView` /
+ * `MonomialTypes`; this header remains the workhorse at the
+ * top of `e/` (and the encoding shared with `monideal.hpp`).
+ *
+ * @see ExponentVector.hpp
+ * @see monideal.hpp
+ * @see MemoryBlock.hpp
+ */
+
 #include <cstdio>  // for FILE
 #include <vector>  // for vector
 

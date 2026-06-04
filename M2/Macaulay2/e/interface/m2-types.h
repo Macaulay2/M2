@@ -1,6 +1,39 @@
 #pragma once
 // IWYU pragma: private, include "engine-includes.hpp"
 
+/**
+ * @file interface/m2-types.h
+ * @brief Engine-to-interpreter type vocabulary across the C++ / `.dd` boundary.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the bridging types every `interface/*.h` header
+ * uses: scalars (`M2_bool`, `hash_t = uint64_t`); GC-managed
+ * length-prefixed arrays (`M2_arrayint`, `M2_string`,
+ * `M2_ArrayString`); pointer aliases over GMP / MPFR / MPFI
+ * (`gmp_ZZ`, `gmp_QQ`, `gmp_RR`, `gmp_RRi`, `gmp_CC`, `gmp_CCi`
+ * with their `mutable` and `orNull` variants); and the
+ * `engine_RawXxxArray` / `RawArrayPair` / `RawMatrixPair` /
+ * `RawRingElementPair` structs the interpreter sees as opaque
+ * containers of engine pointers. Forward declarations for
+ * `Ring`, `Matrix`, `FreeModule`, `MonomialOrdering`, and the
+ * SLP types let downstream headers refer to engine classes
+ * without dragging in their C++ definitions.
+ *
+ * The `IWYU pragma: private` annotation routes callers through
+ * `engine-includes.hpp` instead of including this file
+ * directly. The `BASECLASS` macro expands to `: public
+ * our_new_delete` in C++ and to nothing in C so the struct
+ * definitions compile on either side; a handful of helpers
+ * (`M2_makearrayint`, `M2_tostring`, `M2_join`,
+ * `M2_tocharstar`) and the global trace counters (`M2_gbTrace`,
+ * `M2_numTBBThreads`, `M2_numericalAlgebraicGeometryTrace`) are
+ * exported alongside the types.
+ *
+ * @see engine-includes.hpp
+ * @see m2-mem.h
+ */
+
 #ifndef _GNU_SOURCE
  #define _GNU_SOURCE
 #endif
@@ -19,6 +52,23 @@
  #include <sys/resource.h>
 #endif
 
+/**
+ * @struct BASECLASS
+ * @brief Synthetic documentation entry for the `BASECLASS` preprocessor
+ *        macro (no real struct of this name exists).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `BASECLASS` expands to either `: public our_new_delete` (when
+ *          included from C++) or to nothing (when included from C or
+ *          under `SAFEC_EXPORTS`), and is interpolated between the
+ *          struct name and its opening brace in declarations such as
+ *          `struct gmp_CC_struct BASECLASS {...};` further down this
+ *          header. Doxygen does not expand the macro, so it reads
+ *          `BASECLASS` as if it were a struct name and emits this
+ *          page; the page is an artifact of the macro trick, not a
+ *          real type.
+ */
 #ifdef __cplusplus
   #define BASECLASS : public our_new_delete
   #include "newdelete.hpp"
@@ -32,14 +82,45 @@
 typedef char M2_bool;
 
 typedef struct M2_string_struct * M2_string;
+/**
+ * @brief Length-prefixed byte string passed between the M2 front end and
+ * the engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `len` is the byte count; `array` is a C99 flexible-array member
+ * that follows in the same allocation. Always handled as a
+ * pointer (`M2_string`), never as a value, so the trailing
+ * variable-length buffer travels with it.
+ */
 struct M2_string_struct {int len;signed char array[];};
 
 typedef struct M2_arrayint_struct * M2_arrayint;
 typedef M2_arrayint M2_arrayintOrNull;
+/**
+ * @brief Length-prefixed `int` array, the integer counterpart of
+ * `M2_string`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Same layout as `M2_string_struct` but with an `int` payload.
+ * `M2_arrayintOrNull` is the nullable typedef used in interface
+ * signatures where the call may legitimately return nothing.
+ */
 struct M2_arrayint_struct {int len;int array[];};
 
 typedef struct M2_ArrayString_struct * M2_ArrayString;
 typedef M2_ArrayString M2_ArrayStringOrNull;
+/**
+ * @brief Length-prefixed array of `M2_string` pointers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Used to pass a list of strings (variable names, error messages,
+ * `Monoid` symbol tables, ...) across the engine boundary. As with
+ * its siblings, the `array` is a flexible-array member trailing
+ * the struct.
+ */
 struct M2_ArrayString_struct {int len;M2_string array[];};
 
 struct MonomialOrdering;

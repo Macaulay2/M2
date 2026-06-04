@@ -3,6 +3,44 @@
 #ifndef _F4Computation_h_
 #define _F4Computation_h_
 
+/**
+ * @file f4/f4-computation.hpp
+ * @brief `F4Computation` --- `GBComputation` adapter around the F4 inner-loop engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `F4Computation`, the `GBComputation` subclass the
+ * interpreter sees when F4 is selected. The class holds borrowed
+ * pointers to the user's `PolynomialRing` and `FreeModule`
+ * (the latter determines whether the order is Schreyer and the
+ * degrees of free-module generators), a `VectorArithmetic*`
+ * pinned at construction (the per-coefficient-ring fast path
+ * picked from the `aring-zzp-ffpack.hpp` / `aring-zzp-flint.hpp`
+ * / generic variants the engine has built), a `MonomialInfo*`
+ * describing the F4-specific packed monomial layout, and the
+ * owned `F4GB* mF4GB` instance that runs the actual algorithm
+ * (deleted in `remove_gb`). Coefficient-ring polymorphism is
+ * runtime through `VectorArithmetic`, **not** through `F4GB`
+ * template instantiation --- `F4GB` is monomorphic.
+ *
+ * Standard `GBComputation` virtuals (`start_computation`,
+ * `get_gb`, `get_mingens`, `get_change`, `get_syzygies`,
+ * `get_initial`, `matrix_remainder`, `matrix_lift`,
+ * `contains`, `set_hilbert_function`, `complete_thru_degree`)
+ * read state out of the running `F4GB` and re-wrap it as engine
+ * `Matrix` values; the `vec` <-> `GBF4Polynomial` translation
+ * is delegated to `f4-m2-interface.hpp`'s `F4toM2Interface`.
+ * `stop_conditions_ok()` unconditionally returns `true`. The
+ * `createF4GB(m, collect_syz, n_rows_to_keep, gb_weights,
+ * strategy, use_max_degree, max_degree, numThreads)` free
+ * factory below is the actual entry point used by
+ * `comp-gb.cpp` when the algorithm strategy selects F4.
+ *
+ * @see f4.hpp
+ * @see f4-m2-interface.hpp
+ * @see comp-gb.hpp
+ */
+
 #include "comp-gb.hpp"              // for GBComputation
 #include "interface/m2-types.h"     // for M2_bool, M2_arrayint
 #include "f4/f4.hpp"                // for F4GB
@@ -16,6 +54,21 @@ class RingElement;
 class VectorArithmetic;
 class buffer;
 
+/**
+ * @brief `GBComputation` subclass that drives an `F4GB` engine instance
+ * from the engine-side computation API.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Owns the `F4GB`, the source `PolynomialRing`, the `FreeModule`
+ * the GB lives in, and the optional `RingElement*` Hilbert
+ * function used for early termination. Implements
+ * `start_computation` / `stop_conditions_ok` /
+ * `complete_thru_degree` by delegating to `F4GB`'s
+ * degree-by-degree driver, and exposes the standard
+ * `get_matrix` / `get_gb` / `get_change` / `get_syzygies`
+ * accessors the front end polls when done.
+ */
 class F4Computation : public GBComputation
 {
   // Interface to the F4 linear algebra GB computation

@@ -19,6 +19,44 @@
 #ifndef _monomial_collection_hpp_
 #define _monomial_collection_hpp_
 
+/**
+ * @file monomial-collection.hpp
+ * @brief `IntsSet<Configuration>` --- set of monomials with insert / lookup / insertion-ordered iteration.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the templated `IntsSet<Configuration>`, the engine's
+ * in-transition "set of monomials" helper used by `M2FreeAlgebra`
+ * and the non-commutative arithmetic paths to track which
+ * `Monom` / `ModuleMonom` values have appeared during a
+ * multiplication or product. The live `Configuration` interface
+ * is just `Hash` and `Eq` functor members (the constructor
+ * forwards them as the `std::unordered_set` policies); a
+ * `copyToModuleElement` shape appears in the template's own
+ * comment list (line 240) as a documented eventual addition,
+ * but no Configuration in this header actually defines or uses
+ * it. The API splits insert from
+ * lookup: `insert(m, comp)` allocates the encoded
+ * `ModuleMonom` in the arena and pushes it onto the
+ * insertion-ordered `mElements` vector if new (returning `true`)
+ * or rolls the allocation back if already present (returning
+ * `false`); `find(m, comp)` is the separate read path, returning
+ * `(index, true)` on a hit and `(-1, false)` otherwise.
+ * Iteration via `uniqueMonoms()` walks `mElements` in insertion
+ * order. Storage is an arena from `<memtailor/Arena.h>` plus a
+ * `std::unordered_set` hash index, so per-monomial work stays
+ * bump-pointer cheap.
+ *
+ * The header's TODO block flags a planned rename of `IntsSet`
+ * to a non-templated `ModuleMonomSet`, a new `VarPowerMonom`
+ * companion, hash-function improvements, and migration of the
+ * commutative `gb-f4/` `MonomialHashTable` toward the same
+ * pattern --- the file is mid-refactor.
+ *
+ * @see Polynomial.hpp
+ * @see M2FreeAlgebra.hpp
+ */
+
 #include "Polynomial.hpp"     // for ModuleMonom, monomToModuleMonom, Monom
 #include "style.hpp"          // for EQ
 
@@ -100,6 +138,16 @@ void printHashTableState(const T& cont)
 // stores elements of type T*: points to a contiguous list of integers, first one is the length.
 // these are removed, when the hash table is removed.  Hash value is also stored.
 
+/**
+ * @brief Strict-weak-order comparator on `ModuleMonom`, used by
+ * `IntsSet::sort` to reorder the insertion-ordered `mElements` list.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Defers to `ModuleMonom::compare` and treats anything `<= EQ` as
+ * "less than", so equal monomials get a stable position from
+ * `std::sort`'s tiebreaker rather than from this comparator.
+ */
 class ModuleMonomLessThan
 {
 public:
@@ -109,6 +157,14 @@ public:
     return cmp <= EQ;
   }
 };
+/**
+ * @brief Hash functor on `ModuleMonom`, forwarding to `ModuleMonom::hash`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Plugged into the `std::unordered_set<ModuleMonom, ...>` inside
+ * `IntsSet` as the `Hash` policy.
+ */
 class ModuleMonomHash
 {
 public:
@@ -117,6 +173,14 @@ public:
     return m.hash();
   }
 };
+/**
+ * @brief Equality functor on `ModuleMonom`, forwarding to `operator==`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Plugged into the `std::unordered_set<ModuleMonom, ...>` inside
+ * `IntsSet` as the `KeyEqual` policy.
+ */
 class ModuleMonomEq
 {
 public:
@@ -125,6 +189,18 @@ public:
     return a == b;
   }
 };
+/**
+ * @brief Legacy `IntsSet` configuration that bundles hashing, equality, and
+ * a `display` helper into one functor object.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Provides the older single-functor shape (`operator()(m)` for hash,
+ * `operator()(a, b)` for equality), with `keysEqual` doing a
+ * length-prefixed elementwise check that ignores the slot reserved
+ * for `value`. Superseded by `ModuleMonomDefaultConfig`, which moved
+ * `Hash` and `Eq` into discrete member functors.
+ */
 class ModuleMonomDefaultConfigOrig
 {
 public:
@@ -161,6 +237,17 @@ private:
   int mNumVars;
 };
 
+/**
+ * @brief Current `IntsSet` configuration: exposes `Hash` and `Eq` as discrete
+ * member functors so the `unordered_set` can use them directly.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Used by the type alias `ModuleMonomialSet = IntsSet<ModuleMonomDefaultConfig>`.
+ * The constructor takes the variable count for size accounting; the
+ * old single-functor `hash` / `keysEqual` / `display` interface
+ * is kept under `#if 0` for reference until the refactor lands.
+ */
 class ModuleMonomDefaultConfig
 {
 public:

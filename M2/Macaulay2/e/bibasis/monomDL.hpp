@@ -10,12 +10,52 @@
 #ifndef BIBASIS_MONOM_DL_HPP
 #define BIBASIS_MONOM_DL_HPP
 
+/**
+ * @file bibasis/monomDL.hpp
+ * @brief `BIBasis::MonomDL` --- degree-lex specialisation of the BIBasis monomial type.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Concrete `Monom` subclass whose `Compare`, `operator<`, and
+ * `operator>` first compare the cached `TotalDegree` and break
+ * ties with lex on the variable list --- the standard degree-
+ * lexicographic order (`grlex` in some textbooks). The variable
+ * list is kept sorted ascending so divisibility, multiplication,
+ * and exact-division traversals fuse into single linear walks;
+ * `IsTrueDivisibleBy` and `IsPommaretDivisibleBy` add the strict
+ * and Janet-prefix flavours the involutive driver needs.
+ * Allocation routes through a per-class static `FastAllocator`
+ * so prolongation churn doesn't hit the system allocator.
+ *
+ * Selected at runtime by `Launcher` when the user requests
+ * `DegLex`; instantiated via `BooleanInvolutiveBasis<MonomDL>` so
+ * the comparison kernel inlines into the reduction inner loop.
+ *
+ * @see monom.hpp
+ * @see monomLex.hpp
+ * @see monomDRL.hpp
+ * @see launcher.hpp
+ * @see involutive.hpp
+ */
+
 #include <set>
 #include "allocator.hpp"
 #include "monom.hpp"
 
 namespace BIBasis
 {
+    /**
+     * @brief `Monom` specialisation that orders monomials by degree, then
+     * by lex on the variable list (DegLex).
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
+     *
+     * @details Inherits `Monom`'s sorted-linked-list storage and adds a
+     * per-class `FastAllocator` plus a `Next` link so collections
+     * of `MonomDL`s can also be chained in BIBasis's working
+     * lists. `operator<` / comparison overloads (declared in the
+     * .cpp) implement the DegLex order.
+     */
     class MonomDL : public Monom
     {
     private:

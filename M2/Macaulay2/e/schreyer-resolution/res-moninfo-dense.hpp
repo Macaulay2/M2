@@ -3,6 +3,54 @@
 #ifndef _res_moninfo_dense_hpp_
 #define _res_moninfo_dense_hpp_
 
+/**
+ * @file schreyer-resolution/res-moninfo-dense.hpp
+ * @brief `ResMonoidDense` --- dense exponent-vector implementation of the resolution monoid.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the implementation `res-moninfo.hpp` currently picks
+ * as the production `ResMonoid`. Each monomial is encoded as
+ * `[hash, component, weight_1, ..., weight_nweights, exp_0, ...,
+ * exp_{nvars-1}]` with `firstvar = 2 + nweights` and a fixed
+ * `nslots` total, so the slot count is the same for every
+ * monomial regardless of which variables actually appear ---
+ * favouring `O(1)` access and short-walk comparison over
+ * compactness. Hashing is the additive Steel trick:
+ * `from_expvector` stores `hash(m) = sum_i hashfcn[i] * e_i`
+ * (with `hashfcn` a per-variable precomputed random word), so
+ * `hash(m*n) = hash(m) + hash(n)` and `mult` updates the hash
+ * by a single add. The class-level `mask` is **not** part of
+ * the hash --- it is used only by `check_monomial` to detect
+ * overflow by AND-ing it against each slot. Weight slots
+ * front-load the comparison with cached degree contributions,
+ * so order tests can short-circuit before walking the exponent
+ * suffix. `mult(a, b, result)` is commutative: skew handling
+ * lives separately in `skew_vars` / `skew_mult_sign`, which
+ * take a `SkewMultiplication*` by parameter --- the class does
+ * not own or inherit one.
+ *
+ * `compare_schreyer(m, n, m0, n0, tie1, tie2)` is the live
+ * order test; the in-file `compare_grevlex` is currently `#if
+ * 0`-d out, so only the sparse twin offers a live grevlex
+ * comparator. Otherwise the two implementations share the same
+ * `mult` / `divide` / `monomial_size` / `to_expvector` /
+ * `from_expvector` / `from_varpower_monomial` surface ---
+ * which is what lets `res-moninfo.hpp` swap implementations
+ * with a single typedef edit. The dense layout wins for rings
+ * with few variables or dense exponents (cache-friendly inner
+ * loops, predictable layout); the sparse twin
+ * `res-moninfo-sparse.hpp` wins on the opposite end. The
+ * `mutable unsigned long ncalls_*` counters at the bottom of
+ * the class are the engine's home-grown profiler hooks.
+ *
+ * @see res-moninfo.hpp
+ * @see res-moninfo-sparse.hpp
+ * @see res-monomial-types.hpp
+ * @see res-poly-ring.hpp
+ * @see skew.hpp
+ */
+
 #include <iostream>                   // for ostream
 #include <memory>                     // for unique_ptr
 #include <vector>                     // for vector
@@ -10,6 +58,20 @@
 #include "schreyer-resolution/res-monomial-types.hpp"
 #include "skew.hpp"  // for SkewMultiplication
 
+/**
+ * @brief Dense-format `ResMonoid` implementation: monomials laid out as
+ * fixed-width exponent vectors.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Each encoded monomial has `nslots` ints: `[hash, comp, w_1, ...,
+ * w_r, e_1, ..., e_n]`. Exponents are stored explicitly for
+ * every variable, so encode / decode are O(`nvars`) but the
+ * monomial size is fixed at compile-time once `nvars` is known.
+ * The dense representation wins when monomials are typically
+ * non-zero in many variables; `ResMonoidSparse` is the
+ * varpower-encoded alternative for sparse settings.
+ */
 class ResMonoidDense
 {
   int nvars;

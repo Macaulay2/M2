@@ -1,5 +1,35 @@
 #ifndef __timing_hpp_
 #define __timing_hpp_
+
+/**
+ * @file timing.hpp
+ * @brief Inline `std::chrono::steady_clock` wrappers and elapsed-time conversion helpers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Provides `timer()` / `now()` (both returning a
+ * `std::chrono::steady_clock::time_point`, hard-coded to the
+ * steady clock) for capturing high-resolution timestamps, plus
+ * templated `nanoseconds(duration)` / `microseconds(duration)`
+ * / `seconds(duration)` helpers that pull the count out of any
+ * `std::chrono::duration`-shaped type via `duration_cast`
+ * (`seconds` returns a `double` by scaling the nanosecond
+ * count). The `TIME(t, call)` macro at the bottom wraps a
+ * `call` with `now()` brackets and accumulates the nanosecond
+ * delta into `t`, which is how the GB and resolution drivers
+ * collect their `clock_*` timing fields.
+ *
+ * Used by `SLP-imp.hpp`'s NAG evaluator (per-step timestamps
+ * that drive continuation-step heuristics) and by the F4 GB
+ * engines for the per-reduction trace timings dumped on
+ * `M2_gbTrace` runs. The `StopConditions` machinery in
+ * `comp.hpp` does **not** have a time-limit field --- its
+ * stop conditions are degree / basis-element / syzygy / pair /
+ * codim / subring / length limits only.
+ *
+ * @see SLP-imp.hpp
+ */
+
 #include <chrono>
 
 inline std::chrono::steady_clock::time_point timer()

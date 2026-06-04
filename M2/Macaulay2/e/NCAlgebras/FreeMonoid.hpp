@@ -1,6 +1,39 @@
 #ifndef _free_monoid_hpp_
 #define _free_monoid_hpp_
 
+/**
+ * @file NCAlgebras/FreeMonoid.hpp
+ * @brief `FreeMonoid` --- monoid of length-prefixed non-commutative words with weight-vector prefix.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the word-side counterpart of the commutative
+ * `Monoid`: a non-commutative monomial is a sequence of
+ * variable indices `[v_1, v_2, ..., v_s]`, and `FreeMonoid`
+ * stores it in the packed form `[total length] wt_0 ... wt_{r-1}
+ * w_0 ... w_s` --- a leading length so the word can be
+ * `memcpy`ed, `r` weight values used to short-circuit
+ * comparison, and the indices themselves. Multiplication is
+ * plain concatenation: no reordering, no normalisation, since
+ * the algebra is free. The intended comparison is weight-first
+ * then lexicographic, matching the "leading word" convention of
+ * the non-commutative Gröbner literature; the in-file TODOs
+ * track wiring the weight values through the front end so
+ * compare can use them consistently.
+ *
+ * The companion `FreeMonoidLogger` at the top of the header is
+ * a debug helper that counts monomial compares for profiling.
+ * `NCGroebner.cpp` resets the counter and prints it after each
+ * reduction, but the `logCompare()` call inside `FreeMonoid.cpp`
+ * is currently commented out, so the counter only ticks if a
+ * developer re-enables it.
+ *
+ * @see Word.hpp
+ * @see FreeAlgebra.hpp
+ * @see NCGroebner.hpp
+ * @see Polynomial.hpp
+ */
+
 #include "Polynomial.hpp"      // for Monom
 #include "newdelete.hpp"       // for our_new_delete
 #include "polyring.hpp"        // for PolynomialRing
@@ -22,6 +55,16 @@ class buffer;  // lines 17-17
 // format
 // [total length] wt0 wt1 ... w(tr-1) w0 w1  ... ws
 
+/**
+ * @brief Static counter for non-commutative monomial comparisons.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Bumped each time `FreeMonoid::compare` is called; useful when
+ * profiling the inner loops of `NCGroebner` / `NCF4`. `reset()`
+ * zeroes the counter and `operator<<` (declared below) pretty-prints
+ * the current value.
+ */
 class FreeMonoidLogger
 {
 public:
@@ -40,6 +83,23 @@ public:
 
 std::ostream& operator<<(std::ostream& o, FreeMonoidLogger a);
 
+/**
+ * @brief The free non-commutative monoid on a set of named variables, with
+ * monomial ordering and degree / weight machinery.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Owns the variable names, the multi-degree of each variable, a
+ * stack of `mNumWeights` weight vectors, and a heft vector. A
+ * `Monom` is laid out as `[length, deg, w_0 ... w_{r-1}, v_0 ...
+ * v_s]` --- length, total degree, weight values, then the word
+ * itself. The class exposes the primitives the non-commutative
+ * arithmetic engines need: `mult` / `mult3`, `compare` /
+ * `isEqual`, conversion between `Monom`s, `Word`s and the engine's
+ * `Monomial` varpower form, and helpers that allocate
+ * left-mid-right products into a `MemoryBlock` (the hot path for
+ * `NCF4` row construction).
+ */
 class FreeMonoid : public our_new_delete
 {
   // types of monomials: (MES: just note to ourselves: remove it eventually).
@@ -171,6 +231,17 @@ private:
   int wordWeight(Word& word, const std::vector<int>& weight, int start_index) const;
 };
 
+/**
+ * @brief Strict comparator on `Monom`s under a `FreeMonoid` order: returns
+ * true exactly when the first monomial is *greater than* the second.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Confusingly named ("Eq") but actually a `<` swap-ready comparator
+ * for `std::map<Monom, ..., MonomEq>` (used by `MapPolynomialHeap`):
+ * `std::map` requires strict-weak order so this returns
+ * `compare(a, b) == GT`, which orders the lead term to `mMap.begin()`.
+ */
 class MonomEq
 {
 public:
@@ -190,6 +261,17 @@ private:
   const FreeMonoid* mMonoid;
 };
 
+/**
+ * @brief Hash functor on `Monom` (or `Word`) suitable for
+ * `std::unordered_map` / `std::unordered_set`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Seeds the hash with the first int (length / first word position),
+ * then folds each remaining int in with the boost-style mix
+ * `hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2)`. Same
+ * algorithm for both `Monom` and `Word` overloads.
+ */
 class MonomHash {
 public:
   int operator()(const Monom &V) const {
@@ -208,6 +290,18 @@ public:
   }
 };
 
+/**
+ * @brief Equality functor on `Monom` (or `Word`), the `KeyEqual` companion
+ * of `MonomHash` for `std::unordered_map<Monom, ...>`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details The `Monom` overload delegates to `FreeMonoid::isEqual` so the
+ * functor needs the monoid pointer (default-constructed instances
+ * hold `nullptr` --- callers must rebind before use). The `Word`
+ * overload is a `std::equal` over the two iterator ranges and does
+ * not consult the monoid.
+ */
 class MonomHashEqual {
 public:
   MonomHashEqual() : mMonoid(nullptr) {}

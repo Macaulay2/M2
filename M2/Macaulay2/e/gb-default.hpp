@@ -3,6 +3,42 @@
 #ifndef _gbA_h_
 #define _gbA_h_
 
+/**
+ * @file gb-default.hpp
+ * @brief `gbA` --- the engine's default Buchberger-style Groebner-basis algorithm.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `gbA`, the `GBComputation` subclass that the
+ * dispatcher in `comp-gb.cpp` falls back to (the `default:`
+ * branch of its `algorithm`-keyed switch). The classical
+ * Buchberger loop --- select an S-pair, compute its
+ * S-polynomial, reduce against the current basis, insert
+ * non-zero remainders, generate / flush S-pairs --- is layered
+ * on top of a tuned `gbring` value representation (`gbvector`),
+ * `MonomialTable` / `MonomialTableZZ` indices of leading
+ * monomials, and a final `ReducedGB` reduction pass. The three
+ * status bits `ELEM_IN_RING`, `ELEM_MINGEN`, and `ELEM_MINGB`
+ * declared at the top tag each basis element so the interpreter
+ * can extract either the minimal generators or the minimal GB
+ * at the end of the computation.
+ *
+ * Driven by the `gbA_state` state machine (`STATE_NEWDEGREE`,
+ * `STATE_NEWPAIRS`, `STATE_HILB`, `STATE_SPAIRS`, `STATE_GENS`,
+ * `STATE_AUTOREDUCE`, `STATE_DONE`): all S-pairs of the current
+ * degree are processed before advancing, which lets the loop
+ * pause at any degree boundary and resume cleanly. Sibling
+ * strategies (`gb-homog2.hpp`, `gb-sugarless.hpp`,
+ * `gb-toric.hpp`) are picked by other `algorithm` values of the
+ * same dispatcher; `gb-walk.hpp` has its own
+ * `rawGroebnerWalk` entry point.
+ *
+ * @see comp-gb.hpp
+ * @see gbring.hpp
+ * @see montable.hpp
+ * @see reducedgb.hpp
+ */
+
 #include "comp-gb.hpp"
 
 #include "gbring.hpp"

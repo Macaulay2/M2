@@ -1,6 +1,38 @@
 // In BUILD tree in Macaulay2/e:
 // ./M2-unit-tests --gtest_filter="*F4*"
 
+/**
+ * @file unit-tests/NewF4Test.cpp
+ * @brief gtest coverage for the refactored F4 engine's hash table, lookup table, and `PolynomialList`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Hosts two gtest suites covering `gb-f4/`'s monomial-side
+ * infrastructure: `TEST(NewF4, *)` exercises `HashTableStats`
+ * accumulation, `MonomialHashTable` insertion / lookup with
+ * same-monomial-same-ID invariants (`NewF4.hashtable`),
+ * `MatrixStream` round-trips (`NewF4.matrixstream`), and
+ * `PolynomialList` construction via `BasicPolyListParser`;
+ * `TEST(NewF4MonomialLookupTable, *)` covers
+ * `MonomialLookupTable` mask creation, divisibility queries,
+ * and monomial-operation correctness. `VectorArithmetic`
+ * primitives get smoke-tested in the same pass so the
+ * matrix-row arithmetic consuming the hash-table indices is
+ * validated alongside.
+ *
+ * Both suites share the `*F4*` prefix so the developer recipe
+ * at the top of the file --- `M2-unit-tests
+ * --gtest_filter="*F4*"` --- runs them together. Ring
+ * construction goes through `util-polyring-creation` to keep
+ * each test focused on the F4-side assertions.
+ *
+ * @see gb-f4/MonomialHashTable.hpp
+ * @see gb-f4/MonomialLookupTable.hpp
+ * @see gb-f4/PolynomialList.hpp
+ * @see VectorArithmetic.hpp
+ * @see util-polyring-creation.hpp
+ */
+
 #include <iostream>
 #include <memory>
 #include <bitset>

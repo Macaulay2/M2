@@ -1,3 +1,30 @@
+/**
+ * @file unit-tests/DMatZZpTest.cpp
+ * @brief gtest coverage for `DMat<M2::ARingZZp>` --- dense matrices over `Z/p`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Hosts `TEST(DMatZZp, create)` and `TEST(DMatZZp, submatrix)`
+ * over `DMat<M2::ARingZZp>` instances at `Z/101`. `create`
+ * pins down construction with `(ring, rows, cols)`,
+ * single-entry get / set round-trips through `M.entry(i, j)`,
+ * and the `M.ring()` accessor; `submatrix` covers `submatrix`
+ * assignment, in-place `+=` and `*=`, and `MatrixOps::isZero`
+ * on subblock zeros. `aring-glue.hpp` is pulled in alongside
+ * the `ARingZZp` header so the legacy `Ring` surface the F4
+ * engine routes through is exercised in the same pass.
+ *
+ * Companion files `MatrixIOTest.cpp` and `PolyRingTest.cpp`
+ * (same `file-dmat-matrix-tests` markdown) cover the matrix /
+ * polynomial-list I/O machinery and the polynomial-ring
+ * constructors `DMat`-based code sits on top of.
+ *
+ * @see DMatTest.hpp
+ * @see aring-zzp.hpp
+ * @see aring-glue.hpp
+ * @see NewF4Test.cpp
+ */
+
 #include <memory>
 #include <gtest/gtest.h>
 

@@ -1,6 +1,36 @@
 #ifndef _m2_free_algebra_quotient_hpp_
 #define _m2_free_algebra_quotient_hpp_
 
+/**
+ * @file M2FreeAlgebraQuotient.hpp
+ * @brief `Ring`-shaped façade around a non-commutative quotient algebra.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `M2FreeAlgebraQuotient` packages a
+ * `NCAlgebras/FreeAlgebraQuotient` --- a free associative algebra
+ * modulo a two-sided ideal --- in a `Ring`-derived wrapper so the rest
+ * of the engine (`Matrix`, `MutableMatrix`, resolutions, `RingMap`)
+ * can treat the quotient like any other ring. It is the quotient
+ * counterpart of `M2FreeAlgebra`; the quotient state (the
+ * non-commutative Groebner basis of the defining ideal) is owned by
+ * the wrapped `FreeAlgebraQuotient`.
+ *
+ * Multiplication first runs the ambient free-algebra product (word
+ * concatenation lifted to polynomials) and then reduces modulo the
+ * stored GB via `NCAlgebras/NCGroebner.hpp` --- this normal-form
+ * step is what distinguishes quotient arithmetic from the ambient
+ * free algebra and gives every quotient element a canonical
+ * representative. Because non-commutative two-sided GBs need not
+ * be finite, the GB is in general only computed up to a chosen
+ * degree limit; operations on longer words may not fully simplify.
+ *
+ * @see M2FreeAlgebra.hpp
+ * @see NCAlgebras/FreeAlgebraQuotient.hpp
+ * @see NCAlgebras/NCGroebner.hpp
+ * @see qring.hpp
+ */
+
 #include "engine-includes.hpp"
 
 #include <memory>
@@ -19,6 +49,20 @@ class RingMap;
 class SumCollector;
 class buffer;
 
+/**
+ * @brief Concrete `Ring` wrapper around an owned `FreeAlgebraQuotient`
+ * (the quotient counterpart of `M2FreeAlgebra`).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds a reference to the ambient `M2FreeAlgebra` plus a
+ * `std::unique_ptr<FreeAlgebraQuotient>` carrying the
+ * Groebner-basis-defined quotient. `create(F, GB, maxdeg)` is the
+ * factory: it accepts the engine `Matrix* GB` of defining
+ * relations and an optional `maxdeg` cap (`-1` means compute a
+ * complete GB), wires up the underlying `FreeAlgebraQuotient`, and
+ * lifts it into the engine's `Ring` hierarchy.
+ */
 class M2FreeAlgebraQuotient : public M2FreeAlgebraOrQuotient
 {
 private:

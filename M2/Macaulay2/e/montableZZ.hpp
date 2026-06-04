@@ -1,6 +1,43 @@
 #ifndef __montableZZ_h
 #define __montableZZ_h
 
+/**
+ * @file montableZZ.hpp
+ * @brief `MonomialTableZZ` --- coefficient-aware leading-monomial index for `ZZ`-coefficient Groebner bases.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * The `ZZ`-coefficient counterpart of `montable.hpp`. Each
+ * `mon_term` carries a doubly-linked-list pair (`_next` /
+ * `_prev`), the borrowed exponent pointer `_lead` (whose bytes
+ * belong to the owning polynomial; trailing sugar coordinates
+ * are ignored), a precomputed bitmask `_mask`, a basis index
+ * `_val`, and a leading-coefficient pointer `_coeff` (also
+ * borrowed). The terms are kept in lex order on monomials per
+ * the in-source comment; over `ZZ` a basis element only
+ * reduces a target when its leading coefficient divides the
+ * target's, so the API splits divisibility queries into
+ * monomial-only and coefficient-aware variants.
+ *
+ * Public methods: `make(nvars)` (the constructor),
+ * `insert(coeff, exp, comp, id)`, `is_weak_member` (submodule
+ * containment) and `is_strong_member` (divisibility),
+ * `find_smallest_coeff_divisor`, `find_term_divisors` /
+ * `find_monomial_divisors` (each returning up to `max` matches
+ * into a `VECTOR(mon_term*)`), `find_exact` /
+ * `find_exact_monomial`, `change_coefficient`, and the static
+ * `find_weak_generators` / `find_strong_generators` minimisers.
+ * Primary consumer is the `ZZ`-coefficient path in `gb-default.hpp`,
+ * which holds two pointers of this type --- the basis index
+ * `lookupZZ` and the quotient-ring index `ringtableZZ` (only one
+ * non-null at a time) --- and calls the static
+ * `find_weak_generators` to minimise the input generators
+ * before the GB loop starts.
+ *
+ * @see montable.hpp
+ * @see gb-default.hpp
+ */
+
 #include <vector>
 #include <memory>
 #include <algorithm>
@@ -23,9 +60,34 @@
     Is this really an OK idea?
  */
 
+/**
+ * @brief `MonomialTable` analogue for monomials carrying a `ZZ` coefficient.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Used by the integer-coefficient GB code path to track lead-term
+ * divisibility together with the leading integer coefficient: when
+ * the table is consulted to reduce `coeff * exp` against an entry
+ * `c * lead`, both the exponent-divisibility test and the `c |
+ * coeff` integer-divisibility test are honoured. Otherwise the
+ * data structure matches `MonomialTable`: per-component
+ * doubly-linked lists of `mon_term`s in lex order with a
+ * `_mask`-filtered divisor lookup.
+ */
 class MonomialTableZZ : public our_new_delete
 {
  public:
+  /**
+   * @brief `MonomialTable::mon_term` plus an `_coeff` slot pointing at the
+   * entry's leading `ZZ` coefficient (or `nullptr` for the
+   * coefficient-blind case).
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details The coefficient itself is owned by whatever stored the entry
+   * (typically a GB element), so the lifetime of `_coeff` must
+   * outlive this `mon_term`.
+   */
   struct mon_term : public our_new_delete
   {
     mon_term *_next;

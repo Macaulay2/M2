@@ -1,6 +1,37 @@
 #ifndef _polynomial_hpp_
 #define _polynomial_hpp_
 
+/**
+ * @file Polynomial.hpp
+ * @brief Modern `Monom` / `Polynomial` value types shared by NC algebras and the refactored F4.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `Monom` is an array-of-ints encoding of a non-commutative word
+ * with a degree prefix: `[length, degree, var_1, ..., var_n]`
+ * where `length = n + 2`. The length-field-first layout lets a
+ * single pointer walk past a monomial without external context.
+ * `ModuleMonom` adds three slots --- `index`, `hashval`, `comp`
+ * --- in front of the `Monom` payload, giving the full format
+ * `[len, index, hashval, comp, deg, vars...]` consumed by the
+ * resolution and module-side paths. `Polynomial<CoefficientRingType>`
+ * (aliased `Poly`) stores its terms as parallel `gc_vector`s ---
+ * an `mCoefficients` vector of `ElementType` and a flat
+ * `mMonomials` vector holding the encoded monomials end-to-end
+ * --- walked together by the monomial length prefix.
+ *
+ * Modern counterpart to the legacy `gbvector` in `gbring.hpp`:
+ * `gbvector` is an intrusive linked list optimised for
+ * term-by-term sorted merging in the classical Buchberger inner
+ * loop, while `Polynomial` wins for the batch operations of F4
+ * and the resolution code. Primary consumers are `NCAlgebras/`
+ * and `gb-f4/`; `schreyer-resolution/` carries a
+ * resolution-specialised variant.
+ *
+ * @see gbring.hpp
+ * @see NCAlgebras/FreeAlgebra.hpp
+ */
+
 #include "newdelete.hpp"  // for our_new_delete
 #include "ringelem.hpp"   // for ring_elem
 #include "style.hpp"      // for GT, LT, EQ
@@ -11,6 +42,21 @@
 #include <iterator>       // for forward_iterator_tag
 #include <utility>        // for pair, make_pair
 
+/**
+ * @brief Non-owning view onto a `[length, degree, v1, v2, ..., vn]` packed
+ * monomial in some externally managed buffer.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details A `Monom` is just a `const int*` cursor; the leading int is the
+ * total length (including itself), followed by the degree, then the
+ * `n` variable indices that spell out the (non-commutative) word.
+ * Indexing and `begin()` / `end()` give read-only iteration over the
+ * whole packed array. The `Monom` knows nothing about which monoid
+ * gave it meaning --- that lives in `FreeMonoid` / `ResMonoid`.
+ * Weights (added later) extend the format and are not yet reflected
+ * in this header comment.
+ */
 struct Monom
 // Format for monomials:
   // A monomial is an array of ints, the first of which is the length of that array (including length field).
@@ -42,12 +88,28 @@ private:
 
 std::ostream& operator<<(std::ostream& o, const Monom& m);
 
+/**
+ * @brief `Monom` extended with a module component, a stored index, and a
+ * memoised hash --- the value type of `IntsSet` and friends.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Layout: `[len, value/index, hashval, comp, deg, v1, ..., vr]`.
+ * The trailing slice `[len-3, deg, v1, ..., vr]` is exactly a
+ * `Monom`. `value/index` (`mValue[1]`) is the slot the owning
+ * `IntsSet` writes its enumeration index into; `hashval`
+ * (`mValue[2]`) is lazily computed on the first `hash()` call so
+ * subsequent lookups skip the work. `compare()` orders by hash,
+ * then component, then descending lex (so `m1 > m2` returns `LT`
+ * --- intentional to keep insertion-order monomials in the
+ * conventional "lead term first" position).
+ */
 class ModuleMonom
 // Format for such a monomial:
 // [len value hashval comp deg v1 v2 ... vr]
 // where [len-3 deg v1 v2 ... vr] is a Monom.
 {
-  
+
 public:
   ModuleMonom(int* begin) : mValue(begin) {}
 
@@ -257,6 +319,17 @@ private:
   monomVector mMonomials;
 };
 
+/**
+ * @brief Default `CoefficientRingType` parameter for `Polynomial<...>`:
+ * a thin trait whose `ElementType` is just `ring_elem`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Used to instantiate the alias `Poly = Polynomial<CoefficientRingType>`
+ * --- the non-commutative engine's standard polynomial type that
+ * stores coefficients as opaque engine `ring_elem`s rather than as
+ * an `aring`-specific concrete element type.
+ */
 struct CoefficientRingType
 {
   typedef ring_elem ElementType;

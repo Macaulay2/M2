@@ -1,6 +1,51 @@
 #ifndef _monomial_ideal_h_
 #  define _monomial_ideal_h_
 
+/**
+ * @file interface/monomial-ideal.h
+ * @brief Engine-boundary C API for constructing and operating on `MonomialIdeal`s.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `extern "C"` entry points the M2 interpreter
+ * routes to the engine's combinatorial `MonomialIdeal`
+ * machinery. `IM2_MonomialIdeal_make(M, n)` builds an ideal
+ * from the lead monomials of the matrix columns whose lead
+ * term lands in row `n`, and `IM2_MonomialIdeal_to_matrix`
+ * walks back. The algebraic surface covers intersection
+ * (`IM2_MonomialIdeal_intersect`, bound as `rawIntersect`),
+ * colon and saturation (`rawColonMonomialIdeal1` / `_2`,
+ * `rawSaturateMonomialIdeal1` / `_2` --- the `_1` variants
+ * take a single `EngineMonomial`, the `_2` variants take a
+ * second `MonomialIdeal`), `rawRadicalMonomialIdeal`, the
+ * strongly-stable closure / test pair
+ * `IM2_MonomialIdeal_borel` / `_is_borel` (bound as
+ * `rawStronglyStableClosure` / `rawIsStronglyStable` ---
+ * in-source comments flag that the C names "should really be
+ * named: ..._strongly_stable"), `rawAlexanderDual`, and the
+ * decomposition queries `IM2_MonomialIdeal_codim`
+ * (`rawCodimension`), `rawMonomialMinimalPrimes` (carrying a
+ * `RENAME THIS ROUTINE` source comment), and
+ * `rawMaximalIndependentSets`. `IM2_MonomialIdeal_Hilbert`
+ * computes the Hilbert-series numerator of `coker I` directly
+ * from the monomial generators (bound as `rawHilbert`), and
+ * `rawMonomialIdealLCM` returns the LCM as a degree vector.
+ *
+ * `MonomialIdeal` is always stored as a set of minimal
+ * generators; the in-source comment for `rawMonomialIdealHash`
+ * notes that the structure is **mutable** (hashes are
+ * sequentially assigned rather than content-derived). The
+ * dedicated C surface lets the interpreter manipulate initial
+ * ideals, leading-term matrices, and Hilbert-function inputs
+ * without paying for polynomial-ring machinery. The opaque
+ * `EngineMonomial` type is the single-monomial handle the
+ * `_1`-flavour colon and saturation entries accept.
+ *
+ * @see monomial-ideal.cpp
+ * @see monoid.h
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 // TODO: fix this

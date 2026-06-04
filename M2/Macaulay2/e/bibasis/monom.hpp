@@ -10,13 +10,63 @@
 #ifndef BIBASIS_MONOM_HPP
 #define BIBASIS_MONOM_HPP
 
+/**
+ * @file bibasis/monom.hpp
+ * @brief `BIBasis::Monom` --- abstract squarefree-monomial base for the three Janet orderings.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the polymorphic root of the BIBasis monomial
+ * hierarchy: a singly-linked list of `VarsListNode` records
+ * (each carrying a `short int Integer` variable index plus
+ * `Next`) with a cached `TotalDegree`, and the static
+ * `DimIndepend` that fixes the variable count for the whole
+ * subsystem. Each `VarsListNode` allocates from a static
+ * `FastAllocator` slab so the millions of nodes the
+ * prolongation loop creates stay cache-resident. Because the
+ * ground field is `F_2[x]/(x_i^2 - x_i)` every exponent is 0
+ * or 1, so the list records exactly the *set* of variables that
+ * appear; no exponent slots are needed.
+ *
+ * The pure virtuals `MultiplyBy`, `SetOne`, `operator[]`,
+ * `FirstMultiVar`, and `GetVariablesSet` are filled in by the
+ * three concrete subclasses --- `MonomLex`, `MonomDL`,
+ * `MonomDRL` --- each implementing one monomial ordering. The
+ * bibasis algorithm templates on the concrete type rather than
+ * dispatching through `Monom*`, so the abstract surface here is
+ * mostly a shared layout and a documentation anchor for the
+ * ordering variants.
+ *
+ * @see allocator.hpp
+ * @see monomLex.hpp
+ * @see monomDL.hpp
+ * @see monomDRL.hpp
+ * @see polynom.hpp
+ */
+
 #include <set>
 #include <iostream>
 #include "allocator.hpp"
 
 namespace BIBasis
 {
-    class Monom 
+    /**
+     * @brief Abstract base for the BIBasis boolean-coefficient monomial
+     * types --- a sorted, singly linked list of variable indices.
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
+     *
+     * @details `Integer` is a 16-bit type because BIBasis caps the number of
+     * variables (`DimIndepend`) at 32k. Subclasses
+     * (`MonomLex`, `MonomDL`, `MonomDRL`) implement the comparison
+     * for their respective monomial orders; the storage layout is
+     * shared in this base. Memory comes from a per-`VarsListNode`
+     * `FastAllocator`, so list insertion is bump-pointer cheap.
+     * `TotalDegree` caches the sum of exponents for fast degree
+     * lookups; in this boolean (square-free) setting that equals
+     * the list length.
+     */
+    class Monom
     {
     public:
         typedef short int Integer;
@@ -28,6 +78,18 @@ namespace BIBasis
         };
 
     protected:
+        /**
+         * @brief Singly linked-list node of a `Monom`'s variable list, with
+         * a per-class slab allocator.
+         *
+         * @note AI-generated documentation. Verify against the source before relying on it.
+         *
+         * @details `Value` is the variable index, `Next` chains to the next
+         * variable in increasing order. The static `Allocator`
+         * (a `FastAllocator` shared across all `VarsListNode`s)
+         * supplies fixed-size slots so new/delete avoid the system
+         * heap on the BIBasis inner loop.
+         */
         struct VarsListNode
         {
             Integer Value;

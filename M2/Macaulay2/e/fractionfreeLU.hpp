@@ -3,8 +3,53 @@
 #ifndef _fractionfreeLU_hpp_
 #define _fractionfreeLU_hpp_
 
+/**
+ * @file fractionfreeLU.hpp
+ * @brief `FF_LUComputation` --- Bareiss-style fraction-free LU over an integral domain.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `FF_LUComputation`, a private-constructor class that
+ * runs Bareiss's algorithm on a `MutableMatrix` whose base ring
+ * `R` is asserted to be an integral domain. The Bareiss update
+ * `M[i, j] := (M[i, j] M[k, k] - M[i, k] M[k, j]) / lastpivot`
+ * is guaranteed to produce an exact ring element (with no
+ * remainder) whenever `R` is a domain, so every intermediate
+ * value stays in `R` without a detour through the fraction field.
+ * For matrices with polynomial coefficients this can be orders of
+ * magnitude faster than ordinary LU plus fraction simplification.
+ *
+ * The class tracks the column permutation it applied
+ * (`col_perm`), the previous pivot (`lastpivot`, used as the
+ * Bareiss denominator), the current pivot, and a per-step
+ * `need_div` flag indicating whether the division should run (the
+ * first step does not). After completion `M` carries the LU
+ * factors packed in the standard compact form (strictly-below for
+ * `L`, on-and-above for `U`) and the determinant is the final
+ * pivot up to the sign of the column permutation. M2 reaches this
+ * path via `LUdecomposition` over polynomial coefficient rings
+ * and via the `DET_BAREISS` strategy in `det.hpp`.
+ *
+ * @see det.hpp
+ * @see mat.hpp
+ */
+
 #include "mat.hpp"
 
+/**
+ * @brief LU decomposition over a domain using fraction-free Gaussian
+ * elimination.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details The classical Bareiss-style algorithm: at each step, the new
+ * entry is `(pivot * a - factor * b) / lastpivot`, where the
+ * division is exact because the ring is a domain. Tracks
+ * `col_perm` for the column permutation and `need_div[i]` for
+ * which columns still need the trailing division. Used by the
+ * engine wherever an integer-coefficient LU is needed without
+ * introducing fractions.
+ */
 class FF_LUComputation
 {
   // This is a class encapsulating the LU decomposition

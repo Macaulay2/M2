@@ -1,4 +1,36 @@
-// This file should only be included once, by what?
+/**
+ * @file dmat-lu-qq.hpp
+ * @brief `DMatLinAlg<M2::ARingQQ>` --- rational dense LU routed through FLINT `fmpq_mat` / `fmpz_mat`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Specialises `DMatLinAlg` for the rational aring `ARingQQ`.
+ * Each operation copies the input through `FlintQQMat`
+ * (`dmat-qq-interface-flint.hpp`) so a FLINT `fmpq_mat_t` is
+ * available without disturbing the M2 matrix, then dispatches:
+ * `rank` clears denominators via
+ * `fmpq_mat_get_fmpz_mat_rowwise` and falls into
+ * `fmpz_mat_rank`; `kernel` (null-space) follows the same
+ * denominator-clearing pattern and finishes with
+ * `fmpz_mat_nullspace`; `inverse` goes through `fmpz_mat_inv`
+ * on the cleared matrix and scales back to `fmpq`; and
+ * `determinant` and `solveInvertible` stay in rationals via
+ * `fmpq_mat_det` and `fmpq_mat_solve_dixon` directly.
+ *
+ * `matrixPLU` is the exception: an in-source comment notes
+ * `fmpz_mat_fflu` does not return a true LU factorisation, so
+ * the specialisation builds a generic `DMatLUinPlace<ARingQQ>`
+ * locally and uses `LUUtil<ARingQQ>::setUpperLower` to split.
+ * `solve(B, X)` handles the non-square / rank-deficient case
+ * by `concatenateMatrices<Mat>` of `[A | B]`, calling
+ * `fmpq_mat_rref`, and reading the solution out of the
+ * column-rank profile via the static
+ * `findColumnRankProfileFromLU`.
+ *
+ * @see dmat-lu.hpp
+ * @see dmat-qq-interface-flint.hpp
+ * @see aring-qq.hpp
+ */
 
 //////////////////////
 // ZZpFlint //////////
@@ -6,6 +38,19 @@
 
 #include "dmat-qq-interface-flint.hpp"
 
+/**
+ * @brief Specialisation of `DMatLinAlg` for `ARingQQ` dense matrices,
+ * routing every linear-algebra query (rank, determinant, kernel,
+ * inverse, solve) through FLINT's `fmpq_mat_*` routines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Constructs `FlintQQMat` translations on demand (via
+ * `dmat-qq-interface-flint.hpp`), runs the corresponding FLINT
+ * call, and converts the result back into `DMat<ARingQQ>`. Saves
+ * the engine from having to re-implement Bareiss-style rational
+ * elimination on top of GMP rationals.
+ */
 template <>
 class DMatLinAlg<M2::ARingQQ>
 {

@@ -3,6 +3,41 @@
 #ifndef _dmat_gf_flint_big_hpp_
 #define _dmat_gf_flint_big_hpp_
 
+/**
+ * @file dmat-gf-flint-big.hpp
+ * @brief `DMat<M2::ARingGFFlintBig>` --- dense GF matrices stored in a FLINT `fq_nmod_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Specialises the dense-matrix template for the large-`q`
+ * Galois-field aring `ARingGFFlintBig`. Storage is a single
+ * `fq_nmod_mat_t mArray` whose entries are polynomials over
+ * `Z/p` (the `fq_nmod_struct` carried by the aring). The class
+ * exposes the standard `DMat` surface (`ring()`, `numRows`,
+ * `numColumns`, `entry(r, c)` via `fq_nmod_mat_entry`,
+ * `resize`, `swap`) plus a raw `fq_nmod_mat()` accessor and
+ * the `unsafeArray()` direct-pointer hook for consumers that
+ * need to hand the underlying buffer back to FLINT. All
+ * `fq_nmod_mat_*` API calls take `ring().flintContext()`, which
+ * the constructors and destructor thread through.
+ *
+ * Arithmetic and linear-algebra (`rank`, `mul`, LU, solve,
+ * null-space) are *not* declared in this header --- consumers
+ * (the LU specialisations in `dmat-lu-inplace.hpp` and the
+ * `mat-linalg.hpp` machinery) reach into `fq_nmod_mat()` and
+ * call the FLINT routines directly. The companion
+ * `dmat-gf-flint.hpp` covers the small-`q` Zech-table
+ * (`fq_zech_mat_t`) representation; the user picks between the
+ * two at ring construction via the separate
+ * `rawARingGaloisFieldFlintZech` / `rawARingGaloisFieldFlintBig`
+ * entry points. `M2/gc-include.h` precedes the FLINT include
+ * so the allocator routes through bdwgc.
+ *
+ * @see dmat.hpp
+ * @see dmat-gf-flint.hpp
+ * @see aring-gf-flint-big.hpp
+ */
+
 #include <utility>                 // for swap
 #include "aring-gf-flint-big.hpp"  // for ARingGFFlintBig
 
@@ -17,6 +52,18 @@
 template <typename ACoeffRing>
 class DMat;
 
+/**
+ * @brief Specialisation of `DMat` for `ARingGFFlintBig` matrices, backed by
+ * FLINT's `fq_nmod_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Big-field counterpart of `DMat<ARingGFFlint>`: for `GF(p^n)`
+ * extensions too large for Zech tables, entries are stored as
+ * `fq_nmod` (polynomial-quotient) values and operations dispatch
+ * to `fq_nmod_mat_*` routines. Slower per-op than the Zech
+ * specialisation but unconstrained by field size.
+ */
 /////////////////////////////////////////////////////////////////
 // Flint: use fq_nmod_mat for implementation of dense matrices //
 /////////////////////////////////////////////////////////////////

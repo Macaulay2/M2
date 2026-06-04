@@ -3,6 +3,37 @@
 #ifndef _buffer_hpp_
 #define _buffer_hpp_
 
+/**
+ * @file buffer.hpp
+ * @brief Append-only GC-backed byte buffer used throughout the engine for text output.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `buffer` is the lightweight text-output primitive shared by
+ * every engine `text_out`, error message, debug trace, and
+ * serialised value. Storage is a `char*` allocated via
+ * `newarray_atomic` (an atomic GC region: the collector treats
+ * it as containing no pointers); when a write would exceed
+ * `_capacity` the buffer doubles via `expand`, `memcpy`s the
+ * old contents into the larger block, and `freemem`s the
+ * previous one. The destructor `freemem`s the active block.
+ * The starting capacity is `BUFFER_INITIAL_CAPACITY = 100`.
+ *
+ * The class is preferred over `std::ostringstream` mostly for
+ * GC integration --- the buffer can be threaded through engine
+ * code that already runs under bdwgc without crossing into the
+ * STL allocator. The header overloads `operator<<` for every
+ * primitive integer / character / floating-point type, plus
+ * MPFR, MPFI, and the `cc_struct` / `cci_struct` complex
+ * variants, and a marker `indent { int n }` struct whose
+ * `operator<<` emits `n` right-aligned to three columns (padded
+ * with one or two leading spaces) rather than `n` raw spaces.
+ * Contents come back out via `str()` (the live buffer with a
+ * nul terminator) or `to_string()` (an `M2_string` copy).
+ *
+ * @see newdelete.hpp
+ */
+
 #include "newdelete.hpp"
 #include "engine-includes.hpp"
 #include <string>

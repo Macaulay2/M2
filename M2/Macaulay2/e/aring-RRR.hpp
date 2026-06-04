@@ -3,6 +3,44 @@
 #ifndef _aring_RRR_hpp_
 #define _aring_RRR_hpp_
 
+/**
+ * @file aring-RRR.hpp
+ * @brief `M2::ARingRRR` --- arbitrary-precision real numbers backed by MPFR.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingRRR` is the precision-flexible sibling of `ARingRR`.
+ * Each instance carries a `mPrecision` mantissa bit count
+ * (returned by `get_precision()`) and stores each element as a
+ * `__mpfr_struct` of that precision; instances of different
+ * precisions are treated as distinct rings, so 53-bit and
+ * 100-bit values cannot silently mix. Every arithmetic
+ * operation routes through MPFR --- the actively-used surface
+ * is `mpfr_add` / `_sub` / `_mul` / `_div` / `_neg` / `_fma` /
+ * `_pow_si` / `_pow_z` / `_si_div` plus the comparisons
+ * `mpfr_cmp` / `_cmp_si` / `_cmpabs`, the setters
+ * `mpfr_set` / `_set_d` / `_set_q` / `_set_si` / `_set_z` /
+ * `_get_d`, and the lifecycle pair `mpfr_clear` / `_swap`
+ * --- all under round-to-nearest-ties-even (`MPFR_RNDN`).
+ * Transcendentals (`mpfr_sin`, `mpfr_log`, etc.) are **not**
+ * called from this class; alternative rounding modes are not
+ * exposed either.
+ *
+ * The header pulls in `interface/gmp-util.h` for
+ * `moveTo_gmpRR`, which migrates the MPFR mantissa onto the GC
+ * heap when returning a value to the interpreter, and
+ * `interface/random.h` for `randomMpfr` (uniformly distributed
+ * `mpfr_t` at the ring's precision). `IM2_Ring_RRR(prec)` in
+ * `interface/ring.cpp` is the M2-side factory: it returns
+ * `ConcreteRing<ARingRR>` when `prec <= 53` and
+ * `ConcreteRing<ARingRRR>(prec)` otherwise.
+ *
+ * @see aring-RR.hpp
+ * @see aring-RRi.hpp
+ * @see aring-CCC.hpp
+ * @see aring.hpp
+ */
+
 #include "interface/gmp-util.h"  // for moveTo_gmpRR
 #include "interface/random.h"    // for randomMpfr
 
@@ -16,8 +54,18 @@ class RingMap;
 
 namespace M2 {
 /**
-\ingroup rings
-*/
+ * @brief `aring`-style adapter for arbitrary-precision real numbers, backed
+ * by MPFR.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `ElementType` is `__mpfr_struct`. `mPrecision` (set at
+ * construction) gives the bit precision used for every operation;
+ * characteristic is 0. `ringID = ring_RRR`. Forms the real
+ * component of `ARingCCC`.
+ *
+ * @ingroup rings
+ */
 class ARingRRR : public SimpleARing<ARingRRR>
 {
   // Higher precision real numbers

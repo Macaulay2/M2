@@ -3,6 +3,35 @@
 #ifndef _mat_util_hpp_
 #define _mat_util_hpp_
 
+/**
+ * @file mat-util.hpp
+ * @brief Generic helpers (`displayMat`, `concatenateMatrices`) for `DMat` / `SMat` matrices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Collects the templated utilities that do not fit naturally
+ * into `mat-arith.hpp`, `mat-elem-ops.hpp`, or `mat-linalg.hpp`.
+ * `displayMat<Mat>(buffer& o, const Mat& A)` walks any
+ * duck-typed `Mat` exposing `ElementType`, `ring()`,
+ * `numRows()`, `numColumns()`, and `entry(r, c)`, builds one
+ * per-row sub-buffer, pads each column to the widest entry,
+ * marks zero entries with `.`, and emits the assembled rows
+ * through the `buffer` followed by `newline`. The one-argument
+ * overload `displayMat(A)` wraps the same routine and flushes
+ * via `emit` from `text-io.hpp`. Both `DMat<R>` and `SMat<R>`
+ * satisfy the contract.
+ *
+ * The companion `concatenateMatrices<Mat>(A, B, C)` writes the
+ * horizontal join `[A | B]` into a caller-supplied `C` (after
+ * resizing it to `A.numRows() x (A.numColumns() + B.numColumns())`),
+ * asserting that `A` and `B` have the same row count.
+ *
+ * @see buffer.hpp
+ * @see text-io.hpp
+ * @see dmat.hpp
+ * @see smat.hpp
+ */
+
 // Functions for all mutable matrices, or that don't fit in
 // mat-elem-ops, mat-arith, or mat-linalg
 

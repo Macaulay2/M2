@@ -4,6 +4,38 @@
 #ifndef _gbbinom_hh_
 #define _gbbinom_hh_
 
+/**
+ * @file gb-toric.hpp
+ * @brief `binomialGB_comp` --- Buchberger GB specialised to binomial / toric ideals.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `binomialGB_comp` along with its purpose-built value
+ * types: `binomial` (a `(lead, tail)` pair of monomial pointers
+ * encoding a binomial `m_lead - m_tail`) and `binomial_gb_elem`,
+ * the intrusive list node carrying a binomial together with a
+ * `smaller` back-link (non-null iff the current element is not a
+ * minimal GB generator, in which case it points at a GB element
+ * whose leading monomial divides this one). Specialising to
+ * binomials lets the algorithm skip generic-coefficient
+ * arithmetic entirely --- every operation is monomial
+ * manipulation through the helper class `binomial_ring`.
+ *
+ * The dispatcher in `comp-gb.cpp` selects this path via
+ * `algorithm == 7`. The in-source class doxygen flags the
+ * implementation "Non-functional": `get_change`,
+ * `get_syzygies`, `matrix_remainder`, `matrix_lift`, and
+ * `contains` are declared but not planned to be implemented,
+ * and `text_out` is a no-op. Sibling GB specialisations live in
+ * `gb-default.hpp`, `gb-sugarless.hpp`, `gb-homog2.hpp`, and
+ * `gb-walk.hpp`. The TODO at the top of the header flags the
+ * still-undecided typing of the `int *` monomial pointers that
+ * the binomial struct uses.
+ *
+ * @see comp-gb.hpp
+ * @see gb-default.hpp
+ */
+
 #include "comp-gb.hpp"
 #include "matrix.hpp"
 

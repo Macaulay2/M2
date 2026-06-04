@@ -3,6 +3,44 @@
 #ifndef _aring_CC_hpp_
 #define _aring_CC_hpp_
 
+/**
+ * @file aring-CC.hpp
+ * @brief `M2::ARingCC` --- machine-precision complex numbers (pair of `double`s).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingCC` is the complex sibling of `ARingRR` in the aring
+ * family: a `SimpleARing<ARingCC>` specialisation whose element
+ * type is `cc_doubles_struct` (a `(re, im)` pair of `double`s).
+ * Hot-path arithmetic --- `add`, `subtract`, `mult`, `divide`,
+ * `invert` --- runs as hardware floating-point on the real and
+ * imaginary parts; the only MPFR appearance is the
+ * `mpfr_get_d` down-conversion in the `set_from_BigReal` /
+ * `set_from_BigComplex` bridges. `random` applies
+ * `randomDouble()` from `interface/random.h` componentwise.
+ * The class also carries an `ARingRR mRR` and exposes it
+ * through `real_ring()` so callers can drop down to a real ring
+ * of matching precision.
+ *
+ * On top of the real-ring API it adds `abs` and the cheaper
+ * `abs_squared` (both produce an `ARingRR::ElementType` result)
+ * plus the `set_from_doubles(result, re, im)` element-builder.
+ * There is **no** `conjugate`, `real`, or `imag` method on
+ * `ARingCC` itself --- those operations are handled by direct
+ * access to the `.re` / `.im` fields of `cc_doubles_struct`.
+ * The arbitrary-precision siblings live in `aring-CCC.hpp`
+ * (MPFR-backed) and `aring-CCi.hpp` (MPFI Cartesian-rectangle
+ * intervals); `IM2_Ring_CCC(prec)` in `interface/ring.cpp` is
+ * the M2-side factory --- it returns `ConcreteRing<ARingCC>`
+ * when `prec <= 53` and `ConcreteRing<ARingCCC>(prec)`
+ * otherwise.
+ *
+ * @see aring-RR.hpp
+ * @see aring-CCC.hpp
+ * @see aring-CCi.hpp
+ * @see aring.hpp
+ */
+
 #include "interface/gmp-util.h"  // for moveTo_gmpCC
 #include "interface/random.h"    // for randomDouble
 
@@ -18,8 +56,18 @@ class RingMap;
 namespace M2 {
 
 /**
-\ingroup rings
-*/
+ * @brief `aring`-style adapter for double-precision complex numbers, stored
+ * as `(double, double)` pairs.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `ElementType` is `cc_doubles_struct` --- two IEEE-754 doubles for
+ * the real and imaginary parts. Holds a companion `ARingRR mRR`
+ * for the real-component arithmetic. `ringID = ring_CC`. Use
+ * `ARingCCC` instead when arbitrary precision is needed.
+ *
+ * @ingroup rings
+ */
 class ARingCC : public SimpleARing<ARingCC>
 {
   // approximate real numbers, implemented as doubles.

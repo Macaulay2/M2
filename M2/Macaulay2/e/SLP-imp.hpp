@@ -5,6 +5,39 @@
 #ifndef _slp_imp_hpp_
 #define _slp_imp_hpp_
 
+/**
+ * @file SLP-imp.hpp
+ * @brief Templated `SLEvaluatorConcrete<RT>` --- the per-ring SLP evaluator implementation.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Provides the out-of-line template implementations of the
+ * `SLEvaluatorConcrete<RT>` constructors and methods declared
+ * in `SLP-defs.hpp`. There are four constructors: two take a
+ * `MutableMat<DMat<RT>>` of pre-evaluated constants (one for
+ * interpreted evaluation, one for the compiled path), and two
+ * mirror them for `MutableMat<SMat<RT>>` --- the sparse-matrix
+ * constructors are stubs that print to `std::cerr` and `abort`.
+ * `evaluate(const MutableMatrix* inputs, MutableMatrix* outputs)`
+ * initialises a working `std::vector<ElementType>`, walks the
+ * `SLProgram` nodes through `computeNextNode` applying each
+ * gate via `mRing`'s aring methods, and reads off the values at
+ * the recorded output positions; `specialize(parameters)` builds
+ * a partially-evaluated copy for parameter-homotopy use.
+ *
+ * The header pulls in `<dlfcn.h>` for an optional JIT path:
+ * when the `libName` constructor is called, `dlopen` loads a
+ * pre-compiled SLP shared library and `dlsym` resolves either
+ * the `RR` or `CC` entry symbol into the `compiled_fn` function
+ * pointer; `evaluate` then bypasses the interpreter and dispatches
+ * to the loaded routine. The default evaluation walks nodes
+ * interpretively when `isCompiled` is false.
+ *
+ * @see SLP.hpp
+ * @see SLP-defs.hpp
+ * @see NAG.hpp
+ */
+
 #include <cstdlib>
 #include <algorithm>
 #include <dlfcn.h>

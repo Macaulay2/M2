@@ -3,6 +3,44 @@
 #ifndef _aring_translate_hpp_
 #define _aring_translate_hpp_
 
+/**
+ * @file aring-translate.hpp
+ * @brief Cross-ring coercion templates: `mypromote` / `mylift` between two `aring` rings, and `get_from_*` from an external M2 numeric type into an `aring`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the templated cross-ring coercion routines:
+ * `mypromote<RingR, RingS>(R, S, fR, result_fS)` for the
+ * forward direction `R -> S` (e.g. `Q -> RR` via
+ * `S.set_from_mpq`, `Z -> Z/p`), `mylift<RingR, RingS>` for the
+ * reverse `S -> R` (e.g. `Z/p -> Z` lifting to a canonical
+ * representative), and the `get_from_*` family
+ * (`get_from_BigReal`, `get_from_BigComplex`,
+ * `get_from_Interval`, `get_from_ComplexInterval`,
+ * `get_from_double`, `get_from_complex_double`) that injects an
+ * external M2 numeric type into an aring element. Each generic
+ * template body returns `false` to signal "this pair is
+ * unsupported"; the supported pairs (`ARingQQ -> ARingRR /
+ * ARingRRR / ARingRRi / ARingCC`, the various
+ * `BigReal/Complex/Interval -> ARing*`, ...) are added as
+ * `inline` overload-resolution specialisations further down.
+ * Because each aring's own header knows only about itself,
+ * this file pulls in *every* `aring-*.hpp` so the
+ * specialisations have access to both source and target types.
+ *
+ * Together with `aring-glue.hpp` this file completes the aring
+ * integration story: `aring-glue.hpp` is the vertical bridge
+ * (aring up to the legacy `Ring*` API) and `aring-translate.hpp`
+ * is the horizontal bridge (aring across to another aring).
+ * The `promote` / `lift` paths in the legacy `Ring` machinery
+ * funnel through these templates whenever the source and target
+ * rings are both aring-backed.
+ *
+ * @see aring.hpp
+ * @see aring-glue.hpp
+ * @see ringmap.hpp
+ */
+
 ///////////////////////////////////////////////////////
 // Contains functions which are "ring translational" //
 ///////////////////////////////////////////////////////

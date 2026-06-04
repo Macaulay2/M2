@@ -3,6 +3,48 @@
 #ifndef _monomial_sets_hpp_
 #define _monomial_sets_hpp_
 
+/**
+ * @file monomial-sets.hpp
+ * @brief `MonomialSetFixedSize` / `MonomialSetVarSize` / `MonomialCollection*` / `MonomialMemorySpace` --- monomial-interning helpers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares a five-class kit for interning monomials stored as
+ * contiguous `int` sequences. `MonomialMemorySpace` wraps a
+ * `memt::Arena` (memtailor) and hands out bump-pointer ranges
+ * via `alloc(int size)`; allocations can be popped LIFO
+ * (`popLastAlloc`) or shrunk (`shrinkLastAlloc`), and the entire
+ * arena is freed in one shot at destruction. The `Set`
+ * variants --- `MonomialSetFixedSize` (constructor takes the
+ * `int` size, **not** a `<NWords>` template parameter) and
+ * `MonomialSetVarSize` (treats `*m` as a length prefix so the
+ * monomial spans `[m, m + *m)`) --- wrap a
+ * `std::unordered_set<const int*, ...>` and do no allocation
+ * themselves; the caller owns the storage. The `Collection`
+ * variants (`MonomialCollectionFixedSize` / `MonomialCollectionVarSize`)
+ * compose a `Set` with their own `MonomialMemorySpace` and
+ * implement the intern-or-pop pattern (`findOrInsert` copies
+ * the monomial into the arena, looks it up, and pops the
+ * allocation if a duplicate is already present).
+ *
+ * The included `MonomialHashAndEqFixedSize` /
+ * `MonomialHashAndEqVarSize` functors implement equality
+ * correctly via `std::equal`, but their `operator()` for
+ * hashing is currently a `// TODO: do something good here.`
+ * stub that returns `0` --- so the underlying
+ * `std::unordered_set` degenerates to a single bucket and
+ * comparisons fall through to the equality functor. This
+ * matches the comment in `monomial-collection.hpp` ("improve
+ * the hash function"); both files are mid-refactor scaffolding.
+ * The only active consumer in the engine is
+ * `schreyer-resolution/res-f4.hpp`, which holds a
+ * `MonomialMemorySpace mMonomSpace2` (the arena alone --- it
+ * does not use the `Set` / `Collection` classes here).
+ *
+ * @see monomial-collection.hpp
+ * @see MemoryBlock.hpp
+ */
+
 // This file contains classes for keeping sets of monomials.
 // There are two types of monomials:
 //  a. fixed size (and that size is passed in as a parameter)
@@ -22,6 +64,19 @@
 #include <utility>
 #include <cassert>
 
+/**
+ * @brief Bump-pointer arena for monomial storage, backed by a `memt::Arena`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Hands out contiguous `int` ranges via `alloc(size)` (returns
+ * `[begin, end)`). Supports LIFO `popLastAlloc` and `shrinkLastAlloc`
+ * so a monomial can be allocated at its maximum length, written in
+ * place, then trimmed --- the pattern the variable-size `Collection`
+ * classes use for intern-or-pop. The whole arena is reset with
+ * `freeAllAllocs` or released to the OS with
+ * `freeAllAllocsAndBackingMemory`.
+ */
 // MonomialMemorySpace:
 //
 class MonomialMemorySpace
@@ -58,6 +113,16 @@ private:
   memt::Arena mArena;
 };
 
+/**
+ * @brief Combined hash + equality functor for fixed-size monomials, plugged
+ * into the `std::unordered_set` inside `MonomialSetFixedSize`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Equality is `std::equal` over `mMonomialSize` ints; the hash is a
+ * `TODO` stub that returns 0 (so the underlying hash set degenerates
+ * to a single bucket and falls back on the equality comparator).
+ */
 class MonomialHashAndEqFixedSize
 {
 public:
@@ -83,6 +148,16 @@ private:
   int mMonomialSize;
 };
 
+/**
+ * @brief Combined hash + equality functor for variable-size monomials, plugged
+ * into the `std::unordered_set` inside `MonomialSetVarSize`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Reads the leading int of each monomial as its length, then compares
+ * the two ranges with `std::equal`. The hash is the same `TODO` stub
+ * that returns 0 as in the fixed-size variant.
+ */
 class MonomialHashAndEqVarSize
 {
 public:
@@ -148,6 +223,18 @@ private:
   std::unordered_set<const int*, MonomialHashAndEqFixedSize, MonomialHashAndEqFixedSize> mHash;
 };
 
+/**
+ * @brief Hash set of interned variable-size monomials --- the variable-length
+ * counterpart of `MonomialSetFixedSize`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Each monomial is a contiguous range `[m, m + *m)` where the leading
+ * int is the length, so the set itself stores only `const int*`
+ * pointers; the storage is owned by the caller (typically a
+ * `MonomialMemorySpace`). `findOrInsert` returns the canonical
+ * pointer plus a flag indicating whether a new entry was created.
+ */
 class MonomialSetVarSize
 {
 public:
@@ -183,6 +270,19 @@ private:
   std::unordered_set<const int*, MonomialHashAndEqVarSize, MonomialHashAndEqVarSize> mHash;
 };
 
+/**
+ * @brief Interning collection that pairs a `MonomialSetFixedSize` with its own
+ * `MonomialMemorySpace` to own monomial storage.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `findOrInsert(monom)` copies the caller's monomial into the arena,
+ * tries to insert the new pointer into the set, and pops the
+ * allocation back off the arena if a duplicate was already present
+ * (the "intern-or-pop" pattern). `monomialMemorySpace()` exposes the
+ * arena so callers that allocate first and then insert can do so
+ * without an extra copy.
+ */
 class MonomialCollectionFixedSize
 {
 public:
@@ -244,6 +344,17 @@ private:
 };
 
 
+/**
+ * @brief Variable-size counterpart of `MonomialCollectionFixedSize`: pairs a
+ * `MonomialSetVarSize` with its own `MonomialMemorySpace`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `findOrInsert(monom)` allocates `*monom` ints in the arena, copies
+ * the monomial in, attempts to intern the pointer, and pops on
+ * duplicate. Same intern-or-pop pattern as the fixed-size variant
+ * with the length read from the monomial's first int.
+ */
 class MonomialCollectionVarSize
 {
 public:

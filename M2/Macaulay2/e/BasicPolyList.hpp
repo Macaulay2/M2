@@ -1,3 +1,38 @@
+/**
+ * @file BasicPolyList.hpp
+ * @brief Ring-agnostic polynomial-list transport type plus its streaming collector and emitter.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `BasicPolyList` is a `std::vector<BasicPoly>` that acts as the
+ * hub format between M2-side `Matrix` values, the F4
+ * Groebner-basis engine in `gb-f4/`, file-format readers (msolve,
+ * raw text), and the `BasicPolyListParser`. The type carries no
+ * ring reference, which keeps each conversion as a single
+ * `BasicPolyList`-to-other transcript rather than every pair
+ * needing its own translator. Coefficient support currently
+ * inherits `BasicPoly`'s `mpz_class`-only restriction; `GF(p^n)`,
+ * `QQ`, fraction fields, and recursive polynomial coefficients
+ * are flagged TODOs in the in-source comment.
+ *
+ * Two helpers wire `BasicPolyList` into the stream protocol from
+ * `PolynomialStream.hpp`: `BasicPolyListStreamCollector` is the
+ * **consumer** --- it builds a `BasicPolyList` from a sequence of
+ * `idealBegin` / `appendPolynomialBegin` / term events; the
+ * template `toStream<S>(Fs, str)` is the dual **producer** ---
+ * it walks a `BasicPolyList` and emits the same event sequence
+ * into any `S`. `toMatrix(FreeModule*, BasicPolyList)` composes
+ * `toStream` with a `MatrixStream` (`matrix-stream.hpp`) to
+ * produce an M2 `Matrix`. The free `bytesUsed`,
+ * `basicPolyListFromString`, and `basicPolyListFromFile` helpers
+ * round out the API.
+ *
+ * @see BasicPoly.hpp
+ * @see PolynomialStream.hpp
+ * @see BasicPolyListParser.hpp
+ * @see matrix-stream.hpp
+ */
+
 // BasicPolyList is a vector of polynomials (with components)
 // which we can easily translate to and from other polynomial and matrix types.
 // This class really doesn't require any ring.
@@ -22,6 +57,21 @@ using BasicPolyList = std::vector<BasicPoly>;
 
 long bytesUsed(const BasicPolyList& F);
 
+/**
+ * @brief Streaming consumer that builds a `BasicPolyList` from per-term
+ * callbacks, matching the mathicgb / mgb stream interface.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Receives `appendPolynomialBegin / appendTermBegin /
+ * appendExponent / appendTermDone / appendPolynomialDone` calls
+ * from a polynomial producer (typically the mathicgb stream
+ * parser) and assembles the result into `mValue`. Stores the
+ * declared modulus, variable count, and component count so the
+ * caller can ask the collector to echo them back even though the
+ * `BasicPoly` representation itself does not use them. Used for
+ * portable polynomial I/O outside the typed `Ring` machinery.
+ */
 class BasicPolyListStreamCollector
 {
 public:

@@ -1,5 +1,40 @@
 #pragma once
 
+/**
+ * @file gb-f4/PolynomialList.hpp
+ * @brief Hash-table-keyed polynomial storage for the new F4.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the container and value type the refactored F4 uses
+ * for inputs, intermediates, and basis elements. `PolynomialList`
+ * owns a `std::vector<Polynomial>` together with non-owning
+ * references to a shared `MonomialHashTable` and
+ * `VectorArithmetic`; the shared table means each `Polynomial`
+ * reduces to three small parallel arrays --- an `ElementArray`
+ * of coefficients (sized and decoded through `VectorArithmetic`),
+ * a vector of `MonomialIndex` keys into the table, and a vector
+ * of `ComponentIndex` slots for free-module components. The
+ * list and its hash table must share a lifetime; deleting the
+ * table invalidates every polynomial in the list.
+ *
+ * The nested templated `PolynomialIterator` exposes per-term
+ * `coeff()` / `monom()` / `comp()` accessors that decode the
+ * vector-arithmetic and hash-table indirections behind the
+ * scenes. `PolynomialListStreamCollector` implements the
+ * mathicgb-style `appendTermBegin` / `appendExponent` /
+ * `appendTermDone` stream surface so a `BasicPolyListParser`
+ * (and the legacy `Matrix` ingestion path) can feed terms in
+ * without an intermediate buffer; the free `toStream` writes a
+ * list back out the same way.
+ *
+ * @see MonomialHashTable.hpp
+ * @see MonomialTypes.hpp
+ * @see VectorArithmetic.hpp
+ * @see Basis.hpp
+ * @see GBF4Computation.hpp
+ */
+
 #include "../VectorArithmetic.hpp"
 #include "../BasicPolyList.hpp"
 #include "MonomialHashTable.hpp"

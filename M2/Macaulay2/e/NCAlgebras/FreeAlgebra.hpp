@@ -1,6 +1,38 @@
 #ifndef _free_algebra_hpp_
 #define _free_algebra_hpp_
 
+/**
+ * @file NCAlgebras/FreeAlgebra.hpp
+ * @brief Free associative algebra `k<x_1,...,x_n>` over an arbitrary coefficient ring.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the non-commutative analogue of `PolyRing`: a
+ * `FreeAlgebra` pairs a coefficient `Ring` reference with a
+ * `shared_ptr<FreeMonoid>` carrying the word side (names,
+ * degrees, weight and heft vectors, monoid order). Polynomial
+ * values are the shared `Poly` type from `Polynomial.hpp`,
+ * stored as a vector of `(coefficient, word)` pairs sorted by
+ * the monoid order; multiplication is
+ * `Sum_{i,j} (c_i*d_j) * (m_i ~ n_j)` where `~` is
+ * concatenation. A `SumCollector` from `ring.hpp` combines like
+ * terms during accumulation.
+ *
+ * `FreeAlgebra` does not inherit from `Ring`; the `Ring`-shaped
+ * facade lives in `M2FreeAlgebra` and `M2FreeAlgebraQuotient`.
+ * The static `create(...)` factory takes the coefficient ring,
+ * variable names, degree ring, and per-variable degree / weight
+ * / heft vectors, builds the matching `FreeMonoid`, and returns
+ * the object the NCGroebner / NCF4 engines consume.
+ *
+ * @see FreeMonoid.hpp
+ * @see Word.hpp
+ * @see Polynomial.hpp
+ * @see NCGroebner.hpp
+ * @see FreeAlgebraQuotient.hpp
+ * @see M2FreeAlgebra.hpp
+ */
+
 #include "Polynomial.hpp"             // for Poly, Monom
 #include "NCAlgebras/FreeMonoid.hpp"  // for FreeMonoid
 #include "NCAlgebras/Word.hpp"        // for Word
@@ -18,6 +50,21 @@ class PolynomialRing;
 class RingMap;
 class buffer;
 
+/**
+ * @brief Free associative algebra over a coefficient ring: the
+ * non-commutative analogue of `PolynomialRing`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Bundles the coefficient ring with a `FreeMonoid` of words on the
+ * generators and exposes the operation surface the non-commutative
+ * arithmetic / Groebner stack (`NCGroebner`, `NCF4`) reduces against:
+ * `from_word`, `add`, `subtract`, `mult`, `mult_by_term_left_and_right`,
+ * `power`, and the lead-term accessors. Created through the static
+ * `create()` factory from a coefficient ring plus the variable names,
+ * degrees, weight vectors, and heft vector; the constructor itself is
+ * private.
+ */
 class FreeAlgebra : public our_new_delete
 {
 private:
@@ -206,6 +253,18 @@ public:
 #endif
 };
 
+/**
+ * @brief Owned `Poly` value paired with its `FreeAlgebra*`, providing
+ * natural operator-overloaded arithmetic.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Debugging / scripting convenience: wraps a `Poly` so the algebra
+ * pointer is implicit and `+`, `-`, `*`, unary `-`, and `^n`
+ * (power) can be written directly. The destructor calls
+ * `FreeAlgebra::clear`, so callers do not have to manage the
+ * underlying `Poly` lifetime.
+ */
 // For debugging purposes
 class FreeAlgebraElement
 {
@@ -279,6 +338,20 @@ std::ostream& operator<<(std::ostream& o, const FreeAlgebraElement& f);
 
 // FreeAlgebraHeap and the SumCollector below are used for eval and mult
 
+/**
+ * @brief Geobucket-style accumulator for many `Poly` summands in the free
+ * associative algebra.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Maintains `GEOHEAP_SIZE` size-tiered buckets; `add(f)` slots `f`
+ * into the smallest non-empty bucket it overflows and merges
+ * upward, so an O(`n`) chain of additions costs amortised O(`n log
+ * n`) work rather than O(`n^2`). `value()` linearises the buckets
+ * into a single `Poly` and resets the heap. Used by `mult` and
+ * evaluation paths that build a polynomial as a long sum of
+ * `mult_by_term_left_and_right` contributions.
+ */
 class FreeAlgebraHeap
 {
   const FreeAlgebra& F;  // Our elements will be vectors in here
@@ -298,6 +371,19 @@ class FreeAlgebraHeap
   }  // DO NOT USE, except for debugging purposes!
 };
 
+/**
+ * @brief `SumCollector` adapter that funnels engine-side `ring_elem` adds
+ * into a `FreeAlgebraHeap`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Used wherever the engine's generic `SumCollector` interface
+ * (e.g. for `RingMap` evaluation) needs to accumulate
+ * free-associative polynomials: each `add(ring_elem f1)` casts
+ * down to `Poly*` and pushes through to `FreeAlgebraHeap::add`,
+ * and `getValue()` returns the linearised sum as a fresh
+ * `ring_elem`.
+ */
 class SumCollectorFreeAlgebraHeap : public SumCollector
 {
   FreeAlgebraHeap H;

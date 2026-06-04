@@ -3,6 +3,45 @@
 #ifndef _comp_gb_hpp_
 #define _comp_gb_hpp_
 
+/**
+ * @file comp-gb.hpp
+ * @brief `GBComputation` --- abstract base of every Groebner-basis algorithm in the engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `GBComputation` extends `Computation` with the GB-specific
+ * vocabulary the interpreter requests once a basis has been
+ * (partially) built: `get_gb`, `get_mingens`, `get_change` (the
+ * change-of-basis matrix), `get_syzygies`, `get_initial`
+ * (leading terms), and `complete_thru_degree`. Each accessor is
+ * virtual because the concrete subclasses keep different
+ * internal representations --- `gbA` (`gb-default.hpp`) is the
+ * classical default, `GB_comp` (`gb-homog2.hpp`) the homogeneous
+ * specialisation, `GBinhom_comp` the inhomogeneous variant,
+ * the F4 driver in `f4/f4-computation.hpp` and the new-F4 in
+ * `gb-f4/`, plus `GaussElimComputation`, `HermiteComputation`,
+ * `binomialGB_comp` (`gb-toric.hpp`), `GBWalker` (`gb-walk.hpp`),
+ * `GBDeclared` (`comp-gb-declared.hpp`), `GBProxy`
+ * (`comp-gb-proxy.hpp`), and `ReducedGB`.
+ *
+ * The factory `GBComputation::choose_gb(...)` takes an
+ * `algorithm` integer plus a `strategy` flag and the input
+ * matrix shape, and `switch`es on `algorithm` to instantiate
+ * the right subclass --- most user code never constructs one
+ * directly. The header also exposes the `SPAIR_*` return codes
+ * (`SPAIR_DONE` / `_GB` / `_SYZ` / `_ZERO` / `_MINGEN` /
+ * `_GEN` / `_PAIR` / `_RING` / `_REMOVED` / `_DEFERRED`) used
+ * by the classical s-pair step. Companion variants
+ * `comp-gb-declared.cpp` (basis supplied by the user, no
+ * computation) and `comp-gb-proxy.cpp` (forwards every virtual
+ * to a held-pointer `GBComputation*` and lets it be hot-swapped)
+ * reuse the same interface.
+ *
+ * @see comp.hpp
+ * @see comp-res.hpp
+ * @see gbring.hpp
+ */
+
 #include "comp.hpp"
 class buffer;
 

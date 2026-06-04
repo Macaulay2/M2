@@ -3,6 +3,47 @@
 #ifndef _mat_hpp_
 #define _mat_hpp_
 
+/**
+ * @file mat.hpp
+ * @brief `MutableMatrix` --- abstract base of every mutable matrix the engine hands across the boundary.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the pure-virtual `MutableMatrix` (a
+ * `MutableEngineObject` subclass). The interpreter and most
+ * interface code only see this base type: `n_rows`, `n_cols`,
+ * `get_ring`, `is_dense`, `get_entry` / `set_entry`, the row /
+ * column primitives (`interchange_rows` / `_columns`,
+ * `scale_row` / `_column`, `divide_row` / `_column`,
+ * `row_op` / `column_op`, `row_permute` / `column_permute`,
+ * `insert_rows` / `_columns`, `delete_rows` / `_columns`,
+ * `dot_product`), and the heavy linear-algebra entry points
+ * (`rank`, `determinant`, `LU`, `LUincremental`,
+ * `LQUPFactorizationInPlace`, `solveLinear`,
+ * `solveInvertible`, `nullSpace`, `invert`, `transpose`,
+ * `mult`, `add`). Concrete storage lives one level down in the
+ * templated `MutableMat<MatT>` wrapper, specialised over the
+ * dense `DMat<R>` and sparse `SMat<R>` back ends.
+ *
+ * The two-layer split keeps the per-ring fast paths fully
+ * templated (no virtual dispatch inside the inner loop) while
+ * presenting a single uniform `MutableMatrix*` interface across
+ * the engine / interpreter boundary. The static factories
+ * `zero_matrix`, `identity`, and `from_matrix` defined in
+ * `mat.cpp` create instances by delegating to
+ * `R->makeMutableMatrix(...)`, so the concrete `DMat<R>` /
+ * `SMat<R>` specialisation is chosen by each Ring's own
+ * override (e.g. `RingZZ::makeMutableMatrix` instantiates over
+ * `ARingZZGMP`, `Z_mod::makeMutableMatrix` over `ARingZZp`,
+ * `ConcreteRing<R>::makeMutableMatrix` from `aring-glue.hpp`
+ * picks the matching aring storage), with a
+ * `CoefficientRingR`-backed fallback when no override exists.
+ *
+ * @see dmat.hpp
+ * @see smat.hpp
+ * @see mutablemat.hpp
+ */
+
 #include "exceptions.hpp"
 #include "hash.hpp"
 #include "relem.hpp"
@@ -17,9 +58,23 @@ template <class T>
 class MutableMat;
 
 /**
- * \ingroup matrices
+ * @brief Abstract base class for mutable matrices over an arbitrary engine
+ * `Ring`, the in-place counterpart of the immutable `Matrix`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Defines the pure-virtual operation surface
+ * (`get_entry` / `set_entry` / `row_op` / `column_op` / `addRow` /
+ * `solve` / ...) that engine code reduces against, and lets
+ * `MutableMat<DMat<R>>` and `MutableMat<SMat<R>>` (the dense /
+ * sparse templated subclasses) pick storage. Inherits
+ * `MutableEngineObject` so mutation does not invalidate the
+ * identity-based hash. Used as the run-time type behind the
+ * front end's `MutableMatrix` interface for ring rings other
+ * than the numerical ones handled by LAPACK.
+ *
+ * @ingroup matrices
  */
-
 class MutableMatrix : public MutableEngineObject
 {
  protected:

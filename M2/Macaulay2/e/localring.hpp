@@ -4,6 +4,40 @@
 #ifndef _localring_hh_
 #define _localring_hh_
 
+/**
+ * @file localring.hpp
+ * @brief `LocalRing` --- localisation of a polynomial ring at a prime ideal `P`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `LocalRing`, a `Ring` subclass whose value type
+ * `local_elem` is a `(numer, denom)` pair (the same fraction
+ * shape as `frac.hpp`) but with the denominator restricted to
+ * `R \ P` rather than `R \ {0}`. The class stores the underlying
+ * polynomial ring `mRing` and a `GBComputation* mPrime` (a GB of
+ * `P`); the private `is_in_prime(f)` wraps `f` in a one-column
+ * matrix and tests `mPrime->contains(M) == -1` to decide ideal
+ * membership. `is_unit(f)` is then `!is_in_prime(f.numer)`, and
+ * `divide` / `invert` raise `exc::engine_error("attempt to
+ * divide by a non-unit")` exactly when the divisor's numerator
+ * lies in `P` --- the check fires per division, not after every
+ * arithmetic op.
+ *
+ * The constraint is what justifies a distinct class from
+ * `FractionField`: a `LocalRing` knows how to ask "does this
+ * element lie in `P`?", its unit group depends on `P`, and the
+ * `simplify` pass only cancels GCDs when `use_gcd_simplify`
+ * holds (`true` by default, flagged with a `FIXME remove`).
+ * Heavy callers are local-cohomology and tangent / normal-cone
+ * computations driven from `m2/localring.m2`; GB work over a
+ * `LocalRing` reaches into the specialised
+ * `reducedgb-field-local.hpp`.
+ *
+ * @see frac.hpp
+ * @see polyring.hpp
+ * @see comp-gb.hpp
+ */
+
 #include "ring.hpp"
 #include "poly.hpp"
 #include "polyring.hpp"
@@ -15,6 +49,20 @@ struct local_elem
   ring_elem denom;
 };
 
+/**
+ * @brief Engine-side localisation of a polynomial ring at a prime ideal.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Elements are `local_elem*` pointers holding a `(numer, denom)`
+ * pair with `denom` known not to lie in the prime; `is_in_prime`
+ * uses the supplied `GBComputation* mPrime` (the Groebner basis
+ * of the prime ideal) to check membership. `simplify` cancels
+ * common factors between numerator and denominator using the
+ * underlying `PolyRing`'s `gcd`. The localisation lifts the
+ * polynomial ring's operations into the standard
+ * fraction-of-coprime-pair form.
+ */
 class LocalRing : public Ring
 {
  private:

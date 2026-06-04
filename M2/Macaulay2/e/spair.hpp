@@ -2,6 +2,48 @@
 #ifndef _spair_hh_
 #define _spair_hh_
 
+/**
+ * @file spair.hpp
+ * @brief `gb_elem` / `s_pair` / `s_pair_heap` --- basis-element record, S-pair work unit, and S-pair priority queue for Buchberger-style GB.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the three intrusive structures at the heart of `gbA`
+ * and its sibling strategies. `gb_elem` carries one basis
+ * member: the `gbvector` polynomial `f` plus its syzygy companion
+ * `fsyz`, the cached leading exponent vector `lead_exp`, an
+ * `is_min` bitmask (interpreted with the `ELEM_*` bits from
+ * `gb-default.hpp`), and an index `me` into the basis. Two
+ * intrusive lists thread through it (`next` over every element
+ * in insertion order, `next_min` over the still-minimal subset)
+ * and each element owns its own `pair_list` of pending `s_pair`s
+ * where it serves as the "first" pair operand --- shrinking
+ * that list to empty is what promotes an element to a finalised
+ * GB generator.
+ *
+ * `s_pair` stores enough information to rank the pair on the
+ * S-pair queue (`degree`, `lcm` of the leading monomials as a
+ * packed monomial, and a `compare_num` tiebreaker --- a negative
+ * `compare_num` marks the pair as deleted) without computing the
+ * S-polynomial yet; the `f` / `fsyz` slots hold the S-polynomial
+ * only after the pair is pulled off the queue. A `next_same`
+ * link keeps the per-`gb_elem` `pair_list` chained.
+ *
+ * `s_pair_heap` is the priority queue itself: a fixed-size array
+ * of `NHEAP = 12` per-bucket sorted lists (one per power-of-two
+ * size class), merged in pairs in `insert(p)` / lazily flushed
+ * in `remove()` via `merge`. The `top_of_heap` index tracks the
+ * deepest populated bucket; `n_in_heap[i]` is the count in bucket
+ * `i`. `put_back(p)`, `grab_remaining_pairs`, and `sort_list` are
+ * the helpers GB strategies use to splice batches in and out
+ * without re-sorting. The default sugar-aware degree-first
+ * selection lives in `gb-default.hpp`.
+ *
+ * @see gb-default.hpp
+ * @see gbring.hpp
+ * @see gbweight.hpp
+ */
+
 #include "freemod.hpp"
 #include "polyring.hpp"
 #include "gbring.hpp"

@@ -1,6 +1,53 @@
 #ifndef _monomial_ordering_h_
 #  define _monomial_ordering_h_
 
+/**
+ * @file interface/monomial-ordering.h
+ * @brief Engine-boundary C API for assembling block-level `MonomialOrdering`s from declarative pieces.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `MonomialOrdering_type` enum --- `MO_LEX`,
+ * `MO_GREVLEX`, packed `MO_LEX2` / `MO_LEX4` /
+ * `MO_GREVLEX2` / `MO_GREVLEX4`, weighted GRevLex variants
+ * (`MO_GREVLEX_WTS` / `_GREVLEX2_WTS` / `_GREVLEX4_WTS`),
+ * `MO_REVLEX`, `MO_WEIGHTS`, the Laurent variants
+ * (`MO_LAURENT` and `MO_LAURENT_REVLEX`), `MO_NC_LEX`, and
+ * `MO_POSITION_UP` / `_DOWN` --- together with the per-block
+ * `mon_part` record (carrying type, `nvars`, and an optional
+ * `*wts` weight array) and the variable-length
+ * `MonomialOrdering` struct that holds the assembled sequence
+ * of parts (`mon_part array[1]` flexible-style) plus a cached
+ * `_hash`. Each `raw*MonomialOrdering` factory builds one block
+ * (lex, GRevLex-with-packing, revlex, weights,
+ * group-lex / group-revlex, NC-lex, position-up/down);
+ * composition is via `rawProductMonomialOrdering` (for tensor
+ * products) and `rawJoinMonomialOrdering` (the default block-
+ * joining used when making monoids and polynomial rings),
+ * both over an `engine_RawMonomialOrderingArray`. Accessors
+ * include `rawNumberOfVariables`,
+ * `rawNumberOfInvertibleVariables`,
+ * `rawNonTermOrderVariables` (which detect local / tangent-cone
+ * orders where GB algorithms must switch behaviour),
+ * `IM2_MonomialOrdering_to_string`,
+ * `rawMonomialOrderingHash`, and the predicate helpers
+ * `moIsGRevLex` / `moIsLex` / `moGetWeightValues`.
+ *
+ * The output of these constructors flows into
+ * `rawMonoid(mo, ...)`, where `imonorder.cpp` compiles the
+ * declarative `MonomialOrdering` into an executable
+ * `MonomialOrder` layout. The packed `MO_*2` / `MO_*4`
+ * variants squeeze two or four exponents per `int` for small-
+ * exponent rings, halving or quartering monomial-comparison
+ * memory footprint --- they appear as `Lex`/`LexSmall`/`LexTiny`
+ * and `GRevLex`/`GRevLexSmall`/`GRevLexTiny` on the M2 side.
+ *
+ * @see monomial-ordering.cpp
+ * @see monoid.h
+ * @see imonorder.hpp
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 typedef struct MonomialOrdering MonomialOrdering;
@@ -35,6 +82,20 @@ typedef struct mon_part_rec_
   int *wts;
 } * mon_part;
 
+/**
+ * @brief Front-end-side description of a monomial ordering as a list of
+ * `mon_part` blocks.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `_hash` caches the front-end hash so order objects can be
+ * compared and deduplicated cheaply; `len` is the number of
+ * blocks; `array[1]` is a C99 flexible-array tail holding the
+ * `len` ordered blocks (`Lex`, `GRevLex`, `Weights`, `Position`,
+ * ...). Built by the `MonomialOrderings::*` factories
+ * (`monordering.hpp`) and compiled into the engine-side
+ * `MonomialOrder_rec` (`imonorder.hpp`) via `monomialOrderMake`.
+ */
 struct MonomialOrdering
 {
   unsigned int _hash;

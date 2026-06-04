@@ -3,6 +3,43 @@
 #ifndef _FreeModule_hh_
 #define _FreeModule_hh_
 
+/**
+ * @file freemod.hpp
+ * @brief `FreeModule` --- finite-rank free module `R^n`, the type-level anchor for every `Matrix`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `FreeModule`, an `EngineObject` that holds its base
+ * `Ring *R`, the per-generator degree vectors in
+ * `gc_vector<monomial> components` (the rank is just
+ * `components.size()`), and an optional `SchreyerOrder
+ * *schreyer` (NULL when no Schreyer structure is installed).
+ * Every `Matrix` stores pointers to a source and target
+ * `FreeModule`, so this class is what gives matrix shapes
+ * their static guarantees --- degree compatibility and
+ * base-ring agreement are checked through these pointers. Once
+ * a `FreeModule` is interned its `EngineObject` hash freezes
+ * it, but during construction it is built up imperatively: the
+ * fresh-return transformations `sub_space`, `direct_sum`,
+ * `tensor`, `exterior` and the static `make_schreyer` allocate
+ * a new `FreeModule`, while `append`, `append_schreyer`,
+ * `change_degree`, and the in-place `direct_sum_to` mutate the
+ * receiver and are used to fill it in before it escapes.
+ *
+ * When a Schreyer order is installed, the comparison
+ * `compare(e_i * m, e_j * m')` first compares
+ * `m_{i} * m` against `m_{j} * m'` using the stored leading
+ * monomials of the inducing generators and then tiebreaks by
+ * index, which is what lets a syzygy module remember the order
+ * structure of the resolution step it came from. The
+ * standalone `#undef FreeModule` near the top of the header
+ * defuses a stray MinGW system-header macro of the same name.
+ *
+ * @see ring.hpp
+ * @see schorder.hpp
+ * @see matrix.hpp
+ */
+
 #include "ring.hpp"
 #include "schorder.hpp"
 
@@ -12,6 +49,19 @@ class GBMatrix;
 // an include file under mingw32 defines a macro with the name FreeModule:
 #undef FreeModule
 
+/**
+ * @brief Engine-side free module `R^n` over a `Ring`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds the underlying `Ring*` plus a `components` vector with the
+ * multi-degree of each generator; optionally carries a
+ * `SchreyerOrder*` that pins the per-component tie-breaker data
+ * used when the free module participates in a Schreyer
+ * resolution. Constructed only through `Ring`-side factory paths
+ * (the constructor is private) so the engine can guarantee the
+ * ring / degree pair is consistent before any vectors live in it.
+ */
 class FreeModule : public EngineObject
 {
   friend class Ring;

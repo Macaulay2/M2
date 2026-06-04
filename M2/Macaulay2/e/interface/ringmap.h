@@ -1,6 +1,42 @@
 #ifndef _ringmap_h_
 #  define _ringmap_h_
 
+/**
+ * @file interface/ringmap.h
+ * @brief Engine-boundary C API for constructing and evaluating `RingMap` homomorphisms.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `extern "C"` entry points the M2 interpreter
+ * uses for ring homomorphisms `R -> S`. Construction:
+ * `IM2_RingMap_make1(M)` builds a `RingMap*` from an image
+ * matrix `M` whose columns give the images of the source
+ * generators (bound as `rawRingMap`, but carrying an in-source
+ * "WARNING: I want to change the interface to this routine"
+ * note); the two-argument `IM2_RingMap_make(M, base)` (which
+ * would fix an explicit source `Ring *base`) is in-source
+ * marked `/* TODO */` and not yet wired up. Evaluation:
+ * `IM2_RingMap_eval_ringelem`, `IM2_RingMap_eval_matrix`, and
+ * `rawRingMapEvalMutableMatrix` apply the map to a single
+ * `RingElement`, an immutable `Matrix` (with an explicit
+ * `newTarget` `FreeModule`), or a `MutableMatrix` respectively
+ * --- all three bind on the M2 side as `rawRingMapEval`.
+ * Inspection: `IM2_RingMap_target` (`rawTarget`),
+ * `IM2_RingMap_is_equal`, `IM2_RingMap_to_string`, and
+ * `rawRingMapHash` (also flagged `/* TODO */`).
+ *
+ * The in-source "My plan, Dan, is to make changes to how ring
+ * maps are constructed" note marks this header as still in
+ * transition. No `rawCompose` lives here: composition is
+ * handled at the M2 level rather than through a dedicated
+ * engine entry.
+ *
+ * @see ringmap.cpp
+ * @see ringelement.h
+ * @see ring.h
+ * @see mutable-matrix.h
+ */
+
 #  include "engine-includes.hpp"
 
 // TODO: fix this

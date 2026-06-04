@@ -3,6 +3,42 @@
 #ifndef _aring_zz_gmp_hpp_
 #define _aring_zz_gmp_hpp_
 
+/**
+ * @file aring-zz-gmp.hpp
+ * @brief `M2::ARingZZGMP` --- aring integer ring backed straight by GMP `mpz_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingZZGMP` is a `SimpleARing<ARingZZGMP>` whose `ElementType`
+ * is GMP's `__mpz_struct` (the single-element form of `mpz_t`).
+ * Arithmetic is delegated to the corresponding GMP primitives
+ * (`mpz_add`, `mpz_sub`, `mpz_mul`, `mpz_submul`, `mpz_divexact`,
+ * `mpz_pow_ui`, ...); `divide` raises `exc::engine_error("division
+ * not exact")` when the dividend is not actually divisible. The
+ * `to_ring_elem` path calls
+ * `interface/gmp-util.h::mpz_reallocate_limbs` on the exported
+ * `mpz_ptr` so its limbs are migrated onto the GC heap before the
+ * value is handed to legacy `Ring` code; in-place arithmetic on
+ * `ARingZZGMP` values keeps GMP's own limb storage.
+ *
+ * `ring.cpp::makeIntegerRing` actually returns
+ * `new RingZZ` --- the legacy `RingZZ` (`ZZ.hpp`) class, not a
+ * `ConcreteRing<ARing*>` --- and `RingZZ` internally carries an
+ * `ARingZZGMP *coeffR` member that it forwards arithmetic to.
+ * The FLINT-backed sibling `aring-zz-flint.hpp::ARingZZ` is a
+ * parallel aring choice but not the one M2's integer ring goes
+ * through. `RingZZ::makeMutableMatrix` (in `mat.cpp`) is where
+ * `ARingZZGMP` becomes the matrix back end: it builds
+ * `MutableMat<DMat<ARingZZGMP>>` or `MutableMat<SMat<ARingZZGMP>>`
+ * depending on the `dense` flag, and `mat-linalg.hpp` aliases
+ * `DMat<ARingZZGMP>` as `DMatZZGMP` for the matching dense
+ * linear-algebra paths.
+ *
+ * @see ZZ.hpp
+ * @see aring-zz-flint.hpp
+ * @see aring.hpp
+ */
+
 #include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 #include "interface/random.h"    // for rawRandomInteger
 

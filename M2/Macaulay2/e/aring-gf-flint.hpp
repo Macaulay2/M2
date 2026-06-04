@@ -3,6 +3,43 @@
 #ifndef _aring_gf_flint_hpp_
 #define _aring_gf_flint_hpp_
 
+/**
+ * @file aring-gf-flint.hpp
+ * @brief `M2::ARingGFFlint` --- small `GF(p^k)` via FLINT Zech-logarithm tables.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingGFFlint` (registered as `ringID = ring_GFFlintZech`)
+ * represents a Galois field `GF(q)` of small order via FLINT's
+ * `fq_zech_*` interface. The element type is FLINT's
+ * `fq_zech_struct`, which wraps a single `mp_limb_t` Zech log
+ * index of a chosen primitive root; every non-zero operation
+ * reduces to O(1) integer arithmetic on that index
+ * (multiplication is `(i + j) mod (q - 1)`, addition uses a
+ * Zech table built once at construction). One word per element
+ * and no per-call allocations make this the fastest path for
+ * small `q`; FLINT's Zech table sizing imposes the upper limit
+ * on `q`. The class inherits from `RingInterface` directly (not
+ * `SimpleARing<ARingGFFlint>`) so its nested `Element` can hold
+ * an `fq_zech_ctx_struct*` for the destructor.
+ *
+ * The context is initialised via `fq_zech_ctx_init_modulus`
+ * against a user-supplied minimal polynomial; the M2-side entry
+ * point is `rawARingGaloisFieldFlintZech` in
+ * `interface/aring.cpp`. Larger extensions are reached by the
+ * separate `rawARingGaloisFieldFlintBig` entry point (which
+ * builds an `ARingGFFlintBig` from `aring-gf-flint-big.hpp`
+ * using polynomial-quotient `fq_nmod_*` arithmetic). The native
+ * `aring-m2-gf.hpp` path provides the same algebra without a
+ * FLINT dependency, and `GF.hpp` is the legacy table-based
+ * class.
+ *
+ * @see aring-gf-flint-big.hpp
+ * @see aring-m2-gf.hpp
+ * @see GF.hpp
+ * @see aring.hpp
+ */
+
 #include <vector>
 
 // The following needs to be included before any flint files are included.
@@ -32,9 +69,23 @@ class RingElement;
 namespace M2 {
 
 /**
-\ingroup rings
-*/
-
+ * @brief `aring`-style adapter for FLINT's Zech-logarithm representation
+ * of small finite fields `GF(p^n)`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `ElementType` is `fq_zech_struct` and every arithmetic call
+ * delegates to FLINT's `fq_zech_*` routines through the held
+ * `mContext` (`fq_zech_ctx_struct*`). The table-driven Zech
+ * representation makes addition fast, so this is the preferred
+ * `GF(p^n)` backend when the field is small enough for the
+ * lookup tables to fit. `ringID = ring_GFFlintZech` so
+ * `VectorArithmetic` can dispatch to the matching concrete
+ * specialisation. For larger fields where the Zech tables would
+ * exceed memory, use `ARingGFFlintBig` instead.
+ *
+ * @ingroup rings
+ */
 class ARingGFFlint : public RingInterface
 {
  public:
@@ -73,6 +124,17 @@ class ARingGFFlint : public RingInterface
     const fq_zech_ctx_struct* mContext;
   };
 
+  /**
+   * @brief Fixed-size owned array of `fq_zech_struct` slots tied to an
+   * `ARingGFFlint` for the matching FLINT context.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details Each slot is `fq_zech_init2`-initialised at construction and
+   * `fq_zech_clear`-released in the destructor, so the array owns
+   * its FLINT-side data. Used as the flat per-row buffer the dense
+   * linear-algebra templates expect.
+   */
   class ElementArray
   {
     const fq_zech_ctx_struct* mContext;

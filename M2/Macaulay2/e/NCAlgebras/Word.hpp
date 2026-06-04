@@ -1,9 +1,57 @@
 #ifndef _word_hpp_
 #define _word_hpp_
 
+/**
+ * @file NCAlgebras/Word.hpp
+ * @brief `Word` and `WordWithData` --- non-owning views over the flat-int encoding of a non-commutative word.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the NC-side lightweight view that every word-table,
+ * suffix-tree, overlap, and reduction routine passes around.
+ * `Word` carries `mBegin` / `mEnd` pointers plus a cached size
+ * into a raw `int[]` of variable indices `[v_1, ..., v_k]` ---
+ * with no length or weight prefix, since `FreeMonoid` already
+ * stores those separately. The class never allocates; the
+ * underlying buffer normally lives in a `MemoryBlock` or in a
+ * `std::vector<int>` that outlives the `Word`. `init` lets one
+ * `Word` instance be rebound across many buffers in a tight
+ * loop without reconstruction; the `std::vector<int>`
+ * constructor is `explicit` and exists for unit tests where the
+ * lifetime is obvious.
+ *
+ * `WordWithData` decorates a `Word` with `mEcartDegree` and
+ * `mHeftDegree` so the word-table sort and divisibility checks
+ * over a homogenised system can compare by ecart degree before
+ * walking the variable indices. Equality on `WordWithData`
+ * deliberately ignores heft degree but respects ecart degree,
+ * matching the divisibility convention used by `NCGroebner`'s
+ * reducer-selection step. Commutative counterpart is
+ * `gb-f4/MonomialView`.
+ *
+ * @see FreeMonoid.hpp
+ * @see WordTable.hpp
+ * @see SuffixTree.hpp
+ * @see OverlapTable.hpp
+ * @see gb-f4/MonomialView.hpp
+ */
+
 #include <iosfwd>    // for ostream
 #include <vector>    // for vector, vector<>::value_type
 
+/**
+ * @brief Non-owning view of a non-commutative word: `[begin, end)` of `int`
+ * variable indices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Stores three pointers / lengths (`mBegin`, `mEnd`, `mSize`) into
+ * an externally owned buffer (typically a `MemoryBlock` arena in
+ * `NCF4`). The view is cheap to copy and pass around but the
+ * caller must keep the backing buffer alive for the `Word`'s
+ * lifetime. Equality is elementwise; iteration goes through
+ * `begin()` / `end()` / `operator[]`.
+ */
 class Word
 {
 public:
@@ -46,6 +94,19 @@ private:
 
 std::ostream& operator<<(std::ostream& o, const Word& w);
 
+/**
+ * @brief `Word` plus its ecart degree and heft degree --- the value type
+ * `WordWithDataTable` stores.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `mEcartDegree` records the power of an invisible homogenising
+ * variable so divisibility checks in `WordWithDataTable::subword`
+ * can refuse matches whose ecart is wrong; `mHeftDegree` is the
+ * original heft degree the word entered with, kept for stable
+ * sorting. The underlying word is held by composition (`mWord`)
+ * rather than inheritance.
+ */
 // this class is intended for use in the word table, taking ecart degree (i.e.
 // the power of an 'invisible' homogenizing variable) into consideration when
 // checking divisibility.

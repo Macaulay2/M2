@@ -3,6 +3,40 @@
 #ifndef _Schurring2_hh_
 #define _Schurring2_hh_
 
+/**
+ * @file schur2.hpp
+ * @brief `SchurRing2` --- refactored Schur ring with length-prefixed partitions and an explicit `Ring` base.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `SchurRing2`, the second-generation Schur-function
+ * ring. Unlike `schur.hpp`'s `SchurRing` (which inherits from
+ * `PolyRing`), `SchurRing2` derives directly from `Ring`.
+ * Partitions are stored in the `schur_partition` layout
+ * `[n + 1, a_1, ..., a_n]` --- a length prefix followed by the
+ * non-increasing parts `a_1 >= a_2 >= ... >= a_n` (an in-source
+ * note flags that parts may be negative). Elements are
+ * `schur_poly` objects carrying parallel `coeffs` and `monoms`
+ * vectors, where `monoms` is a flat concatenation of
+ * `schur_partition`s walked by the length prefix. Multiplication
+ * uses Littlewood-Richardson enumeration through the private
+ * `skew_schur` / `SM` recursion with reusable `SMtab` / `SMfilled`
+ * `tableau2` scratch tableaux, and accumulates into the
+ * `schur_poly_heap *SMheap` defined in `schur-poly-heap.hpp`.
+ *
+ * The class is allowed to have a free coefficient ring
+ * (`coefficientRing`) and an optional variable-count cap `nvars`
+ * (`-1` means "infinite-rank" virtual partitions, served by
+ * `createInfinite`). `dimension(f)` evaluates the Schur
+ * polynomial at the all-ones specialisation; `invert`,
+ * `divide`, and `syzygy` are explicitly no-ops because they
+ * have no meaning in this ring.
+ *
+ * @see schur.hpp
+ * @see schur-poly-heap.hpp
+ * @see poly.hpp
+ */
+
 #include <vector>
 #include "poly.hpp"
 
@@ -100,6 +134,20 @@ inline schur_poly::iterator schur_poly::end() const
   return iterator(*this, 1);
 }
 
+/**
+ * @brief Refactored Schur (symmetric-function) ring whose elements are
+ * `schur_poly` sums of partitions over a configurable coefficient
+ * ring.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Replaces the older `SchurRing` (in `schur.hpp`) with a leaner
+ * implementation: partitions are stored in `schur_partition`
+ * sorted form rather than exponent vectors, and `nvars` caps the
+ * partition length (`-1` means no cap, i.e. infinitely many
+ * Schur generators). Multiplication uses the Littlewood-Richardson
+ * rule via `truncate`. Forms the base class for `SchurSnRing`.
+ */
 class SchurRing2 : public Ring
 {
  private:

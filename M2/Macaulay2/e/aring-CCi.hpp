@@ -3,6 +3,43 @@
 #ifndef _aring_CCi_hpp_
 #define _aring_CCi_hpp_
 
+/**
+ * @file aring-CCi.hpp
+ * @brief `M2::ARingCCi` --- certified complex intervals as Cartesian rectangles of MPFI intervals.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingCCi` represents a complex value as a pair of real
+ * intervals `(re_interval, im_interval)` --- i.e. a Cartesian
+ * rectangle in the complex plane. Endpoints have arbitrary
+ * MPFR precision (`mPrecision` is the class's sole stored
+ * state); the underlying interval arithmetic is MPFI. Addition
+ * is componentwise; multiplication uses the standard
+ * `(ac - bd) + (ad + bc) i` formula on the sub-intervals with
+ * MPFI's outward rounding, so the result is a certified
+ * enclosure of the true product. The rectangle representation
+ * is simple but yields overly wide enclosures under rotation;
+ * for tighter bounds the disk form would be preferable, but
+ * this file does not implement it.
+ *
+ * The class pulls in `aring-RRR.hpp`, `aring-RRi.hpp`, and
+ * `aring-CCC.hpp` to interoperate with their element types:
+ * `is_member` overloads accept `ARingRRR`, `ARingRRi`, and
+ * `ARingCCC` elements; `realPartReference` /
+ * `imaginaryPartReference` / `set_real_part` /
+ * `set_imaginary_part` exchange the rectangle components with
+ * `ARingRRi` values; and `midpoint(ARingCCC::ElementType&, ...)`
+ * collapses an interval to its MPFR-complex midpoint.
+ * `IM2_Ring_CCi(prec)` in `interface/ring.cpp` is the M2-side
+ * factory --- there is no machine-precision shortcut for the
+ * interval variant.
+ *
+ * @see aring-RRi.hpp
+ * @see aring-RRR.hpp
+ * @see aring-CCC.hpp
+ * @see aring.hpp
+ */
+
 #include <iostream>
 
 #include <mpfi.h>
@@ -21,8 +58,18 @@ class RingMap;
 
 namespace M2 {
 /**
-\ingroup rings
-*/
+ * @brief `aring`-style adapter for arbitrary-precision complex intervals,
+ * stored as `(MPFI, MPFI)` pairs.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `ElementType` is `cci_struct` --- MPFI intervals for the real
+ * and imaginary components, so arithmetic yields rigorous
+ * containing intervals. `mPrecision` sets the per-bound MPFR
+ * precision. `ringID = ring_CCi`.
+ *
+ * @ingroup rings
+ */
 class ARingCCi : public SimpleARing<ARingCCi>
 {
   // Higher precision real intervals

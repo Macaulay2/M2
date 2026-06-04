@@ -1,6 +1,41 @@
 #ifndef __vector_arithmetic_hpp__
 #define __vector_arithmetic_hpp__
 
+/**
+ * @file VectorArithmetic.hpp
+ * @brief Coefficient-ring-erased arithmetic dispatcher used by F4, GB, and resolution code.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `VectorArithmetic` is the engine's dispatcher for the inner
+ * loop shared across F4-style code paths --- the
+ * `accumulator[col] += coeff * scaling` operation that runs
+ * many times per S-pair. It holds a `std::variant` named
+ * `CVA_Type` over `ConcreteVectorArithmetic<RingType>*` for
+ * each supported coefficient ring (`ARingZZpFlint`,
+ * `ARingZZpFFPACK`, `ARingZZp`, `ARingQQGMP`, `ARingGFM2`,
+ * `ARingGFFlint`, `ARingGFFlintBig`, `CoefficientRingR`,
+ * `CoefficientRingZZp`, `DummyRing`); the constructor switches
+ * on `R->ringID()` to instantiate the matching variant slot,
+ * and every public method uses `std::visit` so the body sees a
+ * `ConcreteVectorArithmetic<R>*` and the native add / multiply
+ * inlines. Storage is the opaque `ElementArray` wrapper
+ * declared alongside, and the `VectorArithmeticStats` companion
+ * counts `mNumAdditions` for profiling.
+ *
+ * The point of the indirection is cross-ring reuse: `f4/`,
+ * `gb-f4/`, `schreyer-resolution/`, and `NCAlgebras/NCF4` all
+ * hit this dispatcher rather than coding against any particular
+ * ring, so teaching the engine a new coefficient backend is a
+ * matter of implementing it as an `aring`, adding a
+ * `ConcreteVectorArithmetic<...>` specialisation, threading the
+ * new type into `CVA_Type`, and exposing construction through
+ * `interface/aring.h`.
+ *
+ * @see aring.hpp
+ * @see aring-glue.hpp
+ */
+
 // #include <utility>                  // for swap
 // #include <assert.h>                 // for assert
 // #include <stddef.h>                 // for size_t
@@ -45,6 +80,20 @@
 class Ring;
 using ComponentIndex = int;
 
+/**
+ * @brief Type-erased owning handle to a dense coefficient vector held by a
+ * `ConcreteVectorArithmetic<Ring>`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Stores a single `void*` whose concrete type is the wrapped ring's
+ * `ElementContainerType` (e.g. an `std::vector<elem>` or an ARing
+ * concrete array). All payload access is funneled through
+ * `ConcreteVectorArithmetic` --- the friend declaration --- so only
+ * the matching arithmetic dispatcher can recover the real pointer.
+ * Default-constructed as null; copies are disallowed and moves go
+ * through `swap`, keeping ownership unique.
+ */
 class ElementArray
 {
   template<typename RingType> friend class ConcreteVectorArithmetic;
@@ -67,6 +116,17 @@ private:
   void* mValue;
 };
 
+/**
+ * @brief Lightweight counter attached to a `ConcreteVectorArithmetic<Ring>`
+ * for tracking how many coefficient additions a reduction performed.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details The `mNumAdditions` counter is `mutable` so that it can be
+ * incremented from within `const` arithmetic methods. `numAdditions()`
+ * reports the running total. Plugged into the F4 / GB code paths
+ * via `VectorArithmetic::numAdditions()` for profiling.
+ */
 class VectorArithmeticStats
 {
   mutable long mNumAdditions;
@@ -585,6 +645,22 @@ inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArra
 
 //template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
+/**
+ * @brief Runtime dispatcher that hides the concrete coefficient ring behind
+ * a `std::variant` of `ConcreteVectorArithmetic<Ring>*` pointers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Constructed from a `const Ring*`: the `ringID()` switch picks the
+ * matching `ConcreteVectorArithmetic<Ring>` and stores it in the
+ * variant `mConcreteVector`. Every arithmetic call
+ * (`pushBackOne`, `add`, `subtract`, `denseRowReduceByThis`, ...)
+ * goes through `std::visit`, so callers get one polymorphic
+ * interface that is still resolved with a tight switch instead of
+ * a virtual call. The list of supported rings is exactly the
+ * variant alternatives below --- adding a new coefficient ring
+ * means extending both the variant and the constructor switch.
+ */
 // this is the dispatching class using std::variant
 class VectorArithmetic
 {

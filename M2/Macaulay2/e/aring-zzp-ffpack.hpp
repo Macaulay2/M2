@@ -3,6 +3,39 @@
 #ifndef _aring_ffpack_hpp_
 #define _aring_ffpack_hpp_
 
+/**
+ * @file aring-zzp-ffpack.hpp
+ * @brief `M2::ARingZZpFFPACK` --- `Z/p` via FFLAS-FFPACK's `Givaro::Modular<double>` field.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingZZpFFPACK` represents a `Z/p` value as
+ * `Givaro::Modular<double>::Element` --- a reduced representative
+ * in `[0, p)` stored as a `double`. The `double` choice is
+ * deliberate: matrices over this ring can be reinterpreted as
+ * `double` matrices, multiplied via BLAS, and then reduced,
+ * which is dramatically faster than element-wise multiplication
+ * for small primes where the pre-reduction product still fits
+ * in the 53-bit mantissa (roughly `p` up to `2^25` at typical
+ * matrix sizes).
+ *
+ * The header has to defuse a name collision (in-source
+ * "issue #2347") between C++17's `std::bool_constant` and
+ * Givaro's own `bool_constant` by `#define`-renaming Givaro's
+ * version for the duration of the FFLAS-FFPACK include;
+ * `<ratio>` is included as a macOS-specific workaround. Engine
+ * consumers are `mat-linalg.hpp`, the FFPACK-backed dense
+ * routines in `dmat-ffpack.cpp` and `dmat-lu-zzp-ffpack.hpp`,
+ * the `ConcreteVectorArithmetic<ARingZZpFFPACK>` specialisation
+ * in `VectorArithmetic.hpp` that feeds the F4 pipeline, and the
+ * `aring-tower.hpp` tower-of-rings layer.
+ *
+ * @see aring-zzp.hpp
+ * @see aring-zzp-flint.hpp
+ * @see VectorArithmetic.hpp
+ * @see aring.hpp
+ */
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"

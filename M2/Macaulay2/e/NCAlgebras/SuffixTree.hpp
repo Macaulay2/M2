@@ -1,6 +1,48 @@
 #ifndef _suffix_tree_hpp_
 #define _suffix_tree_hpp_
 
+/**
+ * @file NCAlgebras/SuffixTree.hpp
+ * @brief `SuffixTree` / `SuffixTreeNode` --- experimental generalised suffix tree for non-commutative leading-word lookup.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the alternative leading-word index for `NCGroebner`
+ * and `NCF4`. A generalised suffix tree of the basis's leading
+ * words gives `O(|target|)` subword and substring queries
+ * regardless of basis size, where the production `WordTable`
+ * pays `O(|target| * |basis|)`. Each `SuffixTreeNode` stores
+ * an arc label (`Label = std::vector<int>` of variable
+ * indices), the cumulative label from the root, child pointers
+ * keyed by the first arc symbol
+ * (`std::map<Label, SuffixTreeNode*>`), a suffix link
+ * `mSuffixLink`, and the `mIsFullPattern` /
+ * `mPatternLeafCount` flags that mark whether a node
+ * terminates one of the inserted basis words and how many
+ * descendant leaves it covers. The owning `SuffixTree` class
+ * holds the root and the inserted-monomial list, deletes the
+ * subtree on `clear()` / destruction, and offers
+ * `insert(w)` / `insert(w, newRightOverlaps)`,
+ * `subword` / `subwords` / `superwords` /
+ * `isNontrivialSuperword`, and `leftOverlaps`. A
+ * `rightOverlaps` method is **commented out** with the in-source
+ * note "Not sure this is possible in this implementation",
+ * which is one of the reasons the production path stays on
+ * `WordTable`.
+ *
+ * The `Overlap` tuple is shared with `WordTable` so consumers
+ * see the same return type whichever index is active.
+ * `NCGroebner` and `NCF4` are staged to swap the two indices
+ * via toggled `//SuffixTree mWordTable;` declarations
+ * commented out alongside the live `WordTable` member; in
+ * production the `WordTable` path is used.
+ *
+ * @see Word.hpp
+ * @see WordTable.hpp
+ * @see NCGroebner.hpp
+ * @see NCF4.hpp
+ */
+
 #include "NCAlgebras/Word.hpp"  // for Word
 
 #include <iostream>  // for ostream
@@ -15,6 +57,22 @@ using Overlap = std::tuple<int,int,int,bool>;
 // data type of an arc/vertex label
 using Label = std::vector<int>;
 
+/**
+ * @brief One node of a generalised suffix tree built over the inserted
+ * non-commutative monomial patterns.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds its parent pointer, a `std::map<Label, SuffixTreeNode*>`
+ * of children keyed by the first symbol of each outgoing arc, the
+ * Ukkonen-style suffix link, the arc label (`mArcLabel`), and the
+ * full path label from the root (`mLabel`). `mIsFullPattern`
+ * marks the node as corresponding to a complete inserted pattern
+ * (vs. just a suffix of one) and `mPatternLeafCount` caches how
+ * many pattern leaves descend from it for fast subtree summaries.
+ * Leaves encode their pattern index as the final negative integer
+ * in `mLabel`, decoded by `getPatternNumber()`.
+ */
 class SuffixTreeNode
 {
 public:
@@ -137,6 +195,22 @@ using SubwordsType = std::tuple<SuffixTreeNode*,
                                 SuffixTreeNode*,
                                 bool>;
 
+/**
+ * @brief Generalised suffix tree alternative to `WordTable` for indexing
+ * non-commutative monomials.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Provides the same query surface as `WordTable` (`subword` /
+ * `subwords` / `leftOverlaps` / `rightOverlaps`, etc.) but backed
+ * by a Ukkonen-style suffix tree of `SuffixTreeNode`s rather than
+ * a flat array, giving asymptotically faster subword queries at
+ * the cost of a more elaborate insertion path. Currently a
+ * drop-in candidate for the `WordTable` `mWordTable` slot in
+ * `NCF4` / `NCGroebner` --- the commented-out
+ * `SuffixTree mWordTable;` in those headers shows the intended
+ * swap.
+ */
 // other than the monomial list, all functions should work on Word(s) not Label(s)
 // to avoid unnecessary copies
 

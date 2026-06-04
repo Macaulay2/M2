@@ -3,6 +3,34 @@
 #ifndef _aring_wrap_hpp_
 #define _aring_wrap_hpp_
 
+/**
+ * @file aring-wrap.hpp
+ * @brief `RElementWrap<RingType>` and `AConcreteRing<RingType>` --- abandoned scaffolding for an abstract `ARing` / `RElement` base.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares two templates that sketch an alternative aring
+ * type-erasure design: `RElementWrap<RingType>` inherits from
+ * `RElement` and stores one `RingType::ElementType` value, and
+ * `AConcreteRing<RingType>` inherits from `ARing`, holds a
+ * `RingType` by value, and forwards `init_set` / `add_to` to it
+ * through the `RELEM(RingType, ...)` cast macros. Both templates
+ * `friend bool ARing::converter(const ARing*, const ARing*,
+ * const RElement&, RElement&)` --- but neither `RElement`,
+ * `ARing`, nor `ARing::converter` is defined anywhere in the
+ * engine tree; the two templates are not referenced by any
+ * other file. Treat this header as orphan scaffolding kept
+ * around for historical / sketch purposes rather than as part
+ * of the live aring framework, whose actual ring- and
+ * element-level bridges live in `aring-glue.hpp` (vertical
+ * bridge to `Ring*`) and the `mypromote` / `mylift` family in
+ * `aring-translate.hpp`.
+ *
+ * @see aring.hpp
+ * @see aring-glue.hpp
+ * @see aring-translate.hpp
+ */
+
 #include "aring.hpp"
 
 namespace M2 {

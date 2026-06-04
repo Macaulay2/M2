@@ -3,12 +3,67 @@
 #ifndef _schorder_hpp_
 #define _schorder_hpp_
 
+/**
+ * @file schorder.hpp
+ * @brief `SchreyerOrder` --- per-basis-element data backing the Schreyer order on a free module.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `SchreyerOrder`, the lightweight side-table that
+ * lives on a `FreeModule` and supplies the data the engine
+ * needs to compare two basis elements under a Schreyer order.
+ * For each of the `_rank` basis elements the structure stores
+ * one `(compare_num, encoded monomial)` entry, packed flatly
+ * in `_order` with `_nslots = monoid->monomial_size() + 1`
+ * ints per entry --- `compare_num(i)` reads slot `i * _nslots`
+ * and `base_monom(i)` returns the monomial pointer at slot
+ * `i * _nslots + 1`. `schreyer_compare` /
+ * `schreyer_compare_encoded` use these to compare
+ * `(m, m_comp)` against `(n, n_comp)` by applying the ambient
+ * monomial order to `base * m` vs `base * n` and tiebreaking
+ * by `compare_num`; the helpers `schreyer_up(m, comp, result)`
+ * and `schreyer_down(m, comp, result)` multiply / divide `m` by
+ * the inducing base monomial and write into `result` (which is
+ * allowed to alias `m`).
+ *
+ * The destructor `~SchreyerOrder()` is `abort()` --- the class
+ * is not meant to be `delete`d. Use `remove()` to release the
+ * `_order` storage when a holder is finished with it. A free
+ * module starts without a Schreyer order; `Eschreyer.cpp` and
+ * the modern `schreyer-resolution/` install one (via
+ * `create(Matrix*)` / `create(GBMatrix*)`) when the module is
+ * the target of a Schreyer syzygy step. The standard
+ * transformations `sub_space`, `direct_sum`, `tensor`,
+ * `exterior`, `symm`, and `append_order` return a fresh
+ * `SchreyerOrder` matching the corresponding `FreeModule`
+ * operations.
+ *
+ * @see freemod.hpp
+ * @see monoid.hpp
+ * @see Eschreyer.hpp
+ */
+
 #include "buffer.hpp"
 #include "monoid.hpp"
 
 class GBMatrix;
 class Matrix;
 
+/**
+ * @brief Per-component tie-breaker data for a Schreyer monomial order on a
+ * `FreeModule`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details For each of the `_rank` components, stores a `compare_num` plus
+ * the component's base monomial as a flat
+ * `[compare_num, encoded_monom]` slice of width `_nslots` inside
+ * `_order`. When two `FreeModule` entries with different
+ * components are compared, their monomials get pre-multiplied by
+ * their respective `base_monom`s and then ranked by `compare_num`
+ * --- the standard Schreyer recipe that keeps the resolution's GB
+ * machinery consistent across levels.
+ */
 class SchreyerOrder : public our_new_delete
 {
   const Monoid *M;

@@ -3,9 +3,56 @@
 #ifndef __monordering_hpp_
 #define __monordering_hpp_
 
+/**
+ * @file monordering.hpp
+ * @brief `MonomialOrderings` --- C++ factories for the declarative `MonomialOrdering` blocks.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the static-only `MonomialOrderings` class whose
+ * members build single `MonomialOrdering` blocks (`Lex` /
+ * `Lex2` / `Lex4`, `GRevLex` / `GRevLex2` / `GRevLex4` with or
+ * without a weight vector --- plus a packed
+ * `GRevLex(wts, packing)` overload --- `RevLex`, `Weights`,
+ * `GroupLex`, `GroupRevLex`, and the component-ordering
+ * markers `PositionUp` / `PositionDown`), and compose them
+ * (`product`, `join`) into the multi-block orderings the user
+ * actually writes. `toString` renders an ordering back to the
+ * textual form M2 displays. The free function
+ * `monomialOrderingToMatrix` (defined in
+ * `interface/monomial-ordering.cpp`) flattens an ordering into
+ * an integer matrix together with `base_is_revlex` and
+ * component-direction / row-position metadata --- the form
+ * downstream code uses when it needs the order as data.
+ *
+ * This is the user-facing declarative side of the
+ * monomial-order story --- what the user types and what M2
+ * serialises --- paired with the operational `MonomialOrder`
+ * produced by `imonorder.hpp`. A `Monoid` constructor consumes
+ * the declarative output of these factories once at ring
+ * construction and walks the encoded form thereafter.
+ *
+ * @see imonorder.hpp
+ * @see monoid.hpp
+ */
+
 #include <string>
 #include <vector>
 
+/**
+ * @brief Static-method namespace of constructors for the front-end
+ * `MonomialOrdering` value type.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds no state --- every method is `static`. Provides factories
+ * for the standard monomial orders (`Lex`, `GRevLex`, `RevLex`,
+ * `Weights`, `Position`, ...), variants with 2-byte and 4-byte
+ * exponent packings (`Lex2` / `Lex4`, `GRevLex2` / `GRevLex4`),
+ * weighted forms, plus the combinators `join` (lex-of-blocks)
+ * and `product` (tensor-product order). `toString(mo)` renders a
+ * `MonomialOrdering*` back to its M2 source form.
+ */
 class MonomialOrderings {
 public:
   static std::string toString(const MonomialOrdering *mo);

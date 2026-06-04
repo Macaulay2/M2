@@ -1,6 +1,39 @@
 #ifndef __ncreduction_hpp__
 #define __ncreduction_hpp__
 
+/**
+ * @file NCAlgebras/NCReduction.hpp
+ * @brief `PolynomialHeap` abstract interface --- batched-subtraction heap for non-commutative reduction.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the pure-virtual surface every `NCGroebner` /
+ * `NCF4` reduction uses to combine many tail-polynomial
+ * subtractions into a single `O(n log k)` pipeline rather than a
+ * quadratic term-by-term merge. `addPolynomial(poly)` and
+ * `addPolynomial(coeff, left, right, poly)` queue a polynomial
+ * (or its left-coeff-right scaling) for subtraction;
+ * `viewLeadTerm` / `removeLeadTerm` give the running result's
+ * current leading term and pop it; `value()` materialises the
+ * accumulated polynomial when reduction is complete. The
+ * `HeapType` enum selects between concrete implementations
+ * (`Trivial`, `Map`, `PriorityQueue`, the various geobucket /
+ * tournament-tree / dedup variants) which `makePolynomialHeap`
+ * instantiates --- kept side-by-side for benchmarking against
+ * each other.
+ *
+ * Non-commutative analogue of the commutative engine's
+ * `gbvectorHeap`. `getHeapType(strategy)` maps the user-facing
+ * `Strategy =>` integer onto a concrete `HeapType`, and
+ * `getName()` on a live heap reports which one is active so
+ * profile output is unambiguous.
+ *
+ * @see Polynomial.hpp
+ * @see NCGroebner.hpp
+ * @see NCF4.hpp
+ * @see FreeAlgebra.hpp
+ */
+
 #include "Polynomial.hpp"  // for Poly, Monom (ptr only)
 #include "ringelem.hpp"    // for ring_elem
 
@@ -11,6 +44,23 @@
 class FreeAlgebra;
 class Word;
 
+/**
+ * @brief Abstract interface for accumulating a polynomial as a sum of
+ * `(coeff, left * poly * right)` contributions in the free algebra.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details The standard "geobucket"-shaped API used by `NCGroebner` / `NCF4`
+ * reduction loops: `addPolynomial` slots a new contribution in,
+ * `isZero` collapses the heap until either a non-zero lead term is
+ * available or the heap is genuinely empty, `viewLeadTerm` /
+ * `removeLeadTerm` walk the result, and `value()` materialises
+ * everything into a `Poly`. Concrete subclasses
+ * (`TrivialPolynomialHeap`, `MapPolynomialHeap`,
+ * `PriorityQueuePolynomialHeap`, the geobucket-backed
+ * `NaivePolynomialHeap<Queue>`) live in `NCReduction.cpp` and
+ * make different storage / deduplication trade-offs.
+ */
 class PolynomialHeap : public our_new_delete
 {
 public:

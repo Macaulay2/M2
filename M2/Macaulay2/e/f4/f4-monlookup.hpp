@@ -3,6 +3,48 @@
 #ifndef _f4monlookup_h_
 #define _f4monlookup_h_
 
+/**
+ * @file f4/f4-monlookup.hpp
+ * @brief `F4MonomialLookupTableT<Key>` --- monomial-ideal trie for divisor lookup.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the templated `F4MonomialLookupTableT<Key>`, an
+ * explicit monomial-ideal trie used by F4 to answer "does any
+ * leading monomial divide this target?" in time proportional to
+ * the path through the tree rather than the basis size. The
+ * outer state is a `std::vector<mi_node*> mis` --- one trie per
+ * free-module component, plus a shared scratch
+ * `ntuple_word* exp0` for unpacking varpower into a dense
+ * exponent vector during traversal. Each trie level is a
+ * **circular doubly-linked list** of `mi_node`s holding
+ * `(var, exp)` thresholds: `left` / `right` are sibling pointers
+ * within that list (not match / no-match branches), `header`
+ * points back to the list's head, and the tagged
+ * `union { mi_node* down; Key key; }` either descends to the
+ * next variable's list (internal node) or carries the user
+ * `Key` (leaf, typically a basis index). `find_one_divisor1`
+ * walks the current level via `right`, descends through
+ * `down()` when `node->exp <= exp[node->var]`, and backtracks
+ * via `header->down()` when no list entry passes; insertion
+ * (`insert1`) splices new levels and entries in along the
+ * varpower path.
+ *
+ * Specialised for the F4 inner loop's encoded monomial
+ * vocabulary (`moninfo.hpp`, `varpower-monomial.hpp`,
+ * `ntuple-monomial.hpp`); the engine-wide counterpart is
+ * `montable.hpp` (a flat doubly-linked-list-plus-bitmask index
+ * rather than a trie). The free function
+ * `minimalize_varpower_monomials` at the bottom is a helper
+ * for computing a minimal generating set from a list of
+ * varpower monomials.
+ *
+ * @see moninfo.hpp
+ * @see varpower-monomial.hpp
+ * @see ntuple-monomial.hpp
+ * @see montable.hpp
+ */
+
 #include "f4/moninfo.hpp"            // for MonomialInfo (ptr only), const_p...
 #include "f4/ntuple-monomial.hpp"    // for const_ntuple_monomial, ntuple_word
 #include "f4/varpower-monomial.hpp"  // for const_varpower_monomial, varpowe...

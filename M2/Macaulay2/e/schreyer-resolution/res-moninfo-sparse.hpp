@@ -3,6 +3,58 @@
 #ifndef _res_moninfo_sparse_hpp_
 #define _res_moninfo_sparse_hpp_
 
+/**
+ * @file schreyer-resolution/res-moninfo-sparse.hpp
+ * @brief `ResMonoidSparse` --- sparse-multiset encoding alternative to `ResMonoidDense`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the compact alternative `res-moninfo.hpp` keeps in
+ * the codebase for swap-in benchmarking against the production
+ * dense layout. Each monomial is encoded as
+ * `[length, hash, component, weight_1, ..., weight_{mNumWeights},
+ * v_1, v_2, ..., v_d]` (slot 0 is the total array length so
+ * `monomial_size(m) = *m`); the variable tail is a
+ * non-increasing list `v_1 >= v_2 >= ... >= v_d >= 0` where each
+ * variable index is repeated `e_i` times. So a monomial
+ * `x^2 y z^5` with `nvars = 3` (`x=0, y=1, z=2`, no weight
+ * slots) records the 11-slot array `[11, hash, comp, 2, 2, 2,
+ * 2, 2, 1, 0, 0]` (`from_expvector` iterates `i` from
+ * `nvars-1` down to `0` to build it). Memory is
+ * `O(total_degree)` per monomial rather than `O(nvars)`, which
+ * wins big for rings with many variables and low-support
+ * monomials.
+ *
+ * Hashing is the additive Steel trick:
+ * `from_expvector` accumulates `hash += hashfcn[i]` once per
+ * unit of `e[i]`, so `hash(m) = sum_i hashfcn[i] * e_i` and
+ * `mult` updates hashes by addition. The class-level `mask` is
+ * **not** part of the hash --- it is used only by
+ * `check_monomial` to AND-detect overflow in stored slots.
+ * Leading weight slots front-load comparison so the order test
+ * can short-circuit before walking the variable suffix. Skew
+ * multiplication lives in `skew_vars` /
+ * `skew_mult_sign`, both of which take a
+ * `SkewMultiplication*` by parameter; the class does not own
+ * or inherit one, and `mult` is plain commutative.
+ *
+ * The class exposes the same `mult` / `divide` /
+ * `monomial_size` / `compare_schreyer` / `to_expvector` /
+ * `from_expvector` / `from_varpower_monomial` surface as
+ * `ResMonoidDense`, plus a **live** `compare_grevlex` (the
+ * dense twin has its `compare_grevlex` `#if 0`-d out, so
+ * switching the typedef in `res-moninfo.hpp` materially
+ * changes which grevlex comparator the rest of the resolution
+ * sees). A bank of `mutable unsigned long ncalls_*` counters
+ * records every operation for the home-grown profiler.
+ *
+ * @see res-moninfo.hpp
+ * @see res-moninfo-dense.hpp
+ * @see res-monomial-types.hpp
+ * @see res-poly-ring.hpp
+ * @see skew.hpp
+ */
+
 #include <iostream>                   // for ostream
 #include <memory>                     // for unique_ptr
 #include <vector>                     // for vector
@@ -17,6 +69,18 @@
 // d. v1 v2 ... vd
 // where d = length-2
 // v1 >= v2 >= ... >= vd >= 0 are indices of variables.
+/**
+ * @brief Sparse / varpower-format `ResMonoid` implementation: monomials laid
+ * out as length-prefixed lists of `(variable, exponent)` pairs.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Each encoded monomial has variable width: `[length, hash, comp,
+ * w_1, ..., w_r, v_1, e_1, ..., v_d, e_d]`. Encode / decode walk
+ * only the non-zero variables, so the representation wins when
+ * monomials are typically supported in a small subset of
+ * variables; the dense counterpart is `ResMonoidDense`.
+ */
 // or, maybe also have degree before this, and other weight values...
 // SO, general form:
 // [length, hashval, component, w1, ..., wr, v, ..., vd]

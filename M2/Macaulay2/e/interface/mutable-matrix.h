@@ -1,6 +1,50 @@
 #ifndef _mutable_matrix_h_
 #  define _mutable_matrix_h_
 
+/**
+ * @file interface/mutable-matrix.h
+ * @brief Engine-boundary C API for the engine's in-place `MutableMatrix`, including dense linear algebra.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `extern "C"` entry points the M2 interpreter
+ * routes to the engine's mutable matrix type. Construction
+ * (`IM2_MutableMatrix_make`, `IM2_MutableMatrix_identity`,
+ * `IM2_MutableMatrix_from_matrix`, with `prefer_dense` choosing
+ * dense vs. sparse storage) is paired with the standard
+ * read-only queries (`IM2_MutableMatrix_to_matrix` snapshots
+ * back into an immutable `Matrix`, plus dimension, entry,
+ * ring, and string accessors); in-place mutation covers
+ * single-entry set, row / column swap, scale, and elementary
+ * row / column operations. The dense linear-algebra surface
+ * lives on the `rawLinAlg*` family: `rawLinAlgRank`,
+ * `rawLinAlgDeterminant`, `rawLinAlgInverse`, `rawLinAlgRREF`,
+ * `rawLinAlgRankProfile`, `rawLinAlgNullSpace`,
+ * `rawLinAlgSolve`, `rawLinAlgSolveInvertible`,
+ * `rawLinAlgAddMult` / `_SubMult` / `_Mult`, and
+ * `rawLinAlgCharPoly` / `rawLinAlgMinPoly`. Separate
+ * `rawLU` / `rawLUincremental` provide LU under a LAPACK-style
+ * shape, `rawFFLU` is the fraction-free path, `rawLLL` runs
+ * lattice reduction, `rawReduceByPivots` does pivot-based row
+ * elimination, and `rawEigenvalues` / `rawEigenvectors` cover
+ * the RR / CC spectral path.
+ *
+ * Each linear-algebra entry dispatches inside the engine
+ * through the templated `DMat<R>` family to the back end best
+ * suited for the coefficient ring --- FFLAS-FFPACK for `Z/p`
+ * (small `p`), FLINT for `ZZ`/`QQ`/`GF`, Eigen3 for `RR`/`CC`
+ * (per `eigen.hpp`), MPFI on the interval side, generic
+ * otherwise --- so the interpreter never picks the algorithm
+ * itself. The mutable / immutable boundary is the standard
+ * "snapshot" model: an immutable `Matrix` is copied in, the
+ * algorithm rewrites the mutable buffer, and the caller
+ * converts back if it wants an immutable result.
+ *
+ * @see mutable-matrix.cpp
+ * @see matrix.h
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 // TODO: fix this

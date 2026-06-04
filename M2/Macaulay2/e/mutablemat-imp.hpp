@@ -5,6 +5,38 @@
 #ifndef _mutable_mat_imp_hpp_
 #define _mutable_mat_imp_hpp_
 
+/**
+ * @file mutablemat-imp.hpp
+ * @brief Template implementations of `MutableMat<Mat>` --- linear-algebra methods plus the SLP-evaluator bridge.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Carries the inline template bodies for `MutableMat<Mat>`
+ * declared in `mutablemat-defs.hpp`. The linear-algebra
+ * surface --- `rank`, `determinant`, `invert`,
+ * `rowReducedEchelonForm`, `solveLinear`, `solveInvertible`,
+ * `nullSpace`, `mult` --- forwards into `MatrixOps::*`, which
+ * the `mat-linalg.hpp` family specialises per ring. Two SLP-
+ * bridge methods stand apart: `createSLEvaluator(P, constsPos,
+ * varsPos)` wraps an `SLEvaluatorConcrete<CoeffRing>` around a
+ * one-row mutable matrix of constants (the
+ * `n_rows() != 1 || n_cols() != constsPos->len` check errors
+ * out otherwise), and `createCompiledSLEvaluator(libName,
+ * nInputs, nOutputs)` reaches the JIT-compiled-SLP path
+ * instead.
+ *
+ * The split from `mutablemat-defs.hpp` keeps the heavy includes
+ * (SLP machinery, NAG bridges) out of every translation unit
+ * that only needs the declarations; this file is pulled in
+ * where a specific `MutableMat<DMat<R>>` or `MutableMat<SMat<R>>`
+ * is actually instantiated. `SLP-imp.hpp` carries the
+ * straight-line-program evaluator itself.
+ *
+ * @see mutablemat.hpp
+ * @see mutablemat-defs.hpp
+ * @see SLP-imp.hpp
+ */
+
 template <typename Mat>
 M2SLEvaluator* MutableMat<Mat>::createSLEvaluator(M2SLProgram* P,
                                                 M2_arrayint constsPos,

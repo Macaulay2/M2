@@ -4,6 +4,45 @@
 #define _engine_h_
 
 /**
+ * @file engine.h
+ * @brief Legacy umbrella header that re-exports the per-area interface headers and carries the still-unmigrated entry points.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `engine.h` historically declared every public entry point in
+ * one place. Today it forward-declares the engine's user-facing
+ * handle types (`FreeModule`, `Matrix`, `MutableMatrix`,
+ * `RingMap`, `Computation`, `MutableComplex`) under the same
+ * dual C/C++ pattern that each `interface/*.h` uses, then
+ * `#include`s the per-area interface headers so that a single
+ * `#include "engine.h"` still resolves to the public surface. It
+ * also keeps a tail of entry points that have not yet migrated
+ * out: the engine-startup pair `IM2_initialize` and
+ * `IM2_last_error_message`, the `engineMemory()` diagnostic,
+ * the entire `MutableComplex` family (`rawMutableComplex`,
+ * `rawMutableComplexToString`, `rawMutableComplexHash`,
+ * `rawPruneBetti`, `rawPruneComplex`, ...), and the resolution-
+ * specific entries (`rawResolutionBetti`,
+ * `rawResolutionGetMutableMatrixB` /
+ * `rawResolutionGetMutableMatrix2B`, `IM2_Resolution_status` /
+ * `_status_level`, ...) that the `interface/groebner.h`
+ * headerization left behind. New engine code is encouraged to
+ * reach for only the narrower `interface/<area>.h` headers ---
+ * doing so reduces compile-time include bloat and makes
+ * dependencies explicit --- but this header remains for
+ * backward compatibility with callers outside the engine and as
+ * the documented front-door entry point.
+ *
+ * The exact set of locally-declared entries drifts over time as
+ * files migrate out of the legacy bucket; the file itself is the
+ * authoritative inventory. `engine-includes.hpp` carries the
+ * engine-wide baseline (`config.h`, `M2_*` typedefs) that this
+ * header layers on top of.
+ *
+ * @see engine-includes.hpp
+ */
+
+/**
    \mainpage Hi, this is my main documentation page.
  */
 

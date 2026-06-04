@@ -10,12 +10,55 @@
 #ifndef BIBASIS_MONOM_LEX_HPP
 #define BIBASIS_MONOM_LEX_HPP
 
+/**
+ * @file bibasis/monomLex.hpp
+ * @brief `BIBasis::MonomLex` --- pure lexicographic specialisation of the BIBasis monomial type.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Concrete `Monom` subclass whose `Compare`, `operator<`, and
+ * `operator>` order monomials by walking the variable list from
+ * the smallest-index variable upward, with the first disagreement
+ * deciding (no degree pre-test) --- the standard M2 lex order
+ * with `x_0 > x_1 > ...`. The variable list is kept sorted
+ * ascending so `Find` is a linear-but-short walk, and
+ * `MultiplyBy` / `operator*=` / `operator/=` / `SetQuotientOf`
+ * maintain that ordering as they splice nodes; equality
+ * short-circuits on the cached `TotalDegree`. Storage is a
+ * per-class static `FastAllocator` so the millions of transient
+ * monomials created during prolongation stay slab-resident.
+ *
+ * Also exposes `IsPommaretDivisibleBy` (Janet's prefix
+ * divisibility used by the involutive driver) and
+ * `GetVariablesSet` / `FirstMultiVar` for translating between
+ * the linked-list encoding and the dense variable indices the
+ * engine's `Matrix` interface expects. Picked at runtime by
+ * `Launcher` when the user requests `Lex`.
+ *
+ * @see monom.hpp
+ * @see monomDL.hpp
+ * @see monomDRL.hpp
+ * @see launcher.hpp
+ * @see involutive.hpp
+ */
+
 #include <set>
 #include "allocator.hpp"
 #include "monom.hpp"
 
 namespace BIBasis
 {
+    /**
+     * @brief `Monom` specialisation that orders monomials by pure lex on
+     * their sorted variable lists.
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
+     *
+     * @details Same layout as `MonomDL` / `MonomDRL` --- a `Monom` plus a
+     * per-class `FastAllocator` and a `Next` chaining pointer ---
+     * but with lex comparison so the first differing variable
+     * decides the order.
+     */
     class MonomLex : public Monom
     {
     private:

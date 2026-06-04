@@ -1,6 +1,44 @@
 #ifndef __montable_h
 #define __montable_h
 
+/**
+ * @file montable.hpp
+ * @brief `MonomialTable` --- leading-monomial divisor index used by the GB reducer.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `MonomialTable`, the data structure GB code queries
+ * thousands of times per reduction: given a monomial `m`, find
+ * a basis element whose leading monomial divides `m`. Each
+ * `mon_term` carries a doubly-linked-list pair (`_next` /
+ * `_prev`), the borrowed exponent pointer `_lead` (the owning
+ * polynomial still owns it, with trailing sugar entries
+ * ignored), a precomputed bitmask `_mask` that fast-rejects
+ * non-divisors before a full exponent compare, and the basis
+ * index `_val`. Per the in-source comment, terms are kept in
+ * lex order so the divisibility scan can prune early; the
+ * implementation maintains a per-component list head in `_head`
+ * and a `_last_match` cache to speed repeated queries.
+ *
+ * Public operations: `make(nvars)` (the actual constructor),
+ * `insert(exp, comp, id)`, `find_divisor`,
+ * `find_divisors(max, exp, comp, *result)`, and
+ * `find_exact(exp, comp)`. The static `make_minimal` and
+ * `minimalize` helpers (defined at `montable.cpp:367` and `:297`)
+ * read as if they compute a minimal subset by lead monomial,
+ * but they are declared `private` with no `friend` access and
+ * no internal self-calls --- nothing in the engine can reach
+ * them, so they are effectively dead scaffolding kept around in
+ * the header. The coefficient-aware `ZZ`-coefficient analogue
+ * lives in `montableZZ.hpp`, where the divisibility test
+ * additionally checks that a candidate's leading coefficient
+ * divides the reducee's.
+ *
+ * @see montableZZ.hpp
+ * @see gb-default.hpp
+ * @see ExponentVector.hpp
+ */
+
 #include "mem.hpp"
 #include <vector>
 #include <memory>
@@ -23,6 +61,22 @@
     Is this really an OK idea?
  */
 
+/**
+ * @brief Indexed table of monomials with fast "find a divisor" lookup,
+ * keyed by a free integer `val` per entry.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Stores entries as a per-component doubly-linked list of
+ * `mon_term`s sorted in increasing lex order. Each entry caches a
+ * `_mask` (popcount-style divisibility filter) so divisor searches
+ * can skip most monomials with a single bitwise test. Pure
+ * `(exponents, component) -> val` index --- the exponent vectors
+ * themselves are owned by the caller (the table does not free
+ * them). `MonomialTableZZ` is the companion specialisation when
+ * entries also carry a `ZZ` coefficient and the GB needs to track
+ * leading-term divisibility modulo content.
+ */
 class MonomialTable : public our_new_delete
 {
   static MonomialTable *make_minimal(int nvars,
@@ -39,6 +93,18 @@ class MonomialTable : public our_new_delete
 
   MonomialTable();  // the public must use "make" below
  public:
+  /**
+   * @brief Doubly-linked-list node of a `MonomialTable`'s per-component
+   * monomial list.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details `_lead` points to the entry's exponent vector (owned by the
+   * caller, not by the table), `_mask` is the precomputed
+   * divisibility bitmask used to skip non-divisors during search,
+   * and `_val` is the caller-supplied opaque index returned on a
+   * hit.
+   */
   struct mon_term
   {
     mon_term *_next;

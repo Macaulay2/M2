@@ -1,4 +1,34 @@
-// This file should only be included once, by what?
+/**
+ * @file dmat-lu-zzp-flint.hpp
+ * @brief `DMatLinAlg<M2::ARingZZpFlint>` --- dense Z/p linear algebra routed through FLINT `nmod_mat_*`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Specialises `DMatLinAlg` for the FLINT-backed Z/p aring,
+ * with each public method forwarding to the matching
+ * `nmod_mat_*` routine on the underlying `nmod_mat_t`:
+ * `rank()` to `nmod_mat_rank`, `determinant` to `nmod_mat_det`,
+ * `inverse` to `nmod_mat_inv`, `kernel` to `nmod_mat_nullspace`,
+ * and `solveInvertible(B, X)` to `nmod_mat_solve`. `matrixPLU`
+ * copies the input matrix, runs `nmod_mat_lu` on the copy, and
+ * then calls `LUUtil<RingType>::setUpperLower` to split the
+ * packed result into separate L and U. The general-shape
+ * `solve(B, X)` concatenates `[A | B]` via
+ * `concatenateMatrices<Mat>`, runs `nmod_mat_rref`, reads the
+ * column-rank profile via `LUUtil::computePivotColumns`, and
+ * either rejects the system as inconsistent or copies the
+ * solution out of the trailing columns of `AB`.
+ *
+ * The header is `#include`d from `dmat-lu.hpp`;
+ * `M2/gc-include.h` precedes the FLINT include so
+ * `flint_malloc` routes through bdwgc, and the diagnostic
+ * pragmas silence FLINT-internal conversion warnings. The
+ * FFLAS-FFPACK alternative is `dmat-lu-zzp-ffpack.hpp`.
+ *
+ * @see dmat-lu.hpp
+ * @see dmat-lu-zzp-ffpack.hpp
+ * @see aring-zzp-flint.hpp
+ */
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
@@ -12,6 +42,20 @@
 // ZZpFlint //////////
 //////////////////////
 
+/**
+ * @brief Specialisation of `DMatLinAlg` for `ARingZZpFlint` dense matrices,
+ * routing rank / determinant / kernel / solve / inverse calls to
+ * FLINT's `nmod_mat_*` routines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `DMat<ARingZZpFlint>` already wraps an `nmod_mat_t`, so the
+ * linear-algebra layer just hands the underlying FLINT matrix to
+ * the right `nmod_mat_*` entry point and converts the result
+ * back. Gives word-prime `Z/p` matrices the same FLINT speed-up
+ * the FFPACK specialisation provides for primes that fit in a
+ * FFPACK word.
+ */
 template <>
 class DMatLinAlg<M2::ARingZZpFlint>
 {

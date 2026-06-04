@@ -1,5 +1,40 @@
 // Copyright 1994-2020 by Michael E. Stillman
 
+/**
+ * @file engine.cpp
+ * @brief Tiny translation unit that holds the engine's process-global singletons and the `IM2_initialize` boot hook.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Defines (rather than declares) the handful of symbols that
+ * need to exist exactly once:
+ * `MutableEngineObject::mNextMutableHashValue` (the counter
+ * that hands out stable integer hashes to mutable engine
+ * objects --- their contents change so they cannot be
+ * content-hashed) and `heap_size[GEOHEAP_SIZE]`, the
+ * quadrupling bucket-capacity table `4, 16, 64, ..., 1073741824`
+ * (15 buckets) consumed by the geometric-heap data structures
+ * (`geopoly.hpp`, `geovec.hpp`, `geobucket.hpp`,
+ * `schur-poly-heap.hpp`, `gbring.cpp`) when they accumulate
+ * large polynomial sums.
+ *
+ * Also defines `IM2_initialize`, the idempotent engine-startup
+ * hook (caller-guarded by an `initialized` flag): it allocates
+ * the global `doubling_stash *doubles` (the size-bucketed
+ * `int` allocator from `mem.hpp`), constructs the trivial
+ * polynomial ring via `PolyRing::get_trivial_poly_ring()`
+ * (which also wires up `globalZZ` and the trivial monoid),
+ * runs `initializeRationalRing()`, and calls
+ * `rawRandomInitialize()`. The file stays small because the
+ * engine has little true process-global state --- most of what
+ * looks global actually lives inside a `Ring`, `Computation`,
+ * `PolynomialRing`, or `Monoid` instance.
+ *
+ * @see hash.hpp
+ * @see mem.hpp
+ * @see style.hpp
+ */
+
 #include "interface/random.h"
 #include "aring-glue.hpp"    // for initializeRationalRing
 #include "interface/m2-types.h"

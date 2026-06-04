@@ -3,6 +3,37 @@
 #ifndef _hilb_hh_
 #define _hilb_hh_
 
+/**
+ * @file hilb.hpp
+ * @brief Hilbert-series numerator via the Bigatti-Caboara-Robbiano recursion.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `hilb_comp`, which computes the numerator of the
+ * Hilbert series for `coker leadterms(M)` (resp. `coker I` when the
+ * input is a `MonomialIdeal`) over the standard denominator
+ * `prod (1 - t^{deg x_i})`. The recursion picks a pivot monomial
+ * `m` and uses the short exact sequence
+ * `0 -> R/(I:m) -.m-> R/I -> R/(I + (m)) -> 0`, giving
+ * `H_{R/I} = t^{deg m} H_{R/(I:m)} + H_{R/(I + (m))}`. The
+ * `partition_table` declared at the top runs the union-find that
+ * groups variables into connected components so the recursion
+ * splits on independent subproblems whenever possible.
+ *
+ * The matrix entry point takes lead terms only --- callers wanting
+ * the Hilbert series of an arbitrary ideal pass in a Groebner basis.
+ * Reading the Hilbert function or extracting the Hilbert polynomial
+ * from the numerator lives in top-level M2 code; this header exposes
+ * only the static `hilbertNumerator` family --- three overloads
+ * (`const Matrix*`, `const FreeModule*`, `const MonomialIdeal*`)
+ * --- and the per-instance `value()` / `calc(nsteps)` / `is_done()` /
+ * `reset()` / `next_monideal()` driver, plus `coeff_of` for sampling
+ * a single coefficient and `stats()` for printing the recursion
+ * counters (`nsteps`, `depth`, `maxdepth`, `nideal`, `nrecurse`).
+ *
+ * @see monideal.hpp
+ */
+
 // Computation of Hilbert functions via Bigatti's (et al) algorithm.
 
 #include "hash.hpp"       // for MutableEngineObject

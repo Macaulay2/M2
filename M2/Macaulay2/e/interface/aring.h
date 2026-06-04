@@ -1,6 +1,53 @@
 #ifndef _aring_h_
 #  define _aring_h_
 
+/**
+ * @file interface/aring.h
+ * @brief Engine-boundary C API for constructing `aring`-backed coefficient rings.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `extern "C"` `rawARing*` factories the M2
+ * interpreter calls (via the generated `d/engine.dd` bindings)
+ * whenever the user asks for one of the `aring`-family
+ * coefficient rings. Prime fields: `rawARingZZp` (small `p`,
+ * `2 <= p <= 32749`) and `rawARingZZpFlint` (`2 <= p <= 2^64-1`).
+ * Galois fields: `rawARingGaloisField(p, n)` (the Givaro path,
+ * which now errors out with "givaro is no longer available") plus
+ * three live `prim`-driven variants taking a `RingElement`
+ * primitive element --- `rawARingGaloisField1` (M2's own GF code),
+ * `rawARingGaloisFieldFlintBig` (FLINT's wordsize-`p` code, no
+ * Zech tables), and `rawARingGaloisFieldFlintZech` (FLINT with
+ * Zech lookup tables). The fourth declaration
+ * `rawARingGaloisFieldFromQuotient` survives in the header but
+ * its body in `aring.cpp` is `#if 0`-d out (also marked for
+ * removal during the givaro removal), so any caller relying on
+ * it will fail at link time. FLINT-accelerated rationals/integers:
+ * `rawARingZZFlint`, `rawARingQQFlint`. Iterated extensions:
+ * three constructors `rawARingTower1` / `_2` / `_3` for
+ * progressively building tower rings from a coefficient
+ * field, variable names, and defining equations. Each factory
+ * returns a `Ring*` wrapping the appropriate `aring` instance
+ * or null on a domain error so the interpreter can report it
+ * back to the user.
+ *
+ * Three additional helpers cross the same boundary:
+ * `rawARingGFPolynomial(R)` returns the coefficient array of
+ * the GF quotient polynomial; `rawARingGFCoefficients(f)`
+ * decomposes a GF element back into its `(f_0, ..., f_{d-1})`
+ * coefficients over `ZZ/p`; `rawMultiplicativeGenerator(R)`
+ * returns the generator of the GF multiplicative group. The
+ * trailing `/* connected */` annotations on individual entries
+ * mark those that already have a matching `d/` binding ---
+ * notably `rawARingTower1`/`_2`/`_3` are **not** marked
+ * connected. Adding a new `aring` requires declaring it
+ * here, implementing in `aring.cpp`, and wiring the M2-side
+ * `.dd` binding.
+ *
+ * @see aring.cpp
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 // TODO: fix this

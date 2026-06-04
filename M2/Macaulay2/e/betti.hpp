@@ -3,6 +3,37 @@
 #ifndef _betti_hpp_
 #define _betti_hpp_
 
+/**
+ * @file betti.hpp
+ * @brief `BettiDisplay` --- engine-side container and renderer for the Betti table of a free resolution.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `BettiDisplay` holds the graded Betti numbers produced when an
+ * engine `ResolutionComputation` finishes: `entry(deg, lev)`
+ * reads or writes the count at degree `deg` and homological
+ * level `lev`, with absolute bounds `mLoDegree`, `mHiDegree`,
+ * `mHiLength`. The class is intentionally just a 2-D `int` array
+ * (`new int[]` / `delete[]`) with bounds plus printing helpers
+ * --- the actual mathematics (which entries are non-zero and
+ * what they equal) is done by the resolution code that fills
+ * the table.
+ *
+ * `getBetti()` flattens the table into an `M2_arrayint` of the
+ * form `[lo, hi1, len1, values...]` where `lo` is unchanged from
+ * `mLoDegree` and `hi1` / `len1` are trimmed down to the largest
+ * degree / level that still has a positive entry, and
+ * `displayBetti(buffer&)` writes the standard M2 plain-text
+ * Betti diagram --- column totals, a `[grand total]` header,
+ * `-` for zero entries --- to a `buffer`. The `BettiHashAndEq`
+ * functor at the bottom of the header is a `(int*, int)`-keyed
+ * hash/equality pair that hashes the `int*` by its raw pointer
+ * value (`+ 13 * second`) rather than its contents; no engine
+ * code outside this header currently instantiates it.
+ *
+ * @see buffer.hpp
+ */
+
 #include "buffer.hpp"
 
 #include "memtailor.h"
@@ -10,6 +41,21 @@
 #include <unordered_map>
 #include <utility>
 
+/**
+ * @brief Engine-side Betti table: a `(degree, homological level)` rectangle
+ * of integers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Storage is a single flat `int* mValues` of size
+ * `(mHiDegree - mLoDegree + 1) * mNLevels`, indexed via
+ * `entry(deg, lev)`. The user-facing bounds (`loDegree` /
+ * `hiDegree` / `length`) are the requested dimensions; the actual
+ * non-zero region may be tighter. `displayBetti` / `output` print
+ * in the conventional triangular layout the front end shows for
+ * `betti` queries, and `getBetti` flattens to an `M2_arrayint` for
+ * the interpreter.
+ */
 class BettiDisplay
 {
  public:
@@ -46,6 +92,18 @@ class BettiDisplay
   int* mValues;
 };
 
+/**
+ * @brief Combined hash + equality functor for `(int*, int)` pairs, used by
+ * the resolution code to key an `unordered_set` on `(monomial,
+ * component)`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Hash mixes the raw pointer with `13 * comp`; equality is
+ * pointer-and-int equality (the monomials behind the pointers are
+ * already interned, so two equal monomials are guaranteed to share
+ * the same pointer).
+ */
 class BettiHashAndEq
 {
 public:

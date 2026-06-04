@@ -3,6 +3,41 @@
 #ifndef _matrix_hh_
 #define _matrix_hh_
 
+/**
+ * @file matrix.hpp
+ * @brief `Matrix` --- the engine's immutable homomorphism `F -> G` between free modules.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `Matrix`, an `EngineObject` whose entries are stored
+ * as one `vec` per column over the target free module. State
+ * comprises the target and source `FreeModule*`s, a single
+ * `monomial mDegreeShift` in the degree monoid applied
+ * uniformly to every entry's degree (used by graded
+ * computations), and the column array `gc_vector<vec>
+ * mEntries`. `Matrix` is immutable by design --- every
+ * "modifying" operation returns a fresh instance --- which is
+ * what lets the engine share matrices safely and memoise
+ * derived data like bases and kernels.
+ *
+ * Construction goes through `MatrixConstructor`
+ * (`matrix-con.hpp`): the actual constructor is private,
+ * called only by the builder (`FreeModule` also `friend`s the
+ * class for its own internal needs), so matrices reach the
+ * outside world only after degree-compatibility validation.
+ * Routine matrix operations (`add`, `subtract`, `mult`,
+ * `negate`, `transpose`, `submatrix`, `direct_sum`, `tensor`,
+ * `lead_term`, `homogenize`, ...) live in `matrix.cpp`;
+ * specialised operations are split into `matrix-kbasis.cpp`,
+ * `matrix-ncbasis.cpp`, `matrix-sort.cpp`,
+ * `matrix-stream.cpp`, and `matrix-symm.cpp`. Mutable matrix
+ * arithmetic lives in `mutablemat.hpp` instead.
+ *
+ * @see freemod.hpp
+ * @see matrix-con.hpp
+ * @see mutablemat.hpp
+ */
+
 #include "monoid.hpp"
 #include "freemod.hpp"
 #include "monideal.hpp"
@@ -12,7 +47,21 @@
 class MatrixConstructor;
 
 /**
- * \ingroup matrices
+ * @brief Engine-side matrix: a map between two free modules, stored as a
+ * column-vector list.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds a target `FreeModule` (rows), a source `FreeModule` (columns),
+ * a `mDegreeShift` element of the degree monoid, and a `gc_vector<vec>`
+ * `mEntries` where each `vec` is the sparse linked-list representation
+ * of one column. The class is immutable once exposed to the front end
+ * (its `computeHashValue` pins the hash), so all mutating construction
+ * goes through the helper `MatrixConstructor`. Static `make` / `make_sparse`
+ * factories convert raw `engine_RawRingElementArray` input into a fully
+ * populated `Matrix*`.
+ *
+ * @ingroup matrices
  */
 class Matrix : public EngineObject
 {
@@ -238,6 +287,18 @@ class Matrix : public EngineObject
 
   void text_out(buffer &o) const;
 
+  /**
+   * @brief Reseatable iterator over the non-zero entries of one column of
+   * the matrix.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details Constructed in a "no column" state (`col == -1`, `v == nullptr`)
+   * and then `set(col)` aims it at a specific column; `next()`
+   * advances through that column's sparse `vec` list (decreasing
+   * row order; zero entries are not present). Read-only by design
+   * --- the matrix itself is immutable.
+   */
   class iterator : public our_new_delete
   {
     const Matrix *M;  // all matrices are immutable
@@ -259,6 +320,18 @@ class Matrix : public EngineObject
     ring_elem entry() { return v->coeff; }
   };
 
+  /**
+   * @brief Standards-style forward iterator over the `vecterm`s of one
+   * column.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details Simpler companion to `iterator`: holds a raw `const vecterm*`
+   * cursor, increments it with `operator++`, dereferences with
+   * `operator*`, and ends at `nullptr`. Suitable for range-for over
+   * a single column's terms (decreasing row order; zero entries are
+   * not present).
+   */
   class column_iterator
   {
     const vecterm * v;

@@ -1,6 +1,50 @@
 #ifndef _res_dep_graph_hpp_
 #define _res_dep_graph_hpp_
 
+/**
+ * @file schreyer-resolution/res-dep-graph.hpp
+ * @brief `DependencyGraph` --- TBB flow-graph over (level, slanted-degree) cells of a Schreyer-frame resolution.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the parallel scheduler the F4 resolution driver uses
+ * to run multiple homological degrees concurrently while
+ * respecting the fill-matrix dependency that cell `(level,
+ * slanted_degree)` requires both `(level - 1, slanted_degree)`
+ * and `(level, slanted_degree - 1)` to have completed first; the
+ * minimal-Betti pass adds an extra edge from `(level + 1,
+ * slanted_degree - 1)`'s rank node into the current cell's
+ * Betti node. Each cell is a `Node` carrying a
+ * `mFillAndReduceNode`, `mRankNode`, and optional
+ * `mMinimalBettiNode`, all `tbb::flow::continue_node<continue_msg>`
+ * so a node fires once all its predecessors have. `addVertex`
+ * / `addFillMatrixEdge` / `addMinimalBettiEdge` wire the
+ * graph, `startComputation` triggers the root (`mVertices[0]`'s
+ * fill-and-reduce node, which is assumed to be the top of the
+ * dependency tree), and `waitForCompletion` blocks on the whole
+ * frontier. The free function
+ * `makeDependencyGraph(G, nlevels, nslanted_degrees,
+ * doMinimalBetti)` constructs the standard layout.
+ *
+ * The 2-D grid is linearised via `getIndex(lev, sldeg, nlevels,
+ * nslanted_degrees) = lev + sldeg * nlevels`, with the matching
+ * inverse `getPair`. The whole header is `#ifdef WITH_TBB`-
+ * gated; on builds without TBB the parallel layer compiles to
+ * nothing and `SchreyerFrame::minimalBettiNumbers` falls back to
+ * its serial `computeRanks` path. The `parallelizeByDegree`
+ * flag plumbed through `F4ResComputation` is a single on/off
+ * switch --- when true, `SchreyerFrame::minimalBettiNumbers`
+ * builds and triggers this graph; when false, it skips the dep
+ * graph entirely and runs the serial path. The graph also
+ * carries a `topologicalSort` walker (used for debug printing
+ * via `print()`) and a `std::mutex mMutex` for the
+ * single-vertex edits done off the TBB thread pool.
+ *
+ * @see res-f4-computation.hpp
+ * @see res-schreyer-frame.hpp
+ * @see m2tbb.hpp
+ */
+
 #include "m2tbb.hpp"
 
 #ifdef WITH_TBB

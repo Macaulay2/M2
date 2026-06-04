@@ -1,6 +1,46 @@
 #ifndef _computation_h_
 #  define _computation_h_
 
+/**
+ * @file interface/computation.h
+ * @brief `ComputationStatusCode` / `StopConditions` / `StrategyValues` / `Algorithms` / `gbTraceValues` --- engine-to-interpreter vocabulary for long-running computations.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the C-side enums and struct the M2 interpreter
+ * shares with the engine for long-running computations.
+ * `ComputationStatusCode` (18 values: `COMP_DONE`,
+ * `COMP_INTERRUPTED`, `COMP_DONE_DEGREE_LIMIT`,
+ * `COMP_DONE_GB_LIMIT`, `COMP_OVERFLOWED`, ...) is what every
+ * `start_computation()` returns, and the `StopConditions`
+ * struct is what the interpreter populates to tell a
+ * `Computation` when to pause: `always_stop`,
+ * `stop_after_degree` + `degree_limit`, `basis_element_limit`,
+ * `syzygy_limit`, `pair_limit`, `use_codim_limit` +
+ * `codim_limit`, `subring_limit`, `just_min_gens`, and
+ * `length_limit` (commented "ignored for GB computations").
+ * Three further bitfield-style enums live in this header but
+ * carry a TODO asking whether they should move elsewhere:
+ * `StrategyValues` (`STRATEGY_LONGPOLYNOMIALS`, `_SORT`,
+ * `_USE_HILB`, `_USE_SYZ`), `Algorithms` (`GB_polyring_field`,
+ * `GB_polyring_field_homog`), and `gbTraceValues`
+ * (`PRINT_SPAIR_TRACKING`). Concrete computation classes (GB,
+ * resolution, Hilbert, ...) build their own interface headers
+ * on this vocabulary.
+ *
+ * `ComputationStatusCode` is the single source of truth for
+ * the engine/M2 boundary --- the header carries an explicit
+ * "Keep this enum in sync with RawStatusCodes in
+ * Macaulay2/m2/gb.m2" comment, and adding a value here without
+ * updating the M2-side mirror silently breaks status
+ * reporting. Wrapped in `extern "C"` so it crosses the
+ * generated-C side of the `.dd` pipeline.
+ *
+ * @see comp-gb.hpp
+ * @see comp-res.hpp
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 #  if defined(__cplusplus)
@@ -32,6 +72,20 @@ enum ComputationStatusCode {
   COMP_OVERFLOWED = 18,         /* overflowed */
 };
 
+/**
+ * @brief Bundle of optional early-termination knobs the front end can
+ * attach to a long-running `Computation`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Each `*_limit` is consulted by the driver after every increment
+ * of the matching counter (basis element, syzygy, S-pair, codim,
+ * subring, step); `degree_limit` / `length_limit` cap the
+ * homological / degree reach for GB and resolution computations;
+ * `always_stop` short-circuits everything; `just_min_gens` asks
+ * the driver to halt as soon as a minimal generating set is
+ * available. `M2_bool` flags gate which limits are active.
+ */
 struct StopConditions
 {
   M2_bool always_stop;

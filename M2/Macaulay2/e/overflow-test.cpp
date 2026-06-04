@@ -1,3 +1,34 @@
+/**
+ * @file overflow-test.cpp
+ * @brief Standalone microbenchmark and overflow-trip harness for the `safe::` primitives in `overflow.hpp`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Not part of the engine library --- a separately-compiled
+ * binary (`make DEPENDS=no overflow-test`) developers reach for
+ * to confirm overflow detection and measure the per-call cost
+ * of `safe::add`, `safe::mult`, `safe::sub`, `safe::div`,
+ * `safe::minus`, and `safe::ov` (sub-nanosecond-per-iteration on
+ * modern hardware). `main` has two modes: with a command-line
+ * argument in `{sub, add, mult, div, minus, throw}` it deliberately
+ * passes overflowing operands (`safe::add(INT_MAX, 1)`, etc.) and
+ * exits with the expected fatal error, so the developer can
+ * verify each detector individually; with no argument it runs a
+ * hot loop of `outer * inner * roll = 20000 * 5000 * 100 = 10^10`
+ * iterations of a chosen `stmt` macro --- the preserved
+ * `#if 0` block holds the developer's previous timing
+ * comparisons (`y = j + x` vs `y = safe::add(j, x)` at 10^10
+ * reps, etc.) and the bare-`x = 1` loop-overhead measurements
+ * (single assignment 4.488s for 5*10^9 reps ≈ 0.9ns each, pair
+ * 8.973s ≈ 1.8ns per pair) that quantify how much of the
+ * per-iteration cost is overflow checking versus loop overhead.
+ *
+ * Build with optimisation but no LTO so call sites stay
+ * distinct; no engine state is involved.
+ *
+ * @see overflow.hpp
+ */
+
 #define outer 20000
 #define inner 5000
 

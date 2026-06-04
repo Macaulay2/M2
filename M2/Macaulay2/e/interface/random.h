@@ -3,6 +3,47 @@
 #ifndef _rand_h_
 #  define _rand_h_
 
+/**
+ * @file interface/random.h
+ * @brief Engine-boundary C API for the engine's PRNG and rational / real / complex random draws.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `extern "C"` entry points that seed and consult
+ * the engine's pseudo-random number generator:
+ * `rawRandomInitialize` resets it, `rawSetRandomSeed(gmp_ZZ)`
+ * plants a reproducible seed, `rawSetRandomMax(gmp_ZZ)` installs
+ * the default upper bound for integer draws, and the typed
+ * draws cover every coefficient flavour the engine supports ---
+ * `rawRandomULong` / `rawRandomInt` for sub-word integers,
+ * `rawRandomInteger` / `rawSetRandomInteger` for big integers
+ * (the latter writing through an `mpz_ptr` to avoid the
+ * garbage-collected allocation),
+ * `rawRandomQQ` / `rawSetRandomQQ` for rationals with bounded
+ * numerator and denominator,
+ * `rawRandomRRUniform` / `rawRandomRRNormal` / `rawRandomCC`
+ * for arbitrary-precision real and complex variates,
+ * `rawRandomRRi` / `rawSetRandomRRi` / `rawRandomCCi` for
+ * interval variants, the MPFR-direct `randomMpfr`, and
+ * `randomDouble` / `system_randomint` for the C fast paths.
+ * Farey-approximation helpers (`rawFareyApproximation`,
+ * `rawSetFareyApproximation`) sit here since they reuse the
+ * same big-integer height parameter.
+ *
+ * The PRNG state is a triple of file-scope statics in
+ * `random.cpp` (the GMP `gmp_randstate_t state`, the
+ * `int32_t RandomSeed` Schrage-style seed for
+ * `rawRandomInt`, and the `mpz_t maxHeight` default upper
+ * bound) --- there is no `thread_local` or mutex protection,
+ * so single-threaded runs are reproducible from a given seed
+ * but concurrent threads share state and a parallel run is
+ * neither race-free nor reproducible. The `aring-*` coefficient
+ * backends pick this up via `randomDouble` / `rawRandomInteger`.
+ *
+ * @see random.cpp
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 /**

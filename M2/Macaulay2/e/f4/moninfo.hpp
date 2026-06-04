@@ -3,6 +3,52 @@
 #ifndef _moninfo_hpp_
 #define _moninfo_hpp_
 
+/**
+ * @file f4/moninfo.hpp
+ * @brief `MonomialInfo` --- F4's `packed_monomial` encoding plus operations.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `MonomialInfo`, the F4-side specialised monoid
+ * descriptor. A `packed_monomial` is a `monomial_word*` (long
+ * pointer) with the layout
+ * `[hashvalue, component, wt_1, ..., wt_s, e_0, ..., e_{n-1}]`;
+ * the total slot count `nslots` is fixed per ring, so
+ * `monomial_size()` returns it directly (the parameter is
+ * vestigial). The hash is the additive trick (credited to
+ * A. Steel in-source): each variable gets a random
+ * `hashfcn[i]`, and `hash(m) = sum hashfcn[i] * e_i` so
+ * `hash(m*n) = hash(m) + hash(n)` and `mult` updates the
+ * stored hash by a single add. `MonomialInfo` exposes the
+ * F4-inner-loop surface --- `mult` / `unchecked_mult`,
+ * `divide` (returns `bool`, used as a divisibility test) /
+ * `unchecked_divide`, `compare_grevlex` (plus `compare` for
+ * the general ordering), `get_component` /
+ * `set_component`, and conversions
+ * `from_expvector` / `to_expvector` (against the dense
+ * `ntuple_monomial`) and `from_varpower_monomial` /
+ * `to_varpower_monomial` (against the sparse
+ * `varpower_monomial`). Skew-variable operations
+ * (`skew_vars`, `skew_mult_sign`) take a `SkewMultiplication*`
+ * by parameter --- `MonomialInfo` does not own one. A bank
+ * of `mutable unsigned long ncalls_*` counters records every
+ * operation for the `show()` diagnostic dump.
+ *
+ * The encoding carries multi-degree information: optional
+ * weight-vector slots (`mWeightVectors`, `mNumWeights`) are
+ * packed inline between the component and the exponents, and
+ * `mHeftDegrees` / `mModuleHeftDegrees` are kept on the side
+ * for the heft / module-heft scoring. The engine builds one
+ * `MonomialInfo` per `PolynomialRing` at F4 startup and shares
+ * it across all F4 operations on that ring; the `#if 0` block
+ * at the top is stale `stdint.h`/`config.h` scaffolding kept
+ * alongside the live code.
+ *
+ * @see ntuple-monomial.hpp
+ * @see varpower-monomial.hpp
+ * @see f4.hpp
+ */
+
 #include "interface/m2-types.h"           // for M2_arrayint, M2_arrayint_st...
 #include "f4/ntuple-monomial.hpp"         // for ntuple_word, const_ntuple_m...
 #include "f4/varpower-monomial.hpp"       // for varpower_word, index_varpow...
@@ -43,6 +89,21 @@ typedef const monomial_word *const_packed_monomial;
 // or is it:
 // [hashvalue comp e1 e2 ... en -wr ... -w1]
 
+/**
+ * @brief Per-ring monomial layout / encoding helper used by `F4GB`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds the variable count `nvars` and the encoded monomial word
+ * width `nslots`, plus a per-variable hash table (`hashfcn`) and
+ * mask. Encoded monomials are laid out as `[hashvalue, comp,
+ * w_1, ..., w_r, e_1, ..., e_n]` (or with the weights at the
+ * tail, depending on convention --- see in-source comments at the
+ * top of the file). Provides the operations the F4 inner loops
+ * need: `compare`, `mult`, `divide`, `lcm`, `gcd`, hash-with-
+ * component, plus encode / decode against actual exponent
+ * vectors.
+ */
 class MonomialInfo : public our_new_delete
 {
   int nvars;

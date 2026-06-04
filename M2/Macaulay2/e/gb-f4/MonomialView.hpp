@@ -1,5 +1,42 @@
 #pragma once
 
+/**
+ * @file gb-f4/MonomialView.hpp
+ * @brief `newf4::MonomialView` --- non-owning view over a `[length, var_1, e_1, ...]`-encoded monomial.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the lightweight pointer-with-helpers type the new F4
+ * passes around to refer to a monomial without copying its
+ * encoded `MonomialInt` payload. The encoding is `mData[0] =
+ * total length`, followed by alternating `(var, power)` pairs
+ * over only the variables with positive exponent; equality is a
+ * single `std::memcmp` of the tail, divisibility
+ * (`monomialDivides`) is a single linear walk over the sparse
+ * pairs, and `simpleDegree` is just the sum of powers. Four
+ * constructors cover the non-allocating cases (raw pointer or
+ * `std::vector`) plus the two allocating ones that copy from
+ * `(std::vector, MemoryBlock&)` or `(MonomialView&, MemoryBlock&)`
+ * into caller-supplied arena storage; the `combine` / `lcm` /
+ * `product` / `quotient` static helpers route their result into
+ * a `MemoryBlock` so the view returned points at fresh storage
+ * with predictable lifetime.
+ *
+ * The class deliberately does not own its bytes: the same
+ * encoded monomial gets referenced from `MonomialHashTable`
+ * entries, polynomial-list rows, and S-pair LCM slots, and the
+ * arena is reset at the end of each F4 step so every view is
+ * invalidated together. The nested templated `MonomialIterator`
+ * advances two `MonomialInt`s per `++` and exposes `var()` /
+ * `power()` accessors so callers can read the sparse encoding
+ * without indexing arithmetic.
+ *
+ * @see MemoryBlock.hpp
+ * @see MonomialTypes.hpp
+ * @see MonomialHashTable.hpp
+ * @see MonomialLookupTable.hpp
+ */
+
 #include "../MemoryBlock.hpp"
 #include "MonomialTypes.hpp"
 #include <vector>

@@ -2,6 +2,36 @@
 #ifndef _hermite_hh_
 #define _hermite_hh_
 
+/**
+ * @file hermite.hpp
+ * @brief `HermiteComputation` --- Hermite normal form over `ZZ`, the `ZZ`-analogue of `GaussElimComputation`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `HermiteComputation`, a `GBComputation` subclass that
+ * reduces a sparse matrix of generators over `ZZ` to a Hermite
+ * normal form: each row has a distinct lead component, and the
+ * above-pivot entries in that column are reduced against the
+ * pivot in absolute value via `globalZZ->remainderAndQuotient`.
+ * Rows live as an intrusive list of `hm_elem` structs --- a
+ * `gm_elem` cousin with an explicit cached `mpz_t lead` so pivot
+ * comparisons do not have to re-walk `f` (the class even carries
+ * its own `merge` / `sort` over `hm_elem*` lists). Each
+ * elimination step is an extended-GCD (Bezout) update of the
+ * pivot followed by a reduction of the remaining rows --- a
+ * structure that preserves integrality where the
+ * field-coefficient `GaussElimComputation` could not.
+ *
+ * The dispatcher in `comp-gb.cpp` picks this path automatically
+ * when a GB is requested with the base ring `globalZZ`, i.e. for
+ * any submodule of `ZZ^n`. The header notes the implementation
+ * is "slow, replace" --- a candidate for a future-perf rewrite.
+ *
+ * @see gauss.hpp
+ * @see comp-gb.hpp
+ * @see LLL.hpp
+ */
+
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"

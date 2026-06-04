@@ -3,10 +3,66 @@
 #ifndef _ring_elem_hh_
 #define _ring_elem_hh_
 
+/**
+ * @file relem.hpp
+ * @brief `RingElement` --- tagged `(Ring*, ring_elem)` pair, the engine's universal element type.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `RingElement`, the `EngineObject` subclass that
+ * stores one element of a ring as a pair `(R, val)`: the
+ * `Ring*` pointer tags the value and the opaque `ring_elem`
+ * carries it. Arithmetic is exposed through operator overloads
+ * (unary `operator-`, binary `operator+` / `operator-` /
+ * `operator*` / `operator/`, plus `operator*(int)`,
+ * `power(mpz_srcptr)` / `power(int)`, and `invert()`), each
+ * delegating to the corresponding virtual on the ring; the same
+ * `RingElement` shape thus represents integers, rationals,
+ * polynomials, quotient-ring elements, Weyl operators, and any
+ * other algebraic object the engine knows about. The
+ * `make_raw(R, f)` factory wraps a freshly-built `ring_elem`
+ * with its ring; direct construction via the public constructor
+ * is rare.
+ *
+ * Beyond core arithmetic, the class offers `promote(S, result)`
+ * / `lift(S, result)` for the canonical inter-ring maps
+ * (`R -> R[x]`, `R -> R/I`, `R -> frac R`, `Z/p[x]/F -> GF`),
+ * polynomial accessors (`lead_term`, `rest`, `n_terms`,
+ * `get_terms`, `get_coeff`, `lead_coeff`, `lead_monom`,
+ * `is_homogeneous`, `homogenize`, `degree_weights`, `degree`,
+ * `multi_degree`), fraction-field helpers (`numerator`,
+ * `denominator`, `fraction`), content extraction (`content`,
+ * `remove_content`, `split_off_content`), and the univariate-
+ * over-finite-field helper `getSmallIntegerCoefficients`. The
+ * `ring_elem` union itself lives in `ringelem.hpp` --- small
+ * values (`int`, Z/p element) stay inline, large values
+ * (`mpz_ptr`, polynomial pointer) reference heap-allocated
+ * storage, and each ring is the only thing that knows what its
+ * `val` means.
+ *
+ * @see ring.hpp
+ * @see ringelem.hpp
+ */
+
 #include "ring.hpp"
 
 class EngineMonomial;
 
+/**
+ * @brief Front-end-visible "ring element" value: an engine `ring_elem`
+ * paired with the `Ring*` that gives it meaning.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details The interpreter handles ring elements as opaque
+ * `RingElement*` pointers and asks the engine to do arithmetic
+ * by dispatching through `get_ring()`. Inherits from
+ * `EngineObject` so the hash is content-based (computed via the
+ * ring's `computeHashValue`) and the element is immutable once
+ * exposed to the front end. `make_raw` is the standard factory
+ * the interface layer uses to wrap a freshly produced
+ * `ring_elem`.
+ */
 class RingElement : public EngineObject
 {
   const Ring *R;

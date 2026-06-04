@@ -3,6 +3,40 @@
 #ifndef _ringelem_hh_
 #define _ringelem_hh_
 
+/**
+ * @file ringelem.hpp
+ * @brief `ring_elem` --- the universal value type carried by every `Ring*` in the engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `ring_elem` union plus the GMP/MPFR/MPFI const
+ * and mutable pointer aliases (`ZZ`, `ZZmutable`, `QQ`,
+ * `QQmutable`, `RRRelement`, `RRRmutable`, `RRielement`,
+ * `RRimutable`) and the inline `cc_struct` (MPFR pair),
+ * `cc_doubles_struct` (`double` pair), and `cci_struct` (MPFI
+ * pair) complex-number record types. The aliases exist so
+ * engine function signatures can make const-ness explicit
+ * (`void foo(ZZ a, ZZmutable result)` reads more clearly than
+ * its `mpz_srcptr` / `mpz_ptr` expansion) and so a single
+ * search-and-replace can flip the underlying GMP / MPFR / MPFI
+ * type if that surface ever changes.
+ *
+ * `ring_elem` is the value the `Ring`-virtual API trafficks in
+ * everywhere; each `Ring` subclass knows how to interpret the
+ * union. The fields available are `int_val` / `long_val` /
+ * `double_val` (primitives), `mpz_val` / `mpq_val` / `mpfr_val`
+ * / `mpfi_val` (arbitrary-precision pointers),
+ * `cc_doubles_val` / `cc_val` / `cci_val` (complex variants),
+ * `poly_val` (`Nterm*` for `PolyRing` lists), `mPolyVal`
+ * (opaque `void*` for non-commutative polynomials),
+ * `schur_poly_val`, and `local_val`. Constructors and `get_*`
+ * accessors pair up so each ring writes its values in and
+ * reads them back out through the matching tag.
+ *
+ * @see ring.hpp
+ * @see relem.hpp
+ */
+
 #include "M2/math-include.h"  // for mpfi_srcptr, mpfr_srcptr, mpq_srcptr
 #include "monoid.hpp"         // for monomial
 #include "newdelete.hpp"      // for our_new_delete
@@ -103,6 +137,20 @@ union ring_elem
   const schur_poly* get_schur_poly() const { return schur_poly_val; }
 };
 
+/**
+ * @brief Singly linked-list node carrying one term of a polynomial-ring
+ * element.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `next` chains to the next term, `coeff` holds the term's
+ * coefficient (in the parent ring's `ring_elem` representation),
+ * and `monom[1]` is a C99-style flexible-array tail holding the
+ * monomial's encoded `int` payload --- the actual length is
+ * determined by the ring's monoid. Polynomial values stored in a
+ * `ring_elem` via the `poly_val` union arm point at the head of a
+ * chain of these.
+ */
 /* Implements a linked list of ring monomials along with coefficients */
 struct Nterm
 {
@@ -113,7 +161,9 @@ struct Nterm
 };
 
 typedef struct vecterm *vec;
-/* Implements a linked list of module monomials along with coefficients */
+/* Implements a linked list of module monomials along with coefficients.
+   Nodes are kept in strictly decreasing order of `comp`; zero-coefficient
+   entries are omitted. */
 // TODO: why is this garbage collected?
 struct vecterm : public our_new_delete
 {

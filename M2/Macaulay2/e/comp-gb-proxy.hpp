@@ -3,6 +3,35 @@
 #ifndef _comp_gb_proxy_hpp_
 #define _comp_gb_proxy_hpp_
 
+/**
+ * @file comp-gb-proxy.hpp
+ * @brief `GBProxy` --- legacy indirection wrapper around another `GBComputation` (deprecated).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `GBProxy` is a `GBComputation` subclass that holds a non-owning
+ * `GBComputation* G` and forwards every virtual call to it; the
+ * `stop_conditions_ok` override copies `this->stop_` onto `G->stop_`
+ * before delegating, so caller-set stop conditions propagate at the
+ * one point that matters. The unique-to-this-class
+ * `replace_GB(G0)` swaps the held pointer (returning the old one
+ * and copying the new one's status onto `this`), which lets engine
+ * code start one algorithm, jettison its internal state, and keep
+ * only the resulting basis under a fresh wrapper --- the design
+ * goal that motivated `GBProxy` in the first place. The destructor
+ * is `// Intentionally left blank` in the `.cpp` (no owned
+ * resources beyond the forwarded pointer), and the source's own
+ * in-line `@brief` flags this class as expungeable ("Should be
+ * expunged, as full functionality isn't used").
+ *
+ * New code should prefer constructing the desired `GBComputation`
+ * subclass directly, or wrap a precomputed basis in `GBDeclared`
+ * (`comp-gb-declared.hpp`) when a trusted GB is already in hand.
+ *
+ * @see comp-gb.hpp
+ * @see comp-gb-declared.hpp
+ */
+
 #include "comp-gb.hpp"
 
 /**

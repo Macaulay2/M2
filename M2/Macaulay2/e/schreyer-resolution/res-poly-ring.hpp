@@ -3,6 +3,45 @@
 #ifndef _res_poly_ring_hpp_
 #define _res_poly_ring_hpp_
 
+/**
+ * @file schreyer-resolution/res-poly-ring.hpp
+ * @brief `ResPolyRing` and `ResPolynomial` --- resolution-tuned polynomial-ring view and value type.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the F4 resolution's stripped-down counterpart of
+ * `GBRing` / `gbvector`. `ResPolynomial` stores a polynomial as
+ * a length counter, a flat `ElementArray` of coefficients
+ * (decoded through `VectorArithmetic`), and a flat
+ * `std::vector<res_monomial_word>` of packed monomials whose
+ * layout is controlled by `ResMonoid`; the destructor counts
+ * itself in the static `npoly_destructor` debug tally. The
+ * three friends --- `ResPolyRing`, `ResPolynomialConstructor`,
+ * and `ResPolynomialIterator` --- are the only entry points
+ * allowed to peek inside the layout, which lets future reshapes
+ * stay invisible to callers. `ResPolyRing` ties together the
+ * coefficient ring (via `VectorArithmetic`), the resolution
+ * monoid `M`, the original engine monoid `origM` (kept for
+ * promotion / lifting paths), and an optional
+ * `SkewMultiplication` so resolutions over skew-commutative
+ * rings get the right sign in `mult`.
+ *
+ * The split from `PolynomialRing` exists because resolutions do
+ * vastly more monomial arithmetic per second than ordinary
+ * polynomial ops, and the standard ring's virtual dispatch and
+ * full degree-monoid recursion would dominate. Here the
+ * `VectorArithmetic` indirection inlines, and the
+ * `ResMonoid` choice between dense (`res-moninfo-dense.hpp`)
+ * and sparse (`res-moninfo-sparse.hpp`) layouts can be
+ * benchmarked without touching call sites.
+ *
+ * @see VectorArithmetic.hpp
+ * @see res-moninfo.hpp
+ * @see res-monomial-types.hpp
+ * @see res-f4-computation.hpp
+ * @see res-schreyer-frame.hpp
+ */
+
 #include "VectorArithmetic.hpp"                        // for VectorArithmetic
 #include "newdelete.hpp"                               // for our_new_delete
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
@@ -17,6 +56,22 @@ class Monoid;
 class SkewMultiplication;
 struct ResSchreyerOrder;
 
+/**
+ * @brief Polynomial type used by the F4 resolution engine: parallel
+ * coefficient vector and concatenated monomial buffer.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `coeffs` is an `ElementArray` of `len` coefficients managed
+ * through `VectorArithmetic`. `monoms` is a flat
+ * `std::vector<res_monomial_word>` holding all `len` monomials laid
+ * out back-to-back (variable-size in the general case --- iterate
+ * with `ResPolynomialIterator`, which advances by
+ * `ResMonoid::monomial_size`). The static `npoly_destructor` counter
+ * tracks how many destructors actually freed a coefficient array,
+ * useful for leak / churn diagnostics. Copy and move are default
+ * because both members own their data.
+ */
 class ResPolynomial
 {
   friend class ResPolyRing;
@@ -44,6 +99,19 @@ class ResPolynomial
   ResPolynomial& operator=(ResPolynomial&& other) = default;
 };
 
+/**
+ * @brief The polynomial-ring view the F4 resolution engine reduces against:
+ * coefficient arithmetic plus the engine-specific `ResMonoid`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Bundles a `VectorArithmetic` (built from `baseRing`, usually the
+ * base field but not required to be for non-minimal complexes), the
+ * `ResMonoid` that owns monomial layout and order, and the
+ * original `Monoid` for translating back to engine-side polynomials.
+ * Optional `SkewMultiplication*` enables the skew-commutative
+ * resolution path; `isSkewCommutative()` reports whether it's set.
+ */
 class ResPolyRing : public our_new_delete
 {
  public:
@@ -84,6 +152,22 @@ class ResPolyRing : public our_new_delete
   const SkewMultiplication* mSkew;
 };
 
+/**
+ * @brief Builder that accumulates terms into a `ResPolynomial` and finalises
+ * the layout in one shot via `setPoly`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Stages monomials as `res_packed_monomial` pointers in `monoms`
+ * and grows a parallel `ElementArray` in `coeffs`. `appendMonicTerm`
+ * pushes a monomial and an implicit `1` coefficient; `pushBackTerm`
+ * pushes just the monomial (the caller is expected to write the
+ * coefficient through `coefficientInserter`). `setPoly` allocates
+ * the final flat `monoms` buffer in the target `ResPolynomial`,
+ * copies each monomial in, and swaps the coefficient array over.
+ * Maintains two static counters (`ncalls`, `ncalls_fromarray`) for
+ * tracking how often each construction path is used.
+ */
 class ResPolynomialConstructor
 {
  private:
@@ -143,6 +227,18 @@ class ResPolynomialConstructor
   }
 };
 
+/**
+ * @brief Forward iterator over the terms of a `ResPolynomial`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Carries two cursors: `coeff_index` ticks through `elem.coeffs`
+ * one per term, and `monom_index` walks the flat `elem.monoms`
+ * buffer in monomial-size strides (`ResMonoid::monomial_size`),
+ * which is variable when monomials are not fixed-width. Equality
+ * compares the coefficient index only --- the "end" iterator pins
+ * it to `elem.len`.
+ */
 class ResPolynomialIterator
 {
   const ResPolyRing& mRing;

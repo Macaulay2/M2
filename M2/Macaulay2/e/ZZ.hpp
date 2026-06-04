@@ -3,6 +3,43 @@
 #ifndef _ZZ_hh_
 #define _ZZ_hh_
 
+/**
+ * @file ZZ.hpp
+ * @brief Legacy `RingZZ` --- a `Ring`-derived integer ring backed by GMP `mpz_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `RingZZ` is the engine's original integer-ring class,
+ * pre-dating the `aring` framework. It inherits from `Ring`
+ * directly, uses `mpz_ptr` as its `element_type`, and is the
+ * type of the global `globalZZ` instance created by
+ * `PolyRing::make_trivial_ZZ_poly_ring()` (per the in-source
+ * comment near the constructors). The class also `friend`s
+ * `M2::ARingZZGMP` and carries an `ARingZZGMP* coeffR` exposed
+ * by `get_ARing()`, so callers on the legacy side can hand the
+ * aring view to code that prefers it.
+ *
+ * Three integer rings coexist today: `RingZZ` (this file, GMP) ---
+ * which is what `ring.cpp::makeIntegerRing` actually returns as
+ * `new RingZZ` --- plus the two aring siblings `M2::ARingZZGMP`
+ * (GMP via the aring framework, `aring-zz-gmp.hpp`) and
+ * `M2::ARingZZ` (FLINT via the aring framework,
+ * `aring-zz-flint.hpp`). `RingZZ` itself holds an
+ * `ARingZZGMP *coeffR` (exposed by `get_ARing()`) and uses it
+ * via `RingZZ::makeMutableMatrix` to build `MutableMat<DMat<
+ * ARingZZGMP>>` / `MutableMat<SMat<ARingZZGMP>>` for mutable
+ * matrices; the FLINT-backed `ARingZZ` is used directly by the
+ * dense linear-algebra path via `DMat<ARingZZ>` (alias `DMatZZ`).
+ * The two `mask_mpz_cmp_si` / `mask_mpq_cmp_si` wrapper functions
+ * at the top of the header exist purely to silence GMP's
+ * old-style-cast warnings, as the adjacent in-source comment notes.
+ *
+ * @see aring-zz-flint.hpp
+ * @see aring-zz-gmp.hpp
+ * @see aring.hpp
+ * @see aring-glue.hpp
+ */
+
 #include "error.h"
 #include "ring.hpp"
 #include <cstddef>
@@ -23,8 +60,19 @@ extern "C" inline int mask_mpq_cmp_si(mpq_srcptr x, long int i, long int j)
 }
 
 /**
-    @ingroup rings
-*/
+ * @brief Engine-side ring of integers, backed by GMP `mpz_ptr` elements.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Each non-zero element is a heap-allocated `mpz_struct` handed
+ * out by `new_elem()`; `coeffR` is the matching `ARingZZGMP`
+ * facade used wherever the `aring`-shaped coefficient interface is
+ * expected. The class itself only exposes the `Ring`-level surface
+ * --- `add`, `mult`, `divide`, `gcd`, etc. --- with bodies that
+ * delegate to GMP. Constructed once at startup via `Ring::initZZ()`.
+ *
+ * @ingroup rings
+ */
 class RingZZ : public Ring
 {
   friend class M2::ARingZZGMP;

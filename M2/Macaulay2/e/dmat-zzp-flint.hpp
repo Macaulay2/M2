@@ -3,6 +3,40 @@
 #ifndef _dmat_zzp_flint_hpp_
 #define _dmat_zzp_flint_hpp_
 
+/**
+ * @file dmat-zzp-flint.hpp
+ * @brief `DMat<M2::ARingZZpFlint>` --- dense `Z/p` matrices stored in a FLINT `nmod_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Specialises the dense-matrix template for the FLINT-backed
+ * `Z/p` aring. Storage is a single `nmod_mat_t mArray` (an
+ * `mp_limb_t` buffer of representatives in `[0, p)` carried
+ * alongside the precomputed-reciprocal modulus FLINT uses for
+ * fast reduction). The class exposes the standard `DMat`
+ * surface (`ring()`, `numRows`, `numColumns`, `entry(r, c)` via
+ * `nmod_mat_entry`, `resize`, `swap`) plus a raw `nmod_mat()`
+ * accessor and the `unsafeArray()` direct-pointer hook for
+ * consumers that need to hand the underlying buffer back to
+ * FLINT.
+ *
+ * Arithmetic (`nmod_mat_add` / `nmod_mat_mul` / `nmod_mat_rank`
+ * / `nmod_mat_solve` / `nmod_mat_inv` / `nmod_mat_nullspace`,
+ * ...) is *not* declared in this file --- `mat-linalg.hpp` and
+ * the LU specialisations call those routines directly through
+ * `nmod_mat()` once they have a matrix in this form. A sibling
+ * FFLAS-FFPACK specialisation for `ARingZZpFFPACK` lives
+ * alongside in the `mat-linalg.hpp` machinery for primes that
+ * fit FFPACK's BLAS-via-`double` strategy. As with every
+ * FLINT-backed header, `M2/gc-include.h` precedes the FLINT
+ * include so allocations route through bdwgc.
+ *
+ * @see dmat.hpp
+ * @see dmat-lu-zzp-flint.hpp
+ * @see dmat-lu-zzp-ffpack.hpp
+ * @see aring-zzp-flint.hpp
+ */
+
 #include <utility>              // for swap
 #include "aring-zzp-flint.hpp"  // for ARingZZpFlint
 
@@ -21,6 +55,18 @@ class DMat;
 // Flint: use nmod_mat for implementation of dense matrices //
 //////////////////////////////////////////////////////////////
 
+/**
+ * @brief Specialisation of `DMat` for `ARingZZpFlint` matrices, backed by
+ * FLINT's `nmod_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Wraps a FLINT `nmod_mat_t` and forwards every dense matrix
+ * operation to FLINT's `nmod_mat_*` routines, so the
+ * coefficient-by-coefficient arithmetic uses FLINT's optimised
+ * `nmod` primitives. RAII-clean: the constructor calls
+ * `nmod_mat_init` and the destructor calls `nmod_mat_clear`.
+ */
 template <>
 class DMat<M2::ARingZZpFlint>
 {

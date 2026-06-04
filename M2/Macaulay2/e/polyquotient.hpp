@@ -3,6 +3,39 @@
 #ifndef _polyquotient_hpp_
 #define _polyquotient_hpp_
 
+/**
+ * @file polyquotient.hpp
+ * @brief `PolyRingQuotient` --- polynomial ring modulo an ideal whose Groebner basis is known.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the concrete `PolyRingFlat` subclass for `R / I`
+ * (sibling of `PolyRing` from `poly.hpp` --- both inherit
+ * directly from `PolyRingFlat`, not from each other), where `R`
+ * is the ambient ring and `I` is a polynomial ideal carried in
+ * a `QRingInfo` bookkeeping struct (declared in `qring.hpp`).
+ * `QRingInfo` keeps the defining ideal's generators twice ---
+ * as `Nterm*` for ring-element arithmetic and as `gbvector*`
+ * for GB-internal reduction --- so multiplication, inversion,
+ * and every other operation in the quotient finishes with a
+ * reduction against the stored GB without having to convert
+ * representations on each call. The class overrides
+ * `normal_form` to delegate to `qinfo_->normal_form`, plus
+ * `make_gb(g)` (build a GB for the principal ideal `(g)` inside
+ * the quotient) and `ann(a, b)` (return `h` with `h * a` in
+ * `(b)`).
+ *
+ * Built from M2 by `R = k[xs]; I = ideal(...); Q = R/I`; the
+ * factory rejects trivial ideals (returns the ambient `R`
+ * unchanged) and routes through `PolynomialRing` to wire up the
+ * resulting `PolyRingQuotient` into the engine's ring
+ * hierarchy.
+ *
+ * @see poly.hpp
+ * @see qring.hpp
+ * @see polyring.hpp
+ */
+
 #include "engine-includes.hpp"
 
 #include "poly.hpp"
@@ -18,7 +51,20 @@ class gbvector;
 struct RingMap;
 
 /**
- * \ingroup polynomialrings
+ * @brief `PolyRingFlat` subclass for quotients `R / I` of a polynomial ring
+ * by an ideal.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Owns the defining ideal data through the inherited `qinfo_`
+ * (`QRingInfo*`, see `qring.hpp`) and adds `normal_form` as the
+ * thin forwarder onto it: every arithmetic result is reduced
+ * modulo the quotient ideal before being returned. The factory
+ * (`make_gb` plus the front-end-side `PolynomialRing::create`
+ * paths) builds the GB of `I` once and reuses it for every
+ * subsequent reduction.
+ *
+ * @ingroup polynomialrings
  */
 class PolyRingQuotient : public PolyRingFlat
 {

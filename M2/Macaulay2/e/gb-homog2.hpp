@@ -2,6 +2,39 @@
 #ifndef _gb_hh_
 #define _gb_hh_
 
+/**
+ * @file gb-homog2.hpp
+ * @brief `GB_comp` --- Buchberger GB specialised to homogeneous input.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the homogeneous-specialised Groebner basis class
+ * `GB_comp`, along with its `GB_COMP_*` state constants
+ * (`NEWDEGREE`, `NEED_RESIZE`, `S_PAIRS`, `GENS`, `AUTO_REDUCE`,
+ * `NEWPAIRS`, `DONE`). The point of the specialisation is that
+ * S-polynomial degrees in a homogeneous ideal are monotonically
+ * non-decreasing, so the algorithm can process one degree at a
+ * time: ingest all generators of degree `d`, process every
+ * S-pair of degree `d` to completion, then yield the
+ * basis-up-to-degree-`d` and either stop (under `DegreeLimit =>`)
+ * or move on. This makes the homogeneous case naturally
+ * resumable and avoids the sugar bookkeeping the default `gbA`
+ * carries.
+ *
+ * The default `gb-default.hpp` (`gbA`) produces the same answer
+ * for homogeneous input but pays the sugar overhead; the
+ * dispatcher in `comp-gb.cpp` reaches `GB_comp` through
+ * `algorithm == 5` (homogeneity is not auto-detected --- the
+ * caller picks). Sibling variants `gb-sugarless.hpp`,
+ * `gb-toric.hpp`, and `gb-walk.hpp` cover the other specialised
+ * paths.
+ *
+ * @see gb-default.hpp
+ * @see comp-gb.hpp
+ * @see spair.hpp
+ * @see gbweight.hpp
+ */
+
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"

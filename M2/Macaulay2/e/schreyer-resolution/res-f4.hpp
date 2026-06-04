@@ -3,6 +3,54 @@
 #ifndef _res_f4_hpp_
 #define _res_f4_hpp_
 
+/**
+ * @file schreyer-resolution/res-f4.hpp
+ * @brief `F4Res` --- F4-style matrix-reduction worker over a `SchreyerFrame`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the per-cell algorithm class `F4ResComputation`
+ * invokes to advance the resolution one `(level, degree)` step
+ * at a time. `construct(lev, degree)` reads the frame's pending
+ * syzygies into one matrix and collects the matching
+ * tail-reducers from lower levels and earlier degrees into a
+ * second matrix sharing the same columns; the column set is
+ * the union of monomials at level `lev - 2` reachable from
+ * those rows, sorted by Schreyer order, and the hashtable
+ * `MonomialHashTable<ResMonomialsWithComponent> mHashTable`
+ * keys those monomials back to their column index.
+ * `gaussReduce` row-reduces the S-pair matrix against the
+ * reducer matrix via the shared `VectorArithmetic` backend,
+ * and the resulting echelon rows are written back into the
+ * frame as new syzygies. The matrices live in two parallel
+ * `std::vector<Row>` --- `mReducers` (the square reducer
+ * matrix) and `mSPairs` (one row per element at this
+ * `(lev, degree)`) --- where each `Row` carries
+ * `mLeadTerm` / `mComponents` / `mCoeffs`. Monomials at this
+ * cell live in `MonomialMemorySpace mMonomSpace2` and are
+ * freed in bulk between cells.
+ *
+ * Construction calls `processMonomialProduct` (creates or
+ * looks up a column for `m*n` with skew-sign tracking) and
+ * `findDivisor` (which reducer covers a given monomial) before
+ * `loadRow` / `reorderColumns` / `makeMatrix` / `gaussReduce`
+ * snap the matrix together. `F4Res` holds a reference to its
+ * `SchreyerFrame` rather than owning it, so the frame outlives
+ * any single reduction; `friend class ResColumnsSorter` gives
+ * the column-sorting helper access to the column-index
+ * map. `construct(lev, degree)` requires that both
+ * `(lev, degree-1)` and `(lev-1, degree-1)` are already
+ * complete, **but not** `(lev-1, degree)` (per the in-source
+ * NOTE comment). Sibling of `f4/f4.hpp` for the commutative
+ * F4.
+ *
+ * @see res-schreyer-frame.hpp
+ * @see res-f4-computation.hpp
+ * @see res-poly-ring.hpp
+ * @see f4/f4.hpp
+ * @see VectorArithmetic.hpp
+ */
+
 #include "VectorArithmetic.hpp"
 #include "f4/monhashtable.hpp"
 #include "schreyer-resolution/res-memblock.hpp"
@@ -15,6 +63,23 @@ class SchreyerFrame;
 
 /////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief F4-style engine that computes one `(level, degree)` slice of a
+ * free resolution into the host `SchreyerFrame`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `construct(lev, degree)` builds the Macaulay matrix whose rows
+ * are the symbolic reducers for each frame element of that
+ * `(level, degree)` cell, runs `gaussReduce`, and writes the
+ * resulting syzygy polynomials back into the matching
+ * `FrameElement::mSyzygy` slots. The matrix construction
+ * (`processCurrentMonomial` / `processMonomialProduct` /
+ * `loadRow`) and column-sorting passes (`reorderColumns`,
+ * `ResColumnsSorter` friend) live inside this class; the
+ * `debugOutput*` helpers exist for printing the partial state of
+ * the F4 matrix when investigating reduction bugs.
+ */
 class F4Res
 {
   friend class ResColumnsSorter;
@@ -38,6 +103,18 @@ class F4Res
   const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
  private:
+  /**
+   * @brief One row of the Macaulay matrix built by `F4Res::construct`.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details `mLeadTerm` is the previous-level monomial that contributed
+   * this row, used after reduction to slot the resulting syzygy
+   * back into the right `FrameElement`. `mComponents` and
+   * `mCoeffs` are parallel arrays: column index and coefficient
+   * for each non-zero entry. `loadRow` populates the arrays;
+   * `gaussReduce` consumes them.
+   */
   struct Row
   {
     res_packed_monomial

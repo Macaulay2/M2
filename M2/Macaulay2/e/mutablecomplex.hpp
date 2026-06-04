@@ -4,6 +4,42 @@
 #ifndef _mutablecomplex_hpp_
 #define _mutablecomplex_hpp_
 
+/**
+ * @file mutablecomplex.hpp
+ * @brief `MutableComplex` --- in-place chain complex of `MutableMatrix` differentials.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `MutableComplex`, a `MutableEngineObject` subclass
+ * carrying a sequence of `MutableMatrix*` differentials chained
+ * together with a parallel `mBetti` vector of dimensions and
+ * cached `mRing` / `mLocalRing` / `mPolynomialRing` pointers.
+ * The constructor accepts a `VECTOR(MutableMatrix*)` and infers
+ * the ring contexts from the first matrix (`get_ring` /
+ * `cast_to_LocalRing` / `cast_to_PolynomialRing`). The `prune_*`
+ * family is the working API: `prune_unit(iter, flags)` removes
+ * one unit entry and propagates the corresponding row / column
+ * update to the neighbouring differential to preserve the
+ * composition-zero invariant; `prune_matrix(n, flags)` reduces
+ * one matrix's worth of units; `prune_complex(nsteps, flags)`
+ * runs the same pass across the whole complex; and
+ * `prune_betti` / `prune_morphisms` extract the new dimensions
+ * / the reduction morphisms after pruning. The nested
+ * `iterator` class walks `(matrix_index, (row, col))` positions
+ * and `next_unit` / `find_unit` / `list_units` locate
+ * unit-pivot entries to prune.
+ *
+ * Typical workflows construct a `MutableComplex` from an
+ * existing resolution (`comp-res.hpp`) and reduce it to a
+ * minimal form by sequential unit pruning. The TODO at the top
+ * of the header flags the open question of templating over
+ * sparse vs. dense `MutableMatrix`.
+ *
+ * @see mat.hpp
+ * @see comp-res.hpp
+ * @see localring.hpp
+ */
+
 #include "localring.hpp"
 #include "style.hpp"
 #include "hash.hpp"
@@ -11,6 +47,23 @@
 #include "debug.hpp"
 #include <iostream>
 
+/**
+ * @brief Sequence of `MutableMatrix` differentials representing an in-progress
+ * chain complex, used for engine-side minimisation / pruning.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds the underlying ring (`mRing`), and, if applicable, its
+ * `LocalRing` / `PolynomialRing` casts so `prune_*` can switch to
+ * the local-ring path when warranted. `mDifferential[i]` is the
+ * matrix from position `i+1` to position `i`, and `mBetti` caches
+ * the per-position Betti numbers (matrix sizes). The pruning API
+ * (`prune_unit`, `prune_matrix`, `prune_complex`) walks over
+ * `(matrix, row, col)` triples produced by the nested `iterator`
+ * and uses any unit entry it finds to row/column reduce the
+ * complex in place, lowering the Betti numbers while preserving
+ * the homology.
+ */
 // TODO how to seamlessly use sparse or dense mutable matrices?
 // template <typename MutableMatrix>
 class MutableComplex : public MutableEngineObject
@@ -52,6 +105,18 @@ class MutableComplex : public MutableEngineObject
   prune_morphisms(const size_t nsteps, const size_t flags);
   //  MutableComplex* trim_complex(const size_t nsteps, const size_t flags)
 
+  /**
+   * @brief Cursor pointing at one entry of one differential matrix in the
+   * complex: a `(matrix index, (row, col))` triple.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details `mIndex` selects which `MutableMatrix` in `mDifferential` and
+   * `mAddr` selects a position inside it. The pruning API uses
+   * iterators to walk candidate unit entries; `next_unit` /
+   * `find_unit` advance the cursor and `prune_unit(it)` row /
+   * column reduces the complex around that entry.
+   */
   class iterator
   {
    public:

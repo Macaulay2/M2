@@ -2,6 +2,37 @@
 #ifndef _gauss_hh_
 #define _gauss_hh_
 
+/**
+ * @file gauss.hpp
+ * @brief `GaussElimComputation` --- Gaussian elimination GB / submodule strategy over a field.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `GaussElimComputation`, a `GBComputation` subclass that
+ * row-reduces a sparse matrix of generators to echelon form
+ * directly, plus the row-element struct `gm_elem` --- a
+ * `(f, fsyz)` value/syzygy pair plus a cached `nterms` count and
+ * a `next` pointer. Rows are bucketed by lead component in
+ * parallel arrays `gb_list[i]` (the chosen pivot for component
+ * `i`) and `reduce_list[i]` (a linked list of pending rows with
+ * lead component `i`); on insert, the sparsest row (fewest
+ * nonzero terms) is promoted to `gb_list[i]` and any displaced
+ * pivot is pushed onto `reduce_list[i]`. After every generator
+ * is processed, the `gb_list` rows are a Groebner basis and the
+ * accumulated `fsyz` components form the matching syzygy module.
+ *
+ * The strategy is the right call when the input is genuinely a
+ * linear-algebra problem in disguise --- field-coefficient
+ * module presentations where Buchberger would just be performing
+ * the same row reductions with more overhead. The dispatcher in
+ * `comp-gb.cpp` selects this path automatically whenever the
+ * base ring of the input is a (non-polynomial) field;
+ * `hermite.hpp` is the analogous `ZZ`-coefficient algorithm.
+ *
+ * @see comp-gb.hpp
+ * @see hermite.hpp
+ */
+
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"

@@ -1,5 +1,41 @@
 #ifndef __dpoly_h_
 #define __dpoly_h_
+
+/**
+ * @file dpoly.hpp
+ * @brief Native univariate polynomial arithmetic over QQ extensions and finite fields.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `TowerPolynomialStruct` (a `(deg, len, union {long*
+ * ints; TowerPolynomial* polys;})` recursive layout that
+ * bottoms out at `long` coefficients at level 0 and recurses
+ * upward through pointers at each higher level), the `DPoly`
+ * class that drives arithmetic over such towers, and the
+ * `DPolyTraverser` visitor. `DPoly` provides the engine's
+ * dependency-free GCD machinery for algebraic-extension
+ * construction and modular factorisation paths: "monic GCD
+ * mod p" over a finite extension field, and a modular GCD over
+ * `QQ` (lift to many `Z/p`, then CRT back). The in-file
+ * comment flags multivariate and function-field extensions as
+ * planned but not yet implemented.
+ *
+ * The point of having this code alongside Factory
+ * (`interface/factory.h`) is twofold: it gives the engine a
+ * dependency-free path that still works when Factory is
+ * unavailable, and it provides an end-to-end-debuggable native
+ * implementation that the tower layers reach into. Real
+ * consumers are `tower.hpp` (the legacy `Tower : public Ring`
+ * class, which holds a `DRing*` back-end pointing at this
+ * machinery) and `aring-tower.hpp` (the modern `ARingTower`
+ * aring, whose element pointers are reinterpreted as
+ * `TowerPolynomial`s).
+ *
+ * @see tower.hpp
+ * @see aring-tower.hpp
+ * @see ExponentVector.hpp
+ */
+
 // Code for univariate polynomials over algebraic extensions of QQ
 // and over finite fields
 
@@ -26,6 +62,21 @@ typedef struct TowerPolynomialStruct *TowerPolynomial;
  * \ingroup polynomialrings
  */
 
+/**
+ * @brief Heap-allocated node of a tower polynomial: a dense
+ * `degree`-indexed coefficient array that recurses through levels.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `deg` is the polynomial's degree in the current top variable and
+ * `len` is the allocated capacity. The `arr` union picks the
+ * coefficient kind by depth: at the bottom level the coefficients
+ * are integers mod `p` stored in `arr.ints`, and at higher levels
+ * each "coefficient" is itself a `TowerPolynomial` one level down,
+ * stored in `arr.polys`. Tower polynomials are accessed through
+ * `DPoly` / `DRing`, which always carry the current `level` so the
+ * right union arm is consulted.
+ */
 struct TowerPolynomialStruct : public our_new_delete
 {
   int deg;
@@ -38,7 +89,22 @@ struct TowerPolynomialStruct : public our_new_delete
 };
 
 /**
- * \ingroup polynomialrings
+ * @brief Arithmetic engine for tower-polynomial rings:
+ * `(Z/p)[x_0][x_1]...[x_{nvars-1}]` modulo a chain of `extensions`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds the characteristic `p`, the number of variables, and an
+ * `extensions` array --- one tower-polynomial per algebraic level
+ * giving the relation that defines the next variable over the
+ * previous (`nullptr` means transcendental, captured by
+ * `degree_of_extension < 0`). Almost every public operation
+ * (`mult`, `add_in_place`, `gcd`, `resultant`, `pseudo_division`,
+ * ...) takes an explicit `level` argument that dispatches the
+ * recursive descent down the tower. Used by `DRing`, which fixes a
+ * particular working level on top of a shared `DPoly`.
+ *
+ * @ingroup polynomialrings
  */
 class DPoly
 {
@@ -182,7 +248,19 @@ class DPoly
 };
 
 /**
- * \ingroup polynomialrings
+ * @brief Single-level view of a tower-polynomial ring: a `DPoly` plus a
+ * fixed working `level` and a `Tower`-flavoured `ring_type` typedef.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Wraps the `DPoly` engine so the rest of the engine can treat a
+ * particular variable level as an ordinary ring with operations
+ * `add` / `mult` / `invert` / ... on `elem = TowerPolynomial`.
+ * `create()` is the factory that bundles characteristic, variable
+ * count, and extension chain into a fresh `DRing`. Used as the
+ * coefficient ring of the higher-level `Tower` class.
+ *
+ * @ingroup polynomialrings
  */
 class DRing : public our_new_delete
 {
@@ -367,7 +445,19 @@ class DRing : public our_new_delete
 };
 
 /**
- * \ingroup polynomialrings
+ * @brief Visitor base class that walks every term of a `TowerPolynomial`,
+ * calling `viewTerm(coeff, exponents)` once per leaf.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Subclasses override `viewTerm` to consume terms (e.g. to convert
+ * a tower polynomial to engine `Nterm`s for display or for matrix
+ * construction). `traverse(f)` does the depth-first descent and
+ * stops as soon as `viewTerm` returns false. Holds a `const DPoly*`
+ * so the same traverser can be used against several polynomials in
+ * the same ring without rebuilding.
+ *
+ * @ingroup polynomialrings
  */
 class DPolyTraverser : public our_new_delete
 {

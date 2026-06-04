@@ -3,6 +3,45 @@
 #ifndef __matrix_stream_hhp__
 #define __matrix_stream_hhp__
 
+/**
+ * @file matrix-stream.hpp
+ * @brief `MatrixStream` --- term-by-term streaming construction of a `Matrix`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the engine's streaming matrix-builder API. A caller
+ * constructs `MatrixStream(target_FreeModule)` and drives a
+ * hand-rolled state machine:
+ * `idealBegin(polyCount)` ->
+ * `appendPolynomialBegin(nTerms)` ->
+ * `appendTermBegin(component)` ->
+ * `appendExponent(var, exp)` (zero or more) ->
+ * `appendTermDone(coefficient)` ->
+ * `appendPolynomialDone()` ->
+ * `idealDone()`. `value()` then returns the finished `Matrix*`
+ * (and is `nullptr` until `idealDone`). The class also exposes
+ * `modulus()` / `varCount()` / `comCount()` so the same protocol
+ * the `mathicgb` stream interface uses can interrogate the
+ * target ring. Coefficients are accepted as `mpz_class` and land
+ * in the target's coefficient ring; `modulus()` returns the
+ * characteristic (the prime when the ring is `Z/p`, `0` for
+ * characteristic-zero rings).
+ *
+ * The companion template `matrixToStream<T>(M, stream)` is the
+ * reverse direction --- it walks an existing `Matrix` column by
+ * column and emits the same event sequence into any `T` that
+ * implements the protocol. The streaming shape is the right
+ * choice when a parser emits one int at a time and the full
+ * polynomial does not fit in memory ahead of time (msolve and
+ * `BasicPolyList` text formats, F4-style streaming input from
+ * disk). `matrix-con.hpp` is the by-construction sibling that
+ * wants whole columns up front.
+ *
+ * @see matrix.hpp
+ * @see matrix-con.hpp
+ * @see BasicPolyListParser.hpp
+ */
+
 #include "poly.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
@@ -32,6 +71,20 @@
     s.idealDone();
 #endif
 
+/**
+ * @brief Streaming consumer that builds an engine `Matrix` from the
+ * mathicgb-style stream callbacks (`idealBegin /
+ * appendPolynomialBegin / appendTermBegin / appendExponent /
+ * appendTermDone / appendPolynomialDone / idealDone`).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Mirrors the `BasicPolyListStreamCollector` shape but produces a
+ * proper engine `Matrix*` over a `PolyRing` instead of a portable
+ * `BasicPolyList`. Used as the bridge between mathicgb's stream
+ * input and the engine's typed matrices --- `value()` returns
+ * `nullptr` until `idealDone()` is called.
+ */
 class MatrixStream
 {
  public:

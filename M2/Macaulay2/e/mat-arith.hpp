@@ -3,12 +3,59 @@
 #ifndef _mat_arith_hpp_
 #define _mat_arith_hpp_
 
+/**
+ * @file mat-arith.hpp
+ * @brief Templated matrix arithmetic for `DMat<R>` / `SMat<R>` plus the `MatrixWindow` / `SubMatrix` view types.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares free-function templates over `DMat<RT>` (and where
+ * applicable `SubMatrix<MatType>`): predicates (`isZero`,
+ * `isEqual`), in-place ops (`negateInPlace`, `addInPlace`,
+ * `subtractInPlace`, `scalarMultInPlace`), out-of-place ops
+ * (`transpose`, `scalarMult`), windowed forms (`setZero`,
+ * `set`, `addTo`, `addMultipleTo`), and the `normSquared`
+ * accumulator. Forward-declares `MatElementaryOps<MT>` whose
+ * definition lives in `mat-elem-ops.hpp`. The companion
+ * `MatrixWindow` struct stores `(begin_row, begin_column,
+ * end_row, end_column)` as a half-open view, and the
+ * templated `SubMatrix<MatType>` carries the same half-open
+ * window together with a reference to the underlying matrix
+ * plus operator overloads (`=`, `+=`, `*=`, `addMultipleTo`)
+ * so callers can compose submatrix updates without copying
+ * storage; this is how the LU paths walk trailing sub-matrices.
+ *
+ * Concrete implementations dispatch through the templated
+ * specialisations in `mat-linalg.hpp` so each `(operation,
+ * RingType)` pair lands on the best back end --- FLINT /
+ * FFLAS-FFPACK / BLAS where they help, generic per-element
+ * loops otherwise.
+ *
+ * @see mat-linalg.hpp
+ * @see mat-elem-ops.hpp
+ * @see dmat.hpp
+ * @see smat.hpp
+ */
+
 template <typename MT>
 class MatElementaryOps;
 // template <typename MT> class MatArithmetic;
 #include "dmat.hpp"
 #include "smat.hpp"
 
+/**
+ * @brief Half-open rectangular submatrix descriptor: `[begin_row, end_row) x
+ * [begin_column, end_column)`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Constructed as `MatrixWindow(first_row, first_col, nrows, ncols)`
+ * to make caller-side window math read naturally. Used by the
+ * dense / sparse matrix arithmetic templates to restrict an
+ * operation to a rectangular block without materialising a copy.
+ * `sameSize` returns true when two windows have matching
+ * dimensions, the precondition for entrywise add / subtract / copy.
+ */
 // Use below via
 //  MatrixWindow(first_row, first_col, #rows, #columns)
 struct MatrixWindow

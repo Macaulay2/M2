@@ -2,6 +2,38 @@
 #ifndef __res_memblock_hpp_
 #define __res_memblock_hpp_
 
+/**
+ * @file schreyer-resolution/res-memblock.hpp
+ * @brief `ResMemoryBlock<T, NSLAB>` --- resolution-side templated slab bump allocator.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares and defines the per-type slab allocator the F4
+ * resolution loop uses for transient monomial, polynomial-term,
+ * and frame-metadata buffers. A linked list of slab records
+ * each holds `NSLAB` `T`s (defaulted to `4092` so the slab
+ * lands near 16 KB for typical `T` and stays L1-resident);
+ * `allocate(n)` / `reserve(n)` + `intern(n)` return the next
+ * `n` `T`s from the current slab, allocating and chaining a new
+ * one on overflow, and `reset()` rewinds the cursor without
+ * freeing the chain so a whole degree's worth of transient
+ * payload can be bulk-discarded with no per-allocation cost.
+ *
+ * Near-twin of `f4/memblock.hpp` on the GB side; both pre-date
+ * the newer `MemoryBlock` (memtailor `Arena` wrapper) used by
+ * `gb-f4/` and `NCAlgebras/`. The resolution variant differs
+ * from `F4MemoryBlock` by *not* inheriting from
+ * `our_new_delete`, so `ResMemoryBlock` instances are
+ * expected to live as members of larger structs rather than
+ * being individually GC-allocated; the F4 / resolution paths
+ * intentionally evolve independently for now.
+ *
+ * @see f4/memblock.hpp
+ * @see MemoryBlock.hpp
+ * @see res-f4.hpp
+ * @see res-poly-ring.hpp
+ */
+
 template <typename T, long int NSLAB = 4092>
 class ResMemoryBlock
 {

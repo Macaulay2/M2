@@ -10,6 +10,34 @@
 #ifndef BIBASIS_TSET_HPP
 #define BIBASIS_TSET_HPP
 
+/**
+ * @file bibasis/tset.hpp
+ * @brief `BIBasis::TSet<MonomType>` --- the running intermediate involutive basis (T-set).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares and defines the container that holds the
+ * "intermediate basis" the involutive driver builds incrementally
+ * before producing its final answer. Internally a `std::list` of
+ * `Triple<MonomType>*` paired with a `JanetTree` over the same
+ * triples: the list preserves insertion order so the algorithm
+ * can walk it deterministically, and the tree gives `O(degree)`
+ * Janet-divisor lookup via `Find(monom)`. `PushBack` keeps both
+ * structures in sync, `Erase` removes from both, and `Clear`
+ * destroys every triple it owns.
+ *
+ * The key operation `CollectNonMultiProlongations` consults the
+ * Janet tree to harvest every non-multiplicative prolongation a
+ * newly inserted triple generates, then hands them to the
+ * `QSet` for scheduling. Templated on `MonomType` so the
+ * underlying tree and triple types stay specialised per ordering.
+ *
+ * @see janettree.hpp
+ * @see triple.hpp
+ * @see qset.hpp
+ * @see involutive.hpp
+ */
+
 #include <list>
 #include <algorithm>
 #include "janettree.hpp"

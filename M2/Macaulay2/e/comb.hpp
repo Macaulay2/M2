@@ -2,6 +2,31 @@
 #ifndef _comb_hh_
 #define _comb_hh_
 
+/**
+ * @file comb.hpp
+ * @brief `Subsets` --- combinatorial-number-system encoding of `p`-subsets of `{0,...,n-1}`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `Subsets` enumerates and encodes `q`-element subsets of
+ * `{0, 1, ..., n - 1}` (for any `q <= p`) as a single integer index
+ * via the standard combinatorial number system. The constructor
+ * `Subsets(n, p)` precomputes a binomial table; `encode(a)` returns
+ * the index of a sorted `Subset`, `decode(i, a)` writes the `i`-th
+ * subset back into `a`, and the static `increment(n, s)` advances
+ * `s` to the next subset in canonical order. `encodeBoundary` and
+ * `concatenateSubsets` cover the face-map and shuffle operations
+ * needed for exterior-power signs. The encoding is stable under
+ * extension of the ambient set --- the index of a subset depends
+ * only on its element list, not on `n` --- so adding new ambient
+ * elements appends new indices without renumbering existing ones.
+ *
+ * Engine consumers are the exterior-power constructions on free
+ * modules in `freemod.cpp` and `schorder.cpp`, and the minor /
+ * pfaffian routines in `det.cpp`, `matrix.cpp`, and `pfaff.cpp`,
+ * which iterate over row- and column-subsets via `Subsets::increment`.
+ */
+
 #include <cassert>
 #include <vector>
 #include <iosfwd>
@@ -32,6 +57,19 @@
 
 typedef std::vector<size_t> Subset;
 
+/**
+ * @brief Bijective integer encoding of `q`-subsets of `{0, ..., n-1}` via
+ * `binomial(a_0, 1) + binomial(a_1, 2) + ... + binomial(a_{q-1}, q)`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Constructed with maximum bounds `(n, p)`; supports encoding and
+ * decoding of `q`-subsets for all `q <= p`. The encoding does not
+ * depend on `n`, so the same index space scales as the underlying
+ * set grows. Throws if a result would not fit in `size_t`. Used
+ * wherever the engine enumerates exterior-style subsets without
+ * allocating an explicit table.
+ */
 class Subsets
 {
  public:

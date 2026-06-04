@@ -3,6 +3,42 @@
 #ifndef _dmat_gf_flint__hpp_
 #define _dmat_gf_flint__hpp_
 
+/**
+ * @file dmat-gf-flint.hpp
+ * @brief `DMat<M2::ARingGFFlint>` --- dense GF matrices stored in a FLINT `fq_zech_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Specialises the dense-matrix template for the small-`q`
+ * Galois-field aring `ARingGFFlint`. Storage is a single
+ * `fq_zech_mat_t mArray` whose entries are Zech log indices
+ * shared with the aring; the class exposes the standard `DMat`
+ * surface (`ring()`, `numRows`, `numColumns`, `entry(r, c)`
+ * via `fq_zech_mat_entry`, `resize`, `swap`) plus a raw
+ * `fq_zech_mat()` accessor and the `unsafeArray()` direct-pointer
+ * hook for consumers that need to hand the underlying buffer
+ * back to FLINT. All `fq_zech_mat_*` API calls take the
+ * `ring().flintContext()` so the constructors and destructor
+ * thread it through.
+ *
+ * Arithmetic and the LU / rank / solve paths are not declared
+ * in this header --- consumers (the LU specialisations in
+ * `dmat-lu-inplace.hpp` and the `mat-linalg.hpp` family) reach
+ * into `fq_zech_mat()` and call the FLINT routines directly.
+ * The companion `dmat-gf-flint-big.hpp` covers the polynomial-
+ * quotient (`fq_nmod_mat_t`) representation used by
+ * `ARingGFFlintBig`; the user picks between the two at ring
+ * construction time through the separate
+ * `rawARingGaloisFieldFlintZech` and `rawARingGaloisFieldFlintBig`
+ * entry points (no in-engine auto-fallback). The required
+ * `M2/gc-include.h` shim precedes the FLINT headers so the
+ * allocator routes through bdwgc.
+ *
+ * @see dmat.hpp
+ * @see dmat-gf-flint-big.hpp
+ * @see aring-gf-flint.hpp
+ */
+
 #include <utility>                // for swap
 #include "aring-gf-flint.hpp"     // for ARingGFFlint
 
@@ -18,6 +54,18 @@
 template <typename ACoeffRing>
 class DMat;
 
+/**
+ * @brief Specialisation of `DMat` for `ARingGFFlint` matrices, backed by
+ * FLINT's `fq_zech_mat` (Zech-log) routines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Matrices over `GF(p^n)` for small-field cases: stores entries
+ * in FLINT's discrete-log encoding and delegates linear-algebra
+ * primitives to the matching `fq_zech_mat_*` functions. The Zech
+ * tables make addition cheap, so this is the preferred dense
+ * `GF(p^n)` backend for small fields.
+ */
 /////////////////////////////////////////////////////////////////
 // Flint: use fq_nmod_mat for implementation of dense matrices //
 /////////////////////////////////////////////////////////////////

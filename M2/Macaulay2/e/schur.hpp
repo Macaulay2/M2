@@ -3,6 +3,37 @@
 #ifndef _Schurring_hh_
 #define _Schurring_hh_
 
+/**
+ * @file schur.hpp
+ * @brief `SchurRing` --- symmetric-function ring with Schur-basis multiplication via Littlewood-Richardson.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `SchurRing`, a `PolyRing` subclass whose elements
+ * are Z-linear combinations of Schur functions `s_lambda`
+ * indexed by partitions, plus the supporting `tableau` class
+ * (partition vector `p`, partition vector `lambda`, and
+ * `(xloc, yloc)` coordinate arrays giving the horizontal /
+ * vertical positions of each cell in the skew shape).
+ * Multiplication computes the structure constants
+ * `s_lambda * s_mu = sum_nu c_{lambda mu}^nu s_nu` --- the
+ * Littlewood-Richardson coefficients --- via the private
+ * `skew_schur(lambda, p)` and `SM()` recursion, with reusable
+ * `_SMtab` / `_SMfilled` scratch tableaux kept on the ring so
+ * `mult_monomials` does not re-allocate on every product.
+ *
+ * `SCHUR_MAX_WT = 100` caps the partition weight the engine
+ * will multiply; `LARGE_NUMBER = 32000` is the sentinel marking
+ * empty slots in the tableau scratch space. `schur2.hpp` is a
+ * parallel symmetric-function ring built on a different basis,
+ * and `schur-poly-heap.hpp` is the bucketed-collector helper
+ * for assembling large sums of Schur monomials.
+ *
+ * @see poly.hpp
+ * @see schur2.hpp
+ * @see schur-poly-heap.hpp
+ */
+
 #include <vector>
 #include "poly.hpp"
 
@@ -33,6 +64,20 @@ class tableau
   void display() const;
 };
 
+/**
+ * @brief `PolyRing` subclass implementing the Schur (symmetric-function)
+ * ring whose monomials are partitions and whose multiplication is
+ * the Littlewood-Richardson rule.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Exponent vectors are interpreted as partitions and converted
+ * back and forth via `to_partition` / `from_partition`. Schur
+ * multiplication uses the skew-tableau recursion `SM()` driven by
+ * `_SMtab` / `_SMfilled` / `_SMcurrent` scratch state, accumulating
+ * the result into `_SMresult`. Used by the engine's symmetric
+ * function code paths to compute products and skew Schur expansions.
+ */
 class SchurRing : public PolyRing
 {
  private:

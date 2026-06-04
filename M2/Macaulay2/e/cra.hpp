@@ -3,6 +3,35 @@
 #ifndef _cra_hpp_
 #define _cra_hpp_
 
+/**
+ * @file cra.hpp
+ * @brief `ChineseRemainder` --- CRT lifting and rational reconstruction primitives.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `ChineseRemainder`, a static-only collection that
+ * combines modular results back into `ZZ` and `QQ`. `CRA0` is
+ * the core step: given `a mod m`, `b mod n` with `gcd(m, n) = 1`
+ * and the precomputed values `um = u*m`, `vn = v*n`, `mn = m*n`
+ * (where `1 = u*m + v*n`), it produces the unique value reducing
+ * to `a mod m` and `b mod n`; the `.cpp` lifts the result into
+ * balanced-residue form on `(-mn/2, mn/2]` so small integers
+ * stay small. `computeMultipliers` produces those Bezout terms
+ * up front and `CRA` overloads lift `ring_elem`, `vec`, `Matrix`,
+ * and `RingElement` element-by-element with the same multipliers.
+ *
+ * `ratConversion` does rational reconstruction: given `x mod m`,
+ * the half-extended-Euclidean run recovers a fraction `p / q`
+ * with `p == x * q (mod m)` and returns `true` iff the numerator
+ * and denominator can both be chosen smaller than `sqrt(m) / 2`,
+ * which is the standard uniqueness threshold. `interface/cra.cpp`
+ * exposes the whole class to M2 as the `rawRingElementCRA` /
+ * `rawMatrixCRA` / `rawRingElementRatConversion` /
+ * `rawMatrixRatConversion` raw entry points.
+ *
+ * @see interface/cra.h
+ */
+
 #include <M2/math-include.h>
 
 #include "ringelem.hpp"  // for ring_elem, vec

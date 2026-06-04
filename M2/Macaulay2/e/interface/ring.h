@@ -1,6 +1,54 @@
 #ifndef _ring_h_
 #  define _ring_h_
 
+/**
+ * @file interface/ring.h
+ * @brief Engine-boundary C API for the legacy `Ring` hierarchy --- coefficient, polynomial, and composite rings.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `extern "C"` factories the M2 interpreter calls
+ * to build every `Ring` flavour. Coefficient rings:
+ * `IM2_Ring_ZZ` / `_QQ` (singleton getters), `IM2_Ring_ZZp(p)`
+ * (`rawZZp`, range `2 <= p <= 32749`), `rawGaloisField(prim)`,
+ * `IM2_Ring_RRR` / `_CCC` for arbitrary-precision real /
+ * complex, and `IM2_Ring_RRi` / `_CCi` for the MPFI-backed
+ * interval variants. Polynomial rings:
+ * `IM2_Ring_polyring(K, M)`, `IM2_Ring_trivial_polyring()`,
+ * `IM2_Ring_skew_polyring`, `IM2_Ring_weyl_algebra` (with the
+ * homogenising variable index), `IM2_Ring_solvable_algebra`,
+ * `IM2_Ring_schur` plus `rawSchurRing1` / `rawSchurRing2` /
+ * `rawSchurSnRing`, and the non-commutative
+ * `rawRingM2FreeAlgebra` / `rawRingM2FreeAlgebraQuotient`.
+ * Tower extensions: `rawTowerRing1` / `_2` / `_3` (legacy) and
+ * `rawARingTower1` / `_2` / `_3` (`aring`-backed; not yet
+ * marked connected). Composite builds:
+ * `IM2_Ring_quotient(R, I)` (where `I` is a **`Matrix`**
+ * carrying the GB --- not a `GBComputation*`),
+ * `IM2_Ring_quotient1(R, B)` (poly-ring extension over a
+ * coefficient quotient), `IM2_Ring_frac`, and
+ * `IM2_Ring_localization(R, P)` (where `P` is a
+ * `Computation*` --- the in-source comment talks about a
+ * one-row matrix, indicating the signature is out of sync
+ * with the doc). Per-ring inspection: `rawRingHash`,
+ * `IM2_Ring_to_string`, `rawRingCharacteristic`,
+ * `IM2_Ring_is_field` (`rawIsField`),
+ * `IM2_Ring_declare_field` (`rawDeclareField`),
+ * `rawGetNonUnit`, `rawAmbientRing`, `rawDenominatorRing`.
+ *
+ * Some coefficient rings exist twice: a legacy variant
+ * declared here (`IM2_Ring_ZZp`, `rawGaloisField`) and an
+ * `aring`-backed counterpart in `interface/aring.h`. Both
+ * build a `Ring*` the interpreter handles uniformly, but new
+ * code prefers `aring` for its templated arithmetic. The
+ * `Computation` forward declaration is here only because
+ * `IM2_Ring_localization` accepts one.
+ *
+ * @see ring.cpp
+ * @see aring.h
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 // TODO: fix this

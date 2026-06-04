@@ -3,11 +3,71 @@
 #ifndef _nc_res_computation_hpp_
 #define _nc_res_computation_hpp_
 
+/**
+ * @file NCResolutions/nc-res-computation.hpp
+ * @brief `NCResComputation` --- placeholder free-resolution driver for modules over a `FreeAlgebraQuotient`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the intended non-commutative counterpart of
+ * `F4ResComputation`: a `ResolutionComputation` subclass that
+ * **will** compute a free resolution of a right module presented
+ * by its Gröbner basis over a `FreeAlgebraQuotient` ring. The
+ * constructor is private; the friend factory
+ * `createNCRes(groebnerBasisMatrix, max_level, strategy)` is the
+ * only entry point, and the input matrix is expected to be a
+ * (partial) GB of the module being resolved.
+ *
+ * This adapter is currently a **non-functional placeholder**.
+ * `stop_conditions_ok()` unconditionally returns `true`,
+ * `start_computation()` just prints "Starting computation." to
+ * `std::cout`, `complete_thru_degree()` returns `0`,
+ * `get_betti` and the `MutableMatrix`-shaped `get_matrix`
+ * return `nullptr`, the `Matrix`-shaped `get_matrix(level)`
+ * returns either the input module's GB at level 1 or an empty
+ * `MatrixConstructor` matrix elsewhere, `text_out` emits the
+ * fixed string "Noncommutative resolution", and even the
+ * stored fields (`mInputModuleGB`; commented-out `mRing` /
+ * `mMaxLevel`) reflect the unfinished plumbing. The companion
+ * `nc-res-computation.cpp` is 30 lines and only defines the
+ * constructor plus `createNCRes`.
+ *
+ * The expected per-level loop is sketched in the long comment
+ * block at the bottom of the header: build levels 0 / 1 from
+ * the input module, fill in syzygies degree-by-degree using
+ * F4-style overlap reduction against both the ring's GB and the
+ * earlier-level frame, and store each `(free module,
+ * differential)` pair as the resolution grows. The `#if 0`
+ * block sketches `NCSchreyerResolution` / `Level` / `Element` /
+ * `ModulePoly` types the implementation is expected to grow
+ * into; `NCResolutions/notes.txt` tracks the still-open design
+ * questions.
+ *
+ * @see comp-res.hpp
+ * @see FreeAlgebraQuotient.hpp
+ * @see NCGroebner.hpp
+ * @see schreyer-resolution/res-f4-computation.hpp
+ */
+
 #include "comp-res.hpp"
 #include "NCAlgebras/FreeAlgebraQuotient.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
 
+/**
+ * @brief `ResolutionComputation` subclass that builds a free resolution over
+ * a `FreeAlgebraQuotient` (non-commutative).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Constructor is private; the free function `createNCRes` (declared
+ * friend) instantiates the computation from a GB-presented quotient
+ * matrix, a `max_level` cap on homological degree, and a strategy
+ * flag. The class then plugs into the engine's standard
+ * `ResolutionComputation` driver loop (`start_computation`,
+ * partial-progress accessors, etc.) so non-commutative resolutions
+ * look the same to front-end callers as the commutative ones.
+ */
 class NCResComputation : public ResolutionComputation
 {
  private:

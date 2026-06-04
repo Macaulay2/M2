@@ -3,6 +3,51 @@
 #ifndef __f4gb_h_
 #define __f4gb_h_
 
+/**
+ * @file f4/f4.hpp
+ * @brief `F4GB` --- the inner-loop Faugère F4 Groebner-basis algorithm.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `F4GB`, the (non-templated) core class implementing
+ * Faugere's linear-algebra GB algorithm. Each outer iteration
+ * picks the next degree from `F4SPairSet mSPairSet`, asks for
+ * the batch of S-pairs at that degree, computes their
+ * S-polynomials, collects every monomial appearing in those
+ * polynomials and the tail reducers (interned through
+ * `MonomialHashTable<MonomialInfo>` to assign column indices),
+ * builds a Macaulay matrix (`coefficient_matrix *mat`) whose
+ * rows are S-polynomials plus reducers and whose columns are
+ * the collected monomials in the chosen order, reduces it to
+ * row-echelon form (`gauss_reduce`, with an optional follow-up
+ * `tail_reduce`), and extracts as new basis elements those
+ * echelon rows whose leading column was previously
+ * unrepresented (`is_new_GB_row` / `new_GB_elements` /
+ * `insert_gb_element`). Members carry the current basis
+ * (`gb_array mGroebnerBasis`), the generators
+ * (`gb_array mGenerators`), the `MonomialInfo*` describing the
+ * packed-monomial encoding, and a `MonomialLookupTable
+ * mLookupTable` mapping `(monom, comp)` to its GB index.
+ *
+ * Coefficient-ring polymorphism is handled at runtime through
+ * `const VectorArithmetic* mVectorArithmetic`, not via template
+ * parameters --- the long source-level comment listing
+ * "Template parameters include: coefficient ring arithmetic,
+ * packed_monomial, exponents, varpower_monomial,
+ * MonomialLookupTable" describes the would-be template surface
+ * but `F4GB` is monomorphic; the refactored `gb-f4/` engine is
+ * the home of the templated-arithmetic version. When compiled
+ * `WITH_TBB`, an `mtbb::task_arena mScheduler` and `mNumThreads`
+ * field drive a parallel Gaussian-elimination path
+ * (`mParallelGaussTime` vs `mSerialGaussTime`). The top-level
+ * dispatcher `f4-computation.hpp` is where M2 user calls land
+ * before delegating here.
+ *
+ * @see f4-computation.hpp
+ * @see f4-spairs.hpp
+ * @see moninfo.hpp
+ */
+
 // My implementation of Faugere's linear algebra GB routines.  Also includes
 // free resolution code.
 
@@ -87,6 +132,24 @@ class VectorArithmetic;
 
 /////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief Commutative F4 Groebner-basis driver: degree-by-degree Macaulay
+ * matrix construction plus row-reduction over a coefficient ring.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds the running GB (`mGroebnerBasis`), the original generators
+ * (`mGenerators`), and the monomial lookup table for divisor
+ * search. Each degree, the driver picks up the pending S-pairs,
+ * builds a `coefficient_matrix` (`mat`) whose rows are S-pair
+ * reductions plus their tail-reducers and whose columns are the
+ * distinct monomials appearing, sorts the columns under the
+ * `MonomialInfo` order, and row-reduces via `mVectorArithmetic`.
+ * Optional `HilbertController *hilbert` skips reductions whose
+ * result the Hilbert function predicts to be zero. Tracks a wide
+ * set of timing / counter statistics (`clock_sort_columns`,
+ * `mGaussTime`, `n_pairs_computed`, ...) for the benchmark hooks.
+ */
 class F4GB : public our_new_delete
 {
   // Basic required information
@@ -138,6 +201,19 @@ class F4GB : public our_new_delete
   double mInsertGBTime;
   clock_t clock_make_matrix;
 
+  /**
+   * @brief Per-degree counters describing the shape and density of the
+   * Macaulay matrix that `F4GB` just built.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details The matrix is conceptually split into a (top-left) pivot block
+   * and a (bottom-right) non-pivot block; `mTopAndLeft`, `mBottom`,
+   * and `mRight` count the row / column dimensions of the pivot
+   * and remaining blocks. The per-block entry counts (`mAEntries`,
+   * `mBEntries`, ...) feed the F4 diagnostics that report matrix
+   * fill rates and reduction work.
+   */
   struct MacaulayMatrixStats
   {
   public:
@@ -145,7 +221,7 @@ class F4GB : public our_new_delete
     long mTopAndLeft = 0;
     long mBottom = 0;
     long mRight = 0;
-    
+
     // #entries
     long mAEntries = 0; // but not the diagonals?
     long mBEntries = 0;

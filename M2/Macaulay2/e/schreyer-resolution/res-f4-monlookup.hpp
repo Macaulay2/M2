@@ -3,6 +3,41 @@
 #ifndef _f4monlookup_h_
 #define _f4monlookup_h_
 
+/**
+ * @file schreyer-resolution/res-f4-monlookup.hpp
+ * @brief `ResF4MonomialLookupTableT<Key>` --- tree-structured leading-term index for the F4 resolution.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the resolution counterpart of `f4-monlookup.hpp`: a
+ * templated Janet-style binary tree over `res_*_monomial`
+ * encodings, parameterised on the `Key` payload returned by
+ * lookups so the same code base can index basis-element
+ * indices, `(level, index)` pairs, or any other identifier the
+ * caller needs. Each `mi_node` stores a `(var, exp)` test, left
+ * and right children inside a doubly-linked sibling list under
+ * a `header`, and either descends to a child node or terminates
+ * at a leaf carrying the `Key`. `insert_vp` and
+ * `insert_minimal_vp` walk the tree splitting on the encoded
+ * variable exponents, while `find_one_divisor_vp` and
+ * `find_one_divisor_packed` report any payload whose stored
+ * monomial divides the query --- the standard divisor lookup
+ * the F4 reducer-selection step depends on.
+ *
+ * The class duplicates the older `f4-monlookup.hpp` pattern by
+ * design: the resolution side standardises on the `res_*`
+ * monomial typedefs from `res-monomial-types.hpp` and carries a
+ * richer `Key` than F4's plain `int`. A future cleanup may
+ * collapse them, but keeping the trees separate today lets each
+ * evolve at its own pace without coupling the F4 and resolution
+ * code paths.
+ *
+ * @see res-moninfo.hpp
+ * @see res-monomial-types.hpp
+ * @see res-schreyer-frame.hpp
+ * @see f4/f4-monlookup.hpp
+ */
+
 #include "newdelete.hpp"                               // for VECTOR, our_ne...
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"  // for res_varpower_m...

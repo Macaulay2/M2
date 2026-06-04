@@ -1,6 +1,42 @@
 #ifndef __ring_test_hpp__
 #define __ring_test_hpp__
 
+/**
+ * @file unit-tests/ARingTest.hpp
+ * @brief Shared gtest harness for the `ARing*Test.cpp` suite.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the per-ring testing surface: the primary
+ * `getElement<RingType>(R, index, result)` function template
+ * (each `ARing*Test.cpp` provides its ring's specialisation),
+ * the `ARingElementGenerator<RingType>` wrapper handing out one
+ * element per `nextElement` call, the `fromStream` parser, and
+ * a family of templated check drivers parameterised on the ring
+ * --- `testNegate`, `testCoercions`, `testAxioms`, `testAdd`,
+ * `testSubtract`, `testMultiply`, `testDivide`,
+ * `testReciprocal`, `testPower`, and more --- each running
+ * `ntrials` iterations against the generator's output.
+ * `testSomeMore<T>(R)` is a small smoke test that exercises
+ * `set_from_long` + `add` + `is_equal` for a single fixed
+ * `(27, characteristic - 11, 16)` triple, not a full
+ * arithmetic battery. `ntrials = 1000` fixes the random
+ * iteration count; the commented `1000000` line records the
+ * prior experiment that swamped the CI box.
+ *
+ * Element indices `< 50` get a deterministic prefix
+ * (`set_from_long(result, index - 25)` in the typical
+ * specialisation) so zero, plus / minus one, and small integers
+ * are always exercised before the random fuzz kicks in.
+ * Companion to `RingTest.hpp` for the legacy `Ring`-hierarchy
+ * tests.
+ *
+ * @see RingTest.hpp
+ * @see interface/random.h
+ * @see ARingZZTest.cpp
+ * @see ARingGFTest.cpp
+ */
+
 #include "interface/random.h"
 
 const int ntrials = 1000;

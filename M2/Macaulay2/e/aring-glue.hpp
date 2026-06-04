@@ -3,6 +3,49 @@
 #ifndef _ring_glue_hh_
 #define _ring_glue_hh_
 
+/**
+ * @file aring-glue.hpp
+ * @brief `ConcreteRing<RingType>` --- the templated bridge between `aring` and the legacy `Ring` API.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ConcreteRing<RingType>` is a `Ring` subclass that owns a
+ * `std::unique_ptr<RingType>` to a concrete aring (`ARingZZ`,
+ * `ARingZZpFlint`, ...) and implements every `Ring` virtual by
+ * forwarding to the aring's inline method. Because the wrapper
+ * is itself a template parameterised on `RingType`, the compiler
+ * inlines the forwarding calls --- so the only virtual-dispatch
+ * cost lives at the outer `Ring*` boundary; once inside
+ * `ConcreteRing<R>`, all arithmetic is direct calls to the
+ * aring's hot path. The `COERCE_RING(RingType, R)` macro at the
+ * top is a thin `dynamic_cast<const RingType*>(R)` alias kept
+ * for cases where a caller already knows the runtime ring type.
+ *
+ * This file is the single piece that lets the legacy and aring
+ * ring APIs coexist permanently: every aring becomes a usable
+ * `Ring*` for older engine code without losing the performance
+ * of inlined arithmetic in templated hot paths. The variadic
+ * `create<Args...>` factory forwards its arguments straight to
+ * the aring's constructor, so building, say,
+ * `ConcreteRing<ARingZZpFlint>::create(p)` is a one-liner.
+ * `aring-translate.hpp` is the companion for cross-ring
+ * coercion (`mypromote` / `mylift`); on the element-handle side
+ * the class re-exposes both `RingType::ElementType` and
+ * `RingType::Element` as nested typedefs so callers can grab
+ * either the raw scalar or the resource-managing wrapper. The
+ * abandoned `RElementWrap<RingType>` / `AConcreteRing<RingType>`
+ * scaffolding in `aring-wrap.hpp` was a never-completed
+ * alternative design, not the production element-level
+ * counterpart. The `displayArithmeticCalls` flag (defaults to
+ * `false`) is a file-static compile-time debug toggle that,
+ * when flipped to `true` and recompiled, has every forwarded
+ * `Ring` virtual `fprintf(stderr, "calling <op>\n")`.
+ *
+ * @see aring.hpp
+ * @see aring-translate.hpp
+ * @see ring.hpp
+ */
+
 #include "aring.hpp"
 #include "aring-translate.hpp"
 #include "ring.hpp"
@@ -428,6 +471,20 @@ class ConcreteRing : public Ring
 
 };  // class ConcreteRing<RingType>
 
+/**
+ * @brief `Ring`-level `QQ` ring, a thin specialisation of
+ * `ConcreteRing<ARingQQ>` that marks itself with `is_QQ()` and
+ * `coefficient_type() == COEFF_QQ`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Owns its `ARingQQ` through the `ConcreteRing` base. The static
+ * `create()` factory wires up the zero / one elements, declares
+ * the ring a field, and sets the engine-side characteristic so
+ * the rest of the engine can treat `QQ` exactly like any other
+ * coefficient ring while keeping the `is_QQ()` short-circuit
+ * available for QQ-specific fast paths.
+ */
 class RingQQ : public ConcreteRing<ARingQQ>
 {
  public:

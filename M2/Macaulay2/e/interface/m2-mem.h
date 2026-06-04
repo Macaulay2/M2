@@ -1,6 +1,45 @@
 #ifndef m2_mem_included
 #define m2_mem_included
 
+/**
+ * @file interface/m2-mem.h
+ * @brief Engine-wide GC allocator surface (`getmem` / `getmem_atomic`) and debug-allocation trap.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the small `extern "C"` allocator family every engine
+ * translation unit and every generated-C `.dd` glue file calls
+ * to allocate memory: `getmem` for pointer-bearing GC blocks,
+ * `getmem_atomic` for pointer-free blocks the collector can
+ * skip scanning, the `*_clear` variants that zero-initialise,
+ * plus `freemem` / `freememlen` for explicit deletion when the
+ * caller knows the lifetime, and `outofmem2(size_t)` as the
+ * out-of-memory handler. Implementations sit on top of bdwgc
+ * (`GC_malloc` / `GC_malloc_atomic` / ...), so a future GC swap
+ * only has to retarget this layer.
+ *
+ * In non-`NDEBUG` builds the `trap*` group (`trapaddr`,
+ * `trapcount`, `trapset`, `trapchk`, `trapchk_size`,
+ * `badBlock`) gives a lightweight allocation breakpoint:
+ * setting `trapaddr` to a pointer of interest, or arming
+ * `trapset` / `trapcount` to count down to the *N*-th
+ * allocation, makes the next matching `getmem` invoke the
+ * (empty) `trap()` function so a debugger can intercept it. The
+ * header also brings in Valgrind's function-wrap shims so GC
+ * allocations are visible to `memcheck`. The `getmem*arraytype`
+ * / `getmem*structtype` / `getmem*vectortype` macros at the
+ * bottom centralise the `sizeof` arithmetic for length-prefixed
+ * arrays, pointee-sized struct allocations, and plain
+ * `T[len]`-shaped vectors (with `_atomic` variants throughout
+ * for pointer-free payloads). An `#ifdef MEMDEBUG` block
+ * additionally exposes the `M2_debug_malloc` / `_free` /
+ * `_realloc` / `_to_outer` / `_to_inner` hooks for
+ * leak-tracking builds.
+ *
+ * @see m2-mem.cpp
+ * @see gmp-util.h
+ */
+
 #include <stdlib.h>
 
 // d/debug.h

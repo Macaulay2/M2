@@ -3,6 +3,44 @@
 #ifndef _aring_CCC_hpp_
 #define _aring_CCC_hpp_
 
+/**
+ * @file aring-CCC.hpp
+ * @brief `M2::ARingCCC` --- arbitrary-precision complex numbers (pair of MPFR floats).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingCCC` is the complex counterpart to `ARingRRR`: a
+ * `SimpleARing<ARingCCC>` whose element type is `cc_struct` ---
+ * a pair of MPFR floats with mantissa precision chosen at
+ * construction. The class composes an `ARingRRR mRRR` of the
+ * same precision and exposes it through `real_ring()` for the
+ * real-line drop-down. Arithmetic evaluates the standard
+ * formulas `(a+bi) +/- (c+di)`,
+ * `(a+bi)(c+di) = (ac-bd) + (ad+bc)i`,
+ * `1/(a+bi) = (a-bi)/(a^2+b^2)`, `|a+bi| = sqrt(a^2+b^2)`
+ * component-wise via `mpfr_add` / `mpfr_sub` / `mpfr_mul` /
+ * `mpfr_div` / `mpfr_sqrt` under round-to-nearest-ties-even.
+ *
+ * The header pulls in `interface/gmp-util.h` for
+ * `mpfr_reallocate_limbs` (moves the mantissa from MPFR's heap
+ * onto the GC heap) and `moveTo_gmpCC` (bundles two MPFRs into
+ * the interpreter's GC-managed complex type), plus
+ * `interface/random.h` for `randomMpfr`. `IM2_Ring_CCC(prec)`
+ * in `interface/ring.cpp` is the M2-side factory --- it returns
+ * `ConcreteRing<ARingCC>` when `prec <= 53` and
+ * `ConcreteRing<ARingCCC>(prec)` otherwise. Engine consumers
+ * include the `DMat<ARingCCC>` (`LMatrixCCC`) dense matrices
+ * used by `eigen.hpp`, the corresponding paths in `mat-linalg.hpp`
+ * and `dmat-lu-inplace.hpp`, the `SLEvaluatorConcrete<ARingCCC>`
+ * specialisation in the SLP machinery, and `PathTracker`'s
+ * `ConcreteRing<ARingCCC>*` field at the M2-ring boundary.
+ *
+ * @see aring-RRR.hpp
+ * @see aring-CC.hpp
+ * @see aring-CCi.hpp
+ * @see aring.hpp
+ */
+
 #include "interface/gmp-util.h"  // for mpfr_reallocate_limbs, moveTo_gmpCC
 #include "interface/random.h"    // for randomMpfr
 
@@ -17,8 +55,18 @@ class RingMap;
 
 namespace M2 {
 /**
-\ingroup rings
-*/
+ * @brief `aring`-style adapter for arbitrary-precision complex numbers,
+ * stored as `(MPFR, MPFR)` pairs.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `ElementType` is `cc_struct` --- two MPFR scalars for the real
+ * and imaginary parts. Holds a companion `ARingRRR mRRR` at the
+ * same working precision so the per-component arithmetic stays
+ * consistent. `ringID = ring_CCC`.
+ *
+ * @ingroup rings
+ */
 class ARingCCC : public SimpleARing<ARingCCC>
 {
   // complex numbers represented as pairs of MPFRs.

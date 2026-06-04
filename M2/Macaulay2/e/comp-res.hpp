@@ -3,6 +3,41 @@
 #ifndef _comp_res_hpp_
 #define _comp_res_hpp_
 
+/**
+ * @file comp-res.hpp
+ * @brief `ResolutionComputation` --- abstract base for every free-resolution algorithm in the engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ResolutionComputation` is the resolution-side mirror of
+ * `GBComputation`: a `Computation` subclass that adds the
+ * resolution-specific virtuals `get_free(level)`,
+ * `get_matrix(level)` (the differential `F_level -> F_{level - 1}`),
+ * `get_betti(type)` (a Betti table where `type` indexes into the
+ * `rawResolutionBetti` enumeration documented in `engine.h`:
+ * `0` minimal, `1` non-minimal, `2` S-pairs remaining, `3` term
+ * counts, `4` `FastNonminimal => true` minimal Bettis), and
+ * `complete_thru_degree`. Concrete subclasses span the engine's
+ * resolution algorithms --- `res_comp` (`res-a1.hpp`),
+ * `res2_comp` (`res-a0.hpp`), `gbres_comp` (`res-a2.hpp`),
+ * `F4ResComputation` (`schreyer-resolution/`), and
+ * `NCResComputation` (`NCResolutions/`) --- each keeping its own
+ * internal layout.
+ *
+ * The factory `ResolutionComputation::choose_res(...)` reads both
+ * the `algorithm` and `strategy` integers (mapped from the M2
+ * `Algorithm =>` and `Strategy =>` options; the values are
+ * documented in `engine.h`) plus thread / degree-limit options
+ * and returns the matching subclass. Per-degree state lives on
+ * the heap so a typical `DegreeLimit => k` workflow can inspect
+ * Betti numbers, decide whether to continue, and resume by
+ * relaxing the limit and calling `start_computation` again.
+ *
+ * @see comp.hpp
+ * @see comp-gb.hpp
+ * @see betti.hpp
+ */
+
 #include "comp.hpp"
 class buffer;
 

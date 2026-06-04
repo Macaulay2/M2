@@ -3,6 +3,38 @@
 #ifndef _mat_elementary_ops_hpp_
 #define _mat_elementary_ops_hpp_
 
+/**
+ * @file mat-elem-ops.hpp
+ * @brief `MatElementaryOps<MT>` --- row / column primitives templated over dense or sparse matrix storage.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Provides the building-block operations every linear-algebra
+ * algorithm composes: row and column swaps, row / column
+ * scaling, row addition (`row_i += c * row_j`), the
+ * corresponding column variant, and the pivot-search helper
+ * `lead_row(mat, col[, result])` that returns the
+ * largest-index non-zero row of a given column. The template
+ * has separate full specialisations on `DMat<RT>` and
+ * `SMat<RT>` so each storage shape gets a dense-walk or
+ * sparse-pivot implementation appropriate to its data layout;
+ * consumers write a generic algorithm against
+ * `MatElementaryOps<MT>` and let the right specialisation be
+ * picked at instantiation time.
+ *
+ * Engine consumers are the LU machinery (`dmat-lu.hpp` /
+ * `dmat-lu-inplace.hpp`) and the higher-level dispatchers in
+ * `mat-linalg.hpp`. `fractionfreeLU.hpp`, `hermite.hpp`, and
+ * `gauss.hpp` carry their own elementary row/column code
+ * rather than going through this template. The arithmetic-only
+ * sibling header is `mat-arith.hpp`.
+ *
+ * @see mat-arith.hpp
+ * @see mat-linalg.hpp
+ * @see dmat.hpp
+ * @see smat.hpp
+ */
+
 #include <memory>
 
 template <typename MT>

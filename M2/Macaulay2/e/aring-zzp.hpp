@@ -3,6 +3,40 @@
 #ifndef _aring_zzp_hpp_
 #define _aring_zzp_hpp_
 
+/**
+ * @file aring-zzp.hpp
+ * @brief `M2::ARingZZp` --- portable `Z/p` for small primes via log / exp tables.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingZZp` is the dependency-free `Z/p` aring: a
+ * `SimpleARing<ARingZZp>` whose elements are interpreted as log
+ * indices of a chosen primitive root, with `0` reserved for the
+ * field zero and each `1 <= n <= p - 1` representing `alpha^n mod p`
+ * (in particular `p - 1` is the representation of `1`).
+ * Multiplication reduces to `(a + b) mod (p - 1)`, inversion to
+ * `p - 1 - a` (negation mod `p - 1`), and `power(a, n)` to
+ * `(a * n) mod (p - 1)`. Addition is a classical log / exp
+ * round-trip: `exp_table` maps the two operands back to actual
+ * residues, those are summed mod `p`, and `log_table` converts
+ * the result back to an index. `log_table` and `exp_table` are
+ * built at construction and each occupy `p` ints, so the pair
+ * fits comfortably in cache for the small primes M2's ZZp
+ * factory accepts (`2 <= p <= 32749`).
+ *
+ * This is the only `Z/p` aring path with no external dependency,
+ * so it is what stripped-down or diagnostic M2 builds fall back
+ * to. The non-aring counterpart with the same table encoding is
+ * the legacy `Z_mod` in `ZZp.hpp` (typedef'd here as
+ * `ring_type`); the FLINT- and FFLAS-FFPACK-backed variants live
+ * in `aring-zzp-flint.hpp` and `aring-zzp-ffpack.hpp`.
+ *
+ * @see ZZp.hpp
+ * @see aring-zzp-flint.hpp
+ * @see aring-zzp-ffpack.hpp
+ * @see aring.hpp
+ */
+
 #include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
@@ -14,8 +48,21 @@ class RingMap;
 
 namespace M2 {
 /**
-\ingroup rings
-*/
+ * @brief `aring`-style adapter for `Z/p` using a discrete-log (Zech)
+ * representation: every non-zero residue is its index relative to
+ * a primitive generator `a`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Encoding: `0` means 0, `p-1` means 1, and `1..p-2` are the
+ * exponents of `a^n mod p` covering residues `2..p-1`.
+ * Multiplication / division collapse to integer add / sub mod
+ * `p-1` with no table hit; addition uses precomputed `exp` /
+ * `log` tables. `ringID = ring_ZZp`. The `aring` twin of
+ * `CoefficientRingZZp`.
+ *
+ * @ingroup rings
+ */
 class ARingZZp : public SimpleARing<ARingZZp>
 {
   // Integers mod p, implemented as

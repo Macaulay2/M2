@@ -3,6 +3,39 @@
 #ifndef _monomial_hh_
 #define _monomial_hh_
 
+/**
+ * @file monomial.hpp
+ * @brief `EngineMonomial` --- opaque single-monomial value type used at the engine boundary.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `EngineMonomial`, the `EngineObject` subclass that
+ * stores one monomial as a varpower-encoded `gc_vector<int>` in
+ * the standard `[2n + 1, v_1, e_1, ..., v_n, e_n]` layout
+ * inherited from `ExponentList.hpp`. All five constructors
+ * (no-arg, `(int, int)`, `(const int *vp)`, `(M2_arrayint)`,
+ * `(const std::vector<int>&)`) are class-private; public
+ * construction goes through the four static `make(...)` factory
+ * overloads that mirror the parameterised constructors. Beyond
+ * construction, the class exposes monomial arithmetic
+ * (`operator*` / `operator/`, `power`, `lcm`, `gcd`, `radical`,
+ * `erase`, `monsyz`), predicates (`is_one`, `is_equal`, `divides`,
+ * `compare`, `simple_degree`), and serialisation (`text_out`,
+ * `to_arrayint`, `ints()` for the raw buffer). The class is the
+ * M2-level `Monomial` --- a different beast from the encoded
+ * monomials packed into a `Monoid`'s inner-loop layout and from
+ * the `ExponentVector` / `ExponentList` storage layer.
+ *
+ * The header's long-standing reversal note matters in the
+ * non-commutative case: the M2 front-end reverses the
+ * variable-power list before crossing the boundary, and engine
+ * code consuming `EngineMonomial` in the NC setting must
+ * un-reverse before computing word products.
+ *
+ * @see ExponentList.hpp
+ * @see monoid.hpp
+ */
+
 #include <vector>
 
 #include "ExponentList.hpp"
@@ -10,6 +43,19 @@
 #include "engine-includes.hpp"
 #include "buffer.hpp"
 
+/**
+ * @brief Engine-side immutable monomial value type wrapping a varpower-
+ * encoded exponent vector.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Storage is `[2n+1, v_1, e_1, ..., v_n, e_n]` (per
+ * `ExponentList.hpp`): leading length, then alternating variable
+ * indices and exponents. Inherits from `EngineObject` so the
+ * monomial can carry a stable content-based hash once exposed to
+ * the front end. The `TODO` at the top of the file notes a planned
+ * template-based unification with the lower-level varpower routines.
+ */
 // TODO: can this be combined with varpower using templates?
 class EngineMonomial : public EngineObject
 {

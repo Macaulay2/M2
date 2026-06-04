@@ -1,6 +1,33 @@
 #ifndef _cra_h_
 #  define _cra_h_
 
+/**
+ * @file interface/cra.h
+ * @brief Engine-boundary C API for Chinese-remainder lifting and rational reconstruction.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `extern "C"` entry points the M2 interpreter
+ * calls to combine modular results from independent prime-field
+ * computations and lift them back to characteristic 0:
+ * `rawRingElementCRA` / `rawMatrixCRA` merge two CRT residues
+ * with moduli `m` and `n` into a single residue mod `m*n`, and
+ * `rawRingElementRatConversion` / `rawMatrixRatConversion` run
+ * rational reconstruction --- recovering the unique `a/b` with
+ * `|a|, |b| <= sqrt(m)/2` --- against a target `RQ` polynomial
+ * ring whose coefficients are `QQ`. The moduli arrive as GMP
+ * `mpz_srcptr` so the front end can pass arbitrarily large
+ * primes (or products of primes) without an extra conversion.
+ *
+ * Heavily used by the modular-F4 path and by rational
+ * resolutions / Hilbert-function computations that run the same
+ * algorithm modulo many primes in parallel and reconstruct
+ * afterwards.
+ *
+ * @see cra.cpp
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 // TODO: fix this

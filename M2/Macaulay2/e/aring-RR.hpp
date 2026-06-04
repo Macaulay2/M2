@@ -3,6 +3,39 @@
 #ifndef _aring_RR_hpp_
 #define _aring_RR_hpp_
 
+/**
+ * @file aring-RR.hpp
+ * @brief `M2::ARingRR` --- machine-precision real numbers (IEEE 754 `double`).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingRR` is the simplest real ring in the aring family: a
+ * `SimpleARing<ARingRR>` whose `elem` is plain `double` and whose
+ * `get_precision()` returns `53` (the IEEE 754 mantissa width).
+ * `add` / `subtract` / `mult` / `divide` / `invert` are hardware
+ * floating-point operations with no zero check --- `divide` by
+ * zero silently produces an IEEE `inf`, matching the source's
+ * "we silently assume that a != 0" comment on `invert`. The
+ * non-trivial pieces lean on libm (`pow` for `power`, `fabs` for
+ * `abs` / `increase_norm`) and on MPFR for the `zeroize_tiny`,
+ * `set_from_BigReal`, and `increase_norm` bridges into
+ * higher-precision values. Arbitrary precision drops through to
+ * `ARingRRR` (MPFR); interval certification lives in
+ * `aring-RRi.hpp`.
+ *
+ * Engine consumers are `SLEvaluatorConcrete<ARingRR>` in
+ * `SLP-defs.hpp` / `SLP-imp.hpp`, the `DMat<ARingRR>` (`DMatRR`)
+ * dense matrices in `mat-linalg.hpp` and `dmat-lu-inplace.hpp`,
+ * the cross-ring coercion routines in `aring-translate.hpp`,
+ * and the `MutableMat` machinery that registers RR in
+ * `mutablemat-defs.hpp`.
+ *
+ * @see aring-RRR.hpp
+ * @see aring-RRi.hpp
+ * @see aring-CC.hpp
+ * @see aring.hpp
+ */
+
 #include "interface/random.h"
 #include "exceptions.hpp"
 #include "aring.hpp"
@@ -14,8 +47,17 @@ class RingMap;
 
 namespace M2 {
 /**
-\ingroup rings
-*/
+ * @brief `aring`-style adapter for double-precision real numbers.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `ElementType` is a plain `double`. Fixed precision (53 bits per
+ * `get_precision()`), characteristic 0. `ringID = ring_RR`. Hash
+ * values are derived from the double cast to `unsigned int`. Use
+ * `ARingRRR` instead when arbitrary precision is needed.
+ *
+ * @ingroup rings
+ */
 class ARingRR : public SimpleARing<ARingRR>
 {
   // approximate real numbers, implemented as doubles.

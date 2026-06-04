@@ -1,6 +1,47 @@
 #ifndef _free_algebra_quotient_hpp_
 #define _free_algebra_quotient_hpp_
 
+/**
+ * @file NCAlgebras/FreeAlgebraQuotient.hpp
+ * @brief A `FreeAlgebra` modulo a two-sided ideal carried by an embedded `NCGroebner`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the non-commutative analogue of `PolyRingQuotient`
+ * (the commutative quotient ring lives in `polyquotient.hpp`;
+ * the `PolyQuotient` name in `polyring.hpp` is just a stale
+ * forward declaration). The class holds a reference to its
+ * ambient `FreeAlgebra` together with an `NCGroebner mGroebner`
+ * that owns the stored Gröbner basis of the defining ideal
+ * (the word-table / suffix-tree indices for divisor lookup
+ * also live inside `NCGroebner` --- in-source comments here
+ * confirm the lookup tables were "placed in NCGroebner
+ * object"). The constructor takes a precomputed
+ * `ConstPolyList& GB` plus a `maxdeg` cap. `normalizeInPlace`,
+ * `mult`, `power`, and the other arithmetic entries compute in
+ * the ambient algebra and then reduce modulo the GB via the
+ * embedded `NCGroebner`. The full `Ring`-like surface is
+ * implemented here even though the class does not inherit from
+ * `Ring`; `M2FreeAlgebraQuotient` wraps it to provide the
+ * engine-wide `Ring` facade.
+ *
+ * The companion `FreeAlgebraQuotientElement` at the bottom of
+ * the header is a lightweight RAII handle around one `Poly`
+ * (calls `init`/`clear` on construction/destruction) with
+ * overloaded `+` / `-` / `*` / `^` / `==`, exposed for unit
+ * tests and interactive debugging. A two-sided GB in a free
+ * algebra is in general infinite, so `maxdeg` is how the
+ * engine keeps the computation finite at the cost of incomplete
+ * reduction past that degree.
+ *
+ * @see FreeAlgebra.hpp
+ * @see FreeMonoid.hpp
+ * @see NCGroebner.hpp
+ * @see Polynomial.hpp
+ * @see M2FreeAlgebraQuotient.hpp
+ * @see polyquotient.hpp
+ */
+
 #include "NCAlgebras/FreeAlgebra.hpp" // for FreeAlgebra
 #include "NCAlgebras/FreeMonoid.hpp"  // for FreeMonoid
 #include "NCAlgebras/NCGroebner.hpp"  // for NCGroebner
@@ -16,6 +57,21 @@ class buffer;
 struct Monoid;
 struct RingMap;
 
+/**
+ * @brief Quotient of a `FreeAlgebra` by a Groebner basis up to a fixed
+ * degree bound.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Owns the defining basis through an `NCGroebner` and forwards the
+ * usual ring operations to `mFreeAlgebra`, then runs
+ * `normalizeInPlace` on the result so every output stays in
+ * canonical form modulo the relations. `mMaxdeg` bounds the
+ * degrees up to which the GB is reliable. Note that this class
+ * does NOT inherit from `Ring` --- the engine uses the wrapper
+ * `M2FreeAlgebra` / `M2FreeAlgebraOrQuotient` to lift it into the
+ * `Ring` hierarchy.
+ */
 class FreeAlgebraQuotient : public our_new_delete
 {
 private:
@@ -91,6 +147,18 @@ public:
   SumCollector* make_SumCollector() const;
 };
 
+/**
+ * @brief Owned `Poly` value paired with its `FreeAlgebraQuotient*`,
+ * providing operator-overloaded arithmetic for debugging / scripting.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Quotient counterpart of `FreeAlgebraElement`: the destructor calls
+ * `FreeAlgebraQuotient::clear`, and the arithmetic operators feed
+ * through to the quotient's `add` / `subtract` / `mult` / ...
+ * methods so each result is automatically reduced modulo the
+ * defining ideal.
+ */
 // for debugging purposes
 class FreeAlgebraQuotientElement
 {

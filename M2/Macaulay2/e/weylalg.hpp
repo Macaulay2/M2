@@ -4,11 +4,59 @@
 #ifndef _weylalg_hh_
 #define _weylalg_hh_
 
+/**
+ * @file weylalg.hpp
+ * @brief `WeylAlgebra` --- ring of polynomial differential operators with `[d_i, x_i] = 1`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `PolyRing` subclass for the Weyl algebra: each
+ * pair `(x_i, d_i)` of coordinate and derivative satisfies
+ * `d_i x_i = x_i d_i + 1`, while every other generator commutes
+ * normally. The user supplies the assignment via the
+ * `_derivative` / `_commutative` arrays
+ * (`_derivative[i] = j` means generator `i` is `d_j`;
+ * `_derivative[i] = -1` marks a plain commuting variable),
+ * so the multiplication routine can recognise out-of-order
+ * `d_i x_i` products and unfold them via the Leibniz expansion
+ * `d^a x^b = sum_k C(a, k) C(b, k) k! x^{b - k} d^{a - k}`.
+ * Two static caches `binomtable` and `diffcoeffstable` (sized
+ * up to `binomtop` / `diffcoeffstop`) memoise the binomial and
+ * Leibniz coefficients so the inner loop avoids recomputation.
+ *
+ * Setting `_homogeneous_weyl_algebra` and `_homog_var` selects
+ * the homogenised variant in which `d_i` shares its degree
+ * with `x_i` (via the extra homogeneity variable absorbing the
+ * difference); the result is graded and lets ordinary GB
+ * machinery run unchanged on characteristic-variety and
+ * D-module intersection problems. The TODO at the top of the
+ * header flags a planned migration from raw `int *` arrays to
+ * `ExponentVector`.
+ *
+ * @see poly.hpp
+ * @see solvable.hpp
+ */
+
 #include "poly.hpp"
 #include "gbring.hpp"
 
 ///// Ring Hierarchy ///////////////////////////////////
 
+/**
+ * @brief `PolyRing` subclass for Weyl algebras: polynomial rings with the
+ * `[d_i, x_i] = 1` derivative-variable commutation relations.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Tracks a `_derivative[i]` / `_commutative[i]` index pair so the
+ * ring knows which variables are partial derivatives and which are
+ * the variables they differentiate. Optional homogeneous mode
+ * (`_homogeneous_weyl_algebra`) adds an extra homogenising variable
+ * `_homog_var` used to keep degrees compatible across commutator
+ * expansions. The static `binomtable` / `diffcoeffstable` cache
+ * binomial coefficients and derivative-coefficient products used by
+ * term-by-term multiplication.
+ */
 class WeylAlgebra : public PolyRing
 {
   int _nderivatives;

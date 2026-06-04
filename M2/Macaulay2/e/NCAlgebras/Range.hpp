@@ -1,6 +1,36 @@
 #ifndef __range__
 #define __range__
 
+/**
+ * @file NCAlgebras/Range.hpp
+ * @brief Home-rolled `std::span` substitute and zipped-range view for the NC engines.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the engine's C++17 stand-in for `std::span`.
+ * `Range<T>` is a pair of `T*`s representing `[first, last)`
+ * with `begin()` / `end()` accessors so it works in range-`for`,
+ * plus constructors for raw pointer pairs, `std::pair<T*, T*>`
+ * (the natural output of `MemoryBlock::allocateArray<T>`),
+ * `std::vector<T>`, the engine's `VECTOR(T)` macro, and the
+ * const-widening cross-type copy from `Range<S>`.
+ * `PairRange<U, T>` couples two equal-sized ranges and exposes
+ * `ZipIterator` / `ConstZipIterator` so a caller can walk
+ * monomials and coefficients (or any other parallel arrays) in
+ * a single loop without indexing arithmetic.
+ *
+ * Consumed by `NCF4` and `NCGroebner` for monomial / coefficient
+ * row payloads and by `FreeAlgebra` whenever multiplication
+ * yields a fresh stretch of arena-allocated terms. Bounds
+ * checking is intentionally omitted --- the type stays exactly
+ * as fast as raw pointers in the inner loop.
+ *
+ * @see MemoryBlock.hpp
+ * @see NCF4.hpp
+ * @see NCGroebner.hpp
+ * @see FreeAlgebra.hpp
+ */
+
 #include "newdelete.hpp"
 #include <utility>
 #include <vector>

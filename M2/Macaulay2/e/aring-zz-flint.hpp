@@ -3,6 +3,40 @@
 #ifndef _aring_zz_flint_hpp_
 #define _aring_zz_flint_hpp_
 
+/**
+ * @file aring-zz-flint.hpp
+ * @brief `M2::ARingZZ` --- FLINT-backed arbitrary-precision integers with small-value inlining.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingZZ` represents an integer as FLINT's `fmpz` (the
+ * single-element form; `fmpz_t` is the array-of-one wrapper). FLINT
+ * keeps values fitting in a single 64-bit word inline; only on
+ * blowup does the representation widen to a heap-allocated `mpz_t`.
+ * The hot integer arithmetic (`fmpz_add`, `fmpz_mul`, `fmpz_pow_ui`,
+ * `fmpz_set_si`, `fmpz_set_mpz`) targets that small-value path first,
+ * which makes this implementation materially faster than straight
+ * GMP for the everyday integer-arithmetic mix the engine produces;
+ * the worst case is identical because larger values fall back to GMP
+ * underneath FLINT.
+ *
+ * The include order matters: `M2/gc-include.h` must precede every
+ * FLINT header so FLINT's `flint_malloc` and friends route through
+ * bdwgc, and the diagnostic pragmas wrap FLINT's own warnings (not
+ * engine code). `gmp-util.h`'s `mpz_reallocate_limbs` is the bridge
+ * for passing an `fmpz` to code that wants an `mpz_t` without copying
+ * limbs. M2's user-facing integer ring is still the legacy `RingZZ`
+ * (`ring.cpp::makeIntegerRing` returns `new RingZZ`), which holds a
+ * sibling `ARingZZGMP* coeffR`; `ARingZZ` is the type the FLINT-
+ * backed dense linear algebra in `dmat-zz-flint.hpp` is templated on
+ * (`DMat<ARingZZ>` calls FLINT's `fmpz_mat_*` routines directly via
+ * the alias `DMatZZ`).
+ *
+ * @see ZZ.hpp
+ * @see aring-zz-gmp.hpp
+ * @see aring.hpp
+ */
+
 #include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 
 #include "aring.hpp"

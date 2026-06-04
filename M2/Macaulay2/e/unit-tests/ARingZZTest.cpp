@@ -1,5 +1,36 @@
 // Copyright 2012-2013 Michael E. Stillman
 
+/**
+ * @file unit-tests/ARingZZTest.cpp
+ * @brief gtest coverage for the FLINT-backed `M2::ARingZZ` integer aring.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Plugs `M2::ARingZZ` into the shared `ARingTest.hpp` harness
+ * and provides the `getElement<M2::ARingZZ>` specialisation:
+ * the first 50 indices give the deterministic `[-25, 24]`
+ * prefix that pins down zero, plus/minus one, and the
+ * immediately-around-zero edge cases, and the remainder draws
+ * from the file-scoped `getRandomInteger()` defined over in
+ * `ARingZZpTest.cpp` (the random source is shared so the test
+ * suite stays reproducible across the `ARingZZ*` family).
+ * `gmp_ZZ` arrives via `set_from_mpz`, so the FLINT-side
+ * conversion is exercised in every trial.
+ *
+ * Companion files `ARingZZpTest.cpp`, `ARingQQGmpTest.cpp`, and
+ * `ARingQQFlintTest.cpp` (covered by the same
+ * `file-aring-zz-tests` markdown) follow the same template
+ * against `Z/p`, GMP rationals, and FLINT rationals; cross-
+ * backend agreement between the GMP and FLINT rational suites
+ * is the standard regression guard when either backend ships
+ * an update.
+ *
+ * @see ARingTest.hpp
+ * @see aring-zz-flint.hpp
+ * @see ARingZZpTest.cpp
+ * @see ARingQQFlintTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>

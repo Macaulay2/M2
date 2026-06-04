@@ -3,6 +3,39 @@
 #ifndef _dmat_zz_flint_hpp_
 #define _dmat_zz_flint_hpp_
 
+/**
+ * @file dmat-zz-flint.hpp
+ * @brief `DMat<M2::ARingZZ>` --- dense integer matrices stored in a FLINT `fmpz_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Specialises the dense-matrix template for the FLINT integer
+ * aring. Storage is a single `fmpz_mat_t mArray` of FLINT
+ * `fmpz` cells (with the small-value inlining inherited from
+ * `ARingZZ`). The class exposes the standard `DMat` surface
+ * (`ring()`, `numRows`, `numColumns`, `entry(r, c)` via
+ * `fmpz_mat_entry`, `resize`, `swap` via `fmpz_mat_swap`) plus
+ * a raw `fmpz_mat()` accessor and `unsafeArray()` direct-pointer
+ * hook for consumers that want to hand the underlying `fmpz`
+ * buffer back to FLINT.
+ *
+ * Arithmetic (`fmpz_mat_add`, `fmpz_mat_mul`, `fmpz_mat_rank`,
+ * `fmpz_mat_det`, `fmpz_mat_solve`, `fmpz_mat_inv`,
+ * `fmpz_mat_nullspace`, ...) is *not* declared here ---
+ * `mat-linalg.hpp` and the LU specialisations call them
+ * directly through `fmpz_mat()` once they have copied a matrix
+ * into this representation. The constructor calls
+ * `fmpz_mat_init` with the right dimensions and the destructor
+ * calls `fmpz_mat_clear`; the in-source comment marks the
+ * class "should *not* go to the front end" because FLINT's
+ * limbs are not on the GC heap. `M2/gc-include.h` precedes the
+ * FLINT include so allocations route through bdwgc.
+ *
+ * @see dmat.hpp
+ * @see aring-zz-flint.hpp
+ * @see mat-linalg.hpp
+ */
+
 #include <assert.h>            // for assert
 #include <utility>             // for swap
 #include "aring-zz-flint.hpp"  // for ARingZZ
@@ -22,6 +55,18 @@ class DMat;
 // Dense matrices using Flint...
 ////////////////////////////////////////////////////
 
+/**
+ * @brief Specialisation of `DMat` for `ARingZZ` matrices, backed by FLINT's
+ * `fmpz_mat_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Wraps an `fmpz_mat_t` and dispatches all dense arithmetic to
+ * FLINT's `fmpz_mat_*` routines. The class header warns that
+ * instances must not be exposed to the front end --- the `fmpz_t`
+ * coefficients are allocated by FLINT, not GC-managed, so the
+ * front-end GC could free them out from under the wrapper.
+ */
 template <>
 class DMat<M2::ARingZZ>
 // Warning: objects of this class should *not* go to the front end.

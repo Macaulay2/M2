@@ -1,5 +1,34 @@
 #pragma once
 
+/**
+ * @file gb-f4/MonomialTypes.hpp
+ * @brief Typed integer vocabulary for `namespace newf4` (indices, monomial words, hashes, masks).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the strongly-named integer aliases the rest of
+ * `gb-f4/` uses in place of bare `int`: `Index` numbers GB
+ * basis elements; `MonomialIndex` keys into the
+ * `MonomialHashTable` with `0` reserved as the "undefined"
+ * sentinel; `MonomialInt` is one word of the encoded monomial
+ * stream and also the type used for cached degrees;
+ * `ComponentIndex` numbers free-module components; `HashInt` is
+ * the 64-bit hash returned by `MonomialHashFunction`; and
+ * `MonomialMask` is the 64-bit bitset `MonomialLookupTable`
+ * uses for cheap divisibility pre-tests.
+ *
+ * All six aliases compile to `int32_t` or `uint64_t`, but the
+ * distinct C++ names let the compiler reject calls that mix a
+ * `MonomialIndex` with an `Index` --- bugs that would silently
+ * misbehave with raw ints. Every other header in `gb-f4/`
+ * ultimately includes this one.
+ *
+ * @see MonomialHashTable.hpp
+ * @see MonomialLookupTable.hpp
+ * @see MonomialView.hpp
+ * @see PolynomialList.hpp
+ */
+
 #include <cstdint>
 
 namespace newf4 {

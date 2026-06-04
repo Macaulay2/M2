@@ -10,6 +10,39 @@
 #ifndef BIBASIS_TRIPLE_HPP
 #define BIBASIS_TRIPLE_HPP
 
+/**
+ * @file bibasis/triple.hpp
+ * @brief `BIBasis::Triple<MonomType>` --- (polynomial, ancestors, non-multiplicative variables) record driving Janet division.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares and defines the bundle the involutive engine carries
+ * around: a `Polynom<MonomType>` together with a cached pointer
+ * to its leading monomial, the strong and weak `Ancestor` /
+ * `WeakAncestor` links that record how this triple was derived
+ * from earlier basis elements, the `Variable` index that
+ * generated the prolongation (or `-1` for an initial input), and
+ * the `Nmp` set of non-multiplicative variables Janet division
+ * forbids multiplying by. Two constructors cover the two
+ * lifecycle states --- an initial triple seeded from an input
+ * polynomial vs. a derived triple created by a non-
+ * multiplicative prolongation --- and the destructor owns the
+ * polynomial pointer.
+ *
+ * `Compare(a, b)` returns true when `a`'s leading monomial is
+ * greater than `b`'s, so `QSet` sorts triples by leading
+ * monomial and the algorithm's `back()`-popping loop processes
+ * the lightest pending prolongation first; `SetNmp` / `TestNmp`
+ * are the bookkeeping the algorithm uses to remember which
+ * variables are still eligible for prolongation at each step.
+ *
+ * @see polynom.hpp
+ * @see janettree.hpp
+ * @see tset.hpp
+ * @see qset.hpp
+ * @see involutive.hpp
+ */
+
 #include <set>
 #include <string>
 #include "allocator.hpp"

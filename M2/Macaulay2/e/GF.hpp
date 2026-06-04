@@ -5,8 +5,59 @@
 #include "relem.hpp"
 
 /**
-    @ingroup rings
-*/
+ * @file GF.hpp
+ * @brief Legacy `Ring`-based Galois field with explicit Zech-style lookup tables.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `GF` is the engine's original Galois-field implementation,
+ * pre-dating the `aring` refactor. It inherits from `Ring`
+ * directly (so arithmetic goes through virtual dispatch) and
+ * stores two `int` tables indexed by powers of a chosen
+ * primitive element: `_one_table[i]` is the log index of
+ * `alpha^i + 1` (i.e. the Zech logarithm), and
+ * `_from_int_table[a]` maps a `Z/p` residue `a` to its log
+ * index. Multiplication of non-zero elements becomes index
+ * addition mod `Q - 1`, addition reduces to one `_one_table`
+ * lookup. Alongside the tables the class keeps a pointer to the
+ * presenting polynomial ring `(Z/p)[t]/f(t)` and the primitive
+ * `RingElement`, so M2 code that needs to introspect the
+ * defining polynomial or round-trip through it can still do so
+ * via `getMinimalPolynomial` / `get_rep`.
+ *
+ * Three modern siblings cover the same algebra with different
+ * backing stores: `ARingGFM2` (native, CRTP-inlined via
+ * `SimpleARing`), `ARingGFFlint` (FLINT Zech tables, small
+ * `q`), and `ARingGFFlintBig` (FLINT `fq_nmod`, large `q`).
+ * New engine code prefers those; the legacy class is reached
+ * through the `rawGaloisField` entry point in
+ * `interface/ring.cpp` (`GF::create(f)`).
+ *
+ * @see aring-m2-gf.hpp
+ * @see aring-gf-flint.hpp
+ * @see aring-gf-flint-big.hpp
+ * @see ZZp.hpp
+ */
+
+/**
+ * @brief Engine-side finite field `GF(p^n)` built on top of `(Z/p)[t] / f(t)`
+ * for a primitive element of the resulting field.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Represents non-zero elements by their discrete-logarithm index
+ * relative to a chosen primitive `primitive_element`: index 0
+ * encodes 0, `Q-1` encodes 1, and index `n` encodes
+ * `primitive^n`. `_x_exponent` is the index of the original
+ * generator `t`. Multiplication / division become mod-`Q1` add /
+ * sub on indices; addition uses the precomputed `_one_table` to
+ * resolve `1 + primitive^n`. `_from_int_table` maps small integers
+ * back into indices. Falls back to `Ring` for cases not covered
+ * by the `aring`-style `ARingGFM2` / `ARingGFFlint*`
+ * specialisations.
+ *
+ * @ingroup rings
+ */
 class GF : public Ring
 {
   // int P; // this is defined in class Ring

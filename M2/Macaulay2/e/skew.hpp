@@ -3,6 +3,53 @@
 #ifndef _skew_hpp_
 #define _skew_hpp_
 
+/**
+ * @file skew.hpp
+ * @brief `SkewMultiplication` --- configuration object naming the skew-commuting variables of a ring.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `SkewMultiplication`, the pure-data record a
+ * `PolyRing` (and `f4/moninfo.hpp`'s `MonomialInfo`) attaches
+ * when the user declares a subset of the variables to
+ * skew-commute. The record carries the total variable count
+ * `_n_vars`, the skew-variable count `_n_skew`, an ordered
+ * `_skew_list` of skew-variable indices for iteration, and a
+ * `_skew_exp` boolean bitmap indexed by variable for O(1)
+ * lookup --- the two representations exist for the different
+ * hot-loop patterns engine code walks.
+ *
+ * Beyond the lookup helpers `is_skew_var`, `skew_variable`,
+ * `skew_degree(exp)` (number of skew variables active in
+ * `exp`), and `skew_vars(exp, result)` (their indices), the
+ * class also computes `mult_sign(exp1, exp2)` --- the +/-1
+ * sign produced by the transpositions needed to interleave the
+ * skew variables of the two factors --- plus `diff` / `divide`
+ * exponent helpers and `exp_is_zero(exp)`, which detects
+ * `x_i^2 = 0` collapses on the skew side. Full polynomial
+ * multiplication still lives in `skewpoly.cpp`, `f4/`, and the
+ * resolution code in `schreyer-resolution/`, which consult
+ * `SkewMultiplication` for these signs and predicates.
+ *
+ * @see polyring.hpp
+ */
+
+/**
+ * @brief Sign-rule helper used by every ring that has a skew-commutative
+ * subset of variables (exterior factor, full skew ring, ...).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Stores which of the `_n_vars` variables are skew
+ * (`_skew_list[0.._n_skew-1]`, with `_skew_exp[i]` a fast
+ * "is variable `i` skew?" lookup), plus the byte size used to
+ * cache exponent vectors. Hands out the inversion count needed by
+ * the wrapping ring's `mult_by_term1` to decide the sign of a
+ * product, and detects `x_i^2 = 0` collapses on the skew side.
+ * Full polynomial multiplication still lives in the rings that
+ * embed this helper (`SkewPolynomialRing`, `PolyRing` with skew
+ * factors, F4 / resolution code).
+ */
 class SkewMultiplication
 {
  public:

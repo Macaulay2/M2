@@ -1,6 +1,38 @@
 #ifndef _gmp_util_h_
 #  define _gmp_util_h_
 
+/**
+ * @file interface/gmp-util.h
+ * @brief Inline helpers that move GMP / MPFR / MPFI limbs from `malloc`-managed storage into the bdwgc heap.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the small family of `mpz_reallocate_limbs` /
+ * `mpfr_reallocate_limbs` / `mpfi_reallocate_limbs` rewriters
+ * and the typed `moveTo_gmpQQ` / `moveTo_gmpRR` /
+ * `moveTo_gmpRRi` / `moveTo_gmpCC` / `moveTo_gmpCCi` wrappers
+ * (integer values go through `mpz_reallocate_limbs` directly)
+ * that the engine uses to launder every GMP-allocated number
+ * through `getmem_atomic` before handing it back to the
+ * interpreter. The pattern is the same in every case: allocate
+ * a fresh atomic GC buffer of the right limb size, `memcpy` the
+ * existing limbs into it, `mpz_clear` / `mpfr_clear` the
+ * original malloc-backed payload, and rewire the multiprecision
+ * struct to point at the new GC-managed storage.
+ *
+ * Without this laundering the engine would interleave two
+ * memory regimes inside the same value and the bdwgc collector
+ * would be unable to see the limbs --- so any rational, real,
+ * or complex number crossing the engine-to-interpreter boundary
+ * gets passed through a `moveTo_*` helper first. The
+ * `CC_struct` / `CCi_struct` typedefs at the bottom carry the
+ * complex (and complex-interval) layouts the helpers operate
+ * on.
+ *
+ * @see m2-mem.h
+ * @see engine-includes.hpp
+ */
+
 #  include "engine-includes.hpp"
 
 /**
@@ -50,11 +82,34 @@ inline void mpfi_reallocate_limbs (mpfi_ptr _z)
     mpfr_reallocate_limbs(&(_z->right));
 }
 
+  /**
+   * @brief Immutable view of a complex number as a pair of `mpfr_srcptr`
+   *        real and imaginary parts.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details Read-only twin of `CCmutable_struct`: the `mpfr_srcptr` members
+   *          forbid in-place mutation. Used by engine code that needs
+   *          to pass an MPFR complex number by reference without
+   *          allowing the callee to change it.
+   */
   typedef struct {
     mpfr_srcptr re;
     mpfr_srcptr im;
   } CC_struct;
 
+  /**
+   * @brief Mutable view of a complex number as a pair of `mpfr_ptr` real
+   *        and imaginary parts.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details Companion to `CC_struct`: the `mpfr_ptr` members allow in-place
+   *          MPFR arithmetic. The commented-out `gmp_CCmutable` /
+   *          `gmp_CC` typedefs below show how engine pointers used to
+   *          alias these structs before the macro-based layout in
+   *          `m2-types.h` replaced them.
+   */
   typedef struct {
     mpfr_ptr re;
     mpfr_ptr im;
@@ -63,11 +118,30 @@ inline void mpfi_reallocate_limbs (mpfi_ptr _z)
   //  typedef CCmutable_struct* gmp_CCmutable;
   //  typedef CC_struct* gmp_CC;
 
+/**
+ * @brief Immutable view of a complex interval as a pair of `mpfi_srcptr`
+ *        real and imaginary parts.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Interval analogue of `CC_struct`: real and imaginary components
+ *          are MPFI intervals rather than MPFR scalars, supporting the
+ *          `RRi` / `CCi` interval-arithmetic rings.
+ */
 typedef struct {
   mpfi_srcptr re;
   mpfi_srcptr im;
 } CCi_struct;
 
+/**
+ * @brief Mutable view of a complex interval as a pair of `mpfi_ptr` real
+ *        and imaginary parts.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Companion to `CCi_struct`: the `mpfi_ptr` members allow in-place
+ *          interval arithmetic.
+ */
 typedef struct {
   mpfi_ptr re;
   mpfi_ptr im;

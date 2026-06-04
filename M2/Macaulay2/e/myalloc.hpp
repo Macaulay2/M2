@@ -3,12 +3,57 @@
 #ifndef __myalloc_hpp_
 #define __myalloc_hpp_
 
+/**
+ * @file myalloc.hpp
+ * @brief `AllocLogger` / `StatsAllocator` --- single-threaded debug/benchmark instrumentation.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `AllocLogger` with static counters (`mNumAllocs`,
+ * `mAllocSize`, `mNumDeallocs`, `mCurrentAllocSize`,
+ * `mHighWater`) and the `StatsAllocator` wrapper that bumps
+ * those counters on every allocation / deallocation. The class
+ * is intentionally minimal: counters are static so per-type
+ * statistics share a collector, and there is no locking on the
+ * counter increments (the in-source comment is explicit: "not
+ * thread safe"). `StatsAllocator::allocate` / `deallocate` log
+ * the size, then call straight through to `::operator new` /
+ * `::operator delete`; there is no free-skipping debug mode.
+ * It is for debugging and benchmarking only --- not safe in any
+ * path the supervisor parallelises.
+ *
+ * Production allocations route through `newdelete.hpp`'s
+ * `our_new_delete` (Boehm GC). The legacy `mem.hpp` size-class
+ * `stash` allocator is now stubbed (its `new_elem` /
+ * `delete_elem` short-circuit to `newarray_clear` / `freemem`),
+ * so `AllocLogger` is the only opt-in counter source left ---
+ * reach for it when you want to count allocations of a single
+ * type in a benchmark run and dump the totals afterward.
+ *
+ * @see newdelete.hpp
+ * @see mem.hpp
+ */
+
 #include <iostream>
 
 // This class is static as it appears easiest if all allocator objects
 // are essentially identical.  It could be a static member of StatsAllocator,
 // but then each type T would have a different stats object.
 //
+/**
+ * @brief Process-wide allocation counter used by `StatsAllocator` for
+ * debugging and benchmarking.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details All counters (`mNumAllocs`, `mAllocSize`, `mNumDeallocs`,
+ * `mCurrentAllocSize`, `mHighWater`) are `static`, so the logger
+ * tracks every `StatsAllocator`-mediated allocation in the
+ * process at once. `logAlloc` / `logDealloc` are called from the
+ * allocator hooks; `reset()` zeroes everything for a fresh
+ * measurement. Not thread-safe --- intended only for diagnostic
+ * runs.
+ */
 // This class is meant for debugging/benchmark use only.
 // This class is not thread safe.
 //

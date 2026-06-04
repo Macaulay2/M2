@@ -8,6 +8,50 @@
 #ifndef _groebner_h_
 #  define _groebner_h_
 
+/**
+ * @file interface/groebner.h
+ * @brief Engine-boundary C API for Gröbner basis, resolution, and Hilbert-series computations.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `extern "C"` factories the M2 interpreter calls
+ * to start, drive, and inspect every long-running ideal-theory
+ * computation in the engine. Every factory returns the opaque
+ * `Computation*` typedef (which the engine sees as a
+ * `GBComputation*` or `ResolutionComputation*` internally):
+ * `IM2_GB_make` (`rawGB`), `IM2_res_make`, `rawMarkedGB`,
+ * `IM2_GB_force`, and `rawGroebnerWalk` build computations;
+ * `IM2_GB_set_hilbert_function`, `IM2_Computation_set_stop`,
+ * and `rawStartComputation` configure / step them;
+ * `rawStatus1` / `rawStatus2` / `rawShowComputation` poll
+ * their state. Result extraction: `rawGBGetMatrix`,
+ * `rawGBMinimalGenerators`, `rawGBChangeOfBasis`,
+ * `rawGBGetLeadTerms`, `rawGBGetParallelLeadTerms`,
+ * `rawGBSyzygies`, `rawGBMatrixRemainder`,
+ * `IM2_GB_matrix_lift`, `IM2_GB_contains`, plus the
+ * resolution-only `rawMinimalBetti`. `IM2_Matrix_Hilbert` and
+ * `rawKernelOfGB` cover GB-adjacent operations (Hilbert
+ * numerator on `coker leadterms`, Schreyer-induced kernel)
+ * that have no Computation surface of their own.
+ *
+ * This header is the source of truth for what `groebner.cpp`
+ * exports --- the in-file FIXME at the top notes "this header
+ * is based on what is defined in groebner.cpp, but the
+ * declarations in engine.h don't seem to match", and there is
+ * an explicit "will be removed once the new code is functional"
+ * banner before the legacy entry-point block. Implementation
+ * dispatches through `GBComputation::choose_gb` and
+ * `ResolutionComputation::choose_res` so the interpreter
+ * never sees algorithm selection; it just gets back an opaque
+ * pointer it polls via the shared `computation.h`
+ * `ComputationStatusCode` enum.
+ *
+ * @see groebner.cpp
+ * @see computation.h
+ * @see comp-gb.hpp
+ * @see comp-res.hpp
+ */
+
 #  include "engine-includes.hpp"
 #  include "interface/computation.h"
 

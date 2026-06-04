@@ -3,6 +3,41 @@
 #ifndef _dmat_lu_inplace_hpp_
 #define _dmat_lu_inplace_hpp_
 
+/**
+ * @file dmat-lu-inplace.hpp
+ * @brief `DMatLUinPlace<RT>` --- the LU worker that `DMatLinAlg<RT>` delegates to, with `RR` / `CC` / GF specialisations.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `DMatLUinPlace<RingType>`, the worker class
+ * `DMatLinAlg<RingType>::mLUObject` is built from. Its
+ * constructor copies the caller's matrix into the private `mLU`
+ * field (FLINT's "in-place" routines and the LAPACK routines
+ * below mutate that internal copy, *not* the user's original),
+ * runs `computeLU()` lazily on first access via `LUinPlace()`,
+ * and exposes `permutation()`, `pivotColumns()`, and
+ * `signOfPermutation()`. The generic `computeLU()` body in
+ * this file implements partial-pivot LU using
+ * `MatElementaryOps<Mat>::interchange_rows` and `findPivot`
+ * (with absolute-value-pivot `findPivot` specialisations for
+ * `ARingRRR` / `ARingCCC`).
+ *
+ * Four `computeLU` specialisations route to native back ends:
+ * `ARingGFFlintBig` via `fq_nmod_mat_lu`, `ARingGFFlint` via
+ * `fq_zech_mat_lu` (`<flint/perm.h>::_perm_parity` reads off
+ * the sign), and `ARingRR` / `ARingCC` via LAPACK's `dgetrf_`
+ * / `zgetrf_` --- marshalled in and out by the free helpers
+ * `make_lapack_array` / `fill_from_lapack_array` declared at
+ * the top of the header. The shared `LUUtil<RT>` template
+ * carries `setUpperLower` (splits an in-place LU back into
+ * separate L / U) and `computePivotColumns`.
+ *
+ * @see dmat-lu.hpp
+ * @see dmat.hpp
+ * @see aring-gf-flint.hpp
+ * @see aring-gf-flint-big.hpp
+ */
+
 #include "dmat.hpp"
 #include "mat-elem-ops.hpp"
 #include "mat-util.hpp"

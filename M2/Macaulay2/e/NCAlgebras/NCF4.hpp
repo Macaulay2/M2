@@ -1,6 +1,53 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
+/**
+ * @file NCAlgebras/NCF4.hpp
+ * @brief `NCF4` --- non-commutative F4 Gröbner-basis driver building a per-degree Macaulay matrix.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the F4-style alternative to the one-overlap-at-a-time
+ * `NCGroebner` reduction loop. Each iteration collects every
+ * overlap of the current degree from `OverlapTable mOverlapTable`,
+ * assembles a Macaulay matrix whose rows are the overlap
+ * polynomials plus their tail-reducers (drawn from
+ * `mGroebner`, the original inputs `mInput`, and
+ * previously-built reducer rows --- corresponding to the three
+ * `PreRowType` flavours `ReducerPreRow` / `OverlapPreRow` /
+ * `PreviousReducerPreRow`) and whose columns are the distinct
+ * monomials seen in any row sorted by the non-commutative
+ * monomial order, then row-reduces the whole matrix via
+ * `mVectorArithmetic`. Echelon rows whose leading column was
+ * not already a basis-element leading column become new GB
+ * elements (added to `mGroebner`); their overlaps feed the next
+ * degree. Two `RowsVector` matrices (`mRows`/`mPreviousRows`)
+ * and a third `mOverlaps` track current vs prior cohorts so
+ * `PreviousReducerPreRow` references can be resolved without
+ * rebuilding from scratch.
+ *
+ * Monomial / word storage is owned by an internal pair of
+ * `MemoryBlock`s (`mMonomialSpace` / `mPreviousMonomialSpace`).
+ * Word divisibility uses the live `WordTable` (the
+ * commented-out `SuffixTree mWordTable;` alternative remains
+ * available as a swap-in experiment). `m2tbb.hpp` is included
+ * for the column-monomial `mtbb::unordered_map MonomialHash`,
+ * the `PreRowFeeder = mtbb::feeder<PreRow>` worker queue, and a
+ * held `mtbb::task_arena mScheduler` ready for the parallel
+ * matrix-build path; the explicit comment "only used in
+ * parallelBuildF4Matrix, which is currently not used" flags
+ * that the parallel build is dormant scaffolding, and the
+ * `concurrent_vector` row / column container choices are
+ * commented out in favour of `std::vector` for now.
+ *
+ * @see NCGroebner.hpp
+ * @see FreeAlgebra.hpp
+ * @see OverlapTable.hpp
+ * @see WordTable.hpp
+ * @see SuffixTree.hpp
+ * @see VectorArithmetic.hpp
+ */
+
 #include "m2tbb.hpp"                      // for tbb interface
 
 #include "NCAlgebras/FreeMonoid.hpp"      // for MonomEq
@@ -32,6 +79,27 @@ union ring_elem;
 //   F4MatrixBuilder
 //   F4Matrix
 
+/**
+ * @brief Non-commutative F4 Groebner-basis driver: builds a per-degree
+ * Macaulay matrix from overlaps and reduces it in bulk.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Replaces the one-overlap-at-a-time `NCGroebner` loop with the F4
+ * pattern. Each degree, the driver pulls every overlap of that
+ * degree from `mOverlapTable`, builds rows from the overlaps plus
+ * their tail-reducers (drawn from `mGroebner`, the original
+ * `mInput`, or `mRows` --- the three `PreRowType` flavours), labels
+ * the columns by the distinct monomials seen, sorts them under the
+ * non-commutative monomial order, then echelon-reduces via
+ * `mVectorArithmetic`. Echelon rows whose leading column is new
+ * become new GB elements and feed the next degree's overlaps.
+ *
+ * Monomial / word storage is owned by an internal `MemoryBlock` pair
+ * (`mMonomialSpace` / `mPreviousMonomialSpace`); divisibility uses
+ * `mWordTable`. TBB scaffolding (`PreRowFeeder`, `mScheduler`) is
+ * wired up but the parallel build path is currently dormant.
+ */
 class NCF4 : public our_new_delete
 {
 private:
@@ -52,6 +120,20 @@ private:
 
   enum PreRowType { ReducerPreRow, OverlapPreRow, PreviousReducerPreRow };
 
+  /**
+   * @brief Symbolic description of one row before it is materialised in the
+   * matrix: a `left * (something) * right` triple.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details `preRowType` decides what `preRowIndex` points at:
+   * `ReducerPreRow` indexes either `mGroebner` (`>= 0`) or `mInput`
+   * (`< 0`, decoded as `-preRowIndex - 1`); `OverlapPreRow` is a
+   * freshly added overlap whose polynomial lives in the current
+   * cohort's `mRows`; `PreviousReducerPreRow` refers back into
+   * `mPreviousRows`. The `Word`s `left` and `right` are the leading
+   * monomial decomposition needed to materialise the row.
+   */
   struct PreRow
   {
     Word left;
@@ -60,15 +142,37 @@ private:
     PreRowType preRowType;
   };
 
+  /**
+   * @brief A materialised row of the Macaulay matrix: parallel coefficient and
+   * monomial arrays.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details `coeffVector` carries the coefficients via the `VectorArithmetic`
+   * abstraction. `columnWords` holds the monomial of each non-zero
+   * entry and is only valid before reduction starts; once columns are
+   * labelled, `columnIndices` carries the integer column indices that
+   * reduction actually uses.
+   */
   struct Row
   {
     ElementArray coeffVector;     // vector of coefficients
-    Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
+    Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix,
                                  // as the indices are not known during creation.
     Range<Word> columnWords;     // monoms used in the row.  Valid only *before* reduction begins, as reduction
                                  // does not update this field
   };
 
+  /**
+   * @brief A column of the Macaulay matrix: the monomial that names it plus
+   * the row currently acting as its pivot (or -1 if none).
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details A `Column`'s position in the enclosing `ColumnsVector` is its
+   * column index, so `Row::columnIndices` indexes back into this
+   * vector.
+   */
   struct Column
   {
     Word word;                 // Monom corresponding to the column
@@ -91,6 +195,16 @@ private:
   //      (and -1 if there is no such row).
   using MonomialHash = mtbb::unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
   
+  /**
+   * @brief Per-thread counters tracking how much work the F4 reduction did.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details `numCancellations` is the number of coefficient cancellations
+   * the reducer applied, and `numRows` is the number of rows it
+   * processed. Stored thread-locally so the parallel build path can
+   * tally without contention.
+   */
   // thread local information
   struct NCF4Stats {
     NCF4Stats() : numCancellations(0), numRows(0) {}

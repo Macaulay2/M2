@@ -3,6 +3,35 @@
 #ifndef _poly_hpp_
 #define _poly_hpp_
 
+/**
+ * @file poly.hpp
+ * @brief Concrete commutative `PolyRing` --- standard polynomial ring inheriting from `PolyRingFlat`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the concrete `PolyRing` that engine code instantiates
+ * whenever it talks about "a polynomial ring." The class
+ * descends from the abstract layer in `polyring.hpp` through
+ * `PolyRingFlat` (the intermediate that asserts coefficients
+ * are non-polynomial) and is the parent of the flavoured
+ * polynomial-ring subclasses the engine actually defines:
+ * `SkewPolynomialRing` (`skewpoly.hpp`), `WeylAlgebra`
+ * (`weylalg.hpp`), `SolvableAlgebra` (`solvable.hpp`), and
+ * `SchurRing` (`schur.hpp`). The quotient flavour
+ * `PolyRingQuotient` (`polyquotient.hpp`) sits beside `PolyRing`
+ * --- both inherit directly from `PolyRingFlat` --- and the
+ * non-commutative `M2FreeAlgebra` (`M2FreeAlgebra.hpp`) is on a
+ * separate `Ring` hierarchy. `TermIdeal`, `Matrix`,
+ * `GBRing` / `GBRingSkew`, `GBComputation`, and
+ * `ChineseRemainder` are forward-declared so the header stays
+ * light.
+ *
+ * @see polyring.hpp
+ * @see skewpoly.hpp
+ * @see weylalg.hpp
+ * @see polyquotient.hpp
+ */
+
 #include "ring.hpp"
 #include "ringelem.hpp"
 #include "skew.hpp"
@@ -17,6 +46,20 @@ class GBComputation;
 class ChineseRemainder;
 #include "polyring.hpp"
 
+/**
+ * @brief Concrete `PolyRingFlat` subclass implementing ordinary commutative
+ * polynomial rings `K[x_1, ..., x_n]` with a generic coefficient
+ * ring `K` and monoid `M`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details The default polynomial-ring implementation used by the engine
+ * when no special structure (skew, Weyl, solvable, quotient,
+ * fraction) is involved. Bodies for the `Ring` virtuals are in
+ * `poly.cpp`; the class itself declares the friends needed to
+ * give the term-level helpers, GB drivers, and matrix-stream
+ * code direct access to the linked-list `Nterm` representation.
+ */
 class PolyRing : public PolyRingFlat
 {
   friend class GBRingSkew;

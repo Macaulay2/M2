@@ -2,6 +2,44 @@
 #ifndef _aring_tower_hpp_
 #define _aring_tower_hpp_
 
+/**
+ * @file aring-tower.hpp
+ * @brief `M2::ARingTower` --- iterated finite-field extension tower for very large `GF(p^k)`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Builds a finite field as a chain `L_0 = Z/p`,
+ * `L_i = L_{i-1}[t_i] / f_i(t_i)`. A field element at level `k`
+ * is a polynomial in `t_k` of degree less than `deg(f_k)` whose
+ * coefficients themselves live in `L_{k-1}`, so values are
+ * represented recursively as `ARingPolynomial` --- a pointer to
+ * `ARingPolynomialStruct { int deg; int len; union { ElementType*
+ * coeffs; ARingPolynomial* polys; }; }` that bottoms out at the
+ * `ARingZZpFFPACK` aring from `aring-zzp-ffpack.hpp` (the base
+ * ring is fixed; the in-source TODO flags making this a template
+ * over the bottom ring). Multiplication at each level is
+ * polynomial multiplication followed by reduction modulo the
+ * level's minimal polynomial. Unlike the other arings,
+ * `ARingTower` inherits from `RingInterface` directly rather
+ * than from `SimpleARing<ARingTower>` because element values are
+ * heap-managed pointers that need a backing-ring reference at
+ * destruction time --- the nested `Element` class holds an
+ * `ARingTower&` for exactly that reason.
+ *
+ * The tower path is the right choice when the user wants an
+ * explicit tower presentation. The M2-side entry points are
+ * `rawARingTower1` (build from a base `Z/p` and variable names)
+ * and `rawARingTower2` (extend an existing tower with more
+ * variables) in `interface/aring.cpp`; standard monolithic
+ * `GF(p^k)` rings are reached via separate factories that pick
+ * `aring-gf-flint.hpp` or `aring-gf-flint-big.hpp` instead.
+ *
+ * @see aring-zzp-ffpack.hpp
+ * @see aring-gf-flint.hpp
+ * @see aring-gf-flint-big.hpp
+ * @see ExponentVector.hpp
+ */
+
 #include <vector>
 #include <string>
 
@@ -19,6 +57,22 @@ namespace M2 {
  */
 typedef struct ARingPolynomialStruct *ARingPolynomial;
 
+/**
+ * @brief Heap-allocated node of an `ARingTower` polynomial: a dense
+ * `degree`-indexed coefficient array that recurses through tower levels.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `deg` is the polynomial's degree in the current top variable and
+ * `len` is the allocated capacity. The anonymous union picks the
+ * coefficient kind by depth: at the bottom level the coefficients
+ * are `ARingZZpFFPACK::ElementType` values stored in `coeffs`, and
+ * at higher levels each "coefficient" is itself an
+ * `ARingPolynomial` one level down, stored in `polys`. Accessed
+ * through `ARingTower` (the `aring`-shaped sibling of `DRing` in
+ * `dpoly.hpp`), which always carries the current level so the
+ * right union arm is consulted.
+ */
 struct ARingPolynomialStruct
 {
   int deg;
@@ -35,8 +89,23 @@ class DRing;
 
 // TODO: make this a template type, with the base e.g. ZZ/p, ZZ, QQ, etc.
 /**
-\ingroup rings
-*/
+ * @brief `aring`-style coefficient ring for tower polynomial rings
+ * `(Z/p)[x_0][x_1]...[x_{n-1}]` modulo a chain of extensions.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details The `aring` analogue of `DRing` (see `dpoly.hpp`): bundles a
+ * base `ARingZZpFFPACK` ring with a list of variable names and a
+ * vector of `extensions` (one tower polynomial per algebraic
+ * level, `nullptr` for transcendental). `ElementType` is
+ * `ARingPolynomial`, and the nested `Element` and `ElementArray`
+ * helpers manage the underlying heap-allocated chains. Hardcoded
+ * to `ARingZZpFFPACK` for now (TODO: template on base ring), and
+ * tagged with `ringID = ring_tower_ZZp` so the engine can
+ * recognise it.
+ *
+ * @ingroup rings
+ */
 class ARingTower : public RingInterface
 {
   friend class ARingTowerEvaluator;
@@ -79,6 +148,17 @@ class ARingTower : public RingInterface
     const ARingTower &R;
   };
 
+  /**
+   * @brief Fixed-size, owned array of `ElementType`s for the linear-algebra
+   * templates that want a flat buffer of tower-polynomial slots.
+   *
+   * @note AI-generated documentation. Verify against the source before relying on it.
+   *
+   * @details Backed by a `std::unique_ptr<ElementType[]>`. Slots are
+   * zero-initialised at construction and cleared through
+   * `ARingTower::clear` in the destructor, so the array owns its
+   * tower polynomials.
+   */
   class ElementArray
   {
     const ARingTower &R;

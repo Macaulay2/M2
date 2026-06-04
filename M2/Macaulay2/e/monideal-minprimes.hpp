@@ -8,6 +8,42 @@
 #ifndef _monideal_minprimes_h_
 #define _monideal_minprimes_h_
 
+/**
+ * @file monideal-minprimes.hpp
+ * @brief `MinimalPrimes` --- minimal primes of a `MonomialIdeal` via a two-phase state machine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `MinimalPrimes`, the cousin of `AssociatedPrimes`
+ * specialised to the minimal-codimension primes only. The
+ * constructor radicalises the input (minimal primes of `I`
+ * agree with minimal primes of `rad(I)`, and working with the
+ * radical eliminates higher-power monomials cheaply), sets
+ * `min_codim` to an impossibly large `nvars + 1`, and leaves an
+ * empty accumulator `primes`. The `state` field runs the same
+ * two-stage shape as `AssociatedPrimes`: `do_codim` finds the
+ * minimum codimension cheaply, `do_primes` enumerates the
+ * minimal-codimension primes; callers who only need
+ * `codimension()` can stop after the first phase. Generators
+ * are stored as squarefree monomials in the accumulator
+ * `primes`, with the `Q` worklist of `Bag*`s carrying in-progress
+ * candidates between recursive steps; the combinatorial
+ * recursion is the standard monomial split-on-`x_i` that drives
+ * monomial primary decomposition.
+ *
+ * The public surface offers two enumeration algorithms ---
+ * `min_primes(maxcodim, count)` (the `Nmi_node`-tree walk via
+ * `ass_prime_generator`) and `alg1_min_primes(maxcodim, count)`
+ * (the `alg1_grab_prime` / `alg1_min_prime_generator` exponent-
+ * vector recursion) --- plus `associated_primes(count)`,
+ * `max_indep_sets(count)`, and static convenience overloads
+ * `MinimalPrimes::codimension` / `::min_primes` / `::max_indep_sets`
+ * that build a transient instance and call the matching member.
+ *
+ * @see monideal.hpp
+ * @see assprime.hpp
+ */
+
 #include "monideal.hpp"
 
 class MinimalPrimes

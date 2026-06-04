@@ -2,6 +2,36 @@
 #ifndef _mem_hh_
 #define _mem_hh_
 
+/**
+ * @file mem.hpp
+ * @brief `stash` and `doubling_stash` --- legacy size-class allocator interfaces, now stubbed to plain GC allocation.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the engine's `stash` (fixed-size) and
+ * `doubling_stash` (dispatches by size to one of `NDOUBLES = 25`
+ * power-of-two `stash`es, capping at `2 * 2^25`) classes. The
+ * design retains a slab list, a free list, a `chop_slab`
+ * splitter, a `bad_pattern` debug-fill byte, the `word_size`
+ * pointer-step constant, and a `spinLock` for concurrent access
+ * --- but the live bodies of `new_elem` and `delete_elem` short
+ * circuit to `newarray_clear(char, element_size)` and
+ * `freemem(p)` respectively (see the early `return` near the
+ * top of each inline definition); the slab / free-list path,
+ * statistics counters, and `chop_slab` are all unreachable in
+ * the current build.
+ *
+ * Used by engine code that allocates the same small struct
+ * (S-pair records, GB vectors, monomial cells, ...) in tight
+ * loops via the per-class `mystash` idiom sketched in the
+ * `#if 0` example at the top of the header. The
+ * `engine_allocated` / `engine_highwater` externs and the
+ * inline `engine_alloc` / `engine_dealloc` helpers are
+ * available for any caller that wants to manually track usage.
+ *
+ * @see newdelete.hpp
+ */
+
 #include <cassert>
 #include "newdelete.hpp"
 // for spinLock:

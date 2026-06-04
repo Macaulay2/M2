@@ -1,6 +1,51 @@
 #ifndef NEWDELETE_H
 #define NEWDELETE_H 1
 
+/**
+ * @file newdelete.hpp
+ * @brief `our_new_delete` --- per-class opt-in routing of `new` / `delete` through bdwgc.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `our_new_delete` base class, the
+ * destructor-firing `our_gc_cleanup` subclass, the `gc_vector<T>`
+ * alias for `std::vector<T, gc_allocator<T>>`, and the
+ * allocation macro family --- `newitem` / `newitem_clear` /
+ * `newitem_atomic` for single objects, `newarray` /
+ * `newarray_clear` / `newarray_atomic` / `newarray_atomic_clear`
+ * for sized blocks, the size-known-at-runtime `GETMEM(T*,
+ * size)` / `GETMEM_ATOMIC(T*, size)`, the `alloca`-backed
+ * `ARRAY_ON_STACK(type, nelems)`, and `VECTOR(T)` as a legacy
+ * alias for `gc_vector<T>`. A class inheriting from
+ * `our_new_delete` gets `operator new` / `new[]` routed through
+ * the engine's `getmem` (a `GC_malloc` wrapper from
+ * `interface/m2-mem.h`, with `outofmem2` on failure) and
+ * `operator delete` / `delete[]` routed through `freemem`, so
+ * every `new Foo(...)` of a participating class lands on the
+ * GC heap without any per-allocation glue at the call site;
+ * placement-`new` overloads exist for the standard
+ * `new(buffer) T(...)` idiom. `our_gc_cleanup` adds a
+ * `GC_REGISTER_FINALIZER_IGNORE_SELF` registration in its
+ * constructor and a `cleanup` trampoline that runs the C++
+ * destructor when the collector reclaims the object.
+ *
+ * `gc_vector<T>` is the right choice whenever `T` holds GC
+ * pointers and the vector itself either lives in a
+ * `our_new_delete`-derived object or stays on the stack. The
+ * engine deliberately avoids globally overriding `operator new`
+ * because mixed memory regimes are in play (FLINT, MPFR, GMP,
+ * and `std::vector` buffers all bring their own allocators);
+ * subclassing is the opt-in mechanism that lets each class
+ * choose. Production engine code uses `our_new_delete` as the
+ * standard base; the legacy `stash` / `doubling_stash`
+ * size-class allocators in `mem.hpp` are now stubbed, with
+ * `new_elem`/`delete_elem` short-circuiting to
+ * `newarray_clear` / `freemem`.
+ *
+ * @see hash.hpp
+ * @see mem.hpp
+ */
+
 #include "interface/m2-mem.h"  // for freemem, getmem, outofmem2
 //#include "debug.h"  // for TRAPCHK, TRAPCHK_SIZE
 

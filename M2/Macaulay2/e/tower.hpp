@@ -2,12 +2,59 @@
 #ifndef _tower_hpp_
 #define _tower_hpp_
 
+/**
+ * @file tower.hpp
+ * @brief Legacy `Tower` --- `Ring`-derived iterated extension of `Z/p` (pre-aring).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `Tower`, the original engine class for an iterated
+ * finite extension `L_0 = Z/p`, `L_i = L_{i-1}[t_i] / f_i(t_i)`.
+ * Each instance carries its `level` in the chain (0 is the
+ * base `Z/p`), the variable count `nvars`, the user-supplied
+ * `M2_ArrayString names`, and a `DRing *D` pointing at the
+ * level's polynomial-representation back-end from `dpoly.hpp`
+ * --- elements are polynomials in the current level's variable
+ * with coefficients drawn from the level below. `Tower`
+ * inherits directly from `Ring` and dispatches arithmetic
+ * through virtuals; the modern `aring-tower.hpp::ARingTower`
+ * (which inherits from `RingInterface` directly because its
+ * heap-pointer elements need a backing-ring reference at
+ * destruction) was written to replace it.
+ *
+ * Beyond the standard `Ring` API, `Tower` exposes
+ * `degreeInVariable`, `differentiate`, `extension_degree`,
+ * `power_mod` (`f^n mod g`), `lowerP` (Frobenius-related), and
+ * `translate` to move elements in from a `PolynomialRing`.
+ * The free functions `towerGCD` and `towerExtendedGCD` wrap
+ * the GCD machinery from `dpoly.hpp` at the `RingElement`
+ * level so M2 code can compute polynomial GCDs over the tower.
+ *
+ * @see aring-tower.hpp
+ * @see ring.hpp
+ * @see dpoly.hpp
+ */
+
 #include "relem.hpp"
 
 class RingMap;
 
 class DRing;
 
+/**
+ * @brief `Ring` subclass for tower polynomial rings
+ * `(Z/p)[x_0][x_1]...[x_{n-1}]` modulo a chain of algebraic extensions.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Owns a `DRing*` (defined in `dpoly.hpp`) that does the actual
+ * tower-polynomial arithmetic, and lifts it into the engine's
+ * `Ring` hierarchy. `level` is the working tower level and
+ * `nvars` the variable count; `names` carries the textual variable
+ * names for display. Built via `create(charac, names, extensions)`
+ * --- `extensions[i]` is the defining polynomial of the `i`-th
+ * variable over the lower variables (or zero for transcendental).
+ */
 class Tower : public Ring
 {
   friend class TowerEvaluator;

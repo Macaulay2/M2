@@ -3,6 +3,45 @@
 #ifndef _reducedgb_hpp_
 #define _reducedgb_hpp_
 
+/**
+ * @file reducedgb.hpp
+ * @brief `ReducedGB` --- abstract base for the canonicalising reduction pass that follows GB computation.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `ReducedGB`, a `GBComputation` subclass that takes
+ * an already-computed Groebner basis and canonicalises it:
+ * leading monomials become distinct, no tail term is divisible
+ * by another element's leading monomial, and (over a field)
+ * leading coefficients are normalised to 1. The base owns the
+ * `GBRing *R`, `originalR`, source / target `FreeModule*`s,
+ * and a `VECTOR(POLY) polys` of the current basis; the leading
+ * monomial index (`MonomialTable` or `MonomialTableZZ` from
+ * `montable.hpp` / `montableZZ.hpp`) is added by the
+ * appropriate subclass. The static `ReducedGB::create` factory
+ * picks the right subclass from the coefficient ring and call
+ * shape.
+ *
+ * Concrete subclasses cover the cases that diverge: `ReducedGB_Field`
+ * (`reducedgb-field.hpp`) enforces the field convention,
+ * `ReducedGB_Field_Local` (`reducedgb-field-local.hpp`, which
+ * extends `ReducedGB_Field` rather than `ReducedGB` directly)
+ * adds the unit-of-the-maximal-ideal check required over local
+ * rings, `ReducedGB_ZZ` (`reducedgb-ZZ.hpp`) handles
+ * coefficient-aware reduction (multiple basis elements with the
+ * same monomial support are allowed if they differ in
+ * coefficient), and `MarkedGB` (`reducedgb-marked.hpp`) takes a
+ * user-supplied `(leadterms, basis)` pair, accepts the marked
+ * leading terms as-is, and runs `auto_reduce()` over the tails
+ * (so no Buchberger loop runs but the polynomials themselves
+ * are still reduced against each other's marked leads).
+ *
+ * @see comp-gb.hpp
+ * @see gbring.hpp
+ * @see montable.hpp
+ * @see montableZZ.hpp
+ */
+
 #include "comp-gb.hpp"
 #include <vector>
 #include "gbring.hpp"

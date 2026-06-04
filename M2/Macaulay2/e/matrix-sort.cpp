@@ -1,5 +1,50 @@
+/**
+ * @file matrix-sort.cpp
+ * @brief `MatrixSorter` --- compute the column permutation that sorts a `Matrix` by degree / leading term.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Defines `MatrixSorter`, the helper that the engine-level
+ * `Matrix::sort(degorder, ringorder)` (defined at the bottom of
+ * this file --- the only external entry point) hands off to.
+ * It carries parallel per-column arrays (`sort_vals`, `sort_vecs`,
+ * `sort_degs`) plus the `deg_ascending` and `ringorder_ascending`
+ * flags from the constructor, which flip the sign of the degree
+ * comparison and the ring-order comparison respectively. The
+ * comparator walks degrees first (skipped entirely when
+ * `deg_ascending == 0`), then leading monomials via
+ * `R->compare_vecs`, returning the standard `-1` / `0` / `1`
+ * comparator triple. A hand-rolled `sort_partition` /
+ * `sort_range` quicksort drives the permutation; null vectors
+ * sort to the end. The sorter does not mutate the input matrix
+ * --- it computes a permutation `M2_arrayint result` and hands
+ * that back via `MatrixSorter::value()`, so the same permutation
+ * can be applied uniformly to a basis, its change-of-basis
+ * matrix, and its syzygies in lockstep.
+ *
+ * The class is file-local: no other engine translation unit
+ * references `MatrixSorter` directly; everyone goes through
+ * `Matrix::sort`.
+ *
+ * @see matrix.hpp
+ * @see style.hpp
+ */
+
 #include "matrix.hpp"
 
+/**
+ * @brief Helper that computes a column permutation for an engine `Matrix`
+ * by degree-then-monomial-order sort.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details `deg_ascending` and `ringorder_ascending` are sign flags; the
+ * comparator first orders by `sort_degs[i]` (the column's
+ * heuristic degree) and then breaks ties with the ring's lead-term
+ * comparison on `sort_vecs[i]`. Indices are sorted into `result`,
+ * which the caller uses to permute the matrix columns. Used to
+ * implement the engine-side `sort` matrix operation.
+ */
 class MatrixSorter
 {
   const Ring *R;

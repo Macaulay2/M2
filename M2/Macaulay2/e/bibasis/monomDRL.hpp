@@ -10,12 +10,52 @@
 #ifndef BIBASIS_MONOM_DRL_HPP
 #define BIBASIS_MONOM_DRL_HPP
 
+/**
+ * @file bibasis/monomDRL.hpp
+ * @brief `BIBasis::MonomDRL` --- degree-reverse-lex specialisation of the BIBasis monomial type.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Concrete `Monom` subclass whose `Compare`, `operator<`, and
+ * `operator>` compare by cached `TotalDegree` first and break
+ * ties with reverse-lex on the variable list --- the default
+ * ordering for most Gröbner-basis work, since on typical inputs
+ * it produces the smallest output bases. The variable list is
+ * stored ascending and the order-specific traversal direction is
+ * baked into the comparison, while multiplication, division, and
+ * divisibility share the same linear-walk structure as the other
+ * orderings. Storage routes through a per-class static
+ * `FastAllocator` so prolongation churn stays slab-resident.
+ *
+ * Selected at runtime by `Launcher` when the user requests
+ * `DegRevLex`; instantiated as `BooleanInvolutiveBasis<MonomDRL>`
+ * so the comparison kernel inlines into the reduction inner loop.
+ * Also implements `IsPommaretDivisibleBy` for the Janet driver.
+ *
+ * @see monom.hpp
+ * @see monomLex.hpp
+ * @see monomDL.hpp
+ * @see launcher.hpp
+ * @see involutive.hpp
+ */
+
 #include <set>
 #include "allocator.hpp"
 #include "monom.hpp"
 
 namespace BIBasis
 {
+    /**
+     * @brief `Monom` specialisation that orders monomials by degree, then
+     * by reverse-lex on the variable list (DegRevLex).
+     *
+     * @note AI-generated documentation. Verify against the source before relying on it.
+     *
+     * @details Same layout as `MonomDL` --- a `Monom` plus a per-class
+     * `FastAllocator` and a `Next` chaining pointer --- but with
+     * the comparison overloads implementing DegRevLex instead of
+     * DegLex.
+     */
     class MonomDRL : public Monom
     {
     private:

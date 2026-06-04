@@ -1,6 +1,41 @@
 // Copyright 2004.  Michael E. Stillman
 #pragma once
 
+/**
+ * @file monoid.hpp
+ * @brief `Monoid` --- variable count, naming, grading, and monomial order of a polynomial ring.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `Monoid`, the multiplicative-side representation of
+ * an M2 polynomial ring. It carries the variable count
+ * (`mVariableCount`) and names (`mVariableNames`), the
+ * per-variable (multi-)degree vectors flattened into
+ * `mDegrees`, a heft vector used to detect bounded-degree
+ * subsets, and the recursive `mDegreeMonoid` / `mDegreeRing`
+ * in which degrees themselves live (base case is the trivial
+ * monoid). Two parallel ordering representations sit alongside
+ * each other: the declarative `MonomialOrdering` the user
+ * wrote (`Lex`, `GRevLex`, weight blocks, ...) in `mo_` and the
+ * encoded `MonomialOrder` walked by the inner loop in
+ * `monorder_` --- the translator lives in `imonorder.hpp`.
+ * `monomial_size()` reports the number of `int`s in an encoded
+ * monomial for this monoid; the `MONOMIAL_BYTE_SIZE` macro
+ * scales that to bytes.
+ *
+ * Hot-path code allocates monomials on the stack via the
+ * `ALLOCATE_MONOMIAL` / `ALLOCATE_EXPONENTS` `alloca`-backed
+ * macros declared in this header; a typical GB step builds
+ * thousands of transient monomials per pair and cannot afford
+ * heap allocation. `Monoid` inherits from
+ * `MutableEngineObject` so the engine can attach derived data
+ * with stable identity.
+ *
+ * @see imonorder.hpp
+ * @see ExponentList.hpp
+ * @see ExponentVector.hpp
+ */
+
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>  // for alloca
 #endif
@@ -34,6 +69,22 @@ typedef const int *const_monomial;
 // TODO: rename and document all variables
 // (e.g. see NCAlgebras/FreeMonoid.hpp and mathicgb/MonoMonoid.hpp)
 // TODO: make sure monoid is deconstructed and not garbage collected
+/**
+ * @brief Engine-side commutative monomial monoid: variable names, ordering,
+ * multidegree machinery, and monomial encoding/decoding.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Owns the front-end `MonomialOrdering* mo_` plus its compiled
+ * `MonomialOrder* monorder_` form, the variable count and names,
+ * the per-variable multidegrees, the heft vector, and (recursively)
+ * a `mDegreeMonoid` describing how degrees themselves are
+ * structured. Exposes the operations rings reduce against
+ * (`mult`, `divide`, `lcm`, `gcd`, `compare`, `is_one`, plus
+ * encode / decode between exponent vectors and packed monomial
+ * words). The commutative counterpart of `FreeMonoid` in the
+ * NC stack.
+ */
 class Monoid : public MutableEngineObject
 {
   const Monoid *mDegreeMonoid;

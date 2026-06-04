@@ -3,6 +3,41 @@
 #ifndef _aring_QQ_gmp_hpp_
 #define _aring_QQ_gmp_hpp_
 
+/**
+ * @file aring-qq-gmp.hpp
+ * @brief `M2::ARingQQGMP` --- arbitrary-precision rationals backed straight by GMP `mpq_t`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * `ARingQQGMP` is the GMP counterpart of `ARingQQFlint`: each
+ * `ElementType` is a `__mpq_struct` carrying two GMP integers,
+ * with the limbs of both numerator and denominator
+ * heap-allocated under GMP's own allocator (no small-value
+ * inlining as in FLINT's `fmpq`). The class is a
+ * `SimpleARing<ARingQQGMP>` and supplies the standard aring API
+ * (`init` / `clear`, `set_from_long` / `_mpz` / `_mpq`, `add`,
+ * `subtract`, `mult`, `divide`, `negate`, `invert`, `is_zero`,
+ * `is_equal`, `is_unit`). `random(result)` draws independent
+ * numerator and denominator bit-strings via `mpz_urandomb` with
+ * width `mMaxHeight` (initialised to `50` in the constructor),
+ * using a per-instance `gmp_randstate_t` seeded by
+ * `gmp_randinit_default`; `eval` defers M2 ring-map evaluation
+ * to `target_ring->from_rational`.
+ *
+ * Observable behaviour matches `ARingQQFlint`; the dispatcher
+ * in `aring-qq.hpp` currently aliases the default `ARingQQ`
+ * here for historical reasons even though the FLINT path is
+ * faster in most cases. The lingering `#include "ring.hpp"` is
+ * for cross-ring promotion --- the same pending refactor
+ * flagged in `aring-qq-flint.hpp` (promotion is intended to
+ * migrate to `aring-translate.hpp`).
+ *
+ * @see aring-qq.hpp
+ * @see aring-qq-flint.hpp
+ * @see aring-zz-gmp.hpp
+ * @see aring.hpp
+ */
+
 #include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 #include "interface/random.h"    // for rawSetRandomQQ
 

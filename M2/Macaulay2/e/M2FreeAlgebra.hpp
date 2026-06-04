@@ -1,6 +1,43 @@
 #ifndef _m2_free_algebra_hpp_
 #define _m2_free_algebra_hpp_
 
+/**
+ * @file M2FreeAlgebra.hpp
+ * @brief `Ring`-shaped wrapper that exposes a non-commutative `FreeAlgebra` to the rest of the engine.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * The non-commutative implementation in `NCAlgebras/FreeAlgebra.hpp`
+ * (`class FreeAlgebra : public our_new_delete`) deliberately does
+ * not inherit from `Ring` --- it wants clean templates and no
+ * virtual-dispatch overhead. But matrices, modules, resolutions,
+ * `Computation`s, and `RingMap` construction all want a `Ring*`.
+ * `M2FreeAlgebra` reconciles the two by owning a
+ * `std::unique_ptr<FreeAlgebra>` and forwarding every `Ring`
+ * virtual call to the wrapped instance, so the non-commutative
+ * ring slots transparently into `Matrix` / `MutableMatrix` /
+ * `RingElement` slots.
+ *
+ * The class hierarchy here is two-level: this file also declares
+ * the abstract `M2FreeAlgebraOrQuotient : public Ring`, which
+ * `M2FreeAlgebra` and `M2FreeAlgebraQuotient` both inherit from.
+ * That intermediate fixes `is_commutative_ring()` to `false` and
+ * pins the abstract API (`freeAlgebra()`, `n_vars()`,
+ * `coefficientRing()`, `from_coefficient()`, `makeTerm()`,
+ * `cast_to_M2FreeAlgebraOrQuotient()`) plus `toPoly` / `fromPoly`
+ * / `appendFromModuleMonom` / `fromModuleMonom` helpers that
+ * translate between `ring_elem` (carrying the value through the
+ * `mPolyVal` slot) and the shared `Poly` from `Polynomial.hpp`.
+ * This wrap-a-templated-implementation-in-a-`Ring` pattern
+ * mirrors `aring-glue.hpp`'s `ConcreteRing<R>` for the aring
+ * family.
+ *
+ * @see NCAlgebras/FreeAlgebra.hpp
+ * @see Polynomial.hpp
+ * @see aring-glue.hpp
+ * @see M2FreeAlgebraQuotient.hpp
+ */
+
 #include <M2/math-include.h>
 #include "engine-includes.hpp"
 
@@ -24,6 +61,19 @@ struct Monoid;
 //  typedef ring_elem ElementType;
 //};
 
+/**
+ * @brief Abstract `Ring` subclass that lifts either a `FreeAlgebra` or a
+ * `FreeAlgebraQuotient` into the engine's `Ring` hierarchy.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details The common base of `M2FreeAlgebra` (the unquotiented case) and
+ * `M2FreeAlgebraQuotient`. Provides the `Ring` overrides that
+ * dispatch to the underlying `freeAlgebra()` and the type-safe
+ * cast helpers (`toPoly` / `fromPoly` / `appendFromModuleMonom`)
+ * the rest of the engine uses to convert between opaque `ring_elem`
+ * handles and concrete `Poly*` values.
+ */
 class M2FreeAlgebraOrQuotient : public Ring
 {
 public:
@@ -54,6 +104,19 @@ public:
 
 };
 
+/**
+ * @brief Concrete `Ring` wrapper around an owned `FreeAlgebra` (no quotient).
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Holds the wrapped algebra via `std::unique_ptr<FreeAlgebra>` and
+ * delegates every `Ring` operation to it. `create()` is the factory
+ * that builds the underlying `FreeAlgebra` from the user-visible
+ * names / degrees / weight vectors / heft vector and hands the
+ * resulting unique pointer in. The companion
+ * `M2FreeAlgebraQuotient` plays the same role for a
+ * `FreeAlgebraQuotient`.
+ */
 class M2FreeAlgebra : public M2FreeAlgebraOrQuotient
 {
 private:

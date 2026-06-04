@@ -3,6 +3,42 @@
 #ifndef _ring_hh_
 #  define _ring_hh_
 
+/**
+ * @file ring.hpp
+ * @brief `Ring` --- the legacy abstract base class for every coefficient and polynomial ring.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `Ring`, the virtual base from which every ring in
+ * M2's legacy interface descends: `RingZZ`, `Z_mod`, `PolyRing`
+ * (with the flavoured subclasses `SkewPolynomialRing`,
+ * `WeylAlgebra`, `SolvableAlgebra`, `SchurRing`),
+ * `PolyRingQuotient`, `SchurRing2`, `FractionField`,
+ * `LocalRing`, `GF`, the `M2FreeAlgebra` /
+ * `M2FreeAlgebraQuotient` non-commutative pair, and ---
+ * indirectly via `aring-glue.hpp` --- the `ConcreteRing<R>`
+ * template (and its `RingQQ` instantiation) that wraps any
+ * `aring`-templated ring. Every operation a ring supports
+ * (`add`, `mult`, `is_zero`, `is_unit`, `from_long`, `eval`,
+ * `text_out`, ...) is a virtual method on this class, and
+ * callers dispatch through `Ring*` uniformly. The header
+ * forward-declares the friend ring types so the giant
+ * interface surface can keep its mutual references without
+ * dragging in every subsystem; the `PolyQQ` declaration near
+ * the top is stale (no class body exists in the tree).
+ *
+ * Marked "legacy" because the 2012-onward `aring.hpp`
+ * framework replaces virtual dispatch with templates for hot
+ * paths; new rings should target `aring`. The legacy API
+ * persists everywhere existing code already speaks `Ring*`,
+ * and `aring-glue.hpp`'s `ConcreteRing<R>` is what lets the
+ * frameworks coexist.
+ *
+ * @see aring.hpp
+ * @see aring-glue.hpp
+ * @see relem.hpp
+ */
+
 #  include <utility>  // for pair
 
 #  include "aring.hpp"       // for RingID, ring_old
@@ -501,7 +537,8 @@ class Ring : public MutableEngineObject
   /// vector operations ////////////////////
   //////////////////////////////////////////
   // These routines all act on linked lists
-  // of vecterm's, sorted by descending component.
+  // of vecterm's, sorted by descending component;
+  // zero-coefficient entries are omitted.
   // We always assume that ringelem's are immutable:
   // The same value might be shared in several vecterms.
   //
@@ -614,6 +651,20 @@ class Ring : public MutableEngineObject
   ring_elem vec_split_off_content(vec f, vec &result) const;
 };
 
+/**
+ * @brief Abstract incremental accumulator that builds a `ring_elem` from
+ * many `add(f)` calls.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Provides a single-value `getValue()` entry point that finalises
+ * whatever the underlying ring decided to do with the staged
+ * summands (geobucket merge, hash deduplication, polynomial
+ * normalisation, ...). Concrete subclasses include
+ * `SumCollectorFreeAlgebraHeap` (in `FreeAlgebra.hpp`) and the
+ * ring-specific implementations the engine instantiates through
+ * `Ring::make_SumCollector`.
+ */
 class SumCollector : public our_new_delete
 {
  public:

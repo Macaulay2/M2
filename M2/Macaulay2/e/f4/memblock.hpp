@@ -2,6 +2,36 @@
 #ifndef __memblock_h_
 #define __memblock_h_
 
+/**
+ * @file f4/memblock.hpp
+ * @brief `F4MemoryBlock<T, NSLAB>` --- F4's templated slab bump allocator.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `F4MemoryBlock`, the F4-internal slab allocator
+ * parameterised on the value type `T` and the slab capacity
+ * `NSLAB` (default `4092` chosen so each slab lands near 16 KB
+ * for the typical `T` and stays L1-resident). The allocator
+ * keeps a linked list of `slab` records; `allocate(len)`
+ * returns the next `len` `T`s from the current slab in one
+ * call (or you can split it into `reserve(len)` to obtain a
+ * pointer and `intern(len)` to commit the bump), allocating
+ * and chaining a new slab on overflow. `reset()` rewinds the
+ * cursor to the first slab without freeing the chain --- so a
+ * generation of transient F4 monomials, S-pair indices, or
+ * coefficient arrays can be allocated and then bulk-discarded
+ * with no per-allocation cost.
+ *
+ * Counterpart to the top-of-engine `MemoryBlock` (a
+ * `memtailor::Arena` wrapper); the in-F4 version exists so the
+ * F4 inner loop can stay independent of the submodule and
+ * specialise the slab layout to the value type at compile
+ * time.
+ *
+ * @see f4.hpp
+ * @see MemoryBlock.hpp
+ */
+
 #include "newdelete.hpp"
 
 template <typename T, long int NSLAB = 4092>

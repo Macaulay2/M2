@@ -3,6 +3,41 @@
 #ifndef _dmat_lu_hpp_
 #define _dmat_lu_hpp_
 
+/**
+ * @file dmat-lu.hpp
+ * @brief Umbrella header for `DMat<R>` LU --- declares `DMatLinAlg<RingType>` and pulls in every back-end variant.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the dispatch template `DMatLinAlg<RingType>` and
+ * `#include`s the per-ring LU specialisations:
+ * `dmat-lu-inplace.hpp` (the `DMatLUinPlace<RingType>` worker
+ * that the generic body holds as its `mLUObject`),
+ * `dmat-lu-zzp-ffpack.hpp` (Z/p via FFLAS-FFPACK),
+ * `dmat-lu-zzp-flint.hpp` (Z/p via FLINT), and `dmat-lu-qq.hpp`
+ * (rational LU). Each `RingType` with a specialisation
+ * overrides the template to route into a back-end-native
+ * routine; rings without one fall through to the generic
+ * in-place implementation laid out in this file.
+ *
+ * The public API of `DMatLinAlg<RingType>` is `solve(B, X)`,
+ * `solveInvertible(B, X)`, `inverse(X)`, `determinant(result)`,
+ * `matrixPLU(P, L, U)` (P as `std::vector<size_t>`, with L and
+ * U returned as *separate* matrices --- `setUpperLower` splits
+ * the internal packed LU into them), `kernel(X)`, `rank()`,
+ * and `columnRankProfile(profile)`. Consumers include the
+ * dispatching `mat-linalg.hpp` family, the SLP machinery
+ * (`SLP-imp.hpp`), and the resolution boundary code in
+ * `schreyer-resolution/res-f4-m2-interface.cpp`. The file also
+ * defines free templates `permuteRows`, `solveLowerTriangular`,
+ * and `solveUpperTriangular` (with FLINT `fq_zech` / `fq_nmod`
+ * specialisations for the GF variants).
+ *
+ * @see dmat.hpp
+ * @see mat-linalg.hpp
+ * @see mat-elem-ops.hpp
+ */
+
 #include "dmat.hpp"
 #include "mat-elem-ops.hpp"
 #include "mat-util.hpp"

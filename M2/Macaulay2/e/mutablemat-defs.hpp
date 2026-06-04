@@ -3,6 +3,44 @@
 #ifndef _mutable_mat_defs_hpp_
 #define _mutable_mat_defs_hpp_
 
+/**
+ * @file mutablemat-defs.hpp
+ * @brief `MutableMat<Mat>` --- the templated bridge from `DMat` / `SMat` to the abstract `MutableMatrix`.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares `MutableMat<Mat>` (a `MutableMatrix` subclass
+ * owning a `Mat`, where `Mat` is one of `DMat<R>` or
+ * `SMat<R>`) along with the supporting helpers used in the
+ * templated linear-algebra path: the `isDense<MT>` predicate
+ * (true for `DMat`, false for `SMat`), the `EigenTypes<RT>`
+ * traits struct that maps each numeric aring to its
+ * eigenvalue / eigenvector / Hermitian-eigenvalue /
+ * Hermitian-eigenvector return types (with `ARingRR`
+ * eigenvalues lifting into `ARingCC`, MPFR-precision rings
+ * lifting into their `CCC` counterpart), and the
+ * `toMatrix<CoeffRing>(R, DMat)` / `toMatrix<CoeffRing>(R, SMat)`
+ * conversion templates that materialise a `DMat` or `SMat`
+ * back into an immutable engine `Matrix*` via
+ * `MatrixConstructor`. The wrapper implements every
+ * `MutableMatrix` virtual by forwarding to the wrapped
+ * templated implementation, so the outer interface stays
+ * uniform while the inner-loop arithmetic stays fully inlined
+ * --- the same wrap-templated-implementation-in-a-virtual-base
+ * pattern `aring-glue.hpp`'s `ConcreteRing<R>` uses for rings.
+ *
+ * The companion `mutablemat-imp.hpp` carries the heavy
+ * template bodies (which would otherwise drag SLP and NAG
+ * includes into every consumer); a translation unit that needs
+ * only the declarations pulls in this file via the
+ * `mutablemat.hpp` umbrella and leaves the implementation for
+ * instantiation sites.
+ *
+ * @see mutablemat.hpp
+ * @see mutablemat-imp.hpp
+ * @see mat.hpp
+ */
+
 #include <iostream>
 #include "mat.hpp"
 
@@ -42,6 +80,16 @@ struct EigenTypes
   typedef RT HermitianEigenvectorType;
 };
 
+/**
+ * @brief `EigenTypes` specialisation for double-precision real matrices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details A general (non-Hermitian) `ARingRR` matrix has complex eigenvalues
+ * and eigenvectors --- both are promoted to `M2::ARingCC`. The
+ * Hermitian path stays real, so `HermitianEigenvalueType` and
+ * `HermitianEigenvectorType` remain `M2::ARingRR`.
+ */
 template <>
 struct EigenTypes<M2::ARingRR>
 {
@@ -51,6 +99,15 @@ struct EigenTypes<M2::ARingRR>
   typedef M2::ARingRR HermitianEigenvectorType;
 };
 
+/**
+ * @brief `EigenTypes` specialisation for double-precision complex matrices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details The general path stays in `M2::ARingCC`. The Hermitian path drops
+ * eigenvalues to `M2::ARingRR` (Hermitian matrices have real
+ * spectrum) while eigenvectors remain `M2::ARingCC`.
+ */
 template <>
 struct EigenTypes<M2::ARingCC>
 {
@@ -60,6 +117,16 @@ struct EigenTypes<M2::ARingCC>
   typedef M2::ARingCC HermitianEigenvectorType;
 };
 
+/**
+ * @brief `EigenTypes` specialisation for arbitrary-precision real (`MPFR`)
+ * matrices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details Same logic as the `M2::ARingRR` specialisation lifted to the
+ * MPFR/MPC rings: general spectra land in `M2::ARingCCC`, Hermitian
+ * spectra stay in `M2::ARingRRR`.
+ */
 template <>
 struct EigenTypes<M2::ARingRRR>
 {
@@ -69,6 +136,16 @@ struct EigenTypes<M2::ARingRRR>
   typedef M2::ARingRRR HermitianEigenvectorType;
 };
 
+/**
+ * @brief `EigenTypes` specialisation for arbitrary-precision complex
+ * (`MPC`) matrices.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * @details General path stays in `M2::ARingCCC`. Hermitian eigenvalues drop
+ * to `M2::ARingRRR` (real); Hermitian eigenvectors remain
+ * `M2::ARingCCC`.
+ */
 template <>
 struct EigenTypes<M2::ARingCCC>
 {

@@ -1,5 +1,45 @@
 #pragma once
 
+/**
+ * @file gb-f4/GBF4Interface.hpp
+ * @brief Legacy-to-new-F4 adapter exposing `GBF4Computation` through the engine's `GBComputation` API.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the `GBComputation` subclass the M2 interpreter
+ * sees plus two `createGBF4Interface` factory overloads (one
+ * at global scope taking `int strategy`, one in
+ * `namespace newf4` taking `Strategy strategy`) and the
+ * `populateComputation(const Matrix*, GBF4Computation&)` helper.
+ * `GBF4Interface` holds borrowed pointers to the
+ * `PolynomialRing` and `FreeModule`, plus owning
+ * `unique_ptr<VectorArithmetic>` and
+ * `unique_ptr<GBF4Computation>` members carrying the algorithm
+ * state. Two constructors cover ingestion from a legacy
+ * `Matrix` or from a `BasicPolyList` --- the latter being the
+ * representation produced by `BasicPolyListParser` from the
+ * MSolve text format and similar engine-neutral inputs.
+ *
+ * This adapter is currently a **non-functional placeholder**:
+ * `start_computation()` has an empty body, and every
+ * `GBComputation` reporter override (`get_gb`, `get_mingens`,
+ * `get_change`, `get_syzygies`, `get_initial`,
+ * `matrix_remainder`, `matrix_lift`, `set_hilbert_function`,
+ * `contains`) currently returns `nullptr`, `false`, or `0`.
+ * The embedded `GBF4Computation` likewise has no GB-construction
+ * methods yet --- ingestion is the only live path. Separating
+ * "interface" from "computation" is the eventual design so the
+ * templated core stays free of `Matrix` / `Computation` glue.
+ * The `toMatrix` helper at the bottom converts a
+ * `PolynomialList` back through `MatrixStream` for `show*`
+ * paths and is the one piece that is wired up.
+ *
+ * @see GBF4Computation.hpp
+ * @see PolynomialList.hpp
+ * @see comp-gb.hpp
+ * @see matrix-stream.hpp
+ */
+
 #include "BasicPolyList.hpp"
 #include "GBF4Computation.hpp"
 #include "PolynomialList.hpp"

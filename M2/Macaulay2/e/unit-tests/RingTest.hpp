@@ -3,6 +3,44 @@
 #ifndef __ring_test_hpp__
 #define __ring_test_hpp__
 
+/**
+ * @file unit-tests/RingTest.hpp
+ * @brief Shared gtest fixture for the legacy `Ring`-based `Ring*Test.cpp` suite.
+ *
+ * @note AI-generated documentation. Verify against the source before relying on it.
+ *
+ * Declares the harness the legacy-ring tests share: the
+ * primary `getElement<RingType>(R, index)` function template
+ * (specialised per ring in the corresponding `Ring*Test.cpp`)
+ * that returns a `ring_elem` rather than a typed `ElementType`,
+ * the `RingElementGenerator<RingType>` wrapper handing out one
+ * `ring_elem` per `nextElement` call, the `fromStream` parsers
+ * for deserialising elements through the engine's `istream`
+ * plumbing, and the `ringName(R)` helper that drives a `buffer`
+ * through `R.text_out` so test failure messages name the ring
+ * under test. A family of templated drivers --- `testRingCoercions`,
+ * `testRingNegate`, `testRingAdd`, `testRingSubtract`,
+ * `testRingDivide`, `testRingAxioms`, `testRingPower`,
+ * `testRingGCD`, `testRingRemainder`, `testRingSyzygy` ---
+ * each run `ntrials` iterations against the generator's
+ * output. `ntrials = 100` (with a commented `// 5000` recording
+ * the prior value); the figure is deliberately smaller than
+ * the `aring` suite's `1000` because each legacy call
+ * dispatches through virtual `Ring` methods and is
+ * correspondingly slower.
+ *
+ * Mirrors `ARingTest.hpp` for the older `ring_elem` /
+ * tagged-pointer interface that still powers most user-facing
+ * polynomial rings and crosses the C boundary to the
+ * interpreter.
+ *
+ * @see ARingTest.hpp
+ * @see interface/random.h
+ * @see ZZ.hpp
+ * @see RingZZTest.cpp
+ * @see RingZZpTest.cpp
+ */
+
 #include <cstdio>
 #include <string>
 #include <iostream>
