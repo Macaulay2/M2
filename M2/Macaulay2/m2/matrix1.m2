@@ -439,11 +439,11 @@ comodule Ideal := Module => I -> cokernel generators I
 quotient Ideal := Module => opts -> I -> (ring I) / I
 module   Ideal := Module => (cacheValue symbol module) (I -> image generators I)
 
-genera Ideal := (I) -> genera ((ring I)^1/I)
-genus Ideal := (I) -> genus ((ring I)^1/I)
+genera Ideal := I -> genera comodule I
+genus  Ideal := I -> genus  comodule I
 
-eulers(Ideal) := (I) -> eulers((ring I)^1/I)
-euler(Ideal) := (I) -> euler((ring I)^1/I)
+eulers Ideal := I -> eulers comodule I
+euler  Ideal := I -> euler  comodule I
 
 RingElement * Ideal := Ideal => (r,I) -> ideal (r ** generators I)
 Ideal * RingElement := Ideal => (I,r) -> ideal ((generators I)**r)
