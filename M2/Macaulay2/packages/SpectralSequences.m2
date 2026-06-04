@@ -32,7 +32,7 @@ newPackage(
   "SpectralSequences",
 --  AuxiliaryFiles => true,
   Version => "2.02",
-  Date => "9 March 2026",
+  LastUpdated => "9 March 2026",
   Authors => {
        {
       Name => "David Berlekamp", 
@@ -59,7 +59,7 @@ newPackage(
       Email => "vqthanh@math.berkeley.edu",
       HomePage => "http://math.berkeley.edu/~thanh"}},
   Headline => "spectral sequences",
-  Keywords => {"Homological Algebra"},
+  Areas => {"Homological Algebra"},
   PackageImports => {},
   PackageExports => {"Complexes","PushForward", "SimplicialComplexes"}
   )

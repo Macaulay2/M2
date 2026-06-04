@@ -20,7 +20,7 @@
 
 newPackage( "TestIdeals",
 Version => "1.01",
-Date => "3/22/2019, 2019",
+LastUpdated => "3/22/2019, 2019",
 Authors => {
      {Name => "Erin Bela",
      Email => "ebela@nd.edu"
@@ -77,7 +77,7 @@ Authors => {
      }
 },
 Headline => "singularities in positive characteristic",
-Keywords => {"Commutative Algebra"},
+Areas => {"Commutative Algebra"},
 AuxiliaryFiles=>true,
 PackageExports=>{"Depth"},
 PackageImports => {"MinimalPrimes", "Complexes"},

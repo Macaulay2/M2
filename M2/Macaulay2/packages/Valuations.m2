@@ -1,7 +1,7 @@
 newPackage("Valuations",
         Headline => "implementation of valuations for rings",
         Version => "1.0",
-        Date => "June 5, 2023",
+        LastUpdated => "June 5, 2023",
         Authors => {
             {Name => "Michael Burr", Email => "burr2@clemson.edu", HomePage => "https://cecas.clemson.edu/~burr2/"},
             {Name => "Colin Alstad", Email => "calstad@clemson.edu", HomePage => "https://colinalstad.com/"},
@@ -13,7 +13,7 @@ newPackage("Valuations",
         HomePage => "https://github.com/Macaulay2/Workshop-2023-Minneapolis/tree/valuations",
         Configuration => {},
         PackageExports => {"LocalRings", "SubalgebraBases", "InvariantRing", "gfanInterface", "Binomials"},
-	Keywords => {"Commutative Algebra"})
+	Areas => {"Commutative Algebra"})
 
 ----- Eventually move to other packages
 ring Subring := A -> ambient A

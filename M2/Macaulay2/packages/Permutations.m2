@@ -2,8 +2,8 @@ newPackage(
     "Permutations",
     AuxiliaryFiles => true,
     Version => "1.1", 
-    Date => "May 13, 2025",
-    Keywords => {"Combinatorics"},
+    LastUpdated => "May 13, 2025",
+    Areas => {"Combinatorics"},
     Authors => {
         {Name => "Sean Grate", 
          Email => "sean.grate@auburn.edu", 

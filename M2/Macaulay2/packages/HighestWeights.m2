@@ -18,13 +18,13 @@
 newPackage(
      "HighestWeights",
      Version => "0.6.5",
-     Date => "July 03, 2015",
+     LastUpdated => "July 03, 2015",
      AuxiliaryFiles => true,
      Authors => {{Name => "Federico Galetto",
      	       Email => "galetto.federico@gmail.com",
 	       HomePage => "http://math.galetto.org"}},
      Headline => "decompose free resolutions and graded modules with a semisimple Lie group action",
-     Keywords => {"Lie Groups and Lie Algebras", "Homological Algebra"},
+     Areas => {"Lie Groups and Lie Algebras", "Homological Algebra"},
      PackageExports => {"WeylGroups", "Complexes"},
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",

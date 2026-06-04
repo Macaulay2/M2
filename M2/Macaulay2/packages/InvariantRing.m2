@@ -9,8 +9,8 @@
 
 newPackage(
         "InvariantRing",
-        Version => "2.5", 
-        Date => "May 25, 2026",
+        Version => "2.4", 
+        LastUpdated => "May 1, 2026",
         Authors => {
 	    {Name => "Luigi Ferraro", 
 		 Email => "luigi.ferraro@utrgv.edu", 
@@ -38,7 +38,7 @@ newPackage(
 		 HomePage => "https://math.berkeley.edu/~xlni/"}
              },
         Headline => "invariants of group actions",
-	Keywords => {"Representation Theory", "Group Theory"},
+	Areas => {"Representation Theory", "Group Theory"},
 	Certification => {
 	     "journal name" => "Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",

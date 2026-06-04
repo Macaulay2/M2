@@ -1,7 +1,7 @@
 newPackage(
   "TropicalToric",
 	Version => "1.0",
-	Date => "May 2022",
+	LastUpdated => "May 2022",
 	Authors => {
    		{
         Name => "Alessio Borzì",
@@ -23,7 +23,7 @@ newPackage(
 	CacheExampleOutput => true,
   OptionalComponentsPresent => true,
   UseCachedExampleOutput => true,
-  Keywords => {"Tropical Geometry"},
+  Areas => {"Tropical Geometry"},
   Certification => {
       "journal name" => "Journal of Software for Algebra and Geometry",
       "journal URI" => "https://msp.org/jsag/",

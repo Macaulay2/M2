@@ -2,7 +2,7 @@
 newPackage(
 	"MonodromySolver",
     	Version => "1.16", 
-    	Date => "May 2023",
+    	LastUpdated => "May 2023",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "timduff@uw.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
@@ -13,7 +13,7 @@ newPackage(
 	     },
     	HomePage => "http://www.math.gatech.edu/~leykin",
     	Headline => "solving polynomial systems via monodromy",
-	Keywords => {"Numerical Algebraic Geometry"},
+	Areas => {"Numerical Algebraic Geometry"},
 	PackageImports => {"gfanInterface","NAGtypes"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true,

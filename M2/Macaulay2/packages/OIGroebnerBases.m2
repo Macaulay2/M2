@@ -13,8 +13,8 @@ You should have received a copy of the GNU General Public License along with thi
 newPackage("OIGroebnerBases",
     Headline => "OI-modules over Noetherian polynomial OI-algebras",
     Version => "1.0.0",
-    Date => "September 6, 2023",
-    Keywords => { "Commutative Algebra" },
+    LastUpdated => "September 6, 2023",
+    Areas => { "Commutative Algebra" },
     Authors => {
         { Name => "Michael Morrow", HomePage => "https://michaelmorrow.me", Email => "michaelhmorrow98@gmail.com" }
     },

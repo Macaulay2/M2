@@ -18,11 +18,11 @@
 
 newPackage(
 	"Visualize",
-	Version => "1.10",
-	Date => "May 27, 2026",
-    	Authors => {
-     	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},
-	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},
+	Version => "1.9",
+	LastUpdated => "January 2, 2026",
+    	Authors => {       
+     	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
+	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelpi.edu/~bstone/"},
 	     {Name => "Jim Vallandingham", Email => "vlandham@gmail.com", HomePage => "http://vallandingham.me/"},
 	     {Name => "Doug Torrance", Email => "dtorrance9@gatech.edu", HomePage => "https://d-torrance.github.io"}
@@ -32,7 +32,7 @@ newPackage(
 -- Contributing Author	     {Name => "Julio Urenda", Email => "jcurenda@nmsu.edu"},
 	     },
     	Headline => "interactive visualization and manipulation of combinatorial objects in a browser",
-	Keywords => {"Graphics"},
+	Areas => {"Graphics"},
 	PackageExports => {"Graphs", "Posets", "SimplicialComplexes"},
 	AuxiliaryFiles => true,
 	Configuration => {"DefaultPath" => null }

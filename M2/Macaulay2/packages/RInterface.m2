@@ -17,12 +17,12 @@
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
     Version => "0.2",
-    Date => "May 7, 2026",
+    LastUpdated => "May 7, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
 	    HomePage => "https://d-torrance.github.io"}},
-    Keywords => {"Interfaces"},
+    Areas => {"Interfaces"},
     OptionalComponentsPresent => run("command -v R > /dev/null") == 0,
     AuxiliaryFiles => true,
     PackageImports => {"ForeignFunctions"})

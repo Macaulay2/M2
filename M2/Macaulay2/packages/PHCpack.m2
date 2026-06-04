@@ -6,7 +6,7 @@ phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersi
 newPackage(
   "PHCpack",
   Version => "1.8", 
-  Date => "25 May 2016",
+  LastUpdated => "25 May 2016",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "egross7@uic.edu",
@@ -19,7 +19,7 @@ newPackage(
      HomePage => "http://www.math.uic.edu/~jan"}
   },
   Headline => "interface to PHCpack",
-  Keywords => {"Numerical Algebraic Geometry", "Interfaces"},
+  Areas => {"Numerical Algebraic Geometry", "Interfaces"},
   Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

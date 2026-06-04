@@ -5,7 +5,7 @@
 
 newPackage("SLnEquivariantMatrices",
            Version => "1.0", 
-     	   Date => "April 10, 2018",
+     	   LastUpdated => "April 10, 2018",
      	   Authors => {
 	               {Name => "Ada Boralevi", 
 			   Email => "ada.boralevi@polito.it",
@@ -17,7 +17,7 @@ newPackage("SLnEquivariantMatrices",
 			   Email => "paolo.lella@polimi.it",
 			       HomePage => "http://www.paololella.it"}
 		      },
-	   Keywords => {"Representation Theory"},
+	   Areas => {"Representation Theory"},
 	   PackageImports => {"Varieties"},
      	   Headline => "file ancillary to the paper \"A construction of equivariant bundles on the space of symmetric forms\""
      	  )

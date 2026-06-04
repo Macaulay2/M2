@@ -1,10 +1,10 @@
 newPackage(
      "SymmetricPolynomials",
      Version => "1.0",
-     Date => "May 20 2009",
+     LastUpdated => "May 20 2009",
     Authors => {{Name => "Alexandra Seceleanu", HomePage => "https://aseceleanu.github.io/"}},
      Headline => "symmetric polynomials",
-     Keywords => {"Combinatorics", "Representation Theory"},
+     Areas => {"Combinatorics", "Representation Theory"},
      DebuggingMode => false
      )
 

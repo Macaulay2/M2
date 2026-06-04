@@ -2,11 +2,11 @@
 newPackage(
         "ExteriorIdeals",
         Version => "1.1", 
-        Date => "February 13, 2018",
+        LastUpdated => "February 13, 2018",
         Authors => {{Name => "Marilena Crupi", Email => "mcrupi@unime.it", HomePage => "http://www.unime.it/it/persona/marilena-crupi"},
                     {Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http://mat521.unime.it/amata"}},
         Headline => "monomial ideals over exterior algebras",
-        Keywords => {"Commutative Algebra"},
+        Areas => {"Commutative Algebra"},
         DebuggingMode => false,
         Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",

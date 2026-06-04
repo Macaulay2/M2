@@ -1,13 +1,13 @@
 newPackage(
 "MCMApproximations",
 Version => "1.1",
-Date => "April 3, 2013, revised August 21, 2017",
+LastUpdated => "April 3, 2013, revised August 21, 2017",
 Authors => {{Name => "David Eisenbud",
 Email => "de@msri.org",
 HomePage => "http://www.msri.org/~de"}},
 Headline => "MCM approximations and complete intersections",
 PackageExports => {"Complexes"},
-Keywords => {"Commutative Algebra"},
+Areas => {"Commutative Algebra"},
 DebuggingMode => false
 )
 

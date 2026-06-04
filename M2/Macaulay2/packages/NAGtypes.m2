@@ -3,14 +3,14 @@
 newPackage(
      "NAGtypes",
      Version => "1.21",
-     Date => "Nov 2022",
+     LastUpdated => "Nov 2022",
      Headline => "types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
-     Keywords => {"Numerical Algebraic Geometry"},
+     Areas => {"Numerical Algebraic Geometry"},
      PackageExports => {"NumericalLinearAlgebra"}, 
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done

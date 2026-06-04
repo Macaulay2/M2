@@ -9,7 +9,7 @@
 newPackage("Polyhedra",
     Headline => "convex polyhedra",
     Version => "1.10",
-    Date => "November 12, 2018",
+    LastUpdated => "November 12, 2018",
     AuxiliaryFiles => true,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -24,7 +24,7 @@ newPackage("Polyhedra",
 	 "volume number" => "1",
 	 "volume URI" => "https://msp.org/jsag/2009/1-1/"
 	 },
-    Keywords => {"Convex Geometry"},
+    Areas => {"Convex Geometry"},
     Authors => {
       {
          Name => "René Birkner",

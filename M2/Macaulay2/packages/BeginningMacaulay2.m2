@@ -1,11 +1,11 @@
 -- -*- coding: utf-8 -*-
-newPackage( "BeginningMacaulay2", Version => "1.0", Date => "November 3, 2009",
+newPackage( "BeginningMacaulay2", Version => "1.0", LastUpdated => "November 3, 2009",
      Authors => {
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	  },
      Headline => "Mathematicians' Introduction to Macaulay2",
-     Keywords => {"Documentation"},
+     Areas => {"Documentation"},
      PackageExports => {"Complexes"},
      AuxiliaryFiles => true
      )

@@ -3,7 +3,7 @@ newPackage(
     "RealRoots",
     Version=>"1.1",
     --updates/corrections to realRootIsolation by Corin Lee (cel34@bath.ac.uk) 2025/05/25
-    Date=>"Oct 9, 2020",
+    LastUpdated=>"Oct 9, 2020",
     Authors=>{
      	{Name=>"Jordy Lopez Garcia",
 	 Email=>"jordy.lopez@tamu.edu",
@@ -19,7 +19,7 @@ newPackage(
 	 HomePage=>"https://tjyahl.github.io/"}
 	},
     Headline=>"symbolically exploring, counting, and locating real solutions to general polynomial systems",
-    Keywords=>{"Real Algebraic Geometry"},
+    Areas=>{"Real Algebraic Geometry"},
     PackageImports=>{},
     PackageExports=>{},
     DebuggingMode=>false,

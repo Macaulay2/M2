@@ -2,14 +2,14 @@
 newPackage(
     "TriangularSets",
     Version => "0.1", 
-    Date => "2 September 2017",
+    LastUpdated => "2 September 2017",
     Authors => {
       {Name => "Diego Cifuentes",
        Email => "diegcif@mit.edu",
        HomePage => "http://www.mit.edu/~diegcif"}
     },
     Headline => "triangular decompositions of ideals",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     AuxiliaryFiles => true,
     PackageImports => {"Binomials","MapleInterface","Elimination"},
     PackageExports => {}

@@ -2,12 +2,12 @@ newPackage(
     "SimplicialModules",
      AuxiliaryFiles => true,
      Version => "0.1",
-     Date => "April 27, 2026",
+     LastUpdated => "April 27, 2026",
      Authors => {
 	{Name => "Keller VandeBogert", Email => "kvandebo@nd.edu", HomePage => "https://sites.google.com/view/kellervandebogert/home"},
 	{Name => "Michael DeBellevue", Email => "michael.debellevue@gmail.com"}},
      Headline => "methods for working in the category of simplicial modules",
-     Keywords => {"Homological Algebra", "Commutative Algebra"},
+     Areas => {"Homological Algebra", "Commutative Algebra"},
      PackageExports => {"Complexes", "SchurFunctors"}
     )
 

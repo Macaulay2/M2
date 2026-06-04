@@ -18,7 +18,7 @@
 newPackage(
      "Jets",
      Version => "1.2",
-     Date => "October 15, 2024",
+     LastUpdated => "October 15, 2024",
      AuxiliaryFiles => true,
      Authors => {
 	 {
@@ -35,7 +35,7 @@ newPackage(
      PackageImports => {"Varieties"},
      PackageExports => {"EdgeIdeals"},
      DebuggingMode => false,
-     Keywords => {"Algebraic Geometry"},
+     Areas => {"Algebraic Geometry"},
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
 	  "journal URI" => "https://msp.org/jsag/",

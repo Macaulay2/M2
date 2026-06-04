@@ -19,13 +19,13 @@ newPackage(
     "NormalToricVarieties",
     AuxiliaryFiles => true,
     Version => "1.9",
-    Date => "31 May 2020",
+    LastUpdated => "31 May 2020",
     Authors => {{
         Name => "Gregory G. Smith", 
         Email => "ggsmith@mast.queensu.ca", 
         HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
     Headline => "routines for working with normal toric varieties and related objects",
-    Keywords => {"Toric Geometry"},
+    Areas => {"Toric Geometry"},
     PackageExports => {"Polyhedra", "Schubert2", "Varieties","Truncations"},
     PackageImports => {"FourierMotzkin","Normaliz","LLLBases","Complexes"},
     DebuggingMode => false

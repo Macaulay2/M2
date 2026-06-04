@@ -18,7 +18,7 @@
 newPackage(
      "FrobeniusMultiplicities",
      Version => "0.7", 
-     Date => "May 27, 2009",
+     LastUpdated => "May 27, 2009",
      Authors => {
 	  {Name => "Jason McCullough", Email => "jmccullo@math.ucr.edu", HomePage => "http://www.math.ucr.edu/~jmccullo"}
 	  },

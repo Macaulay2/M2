@@ -1,7 +1,7 @@
 newPackage(
     "ExampleFreeResolutions",
     Version => "0.1",
-    Date => "18 Mar 2022",
+    LastUpdated => "18 Mar 2022",
     Headline => "examples to benchmark and test free resolution and betti number code",
     Authors => {{ Name => "", Email => "", HomePage => ""}},
     PackageImports => {"InverseSystems"},

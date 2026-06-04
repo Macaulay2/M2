@@ -6,13 +6,13 @@ This file is in the public domain.
 newPackage(
      "NoetherNormalization",
      Version => "0.9.3", 
-     Date => "Sept, 2010",
+     LastUpdated => "Sept, 2010",
      Authors => {
 	  {Name => "Bart Snapp", Email => "snapp@math.ohio-state.edu", HomePage => "http://www.math.ohio-state.edu/~snapp/"},
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
 	  },
      Headline => "place an ideal in Noether normal position",
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      DebuggingMode => false
      )
 

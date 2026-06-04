@@ -19,7 +19,7 @@
 newPackage(
     "MinimalPrimes",
     Version => "0.10",
-    Date => "November 12, 2020",
+    LastUpdated => "November 12, 2020",
     Headline => "minimal primes and radical routines for ideals",
     Authors => {
 	{Name => "Frank Moore",    Email => "moorewf@wfu.edu",       HomePage => "https://users.wfu.edu/moorewf"},
@@ -27,7 +27,7 @@ newPackage(
 	{Name => "Franziska Hinkelmann"},
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageImports => { "Elimination" },
     AuxiliaryFiles => true,
     DebuggingMode => false

@@ -17,13 +17,13 @@
 newPackage(
     "DirectSummands",
     Version => "0.4",
-    Date => "May 8th 2026",
+    LastUpdated => "May 8th 2026",
     Headline => "decompositions of modules and coherent sheaves",
     Authors => {
 	{ Name => "Devlin Mallory", Email => "malloryd@math.utah.edu", HomePage => "https://math.utah.edu/~malloryd/"},
 	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",         HomePage => "https://math.umn.edu/~mahrud/"}
 	},
-    Keywords => { "Commutative Algebra" },
+    Areas => { "Commutative Algebra" },
     PackageImports => {
 	"Polyhedra",       -- for coneFromVData and coneComp
 	"Truncations",     -- for effGenerators

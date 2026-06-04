@@ -1,7 +1,7 @@
 newPackage(
     "MacaulayPosets",
     Version => "1.0",
-    Date => "April 5, 2026",
+    LastUpdated => "April 5, 2026",
     Headline => "Macaulay posets",
     Authors => { 
         {
@@ -20,7 +20,7 @@ newPackage(
     PackageImports => {
         "Visualize"
     },
-    Keywords => {"Combinatorial Commutative Algebra"}
+    Areas => {"Combinatorial Commutative Algebra"}
 )
 export {
     "PosetMap",

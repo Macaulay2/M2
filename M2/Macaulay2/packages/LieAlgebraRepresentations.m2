@@ -3,7 +3,7 @@
 newPackage(
     "LieAlgebraRepresentations",
     Version => "1.01",
-    Date => "May 1, 2026",
+    LastUpdated => "May 1, 2026",
     AuxiliaryFiles=>true,
     Headline => "Lie algebra representations and characters",
     Authors => {
@@ -16,7 +16,7 @@ newPackage(
 	      Email => "pzinn@unimelb.edu.au",
 	      HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}
 	  },
-    Keywords => {"Lie Groups and Lie Algebras"},
+    Areas => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},
     PackageExports => {"SpechtModule","Polyhedra","Isomorphism","AssociativeAlgebras"},
     DebuggingMode => false,

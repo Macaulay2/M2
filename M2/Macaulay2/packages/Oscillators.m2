@@ -1,7 +1,7 @@
 newPackage(
         "Oscillators",
         Version => "1.0", 
-        Date => "1 May 2025",
+        LastUpdated => "1 May 2025",
         Authors => {
             {
                 Name => "John Cobb", 
@@ -20,7 +20,7 @@ newPackage(
                 }
             },
         Headline => "code to analyze graph oscillators",
-        Keywords => {"Applied Algebraic Geometry"},
+        Areas => {"Applied Algebraic Geometry"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
         PackageExports => {

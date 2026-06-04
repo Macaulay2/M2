@@ -9,7 +9,7 @@ This file is in the public domain.
 newPackage(
      "Depth",
      Version => "1.0", 
-     Date => "September 2010, rev May 2016",
+     LastUpdated => "September 2010, rev May 2016",
      Authors => {
 	  {Name => "Bart Snapp", 
 	      Email => "snapp@math.ohio-state.edu", 
@@ -26,7 +26,7 @@ newPackage(
 	  },
      Headline => "aids in computations related to depth",
      PackageExports => {"Complexes"},
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      DebuggingMode => false
      )
 

@@ -1,14 +1,14 @@
 -- -*- coding: utf-8 -*-
 newPackage("Dmodules",
     Version => "1.4.1.1",
-    Date => "February 2023",
+    LastUpdated => "February 2023",
     Headline => "D-modules",
     HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
     Authors => {
 	{ Name => "Anton Leykin", Email => "leykin@math.gatech.edu" },
 	{ Name => "Harrison Tsai" }
 	},
-    Keywords => { "D-modules" },
+    Areas => { "D-modules" },
     PackageExports => {
 	"WeylAlgebras",
 	"HolonomicSystems",

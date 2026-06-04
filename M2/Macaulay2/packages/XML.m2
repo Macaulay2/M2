@@ -2,10 +2,10 @@
 
 newPackage("XML",
     	Version => "1.1", 
-    	Date => "September 1, 2010",
+    	LastUpdated => "September 1, 2010",
     	Authors => {{Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
-	Keywords => {"Miscellaneous"},
+	Areas => {"Miscellaneous"},
     	DebuggingMode => false)
 export {
      "XMLnode", "tag", "children", "parse", "toXMLnode", "Trim", "toLibxmlNode",

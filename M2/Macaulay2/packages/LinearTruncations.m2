@@ -1,7 +1,7 @@
 newPackage(
     "LinearTruncations",
     Version => "1.0",
-    Date => "May 5, 2021",
+    LastUpdated => "May 5, 2021",
     Authors => {
 	{Name => "Lauren Cranton Heller", Email => "lch@math.berkeley.edu"},
 	{Name => "David Eisenbud", Email => "de@msri.org"},
@@ -9,7 +9,7 @@ newPackage(
     Headline => "find the multigraded truncations that give linear resolutions",
     PackageExports => {"Complexes", "TateOnProducts", "Truncations"},
     DebuggingMode => false,
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
 	 "journal URI" => "https://msp.org/jsag/",

@@ -1,7 +1,7 @@
 newPackage(
 	"PolymakeInterface",
     	Version => "0.3", 
-    	Date => "Aug 6, 2012",
+    	LastUpdated => "Aug 6, 2012",
     	Authors => {{Name => "Josephine Yu", 
 		     Email => "josephine.yu@math.gatech.edu", 
 		     HomePage => "http://people.math.gatech.edu/~jyu67"},

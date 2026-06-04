@@ -17,7 +17,7 @@ peek loadedFiles
 newPackage(
 	"AdjunctionForSurfaces",
     	Version => "0.5", 
-    	Date => "January 24, 2024",
+    	LastUpdated => "January 24, 2024",
     	Authors => { 
 	         {Name => "Frank-Olaf Schreyer", 
 		  Email => "schreyer@math.uni-sb.de", 
@@ -25,7 +25,7 @@ newPackage(
 	         },
     	Headline => "Adjunction for Surfaces",
         PackageImports => {"Complexes"},
-	Keywords => {"Projective Algebraic Geometry"}
+	Areas => {"Projective Algebraic Geometry"}
     	)
 
 export {

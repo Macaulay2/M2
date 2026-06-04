@@ -7,7 +7,7 @@
 newPackage(
         "PushForward",
         Version => "0.6",
-        Date => "May 14, 2021",
+        LastUpdated => "May 14, 2021",
         Authors => {
             {Name => "Claudiu Raicu", 
                 Email => "craicu@nd.edu", 
@@ -20,7 +20,7 @@ newPackage(
                 HomePage => "http://pi.math.cornell.edu/~mike"}
             },
         Headline => "push forwards of finite ring maps",
-        Keywords => {"Commutative Algebra"}
+        Areas => {"Commutative Algebra"}
         )
         
 -- note, this version has a slight change added by Karl Schwede.  It has an option to turn off the prune calls.

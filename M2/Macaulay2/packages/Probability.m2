@@ -17,12 +17,12 @@
 newPackage("Probability",
     Headline => "basic probability functions",
     Version => "0.7",
-    Date => "January 13, 2026",
+    LastUpdated => "January 13, 2026",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance9@gatech.edu",
 	    HomePage => "https://d-torrance.github.io"}},
-    Keywords => {"Algebraic Statistics"},
+    Areas => {"Algebraic Statistics"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

@@ -2,7 +2,7 @@
 newPackage(
    "HodgeIntegrals",
    Version => "1.2.1",
-   Date => "29 April 2010",
+   LastUpdated => "29 April 2010",
    Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	"journal URI" => "https://msp.org/jsag/",
@@ -22,7 +22,7 @@ newPackage(
 	    HomePage => "http://www.stephanieyang.com"}
          },
    Headline => "Hodge integrals on the moduli space of curves",
-   Keywords => {"Commutative Algebra"},
+   Areas => {"Commutative Algebra"},
    DebuggingMode => false
    )
 

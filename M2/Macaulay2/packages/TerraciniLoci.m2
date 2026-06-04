@@ -30,7 +30,7 @@
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
     Version => "0.5",
-    Date => "February 10, 2026",
+    LastUpdated => "February 10, 2026",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
@@ -49,7 +49,7 @@ newPackage("TerraciniLoci",
 	    Email => "e.teixeira-turatti@uw.edu.pl",
 	    HomePage => "https://turattiettore.wixsite.com/ettoreturatti"}},
     HomePage => "https://github.com/d-torrance/terracini-loci",
-    Keywords => {"Projective Algebraic Geometry"},
+    Areas => {"Projective Algebraic Geometry"},
     PackageImports => {
 	"CorrespondenceScrolls",
 	"FastMinors",

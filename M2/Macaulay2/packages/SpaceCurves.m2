@@ -1,7 +1,7 @@
 newPackage(
         "SpaceCurves",
         Version => "1.0", 
-        Date => "May 26th 2018",
+        LastUpdated => "May 26th 2018",
         Authors => {{Name => "Frank-Olaf Schreyer", 
                   Email => "schreyer@math.uni-sb.de", 
                   HomePage => "https://www.math.uni-sb.de/ag/schreyer/"},
@@ -13,7 +13,7 @@ newPackage(
                   HomePage => "https://math.berkeley.edu/~myzhang/"}
 	      },
         Headline => "space curves",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
         PackageImports => {"Complexes"},
         DebuggingMode => false,
 	Certification => {

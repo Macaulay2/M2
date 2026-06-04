@@ -3,7 +3,7 @@ bertiniPresent := run ("type bertini >/dev/null 2>&1") === 0
 newPackage(
   "Bertini",
   Version => "2.1.2.3",
-  Date => "Feb 6 2024",
+  LastUpdated => "Feb 6 2024",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -19,7 +19,7 @@ newPackage(
      HomePage => "http://www.math.gatech.edu/~leykin"}
   },
   Headline => "interface to Bertini",
-  Keywords => {"Numerical Algebraic Geometry", "Interfaces"},
+  Areas => {"Numerical Algebraic Geometry", "Interfaces"},
   Configuration => { "BERTINIexecutable"=>"bertini" },
   AuxiliaryFiles => true,
   PackageExports => {"NAGtypes"},

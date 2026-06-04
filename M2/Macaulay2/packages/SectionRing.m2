@@ -1,14 +1,14 @@
 --this file is in the public domain
 
 newPackage( "SectionRing",
-     Version => "0.2", Date => "September 21 2016", Authors => {
+     Version => "0.2", LastUpdated => "September 21 2016", Authors => {
      	  {Name=> "Andrew Bydlon",
      	       Email=> "thelongdivider@gmail.com",
      	       HomePage => "http://www.math.utah.edu/~bydlon/"
      	       }
 	  },
      PackageImports => { "WeilDivisors", "Varieties" },
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      Headline => "the section ring of a Weil Divisor"
      )
 

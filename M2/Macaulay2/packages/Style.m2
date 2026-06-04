@@ -2,7 +2,7 @@
 newPackage( "Style",
      AuxiliaryFiles => true,
      Headline => "style sheets and images for the documentation",
-     Keywords => {"Documentation"},
+     Areas => {"Documentation"},
      Version => "1.1"
      )
 

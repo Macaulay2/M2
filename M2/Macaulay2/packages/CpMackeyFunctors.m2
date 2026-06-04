@@ -2,7 +2,7 @@
 newPackage(
     "CpMackeyFunctors",
     Version=>"1.0",
-    Date=>"July 4, 2025",
+    LastUpdated=>"July 4, 2025",
     Authors=>{
         {Name=>"Thomas Brazelton",
             Email=>"brazelton@math.harvard.edu",
@@ -30,7 +30,7 @@ newPackage(
             HomePage=>"https://sites.google.com/view/szotine/home"}
     },
     Headline => "homological algebra with Mackey functors for cyclic groups of prime order",
-    Keywords=>{"Homotopy Theory", "Equivariant Cohomology"},
+    Areas=>{"Homotopy Theory", "Equivariant Cohomology"},
     PackageExports=>{"Complexes"},
     -- Complexes needed to overload `res` (alias for `freeResolution`)
     AuxiliaryFiles => true,

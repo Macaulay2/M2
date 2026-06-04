@@ -3,14 +3,14 @@ newPackage(
     	  "PseudomonomialPrimaryDecomposition",
 	  Headline => "Primary decomposition of square free pseudomonomial ideals",
    	  Version => "0.3",
-	  Date => "January, 2022",
+	  LastUpdated => "January, 2022",
 	  Authors => {{
 		    Name => "Alan A. Veliz-Cuba",
 		    Email => "avelizcuba1@udayton.edu",
 		    HomePage => "https://sites.google.com/site/alanvelizcuba/"
 		    }},
 	  DebuggingMode => false,
-	  Keywords => {"Commutative Algebra"},
+	  Areas => {"Commutative Algebra"},
 	  Certification => {
 	       "journal name" => "The Journal of Software for Algebra and Geometry",
 	       "journal URI" => "https://msp.org/jsag/",

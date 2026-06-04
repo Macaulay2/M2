@@ -15,14 +15,14 @@
 newPackage(
     "PrimaryDecomposition",
     Version => "2.0",
-    Date => "July 4, 2020",
+    LastUpdated => "July 4, 2020",
     Headline => "primary decomposition and associated primes routines",
     Authors => {
 	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
 	{Name => "Carolyn Yackel", Email => "cyackel@math.indiana.edu"},
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageExports => { "Saturation", "MinimalPrimes" },
     PackageImports => { HomologicalAlgebraPackage, "Elimination" },
     AuxiliaryFiles => true,

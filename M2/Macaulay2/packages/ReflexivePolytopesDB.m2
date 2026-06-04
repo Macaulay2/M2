@@ -8,14 +8,14 @@
 newPackage(
         "ReflexivePolytopesDB",
         Version => "1.0", 
-        Date => "22 May 2019",
+        LastUpdated => "22 May 2019",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4",
-	Keywords => {"Convex Geometry"},
+	Areas => {"Convex Geometry"},
         AuxiliaryFiles => true
         )
 

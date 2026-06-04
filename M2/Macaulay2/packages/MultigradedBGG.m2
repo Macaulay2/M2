@@ -1,6 +1,6 @@
 newPackage("MultigradedBGG",
     Version => "1.2",
-    Date => "11 April 2025",
+    LastUpdated => "11 April 2025",
     Headline => "the multigraded BGG correspondence and differential modules",
     Authors => {
 	{Name => "Maya Banks",         	     Email => "mdbanks@wisc.edu",      HomePage => "https://sites.google.com/wisc.edu/mayabanks" },
@@ -11,7 +11,7 @@ newPackage("MultigradedBGG",
 	{Name => "Sasha Zotine",    	     Email => "zotinea@mcmaster.ca",   HomePage => "https://sites.google.com/view/szotine/home" }
     },
     PackageExports => {"NormalToricVarieties", "Complexes"},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

@@ -3,7 +3,7 @@
 -- TODO: document (EXAMPLE, PRE)
 
 newPackage("Text",
-     Keywords => {"Documentation"},
+     Areas => {"Documentation"},
      Headline => "documentation and hypertext"
      )
 

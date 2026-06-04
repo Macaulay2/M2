@@ -10,13 +10,13 @@
 newPackage(
     "K3Surfaces",
     Version => "1.1", 
-    Date => "August 13, 2022",
+    LastUpdated => "August 13, 2022",
     Authors => {{Name => "Michael Hoff", 
                  Email => "hahn@math.uni-sb.de"},
                 {Name => "Giovanni Staglianò", 
                  Email => "giovanni.stagliano@unict.it"}},
     PackageExports => {"SpecialFanoFourfolds"},
-    Keywords => {"Algebraic Geometry"},
+    Areas => {"Algebraic Geometry"},
     Headline => "Explicit constructions of K3 surfaces",
     DebuggingMode => false
 )

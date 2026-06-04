@@ -1,5 +1,5 @@
 newPackage( "RationalMaps",
-    Version => "1.0", Date => "March 11th, 2022", Authors => {
+    Version => "1.0", LastUpdated => "March 11th, 2022", Authors => {
         {Name => "Karl Schwede",
         Email=> "kschwede@gmail.com",
         HomePage=> "http://www.math.utah.edu/~schwede"
@@ -16,7 +16,7 @@ newPackage( "RationalMaps",
         Email => "cjamesbott@gmail.com",
         HomePage=>"https://www.math.tamu.edu/directory/formalpg.php?user=cbott2"}
     }, --this file is in the public domain
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     Headline => "rational maps between varieties", 
     PackageExports => {"FastMinors", "Varieties"},
     Certification => {

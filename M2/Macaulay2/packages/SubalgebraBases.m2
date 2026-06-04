@@ -3,7 +3,7 @@ newPackage(
     "SubalgebraBases",
     AuxiliaryFiles => true,
     Version => "1.4",
-    Date => "January 2024",
+    LastUpdated => "January 2024",
     Authors => {{
         Name => "Michael Burr",
         Email => "burr2@clemson.edu",
@@ -30,7 +30,7 @@ newPackage(
     Headline => "Canonical subalgebra bases (aka SAGBI/Khovanskii bases)",
     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
     DebuggingMode => false, -- set to true only during development
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

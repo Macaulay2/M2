@@ -10,7 +10,7 @@
 
 newPackage("GKMVarieties",
 	Version => "0.1",
-	Date => "August 1, 2020",
+	LastUpdated => "August 1, 2020",
 	Authors => {
 	    {Name => "Chris Eur",
        	     Email => "chriseur@stanford.edu",
@@ -23,7 +23,7 @@ newPackage("GKMVarieties",
 	HomePage => "https://github.com/chrisweur/GKMVarieties",
 	PackageExports => {"Graphs", "Matroids", "NormalToricVarieties"},
 	AuxiliaryFiles => true,
-	Keywords => {"Equivariant Cohomology", "Toric Geometry", "Flag Varieties", "Matroids"},
+	Areas => {"Equivariant Cohomology", "Toric Geometry", "Flag Varieties", "Matroids"},
 	DebuggingMode => false
 )
 export {

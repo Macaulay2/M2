@@ -9,13 +9,13 @@
 newPackage("FiniteFittingIdeals",
     Headline => "Fitting ideals of finite modules",
     Version => "1.0",
-    Date => "May 5, 2015",
+    LastUpdated => "May 5, 2015",
     Authors => {
 	{Name => "Gustav Sædén Ståhl",
 	    HomePage => "http://www.math.kth.se/~gss",
 	    Email => "gss@math.kth.se"}
       	},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     DebuggingMode => false
     )
 

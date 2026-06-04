@@ -17,14 +17,14 @@
 newPackage(
 	"FourTiTwo",
     	Version => "1.0", 
-    	Date => "February 8, 2009",
+    	LastUpdated => "February 8, 2009",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu"},
 	     {Name => "Josephine Yu", Email => "jyu@math.mit.edu"},
 	     {Name => "Sonja Petrovic", Email => "petrovic@psu.edu"}
 	     },
     	Headline => "Interface to 4ti2",
-	Keywords => {"Interfaces"},
+	Areas => {"Interfaces"},
 	Configuration => { "path" => "",
 	     "keep files" => true
 	      },

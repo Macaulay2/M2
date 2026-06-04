@@ -18,12 +18,12 @@ newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
     Version => "0.6",
-    Date => "February 28, 2026",
+    LastUpdated => "February 28, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
 	    HomePage => "https://d-torrance.github.io"}},
-    Keywords => {"System"},
+    Areas => {"System"},
     PackageExports => {"Text"},
     PackageImports => {"Parsing"},
     AuxiliaryFiles => true)

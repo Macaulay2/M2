@@ -3,7 +3,7 @@
 newPackage(
 	"KustinMiller",
     	Version => "1.4",
-    	Date => "May 14, 2012",
+    	LastUpdated => "May 14, 2012",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},
@@ -12,7 +12,7 @@ newPackage(
 		  HomePage => "http://www.math.ist.utl.pt/~papadak/"}
                    },
     	Headline => "unprojection and the Kustin-Miller complex construction",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	PackageExports => {"SimplicialComplexes", "Complexes"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

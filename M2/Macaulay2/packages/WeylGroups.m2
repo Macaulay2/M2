@@ -4,14 +4,14 @@
 newPackage(
 	"WeylGroups",
 	Version => "0.5.3",
-	Date => "October 15, 2022",
+	LastUpdated => "October 15, 2022",
 	Authors => {
 		{Name => "Baptiste Calmès",
 		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "root systems and Weyl groups",
-	Keywords => {"Lie Groups and Lie Algebras"},
+	Areas => {"Lie Groups and Lie Algebras"},
 	AuxiliaryFiles => true,
 	PackageExports => {"Graphics"},
 	DebuggingMode => false)

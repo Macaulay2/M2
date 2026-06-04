@@ -1,7 +1,7 @@
 newPackage(
     "Hadamard",
     Version => "0.1",
-    Date => "November 2020",
+    LastUpdated => "November 2020",
     Authors => {
 
 	{Name => "Iman Bahmani Jafarloo",
@@ -14,7 +14,7 @@ newPackage(
     DebuggingMode => false,
     Reload => false,
     PackageExports => {"Points"},
-    Keywords => {"Commutative Algebra"}
+    Areas => {"Commutative Algebra"}
     )
 export {
     -- types

@@ -1,7 +1,7 @@
 newPackage(
 	"RandomCurvesOverVerySmallFiniteFields",
 	Version => "0.3",
-	Date => "March 20, 2018",
+	LastUpdated => "March 20, 2018",
 	Authors => {{Name => "Christian Bopp",
 			   Email =>"bopp@math.uni-sb.de",
 			   HomePage =>"http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
@@ -9,7 +9,7 @@ newPackage(
 			   Email =>"schreyer@math.uni-sb.de",
 			   HomePage =>"https://www.math.uni-sb.de/ag/schreyer"}},
 	Headline=> "general canonical curves of genus <= 15 over fields with small characteristic",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
 	PackageImports => {"Elimination","Truncations","Complexes"}
 	)
     

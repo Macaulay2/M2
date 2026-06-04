@@ -22,7 +22,14 @@ needs "installPackage.m2" -- for topFileName
 -- set by about and used by (help, ZZ)
 lastabout := null
 
-authorDefaults    := new HashTable from { Name => "Anonymous", Email => null, HomePage => null, Maintainer => false }
+authorDefaults := new HashTable from { Name => "Anonymous", 
+                                       Email => null, 
+                                       HomePage => null, 
+                                       Orcid => null }
+maintainerDefaults := new HashTable from { Name => "Macaulay2 Group", 
+                                           Email => null, 
+                                           HomePage => null, 
+                                           Orcid => null }
 
 binary   := set flexibleBinaryOperators
 prefix   := set flexiblePrefixOperators
@@ -57,11 +64,11 @@ optTO := key -> (
     if currentHelpTag.?Key and instance(currentHelpTag.Key, Sequence) and currentHelpTag =!= ptag then return;
     if isUndocumented tag then return;
     if isSecondaryTag tag then (
-	-- TODO: figure out how to align the lists using padding
-	-- ref = pad(ref, printWidth // 4);
-	(format ptag, fkey, next(), fixup (
-		if currentHelpTag === ptag then KBD fkey
-		else SPAN {KBD fkey, " -- see ", TOH{ptag}})))
+    -- TODO: figure out how to align the lists using padding
+    -- ref = pad(ref, printWidth // 4);
+    (format ptag, fkey, next(), fixup (
+        if currentHelpTag === ptag then KBD fkey
+        else SPAN {KBD fkey, " -- see ", TOH{ptag}})))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
@@ -79,15 +86,15 @@ smenuCLASS := s -> ul (last \ sort \\ nonnull \\ optTOCLASS \ toList s)
 redoMENU = contents -> (
     contents = deepApply'(contents, identity, item -> instance(item, BasicList) and not isLink item);
     DIV prepend(
-	HEADER3 "Menu",
-	nonnull sublists(contents,
-	    line    -> isLink line,
-	    section -> UL apply(section, line -> (
-		    if instance(line, TO2) then return line;
-		    link := optTO line#0;
-		    if link === null then error("undocumented menu item ", toString line#0);
-		    last link)),
-	    line -> if instance(line, Hypertext) then line else HEADER4 {line}))
+    HEADER3 "Menu",
+    nonnull sublists(contents,
+        line    -> isLink line,
+        section -> UL apply(section, line -> (
+            if instance(line, TO2) then return line;
+            link := optTO line#0;
+            if link === null then error("undocumented menu item ", toString line#0);
+            last link)),
+        line -> if instance(line, Hypertext) then line else HEADER4 {line}))
     )
 
 -----------------------------------------------------------------------------
@@ -103,20 +110,20 @@ addro := (sym, meth) -> (
 initializeReverseOptionTable := () -> (
     reverseOptionTable = new MutableHashTable;
     scan(dictionaryPath, dict -> scan(values dict, S -> (
-		X := value S;
-		if instance(X, Function) then (
-		    opts := options X;
-		    if opts =!= null then scanKeys(opts, symb -> addro(symb, X)))
-		else if instance(X, Type) then scan(pairs X, (methodKey, methodFunction) -> (
-			if (instance(methodKey,      MethodFunctionWithOptions) or
-			    instance(methodKey,      Sequence))
-			and instance(methodFunction, Function) then (
-			    opts := options methodFunction;
-			    if opts =!= null then (
-				if instance(methodKey, MethodFunctionWithOptions) then methodKey = (methodKey, X);
-				scanKeys(opts, symb -> addro(symb, methodKey))))
-			))
-		))))
+        X := value S;
+        if instance(X, Function) then (
+            opts := options X;
+            if opts =!= null then scanKeys(opts, symb -> addro(symb, X)))
+        else if instance(X, Type) then scan(pairs X, (methodKey, methodFunction) -> (
+            if (instance(methodKey,      MethodFunctionWithOptions) or
+                instance(methodKey,      Sequence))
+            and instance(methodFunction, Function) then (
+                opts := options methodFunction;
+                if opts =!= null then (
+                if instance(methodKey, MethodFunctionWithOptions) then methodKey = (methodKey, X);
+                scanKeys(opts, symb -> addro(symb, methodKey))))
+            ))
+        ))))
 
 -----------------------------------------------------------------------------
 -- isDocumentableThing and documentableMethods
@@ -168,10 +175,10 @@ documentationValue(Symbol, Type)  := (S, T) -> (
     -- objects of type T
     e := smenu(toString \ subobjects' T);
     DIV nonnull splice ( "class" => "waystouse",
-	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, ":"}, b),
-	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, ":"}, a),
-	if #c > 0 then ( SUBSECTION {"Methods that use ",                    indefinite synonym T, ":"}, c),
-	if #e > 0 then ( SUBSECTION {"Protected objects of class ",                 TT toString T, ":"}, e)))
+    if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, ":"}, b),
+    if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, ":"}, a),
+    if #c > 0 then ( SUBSECTION {"Methods that use ",                    indefinite synonym T, ":"}, c),
+    if #e > 0 then ( SUBSECTION {"Protected objects of class ",                 TT toString T, ":"}, e)))
 -- e.g. Macaulay2Doc :: Strategy
 documentationValue(Symbol, Symbol) := (S, S') -> (
     -- return links to all other methods with option name Strategy
@@ -183,7 +190,7 @@ documentationValue(Symbol, Symbol) := (S, S') -> (
     -- the same package? select for package f === package currentHelpTag
     a := smenu apply(select(opts, f -> isDocumentableMethod f), f -> [f, S]);
     if #a > 0 then DIV { -- "class" => "waystouse", -- we want this one to be larger
-	 SUBSECTION {"Functions with optional argument named ", TT toString S, ":"}, a})
+     SUBSECTION {"Functions with optional argument named ", TT toString S, ":"}, a})
 -- e.g. Macaulay2Doc :: Strategy => Default
 documentationValue(Symbol, Option) := (S, o) -> (
     -- return links to all other methods with option name Strategy
@@ -205,98 +212,119 @@ documentationValue(Symbol, Keyword)         := (S, f) -> (
     -- methods of f
     a := smenu documentableMethods f;
     if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
-	SUBSECTION {"Ways to use ", TT toExternalString f, ":"}, nonnull prepend(c, a)))
+    SUBSECTION {"Ways to use ", TT toExternalString f, ":"}, nonnull prepend(c, a)))
 -- this is the only one not involving a Symbol
 -- e.g. Depth :: depth(Ideal, Ring)
 documentationValue(Nothing, Sequence) := (S, s) -> (
     a := smenu documentableMethods s#0;
     if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
-	SUBSECTION {"Ways to use this method:"}, a))
+    SUBSECTION {"Ways to use this method:"}, a))
 
 -- TODO: simplify this process
 -- e.g. Macaulay2Doc :: Macaulay2Doc
-documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then (
+documentationValue(Symbol, Package, HashTable) := (S, pkg, additionalData) -> if pkg =!= Core then (
     isM2Doc := pkg#"pkgname" === "Macaulay2Doc";
-    -- package filename
-    fn := pkg#"pkgname" | ".m2";
-    -- authors
-    au := pkg.Options.Authors;
-    -- citation
-    ci := if isM2Doc then citePackage "M2" else if #au > 0 then citePackage pkg;
-    -- exported symbols
+
+    -- The relevant metadata of the package.
+    areas := pkg.Options.Areas;
+    keywords := pkg.Options.Keywords;
+    maintainer := pkg.Options.Maintainer;
+    authors := pkg.Options.Authors;
+    description := if additionalData.?Description then additionalData.Description;
+    contributors := if additionalData.?Contributors then additionalData.Contributors;
+    acknowledgement := if additionalData.?Acknowledgement then additionalData.Acknowledgement;
+    references := if additionalData.?References then additionalData.References;
+    citation := if isM2Doc then citePackage "M2" else if #authors > 0 then citePackage pkg;
+    -- Exports and such.
     -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
-    e := toSequence pkg#"exported symbols";
-    f := toSequence pkg#"exported mutable symbols";
-    -- functions and commands
-    a := select(e, x -> instance(value x, Function) or instance(value x, Command));
-    -- types
-    b := select(e, x -> instance(value x, Type));
-    -- methods
+    exportedSymbols := toSequence pkg#"exported symbols";
+    exportedMutableSymbols := toSequence pkg#"exported mutable symbols";
+    functionsAndCommands := select(exportedSymbols, x -> instance(value x, Function) or instance(value x, Command));
+    types := select(exportedSymbols, x -> instance(value x, Type));
     -- TODO: should we limit to methods that have individual documentation? Probably not
-    m := documentableMethods pkg;
-    -- symbols
-    c := select(e, x -> instance(value x, Symbol));
-    -- other things
-    d := toList(set e - set a - set b - set c);
-    -- the result
+    docMethods := documentableMethods pkg;
+    symbols := select(exportedSymbols, x -> instance(value x, Symbol));
+    otherThings := toList(set exportedSymbols - set functionsAndCommands - set types - set symbols);
+
+    -- The formatted frontpage of the package.
     DIV nonnull splice (
-	if #au > 0 then DIV {
-	    SUBSECTION (if #au === 1 then "Author" else "Authors"),
-	    fixup UL apply(au, au -> (
-		    (defs, args) := override(authorDefaults, toSequence au);
-		    LI {
-			if defs.HomePage === null then defs.Name else HREF{defs.HomePage, defs.Name},
-			if defs.Email    =!= null then SPAN{" <", HREF{concatenate("mailto:", defs.Email), defs.Email}, ">"},
-			if defs.Maintainer        then SPAN{" (maintainer)"}}))
-	    },
-	if (cert := pkg.Options.Certification) =!= null then (
-	    cert  = new HashTable from cert;
-	    -- TODO: compare with the one in installPackage.m2
-	    star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
-	    DIV {
-		SUBSECTION {"Certification ", star},
-		PARA {
-		    "Version ", BOLD cert#"version at publication", " of this package",
-		    if cert#?"legacy name"
-		    then (" (under the name \"", cert#"legacy name", "\")"),
-		    " was accepted for publication",
-		    " in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
-		    " of ",     HREF{cert#"journal URI",            cert#"journal name"},
-		    " on ",          cert#"acceptance date", ", in the article ",
-		                HREF{cert#"published article URI",  cert#"article title"},
-		    " (DOI: ",  HREF{"https://doi.org/" | cert#"published article DOI", cert#"published article DOI"},
-		    "). That version can be obtained",
-		    " from ",   HREF{cert#"published code URI", "the journal"},
-		    "."}}
-	    ),
-	DIV {
-	    SUBSECTION "Version",
-	    PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
-		if isM2Doc then "Macaulay2" else pkg#"pkgname",
-		if pkg.Options.Date =!= null then { ", released ", BOLD pkg.Options.Date }, "." }},
-	if isM2Doc or #au > 0 then
-	if instance(ci, DIV) then ci else DIV {
-	    SUBSECTION "Citation",
-	    PARA { "If you have used ", if isM2Doc then "Macaulay2" else "this package",
-		" in your research, please cite it as follows:" },
-	    TABLE {"class" => "examples",
-		TR TD PRE prepend("class" => "language-bib", CODE ci)},
-	    -- TODO: ideally this should be in Macaulay2Doc/ov_top.m2
-	    if isM2Doc then PARA { "Moreover, you can use the ", TO "PackageCitations::cite", " function
-		to learn how to cite any particular Macaulay2 packages which contributed to your research." }
-	    },
-	if not isM2Doc and #e + #m > 0 then DIV {
-	    SUBSECTION "Exports",
-	    DIV { "class" => "exports",
-		fixup UL {
-		    if #b > 0 then LI {"Types",                  smenu b},
-		    -- FIXME: this line is displayed empty for Truncations
-		    if #a > 0 then LI {"Functions and commands", smenu a},
-		    if #m > 0 then LI {"Methods",                smenu m},
-		    if #c > 0 then LI {"Symbols",                smenu c},
-		    if #f > 0 then LI {"Mutable symbols",        smenu f},
-		    if #d > 0 then LI {"Other things",      smenuCLASS d}}}
-	    }))
+		HEADER1 toList additionalData.Headline,
+		HEADER2 prepend("style" => "text-align:center", 
+						{concatenate("Version ", pkg.Options.Version,
+						 if pkg.Options.LastUpdated =!= null then concatenate(" (Last Updated: ", pkg.Options.LastUpdated, ")"))}
+		),
+		if #areas > 0 then HEADER3 prepend("style" => "text-align:center", {concatenate("Areas: ", demark(", ", areas))}),
+		if #keywords > 0 then HEADER3 prepend("style" => "text-align:center", {concatenate("Keywords: ", demark(", ", keywords))}),
+		if maintainer =!= null then DIV {
+			SUBSECTION "Maintainer", 
+			fixup UL { 
+				(fields, args) := override(maintainerDefaults, toSequence maintainer);
+				LI {
+					if fields.HomePage === null then fields.Name else HREF {fields.HomePage, fields.Name},
+					if fields.Email =!= null then SPAN {" <", HREF {concatenate("mailto:", fields.Email), fields.Email}, ">"}
+				}
+			}
+		},
+		if #authors > 0 then DIV {
+			SUBSECTION (if #authors === 1 then "Author" else "Authors"),
+			fixup UL apply(authors, author -> (
+				(fields, args) = override(authorDefaults, toSequence author);
+				LI {
+					if fields.HomePage === null then fields.Name else HREF {fields.HomePage, fields.Name},
+					if fields.Email    =!= null then SPAN {" <", HREF {concatenate("mailto:", fields.Email), fields.Email}, ">"}
+				})
+			)
+		},
+		DIV description,
+		DIV contributors,
+		DIV acknowledgement,
+		DIV references,
+		if (cert := pkg.Options.Certification) =!= null then (
+			cert  = new HashTable from cert;
+			-- TODO: compare with the one in installPackage.m2
+			star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
+			DIV nonnull splice {
+			SUBSECTION {"Certification ", star},
+			PARA nonnull splice {
+				"Version ", BOLD cert#"version at publication", " of this package",
+				if cert#?"legacy name" then (" (under the name \"", cert#"legacy name", "\")"),
+				" was accepted for publication",
+				" in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
+				" of ",     HREF{cert#"journal URI",            cert#"journal name"},
+				" on ",          cert#"acceptance date", ", in the article ",
+							HREF{cert#"published article URI",  cert#"article title"},
+				" (DOI: ",  HREF{"https://doi.org/" | cert#"published article DOI", cert#"published article DOI"},
+				"). That version can be obtained",
+				" from ",   HREF{cert#"published code URI", "the journal"},
+				"."}
+			}
+		),
+		if isM2Doc or #authors > 0 then
+		if instance(citation, DIV) then citation else DIV nonnull splice {
+			SUBSECTION "Citation",
+			PARA { "If you have used ", if isM2Doc then "Macaulay2" else "this package",
+			" in your research, please cite it as follows:" },
+			TABLE {"class" => "examples",
+			TR TD PRE prepend("class" => "language-bib", CODE citation)},
+			-- TODO: ideally this should be in Macaulay2Doc/ov_top.m2
+			if isM2Doc then PARA { "Moreover, you can use the ", TO "PackageCitations::cite", " function
+			to learn how to cite any particular Macaulay2 packages which contributed to your research." }
+		},
+		if not isM2Doc and #exportedSymbols + #docMethods > 0 then DIV {
+			SUBSECTION "Exports",
+			DIV { "class" => "exports",
+			fixup UL {
+				if #types > 0 then LI {"Types",                                 smenu types},
+				-- FIXME: this line is displayed empty for Truncations
+				if #functionsAndCommands > 0 then LI {"Functions and commands", smenu functionsAndCommands},
+				if #docMethods > 0 then LI {"Methods",                          smenu docMethods},
+				if #symbols > 0 then LI {"Symbols",                             smenu symbols},
+				if #exportedMutableSymbols > 0 then LI {"Mutable symbols",      smenu exportedMutableSymbols},
+				if #otherThings > 0 then LI {"Other things",                    smenuCLASS otherThings}}
+			}
+		}
+    )
+)
 
 -----------------------------------------------------------------------------
 -- Details for developers
@@ -312,8 +340,8 @@ getSource(Symbol, Package) := (S, pkg) -> (
     -- TODO: for packages, should we link to the location on GitHub instead?
     ", defined in ", linkToFile(pkg#"source file", pkg#"pkgname" | ".m2", ""),
     if pkg#?"auxiliary files" then (
-	", with auxiliary files in ",
-	linkToFile(pkg#"auxiliary files", pkg#"pkgname" | "/", ""))
+    ", with auxiliary files in ",
+    linkToFile(pkg#"auxiliary files", pkg#"pkgname" | "/", ""))
     )
 
 -- Handling operators
@@ -331,53 +359,53 @@ getOperator := key -> if operator#?key then (
     op := toString key;
     if match("^[[:alpha:]]*$", op) then op = " " | op | " ";
     fixup DIV (
-	if binary#?key and key =!= symbol ?? then {
-	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
-		"The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
-	    PRE if key === symbol SPACE
-	    then "         X Y := (x,y) -> ..."
-	    else if (getParsing key)#0 <= (getParsing symbol :=)#0
-	    then "        (X "|op|" Y) := (x,y) -> ..."
-	    else "         X "|op|" Y := (x,y) -> ...",
-	    PARA {"where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."}},
-	if key === symbol ?? then { -- can't install binary methods
-	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". "}},
-	if prefix#?key then {
-	    PARA {"This operator may be used as a prefix unary operator in an expression like ", TT (op | "y"), ". ",
-		"The user may ", TO2{ "Macaulay2Doc :: installing methods", "install a method" }, " for handling such expressions with code such as"},
-	    PRE ("           "|op|" Y := (y) -> ..."),
-	    PARA {"where ", TT "Y", " is the class of ", TT "y", "."}},
-	if postfix#?key then {
-	    PARA {"This operator may be used as a postfix unary operator in an expression like ", TT ("x" | op), ". ",
-		"The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
-	    PRE ("         X "|op|"   := (x) -> ..."),
-	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}},
-	if augmented#?key then {
-	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
-		"The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
-	    PRE ("         X "|op|" (x,y) -> ..."),
-	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}},
-	if unicodeOperators#?key then {
-	    PARA {"To insert this character in Emacs, you may press ", KBD "C-x 8 RET", " or ", KBD "M-x insert-char",
-		" and then enter ", format unicodeOperators#key#0, " in the minibuffer."},
-	    if (texcmd := unicodeOperators#key#1) =!= null
-	    then PARA {"Alternatively, you may press ", KBD "C-x RET C-\\", "  or ", KBD "M-x set-input-method",
-		" and then enter \"TeX\" in the minibuffer.  Afterwards, typing \"", texcmd,
-		"\" will input the character.  You may then toggle the input method using ", KBD "C-\\", " or ",
-		KBD "M-x toggle-input-method"}},
-	))
+    if binary#?key and key =!= symbol ?? then {
+        PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
+        "The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
+        PRE if key === symbol SPACE
+        then "         X Y := (x,y) -> ..."
+        else if (getParsing key)#0 <= (getParsing symbol :=)#0
+        then "        (X "|op|" Y) := (x,y) -> ..."
+        else "         X "|op|" Y := (x,y) -> ...",
+        PARA {"where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."}},
+    if key === symbol ?? then { -- can't install binary methods
+        PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". "}},
+    if prefix#?key then {
+        PARA {"This operator may be used as a prefix unary operator in an expression like ", TT (op | "y"), ". ",
+        "The user may ", TO2{ "Macaulay2Doc :: installing methods", "install a method" }, " for handling such expressions with code such as"},
+        PRE ("           "|op|" Y := (y) -> ..."),
+        PARA {"where ", TT "Y", " is the class of ", TT "y", "."}},
+    if postfix#?key then {
+        PARA {"This operator may be used as a postfix unary operator in an expression like ", TT ("x" | op), ". ",
+        "The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
+        PRE ("         X "|op|"   := (x) -> ..."),
+        PARA {"where ", TT "X", " is the class of ", TT "x", "."}},
+    if augmented#?key then {
+        PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
+        "The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
+        PRE ("         X "|op|" (x,y) -> ..."),
+        PARA {"where ", TT "X", " is the class of ", TT "x", "."}},
+    if unicodeOperators#?key then {
+        PARA {"To insert this character in Emacs, you may press ", KBD "C-x 8 RET", " or ", KBD "M-x insert-char",
+        " and then enter ", format unicodeOperators#key#0, " in the minibuffer."},
+        if (texcmd := unicodeOperators#key#1) =!= null
+        then PARA {"Alternatively, you may press ", KBD "C-x RET C-\\", "  or ", KBD "M-x set-input-method",
+        " and then enter \"TeX\" in the minibuffer.  Afterwards, typing \"", texcmd,
+        "\" will input the character.  You may then toggle the input method using ", KBD "C-\\", " or ",
+        KBD "M-x toggle-input-method"}},
+    ))
 
 -- TODO: expand this
 getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     SUBSECTION "For the programmer",
     fixup PARA deepSplice {
-	"The object ", TO S, " is ", ofClass class s, getSource(S, s),
-	if parent s =!= Nothing then (
-	    f := drop(ancestors s, 1);
-	    if #f == 1 then ", with ancestor class "   else
-	    if #f >= 2 then ", with ancestor classes " else ", with no ancestor class.",
-	    toSequence between(" < ", TO \ f)),
-	"."},
+    "The object ", TO S, " is ", ofClass class s, getSource(S, s),
+    if parent s =!= Nothing then (
+        f := drop(ancestors s, 1);
+        if #f == 1 then ", with ancestor class "   else
+        if #f >= 2 then ", with ancestor classes " else ", with no ancestor class.",
+        toSequence between(" < ", TO \ f)),
+    "."},
     getOperator S)
 
 getLocation := tag -> if tag =!= null then (
@@ -387,9 +415,9 @@ getLocation := tag -> if tag =!= null then (
     filename := replace(getpkgsrcdir tag.Package, "", docfile);
     HR{},
     DIV ( "class" => "waystouse",
-	fixup PARA (
-	    "The source of this document is in ",
-	    linkToFile(docfile, filename, linepos), ".")
+    fixup PARA (
+        "The source of this document is in ",
+        linkToFile(docfile, filename, linepos), ".")
         )
     )
 
@@ -412,24 +440,24 @@ headlines = method()
 headlines List := L -> (
     lastabout = tags := apply(L, makeDocumentTag);
     TABLE apply(#L, i -> { pad(floor log_10(#L) + 2, i | "."),
-	TO2(tags#i, net tags#i), commentize headline tags#i }))
+    TO2(tags#i, net tags#i), commentize headline tags#i }))
 
 -- Compare with SYNOPSIS in document.m2
 getSynopsis := (key, tag, rawdoc) -> (
     if rawdoc === null then return null;
     result := nonnull {
-	if rawdoc.?BaseFunction then SPAN { "Function: ", TO rawdoc.BaseFunction }
-	else if instance(key, Sequence) and key#?0 then (
-	    if  instance(key#0, ScriptedFunctor) then SPAN { "Scripted functor: ", TO key#0 }
-	    else if instance(key#0, Keyword)     then SPAN { "Operator: ",         TO key#0 }
-	    else if instance(key#0, Function)    then SPAN { "Function: ",         TO key#0 }
-	    else if instance(key#0, Sequence) and #key#0 === 2 and key#0#1 === symbol=
-	    then SPAN { "Operator: ", TO key#0#0 }), -- assignment operator for this operator
-	if rawdoc.?Usage        then                           rawdoc.Usage, -- TODO: handle getUsage here
-	if rawdoc.?Inputs       then  LI { "Inputs:",       UL rawdoc.Inputs },
-	if rawdoc.?Options      then  LI { TO2{"Macaulay2Doc :: using functions with optional inputs", "Optional inputs"}, ":", UL rawdoc.Options },
-	if rawdoc.?Outputs      then  LI { "Outputs:",      UL rawdoc.Outputs },
-	if rawdoc.?Consequences then DIV { "Consequences:", UL rawdoc.Consequences }};
+    if rawdoc.?BaseFunction then SPAN { "Function: ", TO rawdoc.BaseFunction }
+    else if instance(key, Sequence) and key#?0 then (
+        if  instance(key#0, ScriptedFunctor) then SPAN { "Scripted functor: ", TO key#0 }
+        else if instance(key#0, Keyword)     then SPAN { "Operator: ",         TO key#0 }
+        else if instance(key#0, Function)    then SPAN { "Function: ",         TO key#0 }
+        else if instance(key#0, Sequence) and #key#0 === 2 and key#0#1 === symbol=
+        then SPAN { "Operator: ", TO key#0#0 }), -- assignment operator for this operator
+    if rawdoc.?Usage        then                           rawdoc.Usage, -- TODO: handle getUsage here
+    if rawdoc.?Inputs       then  LI { "Inputs:",       UL rawdoc.Inputs },
+    if rawdoc.?Options      then  LI { TO2{"Macaulay2Doc :: using functions with optional inputs", "Optional inputs"}, ":", UL rawdoc.Options },
+    if rawdoc.?Outputs      then  LI { "Outputs:",      UL rawdoc.Outputs },
+    if rawdoc.?Consequences then DIV { "Consequences:", UL rawdoc.Consequences }};
     if #result > 0 then fixup UL result)
 
 -- e.g., [(res, Module), Strategy => FastNonminimal]
@@ -441,54 +469,53 @@ getDefaultOptions := (nkey, opt) -> DIV (
     else   if (options   fn)#?opt then (options   fn)#opt;
     if instance(opt, Option) then (opt, def) = toSequence opt;
     SUBSECTION "Further information", UL {
-	SPAN{ "Default value: ",
-	    if   isDocumentableThing def
-	    and hasDocumentation     def
-	    then TO {def} else TT toString def },
-	SPAN{ if instance(nkey, Sequence) then "Method: " else "Function: ", TOH {nkey} },
-	SPAN{ "Option key: ", TOH {opt} }
-	})
+    SPAN{ "Default value: ",
+        if   isDocumentableThing def
+        and hasDocumentation     def
+        then TO {def} else TT toString def },
+    SPAN{ if instance(nkey, Sequence) then "Method: " else "Function: ", TOH {nkey} },
+    SPAN{ "Option key: ", TOH {opt} }
+    })
 
 getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
-	pkg := getpkgNoLoad tag.Package ?? tag.Package;
-	desc = processExamples(pkg, tag.Format, desc);
-	if instance(key, String) -- overview key
-	or instance(key, Package) then DIV { desc }
-	else DIV { SUBSECTION "Description", desc })
+    desc = processExamples(package' tag, format tag, desc);
+    if instance(key, String) -- overview key
+    or instance(key, Package) then DIV { desc }
+    else DIV { SUBSECTION "Description", desc })
     else DIV { COMMENT "empty documentation body" })
 
 -- Returns the contents of a documentation node prepared for JSON serialization
 getData = (key, tag, rawdoc) -> (
     currentHelpTag = tag;
     result := new HashTable from {
-	Headline        => ( formatDocumentTag key, commentize getOption(rawdoc, Headline) ),
-	"Synopsis"      => getSynopsis(key, tag, rawdoc),
-	Description     => getDescription(key, tag, rawdoc),
-	SourceCode      => getOption(rawdoc, SourceCode),
-	Acknowledgement => getOption(rawdoc, Acknowledgement),
-	Contributors    => getOption(rawdoc, Contributors),
-	References      => getOption(rawdoc, References),
-	Citation        => getOption(rawdoc, Citation),
-	Caveat          => getOption(rawdoc, Caveat),
-	SeeAlso         => getOption(rawdoc, SeeAlso),
-	Subnodes        => getOption(rawdoc, Subnodes),
-	"Location"      => toString locate tag, -- for debugging
-	-- this is so a "Ways to use" section is listed when multiple
-	-- method keys are documented together without the base function
-	"WaysToUse"     => DIV (
-	    if instance(key, Sequence) then (
-		documentationValue(, key)) else
-	    if instance(key, Symbol)   then (
-		documentationValue(key, value key),
-		getTechnical(key, value key)) else
-	    if instance(key, Array)    then (
-		if instance(opt := key#1, Option)
-		then documentationValue(opt#0, opt)
-		else documentationValue(opt, value opt),
-		getDefaultOptions(key#0, key#1)),
-	    getLocation tag),
+    Headline        => ( formatDocumentTag key, commentize getOption(rawdoc, Headline) ),
+    "Synopsis"      => getSynopsis(key, tag, rawdoc),
+    Description     => getDescription(key, tag, rawdoc),
+    SourceCode      => getOption(rawdoc, SourceCode),
+    Acknowledgement => getOption(rawdoc, Acknowledgement),
+    Contributors    => getOption(rawdoc, Contributors),
+    References      => getOption(rawdoc, References),
+    Citation        => getOption(rawdoc, Citation),
+    Caveat          => getOption(rawdoc, Caveat),
+    SeeAlso         => getOption(rawdoc, SeeAlso),
+    Subnodes        => getOption(rawdoc, Subnodes),
+    "Location"      => toString locate tag, -- for debugging
+    -- this is so a "Ways to use" section is listed when multiple
+    -- method keys are documented together without the base function
+    "WaysToUse"     => DIV (
+        if instance(key, Sequence) then (
+        documentationValue(, key)) else
+        if instance(key, Symbol)   then (
+        documentationValue(key, value key),
+        getTechnical(key, value key)) else
+        if instance(key, Array)    then (
+        if instance(opt := key#1, Option)
+        then documentationValue(opt#0, opt)
+        else documentationValue(opt, value opt),
+        getDefaultOptions(key#0, key#1)),
+        getLocation tag),
     };
     result = applyValues(result,  val -> fixup val);
     result = selectValues(result, val -> val =!= null and val =!= () and val =!= DIV{});
@@ -501,13 +528,17 @@ getData = (key, tag, rawdoc) -> (
 -- TODO: combine sections when multiple tags are being documented (e.g. strings and methods)
 getBody := (key, tag, rawdoc) -> (
     DIV nonnull splice (
-	data := getData(key, tag, rawdoc);
-	HEADER1 toList data.Headline,
-	apply(("Synopsis", Description, SourceCode, Acknowledgement, Contributors,
-		References, Caveat, SeeAlso, Subnodes, "WaysToUse"),
-	    section -> if data#?section then data#section)
+        data := getData(key, tag, rawdoc);
+        if isPackageNode tag then (
+            documentationValue(key, value key, data)
+        ) else (
+        	HEADER1 toList data.Headline,
+            apply(("Synopsis", Description, SourceCode, Acknowledgement, Contributors, 
+                   References, Caveat, SeeAlso, Subnodes, "WaysToUse"), 
+                  section -> if data#?section then data#section)
         )
     )
+)
 
 -----------------------------------------------------------------------------
 -- View help within Macaulay2
@@ -552,7 +583,7 @@ viewHelp String := key -> viewHelp makeDocumentTag key
 viewHelp Thing  := key -> (
     if key === () then (
         if fileExists frontpage then show URL urlEncode(rootURI | frontpage)
-	-- TODO: generate this on-demand
+        -- TODO: generate this on-demand
         else error("missing documentation index: ", frontpage, ". Run makePackageIndex() or start M2 without -q"))
     else viewHelp makeDocumentTag key)
 viewHelp DocumentTag := tag -> (
@@ -569,8 +600,8 @@ setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 makeInfo := tag -> (
     infoFile := temporaryDirectory() | toFilename format tag | ".info";
     infoFile << "\037" << endl <<
-	"Node: Top, Up: (Macaulay2Doc)Top" << endl << endl <<
-	info help tag << endl << close;
+    "Node: Top, Up: (Macaulay2Doc)Top" << endl << endl <<
+    info help tag << endl << close;
     infoFile
 )
 
@@ -598,22 +629,22 @@ setAttribute(infoHelp#0, ReverseDictionary, symbol infoHelp)
 briefDocumentation = key -> (
     if not isDocumentableMethod key and not isDocumentableThing key
     then return if hasAttribute(key, ReverseDictionary) then DIV {
-	-- TODO: use either "formation" to enhance the result
-	-- or enhance "describe" or "getTechnical" using "formation"
-	-- TODO: add spaces around :=
-	BinaryOperation{symbol :=, key, describe key},
-	getTechnical(getAttribute(key, ReverseDictionary), key) };
+    -- TODO: use either "formation" to enhance the result
+    -- or enhance "describe" or "getTechnical" using "formation"
+    -- TODO: add spaces around :=
+    BinaryOperation{symbol :=, key, describe key},
+    getTechnical(getAttribute(key, ReverseDictionary), key) };
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
     -- TODO: should it be getGlobalSymbol or getAttribute?
     tag := getOption(rawdoc, symbol DocumentTag);
     title := getOption(rawdoc, Headline);
     synopsis := getSynopsis(key, tag, rawdoc);
     try symb := getGlobalSymbol toString key then (
-	waystouse := documentationValue(symb, key);
-	technical := getTechnical(symb, key)) else ();
+    waystouse := documentationValue(symb, key);
+    technical := getTechnical(symb, key)) else ();
     DIV nonnull {
-	PARA {format tag, commentize title},
-	synopsis, waystouse, technical })
+    PARA {format tag, commentize title},
+    synopsis, waystouse, technical })
 
 ? ScriptedFunctor :=
 ? Function :=

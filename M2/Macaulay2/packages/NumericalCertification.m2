@@ -1,7 +1,7 @@
 newPackage(
 	"NumericalCertification",
     	Version => "1.6",
-    	Date => "May, 2022",
+    	LastUpdated => "May, 2022",
     	Authors => {
 	     {Name => "Kisun Lee", Email => "kil004@ucsd.edu", HomePage => "https://klee669.github.io"}
 	     },
@@ -9,7 +9,7 @@ newPackage(
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	Configuration => {"ALPHACERTIFIEDexec" => "alphaCertified"},
 	AuxiliaryFiles => true,
-	Keywords => {"Numerical Algebraic Geometry"}
+	Areas => {"Numerical Algebraic Geometry"}
     	)
 
 -- Any symbols or functions that the user is to have access to

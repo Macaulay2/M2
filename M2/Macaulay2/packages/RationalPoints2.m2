@@ -4,10 +4,10 @@
 newPackage(
     "RationalPoints2",
     Version => "0.5",
-    Date => "Mar 18, 2021",
+    LastUpdated => "Mar 18, 2021",
     Authors => { {Name => "Jieao Song", Email => "jieao.song@imj-prg.fr"} },
     Headline => "find the rational points on a variety",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     DebuggingMode => false,
     PackageImports => {"Elimination", "Varieties"}
 )

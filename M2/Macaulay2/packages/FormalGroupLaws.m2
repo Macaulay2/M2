@@ -3,14 +3,14 @@
 newPackage(
 	"FormalGroupLaws",
 	Version => "0.2",
-	Date => "February 26, 2010",
+	LastUpdated => "February 26, 2010",
 	Authors => {
 		{Name => "Baptiste Calmès",
 		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "commutative formal group laws",
-	Keywords => {"Group Theory"},
+	Areas => {"Group Theory"},
 	PackageImports => {"Truncations"},
 	DebuggingMode => false)
 

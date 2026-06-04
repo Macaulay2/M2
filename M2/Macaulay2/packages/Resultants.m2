@@ -10,10 +10,10 @@
 newPackage(
        "Resultants",
 	Version => "1.2.2", 
-    	Date => "May 10, 2019",
+    	LastUpdated => "May 10, 2019",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     	Headline => "resultants, discriminants, and Chow forms",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	PackageExports => { "Elimination" },
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

@@ -10,7 +10,7 @@
 newPackage(
     "MixedMultiplicity",
     Version => "3.0",
-    Date => "May, 2023",
+    LastUpdated => "May, 2023",
     Authors => {
 	{    Name => "Kriti Goel", 
 	    Email => "kritigoel.maths@gmail.com", 
@@ -31,7 +31,7 @@ newPackage(
 	},
     Headline => "Mixed Multiplicities of ideals",
     PackageImports => { "WeilDivisors", "ReesAlgebra", "Depth", "Polyhedra" },
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

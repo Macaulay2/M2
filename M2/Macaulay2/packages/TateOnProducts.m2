@@ -28,7 +28,7 @@ check "TateOnProducts"
 newPackage(
     "TateOnProducts",
     Version => "1.2",
-    Date => "January 30, 2020",
+    LastUpdated => "January 30, 2020",
     Headline => "Tate resolutions on products of projective spaces",
     Authors => {
 	{ Name => "Daniel Erman",        Email => "derman@math.wisc.edu",    HomePage => "http://www.math.wisc.edu/~derman/" },
@@ -37,7 +37,7 @@ newPackage(
 	{ Name => "Michael E. Stillman", Email => "mike@math.cornell.edu",   HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html" },
 	{ Name => "Yeongrak Kim",     	 Email => "kim@math.uni-sb.de",      HomePage => "http://sites.google.com/view/yeongrak/"}
 	},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageImports => {"Truncations"},
     PackageExports => {"Isomorphism", "Complexes", "SVDComplexes"},
     DebuggingMode => false

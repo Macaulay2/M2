@@ -11,7 +11,7 @@ viewHelp "SVDComplexes"
 newPackage(
         "SVDComplexes",
         Version => "0.3", 
-        Date => "May 23, 2018",
+        LastUpdated => "May 23, 2018",
         Authors => {
             {Name => "Frank-Olaf Schreyer", 
 		        Email => "schreyer@math.uni-sb.de",
@@ -21,7 +21,7 @@ newPackage(
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
-	Keywords => {"Homological Algebra", "Commutative Algebra"},
+	Areas => {"Homological Algebra", "Commutative Algebra"},
 	PackageExports => {"LLLBases", "Complexes"},
         DebuggingMode => false
         )

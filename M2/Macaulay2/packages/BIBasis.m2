@@ -8,12 +8,12 @@
 newPackage(
     "BIBasis",
     Version => "0.6.3",
-    Date => "March 29, 2011",
+    LastUpdated => "March 29, 2011",
     Authors => {
         {Name => "Mikhail Zinin", Email => "mzinin@gmail.com"}
     },
     Headline => "involutive Pommaret basis in a Boolean ring",
-    Keywords => {"Groebner Basis Algorithms"},
+    Areas => {"Groebner Basis Algorithms"},
     PackageImports => {"BooleanGB"},
     DebuggingMode => false
     )

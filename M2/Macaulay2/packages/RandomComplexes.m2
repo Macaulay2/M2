@@ -11,7 +11,7 @@ viewHelp "RandomComplexes"
 newPackage(
         "RandomComplexes",
         Version => "0.2", 
-        Date => "4 April 2018",
+        LastUpdated => "4 April 2018",
         Authors => {{Name => "Frank-Olaf Schreyer", 
                         Email => "schreyer@math.uni-sb.de",
 		        HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
@@ -20,7 +20,7 @@ newPackage(
 		        HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
                     },
         Headline => "random complexes over fields or the integers",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
         PackageExports => {"Complexes", "SimplicialComplexes"},
 	PackageImports => {"LLLBases"}
         )

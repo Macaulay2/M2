@@ -13,7 +13,7 @@
 ---------------------------------------------------------------------------
 newPackage ("VirtualResolutions",
     Version => "1.4",
-    Date => "May 06, 2021",
+    LastUpdated => "May 06, 2021",
     Headline => "Methods for virtual resolutions on products of projective spaces",
     Authors =>{
         {Name => "Ayah Almousa",       Email => "aka66@cornell.edu",   HomePage => "http://pi.math.cornell.edu/~aalmousa "},
@@ -23,7 +23,7 @@ newPackage ("VirtualResolutions",
         {Name => "Michael Loper",      Email => "loper012@umn.edu",    HomePage => "http://math.umn.edu/~loper012/"},
         {Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",      HomePage => "http://math.umn.edu/~mahrud/"}
         },
-    Keywords => {"Commutative Algebra", "Homological Algebra"},
+    Areas => {"Commutative Algebra", "Homological Algebra"},
     PackageImports => {"Elimination", "Depth", "Saturation", "SpaceCurves"},
     PackageExports => {"NormalToricVarieties", "LinearTruncations", "TateOnProducts"},
     AuxiliaryFiles => true,

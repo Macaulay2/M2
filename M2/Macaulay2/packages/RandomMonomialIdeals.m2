@@ -3,7 +3,7 @@
 newPackage(
 	"RandomMonomialIdeals",
     	Version => "1.0",
-    	Date => "January 28, 2019",
+    	LastUpdated => "January 28, 2019",
     	Authors => {
 	    {
 		Name => "Sonja Petrovic",
@@ -48,7 +48,7 @@ newPackage(
 	    }
 	},
     	Headline => "Erdos-Renyi-type random monomial ideals",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
      	PackageImports => { "Complexes", "Depth", "BoijSoederberg", "Serialization" },
     	DebuggingMode => false,
 	Certification => {

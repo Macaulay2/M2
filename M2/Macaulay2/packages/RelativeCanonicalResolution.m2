@@ -1,7 +1,7 @@
 newPackage(
 	"RelativeCanonicalResolution",
 	Version => "1.0",
-	Date => "June 22, 2020",
+	LastUpdated => "June 22, 2020",
 	Authors => {{Name => "Christian Bopp",
 		     Email => "bopp@math.uni-sb.de",
 		     HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
@@ -9,7 +9,7 @@ newPackage(
 		     Email => "hahn@math.uni-sb.de",
 		     HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}},
 	 Headline=> "the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k",
-	 Keywords => {"Commutative Algebra"},
+	 Areas => {"Commutative Algebra"},
          PackageExports => {"Complexes"},
 	 Certification => {
 	        "journal name" => "The Journal of Software for Algebra and Geometry",

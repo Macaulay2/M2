@@ -1,7 +1,7 @@
 newPackage("ToricCohomology",
     Headline => "toric and multiproj cohomology",
     Version => "0.1",
-    Date => "June 10, 2009",
+    LastUpdated => "June 10, 2009",
     PackageImports => { "LLLBases", "FourierMotzkin" },
     Authors => {
          {Name => "Alexandra Seceleanu", Email => "asecele2@illinois.edu"}}

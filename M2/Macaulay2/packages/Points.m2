@@ -2,7 +2,7 @@
 newPackage(
 	"Points",
     	Version => "3.0", 
-    	Date => "29 June 2008, revised by DE June 2016, revised by FG and JWS June 2018",
+    	LastUpdated => "29 June 2008, revised by DE June 2016, revised by FG and JWS June 2018",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://macaulay2.com/"},
 	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"},
@@ -11,7 +11,7 @@ newPackage(
 	     {Name => "Joseph W. Skelton", Email => "jskelton@tulane.edu"}
 	     },
     	Headline => "sets of points",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
         PackageImports => {"Complexes"},
         PackageExports => {"LexIdeals"},
     	DebuggingMode => false

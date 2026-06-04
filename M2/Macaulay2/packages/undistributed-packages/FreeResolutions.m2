@@ -1,7 +1,7 @@
 newPackage(
         "FreeResolutions",
         Version => "0.1", 
-        Date => "Oct 2014",
+        LastUpdated => "Oct 2014",
         Authors => {{Name => "Mike Stillman", 
                   Email => "", 
                   HomePage => ""}},

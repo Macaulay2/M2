@@ -5,12 +5,12 @@
 newPackage(
      "RationalPoints",
      Version => "0.95",
-     Date => "Aug 21, 2009",
+     LastUpdated => "Aug 21, 2009",
      Authors => {
 	  {Name => "Nathaniel Stapleton", Email => "nat.j.stapleton@gmail.com"}
 	  },
      Headline => "find the common zeroes of a set of polynomials with coefficients in a finite field",
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      DebuggingMode => false
      )
 

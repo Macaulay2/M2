@@ -1,7 +1,7 @@
 newPackage(
 	"InverseSystems",
     	Version => "1.1", 
-    	Date => "June 27, 2018",
+    	LastUpdated => "June 27, 2018",
     	Authors => {{Name => "David Eisenbud", 
 		  Email => "de@msri.org"
 		  },
@@ -9,7 +9,7 @@ newPackage(
 		     Email => "boij@kth.se"}
 			},
     	Headline => "equivariant Macaulay inverse systems",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
     	DebuggingMode => false
     	)
 

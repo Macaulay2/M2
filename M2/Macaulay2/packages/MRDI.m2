@@ -21,7 +21,7 @@
 newPackage(
     "MRDI",
     Version => "0.1",
-    Date => "April 25, 2026",
+    LastUpdated => "April 25, 2026",
     Headline => "serializing algebraic data with .mrdi files",
     Authors => {
 	{
@@ -30,7 +30,7 @@ newPackage(
 	    HomePage => "https://d-torrance.github.io"
 	    }},
     PackageImports => {"JSON"},
-    Keywords => {"System"})
+    Areas => {"System"})
 
 export {
     -- methods

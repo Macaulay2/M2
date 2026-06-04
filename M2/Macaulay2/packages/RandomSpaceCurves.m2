@@ -1,7 +1,7 @@
 newPackage(
 	"RandomSpaceCurves",
     	Version => "0.5",
-    	Date => "March 1, 2011",
+    	LastUpdated => "March 1, 2011",
     	Authors => {
 	        {Name => "Hans-Christian Graf v. Bothmer",
 	         Email => "bothmer@uni-math.gwdg.de",
@@ -16,7 +16,7 @@ newPackage(
 		 HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
     	Headline => "random smooth space curves",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
         PackageImports => {"Complexes"},
      	PackageExports => {"RandomObjects"},
     	DebuggingMode => false

@@ -1,11 +1,11 @@
        newPackage(
                "ChainComplexOperations",
                Version => "0.2", 
-               Date => "Jan 4, 2017",
+               LastUpdated => "Jan 4, 2017",
                Authors => {{Name => "David Eisenbud", 
                          Email => "de@msri.org"}},
                Headline => "sym2, wedge2, chi2 of a ChainComplex",
-	       Keywords => {"Homological Algebra"},
+	       Areas => {"Homological Algebra"},
                PackageExports => {"Complexes"},
                DebuggingMode => false
                )

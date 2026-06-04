@@ -12,7 +12,7 @@
 newPackage(
     "AlgebraicSplines",
         Version => "0.1.0", 
-        Date => "27. May 2015",
+        LastUpdated => "27. May 2015",
         Authors => {
             {Name => "Michael DiPasquale", Email => "mdipasq@okstate.edu", HomePage => "http://math.okstate.edu/people/mdipasq/"},
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://cs.hood.edu/~whieldon"},
@@ -20,7 +20,7 @@ newPackage(
 	    {Name => "Daniel Irving Bernstein", Email=> "dibernst@ncsu.edu", HomePage =>"http://www4.ncsu.edu/~dibernst"}
         },
         Headline => "splines on simplicial complexes, polytopal complexes, and graphs",
-	Keywords => {"Applied Algebraic Geometry"},
+	Areas => {"Applied Algebraic Geometry"},
         Configuration => {},
         DebuggingMode => false,
 	PackageImports => { "Complexes", "Elimination" },

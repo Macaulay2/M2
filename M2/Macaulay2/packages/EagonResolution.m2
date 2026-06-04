@@ -1,7 +1,7 @@
 newPackage(
         "EagonResolution",
         Version => "1.0", 
-        Date => "September 23, 2020",
+        LastUpdated => "September 23, 2020",
         Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org", 
                   HomePage => "http://www.msri.org/~de"},
@@ -9,7 +9,7 @@ newPackage(
                   Email => "mike@math.cornell.edu", 
                   HomePage => "http://pi.math.cornell.edu/~mike"}},
         Headline => "Compute the Eagon Resolution of the residue field",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
         PackageExports => {"Complexes"},
         DebuggingMode => false
         )

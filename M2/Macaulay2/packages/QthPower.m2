@@ -1,13 +1,13 @@
 newPackage(
     "QthPower",
     Version => "1.02", 
-    Date => "January 17, 2014",
+    LastUpdated => "January 17, 2014",
     Authors => {{Name => "Douglas A. Leonard",
                  Email => "leonada@auburn.edu",
                  HomePage => "http://www.dms.auburn.edu/~leonada"}},
     Headline => 
     "An implementation of the Qth-Power algorithm for computing integral closures",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageImports => {"IntegralClosure"}
 )
 ------------------------------------------------------------------------

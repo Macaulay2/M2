@@ -28,14 +28,14 @@
 newPackage(
     "LocalRings",
     Version => "2.1",
-    Date => "May 08, 2021",
+    LastUpdated => "May 08, 2021",
     Authors => {
         {Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud/"},
         {Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
         {Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "http://www.msri.org/~de/"}
         },
     Headline => "operations over a local ring R_p",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageExports => {"Saturation", "Complexes"},
     AuxiliaryFiles => true
     )

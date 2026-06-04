@@ -5,7 +5,7 @@
 -- newPackage is called in packages.m2!
 CorePackage = (
     "Core",
-    Date     => version#"compile time",
+    LastUpdated => version#"compile time",
     Version  => version#"VERSION",
     Headline => "a computer algebra system designed to support algebraic geometry",
     HomePage => "https://Macaulay2.com/",

@@ -1,7 +1,7 @@
 newPackage(
     "SuperLinearAlgebra", 
     Version => "0.1", 
-    Date => "29 January 2021", 
+    LastUpdated => "29 January 2021", 
     Authors => {
         {Name => "Fereshteh Bahadorykhalily", 
          Email => "f.bahadori.khalili@gmail.com", 
@@ -14,7 +14,7 @@ newPackage(
     }, 
     Headline => "computations related to supermatrices", 
     DebuggingMode => false,
-    Keywords => {"Linear Algebra"}
+    Areas => {"Linear Algebra"}
 )
 
 --------------------

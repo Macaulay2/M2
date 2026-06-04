@@ -33,7 +33,7 @@ newPackage(
   "TensorComplexes",
   AuxiliaryFiles => false,
   Version => "1.0",
-  Date => "29 July 2011",
+  LastUpdated => "29 July 2011",
   Authors => {
     {	 
       Name => "David Eisenbud", 
@@ -51,7 +51,7 @@ newPackage(
       Name => "Dumitru Stamate", 
       Email => "dumitru.stamate@fmi.unibuc.ro"}},
   Headline => "multilinear algebra with labeled bases",
-  Keywords => {"Commutative Algebra"},
+  Areas => {"Commutative Algebra"},
   PackageExports => {"Complexes"},
   DebuggingMode => false
   )

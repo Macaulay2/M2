@@ -6,7 +6,7 @@ newPackage (
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
-     Keywords => {"Miscellaneous"},
+     Areas => {"Miscellaneous"},
      HomePage => "https://macaulay2.com/",
      PackageImports => {"Complexes", "XML"},
      Version => "1.0"

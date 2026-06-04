@@ -1,6 +1,6 @@
 newPackage("ThreadedGB",
     Version => "1.1",
-    Date => "November 12, 2020",
+    LastUpdated => "November 12, 2020",
     Authors => {
 	{
 	    Name => "Sonja Petrovic",
@@ -13,7 +13,7 @@ newPackage("ThreadedGB",
 	    HomePage => "https://www.sjzelenberg.com/"
 	}
     },
-    Keywords => {"Groebner Basis Algorithms"},
+    Areas => {"Groebner Basis Algorithms"},
     Headline => "Compute a Groebner basis using the classical Buchberger with multiple threads",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",

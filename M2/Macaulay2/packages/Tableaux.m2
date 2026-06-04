@@ -1,11 +1,11 @@
 newPackage(
     "Tableaux",
     Version => "0.6",
-    Date => "January 13, 2026",
+    LastUpdated => "January 13, 2026",
     Authors => {
 	{Name => "John Graf", Email => "jrgraf@udel.edu", HomePage => "https://j-graf.github.io/"}},
     Headline => "constructing Young tableaux",
-    Keywords => {"Combinatorics"},
+    Areas => {"Combinatorics"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
     PackageImports => {"Permutations"}--,

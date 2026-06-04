@@ -3,7 +3,7 @@
 newPackage(
         "GeometricDecomposability",
         Version => "1.4.3",
-        Date => "June 10, 2025",
+        LastUpdated => "June 10, 2025",
         Headline => "checking whether ideals are geometrically vertex decomposable",
         Authors => {
                 {
@@ -17,7 +17,7 @@ newPackage(
                 HomePage => "https://ms.mcmaster.ca/~vantuyl/"
                 }
                 },
-        Keywords => {"Commutative Algebra"},
+        Areas => {"Commutative Algebra"},
         PackageImports => {"Depth", "PrimaryDecomposition"},
 	Certification => {
 	    "journal name" => "Journal of Software for Algebra and Geometry",

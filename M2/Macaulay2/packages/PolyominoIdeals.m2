@@ -1,7 +1,7 @@
 newPackage(
 	"PolyominoIdeals",
 	Version => "2.0",
-	Date => "November, 2025",
+	LastUpdated => "November, 2025",
 	
 	Authors => {
 		{
@@ -20,7 +20,7 @@ newPackage(
 			}
 	},
 	Headline => "Collections of cells and binomial ideals",
-	Keywords => {"Combinatorial Commutative Algebra"},
+	Areas => {"Combinatorial Commutative Algebra"},
 	PackageImports => { "Graphs", "gfanInterface" }
 )
 

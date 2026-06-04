@@ -1,12 +1,12 @@
 newPackage(
         "HigherCIOperators",
         Version => "0.5", 
-        Date => "May 10, 2015",
+        LastUpdated => "May 10, 2015",
         Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org",
                   HomePage => "http://www.msri.org/~de/"}},
         Headline => "higher CI operators",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
         DebuggingMode => false,
      	PackageImports => { "CompleteIntersectionResolutions" },
 	PackageExports =>{"MCMApproximations", "Complexes"}

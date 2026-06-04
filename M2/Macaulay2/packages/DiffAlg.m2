@@ -3,7 +3,7 @@
 newPackage (
 	"DiffAlg",
 	Version => "1.5",
-	Date => "October, 2018",
+	LastUpdated => "October, 2018",
 	Authors => {
 		{ Name => "Manuel Dubinsky",
 		  Email => "manudubinsky@gmail.com",
@@ -19,7 +19,7 @@ newPackage (
 		  HomePage => ""}
 	},
 	Headline => "specialized routines for differential forms",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	Configuration => { 
 		"BaseRing" => null,
 		"VariableName" => "x",

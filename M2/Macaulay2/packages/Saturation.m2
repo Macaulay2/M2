@@ -16,13 +16,13 @@
 newPackage(
     "Saturation",
     Version => "0.3",
-    Date => "November 29, 2021",
+    LastUpdated => "November 29, 2021",
     Headline => "quotient, saturation, and annihilator routines for ideals and modules",
     Authors => {
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"},
 	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     PackageExports => { HomologicalAlgebraPackage, "Elimination" },
     AuxiliaryFiles => true,
     DebuggingMode => false

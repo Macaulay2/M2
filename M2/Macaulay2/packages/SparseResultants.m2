@@ -10,10 +10,10 @@
 newPackage(
        "SparseResultants",
         Version => "1.2", 
-        Date => "July 8, 2021",
+        LastUpdated => "July 8, 2021",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
         PackageExports => {"Resultants"},
         DebuggingMode => false,
 	Certification => {

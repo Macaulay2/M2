@@ -1,7 +1,7 @@
 newPackage(
     "SumsOfSquares",
     Version => "2.2",
-    Date => "May 2021",
+    LastUpdated => "May 2021",
     Authors => {
      {Name => "Diego Cifuentes",
       Email => "diegcif@mit.edu",
@@ -17,7 +17,7 @@ newPackage(
       HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
     },
     Headline => "sums of squares",
-    Keywords => {"Real Algebraic Geometry"},
+    Areas => {"Real Algebraic Geometry"},
     AuxiliaryFiles => true,
     PackageImports => {"FourierMotzkin"},
     PackageExports => {"SemidefiniteProgramming"},

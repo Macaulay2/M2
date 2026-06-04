@@ -17,12 +17,12 @@
 newPackage(
     	"SimplicialPosets",
     	Version => "1.0",
-    	Date => "December 3, 2019",
+    	LastUpdated => "December 3, 2019",
 	Authors => {{
 		    Name => "Nathan Nichols",
 		    Email => "nicho997@umn.edu"}},
         Headline => "constructing Stanley simplicial poset rings",
-	Keywords => {"Combinatorial Commutative Algebra"},
+	Areas => {"Combinatorial Commutative Algebra"},
 	DebuggingMode => false,
 	PackageExports => {
 	    "Posets",

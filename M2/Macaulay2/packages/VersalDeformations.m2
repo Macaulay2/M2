@@ -7,14 +7,14 @@
 newPackage("VersalDeformations",
     Headline => "versal deformations and local Hilbert schemes",
     Version => "4.0",
-    Date => "July 9, 2025",
+    LastUpdated => "July 9, 2025",
     Authors => {
         {Name => "Nathan Ilten",
 	  HomePage => "http://www.sfu.ca/~nilten/",
 	  Email => "nilten@sfu.ca"}},
     Configuration => {"DefaultDefParam"=>"t","DefaultDefParamX"=>"s","DefaultDefParamY"=>"t"},
     PackageImports => {"Varieties"},
-    Keywords => {"Deformation Theory"},
+    Areas => {"Deformation Theory"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "https://msp.org/jsag/",

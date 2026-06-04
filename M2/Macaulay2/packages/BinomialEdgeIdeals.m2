@@ -1,12 +1,12 @@
 newPackage("BinomialEdgeIdeals",
 	Version => "1.0",
-	Date => "April 2015",
+	LastUpdated => "April 2015",
 	Authors => {
      {Name => "Tobias Windisch",
       Email => "windisch@ovgu.de",
       HomePage => "http://www.uni-magdeburg.de/windisch/"}},
    Headline => "binomial edge ideals",
-   Keywords => {"Edge Ideals"},
+   Areas => {"Edge Ideals"},
    PackageImports => {"Graphs","Binomials"}
 	)
 

@@ -1,7 +1,7 @@
 newPackage(
     "SemidefiniteProgramming",
     Version => "0.3",
-    Date => "May 2021",
+    LastUpdated => "May 2021",
     Authors => {
      {Name => "Diego Cifuentes",
       Email => "diegcif@mit.edu",
@@ -17,7 +17,7 @@ newPackage(
       HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
     },
     Headline => "semidefinite programming",
-    Keywords => {"Real Algebraic Geometry", "Interfaces"},
+    Areas => {"Real Algebraic Geometry", "Interfaces"},
     Configuration => {"CSDPexec"=>"","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},
     AuxiliaryFiles => true,
     PackageExports => {"NumericalAlgebraicGeometry"}

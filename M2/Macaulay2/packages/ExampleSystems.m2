@@ -3,7 +3,7 @@ newPackage(
 	"ExampleSystems",
 	AuxiliaryFiles => true,
     	Version => "0.5", 
-    	Date => "May 2020",
+    	LastUpdated => "May 2020",
     	Authors => {
                {Name => "Anton Leykin", 
                Email => "leykin@math.gatech.edu"},
@@ -16,7 +16,7 @@ newPackage(
         },
 	PackageExports => {"NumericalAlgebraicGeometry"},
     	Headline => "database of polynomial systems",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
     	DebuggingMode => false
     	)
 

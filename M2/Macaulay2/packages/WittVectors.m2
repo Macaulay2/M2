@@ -1,7 +1,7 @@
 newPackage(
     "WittVectors",
     Version => "0.01",
-    Date => "April 29, 2026",
+    LastUpdated => "April 29, 2026",
     Authors => {
     	{Name => "Anne Fayolle", Email => "anne.fayolle@utah.edu", HomePage => "https://annefayolle.github.io/"},
 	{Name => "Abhay Goel", Email => "u1421426@utah.edu", HomePage => "https://abhayg11.github.io/"},
@@ -16,7 +16,7 @@ newPackage(
         "Elimination",
     },
     Headline => "computations with Witt vectors, Frobenius lifts, and quasi-F-splittings",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     DebuggingMode => false,
     AuxiliaryFiles => true
     )

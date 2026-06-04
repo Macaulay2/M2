@@ -1,6 +1,6 @@
 newPackage( "Seminormalization",
 	Version => "0.22",
-	Date => "June 14, 2024",
+	LastUpdated => "June 14, 2024",
 	Authors => {
 		{Name => "Karl Schwede",
 		Email => "schwede@math.utah.edu",
@@ -11,7 +11,7 @@ newPackage( "Seminormalization",
 		}
 	},
 	Headline => "seminormalization of rings",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	PackageImports => {"IntegralClosure"},
 	PackageExports => {"Pullback", "PushForward"},
 	Certification => {

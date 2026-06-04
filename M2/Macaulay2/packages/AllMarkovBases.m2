@@ -1,7 +1,7 @@
 newPackage(
     "AllMarkovBases",
     Version => "1.0",
-    Date => "May 08, 2025",
+    LastUpdated => "May 08, 2025",
     Headline => "computing all minimal Markov bases of a configuration matrix",
     Authors => {
         {Name => "Alexander Milner",
@@ -11,7 +11,7 @@ newPackage(
             Email => "oliver.clarke@durham.ac.uk",
             HomePage => "https://www.oliverclarkemath.com/"}
         },
-    Keywords => {"Algebraic Statistics"},
+    Areas => {"Algebraic Statistics"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageExports => {"FourTiTwo","Graphs","Normaliz"}

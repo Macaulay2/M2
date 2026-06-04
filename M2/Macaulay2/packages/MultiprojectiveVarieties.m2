@@ -12,10 +12,10 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7.1", 
-    Date => "April 18, 2023",
+    LastUpdated => "April 18, 2023",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
-    Keywords => {"Projective Algebraic Geometry"},
+    Areas => {"Projective Algebraic Geometry"},
     PackageImports => {"PrimaryDecomposition","TangentCone"},
     PackageExports => {"Cremona","SparseResultants","Varieties"},
     DebuggingMode => false,

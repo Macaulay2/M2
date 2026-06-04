@@ -2,13 +2,13 @@
 newPackage(
 	"EllipticCurves",
     	Version => "0.1", 
-    	Date => "May 3, 2014",
+    	LastUpdated => "May 3, 2014",
     	Authors => {{Name => "Alessandro Oneto", 
 		  Email => "oneto@math.su.se"},
 	    {Name => "Stefano Marseglia", 
 		  Email => "stefanom@math.su.se"}},
 	PackageImports => {"Varieties"},
-	Keywords => {"Algebraic Number Theory"},
+	Areas => {"Algebraic Number Theory"},
     	Headline => "group law on elliptic curves (and counting points with brute force methods)"
     	)
 

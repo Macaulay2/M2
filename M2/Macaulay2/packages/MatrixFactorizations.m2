@@ -2,7 +2,7 @@ newPackage(
     "MatrixFactorizations",
     AuxiliaryFiles => true -*may need to change*-,
     Version => "0.1", 
-    Date => "August 13, 2025",
+    LastUpdated => "August 13, 2025",
     Authors => {
         {Name => "David Favero", 
             Email => "favero@umn.edu", 
@@ -18,7 +18,7 @@ newPackage(
             HomePage => "https://sites.google.com/view/kellervandebogert/home"}
     },
     Headline => "computing with matrix factorizations of different lengths",
-    Keywords => {"Commutative Algebra", "Homological Algebra"},
+    Areas => {"Commutative Algebra", "Homological Algebra"},
     PackageExports => {
         "Complexes"
     },

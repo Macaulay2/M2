@@ -1,7 +1,7 @@
 newPackage(
      "M0nbar",
      Version => "0.3",
-     Date => "April 5, 2014",
+     LastUpdated => "April 5, 2014",
      Authors => {
 	  {Name => "Han-Bom Moon",
 	   Email => "hmoon8@fordham.edu"},
@@ -9,7 +9,7 @@ newPackage(
 	   Email=> "dswinarski@fordham.edu",
 	   HomePage=>"http://faculty.fordham.edu/dswinarski"}
 	  },
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      Headline => "calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves"
      )
 export {"CurveClassRepresentativeM0nbar",

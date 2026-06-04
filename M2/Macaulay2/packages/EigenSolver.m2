@@ -1,7 +1,7 @@
 newPackage(
     "EigenSolver",
     Version => "0.1", 
-    Date => "June 2020",
+    LastUpdated => "June 2020",
     Authors => {
         {Name => "Laurent Busé", 
         Email => "Laurent.Buse@inria.fr"},
@@ -17,7 +17,7 @@ newPackage(
         Email => "pirnes@wisc.edu"}
     },
     Headline => "polynomial system solver via eigen-computations",
-    Keywords => {"Numerical Algebraic Geometry"},
+    Areas => {"Numerical Algebraic Geometry"},
     PackageExports => {"NAGtypes"},
     AuxiliaryFiles => false,
     DebuggingMode => false

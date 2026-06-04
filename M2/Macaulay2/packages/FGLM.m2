@@ -1,12 +1,12 @@
 newPackage(
     "FGLM",
     Version => "1.1.0",
-    Date => "September 3, 2019",
+    LastUpdated => "September 3, 2019",
     Authors => {
         { Name => "Dylan Peifer",   Email => "djp282@cornell.edu", HomePage => "https://math.cornell.edu/~djp282" },
         { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",     HomePage => "https://math.umn.edu/~mahrud" }
         },
-    Keywords => {"Groebner Basis Algorithms"},
+    Areas => {"Groebner Basis Algorithms"},
     Headline => "Groebner bases via the FGLM algorithm"
     )
 

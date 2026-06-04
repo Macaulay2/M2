@@ -12,13 +12,13 @@ the License, or any later version.
 newPackage(
            "Normaliz",
            Version=>"2.6",
-           Date=>"February 4, 2023",
+           LastUpdated=>"February 4, 2023",
            Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@uni-osnabrueck.de"},
                     {Name=> "Christof Soeger",
                     Email=>"csoeger@uni-osnabrueck.de"}},
            Headline=>"interface to Normaliz in Macaulay2",
-           Keywords => {"Interfaces"},
+           Areas => {"Interfaces"},
            DebuggingMode => false,
 	   Certification => {
 		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

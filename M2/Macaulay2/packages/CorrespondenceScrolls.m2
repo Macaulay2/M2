@@ -11,7 +11,7 @@ viewHelp CorrespondenceScrolls
 newPackage(
 	"CorrespondenceScrolls",
     	Version => "0.6", 
-    	Date => "April 23, 2018, updated June 27, 2020",
+    	LastUpdated => "April 23, 2018, updated June 27, 2020",
     	Authors => {{Name => "David Eisenbud", 
 		  Email => "de@msri.org", 
 		  HomePage => "http://www.msri.org/~de"},
@@ -22,7 +22,7 @@ newPackage(
 		   -- Email => "",
 		   HomePage => ""}},
     	Headline => "correspondence scrolls",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	PackageImports => { "Elimination", "Complexes" }
 	)
 

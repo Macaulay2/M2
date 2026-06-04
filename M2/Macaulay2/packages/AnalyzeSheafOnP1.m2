@@ -1,12 +1,12 @@
      newPackage(
              "AnalyzeSheafOnP1",
              Version => "0.1", 
-             Date => "June 3, 2015",
+             LastUpdated => "June 3, 2015",
              Authors => {{Name => "David Eisenbud", 
                        Email => "de@msri.org", 
                        HomePage => "http://www.msri.org/~de"}},
              Headline => "decompose a Sheaf on P1",
-	     Keywords => {"Commutative Algebra"},
+	     Areas => {"Commutative Algebra"},
 	     PackageImports => {"Varieties"},
              DebuggingMode => false
              )

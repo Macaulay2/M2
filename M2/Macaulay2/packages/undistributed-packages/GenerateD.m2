@@ -1,7 +1,7 @@
 newPackage(
         "GenerateD",
         Version => "0.1", 
-        Date => "3 Oct 2017",
+        LastUpdated => "3 Oct 2017",
         Authors => {
             {Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 

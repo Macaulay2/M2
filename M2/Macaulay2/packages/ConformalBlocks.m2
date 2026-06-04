@@ -1,13 +1,13 @@
 newPackage(
     "ConformalBlocks",
     Version => "2.4", 
-    Date => "June 22, 2018",
+    LastUpdated => "June 22, 2018",
     Authors => {
 	{Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
 	},
     PackageExports => { "LieAlgebraRepresentations" },
     Headline => "for conformal block divisors",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     Certification => {
 	 -- same article as for package LieTypes, now LieAlgebraRepresentations
 	  "journal name" => "The Journal of Software for Algebra and Geometry",

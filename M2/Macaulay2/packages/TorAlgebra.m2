@@ -1,6 +1,6 @@
 newPackage ( "TorAlgebra",
     Version => "2.1",
-    Date => "5 November 2020",
+    LastUpdated => "5 November 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -10,7 +10,7 @@ newPackage ( "TorAlgebra",
 	  HomePage => "https://web.northeastern.edu/oveliche/index.html" }
 	},
     Headline => "classification of local rings based on multiplication in homology",
-    Keywords => {"Homological Algebra"},
+    Areas => {"Homological Algebra"},
     PackageImports => { "Complexes", "LocalRings" },
     Certification => { -- this package was certified under its old name, "CodepthThree"
 	 "journal name" => "The Journal of Software for Algebra and Geometry",

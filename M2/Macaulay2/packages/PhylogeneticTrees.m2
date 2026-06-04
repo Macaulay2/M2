@@ -2,7 +2,7 @@
 newPackage(
      "PhylogeneticTrees",
      Version => "2.0",
-     Date => "November 15, 2019",
+     LastUpdated => "November 15, 2019",
      Headline => "invariants for group-based phylogenetic models",
      --HomePage => "",
      Authors => {
@@ -16,7 +16,7 @@ newPackage(
 	  {Name => "AJ Stewart", Email => "stewaral@seattleu.edu"},
 	  {Name => "Robert Walker", Email => "robmarsw@umich.edu"}
 	  },
-     Keywords => {"Applied Algebraic Geometry"},
+     Areas => {"Applied Algebraic Geometry"},
      PackageImports => {
 	 "Isomorphism",	 
 	  "FourTiTwo"

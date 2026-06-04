@@ -22,14 +22,14 @@
 newPackage(
     "AbstractSimplicialComplexes",
     Version => "1.1",
-    Date => "12 May 2025",
+    LastUpdated => "12 May 2025",
     Headline => "Abstract Simplicial Complexes",
     Authors => {{ Name => "Nathan Grieve", Email => "nathan.m.grieve@gmail.com",
 	    HomePage => "https://sites.google.com/view/nathan-grieve"}},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageImports => {"Complexes"},
-    Keywords => {"Combinatorial Commutative Algebra"},
+    Areas => {"Combinatorial Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

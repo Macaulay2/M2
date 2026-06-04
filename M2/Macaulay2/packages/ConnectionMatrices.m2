@@ -1,7 +1,7 @@
 newPackage(
     "ConnectionMatrices",
-    Version => "1.1",
-    Date => "May 2026",
+    Version => "1.0",
+    LastUpdated => "March 2025",
     Authors => {
 	{ Name => "Paul Goerlach",           Email => "paul.goerlach@ovgu.de",              HomePage => "" },
 	{ Name => "Joris Koefler",           Email => "joris.koefler@mis.mpg.de",           HomePage => "" },
@@ -12,7 +12,7 @@ newPackage(
 	{ Name => "Francesca Zaffalon",      Email => "francesca.zaffalon@mis.mpg.de",      HomePage => "" }
     },
     Headline => "connection matrices and integrable systems from D-ideals",
-    Keywords => { "D-modules" },
+    Areas => { "D-modules" },
     PackageExports => { "Dmodules" },
     AuxiliaryFiles => true,
     DebuggingMode => false,

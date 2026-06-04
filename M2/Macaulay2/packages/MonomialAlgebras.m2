@@ -1,14 +1,14 @@
 newPackage(
 	"MonomialAlgebras",
     	Version => "2.3",
-    	Date => "May 11, 2013",
+    	LastUpdated => "May 11, 2013",
     	Authors => {
          {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
          {Name => "Janko Boehm", Email => "boehm@mathematik.uni-kl.de", HomePage => "http://www.mathematik.uni-kl.de/~boehm/"},
          {Name => "Max Nitsche", Email => "nitsche@mis.mpg.de", HomePage => ""}
          },
     	Headline => "monomial algebras",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",

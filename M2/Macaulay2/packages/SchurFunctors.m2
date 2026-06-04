@@ -1,7 +1,7 @@
 newPackage(
      	  "SchurFunctors",
      	  Version => "1.0",
-	  Date => "April 18, 2026",
+	  LastUpdated => "April 18, 2026",
 	  Authors => {
 	       {Name => "Michael E. Stillman",
 		    Email => "mike@math.cornell.edu",
@@ -13,7 +13,7 @@ newPackage(
 		    HomePage => "https://sites.google.com/view/kellervandebogert/home"}
 	       },
 	  Headline => "Schur modules and maps between them",
-	  Keywords => {"Homological Algebra", "Representation Theory"},
+	  Areas => {"Homological Algebra", "Representation Theory"},
 	  DebuggingMode => false,
 	  AuxiliaryFiles=>true
      	  )

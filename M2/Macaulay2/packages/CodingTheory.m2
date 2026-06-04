@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 newPackage(
 	"CodingTheory",
     	Version => "1.0", 
-    	Date => "May 25, 2020",
+    	LastUpdated => "May 25, 2020",
     	Authors => {
 	     {Name => "Taylor Ball", Email => "trball13@gmail.com"},
 	     {Name => "Eduardo Camps", Email => "camps@esfm.ipn.mx"},
@@ -50,7 +50,7 @@ newPackage(
         PackageExports => {
 	    "Graphs"
 	    },
-       Keywords => { "Coding Theory" },
+       Areas => { "Coding Theory" },
        Certification => {
 	    "journal name" => "The Journal of Software for Algebra and Geometry",
 	    "journal URI" => "https://msp.org/jsag/",

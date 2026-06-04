@@ -4,10 +4,10 @@ if version#"VERSION" < "1.15" then error "this package requires Macaulay2 versio
 newPackage(
        "CoincidentRootLoci",
 	Version => "0.1.3", 
-        Date => "January 30, 2021",
+        LastUpdated => "January 30, 2021",
     	Headline => "coincident root loci",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
-	Keywords => {"Real Algebraic Geometry", "Interfaces"},
+	Areas => {"Real Algebraic Geometry", "Interfaces"},
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
@@ -1095,7 +1095,7 @@ load "./CoincidentRootLoci/documentation.m2"
 
 load "./CoincidentRootLoci/tests.m2"
 
-welcome := "CoincidentRootLoci v."|CoincidentRootLoci.Options.Version|" loaded successfully (last updated: "|CoincidentRootLoci.Options.Date|")";
+welcome := "CoincidentRootLoci v."|CoincidentRootLoci.Options.Version|" loaded successfully (last updated: "|CoincidentRootLoci.Options.LastUpdated|")";
 if notify then
   if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
 

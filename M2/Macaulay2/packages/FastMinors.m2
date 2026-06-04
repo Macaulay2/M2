@@ -1,9 +1,8 @@
 newPackage( "FastMinors",
-Version => "1.3.1", Date => "May 13th, 2026", Authors => {
-    {
-        Name => "Boyana Martinova",
-        Email=> "martinova@wisc.edu",
-        HomePage=> "https://sites.google.com/view/bmartinova"
+Version => "1.2.6", LastUpdated => "May 15th, 2023", Authors => {
+    {Name => "Boyana Martinova",
+    Email=> "martinova@wisc.edu",
+    HomePage=> "https://sites.google.com/view/bmartinova"
     },
     {
         Name => "Marcus Robinson",
@@ -24,7 +23,7 @@ Version => "1.3.1", Date => "May 13th, 2026", Authors => {
     PackageImports => {"Complexes"},
     PackageExports => {"RandomPoints",  "PrimaryDecomposition"},
     DebuggingMode => false, Reload=>false,
-Keywords => {"Linear Algebra"},
+Areas => {"Linear Algebra"},
 Certification => {
     "journal name" => "Journal of Software for Algebra and Geometry",
     "journal URI" => "https://msp.org/jsag/",

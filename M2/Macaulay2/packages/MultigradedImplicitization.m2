@@ -1,7 +1,7 @@
 newPackage(
   "MultigradedImplicitization",
   Version => "1.1",
-  Date => "May 15, 2025",
+  LastUpdated => "May 15, 2025",
   Authors => {
     {Name => "Joseph Cummings",
     Email => "josephcummings03@gmail.com",
@@ -14,7 +14,7 @@ newPackage(
     HomePage => "https://math.umn.edu/~mahrud"}
   },
   Headline => "solving implicitization problems using multigradings",
-  Keywords => {"Algebraic Statistics", "Commutative Algebra"},
+  Areas => {"Algebraic Statistics", "Commutative Algebra"},
   PackageImports => {"gfanInterface"}
 )
 

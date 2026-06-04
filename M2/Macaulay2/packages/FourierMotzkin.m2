@@ -17,13 +17,13 @@
 newPackage(
 	"FourierMotzkin",
     	Version => "1.2", 
-    	Date => "10 December 2008",
+    	LastUpdated => "10 December 2008",
     	Authors => {{
 		  Name => "Gregory G. Smith", 
 		  HomePage => "http://www.mast.queensu.ca/~ggsmith",
 		  Email => "ggsmith@mast.queensu.ca"}},
     	Headline => "convex hulls and polar cones",
-	Keywords => {"Convex Geometry"},
+	Areas => {"Convex Geometry"},
     	DebuggingMode => false
     	)
 

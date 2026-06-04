@@ -6,14 +6,14 @@
 
 newPackage("EliminationMatrices",
    Version => "1.4",
-   Date => "13 February 2012",
+   LastUpdated => "13 February 2012",
    Authors => {
          {Name => "Nicolás Botbol", Email => "nbotbol@dm.uba.ar", HomePage => "http://mate.dm.uba.ar/~nbotbol/"},
 	     {Name => "Laurent Busé", Email => "Laurent.Buse@inria.fr", HomePage => "http://www-sop.inria.fr/members/Laurent.Buse/"},
 	     {Name => "Manuel Dubinsky", Email => "manudubinsky@gmail.com" }
 	     },
    Headline => "resultants",
-   Keywords => {"Commutative Algebra"},
+   Areas => {"Commutative Algebra"},
    PackageImports => { "Elimination" },
    PackageExports => { "Complexes" },
    DebuggingMode => false

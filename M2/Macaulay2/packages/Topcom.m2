@@ -16,14 +16,14 @@
 newPackage(
         "Topcom",
         Version => "0.95",
-        Date => "13 Nov 2022",
+        LastUpdated => "13 Nov 2022",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "interface to the topcom software package which in particular computes triangulations",
-        Keywords => {"Interfaces"},
+        Areas => {"Interfaces"},
         DebuggingMode => false
         )
 

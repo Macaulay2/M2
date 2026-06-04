@@ -3,13 +3,13 @@
 newPackage(
      "GenericInitialIdeal",
      Version => "0.2", 
-     Date => "July 1, 2008",
+     LastUpdated => "July 1, 2008",
      Authors => {
 	  {Name => "Alexandra Seceleanu", Email => "asecele2@uiuc.edu"},
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
 	  },
      Headline => "find the generic initial ideal of a given ideal",
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      DebuggingMode => false
      )
 --=========================================================================--

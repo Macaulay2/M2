@@ -2,14 +2,14 @@
 newPackage(
     "ExteriorModules",
     Version => "1.0", 
-    Date => "May 05, 2020",
+    LastUpdated => "May 05, 2020",
     Authors => {{Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http://mat521.unime.it/amata"},
                 {Name => "Marilena Crupi", Email => "mcrupi@unime.it", HomePage => "http://www.unime.it/it/persona/marilena-crupi"}
                 },
     Headline => "monomial modules over exterior algebras",
     DebuggingMode => false,
     PackageExports=>{"ExteriorIdeals", "Complexes"},
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",
          "journal URI" => "https://msp.org/jsag/",

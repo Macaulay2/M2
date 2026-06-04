@@ -2,7 +2,7 @@ newPackage("NumericalImplicitization",
     Headline => "numerical invariants of images of varieties",
     AuxiliaryFiles => true,
     Version => "2.2.0",
-    Date => "November 24, 2020",
+    LastUpdated => "November 24, 2020",
     Authors => {
         {Name => "Justin Chen",
 	 Email => "justin.chen@math.gatech.edu",
@@ -11,7 +11,7 @@ newPackage("NumericalImplicitization",
 	 Email => "jkileel@math.princeton.edu",
 	 HomePage => "https://web.math.princeton.edu/~jkileel/"}
         },
-    Keywords => {"Numerical Algebraic Geometry"},
+    Areas => {"Numerical Algebraic Geometry"},
     PackageExports => {"NumericalAlgebraicGeometry"},
     Certification => {	
 	"journal name" => "The Journal of Software for Algebra and Geometry",	

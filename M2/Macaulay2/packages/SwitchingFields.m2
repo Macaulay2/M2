@@ -2,13 +2,13 @@
 newPackage(
 	"SwitchingFields",
     	Version => "1.0", 
-    	Date => "September 11th, 2020",
+    	LastUpdated => "September 11th, 2020",
     	Authors => {
 	     {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"},
 	     {Name => "Sarasij Maitra", Email => "sm3vg@virginia.edu", HomePage => "https://people.virginia.edu/~sm3vg"}
 	     },
     	Headline => "Switch Base Fields and Obtain Natural Maps",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
         Reload=>false,
         DebuggingMode => false,
 	AuxiliaryFiles => false -- set to true if package comes with auxiliary files

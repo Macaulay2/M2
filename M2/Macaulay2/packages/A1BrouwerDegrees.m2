@@ -2,7 +2,7 @@
 newPackage (
     "A1BrouwerDegrees",
     Version => "2.0",
-    Date => "October 13, 2025",
+    LastUpdated => "October 13, 2025",
     Authors => {
         {Name=> "Stephanie Atherton",
     Email => "satherton@student.otis.edu"},
@@ -47,7 +47,7 @@ newPackage (
     PackageExports => {},
     AuxiliaryFiles => true,
 	DebuggingMode => false,
-	Keywords => {"Homotopy Theory","Commutative Algebra"},
+	Areas => {"Homotopy Theory","Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
 	"journal URI" => "https://msp.org/jsag/",

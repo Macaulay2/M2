@@ -9,7 +9,7 @@ the License, or any later version.
 
 newPackage ( "ResLengthThree",
     Version => "1.0",
-    Date => "3 December 2020",
+    LastUpdated => "3 December 2020",
     Authors => {
 	{ Name => "Lars Winther Christensen",
 	  Email => "lars.w.christensen@ttu.edu",
@@ -30,7 +30,7 @@ newPackage ( "ResLengthThree",
     Headline => "Multiplication in free resolutions of length three",
     Reload => false,
     DebuggingMode => false,
-    Keywords => { "Homological Algebra" },
+    Areas => { "Homological Algebra" },
     PackageExports => { "Complexes" }
     )
 

@@ -3,14 +3,14 @@
 newPackage(
 	"Graphics",
 	Version => "0.3",
-	Date => "June 4, 2013",
+	LastUpdated => "June 4, 2013",
 	Authors => {
 		{Name => "Baptiste Calmes",
 		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "create graphics",
-	Keywords => {"Graphics"},
+	Areas => {"Graphics"},
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users

@@ -5,7 +5,7 @@
 newPackage("SuffixTrees",
      Headline => "Data Type for a Suffix Tree as laid out by Amir et.al.",
      Version => "0.1",
-     Date => "Jan 22, 2021",
+     LastUpdated => "Jan 22, 2021",
     Authors => {{Name => "Frank Moore", 
 	   Email => "moorewf@wfu.edu",
 	   HomePage => "https://math.wfu.edu/moore"},

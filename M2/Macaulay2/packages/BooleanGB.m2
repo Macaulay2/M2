@@ -1,13 +1,13 @@
 newPackage(
     "BooleanGB",
     Version => "1.0", 
-    Date => "May 9, 2011",
+    LastUpdated => "May 9, 2011",
     Authors => {{Name => "Franziska Hinkelmann", 
     Email => "fhinkel@vt.edu", 
     HomePage => "http://www.math.vt.edu/people/fhinkel/"}, 
     {Name => "Mike Stillman"},
     {Name => "Elizabeth Arnold"}},
-    Keywords => {"Groebner Basis Algorithms"},
+    Areas => {"Groebner Basis Algorithms"},
     Headline => "Groebner bases for ideals in Boolean polynomial quotient rings",
     DebuggingMode => false
     )

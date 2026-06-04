@@ -30,13 +30,13 @@
 newPackage (
     "PackageCitations",
     Version => "0.1",
-    Date => "2017 03 28",
+    LastUpdated => "2017 03 28",
     Authors => {{
         Name => "Aaron Dall",
         Email => "aaronmdall -at- gmail.com",
         HomePage => "https://www.aarondall.com"}},
     Headline => "citation of Macaulay2 packages",
-    Keywords => {"Miscellaneous"},
+    Areas => {"Miscellaneous"},
     HomePage => "https://github.com/aarondall/PackageCitations-M2"
     )
 

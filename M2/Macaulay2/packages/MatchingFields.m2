@@ -3,12 +3,12 @@
 newPackage(
     "MatchingFields",
     Version => "1.3",
-    Date => "February 2, 2026",
+    LastUpdated => "February 2, 2026",
     Authors => {
         {Name => "Oliver Clarke", Email => "oliver.clarke@durham.ac.uk", HomePage => "https://www.oliverclarkemath.com/"}
         },
     Headline => "Toric degenerations of flag varieties via matching fields",
-    Keywords => {"Flag Varieties"},
+    Areas => {"Flag Varieties"},
     DebuggingMode => false,
     PackageExports => {"Polyhedra", "SubalgebraBases", "Matroids", "FourTiTwo", "Graphs"}
     )

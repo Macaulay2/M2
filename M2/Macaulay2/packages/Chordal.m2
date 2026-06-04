@@ -2,7 +2,7 @@
 newPackage(
     "Chordal",
     Version => "0.2",
-    Date => "May 15, 2021",
+    LastUpdated => "May 15, 2021",
     Authors => {
       {Name => "Diego Cifuentes",
        Email => "diegcif@mit.edu",
@@ -12,7 +12,7 @@ newPackage(
        HomePage => "http://www.mit.edu/~parrilo/"}
     },
     Headline => "routines that exploit chordal structure",
-    Keywords => {"Commutative Algebra", "Graph Theory"},
+    Areas => {"Commutative Algebra", "Graph Theory"},
     AuxiliaryFiles => true,
     PackageImports => {"PrimaryDecomposition"},
     PackageExports => {"Graphs","TriangularSets"}

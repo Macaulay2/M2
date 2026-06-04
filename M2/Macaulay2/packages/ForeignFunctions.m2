@@ -17,11 +17,12 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
     Version => "0.7",
-    Date => "February 5, 2026",
+    LastUpdated => "February 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
 	    HomePage => "https://d-torrance.github.io"}},
+    Areas => {"Interfaces"},
     Keywords => {"Interfaces"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",

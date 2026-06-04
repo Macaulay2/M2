@@ -10,10 +10,10 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.8",
-    Date => "Apr 13, 2026",
+    LastUpdated => "Apr 13, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
-    Keywords => {"Algebraic Geometry"},
+    Areas => {"Algebraic Geometry"},
     AuxiliaryFiles => true,
     PackageImports => {"PrimaryDecomposition","TangentCone"},
     PackageExports => {"MultiprojectiveVarieties"},

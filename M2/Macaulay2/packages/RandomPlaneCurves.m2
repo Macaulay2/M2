@@ -1,7 +1,7 @@
 newPackage(
 	"RandomPlaneCurves",
     	Version => "0.6",
-    	Date => "June 20, 2011",
+    	LastUpdated => "June 20, 2011",
     	Authors => {
 	     {Name => "Hans-Christian Graf v. Bothmer",
 	      Email => "bothmer@uni-math.gwdg.de",
@@ -16,7 +16,7 @@ newPackage(
 	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
     	Headline => "random plane curves",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
 	PackageExports => {"RandomObjects"},
 	PackageImports => {"Truncations"},
     	DebuggingMode => false

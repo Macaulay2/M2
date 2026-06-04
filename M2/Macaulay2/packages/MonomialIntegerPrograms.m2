@@ -32,7 +32,7 @@ newPackage (
   PackageImports => {"Complexes","LexIdeals","MinimalPrimes"},
   OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
   DebuggingMode => false,
-  Keywords => {"Commutative Algebra"}
+  Areas => {"Commutative Algebra"}
 )
 
 -------------

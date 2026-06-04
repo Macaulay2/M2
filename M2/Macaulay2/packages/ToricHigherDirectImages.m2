@@ -18,14 +18,14 @@
 newPackage(
     "ToricHigherDirectImages",
     Version => "1.1",
-    Date => "2026 April",
+    LastUpdated => "2026 April",
     Authors => {
 	{Name     => "Sasha Zotine",
 	 Email    => "zotinea@mcmaster.ca",
 	 HomePage => "https://sites.google.com/view/szotine/home" }
 	},
     Headline => "computations involving pushforwards and higher direct images of toric maps",
-    Keywords => {"Toric Geometry"},
+    Areas => {"Toric Geometry"},
     DebuggingMode => false,
     PackageExports => {"NormalToricVarieties","Complexes"},
     PackageImports => {"FourierMotzkin"}

@@ -2,7 +2,7 @@
 newPackage(
 	"ParameterSchemes",
     	Version => "0.01", 
-    	Date => "February 21, 2008",
+    	LastUpdated => "February 21, 2008",
     	Authors => {{Name => "Mike Stillman", 
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},

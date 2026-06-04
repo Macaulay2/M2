@@ -2,7 +2,7 @@
 newPackage("DGAlgebras",
      Headline => "Data type for DG algebras",
      Version => "2.0",
-     Date => "April 27, 2026",
+     LastUpdated => "April 27, 2026",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
@@ -11,7 +11,7 @@ newPackage("DGAlgebras",
 	   HomePage => "https://sites.google.com/view/kellervandebogert/home",
 	   Email => "keller.v@uky.edu"}
        },
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      DebuggingMode => false,
      PackageExports => {"IntegralClosure", "OldChainComplexes", "Complexes"},
      AuxiliaryFiles => true

@@ -6,14 +6,14 @@
 newPackage(
         "AbstractToricVarieties",
         Version => "0.1", 
-        Date => "10 June 2017",
+        LastUpdated => "10 June 2017",
         Authors => {
             {Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
         Headline => "links abstract simplicial (normal) toric varieties to Schubert2",
-	Keywords => {"Toric Geometry", "Intersection Theory"},
+	Areas => {"Toric Geometry", "Intersection Theory"},
         PackageExports => {"NormalToricVarieties", "Schubert2"}
         )
 

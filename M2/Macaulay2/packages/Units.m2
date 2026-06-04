@@ -1,8 +1,8 @@
 newPackage("Units",
     	Headline => "units conversion and physical constants",
     	Version => "0.9", 				    -- needs to be documented
-    	Date => "May 5, 2011",
-	Keywords => {"Miscellaneous"},
+    	LastUpdated => "May 5, 2011",
+	Areas => {"Miscellaneous"},
     	Authors => {
 	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://dangrayson.com/"}
 	     }

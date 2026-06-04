@@ -1,7 +1,7 @@
 newPackage(
     "AssociativeAlgebras",
     Version => "0.9", 
-    Date => "23 Oct 2024",
+    LastUpdated => "23 Oct 2024",
     Authors => {{Name => "Frank Moore", 
 	   Email => "moorewf@wfu.edu",
 	   HomePage => "https://math.wfu.edu/moore"},
@@ -10,7 +10,7 @@ newPackage(
             HomePage => "http://www.math.cornell.edu/~mike"}
         },
     Headline => "Noncommutative algebra",
-    Keywords => {"Noncommutative Algebra"},
+    Areas => {"Noncommutative Algebra"},
     PackageImports =>{"Complexes"},
     PackageExports =>{"IntegralClosure"},
     AuxiliaryFiles => true

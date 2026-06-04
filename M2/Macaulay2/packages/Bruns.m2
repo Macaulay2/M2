@@ -14,12 +14,12 @@
 newPackage(
      "Bruns",
      Version => "2.0",
-     Date => "June 28, 2008",
+     LastUpdated => "June 28, 2008",
      Authors =>{{Name => "David Eisenbud",
 	       Email => "de@msri.org",
 	       HomePage=>"http://www.msri.org/~de"}},
      Headline => "make a 3-generator ideal with an \"any\" resolution",
-     Keywords => {"Commutative Algebra"},
+     Areas => {"Commutative Algebra"},
      PackageImports => {"Complexes"},
      DebuggingMode => false
      )

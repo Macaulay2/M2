@@ -6,7 +6,7 @@ newPackage(
 	"FastLinearAlgebra",
 	AuxiliaryFiles => true,
     	Version => "0.1",
-    	Date => "May 12, 2011",
+    	LastUpdated => "May 12, 2011",
 	Authors => {
 	     {Name => "Michael E. Stillman", 
 		  Email => "mike@math.cornell.edu", 

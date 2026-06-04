@@ -1,7 +1,7 @@
 newPackage(
      "ChainComplexExtras",
-     Version => "1.2",
-     Date => "May 20, 2026",
+     Version => "1.1",
+     LastUpdated => "Jan 11, 2016",
      Authors => {
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},
@@ -16,6 +16,7 @@ newPackage(
 	  },
      Headline => "some additional ChainComplex Functions",
      PackageExports => {"OldChainComplexes"},
+     Areas => {"Homological Algebra"},
      -- Complexes is imported (not re-exported) so EKResolution / AHHResolution
      -- can return the modern Complex type and isQuasiIsomorphism can share
      -- the symbol declared in Complexes (we add a ChainComplexMap dispatch).
@@ -29,7 +30,6 @@ newPackage(
      -- via `check`.  The merged-in simplicialResolution / scarf / isAcyclic
      -- functions from MIR are therefore not included here.
      PackageImports => {"Complexes"},
-     Keywords => {"Homological Algebra"},
      DebuggingMode =>false
      )
 

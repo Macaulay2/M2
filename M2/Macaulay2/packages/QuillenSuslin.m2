@@ -17,13 +17,13 @@
 newPackage(
 	"QuillenSuslin",
     	Version => "1.7", 
-    	Date => "May 10, 2013",
+    	LastUpdated => "May 10, 2013",
     	Authors => {
 	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},
 	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://bstone.github.io/"}
 	     },
     	Headline => "the Quillen-Suslin algorithm for bases of projective modules",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",

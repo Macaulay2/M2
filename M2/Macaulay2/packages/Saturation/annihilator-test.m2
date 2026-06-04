@@ -1,5 +1,5 @@
 -- moved from Macaulay2/tests/normal/ann.m2 and ann2.m2
--- Date: Sat, 22 Apr 2000 14:09:05 -0700
+-- LastUpdated: Sat, 22 Apr 2000 14:09:05 -0700
 -- From: David Eisenbud <de@msri.org>
 -- To: Dan Grayson <dan@math.uiuc.edu>, Mike Stillman <mike@math.cornell.edu>, Craig Huneke <huneke@math.ukans.edu>
 -- Subject: bug in Tor?

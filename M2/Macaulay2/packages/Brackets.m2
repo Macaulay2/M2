@@ -1,7 +1,7 @@
 newPackage(
           "Brackets",
           Version => "0.1",
-          Date => "April 15, 2025",
+          LastUpdated => "April 15, 2025",
           Headline => "Brackets, Grassmann-Cayley Algebra, and Projective Geometry",
           Authors => {
 	      { Name => "Dalton Bidleman", Email => "deb0036@auburn.edu", HomePage => ""},
@@ -12,7 +12,7 @@ newPackage(
 	  PackageImports => {},
           AuxiliaryFiles => false,
           DebuggingMode => false,
-	  Keywords => {"Projective Algebraic Geometry"}
+	  Areas => {"Projective Algebraic Geometry"}
           )
 
 export {"Bracket", "AbstractGCRing", "bracketRing", "BracketRing", "GCAlgebra", "normalForm", "gc", "toBracketPolynomial", "GCExpression", "GCMatrix"}

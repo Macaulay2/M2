@@ -9,12 +9,12 @@
 newPackage (
    "SimplicialDecomposability",
    Version => "1.0.6",
-   Date => "20. June 2011",
+   LastUpdated => "20. June 2011",
    Authors => {{Name => "David Cook II",
                 Email => "dwcook@eiu.edu",
                 HomePage => "http://ux1.eiu.edu/~dwcook/"}},
    Headline => "various decomposability routines for simplicial complexes",
-   Keywords => {"Combinatorial Commutative Algebra"},
+   Areas => {"Combinatorial Commutative Algebra"},
    DebuggingMode => false,
    Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

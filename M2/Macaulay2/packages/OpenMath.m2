@@ -19,12 +19,12 @@
 newPackage(
 	"OpenMath",
     	Version => "0.2.2", 
-    	Date => "March 16, 2011",
+    	LastUpdated => "March 16, 2011",
     	Authors => {
 			{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/~danr"}
 		},
     	Headline => "OpenMath for Macaulay2",
-	Keywords => {"System"},
+	Areas => {"System"},
 	PackageImports => {"MinimalPrimes"},
 	PackageExports => {"XML","ConwayPolynomials"},
     	DebuggingMode => false,

@@ -1,13 +1,13 @@
 newPackage(
 	"ConvexInterface",
     	Version =>"0.33", 
-    	Date =>"December 1, 2010",
+    	LastUpdated =>"December 1, 2010",
     	Authors =>{{Name =>"Janko Boehm", 
 		  Email =>"boehm@mathematik.uni-kl.de", 
 		  HomePage =>"http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
     	Headline =>"interface to Convex",
-        Keywords => {"Interfaces"},
+        Areas => {"Interfaces"},
     	DebuggingMode => false,
         Configuration =>{"ConvexPath"=>""},
 	CacheExampleOutput => true,

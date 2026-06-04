@@ -1,7 +1,7 @@
 newPackage(
 	"RandomCanonicalCurves",
     	Version => "0.6",
-    	Date => "March 4, 2011",
+    	LastUpdated => "March 4, 2011",
     	Authors => {{Name => "Frank-Olaf Schreyer",
 		  Email => "schreyer@math.uni-sb.de",
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
@@ -10,7 +10,7 @@ newPackage(
 		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}
                    },
     	Headline => "Construction of random smooth canonical curves up to genus 14",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
      	PackageImports => {"Truncations","RandomSpaceCurves","RandomPlaneCurves","RandomGenus14Curves"},
      	PackageExports => {"RandomObjects"},
     	DebuggingMode => false

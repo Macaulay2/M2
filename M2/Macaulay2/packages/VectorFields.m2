@@ -10,13 +10,13 @@
 newPackage(
 		"VectorFields",
 		Version => "1.80", 
-		Date => "April 7, 2016",
+		LastUpdated => "April 7, 2016",
 		Authors => {
 			{Name => "Brian Pike", 
 			Email => "bapike@gmail.com",
 			HomePage => "http://www.brianpike.info/"}},
 		Headline => "vector fields",
-		Keywords => {"Commutative Algebra"},
+		Areas => {"Commutative Algebra"},
 		PackageImports => {"PrimaryDecomposition"},		     
 		DebuggingMode => false 
 	)

@@ -2,12 +2,12 @@
 newPackage(
 	"ConwayPolynomials",
     	Version => "1.0", 
-    	Date => "October 23, 2008",
+    	LastUpdated => "October 23, 2008",
     	Authors => {
 	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu"}
 	     },
     	HomePage => "http://www.math.uiuc.edu/~dan/",
-	Keywords => {"Group Theory"},
+	Areas => {"Group Theory"},
     	Headline => "a database of Conway polynomials"
     	)
 -- the data comes libflint

@@ -2,7 +2,7 @@
 newPackage(
 	"ReactionNetworks",
     	Version => "1.0",
-    	Date => "June, 2016",
+    	LastUpdated => "June, 2016",
     	Authors => {
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
 	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
@@ -14,7 +14,7 @@ newPackage(
 	     },
 --    	HomePage => "http://www.math.uiuc.edu/~doe/", --page not working
         Headline => "reaction networks",
-	Keywords => {"Applied Algebraic Geometry"},
+	Areas => {"Applied Algebraic Geometry"},
 	PackageImports => {"Graphs", "FourTiTwo"},
         DebuggingMode => false,
 --  	DebuggingMode => true,		 -- set to true only during development

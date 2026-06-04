@@ -1,6 +1,6 @@
 newPackage ( "ResidualIntersections",
     Version => "1.1",
-    Date => "07 May 2016",
+    LastUpdated => "07 May 2016",
     Authors => {
 	{Name => "Katie Ansaldi",
 	    Email => "kansaldi@gmail.com"},
@@ -15,7 +15,7 @@ newPackage ( "ResidualIntersections",
 	},
     PackageExports => {"RandomIdeals", "Depth"},
     Headline => "conditions associated to residual intersection theory",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     DebuggingMode => false
     )
 

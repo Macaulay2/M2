@@ -12,14 +12,14 @@
 newPackage(
     "Posets",
         Version => "1.1.3",
-        Date => "May 15, 2021",
+        LastUpdated => "May 15, 2021",
         Authors => {
             {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
         },
         Headline => "partially ordered sets (posets)",
-	Keywords => {"Combinatorics"},
+	Areas => {"Combinatorics"},
         Configuration => {
             "DefaultPrecompute" => true,
             "DefaultSuppressLabels" => true

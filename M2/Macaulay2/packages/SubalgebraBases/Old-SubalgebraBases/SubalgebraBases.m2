@@ -3,7 +3,7 @@ newPackage(
 	"SubalgebraBases",
 	AuxiliaryFiles => true,
     	Version => "0.1", 
-    	Date => "November 24, 2006",
+    	LastUpdated => "November 24, 2006",
     	Authors => {{Name => "Mike Stillman", 
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},

@@ -1,7 +1,7 @@
 newPackage(
    "GameTheory",
    Version => "1.0",
-   Date => "May, 2025",
+   LastUpdated => "May, 2025",
    Authors => {
       {Name => "Erin Connelly",
          Email => "erin.connelly@uni-osnabrueck.de",
@@ -32,7 +32,7 @@ newPackage(
          HomePage => "https://www.felixzhao.com/"}
    },
    Headline => "computing equilibria in game theory",
-   Keywords => {"Game Theory"},
+   Areas => {"Game Theory"},
    PackageExports => {"Polyhedra","GraphicalModels"},
    PackageImports => {"Polyhedra"}
    )

@@ -2,7 +2,7 @@
 newPackage(
     "EliminationTemplates",
     Version => "1",
-    Date => "April 30, 2026",
+    LastUpdated => "April 30, 2026",
     Authors => {
     {Name => "Manav Batavia",
     Email => "manavbatavia@gmail.com",
@@ -27,7 +27,7 @@ newPackage(
     HomePage => ""}},
     Headline => "Elimination Templates",
     PackageImports => {"EigenSolver", "NumericalAlgebraicGeometry"},
-    Keywords => {"Applied Algebraic Geometry", "Numerical Algebraic Geometry"},
+    Areas => {"Applied Algebraic Geometry", "Numerical Algebraic Geometry"},
     HomePage => "",
     DebuggingMode => false,
     AuxiliaryFiles => true

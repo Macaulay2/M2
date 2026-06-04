@@ -1,10 +1,10 @@
 -- -*- coding: utf-8 -*-
 newPackage("LLLBases",
      Version => "1.1", 
-     Date => "July 7, 2005",
+     LastUpdated => "July 7, 2005",
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}},
      Headline => "Lenstra-Lenstra-Lovasz bases",
-     Keywords => {"Algebraic Number Theory", "Linear Algebra"},
+     Areas => {"Algebraic Number Theory", "Linear Algebra"},
      DebuggingMode => false
      )
 

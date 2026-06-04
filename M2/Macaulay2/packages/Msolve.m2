@@ -1,7 +1,7 @@
 newPackage(
 	"Msolve",
 	Version => "1.24.06", 
-    	Date => "September 2025",
+    	LastUpdated => "September 2025",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "martin.helmer@swansea.ac.uk", 
 		  HomePage => "http://martin-helmer.com/"}, {Name => "Mike Stillman", 
@@ -9,7 +9,7 @@ newPackage(
 		  HomePage => "https://math.cornell.edu/michael-e-stillman"},{Name => "Anton Leykin", 
 		  Email => "leykin@math.gatech.edu", 
 		  HomePage => "https://antonleykin.math.gatech.edu/"}},
-	  Keywords => {"Groebner Basis Algorithms" , "Interfaces"},
+	  Areas => {"Groebner Basis Algorithms" , "Interfaces"},
 	Headline => "interface to the msolve library for solving multivariate polynomial systems using Groebner Bases",
 	PackageImports => { "Elimination", "Saturation" },
     	AuxiliaryFiles => true,

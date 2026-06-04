@@ -8,11 +8,11 @@
 newPackage("PositivityToricBundles",
            Headline => "check positivity of toric vector bundles",
            Version => "1.9",
-           Date => "August, 2024",
+           LastUpdated => "August, 2024",
            Authors => { 
             {Name => "Andreas Hochenegger",
              Email => "andreas.hochenegger@polimi.it"}},
-           Keywords => {"Toric Geometry"},
+           Areas => {"Toric Geometry"},
            Configuration =>{},
 	   PackageImports => {},
            PackageExports => {"ToricVectorBundles"}

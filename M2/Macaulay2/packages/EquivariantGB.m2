@@ -1,7 +1,7 @@
 newPackage(
      "EquivariantGB",
      Version =>"0.2",
-     Date => "2014",
+     LastUpdated => "2014",
      Headline => "Equivariant Groebner bases and related algorithms",
      HomePage => "",
      Authors => {
@@ -9,7 +9,7 @@ newPackage(
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"},
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
-     Keywords => {"Groebner Basis Algorithms"},
+     Areas => {"Groebner Basis Algorithms"},
      PackageImports => {"FourTiTwo"},
      AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
      -- DebuggingMode should be true while developing a package, 

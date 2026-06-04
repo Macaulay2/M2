@@ -1,7 +1,7 @@
 newPackage(
         "JuliaInterface",
         Version => "0.1", 
-        Date => "July 10, 2018",
+        LastUpdated => "July 10, 2018",
         Authors => {
 	    {Name => "Tim Duff", 
 	     Email => "tduff3@gatech.edu", 

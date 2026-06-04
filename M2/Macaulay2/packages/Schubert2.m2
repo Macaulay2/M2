@@ -3,7 +3,7 @@ newPackage(
 	"Schubert2",
 	AuxiliaryFiles => true,
     	Version => "0.7",
-    	Date => "April 24, 2013",
+    	LastUpdated => "April 24, 2013",
 	Authors => {
 	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
@@ -13,7 +13,7 @@ newPackage(
 	     },
 	HomePage => "https://macaulay2.com/",
     	Headline => "characteristic classes for varieties without equations",
-	Keywords => {"Intersection Theory"},
+	Areas => {"Intersection Theory"},
         DebuggingMode => false,
 	PackageImports => {"SchurRings","PushForward","Varieties"}
     	)

@@ -20,7 +20,7 @@
 newPackage(
 	"ReesAlgebra",
     	Version => "2.3", 
-    	Date => "November 2019",
+    	LastUpdated => "November 2019",
     	Authors => {{
 		  Name => "David Eisenbud",
 		  Email => "de@msri.org"},
@@ -31,7 +31,7 @@ newPackage(
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	DebuggingMode => false,
     	Headline => "Rees algebras",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",

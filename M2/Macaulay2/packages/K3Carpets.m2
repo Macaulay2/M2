@@ -10,7 +10,7 @@ viewHelp K3Carpets
 newPackage(
 	"K3Carpets",
     	Version => "0.5", 
-    	Date => "March 24, 2018",
+    	LastUpdated => "March 24, 2018",
     	Authors => {{Name => "David Eisenbud", 
 		  Email => "de@msri.org", 
 		  HomePage => "http://www.msri.org/~de"},
@@ -18,7 +18,7 @@ newPackage(
 		  Email => "schreyer@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer"}},
     	Headline => "K3 double structure on scrolls",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	PackageExports => {
             "Complexes",
             "CompleteIntersectionResolutions" -- makeHomotopies1, Characteristic

@@ -23,13 +23,13 @@
 newPackage(
 	"Binomials",
 	Version => "1.2.1",
-	Date => "January 2018",
+	LastUpdated => "January 2018",
 	Authors => {{
 		  Name => "Thomas Kahle",
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://www.thomas-kahle.de"}},
     	Headline => "specialized routines for binomial ideals",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
 	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "MinimalPrimes", "Elimination", "Classic"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

@@ -17,12 +17,12 @@
 newPackage("JSONRPC",
     Headline => "JSON-RPC server",
     Version => "0.2",
-    Date => "February 18, 2026",
+    LastUpdated => "February 18, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
 	    HomePage => "https://d-torrance.github.io"}},
-    Keywords => {"System"},
+    Areas => {"System"},
     PackageImports => {"JSON"})
 
 ---------------

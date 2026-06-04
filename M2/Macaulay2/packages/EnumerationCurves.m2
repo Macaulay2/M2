@@ -3,11 +3,11 @@
 newPackage(
         "EnumerationCurves",
         Version => "0.1",
-        Date => "December 10, 2013",
+        LastUpdated => "December 10, 2013",
         Authors => {{Name => "Hiep Dang",
                     Email => "hiepdt_tt@dlu.edu.vn"}},
         Headline => "Enumeration of rational curves via torus actions",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
         DebuggingMode => false
         )
 

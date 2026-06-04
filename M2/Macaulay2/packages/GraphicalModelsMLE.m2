@@ -11,7 +11,7 @@ the License, or any later version.
 newPackage(
      "GraphicalModelsMLE",
      Version => "1.0",
-     Date => "April 19, 2022",
+     LastUpdated => "April 19, 2022",
      Authors => {
 	  {Name=> "Carlos Amendola",
 	   Email=> "carlos.amendola@mis.mpg.de",
@@ -42,7 +42,7 @@ newPackage(
 	   HomePage=>"http://faculty.fordham.edu/dswinarski"}
 	  },
      Headline => "maximum likelihood estimates for graphical statistical models",
-     Keywords => {"Algebraic Statistics"},
+     Areas => {"Algebraic Statistics"},
      PackageExports => {"GraphicalModels","Graphs","EigenSolver","NumericalAlgebraicGeometry","StatGraphs"},
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",

@@ -1,7 +1,7 @@
 newPackage(
     "NumericalLinearAlgebra",
     Version => "1.16", 
-    Date => "Dec 2020",
+    LastUpdated => "Dec 2020",
     Authors => {
         {Name => "Robert Krone", 
             Email => "krone@math.gatech.edu"},
@@ -11,7 +11,7 @@ newPackage(
             Email => "anton.leykin@gmail.com"}
     	},
     Headline => "numerically compute local dual space and Hilbert functions",
-    Keywords => {"Numerical Linear Algebra"},
+    Areas => {"Numerical Linear Algebra"},
     PackageExports => {"LLLBases"},
     AuxiliaryFiles => false
 )

@@ -2,7 +2,7 @@
 newPackage(
         "RandomPoints",
     	Version => "1.5.3",
-    	Date => "May 17th, 2023",
+    	LastUpdated => "May 17th, 2023",
     	Authors => {
 	     {Name => "Sankhaneel Bisui", Email => "Sankhaneel.Bisui@umanitoba.ca", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
          {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"},
@@ -16,7 +16,7 @@ newPackage(
 		DebuggingMode => false, 
 		Reload=>false,
 		AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
-		Keywords => {"Examples and Random Objects"},
+		Areas => {"Examples and Random Objects"},
 		Certification => {
 		    "journal name" => "Journal of Software for Algebra and Geometry",
 		    "journal URI" => "https://msp.org/jsag/",

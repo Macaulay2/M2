@@ -2,7 +2,7 @@ newPackage(
         "EngineTests",
     	AuxiliaryFiles => true,
         Version => "0.1", 
-        Date => "29 Aug 2011",
+        LastUpdated => "29 Aug 2011",
 	    Authors => {
             {Name => "Michael E. Stillman", 
 		        Email => "mike@math.cornell.edu", 
@@ -13,7 +13,7 @@ newPackage(
             },
         Headline => "a test suite for the Macaulay2 engine",
         PackageExports => {"Complexes"},
-	Keywords => {"Miscellaneous"},
+	Areas => {"Miscellaneous"},
         AuxiliaryFiles=> true
         )
 

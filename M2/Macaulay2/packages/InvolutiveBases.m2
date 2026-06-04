@@ -8,13 +8,13 @@
 newPackage(
         "InvolutiveBases",
         Version => "1.10",
-        Date => "August 06, 2009",
+        LastUpdated => "August 06, 2009",
         Authors => {{Name => "Daniel Robertz",
                   Email => "daniel@momo.math.rwth-aachen.de",
                   HomePage => "http://wwwb.math.rwth-aachen.de/~daniel/"}},
         Headline => "Methods for Janet bases and Pommaret bases in Macaulay 2",
         PackageExports => { "Complexes" },
-	Keywords => {"Groebner Basis Algorithms"},
+	Areas => {"Groebner Basis Algorithms"},
         DebuggingMode => false
         )
 

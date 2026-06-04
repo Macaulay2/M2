@@ -1,7 +1,7 @@
 newPackage(
     "MultiplicitySequence",
     Version => "0.7", 
-    Date => "May 8, 2021",
+    LastUpdated => "May 8, 2021",
     Authors => {
         {Name => "Justin Chen", 
             Email => "justin.chen@math.gatech.edu"
@@ -14,7 +14,7 @@ newPackage(
         }
     },
     Headline => "computing the multiplicity sequence of an ideal",
-    Keywords => {"Commutative Algebra"},
+    Areas => {"Commutative Algebra"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageExports => {

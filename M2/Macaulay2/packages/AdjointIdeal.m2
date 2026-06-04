@@ -1,13 +1,13 @@
 -- -*- coding: utf-8 -*- this has to be on the first line
 newPackage(
 	"AdjointIdeal",
-    	Version => "0.6",
-    	Date => "August 25, 2010",
-    	Authors => {{Name => "Janko Boehm",
-		  Email => "boehm@mathematik.uni-kl.de",
+    	Version => "0.6", 
+    	LastUpdated => "August 25, 2010",
+    	Authors => {{Name => "Janko Boehm", 
+		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"}},
     	Headline => "adjoint ideals of plane curves and related computations",
-	Keywords => {"Commutative Algebra"},
+	Areas => {"Commutative Algebra"},
     	DebuggingMode => false,
 	CacheExampleOutput => true,
 	-- The doc Examples invoke MapleInterface (Maple is needed to *compute*

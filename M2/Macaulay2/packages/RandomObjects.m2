@@ -1,6 +1,6 @@
 newPackage ("RandomObjects",
       	Version => "0.2",
-    	Date => "June 19, 2011",
+    	LastUpdated => "June 19, 2011",
     	Authors => {
 	     {Name     => "Hans-Christian Graf v. Bothmer",
 	      Email    => "bothmer@uni-math.gwdg.de",
@@ -18,7 +18,7 @@ newPackage ("RandomObjects",
 	      Email    => "schreyer@math.uni-sb.de",
 	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}},
         Headline => "a framework for making random objects in algebraic geometry",
-	Keywords => {"Examples and Random Objects"},
+	Areas => {"Examples and Random Objects"},
 	PackageImports => {"SimpleDoc"},
     	DebuggingMode => false
         )

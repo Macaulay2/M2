@@ -1,7 +1,7 @@
 newPackage(
     "DecomposableSparseSystems",
     Version=>"1.0.1",
-    Date=>"Jan 17, 2021",
+    LastUpdated=>"Jan 17, 2021",
     Authors=> {
         {Name=>"Taylor Brysiewicz",
 	 Email=>"tbrysiew@uwo.ca",
@@ -17,7 +17,7 @@ newPackage(
 	 HomePage=>"https://math.tamu.edu/~thomasjyahl"}
         },
     Headline=>"Solving decomposable sparse systems",
-    Keywords => {"Numerical Algebraic Geometry"},
+    Areas => {"Numerical Algebraic Geometry"},
     PackageImports=>{"PHCpack","Polyhedra","DeterminantalRepresentations"},
     PackageExports=>{"NumericalAlgebraicGeometry"},
     AuxiliaryFiles=>true,

@@ -2,7 +2,7 @@
 newPackage(
     "NoetherianOperators",
     Version => "2.2.1",
-    Date => "Nov 2 2021",
+    LastUpdated => "Nov 2 2021",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -20,7 +20,7 @@ newPackage(
     PackageImports => {"PrimaryDecomposition"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
-    Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"},
+    Areas => {"Numerical Algebraic Geometry", "Commutative Algebra"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
 	 "journal URI" => "https://msp.org/jsag/",
