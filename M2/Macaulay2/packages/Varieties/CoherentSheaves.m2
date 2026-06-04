@@ -406,50 +406,54 @@ euler(CoherentSheaf, ZZ, ZZ) := RingElement => (F, b1, b2) -> (
 
 importFrom_Core "hilbertFunctionRing"
 
--- The Hilbert polynomial of a weighted projective space (not the Hilbert function, despite the name).
--- Namely, for P = Proj R1 such that R1 is a polynomial ring with generators in degrees a_0,...,a_(n-1),
--- chi(P, O(i)) is a quasipolynomial in i:
---   chi(P, O(i)) = c_n(i) i^n + ... + c_0(i)
--- with each c_j(i) a periodic function of i, of period dividing lcm(a_0,...,a_(n-1)).
--- (Equivalently, h^0(X, O(i)) has this description for i sufficiently large.)
--- We define the Hilbert polynomial f(i) as the polynomial in QQ[i] obtained by _averaging_ each of these coefficients.
+-- A : ring of the interpolation, e.g. QQ[i]
+-- pts : ({x}, y) pairs, e.g. given as by
+--   listForm hilbertSeries(S, Order => n * lcm flatten degrees S)
+newtonInterpolation = (A, pts) -> (
+    -- using Newton interpolation is O(n^2), but top-level is not as fast!
+    interpolant := pts#0#1 * 1_A;
+    for k from 1 to #pts-1 do (
+	w := product(k, j -> A_0 - pts#j#0#0);
+	ev := map(QQ, A, { pts#k#0#0 });
+	interpolant += w * (pts#k#1 - ev interpolant) / ev w);
+    interpolant)
 
-hilbertFunctionQ = method()
-hilbertFunctionQ Ring := RingElement => R -> (
-    R.cache ??= new MutableHashTable;
-    if R.cache.?hilbertPolynomial then return R.cache.hilbertPolynomial;
-    if not isPolynomialRing R then error "For hilbertFunctionQ, the ring must be a polynomial ring.";
-    degs := flatten degrees R; -- R should be singly graded.
-    n := #degs; -- So the weighted projective space Proj R has dimension n-1.
-    prod := lcm degs; -- The lcm of the weights.
-    -- It suffices to compute the dimension of R_(j.prod+a) for j=0,1,...,n-1 and 0 <= a <= prod-1.
-    truncatedseries := hilbertSeries(R, Order => n*prod); -- The Hilbert series is in a ring ZZ[T].
-    T := (ring truncatedseries)_0;
-    ringi := hilbertFunctionRing();
-    i := ringi_0;
-    wpoly := 0; k := 0; polylist := {}; value := 0; newcoeff := 0; evj := 0; interpolant := 0; total := 0;
-    for a from 0 to prod-1 do ( -- Compute the polynomial of degree n-1 that interpolates dim R_(j.prod+a) for j=0,...,n-1.
-	interpolant = coefficient(T^a, truncatedseries)*1_ringi;
-	-- This is the polynomial of degree 0 that interpolates at 0.prod+a. We use Newton interpolation
-	-- to construct the polynomial of degree j that interpolates at 0*prod+a,1*prod+a,...,j*prod+a, for j up to n-1.
-	for j from 1 to n-1 do (
-	    value = coefficient(T^(j*prod+a), truncatedseries);
-	    polylist = apply(j, k -> i-k*prod-a); -- This gives the list {i-a, i-1*prod-a, ..., i-(j-1)*prod-a} in QQ[i].
-	    wpoly = product polylist; -- This gives the polynomial (i-a)(i-1*prod-a)...(i-(j-1)*prod-a) in QQ[i].
-	    evj = map(QQ, ringi, {j*prod+a});
-	    newcoeff = (value - evj interpolant)/(evj wpoly);
-	    interpolant = interpolant + newcoeff*wpoly);
-	total=total+interpolant
-	);
-    -- Now average the polynomials "interpolant"; the number of them was "prod".
-    R.cache.hilbertPolynomial = total/prod)
+-- see hilbertFunctionQ in m2/hilbert.m2
+weightedHilbertPolynomials = method()
+weightedHilbertPolynomials PolynomialRing := RingElement => S -> S.cache.weightedHilbertPolynomials ??= (
+    -- The Hilbert (quasi)polynomial of a weighted projective space X = Proj S
+    -- where S is a polynomial ring with generators in degrees a_0,...,a_(n-1),
+    -- is a quasipolynomial in i:   chi(X, O(i)) = c_n(i) i^n + ... + c_0(i)
+    -- with each c_j(i) a periodic function of i, of period dividing lcm(a_0,...,a_(n-1)).
+    -- Equivalently, h^0(X, O(i)) has this description for i sufficiently large.
+    --
+    -- if S is standard graded, then Core's algorithm is better
+    if isStandardGraded S then return hashTable { 0 => hilbertPolynomial(S, Projective => false) };
+    -- otherwise, we return a list of lcm many polynomials representing a quasipolynomial
+    -- NOTE: we define the Hilbert polynomial hp(i) as the polynomial in QQ[i]
+    -- obtained by _averaging_ each of these coefficients, NOT the actual quasipolynomial.
+    assertWeightedZZGraded S;
+    A := hilbertFunctionRing();
+    n := numgens S; -- dim Proj S = n - 1
+    rho := lcm flatten degrees S; -- the actual period might be a divisor of this
+    -- it suffices to compute dim S_(j * rho + a) for 0 <= j < n and 0 <= a < rho,
+    -- but Hilbert series is much more sensitive to large n, even if rho is small.
+    pts := listForm hilbertSeries(S, Order => n*rho);
+    levels := partition(i -> i % rho, toList(0..n*rho-1));
+    applyValues(levels, L -> newtonInterpolation(A, pts_L)))
 
-hilbertFunctionQ(Ring, ZZ) := memoize(
-    (R, d) -> (
-	if d === 0 then hilbertFunctionQ(R)
-	else (
-	    i := (hilbertFunctionRing())_0;
-	    substitute(hilbertFunctionQ(R), {i => i+d}))))
+averagedHilbertPolynomial = method()
+averagedHilbertPolynomial PolynomialRing := S -> (
+    -- average of the Hilbert quasipolynomials of S
+    S.cache.averagedHilbertPolynomial ??= (
+	hqp := weightedHilbertPolynomials S;
+	sum values hqp / #hqp))
+averagedHilbertPolynomial(PolynomialRing, ZZ) := (S, d) -> (
+    -- average of the Hilbert quasipolynomials of S(d)
+    hp := averagedHilbertPolynomial S;
+    if d == 0 then return hp;
+    S.cache#(averagedHilbertPolynomial, d) ??= (
+	sub(hp, matrix { gens ring hp + {d} })))
 
 -- c.f. the toric version in NormalToricVariety/Chow.m2
 -- and the original definition and hook in m2/hilbert.m2
@@ -500,7 +504,7 @@ hilbertPolynomial(ProjectiveVariety, CoherentSheaf) := opts -> (X, F) -> (
 	S := ring M;
 	-- FIXME: make this last piece multigraded friendly
 	0_A + sum(listForm poincare M, (e, c) ->
-	    c * hilbertFunctionQ(S, -e#0)));
+	    c * averagedHilbertPolynomial(S, -e#0)));
     -- twist according to HP(F, i) = HP(F0(twist), i) = HP(F0, i+twist)
     if twist != z then hp = sub(hp, matrix { gens ring hp + twist });
     -- TODO: it's awkward that the option gets ignored depending on the grading input
