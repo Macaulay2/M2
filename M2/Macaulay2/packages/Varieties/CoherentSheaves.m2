@@ -26,8 +26,6 @@ CoherentSheaf#0  = X -> (sheaf X)^0
 
 -- constructors
 sheaf = method()
--- TODO: sheaf Ring and sheaf Module should return a sheaf over variety of the ring rather than Proj,
--- and if a variety doesn't already exist then either Proj or Spec should be defined and cached.
 sheaf Ring := Ring^~ := SheafOfRings =>     R  -> sheaf(variety R, R)
 sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
 

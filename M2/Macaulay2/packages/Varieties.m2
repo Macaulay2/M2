@@ -301,8 +301,8 @@ isProjective ProjectiveVariety := X -> true
 -- This method returns either a Variety, an AbstractVariety (from Schubert2),
 -- a NormalToricVariety, or any other variety stashed in R.variety.
 variety = method(TypicalValue => Variety)
-variety Ring  := S -> if S.?variety then S.variety else Proj S
-variety Ideal := I -> Proj quotient I -- TODO: should this be Spec or Proj?
+variety Ring  := S -> if S.?variety then S.variety else if isHomogeneous S then Proj S else Spec S
+variety Ideal := I -> if isHomogeneous I then Proj quotient I else Spec quotient I
 
 assertSameVariety = Fs -> if not same apply(Fs, variety) then error "expected objects on the same variety"
 
