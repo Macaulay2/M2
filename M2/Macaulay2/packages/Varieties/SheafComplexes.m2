@@ -91,12 +91,21 @@ module ComplexMap := ComplexMap => phi -> phi.cache.module ??= (
     S := source phi;
     T := target phi;
     if not isSheafComplex S or not isSheafComplex T then return phi;
-    maxTruncDeg := max ( apply(values S.dd.map, f -> f.degree) | apply(values T.dd.map, f -> f.degree) );
-    sphi := map(truncate(maxTruncDeg,module T), truncate(maxTruncDeg,module S), applyValues(phi.map, i -> truncate(maxTruncDeg, matrix i)));
+    maxTruncDeg := max join(
+	apply(values S.dd.map, f -> f.degree),
+	apply(values T.dd.map, f -> f.degree));
+    sphi := map(
+	truncate(maxTruncDeg, module T),
+	truncate(maxTruncDeg, module S),
+	applyValues(phi.map, f -> truncate(maxTruncDeg, matrix f)));
     sphi.cache.sheaf = phi;
     sphi)
 
-Complex(ZZ) := Complex(Sequence) := Complex => (C, a) -> complex applyValues(C.dd.map, f -> f(a))
+Complex(ZZ) := Complex(Sequence) := Complex => (C, a) -> (
+    (lo, hi) := concentration C;
+    if lo === hi
+    then complex(C_lo(a), Base => lo)
+    else complex applyValues(C.dd.map, f -> f(a)))
 
 -----------------------------------------------------------------------------
 
@@ -690,7 +699,10 @@ Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
 	a := max for i from 0 to length(Resns)-1 list max apply(n - L_i .. P_i, j-> (max degrees (Resns_i)_j)#0 - j);
 	r := a - l + 1;
 	M = truncate(r, M));
-    complex applyValues(D.dd.map, f -> part(0, Ext^m(M, matrix f, opts))))
+    (loD, hiD) := concentration D;
+    if loD === hiD
+    then complex(part(0, Ext^m(M, D_loD, opts)), Base => loD)
+    else complex applyValues(D.dd.map, f -> part(0, Ext^m(M, matrix f, opts))))
 
 -- The following would be faster than the current function. It is omitted for now, because
 -- it is not obviously functorial. But it could be combined with functorial constructions,
