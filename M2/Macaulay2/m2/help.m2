@@ -25,7 +25,6 @@ lastabout := null
 authorDefaults := new HashTable from { Name => "Anonymous", 
                                        Email => null, 
                                        HomePage => null, 
-                                       Maintainer => false, 
                                        Orcid => null }
 maintainerDefaults := new HashTable from { Name => "Macaulay2 Group", 
                                            Email => null, 
@@ -227,8 +226,6 @@ documentationValue(Symbol, Package, HashTable) := (S, pkg, additionalData) -> if
     isM2Doc := pkg#"pkgname" === "Macaulay2Doc";
 
     -- The relevant metadata of the package.
-    amsMSC := pkg.Options.MathematicsSubjectClassification;
-    acmCCS := pkg.Options.ComputingClassificationSystem;
     areas := pkg.Options.Areas;
     keywords := pkg.Options.Keywords;
     maintainer := pkg.Options.Maintainer;
@@ -251,86 +248,82 @@ documentationValue(Symbol, Package, HashTable) := (S, pkg, additionalData) -> if
 
     -- The formatted frontpage of the package.
     DIV nonnull splice (
-        DIV {
-            HEADER2 prepend("style" => "text-align:center", 
-                            {concatenate("Version ", pkg.Options.Version,
-                             if pkg.Options.LastUpdated =!= null then concatenate(", Last Updated: ", pkg.Options.LastUpdated))}
-            ),
-            DIV nonnull splice prepend("style" => "text-align:center", 
-                -- {demark("\n", select({if #amsMSC > 0 then concatenate("MSC: ", demark(", ", amsMSC)),
-                --                       if #acmCCS > 0 then concatenate("CCS: ", demark(", ", acmCCS)),
-                --                       if #keywords > 0 then concatenate("Keywords: ", demark(", ", keywords))}, i -> i =!= null))}
-                    select({if #areas > 0 then HEADER3 concatenate("Areas: ", demark(", ", areas)),
-                            if #keywords > 0 then HEADER3 concatenate("Keywords: ", demark(", ", keywords))}, i -> i =!= null)
-            ),
-            if maintainer =!= null then DIV {
-                SUBSECTION "Maintainer", 
-                fixup UL { 
-                    (fields, arg) := override(maintainerDefaults, toSequence maintainer);
-                    LI {
-                        if fields.HomePage === null then fields.Name else HREF {fields.HomePage, fields.Name},
-                        if fields.Email =!= null then SPAN {" <", HREF {concatenate("mailto:", fields.Email), fields.Email}, ">"}
-                    }
-                 }
-            },
-            if #authors > 0 then DIV {
-                SUBSECTION (if #authors === 1 then "Author" else "Authors"),
-                fixup UL apply(authors, author -> (
-                    (defs, args) := override(authorDefaults, toSequence author);
-                    LI {
-                    if defs.HomePage === null then defs.Name else HREF{defs.HomePage, defs.Name},
-                    if defs.Email    =!= null then SPAN{" <", HREF{concatenate("mailto:", defs.Email), defs.Email}, ">"},
-                    if defs.Maintainer        then SPAN{" (maintainer)"}}))
-                },
-            DIV description,
-            DIV contributors,
-            DIV acknowledgement,
-            DIV references,
-            if (cert := pkg.Options.Certification) =!= null then (
-                cert  = new HashTable from cert;
-                -- TODO: compare with the one in installPackage.m2
-                star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
-                DIV {
-                SUBSECTION {"Certification ", star},
-                PARA {
-                    "Version ", BOLD cert#"version at publication", " of this package",
-                    if cert#?"legacy name"
-                    then (" (under the name \"", cert#"legacy name", "\")"),
-                    " was accepted for publication",
-                    " in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
-                    " of ",     HREF{cert#"journal URI",            cert#"journal name"},
-                    " on ",          cert#"acceptance date", ", in the article ",
-                                HREF{cert#"published article URI",  cert#"article title"},
-                    " (DOI: ",  HREF{"https://doi.org/" | cert#"published article DOI", cert#"published article DOI"},
-                    "). That version can be obtained",
-                    " from ",   HREF{cert#"published code URI", "the journal"},
-                    "."}
-                }
-            ),
-            if isM2Doc or #authors > 0 then
-            if instance(citation, DIV) then citation else DIV {
-                SUBSECTION "Citation",
-                PARA { "If you have used ", if isM2Doc then "Macaulay2" else "this package",
-                " in your research, please cite it as follows:" },
-                TABLE {"class" => "examples",
-                TR TD PRE prepend("class" => "language-bib", CODE citation)},
-                -- TODO: ideally this should be in Macaulay2Doc/ov_top.m2
-                if isM2Doc then PARA { "Moreover, you can use the ", TO "PackageCitations::cite", " function
-                to learn how to cite any particular Macaulay2 packages which contributed to your research." }
-                },
-            if not isM2Doc and #exportedSymbols + #docMethods > 0 then DIV {
-                SUBSECTION "Exports",
-                DIV { "class" => "exports",
-                fixup UL {
-                    if #types > 0 then LI {"Types",                                 smenu types},
-                    -- FIXME: this line is displayed empty for Truncations
-                    if #functionsAndCommands > 0 then LI {"Functions and commands", smenu functionsAndCommands},
-                    if #docMethods > 0 then LI {"Methods",                          smenu docMethods},
-                    if #symbols > 0 then LI {"Symbols",                             smenu symbols},
-                    if #exportedMutableSymbols > 0 then LI {"Mutable symbols",      smenu exportedMutableSymbols},
-                    if #otherThings > 0 then LI {"Other things",                    smenuCLASS otherThings}}}
-                }
-    })
+		HEADER1 toList additionalData.Headline,
+		HEADER2 prepend("style" => "text-align:center", 
+						{concatenate("Version ", pkg.Options.Version,
+						 if pkg.Options.LastUpdated =!= null then concatenate(" (Last Updated: ", pkg.Options.LastUpdated, ")"))}
+		),
+		if #areas > 0 then HEADER3 prepend("style" => "text-align:center", {concatenate("Areas: ", demark(", ", areas))}),
+		if #keywords > 0 then HEADER3 prepend("style" => "text-align:center", {concatenate("Keywords: ", demark(", ", keywords))}),
+		if maintainer =!= null then DIV {
+			SUBSECTION "Maintainer", 
+			fixup UL { 
+				(fields, args) := override(maintainerDefaults, toSequence maintainer);
+				LI {
+					if fields.HomePage === null then fields.Name else HREF {fields.HomePage, fields.Name},
+					if fields.Email =!= null then SPAN {" <", HREF {concatenate("mailto:", fields.Email), fields.Email}, ">"}
+				}
+			}
+		},
+		if #authors > 0 then DIV {
+			SUBSECTION (if #authors === 1 then "Author" else "Authors"),
+			fixup UL apply(authors, author -> (
+				(fields, args) = override(authorDefaults, toSequence author);
+				LI {
+					if fields.HomePage === null then fields.Name else HREF {fields.HomePage, fields.Name},
+					if fields.Email    =!= null then SPAN {" <", HREF {concatenate("mailto:", fields.Email), fields.Email}, ">"}
+				})
+			)
+		},
+		DIV description,
+		DIV contributors,
+		DIV acknowledgement,
+		DIV references,
+		if (cert := pkg.Options.Certification) =!= null then (
+			cert  = new HashTable from cert;
+			-- TODO: compare with the one in installPackage.m2
+			star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
+			DIV nonnull splice {
+			SUBSECTION {"Certification ", star},
+			PARA nonnull splice {
+				"Version ", BOLD cert#"version at publication", " of this package",
+				if cert#?"legacy name" then (" (under the name \"", cert#"legacy name", "\")"),
+				" was accepted for publication",
+				" in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
+				" of ",     HREF{cert#"journal URI",            cert#"journal name"},
+				" on ",          cert#"acceptance date", ", in the article ",
+							HREF{cert#"published article URI",  cert#"article title"},
+				" (DOI: ",  HREF{"https://doi.org/" | cert#"published article DOI", cert#"published article DOI"},
+				"). That version can be obtained",
+				" from ",   HREF{cert#"published code URI", "the journal"},
+				"."}
+			}
+		),
+		if isM2Doc or #authors > 0 then
+		if instance(citation, DIV) then citation else DIV nonnull splice {
+			SUBSECTION "Citation",
+			PARA { "If you have used ", if isM2Doc then "Macaulay2" else "this package",
+			" in your research, please cite it as follows:" },
+			TABLE {"class" => "examples",
+			TR TD PRE prepend("class" => "language-bib", CODE citation)},
+			-- TODO: ideally this should be in Macaulay2Doc/ov_top.m2
+			if isM2Doc then PARA { "Moreover, you can use the ", TO "PackageCitations::cite", " function
+			to learn how to cite any particular Macaulay2 packages which contributed to your research." }
+		},
+		if not isM2Doc and #exportedSymbols + #docMethods > 0 then DIV {
+			SUBSECTION "Exports",
+			DIV { "class" => "exports",
+			fixup UL {
+				if #types > 0 then LI {"Types",                                 smenu types},
+				-- FIXME: this line is displayed empty for Truncations
+				if #functionsAndCommands > 0 then LI {"Functions and commands", smenu functionsAndCommands},
+				if #docMethods > 0 then LI {"Methods",                          smenu docMethods},
+				if #symbols > 0 then LI {"Symbols",                             smenu symbols},
+				if #exportedMutableSymbols > 0 then LI {"Mutable symbols",      smenu exportedMutableSymbols},
+				if #otherThings > 0 then LI {"Other things",                    smenuCLASS otherThings}}
+			}
+		}
+    )
 )
 
 -----------------------------------------------------------------------------
@@ -533,14 +526,12 @@ getData = (key, tag, rawdoc) -> (
 -- TODO: allow customizing the template for different output methods
 -- TODO: combine sections when multiple tags are being documented (e.g. strings and methods)
 getBody := (key, tag, rawdoc) -> (
-    -- Different ordering of sections depending on if the key is for the main page of a package.
-    -- allNonMacaulay2DocPackages := set(separate_" " version#"packages" | installedPackages()) - set {"Macaulay2Doc"};
     DIV nonnull splice (
         data := getData(key, tag, rawdoc);
-        HEADER1 toList data.Headline,
         if isPackageNode tag then (
             documentationValue(key, value key, data)
         ) else (
+        	HEADER1 toList data.Headline,
             apply(("Synopsis", Description, SourceCode, Acknowledgement, Contributors, 
                    References, Caveat, SeeAlso, Subnodes, "WaysToUse"), 
                   section -> if data#?section then data#section)
