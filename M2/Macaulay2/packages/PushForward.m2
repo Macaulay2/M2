@@ -62,6 +62,8 @@ pushforward(RingElement) := (r) -> pushforward(map(ring r, coefficientRing ring 
 pushforward(Module, Matrix) := (M, n) -> (
     N := module target n;
     P := getPushforwardByModule(N, M);
+    -- in rank 1 free case attempt to find the right module to pushforward to.
+    if P === null and N == module ring N then P = getPushforwardByModule(module ring N, M);
     if P === null then error "argument module is not the pushforward of the module of argument element.";
     P n
 );
