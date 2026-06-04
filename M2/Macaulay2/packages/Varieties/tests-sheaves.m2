@@ -17,11 +17,37 @@ TEST /// -- Hilbert polynomials, for projective and weighted projective varietie
   hilb1 = hilbertPolynomial(X1, Projective=>false); -- An element of the ring QQ[i].
   i = (class hilb1)_0;
   assert(hilb1 == (3/2)*i^2+(5/2)*i+1)
+
   R2 = QQ[x,y,z,Degrees=>{1,2,3}];
   X2 = Proj R2;
   hilb2 = hilbertPolynomial X2;
   i = (class hilb2)_0; -- This may not be the "same" ring QQ[i] as before.
   assert(hilb2 == (1/12)*i^2+(1/2)*i+(47/72))
+///
+
+TEST /// -- tests for weightedHilbertPolynomials
+  debug Varieties
+  kk = ZZ/32003
+
+  -- in the standard graded case, there's just one Hilbert polynomial
+  degs = splice {200:1};
+  S = kk[#degs, Degrees => degs]
+  elapsedTime hqp = weightedHilbertPolynomials S; -- <0.01s
+  assert(hqp === hashTable { 0 => hilbertPolynomial(S, Projective => false) })
+
+  -- the large dimension, low period regime
+  degs = splice {70:1,1,5,5,5,5}; rho = lcm degs
+  S = kk[#degs, Degrees => degs]
+  elapsedTime hilbertSeries(S, Order => #degs * lcm degs); -- ~4.5s
+  elapsedTime hqp = weightedHilbertPolynomials S; -- ~1.5s
+  assert all(#degs * rho, d -> hqp#(d % rho)[d] - hilbertFunction(d, S) == 0)
+
+  -- the large dimension, low period regime
+  degs = splice {1,1,7,7,7,7,280}; rho = lcm degs
+  S = kk[#degs, Degrees => degs]
+  elapsedTime hilbertSeries(S, Order => #degs * rho); -- ~3.5s
+  elapsedTime hqp = weightedHilbertPolynomials S; -- ~0.7s
+  assert all(#degs * rho, d -> hqp#(d % rho)[d] - hilbertFunction(d, S) == 0)
 ///
 
 TEST ///
