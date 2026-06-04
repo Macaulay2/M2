@@ -38,7 +38,7 @@ killLocalH0 = M -> M.cache.TorsionFree ??= if (H0 := saturate(0*M)) == 0 then M 
 -- Given a CoherentSheaf F, defined by a graded module M over a positively graded algebra R2,
 -- return the map from M to a possibly simpler R2-module N that represents the same sheaf F. We always simplify
 -- at least to M/M_tors, and if an even "better" module has been cached, we return that.
--- We expect not to apply this function when F was defined as a twist (i.e., when F.cache.?Twist is true), to simplify caching.
+-- We expect not to apply this function when F was defined as a twist (i.e., when F.cache.?BaseTwist is true), to simplify caching.
 -- The module N can be obtained by "target currentModuleMap F".
 currentModuleMap = F -> (
     M := module F;
@@ -60,7 +60,7 @@ currentModuleMap = F -> (
 -- of a graded polynomial ring R1, return a possibly simpler R1-module N that represents the same sheaf F.
 -- (It will always be the R1-module underlying an R2-module.) We always simplify at least to M/M_tors,
 -- and if an even "better" module has been cached, we return that.
--- We expect not to apply this function when F was defined as a twist (i.e., when F.cache.?Twist is true), to simplify caching.
+-- We expect not to apply this function when F was defined as a twist (i.e., when F.cache.?BaseTwist is true), to simplify caching.
 currentModuleBaseRing = F -> (
     M := module F;
     R2 := ring M;
@@ -244,13 +244,13 @@ cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) ->
     cohomology(p, S, opts))
 cohomology(ZZ, SumOfTwists) := Module => opts -> (p, S) -> (
     (F, b) := (S#0, S#1#0);
-    if F.cache.?Twist then ( -- Here F was defined as a twist of another sheaf, say F = E(shift). We reduce to the calculation for E.
-	shift := first F.cache.Twist#0; -- Here F.cache.Twist#0 should be a degree in the form {3}, and then shift would be 3.
+    if F.cache.?BaseTwist then ( -- Here F was defined as a twist of another sheaf, say F = E(shift). We reduce to the calculation for E.
+	shift := first F.cache.BaseTwist#1; -- Here F.cache.BaseTwist#1 should be a degree in the form {3}, and then shift would be 3.
 	if opts.Degree === Direct or opts.Degree === DirectNonPrint then
-	originalseq := HH^p(F.cache.Twist#1(>= b + shift), Degree => DirectNonPrint)
-	else originalseq = HH^p(F.cache.Twist#1(>= b + shift), Degree => NonPrint);
+	originalseq := HH^p(F.cache.BaseTwist#0(>= b + shift), Degree => DirectNonPrint)
+	else originalseq = HH^p(F.cache.BaseTwist#0(>= b + shift), Degree => NonPrint);
 	b0 := -shift + originalseq#0; b1 := -shift + originalseq#1;
-	if p == 0 then F.cache.GlobalSectionLimit = (F.cache.Twist#1).cache.GlobalSectionLimit;
+	if p == 0 then F.cache.GlobalSectionLimit = (F.cache.BaseTwist#0).cache.GlobalSectionLimit;
 	-- We record this number for use in SheafMaps.m2.
 	output := (originalseq#2)(shift))
     else ( -- Now the sheaf F was not defined as a twist.
@@ -583,14 +583,14 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opt
 	(minimalPresentation, CoherentSheaf), (opts, F), (opts, F) -> (
 	    if not isProjective variety F then return sheaf minimalPresentation module F;
 	    -- That handles a sheaf on an affine variety.
-	    if F.cache.?Twist then (
+	    if F.cache.?BaseTwist then (
 		-- Here F was defined as a twist of another sheaf, say F = E(shift). We reduce to the calculation for E.
-		shift := first F.cache.Twist#0; -- Here F.cache.Twist#0 should be a degree in the form {3}, and then shift would be 3.
-		H := minimalPresentation F.cache.Twist#1; -- Here F.cache.Twist#1 is the original sheaf E.
+		shift := first F.cache.BaseTwist#1; -- Here F.cache.BaseTwist#1 should be a degree in the form {3}, and then shift would be 3.
+		H := minimalPresentation F.cache.BaseTwist#0; -- Here F.cache.BaseTwist#0 is the original sheaf E.
 		Gmap := (H.cache.pruningMap)(shift);
 		-- We mainly record F.cache.TorsionFree (as a quotient of F.module) for use in SheafMaps.m2.
-		F.cache.TorsionFree = ((F.cache.Twist#1).cache.TorsionFree)(shift);
-	        F.cache.GlobalSectionLimit = -shift + (F.cache.Twist#1).cache.GlobalSectionLimit)
+		F.cache.TorsionFree = ((F.cache.BaseTwist#0).cache.TorsionFree)(shift);
+	        F.cache.GlobalSectionLimit = -shift + (F.cache.BaseTwist#0).cache.GlobalSectionLimit)
 	    -- Now F was not defined as a twist. This is the default algorithm.
 	    else (
 		if not F.cache.?SaturationMap then HH^0(F(>=0), Degree => NonPrint);
@@ -691,15 +691,15 @@ protect TruncateDegree
 Ext(ZZ, SheafOfRings,  SumOfTwists) := Module => opts -> (m, O, S) -> Ext^m(O^1, S, opts)
 Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m, F, S) -> (
     (G, b) := (S#0, S#1#0); -- Here G should be a coherent sheaf.
-    if F.cache.?Twist or G.cache.?Twist then ( -- Here F or G was defined as a twist of another sheaf,
+    if F.cache.?BaseTwist or G.cache.?BaseTwist then ( -- Here F or G was defined as a twist of another sheaf,
 	-- say F = F0(c) and G = G0(d). We reduce to the calculation for F0 and G0, to take advantage of caching.
 	F0 := F; c := 0; G0 := G; d := 0;
-	if F.cache.?Twist then (
-	    c = first F.cache.Twist#0;
-	    F0 = F.cache.Twist#1);
-	if G.cache.?Twist then (
-	    d = first G.cache.Twist#0;
-	    G0 = G.cache.Twist#1);
+	if F.cache.?BaseTwist then (
+	    c = first F.cache.BaseTwist#1;
+	    F0 = F.cache.BaseTwist#0);
+	if G.cache.?BaseTwist then (
+	    d = first G.cache.BaseTwist#1;
+	    G0 = G.cache.BaseTwist#0);
 	(b0,b1,E0) := Ext^m(F0, G0(>= b + d - c), MinimalGenerators => NonPrint);
 	E := E0(d - c);
 	b0 = b0 - (d - c); b1 = b1 - (d - c);
@@ -818,7 +818,7 @@ hh(ZZ, CoherentSheaf) := ZZ => opts -> (cohodeg, F) -> (
 	return if cohodeg != 0 then 0
 	else if dim F > 0 then infinity
 	else degree F);
-    if F.cache.?Twist then return hh^cohodeg(F.cache.Twist#1, Degree => opts.Degree + first F.cache.Twist#0);
+    if F.cache.?BaseTwist then return hh^cohodeg(F.cache.BaseTwist#0, Degree => opts.Degree + first F.cache.BaseTwist#1);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist.
     R2 := ring module F;
     M := currentModuleBaseRing F;
@@ -881,7 +881,7 @@ invertvar = (f) -> (
 hh(ZZ, SheafOfRings,  ZZ, ZZ) := RingElement => opts -> (cohodeg, O, b1, b2) -> hh^cohodeg(O^1, b1, b2, opts)
 hh(ZZ, CoherentSheaf, ZZ, ZZ) := RingElement => opts -> (cohodeg, F, b1, b2) -> (
     checkProjective variety F;
-    if F.cache.?Twist then return hh^cohodeg(F.cache.Twist#1, b1, b2, Degree => opts.Degree + first F.cache.Twist#0);
+    if F.cache.?BaseTwist then return hh^cohodeg(F.cache.BaseTwist#0, b1, b2, Degree => opts.Degree + first F.cache.BaseTwist#1);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist.
     b1 = opts.Degree + b1; b2 = opts.Degree + b2;
     if instance(F, SheafOfRings) then F = F^1; -- That makes F a CoherentSheaf.
@@ -991,7 +991,7 @@ hh(ZZ, SumOfTwists) := Sequence => opts -> (cohodeg, sumoftwists) -> (
     -- where F is a CoherentSheaf (or a SheafOfRings) on a closed subspace of a weighted projective space.
     F := sumoftwists#0; -- For an input of the form hh^i(F(>=b)), the number b is ignored. Note that,
     -- if F is input as a SheafOfRings, SumOfTwists automatically turns it into a CoherentSheaf; so that's what this function receives.
-    if F.cache.?Twist then return hh^cohodeg((F.cache.Twist#1)(*), Degree => opts.Degree + first F.cache.Twist#0);
+    if F.cache.?BaseTwist then return hh^cohodeg((F.cache.BaseTwist#0)(*), Degree => opts.Degree + first F.cache.BaseTwist#1);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist.
     R2 := ring module F;
     M := currentModuleBaseRing F;

@@ -122,7 +122,7 @@ dim SheafOfRings  := O -> dim O^1
 dim CoherentSheaf := F -> (
     if not isProjective variety F then return dim module F;
     -- Note that twisting does not change the dimension of F
-    if F.cache.?Twist then F = F.cache.Twist#1;
+    if F.cache.?BaseTwist then F = F.cache.BaseTwist#0;
     M := currentModuleBaseRing F;
     -- For a singly graded algebra R, the dimension of F = M^~ on Proj(R) is the
     -- dimension of M as an R-module minus 1, except that we always return at least -1.
@@ -141,7 +141,7 @@ degree CoherentSheaf := F -> (
     -- Indeed, every line bundle L on a curve X in projective space has degree
     -- _as a coherent sheaf_ equal to the degree of X. See degreeOnCurve.
     -- Note that twisting does not change the degree of F.
-    if F.cache.?Twist then F = F.cache.Twist#1;
+    if F.cache.?BaseTwist then F = F.cache.BaseTwist#0;
     M := currentModuleBaseRing F;
     R := assertWeightedZZGraded ring M;
     -- The degree is an integer if all weights are equal to 1, but otherwise a rational number.
@@ -187,27 +187,23 @@ genera  CoherentSheaf := F -> genera  module F
 -- TODO: this is incorrect in higher Picard rank
 pdim    CoherentSheaf := F -> tryHooks((pdim,  CoherentSheaf), F, pdim  @@ module)
 
--- hilbertPolynomial CoherentSheaf is defined below, for subspaces of weighted projective spaces.
-
 -- twist and powers
 -- TODO: sheaf should dehomogenize modules on Affine varieties
--- These work correctly even for multigraded rings. E.g., you can write F(2) if the ring is singly graded, or F(2,3) if it is doubly graded.
-SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a)
-
--- If a coherent sheaf is defined as a twist, say G = F(a), then we remember the original sheaf, so we can reuse cached information about it.
--- Namely, G.cache.Twist is the sequence ({a}, F) (or the analogous thing if F was itself defined as a twist). Any later calculations made
--- about G will be cached as information about F.
-CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> (
+-- These work correctly even for multigraded rings, e.g. F(1) or F(1,2,3)
+SheafOfRings(ZZ)  := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a)
+CoherentSheaf(ZZ) := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> (
     X := variety F;
-    R := ring X;
-    deg := splice{a};
-    if deg === degree 1_R then return F; -- That is, F(0) is the same as F.
+    deg := splice {a};
+    -- If a coherent sheaf is defined as a twist, say G = F(a), we cache the original sheaf.
+    -- Any later calculations made about G will be cached as information about F.
+    if F.cache.?BaseTwist then (F, deg) = (
+	F.cache.BaseTwist#0,        -- the original sheaf
+	F.cache.BaseTwist#1 + deg); -- the combined twist
+    if deg === degree 1_(ring X) then return F; -- F(a)(-a) = F.
     G := F ** OO_X^{deg};
-    G.cache.Twist = if not F.cache.?Twist then (deg, F) else (
-	(deg0, F0) := F.cache.Twist;
-	if -deg === deg0 then return F0; -- That is, E(-a)(a) is the same as E.
-	(deg + deg0, F0));
+    G.cache.BaseTwist = (F, deg);
     G)
+-- TODO: should modules also cache their base twist?
 Module(ZZ) := Module Sequence := Module => (M, a) -> M ** (ring M)^{splice{a}}
 Matrix(ZZ) := Matrix Sequence := Matrix => (f, a) -> f ** (ring f)^{splice{a}}
 Ring(ZZ)   := Ring   Sequence := Module => (R, a) -> (R^1) ** R^{splice{a}}
@@ -363,9 +359,9 @@ euler SheafOfRings  := ZZ => O -> euler O^1
 euler CoherentSheaf := ZZ => F -> (
     -- Compute the Euler characteristic chi(X, F) for a coherent sheaf on a closed subspace X of a weighted projective space.
     shift := 0;
-    if F.cache.?Twist then
-    (shift = first F.cache.Twist#0;
-	F = F.cache.Twist#1);
+    if F.cache.?BaseTwist then
+    (shift = first F.cache.BaseTwist#1;
+	F = F.cache.BaseTwist#0);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist. We now compute chi(X, F(shift)).
     M := currentModuleBaseRing F;
     R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
@@ -405,9 +401,9 @@ euler(SheafOfRings,  ZZ, ZZ) := RingElement => (O, b1, b2) -> euler(O^1, b1, b2)
 euler(CoherentSheaf, ZZ, ZZ) := RingElement => (F, b1, b2) -> (
     -- Here b1 <= b2 are integers, and F is a coherent sheaf on a closed subspace of a weighted projective space.
     shift := 0;
-    if F.cache.?Twist then
-    (shift = first F.cache.Twist#0;
-	F = F.cache.Twist#1;
+    if F.cache.?BaseTwist then
+    (shift = first F.cache.BaseTwist#1;
+	F = F.cache.BaseTwist#0;
 	b1 = b1 + shift; b2 = b2 + shift);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist. We now compute chi(X, F, b1, b2).
     if b1 > b2 then error "the lower bound should be <= the upper bound";
@@ -527,7 +523,7 @@ hilbertPolynomial          SheafOfRings   := o ->     O  -> degree O^1
 hilbertPolynomial(ProjectiveVariety, CoherentSheaf) := opts -> (X, F0) -> (
     -- If F0 was defined as a twist of another sheaf, F is now that original sheaf,
     -- and we want to compute the Hilbert polynomial of F0 = F(twist).
-    (twist, F) := if F0.cache.?Twist then F0.cache.Twist else (degree 1_(ring X), F0);
+    (F, twist) := if F0.cache.?BaseTwist then F0.cache.BaseTwist else (F0, degree 1_(ring X));
     -- compute the Hilbert polynomial of F in Q[i] and cache it
     hp := F.cache.hilbertPolynomial ??= (
 	M := currentModuleBaseRing F;
