@@ -39,14 +39,14 @@ TEST /// -- tests for weightedHilbertPolynomials
   degs = splice {70:1,1,5,5,5,5}; rho = lcm degs
   S = kk[#degs, Degrees => degs]
   elapsedTime hilbertSeries(S, Order => #degs * lcm degs); -- ~4.5s
-  elapsedTime hqp = weightedHilbertPolynomials S; -- ~1.5s
+  elapsedTime hqp = weightedHilbertPolynomials S; -- <1s
   assert all(#degs * rho, d -> hqp#(d % rho)[d] - hilbertFunction(d, S) == 0)
 
   -- the large dimension, low period regime
   degs = splice {1,1,7,7,7,7,280}; rho = lcm degs
   S = kk[#degs, Degrees => degs]
   elapsedTime hilbertSeries(S, Order => #degs * rho); -- ~3.5s
-  elapsedTime hqp = weightedHilbertPolynomials S; -- ~0.7s
+  elapsedTime hqp = weightedHilbertPolynomials S; -- <0.3s
   assert all(#degs * rho, d -> hqp#(d % rho)[d] - hilbertFunction(d, S) == 0)
 ///
 

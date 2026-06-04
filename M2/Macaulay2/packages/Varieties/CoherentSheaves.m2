@@ -409,6 +409,13 @@ importFrom_Core "hilbertFunctionRing"
 -- A : ring of the interpolation, e.g. QQ[i]
 -- pts : ({x}, y) pairs, e.g. given as by
 --   listForm hilbertSeries(S, Order => n * lcm flatten degrees S)
+vandermondeInterpolation = (A, pts) -> (
+    -- Vandermonde interpolation is O(n^3), where the hardest part is computing
+    -- inverses of matrices over QQ, but engine linear algebra is very fast!
+    V := matrix(QQ, table(#pts, #pts, (i, j) -> (pts#i#0#0)^j));
+    coeff := entries(inverse V * vector(last \ pts));
+    sum(coeff, apply(#pts, j -> A_0^j), times))
+
 newtonInterpolation = (A, pts) -> (
     -- using Newton interpolation is O(n^2), but top-level is not as fast!
     interpolant := pts#0#1 * 1_A;
@@ -440,7 +447,9 @@ weightedHilbertPolynomials PolynomialRing := RingElement => S -> S.cache.weighte
     -- but Hilbert series is much more sensitive to large n, even if rho is small.
     pts := listForm hilbertSeries(S, Order => n*rho);
     levels := partition(i -> i % rho, toList(0..n*rho-1));
-    applyValues(levels, L -> newtonInterpolation(A, pts_L)))
+    -- see comments above about Vandermonde vs Newton interpolation
+    -- TODO: implement and try out FFT-based interpolation
+    applyValues(levels, L -> vandermondeInterpolation(A, pts_L)))
 
 averagedHilbertPolynomial = method()
 averagedHilbertPolynomial PolynomialRing := S -> (
