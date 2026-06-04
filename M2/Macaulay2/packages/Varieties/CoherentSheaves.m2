@@ -31,10 +31,12 @@ sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
 
 sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
     if ring X =!= R then error "sheaf: expected ring of the variety";
-    -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
     X.sheaf ??= (
-	O := new SheafOfRings from { symbol variety => X, symbol ring => R };
-	O.cache = new MutableHashTable;
+	O := new SheafOfRings from {
+	    symbol variety => X,
+	    symbol ring    => R,
+	    symbol cache   => new CacheTable
+	    };
 	-- TODO: need to either automate this, or add it in NormalToricVarieties, etc.
 	promote(Number,   O) := promote(RingElement, O) := RingElement => (x, O) -> promote(x, ring variety O);
 	promote(SheafMap, O) := promote(SheafMap,    R) := SheafMap    => baseChange;
@@ -46,17 +48,15 @@ sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
 -- TODO: should the module of a sheaf be fixed, or should it be allowed to change?
 -- TODO: https://github.com/Macaulay2/M2/issues/1358
 sheaf Module := Module^~ := CoherentSheaf =>     M  -> sheaf(variety ring M, M)
-sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
-    if M.cache#?(sheaf, X) then return M.cache#(sheaf, X);
-    M.cache#(sheaf, X) = (
-	if ring M =!= ring X then error "sheaf: expected module and variety to have the same ring";
-	if instance(X, ProjectiveVariety) and not isHomogeneous M then error "sheaf: expected a homogeneous module";
-	new CoherentSheaf from {
-	    symbol variety => X,
-	    symbol module => M,
-	    symbol cache => new CacheTable
-	    }
-	))
+sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> M.cache#(sheaf, X) ??= (
+    if ring M =!= ring X then error "sheaf: expected module and variety to have the same ring";
+    if instance(X, ProjectiveVariety) and not isHomogeneous M then error "sheaf: expected a homogeneous module";
+    new CoherentSheaf from {
+	symbol variety => X,
+	symbol module  => M,
+	symbol cache   => new CacheTable
+	}
+    )
 
 -- TODO: consider adding IdealSheaf or SheafOfIdeals type
 sheaf Ideal := Ideal^~ := CoherentSheaf =>     I  -> sheaf(variety ring I, module I)
