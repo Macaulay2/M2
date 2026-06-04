@@ -1001,6 +1001,98 @@ load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 TEST ///
 load "NumericalSchubertCalculus/TST/4LinesOsculating_changeFlags.m2"
 ///
+
+-- Coverage tests for exported service and diagnostic functions.
+
+TEST ///
+-- partition2bracket and bracket2partition convert between the partition and
+-- bracket descriptions of a Schubert condition.  Composing them recovers the
+-- original partition padded to length k (the effect of verifyLength).
+needsPackage "NumericalSchubertCalculus"
+assert(partition2bracket({2,1},3,6) == {2,4,6})
+assert(partition2bracket({2},3,6) == {2,5,6})
+assert(partition2bracket({1},2,4) == {2,4})
+assert(bracket2partition({2,4,6},6) == {2,1,0})
+assert(bracket2partition(partition2bracket({2,1},3,6),6) == {2,1,0})
+assert(bracket2partition(partition2bracket({3,1},3,7),7) == {3,1,0})
+assert(bracket2partition(partition2bracket({1},2,4),4) == {1,0})
+///
+
+TEST ///
+-- NSC2phc encodes a Schubert problem as PHCpack's multiplicity-bracket matrix,
+-- each row being {multiplicity, bracket}.  Partition and bracket input describing
+-- the same problem must agree, and a list that is not a Schubert problem (the
+-- codimensions do not fill the Grassmannian) must be rejected.
+needsPackage "NumericalSchubertCalculus"
+assert(NSC2phc({{1},{1},{1},{1}},2,4) == matrix{{4,2,4}})
+assert(NSC2phc({{2},{2},{2},{2}},2,6) == matrix{{4,3,6}})
+assert(NSC2phc({{2,4},{2,4},{2,4},{2,4}},2,4) == NSC2phc({{1},{1},{1},{1}},2,4))
+assert(try (NSC2phc({{1},{1}},2,4); false) else true)
+///
+
+TEST ///
+-- LRnumber counts the solutions of a Schubert problem; the default Schubert2
+-- strategy uses intersection theory on the Grassmannian.
+needsPackage "NumericalSchubertCalculus"
+assert(LRnumber({{1},{1},{1},{1}},2,4) == 2)
+assert(LRnumber({{2},{2},{2},{2}},2,6) == 3)
+assert(LRnumber({{2,1},{2,1},{2,1}},3,6) == 2)
+-- bracket input gives the same count as the equivalent partition input
+assert(LRnumber({{2,4},{2,4},{2,4},{2,4}},2,4) == 2)
+assert(try (LRnumber({{1},{1}},2,4); false) else true)
+///
+
+TEST ///
+-- randomSchubertProblemInstance attaches a random flag to every condition.
+needsPackage "NumericalSchubertCalculus"
+I = randomSchubertProblemInstance({{1},{1},{1},{1}},2,4);
+assert(#I == 4)
+assert(all(I, cf -> first cf == {1}))
+assert(all(I, cf -> instance(last cf, Matrix) and numRows last cf == 4 and numColumns last cf == 4))
+-- the "unitary" strategy builds flags from random unitary matrices
+Iu = randomSchubertProblemInstance({{2,1},{2,1},{2,1}},3,6, Strategy=>"unitary");
+assert(#Iu == 3 and numRows last first Iu == 6)
+-- an unknown strategy is rejected
+assert(try (randomSchubertProblemInstance({{1},{1},{1},{1}},2,4,Strategy=>"bogus"); false) else true)
+///
+
+TEST ///
+-- checkIncidenceSolution tests whether a matrix satisfies the incidence
+-- conditions of a Schubert problem.  solutionsToAffineCoords rewrites a solution
+-- in the affine chart whose bottom k-by-k block is the identity.
+needsPackage "NumericalSchubertCalculus"
+H = promote(matrix{{1,0},{0,0},{0,1},{0,0}},CC);
+P = {({2,1},id_(CC^4)),({1,0},rsort id_(CC^4))};
+assert(checkIncidenceSolution(H,P) === true)
+-- a matrix that does not lie on the Schubert varieties fails the check
+Hbad = promote(matrix{{1,0},{2,3},{0,1},{5,7}},CC);
+assert(checkIncidenceSolution(Hbad,P) === false)
+a = first solutionsToAffineCoords {promote(matrix{{2,3},{5,7},{1,1},{2,3}},CC)};
+assert(clean(0.001, submatrix(a,{2,3},{0,1}) - id_(CC^2)) == 0)
+///
+
+TEST ///
+-- diagnostic exports: setVerboseLevel sets the package verbosity and returns the
+-- new level; resetStatistics and printStatistics manage the checkerboard-move
+-- statistics table (both return null).
+needsPackage "NumericalSchubertCalculus"
+assert(setVerboseLevel 2 === 2)
+assert(setVerboseLevel 0 === 0)
+assert(resetStatistics() === null)
+assert(printStatistics() === null)
+///
+
+TEST ///
+-- solveSimpleSchubert solves a simple Schubert problem by Pieri homotopy.
+-- Four lines meeting four general lines in P^3 has two solutions.
+needsPackage "NumericalSchubertCalculus"
+setRandomSeed 0
+P = randomSchubertProblemInstance({{1},{1},{1},{1}},2,4);
+S = solveSimpleSchubert(P,2,4);
+assert(#S == 2)
+assert(all(S, s -> checkIncidenceSolution(s,P)))
+///
+
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
 ---------------------------------------------------------------------------

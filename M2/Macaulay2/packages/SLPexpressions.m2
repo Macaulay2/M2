@@ -749,7 +749,15 @@ XpC = X+C+2
 XXC = productGate{X,X,C}
 detXCCX = detGate{{X,C},{C,X}}
 XoC = X/C
-cCode (matrix{{XXC,detXCCX,0},{XoC,1,2}},matrix{{X,C}})
+-- cCode emits a C function "void evaluate(...)" with one y[i] assignment per
+-- output gate; redirect to a temp file and check the structure of the output.
+fn = temporaryFileName() | ".c"
+f = openOut fn
+cCode(matrix{{XXC,detXCCX,0},{XoC,1,2}}, matrix{{X,C}}, f)
+close f
+s = get fn
+assert(match("void evaluate", s) =!= null)
+assert(match("y\\[0\\]", s) =!= null)
 ///
 
 --fill m x n matrix with values from another matrix
@@ -889,6 +897,32 @@ FY = value(diff(Y,F),h)
 assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
 ///
 
+TEST ///
+-- undeclareVariable reverses the effect of declareVariable on a Symbol: it
+-- restores the symbol's binding to itself (so its class returns to Symbol).
+declareVariable myVar
+assert(instance(myVar, InputGate))
+undeclareVariable myVar
+assert(instance(myVar, Symbol))
+assert(myVar === symbol myVar)
+///
+
+TEST ///
+-- constants returns the list of constant InputGates appearing in a gate
+-- expression; countGates returns a HashTable counting each gate class.
+X = inputGate symbol X
+C = inputGate symbol C
+D = detGate{{X,C},{C,X}}
+c1 = constants(3*D + 2*X)
+assert(instance(c1, List))
+assert(#c1 == 2)
+assert(#constants X == 0)
+assert(#constants gateMatrix{{D, 12*X}} == 1)
+ct = countGates matrix{{D, 12*X}}
+assert(instance(ct, HashTable))
+assert(ct#?DetGate and ct#?ProductGate and ct#?InputGate)
+assert(instance(countGates(X*X), HashTable))
+///
 
 ------------------------
 -- expression, net, html

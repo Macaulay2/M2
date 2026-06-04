@@ -32,3 +32,26 @@ TEST ///
   N=(R^1)/(J^d)
   assert( annihilator Tor_1(M,N)==  annihilator Tor_1(N,M) )
 ///
+
+-- Tests added in the 2026 test-audit pass: annihilator stress.
+-- The existing tests focus on the Tor-symmetry identity; these add direct
+-- coverage on cyclic quotient modules, principal ideals, the unit module,
+-- the cokernel of a row of variables, and the direct-sum identity.
+TEST ///
+  R = QQ[a,b,c]
+  -- annihilator of a cyclic quotient module recovers the defining ideal
+  I = ideal(a^2, b*c)
+  assert(annihilator (R^1/I) == I)
+  assert(annihilator (R^1/ideal(a^2, b^2, c^2)) == ideal(a^2, b^2, c^2))
+  -- principal ideal
+  assert(annihilator (R^1/ideal(a^2 - b^2)) == ideal(a^2 - b^2))
+  -- the unit module has zero annihilator
+  assert(annihilator R^1 == ideal 0_R)
+  -- cokernel of a row of variables: annihilator is the variable ideal
+  assert(annihilator coker matrix{{a,b,c}} == ideal(a,b,c))
+  -- direct-sum annihilator equals the intersection of summand annihilators
+  S = QQ[s,t]
+  M = S^1/ideal s
+  N = S^1/ideal t
+  assert(annihilator(M ++ N) == intersect(annihilator M, annihilator N))
+///

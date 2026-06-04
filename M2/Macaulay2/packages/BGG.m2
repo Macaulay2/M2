@@ -1357,13 +1357,17 @@ TEST///
   assert(betti L == ans)
 ///
 
--*
+--Old comments:
 --I don't see why the following doesn't work. The output of the left side sure LOOKS like that on the right
 TEST///
 A = ZZ/11[a,b]
-(projectiveProduct(A,{1,1}))_0 === A[x_(0,0), x_(0,1)][x_(1,0), x_(1,1)]
+---(projectiveProduct(A,{1,1}))_0 === A[x_(0,0), x_(0,1)][x_(1,0), x_(1,1)]
+---This does not work since the variable x_(-,-) on the left hand side is NOT the symbol x_(-,-) on the right hand side
+assert(numgens(projectiveProduct(A,{1,1}))_0 == 2)
+assert(numgens coefficientRing (projectiveProduct(A,{1,1}))_0 == 2)
+assert(coefficientRing coefficientRing (projectiveProduct(A,{1,1}))_0 === A)
 ///
-*-
+
 
 TEST///
 A = QQ[a,b]

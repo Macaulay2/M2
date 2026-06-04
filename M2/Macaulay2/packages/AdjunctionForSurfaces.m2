@@ -799,8 +799,184 @@ doc ///
 	betti(fib=trim ideal (random(kk^1,kk^3)*presentation omegaY))
 	dim fib, degree fib
      Text 
-        The adjunction map |H+K_Y|: Y -> P2 
-	is 3:1 in case of family 4.         
-///	
+        The adjunction map |H+K_Y|: Y -> P2
+	is 3:1 in case of family 4.
+///
+
+-- Tests added in the 2026 test-audit pass.  The package shipped with zero
+-- TEST blocks; below we exercise every export with at least one assertion.
+-- All blocks call setRandomSeed where randomness is involved; the
+-- adjunctionProcess and rationalSurface assertions use the deterministic
+-- numerical data those calls produce on the chosen seed.
+
+TEST /// -- expectedDimension is pure arithmetic; pin a few representative inputs
+  assert(expectedDimension(8, toList(3:3)|toList(2:4)|{1}) == 6)
+  assert(expectedDimension(4, toList(7:1)) == 8)
+  assert(expectedDimension(6, toList(6:2)|toList(2:1)) == 8)
+  assert(expectedDimension(2, {}) == 6)
+  assert(expectedDimension(3, {}) == 10)
+  assert(expectedDimension(1, toList(7:1)) == 0)
+  assert(expectedDimension(0, {}) == 1)
+///
+
+TEST /// -- linearSystemOnRationalSurface output shape
+  setRandomSeed 0
+  kk = ZZ/nextPrime(10^3)
+  t = symbol t
+  P2 = kk[t_0..t_2]
+  d = 4
+  L = toList(7:1)
+  H = linearSystemOnRationalSurface(P2, d, L)
+  assert(numgens source H == expectedDimension(d, L))
+  assert(all(flatten entries H, f -> first degree f == d))
+///
+
+TEST /// -- rationalSurface basic invariants (degree, dim, genus, d^2 - sum r^2 identity)
+  setRandomSeed 0
+  kk = ZZ/nextPrime(10^3)
+  t = symbol t
+  P2 = kk[t_0..t_2]
+  d = 4
+  L = toList(7:1)
+  n = expectedDimension(d, L) - 1
+  x = symbol x
+  Pn = kk[x_0..x_n]
+  I = rationalSurface(P2, d, L, Pn)
+  assert(class I === Ideal)
+  assert(degree I == d^2 - sum(L, r -> r^2))
+  assert(dim I == 3)
+  assert(genus I == 0)
+///
+
+TEST /// -- rationalSurface with Symbol creates the ambient ring on the fly
+  setRandomSeed 0
+  kk = ZZ/nextPrime(10^3)
+  t = symbol t
+  P2 = kk[t_0..t_2]
+  d = 4
+  L = toList(7:1)
+  y = symbol y
+  I = rationalSurface(P2, d, L, y)
+  assert(numgens ring I == expectedDimension(d, L))
+  assert(degree I == d^2 - sum(L, r -> r^2))
+///
+
+TEST /// -- adjunctionProcess on a rational surface in P^7
+  setRandomSeed 0
+  kk = ZZ/nextPrime(10^3)
+  t = symbol t
+  x = symbol x
+  P2 = kk[t_0..t_2]
+  d = 4
+  L = toList(7:1)
+  n = expectedDimension(d, L) - 1
+  Pn = kk[x_0..x_n]
+  I = rationalSurface(P2, d, L, Pn)
+  (numList, adjList, ptsList, J) = toSequence adjunctionProcess I
+  assert(numList == {(7,9,3), 7, (2,1,0)})
+  assert(#adjList == 1)
+  assert(class adjList_0 === Matrix)
+  assert(#ptsList == 1)
+  assert(class J === Ideal)
+///
+
+TEST /// -- adjunctionProcess(I, 0) returns the input unchanged
+  setRandomSeed 0
+  kk = ZZ/nextPrime(10^3)
+  t = symbol t
+  x = symbol x
+  P2 = kk[t_0..t_2]
+  d = 4
+  L = toList(7:1)
+  n = expectedDimension(d, L) - 1
+  Pn = kk[x_0..x_n]
+  I = rationalSurface(P2, d, L, Pn)
+  (numList0, adjList0, ptsList0, J0) = toSequence adjunctionProcess(I, 0)
+  assert(adjList0 == {})
+  assert(ptsList0 == {})
+  assert(J0 == I)
+///
+
+TEST /// -- parametrization round-trip: pull-back along H recovers the ideal
+  setRandomSeed 0
+  kk = ZZ/nextPrime(10^3)
+  t = symbol t
+  x = symbol x
+  P2 = kk[t_0..t_2]
+  d = 4
+  L = toList(7:1)
+  n = expectedDimension(d, L) - 1
+  Pn = kk[x_0..x_n]
+  I = rationalSurface(P2, d, L, Pn)
+  (numList, adjList, ptsList, J) = toSequence adjunctionProcess I
+  P2new = ring J
+  H = parametrization(P2new, adjList)
+  assert(class H === Matrix)
+  assert(numgens source H == n + 1)
+  phi = map(P2new, Pn, H)
+  assert(trim ker phi == I)
+///
+
+TEST /// -- slowAdjunctionCalculation: alternate path to the adjoint ideal
+  setRandomSeed 0
+  kk = ZZ/nextPrime(10^3)
+  t = symbol t
+  x = symbol x
+  P2 = kk[t_0..t_2]
+  d = 4
+  L = toList(7:1)
+  n = expectedDimension(d, L) - 1
+  Pn = kk[x_0..x_n]
+  I = rationalSurface(P2, d, L, Pn)
+  fI = res(I, Strategy => Nonminimal)
+  c = codim I
+  G = (dual fI[-c]) ** Pn^{-n-1}
+  omega = prune HH_0 G
+  D = transpose presentation omega
+  y = symbol y
+  J = slowAdjunctionCalculation(I, D, y)
+  -- slowAdjunctionCalculation returns a sequence; the first entry is the ideal
+  assert(class J === Sequence)
+  assert(#J > 0)
+///
+
+TEST /// -- adjointMatrix structural check
+  setRandomSeed 0
+  kk = ZZ/nextPrime(10^3)
+  t = symbol t
+  x = symbol x
+  P2 = kk[t_0..t_2]
+  d = 4
+  L = toList(7:1)
+  n = expectedDimension(d, L) - 1
+  Pn = kk[x_0..x_n]
+  I = rationalSurface(P2, d, L, Pn)
+  fI = res(I, Strategy => Nonminimal)
+  c = codim I
+  G = (dual fI[-c]) ** Pn^{-n-1}
+  omega = prune HH_0 G
+  D = transpose presentation omega
+  z = symbol z
+  adj = adjointMatrix(D, z)
+  assert(class adj === Matrix)
+  assert(numgens ring adj == rank source D)
+///
+
+TEST /// -- specialFamiliesOfSommeseVandeVen 1..3; family 5 is rejected
+  kk = ZZ/nextPrime(10^3)
+  setRandomSeed 0
+  Y1 = specialFamiliesOfSommeseVandeVen(kk, 1)
+  assert(class Y1 === Ideal)
+  assert(degree Y1 > 0)
+  setRandomSeed 0
+  Y2 = specialFamiliesOfSommeseVandeVen(kk, 2)
+  assert(class Y2 === Ideal)
+  assert(degree Y2 > 0)
+  setRandomSeed 0
+  Y3 = specialFamiliesOfSommeseVandeVen(kk, 3)
+  assert(class Y3 === Ideal)
+  assert(degree Y3 > 0)
+  assert(try (specialFamiliesOfSommeseVandeVen(kk, 5); false) else true)
+///
 
 end

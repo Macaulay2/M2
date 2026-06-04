@@ -642,12 +642,47 @@ doc ///
      R_0, R_1, R_119
      coefficientRing R
   Caveat
-    Currently, the user has no choice about the names of the variables.  
+    Currently, the user has no choice about the names of the variables.
     Also, the base field is set to be QQ, without option of changing it.
-    These will hopefully change in a later version.  
+    These will hopefully change in a later version.
   SeeAlso
 ///
 
+
+-- The package previously had zero TEST blocks. Smoke-cover the main
+-- pipeline (graph -> Markov statements -> ideal) on a small DAG so
+-- regressions in any of the underlying routines surface immediately.
+TEST ///
+G := makeGraph {{2, 3}, {4}, {4}, {}};
+assert(class G === Graph);
+-- Children sets match the input list (1-indexed).
+assert(G#1 === set {2, 3});
+assert(G#2 === set {4});
+assert(G#3 === set {4});
+assert(G#4 === set {});
+-- Markov statement variants.
+gms := globalMarkovStmts G;
+pms := pairMarkovStmts G;
+lms := localMarkovStmts G;
+for stmts in {gms, pms, lms} do (
+    assert(class stmts === List);
+    assert(all(stmts, t -> class t === List and #t == 3));
+    );
+-- Discrete Markov ideal on a 2x2x2x2 grid.
+R := markovRing(2, 2, 2, 2);
+assert(class R === PolynomialRing);
+assert(numgens R == 16);
+I := markovIdeal(R, gms);
+assert(class I === Ideal);
+assert(numgens I > 0);
+-- Gaussian ideal on the same DAG (4 nodes -> 10 covariance vars).
+GR := gaussRing 4;
+assert(class GR === PolynomialRing);
+assert(numgens GR == 10);
+J := gaussIdeal(GR, G);
+assert(class J === Ideal);
+assert(numgens J > 0);
+///
 
 end
 doc ///

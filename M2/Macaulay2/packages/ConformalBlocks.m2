@@ -1308,8 +1308,10 @@ TEST ///
     D=symmetricDivisorM0nbar(8,3*B_2+2*B_3+4*B_4)
     assert(isExtremalSymmetricFDivisor(D) === true)
     D=kappaDivisorM0nbar(8)
-    isExtremalSymmetricFDivisor(D)
-///		
+    -- kappa is very ample, hence in the interior of the nef cone, hence
+    -- not an extremal ray of the symmetric F-divisor cone.
+    assert(isExtremalSymmetricFDivisor(D) === false)
+///
 
 doc ///	
     Key 
@@ -1487,8 +1489,13 @@ doc ///
 TEST ///
     sl_4 =simpleLieAlgebra("A",3);
     V=conformalBlockVectorBundle(sl_4,1,{{1,0,0},{1,0,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1}},0);
-    D=symmetrizedConformalBlockDivisor(V)
-///	     	
+    D=symmetrizedConformalBlockDivisor(V);
+    assert(class D === SymmetricDivisorM0nbar)
+    assert(D#"NumberOfPoints" === 6)
+    -- the symmetrized divisor on M_{0,6} for this V is 288 B_2 + 288 B_3
+    -- in the standard basis (b_2, b_3); pin the coefficient list.
+    assert(coefficientList D == {288, 288})
+///
 		
 doc ///
     Key 

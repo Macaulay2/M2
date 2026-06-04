@@ -3349,7 +3349,9 @@ assert(mingens {8, 10, 31, 129, 130} == {8, 10, 31})
 
 TEST///-*socle*-
 L = {9, 23, 28, 31}
-socle L == {84, 79, 62}
+assert(socle L == {84, 79, 62})
+assert(socle {3,7} == {14})
+assert(type {3,4,5} == #socle {3,4,5})
 ///
 
 TEST/// -*conductor*-
@@ -3383,7 +3385,99 @@ TEST///-*test of coneEquations*-
     M1=(M|matrix apply(rank target M,i->{-1}))
     assert(all(flatten entries (M1*eqInh),e->e>=0))
 ///
-   
+
+TEST/// -*buchweitzCriterion*-
+assert(buchweitzCriterion {7,12,13} == 0)
+assert(buchweitzCriterion buchweitz 0 == -1)
+assert(buchweitzCriterion buchweitz 2 == -1)
+assert(buchweitzCriterion(3,{4,5}) == buchweitzCriterion {3,4,5})
+///
+
+TEST/// -*isSymmetric*-
+assert(isSymmetric {3,5})
+assert(isSymmetric {7,9})
+assert(not isSymmetric {3,4,5})
+///
+
+TEST/// -*kunzMatrix*-
+assert(kunzMatrix {4,7} == matrix {{0,0,0},{0,0,1},{0,1,1}})
+assert(kunzMatrix {4,7} == transpose kunzMatrix {4,7})
+assert(kunzMatrix {4,7} == kunzMatrix apery {4,7})
+///
+
+TEST/// -*weight*-
+assert(weight {5,7} == 36)
+assert(weight {6,7} == 55)
+///
+
+TEST/// -*ewt and effectiveWeight*-
+assert(ewt {5,7} == 15)
+assert(ewt {6,7} == 20)
+assert(effectiveWeight {5,7} == ewt {5,7})
+assert(ewt {5,7} <= weight {5,7})
+///
+
+TEST/// -*kunzRing*-
+R = kunzRing {3,5};
+assert(dim R == 0)
+assert(isHomogeneous R)
+///
+
+TEST/// -*coneRays*-
+assert(coneRays 3 == matrix {{1,2},{2,1}})
+assert(all(flatten entries ((transpose coneEquations 4) * coneRays 4), e -> e >= 0))
+///
+
+TEST/// -*knownExample*-
+assert(knownExample {7,12,13})
+assert(knownExample {3,4,5})
+assert(not knownExample {6,8,9,11})
+assert(not knownExample {5,8,11,12})
+///
+
+TEST/// -*LabBookProtocol*-
+assert(LabBookProtocol 7 === null)
+assert(LabBookProtocol 99 === null)
+///
+
+TEST/// -*heuristicSmoothness*-
+S = ZZ/101[x,y];
+setRandomSeed 0
+assert(heuristicSmoothness ideal(y-x^2))
+setRandomSeed 0
+assert(not heuristicSmoothness ideal(y^2-x^3))
+///
+
+TEST/// -*getFlatFamily*-
+setRandomSeed 0
+(I,J1,family) = getFlatFamily({6,8,10,11},0.30,0);
+assert(instance(I,Ideal) and instance(J1,Ideal) and instance(family,Matrix))
+assert(betti res ideal family == betti res I)
+///
+
+TEST/// -*isARandomFiberSmooth*-
+setRandomSeed 0
+(I,J1,family) = getFlatFamily({6,8,10,11},0.30,0);
+setRandomSeed 0
+assert(isARandomFiberSmooth(I,J1,family))
+///
+
+TEST/// -*isSmoothableSemigroup*-
+setRandomSeed 0
+assert(isSmoothableSemigroup({6,8,10,11},0.30,0))
+///
+
+TEST/// -*isWeierstrassSemigroup*-
+setRandomSeed 0
+assert(isWeierstrassSemigroup({6,8,9,11},0.15))
+///
+
+TEST/// -*nonWeierstrassSemigroups*-
+assert(nonWeierstrassSemigroups(4,7) == {})
+assert(nonWeierstrassSemigroups(4,8) == {})
+///
+
+
 end--
 
 -* Development section *-

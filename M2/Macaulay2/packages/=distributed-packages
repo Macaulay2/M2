@@ -295,3 +295,7 @@ MRDI
 EliminationTemplates
 WittVectors
 Padic
+EuclideanDistanceDegree
+NeuralIdeals
+TestAudit
+LanguageServer

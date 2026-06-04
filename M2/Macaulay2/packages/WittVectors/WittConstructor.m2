@@ -5,6 +5,8 @@ explicit = method()
 wittIdeal = method(Dispatch => Thing)
 verschiebung = method()
 wittFrobenius = method()
+-- TODO: makeCoefficientFieldPrime is exported and appears inside other
+-- doc Examples, but has no dedicated doc node in Documentation.m2.
 makeCoefficientFieldPrime = method()
 charPCheck = method()
 baseRing' = method()

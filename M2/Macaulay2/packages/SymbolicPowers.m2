@@ -1960,6 +1960,92 @@ I=intersect(ideal(x_1,x_2),ideal(x_2,x_3),ideal(x_3,x_1),ideal(x_3,x_4),ideal(x_
 assert(noPackedAllSubs I=={{"x_1=>0", "x_2=>1", "x_3=>1"}, {"x_2=>0", "x_1=>1", "x_3=>1"}, {"x_5=>0", "x_4=>1", "x_6=>1"}, {"x_6=>0", "x_4=>1", "x_5=>1"}})
 ///
 
+
+
+--asymptoticRegularity
+TEST ///
+R = QQ[x,y,z];
+J = ideal (x*(y^3-z^3),y*(z^3-x^3),z*(x^3-y^3));
+asymptoticRegularity(J, SampleSize=>5)
+assert(asymptoticRegularity(J, SampleSize=>5)==4)
+///
+
+-- assPrimesHeight
+TEST ///
+R = QQ[x,y,z,a,b];
+J = intersect(ideal(x,y,z),ideal(a,b));
+L= assPrimesHeight(J);
+assert(instance(L,List))
+assert(L=={2,3})
+///
+
+--minDegreeSymbPower
+TEST ///
+T = QQ[x,y,z];
+I = intersect(ideal"x,y",ideal"x,z",ideal"y,z");
+assert(minDegreeSymbPower(I,2)==3)
+///
+
+--minimalPart
+TEST ///
+R = QQ[x,y,z];
+J = intersect(ideal(x^2,y,z^3),ideal(x,z));
+assert(minimalPart(J)==ideal(z,x))
+///
+
+--symbolicDefect
+TEST ///
+R = QQ[x,y,z];
+I = ideal(x*y,x*z,y*z);
+d=symbolicDefect(I,2,UseMinimalPrimes=>true)
+assert(symbolicDefect(I,2)==1)
+assert(d==1)
+///
+
+--symbolicPowerJoin
+TEST ///
+A = QQ[x,y,z];
+I=ideal(x,y);
+J=symbolicPowerJoin(I,2);
+assert(symbolicPowerJoin(I,2)==symbolicPower(I,2))
+///
+
+--symbPowerPrimePosChar
+TEST ///
+B = ZZ/7[x,y,z];
+f = map(ZZ/7[t],B,{t^3,t^4,t^5});
+I = ker f;
+assert(symbPowerPrimePosChar(I,2)==symbolicPower(I,2))
+///
+
+-- UseMinimalPrimes option in containmentProblem, isSymbPowerContainedinPower, symbolicPower
+TEST ///
+B = QQ[x,y,z];
+f = map(QQ[t],B,{t^3,t^4,t^5});
+I = ker f;
+m = containmentProblem(I,2,UseMinimalPrimes=>true)
+assert(m==3)
+bool= not(isSymbPowerContainedinPower(I,2,2,UseMinimalPrimes=>true));
+assert(bool)
+assert(symbolicPower(I,4,UseMinimalPrimes=>true)==symbolicPower(I,4))
+///
+
+--lowerBoundResurgence options
+TEST ///
+T = QQ[x,y,z];
+I = intersect(ideal"x,y",ideal"x,z",ideal"y,z");
+assert(lowerBoundResurgence(I)<=lowerBoundResurgence(I,SampleSize=>8))
+assert(lowerBoundResurgence(I,UseWaldschmidt=>true)==4/3)
+///
+
+-- waldschmidt SampleSize option
+TEST ///
+R = QQ[x,y,z];
+J = ideal (x*(y^3-z^3),y*(z^3-x^3),z*(x^3-y^3));
+assert(waldschmidt(J, SampleSize=>5)==3)
+///
+
+
 end
 
 restart
@@ -2024,12 +2110,3 @@ waldschmidt I
 
 
 lowerBoundResurgence(I)
-
-
-
-------testing CIPRimes
-loadPackage "SymbolicPowers"
-loadPackage "Points"
-I=randomPoints(2,10);
-time symbolicPower(I,6,CIPrimes=>true);
-time symbolicPower(I,6);

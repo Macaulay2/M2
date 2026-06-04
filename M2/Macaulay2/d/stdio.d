@@ -106,7 +106,21 @@ export clearFileError(o:file):void := (
      );
 export fileErrorMessage(o:file):string := o.errorMessage;
 export noprompt():string := "";
-newbuffer():string := new string len bufsize do provide ' ';
+-- When newbuffer() is inlined, GCC cannot tell that GC_MALLOC_ATOMIC allocated
+-- bufsize bytes for the flexible array, so it spuriously warns that the
+-- memset writing bufsize bytes overflows a region of size 0.
+newbuffer():string := (
+    Ccode(void, "
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored \"-Warray-bounds\"
+#pragma GCC diagnostic ignored \"-Wstringop-overflow\"
+(void)0");
+    result := new string len bufsize do provide ' ';
+    Ccode(void, "
+#pragma GCC diagnostic pop
+(void)0");
+    result
+    );
 export stdError := newFile(
      -- contrast with stderr, defined in errio.d
      -- intended just for top level use where nets might be printed

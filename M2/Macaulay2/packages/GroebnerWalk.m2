@@ -765,4 +765,72 @@ assert(gens G1 == gens G3)
 assert(gens G2 == gens G3)
 ///
 
+TEST /// -- (groebnerWalk, GroebnerBasis, Ring): the precomputed-GB overload (GroebnerWalk.m2:32-43)
+R1 = QQ[x,y,z, MonomialOrder=>Weights=>{1,1,10}]
+I1 = ideal(y^2-x, z^3-x)
+R2 = QQ[x,y,z, MonomialOrder=>Weights=>{10,1,1}]
+G = gb I1
+H = groebnerWalk(G, R2)
+assert(class H === GroebnerBasis)
+assert(gens H == gens gb sub(I1, R2))
+assert(gens groebnerWalk(G, R2, Strategy => Generic) == gens gb sub(I1, R2))
+-- the (Ideal, Ring) form delegates to the (GroebnerBasis, Ring) form via gb I (GroebnerWalk.m2:30)
+assert(gens groebnerWalk(I1, R2) == gens H)
+///
+
+TEST /// -- groebnerWalk: unknown Strategy is rejected (GroebnerWalk.m2:41-42)
+R1 = QQ[x,y,z, MonomialOrder=>Weights=>{1,1,10}]
+I1 = ideal(y^2-x, z^3-x)
+R2 = QQ[x,y,z, MonomialOrder=>Weights=>{10,1,1}]
+assert(try (groebnerWalk(I1, R2, Strategy => Foo); false) else true)
+///
+
+TEST /// -- groebnerWalk: result generates the same ideal as sub(I, R2) under both strategies
+R1 = QQ[x,y,z, MonomialOrder=>Weights=>{1,1,10}]
+I1 = ideal(y^2-x, z^3-x)
+R2 = QQ[x,y,z, MonomialOrder=>Lex]
+J = sub(I1, R2)
+assert(ideal gens groebnerWalk(I1, R2) == J)
+assert(ideal gens groebnerWalk(I1, R2, Strategy => Generic) == J)
+///
+
+TEST /// -- groebnerWalk: unit ideal walks to the unit ideal (degenerate input)
+R1 = QQ[x,y,z]
+R2 = QQ[x,y,z, MonomialOrder=>Lex]
+assert(gens groebnerWalk(ideal 1_R1, R2) == matrix {{1_R2}})
+-- same over a finite field
+KK = ZZ/32003
+R3 = KK[x,y,z]
+R4 = KK[x,y,z, MonomialOrder=>Lex]
+assert(gens groebnerWalk(ideal 1_R3, R4) == matrix {{1_R4}})
+///
+
+TEST /// -- groebnerWalk: target ring with the same monomial order yields a GB of the input ideal
+R = QQ[x,y, MonomialOrder=>Lex]
+I = ideal(x^2 + y, y^3 + x)
+H = groebnerWalk(I, R)
+-- Source and target orders coincide, so the walk is degenerate but must still produce a GB of I
+assert(ideal gens H == I)
+///
+
+TEST /// -- nextW: weight that already matches the target is its own next step (GroebnerWalk.m2:141-158)
+debug GroebnerWalk
+R = QQ[x,y,z, MonomialOrder=>Weights=>{1,1,10}]
+I = ideal(y^2-x, z^3-x)
+G = gb I
+w = weightVector R
+assert(nextW(G, w, w) == w)
+///
+
+TEST /// -- nextV: when start and target term orders coincide there are no candidate facets (GroebnerWalk.m2:222-262)
+debug GroebnerWalk
+R = QQ[x,y,z]
+I = ideal(y-x^2, z-x^3)
+G = gb I
+S = weightVectors R
+-- first-step branch (v0 = {}): both selects reject every bounding vector because no w can be both
+-- "first nonzero dot with S#i > 0" and "first nonzero dot with T#i < 0" when S == T
+assert(nextV(G, {}, S, S) == {})
+///
+
 end

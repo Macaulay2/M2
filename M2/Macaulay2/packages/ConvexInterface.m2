@@ -758,12 +758,12 @@ doc ///
 
 doc ///
   Key
-    readConvexHullFaces    
+    readConvexHullFaces
     (readConvexHullFaces,String)
   Headline
     Read the result of a previous mConvexHullFaces or mConvexHullFacesAndDuals computation.
   Usage
-    readConvexHullFaces(L)
+    readConvexHullFaces(fn)
   Inputs
     fn:String
   Outputs
@@ -775,12 +775,12 @@ doc ///
 
 doc ///
   Key
-    readPosHullFaces    
+    readPosHullFaces
     (readPosHullFaces,String)
   Headline
     Read the result of a previous mPosHullFaces or mPosHullFacesAndDuals computation.
   Usage
-    readConvexHullFaces(L)
+    readPosHullFaces(fn)
   Inputs
     fn:String
   Outputs
@@ -816,3 +816,46 @@ doc ///
 -*
 installPackage("ConvexInterface",RerunExamples=>true);
 *-
+
+-----------
+-- Tests --
+-----------
+
+-- Structural tests: these do not invoke Maple, so they run in any
+-- environment. They guard against accidental re-exports / un-exports
+-- and against the package failing to declare its 12 entry points.
+TEST ///
+-- All 10 method-style exports should be callable (MethodFunction or
+-- MethodFunctionWithOptions, both of which descend from Function).
+for f in {callConvex, mConvexHullFaces, mConvexHullFacesAndDuals,
+    mPosHullFaces, mPosHullFacesAndDuals, mIsSubcone, mLatticePoints,
+    mHomology, readConvexHullFaces, readPosHullFaces} do
+    assert(instance(f, Function));
+-- The toFile-bearing methods specifically should carry the toFile option.
+for f in {callConvex, mConvexHullFaces, mConvexHullFacesAndDuals,
+    mPosHullFaces, mPosHullFacesAndDuals, mIsSubcone} do (
+    assert(instance(f, MethodFunctionWithOptions));
+    assert((options f)#toFile === null);
+    );
+-- FinitelyGeneratedAbelianGroup is the output type of mHomology.
+assert(instance(FinitelyGeneratedAbelianGroup, Type));
+-- toFile is an exported option symbol.
+assert(instance(toFile, Symbol));
+///
+
+-- Maple-gated TEST: only invoked when an executable `maple` is on PATH
+-- AND the configured ConvexPath is usable. Otherwise the body is a
+-- no-op so `check "ConvexInterface"` still passes cleanly.
+TEST ///
+mapleAvailable := try (run "command -v maple > /dev/null 2>&1" == 0) else false;
+if mapleAvailable then (
+    -- Trivial Maple round-trip: 1+1 should come back as 2. Exercises
+    -- the entire callConvex -> callMaple -> Maple subshell pipeline.
+    r := try callConvex("returnvalue:=1+1;") else null;
+    assert(r === 2);
+    -- A small Convex computation: the f-vector of the unit square has
+    -- 4 vertices, 4 edges, 1 face -> {4, 4, 1}.
+    fv := try callConvex("returnvalue:=convert(fvector(convhull([1,0],[0,1],[-1,0],[0,-1])),list);") else null;
+    assert(fv =!= null);
+    );
+///

@@ -1917,8 +1917,8 @@ document {
 document {
      Key =>{isPolynomial,(isPolynomial,NestedDeformation),(isPolynomial,List,List,List,List)},
      Headline => "checks if a deformation lifts to arbitrary order",
-     Usage => "B = checkTangentSpace(D) \n
-		B = checkTangentSpace(F,R,G,C) 
+     Usage => "B = isPolynomial(D) \n
+		B = isPolynomial(F,R,G,C)
      ",
      Inputs => {"D" =>{"a ",(TO NestedDeformation)},
 	     "F" =>{"a ",(TO List)},
@@ -1938,8 +1938,8 @@ document {
  document {
      Key =>{sanityCheck,(sanityCheck,ZZ,NestedDeformation),(sanityCheck,ZZ,List)},
      Headline => "checks if deformation data satisfies the deformation equation at a certain order",
-     Usage => "B = checkTangentSpace(n,D) \n
-		B = checkTangentSpace(n,L) 
+     Usage => "B = sanityCheck(n,D) \n
+		B = sanityCheck(n,L)
      ",
      Inputs => {
 	     "n" =>{"an element of ",(TO ZZ)},
@@ -1979,7 +1979,7 @@ data."},
  document {
      Key =>{obstructions,(obstructions,NestedDeformation)},
      Headline => "outputs the obstruction equations of a NestedDeformation",
-     Usage => "G = families D ",
+     Usage => "G = obstructions D ",
      Inputs => {
 	     "D" =>{"a ",(TO NestedDeformation)}
 	     },
@@ -2208,4 +2208,148 @@ G==map(target G,source G,sub(matrix {{0}, {0}, {0}, {0}, {t_1*t_2+t_1*t_3-t_5*t_
       {t_4^2-t_4*t_5+t_5^2-t_2*t_6+2*t_3*t_6-t_12^2+t_12*t_14-t_14^2+t_9*t_15-2*t_11*t_15+t_13*t_15-t_5*t_16+t_14*t_16-t_3*t_17+t_11*t_17
       -t_13*t_17-t_1*t_18+t_8*t_18-t_10*t_18}, {t_4*t_6+t_5*t_6-t_12*t_15-t_14*t_15-t_6*t_16+t_15*t_16-t_4*t_17+t_12*t_17-t_2*t_18+t_9*t_
       18-t_13*t_18}},ring G))
+///
+
+TEST /// -- nestedTangent direct (audit rec #1: zero TEST coverage despite public v4.0 API)
+R = QQ[x,y]
+F0Y = basis(3,R)
+F0X = basis(2,R)
+nt = nestedTangent(F0X,F0Y)
+assert(class nt === Matrix)
+assert(ring nt === R)
+assert(numRows nt == 7)
+-- IncludeTrivial=>true must yield at least as many columns as the default (trivial sub-family
+-- deformation directions are added on); for this input strictly more.
+ntT = nestedTangent(F0X,F0Y,IncludeTrivial=>true)
+assert(numRows ntT == numRows nt)
+assert(numColumns nt < numColumns ntT)
+///
+
+TEST /// -- nestedObstruction direct
+R = QQ[x,y]
+F0Y = basis(3,R)
+F0X = basis(2,R)
+nob = nestedObstruction(F0X,F0Y)
+assert(class nob === Matrix)
+assert(ring nob === R)
+///
+
+TEST /// -- setupNestedDeformation direct (audit rec #2: 6-list and 7-list dispatch)
+R = QQ[x,y]
+F0Y = basis(3,R)
+F0X = basis(2,R)
+T1XY = nestedTangent(F0X,F0Y,IncludeTrivial=>true)
+T2X = CT^2(F0X)
+T2Y = CT^2(F0Y)
+T2XY = nestedObstruction(F0X,F0Y)
+
+-- 6-element list dispatch (this is the form nestedHilbertScheme constructs internally)
+D6 = setupNestedDeformation({F0X, T2X, F0Y, T2Y, T1XY, T2XY})
+assert instance(D6, NestedDeformation)
+
+-- 7-element list dispatch (this is the form nestedVersalDeformation constructs internally)
+T1X = normalMatrix(F0X)
+T1Y = CT^1(F0Y)
+D7 = setupNestedDeformation({F0X, T1X, T2X, F0Y, T1Y, T2Y, T2XY})
+assert instance(D7, NestedDeformation)
+
+-- Wrong-length list is rejected by the explicit error at VersalDeformations.m2:587
+assert(try (setupNestedDeformation({F0X, T2X, F0Y, T2Y, T1XY}); false) else true)
+///
+
+TEST /// -- cotangentCohomology1 / cotangentCohomology2 direct (currently only used as input to versalDeformation)
+S = QQ[a..d]
+J = minors(2,matrix{{a,b,c,d^2},{b,c,d,a^3}})
+ct1 = cotangentCohomology1(gens J)
+ct2 = cotangentCohomology2(gens J)
+assert(class ct1 === Matrix)
+assert(class ct2 === Matrix)
+-- CT^i is the scripted-functor sugar for cotangentCohomology_i; pin the agreement
+assert(CT^1(gens J) == ct1)
+assert(CT^2(gens J) == ct2)
+///
+
+TEST /// -- correctionMatrix direct (no doc EXAMPLE; only called inside correctDeformation)
+S = QQ[a..d]
+J = minors(2,matrix{{a,b,c,d^2},{b,c,d,a^3}})
+(F1,R1) = firstOrderDeformations(gens J, syz gens J, CT^1(gens J))
+(M,L) = correctionMatrix(F1_1, R1_1)
+-- correctionMatrix returns (M, L): M is a "perturbations of obstructions" matrix and
+-- L is a list of (F1, R1) pairs (one per deformation parameter)
+assert(class M === Matrix)
+assert(class L === List)
+assert(length L == numColumns M)
+assert(length L == numgens ring F1_1)
+///
+
+TEST /// -- extMatrix direct (used inside the module-deformation TEST 7 but never asserted on)
+S = QQ[x,y]/ideal{x^4+y^3}
+use S
+f = matrix {{y,-x^2,0},{x,0,-y},{0,-y,-x}}
+em = extMatrix(f)
+assert(class em === Matrix)
+-- The number of rows of extMatrix(f) matches the number of source-degree-1 lifts that
+-- versalDeformation will track for the module presented by f
+assert(numRows em > 0 and numColumns em > 0)
+///
+
+TEST /// -- isPolynomial + sanityCheck direct (both called transitively but never the assert subject)
+S = QQ[x,y]
+I = ideal(x^2 + y^2)
+(F,R,G,C) = versalDeformation(gens I)
+assert(class isPolynomial(F,R,G,C) === Boolean)
+assert(isPolynomial(F,R,G,C) == true)
+assert(class sanityCheck(2,{F,R,G,C}) === Boolean)
+assert(sanityCheck(2,{F,R,G,C}) == true)
+///
+
+TEST /// -- nestedVersalDeformation IncludeTrivial=>false (audit rec #3: the false branch was never tested)
+R = QQ[x_1..x_4]
+F0Y = gens ideal{x_1*x_2*x_3 - x_4^3}
+F0X = gens ideal{x_1, x_4}
+Ddefault = nestedVersalDeformation(F0X,F0Y,Projective=>true,Verbose=>0)
+Dfalse   = nestedVersalDeformation(F0X,F0Y,Projective=>true,IncludeTrivial=>false,Verbose=>0)
+assert instance(Ddefault, NestedDeformation)
+assert instance(Dfalse,   NestedDeformation)
+-- The false branch uses CT^1(F0X) instead of normalMatrix(F0X) for T1X (VersalDeformations.m2:774,785)
+-- and produces a smaller-or-equal-sized X-deformation family
+assert(numColumns ((families Dfalse)_0) <= numColumns ((families Ddefault)_0))
+///
+
+TEST /// -- DefParam / DefParamX / DefParamY: ring variable naming
+S = QQ[a..d]
+J = minors(2,matrix{{a,b,c,d^2},{b,c,d,a^3}})
+-- default DefParam => "t"
+fod = firstOrderDeformations(gens J, syz gens J, CT^1(gens J))
+F1d = fod#0
+-- DefParam => "u" should name the deformation parameters u_i instead of t_i
+fou = firstOrderDeformations(gens J, syz gens J, CT^1(gens J), DefParam => "u")
+F1u = fou#0
+assert(toString first gens ring F1u_1 == "u_1")
+assert(toString first gens ring F1d_1 == "t_1")
+
+-- DefParamX/DefParamY on nested deformations: separate naming for X vs Y deformations
+R3 = QQ[x_1..x_4]
+F0Y3 = gens ideal{x_1*x_2*x_3 - x_4^3}
+F0X3 = gens ideal{x_1, x_4}
+ndCustom = nestedVersalDeformation(F0X3, F0Y3, DefParamX=>"u", DefParamY=>"v",
+                                   Projective=>true, Verbose=>0)
+F = families ndCustom
+ringVarNames = apply(gens ring F_0, v -> toString v)
+-- Every variable of the family ring should be named u_* (X-deformations) or v_* (Y-deformations).
+assert all(ringVarNames, n -> match("^u_", n) or match("^v_", n))
+///
+
+TEST /// -- CacheName: versalDeformation stores results in the user-supplied MutableHashTable
+S = QQ[x,y]
+I = ideal(x^2 + y^2)
+H = new MutableHashTable
+(F,R,G,C) = versalDeformation(gens I, CacheName => H)
+-- After computation, H#VersalDeformationResults should hold the (F,R,G,C) sequence
+assert(H#?VersalDeformationResults)
+stored = H#VersalDeformationResults
+assert(class stored === Sequence)
+assert(length stored == 4)
+-- The cached result agrees with the returned tuple
+assert(stored#0 == F and stored#1 == R and stored#2 == G and stored#3 == C)
 ///

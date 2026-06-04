@@ -625,8 +625,8 @@ symMatrix(eOdd,eEv)
 assert isHomogeneous c0
 assert isHomogeneous c1
 betti c0, betti c1
-all(n,i->eOdd_i*c1+c0*eOdd_i==0)
-all(n,i->eEv_i*c0+c1*eEv_i==0)
+assert(all(n,i->eOdd_i*c1+c0*eOdd_i==0))
+assert(all(n,i->eEv_i*c0+c1*eEv_i==0))
 assert(target eEv_0 == target c1)
 assert(target eOdd_0 == target c0)
 determ=det symMatrix(eOdd,eEv)
@@ -729,27 +729,22 @@ randomLineBundle(ZZ, RingElement) := (d,f) -> (
     )
 
 
-TEST///
---test of preRandomLineBundle and randomLineBundle
-restart
-load "PencilsOfQuadrics.m2"
-
-kk = ZZ/nextPrime(10^3)
-R = kk[ s,t]
-g = 3
-
+TEST///-*test of preRandomLineBundle and randomLineBundle*-
+setRandomSeed 0
+kk = ZZ/101
+R = kk[s,t]
+g = 1
 f = random(2*g+2, R)
-assert(dim ideal(jacobian ideal f)== 0)
- 
-d=random(ZZ)
-
-tally apply(100, i->(
-preLd=preRandomLineBundle(d,f);
-betti preLd.yAction))
-
-tally apply(100, i->(
-Ld=randomLineBundle(d,f);
-betti Ld.yAction))
+assert(dim ideal(jacobian ideal f) == 0)
+-- preRandomLineBundle(d,f) is a degree-d line bundle on the curve y^2-(-1)^g*f
+L2 = preRandomLineBundle(2,f)
+assert(class L2 === VectorBundleOnE)
+assert(degOnE L2 == 2)
+assert((L2.yAction)^2_(0,0) + (-1)^g*f == 0)
+assert(degOnE preRandomLineBundle(0,f) == 0)
+-- randomLineBundle(d,f) likewise produces a degree-d line bundle, more balanced
+assert(degOnE randomLineBundle(3,f) == 3)
+assert(degOnE randomLineBundle(0,f) == 0)
 ///
 
 
@@ -3764,6 +3759,86 @@ Y=X*M
 assert((eOdd_0*eEv_1+eOdd_1*eEv_0)_(0,0) == 2*R_1)
 assert all(eEv,e->isHomogeneous e)
 assert all(eOdd,e->isHomogeneous e)
+///
+
+TEST///-*test of randNicePencil and its RandomNicePencil accessors*-
+setRandomSeed 0
+rNP = randNicePencil(ZZ/101, 1)
+assert(class rNP === RandomNicePencil)
+-- the eight stored keys (baseRing reuses the Core symbol of that name)
+assert(sort apply(keys rNP, toString) ===
+    {"baseRing","isotropicSpace","matFact1","matFact2","matFactu1","matFactu2","qqRing","quadraticForm"})
+S = rNP.qqRing
+qq = rNP.quadraticForm
+assert(ring qq === S)
+assert(class rNP.baseRing === PolynomialRing)
+assert(class rNP.isotropicSpace === Matrix)
+-- matFact1, matFact2 are a matrix factorization of the pencil qq
+assert((rNP.matFact1 * rNP.matFact2) - qq ** id_(source rNP.matFact1) == 0)
+assert((rNP.matFact2 * rNP.matFact1) - qq ** id_(source rNP.matFact1) == 0)
+-- matFactu1, matFactu2 are the matrix factorization for the isotropic subspace
+assert((rNP.matFactu1 * rNP.matFactu2) - qq ** id_(source rNP.matFactu1) == 0)
+assert((rNP.matFactu2 * rNP.matFactu1) - qq ** id_(source rNP.matFactu1) == 0)
+///
+
+TEST///-*test of ciModuleToMatrixFactorization and ciModuleToCliffordModule*-
+setRandomSeed 0
+kk = ZZ/101
+U = kk[x_0..x_3]
+qq = random(U^1, U^{2:-2})
+Ubar = U/ideal qq
+M = coker vars Ubar
+-- ciModuleToMatrixFactorization returns a matrix factorization (e1,e0)
+(e1,e0) = ciModuleToMatrixFactorization M
+assert(isHomogeneous e0 and isHomogeneous e1)
+assert(source e0 == target e1)
+assert(0 == e0*e1 - diagonalMatrix(ring e0, apply(numcols e0, i -> (e0*e1)_0_0)))
+assert(0 == e1*e0 - diagonalMatrix(ring e1, apply(numcols e1, i -> (e1*e0)_0_0)))
+-- ciModuleToCliffordModule packages the same data as a CliffordModule
+C = ciModuleToCliffordModule M
+assert(class C === CliffordModule)
+assert(sort apply(keys C, toString) ===
+    {"evenCenter","evenOperators","hyperellipticBranchEquation","oddCenter","oddOperators","symmetricM"})
+assert(class C.symmetricM === Matrix)
+-- the branch equation is the determinant of the symmetric matrix symmetricM
+assert(det C.symmetricM == C.hyperellipticBranchEquation)
+///
+
+TEST///-*test of vectorBundleOnE, VectorBundleOnE and randomExtension*-
+setRandomSeed 0
+kk = ZZ/101
+R = kk[s,t]
+f = (s+2*t)*(s+t)*(s-t)*(s-2*t)
+-- a degree-0 line bundle, re-wrapped as a VectorBundleOnE
+L0 = randomLineBundle(0,f)
+V = vectorBundleOnE(L0.yAction)
+assert(class V === VectorBundleOnE)
+assert(V.yAction === L0.yAction)
+-- randomExtension produces a VectorBundleOnE whose degree on E is additive
+L1 = randomLineBundle(-1,f)
+E = randomExtension(L1,L0)
+assert(class E === VectorBundleOnE)
+assert(degOnE E == degOnE L1 + degOnE L0)
+-- the (Matrix,Matrix) overload returns the yAction matrix of such an extension
+E2 = randomExtension(L1.yAction, L0.yAction)
+assert(class E2 === Matrix)
+assert(degOnE vectorBundleOnE E2 == degOnE L1 + degOnE L0)
+///
+
+TEST///-*test of searchUlrich and LabBookProtocol*-
+setRandomSeed 0
+kk = ZZ/101
+(S,qq,R,u,M1,M2,Mu1,Mu2) = randomNicePencil(kk,1)
+Mu = cliffordModule(Mu1,Mu2,R)
+-- searchUlrich finds an Ulrich module: rank 2^(g+1) over S, with a linear presentation
+ulr = searchUlrich(Mu,S)
+assert(class ulr === Module)
+assert(ulr != 0)
+assert(ring ulr === S)
+assert(numgens target presentation ulr == 2^2)
+assert(isHomogeneous presentation ulr)
+-- LabBookProtocol is a printing-only helper; it returns null
+assert(LabBookProtocol 3 === null)
 ///
 
 end--

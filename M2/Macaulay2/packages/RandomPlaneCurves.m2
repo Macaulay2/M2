@@ -335,6 +335,30 @@ L=basis(5,R)
 C=imageUnderRationalMap(I,L);
 assert(dim C == 2 and genus C==0 and degree C == 5)
 ///
+
+-- Regression for completeLinearSystemOnNodalPlaneCurve, ported from the
+-- doc EXAMPLE. The function was previously only exercised in
+-- documentation, with no TEST asserting a concrete output.
+TEST ///
+setRandomSeed "alpha";
+R := ZZ/32003[x_0..x_2];
+J := (random nodalPlaneCurve)(6, 3, R);
+D := {J + ideal random(R^1, R^{1:-3}), J + ideal 1_R};
+l := completeLinearSystemOnNodalPlaneCurve(J, D);
+assert(class l === Sequence);
+assert(#l == 2);
+assert(class l_0 === Matrix);
+-- 12-dimensional linear system: degree-3 divisor on a genus-7 curve
+-- has h^0 = 12 in this regime (a sextic with 3 nodes is genus 7).
+assert(numgens source l_0 == 12);
+-- the image under that linear system is a degree-18 surface (in
+-- general; the embedding is not necessarily into the smallest space).
+C := imageUnderRationalMap(J, l_0);
+assert(dim C == 2);
+assert(degree C == 18);
+assert(genus C == 7);
+///
+
 end
 
 restart

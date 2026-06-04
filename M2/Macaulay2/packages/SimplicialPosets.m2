@@ -512,6 +512,78 @@ for i from 1 to N do(
     );
 ///
 
+------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: direct coverage
+-- for testFVector (the only export with no dedicated TEST in
+-- the existing suite), boundary cases for the classifiers on
+-- small boolean lattices, and stanleyPosetIdeal smoke +
+-- error-path tests.
+------------------------------------------------------------
+
+-- testFVector direct tests: checks Stanley's necessary conditions for a
+-- list to be the f-vector of a simplicial poset.  Positive, negative, and
+-- closure cases.
+TEST ///
+-- Positive cases: f-vectors that DO satisfy Stanley's conditions
+assert(testFVector {1})
+assert(testFVector {1,2,1})            -- f-vector of booleanLattice 2
+assert(testFVector {1,3,3,1})          -- f-vector of booleanLattice 3
+assert(testFVector {1,4,6,4,1})        -- f-vector of booleanLattice 4
+assert(testFVector {1,6,5,1})          -- the doc example
+assert(testFVector {1,3,3,7})          -- valid even with a large top entry
+-- Negative cases: must start with 1, and each entry >= binomial(n-1, i)
+assert(not testFVector {0})
+assert(not testFVector {2,3,4})        -- f#0 != 1
+assert(not testFVector {1,1,0})        -- f#1 = 1 < binomial(2,1) = 2
+-- Closure: getFVector of any simplicial poset returns a valid f-vector
+P = booleanLattice 3
+assert(testFVector getFVector P)
+Q = fromFVector {1,5,7,5,3}
+assert(testFVector getFVector Q)
+-- testFVector errors on an empty list (indexes fVec#0 out of bounds)
+assert(try (testFVector {}; false) else true)
+///
+
+-- Classifier boundary cases on small boolean lattices.  The empty boolean
+-- lattice and chain are well-defined edge cases.
+TEST ///
+-- booleanLattice 0 is the singleton poset
+P0 = booleanLattice 0
+assert(isBoolean P0)
+assert(isSimplicial P0)
+assert(getFVector P0 == {1})
+-- booleanLattice 1 is the 2-element chain (which IS a boolean lattice)
+P1 = booleanLattice 1
+assert(isBoolean P1)
+assert(isSimplicial P1)
+assert(getFVector P1 == {1,1})
+-- booleanLattice 2
+P2 = booleanLattice 2
+assert(isBoolean P2)
+assert(isSimplicial P2)
+assert(getFVector P2 == {1,2,1})
+-- chain 5 is neither boolean nor simplicial (it has length > 1 and is not
+-- a boolean lattice)
+C5 = chain 5
+assert(not isBoolean C5)
+assert(not isSimplicial C5)
+///
+
+-- stanleyPosetIdeal structural smoke test + error paths.  The deterministic
+-- case complements the 50 randomised tests already in the suite by pinning
+-- down structural invariants on a fixed input.
+TEST ///
+P = booleanLattice 3
+I = stanleyPosetIdeal P
+assert(class I === Ideal)
+-- ring has one variable per vertex of P
+assert(numgens ring I == #vertices P)
+-- stanleyPosetIdeal errors on a non-simplicial poset (chain of length > 1)
+assert(try (stanleyPosetIdeal chain 5; false) else true)
+-- fromFVector errors on an invalid f-vector
+assert(try (fromFVector {2,3,4}; false) else true)
+///
+
 
 end--
 

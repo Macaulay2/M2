@@ -939,13 +939,15 @@ substrfun(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("substring",substrfun);
 
-tostring(n:MysqlConnection):string := tostring(Ccode(constcharstarOrNull, "
+tostring(n:MysqlConnection):string := (
+    Ccode(void, "(void)", n);
+    tostring(Ccode(constcharstarOrNull, "
      #if WITH_MYSQL
        mysql_get_host_info(", n, ")
      #else
        \"not present\"
      #endif
-"));
+")));
 
 tostring(m:MysqlConnectionWrapper):string := (
      "<<MysqlConnection : " + ( when m.mysql is null do "closed" is n:MysqlConnection do tostring(n) ) + ">>"

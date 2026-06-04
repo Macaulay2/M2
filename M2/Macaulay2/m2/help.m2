@@ -409,11 +409,10 @@ getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     getOperator S)
 
 getLocation := tag -> if tag =!= null then (
-    pkg := package tag;
     docpos := locate tag;
     linepos := ":" | docpos#1 | ":" | docpos#2;
     docfile := toAbsolutePath docpos#0;
-    filename := replace(pkg#"source directory", "", docfile);
+    filename := replace(getpkgsrcdir tag.Package, "", docfile);
     HR{},
     DIV ( "class" => "waystouse",
     fixup PARA (
@@ -429,7 +428,9 @@ getLocation := tag -> if tag =!= null then (
 getOption := (rawdoc, tag) -> if rawdoc =!= null and rawdoc#?tag then rawdoc#tag
 
 headline = method(Dispatch => Thing)
-headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag key, Headline)
+headline Thing := key -> getOption(
+    fetchRawDocumentation(makeDocumentTag key,
+	LoadDocumentation => false), Headline)
 headline DocumentTag := tag -> (
     -- TODO: how can we make sure readPackage loads the correct package?
     if isPackageNode tag then (readPackage tag.Package).Headline

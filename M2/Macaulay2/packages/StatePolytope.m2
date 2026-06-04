@@ -144,7 +144,7 @@ I=ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 L= {{b*d, a*d, a*c}, {a*d, b*d, b^2}, {a*d^2, b*d, b*c, b^2}, {b*d, b^2, b*c,
      c^3}, {a*d, a*c, c^2}, {a^2*d, a*c, c^2, b*c}, {a*c, c^2, b*c, b^3}, {c^2,
      b*c, b^2}};
-assert(set initialIdeals(I) === set L)
+assert(set(set \ initialIdeals(I)) === set(set \ L))
 ///
      
 document {
@@ -248,6 +248,80 @@ J=ideal(a*b-c^2,a*b*c);
 assert(isStable(2,J) ==true)
 assert(isStable(3,J) ==true)
 assert(isStable(4,J) ==false)
+///
+
+------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: stress coverage
+-- for initialIdeals on monomial/principal/quadric inputs, a
+-- structural cross-check that the number of polymake state-
+-- polytope vertices matches the number of initial ideals,
+-- and structural assertions for isStable.
+------------------------------------------------------------
+
+-- initialIdeals stress: monomial ideals collapse to a single Groebner cone,
+-- a principal ideal in n variables has n distinct initial monomials, a
+-- conic has two, the doc example has two, and the returned monomials are
+-- always single-term polynomials in the input ring.
+TEST ///
+S = QQ[x,y,z]
+-- a monomial ideal has a unique Groebner basis
+Lmon = initialIdeals ideal(x^2, y^2, z^2)
+assert(class Lmon === List)
+assert(#Lmon == 1)
+assert(set first Lmon === set {x^2, y^2, z^2})
+-- a principal ideal in 3 variables has one initial ideal per leading monomial
+Lprin = initialIdeals ideal(x^2 + y^2 + z^2)
+assert(#Lprin == 3)
+assert(all(Lprin, l -> #l == 1))
+-- the conic u^2 = v*w has two initial ideals
+U = QQ[u,v,w]
+assert(set(set \ initialIdeals ideal(u^2 - v*w)) === set(set \ {{u^2}, {v*w}}))
+-- the doc example for initialIdeals at L134-137 evaluates to two initial ideals
+T = QQ[a,b]
+assert(set(set \ initialIdeals ideal(a^2+b^2, a*b)) === set(set \ {{a*b, a^2, b^3}, {a^3, a*b, b^2}}))
+-- ZZ/p coefficients work the same way
+P = ZZ/101[a,b,c]
+assert(class initialIdeals ideal(a*c - b^2) === List)
+-- structural: every returned element is a list of single-term polynomials
+-- (monomials) in the input ring -- check on the rational normal curve example.
+R = QQ[a..d]
+LL = initialIdeals ideal(a*c-b^2, a*d-b*c, b*d-c^2)
+assert(all(LL, l -> class l === List))
+assert(all(flatten LL, m -> #(exponents m) === 1))
+assert(all(flatten LL, m -> ring m === R))
+///
+
+-- Cross-check: the number of vertices of the state polytope equals the
+-- number of distinct initial ideals (= the number of Groebner cones) for
+-- the unbounded-m polymakeStatePolytope.  Each vertex is an integer vector
+-- of length numgens R.  The mth state polytope has at most as many vertices.
+TEST ///
+R = QQ[a..d]
+I = ideal(a*c-b^2, a*d-b*c, b*d-c^2)
+sp = polymakeStatePolytope I
+assert(class sp === List)
+assert(#sp == #initialIdeals I)
+assert(all(sp, v -> #v == numgens R))
+assert(all(sp, v -> all(v, c -> instance(c, ZZ))))
+sp3 = polymakeStatePolytope(3, I)
+assert(class sp3 === List)
+assert(#sp3 <= #sp)
+assert(all(sp3, v -> #v == numgens R))
+assert(all(sp3, v -> all(v, c -> instance(c, ZZ))))
+///
+
+-- isStable: structural complement to the existing assertions on the same
+-- example.  Each call returns a Boolean.
+TEST ///
+R = QQ[a..d]
+I = ideal(a*c-b^2, a*d-b*c, b*d-c^2)
+assert(class isStable(3, I) === Boolean)
+assert(class isStable(4, I) === Boolean)
+S = QQ[a..c]
+J = ideal(a*b-c^2, a*b*c)
+assert(class isStable(2, J) === Boolean)
+assert(class isStable(3, J) === Boolean)
+assert(class isStable(4, J) === Boolean)
 ///
 
 end

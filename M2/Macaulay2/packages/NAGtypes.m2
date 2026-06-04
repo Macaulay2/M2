@@ -233,6 +233,28 @@ p3 =  point {{.999,2.3+ii}}
 assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
 ///
 
+-- Cover several previously-untested accessor methods on PolySystem
+-- and helpers that previous TESTs did not exercise: numParameters,
+-- realPoints, toAffineChart, numericalVariety, numericalAffineSpace.
+TEST ///
+R := CC[x, y];
+F := polySystem {x^2 - 1, y - x};
+-- numParameters is zero for a vanilla PolySystem.
+assert(numParameters F == 0);
+assert(numVariables F == 2);
+assert(numFunctions F == 2);
+-- realPoints filters out non-real points.
+p1 := point {{1.0_CC, 2.0_CC}};
+p2 := point {{0.5_CC, 1.0_CC + 0.0001 * ii}};
+rp := realPoints {p1, p2};
+assert(#rp == 1);
+-- numericalAffineSpace and numericalVariety: trivial-input shape.
+assert(class numericalAffineSpace R === NumericalVariety);
+assert(class numericalVariety {} === NumericalVariety);
+-- toAffineChart on coordinates of a projective point.
+assert(toAffineChart(0, {1.0_CC, 2.0_CC, 0.5_CC}) == {2.0_CC, 0.5_CC});
+///
+
 load "./NAGtypes/PolyDualSpaces.m2"
 load "./NAGtypes/WSet-ambient.m2"
 load "./NAGtypes/WSet-proxy.m2"

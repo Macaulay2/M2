@@ -1552,6 +1552,39 @@ TEST ///
 			 ))));
 ///
 
+-- Direct test of gramm. gramm returns the Gram-Schmidt orthogonalization
+-- of the input column vectors as a (MutableMatrix, MutableHashTable)
+-- pair. Verify class shape and that the orthogonalized columns are
+-- pairwise orthogonal (Gram matrix is diagonal).
+TEST ///
+m := matrix {{1, 2, 3}, {4, 5, 6}, {7, 8, 10}};
+g := gramm m;
+assert(class g === Sequence);
+assert(#g == 2);
+assert(instance(g_0, MutableMatrix));
+assert(instance(g_1, MutableHashTable));
+B := matrix g_0;
+-- the first column should be unchanged (Gram-Schmidt fixes v_0).
+assert((entries transpose B)_0 == (entries transpose m)_0);
+-- A^T A must be diagonal: off-diagonal entries are zero.
+gramMat := (transpose B) * B;
+for i to 2 do
+    for j from i+1 to 2 do
+        assert(gramMat_(i, j) == 0);
+///
+
+-- Smoke-classes for the 8 precision/backend option symbols (NTL,
+-- Givens, BKZ, RealFP, RealQP, RealQP1, RealXD, RealRR). These are
+-- exported as symbols and used as Strategy values; previously none
+-- of them appeared in any live TEST.
+TEST ///
+for sym in {NTL, Givens, BKZ, RealFP, RealQP, RealQP1, RealXD, RealRR} do
+    assert(class sym === Symbol);
+-- and the option-value symbols are distinct (no accidental aliasing).
+syms := {NTL, Givens, BKZ, RealFP, RealQP, RealQP1, RealXD, RealRR};
+assert(#(set syms) == #syms);
+///
+
 end
 
 document { 

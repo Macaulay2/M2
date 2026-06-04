@@ -701,6 +701,7 @@ export {
 	"findHeft",
 	"findProgram",
 	"findSynonyms",
+	"finish",
 	"first",
 	"firstkey",
 	"fittingIdeal",

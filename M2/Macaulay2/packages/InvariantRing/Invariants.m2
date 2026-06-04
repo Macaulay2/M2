@@ -55,6 +55,21 @@ net RingOfInvariants := S -> (
     return n;
     )
 
+texMath RingOfInvariants := S -> (
+    G := gens S;
+    texString := (texMath coefficientRing ambient S);
+    if #G != 0 then (
+	texString |= "\\left[" |
+	concatenate mingle(apply(G, g -> texMath g),toList(#G-1:", ")) | "\\right]";
+	);
+    if not zero ideal ambient S then (
+	L := (ideal ambient S)_*;
+	texString |= " / \\left(" |
+	concatenate mingle(apply(L, l -> texMath l),toList(#L-1:", ")) | "\\right)";
+	);
+    texString
+    )
+
 action = method()
 
 action RingOfInvariants := GroupAction => S -> S.action
@@ -117,18 +132,19 @@ reynoldsOperator (RingElement, DiagonalAction) := RingElement => (f, D) -> sum s
 --- Elementary Invariants Methods ---------
 -------------------------------------------
 
-
+-*
 -->-- Function: seedMinimal --<--
+-- auxiliary unexported function for elementaryInvariants
 -- Checks if a given candidate is minimal given the list of seeds, starting at the index, "startIndex"
 --> INPUT:   
---           Seeds      : List[List[ZZ]] › A list of current seeds that are invariant
---           Candidate  : List[ZZ]       › A seed that may be added to the Seeds list
---           startIndex : ZZ             › The index in the Seeds list that you want to start minimizing from
+--    Seeds      : List[List[ZZ]] › A list of current seeds that are invariant
+--    Candidate  : List[ZZ]       › A seed that may be added to the Seeds list
+--    startIndex : ZZ             › The index in the Seeds list that you want to start minimizing from
 --> OUTPUT: 
---           Returns ({-1} | candidate) if our candidate is minimal.
---           Returns {-2} if our candidate is not minimal.
---           Returns ({-3, index}) if a seed is not minimal, with the index of the seed. 
---           Returns ({-4, index} | newSeed) if our candidate helps reduce a seed. 
+--    Returns ({-1} | candidate) if our candidate is minimal.
+--    Returns {-2} if our candidate is not minimal.
+--    Returns ({-3, index}) if a seed is not minimal, with the index of the seed. 
+--    Returns ({-4, index} | newSeed) if our candidate helps reduce a seed. 
 seedMinimal := (Seeds, candidate, startIndex) -> (
 	i := startIndex;
 	numSeeds := #Seeds;
@@ -169,150 +185,116 @@ seedMinimal := (Seeds, candidate, startIndex) -> (
 	);
 	return {-1, 0} | candidate ;
 )
+*-
 
 -->--elementaryInvariants function--<--
+-- unexported, called with invariants(D,Strategy=>"Elementary");
 --> INPUT:  D (a diagonalAction)
 --> OUTPUT: L (a list of invariants)
 elementaryInvariants := D -> (
-	---------------------
-	-- Seed Generation --
-	---------------------
+    ---------------------
+    -- Seed Generation --
+    ---------------------
 
-	-->- Grab our variables W, R, Z from D -<--
-	W := D.weights_1;
-	
-	R := ring D;
-	Z := (D.cyclicFactors)#0;
+    -->- Grab our variables W, R, Z from D -<--
+    W := D.weights_1;
+    R := ring D;
+    Z := (D.cyclicFactors)#0;
 
-	-->- Find our m and n from the weight matrix -<--
-	n := numColumns W; m := numRows W;
+    -->- Find our m and n from the weight matrix -<--
+    n := numColumns W; m := numRows W;
 
-	-->- STEP 1 -<--
-	-->- Now, we find a n x n submatrix of W with nonzero determinant --<-
-	nonZeroSM := matrix{{0}};           -- Start with an empty submatrix (SM stands for submatrix)
-	colList := {};                       -- This empty list will track the columns we don't use for the submatrix
-	for i from 0 to (n - m) do (                 -- Iterate from 0 to n - m (we don't want our matrix out of bounds)
-		candidateSM := submatrix(W, toList(i .. i+m-1));
-		if (determinant candidateSM != 0) then (
-			nonZeroSM = candidateSM;    -- If candidateSM has nonzero determinant, it is now our nonZero det submatrix
-			colList = toList(0 .. i-1) | toList(i+m .. n-1); -- Grabs the columns we didn't use. 
-			break;                      -- ends the loop
-		)
+    -->- STEP 1 -<--
+    -->- Now, we find a n x n submatrix of W with maximal rank --<-
+    -- compute RREF of weight matrix
+    rref := reducedRowEchelonForm promote(W,QQ);
+    -- find columns containing pivots, remove nulls from zero rows
+    pivs := delete(null, apply(entries rref, r -> position(r, i -> i == 1)) );
+    nonZeroSM := submatrix(W,pivs); -- the submatrix
+    colList := toList( set(0..n-1) - set(pivs) ); -- columns without pivots
+
+    -->- STEP 2 -<--
+    -- Creates a list for the seed invariants in exponent vec form
+    -- Iterates through all columns we didn't use for nonZeroSM
+    seedList := for v in colList list (
+	-- Matrix we extract the seed invariant from (where W_v is our additional vector)
+	seedMatrix      := nonZeroSM | matrix(W_v);
+	colsInSM        := pivs | {v};
+	-- Current seed invariant we are calculating
+	-- This loops lets us remove one of the columns from the matrix to calculate the plücker
+	seedInvariant := for i from 0 to m list (
+	    pluckerMatrix   := submatrix'(seedMatrix, {i});  -- Find plucker matrix
+	    colInW          := colsInSM#i;                   -- W-column corresponding to this seedMatrix col
+	    e               := for j from 0 to n-1 list (if j == colInW then 1 else 0);        
+	    (-1)^i * determinant(pluckerMatrix) * e
+	    );
+	sum seedInvariant -- Adds the summed seed invariant vec to our list
+	);
+    -- Now, seedList contains our list of seed Invariants, so we move onto expansion.
+
+    --------------------
+    -- Seed Expansion --
+    --------------------
+    ringVars := gens R;
+
+    -- our seeds are a Z basis 
+    seedList = for l in seedList list apply(l, x -> ((x % Z) + Z) % Z); --mod p
+    p := Z;                              
+    t := #seedList;                      
+    olsonBound := m * (p - 1) + 1;       
+    divides := (b, a) -> all(#a, j -> b#j <= a#j);
+
+    --> enumerate (c_1,...,c_t) in \ZZ/p\ZZ --
+    -- I use flatten to remove the {} entries because the vec are stored in {} too so it prunes it
+    candidates := flatten for i from 1 to p^t - 1 list (
+	-- Turn the integer into a vector 
+	c := for j from 0 to t - 1 list ((i // p^j) % p);
+	cand := for k from 0 to n - 1 list (
+	    -- sum over seeds component-wise with weights in c then mod p
+	    (sum for j from 0 to t - 1 list (c#j) * (seedList#j#k)) % p
+	    );
+	deg := sum cand;
+	-- check Olson's bound
+	if deg > 0 and deg <= olsonBound then {cand} else {}
 	);
 
-	-->- Return error if this submatrix doesn't exist --<--
-	-- Fred G: April 26, 2027; currently the Elementary strategy can only be called
-	-- if the weight matrix has maximal rank, which guarantees the existence of an
-	-- n x n submatrix with nonzero determinant, so this error is never triggered
-	-- I chose to add the maximal rank condition because the default strategy
-	-- Derksen-Gandini returns a result even when the matrix does not have maximal
-	-- rank, so this error created inconsistent outputs
-	-- Francesca suggests row-reducing the matrix then removing zero rows to ensure
-	-- we always have a matrix with maximal rank; this is okay mathematically because
-	-- the invariant rings are isomorphic, but technically it changes the action.
-	-- There is also the issue that row-reducing requires moving to QQ instead of ZZ
-	-- which may introduce denominators, so we would have to deal with that.
-	-- All of this could be considered for a later update.
-	if (nonZeroSM == matrix{{0}}) then (
-		error ("Non-zero submatrix of this weight matrix could not be found.\n");
-		return {};
+    -- seeds might be above Olson's bound
+    candidates = candidates | seedList;
+
+    --> Then we add the pure powers to the list, checking if they are minimal via our purePowers list.
+    candidates = candidates | for i from 0 to #ringVars - 1 list (
+	for j from 0 to #ringVars - 1 list (if i == j then p else 0)
+	);
+    
+    -- make minimal
+    -- remove duplicates
+    candidates = unique candidates;
+
+    -- makes {2, 1, 4} into {7, {2, 1, 4}} so we can sort by degree sum
+    candidates = apply(candidates, a -> {sum a, a});
+
+    -- sorts it by degree sum
+    candidates = sort candidates;
+
+    -- {7, {2, 1, 4}} back into {2, 1, 4}
+    candidates = apply(candidates, q -> q#1);
+
+    -- Now we sorted by degree sum, we check if they divide (divides function checks an inequality)
+    -- seed list is grown seeds
+    seedList = new MutableList from {};
+    for a in candidates do (
+	-- if no seeds in the list divide our candidate then its a valid seed so we add it
+	if not any(#seedList, i -> divides(seedList#i, a)) then seedList#(#seedList) = a;
 	);
 
-	-->- STEP 2 -<--
-	seedList := {};		                     	-- Creates a list for the seed invariants in exponent vec form
-
-	for v in colList do (                   	-- Iterates through all columns we didn't use for nonZeroSM
-		seedInvariant       := {};              -- Current seed invariant we are calculating
-		seedMatrix      := nonZeroSM | matrix(W_v);		-- Matrix we extract the seed invariant from (where W_v is our additional vector)
-		signFlip        := 1;
-		for i from 0 to m do (                 -- This loops lets us remove one of the columns from the matrix to calculate the plücker
-			pluckerMatrix   := submatrix(seedMatrix, toList(0 .. i -1) | toList (i + 1 .. m));  -- Find plucker matrix
-			e               := for j from 0 to n-1 list (if j == i then 1 else 0);              -- Standard basis vector
-			seedInvariant   = seedInvariant | {signFlip * determinant(pluckerMatrix) * e};      -- Calculate vector
-			signFlip        = signFlip * -1;     -- Flip the sign after each iteration.
-		);
-		seedList = seedList | {sum seedInvariant} -- Adds the summed seed invariant vec to our list
+    -->-- Now, we turn each of the exponent vectors into their polynomials in the ring. --<--
+    polyList := for i in toList seedList list (
+	n := 1;
+	for j to #i - 1 do (n = n * (((ringVars)#j)^(i#j)));
+	n
 	);
-
-	-- Now, seedList contains our list of seed Invariants, so we move onto expansion.
-
-	--------------------
-	-- Seed Expansion --
-	--------------------
-	ringVars    := gens R;            -- So we don't need to call "gens" each time we need the variables of the ring
-	seedList    = for l in seedList list apply(l, x -> ((x % Z) + Z) % Z); -- Mods our seeds out by Z
-	trashList   := {0} | seedList;    -- List to keep track of duplicate invariants
-	purePowers := apply(#ringVars, i -> 0);	-- List to keep track of pure powers.
-	powerIndex := null; -- added by FG to fix unexported symbol error
-	
-
-	--> Starting with seed expansion <--
-	-- Note that the "drop" function is used in combination with the seedminimal function in this loop.
-	-- This is because seed minimal appends a "result" and "index" value to the beginning of a seed.
-	-- Thus by saying drop(candidate, 2), we get rid of those information values. 
-	for s when s < #seedList do (		-- We use a "when" loop here because size of newList will change
-		startingSeed := seedList#s;
-		for k to #seedList - 1 do (		-- We can use a static loop here because we won't add any elements in here. 
-			for p from 1 to (Z - 1) do (
-				candidateSeed := (seedList#k) * p;					-- Put our seed to the power of p.
-				candidateSeed = (startingSeed + candidateSeed) % Z;	-- Multiply two seeds & mod out by Z.
-				if (not all(candidateSeed, i -> i == 0) and not any(trashList, t -> (candidateSeed == {t}))) then (
-					minimality := seedMinimal(seedList, candidateSeed, 0);
-					result := minimality#0;
-					-- If result = -3 or -4, that means one of our seeds was not minimal given our candidate
-					while (result == -3 or result == -4) do (		-- So we must loop to sort out the seeds and get our candidate & seeds minimized
-						editIndex := minimality#1;					-- minimality#2 holds the index of the seed we need to adjust.
-						if (result == -3) then (					-- {-3} -> Our seed is not minimal, so we must remove it.
-							seedList = take(seedList, editIndex) | drop(seedList, editIndex+1);
-						)
-						else if (result == -4) then (				-- {-4} -> We found a reduction for our seed, so we must replace the old one. 
-							newSeed := drop(minimality, 2);
-							seedList = replace(editIndex, newSeed, seedList); -- Replace our old seed with the new one.
-							if (number(newSeed, e -> e != 0) == 1) then ( -- Check if our seed is a pure power of some kind. 
-								powerIndex = position(newSeed, e -> e != 0);
-								purePowers = replace(powerIndex, newSeed#powerIndex, purePowers);
-							);
-							
-						);
-						--> Then we call our seedMinimal function again, this time starting from the editIndex to save time.
-						minimality = seedMinimal(seedList, candidateSeed, editIndex+1);
-						result = minimality#0;
-					);
-					
-					if (result == -1) then (	-- If our candidate is minimal, we add it to the seed list. 
-						newCandSeed := drop(minimality, 2);
-						candidateSeed = newCandSeed;
-						if (number(newCandSeed, e -> e != 0) == 1) then ( -- check if seed is pure power of some kind
-							powerIndex = position(newCandSeed, e -> e != 0);
-							if (powerIndex =!= null and powerIndex < #purePowers) then (
-								purePowers = replace(powerIndex, newCandSeed#powerIndex, purePowers);
-							);
-						);
-						seedList = append(seedList, newCandSeed);	-- Add our seed to the list. 
-					);
-					-- If our result is -2, we do nothing because our candidate is bunk.
-				);
-				trashList = append(trashList, candidateSeed)  -- Always add our candidate to the trashList for efficiency.
-			);
-		);
-	);
-
-	--> Then we add the pure powers to the list, checking if they are minimal via. our purePowers list.
-	for i from 0 to (#ringVars - 1) do (
-		if (Z % (purePowers#i) != 0 ) then (
-			seedList = seedList | {for k to (#ringVars - 1) list (if i == k then Z else 0)};
-		);
-	);
-
-	-->-- Now, we turn each of the exponent vectors into their polynomials in the ring. --<--
-	polyList := {};
-	for i in seedList do (
-		n := 1;
-		for j to #i - 1 do (n = n * (((ringVars)#j)^(i#j)));
-		polyList = polyList | {n};
-	);
-	
-	return polyList; -- Return our list
+    
+    return polyList; -- Return our list
 )
 
 -------------------------------------------
@@ -332,14 +314,14 @@ invariants = method(Options => {
 invariants DiagonalAction := List => o -> D -> (
     d := cyclicFactors D;
     (W1, W2) := weights D;
-    -- As of April 2026, the elementary generation method is when
-    -- called by the user with Strategy=>"Elementary", as long as:
+    -- As of May 2026, the elementary generation method is default, as long as:
     -- i) there is no torus action: zero(W1)
     -- ii) there are cyclic factors: d =!= {}
     -- iii) all cyclic factors have the same order: all(d, i -> d#0 == i)
     -- iv) the weight matrix has maximal rank: rank W2 == min(numRows W2,numColumns W2)
-    if (o.Strategy === "Elementary") and
-    zero(W1) and d =!= {} and all(d, i -> d#0 == i)
+    -- the old strategy can be used with the option Strategy=>"DerksenGandini"
+    if (o.Strategy =!= "DerksenGandini") and
+    zero(W1) and d =!= {} and isPrime d#0 and all(d, i -> d#0 == i)
     and rank W2 == min(numRows W2,numColumns W2)
     then (
 	return elementaryInvariants D;
@@ -359,7 +341,6 @@ invariants DiagonalAction := List => o -> D -> (
             return invariants D';
         )
     );
-    R = kk[R_*, MonomialOrder => GLex];
     g := numgens D;
     n := dim D;
     mons := R_*;
@@ -403,33 +384,39 @@ invariants DiagonalAction := List => o -> D -> (
         C = transpose C_(apply(r, i -> i));
         C = apply(numColumns C, j -> C_j)
     );
+    -- sort elements of convex hull to ensure consistency across sources
+    -- vectors are turned to lists for sorting, then back to vectors
+    C = apply(sort apply(C,entries), vector);
+    -- begin Derksen's algorithm for tori
     S = new MutableHashTable from apply(C, w -> w => {});
     scan(#mons, i -> S#(W1_i) = S#(W1_i)|{mons#i});
     U = new MutableHashTable from S;
-    nonemptyU := select(keys U, w -> #(U#w) > 0);
-        while  #nonemptyU > 0 do(
-        v = first nonemptyU;
-        m = first (U#v);
-        
-        scan(#mons, i -> (
-            u := m*mons#i;
-            v' := v + W1_i;
-            if ((U#?v') and all(S#v', m' -> (
-                if u%m' =!= 0_R then true
-                else if g > 0 then (
-                    m'' := u//m';
-                    v'' := reduceWeight(W2*(vector first exponents m''));
-                    v'' =!= 0_(ZZ^g)
-                )
-                else false
-            ))) then ( 
-                S#v' = S#v'|{u};
-                U#v' = U#v'|{u};
-            )
-        ));
-        U#v = delete(m, U#v);
-        nonemptyU = select(keys U, w -> #(U#w) > 0)
-    );
+    while any(values U, u -> #u > 0) do(
+	-- Derksen does not specify which key vector to pick
+	-- for consistency, pick first available from convex hull
+	v = first select(1,C, w -> #(U#w) > 0);
+	-- Derksen does not specify which monomial to pick
+	-- min seems to be the right one for minimal invariants
+	m = min (U#v);
+    
+	scan(#mons, i -> (
+		u := m*mons#i;
+		v' := v + W1_i;
+		if ((U#?v') and all(S#v', m' -> (
+			    if u%m' =!= 0_R then true
+			    else if g > 0 then (
+				m'' := u//m';
+				v'' := reduceWeight(W2*(vector first exponents m''));
+				v'' =!= 0_(ZZ^g)
+				)
+			    else false
+			    ))) then ( 
+		    S#v' = S#v'|{u};
+		    U#v' = U#v'|{u};
+		    )
+		));
+	U#v = delete(m, U#v);
+	);
     
     if S#?(0_(ZZ^r)) then mons = S#(0_(ZZ^r)) else mons = {};
     return apply(mons, m -> sub(m, ring D) )

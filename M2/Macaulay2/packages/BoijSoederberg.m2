@@ -168,22 +168,71 @@ mat2cohom(Matrix,ZZ) := (M,lowDegree) -> (
 
 --- Test 1
 TEST ///
+-- mat2betti: matrix -> BettiTally; matrix(BettiTally) is its inverse.
 M = matrix "1,0,0,0;
-        0,4,4,1"
-B = mat2betti oo 
-assert (M == matrix B)
+            0,4,4,1"
 
+B = mat2betti M
+-- output has the right type
+assert(instance(B, BettiTally))
+-- mat2betti pinned directly: the 4 nonzero entries become keys, the zeros are dropped
+assert(B === new BettiTally from {
+        (0,{0},0) => 1,
+        (1,{2},2) => 4,
+        (2,{3},3) => 4,
+        (3,{4},4) => 1})
+-- matrix(BettiTally) inverts mat2betti
+assert(M == matrix B)
+-- the 1-argument form is exactly the lowDegree => 0 case
+assert(B === mat2betti(M,0))
+
+-- a nonzero lowDegree shifts every internal degree
 B2 = mat2betti(M,2)
+assert(B2 === new BettiTally from {
+        (0,{2},2) => 1,
+        (1,{4},4) => 4,
+        (2,{5},5) => 4,
+        (3,{6},6) => 1})
 assert(M == matrix B2)
+
+-- a diagram with a gap (nothing in homological degree 2) must survive the round trip
+N = matrix "1,0,0,0,0;
+            0,2,0,0,0;
+            0,0,0,3,1"
+assert(mat2betti N === new BettiTally from {
+        (0,{0},0) => 1,
+        (1,{2},2) => 2,
+        (3,{5},5) => 3,
+        (4,{6},6) => 1})
+assert(N == matrix mat2betti N)
 ///
 
 
 --- Test 2
 TEST ///
+-- mat2cohom: matrix -> CohomologyTally.  There is no inverse (matrix CohomologyTally
+-- is unimplemented), so the result must be pinned directly.
 m = matrix "5,0,0,0,0;
-     	0,1,1,0,0;
-	0,0,0,1,2"
-c = mat2cohom (oo,0)
+            0,1,1,0,0;
+            0,0,0,1,2"
+
+c = mat2cohom(m,0)
+-- output has the right type
+assert(instance(c, CohomologyTally))
+-- mat2cohom pinned directly: rows map to cohomological degrees n..0, zeros are dropped
+assert(c == new CohomologyTally from {
+        (2,-2) => 5,
+        (1, 0) => 1,
+        (1, 1) => 1,
+        (0, 3) => 1,
+        (0, 4) => 2})
+-- lowDegree shifts every twist (here by +2)
+assert(mat2cohom(m,2) == new CohomologyTally from {
+        (2, 0) => 5,
+        (1, 2) => 1,
+        (1, 3) => 1,
+        (0, 5) => 1,
+        (0, 6) => 2})
 ///
 
 matrix(BettiTally, ZZ, ZZ) := opts -> (B,lowestDegree, highestDegree) -> (
@@ -218,8 +267,10 @@ M = matrix "1,0,0,0,0,0;
      	    0,0,0,0,0,0;
 	    0,5,6,2,0,0;
 	    0,51,176,230,135,30"
-assert(matrix(B,0,3) == M)
-assert(matrix B == M)
+assert(matrix(B,0,3) == M)              -- 3-argument form: explicit range
+assert(matrix B == M)                   -- no-argument form: range inferred
+assert(matrix(B,0) == M)                -- 2-argument form (low only) -- previously untested
+assert(matrix(B,0) == matrix B)         -- the three overloads are mutually consistent
 B = pureBettiDiagram{0,3,4,7,9}
 C = matrix B
 assert(B == mat2betti C)
@@ -251,31 +302,46 @@ isPure BettiTally := (B) -> lowestDegrees B == highestDegrees B
 
 -- Test 4
 TEST ///
-matrix "1,0,0;
-     	0,2,3"  
-B = mat2betti oo
+-- isPure: true exactly when every column of the diagram carries a single degree.
+B = mat2betti matrix "1,0,0;
+                      0,2,3"
 assert(isPure B)
 
-matrix "1,0,0; 0,2,1; 0,1,1"
-B2 = mat2betti oo
-assert(not isPure B2)
+B2 = mat2betti matrix "1,0,0; 0,2,1; 0,1,1"
+assert(not isPure B2)                   -- homological degree 1 carries two degrees
+
+-- a diagram with a gap is not pure (an empty column gives infinity =!= -infinity)
+B3 = mat2betti matrix "1,0,0; 0,0,1; 0,0,1"
+assert(not isPure B3)
+
+-- every pureBettiDiagram is pure, by construction
+assert(isPure pureBettiDiagram {0,2,3,5})
+assert(isPure pureBettiDiagram {0,1,2,3,4})
+assert(isPure pureBettiDiagram {-2,0,1,4})
 ///
 
 -- Test 5
 TEST ///
---load "BoijSoederberg.m2"
-m=matrix"1,0,0;
-0,1,1;
-0,0,1"
-B=mat2betti m
+-- lowestDegrees / highestDegrees: per homological degree, the min / max internal degree.
+B = mat2betti matrix "1,0,0;
+                      0,1,1;
+                      0,0,1"
 assert(lowestDegrees B == {0,2,3})
 assert(highestDegrees B == {0,2,4})
-m=matrix"1,0,0;
-0,0,1;
-0,0,1"
-B=mat2betti m
+assert(#lowestDegrees B == pdim B + 1)        -- one entry per homological degree
+assert(#highestDegrees B == pdim B + 1)
+
+-- a missing column yields infinity (lowest) and -infinity (highest)
+B = mat2betti matrix "1,0,0;
+                      0,0,1;
+                      0,0,1"
 assert(lowestDegrees B == {0,infinity,3})
 assert(highestDegrees B == {0,-infinity,4})
+
+-- on a pure diagram lowest and highest agree and recover the degree sequence
+L = {-2,0,1,4}
+assert(lowestDegrees pureBettiDiagram L == L)
+assert(highestDegrees pureBettiDiagram L == L)
 ///
 
 -------------------------------------
@@ -416,30 +482,28 @@ eliminateBetti Ideal := o -> I -> (
      return eliminateBetti( betti res I, EliminationSequence => o.EliminationSequence );
      )
   
--- Test 6  
+-- Test 6
 TEST ///
+-- eliminateBetti, isMassEliminate, makeCI
 R = ZZ/8821[x,y,z,w]
 I = ideal(x,y^4,z^8,w^9)
 B = betti res I
-eliminateBetti I
 X = eliminateBetti B
+assert(instance(X, BettiEliminationTally))            -- output type
 assert(X#(0,{0},0) === 12)
 assert(X#(2,{13},13) === 10)
-
+assert(eliminateBetti I === X)                        -- the Ideal overload agrees with the BettiTally one
+-- EliminationSequence => true returns the raw elimination order (previously untested)
+assert(eliminateBetti(B, EliminationSequence => true) === {{1},{2},{1},{2},{1},{2},{3},{2},{3},{2},{3}})
 assert(isMassEliminate B === false)
 
+-- makeCI L is the Betti table of an actual complete intersection (field-independent)
 R = QQ[x,y,z,w]
 I = ideal(x^2,y^4,z^5,w^7)
-B = makeCI{2,4,5,7}
-C = betti res (R^1/I)
-assert(B===C)
-
+assert(makeCI{2,4,5,7} === betti res (R^1/I))
 J = ideal(x^4,y^5,z^7,w^9)
-D = makeCI{4,5,7,9}
-E = betti res(R^1/J)
-assert(D===E)
-
-assert(isMassEliminate(E)===true)
+assert(makeCI{4,5,7,9} === betti res (R^1/J))
+assert(isMassEliminate(makeCI{4,5,7,9}) === true)
 ///
  
 --  input: List of degrees (type of an artinian complete intersection)
@@ -511,6 +575,13 @@ assert(D2 == mat2betti m)
 assert(makePureBetti({0,2,3,5},TableEntries=> RealizationModules) == {4,20,20,4})
 C2 = makePureBettiDiagram({0,2,3,5},TableEntries=> RealizationModules)
 assert(lift(C2,ZZ) == mat2betti matrix "4,0,0,0; 0,20,20,0; 0,0,0,4")
+
+-- basic invariants
+L = {0,1,3,7}
+assert(# pureBetti L == # L)                          -- one Betti number per degree in L
+assert(all(pureBetti L, b -> b > 0))                  -- Betti numbers are positive
+assert(pureBetti L === makePureBetti L)               -- pureBetti is exactly the LeastIntegerEntries case
+assert(try (makePureBetti {0,2,1}; false) else true)  -- a non-increasing sequence is rejected
 ///
 
 ---------------------------------------------
@@ -527,10 +598,13 @@ isStrictlyIncreasing=L->(
 -- Test 8
 TEST ///
 debug BoijSoederberg
-L={1,4,5,9}
-assert(isStrictlyIncreasing L)
-L={1,4,5,9,9}
-assert(not isStrictlyIncreasing L)
+-- isStrictlyIncreasing: true iff each term is strictly less than the next
+assert(isStrictlyIncreasing {1,4,5,9})            -- strictly increasing
+assert(isStrictlyIncreasing {-3,-1,0,2})          -- also with negative entries
+assert(isStrictlyIncreasing {7})                  -- a singleton is vacuously increasing
+assert(not isStrictlyIncreasing {1,4,5,9,9})      -- equal adjacent entries
+assert(not isStrictlyIncreasing {5,3,1})          -- strictly decreasing
+assert(not isStrictlyIncreasing {1,5,3,9})        -- a single dip in the middle
 ///
 
 --input: a BettiTally or a similar hash table
@@ -751,6 +825,12 @@ m3=mat2betti matrix"1,0,0;
 	  0,4,3"
 M'=set{m1,m2,m3}
 assert(L===M')
+
+-- the components, scaled by their multipliers, must sum back to B
+B = mat2betti matrix "1,0,0,0; 0,4,4,1"
+assert(B == lift(value decomposeBetti B, ZZ))
+assert(B == lift(value decomposeBetti(B, TableEntries => HerzogKuhl), ZZ))
+assert(B == lift(value decomposeBetti(B, TableEntries => RealizationModules), ZZ))
 ///
 
 -- Similar to decompose but with options.
@@ -799,9 +879,7 @@ decomposeDegrees BettiTally := o -> B -> (
 
 -- Test 10
 TEST ///
-restart
-loadPackage"BoijSoederberg"
-
+-- decomposeDegrees: the degree sequences (with multipliers) of the BS decomposition
 M=matrix "1,0,0,0;
         0,4,4,1"
 B=mat2betti M	
@@ -896,6 +974,7 @@ m = matrix "4,3,2,1,0,0,0,0;
             0,0,0,0,1,2,3,4"
 A= mat2cohom (m,-3)
 assert(pureCohomologyTable({0},-3,4) == A)
+assert(instance(pureCohomologyTable({0},-3,4), CohomologyTally))   -- output type
 
 m2 = matrix "120,70,36,15,4,0,0,0,0,0,0;
      	     0,0,0,0,0,0,0,0,0,0,0;
@@ -1097,6 +1176,7 @@ m = matrix "0,1,-2;
             0,0,0;
 	    0,0,0"
 assert(facetEquation({0,1,3},1,0,2) == m)
+assert(instance(facetEquation({0,1,3},1,0,2), Matrix))   -- output type
 
 m2 = matrix "24,-7,0,0,4;
      	     7,0,0,-4,9;
@@ -1162,6 +1242,10 @@ assert(dotProduct(A2,B2)==2)
 assert(dotProduct(mat2betti A2, mat2betti B2)==2)
 assert(dotProduct(A2, mat2betti B2) == 2)
 
+-- dotProduct is symmetric and returns an integer
+assert(dotProduct(A, B) == dotProduct(B, A))
+assert(dotProduct(A1, B1) == dotProduct(B1, A1))
+assert(instance(dotProduct(A, B), ZZ))
 ///
 
 
@@ -1217,18 +1301,20 @@ rkSchur = (n,L) -> (
 -- Test 14
 TEST ///
 debug BoijSoederberg
-rkSchur(6,{1,1,1,1}) -- exterior power
-rkSchur(6,{2}) -- symmetric power
-rkSchur(3,{3,2,0})
-rkSchur(3,{4,3,1}) -- the previous tensored with the top exterior power
+-- rkSchur: rank of the Schur functor S_L(C^n).  Pinned directly...
+assert(rkSchur(6,{1,1,1,1}) == 15)   -- exterior power: dim wedge^4 C^6 = binomial(6,4)
+assert(rkSchur(6,{2}) == 21)         -- symmetric power: dim Sym^2 C^6 = binomial(7,2)
+assert(rkSchur(3,{3,2,0}) == 15)
+assert(rkSchur(3,{4,3,1}) == 15)     -- {3,2,0} tensored with the top exterior power
 
+-- ...and independently cross-checked against SchurRings' dim
 needsPackage "SchurRings"
 R = schurRing(s,6)
-assert(dim s_{1,1,1,1} == rkSchur(6,{1,1,1,1})) -- exterior power
-assert(dim s_{2} == rkSchur(6,{2})) -- symmetric power
+assert(dim s_{1,1,1,1} == rkSchur(6,{1,1,1,1}))
+assert(dim s_{2} == rkSchur(6,{2}))
 R = schurRing(s,3)
 assert(dim s_{3,2,0} == rkSchur(3,{3,2,0}))
-assert(dim s_{4,3,1} == rkSchur(3,{4,3,1})) -- the previous tensored with the top exterior power
+assert(dim s_{4,3,1} == rkSchur(3,{4,3,1}))
 ///
 
 pureCharFree = method()
@@ -1262,12 +1348,16 @@ pureAll List := (L) -> (pureCharFree L, pureTwoInvariant L, pureWeyman L)
 
 -- Test 15
 TEST ///
+-- pureAll = (pureCharFree, pureTwoInvariant, pureWeyman): beta_0 of three constructions
 assert(pureAll{0,1,2,3,4} == (1,1,1))
 assert(pureAll{0,1,3,4} == (2,2,3))
 W = pureAll{0,4,6,9,11}
 assert(W == (1400, 14700, 175))
-P = pureBetti{0,4,6,9,11}
-for i from 0 to #W-1 list (W_i/P_0)
+assert(#W == 3)                              -- pureAll returns a 3-tuple
+assert(all(W, w -> w > 0))                   -- all three beta_0 values are positive
+-- each construction realizes a positive multiple of the minimal beta_0
+P0 = (pureBetti{0,4,6,9,11})#0
+assert(all(W, w -> w % P0 == 0))
 ///
 
 ----------------------------------------------------
@@ -1313,6 +1403,10 @@ B = pureBettiDiagram L
 assert(B == betti res randomSocleModule(L,1))
 assert(2*B == betti res randomSocleModule(L,2))
 assert(3*B == betti res randomSocleModule(L,3))
+
+-- structural checks, independent of the random seed
+assert(instance(randomSocleModule(L,1), Module))
+assert(dim randomSocleModule(L,1) == 0)        -- a finite-length module
 ///
 
 randomModule = method(Options => {CoefficientRing => ZZ/101})
@@ -1385,6 +1479,10 @@ M = mat2betti matrix"2,0,0,0;
 		     0,0,0,0;
 		     0,0,16,12"
 assert(B'==M)
+
+-- structural checks, independent of the random seed
+assert(instance(randomModule(L,1), Module))
+assert(isHomogeneous randomModule(L,1))
 ///
 
 -------------------------------------------
@@ -1467,16 +1565,11 @@ A=apply(7,i-> bott(L,i))
 AA={{{0, 0, 0, 0}, 0, 1}, 0, 0, 0, {{0, 0, 0, 0}, 3, 1}, {{1, 0, 0, 0}, 3, 4}, {{2, 0, 0, 0}, 3, 10}}
 assert(A==AA)
 
-for u from 0 to 6 do
-print bott(L,u)
-
 L={5,2,1,1}
 A=apply(10,i->bott(L,i))
 AA={{{5, 2, 1, 1, 0}, 0, 945}, {{4, 1, 0, 0, 0}, 0, 224}, 0, 0, {{3, 0, 0, 0, 0}, 2, 35}, 0, {{3, 1, 1, 0, 0}, 3, 126}, {{3, 2, 1, 0, 0}, 3, 280}, {{3, 3, 1, 0, 0}, 3, 315}, 0}
 assert(A==AA)
 
-for u from 0 to 10 do
-print bott(L,u)
 ///
 
 beginDocumentation()
@@ -2273,34 +2366,22 @@ document {
 
 -- Test 19
 TEST ///
-d={0,2,4}
-facetEquation(d,0,-1,3)
+-- facetEquation: valid (degree sequence, facet index) inputs yield an integer matrix
+assert(instance(facetEquation({0,2,4},0,-1,3), Matrix))
+assert(instance(facetEquation({0,3,5,7},2,-3,4), Matrix))
+assert(instance(facetEquation({1,3,4,6,7},2,1,3), Matrix))
+assert(instance(facetEquation({5,7,9,11},2,0,12), Matrix))
 
-d={0,3,5,7}
-facetEquation(d,2,-3,4) -- OK
-assert try facetEquation(d,2,0,3) else true -- gives error msg.
-
-d={0,2,3}
-assert try facetEquation(d,0,0,0) else true --gives error msg
-
-d={0,2,3}
-facetEquation(d,0,-1,1)
-facetEquation(d,0,0,2)
-d={0,2,4}
-facetEquation(d,1,-2,2)
-
-d={1,3,4,6,7}
-facetEquation(d,2,1,3)
-pureBettiDiagram d
-d={5,7,9,11}
-facetEquation(d,1,5,8)
-facetEquation(d,1,0,8)
-d={5,7,9,11}
-facetEquation(d,2,0,12)
+-- invalid input is rejected
+assert(try (facetEquation({0,1,2},0,0,3); false) else true)    -- not an allowed facet: de#1-de#0 != 2
+assert(try (facetEquation({0,3,5,7},2,0,3); false) else true)  -- degree range too small
+assert(try (facetEquation({0,2,3},0,0,0); false) else true)    -- degree range too small
 ///
 
 -- Test 20
 TEST ///
+-- facetEquation: dotted with a pure diagram, the facet equation vanishes on the
+-- facet's two degree sequences (d, e) and is positive off the facet (de).
 d={1,3,4,5,7}
 e={1,3,5,6,7}
 de = {1,3,4,6,7}

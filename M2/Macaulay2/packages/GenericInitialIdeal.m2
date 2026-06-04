@@ -109,15 +109,15 @@ gin(Ideal) := opts -> (I) -> (
 -- INPUT: QuotientRing
 -- OUTPUT: MonomialIdeal
 
-gin(QuotientRing) :=Ideal => (R) -> (
-     gin(ideal R)
+gin(QuotientRing) := Ideal => opts -> (R) -> (
+     gin(ideal R, opts)
      );
 
 -- ====================================================================================================================
 
 lexgin = method(Options => {AttemptCount => 7, Verbose => false, Modular => false, Multigraded => false})
 lexgin(Ideal) := opts -> (I) -> ( gin(I,AttemptCount => opts.AttemptCount, Verbose => opts.Verbose, Modular => opts.Modular, MonomialOrder => Lex, Multigraded => opts.Multigraded));
-lexgin(QuotientRing):=Ideal => (R) -> (lexgin(ideal R));
+lexgin(QuotientRing) := Ideal => opts -> (R) -> (lexgin(ideal R, opts));
 
 --==================================================================================================================
 beginDocumentation()
@@ -186,7 +186,7 @@ document {
 	  Verbose => {"provides a summary of the random initial ideals generated and warns if the selected one is not strongly stable."},
      },
      Outputs => {{"an ", TO Ideal, ", the generic initial ideal of ", TT "I", "."}},
-     PARA {"Same as gin with MonomiaOrder => Lex"},
+     PARA {"Same as gin with MonomialOrder => Lex"},
      SeeAlso => "gin",
       PARA {"This symbol is provided by the package ", TO GenericInitialIdeal, "." }
      }
@@ -234,4 +234,76 @@ J = gin(I, Multigraded => true)
 assert(J == ideal(x_1*y_1,x_2^2*y_1,y_1*z_1,x_1*y_2*z_1,x_2^2*y_2*z_1,x_2*y_1*z_2,x_1^2*y_2*z_2,x_1*x_2*y_2*z_2))
 K = lexgin(I, Multigraded => true)
 assert(K == ideal(x_1*y_1,x_2^2*y_1,y_1*z_1,x_1*y_2*z_1,x_2^2*y_2*z_1,x_2*y_1^2*z_2,x_1*y_2*z_2))
+///
+
+----------------------------------------------------------------------
+-- Tests for the gin / lexgin QuotientRing methods (previously broken
+-- because the methods were declared without "opts ->", so passing the
+-- option table caused "no method found for applying ideal to OptionTable")
+-- and for the previously untested Modular and AttemptCount options.
+----------------------------------------------------------------------
+
+TEST ///
+-- gin and lexgin must accept a QuotientRing, internally dispatch via its
+-- defining ideal, and forward options.  The defining ideal of
+-- QQ[a,b,c]/(a^2+b^2+c^2) ginned to (a^2) after a generic linear change.
+setRandomSeed 0;
+R = QQ[a,b,c];
+A = R/(a^2+b^2+c^2);
+G = gin(A);
+assert(instance(G, Ideal));
+use R;
+assert(G == ideal a^2);
+setRandomSeed 0;
+S = QQ[u,v,w];
+B = S/(u^2+v^2+w^2);
+L = lexgin(B);
+assert(instance(L, Ideal));
+use S;
+assert(L == ideal u^2);
+///
+
+TEST ///
+-- options must propagate through the QuotientRing wrappers
+setRandomSeed 0;
+R = QQ[a,b,c];
+A = R/(a^2+b^2+c^2);
+GM = gin(A, Modular=>true);
+assert(instance(GM, Ideal));
+GA = gin(A, AttemptCount=>3);
+assert(instance(GA, Ideal));
+LM = lexgin(A, Modular=>true);
+assert(instance(LM, Ideal));
+///
+
+TEST ///
+-- the Modular option performs the computation over ZZ/p for a random large
+-- prime; on this stable input it returns the same monomial ideal as the
+-- standard char-0 computation.
+setRandomSeed 0;
+R = QQ[m,n,p,q];
+I = ideal(m^3+p^2*q, n^3-m*q^2);
+GM = gin(I, Modular=>true);
+assert(instance(GM, Ideal));
+assert(ring GM === R);
+setRandomSeed 0;
+G = gin(I);
+setRandomSeed 0;
+GMb = gin(I, Modular=>true);
+assert(G == GMb);
+///
+
+TEST ///
+-- the AttemptCount option controls how many random coordinate changes are
+-- tried before picking the modal result.  Each setting returns an Ideal in
+-- the right ring.
+setRandomSeed 0;
+R = QQ[r,s,t,u];
+I = ideal(r^3+t^2*u, s^3-r*u^2);
+G1 = gin(I, AttemptCount=>1);
+assert(instance(G1, Ideal) and ring G1 === R);
+G3 = gin(I, AttemptCount=>3);
+assert(instance(G3, Ideal) and ring G3 === R);
+G5 = gin(I, AttemptCount=>5);
+assert(instance(G5, Ideal) and ring G5 === R);
 ///

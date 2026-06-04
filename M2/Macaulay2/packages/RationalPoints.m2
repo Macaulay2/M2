@@ -397,9 +397,36 @@ document {
      assert(rationalPoints(I,Amount => true) == 17)
      R = ZZ/13[b,c,d];
      I = ideal (b-b);
-     assert(rationalPoints(I,Amount => true) == 2197)     
+     assert(rationalPoints(I,Amount => true) == 2197)
      assert(#rationalPoints Grassmannian(1,3,CoefficientRing=>ZZ/2) == 36);
      ///
+
+-- Cover the four option branches (UseGB, UseMinGens, SortGens, LowMem)
+-- that were previously never set in any TEST. We compare counts rather
+-- than point lists because the different code paths choose different
+-- coset representatives (signed vs. unsigned reps mod p) for the same
+-- points -- they agree on the set of points mod p but not on the
+-- literal entries returned.
+TEST ///
+R := ZZ/5[x, y];
+I := ideal(y - x^2);
+-- y = x^2 over F_5 has exactly 5 rational points (one per value of x).
+n := rationalPoints(I, Amount => true);
+assert(n == 5);
+-- Every option toggled individually must report the same count.
+assert(rationalPoints(I, UseGB => false, Amount => true) == 5);
+assert(rationalPoints(I, UseGB => true, Amount => true) == 5);
+assert(rationalPoints(I, UseMinGens => true, Amount => true) == 5);
+assert(rationalPoints(I, SortGens => true, Amount => true) == 5);
+assert(rationalPoints(I, LowMem => true, Amount => true) == 5);
+-- And the LowMem branch must yield the same set of 5 distinct points
+-- after we normalize coset representatives mod 5. Entries are ZZ/5
+-- ring elements; lift to ZZ before reducing.
+normalize := ptsL -> set apply(ptsL, p -> apply(p, q -> (lift(q, ZZ)) % 5));
+ptsDefault := rationalPoints I;
+ptsLow := rationalPoints(I, LowMem => true);
+assert(normalize ptsDefault === normalize ptsLow);
+///
 endPackage "RationalPoints"
 
 --=========================================================================--

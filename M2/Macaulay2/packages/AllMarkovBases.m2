@@ -1192,6 +1192,190 @@ assert(
     )
 ///
 
+-- direct test of fiberGraph (returning Graph objects);
+-- previously only tested indirectly via computeFiber / markovBases.
+TEST ///
+A := matrix "3,4,5";
+fg := fiberGraph A;
+assert(class fg === List);
+assert(#fg == 3);
+-- the three nontrivial fibers each have two vertices (a Markov move's positive and negative parts)
+assert(all(fg, g -> #(vertices g) == 2));
+assert(
+    set apply(fg, g -> set vertices g)
+    ==
+    set {set {{1,0,1},{0,2,0}}, set {{3,0,0},{0,1,1}}, set {{2,1,0},{0,0,2}}}
+    );
+///
+
+-- direct test of fiberGraph with ReturnConnectedComponents => true
+TEST ///
+A := matrix "3,4,5";
+ccs := fiberGraph(A, ReturnConnectedComponents => true);
+expected := set apply(
+    {{{0, 2, 0}, {1, 0, 1}}, {{0, 1, 1}, {3, 0, 0}}, {{0, 0, 2}, {2, 1, 0}}},
+    fiber -> set apply(fiber, p -> {p}));
+got := set apply(ccs, fiber -> set apply(fiber, comp -> set comp));
+expectedSet := set apply(
+    {{{0, 2, 0}, {1, 0, 1}}, {{0, 1, 1}, {3, 0, 0}}, {{0, 0, 2}, {2, 1, 0}}},
+    fiber -> set apply(fiber, p -> set {p}));
+assert(got == expectedSet);
+///
+
+-- FiberAlgorithm cross-consistency: all four algorithms must produce the
+-- same connected-component partition (up to ordering of inner lists).
+TEST ///
+normCC := ccList -> set apply(ccList, fiber -> set apply(fiber, comp -> set comp));
+algs := {"fast", "decompose", "markov", "lattice"};
+-- need a fresh matrix per call so the cache is clean
+results := apply(algs, alg -> normCC fiberGraph(matrix "2,5,40", ReturnConnectedComponents => true, FiberAlgorithm => alg));
+assert(#(set results) == 1);
+-- and likewise countMarkov should be algorithm-invariant
+counts := apply(algs, alg -> countMarkov(matrix "2,5,40", FiberAlgorithm => alg));
+assert(#(set counts) == 1);
+assert(counts_0 == 5);
+///
+
+-- pruferSequence: direct concrete tests.
+-- For a Prufer sequence of length k in {0..n-1} where n = k+2,
+-- the output is a list of edges (sets of size 2) defining a tree on n vertices.
+TEST ///
+-- length-0 sequence: tree on 2 vertices has 1 edge {0,1}.
+assert(pruferSequence {} == {set {0,1}});
+-- length-1 sequence: tree on 3 vertices has 2 edges.
+assert(pruferSequence {0} == {set {0,1}, set {0,2}});
+-- length-2 sequence on 4 vertices: 3 edges.
+assert(pruferSequence {0,1} == {set {0,2}, set {0,1}, set {1,3}});
+-- length-3 sequence on 5 vertices: 4 edges.
+assert(pruferSequence {1,1,1} == {set {0,1}, set {1,2}, set {1,3}, set {1,4}});
+///
+
+-- pruferSequence is supposed to be a bijection between {0..n-1}^(n-2) and
+-- labelled trees on n nodes. For n=4 there are 4^2 = 16 sequences and 16 trees.
+TEST ///
+seqs := toList((0,0)..(3,3));
+trees := apply(seqs, p -> set pruferSequence toList p);
+assert(#(unique trees) == 16);
+-- every tree has 3 edges
+assert(all(trees, t -> #t == 3));
+///
+
+-- randomMarkov: same seed should give same output.
+TEST ///
+setRandomSeed 7;
+A := matrix "2,5,40";
+r1 := randomMarkov A;
+setRandomSeed 7;
+B := matrix "2,5,40";
+r2 := randomMarkov B;
+assert(r1 == r2);
+-- and the default form returns a Matrix (not a List).
+assert(class r1 === Matrix);
+///
+
+-- randomMarkov membership: every sample must be one of the genuine minimal
+-- Markov bases produced by markovBases.
+TEST ///
+setRandomSeed 7;
+A := matrix "2,5,40";
+canonical := M -> set flatten ((v -> {v,-v}) \ entries M);
+mbSet := set (canonical \ markovBases A);
+seen := set {};
+ok := true;
+for i from 1 to 30 do (
+    r := randomMarkov A;
+    if not mbSet#?(canonical r) then ok = false;
+    seen = seen + set {canonical r};
+    );
+assert(ok);
+-- with seed 7 and 30 samples we hit all 5 bases; this also exercises diversity.
+assert(#seen == #mbSet);
+///
+
+-- randomMarkov with NumberOfBases => k returns a List of length k.
+TEST ///
+setRandomSeed 100;
+A := matrix "2,5,40";
+rlist := randomMarkov(A, NumberOfBases => 5);
+assert(class rlist === List);
+assert(#rlist == 5);
+assert(all(rlist, r -> instance(r, Matrix)));
+canonical := M -> set flatten ((v -> {v,-v}) \ entries M);
+mbSet := set (canonical \ markovBases A);
+assert(all(rlist, r -> mbSet#?(canonical r)));
+///
+
+-- randomMarkov with AlwaysReturnList => true forces List output even for k=1.
+TEST ///
+setRandomSeed 0;
+A := matrix "1,2,3";
+r := randomMarkov(A, AlwaysReturnList => true);
+assert(class r === List);
+assert(#r == 1);
+assert(instance(r_0, Matrix));
+///
+
+-- toricIndispensableSet with ReturnFiberValues => true returns the list of
+-- fiber values (one per indispensable binomial), not a matrix.
+TEST ///
+A := matrix "2,3,4";
+fv := toricIndispensableSet(A, ReturnFiberValues => true);
+assert(class fv === List);
+-- there's exactly one indispensable binomial here: {2,0,-1}, with fiber value A * {2,0,0} = 4.
+assert(fv == {{4}});
+///
+
+-- Matrix-Ring overloads: markovBases, randomMarkov, toricIndispensableSet,
+-- and toricUniversalMarkov should accept a coefficient ring and return Ideals.
+TEST ///
+A := matrix "1,2,3";
+R := QQ[x_1..x_3];
+mbR := markovBases(A, R);
+assert(class mbR === List);
+assert(#mbR == 2);
+assert(all(mbR, I -> class I === Ideal and ring I === R));
+setRandomSeed 0;
+rmR := randomMarkov(A, R);
+assert(class rmR === Ideal);
+assert(ring rmR === R);
+setRandomSeed 0;
+rmR3 := randomMarkov(A, R, NumberOfBases => 3);
+assert(class rmR3 === List);
+assert(#rmR3 == 3);
+assert(all(rmR3, I -> class I === Ideal and ring I === R));
+tisR := toricIndispensableSet(A, R);
+assert(class tisR === Ideal);
+assert(ring tisR === R);
+tumR := toricUniversalMarkov(A, R);
+assert(class tumR === Ideal);
+assert(ring tumR === R);
+///
+
+-- computeFiber with each FiberAlgorithm produces the same fiber (up to order).
+TEST ///
+algs := {"fast", "decompose", "markov", "lattice"};
+results := apply(algs, alg -> set computeFiber(matrix "3,4,6,8,12", vector {12}, FiberAlgorithm => alg));
+assert(#(set results) == 1);
+assert(#(results_0) == 6);
+///
+
+-- Error path: a non-pointed semigroup (matrix with both signs) should error
+-- early instead of looping or returning garbage.
+TEST ///
+A := matrix "1,-1,0";
+assert(try (fiberGraph A; false) else true);
+B := matrix "1,-1,0";
+assert(try (markovBases B; false) else true);
+///
+
+-- Error path: an unknown FiberAlgorithm should error when the option is used.
+TEST ///
+A := matrix "3,4,5";
+assert(try (computeFiber(A, vector {8}, FiberAlgorithm => "no_such_algorithm"); false) else true);
+B := matrix "3,4,5";
+assert(try (countMarkov(B, FiberAlgorithm => "no_such_algorithm"); false) else true);
+///
+
 
 end--
 restart

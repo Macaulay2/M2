@@ -406,6 +406,13 @@ isSCM(Ideal) := I -> (
     S:=ring I;
     d:=dim I;
     d0:=minimumDimension I;
+    -- TODO: suspected bug -- this dispatch disagrees with the Module dispatch (Schenzel,
+    -- above) on at least one input. Example: I = ideal(x_1^2*x_3, x_2*x_3^2*x_4,
+    -- x_1*x_3^3*x_5) in QQ[x_1..x_5]: isSCM(I) returns false here, but isSCM(S^1/I) and
+    -- the deficiency-module trace (each omega^i is zero or CM of dim i) both say true.
+    -- For i < d0, filterIdeal(I,i) returns I itself, so the depth-vs-(i+1) check becomes
+    -- restrictive at i = d0-1; whether Goodarzi (2011)'s characterization actually
+    -- requires the depth check for i < d0 should be verified against the paper.
     for i from 0 to d-1 do (
         Ii:=filterIdeal(I,i);
         Si:=(S^1/Ii);
@@ -571,6 +578,58 @@ S = QQ[x_1..x_4,y_1..y_4]
 E = {{1, 2}, {1, 3}, {1, 4}, {2, 3}, {3, 4}}
 J = ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
 assert(isCCM(J)==true)
+///
+
+--========================
+-- boundary cases on the predicates: zero and unit ideals
+--========================
+TEST ///
+S = QQ[a,b,c];
+-- zero ideal (the whole ring S) is Cohen-Macaulay, hence SCM and CCM
+assert(isSCM ideal(0_S));
+assert(isCCM ideal(0_S));
+-- unit ideal (the zero module) is vacuously SCM and CCM
+assert(isSCM ideal(1_S));
+assert(isCCM ideal(1_S));
+///
+
+--========================
+-- deficiencyModule out-of-range returns the zero module
+--========================
+TEST ///
+S = QQ[a,b,c];
+M = S^1/ideal(a*b, b*c);
+-- below depth M and above dim M -> zero module
+assert(deficiencyModule(M, -1) == 0);
+assert(deficiencyModule(M, dim M + 1) == 0);
+assert(deficiencyModule(M, 100) == 0);
+///
+
+--========================
+-- filterIdeal boundary behavior at -1, 0, and dim I
+--========================
+TEST ///
+S = QQ[x_1..x_4, y_1..y_4];
+E = {{1, 2}, {1, 3}, {1, 4}, {2, 3}, {3, 4}};
+J = ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
+-- I^<i> = I for i < minimumDimension I (so in particular at i = -1 and i = 0)
+assert(filterIdeal(J, -1) == J);
+assert(filterIdeal(J, 0) == J);
+-- I^<dim I> is the unit ideal (S itself)
+assert(filterIdeal(J, dim J) == ideal(1_S));
+///
+
+--========================
+-- Ideal and Module dispatches agree for canonicalModule, deficiencyModule, and isCCM
+-- (NB: isSCM(I) vs isSCM(S^1/I) can disagree on some inputs -- flagged as a known issue)
+--========================
+TEST ///
+S = QQ[x_1..x_5];
+I = ideal(x_1^2*x_3, x_2*x_3^2*x_4, x_1*x_3^3*x_5);
+M = S^1/I;
+assert(canonicalModule I == canonicalModule M);
+assert(deficiencyModule(I, 2) == deficiencyModule(M, 2));
+assert(isCCM I == isCCM M);
 ///
 
 -------------------------------------------------------------------------

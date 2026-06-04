@@ -1993,7 +1993,15 @@ TEST /// -- Test 28
     ///
     
 TEST /// --Test 29
-    
+    -- FindCharacter=>true returns the character; its coefficient sum recovers the dimension
+    c = incidenceCohomology({3,0,-2,-6,3}, FindCharacter => true);
+    assert instance(c, RingElement)
+    assert(sum flatten entries last coefficients c == incidenceCohomology({3,0,-2,-6,3}))
+    -- the (List, PolynomialRing) form computes the character over a user-supplied ring
+    S = ZZ[y_1..y_3, Inverses => true, MonomialOrder => Lex];
+    cR = incidenceCohomology({2,3,7,-10}, S);
+    assert(ring cR === S)
+    assert(sum flatten entries last coefficients cR == incidenceCohomology({2,3,7,-10,3}))
 ///
 
 TEST /// -- Test 30
@@ -2003,6 +2011,44 @@ TEST /// -- Test 30
 
 TEST /// -- Test 31
     assert(incidenceCohomology({2,3,-11,7,3})==80)
+///
+
+TEST /// -- Test 32
+    -- regression: known dimensions of H^i(X, O_X(a,b)) on the incidence correspondence
+    assert(incidenceCohomology({0,0,7,6,3}) == 420)
+    assert(incidenceCohomology({1,3,6,-8,3}) == 9)
+    assert(incidenceCohomology({1,0,6,-8,3}) == 0)
+    assert instance(incidenceCohomology({0,0,7,6,3}), ZZ)
+///
+
+TEST /// -- Test 33
+    -- the dimension of H^i(X, O_X(a,b)) is symmetric in the two twists a and b
+    assert(incidenceCohomology({1,3,6,-8,3}) == incidenceCohomology({1,3,-8,6,3}))
+    assert(incidenceCohomology({2,3,-11,7,3}) == incidenceCohomology({2,3,7,-11,3}))
+    assert(incidenceCohomology({2,5,9,-14,4}) == incidenceCohomology({2,5,-14,9,4}))
+///
+
+TEST /// -- Test 34
+    -- Serre duality on X (dim X = 2n-3): H^i(O_X(a,b)) and
+    -- H^(2n-3-i)(O_X(-n+1-b,-n+1-a)) have equal dimension
+    assert(incidenceCohomology({1,3,6,-8,3}) == incidenceCohomology({2,3,6,-8,3}))
+    assert(incidenceCohomology({0,0,7,6,3}) == incidenceCohomology({3,0,-8,-9,3}))
+    assert(incidenceCohomology({1,5,4,-19,4}) == incidenceCohomology({4,5,16,-7,4}))
+///
+
+TEST /// -- Test 35
+    -- a twist a or b strictly between -n+2 and -1 forces the cohomology to vanish
+    assert(incidenceCohomology({0,3,-1,5,4}) == 0)
+    assert(incidenceCohomology({2,5,8,-2,4}) == 0)
+    -- Kempf vanishing: for dominant twists a >= b >= 0 only H^0 is nonzero
+    assert(incidenceCohomology({1,3,5,3,3}) == 0)
+    assert(incidenceCohomology({2,5,7,7,4}) == 0)
+///
+
+TEST /// -- Test 36
+    -- for dominant twists the H^0 dimension is independent of the characteristic
+    assert(incidenceCohomology({0,0,7,6,3}) == incidenceCohomology({0,3,7,6,3}))
+    assert(incidenceCohomology({0,0,9,4,4}) == incidenceCohomology({0,5,9,4,4}))
 ///
 
 end

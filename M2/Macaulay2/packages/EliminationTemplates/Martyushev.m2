@@ -192,7 +192,9 @@ parseMartyushevBases(String, Ring) := (path, R) -> (
         ok := true;
         local mons;
         try ( mons = value listStr; ) else ( ok = false; );
-        if ok and instance(mons, List) then continue;
+        -- skip lines that failed to parse or did not produce a List;
+        -- keep the parsed basis on success.
+        if not (ok and instance(mons, List)) then continue;
 	mons
     );
     out

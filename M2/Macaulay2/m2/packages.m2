@@ -11,9 +11,6 @@ needs "system.m2"
 needs "hypertext.m2"
 
 loadedPackages = {}
-loadedDatabases = new MutableHashTable
-
-addEndFunction(() -> apply(values loadedDatabases, db -> if isOpen db then close db))
 
 rawKey   = "raw documentation"
 rawKeyDB = "raw documentation database"
@@ -112,26 +109,14 @@ checkPackageName = (title, checkdeprecated) -> (
 
 closePackage = pkg -> if pkg#?rawKeyDB then (db -> if isOpen db then close db) pkg#rawKeyDB
 
-detectPackagePrefix = () -> (
+detectPackagePrefix = pkgdir -> (
     -- Try to detect whether we are loading the package from an installed version.
     -- A better test would be to see if the raw documentation database is there...
-    m := regex("(/|^)" | Layout#2#"packages" | "$", currentFileDirectory);
-    if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else (
-	m = regex("(/|^)" | Layout#1#"packages" | "$", currentFileDirectory);
+    m := regex("(/|^)" | Layout#2#"packages" | "$", pkgdir);
+    if m#?1 then substring(pkgdir, 0, m#1#0 + m#1#1) else (
+	m = regex("(/|^)" | Layout#1#"packages" | "$", pkgdir);
 	-- this can be useful when running from the source tree, but this is a kludge
-	if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else prefixDirectory))
-
-openDatabaseUntilExit = dbname -> if fileExists dbname then (
-    db := loadedDatabases#dbname ??= openDatabase dbname;
-    db) else if notify then printerr("database not present: ", minimizeFilename dbname)
-
-openPackageDatabase = method()
-openPackageDatabase String := pkgname -> openPackageDatabase(detectPackagePrefix(), pkgname)
-openPackageDatabase(String, String) := (packagePrefix, pkgname) -> (
-    try ( if isOpen(pkg := getpkgNoLoad pkgname)#rawKeyDB then return pkg#rawKeyDB );
-    if (packageLayout := detectCurrentLayout packagePrefix) =!= null then (
-	openDatabaseUntilExit databaseFilename(Layout#packageLayout, packagePrefix, pkgname))
-    else if notify then printerr("package prefix null, not opening database for package ", format pkgname))
+	if m#?1 then substring(pkgdir, 0, m#1#0 + m#1#1) else prefixDirectory))
 
 -----------------------------------------------------------------------------
 -- Package type declarations and basic constructors
@@ -240,6 +225,9 @@ loadPackageOptions#"default" = new MutableHashTable from options loadPackage
 
 getpkg       = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname else dismiss needsPackage pkgname
 getpkgNoLoad = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname
+getpkgsrcdir = pkgname -> (
+    if (pkg := getpkgNoLoad pkgname ?? getPackageInfo pkgname) =!= null
+    then pkg#"source directory" else error "package not loaded or preinstalled")
 
 -----------------------------------------------------------------------------
 -- newPackage
@@ -391,7 +379,7 @@ newPackage String := opts -> pkgname -> (
 	};
     newpkg.PackageIsLoaded = false;
     --
-    packagePrefix := detectPackagePrefix();
+    packagePrefix := detectPackagePrefix(currentFileDirectory);
     packageDatabase := openPackageDatabase(packagePrefix, pkgname);
     if packagePrefix   =!= null then newpkg#"package prefix" = packagePrefix;
     if packageDatabase =!= null then newpkg#rawKeyDB         = packageDatabase;
@@ -603,8 +591,11 @@ popDictionary  := (d, s) -> (dictionaryPath =    drop(dictionaryPath, 1); s)
 -- Probably only necessary because Text documents Hypertext objects.
 -- Is there an alternative way? Is is used by document.m2 and installPackage.m2
 evaluateWithPackage = (pkg, object, func) -> (
-    if isMember(pkg.Dictionary, dictionaryPath) then return func object;
-    popDictionary(pushDictionary pkg.Dictionary, func object))
+    -- add a temporary mutable dictionary to catch stray symbols
+    -- before they end up in User#"private dictionary" (cf. #4290)
+    popDictionary(pushDictionary new Dictionary,
+	if isMember(pkg.Dictionary, dictionaryPath) then  func object
+	else popDictionary(pushDictionary pkg.Dictionary, func object)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

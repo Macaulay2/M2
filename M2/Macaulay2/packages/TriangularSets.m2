@@ -771,7 +771,4 @@ beginDocumentation()
 
 load "./TriangularSets/TriangularSetsDoc.m2";
 
-TEST ///
 load (TriangularSets#"source directory" | "./TriangularSets/test_triangular.m2")
-///
-

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+M2 --silent --stop                    \
+   -e 'clearEcho stdio'               \
+   -e 'needsPackage "LanguageServer"' \
+   -e 'server = new LSPServer'        \
+   -e 'setLogger(server, printerr)'   \
+   -e 'start server'

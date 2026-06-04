@@ -55,9 +55,8 @@ newPackage(
 	     },
 	AuxiliaryFiles => true,
         DebuggingMode => false,
-	PackageExports => {
-	    "Graphs"
-	    }
+	PackageImports => {"Elimination","Normaliz","Polyhedra"},
+	PackageExports => {"Graphs"}
         )
 
 
@@ -111,10 +110,6 @@ export {
     "DegreeVector",    	       	  
     "PrintDegreePolynomial"    	  
     }
-
-needsPackage("Elimination")
-needsPackage("Normaliz")
-needsPackage("Polyhedra")
 
 GroupAction = new Type of HashTable
 

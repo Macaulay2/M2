@@ -4,8 +4,8 @@ newPackage("Padic",
     LastUpdated => "April 28, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
     Areas => {"Algebraic Number Theory"},
     PackageExports => {"Valuations"},
     PackageImports => {"ForeignFunctions"})

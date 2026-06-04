@@ -320,7 +320,7 @@ makePackageIndex = method(Dispatch => Thing)
 makePackageIndex Sequence := x -> if x === () then makePackageIndex path else error "expected no arguments"
 -- this might get too many files (formerly we used packagePath)
 makePackageIndex List := path -> (
-    verboseLog := if debugLevel > 10 then printerr else identity;
+    verboseLog := if notify or debugLevel > 10 then printerr else identity;
     -- TO DO : rewrite this function to use the results of tallyInstalledPackages
     tallyInstalledPackages();
     initInstallDirectory options installPackage;
