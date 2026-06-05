@@ -350,14 +350,14 @@ document {
     ///,
     SeeAlso => {(symbol >=,ZZ),SumOfTwists}}
 
-doc ///
+-*
 Node
   Key
-    currentModuleMap
+    torsionFreeMap
   Headline
     map to a simplified module representing a coherent sheaf
   Usage
-    currentModuleMap F
+    torsionFreeMap F
   Inputs
     F:CoherentSheaf
   Outputs
@@ -367,7 +367,7 @@ Node
       A coherent sheaf $F$ on a projective scheme Proj $R$ is viewed in Macaulay2
       as the sheaf associated to a graded $R$-module $M$. However, any other graded $R$-module that agrees with $M$
       in sufficiently high degrees also represents the same sheaf $F$.
-      The function @TT "currentModuleMap F"@ returns a map
+      The function @TT "torsionFreeMap F"@ returns a map
       $M\to N$ of graded $R$-modules such that $N$ also represents $F$, but $N$ should be "simpler" than $M$
       (or at least as simple). The choice of $N$ may be improved as other functions are applied to $F$.
       This is mainly intended for internal Macaulay2 use.
@@ -377,17 +377,17 @@ Node
       R = QQ[x,y];
       X = Proj R;
       S1 = R^1/(x^2,x*y,y^2)
-      currentModuleMap S1
+      torsionFreeMap S1
   SeeAlso
-    currentModuleBaseRing
+    torsionFreeLift
 
 Node
   Key
-    currentModuleBaseRing
+    torsionFreeLift
   Headline
     a simplified module representing a coherent sheaf
   Usage
-    currentModuleBaseRing F
+    torsionFreeLift F
   Inputs
     F:CoherentSheaf
   Outputs
@@ -397,12 +397,12 @@ Node
       A coherent sheaf $F$ on a projective scheme Proj $R$ is viewed in Macaulay2
       as the sheaf associated to a graded $R$-module $M$. However, any other graded $R$-module that agrees with $M$
       in sufficiently high degrees also represents the same sheaf $F$.
-      The function @TO2{currentModuleMap,"currentModuleMap F"}@ returns a map
+      The function @TO2{torsionFreeMap,"torsionFreeMap F"}@ returns a map
       $M\to N$ of graded $R$-modules such that $N$ also represents $F$, with $N$ "simpler" than $M$
       (or at least as simple). The choice of $N$ may be improved as other functions are applied to $F$.
     Text
       The ring $R$ will be a quotient of a polynomial ring $S$,
-      and @TT "currentModuleBaseRing F"@ returns $N$ as an $S$-module.
+      and @TT "torsionFreeLift F"@ returns $N$ as an $S$-module.
       This is mainly intended for internal Macaulay2 use.
     Text
       The function also works for a coherent sheaf on a closed subspace of a weighted projective space.
@@ -412,10 +412,12 @@ Node
       X2 = Proj R2;
       S2 = OO_X2^1
       module S2
-      currentModuleBaseRing S2
+      torsionFreeLift S2
   SeeAlso
-    currentModuleMap
+    torsionFreeMap
+*-
 
+doc ///
 Node
   Key
     (degree, CoherentSheaf)

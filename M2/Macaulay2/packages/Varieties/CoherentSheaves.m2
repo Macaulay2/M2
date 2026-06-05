@@ -123,7 +123,7 @@ dim CoherentSheaf := F -> (
     if not isProjective variety F then return dim module F;
     -- Note that twisting does not change the dimension of F
     if F.cache.?BaseTwist then F = F.cache.BaseTwist#0;
-    M := currentModuleBaseRing F;
+    M := torsionFreeLift F;
     -- For a singly graded algebra R, the dimension of F = M^~ on Proj(R) is the
     -- dimension of M as an R-module minus 1, except that we always return at least -1.
     -- For an m-graded ring R, this definition views Proj(R)
@@ -142,7 +142,7 @@ degree CoherentSheaf := F -> (
     -- _as a coherent sheaf_ equal to the degree of X. See degreeOnCurve.
     -- Note that twisting does not change the degree of F.
     if F.cache.?BaseTwist then F = F.cache.BaseTwist#0;
-    M := currentModuleBaseRing F;
+    M := torsionFreeLift F;
     R := assertWeightedZZGraded ring M;
     -- The degree is an integer if all weights are equal to 1, but otherwise a rational number.
     -- For example, on X = PP^n(a_0,...,a_n), the structure sheaf OO_X has degree 1/(a_0...a_n).
@@ -334,7 +334,7 @@ euler CoherentSheaf := ZZ => F -> tryHooks((euler, CoherentSheaf), F,
 	(F0, twist) := if F.cache.?BaseTwist then F.cache.BaseTwist else (F, {0});
 	-- TODO: is poincare polynomial the same before the pushforward?
 	-- if so we just need M = module F0, certainly not saturation!
-	M := currentModuleBaseRing F0; -- pushforward the module and kill m-torsion
+	M := torsionFreeLift F0; -- pushforward the module and kill m-torsion
 	n := numgens R; -- dim X = n-1
 	w := sum degrees R; -- n+sigma in Symoonds's notation
 	hf := hilbertFunction R;
@@ -381,7 +381,7 @@ euler(CoherentSheaf, ZZ, ZZ) := RingElement => (F, b1, b2) -> (
     b1 = {b1} + twist; b2 = {b2} + twist;
     -- TODO: if indeed we can get away with poincare module F0 here,
     -- be sure to still use the Hilbert series of ambient R below, not R!
-    M := currentModuleBaseRing F0; -- pushforward the module and kill m-torsion
+    M := torsionFreeLift F0; -- pushforward the module and kill m-torsion
     S := ring M;
     n := numgens R; -- dim X = n-1
     w := sum degrees R; -- n+sigma in Symoonds's notation
@@ -508,7 +508,7 @@ hilbertPolynomial(ProjectiveVariety, CoherentSheaf) := opts -> (X, F) -> (
     hp := if isStandardGraded R then hilbertPolynomial(module F0, Projective => false)
     -- otherwise, we compute the Hilbert polynomial of F0 in QQ[i] and cache it
     else F0.cache.hilbertPolynomial ??= (
-	M := currentModuleBaseRing F0; -- pushforward the module and kill m-torsion
+	M := torsionFreeLift F0; -- pushforward the module and kill m-torsion
 	A := hilbertFunctionRing();
 	S := ring M;
 	-- FIXME: make this last piece multigraded friendly

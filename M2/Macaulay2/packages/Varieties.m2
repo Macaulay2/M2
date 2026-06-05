@@ -78,9 +78,6 @@ export {
     "degreeOnCurve",
     "naiveCotangentComplex",
     "reflexiveDifferentials",
-    "twistedGlobalSectionsModule",
-    "currentModuleMap",
-    "currentModuleBaseRing",
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     -- "ext", -- temporarily commented
@@ -89,19 +86,15 @@ export {
     "GlobalSectionLimit",
     "SaturationMap",
     "TorsionFree",
-    "Dualizing",
-    "Residue",
-    "TorsionFreeMap",
-    "TorsionFreeBaseRing",
-    "SaturationBaseRing",
-    "BaseTwist",
     "NonPrint",
     "Direct",
     "DirectNonPrint",
     "Hsum",
-    -- "Prune",
     -- "TruncateDegree",
     }
+
+protect Dualizing
+protect BaseTwist
 
 importFrom_Core {
     "nonnull", "listZZ",
@@ -373,7 +366,7 @@ isSmooth ProjectiveVariety := {} >> o -> X -> (
 -- cf. https://github.com/Macaulay2/M2/issues/4201
 isCohenMacaulay     AffineVariety := true >> o -> X -> ( needsPackage "TestIdeals"; isCohenMacaulay(ring X, o) ) -- FIXME
 isCohenMacaulay ProjectiveVariety := {}   >> o -> X -> (
-    M := currentModuleBaseRing OO_X^1;
+    M := torsionFreeLift OO_X^1;
     S := ring M; -- Thus S is a graded polynomial ring, and M is R = S/I as an S-module,
     -- for a graded ring R with X = Proj(R).
     if degreeLength S =!= 1 then error "expected degree length 1";

@@ -30,47 +30,35 @@ degreeList := M -> (
 killLocalH0 = M -> M.cache.TorsionFree ??= if (H0 := saturate(0*M)) == 0 then M else M / H0
 -- We mainly remember M.cache.TorsionFree (as a quotient module of M) for use in SheafMaps.m2.
 
--- Given a CoherentSheaf F, defined by a graded module M over a positively graded algebra R2,
--- return the map from M to a possibly simpler R2-module N that represents the same sheaf F. We always simplify
--- at least to M/M_tors, and if an even "better" module has been cached, we return that.
--- We expect not to apply this function when F was defined as a twist (i.e., when F.cache.?BaseTwist is true), to simplify caching.
--- The module N can be obtained by "target currentModuleMap F".
-currentModuleMap = F -> (
-    M := module F;
-    R2 := ring M;
-    if F.cache.?SaturationMap then F.cache.SaturationMap
-    else
-    if F.cache.?TorsionFreeMap then F.cache.TorsionFreeMap
-    else (
-	N0 := killLocalH0 M;
-	N := minimalPresentation N0;
-	F.cache.TorsionFreeBaseRing = if isPolynomialRing R2 then N else minimalPresentation liftModule N;
-	F.cache.TorsionFreeMap = (inverse N.cache.pruningMap) * inducedMap(N0, M)))
--- In this last step, if M is already torsion-free (but we have not checked that before),
--- we don't bother to keep literally the same module (in Macaulay2 terms). Indeed, all the cohomology functions
--- start with calling a "currentModule" program; so we will not have done significant earlier calculations with M.
--- And in some cases, our running minimalPresentation here may give a simpler description of the same module.
+protect SaturatedLift
+protect TorsionFreeLift
+protect TorsionFreeMap
 
--- Given a CoherentSheaf F, defined by a graded module M over a positively graded algebra R2, a quotient
--- of a graded polynomial ring R1, return a possibly simpler R1-module N that represents the same sheaf F.
--- (It will always be the R1-module underlying an R2-module.) We always simplify at least to M/M_tors,
--- and if an even "better" module has been cached, we return that.
--- We expect not to apply this function when F was defined as a twist (i.e., when F.cache.?BaseTwist is true), to simplify caching.
-currentModuleBaseRing = F -> (
+-- Given a sheaf F associated to a graded module M over a positively graded algebra R,
+-- return the map from M to a possibly simpler R-module N that represents the same sheaf F.
+-- We always simplify at least to M/M_tors, and if an even "better" module has been cached, we return that.
+-- The module N can be obtained by "target torsionFreeMap F".
+torsionFreeMap = F -> (
     M := module F;
-    R2 := ring M;
-    if F.cache.?SaturationBaseRing then F.cache.SaturationBaseRing
-    else
-    if F.cache.?TorsionFreeBaseRing then F.cache.TorsionFreeBaseRing
-    else (
+    R := ring M;
+    if F.cache.?SaturationMap  then F.cache.SaturationMap  else
+    if F.cache.?TorsionFreeMap then F.cache.TorsionFreeMap else (
 	N0 := killLocalH0 M;
 	N := minimalPresentation N0;
-	F.cache.TorsionFreeMap = (inverse N.cache.pruningMap) * inducedMap(N0, M);
-	F.cache.TorsionFreeBaseRing = if isPolynomialRing R2 then N else minimalPresentation liftModule N))
--- In this last step, if M is already torsion-free (but we have not checked that before),
--- we don't bother to keep literally the same module (in Macaulay2 terms). Indeed, all the cohomology functions
--- start with calling a "currentModule" program; so we will not have done significant earlier calculations with M.
--- And in some cases, our running minimalPresentation here may give a simpler description of the same module.
+	F.cache.TorsionFreeLift = minimalPresentation liftModule N;
+	F.cache.TorsionFreeMap = inverse N.cache.pruningMap * inducedMap(N0, M)
+	)
+    )
+
+torsionFreeLift = F -> (
+    M := module F;
+    if F.cache.?SaturatedLift   then F.cache.SaturatedLift   else
+    if F.cache.?TorsionFreeLift then F.cache.TorsionFreeLift else (
+	N0 := killLocalH0 M;
+	N := minimalPresentation N0;
+	F.cache.TorsionFreeMap = inverse N.cache.pruningMap * inducedMap(N0, M);
+	F.cache.TorsionFreeLift = minimalPresentation liftModule N)
+    )
 
 -- This function "twistedGlobalSectionsModule" returns a sequence (b0, b1, M0) as output,
 -- meaning that M0 is a module that maps to H^0(X, F(*)),
@@ -93,9 +81,9 @@ twistedGlobalSectionsModule = (F, bound) -> (
     -- However, we need to keep the information
     -- cached in M, for instance if M is a Hom module.
     M := module F;
-    quot := currentModuleMap F; -- The map from M to a simplified A-module N (at least simplified to M/M_tors).
+    quot := torsionFreeMap F; -- The map from M to a simplified A-module N (at least simplified to M/M_tors).
     N := target quot;
-    N' := currentModuleBaseRing F; -- This is N as an S-module.
+    N' := torsionFreeLift F; -- This is N as an S-module.
     S := ring N'; -- This is a graded polynomial ring.
     degs := degrees S; -- This is a list of the form {{1},{9},{15},{22}}, say.
     n := #degs; -- So P = Proj S has dimension n-1.
@@ -139,7 +127,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
     if p <= 0 then (
 	F.cache.SaturationMap = quot; -- The map from M to the simplified A-module N. Since we keep the same module N
 	-- in this case, Macaulay2 remembers any earlier calculations done for N, such as Ext calculations.
-	F.cache.SaturationBaseRing = N'; -- This is N as an S-module.
+	F.cache.SaturatedLift = N'; -- This is N as an S-module.
 	return if complete then (-infinity, -infinity, N)
 	else (p + bound, p + bound, N));
     G := minimalPresentation target(
@@ -163,7 +151,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
     -- so that Macaulay2 remembers any earlier calculations done for N, such as Ext calculations.
     if isSurjective phi then (
 	F.cache.SaturationMap = quot; -- The map from M to the simplified A-module N.
-	F.cache.SaturationBaseRing = N';
+	F.cache.SaturatedLift = N';
 	return if complete then (-infinity, -infinity, N)
 	else (bound, bound, N));
     -- now we compute the center map in the sequence, where m is the maximal ideal of S:
@@ -171,10 +159,9 @@ twistedGlobalSectionsModule = (F, bound) -> (
     iota := inverse G.cache.pruningMap; -- map from Gamma_* M to its minimal presentation
     -- quot is the map from M to N (which may be M/M_tors).
     F.cache.SaturationMap = if p <= 0 then iota * quot else iota * phi * quot;
-    F.cache.SaturationBaseRing = minimalPresentation liftModule G;
+    F.cache.SaturatedLift = minimalPresentation liftModule G;
     if complete then (-infinity, -infinity, G)
     else (bound, bound, G))
-
 
 -----------------------------------------------------------------------------
 -- cohomology
@@ -319,9 +306,9 @@ cohomologyDirect = {Print => true} >> opts -> (cohodeg, S) -> (
     -- Here S should be a SumOfTwists, as in "cohomologyDirect(1,F(>=0))".
     (F, shift) := (S#0, S#1#0);
     R2 := ring module F;
-    quot := currentModuleMap F; -- The map from the original R2-module M to a simplified module N (at least simplified to M/M_tors).
+    quot := torsionFreeMap F; -- The map from the original R2-module M to a simplified module N (at least simplified to M/M_tors).
     N := target quot;
-    N' := currentModuleBaseRing F;
+    N' := torsionFreeLift F;
     R1 := assertWeightedZZGraded ring N'; -- R1 is a graded polynomial ring, and N' is N as an R1-module.
     -- In particular, N' is m-torsion-free, where m is the maximal ideal of R1.
     output := 0;
@@ -392,7 +379,7 @@ cohomologyDirect = {Print => true} >> opts -> (cohodeg, S) -> (
 		iota := inverse output.cache.pruningMap; -- the map from G to its minimal presentation, output.
 		-- quot is the map from M to N (which may be M/M_tors).
 		F.cache.SaturationMap = iota * phi * quot;
-		F.cache.SaturationBaseRing = minimalPresentation liftModule output)
+		F.cache.SaturatedLift = minimalPresentation liftModule output)
 	    )
 	else (
 	    -- Following the advice of the Macaulay2 documentation, for c = cohodeg > 0,
@@ -501,7 +488,7 @@ localCohomology = (i, F, b) -> (
     -- this is local cohomology for the maximal ideal
     if b == -infinity then error "not implemented yet";
     R2 := ring module F;
-    M := currentModuleBaseRing F;
+    M := torsionFreeLift F;
     R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
     degs := degrees R1;
     n := #degs; -- So P = Proj R1 has dimension n-1.
@@ -705,11 +692,11 @@ Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m, F, S) -> (
 	b0 = b0 - (d - c); b1 = b1 - (d - c);
 	E.cache.TruncateDegree = E0.cache.TruncateDegree)
     else (-- Now the sheaves F and G were not defined as twists.
-	N := target currentModuleMap G; -- A simplified module that represents G.
+	N := target torsionFreeMap G; -- A simplified module that represents G.
 	R2 := assertWeightedZZGraded ring N;
 	degs := degrees R2; -- This is a list of the form {{1},{9},{15},{22}}, say.
 	n := #degs;
-	M := target currentModuleMap F;
+	M := target torsionFreeMap F;
 	Mres := freeResolution(M, LengthLimit => m+1);
 	HomMN := Hom(Mres, N);
 	e := 0;
@@ -821,7 +808,7 @@ hh(ZZ, CoherentSheaf) := ZZ => opts -> (cohodeg, F) -> (
     if F.cache.?BaseTwist then return hh^cohodeg(F.cache.BaseTwist#0, Degree => opts.Degree + first F.cache.BaseTwist#1);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist.
     R2 := ring module F;
-    M := currentModuleBaseRing F;
+    M := torsionFreeLift F;
     R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
     -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
     A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
@@ -888,7 +875,7 @@ hh(ZZ, CoherentSheaf, ZZ, ZZ) := RingElement => opts -> (cohodeg, F, b1, b2) -> 
     if not instance(F, CoherentSheaf) or not instance(b1, ZZ) or not instance(b2, ZZ) or b1>b2 then (
 	error "the input should be in the form hh^i(F,b1,b2), with F a coherent sheaf and b1 <= b2 integers");
     R2 := ring module F;
-    M := currentModuleBaseRing F;
+    M := torsionFreeLift F;
     R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
     -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
     A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
@@ -994,7 +981,7 @@ hh(ZZ, SumOfTwists) := Sequence => opts -> (cohodeg, sumoftwists) -> (
     if F.cache.?BaseTwist then return hh^cohodeg((F.cache.BaseTwist#0)(*), Degree => opts.Degree + first F.cache.BaseTwist#1);
     -- Thus we reduce to the case where the sheaf F was not defined as a twist.
     R2 := ring module F;
-    M := currentModuleBaseRing F;
+    M := torsionFreeLift F;
     R1 := assertWeightedZZGraded ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
     -- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
     A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
