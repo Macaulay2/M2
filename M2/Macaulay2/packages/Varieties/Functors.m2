@@ -16,19 +16,14 @@ checkVariety := (X, F) -> (
     if not isAffineRing ring X then error "expected a variety defined over a field";
     )
 
--- TODO: this is called twice
--- TODO: implement for multigraded ring
 degreeList := M -> (
     -- gives the exponents of the numerator of reduced Hilbert series of M
     if dim M > 0 then error "expected module of finite length";
-    R2 := ring M; -- This should be singly graded.
-    deglist := degrees R2;
-    n := numgens R2;
-    H := poincare M; -- The Hilbert series of M is (poincare M)/(product_i (1 - T^(a_i))),
-    -- where a_0,...,a_(n-1) are the degrees of the generators of R2, as positive integers.
+    H := poincare M; -- HS(M) = poincare M / product_i (1 - T^(d_i)),
     T := ring H;
-    H = H // product(n, i -> 1 - T_(deglist#i));
-    exponents H / first)
+    -- this is faster than calling reduceHilbert
+    w := product(degrees ring M, deg -> 1 - T_deg);
+    first \ exponents(H // w))
 
 -- quotienting by the local cohomology H_m^0(M) to "saturate" M
 -- TODO: use irrelevant ideal here
