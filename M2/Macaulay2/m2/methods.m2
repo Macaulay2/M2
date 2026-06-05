@@ -412,10 +412,9 @@ setupMethods(Dispatch => Thing, {max,min,directSum,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)
 factor = method( Options => { } )
 
-cohomology = method( Options => { 
-	  Degree => 0		  -- for local cohomology and sheaf cohomology
-	  } )
-homology = method( Options => { } )
+-- TODO: rename Degree to DegreeLimit
+cohomology = method( Options => { Strategy => null, Degree => 0 } )
+homology   = method( Options => { Strategy => null } )
 
 width  = method(TypicalValue => ZZ)
 height = method(TypicalValue => ZZ)
