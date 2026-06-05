@@ -86,10 +86,6 @@ export {
     "GlobalSectionLimit",
     "SaturationMap",
     "TorsionFree",
-    "NonPrint",
-    "Direct",
-    "DirectNonPrint",
-    "Hsum",
     -- "TruncateDegree",
     }
 
