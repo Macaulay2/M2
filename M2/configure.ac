@@ -1116,13 +1116,14 @@ found and $msolve_min_version is required; will build])
          [AC_MSG_RESULT([no, will build])
           BUILD_msolve=yes])])
 
-AS_IF([test $BUILD_palp = no],
-    [AC_MSG_CHECKING([whether palp is installed])
-     AS_IF([command -v poly.x > /dev/null],
-         [AC_MSG_RESULT([yes])
-          FILE_PREREQS="$FILE_PREREQS `command -v poly.x`"],
-         [AC_MSG_RESULT([no, will build])
-          BUILD_palp=yes])])
+dnl TODO: uncomment whne we require palp
+dnl AS_IF([test $BUILD_palp = no],
+dnl [AC_MSG_CHECKING([whether palp is installed])
+dnl  AS_IF([command -v poly.x > /dev/null],
+dnl      [AC_MSG_RESULT([yes])
+dnl       FILE_PREREQS="$FILE_PREREQS `command -v poly.x`"],
+dnl      [AC_MSG_RESULT([no, will build])
+dnl       BUILD_palp=yes])])
 
 AC_LANG([C++])
 AS_IF([test $BUILD_eigen = no],
