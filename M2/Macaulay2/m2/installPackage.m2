@@ -255,10 +255,10 @@ indexButton    := (htmlDirectory, indexFileName) -> HREF {htmlDirectory | indexF
 tocButton      := (htmlDirectory, tocFileName)   -> HREF {htmlDirectory | tocFileName,   "toc"};
 pkgButton      := TO2 {"Macaulay2Doc :: packages provided with Macaulay2", "Packages"};
 homeButton     := HREF {"https://macaulay2.com/", "Macaulay2"};
-searchBox      := LITERAL ///<form method="get" action="https://www.google.com/search">
-  <input placeholder="Search" type="text" name="q" value="">
-  <input type="hidden" name="q" value="site:macaulay2.com/doc">
-</form>
+searchBox      := LITERAL ///<div id="search-container">
+  <input id="search-input" type="search" placeholder="Search">
+  <div id="search-results"></div>
+</div>
 ///
 
 nextButton     := tag -> if NEXT#?tag then HREF { htmlFilename NEXT#tag, "next" }     else "next"
