@@ -46,14 +46,6 @@ previousMethodsFound = null
 codeAddress = pos -> ( pos, ": --source code:" ) -- [addr]:[line]:[char]-[line]:[char]:
 
 
---protect PrintCaret
---protect PrintLineNum
---codeContent = method(
---    Options => {
---	PrintCaret => true,
---	PrintLineNum => true
---    }
---)
 -----------------------------------------------------------------------------
 -- Updates to codeContent developed by Bryson Kagy, Adam LaClair, Olalekan Ogunmefun, Jay Yang
 -- as part of the 2026 workshop "Building the Future of Macaulay2" at Georgia Tech.
@@ -133,11 +125,6 @@ dedupMethods = L -> (
     toList L)
 
 code = method(Dispatch => Thing)
---    Options => {
---	PrintCaret => true,
---	PrintLineNum => true
---    }
---)
 code Nothing := identity
 code FilePosition := x -> (
     filename := x#0; start := x#1; stop := x#3 ?? x#1;
