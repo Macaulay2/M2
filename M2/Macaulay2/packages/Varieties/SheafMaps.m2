@@ -272,6 +272,7 @@ toExternalString SheafMap := toString @@ describe
 -----------------------------------------------------------------------------
 -- isLiftable, lift
 -----------------------------------------------------------------------------
+
 --general method: checks whether a map phi is in the image of
 --the map Hom(eta,target phi)
 isLiftable = method()
@@ -334,6 +335,7 @@ inducedMap(CoherentSheaf, CoherentSheaf, SheafMap) := SheafMap => opts -> (G, F,
 -----------------------------------------------------------------------------
 -- Direct sums and components
 -----------------------------------------------------------------------------
+
 --WARNING: the current direct sum of sheaves does not cache components
 SheafMap.directSum = args -> (
     assert(#args>0);
@@ -354,6 +356,7 @@ components SheafMap := List => phi -> if phi.cache.?components then phi.cache.co
 -----------------------------------------------------------------------------
 -- Tensors and exterior/symmetric powers
 -----------------------------------------------------------------------------
+
 -- TODO: take care of the case when the rings are different
 -- FIXME: the source and target sheaves are not correct in this version
 tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> sheaf(matrix phi ** matrix psi)
@@ -407,9 +410,11 @@ koszul(ZZ, SheafMap) := SheafMap => (i, f) -> (
     G := exteriorPower(i-1, F);
     g := comultiplication(i, F);
     (f ** id_G) * g)
+
 -----------------------------------------------------------------------------
 -- inverse
 -----------------------------------------------------------------------------
+
 inverse SheafMap := SheafMap => f -> SheafMap.InverseMethod f
 SheafMap.InverseMethod = f -> f.cache.inverse ??= (
     X := variety f;
@@ -434,6 +439,7 @@ SheafMap^ZZ := SheafMap => BinaryPowerMethod
 -----------------------------------------------------------------------------
 -- sheafHom and Hom
 -----------------------------------------------------------------------------
+
 sheafHom(SheafMap, SheafMap)      := SheafMap => o -> (phi, psi) -> (dual phi) ** psi
 sheafHom(SheafMap, CoherentSheaf) := SheafMap => o -> (phi, F) -> sheafHom(phi, id_F)
 sheafHom(CoherentSheaf, SheafMap) := SheafMap => o -> (F, phi) -> sheafHom(id_F, phi)
@@ -477,6 +483,7 @@ homomorphism' SheafMap := o -> h -> part(0, homomorphism'(matrix h, o))
 -----------------------------------------------------------------------------
 -- homology
 -----------------------------------------------------------------------------
+
 homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     -- Note: these checks prune the image of f and g only
     -- TODO: should we check matrix g == 0 to avoid pruning?
@@ -497,7 +504,7 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     sheaf(X, homology(matrix g, f, opts)))
 
 -----------------------------------------------------------------------------
--- Prune
+-- cohomology and Ext
 -----------------------------------------------------------------------------
 
 cohomology(ZZ,                    SheafMap) := Matrix => opts -> (p,    f) -> cohomology(p, variety f, f, opts)
@@ -554,7 +561,7 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
     part(0, Ext^m(M, matrix f, opts)))
 
 -----------------------------------------------------------------------------
--- Prune
+-- Map of modules of twisted global sections Γ_*(G) <- Γ_*(F)
 -----------------------------------------------------------------------------
 
 -- Consider the sequence 0 -> m^[p] -> S -> S/m^[p] -> 0 and apply Hom(-,M)
@@ -569,10 +576,6 @@ prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> f -> f.cac
     -- TODO: substitute with appropriate irrelevant ideal
     Bp := module (ideal vars ring variety F)^[p];
     lift sheaf(f.variety, prune Hom(Bp, g)))
-
------------------------------------------------------------------------------
--- Things to move to the Core
------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
 -- pullback and pushout and concatenation
