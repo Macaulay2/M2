@@ -46,14 +46,14 @@ previousMethodsFound = null
 codeAddress = pos -> ( pos, ": --source code:" ) -- [addr]:[line]:[char]-[line]:[char]:
 
 
-protect PrintCaret
-protect PrintLineNum
-codeContent = method(
-    Options => {
-	PrintCaret => true,
-	PrintLineNum => true
-    }
-)
+--protect PrintCaret
+--protect PrintLineNum
+--codeContent = method(
+--    Options => {
+--	PrintCaret => true,
+--	PrintLineNum => true
+--    }
+--)
 -----------------------------------------------------------------------------
 -- Updates to codeContent developed by Bryson Kagy, Adam LaClair, Olalekan Ogunmefun, Jay Yang
 -- as part of the 2026 workshop "Building the Future of Macaulay2" at Georgia Tech.
@@ -62,7 +62,8 @@ codeContent = method(
 -- In codeContent, pos is the FilePosition of the error, s and e are the starting and ending line numbers of the error, and filelines is the list of lines in the file of the error. 
 -----------------------------------------------------------------------------
 
-codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
+--codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
+codeContent = (pos, s, e, filelines) -> (
     posL := {}; --List, containing the information associated to the error message.
     strList := {};  --List, used for storing the line numbers as strings.
     str := ""; -- String, temporary variable used for creating output.
@@ -79,31 +80,31 @@ codeContent (FilePosition,ZZ,ZZ,List) := opt ->  (pos, s, e, filelines) -> (
     
     
     --Get max length of the integer that will be printed as a string.
-    if (opt.PrintLineNum === true) then (
+    if (debugPrintLineNumbers === true) then (
 	strList = for i from s-1 to e-1 list toString((posL#1+(i-s+1)));
 	maxLen = max(length\strList)
     );
 
     --Create the first line of output.
-    if (s != e and opt.PrintCaret === true) then (
+    if (s != e and debugPrintCarets === true) then (
 	outputList = outputList | { concatenate( ((leftPadding + maxLen + rightPadding + posL#2:" ")), "v") };
     );    
 
     --Create the middle lines of output, where print out the code.
-    if (opt.PrintLineNum === true) then (
+    if (debugPrintLineNumbers === true) then (
 	outputList = outputList | for i from s-1 to e-1 list (
 	    concatenate( ((leftPadding + (maxLen - length strList#(i-s+1))):" "), strList#(i-s+1), ((rightPadding):" "), filelines_i )
 	);
     ) else (
-	    outputList = outputList | filelines_{s-1..e-1};
+	outputList = outputList | filelines_{s-1..e-1};
     );
 
 
     --Check whether there are carets to print.
-    if (opt.PrintCaret === true) then (
+    if (debugPrintCarets === true) then (
 	str = "";
 	--Append the padding associated to the line numbers.
-	if (opt.PrintLineNum === true) then ( 
+	if (debugPrintLineNumbers === true) then ( 
 	    str = concatenate(str, ((leftPadding + (maxLen) + rightPadding):" "));
 	);
 
@@ -131,15 +132,14 @@ dedupMethods = L -> (
 	    L#i = join(tag, L#i)));
     toList L)
 
-code = method(
-    Dispatch => Thing,
-    Options => {
-	PrintCaret => true,
-	PrintLineNum => true
-    }
-)
-code Nothing := opt -> identity
-code FilePosition := opt -> x -> (
+code = method(Dispatch => Thing)
+--    Options => {
+--	PrintCaret => true,
+--	PrintLineNum => true
+--    }
+--)
+code Nothing := identity
+code FilePosition := x -> (
     filename := x#0; start := x#1; stop := x#3 ?? x#1;
      (	 
 	  wp := set characters " \t\r);";
@@ -161,11 +161,11 @@ code FilePosition := opt -> x -> (
 	       );
 	  file = lines file;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
-	  DIV splice { codeAddress(x), codeContent(PrintCaret => debugPrintCarets, PrintLineNum => debugPrintLineNumbers, x, start, stop, file) }
+	  DIV splice { codeAddress(x), codeContent(x, start, stop, file) }
 	  ))
-code Symbol     := 
-code Pseudocode := opt -> s -> code locate s
-code Sequence   := opt -> s -> (
+code Symbol     :=
+code Pseudocode := s -> code locate s
+code Sequence   := s -> (
     key := select(s, x -> not instance(x, Option));
     -- handle strategies
     mesg := "-- code for method: ";
@@ -182,10 +182,10 @@ code Sequence   := opt -> s -> (
     if func =!= null or (func = lookup key) =!= null
     then DIV { DIV { mesg, formatDocumentTag s }, codeFunction(s, func, 0) }
     else "-- no method function found: " | formatDocumentTag key)
-code Function   := opt -> f -> codeFunction(null, f, 0)
-code Command    := opt -> C -> code C#0
-code List       := opt -> L -> DIV between_(HR{}) dedupMethods apply(L, code)
-code ZZ         := opt -> i -> code previousMethodsFound#i
+code Function   := f -> codeFunction(null, f, 0)
+code Command    := C -> code C#0
+code List       := L -> DIV between_(HR{}) dedupMethods apply(L, code)
+code ZZ         := i -> code previousMethodsFound#i
 
 -----------------------------------------------------------------------------
 -- edit
