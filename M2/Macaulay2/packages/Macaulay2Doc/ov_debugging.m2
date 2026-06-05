@@ -89,7 +89,7 @@ document {
     "However, the following attempt results in an error, and the debugger starts up automatically.",
     EXAMPLE "g 2",
     "Here it says ENTERING DEBUGGER when you enter the debugger. You may use ", TO "help", ", as instructed, to view the commands available in the debugger.
-    While in the debugger, the input line says  \"<M2 debugger>\"  and the line numbers of the error are displayed to the right of the code. 
+    While in the debugger, the input line says  \"<Debugger>\"  and the line numbers of the error are displayed to the right of the code. 
     In addition there are carets below the specific characters causing the error or below the starting ending characters if the error is multiple lines.
     The line numbers and carets can be toggled off by including at the start of your document debugPrintLineNumbers = false; and debugPrintCarets = false; respectively.
     As suggested by the help display, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
