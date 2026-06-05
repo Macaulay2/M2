@@ -570,29 +570,34 @@ truncatedDual = (M, e, sumOfWeights) -> (
 
 -- This is an approximation of Gamma_* F, at least with an inclusion from Gamma_>=0 F
 -- TODO: optimize caching: if HH^0(F(>=b)) is cached above, does this need to be cached?
--- TODO: should F>=0 be hardcoded? I think this is OK, especially since the function HH^0(F(>=b))
--- returns all of H^0(X,F(*)) if that is bounded below.
 minimalPresentation SheafOfRings  := prune SheafOfRings  := SheafOfRings  => opts -> identity
 minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> (
     F -> F.cache#(symbol minimalPresentation => opts) ??= tryHooks(
-	(minimalPresentation, CoherentSheaf), (opts, F), (opts, F) -> (
-	    if not isProjective variety F then return sheaf minimalPresentation module F;
-	    -- That handles a sheaf on an affine variety.
-	    if F.cache.?BaseTwist then (
-		-- Here F was defined as a twist of another sheaf, say F = E(shift). We reduce to the calculation for E.
-		shift := first F.cache.BaseTwist#1; -- Here F.cache.BaseTwist#1 should be a degree in the form {3}, and then shift would be 3.
-		H := minimalPresentation F.cache.BaseTwist#0; -- Here F.cache.BaseTwist#0 is the original sheaf E.
-		Gmap := (H.cache.pruningMap)(shift);
-		-- We mainly record F.cache.TorsionFree (as a quotient of F.module) for use in SheafMaps.m2.
-		F.cache.TorsionFree = ((F.cache.BaseTwist#0).cache.TorsionFree)(shift);
-	        F.cache.GlobalSectionLimit = -shift + (F.cache.BaseTwist#0).cache.GlobalSectionLimit)
-	    -- Now F was not defined as a twist. This is the default algorithm.
-	    else (
-		if not F.cache.?SaturationMap then HH^0(F(>=0), Degree => NonPrint);
-		Gmap = sheaf(F.variety, F.cache.SaturationMap));
-	    G := target Gmap;
-	    G.cache.pruningMap = Gmap;
-	    G)))
+        (minimalPresentation, CoherentSheaf), (opts, F),
+        (opts, F) -> sheaf prune(module F, opts)))
+
+addHook((minimalPresentation, CoherentSheaf), Strategy => ProjectiveVariety,
+    (opts, F) -> if isProjective variety F then (
+        -- HH^0(F(>=0)) uses twistedGlobalSectionsModule and caches SaturationMap.
+        -- We want the target of the saturation map gamma: M -> Gamma_(d >= 0)(X, F(d)),
+        -- so we first check if SaturationMap is cached, and if not we call HH^0(F(>=0))
+        if not F.cache.?SaturationMap then HH^0(F(>=0), Degree => NonPrint);
+        gamma := sheaf(F.variety, F.cache.SaturationMap);
+        G := target gamma; -- G = HH^0(F(>=0))
+        G.cache.pruningMap = gamma;
+        G)
+    )
+
+addHook((minimalPresentation, CoherentSheaf), Strategy => "SerreTwist",
+    (opts, F) -> if isProjective variety F and F.cache.?BaseTwist then (
+        (F0, twist) := F.cache.BaseTwist; -- F = F0(twist)
+        G := (G0 := minimalPresentation(F0, opts))(twist);
+        G.cache.pruningMap         = G0.cache.pruningMap(twist);
+        -- these would normally be set by twistedGlobalSectionsModule,
+        -- so we transfer them in the twisted sheaf for use in SheafMaps.m2
+        F.cache.TorsionFree        = F0.cache.TorsionFree(twist);
+        F.cache.GlobalSectionLimit = F0.cache.GlobalSectionLimit)
+    )
 
 -----------------------------------------------------------------------------
 -- Projective bundles
