@@ -1166,7 +1166,7 @@ ExternalProject_Add(build-bertini
   )
 #_ADD_COMPONENT_DEPENDENCY(libraries bertini "gmp;mpfr" BERTINI)
 
-# http://hep.itp.tuwien.ac.at/~kreuzer/CY/CYpalp.html
+# https://hep.itp.tuwien.ac.at/~kreuzer/CY/CYpalp.html
 set(palp_PROGRAMS
   class-11d.x  class.x    cws-6d.x    mori-5d.x  nef-4d.x  poly-11d.x  poly.x
   class-4d.x   cws-11d.x  cws.x       mori-6d.x  nef-5d.x  poly-4d.x
