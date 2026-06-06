@@ -80,7 +80,7 @@ TEST ///
   assert(betti'ans == minimalBetti (ideal I_*))
   assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>5))
   assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>0))
-  assert((new BettiTally from {}) === minimalBetti (ideal I_*, LengthLimit=>-1))
+  assert((new BettiTally from {}) === minimalBetti (ideal I_*, LengthLimit => -1))
   assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>1000))  
   assert(betti'ans == minimalBetti (ideal I_*, DegreeLimit=>1000))  
   assert(betti'ans == minimalBetti (ideal I_*, DegreeLimit=>-1000))

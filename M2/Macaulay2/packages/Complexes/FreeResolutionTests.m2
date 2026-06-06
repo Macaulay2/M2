@@ -167,8 +167,8 @@ TEST ///
 
   E = ZZ/101[a..d, SkewCommutative => true]
   I = ideal"ab, acd"
-  assert try (freeResolution(I); false) else true
-  C = freeResolution(I, LengthLimit => 5)
+  freeResolution I; -- this should not give an error, just give a warning message.
+  C = freeResolution(I, LengthLimit => 5) -- doesn't change the length limit?
   assert isWellDefined C
   assert(length C == 5)
   assert(naiveTruncation(prune HH C, (1,4)) == 0)
@@ -841,7 +841,7 @@ TEST ///
   assert(C5.cache.Module === M)
   -- TODO? What behavior do we want here?
   --assert try (C6 = freeResolution(M, LengthLimit => -1); false) else true  -- this one?
-  assert ((C6 = freeResolution(M, LengthLimit => -1)) == 0) -- or this one?
+  assert try (C6 = freeResolution(M, LengthLimit => -1); false) else true
   assert(M.cache.?Resolution)
   assert(M.cache.Resolution === C2)
   assert(M.cache.Resolution.cache.LengthLimit === length C2)
@@ -854,11 +854,12 @@ TEST ///
   C = freeResolution M
   assert(M.cache.?Resolution)
   assert(M.cache.Resolution === C)
-  
-  C1 = freeResolution(M, LengthLimit => -1)
-  assert(M.cache.Resolution === C)
-  assert(C1 == C)
-  assert(C1 == 0)
+
+  -- Why do we want to allow negative LengthLimit?
+  -- C1 = freeResolution(M, LengthLimit => -1)
+  -- assert(M.cache.Resolution === C)
+  -- assert(C1 == C)
+  -- assert(C1 == 0)
 
   C2 = freeResolution(M, LengthLimit => 2)
   M.cache.Resolution === C

@@ -61,9 +61,25 @@ freeResolution Module := Complex => opts -> M -> (
     -- DegreeLimit is a lower limit on what will be computed degree-wise, but more might be computed.
     R := ring M;
     local C;
-    if M === R^0 or opts.LengthLimit < 0
-    then return M.cache.Resolution ??= complex R^0;
-    if isFreeModule M then return M.cache.Resolution ??= complex M;
+    if opts.LengthLimit < 0 then error "expected nonnegative LengthLimit";
+    if M === R^0
+    then (
+        FM := M.cache.Resolution ??= complex M;
+        FM.cache.Module = M;
+        return FM;
+        );
+    if isFreeModule M then (
+        << "calling free module res code" << endl;
+        if not M.cache.?Resolution then (
+            FM = complex M;
+            FM.cache.Nonminimal = false;
+            FM.cache.LengthLimit = infinity;
+            FM.cache.DegreeLimit = infinity;
+            FM.cache.Module = M;
+            M.cache.Resolution = FM;
+            );
+        return M.cache.Resolution
+        );
     if M.cache.?Resolution then (
         C = M.cache.Resolution;
         if not C.cache.?LengthLimit or not C.cache.?DegreeLimit then
@@ -89,7 +105,7 @@ freeResolution Module := Complex => opts -> M -> (
                 RO.compute(opts.LengthLimit, opts.DegreeLimit); -- it is possible to interrupt this and then the following lines do not happen.
                 C = RO.complex(opts.LengthLimit);
                 C.cache.Nonminimal = (RO.Strategy === 4 or  RO.Strategy === 5); -- magic number: this means Nonminimal, or NonminimalWithGB to the engine...
-                C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
+                C.cache.LengthLimit = if max C < RO.LengthLimit then infinity else RO.LengthLimit;
                 C.cache.DegreeLimit = opts.DegreeLimit;
                 C.cache.Module = M;
                 M.cache.Resolution = C;
@@ -114,7 +130,7 @@ freeResolution Module := Complex => opts -> M -> (
     if C =!= null then (
         assert(instance(C, Complex));
         C.cache.Nonminimal = (RO.Strategy === 4 or RO.Strategy === 5); -- magic number: this means Nonminimal, NonminimalWithGB to the engine...
-        C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
+        C.cache.LengthLimit = if max C < RO.LengthLimit then infinity else RO.LengthLimit;
         C.cache.DegreeLimit = opts.DegreeLimit;
         C.cache.Module = M;
         M.cache.Resolution = C;
@@ -135,27 +151,20 @@ resolutionObjectInEngine = (opts, M, matM) -> (
     lengthlimit := if opts.LengthLimit === infinity 
         then (
             if isSkewCommutative R then (
-                -- we remove the ResolutionObject from M.cache since 
-                -- otherwise it is in an incomplete and unrecoverable state
-                remove(M.cache, symbol ResolutionObject);
                 << "WARNING: since no finite LengthLimit was given, it has been arbitrarily set to be the number of variables" << endl;
+                RO.LengthLimit = numgens R;
                 numgens R
-                --error "need to provide LengthLimit for free resolutions over skew-commutative rings";
                 )
             else (
                 flatR := first flattenRing R;
-                if ideal flatR != 0 then (
-                    -- we remove the ResolutionObject from M.cache since 
-                    -- otherwise it is in an incomplete and unrecoverable state 
-                    remove(M.cache, symbol ResolutionObject);
+                if ideal flatR != 0 then ( -- i.e. is R a quotient polynomial ring?
                     << "WARNING: since no finite LengthLimit was given, it has been arbitrarily set to be the number of variables" << endl;
-                    --error "need to provide LengthLimit for free resolutions over quotients of polynomial rings";
+                    RO.LengthLimit = numgens flatR;
                     );
                 numgens flatR)
             )
         else opts.LengthLimit;
-
-
+    
     RO.RawComputation = rawResolution(
         raw matM,         -- the matrix
         true,             -- whether to resolve the cokernel of the matrix
@@ -224,10 +233,10 @@ resolutionObjectInEngine = (opts, M, matM) -> (
         mapfcn := i -> map(modules#(i-1), modules#i, rawResolutionGetMatrix(RO.RawComputation, i));
         complex(modules, mapfcn)
         );
-    
+
     if not opts.StopBeforeComputation then
-        RO.compute(opts.LengthLimit, opts.DegreeLimit);
-    RO.complex(opts.LengthLimit)
+        RO.compute(RO.LengthLimit, opts.DegreeLimit);
+    RO.complex(RO.LengthLimit)
     )
 
 resolutionInEngine1 = (opts, M) -> (
@@ -723,7 +732,10 @@ minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
 
 minimalBetti Module := BettiTally => opts -> M -> (
     R := ring M;
-    if isFreeModule M then return betti complex M;
+    if isFreeModule M then (
+        if opts.LengthLimit < 0 then return betti complex R^0;
+        return betti complex M;
+        );
     degreelimit := opts.DegreeLimit;
     if degreelimit === null then degreelimit = infinity;
     lengthlimit := opts.LengthLimit;
