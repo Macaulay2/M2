@@ -35,7 +35,7 @@ UNITTEST_CCFILES := \
     RingRRRTest \
     RingCCCTest \
     OverflowTest \
-    BRP-test
+    BRP-test \
     RingCCCTest \
     LatticePointsTest
 
