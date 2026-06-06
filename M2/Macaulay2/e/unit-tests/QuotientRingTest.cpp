@@ -2,9 +2,9 @@
 // Tests for ideal creation, Groebner bases, and quotient rings.
 
 #include <gtest/gtest.h>
-#include "util-polyring-creation.hpp"
-#include "RingElem.hpp"
-#include "matrix.hpp"
+#include "unit-tests/util-polyring-creation.hpp"
+#include "unit-tests/RingElem.hpp"
+#include "matrices/matrix.hpp"
 #include "debug.hpp"
 // Step 1: idealFromStrings
 TEST(IdealCreation, fromStrings)

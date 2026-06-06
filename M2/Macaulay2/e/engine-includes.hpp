@@ -2,8 +2,8 @@
 // file to be included by all cpp files in the engine
 // what about c files?
 
-#ifndef __engine_includes_hpp__
-#define __engine_includes_hpp__
+#ifndef M2__ENGINE_INCLUDES_HPP__
+#define M2__ENGINE_INCLUDES_HPP__
 
 // IWYU pragma: begin_exports
 

@@ -187,7 +187,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					if err.message == returnMessage
 					|| err.message == continueMessage || err.message == continueMessageWithArg 
 					|| err.message == stepMessage || err.message == stepMessageWithArg 
-					|| err.message == breakMessage || err.message == throwMessage then (
+					|| err.message == breakMessage || err.message == throwMessage
+					|| err.message == finishMessage then (
 					     if stopIfBreakReturnContinue then return lastvalue;
 					     );
 					if err.message == unwindMessage then (
@@ -360,7 +361,7 @@ loadprint(filename:string,dc:DictionaryClosure,returnIfError:bool):Expr := (
 	       if err.message == returnMessage
 	       || err.message == continueMessage || err.message == continueMessageWithArg
 	       || err.message == stepMessage || err.message == stepMessageWithArg
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else r
+	       || err.message == breakMessage || err.message == finishMessage then if err.value == dummyExpr then nullE else err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -376,7 +377,7 @@ load(filename:string):Expr := (
 	       if err.message == returnMessage
 	       || err.message == continueMessage || err.message == continueMessageWithArg
 	       || err.message == stepMessage || err.message == stepMessageWithArg
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else r
+	       || err.message == breakMessage || err.message == finishMessage then if err.value == dummyExpr then nullE else err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -489,6 +490,7 @@ setupfun("commandInterpreter",commandInterpreter);
 currentS := setupvar("current",nullE);
 debugger(f:Frame,c:Code):Expr := (
      -- stdIO << "-- recursionDepth = " << recursionDepth << endl;
+     finishTargetDepth = -1;
      oldrecursionDepth := recursionDepth;
      recursionDepth = 0;
      setDebuggingMode(false);
@@ -535,7 +537,7 @@ value(e:Expr):Expr := (
 	       if err.message == returnMessage
 	       || err.message == continueMessage || err.message == continueMessageWithArg 
 	       || err.message == stepMessage || err.message == stepMessageWithArg 
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value 
+	       || err.message == breakMessage || err.message == finishMessage then if err.value == dummyExpr then nullE else err.value 
 	       else r)
 	  else r)
      is x:SpecialExpr do value(x.e)
@@ -745,6 +747,41 @@ historyLength(e:Expr):Expr := (
 	else WrongNumArgs(0))
     else WrongNumArgs(0));
 setupfun("historyLength", historyLength);
+
+-- enter the debugger
+breakpoint(c:Code):Expr := (
+    e := debuggerpointer(localFrame, c);
+	
+    when e is err:Error do (
+		printMessage(codePosition(c), err.message);
+		if err.message == breakMessage then ( buildErrorPacket(unwindMessage) )
+		else if err.message == returnMessage then (
+			setSteppingFlag();
+			err.value)
+		else if err.message == stepMessage || err.message == stepMessageWithArg then (
+			setSteppingFlag();
+			stepCount = (
+				when err.value is step:ZZcell do
+					if isInt(step) then toInt(step) else 1
+				else 1);
+			if stepCount < 0 then (
+				microStepCount = - stepCount;
+				stepCount = -1;
+			);
+			eval(c))
+		else if err.message == continueMessage then (eval(c))
+		else if err.message == finishMessage then (
+			printMessage(codePosition(c), "finish has been called");
+			finishTargetDepth = recursionDepth - 1;
+			setSteppingFlag();
+			eval(c)
+		)
+		else e
+	)
+	else e
+);
+
+setupop(breakpointS, breakpoint);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "

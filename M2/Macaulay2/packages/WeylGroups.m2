@@ -4486,8 +4486,7 @@ TEST ///
 	w2 = reduce(R,{1,2,1,3,2});
 	myInterval=intervalBruhat(P % w1,P % w2);
     G = hasseDiagramToGraph(myInterval, "labels" => "reduced decomposition")
-    -- the following test is dependent on the order chosen
-    -- this test should be changed to check correctness, not the specific order of nodes
+    -- all assertions below are order-independent (row counts, label sets, link triples)
     assert(#G == 5)
     G = toList G;
     assert(G/length == {1,2,3,3,1})
@@ -4498,22 +4497,18 @@ TEST ///
         set{"121", "213", "123"}, 
         set{"21", "23", "12"}, 
         set{"2"}})
-    -- we should check that the links are correct too.
-    -- the following is one possible answer, but it can change.  Why?!
-    -*
-      assert(G#0 == {{"12132", {{"3", 0}, {"2", 1}}}});
-      assert(G#1 == {
-              {"2132", {{"232", 1}, {"2", 2}}}, 
-              {"1213", {{"1", 0}, {"3", 1}, {"232", 2}}}
-              });
-      assert(G#2 == {
-              {"123", {{"3", 0}, {"12321", 2}}}, 
-              {"121", {{"1", 0}, {"2", 1}}}, 
-              {"213", {{"3", 1}, {"1", 2}}}
-              });
-      assert(G#3 == {{"12", {{"121", 0}}}, {"21", {{"1", 0}}}, {"23", {{"3", 0}}}})
-      assert(G#4 == {{"2", {}}})
-      *-
+    -- the links, as an order-independent set of (source, edge, target) label triples
+    -- (this replaces an earlier position-indexed check that depended on node order)
+    triples = set flatten apply(#G - 1, i -> flatten apply(G#i, node ->
+            apply(node#1, link -> {node#0, link#0, (G#(i+1)#(link#1))#0})));
+    assert(triples === set {
+            {"12132","2","1213"}, {"12132","3","2132"},
+            {"1213","1","123"}, {"1213","3","121"}, {"1213","232","213"},
+            {"2132","2","213"}, {"2132","232","121"},
+            {"123","3","12"}, {"123","12321","23"},
+            {"121","1","12"}, {"121","2","21"},
+            {"213","1","23"}, {"213","3","21"},
+            {"12","121","2"}, {"21","1","2"}, {"23","3","2"}})
 ///
 
 doc ///
@@ -4604,6 +4599,86 @@ doc ///
 			Will load a Hasse graph from the file {\tt f}.
 	SeeAlso	
 		"storeHasseGraph(HasseGraph,String)"
+///
+
+-- underBruhat: the Weyl group elements covered (just below) a given one in the Bruhat order
+TEST ///
+  R = rootSystemA 3
+  w0 = longestWeylGroupElement R
+  U = underBruhat w0
+  -- type: underBruhat returns a List of {WeylGroupElement, reflection} pairs
+  assert instance(U, List)
+  -- regression: the longest element of A3 covers exactly 3 elements
+  assert(#U == 3)
+  -- property: each covered element has length exactly one less than w0
+  assert all(U, x -> #reducedDecomposition(x#0) == #reducedDecomposition w0 - 1)
+  -- property: each covered element is genuinely below w0 in the Bruhat order
+  assert all(U, x -> isLtBruhat(x#0, w0))
+  -- run: underBruhat also accepts a list of (equal-length) elements
+  assert instance(underBruhat apply(U, x -> x#0), List)
+///
+
+-- aboveBruhat: the Weyl group elements covering (just above) a given one in the Bruhat order
+TEST ///
+  R = rootSystemA 3
+  e = neutralWeylGroupElement R
+  A = aboveBruhat e
+  -- type: aboveBruhat returns a List of {WeylGroupElement, reflection} pairs
+  assert instance(A, List)
+  -- regression: the identity is covered by exactly 3 elements (the simple reflections)
+  assert(#A == 3)
+  -- property: each covering element has length 1
+  assert all(A, x -> #reducedDecomposition(x#0) == 1)
+  -- property: the identity is genuinely below each covering element
+  assert all(A, x -> isLtBruhat(e, x#0))
+  -- run: aboveBruhat also accepts a list of (equal-length) elements
+  assert instance(aboveBruhat apply(A, x -> x#0), List)
+///
+
+-- intervalBruhat: the Bruhat interval [u,v], returned as a HasseDiagram
+TEST ///
+  R = rootSystemA 2
+  u = neutralWeylGroupElement R
+  v = longestWeylGroupElement R
+  H = intervalBruhat(u, v)
+  -- type: the interval is a HasseDiagram
+  assert instance(H, HasseDiagram)
+  -- regression: [e, w0] in A2 is the whole 6-element Weyl group
+  elts = flatten apply(toList H, row -> apply(row, x -> x#0))
+  assert(#elts == 6)
+  -- property: every element of the interval lies between u and v
+  assert all(elts, w -> isLtBruhat(u, w) and isLtBruhat(w, v))
+  -- run: intervalBruhat also accepts left cosets (W/W_P) and right cosets (W_P\W)
+  R3 = rootSystemA 3
+  P = parabolic(R3, set {3})
+  a = reduce(R3, {2})
+  b = reduce(R3, {1,2,1,3,2})
+  assert instance(intervalBruhat(a % P, b % P), HasseDiagram)
+  assert instance(intervalBruhat(P % a, P % b), HasseDiagram)
+  -- error: u and v must live in the same Weyl group
+  assert(try (intervalBruhat(neutralWeylGroupElement R, neutralWeylGroupElement R3); false) else true)
+///
+
+-- storeHasseGraph / loadHasseGraph: round-trip a labelled HasseGraph through a file
+TEST ///
+  R = rootSystemA 3
+  I = intervalBruhat(reduce(R,{2,1,2}), reduce(R,{1,2,1,3,2}))
+  G = hasseDiagramToGraph(I, "labels" => "reduced decomposition")
+  -- type: hasseDiagramToGraph produces a HasseGraph
+  assert instance(G, HasseGraph)
+  -- regression: storing then loading recovers an identical graph
+  f = temporaryFileName()
+  storeHasseGraph(G, f)
+  assert(loadHasseGraph f === G)
+///
+
+-- hasseGraphToPicture: a HasseGraph renders to a Graphics Picture
+TEST ///
+  R = rootSystemA 3
+  I = intervalBruhat(reduce(R,{2,1,2}), reduce(R,{1,2,1,3,2}))
+  G = hasseDiagramToGraph(I, "labels" => "reduced decomposition")
+  -- type: hasseGraphToPicture returns a Picture (from the Graphics package)
+  assert instance(hasseGraphToPicture G, Picture)
 ///
 
 

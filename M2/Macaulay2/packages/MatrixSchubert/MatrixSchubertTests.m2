@@ -974,8 +974,8 @@ assert(toOneLineNotation getASM schubertDeterminantalIdeal PI == {});
 
 
 TEST ///
----isSchubertCM
---assert(isSchubCM({1,3,2}) == true)
+---isSchubertCM (Matrix input checks pdim == codim; List input uses Fulton's theorem)
+assert(isSchubCM({1,3,2}) == true)
 assert(isSchubertCM(matrix{{0,0,0,1},{0,1,0,0},{1,-1,1,0},{0,1,0,0}}) == true)
 assert(isSchubertCM(matrix{{0, 0, 1, 0}, {1, 0, -1, 1}, {0, 1, 0, 0}, {0, 0, 1, 0}}) == false)
 ///
@@ -1035,4 +1035,209 @@ TEST ///
 --toOneLineNotation edge case
 assert(toOneLineNotation({1},1) == {1})
 
+///
+
+-------------------------
+-------------------------
+--**ADDED RIGOROUS COVERAGE**--
+-- Direct tests for permutation utilities, ASM_Lists generators, option keys,
+-- algorithm branches, the PipeDream type, and subwordComplex.
+-------------------------
+-------------------------
+
+TEST ///
+-- isPerm: recognizes 1-line-notation permutations; rejects repeated values,
+-- gaps, and out-of-range entries. Boundary inputs {} and {1} included.
+assert(isPerm {1})
+assert(isPerm {2,1})
+assert(isPerm {1,2,3})
+assert(isPerm {3,1,2})
+assert(isPerm {})
+assert(not isPerm {1,1})
+assert(not isPerm {1,3})
+assert(not isPerm {0,1})
+assert(not isPerm {2,3,4})
+///
+
+TEST ///
+-- firstDescent / lastDescent: index of the first/last descent of a permutation.
+-- error test: both reject the identity (no descent) and non-permutations.
+assert(firstDescent {1,3,2} == 2 and lastDescent {1,3,2} == 2)
+assert(firstDescent {3,2,1} == 1 and lastDescent {3,2,1} == 2)
+assert(firstDescent {2,1,4,3} == 1 and lastDescent {2,1,4,3} == 3)
+assert(firstDescent {1,4,3,2} == 2 and lastDescent {1,4,3,2} == 3)
+assert(try (firstDescent {1,2,3}; false) else true)
+assert(try (lastDescent {1,2,3}; false) else true)
+assert(try (firstDescent {1,1}; false) else true)
+assert(try (lastDescent {2,2}; false) else true)
+///
+
+TEST ///
+-- inverseOf: the group inverse. Property tests: it is an involution, and a
+-- permutation composed with its inverse (either order) is the identity.
+assert(inverseOf {2,3,1} == {3,1,2})
+assert(inverseOf {3,1,2} == {2,3,1})
+assert(inverseOf {1,2,3,4} == {1,2,3,4})
+w = {4,1,5,2,3};
+assert(inverseOf inverseOf w == w)
+assert(composePerms(w, inverseOf w) == toList(1..#w))
+assert(composePerms(inverseOf w, w) == toList(1..#w))
+assert(try (inverseOf {1,1}; false) else true)
+///
+
+TEST ///
+-- longestPerm: the longest element {n,n-1,...,1} of S_n. Property test: its
+-- Coxeter length is n(n-1)/2. Boundary: a non-positive argument must error.
+assert(longestPerm 1 == {1})
+assert(longestPerm 4 == {4,3,2,1})
+assert(all(1..6, n -> permLength longestPerm n == n*(n-1)//2))
+assert(try (longestPerm 0; false) else true)
+assert(try (longestPerm(-3); false) else true)
+///
+
+TEST ///
+-- avoidsAllPatterns: whether a permutation avoids every pattern in a list.
+-- Property tests: it agrees with the conjunction of isPatternAvoiding, and
+-- reduces to isVexillary for the single pattern {2,1,4,3}.
+assert(avoidsAllPatterns({1,2,3,4}, {{2,1}}))
+assert(not avoidsAllPatterns({1,2,3,4}, {{2,1},{1,2}}))
+assert(avoidsAllPatterns({2,1,4,3}, {}))
+w = {7,2,5,8,1,3,6,4};
+pats = {{2,1},{1,3,2},{2,1,4,3}};
+assert(avoidsAllPatterns(w, pats) == all(pats, p -> isPatternAvoiding(w, p)))
+assert(avoidsAllPatterns(w, {{2,1,4,3}}) == isVexillary w)
+///
+
+TEST ///
+-- permToMatrix / toOneLineNotation: the permutation <-> permutation-matrix
+-- bijection. Property tests: round-trip recovery, and every permutation matrix
+-- is an ASM. error test: a non-permutation must be rejected.
+assert(permToMatrix {2,1} == matrix{{0,1},{1,0}})
+assert(permToMatrix {1,2,3} == id_(ZZ^3))
+assert(permToMatrix {3,1,2} == matrix{{0,0,1},{1,0,0},{0,1,0}})
+for w in {{1},{2,1},{3,1,2},{2,1,4,3},{4,1,5,2,3}} do (
+    assert(toOneLineNotation permToMatrix w == w);
+    assert(isASM permToMatrix w)
+    )
+assert(try (permToMatrix {2,2}; false) else true)
+///
+
+TEST ///
+-- grothendieckPolynomial Algorithm option: the default "DividedDifference" and
+-- the "PipeDream" algorithm must produce the same polynomial.
+-- error test: an unrecognized Algorithm value must be rejected.
+for w in {{1,3,2},{2,1,4,3}} do
+    assert(toExternalString grothendieckPolynomial w
+        == toExternalString grothendieckPolynomial(w, Algorithm => "PipeDream"))
+assert(try (grothendieckPolynomial({2,1,3}, Algorithm => "Nonsense"); false) else true)
+///
+
+TEST ///
+-- schubertPolynomial Algorithm option: the default "DividedDifference" and the
+-- "Transition" algorithm must produce the same polynomial.
+-- error test: an unrecognized Algorithm value must be rejected.
+for w in {{2,1,5,4,3},{1,4,3,2}} do
+    assert(toExternalString schubertPolynomial w
+        == toExternalString schubertPolynomial(w, Algorithm => "Transition"))
+assert(try (schubertPolynomial({2,1,3}, Algorithm => "Nonsense"); false) else true)
+///
+
+TEST ///
+-- CoefficientRing / Variable options on the ideal constructors must take
+-- effect: they change the coefficient field and the variable name.
+assert(char ring antiDiagInit({2,1,3}, CoefficientRing => ZZ/101) == 101)
+assert(char ring first fultonGens({3,2,1}, CoefficientRing => ZZ/2) == 2)
+I = schubertDeterminantalIdeal({2,1,3}, Variable => getSymbol "y");
+assert(toExternalString (ring I)_0 == "y_(1,1)")
+J = antiDiagInit({2,1,3}, Variable => getSymbol "w");
+assert(toExternalString (ring J)_0 == "w_(1,1)")
+///
+
+TEST ///
+-- property test: an initial ideal preserves the Hilbert function, so the
+-- antidiagonal initial ideal and the three diagonal initial ideals (SE, NW,
+-- revlex) all share the codimension and degree of the Schubert ideal.
+for w in {{1,3,2},{2,1,4,3},{3,1,4,2}} do (
+    I = schubertDeterminantalIdeal w;
+    inits = {antiDiagInit w, diagLexInitSE w, diagLexInitNW w, diagRevLexInit w};
+    assert(all(inits, K -> codim K == codim I));
+    assert(all(inits, K -> degree K == degree I))
+    )
+A = matrix{{0,1,0},{1,-1,1},{0,1,0}};
+IA = schubertDeterminantalIdeal A;
+initsA = {antiDiagInit A, diagLexInitSE A, diagLexInitNW A, diagRevLexInit A};
+assert(all(initsA, K -> codim K == codim IA and degree K == degree IA))
+///
+
+TEST ///
+-- cohenMacaulayASMsList / nonCohenMacaulayASMsList: every listed matrix is an
+-- ASM, and the CM / non-CM labelling is correct (cross-checked against
+-- isSchubertCM). Boundary: nonCohenMacaulayASMsList is {} for n <= 3, and an
+-- out-of-range size must error.
+cm4 = cohenMacaulayASMsList 4;
+assert(#cm4 == 15)
+assert(all(cm4, isASM))
+assert(all(cm4, isSchubertCM))
+assert(nonCohenMacaulayASMsList 3 == {})
+ncm4 = nonCohenMacaulayASMsList 4;
+assert(#ncm4 == 3)
+assert(all(ncm4, isASM))
+assert(all(ncm4, A -> not isSchubertCM A))
+assert(try (cohenMacaulayASMsList 0; false) else true)
+assert(try (cohenMacaulayASMsList 7; false) else true)
+assert(try (nonCohenMacaulayASMsList 7; false) else true)
+///
+
+TEST ///
+-- ASMRandomList(n,m): returns m ASMs of size n, each drawn from ASMFullList n.
+-- Boundary: a size outside 1..7 must error.
+full4 = ASMFullList 4;
+sample = ASMRandomList(4, 8);
+assert(#sample == 8)
+assert(all(sample, isASM))
+assert(all(sample, A -> member(A, full4)))
+assert(try (ASMRandomList(8, 2); false) else true)
+assert(try (ASMRandomList(0, 2); false) else true)
+///
+
+TEST ///
+-- initialIdealsList(n): the precomputed antidiagonal initial ideals of size n.
+-- Returns a nonempty list of ideals; the size must lie in 3..6.
+L = initialIdealsList 3;
+assert(#L == 7)
+assert(all(L, K -> instance(K, Ideal)))
+assert(try (initialIdealsList 2; false) else true)
+assert(try (initialIdealsList 7; false) else true)
+///
+
+TEST ///
+-- PipeDream: the exported type returned by pipeDreams / pipeDreamsNonReduced.
+-- Covers type membership, the PipeDream == List comparison, the net / toString
+-- display methods, reduced-subset-of-nonreduced containment, and the property
+-- that every reduced pipe dream of w has exactly permLength(w) crossing tiles.
+assert(instance(PipeDream, Type))
+D = first pipeDreams {1};
+assert(class D === PipeDream)
+assert(D == {{"/"}})
+assert(instance(net D, Net))
+assert(instance(toString D, String))
+crosses = E -> sum apply(toList E, row -> #select(row, t -> t == "+"));
+for w in {{3,1,2},{2,1,4,3},{1,4,3,2}} do (
+    pds = pipeDreams w;
+    assert(all(pds, E -> instance(E, PipeDream)));
+    assert(all(pipeDreamsNonReduced w, E -> instance(E, PipeDream)));
+    assert(isSubset(set pds, set pipeDreamsNonReduced w));
+    assert(all(pds, E -> crosses E == permLength w))
+    )
+///
+
+TEST ///
+-- subwordComplex(w): the simplicial complex whose Stanley-Reisner ideal is the
+-- antidiagonal initial ideal of w (Knutson-Miller). The sub accounts for the
+-- fresh ring built by simplicialComplex.
+assert(instance(subwordComplex {2,1,3}, SimplicialComplex))
+for w in {{2,1,3},{1,4,3,2},{3,1,4,2}} do (
+    adi = antiDiagInit w;
+    assert(adi == sub(monomialIdeal subwordComplex w, ring adi))
+    )
 ///

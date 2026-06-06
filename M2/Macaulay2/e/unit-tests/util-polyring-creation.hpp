@@ -1,4 +1,5 @@
-#pragma once
+#ifndef M2_UNIT_TESTS_UTIL_POLYRING_CREATION_HPP
+#define M2_UNIT_TESTS_UTIL_POLYRING_CREATION_HPP
 
 #include <iostream>
 #include <memory>
@@ -6,12 +7,12 @@
 #include <vector>
 
 #include "interface/monomial-ordering.h"
-#include "monordering.hpp"
+#include "monomials/monordering.hpp"
 #include "interface/ring.h"
 #include "interface/aring.h"
 #include "monoid.hpp"
-#include "poly.hpp"
-#include "polyring.hpp"
+#include "rings/poly.hpp"
+#include "rings/polyring.hpp"
 
 const Monoid* degreeMonoid(const std::vector<std::string>& names);
 
@@ -49,6 +50,7 @@ const Matrix* computeGB(const Matrix* M);
 const Ring* simpleQuotientRing(const PolynomialRing* R,
                                const std::vector<std::string>& generators);
 
+#endif
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

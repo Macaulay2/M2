@@ -1,10 +1,11 @@
-#pragma once
+#ifndef M2_GB_F4_GBF4INTERFACE_HPP
+#define M2_GB_F4_GBF4INTERFACE_HPP
 
 #include "BasicPolyList.hpp"
-#include "GBF4Computation.hpp"
-#include "PolynomialList.hpp"
-#include "../e/comp-gb.hpp"
-#include "../matrix-stream.hpp"
+#include "gb-f4/GBF4Computation.hpp"
+#include "gb-f4/PolynomialList.hpp"
+#include "groebner-computations/comp-gb.hpp"
+#include "matrices/matrix-stream.hpp"
 
 class Matrix;
 
@@ -135,6 +136,7 @@ inline const Matrix* toMatrix(const FreeModule *target, const PolynomialList& Fs
 
 } // end namespace newf4
 
+#endif
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

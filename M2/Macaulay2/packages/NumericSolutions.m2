@@ -828,6 +828,38 @@ for ii from 0 to length S -1 do (
 assert(normSol < 10^(-10));
 ///
 
+--test compMatr, traceForm
+TEST ///
+R = QQ[x];
+I = ideal(x^2-1);
+
+M = compMatr(I,x);
+assert(M^2 ==id_(source M))
+
+T = traceForm(I);
+assert(entries T == {{2,0},{0,2}})
+///
+
+--test jordanForm
+TEST ///
+A = matrix{{1,1},{0,1}};
+
+(P,Eigs,Rep,AlgMult,J) = jordanForm A;
+
+assert(Rep == {1})
+assert(AlgMult == {2})
+
+A = matrix{{1,10^(-5)},{0,1}};
+
+-- with large tolerance, matrix is treated as diagonal
+(P1,E1,R1,A1,J1) = jordanForm(A, Tolerance => 10.^(-3));
+
+-- with tighter tolerance, nilpotent entry is detected
+(P2,E2,R2,A2,J2) = jordanForm(A, Tolerance => 10.^(-8));
+
+assert(norm(J1 - id_(QQ^2)) < 10.^(-6));
+assert(norm(J2 - matrix{{1.,1.},{0.,1.}}) < 10.^(-6));
+///
 end
 
 when using this package please refer to 

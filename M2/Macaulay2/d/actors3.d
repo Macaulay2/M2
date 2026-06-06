@@ -96,6 +96,17 @@ override(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("override",override);
 -----------------------------------------------------------------------------
+EqualEqualfunpointer := dummyEE;
+listComparison(s:Sequence, t:Sequence):Expr := (
+    n := length(s);
+    if n == length(t) then (
+	for i from 0 to n - 1 do (
+	    ret := EqualEqualfunpointer(s.i, t.i);
+	    when ret is Error do return ret else nothing;
+	    if ret == False then return False);
+	True)
+    else False);
+
 equalmethod(x:Expr,y:Expr):Expr := (
      method := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
      if method == nullE 
@@ -177,36 +188,28 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  when y 
 	  is yy:stringCell do toExpr(xx.v === yy.v)	 -- # typical value: symbol ==, String, String, Boolean
 	  else equalmethod(x,y))
-     is s:Sequence do when y is t:Sequence do (				 -- # typical value: symbol ==, Sequence, Sequence, Boolean
-	  if length(s) != length(t) then return False;
-	  for i from 0 to length(s)-1 do (
-	       ret := EqualEqualfun(s.i,t.i);
-	       when ret is Error do return ret else nothing;
-	       if ret == False then return False;
-	       );
-	  True
-	  ) else equalmethod(x,y)
+     is s:Sequence do (
+	 when y
+	 is t:Sequence do listComparison(s, t)           -- # typical value: symbol ==, Sequence, Sequence, Boolean
+	 is List do WrongArg("lists of the same class")
+	 else equalmethod(x, y))
      else equalmethod(x,y));
+EqualEqualfunpointer = EqualEqualfun;
 listComparison(e:Expr):Expr := (
-     when e 
-     is args:Sequence do if length(args) != 2 then WrongNumArgs(2) else (
-	  when args.0 is a:List do
-	  when args.1 is b:List do (
-	       if a.Class != b.Class then return False;
-	       s := a.v;
-	       t := b.v;
-	       if length(s) != length(t) then return False;
-	       for i from 0 to length(s)-1 do (
-		    ret := EqualEqualfun(s.i,t.i);
-		    when ret is Error do return ret else nothing;
-		    if ret == False then return False;
-		    );
-	       True
-	       )
-	  else WrongArg(2,"a visible list")
-	  else WrongArg(1,"a visible list")
-	  )
-     else WrongNumArgs(2));
+    when e
+    is args:Sequence do (
+	if length(args) == 2 then (
+	    when args.0 is a:List do (
+		when args.1
+		is b:List do (
+		    if a.Class != b.Class
+		    then WrongArg("lists of the same class")
+		    else listComparison(a.v, b.v))
+		is Sequence do WrongArg("lists of the same class")
+		else WrongArg(2,"a visible list"))
+	    else WrongArg(1,"a visible list"))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
 installMethod(EqualEqualS,visibleListClass,visibleListClass,listComparison);
 EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);

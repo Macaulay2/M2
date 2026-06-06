@@ -6,7 +6,8 @@
  *  TODO: allow infinite precision integers too.
 */
 //  TODO: how should we handle coefficients which are: GF(p^n), QQ, fraction fields? or even polynomials?
-#pragma once
+#ifndef M2_BASICPOLYLIST_HPP
+#define M2_BASICPOLYLIST_HPP
 
 #include "exceptions.hpp"
 
@@ -16,7 +17,7 @@
 #include <iostream>
 
 #include "BasicPoly.hpp"
-#include "PolynomialStream.hpp"
+#include "unused/PolynomialStream.hpp"
 
 class FreeModule;
 class Matrix;
@@ -110,6 +111,7 @@ auto basicPolyListFromString(std::vector<std::string> varNames, std::string poly
 */
 auto basicPolyListFromFile(std::vector<std::string> varNames, std::string fileName) -> BasicPolyList;
 
+#endif
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

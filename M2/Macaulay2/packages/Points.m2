@@ -1424,6 +1424,33 @@ TEST///
      assert(G == projectiveFatPointsByIntersection(M,mults,R))
 ///
 
+TEST ///
+-- points: build the ideal of a set of projective points by intersecting per-point ideals
+R = ZZ/101[a,b,c];
+pmat = matrix(R, {{1,0,0},{0,1,0},{0,0,1}});
+assert(points pmat == ideal(a*b, a*c, b*c));
+///
+
+TEST ///
+-- minMaxResolution prints the predicted and lex Betti tables and returns null
+assert(minMaxResolution(3,5) === null);
+///
+
+TEST ///
+-- VerifyPoints option: default and VerifyPoints=>false agree on a clean projective-points matrix;
+-- the default also tolerates duplicate columns by cleaning them up; projectiveFatPoints accepts the option too.
+M = matrix {{1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}};
+R = QQ[x,y,z];
+(inG1, G1) = projectivePoints(M, R);
+(inG2, G2) = projectivePoints(M, R, VerifyPoints => false);
+assert(G1 == G2);
+Mdup = M | matrix{{1},{0},{0}};
+(inGd, Gd) = projectivePoints(Mdup, R);
+assert(Gd == G1);
+(inGf, Gf) = projectiveFatPoints(M, {1,1,1,1}, R, VerifyPoints => false);
+assert(instance(Gf, List));
+///
+
 end
 
 -*

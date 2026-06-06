@@ -1,16 +1,16 @@
 // Copyright 2026, The Macaulay2 Authors.
 
 #include "util.hpp"
-#include "util-polyring-creation.hpp"
-#include "weylalg.hpp"
+#include "unit-tests/util-polyring-creation.hpp"
+#include "rings/weylalg.hpp"
 #include "interface/ring.h"
 #include "interface/aring.h"
 #include "BasicPoly.hpp"
 #include "BasicPolyList.hpp"
 #include "monoid.hpp"
-#include "freemod.hpp"
+#include "free-modules/freemod.hpp"
 #include "interface/groebner.h"
-#include "comp-gb.hpp"
+#include "groebner-computations/comp-gb.hpp"
 
 // Creation of ring type objects
 // coefficient rings

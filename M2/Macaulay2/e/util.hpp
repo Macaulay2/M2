@@ -1,5 +1,6 @@
 // Copyright 2014-2016  Michael E. Stillman
-#pragma once
+#ifndef M2_UTIL_HPP
+#define M2_UTIL_HPP
 
 #include <string>   // for string, basic_string
 #include <vector>   // for vector
@@ -85,6 +86,7 @@ inline std::ostream& operator<<(std::ostream& o, const std::vector<T>& ts)
   return o;
 }
 
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

@@ -9,49 +9,83 @@ INTERFACE2 = interrupted
 #  NCAlgebras/SuffixTree \
 
 INTERFACE = \
-	myalloc \
 	BasicPoly \
 	BasicPolyList \
 	BasicPolyListParser \
-	matrix-ncbasis \
-	M2FreeAlgebraQuotient \
 	M2FreeAlgebra \
-	NCAlgebras/Word \
-	NCAlgebras/NCReduction \
-	NCAlgebras/FreeAlgebraQuotient \
+	M2FreeAlgebraQuotient \
+	NAG/NAG \
 	NCAlgebras/FreeAlgebra \
+	NCAlgebras/FreeAlgebraQuotient \
 	NCAlgebras/FreeMonoid \
-	NCAlgebras/WordTable \
-	NCAlgebras/SuffixTree \
-	NCAlgebras/NCGroebner \
 	NCAlgebras/NCF4 \
+	NCAlgebras/NCGroebner \
+	NCAlgebras/NCReduction \
 	NCAlgebras/OverlapTable \
+	NCAlgebras/SuffixTree \
+	NCAlgebras/Word \
+	NCAlgebras/WordTable \
 	NCResolutions/nc-res-computation \
 	Polynomial \
-	monomial-collection \
-	eigen \
-	monomial-sets \
-	mutablecomplex \
-	localring \
-	bibasis/bibasis \
+	SLP/SLP \
+	basic-mutable-matrices/dmat \
+	basic-mutable-matrices/lapack \
+	basic-mutable-matrices/mat \
+	basic-rings/aring \
+	basic-rings/aring-CC \
+	basic-rings/aring-CCC \
+	basic-rings/aring-CCi \
+	basic-rings/aring-GF-flint \
+	basic-rings/aring-GF-flint-big \
+	basic-rings/aring-QQ-flint \
+	basic-rings/aring-QQ-gmp \
+	basic-rings/aring-RR \
+	basic-rings/aring-RRR \
+	basic-rings/aring-RRi \
+	basic-rings/aring-ZZ-flint \
+	basic-rings/aring-ZZ-gmp \
+	basic-rings/aring-ZZp \
+	basic-rings/aring-ZZp-ffpack \
+	basic-rings/aring-ZZp-flint \
+	basic-rings/aring-m2-GF \
+	basic-rings/aring-tower \
+	basic-rings/reader \
 	bibasis/allocator \
+	bibasis/bibasis \
 	bibasis/launcher \
 	bibasis/monom \
 	bibasis/monomDL \
 	bibasis/monomDRL \
 	bibasis/monomLex \
 	bibasis/settings-manager \
-	schreyer-resolution/res-monomial-sorter \
-	schreyer-resolution/res-f4-monlookup \
-	schreyer-resolution/res-moninfo-dense \
-	schreyer-resolution/res-moninfo-sparse \
-	schreyer-resolution/res-moninfo \
-	schreyer-resolution/res-poly-ring \
-	schreyer-resolution/res-f4-m2-interface \
-	schreyer-resolution/res-schreyer-frame \
-	schreyer-resolution/res-dep-graph \
-	schreyer-resolution/res-f4 \
-	schreyer-resolution/res-f4-computation \
+	buffer \
+	coeffrings \
+	comb \
+	computations/BRP \
+	computations/Eschreyer \
+	computations/LLL \
+	computations/assprime \
+	computations/comp \
+	computations/det \
+	computations/ntl-interface \
+	computations/pfaff \
+	cra \
+	debug \
+	eigen \
+	f4/f4 \
+	f4/f4-computation \
+	f4/f4-m2-interface \
+	f4/f4-monlookup \
+	f4/f4-spairs \
+	f4/hilb-fcn \
+	f4/monhashtable \
+	f4/moninfo \
+	finalize \
+	fplll-interface \
+	fractionfreeLU \
+	free-modules/freemod \
+	free-modules/schreyer-orders \
+	gauss \
 	gb-f4/Basis \
 	gb-f4/GBF4Computation \
 	gb-f4/GBF4Interface \
@@ -61,141 +95,104 @@ INTERFACE = \
 	gb-f4/MonomialView \
 	gb-f4/PolynomialList \
 	gb-f4/SPairs \
-	f4/f4 \
-	f4/f4-monlookup \
-	f4/f4-computation \
-	f4/f4-spairs \
-	f4/f4-m2-interface \
-	f4/hilb-fcn \
-	f4/monhashtable \
-	monsort \
-	f4/moninfo \
-	betti \
-	GF \
-	ZZ \
-	ZZp \
-	reader \
-	matrix-stream \
-	cra \
-	aring-zz-gmp \
-	aring-qq-gmp \
-	aring-zz-flint \
-	aring-qq-flint \
-	aring-zzp-flint \
-	aring-RR \
-	aring-CC \
-	aring-RRR \
-	aring-CCC \
-	aring-RRi \
-	aring-CCi \
-	aring-tower \
-	aring-gf-flint-big \
-	aring-gf-flint \
-	aring-m2-gf \
-	aring-zzp \
-	aring-zzp-ffpack \
-	aring \
-	schurSn \
-	schur2 \
-	dpoly \
-	tower \
-	interreduce \
-	finalize \
-	NAG \
-	SLP \
-	overflow \
-	memory-status \
-	imonorder \
-	sagbi \
-	monideal-minprimes \
-	lapack \
-	LLL \
-	fractionfreeLU \
-	ntl-interface \
-	fplll-interface \
-	mat \
-	dmat \
-	coeffrings \
-	Eschreyer \
-	gbweight \
-	qring \
-	polyquotient \
-	poly \
-	debug \
-	comp \
-	comp-gb \
-	comp-gb-proxy \
-	comp-gb-declared \
-	comp-res \
-	res-a0 \
-	res-a0-poly \
-	res-a1 \
-	res-a1-poly \
-	res-a2 \
-	reducedgb \
-	reducedgb-field \
-	reducedgb-marked \
-	reducedgb-field-local \
-	reducedgb-ZZ \
-	montable \
-	montableZZ \
-	schorder \
-	assprime \
-	buffer \
-	comb \
-	det \
-	frac \
-	franzi-brp \
-	freemod \
-	gb-default \
-	gb-homog2 \
-	gb-sugarless \
-	gb-toric \
-	gb-walk \
-	gbring \
-	gauss \
+	groebner-computations/comp-gb \
+	groebner-computations/comp-gb-declared \
+	groebner-computations/comp-gb-proxy \
+	groebner-computations/gb-default \
+	groebner-computations/gb-homog2 \
+	groebner-computations/gb-sugarless \
+	groebner-computations/gb-toric \
+	groebner-computations/gb-walk \
+	groebner-computations/gbring \
+	groebner-computations/gbweight \
+	groebner-computations/reducedgb \
+	groebner-computations/reducedgb-ZZ \
+	groebner-computations/reducedgb-field \
+	groebner-computations/reducedgb-field-local \
+	groebner-computations/reducedgb-marked \
+	groebner-computations/sagbi \
+	groebner-computations/spair \
 	hermite \
 	hilb \
+	imonorder \
 	int-bag \
-	matrix \
-	matrix-con \
+	interreduce \
+	matrices/matrix \
+	matrices/matrix-con \
+	matrices/matrix-ncbasis \
+	matrices/matrix-stream \
 	mem \
-	monideal \
+	memory-status \
 	monoid \
-	monomial \
-	polyring \
-	pfaff \
-	relem \
-	ring \
-	ringelem \
+	monomials/ExponentList \
+	monomials/monideal \
+	monomials/monideal-minprimes \
+	monomials/monomial \
+	monomials/monomial-collection \
+	monomials/monomial-sets \
+	monomials/monsort \
+	monomials/montable \
+	monomials/montableZZ \
+	monomials/overflow \
+	mutablecomplex \
+	myalloc \
+	resolution/betti \
+	resolution/comp-res \
+	resolutions/res-a0 \
+	resolutions/res-a0-poly \
+	resolutions/res-a1 \
+	resolutions/res-a1-poly \
+	resolutions/res-a2 \
+	ring-elements/ring-element \
 	ringmap \
-	schur \
-	skew \
-	skewpoly \
-	solvable \
-	spair \
-	text-io \
-	ExponentList \
-	weylalg
+	rings/GF \
+	rings/ZZ \
+	rings/ZZp \
+	rings/dpoly \
+	rings/frac \
+	rings/localring \
+	rings/poly \
+	rings/polyquotient \
+	rings/polyring \
+	rings/qring \
+	rings/ring \
+	rings/ringelem \
+	rings/skew \
+	rings/skewpoly \
+	rings/solvable \
+	rings/tower \
+	rings/weylalg \
+	schreyer-resolutions/res-dep-graph \
+	schreyer-resolutions/res-f4 \
+	schreyer-resolutions/res-f4-computation \
+	schreyer-resolutions/res-f4-m2-interface \
+	schreyer-resolutions/res-f4-monlookup \
+	schreyer-resolutions/res-moninfo \
+	schreyer-resolutions/res-moninfo-dense \
+	schreyer-resolutions/res-moninfo-sparse \
+	schreyer-resolutions/res-monomial-sorter \
+	schreyer-resolutions/res-poly-ring \
+	schreyer-resolutions/res-schreyer-frame \
+	schur-rings/schur \
+	schur-rings/schur2 \
+	schur-rings/schurSn \
+	text-io
 
 COMMANDS = \
-	interface/m2-types \
-	interface/m2-mem \
-	ntl-internal \
-	ntl-debugio \
-	matrix-kbasis \
-	matrix-symm \
-	matrix-sort \
-	ring-vecs \
-	res-a2-gb \
+	computations/BRP-gb \
+	computations/BRP-interface \
+	computations/ntl-debugio \
+	computations/ntl-internal \
 	engine \
 	interface/aring \
-	interface/cra \
 	interface/cone \
+	interface/cra \
 	interface/factory \
 	interface/flint \
 	interface/freemodule \
 	interface/groebner \
+	interface/m2-mem \
+	interface/m2-types \
 	interface/matrix \
 	interface/monoid \
 	interface/monomial-ideal \
@@ -206,27 +203,31 @@ COMMANDS = \
 	interface/ring \
 	interface/ringelement \
 	interface/ringmap \
-	franzi-gb \
-	franzi-interface
+	matrices/matrix-kbasis \
+	matrices/matrix-sort \
+	matrices/matrix-symm \
+	resolutions/res-a2-gb \
+	rings/ring-vecs
 
 NAMES_H = \
-	m2tbb \
-	f4/f4-types \
-	f4/memblock \
-	ExponentVector \
-	VectorArithmetic \
 	MemoryBlock \
 	NCAlgebras/Range \
-	style \
-	util \
-	hash \
+	VectorArithmetic \
+	basic-rings/vector-arithmetic \
+	f4/f4-types \
+	f4/memblock \
 	f4/ntuple-monomial \
 	f4/varpower-monomial \
-	res-a0-pair
+	hash \
+	m2tbb \
+	monomials/ExponentVector \
+	resolutions/res-a0-pair \
+	style \
+	util
 
-C_FILES = error table exptable complex # interface/m2-types interface/m2-mem
+C_FILES = error table exptable # interface/m2-types interface/m2-mem
 
-D_FILES = 
+D_FILES =
 DD_FILES = #test
 
 ##############################
@@ -251,4 +252,4 @@ LIBENGINE = @pre_librariesdir@/libengine.a
 endif
 
 HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE) $(INTERFACE2)) $(E_H)
-ENGINE_SRCFILES := $(ENGINE_CCFILES) $(ENGINE_CFILES) $(HHFILES) $(ENGINE_DDFILES) $(ENGINE_DFILES) 
+ENGINE_SRCFILES := $(ENGINE_CCFILES) $(ENGINE_CFILES) $(HHFILES) $(ENGINE_DDFILES) $(ENGINE_DFILES)

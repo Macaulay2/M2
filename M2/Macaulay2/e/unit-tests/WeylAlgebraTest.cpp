@@ -1,12 +1,12 @@
 // Copyright 2026, The Macaulay2 Authors.
 
 #include "interface/ring.h"
-#include "relem.hpp"
+#include "ring-elements/ring-element.hpp"
 #include "util.hpp"
-#include "weylalg.hpp"
-#include "RingTest.hpp"
-#include "RingElem.hpp"
-#include "util-polyring-creation.hpp"
+#include "rings/weylalg.hpp"
+#include "unit-tests/RingTest.hpp"
+#include "unit-tests/RingElem.hpp"
+#include "unit-tests/util-polyring-creation.hpp"
 
 class WeylAlgebraTestAccessor {
  public:

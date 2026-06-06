@@ -3,7 +3,8 @@
 */
 //  TODO: allow infinite precision integers too.
 //  TODO: how should we handle coefficients which are: GF(p^n), QQ, fraction fields? or even polynomials?
-#pragma once
+#ifndef M2_BASICPOLY_HPP
+#define M2_BASICPOLY_HPP
 
 #include "exceptions.hpp"
 #include <vector>
@@ -103,6 +104,7 @@ void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash,
 // TODO: we want an iterator type here.
 // TODO: 
 // 
+#endif
 
 // Local Variables:
 // indent-tabs-mode: nil

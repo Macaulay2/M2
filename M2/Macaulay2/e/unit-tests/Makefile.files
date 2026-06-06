@@ -33,7 +33,9 @@ UNITTEST_CCFILES := \
     WeylAlgebraTest \
     QuotientRingTest \
     RingRRRTest \
-    RingCCCTest
+    RingCCCTest \
+    OverflowTest \
+    BRP-test
 
 #    ARingGFTest \
 

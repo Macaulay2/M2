@@ -1,6 +1,12 @@
 #include <Python.h>
 #include "python-exports.h"
+
+/* vendored from https://github.com/python/pythoncapi-compat
+ * suppress warnings we can't fix */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 #include "pythoncapi_compat.h"
+#pragma GCC diagnostic pop
 
 #include <gmp.h>
 
@@ -59,6 +65,7 @@ int python_Main() {
 /* see http://docs.python.org/extending/extending.html for this example */
 
 static PyObject * spam_system(PyObject *self, PyObject *args) {
+  (void)self;
   const char *command;
   int sts;
   if (!PyArg_ParseTuple(args, "s", &command)) return NULL;

@@ -1,5 +1,5 @@
-#ifndef NEWDELETE_H
-#define NEWDELETE_H 1
+#ifndef M2_NEWDELETE_H
+#define M2_NEWDELETE_H
 
 #include "interface/m2-mem.h"  // for freemem, getmem, outofmem2
 //#include "debug.h"  // for TRAPCHK, TRAPCHK_SIZE

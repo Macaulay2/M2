@@ -1,7 +1,7 @@
 // Copyright 2005 Michael E. Stillman
 
-#ifndef __f4gb_h_
-#define __f4gb_h_
+#ifndef M2_F4__F4GB_H_
+#define M2_F4__F4GB_H_
 
 // My implementation of Faugere's linear algebra GB routines.  Also includes
 // free resolution code.
@@ -69,13 +69,13 @@
 //
 
 #include "interface/m2-types.h"     // for M2_arrayint, M2_bool
-#include "f4-types.hpp"             // for gb_array, MonomialLookupTable
+#include "f4/f4-types.hpp"             // for gb_array, MonomialLookupTable
 #include "f4/moninfo.hpp"           // for packed_monomial, MonomialInfo
 #include "f4/f4-spairs.hpp"         // For F4SPairSet
 #include "interface/computation.h"  // for ComputationStatusCode, StopCondit...
 #include "m2tbb.hpp"                // for TBB
-#include "memblock.hpp"             // for F4MemoryBlock
-#include "monhashtable.hpp"         // for MonomialHashTable
+#include "f4/memblock.hpp"             // for F4MemoryBlock
+#include "f4/monhashtable.hpp"         // for MonomialHashTable
 #include "newdelete.hpp"            // for our_new_delete
 #include "MemoryBlock.hpp"          // for MemoryBlock<T>
 #include <ctime>                    // for clock, CLOCKS_PER_SEC, clock_t

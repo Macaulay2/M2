@@ -1381,6 +1381,38 @@ wtR13 = matrix{{25,21}};
 --assert(ic3#3 == matrix{{16,15,13,12,11,10,7}}------------------------------
 ///
 
+TEST ///
+-- grevlexWeight prepends grevlex rows above the weight rows: (5,6,6;3,6,0) -> (1,0,0;5,6,6;3,6,0)
+wtR = matrix{{5,6,6},{3,6,0}};
+assert(grevlexWeight(wtR) == matrix{{1,0,0},{5,6,6},{3,6,0}})
+///
+
+TEST ///
+-- testWeightMatrix returns a list of booleans indicating compatibility of the weight matrix with each GB element
+-- compatible case: wtR=(5,6,6;3,6,0) on x^6+x^3*z-y^3*z^2 (the qthIntegralClosure doc example)
+wtOk = matrix{{5,6,6},{3,6,0}};
+rOk = ZZ/2[x,y,z,Weights => entries weightGrevlex(wtOk)];
+GBok = {x^6 + x^3*z - y^3*z^2};
+assert(testWeightMatrix(wtOk, rOk, GBok) === {true});
+-- incompatible case: row-2 entry 2 in place of 3 breaks wt(x^6) == wt(y^3*z^2)
+wtBad = matrix{{5,6,6},{2,6,0}};
+rBad = ZZ/2[a,b,c,Weights => entries weightGrevlex(wtBad)];
+GBbad = {a^6 + a^3*c - b^3*c^2};
+assert(testWeightMatrix(wtBad, rBad, GBbad) === {false});
+///
+
+TEST ///
+-- qthConductor returns a conductor element living in the Noether normalization P (subring of last numRows(wtR) variables)
+wtR = matrix{{12,5}};
+Rq = ZZ/2[y,x,Weights => entries weightGrevlex(wtR)];
+I = ideal {y^5 + y^2*(x^4 + x) + y*x^2 + x^12};
+depno = (numColumns wtR) - (numRows wtR);
+delta = qthConductor(I, depno);
+assert(delta == x^2);
+assert(ring delta === Rq);
+assert(isSubset(support delta, {x}));
+///
+
 
 
 

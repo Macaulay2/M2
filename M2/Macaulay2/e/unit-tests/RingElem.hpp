@@ -11,7 +11,8 @@
 //
 //   auto f = RingElem::fromString(R, "x^2+3*x*y-1");
 
-#pragma once
+#ifndef M2_UNIT_TESTS_RINGELEM_HPP
+#define M2_UNIT_TESTS_RINGELEM_HPP
 
 #include <cassert>
 #include <iostream>
@@ -19,8 +20,8 @@
 #include <vector>
 
 #include "buffer.hpp"
-#include "ring.hpp"
-#include "polyring.hpp"
+#include "rings/ring.hpp"
+#include "rings/polyring.hpp"
 #include "monoid.hpp"
 #include "BasicPoly.hpp"
 
@@ -50,6 +51,7 @@ class RingElem
   // NOTE: fromString and toString are not yet inverses of each other.
   // toString outputs e.g. "x3+2xyz" while fromString expects "x^3+2*x*y*z".
   // TODO: make these round-trip compatible.
+  // TODO: fromDouble
   static RingElem fromString(const Ring *R, const std::string &s);
 
   // Accessors
@@ -117,3 +119,5 @@ class RingElem
     return os << f.toString();
   }
 };
+
+#endif

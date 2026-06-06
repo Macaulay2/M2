@@ -111,6 +111,14 @@ f2 = map(middleL,middleK);
 assert(f3 * f2 * f1 === map(L, K));
 ///
 
+TEST /// --check conwayPolynomial(q), conwayPolynomial(p,n)
+q = 9
+assert(degree(conwayPolynomial(q)) == {2})
+p = 5
+n = 12
+assert(degree(conwayPolynomial(p,n))=={12})
+///
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages  PACKAGES=ConwayPolynomials RemakePackages=true RerunExamples=true IgnoreExampleErrors=false RemakeAllDocumentation=true"
 -- End:

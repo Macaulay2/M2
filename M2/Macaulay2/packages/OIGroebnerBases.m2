@@ -2902,6 +2902,232 @@ assert(apply(getBasisElements C_1, getWidth) === {4});
 assert(apply(getBasisElements C_2, getWidth) === {5,5})
 ///
 
+-- TESTS added in the 2026 test-audit pass: coverage for previously untested
+-- exports, plus stress tests of the core methods.
+
+-- TEST 4: all eight VariableOrder constants are accepted, an invalid one is not.
+TEST ///
+orders = {ColUpRowUp, ColUpRowDown, ColDownRowUp, ColDownRowDown, RowUpColUp, RowUpColDown, RowDownColUp, RowDownColDown};
+for V in orders do assert(instance(makePolynomialOIAlgebra(2, x, QQ, VariableOrder => V), PolynomialOIAlgebra))
+assert(try (makePolynomialOIAlgebra(2, x, QQ, VariableOrder => RowUp); false) else true)
+///
+
+-- TEST 5: stress test -- oiGB produces a valid OI-Groebner basis under
+-- several different variable orders of the underlying OI-algebra.
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ, VariableOrder => RowUpColUp);
+F = makeFreeOIModule(e, {1,1,2}, P);
+installGeneratorsInWidth(F, 1); installGeneratorsInWidth(F, 2);
+use F_1; b1 = x_(1,1)*e_(1,{1},1)+x_(2,1)*e_(1,{1},2);
+use F_2; b2 = x_(1,2)*x_(1,1)*e_(2,{2},2)+x_(2,2)*x_(2,1)*e_(2,{1,2},3);
+B = oiGB {b1, b2};
+assert(#B === 3 and isOIGB B)
+P2 = makePolynomialOIAlgebra(2, y, QQ, VariableOrder => ColUpRowUp);
+G = makeFreeOIModule(c, {1,1,2}, P2);
+installGeneratorsInWidth(G, 1); installGeneratorsInWidth(G, 2);
+use G_1; c1 = y_(1,1)*c_(1,{1},1)+y_(2,1)*c_(1,{1},2);
+use G_2; c2 = y_(1,2)*y_(1,1)*c_(2,{2},2)+y_(2,2)*y_(2,1)*c_(2,{1,2},3);
+B2 = oiGB {c1, c2};
+assert(#B2 === 3 and isOIGB B2)
+P3 = makePolynomialOIAlgebra(2, z, QQ, VariableOrder => RowDownColDown);
+H = makeFreeOIModule(f, {1,1,2}, P3);
+installGeneratorsInWidth(H, 1); installGeneratorsInWidth(H, 2);
+use H_1; g1 = z_(1,1)*f_(1,{1},1)+z_(2,1)*f_(1,{1},2);
+use H_2; g2 = z_(1,2)*z_(1,1)*f_(2,{2},2)+z_(2,2)*z_(2,1)*f_(2,{1,2},3);
+B3 = oiGB {g1, g2};
+assert(#B3 === 3 and isOIGB B3)
+///
+
+-- TEST 6: makeFreeOIModule with and without the DegreeShifts option.
+TEST ///
+P = makePolynomialOIAlgebra(1, x, QQ);
+F = makeFreeOIModule(e, {1,2}, P);
+assert(getRank F === 2)
+assert(apply(getBasisElements F, degree) === {0, 0})
+G = makeFreeOIModule(d, {1,2}, P, DegreeShifts => {-3,-4});
+assert(apply(getBasisElements G, degree) === {3, 4})
+///
+
+-- TEST 7: makeFreeOIModule with the OIMonomialOrder option (Schreyer order).
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,1}, P);
+installGeneratorsInWidth(F, 2);
+b = x_(1,1)*e_(2,{1},1)+x_(2,1)*e_(2,{1},2);
+G = makeFreeOIModule(d, {2}, P, DegreeShifts => {-degree b}, OIMonomialOrder => {b});
+assert(getRank G === 1)
+assert(not isZero G)
+///
+
+-- TEST 8: the basic getters of a free OI-module and its elements, and the
+-- ModuleInWidth and VectorInWidth types.
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,1,2}, P);
+assert(getRank F === 3)
+assert(#getBasisElements F === 3)
+installGeneratorsInWidth(F, 4);
+f = x_(2,4)*e_(4,{3},1)+x_(1,3)^2*e_(4,{2,4},3);
+assert(instance(f, VectorInWidth))
+assert(getWidth f === 4)
+assert(getFreeOIModule f === F)
+assert(instance(F_2, ModuleInWidth))
+///
+
+-- TEST 9: the three isZero overloads -- FreeOIModule, VectorInWidth,
+-- FreeOIModuleMap.
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,2}, P);
+assert(not isZero F)
+assert(isZero makeFreeOIModule(d, {}, P))
+installGeneratorsInWidth(F, 3);
+f = x_(1,2)*x_(1,1)*e_(3,{2},1)+x_(2,2)*x_(2,1)*e_(3,{1,3},2);
+assert(not isZero f)
+assert(isZero(f - f))
+H = makeFreeOIModule(g, {2}, P);
+installGeneratorsInWidth(H, 2);
+C = oiRes({g_(2,{1,2},1)}, 2);
+assert(not isZero C.dd_0)
+assert(isZero C.dd_1)
+///
+
+-- TEST 10: stress test -- the vector-space axioms for VectorInWidth
+-- arithmetic.  (VectorInWidth has no ==, so equality is tested via isZero.)
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,1}, P);
+installGeneratorsInWidth(F, 2);
+f = x_(1,1)*e_(2,{1},1)+x_(2,1)*e_(2,{1},2);
+g = x_(1,2)*e_(2,{2},1)-x_(2,2)*e_(2,{2},2);
+h = x_(2,1)*e_(2,{1},1);
+-- additive group axioms
+assert(isZero((f + g) + h - (f + (g + h))))
+assert(isZero(f + g - (g + f)))
+assert(isZero(f - f))
+assert(isZero(-f + f))
+assert(isZero(0 * f))
+assert(isZero(1 * f - f))
+assert(isZero((-1) * f - (-f)))
+-- scalar multiplication
+assert(isZero(3 * f - (f + f + f)))
+r = x_(1,2); s = x_(2,2)^2;
+assert(isZero(r * (f + g) - (r * f + r * g)))
+assert(isZero((r + s) * f - (r * f + s * f)))
+assert(isZero((r * s) * f - r * (s * f)))
+///
+
+-- TEST 11: term extraction -- terms, leadTerm, leadMonomial, leadCoefficient,
+-- degree, and isHomogeneous for VectorInWidth.
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,1}, P);
+installGeneratorsInWidth(F, 2);
+f = x_(1,1)*e_(2,{1},1)+x_(2,1)*e_(2,{1},2)-5*x_(1,2)*e_(2,{2},1)-x_(2,2)*e_(2,{2},2);
+assert(#terms f === 4)
+-- the terms sum back to the element
+assert(isZero(f - sum terms f))
+-- leadTerm = leadCoefficient * leadMonomial
+assert(isZero(leadTerm f - leadCoefficient(f) * leadMonomial(f)))
+assert(leadCoefficient f == -5)
+assert(degree f === 1)
+-- the lead term is one of the terms
+assert(any(terms f, t -> isZero(t - leadTerm f)))
+g = x_(1,2)*x_(1,1)*e_(2,{1},1)+x_(2,1)*e_(2,{2},2);
+assert(isHomogeneous f)
+assert(not isHomogeneous g)
+///
+
+-- TEST 12: oiGB Strategy variants all yield valid Groebner bases, and
+-- reduceOIGB is idempotent (audit recommendation 4).
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,1,2}, P);
+installGeneratorsInWidth(F, 1); installGeneratorsInWidth(F, 2);
+use F_1; b1 = x_(2,1)*e_(1,{1},2)+x_(1,1)*e_(1,{1},2);
+use F_2; b2 = x_(1,2)*x_(1,1)*e_(2,{2},1)+x_(2,2)*x_(1,2)*e_(2,{2},2);
+Bfast = oiGB({b1, b2}, Strategy => FastNonminimal);
+Bmin  = oiGB({b1, b2}, Strategy => Minimize);
+Bred  = oiGB({b1, b2}, Strategy => Reduce);
+assert(isOIGB Bfast and isOIGB Bmin and isOIGB Bred)
+assert(isOIGB minimizeOIGB Bfast)
+R = reduceOIGB Bfast;
+assert(isOIGB R)
+-- reduceOIGB is idempotent
+R2 = reduceOIGB R;
+assert(#R2 === #R)
+assert(all(#R, k -> isZero(R2#k - R#k)))
+///
+
+-- TEST 13: oiSyz computes a Groebner basis for the syzygy module;
+-- getFreeOIModule and getSchreyerMap recover the Schreyer data.
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,1}, P);
+installGeneratorsInWidth(F, 2);
+b = x_(1,2)*x_(1,1)*e_(2,{2},1)+x_(2,2)*x_(2,1)*e_(2,{1},2);
+G = oiGB {b};
+assert(#G === 2)
+Gsyz = oiSyz(G, d);
+assert(#Gsyz === 3)
+assert isOIGB Gsyz
+H = getFreeOIModule Gsyz#0;
+assert(instance(H, FreeOIModule))
+assert(instance(getSchreyerMap H, FreeOIModuleMap))
+///
+
+-- TEST 14: oiOrbit computes the n-orbit of a list of elements.
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,1}, P);
+installGeneratorsInWidth(F, 2);
+b = x_(1,1)*e_(2,{1},1)+x_(2,1)*e_(2,{1},2);
+O = oiOrbit({b}, 4);
+assert(instance(O, List))
+assert(#O === 3)
+assert(all(O, v -> instance(v, VectorInWidth)))
+///
+
+-- TEST 15: stress test -- a length-4 OI-resolution.  It must be a complex
+-- with homogeneous differentials that are free OI-module maps.
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,1}, P);
+installGeneratorsInWidth(F, 2);
+b = x_(1,2)*x_(1,1)*e_(2,{2},1)+x_(2,2)*x_(2,1)*e_(2,{1},2);
+C = oiRes({b}, 4);
+assert isComplex C
+assert(apply(0..4, k -> getRank C_k) === (1,1,2,3,5))
+scan(0..4, k -> assert isHomogeneous C.dd_k)
+phi = C.dd_1;
+assert(instance(phi, FreeOIModuleMap))
+assert(instance(image phi, List))
+assert(instance(phi (getBasisElements C_1)#0, VectorInWidth))
+assert(instance(ranks C, Net))
+assert(instance(restrictedRanks(C, 5), Net))
+assert(instance(describeFull C, Net))
+///
+
+-- TEST 16: the TopNonminimal option.  With TopNonminimal => true the top
+-- Groebner basis is not minimized, so the top module has a larger rank.
+TEST ///
+P = makePolynomialOIAlgebra(2, x, QQ);
+F = makeFreeOIModule(e, {1,1}, P);
+installGeneratorsInWidth(F, 2);
+b = x_(1,2)*x_(1,1)*e_(2,{2},1)+x_(2,2)*x_(2,1)*e_(2,{1},2);
+Cdef = oiRes({b}, 2);
+Ctop = oiRes({b}, 2, TopNonminimal => true);
+assert isComplex Cdef
+assert isComplex Ctop
+assert(apply(0..2, k -> getRank Cdef_k) === (1,1,3))
+assert(apply(0..2, k -> getRank Ctop_k) === (1,1,6))
+-- the lower-degree modules agree; only the top module differs
+assert(getRank Cdef_0 === getRank Ctop_0)
+assert(getRank Cdef_1 === getRank Ctop_1)
+assert(getRank Ctop_2 > getRank Cdef_2)
+///
+
+
 end
 
 -- GB example 1: one linear and one quadratic

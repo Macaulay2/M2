@@ -464,6 +464,154 @@ TEST ///
   elapsedTime assert({2, 2, 2, 2} == rank \ summands M2) -- ~12s
 ///
 
+TEST /// -- isDirectSummand / isSummand: detecting direct summands
+  S = ZZ/3[x,y,z]
+  M = S^{0,-1,-2}
+  -- free L: twists occurring among the generators of M are summands
+  assert isDirectSummand(S^{-1}, M)
+  assert isDirectSummand(S^{0,-2}, M)
+  -- isSummand is an exported synonym
+  assert(isSummand === isDirectSummand)
+  assert isSummand(S^{-1}, M)
+  -- free L: a twist not occurring in M is not a summand
+  assert not isDirectSummand(S^{1}, M)
+  -- boundary: rank L > rank M is immediately false
+  assert not isDirectSummand(S^4, M)
+  -- boundary: equal ranks reduce to an isomorphism test
+  assert isDirectSummand(M, M)
+  assert not isDirectSummand(S^3, M)
+  -- non-free L: a genuine summand of N ++ N is found
+  N = module ideal(x,y,z)
+  assert not isFreeModule N
+  assert isDirectSummand(N, N ++ N)
+  -- non-free L: an unrelated module is not a summand
+  assert not isDirectSummand(module ideal(x,y), N ++ N)
+  -- error: the two modules must be defined over the same ring.  Pin the
+  -- exact error message (rather than accept any failure from isDirectSummand)
+  -- to distinguish the cross-ring guard from unrelated runtime errors.
+  S2 = ZZ/5[a,b,c]
+  ret = capture "isDirectSummand(S2^1, M)"
+  assert(ret#0 and match("expected objects over the same ring", ret#1) =!= null)
+///
+
+TEST /// -- findProjectors: graded projectors that split a module
+  debug needsPackage "DirectSummands"
+  R = ZZ/7[x,y,z]
+  M = coker matrix"x,y,z;y,z,x;z,x,y"
+  P = findProjectors M
+  -- type: a nonempty list of endomorphisms of M
+  assert instance(P, List)
+  assert(0 < #P)
+  assert all(P, g -> instance(g, Matrix))
+  assert all(P, g -> source g === M and target g === M)
+  -- property: each projector is a nonzero, non-injective endomorphism
+  assert all(P, g -> g != 0 and not isInjective g)
+  -- run: the projectors drive the decomposition into three summands
+  L = summandsFromProjectors(M, P)
+  assert(3 == #L)
+  assert isIsomorphic(directSum L, M)
+  -- error: findProjectors rejects a non-homogeneous module.  Pin the
+  -- exact "expected a homogeneous module" error rather than any failure,
+  -- so the test distinguishes the homogeneity guard from a numerical or
+  -- algorithmic failure that happens to throw on the same input.
+  Minhom = coker matrix{{x, y + 1}, {y, x}}
+  assert not isHomogeneous Minhom
+  ret = capture "findProjectors Minhom"
+  assert(ret#0 and match("expected a homogeneous module", ret#1) =!= null)
+  -- error: an indecomposable module (here R^1) yields no projectors.
+  -- findProjectors here raises an error rather than returning null after
+  -- exhausting its retry budget; pin the "no projectors found" message
+  -- so a future change to make it return null (or to surface a different
+  -- error) is caught.
+  ret = capture "findProjectors R^1"
+  assert(ret#0 and match("no projectors found", ret#1) =!= null)
+///
+
+TEST /// -- findIdempotents / findIdem: idempotents that split a module
+  debug needsPackage "DirectSummands"
+  R = ZZ/7[x,y,z]
+  M = coker matrix"x,y,z;y,z,x;z,x,y"
+  I = findIdempotents M
+  -- type: a nonempty list of endomorphisms of M
+  assert instance(I, List)
+  assert(0 < #I)
+  assert all(I, h -> instance(h, Matrix))
+  assert all(I, h -> source h === M and target h === M)
+  -- property: each returned endomorphism is (weakly) idempotent
+  assert all(I, isWeakIdempotent)
+  -- run: the idempotents drive the decomposition into three summands
+  L = summandsFromIdempotents(M, I)
+  assert(3 == #L)
+  assert isIsomorphic(directSum L, M)
+  -- findIdem is an exported synonym for findIdempotents
+  assert(findIdem === findIdempotents)
+  -- error: an indecomposable module (here R^1) yields no idempotents.
+  -- Pin the "no idempotent found" error message so the test catches a
+  -- future change that returns null or surfaces a different error.
+  ret = capture "findIdempotents R^1"
+  assert(ret#0 and match("no idempotent found", ret#1) =!= null)
+///
+
+TEST /// -- frobeniusPullback: pullback along the Frobenius
+  -- over a prime field the Frobenius twist of the ring is the ring itself
+  R = ZZ/3[x]
+  -- a free module pulls back to a free module, scaling degrees by p^e
+  assert(frobeniusPullback(1, R^1)    == R^1)
+  assert(frobeniusPullback(1, R^{-1}) == R^{-3})
+  -- the 0-th Frobenius pullback is the identity
+  assert(frobeniusPullback(0, R^{-1}) == R^{-1})
+  -- on a cokernel, the presentation entries are raised to the p^e power
+  assert(frobeniusPullback(1, coker matrix{{x}}) == coker matrix{{x^3}})
+  assert(frobeniusPullback(2, coker matrix{{x}}) == coker matrix{{x^9}})
+  -- the matrix version raises every entry to the p^e power
+  assert(frobeniusPullback(1, vars R) == map(R^1, R^{-3}, {{x^3}}))
+  -- the Ring and Ideal inputs reduce to the module case
+  assert(frobeniusPullback(1, R) == R^1)
+  assert instance(frobeniusPullback(1, ideal x), Module)
+///
+
+TEST /// -- frobeniusPullback over GF(p^e), e > 1: Frobenius twists the underlying ring
+  -- When the ground field is GF(p^e) with e > 1, Frobenius is non-trivial
+  -- on the field itself (a -> a^p), so the pullback of a module over a
+  -- quotient ring twists the constants in the defining ideal accordingly.
+  -- Here R = (GF 4)[x]/(x + a), and pulling back R^1 once should produce
+  -- the quotient by (x + a^p) = (x + a^2) = (x + a + 1) (since GF 4's
+  -- generator a satisfies a^2 + a + 1 = 0, so a^2 == a + 1).
+  F4 = GF 4
+  S = F4[x]
+  a = F4_0
+  R = S/(x + a)
+  fp = frobeniusPullback(1, R^1)
+  -- the pullback created a new ring, distinct from R
+  assert(ring fp =!= R)
+  -- ...with the same underlying polynomial ring
+  assert(ambient ring fp === S)
+  -- but a Frobenius-twisted defining ideal: (x + a) became (x + a^2).
+  -- We lift back to S to compare polynomials in the same ring (in R
+  -- itself, x + a = 0, so any comparison there would collapse).
+  gen = lift((ideal ring fp)_0, S)
+  use S  -- evaluate the RHS in the polynomial ring S, not in the quotient R
+  assert(gen == x + a^2)
+  -- equivalently x + a + 1, since a^2 == a + 1 in GF 4
+  assert(gen == x + a + 1)
+///
+
+TEST /// -- frobeniusPullback(ZZ, CoherentSheaf) on an elliptic curve
+  -- Exercises the (ZZ, CoherentSheaf) overload of frobeniusPullback by
+  -- composing it with frobeniusPushforward on a smooth elliptic curve in
+  -- P^2 over a prime field.  The Frobenius morphism F: X -> X has degree
+  -- p^{dim X} = p, so F_* OO_X has rank p as an OO_X-module, and F^* F_* OO_X
+  -- again has rank p over the same ring (Frobenius pullback over a prime
+  -- field doesn't twist the ring).
+  S = ZZ/5[x, y, z]
+  X = Proj(S/(y^2*z - x^3 - x*z^2 - z^3))
+  pp = frobeniusPullback(1, frobeniusPushforward(1, OO_X))
+  assert(instance(pp, CoherentSheaf))
+  assert(rank module pp == 5)
+  -- the underlying ring is unchanged: ZZ/5 is its own prime field
+  assert(ring module pp === ring module OO_X)
+///
+
 load "./large-tests.m2"
 
 end--

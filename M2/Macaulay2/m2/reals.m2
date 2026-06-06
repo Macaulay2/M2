@@ -537,6 +537,8 @@ texMath RR := x -> (
 	)
     )
 texMath RRi := x -> concatenate("\\big[",texMath left x,",",texMath right x,"\\big]",if isEmpty x then "\\text{ (an empty interval)}")
+texMath CCi := x -> texMath realPart x | "+" | texMath imaginaryPart x | texMath ii
+
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;
@@ -586,6 +588,7 @@ BesselY(Number, Number) := (n, x) -> BesselY'(numeric n, numeric x)
 ring ComplexField := R -> CC
 ring RealField := R -> RR
 ring RealIntervalField := R -> RRi
+ring ComplexIntervalField := R -> CCi
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

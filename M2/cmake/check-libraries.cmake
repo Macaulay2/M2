@@ -228,6 +228,7 @@ find_program(4TI2	NAMES	circuits 4ti2-circuits 4ti2_circuits)
 find_program(COHOMCALG	NAMES	cohomcalg)
 find_program(MSOLVE	NAMES	msolve)
 find_program(GFAN	NAMES	gfan)
+# gfanInterface checks the minimum gfan version (>= 0.8) at runtime.
 # TODO: library or program?
 find_program(LRSLIB	NAMES	lrs)
 # TODO: check for alternatives as well: sdpa or mosek

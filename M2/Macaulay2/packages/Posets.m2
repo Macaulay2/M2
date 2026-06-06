@@ -6849,6 +6849,255 @@ P = poset({0,1,2,3,4},{{0,2},{2,3},{1,4},{0,4},{1,3}})
 assert(isRanked P == false)
 ///
 
+------------------------------------
+------------------------------------
+-- Tests added in the 2026 test-audit pass: assertions for exported
+-- functions that previously had no test coverage.
+------------------------------------
+------------------------------------
+
+-- hibiIdeal: the Hibi ideal of a poset is a monomial ideal in 2n variables
+-- whose generators biject with the order ideals of the poset.
+TEST ///
+H = hibiIdeal chain 3;
+assert(instance(H, MonomialIdeal))
+assert(numgens ring H == 6)
+-- chain n has n+1 order ideals, hence n+1 generators
+assert(numgens H == 4)
+assert(numgens hibiIdeal chain 4 == 5)
+-- each generator is squarefree of degree n
+assert(all(first entries gens H, m -> first degree m == 3))
+///
+
+-- hibiRing: the toric algebra isomorphic to the Hibi ring of a poset.  For a
+-- chain it is a polynomial ring, and the "kernel" and "4ti2" strategies agree.
+TEST ///
+H = hibiRing chain 4;
+assert(numgens H == 5)
+assert(numgens ideal H == 0)
+Hb = hibiRing booleanLattice 2;
+assert(numgens Hb == 6)
+assert(numgens ideal Hb == 1)
+H2 = hibiRing(booleanLattice 2, Strategy => "4ti2");
+assert(numgens H2 == numgens Hb)
+assert(numgens ideal H2 == numgens ideal Hb)
+///
+
+-- pPartitionRing: the toric algebra isomorphic to the P-partition ring; the
+-- "kernel" and "4ti2" strategies give the same minimally generated algebra.
+TEST ///
+P = poset {{1,2},{2,4},{3,4},{3,5}};
+R = pPartitionRing P;
+assert(instance(R, QuotientRing))
+assert(numgens R == 6)
+assert(numgens ideal R == 1)
+R2 = pPartitionRing(P, Strategy => "4ti2");
+assert(numgens R2 == numgens R)
+assert(numgens ideal R2 == numgens ideal R)
+///
+
+-- dominanceLattice: partitions of n under the dominance order.  For n <= 5 it
+-- is a chain; for n = 6 it is a non-chain lattice.
+TEST ///
+assert(dominanceLattice 2 == chain 2)
+assert(dominanceLattice 3 == chain 3)
+assert(dominanceLattice 4 == chain 5)
+assert(dominanceLattice 5 == chain 7)
+D = dominanceLattice 6;
+assert(#(D.GroundSet) == 11)
+assert(isLattice D)
+assert(D != chain 11)
+///
+
+-- facePoset: the poset of faces of a simplicial complex ordered by inclusion;
+-- the face poset of a (k-1)-simplex is the boolean lattice on k vertices.
+TEST ///
+R = QQ[a,b,c,d];
+F = facePoset simplicialComplex {a*b*c, c*d};
+assert(#(F.GroundSet) == 10)
+assert(#(coveringRelations F) == 15)
+assert(facePoset simplicialComplex {a*b*c} == booleanLattice 3)
+///
+
+-- intersectionLattice: the lattice of intersections of a hyperplane
+-- arrangement, ordered by containment.
+TEST ///
+R = QQ[x,y,z];
+P = intersectionLattice({x+y, x+z, y+z}, R);
+assert(#(P.GroundSet) == 8)
+assert(#(coveringRelations P) == 12)
+assert(isLattice P)
+///
+
+-- ncpLattice / ncPartitions: the non-crossing partition lattice and the list
+-- of non-crossing partitions of an n-set (counted by the Catalan numbers).
+TEST ///
+assert(#(ncPartitions 3) == 5)
+assert(#(ncPartitions 4) == 14)
+assert(#(ncPartitions 5) == 42)
+P = ncpLattice 3;
+assert(#(P.GroundSet) == 5)
+assert(isLattice P)
+assert(#((ncpLattice 4).GroundSet) == 14)
+///
+
+-- partitionLattice / setPartition: the lattice of set-partitions of an n-set
+-- (counted by the Bell numbers) and the underlying list of set-partitions.
+TEST ///
+assert(#(setPartition {2,3,5}) == 5)
+assert(#(setPartition 4) == 15)
+P = partitionLattice 3;
+assert(#(P.GroundSet) == 5)
+assert(isLattice P)
+assert(#((partitionLattice 4).GroundSet) == 15)
+-- for n = 4 the partition lattice and the non-crossing partition lattice differ
+assert(ncpLattice 4 != partitionLattice 4)
+///
+
+-- plueckerPoset: a poset on the subsets of {0,...,n-1} whose incomparable
+-- pairs encode the initial ideal of the Plücker relations.
+TEST ///
+P = plueckerPoset 4;
+assert(#(P.GroundSet) == 16)
+assert(#(coveringRelations P) == 20)
+///
+
+-- randomPoset: a random poset on n vertices with relation probability Bias.
+-- Bias => 1 forces a total order; Bias => 0 forces an antichain.
+TEST ///
+setRandomSeed 0;
+assert(#((randomPoset 8).GroundSet) == 8)
+assert(randomPoset(7, Bias => 1.0) == chain 7)
+A = randomPoset(7, Bias => 0.0);
+assert(#(coveringRelations A) == 0)
+assert(A == poset(toList(1..7), {}))
+///
+
+-- youngSubposet: a finite subposet of Young's lattice, given either by a
+-- partition-size bound or by a closed interval of partitions.
+TEST ///
+P = youngSubposet 4;
+assert(#(P.GroundSet) == 12)
+Q = youngSubposet({3,1}, {4,2,1});
+assert(#(Q.GroundSet) == 8)
+assert(#(coveringRelations Q) == 12)
+///
+
+-- texPoset: a TikZ-figure of the Hasse diagram of a poset, as a string;
+-- tex P is the same with no options.
+TEST ///
+S = texPoset booleanLattice 2;
+assert(instance(S, String))
+assert(match("tikzpicture", S))
+assert(instance(tex booleanLattice 2, String))
+assert(instance(texPoset(booleanLattice 2, Jitter => true), String))
+assert(instance(texPoset(booleanLattice 2, SuppressLabels => false), String))
+///
+
+-- gapConvertPoset: converts between Macaulay2 posets and GAP's poset format;
+-- converting back from GAP format augments the poset with a min and a max.
+TEST ///
+S = gapConvertPoset chain 3;
+assert(instance(S, String))
+assert(gapConvertPoset S == augmentPoset chain 3)
+-- the GAP string from the package documentation encodes augmented B_3
+Sdoc = "[ [ 3 ], [ 10 ], [ 4, 7, 9 ], [ 5, 6 ], [ 2 ], [ 2 ], [ 5, 8 ], [ 2 ], [ 6, 8 ], [  ] ]";
+assert(gapConvertPoset Sdoc == augmentPoset booleanLattice 3)
+///
+
+-- outputTexPoset: writes a LaTeX/TikZ representation of a poset to a file.
+TEST ///
+fn = temporaryFileName() | ".tex";
+outputTexPoset(booleanLattice 2, fn);
+assert(fileExists fn)
+assert(#(get fn) > 0)
+removeFile fn;
+///
+
+-- setPrecompute / setSuppressLabels: toggle the package-wide configuration
+-- flags, each returning the previous setting.
+TEST ///
+old = setPrecompute false;
+assert(instance(old, Boolean))
+-- setting it again returns the value just installed, and restores the original
+assert(setPrecompute old === false)
+oldSL = setSuppressLabels false;
+assert(instance(oldSL, Boolean))
+assert(setSuppressLabels oldSL === false)
+///
+
+-- the AntisymmetryStrategy option of the poset constructor: the "rank",
+-- "none", and "digraph" strategies agree on a valid poset, and only "none"
+-- skips the anti-symmetry check.
+TEST ///
+G = {a,b,c,d};
+R = {{a,b},{b,c},{a,d},{d,c}};
+assert(poset(G, R, AntisymmetryStrategy => "rank") == poset(G, R, AntisymmetryStrategy => "none"))
+assert(poset(G, R, AntisymmetryStrategy => "rank") == poset(G, R, AntisymmetryStrategy => "digraph"))
+-- a cyclic relation set is rejected by "rank" and by "digraph"
+assert(try (poset({a,b}, {{a,b},{b,a}}, AntisymmetryStrategy => "rank"); false) else true)
+assert(try (poset({a,b}, {{a,b},{b,a}}, AntisymmetryStrategy => "digraph"); false) else true)
+-- but "none" skips the check
+assert(try (poset({a,b}, {{a,b},{b,a}}, AntisymmetryStrategy => "none"); true) else false)
+-- an unknown strategy is an error
+assert(try (poset(G, R, AntisymmetryStrategy => "bogus"); false) else true)
+///
+
+-- labelPoset: relabels the ground set of a poset, producing an isomorphic copy.
+TEST ///
+P = chain 5;
+l = hashTable {1 => a, 2 => b, 3 => c, 4 => d, 5 => e};
+Q = labelPoset(P, l);
+assert(Q.GroundSet == {a,b,c,d,e})
+assert(P == Q)
+///
+
+-- isComparabilityGraph: a graph is a comparability graph iff it has a
+-- transitive orientation; a non-triangular odd cycle never does.
+TEST ///
+assert(isComparabilityGraph comparabilityGraph booleanLattice 3)
+assert(isComparabilityGraph comparabilityGraph chain 4)
+assert(not isComparabilityGraph graph {{1,2},{2,3},{3,4},{4,5},{1,5}})
+///
+
+-- (height, Poset): one less than the size of a longest maximal chain.
+TEST ///
+assert(height chain 5 == 4)
+assert(height booleanLattice 3 == 3)
+assert(height chain 1 == 0)
+-- an antichain has height 0
+assert(height poset({1,2,3}, {}) == 0)
+///
+
+-- (isomorphism, Poset, Poset): an isomorphism hash table when the posets are
+-- isomorphic, and null otherwise.
+TEST ///
+iso = isomorphism(booleanLattice 2, booleanLattice 2);
+assert(instance(iso, HashTable))
+assert(# keys iso == 4)
+assert(isomorphism(chain 2, chain 3) === null)
+assert(areIsomorphic(booleanLattice 2, booleanLattice 2))
+assert(not areIsomorphic(chain 2, chain 3))
+///
+
+-- diamondProduct and hasseDiagram: an invariant-level check (vertex and edge
+-- counts) of the kind that can stand in for a brittle literal comparison.
+TEST ///
+B = booleanLattice 2;
+-- the Hasse diagram of B_2 is a 4-cycle of covering relations
+assert(#(vertices hasseDiagram B) == 4)
+assert(#(edges hasseDiagram B) == 4)
+D = diamondProduct(B, B);
+assert(isLattice D)
+assert(#(D.GroundSet) == 10)
+assert(#(coveringRelations D) == 16)
+-- hasseDiagram has one directed edge per covering relation
+H = hasseDiagram D;
+assert(#(vertices H) == 10)
+assert(#(edges H) == 16)
+///
+
+
 end;
 
 ------------------------------------------

@@ -1,5 +1,5 @@
-#ifndef _NCGroebner_hpp_
-#define _NCGroebner_hpp_
+#ifndef M2_NCALGEBRAS_NCGROEBNER_HPP_
+#define M2_NCALGEBRAS_NCGROEBNER_HPP_
 
 #include "NCAlgebras/NCReduction.hpp"   // for PolynomialHeap
 #include "NCAlgebras/OverlapTable.hpp"  // for OverlapTable

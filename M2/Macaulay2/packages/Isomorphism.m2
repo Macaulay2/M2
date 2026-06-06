@@ -867,6 +867,35 @@ TEST ///
       ))
 ///
 
+-- Pin the *current* (not ideal) behavior of isomorphism on the example
+-- whose ideal-behavior assertions are silenced at lines 752-784 with a
+-- "TODO: ideally, if a homogeneous isomorphism _can_ be found, we
+-- should find it" breadcrumb. These assertions document the current
+-- behavior so that any future change is surfaced as a regression --
+-- whether the change is a fix (the silenced asserts become satisfiable
+-- and these regression asserts start failing) or a further drift.
+TEST ///
+  debug Isomorphism
+  R := QQ[x,y]
+  M := coker map(R^{{1}, {0}}, , {{x},{0}})
+  N := coker map(R^{{0}, {1}}, , {{0},{x}})
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
+  f := isomorphism(N, M, Strict => false, Homogeneous => false)
+  -- Current behavior: the returned isomorphism is NOT homogeneous,
+  -- even though M and N are isomorphic in the homogeneous category
+  -- (see TODO at Isomorphism.m2:751).
+  assert(not isHomogeneous f)
+  -- The cache stores the isomorphism under key (N, M, {true, false})
+  -- rather than {true, true} (which is what the silenced assert at
+  -- :752 expects).
+  assert(N.cache.cache.Isomorphisms#?(N, M, {true, false}))
+  assert(not N.cache.cache.Isomorphisms#?(N, M, {true, true}))
+  -- A single isomorphism is currently cached.
+  assert(1 == #N.cache.cache.Isomorphisms)
+  -- And nothing is cached on M (only the larger of the two stores).
+  assert(not M.cache.cache.?Isomorphisms)
+///
+
 end--
 
 -----------------------------------------------------------------------------

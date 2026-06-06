@@ -311,6 +311,39 @@ document get (currentFileDirectory | "SimpleDoc/helpers-doc.txt")
 value docExample
 value testExample
 
+-- Cover the three URL-helper exports (arXiv, wikipedia, stacksProject)
+-- and the two template strings (docTemplate, packageTemplate) directly.
+-- All five were previously documented but never asserted on. Use
+-- toString-of-class to dodge any local shadowing of the HREF type.
+TEST ///
+-- arXiv: one-arg form uses the same string for ref and link text.
+a1 := arXiv "1234.5678";
+assert(toString class a1 == "HREF");
+assert(a1#0 == "https://arxiv.org/abs/1234.5678");
+assert(a1#1 == "arXiv:1234.5678");
+-- arXiv: two-arg form keeps the explicit title.
+a2 := arXiv("1234.5678", "My Paper");
+assert(a2#0 == "https://arxiv.org/abs/1234.5678");
+assert(a2#1 == "My Paper");
+-- wikipedia: one-arg form replaces spaces with underscores in the URL
+-- but keeps spaces in the title.
+w := wikipedia "Hilbert series";
+assert(toString class w == "HREF");
+assert(w#0 == "https://en.wikipedia.org/wiki/Hilbert_series");
+assert(w#1 == "Hilbert series");
+-- stacksProject takes (tag, title) only.
+sp := stacksProject("00AB", "Some tag");
+assert(toString class sp == "HREF");
+assert(sp#0 == "https://stacks.math.columbia.edu/tag/00AB");
+assert(sp#1 == "Some tag");
+-- Template strings exist and contain expected substitution sites.
+pt := packageTemplate "MyPkg";
+assert(toString class pt == "String");
+assert(match("MyPkg", pt));
+assert(toString class docTemplate == "String");
+assert(length docTemplate > 0);
+///
+
 end--
 
 uninstallPackage "SimpleDoc"

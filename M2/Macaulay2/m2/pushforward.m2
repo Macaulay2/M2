@@ -113,23 +113,35 @@ ordertab := new HashTable from {
     Lex          => (nR, nS) -> Lex,
     }
 
-pushNonLinear := (opts, f, M) -> (
+pushNonLinear := (opts, f0, M) -> (
     -- given f: R --> S, and M an S-module, finite over R,
     -- returns R-presentation matrix for the pushforward of M
     -- written by Mike Stillman and David Eisenbud
-    (R, S) := (target f, source f);
-    deglen := degreeLength S;
-    n1 := numgens R; -- TODO: what if R is a tower?
+
+    -- first flatten source and target of f so that this computation works for towers.
+    -- note this forces us to unflatten the return value when we are done.
+    (R, phiR) := flattenRing target f0;
+    (S, phiS) := flattenRing source f0;
+    m := phiR presentation M;
+    f := phiR * f0 * phiS^-1;
+
+    -- making sure that homogeneity isn't broken
+    if isHomogeneous M  then assert isHomogeneous m;
+    if isHomogeneous f0 then assert isHomogeneous f;
+
+    -- set up some variables that are used throughout
+    deglenS := degreeLength S;
+    numgensS := numgens S;
+    numgensR := numgens R;
 
     monorder := opts.MonomialOrder;
-    monorder  = if ordertab#?monorder then (ordertab#monorder)(numgens R, numgens S)
+    monorder  = if ordertab#?monorder then (ordertab#monorder)(numgensR, numgensS)
     else error("pushForward: MonomialOrder option expected one of ",
 	demark_", " \\ toString \ keys ordertab);
 
     J := graphIdeal(f, MonomialOrder => monorder, VariableBaseName => local X);
     G := ring J;
-    m := presentation M;
-    xvars := map(G, R, submatrix(vars G, toList(0..n1-1)));
+    xvars := map(G, R, submatrix(vars G, toList(0..numgensR - 1)));
     m1 := presentation (cokernel xvars m  **  cokernel generators J);
 
     if opts.UseHilbertFunction and all({f, m}, isHomogeneous) then (
@@ -140,15 +152,15 @@ pushNonLinear := (opts, f, M) -> (
 	-- cache poincare
 	poincare cokernel m1 = hf);
 
-    mapbackdeg := d -> take(d, -deglen);
+    mapbackdeg := d -> take(d, -deglenS);
     -- that choice of degree map was chosen to make the symmetricPower functor homogeneous, but it doesn't have much
     -- else to recommend it.
     -- we should really be *lifting* the result to S along the natural map S ---> G
-    mapback := map(S, G, map(S^1, S^n1, 0) | vars S, DegreeMap => mapbackdeg );
+    mapback := map(S, G, map(S^1, S^numgensR, 0) | vars S, DegreeMap => mapbackdeg );
 
     -- let's at least check it splits f's degree map:
-    for i from 0 to deglen-1 do (
-	e := for j from 0 to deglen-1 list if i === j then 1 else 0;
+    for i from 0 to deglenS-1 do (
+	e := for j from 0 to deglenS-1 list if i === j then 1 else 0;
 	if mapbackdeg f.cache.DegreeMap e =!= e
 	then error "not implemented yet: unexpected degree map of ring map");
 
@@ -156,8 +168,8 @@ pushNonLinear := (opts, f, M) -> (
 	StopBeforeComputation => opts.StopBeforeComputation,
 	DegreeLimit           => opts.DegreeLimit,
 	PairLimit             => opts.PairLimit);
-    -- MES: check if the monomial order restricts to S.  If so, then do `` forceGB result ''
-    mapback selectInSubring(if numgens target f > 0 then 1 else 0, generators g))
+    -- MES: check if the monomial order restricts to R.  If so, then do `` forceGB result ''
+    phiS^-1 mapback selectInSubring(if numgensR > 0 then 1 else 0, generators g))
 
 -*
 pushLinear := opts -> (f,M) -> (

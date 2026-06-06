@@ -1,5 +1,5 @@
-#ifndef _cra_h_
-#  define _cra_h_
+#ifndef M2_INTERFACE_CRA_H_
+#define M2_INTERFACE_CRA_H_
 
 #  include "engine-includes.hpp"
 

@@ -7,12 +7,12 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_TSET_HPP
-#define BIBASIS_TSET_HPP
+#ifndef M2_BIBASIS_TSET_HPP
+#define M2_BIBASIS_TSET_HPP
 
 #include <list>
 #include <algorithm>
-#include "janettree.hpp"
+#include "bibasis/janettree.hpp"
 
 namespace BIBasis
 {

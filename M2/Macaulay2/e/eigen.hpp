@@ -1,11 +1,11 @@
-#ifndef __eigen_hpp_
-#define __eigen_hpp_
+#ifndef M2__EIGEN_HPP_
+#define M2__EIGEN_HPP_
 
-#include "dmat.hpp"
-#include "aring-RR.hpp"
-#include "aring-CC.hpp"
-#include "aring-RRR.hpp"
-#include "aring-CCC.hpp"
+#include "basic-mutable-matrices/dmat.hpp"
+#include "basic-rings/aring-RR.hpp"
+#include "basic-rings/aring-CC.hpp"
+#include "basic-rings/aring-RRR.hpp"
+#include "basic-rings/aring-CCC.hpp"
 using LMatrixRR = DMat<M2::ARingRR>;
 using LMatrixCC = DMat<M2::ARingCC>;
 using LMatrixRRR = DMat<M2::ARingRRR>;

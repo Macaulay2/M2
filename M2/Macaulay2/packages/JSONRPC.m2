@@ -1,5 +1,5 @@
 -- JSONRPC package for Macaulay2
--- Copyright (C) 2025-2026 Doug Torrance <dtorrance@piedmont.edu>
+-- Copyright (C) 2025-2026 Doug Torrance <dtorrance9@gatech.edu>
 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ newPackage("JSONRPC",
     Date => "February 18, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
     Keywords => {"System"},
     PackageImports => {"JSON"})
 
@@ -250,7 +250,7 @@ doc ///
     new JSONRPCServer
   Description
     Text
-      @CODE "JSONRPCSever"@ is the core class of the package, responsible for
+      @CODE "JSONRPCServer"@ is the core class of the package, responsible for
       handling JSON-RPC requests. It allows you to
       @TO2(registerMethod, "register methods")@,
       @TO2(handleRequest, "process incoming requests")@ (including batches),
@@ -732,4 +732,27 @@ assertJSONRPC(
 assertJSONRPC(
     makeRequest("addThree", hashTable {"x" => 6}, 2),
     "{\"result\": 9, \"jsonrpc\": \"2.0\", \"id\": 2}")
+///
+
+-- Pin the current (incomplete) parameter-validation behavior. Per the
+-- JSON-RPC 2.0 spec, parameter arity / type mismatches should produce
+-- error code -32602 "Invalid params", but the TODO at JSONRPC.m2:157
+-- defers that work, so the implementation currently surfaces the
+-- caught M2 exception as -32603 "Internal error". When that TODO is
+-- closed, this regression test will need to be updated to assert
+-- -32602; until then it locks down the current code path so the
+-- behavior change is visible.
+TEST ///
+needsPackage "JSON"
+server := new JSONRPCServer
+registerMethod(server, "add", (a, b) -> a + b)
+-- arity mismatch (1 arg instead of 2)
+resp1 := fromJSON handleRequest(server,
+    "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"add\", \"params\": [1]}")
+assert(resp1#"error"#"code" == -32603)
+-- type mismatch (strings instead of numbers)
+resp2 := fromJSON handleRequest(server,
+    "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"add\", \"params\": [\"a\", \"b\"]}")
+assert(resp2#"error"#"code" == -32603)
+-- when the TODO at :157 is implemented, both should produce -32602.
 ///

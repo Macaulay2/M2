@@ -114,20 +114,20 @@ hilbertSequence Module := HashTable => opts -> M -> (
 hilbertSequence Ring := HashTable => opts -> R -> hilbertSequence(R^1, opts)
 hilbertSequence Ideal := HashTable => opts -> I -> hilbertSequence(comodule I, opts)
 
--- hilbertPolynomial = method(Options => {Projective => false}) -- should be a hook?
--- hilbertPolynomial Module := RingElement => o -> M -> ( -- TODO: fix
-    -- if not isHomogeneous M then error "expected a (multi-)homogeneous module";
-    -- R := ring M;
-    -- n := degreeLength R;
-    -- if n > 1 then (
-        -- i := getSymbol "i";
-        -- S := QQ(monoid[i_1..i_n]);
-        -- b := hilbertSequence M;
-        -- sum(pairs b, p -> p#1*product(#gens S, j -> binomial(S_j+p#0#j, p#0#j)))
-    -- ) else Core$hilbertPolynomial(M, o)
--- )
--- hilbertPolynomial Ideal := RingElement => o -> I -> hilbertPolynomial(comodule I, o)
--- hilbertPolynomial Ring := RingElement => o -> R -> hilbertPolynomial(R^1, o)
+-- The Core hilbertPolynomial handles only singly-graded modules.  Extend it,
+-- via a hook, to multigraded modules: the multivariate Hilbert polynomial is
+-- read off from the Hilbert sequence.  The hook declines (returns null) in the
+-- singly-graded case, so the Core method is unaffected; the Core Ideal and
+-- Ring methods pick this up automatically by passing to the comodule.
+addHook((hilbertPolynomial, Module), Strategy => "MultiplicitySequence", (opts, M) -> (
+    if degreeLength ring M <= 1 then return null;
+    if not isHomogeneous M then error "expected a (multi-)homogeneous module";
+    n := degreeLength ring M;
+    i := getSymbol "i";
+    S := QQ(monoid[i_1..i_n]);
+    b := hilbertSequence M;
+    sum(pairs b, p -> p#1*product(#gens S, j -> binomial(S_j+p#0#j, p#0#j)))
+))
 
 -- This is the main method. It computes the multiplicity sequence of an ideal using one of two strategies: either bivariate Hilbert series (default), or general elements.
 multiplicitySequence = method(Options => options getGenElts ++ options hilbertSequence ++ {Strategy => "grGr"})
@@ -672,10 +672,46 @@ doc ///
 	NP
 ///
 
-undocumented {
-    getGenElts,
-    (getGenElts, Ideal, ZZ)
- }
+doc ///
+    Key
+        getGenElts
+        (getGenElts, Ideal, ZZ)
+        [getGenElts, minTerms]
+        [getGenElts, numCandidates]
+    Headline
+        general elements of an ideal cutting down the codimension
+    Usage
+        getGenElts(I, n)
+    Inputs
+        I:Ideal
+        n:ZZ
+            the number of general elements to produce
+        minTerms => ZZ
+            the minimum number of generators of I to combine when forming a
+            general element; the default value -1 uses all generators
+        numCandidates => ZZ
+            the number of random candidates tried at each step
+    Outputs
+        :List
+            a list of n general elements of I
+    Description
+        Text
+            This function produces a list of n elements of I whose first j
+            entries generate an ideal of codimension j, for each j from 1 to n.
+            Such general elements underlie the {\tt "genElts"} strategy of
+            @TO multiplicitySequence@.
+
+            The elements are random combinations of the generators of I, so
+            the output varies between runs; @TO setRandomSeed@ makes it
+            reproducible.
+        Example
+            R = QQ[x,y,z];
+            I = ideal "xy,yz,zx";
+            setRandomSeed 0;
+            getGenElts(I, 2)
+    SeeAlso
+        multiplicitySequence
+///
 
  
 --------------------------------------------------------------------------------------------
@@ -729,6 +765,141 @@ assert(pairs multiplicitySequence ideal "x,y2" == {(2,2)})
 assert(pairs multiplicitySequence (m*I) == {(2,1)})
 ///
 
+--------------------------------------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: coverage for exported functions
+-- that previously had no (or only incidental) test coverage.
+--------------------------------------------------------------------------------------------
+
+-- grGr: the bigraded ring Gr_m(Gr_I(R)); the result is cached on the ideal.
+TEST ///
+R = QQ[x,y];
+I = ideal"x2,xy";
+A = grGr I;
+assert(instance(A, Ring))
+-- grGr is bigraded
+assert(degreeLength A == 2)
+assert(unique degrees A == {{1,0},{0,1}})
+-- the result is cached on the ideal
+assert(grGr I === A)
+///
+
+-- hilbertSequence: the coefficients of the p-th sum transform of the
+-- multigraded Hilbert function, returned as a hash table.
+TEST ///
+R = QQ[a..e];
+I = monomialIdeal "de,abe,ace,abcd";
+assert(hilbertSequence I === hashTable {({1},2), ({2},-6), ({3},5)})
+-- the ideal form is the Hilbert sequence of the comodule
+assert(hilbertSequence I === hilbertSequence comodule I)
+-- a genuinely multigraded example
+S = QQ[a..e, DegreeRank => 5];
+assert(# pairs hilbertSequence monomialIdeal "de,abe,ace,abcd" == 16)
+///
+
+-- printHilbertSequence: lays out a Hilbert sequence as a Net table.
+TEST ///
+R = QQ[x_1..x_9];
+I = minors(2, genericMatrix(R, 3, 3));
+assert(instance(printHilbertSequence hilbertSequence grGr I, Net))
+///
+
+-- getGenElts: a list of general elements of an ideal, one cutting the
+-- codimension down at each step.  (Random; setRandomSeed makes it reproducible.)
+TEST ///
+setRandomSeed 0;
+R = QQ[x,y,z];
+I = ideal"xy,yz,zx";
+G = getGenElts(I, 2);
+assert(#G == 2)
+-- each general element belongs to I
+assert(all(G, c -> c % I == 0))
+assert(#getGenElts(I, 3) == 3)
+assert(#getGenElts(I, 2, minTerms => 2) == 2)
+///
+
+-- the "grGr" (Hilbert series) and "genElts" (general elements) strategies of
+-- multiplicitySequence compute the same sequence.
+TEST ///
+setRandomSeed 0;
+R = QQ[x,y,z];
+I = ideal"x4z,y3z";
+assert(multiplicitySequence(I, Strategy => "grGr") === multiplicitySequence(I, Strategy => "genElts"))
+assert(multiplicitySequence(I, Strategy => "genElts") === hashTable {(1,1),(2,15)})
+///
+
+-- the DoSaturate, minTerms and numCandidates options of multiplicitySequence
+-- are accepted and yield the correct sequence.
+TEST ///
+setRandomSeed 0;
+R = QQ[x,y,z];
+I = ideal"x4z,y3z";
+expected = hashTable {(1,1),(2,15)};
+assert(multiplicitySequence(I, DoSaturate => true) === expected)
+assert(multiplicitySequence(I, Strategy => "genElts", minTerms => 1) === expected)
+assert(multiplicitySequence(I, Strategy => "genElts", numCandidates => 5) === expected)
+///
+
+-- multiplicitySequence does not require the ambient ring to be a polynomial
+-- ring.
+TEST ///
+S = QQ[a..d];
+J = ideal(a*d - b*c, c^2 - b*d);
+R = S/J;
+I = ideal(R_0^2, R_0*R_1, R_1^3);
+assert(multiplicitySequence I === hashTable {(1,5),(2,7)})
+///
+
+-- multiplicitySequence(j, I) extracts the j-th term of the sequence; indices
+-- below the codimension or above the analytic spread return 0.
+TEST ///
+R = QQ[x,y,z];
+I = ideal"xy2,yz3,zx4";
+assert(multiplicitySequence(2, I) == 9)
+assert(multiplicitySequence(3, I) == 25)
+assert(multiplicitySequence(1, I) == 0)
+assert(multiplicitySequence(4, I) == 0)
+///
+
+-- monReduction: the minimal monomial reduction of a monomial ideal.  Only the
+-- Newton-polyhedron vertices survive, so a non-vertex generator is dropped.
+TEST ///
+R = QQ[x,y];
+I = ideal"x3,x2y,xy2,y3";
+J = monReduction I;
+assert(instance(J, MonomialIdeal))
+-- the interior generators x2y, xy2 are dropped
+assert(J == monomialIdeal"x3,y3")
+assert(J != monomialIdeal I)
+-- an ideal that equals its own monomial reduction is a fixed point
+assert(monReduction ideal"x2,xy,y3" == monomialIdeal"x2,xy,y3")
+///
+
+-- NP: the Newton polyhedron of a monomial ideal; it is unchanged by passing
+-- to the integral closure of the ideal.
+TEST ///
+R = QQ[x,y,z];
+I = ideal"x2,y3,yz";
+P = NP I;
+assert(instance(P, Polyhedron))
+assert(fVector P == {3,7,5,1})
+assert(P == NP integralClosure(I, 1))
+///
+
+-- the Core hilbertPolynomial is extended by this package (via a hook) to
+-- multigraded modules, computed from the Hilbert sequence.
+TEST ///
+S = QQ[a..e, DegreeRank => 5];
+J = monomialIdeal "de,abe,ace,abcd";
+hp = hilbertPolynomial J;
+assert(instance(hp, RingElement))
+assert(numgens ring hp == 5)
+assert(toString hp == "i_1*i_2*i_3+i_1*i_2*i_4+i_1*i_3*i_4+i_2*i_3*i_4+i_2*i_3*i_5+i_1*i_2+i_1*i_3+i_2*i_3+i_1*i_4+i_2*i_4+i_3*i_4+i_1*i_5+i_2*i_5+i_3*i_5+i_1+i_2+i_3+i_4+i_5+1")
+-- the singly-graded case is unchanged: it delegates to the Core method
+R = QQ[a..e];
+assert(instance(hilbertPolynomial monomialIdeal "de,abe,ace,abcd", ProjectiveHilbertPolynomial))
+///
+
+
 end--
 
 restart
@@ -776,8 +947,8 @@ grGr = I -> (
     mG1R2 := phi2 sub(mG1, reesRingm);
     K2R2 := phi2 K2;
     first flattenRing (R2 / (mG1R2 + K2R2))
-    T := R2 / (mG1R2 + K2R2); 
-    modification of T to have the right degrees
+    T := R2 / (mG1R2 + K2R2);
+    -- modification of T to have the right degrees
     minimalPresentation T
     hilbertSeries oo
 )
@@ -829,11 +1000,11 @@ hilbertSamuelMultiplicity := I -> ( -- computes e(m, R/I) (need to fix)
    colInGenLinComMat := numcols genLinComMat;
    genRedIdeal := ideal (0_R);
    if (dim R == 1) then genRedIdeal = saturate (ideal (0_R), maxR) + ideal genLinComMat  -- the case of dim R/I = 1
-    the case of dim R/I >= 2
-       else genRedIdeal = saturate (ideal submatrix (genLinComMat, {0..(colInGenLinComMat - 2)}), maxR) + ideal genLinComMat;     
+    -- the case of dim R/I >= 2
+       else genRedIdeal = saturate (ideal submatrix (genLinComMat, {0..(colInGenLinComMat - 2)}), maxR) + ideal genLinComMat;
     if (codim genRedIdeal != dim R) then return "Elements chosen are not general. Try again."; 
     use ring I;
-    the length method doesn't handle the non-graded case, but the degree function does.
+    -- the length method doesn't handle the non-graded case, but the degree function does.
    degree comodule primaryComponent (genRedIdeal,maxR) -- alternatively normalCone?
 )
 
@@ -855,7 +1026,7 @@ multSeq Ideal := List => I -> (
     hashTable for i from codim I to analyticSpread I list (i, cSubi (i,I))
 )
 
-lengthij, length10ij, length11ij do not seem to be used elsewhere, and have been commented out
+-- lengthij, length10ij, length11ij do not seem to be used elsewhere, and have been commented out
 lengthij = method()
 lengthij (ZZ, ZZ, Ideal) := ZZ => (i,j,I) -> (
     R := ring I;

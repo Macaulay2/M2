@@ -1,8 +1,8 @@
 -*- coding: utf-8 -*-
 newPackage("DGAlgebras",
      Headline => "Data type for DG algebras",
-     Version => "2.0",
-     Date => "April 27, 2026",
+     Version => "2.1",
+     Date => "June 4, 2026",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
@@ -93,6 +93,7 @@ export {"DGAlgebra",
 	"adjoinGenerators",
 	"semifreeResolution",
 	"minimalSemifreeResolution",
+	"minimizeDGModule",
 	"isMinimalSemifreeResolution",
 	"generatorTable",
 	"dgModuleSummary",
@@ -485,10 +486,29 @@ adjoinVariables (DGAlgebra, List) := opts -> (A, cycleList) -> (
    local newDegreesList;
    local newCycleDegrees;
    tempDegree := {1} | toList ((#(degree first cycleList)-1):0);
-   if A.isHomogeneous then
-      newCycleDegrees = apply(cycleList, z -> degree z + tempDegree)
-   else
-      newCycleDegrees = apply(cycleList, z -> {first degree z + 1});
+   -- Compute new generator degrees as `degree z + tempDegree`, then
+   -- normalize the length to match A.Degrees so the concatenation
+   -- A.Degrees | newCycleDegrees is length-uniform.
+   --
+   -- Why this normalization matters: A.Degrees stores degrees in their
+   -- pre-padding length (e.g. length 1 from `toList((numgens R):{1})` in
+   -- the !isHomogeneous Koszul construction), while A.natural's
+   -- underlying polynomial ring pads them to length 2 via line 304's
+   -- length-mismatch guard. The cycle z therefore has a length-2 degree
+   -- even when A.Degrees entries have length 1, and adding them gives a
+   -- length-2 newCycleDegrees that mixes with length-1 A.Degrees and
+   -- breaks freeDGAlgebra below.
+   --
+   -- Truncating/padding to A.Degrees's length restores consistency.
+   -- Truncation drops the internal-grading info only in the case where
+   -- A.Degrees was already length 1 (a hom-only DG algebra); the
+   -- internal degree was never tracked in that path to begin with.
+   expectedLen := if #A.Degrees > 0 then #(first A.Degrees) else (#tempDegree);
+   normalizeLen := d -> (
+       if #d > expectedLen then take(d, expectedLen)
+       else if #d < expectedLen then d | toList((expectedLen - #d) : 0)
+       else d);
+   newCycleDegrees = apply(cycleList, z -> normalizeLen(degree z + tempDegree));
    newDegreesList = A.Degrees | newCycleDegrees;
    existingGenNames := apply(gens A.natural, baseName);
    baseSymForNew := if opts.Variable === null then (
@@ -2669,8 +2689,12 @@ semifreeResolution Module := opts -> M -> (
 -- minimal presentation. For A = koszulComplexDGA R with R a standard
 -- graded quotient of a polynomial ring over a field, this is satisfied.
 -------------------------------------------------------------------------
+-- Minimize option: if true (default), post-process with minimizeDGModule
+-- to absorb any contractible (e_i, e_j) pairs left by killCycles. Set
+-- Minimize => false to recover the pre-fix (acyclic but possibly
+-- non-augmentation-minimal) behavior.
 minimalSemifreeResolution = method(TypicalValue => DGModule,
-    Options => {StartDegree => 1, EndDegree => 3})
+    Options => {StartDegree => 1, EndDegree => 3, Minimize => true})
 minimalSemifreeResolution (DGAlgebra, Module) := opts -> (A, M) -> (
     R := A.ring;
     if ring M =!= R then
@@ -2678,6 +2702,10 @@ minimalSemifreeResolution (DGAlgebra, Module) := opts -> (A, M) -> (
     -- Replace M by a minimally-presented copy. prune gives a minimal
     -- presentation over a (graded-)local ring; over a polynomial ring it
     -- gives a minimal graded presentation.
+    -- Caveat: M2's prune (and rank) can spuriously return zero for cyclic
+    -- modules over coefficients in non-prime finite fields GF(p^n) with
+    -- n > 1. In that case the algorithm produces a trivial DGModule;
+    -- it works correctly over ZZ/p, QQ, ZZ, and standard graded rings.
     Mmin := prune M;
     numGensM := numgens Mmin;
     presMin := presentation Mmin;
@@ -2715,6 +2743,12 @@ minimalSemifreeResolution (DGAlgebra, Module) := opts -> (A, M) -> (
         Mdg = killCycles(Mdg, StartDegree => n);
         n = n + 1;
     );
+    -- Post-process: absorb scalar-unit pairs left by killCycles. This
+    -- preserves acyclicity (it does proper Gauss elimination on the
+    -- semifree resolution) and brings every differential entry into the
+    -- augmentation ideal of A.natural, satisfying the full minimality
+    -- criterion that isMinimalSemifreeResolution checks.
+    if opts.Minimize then Mdg = minimizeDGModule Mdg;
     Mdg
 )
 minimalSemifreeResolution Module := opts -> M -> (
@@ -2724,12 +2758,18 @@ minimalSemifreeResolution Module := opts -> M -> (
 )
 
 -------------------------------------------------------------------------
--- isMinimalSemifreeResolution(M): true iff each generator differential
--- lies in the augmentation ideal of A.natural. Equivalently: reducing
--- A.natural modulo (vars R, positive-hom-deg generators), each component
--- of each M.diff#i collapses to zero.
+-- isMinimalSemifreeResolution(M): true iff
+--   (1) each generator differential lies in the augmentation ideal of
+--       A.natural — i.e. reducing A.natural mod (vars R, positive-hom-deg
+--       generators), each component of each M.diff#i collapses to zero,
+--   AND
+--   (2) M is acyclic (a genuine resolution): H_i(M) = 0 for 1 <= i <=
+--       maxDegree(M).
 --
--- Does NOT check acyclicity — use isAcyclic with an EndDegree for that.
+-- Both conditions are necessary. Condition (1) alone is satisfied by
+-- non-resolutions (acyclic in the wrong basis); condition (2) alone is
+-- satisfied by non-minimal resolutions (with scalar-unit differential
+-- entries). True minimality of a semifree resolution requires both.
 -------------------------------------------------------------------------
 isMinimalSemifreeResolution = method(TypicalValue => Boolean)
 isMinimalSemifreeResolution DGModule := M -> (
@@ -2737,8 +2777,7 @@ isMinimalSemifreeResolution DGModule := M -> (
     if not isFreeModule M.natural then return false;
     A := M.dgAlgebra;
     R := A.ring;
-    -- Build the augmentation map A.natural -> k:
-    --   first set all T_i = 0 (sub to R), then reduce mod ideal vars R.
+    -- (1) Augmentation-ideal check.
     killT := map(R, A.natural,
         matrix{apply(numgens A.natural, i -> 0_R)});
     mR := if numgens R > 0 then ideal vars R else ideal 0_R;
@@ -2746,11 +2785,117 @@ isMinimalSemifreeResolution DGModule := M -> (
         if f == 0 then true
         else (killT f) % mR == 0
     );
-    all(M.diff, v -> (
+    augOK := all(M.diff, v -> (
         if v == 0 then true
         else all(entries v, c -> augIsZero c)
-    ))
+    ));
+    if not augOK then return false;
+    -- (2) Acyclicity check. A truncated semifree resolution adjoined
+    -- up to V-generator hom-deg N has H_1 = ... = H_{N-1} = 0; H_N
+    -- (= ker d_N modulo image d_{N+1}) is the next syzygy and may be
+    -- nonzero. Note maxDegree(M) is the max degree of the underlying
+    -- R-complex (V-gens shifted by A.natural multiplication) — for the
+    -- acyclicity bound we want max hom-deg of V-generators only.
+    if #(M.Degrees) == 0 then return true;
+    maxVdeg := max(M.Degrees / first);
+    if maxVdeg < 2 then return true;
+    not any(1..(maxVdeg - 1), i -> prune homology(i, M) != 0)
 )
+
+
+-------------------------------------------------------------------------
+-- minimizeDGModule(M): post-process a semifree DGModule, absorbing every
+-- contractible (e_i, e_j) pair — i.e. every pair where d(e_j) has a
+-- scalar-unit entry on row i. After absorption, the underlying complex
+-- is unchanged up to quasi-isomorphism (and stays acyclic) but no
+-- residual scalar-unit entries remain, so every differential lands in
+-- the augmentation ideal of A.natural.
+--
+-- Algorithm — proper graded Gauss elimination:
+--   1. Find (i, j, u) with M.diff#j's i-th entry a nonzero scalar u.
+--      (Necessarily hom-deg(e_j) = hom-deg(e_i) + 1.)
+--   2. For every same-hom-deg generator e_l (l != j) with c_{l,i} =
+--      (entries M.diff#l)#i nonzero, update M.diff#l <- M.diff#l -
+--      (c_{l,i}/u) * M.diff#j. This implements the basis change
+--      e_l_new = e_l_old - (c_{l,i}/u) e_j and clears e_i out of d(e_l).
+--   3. Drop BOTH e_i and e_j from the basis: keepIdx = complement of
+--      {i, j}; for each surviving l, the new diff vector has the i-th
+--      and j-th entries removed.
+--
+-- For higher-hom-deg generators e_k that have d(e_k) referencing e_j,
+-- the d^2 = 0 identity guarantees that in the NEW basis the e_j
+-- coefficient of d(e_k) is 0. Concretely: the e_i coefficient of
+-- d^2(e_k) = 0 forces c_k^j = -(1/u) sum_l c_k^l c_{l,i}, which is
+-- exactly the basis-change correction that the e_j-column drop
+-- absorbs.  So we may simply remove the j-th entry of d(e_k).
+--
+-- Loop until no scalar-unit pair is found; each iteration strictly
+-- decreases the generator count, so termination is guaranteed.
+-------------------------------------------------------------------------
+minimizeDGModule = method(TypicalValue => DGModule)
+minimizeDGModule DGModule := M -> (
+    A := M.dgAlgebra;
+    R := A.ring;
+    kk := coefficientRing R;
+    -- Test if an A.natural element lifts to a nonzero scalar in kk.
+    asScalarUnit := u -> (
+        if u == 0 then return null;
+        v := null;
+        try (v = lift(u, kk)) else return null;
+        if v == 0 then null else v
+    );
+    -- Find the first (i, j, u) where M.diff#j has scalar unit u on row i.
+    findPair := M0 -> (
+        for j from 0 to (#M0.diff - 1) do (
+            if M0.diff#j == 0 then continue;
+            ents := entries M0.diff#j;
+            for i from 0 to (#ents - 1) do (
+                u := asScalarUnit(ents#i);
+                if u =!= null then return (i, j, u);
+            );
+        );
+        null
+    );
+    -- Absorb the pair (e_i, e_j): basis-change same-deg generators
+    -- then drop e_i and e_j.
+    absorbPair := (M0, i, j, u) -> (
+        uInvA := sub(1_kk / u, A.natural);
+        djVec := M0.diff#j;
+        -- Step 1: modify same-deg generators (any l != j with c_{l,i} != 0).
+        modifiedDiffs := apply(#M0.diff, l -> (
+            if l == i or l == j then null  -- to be dropped
+            else (
+                cLI := (entries M0.diff#l)#i;
+                if cLI == 0 then M0.diff#l
+                else M0.diff#l - (cLI * uInvA) * djVec
+            )
+        ));
+        -- Step 2: drop both i and j from generator list and from rows.
+        keepIdx := select(toList(0..#M0.diff - 1), k -> k != i and k != j);
+        newDegs := apply(keepIdx, k -> M0.Degrees#k);
+        Mnew := freeDGModule(A, newDegs);
+        translateVec := v -> (
+            if v == 0 then return 0_(Mnew.natural);
+            ents := entries v;
+            sum apply(#keepIdx, newIdx -> (
+                oldIdx := keepIdx#newIdx;
+                e := ents#oldIdx;
+                if e == 0 then 0_(Mnew.natural)
+                else e * (Mnew.natural)_newIdx
+            ))
+        );
+        setDiff(Mnew, apply(keepIdx, k -> translateVec modifiedDiffs#k));
+        Mnew
+    );
+    Mcur := M;
+    while true do (
+        triple := findPair Mcur;
+        if triple === null then break;
+        Mcur = absorbPair(Mcur, triple#0, triple#1, triple#2);
+    );
+    Mcur
+)
+
 
 -------------------------------------------------------------------------
 -- DG module visualization: generatorTable, dgModuleSummary,

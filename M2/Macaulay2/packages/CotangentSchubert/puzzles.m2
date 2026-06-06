@@ -281,6 +281,8 @@ neside = p -> new LabelList from apply(p.Length,i->p#(0,i,0))
 -- computation of (d<=3) equivariant fugacities
 myload "fugacity.m2"
 
+-- TODO: `assoc` is exported here but has no doc node and is not on the
+-- undocumented {} list at CotangentSchubert.m2:398-405.
 export { "puzzle", "bottom", "fugacity", "fugacityTally", "fugacityVector", "Puzzle", "assoc", "doublePuzzle" }
 end
 

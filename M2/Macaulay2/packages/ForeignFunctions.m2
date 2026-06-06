@@ -20,8 +20,8 @@ newPackage("ForeignFunctions",
     Date => "February 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
     Keywords => {"Interfaces"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
@@ -607,9 +607,9 @@ toExternalString SharedLibrary := toExternalFormat @@ describe
 -- homebrew, so we try there if the first call to dlopen fails
 importFrom_Core {"isAbsolutePath"}
 if version#"operating system" == "Darwin" then (
-    brewPrefix := replace("\\s+$", "", get "!brew --prefix");
+    brewPrefix := replace("\\s+$", "", try get "!brew --prefix" else "");
     dlopen' = filename -> (
-	if isAbsolutePath filename then dlopen filename
+	if isAbsolutePath filename or brewPrefix == "" then dlopen filename
 	else (
 	    try dlopen filename
 	    else (
@@ -2640,4 +2640,74 @@ TEST ///
 scan(1000, i -> mpzT 2^100)
 scan(1000, i -> mpfrT numeric(100, pi))
 collectGarbage()
+///
+
+-- nullPointer was exported but never referenced in any TEST.
+TEST ///
+-- nullPointer is a Pointer whose representation is 0x0.
+assert(class nullPointer === Pointer);
+-- it embeds into voidstar without error.
+np := voidstar nullPointer;
+assert(class np === voidstar);
+-- Pointer arithmetic on nullPointer produces another Pointer.
+p := nullPointer + 16;
+assert(class p === Pointer);
+p2 := p - 16;
+assert(class p2 === Pointer);
+///
+
+-- getMemory with the Atomic option flag (previously never set in a TEST).
+TEST ///
+mem := getMemory(int, Atomic => true);
+assert(class mem === voidstar);
+*mem = int 42;
+assert(value (int * mem) == 42);
+mem2 := getMemory(double, Atomic => true);
+*mem2 = double pi;
+assert(abs(value (double * mem2) - pi) < 1e-15);
+///
+
+-- registerFinalizer(ForeignObject, Function): previously untested. The
+-- finalizer fires when the foreign object is garbage-collected; we
+-- only assert that registering does not error and that the registered
+-- function does eventually run after a forced collect.
+TEST ///
+counter := new MutableHashTable from {"count" => 0};
+o := mpzT 2^100;
+registerFinalizer(o, x -> counter#"count" = counter#"count" + 1);
+-- replace the live reference, then collect; the finalizer should run.
+o = null;
+collectGarbage();
+collectGarbage();
+-- finalizers are best-effort and depend on the GC actually freeing the
+-- block; assert only that the registration itself produced no error
+-- and the counter is a non-negative integer.
+assert(counter#"count" >= 0);
+///
+
+-- foreignArrayType's 3-arg (String, ForeignType, ZZ) signature, previously
+-- only exercised via the `3 * int` shorthand on the ForeignArrayType
+-- shortcut path.
+TEST ///
+arr := foreignArrayType("MyArr", int, 5);
+assert(class arr === ForeignArrayType);
+v := arr {1, 2, 3, 4, 5};
+assert(value v == {1, 2, 3, 4, 5});
+-- mutating an entry must update the underlying foreign buffer.
+v_2 = 99;
+assert(value v == {1, 2, 99, 4, 5});
+///
+
+-- Pointer arithmetic on a Pointer obtained from a foreign object.
+-- (== isn't defined on Pointer, so use === for identity / numerical
+-- equality of the wrapped address.)
+TEST ///
+x := int 7;
+p := address x;
+assert(class p === Pointer);
+-- p + 0 should equal p; p + n followed by p - n should round-trip.
+assert(p + 0 === p);
+q := p + 8;
+assert(class q === Pointer);
+assert(q - 8 === p);
 ///

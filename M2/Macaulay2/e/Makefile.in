@@ -8,8 +8,9 @@ PRE.cc   = $(COMPILE.cc) -E
 
 include Makefile.files
 include Makefile.common
-CPPFLAGS := -I@srcdir@ $(CPPFLAGS) \
-  -Wno-fatal-errors -Wno-unused-variable
+  CPPFLAGS := -I@srcdir@ \
+    $(CPPFLAGS) \
+    -Wno-fatal-errors -Wno-unused-variable
 
 #  -I../d -I@srcdir@/../c -I@srcdir@/../d \
 
@@ -30,7 +31,9 @@ TAGS tags: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 	@srcdir@/NCAlgebras/*.hpp @srcdir@/NCAlgebras/*.cpp \
 	@srcdir@/interface/*.h @srcdir@/interface/*.cpp \
-	@srcdir@/schreyer-resolution/*.hpp @srcdir@/schreyer-resolution/*.cpp \
+	@srcdir@/computations/*.hpp @srcdir@/computations/*.cpp \
+	@srcdir@/free-modules/*.hpp @srcdir@/free-modules/*.cpp \
+	@srcdir@/schreyer-resolutions/*.hpp @srcdir@/schreyer-resolutions/*.cpp \
 	@srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 	@srcdir@/bibasis/*.hpp @srcdir@/bibasis/*.cpp \
 	@srcdir@/unit-tests/*.cpp
@@ -40,20 +43,6 @@ TAGS tags: @srcdir@/TAGS
 
 # overflows
 LDLIBS = -lgc
-
-check:: run-overflow-test
-run-overflow-test : overflow-test Makefile
-	@ echo "#warning: the following 6 tests are intended to throw uncaught overflow exceptions"
-	./overflow-test throw || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
-	./overflow-test sub   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
-	./overflow-test minus || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
-	./overflow-test mult  || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
-	./overflow-test div   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
-	./overflow-test add   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
-	touch $@
-clean :: ; rm -f run-overflow-test
-overflow-test : overflow.o #../d/debug.o ../d/M2mem.o ../d/memdebug.o
-clean :: ; rm -f overflow-test
 
 #all:; $(MAKE) -C f4
 
@@ -111,7 +100,7 @@ distclean: clean; rm -f Makefile @srcdir@/TAGS
 # we like using "struct" and "class" interchangeably
 CXXFLAGS += -Wno-mismatched-tags
 
-# a stand-alone program made from test.dd
+# a stand-alone program made from unused/test.dd
 # test : ../c/scc-core.o
 test : complex.o
 test : LDFLAGS += -L../d -lmpfr -lgmp -lfac -lcf -lcfmem
@@ -177,4 +166,3 @@ help:
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e "
 # End:
-
