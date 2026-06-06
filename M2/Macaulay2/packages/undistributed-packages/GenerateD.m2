@@ -669,7 +669,7 @@ export rawHomogenizeMatrix(e:Expr):Expr := (
     if isSmallInt(s.1) then (varindex := getSmallInt(s.1);
     if isSequenceOfSmallIntegers(s.2) then (varweights := getSequenceOfSmallIntegers(s.2);
          toExpr(Ccode(RawMatrixOrNull,
-                 "IM2_Matrix_homogenize(",
+                 "rawMatrixHomogenize(",
                  M, ",",
                  varindex, ",",
                  weights,

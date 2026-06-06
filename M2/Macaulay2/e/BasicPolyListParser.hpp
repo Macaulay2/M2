@@ -1,7 +1,7 @@
 /** 
-* This class implements parsing of polynomials from a string or file
-* as well as Msolve format.
-*/
+ * This class implements parsing of polynomials from a string or file
+ * as well as Msolve format.
+*/ 
 #ifndef M2_BASICPOLYLISTPARSER_HPP
 #define M2_BASICPOLYLISTPARSER_HPP
 

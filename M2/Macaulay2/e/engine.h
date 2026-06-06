@@ -87,7 +87,7 @@ extern "C" {
   /**** Groebner basis and resolution routines ******/
   /**************************************************/
 
-  Computation /* or null */* IM2_Computation_set_stop(Computation *G,
+  Computation /* or null */* rawComputationSetStop(Computation *G,
                                      M2_bool always_stop,       /* 1 */
                                      M2_arrayint degree_limit,  /* 2*/
                                      int basis_element_limit,   /* 3 */
@@ -110,7 +110,7 @@ extern "C" {
   /* The computation is complete up to and including this degree.
      The exact meaning of 'degree' is computation specific */
 
-  M2_string IM2_GB_to_string(Computation *C); /* drg: connected, in actors4.d */
+  M2_string rawGBToString(Computation *C); /* drg: connected, in actors4.d */
 
   unsigned int rawComputationHash(const Computation *C); /* drg: connected, in basic.d */
 
@@ -123,7 +123,7 @@ extern "C" {
   /* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
   /* Res: SortStrategy, 0, 1, 2, 3 ?? */
 
-  Computation /* or null */ *IM2_res_make(const Matrix *m,
+  Computation /* or null */ *rawResMake(const Matrix *m,
                                   M2_bool resolve_cokernel,
                                   int max_level,
                                   M2_bool use_max_slanted_degree,
@@ -170,7 +170,7 @@ extern "C" {
   */
 
   /* I don't know what this is supposed to do (mike) */
-  int IM2_Resolution_status(Computation *G,
+  int rawResolutionStatus(Computation *G,
                     int * complete_up_through_this_degree,
                     int * complete_up_through_this_level); /* drg: TODO */
   /* -1: error condition, and the error message is set.
@@ -181,7 +181,7 @@ extern "C" {
      4: finished the computation completely
   */
 
-  enum ComputationStatusCode IM2_Resolution_status_level(Computation *G,
+  enum ComputationStatusCode rawResolutionStatusLevel(Computation *G,
                                                          int level,
                                                          M2_bool minimize,
                                                          int * complete_up_through_this_degree);

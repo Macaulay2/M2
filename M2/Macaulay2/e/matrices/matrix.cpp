@@ -57,6 +57,70 @@ unsigned int Matrix::computeHashValue() const
   return hashval;
 }
 
+const RingElement /* or null */ *Matrix::entry(int r, int c) const
+{
+  if (r < 0 || r >= n_rows())
+    {
+      ERROR("matrix row index %d out of range 0 .. %d", r, n_rows() - 1);
+      return nullptr;
+    }
+  if (c < 0 || c >= n_cols())
+    {
+      ERROR("matrix column index %d out of range 0 .. %d",
+            c,
+            n_cols() - 1);
+      return nullptr;
+    }
+  return RingElement::make_raw(get_ring(), elem(r, c));
+}
+
+engine_RawRingElementArrayArrayOrNull Matrix::entries() const
+{
+  int ncols = n_cols();
+  int nrows = n_rows();
+  if (nrows < 0 || ncols < 0)
+    {
+      ERROR("internal error: matrix has a negative size %d by %d",
+            nrows,
+            ncols);
+      return nullptr;
+    }
+
+  engine_RawRingElementArrayArray entries =
+      getmemarraytype(engine_RawRingElementArrayArray, nrows);
+  entries->len = nrows;
+
+  const Ring *R = get_ring();
+  RingElement *zero = RingElement::make_raw(R, R->zero());
+  for (int r = 0; r < nrows; r++)
+    {
+      engine_RawRingElementArray currRow =
+          getmemarraytype(engine_RawRingElementArray, ncols);
+      currRow->len = ncols;
+      std::fill_n(currRow->array, ncols, zero);
+      entries->array[r] = currRow;
+    }
+
+  for (int c = 0; c < ncols; c++)
+    {
+      const vec &column = elem(c);
+      for (const vecterm &term : column)
+        {
+          if (term.comp < 0 || term.comp >= nrows)
+            {
+              ERROR("internal error: matrix contains invalid entries:"
+                    "row index %d out of range 0 .. %d",
+                    term.comp,
+                    nrows - 1);
+              continue;
+            }
+          entries->array[term.comp]->array[c] =
+              RingElement::make_raw(R, term.coeff);
+        }
+    }
+  return entries;
+}
+
 const Matrix /* or null */ *Matrix::make(const FreeModule *target,
                                          int ncols,
                                          const engine_RawRingElementArray M)
@@ -274,6 +338,50 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target) const
   MatrixConstructor mat(target, n_cols());
   for (int i = 0; i < n_cols(); i++)
     mat.set_column(i, R->copy_vec(mEntries[i]));
+  mat.compute_column_degrees();
+  return mat.to_matrix();
+}
+
+const Matrix /* or null */ *Matrix::promote(const FreeModule *target) const
+{
+  ring_elem a;
+  const Ring *R = get_ring();
+  const Ring *S = target->get_ring();
+  MatrixConstructor mat(target, n_cols());
+  Matrix::iterator i(this);
+  for (int c = 0; c < n_cols(); c++)
+    for (i.set(c); i.valid(); i.next())
+      if (S->promote(R, i.entry(), a))
+        mat.set_entry(i.row(), c, a);
+      else
+        {
+          ERROR("first error occurred while promoting matrix entry at row %d, column %d",
+                i.row(),
+                c);
+          return nullptr;
+        }
+  mat.compute_column_degrees();
+  return mat.to_matrix();
+}
+
+const Matrix /* or null */ *Matrix::lift(const FreeModule *target) const
+{
+  ring_elem a;
+  const Ring *R = get_ring();
+  const Ring *S = target->get_ring();
+  MatrixConstructor mat(target, n_cols());
+  Matrix::iterator i(this);
+  for (int c = 0; c < n_cols(); c++)
+    for (i.set(c); i.valid(); i.next())
+      if (R->lift(S, i.entry(), a))
+        mat.set_entry(i.row(), c, a);
+      else
+        {
+          ERROR("first error occurred while lifting matrix entry at row %d, column %d",
+                i.row(),
+                c);
+          return nullptr;
+        }
   mat.compute_column_degrees();
   return mat.to_matrix();
 }
@@ -623,6 +731,81 @@ Matrix *Matrix::concat(const Matrix &m) const
   for (i = 0; i < nc; i++) mat.set_column(i, R->copy_vec(elem(i)));
   for (i = 0; i < m.n_cols(); i++)
     mat.set_column(nc + i, R->copy_vec(m.elem(i)));
+  return mat.to_matrix();
+}
+
+Matrix *Matrix::concat(unsigned int n, const Matrix *const matrices[])
+{
+  if (n == 0)
+    {
+      ERROR("matrix concat: expects at least one matrix");
+      return nullptr;
+    }
+
+  const FreeModule *F = matrices[0]->rows();
+  const Ring *R = F->get_ring();
+  MatrixConstructor mat(F, 0);
+  int next = 0;
+  for (unsigned int i = 0; i < n; i++)
+    {
+      const Matrix *M = matrices[i];
+      if (R != M->get_ring())
+        {
+          ERROR("matrix concat: different base rings");
+          return nullptr;
+        }
+      if (F->rank() != M->n_rows())
+        {
+          ERROR("matrix concat: row sizes are not equal");
+          return nullptr;
+        }
+      for (int j = 0; j < M->n_cols(); j++)
+        {
+          mat.append(R->copy_vec(M->elem(j)));
+          mat.set_column_degree(next++, M->cols()->degree(j));
+        }
+    }
+  return mat.to_matrix();
+}
+
+const Matrix *Matrix::direct_sum(unsigned int n, const Matrix *const matrices[])
+{
+  if (n == 0)
+    {
+      ERROR("matrix direct sum: expects at least one matrix");
+      return nullptr;
+    }
+
+  const Ring *R = matrices[0]->get_ring();
+  for (unsigned int i = 1; i < n; i++)
+    if (R != matrices[i]->get_ring())
+      {
+        ERROR("matrix direct sum: different base rings");
+        return nullptr;
+      }
+
+  if (n == 1) return matrices[0];
+
+  FreeModule *F = R->make_FreeModule();
+  FreeModule *G = R->make_FreeModule();
+  for (unsigned int i = 0; i < n; i++)
+    {
+      F->direct_sum_to(matrices[i]->rows());
+      G->direct_sum_to(matrices[i]->cols());
+    }
+
+  MatrixConstructor mat(F, G, nullptr);
+  int row_offset = 0;
+  int col_offset = 0;
+  for (unsigned int i = 0; i < n; i++)
+    {
+      const Matrix *M = matrices[i];
+      for (int j = 0; j < M->n_cols(); j++)
+        mat.set_column(col_offset + j,
+                       R->component_shift(row_offset, M->elem(j)));
+      row_offset += M->n_rows();
+      col_offset += M->n_cols();
+    }
   return mat.to_matrix();
 }
 

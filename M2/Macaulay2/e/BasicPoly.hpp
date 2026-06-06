@@ -1,6 +1,8 @@
-// Current restriction: the coefficients must be an integral type.
-//   TODO: allow infinite precision integers too.
-//   TODO: how should we handle coefficients which are: GF(p^n), QQ, fraction fields? or even polynomials?
+/** 
+ * Current restriction: the coefficients must be an integral type.
+*/
+//  TODO: allow infinite precision integers too.
+//  TODO: how should we handle coefficients which are: GF(p^n), QQ, fraction fields? or even polynomials?
 #ifndef M2_BASICPOLY_HPP
 #define M2_BASICPOLY_HPP
 
@@ -15,10 +17,10 @@ class BasicPoly
 {
 public:
   std::vector<mpz_class> mCoefficients;
-  std::vector<int> mComponents; // if zero length: all components are 0.
-  std::vector<int> mMonomials; // a concatenated list of varpower monomials.  Each first entry is its length.
+  std::vector<int> mComponents; ///< if zero length: all components are 0.
+  std::vector<int> mMonomials; ///< a concatenated list of varpower monomials.  Each first entry is its length.
 
-  void clear(); // resets all data to represent the zero polynomial
+  void clear(); ///< resets all data to represent the zero polynomial
   ~BasicPoly() { clear(); }
   
   size_t termCount() const { return mCoefficients.size(); } 
@@ -82,15 +84,22 @@ public:
   }
 };
 
-// These will throw a parsing_error if there is a parsing error.  The
-// plan is that that will include the location in the string of the
-// error.
+// TODO: include location of the parse_error in the string
 
+/**
+ * Parse a polynomial with integer coefficients from a string with variables `varnames`.
+ * Variables a valid idenifiers made up of alphanumeric characters and underscore.
+ * Terms are of the form integer * variable ^ exponent + ...
+ * Exponents are assumed to be positive.
+ * \throws parsing_error
+*/
 BasicPoly parseBasicPoly(std::string poly, std::vector<std::string> varnames);
 
-/// This version is a potentially faster alternative when reading many polynomials
+/**
+ * This version is a potentially faster alternative when reading many polynomials
+ * \throws parsing_error
+*/
 void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash, BasicPoly& result);
-
 
 // TODO: we want an iterator type here.
 // TODO: 

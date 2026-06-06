@@ -1,8 +1,11 @@
-// BasicPolyList is a vector of polynomials (with components)
-// which we can easily translate to and from other polynomial and matrix types.
-// This class really doesn't require any ring.
-// Current restriction: the coefficients must be an integral type. TODO: allow infinite precision integers too.
-//   TODO: how should we handle coefficients which are: GF(p^n), QQ, fraction fields? or even polynomials?
+/** 
+ *  BasicPolyList is a vector of BasicPoly, polynomials (with components),
+ *  which we can easily translate to and from other polynomial and matrix types.
+ *  This class really doesn't require any ring.
+ *  Current restriction: the coefficients must be an integral type.
+ *  TODO: allow infinite precision integers too.
+*/
+//  TODO: how should we handle coefficients which are: GF(p^n), QQ, fraction fields? or even polynomials?
 #ifndef M2_BASICPOLYLIST_HPP
 #define M2_BASICPOLYLIST_HPP
 
@@ -99,8 +102,13 @@ void toStream(const BasicPolyList& Fs, S &str)
 
 const Matrix* toMatrix(const FreeModule *target, const BasicPolyList& Fs);
 
-// The following can certainly throw an error.  You need to check that!
+/**
+ * \throws parsing_error
+*/
 auto basicPolyListFromString(std::vector<std::string> varNames, std::string polyPerLine) -> BasicPolyList;
+/**
+ * \throws parsing_error
+*/
 auto basicPolyListFromFile(std::vector<std::string> varNames, std::string fileName) -> BasicPolyList;
 
 #endif

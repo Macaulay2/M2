@@ -862,7 +862,7 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
               if (error()) return nullptr;
             }
           result->array[next++] =
-              IM2_Matrix_make1(M->rows(), u.length(), result1, false);
+              rawMatrix1(M->rows(), u.length(), result1, false);
         }
 
       return result;

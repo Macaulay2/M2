@@ -55,7 +55,7 @@ void test_over_RR_or_CC(const Ring *R)
 }
 
 ////////////////////////////////////
-const RingElement /* or null */ *IM2_Matrix_Hilbert(const Matrix *M)
+const RingElement /* or null */ *rawMatrixHilbert(const Matrix *M)
 /* This routine computes the numerator of the Hilbert series
    for coker leadterms(M), using the degrees of the rows of M.
    nullptr is returned if the ring is not appropriate for
@@ -87,7 +87,7 @@ const Matrix *rawKernelOfGB(const Matrix *M)
 ///////// The following will be removed once the new code is functional
 /////////////
 ///////////////////////////////////////////////////////////////////////////////////
-Computation /* or null */ *IM2_GB_make(
+Computation /* or null */ *rawGBMake(
     const Matrix *m,
     M2_bool collect_syz,
     int n_rows_to_keep,
@@ -121,7 +121,7 @@ Computation /* or null */ *IM2_GB_make(
   }
 }
 
-Computation /* or null */ *IM2_res_make(const Matrix *m,
+Computation /* or null */ *rawResMake(const Matrix *m,
                                         M2_bool resolve_cokernel,
                                         int max_level,
                                         M2_bool use_max_slanted_degree,
@@ -158,7 +158,7 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
   }
 }
 
-Computation /* or null */ *IM2_GB_set_hilbert_function(Computation *C,
+Computation /* or null */ *rawGBSetHilbertFunction(Computation *C,
                                                        const RingElement *h)
 {
   try
@@ -180,7 +180,7 @@ Computation /* or null */ *IM2_GB_set_hilbert_function(Computation *C,
   }
 }
 
-Computation /* or null */ *IM2_GB_force(
+Computation /* or null */ *rawGBForce(
     const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
     const Matrix *gb,
     const Matrix *change, /* same number of columns as 'gb', if not 0 */
@@ -228,7 +228,7 @@ Computation /* or null */ *rawGroebnerWalk(const Matrix *gb,
   }
 }
 
-Computation /* or null */ *IM2_Computation_set_stop(
+Computation /* or null */ *rawComputationSetStop(
     Computation *G,
     M2_bool always_stop,
     M2_arrayint degree_limit,
@@ -447,7 +447,7 @@ const Matrix /* or null */ *rawGBMatrixRemainder(Computation *C,
   }
 }
 
-M2_bool IM2_GB_matrix_lift(Computation *C,
+M2_bool rawGBMatrixLift(Computation *C,
                            const Matrix *m,
                            const Matrix /* or null */ **result_remainder,
                            const Matrix /* or null */ **result_quotient)
@@ -467,7 +467,7 @@ M2_bool IM2_GB_matrix_lift(Computation *C,
   return false;
 }
 
-int IM2_GB_contains(Computation *C, const Matrix *m)
+int rawGBContains(Computation *C, const Matrix *m)
 {
   try
     {
@@ -576,7 +576,7 @@ const FreeModule /* or null */ *rawResolutionGetFree(Computation *C, int level)
   }
 }
 
-int IM2_Resolution_status(Computation *C,
+int rawResolutionStatus(Computation *C,
                           int *complete_up_through_this_degree,
                           int *complete_up_through_this_level)
 {
@@ -584,13 +584,13 @@ int IM2_Resolution_status(Computation *C,
   (void) complete_up_through_this_degree;
   (void) complete_up_through_this_level;
 #ifdef DEVELOPMENT
-#warning "IM2_Resolution_status to be written"
+#warning "rawResolutionStatus to be written"
 #endif
   ERROR("not re-implemented yet");
   return -1;
 }
 
-enum ComputationStatusCode IM2_Resolution_status_level(
+enum ComputationStatusCode rawResolutionStatusLevel(
     Computation *C,
     int level,
     M2_bool minimize,
@@ -601,7 +601,7 @@ enum ComputationStatusCode IM2_Resolution_status_level(
   (void) minimize;
   (void) complete_up_through_this_degree;
 #ifdef DEVELOPMENT
-#warning "IM2_Resolution_status to be written"
+#warning "rawResolutionStatus to be written"
 #endif
   ERROR("not re-implemented yet");
   return COMP_ERROR;
@@ -630,7 +630,7 @@ M2_arrayintOrNull rawResolutionBetti(Computation *C, int type)
   }
 }
 
-M2_string IM2_GB_to_string(Computation *C)
+M2_string rawGBToString(Computation *C)
 /* TODO */
 {
   buffer o;

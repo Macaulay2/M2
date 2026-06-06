@@ -10,6 +10,7 @@
 #include <vector>
 
 class MatrixConstructor;
+class RingElement;
 
 /**
  * \ingroup matrices
@@ -80,6 +81,9 @@ class Matrix : public EngineObject
 
   const Matrix /* or null */ *remake(const FreeModule *target) const;
 
+  const Matrix /* or null */ *promote(const FreeModule *target) const;
+  const Matrix /* or null */ *lift(const FreeModule *target) const;
+
   static const Matrix *make(const MonomialIdeal *mi);
 
   const Ring *get_ring() const { return rows()->get_ring(); }
@@ -89,6 +93,8 @@ class Matrix : public EngineObject
   ring_elem elem(int i, int j) const;
   vec &elem(int i) { return mEntries[i]; }
   const vec &elem(int i) const { return mEntries[i]; }
+  const RingElement /* or null */ *entry(int r, int c) const;
+  engine_RawRingElementArrayArrayOrNull entries() const;
   /*****************************************/
 
   /* The non-const versions of these will go away */
@@ -117,7 +123,8 @@ class Matrix : public EngineObject
   Matrix *scalar_mult(const ring_elem r, bool opposite_mult) const;
   Matrix *mult(const Matrix *m, bool opposite_mult) const;
   Matrix *concat(const Matrix &m) const;
-
+  static Matrix /* or null */ *concat(unsigned int n,
+                                      const Matrix *const matrices[]);
   static Matrix *identity(const FreeModule *F);
   static Matrix /* or null */ *zero(const FreeModule *F, const FreeModule *G);
 
@@ -131,6 +138,8 @@ class Matrix : public EngineObject
   static Matrix /* or null */ *flip(const FreeModule *G, const FreeModule *H);
 
   Matrix /* or null */ *direct_sum(const Matrix *m) const;
+  static const Matrix /* or null */ *direct_sum(unsigned int n,
+                                                const Matrix *const matrices[]);
   Matrix /* or null */ *module_tensor(const Matrix *m) const;
   Matrix /* or null */ *tensor(const Matrix *m) const;
   Matrix /* or null */ *diff(const Matrix *m, int use_coef) const;

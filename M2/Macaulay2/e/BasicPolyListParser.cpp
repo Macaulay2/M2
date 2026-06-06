@@ -1,3 +1,7 @@
+/**
+ * Parsing utilities for polynomials and list of polynomials in both the engine 
+ * and MSolve's format
+ */
 #include "BasicPolyListParser.hpp"
 
 #include <iostream>

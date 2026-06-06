@@ -1,4 +1,7 @@
-// Copyright 1999  Michael E. Stillman
+/**
+ * \author Micahel E. Stillman
+ * \copyright Copyright 1999  Michael E. Stillman
+*/
 #ifndef M2_COMPUTATIONS_ESCHREYER_HPP_
 #define M2_COMPUTATIONS_ESCHREYER_HPP_
 
@@ -31,19 +34,18 @@ class GBKernelComputation : public Computation
   const Ring *K;
   GBRing *GR;
   const Monoid *M;
-  const SchreyerOrder *SF;  // order for F.
-  const SchreyerOrder *SG;  // order for G.
-  const FreeModule *F;      // This is where the action is...
-  const FreeModule *G;      // This is where the resulting syzygies live.
+  const SchreyerOrder *SF;  ///< order for F.
+  const SchreyerOrder *SG;  ///< order for G.
+  const FreeModule *F;      ///< This is where the action is...
+  const FreeModule *G;      ///< This is where the resulting syzygies live.
   // This MUST be a Schreyer free module compatible with the input!
 
-  gc_vector<MonomialIdeal*> mi;   // Used in reduction.
-  gc_vector<gbvector*> gb;        // This is the "stripped" GB.
-  gc_vector<gbvector*> syzygies;  // This is basically the result.
+  gc_vector<MonomialIdeal*> mi;   ///< Used in reduction.
+  gc_vector<gbvector*> gb;        ///< This is the "stripped" GB.
+  gc_vector<gbvector*> syzygies;  ///< This is basically the result.
 
-  // byte sizes for allocating temp exp vectors and monomials on the stack
-  size_t exp_size;
-  size_t monom_size;
+  size_t exp_size; ///< byte size for allocating temp exp vectors on the stack
+  size_t monom_size; ///< byte size for allocating monomials on the stack
 
   int n_ones;
   int n_unique;
@@ -54,21 +56,35 @@ class GBKernelComputation : public Computation
   void strip_gb(const gc_vector<gbvector*> &m);
   void strip_gb(const GBMatrix *m);
 
+  /**
+   * This routine grabs 'c', and 'monom' should be the total monomial.
+   */
   gbvector *make_syz_term(ring_elem c, const_monomial monom, int comp) const;
-  // This routine grabs 'c', and 'monom' should be the total monomial.
 
   bool find_ring_divisor(const_exponents exp, const gbvector *&result);
-  int find_divisor(const MonomialIdeal *mi, const_exponents exp, int &result);
-  // Returns the index of the least element in the monomial order which divides.
 
+  /**
+   * Returns the index of the least element in the monomial order which divides.
+   */
+  int find_divisor(const MonomialIdeal *mi, const_exponents exp, int &result);
+
+  /**
+   * removes every term of f which is not a lead term of some element of gb.
+   */
   void wipe_unneeded_terms(gbvector *&f);
-  // removes every term of f which is not a lead term of some element of gb.
 
   gbvector *s_pair(gbvector *syz);
-  void reduce(gbvector *&g,
-              gbvector *&gsyz);  // Reduces g to zero.  gsyz is real result.
+
+  /**
+   * Reduces g to zero.  gsyz is real result.
+   */
+  void reduce(gbvector *&g, gbvector *&gsyz);
+
+  /**
+   * Reduces g to zero.  gsyz is real result.
+   */
   void geo_reduce(gbvector *&g,
-                  gbvector *&gsyz);  // Reduces g to zero.  gsyz is real result.
+                  gbvector *&gsyz);  
  public:
   GBKernelComputation(const GBMatrix *m);
 

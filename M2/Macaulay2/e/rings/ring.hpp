@@ -306,6 +306,7 @@ class Ring : public MutableEngineObject
   virtual FreeModule *make_FreeModule() const;
   virtual FreeModule *make_Schreyer_FreeModule() const;
   virtual FreeModule *make_FreeModule(int n) const;
+  virtual FreeModule *make_FreeModule(int ndegrees, int *degrees) const;
 
   virtual SumCollector *make_SumCollector() const;
 
