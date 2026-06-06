@@ -17,13 +17,13 @@
 #include "cytools/lattice-points-normaliz.hpp"
 #include "cytools/lattice_points.hpp"
 
-#include "ZZp.hpp"
+#include "rings/ZZp.hpp"
 #include "error.h"
 #include "interface/cone.h"
-#include "mat.hpp"
-#include "matrix-con.hpp"
-#include "matrix.hpp"
-#include "ring.hpp"
+#include "mutable-matrices/mutablemat.hpp"
+#include "matrices/matrix-con.hpp"
+#include "matrices/matrix.hpp"
+#include "rings/ring.hpp"
 
 using M2::cytools::latticePoints;
 using M2::cytools::LatticePointsResult;
