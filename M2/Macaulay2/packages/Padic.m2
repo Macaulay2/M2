@@ -1,14 +1,47 @@
+-- Padic package for Macaulay2
+-- Copyright (C) 2026 Doug Torrance
+
+-- This program is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU General Public License
+-- as published by the Free Software Foundation; either version 2
+-- of the License, or (at your option) any later version.
+
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, see <https://www.gnu.org/licenses/>.
+
 newPackage("Padic",
     Headline => "p-adic numbers",
-    Version => "0.1",
-    Date => "April 28, 2026",
+    Version => "0.2",
+    Date => "June 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
 	    HomePage => "https://d-torrance.github.io"}},
+    HomePage => "https://github.com/d-torrance/macaulay2-padic",
     Keywords => {"Algebraic Number Theory"},
     PackageExports => {"Valuations"},
     PackageImports => {"ForeignFunctions"})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2026-06-05, M2 1.26.06)
+* update my contact info
+* add homepage field
+* add GPL header
+
+0.1 (2026-04-28, M2 1.26.05)
+* initial release
+
+*-
 
 endpkg = msg -> (
     document {Key => Padic,

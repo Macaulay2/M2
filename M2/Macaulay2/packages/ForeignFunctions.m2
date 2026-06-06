@@ -16,8 +16,8 @@
 
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.7",
-    Date => "February 5, 2026",
+    Version => "0.8",
+    Date => "June 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
@@ -43,6 +43,12 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.8 (2026-06-05, M2 1.26.06)
+* update my contact info
+* updated tests (thanks to Taylor, Keller, and the M2@GT26 testing group!)
+* deal w/ Darwin systems that don't have Homebrew installed (thanks to Ross
+  George!)
 
 0.7 (2026-02-05, M2 1.26.05)
 * fix garbage collection of mpzT and mpfrT objects

@@ -16,8 +16,8 @@
 
 newPackage("JSONRPC",
     Headline => "JSON-RPC server",
-    Version => "0.2",
-    Date => "February 18, 2026",
+    Version => "0.3",
+    Date => "June 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
@@ -30,6 +30,10 @@ newPackage("JSONRPC",
 ---------------
 
 -*
+
+0.3 (2026-06-05, M2 1.26.06)
+* update my contact info
+* updated tests (thanks to Taylor, Keller, and the M2@GT26 testing group!)
 
 0.2 (2026-02-18, M2 1.26.05)
 * Use trap for error messages

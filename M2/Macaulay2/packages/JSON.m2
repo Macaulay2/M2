@@ -17,8 +17,8 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.6",
-    Date => "February 28, 2026",
+    Version => "0.7",
+    Date => "June 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
@@ -33,6 +33,10 @@ newPackage(
 ---------------
 
 -*
+
+0.7 (2026-06-05, M2 1.26.06)
+* update my contact info
+* updated tests (thanks to Taylor, Keller, and the M2@GT26 testing group!)
 
 0.6 (2026-02-28, M2 1.26.05)
 * parsing is now handled by jansson in the interpreter, which speeds things up

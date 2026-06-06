@@ -16,13 +16,13 @@
 
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
-    Version => "0.2",
-    Date => "May 7, 2026",
+    Version => "0.3",
+    Date => "June 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
 	    HomePage => "https://d-torrance.github.io"}},
-    Keywords => {"Interfaces"},
+    Keywords => {"Interfaces", "Algebraic Statistics"},
     OptionalComponentsPresent => run("command -v R > /dev/null") == 0,
     AuxiliaryFiles => true,
     PackageImports => {"ForeignFunctions"})
@@ -32,6 +32,10 @@ newPackage("RInterface",
 ---------------
 
 -*
+
+0.3 (2026-06-05, M2 1.26.05)
+* update my contact info
+* add "Algebraic Statistics" keyword
 
 0.2 (2026-05-07, M2 1.26.05)
 * Release under GPL

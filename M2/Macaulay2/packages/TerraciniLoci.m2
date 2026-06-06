@@ -29,8 +29,8 @@
 
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
-    Version => "0.5",
-    Date => "February 10, 2026",
+    Version => "0.6",
+    Date => "June 5, 2026",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
@@ -38,7 +38,7 @@ newPackage("TerraciniLoci",
 	    HomePage => "https://www.mimuw.edu.pl/~galuppi/"},
 	{
 	    Name => "Pierpaola Santarsiero",
-	    Email => "p.santarsiero@staff.univpm.it",
+	    Email => "p.santarsiero@uw.edu.pl",
 	    HomePage => "https://pierpaolasantarsiero.wixsite.com/pierpaola"},
 	{
 	    Name => "Doug Torrance",
@@ -60,6 +60,10 @@ newPackage("TerraciniLoci",
 ---------------
 
 -*
+
+0.6 (2026-06-05, M2 1.26.06)
+* update author contact info
+* updated tests (thanks to Taylor, Keller, and the M2@GT26 testing group!)
 
 0.5 (2026-12-10, M2 1.26.05)
 * update citation information
