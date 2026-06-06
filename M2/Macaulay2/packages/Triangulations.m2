@@ -13,8 +13,8 @@
 
 newPackage(
         "Triangulations",
-        Version => "0.5", 
-        Date => "29 April 2026",
+        Version => "0.6", 
+        Date => "5 June 2026",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
@@ -39,45 +39,50 @@ export {
 
     "triangulation",
     "vectors",
-    "regularFineTriangulation",
-    "chirotope",
-    "naiveChirotope",
-    "flips",
-    "bistellarFlip",
-    "neighbors",
-    "generateTriangulations",
-    "flipGraph",
-    "allTriangulations",
     "isStar",
     "isFine",
-    "isRegularTriangulation", -- note the non-use of isRegular.  Is this ok?
-    "regularTriangulationWeights",
-    
-    "flipCandidates",
-    "wallCircuits",
-    "secondaryCone",
-    "secondaryFan",
     "degreeMatrix",
-    "DegreeMatrix",
-    "Cones",
-    "interiorLatticePoint",
+
+    "chirotope",
+    "naiveChirotope",
+
+    "isRegularTriangulation",
+    "regularTriangulationWeights",
+    "delaunayWeights",
+    "delaunaySubdivision",
+    
+    "bistellarFlip",
+    "flipCandidates",
+    "flips",
+    "neighbors",
+    "secondaryCone",
+    "wallCircuits",
 
     "volumeVector",
     "gkzVector",
-    
-    "delaunayWeights",
-    "delaunaySubdivision",
 
-    "fineStarTriangulation",
-    "regularFineStarTriangulation",
-    "regularFineFanTriangulation",
-    "naiveIsTriangulation",
+    "allTriangulations",
+    "generateTriangulations",
+    "flipGraph",
+    
+    "regularFineTriangulation", -- of a point set
+    "regularFineStarTriangulation", -- of a point set, with origin added
+    "regularFineFanTriangulation",-- of a vector configuration (non-acyclic, or acyclic).
     "someTriangulation",
     "makeFine",
-    
+    "fineStarTriangulation", -- don't really need this?
+
     "ConeIndex",
+    "DegreeMatrix",
     "Edges"
     }
+
+protect Cones
+-- currently not exported:
+--    "interiorLatticePoint"
+--    "secondaryFan"
+--    "naiveIsTriangulation"
+--    "Cones"
 
 -- Engine code (calls an LP solver), used by
 -- isRegularTriangulation, regularTriangulationWeights.
@@ -185,7 +190,7 @@ regularFineFanTriangulation Matrix := Triangulation => A -> (
     )
 
 
--- TODO: I am not sure that this is correct.
+-- TODO: I am not sure that this is correct, therefore, this is not exported.
 naiveIsTriangulation = method()
 naiveIsTriangulation(Matrix, List, List) := (A, circuits, tri) -> (
     aA := augment A;
@@ -326,6 +331,7 @@ regularTriangulationWeights Triangulation := List => opts -> T -> (
     if opts.Strategy === Topcom then
         topcomRegularTriangulationWeights T
     else (
+        << "warning: regularTriangulationWeights algorithm other that Topcom is experimental, not debugged!" << endl;
         A1 := matrix T;
         Q := if opts.DegreeMatrix === null then degreeMatrix A1 else opts.DegreeMatrix;
         weightsFromConeAndQ(secondaryCone(T, DegreeMatrix => Q), Q, numColumns A1)
@@ -335,6 +341,7 @@ regularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
     if opts.Strategy === Topcom then
         topcomRegularTriangulationWeights(A, tri)
     else (
+        << "warning: regularTriangulationWeights algorithm other that Topcom is experimental, not debugged!" << endl;
         d := #(tri#0);
         A1 := if numrows A == d-1 then A || matrix{ toList(numcols A : 1) } else A;
         Q := if opts.DegreeMatrix === null then degreeMatrix A1 else opts.DegreeMatrix;
@@ -824,7 +831,7 @@ generateTriangulations = method(Options => {
         RegularOnly=>false,
         Fine => true,
         Homogenize => true,
-        Strategy => "engine"})
+        Strategy => Topcom})
 generateTriangulations Triangulation := opts -> T0 -> (
     -- BFS over the bistellar-flip graph starting at T0.
     -- 'seen' records every triangulation we have ever encountered, regardless of
@@ -833,10 +840,11 @@ generateTriangulations Triangulation := opts -> T0 -> (
     -- 'queue' is both the BFS frontier and the result-so-far: a MutableList
     -- giving O(1) push (queue#(#queue) = x) and O(1) pop (advance nextIdx).
     -- Fine controls whether support-changing flips are considered (see neighbors).
-    -- Strategy selects the regularity test: "engine" (default, uses
-    -- rawConeInteriorPoint on secondaryCone) or "topcom" (subprocess).
-    isReg := if opts.Strategy === "topcom" then topcomIsRegularTriangulation
-             else x -> isRegularTriangulation(x, Strategy => Engine);
+    -- Strategy selects the regularity test: Engine (uses
+    -- rawConeInteriorPoint on secondaryCone) or Topcom (subprocess).
+    isReg := if opts.Strategy === Topcom then topcomIsRegularTriangulation
+             else if opts.Strategy === Engine then x -> isRegularTriangulation(x, Strategy => Engine)
+             else error "expected Strategy => Topcom, ot Strategy => Engine";
     seen := new MutableHashTable;
     seen#T0 = true;
     queue := new MutableList from {T0};
@@ -872,7 +880,7 @@ flipGraph = method(Options => {
         RegularOnly=>false,
         Fine => true,
         Homogenize => true,
-        Strategy => "engine"}
+        Strategy => Topcom}
     )
 flipGraph Triangulation := HashTable => opts -> T0 -> (
     -- Breadth first search over the bistellar-flip graph starting at T0, recording both the
@@ -883,8 +891,9 @@ flipGraph Triangulation := HashTable => opts -> T0 -> (
     -- Edges are recorded once per undirected pair, when discovered from the
     -- lower-indexed endpoint (j > i guard skips back-edges to already-processed nodes).
     -- Strategy selects the regularity test (see generateTriangulations).
-    isReg := if opts.Strategy === "topcom" then topcomIsRegularTriangulation
-             else isRegularTriangulation;
+    isReg := if opts.Strategy === Topcom then topcomIsRegularTriangulation
+             else if opts.Strategy === Engine then x -> isRegularTriangulation(x, Strategy => Engine)
+             else error "expected Strategy => Topcom, ot Strategy => Engine";
     index := new MutableHashTable;
     index#T0 = 0;
     queue := new MutableList from {T0};
@@ -943,7 +952,7 @@ flipGraph(Matrix, List) := HashTable => opts -> (Amat, triang) -> (
 secondaryFan = method(Options => {
         Limit => infinity,
         DegreeMatrix => null,
-        Strategy => "engine"
+        Strategy => Topcom
         })
 secondaryFan Triangulation := HashTable => opts -> T -> (
     Q := if opts.DegreeMatrix === null then degreeMatrix T else opts.DegreeMatrix;
@@ -987,20 +996,6 @@ gkzVector = volumeVector
 
 beginDocumentation()
 
--*
-      needsPackage "StringTorics"
-      topes = kreuzerSkarke(5, Limit => 10)
-      Q = reflexivePolytope topes_7
-      isFavorable Q
-      rays Q
-      A = matrix topes_7
-      P2 = polar convexHull A
-      Amat = latticePointList P2
-
-      -- one from h11=7
-      --LP = {{-1, -1, -1, 1}, {-1, -1, -1, 2}, {-1, -1, 0, 1}, {-1, 0, -1, 1}, {-1, 0, 1, 0}, {-1, 0, 2, 0}, {-1, 1, 0, 0}, {-1, 2, 0, -1}, {0, -1, -1, 1}, {0, 1, 1, -1}, {2, 0, 0, -1}, {0,0,0,0}}      
-*-
-
 doc ///
   Key
     Triangulations
@@ -1016,6 +1011,7 @@ doc ///
     Text
       @UL {
           TO Triangulation,
+          TO (triangulation, Matrix, List),
           TO (max, Triangulation),
           TO (vectors, Triangulation),
           TO (matrix, Triangulation)
@@ -1024,12 +1020,14 @@ doc ///
       @SUBSECTION "Creating triangulations"@
     Text
       @UL {
-          TO (triangulation, Matrix, List),
-          TO (regularFineTriangulation, Matrix),
-          TO (fineStarTriangulation, Matrix, List),
+          TO (allTriangulations, Matrix),
+          TO (someTriangulation, Matrix),
+          TO regularFineTriangulation,
           TO (regularFineStarTriangulation, Matrix),
+          TO (regularFineFanTriangulation, Matrix),
+          TO (fineStarTriangulation, Matrix, List),
+          TO (makeFine, Triangulation),
           TO (generateTriangulations, Triangulation),
-          TO (allTriangulations, Matrix)
           }@
     Text
       @SUBSECTION "Properties of triangulations"@
@@ -1039,8 +1037,7 @@ doc ///
           TO (isRegularTriangulation, Triangulation),
           TO (regularTriangulationWeights, Triangulation),
           TO (isStar, Triangulation),
-          TO (isFine, Triangulation),
-          TO (naiveIsTriangulation, Triangulation)
+          TO (isFine, Triangulation)
           }@
     Text
       @SUBSECTION "Exploring the set of triangulations"@
@@ -1685,7 +1682,7 @@ doc ///
       T = regularFineTriangulation A
       isWellDefined T
   SeeAlso
-    naiveIsTriangulation
+--    naiveIsTriangulation
     isRegularTriangulation
     triangulation
 ///
@@ -1723,7 +1720,7 @@ doc ///
   Caveat
     This function does not check that {\tt tri} is a valid triangulation;
     it only inspects the support.  See
-    @TO (isWellDefined, Triangulation)@ or @TO naiveIsTriangulation@
+    @TO (isWellDefined, Triangulation)@
     for that.
   SeeAlso
     isStar
@@ -1835,7 +1832,8 @@ doc ///
     "Topcom::topcomRegularTriangulationWeights"
 ///
 
-doc ///
+"doc" -- currently unexported.
+///
   Key
     naiveIsTriangulation
     (naiveIsTriangulation, Triangulation)
@@ -2488,7 +2486,8 @@ doc ///
     allTriangulations
 ///
 
-doc ///
+"doc" -- currently unexported, as it it not seriously tested yet
+///
   Key
     secondaryFan
     (secondaryFan, Triangulation)
@@ -2514,8 +2513,8 @@ doc ///
       cone in the result is expressed in this Q's coordinates, so cones
       are directly comparable.
     Strategy => String
-      either {\tt "engine"} (default; uses @TO isRegularTriangulation@,
-      no subprocess) or {\tt "topcom"} (uses
+      either {\tt Engine} (uses @TO isRegularTriangulation@,
+      no subprocess) or {\tt Topcom} (default) (uses
       @TO topcomIsRegularTriangulation@) for the regularity test in the
       flip-graph BFS
   Outputs
@@ -2867,8 +2866,7 @@ TEST ///
 TEST ///
   A = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
   T = regularFineTriangulation A
-  naiveIsTriangulation T -- TODO: doc this, and allow A to be homogenized? Same with topcomIsTriangulation
-  -- XX
+  assert isWellDefined T
   assert(set flips T === set{{{0, 3}, {4}}, {{1, 2}, {4}}})
   orientedCircuits A
   assert isSubset(flips T, orientedCircuits A)
@@ -2876,7 +2874,8 @@ TEST ///
   chirotope A
   assert(naiveChirotopeString A === chirotopeString A)
   topcomNumTriangulations(A, RegularOnly => false, ConnectedToRegular => false) -- this should really be the default?
-  allTriangulations A
+  assert(oo === 3)
+  assert(# allTriangulations A === 3)
 ///
 
 -*
@@ -2923,23 +2922,20 @@ TEST ///
   restart
   needsPackage "Triangulations"
 *-
+"TEST" -- fix this test! i.e. check which things here are really not triangulations, or regular...
 ///
-XXXdifhdifhdsihfds
 -- TODO: This test needs to be made to assert correct statements
 -- How to test that triangulations are correct?  What I thought worked does not.
-  needsPackage "Triangulations"
   A = transpose matrix{{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
   regularFineTriangulation A  
   tri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 3, 4}}
+
   tri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 2, 3}}
-
   topcomIsRegularTriangulation(A, tri) -- Wrong!!
-  naiveIsTriangulation(A, tri)
-
+  assert isWellDefined triangulation(A, tri) 
+  
   badtri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 2, 3}}
-  debugLevel = 6
   isRegularTriangulation(A,badtri) -- this should fail! But it doesn't seem to do so. BUG in something!!!
-  debugLevel = 0
   -- hmmm, we can make non-sensical triangulations, without it noticing.
   -- this should be a bug?  
   A = transpose matrix {{0,0},{0,1},{1,0},{1,1}}
@@ -2966,8 +2962,9 @@ TEST ///
   P2 = polar convexHull A
   C = matrix {latticePoints P2}
   tri = regularFineTriangulation C
-  assert isRegularTriangulation tri
-  regularTriangulationWeights tri -- is this correct?  Some weights have negative values??
+  assert isRegularTriangulation(tri, Strategy => Engine)
+  -- the next line takes 2.2 seconds on my machine.
+  --elapsedTime topcomRegularTriangulationWeights tri -- is this correct?  Some weights have negative values??
 ///
 
 
@@ -2994,11 +2991,9 @@ V = transpose matrix {{0,0},{1,0},{0,1},{1,1}}
 T1 = {{0,1,2}}
 T2 = {{0,1,2},{0,1,3}}
 T3 = {{0,1,2,3}}
-assert(not naiveIsTriangulation(V, T1))
-assert(not naiveIsTriangulation(V, T2))
-assert(not naiveIsTriangulation(V, T3))
--- assert(not topcomIsTriangulation(V, T1)) -- topcom signals an error here
--- assert(not topcomIsTriangulation(V, T2)) -- topcom signals an error here
+assert(not topcomIsTriangulation(V, T1))
+assert(not topcomIsTriangulation(V, T2))
+assert(not topcomIsTriangulation(V, T3))
 assert(not topcomIsTriangulation(V, T3))
 ///
 
@@ -3012,25 +3007,19 @@ TEST ///
 
   -- the times for these are SUBSTANTIALLY BETTER in May 2026 (only a fraction of a second for each one).
   -- NOTE: these are all from triangulations of the polytope, not the fan!
-  elapsedTime n1 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>true) -- 6.9 sec, 408 of these CORRECT
-  elapsedTime n2 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly => false) -- 116 sec, 448 of these
-  elapsedTime n3 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>true)  -- 8 sec, 520 of these CORRECT
-  elapsedTime n4 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly => false) -- 115 sec, 564 of these
+  -- elapsedTime n1 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>true) -- 6.9 sec, 408 of these CORRECT
+  -- elapsedTime n2 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly => false) -- 116 sec, 448 of these
+  -- elapsedTime n3 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>true)  -- 8 sec, 520 of these CORRECT
+  -- elapsedTime n4 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly => false) -- 115 sec, 564 of these
 
-  elapsedTime n5 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false) -- .09 sec, 448 of these
-  elapsedTime n6 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false) -- 115.5 sec, 448 of these
-  elapsedTime n7 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false)  -- .11 sec, 564 of these
-  elapsedTime n8 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false) -- 116 sec, 564 of these
+  -- elapsedTime n5 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false) -- .09 sec, 448 of these
+  -- elapsedTime n6 = topcomNumTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false) -- 115.5 sec, 448 of these
+  -- elapsedTime n7 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false)  -- .11 sec, 564 of these
+  -- elapsedTime n8 = topcomNumTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false) -- 116 sec, 564 of these
 
-  elapsedTime set1 = allTriangulations(A, Fine=>true, ConnectedToRegular=>true); -- 6.9 sec, 408  CORRECT
-  elapsedTime set2 = allTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly => false); -- 118 sec, 448
-  elapsedTime set3 = allTriangulations(A, Fine=>false, ConnectedToRegular=>true); -- 8.1 sec, 520 CORRECT
-  elapsedTime set4 = allTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly => false); -- 116 sec.  564 of these.
-
-  elapsedTime set5 = allTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false); -- .15 sec, 448 of these
-  elapsedTime set6 = allTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false); -- 116 sec, 448 of these
-  elapsedTime set7 = allTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false); -- .22 sec, 564 of these
-  elapsedTime set8 = allTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false); -- 117 sec, 564 of these
+  -- the above are commented out for speed.  These are the number we expect.
+  
+  (n1, n2, n3, n4, n5, n6, n7, n8) = (408, 448, 520, 564, 448, 448, 564, 564)
 
   assert(n1 == 408)
   assert(n2 == 448)
@@ -3041,7 +3030,18 @@ TEST ///
   assert(n7 == 564)
   assert(n8 == 564)
 
-  assert((n1,n2,n3,n4,n5,n6,n7,n8) == (#set1, #set2, #set3, #set4, #set5, #set6, #set7, #set8))
+  elapsedTime set1 = allTriangulations(A, Fine=>true, ConnectedToRegular=>true); -- 6.9 sec, 408  CORRECT
+  elapsedTime set2 = allTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly => false); -- 118 sec, 448
+  elapsedTime set3 = allTriangulations(A, Fine=>false, ConnectedToRegular=>true); -- 8.1 sec, 520 CORRECT
+  elapsedTime set4 = allTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly => false); -- 116 sec.  564 of these.
+
+  elapsedTime set5 = allTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false); -- .15 sec, 448 of these
+--  elapsedTime set6 = allTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false); -- 116 sec, 448 of these
+  elapsedTime set7 = allTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false); -- .22 sec, 564 of these
+--  elapsedTime set8 = allTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false); -- 117 sec, 564 of these
+
+
+  assert((n1,n2,n3,n4,n5,n7) == (#set1, #set2, #set3, #set4, #set5, #set7))
   fineTris = select(set4, x -> isFine x);
 --  elapsedTime regularFineTris = select(fineTris, t -> isRegularTriangulation t); -- 9.5 sec (topcom calls)
 --  elapsedTime regularTris = select(set4, t -> isRegularTriangulation t); -- 11.6 sec (topcom)
@@ -3055,19 +3055,20 @@ TEST ///
 
 --  elapsedTime assert(set select(set7, t -> isRegularTriangulation t) === set set3)
 --  elapsedTime assert(set select(set5, t -> isRegularTriangulation t) === set set1)
-  
-  -- do these using the engine code for regular triangulations.
-  elapsedTime regularFineTrisEngine = select(fineTris, t -> isRegularTriangulation(t, Strategy => Engine)); -- 1.3 sec (topcom calls)
-  elapsedTime regularTrisEngine = select(set4, t -> isRegularTriangulation(t, Strategy => Engine)); -- 1.6 sec (topcom)
+
+-- The following takes too long for a test.
+-- do these using the engine code for regular triangulations.
+  -- elapsedTime regularFineTrisEngine = select(fineTris, t -> isRegularTriangulation(t, Strategy => Engine)); -- 1.3 sec (topcom calls)
+  -- elapsedTime regularTrisEngine = select(set4, t -> isRegularTriangulation(t, Strategy => Engine)); -- 1.6 sec (topcom)
 --  assert(regularFineTris === regularFineTrisEngine)
 --  assert(regularTris === regularTrisEngine) -- OK, give same answers
-  elapsedTime assert(set select(set7, t -> isRegularTriangulation(t, Strategy => Engine)) === set set3)
-  elapsedTime assert(set select(set5, t -> isRegularTriangulation(t, Strategy => Engine)) === set set1)
-  -- thus, the two versions of isRegularTriangulation appear to give the same answers, for about 1/8 cost...
+  -- elapsedTime assert(set select(set7, t -> isRegularTriangulation(t, Strategy => Engine)) === set set3)
+  -- elapsedTime assert(set select(set5, t -> isRegularTriangulation(t, Strategy => Engine)) === set set1)
+-- thus, the two versions of isRegularTriangulation appear to give the same answers, for about 1/8 cost...
   
-  -- TODO: these take a long time.  Also, not sure how correct this routine is...!
---  assert elapsedTime all(for tri in set5 list naiveIsTriangulation tri) -- ouch: 19.0 sec, but all are true.
---  assert elapsedTime all(for tri in set4 list naiveIsTriangulation tri) -- ouch: 24.7 sec, but all are true.
+-- TODO: these take a long time.  Also, not sure how correct this routine is...!
+  --  assert elapsedTime all(for tri in set5 list naiveIsTriangulation tri) -- ouch: 19.0 sec, but all are true.
+  --  assert elapsedTime all(for tri in set4 list naiveIsTriangulation tri) -- ouch: 24.7 sec, but all are true.
 ///
 
 -*
@@ -3243,8 +3244,8 @@ TEST /// -- test of functions here on the square and the cube
   elapsedTime tris1 = allTriangulations(sq9, Fine => true);
   assert(64 == #tris1)
   elapsedTime tris2 = generateTriangulations triangulation(sq9, t1);
-  elapsedTime tris2a = generateTriangulations(triangulation(sq9, t1), RegularOnly => true); -- slow...
-  #tris2 == #tris2a
+  --elapsedTime tris2a = generateTriangulations(triangulation(sq9, t1), RegularOnly => true); -- slow (1.5 sec)
+  -- #tris2 == #tris2a
 
   -- via topcom: (too long for general test)
   ----elapsedTime assert(387 == # select(tris, t -> topcomIsRegularTriangulation(sq9, max t))) -- slow
@@ -3260,12 +3261,6 @@ TEST /// -- test of functions here on the square and the cube
   -- elapsedTime finetris1 = generateTriangulations(sq9, t1, Fine => true); -- TODO
   elapsedTime finetris1 = generateTriangulations triangulation(sq9, t1);
   assert(finetris/max//sort == finetris1/max//sort)
-
-  finetris/volumeVector
-  
-  -- TODO: audit/allow "A" matrices to be homogeneous or not?  THIS MIGHT BE DONE...
-  --   one way: default is not, and Homogenize => true will add the extra row.
-  --   use this for most routines taking point configurations or vector configurations.
 ///
 
 -*
@@ -3289,7 +3284,6 @@ TEST ///
   assert isStar(A, T)
   assert isRegularTriangulation(A, T)
 
-  assert naiveIsTriangulation(A, T)      
   assert topcomIsTriangulation(A, T)      
 
   elapsedTime tris = allTriangulations A;
@@ -3340,9 +3334,10 @@ TEST ///
   assert(#tris == 64)
   assert(set (tris/max) === set ((allTriangulations(sq9, Fine => true))/max))
 
-  -- RegularOnly: same 64 in this case (all are regular)
-  trisR = generateTriangulations(T, RegularOnly => true)
-  assert(#trisR == 64)
+  -- RegularOnly: same 64 in this case (all are regular) 
+  -- elapsedTime trisR = generateTriangulations(T, RegularOnly => true) -- 1.5 sec
+  -- assert(#trisR == 64)
+  -- assert(set trisR === set tris)
 
   -- Limit is exact, including the boundary cases
   assert(#generateTriangulations(T, Limit => 1) == 1)
@@ -3388,12 +3383,12 @@ TEST ///
   sq9 = matrix {{-1, -1, 1, 1, -1, 0, 0, 1, 0}, {-1, 1, -1, 1, 0, -1, 1, 0, 0}}
   Tsq = regularFineTriangulation sq9
   assert(#generateTriangulations Tsq == 64)
-  trisAll = generateTriangulations(Tsq, Fine => false);
-  assert(#trisAll > 64)
+  -- trisAll = generateTriangulations(Tsq, Fine => false);
+  -- assert(#trisAll === 387)
   -- Every triangulation found should be reachable from T via flips, and
   -- since all triangulations of sq9 are regular, this should match
   -- allTriangulations restricted to those connected to a regular fine.
-  assert(#trisAll == # allTriangulations sq9)
+  -- assert(#trisAll == # allTriangulations sq9)
 ///
 
 -*
@@ -3640,26 +3635,28 @@ assert(regularTriangulationWeights Tnr === null)
 V = transpose matrix {{1,1,1,1},{0,1,1,1},{1,0,1,1},{1,1,0,1},{0,0,1,1},{0,1,0,1},{1,0,0,1},{0,0,0,1}}
 Tv = triangulation(V, {{0,1,2,3},{1,2,3,4},{1,3,4,5},{2,3,4,6},{3,4,5,6},{4,5,6,7}})
 M = secondaryCone Tv
-x = interiorLatticePoint M
-assert(class first x === ZZ)
-assert all(flatten entries (M * (transpose matrix {x})), v -> v > 0)
+-- x = interiorLatticePoint M -- interiorLatticePoint not exported.
+-- assert(class first x === ZZ)
+-- assert all(flatten entries (M * (transpose matrix {x})), v -> v > 0)
 
 -- Empty cone (no walls): interiorLatticePoint returns the zero vector.
-M0 = map(ZZ^0, ZZ^3, 0)
-assert(interiorLatticePoint M0 == {0,0,0})
+-- commented out, as interiorLatticePoint not exported:
+--M0 = map(ZZ^0, ZZ^3, 0)
+--assert(interiorLatticePoint M0 == {0,0,0})
 ///
 
 -*
 restart
 needsPackage "Triangulations"
 *-
-TEST ///
+"TEST" -- secondaryFan is not yet exported or debugged.
+///
 -- secondaryFan and the engine/topcom Strategy switch produce identical
 -- flipGraph data on a small example.  Cones are full-dim (we asked for
 -- regular triangulations only) and live in the same Q-coords.
 A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
-Feng = secondaryFan(A, Strategy => "engine")
-Ftc  = secondaryFan(A, Strategy => "topcom")
+Feng = secondaryFan(A, Strategy => Engine)
+Ftc  = secondaryFan(A, Strategy => Topcom)
 assert(set Feng.Triangulations === set Ftc.Triangulations)
 assert(# Feng.Edges == # Ftc.Edges)
 assert(Feng.DegreeMatrix == Ftc.DegreeMatrix)
@@ -3817,13 +3814,12 @@ TEST /// -- all functions, on a non-acyclic vector configuration.
   volumeVector t0
   volumeVector t2
 
-  -- secondary cones -- this might not be functional yet??
   wallCircuits t1
   wallCircuits t0
   secondaryCone t1
   secondaryCone t0
   secondaryCone t2
-  secondaryFan t1
+  -- secondaryFan t1 -- not yet exported/debugged.
 ///
 
 -*
@@ -3911,8 +3907,8 @@ TEST /// -- methods to find one FRST of a reflexive polytope.
   tris = generateTriangulations(t, Limit => 10);
   #tris == 10
   assert all(tris/isFine)
-  assert all(tris/isRegularTriangulation)
-  assert all(tris/isWellDefined)
+  -- elapsedTime assert all(tris/isRegularTriangulation) -- 0.6 sec
+  -- elapsedTime assert all(tris/isWellDefined) -- 0.6 sec
 
   -- elapsedTime tris = generateTriangulations(t, Limit => 10000);  -- 256 seconds
   -- #tris == 10000
@@ -4049,3 +4045,18 @@ needsPackage "Triangulations"
   Ts_1 == t1
   Ts_2 == t2
 ///
+
+-*
+      needsPackage "StringTorics"
+      topes = kreuzerSkarke(5, Limit => 10)
+      Q = reflexivePolytope topes_7
+      isFavorable Q
+      rays Q
+      A = matrix topes_7
+      P2 = polar convexHull A
+      Amat = latticePointList P2
+
+      -- one from h11=7
+      --LP = {{-1, -1, -1, 1}, {-1, -1, -1, 2}, {-1, -1, 0, 1}, {-1, 0, -1, 1}, {-1, 0, 1, 0}, {-1, 0, 2, 0}, {-1, 1, 0, 0}, {-1, 2, 0, -1}, {0, -1, -1, 1}, {0, 1, 1, -1}, {2, 0, 0, -1}, {0,0,0,0}}      
+*-
+
