@@ -1,5 +1,5 @@
-#ifndef _cone_h_
-#  define _cone_h_
+#ifndef M2_INTERFACE_CONE_H_
+#define M2_INTERFACE_CONE_H_
 
 #  include "engine-includes.hpp"
 

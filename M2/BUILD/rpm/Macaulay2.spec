@@ -141,6 +141,7 @@ rm -fv %{buildroot}%{_infodir}/dir
 %files
 %{_bindir}/M2
 %{_bindir}/M2-binary
+%{_bindir}/M2-language-server
 %{_prefix}/lib/Macaulay2/
 %{_libexecdir}/Macaulay2/
 %{_datadir}/emacs/site-lisp/macaulay2/

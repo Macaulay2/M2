@@ -717,13 +717,16 @@ doc ///
      ideal fromDual(f2, DividedPowers => false)
      ideal fromDual(f2, DividedPowers => true)
    Caveat
-    The Base ring of the input must be a standard graded polynomial ring over a field.
+    The base ring of the input must be a polynomial ring over a field.  The function
+    also works correctly on inhomogeneous inputs (producing a correspondingly
+    inhomogeneous artinian Gorenstein ideal) and on rings with non-standard gradings
+    such as those with negative-degree variables.
 
     Logically, the output of fromDual should be an ideal, not a matrix, but the original
     function was converted from the classic Macaulay, where this distinction was not made.
    SeeAlso
     InverseSystems
-    inverseSystem    
+    inverseSystem
     fromDual
 ///
 doc ///
@@ -899,8 +902,35 @@ f = random(S^{1,2,3}, S^{0,-1,-2})
 assert(fromDual f == fromDual toDual(10, fromDual f))
 ///
 
+TEST///
+-- fromDual on an inhomogeneous input produces a 0-dimensional Gorenstein ideal
+-- whose generators all annihilate the input under contraction.  This pins the
+-- behavior described in Macaulay2/M2#71, where it was once reported (without a
+-- preserved example) that fromDual gave "meaningless answers" on inhomogeneous
+-- inputs.  The current output is mathematically correct: Ann(f) under
+-- contraction is well-defined for any nonzero f, just inhomogeneous when f is.
+R = QQ[x,y]
+f = matrix{{x + y^2}}
+g = fromDual f
+-- pin the output (catches regression in normalization)
+assert(g == matrix{{y^2 - x, x*y, x^2, y^3}})
+-- every generator annihilates f under contraction
+assert(zero contract(g, transpose f))
+-- and (ideal g) is artinian Gorenstein with R/(ideal g) of length 3
+I = ideal g
+assert(dim I == 0)
+assert(degree I == 3)
+///
 
-     
+TEST///
+-- fromDual works on rings with non-standard gradings (here a negative-degree
+-- variable).  This pins behavior raised in Macaulay2/M2#71 comment by mats-boij:
+-- a 2014 build errored with "division is not defined in this ring", but the
+-- current code returns the correct annihilator (x^2).
+S = QQ[x, Degrees => {-1}]
+assert(fromDual matrix{{x}} == matrix{{x^2}})
+///
+
 TEST ///
 -- fromDual of a random quartic: a Gorenstein artinian ideal, self-dual resolution 1,7,7,1
 setRandomSeed 0

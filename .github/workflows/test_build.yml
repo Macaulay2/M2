@@ -64,7 +64,7 @@ jobs:
           brew config
           brew update
           brew tap macaulay2/tap
-          brew install automake bison boost libtool tbb ccache ctags llvm make yasm libffi msolve googletest fplll eigen jansson r
+          brew install automake bison boost libtool tbb ccache ctags llvm make yasm libffi msolve googletest fplll eigen jansson r palp
           brew install texinfo || true # sometimes post-install step fails
           brew install --only-dependencies macaulay2/tap/M2
           brew link factory --force
@@ -85,7 +85,7 @@ jobs:
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
                   libnauty-dev nauty lrslib polymake pipx phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev \
-                  msolve libfplll-dev libjansson-dev r-base
+                  msolve libfplll-dev libjansson-dev r-base palp
 
 # ----------------------
 #   Steps common to all build variants

@@ -590,7 +590,7 @@ AC_SUBST(BUILTLIBS)
 AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest tbb memtailor mathic mathicgb eigen ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
-AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty lrslib topcom cohomcalg msolve")
+AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty lrslib topcom cohomcalg msolve palp")
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
@@ -653,7 +653,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty lrslib msolve)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty lrslib msolve palp)]),
     [for i in $enableval
      do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
@@ -976,10 +976,10 @@ fi
 AC_MSG_CHECKING(whether the package gfan is installed)
 if command -v gfan > /dev/null
 then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
-     AX_COMPARE_VERSION([$gfan_version], [ge], [0.6],
+     AX_COMPARE_VERSION([$gfan_version], [ge], [0.8],
           [AC_MSG_RESULT([yes])
            FILE_PREREQS="$FILE_PREREQS `command -v gfan`"],
-          [AC_MSG_RESULT([yes, but < 0.6, will build])
+          [AC_MSG_RESULT([yes, but < 0.8, will build])
            BUILD_gfan=yes])
 else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
@@ -1115,6 +1115,15 @@ found and $msolve_min_version is required; will build])
               BUILD_msolve=yes])],
          [AC_MSG_RESULT([no, will build])
           BUILD_msolve=yes])])
+
+dnl TODO: uncomment whne we require palp
+dnl AS_IF([test $BUILD_palp = no],
+dnl [AC_MSG_CHECKING([whether palp is installed])
+dnl  AS_IF([command -v poly.x > /dev/null],
+dnl      [AC_MSG_RESULT([yes])
+dnl       FILE_PREREQS="$FILE_PREREQS `command -v poly.x`"],
+dnl      [AC_MSG_RESULT([no, will build])
+dnl       BUILD_palp=yes])])
 
 AC_LANG([C++])
 AS_IF([test $BUILD_eigen = no],

@@ -16,7 +16,6 @@ document {
 	  [gb,DegreeLimit],
      	  [gb,GBDegrees],
 	  [gb,HardDegreeLimit],
-	  [gb,Hilbert],
 	  [gb,PairLimit],
 	  [gb,StopBeforeComputation],
 	  [gb,StopWithMinimalGenerators],
@@ -111,6 +110,8 @@ document {
 	 TO gbRemove,
 	 TO "gbTrace",
 	 TO LongPolynomial,
+         TO canUseHilbertHint,
+         TO "using a Hilbert hint for a Groebner basis calculation"
          }
      }
 
@@ -327,3 +328,45 @@ document {
     "The option ", TO "ChangeMatrix", " can be used with ", TO "gb",
     " to enable the computation of the change of basis matrix."
 }
+
+
+doc ///
+Node
+    Key
+        "using a Hilbert hint for a Groebner basis calculation"
+        [gb,Hilbert]
+    Headline
+        how to provide the Hilbert function to speed up Groebner basis calculations
+    Usage
+        gb(M, Hilbert => hf)
+    Description
+        Text
+            If the input module is homogeneous (and its ring passes the checks in @ TO canUseHilbertHint @),
+            and one knows the Hilbert function of the module, then one can provide this information to the
+            engine to prevent unnecessary S-pair reductions.
+        Text
+            For example, if one considers a list of $m$ random forms in $n$ variables with $m \leq n$, one expects
+            the ideal to define a complete intersection, so we can provide this Hilbert function to the
+            engine.  One provides the numerator of the Hilbert series of the module (or in the case
+            of an ideal, of the corresponding quotient module) as provided by @ TO poincare @.    
+            In the example below, we use a monomial complete intersection to easily
+            provide this information.
+        Example
+            R = ZZ/101[a,b,c,d,e]
+            M = ideal random(R^1,R^{-4,-5,-5,-6});
+            hf = poincare ideal (a^4,b^5,c^5,d^6)
+            elapsedTime Mgb = gb M
+            M = ideal M_*;
+            elapsedTime Mgb = gb(M, Hilbert => hf)
+        Text
+            However, obtaining the Hilbert function is not always easy to provide in this
+            way.  In this case, one must work with the @ TO degreesRing @ of the ring in question.
+        Example
+            S = degreesRing R
+            T = S_0
+            hf = (1 - T^4) * (1 - T^5)^2 * (1 - T^6)
+            M = ideal M_*;
+            elapsedTime Mgb = gb(M, Hilbert => hf)            
+    SeeAlso
+        canUseHilbertHint
+///

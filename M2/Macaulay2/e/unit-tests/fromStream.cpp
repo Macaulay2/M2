@@ -3,9 +3,9 @@
 // 'i' is incremented to directly past the part read
 // an exception is raised on bad input?
 
-#include "RingTest.hpp"
-#include "aring-zzp.hpp"
-#include "ZZp.hpp"
+#include "unit-tests/RingTest.hpp"
+#include "basic-rings/aring-ZZp.hpp"
+#include "rings/ZZp.hpp"
 
 template <typename T>
 std::istream &fromStream(std::istream &i,

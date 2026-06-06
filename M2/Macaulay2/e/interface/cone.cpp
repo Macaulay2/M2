@@ -7,9 +7,9 @@
 #include "debug.hpp"
 #include "interface/gmp-util.h"
 #include "interface/matrix.h"
-#include "matrix-con.hpp"
-#include "matrix.hpp"
-#include "relem.hpp"
+#include "matrices/matrix-con.hpp"
+#include "matrices/matrix.hpp"
+#include "ring-elements/ring-element.hpp"
 
 #include <libnormaliz/cone.h>
 #include <vector>

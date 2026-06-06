@@ -1,6 +1,6 @@
 // Copyright 2012  Michael E. Stillman
-#ifndef __interrupted__hpp__
-#define __interrupted__hpp__
+#ifndef M2__INTERRUPTED__HPP__
+#define M2__INTERRUPTED__HPP__
 
 extern bool system_interrupted();
 

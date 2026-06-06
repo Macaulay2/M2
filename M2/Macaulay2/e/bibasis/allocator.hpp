@@ -7,8 +7,8 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_FAST_ALLOCATOR_HPP
-#define BIBASIS_FAST_ALLOCATOR_HPP
+#ifndef M2_BIBASIS_FAST_ALLOCATOR_HPP
+#define M2_BIBASIS_FAST_ALLOCATOR_HPP
 
 namespace BIBasis
 {
