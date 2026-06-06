@@ -1,8 +1,8 @@
-# URL = http://cs.anu.edu.au/~bdm/nauty
-URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 27b11
+URL = https://pallini.di.uniroma1.it
+VERSION = 2_9_3
+SHA256SUM = 9fc4edae04f88a0f5883985be3b39cf7f898fd6cc96e96b9ee25452743cc1b5b
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-PRECONFIGURE = autoreconf -i
+PRECONFIGURE = autoreconf -vif
 TARFILE = nauty$(VERSION).tar.gz
 TARDIR = nauty$(VERSION)
 

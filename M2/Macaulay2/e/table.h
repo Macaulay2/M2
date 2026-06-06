@@ -5,13 +5,6 @@
 #ifndef TABLE_INCLUDED
 #define TABLE_INCLUDED
 
-/******************************************************/
-/*these next lines added by MES, July 2002, to use our gc routines..*/
-#include "engine-includes.hpp"
-#define  NEW(p) ((p) = (void *) getmem((long)sizeof *(p)))
-#define FREE(ptr) ((void)(freemem((ptr)), (ptr) = 0))
-/******************************************************/
-
 #define T Table_T
 struct T;
 typedef struct T T;

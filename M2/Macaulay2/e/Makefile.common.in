@@ -73,6 +73,14 @@ COMPILE.cpp = $(COMPILE.cc)
 	$(SHOW)"MKDEP $*.c"
 	$(HIDE)@CC@  -MT $@ -MT $*.o -MM -MP $(CFLAGS)   $(CPPFLAGS) $(TARGET_ARCH) $(MORE_OPTIONS) $< >$*.dep
 
+@pre_librariesdir@/libengine.so: $(LOFILES)
+	$(HIDE)$(MKDIR_P) $(@D)
+	@CC@ -shared $^ $(OUTPUT_OPTION)
+
+@pre_librariesdir@/libengine.a: $(ENGINE_OFILES)
+	$(HIDE)$(MKDIR_P) $(@D)
+	@AR@ rcs $@ $^
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e Makefile.common "
 # End:

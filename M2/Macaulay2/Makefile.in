@@ -2,9 +2,15 @@
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 VPATH = @srcdir@
 include ../include/config.Makefile
-all: @pre_docdir@/COPYING-GPL-2 @pre_docdir@/COPYING-GPL-3 @pre_docdir@/README @pre_docdir@/LAYOUT
-SUBDIRS = util c d e system bin m2 man packages editors \
+all: @pre_docdir@/COPYING-GPL-2 @pre_docdir@/COPYING-GPL-3 @pre_docdir@/LAYOUT
+SUBDIRS = e c d system bin m2 man packages editors \
 	$(if $(filter html, @DOCUMENTATION@), html-check-links) tests
+
+all-in-d: all-in-c
+all-in-bin: all-in-e all-in-d all-in-system
+all-in-m2: all-in-bin
+all-in-packages all-in-editors all-in-tests: all-in-m2
+all-in-html-check-links: all-in-packages
 
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),
@@ -25,4 +31,3 @@ distclean:; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2 "
 # End:
-.NOTPARALLEL:

@@ -1,6 +1,7 @@
 doc ///
   Key
     erf
+   (erf,InexactNumber)
   Headline
     error function
   Usage
@@ -23,6 +24,7 @@ doc ///
 doc ///
   Key
     erfc
+   (erfc,InexactNumber)
   Headline
     complementary error function
   Usage
@@ -45,6 +47,7 @@ doc ///
 doc ///
   Key
     inverseErf
+   (inverseErf,InexactNumber)
   Headline
     inverse error function
   Usage

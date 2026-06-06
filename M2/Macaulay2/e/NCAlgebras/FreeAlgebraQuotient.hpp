@@ -8,7 +8,6 @@
 #include "newdelete.hpp"              // for our_new_delete
 #include "ringelem.hpp"               // for ring_elem
 
-#include <gmp.h>                      // for mpz_srcptr, mpq_srcptr
 #include <vector>                     // for vector
 
 class Ring;
@@ -42,7 +41,7 @@ public:
 
   void normalizeInPlace(Poly& f) const;
   
-  void init(Poly& f) const {}
+  void init(Poly& f) const { (void) f; }
   void clear(Poly& f) const;
   void setZero(Poly& f) const;
 
@@ -78,10 +77,16 @@ public:
                      bool p_parens) const;
 
   bool is_homogeneous(const Poly& f) const;
-  void degree(const Poly& f, int *d) const;
+  // FIXME: copied from ring.hpp because this doesn't inherit from Ring
+  inline const_monomial degree(const Poly& f) const
+  {
+    auto d = degreeMonoid().make_one();
+    multi_degree(f, d);
+    return d;
+  }
   // returns true if f is homogeneous, and sets already_allocated_degree_vector
   // to be the LCM of the exponent vectors of the degrees of all terms in f.
-  bool multi_degree(const Poly& f, int *already_allocated_degree_vector) const;
+  bool multi_degree(const Poly& f, monomial already_allocated_degree_vector) const;
 
   SumCollector* make_SumCollector() const;
 };

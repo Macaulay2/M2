@@ -6,7 +6,7 @@ doc///
   max
   (max, VisibleList)
  Headline
-  yields the maximum element in a list or sequence
+  get the maximum element in a list or sequence
  Usage
   max X
  Inputs

@@ -10,7 +10,7 @@ assert( join ( [a,b,c], {d,e,f} ) === [a,b,c,d,e,f] )
 
 x = new MutableList from splice {(0..10)}
 y = join x
-assert mutable y
+assert isMutable y
 x#2 = 33
 assert (y#2 === 2)
 

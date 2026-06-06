@@ -1,0 +1,16 @@
+-- -*- M2-comint -*- hash: 1061292516861121361
+
+i1 : X = toricProjectiveSpace 2;
+
+i2 : D = X_{0} + X_{1};
+
+o2 : ToricCycle on X
+
+i3 : toricDivisorFromCycle D
+
+o3 = X  + X
+      0    1
+
+o3 : ToricDivisor on X
+
+i4 : 

@@ -64,8 +64,8 @@ degree idealX
 P3 = Proj ringP3
 HH^1((OO_P3(1)/idealX)(>=0))
 degrees oo
-omegaX = Ext^(codim idealX)(ringP3^1/idealX, ringP3^{-4})
-dualModule = Hom(omegaX, ringP3^1/idealX)
+omegaX = prune Ext^(codim idealX)(ringP3^1/idealX, ringP3^{-4})
+dualModule = Hom(omegaX, ringP3^1/idealX, MinimalGenerators => true)
 betti prune dualModule
 f = homomorphism dualModule_{0}
 canGens = f*basis(0,omegaX)
@@ -78,12 +78,12 @@ betti res idealXcan
 deg2places = positions(degrees idealXcan, i->i=={2})
 idealS= ideal (gens idealXcan)_deg2places
 codim singularLocus idealS
-omegaS = Ext^(codim idealS)(ringP5^1/idealS, ringP5^{-6})
+omegaS = prune Ext^(codim idealS)(ringP5^1/idealS, ringP5^{-6})
 OS = ringP5^1/idealS
 omegaS**omegaS
-omega2S = Hom(Hom(omegaS**omegaS, OS),OS)
-L = Hom(omegaS, OS**(ringP5^{-1}))
-dualModule = Hom(L, OS)
+omega2S = Hom(Hom(omegaS**omegaS, OS, MinimalGenerators => true), OS, MinimalGenerators => true)
+L = Hom(omegaS, OS**(ringP5^{-1}), MinimalGenerators => true)
+dualModule = Hom(L, OS, MinimalGenerators => true)
 betti generators dualModule
 g = homomorphism dualModule_{0}
 toP2 = g*basis(0,L)

@@ -10,15 +10,20 @@ testsame = (p,m) -> if p >= 0 then
 testsame1 = (p,m) -> (
      time answer1 := gens minors(p,m,Strategy=>Bareiss);
      time answer2 := gens minors(p,m,Strategy=>Cofactor);
-     assert(answer1 == answer2))
+     time answer3 := gens minors(p,m,Strategy=>Dynamic);
+     assert(answer1 == answer2);
+     assert(answer1 == answer3))
 
 testsame2 = (p,m) -> (
      time answer1 := exteriorPower(p,m,Strategy=>Bareiss);
      time answer2 := exteriorPower(p,m,Strategy=>Cofactor);
-     assert(answer1 == answer2))
+     time answer3 := exteriorPower(p,m,Strategy=>Dynamic);
+     assert(answer1 == answer2);
+     assert(answer1 == answer3))
 
 R = ZZ/101[a..d]
 m = matrix{{a,b},{c,d}}
+assert(det m == a*d - b*c)
 assert(minors(2,m) == ideal(a*d-b*c))
 assert(minors(1,m) == ideal(a,b,c,d))
 assert(minors(0,m) == ideal(1_R))
@@ -60,6 +65,10 @@ testsame1(1,m1)
 testsame1(2,m1)
 testsame1(3,m1)
 testsame1(4,m1)
+
+F = GF(8, Variable => x)
+m = matrix{{x,1},{x^2,x^3}}
+assert ( det m == x^4 - x^2 )
 
 R = QQ
 m = random(QQ^8,QQ^8)

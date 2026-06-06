@@ -12,12 +12,11 @@ newPackage(
     		{Name => "Paolo Tripoli", Email => "paolo.tripoli@nottingham.ac.uk", HomePage=>"https://sites.google.com/view/paolotripoli/home"},
    		{Name => "Magdalena Zajaczkowska", Email => "Magdalena.A.Zajaczkowska@gmail.com", HomePage=>""}
 		},
-	Headline => "A package for doing computations in tropical geometry",
+	Headline => "computations in tropical geometry",
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",
---		"keepfiles" => true,
-"keepfiles" => false,
+		"keepfiles" => false,
 		"cachePolyhedralOutput" => true,
 		"tropicalMax" => false,
 		"polymakeCommand" =>""
@@ -25,8 +24,8 @@ newPackage(
     	OptionalComponentsPresent => true,
         PackageExports => {"gfanInterface","EliminationMatrices","Matroids","Polyhedra"},
 	AuxiliaryFiles => true,
---	AuxiliaryFiles => false,
-	CacheExampleOutput => true
+	CacheExampleOutput => true,
+	Keywords => {"Tropical Geometry"}
 )
 
 
@@ -359,7 +358,7 @@ findMultiplicity=(M,I)->(
     K:=ideal(leadTerm(1,J));
     --you saturate since you don't want the components outside the torus
     initialIdeal:= saturate(sub(K,S), product gens S);
-    --this is the the basis of the lattice associated to the toric ideal we are going to compute
+    --this is the basis of the lattice associated to the toric ideal we are going to compute
 --    Basis:= (maxCol( generators kernel transpose M))_0;
       toricIdeal:= ideal apply(entries transpose gens kernel transpose M, u->(
 	      mon1:=1_R;
@@ -500,7 +499,7 @@ tropicalVariety (Ideal) := o -> (I) ->(
 
 --auxiliary function to quotient out the lineality space (1,1,...1) introduced by the homogenisation
 --input= matrix whose columns are either the rays or the generators of the lineality space of a fan
---output= matrix whose columns are either the rays or the generators of the linelity space of the fan quotiented by (1,...,1)
+--output= matrix whose columns are either the rays or the generators of the lineality space of the fan quotiented by (1,...,1)
 dehomogenise=(M) -> (
 	vectorList:= entries transpose M;
 	dehomog:= new List;
@@ -726,7 +725,7 @@ convertToPolymake = (T) ->(
 
 --functions to get stuff from fans and tropical cycles
 
-rays TropicalCycle:= T->( rays fan T)
+rays TropicalCycle:= {} >> o -> T->( rays fan T)
 
 cones (ZZ,TropicalCycle):= (i,T)->( cones(i,fan T))
 
@@ -757,9 +756,9 @@ isSimplicial TropicalCycle:= Boolean => T->( isSimplicial(fan(T)))
 --------------------
 
 
--- BergmanconeC returns the matrix of of generators of the cones
--- corresponding to the chain of flats C it does not check whether C
--- is a chain of flat or not 
+-- BergmanconeC returns the matrix of generators of the cones
+-- corresponding to the chain of flats C. It does not check whether C
+-- is a chain of flats or not.
 
 BergmanconeC  = (M, C) -> (
     groundSetM:=#M.groundSet;
@@ -861,7 +860,7 @@ doc ///
 		tropical hypersurface given an input polynomial. The input
 		should be entered as a homogeneous polynomial. Running
 		this method opens an image in a new browser window. The
-		coefficients can be intereted as p-adic coefficients or as
+		coefficients can be interpreted as p-adic coefficients or as
 		polynomials via the option @TO Valuation@. Examples are
 		commented out because they open a new browser window.
 	    Example

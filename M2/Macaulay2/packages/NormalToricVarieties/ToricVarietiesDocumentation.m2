@@ -1427,7 +1427,7 @@ doc ///
             rays X
             weilDivisorGroup X
     	Text
-             When the normal toric variety is nondegerenate, the number of
+             When the normal toric variety is nondegenerate, the number of
              rays equals the number of variables in the total coordinate ring.
     	Example  
              #rays X == numgens ring X
@@ -1799,7 +1799,6 @@ doc ///
 doc ///
     Key 
         (isProjective, NormalToricVariety)
-        isProjective	
     Headline 
         whether a toric variety is projective
     Usage 
@@ -2028,7 +2027,7 @@ doc ///
     Headline 
         make a birational simplicial toric variety
     Usage 
-        makeSimplical X
+        makeSimplicial X
     Inputs
         X : NormalToricVariety
         Strategy => ZZ
@@ -2277,7 +2276,7 @@ doc ///
 	    # (set rays Y' - set rays Y)
     Caveat 
         A singular normal toric variety almost never has a unique minimal
-	resolution.  This method returns only of one of the many minimal
+	resolution.  This method returns only one of the many minimal
 	resolutions.
     SeeAlso
         "resolving singularities"

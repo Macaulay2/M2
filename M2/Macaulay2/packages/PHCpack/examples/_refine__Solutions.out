@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -2099623032
+-- -*- M2-comint -*- hash: 5769430863697300360
 
 i1 : R = CC[x,y]; S = {x^2 - 1/3, x*y - 1}; ourRoots = solveSystem(S);
 

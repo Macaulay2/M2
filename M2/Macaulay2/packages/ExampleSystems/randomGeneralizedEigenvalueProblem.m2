@@ -33,7 +33,7 @@ doc ///
         Text
 	    Given $n\times n$ matrices $A$ and $B$, 
 	    a number $\lambda$ is a {\bf generalized eigenvalue}
-	    if there is a nonzero vecor $v$ such that $A x = \lambda B x$.
+	    if there is a nonzero vector $v$ such that $A x = \lambda B x$.
 	Text
 	    This function creates a square target system representing the problem
 	    for random $A$ and $B$ and a start system representing  

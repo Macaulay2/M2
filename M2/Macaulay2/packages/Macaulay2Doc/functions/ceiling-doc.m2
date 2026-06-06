@@ -18,5 +18,5 @@ document {
      EXAMPLE {
      "ceiling(-3.4)"
      },
-     SeeAlso => {floor}
+     SeeAlso => {(floor, Number), (truncate, Number)}
      }

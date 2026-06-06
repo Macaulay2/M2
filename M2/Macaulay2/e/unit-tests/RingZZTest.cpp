@@ -22,9 +22,9 @@ ring_elem getElement<RingZZ>(const RingZZ& R, int index)
 /////////////////////////////////////////////////
 TEST(RingZZ, create)
 {
-  EXPECT_TRUE(globalZZ != 0);
+  EXPECT_TRUE(globalZZ != nullptr);
 
-  EXPECT_TRUE(dynamic_cast<const RingZZ*>(globalZZ) != 0);
+  EXPECT_TRUE(dynamic_cast<const RingZZ*>(globalZZ) != nullptr);
   EXPECT_EQ(globalZZ->coefficient_type(), Ring::COEFF_ZZ);
   EXPECT_TRUE(globalZZ->is_ZZ());
   EXPECT_EQ(ringName(*globalZZ), "ZZ");

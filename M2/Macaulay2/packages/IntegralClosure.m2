@@ -32,7 +32,6 @@ export{
      "integralClosure", 
      "icFractions", 
      "icMap", 
-     "isNormal", 
      "conductor", 
      "makeS2",
      "idealizer", 
@@ -467,17 +466,14 @@ randomMinors(ZZ,ZZ,Matrix) := (n,d,M) -> (
 	then return (minors(d,M))_*;
      L := {}; -- L will be a list of minors, specified by the pair of lists "rows" and "cols"
      dets := {}; -- the list of determinants taken so far
-     rowlist := toList(0..r-1);
-     collist := toList(0..c-1);
-     ds := toList(0..d-1);
 
      for i from 1 to n do (
       -- choose a random set of rows and of columns, add it to L 
       -- only if it doesn't appear already. When a pair is added to L, 
       -- the corresponding minor is added to "dets"
        while ( 
-         rows := sort (random rowlist)_ds ;
-         cols := sort (random collist)_ds ;
+         rows := randomSubset(r, d);
+         cols := randomSubset(c, d);
          for p in L do (if (rows,cols) == p then break true);
          false)
         do();
@@ -494,13 +490,10 @@ nonzeroMinor(ZZ,Matrix) :=  opts -> (d,M) -> (
      c := numcols M;
      if d > min(r,c) then return null;
      candidate := 0_(ring M);
-     rowlist := toList(0..r-1);
-     collist := toList(0..c-1);
-     ds := toList(0..d-1);
      for i from 1 to opts.Limit do(
       -- choose a random set of rows and of columns, test the determinant.
-         rows := sort (random rowlist)_ds ;
-         cols := sort (random collist)_ds ;
+         rows := randomSubset(r, d);
+         cols := randomSubset(c, d);
          candidate = det (M^rows_cols);
 	 if candidate != 0 then return(candidate);
        );
@@ -662,7 +655,8 @@ fInIdeal = (f,I) -> (
 -- COMMENT: This computes the jacobian of the ring which can be expensive.  
 -- However, it first checks the less expensive S2 condition and then 
 -- checks R1.  
-isNormal = method()     
+
+--isNormal = method()     
 isNormal(Ring) := Boolean => (R) -> (
      -- 1 argument:  A ring - usually a quotient ring. 
      -- Return: A boolean value, true if the ring is normal and false
@@ -916,7 +910,6 @@ f \in integral closure(ideal apply(numgens R,i-> x_i*df/dx_i))
 Conjecture (Huneke: f is never a minimal generator of the integral closure of
 ideal apply(numgens R,i-> df/dx_i).
 *-
-jacobian RingElement := Matrix => f -> jacobian ideal f
 
 testHunekeQuestion = method()
 testHunekeQuestion RingElement := Boolean => f -> (
@@ -1171,7 +1164,6 @@ doc ///
 
 doc ///
   Key
-    isNormal
     (isNormal, Ring)
   Headline
     determine if a reduced ring is normal
@@ -2174,7 +2166,7 @@ document {
      "With this extra bit of information, the user can now compute
      integral closures of principal ideals in ", TT "R", " via ",
      TO icPIdeal, ".",
-     SeeAlso => {"icPIdeal", "integralClosure", "isNormal"},
+     SeeAlso => {"icPIdeal", "integralClosure", (isNormal, Ring)},
      Caveat => "The interface to this algorithm will likely change eventually"
 --     Caveat => "NOTE: mingens is not reliable, neither is kernel of the zero map!!!"
 }
@@ -3065,7 +3057,7 @@ loadPackage("IntegralClosure", Reload=>true)
 
     assert not localIsQuasiHomogeneous f    
 
-    -- now get the rees ideal of the euler ideal
+    -- now get the Rees ideal of the Euler ideal
     I = eulerIdeal f
     J = reesIdeal(I, I_0, Variable => w)
     J = first flattenRing J
@@ -3505,7 +3497,7 @@ elapsedTime assert(gens(If*Ig) % integralClosure(Ifg, Verbosity => 4) == 0)
 elapsedTime integralClosure Ifg
 
 
--- MES: this is me playing around tryiing to find better fractions, cvan be removed.
+-- MES: this is me playing around trying to find better fractions, can be removed.
 use ring ideal R'
 contract(w_(2,0), gens ideal R')
 ideal R'

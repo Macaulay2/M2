@@ -27,7 +27,7 @@ R=CC[u1,u2,u3,x,y]
 f1=u1*(y-1)+u2*(y-2)+u3*(y-3)
 f2=(x-11)*(x-12)*(x-13)
 S1=bertiniZeroDimSolve(
-     {f1,f2},--list of polynomials thathave zero dimensional solutions
+     {f1,f2},--list of polynomials that have zero dimensional solutions
      RandomComplex=>{u1,u2,u3},AffVariableGroup=>{x,y})
 assert(#S1===3)
 S2=bertiniZeroDimSolve(

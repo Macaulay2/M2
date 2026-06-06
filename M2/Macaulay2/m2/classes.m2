@@ -1,13 +1,35 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+-----------------------------------------------------------------------------
+-- Functions dealing with types
+-----------------------------------------------------------------------------
+
+-- TODO: is there a better name for ancestors'?
+ancestors  = T -> unique join({T}, while (T = parent T) =!= Thing list T, {Thing})
+ancestors' = T -> unique join({T}, while (T = class  T) =!= Type  list T, {Type})
+
 -- TODO: make this TT toString X later?
-synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
+synonym = X -> X.synonym ?? "object of class " | toString X
+-- TODO: find a more permanent solution
+plurals = new MutableHashTable from {
+    "body"       => "bodies",
+    "dictionary" => "dictionaries",
+    "matrix"     => "matrices",
+    "sheaf"      => "sheaves",
+    "variety"    => "varieties",
+    }
+pluralize = s -> demark_" " append(
+    drop(ws := separate_" " s, -1),
+    if  plurals#?(last ws)
+    then plurals#(last ws) else last ws | "s")
+pluralsynonym = T -> pluralize T.synonym ?? "objects of class " | toString T
 
 Time.synonym = "timing result"
 Boolean.synonym = "Boolean value"
 MutableHashTable.synonym = "mutable hash table"
 HashTable.synonym = "hash table"
 CacheTable.synonym = "cache table"
+Error.synonym = "error"
 Function.synonym = "function"
 FunctionClosure.synonym = "function closure"
 CompiledFunction.synonym = "compiled function"
@@ -23,7 +45,6 @@ File.synonym = "file"
 Symbol.synonym = "symbol"
 Keyword.synonym = "keyword"
 Dictionary.synonym = "dictionary"
--- Pseudocode.synonym = "pseudocode" -- "a pseudocode" doesn't sound so great
 Task.synonym = "task"
 
 -----------------------------------------------------------------------------
@@ -64,18 +85,20 @@ Command Thing := (x,y) -> x#0 y
 
 -- Now some extra stuff:
 
-Command   \ VisibleList := VisibleList => (f,v) -> apply(v,i -> f i)
+Command   \ VisibleList := VisibleList => (f,v) -> apply(v,f#0)
 Function  \ VisibleList := VisibleList => (f,v) -> apply(v,f)
-Command   \ String      := Sequence    => (f,s) -> apply(s,c -> f c)
+Command   \ String      := Sequence    => (f,s) -> apply(s,f#0)
 Function  \ String      := Sequence    => (f,s) -> apply(s,f)
-Command  \\ Thing       := 
+Command  \\ Thing       :=
 Function \\ Thing       := VisibleList => (f,v) -> f v
+       List /  Command  :=        List => (v,f) -> apply(v,f#0)
        List /  Function :=        List => (v,f) -> apply(v,f) -- just because of conflict with List / Thing!
-       List /  Command  :=        List => (v,f) -> apply(v,i -> f i)
-VisibleList /  Command  := VisibleList => (v,f) -> apply(v,i -> f i)
+VisibleList /  Command  := VisibleList => (v,f) -> apply(v,f#0)
 VisibleList /  Function := VisibleList => (v,f) -> apply(v,f)
-     String /  Command  := Sequence    => (s,f) -> apply(s,c -> f c)
+     String /  Command  := Sequence    => (s,f) -> apply(s,f#0)
      String /  Function := Sequence    => (s,f) -> apply(s,f)
+VisibleList // Command  := -- here to make documentation easier
+VisibleList // Function := -- here to make documentation easier
       Thing // Command  := 
       Thing // Function := VisibleList => (v,f) -> f v
 

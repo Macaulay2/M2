@@ -205,15 +205,14 @@ noetherNormalization(Ideal) := opts -> I -> (
 	       return (ffinal, ffinverse f I,X_{0..d-1});
 	       );
 	  counter = counter + 1;
-     	  ); -- f puts the ideal into noether normal position. f inverse goes back to the original ring 
+     	  ); -- f puts the ideal into Noether normal position. f inverse goes back to the original ring 
      );  
 
 -----------------------------------------------------------------------------
 
 noetherNormalization(QuotientRing) := noetherNormalization(PolynomialRing) := opts -> R -> (
      if not isPolynomialRing ring ideal R then error "expected a quotient of a polynomial ring";
-     noetherNormalization(ideal R, Verbose => opts.Verbose)
-     );
+     noetherNormalization(ideal R, opts))
 
 
 --=========================================================================--
@@ -249,7 +248,7 @@ document {
      Usage => "(f,J,X) = noetherNormalization C",
      Inputs => {
 	  "C" => null => {"which is either ", ofClass Ideal, " ", TT "I", ", or ", ofClass QuotientRing, " ", TT "R/I", " where ", TT "R", " is ", ofClass PolynomialRing },
-	  LimitList => List => "gives the value which ", TO "BasisElementLimit", "will take",
+	  LimitList => List => {"gives the value which ", TO "BasisElementLimit", " will take."},
 	  RandomRange => ZZ => "if not 0, gives a integer bound for the random coefficients. If 0, then chooses random elements from the coefficient field."
 	  },
      Outputs => {

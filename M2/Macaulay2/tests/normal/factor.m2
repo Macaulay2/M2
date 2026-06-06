@@ -96,6 +96,12 @@ R=QQ[x];
 assert(isPrime (3*x));
 assert(not isPrime (3_R));
 
+-- issue #1443
+R4=ZZ/2[Z_1..Z_9]
+b=ideal(Z_6*Z_8+Z_5*Z_9,Z_3*Z_8+Z_2*Z_9,Z_6*Z_7+Z_4*Z_9,Z_4^3+Z_5^3+Z_6^3,Z_1*Z_2^2+Z_4*Z_5^2+Z_7*Z_8^2,Z_1^3+Z_5^3+Z_6^3+Z_8^3+Z_9^3,Z_1*Z_2*Z_4^2*Z_5*Z_9+Z_2^2*Z_5^3*Z_9+Z_2^2*Z_6^3*Z_9+Z_1^2*Z_7*Z_8^2*Z_9+Z_2^2*Z_8^3*Z_9+Z_2^2*Z_9^4)
+assert(#decompose b == 22)
+assert not isPrime b
+
 -- factoring over (simple) number fields
 F=toField(QQ[i]/(i^2+1));
 R=F[x,y];

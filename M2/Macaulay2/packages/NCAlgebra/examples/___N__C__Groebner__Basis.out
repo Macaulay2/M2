@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1857150495
+-- -*- M2-comint -*- hash: 12407623142863675873
 
 i1 : R = QQ[a,b,c,d]/ideal{a*b+c*d}
 

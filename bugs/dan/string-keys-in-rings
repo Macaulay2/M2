@@ -1,5 +1,0 @@
-Currently, any string used as a key in a ring is a assumed to harbor a
-generator of the ring, so caching things there is a bad idea.  I'd better put
-them somewhere else. (Recall Amelia used IIICCC as a key, and I wanted to
-change it to a string.)
-

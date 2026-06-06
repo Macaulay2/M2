@@ -426,3 +426,42 @@ TEST /// -- test of removeLowestDimension
   assert same(topComponents I, removeLowestDimension I, ideal"a,d4")
   assert(radical I == ideal(a*b, a*c, a*d, b*d, c*d))
 ///
+
+TEST ///
+  -- a bug in M2 <= 1.24.05, git issue #3176
+  -- the nonstandard grading was handled incorrectly.
+  R = QQ[x,y,z, Degrees => {25,72,29}];
+  P = ker map(QQ[t],R,{t^(25),t^(72),t^(29)});
+  compsP3 = primaryDecomposition(P^3)
+  assert(intersect compsP3 == P^3)
+  assert all(compsP3, isPrimary)  
+///
+
+TEST ///
+-- tests kernelOfLocalization function
+R = QQ[x_0..x_3];
+(I1,I2,I3) = monomialCurveIdeal_R \ ({1,2,3},{2,3},{4,5});
+M = comodule I1 ++ comodule I2 ++ comodule I3;
+K=kernelOfLocalization(M, I2);
+assert(instance(K, Module))
+assert(K!=0)
+assert(K!=M)
+assert(kernelOfLocalization(K,I2)==K)
+///
+
+TEST ///
+--tests regSeqInIdeal function
+R = QQ[x_0..x_7];
+I = intersect(ideal(x_0,x_1,x_2,x_3), ideal(x_4,x_5,x_6,x_7), ideal(x_0,x_2,x_4,x_6), ideal(x_1,x_3,x_5,7));
+J=regSeqInIdeal I;
+assert(numgens J<=codim I)
+assert(isSubset(regSeqInIdeal(I,4,4,1), I))
+///
+
+TEST ///
+-- tests irreducibleDecomposition function
+R = QQ[x..z];
+I = monomialIdeal (x*y^3, x*y^2*z)
+w = irreducibleDecomposition I
+assert( I == intersect w )
+///

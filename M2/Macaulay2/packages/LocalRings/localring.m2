@@ -17,11 +17,12 @@
 --
 -- NOTE : Elementary operations in a local ring are defined in e/localring.hpp and handled here.
 --        Most operations (syz, res, mingens, etc.) are in packages/LocalRings.m2 and rely heavily
---        on liftUp in packages/LocalRings.m2 and on pruneComplex from packages/PruneComplex.m2
+--        on liftUp in packages/LocalRings.m2 and on pruneComplex from packages/Complexes/PruneComplex.m2.
 --        Legacy code from 2008 is stored in packages/LocalRings/legacy.m2 and is still loaded.
 ---------------------------------------------------------------------------
 
 importFrom_Core {
+    "unhold",
     "getAttribute", "hasAttribute", "ReverseDictionary", "indexStrings", "indexSymbols",
     "generatorExpressions", "generatorSymbols", "commonEngineRingInitializations",
     "rawFraction", "rawNumerator", "rawDenominator", "rawIsLocalUnit", "rawLocalRing" }
@@ -36,8 +37,7 @@ LocalRing#{Standard,AfterPrint} = RP -> (
 
 localRing = method(TypicalValue => LocalRing)
        describe LocalRing := RP -> Describe (expression localRing) (expression last RP.baseRings, expression RP.maxIdeal)
-     expression LocalRing := RP -> if hasAttribute(RP, ReverseDictionary) then expression getAttribute(RP, ReverseDictionary) else describe RP
-toExternalString LocalRing:= RP -> toString describe RP
+     expression LocalRing := RP -> if hasAttribute(RP, ReverseDictionary) then expression getAttribute(RP, ReverseDictionary) else new FunctionApplication from unhold describe RP
 coefficientRing LocalRing := RP -> coefficientRing ring RP.maxIdeal
   isWellDefined LocalRing := RP -> isPrime RP.maxIdeal
   isCommutative LocalRing := RP -> isCommutative ring RP.maxIdeal -- FIXME make sure this is correct
@@ -91,5 +91,14 @@ localRing(EngineRing, Ideal) := (R, P) ->
         if R.?generatorExpressions then RP.generatorExpressions = R.generatorExpressions;
         if R.?indexSymbols then RP.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,RP));
         if R.?indexStrings then RP.indexStrings = applyValues(R.indexStrings, r -> promote(r,RP));
+	setupPromote(
+	    f -> numerator f / denominator f,
+	    RP, frac R);
+	liftFromFractionFieldMap := map(RP, frac R);
+	setupLift(f -> (
+		if isMember(denominator f, RP.maxIdeal)
+		then error "expected a denominator outside the maximal ideal"
+		else liftFromFractionFieldMap f),
+	    frac R, RP);
         RP
         )

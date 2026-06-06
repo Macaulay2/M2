@@ -1,3 +1,12 @@
+-- see https://github.com/Macaulay2/M2/pull/4130
+(t, n) = toSequence timing hilbertFunction(5, QQ[x_0..x_100])
+assert(t < 1 and n == 96560646)
+
+R = QQ[x_0..x_5]/(x_0^8+x_1^8+x_2^8+x_3^8+x_4^8)
+M = module ideal random({2,2,3}, ideal vars R);
+(t, n) = toSequence timing hilbertFunction(100, M)
+assert(t < 30 and n == 32105454)
+
 -- see https://github.com/Macaulay2/M2/issues/1701
 S = ZZ/101[a,b,c]
 I = monomialIdeal(a^2, b^2)
@@ -7,11 +16,18 @@ assert(hilbertFunction(3, I) == 4)
 peek I.cache
 assert(hilbertFunction(2, I) == 4)
 
+h = hilbertFunction I
+assert(h 2 == 4)
+assert(h 3 == 4)
+
 --
 
 R = ZZ/101[a..d]
 assert( hilbertFunction(3,R) === 20 )
 assert( hilbertFunction(10,R) === 286 )
+h = hilbertFunction R
+assert(h 3 == 20)
+assert(h 10 == 286)
 
 --
 

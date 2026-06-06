@@ -351,7 +351,7 @@ toSingular Ideal := (I) -> (
      "ideal i = " | g | ";\n"
      )
 toSingular Ring := (R) -> (
-     -- note: R is assumed to be a polynomial ring.  Variables alowed: single letters, 
+     -- note: R is assumed to be a polynomial ring.  Variables allowed: single letters, 
      -- letters indexed by a single non-negative integer.
      kk := coefficientRing R;
      p := char kk;
@@ -453,7 +453,7 @@ runSingular String := (str) -> (
 
 toMagma = method()
 toMagma Ring := (R) -> (
-     -- note: R is assumed to be a polynomial ring.  Variables alowed: single letters, 
+     -- note: R is assumed to be a polynomial ring.  Variables allowed: single letters, 
      -- letters indexed by a single non-negative integer.
      -- For now the base ring needs to be ZZ/p or QQ.
      kk := coefficientRing R;

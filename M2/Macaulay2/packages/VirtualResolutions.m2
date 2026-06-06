@@ -25,18 +25,17 @@ newPackage ("VirtualResolutions",
         },
     Keywords => {"Commutative Algebra", "Homological Algebra"},
     PackageImports => {"Elimination", "Depth", "Saturation", "SpaceCurves"},
-    PackageExports => {"NormalToricVarieties", "TateOnProducts", "LinearTruncations"},
+    PackageExports => {"NormalToricVarieties", "LinearTruncations", "TateOnProducts"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "The virtual resolutions package for Macaulay2",
 	 "acceptance date" => "19 May 2020",
 	 "published article URI" => "https://msp.org/jsag/2020/10-1/p06.xhtml",
 	 "published article DOI" => "10.2140/jsag.2020.10.51",
 	 "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x06-VirtualResolutions.zip",
-	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/VirtualResolutions.m2",
 	 "release at publication" => "28038a52dcc3b0ad7adfd2562a9cd6b6414a6636",
 	 "version at publication" => "1.2",
 	 "volume number" => "10",
@@ -115,10 +114,10 @@ submatrixWinnowMap = (phi, alphas) -> (
 --------------------------------------------------------------------
 protect winnowingMap
 virtualOfPair = method(Options => {LengthLimit => infinity})
--- TODO: return a Matrix in the Module case and ChainComplexMap in the ChainComplex case
+-- TODO: return a Matrix in the Module case and ComplexMap in the Complex case
 -- TODO: document the winnoingMap
-virtualOfPair(Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
-virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
+virtualOfPair(Ideal,  List) := Complex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
+virtualOfPair(Module, List) := Complex => opts -> (M, alphas) -> (
     R := ring M;
     if M.cache.?resolution then return virtualOfPair(M.cache.resolution, alphas, opts);
     if any(alphas, alpha -> #alpha =!= degreeLength R) then error "degree has wrong length";
@@ -127,10 +126,10 @@ virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     i := 2;
     L := {m} | while m != 0 and i <= opts.LengthLimit list (
         i = i + 1; m = map(R, rawKernelOfGB raw m); m = submatrixWinnow(m, alphas));
-    chainComplex L)
-virtualOfPair(ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
+    complex L)
+virtualOfPair(Complex, List) := Complex => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
-    L := chainComplex apply(min F .. max F - 1, i -> submatrixWinnow(F.dd_(i+1), alphas));
+    L := complex toList apply(min F .. max F, i -> submatrixWinnow(F.dd_(i+1), alphas));
     -- winnowingMap is the map M --> HH_0 F
     M := HH_0 F;
     N := HH_0 L;
@@ -155,7 +154,7 @@ virtualOfPair(ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 resolveViaFatPoint = method()
-resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
+resolveViaFatPoint(Ideal, Ideal, List) := Complex => (J, irr, A) -> (
     L := decompose irr;
     if #A != #L then error("resolveViaFatPoint: expected exponent vector of length " | toString degreeLength irr);
     -- note: decompose doesn't necessarily return in the right order
@@ -174,13 +173,13 @@ resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
 -- Input: Ideal irr - the irrelevant ideal of the ring
 --       Chain Complex C - proposed virtual resolution
 -- Output: Boolean - true if complex is virtual resolution, false otherwise
--- Note: the Determinatal strategy is based on Theorem 1.3 of [Loper2019].
+-- Note: the Determinantal strategy is based on Theorem 1.3 of [Loper2019].
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- TODO: can this use winnowingMap?
 isVirtual = method(TypicalValue => Boolean, Options => {Strategy => null})
-isVirtual(NormalToricVariety, ChainComplex) := opts -> (X,   C) -> isVirtual(ideal X, C)
-isVirtual(Ideal,              ChainComplex) := opts -> (irr, C) -> (
+isVirtual(NormalToricVariety, Complex) := opts -> (X,   C) -> isVirtual(ideal X, C)
+isVirtual(Ideal,              Complex) := opts -> (irr, C) -> (
     S := ring irr;
     if S =!= ring C then error "isVirtual: expected objects in the same ring";
 -- if strategy "determinantal is selected, the method checks virtuality
@@ -320,7 +319,7 @@ randomMonomialCurve (ZZ,ZZ,Ring) := Ideal => (d,e,F) -> (
     uVars := flatten entries vars U;
     --- Choose random monomial to define map to P2.
     B := drop(drop(flatten entries basis({e,0,0},U),1),-1);
-    f := (random(B))#0;
+    f := randomElement B;
     --- Defines graph of morphisms in P1x(P1xP2)
     M1 := matrix {{(uVars#0)^d,(uVars#1)^d},{uVars#2,uVars#3}};
     M2 := matrix {{(uVars#0)^e,(uVars#1)^e,f},{uVars#4,uVars#5,uVars#6}};
@@ -477,7 +476,7 @@ MultigradedRegularityComputation.synonym = "multigraded regularity computation"
 new MultigradedRegularityComputation from Ideal  :=
 new MultigradedRegularityComputation from Module := (C, M) -> (
     if instance(M, Ideal) then M = comodule M;
-    r := degreeLength M;
+    r := degreeLength ring M;
     -- TODO: are there any options that could go in MultigradedRegularityOptions?
     cacheKey := MultigradedRegularityOptions{};
     try M.cache#cacheKey else M.cache#cacheKey = new MultigradedRegularityComputation from {
@@ -489,13 +488,13 @@ isComputationDone = method(TypicalValue => Boolean, Options => true)
 isComputationDone MultigradedRegularityComputation := Boolean => options multigradedRegularity >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
     instance(container.Result, List)
-    and (opts.LowerLimit === null or container.LowerLimit <= opts.LowerLimit)
-    and (opts.UpperLimit === null or container.UpperLimit >= opts.UpperLimit))
+    and container.LowerLimit <= min \ transpose{container.LowerLimit, opts.LowerLimit}
+    and container.UpperLimit >= max \ transpose{container.UpperLimit, opts.UpperLimit})
 
 cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
-cacheComputation = method(TypicalValue => CacheFunction, Options => true)
-cacheComputation MultigradedRegularityComputation := CacheFunction => options multigradedRegularity >> opts -> container -> new CacheFunction from (
+cacheComputation = method(Options => true)
+cacheComputation MultigradedRegularityComputation := options multigradedRegularity >> opts -> container -> (
     -- this function takes advantage of FunctionClosures by modifying the container
     computation -> (
         if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
@@ -528,8 +527,16 @@ multigradedRegularityHelper = (X, S, M, opts) -> (
     else if S.?TateData then X = normalToricVarietyFromTateData S
     -- start from module over multigraded polynomial ring and get module over Cox ring of a product of toricProjectiveSpaces
     else X = normalToricVarietyFromTateData imbueRingWithTateData S;
+    r := regularity M;
+    n := degreeLength ring M;
     -- the multigraded regularity of the zero module is -infinity in every component
-    if M == 0 then return {toList(degreeLength ring X : -infinity)};
+    -- TODO: use Hilbert polynomial to detect irrelevant modules quickly
+    if M == 0 then return {toList(n : -infinity)};
+    opts = opts ++ {
+	-- from Proposition 3.7 of [BCHS22] we know reg M \subset mindegs + Eff X
+	LowerLimit => if opts.LowerLimit =!= null then opts.LowerLimit else compMin degrees M,
+	-- Note: an upper limit that works for all examples isn't known
+	UpperLimit => if opts.UpperLimit =!= null then opts.UpperLimit else compMax join(degrees M, {toList(n : r)})};
     -- store a cached computation object in M
     --   MultigradedRegularityOptions{} => MultigradedRegularityComputation{ LowerLimit, UpperLimit, Result }
     container := new MultigradedRegularityComputation from M;
@@ -543,13 +550,15 @@ multigradedRegularityHelper = (X, S, M, opts) -> (
     then error("no applicable strategy for ", toString key)
     else error("assumptions for computing multigraded regularity with strategy ", toString strategy, " are not met"))
 
+-- This is the old strategy for products of projective spaces.
+-- It is based on a direct sheaf cohomology calculation.
+-- See [ABLS20]: https://msp.org/jsag/2020/10-1/p06.xhtml
 multigradedRegularityCohomologySearchStrategy = (X, M, opts) -> (
     S := ring X;
     -- TODO: also check that X and S are indeed a product of
     -- projective spaces and its Cox ring, otherwise return null
     if instance(M, Ideal) then M = comodule M;
     if ring M =!= S then M = map(S, ring M, gens S) ** M;
-    -- This is the default strategy, outlined in https://msp.org/jsag/2020/10-1/p06.xhtml
     debugInfo := if debugLevel < 1 then identity else printerr;
     -- For products of projective space, the dimension is the
     -- number of variables minus the rank of the Picard group
@@ -566,21 +575,17 @@ multigradedRegularityCohomologySearchStrategy = (X, M, opts) -> (
         "reg M = " | toString r,
         "mindegs = " | toString mindegs};
     H := hilbertPolynomial(X, M);
-    HP := x -> (map(QQ, ring H, x))(H);
     debugInfo \ {
 	"HP M = " | toString H,
 	"degs = " | toString degs};
-    -- TODO: why is this the right upper bound?
-    high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
-    -- TODO: why is mindegs - toList(n:d) the right lower bound?
-    low  := if opts.LowerLimit =!= null then opts.LowerLimit else mindegs - toList(n:d);
-    --
+    (low, high) := (opts.LowerLimit, opts.UpperLimit);
     debugInfo("Computing cohomologyHashTable from ", toString low, " to ", toString high);
     L := pairs cohomologyHashTable(M, low, high);
     --
     gt := new MutableHashTable;
     debugInfo("Beginning search in Picard group");
     -- TODO: rewrite this loop
+    HP := x -> (map(QQ, ring H, x))(H);
     apply(L, ell -> (
             -- Check that Hilbert function and Hilbert polynomial match
             -- (this imposes a condition on the alternating sum of local cohomology dimensions)
@@ -607,7 +612,7 @@ load "./VirtualResolutions/development.m2"
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
------ Input: (C)=(ChainComplex)
+----- Input: (C)=(Complex)
 ----- Output: A resolution of the tail end of the complex appended
 ----- to the given complex.
 ----- Description: This function is not currently being exported,
@@ -621,14 +626,14 @@ load "./VirtualResolutions/development.m2"
 --TODO: Finish test
 --      Add length limit
 resolveTail = method()
-resolveTail(ChainComplex) := ChainComplex => C -> (
+resolveTail(Complex) := Complex => C -> (
     N := max support C;
     M := coker syz C.dd_N;
     -- TODO: add some component of the irrelevant ideal to M here.
     T := res M;
     L1 := for i from min C to max support C - 1 list matrix C.dd_(i+1);
     L2 := for i from min T to max support T - 1 list matrix T.dd_(i+1);
-    chainComplex(L1 | L2)
+    complex(L1 | L2)
     );
 
 --------------------------------------------------------------------

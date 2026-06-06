@@ -18,9 +18,8 @@ set(CLIST
   M2types.c M2lib.c M2mem.c types.h
   scclib.c ../c/scc-core.h
   memdebug.c memdebug.h
-  debug.c debug.h
   getpagesize.h M2mem.h
-  gmp_aux.c gmp_aux.h # TODO: needed with mpir?
+  gmp_aux.c gmp_aux.h
   gdbm_interface.c
   )
 
@@ -36,7 +35,6 @@ set(DLIST
   strings.d
   varstrin.d
   strings1.d
-  errio.d
   vararray.d
   ctype.d
   nets.d
@@ -45,9 +43,11 @@ set(DLIST
   pthread0.d
   stdiop0.d
   gmp.d
+  ballarith.d
   engine.dd
   xml.d		# removed unless WITH_XML
   stdio0.d
+  errio.d
   parse.d
   expr.d
   stdio.d
@@ -60,15 +60,16 @@ set(DLIST
   parser.d
   binding.d
   basic.d
-  convertr.d
   common.d
   util.d
+  convertr.d
   struct.d
   classes.dd
   buckets.dd
   equality.dd
   hashtables.dd
   regex.dd
+  debugging.dd
   evaluate.d
   sets.dd
   mysql.d	# removed unless WITH_SQL
@@ -81,12 +82,18 @@ set(DLIST
   # tasks.d
   xmlactors.d	# removed unless WITH_XML
   actors5.d
-  actors6.dd
+  chrono.dd
+  profiler.dd
   threads.dd
   python.d	# removed unless WITH_PYTHON
   interface.dd interface2.d
+  monoid.dd
+  monomial_ordering.dd
   texmacs.d
   boostmath.dd
+  atomic2.d
+  json.d
+  ffi.d		# removed unless WITH_FFI
   interp.dd	# this one is last, because it contains the top level interpreter
   version.dd
   )
@@ -102,6 +109,12 @@ else()
 endif()
 if(NOT WITH_PYTHON)
   list(REMOVE_ITEM DLIST python.d)
+endif()
+if(NOT WITH_FFI)
+  list(REMOVE_ITEM DLIST ffi.d)
+endif()
+if(NOT WITH_JANSSON)
+  list(REMOVE_ITEM DLIST json.d)
 endif()
 
 ###############################################################################
@@ -126,10 +139,6 @@ foreach(_d_source IN LISTS DLIST)
   list(APPEND CLIST ${_c_source})
 endforeach()
 
-# To avoid unnecessary recompiling, only version.dd is given GIT_DESCRIPTION
-set_source_files_properties(version-tmp.cc
-  PROPERTIES COMPILE_DEFINITIONS GIT_DESCRIPTION="${GIT_DESCRIPTION}")
-
 ###############################################################################
 ## Compile the interpreter
 
@@ -140,7 +149,15 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb)
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor
+  Boost::boost # boost_regex is now header-only, so we don't link Boost::regex
+  $<$<BOOL:${WITH_TBB}>:TBB::tbb>
+  $<$<BOOL:${WITH_FFI}>:FFI::ffi>)
+
+# TODO: c.f. https://github.com/Macaulay2/M2/issues/2682
+if(NOT APPLE)
+  target_link_libraries(M2-interpreter PRIVATE quadmath)
+endif()
 
 target_include_directories(M2-interpreter
   PUBLIC
@@ -155,10 +172,11 @@ target_include_directories(M2-interpreter
     # for libraries that the interpreter needs
     $<BUILD_INTERFACE:${READLINE_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
-    $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include/Macaulay2>
     $<$<BOOL:${WITH_PYTHON}>:$<BUILD_INTERFACE:${Python3_INCLUDE_DIRS}>>
   PRIVATE
+    # Note: this shouldn't be necessary since FFI::ffi is linked above
+    $<$<BOOL:${WITH_FFI}>:$<BUILD_INTERFACE:${FFI_INCLUDE_DIRS}>>
     ${SQLite3_INCLUDE_DIRS}
   )
 
@@ -178,6 +196,10 @@ foreach(LIB IN LISTS LIBRARIES_LIST)
   endif()
 endforeach()
 
+if(TARGET Eigen3::Eigen)
+  target_include_directories(M2-interpreter PUBLIC $<BUILD_INTERFACE:$<TARGET_PROPERTY:Eigen3::Eigen,INTERFACE_INCLUDE_DIRECTORIES>>)
+endif()
+
 foreach(LIB IN LISTS LIBRARY_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARY})
@@ -192,8 +214,6 @@ target_compile_options(M2-interpreter PRIVATE
   -Wno-sign-compare
   -Wno-uninitialized
   -Wno-unused
-  -Wno-array-bounds   # FIXME: caused by scc1's implementation of arrays
-
   # FIXME: mismatched-tags and parentheses-equality errors are caused by scc1
   $<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang>:-Wno-parentheses-equality>
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags -Wno-parentheses-equality>

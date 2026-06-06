@@ -1,0 +1,50 @@
+-- this file contains top level routines that call the C++ code in the engine
+
+use engine;
+use common;
+use hashtables;
+use struct;
+
+-- monoids
+
+header "#include <interface/monoid.h>";
+
+export rawMonoid(mo:RawMonomialOrdering,degreesRing:RawRing,names:array(string),degs:array(int),hefts:array(int)):Expr := toExpr(
+    Ccode(RawMonoidOrNull, "rawMonoid(", mo, ",", degreesRing, ",", names, ",", degs, ",", hefts, ")"));
+export rawMonoid(e:Expr):Expr := (
+    when e is s:Sequence do
+    if length(s) == 0 then toExpr(Ccode(RawMonoid, "rawTrivialMonoid()")) else
+    if length(s) == 5 then
+    when s.0 is mo:RawMonomialOrderingCell do
+    when s.1 is degreesRing:RawRingCell do
+    if isSequenceOfStrings(s.2) then
+    if isSequenceOfSmallIntegers(s.3) then
+    if isSequenceOfSmallIntegers(s.4) then (
+	names := getSequenceOfStrings(s.2);
+	degs  := getSequenceOfSmallIntegers(s.3);
+	hefts := getSequenceOfSmallIntegers(s.4);
+	if length(names) != 0 then (
+	    if length(degs) % length(names) != 0 then return buildErrorPacket("expected same number of degrees for each variable");
+	    if length(hefts) > length(degs)/length(names) then return buildErrorPacket("more heft values than degree length");
+	    )
+	else (
+	    if length(degs) > 0 then return buildErrorPacket("degrees but no variables");
+	    -- omit this test so ZZ[] will work:
+	    -- if length(hefts) > 0 then return buildErrorPacket("hefts but no variables");
+	    );
+	rawMonoid(mo.p, degreesRing.p, names, degs, hefts))
+    else WrongArg(5,"a sequence of small integers (hefts)")
+    else WrongArg(4,"a sequence of small integers (flattened degrees)")
+    else WrongArg(3,"a sequence of strings to be used as names")
+    else WrongArg(2,"the degrees ring")
+    else WrongArg(1,"a monomial ordering")
+    else buildErrorPacket("expected 0 or 5 arguments")
+    else buildErrorPacket("expected 0 or 5 arguments")
+    );
+setupfun("rawMonoid", rawMonoid);
+
+export rawMonoidNumberOfBlocks(e:Expr):Expr := (
+    when e is m:RawMonoidCell
+    do toExpr(Ccode( int, "rawMonoidNumberOfBlocks(", m.p, ")" ))
+    else WrongArg("a monoid"));
+setupfun("rawMonoidNumberOfBlocks", rawMonoidNumberOfBlocks);

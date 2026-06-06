@@ -5,17 +5,13 @@ M2_OPTCFILES :=
 M2_EXTRACFILES :=
 M2_MADECFILES :=
 M2_SRCFILES := 
-M2_OPTCFILES += debug.c
-ifeq "@DEBUG@" "yes"
-M2_OBJECTS += debug.o
-endif
 M2_CFILES += gmp_aux.c 
 M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c memdebug.c
 M2_MADECFILES := startup.c
 M2_OBJECTS += $(M2_MADECFILES:.c=.o)
 M2_CCFILES := boost-regex.cpp main.cpp
 M2_OBJECTS += $(M2_CCFILES:.cpp=.o)
-M2_HFILES := getpagesize.h types.h M2mem.h debug.h startup-header.h startup-trailer.h memdebug.h
+M2_HFILES := getpagesize.h types.h M2mem.h startup-header.h startup-trailer.h memdebug.h
 
 M2_DFILES :=
 M2_DFILES += arithmetic.d
@@ -25,7 +21,6 @@ M2_DFILES += system.d
 M2_DFILES += strings.d
 M2_DFILES += varstrin.d
 M2_DFILES += strings1.d
-M2_DFILES += errio.d
 M2_DFILES += vararray.d
 M2_DFILES += ctype.d
 M2_DFILES += nets.d
@@ -34,6 +29,7 @@ M2_DFILES += interrupts.d
 M2_DFILES += pthread0.d
 M2_DFILES += stdiop0.d 
 M2_DFILES += gmp.d
+M2_DFILES += ballarith.d
 M2_DFILES += engine.dd
 ifeq (@XML@,yes)
 M2_DFILES += xml.d
@@ -42,6 +38,7 @@ else
 M2_SRCFILES += xml.d xml-c.c
 endif
 M2_DFILES += stdio0.d
+M2_DFILES += errio.d
 M2_DFILES += parse.d
 M2_DFILES += expr.d
 M2_DFILES += stdio.d
@@ -54,15 +51,16 @@ M2_DFILES += lex.d
 M2_DFILES += parser.d
 M2_DFILES += binding.d
 M2_DFILES += basic.d
-M2_DFILES += convertr.d
 M2_DFILES += common.d
 M2_DFILES += util.d
+M2_DFILES += convertr.d
 M2_DFILES += struct.d
 M2_DFILES += classes.dd
 M2_DFILES += buckets.dd
 M2_DFILES += equality.dd
 M2_DFILES += hashtables.dd
 M2_DFILES += regex.dd
+M2_DFILES += debugging.dd
 M2_DFILES += evaluate.d
 M2_DFILES += sets.dd
 M2_DFILES += version.dd
@@ -85,7 +83,8 @@ else
 M2_SRCFILES += xmlactors.d
 endif
 M2_DFILES += actors5.d
-M2_DFILES += actors6.dd
+M2_DFILES += chrono.dd
+M2_DFILES += profiler.dd
 M2_DFILES += threads.dd
 
 ifeq (@PYTHON@,yes)
@@ -96,7 +95,18 @@ M2_SRCFILES += python-c.c python.d
 endif
 M2_DFILES += interface.dd interface2.d
 M2_DFILES += texmacs.d
+M2_DFILES += monoid.dd
+M2_DFILES += monomial_ordering.dd
 M2_DFILES += boostmath.dd
+M2_DFILES += atomic2.d
+ifeq (@JANSSON@,yes)
+M2_DFILES += json.d
+endif
+ifneq (@LIBFFI@,no)
+M2_DFILES += ffi.d
+else
+M2_SRCFILES += ffi.d
+endif
 # this one is last, because it contains the top level interpreter
 M2_DFILES += interp.dd
 
@@ -106,7 +116,6 @@ actors5.o basic.o : \
 	@srcdir@/../e/engine.h \
 	@srcdir@/../e/newdelete.hpp \
 	@srcdir@/../d/M2mem.h \
-	@srcdir@/../d/debug.h \
 	../../include/M2/config.h
 
 interface2.o :						\
@@ -118,8 +127,7 @@ interface2.o :						\
 	@srcdir@/../system/supervisorinterface.h	\
 	@srcdir@/../e/engine.h				\
 	@srcdir@/../e/engine-includes.hpp		\
-	@srcdir@/../d/M2mem.h				\
-	@srcdir@/../d/debug.h
+	@srcdir@/../d/M2mem.h
 
 interface.o :						\
 	../../include/M2/config.h			\
@@ -127,7 +135,6 @@ interface.o :						\
 	@srcdir@/../e/newdelete.hpp			\
 	@srcdir@/../d/M2mem.h				\
 	@srcdir@/../c/scc-core.h			\
-	@srcdir@/../d/debug.h				\
 	@srcdir@/../system/supervisorinterface.h	\
 	@srcdir@/../e/engine.h				\
 	@srcdir@/../e/engine-includes.hpp		\
@@ -138,7 +145,6 @@ interface.o :						\
 	@srcdir@/../e/error.h				\
 	@srcdir@/../e/ringelem.hpp			\
 	@srcdir@/../e/monoid.hpp			\
-	@srcdir@/../e/intarray.hpp			\
 	@srcdir@/../e/style.hpp				\
 	@srcdir@/../e/buffer.hpp			\
 	@srcdir@/../e/mem.hpp				\
@@ -149,7 +155,6 @@ interface.o :						\
 	@srcdir@/../e/ZZ.hpp				\
 	@srcdir@/../e/coeffrings.hpp			\
 	@srcdir@/../e/monomial.hpp			\
-	@srcdir@/../e/varpower.hpp			\
 	@srcdir@/../e/exceptions.hpp			\
 	@srcdir@/../e/relem.hpp				\
 	@srcdir@/../e/engine.h				\
@@ -169,7 +174,6 @@ interface.o :						\
 	@srcdir@/../e/aring-qq-flint.hpp		\
 	@srcdir@/../e/aring-qq-gmp.hpp			\
 	@srcdir@/../e/aring-m2-gf.hpp			\
-	@srcdir@/../e/aring-gf-givaro.hpp		\
 	@srcdir@/../e/polyring.hpp			\
 	@srcdir@/../e/skew.hpp				\
 	@srcdir@/../e/qring.hpp				\
@@ -218,7 +222,6 @@ engine.o :						\
 	@srcdir@/../c/scc-core.h			\
 	@srcdir@/../../include/M2/gc-include.h		\
 	@srcdir@/../c/scc-core.h			\
-	@srcdir@/../d/debug.h				\
 	@srcdir@/../system/supervisorinterface.h	\
 	@srcdir@/../e/error.h				\
 	@srcdir@/../e/exceptions.hpp			\
@@ -227,8 +230,6 @@ engine.o :						\
 	@srcdir@/../e/engine-includes.hpp		\
 	@srcdir@/../e/monomial.hpp			\
 	@srcdir@/../e/buffer.hpp			\
-	@srcdir@/../e/varpower.hpp			\
-	@srcdir@/../e/intarray.hpp			\
 	@srcdir@/../e/style.hpp				\
 	@srcdir@/../e/mem.hpp				\
 	@srcdir@/../system/mutex.h			\
@@ -245,8 +246,6 @@ engine.o :						\
 	@srcdir@/../e/freemod.hpp			\
 	@srcdir@/../e/schorder.hpp			\
 	@srcdir@/../e/monideal.hpp			\
-	@srcdir@/../e/queue.hpp				\
-	@srcdir@/../e/index.hpp				\
 	@srcdir@/../e/int-bag.hpp			\
 	@srcdir@/../e/polyring.hpp			\
 	@srcdir@/../e/interface/computation.h		\

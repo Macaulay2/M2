@@ -10,7 +10,7 @@ newPackage(
 			   HomePage =>"https://www.math.uni-sb.de/ag/schreyer"}},
 	Headline=> "general canonical curves of genus <= 15 over fields with small characteristic",
 	Keywords => {"Examples and Random Objects"},
-	PackageImports => {"Elimination","Truncations"}
+	PackageImports => {"Elimination","Truncations","Complexes"}
 	)
     
 export{"isSmoothCurve",
@@ -104,7 +104,7 @@ isSmoothCurve (Ideal) := C -> (
 --This function puts everything together
 smoothCanonicalCurve = method(Options => {Details => false, Printing => false})
 smoothCanonicalCurve (ZZ,ZZ) := opt -> (g,p) -> (
-    if p == 57 then error "57 is the Grotehdieck prime number";
+    if p == 57 then error "57 is the Grothendieck prime number";
     if isPrime(p) == false then error "p is not prime";
     if (g > 15) then error"not implemented yet";
     if (g < 11) then (
@@ -208,7 +208,7 @@ smoothLimit :=20 ;
 -- t = the variable to be used in the numerator
 hilbertNumerator = method()
 hilbertNumerator (List,ZZ,RingElement) := (L,r,t) -> (
-     -- the beginning of the hilbert series
+     -- the beginning of the Hilbert series
      p := sum(#L,i -> L#i*t^i); 
      -- the numerator
      p*(1-t)^(r+1)%t^(#L)
@@ -218,7 +218,7 @@ undocumented { hilbertNumerator, (hilbertNumerator,List,ZZ,RingElement) }
 ----------------------------------------------------------------------------------------------------------------------------   
 
 -----------------------------
--- Expected Betti Tableaus --
+-- Expected Betti Tableaux --
 -----------------------------
 
 -- convert c*t^d to (c,({d},d))
@@ -227,7 +227,7 @@ undocumented { hilbertNumerator, (hilbertNumerator,List,ZZ,RingElement) }
 -- and singly graded
 --
 -- this function is needed to construct 
--- expected betti tables from
+-- expected Betti tables from
 -- a HilbertNumerator
 termToBettiKey = (mon) -> (
      -- the coefficient of the monomial
@@ -245,17 +245,17 @@ expectedBetti = method()
 
 
 -- calculates the expected betti tableau
--- from a hilbert Numerator
+-- from a Hilbert Numerator
 --
 -- For this every term a_i*t^i will represent a summand R^{abs(a_i):-i}
 -- in the ChainComplex represented by the desired BettiTableau
 -- The step where this summand is used depends on the number of
 -- sign switches that occur in the Hilbert numerator before this monomial  
 --
--- the ring of the hilbert numerator is expected to singly graded 
+-- the ring of the Hilbert numerator is expected to singly graded 
 -- and contain only one variable
 expectedBetti (RingElement) := (hilbNum) -> (
-     -- find terms of hilbert Numerator
+     -- find terms of Hilbert Numerator
      -- smallest degree first
      termsHilbNum := reverse terms hilbNum;
      -- convert terms into pairs (coefficient, ({d},d))
@@ -284,7 +284,7 @@ expectedBetti (RingElement) := (hilbNum) -> (
 
 
 -- calculate the expected betti tableau
--- from a given hilbert function.
+-- from a given Hilbert function.
 -- hilb = {h0,...,h_(d+r+1)} 
 -- where d is the regularity of the variety described 
 -- and r is the dimension of the ambient space
@@ -317,20 +317,16 @@ undocumented { expectedBetti, (expectedBetti,RingElement), (expectedBetti, List,
 -- rational entries produce an error
 -- multigraded R's work only if the betti Tally
 -- contains degrees of the correct degree length
-Ring ^ BettiTally := (R,b) -> (
-     F := new ChainComplex;
-     F.ring = R;
-     --apply(pDim b,i->F_i = null);
-     for k in keys b do (
-	  -- the keys of a betti table have the form
-	  -- (homological degree, multidegree, weight)
-	  (i,d,h) := k;
-	  -- use F_i since it gives 0 if F#0 is not defined
-	  F#i = F_i ++ R^{b#k:-d};
-	  );
-     F
-     );
 
+Ring ^ BettiTally := Complex => (R,b) -> (
+    -- direct sum of complexes
+    if #keys b === 0 then return complex R^0;
+    directSum for k in keys b list (
+	  (i,d,h) := k;
+      complex(R^{b#k:-d}, Base => i)
+      )
+    )
+ 
 ----------------------------------------------------------------------------------------------------------------------------
 
 --------------------
@@ -756,7 +752,7 @@ hasFactor (RingElement,ZZ) := (f,n) -> (
      
 hasFactor (Ideal,ZZ) := (I,n) -> (
      -- check whether a homogeneous principal ideal I in two variables over finite ground field FF
-     -- is square-free and has a factor of degee n defined over FF. 
+     -- is square-free and has a factor of degree n defined over FF. 
      R := ring I;
      if not class R === PolynomialRing and dim R !=2 then error "expected a polynomial in P^1";
      cp := decompose I; -- decompose I in its irreducible factors
@@ -1019,7 +1015,7 @@ document {
   Key => RandomCurvesOverVerySmallFiniteFields,
   Headline => "randomly chosen smooth canonical curves over small finite fields",
   "This package can be seen as a refined version of the ",
-  HREF("https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/RandomCanonicalCurves/html/","RandomCanonicalCurves"),  
+  TO "RandomCanonicalCurves",
   " package, which catches all possible missteps in the constructions. 
   The construction follows the unirationality proof of M_g for g<=14 and the article ",
   HREF("http://arxiv.org/abs/1311.6962","Matrix factorizations and families of curves of genus 15"),
@@ -1043,7 +1039,7 @@ document {
   ".",
   PARA{}, 
   " For g <=14, the methods used in this package are based on the Macaulay2 Package ",
-  HREF("http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.8.2/share/doc/Macaulay2/RandomCurves/html/","randomCurves"),
+  TO "RandomCurves::RandomCurves",
   "  and the methods for the g=15 case are based on the Macaulay2-package ",
     HREF("http://www.math.uni-sb.de/ag-schreyer/images/data/computeralgebra/M2/doc/Macaulay2/MatFac15/html/index.html","MatFac15"), 
   ".",
@@ -1095,12 +1091,12 @@ doc ///
               the ideal of a (smooth) canonical curve of genus g over a field with characteristic p                      
   Description
      Text
-       Computes a smooth canonical curve of genus g<=15 over a field of characteristc p.
+       Computes a smooth canonical curve of genus g<=15 over a field of characteristic p.
        For genus g<=14 are based on the unirationality of M_g for g<=14 and the  RandomCurves-package.
        A unirational parametrization of M_g is only a rational map and bad choices of parameters 
        (which are quite likely over small fields) might end up in the indeterminacy locus or some
        other undesired subloci.
-       In this constructions we catch the steps which do not work out for
+       In this construction, we catch the steps which do not work out for
        very small characteristic by catching all possible missteps. 
        
        For g<=10 the curves are constructed via plane models.
@@ -1305,10 +1301,63 @@ doc ///
 	       Enabling this option also enable the option {\tt Printing}.
   SeeAlso
     Printing
-    smoothCanonicalCurve 
+    smoothCanonicalCurve
     smoothCanonicalCurveGenus14
-    smoothCanonicalCurveGenus15  
+    smoothCanonicalCurveGenus15
 ///
+
+----------------------------------------------------------------------
+-- Tests.  Prior to this PR the package had zero registered TEST blocks
+-- (a "TEST ///" sat after "end" at the bottom of the file, hidden from
+-- the test runner).  Add three fast deterministic tests for the light,
+-- pure-arithmetic exports; the heavy random-curve constructors can be
+-- exercised separately when the package's known clock-dependent random
+-- seeding and the genus-14 / p=2 crash are resolved.
+----------------------------------------------------------------------
+
+TEST ///
+-- expectedBetti(g, r, d) returns the expected Betti table of a canonical
+-- curve of degree d and genus g in P^r.  Verified against the classical
+-- complete-intersection table for the canonical g=4 curve (a (2,3)-CI in
+-- P^3) and the 1, 3, 3, 1 table of the canonical g=5 curve in P^4.
+b1 = expectedBetti(4, 3, 6);
+assert(instance(b1, BettiTally));
+assert(b1#(0,{0},0) == 1);
+assert(b1#(1,{2},2) == 1);
+assert(b1#(1,{3},3) == 1);
+assert(b1#(2,{5},5) == 1);
+b2 = expectedBetti(5, 4, 8);
+assert(b2#(0,{0},0) == 1);
+assert(b2#(1,{2},2) == 3);
+assert(b2#(2,{4},4) == 3);
+assert(b2#(3,{6},6) == 1);
+///
+
+TEST ///
+-- hilbertNumerator(L, r, t): given a Hilbert-function prefix L (truncated at
+-- some degree) and an ambient dimension r, return the numerator polynomial of
+-- the corresponding Hilbert series.  Verify on a small example.
+T = QQ[t];
+hn = hilbertNumerator({1,4,7,13,19,25}, 3, t);
+assert(hn == 3*t^5 - 6*t^4 + 5*t^3 - 3*t^2 + 1);
+-- the List/r form of expectedBetti agrees with the (g, r, d) form when the
+-- input list is the Hilbert function of a canonical genus-4 curve in P^3
+-- (a (2,3) complete intersection, with Hilbert function {1, 4, 9, 15, 21, ...}).
+L = apply(10, i -> if i > 1 then 6*i + 1 - 4 else binomial(3+i, 3));
+assert(expectedBetti(L, 3) == expectedBetti(4, 3, 6));
+///
+
+TEST ///
+-- isSmoothCurve: true on the twisted cubic (a smooth rational curve in P^3),
+-- false on the cuspidal cubic y^2*z - x^3 in P^2 (singular at the origin).
+S = QQ[x,y,z,w];
+twistedCubic = minors(2, matrix{{x,y,z},{y,z,w}});
+assert(isSmoothCurve twistedCubic);
+S2 = QQ[x,y,z];
+cuspidalCubic = ideal(y^2*z - x^3);
+assert(not isSmoothCurve cuspidalCubic);
+///
+
 end
 
 restart

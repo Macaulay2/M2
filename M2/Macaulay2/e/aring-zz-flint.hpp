@@ -3,10 +3,11 @@
 #ifndef _aring_zz_flint_hpp_
 #define _aring_zz_flint_hpp_
 
+#include "interface/gmp-util.h"  // for mpz_reallocate_limbs
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <iosfwd>
 #include "exceptions.hpp"
 #include "ZZ.hpp"
 
@@ -15,7 +16,8 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/arith.h>
+#include <flint/flint.h>  // for flint_rand_t, fmpz, fmpz_t
+#include <flint/fmpz.h>   // for fmpz_set_si, fmpz_pow_ui, fmpz_set_mpz
 #pragma GCC diagnostic pop
 
 namespace M2 {
@@ -25,7 +27,7 @@ namespace M2 {
    @brief wrapper for the flint fmpz_t integer representation
 */
 
-class ARingZZ : public RingInterface
+class ARingZZ : public SimpleARing<ARingZZ>
 {
  public:
   static const RingID ringID = ring_ZZFlint;
@@ -81,7 +83,7 @@ class ARingZZ : public RingInterface
   }
 
   void init(ElementType& result) const { fmpz_init(&result); }
-  void clear(ElementType& result) const { fmpz_clear(&result); }
+  static void clear(ElementType& result) { fmpz_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     fmpz_set(&result, &a);
@@ -109,8 +111,19 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
     return false;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
-  void set_var(ElementType& result, int v) const { fmpz_set_si(&result, 1); }
+  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
+  void set_var(ElementType& result, int v) const
+  {
+    (void) v;
+    fmpz_set_si(&result, 1);
+  }
+
   /** @} */
 
   /** @name arithmetic
@@ -232,15 +245,26 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
     fmpz_set_mpz(&result, a.get_mpz());
   }
 
+  ElementType from_ring_elem_const(const ring_elem& a) const
+  {
+    return PTR_TO_COEFF(a.get_mpz());
+  }
+
   /** @} */
 
   bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const
   {
+    (void) Rf;
+    (void) f;
+    (void) result;
     return false;
   }
 
   bool lift(const Ring* Rg, const ElementType& f, ring_elem& result) const
   {
+    (void) Rg;
+    (void) f;
+    (void) result;
     return false;
   }
 

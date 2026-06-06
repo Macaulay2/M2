@@ -1,6 +1,8 @@
 doc ///
   Key
     Gamma
+   (Gamma,InexactNumber)
+   (Gamma,InexactNumber,InexactNumber)
   Headline
     Gamma function
   Usage
@@ -31,6 +33,7 @@ doc ///
 doc ///
   Key
     regularizedGamma
+   (regularizedGamma,InexactNumber,InexactNumber)
   Headline
     upper regularized gamma function
   Usage
@@ -55,6 +58,7 @@ doc ///
 doc ///
   Key
     inverseRegularizedGamma
+   (inverseRegularizedGamma,InexactNumber,InexactNumber)
   Headline
     inverse of the upper regularized gamma function
   Usage
@@ -80,9 +84,10 @@ doc ///
   Key
     lngamma
     (lngamma, RR)
-    (lngamma, ZZ)
-    (lngamma, QQ)
-    (lngamma, Constant)
+    (lngamma, CC)
+    (lngamma, CCi)
+    (lngamma, RRi)
+    (lngamma, Number)
   Headline
     logarithm of the Gamma function
   Usage

@@ -49,7 +49,7 @@ class gbA : public GBComputation
     int size;  // number of monomials, when the element is first inserted. After
     // auto reduction, the number can change.  It is not yet clear if we should
     // change this value...
-    exponents lead;  // -1..nvars-1, the -1 part is the component
+    exponents_t lead;  // -1..nvars-1, the -1 part is the component
     gbelem_type minlevel;
   };
 
@@ -71,7 +71,7 @@ class gbA : public GBComputation
     SPAIR type; /* SPAIR_SPAIR, SPAIR_GCD_ZZ,
                         SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
     int deg;
-    exponents lcm; /* Contains homogenizing variable, component */
+    exponents_t lcm; /* Contains homogenizing variable, component */
     union
     {
       POLY f; /* SPAIR_GEN, SPAIR_ELEM */
@@ -220,7 +220,7 @@ class gbA : public GBComputation
   int divisor_previous_comp;
 
  private:
-  exponents exponents_make();
+  exponents_t exponents_make();
 
   bool over_ZZ() const { return _coeff_type == Ring::COEFF_ZZ; }
   /* initialization */
@@ -334,16 +334,16 @@ class gbA : public GBComputation
 
   void minimalize_gb();
 
-  int find_good_divisor(exponents e, int x, int degf, int &result_gap);
+  int find_good_divisor(exponents_t e, int x, int degf, int &result_gap);
 
   int find_good_monomial_divisor_ZZ(mpz_srcptr c,
-                                    exponents e,
+                                    exponents_t e,
                                     int x,
                                     int degf,
                                     int &result_gap);
 
   int find_good_term_divisor_ZZ(mpz_srcptr c,
-                                exponents e,
+                                exponents_t e,
                                 int x,
                                 int degf,
                                 int &result_gap);

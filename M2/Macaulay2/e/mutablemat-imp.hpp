@@ -15,7 +15,18 @@ M2SLEvaluator* MutableMat<Mat>::createSLEvaluator(M2SLProgram* P,
     return nullptr;
   } else return new M2SLEvaluator(
     new SLEvaluatorConcrete<typename Mat::CoeffRing> (&(P->value()), constsPos, varsPos, this)
-  );
+    );
+}
+
+template <typename Mat>
+M2SLEvaluator* MutableMat<Mat>::createCompiledSLEvaluator(
+      M2_string libName,
+      int nInputs,
+      int nOutputs) const
+{
+  return new M2SLEvaluator(
+    new SLEvaluatorConcrete<typename Mat::CoeffRing> (libName, nInputs, nOutputs, this)
+    );
 }
 
 template <typename T>
@@ -28,7 +39,7 @@ template <typename T>
 const RingElement* MutableMat<T>::determinant() const
 {
   ring_elem det;
-  elem a;
+  typename T::ElementType a;
   mat.ring().init(a);
   MatrixOps::determinant(mat, a);
   //  MatrixOps::BasicLinAlg<MatType>::determinant(mat, a);
@@ -178,6 +189,7 @@ M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
 template <typename T>
 M2_arrayintOrNull MutableMat<T>::LU(MutableMatrix* L, MutableMatrix* U) const
 {
+  //  std::cout << "MutableMat<T>::LU\n";
   T* L1 = L->coerce<T>();
   T* U1 = U->coerce<T>();
   if (L1 == 0 or U1 == 0)
@@ -308,6 +320,7 @@ template <typename Mat>
 engine_RawArrayIntPairOrNull MutableMat<Mat>::LQUPFactorizationInPlace(
     bool transpose)
 {
+  (void) transpose;
   throw exc::engine_error(
       "LU decomposition currently not implemented for this ring and matrix "
       "type");

@@ -52,7 +52,7 @@ GBWalker::GBWalker(MarkedGB *G0, long **order1, long **order2)
       G(G0),
       monorder1(order1),  // or create this from the monomial order?
       monorder2(order2),
-      ww(0)
+      ww(nullptr)
 {
   // TODO: need to set what else?
   //
@@ -61,6 +61,8 @@ GBWalker::GBWalker(MarkedGB *G0, long **order1, long **order2)
 GBWalker::GBWalker(const Matrix *gb_under_order1,
                    const MonomialOrdering *order1)
 {
+  (void) gb_under_order1;
+  (void) order1;
 }
 
 GBWalker *GBWalker::create(const Matrix *gb_under_order1,
@@ -94,18 +96,19 @@ GBComputation *GBWalker::make_gb(const Matrix *M) const
                                                false,
                                                -1,
                                                0,
-                                               0
+                                               0,
+                                               0 // TBB numThreads
                                                /* , max_reduction_count */
                                                );
   G0->set_stop_conditions(false,
-                          NULL,
+                          nullptr,
                           -1,
                           -1,  // syzygy limit
                           -1,
                           -1,
                           -1,
                           false,
-                          NULL);
+                          nullptr);
   return G0;
 }
 
@@ -113,12 +116,12 @@ void GBWalker::initialize()
 {
   // Initialize the local variables of the computation
   state = STATE_compute_w;
-  ww = 0;
-  inwwG = 0;
-  gb_inwwG = 0;
+  ww = nullptr;
+  inwwG = nullptr;
+  gb_inwwG = nullptr;
   next_to_reduce = 0;
   // G is already set
-  G1 = 0;
+  G1 = nullptr;
 }
 
 bool GBWalker::compute_next_w()
@@ -166,6 +169,7 @@ void GBWalker::start_computation()
             }
           next_to_reduce = 0;
           state = STATE_reduce;
+          [[fallthrough]];
         case STATE_reduce:
           while (next_to_reduce < 0)  // TODO: consider the top of the loop
             {
@@ -174,11 +178,12 @@ void GBWalker::start_computation()
               next_to_reduce++;
             }
           state = STATE_autoreduce;
+          break;
         case STATE_autoreduce:
           G->remove_gb();
           delete G;
           G1 = static_cast<MarkedGB *>(
-              GBDeclared::create(gb_inwwG->get_initial(-1), H, H, 0, 0));
+              GBDeclared::create(gb_inwwG->get_initial(-1), H, H, nullptr, nullptr));
           state = STATE_compute_w;
         case STATE_done:
           set_status(COMP_DONE);
@@ -189,70 +194,76 @@ void GBWalker::start_computation()
 const PolynomialRing *GBWalker::get_ring() const
 {
   // MES: TO WRITE
-  return 0;
+  return nullptr;
 }
 
 Computation /* or null */ *GBWalker::set_hilbert_function(const RingElement *h)
 {
+  (void) h;
   // MES: TO WRITE
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBWalker::get_gb()
 {
   // MES: TO WRITE
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBWalker::get_mingens()
 {
   // MES: TO WRITE
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBWalker::get_change()
 {
   // MES: TO WRITE
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBWalker::get_syzygies()
 {
   // MES: TO WRITE
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBWalker::get_initial(int nparts)
 {
+  (void) nparts;
   // MES: TO WRITE
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBWalker::get_parallel_lead_terms(M2_arrayint w)
 {
+  (void) w;
   // MES: TO WRITE
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBWalker::matrix_remainder(const Matrix *m)
 {
+  (void) m;
   // MES: TO WRITE
-  return 0;
+  return nullptr;
 }
 
 M2_bool GBWalker::matrix_lift(const Matrix *m,
                               const Matrix /* or null */ **result_remainder,
                               const Matrix /* or null */ **result_quotient)
 {
+  (void) m;
   // MES: TO WRITE, should this be written?
-  *result_remainder = 0;
-  *result_quotient = 0;
+  *result_remainder = nullptr;
+  *result_quotient = nullptr;
   ERROR("rawGBMatrixLift not implemented for GB walks");
   return false;
 }
 
 int GBWalker::contains(const Matrix *m)
 {
+  (void) m;
   // MES: TO WRITE
   return -1;
 }
@@ -261,6 +272,7 @@ void GBWalker::text_out(buffer &o) const
 /* This displays statistical information, and depends on the
    M2_gbTrace value */
 {
+  (void) o;
   // MES: TO WRITE
 }
 

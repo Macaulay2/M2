@@ -1,54 +1,70 @@
 # @configure_input@
 include ../../include/config.Makefile
-VPATH = @srcdir@
 ARGS = --script
-.NOTPARALLEL:
 
 MADEFILES = M2-symbols.el M2-emacs-help.txt M2-emacs.m2
 SRCFILES = M2-init.el M2-mode.el M2.el README.md
 
-all: @pre_emacsdir@ $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES))
+all: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES))
 verify: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES)) $(addprefix emacs/, $(SRCFILES) $(MADEFILES)); ls -lrt $^
-Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/editors/Makefile
+Makefile: @srcdir@/Makefile.in; cd ../..; ./config.status Macaulay2/editors/Makefile
 
 @pre_emacsdir@ :; @INSTALL@ -d "$@"
-@pre_emacsdir@/% : $(addprefix emacs/, %) ; @INSTALL_DATA@ $^ @pre_emacsdir@
+@pre_emacsdir@/% : emacs/% | @pre_emacsdir@
+	@INSTALL_DATA@ $< $(@D)
 
-emacs/M2-symbols.el highlightjs/macaulay2.js : make-M2-symbols.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
-	@pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/make-M2-symbols.m2 -e 'exit 0'
+emacs/M2-symbols.el prism/macaulay2.js :                         \
+	@srcdir@/make-M2-symbols.m2 @srcdir@/../m2/exports.m2    \
+	@pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
+	@pre_exec_prefix@/bin/M2 $(ARGS) $< -e 'exit 0'
 emacs/M2-emacs.m2 emacs/M2-emacs-help.txt: emacs/make-M2-emacs-help.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	cd emacs; @pre_exec_prefix@/bin/M2 $(ARGS) @abs_srcdir@/emacs/make-M2-emacs-help.m2 -e 'exit 0'
 
-ifeq (@HIGHLIGHTJS@,yes)
-$(CURDIR)/highlightjs/%: @srcdir@/highlightjs/%
-	$(MKDIR_P) $(@D)
+emacs/M2-symbols.el.gz: emacs/M2-symbols.el
+	gzip -nf9 $<
+
+# copy files to build directory for out-of-tree builds
+ifneq (@srcdir@,.)
+emacs prism:
+	$(MKDIR_P) $@
+
+emacs/%: @srcdir@/emacs/% emacs
 	cp $< $@
 
-highlightjs/node_modules: $(CURDIR)/highlightjs/package.json
-ifeq (@DOWNLOAD@,yes)
-	cd $(@D) && @NPM@ install
+prism/%: @srcdir@/prism/% prism
+	cp $< $@
+
+clean:
+	rm -rf @pre_emacsdir@/* emacs prism pygments vim
+
 else
-	@echo "error: missing highlightjs dependencies, so either use a \"fat\" tar file" >&2
-	@echo "       of the Macaulay2 source code or rerun the Macaulay2 \"configure\" command" >&2
-	@echo "       with the added option \"--enable-download\" to enable automatic" >&2
-	@echo "       downloading of these dependencies over the internet" >&2
-	@false
+clean:
+	rm -rf @pre_emacsdir@/* $(addprefix emacs/, $(MADEFILES)) \
+		pygments/macaulay2.py $(PRISM_MADEFILES)
 endif
 
-highlightjs/highlight.js: highlightjs/macaulay2.js \
-	$(CURDIR)/highlightjs/package.json         \
-	$(CURDIR)/highlightjs/webpack.config.js    \
-	$(CURDIR)/highlightjs/index.js             \
-	$(CURDIR)/highlightjs/highlight-override.css
-	cd $(dir $@) && @NPM@ run build
-else
-highlightjs/highlight.js:
-	@echo "warning: html docs will not have syntax highlighting"
-	$(MKDIR_P) $(@D)
-	touch $@
-endif
+%/node_modules: %/package.json
+	cd $* && npm install
 
-clean::; rm -rf @pre_emacsdir@/* atom emacs highlightjs prism pygments vim
+PRISM_MADEFILES = $(addprefix prism/, node_modules package-lock.json \
+	prism.js prism.js.LICENSE.txt macaulay2.js)
+
+prism/prism.js: prism/macaulay2.js        \
+	prism/package.json      \
+	prism/node_modules      \
+	prism/webpack.config.js \
+	prism/index.js          \
+	prism/prism-M2.css
+	cd $(@D) && npm run build
+
+update-syntax-highlighting: prism/prism.js
+	cp $< @top_srcdir@/Macaulay2/packages/Style
+	cp $<.LICENSE.txt @top_srcdir@/Macaulay2/packages/Style
+	git add @top_srcdir@/Macaulay2/packages/Style/prism.js*
+	git commit -m "Update prism.js symbols for version @PACKAGE_VERSION@."
+
+.PHONY: update-syntax-highlighting
+
 distclean:: clean; rm -f Makefile
 
 # Local Variables:

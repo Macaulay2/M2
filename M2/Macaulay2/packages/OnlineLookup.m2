@@ -14,19 +14,8 @@ newPackage(
 	PackageImports => {"Text"}
         )
 
-export {"oeis","urlEncode","isc"}
+export {"oeis", "isc"}
 
-percentEncoding = hashTable transpose {
-    {"␣", "!", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "/", ":", ";", "=", "?", "@", "[", "]"},
-    {"%20", "%21", "%23", "%24", "%25", "%26", "%27", "%28", "%29", "%2A", "%2B", "%2C", "%2F", "%3A", "%3B", "%3D", "%3F", "%40", "%5B", "%5D"}
-    }
-
--- TODO: use in/move to html.m2
-urlEncode = method()
-urlEncode Nothing := identity
-urlEncode String := s -> concatenate apply(s, c -> if percentEncoding#?c then percentEncoding#c else c)
-
-oeisHTTP := "http://oeis.org";
 oeisHTTPS := "https://oeis.org";
 
 tryWWW = url -> try last splitWWW getWWW url else (
@@ -39,7 +28,7 @@ oeis = method(TypicalValue => OL,
     Options => {Limit => 100, Position => 0})
 oeis VisibleList := o -> L -> oeis (demark(",",toString\L),o)
 oeis String := o -> search -> (
-    url:=oeisHTTP|"/search?q="|urlEncode search|"&fmt=text&start="|o.Position|"&n="|o.Limit; -- limit the number of results
+    url:=oeisHTTPS|"/search?q="|urlEncode search|"&fmt=text&start="|o.Position|"&n="|o.Limit; -- limit the number of results
     www :=  tryWWW url;
     ans := select("(?<=^%N ).*$",www);    
     OL apply(ans, line -> LI(
@@ -79,6 +68,7 @@ maple2M2 = s -> ( -- some common functions
     s = replace("Re","realPart",s);
     s = replace("Im","imaginaryPart",s);
     s = replace("I","ii",s);
+    s = replace(";",",",s); -- not great
     s = binaryReplace("\\^","",")`(",s); -- to fix precedence issue of ^ in maple
     s = replace("`","^",s); -- phew
     s
@@ -153,6 +143,8 @@ multidoc ///
  Node
   Key
    isc
+   (isc, Constant)
+   (isc, Number)
    (isc, String)
    (isc, RR)
   Headline
@@ -163,12 +155,21 @@ multidoc ///
     (@HREF "http://wayback.cecm.sfu.ca/projects/ISC/"@).
    Example
     isc (sqrt 2*pi)
- Node
-  Key
-   urlEncode
-  Headline
-   URL encoding
-  Description
-   Text
-    This function provides a minimal encoding of a string in order to be used as part of a URL.
+///
+
+-- oeis function
+TEST ///
+oeis {1,3,31,1145}
+instance(oeis {1,3,31,1145}, MarkUpType)
+///
+
+-- oeis options
+TEST ///
+L = apply(5,n->n!);
+oeis (L,Limit=>5);
+x= #oeis (L,Limit=>5)
+assert(x<=5)
+oeis (L,Limit=>1,Position=>2);
+y= #oeis (L,Limit=>1,Position=>2)
+assert(y==1)
 ///

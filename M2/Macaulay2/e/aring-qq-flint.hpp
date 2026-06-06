@@ -3,15 +3,16 @@
 #ifndef _aring_QQ_flint_hpp_
 #define _aring_QQ_flint_hpp_
 
-#include <iosfwd>
+#include "interface/gmp-util.h"  // for mpz_reallocate_limbs
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-//#include <flint/arith.h>
-#include <flint/fmpq.h>
+#include <flint/flint.h>  // for fmpq_denref, fmpq_numref, fmpq, flin...
+#include <flint/fmpq.h>   // for fmpq_init, fmpq_set, fmpq_set_mpq
+#include <flint/fmpz.h>   // for fmpz_get_ui, fmpz_cmp_si, fmpz_is_one
 #pragma GCC diagnostic pop
 
 #include "aring.hpp"
@@ -29,7 +30,7 @@ namespace M2 {
    @brief wrapper for the flint fmpq_t integer representation
 */
 
-class ARingQQFlint : public RingInterface
+class ARingQQFlint : public SimpleARing<ARingQQFlint>
 {
  public:
   static const RingID ringID = ring_QQFlint;
@@ -90,7 +91,7 @@ class ARingQQFlint : public RingInterface
   }
 
   void init(ElementType& result) const { fmpq_init(&result); }
-  void clear(ElementType& result) const { fmpq_clear(&result); }
+  static void clear(ElementType& result) { fmpq_clear(&result); }
   void set(ElementType& result, const ElementType& a) const
   {
     fmpq_set(&result, &a);
@@ -115,8 +116,19 @@ class ARingQQFlint : public RingInterface
     return true;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
-  void set_var(ElementType& result, int v) const { fmpq_set_si(&result, 1, 1); }
+  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
+  void set_var(ElementType& result, int v) const
+  {
+    (void) v;
+    fmpq_set_si(&result, 1, 1);
+  }
+
   /** @} */
 
   /** @name arithmetic
@@ -234,6 +246,19 @@ class ARingQQFlint : public RingInterface
     fmpq_set_mpq(&result, a.get_mpq());
   }
 
+  /** @brief returns a read only view into the ring_elem
+   *  The return value of this function should not be modified,
+   *  since the contents point directly into the input ring_elem.
+   */
+  const ElementType from_ring_elem_const(const ring_elem& a) const
+  {
+    mpq_srcptr a1 = a.get_mpq();
+    fmpq result;
+    result.num = PTR_TO_COEFF(mpq_numref(a1));
+    result.den = PTR_TO_COEFF(mpq_denref(a1));
+    return result;
+  }
+
   /** @} */
 
   bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const
@@ -250,6 +275,9 @@ class ARingQQFlint : public RingInterface
 
   bool lift(const Ring* Rg, const ElementType& f, ring_elem& result) const
   {
+    (void) Rg;
+    (void) f;
+    (void) result;
     return false;
   }
 

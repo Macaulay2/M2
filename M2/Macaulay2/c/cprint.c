@@ -296,7 +296,7 @@ static void cprintarraydef(node t){
      if (length(m) == 1) put("int len;");
      cprint(typ);
      put(" array[");
-     if (len!=NULL) cprint(len); else put("1");
+     if (len!=NULL) cprint(len);
      put("];};\n");
      }
 
@@ -380,8 +380,6 @@ static void cprintsomesizeof(node t, node arraylen){
 	       cprint(arraylen);
 	       put(")*sizeof(");
 	       cprint(typ);
-	       put(")-sizeof(");
-	       cprint(typ);
 	       put(")");
 	       }
 	  }
@@ -463,7 +461,7 @@ static void cprintdefine(node t,bool definitions) {
 	       threadLocalDeclarationFlag = 1;
 	       cprint(t);
 	       threadLocalDeclarationFlag = 0;	      
-	       put("_id;\n");
+	       put("_id");
 //	       put("__thread ");
           }
      if (flags & const_F) put("const ");
@@ -529,6 +527,7 @@ static void cprintdefun(node g) {
      node args = CDAR(g);
      node funtype = type(fun);
      node rettype = functionrettype(funtype);
+     node parm;
      assert(issym(fun));
      locn(g);
      /* printpos(); */
@@ -550,6 +549,15 @@ static void cprintdefun(node g) {
      put(")");
      put("{");
      put("\n");
+     /* suppress unused parameter warnings for parameters not referenced in scc source */
+     for (parm = CDAR(g); parm != NULL; parm = CDR(parm)) {
+	  node w = CAR(parm);
+	  if (issym(w) && !(w->body.symbol.flags & used_F)) {
+	       put("(void)");
+	       cprint(w);
+	       put(";\n");
+	       }
+	  }
      cprintsemi(CDDR(g));
      printpos();
      put("}");

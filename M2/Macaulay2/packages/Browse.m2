@@ -148,7 +148,9 @@ beginDocumentation()
 
 document {
      Key => Browse,
-     Headline => "a method for browsing and examining Macaulay2 data structures"
+     Headline => "a method for browsing and examining Macaulay2 data structures",
+     "This package provides a method, ", TO browse, ", for browsing and ",
+     "examining Macaulay2 data structures."
      }
 
 document {
@@ -159,11 +161,32 @@ document {
      PARA{},
      "A menu of numbered items is presented to the user that allow the user to
      inspect the ", TO "class", " or ", TO "parent", " of ", TT "x", ".  For a
-     hash table, the keys are presented so the user can visit the 
-     corresponding values, and for a list, the entries are presented so the user 
-     can visit them.  One of the menu items allows the user to go back to 
+     hash table, the keys are presented so the user can visit the
+     corresponding values, and for a list, the entries are presented so the user
+     can visit them.  One of the menu items allows the user to go back to
      re-examine the previous item."
      }
+
+-- browse is an interactive utility: its main loop reads from stdin to
+-- drive a menu, so the function itself cannot be invoked in a TEST
+-- without a mock-stdin harness. The smoke test below guards against
+-- accidental removal of the export and against silent changes to the
+-- private menu method's dispatch surface.
+TEST ///
+assert(instance(browse, Function));
+-- the private `menu` method is the workhorse; check it exists and has
+-- the eight dispatches that handle the supported argument shapes.
+menuSym := (Browse#"private dictionary")#"menu";
+m := value menuSym;
+assert(instance(m, MethodFunction));
+dispatches := set apply(methods m, meth -> drop(toSequence meth, 1));
+assert(dispatches#?(Thing, Thing));
+assert(dispatches#?(Function, Thing));
+assert(dispatches#?(Symbol, Thing));
+assert(dispatches#?(HashTable, Thing));
+assert(dispatches#?(BasicList, Thing));
+assert(dispatches#?(Sequence, Thing));
+///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Browse pre-install"

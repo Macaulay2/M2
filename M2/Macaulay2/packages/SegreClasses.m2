@@ -9,7 +9,7 @@ newPackage( "SegreClasses",
          Email => "Corey.Harris@mis.mpg.de",
          HomePage => "http://coreyharris.name"}
     },
-    Headline => "test containment of varieties and computes algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, via a very general Segre class computation",
+    Headline => "Segre class computations for containment of varieties and Fulton-MacPherson intersection products",
     Keywords => {"Intersection Theory"},
     DebuggingMode => false
 );
@@ -293,7 +293,7 @@ chowClass Scheme := opts -> X -> (
                     Ls=Ls+sum(wDims_i,j->ideal(random(OneAti(degreeLength R,i),R)));
                 );
             );
-            ZeroDimGB=ideal groebnerBasis(saturate(X)+Ls+LA, Strategy=>"F4");
+            ZeroDimGB=groebnerBasis(saturate(X)+Ls+LA, Strategy=>"F4");
             classI=classI+(numColumns basis(cokernel leadTerm ZeroDimGB))*w;
         );
     );
@@ -460,7 +460,7 @@ segre (Ideal,Ideal,QuotientRing) :=opts->(X,Y,A) -> (
     projectiveDegreesList := projectiveDegrees(sX,sY);
     if opts.Verbose then <<"Projective degrees= "<<projectiveDegreesList<<endl;
 
-    --build segre class recursively from Proj Degs
+    --build Segre class recursively from Proj Degs
     segreClass:=0_A;
     RHS:=sum(0..dim sX,i->alpha^(dim sY-i)*chowClass(sY)) - sum(projectiveDegreesList);
     basisByCodim := partition(i -> sum(flatten exponents i), IA.basis);
@@ -1035,7 +1035,7 @@ y=(gens(R))_{4..7}
 Qx = ideal (x#0*x#1 - x#2*x#3)
 Qy=sub(Qx,matrix{join(y,for i from 4 to 7 list 0)})
 D = minors(2,matrix{x,y})
-I=ideal(Qx,Qy,D) --Q in the diagional
+I=ideal(Qx,Qy,D) --Q in the diagonal
 Cx=ideal random({1,0},R)
 A = ZZ[a,b,Degrees=>{{1,0},{0,1}}]/(a^4,b^4)
 s=segre(Cx,I,A,Verbose=>true)
@@ -1126,6 +1126,41 @@ f=random({1,1,1},R)
 Y=ideal (z_0*W_0-z_1*W_1)+ideal(f)
 X=((W)*ideal(y)+ideal(f))
 assert(isComponentContained(X,Y)==true)
+///
+
+TEST ///
+-- isMultiHom: detects whether an ideal is homogeneous for the multi-grading
+R = makeProductRing({1,2})
+x = gens R
+assert(isMultiHom ideal(x_0^2*x_2 + x_1^2*x_3))
+assert(not isMultiHom ideal(x_0^2*x_2 + x_1*x_2^2))
+assert(isMultiHom(x_0^2*x_2 + x_1^2*x_3))
+///
+
+TEST ///
+-- projectiveDegree: a single projective degree equals the matching
+-- coefficient of the projectiveDegrees list
+R = makeProductRing({3,3})
+x = gens R
+D = minors(2, matrix{{x_0..x_3},{x_4..x_7}})
+X = ideal(x_0*x_1, x_1*x_2, x_0*x_2)
+A = makeChowRing R
+pds = sum projectiveDegrees(X, D, A)
+assert all(flatten entries monomials pds, h -> projectiveDegree(X, D, h) == pds_h)
+assert(projectiveDegree(X, D, A_0^2*A_1^2) == 3)
+///
+
+TEST ///
+-- chowClass: the class of a degree-2 hypersurface in P^6 is 2h; the
+-- "prob" and "multidegree" strategies and the 1/2-argument forms agree
+R = makeProductRing({6})
+x = gens R
+J = ideal(x_0*x_2 - x_4*x_5)
+A = makeChowRing R
+assert(chowClass(J, A) == 2*A_0)
+assert(chowClass(J, A, Strategy => "prob") == chowClass(J, A))
+clX = chowClass(J, Strategy => "prob")
+assert(clX == chowClass(J, ring clX))
 ///
 
 end

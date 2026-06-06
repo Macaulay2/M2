@@ -282,6 +282,7 @@ class MutableMatrix : public MutableEngineObject
   // engine_error is thrown.
   virtual engine_RawArrayIntPairOrNull LQUPFactorizationInPlace(bool transpose)
   {
+    (void) transpose;
     throw exc::engine_error("not implemented for this ring or matrix type");
   }
 
@@ -343,6 +344,11 @@ class MutableMatrix : public MutableEngineObject
       M2SLProgram *P,
       M2_arrayint constsPos,
       M2_arrayint varsPos) const = 0;  // this = const matrix
+
+  virtual M2SLEvaluator* createCompiledSLEvaluator(
+      M2_string libName,
+      int nInputs,
+      int nOutputs) const = 0;  // this = const matrix
 };
 
 #endif

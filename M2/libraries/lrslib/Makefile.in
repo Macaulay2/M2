@@ -1,12 +1,12 @@
 # replace lrslib by the name of the library or package
 # install this file as lrslib/Makefile.in
-# add libraries/lrslib/Makefile to ../config/files
+# add libraries/lrslib/Makefile to ../m4/files
 # run make -C ../..
 # reconfigure in the build directory
 HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
-# URL = http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive
-URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 071a
+URL = https://macaulay2.com/Downloads/OtherSourceCode/
+VERSION = 073
+SHA256SUM = c49a4ebd856183473d1d5a62785fcdfe1057d5d671d4b96f3a1250eb1afe4e83
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = lrslib-$(VERSION).tar.gz
 #PROGRAMS = lrs redund lra1 redund1 nash setupnash setupnash2 fourier buffer 2nash
@@ -15,7 +15,10 @@ STRIPFILES = $(PROGRAMS)
 LICENSEFILES = COPYING
 CONFIGURECMD = true
 BUILDTARGET = lrs
-BUILDOPTIONS = LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" CC="$(CC)" TARGET_ARCH=$(TARGET_ARCH) RANLIB=true LIBDIR="$(BUILTLIBPATH)/lib" INCLUDEDIR="$(BUILTLIBPATH)/include"
+BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)"           \
+	LIBDIR="$(BUILTLIBPATH)/lib $(LDFLAGS)" \
+	INCLUDEDIR="$(BUILTLIBPATH)/include"    \
+	CFLAGS="$(CFLAGS) -Ilrsarith-011"
 INSTALLCMD = true
 CHECKCMD = true
 include ../Makefile.library

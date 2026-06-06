@@ -541,7 +541,7 @@ I = ideal(
     a^3*b+b^3*c+c^3*d+d^3*e+e^3*a)
 
 (I = clear I; time res coker gens I)           -- amazingly hard...C.I. so could write it down
-     	       	    	      	   	       -- but slanted degree: 261.09 (min betti nums buggy)
+     	       	    	      	   	       -- but slanted degree: 261.09 (min Betti nums buggy)
 (I = clear I; time primaryDecomposition I)     -- fastgb 27.31 (2020: 3.54374 seconds)
 (I = clear I; time minimalPrimes I)                -- 2.35
 (I = clear I; time radical I)                  -- 

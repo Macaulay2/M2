@@ -6,6 +6,7 @@ Authors => {{Name => "David Eisenbud",
 Email => "de@msri.org",
 HomePage => "http://www.msri.org/~de"}},
 Headline => "MCM approximations and complete intersections",
+PackageExports => {"Complexes"},
 Keywords => {"Commutative Algebra"},
 DebuggingMode => false
 )
@@ -28,12 +29,6 @@ export {
     "setupModules"
     }
 
--* test: The following code crashes M2 v 8.2
-S = ZZ/101[a]
-R = S/ideal(a^2)
-res (coker vars R, LengthLimit => 0)
-*-
-
 depth Module := M-> profondeur M
 
 socleDegrees = method()
@@ -50,7 +45,7 @@ syzygyModule(ZZ,Module) := opts -> (k,M) -> (
     F := null;
 
     if k>0 then (
-	F = res(M, LengthLimit => k+1);
+	F = freeResolution(M, LengthLimit => k+1);
 	return coker F.dd_(k+1));
     
     if k<0 then (
@@ -59,9 +54,9 @@ syzygyModule(ZZ,Module) := opts -> (k,M) -> (
 	n = 1 else
 	if opts.CoDepth >0 then
 	n = opts.CoDepth;
-	F  = res(M, LengthLimit => n);
+	F  = freeResolution(M, LengthLimit => n);
 	M1 := image dual F.dd_(n);
-	G := res(M1, LengthLimit => -k+n);
+	G := freeResolution(M1, LengthLimit => -k+n);
     return image dual G.dd_(-k+n));
     )
 
@@ -71,7 +66,7 @@ profondeur(Ideal, Module) := (I,M) ->(
     R := ring M;
     d := max(1,dim M); -- d=0 causes a crash
     if not isCommutative R then error"profondeur undefined for noncommutative rings";
-    F := M**dual res (R^1/I, LengthLimit => d);
+    F := M**dual freeResolution (R^1/I, LengthLimit => d);
     i := 0;    
     while HH_i F == 0 do i=i-1;
     -i)
@@ -102,10 +97,10 @@ approximatione(ZZ,Module) := opts -> (n,M) ->(
     Mp := prune M;
     p := Mp.cache.pruningMap; -- the iso Mp -->M
     if isFreeModule Mp then return p;
-    F := res(Mp, LengthLimit =>n);
+    F := freeResolution(Mp, LengthLimit =>n);
     if F.dd_n == 0 then return map(M,(ring M)^0,0); -- in this case the n-th syz is 0
-    G := res(coker transpose F.dd_n, LengthLimit =>n);
-    F' := chainComplex reverse apply(n, j-> transpose F.dd_(j+1));
+    G := freeResolution(coker transpose F.dd_n, LengthLimit =>n);
+    F' := complex reverse apply(n, j-> transpose F.dd_(j+1));
     phi := extend(G, F', id_(G_0));
     M' := coker transpose G.dd_n;
     map(M, M',(matrix p)*transpose phi_n)
@@ -125,8 +120,8 @@ coSyzygyChain(ZZ, Module) := (n,M) ->(
     --produces dual G of the  resolution of the dual of the second syzygy of M for n+1 steps,
     --adjusted so that M == image G.dd_0. Thus the map G.dd_(-1) is the universal map
     --of M into a free module, etc.
-    F := res(M,LengthLimit => 1);
-    G := res(coker dual F.dd_1, LengthLimit => n+1);
+    F := freeResolution(M,LengthLimit => 1);
+    G := freeResolution(coker dual F.dd_1, LengthLimit => n+1);
     H := (dual G) [-1];
     H)
     
@@ -153,7 +148,8 @@ coApproximationSequence = M -> (
     alpha := coApproximation M;
     N := coker alpha;
     beta := inducedMap(N,target alpha);
-    chainComplex {map(S^0,N,0),beta,alpha,map(source alpha,S^0,0)})
+    complex({beta,alpha}, Base => 1)
+    )
 
 approximation = method(Options =>{CoDepth=>-1, Total =>true})
 approximation Module := opts -> M->(
@@ -183,7 +179,7 @@ approximationSequence = M->(
     tot := (alpha|beta);
     N := kernel tot;
     gamma := inducedMap(source tot,N);
-    chainComplex {map(S^0,M,0), tot,gamma,map(N,S^0,0)}
+    complex({tot,gamma}, Base => 1)
     )
 
 auslanderInvariant = method(Options =>{CoDepth => -1})
@@ -216,7 +212,7 @@ setupModules = method()
 setupModules(List,Module) := (R,M)->(
     --R_i is a ci of codim i in a ring S
     --returns (MM,kk,p) where
-    --MM,kk are lists whose i-compoents are the module M and residue field k, but over R_i
+    --MM,kk are lists whose i-components are the module M and residue field k, but over R_i
     --p_i_j is the projection from R_j to R_i (c >= i >= j >= 0)
     --M is a a module over R_c.
     c := length R-1;
@@ -294,21 +290,16 @@ Description
    R = S/ideal(a^3+b^3+c^3)
    M = coker random(R^2, R^{4:-1});
    Ea = approximationSequence M;
-   netList apply({1,2,3}, i-> betti res Ea_i)
+   netList apply({1,2,3}, i-> betti freeResolution(Ea_i, LengthLimit => numgens R + 1))
   Text
    Here is a similar display for the co-approximation sequence. Here
    the Betti table of M is at the bottom, the Betti table of the module of finite projective dimension
    is in the middle, and that of the MCM module is at the top (
   Example
    Ec = coApproximationSequence M;
-   netList apply(5, i-> betti res prune Ec_i)   
+   netList apply(5, i-> betti freeResolution(prune Ec_i, LengthLimit => 10))
 ///
 
-
-///
-restart
-loadPackage("MCMApproximations", Reload=>true)
-///
 
 doc ///
    Key
@@ -328,9 +319,9 @@ doc ///
      L = {} if the socle is 0.
     Example
      R = ZZ/101[x,y,z]
-     M0 = R^1/(ideal(x,y,z)*ideal (x,y));
-     M1 = coker random(R^{1,2}, R^{0,-1,-2}); -- dim 1
-     M2 = coker random(R^{1,2}, R^{0,-1,-2,-4}); -- dim 0
+     socleDegrees(coker vars R)
+     socleDegrees(R^1/(ideal vars R)^2)
+     socleDegrees(R^1/(ideal(x,y,z)*ideal(x,y)))
    ///
 
 doc ///
@@ -368,17 +359,17 @@ doc ///
      If k==0 then the N=M. If k>0 then the syzygy module is computed from the 
      resolution. If k<0 then the program returns the dual of the (n-k)-th syzygy
      of the dual of the k-th syzygy, where n is one more than Codepth if that
-     opition is specified, and else n is the number of variables of ring M. 
+     option is specified, and else n is the number of variables of ring M. 
      Of course the resulting N is 0 if ring M is regular, and otherwise correct
      only if ring M is Gorenstein. In the Gorenstein case, syzygyModule(-k, syzygyModule(k, M))
      -is the non-free part of the source of the MCM approximation of M.
     Example
      R = setupRings(4,3);
      M = coker vars R_2;
-     betti res M
+     betti freeResolution(M, LengthLimit => numgens ring M)
      betti syzygyModule(2,M)
      betti (N2 = syzygyModule(-2,M))
-     betti res N2
+     betti freeResolution(N2, LengthLimit => numgens ring N2)
      betti syzygyModule(-2,M,CoDepth=>2)
    Caveat
     ring M must be Gorenstein, and the program does not check
@@ -458,7 +449,7 @@ doc ///
      N = target ca
      profondeur M'' == dim ring M'' -- an MCM module
      M'' == source approximation(M'', Total=>false) -- no free summands
-     2 == length res(N, LengthLimit =>10) -- projective dimension <\infty
+     2 == length freeResolution(N, LengthLimit =>10) -- projective dimension <\infty
    SeeAlso
     setupRings
     setupModules
@@ -573,7 +564,7 @@ doc ///
    Inputs
     M:Module
    Outputs
-    E:ChainComplex
+    E:Complex
    Description
     Text
      The approximation sequence of a module M over a Gorenstein ring
@@ -599,7 +590,7 @@ doc ///
    Inputs
     M:Module
    Outputs
-    E:ChainComplex
+    E:Complex
    Description
     Text
      The  coapproximation sequence of a module M over a Gorenstein ring
@@ -729,7 +720,7 @@ doc ///
 ///
     --R_i is a ci of codim i in a ring S
     --returns (MM,kk,p) where
-    --MM,kk are lists whose i-compoents are the module M and residue field k, but over R_i
+    --MM,kk are lists whose i-components are the module M and residue field k, but over R_i
     --p_i_j is the projection from R_j to R_i (c >= i >= j >= 0)
 
 doc ///
@@ -776,7 +767,7 @@ TEST///
    (MM,kk,p) = setupModules(T, M)
    (a,b) = approximation MM_1 -- MM_1 is M as a module over the ring of codim 1
    M' = source a
-   assert(length res pushForward(p_1_0,M') == 1) -- an MCM module
+   assert(length freeResolution pushForward(p_1_0,M') == 1) -- an MCM module
    assert isFreeModule source b -- free module
 ///
 
@@ -815,14 +806,27 @@ ca = coApproximation M_(c-1)
 M'' = coker ca
 N = target ca
 assert(profondeur M'' == dim ring M'') -- an MCM module
-assert(betti res prune M'' == betti res source approximation(prune M'', Total=>false)) -- no free summands
-assert(2 == length res(N, LengthLimit =>10)) -- projective dimension <\infty
+assert(betti freeResolution(prune M'', LengthLimit => 10) == betti freeResolution(source approximation(prune M'', Total=>false), LengthLimit => 10)) -- no free summands
+assert(2 == length freeResolution(N, LengthLimit =>10)) -- projective dimension <\infty
 ///
-///TEST
-setRandomSeed 100
-assert( (approximation M) === (map(image map((R)^1,(R)^{{-1},{-1}},{{a, b}}),cokernel map((R)^{{-1},{-1}},(R)^{{-2},{-2}},{{-a, b}, {0, a}}),{{-1, 0}, {0, 1}}),map(image map((R)^1,(R)^{{-1},{-1}},{{a, b}}),(R)^0,0)) );
-assert( (approximation(M, Total=>false)) === map(image map((R)^1,(R)^{{-1},{-1}},{{a,b}}),cokernel map((R)^{{-1},{-1}},(R)^{{-2},{-2}},{{-a, b}, {0, a}}),{{-1, 0}, {0, 1}}) );
-assert( (approximation(M, CoDepth => 0)) === (map(image map((R)^1,(R)^{{-1},{-1}},{{a,b}}),cokernel map((R)^{{-1},{-1}},(R)^{{-2},{-2}},{{a, -b}, {0, a}}),{{1, 0}, {0,1}}),map(image map((R)^1,(R)^{{-1},{-1}},{{a, b}}),(R)^0,0)) );
+-- approximation, with its options Total and CoDepth.  approximation M
+-- returns the pair (phi,psi) of the MCM approximation; the total map
+-- (phi|psi) is a surjection onto M, and psi maps from a free module.
+TEST///
+R = ZZ/101[a,b]/ideal(a^2)
+M = image vars R
+ap = approximation M
+assert(class ap === Sequence)
+(phi,psi) = ap
+assert(target phi === M and target psi === M)
+assert(isSurjective(phi | psi))
+assert(isFreeModule source psi)
+-- Total => false returns only the essential (non-free) component phi
+apf = approximation(M, Total => false)
+assert(class apf === Matrix)
+assert(apf === phi)
+-- CoDepth is a computation hint; the (phi,psi) pair is still returned
+assert(class approximation(M, CoDepth => 0) === Sequence)
 ///
 TEST///
 setRandomSeed 100
@@ -896,7 +900,7 @@ q = map(R,S)
 M0= coker random(R^2, R^{4:-1});
 M = pushForward(q,syzygyModule(4,M0));
 L = (layeredResolution(ff,M))_0;
-assert(betti L == betti res M)
+assert(betti L == betti freeResolution M)
 ///
 
 TEST///
@@ -905,7 +909,46 @@ M = module(ideal(a,b,c));
 Ea = approximationSequence M;
 Ec = coApproximationSequence M;
 assert(isFreeModule prune Ea_3 ===true)
-assert(length res prune Ec_2 == 1)
+assert(length freeResolution(prune Ec_2, LengthLimit => 10) == 1)
+///
+
+-- regression: freeResolution(..., LengthLimit => 0) over a hypersurface
+-- once crashed M2 v8.2.  It must now build a length-0 free complex.
+TEST///
+S = ZZ/101[a]
+R = S/ideal(a^2)
+F = freeResolution(coker vars R, LengthLimit => 0)
+assert(length F == 0)
+assert(rank F_0 == 1)
+///
+
+-- socleDegrees: the degrees (with multiplicity) of the socle generators.
+TEST///
+R = ZZ/101[x,y,z]
+-- residue field: socle is the field itself, in degree 0
+assert(socleDegrees(coker vars R) == {0})
+-- a free module has zero socle, hence the empty list
+assert(socleDegrees(R^1) == {})
+-- R/((x,y,z)(x,y)): a 2-dimensional socle, both generators in degree 1
+assert(socleDegrees(R^1/(ideal(x,y,z)*ideal(x,y))) == {1,1})
+-- error test: socleDegrees requires the coefficient ring to be a field
+assert(try (socleDegrees((ZZ[t])^1/ideal(t^2)); false) else true)
+///
+
+-- setupRings options.  Characteristic sets the coefficient field; with
+-- Randomize => false the regular sequence is the pure d-th powers.
+TEST///
+setRandomSeed 0
+assert(char first setupRings(2,2) == 101)
+assert(char first setupRings(2,2, Characteristic => 5) == 5)
+T = setupRings(2,3, Randomize => false)
+assert(#T == 3)
+-- Randomize => false: every defining-ideal generator is a single monomial
+assert(all(flatten entries gens ideal last T, g -> size g == 1))
+-- CoDepth: a correct codepth hint leaves syzygyModule's result unchanged
+R = (setupRings(2,2))_2
+M = coker vars R
+assert(betti syzygyModule(-2,M) == betti syzygyModule(-2,M, CoDepth => 2))
 ///
 
 end--

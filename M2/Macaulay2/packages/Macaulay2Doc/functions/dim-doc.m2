@@ -38,48 +38,7 @@ document {
           "R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}];",
 	  "dim R"
 	  },
-     SeeAlso => {codim, (dim,AffineVariety)}
-     }
-document { 
-     Key => (dim,AffineVariety),
-     Headline => "dimension of the affine variety",
-     Usage => "dim V",
-     Inputs => {"V"
-	  },
-     Outputs => {ZZ
-	  },
-     "Computes the dimension of the affine algebraic set ", TT "V"," as the Krull dimension
-      of its affine coordinate ring.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y];",
-          "point = ideal(x,y);",
-	  "line = ideal(2*x+3*y-1);",
-	  "V=Spec(R/intersect(point,line))",	  
-	  "dim V",
-	  "Z=Spec(R/(point+line))",
-	  "dim Z"
-	  },
-     SeeAlso => {Spec, (dim,ProjectiveVariety)}
-     }
-document { 
-     Key => (dim,ProjectiveVariety),
-     Headline => "dimension of the projective variety",
-     Usage => "dim V",
-     Inputs => {"V"
-	  },
-     Outputs => {ZZ
-	  },
-     "Computes the dimension of the projective algebraic set from 
-      the Krull dimension of its homogeneous coordinate ring.",
-     EXAMPLE {
-	  "R = ZZ/101[x_0..x_4];",
-	  "M = matrix{{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4}}",
-	  "V = Proj(R/minors(2,M));",
-	  "degree V",
-	  "dim V",
-	  "dim minors(2,M)"
-	  },
-     SeeAlso => {Proj, (dim, AffineVariety)}
+     SeeAlso => {codim, "Varieties::dim(AffineVariety)"}
      }
 document { 
      Key => (dim,Module),
@@ -104,10 +63,8 @@ document {
      Key => (dim,ProjectiveHilbertPolynomial),
      Headline => "the degree of the Hilbert polynomial",
      Usage => "dim P",
-     Inputs => {"P"
-	  },
-     Outputs => {"ZZ"
-	  },
+     Inputs => {"P"},
+     Outputs => {ZZ},
      "The command ", TO dim,  "is designed so that the result 
      is the dimension of the projective scheme that 
      may have been used to produce the given Hilbert polynomial.",

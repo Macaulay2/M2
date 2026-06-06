@@ -12,6 +12,17 @@
 }
 {
    libgc
+   Memcheck:Value1
+   ...
+   obj:*/libgc.so*
+}
+{
+   libgc
+   Memcheck:Value8
+   src:gc_allocator.h
+}
+{
+   libgc
    Memcheck:Cond
    ...
    obj:*/libgc.so*
@@ -19,6 +30,12 @@
 {
    libgc
    Memcheck:Addr8
+   ...
+   obj:*/libgc.so*
+}
+{
+   libgc
+   Memcheck:Addr1
    ...
    obj:*/libgc.so*
 }

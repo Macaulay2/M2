@@ -524,7 +524,7 @@ LRtriple = method(TypicalValue => Sequence,
 LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --
 -- DESCRIPTION :
---   Solves several checker games, each checker game involes
+--   Solves several checker games, each checker game involves
 --   a triple Schubert intersection.
 --
 -- ON ENTRY :

@@ -132,15 +132,19 @@ expression JoinOfCoincidentRootLoci := (Z) -> (
 
 net CoincidentRootLocus := (X) -> net expression X;
 
+CoincidentRootLocus#{WebApp,AfterPrint} = CoincidentRootLocus#{WebApp,AfterNoPrint} = 
 CoincidentRootLocus#{Standard,AfterPrint} = CoincidentRootLocus#{Standard,AfterNoPrint} = X -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Coincident root locus" << endl;
 );
 
 net JoinOfCoincidentRootLoci := (Z) -> net expression Z;
 
+JoinOfCoincidentRootLoci#{WebApp,AfterPrint} = JoinOfCoincidentRootLoci#{WebApp,AfterNoPrint} = 
 JoinOfCoincidentRootLoci#{Standard,AfterPrint} = JoinOfCoincidentRootLoci#{Standard,AfterNoPrint} = X -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Join of ", << #(X#"listCRloci") <<" coincident root loci" << endl;
 );
+
+texMath JoinOfCoincidentRootLoci := texMath CoincidentRootLocus := texMath @@ net;
 
 toString CoincidentRootLocus := (X) -> "CRL("|toString partition X|","|toString coefficientRing X|","|"Variable=>"|toString X#"variable"|")"; 
 
@@ -954,7 +958,7 @@ JoinOfCoincidentRootLoci * JoinOfCoincidentRootLoci := (X,Y) -> joinOfHooks (toS
 --=== Binary forms and utilities =================================
 --================================================================
 
-RingElement ~ := (F) -> RingElement := (G) -> (
+RingElement ~ RingElement := (F, G) -> (
   if not (isPolynomialRing ring F and isPolynomialRing ring G and numgens ring F == 2 and numgens ring G == 2) then error "expected two binary forms";
   K := coefficientRing ring F;
   if K =!= coefficientRing ring G then error "got different coefficient rings";

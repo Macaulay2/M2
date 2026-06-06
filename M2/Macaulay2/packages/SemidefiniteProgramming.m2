@@ -37,7 +37,6 @@ export {
     "changeSolver",
     "criticalIdeal",
 --Method options
-    "Verbosity",
     "Solver",
     "Scaling"
 }
@@ -524,7 +523,8 @@ simpleSDP2 = {Verbosity => 0} >> o -> (C,A,mb,y,checktrivial,UntilObjNegative) -
         mu = mu/theta;
         while true do (
             S := C - sum toList apply(0..m-1, i-> y_(i,0) * A_i);
-            try Sinv := solve(S, id_(target S)) else (
+            Sinv := solve(S, id_(target S));
+            if Sinv === null then (
                 verbose1("Slack matrix is singular", o);
                 return (Xnull,,,StatusFailed) );
             -- compute Hessian:
@@ -1084,3 +1084,6 @@ TEST /// --refine
     assert(norm(y1+sqrt 2)<tol)
 ///
 
+TEST /// -- issue #4104 (used to raise an error)
+optimize(sdp(matrix{{0, 0}, {0, 1}}, 1:matrix{{1, 0}, {0, 0}}, matrix{{1}}), Solver=>"M2")
+///

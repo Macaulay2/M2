@@ -15,6 +15,8 @@ const int LARGE_NUMBER = 32000;
 
 void tableau2::initialize(int nvars, int maxwt0)
 {
+  (void) nvars;
+  (void) maxwt0;
   maxwt = SCHUR_MAX_WT;
   wt = 0;
   lambda = nullptr;
@@ -318,12 +320,15 @@ ring_elem SchurRing2::copy(const ring_elem f) const
 
 ring_elem SchurRing2::invert(const ring_elem f) const
 {
+  (void) f;
   // This function is not relevant for this ring
   return zero();
 }
 
 ring_elem SchurRing2::divide(const ring_elem f, const ring_elem g) const
 {
+  (void) f;
+  (void) g;
   // This function is not relevant for this ring
   return zero();
 }
@@ -333,6 +338,8 @@ void SchurRing2::syzygy(const ring_elem a,
                         ring_elem &x,
                         ring_elem &y) const
 {
+  (void) a;
+  (void) b;
   // This function is not relevant for this ring
   x = zero();
   y = zero();
@@ -443,7 +450,7 @@ bool SchurRing2::promote(const Ring *Rf,
   else
     {
       const SchurRing2 *Sf = Rf->cast_to_SchurRing2();
-      if (Sf != 0)
+      if (Sf != nullptr)
         {
           if (coefficientRing == Sf->getCoefficientRing())
             {
@@ -473,7 +480,7 @@ bool SchurRing2::lift(const Ring *Rg,
   else
     {
       const SchurRing2 *Sg = Rg->cast_to_SchurRing2();
-      if (Sg != 0)
+      if (Sg != nullptr)
         {
           if (coefficientRing == Sg->getCoefficientRing())
             {
@@ -503,7 +510,7 @@ ring_elem SchurRing2::negate(const ring_elem f) const
 }
 
 ring_elem SchurRing2::truncate(const ring_elem f) const
-// assumption: f is a schur poly over another schur ring, with the SAME coeff
+// assumption: f is a Schur poly over another Schur ring, with the SAME coeff
 // ring
 //  each term is copied over, if the number of elements in the partition is <=
 //  n_vars()
@@ -638,10 +645,11 @@ ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
     }
 }
 
-void toVarpower(const_schur_partition a, intarray &result)
+void to_varpower(const_schur_partition a, gc_vector<int>& result)
 {
   int len = a[0];
-  int *result_vp = result.alloc(2 * len);
+  result.resize(2 * len);
+  int *result_vp = result.data();
   int *orig_result_vp = result_vp;
   result_vp++;
 
@@ -668,7 +676,7 @@ void toVarpower(const_schur_partition a, intarray &result)
 
   int newlen = static_cast<int>(result_vp - orig_result_vp);
   *orig_result_vp = newlen;
-  result.shrink(newlen);
+  result.resize(newlen);
 }
 
 engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR,
@@ -677,7 +685,7 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR,
   if (coeffR != coefficientRing)
     {
       ERROR("expected coefficient ring of Schur ring");
-      return 0;
+      return nullptr;
     }
   const schur_poly *f1 = f.get_schur_poly();
   int n = static_cast<int>(f1->size());  // this is here because the lengths of
@@ -694,15 +702,15 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR,
   result->coeffs = coeffs;
 
   // Loop through the terms
-  intarray vp;
+  gc_vector<int> vp;
   schur_poly::iterator i = f1->begin();
   for (int next = 0; next < n; ++i, ++next)
     {
       coeffs->array[next] =
           RingElement::make_raw(coefficientRing, i.getCoefficient());
-      toVarpower(i.getMonomial(), vp);
-      monoms->array[next] = Monomial::make(vp.raw());
-      vp.shrink(0);
+      to_varpower(i.getMonomial(), vp);
+      monoms->array[next] = EngineMonomial::make(vp.data());
+      vp.resize(0);
     }
   return result;
 }
@@ -711,6 +719,8 @@ ring_elem SchurRing2::eval(const RingMap *map,
                            const ring_elem f,
                            int first_var) const
 {
+  (void) f;
+  (void) first_var;
   // Should we allow ring maps to other Schur rings?  No others are that well
   // defined...
   // Use promote and lift for those instead?

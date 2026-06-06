@@ -443,7 +443,7 @@ doc /// --initial
     Description
       Text
         Returns the initial of a polynomial.
-        The initial of a polynomial $f$ is the the leading coefficient of $f$ viewed as a univariate polynomial in its @TO2 {mvar,"main variable"}@.
+        The initial of a polynomial $f$ is the leading coefficient of $f$ viewed as a univariate polynomial in its @TO2 {mvar,"main variable"}@.
       Example
         R = QQ[x_0..x_3, MonomialOrder=>Lex];
         f = x_1^2*(x_2*x_3+2*x_3) + x_1*(x_2^2-1) + (x_2-x_3)

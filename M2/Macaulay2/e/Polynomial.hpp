@@ -1,7 +1,7 @@
 #ifndef _polynomial_hpp_
 #define _polynomial_hpp_
 
-#include "newdelete.hpp"  // for VECTOR, our_new_delete
+#include "newdelete.hpp"  // for our_new_delete
 #include "ringelem.hpp"   // for ring_elem
 #include "style.hpp"      // for GT, LT, EQ
 
@@ -10,9 +10,6 @@
 #include <iostream>       // for ostream
 #include <iterator>       // for forward_iterator_tag
 #include <utility>        // for pair, make_pair
-
-using IntVector = VECTOR(int);
-// using IntVector = std::vector<int>;
 
 struct Monom
 // Format for monomials:
@@ -140,6 +137,7 @@ inline ModuleMonom monomToModuleMonom(const Monom& a, int comp, std::pair<int*, 
 template<typename T>
 void appendModuleMonomToMonom(const ModuleMonom& a, int& comp, T& inserter)
 {
+  (void) comp;
   inserter.push_back(a.size()-3);
   for (int i=4; i<a.size(); ++i)
     inserter.push_back(a[i]);
@@ -158,8 +156,8 @@ class Polynomial : public our_new_delete
   
   typedef typename CoefficientRingType::ElementType ElementType;
 public:  
-  typedef typename VECTOR(ElementType) coeffVector;
-  using monomVector = IntVector; // TODO: remove monomVector?
+  using coeffVector = gc_vector<ElementType>;
+  using monomVector = gc_vector<int>; // TODO: remove monomVector?
 
   typedef typename coeffVector::iterator coeffIterator;
   typedef monomVector::iterator monomIterator;
@@ -188,6 +186,7 @@ public:
 
     self_type operator++(int junk)
     {
+      (void) junk;
       // postfix ++ operator
       self_type i = *this;
       stepIterators();
@@ -264,8 +263,8 @@ struct CoefficientRingType
 };
 
 using Poly = Polynomial<CoefficientRingType>;
-using PolyList = VECTOR(Poly*);
-using ConstPolyList = VECTOR(const Poly*);
+using PolyList = gc_vector<Poly*>;
+using ConstPolyList = gc_vector<const Poly*>;
 
 #endif
 

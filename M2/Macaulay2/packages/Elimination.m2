@@ -9,11 +9,7 @@ newPackage("Elimination",
 
 export {"eliminate", "sylvesterMatrix", "discriminant", "resultant"}
 
----------------------
---- Preliminaries  --
----------------------
-
-getIndices = (R,v) -> unique apply(v, index)
+importFrom_Core {"monoidIndices"}
 
 ------------------------------
 -- Elimination of variables --
@@ -36,7 +32,7 @@ eliminateH = (v,I) -> (
      return trim phi eS;
      )
 
-isFlatPolynomialRing := (R) -> (
+isFlatPolynomialRing = R -> (
      -- R should be a ring
      -- determines if R is a poly ring over ZZ or a field
      kk := coefficientRing R;
@@ -61,6 +57,9 @@ eliminationRing = (elimvars, R) -> (
      skew := (options R).SkewCommutative;
      degs = degs_perm;
      vars = vars_perm;
+     -- FIXME: remove this line when Weyl variables are stored as indices in the monoid
+     weyl = monoidIndices_R weyl;
+     weyl = apply(weyl, pair -> invperm_pair);
      M := monoid [vars,MonomialOrder=>Eliminate(#elimvars), Degrees=>degs, 
 	  WeylAlgebra => weyl, SkewCommutative => skew, MonomialSize=>16];
      k := coefficientRing R;
@@ -89,7 +88,7 @@ eliminate (List, Ideal) := (v,I) -> (
        error "expected a polynomial ring over ZZ or a field";
      if #v === 0 then return I;
      if not all(v, x -> class x === R) then error "expected a list of elements in the ring of the ideal";
-     varlist := getIndices(ring I,v);
+     varlist := unique monoidIndices_R v;
      eliminate1(varlist, I)
      )
 
@@ -101,7 +100,7 @@ eliminate(RingElement, Ideal) := (v,I) -> eliminate({v},I)
 -- Sylvester matrix, resultant, discriminant --
 -----------------------------------------------
 
-sylvesterMatrix = method()
+sylvesterMatrix = method(TypicalValue => Matrix)
 sylvesterMatrix(RingElement,RingElement,RingElement) := (f,g,x) -> (
      R := ring f;
      if R =!= ring g then error "expected same ring";
@@ -121,12 +120,12 @@ sylvesterMatrix(RingElement,RingElement,RingElement) := (f,g,x) -> (
        m = transpose m;
        substitute(m, x=>0)))
 
-resultant = method()
-resultant(RingElement, RingElement, RingElement) := (f,g,x) -> 
+resultant = method(TypicalValue => RingElement, Options => { Algorithm => null })
+resultant(RingElement, RingElement, RingElement) := o -> (f,g,x) ->
      det sylvesterMatrix(f,g,x)
 
-discriminant = method()
-discriminant(RingElement, RingElement) := (f,x) -> resultant(f, diff(x,f), x)
+discriminant = method(Options => { Algorithm => null })
+discriminant(RingElement, RingElement) := RingElement => o -> (f,x) -> resultant(f, diff(x,f), x, o)
 
 -----------------------------------------------
 -- documentation and tests
@@ -281,6 +280,56 @@ time resultant(f1,f2,a)
 time eliminate(ideal(f1,f2),a)
 ///
 
+TEST ///
+  debug Elimination
+  W1 = QQ[x, t_0, dt_0, s, WeylAlgebra => {{1, 2}}]
+  W2 = QQ[x, t_0, dt_0, s, WeylAlgebra => { 1=>2 }]
+  W3 = QQ[x, t_0, dt_0, s, WeylAlgebra => { t_0=>dt_0 }]
+  W4 = QQ[x, t_0, dt_0, s, WeylAlgebra => {{t_0, dt_0}}]
+
+  checkWeylAlgebra = W -> (
+      I := ideal(W_0*W_1*W_2, W_0^2, 2*W_1^2*W_2^2+3*W_1*W_2, W_1*W_2+W_3+1);
+      J := eliminate(I, {W_1, W_2});
+      assert isSubset(J, I);
+      --
+      (F, G) := eliminationRing({1, 2}, W);
+      perm := {1, 2, 0, 3}; invperm := inversePermutation perm;
+      weyl := apply(W.WeylAlgebra, pair -> invperm_pair);
+      assert((target F).WeylAlgebra == weyl);
+      --
+      W = QQ[W_*_perm, WeylAlgebra => weyl, MonomialOrder => Eliminate 2];
+      I = sub(I, W);
+      J = ideal selectInSubring(1, gens gb I);
+      assert isSubset(J, I);
+      )
+  scan({W1, W2, W3, W4}, checkWeylAlgebra)
+///
+
+--trivial test, duplicate variables, variable not in ring
+TEST ///
+R = QQ[x,y]
+I = ideal(x^2+y)
+
+assert(eliminate({},I) == I)
+
+assert(eliminate({x},I)==eliminate({x,x},I))
+
+S = QQ[z]
+assert try eliminate(z,I) then false else true
+
+///
+
+--homogeneity, commutativity of elimination
+TEST ///
+R = QQ[x,y,z]
+I = ideal(x*y-z^2, x^2-y*z)
+
+J = eliminate(x,I)
+
+assert(isHomogeneous J)
+
+assert(eliminate(x,eliminate(y,I)) == eliminate(y,eliminate(x,I)))
+///
 end
 loadPackage "Elimination"
 installPackage Elimination

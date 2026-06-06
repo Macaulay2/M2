@@ -131,9 +131,10 @@ processAlgorithm := (alg, m) -> (
     -- else if alg === Faugere       then error "the Faugere algorithm option has been replaced by LinearAlgebra"
     else if alg === Sugarless     then 4
     else if alg === Homogeneous2  then 5
-    else if alg === LinearAlgebra then (warnexp(); 6)
+    else if alg === LinearAlgebra then 6
     else if alg === Toric         then (warnexp(); 7)
     else if alg === Test          then 8
+    else if alg === ParallelF4    then 9 -- also experimental
     else error "unknown algorithm encountered")
 
 -----------------------------------------------------------------------------
@@ -146,19 +147,12 @@ GroebnerBasis.synonym = "Gröbner basis"
 GroebnerBasisOptions = new Type of OptionTable
 GroebnerBasisOptions.synonym = "Gröbner basis options"
 
--- m:    a Matrix
--- type: an GroebnerBasisOptions
--- opts: an OptionTable
 -- TODO: document this
-new GroebnerBasis from Sequence := (GB, S) -> (
-    (m, type, opts) := if #S === 3 then S else error "GroebnerBasis: expected three initial values";
-    -- TODO: implement recursive type checking
-    if not instance(m, Matrix) or not instance(type, GroebnerBasisOptions) or not instance(opts, OptionTable)
-    then error "GroebnerBasis: expected a sequence of type (Matrix, GroebnerBasisOptions, OptionTable)";
+new GroebnerBasis from (Matrix, GroebnerBasisOptions, OptionTable) := (GB, m, type, opts) -> (
     if flagInhomogeneity and not isHomogeneous m then error "internal error: gb: inhomogeneous matrix flagged";
     -- initialize the toplevel container
     G := new GroebnerBasis;
-    if debugLevel > 5 then registerFinalizer(G, "gb (new GroebnerBasis from Sequence)");
+    if debugLevel > 5 then registerFinalizer(G, "gb (new GroebnerBasis from (Matrix, GroebnerBasisOptions, OptionTable))");
     G.ring = ring m;
     G.matrix = Bag {m};
     G.target = target m;
@@ -190,7 +184,8 @@ status GroebnerBasis := o -> g -> (
     )
 net      GroebnerBasis :=
 toString GroebnerBasis := g -> "GroebnerBasis[" | status g | "]"
-texMath  GroebnerBasis := g -> texMath toString g
+texMath  GroebnerBasis := texMath @@ toString
+html     GroebnerBasis := g -> html class g | "[" | status g | "]"
 
 
 rawsort := m -> rawSubmatrix(m, rawSortColumns(m,1,1))
@@ -200,6 +195,7 @@ syz = method(TypicalValue => Matrix, Options => syzDefaults)
 -- rawGBSyzygies doesn't sort its columns, so we do that here
 syz              GroebnerBasis  := Matrix => o -> G -> map(ring G, rawsort rawGBSyzygies G.RawComputation)
 leadTerm         GroebnerBasis  := Matrix =>      G -> map(ring G, rawGBGetLeadTerms(raw G, -1))
+leadTerm     (ZZ,GroebnerBasis) := Matrix =>   (i,G)-> map(ring G, rawGBGetLeadTerms(raw G, i))
 getChangeMatrix  GroebnerBasis  := Matrix =>      G -> map(ring G, rawGBChangeOfBasis G.RawComputation)
 generators       GroebnerBasis  := Matrix => o -> G -> map(target unbag G.matrix, , rawGBGetMatrix G.RawComputation)
 -- rawGBMinimalGenerators doesn't sort its columns, so we do that here
@@ -228,6 +224,9 @@ Matrix          % GroebnerBasis  :=
 remainder(Matrix, GroebnerBasis) := Matrix      => (n, G) -> map(target n, , rawGBMatrixRemainder(raw G, raw n))
 Number          % GroebnerBasis  :=
 RingElement     % GroebnerBasis  := RingElement => (r, G) -> (remainder(promote(r, ring G) * id_(target G), G))_(0,0)
+
+-- TODO: IM2_GB_is_equal is mentioned in the interpreter, but never defined
+GroebnerBasis == GroebnerBasis := (G1, G2) -> -1 === rawGBContains(raw G1, raw generators G2) and -1 === rawGBContains(raw G2, raw generators G1)
 
 -----------------------------------------------------------------------------
 -- helpers for gb
@@ -258,32 +257,34 @@ gbGetPartialComputation := (m, type) -> (
 	null))
 
 -- handle the Hilbert numerator later, which might be here:
-checkHilbertHint = m -> (
-    R := ring m;
-    -- Needed for using Hilbert functions to aid in Groebner basis computation:
-    --    Ring is poly ring over a field (or skew commutative, or quotient ring of such, or both)
-    --    Ring is singly graded, every variable is positive
-    --    Ring is homogeneous in this grading
-    --    Matrix is homogeneous in this grading
-    isHomogeneous m
-    and degreeLength R === 1
+canUseHilbertHint = method()
+
+canUseHilbertHint Ring := Boolean => R -> (
+    degreeLength R === 1
     and (instance(R, PolynomialRing) or isQuotientOf(PolynomialRing, R))
     and isField coefficientRing R
     and (isCommutative R or isSkewCommutative R)
-    and all(degree \ generators(R, CoefficientRing => ZZ), deg -> deg#0 > 0)
+    and all(degree \ generators R, deg -> deg#0 > 0)
     )
+canUseHilbertHint Ideal :=
+canUseHilbertHint Module :=
+canUseHilbertHint Matrix := Boolean => m -> canUseHilbertHint ring m and isHomogeneous m
 
 gbGetHilbertHint := (m, opts) -> (
     if opts.Hilbert =!= null then (
+        if not canUseHilbertHint m then (
+            --<< "warning: Hilbert hint given, but is being ignored" << endl;
+            return null;
+            );
 	if ring opts.Hilbert === degreesRing ring m then opts.Hilbert
 	else error "expected Hilbert option to be in the degrees ring of the ring of the matrix")
     else if m.cache.?cokernel and m.cache.cokernel.cache.?poincare
-    and   checkHilbertHint m then m.cache.cokernel.cache.poincare
+    and canUseHilbertHint m then m.cache.cokernel.cache.poincare
     else if m.?generators then (
 	g := m.generators;
 	if g.cache.?image then (
 	    M := g.cache.image;
-	    if M.cache.?poincare and checkHilbertHint m
+	    if M.cache.?poincare and canUseHilbertHint m
 	    then poincare target g - poincare M)))
 
 checkArgGB := m -> (
@@ -302,12 +303,15 @@ degreeToHeft = (R, d) -> (
 -- gb
 -----------------------------------------------------------------------------
 
+-- TODO: find better name and export this
+fullgens = M -> M.cache#"full gens" ??= (
+    if M.?relations then generators M | M.relations else generators M)
+
 gb = method(TypicalValue => GroebnerBasis, Options => gbDefaults)
 gb Ideal  := GroebnerBasis => opts -> I -> gb (module I, opts)
 gb Module := GroebnerBasis => opts -> M -> (
-    if M.?relations then (
-	if not M.cache#?"full gens" then M.cache#"full gens" = generators M | relations M;
-	gb(M.cache#"full gens", opts, SyzygyRows => numgens source generators M))
+    if M.?relations
+    then gb(fullgens M, opts, SyzygyRows => numgens source generators M)
     else gb(generators M, opts))
 gb Matrix := GroebnerBasis => opts -> m -> (
     checkArgGB m;
@@ -419,7 +423,13 @@ groebnerBasis Matrix := opts -> x -> (
 	if gbTrace > 0 then << "-- computing mgb " << opts.Strategy << " " << mgbopts << endl;
 	-- use engineMGB
 	generators forceGB engineMGB(x, mgbopts))
-    else generators gb x)
+    else (
+        -- if opts.Strategy === "F4" or opts.Strategy === "MGB" then (
+        --     << "warning: cannot use MGB or F4 option with this ring, falling back to default" << endl;
+        --     );
+        generators gb x
+        )
+    )
 
 -----------------------------------------------------------------------------
 -- forceGB

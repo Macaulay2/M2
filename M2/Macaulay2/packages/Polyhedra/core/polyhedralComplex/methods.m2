@@ -1,4 +1,4 @@
--- PURPOSE : Giving the k dimensionial Polyhedra of the Polyhedral Complex
+-- PURPOSE : Giving the k dimensional Polyhedra of the Polyhedral Complex
 --   INPUT : (k,PC)  where 'k' is a positive integer and PC is a PolyhedralComplex 
 --  OUTPUT : a List of Polyhedra
 polyhedra = method(TypicalValue => List)

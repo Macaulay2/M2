@@ -15,11 +15,10 @@ linSpace Fan := F -> linealitySpace F
 isPointed Fan := F -> all(values getProperty(F, honestMaxObjects), c->isPointed c)
 
 
+-- PURPOSE : Checks if the input is smooth
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
-isSmooth Fan := F -> (
-   getProperty(F, smooth)
-)
+isSmooth Fan := {} >> o -> F -> getProperty(F, smooth)
 
 
 -- PURPOSE : Computing the subfan of all smooth cones of the Fan
@@ -39,7 +38,7 @@ smoothSubfan Fan := F -> (
 isPolytopal = method(TypicalValue => Boolean)
 isPolytopal Fan := F -> getProperty(F, polytopal)
 
--- PURPOSE : Giving the k dimensionial Cones of the Fan
+-- PURPOSE : Giving the k dimensional Cones of the Fan
 --   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
 --  OUTPUT : a List of Cones
 cones = method(TypicalValue => List)

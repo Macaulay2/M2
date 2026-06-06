@@ -7,8 +7,6 @@ document {
      Headline => "variables",
      }
 
-undocumented {(vars,QuotientRing)}
-
 document { 
      Key => {(vars,Ring)},
      Headline => "row matrix of the variables",     
@@ -34,12 +32,12 @@ document {
      }
 
 document { 
-     Key => {(vars, GeneralOrderedMonoid)},
-     Headline => "row matrix of the variables",     
+     Key => {(vars, Monoid)},
+     Headline => "list of variables in a monoid",
      Usage => "vars M",
      Inputs => { "R" },
      Outputs => { List => { "a list of the generators of ", TT "M"} },
-     "The result is the same as that provided by ", TO (generators,GeneralOrderedMonoid), ".",
+     "The result is the same as that provided by ", TO (generators, Monoid), ".",
      EXAMPLE lines ///
      	  M = monoid[x,y,z]
 	  vars M

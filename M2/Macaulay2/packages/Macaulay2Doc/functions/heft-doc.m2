@@ -2,9 +2,6 @@
 --- author(s): 
 --- notes: heft is defined in hilbert.m2
 
--- This is to be deprecated
-undocumented (heft, Module)
-
 doc ///
 Node
   Key
@@ -88,6 +85,7 @@ Node
      findHeft
     (findHeft, List)
     [findHeft, DegreeRank]
+    [findHeft, DegreeGroup]
   Headline
     find a heft vector for a list of degrees
   Usage

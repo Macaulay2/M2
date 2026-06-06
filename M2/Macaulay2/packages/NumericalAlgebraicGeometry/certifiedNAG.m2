@@ -15,7 +15,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      if not(n == #T+1 
 	  -- and all(T, isHomogeneous) and all(S, isHomogeneous) -- bug in isHomogeneous!!!
 	  ) 
-     then error "expected n equations in in n+1 variables";
+     then error "expected n equations in n+1 variables";
      deg := T/first@@degree;
      if S/first@@degree != deg then error "degrees of start and target systems do not match";
      

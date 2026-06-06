@@ -13,6 +13,16 @@ assert(basis(0, 1, R) == matrix{{1, a, b}})
 assert(basis(0, 2, R) == matrix{{1, a, a^2, a*b, b, b^2}})
 assert(basis(0, 1, R) == matrix{{1, a, b}})
 
+-- c.f. examples "part(List,Complex)"
+R = QQ[a..d]
+M = coker matrix {{a*b, a*c, b*c, a*d}}
+N = image map(R^{4:-2}, , {{-c, -c, 0, -d}, {b, 0, -d, 0}, {0, a, 0, 0}, {0, 0, c, b}})
+P = image map(R^{4:-3}, , {{d}, {0}, {-c}, {b}})
+assert(basis(4, map(R^0, M, 0)) == 0)
+assert(basis(4, map(M,   N, 0)) == 0)
+assert(basis(4, map(N,   P, 0)) == 0)
+assert(basis(4, map(P, R^0, 0)) == 0)
+
 -- partial multidegrees
 -- see https://github.com/Macaulay2/M2/pull/2056
 assert(basis({3}, A = ZZ/101[a..d, Degrees=>{2:{1,2},2:{0,1}}]) == matrix"a3,a2b,ab2,b3")
@@ -47,6 +57,11 @@ assert(basis(0, R) == gens R^1) -- ignores degree 0 vars
 assert try (basis(0, R, Variables => {0}); false) else true
 assert(basis(1, R) == 0)
 
+S = ZZ/101[s,t]
+R = S[a..d]
+assert(basis({0,1}, R) == sub(vars S, R))
+assert(basis({1,0}, R) == vars R)
+
 -- FIXME: these are also broken
 R = ZZ/101[a,b, Degrees => {0,1}]
 basis(1, R)
@@ -59,6 +74,12 @@ assert(basis(0, A = ZZ/101[a, Degrees => {0}]) == gens A^1)
 -- this is finite over the field, so we include all vars
 assert(basis(0, A = ZZ/101[a, Degrees => {0}]/ideal(a^3)) == matrix"1,a,a2")
 assert(basis A == matrix"1,a,a2")
+assert(basis id_(A^1) == id_(image basis A))
+assert(basis map(A,A) == id_(image basis A))
+
+A = quotient ideal conwayPolynomial(2, 3)
+B = image basis A
+assert(basis map(A, A, {a^2}) == map(B, B, {{1, 0, 0}, {0, 0, 1}, {0, 1, 1}}))
 
 -- https://github.com/Macaulay2/M2/issues/1312
 R = QQ[]
@@ -110,3 +131,16 @@ assert(basis(2, R) == matrix"a2,b")
 -- FIXME: assert(basis(2, R, Truncate => true) == matrix "b,a2,c")
 assert(basis(2, R) == matrix"a2,b")
 
+-- tests for basis of ring maps
+R = ZZ/32003[s,t][a..d]
+f = map(A := coefficientRing R, R, DegreeMap => d -> take(d, - degreeLength A))
+assert(entries basis(({2}, {0,2}), f) == entries id_(ZZ^3))
+
+f = map(QQ[s,t], QQ[w,x,y,z], matrix"s3,s2t,st2,t3")
+b = basis((6, 2), f)
+-- FIXME: this is very non-minimal, but ker b doesn't work if f is homogeneous ...
+K = image map(source b, , gens ker b)
+-- FIXME: why isn't ker b a submodule of source b already?
+-- assert isSubset(ker b, source b)
+assert isSubset(K, source b)
+assert(ker f == K)

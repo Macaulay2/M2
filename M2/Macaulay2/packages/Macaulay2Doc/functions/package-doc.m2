@@ -2,6 +2,8 @@
 --- author(s): Mahrud
 --- notes: functions below are all defined in packages.m2
 
+undocumented (newPackage, Sequence)
+
 doc ///
 Node
   Key
@@ -16,6 +18,7 @@ Node
       :Available packages:
         "packages provided with Macaulay2"
         :The directory containing the packages is @HREF { currentLayout#"packages", currentLayout#"packages" }@
+	:In addition, there are two meta-packages: @TO "Macaulay2Doc::Core"@ and @TO "Macaulay2Doc::User"@.
 
       :Functions useful when @TO "using packages"@:
         needsPackage
@@ -31,7 +34,7 @@ Node
         exportMutable
         beginDocumentation
         document
-        TEST
+        symbol TEST
 
       :Functions useful when debugging a package:
         "debugging"
@@ -434,7 +437,6 @@ Node
     [installPackage, MakeHTML]
     [installPackage, MakeInfo]
     [installPackage, MakePDF]
-    [installPackage, MakeLinks]
     [installPackage, RemakeAllDocumentation]
     [installPackage, RerunExamples]
     [installPackage, RunExamples]
@@ -454,7 +456,7 @@ Node
       if true, then do not give the @TT "-q"@ option to the Macaulay2 executable when running examples, thereby
       allowing it to load the user's @TO "initialization file"@, allowing it to load packages previously installed
       in the user's @TO2 {"applicationDirectory", "application directory"}@, and allowing packages it loads to read
-      their configuration files from the the user's @TO2{"applicationDirectory", "application directory"}@.
+      their configuration files from the user's @TO2{"applicationDirectory", "application directory"}@.
       If false, then do give the option. If @TO "null"@, then propagate the option from the current @TO "commandLine"@,
       if one occurs there.
     DebuggingMode=>Boolean
@@ -481,8 +483,6 @@ Node
       the installation prefix for installation of the files of the package, in case encapsulation is not enabled,
       or for installation of the links to the files, in case encapsulation is enabled. The default value is the
       subdirectory named @TT "local"@ of the user's @TO "application directory"@.
-    MakeLinks=>Boolean
-      whether to make links to the files after installing them, in case encapsulation is enabled
     RemakeAllDocumentation=>Boolean
       whether to regenerate all of the help pages for this package. The default action is to rebuild only the html
       pages of the documentation entries that have been changed since the last time the package was installed.

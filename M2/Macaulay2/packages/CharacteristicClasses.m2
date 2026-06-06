@@ -2,30 +2,30 @@
 
 newPackage(
      	"CharacteristicClasses",
-	Version =>"2.0",
-    	Date => "October 24, 2015",
+	Version =>"2.1",
+    	Date => "June 24, 2025",
     	Authors => {{Name => "Martin Helmer", 
-		  Email => "martin.helmer@berkeley.edu", 
-		  HomePage => "https://math.berkeley.edu/~mhelmer/"},
+		  Email => "martin.helmer@swansea.ac.uk", 
+		  HomePage => "http://martin-helmer.com/"},
 	      {Name => "Christine Jost", 
 		  Email => "christine.e.jost@gmail.com"}},
-    	Headline => "CSM classes, Segre classes and the Euler characteristic for some subschemes of smooth complete toric varieties",
+    	Headline => "CSM classes, Segre classes and the Euler characteristic",
 	Keywords => {"Intersection Theory"},
     	DebuggingMode => false,
 	PackageImports => { "Elimination", "PrimaryDecomposition", "NormalToricVarieties"},
 	Configuration => { "pathToBertini" => ""},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Computing characteristic classes and the topological Euler characteristic of complex projective schemes",
 	     "acceptance date" => "5 June 2015",
-	     "published article URI" => "http://msp.org/jsag/2015/7-1/p04.xhtml",
-	     "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x04-CharacteristicClasses.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/CharacteristicClasses.m2",
+	     "published article URI" => "https://msp.org/jsag/2015/7-1/p04.xhtml",
+	     "published article DOI" => "10.2140/jsag.2015.7.31",
+	     "published code URI" => "https://msp.org/jsag/2015/7-1/jsag-v7-n1-x04-CharacteristicClasses.m2",
 	     "release at publication" => "82375d8c668f3acf1d825b8ba991081769fba742",	    -- git commit number in hex
 	     "version at publication" => "1.1",
 	     "volume number" => "7",
-	     "volume URI" => "http://msp.org/jsag/2015/7-1/"
+	     "volume URI" => "https://msp.org/jsag/2015/7-1/"
 	     }
     	);
     
@@ -59,8 +59,45 @@ export{"Segre",
    "ProjectiveDegree",
    "PnResidual",
    "bertini",
-   "bertiniCheck"
+   "bertiniCheck", 
+   "EulerAffine"
    }
+
+euleraffinehyp := (eqn) -> (
+    S1:=ring eqn;
+    n:=numgens(S1)-1;
+    enleqn:=(homogenize(eqn,(entries vars S1)_0_0)*(entries vars S1)_0_0);
+    cuteqn:=(substitute(enleqn,{(entries vars S1)_0_0=>0}));
+    if enleqn==0 then enleqn=0_S1;
+    if cuteqn==0 then cuteqn=0_S1;
+    enI:=ideal(enleqn);
+    cuI:=ideal(cuteqn);
+    tem1:=CSM(enI);
+    A:=ring tem1;
+    tem2:=CSM(A,cuI);
+    tem:=tem1-tem2;
+    return (tem_(A_0^n))+1;
+);
+
+EulerAffine=method(TypicalValue=>ZZ);
+EulerAffine (Ideal) := idea -> (
+    S:=ring idea;
+    if not (isPolynomialRing S) then error("Sorry, expecting an ideal defined over a polynomial ring"); 
+    kk:=coefficientRing S;
+    n:=numgens S;
+    z:=getSymbol "zzz";
+    S=kk[z_0..z_n];
+    schem11:=(map(S,ring idea,{z_1..z_n})) idea;
+    r:=numgens schem11;
+    gschem:=(entries gens schem11)_0;
+    sset:=new MutableList from {0..r};
+    psum:=new MutableList from {0..r};
+    for s from 1 to r do(
+	sset#s=apply(subsets(gschem,s),eq->euleraffinehyp(product(eq)));
+	psum#s=sum(sset#s)
+	);
+    return sum(1..r,s->-(-1)^s*psum#s);
+);
 
 MultiProjCoordRing=method(TypicalValue=>Ring);
 MultiProjCoordRing (Symbol,List):=(x,l)->(
@@ -116,7 +153,7 @@ ClassInToricChowRing (QuotientRing,RingElement) :=(A,f)->(
 --
 --Input: An Ideal I, of if the ambient spaces is a Toric variety
 --an ideal and a NormalToricVariety. Optionally the 
---associated chow ring, or toric chow ring may be input so 
+--associated Chow ring, or toric Chow ring may be input so
 --that the output is returned in this ring
 --
 --Output: If V=V(I) (in a applicable toric variety X) is smooth 
@@ -287,7 +324,7 @@ ToricChowRing NormalToricVariety:=TorVar->(
          A=C/substitute(SR+J,C);
 	 )
      else (error "Calculations for subschemes of singular toric varieties are not implemented yet";return 0;);
-    --Generators (as a ring) of the quotient ring representation of the chow ring correspond to 
+    --Generators (as a ring) of the quotient ring representation of the Chow ring correspond to 
     --the divisors associated to the rays in the fan Theorem 12.5.3. Cox, Little, Schenck and 
     --comments above
     return A;
@@ -436,7 +473,7 @@ CSM (QuotientRing, NormalToricVariety) :=opts->(A,TorVar)->(
     prodj:=0;
     --The following implements the method described 
     --in Barthel, Brasselet, and Fieseler.
-    --Lemma 12.5.2 of Cox, Little, Schenck is used to find the chow ring class of the 
+    --Lemma 12.5.2 of Cox, Little, Schenck is used to find the Chow ring class of the 
     --orbit closure from divisors
     --if the toric variety is smooth the multiplicity is 1. 
     Ssets:=0;
@@ -553,7 +590,7 @@ CSM (QuotientRing,NormalToricVariety,Ideal,MutableHashTable):=opts->(ChRing,TorV
 --
 --Input: An Ideal I, or if the ambient spaces is a Toric variety
 --an ideal and a NormalToricVariety. Optionally the 
---associated chow ring, or toric chow ring may be input so 
+--associated Chow ring, or toric Chow ring may be input so
 --that the output is returned in this ring
 --
 --Output: If V=V(I) (in a applicable toric variety X) is smooth 
@@ -582,7 +619,7 @@ Segre (NormalToricVariety, Ideal):= opts->(TorVar,I)->(
     );
 
 Segre (QuotientRing,NormalToricVariety, Ideal):= opts->(ChRing,TorVar,I)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     A:=ChRing;
     R:=ring I;
     irel:=ideal TorVar;
@@ -703,13 +740,13 @@ multr=(RayMatrix,r)->(
     )
 
 SegreMainToric = (ChRing,TorVar,I,PDl,AlphNList,Output)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     alpha:=AlphNList_0;
     n:=AlphNList_1;
     return SegreMain(ChRing,I,PDl,{alpha,n,Output});
     );
 SegreMainToric2 = (ChRing,TorVar,I,PDl,Output)->(
-    if not isMultiHomogeneous(I) then error"Reqires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
+    if not isMultiHomogeneous(I) then error"Requires Homogeneous Input, try saturating by the irrelevant ideal"<<endl;
     irel:=ideal TorVar;
     n:=dim(TorVar);
     A:=ChRing;
@@ -1522,7 +1559,7 @@ checkUserInput = (I,CompMethod) -> (
 
 
 -- The function prepare does two things to prepare the later computations. At first, it trims the ideal I, taking away
--- nonnecessary generators. Then it creates a ring only used internally and an ideal in it isomorphic to I and returns this ideal. This 
+-- unnecessary generators. Then it creates a ring only used internally and an ideal in it isomorphic to I and returns this ideal. This 
 -- step is done to avoid possible later conflicts in the choice of variables.
 prepare = I -> (
 
@@ -1622,9 +1659,9 @@ doc ///
                symbolically, using Gr&ouml;bner bases, and numerically, using the regenerative cascade implemented in Bertini. The regenerative
 	       cascade is described in [3].   
 	       
-	       All algorithms are probabilistic but will succeed with high probability. In the case of the symbolic implementation of the ProjecvtiveDegree method 
+	       All algorithms are probabilistic but will succeed with high probability. In the case of the symbolic implementation of the ProjectiveDegree method 
                practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient, i.e.
-               using the finite field kk=ZZ/25073 the experiential chance of failure with the ProjectiveDegree algorithm on a variety of examples
+               using the finite field kk=ZZ/25073 the experimental chance of failure with the ProjectiveDegree algorithm on a variety of examples
                was less than 1/2000. Using kk=ZZ/32749 resulted in no failures in over 10000 attempts of several different examples. 
                Read more under @TO "probabilistic algorithm"@.
 	       
@@ -2058,7 +2095,12 @@ doc ///
 	  (CSM, QuotientRing, NormalToricVariety,Ideal,MutableHashTable)
 	  (CSM, Ideal, Symbol)
 	  (CSM,NormalToricVariety)
-          (CSM,QuotientRing,NormalToricVariety)	  
+	  (CSM,QuotientRing,NormalToricVariety)
+	  [CSM, CompMethod]
+	  [CSM, Method]
+	  [CSM, CheckSmooth]
+	  [CSM, InputIsSmooth]
+	  [CSM, IndsOfSmooth]
      Headline
      	  The Chern-Schwartz-MacPherson class
      Usage
@@ -2103,7 +2145,7 @@ doc ///
 	  Output=>"ChowRingElement"
 	    the type of output to return, "ChowRingElement" is default and returns a RingElement in the Chow ring of the appropriate ambient space 
 	  Output=>"HashForm"
-	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomails in the corresponding set of generators is stored, there is no extra cost to using this option
+	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomials in the corresponding set of generators is stored, there is no extra cost to using this option
           IndsOfSmooth=>
 	    this option may speed up the run time when using the DirectCompleteInt Method if the user knows additional information about the input ideal, see @TO IndsOfSmooth@ 
      Outputs
@@ -2212,7 +2254,7 @@ doc ///
 	  Output=>
 	    the type of output to return the default output is an integer
 	  Output=>"HashForm"
-	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form  \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomails in the corresponding set of generators is stored, there is no extra cost to using this option
+	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form  \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomials in the corresponding set of generators is stored, there is no extra cost to using this option
           IndsOfSmooth=>
 	    this option may speed up the run time when using the DirectCompleteInt Method if the user knows additional information about the input ideal, see @TO IndsOfSmooth@
      Outputs
@@ -2319,8 +2361,8 @@ doc ///
                computing the correct class. 
                Skeptical users should repeat calculations several times to increase the probability of computing the correct class.
 
-               In the case of the symbolic implementation of the ProjecvtiveDegree method practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient to expect a correct result with high probability, i.e.
-               using the finite field kk=ZZ/25073 the experiential chance of failure with the ProjectiveDegree algorithm on a variety of examples
+               In the case of the symbolic implementation of the ProjectiveDegree method practical experience and algorithm testing indicate that a finite field with over 25000 elements is more than sufficient to expect a correct result with high probability, i.e.
+               using the finite field kk=ZZ/25073 the experimental chance of failure with the ProjectiveDegree algorithm on a variety of examples
                was less than 1/2000. Using the finite field kk=ZZ/32749 resulted in no failures in over 10000 attempts of several different examples. 
 	       
 	       We illustrate the probabilistic behaviour with an example where the chosen random seed leads to a wrong result in the first calculation. 
@@ -2413,7 +2455,7 @@ doc ///
 	       peek eu
 	       
 	  Text  
-	       The MutableHashTable returned with the option Output=>HashForm contains different information depending on the method with which it is used. Additionally if the option @TO InputIsSmooth@ is used then the hash table returned by the methods Euler and CSM will be the same as that returned by Chern. When using the @TO CSM@  command in the default configurations (that is @TO Method@=>InclusionExclusion, @TO CompMethod@=>ProjectiveDegree) there is the additional option to set Output=>HashFormXL. This returns all the usual information that Output=>HashForm would for this configuration with the addition of the projective degrees and Segre classes of singularity subschemes generated by the hypersurfaces considered in the inclusion/exclusion procedure, that is in finding the CSM class of all hypersurfaces generated by taking a product of some subsets of generators of the input ideal. Note that, since the CSM class of a subscheme equals the CSM class of its reduced scheme, or equailiently for us the CSM class corresponding to an ideal I equals the CSM class of the radical of I, then internally we always work with radical ideals (for efficiency reasons). Hence the projective degrees and Segre classes computed internally will be those of the radical of an ideal defined by a polynomial which is a product of some subset of the generators. We illustrate this with an example below.
+	       The MutableHashTable returned with the option Output=>HashForm contains different information depending on the method with which it is used. Additionally if the option @TO InputIsSmooth@ is used then the hash table returned by the methods Euler and CSM will be the same as that returned by Chern. When using the @TO CSM@  command in the default configurations (that is @TO Method@=>InclusionExclusion, @TO CompMethod@=>ProjectiveDegree) there is the additional option to set Output=>HashFormXL. This returns all the usual information that Output=>HashForm would for this configuration with the addition of the projective degrees and Segre classes of singularity subschemes generated by the hypersurfaces considered in the inclusion/exclusion procedure, that is in finding the CSM class of all hypersurfaces generated by taking a product of some subsets of generators of the input ideal. Note that, since the CSM class of a subscheme equals the CSM class of its reduced scheme, or equivalently for us the CSM class corresponding to an ideal I equals the CSM class of the radical of I, then internally we always work with radical ideals (for efficiency reasons). Hence the projective degrees and Segre classes computed internally will be those of the radical of an ideal defined by a polynomial which is a product of some subset of the generators. We illustrate this with an example below.
           Example
 	      csmXLhash=CSM(A,I,Output=>HashFormXL)
 	      peek csmXLhash
@@ -2469,6 +2511,36 @@ doc ///
                time CSM(U,CheckSmooth=>false)
 	       
 ///
+
+doc ///
+     Key
+     	  EulerAffine
+	  (EulerAffine,Ideal)
+     Headline
+     	  The Euler Characteristic of an affine variety. 
+     Usage
+     	  EulerAffine I
+     Inputs
+     	  I:Ideal
+	    an ideal in a polynomial ring over a field defining an affine variety.
+     Outputs
+     	  :RingElement
+	   the Euler characteristic 
+Description
+     	  Text
+	       This command computes the Euler characteristic of a complex affine variety.  
+	  Example
+	       kk=ZZ/32749;
+	       R=kk[x_1..x_3]
+	       I=ideal(x_1^2+x_2^2+x_3^2-1)
+	       time EulerAffine I
+	  Text
+	      Observe that the algorithm is a probabilistic algorithm and may give a wrong answer with a small but nonzero probability. Read more under 
+	       @TO "probabilistic algorithm"@.
+///
+
+
+
 --------------------------------------------------------
 -- Tests
 --------------------------------------------------------
@@ -2540,6 +2612,19 @@ TEST ///
     assert(Euler(csmH#"CSM")==7);
     assert(csmH#{0}==Chern(A,ideal(I_0)));
     assert(seg==(V//(1+V)));    
+///
+
+TEST ///
+-*
+   restart
+   needsPackage "CharacteristicClasses"
+   installPackage "CharacteristicClasses"
+*-
+         kk=ZZ/32749;
+	 R=kk[x_1..x_3];
+	 I=ideal(x_1^2+x_2^2+x_3^2-1);
+	 eu=EulerAffine I;
+	 assert(eu==2);
 ///
 -------------------------------------------------------
 -- References

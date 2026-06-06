@@ -52,20 +52,13 @@ testMutableMatrices kk
 kk = ZZp 1049599
 kk = ZZp 1073742851
 
--- Question: how do we get 
---kk = GF (1073742851, 1, Strategy=>"Givaro")
---testMutableMatrices kk
-
---kk = GF (1049599, 1, Strategy=>"CompleteGivaro")
---testMutableMatrices kk
-
 kk = GF(2,4,Strategy=>"Old")
-testMutableMatrices kk -- fails, since rank is not yet defined for this type of ring
-
-kk = GF(2,4,Strategy=>"Givaro")
 testMutableMatrices kk
 
-kk = GF(2,4,Strategy=>"CompleteGivaro")
+kk = GF(2,4,Strategy=>"Flint")
+testMutableMatrices kk
+
+kk = GF(2,4,Strategy=>"FlintBig")
 testMutableMatrices kk
 
 kk = GF(2,12,Strategy=>"New")

@@ -2,7 +2,10 @@
 
 needs "remember.m2" -- for memoize
 
-subsets(ZZ,ZZ) := List => (n,j) -> (
+-----------------------------------------------------------------------------
+
+subsets = method(TypicalValue => List)
+subsets(ZZ, ZZ) := (n, j) -> (
      if n < 0 then error "expected a nonnegative number";
      if j < 0 then return {};
      if j == 0 then return {{}};
@@ -14,24 +17,27 @@ subsets(ZZ,ZZ) := List => (n,j) -> (
      scan(j-2, i -> x = join apply(x, s -> apply(0 .. s#0 - 1, i -> prepend(i,s))));
      toList apply(x,toList))
 
-subsets(List,ZZ) := List => (s,j) -> apply(subsets(#s,j),v->apply(v,i->s#i))
-subsets(Sequence,ZZ) := List => (s,j) -> subsets(toList s,j)
-subsets(Set,ZZ) := List => (s,j) -> apply(subsets(toList s, j), set)
-subsets Set := List => x -> apply(subsets toList x, set)
-subsets List := List => x -> (
+subsets(Set,      ZZ) := (s, j) -> apply(subsets(toList s, j), set)
+subsets(List,     ZZ) := (s, j) -> apply(subsets(#s, j), v -> s_v)
+subsets(Sequence, ZZ) := (s, j) -> subsets(toList s, j)
+
+subsets ZZ   := n -> subsets toList(0 ..< n)
+subsets Set  := x -> apply(subsets toList x, set)
+subsets List := x -> (
      if #x === 0 then {x}
      else (
 	  a := x#-1;
 	  x = drop(x,-1);
 	  s := subsets x;
 	  join(s,apply(s,y->append(y,a)))))
-subsets ZZ := List => n -> (
-    if n < 0 then error "expected a nonnegative number";
-    subsets toList (0 .. n-1))
+
+-----------------------------------------------------------------------------
 
 Partition = new Type of BasicList
 Partition _ ZZ := (p,i) -> p#i
-partitions(ZZ,ZZ) := List => memoize (
+
+partitions = method(TypicalValue => List)
+partitions(ZZ, ZZ) := memoize(
      (n,k) -> (
      	  if k > n then k=n;
 	  if n < 0 then {}
@@ -41,7 +47,20 @@ partitions(ZZ,ZZ) := List => memoize (
      	  else join( 
 	       apply(partitions(n-k,k),i -> prepend(k,i)), 
 	       partitions(n,k-1))))
-partitions ZZ := List => (n) -> partitions(n,n)
+partitions ZZ := n -> partitions(n, n)
+
+compositions = method(TypicalValue => List)
+compositions(ZZ, ZZ) := memoize(
+    (n, k) -> (
+	if k  < 0
+	or n == 0 then {} else
+	if k == 0 then { toList(n:0) }
+	else join(
+	    nz1 := toList(n-1:0) | {1};
+	    apply(compositions(n - 1, k), s -> s | {0}),
+	    apply(compositions(n, k - 1), s -> s + nz1))
+    ))
+compositions ZZ := n -> compositions(n, n)
 
 conjugate Partition := Partition => (lambda) -> (
      if #lambda === 0 then new Partition from {} else (

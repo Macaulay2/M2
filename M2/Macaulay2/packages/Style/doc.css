@@ -78,6 +78,32 @@ dl.element {
   margin: 0px;
 }
 
+div.indent {
+    border-left:3px solid;
+    padding:10px;
+}
+
+span.tt {
+  font-family: monospace;
+}
+
+kbd {
+  display: inline-block;
+  font-family: monospace;
+  padding: 0.25rem;
+  line-height: 0.8em;
+  vertical-align: middle;
+  background-color: #f6f8fa;
+  border: solid 0px #afb8c133;
+  border-bottom-color: #afb8c133;
+  border-radius: 6px;
+  box-shadow: inset 0 -1px 0 #afb8c133;
+}
+
+div#buttons {display: flex;}
+div#buttons div {flex-grow: 1; align-self: flex-end;}
+.right {text-align: right;}
+
 /*
 
  Local Variables:

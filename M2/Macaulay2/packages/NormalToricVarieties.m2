@@ -26,8 +26,8 @@ newPackage(
         HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
     Headline => "routines for working with normal toric varieties and related objects",
     Keywords => {"Toric Geometry"},
-    PackageExports => {"Polyhedra", "Schubert2"},
-    PackageImports => {"FourierMotzkin","Normaliz","LLLBases"},
+    PackageExports => {"Polyhedra", "Schubert2", "Varieties","Truncations"},
+    PackageImports => {"FourierMotzkin","Normaliz","LLLBases","Complexes"},
     DebuggingMode => false
     )
 
@@ -56,17 +56,14 @@ export {
     "isFano", 
     "isFibration",
     "isNef",  
-    "isProjective",
     "isProper", 
     "isQQCartier", 
     "kleinschmidt",
     "makeSimplicial",
     "makeSmooth",
-    "nefGenerators",  
     "normalToricVariety",  
     "orbits",   
     "picardGroup",  
-    "pullback",  
     "toricProjectiveSpace",
     "smallAmpleToricDivisor",  
     "smoothFanoToricVariety",

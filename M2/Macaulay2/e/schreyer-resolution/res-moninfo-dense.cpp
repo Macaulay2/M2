@@ -11,6 +11,8 @@ ResMonoidDense::ResMonoidDense(int nvars0,
                                const std::vector<int>& weightvecs,
                                const MonomialOrderingType moType)
 {
+  (void) weightvecs;
+  (void) moType;
   nvars = nvars0;
   hashfcn = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[nvars]);
   for (int i = 0; i < nvars; i++) hashfcn[i] = rand();
@@ -21,8 +23,8 @@ ResMonoidDense::ResMonoidDense(int nvars0,
   ncalls_compare = 0;
   ncalls_mult = 0;
   ncalls_get_component = 0;
-  ncalls_from_exponent_vector = 0;
-  ncalls_to_exponent_vector = 0;
+  ncalls_from_expvector = 0;
+  ncalls_to_expvector = 0;
   ncalls_to_varpower = 0;
   ncalls_from_varpower = 0;
   ncalls_is_equal = 0;
@@ -80,8 +82,8 @@ void ResMonoidDense::show() const
   fprintf(stderr, "  #calls compare = %lu\n", ncalls_compare);
   fprintf(stderr, "  #calls mult    = %lu\n", ncalls_mult);
   fprintf(stderr, "  #calls get comp= %lu\n", ncalls_get_component);
-  fprintf(stderr, "  #calls fromexp = %lu\n", ncalls_from_exponent_vector);
-  fprintf(stderr, "  #calls toexp   = %lu\n", ncalls_to_exponent_vector);
+  fprintf(stderr, "  #calls fromexp = %lu\n", ncalls_from_expvector);
+  fprintf(stderr, "  #calls toexp   = %lu\n", ncalls_to_expvector);
   fprintf(stderr, "  #calls fromvp  = %lu\n", ncalls_from_varpower);
   fprintf(stderr, "  #calls tovp    = %lu\n", ncalls_to_varpower);
   fprintf(stderr, "  #calls is equal= %lu\n", ncalls_is_equal);

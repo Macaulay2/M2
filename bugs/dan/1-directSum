@@ -1,3 +1,0 @@
-idea from David: make
-
-     directSum(x:List,f:Function) be equivalent to directSum apply(x,f)

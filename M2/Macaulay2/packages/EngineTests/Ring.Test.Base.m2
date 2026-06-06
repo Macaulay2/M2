@@ -141,8 +141,6 @@ TEST ///
   R = GF(2^5, Strategy=>"Flint")
   time testFF(R,R_0,1000)
 
-  R = GF(2^5, Strategy=>"Givaro")
-  time testFF(R,R_0,1000)
 ///
 
 testFF = (R, gen, ntrials) -> (

@@ -3,8 +3,8 @@
 
 newPackage(
 	"WeylGroups",
-	Version => "0.5.2",
-	Date => "November 1, 2021",
+	Version => "0.5.3",
+	Date => "October 15, 2022",
 	Authors => {
 		{Name => "Baptiste Calmès",
 		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
@@ -18,26 +18,30 @@ newPackage(
 
 -- Put here the name of functions that should be visible to users
 export{
-"RootSystem", 
-"cartanMatrix", 
-"rootSystem", "rootSystemA", "rootSystemB", "rootSystemC", "rootSystemD", "rootSystemE", "rootSystemF4", "rootSystemG2", 
-"Weight", 
-"weight", 
-"Root", 
+"RootSystem",
+"cartanMatrix",
+"rootSystem", "rootSystemA", "rootSystemB", "rootSystemC", "rootSystemD", "rootSystemE", "rootSystemF4", "rootSystemG2",
+"Weight",
+"weight",
+"Root",
 "isPositiveRoot", "isRoot", "addRoots",
-"halfSumOfRoots", "reflect", "simpleRoot", "rootCoefficients", 
-"WeylGroupElement", 
-"reduce", "reducedDecomposition", "isReduced", "coxeterLength", "longestWeylGroupElement", "positiveRoots", "reflection", "scalarProduct", "eval", "isReflection", "whoseReflection", 
-"Parabolic", "WeylGroupLeftCoset", "WeylGroupRightCoset", "WeylGroupDoubleCoset", 
-"parabolic", "minimalRepresentative", "isMinimalRepresentative", 
-"DynkinDiagram", "DynkinType", 
-"dynkinDiagram", "connectedComponents", "endVertices", "dynkinType", "dynkinExponents",
-"poincareSeries",
-"HasseDiagram", "HasseGraph", 
+"numberOfPositiveRoots",
+"halfSumOfRoots", "reflect", "simpleRoot", "rootCoefficients",
+"WeylGroupElement",
+"reduce", "reducedDecomposition", "isReduced", "coxeterLength", "longestWeylGroupElement",
+"underBruhat", "aboveBruhat", "isLtBruhat", "intervalBruhat",
+"positiveRoots", "reflection", "scalarProduct", "eval", "isReflection", "whoseReflection",
+"listWeylGroupElements", "neutralWeylGroupElement",
+"Parabolic", "parabolic",
+"WeylGroupLeftCoset", "WeylGroupRightCoset", "WeylGroupDoubleCoset",
+"minimalRepresentative", "isMinimalRepresentative",
+"DynkinDiagram",
+"dynkinDiagram", "connectedComponents", "endVertices", "dynkinType",
+"DynkinType",
+"dynkinExponents",
+"HasseDiagram", "HasseGraph",
 "hasseDiagramToGraph", "hasseGraphToPicture", "storeHasseGraph", "loadHasseGraph",
-"underBruhat", "aboveBruhat",
-"isLtBruhat", "intervalBruhat",
-"numberOfPositiveRoots", "listWeylGroupElements", "neutralWeylGroupElement"
+"poincareSeries"
 }
 
 -- Variables that can be modified by the user
@@ -443,6 +447,9 @@ Weight + Weight := (p1,p2) -> new Weight from ((new Vector from p1)+(new Vector 
 
 --redefining difference of two weights
 Weight - Weight := (p1,p2) -> new Weight from ((new Vector from p1)-(new Vector from p2))
+
+--defining scalar times weight
+ZZ * Weight := (n,p) -> new Weight from {n*p#0}
 
 --defining opposite to a weight
 - Weight := (p) -> (-1)*p
@@ -1535,6 +1542,19 @@ doc ///
 			This package provides functions to compute in Weyl groups of root systems. In particular, it can compute intervals for the Bruhat order.
 		Text	
 			Here is a quick @HREF(currentLayout#"packages" | "WeylGroups/tutorial.html","tutorial")@ on how to use it.
+	Subnodes
+		RootSystem
+		Weight
+		Root
+		WeylGroupElement
+		Parabolic
+		WeylGroupLeftCoset
+		WeylGroupRightCoset
+		WeylGroupDoubleCoset
+		DynkinDiagram
+		DynkinType
+		HasseDiagram
+		HasseGraph
 ///
 
 doc ///
@@ -1542,6 +1562,18 @@ doc ///
 		RootSystem
 	Headline
 		the class of all root systems
+	Subnodes
+		rootSystem
+		cartanMatrix
+		(rank, RootSystem)
+		(rootSystem,DynkinType)
+		rootSystemA
+		rootSystemB
+		rootSystemC
+		rootSystemD
+		rootSystemE
+		(rootSystem,RootSystem,Parabolic)
+		(rootSystem,DynkinDiagram)
 ///
 
 doc ///
@@ -1829,6 +1861,12 @@ doc ///
 	Description
 		Text
 			a weight is represented by an element of ZZ^n, the basis consisting in the fundamental weights
+	Subnodes
+		weight
+		(weight,RootSystem,BasicList)
+		(weight,RootSystem,Vector)
+		isPositiveRoot
+		isRoot
 ///
 
 doc ///
@@ -1887,6 +1925,33 @@ TEST ///
 	p1=weight(R,{1,1,2,3});
 	p2=weight(R,{1,1,-2,3});
 	assert(p1-p2==weight(R,{0,0,4,0}))
+///
+
+doc ///
+	Key
+		(symbol *,ZZ,Weight)
+	Headline
+		the multiple of a weight
+	Usage
+		n * p
+	Inputs
+	        n: ZZ
+		p: Weight
+	Outputs
+		: Weight
+			n times {\tt p}
+	Description
+		Example
+			R=rootSystemA(4)
+			M=cartanMatrix R
+			p=weight(R,M_2)
+			-2*p
+///
+
+TEST ///
+	R=rootSystemA(3);
+	p=weight(R,{1,2,1});
+	assert(2*p==weight(R,{2,4,2}))
 ///
 
 doc ///
@@ -1980,6 +2045,16 @@ doc ///
 	Description
 		Text
 			a root is represented by the respective weight
+	Subnodes
+		addRoots
+		(addRoots, RootSystem, Root, Root)
+		(symbol *, ZZ, Root)
+		halfSumOfRoots
+		simpleRoot
+		(norm, RootSystem, Root)
+		rootCoefficients
+		positiveRoots
+		numberOfPositiveRoots
 ///
 
 doc ///
@@ -2729,6 +2804,21 @@ doc ///
 	Description
 		Text
 			{\tt w} is represented by the list consisting of a root system and {\tt w} applied to the half-sum of positive roots
+	Subnodes
+		reduce
+		reducedDecomposition
+		isReduced
+		coxeterLength
+		longestWeylGroupElement
+		reflection
+		isReflection
+		whoseReflection
+		listWeylGroupElements
+		neutralWeylGroupElement
+		underBruhat
+		aboveBruhat
+		isLtBruhat
+		intervalBruhat
 ///
 
 doc ///
@@ -4275,6 +4365,11 @@ doc ///
 	Description
 		Text
 			A Hasse graph is a Hasse diagram ready for display. It contains labels instead of Weyl group elements and reflections.
+	Subnodes
+		hasseDiagramToGraph
+		hasseGraphToPicture
+		storeHasseGraph
+		loadHasseGraph
 ///
 
 doc ///
@@ -4391,8 +4486,7 @@ TEST ///
 	w2 = reduce(R,{1,2,1,3,2});
 	myInterval=intervalBruhat(P % w1,P % w2);
     G = hasseDiagramToGraph(myInterval, "labels" => "reduced decomposition")
-    -- the following test is dependent on the order chosen
-    -- this test should be changed to check correctness, not the specific order of nodes
+    -- all assertions below are order-independent (row counts, label sets, link triples)
     assert(#G == 5)
     G = toList G;
     assert(G/length == {1,2,3,3,1})
@@ -4403,22 +4497,18 @@ TEST ///
         set{"121", "213", "123"}, 
         set{"21", "23", "12"}, 
         set{"2"}})
-    -- we should check that the links are correct too.
-    -- the following is one possible answer, but it can change.  Why?!
-    -*
-      assert(G#0 == {{"12132", {{"3", 0}, {"2", 1}}}});
-      assert(G#1 == {
-              {"2132", {{"232", 1}, {"2", 2}}}, 
-              {"1213", {{"1", 0}, {"3", 1}, {"232", 2}}}
-              });
-      assert(G#2 == {
-              {"123", {{"3", 0}, {"12321", 2}}}, 
-              {"121", {{"1", 0}, {"2", 1}}}, 
-              {"213", {{"3", 1}, {"1", 2}}}
-              });
-      assert(G#3 == {{"12", {{"121", 0}}}, {"21", {{"1", 0}}}, {"23", {{"3", 0}}}})
-      assert(G#4 == {{"2", {}}})
-      *-
+    -- the links, as an order-independent set of (source, edge, target) label triples
+    -- (this replaces an earlier position-indexed check that depended on node order)
+    triples = set flatten apply(#G - 1, i -> flatten apply(G#i, node ->
+            apply(node#1, link -> {node#0, link#0, (G#(i+1)#(link#1))#0})));
+    assert(triples === set {
+            {"12132","2","1213"}, {"12132","3","2132"},
+            {"1213","1","123"}, {"1213","3","121"}, {"1213","232","213"},
+            {"2132","2","213"}, {"2132","232","121"},
+            {"123","3","12"}, {"123","12321","23"},
+            {"121","1","12"}, {"121","2","21"},
+            {"213","1","23"}, {"213","3","21"},
+            {"12","121","2"}, {"21","1","2"}, {"23","3","2"}})
 ///
 
 doc ///
@@ -4510,6 +4600,89 @@ doc ///
 	SeeAlso	
 		"storeHasseGraph(HasseGraph,String)"
 ///
+
+-- underBruhat: the Weyl group elements covered (just below) a given one in the Bruhat order
+TEST ///
+  R = rootSystemA 3
+  w0 = longestWeylGroupElement R
+  U = underBruhat w0
+  -- type: underBruhat returns a List of {WeylGroupElement, reflection} pairs
+  assert instance(U, List)
+  -- regression: the longest element of A3 covers exactly 3 elements
+  assert(#U == 3)
+  -- property: each covered element has length exactly one less than w0
+  assert all(U, x -> #reducedDecomposition(x#0) == #reducedDecomposition w0 - 1)
+  -- property: each covered element is genuinely below w0 in the Bruhat order
+  assert all(U, x -> isLtBruhat(x#0, w0))
+  -- run: underBruhat also accepts a list of (equal-length) elements
+  assert instance(underBruhat apply(U, x -> x#0), List)
+///
+
+-- aboveBruhat: the Weyl group elements covering (just above) a given one in the Bruhat order
+TEST ///
+  R = rootSystemA 3
+  e = neutralWeylGroupElement R
+  A = aboveBruhat e
+  -- type: aboveBruhat returns a List of {WeylGroupElement, reflection} pairs
+  assert instance(A, List)
+  -- regression: the identity is covered by exactly 3 elements (the simple reflections)
+  assert(#A == 3)
+  -- property: each covering element has length 1
+  assert all(A, x -> #reducedDecomposition(x#0) == 1)
+  -- property: the identity is genuinely below each covering element
+  assert all(A, x -> isLtBruhat(e, x#0))
+  -- run: aboveBruhat also accepts a list of (equal-length) elements
+  assert instance(aboveBruhat apply(A, x -> x#0), List)
+///
+
+-- intervalBruhat: the Bruhat interval [u,v], returned as a HasseDiagram
+TEST ///
+  R = rootSystemA 2
+  u = neutralWeylGroupElement R
+  v = longestWeylGroupElement R
+  H = intervalBruhat(u, v)
+  -- type: the interval is a HasseDiagram
+  assert instance(H, HasseDiagram)
+  -- regression: [e, w0] in A2 is the whole 6-element Weyl group
+  elts = flatten apply(toList H, row -> apply(row, x -> x#0))
+  assert(#elts == 6)
+  -- property: every element of the interval lies between u and v
+  assert all(elts, w -> isLtBruhat(u, w) and isLtBruhat(w, v))
+  -- run: intervalBruhat also accepts left cosets (W/W_P) and right cosets (W_P\W)
+  R3 = rootSystemA 3
+  P = parabolic(R3, set {3})
+  a = reduce(R3, {2})
+  b = reduce(R3, {1,2,1,3,2})
+  assert instance(intervalBruhat(a % P, b % P), HasseDiagram)
+  assert instance(intervalBruhat(P % a, P % b), HasseDiagram)
+  -- error: u and v must live in the same Weyl group
+  assert(try (intervalBruhat(neutralWeylGroupElement R, neutralWeylGroupElement R3); false) else true)
+///
+
+-- storeHasseGraph / loadHasseGraph: round-trip a labelled HasseGraph through a file
+TEST ///
+  R = rootSystemA 3
+  I = intervalBruhat(reduce(R,{2,1,2}), reduce(R,{1,2,1,3,2}))
+  G = hasseDiagramToGraph(I, "labels" => "reduced decomposition")
+  -- type: hasseDiagramToGraph produces a HasseGraph
+  assert instance(G, HasseGraph)
+  -- regression: storing then loading recovers an identical graph
+  f = temporaryFileName()
+  storeHasseGraph(G, f)
+  assert(loadHasseGraph f === G)
+///
+
+-- hasseGraphToPicture: a HasseGraph renders to a Graphics Picture
+TEST ///
+  R = rootSystemA 3
+  I = intervalBruhat(reduce(R,{2,1,2}), reduce(R,{1,2,1,3,2}))
+  G = hasseDiagramToGraph(I, "labels" => "reduced decomposition")
+  -- type: hasseGraphToPicture returns a Picture (from the Graphics package)
+  assert instance(hasseGraphToPicture G, Picture)
+///
+
+
+
 
 
 

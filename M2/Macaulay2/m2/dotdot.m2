@@ -2,7 +2,7 @@
 
 needs "code.m2"
 needs "indeterminates.m2"
-needs "ofcm.m2"
+needs "monoids.m2"
 needs "variables.m2"
 
 -- this code should go after the last method installed for baseName

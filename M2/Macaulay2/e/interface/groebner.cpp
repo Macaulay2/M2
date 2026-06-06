@@ -6,6 +6,7 @@
 #include <limits>
 #include <sstream>
 
+#include "Eschreyer.hpp"
 #include "hilb.hpp"
 #include "comp-gb.hpp"
 #include "comp-res.hpp"
@@ -70,6 +71,18 @@ const RingElement /* or null */ *IM2_Matrix_Hilbert(const Matrix *M)
   }
 }
 
+const Matrix *rawKernelOfGB(const Matrix *M)
+/* Assuming that the columns of G form a GB, this routine computes
+   a Groebner basis of the kernel of these elements, using an
+   appropriate Schreyer order on the source of G. */
+{
+  GBMatrix *N = new GBMatrix(M);
+  GBKernelComputation G(N);
+  G.calc();
+  GBMatrix *syz = G.get_syzygies();
+  return syz->to_matrix();
+}
+
 ///////////////////////////////////////////////////////////////////////////////////
 ///////// The following will be removed once the new code is functional
 /////////////
@@ -90,6 +103,7 @@ Computation /* or null */ *IM2_GB_make(
     {
       test_over_RR_or_CC(m->get_ring());
       clear_emit_size();
+      int numThreads = M2_numTBBThreads; // settable from front end.
       return GBComputation::choose_gb(m,
                                       collect_syz,
                                       n_rows_to_keep,
@@ -98,6 +112,7 @@ Computation /* or null */ *IM2_GB_make(
                                       max_degree,
                                       algorithm,
                                       strategy,
+                                      numThreads,
                                       max_reduction_count);
   } catch (const exc::engine_error& e)
     {
@@ -112,12 +127,20 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
                                         M2_bool use_max_slanted_degree,
                                         int max_slanted_degree,
                                         int algorithm,
-                                        int strategy)
+                                        int strategy,
+                                        M2_bool parallelizeByDegree)
 {
   try
     {
       test_over_RR_or_CC(m->get_ring());
       // Choose the correct computation here.
+      
+      // XXX
+
+      // Grab max number of threads (settable from the front end).
+      int numThreads = M2_numTBBThreads; // settable from front end.
+      //std::cout << "Using numThreads = " << numThreads << std::endl;
+      
       clear_emit_size();
       return ResolutionComputation::choose_res(m,
                                                resolve_cokernel,
@@ -125,7 +148,9 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
                                                use_max_slanted_degree,
                                                max_slanted_degree,
                                                algorithm,
-                                               strategy);
+                                               strategy,
+                                               numThreads,
+                                               parallelizeByDegree);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -143,11 +168,11 @@ Computation /* or null */ *IM2_GB_set_hilbert_function(Computation *C,
       if (G->get_ring()->get_degree_ring() != h->get_ring())
         {
           ERROR("expected Hilbert function hint to be in correct degree ring");
-          return 0;
+          return nullptr;
         }
-      if (G != 0) return G->set_hilbert_function(h);
+      if (G != nullptr) return G->set_hilbert_function(h);
       ERROR("computation type unknown or not implemented");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -281,7 +306,7 @@ Computation /* or null */ *rawStartComputation(Computation *C)
             }
         }
 
-      return error() ? 0 : C;
+      return error() ? nullptr : C;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -300,9 +325,9 @@ const Matrix /* or null */ *rawGBGetMatrix(Computation *C)
     {
       clear_emit_size();
       GBComputation *G = C->cast_to_GBComputation();
-      if (G != 0) return G->get_gb();
+      if (G != nullptr) return G->get_gb();
       ERROR("computation type unknown or not implemented");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -320,9 +345,9 @@ const Matrix /* or null */ *rawGBMinimalGenerators(Computation *C)
     {
       clear_emit_size();
       GBComputation *G = C->cast_to_GBComputation();
-      if (G != 0) return G->get_mingens();
+      if (G != nullptr) return G->get_mingens();
       ERROR("computation type unknown or not implemented");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -341,9 +366,9 @@ const Matrix /* or null */ *rawGBChangeOfBasis(Computation *C)
     {
       clear_emit_size();
       GBComputation *G = C->cast_to_GBComputation();
-      if (G != 0) return G->get_change();
+      if (G != nullptr) return G->get_change();
       ERROR("computation type unknown or not implemented");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -374,9 +399,9 @@ const Matrix /* or null */ *rawGBGetParallelLeadTerms(Computation *C,
     {
       clear_emit_size();
       GBComputation *G = C->cast_to_GBComputation();
-      if (G != 0) return G->get_parallel_lead_terms(w);
+      if (G != nullptr) return G->get_parallel_lead_terms(w);
       ERROR("computation type unknown or not implemented");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -395,9 +420,9 @@ const Matrix /* or null */ *rawGBSyzygies(Computation *C)
     {
       clear_emit_size();
       GBComputation *G = C->cast_to_GBComputation();
-      if (G != 0) return G->get_syzygies();
+      if (G != nullptr) return G->get_syzygies();
       ERROR("computation type unknown or not implemented");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -412,9 +437,9 @@ const Matrix /* or null */ *rawGBMatrixRemainder(Computation *C,
     {
       clear_emit_size();
       GBComputation *G = C->cast_to_GBComputation();
-      if (G != 0) return G->matrix_remainder(m);
+      if (G != nullptr) return G->matrix_remainder(m);
       ERROR("computation type unknown or not implemented");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -431,7 +456,7 @@ M2_bool IM2_GB_matrix_lift(Computation *C,
     {
       clear_emit_size();
       GBComputation *G = C->cast_to_GBComputation();
-      if (G != 0)
+      if (G != nullptr)
         return G->matrix_lift(m, result_remainder, result_quotient);
       else
         ERROR("computation type unknown or not implemented");
@@ -448,7 +473,7 @@ int IM2_GB_contains(Computation *C, const Matrix *m)
     {
       clear_emit_size();
       GBComputation *G = C->cast_to_GBComputation();
-      if (G != 0) return G->contains(m);
+      if (G != nullptr) return G->contains(m);
       ERROR("computation type unknown or not implemented");
       return -2;
   } catch (const exc::engine_error& e)
@@ -464,9 +489,9 @@ const Matrix /* or null */ *rawResolutionGetMatrix(Computation *C, int level)
     {
       clear_emit_size();
       ResolutionComputation *G = C->cast_to_ResolutionComputation();
-      if (G != 0) return G->get_matrix(level);
+      if (G != nullptr) return G->get_matrix(level);
       ERROR("expected resolution computation type");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -482,9 +507,9 @@ MutableMatrix /* or null */ *rawResolutionGetMatrix2(Computation *C,
     {
       clear_emit_size();
       ResolutionComputation *G = C->cast_to_ResolutionComputation();
-      if (G != 0) return G->get_matrix(level, degree);
+      if (G != nullptr) return G->get_matrix(level, degree);
       ERROR("expected resolution computation type");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -505,9 +530,9 @@ MutableMatrix /* or null */ *rawResolutionGetMutableMatrixB(Computation *C,
     {
       clear_emit_size();
       F4ResComputation *G = dynamic_cast<F4ResComputation *>(C);
-      if (G != 0) return G->get_mutable_matrix(R, level);
+      if (G != nullptr) return G->get_mutable_matrix(R, level);
       ERROR("expected fast nonminimal resolution computation type");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -525,9 +550,9 @@ MutableMatrix /* or null */ *rawResolutionGetMutableMatrix2B(
     {
       clear_emit_size();
       F4ResComputation *G = dynamic_cast<F4ResComputation *>(C);
-      if (G != 0) return G->get_mutable_matrix(KK, level, degree);
+      if (G != nullptr) return G->get_mutable_matrix(KK, level, degree);
       ERROR("expected fast nonminimal resolution computation type");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -541,9 +566,9 @@ const FreeModule /* or null */ *rawResolutionGetFree(Computation *C, int level)
     {
       clear_emit_size();
       ResolutionComputation *G = C->cast_to_ResolutionComputation();
-      if (G != 0) return G->get_free(level);
+      if (G != nullptr) return G->get_free(level);
       ERROR("expected resolution computation type");
-      return 0;
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -555,6 +580,9 @@ int IM2_Resolution_status(Computation *C,
                           int *complete_up_through_this_degree,
                           int *complete_up_through_this_level)
 {
+  (void) C;
+  (void) complete_up_through_this_degree;
+  (void) complete_up_through_this_level;
 #ifdef DEVELOPMENT
 #warning "IM2_Resolution_status to be written"
 #endif
@@ -568,6 +596,10 @@ enum ComputationStatusCode IM2_Resolution_status_level(
     M2_bool minimize,
     int *complete_up_through_this_degree)
 {
+  (void) C;
+  (void) level;
+  (void) minimize;
+  (void) complete_up_through_this_degree;
 #ifdef DEVELOPMENT
 #warning "IM2_Resolution_status to be written"
 #endif
@@ -588,7 +620,7 @@ M2_arrayintOrNull rawResolutionBetti(Computation *C, int type)
   try
     {
       ResolutionComputation *G = C->cast_to_ResolutionComputation();
-      if (G != 0) return G->get_betti(type);
+      if (G != nullptr) return G->get_betti(type);
       ERROR("expected resolution computation type");
       return nullptr;
   } catch (const exc::engine_error& e)
@@ -621,10 +653,10 @@ Matrix /* or null */ *rawSubduction(int numparts, const Matrix *M,
   try
     {
       GBComputation *G = C->cast_to_GBComputation();
-      if (G == 0)
+      if (G == nullptr)
         {
           ERROR("expected a Groebner basis computation");
-          return 0;
+          return nullptr;
         }
       return sagbi::subduct(numparts, M, F, G);
   } catch (const exc::engine_error& e)
@@ -648,16 +680,16 @@ Matrix /* or null */ *rawSubduction1(int numparts,
     {
         GBComputation *gbReductionIdeal = rawGBReductionIdeal->cast_to_GBComputation();
         GBComputation *gbI = rawGBI->cast_to_GBComputation();
-        if ((gbReductionIdeal == 0) || (gbI == 0))
+        if ((gbReductionIdeal == nullptr) || (gbI == nullptr))
         {
             ERROR("expected a Groebner basis computation");
-            return 0;
+            return nullptr;
         }
         return sagbi::subduct1(numparts, rawT, rawS, m, inclusionAmbient, fullSubstitution, substitutionInclusion, gbI, gbReductionIdeal);
     } catch (const exc::engine_error& e)
     {
         ERROR(e.what());
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -667,7 +699,7 @@ void rawDisplayMatrixStream(const Matrix *inputMatrix)
 {
   const Ring *R = inputMatrix->get_ring();
   const PolyRing *P = R->cast_to_PolyRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected a polynomial ring");
       return;
@@ -741,31 +773,32 @@ const Matrix *rawMGB(
     {
       const Ring *R = inputMatrix->get_ring();
       const PolyRing *P = R->cast_to_PolyRing();
-      if (P == 0)
+      if (P == nullptr)
         {
           ERROR("expected a polynomial ring");
-          return 0;
+          return nullptr;
         }
       if (nthreads < 0)
         {
           ERROR("mgb: expected a non-negative number of threads");
-          return 0;
+          return nullptr;
         }
       if (P->characteristic() > std::numeric_limits<int>::max())
         {
           ERROR("characteristic is too large for mathic gb computation");
-          return 0;
+          return nullptr;
         }
       if (P->characteristic() == 0)
         {
           ERROR(
               "characteristic for mathic gb computation must be a prime "
               "number");
-          return 0;
+          return nullptr;
         }
       if (not P->getCoefficientRing()->isFinitePrimeField())
         {
           ERROR("coefficients for mathic gb computation must be a prime field");
+          return nullptr;
         }
       int charac = static_cast<int>(P->characteristic());
       int nvars = P->n_vars();
@@ -797,7 +830,7 @@ const Matrix *rawMGB(
           ERROR(
               "monomial ordering is not appropriate for Groebner basis "
               "computation");
-          return 0;
+          return nullptr;
         }
       if (!configuration.setMonomialOrder(
               (base_is_revlex
@@ -814,7 +847,7 @@ const Matrix *rawMGB(
 
       if (component_is_before_row >= 0)
         configuration.setComponentBefore(component_is_before_row);
-      configuration.setComponentsAscending(component_direction == 1);
+      configuration.setComponentsAscending(component_direction == 1); // BUG: what if descending??
 
 #if 0
     // Debug information
@@ -822,6 +855,8 @@ const Matrix *rawMGB(
     for (size_t i=0; i<mat.size(); i++) printf("%d ", mat[i]);
     printf("\n");
     printf("  Base=%d\n", base_is_revlex);
+    printf("  ComponentBefore=%d\n", component_is_before_row);
+    std::cout << "componentBefore: " << configuration.componentBefore() << std::endl;
 #endif
 
       mgb::GroebnerInputIdealStream input(configuration);
@@ -838,7 +873,7 @@ const Matrix *rawMGB(
       if (callback.wasInterrupted())
         {
           ERROR("computation was interrupted");
-          return 0;
+          return nullptr;
         }
       const Matrix *result = matStream.value();
       // printf("number of callbacks = %lu  result = %lu\n",
@@ -860,6 +895,7 @@ ConstPolyList matrixToPolyList(const M2FreeAlgebraOrQuotient* A,
                                const Matrix* input)
 {
   ConstPolyList result;
+  (void) A;
   result.reserve(input->n_cols() * input->n_rows());
   for (int i=0; i < input->n_rows(); i++)
     {
@@ -906,7 +942,7 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int st
       if (isF4)
         {
           int numthreads = M2_numTBBThreads; // settable from front end.
-          std::cout << "Using numthreads = " << numthreads << std::endl;
+          // std::cout << "Using numthreads = " << numthreads << std::endl;
           NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy, (isParallel ? numthreads : 1));
           G.compute(maxdeg); // this argument is actually the soft degree limit
           auto result = copyPolyVector(A, G.currentValue());

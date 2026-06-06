@@ -23,6 +23,7 @@ newPackage(
      Headline => "manipulating finite sets of hyperplanes",
      Keywords => {"Algebraic Geometry", "Matroids"},
      DebuggingMode => false,
+     PackageImports => {"Complexes"},
      PackageExports => {"Matroids"}
      )
 
@@ -711,7 +712,7 @@ subArrangement Flat := Arrangement => F -> (
      arrangement(A.hyperplanes_(toList F), ring A)
      )
 
--- the next version is redundant, but I'm putting it in in case users want to
+-- the next version is redundant, but I'm putting it here in case users want to
 -- use the usual notation
 subArrangement (Arrangement, Flat) := Arrangement => (A, F) -> (
      if (A =!= arrangement F) then error "not a flat of the arrangement";
@@ -807,7 +808,7 @@ flats Arrangement := List => A -> apply(1+rank A, j-> flats(j,A))
 circuits CentralArrangement := List => A -> toList \ circuits matroid A
      
      
--- should overload "directSum" when tersor product of a sequence of rings
+-- should overload "directSum" when tensor product of a sequence of rings
 -- becomes available
 arrangementSum = method()
 arrangementSum (Arrangement, Arrangement) := Arrangement => (A, B) -> (
@@ -2526,7 +2527,7 @@ doc ///
     Inputs
         F : Flat
 	G : Flat
-	    in the same arrangment as $F$
+	    in the same arrangement as $F$
     Outputs
         : Flat
     	    having the greatest codimension among those contained in both $F$
@@ -2575,7 +2576,7 @@ doc ///
     Inputs
         F : Flat
 	G : Flat
-	    in the same arrangment as $F$
+	    in the same arrangement as $F$
     Outputs
         : Flat
     	    having the least codimension among those contained in both $F$
@@ -2584,7 +2585,7 @@ doc ///
         Text
 	    In the geometric lattice of flats, the vee (also known as the
 	    supremum or least upper bound) is the join operation.
-	    Equivalently, identifyings flats with subspaces, this operation is
+	    Equivalently, identifying flats with subspaces, this operation is
 	    the closure of the union.
 	Text
     	    The vee operation is commutative, associative, and idempotent.
@@ -2695,7 +2696,7 @@ doc ///
 	    A = arrangement "braid"
 	    deletion(A,5)
 	Text
-	    You can also remove a hyperplane by specifiying its linear form.
+	    You can also remove a hyperplane by specifying its linear form.
 	Example
 	    R = QQ[x,y]
 	    A = arrangement {x,y,x-y}
@@ -3348,7 +3349,7 @@ doc ///
 	    @HREF("https://arxiv.org/abs/math/9912212", "arXiv:math/9912212")@,
 	    as well as Sheaf Algorithms Using the Exterior Algebra, 
 	    by Wolfram Decker and David Eisenbud, in 
-	    @HREF("https://faculty.math.illinois.edu/Macaulay2/Book/",
+	    @HREF("https://macaulay2.com/Book/",
 		    "Computations in algebraic geometry with Macaulay 2")@,
 		 Algorithms and Computations in Mathematics, Springer-Verlag, 
 		 Berlin, 2001.
@@ -3546,7 +3547,7 @@ indented = completed
 ** = need to begin
 
 arrangement(List, Ring)	 -- not clear what to do here
-arrangement(List, Matrix)				    
+arrangement(List, Matrix)
 arrangement String
 arrangement Flat
 arrangement(Flat, Validate=>true)
@@ -3619,12 +3620,15 @@ TEST ///
 R = ZZ[x,y,z];
 trivial = arrangement({},R);
 nontrivial = arrangement({x},R);
+assert(instance(trivial, Arrangement))
+assert(instance(nontrivial, CentralArrangement))
 assert(rank trivial == 0)
 assert(ring trivial === R)
 assert(0 == matrix trivial)
 assert(0 == coefficients trivial)
 assert(deletion(nontrivial,x) == trivial)
 assert(trivial++trivial != trivial)
+assert(instance(trivial++trivial, Arrangement))
 assert(trivial**QQ != trivial)
 ///
 
@@ -3642,6 +3646,7 @@ A3mat = arrangement(matrix {{1, 1, 1, 0, 0, 0},	    -- arrangement(List, Matrix)
 	             {-1, 0, 0, 1, 1, 0},
 		     {0, -1, 0, -1, 0, 1},
 		     {0, 0, -1, 0, -1, -1}}, R)
+assert(instance(A3, CentralArrangement))
 assert(A3 === A3poly)
 assert(A3 === A3mat) 
 assert(A3 === sub(A3ring, map(R, ring A3ring, R_*)))	    -- sub(Arrangement, RingMap)
@@ -3657,6 +3662,7 @@ assert(matroid (A3**QQ) === matroid coefficients (A3**QQ))  -- matroid CentralAr
 -----------------------------------------------------------
 TEST ///
 X3 = arrangement "X3"					    -- arrangement String
+assert(instance(X3, CentralArrangement))
 assert(isDecomposable X3)				    -- isDecomposable Arrangement
 assert(multiplierIdeal(2,X3) == multiplierIdeal(11/5,X3))		    -- multiplierIdeal(ZZ, CentralArrangement)
 time I1 = orlikTerao(X3);				    -- orlikTerao CentralArrangement
@@ -3716,6 +3722,7 @@ TEST ///
 A3 = typeA 3
 
 F = flat(A3, {0,1,3})
+assert(instance(F, Flat))
 assert(try(flat(A3, {0,1}); false) else true)	 -- `Validate=>true`
 assert(A3 === arrangement F)			 -- `arrangement Flat`
 assert(toList F === {0,1,3})			 -- `toList Flat`
@@ -3734,11 +3741,11 @@ assert(flats (0, empty) === {flat(empty, {})})
 R = QQ[x,y]
 affine = arrangement({x,x+1,y}, R)
 assert(flats(2, affine) === {flat(affine, {0,2}), flat(affine, {1,2})})
--- Test `closure` and comparison of Flats (moved to documentation)
---F' = closure(A3, ideal (hyperplanes A3)_{0,1})		    -- closure(Arrangement, Ideal)
---assert(F == F')
---F' = closure(A3, {0,1})					    -- closure(Arrangement, List)
---assert(F == F')
+-- Test `closure` and comparison of Flats
+F' = closure(A3, ideal (hyperplanes A3)_{0,1})		    -- closure(Arrangement, Ideal)
+assert(F == F')
+F' = closure(A3, {0,1})					    -- closure(Arrangement, List)
+assert(F == F')
 ///
 
 ---------------------------
@@ -3869,13 +3876,21 @@ assert(dual(coloop, R') === loop)			    -- dual of a coloop
 ---------------------------
 -- euler
 ---------------------------
--- In documentation
+TEST ///
+assert(euler typeA (5) === 24)
+assert(euler typeB (3) === 8)
+///
 
 ---------------------------
 -- eulerRestriction
 ---------------------------
-
--- in documentation
+TEST ///
+A = arrangement "bracelet"
+(B,m) = eulerRestriction(A,{1,1,1,1,1,1,1,1,1,1},0)
+assert(isFreeModule prune image der B)
+C = restriction(A,0)
+assert(not isFreeModule prune image der C)
+///
 
 ---------------------------
 -- genericArrangement

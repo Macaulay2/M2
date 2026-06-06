@@ -58,7 +58,7 @@ doc ///
 
      In addition to the functions highlighted above, the @TT "VirtualResolutions"@ package contains
      a number of other tools for constructing and studying virtual resolutions. In particular,
-     there are functions to construct virtual resolutions for zero dimensionsal subschemes, to
+     there are functions to construct virtual resolutions for zero dimensional subschemes, to
      check whether a complex is a virtual resolution, and to construct curves in $\PP^1\times\PP^2$.
   References
     @UL {
@@ -78,8 +78,8 @@ doc ///
 doc ///
     Key
         isVirtual
-        (isVirtual,Ideal,ChainComplex)
-        (isVirtual,NormalToricVariety,ChainComplex)
+        (isVirtual,Ideal,Complex)
+        (isVirtual,NormalToricVariety,Complex)
     Headline
         checks whether a chain complex is a virtual resolution
     Usage
@@ -90,7 +90,7 @@ doc ///
             irrelevant ideal of the ring
         X:NormalToricVariety
             normal toric variety
-        C:ChainComplex
+        C:Complex
             chain complex we want to check if is a virtual resolution
     Outputs
         :Boolean
@@ -394,7 +394,7 @@ doc ///
         A:List
             power you want to take the irrelevant ideal to
     Outputs
-        :ChainComplex
+        :Complex
             virtual resolution of our ideal
     Description
         Text
@@ -427,7 +427,7 @@ doc ///
         virtualOfPair
         (virtualOfPair, Ideal,        List)
         (virtualOfPair, Module,       List)
-        (virtualOfPair, ChainComplex, List)
+        (virtualOfPair, Complex, List)
     Headline
         creates a virtual resolution from a free resolution by keeping only summands of specified degrees
     Usage
@@ -439,12 +439,12 @@ doc ///
             ideal over multigraded ring
         M:Module
             module over multigraded ring
-        C:ChainComplex
+        C:Complex
             free resolution of a module
         L:List
             multidegrees of summands to keep
     Outputs
-        :ChainComplex
+        :Complex
     Description
         Text
           Given an ideal I or module M and a list of multidegrees L, this function produces a chain complex by iteratively

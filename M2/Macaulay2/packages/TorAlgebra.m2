@@ -11,20 +11,20 @@ newPackage ( "TorAlgebra",
 	},
     Headline => "classification of local rings based on multiplication in homology",
     Keywords => {"Homological Algebra"},
-    PackageImports => {"LocalRings"},
+    PackageImports => { "Complexes", "LocalRings" },
     Certification => { -- this package was certified under its old name, "CodepthThree"
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Local rings of embedding codepth 3: A classification algorithm",
 	 "acceptance date" => "2014-07-11",
-         "published article DOI" => "http://dx.doi.org/10.2140/jsag.2014.6.1",
-	 "published article URI" => "http://msp.org/jsag/2014/6-1/jsag-v6-n1-p01-s.pdf",
-	 "published code URI" => "http://msp.org/jsag/2014/6-1/jsag-v6-n1-x01-code.zip",
-	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/CodepthThree.m2",
+         "published article DOI" => "10.2140/jsag.2014.6.1",
+	 "published article URI" => "https://msp.org/jsag/2014/6-1/p01.xhtml",
+	 "published code URI" => "https://msp.org/jsag/2014/6-1/jsag-v6-n1-x01-code.zip",
 	 "release at publication" => "4b2e83cd591e7dca954bc0dd9badbb23f61595c0",
+	 "legacy name" => "CodepthThree",
 	 "version at publication" => "1.0",
 	 "volume number" => "6",
-	 "volume URI" => "http://msp.org/jsag/2014/6-1/"
+	 "volume URI" => "https://msp.org/jsag/2014/6-1/"
 	 },
     Reload => false,
     DebuggingMode => false
@@ -86,8 +86,7 @@ if version#"VERSION" == "1.6" then ( complete GradedModule := (M) -> M );
 -- PoincareSeries: rational function, Poincare series in closed form
 -- BassSeries: rational function, Bass series in closed form
 
-T := degreesRing 1;
-T = newRing(T, Degrees => {1});
+T := degreesRing {1};
 t := T_0;
 
 toralgdata = R -> (
@@ -365,10 +364,10 @@ toralgdata = R -> (
 		)
 	    else (
 		if isHomogeneous ideal R then (
-		    data := computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
+		    data := computeBass1 (Q, R, I, e, complex{L.dd_1,L.dd_2}, tries)
 		    )
 		else (
-    	    	    data = computeBass2 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries);
+    	    	    data = computeBass2 (Q, R, I, e, complex{L.dd_1,L.dd_2}, tries);
 		    );
 		mu := data#"bass";
 		c':= data#"codepth";
@@ -401,10 +400,10 @@ toralgdata = R -> (
 		)
 	    else (
 		if isHomogeneous ideal R then (
-		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
+		    data = computeBass1 (Q, R, I, e, complex{L.dd_1,L.dd_2}, tries)
 		    )
 		else (
-    	    	    data = computeBass2 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries);
+    	    	    data = computeBass2 (Q, R, I, e, complex{L.dd_1,L.dd_2}, tries);
 		    );
 		mu = data#"bass";
 		c'= data#"codepth";
@@ -437,10 +436,10 @@ toralgdata = R -> (
 		)
 	    else (
 		if isHomogeneous ideal R then (
-		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2,L.dd_3), tries)
+		    data = computeBass1 (Q, R, I, e, complex{L.dd_1,L.dd_2,L.dd_3}, tries)
 		    )
 		else (
-    	    	    data = computeBass2 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2,L.dd_3), tries);
+    	    	    data = computeBass2 (Q, R, I, e, complex{L.dd_1,L.dd_2,L.dd_3}, tries);
 		    );
 		mu = data#"bass";
 		c'= data#"codepth";
@@ -1967,6 +1966,65 @@ Q = ZZ/53[u,v,w,x,y,z]
 I = ideal(x^2*y^2,x^2*z,y^2*z,u^2*z,v^2*z,w^2*z,z^2)
 L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 6, 4, 7, 1, "Golod", 0, 0, "-"} )
+///
+
+-- #53 the predicates isCI, isGorenstein, isGolod
+TEST ///
+Q = QQ[x,y,z]
+Ici = ideal(x^2,y^2)
+Igolod = (ideal(x,y,z))^2
+Igor = ideal(x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3)
+Rci = Q/Ici
+Rgolod = Q/Igolod
+Rgor = Q/Igor
+-- a complete intersection is CI and (hence) Gorenstein, but not Golod
+assert(isCI Rci)
+assert(isGorenstein Rci)
+assert(not isGolod Rci)
+-- the square of the maximal ideal is Golod, but not CI or Gorenstein
+assert(isGolod Rgolod)
+assert(not isCI Rgolod)
+assert(not isGorenstein Rgolod)
+-- a Gorenstein ring that is not a complete intersection
+assert(isGorenstein Rgor)
+assert(not isCI Rgor)
+-- the predicates accept the defining ideal too, agreeing with the quotient ring
+assert(isCI Ici === isCI Rci)
+assert(isGolod Igolod === isGolod Rgolod)
+-- the predicates read the corresponding fields of the torAlgData hash table
+assert(isCI Rci === (torAlgData Rci)#"isCI")
+assert((torAlgData Rci)#"c" === 2)
+assert((torAlgData Rci)#"Class" === "C")
+///
+
+-- #54 torAlgDataPrint
+TEST ///
+Q = QQ[x,y,z]
+I = ideal(x^2,y^2)
+R = Q/I
+-- torAlgDataPrint returns a string with one "key=value " entry per key
+s = torAlgDataPrint(R, {c, Class})
+assert instance(s, String)
+assert(s === "c=2 Class=C \n")
+-- the Ideal form agrees with the QuotientRing form
+assert(torAlgDataPrint(I, {c, Class}) === s)
+///
+
+-- #55 setAttemptsAtGenericReduction
+TEST ///
+Q = QQ[x,y,z]
+R = Q/ideal(x^2,y^2)
+-- attemptsAtGenericReduction is unset until setAttemptsAtGenericReduction is called
+assert(not R.?attemptsAtGenericReduction)
+s = setAttemptsAtGenericReduction(R, 7)
+-- the function returns a String and sets R.attemptsAtGenericReduction
+assert instance(s, String)
+assert(R.attemptsAtGenericReduction === 7)
+-- with too few attempts, computing the Bass numbers of a higher-codepth ring fails
+Q6 = ZZ/2[u,v,w,x,y,z]
+R6 = Q6/ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3)
+setAttemptsAtGenericReduction(R6, 0)
+assert(try (torAlgClass R6; false) else true)
 ///
 
 end

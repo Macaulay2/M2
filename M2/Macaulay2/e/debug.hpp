@@ -1,5 +1,4 @@
 #include "ringelem.hpp"
-#include "intarray.hpp"
 
 class Matrix;
 class RingElement;
@@ -39,6 +38,12 @@ extern "C" void dmutablemat(MutableMatrix *m);
 extern "C" void dmonideal(MonomialIdeal *m);
 
 extern "C" void dintarray(M2_arrayint a);
+
+template <typename T>
+void dvector(gc_vector<T>& a);
+
+template <typename T>
+void dvector(std::vector<T>& a);
 
 extern "C" void dstash();
 

@@ -274,7 +274,7 @@ makeMatrix(ZZ, ZZ, ResolutionData) := (lev, deg, D) -> (
             t := D.Frame#lev#i;
             processRow(t.LeadTerm, lev, D)
             );
-    -- step 2: loop through all elements of RowList, do the same, until at end of liast
+    -- step 2: loop through all elements of RowList, do the same, until at end of list
     r := 0;
     elapsedTime rows := while r < #D.RowList list (
         -- these will have degree 'deg'

@@ -18,7 +18,20 @@ newPackage( "RationalMaps",
     }, --this file is in the public domain
     Keywords => {"Commutative Algebra"},
     Headline => "rational maps between varieties", 
-    PackageExports => {"FastMinors"}    
+    PackageExports => {"FastMinors", "Varieties"},
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry",
+	 "journal URI" => "https://msp.org/jsag/",
+	 "article title" => "RationalMaps, a package for Macaulay2",
+	 "acceptance date" => "17 July 2022",
+	 "published article URI" => "https://msp.org/jsag/2022/12-1/p03.xhtml",
+	 "published article DOI" => "10.2140/jsag.2022.12.17",
+	 "published code URI" => "https://msp.org/jsag/2022/12-1/jsag-v12-n1-x03-RationalMaps.m2",
+	 "release at publication" => "0cee3a5ae1e3fbd3dfa8407a4c8d6ad6a13dffd3",	    -- git commit number in hex
+	 "version at publication" => "1.0",
+	 "volume number" => "12",
+	 "volume URI" => "https://msp.org/jsag/2022/12-1/"
+	 }
 )
 --Hassanzadeh was supported by CNPq-bolsa de Produtividade and by the MathAmSud project ``ALGEO''
 --Schwede was supported in part by the NSF FRG Grant DMS \#1265261/1501115, NSF CAREER Grant DMS \#1252860/1501102, NSF Grants DMS \#1840190 and DMS \#2101800.
@@ -50,7 +63,7 @@ export{
     "SimisStrategy", --an option for controlling how inversion of maps is run.
     "HybridStrategy", --an option for controlling how inversion of maps is run. (This is the default)
     "MinorsLimit", --an option for how many times we should randomly look for a minor before calling syz in inverseOfMap
-    "HybridLimit", --an option for controlling inversion of maps (whether to do more simis or more rees strategies)
+    "HybridLimit", --an option for controlling inversion of maps (whether to do more Simis or more Rees strategies)
     "CheckBirational", --an option for inverseOfMap, whether or not to check whether something is birational
     "SaturateOutput",  --option to turn off saturation of the output
     "AssumeDominant" --option to assume's that the map is dominant (ie, don't compute the kernel)
@@ -91,6 +104,8 @@ RationalMapping = new Type of HashTable;
 rationalMapping = method(Options=>{}); --constructor for RationalMapping
 
 rationalMapping(RingMap) := o->(phi) -> (
+    if not isHomogeneous target phi then error "rationalMapping: the target should be homogeneous";
+    if not isHomogeneous source phi then error "rationalMapping: the source should be homogeneous";
     if not isSameDegree(first entries matrix phi) then error "rationalMapping:  expected all terms to have the same degree";
     new RationalMapping from {map=>phi, cache => new CacheTable from {}}
 );
@@ -291,7 +306,7 @@ isRegularMap(RationalMapping) := o->(phi) ->(
   );
 
 
-  --the rees algebra computation below is too slow, we need to modify it
+  --the Rees algebra computation below is too slow, we need to modify it
   --Hamid: we may add all of the strategies and options which are applied in saturate
  blowUpIdealsSaturation(Ideal, BasicList):=(a,L)->(
     r:=length  L;
@@ -404,7 +419,7 @@ simisAlgebra(Ideal, Matrix,ZZ):=(a,M,m)->(
  --this function computes the "relation type" of an ideal in a ring R.
  --Let R be the ring given bythe  ideal a and L be a list of elements in R.
  --the relation type is the biggest degree in terms of new variables in the
- --defining ideal of the rees algebra of I over R.
+ --defining ideal of the Rees algebra of I over R.
  --
 
  relationType(Ideal,BasicList):=o->(a,L)->(
@@ -650,7 +665,7 @@ isBirationalOntoImageRees(RationalMapping) := o -> (phi1) -> (
      nr:=numRows(transpose barJD);
     if (o.Verbosity >= 1) then print "isBirationalOntoImageRees: computed Jacobian dual matrix";
     if (o.Verbosity >= 2) then(
-        print ( "Jacobain dual matrix has  " |nc|" columns  and   "|nr|" rows.");
+        print ( "Jacobian dual matrix has  " |nc|" columns  and   "|nr|" rows.");
     );
     jdd:=(numgens ambient Rlin1)-1;
     if (o.Verbosity >= 2) then print "isBirationalOntoImageRees: is computing the rank of the  Jacobian dual matrix- barJD";
@@ -745,7 +760,7 @@ isBirationalOntoImageSimis(RationalMapping) := o-> (phi1) -> (
 
     flag := false;   --this boolean checks whether it is birational
     giveUp := false;  --this checks whether we give up checkin birationality or not yet
-    secdeg:=1;        --the second degree of rees equations
+    secdeg:=1;        --the second degree of Rees equations
     jj := 1;
     M := null;
     while (giveUp == false) do (
@@ -937,7 +952,7 @@ inverseOfMapRees(RationalMapping) := o->(phi1)->(
      nc:=numColumns(transpose barJD);
      nr:=numRows(transpose barJD);
     if (o.Verbosity >= 2 ) then(
-        print ( "Jacobain dual matrix has  " |nc|" columns  and about  "|nr|" rows.");
+        print ( "Jacobian dual matrix has  " |nc|" columns  and about  "|nr|" rows.");
     );
     nonZMinor := null;
     if (o.MinorsLimit > 0) then (
@@ -1348,20 +1363,20 @@ document {
 	  {"A. Simis, ",EM "  Cremona Transformations and some Related Algebras", ", Journal of Algebra, Volume 280, Issue 1, 1 October 2004, Pages 162--179"},
 	},
     BOLD "Functionality overlap with other packages:\n\n",BR{},BR{},
-    EM HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"},
-      ":  While the package ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"}, " focuses mostly on curves, it also includes a function ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html", "invertBirationalMap"}, "
+    EM  TO "Parametrization",
+      ":  While the package ", TO "Parametrization", " focuses mostly on curves, it also includes a function ", TO "Parametrization::invertBirationalMap", "
       that has the same functionality as ", TO "inverseOfMap", ".  On the other hand, these two functions were implemented differently and so sometimes one function can be substantially faster than the other.\n", BR{}, BR{},
-    EM HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"},
-    ":  The package ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"}, " focuses on  fast probabilistic computations in general cases and  deterministic computations for special
+    EM TO "Cremona::Cremona",
+    ":  The package ", TO "Cremona::Cremona", " focuses on  fast probabilistic computations in general cases and  deterministic computations for special
      kinds of maps from projective space.  More precisely, ",BR{},
     UL {
-        {HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_is__Birational.html","isBirational"}, " gives a probabilistic answer to the question of whether a map between varieties is birational.  Furthermore, if the
+        {TO "Cremona::isBirational", " gives a probabilistic answer to the question of whether a map between varieties is birational.  Furthermore, if the
 	     source is projective space, then ", TT "degreeOfRationalMap", " with ", TT   "MathMode=>true", " gives a deterministic correct answer.
 	      In some cases, the speed of the latter  is comparable with ", TO "isBirationalMap", " with ", TT   "AssumeDominant=>true." },
-        {HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_inverse__Map.html","inverseMap"}, " gives a  fast computation of the inverse of a birational map if the source is projective space ", EM " and ",
+        {TO "Cremona::inverseMap", " gives a  fast computation of the inverse of a birational map if the source is projective space ", EM " and ",
 	     "the map has maximal linear rank.   In some cases, even if the map has maximal linear rank, our function ", TO "inverseOfMap",
 	       " appears to be competitive however.  If you pass inverseMap a map not from projective space, then it calls a modified and improved version of ",
-	      HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html", "invertBirationalMap"}, " from ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"}, "."},
+	      TO "Parametrization::invertBirationalMap", " from ", TO "Parametrization", "."},
     },
 }
 
@@ -1386,7 +1401,7 @@ document{
     Key=>{HybridLimit},
     Headline=>"an option to control HybridStrategy",
        "This controls behavior when using ", TT "Strategy=>HybridStrategy", ".  ", "By increasing the HybridLimit value (default 15), 
-       HybridStrategy will execte SimisStrategy longer. 
+       HybridStrategy will execute SimisStrategy longer. 
 	     Infinity will behave exactly like SimisStrategy.",
     SeeAlso=>{
         "HybridStrategy"        
@@ -1606,7 +1621,7 @@ doc ///
             tau*tauInverse == identP2 --a map composed with its inverse is the identity
             tauInverse*tau == identBlowUp
         Text
-            Note that one can only raise maps to powers (with the exception of 1 and -1) if the source and target of the the same.  In that case, raising a map to a negative power means compose the inverse of a map with itself.  We illustrate this with the quadratic transformation on $P^2$ that we started with (an transformation of order 2 in the Cremona group).
+            Note that one can only raise maps to powers (with the exception of 1 and -1) if the source and target are the same.  In that case, raising a map to a negative power means compose the inverse of a map with itself.  We illustrate this with the quadratic transformation on $P^2$ that we started with (an transformation of order 2 in the Cremona group).
         Example
             phi^3 == phi^-1 
             phi^-2 == ident
@@ -1717,7 +1732,7 @@ doc ///
         SimisStrategy
         ReesStrategy
     Caveat
-        Also see the very fast probabilistic birationality checking of the @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"}@ package: @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_is__Birational.html","isBirational"}@.
+        Also see the very fast probabilistic birationality checking of the @TO "Cremona::Cremona"@ package: @TO "Cremona::isBirational"@.
 ///
 --***************************************************************
 
@@ -2261,7 +2276,7 @@ doc ///
         SimisStrategy
         ReesStrategy
     Caveat
-        The current implementation of this function works only for irreducible varieties.  Also see the function @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_inverse__Map.html","inverseMap"}@ in the package @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"}@, which for some maps from projective space is faster.  Additionally, also compare with the function @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html", "invertBirationalMap"}@ of the package @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"}@.
+        The current implementation of this function works only for irreducible varieties.  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona::Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO "Parametrization"@.
 ///
 --***************************************************************
 
@@ -2318,7 +2333,7 @@ doc ///
              phi=map(S,S,transpose jacobian ideal g);
              sourceInversionFactor(phi, Verbosity=>0)
     Caveat
-        The current implementation of this function works only for irreducible varieties..  Also see the function @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_inverse__Map.html","inverseMap"}@ in the package @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"}@, which for some maps from projective space is faster.  Additionally, also compare with the function @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html", "invertBirationalMap"}@ of the package @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"}@.
+        The current implementation of this function works only for irreducible varieties..  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona::Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO"Parametrization"@.
     SeeAlso
         HybridStrategy
         SimisStrategy
@@ -2603,7 +2618,7 @@ TEST /// --test #28
 ///
 
 TEST /// --test #29, map from genus 3 curve to projective space
-    needsPackage "Divisor";
+    needsPackage "WeilDivisors";
     C = ZZ/103[x,y,z]/(x^4+x^2*y*z+y^4+z^3*x);
     Q = ideal(y,x+z); --a point on our curve
     f2 = mapToProjectiveSpace(7*divisor(Q)); --a divisor of degree 7 (this is degree 7, so should induce an embedding)
@@ -2718,6 +2733,67 @@ TEST /// --test #34, an interesting example based on a question of Abbas Nasrola
    assert( isBirationalMap(rat, AssumeDominant=>true) )
    ratI = rat^-1;
    assert(rat*ratI == identR1 and ratI*rat == identS1)
+///
+
+TEST /// --test #35 (mapOntoImage)
+    R = QQ[x,y];
+    S = QQ[a,b,c];
+    f = map(R, S, {x^2, x*y, y^2}); --the Veronese embedding of P^1 as a conic
+    g = mapOntoImage f;
+    assert(instance(g, RingMap));
+    assert(idealOfImageOfMap g == 0); --mapOntoImage is dominant onto its image
+    T = QQ[u,v,w];
+    dom = map(T, T, {u,v,w}); --an already-dominant map is returned unchanged
+    assert(mapOntoImage dom === dom);
+    assert(instance(mapOntoImage rationalMapping f, RationalMapping));
+///
+
+TEST /// --test #36 (jacobianDualMatrix)
+    R = QQ[x,y];
+    S = QQ[a,b,c,d];
+    Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3}); --the twisted cubic
+    assert(instance(jacobianDualMatrix Pi, Matrix));
+    assert(instance(jacobianDualMatrix(Pi, Strategy=>ReesStrategy), Matrix));
+    assert(instance(jacobianDualMatrix(Pi, Strategy=>SaturationStrategy), Matrix));
+    phi = rationalMapping Pi;
+    assert(jacobianDualMatrix phi === jacobianDualMatrix phi); --result is cached on the RationalMapping
+///
+
+TEST /// --test #37 (sourceInversionFactor)
+    R = ZZ/7[x,y,z];
+    S = ZZ/7[a,b,c];
+    h = map(R, S, {y*z, x*z, x*y}); --the quadratic Cremona transformation
+    sf = sourceInversionFactor(h, Verbosity=>0);
+    assert(instance(sf, RingElement));
+    assert(ring sf === R);
+    assert(sf == x*y*z); --the Cremona composed with its inverse contributes the factor xyz
+///
+
+TEST /// --test #38 (inverseOfMap with SimisStrategy and with MinorsLimit)
+    R = ZZ/11[x,y,z];
+    S = ZZ/11[a,b,c];
+    h = rationalMapping(R, S, {y*z, x*z, x*y}); --quadratic Cremona
+    phi = rationalMapping(S, R, {b*c, a*c, a*b}); --its inverse
+    assert(inverseOfMap(h, AssumeDominant=>true, Strategy=>SimisStrategy, Verbosity=>0) == phi);
+    assert(inverseOfMap(h, AssumeDominant=>true, MinorsLimit=>0, Verbosity=>0) == phi);
+///
+
+TEST /// --test #39 (CheckBirational throws an error on a non-birational map)
+    R = QQ[x,y,z]/(x^3+y^3-z^3); --an elliptic curve
+    S = QQ[a,b];
+    f = map(R, S, {x, y-z}); --not birational onto its image
+    assert(isBirationalOntoImage(f, Verbosity=>0) == false);
+    assert(try (inverseOfMap(f, CheckBirational=>true, Verbosity=>0); false) else true);
+///
+
+TEST /// --test #40 (SaturateOutput option of baseLocusOfMap)
+    R = QQ[x,y,z];
+    f = map(R, R, {x^2*y, x^2*z, x*y*z});
+    bl = baseLocusOfMap f; --saturated, the default
+    blU = baseLocusOfMap(f, SaturateOutput=>false);
+    assert(bl == ideal(x*y, y*z, x*z));
+    assert(instance(blU, Ideal));
+    assert(saturate blU == bl); --saturating the unsaturated output recovers the base locus
 ///
 
 

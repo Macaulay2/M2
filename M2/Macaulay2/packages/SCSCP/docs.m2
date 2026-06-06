@@ -6,7 +6,10 @@ export { "SCSCPConnection", "newConnection", "startServer", "RemoteObject" }
 beginDocumentation()
 document { 
 	Key => SCSCP,
-	Headline => "SCSCP (Symbolic Computation Software Composability Protocol) support"
+	Headline => "SCSCP (Symbolic Computation Software Composability Protocol) support",
+	"This package provides an ",
+	HREF("https://openmath.org/standard/scscp/", "SCSCP"), " (Symbolic ",
+	"Computation Software Composability Protocol) server and client."
 	}
 
 document {

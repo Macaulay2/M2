@@ -64,7 +64,7 @@ bool Z_mod::initialize_Z_mod(int p)
 Z_mod *Z_mod::create(int p)
 {
   Z_mod *result = new Z_mod;
-  if (!result->initialize_Z_mod(p)) return 0;
+  if (!result->initialize_Z_mod(p)) return nullptr;
 
   return result;
 }
@@ -117,6 +117,7 @@ void Z_mod::elem_text_out(buffer &o,
                           bool p_plus,
                           bool p_parens) const
 {
+  (void) p_parens;
   int n = to_int(a.get_int());
   if (n < 0)
     {

@@ -29,6 +29,41 @@ using MatrixXmpRR = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>;
 using MatrixXmpCC = Eigen::Matrix<std::complex<double>,Eigen::Dynamic,Eigen::Dynamic>;
 #endif
 
+#ifdef _LIBCPP_VERSION
+/* workaround incompatibility between libc++'s implementation of complex and
+ * mpreal
+ */
+namespace eigen_mpfr {
+inline Real abs(const Complex &x) { return hypot(x.real(), x.imag()); }
+inline Complex sqrt(const Complex &x)
+{
+  Real a = abs(x);
+  const Real &xr = x.real();
+  const Real &xi = x.imag();
+  if (xi >= 0) { return Complex(sqrt((a + xr) / 2), sqrt((a - xr) / 2)); }
+  else { return Complex(sqrt((a + xr) / 2), -sqrt((a - xr) / 2)); }
+}
+inline Complex operator/(const Complex &lhs, const Complex &rhs)
+{
+  const Real &lhsr = lhs.real();
+  const Real &lhsi = lhs.imag();
+  const Real &rhsr = rhs.real();
+  const Real &rhsi = rhs.imag();
+  Real normrhs = rhsr*rhsr+rhsi*rhsi;
+  return Complex((lhsr * rhsr + lhsi * rhsi) / normrhs,
+                 (lhsi * rhsr - lhsr * rhsi) / normrhs);
+}
+inline Complex operator*(const Complex &lhs, const Complex &rhs)
+{
+  const Real &lhsr = lhs.real();
+  const Real &lhsi = lhs.imag();
+  const Real &rhsr = rhs.real();
+  const Real &rhsi = rhs.imag();
+  return Complex(lhsr * rhsr - lhsi * rhsi, lhsi * rhsr + lhsr * rhsi);
+}
+};  // namespace eigen_mpfr
+#endif
+
 namespace EigenM2 {
 
 #ifdef NO_LAPACK  

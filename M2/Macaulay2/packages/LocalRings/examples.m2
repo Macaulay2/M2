@@ -217,7 +217,7 @@ assert({1,1,0,0} == for i from 0 to 3 list hilbertSamuelFunction(max RP, N, i))
 -- III. Additional examples:
 
 restart
-debug needsPackage "PruneComplex"
+debug needsPackage "Complexes"
 needsPackage "LocalRings"
 R = ZZ/32003[a..f]
 I = ideal"abc-def,ab2-cd2-c,acd-b3-1"
@@ -466,7 +466,7 @@ length oo -- FIXME this should be n-1=3
 RP = localRing(R, P)
 M = promote(P, RP)
 -- Then R/(X_i-Y_(i-1) : 0<1<n+1)R  \cong k[[X_1..X_n]]/minor(2,({{X1..Xn},{X2..Xn,X1}}))
--- this is a cohen macaulay local ring of dim 1, also almost gorenstein local rings
+-- this is a Cohen-Macaulay local ring of dim 1, also almost Gorenstein local rings
 
 
 -- TODO
@@ -562,17 +562,12 @@ length N
 -------------------------------------------------------------------------------------------------------
 restart
 needsPackage "LocalRings"
-needsPackage "PruneComplex"
 debugLevel=1
-debug PruneComplex
 debug LocalRings
-elapsedTime check PruneComplex -- 17
 elapsedTime check LocalRings -- 15
 
-uninstallPackage "PruneComplex"
 uninstallPackage "LocalRings"
 
-installPackage "PruneComplex"
 installPackage "LocalRings"
 
 -------------------------------------------------------------------------------------------------------
@@ -584,7 +579,7 @@ make -j4 all-in-d all-in-e all-in-bin
 
 restart
 debug Core
-debug needsPackage "PruneComplex"
+debug needsPackage "Complexes"
 debug needsPackage "LocalRings"
   R = ZZ/32003[vars(0..3)]
   I = monomialCurveIdeal(R, {1, 3, 4})

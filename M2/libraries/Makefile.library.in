@@ -8,11 +8,11 @@ export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
 # between compile time and install time is to prepend a string
 PREFIX = $(BUILTLIBPATH)
-.NOTPARALLEL:
 ifneq ($(PARALLEL),yes)
 NOTPARALLEL = -j1
 endif
 LIBNAME ?= $(shell basename `pwd`)
+GIT_REF ?= v$(VERSION)
 UNTARDIR = build
 OLDUNTARDIR = build-old
 TARDIR ?= $(LIBNAME)-$(VERSION)
@@ -92,9 +92,14 @@ else
 endif
 BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
+ifeq ($(SUBMODULE),true)
+UNTARCMD      ?= $(MKDIR_P) $(TARDIR) && \
+		 $(MAKE) -C .. fetch  && \
+		 cp -r @abs_top_srcdir@/submodules/$(LIBNAME)/* $(TARDIR)
+else
 UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
+endif
 %.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
-export PATH := @abs_top_srcdir@/usr-build/bin:$(PATH)
 all:prereq install post-install
 prereq:
 post-install:
@@ -110,12 +115,42 @@ uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 always:
 diffs: .untarred2-$(VERSION) always
-	D=`pwd`; cd $(UNTARDIR) && diff -ur $(DIFF_OPTIONS) $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
+	D=`pwd`; cd $(UNTARDIR) && diff -ur $(DIFF_OPTIONS) $$D/tmp/$(TARDIR) $(TARDIR) | grep -Ev '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
 unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) clean ; fi
 PACKAGE-DISTCLEAN-TARGET := distclean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
+fetch: download-enabled
+ifeq ($(SUBMODULE),true)
+fetch: .submodule-updated
+.submodule-updated:
+	$(MAKE) update-submodule
+	touch $@
+update-submodule:
+	if git rev-parse 2> /dev/null;                          \
+	then                                                    \
+		@GIT@ submodule update --init                   \
+			@abs_top_srcdir@/submodules/$(LIBNAME); \
+	else                                                    \
+		cd @abs_top_srcdir@/submodules;                 \
+		rm -rf $(LIBNAME);                              \
+		@GIT@ clone $(URL) $(LIBNAME);                  \
+		cd $(LIBNAME);                                  \
+		@GIT@ checkout $(GIT_REF);                      \
+	fi
+
+clean::
+	rm -f .submodule-updated
+	if git rev-parse 2> /dev/null;                                         \
+	then                                                                   \
+		@GIT@ submodule deinit @abs_top_srcdir@/submodules/$(LIBNAME); \
+	else                                                                   \
+		rm -rf @abs_top_srcdir@/submodules/$(LIBNAME);                 \
+		mkdir @abs_top_srcdir@/submodules/$(LIBNAME);                  \
+	fi
+else
 fetch: $(TARFILE_DIR)/$(TARFILE)
+endif
 patch: .patched-$(VERSION)
 license-dir: $(LICENSE_DIR)
 $(LICENSE_DIR):; $(MKDIR_P) $(LICENSE_DIR)
@@ -180,10 +215,10 @@ endif
 	$(WHY)
 	@ set -x ; ( $(CDBUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
-PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch --batch -p0 < $$i ; done
-.patched-$(VERSION) : $(PATCHFILE) $(TARFILE_DIR)/$(TARFILE)
+PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do @PATCH@ --batch -p0 < $$i ; done
+.patched-$(VERSION) : $(PATCHFILE)
 	$(WHY)
-	if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
+	@ if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
 	    then echo please remove or move $(OLDUNTARDIR)/$(UNTARDIR) out of the way ; \
 	         exit 1 ; \
 	    fi
@@ -192,6 +227,9 @@ PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch --batch -p0 < $$i 
 	cd $(UNTARDIR) && $(UNTARCMD)
 	$(PATCHCMD)
 	touch $@
+ifneq ($(SUBMODULE),true)
+.patched-$(VERSION): $(TARFILE_DIR)/$(TARFILE)
+endif
 .untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE)
 	$(WHY)
 	mkdir tmp ; (cd tmp && $(UNTARCMD)) && touch $@
@@ -224,9 +262,23 @@ CHECKFETCHED = case "$(URL)" in									\
 	    fi ;;										\
 	esac
 $(TARFILE_DIR)/$(TARFILE) :
-ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
-else
+ifneq ($(SHA256SUM), true)
+	@cd $(TARFILE_DIR) && \
+		actual=$$(sha256sum $(TARFILE) | awk '{print $$1}'); \
+		if test "x$(SHA256SUM)" != "x$$actual"; \
+		then echo "error: *** SHA256 hash of $(TARFILE) does not match the expected value"; \
+		echo "  expected: $(SHA256SUM)"; \
+		echo "    actual: $$actual"; \
+		exit 1; \
+		else echo " \033[32m✓\033[0m SHA256 ok ($(SHA256SUM))"; \
+		fi
+endif
+distclean: package-distclean
+clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(UNTARDIR) $(OLDUNTARDIR)
+distclean: clean ; rm -rf Makefile
+download-enabled:
+ifneq (@DOWNLOAD@,yes)
 	@ echo "error: for the third-party library or program source \"$(LIBNAME)\"" >&2
 	@ echo "       the source code is not present in the file \"$@\"" >&2
 	@ echo "       so either download a \"fat\" tar file of the Macaulay2 source code" >&2
@@ -234,9 +286,6 @@ else
 	@ echo "       to enable automatic downloading of the source code over the internet" >&2
 	@ false
 endif
-distclean: package-distclean
-clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(UNTARDIR) $(OLDUNTARDIR)
-distclean: clean ; rm -rf Makefile
 
 SLIMIT ?= 8192
 TLIMIT ?= 100
@@ -284,14 +333,19 @@ help:;
 	@ echo "targets:"
 	@ echo ""
 	@ echo "  all                         build/compile all files [the default target]"
+	@ echo "  fetch                       fetch the library source"
 	@ echo "  reconfigure                 remake configuration files for library"
 	@ echo "  diffs                       create diff file for changes to library sources"
-	@ echo "  clean                       remove most created files, except Makefiles and dowloaded tarfiles"
+	@ echo "  clean                       remove most created files, except Makefiles and"
+	@ echo "                              dowloaded tarfiles"
 	@ echo "  distclean                   remove all created files"
-	@ echo "  package-clean               remove most created files in the package's directory tree, except Makefiles"
-	@ echo "  package-distclean           remove all created files in the package's directory tree"
+	@ echo "  package-clean               remove most created files in the package's"
+	@ echo "                              directory tree, except Makefiles"
+	@ echo "  package-distclean           remove all created files in the package's"
+	@ echo "                              directory tree"
 	@ echo "  check                       check whether library compiled correctly"
 	@ echo "  recheck                     check, even if we've checked before"
+	@ echo "  update-submodule            update git submodule for library (if applicable)"
 	@ echo ""
 autotool-versions:
 	whereis autoconf

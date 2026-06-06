@@ -3,6 +3,9 @@
 #ifndef _aring_CC_hpp_
 #define _aring_CC_hpp_
 
+#include "interface/gmp-util.h"  // for moveTo_gmpCC
+#include "interface/random.h"    // for randomDouble
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -17,7 +20,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingCC : public RingInterface
+class ARingCC : public SimpleARing<ARingCC>
 {
   // approximate real numbers, implemented as doubles.
 
@@ -89,6 +92,11 @@ class ARingCC : public RingInterface
     result = * a.get_cc_doubles();
   }
 
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *a.get_cc_doubles();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType& result) const
@@ -105,8 +113,9 @@ class ARingCC : public RingInterface
     result.im = 0.0;
   }
 
-  void clear(ElementType& result) const
+  static void clear(ElementType& result)
   {
+    (void) result;
     // do nothing
   }
 
@@ -117,7 +126,12 @@ class ARingCC : public RingInterface
     result.im = 0.0;
   }
 
-  void set_var(ElementType& result, int v) const { set_from_long(result, 1); }
+  void set_var(ElementType& result, int v) const
+  {
+    (void) v;
+    set_from_long(result, 1);
+  }
+
   void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     result.re = mpz_get_d(a);
@@ -370,6 +384,7 @@ class ARingCC : public RingInterface
             int first_var,
             ring_elem& result) const
   {
+    (void) first_var;
     if (!map->get_ring()->from_complex_double(f.re, f.im, result))
       {
         result = map->get_ring()->from_long(0);

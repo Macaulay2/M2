@@ -1,9 +1,10 @@
 CSDP_VERSION = 6.2.0
+SHA256SUM = 7f202a15f33483ee205dcfbd0573fdbd74911604bb739a04f8baa35f8a055c5b
 LIBNAME = Csdp
 VERSION = $(CSDP_VERSION)
 PATCHFILE = @abs_srcdir@/patch-$(CSDP_VERSION)
 #URL = http://www.coin-or.org/download/source/Csdp
-URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = https://macaulay2.com/Downloads/OtherSourceCode
 TARFILE = Csdp-$(VERSION).tgz
 
 CONFIGURECMD = true

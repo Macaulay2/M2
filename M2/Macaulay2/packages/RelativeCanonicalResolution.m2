@@ -10,15 +10,15 @@ newPackage(
 		     HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}},
 	 Headline=> "the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k",
 	 Keywords => {"Commutative Algebra"},
+         PackageExports => {"Complexes"},
 	 Certification => {
 	        "journal name" => "The Journal of Software for Algebra and Geometry",
-		"journal URI" => "http://j-sag.org/",
+		"journal URI" => "https://msp.org/jsag/",
 		"article title" => "The relative canonical resolution: Macaulay2-package, experiments and conjectures",
 		"acceptance date" => "28 August 2020",
 		"published article URI" => "https://msp.org/jsag/2021/11-1/p03.xhtml",
          	"published article DOI" => "10.2140/jsag.2021.11.15",
 		"published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x03-RelativeCanonicalResolution.m2",
-     	        "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RelativeCanonicalResolution.m2",
 		"release at publication" => "2f0290ad1bf65508e8f3cf63579447ef3153486f",	    -- git commit number in hex
 		"version at publication" => "1.0",
 		"volume number" => "11",
@@ -181,7 +181,7 @@ balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of length n
       (L,L1) := ({},{});
       PHI := matrix map(S^1,S^1,0_S);
       while (#flatten entries PHI < g) do (
-      pts := random(apply(p,i -> matrix{{i,1}})|{matrix{{1,0}}});
+      pts := shuffle(apply(p,i -> matrix{{i,1}})|{matrix{{1,0}}});
       while (#L < g or #(unique flatten L) < #(flatten L)) do (  
              (L,L1) = ({},{}); 
 	     f := random(S^1, S^{2:-k});
@@ -267,7 +267,7 @@ resCurveOnScroll (Ideal,ZZ,ZZ) := (Jcan,g,lengthRes) -> (
                     M = M0_(select(cols,j -> ((degrees source M0)_j)_0 == degsH_(i-1)));
 		    if (rank source M < rkSyzModules(1+i,k) ) then error("DegreeLimit too low");
                     M));
-    chainComplex resX       
+    complex resX       
      );   
     
 resCurveOnScroll (Ideal,ZZ) := (Jcan,g) -> ( 
@@ -289,7 +289,7 @@ resCurveOnScroll (Ideal,ZZ) := (Jcan,g) -> (
                     M = M0_(select(cols,j -> ((degrees source M0)_j)_0 == degsH_(i-1)));
 		    if (rank source M < rkSyzModules(1+i,k) ) then error("DegreeLimit too low");
                     M));
-    chainComplex resX        
+    complex resX        
      );
 
 ---------------------------------------------------------------
@@ -326,7 +326,7 @@ bettiENtype (ZZ,ZZ,ZZ,ZZ) := (b,a,f,mult) -> (
 -- Computes the Eagon-Northcott type resolution. 
 -- The function is based on the Eagon-Northcott function by Greg Smith.
 -- Input: twist b of the Ruling and matrix Phi defining the scroll, thus defining the differentials
--- Output: a chain complex, the Eagon-Northcott type complex
+-- Output: a Complex, the Eagon-Northcott type complex
 
 eagonNorthcottType = method()
 eagonNorthcottType (Matrix,ZZ) := (Phi,b) -> (
@@ -362,7 +362,7 @@ eagonNorthcottType (Matrix,ZZ) := (Phi,b) -> (
 		     t := first select(toList(0..g-1), l -> vec#l == 1);
 		     (-1)^(s+1)*Phi_(t,q#0#s))))
        );	
-     chainComplex d)
+     complex d)
 
 
 -- lifts a monomial to the Eagon-Nortcott type resolution
@@ -436,7 +436,7 @@ matrix apply(rank target A, i ->
 -- Output: the iterated mapping cone
 
 iteratedCone = method()
-iteratedCone (ChainComplex,List) := (resX,e) -> ( 
+iteratedCone (Complex,List) := (resX,e) -> ( 
    k := length(e)+1;
    g := sum(e)+k-1;
    kk := coefficientRing ring resX_0;
@@ -585,7 +585,7 @@ doc ///
     l: ZZ
        the length limit of the resolution          
   Outputs
-    resX: ChainComplex
+    resX: Complex
           the relative canonical resolution       
   Description
      Text
@@ -642,7 +642,7 @@ doc ///
     b: ZZ
        the twist     
   Outputs
-    ENresolution: ChainComplex
+    ENresolution: Complex
                   the Eagon-Northcott type resolution     
   Description
      Text
@@ -698,18 +698,18 @@ doc ///
 doc ///
   Key 
     iteratedCone
-    (iteratedCone,ChainComplex,List) 
+    (iteratedCone,Complex,List) 
   Headline 
     Computes a (possibly non-minimal) resolution of C in P^{g-1} starting from the relative canonical resolution of C in P(E)
   Usage
     resC=iteratedCone(resX,e)
   Inputs
-    resX: ChainComplex
+    resX: Complex
           the relative canonical resolution
     e: List
        the type of the scroll $P(E)$   
   Outputs
-    resC: ChainComplex
+    resC: Complex
        	  the resolution of C obtained by an iterated mapping cone     
   Description
      Text
@@ -912,6 +912,92 @@ betti(ENT1 = eagonNorthcottType(Phi,1))
 assert((ENT1.dd)^2 == 0)
 betti(ENT2 = eagonNorthcottType(Phi,2))
 assert((ENT2.dd)^2 == 0)
+///
+
+---------------------------------------------------------------------
+-- Added coverage for previously untested exports and stress tests.
+---------------------------------------------------------------------
+
+TEST ///
+-- rkSyzModules: the ranks of the modules in the relative canonical resolution.
+-- Property test: the ranks are symmetric, rkSyzModules(i,k) = rkSyzModules(k-2-i,k).
+assert(apply(4, i -> rkSyzModules(i,5)) == {1,5,5,1})
+assert(apply(6, i -> rkSyzModules(i,7)) == {1,14,35,35,14,1})
+assert(apply(8, i -> rkSyzModules(i,9)) == {1,27,105,189,189,105,27,1})
+for k from 4 to 9 do (
+   assert(rkSyzModules(0,k) == 1);
+   assert(rkSyzModules(k-2,k) == 1);
+   assert(all(toList(0..k-2), i -> rkSyzModules(i,k) == rkSyzModules(k-2-i,k)));
+   )
+///
+
+TEST ///
+-- scrollDegrees and coxDegrees convert bidegrees between the scroll and its
+-- Cox ring; they are mutually inverse.
+assert(scrollDegrees({2,5},{1,1,1,1}) === (2,3))
+assert(coxDegrees({2,3},{1,1,1,1}) === (2,5))
+for e in {{1,1,1,1},{2,1,1},{3,3},{1,2,2,1}} do (
+   for a in {{0,0},{2,5},{3,-1},{1,7}} do (
+      assert(toList scrollDegrees(toList coxDegrees(a,e), e) == a);
+      assert(toList coxDegrees(toList scrollDegrees(a,e), e) == a);
+      )
+   )
+///
+
+TEST ///
+-- canonicalMultipliers: the g ratios of the gluing data of the canonical
+-- bundle of a nodal curve, computed from g pairs of points on P^1.
+S = QQ[x_0,x_1]
+P = sub(matrix{{1,2,3},{1,1,1}}, S)
+Q = sub(matrix{{0,5,7},{1,1,1}}, S)
+cm = canonicalMultipliers(P,Q)
+assert(instance(cm, Matrix))
+assert((numrows cm, numcols cm) == (2,3))
+assert(cm == sub(matrix{{48,10,-12},{210,-80,420}}, S))
+S3 = QQ[x_0,x_1,x_2]
+assert(try (canonicalMultipliers(sub(P,S3), sub(Q,S3)); false) else true)
+///
+
+TEST ///
+-- lineBundleFromPointsAndMultipliers: a basis of sections of a line bundle
+-- given by points and multipliers, as a one-row matrix over the ring of P^1.
+S = QQ[x_0,x_1]
+P = sub(matrix{{1,2,3},{1,1,1}}, S)
+Q = sub(matrix{{0,5,7},{1,1,1}}, S)
+lb = lineBundleFromPointsAndMultipliers({1,2,3}, P, Q, 4)
+assert(instance(lb, Matrix))
+assert(numrows lb == 1)
+assert(numcols lb == 2)
+assert(ring lb === S)
+///
+
+TEST ///
+-- liftMatrixToEN, exercised through the full pipeline. Stress test: the
+-- relative canonical resolution of a random (g,k) = (8,5) curve is exact,
+-- its module ranks agree with rkSyzModules, and liftMatrixToEN returns a matrix.
+(g,k,n) = (8,5,1000)
+Ican = canCurveWithFixedScroll(g,k,n)
+assert((genus Ican, degree Ican, dim Ican) == (g, 2*g-2, 2))
+Jcan = curveOnScroll(Ican,g,k)
+resX = resCurveOnScroll(Jcan,g,2)
+assert((resX.dd)^2 == 0)
+assert(apply(1+length resX, i -> rank resX_i) == apply(1+length resX, i -> rkSyzModules(i,k)))
+e = balancedPartition(k-1,g-k+1)
+A = liftMatrixToEN(resX.dd_1, e)
+assert(instance(A, Matrix))
+assert(numrows A == 1)
+///
+
+TEST ///
+-- Stress test: the Eagon-Northcott type complex of a 2x4 scroll matrix is a
+-- genuine complex (differential squares to zero) for every twist b = 0..5.
+R7 = ZZ/12347[x_0..x_7]
+Phi = matrix{{x_0,x_1,x_2,x_3},{x_4,x_5,x_6,x_7}}
+for b from 0 to 5 do (
+   C = eagonNorthcottType(Phi, b);
+   assert(instance(C, Complex));
+   assert((C.dd)^2 == 0);
+   )
 ///
 
 end;

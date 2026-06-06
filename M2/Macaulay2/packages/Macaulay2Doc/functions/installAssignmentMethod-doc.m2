@@ -1,5 +1,7 @@
 document { 
-     Key => {installAssignmentMethod,
+    Key => {
+	"installing assignment methods",
+	 installAssignmentMethod,
 	  (installAssignmentMethod,Symbol,HashTable,Option),
 	  (installAssignmentMethod,Symbol,HashTable,HashTable,Option),
 	  (installAssignmentMethod,Symbol,HashTable,Function),
@@ -56,7 +58,7 @@ document {
 	  x_c
      ///,
      "The source code explains how it works, behind the scenes.",
-     PRE ("    " | code {(symbol _,Symbol,Thing),((symbol _,symbol =),Symbol,Thing)}),
+     PRE ("    " | net code {(symbol _,Symbol,Thing),((symbol _,symbol =),Symbol,Thing)}),
      EXAMPLE lines ///
 	  peek x
      ///,

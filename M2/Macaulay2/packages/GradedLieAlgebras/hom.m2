@@ -36,7 +36,7 @@ doc ///
 		Text
 		  Another similarity with ring maps is that a map $M \ \to\  L$ 
 		  need not 
-		  be well defined, in the sense that that the relations in $M$
+		  be well defined, in the sense that the relations in $M$
 		  need not be sent to zero in $L$. 
 		  It may also happen that the map
 		  does not commute with the differentials in $M$ and $L$. All this can 

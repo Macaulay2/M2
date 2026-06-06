@@ -1,11 +1,11 @@
 -- -*- coding: utf-8 -*-
 newPackage("Markov",
      Authors => {
-	  {Name => "Luis Garcia-Puente"},
+	  {Name => "Luis David Garcia Puente"},
 	  {Name => "Mike Stillman"}
 	  },
      DebuggingMode => false,
-     Keywords => {"Statistics"},
+     Keywords => {"Algebraic Statistics"},
      Headline => "Markov ideals arising from Bayesian networks in statistics",
      Version => "1.3",
      Date => "May 15, 2021",
@@ -206,7 +206,7 @@ normalizeStmt = (D) -> (
      D1 := toList(D#1);
      {D0#0, D0#1, D1}
      )
-minimize = (Ds) -> (
+minimizeStmts = (Ds) -> (
      -- each element of Ds should be a list {A,B,C}
      answer := {};
      -- step 1: first make the first two elements of each set a set
@@ -237,7 +237,7 @@ removeRedundants = (Ds) -> (
 	       a := Ds_i;
 	       D0 := drop(Ds,{i,i});
 	       all(D0, b -> not test1(a,b))));
-     minimize(Ds_c))
+     minimizeStmts(Ds_c))
 
 --------------------------
 -- Bayes ball algorithm --
@@ -642,12 +642,47 @@ doc ///
      R_0, R_1, R_119
      coefficientRing R
   Caveat
-    Currently, the user has no choice about the names of the variables.  
+    Currently, the user has no choice about the names of the variables.
     Also, the base field is set to be QQ, without option of changing it.
-    These will hopefully change in a later version.  
+    These will hopefully change in a later version.
   SeeAlso
 ///
 
+
+-- The package previously had zero TEST blocks. Smoke-cover the main
+-- pipeline (graph -> Markov statements -> ideal) on a small DAG so
+-- regressions in any of the underlying routines surface immediately.
+TEST ///
+G := makeGraph {{2, 3}, {4}, {4}, {}};
+assert(class G === Graph);
+-- Children sets match the input list (1-indexed).
+assert(G#1 === set {2, 3});
+assert(G#2 === set {4});
+assert(G#3 === set {4});
+assert(G#4 === set {});
+-- Markov statement variants.
+gms := globalMarkovStmts G;
+pms := pairMarkovStmts G;
+lms := localMarkovStmts G;
+for stmts in {gms, pms, lms} do (
+    assert(class stmts === List);
+    assert(all(stmts, t -> class t === List and #t == 3));
+    );
+-- Discrete Markov ideal on a 2x2x2x2 grid.
+R := markovRing(2, 2, 2, 2);
+assert(class R === PolynomialRing);
+assert(numgens R == 16);
+I := markovIdeal(R, gms);
+assert(class I === Ideal);
+assert(numgens I > 0);
+-- Gaussian ideal on the same DAG (4 nodes -> 10 covariance vars).
+GR := gaussRing 4;
+assert(class GR === PolynomialRing);
+assert(numgens GR == 10);
+J := gaussIdeal(GR, G);
+assert(class J === Ideal);
+assert(numgens J > 0);
+///
 
 end
 doc ///
@@ -716,7 +751,7 @@ res J1
 support J1
 
 globalMarkovStmts G
-minimize oo
+minimizeStmts oo
 
 G = makeGraph{{2,3},{4},{4},{}}
 G1 = makeGraph{{},{1},{1},{2,3}}

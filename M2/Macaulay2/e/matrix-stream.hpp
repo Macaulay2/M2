@@ -6,6 +6,7 @@
 #include "poly.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
+#include <gmpxx.h>
 
 #if 0
 // Example of the calls used to create an ideal (one rowed matrix), over a poly ring
@@ -44,11 +45,13 @@ class MatrixStream
   }  // This will return null before idealDone() is called.
 
   // Fields required for the general stream interface (see mathicgb::mathicgb.h)
-  typedef int Coefficient;
+  using Coefficient = mpz_class;
   // typedef long Coefficient;
-  typedef size_t VarIndex;
+  // typedef size_t VarIndex;
+  typedef int VarIndex;
   typedef int Exponent;
-  typedef unsigned int Component;
+  //typedef unsigned int Component;
+  typedef int Component;
 
   Coefficient modulus() const
   {
@@ -56,6 +59,7 @@ class MatrixStream
   }
   VarIndex varCount() const { return mPolyRing->n_vars(); }
   Component comCount() const { return mFreeModule->rank(); }
+  
   void idealBegin(size_t polyCount);
   void appendPolynomialBegin(size_t termCount);
   void appendTermBegin(Component com);
@@ -89,7 +93,7 @@ void matrixToStream(const Matrix* M, T& stream)
   size_t ncols = M->n_cols();
   int charac = static_cast<int>(P->characteristic());
   assert(charac > 0);
-  exponents exp =
+  exponents_t exp =
       ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(nvars));  // allocated on stack
   stream.idealBegin(ncols);
   Matrix::iterator i(M);
@@ -101,7 +105,7 @@ void matrixToStream(const Matrix* M, T& stream)
       for (; i.valid(); i.next())
         {
           Nterm* t = i.entry();
-          for (Nterm* s = t; s != 0; s = s->next) nterms++;
+          for ([[maybe_unused]] Nterm& s : t) nterms++;
         }
       stream.appendPolynomialBegin(nterms);
 
@@ -110,13 +114,13 @@ void matrixToStream(const Matrix* M, T& stream)
       for (; i.valid(); i.next())
         {
           Nterm* t = i.entry();
-          for (Nterm* s = t; s != 0; s = s->next)
+          for (Nterm& s : t)
             {
-              P->getMonoid()->to_expvector(s->monom, exp);
+              P->getMonoid()->to_expvector(s.monom, exp);
               stream.appendTermBegin(i.row());
               for (size_t j = 0; j < nvars; j++)
                 if (exp[j] != 0) stream.appendExponent(j, exp[j]);
-              std::pair<bool, long> b = KK->coerceToLongInteger(s->coeff);
+              std::pair<bool, long> b = KK->coerceToLongInteger(s.coeff);
               assert(b.first);
               int a = static_cast<int>(
                   b.second);  // This will fit, as the charac fits into an int

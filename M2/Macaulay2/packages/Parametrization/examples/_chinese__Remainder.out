@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 774052082 *}
+-- -*- M2-comint -*- {* hash: 1332213913842
 
 i1 : chineseRemainder({1,2,3},{3,5,7})
 

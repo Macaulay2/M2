@@ -1,13 +1,13 @@
 
 newPackage(
         "RandomPoints",
-    	Version => "1.5.2",
-    	Date => "July 30th, 2021",
+    	Version => "1.5.3",
+    	Date => "May 17th, 2023",
     	Authors => {
-	     {Name => "Sankhaneel Bisui", Email => "sbisu@tulane.edu", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
+	     {Name => "Sankhaneel Bisui", Email => "Sankhaneel.Bisui@umanitoba.ca", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
          {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"},
-         {Name => "Sarasij Maitra", Email => "sm3vg@virginia.edu", HomePage => "https://sarasij93.github.io/"},         
-	     {Name=> "Thai Nguyen", Email =>"tnguyen11@tulane.edu", HomePage=>"https://sites.google.com/view/thainguyenmath "},
+         {Name => "Sarasij Maitra", Email => "maitra@math.utah.edu", HomePage => "https://sarasij93.github.io/"},         
+	     {Name=> "Thai Nguyen", Email =>"nguyt161@mcmaster.ca", HomePage=>"https://sites.google.com/view/thainguyenmath "},
          {Name=> "Frank-Olaf Schreyer", Email =>"schreyer@math.uni-sb.de", HomePage=>"https://www.math.uni-sb.de/ag/schreyer/index.php/ "},
 	     {Name=>"Karl Schwede", Email=>"schwede@math.utah.edu", HomePage=>"https://www.math.utah.edu/~schwede/" }	     	     
 	     },
@@ -15,7 +15,21 @@ newPackage(
         PackageImports => {"SwitchingFields", "MinimalPrimes", "ConwayPolynomials"}, 
 		DebuggingMode => false, 
 		Reload=>false,
-		AuxiliaryFiles => false -- set to true if package comes with auxiliary files
+		AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
+		Keywords => {"Examples and Random Objects"},
+		Certification => {
+		    "journal name" => "Journal of Software for Algebra and Geometry",
+		    "journal URI" => "https://msp.org/jsag/",
+		    "article title" => "Finding points on varieties with Macaulay2",
+		    "acceptance date" => "2023-05-08",
+		    "published article URI" => "https://msp.org/jsag/2023/13-1/p03.xhtml",
+		    "published article DOI" => "10.2140/jsag.2023.13.33",
+		    "published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x03-RandomPoints.m2",
+		    "release at publication" => "ae946e7b4ba5d4d16f3cf8b3ddfef75086ba0559",
+		    "version at publication" => "1.5.3",
+		    "volume number" => "13",
+		    "volume URI" => "https://msp.org/jsag/2023/13-1/"
+		    }
     	)
 
 -- Any symbols or functions that the user is to have access to
@@ -409,7 +423,7 @@ getRandomLinearForms(Ring, List) := opts -> (R1, L1) ->(
     if (d <= 0) then (
         
     );
-    tempList := random genList;
+    tempList := shuffle genList;
     if (opts.Verify) then (
         if (#tempList < monomialForms + trueMonomialForms + binomialForms) then (tempList = tempList | apply(monomialForms + trueMonomialForms + binomialForms - #tempList, i->(genList)#(random d)));
     );
@@ -457,7 +471,7 @@ getRandomLinearForms(Ring, List) := opts -> (R1, L1) ->(
     );
     formList = formList | apply(constForms, i -> random(0, R1));
 
-    return random formList;
+    return shuffle formList;
 );
 
 
@@ -831,7 +845,7 @@ linearIntersectionNew(ZZ, Ideal) := opts -> (n1, I1) -> (
                 if ((not homogFlag) and ((fastDim0(workingIdeal) == true))) then (--if we are using decompose
                     if opts.Verbose or debugLevel > 0 then print("linearIntersectionNew: We found at least one point");
                     
-                    ptList = random decompose trim (workingIdeal);                        
+                    ptList = shuffle decompose trim (workingIdeal);
                     if opts.Verbose or debugLevel > 0 then print("linearIntersectionNew: We found " | toString(#ptList) | " points.");
                     j=0;
                     sortedPtList = sort apply(#ptList, t -> {0, degree (ptList#t), t});                    
@@ -848,7 +862,7 @@ linearIntersectionNew(ZZ, Ideal) := opts -> (n1, I1) -> (
                             I3 = psi(I2);
                             newS2 = target psi;
                             m2 = psi(ptList#j);
-                            newPtList = random decompose(m2); --make sure we are picking points randomly from this decomposition
+                            newPtList = shuffle decompose(m2); --make sure we are picking points randomly from this decomposition
                             --since these points are going to be conjugate, we only pick 1.                      
                             if (#newPtList > 0) then ( 
                                 finalPoint = idealToPoint(newPtList#0);
@@ -1377,7 +1391,7 @@ findANonZeroMinor(ZZ, Matrix, Ideal) := opts -> (n,M,I)->(
     Mcolumnextract = M_N1;
     M11 := mutableMatrix phi(Mcolumnextract);
     N2 = (rowRankProfile(M11));
-    N1rand := random(N1);
+    N1rand := shuffle(N1);
     N1new = {};
     for i from  0 to n-1 do(
 	    N1new = join(N1new, {N1rand#i});
@@ -1386,8 +1400,8 @@ findANonZeroMinor(ZZ, Matrix, Ideal) := opts -> (n,M,I)->(
     --Karl:  I modified the following.
     if (rank(M3)<n) then error "findANonZeroMinor:  Something went wrong, the matrix rank fell taking the first submatrix.  This indicates a bug in the program.";
     --this is what was written before:
-    --return (P,N1,N2,"findANonZeroMinor: Using the the second and third outputs failed to generate a random matrix of the given size, that has full rank when evaluated at the first output.");
-    N2rand := random(rowRankProfile(M3));
+    --return (P,N1,N2,"findANonZeroMinor: Using the second and third outputs failed to generate a random matrix of the given size, that has full rank when evaluated at the first output.");
+    N2rand := shuffle(rowRankProfile(M3));
     N2new = {};
     for i from 0 to n-1 do(
         N2new = join(N2new, {N2rand#i});
@@ -1783,7 +1797,7 @@ doc ///
         Full
         Trinomial
     Headline
-        When changing coordinates, whether to replace variables by general degre 1 forms, binomials, etc.
+        When changing coordinates, whether to replace variables by general degree 1 forms, binomials, etc.
     Usage
         Replacement => Full
         Replacement => Monomial
@@ -1842,7 +1856,7 @@ doc///
         [extendIdealByNonZeroMinor, NumThreadsToUse]
         [findANonZeroMinor, NumThreadsToUse]
     Headline
-        number of threads the the function will use in a brute force search for a point 
+        number of threads that the function will use in a brute force search for a point 
     Description
         Text
             When calling {\tt randomPoints}, and functions that call it, with a {\tt BruteForce} strategy, this denotes the number of threads to use in brute force point checking.
@@ -1859,7 +1873,7 @@ doc///
         [extendIdealByNonZeroMinor,PointCheckAttempts ]
         [findANonZeroMinor, PointCheckAttempts]
     Headline
-        Number of times the the function will search for a point 
+        Number of times that the function will search for a point 
     Description
         Text
             When calling {\tt randomPoints}, and functions that call it, with a {\tt BruteForce} strategy strategy, this denotes the number of trials for brute force point checking.  When calling it with a {\tt LinearIntersection} strategy, this controls how many linear spaces are created.

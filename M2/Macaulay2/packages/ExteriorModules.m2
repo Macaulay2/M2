@@ -8,16 +8,16 @@ newPackage(
                 },
     Headline => "monomial modules over exterior algebras",
     DebuggingMode => false,
-    PackageExports=>{"ExteriorIdeals"},
+    PackageExports=>{"ExteriorIdeals", "Complexes"},
+    Keywords => {"Commutative Algebra"},
     Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",
-         "journal URI" => "http://j-sag.org/",
+         "journal URI" => "https://msp.org/jsag/",
          "article title" => "ExteriorModules: a package for computing monomial modules over an exterior algebra",
          "acceptance date" => "3 June 2021",
          "published article URI" => "https://msp.org/jsag/2021/11-1/p08.xhtml",
          "published article DOI" => "10.2140/jsag.2021.11.71",
          "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x08-ExteriorModules.zip",
-         "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ExteriorModules.m2",
          "release at publication" => "49c26ff4b584149645fb695d8d8ba7481d0167df",        -- git commit number in hex
          "version at publication" => "1.0",
          "volume number" => "11",
@@ -458,7 +458,7 @@ O
 -------------------------------------------------------------------------------------------
 -- compute the (minimal) Betti numbers of M
 ----------------------------------------------------------------------------------------------
-minimalBettiNumbers Module := M -> betti res image mingens M 
+minimalBettiNumbers Module := opts -> M -> betti freeResolution(image mingens M, opts)
 
 
 -------------------------------------------------------------------------------------------
@@ -470,8 +470,8 @@ initialModule Module := M -> image monomials leadTerm gens gb M
 -------------------------------------------------------------------------------------------
 -- compute the Bass numbers of M
 ----------------------------------------------------------------------------------------------
-bassNumbers = method(TypicalValue=>BettiTally)
-bassNumbers Module := M -> sum(minimalBettiNumbers\ann\getIdeals M)  
+bassNumbers = method(TypicalValue=>BettiTally, Options => options minimalBettiNumbers)
+bassNumbers Module := BettiTally => opts -> M -> sum(ann\getIdeals M, a -> minimalBettiNumbers(a, opts))
 
 ---------------------------------------------
 ---------------------------------------------
@@ -888,8 +888,9 @@ document {
 document {
      Key => {(minimalBettiNumbers,Module)},
      Headline => "compute the minimal Betti numbers of a given graded module",
-     Usage => "minimalBettiNumbers M",
-     Inputs => {"M" => {"a graded module over an exterior algebra"}
+     Usage => "minimalBettiNumbers(M, LengthLimit => lim)",
+     Inputs => {"M" => {"a graded module over an exterior algebra"},
+         LengthLimit => ZZ => { "only compute enough to determine the Betti table up to and including the column labelled ", TT "lim"}
       },
      Outputs => {BettiTally => {"the Betti table of the module ", TT "M", " computed using its minimal generators"}},
      "If ", TT"M", " is a graded finitely generated module over an exterior algebra ", TT "E", ", we denote by ", TEX///$\beta_{i,j}(M)=\dim_K\mathrm{Tor}_{i}^{E}(M,K)_j$///, " the graded Betti numbers of ", TT "M", ".",
@@ -904,7 +905,7 @@ document {
            M_2=createModule({J,I_2},F)
            M_1==M_2
            betti M_1==betti M_2
-           minimalBettiNumbers M_1==minimalBettiNumbers M_2
+           minimalBettiNumbers(M_1, LengthLimit => 5) == minimalBettiNumbers(M_2, LengthLimit => 5)
       ///
      }
  
@@ -930,10 +931,11 @@ document {
      }
  
 document {
-     Key => {bassNumbers,(bassNumbers,Module)},
+     Key => {bassNumbers,(bassNumbers,Module),[bassNumbers,LengthLimit]},
      Headline => "compute the Bass numbers of a given graded module",
-     Usage => "bassNumbers M",
-     Inputs => {"M" => {"a graded module over an exterior algebra"}
+     Usage => "bassNumbers(M, LengthLimit => lim)",
+     Inputs => {"M" => {"a graded module over an exterior algebra"},
+         LengthLimit => ZZ => { "only compute enough to determine the Bass table up to and including the column labelled ", TT "lim"}
       },
      Outputs => {BettiTally => {"the Bass table of the module ", TT "M", " computed using its minimal generators"}},
      "If ", TT"M", " is a graded finitely generated module over an exterior algebra ", TT "E", ", we denote by ", TEX///$\beta_{i,j}(M)=\dim_K\mathrm{Tor}_{i}^{E}(M,K)_j$///, " the graded Betti numbers of ", TT "M", " and by ", TEX///$\mu_{i,j}(M) = \dim_K \mathrm{Ext}_E^i(K, M)_j$///, " the graded Bass numbers of ", TT "M", ". Let ", TEX///$M^\ast$///, " be the right (left) ", TEX///$E$///, "-module ", TEX///$\mathrm{Hom}_E(M,E).$///, " The duality between projective and injective resolutions implies the following relation between the graded Bass numbers of a module and the graded Betti numbers of its dual: ", TEX///$\beta_{i,j}(M) = \mu_{i,n-j}(M^\ast)$///, ", for all ", TEX///$i, j.$///,
@@ -944,7 +946,7 @@ document {
            I_1=ideal(e_1*e_2,e_1*e_3,e_2*e_3)
            I_2=ideal(e_1*e_2,e_1*e_3)
            M=createModule({I_1,I_2},F)
-           bassNumbers M
+           bassNumbers(M, LengthLimit => 5)
       ///
      }
      
@@ -1188,7 +1190,7 @@ M_1=createModule({I_1,I_2},F)
 J=ideal(join(flatten entries gens I_1,{e_1*e_2*e_3}))
 M_2=createModule({J,I_2},F)
 assert(M_1==M_2)
-assert(minimalBettiNumbers M_1==minimalBettiNumbers M_2)
+assert(minimalBettiNumbers(M_1, LengthLimit => 5) == minimalBettiNumbers(M_2, LengthLimit => 5))
 ///
 
 ----------------------------
@@ -1214,10 +1216,77 @@ F=E^{0,0}
 I_1=ideal(e_1*e_2,e_1*e_3,e_2*e_3)
 I_2=ideal(e_1*e_2,e_1*e_3)
 M=createModule({I_1,I_2},F)
-t=bassNumbers M
+t=bassNumbers(M, LengthLimit => 5)
 assert(t#(1,{2},2)==4)
 assert(t#(4,{5},5)==34)
 assert(t#(5,{6},6)==50)
+///
+
+----------------------------
+-- Bass-Betti duality
+----------------------------
+TEST ///
+-- The Bass numbers of M agree with the minimal Betti numbers of its
+-- E-dual Hom_E(M, E) when the ambient free module is generated in a single
+-- internal degree (here F = E^{0,0}); see the duality stated in the
+-- documentation of bassNumbers.
+E=QQ[e_1..e_4,SkewCommutative=>true]
+F=E^{0,0}
+I_1=ideal(e_1*e_2,e_1*e_3,e_2*e_3)
+I_2=ideal(e_1*e_2,e_1*e_3)
+M=createModule({I_1,I_2},F)
+assert(bassNumbers(M, LengthLimit => 5) == minimalBettiNumbers(Hom(M, E^1), LengthLimit => 5))
+///
+
+----------------------------
+-- minimalBettiNumbers strict regression
+----------------------------
+TEST ///
+-- Hand-checked Betti numbers of M = (e_1*e_2, e_1*e_3) inside E^1 over
+-- the exterior algebra in three variables.  Each homological degree
+-- has a single internal-degree column.
+E=QQ[e_1,e_2,e_3,SkewCommutative=>true]
+F=E^{0}
+M=ideal(e_1*e_2, e_1*e_3)*F
+b=minimalBettiNumbers(M, LengthLimit => 4)
+assert(b#(0,{2},2) == 2)
+assert(b#(1,{3},3) == 5)
+assert(b#(2,{4},4) == 9)
+assert(b#(3,{5},5) == 14)
+assert(b#(4,{6},6) == 20)
+///
+
+----------------------------
+-- closure idempotency and containment
+----------------------------
+TEST ///
+-- lexModule is the unique lex module with the same Hilbert sequence as M;
+-- stableModule and stronglyStableModule are the smallest supermodules of M
+-- with the corresponding property (the doc states explicitly that they
+-- do not preserve invariants).  All three closures are idempotent.
+E=QQ[e_1..e_4,SkewCommutative=>true]
+F=E^{0,0}
+I_1=ideal(e_1*e_2,e_1*e_3,e_2*e_3)
+I_2=ideal(e_1*e_2,e_1*e_3)
+M=createModule({I_1,I_2},F)
+-- lexModule: same Hilbert sequence, is lex, idempotent
+ML=lexModule M
+assert(isLexModule ML)
+assert(lexModule ML == ML)
+assert(hilbertSequence M == hilbertSequence ML)
+-- stableModule: contains M, stable, idempotent
+MS=stableModule M
+assert(isStableModule MS)
+assert(stableModule MS == MS)
+assert(isSubset(M, MS))
+-- stronglyStableModule: contains M, strongly stable, idempotent
+MSS=stronglyStableModule M
+assert(isStronglyStableModule MSS)
+assert(stronglyStableModule MSS == MSS)
+assert(isSubset(M, MSS))
+-- containment chain: the smallest stable supermodule is contained in the
+-- smallest strongly-stable supermodule (every strongly stable is stable)
+assert(isSubset(MS, MSS))
 ///
 
 end

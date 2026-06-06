@@ -1,11 +1,12 @@
 HOMEPAGE = http://www.hboehm.info/gc/
-URL = http://www.hboehm.info/gc/gc_source/
+SUBMODULE = true
+LIBNAME = bdwgc
+URL = https://github.com/ivmai/bdwgc.git
 GITURL = https://github.com/ivmai/bdwgc/
-URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 8.0.4
-#VERSION = 7.6.2
+VERSION = 8.2.12
 LICENSEFILES = README.QUICK
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PRECONFIGURE = ./autogen.sh
 
 # We can also get the sources from the home page above or from
 #   https://github.com/ivmai/bdwgc/

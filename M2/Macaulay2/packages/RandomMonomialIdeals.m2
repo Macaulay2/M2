@@ -49,17 +49,16 @@ newPackage(
 	},
     	Headline => "Erdos-Renyi-type random monomial ideals",
 	Keywords => {"Examples and Random Objects"},
-     	PackageImports => { "Depth", "BoijSoederberg", "Serialization" },
+     	PackageImports => { "Complexes", "Depth", "BoijSoederberg", "Serialization" },
     	DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Random Monomial Ideals: a Macaulay2 package",
 	     "acceptance date" => "11 April 2019",
 	     "published article URI" => "https://msp.org/jsag/2019/9-1/p08.xhtml",
 	     "published article DOI" => "10.2140/jsag.2019.9.65",
 	     "published code URI" => "https://msp.org/jsag/2019/9-1/jsag-v9-n1-x08-RandomMonomialIdeals.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RandomMonomialIdeals.m2",
 	     "release at publication" => "902570b14480e7590b6960b1352331acce3ef817",	    -- git commit number in hex
 	     "version at publication" => "1.0",
 	     "volume number" => "9",
@@ -67,6 +66,11 @@ newPackage(
 	     }
     	)
 
+-- TODO: the option symbols `Coefficients`, `VariableName`, `ShowTally`,
+-- `SaveBettis`, and `CountPure` are exported and documented but no TEST
+-- passes them with a non-default value and asserts the observable effect.
+-- A single flip-and-assert TEST per option would catch regressions in
+-- option dispatch.
 export {
     "randomMonomialSets",
     "randomMonomialSet",
@@ -218,7 +222,7 @@ writeSample (Sample, String) := (s, dirname) -> (
     if fileExists dirname then (
 	stderr << "warning: directory or file with this name already exists." << endl;
         if not isDirectory dirname then (
-	    stderr << "warning: overwrting file." << endl;
+	    stderr << "warning: overwriting file." << endl;
 	    removeFile dirname;
 	    mkdir dirname;
 	    );
@@ -356,7 +360,8 @@ randomMonomialSet (PolynomialRing,ZZ,ZZ) := List => o -> (R,D,M) -> (
     if M<0 then stderr << "warning: M expected to be a nonnegative integer" << endl;
     if o.Strategy === "Minimal" then error "Minimal not implemented for fixed size ER model";
     allMonomials := flatten flatten apply(toList(1..D),d->entries basis(d,R));
-    C := take(random(allMonomials), M);
+    print(#allMonomials);
+    C := shuffle(allMonomials, min(M, #allMonomials));
     if C==={} then {0_R} else C
 )
 
@@ -377,12 +382,13 @@ randomMonomialSet (PolynomialRing,ZZ,List) := List => o -> (R,D,pOrM) -> (
         if o.Strategy === "Minimal" then (
             currentRingM := R;
             apply(D, d->(
-                chosen := take(random(flatten entries basis(d+1, currentRingM)), pOrM_d);
+		mons := flatten entries basis(d+1, currentRingM);
+                chosen := shuffle(mons, min(pOrM_d, #mons));
                 B = flatten append(B, chosen/(i->sub(i, R)));
                 currentRingM = currentRingM/promote(ideal(chosen), currentRingM)
 		)
 	    )
-	) else B = flatten apply(toList(1..D), d->take(random(flatten entries basis(d,R)), pOrM_(d-1)));
+	) else B = flatten apply(toList(1..D), d->shuffle(flatten entries basis(d,R), pOrM_(d-1)));
     ) else if all(pOrM,q->instance(q,RR)) then (
         if any(pOrM,q-> q<0.0 or 1.0<q) then error "pOrM expected to be a list of real numbers between 0.0 and 1.0";
         if o.Strategy === "Minimal" then (
@@ -1705,7 +1711,7 @@ doc ///
       using the function writeSample. 
       This shows how to retrieve that stored sample and have it loaded as an object of type Sample: 
     Example 
-      writeSample(sample(ER(2,3,0.1),5), "testDirectory")
+      writeSample(sample(ER(2,3,0.1),5), "testDirectory") -* no-capture-flag *-
       mySample = sample("testDirectory")
       peek mySample 
   SeeAlso
@@ -1847,7 +1853,7 @@ doc ///
       about the model used to generate the sample, and another text file contains the 
       information about the sample itself. 
     Example
-      writeSample(sample(ER(2,3,0.1),5), "testDirectory")
+      writeSample(sample(ER(2,3,0.1),5), "testDirectory") -* no-capture-flag *-
       mySample = sample("testDirectory")
       peek mySample 
   SeeAlso
@@ -2176,6 +2182,12 @@ doc ///
 
 --******************************************--
 -- TESTS     	     	       	    	    --
+-- TODO: every TEST below calls one of the `random*` entry points but none
+-- of them invokes `setRandomSeed`.  The current suite happens to be
+-- robust because most tests use p=0.0 or p=1.0 (deterministic boundary
+-- cases) -- but any TEST whose assertions depend on the RNG state would
+-- be a latent flakiness vector.  Seed the suite (e.g. `setRandomSeed 0`
+-- at the top of each TEST that calls a non-boundary `random*`).
 --******************************************--
 
 --************************--
@@ -2610,6 +2622,66 @@ TEST///
   stat = statistics(sample(ER(5,5,1.0),10),x->#x);
   assert(stat.Mean == 251)
   assert(stat.StdDev == 0)
+///
+
+--****************************--
+--  Sample/Model constructor and serialization round-trip  --
+--****************************--
+
+TEST ///
+  -- the `model` constructor builds a Model with Name, Parameters, and
+  -- a Generate function; `sample` then records ModelName, Parameters,
+  -- and SampleSize on the resulting Sample, and `getData` returns the
+  -- list of generated sets
+  R = QQ[x, y, z];
+  mymodel = model({R, 2, 1.0}, (myR, myD, myp) -> randomMonomialSet(myR, myD, myp), "MyTestModel");
+  assert(class mymodel === Model)
+  assert(mymodel.Name == "MyTestModel")
+  -- (M2 does not define == on PolynomialRing, so compare component-wise)
+  assert(#mymodel.Parameters == 3)
+  assert(mymodel.Parameters_0 === R)
+  assert(mymodel.Parameters_1 == 2)
+  assert(mymodel.Parameters_2 == 1.0)
+  s = sample(mymodel, 3);
+  assert(class s === Sample)
+  assert(s.ModelName == "MyTestModel")
+  assert(#s.Parameters == 3)
+  assert(s.Parameters_0 === R)
+  assert(s.Parameters_2 == 1.0)
+  assert(s.SampleSize == 3)
+  assert(#getData s == 3)
+///
+
+TEST ///
+  -- writeSample and sample(String) round-trip a Sample through the
+  -- filesystem; ModelName / SampleSize / Parameters survive verbatim,
+  -- and the Data list survives up to toString (the deserialized ring
+  -- is a freshly created ring object so === / == do not match directly)
+  s = sample(ER(2, 2, 1.0), 3);
+  tmpd = temporaryFileName() | "/";
+  writeSample(s, tmpd);
+  assert(fileExists tmpd)
+  s2 = sample tmpd;
+  assert(class s2 === Sample)
+  assert(s2.ModelName == s.ModelName)
+  assert(s2.SampleSize == s.SampleSize)
+  assert(toString s2.Parameters == toString s.Parameters)
+  assert(#(getData s2) == #(getData s))
+  assert(toString getData s2 == toString getData s)
+///
+
+TEST ///
+  -- statistics(Sample, Function) returns a HashTable carrying Mean,
+  -- StdDev, and a Histogram (a Tally over the per-sample values of f).
+  -- On ER(_,_,1.0) every generated monomial set is the same, so the
+  -- histogram has exactly one bucket containing all SampleSize entries.
+  ss = sample(ER(3, 2, 1.0), 4);
+  stat = statistics(ss, x -> #x);
+  assert(class stat === HashTable)
+  assert(stat.Mean == 9)
+  assert(stat.StdDev == 0)
+  assert(class stat.Histogram === Tally)
+  assert(stat.Histogram == new Tally from {9 => 4})
 ///
 
 end

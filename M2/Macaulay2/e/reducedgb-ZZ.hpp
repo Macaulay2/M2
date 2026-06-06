@@ -22,7 +22,7 @@ class ReducedGB_ZZ : public ReducedGB
   MonomialTableZZ *T;
   const MonomialTableZZ *ringtableZZ;
 
-  enum divisor_type find_divisor(exponents exp, int comp, int &result_loc);
+  enum divisor_type find_divisor(exponents_t exp, int comp, int &result_loc);
 
   ReducedGB_ZZ(GBRing *R0,
                const PolynomialRing *originalR0,

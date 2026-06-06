@@ -521,23 +521,26 @@ splitFunction#IndependentSet = (I,opts) -> (
     J := I.Ideal;
     if J == 1 then error "Internal error: Input should not be unit ideal.";
     R := ring J;
-    hf := if isHomogeneous J then poincare J else null;
+    hf := if canUseHilbertHint J then poincare J else null;
     indeps := independentSets(J, Limit=>1);
     basevars := support first indeps;
     if opts.Verbosity >= 3 then
         << "  Choosing: " << basevars << endl;
     (S, SF) := makeFiberRings(basevars,R);
     JS := S.cache#"RtoS" J;
+    -- Note: at this point, if J is homogeneous, JS should be as well. However, ideal JSF below
+    -- will almost never be homogeneous.
+    --
     -- if basevars is empty, then return I, but put in the lex ring.
-    -- return value not correct form yet
     if #basevars == 0 then (
         I.IndependentSet = ({},S,SF);
         I.LexGBOverBase = (ideal gens gb JS)_*;
         return splitLexGB I;
     );
     -- otherwise compute over the fraction field.
-    if hf =!= null and degreesRing ring JS === ring hf then gb(JS, Hilbert=>hf) else gb JS;
-    --gens gb IS;
+    -- in the next test, I am pretty sure that whenever J is homogeneous, so is J (and hf is then defined).
+    -- But I'm keeping the test here anyway
+    if hf =!= null and canUseHilbertHint JS then gb(JS, Hilbert=>hf) else gb JS;
     (JSF, coeffs) := minimalizeOverFrac(JS, SF);
     if coeffs == {} then (
         I.IndependentSet = (basevars,S,SF);

@@ -82,6 +82,11 @@ y = sort x
 z = sort y
 assert ( z == y )
 
+L = toList((0,0)..(1,1))
+assert( L === sort(L, identity) )
+L = {0,0,0,1,2,3}
+assert( L === sort(L, identity) )
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test sort.out"

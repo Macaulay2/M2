@@ -1,2 +1,0 @@
-M2-factory.cpp depends on templates/ftmpl_list.cc, make a makefile
-include file that gets the right dependency recorded

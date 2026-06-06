@@ -42,6 +42,7 @@ class PfaffianComputation : public our_new_delete
 
   Matrix *pfaffians() { return pfaffs.to_matrix(); }
   const Ring *get_ring() const { return R; }
+  ring_elem calc_pfaff(void);
 };
 
 #endif

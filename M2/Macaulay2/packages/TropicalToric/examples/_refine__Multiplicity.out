@@ -1,0 +1,27 @@
+-- -*- M2-comint -*- hash: 8150816867420571977
+
+i1 : X = toricProjectiveSpace 3;
+
+i2 : R = QQ[x_1 .. x_3];
+
+i3 : f = x_1*x_2*x_3 + x_1*x_2 + x_1*x_3 + x_2*x_3;
+
+i4 : T = tropicalVariety(ideal f);
+
+i5 : F = gfanFanCommonRefinement(fan X, fan T);
+
+i6 : X' = makeSimplicial (normalToricVariety F);
+
+i7 : multiplicities T
+
+o7 = {1, 1, 1, 1, 1, 1}
+
+o7 : List
+
+i8 : refineMultiplicity(T,X')
+
+o8 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+
+o8 : List
+
+i9 : 

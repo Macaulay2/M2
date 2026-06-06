@@ -156,6 +156,6 @@ x = new MutableList from {1,2,3}
 y = apply(x,identity)
 assert(class x === class y)
 assert(x =!= y)
-assert(mutable x)
-assert(mutable y)
+assert(isMutable x)
+assert(isMutable y)
 assert(hash y =!= 0)

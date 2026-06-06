@@ -25,6 +25,16 @@ assert (trim(M,Strategy=>Complement) === trim(N,Strategy=>Complement))
 assert (trim P === R^1)
 assert (trim(P,Strategy=>Complement) === R^1)
 
+-- trim PID
+R=QQ[x]
+I = ideal(3*x^4-x^3+x^2-x-2,3*x^4+2*x^3+6*x+4)
+J = trim I
+assert(I == J)
+assert(numgens J == 1)
+I' = ideal(x^3-1, x^2+1)
+J' = trim I'
+assert(J'_* == {1})
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test trim.out"
 -- End:

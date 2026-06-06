@@ -5,6 +5,7 @@ use evaluate;
 use parser;
 use texmacs;
 use actors5;
+use profiler;
 
 import dirname(s:string):string;
 
@@ -15,10 +16,10 @@ export setupargv():void := (
      setupconst("environment",toExpr(envp));
      );
 
-fileExitHooks := setupvar("fileExitHooks", Expr(emptyList));
-currentFileName := setupvar("currentFileName", nullE);
-currentPosFile  := dummyPosFile;
-currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
+fileExitHooks := setupvarThread("fileExitHooks", Expr(emptyList));
+currentFileName := setupvarThread("currentFileName", nullE);
+threadLocal currentPosFile  := dummyPosFile;
+currentFileDirectory := setupvarThread("currentFileDirectory", toExpr("./"));
 update(err:Error,prefix:string,f:Code):Error := (
      if !err.printed
      then printErrorMessage0(f,prefix + ": " + err.message)
@@ -107,27 +108,29 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    promptWanted = true;
 	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
-		    if isatty(file) || file.posFile.file.fulllines then flush(file);
+		    if isatty(file) || file.posFile.file.fulllines then flushToken(file);
+		    file.posFile.line = file.posFile.line + 1;
+		    file.posFile.column = ushort(0);
 		    )
 	       )
 	  else (
 	       t := u.word;
 	       if t == wordEOF then (
-		    if debugLevel == 123 then stderr <<  "-- EOF token, returning: " << position(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- EOF token, returning: " << u.position << endl;
 		    return if returnLastvalue then lastvalue else nullE;
 		    )
 	       else if t == NewlineW then (
-		    if debugLevel == 123 then stderr <<  "-- newline token, discarding: " << position(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- newline token, discarding: " << u.position << endl;
 		    gettoken(file,true);
 		    )
 	       else if t == wordEOC then (
-		    if debugLevel == 123 then stderr <<  "-- end-of-cell token, discarding: " << position(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- end-of-cell token, discarding: " << u.position << endl;
 		    gettoken(file,true);
 		    )
 	       else (
 	  	    previousLineNumber = lineNumber;
 		    promptWanted = true;
-		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << position(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << u.position << endl;
 		    parsed := parse(file,SemicolonW.parse.precedence,true);
 		    if parsed == errorTree then (
 			 if test(interruptedFlag) then (
@@ -142,6 +145,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    	      if debugLevel == 123 then stderr <<  "-- error during parsing" << endl;
 			      if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 			      if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
+			      file.posFile.line = file.posFile.line + 1;
+			      file.posFile.column = ushort(0);
 			      );
 			 )
 		    else (
@@ -161,7 +166,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 then (
 			      msg := "syntax error: unmatched " + s.word.name;
 			      printErrorMessage(s,msg);
-			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
+			      if stopIfError || returnIfError then return Expr(Error(s.position,msg,nullE,false,dummyFrame));
 			      )
 			 else (
 			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
@@ -182,7 +187,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					if err.message == returnMessage
 					|| err.message == continueMessage || err.message == continueMessageWithArg 
 					|| err.message == stepMessage || err.message == stepMessageWithArg 
-					|| err.message == breakMessage || err.message == throwMessage then (
+					|| err.message == breakMessage || err.message == throwMessage
+					|| err.message == finishMessage then (
 					     if stopIfBreakReturnContinue then return lastvalue;
 					     );
 					if err.message == unwindMessage then (
@@ -246,14 +252,14 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      else (
 				   -- an error occurred in localBind
 				   if isatty(file) 
-				   then flush(file)
+				   then flushToken(file)
 				   else return (
 					if lasterrmsg != dummyError
 					then Expr(lasterrmsg)
 					else buildErrorPacket("error occurred in parsing")))))))));
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
-setInterpreterDepth(n:int):void := (
+export setInterpreterDepth(n:int):void := (
      interpreterDepth = n;
      setGlobalVariable(interpreterDepthS, toExpr(interpreterDepth)));
 incrementInterpreterDepth():void := setInterpreterDepth(interpreterDepth + 1);
@@ -267,7 +273,9 @@ readeval3(file:TokenFile,printout:bool,dc:DictionaryClosure,returnLastvalue:bool
       savepf := currentPosFile;
 	setGlobalVariable(currentFileName,toExpr(file.posFile.file.filename));
 	setGlobalVariable(currentFileDirectory,toExpr(dirname(file.posFile.file.filename)));
-        currentPosFile = file.posFile;
+	if currentPosFile.file == stdIO && file.posFile.file == stdIO
+	then file.posFile = currentPosFile
+	else currentPosFile = file.posFile;
 	ret := readeval4(file,printout,dc.dictionary,returnLastvalue,stopIfBreakReturnContinue,returnIfError);
       setGlobalVariable(currentFileDirectory,savecd);
       setGlobalVariable(currentFileName,savecf);
@@ -318,7 +326,7 @@ topLevelPrompt():string := (
      if debugLevel == 123 then (
 	  p = "[" + tostring(promptcount) + "]  " + p;
 	  stderr <<  "-- topLevelPrompt:" 
-	  << " prompt = \"" << presentn(p) << "\""
+	  << " prompt = \"" << present(p) << "\""
 	  << endl;
 	  );
      promptcount = promptcount + 1;
@@ -353,7 +361,7 @@ loadprint(filename:string,dc:DictionaryClosure,returnIfError:bool):Expr := (
 	       if err.message == returnMessage
 	       || err.message == continueMessage || err.message == continueMessageWithArg
 	       || err.message == stepMessage || err.message == stepMessageWithArg
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else r
+	       || err.message == breakMessage || err.message == finishMessage then if err.value == dummyExpr then nullE else err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -369,7 +377,7 @@ load(filename:string):Expr := (
 	       if err.message == returnMessage
 	       || err.message == continueMessage || err.message == continueMessageWithArg
 	       || err.message == stepMessage || err.message == stepMessageWithArg
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else r
+	       || err.message == breakMessage || err.message == finishMessage then if err.value == dummyExpr then nullE else err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -469,12 +477,12 @@ commandInterpreter(e:Expr):Expr := (
        is Nothing do loadprint("-",newStaticLocalDictionaryClosure(),false)
        is x:DictionaryClosure do commandInterpreter(x)
        is x:SymbolClosure do commandInterpreter(x.frame)
-       is x:CodeClosure do commandInterpreter(x.frame)
+       is x:PseudocodeClosure do commandInterpreter(x.frame)
        is x:FunctionClosure do commandInterpreter(x.frame)
        is cfc:CompiledFunctionClosure do commandInterpreter(emptyFrame)	    -- some values are there, but no symbols
        is CompiledFunction do commandInterpreter(emptyFrame)		    -- no values or symbols are there
        is s:SpecialExpr do commandInterpreter(s.e)
-       else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
+       else WrongArg("a function, symbol, dictionary, pseudocode closure, or ()");
      decrementInterpreterDepth();
      ret);
 setupfun("commandInterpreter",commandInterpreter);
@@ -482,11 +490,13 @@ setupfun("commandInterpreter",commandInterpreter);
 currentS := setupvar("current",nullE);
 debugger(f:Frame,c:Code):Expr := (
      -- stdIO << "-- recursionDepth = " << recursionDepth << endl;
+     finishTargetDepth = -1;
      oldrecursionDepth := recursionDepth;
      recursionDepth = 0;
      setDebuggingMode(false);
        oldDebuggerCode := getGlobalVariable(currentS);
-       setGlobalVariable(currentS,Expr(CodeClosure(f,c)));
+       setGlobalVariable(currentS,Expr(PseudocodeClosure(f,c)));
+	 printMessage(codePosition(c), "entering debugger (enter 'help' to see commands)");
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
 		r := applyEE(debuggerHook,True);
@@ -497,14 +507,16 @@ debugger(f:Frame,c:Code):Expr := (
 		r := applyEE(debuggerHook,False);
 		when r is Error do return r else nothing;
 		);
+	 if debugLevel != 0 then
+	 printMessage(codePosition(c), "leaving debugger");
 	 decrementInterpreterDepth();
        setGlobalVariable(currentS,oldDebuggerCode);
      setDebuggingMode(true);
      recursionDepth = oldrecursionDepth;
      ret);
-debuggerFun = debugger;
+debuggerpointer = debugger;
 
-currentString := setupvar("currentString", nullE);
+currentString := setupvarThread("currentString", nullE);
 value(e:Expr):Expr := (
      when e
      is q:SymbolClosure do (
@@ -513,7 +525,8 @@ value(e:Expr):Expr := (
 	  if i < length(vals) then vals.i 
 	  else nullE					    -- localFrame is the only one that might be short
 	  )
-     is c:CodeClosure do eval(c.frame,c.code)
+     is c:PseudocodeClosure do eval(c.frame,c.code)
+     is c:Pseudocode do eval(c.code)
      is s:stringCell do (
       	  savecs := getGlobalVariable(currentString);
 	  setGlobalVariable(currentString,e);
@@ -524,9 +537,10 @@ value(e:Expr):Expr := (
 	       if err.message == returnMessage
 	       || err.message == continueMessage || err.message == continueMessageWithArg 
 	       || err.message == stepMessage || err.message == stepMessageWithArg 
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value 
+	       || err.message == breakMessage || err.message == finishMessage then if err.value == dummyExpr then nullE else err.value 
 	       else r)
 	  else r)
+     is x:SpecialExpr do value(x.e)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
 setupfun("value'",value);
 
@@ -534,8 +548,8 @@ setupfun("value'",value);
 capture(e:Expr):Expr := (
      when e
      is s:stringCell do (
-	  flush(stdIO);
-	  flush(stdError);
+	  stdIO << flush;
+	  stdError << flush;
 	  oldStdError := stdError;
 	  setStdError(stdIO);
 	  oldStopIfError := stopIfError;
@@ -577,6 +591,52 @@ capture(e:Expr):Expr := (
      else WrongArg(1,"a string"));
 setupfun("capture", capture).Protected = false; -- will be overloaded in m2/examples.m2
 
+parse(e:Expr):Expr := (
+    when e
+    is code:stringCell do (
+	done := false;
+	numParsed := 0;
+	capacity := 4;
+	result := Sequence(nullE, nullE, nullE, nullE);
+	stringFile := stringTokenFile("currentString", code.v);
+	stringFile.posFile.file.fulllines = stdIO.fulllines; -- for TeXmacs mode
+	while true do (
+	    -- mimic the interpreter
+	    while true do (
+		-- lex for a bit until we see something to parse
+		t := peektoken(stringFile, true).word;
+		if t == wordEOF then ( -- end of string
+		    done = true;
+		    break)
+		else if t.parse.precedence <= SemicolonW.parse.precedence then (
+		    if t == SemicolonW || t == NewlineW || t == wordEOC then (
+			gettoken(stringFile, true);
+			nothing)
+		    -- extra right paren
+		    else return buildErrorPacket("syntax error: unmatched " +
+			t.name))
+		-- we found something to parse!
+		else break);
+	    if done then break;
+	    p := parse(stringFile, SemicolonW.parse.precedence, true);
+	    if p == errorTree
+	    then return buildErrorPacket("--backtrace: parse error--");
+	    numParsed = numParsed + 1;
+	    -- ran out of space -- time to grow our sequence
+	    if numParsed > capacity then (
+		capacity = 2 * capacity;
+		newResult := new Sequence len capacity do (
+		    foreach x in result do provide x;
+		    while true do provide nullE);
+		result = newResult);
+	    result.(numParsed - 1) = toExpr(p));
+	if numParsed == 0 then emptyList
+	else if numParsed == capacity then list(result)
+	else list(new Sequence len numParsed do (
+		foreach x in result do provide x)))
+    else WrongArgString());
+setupfun("parse", parse);
+
 normalExit := 0;
 errorExit := 1;
 interruptExit := 2;					    -- see also M2lib.c
@@ -610,6 +670,7 @@ export process():void := (
      setMaxAllowableThreads();
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
+     setStdError(stdError);
      -- we don't know the right directory; calls commandInterpreter and eventually returns:
      ret := readeval(stringTokenFile(startupFile.filename,startupFile.contents),false,false);
      when ret is err:Error do (
@@ -655,6 +716,72 @@ runBasicTests(e:Expr):Expr := (
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("runBasicTests",runBasicTests);
+
+getHistory(e:Expr):Expr := (
+    when e is n:ZZcell do if isInt(n)
+    then toExpr(tostring(getHistory(toInt(n))))
+    else WrongArgSmallInteger()
+    else WrongArgZZ());
+setupfun("getHistory", getHistory);
+
+readHistory(e:Expr):Expr := (
+    when e is filename:stringCell
+    do toExpr(readHistory(tocharstar(expandFileName(filename.v))))
+    else WrongArgString(1));
+setupfun("readHistory", readHistory);
+
+appendHistory(e:Expr):Expr := (
+    when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+    when s.0 is n:ZZcell do if !isInt(n) then WrongArgSmallInteger(1) else
+    when s.1 is filename:stringCell
+    do toExpr(appendHistory(toInt(n), tocharstar(expandFileName(filename.v))))
+    else WrongArgString(2)
+    else WrongArgZZ(1)
+    else WrongNumArgs(2));
+setupfun("appendHistory", appendHistory);
+
+historyLength(e:Expr):Expr := (
+    when e
+    is s:Sequence do (
+	if length(s) == 0 then toExpr(historyLength())
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("historyLength", historyLength);
+
+-- enter the debugger
+breakpoint(c:Code):Expr := (
+    e := debuggerpointer(localFrame, c);
+	
+    when e is err:Error do (
+		printMessage(codePosition(c), err.message);
+		if err.message == breakMessage then ( buildErrorPacket(unwindMessage) )
+		else if err.message == returnMessage then (
+			setSteppingFlag();
+			err.value)
+		else if err.message == stepMessage || err.message == stepMessageWithArg then (
+			setSteppingFlag();
+			stepCount = (
+				when err.value is step:ZZcell do
+					if isInt(step) then toInt(step) else 1
+				else 1);
+			if stepCount < 0 then (
+				microStepCount = - stepCount;
+				stepCount = -1;
+			);
+			eval(c))
+		else if err.message == continueMessage then (eval(c))
+		else if err.message == finishMessage then (
+			printMessage(codePosition(c), "finish has been called");
+			finishTargetDepth = recursionDepth - 1;
+			setSteppingFlag();
+			eval(c)
+		)
+		else e
+	)
+	else e
+);
+
+setupop(breakpointS, breakpoint);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "

@@ -256,7 +256,7 @@ reductorVariable = (f,excludes,onlyOnes) -> (
      if varList === {} then varList
      else (
      	  termf := terms f;
-     	  s := select(termf, i -> member(leadMonomial i , varList));
+     	  s := select(termf, i -> isMember(leadMonomial i , varList));
      	  coef := s/leadCoefficient;
      	  pos := position(coef, i -> (i == 1) or (i == -1));
 	  -- best to choose linear terms with coefficient 1 or -1 if

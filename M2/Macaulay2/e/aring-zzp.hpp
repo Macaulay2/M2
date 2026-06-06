@@ -16,7 +16,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingZZp : public RingInterface
+class ARingZZp : public SimpleARing<ARingZZp>
 {
   // Integers mod p, implemented as
   // exponents of a primitive element a
@@ -96,10 +96,20 @@ class ARingZZp : public RingInterface
       result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    if (a.get_int() == 0)
+      return p1;
+    else if (a.get_int() == p1)
+      return 0;
+    else
+      return a.get_int();
+  }
+
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = 0; }
-  void clear(elem &result) const { /* nothing */}
+  static void clear(elem &result) { (void) result; }
 
   void set_zero(elem &result) const { result = 0; }
   void set_from_long(elem &result, long a) const
@@ -109,7 +119,12 @@ class ARingZZp : public RingInterface
     result = log_table[a];
   }
 
-  void set_var(elem &result, int v) const { result = 1; }
+  void set_var(elem &result, int v) const
+  {
+    (void) v;
+    result = 1;
+  }
+
   void set_from_mpz(elem &result, mpz_srcptr a) const
   {
     int b = static_cast<int>(mpz_fdiv_ui(a, p));
@@ -126,7 +141,13 @@ class ARingZZp : public RingInterface
     return true;
   }
 
-  bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
+  bool set_from_BigReal(elem &result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
   // arithmetic
   void negate(elem &result, elem a) const
   {

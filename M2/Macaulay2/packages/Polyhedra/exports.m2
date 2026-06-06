@@ -34,6 +34,7 @@ export {
    "linearTransform",
    "polyhedra", 
    "vertices",
+   "hilbertBasis",
    "areCompatible", 
    "commonFace", 
    "contains", 
@@ -47,8 +48,8 @@ export {
    "isPure",
    "isReflexive",
    "isSimplicial", 
-   "isSmooth", 
-   "isVeryAmple",
+   --"isSmooth",
+   --"isVeryAmple",
    "faces", 
    "facesAsPolyhedra",
    "facesAsCones",
@@ -83,7 +84,6 @@ export {
    "affinePreimage", 
    "bipyramid", 
    "ccRefinement", 
-   "directProduct",
    "dualCone", 
    "faceFan", 
    "imageFan", 
@@ -113,6 +113,7 @@ export {
    "barycentricTriangulation",
    "regularSubdivision",
    "minimalNonFaces",
-   "stanleyReisnerRing"
+   "stanleyReisnerRing",
+   "centroid",
 }
 

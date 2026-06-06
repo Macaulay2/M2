@@ -2,13 +2,13 @@
 --- author(s): Giulio 
 --- notes: updated November 2021
 
+-- TODO: this is currently a duplicate one, remove one of them
 doc ///
 Node
   Key
      regularity
     (regularity, Ideal)
     (regularity, Module)
-    (regularity, ChainComplex)
     [regularity, Weights]
   Headline
     compute the Castelnuovo-Mumford regularity
@@ -16,7 +16,7 @@ Node
     r = regularity C
     r = regularity(C, Weights => w)
   Inputs
-    C:{ChainComplex,Ideal,Module}
+    C: -- an Ideal, a Module, or a ChainComplex
     Weights=>List -- a weight vector @TT "w"@, see @TO [betti, Weights]@
   Outputs
     r:ZZ
@@ -48,7 +48,7 @@ Node
       betti(C, Weights => {2})
       regularity(C, Weights => {2})
   SeeAlso
-    resolution
+    "OldChainComplexes :: resolution"
     betti
     comodule
     "VirtualResolutions :: multigradedRegularity"

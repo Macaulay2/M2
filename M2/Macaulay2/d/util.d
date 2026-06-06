@@ -187,6 +187,14 @@ export getSequenceOfMutableMatrices(e:Expr) : RawMutableMatrixArray := (
      is a:RawMutableMatrixCell do RawMutableMatrixArray(a.p)
      else RawMutableMatrixArray());
 
+export isFunction(e:Expr):bool := (
+     when e
+     is CompiledFunction do true
+     is CompiledFunctionClosure do true
+     is FunctionClosure do true
+     is s:SpecialExpr do isFunction(s.e)
+     else false);
+
 -----------------------------------------------------------------------------
 -- helper routines for checking and converting return values
 
@@ -199,6 +207,15 @@ export threeE := toExpr(3);
 export toExpr(h:long):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(h:ulong):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(h:ushort):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:int8_t):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:uint8_t):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:int16_t):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:uint16_t):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:int32_t):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:uint32_t):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:int64_t):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:uint64_t):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:hash_t):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(s:string):Expr := Expr(stringCell(s));
 export emptyString := toExpr("");
 export toExpr(x:ZZ):Expr := Expr(ZZcell(x));
@@ -206,6 +223,8 @@ export toExpr(x:QQ):Expr := Expr(QQcell(x));
 export toExpr(x:RR):Expr := Expr(RRcell(x));
 export toExpr(x:RRi):Expr := Expr(RRicell(x));
 export toExpr(x:CC):Expr := Expr(CCcell(x));
+export toExpr(x:CCi):Expr := Expr(CCicell(x));
+export toExpr(x:float):Expr := Expr(RRcell(toRR(x,ulong(24))));
 export toExpr(x:double):Expr := Expr(RRcell(toRR(x,ulong(53))));
 export toExpr(x:RawComputation):Expr := Expr(RawComputationCell(x));
 export toExpr(x:RawFreeModule):Expr := Expr(RawFreeModuleCell(x));
@@ -260,6 +279,7 @@ export toExpr(x:QQorNull):Expr := when x is i:QQ do Expr(QQcell(i)) is null do e
 export toExpr(x:RRorNull):Expr := when x is i:RR do Expr(RRcell(i)) is null do engineErrorMessage();
 export toExpr(x:RRiorNull):Expr := when x is i:RRi do Expr(RRicell(i)) is null do engineErrorMessage();
 export toExpr(x:CCorNull):Expr := when x is i:CC do Expr(CCcell(i)) is null do engineErrorMessage();
+export toExpr(x:CCiorNull):Expr := when x is i:CCi do Expr(CCicell(i)) is null do engineErrorMessage();
 export toExpr(x:RawMatrixPairOrNull):Expr := when x is p:RawMatrixPair do seq(Expr(RawMatrixCell(p.a)),Expr(RawMatrixCell(p.b))) is null do engineErrorMessage();
 export toExpr(x:RawMatrixArray):Expr := Expr( list( new Sequence len length(x) do foreach m in x do provide Expr(RawMatrixCell(m)) ) );
 export toExpr(x:RawMatrixArrayOrNull):Expr := when x is r:RawMatrixArray do toExpr(r) is null do engineErrorMessage();

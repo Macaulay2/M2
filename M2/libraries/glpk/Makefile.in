@@ -1,7 +1,8 @@
 # URL = ftp://ftp.gnu.org/gnu/glpk
 # we link it with 4ti2, but not with Macaulay2
-VERSION = 4.59
-URL = http://macaulay2.com/Downloads/OtherSourceCode
+VERSION = 5.0
+SHA256SUM = 4a1013eebb50f728fc601bdd833b0b2870333c3b3e5a816eeba921d95bec6f15
+URL = https://ftp.gnu.org/gnu/glpk
 HOMEPAGE = http://www.gnu.org/software/glpk/
 
 ifeq (@SHARED@,no)

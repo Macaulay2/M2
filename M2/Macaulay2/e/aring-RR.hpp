@@ -16,7 +16,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRR : public RingInterface
+class ARingRR : public SimpleARing<ARingRR>
 {
   // approximate real numbers, implemented as doubles.
  public:
@@ -72,15 +72,20 @@ class ARingRR : public RingInterface
     result = a.get_double();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_double();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { result = 0.0; }
   void init_set(ElementType &result, const ElementType &a) const { result = a; }
   void set(ElementType &result, const ElementType &a) const { result = a; }
   void set_zero(ElementType &result) const { result = 0.0; }
-  void clear(ElementType &result) const
+  static void clear(ElementType &result)
   {
-    // do nothing
+    (void) result;
   }
 
   void copy(ElementType &result, const ElementType &a) const { set(result, a); }
@@ -89,7 +94,12 @@ class ARingRR : public RingInterface
     result = static_cast<double>(a);
   }
 
-  void set_var(ElementType &result, int v) const { result = 1.0; }
+  void set_var(ElementType &result, int v) const
+  {
+    (void) v;
+    result = 1.0;
+  }
+
   void set_from_mpz(ElementType &result, mpz_srcptr a) const
   {
     result = mpz_get_d(a);
@@ -221,6 +231,7 @@ class ARingRR : public RingInterface
             int first_var,
             ring_elem &result) const
   {
+    (void) first_var;
     if (!map->get_ring()->from_double(f, result))
       {
         result = map->get_ring()->from_long(0);

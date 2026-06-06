@@ -35,8 +35,8 @@ export (s:string) < (t:string) : bool := strcmp(s,t) == -1;
 export (s:string) >= (t:string) : bool := !(s<t);
 export (s:string) > (t:string) : bool := t<s;
 export (s:string) <= (t:string) : bool := !(t<s);
-export hash(s:string):int := (
-     h := 0;
+export hash(s:string):hash_t := (
+     h := hash_t(0);
      foreach c in s do h = 31*h + int(c);
      h & 0x7fffffff
      );
@@ -54,7 +54,7 @@ export match(s:string,i:int,t:string):bool := (
      n := length(t);
      j := 0;
      while i < m && j < n do if s.i != t.j then return false else (i=i+1; j=j+1);
-     true);
+     j == n);
 export index(s:string,offset:int,sep:string):int := (
      i := offset;
      while i < length(s) do if match(s,i,sep) then return i else i=i+1;
@@ -64,7 +64,7 @@ export index(s:string,offset:int,c:char,d:char):int := (
      while i+1 < length(s) do if c == s.i && d==s.(i+1) then return i else i=i+1;
      -1);     
 
-utf8charlength(c0:char):int := (
+export utf8charlength(c0:char):int := (
     c := int(uchar(c0));
     if (c & 0x80) == 0 then 1
     else if (c & 0xe0) == 0xc0 then 2

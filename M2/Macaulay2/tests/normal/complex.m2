@@ -166,3 +166,6 @@ a = -5-ii
 b = sqrt(a)
 assert(abs(b^2-a) < 1e-14)
 assert(b >= 0)
+
+assert(abs(log1p ii - log(1 + ii)) < 1e-14)
+assert(expm1 ii == exp ii - 1)

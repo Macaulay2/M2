@@ -860,7 +860,7 @@ doc ///
         Text
 	    Given a positive integer {\tt m} and a normal toric variety {\tt
 	    X}, the diagonal morphism is the toric map from {\tt X} to the
-	    {\tt m}-ary Cartersion product of {\tt X} such that it composes to
+	    {\tt m}-ary Cartesian product of {\tt X} such that it composes to
 	    the identity with the {\tt i}-th 
 	    @TO2((symbol ^, NormalToricVariety, Array), "projection map")@, 
 	    for all {\tt i} in {\tt A}, and compose to the zero map with the
@@ -1172,7 +1172,7 @@ doc ///
             torus-invariant Weil divisors on $X$.  For arbitrary normal toric
             varieties, the @TO weilDivisorGroup@ is not a functor.  However,
             @TO weilDivisorGroup@ is a contravariant functor on the category
-            of @TO2(isSmooth, "smooth")@ normal toric varieties.
+            of @TO2((isSmooth, NormalToricVariety), "smooth")@ normal toric varieties.
 	Text
 	    We illustrate this method on the projection from the first 
 	    @TO2(hirzebruchSurface, "Hirzebruch surface")@ to the 
@@ -1231,7 +1231,7 @@ doc ///
             class group of $Y$ to the class group of $X$.  For arbitrary normal
             toric varieties, the @TO classGroup@ is not a functor.  However,
             @TO classGroup@ is a contravariant functor on the category of
-            @TO2(isSmooth, "smooth")@ normal toric varieties.
+            @TO2((isSmooth, NormalToricVariety), "smooth")@ normal toric varieties.
 	Text
 	    We illustrate this method on the projection from the first 
 	    @TO2(hirzebruchSurface, "Hirzebruch surface")@ to the 
@@ -1252,7 +1252,7 @@ doc ///
             assert(f' * fromWDivToCl Y  == fromWDivToCl X  * f'')	    
 	Text
 	    The source of the toric map need not be 
-	    @TO2(isSmooth, "smooth")@.	    
+	    @TO2((isSmooth, NormalToricVariety), "smooth")@.
 	Example
 	    Z = toricBlowup({0, 1}, X, {1,2});
     	    assert (isWellDefined Z and not isSmooth Z)	    
@@ -1310,7 +1310,7 @@ doc ///
             assert(f' * fromCDivToPic Y  == fromCDivToPic X  * f'')	    
 	Text
 	    Neither the source nor the target of the toric map needs to be 
-	    @TO2(isSmooth, "smooth")@.	    
+	    @TO2((isSmooth, NormalToricVariety), "smooth")@.
 	Example  
 	    W = weightedProjectiveSpace {1, 1, 2};	     
 	    Z = toricBlowup({0, 1, 4}, (W ** toricProjectiveSpace 1), {0, -2, 1});
@@ -1370,7 +1370,7 @@ doc ///
             assert(f'' * fromCDivToPic Y == fromCDivToPic X  * f')
 	Text
 	    Neither the source nor the target of the toric map needs to be 
-	    @TO2(isSmooth, "smooth")@.	    
+	    @TO2((isSmooth, NormalToricVariety), "smooth")@.
 	Example  
 	    W = weightedProjectiveSpace {1, 1, 2};	     
 	    Z = toricBlowup({0, 1, 4}, (W ** toricProjectiveSpace 1), {0, -2, 1});
@@ -1392,19 +1392,7 @@ doc ///
 ------------------------------------------------------------------------------
 -- operations related to toric divisors and sheaves
 ------------------------------------------------------------------------------
-doc ///
-    Key
-        pullback
-    Headline
-        make the pullback along a toric map
-    Description
-        Text
-	    A toric map induces pullback operations in several different
-	    situations.  Those currently implemented in this package are
-	    listed below.	    
-///
-    
-    
+
 doc ///
     Key
         (pullback, ToricMap, ToricDivisor)
@@ -1569,7 +1557,7 @@ doc ///
 	    Given a toric map $f : X \to Y$ where $Y$ is smooth, this method
 	    returns the induced map from the total coordinate ring $S$ of $Y$
 	    to the total coordinate ring $R$ of $X$.  Since $f$ is
-	    torus-equivarient, each variable in the polynomial ring $S$ maps
+	    torus-equivariant, each variable in the polynomial ring $S$ maps
 	    to a monomial in $R$.  
 	Text
 	    As a first example, we compute the map on the total coordinate

@@ -8,7 +8,20 @@ document {
      Key => apply,
      Headline => "apply a function to each element",
      Usage => "apply(L,f) or apply(L1,L2,f)",
-     SeeAlso => {"applyKeys", "applyPairs", "applyValues", "applyTable", "lists and sequences"}
+     SeeAlso => {
+	 "lists and sequences",
+	 table,
+	 applyKeys,
+	 applyPairs,
+	 applyValues,
+	 applyTable,
+	 },
+     Subnodes => {
+	 TO (apply, ZZ, Function),
+	 TO (apply, BasicList, Function),
+	 TO (apply, BasicList, BasicList, Function),
+	 TO (apply, Thing, Function),
+         },
      }
 document { 
      Key => {(apply,BasicList,Function), (apply,String,Function)},
@@ -74,3 +87,35 @@ document {
      	  },
      }
 
+doc ///
+  Key
+    (apply, Thing, Function)
+  Headline
+    apply a function to an object with an iterator
+  Usage
+    apply(x, f)
+  Inputs
+    x:Thing -- an instance of a class with the @TO iterator@ method installed
+    f:Function
+  Outputs
+    :Iterator
+  Description
+    Text
+      Suppose @TT "x"@ is an instance of a class with the @TO iterator@ method
+      installed and suppose @TT "iter"@ is the output of
+      @TT "iterator x"@.  Then a new @TO Iterator@ object is returned whose
+      @TO next@ method returns @TT "f next iter"@  until @TT "next iter"@
+      returns @TO StopIteration@, in which case this new iterator does the same.
+    Example
+      applyiter = apply(iterator "foo", toUpper)
+      next applyiter
+      next applyiter
+      next applyiter
+      next applyiter
+  SeeAlso
+    iterator
+    Iterator
+    next
+    StopIteration
+    (select, Thing, Function)
+///

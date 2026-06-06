@@ -94,7 +94,7 @@ document {
      SeeAlso => {(relations,Module)}
      }
 document { 
-     Key => (generators,GeneralOrderedMonoid),
+     Key => (generators, Monoid),
      Headline => "list of generators",
      Usage => "generators M\ngens M",
      Inputs => {

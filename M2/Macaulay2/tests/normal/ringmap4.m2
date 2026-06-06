@@ -65,6 +65,9 @@ x' = promote(A_0,B)
 assert( x != x' )
 assert( f x == x^2 )
 assert( f x' == x' )
+assert( f^0 === id_B )
+assert( f^1 === f )
+assert( f^2 === map(B, B, {x^4}) )
 
 C = ZZ[x][y]
 g = map(ZZ,C,{2})

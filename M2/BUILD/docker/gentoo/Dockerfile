@@ -15,7 +15,7 @@ COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 RUN emerge --sync
 RUN emerge -n cmake ninja
 
-#RUN emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest libatomic_ops lrslib mpc mpfr mpir nauty normaliz ntl topcom yasm sys-process/time
+#RUN emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest lrslib mpc mpfr mpir nauty normaliz ntl topcom yasm sys-process/time
 
 #  	autoconf automake bison make patch ccache \
 #	gettext python cmake curl gcc git gnupg \
@@ -25,7 +25,7 @@ RUN emerge -n cmake ninja
 #RUN pacman --sync --noconfirm --needed openblas openmp intel-tbb libxml2 readline gdbm boost
 
 # Libraries we can build
-#RUN pacman --sync --noconfirm --needed eigen fflas-ffpack givaro glpk gmp gc gtest mpfr ntl libatomic_ops
+#RUN pacman --sync --noconfirm --needed eigen fflas-ffpack givaro glpk gmp gc gtest mpfr ntl
 
 # Optional packages
 #RUN pacman --sync --noconfirm mlocate bash-completion

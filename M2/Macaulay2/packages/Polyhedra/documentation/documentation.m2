@@ -105,6 +105,32 @@ doc ///
 
 doc ///
    Key
+      centroid
+      (centroid,Polyhedron)
+   Headline
+      computes the centroid or barycenter of a polyhedron
+   Usage
+      centroid P
+   Inputs
+      P:Polyhedron
+         a compact polyhedron
+   Outputs
+       :Matrix
+   Description
+      Text
+         The centroid of a polyhedron is the center of mass of the polyhedron.
+         This is computed by first triangulating the polyhedron, and then taking
+         a weighted sum of the barycenters of the simplices in the triangulation.
+      Example
+         centroid stdSimplex 3
+      Example
+         centroid hypercube 2
+   SeeAlso
+      barycentricTriangulation
+///
+
+doc ///
+   Key
       latticeVolume
       (latticeVolume,Polyhedron)
    Headline
@@ -481,7 +507,7 @@ doc ///
    Description
       Text
          Method used by the package
-         @ HREF("https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.12/share/doc/Macaulay2/Tropical/html/", "Tropical.m2") @ to construct a fan from {\tt Gfan} output.
+	 @ TO "Tropical" @ to construct a fan from {\tt Gfan} output.
          Gfan produces more data than just rays and maximal cones and this constructor will save that data to avoid recomputation.
 ///
 

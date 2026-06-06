@@ -6,12 +6,12 @@
 // TODO: fix this
 #  if defined(__cplusplus)
 class Matrix;
-class Monomial;
+class EngineMonomial;
 class MonomialIdeal;
 class RingElement;
 #  else
 typedef struct Matrix Matrix;
-typedef struct Monomial Monomial;
+typedef struct EngineMonomial EngineMonomial;
 typedef struct MonomialIdeal MonomialIdeal;
 typedef struct RingElement RingElement;
 #  endif
@@ -31,7 +31,7 @@ typedef struct RingElement RingElement;
 extern "C" {
 #  endif
 
-engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n);
+const MonomialIdeal* /* or null */ IM2_MonomialIdeal_make(const Matrix *m, int n);
 /* drg: connected rawMonomialIdeal*/
 /* Given a matrix 'm' over an allowed base ring (as above), create the
    monomial ideal consisting of all of the lead monomials of the columns
@@ -43,7 +43,7 @@ const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I);
 /* Return a one row matrix over the base ring of I consisting
    of the monomials in I */
 
-M2_string IM2_MonomialIdeal_to_string(const MonomialIdeal *I); /* TODO */
+M2_string IM2_MonomialIdeal_to_string(const MonomialIdeal *I);
 
 unsigned int rawMonomialIdealHash(const MonomialIdeal *I);
 /* connected to 'hash', sequential, as it is mutable */
@@ -70,7 +70,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(
 
 const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a);
+    const EngineMonomial *a);
 /* drg: connected rawColon*/
 /* If I = (m1, ..., mr),
    Form the monomial ideal (I : a) = (m1:a, ..., mr:a) */
@@ -84,7 +84,7 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(
 
 const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(
     const MonomialIdeal *I,
-    const Monomial *a);
+    const EngineMonomial *a);
 /* drg: connected rawSaturateMonomialIdeal*/
 /* Form I:a^\infty.  IE, set every variable which occurs in 'a' to '1' in
    every generator of I. */

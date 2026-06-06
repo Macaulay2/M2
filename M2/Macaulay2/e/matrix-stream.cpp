@@ -1,7 +1,7 @@
 #include "matrix-stream.hpp"
 
 MatrixStream::MatrixStream(const FreeModule* F)
-    : mFreeModule(F), mMatrixConstructor(F, 0), mValue(0), mCurrentComponent(0)
+    : mFreeModule(F), mMatrixConstructor(F, 0), mValue(nullptr), mCurrentComponent(0)
 {
   mPolyRing = F->get_ring()->cast_to_PolyRing();
   assert(mPolyRing != 0);
@@ -19,13 +19,11 @@ MatrixStream::~MatrixStream()
 
 void MatrixStream::idealBegin(size_t polyCount)
 {
-  // We ignore polyCount
-  // Nothing to do
+  (void) polyCount;
 }
 void MatrixStream::appendPolynomialBegin(size_t termCount)
 {
-  // we ignore termCount
-  // Nothing to do
+  (void) termCount;
 }
 void MatrixStream::appendTermBegin(Component com)
 {
@@ -43,9 +41,9 @@ void MatrixStream::appendTermDone(Coefficient coefficient)
   // Now we need to create an Nterm, and attach it at mCurrentComponent
   Nterm* t = ring().new_term();
   ring().getMonoid()->from_expvector(mCurrentExponents, t->monom);
-  t->coeff = ring().getCoefficients()->from_long(coefficient);
-  t->next = 0;
-  if (mLastTerms[mCurrentComponent] == 0)
+  t->coeff = ring().getCoefficients()->from_int(coefficient.get_mpz_t());
+  t->next = nullptr;
+  if (mLastTerms[mCurrentComponent] == nullptr)
     {
       mCurrentColumn[mCurrentComponent] = t;
       mLastTerms[mCurrentComponent] = t;
@@ -67,8 +65,8 @@ void MatrixStream::appendPolynomialDone()
   mMatrixConstructor.append(v);
   for (int i = 0; i < mFreeModule->rank(); i++)
     {
-      mCurrentColumn[i] = 0;
-      mLastTerms[i] = 0;
+      mCurrentColumn[i] = nullptr;
+      mLastTerms[i] = nullptr;
     }
 }
 void MatrixStream::idealDone()

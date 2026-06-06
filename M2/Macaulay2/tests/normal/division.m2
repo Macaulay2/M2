@@ -129,6 +129,9 @@ assert( (quotientRemainder(1-u^3,1-u)) === (1+u+u^2,0_R) )
   assert((-2)^(-3) == -1/8)
   assert((-17)^(-1) == -1/17)
 
+  -- fixed in #2982
+  assert(2^(-1_QQ) == 1/2)
+
 -- git issue 2177, 2178 FIXED
   K=frac(QQ[t]) 
   R=K[y,x, MonomialOrder=>GLex]; 
@@ -198,6 +201,11 @@ assert( (quotientRemainder(1-u^3,1-u)) === (1+u+u^2,0_R) )
 -- git issue #2496 fixed
   R = QQ[x]
   assert(try (0_R / 0_R; false) else true) -- should give an error
+
+-- quotientRemainder(ZZ, ZZ)
+  assert Equation(quotientRemainder(5710, 56), (101, 54))
+  assert Equation(quotientRemainder(5710, -56), (-101, 54))
+  assert Equation(quotientRemainder(5710, 0), (0, 5710))
 
 end--
 generateAssertions ///

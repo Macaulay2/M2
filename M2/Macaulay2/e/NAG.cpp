@@ -61,18 +61,18 @@ Matrix* StraightLineProgram::evaluate(const Matrix* vals)
 template <class Field>
 SLP<Field>::SLP()
 {
-  C = NULL;
-  handle = NULL;
+  C = nullptr;
+  handle = nullptr;
   eval_time = 0;
   n_calls = 0;
-  nodes = NULL;
+  nodes = nullptr;
 }
 
 template <class Field>
 SLP<Field>::~SLP()
 {
   freemem(nodes);
-  if (handle != NULL)
+  if (handle != nullptr)
     {
       printf("closing library\n");
       dlclose(handle);
@@ -93,12 +93,12 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
   if (num_slps > MAX_NUM_SLPs)
     {
       ERROR("max number of slps exceeded");
-      res = NULL;
+      res = nullptr;
     }
   else if (program->len < 3)
     {
       ERROR("invalid SLP");
-      res = NULL;
+      res = nullptr;
     }
   else
     {
@@ -122,7 +122,7 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
                          res->num_consts + res->num_inputs +
                              res->rows_out * res->cols_out);
               char libname[100];
-              sprintf(libname,
+              snprintf(libname, 100,
                       "%s%d.dylib",
                       libPREFIX,
                       program->array[5]);  // Mac OS
@@ -131,10 +131,10 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
               const char* funname = "slpFN";
               printf("loading slpFN from %s\n", libname);
               res->handle = dlopen(libname, RTLD_LAZY | RTLD_GLOBAL);
-              if (res->handle == NULL) ERROR("can't load library %s", libname);
+              if (res->handle == nullptr) ERROR("can't load library %s", libname);
               res->compiled_fn = (void (*)(element_type*, element_type*))dlsym(
                   res->handle, funname);
-              if (res->compiled_fn == NULL)
+              if (res->compiled_fn == nullptr)
                 ERROR(
                     "can't link function %s from library %s", funname, libname);
             }
@@ -193,10 +193,10 @@ Nterm* extract_divisible_by_x(Nterm*& ff, int i)  // auxiliary
   /* Extracts into fx the terms divisible by the (n-1-i)-th variable "x"
      and divides them by x. (exponent vectors are assumed to be reversed)
      Note: terms in fx may not be in monomial order. */
-  Nterm* fx = NULL;
+  Nterm* fx = nullptr;
   Nterm* f = ff;
-  Nterm* prev_f = NULL;
-  while (f != NULL)
+  Nterm* prev_f = nullptr;
+  while (f != nullptr)
     {
       if (f->monom[i] == 0)
         {
@@ -206,7 +206,7 @@ Nterm* extract_divisible_by_x(Nterm*& ff, int i)  // auxiliary
       else
         {
           f->monom[i]--;  // divide by x
-          if (prev_f != NULL)
+          if (prev_f != nullptr)
             {
               prev_f->next = f->next;  // extract
             }
@@ -216,14 +216,14 @@ Nterm* extract_divisible_by_x(Nterm*& ff, int i)  // auxiliary
             }
           f->next = fx;  // prepend to fx
           fx = f;
-          f = (prev_f == NULL) ? ff : prev_f->next;
+          f = (prev_f == nullptr) ? ff : prev_f->next;
         }
     }
   return fx;
 }
 
 template <class Field>
-int add_constant_get_position(VECTOR(typename Field::element_type) & consts,
+int add_constant_get_position(gc_vector<typename Field::element_type>& consts,
                               typename Field::element_type c)  // auxiliary
 {
   //!!! smarter implementation coming !!!
@@ -234,54 +234,54 @@ int add_constant_get_position(VECTOR(typename Field::element_type) & consts,
 /* create the part of slp computing f, return the position of the final
  * operation */
 template <class Field>
-int SLP<Field>::poly_to_horner_slp(int n,
-                                   intarray& prog,
-                                   VECTOR(element_type) & consts,
+int SLP<Field>::poly_to_horner_slp(const int n,
+                                   gc_vector<int>& prog,
+                                   gc_vector<element_type>& consts,
                                    Nterm*& f)  // auxiliary
 {
-  int part_pos[n];  // absolute positions of the parts
+  std::vector<int> part_pos(n); // absolute positions of the parts
   int last_nonzero_part_pos = ZERO_CONST;
   for (int i = 0; i < n; i++)
     {
       Nterm* fx = extract_divisible_by_x(f, i);
-      if (fx == NULL)
+      if (fx == nullptr)
         part_pos[i] = ZERO_CONST;
       else
         {
           int p = poly_to_horner_slp(n, prog, consts, fx);
           last_nonzero_part_pos = part_pos[i] = num_operations++;
-          node_index.append(prog.length());
-          prog.append(slpPRODUCT);
-          prog.append(n - 1 - i);  // reference to (n-1-i)-th input (recall: the
+          node_index.push_back(prog.size());
+          prog.push_back(slpPRODUCT);
+          prog.push_back(n - 1 - i);  // reference to (n-1-i)-th input (recall: the
                                    // order of vars is reversed in monomials)
-          prog.append(p - part_pos[i]);  // relative position of p
+          prog.push_back(p - part_pos[i]);  // relative position of p
         }
     }
   int c = 0;  // count nonzeros
-  if (f != NULL) c++;
+  if (f != nullptr) c++;
   for (int i = 0; i < n; i++)
     if (part_pos[i] != ZERO_CONST) c++;
   if (c == 0) return ZERO_CONST;
   if (c == 1 && last_nonzero_part_pos != ZERO_CONST)
     return last_nonzero_part_pos;
   int cur_p = num_operations++;
-  node_index.append(prog.length());
-  prog.append(slpMULTIsum);
-  prog.append(c);
-  if (f != NULL)
-    prog.append(CONST_OFFSET +
+  node_index.push_back(prog.size());
+  prog.push_back(slpMULTIsum);
+  prog.push_back(c);
+  if (f != nullptr)
+    prog.push_back(CONST_OFFSET +
                 add_constant_get_position<Field>(
                     consts, element_type(toBigComplex(C, f->coeff))));
   for (int i = 0; i < n; i++)
     if (part_pos[i] != ZERO_CONST)
-      prog.append(part_pos[i] - cur_p);  // relative position of the i-th part
+      prog.push_back(part_pos[i] - cur_p);  // relative position of the i-th part
   return cur_p;
 }
 
-void monomials_to_conventional_exponent_vectors(int n, Nterm* f)  // auxiliary
+void monomials_to_conventional_expvectors(int n, Nterm* f)  // auxiliary
 /* "unpack" monomials */
 {
-  for (; f != NULL; f = f->next)
+  for (; f != nullptr; f = f->next)
     for (int i = 0; i < n - 1; i++) f->monom[i] -= f->monom[i + 1];
 }
 
@@ -293,7 +293,7 @@ SLP<Field> /* or null */* SLP<Field>::make(const PolyRing* R, ring_elem e)
   if (num_slps > MAX_NUM_SLPs)
     {
       ERROR("max number of slps exceeded");
-      res = NULL;
+      res = nullptr;
     }
   else
     {
@@ -304,39 +304,39 @@ SLP<Field> /* or null */* SLP<Field>::make(const PolyRing* R, ring_elem e)
       res->num_operations = 0;
       res->rows_out = 1;
       res->cols_out = 1;
-      intarray prog;
-      VECTOR(element_type) consts;
+      gc_vector<int> prog;
+      gc_vector<element_type> consts;
 
       // make prog and node
       e = R->copy(e); /* a copy of "e" will be decomposed;
                          how to remove the pieces afterwards?
                          R->remove(...) is an empty function */
       Nterm* f = e.get_poly();
-      monomials_to_conventional_exponent_vectors(n, f);
+      monomials_to_conventional_expvectors(n, f);
       int out = res->poly_to_horner_slp(n, prog, consts, f);
       if (out == ZERO_CONST)
         {
           out = res->num_operations++;
-          res->node_index.append(prog.length());
-          prog.append(slpMULTIsum);
-          prog.append(0);  // sum with zero summands
+          res->node_index.push_back(prog.size());
+          prog.push_back(slpMULTIsum);
+          prog.push_back(0);  // sum with zero summands
         }
 
       // make program
       res->program = M2_makearrayint(
-          prog.length() + 2 /* accounts for lines +2,+3 */ + SLP_HEADER_LEN);
+          prog.size() + 2 /* accounts for lines +2,+3 */ + SLP_HEADER_LEN);
       res->program->array[0] = res->num_consts =
           static_cast<int>(consts.size());
-      prog.append(slpEND);
-      prog.append(out + res->num_consts +
+      prog.push_back(slpEND);
+      prog.push_back(out + res->num_consts +
                   res->num_inputs);  // position of the output
 
       res->program->array[1] = res->num_inputs;
       res->program->array[2] = res->rows_out;
       res->program->array[3] = res->cols_out;
       memcpy(res->program->array + SLP_HEADER_LEN,
-             prog.raw(),
-             sizeof(int) * prog.length());
+             prog.data(),
+             sizeof(int) * prog.size());
 
       // make nodes: [constants, inputs, operations]
       make_nodes(res->nodes,
@@ -356,7 +356,7 @@ SLP<Field> /* or null */* SLP<Field>::concatenate(const SLP<Field>* slp)
       num_inputs != slp->num_inputs || rows_out != slp->rows_out)
     {
       ERROR("slps unstackable");
-      return NULL;
+      return nullptr;
     }
   int num_outputs = rows_out * cols_out;
   int* end_program = program->array + program->len - num_outputs;
@@ -374,7 +374,7 @@ SLP<Field> /* or null */* SLP<Field>::concatenate(const SLP<Field>* slp)
   res->rows_out = rows_out;
   res->cols_out = cols_out + slp->cols_out;
 
-  //  VECTOR(element_type) consts; // !!! use to optimize constants
+  //  gc_vector<element_type> consts; // !!! use to optimize constants
 
   // make program
   res->program = M2_makearrayint(program->len + slp_len - 1 + slp_num_outputs);
@@ -410,7 +410,7 @@ SLP<Field> /* or null */* SLP<Field>::concatenate(const SLP<Field>* slp)
     *a += num_consts + num_operations;  //!!! assume: appending constants
   for (int i = 0; i < slp->num_operations; i++)
     // shift by the size of "operations" part of this->program
-    res->node_index.append(slp->node_index[i] + program->len - SLP_HEADER_LEN -
+    res->node_index.push_back(slp->node_index[i] + program->len - SLP_HEADER_LEN -
                            num_outputs - 1);
 
   res->program->array[0] = res->num_consts =
@@ -431,7 +431,7 @@ SLP<Field> /* or null */* SLP<Field>::concatenate(const SLP<Field>* slp)
 
 /* ref = reference to a node rel. n */
 template <class Field>
-int SLP<Field>::diffPartReference(int n, int ref, int v, intarray& prog)
+int SLP<Field>::diffPartReference(int n, int ref, int v, gc_vector<int>& prog)
 {
   if (ref < 0)
     return diffNodeInput(n + ref, v, prog);
@@ -447,7 +447,9 @@ int SLP<Field>::diffPartReference(int n, int ref, int v, intarray& prog)
 }
 
 template <class Field>
-int SLP<Field>::diffNodeInput(int n, int v, intarray& prog)  // used by jacobian
+int SLP<Field>::diffNodeInput(const int n,
+                              int v,
+                              gc_vector<int>& prog)  // used by jacobian
 {
   int i = node_index[n];
   switch (prog[i])
@@ -457,7 +459,7 @@ int SLP<Field>::diffNodeInput(int n, int v, intarray& prog)  // used by jacobian
       case slpMULTIsum:
         {
           int n_summands = prog[(++i)++];
-          int part_pos[n_summands];
+          std::vector<int> part_pos(n_summands);
           int c = 0;  // count nonzeroes
           int last_non_zero = ZERO_CONST;
           for (int j = 0; j < n_summands; j++)
@@ -472,13 +474,13 @@ int SLP<Field>::diffNodeInput(int n, int v, intarray& prog)  // used by jacobian
           if (c == 0) return ZERO_CONST;
           if (c == 1) return last_non_zero;
           int cur_p = num_operations++;
-          node_index.append(prog.length());
-          prog.append(slpMULTIsum);
-          prog.append(c);
+          node_index.push_back(prog.size());
+          prog.push_back(slpMULTIsum);
+          prog.push_back(c);
           for (int j = 0; j < n_summands; j++)
             {
               if (part_pos[j] != ZERO_CONST)
-                prog.append(part_pos[j] -
+                prog.push_back(part_pos[j] -
                             cur_p);  // relative position of the j-th part
             }
           return cur_p;
@@ -499,9 +501,9 @@ int SLP<Field>::diffNodeInput(int n, int v, intarray& prog)  // used by jacobian
                   else if (b >= CONST_OFFSET)
                     {  // ... constant
                       int cur_p = num_operations++;
-                      node_index.append(prog.length());
-                      prog.append(slpCOPY);  // is there better way?
-                      prog.append(b);
+                      node_index.push_back(prog.size());
+                      prog.push_back(slpCOPY);  // is there better way?
+                      prog.push_back(b);
                       return cur_p;
                     }
                   else
@@ -513,12 +515,12 @@ int SLP<Field>::diffNodeInput(int n, int v, intarray& prog)  // used by jacobian
               else
                 {
                   int cur_p = num_operations++;
-                  node_index.append(prog.length());
-                  prog.append(slpPRODUCT);
-                  prog.append(da - cur_p);
+                  node_index.push_back(prog.size());
+                  prog.push_back(slpPRODUCT);
+                  prog.push_back(da - cur_p);
                   if (b < 0)            // if refers to an operation node
                     b = n + b - cur_p;  // recalculate wrt cur_p
-                  prog.append(b);
+                  prog.push_back(b);
                   return cur_p;
                 }
             }
@@ -531,11 +533,11 @@ int SLP<Field>::diffNodeInput(int n, int v, intarray& prog)  // used by jacobian
                   else if (a >= CONST_OFFSET)
                     {  // ... constant
                       int cur_p = num_operations++;
-                      node_index.append(prog.length());
-                      prog.append(slpCOPY);  // is there a better way ?
+                      node_index.push_back(prog.size());
+                      prog.push_back(slpCOPY);  // is there a better way ?
                       if (a < 0)             // if refers to an operation node
                         a = n + a - cur_p;   // recalculate wrt cur_p
-                      prog.append(a);
+                      prog.push_back(a);
                       return cur_p;
                     }
                   else
@@ -547,12 +549,12 @@ int SLP<Field>::diffNodeInput(int n, int v, intarray& prog)  // used by jacobian
               else
                 {  // db!=0 and db!=1
                   int cur_p = num_operations++;
-                  node_index.append(prog.length());
-                  prog.append(slpPRODUCT);
-                  prog.append(db - cur_p);
+                  node_index.push_back(prog.size());
+                  prog.push_back(slpPRODUCT);
+                  prog.push_back(db - cur_p);
                   if (a < 0)            // if refers to an operation node
                     a = n + a - cur_p;  // recalculate wrt cur_p
-                  prog.append(a);
+                  prog.push_back(a);
                   return cur_p;
                 }
             }
@@ -563,12 +565,12 @@ int SLP<Field>::diffNodeInput(int n, int v, intarray& prog)  // used by jacobian
               if (is_part1_created)
                 {
                   int cur_p = num_operations++;
-                  node_index.append(prog.length());
-                  prog.append(slpPRODUCT);
-                  prog.append(da - cur_p);
+                  node_index.push_back(prog.size());
+                  prog.push_back(slpPRODUCT);
+                  prog.push_back(da - cur_p);
                   if (b < 0)            // if refers to an operation node
                     b = n + b - cur_p;  // recalculate wrt cur_p
-                  prog.append(b);
+                  prog.push_back(b);
                   part1 = cur_p;
                 }
               int part2 = ZERO_CONST;
@@ -576,26 +578,26 @@ int SLP<Field>::diffNodeInput(int n, int v, intarray& prog)  // used by jacobian
               if (is_part2_created)
                 {
                   int cur_p = num_operations++;
-                  node_index.append(prog.length());
-                  prog.append(slpPRODUCT);
-                  prog.append(db - cur_p);
+                  node_index.push_back(prog.size());
+                  prog.push_back(slpPRODUCT);
+                  prog.push_back(db - cur_p);
                   if (a < 0)            // if refers to an operation node
                     a = n + a - cur_p;  // recalculate wrt cur_p
-                  prog.append(a);
+                  prog.push_back(a);
                   part2 = cur_p;
                 }
               int cur_p = num_operations++;
-              node_index.append(prog.length());
-              prog.append(slpMULTIsum);
-              prog.append(2);
+              node_index.push_back(prog.size());
+              prog.push_back(slpMULTIsum);
+              prog.push_back(2);
               if (is_part1_created)
-                prog.append(part1 - cur_p);
+                prog.push_back(part1 - cur_p);
               else
-                prog.append((b < 0) ? b + n - cur_p : b);
+                prog.push_back((b < 0) ? b + n - cur_p : b);
               if (is_part2_created)
-                prog.append(part2 - cur_p);
+                prog.push_back(part2 - cur_p);
               else
-                prog.append((a < 0) ? a + n - cur_p : a);
+                prog.push_back((a < 0) ? a + n - cur_p : a);
               return cur_p;
             }
         }
@@ -617,7 +619,7 @@ SLP<Field> /* or null */* SLP<Field>::jacobian(bool makeHxH,
   if (rows_out != 1)
     {
       ERROR("1-row slp expected");
-      return NULL;
+      return nullptr;
     };
 
   int num_outputs = rows_out * cols_out;
@@ -631,16 +633,17 @@ SLP<Field> /* or null */* SLP<Field>::jacobian(bool makeHxH,
   res->rows_out = num_inputs;
   res->cols_out = cols_out;
 
-  //  VECTOR(element_type) consts; // !!! use to optimize constants
-  intarray prog(program->len);
+  //  gc_vector<element_type> consts; // !!! use to optimize constants
+  gc_vector<int> prog;
+  prog.reserve(program->len);
   for (int i = SLP_HEADER_LEN;
        i < program->len - num_outputs - 1 /*for slpEND*/;
        i++)
-    prog.append(program->array[i]);
+    prog.push_back(program->array[i]);
   res->node_index = node_index;
 
-  int out_pos[res->rows_out *
-              res->cols_out];  // records absolute position of output entries
+  std::vector<int> out_pos(res->rows_out *
+                           res->cols_out);  // records absolute position of output entries
 
   for (int j = 0; j < num_outputs; j++)
     for (int i = 0; i < num_inputs; i++)
@@ -650,26 +653,26 @@ SLP<Field> /* or null */* SLP<Field>::jacobian(bool makeHxH,
                              i,
                              prog);  // uses res->num_operations
   // make program
-  res->program = M2_makearrayint(SLP_HEADER_LEN + prog.length() + 1 +
+  res->program = M2_makearrayint(SLP_HEADER_LEN + prog.size() + 1 +
                                  res->rows_out * res->cols_out);
   res->program->array[0] = res->num_consts =
       num_consts + 1;  //!!! assume: appending ZERO
   res->program->array[1] = res->num_inputs;
   res->program->array[2] = res->rows_out;
   res->program->array[3] = res->cols_out;
-  prog.append(slpEND);
+  prog.push_back(slpEND);
   for (int i = 0; i < num_inputs; i++)
     for (int j = 0; j < num_outputs; j++)
       {
         int t = out_pos[i * res->cols_out + j];
-        prog.append((t == ZERO_CONST)
+        prog.push_back((t == ZERO_CONST)
                         ? num_consts /*ref to ZERO*/
                         : t + res->num_consts +
                               num_inputs);  // position of the output
       }
   memcpy(res->program->array + SLP_HEADER_LEN,
-         prog.raw(),
-         sizeof(int) * prog.length());
+         prog.data(),
+         sizeof(int) * prog.size());
 
   // make nodes: [constants, inputs, operations]
   make_nodes(res->nodes,
@@ -711,7 +714,7 @@ void SLP<Field>::evaluate(int n, const element_type* values, element_type* ret)
 {
   if (n != num_inputs) ERROR("wrong number of inputs");
 
-  element_type* out = NULL;   // used by compiledSLP
+  element_type* out = nullptr;   // used by compiledSLP
   int out_entries_shift = 0;  // position of "out matrix"
 
   int cur_node = num_consts;
@@ -789,7 +792,7 @@ void SLP<Field>::evaluate(int n, const element_type* values, element_type* ret)
         copy_complex_array<Field>(rows_out * cols_out, out, ret);
         break;
       default:
-        // interptretation
+        // interpretation
         element_type* c = ret;
         for (i = 0; i < rows_out; i++)
           for (int j = 0; j < cols_out; j++, c++)
@@ -801,7 +804,7 @@ void SLP<Field>::evaluate(int n, const element_type* values, element_type* ret)
 template <class Field>
 Matrix* SLP<Field>::evaluate(const Matrix* values)
 {
-  element_type* out = NULL;   // used by compiledSLP
+  element_type* out = nullptr;   // used by compiledSLP
   int out_entries_shift = 0;  // position of "out matrix" in slp->program
 
   int cur_node = num_consts;
@@ -853,7 +856,7 @@ Matrix* SLP<Field>::evaluate(const Matrix* values)
                   break;
                 default:
                   ERROR("unknown SLP operation");
-                  return NULL;
+                  return nullptr;
               }
           }
         out_entries_shift = i + 1;
@@ -974,7 +977,7 @@ void SLP<Field>::text_out(buffer& o) const
   for (i = 0; i < num_consts; i++, cur_node++)
     {
       char s[100];
-      nodes[cur_node].sprint(s);
+      nodes[cur_node].snprint(s, 100);
       o << s << ", ";
     }
   o << newline;
@@ -1414,9 +1417,9 @@ PathTracker* PathTracker::catalog[MAX_NUM_PATH_TRACKERS];
 
 PathTracker::PathTracker()
 {
-  raw_solutions = NULL;
-  solutions = NULL;
-  DMforPN = NULL;
+  raw_solutions = nullptr;
+  solutions = nullptr;
+  DMforPN = nullptr;
 }
 
 PathTracker::~PathTracker()
@@ -1437,14 +1440,14 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
   if (S->n_rows() != 1 || T->n_rows() != 1)
     {
       ERROR("1-row matrices expected");
-      return NULL;
+      return nullptr;
     };
   PathTracker* p = new PathTracker;
   const PolyRing* R = p->homotopy_R = S->get_ring()->cast_to_PolyRing();
-  if (R == NULL)
+  if (R == nullptr)
     {
       ERROR("polynomial ring expected");
-      return NULL;
+      return nullptr;
     }
   p->C = cast_to_CCC(R->getCoefficients());
   // const Ring* K = R->getCoefficients();
@@ -1452,7 +1455,7 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
   if (!p->C)
     {
       ERROR("complex coefficients expected");
-      return NULL;
+      return nullptr;
     }
   p->productST = mpfr_get_d(productST, MPFR_RNDN);
   // p->bigT = asin(sqrt(1-p->productST*p->productST));
@@ -1466,14 +1469,14 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
   p->DMforPN = newarray_atomic(double, n);
   p->DMforPN[n - 1] = 1;
   p->S = S;
-  p->slpS = NULL;
+  p->slpS = nullptr;
   for (int i = 0; i < n - 1; i++)
     {
       int d = degree_ring_elem(R, S->elem(0, i));
       if (d > p->maxDegreeTo3halves) p->maxDegreeTo3halves = d;
       p->DMforPN[i] = 1 / sqrt(d);
       StraightLineProgram* slp = StraightLineProgram::make(R, S->elem(0, i));
-      if (p->slpS == NULL)
+      if (p->slpS == nullptr)
         p->slpS = slp;
       else
         {
@@ -1487,11 +1490,11 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
   p->maxDegreeTo3halves = p->maxDegreeTo3halves * sqrt(p->maxDegreeTo3halves);
 
   p->T = T;
-  p->slpT = NULL;
+  p->slpT = nullptr;
   for (int i = 0; i < T->n_cols(); i++)
     {
       StraightLineProgram* slp = StraightLineProgram::make(R, T->elem(0, i));
-      if (p->slpT == NULL)
+      if (p->slpT == nullptr)
         p->slpT = slp;
       else
         {
@@ -1515,30 +1518,30 @@ PathTracker /* or null */* PathTracker::make(const Matrix* HH)
   if (HH->n_rows() != 1)
     {
       ERROR("1-row matrix expected");
-      return NULL;
+      return nullptr;
     };
 
   PathTracker* p = new PathTracker;
   const PolyRing* R = p->homotopy_R = HH->get_ring()->cast_to_PolyRing();
-  if (R == NULL)
+  if (R == nullptr)
     {
       ERROR("polynomial ring expected");
-      return NULL;
+      return nullptr;
     }
   const Ring* K = R->getCoefficients();
   p->C = cast_to_CCC(K);  // cast to ConcreteRing<ARingCCC> for now
   if (!p->C)
     {
       ERROR("complex coefficients expected");
-      return NULL;
+      return nullptr;
     }
 
   p->H = HH;
-  p->slpH = NULL;
+  p->slpH = nullptr;
   for (int i = 0; i < HH->n_cols(); i++)
     {
       StraightLineProgram* slp = StraightLineProgram::make(R, HH->elem(0, i));
-      if (p->slpH == NULL)
+      if (p->slpH == nullptr)
         p->slpH = slp;
       else
         {
@@ -1557,11 +1560,11 @@ PathTracker /* or null */* PathTracker::make(StraightLineProgram* slp_pred,
                                              StraightLineProgram* slp_corr)
 {
   PathTracker* p = new PathTracker;
-  p->H = NULL;
-  p->slpH = NULL;
+  p->H = nullptr;
+  p->slpH = nullptr;
   p->slpHxt = p->slpHxtH = slp_pred;
   p->slpHxH = slp_corr;
-  p->C = NULL;
+  p->C = nullptr;
   return p;
 }
 
@@ -1647,7 +1650,7 @@ int PathTracker::track(const Matrix* start_sols)
   infinity_threshold2 *= infinity_threshold2;
   double end_zone_factor_dbl = mpfr_get_d(end_zone_factor, MPFR_RNDN);
 
-  if (C == NULL)
+  if (C == nullptr)
     C = cast_to_CCC(
         start_sols->get_ring());  // fixes the problem for PrecookedSLPs
 
@@ -1982,12 +1985,12 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
   if (!cast_to_CCC(sols->get_ring()))
     {
       ERROR("complex coordinates expected");
-      return NULL;
+      return nullptr;
     }
   if (sols->n_cols() != n)
     {
       ERROR("incorrect number of coordinates");
-      return NULL;
+      return nullptr;
     }
   n_sols = sols->n_rows();
 
@@ -2070,7 +2073,7 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
 
 Matrix /* or null */* PathTracker::getSolution(int solN)
 {
-  if (solN < 0 || solN >= n_sols) return NULL;
+  if (solN < 0 || solN >= n_sols) return nullptr;
   // construct output
   FreeModule* SS = C->make_FreeModule(n_coords);
   FreeModule* TT = C->make_FreeModule(1);
@@ -2136,7 +2139,7 @@ int PathTracker::getSolutionSteps(int solN)
 
 gmp_RRorNull PathTracker::getSolutionLastT(int solN)
 {
-  if (solN < 0 || solN >= n_sols) return NULL;
+  if (solN < 0 || solN >= n_sols) return nullptr;
   gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].t, MPFR_RNDN);
@@ -2145,7 +2148,7 @@ gmp_RRorNull PathTracker::getSolutionLastT(int solN)
 
 gmp_RRorNull PathTracker::getSolutionRcond(int solN)
 {
-  if (solN < 0 || solN >= n_sols) return NULL;
+  if (solN < 0 || solN >= n_sols) return nullptr;
   gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].cond, MPFR_RNDN);
@@ -2192,10 +2195,11 @@ void Solution::make(int m, const complex* s_s)
 
 int degree_ring_elem(const PolyRing* R, ring_elem re)
 {
-  RingElement* RE = RingElement::make_raw(R, re);
-  M2_arrayint d_array = RE->multi_degree();
-  delete RE;
-  return d_array->array[0];
+  auto d = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(1));
+  R->multi_degree(re, d);
+  // for a single graded ring, the first entry in a monomial array
+  // is the negative of the degree, which is the second entry
+  return -d[0];
 }
 
 void print_complex_matrix(int size, const double* A)

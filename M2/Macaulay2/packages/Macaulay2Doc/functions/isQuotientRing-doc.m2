@@ -26,3 +26,22 @@ document {
 	  },
      SeeAlso => {ambient}
      }
+
+document {
+    Key => isQuotientOf,
+    Headline => "whether one thing is a quotient of another",
+    Subnodes => {
+	TO (isQuotientOf, Ring, Ring),
+	TO (isQuotientOf, Type, Ring),
+    },
+}
+
+document {
+    Key => {(isQuotientOf, Ring, Ring),(isQuotientOf, Ring, QuotientRing)},
+    Headline => "whether one ring is a quotient of another"
+}
+
+document {
+    Key => {(isQuotientOf, Type, Ring),(isQuotientOf, Type, QuotientRing)},
+    Headline => "whether one ring is a quotient of a ring of a given type"
+}

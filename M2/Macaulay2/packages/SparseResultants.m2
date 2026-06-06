@@ -18,13 +18,12 @@ newPackage(
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "A package for computations with sparse resultants",
 	     "acceptance date" => "5 May 2021",
 	     "published article URI" => "https://msp.org/jsag/2021/11-1/p07.xhtml",
 	     "published article DOI" => "10.2140/jsag.2021.11.61",
 	     "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x07-SparseResultants.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SparseResultants.m2",
 	     "release at publication" => "4b0b826f08857b22cf17aebf9c56257ff44d8946",	    -- git commit number in hex
 	     "version at publication" => "1.1",
 	     "volume number" => "11",
@@ -35,7 +34,7 @@ newPackage(
 export{"sparseResultant", "SparseResultant", "sparseDiscriminant", "SparseDiscriminant",
        "denseResultant", "denseDiscriminant",
        "exponentsMatrix", "genericLaurentPolynomials", "genericMultihomogeneousPolynomial",
-       "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "shape", "reverseShape", "sortShape", "sylvesterMatrix", "degreeDeterminant", "flattening",
+       "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "shape", "reverseShape", "sortShape", "degreeDeterminant", "flattening",
        "randomMultidimensionalMatrix", "genericMultidimensionalMatrix", "genericSymmetricMultidimensionalMatrix", "genericSkewMultidimensionalMatrix"}
 
 hasAttribute = value Core#"private dictionary"#"hasAttribute";
@@ -62,7 +61,9 @@ toString SparseResultant := net SparseResultant := R -> (
     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
     else "-*An example of sparse resultant*-"
 );
+texMath SparseResultant := texMath @@ net;
 
+SparseResultant#{WebApp,AfterPrint} = SparseResultant#{WebApp,AfterNoPrint} = 
 SparseResultant#{Standard,AfterPrint} = SparseResultant#{Standard,AfterNoPrint} = (R) -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class R << " ("; 
     << "sparse " << (if R#"Unmixed" then "unmixed" else "mixed") << " resultant associated to " << R#"exponents"; 
@@ -296,7 +297,9 @@ toString SparseDiscriminant := net SparseDiscriminant := D -> (
     if hasAttribute(D,ReverseDictionary) then toString getAttribute(D,ReverseDictionary)
     else "-*An example of sparse discriminant*-"
 );
+texMath SparseDiscriminant := texMath @@ net;
 
+SparseDiscriminant#{WebApp,AfterPrint} = SparseDiscriminant#{WebApp,AfterNoPrint} = 
 SparseDiscriminant#{Standard,AfterPrint} = SparseDiscriminant#{Standard,AfterNoPrint} = (D) -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class D << " ("; 
     << "sparse discriminant associated to " << D#"exponents"; 
@@ -446,7 +449,7 @@ dualizedChowForm (RingMap) := o -> (phi) -> (
    kerPhi := kernel phi;
    if dim kerPhi =!= r+1 then error("hypothesis not satisfied by the set of monomials (the dimension of the associated toric variety is less than "|toString(r)|")");
    mnr := o.AffineChartGrass;
-   if mnr === true then mnr = (random toList(0..n))_{0..r};
+   if mnr === true then mnr = shuffle(toList(0..n), r + 1);
    try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == r+1 and # mnr == r+1) else error("bad value for option AffineChartGrass: expected either 'true' or list of "|toString(r+1)|" distinct integers between 0 and "|toString(n)); 
    mnr = sort mnr; 
    x := local x; u := local u;
@@ -556,6 +559,7 @@ MultidimensionalMatrix = new Type of HashTable;
 
 MultidimensionalMatrix.synonym = "multidimensional matrix";
 
+MultidimensionalMatrix#{WebApp,AfterPrint} = MultidimensionalMatrix#{WebApp,AfterNoPrint} = 
 MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,AfterNoPrint} = M -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << dim M << "-dimensional matrix of shape " << printedShape M << " over " << ring M << endl;
 );
@@ -563,6 +567,7 @@ MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,
 MultidimensionalMatrix.Wrap = x -> wrap(printWidth,"-", net x);
 
 net MultidimensionalMatrix := M -> net entries M;
+texMath MultidimensionalMatrix := texMath @@ net;
 
 multidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix);
 
@@ -723,7 +728,7 @@ makeRing (List) := (L) -> (
 
 gensRing = memoize(
     (K,n) -> (
-        x := apply(#n,i -> getSymbol("x"|toString(i)));
+        x := if #n==1 then {getSymbol "x"} else apply(#n,i -> getSymbol("x"|toString(i)));
         X := apply(#n,i -> toList((x_i)_0 .. (x_i)_(n_i-1)));
         d := entries diagonalMatrix toList(#n : 1);
         R := K[flatten X,Degrees=>apply(#n,i -> n_i : d_i)];
@@ -865,7 +870,6 @@ det245 = (M) -> ( -- determinant of shape 2x4x5
     sub(W,apply(56,j -> g_j => mm_j))
 );
 
-sylvesterMatrix = method(TypicalValue => Matrix);
 sylvesterMatrix (MultidimensionalMatrix) := (M) -> (
     -- see p. 459 in [Gelfand-Kapranov-Zelevinsky]
     n := shape M;
@@ -1112,7 +1116,7 @@ document {
      SeeAlso => {sparseResultant}
 }
 
-undocumented {(describe, SparseResultant), (toString, SparseResultant), (net, SparseResultant), (symbol SPACE, SparseResultant, VisibleList), (symbol SPACE, SparseResultant, Matrix)}
+undocumented {(describe, SparseResultant), (toString, SparseResultant), (net, SparseResultant), (texMath, SparseResultant), (symbol SPACE, SparseResultant, VisibleList), (symbol SPACE, SparseResultant, Matrix)}
 
 document { 
     Key => {sparseDiscriminant,(sparseDiscriminant,Matrix),(sparseDiscriminant,RingElement),[sparseDiscriminant,CoefficientRing]}, 
@@ -1180,7 +1184,7 @@ document {
      SeeAlso => {sparseDiscriminant}
 }
 
-undocumented {(describe, SparseDiscriminant), (toString, SparseDiscriminant), (net, SparseDiscriminant)}
+undocumented {(describe, SparseDiscriminant), (toString, SparseDiscriminant), (net, SparseDiscriminant), (texMath, SparseDiscriminant)}
 
 document { 
     Key => {exponentsMatrix,(exponentsMatrix,Sequence),[exponentsMatrix,Unmixed]}, 
@@ -1419,7 +1423,7 @@ document {
      SeeAlso => {(symbol *,RingElement,MultidimensionalMatrix)}
 }
 
-undocumented {(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ),(sub,MultidimensionalMatrix,Ring),
+undocumented {(texMath,MultidimensionalMatrix),(net,MultidimensionalMatrix),(symbol ==,ZZ,MultidimensionalMatrix),(symbol ==,MultidimensionalMatrix,ZZ),(sub,MultidimensionalMatrix,Ring),
               (matrix,MultidimensionalMatrix),(multidimensionalMatrix,Matrix)}
 
 document { 
@@ -1458,14 +1462,14 @@ document {
     Usage => "det M", 
     Inputs => {"M" => MultidimensionalMatrix},
     Outputs => {RingElement => {"the hyperdeterminant of ",TEX///$M$///}},
-    PARA {"This is calculated using Schlafli's method where it is known to work. Use an optional input as ",TT "Strategy=>\"forceSchlafliMethod\""," to try to force this approach (but without ensuring the correctness of the calculation). For matrices of boundary shape, the calculation passes through ",TO sylvesterMatrix,". For details, see the Chapter 14 in the book ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
+    PARA {"This is calculated using Schlafli's method where it is known to work. Use an optional input as ",TT "Strategy=>\"forceSchlafliMethod\""," to try to force this approach (but without ensuring the correctness of the calculation). For matrices of boundary shape, the calculation passes through ",TO (sylvesterMatrix, MultidimensionalMatrix),". For details, see the Chapter 14 in the book ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
     EXAMPLE {
         "M = randomMultidimensionalMatrix(2,2,2,2)",
         "time det M",
         "M = randomMultidimensionalMatrix(2,2,2,2,5)",
         "time det M"
      },
-     SeeAlso => {MultidimensionalMatrix, degreeDeterminant, sparseDiscriminant, sylvesterMatrix}
+     SeeAlso => {MultidimensionalMatrix, degreeDeterminant, sparseDiscriminant, (sylvesterMatrix, MultidimensionalMatrix)}
 }
 
 document { 
@@ -1596,7 +1600,7 @@ document {
 }
 
 document { 
-    Key => {sylvesterMatrix,(sylvesterMatrix,MultidimensionalMatrix)}, 
+    Key => {(sylvesterMatrix,MultidimensionalMatrix)},
     Headline => "Sylvester-type matrix for the hyperdeterminant of a matrix of boundary shape", 
     Usage => "sylvesterMatrix M", 
     Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix of boundary shape ",TEX///$(k_1+1)\times\cdots\times (k_n+1)$///," (that is, ",TEX///$2 max\{k_1,\ldots,k_n\} = k_1+\ldots+k_n$///,")."}},
@@ -1654,7 +1658,7 @@ document {
 -- Tests -- 
 
 TEST ///
- -- p. 318 Cox-Little-Shea
+ -- p. 318 Cox-Little-O'Shea
 M = matrix {{0,1,0,1},{0,0,1,1}};
 R := QQ[a_0..a_3,b_0..b_3,c_0..c_3][s,t];
 f = a_0 + a_1*s + a_2*t + a_3*s*t;

@@ -36,7 +36,7 @@ newPackage(
         },
     Headline => "operations over a local ring R_p",
     Keywords => {"Commutative Algebra"},
-    PackageExports => {"PruneComplex", "Saturation"},
+    PackageExports => {"Saturation", "Complexes"},
     AuxiliaryFiles => true
     )
 
@@ -323,11 +323,11 @@ hilbertSamuelFunction (Ideal, Module, ZZ, ZZ) := List => (q, M, n0, n1) -> (
 --===================================== addHooks Section =====================================--
 
 -- res, resolution
-addHook((resolution, Module), Strategy => Local, (opts, M) -> (
+addHook((freeResolution, Module), Strategy => Local, (opts, M) -> (
         RP := ring M;
         if instance(RP, LocalRing) then (
             M' := liftUp M;
-            C := resolution(M', opts);
+            C := freeResolution(M', opts);
             CP := C ** RP;
             CP = if isHomogeneous M'
               then pruneComplex(CP, UnitTest => isScalar, PruningMap => false)
@@ -397,7 +397,9 @@ addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
         (L, U) := extractLU(LU, r + s, n);
         for i in 0 ..< n do colReduce(L, i);
         m := - submatrix(L, {r ..< r + s}, {0 ..< n});
-        columnPermute(m, 0, (toList P)_{0 ..< n});
+        -- reverse the permutation of the first n columns
+        P = sortColumns matrix{ (toList P)_{0 ..< n} };
+        columnPermute(m, 0, P);
         -- padding is necessary when image f \nin image g, so we get a remainder
         m  = matrix m | map(RP^s, RP^(max(0, r - n)), 0);
         map(source g, source f, m,

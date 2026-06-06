@@ -72,38 +72,6 @@ getWWW (String,Nothing) := (url,body) -> (
 	       else false));
      ret)
 
-hexdigits = new HashTable from {
-    "0" => 0,
-    "1" => 1,
-    "2" => 2,
-    "3" => 3,
-    "4" => 4,
-    "5" => 5,
-    "6" => 6,
-    "7" => 7,
-    "8" => 8,
-    "9" => 9,
-    "a" => 10,
-    "b" => 11,
-    "c" => 12,
-    "d" => 13,
-    "e" => 14,
-    "f" => 15,
-    "A" => 10,
-    "B" => 11,
-    "C" => 12,
-    "D" => 13,
-    "E" => 14,
-    "F" => 15
-    }
-hex = (str) -> (
-    -- str: String, coming from getWWW
-    -- each char of str should be 0..9,a..f, or A..F
-    -- transform this string into the corresponding hexadecimal number
-    result := 0;
-    for c in characters str do result = 16*result + hexdigits#c;
-    result
-    )
 header = (str) -> (
     -- str: String, coming from getWWW
     -- return ((offset,len of header), (offset, len of body))
@@ -124,7 +92,7 @@ extractChunk = (offset,str) -> (
     -- return value: (newoffset, thischunk)
     loc := regex("([0-9a-fA-F]+)\r\n", offset, str);
     if loc#0#0 =!= offset then error "chunk format error";
-    len := hex substring(loc#1, str);
+    len := changeBase(substring(loc#1, str), 16);
     chunkstart := plus loc#0;
     thischunk := substring(chunkstart, len, str);
     (chunkstart+len+2, thischunk)               -- +2 passes over \r\n

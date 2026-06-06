@@ -113,10 +113,26 @@ u Number := identity
 assert( u ZZ === ZZ )
 assert( u(ZZ,FOO=>BAR) === (new OptionTable from {FOO => BAR},ZZ) )
 
--- chainComplex is now an example, because it is defined by chainComplex = method(Options => true, Dispatch => Thing, TypicalValue => ChainComplex)
+-- "code methods" should deduplicates identical functions
+u Matrix := identity
+s = code methods u
+assert match("-- code for method: u\\(Number\\)", toString net s#0)
+assert match("-- code for method: u\\(Matrix\\)", toString net s#0)
+
+fcn = method(Options => true, Dispatch => Thing, TypicalValue => List)
 X = new Type of BasicList
-chainComplex X := { FOO => BAR } >> o -> x -> (o,x);
-assert ( chainComplex (new X, FOO => 123 ) === (new OptionTable from {FOO => 123},new X from {}) )
-assert ( chainComplex (new X) === (new OptionTable from {FOO => BAR},new X from {}) )
-chainComplex X := identity
-assert( chainComplex (new X) === new X )
+fcn X := { FOO => BAR } >> o -> x -> (o,x);
+assert ( fcn (new X, FOO => 123 ) === (new OptionTable from {FOO => 123},new X from {}) )
+assert ( fcn (new X) === (new OptionTable from {FOO => BAR},new X from {}) )
+fcn X := identity
+assert( fcn (new X) === new X )
+
+-- this should list (net/info, HypertextContainer),
+-- even though HypertextContainer is not exported.
+assert(2 == length methods parent class code first)
+-- this used to fail because of a bug in (package, Sequence)
+debug Core
+assert(1 == length methods needsPackage "FirstPackage")
+
+-- used to give an error
+code methods {Standard, Print}

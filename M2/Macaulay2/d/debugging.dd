@@ -1,0 +1,429 @@
+use tokens;
+use common;
+use util;
+use hashtables;
+
+-- debugger is not defined until interp.dd
+-- so we use a pointer and populate it later.
+dummydebugger(f:Frame,c:Code):Expr := (
+    Ccode(void, "(void)", f);
+    Ccode(void, "(void)", c);
+    nullE);
+export debuggerpointer := dummydebugger;
+
+
+
+export tostring(c:Code):string := (
+    when c
+    is x:nullCode    do "(null)"
+    is x:realCode    do tostringRR(x.x)
+    is x:integerCode do tostring(x.x)
+    is x:stringCode  do concatenate(array(string)("\"", present(x.x), "\""))
+    is x:Error       do concatenate(array(string)("(error \"", x.message, "\")"))
+    --
+    is x:sequenceCode     do concatenate(array(string)("(sequence ",     between(" ", new array(string) len length(x.x) do foreach s in x.x do provide tostring(s)), ")"))
+    is x:listCode         do concatenate(array(string)("(list ",         between(" ", new array(string) len length(x.y) do foreach s in x.y do provide tostring(s)), ")"))
+    is x:arrayCode        do concatenate(array(string)("(array ",        between(" ", new array(string) len length(x.z) do foreach s in x.z do provide tostring(s)), ")"))
+    is x:angleBarListCode do concatenate(array(string)("(angleBarList ", between(" ", new array(string) len length(x.t) do foreach s in x.t do provide tostring(s)), ")"))
+    is x:semiCode         do concatenate(array(string)("(semi ",         between(" ", new array(string) len length(x.w) do foreach s in x.w do provide tostring(s)), ")"))
+    --
+    is x:localSymbolClosureCode  do concatenate(array(string)("(local ",  x.symbol.word.name, " nestingDepth: ", tostring(x.nestingDepth), ")"))
+    is x:globalSymbolClosureCode do concatenate(array(string)("(global ", x.symbol.word.name, ")"))
+    is x:threadSymbolClosureCode do concatenate(array(string)("(thread ", x.symbol.word.name, ")"))
+    --
+    is x:localMemoryReferenceCode  do concatenate(array(string)("(local-fetch ",  tostring(x.frameindex), " ", tostring(x.nestingDepth), ")"))
+    is x:globalMemoryReferenceCode do concatenate(array(string)("(global-fetch ", tostring(x.var.frameindex), ")"))
+    is x:threadMemoryReferenceCode do concatenate(array(string)("(thread-fetch ", tostring(x.var.frameindex), ")"))
+    --
+    is x:localAssignmentCode     do concatenate(array(string)("(local-assign ",  tostring(x.frameindex), " ", tostring(x.nestingDepth), " ", tostring(x.rhs), ")"))
+    is x:globalAssignmentCode    do concatenate(array(string)("(global-assign ", x.lhs.word.name,        " ",                                tostring(x.rhs), ")"))
+    is x:augmentedAssignmentCode do concatenate(array(string)("(augmented-assign ", x.oper.word.name, " ", tostring(x.lhs), " ", tostring(x.rhs), ")"))
+    is x:parallelAssignmentCode  do concatenate(array(string)("(parallel-assign ( ", if x.colon then ":=" else "=", " (",
+	    between(" ", new array(string) len length(x.lhs) do foreach s in x.lhs do provide tostring(s)), ") ", tostring(x.rhs), ")"))
+    -- TODO: what is an example that yields this?
+    is x:evaluatedCode do concatenate(array(string)("(expr ", tostring(hash(x.expr)), ")"))
+    --
+    is x:ifCode    do concatenate(array(string)("(if ",    tostring(x.predicate), " then: ", tostring(x.thenClause), " else: ", tostring(x.elseClause), ")"))
+    is x:tryCode   do concatenate(array(string)(
+	    "(try ",
+	    " framesize: ", tostring(x.framesize),
+	    " frameID: ",   tostring(x.frameID),
+	    " code: ",      tostring(x.code),
+	    " then: ",      tostring(x.thenClause),
+	    " else: ",      tostring(x.elseClause),
+	    " do: ",        tostring(x.doClause), ")"))
+    is x:catchCode do concatenate(array(string)("(catch ", tostring(x.code), ")"))
+    --
+    is x:unaryCode    do concatenate(array(string)("(1-OP ", x.oper.word.name,   " ", tostring(x.rhs), ")"))
+    is x:binaryCode   do concatenate(array(string)("(2-OP ", x.oper.word.name,  " ", tostring(x.lhs),  " ", tostring(x.rhs), ")"))
+    is x:ternaryCode  do concatenate(array(string)("(3-OP ", getTernopName(x.f).word.name, " ", tostring(x.arg1), " ", tostring(x.arg2), " ", tostring(x.arg3), ")"))
+    is x:multaryCode  do concatenate(array(string)("(OP ",   getMultopName(x.f).word.name, " ",
+	    between(" ", new array(string) len length(x.args) do foreach c in x.args do provide tostring(c)), ")"))
+    is x:adjacentCode do concatenate(array(string)("(adjacent ", tostring(x.lhs), " ", tostring(x.rhs), ")"))
+    --
+    is x:functionCode do concatenate(array(string)(
+	    "(function",
+	    " restargs: ",  tostring(x.desc.restargs),
+	    " numparms: ",  tostring(x.desc.numparms),
+	    " framesize: ", tostring(x.desc.framesize),
+	    " frameID: ",   tostring(x.desc.frameID),
+	    " ",            tostring(x.body), ")"))
+    --
+    is x:forCode do concatenate(array(string)(
+	    "(for",
+	    " in: ",   tostring(x.inClause),
+	    " from: ", tostring(x.fromClause),
+	    " to: ",   tostring(x.toClause),
+	    " when: ", tostring(x.whenClause),
+	    " list: ", tostring(x.listClause),
+	    " do: ",   tostring(x.doClause), ")"))
+    --
+    is x:whileListDoCode do concatenate(array(string)("(while ", tostring(x.predicate), " list: ", tostring(x.listClause), " do: ", tostring(x.doClause), ")"))
+    is x:whileDoCode     do concatenate(array(string)("(while ", tostring(x.predicate),                                    " do: ", tostring(x.doClause), ")"))
+    is x:whileListCode   do concatenate(array(string)("(while ", tostring(x.predicate), " list: ", tostring(x.listClause), ")"))
+    --
+    is x:newOfFromCode do concatenate(array(string)("(new ", tostring(x.newClause), " of: ", tostring(x.ofClause), " from: ", tostring(x.fromClause), ")"))
+    is x:newFromCode   do concatenate(array(string)("(new ", tostring(x.newClause),                                " from: ", tostring(x.fromClause), ")"))
+    is x:newOfCode     do concatenate(array(string)("(new ", tostring(x.newClause), " of: ", tostring(x.ofClause), ")"))
+    is x:newCode       do concatenate(array(string)("(new ", tostring(x.newClause), ")"))
+    );
+
+export toExpr(c:Code):Expr := Pseudocode(c);
+export toList(c:Code):Expr := (
+    when c
+    is x:nullCode    do nullE
+    is x:realCode    do toExpr(x.x)
+    is x:integerCode do toExpr(x.x)
+    is x:stringCode  do toExpr(tostring(c))
+    is x:Error do list(toExpr("error"), toExpr(x.message))
+    --
+    is x:sequenceCode     do list(toExpr("sequence"),     Expr(new Sequence len length(x.x) do foreach s in x.x do provide toExpr(s)))
+    is x:listCode         do list(toExpr("list"),         Expr(new Sequence len length(x.y) do foreach s in x.y do provide toExpr(s)))
+    is x:arrayCode        do list(toExpr("array"),        Expr(new Sequence len length(x.z) do foreach s in x.z do provide toExpr(s)))
+    is x:angleBarListCode do list(toExpr("angleBarList"), Expr(new Sequence len length(x.t) do foreach s in x.t do provide toExpr(s)))
+    -- TODO: what is this?
+    is x:semiCode         do list(toExpr("semi"),         Expr(new Sequence len length(x.w) do foreach s in x.w do provide toExpr(s)))
+    --
+    is x:localSymbolClosureCode  do list(toExpr("local"),  Expr(SymbolBody(x.symbol)), toExpr(x.symbol.frameindex), toExpr(x.nestingDepth))
+    is x:globalSymbolClosureCode do list(toExpr("global"), Expr(SymbolBody(x.symbol)), toExpr(x.symbol.frameindex))
+    is x:threadSymbolClosureCode do list(toExpr("thread"), Expr(SymbolBody(x.symbol)), toExpr(x.symbol.frameindex))
+    --
+    is x:localMemoryReferenceCode  do list(toExpr("local-fetch"),  toExpr(x.frameindex), toExpr(x.nestingDepth))
+    is x:globalMemoryReferenceCode do list(toExpr("global-fetch"), toExpr(x.var.frameindex))
+    is x:threadMemoryReferenceCode do list(toExpr("thread-fetch"), toExpr(x.var.frameindex))
+    --
+    is x:localAssignmentCode     do list(toExpr("local-assign"),   toExpr(x.frameindex),       toExpr(x.nestingDepth),   seq(toExpr(x.rhs)))
+    is x:globalAssignmentCode    do list(toExpr("global-assign"),    Expr(SymbolBody(x.lhs)),  toExpr(x.lhs.frameindex), seq(toExpr(x.rhs)))
+    is x:augmentedAssignmentCode do list(toExpr("augmented-assign"), Expr(SymbolBody(x.oper)), seq(toExpr(x.lhs), toExpr(x.rhs)))
+    is x:parallelAssignmentCode  do list(toExpr("parallel-assign"), Expr(SymbolBody(if x.colon then ColonEqualS.symbol else EqualS.symbol)),
+	Expr(new Sequence len length(x.lhs) do foreach s in x.lhs do provide toExpr(s)), toExpr(x.rhs))
+    -- used along augmentedAssignmentCode
+    is x:evaluatedCode do toExpr(tostring(c))
+    --
+    is x:ifCode    do list(toExpr("if"),    seq(toExpr(x.predicate), list(toExpr("then"), toExpr(x.thenClause)), list(toExpr("else"), toExpr(x.elseClause))))
+    is x:tryCode   do list(toExpr("try"),
+	Expr(Sequence(
+	    list(toExpr("framesize"), toExpr(x.framesize)),
+	    list(toExpr("frameID"),   toExpr(x.frameID)),
+	    list(toExpr("code"),      toExpr(x.code)),
+	    list(toExpr("then"),      toExpr(x.thenClause)),
+	    list(toExpr("else"),      toExpr(x.elseClause)),
+	    list(toExpr("do"),        toExpr(x.doClause)))))
+    is x:catchCode do list(toExpr("catch"), seq(toExpr(x.code)))
+    --
+    is x:unaryCode   do list(toExpr("1-OP"), Expr(SymbolBody(x.oper)),   seq(toExpr(x.rhs)))
+    is x:binaryCode  do list(toExpr("2-OP"), Expr(SymbolBody(x.oper)),  seq(toExpr(x.lhs),  toExpr(x.rhs)))
+    is x:ternaryCode do list(toExpr("3-OP"), Expr(SymbolBody(getTernopName(x.f))), seq(toExpr(x.arg1), toExpr(x.arg2), toExpr(x.arg3)))
+    is x:multaryCode do list(toExpr("OP"),   Expr(SymbolBody(getMultopName(x.f))),
+	Expr(new Sequence len length(x.args) do foreach c in x.args do provide toExpr(c)))
+    is x:adjacentCode do list(toExpr("adjacent"), seq(toExpr(x.lhs), toExpr(x.rhs)))
+    --
+    is x:functionCode do list(toExpr("function"),
+	Expr(Sequence(
+		list(toExpr("restargs"),  toExpr(x.desc.restargs)),
+		list(toExpr("numparms"),  toExpr(x.desc.numparms)),
+		list(toExpr("framesize"), toExpr(x.desc.framesize)),
+		list(toExpr("frameID"),   toExpr(x.desc.frameID)),
+		list(toExpr("body"),      toExpr(x.body)))))
+    --
+    is x:forCode do list(toExpr("for"),
+	Expr(Sequence(
+		list(toExpr("framesize"), toExpr(x.framesize)),
+		list(toExpr("frameID"),   toExpr(x.frameID)),
+		list(toExpr("in"),        toExpr(x.inClause)),
+		list(toExpr("from"),      toExpr(x.fromClause)),
+		list(toExpr("to"),        toExpr(x.toClause)),
+		list(toExpr("when"),      toExpr(x.whenClause)),
+		list(toExpr("list"),      toExpr(x.listClause)),
+		list(toExpr("do"),        toExpr(x.doClause)))))
+    --
+    is x:whileListDoCode do list(toExpr("while"), seq(toExpr(x.predicate), list(toExpr("list"), toExpr(x.listClause)), list(toExpr("do"), toExpr(x.doClause))))
+    is x:whileDoCode     do list(toExpr("while"), seq(toExpr(x.predicate),                                             list(toExpr("do"), toExpr(x.doClause))))
+    is x:whileListCode   do list(toExpr("while"), seq(toExpr(x.predicate), list(toExpr("list"), toExpr(x.listClause))))
+    --
+    is x:newOfFromCode do list(toExpr("new"), seq(toExpr(x.newClause), list(toExpr("of"),   toExpr(x.ofClause)), list(toExpr("from"), toExpr(x.fromClause))))
+    is x:newFromCode   do list(toExpr("new"), seq(toExpr(x.newClause),                                           list(toExpr("from"), toExpr(x.fromClause))))
+    is x:newOfCode     do list(toExpr("new"), seq(toExpr(x.newClause), list(toExpr("of"),   toExpr(x.ofClause))))
+    is x:newCode       do list(toExpr("new"), seq(toExpr(x.newClause)))
+    --
+    else toExpr(tostring(c)));
+
+disassemble(e:Expr):Expr := (
+    when e
+    -- # typical value: disassemble, PseudocodeClosure, String
+    is c:PseudocodeClosure do toExpr(tostring(c.code))
+    -- # typical value: disassemble, Pseudocode, String
+    is c:Pseudocode        do toExpr(tostring(c.code))
+    -- # typical value: disassemble, FunctionClosure, String
+    is f:FunctionClosure   do toExpr(tostring(Code(f.model)))
+    -- # typical value: disassemble, FunctionBody, String
+    is f:functionCode      do toExpr(tostring(Code(f.body)))
+    -- e.g. if X = new Type of FunctionClosure is defined,
+    -- this makes disassemble(new X from (a -> 2*a)) work
+    is s:SpecialExpr       do disassemble(s.e)
+    else WrongArg("a pseudocode or function closure derived from Macaulay2 code"));
+setupfun("disassemble", disassemble);
+
+pseudocode(e:Expr):Expr := (
+    when e
+    -- # typical value: pseudocode, FunctionClosure, PseudocodeClosure
+    is f:FunctionClosure do Expr(PseudocodeClosure(f.frame, Code(f.model)))
+    -- # typical value: pseudocode, FunctionBody, PseudocodeClosure
+    is f:functionCode    do Expr(Pseudocode(f.body))
+    -- e.g. if X = new Type of FunctionClosure is defined,
+    -- this makes pseudocode(new X from (a -> 2*a)) work
+    is s:SpecialExpr     do pseudocode(s.e)
+    else WrongArg("a function derived from Macaulay2 code"));
+setupfun("pseudocode", pseudocode);
+
+export filePositionClass := newHashTableWithHash(typeClass, basicListClass);
+setupconst("FilePosition", Expr(filePositionClass));
+
+export locate(p:Position):Expr := (
+    if p == dummyPosition || p == tempPosition
+    then nullE
+    else Expr(sethash(List(filePositionClass,
+		Sequence(
+		    toExpr(verifyMinimizeFilename(p.filename)),
+		    toExpr(int(p.lineL)), toExpr(int(p.columnL)),
+		    toExpr(int(p.lineR)), toExpr(int(p.columnR)),
+		    toExpr(int(p.lineF)), toExpr(int(p.columnF))),
+		hash_t(0), false), false)));
+
+locate(e:Expr):Expr := (
+    when e
+    is Nothing do nullE
+    is Sequence do locate(lookupfun(e))
+    is f:FunctionClosure do locate(f.model.position)
+    is f:functionCode    do locate(codePosition(f.body))
+    -- TODO: can we use binary debug symbols?
+    is CompiledFunction        do nullE
+    is CompiledFunctionBody    do nullE
+    is CompiledFunctionClosure do nullE
+    is c:PseudocodeClosure do locate(codePosition(c.code))
+    is c:Pseudocode        do locate(codePosition(c.code))
+    is s:SymbolClosure do locate(s.symbol.position)
+    is s:SpecialExpr do locate(s.e)
+    is err:Error do locate(err.position)
+    else WrongArg("a function, symbol, sequence, or null"));
+setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
+
+invalidFilePosition := "-* invalid file position *-";
+
+export tostringFilePosition(e:Expr):string := (
+    when e
+    is p:List do (
+	if length(p.v) < 3 then return invalidFilePosition;
+	when p.v.0
+	is s:stringCell do (
+	    r := s.v;
+	    for i from 0 to length(r) - 1 do (
+		if r.i == ' '
+		then (
+		    r = format(r);
+		    break));
+	    when p.v.1
+	    is n:ZZcell do r = r + ":" + tostring(n.v)
+	    else return invalidFilePosition;
+	    when p.v.2
+	    is n:ZZcell do r = r + ":" + tostring(n.v)
+	    else return invalidFilePosition;
+	    if length(p.v) == 4 then (
+		when p.v.3
+		is n:ZZcell do r = r + "(" + tostring(n.v) + ")"
+		else return invalidFilePosition)
+	    else if length(p.v) > 4 then (
+		when p.v.3
+		is n:ZZcell do r = r + "-" + tostring(n.v)
+		else return invalidFilePosition;
+		when p.v.4
+		is n:ZZcell do r = r + ":" + tostring(n.v)
+		else return invalidFilePosition);
+	    r)
+	else invalidFilePosition)
+    else invalidFilePosition);
+
+processErrorArgs0(a:Sequence):string := (
+    r := concatenate(new array(string) len length(a) at i do (
+	    when a.i
+	    is s:stringCell do provide s.v
+	    is s:SymbolClosure do provide "'" + s.symbol.word.name + "'"
+	    else provide robustPrintString(a.i)));
+    foreach x in a do (
+	when x
+	is s:SymbolClosure do r = concatenate(array(string)(
+		r, "\n",
+		tostringFilePosition(locate(s.symbol.position)),
+		": here is the first use of '",
+		s.symbol.word.name, "'"))
+	else nothing);
+    r);
+
+processErrorArgs0(e:Expr):string := (
+    when e
+    is a:Sequence do processErrorArgs0(a)
+    else processErrorArgs0(seq(e)));
+
+processErrorArgs(e:Expr):Expr := toExpr(processErrorArgs0(e));
+setupfun("processErrorArgs", processErrorArgs);
+
+errorfun(e:Expr):Expr := (
+     when e
+     is s:stringCell do buildErrorPacket(s.v)
+     is err:Error do (err.printed = false; e)
+     is x:SpecialExpr do errorfun(x.e)
+     else buildErrorPacket(processErrorArgs0(e)));
+setupfun("error",errorfun);
+
+newError(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is T:HashTable do (
+		if ancestor(T, errorClass) then Expr(SpecialExpr(T,
+			Error(dummyPosition, processErrorArgs0(a.1), T, false,
+			    dummyFrame)))
+		else WrongArg(1, "a type of error"))
+	    else WrongArgHashTable(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+installMethod(NewFromS, errorClass, thingClass, newError);
+
+------------
+-- parse --
+-----------
+
+toExpr(t:Token):Expr := list(toExpr("Token"), toExpr(t.word.name));
+export toExpr(e:ParseTree):Expr := (
+    when e
+    is t:Token do toExpr(t)
+    is p:Parentheses do list(
+	toExpr("Parentheses"),
+	toExpr(p.left),
+	toExpr(p.contents),
+	toExpr(p.right))
+    is p:EmptyParentheses do list(
+	toExpr("EmptyParentheses"),
+	toExpr(p.left),
+	toExpr(p.right))
+    is a:Adjacent do list(
+	toExpr("Adjacent"),
+	toExpr(a.lhs),
+	toExpr(a.rhs))
+    is a:Arrow do list(
+	toExpr("Arrow"),
+	toExpr(a.lhs),
+	toExpr(a.rhs))
+    is q:Quote do list(
+	toExpr("Quote"),
+	toExpr(q.rhs))
+    is q:GlobalQuote do list(
+	toExpr("GlobalQuote"),
+	toExpr(q.rhs))
+    is q:ThreadQuote do list(
+	toExpr("ThreadQuote"),
+	toExpr(q.rhs))
+    is q:LocalQuote do list(
+	toExpr("LocalQuote"),
+	toExpr(q.rhs))
+    is u:Unary do list(
+	toExpr("Unary"),
+	toExpr(u.Operator),
+	toExpr(u.rhs))
+    is b:Binary do list(
+	toExpr("Binary"),
+	toExpr(b.lhs),
+	toExpr(b.Operator),
+	toExpr(b.rhs))
+    is p:Postfix do list(
+	toExpr("Postfix"),
+	toExpr(p.lhs),
+	toExpr(p.Operator))
+    is i:IfThen do list(
+	toExpr("IfThen"),
+	toExpr(i.predicate),
+	toExpr(i.thenClause))
+    is i:IfThenElse do list(
+	toExpr("IfThenElse"),
+	toExpr(i.predicate),
+	toExpr(i.thenClause),
+	toExpr(i.elseClause))
+    is t:Try do list(
+	toExpr("Try"),
+	toExpr(t.primary))
+    is t:TryThen do list(
+	toExpr("TryThen"),
+	toExpr(t.primary),
+	toExpr(t.sequel))
+    is t:TryThenElse do list(
+	toExpr("TryThenElse"),
+	toExpr(t.primary),
+	toExpr(t.sequel),
+	toExpr(t.alternate))
+    is t:TryElse do list(
+	toExpr("TryElse"),
+	toExpr(t.primary),
+	toExpr(t.alternate))
+    is t:TryThenDo do list(Sequence(
+	    toExpr("TryThenDo"),
+	    toExpr(t.primary),
+	    toExpr(t.sequel),
+	    toExpr(t.variable),
+	    toExpr(t.doClause)))
+    is t:TryDo do list(
+	toExpr("TryDo"),
+	toExpr(t.primary),
+	toExpr(t.variable),
+	toExpr(t.doClause))
+    is c:Catch do list(
+	toExpr("Catch"),
+	toExpr(c.primary))
+    is w:WhileDo do list(
+	toExpr("WhileDo"),
+	toExpr(w.predicate),
+	toExpr(w.doClause))
+    is w:WhileListDo do list(
+	toExpr("WhileListDo"),
+	toExpr(w.predicate),
+	toExpr(w.listClause),
+	toExpr(w.doClause))
+    is w:WhileList do list(
+	toExpr("WhileList"),
+	toExpr(w.predicate),
+	toExpr(w.listClause))
+    is f:For do list(Sequence(
+	    toExpr("For"),
+	    toExpr(f.variable),
+	    toExpr(f.inClause),
+	    toExpr(f.fromClause),
+	    toExpr(f.toClause),
+	    toExpr(f.whenClause),
+	    toExpr(f.listClause),
+	    toExpr(f.doClause)))
+    is n:New do list(
+	toExpr("New"),
+	toExpr(n.newClass),
+	toExpr(n.newParent),
+	toExpr(n.newInitializer))
+    is dummy do list(toExpr("dummy")));

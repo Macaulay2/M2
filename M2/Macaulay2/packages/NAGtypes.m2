@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.17",
-     Date => "Jan 2021",
+     Version => "1.21",
+     Date => "Nov 2022",
      Headline => "types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -22,7 +22,7 @@ export {
      -- service functions
      "generalEquations", 
      -- witness set
-     "WitnessSet", "witnessSet", "equations", "slice", "points", 
+     "WitnessSet", "witnessSet", "equations", "slice", "points", "declareIrreducible", 
      "Equations", "Slice", "Points", "ProjectionDimension", 
      "sliceEquations", "projectiveSliceEquations", "IsIrreducible", 
      "ProjectiveWitnessSet", "AffineChart", "projectiveWitnessSet",
@@ -53,7 +53,6 @@ export {
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", 
      "ContinuationParameter", "SpecializationRing",
      "polySystem", "parameters"
-     -- "segmentHomotopy"(defined in extraNAGtypes), "substituteContinuationParameter"(delete???), "specializeContinuationParameter"(delete???),
      }
 
 -- DEBUG Core ----------------------------------------
@@ -222,36 +221,6 @@ generalEquations WitnessSet := (W) -> (
 	  witnessSet(ideal neweqns, slice W, points W))
      )
 
-
--- extra types used (at this point) only by NumericalAlgebraicGeometry 
-export { "Homotopy", "ParameterHomotopy", "SpecializedParameterHomotopy", 
-    "evaluateH", "evaluateHt", "evaluateHx", "Parameters", "specialize"}
-
-Homotopy = new Type of MutableHashTable -- abstract type
-evaluateH = method()
-evaluateH (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
-evaluateHt = method()
-evaluateHt (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
-evaluateHx = method()
-evaluateHx (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
-
-ParameterHomotopy = new Type of MutableHashTable -- abstract type
-evaluateH (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
-evaluateHt (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
-evaluateHx (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
-
-SpecializedParameterHomotopy = new Type of Homotopy
-specialize = method()
-specialize (ParameterHomotopy,Matrix) := (PH, M) -> (
-    SPH := new SpecializedParameterHomotopy;
-    SPH.ParameterHomotopy = PH;
-    SPH.Parameters = M;
-    SPH
-    ) 
-evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H.ParameterHomotopy,H.Parameters,x,t) 
-evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,H.Parameters,x,t) 
-evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,H.Parameters,x,t) 
-
 TEST /// -- miscellaneous tests
 CC[x,y]
 S = polySystem {x^2+y^2-6, 2*x^2-y}
@@ -262,6 +231,28 @@ assert(round (10000*residual(S,p)) == 4173)
 p2 =  point {{1.001,2.3+ii}}
 p3 =  point {{.999,2.3+ii}}
 assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
+///
+
+-- Cover several previously-untested accessor methods on PolySystem
+-- and helpers that previous TESTs did not exercise: numParameters,
+-- realPoints, toAffineChart, numericalVariety, numericalAffineSpace.
+TEST ///
+R := CC[x, y];
+F := polySystem {x^2 - 1, y - x};
+-- numParameters is zero for a vanilla PolySystem.
+assert(numParameters F == 0);
+assert(numVariables F == 2);
+assert(numFunctions F == 2);
+-- realPoints filters out non-real points.
+p1 := point {{1.0_CC, 2.0_CC}};
+p2 := point {{0.5_CC, 1.0_CC + 0.0001 * ii}};
+rp := realPoints {p1, p2};
+assert(#rp == 1);
+-- numericalAffineSpace and numericalVariety: trivial-input shape.
+assert(class numericalAffineSpace R === NumericalVariety);
+assert(class numericalVariety {} === NumericalVariety);
+-- toAffineChart on coordinates of a projective point.
+assert(toAffineChart(0, {1.0_CC, 2.0_CC, 0.5_CC}) == {2.0_CC, 0.5_CC});
 ///
 
 load "./NAGtypes/PolyDualSpaces.m2"
@@ -278,15 +269,10 @@ beginDocumentation()
 load "./NAGtypes/doc-NAGtypes.m2"
 
 undocumented {BasePoint,origin,(origin,Ring),Gens,Space} --Robert???
-undocumented {
-    evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
-    evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
-    evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
-    }
 
 undocumented {(toExternalString,Point), (toExternalString,PolySystem),
     unionPointSet,  (unionPointSet,PointSet,PointSet), pointSet, (pointSet,Thing), (areEqual,PointSet,PointSet), PointSet,
-    differencePointSet, (differencePointSet,PointSet,PointSet), specialize, (specialize,ParameterHomotopy,Matrix),
+    differencePointSet, (differencePointSet,PointSet,PointSet), 
     (symbol ==,PointSet,PointSet), (net,PointSet), 
     (symbol +,PointSet,PointSet), (symbol -,PointSet,PointSet),
     }

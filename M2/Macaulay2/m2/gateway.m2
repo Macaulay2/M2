@@ -3,6 +3,44 @@
 needs "expressions.m2"
 needs "methods.m2"
 
+-----------------------------------------------------------------------------
+-- helpers for functors
+-----------------------------------------------------------------------------
+
+-- flatten the arguments given to a scripted functor
+functorArgs = method()
+functorArgs(Thing,        Sequence) := (i,    args) -> prepend(i, args)
+functorArgs(Thing, Thing, Sequence) := (i, j, args) -> prepend(i, prepend(j, args))
+functorArgs(Thing, Thing, Thing)    :=
+functorArgs(Thing, Thing)           := identity
+
+applyMethod = (key, X) -> (
+    if (F := lookup key) =!= null then F X else error "no method available") -- expand this error message later
+
+-- TODO: combine these with applyMethod and retire these
+applyMethod' = (key, desc, X) -> (
+    if (F := lookup key) =!= null then F X
+    else error("no method for ", desc, " applied to ", X))
+
+applyMethod'' = (F, X) -> (
+    -- TODO: write a variation of lookup to do this
+    key := prepend(F, delete(Option, apply(X, class)));
+    applyMethod'(key, toString F, X))
+
+-- TODO: combine for all functors
+applyMethodWithOpts' = (key, desc, X, opts) -> (
+    if (F := lookup key) =!= null then (F opts) X
+    else error("no method for ", desc, " applied to ", X))
+
+applyMethodWithOpts'' = (F, X, opts) -> (
+    -- TODO: write a variation of lookup to do this
+    key := prepend(F, apply(X, class));
+    applyMethodWithOpts'(key, toString F, X, opts))
+
+-----------------------------------------------------------------------------
+-- Functor and ScriptedFunctor type declarations
+-----------------------------------------------------------------------------
+
 ScriptedFunctor = new Type of MutableHashTable
 ScriptedFunctor.synonym = "scripted functor"
 globalAssignment ScriptedFunctor

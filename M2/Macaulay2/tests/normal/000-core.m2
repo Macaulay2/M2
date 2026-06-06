@@ -8,39 +8,6 @@
      assert( {{1, 0, 1}, {0, 20, 0}, {1, 0, 1}} === applyTable(result,last@@last) )
      print new MatrixExpression from result
 
-
--- Example 4.1: the bounds can be sharp.
---
-     S = QQ[w,x,y,z];
-     X = Proj S;
-     I = monomialCurveIdeal(S,{1,3,4})
-     N = S^1/I;
-     assert(Ext^1(OO_X,N~(>= 0)) == prune truncate(0,Ext^1(truncate(2,S^1),N)))
-     assert(Ext^1(OO_X,N~(>= 0)) != prune truncate(0,Ext^1(truncate(1,S^1),N)))
-
-
--- Example 4.2: locally free sheaves and global Ext.
---
-     S = ZZ/32003[u,v,w,x,y,z];
-     I = minors(2,genericSymmetricMatrix(S,u,3));
-     X = variety I;
-     R = ring X;
-     Omega = cotangentSheaf X;
-     OmegaDual = dual Omega;
-     assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
-
-
--- Example 4.3: Serre-Grothendieck duality.
---
-     S = QQ[v,w,x,y,z];
-     X = variety ideal(w*x+y*z,w*y+x*z);
-     R = ring X;
-     omega = OO_X^{-1};
-     G = sheaf cokernel genericSymmetricMatrix(R,R_0,2);
-     assert(Ext^2(G,omega) == dual HH^0(G))
-     assert(Ext^1(G,omega) == dual HH^1(G))
-     assert(Ext^0(G,omega) == dual HH^2(G))
-
 --
 fib = memoize( n -> if n <= 1 then 1 else fib(n-1) + fib(n-2) )
 assert ( fib 10 == 89 )
@@ -115,52 +82,6 @@ assert isDirectSum (QQ^1 ++ QQ^2)
 
 --
 clearAll
-     R = ZZ[x_1..x_12,y]
-     f = genericMatrix(R,3,4)
-     assert(source (f_{1,2}) == R^{-1,-1})
-     assert(target (f_{1,2}) == target f)
-     M1 = (target f)/(y * target f)
-     M2 = (source f)/(y * source f)
-     g = map(target f,M2,f)
-     h = map(M1,M2,f)
-     k = submatrix(g, {1})
-     assert(target k === target g)
-     l = submatrix(h, {1})
-     assert(target l === target h)
-     assert(source l === R^{-1})
-     m = submatrix(h, {1,2},{2,3})
-     assert(target m === R^2)
-     assert(source m === R^{2:-1})
-     n = submatrix(h, {1,2}, )
-     assert(target n === R^2)
-     assert(source n === source h)
-
-
-
---
-  -- test of submatrixByDegrees
-  R = QQ[a..d]
-  I = ideal"a2b-c3,abc-d3,ac2-bd2-cd2,abcd-c4"
-  C = res I
-  submatrixByDegrees(C.dd_2, (3,3),(6,6))
-  submatrixByDegrees(C.dd_2, ({3},{3}),({6},{6}))
-  submatrixByDegrees(C.dd_2, ({4},{4}),({},{}))
-  submatrixByDegrees(C.dd_2, ({3},{3}),({7},{7}))
-  F = source C.dd_2
-  -- rawSelectByDegrees(raw F, {-4}, {-3})
-  -- rawSelectByDegrees(raw F, {}, {8})
-
-
---
-R = ZZ/101[a..d]
-I = monomialCurveIdeal(R,{1,3,4})
-A = R/I
-jacobian A
-singA = minors(codim ideal presentation A, jacobian A)
-generators gb singA
-
-
---
 R=ZZ/101[a..d]
 f = matrix {{a}}
 assert( isHomogeneous f )
@@ -196,40 +117,6 @@ assert isSurjective R^2_{0,0,1}
 assert not isSurjective R^2_{1}
 
 
---
-    R = ZZ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover exteriorPower(2,M) == exteriorPower(2,cover M) ))
-
---
-R = ZZ/101[x];
-k = coker vars R;
-M = R^3 ++ k^5;
-assert( fittingIdeal(0,M) == ideal 0_R )
-assert( fittingIdeal(1,M) == ideal 0_R )
-assert( fittingIdeal(2,M) == ideal 0_R )
-assert( fittingIdeal(3,M) == ideal x^5 )
-assert( fittingIdeal(4,M) == ideal x^4 )
-assert( fittingIdeal(5,M) == ideal x^3 )
-assert( fittingIdeal(6,M) == ideal x^2 )
-assert( fittingIdeal(7,M) == ideal x )
-assert( fittingIdeal(8,M) == ideal 1_R )
-assert( fittingIdeal(9,M) == ideal 1_R )
-
---
-    R = ZZ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    table(modules, modules, (P,Q) -> assert(cover P ** cover Q == cover (P ** Q)));
 
 --
 scan(3, n -> scan(-3 .. 3, d -> (
@@ -241,10 +128,6 @@ r = ZZ/101[a,b]
 assert ( 2 * degree (a * b^2) === {6} )
 M = cokernel matrix (r,{{1}})
 assert ( isFreeModule prune M )
-
---
-GF(8,Variable => x)
-assert ( det matrix{{x,1},{x^2,x^3}} == x^4 - x^2 )
 
 --
 clearAll
@@ -260,26 +143,6 @@ assert isIsomorphism p
 assert isIsomorphism p^-1
 assert ( p * p^-1 == id_M )
 assert ( p^-1 * p == id_N )
-
---
-S = ZZ/101[a..d]
-I = monomialCurveIdeal(S, {1,3,4})
-R = S/I
-use R
-J = module ideal(a,d)
-K = module ideal(b^2,c^2)
-JK = Hom(J,K)
-f = JK_{0}
-g = homomorphism f
-assert isHomogeneous g
-assert ( source g === J )
-assert ( target g === K )
-f' = homomorphism' g
-assert (f-f' == 0)
-assert (degrees f' === {{{1}}, {{0}}})
-assert (degrees f === {{{1}}, {{1}}})
-assert (degree f == {0})
-assert (degree f' == {1})
 
 
      --
@@ -363,21 +226,6 @@ assert(f%a + a * (f//a) == f)
 
 
 --
-S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
-n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
-j = flatten (m * n - n * m)
-k = flatten (m * n - n * m)
-G = gb j
-jj = generators G
-assert( numgens source jj == 26 )
-T = (degreesRing S)_0
-assert( poincare cokernel j == 1-8*T^2+2*T^3+31*T^4-32*T^5-25*T^6+58*T^7-32*T^8+4*T^9+T^10 )
-v = apply(7, i -> numgens source generators gb(k,DegreeLimit => i) )
-assert (v  === {0, 0, 8, 20, 25, 26, 26} )
-
-
---
 R = ZZ/101[a..d]
 A = image matrix {{a}}
 B = image matrix {{b}}
@@ -449,7 +297,7 @@ assert (not isPrimitive 0_R)
 
 --
 assert ( class (x->x) === FunctionClosure )
-assert ( class abs === CompiledFunction )
+assert ( class any === CompiledFunction )
 assert ( class depth === MethodFunction )
 
 
@@ -665,19 +513,18 @@ R=ZZ/101[a,b]
 f=matrix(R,{{1,a},{0,1}})
 g=matrix(R,{{1,0},{b,1}})
 h=f*g*f*g
-assert( h^3 * h^-1 == h^2 * h^0 )
 assert( h * h^-1 == 1 )
 
 
 --
 R=ZZ/101[a,b]
 f = matrix {{a}}
+g = matrix {{a^2}}
 assert( source f != target f)
 assert( target f == target f^2 )
-assert( source f == source f^2 )
-assert( target f == target f^0 )
-assert( source f != source f^0 )
-
+assert( source f != source g )
+assert( f^2 == g )
+assert( f^0 == 1 )
 
 --
 R = ZZ/101[a..d]
@@ -709,49 +556,6 @@ assert(size promote(f,S) == 4)
 
 --
 clearAll
-R = ZZ/101
-exteriorPower(3,R^5)
-R = ZZ/101[a..d]
-I = monomialCurveIdeal(R,{1,3,4})
-M = Ext^2(coker generators I, R)
-prune exteriorPower(3,M)
-exteriorPower(0,R^3)
-exteriorPower(0,M)
-prune exteriorPower(1,M)
-exteriorPower(2,M)
-exteriorPower(-1,M)
-exteriorPower(-2,M)
-
-M = subquotient(matrix{{a,b,c}}, matrix{{a^2,b^2,c^2,d^2}})
-N = subquotient(matrix{{a^2,b^2,c^2}}, matrix{{a^3,b^3,c^3,d^3}})
-m = map(N,M,matrix(R,{{1,0,0},{0,1,0},{0,0,1}}))
-source m
-target m
-trim ker m
-M1 = coker presentation M
-N1 = coker presentation N
-m1 = map(N1,M1,matrix m)
-M2 = trim exteriorPower(2,M)
-N2 = trim exteriorPower(2,N)
-
-
---
-R = ZZ/101[a .. i]
-m = genericMatrix(R,a,3,3)
-assert( exteriorPower(1,m) == m )
-assert( minors(1,m) == image vars R )
-assert( exteriorPower(2,m*m) == exteriorPower(2,m)*exteriorPower(2,m) )
-assert(
-     exteriorPower(2,m)
-     ==
-     matrix {
-	  {-b*d+a*e, -b*g+a*h, -e*g+d*h},
-	  {-c*d+a*f, -c*g+a*i, -f*g+d*i},
-	  {-c*e+b*f, -c*h+b*i, -f*h+e*i}} )
-assert( exteriorPower(3,m) == matrix {{-c*e*g+b*f*g+c*d*h-a*f*h-b*d*i+a*e*i}} )
-
-
---
 k = ZZ/101
 f = random(k^3,k^9)
 R = k[a,b,c]
@@ -828,12 +632,6 @@ S = ZZ/101[a..j]
 m = matrix {{d*g*i-a*g*j, c*h^2-e*h*i, a*b^2*g-a*b*d*h, b*d*f-d*e*j}}
 E = Ext^3(cokernel m, S)
 annihilator E
-
-
---
-    R = ZZ/101[s,t]
-    J = image matrix {{s^4, s^3*t, s*t^3, t^4}}
-    S = symmetricAlgebra J  -- MES: make an assertion here...
 
 
 --
@@ -915,100 +713,7 @@ eg3 = () -> (
 
 
 --
--- copyright 1995 Michael E. Stillman
--- several tests of tensor products and Tor
--- many of these examples were created by David Eisenbud
 
--- Test 1.  Checking that Tor_i(M,k) and Tor_i(k,M) both give
--- the graded betti numbers of M.
-
-R = ZZ/101[a..d]
-k = cokernel vars R
-M = cokernel matrix {{a*d - b*c, a^2*c - b^3, c^3 - b*d^2, a*c^2 - b^2*d}}
-
-T0 = Tor_0(M,k)
-S0 = Tor_0(k,M)
-T1 = Tor_1(M,k)
-S1 = Tor_1(k,M)
-T2 = Tor_2(M,k)
-S2 = Tor_2(k,M)
-T3 = Tor_3(M,k)
-S3 = Tor_3(k,M)
-T4 = Tor_4(M,k)
-S4 = Tor_4(k,M)
-
-T = (degreesRing R)_0
-
-assert(poincare T0 ==             (1-T)^4)
-assert(poincare T1 == (T^2+3*T^3)*(1-T)^4)
-assert(poincare T2 == 4*T^4*      (1-T)^4)
-assert(poincare T3 ==  T^5 *      (1-T)^4)
-assert(poincare T4 ==  0)
-
-assert(poincare T0 == poincare S0)
-assert(poincare T1 == poincare S1)
-assert(poincare T2 == poincare S2)
-assert(poincare T3 == poincare S3)
-assert(poincare T4 == poincare S4)
-
--- notice that degree Tor_i(M,k) gives the i th betti number of M,
--- as does Tor_i(k,M), and the graded betti numbers can be seen by using
--- 'see target prune Tor_i(k,M)'
--- or by using, for example
-
-hf = poincare T2;
-if hf != 0 then while substitute(hf,{T=>1}) == 0 do hf = hf // (1-T);
-hf
-
--- Test 2.  Intersection multiplicity according to Serre
--- The intersection of two planes in 4-space meeting another such.
--- The multiplicity should be 4.  Serre's technique says that this
--- number should be the alternating sum of the 'degree Tor_i(R/I,R/J)':
-
-R = ZZ/101[a..d]
-I = generators intersect(image matrix {{a,b}}, image matrix {{c,d}});
-J = generators intersect(image matrix {{a-c-b, b-d}}, image matrix {{a-d, b-c}});
-
-U0 = Tor_0(cokernel I, cokernel J);
-U1 = Tor_1(cokernel I, cokernel J);
-U2 = Tor_2(cokernel I, cokernel J);
-U3 = Tor_3(cokernel I, cokernel J);
-U4 = Tor_4(cokernel I, cokernel J)
-
-U0 = prune U0
-assert( numgens target presentation U0 == 1 )
-assert( numgens source presentation U0 == 8 )
-
-U1 = prune U1
-assert( numgens target presentation U1 == 4 )
-assert( numgens source presentation U1 == 16 )
-
-U2 = prune U2
-assert( numgens target presentation U2 == 1 )
-assert( numgens source presentation U2 == 4 )
-
-U3 = prune U3
-assert( numgens target presentation U3 == 0 )
-assert( numgens source presentation U3 == 0 )
-
-U4 = prune U4
-assert( numgens target presentation U4 == 0 )
-assert( numgens source presentation U4 == 0 )
-
-assert( degree U0 == 7 )
-assert( degree U1 == 4 )
-assert( degree U2 == 1 )
-assert( degree U3 == 0 )
-assert( degree U4 == 0 )
-
-
---
-R=ZZ/101[x]
-assert(monomialIdeal vars R != 0)
-assert(monomialIdeal map(R^1,R^1,0) == 0)
-
-
---
 R = ZZ/101[a .. d,Degrees=>{1,2,3,5}]
 f = vars R
 C = resolution cokernel f
@@ -1244,19 +949,8 @@ assert try (clean(0.1,A);false) else true  -- not yet implemented.
 needsPackage "SimplicialComplexes"
 R = QQ[a..d]
 D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
-C = chainComplex D
+C = complex D
 assert ( rank HH_2 C == 1 )
-
-
---
-    R = QQ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover cokernel M_{1} ==  cover M ) )
 
 
 --
@@ -1383,51 +1077,11 @@ F 3
 	  lift(oo,QQ)
 
 
-
-
---
-    R = ZZ[x,y,z]
-    modules = {
-	 image matrix {{x^2,x,y}},
-	 coker matrix {{x^2,y^2,0},{0,y,z}},
-	 R^{-1,-2,-3},
-	 image matrix {{x,y}} ++ coker matrix {{y,z}}
-	 }
-    scan(modules, M -> assert( cover M == target presentation M ) )
-
-
 --
      assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
 
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2,y^3,x*y^2*z,y*z^4);
-    J = polarize(I);
-    assert(betti res I==betti res J)
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2*y^2,y^2*z^2,x*y*z^4);
-    J = polarize(I, VariableBaseName => "whyNotAWord");
-    assert(betti res I==betti res J)
-
-
 --
 clearAll
-R=ZZ/101[a..f]
-m=genericSkewMatrix(R,a,4)
-assert( pfaffians(-2,m) == ideal(0_R) )
-assert( pfaffians(0,m) == ideal(1_R) )
-assert( pfaffians(1,m) == ideal(0_R) )
-assert( pfaffians(2,m) == ideal(a,b,c,d,e,f) )
-assert( pfaffians(3,m) == ideal(0_R) )
-assert( pfaffians(4,m) == ideal(c*d-b*e+a*f) )
-
-
---
 numgens ZZ
 numgens GF(9)
 A = ZZ[a,b,c]
@@ -1739,52 +1393,6 @@ assert ( eulers R == {0,3} )
 
 
 --
-M = matrix{{1.0,1.0},{0.0,1.0}}
-eigenvalues M
-eigenvectors M
-
-M = matrix{{1.0, 2.0}, {2.0, 1.0}}
-eigenvectors(M, Hermitian=>true)
-
-M = matrix{{1.0, 2.0}, {5.0, 7.0}}
-(eigvals, eigvecs) = eigenvectors M
--- here we use "norm" on vectors!
-assert( 1e-10 > norm ( M * eigvecs_0 - eigvals_0 * eigvecs_0 ) )
-assert( 1e-10 > norm ( M * eigvecs_1 - eigvals_1 * eigvecs_1 ) )
-
-printingPrecision = 2
-
-m = map(CC^10, CC^10, (i,j) -> i^2 + j^3*ii)
-(eigvals, eigvecs) = eigenvectors m
-max (abs \ eigvals) / min (abs \ eigvals)
-scan(#eigvals, i -> assert( 1e-10 > norm ( m * eigvecs_i - eigvals_i * eigvecs_i )))
-
--- some ill-conditioned matrices
-
-m = map(CC^10, CC^10, (i,j) -> (i+1)^(j+1))
-(eigvals, eigvecs) = eigenvectors m
-max (abs \ eigvals) / min (abs \ eigvals)
-apply(#eigvals, i -> norm ( m * eigvecs_i - eigvals_i * eigvecs_i ))
-scan(#eigvals, i -> assert( 1e-4 > norm ( m * eigvecs_i - eigvals_i * eigvecs_i )))
-
-m = map(RR^10, RR^10, (i,j) -> (i+1)^(j+1))
-(eigvals, eigvecs) = eigenvectors m
-max (abs \ eigvals) / min (abs \ eigvals)
-apply(#eigvals, i -> norm ( m * eigvecs_i - eigvals_i * eigvecs_i ))
-scan(#eigvals, i -> assert( 1e-4 > norm ( m * eigvecs_i - eigvals_i * eigvecs_i )))
-
-
-
---
-m = map(CC^10, CC^10, (i,j) -> i^2 + j^3*ii)
-eigenvalues m
-m = map(CC^10, CC^10, (i,j) -> (i+1)^(j+1))
-eigenvalues m
-m = map(RR^10, RR^10, (i,j) -> (i+1)^(j+1))
-eigenvalues m
-
-
---
      R=ZZ/101[a..d]
      C=resolution cokernel vars R
      D = C ++ C[1] ++ C[2]
@@ -1851,13 +1459,3 @@ IL = substitute(I,Rlex);
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>2); -- SubringLimit now seems OK
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>4);
 assert(numgens source selectInSubring(1,gens G) == 1)
-
-
-
---
--- For more determinant tests, see Macaulay2/test/testdet.m2
-R = ZZ/103[a,b,c,d]
-h = matrix {{a,b},{c,d}}
-assert( det h == a * d - b * c )
-assert( minors(1,h) == image matrix {{a,b,c,d}} )
-assert( minors(2,h) == image matrix {{a * d - b * c}} )

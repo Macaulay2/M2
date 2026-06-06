@@ -6,7 +6,7 @@
  f3=x^2+x*y+z^2+y*z;
  I=ideal(f1^3, f2^3, f3^3);
  g=I_0*f2^2*f3;
- assert( g % I == 0 )
+ assert isMember(g, I)
  h = gens gb I;
  stack ((f -> wrap(160,"",toString leadTerm f)) \ flatten entries h) 
 
@@ -54,7 +54,7 @@
  f3=x^2+x*y+z^2+y*z;
  I = ideal(f1^3, f2^3, f3^3)
  g=I_0*f2^2*f3;
- assert( g % I == 0 )
+ assert isMember(g, I)
  h = gens gb I;
  stack ((f -> wrap(160,"",toString leadTerm f)) \ flatten entries h) 
 

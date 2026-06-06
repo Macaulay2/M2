@@ -7,6 +7,7 @@ assert( f == g )
 assert( class f === R )
 assert( class g === R )
 assert( class h === S )
+assert( S_-1 === c )
 
 --Date: Fri, 16 Apr 2004 11:43:07 +0000 (UTC)
 --From: Ben Richert <brichert@polymail.cpunix.calpoly.edu>

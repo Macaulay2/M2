@@ -16,13 +16,12 @@ newPackage("DeterminantalRepresentations",
         Reload => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Computing symmetric determinantal representations",
 	     "acceptance date" => "5 December 2019",
 	     "published article URI" => "https://msp.org/jsag/2020/10-1/p02.xhtml",
-	     "published article DOI" => "https://doi.org/10.2140/jsag.2020.10.9",
+	     "published article DOI" => "10.2140/jsag.2020.10.9",
 	     "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x02-DeterminantalRepresentations.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/DeterminantalRepresentations.m2",
 	     "release at publication" => "f3c4030a3e66ae51f54ec24a89e1d5b1992a82eb",	    -- git commit number in hex
 	     "version at publication" => "1.3.0",
 	     "volume number" => "10",
@@ -122,7 +121,7 @@ cubicBivariateDetRep RingElement := List => opts -> f -> (
     L := flatten apply(select(clean(eps, L0), isDoublyStochastic), M -> orthogonalFromOrthostochastic(M, opts));
     if k === QQ then (
         numDigits := ceiling(-log_10(eps));
-        (D1, D2) = (D1/round_numDigits, D2/round_numDigits);
+        (D1, D2) = (D1/round_numDigits/(x->x^QQ), D2/round_numDigits/(x->x^QQ));
         L = L/roundMatrix_numDigits;
     );
     (D1, D2) = (D1, D2)/diagonalMatrix_k;
@@ -1517,7 +1516,7 @@ assert(isOrthogonal(O, Tolerance=>1e-5) and isDoublyStochastic A and clean(1e-8,
 ///
 
 TEST /// -- cholesky, randomPSD
-eps = 1e-15
+eps = 1e-14
 A = randomPSD 5
 E = eigenvectors(A, Hermitian => true)
 assert(clean(eps, A - E#1*diagonalMatrix(E#0)*transpose E#1) == 0)

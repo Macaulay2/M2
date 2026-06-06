@@ -407,7 +407,7 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
 --           defining the location of the black and white checkers;
 --       (2) CriticalRow is either a number or "leaf" if at the leaf,
 --           the number is the position of the black checker that moves;
---       (3) flagM is the the moving flag;
+--       (3) flagM is the moving flag;
 --       (4) IsResolved is a boolean;
 --       (5) Solutions is a list of solutions in local coordinates;
 --       (6) Children points to the children of the  node;
@@ -419,7 +419,7 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
 --
 -- OUT :
 --    node : the following items are modified
---       (3) flagM is the the moving flag;
+--       (3) flagM is the moving flag;
 --       (4) IsResolved is the moving flag;
 --       (5) Solutions is a list of solutions in local coordinates;
 --       (8) SolutionsSuperSet is made when the BLACKBOX option is on.

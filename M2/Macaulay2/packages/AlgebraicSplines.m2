@@ -9,7 +9,7 @@
 ------------------------------------------
 ------------------------------------------
 
-newPackage select((
+newPackage(
     "AlgebraicSplines",
         Version => "0.1.0", 
         Date => "27. May 2015",
@@ -23,11 +23,11 @@ newPackage select((
 	Keywords => {"Applied Algebraic Geometry"},
         Configuration => {},
         DebuggingMode => false,
-	PackageImports => { "Elimination" },
+	PackageImports => { "Complexes", "Elimination" },
         PackageExports => {
 	    "FourierMotzkin"
 	    }
-        ), x -> x =!= null)
+    )
 
 export {
    "BaseRing",
@@ -863,7 +863,7 @@ stanleyReisnerPresentation(List,List,ZZ):=Matrix=>opts->(V,F,r)->(
     --add variables under diagonal embedding to ring generators of M--
     GCR = join(apply(gens S,v->(ident)*matrix{{v}}),GCR);
     dg := apply(GCR,f->(degrees f)_1_0_0);
-    --create stanley reisner ring
+    --create Stanley Reisner ring
     phi := stanleyReisner(V,F,BaseRing=>S,InputType=>opts.InputType,Homogenize=>opts.Homogenize,VariableName=>opts.VariableName,CoefficientRing=>opts.CoefficientRing);
     T := source phi;
     I := ker phi;
@@ -928,7 +928,7 @@ orient = method()
 
 orient(Ideal):=List=> I->(
     LT:= leadTerm I;
-    reverse sort flatten apply(flatten entries LT,f-> support f)
+    reverse sort flatten apply(LT_*,f-> support f)
     )
 
 ------------------------------------------
@@ -1133,7 +1133,7 @@ cellularComplex = method(
 --- is the homology of the simplicial complex relative
 --- to its boundary.
 --------------------------------------------------
-cellularComplex(List) := ChainComplex => opts -> (F) -> (
+cellularComplex(List) := Complex => opts -> (F) -> (
     if opts.InputType === "Polyhedral" then (
 	print "Need a List of Vertices";
 	chain := null;
@@ -1145,7 +1145,7 @@ cellularComplex(List) := ChainComplex => opts -> (F) -> (
 	C := apply(d+1, i-> getCodimDFacesSimplicial(F,i));
 	boundaryC := join({{}},apply(d, i-> getCodimDFacesSimplicial(boundaryF,i)));
     	intC := apply(#C, i -> select(C_i, f -> not member(f,boundaryC_i)));
-    	chain = chainComplex(reverse apply(#intC-1, c-> sub(simpBoundary(intC_c,intC_(c+1)),S)))
+    	chain = complex(reverse apply(#intC-1, c-> sub(simpBoundary(intC_c,intC_(c+1)),S)))
 	);
     chain
     )
@@ -1167,7 +1167,7 @@ cellularComplex(List) := ChainComplex => opts -> (F) -> (
 --With this input, output should be an acyclic complex except for HH_3
 --------------------------------------------------
 
-cellularComplex(List,List) := ChainComplex => opts -> (V,F) -> (
+cellularComplex(List,List) := Complex => opts -> (V,F) -> (
     d := (# first V);
     S := createSplineRing(d,opts);
     if issimplicial(V,F) then (
@@ -1175,7 +1175,7 @@ cellularComplex(List,List) := ChainComplex => opts -> (V,F) -> (
 	C := apply(d+1, i-> getCodimDFacesSimplicial(F,i));
 	boundaryC := join({{}},apply(d, i-> getCodimDFacesSimplicial(boundaryF,i)));
     	intC := apply(#C, i -> select(C_i, f -> not member(f,boundaryC_i)));
-    	chain := chainComplex(reverse apply(#intC-1, c-> sub(simpBoundary(intC_c,intC_(c+1)),S )))
+    	chain := complex(reverse apply(#intC-1, c-> sub(simpBoundary(intC_c,intC_(c+1)),S )))
 	) else (
 	bComp := boundaryComplex(V,F);
 	--Construct list whose ith element is interior intersections of codim i--
@@ -1203,7 +1203,7 @@ cellularComplex(List,List) := ChainComplex => opts -> (V,F) -> (
 	--variables on each face)
 	orList := apply(idList, L->apply(L,I->orient I));
 	--set up the chain complex
-	chain = chainComplex(reverse apply(#intC-1, c-> (
+	chain = complex(reverse apply(#intC-1, c-> (
 		    L1 := {intC_(c+1),idList_(c+1),orList_(c+1)};
 		    L2 := {intC_c,idList_c,orList_c};
 		    sub(polyBoundary(V,L2,L1),S)
@@ -1234,7 +1234,7 @@ idealsComplex=method(Options=>{
 --Outputs: The Schenck-Stillman complex of ideals
 ------------------------------------------
 
-idealsComplex(List,List,ZZ):=ChainComplex => opts -> (V,F,r)->(
+idealsComplex(List,List,ZZ):=Complex => opts -> (V,F,r)->(
     d := #(first V);
     S := createSplineRing(d,opts);
     if issimplicial(V,F) then (
@@ -1264,7 +1264,7 @@ idealsComplex(List,List,ZZ):=ChainComplex => opts -> (V,F,r)->(
 		newMod
 		));
 	--defining the chain complex
-	CCSS :=chainComplex(reverse apply(#intC-1, c-> (
+	CCSS :=complex(reverse apply(#intC-1, c-> (
 		    inducedMap(fullmodulelist_(c+1),fullmodulelist_c,sub(simpBoundary(intC_c,intC_(c+1)),S))
 		    ))
 	    )
@@ -1311,7 +1311,7 @@ idealsComplex(List,List,ZZ):=ChainComplex => opts -> (V,F,r)->(
 		newMod
 		));
 	--set up the chain complex
-	CCSS = chainComplex(reverse apply(#intC-1, c-> (
+	CCSS = complex(reverse apply(#intC-1, c-> (
 		    L1 := {intC_(c+1),idList_(c+1),orList_(c+1)};
 		    L2 := {intC_c,idList_c,orList_c};
 		    M := sub(polyBoundary(V,L2,L1),S);
@@ -1355,7 +1355,7 @@ splineComplex=method(Options=>{
 --------------------------------------------------
 
 
-splineComplex(List,List,ZZ):=ChainComplex => opts -> (V,F,r)->(
+splineComplex(List,List,ZZ):=Complex => opts -> (V,F,r)->(
     d := #(first V);
     S := createSplineRing(d,opts);
     if issimplicial(V,F) then (
@@ -1386,7 +1386,7 @@ splineComplex(List,List,ZZ):=ChainComplex => opts -> (V,F,r)->(
 		fullmodulelist = append(fullmodulelist,newMod)
 		));
 	--defining the chain complex
-	CCSS :=chainComplex(reverse apply(#intC-1, c-> (
+	CCSS :=complex(reverse apply(#intC-1, c-> (
 		    map(fullmodulelist_(c+1),fullmodulelist_c,sub(simpBoundary(intC_c,intC_(c+1)),S))
 		    ))
 	    );
@@ -1434,7 +1434,7 @@ splineComplex(List,List,ZZ):=ChainComplex => opts -> (V,F,r)->(
 		fullmodulelist = append(fullmodulelist,newMod)
 		));
 	--set up the chain complex
-	CCSS = chainComplex(reverse apply(#intC-1, c-> (
+	CCSS = complex(reverse apply(#intC-1, c-> (
 		    L1 := {intC_(c+1),idList_(c+1),orList_(c+1)};
 		    L2 := {intC_c,idList_c,orList_c};
 		    M := sub(polyBoundary(V,L2,L1),S);
@@ -1808,7 +1808,7 @@ doc ///
         postulationNumber
 	(postulationNumber,Module)
     Headline
-        computes the largest degree at which the hilbert function of the graded module M is not equal to the hilbertPolynomial
+        computes the largest degree at which the Hilbert function of the graded module M is not equal to the hilbertPolynomial
     Usage
         v = postulationNumber(M)
     Inputs
@@ -1816,11 +1816,11 @@ doc ///
 	    graded module
     Outputs
         v:ZZ
-	    largest degree at which the hilbert function of the graded module M is not equal to the hilbertPolynomial
+	    largest degree at which the Hilbert function of the graded module M is not equal to the hilbertPolynomial
     Description
         Text
 	    This function computes the postulation number of M which is defined as the
-	    largest degree at which the hilbert function of the graded module M is not equal to the hilbertPolynomial
+	    largest degree at which the Hilbert function of the graded module M is not equal to the hilbertPolynomial
 	Example
 	    V = {{0,0},{1,0},{1,1},{0,1}};
 	    F = {{0,1,2},{0,2,3}};
@@ -1873,11 +1873,11 @@ doc ///
 	    M' = splineModule(V',F,1);
 	    hilbertPolynomial(M',Projective=>false)
 	    hilbertComparisonTable(0,4,M)
-	    postulationNumber(M) --final integer for which hilbert function and polynomial disagree
+	    postulationNumber(M) --final integer for which Hilbert function and polynomial disagree
 	    hilbertComparisonTable(0,4,M')
 	    postulationNumber(M')
     	Text
-	    In the following example, we compare the hilbert polynomial and hilbert function of splines over a centrally triangulated
+	    In the following example, we compare the Hilbert polynomial and Hilbert function of splines over a centrally triangulated
 	    octahedron; the behavior is very similar to the Morgan-Scot partition, except there is an extra degree of symmetry 
 	    available which alters the Hilbert polynomials.  Notice the use of the option Homogenize=>false to consider splines 
 	    of degree precisely d instead of splines of degree at most d.
@@ -1893,7 +1893,7 @@ doc ///
 	    M''=splineModule(V'',F,1,Homogenize=>false);
 	    hilbertPolynomial(M'',Projective=>false)
 	    hilbertComparisonTable(0,6,M)
-	    postulationNumber(M) --largest integer for which hilbert function and polynomial disagree
+	    postulationNumber(M) --largest integer for which Hilbert function and polynomial disagree
 	    hilbertComparisonTable(0,6,M')
 	    postulationNumber(M')
 	    hilbertComparisonTable(0,6,M'')
@@ -2036,7 +2036,7 @@ doc ///
 	InputType=>String
 	
     Outputs
-    	C:ChainComplex
+    	C:Complex
 	    cellular chain complex of $\Delta$ relative to its boundary
     Description
     	Text
@@ -2091,7 +2091,7 @@ doc ///
 	VariableName=>Symbol
 	
     Outputs
-    	C:ChainComplex
+    	C:Complex
 	    Billera-Schenck-Stillman chain complex of ideals
     Description
     	Text
@@ -2214,7 +2214,7 @@ doc ///
 	    phi=stanleyReisner(V,F,BaseRing=>R,Homogenize=>false)
 	    ker phi--decone of simplicial complex is a three-cycle
 	Text
-	    The Stanley Reisner ring of a simpicial complex is obtained using the function @TO ringStructure@, where the
+	    The Stanley Reisner ring of a simplicial complex is obtained using the function @TO ringStructure@, where the
 	    ring generators are chosen to be the Courant functions.
 	Example
 	    V={{0,0},{0,1},{-1,-1},{1,0}};
@@ -2390,7 +2390,7 @@ doc ///
 	    R=QQ[x,y];
 	    phi=stanleyReisnerPresentation(V,F,1,Homogenize=>false,BaseRing=>R)
 	    H=source phi;
-	    scan(gens H, g->print phi(g))--see the expression of each generator in the stanley reisner ring
+	    scan(gens H, g->print phi(g))--see the expression of each generator in the Stanley Reisner ring
     	Text
 	    The kernel of the map is the same as the kernel of the map returned by @TO ringStructure@, but the generators
 	    are expressed differently.
@@ -2454,7 +2454,7 @@ doc ///
 	VariableName=>Symbol
 	
     Outputs
-    	C:ChainComplex
+    	C:Complex
 	    Billera-Schenck-Stillman spline complex
     Description
     	Text
@@ -2711,6 +2711,81 @@ S=QQ[x,y,z];
 phi=stanleyReisnerPresentation(V,F,1,BaseRing=>S,Homogenize=>false,Trim=>true);
 H=source phi; SR=target phi; use SR;
 assert(apply(gens H,g->phi(g))=={X_0-X_3, X_1-X_4, X_2-X_5, X_2^2, X_1^2, X_3^2})
+///
+
+-- Tests added in the 2026 test-audit pass.  The audit found that several
+-- option-symbol exports (BaseRing, InputType, RingType, ByLinearForms,
+-- VariableName, GenVar, IdempotentVar) were used in the codebase but had
+-- no direct assertions pinning their effect.  The blocks below exercise
+-- each of those code paths.
+
+TEST /// -- generalizedSplines with RingType => integer: splines on ZZ/n
+  -- when RingType is an integer n, the underlying ring is ZZ/n and the
+  -- edge labels are integer ideals in ZZ/n.
+  E = {{0,1},{1,2},{2,0}}
+  M = generalizedSplines(E, {1,2,3}, RingType => 6)
+  -- the result is a Module over ZZ[]/6
+  assert(class M === Module)
+  -- ZZ/6 ambient: the ambient module has rank 3 (one per vertex)
+  assert(rank ambient M == 3)
+///
+
+TEST /// -- generalizedSplines with RingType => "Ambient": ideals in an
+-- explicit polynomial ring (the user supplies the ring via the ideals)
+  S = QQ[x,y]
+  E = {{0,1},{1,2},{2,0}}
+  ideals = {ideal x, ideal y, ideal(x-y)}
+  M = generalizedSplines(E, ideals, RingType => "Ambient")
+  assert(class M === Module)
+  assert(ring M === S)
+  assert(rank ambient M == 3)
+///
+
+TEST /// -- splineMatrix InputType => "ByLinearForms": construct from a dual
+-- graph with edges labeled by linear forms.  The doc Example at L1689-1693
+-- shows this case but no TEST pinned the output matrix.
+  R = QQ[x,y]
+  B = {{0,1},{1,2},{2,3},{3,4},{4,0}}
+  H = {x-y, y, x, y-2*x, x+y}
+  sm = splineMatrix(B, H, 1, InputType => "ByLinearForms")
+  assert(class sm === Matrix)
+  -- one row per edge of the dual graph (B has 5 edges) and columns:
+  -- one per vertex (5) + one per edge (5) = 10
+  assert(numgens target sm == 5)
+  assert(numgens source sm == 10)
+  -- each linear form is squared in the (r+1)-power slot (continuity 1 means squares)
+  assert(sm == matrix {{1, -1, 0, 0, 0, x^2-2*x*y+y^2, 0, 0, 0, 0},
+                        {0, 1, -1, 0, 0, 0, y^2, 0, 0, 0},
+                        {0, 0, 1, -1, 0, 0, 0, x^2, 0, 0},
+                        {0, 0, 0, 1, -1, 0, 0, 0, 4*x^2-4*x*y+y^2, 0},
+                        {-1, 0, 0, 0, 1, 0, 0, 0, 0, x^2+2*x*y+y^2}})
+///
+
+TEST /// -- splineMatrix with VariableName override picks up the user's symbol
+  V = {{0,0},{1,0},{1,1},{-1,1},{-2,-1},{0,-1}}
+  F = {{0,2,1},{0,2,3},{0,3,4},{0,4,5},{0,1,5}}
+  E = {{0,1},{0,2},{0,3},{0,4},{0,5}}
+  sm = splineMatrix(V, F, E, 0, VariableName => getSymbol "s")
+  -- the auto-built ring uses s_0, s_1, s_2 instead of the default t_0, t_1, t_2
+  assert(toString first gens ring sm == "s_0")
+  -- and the matrix is the same up to renaming (compare to the default-name version)
+  smDefault = splineMatrix(V, F, E, 0)
+  assert(sub(sm, vars ring smDefault) == smDefault)
+///
+
+TEST /// -- ringStructure with GenVar and IdempotentVar overrides
+  V = {{0,0},{0,1},{-1,-1},{1,0}}
+  F = {{0,1,2},{0,2,3},{0,1,3}}
+  R = QQ[x,y]
+  M = splineModule(V, F, 0, BaseRing => R, Homogenize => false)
+  phi = ringStructure(M, GenVar => getSymbol "A", IdempotentVar => getSymbol "b")
+  -- source has variables A_0, ..., A_(n-1)
+  assert(all(gens source phi, v -> match("^A_", toString v)))
+  -- target ring contains the idempotents b_0, b_1, b_2 plus x, y
+  tgtvars = apply(gens target phi, toString)
+  assert(member("b_0", tgtvars))
+  assert(member("b_1", tgtvars))
+  assert(member("b_2", tgtvars))
 ///
 
 end

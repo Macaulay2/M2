@@ -49,6 +49,16 @@ doc ///
          
       The value of {\tt LastT} is the end value of the continuation parameter:
       if it equals 1, then the solver reached the end of the path properly.
+  Contributors
+    @UL {
+	{HREF("http://www.math.gatech.edu/~leykin", "Anton Leykin")},
+	{HREF("http://www.math.uic.edu/~sommars", "Jeff Sommars")},
+	{HREF("http://www.math.tamu.edu/~tbrysiewicz/", "Taylor Brysiewicz")},
+	{HREF("http://www.coreyharris.name/", "Corey Harris")},
+	{HREF("http://www.mit.edu/~diegcif/", "Diego Cifuentes")},
+	{HREF("http://www.kaiekubjas.com/", "Kaie Kubjas")},
+	{HREF("https://math.berkeley.edu/~seigal/", "Anna Seigal")},
+	}@
   Caveat
     {\bf 1.} If you are having trouble installing the package, 
     check whether the path to your PHCpack executable was set correctly. 
@@ -69,11 +79,7 @@ doc ///
       loadPackage ("PHCpack", 
       Configuration=>{"path"=>"C:/cygwin/PHC/","PHCexe"=>"./phc"}) 
 
-    {\bf 2.} If the package SimpleDoc is not found when 
-    installing {\tt PHCpack.m2}, see questions and answers 6, 7, and 8 
-    on the Macaulay2 web site.
-
-    {\bf 3.} The current version 1.8 of PHCpack.m2 was developed with version 
+    {\bf 2.} The current version 1.8 of PHCpack.m2 was developed with version 
     1.9 of Macaulay2 and with version 2.4.17 of phc.
 ///;
 
@@ -240,7 +246,7 @@ doc ///
   Headline
     Option to specify the dimension to begin searching for positive dimensional components
   Usage
-    numericalIrreducibleDecompositon(...,StartDimension=>ZZ)
+    numericalIrreducibleDecomposition(...,StartDimension=>ZZ)
 ///;
 
 doc ///
@@ -460,6 +466,7 @@ doc ///
   Key
     isWitnessSetMember
     (isWitnessSetMember,WitnessSet,AbstractPoint)
+    [isWitnessSetMember,Verbose]
   Headline
     tests whether a point belongs to a solution set
   Usage
@@ -468,6 +475,9 @@ doc ///
     W:WitnessSet
       positive dimensional, properly embedded with slack variables
     p:AbstractPoint
+    Verbose=>Boolean
+      whether additional output is wanted, including the
+      input and solution file names used by {\tt phc}.
   Outputs
     :Boolean
       true if p is a member of the solution set of W, 
@@ -489,29 +499,6 @@ doc ///
       V = numericalIrreducibleDecomposition (system);
       W = first V#4;
       isWitnessSetMember(W, point{{0,0,0,0,0,0}})
-      
-///;
-
--- options for isWitnessSetMember
-
-doc ///
-  Key
-    [isWitnessSetMember,Verbose]
-  Headline
-    option to specify whether additional output is wanted 
-  Usage
-    isWitnessSetMember(...,Verbose=>Boolean)
-  Description
-    Text
-       Use {\tt Verbose=>true} for additional output, which includes the 
-       input and solution file names used by {\tt phc}.  
-
-    Example
-      R = CC[x11,x22,x21,x12,x23,x13];
-      system = {x11*x22-x21*x12,x12*x23-x22*x13};
-      V = numericalIrreducibleDecomposition (system);
-      W = first V#4;
-      isWitnessSetMember(W, point{{0,0,0,0,0,0}})      
 ///;
 
 -----------------
@@ -1036,7 +1023,7 @@ doc ///
     Example
       L = solveSystem(S)
     Text
-      The method {\tt solveSystem} prints the the {\tt PHCpack} input and output file names 
+      The method {\tt solveSystem} prints the {\tt PHCpack} input and output file names 
       and returns two solutions. The solutions are of type @TO Point@, defined in @TO NAGtypes@. 
       Each point {\tt p} comes with cached diagnostics.
       For example, {\tt p.cache.LastT} is the end value of the continuation parameter; 

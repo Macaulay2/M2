@@ -98,10 +98,10 @@ class gb_emitter : public gb_node
   virtual int n_gb_elems() const { return 0; }
   virtual const FreeModule *output_free_module() const { return gens->rows(); }
   virtual Matrix *get_matrix() { return const_cast<Matrix *>(gens); }
-  virtual Matrix *min_gens_matrix() { return 0; }
-  virtual Matrix *initial_matrix(int) { return 0; }
-  virtual Matrix *gb_matrix() { return 0; }
-  virtual Matrix *change_matrix() { return 0; }
+  virtual Matrix *min_gens_matrix() { return nullptr; }
+  virtual Matrix *initial_matrix(int) { return nullptr; }
+  virtual Matrix *gb_matrix() { return nullptr; }
+  virtual Matrix *change_matrix() { return nullptr; }
   virtual void text_out(buffer &o) const;
   virtual void stats() const;
 };
@@ -128,7 +128,7 @@ class gb2_comp : public gb_node
 
   s_pair_heap *spairs;
   s_pair *these_pairs;
-  intarray total_pairs;
+  gc_vector<int> total_pairs;
 
   VECTOR(gb_elem *) gb;
   VECTOR(monideal_pair *) monideals;  // baggage for each is 'gb_elem *'
@@ -192,7 +192,7 @@ class gb2_comp : public gb_node
   void gb_sort(int lo, int hi);
 
   void flush_pairs();
-  Matrix *make_lead_term_matrix();  // for computing hilbert functions
+  Matrix *make_lead_term_matrix();  // for computing Hilbert functions
 
   void schreyer_append(gbvector *f);
   bool s_pair_step();

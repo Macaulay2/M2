@@ -7,8 +7,6 @@ needs "methods.m2"
 
 Net.synonym = "net"
 
-Net#{Standard,AfterPrint} = identity
-
 toString MutableHashTable := s -> (
      concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
 toString Type := X -> (
@@ -43,24 +41,19 @@ net Command := toString Command := toExternalString Command := f -> (
      )
 
 toExternalString Function := f -> (
-     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
-     t := locate f;
-     if t === null then error "can't convert anonymous function to external string"
-     else error("can't convert anonymous function (",t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4,") to external string")
+     if hasAttribute(f,ReverseDictionary)
+     then toString getAttribute(f,ReverseDictionary)
+     else error("can't convert anonymous function ",net f," to external string")
      )
 
-net Function := toString Function := f -> (
-     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
-     t := locate f;
-     if t === null then "-*Function*-" 
-     else concatenate("-*Function[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*-")
-     )
-
+net Function     := toString Function     :=
 net FunctionBody := toString FunctionBody := f -> (
-     t := locate' f;
-     if t === null then "-*FunctionBody*-" 
-     else concatenate("-*FunctionBody[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*-")
-     )
+    if hasAttribute(f,ReverseDictionary)
+    then toString getAttribute(f,ReverseDictionary)
+    else (
+	t := locate f;
+	concatenate(toString class f,
+	    "[", if t === null then "" else toString t, "]")))
 
 toExternalString Manipulator := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else concatenate("new Manipulator from ",toExternalString toList f)
@@ -76,14 +69,13 @@ toExternalString Net := x -> if height x + depth x == 0 then
      concatenate("(horizontalJoin())", "^", toString height x) else
      concatenate(format toString x, "^", toString(height x - 1))
 
-toExternalString MutableHashTable := s -> (
-     if hasAttribute(s,ReverseDictionary) then return toString getAttribute(s,ReverseDictionary);
-     error "anonymous mutable hash table cannot be converted to external string";
-     )
-toExternalString Type := s -> (
-     if hasAttribute(s,ReverseDictionary) then return toString getAttribute(s,ReverseDictionary);
-     error "anonymous type cannot be converted to external string";
-     )
+toExternalString MutableHashTable :=
+toExternalString MutableList      := s -> (
+    if hasAttribute(s,ReverseDictionary)
+    then toString getAttribute(s,ReverseDictionary)
+    else error("anonymous ", synonym class s,
+	" cannot be converted to external string"))
+
 toExternalString HashTable := s -> (
      concatenate (
 	  "new ", toExternalString class s,
@@ -93,10 +85,6 @@ toExternalString HashTable := s -> (
 	  then demark(", ", apply(pairs s, (k,v) -> toExternalString k | " => " | toExternalString v) )
 	  else "",
 	  "}"))
-toExternalString MutableList := s -> (
-     error "anonymous mutable list cannot be converted to external string";
-     -- concatenate("new ",toExternalString class s, " from {...", toString(#s), "...}" )
-     )
 mid := s -> (
      if #s === 1 then toExternalString s#0
      else between(",",apply(toSequence s,x -> if x === null then "" else toExternalString x))
@@ -192,7 +180,9 @@ net HashTable := x -> (
      	  net class x,
 	  "{", 
 	  -- the first line prints the parts vertically, second: horizontally
- 	  stack (horizontalJoin \ apply(sortByName pairs x,(k,v) -> (net k, " => ", net v))),
+ 	  stack (horizontalJoin \ apply(sortByName pairs x,(k,v) -> (
+		      (if instance(k, String) then format else net) k,
+		      " => ", net v))),
 	  -- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
 	  "}" 
      	  ))
@@ -258,19 +248,19 @@ netList VisibleList := o -> (x) -> (
      x = apply(x, row -> apply(n, i -> algn#i(colwids#i,row#i)));
      x = apply(#x, i -> (
 	     h := max(height \ x#i);
-	     if member(i,bxrows) then h = h + vs;
+	     if isMember(i,bxrows) then h = h + vs;
 	     d := max(depth \ x#i);
-	     if member(i+1,bxrows) or i<#x-1 then d = d + vs;
+	     if isMember(i+1,bxrows) or i<#x-1 then d = d + vs;
 	     sep := "|"^(h,d);
 	     nosep := ""^(h,d);
 	     hsep := (spaces hs)^(h,d);
-	     (if member(0,bxcols) then sep | hsep else nosep)
-	     | (horizontalJoin mingle(x#i,apply(1..#colwids-1,j->if member(j,bxcols) then hsep|sep|hsep else hsep)))
-	     | (if member(#colwids,bxcols) then hsep | sep else nosep)
+	     (if isMember(0,bxcols) then sep | hsep else nosep)
+	     | (horizontalJoin mingle(x#i,apply(1..#colwids-1,j->if isMember(j,bxcols) then hsep|sep|hsep else hsep)))
+	     | (if isMember(#colwids,bxcols) then hsep | sep else nosep)
 	     ));
-     colwids = apply(#colwids, i -> colwids#i+hs*(if member(i,bxcols) then 2 else if i<#colwids-1 or member(#colwids,bxcols) then 1 else 0));
-     hbar := concatenate mingle(apply(#colwids+1,i->if member(i,bxcols) then "+" else ""),apply(colwids,wid -> wid:"-"));
-     x = mingle(apply(#x+1,i->if member(i,bxrows) then hbar else net000),x);
+     colwids = apply(#colwids, i -> colwids#i+hs*(if isMember(i,bxcols) then 2 else if i<#colwids-1 or isMember(#colwids,bxcols) then 1 else 0));
+     hbar := concatenate mingle(apply(#colwids+1,i->if isMember(i,bxcols) then "+" else ""),apply(colwids,wid -> wid:"-"));
+     x = mingle(apply(#x+1,i->if isMember(i,bxrows) then hbar else net000),x);
      br = 2*br + 1;
      (stack x)^(
 	  sum(0 .. br-1, i -> depth x#i)
@@ -281,16 +271,15 @@ netList VisibleList := o -> (x) -> (
 -- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)
 commentize Nothing   := s -> ""
-commentize BasicList := s -> commentize horizontalJoin s
+commentize BasicList := s -> commentize horizontalJoin apply(s, net)
 commentize String    := s -> concatenate(" -- ", between("\n -- ", separate s))
 commentize Net       := S -> (
     baseline := height S - if height S == -depth S then 0 else 1;
     (stack(commentize \ unstack S))^baseline)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
-warning  = msg -> if debugLevel > 0 then (
-    if msg =!= () then printerr("warning: " | msg);
-    error "warning issued, debugLevel > 0");
+warning' = (n, msg) -> if debugLevel >= n then printerr("warning: ", horizontalJoin apply(msg, net))
+warning  =     msg  -> warning'(1, msg)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -98,10 +98,10 @@ doc ///
   Key
     "Singularities of lifting of type [300b]"
   Headline
-    The lifting of [300b] defined by bilaison acquires singularities in dimension 3
+    The lifting of [300b] defined by biliaison acquires singularities in dimension 3
   Description
     Text
-      We describe a way of lifting case [300b] by performing a bilaison construction. Let $X$  be a degree 7 residual component of an intersection of three quadrics containing a linear space of codimension 3. 
+      We describe a way of lifting case [300b] by performing a biliaison construction. Let $X$  be a degree 7 residual component of an intersection of three quadrics containing a linear space of codimension 3. 
     Example 
       loadPackage "RandomIdeals"
       kk = ZZ/101;
@@ -118,7 +118,7 @@ doc ///
       degree SingSS
       dim SingSS
     Text 
-      Perform a bilaison uo by degree 2 of $SS$ in $X$ and get $BT$ an AG variety of degree 17 and type [300b]
+      Perform a biliaison uo by degree 2 of $SS$ in $X$ and get $BT$ an AG variety of degree 17 and type [300b]
     Example
       JJ = randomElementsFromIdeal({3},SS);
       IDD=X+JJ;

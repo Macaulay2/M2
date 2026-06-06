@@ -6,24 +6,36 @@
 needs "methods.m2"
 
 accumulate = method()
-accumulate(Function,Thing,VisibleList) := VisibleList => (f,x,v) -> apply(v, y -> x = f(x,y))
+accumulate(Function, Thing, VisibleList) := VisibleList =>
+accumulate(Function, Thing, Thing)       := Iterator    => (f, x, v) -> (
+    apply(v, y -> x = f(x, y)))
 accumulate(VisibleList,Thing,Function) := VisibleList => (v,x,f) -> reverse apply(reverse v, w -> x = f(w,x))
 accumulate(Function,VisibleList) := VisibleList => (f,v) -> (
      if #v === 0 then error "expected a nonempty list";
      accumulate(f,v#0,drop(v,1)))
 accumulate(VisibleList,Function) := VisibleList => (v,f) -> (
      if #v === 0 then error "expected a nonempty list";
-     accumulate(drop(v,-1),v#-1,f))     
+     accumulate(drop(v,-1),v#-1,f))
+accumulate(Function, Thing) := Iterator => (f, v) -> (
+    iter := iterator v;
+    x := next iter;
+    if x === StopIteration then error "expected a nonempty iterator"
+    else accumulate(f, x, iter))
 
 fold = method()
-fold(Function,Thing,VisibleList) := VisibleList => foldL
-fold(VisibleList,Thing,Function) := VisibleList => (v,x,f) -> (scan(reverse v, w -> x = f(w,x)); x)
-fold(Function,VisibleList) := VisibleList => (f,v) -> (
+fold(Function,Thing,Thing) := foldL
+fold(VisibleList,Thing,Function) := (v,x,f) -> (scan(reverse v, w -> x = f(w,x)); x)
+fold(Function,VisibleList) := (f,v) -> (
      if # v === 0 then error "expected a nonempty list";
      fold(f,v#0,drop(v,1)))
-fold(VisibleList,Function) := VisibleList => (v,f) -> (
+fold(VisibleList,Function) := (v,f) -> (
      if #v === 0 then error "expected a nonempty list";
-     fold(drop(v,-1),v#-1,f))     
+     fold(drop(v,-1),v#-1,f))
+fold(Function, Thing) := (f, v) -> (
+    iter := iterator v;
+    x := next iter;
+    if x === StopIteration then error "expected a nonempty iterator"
+    else fold(f, x, iter))
 
 demark = (s,v) -> concatenate between(s,v)
 

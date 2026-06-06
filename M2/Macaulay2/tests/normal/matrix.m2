@@ -333,6 +333,77 @@ g = map(M,M, { (0,0) => x^2 } )
 assert (g == 0)
 assert isWellDefined g
 
+-- concatenation w/ ring elements
+A = matrix {{1, 2}, {2, 3}}
+assert Equation(A | 5, matrix {{1, 2, 5, 0}, {2, 3, 0, 5}})
+assert Equation(A | 1/2, matrix {{1, 2, 1/2, 0}, {2, 3, 0, 1/2}})
+assert Equation(A | 1.5, matrix {{1, 2, 1.5, 0}, {2, 3, 0, 1.5}})
+assert Equation(A | 1 + ii, matrix {{1, 2, 1 + ii, 0}, {2, 3, 0, 1 + ii}})
+assert Equation(A | x, matrix {{1, 2, x, 0}, {2, 3, 0, x}})
+assert Equation(5 | A, matrix {{5, 0, 1, 2}, {0, 5, 2, 3}})
+assert Equation(1/2 | A, matrix {{1/2, 0, 1, 2}, {0, 1/2, 2, 3}})
+assert Equation(1.5 | A, matrix {{1.5, 0, 1, 2}, {0, 1.5, 2, 3}})
+assert Equation(1 + ii | A, matrix {{1 + ii, 0, 1, 2}, {0, 1 + ii, 2, 3}})
+assert Equation(x | A, matrix {{x, 0, 1, 2}, {0, x, 2, 3}})
+assert Equation(A || 5, matrix {{1, 2}, {2, 3}, {5, 0}, {0, 5}})
+assert Equation(A || 1/2, matrix {{1, 2}, {2, 3}, {1/2, 0}, {0, 1/2}})
+assert Equation(A || 1.5, matrix {{1, 2}, {2, 3}, {1.5, 0}, {0, 1.5}})
+assert Equation(A || 1 + ii, matrix {{1, 2}, {2, 3}, {1 + ii, 0}, {0, 1 + ii}})
+assert Equation(A || x, map(R^4, R^2, matrix {{1, 2}, {2, 3}, {x, 0}, {0, x}}))
+assert Equation(5 || A, matrix {{5, 0}, {0, 5}, {1, 2}, {2, 3}})
+assert Equation(1/2 || A, matrix {{1/2, 0}, {0, 1/2}, {1, 2}, {2, 3}})
+assert Equation(1.5 || A, matrix {{1.5, 0}, {0, 1.5}, {1, 2}, {2, 3}})
+assert Equation(1 + ii || A, matrix {{1 + ii, 0}, {0, 1 + ii}, {1, 2}, {2, 3}})
+assert Equation(x || A, map(R^4, R^{{-1}, {-1}},
+	matrix {{x, 0}, {0, x}, {1, 2}, {2, 3}}))
+
+-- issue #3012
+M = comodule ideal 2
+A = map(M, ZZ^1, {{1}})
+assert Equation(A + A, 0)
+assert Equation(A - A, 0)
+assert Equation(A, -A)
+assert Equation(A + 1, 1 + A)
+
+-- empty matrix
+scan({matrix {}, matrix(ZZ, {}), map(ZZ^0, ZZ^0, {}), map(ZZ^0,, {})}, A -> (
+	    assert Equation(numRows A, 0);
+	    assert Equation(numColumns A, 0);
+	    assert Equation(source A, ZZ^0);
+	    assert Equation(target A, ZZ^0)))
+
+-- issue #3456
+assert Equation(matrix {{ii}}, matrix {{numeric ii}})
+
+-- norm
+A = matrix {{-1, 1}, {3, -5}}
+assert (norm A === 5)
+assert (norm_infinity A === 5)
+assert (norm numeric A === 5.0)
+assert (norm_infinity numeric A === 5.0)
+assert (norm(numeric(20, infinity), numeric A) === 5.0p20)
+assert (norm_2 A === 6.0)
+A = mutableMatrix A
+assert (norm A === 5)
+assert (norm_2 A === 6.0)
+R = QQ[x]
+f = -x^3 + x^2 + 3*x - 5
+assert (norm f === 5_QQ)
+assert (norm_2 f === 6.0)
+v = vector flatten entries A
+assert (norm v === 5)
+assert (norm_2 v === 6.0)
+B = matrix {{f}}
+assert (norm B === 5_QQ)
+assert (norm_2 B === 6.0)
+
+-- 1x1 matrix constructors
+R = QQ[x]
+assert Equation(matrix 1, matrix {{1}})
+assert Equation(matrix(QQ, 1), matrix 1_QQ)
+assert Equation(matrix(RR, 1), matrix 1.0)
+assert Equation(matrix(R, 1), matrix 1_R)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test matrix.out"
 -- End:

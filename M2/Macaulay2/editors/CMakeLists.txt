@@ -4,9 +4,6 @@
 ## - M2-editors generates grammar files
 ## - M2-emacs   generates the M2-mode package for Emacs
 
-# TODO: generate vim grammar
-# TODO: generate textmate grammar
-
 set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
 set(M2_ARGS --script)
 
@@ -14,13 +11,11 @@ set(M2_ARGS --script)
 ## Generating the grammar files is mainly done in make-M2-symbols.m2.
 ## To add to the M2-editors target, add grammar filenames here and in .gitignore.
 set(GRAMMAR_FILES
-  atom/macaulay2.cson
-  highlightjs/macaulay2.js
   prism/macaulay2.js
   pygments/macaulay2.py
 #  rouge/macaulay2.rb
-  vim/m2.vim.syntax
-  vim/m2.vim.dict
+  vim/syntax/m2.vim
+  vim/dict/m2.vim.dict
   emacs/M2-symbols.el)
 
 set(GRAMMAR_TEMPLATES ${GRAMMAR_FILES})
@@ -61,20 +56,21 @@ add_custom_command(OUTPUT ${EMACS_FILES}
   DEPENDS emacs/M2-symbols.el make-M2-symbols.m2)
 
 ################################################################################
-## Generating highlight.js for syntax highlighting in the html documentation
+## Generating prism.js/highlight.js for syntax highlighting in the html
+## documentation
 
-add_custom_target(M2-highlightjs ALL DEPENDS highlightjs/highlight.js)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/highlightjs)
-if(NOT NPM STREQUAL "NPM-NOTFOUND")
-  foreach(FILE IN ITEMS package.json webpack.config.js index.js
-      highlight-override.css)
-    configure_file(highlightjs/${FILE} highlightjs COPYONLY)
-  endforeach()
-  add_custom_command(OUTPUT highlightjs/highlight.js
-    COMMAND cd highlightjs && ${NPM} install && ${NPM} run build
-    DEPENDS highlightjs/macaulay2.js)
-else()
-  add_custom_command(OUTPUT highlightjs/highlight.js
-    COMMENT "warning: html docs will not have syntax highlighting"
-    COMMAND touch highlightjs/highlight.js)
+set(PRISM_DIR ${CMAKE_CURRENT_BINARY_DIR}/prism)
+file(MAKE_DIRECTORY PRISM_DIR)
+file(COPY prism/ DESTINATION ${PRISM_DIR}
+  FILES_MATCHING PATTERN "*.json" PATTERN "*.js" PATTERN "*.css")
+
+if(NOT NPM)
+  return()
 endif()
+
+add_custom_target(M2-prism ALL DEPENDS prism/prism.js)
+add_custom_command(OUTPUT prism/prism.js
+  COMMENT "Generating prism.js syntax file"
+  COMMAND ${NPM} install && ${NPM} run build
+  WORKING_DIRECTORY ${PRISM_DIR}
+  DEPENDS prism/macaulay2.js)

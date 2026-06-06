@@ -2,29 +2,16 @@
 --- author(s): Mike, Mahrud
 --- notes: functions below are all defined in testing.m2
 
--- in development
-undocumented {
-    (TEST, String, String)
-    }
-
 doc ///
 Node
   Key
-     TEST
-    (TEST, String)
-    (TEST, List)
-    [TEST, FileName]
+     symbol TEST
   Headline
     add a test for a package
   Usage
     TEST s
   Inputs
-    s:String
-      or list of strings, containing Macaulay2 code
-    FileName=>Boolean
-      if true, then @TT "s"@ (or each element of @TT "s"@, if it is a
-      list) is interpreted as the name of a file containing a test as
-      opposed to the test itself.
+    s:String -- containing Macaulay2 code
   Consequences
     Item
       registers the string @TT "s"@ as a test of the @TO2 {"currentPackage", "current package"}@.
@@ -56,6 +43,9 @@ Node
     (check, ZZ, String)
     (check, List, Package)
     (check, List, String)
+    (check, List)
+    (check, TestInput)
+    (check, ZZ)
     [check, UserMode]
     [check, Verbose]
   Headline
@@ -65,8 +55,8 @@ Node
     check(i, pkg)
     check(L, pkg)
   Inputs
-    pkg:Package
-      or String, the package to test
+    pkg:{Package,String}
+      the package to test
     i:ZZ
       the index of a test to run
     L:List
@@ -89,22 +79,35 @@ Node
   Description
     Text
       It is important for package authors to provide tests to ensure that the package is functioning properly.
-      One provides tests using the @TO TEST@ function following the @TO beginDocumentation@ call in the source
+      One provides tests using the @TO symbol TEST@ function following the @TO beginDocumentation@ call in the source
       of the package.
 
-      Optionally, one can store all tests in a @TT "tests.m2"@ directory under the auxiliary subdirectory of
-      the package and load the file from the main package source file.
+      Optionally, one can add files to the @TT "tests"@ directory under the auxiliary subdirectory of
+      the package.  The contents of each file will automatically be included as one of the package's tests.
 
-      For example, to run the tests for the @TO "LLLBases :: LLLBases"@ package (Lenstra-Lenstra-Lovasz bases), use:
-    CannedExample
-      needsPackage "LLLBases"
-      check_1 LLLBases
-      check LLLBases
+      For example, to run the tests for the @TO "FirstPackage::FirstPackage"@ package, use:
+    Example
+      needsPackage "FirstPackage"
+      check_1 FirstPackage
+      check FirstPackage
     Text
       Alternatively, if the package is installed somewhere accessible, one can do the following.
-    CannedExample
-      check_1 "LLLBases"
-      check "LLLBases"
+    Example
+      check_1 "FirstPackage"
+      check "FirstPackage"
+    Text
+      A @TO TestInput@ object (or a list of such objects) can also be run directly.
+    Example
+      tests(1, "FirstPackage")
+      check oo
+      tests "FirstPackage"
+      check oo
+    Text
+      If only an integer is passed as an argument, then the test with that index from the last call to @TO tests@
+      is run.
+    Example
+      tests "FirstPackage"
+      check 1
   Caveat
     Currently, if the package was only partially loaded because the documentation was
     obtainable from a database (see @TO "beginDocumentation"@), then the package will be reloaded,
@@ -114,7 +117,27 @@ Node
   SeeAlso
     "packages"
     "creating a package"
-    TEST
+    symbol TEST
     installPackage
     loadPackage
+    tests
 ///
+
+undocumented {(generateAssertions, List)}
+document {
+    Key => {
+	generateAssertions,
+       (generateAssertions, String)
+    },
+    Headline => "generate assert statements from experimental input",
+    Usage => "generateAssertions x",
+    Inputs => { "x" => { "a string whose non-comment non-blank lines are Macaulay2 expressions to be evaluated" } },
+    Outputs => { { "a net whose lines are assert statements that assert that the expressions evaluate to the expected value, just computed" }},
+    EXAMPLE {
+	"generateAssertions ///
+	2+2
+	2^20
+	///",
+	///value \ unstack oo///
+    }
+}

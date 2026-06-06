@@ -22,7 +22,7 @@ RUN pacman --sync --noconfirm --refresh --needed \
 RUN pacman --sync --noconfirm --needed openblas openmp intel-tbb libxml2 readline gdbm boost
 
 # Libraries we can build
-RUN pacman --sync --noconfirm --needed eigen fflas-ffpack givaro glpk gmp gc gtest mpfr ntl libatomic_ops
+RUN pacman --sync --noconfirm --needed eigen fflas-ffpack givaro glpk gmp gc gtest mpfr ntl
 
 # Optional packages
 RUN pacman --sync --noconfirm mlocate bash-completion

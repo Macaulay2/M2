@@ -140,8 +140,7 @@ void normSquared(SubMatrix<MatType> M,
 {
   const auto& C = M.matrix.ring();
   const auto& R = C.real_ring();
-  typename MatType::CoeffRing::RealElementType c;
-  R.init(c);
+  typename MatType::CoeffRing::RealRingType::Element c(R);
   R.set_zero(result);
   for (long rA = M.begin_row; rA < M.end_row; ++rA)
     for (long cA = M.begin_column; cA < M.end_column; ++cA)
@@ -149,7 +148,6 @@ void normSquared(SubMatrix<MatType> M,
         C.abs_squared(c, M.matrix.entry(rA, cA));
         R.add(result, result, c);
       }
-  R.clear(c);
 }
 
 template <typename MatType>
@@ -167,10 +165,9 @@ namespace MatrixOps {
 template <typename RT>
 bool isZero(const DMat<RT>& A)
 {
-  size_t len = A.numRows() * A.numColumns();
-  if (len == 0) return true;
-  for (auto t = A.array() + len - 1; t >= A.array(); t--)
-    if (!A.ring().is_zero(*t)) return false;
+  for (int r = 0; r < A.numRows(); ++r)
+    for (int c = 0; c < A.numColumns(); ++c)
+      if (!A.ring().is_zero(A.entry(r,c))) return false;
   return true;
 }
 
@@ -180,32 +177,28 @@ bool isEqual(const DMat<RT>& A, const DMat<RT>& B)
   assert(&A.ring() == &B.ring());
   if (B.numRows() != A.numRows()) return false;
   if (B.numColumns() != A.numColumns()) return false;
-  size_t top = A.numRows() * A.numColumns();
-  auto elemsA = A.array();
-  auto elemsB = B.array();
-  for (size_t i = 0; i < top; i++)
-    if (!A.ring().is_equal(*elemsA++, *elemsB++)) return false;
+
+  for (int r = 0; r < A.numRows(); ++r)
+    for (int c = 0; c < A.numColumns(); ++c)
+      if (!A.ring().is_equal(A.entry(r,c), B.entry(r,c))) return false;
   return true;
 }
 
 template <typename RT>
 void scalarMultInPlace(DMat<RT>& A, const typename RT::ElementType& f)
 {
-  for (size_t i = 0; i < A.numRows() * A.numColumns(); i++)
-    {
-      A.ring().mult(A.array()[i], f, A.array()[i]);
-    }
+  for (int r = 0; r < A.numRows(); ++r)
+    for (int c = 0; c < A.numColumns(); ++c)
+      A.ring().mult(A.entry(r,c), f, A.entry(r,c));
 }
 
 template <typename RT>
 void negateInPlace(DMat<RT>& A)
 // A = -A
 {
-  size_t len = A.numRows() * A.numColumns();
-  for (size_t i = 0; i < len; i++)
-    {
-      A.ring().negate(A.array()[i], A.array()[i]);
-    }
+  for (int r = 0; r < A.numRows(); ++r)
+    for (int c = 0; c < A.numColumns(); ++c)
+      A.ring().negate(A.entry(r,c), A.entry(r,c));
 }
 
 template <typename RT>
@@ -216,11 +209,9 @@ void addInPlace(DMat<RT>& A, const DMat<RT>& B)
   assert(B.numRows() == A.numRows());
   assert(B.numColumns() == A.numColumns());
 
-  size_t len = A.numRows() * A.numColumns();
-  for (size_t i = 0; i < len; i++)
-    {
-      A.ring().add(A.array()[i], A.array()[i], B.array()[i]);
-    }
+  for (int r = 0; r < A.numRows(); ++r)
+    for (int c = 0; c < A.numColumns(); ++c)
+      A.ring().add(A.entry(r,c), A.entry(r,c), B.entry(r,c));
 }
 
 template <typename RT>
@@ -231,11 +222,9 @@ void subtractInPlace(DMat<RT>& A, const DMat<RT>& B)
   assert(B.numRows() == A.numRows());
   assert(B.numColumns() == A.numColumns());
 
-  size_t len = A.numRows() * A.numColumns();
-  for (size_t i = 0; i < len; i++)
-    {
-      A.ring().subtract(A.array()[i], A.array()[i], B.array()[i]);
-    }
+  for (int r = 0; r < A.numRows(); ++r)
+    for (int c = 0; c < A.numColumns(); ++c)
+      A.ring().subtract(A.entry(r,c), A.entry(r,c), B.entry(r,c));
 }
 
 template <typename RT>
@@ -244,13 +233,10 @@ void transpose(const DMat<RT>& A, DMat<RT>& result)
   assert(&A != &result);  // these cannot be aliased!
   assert(result.numRows() == A.numColumns());
   assert(result.numColumns() == A.numRows());
-  for (size_t c = 0; c < A.numColumns(); ++c)
-    {
-      auto i = A.columnBegin(c);
-      auto j = result.rowBegin(c);
-      auto end = A.columnEnd(c);
-      for (; i != end; ++i, ++j) A.ring().set(*j, *i);
-    }
+
+  for (int r = 0; r < A.numRows(); ++r)
+    for (int c = 0; c < A.numColumns(); ++c)
+      A.ring().set(result.entry(c,r), A.entry(r,c));
 }
 
 //  wA = 0
@@ -315,8 +301,7 @@ void addMultipleTo(DMat<RT>& A,
                    MatrixWindow wB)
 {
   assert(wA.sameSize(wB));
-  typename RT::ElementType tmp;
-  A.ring().init(tmp);
+  typename RT::Element tmp(A.ring());
   long rA = wA.begin_row;
   long rB = wB.begin_row;
   for (; rA < wA.end_row; ++rA, ++rB)
@@ -330,7 +315,6 @@ void addMultipleTo(DMat<RT>& A,
           A.ring().add(a, a, tmp);
         }
     }
-  A.ring().clear(tmp);
 }
 
 // wA = c * wB
@@ -428,6 +412,8 @@ template <typename RT>
 void transpose(const SMat<RT>& A, SMat<RT>& result)
 {
   // result should be the 0 matrix of the correct size.
+  (void) A;
+  (void) result;
   assert(&A != &result);  // these cannot be aliased!
   assert(result.numRows() == A.numColumns());
   assert(result.numColumns() == A.numRows());

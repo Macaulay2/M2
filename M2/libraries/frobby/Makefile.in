@@ -1,38 +1,25 @@
-# note: the next revision of frobby should come from https://github.com/Macaulay2/frobby
-
+SUBMODULE = true
 LICENSEFILES = COPYING
 # author: Bjarke Roune <bjarke@cs.au.dk>
-#VERSION = 0.7.7-M2
-#VERSION = mike3
-VERSION = 0.9.0
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+URL = https://github.com/Macaulay2/frobby
+VERSION = 0.9.9
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 VPATH = @srcdir@
-TARDIR = frobby_v$(VERSION)
-TARFILE := frobby_v$(VERSION).tar.gz
-# this site was unreliable:
-# URL = http://www.broune.com/frobby
-URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 BUILDTARGET = library
-BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include	\
+BUILDOPTIONS = \
 	CXXFLAGS="$(CXXFLAGS)"				\
 	CXX="$(CXX)"					\
 	LDFLAGS="$(LDFLAGS)"				\
-	CPPFLAGS="$(CPPFLAGS)"				\
-	RANLIB="@RANLIB@"
+	CPPFLAGS="$(CPPFLAGS)"
 CHECKOPTIONS = $(BUILDOPTIONS)
 
 # this ought to prevent trouble with carriage returns
 PATCHOPTIONS = --ignore-whitespace
 
 CONFIGURECMD = true
-INSTALLCMD = \
-	$(MKDIR_P) $(LIBRARIESDIR)/lib && \
-	$(MKDIR_P) $(LIBRARIESDIR)/include && \
-	cp bin/libfrobby.a $(LIBRARIESDIR)/lib/libfrobby.a && \
-	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h && \
-	cp src/stdinc.h $(LIBRARIESDIR)/include/stdinc.h
+INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = test
 
 # gcc 8.3 needs more memory

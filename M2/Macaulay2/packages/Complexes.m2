@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
-    Version => "0.9999",
-    Date => "25 April 2022",
+    Version => "1.0",
+    Date => "May 9, 2026",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -11,11 +11,11 @@ newPackage(
             Email => "mike@math.cornell.edu", 
             HomePage => "http://www.math.cornell.edu/~mike"
             }},
-    Headline => "development package for beta testing new version of chain complexes",
+    Headline => "beta testing new version of chain complexes",
     Keywords => {"Homological Algebra"},
-    PackageExports => {"Truncations"},
-    AuxiliaryFiles => true,
-    DebuggingMode => false
+    PackageImports => { "LLLBases" },
+    PackageExports => { "Truncations" },
+    AuxiliaryFiles => true
     )
 
 export {
@@ -23,6 +23,8 @@ export {
     -- types
     "Complex",
     "ComplexMap",
+    "GradedModule" => "Complex",
+    "GradedModuleMap" => "ComplexMap",
     -- functions/methods
     "augmentationMap",
     "canonicalMap",
@@ -32,25 +34,30 @@ export {
     "connectingMap",
     "connectingExtMap",
     "connectingTorMap",
+    "constantStrand",
     "cylinder",
+    "eagonNorthcottComplex",
+    "epicResolutionMap",
     "freeResolution",
     "homotopyMap",
     "horseshoeResolution",
     "koszulComplex",
     "longExactSequence",
     "isComplexMorphism",
-    "isExact",
     "isFree", -- TODO: move to Core, use for freemodules too
     "isQuasiIsomorphism",
     "isNullHomotopic",
     "isNullHomotopyOf",
     "isShortExactSequence",
     "liftMapAlongQuasiIsomorphism",
-    "minimize",
+--    "minimalBetti",
     "minimizingMap",
     "nullHomotopy",
+    --"nullhomotopy" => "nullHomotopy",
     "naiveTruncation",
     "randomComplexMap",
+    "res" => "freeResolution",
+    "resolution" => "freeResolution",
     "resolutionMap",
     "tensorCommutativity",
     "torSymmetry",
@@ -60,22 +67,50 @@ export {
     "yonedaMap'",
     "yonedaProduct",
     -- Option names
+    "FreeToExact", -- used in nullHomotopy
+    "OverField",
+    "OverZZ",
+    "Homogenization",
+    "Nonminimal",
+    "NonminimalWithGB",
     "Concentration",
     "Cycle",
     "Boundary",
     "InternalDegree",
-    "Base",
-    "UseTarget"
+    "UseTarget",
+
+    -- From pruneComplex code
+    "toMutableComplex",
+    "toChainComplex",
+    "pruneComplex",
+    "pruneUnit",
+    "pruneDiff",
+    "isScalar",
+    "Direction", "PruningMap", "UnitTest"
     }
+
+importFrom_Core {
+    "isPackageLoaded",
+    "liftModule", "liftMorphism",
+
+    -- Used in pruneComplex code
+    "LocalRing",
+    "raw",
+    "rawDeleteColumns",
+    "rawDeleteRows",
+    "rawMutableComplex",
+    "rawPruneBetti",
+    "rawPruneComplex",
+    "rawPruningMorphism",
+    }
+
 
 -- keys into the type `Complex`
 protect modules
 
 -- These are keys used in the various ResolutionObject's
 protect SyzygyList
-protect FieldComputation
 protect compute
-protect radical
 protect SchreyerOrder
 protect isComputable
 
@@ -106,79 +141,51 @@ homTensorAdjoint(Module, Module, Module) := (L, M, N) -> (
     -- phi -> (ell |-> (m |-> phi(ell ** m)))
     )
 
--- This belongs in M2 Core!!!
--- make this into a git issue.
-single = v -> (
-     if not same v 
-     then error "incompatible objects in direct sum";
-     v#0)
-directSum Sequence := args -> (
-    if #args === 0 then error "expected more than 0 arguments";
-    y := youngest args;
-    key := (directSum, args);
-    if y =!= null and y.cache#?key then y.cache#key else (
-        type := single apply(args, class);
-        meth := lookup(symbol directSum, type);
-        if meth === null then error "no method for direct sum";
-        S := meth args;
-        if y =!= null then y.cache#key = S;
-        S))
-
-Hom(Module, Module) := Module => (M,N) -> (
-    Y := youngest(M.cache.cache,N.cache.cache);
-    if Y#?(Hom,M,N) then return Y#(Hom,M,N);
-    H := trim kernel (transpose presentation M ** N);
-    H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f + degree f);
-    Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
-    H.cache.formation = FunctionApplication { Hom, (M,N) };
-    H)
-
 --------------------------------------------------------------------
 -- package code ----------------------------------------------------
 --------------------------------------------------------------------
-load "Complexes/ChainComplex.m2"
-load "Complexes/ChainComplexMap.m2"
-load "Complexes/Tor.m2"
-
--- load "Complexes/Resolutions.m2"
--- load(currentFileDirectory | "Complexes/res.m2")
+load "./Complexes/ChainComplex.m2"
+load "./Complexes/FreeResolution.m2"
+load "./Complexes/ChainComplexMap.m2"
+load "./Complexes/Tor.m2"
+load "./Complexes/Ext.m2"
+load "./Complexes/PruneComplex.m2"
 
 --------------------------------------------------------------------
 -- interface code to legacy types ----------------------------------
 --------------------------------------------------------------------
-chainComplex Complex := ChainComplex => (cacheValue symbol ChainComplex) (C -> (
-    (lo,hi) := concentration C;
-    D := new ChainComplex;
-    D.ring = ring C;
-    for i from lo to hi do D#i = C_i;
-    for i from lo+1 to hi do D.dd#i = dd^C_i;
-    D
-    ))
+if isPackageLoaded "OldChainComplexes" then
+  load "./OldChainComplexes/conversion.m2"
 
-complex ChainComplex := Complex => opts -> (cacheValue symbol Complex)(D -> (
-    (lo,hi) := (min D, max D);
-    while lo < hi and (D_lo).numgens == 0 do lo = lo+1;
-    while lo < hi and (D_hi).numgens == 0 do hi = hi-1;
-    if lo === hi then
-        complex D_lo
-    else 
-        complex hashTable for i from lo+1 to hi list i => D.dd_i
-    ))
+koszul Matrix := Complex => m -> koszulComplex m
+eagonNorthcott Matrix := Complex => m -> eagonNorthcottComplex m
 
-chainComplex ComplexMap := ChainComplexMap => f -> (
-    g := new ChainComplexMap;
-    g.cache = new CacheTable;
-    g.source = chainComplex source f;
-    g.target = chainComplex target f;
-    g.degree = degree f;
-    (lo,hi) := concentration f;
-    for i from lo to hi do g#i = f_i;
-    g
+-- TODO: talk to Greg about what to do with this code...
+  -----------------------------------------------------------------------------
+  -- constructing a chain complex with prescribed Betti table
+  -----------------------------------------------------------------------------
+
+  Ring ^ BettiTally := Complex => (R,B) -> (
+    -- donated by Hans-Christian von Bothmer
+    -- given a betti Table B and a Ring R make a chainComplex
+    -- with zero maps over R  that has betti diagram B.
+    -- negative entries are ignored
+    -- rational entries produce an error
+    -- multigraded R's work only if the betti Tally contains degrees of the correct degree length
+    p := sort pairs B;  -- list of (homological degree, multidegree, weight)
+    toplev := p/((k,n) -> first k)//max; -- largest homological degree
+    F := new MutableHashTable;
+    H := partition(x -> x#0#0, p); -- by homological degree.
+    directSum for i in keys H list (
+        degs := flatten for x in H#i list (
+            (i, deg, wt) := x#0;
+            n := x#1;
+            toList(n : -deg)
+            );
+        complex(R^degs, Base => i)
+        )
     )
 
-complex ChainComplexMap := ComplexMap => opts -> g -> (
-    map(complex target g, complex source g, i -> g_i, Degree => degree g)
-    )
 --------------------------------------------------------------------
 -- package documentation -------------------------------------------
 --------------------------------------------------------------------
@@ -194,209 +201,22 @@ undocumented{
     component
     }
 
-load "Complexes/ChainComplexDoc.m2"
-load "Complexes/ChainComplexMapDoc.m2"
+load "./Complexes/ChainComplexDoc.m2"
+load "./Complexes/ChainComplexMapDoc.m2"
+load "./Complexes/PruneComplexDoc.m2"
 
 --------------------------------------------------------------------
 -- documentation for legacy type conversion ------------------------
 --------------------------------------------------------------------
-doc ///
-    Key
-        (complex, ChainComplex)
-    Headline
-        translate between data types for chain complexes
-    Usage
-        D = complex C
-    Inputs
-        C:ChainComplex
-    Outputs
-        D:Complex
-    Description
-        Text
-            Both ChainComplex and Complex are Macaulay2 types that
-            implement chain complexes of modules over rings.
-            The plan is to replace ChainComplex with this new type.
-            Before this happens, this function allows interoperability
-            between these types.
-        Text
-            The first example is the minimal free resolution of the
-            twisted cubic curve.
-        Example
-            R = ZZ/32003[a..d];
-            I = monomialCurveIdeal(R, {1,2,3})
-            M = R^1/I
-            C = resolution M
-            D = complex C
-            D1 = freeResolution M
-            assert(D == D1)
-        Text
-            In the following example, note that a different choice of sign
-            is chosen in the new Complexes package.
-        Example
-            C1 = Hom(C, R^1)
-            D1 = complex C1
-            D2 = Hom(D, R^1)
-            D1.dd_-1
-            D2.dd_-1
-            assert(D1 != D2)
-    Caveat
-        This is a temporary method to allow comparisons among the data types,
-        and will be removed once the older data structure is replaced
-    SeeAlso
-        (chainComplex, Complex)
-        (chainComplex, ComplexMap)
-        (complex, ChainComplexMap)
-///
-
-doc ///
-    Key
-        (chainComplex, Complex)
-    Headline
-        translate between data types for chain complexes
-    Usage
-        C = chainComplex D
-    Inputs
-        D:Complex
-    Outputs
-        C:ChainComplex
-    Description
-        Text
-            Both ChainComplex and Complex are Macaulay2 types that
-            implement chain complexes of modules over rings.
-            The plan is to replace ChainComplex with this new type.
-            Before this happens, this function allows interoperability
-            between these types.
-        Text
-            The first example is the minimal free resolution of the
-            twisted cubic curve.
-        Example
-            R = ZZ/32003[a..d];
-            I = monomialCurveIdeal(R, {1,2,3})
-            M = R^1/I
-            C = resolution M
-            D = freeResolution M
-            C1 = chainComplex D
-            assert(C == C1)
-        Text
-            The tensor products make the same choice of signs.
-        Example
-            D2 = D ** D
-            C2 = chainComplex D2
-            assert(C2 == C1 ** C1)
-    Caveat
-        This is a temporary method to allow comparisons among the data types,
-        and will be removed once the older data structure is replaced
-    SeeAlso
-        (complex, ChainComplex)
-        (complex, ChainComplexMap)
-        (chainComplex, ComplexMap)
-///
-
-doc ///
-    Key
-        (complex, ChainComplexMap)
-    Headline
-        translate between data types for chain complex maps
-    Usage
-        g = complex f
-    Inputs
-        f:ChainComplexMap
-    Outputs
-        g:ComplexMap
-    Description
-        Text
-            Both ChainComplexMap and ComplexMap are Macaulay2 types that
-            implement maps between chain complexes.
-            The plan is to replace ChainComplexMap with this new type.
-            Before this happens, this function allows interoperability
-            between these types.
-        Text
-            The first example is the minimal free resolution of the
-            twisted cubic curve.
-        Example
-            R = ZZ/32003[a..d];
-            I = monomialCurveIdeal(R, {1,2,3})
-            M = R^1/I
-            C = resolution M
-            f = C.dd
-            g = complex f
-            isWellDefined g
-            D = freeResolution M
-            assert(D.dd == g)
-        Text
-            The following two extension of maps between modules to
-            maps between chain complexes agree.
-        Example
-            J = ideal vars R
-            C1 = resolution(R^1/J)
-            D1 = freeResolution(R^1/J)
-            f = extend(C1, C, matrix{{1_R}})
-            g = complex f
-            g1 = extend(D1, D, matrix{{1_R}})
-            assert(g == g1)
-    Caveat
-        This is a temporary method to allow comparisons among the data types,
-        and will be removed once the older data structure is replaced
-    SeeAlso
-        (chainComplex, ComplexMap)
-        (complex, ChainComplex)
-        (chainComplex, Complex)
-///
-
-doc ///
-    Key
-        (chainComplex, ComplexMap)
-    Headline
-        translate between data types for chain complexes
-    Usage
-        f = chainComplex g
-    Inputs
-        g:ComplexMap
-    Outputs
-        f:ChainComplexMap
-    Description
-        Text
-            Both ChainComplexMap and ComplexMap are Macaulay2 types that
-            implement maps between chain complexes.
-            The plan is to replace ChainComplexMap with this new type.
-            Before this happens, this function allows interoperability
-            between these types.
-        Text
-            The first example is the minimal free resolution of the
-            twisted cubic curve.
-        Example
-            R = ZZ/101[a..d];
-            I = monomialCurveIdeal(R, {1,2,3})
-            M = R^1/I
-            D = freeResolution M
-            C = resolution M
-            g = D.dd
-            f = chainComplex g
-            assert(f == C.dd)
-        Text
-            We construct a random morphism of chain complexes.
-        Example
-            J = ideal vars R
-            C1 = resolution(R^1/J)
-            D1 = freeResolution(R^1/J)
-            g = randomComplexMap(D1, D, Cycle => true)
-            f = chainComplex g
-            assert(g == complex f)
-            assert(isComplexMorphism g)
-    Caveat
-        This is a temporary method to allow comparisons among the data types,
-        and will be removed once the older data structure is replaced
-    SeeAlso
-        (complex, ChainComplexMap)
-        (complex, ChainComplex)
-        (chainComplex, Complex)
-///
+if isPackageLoaded "OldChainComplexes" then
+  load "./OldChainComplexes/docs/conversion.m2"
 
 --------------------------------------------------------------------
 -- package tests ---------------------------------------------------
 --------------------------------------------------------------------
-load "Complexes/ChainComplexTests.m2"
-
+load "./Complexes/ChainComplexTests.m2"
+load "./Complexes/FreeResolutionTests.m2"
+load "./Complexes/PruneComplexTests.m2"
 end------------------------------------------------------------
 
 restart
@@ -424,6 +244,9 @@ doc ///
 
 
 S = ZZ/101[a..d]
-K = res coker vars S
+K = freeResolution coker vars S
 L = K ** K
+-- would be nice if these were fast(er):
 elapsedTime L**L;
+elapsedTime (oo ** K)
+elapsedTime (K ** ooo)

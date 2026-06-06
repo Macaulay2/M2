@@ -2,7 +2,7 @@
 
      0-dim-methods				-- routines for 0-dim solution sets 
      BSS-certified				-- certified tracking that emulates Blum-Shub-Smale machine
-     SLP 					-- (depreciated) preSLPs, old way of handling straight line programs
+     SLP 					-- (deprecated) preSLPs, old way of handling straight line programs
      decomposition				-- numerical irreducible decomposition
      deflation 					-- deflation (0- and positive-dimensional)
      doc.m2 (and numericalAG.simpledoc)		-- documentation

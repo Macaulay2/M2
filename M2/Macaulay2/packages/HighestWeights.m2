@@ -25,20 +25,19 @@ newPackage(
 	       HomePage => "http://math.galetto.org"}},
      Headline => "decompose free resolutions and graded modules with a semisimple Lie group action",
      Keywords => {"Lie Groups and Lie Algebras", "Homological Algebra"},
-     PackageExports => {"WeylGroups"},
+     PackageExports => {"WeylGroups", "Complexes"},
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Free resolutions and modules with a semisimple Lie group action",
 	  "acceptance date" => "5 June 2015",
-	  "published article URI" => "http://msp.org/jsag/2015/7-1/p03.xhtml",
-	  "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.9",
-	  "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x03-HW.zip",
-	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/HighestWeights.m2",
+	  "published article URI" => "https://msp.org/jsag/2015/7-1/p03.xhtml",
+	  "published article DOI" => "10.2140/jsag.2015.7.9",
+	  "published code URI" => "https://msp.org/jsag/2015/7-1/jsag-v7-n1-x03-HW.zip",
 	  "release at publication" => "a434adb94f76f9be38131f87745867b0d7925405",	    -- git commit number in hex
 	  "version at publication" => "0.6.5",
 	  "volume number" => "7",
-	  "volume URI" => "http://msp.org/jsag/2015/7-1/"
+	  "volume URI" => "https://msp.org/jsag/2015/7-1/"
 	  }
      )
 
@@ -57,7 +56,7 @@ end
 --0.1: wrote a basic working version of the package! :-)
 --0.2: completed documentation and tests
 --0.2.1: suppressed minimality test for propagate
---0.2.2: now with auxiliary files and freudenthal decomposition
+--0.2.2: now with auxiliary files and Freudenthal decomposition
 --0.2.3: new propagateWeights function
 --0.2.4: preliminary HW decomposition for resolutions (no multigrading)
 --0.2.5: HW decomposition for (multi)-graded rings

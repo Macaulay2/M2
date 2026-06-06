@@ -3,28 +3,8 @@
 needs "nets.m2"
 needs "methods.m2"
 
-symbolLocation = s -> (
-     t := locate s;
-     if t =!= null then t#0 | ":" | toString t#1| ":" | toString (t#2+1) | "-" | toString t#3| ":" | toString (t#4+1)
-     else "")
-
-processArgs := args -> concatenate (
-     args = sequence args;
-     apply(args, x -> 
-	  if class x === String then x
-	  else if class x === Symbol then ("'", toString x, "'")
-	  else silentRobustString(40,3,x)
-	  ),
-     apply(args, x -> if class x === Symbol then ("\n", symbolLocation x, ": here is the first use of '",toString x, "'") else "")
-     )
-olderror := error
-error = args -> (
-     -- this is the body of the "error" function, which prints out error messages
-     olderror processArgs args)
-protect symbol error
-
 warningMessage0 = (args,deb) -> (
-     args = processArgs args;
+     args = processErrorArgs args;
      h := hash args % 10000;
      if debugWarningHashcode === h
      then error args
@@ -47,7 +27,7 @@ on = { CallLimit => 100000, Name => null, GenerateAssertions => false } >> opts 
      fb := functionBody f;
      calldepth := 0;
      totaltime := 0.;
-     if not callCount#?fb then callCount#fb = 0;
+     callCount#fb ??= 0;
      limit := opts.CallLimit;
      if not instance(f, Function) then error("expected a function");
      fn := if opts.Name =!= null then opts.Name else try toString f else "-*function*-";
@@ -139,8 +119,8 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 	       else install pfun v);
 --	  if hasAttribute(v,PrintNet) then v = getAttribute(v,PrintNet) else
 --	  if hasAttribute(v,PrintNames) then v = getAttribute(v,PrintNames) else
-	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
-	  if w#?v then w#v else w#v = new Descent
+--	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
+	  w#v ??= new Descent
 	  );
      scan(types, install);
      world)
@@ -154,14 +134,13 @@ allValues = () -> unique join(flatten(values \ dictionaryPath), select(getAttrib
 	  ))
 showStructure = Command(types -> show1(if types === () then justTypes allValues() else types, parent))
 showClassStructure = Command(types -> show1(if types === () then allThingsWithNames allValues() else types, class))
-ancestors = X -> while true list (local Z; if Z === Thing then break ; Z = X; X = parent X; Z)
 -----------------------------------------------------------------------------
 
 typicalValues#frame = MutableList
 
 select2 := (type,syms) -> apply(
      sort apply(
-	  select(syms, sym -> mutable sym and instance(value sym,type) and value sym =!= sym),
+	  select(syms, sym -> isMutable sym and instance(value sym,type) and value sym =!= sym),
 	  symb -> (hash symb, symb)
 	  ),
      (h,s) -> s)
@@ -172,14 +151,7 @@ localSymbols Pseudocode :=
 localSymbols Symbol :=
 localSymbols Dictionary :=
 localSymbols Function := ls
-
--- make this work eventually:
--- localSymbols() := () -> if current === null then ls() else ls current
--- meanwhile: (see also method123())
--- nullaryMethods # (1 : localSymbols) = () -> if current =!= null then ls current else error "not in debugger (i.e., current not set)"
--- also meanwhile:
-installMethod(localSymbols, () -> if current =!= null then ls current else error "not in debugger (i.e., current not set)")
-
+localSymbols() := () -> if current =!= null then ls current else error "not in debugger (i.e., current not set)"
 localSymbols(Type,Symbol) :=
 localSymbols(Type,Dictionary) :=
 localSymbols(Type,Function) :=
@@ -187,16 +159,13 @@ localSymbols(Type,Pseudocode) := (X,f) -> select2(X,localSymbols f)
 
 localSymbols Type := X -> select2(X,localSymbols ())
 
-robust := y -> silentRobustNet(55,4,3,y)
-abbreviate := x -> (
-     if instance(x, Function) and match("^-\\*Function.*\\*-$", toString x) then "..."
-     else robust x)
 listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d
-listSymbols List := x -> (
-     netList(Boxes=>false, HorizontalSpace => 1, prepend(
-	  {"symbol" || "------","", "class" || "-----", "", "value" || "-----", "location of symbol" || "------------------"},
-	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, symbolLocation s}))))
+listSymbols List := x -> TABLE prepend(
+    apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
+    apply(x, y -> apply({y,Abbreviate {class value y},Abbreviate {value y},locate y},s->TD {s}))
+    );
+
 
 listLocalSymbols = Command(f -> listSymbols localSymbols f)
 
@@ -213,11 +182,12 @@ clearAll = Command (() -> (
 	  ))
 
 generateAssertions = method(TypicalValue => Net)
-generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
+generateAssertions String := s -> generateAssertions select(
+    lines replace("-\\*(.|\n)*?\\*-", "", s), x -> not match("^[[:space:]]*(--.*)?$",x))
 generateAssertions List := y -> (
      nogens := {PolynomialRing, QuotientRing,Function};
      good := t -> (
-	  not mutable t
+	  not isMutable t
 	  and
 	  all(nogens, X -> not instance(t,X))
 	  );
@@ -241,7 +211,42 @@ generateAssertions List := y -> (
 	       else lin
 	       )))^-1
 
+-----------------------------------------------------------------------------
+-- FilePosition and currentPosition
+-----------------------------------------------------------------------------
+
+-- FilePosition = new Type of BasicList -- defined in d
+FilePosition.synonym = "file position"
+
+-- TODO: add FilePosition(String, ZZ, ZZ) and FilePosition(String)
+toExternalString FilePosition :=
+toString FilePosition :=
+net FilePosition := simpleToString -- tostringFilePosition in debugging.dd
+
+
+String | FilePosition := (s, p) -> s | toString p
+FilePosition | String := (p, s) -> toString p | s
+
 currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
+
+-----------------------------------------------------------------------------
+-- locate
+-----------------------------------------------------------------------------
+
+locate' = locate -- defined in d/debugging.dd
+locate = method(Dispatch => Thing, TypicalValue => FilePosition)
+locate Nothing     :=
+locate FunctionBody:=
+locate Function    :=
+locate Pseudocode  :=
+locate Sequence    :=
+locate Error       :=
+locate Symbol      := FilePosition => locate'
+locate Command     := FilePosition => C -> locate'(C#0)
+locate List        := List     => x -> apply(x, locate)
+protect symbol locate
+
+sortByLocation = sortBy(toString @@ locate)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

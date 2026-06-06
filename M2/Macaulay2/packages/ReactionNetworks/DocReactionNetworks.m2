@@ -15,67 +15,38 @@ doc ///
 	    removal of a species or a reaction and the corresponding effect
             on the solutions of the system.
 	Text
-	    {\bf Basic Functions:}
-
-		$\bullet$ @TO "reactionNetwork"@
-
-		$\bullet$ @TO "isDeficient"@
-
-		$\bullet$ @TO "isWeaklyReversible"@
-
-		$\bullet$ @TO "steadyStateEquations"@
-
-		$\bullet$ @TO "conservationEquations"@
-
-	--	$\bullet$ @TO "injectivityTest"@
-
-		$\bullet$ @TO "glue"@
+	    {\bf Basic Functions:} 
+	    @TO "reactionNetwork"@, 
+	    @TO "isDeficient"@, 
+	    @TO "isWeaklyReversible"@,
+	    @TO "steadyStateEquations"@
+	    @TO "conservationEquations"@,
+	    --	@TO "injectivityTest"@
+	    @TO "glue"@
 
 	    {\bf Motifs:}
-
-		$\bullet$ @TO "oneSiteModificationA"@
-
-	        $\bullet$ @TO "oneSiteModificationB"@
-
-        	$\bullet$ @TO "oneSiteModificationC"@
-
-		$\bullet$ @TO "oneSiteModificationD"@
-
-	        $\bullet$ @TO "twoSiteModificationE"@
-
-		$\bullet$ @TO "twoSiteModificationF"@
-
-		$\bullet$ @TO "twoSiteModificationG"@
-
-		$\bullet$ @TO "modificationOfTwoSubstratesH"@
-
-		$\bullet$ @TO "modificationOfTwoSubstratesI"@
-
-		$\bullet$ @TO "twoLayerCascadeJ"@
-
-		$\bullet$ @TO "twoLayerCascadeK"@
-
-		$\bullet$ @TO "twoLayerCascadeL"@
-
-		$\bullet$ @TO "crossLinkingModelCelldeath"@
-
-		$\bullet$ @TO "clusterModelCellDeath"@
-
-		$\bullet$ @TO "wnt"@
-		
-		$\bullet$ @TO "nSiteProcessiveModification"@
-		
-		$\bullet$ @TO "nSiteDistributiveModification"@
-		
-		$\bullet$ @TO "nSiteImmuneReaction"@
-		
-		$\bullet$ @TO "nSiteDiffusion"@
-		
-		$\bullet$ @TO "nSitePoreForming"@
-		
-		$\bullet$ @TO "nSiteSequestration"@
-		
-		$\bullet$ @TO "nSiteAutocatalytic"@
+	    @TO "oneSiteModificationA"@,
+	    @TO "oneSiteModificationB"@,
+	    @TO "oneSiteModificationC"@,
+	    @TO "oneSiteModificationD"@,
+	    @TO "twoSiteModificationE"@,
+	    @TO "twoSiteModificationF"@,
+	    @TO "twoSiteModificationG"@,
+	    @TO "modificationOfTwoSubstratesH"@,
+	    @TO "modificationOfTwoSubstratesI"@,
+	    @TO "twoLayerCascadeJ"@,
+	    @TO "twoLayerCascadeK"@,
+	    @TO "twoLayerCascadeL"@,
+	    @TO "crossLinkingModelCelldeath"@,
+	    @TO "clusterModelCellDeath"@,
+	    @TO "wnt"@,
+	    @TO "nSiteProcessiveModification"@,
+	    @TO "nSiteDistributiveModification"@,
+	    @TO "nSiteImmuneReaction"@,
+	    @TO "nSiteDiffusion"@,
+	    @TO "nSitePoreForming"@,
+	    @TO "nSiteSequestration"@,
+	    @TO "nSiteAutocatalytic"@
 
 	    {\bf Examples}
 
@@ -92,21 +63,19 @@ doc ///
 	    of the ideal.
 	Example
 	    SS = flatten entries steadyStateEquations N
-	    K = toList(apply(0..length N.ReactionRates-1, i-> random(QQ)))
-	    Rr = toList(apply(0..length N.ReactionRates-1, i->
-		    value(N.ReactionRates#i)))
-	    P = toList(apply(0..length Rr-1, i-> Rr#i=>sub(K#i,R)))
-	    F' = toList apply(0..length SS-1, i-> sub(SS#i,P))
+	    K = apply(#N.ReactionRates, i->random QQ)
+	    Rr = N.ReactionRates/value
+	    P = apply(#Rr, i->Rr#i=>sub(K#i,R))
+	    F' = apply(SS, s-> sub(s,P))
 	Text
 	    Next, we create the conservation equations and assume there is no
 	    translation, i.e., the initial conditions are all zero.
 	Example
 	    C = conservationEquations N
 	    L = {0,0,0,0,0}
-	    Iv = toList(apply(0..length N.InitialValues-1, i->
-		    value(N.InitialValues#i)))
-	    S = toList(apply(0..length Iv-1, i-> Iv#i=>L#i))
-	    F'' = toList apply(0..length C-1, i-> sub(C#i,S))
+	    Iv = N.InitialValues
+	    S = apply(#Iv, i->R_(Iv#i)=>L#i)
+	    F'' = apply(C, c->sub(c,S))
 	Text
 	    Finally, we join the two sets of equations and create an ideal. Thus,
 	    the degree and dimension can be computed.
@@ -115,7 +84,6 @@ doc ///
 	    I = ideal F
 	    degree I
 	    dim I
-
 ///
 
 doc ///

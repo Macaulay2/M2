@@ -43,7 +43,29 @@ strings and nets:
 \end{lstlisting}
 printing:
 \begin{lstlisting}[language=Macaulay2]
-for i from 1 to 3 do print(i^2+ii)
+for i from 1 to 8 do print((i+ii)^2)
+\end{lstlisting}
+
+\section{Reusing output}
+The output {\tt o5} is \macoutput{5}.
+The nonexistent output {\tt o11} is \macoutput{11}.
+
+\section{Inputting from external file}
+Some more code:
+\lstinputlisting[language=Macaulay2]{ex.m2}
+
+\section{Packages}
+packages that have a {\tt tex} output will work:
+\begin{lstlisting}[language=Macaulay2]
+needsPackage "Posets";
+booleanLattice 3
+needsPackage "VectorGraphics";
+Circle{"fill"=>"red"}
+\end{lstlisting}
+
+\section{Changing key/values}
+\begin{lstlisting}[showstringspaces=true,language=Macaulay2,basewidth={1.5ex}]
+"some weird spacing  and string style"
 \end{lstlisting}
 
 \section{Help}
@@ -51,14 +73,8 @@ for i from 1 to 3 do print(i^2+ii)
 help cohomology
 \end{lstlisting}
 
-\section{Packages}
-packages that have a {\tt tex} output will work:
-\begin{lstlisting}[language=Macaulay2]
-needsPackage "Posets";
-booleanLattice 3
-\end{lstlisting}
-
 \section{Tricky examples}
+\dots for testing purposes only
 \begin{lstlisting}[language=Macaulay2]
 -- some tricky examples
 \end{lstlisting}
@@ -80,18 +96,5 @@ a=1;b=2;
 c=3;
 \end{lstlisting}
 That last one has no output.
-
-\section{Reusing output}
-The output {\tt o5} is \macoutput{5}.
-The nonexistent output {\tt o18} is \macoutput{18}.
-
-\section{Inputting from external file}
-Some more code:
-\lstinputlisting[language=Macaulay2]{ex.m2}
-
-\section{Changing key/values}
-\begin{lstlisting}[showstringspaces=true,language=Macaulay2,basewidth={1.5ex}]
-"some weird spacing  and string style"
-\end{lstlisting}
 
 \end{document}

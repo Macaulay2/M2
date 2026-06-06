@@ -8,17 +8,21 @@
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
+// includes gmp.h, which is required for FLINT functions that use GMP
+#include <M2/math-include.h>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/fq_nmod.h>
-#include <flint/flint.h>
+#include <flint/flint.h>       // for flint_free, flint_rand_t, fmpz_t
+#include <flint/fmpz.h>        // for fmpz_clear_readonly, fmpz_init_set_...
+#include <flint/fq_nmod.h>     // for fq_nmod_init2, fq_nmod_clear, fq_nm...
+#include <flint/nmod_poly.h>   // for nmod_poly_degree, nmod_poly_get_coe...
 #pragma GCC diagnostic pop
 
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include "exceptions.hpp" // for exc::division_by_zero_error
-#include <iostream>
 
 class PolynomialRing;
 class RingElement;
@@ -47,6 +51,58 @@ class ARingGFFlintBig : public RingInterface
   
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
+
+  /**
+   * \brief A wrapper class for ElementType
+   *
+   * This keeps a pointer to the fq_nmod_ctx_struct as it's needed to
+   * implement the destructor
+   */
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element() = delete;
+    Element(Element&& other) : mContext(other.mContext)
+    {
+      // figure out how to move the value without the context
+      fq_nmod_init2(&mValue, mContext);
+      fq_nmod_set(&mValue, &other.mValue, mContext);
+    }
+    explicit Element(const ARingGFFlintBig& R) : mContext(R.mContext)
+    {
+      fq_nmod_init2(&mValue, mContext);
+    }
+    Element(const ARingGFFlintBig& R, const ElementType& value) : mContext(R.mContext)
+    {
+      R.init_set(mValue, value);
+    }
+    ~Element() { fq_nmod_clear(&mValue, mContext); }
+
+   protected:
+    const fq_nmod_ctx_struct* mContext;
+  };
+
+  class ElementArray
+  {
+    const fq_nmod_ctx_struct* mContext;
+    const int mSize;
+    std::unique_ptr<ElementType[]> mData;
+
+   public:
+    ElementArray(const ARingGFFlintBig& R, size_t size)
+        : mContext(R.mContext), mSize(size), mData(new ElementType[size])
+    {
+      for (size_t i = 0; i < mSize; i++) fq_nmod_init2(&mData[i], mContext);
+    }
+    ~ElementArray()
+    {
+      for (size_t i = 0; i < mSize; i++) fq_nmod_clear(&mData[i], mContext);
+    }
+    ElementType& operator[](size_t idx) { return mData[idx]; }
+    const ElementType& operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData.get(); }
+    const ElementType *data() const { return mData.get(); }
+  };
 
   ARingGFFlintBig(const PolynomialRing& R, const ring_elem a);
 
@@ -94,6 +150,11 @@ class ARingGFFlintBig : public RingInterface
     ElementType* b = getmemstructtype(ElementType*);
     init(*b);
     copy(*b, a);
+    size_t coeffs_size = sizeof(mp_limb_t)*b->alloc;
+    mp_ptr coeffs = reinterpret_cast<mp_ptr>(getmem_atomic(coeffs_size));
+    memcpy(coeffs,b->coeffs,coeffs_size);
+    flint_free(b->coeffs);
+    b->coeffs = coeffs;
     result.poly_val = reinterpret_cast<Nterm*>(b);
   }
 
@@ -101,6 +162,11 @@ class ARingGFFlintBig : public RingInterface
   {
     ElementType* b = reinterpret_cast<ElementType*>(a.poly_val);
     copy(result, *b);
+  }
+
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *reinterpret_cast<ElementType*>(a.poly_val);
   }
 
   bool is_unit(const ElementType& f) const { return not is_zero(f); }
@@ -160,7 +226,13 @@ class ARingGFFlintBig : public RingInterface
     return true;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
+  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
   void negate(ElementType& result, const ElementType& a) const
   {
     fq_nmod_neg(&result, &a, mContext);

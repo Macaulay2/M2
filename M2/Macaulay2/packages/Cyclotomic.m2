@@ -16,15 +16,14 @@
 --  General Public License for more details.
 --
 --  You should have received a copy of the GNU General Public License along
---  with this program; if not, write to the Free Software Foundation, Inc.,
---  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+--  with this program; if not, see <https://www.gnu.org/licenses/>.
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 newPackage(
 	"Cyclotomic",
 	Version => "1.0",
-	Date => "Februar 2012",
+	Date => "February 2012",
     	Authors => {{Name => "Thomas Kahle", 
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://thomas-kahle.de"}},
@@ -232,4 +231,17 @@ I = ideal (t-F_0^2)
 S = G[t]
 J = ideal (t^2-G_0)
 assert (findRootPower coefficientRing ring (joinCyclotomic {I,J})#0 == 12)
+///
+
+TEST ///
+-- https://github.com/Macaulay2/M2/issues/487
+KK = QQ[r]/cyclotomicPoly(3,r);
+S = KK[x_0..x_11];
+A = matrix{
+    {x_0 + r*x_1+r^2*x_2,0,0},
+    {0,r*(x_0 + r*x_1+r^2*x_2),0},
+    {0,0,r^2*(x_0 + r*x_1+r^2*x_2)}}
+B = genericMatrix(S,x_3,3,3)
+M = matrix{{A,B,0*id_(S^3)},{0*id_(S^3),r*A,r*B},{r^2*B,0*id_(S^3),r^2*A}}
+det M -- used to segfault
 ///

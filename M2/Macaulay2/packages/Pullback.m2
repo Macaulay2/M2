@@ -23,10 +23,7 @@ Reload => false
 --************************************************************************************************************
 --************************************************************************************************************
 
-export{"pullback"}
-pullback = method(Options => {Verbose => false});
-
-pullback(RingMap, RingMap) := o -> (f,g) -> (
+pullback(RingMap, RingMap) := {Verbose => false} >> o -> (f,g) -> (
     -- throughout A ---f-->> A/I <-----g----C
     --		   ^			    ^
     --		    \		  	   /
@@ -402,7 +399,7 @@ document{
   }
 
 document{
-  Key => {pullback,(pullback,RingMap,RingMap),[pullback,Verbose]},
+  Key => {(pullback,RingMap,RingMap),[(pullback,RingMap,RingMap),Verbose]},
   Headline => "Compute the pullback of a diagram of rings",
   TEX "The pullback functor in the category of rings.  Given ring maps $f : A \\to B$ and $g : C \\to B$, this tries to compute the pullback of $\\{A \\to B \\leftarrow C\\}$ in the category of rings.  It requires that $A \\to B$ is a surjective map of rings (otherwise it will give an error) and it requires that $C \\to B$ is finite (otherwise it will never terminate).  Currently, it requires that the variable names of the rings $A$ and $C$ are distinct and that the variable names of $A$ are variable names of $B$ and those variables get sent to one another.  If the Verbose option is turned on, then certain steps in the process will be specified.",
   Usage => "pullback(f,g)",
@@ -495,7 +492,11 @@ TEST ///
   vlist = first entries vars (l1#0);
   ambPull = ambient l1#0;
   ambId = ideal l1#0;
-assert( (#(minimalPrimes (ideal l1#0)) == 3) and (#vlist == 3) and (0 == (vlist#0)*(vlist#1)) and (0 == (vlist#0)*(vlist#2)) and (0 == (vlist#2)*(vlist#1)) and ( dim(l1#0) == 1) and (pdim ((Ext^2(ambPull^1/ambId, ambPull))**(l1#0)) > 0) )
+  assert( (#(minimalPrimes (ideal l1#0)) == 3) and (#vlist == 3) and (0 == (vlist#0)*(vlist#1))
+      and (0 == (vlist#0)*(vlist#2)) and (0 == (vlist#2)*(vlist#1))
+      and ( dim(l1#0) == 1)
+      --and (pdim ((Ext^2(ambPull^1/ambId, ambPull))**(l1#0)) > 0) -- this use of pdim isn't quite correct
+      )
 ///
 
 -- **TEST3**  We next construct an interesting example that should be Cohen-Macaulay (and seminormal and weakly normal, but not WN1, note we don't have a good way to check those things yet).  We also check that the singular locus with reduced structure, is regular.  (it should be a copy of A^1).  

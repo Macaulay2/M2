@@ -50,16 +50,15 @@ newPackage(
         PackageExports => {
 	    "Graphs"
 	    },
-       Keywords => { "Coding theory" },
+       Keywords => { "Coding Theory" },
        Certification => {
 	    "journal name" => "The Journal of Software for Algebra and Geometry",
-	    "journal URI" => "http://j-sag.org/",
+	    "journal URI" => "https://msp.org/jsag/",
 	    "article title" => "Coding theory package for Macaulay2",
 	    "acceptance date" => "10 August 2021",
 	    "published article URI" => "https://msp.org/jsag/2021/11-1/p11.xhtml",
 	    "published article DOI" => "10.2140/jsag.2021.11.113",
 	    "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x11-CodingTheory.m2",
-	    "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/CodingTheory.m2",
 	    "release at publication" => "9224486f3fc4b8e00e883570756ab969be351009",	    -- git commit number in hex
 	    "version at publication" => "1.0",
 	    "volume number" => "11",
@@ -411,7 +410,7 @@ linearCode(Module) := LinearCode => opts -> V -> (
     -- input: some submodule V of S.
     -- outputs: if ParityCheck => false then code defined by submodule V.
     --	      	if ParityCheck => true then code defined as the dual 
-    --                            of of the code defined by V.
+    --                            of the code defined by V.
     
     -- produce a set of generators for the specified submodule V.
     GorP := transpose generators V;
@@ -758,7 +757,7 @@ minimumWeight LinearCode := ZZ => opts -> C -> (
 	symbol IncidenceMatrix => M, -- the incidence matrix of a graph
 	symbol PolynomialSet => S,  --- a set of polynomials 
 	symbol LinearCode => linearCode(G), -- the linear code associated with the evaluation code
-	symbol Sets => S, -- the collection of subsets used for constracting a Cartesian code
+	symbol Sets => S, -- the collection of subsets used for constructing a Cartesian code
 	symbol AmbientModule => F^(#P),  --- the ambient space for an evaluation code
 	symbol cache => new CacheTable
 	}
@@ -1146,7 +1145,7 @@ hammingCode(ZZ,ZZ) := LinearCode => (q,r) -> (
     K := GF(q);
     -- setK is the set that contains all the elements of the field.
     setK := set(  {0}| apply(toList(1..q-1),i -> K_1^i));
-    -- C is the transpose of the parity check matrix of the code. Its rows are the the points of the
+    -- C is the transpose of the parity check matrix of the code. Its rows are the points of the
     -- projective space P(r-1,q).
     j := 1;
     C := matrix(apply(toList(1..q^(r-j)), i -> apply(toList(1..1),j -> 1))) | matrix apply(toList(toList setK^**(r-j)/deepSplice),i->toList i);
@@ -1791,7 +1790,7 @@ C := linearCode G;
 for i from 1 to 1 do(
     message := transpose matrix {(for n from 1 to numgens target G list(random(R)))};
     codeword := (transpose G)*message;
-    errors := sum take(random entries basis target codeword, 3);
+    errors := sum randomSubset(entries basis target codeword, 3);
     errors = transpose matrix({errors});
     received := codeword+errors;
     decoded := syndromeDecode(C, received, 8);
@@ -2312,7 +2311,7 @@ assert(dim C.LinearCode == 3)
 
 TEST ///
 -- Toric code.
-M=matrix{{1,4},{2,5},{10,6}} -- matrix of exponent vectors definind the polytope P, exponents vectors are rows
+M=matrix{{1,4},{2,5},{10,6}} -- matrix of exponent vectors defining the polytope P, exponents vectors are rows
 T=toricCode(GF 4,M) --- a toric code over F_4 with polytope P
 assert(length T.LinearCode == 9)
 assert(dim T.LinearCode == 5)
@@ -3111,7 +3110,7 @@ doc ///
 			C = hammingCode(2,3);
 			msg = matrix {{1,0,1,0}};
 			v = msg*(C.GeneratorMatrix);
-			err = matrix take(random entries basis source v, 1);
+			err = matrix shuffle(entries basis source v, 1);
 			received = (transpose (v+err));
 			syndromeDecode(C, received, 3);
 		 	C.cache#"syndromeLUT"
@@ -3595,7 +3594,7 @@ doc ///
 	    imply that it is always as fast or faster than @TT "BruteForce"@. 
 	       
 	    @TT "BruteForce"@ is the simplest and most reliable strategy, but also almost always the slowest. It is intended mainly for
-	    internal purposes such as debbugging and testing the other strategies.
+	    internal purposes such as debugging and testing the other strategies.
         Example
 	    C=hammingCode(2,3);
 	    minimumWeight(C, Strat=>"BruteForce")

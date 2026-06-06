@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "prismjs": "^1.29.0",
+    "prismjs-bibtex": "^2.1.0"
+  },
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^6.0.1"
+  }
+}

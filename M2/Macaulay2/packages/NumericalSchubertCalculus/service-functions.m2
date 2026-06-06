@@ -87,7 +87,7 @@ LRnumber (List,ZZ,ZZ) := o -> (conds,k,n) -> (
 
 ensurePartitions= method()
 ensurePartitions(List,ZZ,ZZ) :=  (conds'flags, k,n) ->(
-    conds := conds'flags/first; -- list of schubert conditions
+    conds := conds'flags/first; -- list of Schubert conditions
     flags := conds'flags/last; -- list of flags
     --- check if these conditions impose a 0-dimensional Schubert Problem
     checkSchubertProblem(conds,k,n);
@@ -570,7 +570,7 @@ notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
 
 skewSchubertVariety = method(TypicalValue=>Matrix, Options=>{Inputs=>53})
 skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
-     -- k and n are the integers defining the Grassmanian G(k,n)
+     -- k and n are the integers defining the Grassmannian G(k,n)
      -- l and m are partitions of n
      (k,n):=kn;
      l = verifyLength(l, k);
@@ -689,7 +689,7 @@ checkSimpleSchubertProblem(List,ZZ,ZZ) := (conds,k,n) ->(
 
 verifyInput = method()
 verifyInput(List,ZZ,ZZ) := (conds'flags, k,n) ->(
-    conds := conds'flags/first; -- list of schubert conditions
+    conds := conds'flags/first; -- list of Schubert conditions
     flags := conds'flags/last; -- list of flags
     -- check if these conditions impose a 0-dimensional Schubert Problem
     checkSchubertProblem(conds,k,n);

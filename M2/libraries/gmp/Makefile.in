@@ -1,7 +1,7 @@
 VPATH = @srcdir@
-RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/gmp
-VERSION = 6.1.0
+VERSION = 6.3.0
+SHA256SUM = ac28211a7cfb609bae2e2c8d6058d66c8fe96434f740cf6fe2e47b000d1c20cb
 TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 LICENSEFILES = README COPYING* doc/gmp.info*

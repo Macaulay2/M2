@@ -15,7 +15,7 @@ newPackage("NCAlgebra",
      Keywords => {"Noncommutative Algebra", "Interfaces"},
      AuxiliaryFiles => true,
      CacheExampleOutput => true,
-     PackageExports =>{"IntegralClosure"},
+     PackageExports =>{"Complexes", "IntegralClosure"},
      OptionalComponentsPresent => bergmanPresent := run "type bergman >/dev/null 2>&1" === 0
      )
 
@@ -3381,7 +3381,7 @@ NCMatrix _ ZZ := (M,d) -> (
    matrix multTable
 )
 
-Hom (ZZ,NCMatrix,NCMatrix) := (d,M,N) -> (
+Hom (ZZ,NCMatrix,NCMatrix) := opts -> (d,M,N) -> (
    -- This method uses Boehm's Algorithm 6.5.1 from "Computer Algebra: Lecture Notes" 
    -- http://www.mathematik.uni-kl.de/~boehm/lehre/1213_CA/ca.pdf
    --

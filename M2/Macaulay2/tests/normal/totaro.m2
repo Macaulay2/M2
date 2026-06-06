@@ -220,11 +220,11 @@ liftmap=map(R0,R1,{e_1,e_2,e_3,e_4,e_5});
 -- so we make it an empty sequence () rather than a matrix. Having this
 -- sequence Gmat saves time in our reduction procedures.
 Gmat=();
-  i=B; prev=grob1; len=#grob1; next=(); j=0;
+  i=B; prev=grob1; len=#grob1; nxt=(); j=0;
   while i>=1 do (
-    next=();
-    j=0; while j<len do (next=append(next,(prev#j)%(two#i)); j=j+1);
-    prev=next; Gmat=prepend(matrix {toList prev},Gmat); i=i-1);
+    nxt=();
+    j=0; while j<len do (nxt=append(nxt,(prev#j)%(two#i)); j=j+1);
+    prev=nxt; Gmat=prepend(matrix {toList prev},Gmat); i=i-1);
   Gmat=prepend((),Gmat);
 
 gmat=redmap(Gmat#1);

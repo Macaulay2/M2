@@ -21,17 +21,18 @@ RawMonomial == RawMonomial := (x,y) -> x === y
 RawMonomial : RawMonomial := (x,y) -> rawColon(x,y)
 ZZ == RawMonomial := (i,x) -> x == i
 
+standardForm = method()
 standardForm RawMonomial := m -> new HashTable from toList rawSparseListFormMonomial m
 expression RawMonomial := x -> (
      v := rawSparseListFormMonomial x;
      if #v === 0 then expression 1
      else new Product from apply(v, (i,e) -> new Power from {vars i, e})
      )
+exponents = method()
 exponents(ZZ,RawMonomial) := (nvars,x) -> (
      z := new MutableList from (nvars : 0);
      scan(rawSparseListFormMonomial x, (i,e) -> z#i = z#i + e);
      toList z)
-net RawMonomial := x -> net expression x
 degree RawMonomial := x -> error "degree of raw monomial not defined (no monoid)"
 gcd(RawMonomial,RawMonomial) := (x,y) -> rawGCD(x,y)
 
@@ -52,6 +53,7 @@ isSmall := i -> class i === ZZ and i < 2^15 and i > -2^15
 isCount := i -> class i === ZZ and i >= 0 and i < 2^15
 isListOfIntegers = x -> instance(x, List) and all(x,i -> class i === ZZ)
 isListOfListsOfIntegers = x -> instance(x, List) and all(x,isListOfIntegers)
+listZZ = v -> if isListOfIntegers(v = toList splice v) then v else error "expected a list of integers"
 checkCount := i -> if not isCount i then error "expected a small positive integer"
 
 fixup1 := method(Dispatch => Thing)			    -- stage 1, everything except Tiny and Small
@@ -185,7 +187,7 @@ processWeights = (nvars,weights) -> (
 	       then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt))));
      weights);
 
-makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
+makeMonomialOrdering = lock((monsize,inverses,nvars,degs,weights,ordering) -> (
      -- 'monsize' is the old MonomialSize option, usually 8 or 16, or 'null' if unset
      -- 'inverses' is true or false, and tells whether the old "Inverses => true" option was used.
      -- 'nvars' tells the total number of variables.  Any extra variables will be ordered with GRevLex or GroupLex.
@@ -212,9 +214,24 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      varcount = 0;
      t := toList nonnull fixup2 t';
      logmo := new FunctionApplication from {rawMonomialOrdering,t};
-     (t,t',value logmo, logmo))
+     (t,t',value logmo, logmo)))
 
 RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering
+
+-- used for debugging mgb interface, moved from ofcm.m2
+monomialOrderMatrix = method()
+monomialOrderMatrix RawMonomialOrdering := mo -> (
+    nvars := rawNumberOfVariables mo;
+    mat := rawMonomialOrderingToMatrix mo;
+    -- the last entry of 'mat' determines whether the tie breaker is Lex or RevLex.
+    -- there may be no other elements of mat, so the next line needs to handle that case.
+    ordermat := if #mat === 3 then map(ZZ^0, ZZ^nvars, 0) else matrix pack(drop(mat, -3), nvars);
+    (ordermat,
+	if mat#-3 ==  0 then Lex else RevLex,
+	if mat#-2 == -1 then Position => Down else
+	if mat#-2 ==  1 then Position => Up   else Position => mat#-2,
+	"ComponentBefore" => mat#-1)
+    )
 
 -- monoids
 
@@ -238,6 +255,7 @@ raw Number := x -> x_((class x).RawRing)
 raw InexactNumber := x -> x_((ring x).RawRing)
 Number _ RawRing := (n,R) -> rawFromNumber(R,n)
 RawRingElement _ RawRing := (x,R) -> rawPromote(R,x)
+raw Constant := raw @@ numeric
 
 RawRingElement == RawRingElement := (x,y) -> x === y
 
@@ -264,7 +282,8 @@ compvals := hashTable { 0 => symbol == , 1 => symbol > , -1 => symbol < }
 comparison := n -> compvals#n
 RawRingElement ? RawRingElement := (f,g) -> comparison rawCompare(f,g)
 
-quotientRemainder(RawRingElement,RawRingElement) := rawDivMod
+quotientRemainder(RawRingElement,RawRingElement) :=
+quotientRemainder(ZZ, ZZ) := rawDivMod
 
 -- monomial ideals
 
@@ -299,19 +318,29 @@ RawFreeModule ** RawFreeModule := rawTensor
 
 -- matrices
 
-setAttribute(ReverseDictionary,RawMatrix,symbol RawMatrix)
+setAttribute(RawMatrix,ReverseDictionary,symbol RawMatrix)
 RawMatrix.synonym = "raw matrix"
 
 setAttribute(RawMutableMatrix,ReverseDictionary,symbol RawMutableMatrix)
 RawMutableMatrix.synonym = "raw mutable matrix"
 
+-- helper functions for negative indices
+adjustIndex = (i, n) -> if i < 0 then n + i else i
+adjustIndices = (I, n) -> apply(I, i -> adjustIndex(i, n))
+
 rawExtract = method()
 
 rawExtract(RawMatrix,ZZ,ZZ) := 
-rawExtract(RawMutableMatrix,ZZ,ZZ) := (m,r,c) -> rawMatrixEntry(m,r,c)
+rawExtract(RawMutableMatrix,ZZ,ZZ) := (m,r,c) -> (
+    r = adjustIndex(r, rawNumberOfRows m);
+    c = adjustIndex(c, rawNumberOfColumns m);
+    rawMatrixEntry(m, r, c))
 
 rawExtract(RawMatrix,Sequence,Sequence) := 
-rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,spliceInside r,spliceInside c)
+rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> (
+    r = adjustIndices(spliceInside r, rawNumberOfRows m);
+    c = adjustIndices(spliceInside c, rawNumberOfColumns m);
+    rawSubmatrix(m,spliceInside r,spliceInside c))
 
 RawMatrix _ Sequence := 
 RawMutableMatrix _ Sequence := (m,rc) -> ((r,c) -> rawExtract(m,r,c)) rc
@@ -325,7 +354,8 @@ target RawMatrix := o -> rawTarget o
 source RawMatrix := o -> rawSource o
 transposeSequence := t -> pack(#t, mingle t)
 isHomogeneous RawMatrix := rawIsHomogeneous
-entries RawMutableMatrix := entries RawMatrix := m -> table(rawNumberOfRows m,rawNumberOfColumns m,(i,j)->rawMatrixEntry(m,i,j))
+entries RawMutableMatrix :=
+entries RawMatrix := rawMatrixEntries
 
 ZZ * RawMatrix := (n,f) -> (
      R := rawRing rawTarget f;
@@ -346,7 +376,13 @@ new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(r
 new RawMatrix from RawMutableMatrix := rawMatrix
 new RawMutableMatrix from RawMatrix := rawMutableMatrix
 
-RawMutableMatrix _ Sequence = (M,ij,val) -> ((i,j) -> (rawSetMatrixEntry(M,i,j,val); val)) ij
+RawMutableMatrix _ Sequence = (M,ij,val) -> ((i,j) -> (
+	rawSetMatrixEntry(
+	    M,
+	    adjustIndex(i, rawNumberOfRows M),
+	    adjustIndex(j, rawNumberOfColumns M),
+	    val);
+	val)) ij
 
 degree RawMatrix := rawMultiDegree
 degrees RawMatrix :=f -> {rawMultiDegree rawTarget f,rawMultiDegree rawSource f}

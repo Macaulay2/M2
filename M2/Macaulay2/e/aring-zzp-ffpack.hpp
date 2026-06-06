@@ -13,6 +13,7 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #define bool_constant givaro_bool_constant
 #include <fflas-ffpack/ffpack/ffpack.h>
 #undef bool_constant
@@ -26,7 +27,7 @@ namespace M2 {
    @brief wrapper for the FFPACK::ModularBalanced<double> field implementation
 */
 
-class ARingZZpFFPACK : public RingInterface
+class ARingZZpFFPACK : public SimpleARing<ARingZZpFFPACK>
 {
  public:
   /// @jakob extract Signed_Trait from givaro.  Or use c++11.
@@ -123,6 +124,11 @@ class ARingZZpFFPACK : public RingInterface
     result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_int();
+  }
+
   /** @} */
 
   /** @name operators
@@ -139,7 +145,7 @@ class ARingZZpFFPACK : public RingInterface
   void set(ElementType &result, ElementType a) const { result = a; }
   void init(ElementType &result) const;
 
-  void clear(ElementType &result) const;
+  static void clear(ElementType &result) { (void) result; };
 
   void set_zero(ElementType &result) const;
 
@@ -151,10 +157,21 @@ class ARingZZpFFPACK : public RingInterface
 
   bool set_from_mpq(ElementType &result, mpq_srcptr a) const;
 
-  bool set_from_BigReal(ElementType &result, gmp_RR a) const { return false; }
+  bool set_from_BigReal(ElementType &result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
   ElementType computeGenerator() const;
 
-  void set_var(ElementType &result, int v) const { result = getGenerator(); }
+  void set_var(ElementType &result, int v) const
+  {
+    (void) v;
+    result = getGenerator();
+  }
+
   /** @} */
 
   /** @name arithmetic

@@ -29,6 +29,26 @@ void dintarray(M2_arrayint a)
   emit(o.str());
 }
 
+template <typename T>
+void dvector(gc_vector<T>& a)
+{
+  buffer o;
+  o << '[';
+  for (auto x : a) o << x << ' ';
+  o << ']';
+  emit(o.str());
+}
+
+template <typename T>
+void dvector(std::vector<T>& a)
+{
+  buffer o;
+  o << '[';
+  for (auto x : a) o << x << ' ';
+  o << ']';
+  emit(o.str());
+}
+
 void dmatrix(const Matrix *M)
 {
   buffer o;
@@ -75,7 +95,7 @@ void dvec(const Ring *R, const vec v)
 void dgbvec(const GBRing *R, gbvector *v)
 {
   buffer o;
-  const FreeModule *F = 0;
+  const FreeModule *F = nullptr;
   R->gbvector_text_out(o, F, v);
   emit(o.str());
 }
@@ -125,7 +145,7 @@ void dstash()
 void dRRR(gmp_RR a)
 {
   buffer o;
-  o << M2_tocharstar((*gmp_tostringRRpointer)(a)) << newline;
+  o << a << newline;
   emit(o.str());
 }
 

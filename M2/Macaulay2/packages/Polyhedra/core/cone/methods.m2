@@ -11,11 +11,10 @@ facesAsCones(ZZ, Cone) := (d, C) -> (
 )
 
 
+-- PURPOSE : Checks if the input is smooth
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
-isSmooth Cone := C -> (
-   getProperty(C, smooth)
-)
+isSmooth Cone := {} >> o -> C -> getProperty(C, smooth)
 
 
 -- PURPOSE : Tests if a Cone is pointed
@@ -25,14 +24,14 @@ isPointed Cone := C -> (
    getProperty(C, pointed)
 )
 
--- hilbertBasis = method()
-hilbertBasis Cone := List => o -> (C -> (
+
+hilbertBasis = method(Options => true)
+hilbertBasis Cone := List => {} >> o -> (C -> (
       if isPointed C then getProperty(C, computedHilbertBasis)
       else error("Hilbert basis not implemented for non-pointed cones yet.")
    )
 )
 
-     
 
 --   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
 --     	     	       Cone 'C'
@@ -65,14 +64,13 @@ minFace (Matrix,Cone) := (v,C) -> (
 --  OUTPUT : 'p',  a point given as a matrix 
 interiorVector = method(TypicalValue => Matrix)
 interiorVector Cone := C -> (
-     if dim C == 0 then map(ZZ^(ambDim C),ZZ^1,0)
+     Rm := rays C;
+     if numColumns Rm == 0 then map(ZZ^(ambDim C),ZZ^1,0)
      else (
-	  Rm := rays C;
 	  ones := matrix toList(numColumns Rm:{1});
 	  -- Take the sum of the rays
 	  iv := Rm * ones;
 	  transpose matrix apply(entries transpose iv, w -> (g := abs gcd w; apply(w, e -> e//g)))));
-
 
 --   INPUT : '(p,C)',  where 'p' is a point given by a matrix and 'C' is a Cone
 --  OUTPUT : 'true' or 'false'

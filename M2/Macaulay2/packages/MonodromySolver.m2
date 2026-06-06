@@ -1,10 +1,10 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.15", 
-    	Date => "May 2021",
+    	Version => "1.16", 
+    	Date => "May 2023",
     	Authors => {
-	     {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},
+	     {Name => "Timothy Duff", Email => "timduff@uw.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
 	     {Name => "Anders Nedergaard Jensen", Email => "jensen@math.au.dk"},
 	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
@@ -16,7 +16,7 @@ newPackage(
 	Keywords => {"Numerical Algebraic Geometry"},
 	PackageImports => {"gfanInterface","NAGtypes"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
-	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
+	AuxiliaryFiles => true,
   	DebuggingMode => false,		
   	--DebuggingMode => true,		 -- set to true only during development
   	CacheExampleOutput => false
@@ -27,8 +27,7 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 
-export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "SpecializedSystem", "Potential12",
-     "gamma1", "gamma2", "Correspondence21", "Family", "Potential21", "Correspondence12", "homotopyGraph", "MonodromySolverOptions", "monodromyGroup"}
+export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "SpecializedSystem", "Potential12", "gamma1", "gamma2", "Correspondence21", "Family", "Potential21", "Correspondence12", "homotopyGraph", "MonodromySolverOptions", "monodromyGroup"}
 
 debug NAGtypes
 debug NumericalAlgebraicGeometry

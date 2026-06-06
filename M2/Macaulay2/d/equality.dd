@@ -8,7 +8,7 @@ header "// required for equality checks
 #include <interface/monomial-ideal.h>       // for IM2_MonomialIdeal_is_equal
 #include <interface/ringelement.h>          // for IM2_RingElement_is_equal
 #include <interface/ringmap.h>              // for IM2_RingMap_is_equal
-#include <monomial.hpp>                     // for Monomial"; -- TODO: remove this one
+#include <monomial.hpp>                     // for EngineMonomial"; -- TODO: remove this one
 
 equal(lhs:Expr,rhs:Expr):Expr;
 
@@ -16,8 +16,8 @@ equal(x:HashTable,y:HashTable):Expr := (
      if x == y then return True;
      if x.hash != y.hash then return False;
      if x.Class != y.Class || x.parent != y.parent then return False;
-     if x.hash == 0 && x.Class == cacheTableClass then return True; -- cache tables have hash code 0
-     if x.Mutable || y.Mutable then return False;
+     if x.hash == hash_t(0) && x.Class == cacheTableClass then return True; -- cache tables have hash code 0
+     if x.Mutable || y.Mutable then return False;	-- so we don't need to lockRead() after this
      if x.numEntries != y.numEntries || length(x.table) != length(y.table) then return False;
      foreach a at i in x.table do (
 	  p := a;
@@ -121,11 +121,18 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  -- other cases needed soon
 	  else False)
-     is c:CodeClosure do (
+     is c:PseudocodeClosure do (
 	  when rhs
-	  is d:CodeClosure do (
+	  is d:PseudocodeClosure do (
 	       if c.frame == d.frame
 	       && c.code == d.code
+	       then True else False)
+	  else False
+	  )
+     is c:Pseudocode do (
+	  when rhs
+	  is d:Pseudocode do (
+	       if c.code == d.code
 	       then True else False)
 	  else False
 	  )
@@ -147,6 +154,12 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       if strictequality(x.v,y.v) then True else False
 	       )
 	  else False)
+	 is x:CCicell do (
+		when rhs
+		is y:CCicell do (
+			if strictequality(x.v.re,y.v.re) && strictequality(x.v.im,y.v.im) then True else False
+	 )
+	 else False)
      is x:SymbolClosure do (
 	  when rhs 
 	  is y:SymbolClosure do (
@@ -239,11 +252,27 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      is Database do False
-     is pythonObjectCell do False
+     is x:pythonObjectCell do (
+	 when rhs
+	 is y:pythonObjectCell do (
+	     if Ccode(bool, x.v, " == ", y.v) then True else False)
+	 else False)
      is xmlNodeCell do False				    -- unimplemented
      is xmlAttrCell do False				    -- unimplemented
      is TaskCell do False
      is fileOutputSyncState do False
+     is x:pointerCell do
+	 when rhs
+	 is y:pointerCell do if x.v == y.v then True else False
+	 else False
+     is x:atomicIntCell do (
+	 when rhs
+	 is y:atomicIntCell do if x == y then True else False
+	 else False)
+     is x:mutexCell do (
+	 when rhs
+	 is y:mutexCell do if x == y then True else False
+	 else False)
      );
 
 -- Local Variables:

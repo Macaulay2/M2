@@ -14,7 +14,7 @@ statePolytope Ideal := I -> (
    -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
    -- respect to this grading
    homogeneityCheck := I -> (
-      -- Generate the matrix 'M' that spans the space of the differeneces of the 
+      -- Generate the matrix 'M' that spans the space of the differences of the 
       -- exponent vectors of the generators of 'I'
       L := flatten entries gens I;
       lt := apply(L, leadTerm);
@@ -47,7 +47,7 @@ statePolytope Ideal := I -> (
       -- map 'I' into 'S' and compute Groebner basis and leadterm
       I1 := f I;
       g := gb I1;
-      lt := leadTerm I1;
+      lt := generators leadTerm I1;
       gbRemove I1;
       (g,lt)
    );
@@ -65,7 +65,7 @@ statePolytope Ideal := I -> (
    if not noError then error("The ideal must be homogeneous w.r.t. some strictly positive grading");
    -- Compute a first Groebner basis to start with
    g := gb I;
-   lt := leadTerm I;
+   lt := generators leadTerm I;
    -- Compute the Groebner cone
    C := gCone(g,lt);
    gbRemove I;

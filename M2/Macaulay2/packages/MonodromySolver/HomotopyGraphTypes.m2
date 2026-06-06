@@ -51,6 +51,9 @@ addNode (HomotopyGraph, Matrix, Matrix) := (HG, p0, x0) -> addNode(point p0, poi
 numSols = method()
 numSols HomotopyNode := N -> length N.PartialSols
 
+getParametricSegmentHomotopy = method()
+getParametricSegmentHomotopy HomotopyGraph := HG -> if HG.?ParameterHomotopy then HG.ParameterHomotopy else HG.ParameterHomotopy = parametricSegmentHomotopy HG.System
+
 addEdge = method(Options=>{"random gamma"=>true})
 addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (HG, n1, n2) -> (
     E := new HomotopyEdge from {
@@ -76,7 +79,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (HG, n1, n2) -> (
         p2 = HG.Randomizer p2;
         );
     if HG.SLP then (
-	seg := parametricSegmentHomotopy HG.System;
+	seg := getParametricSegmentHomotopy HG;
         edgeHomotopy := if HG.LinearSegment then seg else (
             -- create random arc between p1 and p2 in the parameter space
 	    gamma := E.gamma1;

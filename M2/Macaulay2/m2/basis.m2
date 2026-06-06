@@ -28,9 +28,10 @@ inf := t -> if t === infinity then -1 else t
 -----------------------------------------------------------------------------
 
 -- the output of this is used in BasisContext
-getVarlist = (R, varlist) -> (
-    if varlist === null then toList(0 .. numgens R - 1)
-    else if instance(varlist, List) then apply(varlist, v ->
+getVarlist = (R, varlist) -> toList(
+    numvars := R.numallvars ?? numgens R;
+    if varlist === null then toList(0 .. numvars - 1)
+    else if instance(varlist, VisibleList) then apply(varlist, v ->
         -- TODO: what if R = ZZ?
         if instance(v, R)  then index v else
         if instance(v, ZZ) then v
@@ -64,11 +65,13 @@ findHeftandVars := (R, varlist, ndegs) -> (
 
 -- TODO: can this be done via a tensor or push forward?
 -- c.f. https://github.com/Macaulay2/M2/issues/1522
+-- TODO: think about how this compares with part
 liftBasis = (M, phi, B, offset) -> (
     -- lifts a basis B of M via a ring map phi
     (R, S) := (phi.target, phi.source);
     (n, m) := degreeLength \ (R, S);
     offset  = if offset =!= null then splice offset else toList( n:0 );
+    -- TODO: audit this line. Why doesn't map(M, , B, Degree => offset) work?
     if R === S then return map(M, , B, Degree => offset);
     r := if n === 0 then rank source B else (
         lifter := phi.cache.DegreeLift;
@@ -78,6 +81,33 @@ liftBasis = (M, phi, B, offset) -> (
             apply(pack(n, degrees source B),
                 deg -> try - lifter(deg - offset) else zeroDegree)));
     map(M, S ^ r, phi, B, Degree => offset))
+
+-- TODO: is there already code to do this? if not then
+-- implement related functions and move to modules.m2?
+-- Non-torsion components of a ZZ-module
+freeComponents = N -> select(numgens N, i -> QQ ** N_{i} != 0)
+-- Torsion components of a ZZ-module
+torsionComponents = N -> select(numgens N, i -> QQ ** N_{i} == 0)
+-- Map to a ring where degree components are permuted so that
+-- the free components come before the torsion components.
+permuteDegreeGroup = R -> (
+    G := degreeGroup R;
+    F := freeComponents G;
+    P := F | torsionComponents G;
+    H := subquotient(
+	if G.?generators then G.generators^P,
+	if G.?relations  then G.relations^P);
+    f := deg -> if deg =!= null then deg_F;
+    p := deg -> if deg =!= null then deg_P;
+    S := newRing(R,
+	Heft        => p heft R,
+	Degrees     => p \ degrees R,
+	DegreeGroup => H);
+    -- FIXME: why is inverse phi not automatically homogeneous?
+    phi := map(S, R, generators S, DegreeMap => p);
+    -- TODO: this shouldn't be necessary, see https://github.com/Macaulay2/M2/issues/2580
+    psi := map(R, S, generators R, DegreeMap => deg -> deg_(inversePermutation P)); -- TODO: F^-1 for inversePermutation F?
+    (S, phi, psi, p, f))
 
 -----------------------------------------------------------------------------
 -- basis
@@ -99,19 +129,21 @@ basis = method(TypicalValue => Matrix,
 basis Module := opts -> M -> basis(-infinity, infinity, M, opts)
 basis Ideal  := opts -> I -> basis(module I, opts)
 basis Ring   := opts -> R -> basis(module R, opts)
--- TODO: add? basis Matrix := opts -> m -> basis(-infinity, infinity, m, opts)
+basis Matrix := opts -> m -> basis(-infinity, infinity, m, opts)
 
 -----------------------------------------------------------------------------
 
-basis(List,                           Module) := opts -> (deg,    M) -> basis( deg,   deg,  M, opts)
-basis(ZZ,                             Module) := opts -> (deg,    M) -> basis({deg}, {deg}, M, opts)
+basis(List,                           Module) := opts -> (deg,    M) -> basisHelper(opts,  deg,   deg,  M)
+basis(ZZ,                             Module) := opts -> (deg,    M) -> basisHelper(opts, {deg}, {deg}, M)
 basis(InfiniteNumber, InfiniteNumber, Module) :=
-basis(InfiniteNumber, List,           Module) := opts -> (lo, hi, M) -> basisHelper(opts, lo, hi, M)
-basis(InfiniteNumber, ZZ,             Module) := opts -> (lo, hi, M) -> basis( lo,   {hi},  M, opts)
-basis(List,           InfiniteNumber, Module) :=
-basis(List,           List,           Module) := opts -> (lo, hi, M) -> basisHelper(opts, lo, hi, M)
-basis(ZZ,             InfiniteNumber, Module) := opts -> (lo, hi, M) -> basis({lo},   hi,   M, opts)
-basis(ZZ,             ZZ,             Module) := opts -> (lo, hi, M) -> basis({lo},  {hi},  M, opts)
+basis(InfiniteNumber, List,           Module) := opts -> (lo, hi, M) -> basisHelper(opts,  lo,    hi,   M)
+basis(InfiniteNumber, ZZ,             Module) :=
+basis(List,           ZZ,             Module) := opts -> (lo, hi, M) -> basisHelper(opts,  lo,   {hi},  M)
+basis(List,           List,           Module) :=
+basis(List,           InfiniteNumber, Module) := opts -> (lo, hi, M) -> basisHelper(opts,  lo,    hi,   M)
+basis(ZZ,             InfiniteNumber, Module) :=
+basis(ZZ,             List,           Module) := opts -> (lo, hi, M) -> basisHelper(opts, {lo},   hi,   M)
+basis(ZZ,             ZZ,             Module) := opts -> (lo, hi, M) -> basisHelper(opts, {lo},  {hi},  M)
 
 -----------------------------------------------------------------------------
 
@@ -143,6 +175,18 @@ basis(ZZ,             ZZ,             Ring) := opts -> (lo, hi, R) -> basis(lo, 
 
 -----------------------------------------------------------------------------
 
+inducedBasisMap = (G, F, f) -> (
+    -- Assumes G = image basis(deg, target f) and F = image basis(deg, source f)
+    -- this helper routine is useful for computing basis of a pair of composable
+    -- matrices or a chain complex, when target f is the source of a matrix which
+    -- we previously computed basis for.
+    psi := f * F.cache.Monomials; -- equivalent to f * inducedMap(source f, , gens F)
+    phi := last coefficients(ambient psi, Monomials => generators G);
+    map(G, F, phi, Degree => degree f))
+    -- TODO: benchmark against inducedTruncationMap in Truncations.m2
+    -- f' := f * inducedMap(source f, F)       * inducedMap(F, source generators F, generators F);
+    -- map(G, F, inducedMap(G, source f', f') // inducedMap(G, source generators G, generators G), Degree => degree f))
+
 basis(List,                           Matrix) :=
 basis(ZZ,                             Matrix) := opts -> (deg, M) -> basis(deg, deg, M, opts)
 basis(InfiniteNumber, InfiniteNumber, Matrix) :=
@@ -150,13 +194,50 @@ basis(InfiniteNumber, List,           Matrix) :=
 basis(InfiniteNumber, ZZ,             Matrix) :=
 basis(List,           InfiniteNumber, Matrix) :=
 basis(List,           List,           Matrix) :=
+basis(List,           ZZ,             Matrix) :=
 basis(ZZ,             InfiniteNumber, Matrix) :=
-basis(ZZ,             ZZ,             Matrix) := opts -> (lo, hi, M) -> (
-    BF := basis(lo, hi, target M, opts);
-    BG := basis(lo, hi, source M, opts);
-    -- TODO: is this general enough?
-    BM := last coefficients(matrix (M * BG), Monomials => BF);
-    map(image BF, image BG, BM))
+basis(ZZ,             List,           Matrix) :=
+basis(ZZ,             ZZ,             Matrix) := opts -> (lo, hi, M) -> inducedBasisMap(
+    image basis(lo, hi, target M, opts), image basis(lo, hi, source M, opts), M)
+
+-----------------------------------------------------------------------------
+
+-- Note: f needs to be homogeneous, otherwise returns nonsense
+basis           RingMap  := Matrix => opts ->        f  -> basis(({},   {}),   f, opts)
+basis(ZZ,       RingMap) :=
+basis(List,     RingMap) := Matrix => opts -> (degs, f) -> basis((degs, degs), f, opts)
+basis(Sequence, RingMap) := Matrix => opts -> (degs, f) -> (
+    -- if not isHomogeneous f then error "expected a graded ring map (try providing a DegreeMap)";
+    if #degs != 2          then error "expected a sequence (tardeg, srcdeg) of degrees for target and source rings";
+    (T, S) := (target f, source f);
+    (tardeg, srcdeg) := degs;
+    if tardeg === null then tardeg = f.cache.DegreeMap  srcdeg;
+    if srcdeg === null then srcdeg = f.cache.DegreeLift tardeg;
+    targens := basis(tardeg, tardeg, T);
+    srcgens := basis(srcdeg, srcdeg, S);
+    -- TODO: should matrix RingMap return this map instead?
+    -- mon := map(module T, image matrix(S, { S.FlatMonoid_* }), f, matrix f)
+    mat := last coefficients(f cover srcgens, Monomials => targens);
+    map(image targens, image srcgens, f, mat))
+
+-----------------------------------------------------------------------------
+
+-- Note: f needs to be homogeneous, otherwise returns nonsense
+basis(ZZ,       RingMap) :=
+basis(List,     RingMap) := Matrix => opts -> (degs, f) -> basis((degs, degs), f, opts)
+basis(Sequence, RingMap) := Matrix => opts -> (degs, f) -> (
+    -- if not isHomogeneous f then error "expected a graded ring map (try providing a DegreeMap)";
+    if #degs != 2          then error "expected a sequence (tardeg, srcdeg) of degrees for target and source rings";
+    (T, S) := (target f, source f);
+    (tardeg, srcdeg) := degs;
+    if tardeg === null then tardeg = f.cache.DegreeMap  srcdeg;
+    if srcdeg === null then srcdeg = f.cache.DegreeLift tardeg;
+    targens := basis(tardeg, T);
+    srcgens := basis(srcdeg, S);
+    -- TODO: should matrix RingMap return this map instead?
+    -- mon := map(module T, image matrix(S, { S.FlatMonoid_* }), f, matrix f)
+    mat := last coefficients(f cover srcgens, Monomials => targens);
+    map(image targens, image srcgens, f, mat))
 
 -----------------------------------------------------------------------------
 
@@ -233,9 +314,41 @@ basisDefaultStrategy = (opts, lo, hi, M) -> (
 -- Note: for now, the strategies must return a RawMatrix
 algorithms#(basis, List, List, Module) = new MutableHashTable from {
     Default => basisDefaultStrategy,
+    -- For rings whose degree group has torsion
+    -- TODO: should be handled in the engine
+    Torsion => (opts, lo, hi, M) -> (
+	G := degreeGroup(R := ring M);
+	if G == 0 or isFreeModule G then return null;
+	(S, phi, psi, p, f) := permuteDegreeGroup R;
+	B := psi map_S basisDefaultStrategy(opts, f lo, f hi, phi M);
+	L := positions(degrees source B, deg -> lo <= deg and deg <= hi);
+	raw submatrix(B, , L)),
     -- TODO: add separate strategies for skew commutative rings, vector spaces, and ZZ-modules
     }
 
 -- Installing hooks for resolution
-scan({Default}, strategy ->
+scan({Default, Torsion}, strategy ->
     addHook(key := (basis, List, List, Module), algorithms#key#strategy, Strategy => strategy))
+
+-----------------------------------------------------------------------------
+-- part
+-----------------------------------------------------------------------------
+-- returns the graded component of an object in a specific degree
+
+-- gives a map back to the coefficient ring
+residueMap = (cacheValue symbol residueMap) (R -> map(A := coefficientRing R, R, DegreeMap => d -> take(d, - degreeLength A)))
+
+-- TODO: document these
+part(ZZ,   Ring) :=
+part(List, Ring) := Module => (deg, R) -> (residueMap R) source basis(deg, deg, module R)
+
+part(ZZ, Ideal)  :=
+part(ZZ, Module) :=
+part(List, Ideal)  :=
+part(List, Module) := Module => (deg, M) -> (residueMap ring M) source basis(deg, deg, M)
+
+part(ZZ,   Matrix) :=
+part(List, Matrix) := Matrix => (deg, f) -> (residueMap ring f) cover  basis(deg, f)
+
+-- TODO: currently doesn't work unless source f === target f
+part(Sequence, RingMap) := Matrix => (degs, f) -> (residueMap target f) cover basis(degs, f)

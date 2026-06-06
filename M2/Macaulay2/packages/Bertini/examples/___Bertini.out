@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -226670168
+-- -*- M2-comint -*- hash: 3052769501440199080
 
 i1 : needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
 

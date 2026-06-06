@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "exceptions.hpp"
+#include "monoid.hpp"
 #include "monomial.hpp"
 #include "relem.hpp"
 
@@ -39,20 +40,17 @@ ring_elem M2FreeAlgebraOrQuotient::fromModuleMonom(const ModuleMonom& m) const
   return fromPoly(result);
 }
 
-
-
 M2FreeAlgebra* M2FreeAlgebra::create(const Ring* K,
                                      const std::vector<std::string>& names,
                                      const PolynomialRing* degreeRing,
                                      const std::vector<int>& degrees,
                                      const std::vector<int>& wtvecs,
-                                     const std::vector<int>& heftVector
-                                     )
+                                     const std::vector<int>& heftVector)
 {
   assert(K != nullptr);
   auto F = std::unique_ptr<FreeAlgebra>(FreeAlgebra::create(K, names, degreeRing, degrees, wtvecs, heftVector));
   M2FreeAlgebra* result = new M2FreeAlgebra(std::move(F));
-  result->initialize_ring(K->characteristic(), degreeRing, nullptr);
+  result->initialize_ring(K->characteristic(), degreeRing, heftVector);
   result->zeroV = result->from_long(0);
   result->oneV = result->from_long(1);
   result->minus_oneV = result->from_long(-1);
@@ -79,6 +77,7 @@ void M2FreeAlgebra::text_out(buffer &o) const
 
 unsigned int M2FreeAlgebra::computeHashValue(const ring_elem a) const
 {
+  (void) a;
   return 0; // TODO: change this to a more reasonable hash code.
 }
 
@@ -204,7 +203,7 @@ ring_elem M2FreeAlgebra::copy(const ring_elem f) const
 
 void M2FreeAlgebra::remove(ring_elem &f) const
 {
-  // do nothing
+  (void) f;
 }
 
 ring_elem M2FreeAlgebra::negate(const ring_elem f1) const
@@ -279,6 +278,10 @@ ring_elem M2FreeAlgebra::divide(const ring_elem f, const ring_elem g) const
 void M2FreeAlgebra::syzygy(const ring_elem a, const ring_elem b,
                       ring_elem &x, ring_elem &y) const
 {
+  (void) a;
+  (void) b;
+  (void) x;
+  (void) y;
   throw exc::internal_error("M2FreeAlgebra::syzygy is not yet written!");
 
   // TODO: In the commutative case, this function is to find x and y (as simple as possible)
@@ -310,17 +313,13 @@ void M2FreeAlgebra::debug_display(const ring_elem ff) const
   debug_display(f);
 }
 
-void M2FreeAlgebra::makeTerm(Poly& result, const ring_elem a, const int* monom) const
-  // 'monom' is in 'varpower' format
-  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+void M2FreeAlgebra::makeTerm(Poly& result, const ring_elem a, const_varpower monom) const
 {
   result.getCoeffInserter().push_back(a);
   monoid().fromMonomial(monom, result.getMonomInserter());
 }
 
-ring_elem M2FreeAlgebra::makeTerm(const ring_elem a, const int* monom) const
-  // 'monom' is in 'varpower' format
-  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+ring_elem M2FreeAlgebra::makeTerm(const ring_elem a, const_varpower monom) const
 {
   auto result = new Poly;
   makeTerm(*result, a, monom);
@@ -377,7 +376,7 @@ engine_RawArrayPairOrNull M2FreeAlgebra::list_form(const Ring *coeffR, const rin
       vp.resize(0);
       monoid().getMonomialReversed(i.monom(), vp); // should this instead reverse the monomial?
       coeffs->array[next] = RingElement::make_raw(coeffR, c);
-      monoms->array[next] = Monomial::make(vp); // reverses the monomial
+      monoms->array[next] = EngineMonomial::make(vp); // reverses the monomial
     }
   
   return result;
@@ -426,20 +425,15 @@ bool M2FreeAlgebra::is_homogeneous(const Poly* f) const
   return freeAlgebra().is_homogeneous(*f);
 }
 
-void M2FreeAlgebra::degree(const ring_elem f, int *d) const
-{
-  multi_degree(f, d);
-}
-
-bool M2FreeAlgebra::multi_degree(const ring_elem g, int *d) const
+bool M2FreeAlgebra::multi_degree(const ring_elem g, monomial d) const
 {
   const Poly* f = reinterpret_cast<const Poly*>(g.get_Poly());
   return multi_degree(f, d);
 }
 
-bool M2FreeAlgebra::multi_degree(const Poly* f, int *result) const
+bool M2FreeAlgebra::multi_degree(const Poly* f, monomial d) const
 {
-  return freeAlgebra().multi_degree(*f,result);
+  return freeAlgebra().multi_degree(*f, d);
 }
 
 SumCollector* M2FreeAlgebra::make_SumCollector() const

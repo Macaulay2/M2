@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -2114378369
+-- -*- M2-comint -*- hash: 15812640293950924159
 
 i1 : C = fourDimSklyanin(QQ,{a,b,c,d})
 --Calling Bergman for NCGB calculation.

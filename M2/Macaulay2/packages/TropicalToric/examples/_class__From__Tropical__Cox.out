@@ -1,0 +1,18 @@
+-- -*- M2-comint -*- hash: 8974712213391806816
+
+i1 : X = toricProjectiveSpace 3;
+
+i2 : S = ring X;
+
+i3 : I = ideal(S_0+S_1+S_2+1,S_0+2*S_1-S_2+4);
+
+o3 : Ideal of S
+
+i4 : classFromTropicalCox(X,I)
+
+o4 = X
+      {0, 1}
+
+o4 : ToricCycle on X
+
+i5 : 

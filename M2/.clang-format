@@ -1,4 +1,6 @@
-# see http://releases.llvm.org/3.8.0/tools/clang/docs/ClangFormat.html
+# Use `git clang-format` to lint only changed lines in staged files
+# See https://github.com/llvm-mirror/clang/blob/master/tools/clang-format/git-clang-format
+# See https://clang.llvm.org/docs/ClangFormatStyleOptions.html for reference.
 
 ---
 Language:        Cpp
@@ -70,7 +72,7 @@ IncludeCategories:
   - Regex:           '.*'
     Priority:        3
 IndentCaseLabels: true
-# IndentExternBlock: Indent
+IndentExternBlock: NoIndent
 IndentPPDirectives: AfterHash
 IndentWidth:     2
 IndentWrappedFunctionNames: false
@@ -91,6 +93,7 @@ PenaltyBreakTemplateDeclaration: 10
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 200
 PointerAlignment: Left
+ReferenceAlignment: Right
 ReflowComments:  true
 SortIncludes:    false
 SortUsingDeclarations: true
@@ -111,7 +114,7 @@ SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 Standard:        Auto
-TabWidth:        8
+TabWidth:        2
 UseTab:          Never
 ...
 

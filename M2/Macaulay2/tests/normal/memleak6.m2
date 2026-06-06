@@ -22,7 +22,7 @@ end
  -- Theoretically it should run stably at around 22MB or less:
  -- it should just create a list of "desired" matrices, which should not appear 
  -- more than 10-20 times in 5^7 attempts.
- -- Instead, it happens that the RAM usage increases linarly in time.
+ -- Instead, it happens that the RAM usage increases linearly in time.
  -- The function "collectGarbage" does not seem to help in this.
 
 

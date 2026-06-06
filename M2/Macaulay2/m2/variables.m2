@@ -29,13 +29,12 @@ IndexedVariableTable _ Thing := (x,i) -> (
 IndexedVariableTable _ Thing  = (x,i,e) -> (checkValue x; x#i = e)
 IndexedVariableTable.GlobalAssignHook = (X,x) -> (
      globalAssignFunction(X,x);
-     if not x#?symbol$ then x#symbol$ = X;
+     x#symbol$ ??= X;
      )
 IndexedVariableTable.GlobalReleaseHook = (X,x) -> (
      globalReleaseFunction(X,x);
      if x#?symbol$ and x#symbol$ === X then remove(x,symbol$);
      )
-Ring _ IndexedVariable := (x,s) -> x.indexSymbols#s
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
 net IndexedVariable := v -> net expression v
 toString IndexedVariable := v -> toString expression v
@@ -70,6 +69,13 @@ installMethod(symbol <-, Sequence, (x,y) -> (
 IndexedVariable .. IndexedVariable := Sequence => (v,w) -> apply(toSequence v .. toSequence w, xi -> new IndexedVariable from xi)
 IndexedVariable ..< IndexedVariable := Sequence => (v,w) -> apply(toSequence v ..< toSequence w, xi -> new IndexedVariable from xi)
 
+-- baseName
+baseName Thing := R -> (
+    if not hasAttribute(R, ReverseDictionary) then error "baseName: no base name available";
+    x := getAttribute(R, ReverseDictionary);
+    if isMutable x then x else error("baseName: base name ", toString x,
+	" is not mutable, hence not available for use as a variable"))
+baseName Symbol :=
 baseName IndexedVariable := identity
 baseName IndexedVariableTable := x -> if x#?symbol$ then x#symbol$ else error "indexed variable table not associated to a symbol"
 baseName Subscript := x -> new IndexedVariable from { baseName x#0 , x#1 }

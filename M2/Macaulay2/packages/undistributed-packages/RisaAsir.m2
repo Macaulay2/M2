@@ -6,7 +6,7 @@ newPackage(
                   Email => "", 
                   HomePage => ""}},
         Headline => "an interface to the Risa/Asir website and system",
-        PackageExports => {"Dmodules"},
+        PackageExports => {"BernsteinSato"},
         DebuggingMode => false
         )
 
@@ -67,7 +67,6 @@ Headline
   an interface to the Risa/Asir website and system
 Description
   Text
-  Example
 Caveat
 SeeAlso
 ///

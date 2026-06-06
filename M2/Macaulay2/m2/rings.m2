@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 needs "methods.m2"
+needs "expressions.m2" -- for Constant
 
 -----------------------------------------------------------------------------
 -- Ring
@@ -61,17 +62,13 @@ isSkewCommutative = method(TypicalValue => Boolean)
 isSkewCommutative Ring := R -> false
 
 isWeylAlgebra = method(TypicalValue => Boolean)
-isWeylAlgebra Ring := R -> (
-    not isCommutative R and 
-    isPolynomialRing R and 
-    R.monoid.Options.?WeylAlgebra and 
-    #R.monoid.Options.WeylAlgebra > 0
-    )
+isWeylAlgebra Ring := R -> false
 
 ZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true
 RRi.isCommutative = true
+CCi.isCommutative = true
 
 isRing = method(TypicalValue => Boolean)
 isRing Thing := R -> false
@@ -83,9 +80,38 @@ isHomogeneous Ring := R -> (
      degreeLength R == 0 
      )
 
-promote = method(Dispatch=>{Thing,Type,Type})
-lift = method(Dispatch=>{Thing,Type,Type}, Options => {Verify => true})
-liftable  = method(Dispatch=>{Thing,Type,Type}, TypicalValue => Boolean)
+-- printing
+-- technically this should not be allowed, since rings are mutable
+-- and therefore "R === value toExternalString R" will always be false,
+-- however, this is good enough to serialize a ring for another session.
+toExternalString Ring := toString @@ describe
+-- the rest of the printing methods will inherit from methods on Type
+
+-----------------------------------------------------------------------------
+-- promote, lift, liftable, and isConstant
+-----------------------------------------------------------------------------
+
+-- TODO rename isLiftable; currently impossible due to conflict with Varieties::isLiftable
+-- some remnants from lift and promote, version 2
+liftable = method(TypicalValue => Boolean, Dispatch => {Thing, Type, Type})
+liftable(Number,      Number)      :=
+liftable(Number,      RingElement) :=
+liftable(RingElement, Number)      :=
+liftable(RingElement, RingElement) := (f, R) -> lookup(lift,class f,R) =!= null and null =!= lift(f, R, Verify => false)
+
+isConstant = method(TypicalValue => Boolean)
+isConstant RingElement := r -> liftable(r, coefficientRing ring r)
+
+lift = method(Dispatch => {Thing, Type, Type}, Options => {Verify => true})
+Number ^ Ring := RingElement ^ Ring := lift
+
+promote = method(Dispatch => {Thing, Type, Type})
+Number _ Ring := promote
+
+isPromotable = method(TypicalValue => Boolean)
+isPromotable(RingFamily,RingFamily) :=
+isPromotable(RingFamily,Ring) :=
+isPromotable(Ring,Ring) := (R,S) -> lookup(promote,R,S) =!= null
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

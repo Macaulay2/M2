@@ -11,19 +11,19 @@ newPackage(
 	          Email => "hovinen@math.uni-hannover.de"}},
      Headline => "versal deformations of maximal Cohen-Macaulay modules",
      Keywords => {"Deformation Theory"},
-     PackageImports => { "Truncations" },
+     PackageImports => { "Complexes", "Truncations" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Deformations of Matrix Factorisations with Macaulay2",
 	  "acceptance date" => "2010-04-17",
-	  "published article URI" => "http://j-sag.org/Volume2/jsag-2-2010.pdf",
-	  "published code URI" => "http://j-sag.org/Volume2/ModuleDeformations.m2",
-	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ModuleDeformations.m2",
+	  "published article URI" => "https://msp.org/jsag/2010/2-1/p02.xhtml",
+	  "published article DOI" => "10.2140/jsag.2010.2.6",
+	  "published code URI" => "https://msp.org/jsag/2010/2-1/jsag-v2-n1-x02-code.zip",
 	  "release at publication" => "314a1e7a1a5f612124f23e2161c58eabeb491f46",
 	  "version at publication" => "1.0",
 	  "volume number" => "2",
-	  "volume URI" => "http://j-sag.org/Volume2/"
+	  "volume URI" => "https://msp.org/jsag/2010/2-1/"
 	  },
      DebuggingMode => false
 )
@@ -257,7 +257,7 @@ deformMCMModule(Module,RingMap) := o -> (M0,phi) -> (
 
      -- Extract the other matrix of the matrix factorization
      Ml := coker substitute (presentation M0, prune ring M0);
-     C := chainComplex lift (presentation Ml, ambient ring Ml);
+     C := complex lift (presentation Ml, ambient ring Ml);
      f := (mingens ideal ring Ml)_0_0;
      B0 := substitute ((nullhomotopy (f * id_C))_0, ring M0);
      
@@ -567,6 +567,127 @@ assert (isHomogeneous M)
 assert (numgens trim ideal S == 2)
 assert (codim ideal S == 2)
 assert (codim trim minors (2, jacobian S) == 1)
+///
+
+------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: the xi contract,
+-- the free-module and DegreeLimit behavior, the error
+-- preconditions, and stress tests over plane-curve
+-- hypersurface singularities.
+------------------------------------------------------------
+
+-- the xi contract.  In the absolute case the base ring S is generated exactly
+-- by the deformation parameters xi_1, ..., xi_d; those indexed variables live
+-- in S, and the same number of them appear in the ambient ring of M.
+TEST ///
+R = QQ[x,y,Degrees=>{3,4}]/(x^4-y^3);
+(S,M) = deformMCMModule module ideal(x^2,y);
+d = #gens S;
+assert(d == 4)
+assert(gens S == apply(toList(1..d), i -> xi_i))
+assert(ring xi_1 === S)
+assert(all(gens S, g -> match("xi", toString g)))
+assert(#select(gens ring M, g -> match("xi", toString g)) == d)
+///
+
+-- a free module is rigid: deformMCMModule returns a trivial (0-variable) base
+-- space and a free module of the same rank.
+TEST ///
+R = QQ[x,y,Degrees=>{3,4}]/(x^4-y^3);
+(S1,M1) = deformMCMModule R^1;
+assert(numgens S1 == 0)
+assert(isFreeModule M1 and rank M1 == 1)
+(S3,M3) = deformMCMModule R^3;
+assert(numgens S3 == 0)
+assert(isFreeModule M3 and rank M3 == 3)
+///
+
+-- error preconditions.  deformMCMModule rejects a module over a ring that is
+-- not a hypersurface, and a module that is not maximal Cohen-Macaulay (here the
+-- residue field of a curve, whose presentation matrix is not square).
+TEST ///
+T = QQ[x,y,z]/(x^2,y^2,z^2);
+assert(try (deformMCMModule module ideal(T_0,T_1); false) else true)
+U = QQ[x,y]/(x^2-y^3);
+assert(try (deformMCMModule coker matrix{{U_0,U_1}}; false) else true)
+///
+
+-- the DegreeLimit option bounds the order to which the deformation is computed.
+-- Too small a limit leaves the base space unobstructed (the free polynomial
+-- ring on the parameters); a large enough limit yields the versal base space.
+TEST ///
+R = QQ[x,y,Degrees=>{3,4}]/(x^4-y^3);
+M0 = module ideal(x^2,y);
+(S1,M1) = deformMCMModule(M0, DegreeLimit => 1);
+assert(numgens trim ideal S1 == 0)
+assert(dim S1 == 4)
+(S3,M3) = deformMCMModule(M0, DegreeLimit => 3);
+assert(numgens trim ideal S3 == 2)
+assert(dim S3 == 2 and codim ideal S3 == 2)
+///
+
+-- stress test over plane-curve hypersurface singularities (A2, D4, E8).
+-- Deforming the maximal ideal yields a homogeneous deformation whose base
+-- space is again a plane curve, and modulo the parameters xi the determinant
+-- of the deformed matrix factorization recovers the equation of the singularity.
+TEST ///
+R = QQ[x,y,Degrees=>{2,3}]/(x^3-y^2);
+(S,M) = deformMCMModule module ideal(x,y);
+RM = ring M; xiI = ideal select(gens RM, g -> match("xi", toString g));
+assert(isHomogeneous S and isHomogeneous M)
+assert(dim S == 1 and numgens trim ideal S == 1)
+assert(ideal det presentation M + xiI == substitute(ideal R, RM) + xiI)
+
+R = QQ[x,y]/(x^3-x*y^2);
+(S,M) = deformMCMModule module ideal(x,y);
+RM = ring M; xiI = ideal select(gens RM, g -> match("xi", toString g));
+assert(isHomogeneous S and isHomogeneous M)
+assert(dim S == 1 and numgens trim ideal S == 1)
+assert(ideal det presentation M + xiI == substitute(ideal R, RM) + xiI)
+
+R = QQ[x,y,Degrees=>{5,3}]/(x^3-y^5);
+(S,M) = deformMCMModule module ideal(x,y);
+RM = ring M; xiI = ideal select(gens RM, g -> match("xi", toString g));
+assert(isHomogeneous S and isHomogeneous M)
+assert(dim S == 1 and numgens trim ideal S == 1)
+assert(ideal det presentation M + xiI == substitute(ideal R, RM) + xiI)
+///
+
+-- stress test: non-maximal-ideal MCM modules over the E6 curve singularity,
+-- with deterministic assertions on the versal base space.
+TEST ///
+R = QQ[x,y,Degrees=>{3,4}]/(x^4-y^3);
+(S,M) = deformMCMModule module ideal(x^2,y);
+RM = ring M; xiI = ideal select(gens RM, g -> match("xi", toString g));
+assert(isHomogeneous S and isHomogeneous M)
+assert(#gens S == 4)
+assert(dim S == 2 and numgens trim ideal S == 2 and codim ideal S == 2)
+assert(ideal det presentation M + xiI == substitute(ideal R, RM) + xiI)
+
+use R;
+(S,M) = deformMCMModule module ideal(x^2,y^2);
+RM = ring M; xiI = ideal select(gens RM, g -> match("xi", toString g));
+assert(isHomogeneous S and isHomogeneous M)
+assert(dim S == 2 and numgens trim ideal S == 2 and codim ideal S == 2)
+assert(ideal det presentation M + xiI == substitute(ideal R, RM) + xiI)
+///
+
+-- the relative case: deforming the maximal ideal of the A2 singularity along
+-- the Whitney umbrella.  The base ring carries the parameter of Sigma together
+-- with the deformation parameters xi, and the deformation is homogeneous.
+TEST ///
+OSigma = QQ[x,Degrees=>{2}];
+OY = QQ[y,z,x,Degrees=>{2,3,2}]/(z^2-(y-x)*y^2);
+phi = map(OY,OSigma,matrix({{x}}));
+use OSigma;
+OX = trim(OY/phi(ideal x));
+(S,M) = deformMCMModule(module ideal(y,z), phi);
+assert(isHomogeneous S and isHomogeneous M)
+assert(class S === QuotientRing)
+assert(dim S == 2 and numgens trim ideal S == 1 and codim ideal S == 1)
+assert(numRows presentation M == numColumns presentation M)
+assert(#select(gens S, g -> match("xi", toString g)) == 2)
+assert(#select(gens S, g -> not match("xi", toString g)) == 1)
 ///
 
 

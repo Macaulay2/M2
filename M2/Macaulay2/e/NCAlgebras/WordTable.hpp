@@ -14,7 +14,7 @@ class WordWithData;
 
 // TODO
 // have a vector std::vector<int> of indices of each word.
-//   an index of -1 means that that element has been removed.
+//   an index of -1 means that this element has been removed.
 // changes to code:
 //   insert: push_back of the index, return that index.
 //   routines that search over words in the table:

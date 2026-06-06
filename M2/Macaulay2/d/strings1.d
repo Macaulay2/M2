@@ -31,3 +31,4 @@ export tostring(i:int):string := (
 	  );
      toreversestring(if signl then s << '-' else s));
 
+export tostring(i:hash_t):string := tostring(Ccode(ulong, i));

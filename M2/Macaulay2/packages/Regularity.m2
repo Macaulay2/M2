@@ -13,7 +13,7 @@ newPackage(
 --=========================================================================--
 
 -- This package is based on
--- [BG1] Bermejo, Gimenez "Saturation and Castelnuovo-mumford Regularity", 
+-- [BG1] Bermejo, Gimenez "Saturation and Castelnuovo-Mumford Regularity", 
 --         Journal of Algebra 303/2006
 -- [BG2] Bermejo, Gimenez "Computing the Castelnuovo-Mumford Regularity of some 
 --         subschemes of P^n using quotients of monomial ideals",
@@ -41,9 +41,9 @@ depthHomogMon = I-> (
 --============================================================================    
     
     
-    
+
 -- RANDOM LINEAR TRANSFORMATIONS
--- this function produces a upper triangular liniar transformation with entries in k[X]
+-- this function produces a upper triangular linear transformation with entries in k[X]
 
 upTRT2 = (k,X,m) -> (
      Trans := {};
@@ -102,14 +102,14 @@ isNested = (I,d) -> (
 
 satMon = (I,X)-> (
      m := flatten entries mingens I;
-     lamda := apply(entries transpose matrix flatten apply(m,exponents),max);
+     lambda := apply(entries transpose matrix flatten apply(m,exponents),max);
      l := {};
-     for i to #X -1 do l = l|{X_i^(lamda_i+1)};
+     for i to #X -1 do l = l|{X_i^(lambda_i+1)};
      gensIstar := flatten entries mingens (monomialIdeal l:monomialIdeal I);
      gensallvars :={};
      for i to #gensIstar-1 do if support gensIstar_i == X then gensallvars = gensallvars | {gensIstar_i}; --gensallvars contains the minimal gens of I that contain all variables
      if gensallvars == {} then return 0
-     else return sum lamda +1 - (min apply( gensallvars,degree))_0;
+     else return sum lambda +1 - (min apply( gensallvars,degree))_0;
      )
 
 
@@ -152,7 +152,7 @@ regMonCurve = (I,d) -> (
     f := map (S,ring I);
     I = f I;
     m := ideal (apply (X,i-> f i));
-    return (max apply((entries gens gb (I:m))_0,degree))_0
+    return (max apply((entries gens gb (I:m))_0,degree))_0 + 1
     )
 
 delta = I -> min(flatten apply(flatten entries mingens I,degree))
@@ -176,8 +176,7 @@ mRegularity (Ideal):= opts -> I -> (
      X = apply(X, i ->g i);
      d := dim I; 
      if d==0 then (
-	  j := ideal (X_{0..n});
-	  return delta (I:j) +1;
+	  return 1 + max flatten degrees source basis(R/I);
 	  );
      if opts.MonCurve == true then return regMonCurve(I,d);
      f := id_R;
@@ -208,7 +207,28 @@ i=ideal( x_0-a*b,x_1-a*c,x_2-a*d,x_3-b*c,x_4-b*d,x_5-c*d,x_6-a^2,x_7-b^2,x_8-c^2
 j=selectInSubring(1, gens gb i)
 I=ideal flatten entries j -- this is the ideal of the Veronesean,
 assert(mRegularity I == 3)
-///, 
+///,
+
+TEST ///
+-- regression: MonCurve => true must give the true regularity (regMonCurve was off by one)
+R = QQ[a,b,c,d]
+I = monomialCurveIdeal(R, {1,2,3}) -- the twisted cubic, regularity 2
+assert(mRegularity(I, MonCurve => true) == 2)
+assert(mRegularity(I, MonCurve => true) == regularity I)
+J = monomialCurveIdeal(R, {1,3,4})
+assert(mRegularity(J, MonCurve => true) == regularity J)
+///,
+
+TEST ///
+-- regression: the dimension-0 branch must give the true regularity
+R = QQ[x,y,z]
+I = ideal(x^2, y^2, z^2)
+assert(dim I == 0)
+assert(mRegularity I == 4)
+assert(mRegularity I == regularity I)
+J = ideal(x^3, y^2, z^2)
+assert(mRegularity J == 5 and mRegularity J == regularity J)
+///,
      
 
 
@@ -223,7 +243,7 @@ document {
      PARA {TT "Regularity", " is a package for computing the Castelnuovo-Mumford regularity
      of homogeneous ideals in a polynomial ring without having to compute a minimal 
      free resolution of the homogeneous ideal"},
-     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-mumford Regularity", ", Journal of Algebra 303/2006
+     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-Mumford Regularity", ", Journal of Algebra 303/2006
      and ", TT"Computing the Castelnuovo-Mumford Regularity of some subschemes of P^n using quotients of monomial ideals", ", Journal of Pure and Applied Algebra 164/2001."}  
 }
 
@@ -236,7 +256,7 @@ document {
 	  MonCurve => Boolean =>{ " parameter that should be set to true if I is the ideal of a monomial curve"}
 	  },     
      Outputs =>{ "the Castelnuovo-Mumford regularity of the given ideal, if it is homogeneous, and -1 otherwise"},
-     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-mumford Regularity", ", Journal of Algebra 303/2006
+     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-Mumford Regularity", ", Journal of Algebra 303/2006
      and ", TT"Computing the Castelnuovo-Mumford Regularity of some subschemes of P^n using quotients of monomial ideals", ", Journal of Pure and Applied Algebra 164/2001."}, 
      PARA {"computing the regularity of the defining ideal of the second Veronesean of P3"},
      EXAMPLE lines ///
@@ -397,7 +417,7 @@ fastReg (Ideal):= opts -> I -> (
 -- regCM
 
 -- INPUT: I = a Cohen-Macaulay ideal in a polynomial ring
--- OUTPUT: the Castelnupovo Mumford regularity of I
+-- OUTPUT: the Castelnuovo Mumford regularity of I
 
 regCM = (I,d) -> (
    R :=ring I;

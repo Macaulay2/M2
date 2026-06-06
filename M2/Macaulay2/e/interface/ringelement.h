@@ -6,12 +6,12 @@
 // TODO: fix this
 #  if defined(__cplusplus)
 class Matrix;
-class Monomial;
+class EngineMonomial;
 class Ring;
 class RingElement;
 #  else
 typedef struct Matrix Matrix;
-typedef struct Monomial Monomial;
+typedef struct EngineMonomial EngineMonomial;
 typedef struct Ring Ring;
 typedef struct RingElement RingElement;
 #  endif
@@ -40,6 +40,8 @@ const RingElement *IM2_RingElement_from_BigReal(const Ring *R, gmp_RR z);
     
 const RingElement *IM2_RingElement_from_Interval(const Ring *R, gmp_RRi z);
 
+const RingElement *IM2_RingElement_from_ComplexInterval(const Ring *R, gmp_CCi z);
+
 gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a);
 /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
    Otherwise, NULL is returned, and an error is given */
@@ -51,6 +53,8 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a);
 gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a);
     
 gmp_RRiorNull IM2_RingElement_to_Interval(const RingElement *a);
+
+gmp_CCiorNull IM2_RingElement_to_ComplexInterval(const RingElement *a);
 
 long rawDiscreteLog(const RingElement *h);
 
@@ -113,7 +117,7 @@ IM2_RingElement_homogenize(const RingElement *a, int v, M2_arrayint wts);
 
 const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
                                                       const RingElement *a,
-                                                      const Monomial *m);
+                                                      const EngineMonomial *m);
 /* R must be a polynomial ring, and 'a' an element of the
    coefficient ring of R.  Returns a*m, if this is a valid
    element of R.  Returns NULL if not (with an error message). */
@@ -132,7 +136,7 @@ const RingElement /* or null */ *IM2_RingElement_get_terms(
 const RingElement /* or null */ *IM2_RingElement_get_coeff(
     const Ring *coeffRing, /* ring of the result */
     const RingElement *a,
-    const Monomial *m);
+    const EngineMonomial *m);
 /* Return (as an element of the coefficient ring) the coeff
      of the monomial 'm'.
   */
@@ -141,7 +145,7 @@ const RingElement /* or null */ *IM2_RingElement_lead_coeff(
     const Ring *coeffRing, /* ring of the result */
     const RingElement *a);
 
-const Monomial /* or null */ *IM2_RingElement_lead_monomial(
+const EngineMonomial /* or null */ *IM2_RingElement_lead_monomial(
     int nvars, /* number of variables in an outermost monoid */
     const RingElement *a);
 
@@ -288,7 +292,7 @@ const RingElement /* or null */ *IM2_RingElement_homogenize(
 const RingElement /* or null */ *IM2_RingElement_term(
     const Ring *R,
     const RingElement *a,
-    const Monomial *m); /* drg: connected rawTerm*/
+    const EngineMonomial *m); /* drg: connected rawTerm*/
 /* R must be a polynomial ring, and 'a' an element of the
    coefficient ring of R.  Returns a*m, if this is a valid
    element of R.  Returns NULL if not (with an error message).
@@ -308,7 +312,7 @@ const RingElement /* or null */ *IM2_RingElement_get_terms(
 const RingElement /* or null */ *IM2_RingElement_get_coeff(
     const Ring *coeffRing, /* ring of the result */
     const RingElement *a,
-    const Monomial *m); /* drg: connected rawCoefficient*/
+    const EngineMonomial *m); /* drg: connected rawCoefficient*/
 /* Return (as an element of the coefficient ring) the coeff
    of the monomial 'm'.
 */
@@ -317,7 +321,7 @@ const RingElement /* or null */ *IM2_RingElement_lead_coeff(
     const Ring *coeffRing, /* ring of the result */
     const RingElement *a); /* drg: connected rawLeadCoefficient*/
 
-const Monomial /* or null */ *IM2_RingElement_lead_monomial(
+const EngineMonomial /* or null */ *IM2_RingElement_lead_monomial(
     int nvars,             /* number of variables in an outermost monoid */
     const RingElement *a); /* drg: connected rawLeadMonomial*/
 

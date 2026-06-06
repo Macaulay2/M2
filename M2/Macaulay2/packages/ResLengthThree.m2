@@ -30,7 +30,8 @@ newPackage ( "ResLengthThree",
     Headline => "Multiplication in free resolutions of length three",
     Reload => false,
     DebuggingMode => false,
-    Keywords => { "Homological Algebra" }
+    Keywords => { "Homological Algebra" },
+    PackageExports => { "Complexes" }
     )
 
 export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTableOneTwo", 
@@ -43,7 +44,7 @@ export { "resLengthThreeAlg", "resLengthThreeTorAlg", "multTableOneOne", "multTa
 
 resLengthThreeAlg = method()
 
-resLengthThreeAlg(ChainComplex, List) := (F, sym) -> (
+resLengthThreeAlg(Complex, List) := (F, sym) -> (
    if F.cache#?"Algebra Structure" then return F.cache#"Algebra Structure";
    if length F != 3 then
      error "Expected a chain complex of length three which is free of rank one in degree zero.";
@@ -87,14 +88,14 @@ resLengthThreeAlg(ChainComplex, List) := (F, sym) -> (
    A
 )
 
-resLengthThreeAlg( ChainComplex ) := (F) -> (
+resLengthThreeAlg( Complex ) := (F) -> (
     resLengthThreeAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
 
 resLengthThreeTorAlg = method()
 
-resLengthThreeTorAlg(ChainComplex,List) := (F,sym) -> (
+resLengthThreeTorAlg(Complex,List) := (F,sym) -> (
    if F.cache#?"Tor Algebra Structure" then return F.cache#"Tor Algebra Structure";
    A := resLengthThreeAlg(F,sym);
    P := ambient A;
@@ -110,7 +111,7 @@ resLengthThreeTorAlg(ChainComplex,List) := (F,sym) -> (
    B
 )
 
-resLengthThreeTorAlg( ChainComplex ) := (F) -> (
+resLengthThreeTorAlg( Complex ) := (F) -> (
     resLengthThreeTorAlg(F, {getSymbol "e", getSymbol "f", getSymbol "g" })
     )
 
@@ -119,16 +120,9 @@ makeRes = (d1,d2,d3) -> (
     if ( (image matrix entries gens ker d1) != image matrix entries gens image d2 or 
 	(image matrix entries gens ker d2) != image matrix entries gens image d3 or
 	ker d3 !=0) then error "Expected differentials of resolution of length three";
-    -- to build the maps correctly, what you should do is:
-    -- map(R^{degrees} (target), R^{degrees} (source), 
-    F := new ChainComplex; 
-    F.ring = ring d1;
-    F#0 = target d1; 
-    F#1 = source d1; F.dd#1 = d1; 
-    F#2 = source d2; F.dd#2 = d2;
-    F#3 = source d3; F.dd#3 = d3; 
-    F#4 = (F.ring)^{}; F.dd#4 = map(F#3,F#4,0);
-    F 
+    f2 := map(source d1,, matrix d2);
+    f3 := map(source f2,, matrix d3);
+    complex {d1, f2, f3}
     )
 
 multTableOneOne = method(Options => {Labels => true, Compact => false})
@@ -169,7 +163,7 @@ multTableOneTwo(Ring) := opts -> A -> (
 
 resLengthThreeTorAlgClass = method()
 
-resLengthThreeTorAlgClass ChainComplex := F -> (
+resLengthThreeTorAlgClass Complex := F -> (
   A := resLengthThreeTorAlg(F);
   p := rank multMap(A,1,1);
   q := rank multMap(A,1,2);
@@ -197,7 +191,7 @@ resLengthThreeTorAlgClass ChainComplex := F -> (
 )
 
 resLengthThreeTorAlgClass Ideal := I -> (
-   resLengthThreeTorAlgClass res I
+   resLengthThreeTorAlgClass freeResolution I
 )
 
 
@@ -267,77 +261,81 @@ tauMaps(Ring,ZZ,ZZ,ZZ) := (A,l,m,n) -> (
 -- TESTS
 --===================================================================================================
 
+-- resLengthThreeAlg: products in the resolution algebra (default e/f/g
+-- basis symbols), for an ideal whose resolution has length three.
 TEST ///
 Q = QQ[x,y,z];
-F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
+F = freeResolution ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
 G = resLengthThreeAlg F;
 assert ( e_1*e_2 == y*f_1 )
 assert ( e_1*f_4 == -x*g_1 )
 ///
 
-TEST ///
-Q = QQ[x,y,z];
-F = res ideal (x*y, y*z, x^3, y^3-x*z^2,x^2*z,z^3);
-G = resLengthThreeAlg F
-assert ( e_1*e_2 == y*f_1 )
-assert ( e_1*f_4 == -x*g_1 )
-///
-
+-- resLengthThreeTorAlgClass: an ideal of class B.
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^2,x*y,z^2,y*z,z^2)
 assert( resLengthThreeTorAlgClass I === "B" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class C(3).
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal (u*v,w*x,y*z)
 assert( resLengthThreeTorAlgClass I === "C(3)" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class G(7).
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x^3,x^2*z,x*(z^2+x*y),z^3-2*x*y*z,y*(z^2+x*y),y^2*z,y^3)
 assert( resLengthThreeTorAlgClass I === "G(7)" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class G(2).
 TEST ///
 Q = QQ[u,v,w,x,y,z]
 I = ideal(x*y^2,x*y*z,y*z^2,x^4-y^3*z,x*z^3-y^4)
 assert( resLengthThreeTorAlgClass I === "G(2)" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class H(0,0), via the Complex overload.
 TEST ///
 Q = QQ[x,y,z]
-I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
-assert( resLengthThreeTorAlgClass res I === "H(0,0)" )
+I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)
+assert( resLengthThreeTorAlgClass freeResolution I === "H(0,0)" )
 ///
 
+-- resLengthThreeTorAlgClass: the same ideal of class H(0,0), via the Ideal overload.
 TEST ///
 Q = QQ[x,y,z]
-I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)  
+I = ideal(x^2,x*y^2)*ideal(y*z,x*z,z^2)
 assert( resLengthThreeTorAlgClass I === "H(0,0)" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class T.
 TEST ///
 Q = QQ[x,y,z]
-I = ideal(x^3,y^3,z^3,x*y*z)  
+I = ideal(x^3,y^3,z^3,x*y*z)
 assert( resLengthThreeTorAlgClass I === "T" )
 ///
 
+-- resLengthThreeTorAlgClass: an ideal of class H(6,5).
 TEST ///
 Q = QQ[x,y,z]
-I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)  
+I = ideal(x^5,y^5,x*y^4,x^2*y^3,x^3*y^2,x^4*y,z^3)
 assert( resLengthThreeTorAlgClass I === "H(6,5)" )
 ///
 
+-- makeRes builds a length-three resolution from three matrices; the
+-- degree-two products from resLengthThreeAlg vanish in the Tor algebra.
 TEST ///
 Q = QQ[x,y,z]
 d1 = matrix{{-x^2,z^2-x*y,-y^2,-x*z,-y*z}}
 d2 = matrix{{0,0,z,0,-y},{0,0,0,-y,x},{-z,0,0,x,0},{0,y,-x,0,z},{y,-x,0,-z,0}}
 d3 = transpose d1
 F = makeRes(d1,d2,d3)
-A = resLengthThreeAlg F 
+A = resLengthThreeAlg F
 assert(e_2*e_4===y*f_3+z*f_5)
 assert(e_1*e_2===-z*f_3-x*f_5)
 assert(e_3*e_5===-y*f_1)
@@ -347,10 +345,12 @@ assert(e_1*e_2===sub(0,T))
 assert(e_3*e_5===sub(0,T))
 ///
 
+-- resLengthThreeAlg: a full set of degree-one products e_i*e_j and the
+-- degree-one-times-degree-two products e_i*f_j.
 TEST ///
 Q = QQ[x,y,z]
 I = ideal(x*y, y*z, x^3, y^3-x*z^2,x^2*z, z^3)
-G = resLengthThreeAlg res I
+G = resLengthThreeAlg freeResolution I
 assert( e_1*e_2 == y*f_1 )
 assert( e_1*e_3 == x*f_2 )
 assert( e_1*e_4 == -x*z*f_1 + y*f_3 - z*f_5 )
@@ -363,6 +363,38 @@ assert( e_1*f_4 == -x*g_1 )
 assert( e_1*f_5 == 0 )
 assert( e_1*f_6 == g_2 )
 assert( e_1*f_7 == 0 )
+///
+
+-- the Labels and Compact options of multTableOneOne and multTableOneTwo.
+TEST ///
+Q = QQ[x,y,z]
+A = resLengthThreeAlg freeResolution ideal(x^2,y^2,z^2)
+-- Labels => true (the default) prefixes a basis-label row and column
+assert(first multTableOneOne A == {" ", e_1, e_2, e_3})
+assert(# multTableOneOne A == 1 + # multTableOneOne(A, Labels => false))
+-- Labels => false returns the bare 3-by-3 product table
+assert(multTableOneOne(A, Labels => false) == {{0,f_1,f_2},{-f_1,0,f_3},{-f_2,-f_3,0}})
+-- Compact => true prints "." for the products e_i*e_j with i > j
+assert(multTableOneOne(A, Compact => true, Labels => false) == {{0,f_1,f_2},{".",0,f_3},{".",".",0}})
+-- Compact leaves the diagonal and above-diagonal entries unchanged
+assert(multTableOneOne(A, Compact => false, Labels => false) == multTableOneOne(A, Labels => false))
+-- multTableOneTwo honors Labels the same way
+assert(# multTableOneTwo A == 1 + # multTableOneTwo(A, Labels => false))
+///
+
+-- error tests: the exported functions reject malformed input.
+TEST ///
+Q = QQ[x,y,z]
+S = QQ[w]
+-- multTableOneOne / multTableOneTwo need an algebra from a resLengthThree routine
+assert(try (multTableOneOne S; false) else true)
+assert(try (multTableOneTwo S; false) else true)
+-- resLengthThreeAlg needs a length-three resolution
+assert(try (resLengthThreeAlg freeResolution ideal(x^2); false) else true)
+-- resLengthThreeAlg needs a list of exactly three symbols
+assert(try (resLengthThreeAlg(freeResolution ideal(x^2,y^2,z^2), {getSymbol "e", getSymbol "f"}); false) else true)
+-- makeRes rejects matrices that do not form a resolution
+assert(try (makeRes(matrix{{x}}, matrix{{y}}, matrix{{z}}); false) else true)
 ///
 
 --==========================================================================
@@ -392,7 +424,7 @@ document{
 
 document{
   Key => {
-    resLengthThreeAlg, (resLengthThreeAlg, ChainComplex ), (resLengthThreeAlg, ChainComplex, List )
+    resLengthThreeAlg, (resLengthThreeAlg, Complex ), (resLengthThreeAlg, Complex, List )
     },
 
   Headline => "the minimal free resolution presented as a graded-commutative ring",
@@ -400,7 +432,7 @@ document{
   Usage => "resLengthThreeAlg F, resLengthThreeAlg(F,L)", 
 
   Inputs =>{
-      "F" => ChainComplex => "a length three free resolution of a cyclic module",
+      "F" => Complex => "a length three free resolution of a cyclic module",
       "L" => List => "of three symbols"
       },
   
@@ -415,7 +447,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"describe A",
 	"e_1*e_2",
 	"e_1*f_2",
@@ -428,7 +460,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
-	"F = resLengthThreeAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"F = resLengthThreeAlg(freeResolution(ideal (x^2,x*y,y^2,z^2), LengthLimit => 3), {a,b,c} )",
 	"describe F",
 	},
 
@@ -437,7 +469,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,x*y,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution(ideal (x^2,x*y,y^2,z^2), LengthLimit => 3)",
 	"describe A",
 	},
 
@@ -446,7 +478,7 @@ document{
   EXAMPLE {
       "P = ZZ[x,y,z];",
       "Q = P/ideal(4_P);",
-      "A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+      "A = resLengthThreeAlg freeResolution(ideal (x^2,y^2,z^2), LengthLimit => 4)",
       "describe A"
 	},
         
@@ -455,7 +487,7 @@ Caveat => { "The ambient ring ", TT "Q ", "must be homogeneous." }
 
 document{
   Key => {
-    resLengthThreeTorAlg, (resLengthThreeTorAlg, ChainComplex ), (resLengthThreeTorAlg, ChainComplex, List )
+    resLengthThreeTorAlg, (resLengthThreeTorAlg, Complex ), (resLengthThreeTorAlg, Complex, List )
     },
 
   Headline => "the Tor algebra presented as a graded-commutative ring",
@@ -463,7 +495,7 @@ document{
   Usage => "resLengthThreeTorAlg F, resLengthThreeTorAlg(F,L)", 
 
   Inputs =>{
-      "F" => ChainComplex => "a length three free resolution of a cyclic module",
+      "F" => Complex => "a length three free resolution of a cyclic module",
       "L" => List => "of three symbols"
       },
   
@@ -478,7 +510,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeTorAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeTorAlg freeResolution ideal (x^2,y^2,z^2)",
 	"describe A",
 	"e_1*e_2",
 	"e_1*f_2",
@@ -491,7 +523,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v,x,y,z];",
 	"Q = P/ideal(u^2,u*v);",
-	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"A = resLengthThreeTorAlg (freeResolution(ideal (x^2,x*y,y^2,z^2), LengthLimit => 4), {a,b,c} )",
 	"describe A",
 	},
 
@@ -500,7 +532,7 @@ document{
   EXAMPLE {
 	"P = QQ[u,v];",
 	"Q = (P/ideal(u^2,u*v))[x,y,z];",
-	"A = resLengthThreeTorAlg ( res ideal (x^2,x*y,y^2,z^2), {a,b,c} )",
+	"A = resLengthThreeTorAlg ( freeResolution(ideal (x^2,x*y,y^2,z^2), LengthLimit => 4), {a,b,c} )",
 	"describe A",
 	},
     
@@ -536,7 +568,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"multTableOneOne A",
 	"netList multTableOneOne A"
 	},
@@ -563,7 +595,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"netList multTableOneOne (A, Labels => false)",
 	},
 }
@@ -589,7 +621,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"multTableOneOne (A, Compact => true)",
 	"netList multTableOneOne(A, Compact => true)",
 	},
@@ -622,7 +654,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"multTableOneTwo A",
 	"netList multTableOneTwo A"
 	},
@@ -649,7 +681,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"netList multTableOneOne (A, Labels => false)",
 	"netList multTableOneTwo (A, Labels => false)",
 	},
@@ -676,7 +708,7 @@ document{
   
   EXAMPLE {
 	"Q = QQ[x,y,z];",
-	"A = resLengthThreeAlg res ideal (x^2,y^2,z^2)",
+	"A = resLengthThreeAlg freeResolution ideal (x^2,y^2,z^2)",
 	"netList multTableOneTwo (A, Labels => false)",
 	},
 }
@@ -684,7 +716,7 @@ document{
 
 document{
   Key => {
-    resLengthThreeTorAlgClass, (resLengthThreeTorAlgClass, ChainComplex),(resLengthThreeTorAlgClass, Ideal),
+    resLengthThreeTorAlgClass, (resLengthThreeTorAlgClass, Complex),(resLengthThreeTorAlgClass, Ideal),
     },
 
   Headline => "the class (w.r.t. multiplication in homology) of an ideal",
@@ -692,7 +724,7 @@ document{
   Usage => "resLengthThreeTorAlgClass F", 
 
   Inputs =>{
-      "F" => ChainComplex => { "a length three free resolution of a cyclic module" } ,
+      "F" => Complex => { "a length three free resolution of a cyclic module" } ,
       "I" => Ideal => {"an ideal of codepth 3"},
       },
   
@@ -734,7 +766,7 @@ document{
       },
   
   Outputs => { 
-      ChainComplex => { "the resolution with differentials d1, d2, d3."}
+      Complex => { "the resolution with differentials d1, d2, d3."}
       },
   
     PARA { "Creates a resolution of length 3 that has the given three matrices as differentials." },

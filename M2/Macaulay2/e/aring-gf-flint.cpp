@@ -56,16 +56,16 @@ ARingGFFlint::ARingGFFlint(const PolynomialRing& R, const ring_elem a)
   for (long i = 1; i <= mDimension; i++)
     mPPowers[i] = mPPowers[i - 1] * static_cast<ulong>(mCharacteristic);
 
-  flint_randinit(mRandomState);
+  FLINT_RAND_INIT(mRandomState);
 }
 
 ARingGFFlint::~ARingGFFlint()
 {
   fq_zech_ctx_clear(mContext);
   fq_nmod_ctx_clear(mBigContext);
-  mPrimitiveElement = 0;
+  mPrimitiveElement = nullptr;
   freemem(mPPowers);
-  flint_randclear(mRandomState);
+  FLINT_RAND_CLEAR(mRandomState);
 
   if (mGeneratorComputed) fq_zech_clear(&mCachedGenerator, mContext);
 }

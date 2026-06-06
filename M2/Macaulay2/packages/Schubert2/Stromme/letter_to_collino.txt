@@ -433,7 +433,7 @@ od:
 # Hilb(4); 
 # bott(a413*s1^3);  8388608 tw. cubics meeting three planes in P4
 # bott(a413*s1*s2); 672768  tw. cubics meeting a plane and a line
-# bott(a413*s3);    0       tw. cuics passing through a point (of course!)
+# bott(a413*s3);    0       tw. cubics passing through a point (of course!)
 
 ###############################################################
 #quit;

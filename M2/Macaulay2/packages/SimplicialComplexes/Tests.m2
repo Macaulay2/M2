@@ -166,7 +166,7 @@ assert(dim void == -infinity)
 assert(faces(0,void) == {})
 assert(faces(-1,void) == {})
 assert(vertices void == {})
-C = chainComplex void
+C = complex void
 assert(C.dd^2 == 0 )
 assert(HH_0(void) == 0)
 assert(HH_-1(void) == 0)
@@ -179,7 +179,7 @@ assert(faces(0,irrelevant) == {})
 assert(#faces(-1,irrelevant) === 1)
 assert(irrelevant === dual irrelevant)
 assert(fVector irrelevant === {1})
-C = chainComplex irrelevant
+C = complex irrelevant
 assert(C.dd^2 == 0 )
 assert(HH_0(irrelevant) == 0)
 assert(HH_-1(irrelevant) == (coefficientRing R)^1)
@@ -215,7 +215,7 @@ D = simplicialComplex monomialIdeal(a*d, a*e, b*c*d, d*e, c*e, b*e)
 assert not isPure D
 assert ( ideal dual D == monomialIdeal (a*b*c*d, a*b*e, a*c*e, d*e) )
 S = ZZ/32003[u,v,w,x,y];
-C = chainComplex(D, Labels => {u,v,w,x,y})
+C = complex(D, Labels => {u,v,w,x,y})
 assert(C.dd^2 == 0 )
 H = prune HH(C)
 assert(H_0 != 0)
@@ -233,14 +233,14 @@ D = simplicialComplex{a*b*i, a*e*i, i*b*j, j*c*b, j*c*a, j*a*e,
      e*i*f, i*h*f, i*h*j, j*e*d, j*g*d, j*h*g, g*h*f, f*e*d,
      d*f*a, f*b*a, f*g*c, f*b*c, g*c*a, g*d*a}
 assert isPure D
-C = chainComplex D
+C = complex D
 assert( C.dd^2 == 0 )
 H = prune HH(C)
 assert(H_0 == 0)
 assert(rank H_1 == 2)
 assert(rank H_2 == 1)
 D' = dual D
-C' = chainComplex D'
+C' = complex D'
 assert(C'.dd^2 == 0 )
 H' = prune HH(C')
 assert (H'_(7-2) === H_2)
@@ -256,7 +256,7 @@ D = simplicialComplex {a*b*i, a*e*i, b*i*j, b*c*j, a*c*j,
      f*g*h, d*e*f, a*d*f, a*b*f, c*f*g, b*c*f, a*c*g, a*e*g}
 isPure D
 assert(vertices D == toList(a..j))
-C = chainComplex D
+C = complex D
 assert(C.dd^2 == 0)
 H = prune HH(C)
 assert(H_0 == 0)
@@ -280,7 +280,7 @@ D = simplicialComplex abelian 8
 #faces(1,D)
 #faces(2,D)
 #faces(3,D)
-C = chainComplex D
+C = complex D
 assert(C.dd^2 == 0)
 prune HH(C)
 transpose gens ideal D     
@@ -297,7 +297,7 @@ assert(vertices D == toList(b..f))
 assert(facets dual D == facets D)
 S = ZZ/32003[u,v,x,y,z];
 L = {x^2, x*y, x*z, y^2, y*z}
-C = chainComplex(D, Labels => L)
+C = complex(D, Labels => L)
 assert(C.dd^2 == 0)
 l = length C
 assert((for i to l list rank C_i) == for i to l list (fVector D)#i)
@@ -312,7 +312,7 @@ assert all(1..l, i -> H_i == 0)
 TEST ///
 R = ZZ/101[a..e];
 D = simplicialComplex monomialIdeal product gens R
-C = chainComplex D
+C = complex D
 assert(C.dd^2 == 0)
 assert(boundaryMap(5,D) == 0)
 H = prune HH(C)
@@ -328,7 +328,7 @@ D = simplicialComplex {x_0 * x_1 * x_2, x_1 * x_2 * x_3}
 facets D
 dual D
 faces(0,D)
-chainComplex D
+complex D
 dual D
 ///
 
@@ -357,14 +357,14 @@ D = buchbergerSimplicialComplex(L1,R)
 -- peek D.cache.labels
 boundaryMap(0,D,Labels=>L1)
 boundaryMap(1,D,Labels=>L1)
-C = chainComplex(D,Labels=>L1)
+C = complex(D,Labels=>L1)
 assert(C.dd^2 == 0)
 prune(HH C)
 assert all(0..dim D, i -> HH_(i+1)(C) == 0)
 assert(HH_0(C) == S^1/(ideal L1))
 assert isHomogeneous C
 E = lyubeznikSimplicialComplex(L1,R)
-B = chainComplex(E,Labels=>L1)
+B = complex(E,Labels=>L1)
 assert(B.dd^2 == 0)
 assert all(0..dim E, i -> HH_(i+1)(B) == 0)
 assert(HH_0(B) == S^1/(ideal L1))
@@ -436,7 +436,7 @@ S=ZZ/32003[x,y,z]
 L={y*z,x^2*z^2,x^2*y^2}
 R = ZZ/32003[a..c]
 D = buchbergerSimplicialComplex(L,R)
-C = chainComplex(D,Labels=>L)
+C = complex(D,Labels=>L)
 assert(C.dd^2 == 0)
 betti C
 prune(HH C)
@@ -449,7 +449,7 @@ TEST ///
 x = getSymbol "x"
 S = QQ[x_1..x_5];
 Delta = simplicialComplex {x_1*x_2*x_3, x_2*x_4, x_3*x_4, x_5};
-C = chainComplex Delta
+C = complex Delta
 C.dd
 assert(C.dd_0 * C.dd_1 == 0)
 assert(C.dd_1 * C.dd_2 == 0)
@@ -497,34 +497,6 @@ D = simplicialComplex monomialIdeal(x_0*x_1,x_2*x_3*x_4)
 
 
 ------------------------------------------------------------------------------
-///
-R = QQ[x_0..x_4]
-F = face (x_0*x_1)
-G = face (x_0*x_1*x_2)
-assert(isSubface(F,G))
-assert(dim(F)==1);
-assert(dim(G)==2);
-assert(ring(F)===R)
-///
-
-
-------------------------------------------------------------------------------
-///
-R = QQ[x_0..x_4]
-F = face (x_0*x_1)
-assert(set vertices(F) === set {x_0,x_1})
-///
-
-
-------------------------------------------------------------------------------
-///
-R = QQ[x_0..x_4]
-F = face (x_0*x_1)
-assert(set vertices(F) === set {x_0,x_1})
-///
-
-
-------------------------------------------------------------------------------
 TEST ///
 R = QQ[a..e]
 D = simplicialComplex monomialIdeal(a*b*c*d*e)
@@ -538,11 +510,11 @@ D = simplicialComplex{A_0*A_2*A_3,A_2*A_3*A_4}
 vertices D
 S = QQ[x_0..x_3]
 -- This complex should be a minimal free resolution of ideal {S_0*S_1,S_3,S_1*S_2,S_0*S_2}
-C = chainComplex(D,Labels => {S_0*S_1,S_3,S_1*S_2,S_0*S_2})
+C = complex(D,Labels => {S_0*S_1,S_3,S_1*S_2,S_0*S_2})
 assert((for i to length C list rank C_i) === fVector D)
 assert all(1..length C, i -> ((homology C)_i == 0))
 -- This complex is not a minimal free resolution. It is not even exact.
-C = chainComplex(D,Labels => {S_3,S_0*S_1,S_1*S_2,S_0*S_2})
+C = complex(D,Labels => {S_3,S_0*S_1,S_1*S_2,S_0*S_2})
 assert(not (homology C)_1 == 0)
 ///
 
@@ -568,22 +540,23 @@ assert (ring image g === ring D)
 
 
 ------------------------------------------------------------------------------
--- Testing chainComplex of a simplicial map
+-- Testing complex of a simplicial map
 TEST ///
 R = QQ[a,b,c,d,e,f]
 D = simplicialComplex({a*b*c, b*c*d, d*e*f})
 D' = simplicialComplex({a*b*c, c*d, d*e*f})
 phi = map(D, D', {a,b,c,d,e,f})
 assert isWellDefined phi
-Phi = chainComplex phi
+Phi = complex phi
 assert (Phi * (source Phi).dd == (target Phi).dd * Phi)
-assert ((source Phi) === (chainComplex D'))
-assert ((target Phi) === (chainComplex D))
+assert ((source Phi) === (complex D'))
+assert ((target Phi) === (complex D))
 ///
 
 
 ------------------------------------------------------------------------------
 -- Testing (homology, SimplicialMap)
+TEST ///
 S = ZZ/101[a,b,c,d]
 D = simplicialComplex{1_S}
 E = simplicialComplex{0_S}
@@ -597,9 +570,10 @@ I = map(D,D, id_(ring D))
 assert((homology I)_(-1) == 0)
 assert((homology I)_0 == 0)
 assert((prune homology I)_1 == matrix{{1_(coefficientRing D)}})
+///
 
 ------------------------------------------------------------------------------
--- Testing more chainComplex maps
+-- Testing more complex maps
 -- These examples come from Munkres' Algebraic Topology
 -- Example 1 of Ch. 1, Sec. 12, page 63-64.
 TEST ///
@@ -614,16 +588,16 @@ Torus = simplicialComplex{
 S = ZZ[y_0..y_5]
 Circle = simplicialComplex(for i to 5 list S_i*S_((i+1)%6))
 f = map(Torus,Circle,matrix{{R_0,R_4,R_3,R_3,R_4,R_6}})
-Cf = chainComplex f
+Cf = complex f
 CCircle = source Cf
 CTorus = target Cf
 assert not isInjective f
 assert all(1, i -> Cf_(i-1)*CCircle.dd_i == CTorus.dd_i*Cf_i )
 g = map(Torus,Circle,matrix{{R_0,R_1,R_2,R_0,R_4,R_3}})
-Cg = chainComplex g
+Cg = complex g
 assert all(1, i -> Cg_(i-1)*CCircle.dd_i == CTorus.dd_i*Cg_i)
 h = map(Torus,Circle,matrix{{R_0,R_7,R_8,R_5,R_5,R_0}})
-Ch = chainComplex h
+Ch = complex h
 assert all(1, i -> Ch_(i-1)*CCircle.dd_i == CTorus.dd_i*Ch_i)
 ///
 
@@ -706,20 +680,138 @@ assert (numgens ring D' == 3)
 -- Testing Connected Components
 
 -- For the void and empty complex, we should return that complex
+TEST ///
 R = QQ[x_0 .. x_11]
 void = simplicialComplex monomialIdeal(1_R)
 assert(#(connectedComponents void) == 1)
 assert((connectedComponents void)#0 === void)
-
-
 empty = simplicialComplex {1_R}
 assert(#(connectedComponents empty) == 1)
 assert((connectedComponents empty)#0 === empty)
-
 D = simplicialComplex {x_0*x_1, x_1*x_2, x_3*x_4, x_4*x_5*x_6, x_6*x_7, x_8*x_9*x_10, x_9*x_10*x_11}
 assert(#(connectedComponents D) == 3)
 P = positions(connectedComponents D, D -> D === simplicialComplex{x_6*x_7, x_4*x_5*x_6, x_3*x_4})
 assert(#P == 1)
+///
+
+
+------------------------------------------------------------------------------
+-- Named sphere, ball, and manifold constructors
+TEST ///
+-- The Hachimori-library complexes: classic triangulated spheres and balls.
+-- For each, check the dimension, the f-vector, and the reduced rational homology.
+checkComplex = (D, d, fv, h) -> (
+    assert(dim D == d);
+    assert(fVector D == fv);
+    H := prune homology D;
+    assert(apply(toList(-1..d), i -> rank H_i) == h);
+    );
+-- Barnette's 8-vertex non-polytopal triangulation of the 3-sphere
+checkComplex(bartnetteSphereComplex(QQ[x_0..x_7]), 3, {1,8,27,38,19}, {0,0,0,0,1});
+-- the Poincare homology 3-sphere has the rational homology of the 3-sphere
+checkComplex(poincareSphereComplex(QQ[x_0..x_15]), 3, {1,16,106,180,90}, {0,0,0,0,1});
+-- a non-piecewise-linear triangulation of the 5-sphere
+checkComplex(nonPiecewiseLinearSphereComplex(QQ[x_0..x_17]), 5,
+    {1,18,141,515,930,807,269}, {0,0,0,0,0,0,1});
+-- Rudin's, Grunbaum's, and Ziegler's balls are contractible 3-balls
+checkComplex(rudinBallComplex(QQ[x_0..x_13]), 3, {1,14,66,94,41}, {0,0,0,0,0});
+checkComplex(grunbaumBallComplex(QQ[x_0..x_13]), 3, {1,14,54,70,29}, {0,0,0,0,0});
+checkComplex(zieglerBallComplex(QQ[x_0..x_9]), 3, {1,10,38,50,21}, {0,0,0,0,0});
+-- the dunce hat is contractible (though not collapsible)
+checkComplex(dunceHatComplex(QQ[x_0..x_7]), 2, {1,8,24,17}, {0,0,0,0});
+-- Bjorner's complex
+checkComplex(bjornerComplex(QQ[x_0..x_5]), 2, {1,6,15,11}, {0,0,0,1});
+-- each constructor rejects a ring without enough variables
+assert(try (bartnetteSphereComplex(QQ[x_0..x_3]); false) else true);
+assert(try (bjornerComplex(QQ[x_0..x_3]); false) else true);
+///
+
+TEST ///
+-- kleinBottleComplex, realProjectiveSpaceComplex, and smallManifold produce
+-- triangulated manifolds.  We check the dimension, f-vector, and homology,
+-- using a field of characteristic two to expose the torsion.
+-- Klein bottle: rational H_1 has rank 1; over F_2, H_1 = (F_2)^2 and H_2 = F_2.
+K = kleinBottleComplex(QQ[x_0..x_7]);
+assert(dim K == 2 and fVector K == {1,8,24,16});
+assert(apply(toList(-1..2), i -> rank (prune homology K)_i) == {0,0,1,0});
+HK2 = prune homology kleinBottleComplex(ZZ/2[x_0..x_7]);
+assert(apply(toList(-1..2), i -> rank HK2_i) == {0,0,2,1});
+-- the real projective plane: rationally acyclic, with F_2-homology in degrees 1, 2
+P2 = realProjectiveSpaceComplex(2, QQ[x_0..x_5]);
+assert(dim P2 == 2 and fVector P2 == {1,6,15,10});
+assert(apply(toList(-1..2), i -> rank (prune homology P2)_i) == {0,0,0,0});
+HP2 = prune homology realProjectiveSpaceComplex(2, ZZ/2[x_0..x_5]);
+assert(apply(toList(-1..2), i -> rank HP2_i) == {0,0,1,1});
+-- RP^3 is an orientable 3-manifold, so rationally H_3 = QQ
+P3 = realProjectiveSpaceComplex(3, QQ[x_0..x_10]);
+assert(dim P3 == 3 and fVector P3 == {1,11,51,80,40});
+assert(apply(toList(-1..3), i -> rank (prune homology P3)_i) == {0,0,0,0,1});
+-- low-dimensional real projective spaces
+assert(facets realProjectiveSpaceComplex(0, QQ[x_0]) == {x_0});
+assert(dim realProjectiveSpaceComplex(1, QQ[x_0..x_2]) == 1);
+-- smallManifold looks up Frank Lutz's enumeration of small manifolds
+M = smallManifold(2,6,0,QQ[x_0..x_5]);                -- a 2-sphere on six vertices
+assert(dim M == 2 and fVector M == {1,6,12,8});
+assert(apply(toList(-1..2), i -> rank (prune homology M)_i) == {0,0,0,1});
+M' = smallManifold(3,5,0,QQ[x_0..x_4]);               -- boundary of the 4-simplex
+assert(dim M' == 3 and fVector M' == {1,5,10,10,5});
+assert(apply(toList(-1..3), i -> rank (prune homology M')_i) == {0,0,0,0,1});
+-- smallManifold reports an out-of-range index
+assert(try (smallManifold(2,6,3,QQ[x_0..x_5]); false) else true);
+///
+
+
+------------------------------------------------------------------------------
+-- buchbergerResolution and inducedSubcomplex
+TEST ///
+-- buchbergerResolution resolves a monomial ideal by homogenizing its
+-- Buchberger simplicial complex.
+R = ZZ/101[x_0..x_4];
+L = {x_1^2, x_2^2, x_3^2, x_1*x_3, x_2*x_4};
+M = monomialIdeal L;
+BR = buchbergerResolution L;
+assert(class BR === Complex);
+assert(BR.dd^2 == 0);
+-- it is a free resolution of the quotient by the monomial ideal
+assert((prune HH BR)_0 == coker gens M);
+assert all(1..length BR, i -> (prune HH BR)_i == 0);
+-- its ranks are the f-vector of the Buchberger simplicial complex
+assert((for i to length BR list rank BR_i) == fVector buchbergerSimplicialComplex(L,R));
+-- it agrees with homogenizing the Buchberger complex directly
+assert(BR == complex(buchbergerSimplicialComplex(L,R), Labels => L));
+-- for this ideal the resolution is minimal, hence equals the Scarf complex
+assert(BR == scarfChainComplex L);
+-- the MonomialIdeal signature also resolves the quotient
+assert((prune HH buchbergerResolution M)_0 == coker gens M);
+-- degenerate case: the zero ideal
+assert((buchbergerResolution monomialIdeal(0_R))_0 == R^1);
+///
+
+TEST ///
+-- inducedSubcomplex(D, V) is the full subcomplex of D on the vertex subset V.
+S = ZZ[x_0..x_3];
+D = simplicialComplex {x_0*x_1*x_2, x_2*x_3, x_1*x_3};
+G = inducedSubcomplex(D, {x_1, x_2, x_3});
+assert(isWellDefined G);
+assert(set vertices G === set {x_1, x_2, x_3});
+assert(ring G === ring D);
+assert(dim G == 1);
+-- every facet of the induced subcomplex is a face of the original complex
+assert all(facets G, F -> member(F, faces(# support F - 1, D)));
+-- restricting to the full vertex set recovers the complex
+assert(inducedSubcomplex(D, vertices D) === D);
+-- a larger example
+T = QQ[a..f];
+E = simplicialComplex {a*b*c, b*c*d, d*e*f, a*f};
+assert(set facets inducedSubcomplex(E, {a,b,c,d}) === set {a*b*c, b*c*d});
+-- the void and irrelevant complexes are their own induced subcomplexes
+void = simplicialComplex monomialIdeal(1_S);
+assert(inducedSubcomplex(void, {}) === void);
+irrelevant = simplicialComplex {1_S};
+assert(inducedSubcomplex(irrelevant, {}) === irrelevant);
+-- a non-vertex argument is rejected
+assert(try (inducedSubcomplex(D, {x_0, 1_S}); false) else true);
+///
 
 
 -*

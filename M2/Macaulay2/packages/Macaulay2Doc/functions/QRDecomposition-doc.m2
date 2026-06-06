@@ -40,7 +40,7 @@ doc ///
       Q*R-A
       clean(1e-10,oo)
     Text
-      This function works by calling lapack routines, and so only uses the first 53 bits of precision.  
+      This function works by calling LAPACK routines, and so only uses the first 53 bits of precision.
       Lapack also has a way of returning an encoded pair of matrices that contain 
       enough information to reconstruct $Q, R$.
    Caveat

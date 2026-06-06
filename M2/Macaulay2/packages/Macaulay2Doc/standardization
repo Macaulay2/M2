@@ -24,3 +24,13 @@ If the description of the output is very short, put it in the
 
 
 
+
+SYNOPSIS (
+    Heading => "",
+    Usage => ""
+    Inputs => {},
+    Consequences => {}
+    Outputs => {},
+    PARA {},
+    EXAMPLE lines /// ... ///
+)

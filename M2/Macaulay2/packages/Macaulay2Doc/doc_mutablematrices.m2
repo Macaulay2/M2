@@ -2,11 +2,13 @@ document {
      Key => "row and column operations",
      "The usual row and column operations apply to 
      mutable matrices.  These are:",
-     UL {
+     Subnodes => {
+	  TO numRows,
 	  TO rowAdd,
 	  TO rowSwap,
 	  TO rowPermute,
 	  TO rowMult,
+	  TO numColumns,
 	  TO columnAdd,
 	  TO columnSwap,
 	  TO columnPermute,
@@ -45,7 +47,22 @@ document {
 	  "mutableIdentity(RR_100,5)",
 	  "mutableMatrix(QQ,3,5)",
 	  "randomMutableMatrix(4,4,.5,100)"
-	  }
+	  },
+     Subnodes => {
+	 TO MutableMatrix,
+	 TO mutableMatrix,
+	 TO (mutableMatrix, Ring, ZZ, ZZ),
+	 TO mutableIdentity,
+	 TO "MutableMatrix _ Sequence = Thing",
+	 TO "row and column operations",
+	 TO fillMatrix,
+	 TO (randomMutableMatrix, ZZ, ZZ, RR, ZZ),
+	 -- TODO: move these to linear algebra node?
+	 TO nullSpace,
+	 TO reducedRowEchelonForm,
+	 TO rowRankProfile,
+	 TO columnRankProfile,
+         }
      }
 
 document {
@@ -68,7 +85,7 @@ document {
 	  ", ", 
 	  TO mutableIdentity,
      ").  
-     Certain operations over RR or CC are performed using the lapack library
+     Certain operations over RR or CC are performed using the LAPACK library
      and require dense encoding of matrices: ",
      TO "LUdecomposition", ", ", TO "SVD", ", ", TO "solve", ", ", TO "eigenvalues", ", ", TO "eigenvectors", ".",
      
@@ -84,7 +101,7 @@ document {
 	  TO columnMult,
 	  },
      HEADER3 "matrix arithmetic",
-     "Many matrix arithmetic routines are only available for immutabie 
+     "Many matrix arithmetic routines are only available for immutable 
      matrices, not
      mutable matrices.  It is necessary to use ", TO matrix, " to make
      an immutable matrix first.",

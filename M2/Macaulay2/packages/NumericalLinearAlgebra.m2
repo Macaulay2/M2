@@ -52,7 +52,7 @@ numericalRank Matrix := o -> M -> (
      then error "matrix with real or complex entries expected";
      t := o.Threshold; 
      N := if t<=1 then M -- use t as an absolute cutoff for singular values, otherwise look for a "gap"  
-          else matrix apply(entries M, row->(      -- nomalize "large" rows (a hack!!!)
+          else matrix apply(entries M, row->(      -- normalize "large" rows (a hack!!!)
 	     	  m := max(row/abs);
 	     	  if m<1 then row else apply(row,e->e/m)
 	     	  ));
@@ -120,10 +120,19 @@ colReduce Matrix := o -> M -> (
     M
     )
 
+-- Test colReduce, Normalize
 TEST ///
 N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
-N = colReduce(N, Tolerance=>0.01)
-assert(numcols N == 1)
+N1 = colReduce(N, Tolerance=>0.01)
+assert(numcols N1 == 1)
+N2 = colReduce(N, Tolerance=>0.01, Normalize => false)
+assert(N1 != N2)
+N3 = colReduce(N, Reverse=>true, Normalize=>true)
+-- pivots should still all be 1Reverse=>true
+assert(all(0..numcols N3-1, j -> (
+    pivotRow := maxPosition apply(numrows N3, i -> abs N3_(i,j));
+    abs(N3_(pivotRow,j) - 1.) < 1e-10
+)))
 ///
 
 --a list of column indices for a basis of the column space of M

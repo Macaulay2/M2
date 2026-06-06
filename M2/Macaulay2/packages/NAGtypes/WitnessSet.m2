@@ -36,6 +36,8 @@ codim WitnessSet := {} >> o -> W -> numgens ring W - dim W
 ring WitnessSet := W -> if member(class W.Equations, {Ideal,PolySystem}) then ring W.Equations else ring ideal equations W
 degree WitnessSet := W -> #W.Points
 ideal WitnessSet := W -> if class W.Equations === PolySystem then ideal W.Equations else W.Equations
+declareIrreducible = method()
+declareIrreducible WitnessSet := W -> W.cache.IsIrreducible = true 
 
 witnessSet = method(TypicalValue=>WitnessSet)
 witnessSet (PolySystem,Matrix,List) := (F,S,P) -> 
@@ -172,17 +174,19 @@ numericalAffineSpace PolynomialRing := R -> (
     C := coefficientRing R; 
     A := random(C^n,C^n);
     b := random(C^n,C^1);
-    numericalVariety {witnessSet(ideal R, A|(-b), {point entries transpose solve(A,b)})}
+    W := witnessSet(ideal R, A|(-b), {point entries transpose solve(A,b)});
+    declareIrreducible W;
+    numericalVariety {W}
     )
 -- ProjectiveNumericalVariety is not a type!
 projectiveNumericalVariety = method( -* TypicalValue=>ProjectiveNumericalVariety *- )
 projectiveNumericalVariety List := Ws -> new ProjectiveNumericalVariety from numericalVariety Ws
 
 check NumericalVariety := o-> V -> (
-     if any(keys V, k->(class k =!= ZZ or k<0)) 
-     then error "the keys of a NumericalVariety should be nonnegative integers";
-     scan(keys V, k->if class k === ZZ then scan(V#k, W->(
-		    if dim W != k then 
-		    error "dimension of a witness set does not match the key in NumericalVariety";
-		    )));
-     )
+    if any(keys V, k->(class k =!= ZZ or k<0)) 
+    then error "the keys of a NumericalVariety should be nonnegative integers";
+    scan(keys V, k->if class k === ZZ then scan(V#k, W->(
+		if dim W != k then 
+		error "dimension of a witness set does not match the key in NumericalVariety";
+		)));
+    )

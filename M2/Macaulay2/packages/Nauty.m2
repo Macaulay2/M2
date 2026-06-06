@@ -6,7 +6,7 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-newPackage select((
+newPackage(
     "Nauty",
     Version => "1.4.3.1",
     Date => "01. March 2013",
@@ -20,18 +20,18 @@ newPackage select((
     DebuggingMode => false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Nauty in Macaulay2",
 	 "acceptance date" => "2011-04-20",
-	 "published article URI" => "http://j-sag.org/Volume3/jsag-1-2011.pdf",
-	 "published code URI" => "http://j-sag.org/Volume3/Nauty.m2",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Nauty.m2",
+	 "published article URI" => "https://msp.org/jsag/2011/3-1/p01.xhtml",
+	 "published article DOI" => "10.2140/jsag.2011.3.1",
+	 "published code URI" => "https://msp.org/jsag/2011/3-1/jsag-v3-n1-x01-code.zip",
 	 "release at publication" => "ea719b4fd3b65bb35ebd0f10f356c7d53ba73b7d",
 	 "version at publication" => "1.4.1",
 	 "volume number" => "3",
-	 "volume URI" => "http://j-sag.org/Volume3/"
+	 "volume URI" => "https://msp.org/jsag/2011/3-1/"
 	 }
-), x -> x =!= null)
+    )
 
 -------------------
 -- Configuration
@@ -247,7 +247,8 @@ generateRandomGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, p) -> (
     rndSeed := if instance(opts.RandomSeed, ZZ) then " -S" | toString(opts.RandomSeed % 2^30) else "";
     callNauty("genrang -qg -P" | toString p | " "  | toString n | " " | toString num | rndSeed, {})
 )
-generateRandomGraphs (ZZ, ZZ, QQ) := List => opts -> (n, num, p) -> (
+generateRandomGraphs (ZZ, ZZ, QQ) :=
+generateRandomGraphs (ZZ, ZZ, RR) := List => opts -> (n, num, p) -> (
     if n < 1 then error("generateRandomGraphs: nauty does not like graphs with non-positive numbers of vertices.");
     if num < 1 then return {};
     if p <= 0 or p > 1 then error("generateRandomGraphs: Probability must be between 0 and 1.");
@@ -257,7 +258,6 @@ generateRandomGraphs (ZZ, ZZ, QQ) := List => opts -> (n, num, p) -> (
     q := round(100000000 * p) / 100000000;
     callNauty("genrang -qg -P" | toString q | " "  | toString n | " " | toString num | rndSeed, {})
 )
-generateRandomGraphs (ZZ, ZZ, RR) := List => opts -> (n, num, p) -> generateRandomGraphs(n, num, promote(p, QQ), opts)
 generateRandomGraphs (ZZ, ZZ) := List => opts -> (n, num) -> (
     if n < 1 then error("generateRandomGraphs: nauty does not like graphs with non-positive numbers of vertices.");
     if not instance(opts.RandomSeed, Nothing) and not instance(opts.RandomSeed, ZZ) then error("generateRandomGraphs: Option [RandomSeed] is not a valid type, i.e., ZZ or Nothing.");

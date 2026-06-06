@@ -6,6 +6,7 @@ header "";
 --Functions in this file may make calls to stdio.
 
 use gmp;
+use ballarith;
 use stdio;
 use err;
 
@@ -22,6 +23,12 @@ export (x:ZZ) ^ (n:ZZ) : ZZ := (
      if isNegative(n) then fatal("internal error: negative exponent for integer power"); -- what else can we do???
      if !isULong(n) then fatal("integer exponent too large");
      x^toULong(n));
+
+export isInvertible(x:ZZ, n:ZZ):bool := (
+    z := newZZmutable();
+    r := Ccode(int, "mpz_invert(", z, ", ", x, ", ", n, ")");
+    clear(z);
+    return r != 0);
 
 export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
      -- z = x^y mod n
@@ -70,10 +77,10 @@ export format(
      sep:string,		     -- separator between mantissa and exponent
      x:RR						-- the number to format
      ) : array(string) := (	   -- return: ("-","132.456") or ("","123.456")
-     ng := sign(x);
+     ng := signbit(x);
      if isinf(x) then return array(string)(if ng then "-" else "","infinity");
-     if isnan(x) then return array(string)(if ng then "-" else "","NotANumber");
-     meaningful := int(floor(precision(x) / log2ten));
+     if isnan(x) then return array(string)("NotANumber");
+     meaningful := int(floor(precision(x) / log2ten)) + 1;
      if s == 0 || s > meaningful then s = meaningful; -- print at most the "meaningful" digits
      sgn := "";
      if ng then (
@@ -138,7 +145,19 @@ export format(
 	  concatenate(
 	       array(string)(
 		    if pt == 0 then "." else "",
-		    if l == 0 then "" else new string len l do provide '0',
+		    -- GCC incorrectly infers a zero-size region from the "" branch of
+		    -- this if-else and spuriously warns about the new string allocation.
+		    if l == 0 then "" else (
+			Ccode(void, "
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored \"-Warray-bounds\"
+#pragma GCC diagnostic ignored \"-Wstringop-overflow\"
+(void)0");
+			r := new string len l do provide '0';
+			Ccode(void, "
+#pragma GCC diagnostic pop
+(void)0");
+			r),
 		    substr(mantissa,0,pt),
 		    if pt > 0 && pt < manlen then "." else "",
 		    substr(mantissa,pt,manlen-pt),
@@ -156,7 +175,6 @@ export printingSeparator := "e";			    -- was "*10^"
 -- this can be used by the engine for printing matrices to a uniform precision
 
 export tostringRR(x:RR):string := concatenate(format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x));
-tostringRRpointer = tostringRR;
 
 export tostringRRi(x:RRi):string := concatenate( 
     array(string)(
@@ -167,13 +185,37 @@ export tostringRRi(x:RRi):string := concatenate(
        	"]",
         if isEmpty(x) then " (an empty interval)" else ""
        	));  
-tostringRRipointer = tostringRRi;  
 
+
+export tostringRRiforCCi(x:RRi):string := concatenate( 
+    array(string)(
+       	"[",
+       	tostringRR(leftRR(x)),
+       	",",
+       	tostringRR(rightRR(x)),
+       	"]"
+       	));  
+--tostringRRiforCCipointer = tostringRRiforCCi;  
+
+export tostringCCi(x:CCi):string := (
+     re := tostringRRiforCCi(x.re);
+     im := tostringRRiforCCi(x.im) + "*ii";
+     r := (
+	 if isZero(x.im) then re
+	 else if isZero(x.re) then im
+	 else re + "+" + im);
+     if isEmpty(x) then r = r + " (an empty interval)";
+     r
+);
+tostringCCipointer = tostringCCi;  
+
+numericstr(prec:ulong, str:string, ng:bool):string := (
+    "numeric(" + tostring(prec) + ", " + if ng then "-" else "" + str + ")");
 
 export toExternalString(x:RR):string := (
-     if isinf(x) then return if x < 0 then "-infinity" else "infinity";
-     if isnan(x) then return if sign(x) then "-NotANumber" else "NotANumber";
-     ng := sign(x);
+     ng := signbit(x);
+     if isinf(x) then return numericstr(precision(x), "infinity", ng);
+     if isnan(x) then return numericstr(precision(x), "NotANumber", false);
      if ng then x = -x;
      ex := long(0);
      s := getstr(ex, base, 0, x);
@@ -202,46 +244,24 @@ export format(
      l:int,					   -- max number leading zeroes
      t:int,				    -- max number extra trailing digits
      sep:string,		     -- separator between mantissa and exponent
-     abb:bool,				  -- whether to abbreviate "*ii" to "i"
-     paren:bool,    -- whether to parenthesize a sum and prepend a possible '-'
      z:CC						-- the number to format
      ) : string := (
      if isnan(z.re) || isnan(z.im) then return "NotANumber";
      if isinf(z.re) || isinf(z.im) then return "infinity";
      if s != 0 && ac == -1 && !isZero(z.re) && !isZero(z.im) then ac = s - int(floor(double(exponent(z))/log2ten));
-     star := if abb then ""  else "*" ;
-     i  := if abb then "i" else "ii";
+     star := "*";
+     i  := "ii";
      x := format(s,ac,l,t,sep,z.re);
      y := format(s,ac,l,t,sep,z.im);
      if y.1 === "0" then return if x.1 === "0" then "0" else concatenate(x);
      if y.1 === "1" then (y.1 = ""; star = "");
      if x.1 === "0" then return concatenate(array(string)(y.0,y.1,star,i));
      if y.0 === "" then y.0 = "+";
-     lp := "";
-     rp := "";
-     if paren then (
-	  if x.0 === "-" 
-	  then (
-	       x.0 = "";
-	       lp = "-("; 
-	       if y.0 .0 == '-' then y.0 = "+" else y.0 = "-")
-	  else lp = "(";
-	  rp = ")"; 
-	  );
-     concatenate(array(string)(lp,x.0,x.1,y.0,y.1,star,i,rp)));
+     concatenate(array(string)(x.0,x.1,y.0,y.1,star,i)));
 
 export tostringCC(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,false,false,z)
+     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,z)
      );
-export tonetCC(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,false,z)
-     );
-tonetCCpointer = tonetCC;
-export tonetCCparen(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,true,z)
-     );
-tonetCCparenpointer = tonetCCparen;
-
 export toExternalString(z:CC):string := concatenate(array(string)(
      	  "toCC(",
 	  toExternalString(realPart(z)),
@@ -249,6 +269,14 @@ export toExternalString(z:CC):string := concatenate(array(string)(
 	  toExternalString(imaginaryPart(z)),
 	  ")"
 	  ));
+
+export toExternalString(z:CCi):string := concatenate(array(string)(
+     	  "toCCi(",
+       toExternalString(z.re),
+       ",",
+       toExternalString(z.im),
+       ")"
+       ));
 
 
 export (o:file) << (s:charstarOrNull) : file := o << if s == null() then "(null)" else tostring(s);

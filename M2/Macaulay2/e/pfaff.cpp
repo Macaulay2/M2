@@ -5,7 +5,7 @@
 #include "interrupted.hpp"
 
 PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
-    : R(M0->get_ring()), M(M0), p(p0), done(false), row_set(0)
+    : R(M0->get_ring()), M(M0), p(p0), done(false), row_set(nullptr)
 {
   pfaffs = MatrixConstructor(R->make_FreeModule(1), 0);
   if (p == 0)
@@ -30,7 +30,7 @@ int PfaffianComputation::step()
 {
   if (done) return COMP_DONE;
 
-  ring_elem r = calc_pfaff(row_set, p);
+  ring_elem r = calc_pfaff();
   if (!R->is_zero(r))
     pfaffs.append(R->make_vec(0, r));
   else
@@ -52,6 +52,11 @@ int PfaffianComputation::calc(int nsteps)
       if (--nsteps == 0) return COMP_DONE_STEPS;
       if (system_interrupted()) return COMP_INTERRUPTED;
     }
+}
+
+ring_elem PfaffianComputation::calc_pfaff(void)
+{
+  return calc_pfaff(row_set, p);
 }
 
 ring_elem PfaffianComputation::calc_pfaff(size_t *r, int p2)
@@ -98,11 +103,18 @@ Matrix *Matrix::pfaffians(int p) const
   if (get_ring()->get_precision() > 0)
     {
       ERROR("pfaffian computations over RR or CC not yet implemented");
-      return 0;
+      return nullptr;
     }
   PfaffianComputation d {this, p};
   d.calc();
   return d.pfaffians();
+}
+
+ring_elem Matrix::pfaffian() const
+{
+  PfaffianComputation d {this, n_cols()};
+
+  return d.calc_pfaff();
 }
 
 // Local Variables:

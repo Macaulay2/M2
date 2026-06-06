@@ -1,0 +1,16 @@
+HOMEPAGE = https://eigen.tuxfamily.org/
+VERSION = 5.0.1
+SHA256SUM = e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec
+URL = https://gitlab.com/libeigen/eigen/-/archive/$(VERSION)
+TARFILE = eigen-$(VERSION).tar.gz
+LICENSEFILES = COPYING.* README.md
+
+CONFIGURECMD = true
+BUILDCMD = true
+INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include &&        \
+	cp -r Eigen $(LIBRARIESDIR)/include &&            \
+	$(MKDIR_P) $(LIBRARIESDIR)/include/unsupported && \
+	cp -r unsupported/Eigen $(LIBRARIESDIR)/include/unsupported
+
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/eigen/Makefile

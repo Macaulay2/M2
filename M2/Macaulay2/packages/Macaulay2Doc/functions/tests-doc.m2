@@ -3,6 +3,8 @@ doc ///
     tests
     (tests, Package)
     (tests, String)
+    (tests, ZZ, Package)
+    (tests, ZZ, String)
     TestInput
     (code, TestInput)
     (locate, TestInput)
@@ -10,22 +12,27 @@ doc ///
     locate a package's tests
   Usage
     tests pkg
+    tests(i, pkg)
   Inputs
-    pkg:Package
-      or @ofClass String@
+    i:ZZ
+    pkg:{Package, String}
   Outputs
-    :HashTable
+    :{NumberedVerticalList, TestInput}
   Description
     Text
-      Returns @ofClass HashTable@ containing the tests for the given
-      package.  Each key of this hash table is an integer, which would
+      When an integer is not provided, this returns all the tests
+      for the given package.  The position of each element would
       be passed as the first argument of @TO check@ to run the test.
       Each value is a @TT "TestInput"@ object.  These are printed with
       the location of the file so that you may quickly jump to the
       source code of the test when using Emacs.
     Example
       tests "FirstPackage"
-      t = oo#0
+    Text
+      If the test number is also provided, then the corresponding
+      @TT "TestInput"@ object is returned.
+    Example
+      t = tests(0, "FirstPackage")
     Text
       The @TO locate@ and @TO code@ functions do the expected thing
       when given a @TT "TestInput"@ object.

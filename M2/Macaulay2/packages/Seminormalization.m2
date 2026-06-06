@@ -1,6 +1,6 @@
 newPackage( "Seminormalization",
-	Version => "0.21",
-	Date => "September 30th, 2019",
+	Version => "0.22",
+	Date => "June 14, 2024",
 	Authors => {
 		{Name => "Karl Schwede",
 		Email => "schwede@math.utah.edu",
@@ -16,13 +16,12 @@ newPackage( "Seminormalization",
 	PackageExports => {"Pullback", "PushForward"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Seminormalization package for Macaulay2",
 	     "acceptance date" => "5 December 2019",
 	     "published article URI" => "https://msp.org/jsag/2020/10-1/p01.xhtml",
-	     "published article DOI" => "https://doi.org/10.2140/jsag.2020.10.1",
+	     "published article DOI" => "10.2140/jsag.2020.10.1",
 	     "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x01-Seminormalization.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Seminormalization.m2",
 	     "release at publication" => "7a7e6f96b0122482f5d60306f34d06fd8ae1e885",	    -- git commit number in hex
 	     "version at publication" => "0.21",
 	     "volume number" => "10",
@@ -36,6 +35,7 @@ export{
 	--"renameVariablesOfTarget",
 	"ringProduct",
 	"betterNormalizationMap",
+	"conductorOfRingMap",  
 	--potentially the following functions should not be exported
 	"flattenVarDegrees",
 	"ringToAlgebraMap",
@@ -522,7 +522,7 @@ betterNormalizationMap(Ring):=o->(R1) -> (
 	--map them to (R/q_j)^N
 	--apply the maps from fakeMapList to them to get elements
 	--multiply them by appropriate idempotents
-	--in other words, this gives us a function which tells us where elements of R go in in \prod_i (R/q_i)^N
+	--in other words, this gives us a function which tells us where elements of R go in \prod_i (R/q_i)^N
 	--(well, rather the sum of the images in the list should do that)
 	R1qToNormalizedRingList := apply(#quotientDomainList, jj -> (tt -> ((normalizedRing#1)#jj)*( (fakeMapList#jj)((normalizationMapList#jj)(sub(tt, source (normalizationMapList#jj)) )) ) ) ); --not a real map either, this is the "map" from each R1q to the normalizedRing, but it should work for the variables
 	--
@@ -543,12 +543,25 @@ betterNormalizationMap(Ring):=o->(R1) -> (
 
 	--finally, we build the map R1 -> (pruned trimmed normalization),
 	nearlyFinalMap := map(trimmedNormalization, R1, sub(matrix(((normalizedRing#0).minimalPresentationMap)*R1ToRealNormalization), trimmedNormalization));
-
 	myVar := o.Variable;
 	if (o.Variable === null) then (myVar = "Ww") else (myVar = toString(myVar));
 	renamedNorm := varRenamer(myVar, trimmedNormalization);
 	(renamedNorm#1)*(nearlyFinalMap)
 );
+
+
+--***********************************
+--**The following function determines if a ring is normal,
+--**it works on non-domains as well 
+-*
+betterIsNormal = method(Options => {Strategy => {}})
+betterIsNormal(Ring) := o -> (R1) -> (
+	myNorm := betterNormalizationMap(R1, Strategy=> o.Strategy);
+	if not isInjective myNorm then return false;
+	if conductorOfRingMap(myNorm) != ideal(1_R1) then return false;
+	true
+)
+*-
 
 --**********************************
 --the following function takes a list of rings and returns their product.
@@ -627,7 +640,7 @@ ringProduct(List):=o->(listRings) ->(
 	listOfIdeals:={};
 	for count from 0 to numRings-1 do (
 		tempMap:=map(unQuotiented, ambient (newListRings#count), listOfListsOfVars#count); --create a map to our new ring, from each old ring.
-		megaIdeal=megaIdeal+tempMap(ideal(newListRings#count)); --map the old relations to our new ring
+		megaIdeal=megaIdeal+(ideal(listOfIdems#count))*tempMap(ideal(newListRings#count)); --map the old relations to our new ring
 	);
 	outputRing:=unQuotiented/(trim(megaIdeal)); --and we are DONE(ish)
 
@@ -783,6 +796,28 @@ doc ///
 			findElementMappingToTarget(phi, sub(0, S))
 ///
 
+doc ///
+	Key
+		conductorOfRingMap
+		(conductorOfRingMap, RingMap)
+	Headline
+		given a ring map this finds the conductor of the map
+	Usage
+		J = conductorOfRingMap phi
+	Inputs
+		phi: RingMap
+	Outputs
+		J: Ideal
+			the conductor
+	Description
+		Text
+			Given a ring map $\phi : R \to S$, this finds the conductor, the annihilator of $S/R$ as an $R$ module.
+		Example
+			R = QQ[a,b]/ideal(a^3-b^2);
+			S = QQ[c];
+			phi = map(S, R, {c^2,c^3});
+			conductorOfRingMap phi
+///
 
 doc ///
 	Key
@@ -796,7 +831,7 @@ doc ///
 		L: List
 	Outputs
 		M: List
-			a list with a product of of the rings input, and information about its structure
+			a list with a product of the rings input, and information about its structure
 	Description
 		Text
 			Given a list of rings, of finite type over the same coefficient ring, this computes a ring isomorphic to a product of the rings.  It returns a list with three entries.  First is the ring.  Second is the list of orthogonal idempotents.  Finally, it lists where the variables of each of the rings in the list go in the new ring.
@@ -884,7 +919,7 @@ doc ///
 			the first entry is the target of f as an algebra over the source
 	Description
 		Text
-			Given a ringmap map $f: A \to B$, this writes $B$ as $A[...]/J$.  It returns the ring $A[...]/J$ as well as the isomorphim $B \to A[...]/J$.  Consider the first example, a normalization of a cusp.
+			Given a ringmap map $f: A \to B$, this writes $B$ as $A[...]/J$.  It returns the ring $A[...]/J$ as well as the isomorphism $B \to A[...]/J$.  Consider the first example, a normalization of a cusp.
 		Example
 			A = QQ[a,b]/ideal(a^2-b^3);
 			B = QQ[t];
@@ -1030,6 +1065,78 @@ TEST /// --#8 check that the non-semi-normal locus is the right set again
 	cond = radical ann coker myMap;
 	assert(dim radical cond == 0);
 	assert(#(minimalPrimes cond) == 1);
+///
+
+TEST ///  --#9 checking the betterNormalization
+R = ZZ/11[x,y]/ideal(x*y*(x-1)*(y-2));
+phi = betterNormalizationMap R;
+assert(4 == #(minimalPrimes ideal target phi));
+S = QQ[a,b,c]/ideal(a*b,a*c,b*c);
+psi = betterNormalizationMap S;
+assert(3 == #(minimalPrimes ideal target psi));
+///
+
+TEST /// --#10 checking the example that had failed
+R = QQ[x,y]/ideal(x*y*(x-1));
+snmap = (seminormalize R)#1;
+assert(isInjective snmap);
+pfwd = pushFwd(snmap);
+assert( isFreeModule (pfwd#0) and (1 == rank(pfwd#0)))
+///
+
+TEST /// --#11 checking productOfRings in the case that had failed
+R = QQ[x];
+S = QQ[x,y]/ideal(y-2);
+T = (ringProduct({R,S}))#0
+assert(1 == dim T)
+assert(isNormal T)
+assert(2 == #minimalPrimes ideal T)
+///
+
+TEST /// --#12 flattenVarDegrees sums each multidegree vector into a single grading
+R = QQ[x,y, Degrees=>{{1,2},{3,4}}];
+S = flattenVarDegrees R;
+assert(instance(S, Ring));
+assert(degrees S == {{3},{7}});
+R2 = QQ[a,b,c, Degrees=>{{1,0},{0,1},{1,1}}];
+assert(degrees flattenVarDegrees R2 == {{1},{1},{2}});
+///
+
+TEST /// --#13 conductorOfRingMap on the identity is the unit ideal; on the
+-- cusp normalization x = t^2, y = t^3 it is the maximal ideal at the cusp.
+R = QQ[x,y]/(y^2 - x^3);
+phiId = map(R, R, gens R);
+assert(instance(conductorOfRingMap phiId, Ideal));
+assert(conductorOfRingMap phiId == ideal 1_R);
+A = QQ[x,y]/(y^2 - x^3);
+B = QQ[t];
+phi = map(B, A, {t^2, t^3});
+assert(conductorOfRingMap phi == ideal(x, y));
+///
+
+TEST /// --#14 findElementMappingToTarget recovers a preimage f in R with
+-- phi(f) = g; checked for phi: QQ[x] -> QQ[y]/(y^3), x |-> y on g = y and g = y + y^2.
+R = QQ[x];
+S = QQ[y]/(y^3);
+phi = map(S, R, {y});
+assert(phi findElementMappingToTarget(phi, y) == y);
+assert(phi findElementMappingToTarget(phi, y + y^2) == y + y^2);
+///
+
+TEST /// --#15 ringToAlgebraMap writes the target as an algebra over the source
+-- and returns a paired list {newB, map B -> newB} with the expected sources
+-- and targets; the two-argument form (different index) also returns a valid pair.
+A = QQ[x];
+B = QQ[x,y]/(y^2 - x);
+phi = map(B, A, {x});
+out = ringToAlgebraMap phi;
+assert(instance(out, List) and #out == 2);
+assert(instance(out#0, Ring));
+assert(instance(out#1, RingMap));
+assert(source out#1 === B);
+assert(target out#1 === out#0);
+out2 = ringToAlgebraMap(phi, 5);
+assert(#out2 == 2 and instance(out2#0, Ring));
 ///
 
 end

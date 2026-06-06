@@ -40,7 +40,15 @@ I3 = monomialIdeal matrix{{a,b}}
 I4 = monomialIdeal matrix{{a^3,b^3,c^3,d^3}}
 I = intersect(intersect(I1,I2),intersect(I3,I4))
 
-end
+-- Bug in newly added code 29 Dec 2022), fixed today.
+R = ZZ/101[a,b,c,d]
+I1 = monomialIdeal(a^2*b*c,b^3*c,b*d^3)
+I2 = monomialIdeal(a*b*c^2,b*c^2*d,c^3*d)
+assert(hash I1 == hash I2)
+assert(I1 =!= I2)
+assert(# unique{I1, I2} == 2)
+
+end--
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test monideal.out"
 -- End:

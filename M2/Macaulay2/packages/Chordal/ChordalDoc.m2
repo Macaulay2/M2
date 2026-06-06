@@ -1279,7 +1279,7 @@ doc /// --reduceDimension
       Pre
     Caveat
         An arc is removed only if all the @TO2 {ChordalNetChain,"chains"}@ through it have small dimension.
-        If an arc belongs to a chain of large dimenson and a chain of small dimension, then the arc will not be removed.
+        If an arc belongs to a chain of large dimension and a chain of small dimension, then the arc will not be removed.
     SeeAlso
         codimCount
         topComponents

@@ -11,15 +11,17 @@
 document {
 	Key => {diagonalAction, 
 	    (diagonalAction, Matrix, PolynomialRing),
+		(diagonalAction, Matrix, ZZ, PolynomialRing),
 	    (diagonalAction, Matrix, List, PolynomialRing),
 	    (diagonalAction, Matrix, Matrix, List, PolynomialRing)
 	    },
 	Headline => "diagonal group action via weights",
-	Usage => "diagonalAction(W, R), diagonalAction(W, d, R), diagonalAction(W1, W2, d, R)",
+	Usage => "diagonalAction(W, R), diagonalAction(W, z, R), diagonalAction(W, d, R), diagonalAction(W1, W2, d, R)",
 	Inputs => {
 	    	"W" => Matrix => {"of weights of the diagonal group action"},
 		"W1" => Matrix => {"of weights for the torus action"},
 		"W2" => Matrix => {"of weights for the finite abelian action"},
+		"z" => ZZ => {"of the order of an elementary abelian group"},
 	    	"d" => List => {"of orders of cyclic abelian factors in the 
 		    decomposition of the diagonal group"},
 		"R" => PolynomialRing => {"on which the group acts"}
@@ -67,24 +69,54 @@ document {
 	    },
         	
 	EXAMPLE {
-	    "R = QQ[x_1..x_4]",
-	    "W = matrix{{0,1,-1,1},{1,0,-1,-1}}",
+	    "R = QQ[x_1..x_4];",
+	    "W = matrix{{0,1,-1,1},{1,0,-1,-1}};",
 	    "T = diagonalAction(W, R)"
 		},
 	    
     	PARA {
-	    "Here is an example of a product of two cyclic groups of order 3 
-	    acting on a three-dimensional vector space:"
+	    "Here are examples with products of cyclic groups
+	    acting on a three-dimensional vector space.
+	    The orders of the cyclic factors can be passed as
+	    a list of integers or as a single integer when they are
+	    all the same."
 	    },
 	
 	EXAMPLE {
-	    "R = QQ[x_1..x_3]",
-	    "d = {3,3}",
-	    "W = matrix{{1,0,1},{0,1,1}}",
-	    "A = diagonalAction(W, d, R)",
+	    "R = QQ[x_1..x_3];",
+	    "d = {2,5}; z = 3;",
+	    "W = matrix{{1,0,1},{0,1,1}};",
+		"A = diagonalAction(W, d, R)",
+		"B = diagonalAction(W, z, R)"
 		},
     
-	    }
+    	PARA {
+	    "Here is an example of a diagonal action by the product of
+	     a two-dimensional torus with a cyclic group of order 3 
+	    acting on a two-dimensional vector space:"
+	},
+    
+	EXAMPLE {
+	    "R = QQ[x_1, x_2]",
+	    "d = {3}",
+	    "W1 = matrix{{1,-1}, {-1,1}}",
+	    "W2 = matrix {{1,0}}",
+	    "D = diagonalAction(W1, W2, d, R)"
+		},
+    
+    	PARA {
+	    "Finally, a diagonal action may be constructed with a single
+	    weights matrix obtained by vertically stacking the weights
+	    matrix for the torus action on top of the weight matrix for
+	    the finite abelian action. The following redefines the same
+	    action as in the previous example."
+	},
+    
+	EXAMPLE {
+	    "W = W1 || W2",
+	    "diagonalAction(W, d, R)"
+		}
+}
 
 document {
 	Key => {DiagonalAction},
@@ -103,7 +135,8 @@ document {
 
 document {
 	Key => { equivariantHilbertSeries,
-	    (equivariantHilbertSeries, DiagonalAction)
+	    (equivariantHilbertSeries, DiagonalAction),
+	    [equivariantHilbertSeries, Order]
 	    },
 	Headline => "equivariant Hilbert series for a diagonal action",
 	Usage => "equivariantHilbertSeries D",
@@ -122,19 +155,18 @@ document {
 	    "this function returns the equivariant Hilbert series of the coordinate ring",
 	    TEX /// $K[V]$ ///,
 	    "as a rational function of",
-	    TEX /// $z_0, \ldots, z_{r-1}, t$ ///,
+	    TEX /// $\zeta_0, \ldots, \zeta_{r-1}, T$ ///,
 	    "where",
 	    TEX /// $r$ ///,
 	    "is the rank of the torus. The series in",
-	    TEX /// $t$ ///,
+	    TEX /// $T$ ///,
 	    "which is the coefficient of",
-	    TEX /// $z_0^0\cdots z_{r-1}^0$ ///,
-	    "gives the ordinary Hilbert series of",
-	    TEX /// $K[V]^T$ ///,
-	    ". The option ",
+	    TEX /// $\zeta_0^0\cdots \zeta_{r-1}^0$ ///,
+	    "gives the ordinary Hilbert series of the torus-invariant subring. ",
+	    "The option ",
 	    TT "Order => N",
 	    " can be used to compute the series up to the ",
-	    TEX /// $t$ ///,
+	    TEX /// $T$ ///,
 	    "-degree ",
 	    TT "N-1",
 	    "."
@@ -152,10 +184,18 @@ document {
 	    "W = matrix{{-1,0,1},{0,-1,1}}",
 	    "T = diagonalAction(W, R)",
 	    "equivariantHilbertSeries T",
-	    "S = equivariantHilbertSeries(T, Order => 7)",
-	    "sub(S, {z_0 => 0, z_1 => 0})"
+	    "E = equivariantHilbertSeries(T, Order => 7)",
 		},
 	 
+    	PARA {
+	    "The constant part in the ",TEX ///$\zeta$///," variables is the Hilbert series of the invariant ring (up to degree 7)."
+	    },
+	
+	EXAMPLE {
+	    "(Z,phi) = flattenRing ring E;",
+	    "(product toList coefficients(phi E,Monomials=>apply(7,i->Z_0^i)))_(0,0)",
+		},
+	
 	    }
 
 document {

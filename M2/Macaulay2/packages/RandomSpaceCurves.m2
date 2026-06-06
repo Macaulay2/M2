@@ -17,6 +17,7 @@ newPackage(
                    },
     	Headline => "random smooth space curves",
 	Keywords => {"Examples and Random Objects"},
+        PackageImports => {"Complexes"},
      	PackageExports => {"RandomObjects"},
     	DebuggingMode => false
         )
@@ -49,7 +50,7 @@ export{"randomSpaceCurve",
 -- t = the variable to be used in the numerator
 hilbertNumerator=method()
 hilbertNumerator(List,ZZ,RingElement):=(L,r,t)->(
-     -- the beginning of the hilbert series
+     -- the beginning of the Hilbert series
      p:=sum(#L,i->L#i*t^i);
      -- the numerator
      p*(1-t)^(r+1)%t^(#L)
@@ -68,7 +69,7 @@ TEST ///
 
 
 -----------------------------
--- Expected Betti Tableaus --
+-- Expected Betti Tableaux --
 -----------------------------
 
 -- convert c*t^d to (c,({d},d))
@@ -98,17 +99,17 @@ expectedBetti=method()
 
 
 -- calculates the expected betti tableau
--- from a hilbert Numerator
+-- from a Hilbert Numerator
 --
 -- For this every term a_i*t^i will represent a summand R^{abs(a_i):-i}
 -- in the ChainComplex represented by the desired BettiTableau
 -- The step where this summand is used depends on the number of
--- sign switches that occur in the hilbert numerator before this monomial
+-- sign switches that occur in the Hilbert numerator before this monomial
 --
--- the ring of the hilbert numerator is expected to singly graded
+-- the ring of the Hilbert numerator is expected to singly graded
 -- and contain only one variable
 expectedBetti(RingElement):= (hilbNum) ->(
-     -- find terms of hilbert Numerator
+     -- find terms of Hilbert Numerator
      -- smallest degree first
      termsHilbNum := reverse terms hilbNum;
      -- convert terms into pairs (coefficient, ({d},d))
@@ -150,7 +151,7 @@ TEST ///
 
 
 -- calculate the expected betti tableau
--- from a given hilbert function.
+-- from a given Hilbert function.
 -- hilb = {h0,...,h_(d+r+1)}
 -- where d is the regularity of the variety described
 -- and r is the dimension of the ambient space
@@ -208,19 +209,15 @@ TEST ///
 -- rational entries produce an error
 -- multigraded R's work only if the betti Tally
 -- contains degrees of the correct degree length
-Ring ^ BettiTally := (R,b) -> (
-     F := new ChainComplex;
-     F.ring = R;
-     --apply(pDim b,i->F_i = null);
-     for k in keys b do (
-	  -- the keys of a betti table have the form
-	  -- (homological degree, multidegree, weight)
+
+Ring ^ BettiTally := Complex => (R,b) -> (
+    -- direct sum of complexes
+    if #keys b === 0 then return complex R^0;
+    directSum for k in keys b list (
 	  (i,d,h) := k;
-	  -- use F_i since it gives 0 if F#0 is not defined
-	  F#i = F_i ++ R^{b#k:-d};
-	  );
-     F
-     )
+      complex(R^{b#k:-d}, Base => i)
+      )
+    )
 
 TEST ///
      R = QQ[x_0..x_3];
@@ -268,7 +265,7 @@ randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
      -- find betti Numbers of the linear strand
      linearStrand := for i from 0 list (if e#?(i,{i},i) then e#(i,{i},i) else break);
      -- construction depends on length of linear strand.
-     if #linearStrand == 0 then error"linear Stand has length 0. This should never happen";
+     if #linearStrand == 0 then error"linear Strand has length 0. This should never happen";
      if #linearStrand == 1 then (
 	  -- first matrix can neither have nor be required to have linear syzygies
 	  -- choose first matrix randomly
@@ -602,7 +599,7 @@ doc ///
      with both {\tt 4b-10c_1 < a} and {\tt 4d-10c_3 < e}.
 
 
-     diameter {\ge} 4. he routine returns false, although we actually do know a couple of constructions which work in a few further cases.
+     diameter {\ge} 4. The routine returns false, although we actually do know a couple of constructions which work in a few further cases.
 
      The following example prints an overview table for the constructable cases:
    Example
@@ -684,7 +681,7 @@ doc ///
        assuming that each sign change in the coefficients of q corresponds to a step
   Description
     Text
-      calculates the expected betti table  from a given hilbert Numerator.
+      calculates the expected betti table  from a given Hilbert Numerator.
 
     Example
       T=ZZ[t]
@@ -723,7 +720,7 @@ doc ///
   B=expectedBetti(h,r)
  Inputs
   h: List
-      values of the hilbert function
+      values of the Hilbert function
   r: ZZ
        dimension of ambient protective space
  Outputs
@@ -733,7 +730,7 @@ doc ///
   Example
     betti expectedBetti({0,0,4,6,3,0,0,0,0},3)
  Caveat
-  The hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
+  The Hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
 ///
 
 
@@ -747,7 +744,7 @@ doc ///
    p=hilbertNumerator(L,r,t)
  Inputs
    L: List
-   	values of the hilbert function
+   	values of the Hilbert function
    r: ZZ
        dimension of ambient projective space
    t: RingElement
@@ -757,7 +754,7 @@ doc ///
     T=QQ[t];
     hilbertNumerator({0,0,4,6,3,0,0,0,0},3,t)
  Caveat
-  The hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
+  The Hilbert function has to be given at positions {\tt 0} to {\tt d+r+1} where {\tt d} is the regularity of the considered variety
 
 ///
 
@@ -783,7 +780,7 @@ doc ///
      In particular, there are constructions for random points in $M_g$ for $g=11,12,13$.
 
      For a algorithms and theoretical background see
-     @ HREF("http://www.math.uiuc.edu/Macaulay2/Book/", "Needles in a Haystack") @
+     @ HREF("https://macaulay2.com/Book/", "Needles in a Haystack") @
 
   ///
 
@@ -805,6 +802,19 @@ TEST ///
      e = 1;
      betti res (M=(random hartshorneRaoModule)(1,HRao,R))
      assert(apply(toList(e..e+#HRao-1),i->hilbertFunction(i,M))==HRao)
+///
+
+-- Direct test for knownUnirationalComponentOfSpaceCurves. Previously
+-- this export had no `assert` -- it was only printed inside a doc
+-- EXAMPLE table.
+TEST ///
+-- Small (d, g) on the unirational table should return true.
+assert(knownUnirationalComponentOfSpaceCurves(8, 5));
+assert(knownUnirationalComponentOfSpaceCurves(4, 0));
+-- A (d, g) outside the package's constructible region should return
+-- false (the post-end scratch in the source notes that the table is
+-- not exhaustive; this pair is on the false side of the table).
+assert(not knownUnirationalComponentOfSpaceCurves(15, 22));
 ///
 
 

@@ -3,7 +3,9 @@
 #ifndef _aring_RRR_hpp_
 #define _aring_RRR_hpp_
 
-#include "interface/random.h"
+#include "interface/gmp-util.h"  // for moveTo_gmpRR
+#include "interface/random.h"    // for randomMpfr
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -16,7 +18,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-class ARingRRR : public RingInterface
+class ARingRRR : public SimpleARing<ARingRRR>
 {
   // Higher precision real numbers
 
@@ -77,6 +79,11 @@ class ARingRRR : public RingInterface
     mpfr_set(&result, a.get_mpfr(), MPFR_RNDN);
   }
 
+  const ElementType &from_ring_elem_const(const ring_elem &a) const
+  {
+    return *a.get_mpfr();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { mpfr_init2(&result, mPrecision); }
@@ -96,7 +103,7 @@ class ARingRRR : public RingInterface
     mpfr_set_si(&result, 0, MPFR_RNDN);
   }
 
-  void clear(ElementType &result) const { mpfr_clear(&result); }
+  static void clear(ElementType &result) { mpfr_clear(&result); }
   void copy(ElementType &result, const ElementType &a) const
   {
     mpfr_set(&result, &a, MPFR_RNDN);
@@ -109,6 +116,7 @@ class ARingRRR : public RingInterface
 
   void set_var(ElementType &result, int v) const
   {
+    (void) v;
     mpfr_set_si(&result, 1, MPFR_RNDN);
   }
 
@@ -237,6 +245,7 @@ class ARingRRR : public RingInterface
             int first_var,
             ring_elem &result) const
   {
+    (void) first_var;
     if (!map->get_ring()->from_BigReal(&f, result))
       {
         result = map->get_ring()->from_long(0);

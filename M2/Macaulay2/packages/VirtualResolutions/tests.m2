@@ -54,6 +54,13 @@ TEST ///
     S = ZZ/32003[x_0,x_1,x_2,x_3,x_4, Degrees=>{2:{1,0},3:{0,1}}];
     irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
     I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
+    --
+    d1 = matrix{{x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2,
+        x_0*x_1*x_2^3+x_0*x_1*x_2^2*x_3-x_0^2*x_3^2*x_4+x_1^2*x_2*x_4^2+x_1^2*x_3*x_4^2,
+        x_1^2*x_2^3+x_1^2*x_2^2*x_3-x_0*x_1*x_3^2*x_4-x_0^2*x_4^3}};
+    C = complex({d1});
+    elapsedTime assert(isVirtual(irr,C) == false) -- 0.022
+    --
     d1 = matrix{{x_1^3*x_2+x_1^3*x_3+x_0^3*x_4,
             x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2,
             x_0*x_1*x_2^3+x_0*x_1*x_2^2*x_3-x_0^2*x_3^2*x_4+x_1^2*x_2*x_4^2+x_1^2*x_3*x_4^2,
@@ -62,30 +69,8 @@ TEST ///
         {-x_1*x_2-x_1*x_3, 0, x_0*x_4},
         {x_0, -x_1, 0},
         {0, x_0, x_1}});
-    C = chainComplex({d1,d2});
+    C = complex({d1,d2});
     elapsedTime assert(isVirtual(irr,C) == true) -- 0.028
-///
-
-TEST ///
-    S = ZZ/32003[x_0,x_1,x_2,x_3,x_4, Degrees=>{2:{1,0},3:{0,1}}];
-    irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
-    I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-    d1 = matrix{{x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2,
-        x_0*x_1*x_2^3+x_0*x_1*x_2^2*x_3-x_0^2*x_3^2*x_4+x_1^2*x_2*x_4^2+x_1^2*x_3*x_4^2,
-        x_1^2*x_2^3+x_1^2*x_2^2*x_3-x_0*x_1*x_3^2*x_4-x_0^2*x_4^3}};
-    C = chainComplex({d1});
-    elapsedTime assert(isVirtual(irr,C) == false) -- 0.022
-///
-
-TEST ///
-    S = ZZ/32003[x_0,x_1,x_2,x_3,x_4, Degrees=>{2:{1,0},3:{0,1}}];
-    irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
-    I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-    d1 = matrix{{x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2,
-        x_0*x_1*x_2^3+x_0*x_1*x_2^2*x_3-x_0^2*x_3^2*x_4+x_1^2*x_2*x_4^2+x_1^2*x_3*x_4^2,
-        x_1^2*x_2^3+x_1^2*x_2^2*x_3-x_0*x_1*x_3^2*x_4-x_0^2*x_4^3}};
-    C = chainComplex({d1});
-    elapsedTime assert(isVirtual(irr,C) == false) -- 0.027
 ///
 
 TEST ///
@@ -97,15 +82,6 @@ TEST ///
 ///
 
 ----- Tests for idealSheafGens
-TEST ///
-    debug needsPackage "VirtualResolutions"
-    S = ZZ/32003[x_0,x_1,x_2,x_3,x_4, Degrees=>{2:{1,0},3:{0,1}}];
-    irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
-    I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-    J = ourSaturation(I,irr);
-    elapsedTime assert(idealSheafGens(2,J,irr) == {I}) -- 4.2
-///
-
 TEST ///
     debug needsPackage "VirtualResolutions"
     S = ZZ/32003[x_0,x_1,y_0,y_1, Degrees=>{2:{1,0},2:{0,1}}];
@@ -122,6 +98,7 @@ TEST ///
     irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
     I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
     J = ourSaturation(I,irr);
+    elapsedTime assert(idealSheafGens(2,J,irr) == {I}) -- 4.2
     elapsedTime output = idealSheafGens(2,J,irr,GeneralElements=>true); -- 6.8
     elapsedTime assert(J == ourSaturation(output_0, irr)) -- 0.06
 ///
@@ -173,6 +150,11 @@ TEST ///
     elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- woohoo cache hit!!
     -- test for weird ring problems
     assert(ring x_0 === value getSymbol "S")
+    -- test for slow resolutions
+    elapsedTime M = module saturate(I^2, B); -- ~0.3s
+    elapsedTime assert(multigradedRegularity(S, M) == {{6, 4}, {5, 6}, {4, 8}}) -- ~19s
+    -- elapsedTime M = module saturate(I^3, B); -- ~0.8s
+    -- elapsedTime assert(multigradedRegularity(S, M) == {{8, 7}, {9, 6}, {7, 9}, {6, 11}}) -- ~26min
 ///
 
 TEST ///
@@ -316,7 +298,7 @@ TEST ///
   assert(multigradedRegularity(S, comodule I) == {{0,4}})
 ///
 
-TEST /// -- test of returning -infinity for irrelevant ideals
+/// -- test of returning -infinity for irrelevant ideals
   debug needsPackage "VirtualResolutions"
   X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
   --X = normalToricVarietyWithTateData X
@@ -346,4 +328,40 @@ TEST /// -- test of returning -infinity for irrelevant ideals
   plotRegion((i,j) -> isVirtualOfPair({i,j}, N, IrrelevantIdeal => B), {0,0},{3,3})
   plotRegion({{-infinity, 2}, {2, -infinity}}, {0,0}, {3,3})
   n = 2 * regularity N; matrix table(n, n, (y, x) -> hilbertFunction_{n - y - 1, x} N)
+///
+
+------ Tests for error handling
+TEST /// -- error handling: virtualOfPair, resolveViaFatPoint, isVirtual reject bad input
+  -- virtualOfPair: every degree in the list must match the ring's degree length
+  (S, E) = productOfProjectiveSpaces {1, 1}
+  I = ideal(S_0 * S_2)
+  assert(degreeLength S == 2)
+  assert instance(virtualOfPair(I, {{1, 2}}), Complex)         -- control: correct length
+  assert(try (virtualOfPair(I, {{1, 2, 3}}); false) else true)
+  assert(try (virtualOfPair(I, {{1}});       false) else true)
+  -- resolveViaFatPoint: the exponent vector needs one entry per irreducible factor
+  N = {1, 1, 2}
+  (T, F) = productOfProjectiveSpaces N
+  irr = intersect for n to #N - 1 list ideal select(gens T, i -> (degree i)#n == 1)
+  assert(#decompose irr == 3)
+  J = ideal(T_0, T_2, T_4)
+  assert(try (resolveViaFatPoint(J, irr, {2, 1});       false) else true)
+  assert(try (resolveViaFatPoint(J, irr, {2, 1, 0, 0}); false) else true)
+  -- isVirtual: the irrelevant ideal and the complex must be over the same ring
+  RA = ZZ/101[a_0, a_1]
+  RB = ZZ/101[b_0, b_1]
+  assert(try (isVirtual(ideal(a_0, a_1), complex {matrix {{b_0}}}); false) else true)
+///
+
+------ Additional tests for multigradedRegularity
+TEST /// -- multigradedRegularity: zero module and explicit LowerLimit/UpperLimit
+  -- the zero module has regularity -infinity in every component
+  X = toricProjectiveSpace(1) ** toricProjectiveSpace(2)
+  S = ring X
+  assert(multigradedRegularity(S, S^0) == {{-infinity, -infinity}})
+  -- LowerLimit and UpperLimit set the search box explicitly; a box that
+  -- brackets the true regularity must reproduce the default answer
+  (R, E) = productOfProjectiveSpaces {1, 1}
+  assert(multigradedRegularity(R, R^{{-2,-2}}, LowerLimit => {-5,-5}, UpperLimit => {5,5}) == {{2, 2}})
+  assert(multigradedRegularity(R, R^{{-1,-1}}, LowerLimit => {-2,-2}, UpperLimit => {4,4}) == {{1, 1}})
 ///

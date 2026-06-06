@@ -15,8 +15,8 @@ degmonoid = (n) -> (
      varnames := if n === 1 then {"t"} else
         toList apply(1..n, i -> toString(t_i));
      rawMonoid(mo, 
-	  toSequence varnames,
 	  trivring,
+	  toSequence varnames,
 	  {}, {}))
 
 degring1 := rawPolynomialRing(rawZZ(), degmonoid 1)
@@ -31,7 +31,7 @@ singlemonoid = vars -> (
      mo := rawMonomialOrdering { GRevLex => apply(#vars, i -> 1) };
      varnames := toSequence apply(vars, toString);
      degs := apply(vars, i -> 1);
-     rawMonoid(mo, varnames, degring 1, degs, {1}))
+     rawMonoid(mo, degring 1, varnames, degs, {1}))
 
 doublemonoid = (vars, degs) -> (
      -- vars should be a sequence or list of variable names
@@ -44,7 +44,7 @@ lex = vars -> (
      mo := rawMonomialOrdering { Lex => #vars };
      varnames := apply(vars, toString);
      degs := apply(vars, i -> 1);
-     rawMonoid(mo, varnames, degring 1, degs, {1}))
+     rawMonoid(mo, degring 1, varnames, degs, {1}))
 
 elim = (vars1,vars2) -> (
      vars := join(vars1,vars2);
@@ -52,7 +52,7 @@ elim = (vars1,vars2) -> (
      degs := vars/(i -> 1);
      mo := rawMonomialOrdering { Weights => wts1, GRevLex => degs };
      varnames := apply(vars, toString);
-     rawMonoid(mo, varnames, degring 1, degs, {1}))
+     rawMonoid(mo, degring 1, varnames, degs, {1}))
 
 polyring = (K, vars) -> (
      -- each element of vars should be a symbol!
@@ -62,8 +62,7 @@ polyring = (K, vars) -> (
 
 polyring2 = (K, vars, mo) -> (
      -- each element of vars should be a symbol!
-     M := rawMonoid(mo, apply(vars, toString), 
-	       degring 1, (#vars):1, {1});
+     M := rawMonoid(mo, degring 1, apply(vars, toString), (#vars):1, {1});
      R := rawPolynomialRing(K, M);
      scan(#vars, i -> vars#i <- rawRingVar(R,i));
      R)
@@ -71,8 +70,7 @@ polyring2 = (K, vars, mo) -> (
 polyring3 = (K, vars, mo, degs) -> (
      degs = toList flatten splice degs;
      ndegs := (#degs)//(#vars);
-     M := rawMonoid(mo, apply(vars, toString), 
-	       degring ndegs, degs, toList(ndegs:0));
+     M := rawMonoid(mo, degring ndegs, apply(vars, toString), degs, toList(ndegs:0));
      R := rawPolynomialRing(K, M);
      scan(#vars, i -> vars#i <- rawRingVar(R,i));
      R)

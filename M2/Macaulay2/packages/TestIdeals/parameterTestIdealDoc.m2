@@ -23,7 +23,7 @@ doc ///
     Description
         Text
             Given a ring $R$, typically a domain, {\tt canonicalIdeal(R)} produces an ideal isomorphic to the canonical module of $R$.  
-	    It uses the function {\tt embedAsIdeal} from {\tt Divisor.m2}.
+	    It uses the function @TO "WeilDivisors::embedAsIdeal"@ from @TO "WeilDivisors::WeilDivisors"@.
         Example
             S = QQ[x,y,u,v];
             T = QQ[a,b];

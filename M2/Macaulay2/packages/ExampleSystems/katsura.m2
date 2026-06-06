@@ -42,7 +42,7 @@ doc ///
 	    
 	    The unknowns stand for the values (in [0,1])
 	    of a distribution function of a field created by a mixture of 
-	    a ferro-antiferro-magnetic bond at some some points.
+	    a ferro-antiferro-magnetic bond at some points.
 	Example
 	    katsura(10,QQ)
     ///

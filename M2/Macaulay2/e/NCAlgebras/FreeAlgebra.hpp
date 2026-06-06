@@ -9,7 +9,6 @@
 #include "ringelem.hpp"               // for ring_elem
 #include "style.hpp"                  // for GEOHEAP_SIZE
 
-#include <gmp.h>                      // for mpz_srcptr, mpq_srcptr
 #include <iosfwd>                     // for ostream, string
 #include <utility>                    // for pair
 #include <vector>                     // for vector
@@ -23,10 +22,11 @@ class FreeAlgebra : public our_new_delete
 {
 private:
   const Ring& mCoefficientRing;
-  const FreeMonoid& mMonoid;
+  std::shared_ptr<FreeMonoid> mMonoid;
+
 
 private:
-  FreeAlgebra(const Ring* K, const FreeMonoid* M);
+  FreeAlgebra(const Ring* K, std::shared_ptr<FreeMonoid> M);
 
 public:
   static FreeAlgebra* create(const Ring* K,
@@ -38,13 +38,13 @@ public:
                              );
 
   const Ring* coefficientRing() const { return &mCoefficientRing; }
-  const FreeMonoid& monoid() const { return mMonoid; }
+  const FreeMonoid& monoid() const { return *mMonoid; }
   const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }
   int numVars() const { return monoid().numVars(); }
   
   unsigned int computeHashValue(const Poly& a) const; // TODO
 
-  void init(Poly& f) const {}
+  void init(Poly& f) const { (void) f; }
   void clear(Poly& f) const;
   void setZero(Poly& f) const;
 
@@ -107,10 +107,16 @@ public:
                      bool p_parens) const;
 
   bool is_homogeneous(const Poly& f) const;
-  void degree(const Poly& f, int *d) const;
+  // FIXME: copied from ring.hpp because this doesn't inherit from Ring
+  inline const_monomial degree(const Poly& f) const
+  {
+    auto d = degreeMonoid().make_one();
+    multi_degree(f, d);
+    return d;
+  }
   // returns true if f is homogeneous, and sets already_allocated_degree_vector
   // to be the LCM of the exponent vectors of the degrees of all terms in f.
-  bool multi_degree(const Poly& f, int *already_allocated_degree_vector) const;
+  bool multi_degree(const Poly& f, monomial already_allocated_degree_vector) const;
 
   // Returns the pair (d, ishomog) where
   // d is the largest heft of the degree of each monomial in 'f'.
@@ -186,9 +192,7 @@ public:
 
   void debug_display(const Poly* f) const;
 
-  Poly* makeTerm(const ring_elem a, const int* monom) const;
-  // 'monom' is in 'varpower' format (i.e. from the front end)
-  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+  Poly* makeTerm(const ring_elem a, const_varpower monom) const;
 
   void setZero(Poly& f) const // resets f to zero
   {

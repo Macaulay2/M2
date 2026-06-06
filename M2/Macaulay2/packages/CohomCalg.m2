@@ -7,7 +7,7 @@ newPackage(
              Email => "mike@math.cornell.edu", 
              HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"
              }},
-        Headline => "interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety",
+        Headline => "interface to cohomCalg software for computing sheaf cohomology of line bundles on toric varieties",
 	Keywords => {"Toric Geometry", "Interfaces"},
         AuxiliaryFiles => true,
         PackageExports => {"NormalToricVarieties"},
@@ -286,7 +286,7 @@ Key
   (cohomCalg, NormalToricVariety, List)
   (cohomCalg, ToricDivisor)
   (cohomCalg, NormalToricVariety, ToricDivisor)
-  Silent
+  [cohomCalg, Silent]
 Headline
   compute cohomology vectors using the CohomCalg software
 Usage

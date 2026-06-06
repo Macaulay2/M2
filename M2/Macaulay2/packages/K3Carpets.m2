@@ -19,13 +19,16 @@ newPackage(
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer"}},
     	Headline => "K3 double structure on scrolls",
 	Keywords => {"Commutative Algebra"},
-	PackageExports => {"CompleteIntersectionResolutions", "NonminimalComplexes"},
+	PackageExports => {
+            "Complexes",
+            "CompleteIntersectionResolutions" -- makeHomotopies1, Characteristic
+        },
 	PackageImports => {"Elimination"}
 	)
 
 export {
     "schreyerName",
-    -- should be moved to an other package, e.g. NonminimalComplexes
+    -- should be moved to an other package, e.g. Complexes?
     "analyzeStrand",
     "carpetDet",
     "resonanceDet",
@@ -64,7 +67,7 @@ export {
 ///
 I = carpet(3,1, FineGrading =>true)
 isHomogeneous I
-betti res I
+betti freeResolution I
 ///
 carpet = method(Options =>{Characteristic => 32003,FineGrading=>false,Scrolls =>false})
 
@@ -131,12 +134,12 @@ loadPackage "K3Carpets"
 S = ZZ/101[x_0..x_9]
 --mat = genericMatrix(S,x_0,2,5)
 mat = hankelMatrix(S,x_2,2,3)|hankelMatrix(S,2,1)
-betti res carpet(3,1,mat)
-betti res carpet(1,3)
-netList flatten apply(3, a-> apply(4,i->(betti(res carpet(a+1,a+1+i,Characteristic => 2,FineGrading=>true), Weights =>{1,1,0,0}))))
+betti freeResolution carpet(3,1,mat)
+betti freeResolution carpet(1,3)
+netList flatten apply(3, a-> apply(4,i->(betti(freeResolution carpet(a+1,a+1+i,Characteristic => 2,FineGrading=>true), Weights =>{1,1,0,0}))))
 carpet(1,1)
-betti(res canonicalCarpet(7,3,Characteristic => 2,FineGrading=>true), Weights =>{1,1,0,0})
-betti res correspondenceScroll((smallDiagonal pp 2)^2,{3,1})
+betti(freeResolution canonicalCarpet(7,3,Characteristic => 2,FineGrading=>true), Weights =>{1,1,0,0})
+betti freeResolution correspondenceScroll((smallDiagonal pp 2)^2,{3,1})
 time carpet(5,5)
 time 
 
@@ -146,7 +149,7 @@ restart
 loadPackage "K3Carpets"
 I = carpet(1,5,FineGrading=>true)
 I = carpet(1,3,FineGrading=>false)
-betti (res I, Weights =>{1,1,0,0})
+betti (freeResolution I, Weights =>{1,1,0,0})
 isHomogeneous I
 degrees  S
 isHomogeneous mat
@@ -157,9 +160,9 @@ mat
 ///
 
 
-
+importFrom(Core, "preSmithNormalForm") 
 analyzeStrand = method()
-analyzeStrand(ChainComplex,ZZ) := (F,a) -> (
+analyzeStrand(Complex,ZZ) := (F,a) -> (
     mainStrand := constantStrand(F,a+1);
     M1 := mainStrand.dd_(a-1);
     M1Z := lift(M1,ZZ);
@@ -167,15 +170,17 @@ analyzeStrand(ChainComplex,ZZ) := (F,a) -> (
     M2 := mainStrand.dd_a;
     M2Z := lift(M2,ZZ);
     assert(M1Z*M2Z == 0);
-    M1s := smithNormalForm(M1Z,ChangeMatrix=>{false,false});
+    M1s := first preSmithNormalForm(M1Z,ChangeMatrix=>{false,false},KeepZeroes=>false);
+    -- M1s := smithNormalForm(M1Z,ChangeMatrix=>{false,false},KeepZeroes=>false); -- takes much longer time in examples
     L := apply(rank source M1s,i->M1s_(i,i));
     assert(diagonalMatrix L == M1s);
     assert(product L == 1);
-    cM1 := chainComplex sM1Z;
-    cM2 := chainComplex M2Z;
+    cM1 := complex sM1Z;
+    cM2 := complex M2Z;
     compare := extend(cM1,cM2,id_cM1_0);
-    M:= compare#1;
-    elapsedTime Ms := smithNormalForm(M,ChangeMatrix=>{false,false});
+    M:= compare_1;
+    elapsedTime Ms := first preSmithNormalForm(M,ChangeMatrix=>{false,false},KeepZeroes=>false);
+    -- elapsedTime Ms := smithNormalForm(M,ChangeMatrix=>{false,false},KeepZeroes=>false); -- takes much longer time in examples  
     L = apply(rank source Ms,i->Ms_(i,i));
     assert(diagonalMatrix L == Ms);
     L1:= select(L,d-> d!=1);
@@ -196,7 +201,7 @@ carpetBettiTable(HashTable,ZZ) := (h,p) -> (
 carpetBettiTables=method()
 carpetBettiTables(ZZ,ZZ) := (a,b) -> (
     I := carpet(a,b);
-    F := res(I,FastNonminimal=>true);
+    F := freeResolution(I, Strategy => Nonminimal);
    carpetData1 := {};carpetData2 := {};
     L:= null;primes:= {};
     for c from 3 to length F-2 do (    
@@ -227,7 +232,7 @@ carpetBettiTables(ZZ,ZZ) := (a,b) -> (
 degenerateK3BettiTables=method()
 degenerateK3BettiTables(ZZ,ZZ,Sequence) := (a,b,e) -> (
     I := degenerateK3(a,b,e);
-    F := res(I,FastNonminimal=>true);
+    F := freeResolution(I, Strategy => Nonminimal);
     carpetData1 := {};carpetData2 := {};
     L:= null;primes:= {};
     for c from 3 to length F-2 do (    
@@ -257,7 +262,7 @@ degenerateK3BettiTables(ZZ,ZZ,Sequence) := (a,b,e) -> (
   
 
 schreyerName = method()
-schreyerName(ChainComplex,ZZ,ZZ) := (F,i,n) -> (
+schreyerName(Complex,ZZ,ZZ) := (F,i,n) -> (
     -- recursive definition, might be better to produce all names in the complex by
     -- with a for loop
     lT := leadTerm F.dd_i_n;
@@ -269,7 +274,7 @@ schreyerName(ChainComplex,ZZ,ZZ) := (F,i,n) -> (
 	return append(L,mon));
     )
 
-schreyerName(ChainComplex) := F -> (
+schreyerName(Complex) := F -> (
     r := rank F_1;
     L := new MutableHashTable from apply(length F,i->(i+1)=>{});
     L#1 = for n from 0 to r-1 list (
@@ -286,7 +291,7 @@ schreyerName(ChainComplex) := F -> (
     new HashTable from L
     )
 
-schreyerName(ChainComplex,ZZ) :=(F,a) -> (
+schreyerName(Complex,ZZ) :=(F,a) -> (
      r := rank F_1;
     L := new MutableHashTable from apply(length F,i->(i+1)=>{});
     L#1 = for n from 0 to r-1 list (
@@ -331,7 +336,7 @@ gorensteinDouble = method()
 gorensteinDouble Ideal := I -> (
     --the script assumes that the "first" map I --> omega will be a surjection of the right degree
     c := codim I;
-    F := res(I, LengthLimit => c);
+    F := freeResolution(I, LengthLimit => c);
     omega := coker transpose F.dd_c;
     ideal kernel (homomorphism (Hom(module I, omega))_{0})
     )
@@ -344,7 +349,7 @@ canonicalHomotopies = method(Options=>{Characteristic=>32003,FineGrading=>false}
 --with source F_j that corresponds
 --to the i-th quadric.
 canonicalHomotopies(ZZ,ZZ):= opts -> (g,cliff) -> (
-    F := res canonicalCarpet(g,cliff, 
+    F := freeResolution canonicalCarpet(g,cliff, 
 	Characteristic => opts.Characteristic, 
 	FineGrading => opts.FineGrading);
     mins := apply(1+length F, i-> min degrees F_i);
@@ -423,7 +428,7 @@ resonanceDet(ZZ) := (a) -> (
       B1 := matrix apply(3,i->apply(b-1,j->y_(i+j)));
       J := minors(2,A)+minors(2,B)+ideal (transpose A1*D*B1);
       --isHomogeneous J;
-      elapsedTime betti (fJ := res(J,LengthLimit=>a));                                             
+      elapsedTime betti (fJ := freeResolution(J,LengthLimit=>a));                                             
       degs := apply(a+1,i->{1,1,0,i})|apply(b+1,j->{j+1,0,1,j})|{{1,0,0,0},{2,0,0,0}};
       Sall := (coefficientRing S)[x_0..x_a,y_0..y_b,e_1,e_2,Degrees=>degs];
       Fall := allGradings(fJ,Sall);
@@ -727,11 +732,11 @@ relativeResolution(ZZ,ZZ,ZZ) := (a,b,k) -> (
         Lrel=append(Lrel,m1);
 	);
     m2 := syz(last Lrel);
-    frel := chainComplex append(Lrel,m2);
+    frel := complex append(Lrel,m2);
     frel)
    
 relativeResolutionTwists=method()
-relativeResolutionTwists(ZZ,ZZ,ChainComplex) := (amax,bmax,fcox) -> (
+relativeResolutionTwists(ZZ,ZZ,Complex) := (amax,bmax,fcox) -> (
     relTwists:={{{0,0}}}|apply(length fcox,i->
 	apply(degrees fcox_(i+1),d->{d_0+d_1,d_2-amax*d_0-bmax*d_1}));
     relTwists
@@ -766,17 +771,23 @@ computeBound 3
 computeBound 4
 ///
 
-allGradings=method()
-allGradings (ChainComplex,Ring) := (fJ,Sall) -> (
-    fJall := new ChainComplex;
-    fJall.Ring = Sall;
-    fJall_0 = Sall^1;
-    for i from 1 to length fJ do (
-	m := map(fJall_(i-1),,sub(fJ.dd_i,Sall));
-	fJall_i = source m;
-	fJall.dd_i=m);
-    chainComplex apply(length fJ,i->fJall.dd_(i+1))
+allGradings = method()
+allGradings (Complex, Ring) := Complex => (fJ,S) -> (
+    -- fJ is a complex over a singly graded ring
+    modules := new MutableHashTable;
+    maps := new MutableHashTable;
+    (lo,hi) := concentration fJ;
+    modules#lo = S^1;
+    for i from lo+1 to hi do (
+        maps#i = map(modules#(i-1),,sub(fJ.dd_i,S));
+        modules#i = source maps#i;
+        );
+    if lo === hi then 
+        complex S^1
+    else
+        complex maps
     )
+
 --loadPackage("K3Carpets", Reload => true)
 
 upperTriangular=method(TypicalValue=>Boolean)
@@ -789,14 +800,14 @@ carpetDet=method()
 carpetDet(ZZ,ZZ) := (a,b) -> (
   --a=5,b=a
 	I := carpet(a,b);
-	elapsedTime fI := res(I,FastNonminimal=>true,LengthLimit=>a);
+	elapsedTime fI := freeResolution(I,Strategy => Nonminimal,LengthLimit=>a);
         S :=ring I;
 	kk := coefficientRing S;
         degs := apply(a+1,j->{1,0,j})|apply(b+1,j->{0,1,j});
         Sall := kk[gens S,Degrees=>degs];
 	elapsedTime F:= allGradings(fI,Sall);
 	SZ := ZZ[gens S,Degrees=>degs];
-	FZ:= chainComplex apply(length F,i->sub(F.dd_(i+1),SZ));
+	FZ:= complex apply(length F,i->sub(F.dd_(i+1),SZ));
 	assert( keys tally apply(length F-1,i->FZ.dd_(i+1)*FZ.dd_(i+2)==0) == {true});    
         degsM := tally select(degrees F_a,d->d_0+d_1==a+1);
         blocks := keys degsM;
@@ -826,9 +837,9 @@ loadPackage("K3Carpets",Reload=>true)
 L ={3,3}
 I=degenerateK3(3,3,{1,1})
 minimalBetti I
-betti(F=res(I,FastNonminimal=>true))
+betti(F=freeResolution(I,Strategy => Nonminimal))
 I'=carpet(3,3)
-betti(F'=res(I',FastNonminimal=>true))
+betti(F'=freeResolution(I',Strategy => Nonminimal))
 assert(betti F == betti F')
 I=degenerateK3(5,5,(-1,1))
 minimalBetti I
@@ -904,16 +915,16 @@ ker phi
 I = smallDiagonal 2
 scroll = {1,1,1}
 J = correspondenceScroll(I^2, scroll)
-betti res J
+betti freeResolution J
 codim J
 S = ring J
-betti res prune Ext^2(S^1/J, S^1)
+betti freeResolution prune Ext^2(S^1/J, S^1)
 S = kk[x_(0,0)..x_(1,#scroll-1), Degrees =>{2:{1,0},2:{0,1}}]
 I = ideal sum(2, j-> product(#scroll, i->x_(i,j)))
 
-betti res oo
+betti freeResolution oo
 correspondenceScroll(I^2, scroll)
-betti res oo
+betti freeResolution oo
     degs := flatten apply(n, i-> toList (2:apply(n, j-> if j==i then 1 else 0)));
     x := symbol x;
     kk := ZZ/32003;
@@ -993,7 +1004,7 @@ $$
     "The K3 carpets generalize to a family of degenerate K3 surfaces which are unions of two scrolls,
     whose hyperplane sections are reducible canonical curves consisting of two rational normal curves of degree
     g-1 intersecting in g+1 points. The functions in this package explore the syzygies of these surfaces
-    for fields of arbitrary characteristic. Inparticular, the functions in the package allow for g <= 15 a computational proof of the following
+    for fields of arbitrary characteristic. In particular, the functions in the package allow for g <= 15 a computational proof of the following
     conjecture.",
     PARA{},
      HREF("http://arxiv.org","Conjecture 0.1") ,
@@ -1013,7 +1024,7 @@ $$
         TO carpetBettiTable,
 	TO analyzeStrand,
 	TO degenerateK3BettiTables,
-	TO schreyerName, -- should be moved to an other package, e.g. NonminimalComplexes
+	TO schreyerName, -- should be moved to an other package, e.g. Complexes?
         TO allGradings,
 	TO carpetDet,
 	TO resonanceDet,
@@ -1168,13 +1179,13 @@ doc ///
      and changing $a$ to 2.
 
     Example
-     betti res carpet(2,5)
+     betti freeResolution carpet(2,5)
      S = ZZ/101[a..j]
      m = genericMatrix(S,a,2,5)
      I = carpet(2,3,m)
      L = primaryDecomposition I;
-     betti res L_0
-     betti res L_1
+     betti freeResolution L_0
+     betti freeResolution L_1
     Text
      
    Caveat
@@ -1227,19 +1238,19 @@ doc ///
 doc ///
    Key
     analyzeStrand
-    (analyzeStrand, ChainComplex, ZZ)
+    (analyzeStrand, Complex, ZZ)
    Headline
     analyze the (a+1)-st constant strand of F over ZZ
    Usage
     L = analyzeStrand(F,a)
    Inputs
-    F:ChainComplex
+    F:Complex
      the nonminimal resolution of a carpet over large prime
     a:ZZ
      a+1 is the degree of the strand
    Outputs
      L:List
-      the diagonal entries of the Smith normal form of a the cruital
+      the diagonal entries of the Smith normal form of a the crucial
       matrix
    Description
     Text
@@ -1252,7 +1263,7 @@ doc ///
     Example
      a=5,b=5
      I = carpet(a,b);
-     F = res(I, FastNonminimal => true)
+     F = freeResolution(I, Strategy => Nonminimal)
      L = analyzeStrand(F,a); #L
      betti F_a, betti F
      factor product L  
@@ -1265,18 +1276,18 @@ doc ///
 doc ///
    Key
     allGradings
-    (allGradings, ChainComplex, Ring)
+    (allGradings, Complex, Ring)
    Headline
-    add Grading to a chainComplex
+    add Grading to a Complex
    Usage
     Fall = allGradings(F,S)
    Inputs
-    F:ChainComplex
+    F:Complex
      the free resolution of an ideal
     S:Ring
      a ring with a finer garding  
    Outputs
-    Fall:ChainComplex
+    Fall:Complex
       a complex over S, the same as F but now with homogeneous with respect to all gradings of S   
    Description
     Text
@@ -1285,7 +1296,7 @@ doc ///
     Example
      a=3,b=3
      I=carpet(a,b);
-     F = res(I,FastNonminimal=>true,LengthLimit=>2);
+     F = freeResolution(I,Strategy => Nonminimal,LengthLimit=>2);
      betti F
      degs=apply(a+1,i->{1,0,i})|apply(b+1,j->{0,1,j})
      S=coefficientRing ring I[gens ring I,Degrees=>degs]
@@ -1434,7 +1445,7 @@ doc ///
    Caveat
      Already for (e_1,e_2) fairly small, the algorithm might give wrong answers
      since the lift to characteristic zero  might be incorrect. A correction is easy to implement as soon
-     res(.,FastNonminimal=>true) allows QQ (or ZZ) as coefficient ring. Another possibility
+     freeResolution(.,Strategy => Nonminimal) allows QQ (or ZZ) as coefficient ring. Another possibility
      would be to use the Chinese remainder for lifting to ZZ.
    SeeAlso
     carpetBettiTable
@@ -1489,9 +1500,9 @@ doc ///
 doc ///
    Key
     schreyerName
-    (schreyerName,ChainComplex,ZZ,ZZ)
-    (schreyerName,ChainComplex)
-    (schreyerName,ChainComplex,ZZ)
+    (schreyerName,Complex,ZZ,ZZ)
+    (schreyerName,Complex)
+    (schreyerName,Complex,ZZ)
     (schreyerName,HashTable,ZZ,ZZ)
    Headline
     get the names of generators in the (nonminimal) Schreyer resolution according to Schreyer's convention
@@ -1500,7 +1511,7 @@ doc ///
     h = schreyerName(F,a)
     L = schreyerName(h,i,n)    
    Inputs
-     F:ChainComplex
+     F:Complex
       the nonminimal resolution from a Groebner basis
      i:ZZ
       the homological degree
@@ -1527,7 +1538,7 @@ doc ///
     Example
      (a,b)=(5,4)
      I = carpet(a,b);
-     F = res(I, FastNonminimal =>true)
+     F = freeResolution(I, Strategy => Nonminimal)
      betti F
      i=3,n=10
      schreyerName(F,3,10)
@@ -1557,7 +1568,7 @@ doc ///
     FineGrading => Boolean
      if true then F is defined over the ring with $\ZZ^4$-grading
    Outputs
-    F:ChainComplex
+    F:Complex
      free resolution of the canonical carpet of genus g, clifford index cliff
     h:Function
      h(i,j) is the homotopy with source F_j for the i-th quadric.
@@ -1991,7 +2002,7 @@ doc ///
     b:ZZ
     k:ZZ
    Outputs
-    F:ChainComplex
+    F:Complex
      multi-graded chainComplex in the Cox ring
    Description
     Text
@@ -2044,7 +2055,7 @@ doc ///
 doc ///
    Key
     relativeResolutionTwists
-    (relativeResolutionTwists,ZZ,ZZ,ChainComplex)    
+    (relativeResolutionTwists,ZZ,ZZ,Complex)    
    Headline
     compute the twists in the relative resolution 
    Usage
@@ -2052,7 +2063,7 @@ doc ///
    Inputs
     am:ZZ
     bm:ZZ
-    F:ChainComplex
+    F:Complex
    Outputs
     L:List
      of Lists of multidegrees
@@ -2142,7 +2153,7 @@ doc ///
 
 TEST ///
  I =carpet(6,6);
- F = res(I, FastNonminimal =>true)
+ F = freeResolution(I, Strategy => Nonminimal)
 L=analyzeStrand(F,6)
 tally L
 factor product L
@@ -2156,7 +2167,7 @@ a=6,b=6
 TEST ///
 (a,b)=(5,4)
  I =carpet(6,6);
- F = res(I, FastNonminimal =>true)
+ F = freeResolution(I, Strategy => Nonminimal)
 betti F
 S=ring I
 vars S
@@ -2167,8 +2178,8 @@ schreyerName(F,5,10)
  
 
 TEST///
-assert(false == (betti res canonicalCarpet(7,3,Characteristic =>0) == 
-	        betti res canonicalCarpet(7,3,Characteristic =>2)))
+assert(false == (betti freeResolution canonicalCarpet(7,3,Characteristic =>0) == 
+	        betti freeResolution canonicalCarpet(7,3,Characteristic =>2)))
 assert(isHomogeneous carpet(2,4,FineGrading=>true))
 assert(isHomogeneous canonicalCarpet(7,3,FineGrading=>true))
 ///
@@ -2181,7 +2192,104 @@ zBT=h#0 - minimalBetti degenerateK3(a,b,e)
 assert(sum(keys zBT,k->zBT#k)==0)
 ///
 
+-----------------------------------------------------------------------------
+-- Added coverage for exports that previously had no direct test.
+-----------------------------------------------------------------------------
 
+-- productOfProjectiveSpaces / smallDiagonal / irrelevantIdeal / hankelMatrix:
+-- the basic multigraded-ring and matrix constructors.
+TEST ///
+R = productOfProjectiveSpaces {1,3}
+assert(instance(R, PolynomialRing))
+assert(numgens R == 6)
+assert(sort unique((gens R)/degree) == {{0,1},{1,0}})
+assert(numgens productOfProjectiveSpaces 2 == 4)
+sd = smallDiagonal 4
+assert(instance(sd, Ideal) and isHomogeneous sd)
+assert(numgens sd == binomial(4,2))
+assert(numgens smallDiagonal productOfProjectiveSpaces 4 == numgens sd)
+irr = irrelevantIdeal productOfProjectiveSpaces 3
+assert(instance(irr, Ideal) and numgens irr == 2^3)
+HM = hankelMatrix(ZZ/101[xx_0..xx_4], 3, 3)
+assert(instance(HM, Matrix) and (numrows HM, numcols HM) == (3,3))
+assert(all(toList(1..2), i -> all(toList(0..1), j -> HM_(i,j) == HM_(i-1,j+1))))
+assert((numrows hankelMatrix(2,3), numcols hankelMatrix(2,3)) == (2,3))
+///
+
+-- correspondenceScroll / schemeInProduct: the square of the small diagonal of
+-- (P^1)x(P^1) yields, via correspondenceScroll, the same K3 carpet as carpet.
+TEST ///
+S = productOfProjectiveSpaces 2
+Delta = smallDiagonal S
+sc = correspondenceScroll(Delta, {3,3})
+assert(instance(sc, Ideal) and codim sc == 5)
+k3 = correspondenceScroll(Delta^2, {3,3})
+assert(betti minimalBetti k3 == betti minimalBetti carpet(3,3))
+Ssp = ZZ/101[aa,bb]
+J = schemeInProduct(ideal 0_Ssp, {matrix{{aa,bb}}, matrix{{aa,bb}}}, symbol Ysp)
+assert(instance(J, Ideal) and numgens J == 1)
+///
+
+-- Relative resolutions in the case of k-resonance: resonanceScroll, coxMatrices,
+-- relativeEquations, relativeResolution, relativeResolutionTwists, computeBound.
+-- computeBound 3 == 6 is the conjectured value k^2-k for k = 3.
+TEST ///
+assert(resonanceScroll(6,4,3) === ({2,1,1},{1,1,0}))
+(as,bs) = resonanceScroll(5,4,3)
+assert(sum as == 5+1-3 and sum bs == 4+1-3)
+cm = coxMatrices(6,5,4)
+assert(instance(cm, Sequence) and #cm == 4 and all(cm, m -> instance(m, Matrix)))
+re = relativeEquations(4,4,3)
+assert(instance(re, Ideal) and isHomogeneous re and numgens re == 9)
+F = relativeResolution(5,4,3)
+assert(instance(F, Complex) and length F == 4)
+tw = relativeResolutionTwists(as_0, bs_0, F)
+assert(instance(tw, List) and #tw == length F + 1)
+assert(computeBound(6,4,3) === (9,7))
+assert(computeBound 3 == 6)
+///
+
+-- carpetDet / resonanceDet / allGradings: the integer and resonance determinants
+-- of the crucial constant strand, and the regrading of a nonminimal resolution.
+TEST ///
+assert(carpetDet(3,3) == 16)
+rd = resonanceDet 3
+assert(instance(rd, Sequence) and #rd == 2)
+assert(instance(rd#0, Product) and instance(rd#1, Product))
+assert(value rd#0 == 2)
+Id = carpet(3,3)
+Fd = freeResolution(Id, Strategy => Nonminimal, LengthLimit => 2)
+degs = apply(4, i -> {1,0,i}) | apply(4, j -> {0,1,j})
+Sall = (coefficientRing ring Id)[gens ring Id, Degrees => degs]
+G = allGradings(Fd, Sall)
+assert(instance(G, Complex) and length G == length Fd)
+assert(all(toList(1..length G), i -> isHomogeneous G.dd_i))
+///
+
+-- carpetBettiTables / carpetBettiTable: Betti tables of a carpet over every
+-- prime field. The (3,3) carpet has exceptional characteristic 2, so its char-2
+-- table differs from the generic one; both have the same total Betti numbers as
+-- the actual carpet over that characteristic. Sizes kept small: carpetBettiTables
+-- at (6,6) is known to exhaust memory.
+TEST ///
+h = carpetBettiTables(3,3)
+assert(instance(h, HashTable) and sort keys h == {0,2})
+assert(all(keys h, p -> instance(carpetBettiTable(h,p), BettiTally)))
+assert(carpetBettiTable(3,3,0) == carpetBettiTable(h,0))
+assert(carpetBettiTable(h,2) != carpetBettiTable(h,0))
+assert(all(keys h, p -> sum values carpetBettiTable(h,p) == sum values minimalBetti carpet(3,3,Characteristic=>p)))
+///
+
+-- gorensteinDouble / canonicalHomotopies / homotopyRanks, and the Scrolls option
+-- of carpet. The Gorenstein double of the scroll S(3,3) is exactly carpet(3,3).
+TEST ///
+(Icar, xmat, ymat) = carpet(3,3, Scrolls => true)
+assert(instance(Icar, Ideal) and instance(xmat, Matrix) and instance(ymat, Matrix))
+assert(gorensteinDouble minors(2, xmat|ymat) == Icar)
+(Fch, hch) = canonicalHomotopies(7,3)
+assert(instance(Fch, Complex) and instance(hch, Function))
+assert(instance(homotopyRanks(7,3), Net))
+///
 
 end--
 
@@ -2258,7 +2366,7 @@ lineCorrespondence(List,List) := (scroll,correspondence) ->(
 degree (I=(lineCorrespondence({1,1,1},{1,1,1}))_0)
 dim I
 codim I
-betti res I
+betti freeResolution I
 *-
 
 -*
@@ -2313,7 +2421,7 @@ restart
 loadPackage("K3Carpets", Reload =>true)
 (I,Iz) = lineCorrespondence1({1,1,1},{1,1,1});
 Jlistlist
-betti res I
+betti freeResolution I
 degree I
 curveIdeals
 
@@ -2365,7 +2473,7 @@ E = matrix"0,0,1;0,0,0;0,0,0"
 E = matrix"0,0,0;0,0,0;0,0,0"
 --all nonzero 3x3 matrices seem to give a Gorenstein
 I = lineCorrespondence (kk,3,2,E)
-betti res I
+betti freeResolution I
 degree I
 #decompose I
 -- suppose E is 3x3, corresponding to a 2-2 correspondence, and thus
@@ -2393,14 +2501,14 @@ keys h -- is wrong
 ///
 -*
 The following code should replace the code in the package, as soon as
-res(.,FastNonminimal=>true) allows QQ as a coefficient field
+freeResolution(.,Strategy => Nonminimal) allows QQ as a coefficient field
 *-
 degenerateK3BettiTables=method()
 degenerateK3BettiTables(ZZ,ZZ,Sequence) := (a,b,e) -> (
     I := degenerateK3(a,b,e);
     S := QQ[gens ring I];
     I = sub(I,S);
-    F := res(I,FastNonminimal=>true);
+    F := freeResolution(I,Strategy => Nonminimal);
     carpetData1 := {};carpetData2 := {};
     L:= null;primes:= {};
     for c from 3 to length F-2 do (    
@@ -2444,7 +2552,7 @@ correspondenceScroll(f,embedding)
 )
 
 I = hypersurfaceCorrespondence({2},{3},{5})
-betti res I
+betti freeResolution I
 
 
 testbetti = (scroll,deg) ->(

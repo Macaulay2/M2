@@ -18,7 +18,7 @@ doc ///
 		Text
 			A GKM variety is a variety $X$, often assumed to be smooth and complete, with an 
 			action of an algebraic torus $T$ satisfying the following conditions:
-			(i) $X$ is equivariantly formal with respect to the the action of $T$,
+			(i) $X$ is equivariantly formal with respect to the action of $T$,
 			(ii) $X$ has finitely many $T$-fixed points, and (iii) $X$ has finitely
 			many one-dimensional $T$-orbits.  The data of the zero and one dimensional
 			$T$-orbits of $X$ define the moment graph of $X$, with which one can carry out
@@ -208,7 +208,7 @@ doc ///
 
 		Text
 			Similarly as in type $B$, Spin groups are not implemented, so the two connected components of 
-			$SOGr(4,8)$ need be separatedly created in the following way.
+			$SOGr(4,8)$ need be separately created in the following way.
 
 		Example
 			SOGr48odd = generalizedFlagVariety("D",4,{3,3})
@@ -217,7 +217,7 @@ doc ///
 			SOGr48even.points
 
 	Caveat
-		Does not check for low-dimensional isogeneis.  For instance, always use type $D_n$ with $n\geq 4$ to be safe.
+		Does not check for low-dimensional isogenies.  For instance, always use type $D_n$ with $n\geq 4$ to be safe.
 
 	SeeAlso
 		generalizedFlagVariety
@@ -443,7 +443,7 @@ doc ///
 			peek SpFl4
 		
 		Text
-			The following example produces the Orthogonal Grassmaninnian $SOGr(2,5)$ from its
+			The following example produces the Orthogonal Grassmannian $SOGr(2,5)$ from its
 			moment graph.
 
 		Example
@@ -548,7 +548,7 @@ doc ///
 		makeKClass
 		(isWellDefined, KClass)
 		pushforward
-		pullback
+		(pullback, EquivariantMap)
 		(euler, KClass)
 
 ///
@@ -594,7 +594,7 @@ doc ///
 		(isWellDefined, KClass)
 		(symbol *, KClass, KClass)
 		(symbol +, KClass, KClass)
-		pullback
+		(pullback, EquivariantMap)
 		pushforward
 ///
 
@@ -850,7 +850,7 @@ doc ///
 		(compose, EquivariantMap, EquivariantMap)
 		(map, GKMVariety, GKMVariety, List)
 		flagMap
-		pullback
+		(pullback, EquivariantMap)
 		pushforward
 		(euler, KClass)
 ///
@@ -1186,7 +1186,7 @@ doc ///
 
 	Caveat
 		Functionalities concerning intersection cohomology of sheaves on moment graphs, which had been 
-		implemenented before (see @HREF{"https://people.math.umass.edu/~braden/MG/index.html","MG: moment graph computations"}@),
+		implemented before (see @HREF{"https://people.math.umass.edu/~braden/MG/index.html","MG: moment graph computations"}@),
 		have not been imported into this package yet.
 
 	SeeAlso

@@ -23,9 +23,8 @@ target_include_directories(M2-supervisor PUBLIC
 # TODO: make this "if" unnecessary
 if(BDWGC_FOUND)
   target_link_libraries(M2-supervisor PUBLIC Threads::Threads
-    ${BDWGC_LIBRARIES} ${ATOMICOPS_LIBRARIES} ${CMAKE_DL_LIBS})
+    ${BDWGC_LIBRARIES} ${CMAKE_DL_LIBS})
   target_include_directories(M2-supervisor PUBLIC
-    $<BUILD_INTERFACE:${ATOMICOPS_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${BDWGC_INCLUDE_DIR}>)
 endif()
 

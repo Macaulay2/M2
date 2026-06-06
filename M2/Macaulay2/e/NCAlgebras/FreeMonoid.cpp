@@ -37,7 +37,7 @@ FreeMonoid::FreeMonoid(
 
   for (const int* i = mDegrees.data(); i != mDegrees.data() + mDegrees.size(); i += ndegrees)
     {
-      int* deg = degreeMonoid().make_one();
+      monomial deg = degreeMonoid().make_one();
       degreeMonoid().from_expvector(i, deg);
       mDegreeOfVar.push_back(deg);
     }

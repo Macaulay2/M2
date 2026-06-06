@@ -43,7 +43,7 @@ Inputs => {"X" => CoincidentRootLocus},
 Outputs => {ZZ => {"the degree of ",TT"X"," as a projective variety"}},
 PARA{"The formula for the degree of a coincident root locus ",TEX///$X$///," associated with a partition ",TEX///$\lambda=(\lambda_1,\ldots,\lambda_d)$///," was determined in the paper by D. Hilbert - Singularitaten der Diskriminantenflache - Math. Ann. 30, 437-441, 1887."},
 EXAMPLE {"X = coincidentRootLocus {3,2,2,1,1,1,1}","degree X"}}
-undocumented{(net,CoincidentRootLocus),(expression,CoincidentRootLocus),(symbol ==,CoincidentRootLocus,CoincidentRootLocus),(toString,CoincidentRootLocus)}
+undocumented{(texMath,CoincidentRootLocus),(net,CoincidentRootLocus),(expression,CoincidentRootLocus),(symbol ==,CoincidentRootLocus,CoincidentRootLocus),(toString,CoincidentRootLocus)}
 document { 
 Key => {(map, CoincidentRootLocus)},
 Headline => "the map associated to a coincident root locus", 
@@ -330,7 +330,7 @@ randomBinaryForm(d,r,)
 randomBinaryForm(d,,c)", 
 Inputs => {"d" => ZZ,"r" => ZZ,"c" => ZZ}, 
 Outputs => {RingElement => {"a random binary form of degree ",TT"d",", real rank ",TT "r"," and complex rank ",TT "c"}},
-EXAMPLE {"F = randomBinaryForm 5","F = randomBinaryForm(5,4,3)","(realrank F,complexrank F)","F = randomBinaryForm(6,4,4)","(realrank F,complexrank F)",},
+EXAMPLE {"setRandomSeed 2", "F = randomBinaryForm 5","F = randomBinaryForm(5,4,3)","(realrank F,complexrank F)","F = randomBinaryForm(6,4,4)","(realrank F,complexrank F)",},
 SeeAlso => {realrank,complexrank}}
 document { 
 Key => {realroots,(realroots,RingElement)}, 

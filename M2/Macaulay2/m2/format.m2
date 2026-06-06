@@ -20,25 +20,35 @@ needs "nets.m2"
 -- Common utilities for formatting documentation nodes
 -----------------------------------------------------------------------------
 
+-- skip Options; TODO: define parser Option := null instead
+nooptsnull := x -> select(x,e -> class e =!= Option and class e =!= OptionTable and class e =!= Nothing)
+
 -- Macro for setting default parsing of type T
 -- When writing a new formatting tool, call setupRenderer to create the default
 -- parsing for Hypertext, then use the examples provided below to test rendering
 -- of individual subtypes.
 setupRenderer = (parser, joiner, T) -> (
-    parser T := node -> joiner apply(node,
-	subnode -> if class subnode =!= Option and class subnode =!= OptionTable then parser subnode))
+    parser T := node -> joiner apply(nooptsnull node,
+	parser))
 
 -- Default joiners: (TODO: move to string.m2?)
 -- concatenate
 -- horizontalJoin
-wrapHorizontalJoin := x -> wrap horizontalJoin x
+net BR := info BR := x -> stack()
+net HR := info HR := x -> concatenate(printWidth:"-")
+
+horizontalJoin' := x -> ( -- horizontalJoin except for BRs and HRs
+    netBR := net BR{}; netHR := net HR{};
+    x' := sublists(toList x, y -> y=!=netBR and y=!=netHR, toList, y -> {y});
+    stack(horizontalJoin\x')
+    )
+
+wrapHorizontalJoin := x -> wrap horizontalJoin' x
 
 -- Main types: (see hypertext.m2)
 -- Hypertext  > HypertextParagraph, HypertextContainer
 -- MarkUpType > IntermediateMarkUpType
 
--- skip Options; TODO: define parser Option := null instead
-noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
 -----------------------------------------------------------------------------
 -- Setup uniform rendering
@@ -52,7 +62,7 @@ scan({net, info, html, markdown, tex}, parser ->
 
 -- Rendering by horizontal join of inputs
 scan({net, info},
-    parser -> setupRenderer(parser, horizontalJoin, Hypertext))
+    parser -> setupRenderer(parser, horizontalJoin', Hypertext))
 scan({net, info},
     parser -> setupRenderer(parser, wrapHorizontalJoin, HypertextParagraph))
 
@@ -133,6 +143,8 @@ scan({net, info},
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
+	parser' PRE := -- HACK -- might need to rethink
+	parser' INDENT :=
 	parser' TABLE :=
 	parser' MENU :=
 	parser' DL :=
@@ -148,16 +160,19 @@ scan({net, info},
 	    if l =!= null and t =!= null then x = take(x, {l, t});
 	    -- ??
 	    x = splice sublists(x, i -> i === BK or i === SP,
-		SPBKs -> if member(SP,SPBKs) then (BK,"",BK) else BK);
+		SPBKs -> if isMember(SP,SPBKs) then (BK,"",BK) else BK);
 	    x = splice sublists(x, i -> i =!= BK,
 		x -> if #x===1 and instance(x#0,List) then horizontalJoin x#0 else wrap horizontalJoin x,
 		BK -> ());
 	    -- Stack the pieces vertically
 	    stack x);
+	parser INDENT := x -> ( -- INDENT is like DIV but with extra |s on the left. sadly, can't be absorbed into DIV because of non-recursivity of this parser
+	    n := parser DIV toList x;
+	    "| "^(height n, depth n) | n )
 	))
 
 Hop := (op,filler) -> x -> (
-     r := horizontalJoin apply(noopts x,op);
+     r := horizontalJoin apply(nooptsnull x,op);
      if width r === 1 then r = horizontalJoin(r," ");
      r || concatenate( width r : filler ) )
 net  HEADER1 := Hop(net, "*")
@@ -167,46 +182,49 @@ info HEADER1 := Hop(info,"*")
 info HEADER2 := Hop(info,"=")
 info HEADER3 := Hop(info,"-")
 
-net  HR :=
-info HR := x -> concatenate(printWidth:"-")
-
 net  PRE  :=
 net   TT  :=
 net CODE  :=
+net SAMP  :=
 info TT   :=
-info CODE :=  x -> horizontalJoin apply(noopts x,net)
+info SAMP :=
+info CODE :=  x -> horizontalJoin' apply(nooptsnull x,net)
+
+net  KBD :=
+info KBD := x -> formatNoEscaping toString horizontalJoin' apply(nooptsnull x,net)
 
 info PRE  := x ->
-    wrap(printWidth, "-", concatenate apply(noopts x,toString @@ info))
+    wrap(printWidth, "-", concatenate apply(nooptsnull x,toString @@ info))
 
 net TH := Hop(net, "-")
 
 ULop := op -> x -> (
      s := "  * ";
      printWidth = printWidth - #s;
-     r := stack apply(toList noopts x, i -> s | op i);
+     r := stack apply(toList nooptsnull x, i -> s | op i);
      printWidth = printWidth + #s;
      r)
 info UL := ULop info
 net  UL := ULop net
 
 OLop := op -> x -> (
+     (o, ct) := override(options class x, toSequence x);
+     shft := try value o#"start" else 1;
      s := "000. ";
      printWidth = printWidth - #s;
-     x = toList noopts x;
-     r := stack apply(#x, i -> pad(3,toString (i+1)) | ". " | op x#i); -- html starts counting from 1!
+     r := stack apply(#ct, i -> pad(3,toString (i+shft)) | ". " | op ct#i);
      printWidth = printWidth + #s;
      r)
 info OL := OLop info
 net  OL := OLop net
 
-info DL := x -> stack apply(noopts x, info)
-net  DL := x -> stack apply(noopts x, net)
+info DL := x -> stack apply(nooptsnull x, info)
+net  DL := x -> stack apply(nooptsnull x, net)
 
-info DD := x -> "    " | horizontalJoin apply(noopts x, info)
-net  DD := x -> "    " | horizontalJoin apply(noopts x, net)
+info DD := x -> "    " | horizontalJoin apply(nooptsnull x, info)
+net  DD := x -> "    " | horizontalJoin apply(nooptsnull x, net)
 
-opSU := (op,n) -> x -> (horizontalJoin apply(noopts x, op))^n
+opSU := (op,n) -> x -> (horizontalJoin apply(nooptsnull x, op))^n
 net  SUP := opSU(net, 1)
 info SUP := opSU(info,1)
 net  SUB := opSU(net, -1)
@@ -233,13 +251,13 @@ net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 2, noopts \ toList \ toList sequence ag);
+     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 2, nooptsnull \ toList \ toList sequence ag);
      printWidth = save;
      r)
 info TABLE := x -> (
      s := printWidth;
      if printWidth > 2 then printWidth = printWidth - 2;
-     ret := netList(Boxes=>true, applyTable(noopts \ toList \ noopts \\ toList x,info));
+     ret := netList(Boxes=>true, applyTable(nooptsnull \ toList \ nooptsnull \\ toList x,info));
      printWidth = s;
      ret)
 
@@ -271,7 +289,7 @@ infoTagConvert DocumentTag := tag -> (
 
 -- TODO: can this be simplified?
 -- checking if doc is missing can be very slow if node is from another package
-info TO  := x -> info TO2{x#0, format x#0 | if x#?1 then x#1 else ""}
+info TO  := x -> info TO2 x
 info TO2 := x -> (
      tag := fixup x#0;
      if isMissingDoc tag or isUndocumented tag then concatenate(x#1, " (missing documentation)")
@@ -287,7 +305,7 @@ info TOH := x -> (
 
 net TO  := x -> (
      if class x#0 === DocumentTag
-     then concatenate( "\"", format x#0, "\"", if x#?1 then x#1)
+     then concatenate(formatNoEscaping format x#0, if x#?1 then x#1)
      else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
      )
 net TO2 := x -> format x#1

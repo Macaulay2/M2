@@ -28,15 +28,15 @@ i5 : b = vars R
 
 o5 = | x y z |
 
-             1       3
-o5 : Matrix R  <--- R
+             1      3
+o5 : Matrix R  <-- R
 
 i6 : c = matrix {{x^2,y^2,z^2}}
 
 o6 = | x2 y2 z2 |
 
-             1       3
-o6 : Matrix R  <--- R
+             1      3
+o6 : Matrix R  <-- R
 
 i7 : M = coker b
 
@@ -54,14 +54,14 @@ o8 = image {2} | x  -y2 0   -z2 |
                              3
 o8 : R-module, submodule of R
 
-i9 : res M
+i9 : res(M, LengthLimit => 4)
 
       1      3      4      4      4
-o9 = R  <-- R  <-- R  <-- R  <-- R
+o9 = R  <-- R  <-- R  <-- R  <-- R 
                                   
      0      1      2      3      4
 
-o9 : ChainComplex
+o9 : Complex
 
 i10 : X = Proj R
 

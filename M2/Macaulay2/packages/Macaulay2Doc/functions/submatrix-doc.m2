@@ -1,16 +1,8 @@
 document {
-    Key => submatrix,
-    SeeAlso => {
-	submatrix',
+    Key => {
 	(symbol _, Matrix, List),
-	(symbol ^, Matrix, List),
-	(symbol _, Matrix, Array),
-	(symbol ^, Matrix, Array)
-	},
-     }
-
-document {
-     Key => (symbol _, Matrix, List),
+	(symbol _, MutableMatrix, List),
+    },
      Headline => "select columns",
      Usage => "f_cols",
      Inputs => {
@@ -31,7 +23,11 @@ document {
      SeeAlso => {submatrix, (symbol ^, Matrix, List)}
      }
 document {
-     Key => (symbol ^, Matrix, List),
+    Key => {
+	(symbol ^, Matrix, List),
+	(symbol ^, MutableMatrix, List),
+	(symbol ^, Vector, List),
+    },
      Headline => "select rows",
      Usage => "f_rows",
      Inputs => {
@@ -53,8 +49,10 @@ document {
      }
 
 undocumented {
+    (submatrix,Matrix,Nothing,Nothing),
     (submatrix,Matrix,Nothing,VisibleList),
     (submatrix,Matrix,VisibleList,Nothing),
+    (submatrix,MutableMatrix,Nothing,Nothing),
     (submatrix,MutableMatrix,Nothing,VisibleList),
     (submatrix,MutableMatrix,VisibleList,Nothing)
     }
@@ -62,6 +60,7 @@ undocumented {
 -- FIXME: these cannot be documented because of a bug in document.m2
 document {
      Key => {
+	  submatrix,
 --	 (submatrix, Matrix, Nothing, VisibleList),
 --	 (submatrix, Matrix, VisibleList, Nothing),
 	 (submatrix, Matrix, VisibleList, VisibleList),
@@ -144,11 +143,13 @@ document {
 	  (symbol^,Matrix,Array)
 	  },
      }
+
 document {
      Key => {submatrix',
 	  (submatrix',Matrix,VisibleList,VisibleList),
 	  (submatrix', Matrix, Nothing, VisibleList),
 	  (submatrix', Matrix, VisibleList, Nothing),
+	  (submatrix', Matrix, Nothing, Nothing),
 	  (submatrix', Matrix, VisibleList)},
      Headline => "exclude rows and/or columns of a matrix",
      Usage => "submatrix'(f, rows, cols)\nsubmatrix'(f,,cols)\nsubmatrix'(f,cols)\nsubmatrix'(f,rows,)",
@@ -207,8 +208,6 @@ doc ///
     Text
       If only one degree (as integer, or list of integers) is given for {\tt targetBox} or {\tt sourceBox}, then
       only rows or columns that match that exact degree are used.
-
-
     Example
       R = QQ[a..d];
       I = ideal"a2b-c3,abc-d3,ac2-bd2-cd2,abcd-c4"

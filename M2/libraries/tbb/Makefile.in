@@ -1,0 +1,16 @@
+HOMEPAGE = https://oneapi-src.github.io/oneTBB/
+VERSION = 2023.0.0
+SHA256SUM = f8767b971ec6aea25dde58ae0f593e94e7aa75a739a86f67967012f69e2199b1
+URL = https://github.com/uxlfoundation/oneTBB/archive/refs/tags
+TARDIR = oneTBB-$(VERSION)
+TARFILE = v$(VERSION).tar.gz
+LICENSEFILES = README.md LICENSE.txt
+
+CONFIGURECMD = @CMAKE@ -DCMAKE_INSTALL_PREFIX=$(LIBRARIESDIR) \
+	-DCMAKE_INSTALL_LIBDIR=lib -DTBB_TEST=OFF .
+
+VLIMIT = unlimited
+CHECKCMD = @CMAKE@ -DTBB_TEST=ON . && make && ctest
+
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/tbb/Makefile

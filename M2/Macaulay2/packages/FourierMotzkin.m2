@@ -232,6 +232,7 @@ fourierMotzkin (Matrix, Matrix) := Sequence => (Z, H) -> (
      (sort A, sort E))
 
 
+-- TODO: use rawFourierMotzkin?
 --   INPUT : 'Z' a matrix; the columns are the rays generating the cone
 fourierMotzkin Matrix := Sequence => Z -> (
      -- creating zero equalities
@@ -329,14 +330,14 @@ document {
      halfspaces and spans 3-space.",
      
      EXAMPLE {
-	  "rays = transpose matrix(QQ, {{1,1,6},{1,2,4},{1,2,5},
+	  "raylist = transpose matrix(QQ, {{1,1,6},{1,2,4},{1,2,5},
 	       {1,2,6},{1,3,4},{1,3,5},{1,3,6},{1,4,4},{1,4,5},
 	       {1,4,6},{1,5,4},{1,5,5},{1,5,6},{1,5,7},{1,6,3},
 	       {1,6,4},{1,6,5},{1,6,6},{1,6,7},{1,7,4},{1,7,5},
 	       {1,7,6},{1,7,8},{1,8,4},{1,8,5},{1,8,6}})",
-    	  "halfspaces = fourierMotzkin rays",
-	  "numgens source halfspaces#0",
-	  "extremalRays = fourierMotzkin halfspaces",
+	  "halfspaceList = fourierMotzkin raylist",
+	  "numgens source halfspaceList#0",
+	  "extremalRays = fourierMotzkin halfspaceList",
 	  "numgens source extremalRays#0"
 	  },
      
@@ -355,13 +356,14 @@ document {
      Key => "Finding the facets of the cyclic polytope",
      
      "The ", EM "cyclic polytope", " is the convex hull of distinct
-     points on the moment curve.  The function ", TT "cyclicPolytope",
-     " produces a matrix such that columns generate the cyclic ", 
-     TT "d", "-polytope with ", TT "n", " vertices.",
+     points on the moment curve. We can either use the function ", TO "cyclicPolytope",
+     " to produce the cyclic ", TT "d", "-polytope with ", TT "n", " vertices,
+     or directly construct a matrix whose columns are the vertices of the polytope.",
         
      EXAMPLE {
-	  "cyclicPolytope = (d,n) -> map(ZZ^d, ZZ^n, (i,j) -> j^(i+1));",
-	  "vertices = cyclicPolytope(4,8)"
+	  "P = cyclicPolytope(4, 8)",
+	  "vertexList = vertices P",
+	  "vertexList == map(QQ^4, QQ^8, (i,j) -> j^(i+1))"
 	  },
      
      PARA{}, "To find the halfspace representation for the convex hull
@@ -375,14 +377,14 @@ document {
      R := ring V;
      n := numgens source V;
      map(R^1, R^n, {toList(n:1)}) || V);",
-	  "polyCone = homogenizePolytope vertices",
+	  "polyCone = homogenizePolytope vertexList",
 	  "H = fourierMotzkin polyCone",
-	  "halfspaces = H#0",
-	  "numgens source halfspaces"
+	  "halfspaceList = H#0",
+	  "numgens source halfspaceList"
 	  },
      
      "Since ", TT "H#1", " is zero, the polyhedral cone spans 5-space.
-     The columns in the matrix ", TT "halfspaces", " describe a
+     The columns in the matrix ", TT "halfspaceList", " describe a
      complete minimal system of inequalities for the convex hull of
      these points.  In particular, this polytope has 20 facets.",
           
@@ -390,10 +392,10 @@ document {
      compute the facet-vertex incidence matrix.",
 
      EXAMPLE {
-	  "inequalityVector = transpose submatrix(halfspaces,{0},)",
-	  "inequalityMatrix = transpose submatrix(halfspaces,{1..4},)",
+	  "inequalityVector = transpose submatrix(halfspaceList,{0},)",
+	  "inequalityMatrix = transpose submatrix(halfspaceList,{1..4},)",
           "ones = map(ZZ^1,ZZ^8,{toList(8:1)})",
-	  "M = (inequalityMatrix * vertices) + (ones ** inequalityVector)",
+	  "M = (inequalityMatrix * vertexList) + (ones ** inequalityVector)",
 	  "incidence = matrix table(20,8, (i,j) -> if M_(i,j) == 0 then 1 else 0)"
 	  },
 
@@ -431,7 +433,7 @@ document {
      heft);"
      },
      	  
-     PARA{}, "If a polynomial ring as a multigrading determined by a
+     PARA{}, "If a polynomial ring has a multigrading determined by a
      vector configuration, then a positive linear functional plays the
      role of a ", TO Heft, " vector.",
 
@@ -492,7 +494,7 @@ document {
         
      EXAMPLE {
 	  "permutahedron = d -> transpose matrix permutations toList(1..d+1);",
-	  "vertices = permutahedron 3",
+	  "vertexList = permutahedron 3",
 	  },
      
      PARA{}, "To find the halfspace representation for permutahedron, we
@@ -505,16 +507,16 @@ document {
      R := ring V;
      n := numgens source V;
      map(R^1, R^n, {toList(n:1)}) || V);",
-	  "H = fourierMotzkin homogenizePolytope vertices",
+	  "H = fourierMotzkin homogenizePolytope vertexList",
 	  "transpose H#1",
-	  "halfspaces = H#0;",
-	  "numgens source halfspaces",
+	  "halfspaceList = H#0;",
+	  "numgens source halfspaceList",
 	  },
      
      "Since ", TT "H#1", " has one column vector, the polyhedral cone
      spans a 4-dimensional subspace of 5-space.  Indeed, the sum of
      the components for each vertex is 10.  The columns in the matrix
-     ", TT "halfspaces", " describe a complete minimal system of
+     ", TT "halfspaceList", " describe a complete minimal system of
      inequalities for permutahedron.  In particular, this polytope has
      14 facets.",
           
@@ -522,11 +524,11 @@ document {
      compute the facet-vertex incidence matrix.",
      
      EXAMPLE {
-	  "inequalityMatrix = transpose submatrix(halfspaces,{1..4},)",
-	  "M = inequalityMatrix * vertices",
+	  "inequalityMatrix = transpose submatrix(halfspaceList,{1..4},)",
+	  "M = inequalityMatrix * vertexList",
 	  "incidence = matrix table(14,24, (i,j) -> if M_(i,j) == 0 then 1 else 0)",
 	  "vertexDegree = map(ZZ^1,ZZ^14,{toList(14:1)}) * incidence",
-	  "facets = transpose(incidence * transpose map(ZZ^1,ZZ^24,{toList(24:1)}))"
+	  "facetList = transpose(incidence * transpose map(ZZ^1,ZZ^24,{toList(24:1)}))"
 	  },
 
      "We see that each vertex has degree 3.  Moreover, there are 8
@@ -612,6 +614,147 @@ avisExt2 = sort transpose matrix {{ -1, 0, 0, 0, 0, 0}, { -1, -1, -1, 0, 0, 0},
      { -2, 0, 0, -1, -1, -1}, { -3, -1, 0, -1, -1, -2}, { -2, 0, -1, -1, -1, -1}, 
      { -3, 0, -1, -1, -2, -1}}
 assert( (fourierMotzkin avisIn2)#0 == avisExt2)
+///
+
+-- Tests added in the 2026 test-audit pass.  The eight live TEST blocks above
+-- exercise specific input matrices; what was missing was coverage of:
+--   * the three explicit error paths at L159-174 (mismatched rings, mismatched
+--     row counts, non-ZZ/QQ ring);
+--   * the 1-arg form == 2-arg form with zero linearity-space (the L237-243
+--     delegation);
+--   * the doc-example claims pinned numerically (6 facets / 6 extremal rays for
+--     the 26-ray cone at L327-342; 14 facets / 1-dim lineality for the
+--     permutahedron at L495-514);
+--   * the degenerate boundary cases (whole-space input -> empty dual,
+--     zero-column input -> whole-space dual, single ray -> halfspace + lineality);
+--   * redundancy removal verified by roundtrip (the isRedundant/rotateMatrix
+--     internals at L42-56 had no direct test);
+--   * the explicit sort-invariance contract that the L573-575 tests implicitly
+--     rely on (fourierMotzkin's output is permutation-independent in its input
+--     column order);
+--   * negation symmetry between the positive and negative orthants;
+--   * output ring preservation (ZZ -> ZZ, QQ -> QQ) per the L229-231 branch.
+
+TEST ///
+  -- error paths at L159-174: mismatched rings, mismatched row counts, non-ZZ/QQ
+  assert(try (fourierMotzkin(matrix{{1_ZZ}}, matrix{{1_QQ}}); false) else true)
+  assert(try (fourierMotzkin(matrix{{1},{2}}, matrix{{1},{2},{3}}); false) else true)
+  R = ZZ/101
+  assert(try (fourierMotzkin(matrix(R, {{1,0},{0,1}})); false) else true)
+///
+
+TEST ///
+  -- the 1-arg form (L237-243) delegates to the 2-arg form with zero B
+  M = transpose matrix(QQ, {{0,0,1}, {1,0,1}, {0,1,1}})
+  zeroB = map(QQ^(numgens target M), QQ^0, 0)
+  oneArg = fourierMotzkin M
+  twoArg = fourierMotzkin(M, zeroB)
+  assert(oneArg#0 == twoArg#0)
+  assert(oneArg#1 == twoArg#1)
+///
+
+TEST ///
+  -- doc-example numerical contract (L327-342): 26 input rays -> 6 facets -> 6 extremal rays
+  rayMat = transpose matrix(QQ, {{1,1,6},{1,2,4},{1,2,5},
+       {1,2,6},{1,3,4},{1,3,5},{1,3,6},{1,4,4},{1,4,5},
+       {1,4,6},{1,5,4},{1,5,5},{1,5,6},{1,5,7},{1,6,3},
+       {1,6,4},{1,6,5},{1,6,6},{1,6,7},{1,7,4},{1,7,5},
+       {1,7,6},{1,7,8},{1,8,4},{1,8,5},{1,8,6}})
+  HSList = fourierMotzkin rayMat
+  assert(numgens source HSList#0 == 6)
+  assert(numgens source HSList#1 == 0)
+  ExtRays = fourierMotzkin HSList
+  assert(numgens source ExtRays#0 == 6)
+///
+
+TEST ///
+  -- permutahedron doc-example (L495-514) pinned numerically:
+  -- 14 facets, 1-dimensional lineality space
+  permu = transpose matrix permutations toList(1..4)
+  n = numgens source permu
+  homog = (map(ZZ^1, ZZ^n, {toList(n:1)})) || permu
+  Hperm = fourierMotzkin homog
+  assert(numgens source Hperm#0 == 14)
+  assert(numgens source Hperm#1 == 1)
+///
+
+TEST ///
+  -- whole-space input (cone = R^d via I | -I): dual is the zero cone, i.e.,
+  -- empty facets and empty lineality.  A double application recovers a
+  -- d-dimensional lineality space.
+  wholeSp = id_(ZZ^3) | -id_(ZZ^3)
+  (A, B) = fourierMotzkin wholeSp
+  assert(numgens source A == 0)
+  assert(numgens source B == 0)
+  (A', B') = fourierMotzkin(A, B)
+  assert(numgens source A' == 0)
+  assert(numgens source B' == 3)
+///
+
+TEST ///
+  -- empty (zero-column) input: the trivial cone {0} has the whole space
+  -- as its polar (0 facets, full-dim lineality).
+  Z = map(ZZ^3, ZZ^0, 0)
+  (A, B) = fourierMotzkin Z
+  assert(numgens source A == 0)
+  assert(numgens source B == 3)
+///
+
+TEST ///
+  -- single ray (1,0,0) generates a 1-dim cone with 1 halfspace x >= 0 and
+  -- 2-dim orthogonal lineality
+  ray = transpose matrix{{1,0,0}}
+  (A, B) = fourierMotzkin ray
+  assert(numgens source A == 1)
+  assert(numgens source B == 2)
+  assert(A == transpose matrix{{-1,0,0}})
+///
+
+TEST ///
+  -- redundancy removal: a redundant ray (1,1,1) added to (e1, e2, e3) should
+  -- disappear from the extremal-ray description after a roundtrip
+  redCone = transpose matrix(QQ, {{1,0,0}, {0,1,0}, {0,0,1}, {1,1,1}})
+  HS = fourierMotzkin redCone
+  ExtRays = fourierMotzkin HS
+  assert(numgens source ExtRays#0 == 3)
+///
+
+TEST ///
+  -- sort invariance under permutation of input columns (the underlying
+  -- contract that the existing L573-575 tests rely on).  This pins it
+  -- down as a standalone property.
+  M = matrix{{1,1,1,1},{0,1,2,3},{0,3,1,2}}
+  assert((fourierMotzkin M)#0 == (fourierMotzkin M_{3,2,1,0})#0)
+  assert((fourierMotzkin M)#0 == (fourierMotzkin M_{1,3,0,2})#0)
+  -- and likewise the lineality space output
+  assert((fourierMotzkin M)#1 == (fourierMotzkin M_{3,2,1,0})#1)
+///
+
+TEST ///
+  -- negation symmetry: the polar of -I is +I and vice versa, related by
+  -- coordinate-wise negation.
+  posOrth = id_(ZZ^3)
+  negOrth = -id_(ZZ^3)
+  Hpos = (fourierMotzkin posOrth)#0
+  Hneg = (fourierMotzkin negOrth)#0
+  assert(Hneg == -Hpos)
+  assert(Hpos == -id_(ZZ^3))
+  assert(Hneg == id_(ZZ^3))
+///
+
+TEST ///
+  -- output ring preservation: ZZ input keeps ZZ output, QQ input keeps QQ output
+  -- (per the L229-231 substitute branch)
+  Mz = matrix{{1,1,1,1}}
+  rz = (fourierMotzkin Mz)#0
+  sz = (fourierMotzkin Mz)#1
+  assert(ring rz === ZZ)
+  assert(ring sz === ZZ)
+  Mq = transpose matrix(QQ, {{1,1,1,1}})
+  rq = (fourierMotzkin Mq)#0
+  sq = (fourierMotzkin Mq)#1
+  assert(ring rq === QQ)
+  assert(ring sq === QQ)
 ///
 
 end

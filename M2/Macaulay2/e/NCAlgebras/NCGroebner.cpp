@@ -7,7 +7,7 @@
 #include "NCAlgebras/Word.hpp"          // for Word
 #include "NCAlgebras/WordTable.hpp"     // for Overlap, WordTable
 #include "buffer.hpp"                   // for buffer
-#include "engine-exports.h"             // for M2_gbTrace, newline
+#include "interface/m2-types.h"         // for M2_gbTrace, newline
 #include "myalloc.hpp"                  // for operator<<, AllocLogger
 #include "ring.hpp"                     // for Ring
 #include "ringelem.hpp"                 // for ring_elem
@@ -205,7 +205,7 @@ void NCGroebner::autoreduceByLastElement()
 {
   if (mGroebner.size() <= 1) return;
   const Poly& lastPoly = *(mGroebner[mGroebner.size()-1]);
-  const Monom& leadMon = lastPoly.cbegin().monom();
+  Monom leadMon = lastPoly.cbegin().monom();
   for (auto fPtr = mGroebner.begin(); fPtr != mGroebner.end() - 1; ++fPtr)
   {
     ring_elem foundCoeff = getCoeffOfMonom(**fPtr,leadMon);

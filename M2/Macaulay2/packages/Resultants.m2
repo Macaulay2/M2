@@ -14,15 +14,15 @@ newPackage(
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     	Headline => "resultants, discriminants, and Chow forms",
 	Keywords => {"Commutative Algebra"},
+	PackageExports => { "Elimination" },
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "A package for computations with classical resultants",
 	     "acceptance date" => "18 May 2018",
 	     "published article URI" => "https://msp.org/jsag/2018/8-1/p03.xhtml",
 	     "published article DOI" => "10.2140/jsag.2018.8.21",
 	     "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x03-Resultants.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Resultants.m2",
 	     "release at publication" => "61c93a6aaf9d6bf0dd11440339145703ce3d824b",	    -- git commit number in hex
 	     "version at publication" => "1.2.1",
 	     "volume number" => "8",
@@ -31,8 +31,9 @@ newPackage(
 )
 
 export{
-       "resultant",
-       "discriminant",
+    -- these two come from Elimination
+       --"resultant",
+       --"discriminant",
        "affineResultant",
        "affineDiscriminant",
        "genericPolynomials",
@@ -61,15 +62,14 @@ export{
 ----------------------------------------------------------------------------------
 ----------------------- MultipolynomialResultats ---------------------------------
 ----------------------------------------------------------------------------------
-    
-resultant = method(TypicalValue => RingElement, Options => {Algorithm => "Poisson"});
-    
-resultant (Matrix) := o -> (F) -> (
+
+resultant Matrix := opts -> F -> (
     if numgens target F != 1 then error "expected a matrix with one row";
     if not isPolynomialRing ring F then error "the base ring must be a polynomial ring";
     n := numgens source F -1;
     if n+1 != numgens ring F then error("the number of polynomials must be equal to the number of variables, but got " | toString(numgens source F) | " polynomials and " | toString(numgens ring F) | " variables");
-    if o.Algorithm =!= "Poisson" and o.Algorithm =!= "Poisson2" and o.Algorithm =!= "Macaulay" and o.Algorithm =!= "Macaulay2" then error "bad value for option Algorithm; possible values are \"Poisson\", \"Poisson2\", \"Macaulay\", and \"Macaulay2\"";         
+    algorithm := if opts.Algorithm === null then "Poisson" else opts.Algorithm;
+    if not member(algorithm, {"Poisson", "Poisson2", "Macaulay", "Macaulay2"}) then error "bad value for option Algorithm; possible values are \"Poisson\", \"Poisson2\", \"Macaulay\", and \"Macaulay2\"";
     K := coefficientRing ring F;
     x := local x;
     Pn := K[x_0..x_n];
@@ -77,9 +77,9 @@ resultant (Matrix) := o -> (F) -> (
     d := apply(flatten entries F,ee->first degree ee);
     if not isField K then (K' := frac K; Pn' := K'[x_0..x_n]; F' = sub(F,Pn'));
     if not isHomogeneous ideal F' then error("expected homogeneous polynomials");
-    if o.Algorithm === "Macaulay" then (if (min d > -1 and sum(d) > n) then return MacaulayResultant(F,false) else <<"--warning: ignored option Algorithm=>\"Macaulay\""<<endl);
-    if o.Algorithm === "Poisson2" then return interpolateRes(F,"Poisson");
-    if o.Algorithm === "Macaulay2" then return interpolateRes(F,"Macaulay");
+    if algorithm === "Macaulay" then (if (min d > -1 and sum(d) > n) then return MacaulayResultant(F,false) else <<"--warning: ignored option Algorithm=>\"Macaulay\""<<endl);
+    if algorithm === "Poisson2" then return interpolateRes(F,"Poisson");
+    if algorithm === "Macaulay2" then return interpolateRes(F,"Macaulay");
     R := PoissonFormula F';
     if R != 0 then (
         if isField K then return R;
@@ -88,7 +88,7 @@ resultant (Matrix) := o -> (F) -> (
     if dim ideal F' > 0 then sub(0,K) else resultant(wobble F,Algorithm=>"Poisson") 
 );
 
-resultant (List) := o -> (s) -> resultant(matrix{s},Algorithm=>o.Algorithm);
+resultant List := o -> s -> resultant(matrix {s}, o);
     
 PoissonFormula = method();
 PoissonFormula (Matrix) := (F) -> (
@@ -228,15 +228,13 @@ Res222 = (F) -> (
    sub(W,apply(20,j -> g_j => mm_j))
 );
 
-discriminant = method(TypicalValue => RingElement, Options => {Algorithm => "Poisson"});
-    
-discriminant RingElement := o -> (G) -> (
+discriminant RingElement := RingElement => opts -> G -> (
     if not (isPolynomialRing ring G) then error "expected a homogeneous polynomial";   
 --  if not (isHomogeneous G) then error "expected a homogeneous polynomial";   
     n := numgens ring G;
     d := first degree G;
     a := lift(((d-1)^n - (-1)^n)/d,ZZ);
-    resG := resultant(transpose jacobian matrix{{G}},Algorithm=>o.Algorithm);
+    resG := resultant(transpose jacobian matrix{{G}}, opts);
     try return lift(resG/(d^a),ring resG) else (try (q := first quotientRemainder(resG,d^a); assert(resG == q*d^a); return q) else (<<"--warning: the returned discriminant value is only correct up to a non-zero multiplicative constant"<<endl; return resG;));
 );
 
@@ -385,14 +383,14 @@ detectGrassmannian (QuotientRing) := (G) -> (
 
 duality = method(TypicalValue => RingMap); -- p. 94 [Gelfand, Kapranov, Zelevinsky - Discriminants, resultants, and multidimensional determinants, 1994]
 
-sign = (permutation) -> sub(product(subsets(0..#permutation-1,2),I->(permutation_(I_1)-permutation_(I_0))/(I_1-I_0)),ZZ); -- thanks to Nivaldo Medeiros 
+sgn = (permutation) -> sub(product(subsets(0..#permutation-1,2),I->(permutation_(I_1)-permutation_(I_0))/(I_1-I_0)),ZZ); -- thanks to Nivaldo Medeiros 
 tosequence = (L) -> if #L != 1 then toSequence L else L_0;
 
 duality(PolynomialRing) := (R) -> (  -- returns the map R:=G(k,P^n) ---> G(n-k-1,P^n*)
    (k,n,KK,p) := detectGrassmannian R; 
    G := ambient Grass(k,n,KK,Variable=>p);
    G' := ambient Grass(n-k-1,n,KK,Variable=>p);  
-   L := for U in subsets(set(0..n),n-k) list sign( (sort toList(set(0..n)-U)) | sort toList U)  *  (p_(tosequence sort toList(set(0..n)-U)))_G;
+   L := for U in subsets(set(0..n),n-k) list sgn( (sort toList(set(0..n)-U)) | sort toList U)  *  (p_(tosequence sort toList(set(0..n)-U)))_G;
    return(map(R,G,vars R) * map(G,G',L));
 );
 
@@ -429,7 +427,7 @@ tangentialChowForm (Ideal,ZZ,ZZ) := o -> (I,s,l) -> (
    r := if useDuality then n-l-1 else l; 
    if l >= n or l <=-1 then return 1_(Grass(l,n,K,Variable=>p));
    mnr := o.AffineChartGrass;
-   if mnr === true then mnr = (random toList(0..n))_{0..r};
+   if mnr === true then mnr = shuffle(toList(0..n), r + 1);
    if mnr =!= false then (try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == r+1 and # mnr == r+1) else error("bad value for option AffineChartGrass: expected either boolean value or list of "|toString(r+1)|" distinct integers between 0 and "|toString(n))); 
    if mnr =!= false then mnr = sort mnr; 
    if (class o.AssumeOrdinary =!= Boolean and o.AssumeOrdinary =!= null) then error "expected true or false for option AssumeOrdinary";
@@ -688,7 +686,7 @@ projectionMap (Ring,Boolean) := o -> (G,B) -> (
    psi := map(R,G,gens minors(k+1,M));
    mnr := o.AffineChartGrass;
    if mnr === false then return (psi,M);
-   if mnr === true then mnr = (random toList(0..n))_{0..k};
+   if mnr === true then mnr = shuffle(toList(0..n), k + 1);
    try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == k+1 and # mnr == k+1) else error("bad value for option AffineChartGrass: expected either boolean value or list of "|toString(k+1)|" distinct integers between 0 and "|toString(n)); 
    mnr = sort mnr; 
    R = KK[flatten entries submatrix'(transpose M,mnr)];
@@ -828,7 +826,7 @@ fanoVariety (Ideal,ZZ) := o -> (I,k) -> (
    p := if o.Variable === null then getVariable ring I else getVariable o.Variable;
    G := Grass(k,n,K,Variable=>p);
    mnr := o.AffineChartGrass;
-   if mnr === true then mnr = (random toList(0..n))_{0..k};
+   if mnr === true then mnr = shuffle(toList(0..n), k + 1);
    (f,M) := projectionMap(G,false,Variable=>"fano",AffineChartGrass=>mnr);
    t := local t;
    R := (target f)[t_0..t_k];
@@ -849,7 +847,7 @@ beginDocumentation()
 document { 
     Key => Resultants, 
     Headline => "resultants, discriminants, and Chow forms", 
-    PARA{"This package provides methods to deal with resultants and discriminants of multivariate polynomials, and with higher associated subvarieties of irreducible projective varieties. The main methods are: ", TO "resultant",", ",TO "discriminant",", ", TO "chowForm",", ",TO "dualVariety",", and ",TO "tangentialChowForm",". For the mathematical theory, we refer to the following two books: ", HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky. Other references for the theory of Chow forms are: ", HREF{"https://projecteuclid.org/euclid.dmj/1077305197","The equations defining Chow varieties"}, ", by M. L. Green and I. Morrison; ", HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; and ",HREF{"https://www.sciencedirect.com/science/article/abs/pii/S0747717119301506","Coisotropic hypersurfaces in Grassmannians"}, ", by K. Kohn."},
+    PARA{"This package provides methods to deal with resultants and discriminants of multivariate polynomials, and with higher associated subvarieties of irreducible projective varieties. The main methods are: ", TO (resultant,Matrix),", ",TO (discriminant,RingElement),", ", TO "chowForm",", ",TO "dualVariety",", and ",TO "tangentialChowForm",". For the mathematical theory, we refer to the following two books: ", HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky. Other references for the theory of Chow forms are: ", HREF{"https://projecteuclid.org/euclid.dmj/1077305197","The equations defining Chow varieties"}, ", by M. L. Green and I. Morrison; ", HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; and ",HREF{"https://www.sciencedirect.com/science/article/abs/pii/S0747717119301506","Coisotropic hypersurfaces in Grassmannians"}, ", by K. Kohn."},
 }
 document { 
     Key => {[resultant,Algorithm],[discriminant,Algorithm],[affineResultant,Algorithm],[affineDiscriminant,Algorithm]}, 
@@ -868,10 +866,10 @@ document {
         "time resultant(F,Algorithm=>\"Macaulay\")",
          "assert(o3 == o4 and o4 == o5 and o5 == o6)"
     },
-    SeeAlso => {discriminant,resultant}
+    SeeAlso => {(discriminant,RingElement),(resultant,Matrix)}
 } 
 document { 
-    Key => {resultant,(resultant,Matrix),(resultant,List)}, 
+    Key => {(resultant,Matrix),(resultant,List)}, 
     Headline => "multipolynomial resultant", 
     Usage => "resultant F", 
     Inputs => { "F" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," homogeneous polynomials ", TEX///$F_0,\ldots,F_n$///," in ", TEX///$n+1$///," variables (or a ", TO2{List,"list"}," to be interpreted as such a matrix)"}}, 
@@ -892,15 +890,18 @@ document {
     "F = genericPolynomials({2,2,2},ZZ)",
     "time # terms resultant F"
     },
-    SeeAlso => {chowForm,discriminant} 
+    SeeAlso => {chowForm,(discriminant,RingElement)}
 }
 document { 
-    Key => {discriminant,(discriminant,RingElement)}, 
+    Key => {(discriminant,RingElement)},
     Headline => "resultant of the partial derivatives", 
     Usage => "discriminant F", 
     Inputs => { "F" => RingElement => {"a homogeneous polynomial"}}, 
     Outputs => {RingElement => {"the discriminant of ",TT "F"}}, 
-    PARA{"The discriminant of a homogeneous polynomial is defined, up to a scalar factor, as the ",TO resultant," of its partial derivatives. For the general theory, see one of the following: ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky."},
+    PARA{"The discriminant of a homogeneous polynomial is defined, up to a scalar factor, as the ",
+	TO (resultant,Matrix)," of its partial derivatives. For the general theory, see one of the following: ",
+	HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ",
+	HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky."},
     EXAMPLE { 
     "ZZ[a,b,c][x,y]; F = a*x^2+b*x*y+c*y^2",
     "time discriminant F",
@@ -917,7 +918,7 @@ document {
     "time D=discriminant pencil",
     "factor D"
     },
-    SeeAlso => {dualVariety,resultant} 
+    SeeAlso => {dualVariety,(resultant,Matrix)}
 }
 document { 
     Key => {affineResultant,(affineResultant,Matrix),(affineResultant,List)}, 
@@ -930,7 +931,7 @@ document {
     "f = {3*t*y*z-u*z^2+1, -y+t+3*u-1, u*z^4-t*y^3+t*y*z}",
     "affineResultant f"
     },
-    SeeAlso => {resultant,affineDiscriminant} 
+    SeeAlso => {(resultant,Matrix),affineDiscriminant}
 }
 document { 
     Key => {affineDiscriminant,(affineDiscriminant,RingElement)}, 
@@ -944,7 +945,7 @@ document {
     "ZZ[a,b,c,d][x]; f = a*x^3+b*x^2+c*x+d",
     "affineDiscriminant f",
     },
-    SeeAlso => {discriminant,affineResultant} 
+    SeeAlso => {(discriminant,RingElement),affineResultant}
 }
 document { 
     Key => {genericPolynomials,(genericPolynomials,VisibleList,Ring),(genericPolynomials,List)}, 
@@ -976,7 +977,7 @@ document {
        "time (D,D') = macaulayFormula F",
        "assert(det D == (resultant F) * (det D'))" 
     },
-    SeeAlso => {resultant}
+    SeeAlso => {(resultant,Matrix)}
 }
 document { 
     Key => {veronese,(veronese,ZZ,ZZ,Ring),(veronese,ZZ,ZZ)}, 
@@ -1238,7 +1239,7 @@ document {
       "time Z = dualVariety(veronese(2,3,ZZ/3331),AssumeOrdinary=>true);",
       "discF == sub(Z,vars ring discF) and Z == sub(discF,vars ring Z)"
     },
-   SeeAlso => {conormalVariety,discriminant}
+   SeeAlso => {conormalVariety,(discriminant,RingElement)}
 }
 document {
     Key => {[conormalVariety,Strategy],[dualVariety,Strategy]},
@@ -1618,5 +1619,69 @@ L = ideal apply(5,i -> random(1,R))
 assert last (time p = plucker L,time L' = plucker p,time p' = plucker L',L' == L and p' == p)
 ///
 
+--Testing affineDiscriminant
+TEST ///
+R = ZZ[a,b,c][x]
+f = a*x^2+b*x+c
+assert(affineDiscriminant(f)==-b^2+4*a*c)
+///
+
+--Testing affineResultant
+TEST ///
+R = ZZ[t,u][y,z]
+f = {3*t*y*z-u*z^2+1, -y+t+3*u-1, u*z^4-t*y^3+t*y*z}
+r = affineResultant f
+assert(degree(r) == {13})
+assert(#terms(r)==66)
+assert(leadTerm(r)==-81*t^12*u)
+///
+
+--Testing macaulayFormula (which was previously being tested in the example)
+TEST ///
+F = {random(2,Grass(0,2)),random(2,Grass(0,2)),random(3,Grass(0,2))}
+(D,D') = macaulayFormula F
+assert(det(D) == (resultant F) * (det D'))
+///
+
+--Testing Hurwitz form. As mentioned in the docs,
+--hurwitzForm(I) == tangentialChowForm(I,1)
+TEST ///
+Q = ideal random(2,Grass(0,4))
+assert(hurwitzForm(Q)==tangentialChowForm(Q,1))
+///
+
+--Testing isCoisotropic
+TEST ///
+-- first tangential Chow form of a random quadric in P^3
+w = tangentialChowForm(ideal random(2,Grass(0,3)),1)
+assert(isCoisotropic w)
+-- random quadric in G(1,3)
+w' = random(2,Grass(1,3))
+assert(not(isCoisotropic w'))
+///
+
+TEST ///
+X = kernel veronese(1, 3);
+C = conormalVariety X;
+RC = ring C;
+primalVars = take(gens RC, 4);
+dualVars   = drop(gens RC, 4);
+isBiHom = f -> (
+        -- substitute dual vars = 1, check homogeneous in primal vars
+        f1 := sub(f, apply(dualVars, v -> v => 1_RC));
+        -- substitute primal vars = 1, check homogeneous in dual vars
+        f2 := sub(f, apply(primalVars, v -> v => 1_RC));
+        isHomogeneous ideal(f1) and isHomogeneous ideal(f2)
+    );
+assert all(flatten entries gens C, isBiHom);
+elim     = eliminate(primalVars, C);
+dualRing = QQ[y_0..y_3];
+toElimDual = map(dualRing, RC,
+    join(apply(primalVars, v -> 0_dualRing), gens dualRing));
+elimDual = toElimDual elim;
+Xdual    = dualVariety X;
+XdualInDR = sub(Xdual, matrix{gens dualRing});
+ assert(radical elimDual == radical XdualInDR);
+///
 end
 

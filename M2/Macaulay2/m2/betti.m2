@@ -6,17 +6,25 @@
 *-
 
 needs "gb.m2" -- for GroebnerBasis
-needs "res.m2" -- needed by minimalBetti
-needs "chaincomplexes.m2"
-needs "gradedmodules.m2"
 needs "hilbert.m2"
 needs "modules2.m2"
 
 -----------------------------------------------------------------------------
--- Local utilities
+-- unexported helper functions used in several packages
 -----------------------------------------------------------------------------
 
-nonzeroKeys = x -> select(keys x, k -> x#k != 0)
+unpackEngineBetti = w -> (
+    -- w is the result of e.g. rawGBBetti.
+    -- this is an array of ints, of the form:
+    -- [lodegree, hidegree, len, b(lodegree,0), b(lodegree,1), ..., b(lodegree,len), ... b(hidegree,len)]
+    (lo, hi, len) := (w#0, w#1, w#2);
+    w = pack(len+1, drop(w, 3));
+    w = flatten table(toList(lo .. hi), toList(0 .. len),
+	(i,j) -> ((j, {i+j}, i+j), w#(i-lo)#j)); -- no weight option used here
+    new BettiTally from select(w, (k,v) -> v != 0))
+
+-- used in EngineTests
+rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
 
 -----------------------------------------------------------------------------
 -- BettiTally type declarations and basic constructors
@@ -83,18 +91,18 @@ rawBettiTally = v -> (
     minrow := min fi;
     maxrow := max fi;
     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
-    leftside := splice {"", "total:", apply(minrow .. maxrow, i -> toString i | ":")};
+    leftside := splice {, "total:", apply(minrow .. maxrow, i -> RowExpression{ i, symbol :} )};
     totals := apply(transpose v, sum);
     v = prepend(totals,v);
-    v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
-    v = prepend(toString \ toList (mincol .. maxcol), v);
+    v = applyTable(v, bt -> if bt === 0 then symbol . else bt);
+    v = prepend(toList (mincol .. maxcol), v);
     v = apply(leftside,v,prepend);
     v)
 
 rawMultigradedBettiTally = B -> (
     if keys B == {} then return 0;
     N := max apply(pairs B, (key, n) -> ((i,d,h) := key; length d));
-    R := ZZ[vars(0..N-1), MonomialOrder => Lex, Inverses => true];
+    R := ZZ(monoid[vars(0..N-1), MonomialOrder => Lex, Inverses => true]);
     H := new MutableHashTable;
     (rows, cols) := ({}, {});
     scan(pairs B,
@@ -106,7 +114,7 @@ rawMultigradedBettiTally = B -> (
 		m := n * R_d;
 		if H#?key then H#key = H#key + m else H#key = m;
 		) else (
-		s := toString n | ":" | toString d;
+		s := hold n : d;
 		if H#?i then H#i = H#i | {s} else H#i = {s};
 		);
 	    ));
@@ -115,30 +123,37 @@ rawMultigradedBettiTally = B -> (
 	T := table(toList (0 .. length rows - 1), toList (0 .. length cols - 1),
 	    (i,j) -> if H#?(rows#i,cols#j) then H#(rows#i,cols#j) else 0);
 	-- Making the table
-	xAxis := toString \ cols;
-	yAxis := (i -> toString i | ":") \ rows;
-	T = applyTable(T, n -> if n === 0 then "." else toString raw n);
+	xAxis := cols;
+	yAxis := (i -> RowExpression{ i, symbol :}) \ rows;
+--	T = applyTable(T, n -> if n === 0 then symbol . else raw n);
+	T = applyTable(T, n -> if n === 0 then symbol . else n);
 	T = prepend(xAxis, T);
-	T = apply(prepend("", yAxis), T, prepend);
+	T = apply(prepend(, yAxis), T, prepend);
 	) else (
 	T = table(max((keys H)/(j -> #H#j)), sort keys H,
-	    (i,k) -> if i < #H#k then H#k#i else null);
-	T = prepend(toString \ sort keys H, T);
+	    (i,k) -> if i < #H#k then H#k#i);
+	T = prepend(sort keys H, T);
 	);
     T)
 
+toStringn := x -> if x===null then "" else toString x
 net            BettiTally := B -> netList(rawBettiTally B,            Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
-net MultigradedBettiTally := B -> netList(rawMultigradedBettiTally B, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
+net MultigradedBettiTally := B -> netList(applyTable(rawMultigradedBettiTally B,toStringn), Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
+
+texMathn := method()
+texMathn Nothing := x -> ""
+texMathn String := s -> "\\text{"|s|"}" -- minor variation, no tt
+texMathn Thing := texMath
 
 texMath BettiTally := v -> (
     v = rawBettiTally v;
-    v = join({prepend(2, drop(v#0, 1)), prepend("\\text{total:}\n  ", drop(v#1, 1))}, drop(v, 2));
-    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", row)));
+--    v = join({prepend("  ", drop(v#0, 1)), prepend("\\text{total:}\n  ", drop(v#1, 1))}, drop(v, 2));
+    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", apply(row,texMathn))));
     concatenate("\\begin{matrix}", newline, v, newline, "\\end{matrix}"))
 texMath MultigradedBettiTally := v -> (
     v = rawMultigradedBettiTally v;
-    v = if compactMatrixForm then prepend(prepend(2, drop(v#0, 1)), drop(v, 1)) else v;
-    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", row)));
+    v = if compactMatrixForm then prepend(prepend(, drop(v#0, 1)), drop(v, 1)) else v;
+    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", apply(row,texMathn))));
     concatenate("\\begin{matrix}", newline, v, newline, "\\end{matrix}"))
 
 -----------------------------------------------------------------------------
@@ -147,107 +162,33 @@ texMath MultigradedBettiTally := v -> (
 
 -- local function for selecting and computing the appropriate heft
 heftfun := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
-heftvec := (wt1, wt2) -> if wt1 =!= null then wt1 else if wt2 =!= null then wt2 else {}
+--heftvec := (wt1, wt2) -> if wt1 =!= null then wt1 else if wt2 =!= null then wt2 else {}
 
+-- betti(Matrix) is defined in OldChainComplexes now
 betti = method(TypicalValue => BettiTally, Options => { Weights => null, Minimize => false })
 betti GroebnerBasis := opts -> G -> betti(generators G, opts)
 betti Ideal         := opts -> I -> betti(generators I, opts)
 betti Module        := opts -> M -> betti(presentation M, opts)
-betti Matrix        := opts -> f -> betti(chainComplex f, opts)
+betti Matrix        := opts -> f -> missingPackage "either Complexes or OldChainComplexes"
 betti BettiTally    := opts -> B -> if opts.Weights === null then B else (
     heftfn := heftfun opts.Weights;
     applyKeys(B, (i,d,h) -> (i,d,heftfn d)))
 
-unpackEngineBetti = w -> (
-    -- w is the result of e.g. rawGBBetti.
-    -- this is an array of ints, of the form:
-    -- [lodegree, hidegree, len, b(lodegree,0), b(lodegree,1), ..., b(lodegree,len), ... b(hidegree,len)]
-    (lo, hi, len) := (w#0, w#1, w#2);
-    w = pack(len+1, drop(w, 3));
-    w = flatten table(toList(lo .. hi), toList(0 .. len),
-	(i,j) -> ((j, {i+j}, i+j), w#(i-lo)#j)); -- no weight option used here
-    new BettiTally from select(w, (k,v) -> v != 0))
-
--- used in EngineTests
-rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
-
-betti Resolution := opts -> X -> (
-    -- this version works only for rings of degree length 1
-    -- currently if opts.Minimize is true, then an error is given
-    -- unless the FastNonminimal=>true option was given for the free resolution.
-    B := rawBetti(X.RawComputation, if opts.Minimize then 4 else 0); -- the raw version takes no weight option
-    betti(B, Weights => heftvec(opts.Weights, heft ring X)))
-
-betti ChainComplex :=
-betti GradedModule := opts -> C -> (
-    R := ring C;
-    if C.?Resolution and degreeLength R === 1 and heft R === {1} then return betti(C.Resolution, opts);
-    if opts.Minimize then error "Minimize=>true is currently only supported for res(...,FastNonminimal=>true)";
-    complete C;
-    heftfn := heftfun heftvec(opts.Weights, heft R);
-    new BettiTally from flatten apply(
-	select(pairs C, (i,F) -> class i === ZZ),
-	(i,F) -> (
-	    if not isFreeModule F then error("betti: expected module at spot ", toString i, " in chain complex to be free");
-	    apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n))))
-
------------------------------------------------------------------------------
--- minimalBetti
------------------------------------------------------------------------------
 
 minimalBetti = method(
     TypicalValue => BettiTally,
     Options => {
-	DegreeLimit => null,
-	LengthLimit => infinity,
-	Weights => null
-	})
-minimalBetti Module := BettiTally => opts -> M -> (
-    R := ring M;
-    degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
-    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
-    -- check to see if a cached resolution is sufficient
-    cacheKey := ResolutionContext{};
-    if M.cache#?cacheKey and isComputationDone(C := M.cache#cacheKey,
-	DegreeLimit => degreelimit, LengthLimit => lengthlimit)
-    then return betti(C.Result.Resolution, Weights => opts.Weights);
-    -- if not, compute a fast non-minimal resolution
-    -- the following line is because we need to make sure we have the resolution
-    -- either complete, or one more than the desired minimal betti numbers.
-    
-    -- We see if we can now compute a non-minimal resolution.
-    -- If not, we compute a usual resolution.
-    -- TODO: this isn't quite correct.
-    useFastNonminimal := not isQuotientRing R and
-      char R > 0 and char R < (1<<15);
+	DegreeLimit         => null,
+	LengthLimit         => infinity,
+	ParallelizeByDegree => false, -- currently: only used over primes fields of positive characteristic
+	Weights             => null,
+    })
 
-    if not useFastNonminimal then 
-        return betti resolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
-    -- At this point, we think we are good to use the faster algorithm.        
-    -- First, we need to comppute the non-minimal resolution to one further step.
-    if instance(opts.LengthLimit, ZZ) then lengthlimit = lengthlimit + 1;
-    C = resolution(M,
-	StopBeforeComputation => true, FastNonminimal => true,
-	DegreeLimit => degreelimit, LengthLimit => lengthlimit);
-    rC := if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation
-    -- TODO: when can this error happen?
-    else error "cannot use 'minimalBetti' with this input. Input must be an ideal or module in a
-    polynomial ring or skew commutative polynomial ring over a finite field, which is singly graded.
-    These restrictions might be removed in the future.";
-    --
-    B := unpackEngineBetti rawMinimalBetti(rC,
-	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
-	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {});
-    betti(B, Weights => heftvec(opts.Weights, heft R))
-    )
-minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
-    if I.cache.?quotient then I.cache.quotient
-    else I.cache.quotient = cokernel generators I, opts
-    )
+minimalBetti Ideal  :=
+minimalBetti Module := o -> M -> missingPackage "either Complexes or OldChainComplexes"
 
 -----------------------------------------------------------------------------
 
-pdim BettiTally := B -> if #(s := first \ nonzeroKeys B) > 0 then max s - min s else 0
 -- TODO: implement the following for MultigradedBettiTally
 poincare BettiTally := B -> (
     if #B === 0 then return 0;				    -- yes, it's not in a degree ring, but that should be okay
@@ -292,32 +233,15 @@ hilbertSeries(ZZ, BettiTally) := o -> (n,B) -> (
     Divide{num, denom})
 
 -----------------------------------------------------------------------------
-
-Ring ^ BettiTally := ChainComplex => (R,B) -> (
-    -- donated by Hans-Christian von Bothmer
-    -- given a betti Table B and a Ring R make a chainComplex
-    -- with zero maps over R  that has betti diagram B.
-    -- negative entries are ignored
-    -- rational entries produce an error
-    -- multigraded R's work only if the betti Tally contains degrees of the correct degree length
-    F := new ChainComplex;
-    F.ring = R;
-    scan(sort pairs B, (k,n) -> (
-	    (i, deg, wt) := k; -- (homological degree, multidegree, weight)
-	    -- use F_i since it gives 0 if F#i is not there:
-	    F#i = F_i ++ R^{n:-deg})); -- this could be a bit slow
-    F)
-
+-- pdim and regularity
 -----------------------------------------------------------------------------
--- regularity
------------------------------------------------------------------------------
+
+nonzeroKeys = x -> select(keys x, k -> x#k != 0)
+
+pdim Module     := M -> missingPackage "either Complexes or OldChainComplexes"
+pdim BettiTally := B -> if #(s := first \ nonzeroKeys B) > 0 then max s - min s else 0
 
 regularity = method(TypicalValue => ZZ, Options => { Weights => null })
-regularity   BettiTally := opts -> B -> max apply(nonzeroKeys betti(B, opts), (i,d,h) -> h-i)
-regularity ChainComplex := opts -> C -> regularity betti(C, opts)
-regularity        Ideal := opts -> I -> (
-    if I == 0 then -infinity else if I == 1 then 0
-    else 1 + regularity betti(resolution cokernel generators I, opts))
-regularity       Module := opts -> M -> (
-    if not isHomogeneous M then error "regularity: expected homogeneous module";
-    regularity betti(resolution minimalPresentation M, opts))
+regularity Ideal      :=
+regularity Module     := o -> M -> missingPackage "either Complexes or OldChainComplexes"
+regularity BettiTally := o -> B -> max apply(nonzeroKeys betti(B, o), (i, d, h) -> h-i)

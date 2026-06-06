@@ -255,7 +255,7 @@ doc ///
     Description
         Text	    
 	    The group of torus-invariant Cartier divisors on $X$ is the
-            subgroup of all locally principal torus-invarient Weil divisors.
+            subgroup of all locally principal torus-invariant Weil divisors.
             On a normal toric variety, the group of torus-invariant Cartier
             divisors can be computed as an inverse limit.  More precisely, if
             $M$ denotes the lattice of characters on $X$ and the maximal cones
@@ -421,9 +421,8 @@ doc ///
             Cartier divisors.  For more information, see Theorem 4.2.1 in
             Cox-Little-Schenck's {\em Toric Varieties}.
     	Text
-            When the normal toric variety is @TO2(isSmooth, "smooth")@, the
-            Picard group is isomorphic to the 
-	    @TO2(classGroup, "class group")@.
+            When the normal toric variety is @TO2((isSmooth, NormalToricVariety), "smooth")@,
+            the Picard group is isomorphic to the @TO2(classGroup, "class group")@.
       	Example
     	    PP3 = toricProjectiveSpace 3;
 	    assert (isSmooth PP3 and isProjective PP3)
@@ -438,7 +437,7 @@ doc ///
     	    U = normalToricVariety ({{4,-1},{0,1}},{{0},{1}});
 	    assert (isSmooth U and not isComplete U and # max U =!= 1)
     	    picardGroup U
-    	    assert (classGroup U	=== picardGroup U and not isFreeModule picardGroup U)
+	    assert (classGroup U === picardGroup U and not isFreeModule picardGroup U)
     	Text
             For an affine toric variety, the Picard group is trivial.
 	Example
@@ -493,7 +492,7 @@ doc ///
             function returns a matrix representing this map with respect to
             the chosen bases.  
     	Text
-            On a @TO2(isSmooth, "smooth")@ normal toric variety, the Picard
+            On a @TO2((isSmooth, NormalToricVariety), "smooth")@ normal toric variety, the Picard
             group is isomorphic to the class group, so the inclusion map is
             the identity.
     	Example  
@@ -574,7 +573,7 @@ doc ///
 	    the chosen bases.  For more information, see Theorem 4.2.1 in
 	    Cox-Little-Schenck's {\em Toric Varieties}.
 	Text
-            On a @TO2(isSmooth, "smooth")@ normal toric variety, the map from
+            On a @TO2((isSmooth, NormalToricVariety), "smooth")@ normal toric variety, the map from
             the torus-invariant Cartier divisors to the Picard group is the
             same as the map from the @TO2(weilDivisorGroup, "Weil divisors")@
             to the @TO2(classGroup, "class group")@.
@@ -626,7 +625,6 @@ doc ///
 doc ///
     Key
 	(nefGenerators, NormalToricVariety)
-        nefGenerators	
     Headline
         compute generators of the nef cone
     Usage
@@ -671,7 +669,7 @@ doc ///
 	    nefGenerators smoothFanoToricVariety (3,16)	    	    
 	    nefGenerators smoothFanoToricVariety (4,120)
 	Text
-	    There are @TO2(isSmooth, "smooth")@ @TO2(isComplete, "complete")@
+	    There are @TO2((isSmooth, NormalToricVariety), "smooth")@ @TO2(isComplete, "complete")@
             normal toric varieties with no nontrivial nef divisors.
     	Example    
             X = normalToricVariety ({{1,0,0},{0,1,0},{0,0,1},{0,-1,2},{0,0,-1},{-1,1,-1},{-1,0,-1},{-1,-1,0}},{{0,1,2},{0,2,3},{0,3,4},{0,4,5},{0,1,5},{1,2,7},{2,3,7},{3,4,7},{4,5,6},{4,6,7},{5,6,7},{1,5,7}});    
@@ -1864,7 +1862,7 @@ doc ///
             @UL {
     		{"the divisor is a very ample divisor;"},
     		{"for every vertex of the associated lattice polytope
-    		  associated to the divsor, the corresponding semigroup is
+    		  associated to the divisor, the corresponding semigroup is
     		  saturated in the group characters."}
 	    }@
         Text    

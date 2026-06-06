@@ -9,7 +9,7 @@ newPackage(
 	Keywords => {"Commutative Algebra"},
         DebuggingMode => false,
      	PackageImports => { "CompleteIntersectionResolutions" },
-	PackageExports =>{"MCMApproximations"}
+	PackageExports =>{"MCMApproximations", "Complexes"}
         )
 
 export {"exteriorMultiplication",
@@ -25,12 +25,12 @@ trueKoszul=method()
 trueKoszul Matrix := ff -> (
     len := numcols ff;
     gg := map(target ff,source ff, (i,j)-> (-1)^j*ff_(len-1-j)_0); -- was source ff
-    K1 := koszul gg;
+    K1 := koszulComplex gg;
     Klist := apply(len, i-> 
 	map(K1_i, K1_(i+1), (-1)^i*transpose K1.dd_(len -i)));
     mapList := {map((ring gg)^1,,matrix Klist_0)};
     scan(toList(1..len-1), i-> mapList =  append(mapList, map(source last mapList, , matrix Klist_i)));
-    chainComplex mapList
+    complex mapList
     )
 
 -*syzygyModule = method()
@@ -39,14 +39,14 @@ syzygyModule (ZZ, Module) := (d,M)->(
     coker F.dd_(d+1))
 *-
 ciOperatorResolution=method()
-ciOperatorResolution(ChainComplex, ChainComplex) := (A,L) ->(
+ciOperatorResolution(Complex, Complex) := (A,L) ->(
     u :=higherCIOperators(A,L);
-    chainComplex apply(toList(1..length A), 
+    complex apply(toList(1..length A), 
            k->makeALDifferential(k,A,L,u))
        )
 
 makeALDifferential= method()
-makeALDifferential(ZZ,ChainComplex, ChainComplex, HashTable) := 
+makeALDifferential(ZZ,Complex, Complex, HashTable) := 
                          (j, A,L,u) ->(
 --make the differential from the j-th diag A_j**L_0++A_(j-1)**L_1...
 --to the (j-1)-st diagonal A_(j-1)**L_0++...
@@ -67,7 +67,7 @@ makeALDifferential(ZZ,ChainComplex, ChainComplex, HashTable) :=
 
 
 higherCIOperators = method()
-higherCIOperators(ChainComplex, ChainComplex) := (A,L) ->(
+higherCIOperators(Complex, Complex) := (A,L) ->(
 --L is a koszul complex, resolution of coker ff over S
 --A is the lift to S of (part of) a resolution over R = S/ideal ff
 --u#{n,p,q}: A_p **L_q --> A_(p-n)**L_(q+n-1)
@@ -200,6 +200,52 @@ assert(
     )
 ///
 
+-- ciOperatorResolution: AL is a homogeneous (nonminimal) S-free resolution of the same
+-- module as the minimal resolution G.  AL comes from a length-truncated resolution, so
+-- it is exact only in degrees 1..length(AL)-1 -- the top homology is the truncation.
+TEST///
+needsPackage "CompleteIntersectionResolutions"
+S = ZZ/101[a,b,c];
+ff = matrix"a4,b4,c4";
+N = coker matrix"a,b,c;b,c,a";
+R = S/ideal ff;
+M = highSyzygy (R**N);
+AA = res(M, LengthLimit => 5);
+A = complex apply(length AA, i-> lift(AA.dd_(i+1), S));
+L = trueKoszul ff;
+AL = ciOperatorResolution(A,L);
+G = res pushForward(map(R,S),M);
+assert(isHomogeneous AL)
+assert(all(toList(1..length AL - 1), i -> HH_i AL == 0))
+assert(prune HH_0 AL == prune HH_0 G)
+///
+
+-- trueKoszul: produces the Koszul complex of ff (resolving S/ideal ff) with the same
+-- Betti table as koszulComplex but the exterior-algebra (lex) basis order
+TEST///
+S = ZZ/101[a,b,c,d]
+ff = matrix{{a,b,c,d}}
+TK = trueKoszul ff
+KC = koszulComplex ff
+assert(isHomogeneous TK)
+assert(all(toList(1..length TK), i -> HH_i TK == 0))
+assert(prune HH_0 TK == prune coker ff)
+assert(betti TK == betti KC)
+assert(TK.dd_2 != KC.dd_2)
+///
+
+-- exteriorMultiplication: the multiplication maps are associative --
+-- mu{p1+p2,p3} o (mu{p1,p2} ** mu{p3,0}) == mu{p1,p2+p3} o (mu{0,p1} ** mu{p2,p3}).
+-- This revives the package's checkAssociativity oracle as an assertion.
+TEST///
+n = 5
+mu = exteriorMultiplication n
+scan(toList(0..n), p1 ->
+  scan(toList(0..n-p1), p2 ->
+    scan(toList(0..n-p1-p2), p3 ->
+      assert(mu#{p1+p2,p3}*(mu#{p1,p2}**mu#{p3,0}) == mu#{p1,p2+p3}*(mu#{0,p1}**mu#{p2,p3})))))
+///
+
 
 -----------------------------
 --------Documentation-----------
@@ -232,7 +278,7 @@ doc ///
     ff:Matrix
      Matrix with the elements on which to build the Koszul complex
    Outputs
-    K:ChainComplex
+    K:Complex
    Description
     Text
      The usual Koszul command produces a complex with the basis
@@ -241,11 +287,11 @@ doc ///
     Example
      S = ZZ/101[a,b,c,d]
      ff = matrix{{a,b,c,d}}
-     (koszul ff).dd_2
+     (koszulComplex ff).dd_2
      (trueKoszul ff).dd_2
      basis(2,(ZZ/101[a,b,c,d, SkewCommutative => true]))
    SeeAlso
-    koszul    
+    koszulComplex
 ///
 
 doc ///
@@ -267,7 +313,7 @@ doc ///
      The basis of each $\wedge^p k^n$ is given in lex order.
    Caveat
     This is not the order of the basis in the output of
-    koszul ff; rather, use trueKoszul ff.
+    koszulComplex ff; rather, use trueKoszul ff.
    SeeAlso
     trueKoszul
 ///
@@ -275,15 +321,15 @@ doc ///
 doc ///
    Key
     higherCIOperators
-    (higherCIOperators, ChainComplex, ChainComplex)
+    (higherCIOperators, Complex, Complex)
    Headline
     "creates the HashTable of higher CI operators on a lifted resolution"
    Usage
     u = higherCIOperators(A,L)
    Inputs
-    A:ChainComplex
+    A:Complex
      lifted resolution from complete intersection $S\to R$
-    L:ChainComplex
+    L:Complex
      Koszul complex resolving R over S
    Outputs
     u:HashTable
@@ -344,7 +390,7 @@ doc ///
 doc ///
    Key
     makeALDifferential
-    (makeALDifferential,ZZ,ChainComplex, ChainComplex, HashTable)
+    (makeALDifferential,ZZ,Complex, Complex, HashTable)
    Headline
     "makes the differential used in ciOperatorResolution"
    Usage
@@ -352,9 +398,9 @@ doc ///
    Inputs
     j:ZZ
      which differential
-    A:ChainComplex
+    A:Complex
      lift of resolution from complete intersection S-->R
-    L:ChainComplex
+    L:Complex
      Koszul complex resolving R over S
     u:HashTable
      output of higherCIOperators
@@ -369,18 +415,18 @@ doc ///
 doc ///
    Key
     ciOperatorResolution
-    (ciOperatorResolution, ChainComplex, ChainComplex)
+    (ciOperatorResolution, Complex, Complex)
    Headline
     "lift resolution from complete intersection using higher ci-operators"
    Usage
     AL = ciOperatorResolution(A,L)
    Inputs
-    A:ChainComplex
+    A:Complex
      lift over $S\to R$ of an R-free resolution
-    L:ChainComplex
+    L:Complex
      algebra resolution of R over S; for now, Koszul complex
    Outputs
-    AL:ChainComplex
+    AL:Complex
      resolution over S of same module
    Description
     Text
@@ -410,7 +456,7 @@ doc ///
      M = highSyzygy (R**N);
      AA = res(M, LengthLimit => 5);
      Alist = apply(length AA, i-> lift(AA.dd_(i+1), S));
-     A = chainComplex Alist;
+     A = complex Alist;
      L = trueKoszul ff;
      AL = ciOperatorResolution(A,L)
      G = res pushForward(map(R,S),M)

@@ -12,6 +12,7 @@ taskCreate(f:function(TaskCellBody):null,tb:TaskCellBody) ::=  Ccode(taskPointer
 
 export taskDone(tp:taskPointer) ::= Ccode(int, "taskDone(",tp,")")==1;
 export taskStarted(tp:taskPointer) ::=Ccode(int, "taskStarted(",tp,")")==1;
+export taskReady(tp:taskPointer) ::= Ccode(int, "taskReady(", tp, ")") == 1;
 pushTask(tp:taskPointer) ::=Ccode(void, "pushTask(",tp,")");
 taskResult(tp:taskPointer) ::=Ccode(voidPointer, "taskResult(",tp,")");
 export taskKeepRunning(tp:taskPointer) ::= Ccode(int, "taskKeepRunning(",tp,")")==1;
@@ -40,14 +41,6 @@ startup(tb:TaskCellBody):null := (
 	  );
      compilerBarrier();
      null());
-
-isFunction(e:Expr):bool := (
-     when e
-     is CompiledFunction do true
-     is CompiledFunctionClosure do true
-     is FunctionClosure do true
-     is s:SpecialExpr do isFunction(s.e)
-     else false);
 
 taskDone(tb:TaskCellBody):bool := tb.resultRetrieved || taskDone(tb.task);
 
@@ -97,8 +90,12 @@ nextTaskSerialNumber():int := (
      taskSerialNumber = taskSerialNumber+1;		    -- race condition here, solve later
      taskSerialNumber);
 
+NoThreadsError() ::= buildErrorPacket("thread support has been disabled");
+
 createTask2(fun:Expr,arg:Expr):Expr :=(
      if !isFunction(fun) then return WrongArg(1,"a function");
+     if Ccode(bool, "!isThreadSupervisorInitialized()")
+     then return NoThreadsError();
      tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
@@ -170,6 +167,8 @@ setupfun("addCancelTask",addCancelTaskM2);
 
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
+     if Ccode(bool, "!isThreadSupervisorInitialized()")
+     then return NoThreadsError();
      tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
@@ -180,7 +179,7 @@ schedule2(fun:Expr,arg:Expr):Expr := (
 
 schedule1(task:TaskCell):Expr := (
      if taskStarted(task.body.task) then
-     WrongArg("A task that hasn't started")
+     WrongArg("a task that hasn't started")
      else (
      pushTask(task.body.task); 
      Expr(task)
@@ -202,8 +201,12 @@ setupfun("schedule",schedule);
 taskResult(e:Expr):Expr := (
      when e is c:TaskCell do
      if c.body.resultRetrieved then buildErrorPacket("task result already retrieved")
+     else if !taskReady(c.body.task)
+     then buildErrorPacket("task not scheduled yet")
      else if !taskKeepRunning(c.body.task) then buildErrorPacket("task canceled")
-     else if !taskDone(c.body.task) then buildErrorPacket("task not done yet")
+     else if !taskDone(c.body.task) then (
+	  Ccode(voidPointer, "waitOnTask(",c.body.task,")");
+	  taskResult(e))
      else (
 	  r := c.body.returnValue;
 	  c.body.returnValue = nullE;
@@ -217,6 +220,90 @@ setupfun("taskResult",taskResult);
 setupfun("setIOSynchronized",setIOSynchronized);
 setupfun("setIOUnSynchronized",setIOUnSynchronized);
 setupfun("setIOExclusive",setIOExclusive);
+
+export getIOThreadMode(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0
+	then toExpr(getFileThreadMode(stdIO))
+	else WrongNumArgs(0, 1))
+    is f:file do toExpr(getFileThreadMode(f))
+    else WrongArg("a file or ()"));
+setupfun("getIOThreadMode", getIOThreadMode);
+
+WrongArgMutex():Expr := WrongArg("a mutex");
+
+mutexFinalizer(obj:voidPointer, data:voidPointer):void := (
+    mutex := Ccode(ThreadMutex, "*(pthread_mutex_t *)", obj);
+    destroy(mutex););
+
+mutexInit(e:Expr):Expr := (
+    when e
+    is HashTable do (
+	ptr := GCmalloc(Pointer "pthread_mutex_t *");
+	mutex := Ccode(ThreadMutex, "*", ptr);
+	r := init(mutex);
+	if r != 0 then return buildErrorPacketErrno("pthread_mutex_init", r);
+	Ccode(void, "GC_REGISTER_FINALIZER(", ptr, ", ",
+	    "(GC_finalization_proc)", mutexFinalizer, ", NULL, NULL, NULL)");
+	cell := mutexCell(mutex, hash_t(0));
+	cell.hash = hashFromAddress(Expr(cell));
+	Expr(cell))
+    else WrongArgHashTable());
+installMethod(NewS, mutexClass, mutexInit);
+
+lock(e:Expr):Expr := (
+    when e
+    is m:mutexCell do (
+	r := lock(m.v);
+	if r == 0 then nullE
+	else buildErrorPacketErrno("pthread_mutex_lock", r))
+    else WrongArgMutex());
+setupfun("lock0", lock);
+
+trylock(e:Expr):Expr := (
+    when e
+    is m:mutexCell do (
+	r := trylock(m.v);
+	if r == 0 then nullE
+	else buildErrorPacketErrno("pthread_mutex_trylock", r))
+    else WrongArgMutex());
+setupfun("tryLock0", trylock);
+
+unlock(e:Expr):Expr := (
+    when e
+    is m:mutexCell do (
+	r := unlock(m.v);
+	if r == 0 then nullE
+	else buildErrorPacketErrno("pthread_mutex_unlock", r))
+    else WrongArgMutex());
+setupfun("unlock0", unlock);
+
+-- env.0 = the mutex to lock/unlock
+-- env.1 = the function to call
+lockedFunction(e:Expr, env:Sequence):Expr := (
+    if length(env) == 2 then (
+	l := lock(env.0);
+	when l is Error do return l else nothing;
+	r := applyEE(env.1, e);
+	u := unlock(env.0);
+	when u is Error do u else r)
+    else buildErrorPacket("internal error: expected 2 values in environment"));
+
+lockFunction(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is mutexCell do (
+		if isFunction(a.1)
+		then Expr(CompiledFunctionClosure(
+			lockedFunction, nextHash(), a))
+		else WrongArg(2, "a function"))
+	    else WrongArg(1, "a mutex"))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("lockFunction", lockFunction);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "

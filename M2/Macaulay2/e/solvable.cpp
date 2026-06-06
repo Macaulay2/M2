@@ -20,7 +20,7 @@ SolvableAlgebra *SolvableAlgebra::create(const Ring *K,
   SolvableAlgebra *result = new SolvableAlgebra;
 
   result->initialize_poly_ring(K, M);
-  if (!result->initialize_solvable(Q)) return 0;
+  if (!result->initialize_solvable(Q)) return nullptr;
   result->gb_ring_ = GBRing::create_SolvableAlgebra(K, M, result);
   return result;
 }
@@ -56,6 +56,9 @@ ring_elem SolvableAlgebra::mult_by_term(const ring_elem f,
 // Computes c*m*f, BUT NOT doing normal form wrt a quotient ideal..
 {
 // TODO
+  (void) f;
+  (void) c;
+  (void) m;
 #ifdef DEVELOPMENT
 #warning "implement SolvableAlgebra::mult_by_term"
 #endif

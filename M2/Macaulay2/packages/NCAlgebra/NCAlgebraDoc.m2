@@ -39,7 +39,7 @@ doc ///
       
       Detailed instructions for installing Bergman, as well as the NCAlgebra system, can be
       found in the file installNCAlgebra.txt file contained in the NCAlgebra package directory.
-      It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
+      It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/stable/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
 	 
   Subnodes
     "Basic operations on noncommutative algebras"
@@ -2487,7 +2487,7 @@ doc ///
       Text
          The normal elements in degree 2 are x^2, y^2 and z^2. The basis
 	 calculation shows x^2 and y^2 are normal forms in B. The normalElements
-	 method first checks all basis monomials using @ TO isNormal @. In this case
+	 method first checks all basis monomials using @ TO (isNormal, NCRingElement)@. In this case
 	 it finds x^2 and y^2 are normal and returns this information. However,  
 	 z^2 is not a normal form expression. The normal form of z^2 is x*y+y*x. In 
 	 the second phase of the calculation, the method returns generators of the
@@ -3448,7 +3448,7 @@ doc ///
    Description
       Text
          This method constructs a three dimensional Sklyanin algebra with parameters from
-	 the params list, and variables from varList (see @ HREF{"http:////arxiv.org//abs//1107.2953","here"} @).
+	 the params list, and variables from varList (see @ arXiv("1107.2953","here") @).
 	 If either list is not length three, then an error is thrown.  The generic 
 	 such algebra does not have a finite Groebner basis, so the optional parameter
 	 DegreeLimit has been defaulted to 5.  If only one list is provided, it is used
@@ -3958,7 +3958,7 @@ doc ///
 	 for ideals in both commutative and noncommutative polynomial 
 	 rings with coefficients in Q or Z/p. Bergman was created by 
 	 J. Backelin (U. of Stockholm) and its capabilities were extended 
-	 by V. Ufnarovski, S. Cojacaru, and A. Podoplelov.
+	 by V. Ufnarovski, S. Cojocaru, and A. Podoplelov.
       Text
          Though Bergman is limited in terms of the coefficients it can 
 	 handle and the choice of orderings it offers, it is a very 
@@ -4116,7 +4116,7 @@ doc ///
       Text
          Detailed instructions for installing Bergman, as well as the NCAlgebra system, can be
 	 found in the file installNCAlgebra.txt file contained in the NCAlgebra package directory.
-	 It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
+	 It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/stable/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
    SeeAlso
       "Using the Bergman interface"
 ///
@@ -4359,7 +4359,8 @@ doc ///
       g I
 ///
 
-doc ///
+"doc" -- MES: can't run this.  Is this a new node, example doesn't exist?
+///
   Key
     (resolution, NCMatrix)
     NCChainComplex

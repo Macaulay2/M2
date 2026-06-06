@@ -1,5 +1,5 @@
 -*
-   Copyright 2020, Luigi Ferraro, Federico Galetto,
+   Copyright 2020-2026, Luigi Ferraro, Federico Galetto,
    Francesca Gandini, Hang Huang, Matthew Mastroeni, Xianglong Ni.
 
    You may redistribute this file under the terms of the GNU General Public
@@ -9,12 +9,12 @@
 
 newPackage(
         "InvariantRing",
-        Version => "2.0", 
-        Date => "November 11, 2020",
+        Version => "2.5", 
+        Date => "May 25, 2026",
         Authors => {
 	    {Name => "Luigi Ferraro", 
-		 Email => "lferraro@ttu.edu", 
-		 HomePage => "http://www.math.ttu.edu/~lferraro/"
+		 Email => "luigi.ferraro@utrgv.edu", 
+		 HomePage => "https://faculty.utrgv.edu/luigi.ferraro/"
 		 },
              {Name => "Federico Galetto", 
 		 Email => "f.galetto@csuohio.edu", 
@@ -30,7 +30,7 @@ newPackage(
 		 },
 	     {Name => "Thomas Hawes", Email => "thomas.hawes@maths.ox.ac.uk"},
 	     {Name => "Matthew Mastroeni", 
-		 Email => "mmastro@okstate.edu", 
+		 Email => "mmastro@iastate.edu", 
 		 HomePage => "https://mnmastro.github.io/"
 		 },
              {Name => "Xianglong Ni", 
@@ -40,56 +40,68 @@ newPackage(
         Headline => "invariants of group actions",
 	Keywords => {"Representation Theory", "Group Theory"},
 	Certification => {
-	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
-	     "article title" => "Computing the invariant ring of a finite group",
-	     "acceptance date" => "2013-05-16",
-	     "published article URI" => "http://j-sag.org/Volume5/jsag-3-2013.pdf",
-	     "published code URI" => "http://j-sag.org/Volume5/InvariantRing.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/InvariantRing.m2",
-	     "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
-	     "version at publication" => "1.1.0",
-	     "volume number" => "5",
-	     "volume URI" => "http://j-sag.org/Volume5/"
+	     "journal name" => "Journal of Software for Algebra and Geometry",
+	     "journal URI" => "https://msp.org/jsag/",
+	     "article title" => "The InvariantRing package for Macaulay2",
+	     "acceptance date" => "2023-09-14",
+	     "published article URI" => "https://msp.org/jsag/2024/14-1/p02.xhtml",
+	     "published article DOI" => "10.2140/jsag.2024.14.5",
+	     "published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x02-InvariantRing.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/InvariantRing.m2",
+	     "release at publication" => "d708862d93052a37b7f9ff1e584a9b57d1cb7870",
+	     "version at publication" => "2.0",
+	     "volume number" => "14",
+	     "volume URI" => "https://msp.org/jsag/2024/14-1/"
 	     },
 	AuxiliaryFiles => true,
-        DebuggingMode => false
+        DebuggingMode => false,
+	PackageImports => {"Elimination","Normaliz","Polyhedra"},
+	PackageExports => {"Graphs"}
         )
 
 
 
 export {
-    "GroupAction",    	      	  
-    "finiteAction",    	       	  
-    "FiniteGroupAction",    	  
+    -- New Types
+    "GroupAction",
+    "FiniteGroupAction",
+    "DiagonalAction",
+    "LinearlyReductiveAction",
+    
+    --FiniteGroups.m2    	      	  
+    "finiteAction",    	       	      	  
     "group",	    	    	  
     "isAbelian",    	    	  
     "permutationMatrix",          
     "schreierGraph",	    	  
-    "words",    	       	  
-    "cyclicFactors",	    	  
-    "DiagonalAction",	     	  
+    "words",
+    
+    --AbelianGroups.m2    	       	  
+    "cyclicFactors",	    	  	     	  
     "diagonalAction",	     	  
     "equivariantHilbert",    	  
     "equivariantHilbertSeries",   
-    "weights",	      	      	  
+    "weights",
+    
+    --LinearlyReductiveGroups.m2	      	      	  
     "actionMatrix",    	       	  
     "groupIdeal",    	     	  
     "hilbertIdeal",    	       	  
-    "linearlyReductiveAction",	  
-    "LinearlyReductiveAction",	  
+    "linearlyReductiveAction",	  	
+    
+    --Invariants.m2  
     "action",	     	     	  
     "definingIdeal",              
     "DegreeBound",    	      	  
     "invariants",    	     	  
     "invariantRing",	    	  
     "isInvariant",    	      	  
-    "reynoldsOperator",	       	  
-    "UseLinearAlgebra",     	  
+    "reynoldsOperator",	       	     	  
     "RingOfInvariants",	       	  
-    "UseCoefficientRing",    	  
-    "UseNormaliz",    	      	  
-    "UsePolyhedra",    	      	  
+    "UseCoefficientRing",
+    "UsePolyhedra",
+    
+    --Hawes.m2    	      	      	  
     "hironakaDecomposition",   	  
     "molienSeries",    	       	  
     "primaryInvariants",    	  
@@ -98,11 +110,6 @@ export {
     "DegreeVector",    	       	  
     "PrintDegreePolynomial"    	  
     }
-
-
-needsPackage("Elimination")
-needsPackage("Normaliz")
-needsPackage("Polyhedra")
 
 GroupAction = new Type of HashTable
 

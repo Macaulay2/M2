@@ -141,16 +141,6 @@ struct JumpCell
 #endif
 #define RUP(x) ((((x) + PAGESIZE - 1) / PAGESIZE) * PAGESIZE)
 
-#if !defined(__FreeBSD__) && !defined(__DARWIN__)
-void *sbrk();		/* not really ansi standard, sigh */
-#endif
-
-#ifdef MP
-#define link _link
-#include <MP.h>
-#undef link
-#endif
-
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2

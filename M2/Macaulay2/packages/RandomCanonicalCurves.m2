@@ -83,7 +83,7 @@ randomCanonicalCurve(ZZ,PolynomialRing):= opt -> (g,R)->(
 	  d=g+2-s; -- the degree of the plane model
 	  return randomCanonicalModelOfPlaneCurve(d,g,R,Certify=>opt.Certify));
      -- the following space curve models are chosen such that the
-     -- brill noether number is positive and the construction via
+     -- Brill-Noether number is positive and the construction via
      -- Hartshorne-Rao-Modules works
      if g==11 then return randomCanonicalModelOfSpaceCurve(12,11,R,Certify=>opt.Certify);
      if g==12 then return randomCanonicalModelOfSpaceCurve(12,12,R,Certify=>opt.Certify);

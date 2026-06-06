@@ -4,7 +4,7 @@ newPackage(
     Date=>"Jan 17, 2021",
     Authors=> {
         {Name=>"Taylor Brysiewicz",
-	 Email=>"taylorbrysiewicz@gmail.com",
+	 Email=>"tbrysiew@uwo.ca",
 	 HomePage=>"https://sites.google.com/view/taylorbrysiewicz"},
         {Name=>"Jose Israel Rodriguez",
 	 Email=>"Jose@math.wisc.edu",
@@ -26,13 +26,12 @@ newPackage(
     DebuggingMode=>false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Decomposable sparse polynomial systems",
 	 "acceptance date" => "25 March 2021",
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p06.xhtml",
 	 "published article DOI" => "10.2140/jsag.2021.11.53",
 	 "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x06-DecomposableSparseSystems.zip",
-	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/DecomposableSparseSystems.m2",
 	 "release at publication" => "c07e21e64bfa7f37ce7969b2a1bad99666d0fb17",	    -- git commit number in hex
 	 "version at publication" => "1.0.1",
 	 "volume number" => "11",
@@ -807,7 +806,122 @@ TEST ///
     assert(#S==112);
 ///
 
+------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: stress coverage
+-- for the classifier functions (matrix and polynomial forms,
+-- positive and negative cases), tests for the previously-
+-- untested FromVertexGeneric strategy and the
+-- LacunarySystem/TriangularSystem option overrides, error
+-- paths, and an additive assertion for the previously
+-- assert-free TEST near the end of the existing suite.
+------------------------------------------------------------
 
+-- isLacunary / isTriangular on lists of supports: pure-lacunary, pure-
+-- triangular, standard-simplex, and non-decomposable cases.
+TEST ///
+-- pure lacunary: combined supports lie in 2*Z^2 (lattice index 2), no subsystem
+Alac = {matrix{{0,2,2,4},{0,2,0,2}}, matrix{{0,0,2,2,4},{0,4,2,0,2}}}
+assert(isLacunary Alac)
+assert(not isTriangular Alac)
+-- pure triangular: one support lies in a coordinate hyperplane (y=0)
+Atri = {matrix{{0,1,2,3},{0,0,0,0}}, matrix{{0,1,0,1},{0,0,1,1}}}
+assert(isTriangular Atri)
+assert(not isLacunary Atri)
+-- standard simplex supports: neither lacunary nor triangular
+Astd = {matrix{{0,1,0},{0,0,1}}, matrix{{0,1,0},{0,0,1}}}
+assert(not isLacunary Astd)
+assert(not isTriangular Astd)
+assert(not isDecomposable Astd)
+-- the non-decomposable example used elsewhere is also not triangular
+B = {matrix{{1,4,2,3,4},{1,1,2,4,3}},matrix{{-3,-2,2,3},{1,2,3,4}}}
+assert(not isLacunary B)
+assert(not isTriangular B)
+-- the defining identity: isDecomposable == isLacunary or isTriangular
+for A in {Alac, Atri, Astd, B} do
+    assert(isDecomposable A === (isLacunary A or isTriangular A))
+///
+
+-- polynomial-form dispatch: isLacunary / isTriangular / isDecomposable also
+-- accept a list of polynomials.  The matrix dispatch covered above is the
+-- direct workhorse; the polynomial dispatch peels off supports via
+-- pullSystemData and recurses.
+TEST ///
+R = CC[x,y]
+-- a lacunary system (all exponents in 2*Z^2 effectively)
+Flac = {x^2*y^2-1, x^4+y^2}
+assert(isLacunary Flac)
+assert(isDecomposable Flac)
+-- a triangular system (the first equation is univariate)
+Ftri = {x^2-1, y+x}
+assert(isTriangular Ftri)
+assert(isDecomposable Ftri)
+-- a generic linear system: not decomposable
+Fnon = {x+y+1, x-y+2}
+assert(not isLacunary Fnon)
+assert(not isTriangular Fnon)
+assert(not isDecomposable Fnon)
+-- the example from the solver tests is lacunary
+G = {5*x^4*y^6+3*x^2*y^2+1, 9*x^2*y^8+13*x^2+7*y^2-1}
+assert(isLacunary G)
+assert(isDecomposable G)
+///
+
+-- error paths in the classifier and solver entry points.  These error
+-- branches fire before any PHCpack call, so they exercise the package's input
+-- validation regardless of the optional numerical components.
+TEST ///
+-- empty support list: the classifiers index L#0 on an empty list and error
+assert(try (isLacunary {}; false) else true)
+-- inconsistent target sizes: latticeIndex (called by isLacunary) rejects
+assert(try (isLacunary {matrix{{0,1},{0,1}}, matrix{{0,1,2}}}; false) else true)
+-- solveDecomposableSystem rejects non-square systems before any numerical work
+assert(try (
+    Asq := {matrix{{0,1,2},{0,1,0}}};
+    Csq := {{1_CC,2_CC,3_CC}};
+    solveDecomposableSystem(Asq, Csq); false
+  ) else true)
+-- the Nothing-overload form also rejects non-square supports
+assert(try (
+    Anosq := {matrix{{0,1,2},{0,1,0}}};
+    solveDecomposableSystem(Anosq, ); false
+  ) else true)
+///
+
+-- Strategy => FromVertexGeneric: the convex-hull-vertex variant of the
+-- FromGeneric start-system approach.  For the system used by the existing
+-- FromGeneric test, both strategies should produce the same mixed-volume
+-- solution count (32).
+TEST ///
+setRandomSeed "DSS-FromVertexGeneric"
+R = CC[x_1, x_2]
+F = {5*x_1^4*x_2^6+3*x_1^2*x_2^2+1, 9*x_1^2*x_2^8+13*x_1^2+7*x_2^2-1}
+S = solveDecomposableSystem(F, Tolerance=>0.000001, Strategy=>FromVertexGeneric)
+assert(#S == 32)
+///
+
+-- LacunarySystem=>false and TriangularSystem=>false override the two
+-- decomposition strategies and force the plain basicSolver fallback.  For
+-- the test system, that fallback still recovers all mixed-volume solutions.
+TEST ///
+setRandomSeed "DSS-basicSolver-fallback"
+R = CC[x_1, x_2]
+F = {5*x_1^4*x_2^6+3*x_1^2*x_2^2+1, 9*x_1^2*x_2^8+13*x_1^2+7*x_2^2-1}
+S = solveDecomposableSystem(F, Tolerance=>0.000001, LacunarySystem=>false, TriangularSystem=>false)
+assert(#S == 32)
+///
+
+-- The (List, Nothing) dispatch returns the pair (F, S) of generated system
+-- and its solutions.  An additive complement to the existing assert-free
+-- block: assert basic structural properties so the call does not silently
+-- regress.
+TEST ///
+setRandomSeed "DSS-Nothing-structural"
+A = {matrix{{0,2,4},{0,2,4}}, matrix{{0,0,2,2},{0,2,0,2}}}
+(F,S) = solveDecomposableSystem(A, )
+assert(instance(F, List) and #F == 2)
+assert(instance(S, List))
+assert(#S > 0)
+///
 
 
 end--

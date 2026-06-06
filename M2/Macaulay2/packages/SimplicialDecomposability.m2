@@ -18,16 +18,16 @@ newPackage (
    DebuggingMode => false,
    Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	"journal URI" => "http://j-sag.org/",
+	"journal URI" => "https://msp.org/jsag/",
 	"article title" => "Simplicial Decomposability",
 	"acceptance date" => "2010-08-03",
-	"published article URI" => "http://www.j-sag.org/Volume2/jsag-5-2010.pdf",
-	"published code URI" => "http://www.j-sag.org/Volume2/SimplicialDecomposability.m2",
-	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SimplicialDecomposability.m2",
+	"published article URI" => "https://msp.org/jsag/2010/2-1/p05.xhtml",
+	"published article DOI" => "10.2140/jsag.2010.2.20",
+	"published code URI" => "https://msp.org/jsag/2010/2-1/jsag-v2-n1-x05-code.zip",
 	"release at publication" => "d230ee4205bab933be32f3de7ae0ae0f52115c84",
 	"version at publication" => "1.0.5",
 	"volume number" => "2",
-	"volume URI" => "http://www.j-sag.org/volume2.html"
+	"volume URI" => "https://msp.org/jsag/2010/2-1/"
 	},
     PackageExports => {"SimplicialComplexes", "Posets"}
     )
@@ -266,7 +266,7 @@ shellingOrder SimplicialComplex := opts -> S -> (
        if tmp != toList(0..#F-1) then error("shellingOrder: Option Permutation must be the same length as the number of facets and must be increasing consecutive integers.");
        F = F_(opts.Permutation);
    )
-   else if opts.Random then F = random F;
+   else if opts.Random then F = shuffle F;
 
    O := {};
    -- The pure case is easier, so separate it
@@ -1138,8 +1138,44 @@ assert( (hVector(D))#2 == 6)
 assert( (hVector(D, Flag => true))#{1,1,0,1} == 1)
 ///
 
+-- Direct tests of shellingOrder (return shape + content, since prior tests only exercised it via isShellable)
+TEST ///
+R = QQ[a..e];
+S = simplicialComplex {a*b*c, b*c*d, c*d*e};
+O = shellingOrder S;
+assert(instance(O, List));
+assert(#O == #facets S);
+assert(isShelling O);
+assert(set O === set facets S);
+-- non-shellable input returns the empty list
+assert(shellingOrder simplicialComplex {a*b*c, c*d*e} == {});
+///
 
+-- Tests of the Permutation option of shellingOrder
+TEST ///
+R = QQ[a..e];
+S = simplicialComplex {a*b*c, b*c*d, c*d*e};
+O = shellingOrder(S, Permutation => {2,1,0});
+assert(isShelling O);
+assert(set O === set facets S);
+-- an invalid permutation (not a permutation of 0..n-1) errors
+assert(try (shellingOrder(S, Permutation => {0,1,1}); false) else true);
+-- Random and Permutation are mutually exclusive
+assert(try (shellingOrder(S, Random => true, Permutation => {0,1,2}); false) else true);
+///
 
+-- Tests of the Random option of shellingOrder (seeded for determinism)
+TEST ///
+R = QQ[a..e];
+S = simplicialComplex {a*b*c, b*c*d, c*d*e};
+setRandomSeed 0;
+O = shellingOrder(S, Random => true);
+assert(isShelling O);
+assert(set O === set facets S);
+-- same seed gives the same result
+setRandomSeed 0;
+assert(shellingOrder(S, Random => true) === O);
+///
 
 end
 

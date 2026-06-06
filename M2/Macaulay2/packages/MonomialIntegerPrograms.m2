@@ -29,9 +29,10 @@ newPackage (
       },
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
-  PackageImports => {"LexIdeals","MinimalPrimes"},
+  PackageImports => {"Complexes","LexIdeals","MinimalPrimes"},
   OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
-  DebuggingMode => false
+  DebuggingMode => false,
+  Keywords => {"Commutative Algebra"}
 )
 
 -------------
@@ -134,7 +135,7 @@ oldCodim = lookup(codim, MonomialIdeal);
 oldDegree = lookup(degree, MonomialIdeal);
 loadSCIPCodimAndDegree = method();
 installMethod(loadSCIPCodimAndDegree,() -> (
-  codim MonomialIdeal := {} >> opts -> m -> ((cacheValue symbol codim) codimensionIP) m;
+  codim MonomialIdeal := options oldCodim >> opts -> m -> ((cacheValue symbol codim) codimensionIP) m;
   degree MonomialIdeal := m -> ((cacheValue symbol degree) degreeIP) m;
 ));
 loadBuiltinCodimAndDegree = method();
@@ -944,7 +945,7 @@ doc ///
    bettiTablesWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
  SeeAlso
   monomialIdealsWithHilbertFunction
-  (betti,GradedModule)
+  betti
   BettiTally
   HashTable
   tally
@@ -972,7 +973,7 @@ doc ///
   KnownDim => ZZ
    the dimension, @TT"k"@, of the ideal
   IgnorePrimes => List
-    a list of primes to not include the the result. See @TO IgnorePrimes@.
+    a list of primes to not include in the result. See @TO IgnorePrimes@.
  Outputs
   L:List
    all minimal associated primes of dimension $k$
@@ -1068,7 +1069,7 @@ doc ///
   Text
    When the package gets loaded, codim and degree are replaced with
    @TT"codimensionIP"@ and @TT"degreeIP"@ respectively for a @TT"MonomialIdeal"@.
-   @TT"loadSCIPCodimAndDegree"@ can be used to reload the the SCIP methods in the
+   @TT"loadSCIPCodimAndDegree"@ can be used to reload the SCIP methods in the
    event that @TO loadBuiltinCodimAndDegree@ was called.
   Example
    R = QQ[a,b,c];

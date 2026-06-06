@@ -79,7 +79,7 @@ decompose WitnessSet := {} >> unusedOpts -> (W) -> (
      incomplete := select(new List from cs, c->#c!=0);
      if #incomplete>0 then print "-- decompose: some witness points were not classified";
      irred := apply(i'cs, c->witnessSet(W.Equations, W.Slice, (W.Points)_c));
-     scan(irred, c->c.cache.IsIrreducible = true);
+     scan(irred, c->declareIrreducible c);
      irred | if #incomplete == 0 then {} 
              else {
 		 witnessSet(

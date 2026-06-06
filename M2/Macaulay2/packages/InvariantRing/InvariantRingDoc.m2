@@ -32,6 +32,11 @@ document {
 		HREF{"https://deepblue.lib.umich.edu/handle/2027.42/151589","Ideals of Subspace Arrangements"}, 
 	   	". Thesis (Ph.D.)-University of Michigan. 2019. ISBN: 978-1392-76291-2. pp 29-34."
 		},
+	    {"A faster algorithm for invariants of elementary abelian groups based on: ",
+		"Arasha S., Cassell M., Dolorfino M., Gandini F., Novak G., Qin D., and Strom S. (2026). ",
+		arXiv("2605.19158","An algorithm for invariants of elementary abelian groups"),
+		". arXiv:2605.19158"
+		},
 	    {"King's algorithm and the linear algebra method for invariants of finite groups: ",
 		"Derksen, H. & Kemper, G. (2015). ",
 		HREF{"https://link.springer.com/book/10.1007%2F978-3-662-48422-7","Computational Invariant Theory"}, 
@@ -66,8 +71,33 @@ document {
 		auxiliary file Hawes.m2 (with documentation
 		    in the file HawesDoc.m2) and has been updated
 		to work with the new types."
-		}
-	    }
+		},
+	    {BOLD "2.1: ", "speeds up checking whether a polynomial
+		is invariant under a finite group action, and
+		fixes a warning that appeared when computing invariants
+		of finite groups (the authors thank N. Iammarino, T. Yu,
+		    and Q. Zhao for the fix)."
+		},
+	    {BOLD "2.2: ", "changed input of ", TO permutationMatrix,
+		", minor documentation and internal code changes."
+		},
+	    {BOLD "2.3: ", "minor documentation updates."},
+	    {BOLD "2.4: ", "a new algorithm for invariants of elementary
+		abelian $p$-groups."},
+	    {BOLD "2.5: ", "the algorithm for elementary abelian $p$-groups
+		is now much faster, and is used by default when possible.
+		Includes various bug fixes and TeX output for all package classes."}
+	    },
+	Contributors=>{
+	    "The following people worked on the algorithm for invariants of elementary
+	    abelian $p$-groups introduced in version 2.4:
+	    Sasha Arasha,
+	    Marcus Cassell,
+	    Mal Dolorfino,
+	    Gordie Novak,
+	    Daniel Qin,
+	    and Sumner Strom."
+	    },
 	}
     
 document {
@@ -178,4 +208,17 @@ document {
 	PARA {"Format objects of the package ",
 	    TO InvariantRing, " for printing. See ",
 	    TO net," for more information."},
+	    }
+
+document {
+	Key => {
+	    (texMath, RingOfInvariants),
+	    (texMath, DiagonalAction),
+	    (texMath, FiniteGroupAction),
+	    (texMath, LinearlyReductiveAction)
+	    },
+	Headline => "format for printing, as TeX strings",
+	PARA {"Format objects of the package ",
+	    TO InvariantRing, " for printing in TeX. See ",
+	    TO texMath," for more information."},
 	    }

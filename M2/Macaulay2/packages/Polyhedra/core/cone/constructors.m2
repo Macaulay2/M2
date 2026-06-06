@@ -152,7 +152,7 @@ coneFromVData List := L -> (
       )
    );
    result := cones#0;
-   cones = remove(cones, 0);
+   cones = drop(cones, 1);
    -- Adding the cones is not expensive, since we will not do fourierMotzkin
    -- every time.
    for cone in cones do (

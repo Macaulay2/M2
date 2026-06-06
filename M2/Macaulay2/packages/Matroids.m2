@@ -1,25 +1,23 @@
 newPackage("Matroids",
 	AuxiliaryFiles => true,
-	Version => "1.5.0",
-	Date => "May 4, 2022",
+	Version => "1.7.0",
+	Date => "February 6, 2024",
 	Authors => {{
 		Name => "Justin Chen",
-		Email => "jchen@math.berkeley.edu",
-		HomePage => "https://math.berkeley.edu/~jchen"}},
-	Headline => "a package for computations with matroids",
+		Email => "jchen@math.berkeley.edu"}},
+	Headline => "computations with matroids",
 	Keywords => {"Matroids"},
 	HomePage => "https://github.com/jchen419/Matroids-M2",
+	PackageImports => {"Complexes"},
 	PackageExports => {"Graphs", "Posets"},
-	DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Matroids: a Macaulay2 package",
 	     "acceptance date" => "27 September 2018",
 	     "published article URI" => "https://msp.org/jsag/2019/9-1/p03.xhtml",
 	     "published article DOI" => "10.2140/jsag.2019.9.19",
 	     "published code URI" => "https://msp.org/jsag/2019/9-1/jsag-v9-n1-x03-Matroids.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Matroids.m2",
 	     "release at publication" => "cf37f5a1eefc2fe7e6eef2868718256106805027",	    -- git commit number in hex
 	     "version at publication" => "0.9.7",
 	     "volume number" => "9",
@@ -55,19 +53,21 @@ export {
 	"parallelConnection",
 	"sum2",
 	"simpleMatroid",
-	"singleElementExtension",
 	"CheckWellDefined",
-	"freeExtension",
-	"freeCoextension",
+	"extension",
+	"coextension",
 	"elementaryQuotient",
 	"isQuotient",
 	"isElementaryQuotient",
 	"modularCut",
 	"isModularCut",
+	"isLinearSubclass",
+	"linearSubclass",
 	"relaxation",
 	"relabel",
 	"quickIsomorphismTest",
 	"getIsos",
+	"isoTypes",
 	"tutteEvaluate",
 	"chromaticPolynomial",
 	"getCycles",
@@ -79,6 +79,15 @@ export {
 	"FlatOrder",
 	"cogeneratorChowRing",
 	"idealOrlikSolomonAlgebra",
+	"isNonCrossing",
+	"isPositivelyOriented",
+	"positiveOrientation",
+	"isPositivelyOrientable",
+	"kruskalSpanningForest",
+	"coordinatingPath",
+	"rescalingRepresentative",
+	"searchRepresentation",
+	"Attempts",
 	"setRepresentation",
 	"getRepresentation",
 	"storedRepresentation",
@@ -95,7 +104,10 @@ export {
 	"allMatroids",
 	"allMinors",
 	"toSageMatroid",
-	"fromSageMatroid"
+	"fromSageMatroid",
+	"writeToString",
+	"saveMatroid",
+	"readFromFile"
 }
 
 Matroid = new Type of HashTable
@@ -110,6 +122,7 @@ Matroid == Matroid := (M, N) -> M.groundSet === N.groundSet and set bases M === 
 
 matroid = method(Options => {EntryMode => "bases", ParallelEdges => {}, Loops => {}})
 matroid (List, List) := Matroid => opts -> (E, L) -> (
+	L = unique L;
 	if #L > 0 and not instance(L#0, Set) then L = indicesOf(E, L);
 	G := set(0..<#E);
 	B := if opts.EntryMode == "bases" then ( if #L == 0 then error "matroid: There must be at least one basis" else L )
@@ -134,6 +147,12 @@ matroid (List, List) := Matroid => opts -> (E, L) -> (
 	M
 )
 matroid List := Matroid => opts -> L -> matroid(sort unique flatten L, L, opts)
+matroid (ZZ, List) := Matroid => opts -> (n, L) -> matroid(toList(0..<n), L, opts)
+matroid (List, List, ZZ) := Matroid => opts -> (E, N, r) -> ( -- non-spanning circuits
+	if #N > 0 and not instance(N#0, Set) then N = N/set;
+	spanningCircuits := subsets(E, r+1)/set - set flatten apply(N, c -> apply(subsets(E - c, r+1 - #c)/set, s -> s + c));
+	matroid(E, N | spanningCircuits, EntryMode => "circuits")
+)
 matroid Matrix := Matroid => opts -> A -> (
 	k := rank A;
 	setRepresentation(matroid(apply(numcols A, i -> A_{i}), (select(subsets(numcols A, k), S -> rank A_S == k))/set), A)
@@ -444,6 +463,7 @@ hasMinor = method(Options => {Strategy => "flats"})
 hasMinor (Matroid, Matroid) := Boolean => opts -> (M, N) -> (
 	(n, m) := (#N.groundSet, #M.groundSet);
 	if n > m or rank N > rank M or #bases N > #bases M then return false;
+	if n == m then return areIsomorphic(M,N);
 	if opts.Strategy === "flats" and isSimple N then (
 		v := fVector N;
 		truncatedLattice := select(flats(M, rank N, "corank"), f -> rank_M f >= rank M - rank N);
@@ -451,6 +471,7 @@ hasMinor (Matroid, Matroid) := Boolean => opts -> (M, N) -> (
 		truncatedLattice = truncatedLattice - set possibleFlats;
 		for f in possibleFlats do (
 			if any(1..<rank N, i -> #select(truncatedLattice, F -> rank_M F == rank M - rank N + i and isSubset(f, F)) < v#i) then continue;
+			if debugLevel > 1 then printerr("hasMinor: testing flat " | toString(f));
 			Mf := M/f;
 			for Y in independentSets(dual Mf, m - n - #f) do (
 				if areIsomorphic(N, Mf \ Y) then (
@@ -561,135 +582,154 @@ simpleMatroid Matroid := Matroid => M -> M \ set(select((ideal M)_*, m -> first 
 
 -- (CO)EXTENSIONS
 -----------------------------------------------------------------
-
-singleElementExtension = method(Options => {CheckWellDefined => false})
-singleElementExtension (Matroid, List) := Matroid => o -> (M, K) -> (
-    if o.CheckWellDefined and not isModularCut(M, K) then (
-	error "singleElementExtension: Expected a modular cut."
-    );
-    K' := set(K/toList);
+extension = method(Options => {CheckWellDefined => false, EntryMode => "modular cut"})
+extension (Matroid, List) := Matroid => o -> (M, K) -> (
+    -- Note: K' is built as a list of Sets so that the hyperplane-membership
+    -- test `(set K')#?H` below (where H is a Set returned by hyperplanes M)
+    -- compares Sets to Sets.  Previously K' was built via `K/toList/sort`,
+    -- which produced a list of Lists; `(set K')#?H` then silently returned
+    -- false for every hyperplane and B' picked up *all* hyperplanes — an
+    -- incorrect elementary quotient.  Likewise, the "hyperplanes" branch
+    -- key was misspelled as "hyerplanes", so the documented usage
+    --   extension(M, H, EntryMode => "hyperplanes")
+    -- silently fell through to the (broken) else branch.
+    K' := if o.EntryMode == "hyperplanes" then (
+	modularCut(M, K, CheckWellDefined => o.CheckWellDefined)
+	)
+        else (
+	    if o.CheckWellDefined and not isModularCut(M, K) then (
+		error "extension: Expected the second argument
+		to be a modular cut of the matroid given as the first argument."
+    		);
+	    K/toList/set
+	);
     E := toList M.groundSet;
-    e := #E;
+    e := (max E) + 1;
     B := bases M;
     r := rank M;
-    H := select(hyperplanes M, h -> not K'#?h);
-    B' := unique flatten for h in H list for b in B list (
-	I := b*h;
-	if #I == r - 1 then I else continue
-    );
-    B' = apply(B', I -> I + set{e});
+    B' := select(hyperplanes M, H -> not (set K')#?H );
+    B' = unique flatten apply(B', H -> apply(select(B, b -> #(b*H) == r - 1 ), b -> b*H ) );
+    B' = apply(B', I -> I + set {e});
     matroid(E|{e}, B|B')
 )
-singleElementExtension (Matroid, Set) := Matroid => o -> (M, F) ->
-singleElementExtension(M, select(hyperplanes M, h -> isSubset(F, h)),
-CheckWellDefined => false)
+extension (Matroid, Set) := Matroid => o -> (M, F) -> (
+    if not (set flats M)#?F then (
+	error "extension: Expected the second argument
+	to be a flat of the matroid given as the first argument."
+    );
+    E := toList M.groundSet;
+    e := (max E) + 1;
+    B := bases M;
+    r := rank M;
+    B' := select(hyperplanes M, H -> not isSubset(F, H) );
+    B' = unique flatten apply(B', H -> apply(select(B, b -> #(b*H) == r - 1 ), b -> b*H ) );
+    B' = apply(B', I -> I + set {e});
+    matroid(E|{e}, B|B')
+)
+extension Matroid := Matroid => o -> M -> extension(M, M.groundSet)
 
--- INPUT:  A matroid M and a list K of flats of M forming a modular cut.
--- OUTPUT: The matroid M +_K e that is the single element extension of
---         M by the modular cut K.  See [Ox, Sect 7.2].
-
--- INPUT:  A matroid M and a set F that is a flat of M.
--- OUTPUT: The matroid M +_F e that is the (principal) single element extension of
---         M by the modular cut of the interval [F, E].  See [Ox, Sect 7.2].
 -----------------------------------------------------------------
 
-freeExtension = method()
-
-freeExtension Matroid := Matroid => M -> singleElementExtension(M, M.groundSet)
-
--- INPUT:  A matroid M.
--- OUTPUT: The matroid M +_E(M) e that is the principal extension of
---         M by the principal modular cut associated to the ground set
---         E(M).  See [Ox, Sect 7.2].
------------------------------------------------------------------
-
-freeCoextension = method()
-
-freeCoextension Matroid := Matroid => M -> dual singleElementExtension(dual M, M.groundSet)
-
--- INPUT:  A matroid M.
--- OUTPUT: The matroid M +_E(M) e that is the principal extension of
---         M by the principal modular cut associated to the ground set
---         E(M).  See [Ox, Sect 7.2].
------------------------------------------------------------------
+coextension = method()
+coextension Matroid := Matroid => M -> dual extension dual M
 
 -- MATROID QUOTIENTS
 -----------------------------------------------------------------
 
-elementaryQuotient = method(Options => {CheckWellDefined => false})
-
-elementaryQuotient (List, Matroid) := Matroid => o -> (K, M) -> (
-	M' := singleElementExtension(M, K, o);
-	e := max toList M'.groundSet;
-	M'/{e}
+elementaryQuotient = method(Options => {CheckWellDefined => false, EntryMode => "modular cut"})
+elementaryQuotient (Matroid, List) := Matroid => o -> (M, K) -> (
+    N := extension(M, K, o);
+    e := max toList N.groundSet;
+    N/{e}
 )
 
--- INPUT:  A matroid M and a list K of flats of M forming a modular cut.
--- OUTPUT: The elementary quotient of M with respect to the modular cut K.
---         See [Ox, Sect 7.3] 
--- CAVEAT: K must be a proper, nonempty set of flats.   
 -----------------------------------------------------------------
 
-truncate (Set, Matroid) := Matroid => (F, M) -> (
-	M' := singleElementExtension(M, F);
-	e := max toList M'.groundSet;
-	M'/{e}
+truncate (Set, Matroid) := {} >> o -> (F, M) -> (
+    if not (set flats M)#?F then (
+	error "truncate: Expected a set that is a flat of the matroid."
+	);
+    M' := extension(M, F);
+    e := max toList M'.groundSet;
+    M'/{e}
 )
+truncate Matroid := {} >> o -> M -> truncate(M.groundSet, M, o)
+truncate (ZZ, Matroid) := {} >> o -> (i, M) -> (
+    if i < 0 then error "truncate: Expected a non-negative integer.";
+    if i == 0 then M
+    else truncate(i - 1, truncate(M, o), o)
+    )
 
--- INPUT:  A matroid M and a set F that is a flat of M.
--- OUTPUT: The matroid T_F(M) that is the principal truncation of
---         M by with respect to F.  See [Ox, Sect 7.3]
-
-truncate Matroid := Matroid => M -> truncate(M.groundSet, M)
-
--- INPUT:  A matroid M.
--- OUTPUT: The matroid T(M) that is the truncation of M.  See [Ox, Sect 7.3].
 -----------------------------------------------------------------
 
 isQuotient = method()
-
 isQuotient (Matroid, Matroid) := Boolean => (M', M) -> (
-	M.groundSet === M'.groundSet and isSubset(set flats M', set flats M)
+    M.groundSet === M'.groundSet and isSubset(flats M', flats M)
 )
 
 -----------------------------------------------------------------
 
 isElementaryQuotient = method()
-
 isElementaryQuotient (Matroid, Matroid) := Boolean => (M', M) -> (
-	isQuotient(M', M) and rank M' == rank M - 1
+    isQuotient(M', M) and rank M' == rank M - 1
 )
 
+-- MODULAR CUTS
 -----------------------------------------------------------------
 
-modularCut = method()
-
-modularCut (Matroid, Matroid) := List => (M', M) -> (
-	if not isElementaryQuotient(M', M) then (
-		error "modularCut: Expected the first argument to be an
-		elementary quotient matroid of the second argument."
-	);
-	select(flats M', f -> rank(M, f) - rank(M', f) == 1)/toList/sort
+modularCut = method(Options => {CheckWellDefined => false})
+modularCut (Matroid, Matroid) := List => o -> (M', M) -> (
+    if not isElementaryQuotient(M', M) then (
+	error "modularCut: Expected the first argument to be an
+	elementary quotient matroid of the second argument."
+    );
+    select(flats M', f -> rank(M, f) - rank(M', f) == 1)/toList/sort
 )
+modularCut (Matroid, List) := o -> (M, H) -> (
+    if o.CheckWellDefined and not isLinearSubclass(M, H) then (
+	error "modularCut: Expected a list of hyperplanes forming a linear subclass of the matroid."
+	);
+    select(flats M, f -> isSubset(select(hyperplanes M, h -> isSubset(f, h)), H/toList/set) )
+    )
 
 -----------------------------------------------------------------
 
 isModularCut = method()
-
 isModularCut (Matroid, List) := Boolean => (M, K) -> (
-	K' := set K;
-	L := latticeOfFlats M;
-	set (filter(L, K/toList/sort)/set) === K' and all(subsets(K, 2), p -> (
+    K' := set (K/toList/set);
+    L := latticeOfFlats M;
+    set (filter(L, K/toList/sort)/set) === K' and all(subsets(K', 2)/toList, p -> (
 		u := p#0 + p#1;
 		m := (p#0)*(p#1);
 		if rank(M, p#0) + rank(M, p#1) == rank(M, u) + rank(M, m) 
-			then K'#?m
-			else true
-	)) 
+		    then K'#?m
+		    else true
+    )) 
 )
 
--- INPUT:  A matroid M and a list K of flats of M.
--- OUTPUT: Whether K is a modular cut of M.
+-----------------------------------------------------------------
+
+isLinearSubclass = method()
+isLinearSubclass (Matroid, List) := (M, LS) -> (
+    H := LS/toList/set; 
+    if not isSubset(H, hyperplanes M) then (
+	error "isLinearSubclass: Expected a list of hyperplanes of the matroid."
+	);
+    coatH := apply(select(subsets(H, 2), h -> rank(M, h#0*h#1) == rank M - 2), h -> h#0*h#1);
+    isSubset(flatten apply(coatH, f -> select(hyperplanes M, h -> isSubset(f, h) ) ), H)
+    )
+
+-----------------------------------------------------------------
+
+linearSubclass = method(Options => {CheckWellDefined => false})
+linearSubclass (Matroid, List) := o -> (M, K) -> (
+    if o.CheckWellDefined and not isModularCut(M, K) then (
+	error "linearSubclass: Expected a list of flats forming a modular cut of the matroid."
+	);
+    (toList ((set (K/set))*(set hyperplanes M)))
+    ) 
+linearSubclass (Matroid, Matroid) := o -> (M, N) -> linearSubclass(N, modularCut(M, N) )
+
 -----------------------------------------------------------------
 
 relaxation = method(Options => {CheckWellDefined => false})
@@ -716,71 +756,121 @@ relabel (Matroid, List) := Matroid => (M, perm) -> (
 )
 relabel Matroid := Matroid => M -> (
 	E := toList(0..<#M_*);
-	relabel(M, (transpose{E, random E})/toSequence//hashTable)
+	relabel(M, (transpose{E, shuffle E})/toSequence//hashTable)
 )
 
 -- Recursively finds all permutations inducing a bijection on circuits (note: permutations(10) is already slow on a typical machine)
 getIsos = method()
 getIsos (Matroid, Matroid) := List => (M, N) -> (
 	(C, D, e) := (sort(circuits M, c -> #c), circuits N, #M.groundSet);
-	if not tally sizes C === tally sizes D then return {};
-	if #C == 0 then return permutations e;
-	local possibles, local c0, local shiftedIndices, local d1, local B, local candidate;
-	possibles = {};
+	if not(e === #N.groundSet and tally sizes C === tally sizes D) then return {};
+	if #C === 0 or #C#0 === 1 + rank M then return permutations e;
 	if e > 5 then (
-		c0 = toList C#0;
-		shiftedIndices = apply(e, i -> i - #select(c0, j -> j < i));
+		isos := new MutableHashTable;
+		c0 := hashTable apply(#C#0, i -> (keys C#0)#i => i);
+		shiftedIndices := apply(e, i -> i - #select(keys c0, j -> j < i));
 		for d0 in select(D, d -> #d == #c0)/toList do (
-			d1 = sort keys(N.groundSet - d0);
-			B = apply(permutations d0, q -> hashTable apply(#q, i -> c0#i => q#i));
-			possibles = possibles | flatten apply(getIsos(M \ set c0, N \ set d0), p -> (
-				flatten apply(B, q -> (
-					candidate = apply(e, i -> if member(i, c0) then q#i else (d1)#(p#(shiftedIndices#i)));
-					if all(C, c -> member(c/(i -> candidate#i), D)) then {candidate} else {}
-				))
-			));
+			d1 := sort keys(N.groundSet - d0);
+			d1 = hashTable apply(#d1, i -> i => d1#i);
+			table(getIsos(M \ C#0, N \ set d0), permutations d0, (p, q) -> (
+				candidate := apply(e, i -> if c0#?i then q#(c0#i) else (d1)#(p#(shiftedIndices#i)));
+				if all(C, c -> member(c/(i -> candidate#i), D)) then isos#candidate = 1;
+			))
 		);
-		return possibles;
-	) else return select(permutations(e), p -> all(C, c -> member(c/(i -> p#i), D)));
+		keys isos
+	) else select(permutations(e), p -> all(C, c -> member(c/(i -> p#i), D)))
 )
 
-isomorphism (Matroid, Matroid) := HashTable => (M, N) -> ( -- assumes (M, N) satisfy "Could be isomorphic" by quickIsomorphismTest
-	local coloopStore, local C, local D, local e, local C1, local c0slice;
-	local coverCircuits, local H, local candidates, local extraElts, local F, local E;
-	coloopStore = (M, N)/coloops/sort; -- sort is crucial!
-	if #(coloopStore#0) > 0 then (M, N) = (M \ (coloopStore#0), N \ (coloopStore#1)); -- reduces both (M, N) to unions of circuits
-	(C, D, e) = (sort(circuits M, c -> #c), circuits N, #M.groundSet);
-	if #C == 0 then return hashTable pack(2, mingle coloopStore);
-	C1 = C;
-	c0slice = sliceBySize(C1#0, C1);
-	coverCircuits = {C1#0} | while c0slice#?0 list (
+isomorphism (Matroid, Matroid) := HashTable => o -> (M, N) -> ( -- assumes (M, N) satisfy "Could be isomorphic" by quickIsomorphismTest
+	if M == N then return hashTable apply(#M_*, i -> (i, i));
+	-------------------------------
+	-- DFS: 9/12/23
+	-------------------------------
+	(C, D) := (sort((circuits M)/keys/sort, c -> #c), sort((circuits N)/keys/sort, c -> #c));
+	if tally sizes C =!= tally sizes D then return null;
+	numLoops := position(C, c -> #c > 1); -- numLoops cannot be null, since M != N
+	loopStore := apply(numLoops, i -> {C#i#0, D#i#0});
+	coloopStore := pack(2, mingle((toList M.groundSet - set flatten C, toList N.groundSet - set flatten D)/sort));
+	(C, D) = (C_(toList(numLoops..<#C)), D_(toList(numLoops..<#D)));
+	(circUnionM, circUnionN) := (C, D)/flatten/unique;
+	C1 := C;
+	c0slice := sliceBySizeList(C1#0, C1);
+	coverCircuits := {C1#0} | while c0slice#?0 list (
 		C1 = sort(c0slice#0, c -> #c);
-		c0slice = sliceBySize(C1#0, C1);
+		c0slice = sliceBySizeList(C1#0, C1);
 		C1#0
-	); -- creates maximal list of disjoint circuits in M, covering as much of M.groundSet as possible
-	H = apply(coverCircuits, c -> (c, select(D, d -> #d == #c and (pairs sliceBySize(c, C))/last/sizes/tally === (pairs sliceBySize(d, D))/last/sizes/tally))); -- creates list of ordered pairs: first element is member of coverCircuits, second element is list of circuits in N which have the same "intersection size pattern" as the first element
-	if min sizes(H/last) == 0 then return;
-	candidates = {H};
-	for i to #coverCircuits-1 do (
-		candidates = flatten apply(candidates, cand -> apply(#last(cand#i), j -> (
-			append(cand_{0..<i}, (coverCircuits#i, (last(cand#i))#j)) | apply(cand_{i+1..#coverCircuits-1}, S -> (S#0, select(S#1, s -> #(s*((last(cand#i))#j)) == 0)))
-		)))
-	); -- "de-nests" second-element lists of H (i.e. each list member becomes its own item, but keeping only those which are disjoint from previously matched circuits of N
-	extraElts = M.groundSet - flatten(coverCircuits/toList);
-	E = flatten(append(coverCircuits, extraElts)/keys/sort);
-	if #extraElts > 0 then candidates = apply(candidates, cand -> cand | {(extraElts, N.groundSet - flatten(cand/last/toList))});
-	for cand in candidates do (
-		for f in fold((a,b) -> flatten table(a,b,identity), cand/last/keys/permutations) /deepSplice/join do (
-			F = hashTable apply(e, i -> E#i => f#i);
-			if all(C, c -> member(c/(i -> F#i), D)) then return (
-				if #(coloopStore#0) == 0 then F else (
-					F = pairs F;
-					for i to #(coloopStore#0)-1 do F = apply(F, p -> (p#0 + (if p#0 >= coloopStore#0#i then 1 else 0), p#1 + (if p#1 >= coloopStore#1#i then 1 else 0)));
-					hashTable(pack(2, mingle coloopStore) | F)
-				)
-			);
-		);
 	);
+	extraElts := circUnionM - set flatten coverCircuits;
+	sym := permutations toList(0..<#extraElts);
+	level := 0;
+	c := coverCircuits#level;
+	pattern := (values sliceBySizeList(c, C))/sizes/tally;
+	searchTree := new MutableList from {flatten((select(D, d -> #d == #c and pattern === (values sliceBySizeList(d, D))/sizes/tally))/permutations)};
+	phi := new MutableHashTable from (apply(circUnionM, e -> {e, null}) | loopStore | coloopStore);
+	while #searchTree#0 > 0 do {
+		if #searchTree#level > 0 then scan(#c, i -> phi#(c#i) = searchTree#level#0#i);
+		if #searchTree#level == 0 then (
+			scan(#c, i -> phi#(c#i) = null);
+			level = level - 1;
+			c = coverCircuits#level;
+			searchTree#level = drop(searchTree#level, 1);
+		) else if level < #coverCircuits - 1 then (
+			level = level + 1;
+			c = coverCircuits#level;
+			pattern = (values sliceBySizeList(c, C))/sizes/tally;
+			candidates := select(D, d -> #d == #c and #(set d * set values phi) == 0 and pattern === (values sliceBySizeList(d, D))/sizes/tally);
+			searchTree#level = flatten(candidates/permutations);
+			if debugLevel > 0 then << "\rSearch tree: " << toString apply(#searchTree, i -> #searchTree#i) << flush;
+		) else (
+			extraEltsN := circUnionN - set values phi;
+			for p in sym do (
+				scan(#extraElts, i -> phi#(extraElts#i) = extraEltsN#(p#i));
+				if all(C, circ -> member(sort(circ/(i -> phi#i)), D)) then return hashTable pairs phi;
+			);
+			scan(#extraElts, i -> phi#(extraElts#i) = null);
+			searchTree#level = drop(searchTree#level, 1);
+		);
+	};
+	-------------------------------
+	-- Old algorithm
+	-------------------------------
+	-- local coloopStore, local C, local D, local e, local C1, local c0slice;
+	-- local coverCircuits, local H, local candidates, local extraElts, local F, local E;
+	-- coloopStore = (M, N)/coloops/sort; -- sort is crucial!
+	-- if #(coloopStore#0) > 0 then (M, N) = (M \ (coloopStore#0), N \ (coloopStore#1)); -- reduces both (M, N) to unions of circuits
+	-- (C, D, e) = (sort(circuits M, c -> #c), sort(circuits N, d -> #d), #M.groundSet);
+	-- if tally sizes C =!= tally sizes D then return null;
+	-- if #C == 0 then return hashTable pack(2, mingle coloopStore);
+	-- C1 = C;
+	-- c0slice = sliceBySize(C1#0, C1);
+	-- coverCircuits = {C1#0} | while c0slice#?0 list (
+		-- C1 = sort(c0slice#0, c -> #c);
+		-- c0slice = sliceBySize(C1#0, C1);
+		-- C1#0
+	-- ); -- creates maximal list of disjoint circuits in M, covering as much of M.groundSet as possible
+	-- H = apply(coverCircuits, c -> (c, select(D, d -> #d == #c and (values sliceBySize(c, C))/sizes/tally === (values sliceBySize(d, D))/sizes/tally))); -- creates list of ordered pairs: first element is member of coverCircuits, second element is list of circuits in N which have the same "intersection size pattern" as the first element
+	-- if min sizes(H/last) == 0 then return;
+	-- candidates = {H};
+	-- for i to #coverCircuits-1 do (
+		-- candidates = flatten apply(candidates, cand -> apply(#last(cand#i), j -> (
+			-- append(cand_{0..<i}, (coverCircuits#i, (last(cand#i))#j)) | apply(cand_{i+1..#coverCircuits-1}, S -> (S#0, select(S#1, s -> #(s*((last(cand#i))#j)) == 0)))
+		-- )))
+	-- ); -- "de-nests" second-element lists of H (i.e. each list member becomes its own item, but keeping only those which are disjoint from previously matched circuits of N
+	-- extraElts = M.groundSet - flatten(coverCircuits/toList);
+	-- E = flatten(append(coverCircuits, extraElts)/keys/sort);
+	-- if #extraElts > 0 then candidates = apply(candidates, cand -> cand | {(extraElts, N.groundSet - flatten(cand/last/toList))});
+	-- for cand in candidates do (
+		-- for f in fold((a,b) -> flatten table(a,b,identity), cand/last/keys/permutations) /deepSplice/join do (
+			-- F = hashTable apply(e, i -> E#i => f#i);
+			-- if all(C, c -> member(c/(i -> F#i), D)) then return (
+				-- if #(coloopStore#0) == 0 then F else (
+					-- F = pairs F;
+					-- for i to #(coloopStore#0)-1 do F = apply(F, p -> (p#0 + (if p#0 >= coloopStore#0#i then 1 else 0), p#1 + (if p#1 >= coloopStore#1#i then 1 else 0)));
+					-- hashTable(pack(2, mingle coloopStore) | F)
+				-- )
+			-- );
+		-- );
+	-- );
 )
 
 quickIsomorphismTest = method()
@@ -804,6 +894,16 @@ quickIsomorphismTest (Matroid, Matroid) := String => (M, N) -> (
 areIsomorphic (Matroid, Matroid) := Boolean => (M, N) -> (
 	testResult := quickIsomorphismTest(M, N);
 	if member(testResult, {null, "Could be isomorphic"}) then not(isomorphism(M, N) === null) else value testResult
+)
+
+isoTypes = method()
+isoTypes List := List => L -> (
+    isoClasses := {};
+    for o in L do (
+        isNewIsoClass := for c in isoClasses do if areIsomorphic(c, o) then break false;
+        if isNewIsoClass =!= false then isoClasses = append(isoClasses, o);
+    );
+    isoClasses
 )
 
 tuttePolynomialRing := ZZ(monoid(["x","y"]/getSymbol))
@@ -971,6 +1071,135 @@ idealOrlikSolomonAlgebra Matroid := Ideal => opts -> M -> (
 		-- else (-1)^j*e#j);
 )
 
+------------------------------------------
+-- Positive Orientability (cf. Thm 5.2 in https://arxiv.org/pdf/1310.4159.pdf)
+------------------------------------------
+
+isNonCrossing = method()
+isNonCrossing (List, List) := Boolean => (C, D) -> (  -- assumes C and D are disjoint
+    (minC, maxC, minD, maxD) := (min C, max C, min D, max D);
+    (minC < minD and maxC > maxD) or (minD < minC and maxD > maxC)
+)
+isNonCrossing (Set, Set) := Boolean => (C, D) -> isNonCrossing(toList C, toList D)
+
+isPositivelyOriented = method()
+isPositivelyOriented Matroid := Boolean => M -> (
+    all(circuits M, C -> all(select(circuits dual M, D -> #(D * C) == 0), D -> isNonCrossing(C, D)))
+)
+
+positiveOrientation = method()
+positiveOrientation Matroid := List => M -> (
+    aut := getIsos(M, M);
+    checkedPerms := new MutableHashTable;
+    for phi in permutations (#M_*) do (
+        if checkedPerms#?phi then continue;
+        if isPositivelyOriented matroid(M_*, (circuits M)/(C -> C/(e -> phi#e)), EntryMode => "circuits") then return phi;
+        scan(aut, f -> checkedPerms#(phi_f) = 1);
+    );
+    null
+    -- any(permutations (#M_*), phi -> isPositivelyOriented matroid(M_*, (circuits M)/(C -> C/(e -> phi#e)), EntryMode => "circuits"))
+)
+
+isPositivelyOrientable = method()
+isPositivelyOrientable Matroid := Boolean => M -> positiveOrientation M =!= null
+
+-- Search for representations
+
+kruskalSpanningForest = method()
+kruskalSpanningForest Graph := Graph => G -> (
+    comps := new MutableHashTable from (vertices G/(v -> set{v} => 1));
+    k := #connectedComponents G;
+    graph(vertices G, for e in edges G list (
+        if #comps == k then break;
+        ic := select(2, keys comps, c -> #(c*e) > 0);
+        if #ic == 1 then continue;
+		remove(comps, ic#0);
+		remove(comps, ic#1);
+		comps#(ic#0 + ic#1) = 1;
+        e
+    ))
+)
+
+coordinatingPath = method(Options => {Outputs => "withBasis"})
+coordinatingPath Matroid := List => opts -> M -> (
+    if not M.cache#?"coordinatingPath" then M.cache#"coordinatingPath" = (
+        B := sort toList first bases M;
+        D := sort toList (M.groundSet - B);
+        S := toList(0..<rank M);
+        zeroPos := apply(D, d -> (C := fundamentalCircuit(M, set B, d); select(S, i -> not member(B#i, C))));
+        BG := graph(B | D, flatten apply(#D, i -> apply(B - set(B_(zeroPos#i)), j -> {j, D#i})));
+        onePos := (edges kruskalSpanningForest BG)/toList/sort;
+        M.cache#"coordinatingPathBasis" = apply(onePos, p -> (
+            b := if member(p#0, B) then p#0 else p#1;
+            (position(S, i -> B#i === b), first(p - set{b}))
+        )) | apply(#B, i -> (i, B#i));
+        onePos
+    );
+    if opts.Outputs === "withBasis" then M.cache#"coordinatingPathBasis" else M.cache#"coordinatingPath"
+)
+
+-- randomNonzero = method()
+randomNonzero := k -> ( a := random k; while a == 0 do a = random k; a )
+
+rescalingRepresentative = method()
+rescalingRepresentative (Matrix, List) := Matrix => (A, O) -> (
+    if A == 0 then return A;
+	k := ring A;
+    r := numrows A; -- assumes A is full rank
+    B := take(O, -r)/last;
+    A = inverse(A_B) * A;
+    colHash := hashTable((a,b) -> flatten{a, b}, drop(O, -r) /reverse);
+    E := id_(k^r);
+	if any(values colHash, v -> instance(v, List)) then (
+		C := matrix flatten apply(select(keys colHash, k -> instance(colHash#k, List)), c -> (
+			apply(drop(colHash#c, 1), row -> {
+				A_((colHash#c)#0,c)*E^{(colHash#c)#0} - A_(row,c)*E^{row}
+			})
+		));
+		K := gens ker C;
+		D := diagonalMatrix flatten entries sum(numcols K, i -> randomNonzero k * K_{i}); -- attempts to get element of K with all nonzero entries
+		A = D*A;
+	);
+    A*inverse diagonalMatrix apply(numcols A, j -> if colHash#?j then A_(if instance(colHash#j, ZZ) then colHash#j else colHash#j#0, j) else if member(j, B) then A_(position(B, p -> j == p), j) else 1_k)
+)
+
+searchRepresentation = method(Options => {symbol Attempts => 1000})
+searchRepresentation (Matroid, GaloisField) := Matrix => opts -> (M, k) -> (
+    (r, n) := (rank M, #M.groundSet);
+    B := sort toList first bases M;
+    D := sort toList (M.groundSet - B);
+    zeroPos := apply(D, d -> (C := fundamentalCircuit(M, set B, d); select(toList(0..<r), i -> not member(B#i, C))));
+    O := coordinatingPath M;
+    Z := flatten apply(#D, j -> apply(zeroPos#j, i -> (i, D#j)));
+    knownPos := O | Z | flatten apply(r, i -> apply(delete(i, toList(0..<r)), j -> (i, B#j)));
+    unknowns := toList((0,0)..(r-1,n-1)) - set knownPos;
+    if debugLevel > 0 then << "searchRepresentation: #unknowns = " << #unknowns << endl;
+    A := new MutableMatrix from map(k^r, k^n, 0);
+    scan(O, p -> A_p = 1);
+    -- M.cache#"representationCandidate" = matrix A;
+    (viable, total) := (0, 0);
+    maxAttempts := min(opts.Attempts, (k.order - 1)^(#unknowns));
+    foundRep := while total < maxAttempts do (
+        total = total + 1;
+        if debugLevel > 0 then << "\rsearchRepresentation: Testing candidate " << viable << "/" << total << " ... " << flush;
+        scan(unknowns, u -> A_u = randomNonzero k );
+        N := matroid matrix A;
+        if #bases N === #bases M then (
+            viable = viable + 1;
+            if areIsomorphic(M, N) then break true;
+        );
+    );
+    if foundRep === null then (
+        msg := if total === (k.order - 1)^(#unknowns) then (
+            (if total == 1 then "" else "likely ") | "no representation exists"
+        ) else "please try again";
+        if debugLevel > 0 then printerr("searchRepresentation: Could not find representation - " | msg);
+        return;
+    );
+    A = matrix A_((sort pairs isomorphism(M, N))/last); -- makes matroid A == M
+    rescalingRepresentative(A, O)
+)
+
 setRepresentation = method()
 setRepresentation (Matroid, Matrix) := Matroid => (M, A) -> (
 	M.cache.storedRepresentation = A;
@@ -1025,16 +1254,13 @@ spike (ZZ, List) := Matroid => (r, C3) -> ( -- tipped r-spike
 spike ZZ := Matroid => r -> spike(r, {}) -- free tipped r-spike
 
 swirl = method()
-swirl ZZ := Matroid => r -> ( -- free rank-r swirl
-	E := toList(0..<2*r);
-	nonSpanningCircuits := (flatten flatten table(r, r-3, (i,j) -> (
+swirl ZZ := Matroid => r -> matroid(toList(0..<2*r), ( -- free rank-r swirl
+	(flatten flatten table(r, r-3, (i,j) -> (
 		v := toList apply(j, k -> 2*(i+k+1));
 		zChoices := toList((set{0,1})^**j/deepSplice/toList);
 		apply(zChoices, z -> {2*i, 2*i+1} | (z + v) | {2*(i+j+1), 2*(i+j+1)+1})
-	)))/(c -> c/(i -> i % (2*r)));
-	spanningCircuits := select(subsets(E, r+1), s -> not any(nonSpanningCircuits, c -> isSubset(c, s)));
-	matroid(E, nonSpanningCircuits | spanningCircuits, EntryMode => "circuits")
-)
+	)))/(c -> c/(i -> i % (2*r)))
+), r)
 
 wheel = method()
 wheel ZZ := Matroid => r -> if r == 2 then matroid(wheelGraph 3, ParallelEdges => {set{1,2}}) else matroid wheelGraph(r+1)
@@ -1163,6 +1389,36 @@ fromSageMatroid String := Matroid => s -> (
 	value(replace("M", "m", s0) | "}, {" | bases | "}})")
 )
 
+-- Writing to file
+toExternalString Set := toString
+
+writeToString = method()
+writeToString Thing := String => T -> (
+    if not instance(T, HashTable) then return toExternalString T;
+    K := select(keys T, k -> instance(T#k, MutableHashTable));
+    "new " | toString class T | " from {\n" | demark(",\n", for k in keys T - set K list ( 
+        try (
+            toExternalString k | " => " | toExternalString T#k
+        ) else (
+            if debugLevel > 0 then << "Could not externalize key " << k << endl;
+            continue
+        )
+    )) | (if #K > 0 then ",\n" else "") | demark(",\n", for k in K list (
+        toExternalString k | " => " | writeToString T#k
+    )) | "\n}"
+)
+
+saveMatroid = method()
+saveMatroid (Matroid, String) := String => (M, file) -> (
+	s := replace("QQ\\[x_0\\.\\.x_" | toString(#M_* - 1) | "\\]", "matroidRing", writeToString M);
+	(openOut file) << "matroidRing = " << toExternalString ring ideal M << ";" << endl << s << close;
+	file
+)
+saveMatroid Matroid := String => M -> saveMatroid(M, temporaryFileName())
+
+readFromFile = method()
+readFromFile String := Thing => file -> value get file
+
 -- Miscellaneous general purpose helper functions
 
 -- sorts L by values of f (note: L should not involve sequences at all, due to deepSplice)
@@ -1175,18 +1431,29 @@ sizes = L -> L/(l -> #l)
 
 sliceBySize = (s, L) -> partition(l -> #(l*s), L) -- intersects a set against a list of sets, and records sizes
 
+sliceBySizeList = (s, L) -> ( -- intersects a list against a list of lists, and records sizes
+	s = set s;
+	partition(l -> #(s * set l), L)
+) -- note: this is different from sliceBySize(set s, L/set)
+
 load "./Matroids/doc-Matroids.m2"
 
 load "./Matroids/tests-Matroids.m2"
+
+-- Note: ./Matroids/foundations.m2 is an upstream in-development module that
+-- defines Pasture / Foundation / pasture / pastureMorphism / savePasture /
+-- saveFoundation / specificPasture and is not yet integrated into the public
+-- Matroids package; it is intentionally not loaded here.  See
+--   https://github.com/jchen419/Matroids-M2
+-- for upstream development.
 
 end--
 restart
 loadPackage("Matroids", Reload => true)
 uninstallPackage "Matroids"
 installPackage "Matroids"
-installPackage("Matroids", RemakeAllDocumentation => true)
+installPackage("Matroids", RerunExamples => true)
 viewHelp "Matroids"
 check "Matroids"
 
--- TODO:
--- Update documentation
+-- TODO: Update documentation

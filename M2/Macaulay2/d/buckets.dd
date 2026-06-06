@@ -4,7 +4,8 @@ bucketsfun(e:Expr):Expr := (
      when e
      is dc:DictionaryClosure do (
 	  d := dc.dictionary;
-	  Expr(
+	  lockRead(d.symboltable.mutex);
+	  res := Expr(
 	       list(
 		    new Sequence len length(d.symboltable.buckets) do (
 			 foreach b in d.symboltable.buckets do (
@@ -26,9 +27,13 @@ bucketsfun(e:Expr):Expr := (
 					     c = cell.next;
 					     true)
 					)
-				   do nothing))))))
-     is h:HashTable do list(
-	  new Sequence len length(h.table) do (
+				   do nothing)))));
+	  unlock(d.symboltable.mutex);
+	  res)
+     is h:HashTable do (
+	  if h.Mutable then lockRead(h.mutex);
+	  res := list(
+	    new Sequence len length(h.table) do (
 	       foreach pp in h.table do (
 		    n := 0;
 		    p := pp;
@@ -40,8 +45,10 @@ bucketsfun(e:Expr):Expr := (
 		    s := new Sequence len n do (
 			 provide Expr(Sequence(p.key, p.value));
 			 p = p.next);
-		    provide list(s))))
-     else WrongArg("a hash table"));
+		    provide list(s))));
+	  if h.Mutable then unlock(h.mutex);
+	  res)
+     else WrongArgHashTable());
 setupfun("buckets",bucketsfun);
 
 -- Local Variables:

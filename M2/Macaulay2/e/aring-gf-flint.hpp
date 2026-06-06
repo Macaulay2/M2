@@ -8,10 +8,16 @@
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
+// includes gmp.h, which is required for FLINT functions that use GMP
+#include <M2/math-include.h>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/fq_zech.h>
-#include <flint/flint.h>
+#include <flint/flint.h>      // for flint_rand_t, fmpz_t, ulong
+#include <flint/fmpz.h>       // for fmpz_clear_readonly, fmpz_init_set_...
+#include <flint/fq_nmod.h>    // for fq_nmod_clear, fq_nmod_init, fq_nmod_c...
+#include <flint/fq_zech.h>    // for fq_zech_clear, fq_zech_ctx_clear, fq_z...
+#include <flint/nmod_poly.h>  // for nmod_poly_set_coeff_ui, nmod_poly_clear
 #pragma GCC diagnostic pop
 
 #include "interface/random.h"
@@ -36,6 +42,58 @@ class ARingGFFlint : public RingInterface
   typedef fq_zech_struct ElementType;
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
+
+  /**
+   * \brief A wrapper class for ElementType
+   *
+   * This keeps a pointer to the fq_zech_ctx_struct as it's needed to
+   * implement the destructor
+   */
+  class Element : public ElementImpl<ElementType>
+  {
+   public:
+    Element() = delete;
+    Element(Element&& other) : mContext(other.mContext)
+    {
+      // figure out how to move the value without the context
+      fq_zech_init2(&mValue, mContext);
+      fq_zech_set(&mValue, &other.mValue, mContext);
+    }
+    explicit Element(const ARingGFFlint& R) : mContext(R.mContext)
+    {
+      fq_zech_init2(&mValue, mContext);
+    }
+    Element(const ARingGFFlint& R, const ElementType& value) : mContext(R.mContext)
+    {
+      R.init_set(mValue, value);
+    }
+    ~Element() { fq_zech_clear(&mValue, mContext); }
+
+   private:
+    const fq_zech_ctx_struct* mContext;
+  };
+
+  class ElementArray
+  {
+    const fq_zech_ctx_struct* mContext;
+    const size_t mSize;
+    std::unique_ptr<ElementType[]> mData;
+
+   public:
+    ElementArray(const ARingGFFlint& R, size_t size)
+        : mContext(R.mContext), mSize(size), mData(new ElementType[size])
+    {
+      for (size_t i = 0; i < mSize; i++) fq_zech_init2(&mData[i], mContext);
+    }
+    ~ElementArray()
+    {
+      for (size_t i = 0; i < mSize; i++) fq_zech_clear(&mData[i], mContext);
+    }
+    ElementType& operator[](size_t idx) { return mData[idx]; }
+    const ElementType& operator[](size_t idx) const { return mData[idx]; }
+    ElementType *data() { return mData.get(); }
+    const ElementType *data() const { return mData.get(); }
+  };
 
   ARingGFFlint(const PolynomialRing& R, const ring_elem a);
 
@@ -84,6 +142,11 @@ class ARingGFFlint : public RingInterface
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
     result.value = a.get_int();
+  }
+
+  ElementType from_ring_elem_const(const ring_elem& a) const
+  {
+    return {.value = static_cast<mp_limb_t>(a.get_int())};
   }
 
   bool is_unit(const ElementType& f) const { return not is_zero(f); }
@@ -144,7 +207,13 @@ class ARingGFFlint : public RingInterface
     return true;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
+  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
   void negate(ElementType& result, const ElementType& a) const
   {
     fq_zech_neg(&result, &a, mContext);

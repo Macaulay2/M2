@@ -266,3 +266,55 @@ diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/lib
    next=list;
    list=this;
    */
+# Avoid "Assertion '__n < this->size()' failed" in gfanMixedVolume example
+# when gfan is compiled with -D_GLIBCXX_ASSERTIONS (e.g., in RHEL 10 rpm)
+--- a/src/gfanlib_mixedvolume.cpp
++++ gfan0.6.2/src/gfanlib_mixedvolume.cpp
+@@ -5,6 +5,8 @@
+  *      Author: anders
+  */
+ 
++#undef _GLIBCXX_ASSERTIONS
++
+ #include "gfanlib_mixedvolume.h"
+ 
+ #include "gfanlib_circuittableint.h"
+
+commit a70b93d7abc95cc3a9ea18171d1f0db1c7357323
+Author: Dimitry Andric <dim@FreeBSD.org>
+Date:   2024-11-18T13:43:25+01:00
+
+    math/gfan: fix build with clang 19
+    
+    Clang 19 has become more strict about errors in member functions, which
+    results in errors building math/gfan:
+    
+      src/gfanlib_matrix.h:123:18: error: no member named 'vectormultiply' in 'Matrix<typ>'
+        123 |         ret[i]=a.vectormultiply(b.column(i));
+            |                ~ ^
+    
+    The `vectormultiply` method has been commented out by upstream for
+    unknown reasons, but the `operator*` method that references it is also
+    never used, so stub it out.
+    
+    PR:             282851
+    MFH:            2024Q4
+
+--- a/src/gfanlib_matrix.h.orig	2017-06-20 14:47:37 UTC
++++ gfan0.6.2/src/gfanlib_matrix.h
+@@ -115,6 +115,7 @@ template <class typ> class Matrix{ (public)
+         	  p[i][j]=s*(q[i][j]);
+       return p;
+     }
++#if 0
+   friend Matrix operator*(const Matrix& a, const Matrix& b)
+     {
+       assert(a.width==b.height);
+@@ -123,6 +124,7 @@ template <class typ> class Matrix{ (public)
+         ret[i]=a.vectormultiply(b.column(i));
+       return ret.transposed();
+     }
++#endif
+   /*  template<class T>
+     Matrix<T>(const Matrix<T>& c):v(c.size()){
+     for(int i=0;i<size();i++)v[i]=typ(c[i]);}

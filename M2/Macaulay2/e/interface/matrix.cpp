@@ -13,14 +13,17 @@
 #include "freemod.hpp"
 #include "interface/NAG.h"
 #include "interface/gmp-util.h"
+#include "interface/monoid.h"
 #include "mat.hpp"
 #include "matrix-con.hpp"
 #include "matrix.hpp"
-#include "monoid.hpp"
 #include "mutablemat-defs.hpp"
 #include "relem.hpp"
 #include "ring.hpp"
 #include "ringelem.hpp"
+#include "BasicPolyList.hpp"
+#include "BasicPolyListParser.hpp"
+//#include "matrix-io.hpp"
 
 namespace M2 { class ARingCC; }
 
@@ -28,9 +31,10 @@ const FreeModule *IM2_Matrix_get_target(const Matrix *M) { return M->rows(); }
 const FreeModule *IM2_Matrix_get_source(const Matrix *M) { return M->cols(); }
 int IM2_Matrix_n_rows(const Matrix *M) { return M->n_rows(); }
 int IM2_Matrix_n_cols(const Matrix *M) { return M->n_cols(); }
+
 M2_arrayint IM2_Matrix_get_degree(const Matrix *M)
 {
-  return M->degree_monoid()->to_arrayint(M->degree_shift());
+  return to_degree_vector(M->get_ring()->degree_monoid(), M->degree_shift());
 }
 
 M2_string IM2_Matrix_to_string(const Matrix *M)
@@ -57,14 +61,14 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(const Matrix *M,
       if (r < 0 || r >= M->n_rows())
         {
           ERROR("matrix row index %d out of range 0 .. %d", r, M->n_rows() - 1);
-          return 0;
+          return nullptr;
         }
       if (c < 0 || c >= M->n_cols())
         {
           ERROR("matrix column index %d out of range 0 .. %d",
                 c,
                 M->n_cols() - 1);
-          return 0;
+          return nullptr;
         }
       ring_elem result;
       result = M->elem(r, c);
@@ -72,12 +76,69 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(const Matrix *M,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
+}
+
+/* Returns the entries of the matrix in a flat array in row major order
+ */
+engine_RawRingElementArrayArrayOrNull IM2_Matrix_get_entries(const Matrix *M)
+{
+  try
+    {
+      int ncols = M->n_cols();
+      int nrows = M->n_rows();
+      if(nrows < 0 || ncols < 0)
+        {
+          ERROR("internal error: matrix has a negative size %d by %d",
+                nrows,
+                ncols);
+          return nullptr;
+        }
+      engine_RawRingElementArrayArray entries =
+          getmemarraytype(engine_RawRingElementArrayArray, nrows);
+      entries->len = nrows;
+      RingElement *zero =
+          RingElement::make_raw(M->get_ring(), M->get_ring()->zero());
+      for(int r = 0; r < nrows; r++)
+        {
+          engine_RawRingElementArray currRow =
+              getmemarraytype(engine_RawRingElementArray, ncols);
+          currRow->len = ncols;
+          std::fill_n(currRow->array, ncols, zero);
+          entries->array[r] = currRow;
+        }
+      //walk through the columns
+      for(int c = 0; c < ncols; c++)
+        {
+          const vec &column = M->elem(c);
+          for(const vecterm &term : column)
+            {
+              if(term.comp < 0 || term.comp >= nrows)
+                {
+                  ERROR("internal error: matrix contains invalid entries:"
+                        "row index %d out of range 0 .. %d",
+                        term.comp,
+                        nrows - 1);
+                  //Ignoring the entry and continuing
+                  continue;
+                }
+              entries->array[term.comp]->array[c] =
+                  RingElement::make_raw(M->get_ring(), term.coeff);
+            }
+        }
+      return entries;
+    } catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+  return nullptr;
 }
 
 const Matrix *IM2_Matrix_identity(const FreeModule *F, int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -88,6 +149,7 @@ const Matrix /* or null */ *IM2_Matrix_zero(const FreeModule *F,
                                             const FreeModule *G,
                                             int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -99,6 +161,7 @@ const Matrix /* or null */ *IM2_Matrix_make1(const FreeModule *target,
                                              const engine_RawRingElementArray M,
                                              int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -111,6 +174,7 @@ const Matrix /* or null */ *IM2_Matrix_make2(const FreeModule *target,
                                              const engine_RawRingElementArray M,
                                              int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -125,6 +189,7 @@ const Matrix /* or null */ *IM2_Matrix_make_sparse1(
     const engine_RawRingElementArray entries,
     int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -140,6 +205,7 @@ const Matrix /* or null */ *IM2_Matrix_make_sparse2(
     const engine_RawRingElementArray entries,
     int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -149,6 +215,7 @@ const Matrix /* or null */ *IM2_Matrix_make_sparse2(
 M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M)
 /* Is the matrix M implemented as dense? */
 {
+  (void) M;
 #ifdef DEVELOPMENT
 #warning not implemented yet
 #endif
@@ -165,6 +232,7 @@ const Matrix /* or null */ *IM2_Matrix_remake2(const FreeModule *target,
    the expected rank.
 */
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -176,10 +244,11 @@ const Matrix /* or null */ *IM2_Matrix_remake1(const FreeModule *target,
                                                int preference)
 /* Create a new matrix, from M, with new target,
    The target free module must have the expected rank.
-   The source free module is computed heuristically from the the target and the
+   The source free module is computed heuristically from the target and the
    columns of the matrix.
 */
 {
+  (void) preference;
   try
     {
 #ifdef DEVELOPMENT
@@ -189,7 +258,7 @@ const Matrix /* or null */ *IM2_Matrix_remake1(const FreeModule *target,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -201,10 +270,39 @@ const Matrix /* or null */ *IM2_Matrix_random(
     int special_type,  // 0: general, 1:upper triangular, others?
     int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning preference not yet used
 #endif
   return Matrix::random(R, r, c, fraction_non_zero, special_type);
+}
+
+const Matrix* /* or null */ rawMatrixReadMsolveString(const Ring* R, M2_string contents)
+{
+  try
+    {
+      std::string str = string_M2_to_std(contents);// TODO: this does a full copy.  Perhaps we just have readMsolveIdealContents take a string_view?
+      auto Fs = parseMsolveFromString(str);
+      return toMatrix(R->make_FreeModule(1), Fs);
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+}
+
+const Matrix* /* or null */ rawMatrixReadMsolveFile(const Ring* R, M2_string filename)
+{
+  try
+    {
+      std::string str = string_M2_to_std(filename);
+      auto Fs = parseMsolveFile(str);
+      return toMatrix(R->make_FreeModule(1), Fs);
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -235,7 +333,7 @@ const Matrix /* or null */ *IM2_Matrix_concat(const engine_RawMatrixArray Ms)
       if (n == 0)
         {
           ERROR("matrix concat: expects at least one matrix");
-          return 0;
+          return nullptr;
         }
       const FreeModule *F = Ms->array[0]->rows();
       const Ring *R = F->get_ring();
@@ -244,15 +342,15 @@ const Matrix /* or null */ *IM2_Matrix_concat(const engine_RawMatrixArray Ms)
       for (unsigned int i = 0; i < n; i++)
         {
           const Matrix *M = Ms->array[i];
-          if (F->get_ring() != M->get_ring())
+          if (R != M->get_ring())
             {
               ERROR("matrix concat: different base rings");
-              return 0;
+              return nullptr;
             }
           if (F->rank() != M->n_rows())
             {
               ERROR("matrix concat: row sizes are not equal");
-              return 0;
+              return nullptr;
             }
           for (int j = 0; j < M->n_cols(); j++)
             {
@@ -264,7 +362,7 @@ const Matrix /* or null */ *IM2_Matrix_concat(const engine_RawMatrixArray Ms)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -279,7 +377,7 @@ const Matrix /* or null */ *IM2_Matrix_direct_sum(
       if (n == 0)
         {
           ERROR("matrix direct sum: expects at least one matrix");
-          return 0;
+          return nullptr;
         }
       const Matrix *result = Ms->array[0];
       const Ring *R = result->get_ring();
@@ -287,7 +385,7 @@ const Matrix /* or null */ *IM2_Matrix_direct_sum(
         if (R != Ms->array[i]->get_ring())
           {
             ERROR("matrix direct sum: different base rings");
-            return 0;
+            return nullptr;
           }
       for (unsigned int i = 1; i < n; i++)
         result = result->direct_sum(Ms->array[i]);
@@ -296,7 +394,7 @@ const Matrix /* or null */ *IM2_Matrix_direct_sum(
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -308,7 +406,7 @@ const Matrix /* or null */ *IM2_Matrix_tensor(const Matrix *M, const Matrix *N)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -320,7 +418,7 @@ const Matrix /* or null */ *rawModuleTensor(const Matrix *M, const Matrix *N)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -332,7 +430,7 @@ const Matrix /* or null */ *IM2_Matrix_transpose(const Matrix *M)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -346,7 +444,7 @@ const Matrix /* or null */ *IM2_Matrix_reshape(const Matrix *M,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -359,7 +457,7 @@ const Matrix /* or null */ *IM2_Matrix_flip(const FreeModule *F,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -374,7 +472,7 @@ const Matrix /* or null */ *rawWedgeProduct(int p, int q, const FreeModule *F)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -388,7 +486,7 @@ const Matrix /* or null */ *IM2_Matrix_submatrix(const Matrix *M,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -401,7 +499,7 @@ const Matrix /* or null */ *IM2_Matrix_submatrix1(const Matrix *M,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -413,7 +511,7 @@ const Matrix /* or null */ *IM2_Matrix_koszul(int p, const Matrix *M)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -429,13 +527,13 @@ const Matrix /* or null */ *rawKoszulMonomials(int nskew,
       if (M->get_ring() != N->get_ring())
         {
           ERROR("expected same ring");
-          return 0;
+          return nullptr;
         }
       return Matrix::koszul_monomials(nskew, M, N);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -447,7 +545,7 @@ const Matrix /* or null */ *IM2_Matrix_symm(int p, const Matrix *M)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -524,6 +622,11 @@ const Matrix /* or null */ *IM2_Matrix_pfaffians(int p, const Matrix *M)
   return M->pfaffians(p);
 }
 
+const RingElement /* or null */ *IM2_Matrix_pfaffian(const Matrix *M)
+{
+  return RingElement::make_raw(M->get_ring(), M->pfaffian());
+}
+
 const Matrix /* or null */ *IM2_Matrix_diff(const Matrix *M, const Matrix *N)
 {
   return M->diff(N, 1);
@@ -539,7 +642,7 @@ const Matrix /* or null */ *IM2_Matrix_homogenize(const Matrix *M,
                                                   int var,
                                                   M2_arrayint wts)
 {
-  return M->homogenize(var, wts);
+  return M->homogenize(var, M2_arrayint_to_stdvector<int>(wts));
 }
 
 const Matrix /* or null */ *rawCoefficients(M2_arrayint vars,
@@ -590,7 +693,7 @@ engine_RawMatrixPairOrNull rawTopCoefficients(const Matrix *M)
   Matrix *coeffs;
   Matrix *monoms;
   coeffs = M->top_coefficients(monoms);
-  if (coeffs == NULL) return NULL;
+  if (coeffs == nullptr) return nullptr;
   engine_RawMatrixPair result = new engine_RawMatrixPair_struct;
   result->a = monoms;
   result->b = coeffs;
@@ -616,20 +719,6 @@ engine_RawMatrixAndInt IM2_Matrix_divide_by_var(const Matrix *M,
 }
 
 const Matrix *rawMatrixCompress(const Matrix *M) { return M->compress(); }
-#include "Eschreyer.hpp"
-
-const Matrix *IM2_kernel_of_GB(const Matrix *m)
-/* Assuming that the columns of G form a GB, this computes
-   a Groebner basis of the kernel of these elements, using an appropriate
-   Schreyer order on the
-   source of G. */
-{
-  GBMatrix *n = new GBMatrix(m);
-  GBKernelComputation G(n);
-  G.calc();
-  GBMatrix *syz = G.get_syzygies();
-  return syz->to_matrix();
-}
 
 const Matrix *rawRemoveMonomialFactors(const Matrix *m,
                                        M2_bool make_squarefree_only)
@@ -664,11 +753,12 @@ const Matrix /* or null */ *rawMatrixSplitContent(
 
 const Matrix /* or null */ *IM2_Matrix_remove_content(const Matrix *M)
 {
+  (void) M;
 #ifdef DEVELOPMENT
 #warning \
     "const Matrix /* or null */ * IM2_Matrix_remove_content(const Matrix *M) -- not implemented yet"
 #endif
-  return NULL;
+  return nullptr;
 }
 
 const Matrix /* or null */ *IM2_Matrix_promote(const FreeModule *newTarget,
@@ -688,14 +778,14 @@ const Matrix /* or null */ *IM2_Matrix_promote(const FreeModule *newTarget,
           else
             {
               ERROR("cannot promote given matrix");
-              return 0;
+              return nullptr;
             }
       mat.compute_column_degrees();
       return mat.to_matrix();
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -717,7 +807,7 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
           else
             {
               // ERROR("cannot lift given matrix");
-              return 0;
+              return nullptr;
             }
       mat.compute_column_degrees();
       *success_return = 1;
@@ -725,7 +815,7 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -792,6 +882,15 @@ M2SLEvaluator /* or null */ *rawSLEvaluator(M2SLProgram *SLP,
   return consts->createSLEvaluator(SLP, constsPos, varsPos);
 }
 
+M2SLEvaluator /* or null */ *rawCompiledSLEvaluator(
+                                                    M2_string libName,
+                                                    int nInputs,
+                                                    int nOutputs,
+                                                    const MutableMatrix *empty)
+{
+  return empty->createCompiledSLEvaluator(libName, nInputs, nOutputs);
+}
+
 M2SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(
     M2SLEvaluator *H,
     const MutableMatrix *parameters)
@@ -825,6 +924,7 @@ M2_string rawSLEvaluatorToString(M2SLEvaluator *sle)
 unsigned int rawSLEvaluatorHash(M2SLEvaluator *) { return 0; }
 M2SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs)
 {
+  (void) nConstantsAndInputs;
   return new M2SLProgram(new SLProgram);
 }
 M2_string rawSLProgramToString(M2SLProgram *slp)
@@ -964,12 +1064,15 @@ PointArray::RealVector getRealVector(const MutableMatrix *M, int col)
   PointArray::RealVector result;
   auto MC = dynamic_cast<const MutableMat<DMat<M2::ARingCC> > *>(M);
   // if (MC == nullptr)
-  auto i = MC->getMat().columnBegin(col);
-  auto iEnd = MC->getMat().columnEnd(col);
-  for (; i != iEnd; ++i)
+  if (MC == nullptr)
     {
-      result.push_back((*i).re);
-      result.push_back((*i).im);
+      throw exc::engine_error("expected mutable matrix over CC");
+    }
+
+  for (size_t r = 0; r < MC->getMat().numRows(); ++r)
+    {
+      result.push_back(MC->getMat().entry(r, col).re);
+      result.push_back(MC->getMat().entry(r, col).im);
     }
   return result;
 }

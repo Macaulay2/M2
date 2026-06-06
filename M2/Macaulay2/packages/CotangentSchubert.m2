@@ -1,8 +1,8 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.63",
-    Date => "6 Jul 2022", -- "22 Mar 2021",
+    Version => "0.71",
+    Date => "25 Jul 2023", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -11,13 +11,26 @@ newPackage(
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
-    Configuration => { "Factor" => false, "PuzzleSize" => 7 }
+    Configuration => { "Factor" => false, "PuzzleSize" => 7 },
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "The CotangentSchubert Macaulay2 package",
+	"acceptance date" => "2024-02-06",
+	"published article URI" => "https://msp.org/jsag/2024/14-1/p09.xhtml",
+	"published article DOI" => "10.2140/jsag.2024.14.73",
+	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x09-CotangentSchubert.m2",
+	"release at publication" => "6a750d5611ff9685a31e1eb4e176bb71b6842a58",
+	"version at publication" => "0.63",
+	"volume number" => "14",
+	"volume URI" => "https://msp.org/jsag/2024/14-1/"
+	}
     )
 
 if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor" else factor PolynomialRing := opts -> identity;
 
 opts = new OptionTable from {Ktheory => false, Equivariant => true} -- common options
-export {"Ktheory", "Equivariant" };
+export {"Ktheory", "Equivariant", "Separation", "LabelList" };
 
 load "CotangentSchubert/cotangent.m2";
 load "CotangentSchubert/puzzles.m2";
@@ -28,7 +41,7 @@ multidoc ///
   Key
    CotangentSchubert
   Headline
-   A package for contangent Schubert calculus
+   A package for cotangent Schubert calculus
   Description
    Text
     @BOLD "CotangentSchubert"@ is a package for calculations in cotangent Schubert calculus.
@@ -41,7 +54,8 @@ multidoc ///
     @HREF{"http://arxiv.org/abs/1706.10019","arXiv:1706.10019"}@. @BR{}@
     [2] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability II: multiplying motivic Segre classes,
     @HREF{"http://arxiv.org/abs/2102.00563","arXiv:2102.00563"}@. @BR{}@
-    [3] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability III: separated descents, in preparation.
+    [3] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability III: separated descents,
+    @HREF{"http://arxiv.org/abs/2306.13855","arXiv:2306.13855"}@.
  Node
   Key
    setupCotangent
@@ -357,12 +371,40 @@ multidoc ///
     (A,B,FF,I)=setupCotangent(2,4,Presentation=>Borel,Ktheory=>true,Equivariant=>false)
     basis A
     basisCoeffs(x_(1,{1,2})^2)
+ Node
+  Key
+   doublePuzzle
+   DoublePuzzle
+  Headline
+   Produces a rhombus puzzle
+  Usage
+   doublePuzzle (a,b,c,d)
+  Inputs
+   a : String
+   b : String
+   c : String
+   d : String
+  Description
+   Text
+    Given 4 strings, computes the number of pairs of puzzles glued together to form a rhombus with boundaries
+    a,b,c,d in clockwise order.
+
+    In WebApp mode, the output is interactive and allows to test associativity of puzzles.
+   Example
+    doublePuzzle("0101","0101","0101","0101",Equivariant=>false)
+  Caveat
+   At the moment, the interactive part only works on nonequivariant puzzles.
 ///
+-- TODO: 12 of the symbols listed below as `undocumented` also appear in
+-- option-doc Usage sub-keys via [puzzle, Ktheory], [setupCotangent, Borel],
+-- etc.  Either give each its own doc node or remove it from doc Usage.
 undocumented {
     Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
     Paths, Labels, Length, Steps, Ktheory', Separation,
     (restrict,Matrix),(restrict,Matrix,RingElement),
-    (inversion,String)
+    (inversion,String),
+    (html,Puzzle),(net,Puzzle),(tex,Puzzle),(texMath,Puzzle),
+    (html,DoublePuzzle),(net,DoublePuzzle)
     }
 
 TEST ///
@@ -389,8 +431,74 @@ b=segreCls*(fugacityVector P);
 assert(a==b)
 ///
 
+TEST /// -- sum-rule identities for the primed/dual class families
+(A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
+-- segreClass' satisfies the same sum rule as segreClass
+assert(sum apply(I, segreClass') == 1)
+-- the primed families produce the same totals as the unprimed ones
+assert(sum apply(I, chernClass) == sum apply(I, chernClass'))
+assert(sum apply(I, sClass) == sum apply(I, sClass'))
+assert(sum apply(I, schubertClass) == sum apply(I, schubertClass'))
+-- stableClass and stableClass' both return elements of the cotangent ring B
+assert(class stableClass "0101" === B and class stableClass' "0101" === B)
+///
+
+TEST /// -- tautoClass, zeroSection, dualZeroSection, and pushforwardToPointFromCotangent
+(A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
+-- the 0-th Chern class of any tautological bundle is the identity
+assert(tautoClass(0,1) == 1)
+-- zeroSection and dualZeroSection live in A; on the even-dimensional Gr(2,4)
+-- with Equivariant=>false they coincide
+assert(class zeroSection A === A and class dualZeroSection A === A)
+assert(zeroSection A == dualZeroSection A)
+-- pushforwardToPoint of the unit is 0 (only the top class integrates to nonzero)
+assert(pushforwardToPoint 1_A == 0)
+-- pushforwardToPointFromCotangent of zeroSection * dualZeroSection equals
+-- the number of T-fixed points #I
+assert(pushforwardToPointFromCotangent(zeroSection A * dualZeroSection A) == #I)
+///
+
+TEST /// -- inversion counts the inversions of a label string
+assert(inversion "01" == 0)
+assert(inversion "10" == 1)
+assert(inversion "210" == 3)
+assert(inversion "0011" == 0)
+assert(inversion "0101" == 1)
+assert(inversion "1010" == 3)
+///
+
+TEST /// -- puzzle bottom labels, fugacity, and fugacityTally
+(D,FF,I) = setupCotangent(2,4,Ktheory=>true);
+P = puzzle("0101","0110");
+assert(#P == 12)
+-- bottom reads off the bottom boundary; each entry is a LabelList
+assert(all(P, p -> class bottom p === LabelList))
+-- fugacity of a single puzzle is an element of the base field
+assert(class fugacity P_0 === FF)
+-- fugacityTally is a VirtualTally indexed by the distinct bottom strings of P
+fT = fugacityTally P;
+assert(class fT === VirtualTally)
+assert(sort keys fT === sort unique apply(P, bottom))
+///
+
+TEST /// -- restrict computes the value of a Borel class at each T-fixed point
+(A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>true);
+-- restrict requires Equivariant=>true; output is a vector with one entry per fixed point
+r = restrict schubertClass("0101", A);
+assert(#entries r == #I)
+///
+
+TEST /// -- doublePuzzle produces a list of rhombus (double) puzzles
+(D,FF,I) = setupCotangent(2,4,Ktheory=>false);
+DP = doublePuzzle("0101","0101","0101","0101",Equivariant=>false);
+assert(class DP === List)
+assert(#DP == 2)
+///
+
 end
 
+-- TODO: ~50 lines of worked examples follow `end` and are dead code.  Several
+-- of them have natural `==` assertions and could be promoted to TEST blocks.
 (A,FF,I)=setupCotangent(1,2,Ktheory=>true)
 segreCls=sClass I
 segreInv=segreCls^(-1);

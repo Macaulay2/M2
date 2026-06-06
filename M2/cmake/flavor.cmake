@@ -26,6 +26,11 @@ if(NOT DEFINED ISSUE)
     execute_process(COMMAND ${LSB_RELEASE} -s --release
       OUTPUT_VARIABLE ISSUE_RELEASE
       ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(ISSUE_RELEASE STREQUAL "n/a")
+      execute_process(COMMAND ${LSB_RELEASE} -s --codename
+       OUTPUT_VARIABLE ISSUE_RELEASE
+       ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+    endif()
   elseif(OS_RELEASE)
     file(READ ${OS_RELEASE} _os_release)
     string(REGEX MATCH "ID=([A-Za-z ]*)\n"      _ "${_os_release}")

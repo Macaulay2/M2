@@ -15,13 +15,11 @@ newPackage("EliminationMatrices",
    Headline => "resultants",
    Keywords => {"Commutative Algebra"},
    PackageImports => { "Elimination" },
+   PackageExports => { "Complexes" },
    DebuggingMode => false
    )
 
 export {
---	"matrixToListByColumns",
---	"matrixToListByRows",
---	"rankNum",
 	"maxCol",
 	"maxMinor",
 -- MAIN FUNCTIONS
@@ -30,17 +28,11 @@ export {
 	"detComplex",
 	"mapsComplex",
 	"minorsComplex",
---	"degMap",
---	"macRes",
 	"macaulayFormula",
 	"bezoutianMatrix",
---	"ciRes",
 	"ciResDeg",
 	"ciResDegGH",
---	"cm2Res",
---	"detRes",
 	"detResDeg",
---	"rankNE",
 	"Numeric",
 	"Exact",
 	"Sylvester",
@@ -52,6 +44,9 @@ export {
 	"eliminationMatrix",
 	"regularityVar"
 }
+-- Internal helpers defined but intentionally not exported:
+--   matrixToListByColumns, matrixToListByRows, rankNE, rankNum, degMap,
+--   macRes, ciRes, cm2Res, detRes  (used by the dispatchers above)
 
 
 --######################################################################
@@ -307,36 +302,36 @@ degMap(Matrix,List,List,ZZ) := (m, targetShifts, var, d) -> (
 --#######################################################################
 
 
--- PURPOSE : this function calculates the morphisms of a ChainComplex with respect to a subset of the variables of the polynomial ring.
--- INPUT: (complex, var, d): 'complex' is a ChainComplex, 'var' is the list of ring variables to take into account in the morphism, 'd' integer corresponding to the degree of the strand of the chain complex.
+-- PURPOSE : this function calculates the morphisms of a Complex with respect to a subset of the variables of the polynomial ring.
+-- INPUT: (complex, var, d): 'complex' is a Complex, 'var' is the list of ring variables to take into account in the morphism, 'd' integer corresponding to the degree of the strand of the chain complex.
 -- OUTPUT: a list of matrices representing the morphisms of the chain complex
 
 
 mapsComplex = method();
 
-mapsComplex(ZZ, List, ChainComplex) := (d, var, complex) -> (
+mapsComplex(ZZ, List, Complex) := (d, var, C) -> (
 	targetShifts := {0,0,0};
 	mapList := {};
 	columnList := {};
 	complList := {};
-	for i from 1 to length complex do (
-		m := degMap(complex.dd_i, targetShifts, var, d);
+	for i from 1 to length C do (
+		m := degMap(C.dd_i, targetShifts, var, d);
 		mapList = mapList | {m};
-		targetShifts = sourceShifts(complex.dd_i,targetShifts,var);
+		targetShifts = sourceShifts(C.dd_i,targetShifts,var);
 	);
 	return mapList
 );
 
--- PURPOSE : this function calculates the sub-morphisms of a ChainComplex with respect to a subset of the variables of the polynomial ring.
--- INPUT: (complex, var, d): 'complex' is a ChainComplex, 'var' is the list of ring variables to take into account in the morphism, 'd' integer corresponding to the degree of the strand of the chain complex.
+-- PURPOSE : this function calculates the sub-morphisms of a Complex with respect to a subset of the variables of the polynomial ring.
+-- INPUT: (C, var, d): 'C' is a Complex, 'var' is the list of ring variables to take into account in the morphism, 'd' integer corresponding to the degree of the strand of the chain complex.
 -- OUTPUT: a list of matrices representing a restriction and corestriction of the morphisms of the chain complex (the choice of the rows and columns is done according to the computation of a determinant of a complex).
 
 minorsComplex = method(Options => { Strategy => null });
-minorsComplex(ZZ, List, ChainComplex) := List => options -> (d, var, complex) -> (
+minorsComplex(ZZ, List, Complex) := List => options -> (d, var, C) -> (
 	minList := {};
 	columnList := {};
 	complList := {};
-	mapComp := mapsComplex (d, var, complex);
+	mapComp := mapsComplex (d, var, C);
 	for i from 0 to (length mapComp) -1 do (
 		m := mapComp_i;
 		complList = listComplement(toList(0..(rank target m) - 1),  columnList);
@@ -349,37 +344,37 @@ minorsComplex(ZZ, List, ChainComplex) := List => options -> (d, var, complex) ->
 );
 
 
--- PURPOSE : this function calculates the determinants of the submatrices of a ChainComplex with respect to a subset of the variables of the polynomial ring.
--- INPUT: (complex, var, d): 'complex' is a ChainComplex, 'var' is the list of ring variables to take into account in the morphism, 'd' integer corresponding to the degree of the strand of the chain complex.
+-- PURPOSE : this function calculates the determinants of the submatrices of a Complex with respect to a subset of the variables of the polynomial ring.
+-- INPUT: (C, var, d): 'C' is a Complex, 'var' is the list of ring variables to take into account in the morphism, 'd' integer corresponding to the degree of the strand of the chain complex.
 -- OUTPUT: a list of polynomials corresponding to the determinants of the maps given by 'minorsComplex'.
 
 listDetComplex = method (Options => { Strategy => null });
-listDetComplex(ZZ, List, ChainComplex) := List => options -> (d, var, complex) -> (
+listDetComplex(ZZ, List, Complex) := List => options -> (d, var, C) -> (
 	targetShifts := {0,0,0};
 	detList := {};
 	columnList := {};
 	complList := {};
-	for i from 1 to length complex do (
-		m := degMap(complex.dd_i, targetShifts, var, d);
+	for i from 1 to length C do (
+		m := degMap(C.dd_i, targetShifts, var, d);
 		complList = listComplement(toList(0..(rank target m) - 1),  columnList);
 		m = (transpose(m))_complList;
 		m = transpose(m);
 		columnList = (maxCol (m,options))_1;
 		detList = detList | {determinant(m_columnList)};
-		targetShifts = sourceShifts(complex.dd_i,targetShifts,var);
+		targetShifts = sourceShifts(C.dd_i,targetShifts,var);
 	);
 	return detList
 );
 
 
 
--- PURPOSE : this function calculates the determinant of a ChainComplex with respect to a subset of the variables of the polynomial ring.
--- INPUT: (complex, var, d): 'complex' is a ChainComplex, 'var' is the list of ring variables to take into account in the morphism, 'd' integer corresponding to the degree of the strand of the chain complex.
+-- PURPOSE : this function calculates the determinant of a Complex with respect to a subset of the variables of the polynomial ring.
+-- INPUT: (C, var, d): 'C' is a Complex, 'var' is the list of ring variables to take into account in the morphism, 'd' integer corresponding to the degree of the strand of the chain complex.
 -- OUTPUT: a polynomial corresponding to the determinant of the given complex. This is obtained by taking alternate product of the elements in the list 'listDetComplex'.
 
 detComplex = method (Options => { Strategy => null });
-detComplex(ZZ, List, ChainComplex) := List => options -> (d, var, complex) -> (
-	listDetCmp := listDetComplex(d, var, complex, options);
+detComplex(ZZ, List, Complex) := List => options -> (d, var, C) -> (
+	listDetCmp := listDetComplex(d, var, C, options);
 	detC := 1_(ring var_0);
 	for i from 0 to length(listDetCmp)-1 do (
 		if even(i) then (detC = detC* (listDetCmp_i)) else (
@@ -697,7 +692,7 @@ regularityVar(List, Ideal) := (var, I) -> (
 
 	ff:= map (S, R);
 	IS:= ff(I);
-	resIS:= resolution IS;
+	resIS:= freeResolution IS;
 	
  -- we compute the list of b_i's and the regularity 
 	b:= {};
@@ -754,7 +749,7 @@ eliminationMatrix((ZZ, List, Matrix)) := Matrix => options -> (r, var, g) -> (
 	else if getFamilyStrategy(options) == 5 then return detRes (r, var, g)
 	else if getFamilyStrategy(options) == 0 then (
 		I := minors (r+1,g);
-		return (mapsComplex(regularityVar (var,I), var, res I ))_0;
+		return (mapsComplex(regularityVar (var,I), var, freeResolution I ))_0;
 		)
 	else if (getFamilyStrategy(options) == 1 or getFamilyStrategy(options) == 3 or getFamilyStrategy(options) == 4 ) then error "with this input, 'Strategy' keyword must be 'Macaulay', 'determinantal' or 'byResolution'"
 	-- at this point Strategy is null
@@ -769,7 +764,7 @@ eliminationMatrix(List, Matrix, Matrix) := Matrix => options -> (var, g, H) -> (
 	else if getFamilyStrategy(options) == 4 then return ciRes (var, g, H)
 	else if getFamilyStrategy(options) == 0 then (
 		I := (ideal (g*H): ideal g);
-		return (mapsComplex(regularityVar (var,I), var, res I))_0;
+		return (mapsComplex(regularityVar (var,I), var, freeResolution I))_0;
 		)
 	else if (getFamilyStrategy(options) == 1 or getFamilyStrategy(options) == 3 or getFamilyStrategy(options) == 4 ) then error "with this input, 'Strategy' keyword must be 'CM2Residual', 'ciResidual' or 'byResolution'"
 	-- at this point Strategy is null
@@ -778,7 +773,7 @@ eliminationMatrix(List, Matrix, Matrix) := Matrix => options -> (var, g, H) -> (
 	else (
 		print "A strategy is required; please choose 'CM2Residual', 'ciResidual' or 'byResolution' depending on your inputs.";
 --		J := (ideal (g*H): ideal g);
---		return (mapsComplex(regularityVar (var,J), var, res J))_0;
+--		return (mapsComplex(regularityVar (var,J), var, freeResolution J))_0;
 		);
 );
 
@@ -801,7 +796,7 @@ document {
 	
 	TT "EliminationMatrices", " is a package for elimination theory, emphasizing universal formulas, in particular, resultant computations.",
 	
-	PARA {}, "The package contains an implementation for computing determinant of free graded complexes, called ", TO2((detComplex), "detComplex"), ", with several derived methods:  ", TO2((listDetComplex), "listDetComplex"),", ", TO2((mapsComplex), "mapsComplex"),", and  ", TO2((minorsComplex), "minorsComplex"), ". This provides a method for producing universal formulas for any family of schemes, just by combining the ", TO2 {(resolution,Ideal),"resolution(Ideal)"}, " method with  ", TO2((detComplex), "detComplex"), ". In Section 2 determinants of free resolutions are treated, as well as a few examples. We recommend to see [Dem84, Jou95, GKZ94, Bus06] for more details on determinants of complexes in elimination theory.",
+	PARA {}, "The package contains an implementation for computing determinant of free graded complexes, called ", TO2((detComplex), "detComplex"), ", with several derived methods:  ", TO2((listDetComplex), "listDetComplex"),", ", TO2((mapsComplex), "mapsComplex"),", and  ", TO2((minorsComplex), "minorsComplex"), ". This provides a method for producing universal formulas for any family of schemes, just by combining the ", TO2 {"OldChainComplexes :: resolution(Ideal)" ,"resolution(Ideal)"}, " method with  ", TO2((detComplex), "detComplex"), ". In Section 2 determinants of free resolutions are treated, as well as a few examples. We recommend to see [Dem84, Jou95, GKZ94, Bus06] for more details on determinants of complexes in elimination theory.",
 
 	PARA {}, "The package also provides a method ", TO2((eliminationMatrix), "eliminationMatrix")," for computing matrices and formulas for different resultants applicable on different families of polynomials, such as the Macaulay resultant (Macaulay) for generic homogeneous polynomials; the residual resultant ('ciResidual' and 'CM2Residual') for generic polynomials having a non empty base locus scheme; the determinantal resultant ('determinantal') for generic polynomial matrices of a given generic rank. For the theory behind those resultants, the reader can refer to [Mac02, Jou91, Cha93, GKZ94, Jou97, CLO98, BEM00, BEM01, Bus01b, Bus06, Bus04].",
 
@@ -894,21 +889,21 @@ document {
 ------------------------ \ mapsComplex / ------------------------
 
 document {
-     	Key => {mapsComplex, (mapsComplex, ZZ, List, ChainComplex)},
-	Headline => "This function calculates the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
+     	Key => {mapsComplex, (mapsComplex, ZZ, List, Complex)},
+	Headline => "This function calculates the maps of a graded Complex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
 	Usage => " mapsOfTheComplex = mapsComplex(d, v, C)",
 
 	Inputs => {
 		"d" => ZZ => {"integer corresponding to the degree of the strand of the chain complex."},
 		"v" => List => {"list of variables of the polynomial ring R to take into account for elimination"},
-		"C" => ChainComplex => {"a chain complex of free modules over a polynomial ring"}
+		"C" => Complex => {"a chain complex of free modules over a polynomial ring"}
 	},
 	Outputs => {
 		List => {"a list of matrices"}
 	},
 
-	PARA {}, "This function calculates the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
-	PARA {}, "The input ChainComplex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
+	PARA {}, "This function calculates the maps of a graded Complex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
+	PARA {}, "The input Complex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
 	PARA {}, "It is recommended not to define rings as R=QQ[x,y][a,b,c] when the variables to eliminate are '{x,y}'. In this case, see ", TO "flattenRing", " for passing from ", TEX "$R=QQ[x,y][a,b,c]$", " to ", TEX "QQ[x,y,a,b,c].",
 
 	EXAMPLE {" R=QQ[a,b,c,x,y] ",
@@ -916,8 +911,8 @@ document {
 		" f2 = 2*a*x+b*y ",
 		" M = matrix{{f1,f2}} ",
 		" l = {x,y} ",
-		" dHPM = mapsComplex (2,l,koszul M)",
-		" dHPM = mapsComplex (3,l,koszul M)"
+		" dHPM = mapsComplex (2,l,koszulComplex M)",
+		" dHPM = mapsComplex (3,l,koszulComplex M)"
 		},
 		
 	EXAMPLE {" R=QQ[a,b,c,d,e,f,g,h,i,x,y,z] ",
@@ -926,8 +921,8 @@ document {
 		" f3 = g*x+h*y+i*z ",
 		" M = matrix{{f1,f2,f3}} ",
 		" l = {x,y,z} ",
-		" dHPM = mapsComplex (1,l,koszul M)",
-		" dHPM = mapsComplex (2,l,koszul M)"
+		" dHPM = mapsComplex (1,l,koszulComplex M)",
+		" dHPM = mapsComplex (2,l,koszulComplex M)"
 		},
      
 	SeeAlso => {degHomPolMap, listDetComplex, minorsComplex, mapsComplex }
@@ -937,21 +932,21 @@ document {
 ------------------------ \ minorsComplex / ------------------------
 
 document {
-     	Key => {minorsComplex, (minorsComplex, ZZ, List, ChainComplex)},
-	Headline => "calculate some minors of the maps of a graded ChainComplex in a subset of variables and fixed degree",
+     	Key => {minorsComplex, (minorsComplex, ZZ, List, Complex)},
+	Headline => "calculate some minors of the maps of a graded Complex in a subset of variables and fixed degree",
 	Usage => " minorsOfTheComplex = minorsComplex(d,v,C)",
 
 	Inputs => {
 		"d" => ZZ => {"integer corresponding to the degree of the strand of the chain complex."},
 		"v" => List => {"list of variables of the polynomial ring R to take into account for elimination"},
-		"C" => ChainComplex => {"a chain complex of free modules over a polynomial ring"}
+		"C" => Complex => {"a chain complex of free modules over a polynomial ring"}
 	},
 	Outputs => {
 		List => {"a list of square (full-rank) matrices"}
 	},
 
-	PARA {}, "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree. The choice of the minors is according to the construction of the determinant of a complex",
-	PARA {}, "The input ChainComplex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
+	PARA {}, "This function calculates some minors of the maps of a graded Complex with respect to a subset of the variables of the polynomial ring in a fixed degree. The choice of the minors is according to the construction of the determinant of a complex",
+	PARA {}, "The input Complex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
 	PARA {}, "It is recommended not to defines rings as R=QQ[x,y][a,b,c] when the variables to eliminate are '{x,y}'. In this case, see ", TO "flattenRing", " for passing from ", TEX "$R=QQ[x,y][a,b,c]$", " to ", TEX "QQ[x,y,a,b,c].",
 	
 	EXAMPLE {" R=QQ[a,b,c,x,y] ",
@@ -959,8 +954,8 @@ document {
 		" f2 = 2*a*x+b*y ",
 		" M = matrix{{f1,f2}} ",
 		" l = {x,y} ",
-		" dHPM = minorsComplex (2,l,koszul M)",
-		" dHPM = minorsComplex (3,l,koszul M)"
+		" dHPM = minorsComplex (2,l,koszulComplex M)",
+		" dHPM = minorsComplex (3,l,koszulComplex M)"
 		},
 		
 	EXAMPLE {" R=QQ[a,b,c,d,e,f,g,h,i,x,y,z] ",
@@ -969,9 +964,9 @@ document {
 		" f3 = g*x+h*y+i*z ",
 		" M = matrix{{f1,f2,f3}} ",
 		" l = {x,y,z} ",
-		" dHPM = minorsComplex (1,l,koszul M, Strategy => Exact)",
+		" dHPM = minorsComplex (1,l,koszulComplex M, Strategy => Exact)",
 		" setRandomSeed 0",			    -- set seed to one known to work
-		" dHPM = minorsComplex (2,l,koszul M, Strategy => Numeric)"
+		" dHPM = minorsComplex (2,l,koszulComplex M, Strategy => Numeric)"
 		},
      
 	SeeAlso => {degHomPolMap, listDetComplex, detComplex, mapsComplex }
@@ -980,21 +975,21 @@ document {
 ------------------------ \ listDetComplex / ------------------------
 
 document {
-     	Key => {listDetComplex, (listDetComplex, ZZ, List, ChainComplex)},
-	Headline => "This function calculates the list with the determinants of some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
+     	Key => {listDetComplex, (listDetComplex, ZZ, List, Complex)},
+	Headline => "This function calculates the list with the determinants of some minors of the maps of a graded Complex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
 	Usage => "listOfTheDetOfTheComplex = listDetComplex(d,v,C)",
 
 	Inputs => {
 		"d" => ZZ => {"integer corresponding to the degree of the strand of the chain complex."},
 		"v" => List => {"list of variables of the polynomial ring R to take into account for elimination"},
-		"C" => ChainComplex => {"a chain complex of free modules over a polynomial ring"}
+		"C" => Complex => {"a chain complex of free modules over a polynomial ring"}
 	},
 	Outputs => {
 		List => {"a list with the determinant polynomials of the maps computed by 'minorsComplex'"}
 	},
 
-	PARA {}, "This function calculates the list with the determinants of some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree. Precisely, this list corresponds to the list with the determinant polynomials of the maps computed by ", TO "minorsComplex", ".",
-	PARA {}, "The input ChainComplex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
+	PARA {}, "This function calculates the list with the determinants of some minors of the maps of a graded Complex with respect to a subset of the variables of the polynomial ring in a fixed degree. Precisely, this list corresponds to the list with the determinant polynomials of the maps computed by ", TO "minorsComplex", ".",
+	PARA {}, "The input Complex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
 	PARA {}, "It is recommended not to defines rings as R=QQ[x,y][a,b,c] when the variables to eliminate are '{x,y}'. In this case, see ", TO "flattenRing", " for passing from ", TEX "$R=QQ[x,y][a,b,c]$", " to ", TEX "QQ[x,y,a,b,c].",
 	
 	EXAMPLE {" R=QQ[a,b,c,x,y] ",
@@ -1002,8 +997,8 @@ document {
 		" f2 = 2*a*x+b*y ",
 		" M = matrix{{f1,f2}} ",
 		" l = {x,y} ",
-		" dHPM = listDetComplex (2,l,koszul M)",
-		" dHPM = listDetComplex (3,l,koszul M)"
+		" dHPM = listDetComplex (2,l,koszulComplex M)",
+		" dHPM = listDetComplex (3,l,koszulComplex M)"
 		},
 		
 	EXAMPLE {" R=QQ[a,b,c,d,e,f,g,h,i,x,y,z] ",
@@ -1012,9 +1007,9 @@ document {
 		" f3 = g*x+h*y+i*z ",
 		" M = matrix{{f1,f2,f3}} ",
 		" l = {x,y,z} ",
-		" dHPM = listDetComplex (1,l,koszul M, Strategy => Exact)",
+		" dHPM = listDetComplex (1,l,koszulComplex M, Strategy => Exact)",
 		" setRandomSeed 0",			    -- set seed to one known to work
-		" dHPM = listDetComplex (2,l,koszul M, Strategy => Numeric)"
+		" dHPM = listDetComplex (2,l,koszulComplex M, Strategy => Numeric)"
 		},
      
 	SeeAlso => {degHomPolMap, detComplex, minorsComplex, mapsComplex }
@@ -1024,21 +1019,21 @@ document {
 ------------------------ \ detComplex / ------------------------
 
 document {
-     	Key => {detComplex, (detComplex, ZZ, List, ChainComplex)},
-	Headline => "This function calculates the determinant of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
+     	Key => {detComplex, (detComplex, ZZ, List, Complex)},
+	Headline => "This function calculates the determinant of a graded Complex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
 	Usage => " deteriminantComplex = detComplex(d,v,C)",
 
 	Inputs => {
 		"c" => ZZ => {"integer corresponding to the degree of the strand of the chain complex."},
 		"v" => List => {"list of variables of the polynomial ring R to take into account for elimination"},
-		"C" => ChainComplex => {"a chain complex of free modules over a polynomial ring"}
+		"C" => Complex => {"a chain complex of free modules over a polynomial ring"}
 	},
 	Outputs => {
 		"aPolynomialList" => List => {"an element in frac(R) that is the alternate product of the elements in the list 'listDetComplex'"}
 	},
 
-	PARA {}, "This function calculates the determinant of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree. It corresponds to the alternate product of the elements in the list ", TO "listDetComplex",
-	PARA {}, "The input ChainComplex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
+	PARA {}, "This function calculates the determinant of a graded Complex with respect to a subset of the variables of the polynomial ring in a fixed degree. It corresponds to the alternate product of the elements in the list ", TO "listDetComplex",
+	PARA {}, "The input Complex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
 	PARA {}, "It is recommended not to defines rings as R=QQ[x,y][a,b,c] when the variables to eliminate are '{x,y}'. In this case, see ", TO "flattenRing", " for passing from ", TEX "$R=QQ[x,y][a,b,c]$", " to ", TEX "QQ[x,y,a,b,c].",
 	
 	EXAMPLE {" R=QQ[a,b,c,x,y] ",
@@ -1046,8 +1041,8 @@ document {
 		" f2 = 2*a*x+b*y ",
 		" M = matrix{{f1,f2}} ",
 		" l = {x,y} ",
-		" dHPM = detComplex (2,l,koszul M)",
-		" dHPM = detComplex (3,l,koszul M)"
+		" dHPM = detComplex (2,l,koszulComplex M)",
+		" dHPM = detComplex (3,l,koszulComplex M)"
 		},
 		
 	EXAMPLE {" R=QQ[a,b,c,d,e,f,g,h,i,x,y,z] ",
@@ -1056,10 +1051,10 @@ document {
 		" f3 = g*x+h*y+i*z ",
 		" M = matrix{{f1,f2,f3}} ",
 		" l = {x,y,z} ",
-		" dHPM = detComplex (1,l,koszul M)",
-		" dHPM = detComplex (2,l,koszul M)",
-		" dHPM = detComplex (1,l,koszul M, Strategy => Exact)",
-		" dHPM = detComplex (1,l,koszul M, Strategy => Numeric)"
+		" dHPM = detComplex (1,l,koszulComplex M)",
+		" dHPM = detComplex (2,l,koszulComplex M)",
+		" dHPM = detComplex (1,l,koszulComplex M, Strategy => Exact)",
+		" dHPM = detComplex (1,l,koszulComplex M, Strategy => Numeric)"
 		},
      
 	SeeAlso => {degHomPolMap, listDetComplex, minorsComplex, mapsComplex }
@@ -1076,7 +1071,7 @@ scan({detComplex, minorsComplex, listDetComplex}, fn -> document {
     Inputs => {
 	"d" => ZZ => {"integer corresponding to the degree of the strand of the chain complex."},
 	"v" => List => {"list of variables of the polynomial ring R to take into account for elimination"},
-	"C" => ChainComplex => {"a chain complex of free modules over a polynomial ring"},
+	"C" => Complex => {"a chain complex of free modules over a polynomial ring"},
 	"s" => Symbol => {"either ", TT "Exact", " or ", TT "Numeric"}	  
 	},
     
@@ -1329,7 +1324,7 @@ document {
 	
 	PARA {}, "This function basically computes the matrix of the first application in the resolution of (I:J) given in the article of Bruns, Kustin and Miller: 'The resolution of the generic residual intersection of a complete intersection', Journal of Algebra 128.",
 	
-	PARA {}, "The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_n)$", "forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous ", TEX "$I=(f_1,..,f_m)$", ", such that I is included in J and (I:J) is a residual intersection, one wants to to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than ", TT "v", ") surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with ", TO2((maxMinor),"maxMinor"),".",
+	PARA {}, "The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_n)$", "forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous ", TEX "$I=(f_1,..,f_m)$", ", such that I is included in J and (I:J) is a residual intersection, one wants to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than ", TT "v", ") surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with ", TO2((maxMinor),"maxMinor"),".",
 
 
 	EXAMPLE {" R=QQ[a_0,a_1,a_2,a_3,a_4,b_0,b_1,b_2,b_3,b_4,c_0,c_1,c_2,c_3,c_4,x,y,z]", 
@@ -1410,7 +1405,7 @@ document {
 	
 	PARA {}, "This function basically computes the matrix of the first application in the resolution of (I:J) given in the article of Bruns, Kustin and Miller: 'The resolution of the generic residual intersection of a complete intersection', Journal of Algebra 128.",
 	
-	PARA {}, "The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_m)$"," forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous ", TEX "$I=(f_1,..,f_n)$"," such that I is included in J and (I:J) is a residual intersection, one wants to to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than 'varList') surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with ", TO2((maxMinor),"maxMinor"),".",
+	PARA {}, "The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_m)$"," forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous ", TEX "$I=(f_1,..,f_n)$"," such that I is included in J and (I:J) is a residual intersection, one wants to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than 'varList') surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with ", TO2((maxMinor),"maxMinor"),".",
 
 
 	EXAMPLE {" R=QQ[a_0,a_1,a_2,a_3,a_4,b_0,b_1,b_2,b_3,b_4,c_0,c_1,c_2,c_3,c_4,x,y,z]", 
@@ -1586,7 +1581,7 @@ document {
 	    
     Consequences => {"This function basically computes the matrix of the first application in the resolution of (I:J) given in the article of Bruns, Kustin and Miller: 'The resolution of the generic residual intersection of a complete intersection', Journal of Algebra 128."},
 	
-	PARA {"The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_m)$", " forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous  ", TEX "$I=(f_1,..,f_n)$", ", such that I is included in J and (I:J) is a residual intersection, one wants to to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than 'varList') surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with", TO "maxMinor"}, 
+	PARA {"The first argument is a list of homogeneous polynomials ", TEX "$J=(g_1,..,g_m)$", " forming a complete intersection with respect to the variables 'varList'. Given a system of homogeneous  ", TEX "$I=(f_1,..,f_n)$", ", such that I is included in J and (I:J) is a residual intersection, one wants to compute a sort of resultant of (I:J). The second argument is the matrix M such that I=J.M. The output is a generically (with respect to the other variables than 'varList') surjective matrix such that the determinant of a maximal minor is a multiple of the resultant of I on the closure of the complementary of V(J) in V(I). Such a minor can be obtain with", TO "maxMinor"}, 
 	
 }
 
@@ -1625,7 +1620,7 @@ document {
        	},
        
     PARA{}, TT "regularityVar", " computes the Castelnuovo-Mumford regularity of homogeneous ideals in a polynomial ring by computing the shifts and degrees of generators in a minimal free resolution of the homogeneous ideal.",
-    PARA{}, "The list of variables ", TT "l", " contains the variables of the ring having degree 1. Those variables on the ring not in ", TT "l", " have automatically degree 0, as well as the the elements on the coefficient ring",
+    PARA{}, "The list of variables ", TT "l", " contains the variables of the ring having degree 1. Those variables on the ring not in ", TT "l", " have automatically degree 0, as well as the elements on the coefficient ring",
              
     	EXAMPLE {" R=QQ[a..i,x,y,z]",
 	"f1 = a*x+b*y+c*z",
@@ -1636,7 +1631,7 @@ document {
 	"regularityVar (l,I)"
       	},
     
-    SeeAlso => {coefficientRing, resolution, res}
+    SeeAlso => {coefficientRing, resolution}
      }
 
 ---------------------------------------------------------------
@@ -1669,7 +1664,7 @@ assert(dHPM_1 == MR)
 assert(dHPM_0 == gens ((ideal {x,y})^2))
 assert(toString dHPM_1 == toString Syl)
 
-mapC = mapsComplex (2, l, koszul M)
+mapC = mapsComplex (2, l, koszulComplex M)
 
 assert(dHPM_1 == mapC_0)
 
@@ -1692,7 +1687,7 @@ assert(dHPM_1 == MR)
 assert(dHPM_0 == gens (ideal {x,y,z}))
 assert(toString dHPM_1 == toString Jac)
 
-mapC = mapsComplex (1, l, koszul M)
+mapC = mapsComplex (1, l, koszulComplex M)
 
 assert(dHPM_1 == mapC_0)
 
@@ -1709,13 +1704,13 @@ f2 = 2*a*x+b*y;
 M = matrix{{f1,f2}};
 l = {x,y};
 
-mapC2 = mapsComplex (2, l, koszul M)
-minC2 = minorsComplex (2, l, koszul M)
+mapC2 = mapsComplex (2, l, koszulComplex M)
+minC2 = minorsComplex (2, l, koszulComplex M)
 
 assert(mapC2_0 == minC2_0)
 
-mapC3 = mapsComplex (3, l, koszul M)
-minC3 = minorsComplex (3, l, koszul M)
+mapC3 = mapsComplex (3, l, koszulComplex M)
+minC3 = minorsComplex (3, l, koszulComplex M)
 
 assert(mapC3_0_{0,1,2,3} == minC3_0)
 
@@ -1734,13 +1729,13 @@ f2 = d*x+e*y+f*z;
 f3 = g*x+h*y+i*z;
 M = matrix{{f1,f2,f3}};
 l = {x,y,z}
-mapC1 = mapsComplex (1, l, koszul M)
-minC1 = minorsComplex (1, l, koszul M)
+mapC1 = mapsComplex (1, l, koszulComplex M)
+minC1 = minorsComplex (1, l, koszulComplex M)
 
 assert(mapC1_0 == minC1_0)
 
-mapC2 = mapsComplex (2,l,koszul M)
-minC2 = minorsComplex (2,l,koszul M)
+mapC2 = mapsComplex (2,l,koszulComplex M)
+minC2 = minorsComplex (2,l,koszulComplex M)
 
 assert(mapC2_0_{0,1,2,3,4,6} == minC2_0)
 
@@ -1760,9 +1755,9 @@ f2 = 2*a*x+b*y;
 M = matrix{{f1,f2}};
 l = {x,y};
 
-detC2 = detComplex (2,l,koszul M)
-detC3 = detComplex (3,l,koszul M)
-detC4 = detComplex (4,l,koszul M)
+detC2 = detComplex (2,l,koszulComplex M)
+detC3 = detComplex (3,l,koszulComplex M)
+detC4 = detComplex (4,l,koszulComplex M)
 
 assert(detC2 == detC3)
 assert(detC2 == detC4)
@@ -1782,10 +1777,10 @@ f3 = g*x+h*y+i*z;
 M = matrix{{f1,f2,f3}};
 l = {x,y,z}
 
-detC1 = detComplex (1,l,koszul M)
-detC2 = detComplex (2,l,koszul M)
-detC3 = detComplex (3,l,koszul M)
-detC4 = detComplex (4,l,koszul M)
+detC1 = detComplex (1,l,koszulComplex M)
+detC2 = detComplex (2,l,koszulComplex M)
+detC3 = detComplex (3,l,koszulComplex M)
+detC4 = detComplex (4,l,koszulComplex M)
 
 assert(detC1 == detC2)
 assert(detC3 == detC4)
@@ -1797,14 +1792,25 @@ assert(detC1 == -detC3)
 -- Checking the function ciRes
 TEST ///
 
-R=QQ[a_0,a_1,a_2,a_3,a_4,b_0,b_1,b_2,b_3,b_4,c_0,c_1,c_2,c_3,c_4,x,y,z]; 
-G=matrix{{z,x^2+y^2}}; 
-H=matrix{{a_0*z+a_1*x+a_2*y,b_0*z+b_1*x+b_2*y,c_0*z+c_1*x+c_2*y},{a_3,b_3,c_3}}; 
+R=QQ[a_0,a_1,a_2,a_3,a_4,b_0,b_1,b_2,b_3,b_4,c_0,c_1,c_2,c_3,c_4,x,y,z];
+G=matrix{{z,x^2+y^2}};
+H=matrix{{a_0*z+a_1*x+a_2*y,b_0*z+b_1*x+b_2*y,c_0*z+c_1*x+c_2*y},{a_3,b_3,c_3}};
 L=eliminationMatrix({x,y,z},G,H, Strategy => ciResidual)
-maxCol L
+-- maxCol must return a maximal-rank column subset of L (rank L == 6 for this generic input)
+mc = maxCol L
+assert(numColumns mc#0 == rank L and rank mc#0 == rank L)
 
-
-assert(toString L == "matrix {{a_3, b_3, c_3, -a_3*b_1+a_1*b_3, 0, 0, -a_3*c_1+a_1*c_3, 0, 0, -b_3*c_1+b_1*c_3, 0, 0}, {0, 0, 0, -a_3*b_2+a_2*b_3, -a_3*b_1+a_1*b_3, 0, -a_3*c_2+a_2*c_3, -a_3*c_1+a_1*c_3, 0, -b_3*c_2+b_2*c_3, -b_3*c_1+b_1*c_3, 0}, {a_1, b_1, c_1, -a_3*b_0+a_0*b_3, 0, -a_3*b_1+a_1*b_3, -a_3*c_0+a_0*c_3, 0, -a_3*c_1+a_1*c_3, -b_3*c_0+b_0*c_3, 0, -b_3*c_1+b_1*c_3}, {a_3, b_3, c_3, 0, -a_3*b_2+a_2*b_3, 0, 0, -a_3*c_2+a_2*c_3, 0, 0, -b_3*c_2+b_2*c_3, 0}, {a_2, b_2, c_2, 0, -a_3*b_0+a_0*b_3, -a_3*b_2+a_2*b_3, 0, -a_3*c_0+a_0*c_3, -a_3*c_2+a_2*c_3, 0, -b_3*c_0+b_0*c_3, -b_3*c_2+b_2*c_3}, {a_0, b_0, c_0, 0, 0, -a_3*b_0+a_0*b_3, 0, 0, -a_3*c_0+a_0*c_3, 0, 0, -b_3*c_0+b_0*c_3}}")
+-- pin the ciResidual matrix entry-by-entry (avoids brittle toString comparison)
+assert(numRows L == 6 and numColumns L == 12)
+assert(ring L === R)
+assert(entries L == {
+    {a_3, b_3, c_3, -a_3*b_1+a_1*b_3, 0, 0, -a_3*c_1+a_1*c_3, 0, 0, -b_3*c_1+b_1*c_3, 0, 0},
+    {0, 0, 0, -a_3*b_2+a_2*b_3, -a_3*b_1+a_1*b_3, 0, -a_3*c_2+a_2*c_3, -a_3*c_1+a_1*c_3, 0, -b_3*c_2+b_2*c_3, -b_3*c_1+b_1*c_3, 0},
+    {a_1, b_1, c_1, -a_3*b_0+a_0*b_3, 0, -a_3*b_1+a_1*b_3, -a_3*c_0+a_0*c_3, 0, -a_3*c_1+a_1*c_3, -b_3*c_0+b_0*c_3, 0, -b_3*c_1+b_1*c_3},
+    {a_3, b_3, c_3, 0, -a_3*b_2+a_2*b_3, 0, 0, -a_3*c_2+a_2*c_3, 0, 0, -b_3*c_2+b_2*c_3, 0},
+    {a_2, b_2, c_2, 0, -a_3*b_0+a_0*b_3, -a_3*b_2+a_2*b_3, 0, -a_3*c_0+a_0*c_3, -a_3*c_2+a_2*c_3, 0, -b_3*c_0+b_0*c_3, -b_3*c_2+b_2*c_3},
+    {a_0, b_0, c_0, 0, 0, -a_3*b_0+a_0*b_3, 0, 0, -a_3*c_0+a_0*c_3, 0, 0, -b_3*c_0+b_0*c_3}
+    })
 ///
 
 
@@ -1815,7 +1821,14 @@ TEST ///
 R=ZZ[d_0..d_3,k_1,k_2]
 L=ciResDeg({d_0,d_1,d_2,d_3},{k_1,k_2})
 
-assert(toString L == "{d_0+d_1+d_2+d_3-3*k_2-3, {d_1*d_2*d_3-d_1*k_1*k_2-d_2*k_1*k_2-d_3*k_1*k_2+k_1^2*k_2+k_1*k_2^2, d_0*d_2*d_3-d_0*k_1*k_2-d_2*k_1*k_2-d_3*k_1*k_2+k_1^2*k_2+k_1*k_2^2, d_0*d_1*d_3-d_0*k_1*k_2-d_1*k_1*k_2-d_3*k_1*k_2+k_1^2*k_2+k_1*k_2^2, d_0*d_1*d_2-d_0*k_1*k_2-d_1*k_1*k_2-d_2*k_1*k_2+k_1^2*k_2+k_1*k_2^2}}")
+-- ciResDeg returns {regularity, partial-degree list}: pin via polynomial equality, not toString
+assert(L#0 == d_0+d_1+d_2+d_3 - 3*k_2 - 3)
+assert(L#1 == {
+    d_1*d_2*d_3 - d_1*k_1*k_2 - d_2*k_1*k_2 - d_3*k_1*k_2 + k_1^2*k_2 + k_1*k_2^2,
+    d_0*d_2*d_3 - d_0*k_1*k_2 - d_2*k_1*k_2 - d_3*k_1*k_2 + k_1^2*k_2 + k_1*k_2^2,
+    d_0*d_1*d_3 - d_0*k_1*k_2 - d_1*k_1*k_2 - d_3*k_1*k_2 + k_1^2*k_2 + k_1*k_2^2,
+    d_0*d_1*d_2 - d_0*k_1*k_2 - d_1*k_1*k_2 - d_2*k_1*k_2 + k_1^2*k_2 + k_1*k_2^2
+    })
 
 ///
 
@@ -1832,12 +1845,26 @@ l = {x,y,z};
 CmR = (eliminationMatrix (l,G,H, Strategy => CM2Residual))
 
 I := (ideal (G*H): ideal G);
-Mat= (mapsComplex(regularity I -1, l, res I))_0
+Mat= (mapsComplex(regularity I -1, l, freeResolution I))_0
 
 fittI = minors(10,Mat)
 fittCmR = minors(10,CmR)
 
-assert(toString CmR == "matrix {{0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -X, 1, 0, -Y+1, 0, 0}, {0, 0, -Y, 0, 0, 0, -Z, 0, 1, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, -X, 0, 0, -Y+1, 0}, {0, 0, X, -Y, 0, 0, 0, -Z, -X, -Z, 0, -Y+1}, {0, 0, 0, 0, -Y, -1, 0, 0, -Z, 0, 0, 0}, {X, Y-1, 0, 0, 0, Z, 0, 0, 0, 0, 0, 0}, {0, 0, 0, X, 0, 0, 0, 0, 0, 0, -Z, 0}, {0, 0, 0, 0, X, 0, 0, 0, 0, 0, 0, -Z}, {X, Y, 0, 0, 0, Z, 0, 0, 0, 0, 0, 0}}")
+-- pin the CM2Residual matrix entry-by-entry (avoids brittle toString comparison)
+assert(numRows CmR == 10 and numColumns CmR == 12)
+assert(ring CmR === R)
+assert(entries CmR == {
+    {0, 0,  0,  0,  0,  0,  1,  0,  0,  0,    0,    0  },
+    {0, 0,  0,  0,  0,  0, -X,  1,  0, -Y+1,  0,    0  },
+    {0, 0, -Y,  0,  0,  0, -Z,  0,  1,  0,    0,    0  },
+    {-1,0,  0,  0,  0,  0,  0, -X,  0,  0,   -Y+1,  0  },
+    {0, 0,  X, -Y,  0,  0,  0, -Z, -X, -Z,   0,   -Y+1 },
+    {0, 0,  0,  0, -Y, -1,  0,  0, -Z,  0,    0,    0  },
+    {X, Y-1,0,  0,  0,  Z,  0,  0,  0,  0,    0,    0  },
+    {0, 0,  0,  X,  0,  0,  0,  0,  0,  0,   -Z,    0  },
+    {0, 0,  0,  0,  X,  0,  0,  0,  0,  0,    0,   -Z  },
+    {X, Y,  0,  0,  0,  Z,  0,  0,  0,  0,    0,    0  }
+    })
 
 assert(fittI == fittCmR)
 
@@ -1850,7 +1877,9 @@ TEST ///
 R = ZZ[d1,d2,d3,k1,k2]
 DRD = detResDeg(1, {d1,d2,d3},{k1,k2},R)
 
-assert(toString DRD == "{d1+d2+d3-k1-2*k2-1, {d2+d3-k1-k2, d1+d3-k1-k2, d1+d2-k1-k2}}")
+-- detResDeg returns {regularity, partial-degree list}: pin via polynomial equality, not toString
+assert(DRD#0 == d1+d2+d3 - k1 - 2*k2 - 1)
+assert(DRD#1 == {d2+d3-k1-k2, d1+d3-k1-k2, d1+d2-k1-k2})
 ///
 
 
@@ -1863,7 +1892,14 @@ R = QQ[a_0..a_5,b_0..b_5,x,y]
 M = matrix{{a_0*x+a_1*y,a_2*x+a_3*y,a_4*x+a_5*y},{b_0*x+b_1*y,b_2*x+b_3*y,b_4*x+b_5*y}}
 Res = eliminationMatrix(1,{x,y},M, Strategy => determinantal)
 
-assert(toString Res == "matrix {{-a_2*b_0+a_0*b_2, -a_4*b_0+a_0*b_4, -a_4*b_2+a_2*b_4}, {-a_3*b_0-a_2*b_1+a_1*b_2+a_0*b_3, -a_5*b_0-a_4*b_1+a_1*b_4+a_0*b_5, -a_5*b_2-a_4*b_3+a_3*b_4+a_2*b_5}, {-a_3*b_1+a_1*b_3, -a_5*b_1+a_1*b_5, -a_5*b_3+a_3*b_5}}")
+-- pin the determinantal matrix entry-by-entry (avoids brittle toString comparison)
+assert(numRows Res == 3 and numColumns Res == 3)
+assert(ring Res === R)
+assert(entries Res == {
+    {-a_2*b_0+a_0*b_2,                  -a_4*b_0+a_0*b_4,                  -a_4*b_2+a_2*b_4                },
+    {-a_3*b_0-a_2*b_1+a_1*b_2+a_0*b_3,  -a_5*b_0-a_4*b_1+a_1*b_4+a_0*b_5,  -a_5*b_2-a_4*b_3+a_3*b_4+a_2*b_5},
+    {-a_3*b_1+a_1*b_3,                  -a_5*b_1+a_1*b_5,                  -a_5*b_3+a_3*b_5                }
+    })
 
 ///
 
@@ -1880,4 +1916,169 @@ l = {x,y,z}
 
 assert(regularityVar (l,I)==1)
 
+///
+
+-- Test 12
+-- Checking maxCol output directly (EliminationMatrices.m2:202-214)
+TEST ///
+R = QQ[x,y,z]
+-- maxCol returns {N, c} where N = M_c is a maximal-rank column subset and c is the index list
+mc = maxCol id_(R^3)
+assert(mc#0 == id_(R^3))
+assert(mc#1 == {0,1,2})
+
+-- rank-deficient case: the second column is redundant
+M = matrix{{1_R, 2_R, 0_R}, {0_R, 0_R, 1_R}}
+assert(rank M == 2)
+mc2 = maxCol M
+assert(numColumns mc2#0 == 2 and rank mc2#0 == 2)
+assert(mc2#1 == {0,2})
+
+-- zero matrix: no maximal-rank columns
+mc3 = maxCol matrix{{0_R, 0_R}, {0_R, 0_R}}
+assert(numColumns mc3#0 == 0 and mc3#1 == {})
+///
+
+-- Test 13
+-- Checking maxMinor output directly (EliminationMatrices.m2:223-228)
+TEST ///
+R = QQ[x,y,z]
+-- maxMinor returns a square r x r full-rank submatrix where r = rank M
+M = matrix{{1_R, 0_R, 1_R, 1_R}, {0_R, 1_R, 1_R, 0_R}, {0_R, 0_R, 0_R, 1_R}}
+assert(rank M == 3)
+mm = maxMinor M
+assert(numRows mm == 3 and numColumns mm == 3)
+assert(rank mm == 3)
+
+-- on a square full-rank matrix, maxMinor is the matrix itself
+assert(maxMinor id_(R^3) == id_(R^3))
+///
+
+-- Test 14
+-- Checking Numeric and Exact Strategy values for maxCol (EliminationMatrices.m2:157-167)
+TEST ///
+setRandomSeed 0
+R = QQ[a,b,c]
+M = matrix{{a, b, c, a+b}, {b, c, a, b+c}, {a, a, b, a}}
+r = rank M
+-- both strategies must produce a maximal full-rank column subset
+mcE = maxCol(M, Strategy => Exact)
+mcN = maxCol(M, Strategy => Numeric)
+assert(numColumns mcE#0 == r and rank mcE#0 == r)
+assert(numColumns mcN#0 == r and rank mcN#0 == r)
+-- unknown Strategy must be rejected (EliminationMatrices.m2:164)
+assert(try (maxCol(M, Strategy => Foo); false) else true)
+///
+
+-- Test 15
+-- Checking listDetComplex / detComplex agreement (EliminationMatrices.m2:357-391)
+TEST ///
+R=QQ[a,b,c,x,y]
+f1 = a*x^2+b*x*y+c*y^2
+f2 = 2*a*x+b*y
+M = matrix{{f1,f2}}
+l = {x,y}
+
+ldc = listDetComplex(2, l, koszulComplex M)
+dc  = detComplex(2, l, koszulComplex M)
+-- detComplex is documented as the alternating product of listDetComplex entries
+manual = ldc#0
+for i from 1 to (length ldc) - 1 do (
+    if even i then manual = manual * (ldc#i)
+    else            manual = manual / (ldc#i);
+)
+assert(manual == dc)
+
+-- both Numeric and Exact strategies should land on the same alternate-product invariant
+ldcN = listDetComplex(2, l, koszulComplex M, Strategy => Numeric)
+dcN  = detComplex(2, l, koszulComplex M, Strategy => Numeric)
+manualN = ldcN#0
+for i from 1 to (length ldcN) - 1 do (
+    if even i then manualN = manualN * (ldcN#i)
+    else            manualN = manualN / (ldcN#i);
+)
+assert(manualN == dcN)
+///
+
+-- Test 16
+-- Checking macaulayFormula structure (EliminationMatrices.m2:423-445)
+TEST ///
+R = QQ[a,b,c,x,y]
+M = matrix{{a*x^2+b*x*y+c*y^2, 2*a*x+b*y}}
+mf = macaulayFormula({x,y}, M)
+-- macaulayFormula returns a Sequence (C, D) such that det(C)/det(D) is the Macaulay resultant
+assert(class mf === Sequence and length mf == 2)
+-- For this complete intersection in 2 vars, the "missing principal minor" submatrix is empty
+assert(numRows mf#1 == 0 and numColumns mf#1 == 0)
+-- C agrees in entries with the Macaulay elimination matrix
+em = eliminationMatrix({x,y}, M)
+assert(entries mf#0 == entries em)
+-- and they have the same determinant
+assert(det mf#0 == det em)
+///
+
+-- Test 17
+-- Checking bezoutianMatrix structure (EliminationMatrices.m2:458-502)
+TEST ///
+R = QQ[a,b,c,x]
+-- bezoutianMatrix needs n+1 affine polys in n variables; here n=1, two polys of degrees 1,2
+p = matrix{{a*x+b, c*x^2+a*x+1}}
+bm = bezoutianMatrix({x}, p)
+-- result is a square matrix in the original ring R
+assert(ring bm === R)
+assert(numRows bm == numColumns bm)
+-- size matches the max input degree (= 2 here)
+assert(numRows bm == 2)
+-- pin entries: bezoutian of (ax+b, cx^2+ax+1) wrt x
+-- (compare on entries; the source/target degree decoration may differ from a fresh matrix{...})
+assert(entries bm == {{a*c, b*c}, {b*c, a*b - a}})
+///
+
+-- Test 18
+-- Checking ciResDegGH agrees with the first entry of ciResDeg for the same degree data
+-- (EliminationMatrices.m2:534-543, 551-560)
+TEST ///
+R = QQ[a_0..a_3, b_0..b_3, c_0..c_3, x,y,z]
+G = matrix{{z, x^2+y^2}}
+H = matrix{{a_0*z+a_1*x+a_2*y, b_0*z+b_1*x+b_2*y, c_0*z+c_1*x+c_2*y},
+           {a_3,               b_3,               c_3              }}
+d = ciResDegGH({x,y,z}, G, H)
+assert(class d === ZZ)
+-- ciResDegGH uses partial degrees in {x,y,z}; here pdeg(G,var) = {1,2} and pdeg(G*H,var) = {2,2,2}
+-- and ciResDeg's first entry uses exactly the same formula on the integer lists.
+assert(d == (ciResDeg({2,2,2}, {1,2}))#0)
+///
+
+-- Test 19
+-- Checking the byResolution strategy on a complete intersection
+-- (EliminationMatrices.m2:756-759, 771-774)
+TEST ///
+R = QQ[a,b,c,x,y]
+M = matrix{{a*x^2 + b*x*y + c*y^2, 2*a*x + b*y}}
+-- byResolution computes (mapsComplex(regularityVar(var,I), var, freeResolution I))_0
+-- where I = minors(r+1, g) for the (ZZ, List, Matrix) overload
+er = eliminationMatrix(0, {x,y}, M, Strategy => byResolution)
+assert(class er === Matrix)
+assert(ring er === R)
+I = minors(1, M)
+expected = (mapsComplex(regularityVar({x,y}, I), {x,y}, freeResolution I))#0
+assert(er == expected)
+-- An unknown Strategy is rejected (EliminationMatrices.m2:733, getFamilyStrategy error branch)
+assert(try (eliminationMatrix(0, {x,y}, M, Strategy => Foo); false) else true)
+///
+
+-- Test 20
+-- Checking the 2-poly / 1-var dispatch routes to the Sylvester matrix
+-- (EliminationMatrices.m2:747)
+TEST ///
+R = QQ[s,t,u,v][z]
+g1 = z^2 + s*z + t
+g2 = z + u*z + v
+Mz = matrix{{g1, g2}}
+em = eliminationMatrix({z}, Mz)
+sm = sylvesterMatrix(g1, g2, z)
+-- The 2-poly / 1-var auto-dispatch in eliminationMatrix(List, Matrix) goes through
+-- sylvesterMatrix from the Elimination package; pin that they agree.
+assert(em == sm)
+assert(numRows em == 3 and numColumns em == 3)
 ///

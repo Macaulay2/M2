@@ -223,7 +223,7 @@ sparseMonodromySolve PolySystem := o ->  PS -> (
     if numgens coefficientRing R > 0 then error "expected parameter-less system";
     W := symbol W;
     AR := CC[apply(ind,i->W_i)][gens R];
-    polysP := transpose matrix{for i to #polys-1 list -- system with parameteric coefficients and same support 
+    polysP := transpose matrix{for i to #polys-1 list -- system with parametric coefficients and same support 
         sum(exponents polys#i, t->W_(i,t)*AR_(t))};
     P := if o#"new tracking routine" then gateSystem polysP else polySystem polysP;
     targetParam := point sub(fold(polys/coefficients/last,(a,b)->a||b),CC);
@@ -351,7 +351,7 @@ staticMonodromySolve (System, AbstractPoint, List) := o -> (PS, p0, sols0) -> (
     local node1;
     if isGS then (
     	p1 := point random(CC^1, CC^(length coordinates p0));
-    	sols1 := trackHomotopy(specialize(parametricSegmentHomotopy PS, transpose(matrix p0|matrix p1)), sols0);
+    	sols1 := trackHomotopy(specialize(getParametricSegmentHomotopy HG, transpose(matrix p0|matrix p1)), sols0);
 	node1 = addNode(HG, p1, pointArray sols1);
 	) else node1 = addNode(HG, p0, pointArray sols0);
     setTrackTime(HG, 0);    

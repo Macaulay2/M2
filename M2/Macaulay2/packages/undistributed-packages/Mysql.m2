@@ -7,7 +7,7 @@ exportFrom_Core {
      "mysqlGetServerInfo",
      "mysqlGetServerVersion", "mysqlGetHostInfo", "mysqlInfo", "mysqlPing",
      "mysqlListDbs", "mysqlRealConnect", "mysqlRealQuery", "mysqlStoreResult",
-     "mysqlUseResult"
+     "mysqlUseResult", "MysqlResult", "MysqlField"
      }
 
 export {

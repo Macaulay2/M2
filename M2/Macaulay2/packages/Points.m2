@@ -4,8 +4,7 @@ newPackage(
     	Version => "3.0", 
     	Date => "29 June 2008, revised by DE June 2016, revised by FG and JWS June 2018",
     	Authors => {
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.uiuc.edu/Macaulay2/"},
-     	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca"},
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://macaulay2.com/"},
 	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"},
 	     {Name => "David Eisenbud", Email => "de@msri.org"},
 	     {Name => "Federico Galetto", Email => "galetto.federico@gmail.com", HomePage => "http://math.galetto.org"},
@@ -13,7 +12,8 @@ newPackage(
 	     },
     	Headline => "sets of points",
 	Keywords => {"Examples and Random Objects"},
-	PackageExports => {"LexIdeals"},
+        PackageImports => {"Complexes"},
+        PackageExports => {"LexIdeals"},
     	DebuggingMode => false
     	)
 
@@ -777,7 +777,7 @@ doc ///
     Example
      expectedBetti(11,5)
    Caveat
-    The MRC is false, so these are sometimes not the actual betti numbers.
+    The MRC is false, so these are sometimes not the actual Betti numbers.
    SeeAlso
     expectedBetti
     minMaxResolution
@@ -798,7 +798,7 @@ doc ///
    Description
     Text
      prints betti tables corresponding to the minimal resolution conjecture
-     and to the lex ideal with the same hilbert function
+     and to the lex ideal with the same Hilbert function
     Example
      minMaxResolution(3,5)
    SeeAlso
@@ -1422,6 +1422,33 @@ TEST///
       z^4-3*x*y^2*z^5+4*y^3*z^5,
       y^7*z^2-4*y^6*z^3+6*y^5*z^4-4*y^4*z^5+y^3*z^6})
      assert(G == projectiveFatPointsByIntersection(M,mults,R))
+///
+
+TEST ///
+-- points: build the ideal of a set of projective points by intersecting per-point ideals
+R = ZZ/101[a,b,c];
+pmat = matrix(R, {{1,0,0},{0,1,0},{0,0,1}});
+assert(points pmat == ideal(a*b, a*c, b*c));
+///
+
+TEST ///
+-- minMaxResolution prints the predicted and lex Betti tables and returns null
+assert(minMaxResolution(3,5) === null);
+///
+
+TEST ///
+-- VerifyPoints option: default and VerifyPoints=>false agree on a clean projective-points matrix;
+-- the default also tolerates duplicate columns by cleaning them up; projectiveFatPoints accepts the option too.
+M = matrix {{1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}};
+R = QQ[x,y,z];
+(inG1, G1) = projectivePoints(M, R);
+(inG2, G2) = projectivePoints(M, R, VerifyPoints => false);
+assert(G1 == G2);
+Mdup = M | matrix{{1},{0},{0}};
+(inGd, Gd) = projectivePoints(Mdup, R);
+assert(Gd == G1);
+(inGf, Gf) = projectiveFatPoints(M, {1,1,1,1}, R, VerifyPoints => false);
+assert(instance(Gf, List));
 ///
 
 end

@@ -220,8 +220,6 @@ minprimesHelper = (I, key, opts) -> (
     if I == 1 then return {};
     J := first flattenRing I;
     if J == 0 then return {I};
-    -- TODO: make presentation work for ZZ, then move this line
-    if ring I === ZZ then return ideal \ first \ toList factor (trim I)_0;
     S := ring presentation ring J;
 
     strategy := opts.Strategy;
@@ -253,7 +251,8 @@ strat0 = ({Linear, DecomposeMonomials}, infinity)
 strat1 = ({Linear, DecomposeMonomials, (Factorization, 3)}, infinity)
 BirationalStrat = ({strat1, (Birational, infinity)}, infinity)
 NoBirationalStrat = strat1
-stratEnd = {(IndependentSet, infinity), SplitTower, CharacteristicSets}
+--stratEnd = {(IndependentSet, infinity), SplitTower, CharacteristicSets}
+stratEnd = {(IndependentSet, infinity), CharacteristicSets}
 
 algorithms#(minimalPrimes, Ideal) = new MutableHashTable from {
     "Legacy" => (opts, I) -> (
@@ -310,10 +309,22 @@ algorithms#(minimalPrimes, Ideal) = new MutableHashTable from {
 	minI := dual radical monomialIdeal I;
 	-- TODO: make sure (monomialIdeal, MonomialIdeal) isn't forgetful
 	cast \ if minI == 1 then { 0_R } else support \ minI_*),
+
+    ZZ => (
+	isZZ := R -> (
+	    R === ZZ or
+	    -- ZZ[] (or ZZ[][], ZZ[][][], etc.)
+	    instance(R, PolynomialRing) and numgens R == 0 and
+	    isZZ coefficientRing R);
+	(opts, I) -> (
+	    R := ring I;
+	    if isZZ R or instance(R, QuotientRing) and isZZ baseRing R then (
+		n := gcd append(apply(I_*, a -> a^ZZ), char R);
+		apply(first \ toList factor n, p -> ideal p_R)))),
     }
 
 -- Installing hooks for (minimalPrimes, Ideal)
-scan({"Legacy", "NoBirational", "Birational", Hybrid, Monomial}, strategy ->
+scan({"Legacy", "NoBirational", "Birational", Hybrid, Monomial, ZZ}, strategy ->
     addHook(key := (minimalPrimes, Ideal), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------
@@ -501,7 +512,8 @@ makeFiberRings(List,Ring) := (basevars,R) -> (
       allVars := set gens R;
       fiberVars := rsort toList(allVars - set basevars);
       basevars = rsort basevars;
-      S = (coefficientRing R) monoid([fiberVars,basevars,MonomialOrder=>Lex]);
+      degs := join(fiberVars/degree, basevars/degree);
+      S = (coefficientRing R) monoid([fiberVars,basevars,Degrees => degs, MonomialOrder=>Lex]);
           --MonomialOrder=>{#fiberVars,#basevars}]);
       KK := frac((coefficientRing R)(monoid [basevars]));
       SF := KK (monoid[fiberVars, MonomialOrder=>Lex]);

@@ -1,6 +1,7 @@
 doc ///
   Key
     Beta
+   (Beta,InexactNumber,InexactNumber)
   Headline
     Beta function
   Usage
@@ -24,6 +25,7 @@ doc ///
 doc ///
   Key
     regularizedBeta
+   (regularizedBeta,InexactNumber,InexactNumber,InexactNumber)
   Headline
     regularized beta function
   Usage
@@ -49,6 +51,7 @@ doc ///
 doc ///
   Key
     inverseRegularizedBeta
+   (inverseRegularizedBeta,InexactNumber,InexactNumber,InexactNumber)
   Headline
     inverse of the regularized beta function
   Usage

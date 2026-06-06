@@ -22,7 +22,7 @@ namespace BIBasis
     {
         if (!CheckMatrix(matrix))
         {
-            return NULL;
+            return nullptr;
         }
         
         switch(GetSettingsManager().GetMonomialOrder())
@@ -43,7 +43,7 @@ namespace BIBasis
                     return basis.ToMatrix();
                 }
             default:
-                return 0;
+                return nullptr;
         };
     }
 

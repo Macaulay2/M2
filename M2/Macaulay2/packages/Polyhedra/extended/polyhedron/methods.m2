@@ -11,7 +11,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
      if contains(P,convexHull p) then (
 	      (M,v) := halfspaces P;
      	   (N,w) := hyperplanes P;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  v = promote(v,QQ);
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
@@ -48,8 +48,7 @@ polar Polyhedron := P -> getProperty(P, computedPolar)
 -- PURPOSE : Checks if a polytope is very ample
 --   INPUT : 'P'  a Polyhedron, which must be compact
 --  OUTPUT : 'true' or 'false'
-isVeryAmple = method()
-isVeryAmple Polyhedron := P -> getProperty(P, computedVeryAmple)
+isVeryAmple Polyhedron := {} >> o -> P -> getProperty(P, computedVeryAmple)
 
 
 -- PURPOSE : Computing the vertex-edge-matrix of a polyhedron
@@ -119,7 +118,7 @@ faceFan Polyhedron := P -> (
 
 
 -- PURPOSE : Computing the cell decomposition of a compact polyhedron given by a weight vector on the lattice points
---   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
+--   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with lattice points of 'P' 
 --     	    	       many entries
 --  OUTPUT : A list of polyhedra that are the corresponding cell decomposition
 regularSubdivision = method(TypicalValue => List)
@@ -134,13 +133,21 @@ regularSubdivision (Polyhedron,Matrix) := (P,w) -> (
    apply (S, s -> convexHull LP_s)
 )
 
-regularSubdivision (Matrix,Matrix) := (M,w) -> (
+regularSubdivision (Matrix,Matrix) := (MM, w) -> (
+   M := promote(MM, QQ);
    n := numColumns M;
    -- Checking for input errors
    if numColumns w != numColumns M or numRows w != 1 then error("The weight must be a one row matrix with number of points many entries");
    P := convexHull(M||w,matrix (toList(numRows M:{0})|{{1}}));
    F := select(faces (1,P), f -> #(f#1) ==0);
-   apply (F, f -> f#0)
+   pointIndices := new MutableHashTable;
+   for i from 0 to numcols M-1 do
+      pointIndices#(M_{i}) = i;
+   permutation := new MutableHashTable;
+   vertP := (vertices P)^{0..numrows M - 1};
+   for i from 0 to numcols vertP - 1 do
+      permutation#i = pointIndices#(vertP_{i});
+   sort apply (F, f -> sort apply(f#0, i->permutation#i))
   )
 
 
@@ -194,8 +201,8 @@ polarFace(Polyhedron, Polyhedron) := (f, P) -> (
 -- PURPOSE : Checks if a lattice polytope is reflexive
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
-isReflexive = method(TypicalValue => Boolean)
-isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
+isReflexive = method(TypicalValue => Boolean, Options => true)
+isReflexive Polyhedron := {} >> o -> (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
 
 
 -- PURPOSE : Triangulating a compact Polyhedron
@@ -294,6 +301,21 @@ interiorPoint Polyhedron := P -> (
      ones := matrix toList(n:{1/n});
      -- Take the '1/n' weighted sum of the vertices
      Vm * ones)
+
+
+-- PURPOSE : Computing the barycenter/centroid a Polyhedron 
+--   INPUT : 'P',  a Polyhedron
+--  OUTPUT : 'p',  a point given as a matrix
+centroid = method(TypicalValue => Matrix)
+centroid Polyhedron := Matrix => P -> (
+    if not isCompact P then error "the polyhedron must be compact";
+    totalVolume := volume P;
+    sum(barycentricTriangulation P, delta -> (
+            barycenter := (sum delta) / #delta;
+            (volume convexHull delta / totalVolume) * barycenter
+        )
+    )
+)
 
 
 -- PURPOSE : Computing the face of a Polyhedron where a given weight attains its minimum

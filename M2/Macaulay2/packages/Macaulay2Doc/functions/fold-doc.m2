@@ -4,7 +4,8 @@
 doc///
  Key
   fold
-  (fold, Function, Thing, VisibleList)
+  (fold, Function, Thing)
+  (fold, Function, Thing, Thing)
   (fold, Function, VisibleList)
   (fold, VisibleList, Thing, Function)
   (fold, VisibleList, Function)
@@ -19,6 +20,7 @@ doc///
   f:Function
   x:Thing
   L:VisibleList
+    or an instance of a class with the @TO iterator@ method installed
  Outputs
   M:List
  Description
@@ -51,6 +53,13 @@ doc///
    fold({a,b,c,d,e}, identity)
    fold({a,b,c,d}, e, identity)  
    fold({2,3,2,1}, 2, (x, y) -> x^y)
+  Text
+   If @TT "L"@ is an instance of class the the @TO iterator@ method installed,
+   e.g., a string, then it may also be used with @TT "fold"@, but only the
+   versions with @TT "f"@ as the first argument.
+  Example
+   fold(identity, "abcde")
+   fold(identity, "a", "bcde")
   Text
    The difference between @TO fold@ and {\tt accumulate} is that {\tt fold} returns the
    final result of all the nested evaluations of {\tt f}, while {\tt accumulate} lists 
