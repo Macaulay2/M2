@@ -22,7 +22,7 @@
 
 #include "m2tbb.hpp"                                   // for TBB headers
 #include "betti.hpp"                                   // for BettiDisplay
-#include "engine-exports.h"                            // for M2_arrayint
+#include "interface/m2-types.h"                        // for M2_arrayint
 #include "schreyer-resolution/res-memblock.hpp"        // for ResMemoryBlock
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"  // for component_index

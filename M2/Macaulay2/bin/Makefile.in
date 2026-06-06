@@ -22,7 +22,7 @@ endif
 NORULES = yes
 include ../../include/config.Makefile
 include ../d/Makefile.files
-include @srcdir@/../e/Makefile.files
+include ../e/Makefile.files
 include @srcdir@/../system/Makefile.files
 
 %.o : %.c
@@ -33,14 +33,14 @@ include @srcdir@/../system/Makefile.files
 %.o : %.s
 
 # warning: static initializers are run in left-to-right order, and some of them depend on others of them
-M2_OBJECTS := $(SYSTEM_OFILES:%=../system/%) $(ENGINE_OFILES:%=../e/%) $(M2_OBJECTS:%=../d/%) $(patsubst %, ../d/%.o, $(M2_DNAMES))
+M2_OBJECTS := $(SYSTEM_OFILES:%=../system/%) $(M2_OBJECTS:%=../d/%) $(patsubst %, ../d/%.o, $(M2_DNAMES)) $(LIBENGINE)
 
 EXEFILE = @pre_bindir@/M2@EXE@
 M2SCRIPT = @pre_bindir@/M2
 
 all: $(EXEFILE) $(M2SCRIPT) 
 
-$(M2SCRIPT): M2
+$(M2SCRIPT): M2 @pre_bindir@
 	@INSTALL_SCRIPT@ M2 $(M2SCRIPT)
 
 relink:
@@ -174,8 +174,8 @@ endif
 ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@BUILDLIST@,)
 ifneq (@OBJDUMP@,false)
-	@OBJDUMP@ -x "$@".tmp | egrep RPATH || [ $$? -lt 2 ]
-	@OBJDUMP@ -x "$@".tmp | egrep "RPATH +@librariesdir@$$" || [ $$? -lt 2 ]
+	@OBJDUMP@ -x "$@".tmp | grep -E RPATH || [ $$? -lt 2 ]
+	@OBJDUMP@ -x "$@".tmp | grep -E "RPATH +@librariesdir@$$" || [ $$? -lt 2 ]
 else
 	echo "--warning: 'objdump' not installed, can't check rpath in M2 binary"
 endif
@@ -199,4 +199,3 @@ M2: M2.in; cd ../..; ./config.status Macaulay2/bin/M2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/bin relink "
 # End:
-.NOTPARALLEL:

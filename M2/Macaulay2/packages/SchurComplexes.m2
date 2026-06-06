@@ -1,7 +1,7 @@
 newPackage(
 	"SchurComplexes",
-    	Version => "1.1", 
-    	Date => "June 1, 2019",
+    	Version => "1.2", 
+    	Date => "November 12, 2025",
     	Authors => {
 	    {Name => "Michael K. Brown", 
 		  Email => "mkbrown5@wisc.edu", 
@@ -27,6 +27,7 @@ newPackage(
 	    },
     	Headline => "Schur functors of complexes",
 	Keywords => {"Representation Theory", "Homological Algebra"},
+    PackageExports => {"Complexes"},
 	Certification => {
 	     "journal name" => "Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",
@@ -35,7 +36,6 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2019/9-2/p02.xhtml",
 	     "published article DOI" => "10.2140/jsag.2019.9.111",
 	     "published code URI" => "https://msp.org/jsag/2019/9-2/jsag-v9-n2-x02-SchurComplexes.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SchurComplexes.m2",
 	     "release at publication" => "61384b8d76f8bfef42010911dae401d24bcc6ebe",	    -- git commit number in hex
 	     "version at publication" => "1.1",
 	     "volume number" => "9",
@@ -164,67 +164,85 @@ tableauxDiff(ZZ, ZZ, List, HashTable) := (m,n,lT,D) -> (
 --Output: 
 --a ChainComplex, the Schur Complex of F associated to the given partition. When F = 0, the output is a 
 --new ChainComplex.
-schurComplex= (Lambda,F) ->
+schurComplex = (Lambda,F) ->
 (
     lambda:=new Partition from Lambda;
-    Size:=sum Lambda;
-    Min:=min{min(F),0};
-    F=F[2*Min];----moves F into non-negative homological degree
+    --Size:=sum Lambda;
+    --Min:=min{min(F),0};
+    --F=F[2*Min];----moves F into non-negative homological degree
     R := ring(F);
-    l := max(F);
-    evengen := flatten for i from 0 to l//2 list (
-    d := numgens F_(2*i);
-    for j from 1 to d list (2*i,j)
+    m0 := min(F);
+    m1 := max(F);
+    evengen := flatten for i from m0 to m1//2 list (
+        d := numgens F_(2*i);
+        for j from 1 to d list (2*i,j)
         );
-        n := #evengen; --number of even variables
-    oddgen := flatten for i from 0 to (l-1)//2 list (
-    d := numgens F_(2*i+1);
-    for j from 1 to d list(2*i+1,j)
+    n := #evengen; --number of even variables
+    oddgen := flatten for i from m0 to (m1-1)//2 list (
+        d := numgens F_(2*i+1);
+        for j from 1 to d list(2*i+1,j)
         );
     m := #oddgen;  --number of odd variables
+    evenInternalDegrees := flatten for i from m0 to m1//2 list (degrees F_(2*i)); -- list of internal degrees of the basis elements of F in even homological degree
+    oddInternalDegrees := flatten for i from m0 to m1//2 list (degrees F_(2*i+1)); -- list of internal degrees of the basis elements of F in odd homological degree
     inversehash := new HashTable from --computes the map that associates a label to a generator of F
          (for i from 1 to n list evengen#(i-1) => i) | 
 	 (for i from 1 to m list oddgen#(i-1) => -i);
-    D := new HashTable from flatten for i from 1 to l list --encodes the differentials of F
+    D := new HashTable from flatten for i from m0 + 1 to m1 list --encodes the differentials of F
              for j from 1 to numgens F_i list
 	         inversehash#(i,j) => for r from 1 to numgens F_(i-1) list 
 	              (inversehash#(i-1,r),(F.dd_i)_(r-1,j-1));
-    tabs := standardZ2Tableaux(lambda,m,n); --computes tableaux indexing the generators in S_lambda(F)	      
+    tabs := standardZ2Tableaux(lambda,m,n); --computes tableaux indexing the generators in S_lambda(F)
+    tabsInternalDegrees := apply(tabs, T -> tableauInternalDegree(T, evenInternalDegrees, oddInternalDegrees));
     if #tabs > 0 then--checks if F is the zero complex.
     (
-	degreeList := for T in tabs list homologicalDegree(T, evengen, oddgen);
-	shift := min(degreeList);--keeps track of first nonzero homological degree of the Schur complex
+	--degreeList := for T in tabs list homologicalDegree(T, evengen, oddgen);
+	--shift := min(degreeList);--keeps track of first nonzero homological degree of the Schur complex
     	differential := new HashTable from for T in tabs list T => tableauxDiff(m,n,{lambda,T},D);--the differential in the Schur complex
-    	mutG := new MutableHashTable from {};
+    	nonzeroTabsByDegreeHT := new MutableHashTable from {};
     	for T in tabs do
     	(
      	    deg := homologicalDegree(T,evengen,oddgen);
-     	    if mutG#?deg then
+     	    if nonzeroTabsByDegreeHT#?deg then
      	    (
-	    	l := #(mutG#deg);
-	    	(mutG#deg)#l = T;
+	    	l := #(nonzeroTabsByDegreeHT#deg);
+	    	(nonzeroTabsByDegreeHT#deg)#l = T;
 	    	)
-     	    else mutG#deg = new MutableList from {T};
-     	    ); 
-    	tabsByDegree := for i in sort(keys mutG) list toList(mutG#i);
+     	    else nonzeroTabsByDegreeHT#deg = new MutableList from {T};
+     	    );
+	n0 := min keys nonzeroTabsByDegreeHT;
+	n1 := max keys nonzeroTabsByDegreeHT;
+	for j from n0 to n1 do (
+	    if not nonzeroTabsByDegreeHT#?j then nonzeroTabsByDegreeHT#j = new MutableList from {};
+	    );
+    	tabsByDegree := for i in sort(keys nonzeroTabsByDegreeHT) list toList(nonzeroTabsByDegreeHT#i);
 	--tabsByDegree is a List of Lists: the i-th entry is a List of standard tableaux of 
 	--homological degree i. 
-        tabsInEachDegree := for l in tabsByDegree list #l;
-	--the i-th entry in the list tabsInEachDegree is the number of tableaux in the Schur complex of 
-	--homological degree i.
-    	componentList := for i in tabsInEachDegree list R^i;
-    	r := #componentList-1;
-    	matrixList := for i from 0 to r-1 list(
-            transpose matrix for u in tabsByDegree#(i+1) list 
-	    for v in tabsByDegree#i list try((differential#u)#v) else 0
-	    );
-	--The i-th entry of matrixList is the matrix giving the map between the (i+1)-st and i-th components 
-	--of the Schur complex. 
-	    C:= chainComplex for i from 0 to (#matrixList - 1) list map(componentList_i, componentList_(i + 1), matrixList_i);
-	    C.ring = R;
-	    C[-shift-2*Min*Size]---moves the Schur complex based on the shift of F at the beginning
-	) 
-    else new ChainComplex    
+	internalTwistList := apply(tabsByDegree, L -> apply(L, T -> -tableauInternalDegree(T, evenInternalDegrees, oddInternalDegrees)));
+	--internalTwistList is a list of the internal grading twists of the basis elements corresponding to the tableaux in tabsByDegree
+    	componentList := apply(internalTwistList, i -> R^i);
+	r:=#componentList-1;
+	if r > 0 then ----checks if the Schur complex will have length greater than 1
+	(
+	    matrixList := for i from 0 to r-1 list(
+		transpose matrix for u in tabsByDegree#(i+1) list 
+		for v in tabsByDegree#i list try((differential#u)#v) else 0
+		);
+	    --The i-th entry of matrixList is the matrix giving the map between the (i+1)-st and i-th components 
+	    --of the Schur complex.
+	    C:= complex for i from 0 to (#matrixList - 1) list (
+		if source(matrixList_i) == 0 or target(matrixList_i) == 0 then (
+		    map(componentList_i, componentList_(i + 1), 0)
+		    )
+		else (
+		    map(componentList_i, componentList_(i + 1), matrixList_i))
+		);
+	    C[-n0]
+	    )
+	else (complex componentList_0)[-n0]
+	)
+    else complex R^0
+    --changed: else new ChainComplex    
 )
 
 
@@ -248,10 +266,24 @@ homologicalDegree(HashTable,List,List) := (T,evengen,oddgen) -> sum for b in key
      	 if x>0 then (evengen#(x-1))_0 else (oddgen#(-x-1))_0
 	 )
 
+--Input:
+--a HashTable T encoding a Z/2-graded tableau, and list evenDegs (resp. oddDegs) that gives the internal degrees of the
+--basis elements of a free complex F in even (resp. odd) homological degree
+--
+--Output:
+--an integer, the degree of the basis element of the schurComplex of F corresponding to the tableau T. 
+tableauInternalDegree = method();
+tableauInternalDegree(HashTable, List, List) := (T, evenDegs, oddDegs) -> (
+    L := apply(keys T, i ->
+	if (T#i) > 0 then evenDegs_(T#i - 1) else oddDegs_(-(T#i) - 1)
+	);
+    sum L
+    )
+
 ------Straightening algorithm
 
 --Inputs: U= List, V= permutation represented as a list. Outputs: sign of the induced permutation on the unmarked elements of U.
-sign = (U,V)-> (
+sgn = (U,V)-> (
     n:=#U;
     answer:=1;
     for i from 0 to n-2 do (
@@ -280,7 +312,7 @@ permutedTableau= (T,X,row1, row2, col1,lengthcol1,L)-> (
 
 -- Inputs: T=Tableau, vio = pair (column, row) where violation occurs, downCol2 is the number of times the entry in the second column repeats. 
 ---Outputs: Linear combination represented as a hashtable with tableau keys.
-shuffle = (T, vio, downCol2, lambdaprime) -> (
+shuffle' = (T, vio, downCol2, lambdaprime) -> (
     lengthcol1 := lambdaprime#(vio_0-1);
     truncatedcol1:=apply(toList (vio_1..lengthcol1),i -> T#(vio_0,i));
     truncatedcol2:=apply(toList(1..vio_1+downCol2), i-> T#(vio_0 + 1,i));
@@ -288,7 +320,7 @@ shuffle = (T, vio, downCol2, lambdaprime) -> (
     indicesofL:=toList (0..(#L-1));
     subsetsofLofsizetruncatedcol1:=subsets(indicesofL,#truncatedcol1);
     pairs1:=apply(subsetsofLofsizetruncatedcol1, x-> (x, indicesofL-(set x)));
-    signs:=apply(pairs1, x-> sign(L,join(x)));
+    signs:=apply(pairs1, x-> sgn(L,join(x)));
     outputlist:={}; 
     dividedContributions := for i from 0 to (#pairs1-1) list (
 	dividedContribution := 1; --contribution from divided power multiplication
@@ -402,7 +434,7 @@ recursiveStraighten = (H,lambda) -> (
 			if vio === null then hashlist = merge(hashlist,new HashTable from {T => H#T},plus)
 		    	else (
 			    repeat = true;
-		     	    hashlist = merge(hashlist,scalarMultiply(H#T,shuffle(T,vio,downCol2,lambdaprime)),plus);
+		     	    hashlist = merge(hashlist,scalarMultiply(H#T,shuffle'(T,vio,downCol2,lambdaprime)),plus);
 			    );	
 	    		);
 		    );
@@ -437,6 +469,7 @@ scalarMultiply = (s,H) -> (
     L := keys H;
     new HashTable from apply(L, i -> (i=>H#i*s))
     )
+
 
 
 
@@ -502,9 +535,9 @@ doc ///
    G=schurComplex(lambda,F)
   Inputs
    lambda: List
-   F: ChainComplex
+   F: Complex
   Outputs
-   G: ChainComplex
+   G: Complex
   Description
    Text
      This function computes the Schur complex associated to a partition $\lambda$ and a bounded complex $F_{\bullet}$ of finitely-generated free modules over a commutative ring.
@@ -516,7 +549,7 @@ doc ///
    Example
     R=ZZ[x,y,z];
     I=ideal(x,y,z);
-    F=res I;
+    F=freeResolution I;
     lambda={1,1};
     G=schurComplex(lambda,F)
     G.dd
@@ -527,24 +560,36 @@ doc ///
    Example
     R=QQ[x11,x21,x12,x22,x13,x23,x14,x24];
     M=genericMatrix(R,x11,2,4);
-    F = new ChainComplex; F.ring = R; F#0=target M; F#1=source M; F.dd#1=M;
+    F = complex {M};
+      -- F = new ChainComplex; F.ring = R; F#0=target M; F#1=source M; F.dd#1=M;
     lambda={3};
     G=schurComplex(lambda,F)
     G.dd
-    apply((length G)+1,i->reduceHilbert hilbertSeries HH_(i)(G))
+    apply(1+length G,i->reduceHilbert hilbertSeries HH_i(G))
     
    Text
-     We compute a third example.
+     We compute a third example. 
      
    Example
     R=ZZ/7[x,y,z,w];
     I=ideal(x*z-y^2,x*w-y*z, y*w-z^2);
-    F=res I;
+    F=freeResolution I;
     lambda={2,1};
     G=schurComplex(lambda,F)
     G.dd
+
+   Text
+    If the input complex F has a (multi)grading, the resulting Schur complex does as well.
     
-    
+   Example
+    needsPackage "NormalToricVarieties"
+    R = ring hirzebruchSurface 3;
+    F = koszulComplex {x_0^4*x_1 - x_2*x_3, x_0^2};
+    lambda = {2,2};
+    G = schurComplex(lambda, F);
+    G.dd
+    assert isHomogeneous G
+   
         
   SeeAlso
     straightenTableau
@@ -553,10 +598,12 @@ doc ///
 TEST ///
     R=QQ[x11,x21,x12,x22,x13,x23,x14,x24]
     M=genericMatrix(R,x11,2,4)
-    F = new ChainComplex; F.ring = R; F#0=target M; F#1=source M; F.dd#1=M;
+    F = complex {M};
+    --F = new ChainComplex; F.ring = R; F#0=target M; F#1=source M; F.dd#1=M;
     lambda={3}
     G=schurComplex(lambda,F)
-    H=reduceHilbert hilbertSeries HH_(1)(G)
+    assert(isHomogeneous G)
+    H=reduceHilbert hilbertSeries HH_1(G)
     H1=lift(numerator(H),ZZ)
     assert (H1 === 0)
 ///
@@ -565,9 +612,11 @@ TEST ///
 TEST ///-------this Schur complex is exact by Proposition 2.4.7(a) Weyman "Cohomology of Vector Bundles and Syzygies"
     R=ZZ[x,y,z]
     M=id_(R^3)
-    F= new ChainComplex; F.ring = R; F#-7=target M; F#-6=source M; F.dd#-6=M;
+    F = complex({M}, Base => -7);
+    --F= new ChainComplex; F.ring = R; F#-7=target M; F#-6=source M; F.dd#-6=M;
     lambda={3,1}
     G=schurComplex(lambda,F)
+    assert isHomogeneous G
     H={}
     for i from -28 to -24 do H=H|{reduceHilbert hilbertSeries HH_i(G)}
     H1=unique H
@@ -578,38 +627,160 @@ TEST ///-------this Schur complex is exact by Proposition 2.4.7(a) Weyman "Cohom
 
 
 TEST ///
-    R=ZZ[x,y]
-    F=res ideal (x,y)
-    lambda={1,1} 
-    S=schurComplex(lambda,F)
-    N2=S.dd_2
-    M2=matrix{{y,x,0,x},{0,y,x,-y}}
+    R=ZZ[x,y];
+    F=freeResolution ideal (x,y);
+    lambda={1,1};
+    S=schurComplex(lambda,F);
+    assert(isHomogeneous S);
+    N2=S.dd_2;
+    M2=matrix{{y,x,0,x},{0,y,x,-y}};
     assert((N2-M2==0))
 ///
 
 TEST ///
-    T = new HashTable from {(1,1) => 2, (1,2) => 1}
-    lambda = {1,1}
-    S=straightenTableau(T,lambda)
-    T2=new HashTable from{(1,1)=> 1, (1,2)=>2}
-    output=new HashTable from{T2=> -1}
+    needsPackage "NormalToricVarieties"
+    S = ring hirzebruchSurface 3;
+    I= ideal vars S;
+    F= res I;
+    Lambda={1,1};
+    G=schurComplex(Lambda,F);
+    assert(isHomogeneous G)
+///    
+
+
+TEST ///
+    T = new HashTable from {(1,1) => 2, (1,2) => 1};
+    lambda = {1,1};
+    S=straightenTableau(T,lambda);
+    T2=new HashTable from{(1,1)=> 1, (1,2)=>2};
+    output=new HashTable from{T2=> -1};
     assert (S===output)
 ///
 
 TEST ///
-    T = new HashTable from {(1,1) => -3, (1,2) => -2, (1,3) => -2, (2,1) => 1, (2,2) => 2, (2,3) => 3, (3,1) => -1, (3,2) => -1}
-    lambda = new Partition from {3,3,2}
-    S=straightenTableau(T,lambda)
-    T1= new HashTable from {(1,1)=> -3, (1,2)=>-2, (1,3)=> -2, (2,1)=> -1, (2,2)=> -1, (2,3)=> 1, (3,1)=> 2, (3,2)=> 3}
-    T2= new HashTable from {(1,1)=> -3, (1,2)=>-2, (1,3)=> -2, (2,1)=> -1, (2,2)=> -1, (2,3)=> 2, (3,1)=> 1, (3,2)=> 3}
-    T3= new HashTable from {(1,1)=> -3, (1,2)=>-2, (1,3)=> -2, (2,1)=> -1, (2,2)=> -1, (2,3)=> 3, (3,1)=> 1, (3,2)=> 2}
-    Output= new HashTable from {T1=> 1, T2=> -1, T3=> 1}
+    T = new HashTable from {(1,1) => -3, (1,2) => -2, (1,3) => -2, (2,1) => 1, (2,2) => 2, (2,3) => 3, (3,1) => -1, (3,2) => -1};
+    lambda = new Partition from {3,3,2};
+    S=straightenTableau(T,lambda);
+    T1= new HashTable from {(1,1)=> -3, (1,2)=>-2, (1,3)=> -2, (2,1)=> -1, (2,2)=> -1, (2,3)=> 1, (3,1)=> 2, (3,2)=> 3};
+    T2= new HashTable from {(1,1)=> -3, (1,2)=>-2, (1,3)=> -2, (2,1)=> -1, (2,2)=> -1, (2,3)=> 2, (3,1)=> 1, (3,2)=> 3};
+    T3= new HashTable from {(1,1)=> -3, (1,2)=>-2, (1,3)=> -2, (2,1)=> -1, (2,2)=> -1, (2,3)=> 3, (3,1)=> 1, (3,2)=> 2};
+    Output= new HashTable from {T1=> 1, T2=> -1, T3=> 1};
     assert(S===Output)
 ///
 
+-- internal tableau utilities: lengthrow/lengthcolumn (row/column lengths), homologicalDegree
+-- and tableauInternalDegree (degree sums over a tableau's entries), and scalarMultiply
+TEST ///
+debug SchurComplexes
+T = new HashTable from {(1,1)=>1,(2,1)=>1,(3,1)=>1,(1,2)=>1,(2,2)=>1}
+assert(lengthrow(T,1) == 3)
+assert(lengthrow(T,2) == 2)
+assert(lengthcolumn(T,1) == 2)
+assert(lengthcolumn(T,3) == 1)
+T2 = new HashTable from {(1,1)=>1,(1,2)=>-1,(2,1)=>2}
+assert(homologicalDegree(T2,{(0,1),(4,1)},{(3,1)}) == 7)
+assert(tableauInternalDegree(T2,{10,20},{30}) == 60)
+assert(scalarMultiply(3, new HashTable from {1=>2,2=>5}) === new HashTable from {1=>6,2=>15})
+///
+
+-- sgn: the Z/2-graded sign of a permutation -- ordinary inversion sign, except a
+-- transposition of two odd (negative) entries contributes +1, not -1
+TEST ///
+debug SchurComplexes
+assert(sgn({1,2},{0,1}) == 1)
+assert(sgn({1,2},{1,0}) == -1)
+assert(sgn({-1,-2},{1,0}) == 1)
+assert(sgn({1,2,3},{2,1,0}) == -1)
+///
+
+-- columnStandardize sorts a tableau column with the Z/2 sign rule: an even-even swap
+-- flips the sign, a repeated positive entry forces sign 0, odd entries never flip the sign
+TEST ///
+debug SchurComplexes
+csA = columnStandardize(new HashTable from {(1,1)=>2,(1,2)=>1},1,2)
+assert(csA_1 == -1)
+assert((csA_0)#(1,1) == 1 and (csA_0)#(1,2) == 2)
+assert((columnStandardize(new HashTable from {(1,1)=>1,(1,2)=>1},1,2))_1 == 0)
+csC = columnStandardize(new HashTable from {(1,1)=>-1,(1,2)=>-2},1,2)
+assert(csC_1 == 1)
+assert((csC_0)#(1,1) == -2 and (csC_0)#(1,2) == -1)
+///
+
+-- standardZ2Tableaux generates the standard Z/2-graded tableaux indexing the Schur-complex
+-- basis: a single box gives m+n of them; in general their count equals the total rank of
+-- schurComplex, and each one is a fixed point of straightenTableau.
+TEST ///
+debug SchurComplexes
+assert(#standardZ2Tableaux(new Partition from {1},2,3) == 5)
+assert(#standardZ2Tableaux(new Partition from {1},3,4) == 7)
+R = QQ[x11,x21,x12,x22,x13,x23,x14,x24]
+F = complex {genericMatrix(R,x11,2,4)}
+G = schurComplex({3}, F)
+assert(#standardZ2Tableaux(new Partition from {3}, rank F_1, rank F_0) == sum for i from min G to max G list rank G_i)
+tabs = standardZ2Tableaux(new Partition from {2,1}, 2, 2)
+assert(#tabs == 20)
+assert(all(tabs, T -> straightenTableau(T, {2,1}) === new HashTable from {T => 1}))
+///
+
+-- tableauxDiff builds the Schur-complex differential; isWellDefined confirms d^2 = 0,
+-- a stronger check than the isHomogeneous assertions in the existing tests
+TEST ///
+R = ZZ[x,y]
+assert isWellDefined schurComplex({1,1}, freeResolution ideal(x,y))
+R = ZZ/7[x,y,z,w]
+assert isWellDefined schurComplex({2,1}, freeResolution ideal(x*z-y^2,x*w-y*z,y*w-z^2))
+///
+
+-- straightenTableau / recursiveStraighten is a projection onto the standard-tableau basis:
+-- a column with a repeated positive (even) entry straightens to zero, and the partition
+-- argument may be given as a List or a Partition with identical results
+TEST ///
+debug SchurComplexes
+assert(straightenTableau(new HashTable from {(1,1)=>1,(1,2)=>1}, {1,1}) === new HashTable from {})
+Tns = new HashTable from {(1,1)=>2,(2,1)=>1}
+s = straightenTableau(Tns,{2})
+assert(s === new HashTable from {new HashTable from {(1,1)=>1,(2,1)=>2} => 1})
+assert(s === straightenTableau(Tns, new Partition from {2}))
+///
+
+-- permutedTableau rewrites two adjacent tableau columns from a value list L via a pair of
+-- index subsets; entries of column col1 above the cutoff row1 are left untouched
+TEST ///
+debug SchurComplexes
+T = new HashTable from {(1,1)=>10,(1,2)=>11,(2,1)=>20,(2,2)=>21}
+assert(permutedTableau(T, ({0,2},{1,3}), 1, 2, 1, 2, {100,200,300,400}) === new HashTable from {(1,1)=>100,(1,2)=>300,(2,1)=>200,(2,2)=>400})
+assert(permutedTableau(T, ({0},{1,2}), 2, 2, 1, 2, {100,200,300,400}) === new HashTable from {(1,1)=>10,(1,2)=>100,(2,1)=>200,(2,2)=>300})
+///
+
+-- shuffle' performs one step of the straightening law at a column violation, returning the
+-- shuffling relation as a linear combination.  The exact output is pinned for a small case,
+-- and straightening the combination is checked to recover straightening the input tableau.
+TEST ///
+debug SchurComplexes
+straightenCombo = (H, lam) -> (
+    res := new MutableHashTable from {};
+    for k in keys H do (
+        s := straightenTableau(k, lam);
+        for sk in keys s do (
+            c := (H#k)*(s#sk);
+            if res#?sk then res#sk = res#sk + c else res#sk = c));
+    new HashTable from select(pairs res, p -> p#1 != 0));
+Ta = new HashTable from {(1,1)=>2,(2,1)=>1}
+sa = shuffle'(Ta, (1,1), 0, new Partition from {1,1})
+assert(sa === new HashTable from {Ta => 0, new HashTable from {(1,1)=>1,(2,1)=>2} => 1})
+assert(straightenCombo(sa, {2}) === straightenTableau(Ta, {2}))
+Tb = new HashTable from {(1,1)=>2,(1,2)=>4,(2,1)=>1,(2,2)=>3}
+sb = shuffle'(Tb, (1,1), 0, new Partition from {2,2})
+assert(straightenCombo(sb, {2,2}) === straightenTableau(Tb, {2,2}))
+///
+
+end;
 
 
 
+restart
+uninstallPackage "SchurComplexes"
+installPackage "SchurComplexes"
 
-end
+
 

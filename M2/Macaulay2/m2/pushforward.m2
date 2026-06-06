@@ -227,22 +227,32 @@ scan({Default, Quotient}, strategy ->
 -- kernel
 -----------------------------------------------------------------------------
 
-kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((m) -> (
-	  N := source m;
-	  if m == 0 then return N;
-	  P := target m;
-	  if m.?RingMap then (
-	       f := m.RingMap;
-	       n := map(target m,f source m,raw m);
-	       p := pushNonLinear(options pushForward, f, coimage n);
-	       image p)
-	  else (
-	       m = matrix m;
-	       if P.?generators then m = P.generators * m;
-	       h := modulo(m, if P.?relations then P.relations);
-	       if N.?generators then h = N.generators * h;
-	       subquotient( h, if N.?relations then N.relations))))
-kernel RingElement := Module => options -> (m) -> kernel (matrix {{m}},options)
+addHook((kernel, Matrix), Strategy => "PushForward",
+    (opts, m) -> if m.?RingMap then (
+	N := source m;
+	P := target m;
+	f := m.RingMap;
+	M := coimage map(target m, f ** source m, raw m);
+	image pushNonLinear(options pushForward, f, M)))
+
+-----------------------------------------------------------------------------
+
+-- pushforward the module to PP^n via S/I <-- S
+-- this is used for instance before computing pdim
+-- or regularity of a module over a quotient ring.
+-- cf. https://github.com/Macaulay2/M2/issues/3321
+-- and https://github.com/Macaulay2/M2/issues/3656
+-- TODO: can we lift generators and relations and avoid presentation?
+liftModule   = M -> (
+    if instance(ring M, PolynomialRing) then M
+    else cokernel liftMorphism presentation M)
+liftMorphism = f -> f.cache#"liftMorphism" ??= (
+    if instance(ring f, PolynomialRing) then return f;
+    g := presentation ring f;
+    S := ring g;
+    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
+    -- TODO: why doesn't lift(f, ring g) do this automatically?
+    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

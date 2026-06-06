@@ -66,6 +66,15 @@ class CoefficientRingZZp : public M2::SimpleARing<CoefficientRingZZp>
     if (a < 0) a += p;
     result = log_table[a];
   }
+  
+  void set_from_mpz(elem &result, mpz_t a) const
+  {
+    mpz_t tmp;
+    mpz_init_set_si(tmp, p);        // Convert int p to mpz_t
+    mpz_mod(a, a, tmp);             // a = a mod p (always non-negative)
+    mpz_clear(tmp);
+    result = log_table[mpz_get_si(a)];
+  }
 
   long coerceToLongInteger(const elem &f) const
   {
@@ -75,8 +84,8 @@ class CoefficientRingZZp : public M2::SimpleARing<CoefficientRingZZp>
   }
   
   int to_int(int f) const { return exp_table[f]; }
-  void init(elem &result) const {}
-  static void clear(elem &result) { /* nothing */}
+  void init(elem &result) const { (void) result; }
+  static void clear(elem &result) { (void) result; }
   void init_set(elem &result, elem a) const { result = a; }
   void set_zero(elem &result) const { result = zero; }
   void set(elem &result, elem a) const { result = a; }
@@ -219,13 +228,12 @@ class CoefficientRingR
   CoefficientRingR(const Ring *R0) : R(R0) {}
   void init_set(elem &result, elem a) const { result = a; }
   void init(elem &result) const { result = R->zero(); }
-  void clear(elem &result) const
-  { /* do nothing */
-  }
+  void clear(elem &result) const { (void) result; }
 
   void set_zero(elem &result) const { result = R->zero(); }
   void set(elem &result, elem a) const { result = a; }
   void set_from_long(elem &result, long a) const { result = R->from_long(a); }
+  void set_from_mpz(elem &result, mpz_t a) const { result = R->from_int(a); }
   bool is_zero(elem result) const { return R->is_zero(result); }
   bool is_equal(elem a, elem b) const { return R->is_equal(a, b); }
   bool is_unit(elem f) const { return R->is_unit(f); }
@@ -248,8 +256,8 @@ class CoefficientRingR
   void divide(elem &result, elem a, elem b) const { result = R->divide(a, b); }
   void to_ring_elem(ring_elem &result, const elem &a) const { result = a; }
   void from_ring_elem(elem &result, const ring_elem &a) const { result = a; }
-  // do not make the return type here a reference, otherwise dangling refrences
-  // become very easy to make
+  // do not make the return type here a reference, otherwise
+  // dangling references become very easy to make
   elem from_ring_elem_const(const ring_elem &a) const { return a; }
   void swap(elem &a, elem &b) const
   {

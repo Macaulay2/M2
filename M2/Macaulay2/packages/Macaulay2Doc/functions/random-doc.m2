@@ -15,14 +15,15 @@ Node
       This function can be used to get randomized objects of various sorts.
   Subnodes
     (random, ZZ, ZZ)
+    (random, QQ)
     (random, Type)
-    (random, List)
     (random, ZZ, Ideal)
     (random, ZZ, Ring)
     (random, Module)
     (random, Module, Module)
-  SeeAlso
+    randomElement
     setRandomSeed
+    randomSubset
 
 Node
   Key
@@ -63,6 +64,29 @@ Node
 
 Node
   Key
+    (random, QQ)
+  Headline
+    get a random rational number
+  Usage
+    random x
+  Inputs
+    x:QQ
+    Height => ZZ
+  Outputs
+    :QQ -- randomly chosen from the interval $[0, x]$
+  Description
+    Text
+      A random number is chosen from the uniform distribution on the interval
+      $[0, x]$ and then rounded (using the @wikipedia "Farey sequence"@) to the
+      nearest rational number with denominator bounded by the @CODE "Height"@
+      option.
+    Example
+      apply(10, i -> random(7_QQ, Height => 5))
+  SeeAlso
+    setRandomSeed
+
+Node
+  Key
     (random, Type)
   Headline
     get a random object of a type
@@ -82,7 +106,8 @@ Node
     Example
       random RR
       random CC_100
-      tally for i to 100 list random GF 11
+      kk = GF 11
+      tally for i to 100 list random kk
       random GF(2,40)
   SeeAlso
     setRandomSeed
@@ -153,19 +178,23 @@ Node
 
 Node
   Key
-    (random, List)
+     randomElement
+    (randomElement, List)
+--    (random, List)
   Headline
-    shuffle a list randomly
+    select a random element of a list
   Usage
-    random L
+    randomElement L
   Inputs
     L:List
   Outputs
-    :List
-      a new list containing the elements of @TT "L"@ in a shuffled random order
+    :Thing -- random element of @VAR "L"@
   Description
     Example
-      random toList (0 .. 12)
+      randomElement toList (0 .. 12)
+    Text
+      In the near future, this will also be the behavior of
+      @TO (random, List)@.
   SeeAlso
     setRandomSeed
 
@@ -207,12 +236,16 @@ Node
 
 Node
   Key
-    (random, Module)
+    (random, List, Module)
+    (random, ZZ,   Module)
+    (random,       Module)
   Headline
     get a random vector in the module
   Usage
+    v = random(d, M)
     v = random M
   Inputs
+    d:{ZZ,List} -- a degree or degree vector, assumed to be zero if omitted
     M:Module
   Outputs
     v:Vector
@@ -221,6 +254,10 @@ Node
       R = ZZ/7[x,y]
       E = End R^{-1,1}
       h = homomorphism random E
+      h = homomorphism random(0, E)
+      h = homomorphism random(1, E)
+      h = homomorphism random(-1, E)
+      h = homomorphism random(-2, E)
   SeeAlso
     (Hom, Module, Module)
     (random, Module, Module)

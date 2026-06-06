@@ -113,13 +113,13 @@ randomMR := opts -> (F,G) -> (
      map(F,G,new Matrix from f))
 
 random(Module, Module) := Matrix => opts -> (F,G) -> (
-    if not isFreeModule F or not isFreeModule G
-    then return map(F, G, random(cover F, cover G, opts));
+    if not isFreeModule G
+    then return homomorphism random(Hom(G, F, DegreeLimit => 0), opts);
+    if not isFreeModule F
+    then return map(F, G, random(cover F, G, opts));
      R := ring F;
      if R =!= ring G then error "modules over different rings";
      if opts.MaximalRank then return (randomMR opts)(F,G);
-     p := char R;
-     if p === 0 then p = opts.Height;
      degreesTable := table(degrees F, degrees G, 
 	  (i,j) -> toList apply(j,i,difference));
      degreesTally := tally flatten degreesTable;
@@ -142,7 +142,7 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 	       deg -> (
 		    numused := 0;
 		    if deg === 0 then (
-			 n := apply(degreesTally#deg, x -> random p);
+			 n := apply(degreesTally#deg, x -> random(R.BaseRing, opts));
 			 () -> (
 			      r := n#numused;
 			      numused = numused + 1;
@@ -156,14 +156,27 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 			      n = first entries (
 				   m * matrix (R, table(
 					     k, degreesTally#deg, 
-					     (i,j)->random p)));
+					     (i,j)->random(R.BaseRing, opts))));
 			      () -> (
 				   r := n#numused;
 				   numused = numused + 1;
 				   r)))));
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
 
-random Module := Vector => o -> M -> vector(generators M * random(cover M, module ring M, o))
+-- give a random vector in a module over a local (non-homogeneous) ring
+localRandom = (M, opts) -> (
+    R := ring M;
+    -- TODO: which coefficient ring do we want?
+    K := try coefficientRing R else R;
+    v := random(cover M ** K, module K, opts);
+    -- TODO: sub should be unnecessary, but
+    -- see https://github.com/Macaulay2/M2/issues/3638
+    vector inducedMap(M, , generators M * substitute(v, R)))
+
+random(ZZ,   Module) :=
+random(List, Module) := Vector => o -> (d, M) -> vector map(M, , random(cover M, (ring M)^{-d}, o))
+random       Module  := Vector => o ->     M  -> (
+    if isHomogeneous M then random(degree 1_(ring M), M, o) else localRandom(M, o))
 
 random(ZZ,   Ideal) := RingElement => opts -> (d, I) -> random({d}, I, opts)
 random(List, Ideal) := -* RingElement or List => *- opts -> (L, I) -> (

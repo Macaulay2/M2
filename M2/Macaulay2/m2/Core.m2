@@ -2,6 +2,29 @@
 -- The source code of Macaulay2 is contained in multiple files,
 -- all contained in the subdirectory "Macaulay2/".
 
+-- newPackage is called in packages.m2!
+CorePackage = (
+    "Core",
+    Date     => version#"compile time",
+    Version  => version#"VERSION",
+    Headline => "a computer algebra system designed to support algebraic geometry",
+    HomePage => "https://Macaulay2.com/",
+    Authors => {
+	{   Name => "Daniel R. Grayson",
+	    Email => "dan@math.uiuc.edu",
+	    HomePage => "http://www.math.uiuc.edu/~dan/"
+	},
+	{   Name => "Michael E. Stillman",
+	    Email => "mike@math.cornell.edu",
+	    HomePage => "https://math.cornell.edu/michael-e-stillman"
+	}
+    },
+    DebuggingMode => debuggingMode,
+    Reload => true,
+)
+
+-----------------------------------------------------------------------------
+
 if notify then printerr("reading ", minimizeFilename currentFileName)
 
 if class Core =!= Symbol
@@ -35,6 +58,8 @@ nonempty = x -> select(x, i -> i =!= "")
 -- TODO: deprecate these
 undocumentedkeys = new MutableHashTable
 undocumented' = key -> undocumentedkeys#key = true
+
+missingPackage = pkg -> error("this method is not available until ", pkg, " is loaded")
 
 -- a first-in last-out list of symbol values
 -- TODO: move to the interpreter and make thread-safe
@@ -112,9 +137,15 @@ loadPath := (path, filename, loadfun, notify) -> (
 
 load  = filename -> (loadPath(path, filename, simpleLoad, notify);)
 input = filename -> (loadPath(path, filename, simpleInput, false);)
-needs = filename -> if not filesLoaded#?filename then load filename else (
-     (filepath, filetime) := filesLoaded#filename;
-     if filetime < fileTime filepath then load filepath)
+
+simpleNeeds = filename -> (
+    filename = realpath toAbsolutePath filename;
+    if not filesLoaded#?filename
+    then simpleLoad filename
+    else (
+	if filesLoaded#filename < fileTime filename
+	then simpleLoad filename))
+needs = filename -> (loadPath(path, filename, simpleNeeds, notify);)
 
 -----------------------------------------------------------------------------
 -- Setup persistent history
@@ -143,6 +174,41 @@ loads := minimizeFilename concatenate(currentFileDirectory, "loadsequence")
 if notify then printerr("about to read ", loads)
 scan(select("^\\w+\\.m2", "$&", get loads), needs)
 if notify then printerr("read ", loads)
+
+-----------------------------------------------------------------------------
+-- Core officially becomes a package
+-----------------------------------------------------------------------------
+
+newPackage CorePackage
+
+needs "exports.m2"
+
+if prefixDirectory =!= null then
+Core#"package prefix" = prefixDirectory
+
+Core#"preloaded packages" = nonnull {
+    "Classic",
+    "ConwayPolynomials",
+    "Elimination",
+    "IntegralClosure",
+    "InverseSystems",
+    "Isomorphism",
+    "LLLBases",
+    "MinimalPrimes",
+    "OnlineLookup",
+    "PackageCitations",
+    "PrimaryDecomposition",
+    "ReesAlgebra",
+    "Saturation",
+    "SimpleDoc",
+    "TangentCone",
+    "Varieties",
+}
+
+addStartFunction( () -> Core#"preloaded packages" = prepend(HomologicalAlgebraPackage, Core#"preloaded packages") )
+
+undocumented keys undocumentedkeys
+undocumentedkeys = null
 
 corepath' := corepath
 userpath' := userpath

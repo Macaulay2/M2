@@ -1,5 +1,6 @@
 
 i1 : setRandomSeed();
+ -- initializing random seed
 
 i2 : A = QQ[w,x,y,z]
 
@@ -15,14 +16,14 @@ o3 = | w x |
              2      2
 o3 : Matrix A  <-- A
 
-i4 : C = chainComplex U
+i4 : C = complex U
 
       2      2
 o4 = A  <-- A
              
      0      1
 
-o4 : ChainComplex
+o4 : Complex
 
 i5 : L = HH_0 C
 
@@ -49,9 +50,13 @@ o8 = 1 : A  <----------------- A  : 0
                {1} | z  -x |
                {1} | -y w  |
 
-o8 : ChainComplexMap
+                   2
+     2 : 0 <----- A  : 1
+              0
 
-i9 : s * C.dd + C.dd * s == -f
+o8 : ComplexMap
+
+i9 : s * C.dd + C.dd * s == -f * id_C
 
 o9 = true
 
@@ -84,7 +89,7 @@ o16 = B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B
                                                                
       0      1      2      3      4      5      6      7      8
 
-o16 : ChainComplex
+o16 : Complex
 
 i17 : restrict1 = N -> coker(lift(presentation N,A) | f);
 
@@ -182,7 +187,7 @@ o35 = B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B
                                                                
       0      1      2      3      4      5      6      7      8
 
-o35 : ChainComplex
+o35 : Complex
 
 i36 : G.dd_3 - G.dd_5 == 0
 
@@ -205,18 +210,18 @@ o40 = B  <-- B   <-- B   <-- B   <-- B   <-- B   <-- B   <-- B   <-- B
                                                                       
       0      1       2       3       4       5       6       7       8
 
-o40 : ChainComplex
+o40 : Complex
 
 i41 : M' = restrict1 M;
 
 i42 : C = res M'
 
        1      10      15      6
-o42 = A  <-- A   <-- A   <-- A  <-- 0
+o42 = A  <-- A   <-- A   <-- A 
                                      
-      0      1       2       3      4
+      0      1       2       3 
 
-o42 : ChainComplex
+o42 : Complex
 
 i43 : K = ZZ/103; 
 
@@ -370,7 +375,7 @@ Ext(Module,Module) := Module => (M,N) -> (
   N' := cokernel ( pN | p ** id_(target pN) );
   assert isHomogeneous M';
   assert isHomogeneous N';
-  C := complete resolution M';
+  C := resolution M';
   X := getSymbol "X";
   K := coefficientRing A;
   S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
@@ -649,7 +654,7 @@ o100 = B'  <-- B'  <-- B'  <-- B'   <-- B'   <-- B'   <-- B'
                                                            
        0       1       2       3        4        5        6
 
-o100 : ChainComplex
+o100 : Complex
 
 i101 : M' = coker transpose C'.dd_5
 

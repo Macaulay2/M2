@@ -1884,6 +1884,31 @@ TOODAMNSLOW ///
 
   minimalPrimes I -- doesn't seem to finish.  But in fact crashed in <= M2 1.24.05, (see previous test).
 ///
+
+TEST ///
+-- issue #3505
+R = ZZ/5
+assert(minimalPrimes ideal 0_R == {ideal 0_R})
+assert(minimalPrimes ideal 1_R == {})
+assert(minimalPrimes ideal 2_R == {})
+assert(minimalPrimes ideal 3_R == {})
+assert(minimalPrimes ideal 4_R == {})
+R = ZZ/6
+assert(minimalPrimes ideal 0_R == {ideal 2_R, ideal 3_R})
+assert(minimalPrimes ideal 1_R == {})
+assert(minimalPrimes ideal 2_R == {ideal 2_R})
+assert(minimalPrimes ideal 3_R == {ideal 3_R})
+assert(minimalPrimes ideal 4_R == {ideal 2_R})
+assert(minimalPrimes ideal 5_R == {})
+R = ZZ[][][][]/6
+assert(minimalPrimes ideal 0_R == {ideal 2_R, ideal 3_R})
+assert(minimalPrimes ideal 1_R == {})
+assert(minimalPrimes ideal 2_R == {ideal 2_R})
+assert(minimalPrimes ideal 3_R == {ideal 3_R})
+assert(minimalPrimes ideal 4_R == {ideal 2_R})
+assert(minimalPrimes ideal 5_R == {})
+///
+
 end--
 
 -- UHOH problem with finite fields

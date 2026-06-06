@@ -41,6 +41,7 @@ static volatile std::atomic<int> schorder_nremoved = 0;
 //////////////////////////////////////////////////////
 extern "C" void remove_monideal(void *p, void *cd)
 {
+  (void) cd;
 #ifdef MEMDEBUG
   p = M2_debug_to_inner(p);
 #endif
@@ -79,6 +80,7 @@ void intern_monideal(MonomialIdeal *G)
 // }
 void intern_polyring(const PolynomialRing *G)
 {
+  (void) G;
   // We are already setting a finalizer for rings in newdelete.hpp,
   // I believe this one is just unsetting that one.
   return;
@@ -97,6 +99,7 @@ void intern_polyring(const PolynomialRing *G)
 //////////////////////////////////////////////////////
 extern "C" void remove_gb(void *p, void *cd)
 {
+  (void) cd;
 #ifdef MEMDEBUG
   p = M2_debug_to_inner(p);
 #endif
@@ -128,6 +131,7 @@ void intern_GB(GBComputation *G)
 //////////////////////////////////////////////////////
 extern "C" void remove_res(void *p, void *cd)
 {
+  (void) cd;
 #ifdef MEMDEBUG
   p = M2_debug_to_inner(p);
 #endif
@@ -153,6 +157,7 @@ void intern_res(ResolutionComputation *G)
 //////////////////////////////////////////////////////
 extern "C" void remove_SchreyerOrder(void *p, void *cd)
 {
+  (void) cd;
 #ifdef MEMDEBUG
   p = M2_debug_to_inner(p);
 #endif
@@ -181,6 +186,7 @@ void intern_SchreyerOrder(SchreyerOrder *G)
 
 extern "C" void remove_MutableMatrix(void *p, void *cd)
 {
+  (void) cd;
 #ifdef MEMDEBUG
   p = M2_debug_to_inner(p);
 #endif

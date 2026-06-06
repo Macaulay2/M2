@@ -4,9 +4,6 @@
 ## - M2-editors generates grammar files
 ## - M2-emacs   generates the M2-mode package for Emacs
 
-# TODO: generate vim grammar
-# TODO: generate textmate grammar
-
 set(M2 ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2)
 set(M2_ARGS --script)
 
@@ -14,13 +11,11 @@ set(M2_ARGS --script)
 ## Generating the grammar files is mainly done in make-M2-symbols.m2.
 ## To add to the M2-editors target, add grammar filenames here and in .gitignore.
 set(GRAMMAR_FILES
-  atom/macaulay2.cson
-  highlightjs/macaulay2.js
   prism/macaulay2.js
   pygments/macaulay2.py
 #  rouge/macaulay2.rb
-  vim/m2.vim.syntax
-  vim/m2.vim.dict
+  vim/syntax/m2.vim
+  vim/dict/m2.vim.dict
   emacs/M2-symbols.el)
 
 set(GRAMMAR_TEMPLATES ${GRAMMAR_FILES})

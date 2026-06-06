@@ -88,6 +88,9 @@ const RingElement /* or null */ *
 IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c);
 /* drg: connected rawMatrixEntry, OK*/
 
+engine_RawRingElementArrayArrayOrNull
+IM2_MutableMatrix_get_entries(const MutableMatrix *M);
+
 /* Each of these routines returns false if there was an error. */
 
 M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M,

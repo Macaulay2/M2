@@ -4,6 +4,24 @@
 -- this file gets incorporated into the executable file bin/M2 as the string 'startupString'
 -- we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 
+--------------------------------------------------------------------------------
+
+interpreter := () -> (
+    loadDepth = errorDepth = 3;
+    n := commandInterpreter();
+    if class n === ZZ and 0 <= n and n < 128 then exit n;
+    if n === null then exit 0;
+    debuggingMode = false;
+    stopIfError = true;
+    stderr << "error: can't interpret return value as an exit code" << endl;
+    exit 1)
+
+-- false if we return after an abort
+firstTime := class path === Symbol
+if not firstTime then interpreter()
+
+--------------------------------------------------------------------------------
+
 interpreterDepth = loadDepth = errorDepth = 0
 debuggingMode = true
 stopIfError = false
@@ -15,8 +33,6 @@ if gotarg "--no-randomize" then 0 else (currentTime() << 16) + processID()
 if gotarg "--notify" then notify = true
 if gotarg "--stop" then stopIfError = true
 if gotarg "--int"  then handleInterrupts = false
-
-firstTime := class PackageDictionary === Symbol
 
 if firstTime then (
     -- we do this bit *before* "debug Core", so that Core (the symbol, not the package),
@@ -35,12 +51,10 @@ if firstTime then (
     )
 -- we can't make this an else-clause, because then "Core" will be in the wrong dictionary
 disassemble ( () -> debug Core )
-if not firstTime then debug Core -- we need access to the private symbols (we remove the Core private dictionary later.)
 
 toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toString"
 
 local exe
-local topBuilddir
 
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
@@ -55,16 +69,16 @@ if firstTime then (
      restarted = false;
      srcdirs = {};
 
-     markLoaded = (filename, filepath, filetime, notify) -> (
-	 filepath = minimizeFilename filepath;
-	 filesLoaded#filename = (filepath, filetime);
-	 loadedFiles##loadedFiles = realpath toAbsolutePath filepath;
+     markLoaded = (filepath, filetime, notify) -> (
+	 filesLoaded#filepath = filetime;
+	 loadedFiles##loadedFiles = filepath;
 	 if notify then printerr("loaded ", filepath));
      tryLoad = (filename, filepath, loadfun, notify) -> if fileExists filepath then (
+	 filepath = realpath toAbsolutePath filepath;
 	 filetime := fileTime filepath;
 	 if notify then printerr("loading ", filename);
 	 ret := loadfun filepath;
-	 markLoaded(filename, filepath, filetime, notify);
+	 markLoaded(filepath, filetime, notify);
 	 (true, ret)) else (false, null);
      trySimpleLoad := (filename, filepath) -> first tryLoad(filename, filepath, simpleLoad, notify);
 
@@ -155,15 +169,18 @@ if firstTime then (
      concatPath = (dir, name) -> if isAbsolutePath name then name else concatenate(
 	 dir, if not match("/$", dir) then "/", name);
 
-     toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
+     toAbsolutePath = pth -> (
+	 if (
+	     pth =!= "stdio"         and
+	     pth =!= "currentString" and
+	     not isAbsolutePath pth)
+	 then "/" | relativizeFilename("/", pth) else pth);
 
      use = x -> x;				  -- temporary, until methods.m2
 
      Attributes = new MutableHashTable;
      -- values are hash tables with keys Symbol, String, Net (as symbols); replaces ReverseDictionary and PrintNames
-     setAttribute = (val,attr,x) -> (
-	  if Attributes#?val then Attributes#val else Attributes#val = new MutableHashTable
-	  )#attr = x;
+     setAttribute = (val,attr,x) -> ( Attributes#val ??= new MutableHashTable )#attr = x;
      hasAnAttribute = (val) -> Attributes#?val;
      hasAttribute = (val,attr) -> Attributes#?val and Attributes#val#?attr;
      getAttribute = (val,attr) -> Attributes#val#attr;
@@ -238,29 +255,24 @@ if firstTime then (
 	  or select("a+","$&","aaa aaaa") =!= {"aaa","aaaa"}
 	  then error "regex regular expression library not working";
 	  t := hashTable {
-	       "exec" => "${exec_prefix}/",
-	       "common" => "${prefix}/",
 	       "bin" => "@bindir@/",
-	       "lib" => "@libdir@/",
-	       "info" => "@infodir@/",
 	       "data" => "@datadir@/",
-	       "man" => "@mandir@/",
-	       "emacs" => "@emacsdir@/",
-	       "doc" => "@docdir@/",
-	       "packages" => "@packagesdir@/",
 	       "docdir" => "@docdir@/",
-	       "libraries" => "@librariesdir@/",
-	       "programs" => "@programsdir@/",
-	       "program licenses" => "@licensesdir@/",
-	       "package" => "@packagesdir@/PKG/",
+	       "emacs" => "@emacsdir@/",
 	       "factory gftables" =>  "@GFTABLESDIR@",
-	       "packagedoc" => "@docdir@/PKG/",
-	       "packageimages" => "@docdir@/PKG/images/",
-	       "packagetests" => "@docdir@/PKG/tests/",
-	       "packagehtml" => "@docdir@/PKG/html/",
+	       "info" => "@infodir@/",
+	       "lib" => "@libdir@/",
+	       "libraries" => "@librariesdir@/",
+	       "man" => "@mandir@/",
+	       "package" => "@packagesdir@/PKG/",
 	       "packagecache" => "@libm2dir@/PKG/cache/",
+	       "packagedoc" => "@docdir@/PKG/",
+	       "packageexampleoutput" => "@docdir@/PKG/example-output/",
+	       "packagehtml" => "@docdir@/PKG/html/",
 	       "packagelib" => "@libm2dir@/PKG/",
-	       "packageexampleoutput" => "@docdir@/PKG/example-output/"
+	       "packages" => "@packagesdir@/",
+	       "program licenses" => "@licensesdir@/",
+	       "programs" => "@programsdir@/"
 	       };
 	  Layout = hashTable {
 	       1 => applyValues( t, x -> replace("^\\$\\{(pre_)?(exec_)?prefix\\}/", "", x)),
@@ -348,7 +360,6 @@ matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
 nocore = false
 noinitfile = false
-interpreter := commandInterpreter
 
 M2version := () -> (
     initcurrentlayout();
@@ -485,7 +496,14 @@ valueNotify := arg -> (
      value' arg)
 
 action2 := hashTable {
-     "--srcdir" => arg -> if phase == 2 then srcdirs = append(srcdirs, arg),
+     "--srcdir" => arg -> (
+	 if phase == 2 then (
+	     if isDirectory(arg | "/Macaulay2") then (
+		 srcdirs = append(srcdirs, arg);
+		 topSrcdir = realpath arg)
+	     else (
+		 stopIfError = true;
+		 error "--srcdir should contain a 'Macaulay2' subdirectory"))),
      "-E" => arg -> if phase == 3 then valueNotify arg,
      "-e" => arg -> if phase == 4 then valueNotify arg,
      "--print-width" => arg -> if phase == 3 then printWidth = value' arg,
@@ -558,9 +576,9 @@ if firstTime then processCommandLineOptions 1
 srcversion = M2version()
 
 if firstTime and not nobanner then (
-     if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-     stderr << "Macaulay2, version " << srcversion << newline << flush;
-     if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush)
+     if topLevelMode === TeXmacs then << TeXmacsBegin << "verbatim:";
+     << "Macaulay2, version " << srcversion << newline << flush;
+     if topLevelMode === TeXmacs then << TeXmacsEnd << flush)
 
 scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
 homeDirectory = getenv "HOME" | "/"
@@ -614,19 +632,8 @@ loadCore = path -> (
 
 (core "runStartFunctions")()
 
-loadDepth = 0;
-( loadDepth = 3;
-     processCommandLineOptions 4;
-     n := 0;
-     errorDepth = loadDepth = 3;
-     n = interpreter();
-     if class n === ZZ and 0 <= n and n < 128 then exit n;
-     if n === null then exit 0;
-     debuggingMode = false;
-     stopIfError = true;
-     stderr << "error: can't interpret return value as an exit code" << endl;
-     exit 1;
-     )
+(loadDepth = 3; processCommandLineOptions 4; interpreter())
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d startup.m2 all && make -C $M2BUILDDIR/Macaulay2/bin all "
 -- End:

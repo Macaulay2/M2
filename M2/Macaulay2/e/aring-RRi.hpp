@@ -97,7 +97,8 @@ class ARingRRi : public SimpleARing<ARingRRi>
   }
   // 'init', 'init_set' functions
 
-  void init(ElementType &result) const { mpfi_init2(&result, mPrecision); }
+  void init(ElementType &result) const {
+      mpfi_init2(&result, mPrecision); }
   void init_set(ElementType &result, const ElementType &a) const
   {
     init(result);
@@ -326,14 +327,7 @@ class ARingRRi : public SimpleARing<ARingRRi>
     /* rewrite this (in rand.cpp or just copy over?) */
   void random(ElementType &result) const  // redo?
   {
-      mpfr_t val;
-      mpfr_init2(val, mPrecision);
-      randomMpfr(val);
-      mpfi_set_fr(&result,val);
-      
-      randomMpfr(val);
-      mpfi_put_fr(&result,val);
-      mpfr_clear(val);
+    rawSetRandomRRi(&result);
   }
 
     /* Needs to be redone. */
@@ -342,7 +336,8 @@ class ARingRRi : public SimpleARing<ARingRRi>
             int first_var,
             ring_elem &result) const
   {
-      if (!map->get_ring()->from_Interval(&f, result))
+    (void) first_var;
+    if (!map->get_ring()->from_Interval(&f, result))
       {
            result = map->get_ring()->from_long(0);
            ERROR("cannot coerce RRi value to ring type");
@@ -352,13 +347,17 @@ class ARingRRi : public SimpleARing<ARingRRi>
 /* Not ready */
   void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
   {
-      throw 20;
+    (void) epsilon;
+    (void) a;
+    throw 20;
     //if (mpfr_cmpabs(&a, epsilon) < 0) set_zero(a);
   }
     /* Not ready */
   void increase_norm(gmp_RRmutable norm, const ElementType &a) const
   {
-      throw 20;
+    (void) norm;
+    (void) a;
+    throw 20;
    /* if (mpfr_cmpabs(&a, norm) > 0)
       {
         set(*norm, a);

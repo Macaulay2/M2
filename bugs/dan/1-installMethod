@@ -1,5 +1,0 @@
-There should be a form of installMethod that accepts installMethod((M,A,B,C),f), etc.
-
-And here it is:
-
-    installMethod(Sequence,Function) := installMethod @@ append

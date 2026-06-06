@@ -45,13 +45,22 @@ class QRingInfo : public our_new_delete
     return quotient_gbvectors[i];
   }
 
-  virtual void normal_form(ring_elem &f) const {}
-  virtual void gbvector_normal_form(const FreeModule *F, gbvector *&f) const {}
+  virtual void normal_form(ring_elem &f) const
+    {
+      (void) f;
+    }
+  virtual void gbvector_normal_form(const FreeModule *F, gbvector *&f) const
+    {
+      (void) F;
+      (void) f;
+    }
   virtual void gbvector_normal_form(const FreeModule *F,
                                     gbvector *&f,
                                     bool use_denom,
                                     ring_elem &denom) const
   {
+    (void) use_denom;
+    (void) denom;
     gbvector_normal_form(F, f);
   }
 

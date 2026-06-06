@@ -11,7 +11,7 @@ Meeting on 11/2/2023:
 
 For week of June 12, 2023:
     a. MonomialHashTable
-    b. Mike: do (first versino of) the translation from M2 matrices to a Basis/list of polynomials/vectrs
+    b. Mike: do (first version of) the translation from M2 matrices to a Basis/list of polynomials/vectrs
        Basis (at least a simple version)
     c. Monomial lookup table
     d. SPairs
@@ -23,7 +23,7 @@ CLion
         
 To be done for GB F4 parallel.
 
-[ ] MonomialHashTable for ring monomials for repesenting a single monomial in
+[ ] MonomialHashTable for ring monomials for representing a single monomial in
     a polynomial or a column of a macaulay matrix
     (but in either case, we need the component)
 [ ] Monomial lookup table for divisibility

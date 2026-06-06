@@ -3,7 +3,7 @@ document {
      Headline => "list of variables occurring in a polynomial or matrix",
      Usage => "support f",
      Inputs => {
-	  "f" => RingElement => {"or ", ofClass Matrix, "over a polynomial ring"}
+	  "f" => RingElement => {"or ", ofClass Matrix, " over a polynomial ring"}
 	  },
      Outputs => {
 	  List => {"of ", TO2 (RingElement, "ring elements"), ", the variables occurring in ", TT "f"}

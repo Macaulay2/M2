@@ -3,17 +3,21 @@ assert( gcd(2*3*5,2*3*7,2*5*7,3*5*7) == 1 )
 assert( gcd(1000:2) == 2 )
 assert( gcd splice(1000:2,3) == 1 )
 assert( gcd {} == 0 )
+assert( gcd 2 == 2 )
 assert( lcm(2,3,5,7) == 210 )
 assert( lcm(1000:2) == 2 )
 assert( lcm(0, 0) == 0 )
 assert( lcm(0/1, 0/1) == 0 )
 assert( lcm {} == 1 )
+assert( lcm 2 == 2 )
 
 R = ZZ/32003[x,y]
 f = (x+y)^3*(x-y^2)
 g = (x+y)^2*(x^3-x*y+y^3)^4
 assert ( gcd(f,g) == (x+y)^2 )
 assert ( lcm(0_R, 0_R) == 0 )
+assert ( gcd f == f )
+assert ( lcm f == f )
 
 GF 729[x, y, z]
 assert( gcd((x^5+y^3+a+1)*(y-1),(x^5+y^3+a+1)*(z+1)) == x^5+y^3+a+1 )
@@ -76,6 +80,15 @@ assert( d % w#0 == 0 ) -- actually, we'd like w#0 == d.  I wonder why factory do
 
 R = QQ[x]; R2=R[t];
 assert ( gcd(t^2-x^2,t^3-x^3) == t-x )
+
+R = GF(9);
+for i from 0 to 8 do assert(gcd(R_0, R_0^i) == 1_R and gcd(R_0^i, 0_R) == 1_R);
+assert(gcd(0_R, 0_R) == 0_R)
+assert(gcdCoefficients(0_R, 0_R) == (0_R, 0_R, 0_R))
+assert(gcdCoefficients(R_0, 0_R) == (1_R, 1/R_0, 0_R))
+assert(gcdCoefficients(0_R, R_0) == (1_R, 0_R, 1/R_0))
+assert(gcdCoefficients(R_0, R_0 + 1) == (1_R, 1/R_0, 0_R))
+
 
 debug Core
 R = QQ[x,y]

@@ -634,6 +634,7 @@ void DPoly::reset_degree_0(TowerPolynomial &f)
 }
 void DPoly::reset_degree_n(int level, TowerPolynomial &f)
 {
+  (void) level;
   int fdeg = f->deg;
   for (int j = fdeg; j >= 0; --j)
     if (f->arr.polys[j] != nullptr)
@@ -1095,11 +1096,15 @@ void DPoly::remainder(int level, TowerPolynomial &f, const TowerPolynomial g)
 
 void DPoly::pseudo_remainder(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
+  (void) level;
+  (void) f;
   if (g == nullptr) return;
   // TODO: write
 }
 TowerPolynomial DPoly::pseudo_division(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
+  (void) level;
+  (void) f;
   if (g == nullptr) return nullptr;
   // TODO: write
   return nullptr;
@@ -1107,6 +1112,9 @@ TowerPolynomial DPoly::pseudo_division(int level, TowerPolynomial &f, const Towe
 TowerPolynomial DPoly::resultant(int level, TowerPolynomial f, TowerPolynomial g)
 {
   // TODO: write
+  (void) level;
+  (void) f;
+  (void) g;
   return nullptr;
 }
 static void swap_poly(TowerPolynomial &f, TowerPolynomial &g)

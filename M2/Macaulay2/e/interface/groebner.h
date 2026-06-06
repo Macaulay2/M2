@@ -1,3 +1,7 @@
+/*******************************************
+ * Computation routines for Groebner bases *
+ *******************************************/
+
 // FIXME: this header is based on what is defined in groebner.cpp,
 // but the declarations in engine.h don't seem to match
 
@@ -80,15 +84,18 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
                                         int strategy,
                                         M2_bool parallelizeByDegree);
 
+/* rawGBSetHilbertFunction */
 Computation /* or null */ *IM2_GB_set_hilbert_function(Computation *C,
                                                        const RingElement *h);
 
+/* rawGBForce */
 Computation /* or null */ *IM2_GB_force(
     const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
     const Matrix *gb,
     const Matrix *change, /* same number of columns as 'gb', if not 0 */
     const Matrix *syz);   /* possibly 0 too, otherwise same rows as change */
 
+/* rawMarkedGB */
 Computation /* or null */ *rawMarkedGB(
     const Matrix *leadterms,
     const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
@@ -96,6 +103,14 @@ Computation /* or null */ *rawMarkedGB(
     const Matrix *change, /* same number of columns as 'gb', if not 0 */
     const Matrix *syz);   /* possibly 0 too, otherwise same rows as change */
 
+/* Create a GB algorithm which will compute using the generic Groebner walk algorithm
+   Input: gb: a matrix which, under order1, would be a Groebner basis, except that
+              'gb' is a matrix over a polynomial ring whose order is 'order2'.
+          order1: a monomial ordering
+   Output: a Groebner basis computation object which will compute a GB of gb wrt
+          order2, using the Geneeric Groebner Walk algorithm of ...
+   Assumptions: the base ring is a polynomial ring over a field, with NO quotient elements
+  */
 Computation /* or null */ *rawGroebnerWalk(const Matrix *gb,
                                            const MonomialOrdering *order1);
 
@@ -120,6 +135,7 @@ enum ComputationStatusCode rawStatus1(Computation *C);
 
 int rawStatus2(Computation *C);
 void rawShowComputation(const Computation *C);
+
 const Matrix /* or null */ *rawGBGetMatrix(Computation *C);
 /* Get the minimal, auto-reduced GB of a GB computation.
    Each call to this will produce a different raw matrix */
@@ -149,14 +165,21 @@ const Matrix /* or null */ *rawGBSyzygies(Computation *C);
    set to a non-negative integer, then only that many rows of each
    syzygy are kept. */
 
+/* rawGBMatrixRemainder */
 const Matrix /* or null */ *rawGBMatrixRemainder(Computation *C,
                                                  const Matrix *m);
 
+/* rawGBMatrixLift: false is returned if there is an error or if the
+   remainder is NON-zero */
 M2_bool IM2_GB_matrix_lift(Computation *C,
                            const Matrix *m,
                            const Matrix /* or null */ **result_remainder,
                            const Matrix /* or null */ **result_quotient);
 
+/* rawGBContains: given a Groebner basis computation C and matrix m, returns:
+ -2 for errors
+ -1 for containment of span(m) in span(C)
+ i  for the smallest index of a column of m not contained in span(C) */
 int IM2_GB_contains(Computation *C, const Matrix *m);
 
 /*******************************************
@@ -254,8 +277,11 @@ Matrix /* or null */ *rawSubduction1(int numparts,
 
 void rawDisplayMatrixStream(const Matrix *inputMatrix);
 
+/* rawMGB: interface to mathicgb for computing a Groebner basis of an ideal
+   in a polynomial ring over a finite prime field.
+   reducer: 0 is ClassicReducer, 1 is MatrixReducer */
 const Matrix *rawMGB(
-    const Matrix *inputMatrix,
+    const Matrix *input,
     int reducer,
     int spairGroupSize,  // a value of 0 means let the algorithm choose
     int nthreads,

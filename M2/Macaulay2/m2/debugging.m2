@@ -3,23 +3,8 @@
 needs "nets.m2"
 needs "methods.m2"
 
-processArgs := args -> concatenate (
-     args = sequence args;
-     apply(args, x -> 
-	  if class x === String then x
-	  else if class x === Symbol then ("'", toString x, "'")
-	  else silentRobustString(40,3,x)
-	  ),
-     apply(args, x -> if class x === Symbol then ("\n", toString locate x, ": here is the first use of '",toString x, "'") else "")
-     )
-olderror := error
-error = args -> (
-     -- this is the body of the "error" function, which prints out error messages
-     olderror processArgs args)
-protect symbol error
-
 warningMessage0 = (args,deb) -> (
-     args = processArgs args;
+     args = processErrorArgs args;
      h := hash args % 10000;
      if debugWarningHashcode === h
      then error args
@@ -42,7 +27,7 @@ on = { CallLimit => 100000, Name => null, GenerateAssertions => false } >> opts 
      fb := functionBody f;
      calldepth := 0;
      totaltime := 0.;
-     if not callCount#?fb then callCount#fb = 0;
+     callCount#fb ??= 0;
      limit := opts.CallLimit;
      if not instance(f, Function) then error("expected a function");
      fn := if opts.Name =!= null then opts.Name else try toString f else "-*function*-";
@@ -135,7 +120,7 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 --	  if hasAttribute(v,PrintNet) then v = getAttribute(v,PrintNet) else
 --	  if hasAttribute(v,PrintNames) then v = getAttribute(v,PrintNames) else
 --	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
-	  if w#?v then w#v else w#v = new Descent
+	  w#v ??= new Descent
 	  );
      scan(types, install);
      world)
@@ -166,14 +151,7 @@ localSymbols Pseudocode :=
 localSymbols Symbol :=
 localSymbols Dictionary :=
 localSymbols Function := ls
-
--- make this work eventually:
--- localSymbols() := () -> if current === null then ls() else ls current
--- meanwhile: (see also method123())
--- nullaryMethods # (1 : localSymbols) = () -> if current =!= null then ls current else error "not in debugger (i.e., current not set)"
--- also meanwhile:
-installMethod(localSymbols, () -> if current =!= null then ls current else error "not in debugger (i.e., current not set)")
-
+localSymbols() := () -> if current =!= null then ls current else error "not in debugger (i.e., current not set)"
 localSymbols(Type,Symbol) :=
 localSymbols(Type,Dictionary) :=
 localSymbols(Type,Function) :=
@@ -233,25 +211,36 @@ generateAssertions List := y -> (
 	       else lin
 	       )))^-1
 
+-----------------------------------------------------------------------------
+-- FilePosition and currentPosition
+-----------------------------------------------------------------------------
+
 -- FilePosition = new Type of BasicList -- defined in d
 FilePosition.synonym = "file position"
+
+-- TODO: add FilePosition(String, ZZ, ZZ) and FilePosition(String)
 toExternalString FilePosition :=
 toString FilePosition :=
-net FilePosition := p -> concatenate(
-    if match(" ", p#0) then format p#0 else p#0,
-    ":",toString p#1,":",toString p#2,
-    if #p>3 then ("-",toString p#3,":",toString p#4),
---    if #p>5 then (" (",toString p#5,":",toString p#6,")")
-    )
+net FilePosition := simpleToString -- tostringFilePosition in debugging.dd
+
+
+String | FilePosition := (s, p) -> s | toString p
+FilePosition | String := (p, s) -> toString p | s
+
 currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
 
-locate' = locate -- defined in d/actors4.d
+-----------------------------------------------------------------------------
+-- locate
+-----------------------------------------------------------------------------
+
+locate' = locate -- defined in d/debugging.dd
 locate = method(Dispatch => Thing, TypicalValue => FilePosition)
 locate Nothing     :=
 locate FunctionBody:=
 locate Function    :=
 locate Pseudocode  :=
 locate Sequence    :=
+locate Error       :=
 locate Symbol      := FilePosition => locate'
 locate Command     := FilePosition => C -> locate'(C#0)
 locate List        := List     => x -> apply(x, locate)

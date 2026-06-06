@@ -61,6 +61,8 @@ GBWalker::GBWalker(MarkedGB *G0, long **order1, long **order2)
 GBWalker::GBWalker(const Matrix *gb_under_order1,
                    const MonomialOrdering *order1)
 {
+  (void) gb_under_order1;
+  (void) order1;
 }
 
 GBWalker *GBWalker::create(const Matrix *gb_under_order1,
@@ -94,7 +96,8 @@ GBComputation *GBWalker::make_gb(const Matrix *M) const
                                                false,
                                                -1,
                                                0,
-                                               0
+                                               0,
+                                               0 // TBB numThreads
                                                /* , max_reduction_count */
                                                );
   G0->set_stop_conditions(false,
@@ -166,6 +169,7 @@ void GBWalker::start_computation()
             }
           next_to_reduce = 0;
           state = STATE_reduce;
+          [[fallthrough]];
         case STATE_reduce:
           while (next_to_reduce < 0)  // TODO: consider the top of the loop
             {
@@ -174,6 +178,7 @@ void GBWalker::start_computation()
               next_to_reduce++;
             }
           state = STATE_autoreduce;
+          break;
         case STATE_autoreduce:
           G->remove_gb();
           delete G;
@@ -194,6 +199,7 @@ const PolynomialRing *GBWalker::get_ring() const
 
 Computation /* or null */ *GBWalker::set_hilbert_function(const RingElement *h)
 {
+  (void) h;
   // MES: TO WRITE
   return nullptr;
 }
@@ -224,18 +230,21 @@ const Matrix /* or null */ *GBWalker::get_syzygies()
 
 const Matrix /* or null */ *GBWalker::get_initial(int nparts)
 {
+  (void) nparts;
   // MES: TO WRITE
   return nullptr;
 }
 
 const Matrix /* or null */ *GBWalker::get_parallel_lead_terms(M2_arrayint w)
 {
+  (void) w;
   // MES: TO WRITE
   return nullptr;
 }
 
 const Matrix /* or null */ *GBWalker::matrix_remainder(const Matrix *m)
 {
+  (void) m;
   // MES: TO WRITE
   return nullptr;
 }
@@ -244,6 +253,7 @@ M2_bool GBWalker::matrix_lift(const Matrix *m,
                               const Matrix /* or null */ **result_remainder,
                               const Matrix /* or null */ **result_quotient)
 {
+  (void) m;
   // MES: TO WRITE, should this be written?
   *result_remainder = nullptr;
   *result_quotient = nullptr;
@@ -253,6 +263,7 @@ M2_bool GBWalker::matrix_lift(const Matrix *m,
 
 int GBWalker::contains(const Matrix *m)
 {
+  (void) m;
   // MES: TO WRITE
   return -1;
 }
@@ -261,6 +272,7 @@ void GBWalker::text_out(buffer &o) const
 /* This displays statistical information, and depends on the
    M2_gbTrace value */
 {
+  (void) o;
   // MES: TO WRITE
 }
 

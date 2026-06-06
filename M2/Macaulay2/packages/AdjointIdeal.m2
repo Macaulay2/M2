@@ -1,15 +1,25 @@
 -- -*- coding: utf-8 -*- this has to be on the first line
 newPackage(
 	"AdjointIdeal",
-    	Version => "0.6", 
+    	Version => "0.6",
     	Date => "August 25, 2010",
-    	Authors => {{Name => "Janko Boehm", 
-		  Email => "boehm@mathematik.uni-kl.de", 
-		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
+    	Authors => {{Name => "Janko Boehm",
+		  Email => "boehm@mathematik.uni-kl.de",
+		  HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"}},
     	Headline => "adjoint ideals of plane curves and related computations",
 	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false,
 	CacheExampleOutput => true,
+	-- The doc Examples invoke MapleInterface (Maple is needed to *compute*
+	-- the integral basis), so CacheExampleOutput => true ships pre-recorded
+	-- output and UseCachedExampleOutput => true forces installPackage to
+	-- reuse it on machines without Maple (e.g. CI runners) instead of
+	-- regenerating.  The TEST blocks all pre-supply the integral basis
+	-- explicitly and never call into Maple themselves, so we declare
+	-- OptionalComponentsPresent => true to override the M2 default that
+	-- would otherwise skip them under `check`.
+	UseCachedExampleOutput => true,
+	OptionalComponentsPresent => true,
 	PackageImports => {"IntegralClosure","MapleInterface"},
 	AuxiliaryFiles => true
     	)
@@ -663,7 +673,7 @@ doc ///
 
      For more theoretical details see 
      J. Boehm: Rational parametrization of rational curves,
-     @HREF"http://www.math.uni-sb.de/ag/schreyer/jb/diplom%20janko%20boehm.pdf"@.
+     @HREF"https://agag-jboehm.math.rptu.de/~boehm/diplom%20janko%20boehm.pdf"@.
 
 
      {\bf Key user functions:}
@@ -1228,6 +1238,85 @@ ib=matrix({{1,v,v^2/(1+u),v^3/u/(1+u),v^4/u/(1+u)^2,v^5/u/(1+u)^3,v^6/u^2/(1+u)^
 J=adjointIdeal(I,ib)
 use R;
 assert(J==ideal(u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6))
+///
+
+-- Tests added in the 2026 test-audit pass.
+--
+-- The package shipped with 6 TEST blocks but no assertion on `traceMatrix`
+-- (the only export with no direct test).  The newPackage block also defaulted
+-- to OptionalComponentsPresent => false (because CacheExampleOutput => true),
+-- which silently skipped the entire test suite under `check`.  Both gaps are
+-- addressed in this commit:
+--
+--   * OptionalComponentsPresent => true is now set explicitly (the tests all
+--     pre-supply the integral basis and never call into Maple themselves).
+--
+--   * New TEST blocks below cover:
+--       - traceMatrix on the doc-Example curve, with the concrete output
+--         matrix hard-coded;
+--       - LRdecomposition on the identity matrix and on a non-trivial QQ
+--         matrix, asserting both shape (L lower-triangular, R upper-triangular)
+--         and the L*R == P*A identity;
+--       - forwardSubstitution / backwardSubstitution as inverses of L and R
+--         respectively on an explicit non-random example, so the existing
+--         random-matrix TESTs at L1165/L1175 get a deterministic companion.
+
+TEST /// -- traceMatrix on the v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2 curve
+  K = QQ;
+  R = K[v,u,z];
+  I = ideal matrix {{v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2}};
+  Ruv = K[v,u];
+  QR = frac(Ruv);
+  ib = matrix {{1, v, (-1+v^2)/(-1+u), 1/(-1+u)/u*v^3+(-2+u)/(-1+u)/u*v}};
+  tm = traceMatrix(I, ib);
+  assert(class tm === Matrix);
+  -- tm lives in frac(QQ[u]); construct the expected matrix in the same ring
+  -- and check entry-wise (== on matrices also compares degree metadata).
+  TR = ring tm;
+  ut = (gens TR)_0;
+  expected = matrix {{4_TR, 0, 0, 0}, {0, 4, 0, 8*ut-4}, {0, 0, 8*ut+4, 0}, {0, 8*ut-4, 0, 16}};
+  assert(tm - expected == 0);
+///
+
+TEST /// -- deterministic LR + extractRightUpper + extractLeftLower
+  K = QQ;
+  -- A simple 3x3 over QQ
+  A = matrix(QQ, {{2,1,1},{4,3,3},{8,7,9}});
+  (perm, LR) = LRdecomposition(A, j -> -j);
+  P = transpose (id_(QQ^3))_perm;
+  L = extractLeftLower LR;
+  R = extractRightUpper LR;
+  -- L is lower-triangular with 1s on the diagonal; R is upper-triangular
+  assert(all(0..2, i -> L_(i,i) == 1));
+  assert(all(0..1, i -> all(i+1..2, j -> L_(i,j) == 0)));
+  assert(all(0..1, i -> all(i+1..2, j -> R_(j,i) == 0)));
+  -- and the PA = LR identity holds
+  assert(L*R == P*A);
+///
+
+TEST /// -- forwardSubstitution / backwardSubstitution as exact inverses
+  -- Use a deterministic system whose answer can be hand-checked
+  K = QQ;
+  A = matrix(QQ, {{2,1,1},{4,3,3},{8,7,9}});
+  (perm, LR) = LRdecomposition(A, j -> -j);
+  P = transpose (id_(QQ^3))_perm;
+  b = matrix(QQ, {{4},{10},{24}});  -- chosen so A*x = b has x = matrix{{1},{1},{1}}
+  y = forwardSubstitution(LR, P*b);
+  x = backwardSubstitution(LR, y);
+  assert(x == matrix(QQ, {{1},{1},{1}}));
+  -- and the standard A*x == b round-trip
+  assert(A*x == b);
+///
+
+TEST /// -- LRdecomposition on the identity is the identity (no permutation needed)
+  K = QQ;
+  I3 = id_(QQ^3);
+  (perm, LR) = LRdecomposition(I3, j -> -j);
+  P = transpose (id_(QQ^3))_perm;
+  -- The L*R reconstruction must still hold even in this degenerate case
+  L = extractLeftLower LR;
+  R = extractRightUpper LR;
+  assert(L*R == P*I3);
 ///
 
 end

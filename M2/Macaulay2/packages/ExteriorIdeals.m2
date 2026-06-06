@@ -16,7 +16,6 @@ newPackage(
          "published article URI" => "https://msp.org/jsag/2018/8-1/p07.xhtml",
          "published article DOI" => "10.2140/jsag.2018.8.71",
          "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x07-ExteriorIdeals.m2",
-         "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ExteriorIdeals.m2",
          "release at publication" => "1073789664ba1f00096121613a8b6d932a0e5c4e",        -- git commit number in hex
          "version at publication" => "1.0",
          "volume number" => "8",
@@ -390,10 +389,9 @@ document {
      Key => {ExteriorIdeals},
      Headline => "a package for working with ideals over exterior algebra",
      TT "ExteriorIdeals is a package for creating and manipulating ideals over exterior algebra",
-     PARA {"Other acknowledgements:"},      
-     "The method ", TT "isLexIdeal", " was taken from Chris Francisco's package: LexIdeals, which is available at ",
-      HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/LexIdeals/html/","LexIdeals"}
-      
+     Acknowledgement => PARA {
+	 "The method ", TO "isLexIdeal", " was taken from ", TO "LexIdeals::isLexIdeal",
+	 " in Chris Francisco's package ", TO "LexIdeals::LexIdeals", "." },
      }
 
 document {
@@ -469,16 +467,15 @@ document {
      Inputs => {"I" => {"a monomial ideal of an exterior algebra"}
       },
      Outputs => {Boolean => {"true whether ideal ", TT "I", " is lex"}},
-      PARA {"Other acknowledgements:"},      
-     "This method was taken from Chris Francisco's package: LexIdeals, which is available at ",
-      HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/LexIdeals/html/","LexIdeals"},
-      
      PARA {"Examples:"},
      EXAMPLE lines ///
            E=QQ[e_1..e_4,SkewCommutative=>true]
            isLexIdeal ideal {e_1*e_2,e_2*e_3}
            isLexIdeal ideal {e_1*e_2,e_1*e_3,e_1*e_4,e_2*e_3}
      ///,
+     Acknowledgement => PARA {
+	 "This method was taken from ", TO "LexIdeals::isLexIdeal",
+	 " in Chris Francisco's package ", TO "LexIdeals::LexIdeals", "." },
      SeeAlso =>{lexIdeal},
      }
 
@@ -770,7 +767,13 @@ E=QQ[e_1..e_4,SkewCommutative=>true]
 I=ideal {e_1*e_2,e_1*e_3,e_2*e_3}
 J=ideal(join(flatten entries gens I,{e_1*e_2*e_3}))
 assert(I==J)
-minimalBettiNumbers(I, LengthLimit => 5) == minimalBettiNumbers(J, LengthLimit => 5)
+assert(minimalBettiNumbers(I, LengthLimit => 5) == minimalBettiNumbers(J, LengthLimit => 5))
+-- additionally validate against hand-computed Betti ranks of E/I.
+bt = minimalBettiNumbers(I, LengthLimit => 3)
+assert(bt#(0,{0},0) == 1)
+assert(bt#(1,{2},2) == 3)
+assert(bt#(2,{3},3) == 8)
+assert(bt#(3,{4},4) == 15)
 ///
 
 ----------------------------
@@ -781,6 +784,49 @@ E=QQ[e_1..e_5,SkewCommutative=>true]
 I=ideal {e_1*e_2+e_3*e_4*e_5,e_1*e_3+e_4*e_5,e_2*e_3*e_4}
 J=ideal {e_1*e_2,e_1*e_3,e_1*e_4*e_5,e_2*e_3*e_4,e_2*e_4*e_5,e_3*e_4*e_5}
 assert(initialIdeal I==J)
+///
+
+----------------------------
+-- Test Shift option: round-trip and asymmetry
+----------------------------
+TEST ///
+-- The Shift option of macaulayExpansion produces a strictly different
+-- expansion (it raises each down-index by 1) on the same input;
+-- solveMacaulayExpansion inverts the unshifted expansion exactly.
+assert(macaulayExpansion(8,4,Shift=>true) =!= macaulayExpansion(8,4,Shift=>false))
+assert(solveMacaulayExpansion macaulayExpansion(8,4) == 8)
+assert(solveMacaulayExpansion macaulayExpansion(15,3) == 15)
+///
+
+----------------------------
+-- Test minimalBettiNumbers against the Cartan complex
+----------------------------
+TEST ///
+-- The minimal free resolution of the residue field over an exterior algebra
+-- on n variables is the Cartan complex, with Betti numbers
+-- beta_i = binomial(n+i-1, i).  For n = 2 these are 1, 2, 3, 4, 5, ...
+E = QQ[a,b, SkewCommutative=>true];
+bt = minimalBettiNumbers(ideal(a,b), LengthLimit=>4);
+assert(bt#(0,{0},0) == 1);
+assert(bt#(1,{1},1) == 2);
+assert(bt#(2,{2},2) == 3);
+assert(bt#(3,{3},3) == 4);
+assert(bt#(4,{4},4) == 5);
+///
+
+----------------------------
+-- Test closure-operator idempotence and the Hilbert-sequence round-trip
+----------------------------
+TEST ///
+-- lexIdeal, stableIdeal, stronglyStableIdeal are closure operators on the
+-- corresponding classes: their outputs satisfy the matching predicate.
+-- hilbertSequence of an ideal is itself an admissible Hilbert sequence.
+E = QQ[e_1..e_4, SkewCommutative=>true];
+I = ideal {e_1*e_2, e_2*e_3};
+assert(isLexIdeal lexIdeal I);
+assert(isStableIdeal stableIdeal I);
+assert(isStronglyStableIdeal stronglyStableIdeal I);
+assert(isHilbertSequence(hilbertSequence I, E));
 ///
 
 end

@@ -1,15 +1,49 @@
+-- RInterface package for Macaulay2
+-- Copyright (C) 2023-2026 Doug Torrance
+
+-- This program is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU General Public License
+-- as published by the Free Software Foundation; either version 2
+-- of the License, or (at your option) any later version.
+
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, see <https://www.gnu.org/licenses/>.
+
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
-    Version => "0.1",
-    Date => "January 28, 2024",
+    Version => "0.2",
+    Date => "May 7, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
     Keywords => {"Interfaces"},
     OptionalComponentsPresent => run("command -v R > /dev/null") == 0,
     AuxiliaryFiles => true,
     PackageImports => {"ForeignFunctions"})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2026-05-07, M2 1.26.05)
+* Release under GPL
+* Add hash table <-> environment conversion
+* Add RValue, RQuote, RContext
+* Add support for ~ as a binary operator
+* Improved documentation and tests
+
+0.1 (2024-01-28, M2 1.23)
+* initial release
+
+*-
 
 
 endpkg = msg -> (
@@ -29,12 +63,18 @@ export {
     -- types
     "RObject",
     "RFunction",
+    "RContext",
 
     -- methods
+    "RQuote",
     "RSymbol",
+    "RValue",
 
     -- objects
-    "NA"
+    "NA",
+
+    -- symbols
+    "Environment"
     }
 
 ----------
@@ -91,6 +131,9 @@ PROTECT = foreignFunction(Rlib, "Rf_protect", SEXP, SEXP)
 UNPROTECT = foreignFunction(Rlib, "Rf_unprotect", void, int)
 RtryEval = foreignFunction(Rlib, "R_tryEval", SEXP, {SEXP, SEXP, voidstar})
 RGlobalEnv = foreignSymbol(Rlib, "R_GlobalEnv", SEXP)
+RBaseEnv = foreignSymbol(Rlib, "R_BaseEnv", SEXP)
+PRINTNAME = foreignFunction(Rlib, "PRINTNAME", SEXP, SEXP)
+type2char = foreignFunction(Rlib, "Rf_type2char", charstar, int)
 
 tryEval = x -> (
     err := int 0;
@@ -105,16 +148,36 @@ new RFunction from RObject := (T, f) -> (
 	result := tryEval call;
 	UNPROTECT 1;
 	result))
-new RFunction from String := (T, s) -> RFunction RSymbol s
+new RFunction from String := (T, s) -> T RSymbol s
+new RFunction from Thing := (T, x) -> T toString x
 
 install = foreignFunction(Rlib, "Rf_install", SEXP, charstar)
+
+RQuote = method()
+RQuote String := s -> RObject install s
+RQuote Thing := RQuote @@ toString
+
 RSymbol = method()
-RSymbol String := s -> RObject install s
+RSymbol String := s -> tryEval install s
+RSymbol Thing := RSymbol @@ toString
 
-net RObject := stack @@ value @@ (RFunction "capture.output")
+toStringHelper = (f, x) -> (
+    if TYPEOF x == SYMSXP then value CHAR PRINTNAME x
+    else f x)
 
-typeof = value @@ (RFunction "typeof");
-RObject.AfterPrint = x -> (RObject, " of type ", typeof x)
+RtoString = RFunction "toString"
+environmentName = RFunction "environmentName"
+captureOutput = RFunction "capture.output"
+
+toString RObject := x -> value (
+    if TYPEOF x == SYMSXP then CHAR PRINTNAME x
+    else if TYPEOF x == ENVSXP then environmentName x
+    else RtoString x)
+net RObject := x -> (
+    if TYPEOF x == SYMSXP then value CHAR PRINTNAME x
+    else stack value captureOutput x)
+
+RObject.AfterPrint = x -> (RObject, " of type ", value type2char TYPEOF x)
 
 --------------------
 -- Macaulay2 -> R --
@@ -163,6 +226,17 @@ new RObject from  Matrix := (RFunction "matrix") @@ ((T, x) -> (
 	"nrow" => numRows x,
 	"ncol" => numColumns x))
 
+NewEnv = RFunction "new.env"
+defineVar = foreignFunction(Rlib, "Rf_defineVar", void, {SEXP, SEXP, SEXP})
+new RObject from HashTable := (T, x) -> (
+    if class x =!= HashTable then return x;
+    if any(keys x, k -> not instance(k, String))
+    then error "expected all keys to be strings";
+    env := PROTECT NewEnv(0, RBaseEnv, 0);
+    scanPairs(x, (k, v) -> defineVar(RQuote k, RObject v, env));
+    UNPROTECT 1;
+    T env)
+
 --------------------
 -- R -> Macaulay2 --
 --------------------
@@ -176,6 +250,7 @@ COMPLEX = foreignFunction(Rlib, "COMPLEX", voidstar, SEXP)
 stringElt = foreignFunction(Rlib, "STRING_ELT", SEXP, {SEXP, int})
 vectorElt = foreignFunction(Rlib, "VECTOR_ELT", SEXP, {SEXP, int})
 getAttrib = foreignFunction(Rlib, "Rf_getAttrib", SEXP, {SEXP, SEXP})
+lsInternal = foreignFunction(Rlib, "R_lsInternal", SEXP, {SEXP, int})
 NamesSymbol = foreignSymbol(Rlib, "R_NamesSymbol", SEXP)
 DimSymbol = foreignSymbol(Rlib, "R_DimSymbol", SEXP)
 
@@ -184,6 +259,7 @@ NILSXP     = 0
 SYMSXP     = 1
 LISTSXP    = 2
 CLOSXP     = 3
+ENVSXP     = 4
 LANGSXP    = 6
 SPECIALSXP = 7
 BUILTINSXP = 8
@@ -200,6 +276,9 @@ isIterable = set {LGLSXP, INTSXP, REALSXP, CPLXSXP, STRSXP}
 valueFunctions = hashTable {
     NILSXP     => x -> null,
     SYMSXP     => x -> value tryEval x,
+    ENVSXP     => x -> (
+	names := value RObject lsInternal(x, 0);
+	hashTable apply(names ?? {}, name -> (name, value x_name))),
     CHARSXP    => x -> value CHAR x,
     LGLSXP     => x -> value(int * LOGICAL x) == 1,
     INTSXP     => x -> value(int * INTEGER x),
@@ -208,6 +287,7 @@ valueFunctions = hashTable {
 	z := value(Rcomplex * COMPLEX  x);
 	z#"r" + ii * z#"i"),
     STRSXP     => x -> (
+	if length x == 0 then return "";
 	y := stringElt(x, 0);
 	T := TYPEOF y;
 	if T == CHARSXP then value CHAR y
@@ -386,7 +466,6 @@ length RObject := value @@ (RFunction "length") -- needs to return a ZZ
 scan({
 	(symbol not, "!"),
 	(symbol !, "factorial"),
-	(symbol ~, "bitwNot"),
 	(conjugate, "Conj"),
 	(Digamma, "digamma"),
 	(Gamma, "gamma"),
@@ -423,6 +502,7 @@ scan({
 	(symbol ^^, "bitwXor"),
 	(symbol <<, "bitwShiftL"),
 	(symbol >>, "bitwShiftR"),
+	(symbol ~, "~"),
 	(atan2, "atan2"),
 	(Beta, "beta"),
 	(binomial, "choose"),
@@ -433,7 +513,62 @@ scan({
 	installMethod(m2f, RObject, Thing, rf);
 	installMethod(m2f, Thing, RObject, rf)))
 
+bitwNot = RFunction "bitwNot"
+tilde = lookup(symbol ~, RObject, RObject)
+~ RObject := x -> (
+    if member(TYPEOF x, {INTSXP, REALSXP})
+    then bitwNot x
+    else tilde x)
+
 ?? RObject := x -> if TYPEOF x > 0 then x
 
-load "./RInterface/test.m2"
+-----------------------
+-- evaluating R code --
+-----------------------
+
+Rparse = RFunction "parse"
+Reval = RFunction "eval"
+
+RValue = method(
+    Dispatch => Thing,
+    Options => {Environment => RObject RGlobalEnv})
+RValue String := o -> s -> Reval(Rparse("text" => s), RObject o.Environment)
+RValue Sequence := o -> s -> RValue(concatenate \\ toString \ s, o)
+
+RContext = new SelfInitializingType of MutableHashTable
+RContext.synonym = "R context"
+globalAssignment RContext
+
+protect Environment
+new RContext := T -> T {Environment => RObject hashTable {}}
+new RContext from String := (T, s) -> (
+    env := RObject hashTable {};
+    RValue(s, Environment => env);
+    T {Environment => env})
+
+RContext String := (ctx, s) -> RValue(s, Environment => ctx.Environment)
+RContext_String := (ctx, key) -> ctx.Environment_key
+
+importFrom(Core, {"Abbreviate", "TABLE", "TD", "TH"})
+listSymbols RObject := x -> (
+    if not TYPEOF x == ENVSXP
+    then error "expected an environment"
+    else TABLE prepend(
+	apply({"symbol", "class", "value"}, s -> TH {s}),
+	apply(value RObject lsInternal(x, 0) ?? {},
+	    name -> (
+		val := x_name;
+		apply({
+			name,
+			type2char TYPEOF val,
+			Abbreviate {val}}, s-> TD {s})))))
+listSymbols RContext := ctx -> listSymbols ctx.Environment
+
+use RContext := ctx -> (
+    scan(value RObject lsInternal(ctx.Environment, 0) ?? {}, key -> (
+	    if not match("[\\._]", toString key)
+	    then getSymbol toString key <- ctx.Environment_key));)
+
+beginDocumentation()
+
 load "./RInterface/doc.m2"

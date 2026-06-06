@@ -430,7 +430,7 @@ document{
        "setVerboseLevel 0;",
        "S = solveSchubertProblem(SchPblm,2,4)",
        "assert all(S,s->checkIncidenceSolution(s,SchPblm))",
-       "setVerboseLevel 1;",
+       "setVerboseLevel 1; -* no-capture-flag *-",
        "S = solveSchubertProblem(SchPblm,2,4)",
        "assert all(S,s->checkIncidenceSolution(s,SchPblm))"
        },

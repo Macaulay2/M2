@@ -220,7 +220,8 @@ GBComputation *PolyRingQuotient::make_gb(const ring_elem g) const
                                               false,
                                               -1,
                                               0,
-                                              0
+                                              0,
+                                              0 // TBB numThreads
                                               /* , max_reduction_count */
                                               );
   G->set_stop_conditions(false,
@@ -395,7 +396,8 @@ void PolyRingQuotient::syzygy(const ring_elem a,
                                               false,
                                               -1,
                                               0,
-                                              0
+                                              0,
+                                              0 // TBB numThreads
                                               /* , max_reduction_count */
                                               );
   G->set_stop_conditions(false,

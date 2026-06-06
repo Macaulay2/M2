@@ -6,6 +6,6 @@ b = vars R
 c = matrix {{x^2,y^2,z^2}}
 M = coker b
 N = ker c
-res M
+res(M, LengthLimit => 4)
 X = Proj R
 HH^1 cotangentSheaf X 

@@ -9,16 +9,14 @@ void ARingRRi::elem_text_out(buffer &o,
                              bool p_plus,
                              bool p_parens) const
 {
-  mpfi_ptr a = &const_cast<ElementType &>(ap);
-  M2_string s1 = (*gmp_tostringRRpointer)(&(a->left));
-  M2_string s2 = (*gmp_tostringRRpointer)(&(a->right));
+  (void) p_parens;
 
-  if(p_plus) o << "+";
-  o << "[";
-  o.put((char *)s1->array, s1->len);
-  o << ",";
-  o.put((char *)s2->array, s2->len);
-  o << "]";
+  if(p_plus)
+    o << "+";
+
+  // TODO: how do we want to handle -1?  intervals w/ matching endpoints?
+  if (p_one || mpfr_cmp_si(&ap.left, 1) != 0 || mpfr_cmp_si(&ap.right, 1) != 0)
+    o << &ap;
 }
 
 };  // end namespace M2

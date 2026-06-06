@@ -27,11 +27,15 @@ addTest(String, FilePosition) := (str, loc) -> (
     n := #currentPackage#"test inputs";
     currentPackage#"test inputs"#n = TestInput {
 	"location" => loc,
-	"code" => str})
+	"code" => concatenate("-- test source: ", toString loc, newline, str),
+	"package" => currentPackage,
+	"number" => n})
 -- the following is not called by TEST, but called directly when we want to
 -- add a test from a file (used by loadTestDir)
-addTest String := filename -> addTest(get filename,
-    new FilePosition from(filename, 1, 1))
+addTest String := filename -> (
+    str := get filename;
+    strs := lines str;
+    addTest(str, new FilePosition from {filename, 1, 1, #strs, #last strs}))
 -- TODO: support test titles
 
 -----------------------------------------------------------------------------
@@ -49,7 +53,7 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     -- TODO: remove this when capture uses ArgQ
     if usermode === not noinitfile then
     -- try capturing in the same process
-    if isCapturable(teststring, pkg, true) then (
+    if isCapturable(teststring, pkg) then (
 	checkmsg("capturing", desc);
 	-- TODO: adjust and pass argumentMode, instead. This can be done earlier, too.
 	-- Note: UserMode option of capture is not related to UserMode option of check
@@ -60,22 +64,30 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
-    -- TODO: prioritize reading the tests from topSrcdir | "Macaulay2/tests/normal" instead
-    testDir := pkg#"package prefix" |
-        replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
-    pkg#"test directory loaded" =
+    pkg#"test directory loaded" = true;
+    testDir := minimizeFilename(
+	-- prioritize Core tests from source repository
+	if pkg === Core then (
+	    if topSrcdir =!= null and (
+		dir := topSrcdir | "Macaulay2/tests/normal/";
+		isDirectory dir) then dir
+	    else Core#"source directory" | "tests/")
+	else pkg#"source directory" | pkg#"pkgname" | "/tests/");
     if fileExists testDir then (
-        tmp := currentPackage;
-        currentPackage = pkg;
+	printerr("loading tests from ", testDir);
+	tmp := currentPackage;
+	currentPackage = pkg;
 	scan(sort select(readDirectory testDir, file -> match("\\.m2$", file)),
 	    test -> addTest(testDir | test));
-        currentPackage = tmp;
-        true) else false)
+	currentPackage = tmp))
 
 tests = method()
 tests Package := pkg -> (
+    if pkg#?"documentation not loaded"
+    then pkg = loadPackage(pkg,
+	FileName => pkg#"source file",
+	LoadDocumentation => true);
     if not pkg#?"test directory loaded" then loadTestDir pkg;
-    if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
     previousMethodsFound = new NumberedVerticalList from pkg#"test inputs"
     )
 tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
@@ -108,16 +120,25 @@ check(List, Package) := opts -> (L, pkg) -> (
     outfile := errfile -> temporaryDirectory() | errfile | ".tmp";
     if #errorList > 0 then (
 	if opts.Verbose then apply(errorList, (k, errfile) -> (
+		stderr << concatenate(printWidth:"=") << endl;
 		stderr << locate inputs#k << " error:" << endl;
 		printerr getErrors(outfile errfile)));
-	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
+	stderr << concatenate(printWidth:"=") << endl;
+	printerr("Summary: ", toString(#errorList), " test(s) failed in package ", pkg#"pkgname", ":");
+	printerr netList(Boxes => false, HorizontalSpace => 2,
+	    apply(first \ errorList, i -> { "Test #"|i|".", toString locate tests_i pkg }));
+	error("repeat failed tests with:", newline,
+	    "  check({", demark(", ", toString \ first \ errorList), "}, ", format pkg#"pkgname", ")")))
+check TestInput := opts -> t -> check({t#"number"}, t#"package", opts)
+check ZZ := opts -> n -> check(previousMethodsFound#n, opts)
+check List := opts -> T -> scan(T, t -> check(t, opts))
 
 checkAllPackages = () -> (
     tmp := argumentMode;
     argumentMode = defaultMode - SetCaptureErr - SetUlimit -
 	if noinitfile then 0 else ArgQ;
     fails := for pkg in sort separate(" ", version#"packages") list (
-	stderr << HEADER1 pkg << endl;
+	stderr << HEADER2 pkg << endl;
 	if runString("check(" | format pkg | ", Verbose => true)",
 	    Core, false) then continue else pkg) do stderr << endl;
     argumentMode = tmp;

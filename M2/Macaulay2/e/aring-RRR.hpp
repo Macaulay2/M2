@@ -116,6 +116,7 @@ class ARingRRR : public SimpleARing<ARingRRR>
 
   void set_var(ElementType &result, int v) const
   {
+    (void) v;
     mpfr_set_si(&result, 1, MPFR_RNDN);
   }
 
@@ -244,6 +245,7 @@ class ARingRRR : public SimpleARing<ARingRRR>
             int first_var,
             ring_elem &result) const
   {
+    (void) first_var;
     if (!map->get_ring()->from_BigReal(&f, result))
       {
         result = map->get_ring()->from_long(0);

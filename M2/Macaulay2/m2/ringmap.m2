@@ -53,6 +53,8 @@ Ring#id = R -> map(R, R, vars R)
 
 map(RingFamily, Thing, Thing) := RingMap => opts -> (R, S, m) -> map(default R, S, m, opts)
 map(Thing, RingFamily, Thing) := RingMap => opts -> (R, S, m) -> map(R, default S, m, opts)
+map(RingFamily, Thing) := RingMap => opts -> (R, S) -> map(default R, S, opts)
+map(Thing, RingFamily) := RingMap => opts -> (R, S) -> map(R, default S, opts)
 
 map(Ring, Ring)          := RingMap => opts -> (R, S   ) -> map(R, S, matrix(R, {{}}), opts)
 map(Ring, Ring, RingMap) := RingMap => opts -> (R, S, f) -> map(R, S, matrix f,        opts)
@@ -211,9 +213,7 @@ RingMap Module := Module => (f, M) -> (
 -- misc
 tensor(RingMap, Module) := Module => {} >> opts -> (f, M) -> (
     if source f =!= ring M then error "expected module over source ring";
-    subquotient(f ambient M,
-	if M.?generators then f M.generators,
-	if M.?relations  then f M.relations))
+    cokernel f presentation M);
 RingMap ** Module := Module => (f, M) -> tensor(f, M)
 
 tensor(RingMap, Matrix) := Matrix => {} >> opts -> (f, m) -> (
@@ -228,7 +228,6 @@ RingMap \ VisibleList := VisibleList => (f,v) -> apply(v,x -> f x)
 -- kernel
 -----------------------------------------------------------------------------
 
-kernel = method(Options => { SubringLimit => infinity })
 kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (f -> (
     (F, R) := (target f, source f);
     if 0_F == 1_F then return ideal 1_R;
@@ -240,112 +239,125 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (f -> (
 algorithms := new MutableHashTable from {}
 algorithms#(kernel, RingMap) = new MutableHashTable from {
     FractionField => (opts, f) -> (
-	(F, R) := (target f, source f);
-	C := last F.baseRings;
-	if not instance(F, FractionField)
-	or not coefficientRing R === (k := coefficientRing C)
-	or not(isPolynomialRing C or isQuotientOf(PolynomialRing, C))
-	or not(isPolynomialRing R or isQuotientOf(PolynomialRing, R))
-	then return null;
-	       prs := presentation C;
-	       B := ring prs;
-	       images := apply(generators R, x -> (
-			 w := f x;
-			 new Divide from {numerator w, denominator w} ));
-	       -- now make a common denominator for all images
-	       images = new MutableList from images;
-	       i := 1;
-	       while i < #images do (
-		    z := syz(
-			 matrix{{denominator images#0,denominator images#i}},
-			 SyzygyLimit => 1 );
-		    a := -z_(0,0);
-		    b := z_(1,0);
-		    j := 0;
-		    while j < i do (
-			 images#j = apply(images#j, s -> s*a);
-			 j += 1;
-			 );
-		    images#i = apply(images#i, s -> s*b);
-		    i += 1;
-		    );
-	       images = toList images;
-	       commonDenominator := images#0#1;
-	       d := symbol d;
-	       h := symbol h;
-	       x := symbol x;
-	       y := symbol y;
-	(n1, n2) := (numgens F, numgens R);
-	       S := k[x_1 .. x_n1, d, y_1 .. y_n2, h,
-		    MonomialOrder => Eliminate (n1 + 1),
-		    Degrees => join(degrees C, {{1}}, degrees R, {{1}})];
-	       in1 := map(S,C,matrix {take (generators S, n1)});
-	       in2 := map(S,B,matrix {take (generators S, n1)});
-	       in3 := map(S,R,matrix {take (generators S, {n1 + 1, n1 + n2})});
-	       back := map(R,S,map(R^1,R^(n1 + 1),0) | vars R | 1 );
-	       ideal back selectInSubring( 1, 
-		    generators gb(
-			 in2 prs |
-			 homogenize (
-			      in3 vars source in3 - d * in1 matrix {apply(images, first)}
-			      | d * in1 commonDenominator - 1,
-			      h),
-			 Strategy => LongPolynomial, opts))
+		(F, R) := (target f, source f);
+		C := last F.baseRings;
+		if not instance(F, FractionField)
+			or not coefficientRing R === (k := coefficientRing C)
+			or not(isPolynomialRing C or isQuotientOf(PolynomialRing, C))
+			or not(isPolynomialRing R or isQuotientOf(PolynomialRing, R))
+		then return null;
+
+		prs := presentation C;
+		B := ring prs;
+		images := apply(generators R, x -> (
+			w := f x;
+			new Divide from {numerator w, denominator w}
+		));
+
+		-- now make a common denominator for all images
+		images = new MutableList from images;
+		i := 1;
+		while i < #images do (
+			z := syz(
+				matrix{{denominator images#0,denominator images#i}},
+				SyzygyLimit => 1
+			);
+			a := -z_(0,0);
+			b := z_(1,0);
+
+			j := 0;
+			while j < i do (
+				images#j = apply(images#j, s -> s*a);
+				j += 1;
+			);
+			images#i = apply(images#i, s -> s*b);
+			i += 1;
+		);
+		images = toList images;
+		commonDenominator := images#0#1;
+
+		d := symbol d;
+		h := symbol h;
+		x := symbol x;
+		y := symbol y;
+		(n1, n2) := (numgens F, numgens R);
+		S := k[x_1 .. x_n1, d, y_1 .. y_n2, h,
+			MonomialOrder => Eliminate (n1 + 1),
+			Degrees => join(degrees C, {{1}}, degrees R, {{1}})
+		];
+
+		in1 := map(S,C,matrix {take (generators S, n1)});
+		in2 := map(S,B,matrix {take (generators S, n1)});
+		in3 := map(S,R,matrix {take (generators S, {n1 + 1, n1 + n2})});
+		back := map(R,S,map(R^1,R^(n1 + 1),0) | vars R | 1 );
+		ideal back selectInSubring(
+			1,
+			generators gb(
+				in2 prs | homogenize (
+					in3 vars source in3 - d * in1 matrix {apply(images, first)}
+					| d * in1 commonDenominator - 1,
+					h
+				),
+				Strategy => LongPolynomial,
+				opts
+			)
+		)
 	),
 
     "AffineRing" => (opts, f) -> (
-	(F, R) := (target f, source f);
-	if not isAffineRing R
-	or not isAffineRing F
-	or not instance(ambient R, PolynomialRing)
-	or not instance(ambient F, PolynomialRing)
-	or not isField coefficientRing R
-	or not coefficientRing R === coefficientRing F
-	then return null;
-	       graph := generators graphIdeal f;
-	       assert( not isHomogeneous f or isHomogeneous graph );
-	       SS := ring graph;
-	       chh := checkHilbertHint graph;
-	       if chh then (
-		   -- compare with pushNonLinear
-		   hf := poincare module target f;
-		   T := degreesRing SS;
-		   hf = hf * product(degrees source graph, d -> 1 - T_d);
-		   -- cache poincare
-		   poincare cokernel graph = hf;
-		   );
-	n1 := numgens F;
-	       mapback := map(R, ring graph, map(R^1, R^n1, 0) | vars R);
-	       G := gb(graph,opts);
-	       assert (not chh or G#?"rawGBSetHilbertFunction log"); -- ensure the Hilbert function hint was actually used in gb.m2
-	       ideal mapback selectInSubring(1,generators G)
+		(F, R) := (target f, source f);
+		if not isAffineRing R
+			or not isAffineRing F
+			or not instance(ambient R, PolynomialRing)
+			or not instance(ambient F, PolynomialRing)
+			or not isField coefficientRing R
+			or not coefficientRing R === coefficientRing F
+		then return null;
+
+		graph := generators graphIdeal f;
+		assert( not isHomogeneous f or isHomogeneous graph );
+		SS := ring graph;
+		chh := canUseHilbertHint graph;
+		if chh then (
+			-- compare with pushNonLinear
+			hf := poincare module target f;
+			T := degreesRing SS;
+			hf = hf * product(degrees source graph, d -> 1 - T_d);
+			-- cache poincare
+			poincare cokernel graph = hf;
+		);
+		n1 := numgens F;
+		mapback := map(R, ring graph, map(R^1, R^n1, 0) | vars R);
+		G := gb(graph,opts);
+		assert (not chh or G#?"rawGBSetHilbertFunction log"); -- ensure the Hilbert function hint was actually used in gb.m2
+		ideal mapback selectInSubring(1,generators G)
 	),
 
+    ZZ => (opts, f) -> if source f === ZZ then ideal char target f,
+
     Default => (opts, f) -> (
-	(F, R) := (target f, source f);
-	       numsame := 0;
-	       while (
+		(F, R) := (target f, source f);
+		numsame := 0;
+		while (
 		    R.baseRings#?numsame and
-		    F.baseRings#?numsame and 
+		    F.baseRings#?numsame and
 		    R.baseRings#numsame === F.baseRings#numsame
-		    )
-	       do numsame = numsame + 1;
-	       while not (
+		) do numsame = numsame + 1;
+		while not (
 		    isField F.baseRings#(numsame-1)
 		    or
 		    F.baseRings#(numsame-1).?isBasic
-		    )
-	       do numsame = numsame - 1;
-	       k := F.baseRings#(numsame-1);
-	       (R',p) := flattenRing(R, CoefficientRing => k);
-	       (F',r) := flattenRing(F, CoefficientRing => k);
-	if R' === R and F' === F then return null;
-	p^-1 kernel (r * f * p^-1)
+		) do numsame = numsame - 1;
+		k := F.baseRings#(numsame-1);
+		(R',p) := flattenRing(R, CoefficientRing => k);
+		(F',r) := flattenRing(F, CoefficientRing => k);
+		if R' === R and F' === F then return null;
+		p^-1 kernel (r * f * p^-1)
 	),
-    }
+}
 
 -- Installing hooks for kernel RingMap
-scan({Default, "AffineRing", FractionField}, strategy ->
+scan({Default, ZZ, "AffineRing", FractionField}, strategy ->
     addHook(key := (kernel, RingMap), algorithms#key#strategy, Strategy => strategy))
 
 -----------------------------------------------------------------------------

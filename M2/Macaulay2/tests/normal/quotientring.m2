@@ -14,6 +14,9 @@ assert( a_R^2 == 0 )
 R = QQ[a]/a^2[x][y]/y^3
 assert( a_R^2 == 0 )
 
+R = ZZ/41
+assert(sqrt(5_R)^2 == 5_R)
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test quotientring.out"

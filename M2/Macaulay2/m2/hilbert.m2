@@ -84,8 +84,21 @@ poincare Module := M -> (
     if (P := computation M) =!= null then return P;
     error("no applicable strategy for computing poincare over ", toString ring M))
 
+-- Use that the Poincare polynomial of a subquotient module M is the difference of the Poincare polynomials of two quotients.
+-- This avoids having to find a presentation of M (unless that has already been done).
 addHook((poincare, Module), Strategy => Default, M -> (
-	new degreesRing ring M from rawHilbert raw leadTerm gb presentation M))
+        hf := if hasMinPres M then
+                  rawHilbert raw leadTerm gb relations minimalPresentation M
+              -- We cannot just call "poincare minimalPresentation M", because there are cases (such as M free)
+              -- where both M and minimalPresentation M are cached as having a minimal presentation;
+              -- so that would lead to an infinite loop. 
+              else if not M.?generators then
+                  rawHilbert raw leadTerm gb relations M
+              else if M.cache.?presentation then
+                  rawHilbert raw leadTerm gb M.cache.presentation
+              else (rawHilbert raw leadTerm gb relations M) - (rawHilbert raw leadTerm gb M);
+        new degreesRing ring M from hf
+        ))
 
 -- manually installs the numerator of the reduced Hilbert series for the module
 storefuns#poincare = method()
@@ -96,11 +109,14 @@ storefuns#poincare(Module, RingElement) := (M, hf) -> M.cache.poincare = substit
 -- TODO: deprecate this
 installHilbertFunction = storefuns#poincare
 
------------------------------------------------------------------------------
--- pdim, dim, degree, multidegree, length
------------------------------------------------------------------------------
+-- TODO: make poincareN return in variables of (degreesRing R)[S],
+-- so that sub(poincareN C, S => -1) == poincare C holds
+-- Note: poincareN methods are installed in Complexes and OldChainComplexes
+poincareN = method(TypicalValue => RingElement)
 
-pdim Module := M -> length resolution minimalPresentation M
+-----------------------------------------------------------------------------
+-- dim, degree, multidegree, length
+-----------------------------------------------------------------------------
 
 dim Ideal  := I -> dim comodule I
 dim Module := M -> if (c := codim M) === infinity then -1 else dim ring M - c
@@ -316,7 +332,7 @@ hilbertSeries Module := opts -> M -> (
 	    if ord == ord2 then return ser else
 	    if ord  < ord2 then return part(, ord-1, hft, ser));
 	if M.cache#?exactKey or M.cache#?reducedKey then (
-	    if not M.cache#?reducedKey then M.cache#reducedKey = reduceHilbert M.cache#exactKey;
+	    M.cache#reducedKey ??= reduceHilbert M.cache#exactKey;
 	    return last(M.cache#approxKey = (ord, truncateSeries(ord, hft, M.cache#reducedKey))))
 	    )
     else error "hilbertSeries: option Order expected infinity or an integer";
@@ -357,26 +373,40 @@ hilbertSeries ProjectiveHilbertPolynomial := opts -> P -> (
 -- hilbertFunction
 -----------------------------------------------------------------------------
 
-hilbertFunction = method()
+hilbertFunction = method(Options => { Strategy => Default })
 hilbertFunction(ZZ, Ring)   :=
 hilbertFunction(ZZ, Ideal)  :=
-hilbertFunction(ZZ, Module) := (d, M) -> hilbertFunction({d}, M)
+hilbertFunction(ZZ, Module) := opts -> (d, M) -> hilbertFunction({d}, M, opts)
 
-hilbertFunction(List, Ring)   := (L, R) -> hilbertFunction(L, module R)
-hilbertFunction(List, Ideal)  :=
-hilbertFunction(List, Module) := (L, M) -> (
-    -- computes the Hilbert series to a sufficiently high order and
-    -- returns the desired coefficient, thus it is cached by hilbertSeries
+hilbertFunction(List, Ring)   := opts -> (L, R) -> hilbertFunction(L, module R, opts)
+hilbertFunction(List, Ideal)  := opts -> (L, I) -> hilbertFunction(L, comodule I, opts)
+hilbertFunction(List, Module) := opts -> (L, M) -> (
     R := ring M;
     if not all(L, i -> instance(i, ZZ)) then error "hilbertFunction: expected degree to be an integer or list of integers";
     if #L =!= degreeLength R            then error "hilbertFunction: degree length mismatch";
     if heft R === null                  then error "hilbertFunction: ring has no heft vector";
     --
-    HF := runHooks((hilbertFunction, List, Module), (L, M));
+    HF := runHooks((hilbertFunction, List, Module), (opts, L, M), Strategy => opts.Strategy);
     if HF =!= null then return HF;
     error("no applicable strategy for computing Hilbert function over ", toString R))
 
-addHook((hilbertFunction, List, Module), Strategy => Default, (L, M) -> (
+-- When a module is given as a subquotient, M = N1/N2 with N2 < N1 < free module F,
+-- Strategy => Base uses that hilbertFunction(d, M) = hilbertFunction(d, F/N2) - hilbertFunction(d, F/N1).
+-- Also, we do this by finding a basis for F/N2 and F/N1 in degree d, rather than computing the whole Hilbert series.
+-- This may or may not be faster than the default strategy, but it should be at least as fast as "rank source basis(d, M)"
+-- in essentially all cases, and faster than that when M was defined as a subquotient module.
+-- If a presentation or minimal presentation for M has already been computed, we use that.
+addHook((hilbertFunction, List, Module), Strategy => Base, (opts, L, M) -> (
+	if hasMinPres M then numColumns basis(L, minimalPresentation M)
+	else if not M.?generators then numColumns basis(L, M)
+	else if M.cache.?presentation then numColumns basis(L, cokernel presentation M)
+	else (
+	    numColumns basis(L, super M) -
+	    numColumns basis(L, cokernel fullgens M))))
+
+-- computes the Hilbert series to a sufficiently high order and
+-- returns the desired coefficient, thus it is cached by hilbertSeries
+addHook((hilbertFunction, List, Module), Strategy => Default, (opts, L, M) -> (
     h := heft ring M;
     f := hilbertSeries(M, Order => 1 + sum(h, L, times));
     U := monoid ring f;
@@ -384,4 +414,4 @@ addHook((hilbertFunction, List, Module), Strategy => Default, (L, M) -> (
 
 hilbertFunction Ring   :=
 hilbertFunction Ideal  :=
-hilbertFunction Module := M -> d -> hilbertFunction(d, M)
+hilbertFunction Module := opts -> M -> d -> hilbertFunction(d, M, opts)

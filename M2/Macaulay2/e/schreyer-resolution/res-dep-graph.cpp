@@ -58,6 +58,8 @@ TBBNodePtr DependencyGraph::createFillAndReduceNode(int lev, int sldeg)
 
 TBBNodePtr DependencyGraph::createRankNode(int lev, int sldeg)
 {
+  (void) lev;
+  (void) sldeg;
   return std::make_shared<TBBNode>(mTBBGraph,
                                 [](const tbb::flow::continue_msg &msg)
                                 {
@@ -89,9 +91,12 @@ TBBNodePtr DependencyGraph::createRankNode(int lev, int sldeg)
 
 TBBNodePtr DependencyGraph::createMinimalBettiNode(int lev, int sldeg)
 {
+  (void) lev;
+  (void) sldeg;
   return std::make_shared<TBBNode>(mTBBGraph,
                                 [](const tbb::flow::continue_msg &msg)
                                 {
+				  (void) msg;
 				  //std::lock_guard<std::mutex> guard(mMutex);
                                   //std::cout << "minimal betti node  lev=" << lev << " sldeg="
                                   //          << sldeg << " sum=" << lev + sldeg << std::endl;

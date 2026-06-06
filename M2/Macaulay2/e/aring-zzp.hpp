@@ -109,7 +109,7 @@ class ARingZZp : public SimpleARing<ARingZZp>
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = 0; }
-  static void clear(elem &result) { /* nothing */}
+  static void clear(elem &result) { (void) result; }
 
   void set_zero(elem &result) const { result = 0; }
   void set_from_long(elem &result, long a) const
@@ -119,7 +119,12 @@ class ARingZZp : public SimpleARing<ARingZZp>
     result = log_table[a];
   }
 
-  void set_var(elem &result, int v) const { result = 1; }
+  void set_var(elem &result, int v) const
+  {
+    (void) v;
+    result = 1;
+  }
+
   void set_from_mpz(elem &result, mpz_srcptr a) const
   {
     int b = static_cast<int>(mpz_fdiv_ui(a, p));
@@ -136,7 +141,13 @@ class ARingZZp : public SimpleARing<ARingZZp>
     return true;
   }
 
-  bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
+  bool set_from_BigReal(elem &result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
   // arithmetic
   void negate(elem &result, elem a) const
   {

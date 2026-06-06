@@ -25,7 +25,7 @@ newPackage ("VirtualResolutions",
         },
     Keywords => {"Commutative Algebra", "Homological Algebra"},
     PackageImports => {"Elimination", "Depth", "Saturation", "SpaceCurves"},
-    PackageExports => {"NormalToricVarieties", "TateOnProducts", "LinearTruncations"},
+    PackageExports => {"NormalToricVarieties", "LinearTruncations", "TateOnProducts"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
     Certification => {
@@ -36,7 +36,6 @@ newPackage ("VirtualResolutions",
 	 "published article URI" => "https://msp.org/jsag/2020/10-1/p06.xhtml",
 	 "published article DOI" => "10.2140/jsag.2020.10.51",
 	 "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x06-VirtualResolutions.zip",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/VirtualResolutions.m2",
 	 "release at publication" => "28038a52dcc3b0ad7adfd2562a9cd6b6414a6636",
 	 "version at publication" => "1.2",
 	 "volume number" => "10",
@@ -115,10 +114,10 @@ submatrixWinnowMap = (phi, alphas) -> (
 --------------------------------------------------------------------
 protect winnowingMap
 virtualOfPair = method(Options => {LengthLimit => infinity})
--- TODO: return a Matrix in the Module case and ChainComplexMap in the ChainComplex case
+-- TODO: return a Matrix in the Module case and ComplexMap in the Complex case
 -- TODO: document the winnoingMap
-virtualOfPair(Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
-virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
+virtualOfPair(Ideal,  List) := Complex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
+virtualOfPair(Module, List) := Complex => opts -> (M, alphas) -> (
     R := ring M;
     if M.cache.?resolution then return virtualOfPair(M.cache.resolution, alphas, opts);
     if any(alphas, alpha -> #alpha =!= degreeLength R) then error "degree has wrong length";
@@ -127,10 +126,10 @@ virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     i := 2;
     L := {m} | while m != 0 and i <= opts.LengthLimit list (
         i = i + 1; m = map(R, rawKernelOfGB raw m); m = submatrixWinnow(m, alphas));
-    chainComplex L)
-virtualOfPair(ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
+    complex L)
+virtualOfPair(Complex, List) := Complex => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
-    L := chainComplex apply(min F .. max F - 1, i -> submatrixWinnow(F.dd_(i+1), alphas));
+    L := complex toList apply(min F .. max F, i -> submatrixWinnow(F.dd_(i+1), alphas));
     -- winnowingMap is the map M --> HH_0 F
     M := HH_0 F;
     N := HH_0 L;
@@ -155,7 +154,7 @@ virtualOfPair(ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 resolveViaFatPoint = method()
-resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
+resolveViaFatPoint(Ideal, Ideal, List) := Complex => (J, irr, A) -> (
     L := decompose irr;
     if #A != #L then error("resolveViaFatPoint: expected exponent vector of length " | toString degreeLength irr);
     -- note: decompose doesn't necessarily return in the right order
@@ -179,8 +178,8 @@ resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
 --------------------------------------------------------------------
 -- TODO: can this use winnowingMap?
 isVirtual = method(TypicalValue => Boolean, Options => {Strategy => null})
-isVirtual(NormalToricVariety, ChainComplex) := opts -> (X,   C) -> isVirtual(ideal X, C)
-isVirtual(Ideal,              ChainComplex) := opts -> (irr, C) -> (
+isVirtual(NormalToricVariety, Complex) := opts -> (X,   C) -> isVirtual(ideal X, C)
+isVirtual(Ideal,              Complex) := opts -> (irr, C) -> (
     S := ring irr;
     if S =!= ring C then error "isVirtual: expected objects in the same ring";
 -- if strategy "determinantal is selected, the method checks virtuality
@@ -320,7 +319,7 @@ randomMonomialCurve (ZZ,ZZ,Ring) := Ideal => (d,e,F) -> (
     uVars := flatten entries vars U;
     --- Choose random monomial to define map to P2.
     B := drop(drop(flatten entries basis({e,0,0},U),1),-1);
-    f := (random(B))#0;
+    f := randomElement B;
     --- Defines graph of morphisms in P1x(P1xP2)
     M1 := matrix {{(uVars#0)^d,(uVars#1)^d},{uVars#2,uVars#3}};
     M2 := matrix {{(uVars#0)^e,(uVars#1)^e,f},{uVars#4,uVars#5,uVars#6}};
@@ -494,8 +493,8 @@ isComputationDone MultigradedRegularityComputation := Boolean => options multigr
 
 cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
-cacheComputation = method(TypicalValue => CacheFunction, Options => true)
-cacheComputation MultigradedRegularityComputation := CacheFunction => options multigradedRegularity >> opts -> container -> new CacheFunction from (
+cacheComputation = method(Options => true)
+cacheComputation MultigradedRegularityComputation := options multigradedRegularity >> opts -> container -> (
     -- this function takes advantage of FunctionClosures by modifying the container
     computation -> (
         if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
@@ -613,7 +612,7 @@ load "./VirtualResolutions/development.m2"
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
------ Input: (C)=(ChainComplex)
+----- Input: (C)=(Complex)
 ----- Output: A resolution of the tail end of the complex appended
 ----- to the given complex.
 ----- Description: This function is not currently being exported,
@@ -627,14 +626,14 @@ load "./VirtualResolutions/development.m2"
 --TODO: Finish test
 --      Add length limit
 resolveTail = method()
-resolveTail(ChainComplex) := ChainComplex => C -> (
+resolveTail(Complex) := Complex => C -> (
     N := max support C;
     M := coker syz C.dd_N;
     -- TODO: add some component of the irrelevant ideal to M here.
     T := res M;
     L1 := for i from min C to max support C - 1 list matrix C.dd_(i+1);
     L2 := for i from min T to max support T - 1 list matrix T.dd_(i+1);
-    chainComplex(L1 | L2)
+    complex(L1 | L2)
     );
 
 --------------------------------------------------------------------

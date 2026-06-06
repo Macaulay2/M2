@@ -11,7 +11,7 @@
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARIES_LIST MPSOLVE FROBBY NORMALIZ FACTORY FLINT NTL MPFI MPFR GMP BDWGC LAPACK)
-set(LIBRARY_LIST   READLINE HISTORY GDBM)
+set(LIBRARY_LIST   READLINE HISTORY GDBM JANSSON)
 
 message(CHECK_START " Checking for existing libraries and programs")
 
@@ -35,6 +35,7 @@ endif()
 #   TBB 	libtbb-dev	tbb-devel	tbb (Optional)
 #   OpenMP	libomp-dev	libomp-devel	libomp (Optional)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
+#   jansson	libjansson-dev	jansson-devel	jansson
 
 # Set this variable to specify the linear algebra library.
 # See `cmake --help-module FindLAPACK` for the list of options
@@ -42,7 +43,17 @@ endif()
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
-find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_backtrace stacktrace_addr2line)
+
+if(STATIC_BOOST)
+  message(STATUS "Using static Boost, if Boost is installed but not found, try setting STATIC_BOOST to OFF")
+endif()
+set(Boost_USE_STATIC_LIBS ${STATIC_BOOST})
+if(UNIX)
+  cmake_policy(SET CMP0167 OLD) # load CMake's FindBoost module
+  find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_addr2line)
+else()
+  find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_backtrace)
+endif()
 if(Boost_STACKTRACE_BACKTRACE_FOUND)
   set(Boost_stacktrace_lib "Boost::stacktrace_backtrace")
 elseif(Boost_STACKTRACE_ADDR2LINE_FOUND)
@@ -57,6 +68,10 @@ check_include_files(boost/math/tools/atomic.hpp
 
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
+
+if (WITH_JANSSON)
+  find_package(Jansson REQUIRED)
+endif()
 
 if(WITH_OMP)
   find_package(OpenMP REQUIRED)
@@ -127,7 +142,20 @@ find_package(GMP	6.0.0 REQUIRED)
 #   givaro	prime field and algebraic computations	(needs gmp)
 #  fflas_ffpack	Finite Field Linear Algebra Routines	(needs gmp, givaro + LAPACK)
 
-find_package(Eigen3	3.3.0 PATHS ${M2_HOST_PREFIX})
+# Prior to 3.4.1, find_package for Eigen3 doesn't support version ranges
+# but Ubuntu only has 3.4.0 right now, so we should support it
+# For Eigen 5.0 and later, the way the version checking is setup, specifying
+# a version of 3.4.0 or similar won't find version 5.0
+find_package(Eigen3	3.4.0 PATHS ${M2_HOST_PREFIX} QUIET)
+if(NOT EIGEN3_FOUND)
+  find_package(Eigen3	3.4.1...5.0 PATHS ${M2_HOST_PREFIX})
+  # FindEigen3 doesn't set EIGEN3_FOUND, and instead we should check
+  # if the target Eigen3::Eigen is defined, so we set EIGEN3_FOUND
+  # for compatibility with the rest of the build code
+  if(TARGET Eigen3::Eigen)
+    set(EIGEN3_FOUND TRUE)
+  endif()
+endif()
 find_package(BDWGC	7.6.4)
 find_package(MPFR	4.0.1)
 find_package(MPFI	1.5.1)
@@ -138,11 +166,11 @@ find_package(MPSolve	3.2.0)
 find_package(Nauty	2.7.0)
 find_package(Normaliz	3.8.0)
 # TODO: add minimum version checks
-find_package(EAntic	2.0.0)
+find_package(EAntic	2.0.0 QUIET) # only needed when libnormaliz.so needs it
 find_package(MSolve	0.7.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
-find_package(GTest	1.10)
+find_package(GTest	1.16)
 #find_package(Memtailor 1.0.0)
 #find_package(Mathic    1.0.0)
 #find_package(Mathicgb  1.0.0)
@@ -188,6 +216,7 @@ endif()
 ## Programs we can download and build:
 #   4ti2	combinatorial problems on linear spaces		(needs gmp, glpk)
 #   cohomCalg	sheaf cohomology for line bundles on toric varieties
+#   msolve	solving multivariate polynomial systems		(needs gmp, mpfr, flint)
 #   Gfan	Grobner fans and tropical varieties		(needs gmp, cddlib, factory)
 #   lrslib	vertex enumeration/convex hull problems		(needs gmp)
 #   CSDP	semidefinite programming problems		(needs LAPACK, OpenMP)
@@ -197,7 +226,9 @@ endif()
 
 find_program(4TI2	NAMES	circuits 4ti2-circuits 4ti2_circuits)
 find_program(COHOMCALG	NAMES	cohomcalg)
+find_program(MSOLVE	NAMES	msolve)
 find_program(GFAN	NAMES	gfan)
+# gfanInterface checks the minimum gfan version (>= 0.8) at runtime.
 # TODO: library or program?
 find_program(LRSLIB	NAMES	lrs)
 # TODO: check for alternatives as well: sdpa or mosek
@@ -211,7 +242,7 @@ find_program(PHCPACK	NAMES	phc)
 find_program(HOM4PS2	NAMES	hom4ps2) # TODO: http://www.math.nsysu.edu.tw/~leetsung/works/HOM4PS_soft.htm
 # TODO: Maple and package convex
 
-set(PROGRAM_OPTIONS 4ti2 cohomCalg Gfan lrslib CSDP NAUTY_EXECUTABLE NORMALIZ_EXECUTABLE TOPCOM)
+set(PROGRAM_OPTIONS 4ti2 cohomCalg msolve Gfan lrslib CSDP NAUTY_EXECUTABLE NORMALIZ_EXECUTABLE TOPCOM)
 
 ###############################################################################
 ## List installed components and unset those that we wish to build ourselves
@@ -240,6 +271,7 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
       unset(${_name}_INCLUDEDIR CACHE)
       unset(${_name}_INCLUDE_DIR CACHE)
       unset(${_name}_INCLUDE_DIRS CACHE)
+      unset(${_name}_ROOT)
       # for GTest:
       unset(${_name}_MAIN_LIBRARY CACHE)
       unset(${_name}_MAIN_LIBRARY_DEBUG CACHE)
@@ -334,9 +366,12 @@ if(FLINT_FOUND)
   set(CMAKE_REQUIRED_INCLUDES "${FLINT_INCLUDE_DIR};${GMP_INCLUDE_DIRS}")
   check_include_files(flint/nmod.h HAVE_FLINT_NMOD_H)
   check_include_files(flint/arb.h  HAVE_FLINT_ARB_H)
+  set(CMAKE_REQUIRED_LIBRARIES ${FLINT_LIBRARIES})
+  check_function_exists(flint_rand_init HAVE_FLINT_RAND_INIT)
 else()
   unset(HAVE_FLINT_NMOD_H CACHE)
   unset(HAVE_FLINT_ARB_H  CACHE)
+  unset(HAVE_FLINT_RAND_INIT CACHE)
 endif()
 
 if(FROBBY_FOUND)

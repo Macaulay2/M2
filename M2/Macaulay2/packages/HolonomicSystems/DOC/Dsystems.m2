@@ -11,7 +11,7 @@ doc ///
     D:PolynomialRing  
   Outputs
      :Ideal
-      the toric ideal of the matrix $A$ in the polynomial ring of the partials inside of the Weyl algerba $D$.
+      the toric ideal of the matrix $A$ in the polynomial ring of the partials inside of the Weyl algebra $D$.
   Description
     Text 
       A $d \times n$ integer matrix $A$ determines a GKZ hypergeometric system of PDEs 
@@ -121,7 +121,7 @@ doc ///
   Description
       Text
        Given a $d \times n$ integer matrix $A = (a_{ij})$ and a Weyl algebra in $n$ variables, produce the $d$ corresponding Euler operators $E_i = \sum_{j=1}^n a_{ij}x_jdj$.
-       An optional list $b$ imposes a multigrading so that one can look for solutions to the Euler operatros of multidegree $b$.
+       An optional list $b$ imposes a multigrading so that one can look for solutions to the Euler operators of multidegree $b$.
     Example
       D = makeWeylAlgebra(QQ[x,y,z])
       A = matrix{{2,-7,5},{14,8,-1}}

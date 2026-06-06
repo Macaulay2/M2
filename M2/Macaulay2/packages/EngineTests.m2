@@ -12,6 +12,7 @@ newPackage(
 		        HomePage => "" }
             },
         Headline => "a test suite for the Macaulay2 engine",
+        PackageExports => {"Complexes"},
 	Keywords => {"Miscellaneous"},
         AuxiliaryFiles=> true
         )
@@ -248,6 +249,7 @@ load "EngineTests/LinearAlgebra.Test.Driver.m2"
 load "EngineTests/MutableMatrix.Test.Driver.m2"
 load "EngineTests/Ring.Test.Driver.m2"
 load "EngineTests/GB.Test.Mathic.m2"
+load "EngineTests/GB.Test.LinearAlgebra.m2"
 
 load "EngineTests/Res.f4.m2"
 --check  EngineTests

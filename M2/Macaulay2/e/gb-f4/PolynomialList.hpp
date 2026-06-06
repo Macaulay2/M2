@@ -209,7 +209,7 @@ public:
   using Component = BasicPolyListStreamCollector::Component;
 
 private:
-  // We store these, as we need to be able to repsond to what they are,
+  // We store these, as we need to be able to respond to what they are,
   // but we don't use them here at all.
   Coefficient mModulus;
   VarIndex mVarCount;

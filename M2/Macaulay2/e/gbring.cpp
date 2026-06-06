@@ -101,6 +101,7 @@ gbvector *GBRingPoly::mult_by_term1(const FreeModule *F,
                                     const int *monom,
                                     int comp)
 {
+  (void) F;
   // Remember: this multiplies w/o regard to any quotient elements
   gbvector head;
   gbvector *inresult = &head;
@@ -259,6 +260,11 @@ gbvector *GBRingSolvable::mult_by_term1(const FreeModule *F,
                                         const int *monom,
                                         int comp)
 {
+  (void) F;
+  (void) f;
+  (void) u;
+  (void) monom;
+  (void) comp;
 // Remember: this multiplies w/o regard to any quotient elements
 #ifdef DEVELOPMENT
 #warning "implement GBRingSolvable::mult_by_term"
@@ -439,6 +445,7 @@ gbvector *GBRing::gbvector_lead_term(int nparts,
 // If nparts < 0, only take the actual lead term (i.e. one monomial
 // in one component only).
 {
+  (void) F;
 #ifdef DEVELOPMENT
 #warning "Schreyer order question"
 #endif
@@ -490,6 +497,7 @@ gbvector *GBRing::gbvector_parallel_lead_terms(M2_arrayint w,
                                                const gbvector *leadv,
                                                const gbvector *v)
 {
+  (void) F;
   if (v == nullptr) return nullptr;
 
   // loop through every term of v.  Keep those t that satisfy: exp(leadv) -
@@ -773,6 +781,7 @@ void GBRing::gbvector_text_out(buffer &o,
                                const gbvector *v,
                                int nterms) const
 {
+  (void) F;
   if (v == nullptr)
     {
       o << "0";
@@ -1646,6 +1655,7 @@ void GBRing::reduce_marked_lead_term_heap(
 
   monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
 
+  (void) exp;
   find_reduction_coeffs(F, fcurrent_lead, marked_in_g, u, v);
   find_reduction_monomial(F, fcurrent_lead, marked_in_g, comp, MONOM1);
 

@@ -23,11 +23,13 @@ bool isDense(const MT& mat);
 template <typename RT>
 bool isDense(const DMat<RT>& mat)
 {
+  (void) mat;
   return true;
 }
 template <typename RT>
 bool isDense(const SMat<RT>& mat)
 {
+  (void) mat;
   return false;
 }
 
@@ -94,20 +96,18 @@ Matrix* toMatrix(const Ring* R, const DMat<CoeffRing>& A)
   MatrixConstructor result(F, ncols);
   if (nrows == 0 || ncols == 0) return result.to_matrix();
 
-  for (int c = 0; c < ncols; c++)
-    {
-      int r = 0;
-      auto end = A.columnEnd(c);
-      for (auto j = A.columnBegin(c); not(j == end); ++j, ++r)
-        {
-          if (not A.ring().is_zero(*j))
+  for (int r = 0; r < nrows; ++r)
+    for (int c = 0; c < ncols; ++c)
+      {
+        const typename CoeffRing::ElementType & a = A.entry(r,c);
+        if (not A.ring().is_zero(a))
             {
-              ring_elem a;
-              A.ring().to_ring_elem(a, *j);
-              result.set_entry(r, c, a);
+              ring_elem ra;
+              A.ring().to_ring_elem(ra, a);
+              result.set_entry(r, c, ra);
             }
-        }
-    }
+      }        
+
   result.compute_column_degrees();
   return result.to_matrix();
 }
@@ -237,6 +237,7 @@ class MutableMat : public MutableMatrix
     result->mat.grab(m);
     return result;
 #endif
+    (void) prefer_dense;
     return clone();
   }
 
@@ -520,8 +521,7 @@ class MutableMat : public MutableMatrix
                 n_cols() - 1);
           return 0;
         }
-    MutableMat* result =
-        new MutableMat(*this);  // zero matrix, over the same ring
+    MutableMat* result = makeZeroMatrix(rows->len, cols->len);
     MatOps::setFromSubmatrix(getMat(), rows, cols, result->getMat());
     return result;
   }
@@ -536,8 +536,7 @@ class MutableMat : public MutableMatrix
                 n_cols() - 1);
           return 0;
         }
-    MutableMat* result =
-        new MutableMat(*this);  // zero matrix, over the same ring
+    MutableMat* result = makeZeroMatrix(n_rows(), cols->len);
     MatOps::setFromSubmatrix(getMat(), cols, result->getMat());
     return result;
   }
@@ -546,9 +545,24 @@ class MutableMat : public MutableMatrix
   // promote, lift, eval ////////
   ///////////////////////////////
 
-  virtual MutableMatrix* promote(const Ring* S) const { return 0; }
-  virtual MutableMatrix* lift(const Ring* R) const { return 0; }
-  virtual MutableMatrix* eval(const RingMap* F) const { return 0; }
+  virtual MutableMatrix* promote(const Ring* S) const
+  {
+    (void) S;
+    return 0;
+  }
+
+  virtual MutableMatrix* lift(const Ring* R) const
+  {
+    (void) R;
+    return 0;
+  }
+
+  virtual MutableMatrix* eval(const RingMap* F) const
+  {
+    (void) F;
+    return 0;
+  }
+
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////

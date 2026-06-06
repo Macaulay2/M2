@@ -269,6 +269,7 @@ void s_pair_heap::put_back(s_pair *&p)
 void s_pair_heap::stats() const {}
 void s_pair_heap::text_out(buffer &o) const
 {
+  (void) o;
 #ifdef DEVELOPMENT
 #warning "should we display anything in spair text_out, stats?"
 #endif

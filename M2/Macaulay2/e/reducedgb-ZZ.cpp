@@ -24,7 +24,7 @@ ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
     ringtableZZ = originalR->get_quotient_MonomialTableZZ();
 }
 
-void ReducedGB_ZZ::set_gb(VECTOR(POLY) & polys0) {}
+void ReducedGB_ZZ::set_gb(VECTOR(POLY) & polys0) { (void) polys0; }
 struct ReducedGB_ZZ_sorter
 {
   GBRing *R;
@@ -136,6 +136,8 @@ void ReducedGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
   gbvector *zero = nullptr;
   gbvector head;
   gbvector *frem = &head;
+  (void) use_denom;
+  (void) denom;
   frem->next = nullptr;
   POLY h = f;
   exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
@@ -179,6 +181,8 @@ void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
   gbvector *zero = nullptr;
   gbvector head;
   gbvector *frem = &head;
+  (void) use_denom;
+  (void) denom;
   frem->next = nullptr;
   gbvector *h = f;
   exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());

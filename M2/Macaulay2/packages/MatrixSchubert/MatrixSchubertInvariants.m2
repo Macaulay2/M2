@@ -1,6 +1,6 @@
 ----------------------
 --INPUT: matrixSchubertRegADI, takes a permutation in 1-line notation
---OUTPUT: returns the Castelnuovo-Mumford reguarity of the matrix 
+--OUTPUT: returns the Castelnuovo-Mumford regularity of the matrix 
 --        Schubert variety by computing the regularity of the antidiagonal initial ideal
 ------------------------------------------
 -- matrixSchubertRegADI = method()
@@ -15,7 +15,7 @@
 schubertRegularity = method()
 schubertRegularity List := ZZ => w -> (
      if not (isPerm w) then error ("The input must be a partial alternating sign matrix or a permutation.");
-     return rajIndex(w) - permLength(w);
+     rajIndex(w) - permLength(w)
 )
 schubertRegularity Matrix := ZZ => A -> (
     if not(isPartialASM A) then error("The input must be a partial alternating sign matrix or a permutation.");
@@ -25,7 +25,7 @@ schubertRegularity Matrix := ZZ => A -> (
     --Otherwise compute regularity of its antidiagonal initial ideal
     I := antiDiagInit A;
     if I == 0 then return 0;
-    return regularity(I) -1;
+    regularity(I) -1
 );
 
 schubertCodim = method() 

@@ -13,7 +13,7 @@
 
 needs "system.m2" -- for chkrun
 needs "document.m2"
-needs "installPackage.m2" -- TODO: can this be removed?
+needs "installPackage.m2" -- for topFileName
 
 -----------------------------------------------------------------------------
 -- Local variables
@@ -51,7 +51,7 @@ examples ZZ := seeAbout_examples
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
-    tag := makeDocumentTag(key, Package => package key);
+    tag := makeDocumentTag(key, Package => package' key);
     ptag := getPrimaryTag tag;
     fkey := format tag;
     if currentHelpTag.?Key and instance(currentHelpTag.Key, Sequence) and currentHelpTag =!= ptag then return;
@@ -75,6 +75,7 @@ smenuCLASS := s -> ul (last \ sort \\ nonnull \\ optTOCLASS \ toList s)
 
 -- this is a simplified version of submenu in SimpleDoc
 -- used in html.m2 and format.m2
+-- TODO: this seems to be very slow
 redoMENU = contents -> (
     contents = deepApply'(contents, identity, item -> instance(item, BasicList) and not isLink item);
     DIV prepend(
@@ -96,7 +97,7 @@ redoMENU = contents -> (
 reverseOptionTable := null
 
 addro := (sym, meth) -> (
-    if not reverseOptionTable#?sym then reverseOptionTable#sym = new MutableHashTable;
+    reverseOptionTable#sym ??= new MutableHashTable;
     reverseOptionTable#sym#meth = true;)
 
 initializeReverseOptionTable := () -> (
@@ -147,6 +148,7 @@ documentableMethods = key -> select(methods key, isDocumentableMethod)
 
 subclasses = T -> keys fold(ancestors  T, showStructure(),      lookup)
 subobjects = T -> keys fold(ancestors' T, showClassStructure(), lookup)
+subobjects' = T -> if T === Package then { Core, User } else subobjects T
 descendants  = T -> flatten prepend(L := subclasses T, apply(L, descendants))
 descendants' = T -> flatten prepend(L := subobjects T, apply(L, descendants'))
 
@@ -156,7 +158,7 @@ documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
     -- catch when an unexported type is documented; TODO: where should this be caught?
-    if package T === null then error("encountered unexported type ", toString T);
+    if package' T === null then error("encountered unexported type ", toString T);
     -- types that inherit from T
     b := smenu(toString \ subclasses T);
     -- constructors of T
@@ -164,7 +166,7 @@ documentationValue(Symbol, Type)  := (S, T) -> (
     -- functions on T
     c := smenu select(documentableMethods T, key -> not typicalValues#?key or typicalValues#key =!= T);
     -- objects of type T
-    e := smenu(toString \ subobjects T);
+    e := smenu(toString \ subobjects' T);
     DIV nonnull splice ( "class" => "waystouse",
 	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, ":"}, b),
 	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, ":"}, a),
@@ -214,10 +216,13 @@ documentationValue(Nothing, Sequence) := (S, s) -> (
 -- TODO: simplify this process
 -- e.g. Macaulay2Doc :: Macaulay2Doc
 documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then (
+    isM2Doc := pkg#"pkgname" === "Macaulay2Doc";
     -- package filename
     fn := pkg#"pkgname" | ".m2";
     -- authors
     au := pkg.Options.Authors;
+    -- citation
+    ci := if isM2Doc then citePackage "M2" else if #au > 0 then citePackage pkg;
     -- exported symbols
     -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
     e := toSequence pkg#"exported symbols";
@@ -248,39 +253,44 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    cert  = new HashTable from cert;
 	    -- TODO: compare with the one in installPackage.m2
 	    star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
-	    commit := replace("(?<=/blob/)master", toString cert#"release at publication", cert#"repository code URI");
 	    DIV {
 		SUBSECTION {"Certification ", star},
 		PARA {
-		    "Version ", BOLD cert#"version at publication", " of this package was accepted for publication",
+		    "Version ", BOLD cert#"version at publication", " of this package",
+		    if cert#?"legacy name"
+		    then (" (under the name \"", cert#"legacy name", "\")"),
+		    " was accepted for publication",
 		    " in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
 		    " of ",     HREF{cert#"journal URI",            cert#"journal name"},
 		    " on ",          cert#"acceptance date", ", in the article ",
 		                HREF{cert#"published article URI",  cert#"article title"},
 		    " (DOI: ",  HREF{"https://doi.org/" | cert#"published article DOI", cert#"published article DOI"},
 		    "). That version can be obtained",
-		    " from ",   HREF{cert#"published code URI", "the journal"}, " or",
-		    " from ",   HREF{commit, SPAN{"the ", EM "Macaulay2", " source code repository"}},
+		    " from ",   HREF{cert#"published code URI", "the journal"},
 		    "."}}
 	    ),
 	DIV {
 	    SUBSECTION "Version",
 	    PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
-		if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname", "." }},
-	if pkg#"pkgname" =!= "Macaulay2Doc" then DIV {
-	    SUBSECTION "Source code",
-	    PARA { "The source code from which this documentation is derived is in the file ",
-		HREF { if installLayout =!= null then installLayout#"packages" | fn else pkg#"source file", fn }, ".",
-		if pkg#?"auxiliary files" then (
-		    " The auxiliary files accompanying it are in the directory ",
-		    HREF { if installLayout =!= null then installLayout#"packages" | pkg#"pkgname" | "/" else pkg#"auxiliary files", pkg#"pkgname" | "/" }, ".")
-		}
+		if isM2Doc then "Macaulay2" else pkg#"pkgname",
+		if pkg.Options.Date =!= null then { ", released ", BOLD pkg.Options.Date }, "." }},
+	if isM2Doc or #au > 0 then
+	if instance(ci, DIV) then ci else DIV {
+	    SUBSECTION "Citation",
+	    PARA { "If you have used ", if isM2Doc then "Macaulay2" else "this package",
+		" in your research, please cite it as follows:" },
+	    TABLE {"class" => "examples",
+		TR TD PRE prepend("class" => "language-bib", CODE ci)},
+	    -- TODO: ideally this should be in Macaulay2Doc/ov_top.m2
+	    if isM2Doc then PARA { "Moreover, you can use the ", TO "PackageCitations::cite", " function
+		to learn how to cite any particular Macaulay2 packages which contributed to your research." }
 	    },
-	if pkg#"pkgname" =!= "Macaulay2Doc" and #e + #m > 0 then DIV {
+	if not isM2Doc and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
 	    DIV { "class" => "exports",
 		fixup UL {
 		    if #b > 0 then LI {"Types",                  smenu b},
+		    -- FIXME: this line is displayed empty for Truncations
 		    if #a > 0 then LI {"Functions and commands", smenu a},
 		    if #m > 0 then LI {"Methods",                smenu m},
 		    if #c > 0 then LI {"Symbols",                smenu c},
@@ -289,9 +299,34 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    }))
 
 -----------------------------------------------------------------------------
--- Handling operators
+-- Details for developers
 -----------------------------------------------------------------------------
 
+-- temporarily disabled because sometime the links are broken
+linkToFile := (src, fn, pos) -> TT { fn | pos } -- HREF { if installLayout === null then src else installLayout#"packages" | fn, fn | pos };
+
+-- TODO: support more objects
+getSource = method()
+getSource(Symbol, Thing)   := (S, x) -> null
+getSource(Symbol, Package) := (S, pkg) -> (
+    -- TODO: for packages, should we link to the location on GitHub instead?
+    ", defined in ", linkToFile(pkg#"source file", pkg#"pkgname" | ".m2", ""),
+    if pkg#?"auxiliary files" then (
+	", with auxiliary files in ",
+	linkToFile(pkg#"auxiliary files", pkg#"pkgname" | "/", ""))
+    )
+
+-- Handling operators
+
+-- for each unicode operator, we give a pair:
+-- * unicode name
+-- * TeX name (for emacs TeX input mode -- null if not available)
+unicodeOperators := hashTable {
+    symbol · => ("middle dot", "\\cdot"),
+    symbol ⊠ => ("squared times", "\\boxtimes"),
+    symbol ⧢ => ("shuffle product",)}
+
+-- e.g. symbol +
 getOperator := key -> if operator#?key then (
     op := toString key;
     if match("^[[:alpha:]]*$", op) then op = " " | op | " ";
@@ -301,6 +336,8 @@ getOperator := key -> if operator#?key then (
 		"The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
 	    PRE if key === symbol SPACE
 	    then "         X Y := (x,y) -> ..."
+	    else if (getParsing key)#0 <= (getParsing symbol :=)#0
+	    then "        (X "|op|" Y) := (x,y) -> ..."
 	    else "         X "|op|" Y := (x,y) -> ...",
 	    PARA {"where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."}},
 	if key === symbol ?? then { -- can't install binary methods
@@ -319,20 +356,42 @@ getOperator := key -> if operator#?key then (
 	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
 		"The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
 	    PRE ("         X "|op|" (x,y) -> ..."),
-	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}}
+	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}},
+	if unicodeOperators#?key then {
+	    PARA {"To insert this character in Emacs, you may press ", KBD "C-x 8 RET", " or ", KBD "M-x insert-char",
+		" and then enter ", format unicodeOperators#key#0, " in the minibuffer."},
+	    if (texcmd := unicodeOperators#key#1) =!= null
+	    then PARA {"Alternatively, you may press ", KBD "C-x RET C-\\", "  or ", KBD "M-x set-input-method",
+		" and then enter \"TeX\" in the minibuffer.  Afterwards, typing \"", texcmd,
+		"\" will input the character.  You may then toggle the input method using ", KBD "C-\\", " or ",
+		KBD "M-x toggle-input-method"}},
 	))
 
 -- TODO: expand this
 getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     SUBSECTION "For the programmer",
     fixup PARA deepSplice {
-	"The object ", TO S, " is ", ofClass class s,
+	"The object ", TO S, " is ", ofClass class s, getSource(S, s),
 	if parent s =!= Nothing then (
 	    f := drop(ancestors s, 1);
-	    if #f > 1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.",
-	    toSequence between(" < ", f / (T -> TO T))),
+	    if #f == 1 then ", with ancestor class "   else
+	    if #f >= 2 then ", with ancestor classes " else ", with no ancestor class.",
+	    toSequence between(" < ", TO \ f)),
 	"."},
     getOperator S)
+
+getLocation := tag -> if tag =!= null then (
+    docpos := locate tag;
+    linepos := ":" | docpos#1 | ":" | docpos#2;
+    docfile := toAbsolutePath docpos#0;
+    filename := replace(getpkgsrcdir tag.Package, "", docfile);
+    HR{},
+    DIV ( "class" => "waystouse",
+	fixup PARA (
+	    "The source of this document is in ",
+	    linkToFile(docfile, filename, linepos), ".")
+        )
+    )
 
 -----------------------------------------------------------------------------
 -- helper functions for help
@@ -341,12 +400,19 @@ getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
 getOption := (rawdoc, tag) -> if rawdoc =!= null and rawdoc#?tag then rawdoc#tag
 
 headline = method(Dispatch => Thing)
-headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag key, Headline)
-headline DocumentTag := tag -> getOption(fetchRawDocumentation getPrimaryTag tag, Headline)
+headline Thing := key -> getOption(
+    fetchRawDocumentation(makeDocumentTag key,
+	LoadDocumentation => false), Headline)
+headline DocumentTag := tag -> (
+    -- TODO: how can we make sure readPackage loads the correct package?
+    if isPackageNode tag then (readPackage tag.Package).Headline
+    else getOption(fetchRawDocumentation getPrimaryTag tag, Headline))
 
 headlines = method()
-headlines List := L -> TABLE apply(#L, i -> { pad(floor log_10(#L) + 2, i | "."),
-	TO2(tag := makeDocumentTag L#i, net tag), commentize headline tag })
+headlines List := L -> (
+    lastabout = tags := apply(L, makeDocumentTag);
+    TABLE apply(#L, i -> { pad(floor log_10(#L) + 2, i | "."),
+	TO2(tags#i, net tags#i), commentize headline tags#i }))
 
 -- Compare with SYNOPSIS in document.m2
 getSynopsis := (key, tag, rawdoc) -> (
@@ -366,7 +432,8 @@ getSynopsis := (key, tag, rawdoc) -> (
 	if rawdoc.?Consequences then DIV { "Consequences:", UL rawdoc.Consequences }};
     if #result > 0 then fixup UL result)
 
-getDefaultOptions := (nkey, opt) -> DIV ( -- e.g., [(res, Module), Strategy => FastNonminimal]
+-- e.g., [(res, Module), Strategy => FastNonminimal]
+getDefaultOptions := (nkey, opt) -> DIV (
     if instance(nkey, Sequence)
     and #methods nkey > 0       then fn := first nkey else
     if instance(nkey, Function) then fn  =       nkey;
@@ -385,43 +452,62 @@ getDefaultOptions := (nkey, opt) -> DIV ( -- e.g., [(res, Module), Strategy => F
 getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
-	desc = processExamples(package tag, format tag, desc);
-	if instance(key, String) then DIV { desc } -- overview key
+	pkg := getpkgNoLoad tag.Package ?? tag.Package;
+	desc = processExamples(pkg, tag.Format, desc);
+	if instance(key, String) -- overview key
+	or instance(key, Package) then DIV { desc }
 	else DIV { SUBSECTION "Description", desc })
     else DIV { COMMENT "empty documentation body" })
+
+-- Returns the contents of a documentation node prepared for JSON serialization
+getData = (key, tag, rawdoc) -> (
+    currentHelpTag = tag;
+    result := new HashTable from {
+	Headline        => ( formatDocumentTag key, commentize getOption(rawdoc, Headline) ),
+	"Synopsis"      => getSynopsis(key, tag, rawdoc),
+	Description     => getDescription(key, tag, rawdoc),
+	SourceCode      => getOption(rawdoc, SourceCode),
+	Acknowledgement => getOption(rawdoc, Acknowledgement),
+	Contributors    => getOption(rawdoc, Contributors),
+	References      => getOption(rawdoc, References),
+	Citation        => getOption(rawdoc, Citation),
+	Caveat          => getOption(rawdoc, Caveat),
+	SeeAlso         => getOption(rawdoc, SeeAlso),
+	Subnodes        => getOption(rawdoc, Subnodes),
+	"Location"      => toString locate tag, -- for debugging
+	-- this is so a "Ways to use" section is listed when multiple
+	-- method keys are documented together without the base function
+	"WaysToUse"     => DIV (
+	    if instance(key, Sequence) then (
+		documentationValue(, key)) else
+	    if instance(key, Symbol)   then (
+		documentationValue(key, value key),
+		getTechnical(key, value key)) else
+	    if instance(key, Array)    then (
+		if instance(opt := key#1, Option)
+		then documentationValue(opt#0, opt)
+		else documentationValue(opt, value opt),
+		getDefaultOptions(key#0, key#1)),
+	    getLocation tag),
+    };
+    result = applyValues(result,  val -> fixup val);
+    result = selectValues(result, val -> val =!= null and val =!= () and val =!= DIV{});
+    currentHelpTag = null;
+    result)
 
 -- This is the overall template of a documentation page
 -- for specialized templates, see documentationValue above
 -- TODO: allow customizing the template for different output methods
 -- TODO: combine sections when multiple tags are being documented (e.g. strings and methods)
 getBody := (key, tag, rawdoc) -> (
-    currentHelpTag = tag;
-    synopsis := getSynopsis(key, tag, rawdoc);
-    result := fixup DIV nonnull splice (
-	HEADER1{ formatDocumentTag key, commentize getOption(rawdoc, Headline) },
-	if synopsis =!= null then DIV { SUBSECTION "Synopsis", synopsis },
-	getDescription(key, tag, rawdoc),
-	if instance(key, Array) then getDefaultOptions(key#0, key#1),
-	getOption(rawdoc, Acknowledgement),
-	getOption(rawdoc, Contributors),
-	getOption(rawdoc, References),
-	getOption(rawdoc, Caveat),
-	getOption(rawdoc, SourceCode),
-	getOption(rawdoc, SeeAlso),
-	-- this is so a "Ways to use" section is listed when multiple
-	-- method keys are documented together without the base function
-	if instance(key, Sequence) then (
-	    documentationValue(, key)) else
-	if instance(key, Symbol)   then (
-	    documentationValue(key, value key),
-	    getTechnical(key, value key)) else
-	if instance(key, Array)    then (
-	    if instance(opt := key#1, Option)
-	    then documentationValue(opt#0, opt)
-	    else documentationValue(opt, value opt)),
-	getOption(rawdoc, Subnodes));
-    currentHelpTag = null;
-    result)
+    DIV nonnull splice (
+	data := getData(key, tag, rawdoc);
+	HEADER1 toList data.Headline,
+	apply(("Synopsis", Description, SourceCode, Acknowledgement, Contributors,
+		References, Caveat, SeeAlso, Subnodes, "WaysToUse"),
+	    section -> if data#?section then data#section)
+        )
+    )
 
 -----------------------------------------------------------------------------
 -- View help within Macaulay2
@@ -431,6 +517,7 @@ help = method(Dispatch => Thing)
 help DocumentTag := tag -> (
     rawdoc := fetchAnyRawDocumentation tag;
     rawtag := if rawdoc =!= null then rawdoc.DocumentTag else tag;
+    -- TODO: if the symbol is not defined, perhaps call 'about'?
     getBody(tag.Key, rawtag, rawdoc))
 
 help Sequence := key -> (
@@ -538,6 +625,15 @@ briefDocumentation = key -> (
 ? Type     := briefDocumentation
 
 -----------------------------------------------------------------------------
+-- extract the citation guide from the documentation or package info
+-----------------------------------------------------------------------------
+-- this is used by cite from PackageCitations
+citePackage = pkg -> (
+    tag := makeDocumentTag pkg;
+    rawdoc := fetchAnyRawDocumentation tag;
+    getOption(rawdoc, Citation) ?? (symbolFrom("PackageCitations", "iCite")) pkg)
+
+-----------------------------------------------------------------------------
 -- get a list of commands whose name matches the regex
 -----------------------------------------------------------------------------
 apropos = method()
@@ -562,7 +658,9 @@ matchfun := (re, db) -> key -> (
 about = method(Options => {Body => false})
 about Type     :=
 about Symbol   :=
+about ScriptedFunctor :=
 about Function := o -> f -> about("\\b" | toString f | "\\b", o)
+about Keyword := o -> f -> about("(?:^| )" | regexQuote toString f | "(?:$| )")
 about String   := o -> re -> lastabout = (
     packagesSeen := new MutableHashTable;
     NumberedVerticalList sort join(

@@ -18,21 +18,29 @@ using RRimutable = mpfi_ptr;
 
 // The following is the data type used for complex numbers in aring-CCC
 // Perhaps we should have it be 
-typedef struct 
+struct cc_struct
 {
   __mpfr_struct re;
   __mpfr_struct im;
-} cc_struct;
+};
 using cc_ptr = cc_struct *;
 using cc_srcptr = cc_struct const *;
 
-typedef struct
+struct cc_doubles_struct
 {
   double re;
   double im;
-} cc_doubles_struct;
+};
 using cc_doubles_srcptr = cc_doubles_struct const *;
 using cc_doubles_ptr = cc_doubles_struct *;
+
+struct cci_struct
+{
+  __mpfi_struct re;
+  __mpfi_struct im;
+};
+using cci_ptr = cci_struct *;
+using cci_srcptr = cci_struct const *;
 
 struct Nterm;
 typedef Nterm *tpoly;
@@ -55,6 +63,7 @@ union ring_elem
   mpfi_srcptr mpfi_val;
   cc_doubles_srcptr cc_doubles_val;
   cc_srcptr cc_val;
+  cci_srcptr cci_val;
   const void *mPolyVal;
  public:
   ring_elem() : poly_val(nullptr) {}
@@ -68,6 +77,7 @@ union ring_elem
   explicit ring_elem(mpfr_srcptr a) : mpfr_val(a) {}
   explicit ring_elem(mpfi_srcptr a) : mpfi_val(a) {}
   explicit ring_elem(cc_srcptr a) : cc_val(a) {}
+  explicit ring_elem(cci_srcptr a) : cci_val(a) {}
   explicit ring_elem(cc_doubles_srcptr a) : cc_doubles_val(a) {}
   explicit ring_elem(local_elem* a) : local_val(a) {}
   explicit ring_elem(const void* a) : mPolyVal(a) {} // non-commutative polynomials
@@ -85,7 +95,9 @@ union ring_elem
   mpq_srcptr get_mpq() const { return mpq_val; }
   mpfr_srcptr get_mpfr() const { return mpfr_val; }
   mpfi_srcptr get_mpfi() const { return mpfi_val; }
+
   cc_srcptr get_cc() const { return cc_val; }
+  cci_srcptr get_cci() const { return cci_val; }
   cc_doubles_srcptr get_cc_doubles() const { return cc_doubles_val; }
   const local_elem* get_local_elem() const { return local_val; }
   const schur_poly* get_schur_poly() const { return schur_poly_val; }

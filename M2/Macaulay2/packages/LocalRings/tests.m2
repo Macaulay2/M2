@@ -1,14 +1,14 @@
 --============================ Tests Sections ===================================--
 
 TEST /// -- test for localRing, res, **, ==
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   R = ZZ/32003[vars(0..3)]
   I = monomialCurveIdeal(R, {1, 3, 4})
-  CI = res I
+  CI = freeResolution I
   P = ideal"a,b,c";
   RP = localRing(R, P);
   J = ideal(gens I ** RP)
-  CJ = res J
+  CJ = freeResolution J
   CP = CJ++CJ[-10]
   DJ = CI ** RP
   DP = pruneComplex(DJ++DJ[-10], PruningMap=>true)
@@ -40,9 +40,9 @@ TEST /// -- test for syz, liftUp, **, modulo, inducedMap
   P = ideal gens R;
   RP = localRing(R, P);
   I = monomialCurveIdeal(R, {1,3,4})
-  C = res I
+  C = freeResolution I
   IP = monomialCurveIdeal(RP, {1,3,4})
-  CP = res IP
+  CP = freeResolution IP
   -- syz
   f = syz transpose CP.dd_3
   g = transpose CP.dd_2
@@ -108,7 +108,7 @@ TEST ///
   P = ideal gens R;
   RP = localRing(R, P);
   I = monomialCurveIdeal(RP, {1,3,4})
-  C = res I
+  C = freeResolution I
   F = syz transpose C.dd_3
   G = transpose C.dd_2
    -- free module
@@ -147,7 +147,7 @@ TEST ///
   R = ZZ/32003[a..d]
   phi = map(S,R,{s^2*t-t, s*t-s, t^3-s*t^2-s, s^2*t^2})
   I = ker phi
-  C = pruneComplex res I
+  C = pruneComplex freeResolution I
   RP = localRing(R, ideal gens R)
   C' = pruneComplex(C ** RP)
 
@@ -190,7 +190,7 @@ TEST /// -- chain homotopy over local rings
 	      x*y^2+5019*x*y+3216*y^2-13233*z^2+3723*x,
 	      13424*x^2*y+936*x*y^2+10667*y*z^2+14913*x^2-8521*x*y-15541*y^2-12289*x}})
 
-  F = chainComplex { gens J, syz gens J, syz syz gens J }
+  F = complex { gens J, syz gens J, syz syz gens J }
   f0 = J_0
   s0 = map(R^1, 0, 0)
   L = for i to 3 list (
@@ -203,7 +203,7 @@ TEST /// -- chain homotopy over local rings
   phi = map(F, F, i -> L#i, Degree => 1)
   -- TODO: run checks on this
 
-  F = res J
+  F = freeResolution J
   f0 = J_0
   s0 = map(R^1, 0, 0)
   L = for i to 3 list (
@@ -218,8 +218,8 @@ TEST ///
   P = ideal"a,b,c,d";
   RP = localRing(R, P);
 
-  C =  res monomialCurveIdeal(R,  {1, 3, 4})
-  CP = res monomialCurveIdeal(RP, {1, 3, 4})
+  C =  freeResolution monomialCurveIdeal(R,  {1, 3, 4})
+  CP = freeResolution monomialCurveIdeal(RP, {1, 3, 4})
   F = ker   transpose C.dd_3;
   G = image transpose C.dd_2;
   H = subquotient(gens F, gens G)
@@ -236,7 +236,7 @@ TEST /// -- test for // -- TODO add more
   P = ideal gens R;
   RP = localRing(R, P);
   I = monomialCurveIdeal(RP, {1,3,4})
-  C = res I
+  C = freeResolution I
   f = syz transpose C.dd_3
   g = transpose C.dd_2
   f' = liftUp f
@@ -269,7 +269,7 @@ TEST ///
   f = matrix for i from 0 to 2 list for j from 0 to 2 list (random(2, R)+random(1,R))
   I = minors(2, f)
   IP = ideal(gens I ** RP);
-  C = pruneComplex res IP
+  C = pruneComplex freeResolution IP
   assert(coker C.dd_1 == RP^1/IP)
   assert(image C.dd_1 == module IP)
   f1 = relations minimalPresentation image transpose C.dd_2
@@ -358,7 +358,7 @@ TEST /// -- test from Mengyuan
   I = ideal "z(yw-z2)-w(xw-yz), xz-y2"
   codim I == codim P
   -- Hence this is finite, thus I is artinian in R_P, i.e. RP/IP is an artinian ring.
-  C = res I
+  C = freeResolution I
   radical I == P
 
   RP = localRing(R, P)
@@ -430,7 +430,7 @@ TEST ///
 TEST /// -- Legacy test
   R = ZZ/32003[a..f]
   I = ideal"abc-def,ab2-cd2,-b3+acd";
-  C = res I
+  C = freeResolution I
   -- legacy
   setMaxIdeal ideal gens R
   E = localResolution coker C.dd_1
@@ -444,7 +444,7 @@ TEST ///
   I = ker phi
   assert not isHomogeneous I
 
-  C = res I
+  C = freeResolution I
   f = syz transpose C.dd_3;
   g = transpose C.dd_2;
   modulo(f,g);
@@ -539,6 +539,339 @@ TEST /// -- test for saturate
   assert( Q == Q:a )
 ///
 
+-- Tests added in the 2026 test-audit pass.  Targets:
+--   * the three "dark" exports (localComplement, localModulo,
+--     presentationComplex cache key) which had documentation/examples but
+--     no TEST blocks of their own;
+--   * residueMap and maxIdeal, both exported with --not documented and
+--     never directly asserted;
+--   * boundary cases for the LocalRing constructor (non-prime ideal,
+--     hypersurface element, wrong-ring ideal, field, caching);
+--   * the explicit "not implemented" stubs at localring.m2:75,81
+--     (leadCoefficient, RP % RP) which deserve a regression guard;
+--   * isFiniteLength's documented "always true" behaviour (LocalRings.m2:258)
+--     pinned down so the next refactor can't quietly change semantics;
+--   * the (quotient, Matrix, Matrix) / saturate / annihilator hooks over a
+--     *non-maximal* prime, addressing the TODO at LocalRings.m2:369 and the
+--     self-doubted localAnnihilator at LocalRings.m2:484;
+--   * the legacy MES "wrong answer / key not found, OK now" cases at
+--     legacy.m2:357,371,374 which were historically broken but now work and
+--     had no regression guard;
+--   * lift / numerator / denominator round-trips and liftUp on the full
+--     dispatch fan (Ideal, Module, Matrix, MutableMatrix, RingElement,
+--     default-Thing).
+
+TEST /// -- localComplement (no prior TEST block names it)
+  R = QQ[x,y]
+  setMaxIdeal ideal(x,y)
+  m = matrix{{x, y-1}, {0, x}}
+  lc = localComplement m
+  -- the defining splitting property: m | lc has full row rank modulo max
+  -- (i.e., is surjective on the residue field)
+  combined = R.residueMap (m | lc)
+  assert(rank combined == numrows m)
+  -- doc example, second form: a 1x2 matrix whose mod-max class spans R^1
+  -- yields the zero map R^0 -> R^1 as its complement
+  m2 = matrix{{x-1, y}}
+  lc2 = localComplement m2
+  assert(class lc2 === Matrix)
+  assert(rank R.residueMap (m2 | lc2) == 1)
+///
+
+TEST /// -- localModulo (no prior TEST block names it)
+  R = QQ[x,y,z]
+  setMaxIdeal ideal vars R
+  m = matrix {{x-1, y}}
+  n = matrix {{y, z}}
+  L = localModulo(m, n)
+  assert(class L === Matrix)
+  -- shape: source m has 2 cols, source n has 2 cols, syz lives in their sum
+  assert(target L === source m)
+  -- error path: maps with different targets should error
+  m' = matrix {{x-1, y}, {0, 0}}
+  assert(try (localModulo(m', n); false) else true)
+///
+
+TEST /// -- residueMap (exported with --not documented, never directly asserted)
+  R = ZZ/101[a,b,c]
+  -- maximal ideal: residueMap sends every generator to 0, 1 to 1
+  RPmax = localRing(R, ideal gens R)
+  phiMax = RPmax.residueMap
+  assert(source phiMax === RPmax)
+  assert(instance(target phiMax, FractionField))
+  assert(phiMax (a_RPmax) == 0)
+  assert(phiMax (1_RPmax) == 1)
+  assert(phiMax (1 + a_RPmax) == 1)
+  -- non-maximal prime (a,b): residueMap kills a, b but preserves c
+  use R
+  P = ideal(a, b)
+  RPpr = localRing(R, P)
+  phiPr = RPpr.residueMap
+  assert(source phiPr === RPpr)
+  assert(instance(target phiPr, FractionField))
+  assert(phiPr promote(a, RPpr) == 0)
+  assert(phiPr promote(b, RPpr) == 0)
+  -- c is outside P, so its image is nonzero; shift by 1 confirms a non-trivial map
+  use R
+  imC = phiPr promote(c, RPpr)
+  assert(imC != 0)
+  assert(phiPr promote(c + 1, RPpr) - imC == 1)
+  -- the legacy setMaxIdeal(I) path with point coordinates
+  use R
+  setMaxIdeal ideal(a-1, b-2, c-3)
+  assert(R.residueMap a == 1_R)
+  assert(R.residueMap b == 2_R)
+  assert(R.residueMap c == 3_R)
+///
+
+TEST /// -- maxIdeal access (exported with --not documented, never directly asserted)
+  R = ZZ/101[x,y,z]
+  P = ideal(x,y)
+  RP = localRing(R, P)
+  -- RP.maxIdeal holds the ideal *in the base ring*
+  assert(RP.maxIdeal === P)
+  assert(ring RP.maxIdeal === R)
+  -- `max RP` promotes the ideal into RP itself
+  m = max RP
+  assert(ring m === RP)
+  assert(m == promote(P, RP))
+///
+
+TEST /// -- LocalRing constructor: caching, identity, and the R _ I sugar
+  R = ZZ/101[x,y,z]
+  P = ideal(x,y)
+  RPa = localRing(R, P)
+  RPb = localRing(R, P)
+  -- LocalRing instances are memoized on (ring, ideal) per localring.m2:64
+  assert(RPa === RPb)
+  -- R _ P delegates to localRing
+  assert(R _ P === RPa)
+  -- localRing on a field returns the field unchanged
+  fld = ZZ/101
+  assert(localRing(fld, ideal 0_fld) === fld)
+  -- wrong-ring ideal errors
+  S = QQ[u,v]
+  assert(try (localRing(R, ideal(u_S, v_S)); false) else true)
+  assert(try (R _ (ideal(u_S, v_S)); false) else true)
+  -- hypersurface element form errors with the documented "not yet" message
+  assert(try (R _ (x_R); false) else true)
+///
+
+TEST /// -- isWellDefined: prime ideal yields true, non-prime yields false
+  R = ZZ/101[u,v]
+  -- localRing rebinds the global symbols u, v to the new LocalRing, so
+  -- subsequent ideal expressions need an explicit `use R` to refer to R.
+  -- (u*v) factors so is not prime
+  RNP = localRing(R, ideal(u*v))
+  assert(isWellDefined RNP === false)
+  -- (u) is prime in ZZ/101[u,v]
+  use R
+  RPP = localRing(R, ideal u)
+  assert(isWellDefined RPP === true)
+  -- the maximal ideal (u,v) is also prime
+  use R
+  RM = localRing(R, ideal(u,v))
+  assert(isWellDefined RM === true)
+///
+
+TEST /// -- documented "not implemented" stubs at localring.m2:75,81
+  R = ZZ/101[a,b]
+  RP = localRing(R, ideal vars R)
+  -- leadCoefficient is intentionally stubbed
+  assert(try (leadCoefficient (a_RP + 1); false) else true)
+  -- the % operator is intentionally stubbed
+  assert(try (a_RP % b_RP; false) else true)
+///
+
+TEST /// -- isUnit / numerator / denominator on LocalRing elements
+  R = ZZ/101[x,y]
+  RP = localRing(R, ideal vars R)
+  -- elements outside the maximal ideal are units; elements in it are not
+  assert(isUnit (1 + x_RP))
+  assert(isUnit 1_RP)
+  assert(not isUnit x_RP)
+  assert(not isUnit 0_RP)
+  -- numerator/denominator extract the underlying fraction
+  e = (1 + x_RP) / (2 - y_RP)
+  assert(ring numerator e === R)
+  assert(ring denominator e === R)
+  -- they recover the element by multiplication (using the unit-denominator
+  -- branch of fraction)
+  assert(numerator e == promote(numerator e, R))
+///
+
+TEST /// -- lift across LocalRing
+  R = ZZ/101[x,y]
+  RP = localRing(R, ideal vars R)
+  -- units lift back to R
+  assert(lift(promote(x_R, RP), R) == x_R)
+  assert(lift(promote(1_R, RP), R) == 1_R)
+  -- elements with a denominator in the maximal ideal do not lift
+  assert(try (lift(1 / x_RP, R); false) else true)
+  -- promote / lift roundtrip on the fraction field
+  S = QQ[x]
+  Sp = S _ (ideal x)
+  F = frac Sp
+  assert(promote(x_Sp, F) === x_F)
+  assert(lift(x_F, Sp) === x_Sp)
+  assert(not liftable(1/x_F, Sp))
+///
+
+TEST /// -- liftUp on every dispatch in its method table
+  -- use a 4-variable ring so monomialCurveIdeal(R, {1,3,4}) is well-formed
+  R = ZZ/101[a..d]
+  RP = localRing(R, ideal gens R)
+  -- RingElement
+  assert(liftUp (a_RP + 1) == a_R + 1)
+  assert(ring liftUp (a_RP + 1) === R)
+  -- the default Thing dispatch picks the base ring automatically
+  assert(liftUp (a_RP * b_RP) == a_R * b_R)
+  -- Ideal
+  I = ideal(a_RP, b_RP)
+  J = liftUp I
+  assert(ring J === R)
+  assert(J == ideal(a_R, b_R))
+  -- free Module
+  F = RP^{-1, -2, -3}
+  liftedF = liftUp F
+  assert(ring liftedF === R)
+  assert(isFreeModule liftedF)
+  assert(degrees liftedF == {{1}, {2}, {3}})
+  -- Matrix
+  m = matrix{{a_RP, b_RP}, {c_RP, 0}}
+  lm = liftUp m
+  assert(ring lm === R)
+  assert(lm == matrix{{a_R, b_R}, {c_R, 0_R}})
+  -- MutableMatrix
+  mm = mutableMatrix m
+  lmm = liftUp(mm, R)
+  assert(class lmm === MutableMatrix)
+  assert(matrix lmm == lm)
+  -- monomialCurveIdeal compatibility (4-var ring, 3 degrees)
+  IP = monomialCurveIdeal(RP, {1,3,4})
+  assert(liftUp IP == monomialCurveIdeal(R, {1,3,4}))
+///
+
+TEST /// -- presentationComplex cache key (audit: exported with "what was this for?")
+  R = ZZ/32003[a..d]
+  RP = localRing(R, ideal gens R)
+  -- minimalPresentation of a subquotient over RP populates the cache key
+  CP = freeResolution monomialCurveIdeal(RP, {1,3,4})
+  F = syz transpose CP.dd_3
+  G = transpose CP.dd_2
+  M = subquotient(F, G)
+  N = minimalPresentation M
+  assert(M.cache.?presentationComplex)
+  assert(instance(M.cache.presentationComplex, Complex))
+  -- and likewise for a cokernel
+  M2 = coker CP.dd_1
+  N2 = minimalPresentation M2
+  assert(M2.cache.?presentationComplex)
+///
+
+TEST /// -- isFiniteLength: pin down the documented "always true" stub
+  -- per LocalRings.m2:257-258, this currently returns true for any input
+  -- without checking Artinianity.  A later refactor should change this; if
+  -- so, this test should be updated to whichever invariants the corrected
+  -- isFiniteLength asserts.
+  debug LocalRings
+  R = QQ[x,y]
+  RP = localRing(R, ideal vars R)
+  -- free module over a local ring has infinite length, but isFiniteLength
+  -- returns true
+  assert(isFiniteLength RP^1 === true)
+  -- as does an arbitrary subquotient
+  M = RP^1 / promote(ideal(x), RP)
+  assert(isFiniteLength M === true)
+///
+
+TEST /// -- quotient / saturate / annihilator hooks over a non-maximal prime
+  -- (LocalRings.m2:369 "does this work over a prime ideal?";
+  --  LocalRings.m2:484 "is this theoretically correct?")
+  R = ZZ/32003[x,y,z]
+  P = ideal(x,y)              -- height-2 prime, not maximal
+  RP = localRing(R, P)
+  -- (x^2, x*y, y^2) : x  collapses to (x, y) in both R and R_P
+  A = promote(ideal(x^2, x*y, y^2), RP)
+  B = promote(ideal x, RP)
+  assert(quotient(A, B) == promote(ideal(x,y), RP))
+  -- saturate((x,y), x) is the unit ideal
+  assert(saturate(promote(ideal(x,y), RP), promote(ideal x, RP)) == promote(ideal 1_R, RP))
+  -- annihilator of R_P / (x R_P) is x R_P
+  M = RP^1 / promote(ideal x, RP)
+  assert(annihilator M == promote(ideal x, RP))
+///
+
+TEST /// -- hilbertSamuelFunction error handling
+  R = QQ[x,y]
+  RP = localRing(R, ideal vars R)
+  -- input over a non-local ring errors with an explicit message
+  assert(try (hilbertSamuelFunction(R^1, 0); false) else true)
+  -- parameter ideal from a different ring errors
+  S = QQ[s]
+  assert(try (hilbertSamuelFunction(ideal s_S, RP^1, 0); false) else true)
+  -- when q == max RP, the parametric form delegates to the unparameterized one
+  assert(hilbertSamuelFunction(max RP, RP^1, 0, 3) == hilbertSamuelFunction(RP^1, 0, 3))
+///
+
+TEST /// -- legacy MES "OK now" regression: m = matrix"x,y2;z3,x4"
+  -- per legacy.m2:367-389, the following calls had historical "wrong answer",
+  -- "key not found in hash table", and "not even composable maps" failures
+  -- that were silently fixed but never had a regression test.  Pin them
+  -- down so they can't quietly regress again.
+  S = ZZ/101[t,x,y,z]
+  setMaxIdeal ideal vars S
+  m = matrix"x,y2;z3,x4"
+  -- localResolution coker m completes ("wrong answer, OK now: MES")
+  C = localResolution coker m
+  assert(class C === Complex)
+  -- localResolution of a graded coker map completes
+  -- ("gives error msg 'key not found in hash table', OK mow: MES")
+  N = coker map(S^{-2,0}, S^{-3,-4}, m)
+  CN = localResolution N
+  assert(class CN === Complex)
+///
+
+TEST /// -- Hom / Tor / Ext / kernel / cokernel / image smoke over LocalRing
+  R = QQ[a,b,c]
+  RP = localRing(R, ideal gens R)
+  M = RP^1 / promote(ideal a, RP)
+  N = RP^1 / promote(ideal b, RP)
+  assert(instance(Hom(M, N), Module))
+  assert(instance(Tor_1(M, N), Module))
+  assert(instance(Ext^1(M, N), Module))
+  -- kernel, cokernel, image of an explicit matrix
+  use RP
+  f = matrix{{a, b}, {c, b}}
+  assert(instance(kernel f, Module))
+  assert(instance(coker f, Module))
+  assert(instance(image f, Module))
+  -- freeResolution of the zero module
+  Z = freeResolution (RP^0)
+  assert(length Z == 0)
+///
+
+TEST /// -- dim and char of a LocalRing reflect the underlying prime
+  -- localRing rebinds the global variables to the new ring, so each prime
+  -- ideal is constructed *after* an `use` of the polynomial ring.
+  R = QQ[a,b,c]
+  -- localizing at the maximal ideal: dim = codim = numgens
+  Rmax = localRing(R, ideal gens R)
+  assert(dim Rmax == 3)
+  assert(numgens Rmax == 3)
+  -- localizing at a height-2 prime
+  use R
+  Rht2 = localRing(R, ideal(a,b))
+  assert(dim Rht2 == 2)
+  -- char is inherited from the coefficient field
+  R2 = ZZ/101[u,v]
+  assert(char localRing(R2, ideal vars R2) == 101)
+  R3 = QQ[u,v]
+  assert(char localRing(R3, ideal vars R3) == 0)
+  -- degreeLength matches the underlying polynomial ring
+  assert(degreeLength Rmax == 1)
+///
+
 end--
 
 --============================ Tests Under Development ===================================--
@@ -549,7 +882,7 @@ end--
   f = matrix for i from 0 to 2 list for j from 0 to 2 list (random(2, R)+random(1,R))
   I = minors(2, f)
   IP = ideal(gens I ** RP);
-  C = pruneComplex res IP
+  C = pruneComplex freeResolution IP
 --  IP = liftUp IP -- uncomment this line to compare speed with the nonlocal case
   elapsedTime m1 = mingens image gens IP;
   elapsedTime m2 = presentation minimalPresentation image m1;
@@ -592,7 +925,7 @@ end--
 
   RP = localRing(R, ideal gens R)
 
-  C = res J
+  C = freeResolution J
   C1 = pruneComplex C
   C2 = C1 ** RP
   elapsedTime pruneComplex(C2, UnitTest => isScalar, PruningMap => false) -- very slow
@@ -612,7 +945,7 @@ end--
   R = ZZ/32003[a..d]
   F = (a^3-b*c*d-3*b*c)^3-a^3-b^2-(b+d)^4-c^5
   I = ideal jacobian matrix{{F}}
-  C = res I
+  C = freeResolution I
   RP = localRing(R, ideal gens R)
   elapsedTime C1 = pruneComplex(C, PruningMap => false)
   elapsedTime C2 = pruneComplex(C ** RP, PruningMap => false) -- how long does this even take?
@@ -622,6 +955,17 @@ end--
   m1 = mingens Iloc
   m2 = syz m1 -- how long does this take?
   gens gb Iloc
+///
+
+TEST ///
+-- promoting/lifting to/from fraction field
+S = QQ[x]
+p = ideal x
+R = S_p
+F = frac R
+assert(promote(x_R, F) === x_F)
+assert(lift(x_F, R) === x_R)
+assert not liftable(1/x, R)
 ///
 
 end--

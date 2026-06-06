@@ -27,7 +27,6 @@ newPackage( "RationalMaps",
 	 "published article URI" => "https://msp.org/jsag/2022/12-1/p03.xhtml",
 	 "published article DOI" => "10.2140/jsag.2022.12.17",
 	 "published code URI" => "https://msp.org/jsag/2022/12-1/jsag-v12-n1-x03-RationalMaps.m2",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RationalMaps.m2",
 	 "release at publication" => "0cee3a5ae1e3fbd3dfa8407a4c8d6ad6a13dffd3",	    -- git commit number in hex
 	 "version at publication" => "1.0",
 	 "volume number" => "12",
@@ -1367,8 +1366,8 @@ document {
     EM  TO "Parametrization",
       ":  While the package ", TO "Parametrization", " focuses mostly on curves, it also includes a function ", TO "Parametrization::invertBirationalMap", "
       that has the same functionality as ", TO "inverseOfMap", ".  On the other hand, these two functions were implemented differently and so sometimes one function can be substantially faster than the other.\n", BR{}, BR{},
-    EM TO "Cremona",
-    ":  The package ", TO "Cremona", " focuses on  fast probabilistic computations in general cases and  deterministic computations for special
+    EM TO "Cremona::Cremona",
+    ":  The package ", TO "Cremona::Cremona", " focuses on  fast probabilistic computations in general cases and  deterministic computations for special
      kinds of maps from projective space.  More precisely, ",BR{},
     UL {
         {TO "Cremona::isBirational", " gives a probabilistic answer to the question of whether a map between varieties is birational.  Furthermore, if the
@@ -1733,7 +1732,7 @@ doc ///
         SimisStrategy
         ReesStrategy
     Caveat
-        Also see the very fast probabilistic birationality checking of the @TO "Cremona"@ package: @TO "Cremona::isBirational"@.
+        Also see the very fast probabilistic birationality checking of the @TO "Cremona::Cremona"@ package: @TO "Cremona::isBirational"@.
 ///
 --***************************************************************
 
@@ -2277,7 +2276,7 @@ doc ///
         SimisStrategy
         ReesStrategy
     Caveat
-        The current implementation of this function works only for irreducible varieties.  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO "Parametrization"@.
+        The current implementation of this function works only for irreducible varieties.  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona::Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO "Parametrization"@.
 ///
 --***************************************************************
 
@@ -2334,7 +2333,7 @@ doc ///
              phi=map(S,S,transpose jacobian ideal g);
              sourceInversionFactor(phi, Verbosity=>0)
     Caveat
-        The current implementation of this function works only for irreducible varieties..  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO"Parametrization"@.
+        The current implementation of this function works only for irreducible varieties..  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona::Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO"Parametrization"@.
     SeeAlso
         HybridStrategy
         SimisStrategy
@@ -2619,7 +2618,7 @@ TEST /// --test #28
 ///
 
 TEST /// --test #29, map from genus 3 curve to projective space
-    needsPackage "Divisor";
+    needsPackage "WeilDivisors";
     C = ZZ/103[x,y,z]/(x^4+x^2*y*z+y^4+z^3*x);
     Q = ideal(y,x+z); --a point on our curve
     f2 = mapToProjectiveSpace(7*divisor(Q)); --a divisor of degree 7 (this is degree 7, so should induce an embedding)
@@ -2734,6 +2733,67 @@ TEST /// --test #34, an interesting example based on a question of Abbas Nasrola
    assert( isBirationalMap(rat, AssumeDominant=>true) )
    ratI = rat^-1;
    assert(rat*ratI == identR1 and ratI*rat == identS1)
+///
+
+TEST /// --test #35 (mapOntoImage)
+    R = QQ[x,y];
+    S = QQ[a,b,c];
+    f = map(R, S, {x^2, x*y, y^2}); --the Veronese embedding of P^1 as a conic
+    g = mapOntoImage f;
+    assert(instance(g, RingMap));
+    assert(idealOfImageOfMap g == 0); --mapOntoImage is dominant onto its image
+    T = QQ[u,v,w];
+    dom = map(T, T, {u,v,w}); --an already-dominant map is returned unchanged
+    assert(mapOntoImage dom === dom);
+    assert(instance(mapOntoImage rationalMapping f, RationalMapping));
+///
+
+TEST /// --test #36 (jacobianDualMatrix)
+    R = QQ[x,y];
+    S = QQ[a,b,c,d];
+    Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3}); --the twisted cubic
+    assert(instance(jacobianDualMatrix Pi, Matrix));
+    assert(instance(jacobianDualMatrix(Pi, Strategy=>ReesStrategy), Matrix));
+    assert(instance(jacobianDualMatrix(Pi, Strategy=>SaturationStrategy), Matrix));
+    phi = rationalMapping Pi;
+    assert(jacobianDualMatrix phi === jacobianDualMatrix phi); --result is cached on the RationalMapping
+///
+
+TEST /// --test #37 (sourceInversionFactor)
+    R = ZZ/7[x,y,z];
+    S = ZZ/7[a,b,c];
+    h = map(R, S, {y*z, x*z, x*y}); --the quadratic Cremona transformation
+    sf = sourceInversionFactor(h, Verbosity=>0);
+    assert(instance(sf, RingElement));
+    assert(ring sf === R);
+    assert(sf == x*y*z); --the Cremona composed with its inverse contributes the factor xyz
+///
+
+TEST /// --test #38 (inverseOfMap with SimisStrategy and with MinorsLimit)
+    R = ZZ/11[x,y,z];
+    S = ZZ/11[a,b,c];
+    h = rationalMapping(R, S, {y*z, x*z, x*y}); --quadratic Cremona
+    phi = rationalMapping(S, R, {b*c, a*c, a*b}); --its inverse
+    assert(inverseOfMap(h, AssumeDominant=>true, Strategy=>SimisStrategy, Verbosity=>0) == phi);
+    assert(inverseOfMap(h, AssumeDominant=>true, MinorsLimit=>0, Verbosity=>0) == phi);
+///
+
+TEST /// --test #39 (CheckBirational throws an error on a non-birational map)
+    R = QQ[x,y,z]/(x^3+y^3-z^3); --an elliptic curve
+    S = QQ[a,b];
+    f = map(R, S, {x, y-z}); --not birational onto its image
+    assert(isBirationalOntoImage(f, Verbosity=>0) == false);
+    assert(try (inverseOfMap(f, CheckBirational=>true, Verbosity=>0); false) else true);
+///
+
+TEST /// --test #40 (SaturateOutput option of baseLocusOfMap)
+    R = QQ[x,y,z];
+    f = map(R, R, {x^2*y, x^2*z, x*y*z});
+    bl = baseLocusOfMap f; --saturated, the default
+    blU = baseLocusOfMap(f, SaturateOutput=>false);
+    assert(bl == ideal(x*y, y*z, x*z));
+    assert(instance(blU, Ideal));
+    assert(saturate blU == bl); --saturating the unsaturated output recovers the base locus
 ///
 
 

@@ -363,6 +363,7 @@ A = map(M, ZZ^1, {{1}})
 assert Equation(A + A, 0)
 assert Equation(A - A, 0)
 assert Equation(A, -A)
+assert Equation(A + 1, 1 + A)
 
 -- empty matrix
 scan({matrix {}, matrix(ZZ, {}), map(ZZ^0, ZZ^0, {}), map(ZZ^0,, {})}, A -> (
@@ -373,6 +374,35 @@ scan({matrix {}, matrix(ZZ, {}), map(ZZ^0, ZZ^0, {}), map(ZZ^0,, {})}, A -> (
 
 -- issue #3456
 assert Equation(matrix {{ii}}, matrix {{numeric ii}})
+
+-- norm
+A = matrix {{-1, 1}, {3, -5}}
+assert (norm A === 5)
+assert (norm_infinity A === 5)
+assert (norm numeric A === 5.0)
+assert (norm_infinity numeric A === 5.0)
+assert (norm(numeric(20, infinity), numeric A) === 5.0p20)
+assert (norm_2 A === 6.0)
+A = mutableMatrix A
+assert (norm A === 5)
+assert (norm_2 A === 6.0)
+R = QQ[x]
+f = -x^3 + x^2 + 3*x - 5
+assert (norm f === 5_QQ)
+assert (norm_2 f === 6.0)
+v = vector flatten entries A
+assert (norm v === 5)
+assert (norm_2 v === 6.0)
+B = matrix {{f}}
+assert (norm B === 5_QQ)
+assert (norm_2 B === 6.0)
+
+-- 1x1 matrix constructors
+R = QQ[x]
+assert Equation(matrix 1, matrix {{1}})
+assert Equation(matrix(QQ, 1), matrix 1_QQ)
+assert Equation(matrix(RR, 1), matrix 1.0)
+assert Equation(matrix(R, 1), matrix 1_R)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test matrix.out"

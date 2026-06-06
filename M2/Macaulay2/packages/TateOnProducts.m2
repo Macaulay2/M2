@@ -1,7 +1,24 @@
+-- line 2782 + 3, 
+-- use file /var/folders/wb/8v4mm0j52pq9pf5gkr8f23z40000gr/T/M2-17803-0/
+-- from running installPackage.  1 example failing.
+
+-- need to replace 'new Complex' and nearby code with modules = ..., maps = ......
+-- Did the following: ChainComplex -> Complex, chainComplex -> complex
+-- Some things were not changed: e.g. isChainComplex
+-- Removed chainComplexMap.
+-- TODO: res -> freeResolution DONE
+--       eliminate new ChainComplex, 
+--       remove trailing zeros, etc. ??
+--       double check on projections and inclusion maps.  We need the right indices.
+--       some flotsam: functions that we might have implemented.  Remove these or take them.
+-- We also changed: LinearTruncations, VirtualResolutions, but have not tested those.
+-- Currently we are at 3 examples failing.
+
 -*
 restart
 uninstallPackage"TateOnProducts"
 restart
+installPackage "TateOnProducts"
 installPackage("TateOnProducts")--,FileName=>schreyer/Dropbox/SVDComplexes/from-git/TateOnProducts.m2)
 loadPackage("TateOnProducts",Reload=>true)
 viewHelp "TateOnProducts"
@@ -21,8 +38,8 @@ newPackage(
 	{ Name => "Yeongrak Kim",     	 Email => "kim@math.uni-sb.de",      HomePage => "http://sites.google.com/view/yeongrak/"}
 	},
     Keywords => {"Commutative Algebra"},
-    PackageImports => {"Truncations", "SVDComplexes", "Complexes"},
-    PackageExports => {"SVDComplexes"},
+    PackageImports => {"Truncations"},
+    PackageExports => {"Isomorphism", "Complexes", "SVDComplexes"},
     DebuggingMode => false
     )
 
@@ -72,7 +89,7 @@ export {
     "directImageComplex",
     "actionOnDirectImage",
     --the following could all be part of ChainComplexExtras
-    "isIsomorphic",
+    "isIsomorphicStrict",
 --    "prependZeroMap",
 --    "appendZeroMap",
 --    "removeZeroTrailingTerms",
@@ -84,7 +101,7 @@ export {
 --    "isMinimalChainComplex",
 --    "resolutionOfChainComplex",
 --    "chainComplexMap",
-    "InitialDegree",
+--    "InitialDegree",
     "isQuism",
     "isAction"
     --    Check
@@ -197,7 +214,7 @@ multigradedRegularity Module := List => M -> (
 coarseMultigradedRegularity = method(Options =>
                {Strategy =>"MinimalResolution"})
 
--*coarseMultigradedRegularity ChainComplex := o-> F -> (
+-*coarseMultigradedRegularity Complex := o-> F -> (
     --we assume F starts in homological degree 0.
     el := length F;
     r := degreeLength ring F;
@@ -239,7 +256,7 @@ LL (ZZ,List) := (d,n) -> (
     select(L1, ell -> all(#n, i-> ell_i<= (1+n_i)));
     )
 
-coarseMultigradedRegularity ChainComplex := o-> F -> (
+coarseMultigradedRegularity Complex := o-> F -> (
     --we assume F starts in homological degree 0.
     t := degreeLength ring F;
     range := toList(min F..max F-1);
@@ -253,34 +270,51 @@ coarseMultigradedRegularity ChainComplex := o-> F -> (
 
 coarseMultigradedRegularity Module := o-> M-> (
     t := degreeLength ring M;
-    if o.Strategy == "MinimalResolution" then F := res M else
-    if o.Strategy == "FastNonminimal" then (
-    S := ring M;
-    S' := coefficientRing S[gens S];
-    m := presentation M;
-    Tm := target m;
-    Tm':= S'^(degrees Tm/sum);
-    M' := coker map(Tm',,sub(presentation M, S'));
-    assert(isHomogeneous M');
-    F' := res(M', FastNonminimal=>true);
-    F = allGradings(F',Tm, S));
+    if o.Strategy == "MinimalResolution" then 
+        F := freeResolution M
+    else if o.Strategy == "FastNonminimal" then (
+        S := ring M;
+        S' := coefficientRing S[gens S];
+        m := presentation M;
+        Tm := target m;
+        Tm':= S'^(degrees Tm/sum);
+        M' := coker map(Tm',,sub(presentation M, S'));
+        assert(isHomogeneous M');
+        F' := freeResolution(M', Strategy => Nonminimal);
+        F = allGradings(F',Tm, S)
+        );
     coarseMultigradedRegularity(F, Strategy => o.Strategy)
     )
 
 allGradings=method()
-allGradings (ChainComplex,Module, Ring) := (fJ,F0,Sall) -> (
-    fJall := new ChainComplex;
-    fJall.Ring = Sall;
-    fJall_0 = F0;
-    for i from 1 to length fJ do (
-	m := map(fJall_(i-1),,sub(fJ.dd_i,Sall));
-	fJall_i = source m;
-	fJall.dd_i=m);
-    chainComplex apply(length fJ,i->fJall.dd_(i+1))
+-- Older version, to be removed:
+-- allGradings (Complex,Module, Ring) := (fJ,F0,Sall) -> (
+--     fJall := new ChainComplex;
+--     fJall.Ring = Sall;
+--     fJall_0 = F0;
+--     for i from 1 to length fJ do (
+-- 	m := map(fJall_(i-1),,sub(fJ.dd_i,Sall));
+-- 	fJall_i = source m;
+-- 	fJall.dd_i=m);
+--     complex apply(length fJ,i->fJall.dd_(i+1))
+--     )
+allGradings (Complex, Module, Ring) := Complex => (fJ,F0,Sall) -> (
+    -- fJ is a complex over a singly graded ring
+    S := ring F0;
+    if Sall =!= S then error "we expected module over the given ring";
+    modules := new MutableHashTable;
+    maps := new MutableHashTable;
+    (lo,hi) := concentration fJ;
+    modules#lo = F0;
+    for i from lo+1 to hi do (
+        maps#i = map(modules#(i-1),,sub(fJ.dd_i,S));
+        modules#i = source maps#i;
+        );
+    if lo === hi then 
+        complex F0
+    else
+        complex maps
     )
-
-
-
 
 productOfProjectiveSpaces = method(Options=>
     {CoefficientField=>ZZ/32003,
@@ -325,9 +359,9 @@ M = coker gens pfaffians(4, m1-transpose m1)
 R = coarseMultigradedRegularity M
 R ={4,4}
 netList apply(1+ length G, i-> tally degrees G_i)
-betti (G =res M)
+betti (G =freeResolution M)
 R = {} %{1,4} also works.
-betti (G = res truncate(R, M))
+betti (G = freeResolution truncate(R, M))
 netList apply(1+ length G, i-> tally degrees G_i)
 
 regularity G
@@ -393,7 +427,7 @@ subMatrix=(m,d,e) -> (
 
 upperCorner=method()
 --  needs update if we work with negative grading on exterior algebra.
-upperCorner(ChainComplex,List) := (F,deg) ->(
+upperCorner(Complex,List) := (F,deg) ->(
      E:=ring F;
      degsE:= unique degrees E;
      n:=apply(degsE,dege->#select(degrees E,d->d==dege)-1);
@@ -412,7 +446,7 @@ upperCorner(ChainComplex,List) := (F,deg) ->(
 
 
 lowerCorner=method()
-lowerCorner(ChainComplex,List) := (F,deg) ->(
+lowerCorner(Complex,List) := (F,deg) ->(
      E:=ring F;
      degsE:= unique degrees E;
      n:=apply(degsE,dege->#select(degrees E,d->d==dege)-1);
@@ -431,7 +465,7 @@ lowerCorner(ChainComplex,List) := (F,deg) ->(
 
 -*
 corner=method()
-corner(ChainComplex,List) := (F,deg) ->(
+corner(Complex,List) := (F,deg) ->(
      E:=ring F;
      degsE:= unique degrees E;
      assert(
@@ -446,7 +480,7 @@ corner(ChainComplex,List) := (F,deg) ->(
      transpose (transpose F.dd_k_L1)_L2
      )
 
-corner(ChainComplex,ZZ,List) := (F,k,deg) ->(
+corner(Complex,ZZ,List) := (F,k,deg) ->(
     --Frank: I do not understand why we want this function, most likely for a bit more flexibility
      E:=ring F;
      degsE:= unique degrees E;
@@ -472,7 +506,7 @@ corner(ChainComplex,ZZ,List) := (F,k,deg) ->(
 cohomologyMatrix=method()
 
 
-cohomologyMatrix(ChainComplex,List,List) := (F,da,db) -> (
+cohomologyMatrix(Complex,List,List) := (F,da,db) -> (
        --Under the assumption that T is part of a Tate resolution of a sheaf F on a product of
        --two projective space P^{n_1} x P^{n_2}, the function returns a matrix of cohomology polynomials
        --$$\sum_{i=0}^{|n|} \, dim H^i(\mathbb P^{n_1}\times \mathbb P^{n_2},\mathcal F(c_1,c_2)) * h^i \in \, \mathbb Z[h,k]$$
@@ -489,7 +523,7 @@ cohomologyMatrix(ChainComplex,List,List) := (F,da,db) -> (
        --(b_1,b_2) sits in the north-east corner, the one corresponding to (a_1,a_2) in the south-west
        --corner.
      E:= ring F;
-     if degreeLength E != 2 then error "cohomologyMatrix works only with a product of two projective spaces";
+     if not #unique degrees E==2 then error "works only for two factors";
      L:=flatten apply(toList(min F..max F), k->
 	 apply(degrees F_k, deg->
 	     sum deg-k));
@@ -503,7 +537,7 @@ cohomologyMatrix(ChainComplex,List,List) := (F,da,db) -> (
      C
      )
 cohomologyMatrix(Module, List, List) := (M, low, high) -> (
-    if degreeLength ring M != 2 then error "cohomologyMatrix works only with a product of two projective spaces";
+    if degreeLength ring M != 2 then error"this version works only with a product of two projective spaces.";
     if #low !=2 or #high !=2 then error"expected degree lists of length 2";
     if not all(#low, i-> low_i<=high_i) then error"low should be less than high";
     C := tateResolution(M, low, high);
@@ -527,12 +561,12 @@ eulerPolynomialTable HashTable := H ->(
     )
 eulerPolynomialTable(Module, List, List) := (M,low,high) ->
     eulerPolynomialTable cohomologyHashTable(M,low,high)
-eulerPolynomialTable(ChainComplex, List, List) := (T,low,high) ->
+eulerPolynomialTable(Complex, List, List) := (T,low,high) ->
     eulerPolynomialTable cohomologyHashTable(T,low,high)
 
 cohomologyHashTable=method()
 
-cohomologyHashTable(ChainComplex,List,List) := (F,low,high) -> (
+cohomologyHashTable(Complex,List,List) := (F,low,high) -> (
        --Under the assumption that T is part of a Tate resolution of a sheaf F on a product of
        --projective spaces P^{n_1} x ... x P^{n_t}, the function returns a hashTable
        --In case T corresponds to an object in the derived category D^b(P^{n_1}x P^{n_2}), then
@@ -562,7 +596,7 @@ cohomologyHashTable(Module, List, List) := (M, low, high) -> (
 
 
 tallyDegrees=method()
-tallyDegrees(ChainComplex) := C -> (
+tallyDegrees(Complex) := C -> (
     apply(min C..max C,k->tally degrees C_k))
 
 
@@ -584,23 +618,27 @@ boxDegrees(Ring) := E -> (
 
 
 beilinsonWindow=method()
-beilinsonWindow ChainComplex := (C)-> (
+beilinsonWindow Complex := (C)-> (
     tD := tateData ring C;
     (S,E) := tD.Rings;
-    (minC, maxC, mapsC) := toSequence chainComplexData C;
+    (minC, maxC) := concentration C;
     windows := for i from minC to maxC list (
         degs := degrees C_i;
         positions(degs, a -> inBeilinsonWindow(a,E))
         );
-    maps := for i from minC + 1 to maxC list (
-        submatrix(C.dd_i, windows_(i-minC-1), windows_(i-minC))
+    maps := hashTable for i from minC + 1 to maxC list (
+        rowPositions := windows_(i-minC-1);
+        colPositions := windows_(i-minC);
+        if #rowPositions === 0 then continue
+        else
+            i => submatrix(C.dd_i, rowPositions, colPositions)
         );
-    removeZeroTrailingTerms chainComplexFromData{minC, maxC, maps}
+    
+    complex maps
     )
 
-
 isChainComplex=method()
-isChainComplex(ChainComplex) := W -> (
+isChainComplex(Complex) := W -> (
      lengthW:= max W- min W;
      #select(min W+1..max W-1,i->( if (source W.dd_i==0 or W.dd_(i+1)==0) then  true else W.dd_i*W.dd_(i+1)==0)) ==lengthW-1)
 
@@ -635,13 +673,13 @@ truncateInE(List,Module):= (d,M) -> (
 
 
 cornerComplex=method()
-cornerComplex(ChainComplex,List) := (C,c) ->(
+cornerComplex(Complex,List) := (C,c) ->(
        d:=c-toList(#c:1);
        cornerComplex1(C,d)
        )
 
 cornerComplex1=method()
-cornerComplex1(ChainComplex,List) := (C,c) -> (
+cornerComplex1(Complex,List) := (C,c) -> (
     -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
@@ -651,10 +689,11 @@ cornerComplex1(ChainComplex,List) := (C,c) -> (
     Cge := firstQuadrantComplex1(C'[-#t+1],c);    
     Cle := lastQuadrantComplex1(C',c);
 --    <<(betti Cge, betti Cle) <<endl;
-    A:=0;B:=0;AB:=0;d:=0;
-    Ccorner:= chainComplex apply(max C- min C - #t-1, e-> (
-	   d:=e+#t; A=Cge.dd_(d);
-	   B= Cle.dd_(d); AB = cornerMap(C',c,d);
+    Ccorner:= complex apply(max C- min C - #t-1, e-> (
+	   d := e+#t; 
+           A := Cge.dd_(d);
+	   B := Cle.dd_(d); 
+           AB := cornerMap(C',c,d);
 --	   print((betti A,betti AB,betti B));
 	   (A|AB)||(map(target B, source A,0)|B))
           );
@@ -668,7 +707,7 @@ cornerComplex(Module, List, List) := (M,low, high) ->(
     hi := apply(#regs, i->max(regs_i, high_i+1)); --hi
     N := presentation truncate(hi, M)**S^{hi};-- betti N
     Q := symExt(N,E); --betti Q
-    (res (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi}[sum hi]
+    (freeResolution (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi}[sum hi]
     )
 *-
 
@@ -683,7 +722,7 @@ tateResolution(Module, List, List) := (M,low, high) ->(
     N := presentation truncate(hi, M)**S^{hi};-- betti N
     Q := symExt(N,E); --betti Q
         
-    (res (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi}[sum hi-#regs+2]
+    ((freeResolution (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi})[sum hi-#regs+2]
     )
 
 tateResolution(Matrix, List, List) := (A, low, high) -> (
@@ -702,15 +741,15 @@ tateResolution(Matrix, List, List) := (A, low, high) -> (
 
     QM := symExt(linearPresentationM,E);
     QN := symExt(linearPresentationN,E);
-    CM := (res (coker QM,LengthLimit=>(sum hi-sum low)));
-    CN := (res (coker QN,LengthLimit=>(sum hi-sum low)));
+    CM := (freeResolution (coker QM,LengthLimit=>(sum hi-sum low)));
+    CN := (freeResolution (coker QN,LengthLimit=>(sum hi-sum low)));
    
-    extPos := extend(CN[1], CM[1], sub(matrix truncatedMapMtoN, E));
+    extPos := extend(CN[1], CM[1], map(CN_1, CM_1, sub(matrix truncatedMapMtoN, E)));
     extNeg := dual extend(dual CM[-1], dual CN[-1], transpose sub(matrix truncatedMapMtoN,E));
     -- shift does not change the sign of map of complexes
-    extAll := map(CN, CM, i->(if i<1 then extNeg#(i-1) else extPos#(i-1)));
+    extAll := map(CN, CM, i->(if i<1 then extNeg_(i-1) else extPos_(i-1)));
 
-    extAll**E^{hi}[sum hi-#regM+2]
+    (extAll**E^{hi})[sum hi-#regM+2]
     )
 
 ///
@@ -735,8 +774,8 @@ source TA == TM
 target TA == TN
 isChainComplexMap TA
 
-isIsomorphic (truncate(regularity M, HH^0 (beilinson TM)), truncate(regularity M, M))
-isIsomorphic (truncate(regularity N, HH^0 (beilinson TN)), truncate(regularity N, N))
+isIsomorphicStrict (truncate(regularity M, HH^0 (beilinson TM)), truncate(regularity M, M))
+isIsomorphicStrict (truncate(regularity N, HH^0 (beilinson TN)), truncate(regularity N, N))
 
 ------------------------------
 restart
@@ -761,8 +800,8 @@ source TA == TM
 target TA == TN
 isChainComplexMap TA
 
-isIsomorphic (truncate(regM, HH^0 (beilinson TM)), truncate(regM, M))
-isIsomorphic (truncate(regN, HH^0 (beilinson TN)), truncate(regN, N))    
+isIsomorphicStrict (truncate(regM, HH^0 (beilinson TM)), truncate(regM, M))
+isIsomorphicStrict (truncate(regN, HH^0 (beilinson TN)), truncate(regN, N))    
 ------------------------
 ///
 
@@ -809,12 +848,12 @@ quadrantMap1(Matrix,List) := (M,c) -> (
     return ((M^goodRows)_goodColumns))
 
 firstQuadrantComplex=method()
-firstQuadrantComplex(ChainComplex,List) := (C,c) -> (
+firstQuadrantComplex(Complex,List) := (C,c) -> (
      -- c index of the lower corner of the first quadrant
      firstQuadrantComplex1(C,c-toList(#c:1)) )
 
 firstQuadrantComplex1=method()
-firstQuadrantComplex1(ChainComplex,List) := (C,c) -> (
+firstQuadrantComplex1(Complex,List) := (C,c) -> (
     -- c index of upper corner of the complementary last quadrant
     -- added this line to make the function  work for the zero complex
     if C==0 then return C;
@@ -824,8 +863,8 @@ firstQuadrantComplex1(ChainComplex,List) := (C,c) -> (
     -- I:= numFactors ring C;
     -- sign change for c (1x)
     --now replace each map in C' with the corresponding "quadrantMap"
---    Cge:=chainComplex apply(max C'-1,d -> quadrantMap(C'.dd_(d+1),-c,{},{}));
-    Cge:=chainComplex apply(max C'-1,d -> quadrantMap1(C'.dd_(d+1),-c));
+--    Cge:=complex apply(max C'-1,d -> quadrantMap(C'.dd_(d+1),-c,{},{}));
+    Cge:=complex apply(max C'-1,d -> quadrantMap1(C'.dd_(d+1),-c));
     return Cge[-s])
 ///
 restart
@@ -835,8 +874,8 @@ uninstallPackage "TateOnProducts"
 restart
 installPackage "TateOnProducts"
         (S,E) = productOfProjectiveSpaces {1,1};
-	T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
-        T=trivialHomologicalTruncation(T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
+	T1= (dual freeResolution( trim (ideal vars E)^2,LengthLimit=>8))[1];
+        T=trivialHomologicalTruncation(T2=freeResolution(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
     	betti T
 	cohomologyMatrix(T,-{4,4},{3,2})
     	fqT=firstQuadrantComplex(T,-{2,1});
@@ -855,13 +894,13 @@ viewHelp TateOnProducts
 
 
 lastQuadrantComplex=method()
-lastQuadrantComplex(ChainComplex,List) := (C,c) -> (
-    -- c index of the lower corner of the complentary first quadrant
+lastQuadrantComplex(Complex,List) := (C,c) -> (
+    -- c index of the lower corner of the complementary first quadrant
     lastQuadrantComplex1(C,c-toList(#c:1)))
 
 
 lastQuadrantComplex1=method()
-lastQuadrantComplex1(ChainComplex,List) := (C,c) -> (
+lastQuadrantComplex1(Complex,List) := (C,c) -> (
      -- c index of the upper corner of the last quadrant
      -- added this line to make the function  work for the zero complex
     if C==0 then return C;
@@ -870,11 +909,11 @@ lastQuadrantComplex1(ChainComplex,List) := (C,c) -> (
     C':=C[s];
     I:= numFactors ring C;
     --sign chain for c (1x)
-    Cge:=chainComplex apply(max C'-1,d -> quadrantMap(C'.dd_(d+1),-c,I,I));
+    Cge:=complex apply(max C'-1,d -> quadrantMap(C'.dd_(d+1),-c,I,I));
     return Cge[-s])
 
 cornerMap=method()
-cornerMap(ChainComplex,List,ZZ) := (C,c,d) -> (
+cornerMap(Complex,List,ZZ) := (C,c,d) -> (
     -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
@@ -891,11 +930,11 @@ cornerMap(ChainComplex,List,ZZ) := (C,c,d) -> (
 
 
 regionComplex=method()
-regionComplex(ChainComplex,List,Sequence) := (T,c,IJK) -> (
+regionComplex(Complex,List,Sequence) := (T,c,IJK) -> (
     T1:=trivialHomologicalTruncation(T,nonzeroMin T, nonzeroMax T);
     T2:=T1[min T1];
     Ls:=apply(toList(min T2..max T2),k->goodColumns(T2_k,c,IJK));
-    rT:=chainComplex apply(min T2+1..max T2,k-> ((T2.dd_k))^(Ls_(k-1))_(Ls_(k)));
+    rT:=complex apply(toList(min T2+1..max T2),k-> ((T2.dd_k))^(Ls_(k-1))_(Ls_(k)));
     rT[-min T1])
 
 goodColumns=method()
@@ -916,39 +955,39 @@ goodDegree(List,List,Sequence) := (d,c,IJK) -> (
 
 
 strand=method()
-strand(ChainComplex,List,List) := (T,c,I) -> (
+strand(Complex,List,List) := (T,c,I) -> (
     regionComplex(T,c,({},I,{})))
 
 
 
 
 --------------------------------------------------
--- formal ChainComplex manipulations            --
+-- formal Complex manipulations            --
 --------------------------------------------------
 
-chainComplexData = C->(
-    minC := min C;
-    maxC := max C;
-    C':=C[minC];
-    {minC, maxC, apply(toList(1..maxC-minC), i-> (C').dd_i)}
-)
+-- chainComplexData = C->(
+--     minC := min C;
+--     maxC := max C;
+--     C':=C[minC];
+--     {minC, maxC, apply(toList(1..maxC-minC), i-> (C').dd_i)}
+-- )
 
-chainComplexFromData = method()
-chainComplexFromData List := L ->(
-    --format of L is desired min, desired max, list of
-    --shifted maps
-    C := chainComplex L_2;
-    assert( min C == 0);
-    C[-L_0])
+-- chainComplexFromData = method()
+-- chainComplexFromData List := L ->(
+--     --format of L is desired min, desired max, list of
+--     --shifted maps
+--     C := complex L_2;
+--     assert( min C == 0);
+--     C[-L_0])
 
-chainComplexFromData(ZZ, List) := (minC,L) ->(
-    --minC will become the min of the output complex
-    C := chainComplex L;
-    assert( min C ==0);
-    C[-minC])
+-- chainComplexFromData(ZZ, List) := (minC,L) ->(
+--     --minC will become the min of the output complex
+--     C := complex L;
+--     assert( min C ==0);
+--     C[-minC])
 
 trivialHomologicalTruncation=method()
-trivialHomologicalTruncation(ChainComplex,ZZ,ZZ) := (C,d,e) -> (
+trivialHomologicalTruncation(Complex,ZZ,ZZ) := (C,d,e) -> (
     F := C;
     -- given a chain complex
     -- ... <- C_{k-1} <- C_{k} <- C_{k+1} <- ...
@@ -958,41 +997,58 @@ trivialHomologicalTruncation(ChainComplex,ZZ,ZZ) := (C,d,e) -> (
     while min F > d do (F =prependZeroMap F);
     while max F < e do (F=appendZeroMap F);
     G := F[d];
-    if d==e then (G= prependZeroMap chainComplex map(G_0,(ring G)^0,0)) else (
-	G=prependZeroMap appendZeroMap chainComplex apply(toList(1..e-d),k->G.dd_k));
+    if d==e then (G= prependZeroMap complex G_0) else (
+	G=prependZeroMap appendZeroMap complex apply(toList(1..e-d),k->G.dd_k));
     G[-d])
 ///
 E=ZZ/101[e_0,e_1,SkewCommutative=>true]
-F=res ideal vars E
+F=freeResolution(ideal vars E, LengthLimit => 3)
 betti F
-C=dual res (coker transpose F.dd_3,LengthLimit=>8)[-3]
+C=dual freeResolution (coker transpose F.dd_3,LengthLimit=>8)[-3]
 betti C
 C1=trivialHomologicalTruncation(C,-2,2)
 trivialHomologicalTruncation(C1,-3,3)
 ///
 
 
-
+-- XXXX Fix these
 prependZeroMap= method()
-prependZeroMap ChainComplex := C->(
-    L := chainComplexData(C[-1]);
-    minC := L_0;
-    newd := map((ring C)^0, target L_2_0, 0);
-    (chainComplexFromData(minC-1,prepend(newd,L_2)))[1]
+-- prependZeroMap Complex := C->(
+--     L := chainComplexData(C[-1]);
+--     minC := L_0;
+--     newd := map((ring C)^0, target L_2_0, 0);
+--     (chainComplexFromData(minC-1,prepend(newd,L_2)))[1]
+--     )
+
+prependZeroMap Complex := C -> (
+    (lo, hi) := concentration C;
+    if lo === hi then complex({(ring C)^0, C_lo}, Base => lo-1)
+    else complex hashTable for i from lo to hi list i => (
+        if i === lo then map((ring C)^0, C_lo, 0) 
+        else dd^C_i
+        )
     )
 
 appendZeroMap= method()
-appendZeroMap ChainComplex := C->(
-    L := chainComplexData(C);
-    minC := L_0;
-    newd := map(source last L_2,(ring C)^0, 0);
-    chainComplexFromData(minC,append(L_2,newd))
+-- appendZeroMap Complex := C->(
+--     L := chainComplexData(C);
+--     minC := L_0;
+--     newd := map(source last L_2,(ring C)^0, 0);
+--     chainComplexFromData(minC,append(L_2,newd))
+--     )
+
+appendZeroMap Complex := C -> (
+    (lo, hi) := concentration C;
+    if lo === hi then complex({C_lo, (ring C)^0}, Base => lo)
+    else complex hashTable for i from lo+1 to hi+1 list i => (
+        if i === hi+1 then map(C_hi, (ring C)^0, 0) 
+        else dd^C_i
+        )
     )
 
 
-
 nonzeroMin = method()
-nonzeroMin(ChainComplex) := C -> (
+nonzeroMin(Complex) := C -> (
     --assert( not C==0);
     if C==0 then return min C;
     m:= min C;
@@ -1001,7 +1057,7 @@ nonzeroMin(ChainComplex) := C -> (
 
 
 nonzeroMax = method()
-nonzeroMax(ChainComplex) := C -> (
+nonzeroMax(Complex) := C -> (
     --assert( not C==0);
     if C==0 then return max C;
     m:= max C;
@@ -1010,42 +1066,47 @@ nonzeroMax(ChainComplex) := C -> (
 ///
 symbol tt
 R=ZZ[tt]
-C=chainComplex {matrix{{R_0}}}
+C=complex {matrix{{R_0}}}
 C1=appendZeroMap prependZeroMap C
 nonzeroMax C1,max C1
 nonzeroMin C1, min C1
 ///
 
 removeZeroTrailingTerms = method()
-removeZeroTrailingTerms(ChainComplex) := W -> (
-    E := ring W;
+removeZeroTrailingTerms(Complex) := W -> (
+--    E := ring W;
     mi := nonzeroMin W;
     ma := nonzeroMax W;
-    W' := W[mi];
-    if mi==ma then (return (chainComplex({map(E^0,W'_0,0),map(W'_0,E^0,0)}))[-mi+1]) else
-    (chainComplex apply(toList(1..ma-mi),i->W'.dd_i))[-mi]
+--    W' := W[mi];
+    if mi==ma then (
+        complex(W_mi, Base => mi)
+--        return (complex({map(E^0,W'_0,0),map(W'_0,E^0,0)}))[-mi+1]) 
+        )
+    else complex hashTable for i from mi+1 to ma list (
+        i => W.dd_i)
+--        (complex apply(toList(1..ma-mi),i->W'.dd_i))[-mi]
     )
 
 ///
 R=ZZ[tt]
-C=chainComplex {matrix{{R_0}}}
+C=complex {matrix{{R_0}}}
 C1=appendZeroMap prependZeroMap C
 removeZeroTrailingTerms C1
 ///
 
 
 extendFromMiddle = method()
-extendFromMiddle (ChainComplex, ChainComplex, Matrix, ZZ) := (F1, F2, f, i) ->(
-    --f is a map to F1_i from F2_0. Output is a ChainComplexMap to F1 from F2e,
+extendFromMiddle (Complex, Complex, Matrix, ZZ) := (F1, F2, f, i) ->(
+    --f is a map to F1_i from F2_0. Output is a ComplexMap to F1 from F2e,
     --where F2e is a chain complex obtained from F2 by prepending zeros.
-    --CAVEAT the process of making a new ChainComplex seems to destroy
+    --CAVEAT the process of making a new Complex seems to destroy
     --the direct sum information in the source and target modules!
     S:= ring F1;
     ind := toList(min F1.. max F1);
     F1List := apply (ind, i->F1.dd_i);
-    F1i := chainComplex F1List_{i+1..max F1};
+    F1i := complex F1List_{i+1..max F1};
     fi := extend(F1i,F2,f);
-    F2e := chainComplex(
+    F2e := complex(
 	apply(ind, j->
 	    if j<i-1 then map (S^0,S^0,0) else
 	    if j == i-1 then map(S^0, F2_0,0) else
@@ -1055,32 +1116,33 @@ extendFromMiddle (ChainComplex, ChainComplex, Matrix, ZZ) := (F1, F2, f, i) ->(
 	    if j< i then map(F1_j, F2e_j,0) else fi_(j-i))
     )
 
-chainComplexMap=method(
-    Options => {InitialDegree => -infinity}
-)
-chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
-   --- the code commented out should also work, and is in some sense
-   --- more desirable as it uses map in the code.  However, something squirly
-   --- happens in the map code.
-   ---    startDeg := min C;
-   ---    if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;
-   ---    definingSet := set (startDeg..startDeg + length maps - 1);
-   ---    map(D,C,i -> (if member(i, definingSet) then maps_(i - startDeg) else 0))
-   startDeg := min C;
-   if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;
-   F := new ChainComplexMap;
-   F.degree = 0;
-   F.source = C;
-   F.target = D;
-   index1 := startDeg;
-   scan(maps, x -> (F#index1 = x; index1 = index1 + 1;));
-   F
-)
+-- Commented out MS+GS
+-- chainComplexMap=method(
+--     Options => {InitialDegree => -infinity}
+-- )
+-- chainComplexMap(Complex,Complex,List):= o -> (D,C,maps) -> (
+--    --- the code commented out should also work, and is in some sense
+--    --- more desirable as it uses map in the code.  However, something squirly
+--    --- happens in the map code.
+--    ---    startDeg := min C;
+--    ---    if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;
+--    ---    definingSet := set (startDeg..startDeg + length maps - 1);
+--    ---    map(D,C,i -> (if member(i, definingSet) then maps_(i - startDeg) else 0))
+--    startDeg := min C;
+--    if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;
+--    F := new ChainComplexMap; -- XXX Fix
+--    F.degree = 0;
+--    F.source = C;
+--    F.target = D;
+--    index1 := startDeg;
+--    scan(maps, x -> (F#index1 = x; index1 = index1 + 1;));
+--    F
+-- )
 
 resolutionOfChainComplex = method(Options=>{LengthLimit => infinity})
-resolutionOfChainComplex ChainComplex := o -> C -> (
+resolutionOfChainComplex Complex := o -> C -> (
     -- computes a (generally non-minimal) resolution of a complex by the method
-    -- of iterated mapping cones, and returns the ChainComplexMap from this to C.
+    -- of iterated mapping cones, and returns the ComplexMap from this to C.
     -- If
     -- C: 0 -> Cn ->...->Cm ->0
     -- is a chain complex, and Gi is a resolution of
@@ -1098,7 +1160,7 @@ resolutionOfChainComplex ChainComplex := o -> C -> (
     n := numgens ring C;
     lengthLimit := max(n+len, len+o.LengthLimit);
     ind := toList(minC..maxC);
-    reslist := apply(ind, i-> res(C_i, LengthLimit => lengthLimit-(i-minC)));
+    reslist := apply(ind, i-> freeResolution(C_i, LengthLimit => lengthLimit-(i-minC)));
     mats := apply(ind, i-> matrix C.dd_i);
     --mats_i is the map from the free cover of C_i to
     --the free cover of C_(i-1)
@@ -1127,10 +1189,10 @@ resolutionOfChainComplex ChainComplex := o -> C -> (
 --    Cres.cache.comparisonMap = compMap[-minC];
 --    Cres
 --    compMap[-minC]
-    chainComplexMap(C,F[-minC],comp)
+    map(C,F[-minC],comp) -- XXX check shifts
     )
 
-minimize ChainComplex := E ->(
+minimize Complex := E ->(
     --To simplify the notation consider the complex C = E[min E] that
     --is shifted so that the first nonzero module is C_0.
     --The algorithm:
@@ -1139,7 +1201,7 @@ minimize ChainComplex := E ->(
     -- the map rho is not a chain complex map, but the image of
     --(rho | d*rho): C ++ C[1] --> C is a subcomplex and
     --the minimization of  C is the complex C/image(rho|d*rho).
-    --The script returns the ChainComplexMap from the minimization to C.
+    --The script returns the ComplexMap from the minimization to C.
     complete E;
     C:= E[min E]; -- now min C == 0.
     M := max C;
@@ -1182,7 +1244,7 @@ isMinimalChainComplex = C -> (
 minimize = method (
     Options => {Check => false}
     )
-minimize ChainComplex := o -> E ->(
+minimize Complex := o -> E ->(
     --To simplify the notation consider the complex C = E[nonZeroMin E] that
     --is shifted so that the first nonzer module is C_0.
     --The algorithm:
@@ -1219,12 +1281,12 @@ minimize ChainComplex := o -> E ->(
     )
 *-
 --isExact=method()
-isExact(ChainComplex):=(C) -> (
+isExact(Complex):= {} >> opts -> (C) -> (
    if (all((min C,max C), i -> (prune HH_i(C) == 0))) then true else false
 )
 
 isQuism=method()
-isQuism(ChainComplexMap):=(phi) -> (
+isQuism(ComplexMap):=(phi) -> (
    isExact(cone phi)
 )
 
@@ -1234,7 +1296,7 @@ restart
 loadPackage "TateOnProducts"
 S=ZZ/101[x_0..x_2]
 m=random(S^{1,0},S^{0,-1})
-C=chainComplex{m}
+C=complex{m}
 target minimize C
 *-
 
@@ -1246,7 +1308,7 @@ inWindow = method()
 inWindow(List,List) := (D,n) ->
     #D == #select(#D, i->(0<=D_i and D_i<=n_i))
 
-inWindow(ChainComplex) := W -> (
+inWindow(Complex) := W -> (
     (t,v,n,varsList,irrList) := ringData ring W;
     L:=flatten apply(toList(nonzeroMin W.. nonzeroMax W),d-> degrees W_d);
     #select(L, D-> not inWindow(D,n))==0)
@@ -1300,6 +1362,8 @@ pushAboveWindow1 Module := Matrix => M -> (
     then powers(v-D,irrList)**E^{ -D} else id_(E^{ -D}))
     )
 
+-- pushAboveWindow (internal): the result keeps the same target as its input
+-- and has all source generators pushed minimally outside the Beilinson window.
 TEST ///
 debug TateOnProducts
 (S,E) = productOfProjectiveSpaces {1,2}
@@ -1369,32 +1433,38 @@ pushAboveWindow List := List => L ->(
    append(L',B)
     )
 
-pushAboveWindow ChainComplex := ChainComplex => C -> (
+pushAboveWindow Complex := Complex => C -> (
     --makes the chain complex into a list of matrices, 
     --does pushAboveWindow to that, 
     --and makes it back into a chain complex.
     --That is:  Takes a chain complex and adds all the syzygies of maps in the complex that
     --are outside the Beilinson window.
-    C':=appendZeroMap appendZeroMap prependZeroMap C;
-    L := chainComplexData C';
-    M := pushAboveWindow L_2;
-    chainComplexFromData(min C', M)
-    )
+    (minC, maxC) := concentration C;
+    L2 := for i from minC to maxC+2 list C.dd_i;
+    M := pushAboveWindow L2;
+    complex(M, Base => minC-1)
+    -- C':=appendZeroMap appendZeroMap prependZeroMap C;
+    -- L := chainComplexData C';
+    -- M := pushAboveWindow L_2;
+    -- chainComplexFromData(min C', M)
+    );
 
+-- pushAboveWindow (internal) applied to a complex leaves its Beilinson
+-- window unchanged.
 TEST ///
 debug TateOnProducts
         n={1,1};
         (S,E) = productOfProjectiveSpaces n;
-	T1 = (dual res trim (ideal vars E)^2)[1];
+	T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 4))[1];
 	a=-{2,2};
-	T2=T1**E^{a}[sum a];
+	T2 = T1 ** complex(E^{a})[sum a];
 	W=beilinsonWindow T2
 	T3 = pushAboveWindow W
     	assert(beilinsonWindow T3 == W)
 ///
 
 tateExtension=method()
-tateExtension(ChainComplex) := W -> (
+tateExtension(Complex) := W -> (
     -- input W : a Beilinson representative of an object in D^b(PP)
     -- output :  an Tate extension in a bounded range
     -- compute the TateExtension in a sloppy way: the Beilinson window of the extension is only
@@ -1409,14 +1479,14 @@ tateExtension(ChainComplex) := W -> (
     --betti W1,betti TW1
 --Bbounds given for the length of the resolution have to be discussed
 --They should come out of the proof of the theorem !!
-    TW1e := res(coker TW1.dd_(ma),LengthLimit=>(3*sum v))[-ma];
+    TW1e := freeResolution(coker TW1.dd_(ma),LengthLimit=>(3*sum v))[-ma];
     --betti TW1e
     --changed a sign here
     --TW1c := cornerComplex(TW1e,2*v);
     TW1c := cornerComplex(TW1e,-2*v); -- replace with upper quad cplx
 --cohomologyMatrix(TW1c, -4*v,4*v)
     --betti TWc
-    TW2 := dual res(coker transpose TW1c.dd_(ma+sum v),
+    TW2 := dual freeResolution(coker transpose TW1c.dd_(ma+sum v),
 	LengthLimit =>(ma+3*sum v -mi))[-ma-sum v+1];
 --cohomologyMatrix(TW2, -4*v,4*v)
     --betti TW2
@@ -1426,11 +1496,11 @@ tateExtension(ChainComplex) := W -> (
 -*
 --this code is not used
 continueComplex = method(Options => options res)
-continueComplex ChainComplex := o->C ->(
+continueComplex Complex := o->C ->(
     ma := nonzeroMax C;
-    C' := res(image (C.dd_ma),LengthLimit => o.LengthLimit)[-ma];
+    C' := freeResolution(image (C.dd_ma),LengthLimit => o.LengthLimit)[-ma];
     ma' := nonzeroMax C';
-    D := new ChainComplex;
+    D := new Complex;
     D.ring = ring C;
     apply(toList(min C..ma'),i->(
 	    D_i = if i<= ma then C_i else C'_i));
@@ -1444,7 +1514,7 @@ debug TateOnProducts
 n={1,1};
 (S,E) = productOfProjectiveSpaces n;
 p = 2
-C = res(coker vars E,LengthLimit =>p)[2]
+C = freeResolution(coker vars E,LengthLimit =>p)[2]
 C1 = continueComplex(C, LengthLimit =>2)
 assert((C1.dd)^2 == 0)
 ///
@@ -1897,9 +1967,10 @@ beilinson Matrix := Matrix => opts -> o -> (
     )
 )
 
-beilinson ChainComplex := opts -> (BT) -> (
+beilinson Complex := opts -> (BT) -> (
     -- BT should be a complex over E = exterior algebra
-    data := chainComplexData BT;
+    (minBT, maxBT) := concentration BT;
+    -- data := chainComplexData BT;
     if opts.BundleType === MapsBetweenFreeBundles then (
 	-- Do we also need a sign convention for them?
 	tD := tateData ring BT;
@@ -1909,12 +1980,13 @@ beilinson ChainComplex := opts -> (BT) -> (
 	--Csrc:=quotientPresentationComplex(BT);
 	Ctar:=beilinson(BT, BundleType=>FreeBundle);
 	
-	mapList:=data#2/(m->(beilinson(m,opts)));
+        mapList := for i from minBT+1 to maxBT list beilinson(BT.dd_i, opts);
+	-- mapList:=data#2/(m->(beilinson(m,opts)));
 	tempList:={};
 	apply(mapList,i->(tempList=tempList|{i_1}));
 	tempList=tempList|{(mapList_(#mapList-1))_0};
 	
-	f:= m->tempList_(m-data#0);
+	f:= m->tempList_(m-minBT);
 	
 	map(Ctar,Csrc,f)
 	-- Sometimes Ctar, Csrc may have different lengths (at boundary multidegrees).
@@ -1922,25 +1994,33 @@ beilinson ChainComplex := opts -> (BT) -> (
 	-- and the default map is 0 unless we assign.
 	)
     else (
-    removeZeroTrailingTerms chainComplexFromData{data#0, data#1,data#2/(m -> (beilinson(m, opts)))}
-    )
+        if minBT === maxBT then 
+            return complex(target beilinson(BT.dd_(minBT+1), opts), 
+                           Base => minBT);
+        C := complex hashTable for i from minBT+1 to maxBT list (
+            m := beilinson(BT.dd_i, opts);
+            if source m == 0 then continue 
+            else i => m
+            );
+        removeZeroTrailingTerms C
+      )
     )
 
 -- quotientPresentationComplex = method()
 -- This method extracts the maps on twisted free modules of multidegree {-1,...,-1}.
 -- The beilinson complex in 'QuotientBundle' option is a quotient of this free complex.
 -- maybe it is not a natural answer; take 'contractionSequence' might be better.
--* quotientPresentationComplex ChainComplex := (BT) -> (
+-* quotientPresentationComplex Complex := (BT) -> (
     BTQuot := beilinson (BT, BundleType=>QuotientBundle); -- already zero trailing terms are removed
     tmin:=(min BTQuot);
     tmax:=(max BTQuot);
     BTshifted:=BTQuot[tmin];
-    C:=chainComplex(apply(1..tmax-tmin, i->map(target presentation target BTshifted.dd_(i), target presentation source BTshifted.dd_(i),BTshifted.dd_(i))));
+    C:=complex(apply(toList(1..tmax-tmin), i->map(target presentation target BTshifted.dd_(i), target presentation source BTshifted.dd_(i),BTshifted.dd_(i))));
     C[-tmin]
     )
 *-
 
--*embeddingToFree ChainComplex := (BT) -> (
+-*embeddingToFree Complex := (BT) -> (
     -- return a list of embedding maps from a BT complex to a free complex
     data := chainComplexData BT;
     BTquotient := chainComplexFromData{data#0, data#1,data#2/(m -> (beilinson(m, BundleType=>QuotientBundle)))};
@@ -2009,29 +2089,42 @@ contractionFunctor Matrix := Matrix => m -> (
     map(tar,src,mats)
     )
 
-contractionFunctor ChainComplex := (C) -> (
+contractionFunctor Complex := (C) -> (
     -- C should be a complex over E = exterior algebra
-    data := chainComplexData contractionWindow C;
-    removeZeroTrailingTerms chainComplexFromData{data#0, data#1,data#2/(m -> contractionFunctor m)}
+    C' := contractionWindow C;
+    (minC', maxC') := concentration C';
+    complex hashTable for i from minC' + 1 to maxC' list (
+        m := contractionFunctor C'.dd_i;
+        if source m == 0 then continue
+        else i => m
+        )
+    -- data := chainComplexData contractionWindow C;
+    -- removeZeroTrailingTerms chainComplexFromData{data#0, data#1,data#2/(m -> contractionFunctor m)}
     )
 
 contractionWindow=method()
-contractionWindow ChainComplex := (C)-> (
+contractionWindow Complex := (C)-> (
     tD := tateData ring C;
     (S,E) := tD.Rings;
-    (minC, maxC, mapsC) := toSequence chainComplexData C;
+    (minC, maxC) := concentration C;
+    -- (minC, maxC, mapsC) := toSequence chainComplexData C;
     windows := for i from minC to maxC list (
         degs := degrees C_i;
         positions(degs, a -> inContractionWindow(a,E))
         );
-    maps := for i from minC + 1 to maxC list (
-        submatrix(C.dd_i, windows_(i-minC-1), windows_(i-minC))
-        );
-    removeZeroTrailingTerms chainComplexFromData{minC, maxC, maps}
+    complex hashTable for i from minC + 1 to maxC list (
+        m := submatrix(C.dd_i, windows_(i-minC-1), windows_(i-minC));
+        if source m == 0 then continue
+        else i => m
+        )
+    -- maps := for i from minC + 1 to maxC list (
+    --     submatrix(C.dd_i, windows_(i-minC-1), windows_(i-minC))
+    --     );
+    -- removeZeroTrailingTerms chainComplexFromData{minC, maxC, maps}
     )
 
 contractionSequence = method()
-contractionSequence ChainComplex := (T) -> (
+contractionSequence Complex := (T) -> (
     -- given a complex of E-modules, forms two
     -- exact sequences,
     --   C: beilinson(T, BundleType=>QuotientBundle)
@@ -2061,8 +2154,8 @@ n={1}
 n = {2,1}
 (S,E) = productOfProjectiveSpaces n
 
-needsPackage "ChainComplexExtras"
-C=chainComplex (matrix {{E_0}})
+--needsPackage "ChainComplexExtras"
+C=complex {matrix {{E_0}}}
 beilinson(C)
 (beilinson(C, BundleType=>DummyQuotientBundle)).dd_1
 (beilinson(C, BundleType=>FreeBundle)).dd_1
@@ -2074,9 +2167,9 @@ beilinson(C)
   m = map(E^{{0,-1}}, E^{{-2,-1}}, {{e_(0,1)*e_(0,2)}})
   contractionFunctor m
 
-  T1 = (dual res trim (ideal vars E)^2 [1]);
+  T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 4)[1]);
   cohomologyMatrix(T1,-3*n,3*n)
-  T2 = res(coker lowerCorner(T1, {2,2}), LengthLimit=>14)[4]
+  T2 = freeResolution(coker lowerCorner(T1, {2,2}), LengthLimit=>14)[4]
   cohomologyMatrix(T2,-3*n,3*n)
   betti contractionWindow (T2**E^{{0,0}})
   betti beilinsonWindow (T2**E^{{-1,-1}})
@@ -2185,7 +2278,7 @@ cornerCohomologyTablesOfUa(List) := n-> (
     Us:=flatten apply(n_0+1,a0->apply(n_1+1,a1->(
 	    a={a0,a1};
             U=E^{ -a};
-            W=(chainComplex {map(E^0,U,0),map(U,E^0,0)})[1];
+            W=(complex {map(E^0,U,0),map(U,E^0,0)})[1];
 	    {a,W})
 	));
         Ts:=apply(Us,aW->(
@@ -2214,7 +2307,7 @@ cornerCohomologyTablesOfUa(List,List) :=(n,a)-> (
     (S,E) := productOfProjectiveSpaces n;
     U:=0;W:=0;T:=0;cTa:=0;cTb:=0;cTb1:=0;
             U=E^{ -a};
-            W=(chainComplex {map(E^0,U,0),map(U,E^0,0)})[1];
+            W=(complex {map(E^0,U,0),map(U,E^0,0)})[1];
 	T=tateExtension W;
 	T=trivialHomologicalTruncation(T,-2*sum n,2*sum n);
 	cTa=cornerComplex(T,-a);
@@ -2286,84 +2379,88 @@ betti m
 ///
 
 bgg = method(Options =>{LengthLimit => null})
-bgg Module := o -> P -> (
+bgg Module := Complex => o -> P -> (
     (S,E) := (tateData ring P)#Rings;
-    D:= null; Ds:= null;
-    freeModulesDegs:=null;
-    tar:=null;sour:=null;
-    utar:=0;usour:=null;
-    a:=0;a':=0;u:=null;
-    if ring P === E then(
-    D = (degrees basis P)_1;
-    Ds = sort apply(D, d->(sum d,d));
-    minP := min(Ds/first);
-    maxP := max(Ds/first);
-    if o.LengthLimit =!= null then maxP=min(maxP,minP+1+o.LengthLimit);
-    freeModuleDegs := hashTable apply(toList(minP..maxP), i->
-	    (-i=>select(Ds,d-> d_0 == i)/last)
+    D := null; 
+    Ds := null;
+    freeModuleDegs := null;
+    tar := null;
+    sour := null;
+    utar := 0;
+    usour := null;
+    a := 0;
+    a':= 0;
+    u := null;
+    modules := new MutableHashTable;
+    maps := null;
+    if ring P === E then (
+        D = (degrees basis P)_1;
+        Ds = sort apply(D, d->(sum d,d));
+        minP := min(Ds/first);
+        maxP := max(Ds/first);
+        if o.LengthLimit =!= null then
+            maxP = min(maxP,minP+1+o.LengthLimit);
+        freeModuleDegs = hashTable apply(toList(minP..maxP), 
+            i -> (-i => select(Ds, d-> d_0 == i)/last)
 	    );
-    LP := new ChainComplex;
-    LP.ring = S;
---define the modules as direct sums, with one degree per summand
-    scan(toList(minP..maxP), i->
-	LP#(-i) = directSum apply(unique freeModuleDegs#(-i), d ->
-	    S^(select(freeModuleDegs#(-i), k-> d ==k))));
---define the maps
-    u = L->unique degrees L;
-    scan(toList(min LP+1..max LP), k->(
-	    tar = LP_(k-1);
-	    sour = LP_k;
-	    utar = u tar;
-	    usour = u sour;
-	    LP.dd#k = sum(#utar, i->
-		      sum(#usour, j->(
-	              a' = -utar_i;
-	              a = -usour_j;
-                      map(tar,sour,
-    		         tar_[i]*multMap(P,a',a)*(sour^[j])
-		         )
-		     )))
-               )
-	);
-   return LP);
-   if ring P === S then (
-   if o.LengthLimit === null then LengLim := 1+numgens S else
-                   LengLim = o.LengthLimit;
+        --define the modules as direct sums, with one degree per summand
+        for i from minP to maxP do
+	    modules#(-i) = directSum apply(unique freeModuleDegs#(-i), 
+                d -> S^(select(freeModuleDegs#(-i), k -> d == k))
+                );
+        if minP === maxP then return complex(modules#(-minP), Base => -minP);
+        maps = hashTable for k from -maxP+1 to -minP list k => (
+            tar = modules#(k-1);
+            sour = modules#k;
+            utar = unique degrees tar;
+            usour = unique degrees sour;
+	    sum(#utar, i->
+                sum(#usour, j->(
+                        a' = -utar_i;
+                        a = -usour_j;
+                        map(tar,sour,
+                            tar_[i]*multMap(P,a',a)*(sour^[j])
+                            )
+                )))
+            );
+        return complex maps
+        );
+    if ring P =!= S then 
+        error "expected ring created with 'productOfProjectiveSpaces'";
+ 
+    -- at this point ring P is S.
+    LengLim := if o.LengthLimit === null 
+        then 1+numgens S 
+        else o.LengthLimit;
     M := P/((ideal vars S)^(LengLim+1));
     D = (degrees basis M)_1;
     Ds = sort apply(D, d->(sum d,d));
     minM := min(Ds/first);
     maxM := max(Ds/first);
---    (maxM - minM)
-    freeModuleDegs = hashTable apply(toList(minM..maxM), i->
-	    (-i=>select(Ds,d-> d_0 == i)/last)
-	    );
-    RM := new ChainComplex;
-    RM.ring = E;
---define the modules as direct sums, with one degree per summand
-    scan(toList(minM..maxM), i->
-	RM#(-i) = directSum apply(unique freeModuleDegs#(-i), d ->
-	    E^(select(freeModuleDegs#(-i), k-> d ==k))));
---define the maps
-    u = L->unique degrees L;
-    scan(toList(min RM+1..max RM), k->(
-	    tar = RM_(k-1);
-	    sour = RM_k;
-	    utar = u tar;
-	    usour = u sour;
-	    RM.dd#k = sum(#utar, i->
-		      sum(#usour, j->(
-	              a' = -utar_i;
-	              a = -usour_j;
-                      map(tar,sour,
-    		         tar_[i]*multMapE(M,a',a)*(sour^[j])
-		         )
-		     )))
-               )
-	);
-   return RM))
-
-
+    freeModuleDegs = hashTable apply(toList(minM..maxM),
+        i -> (-i => select(Ds, d-> d_0 == i)/last)
+        );
+    for i from minM to maxM do
+        modules#(-i) = directSum apply(unique freeModuleDegs#(-i), 
+            d -> E^(select(freeModuleDegs#(-i), k -> d == k))
+            );
+    if minM === maxM then return complex(modules#(-minM), Base => -minM);
+    maps = hashTable for k from -maxM+1 to -minM list k => (
+        tar = modules#(k-1);
+        sour = modules#k;
+        utar = unique degrees tar;
+        usour = unique degrees sour;
+        sum(#utar, i->
+            sum(#usour, j->(
+                    a' = -utar_i;
+                    a = -usour_j;
+                    map(tar,sour,
+                        tar_[i]*multMapE(M,a',a)*(sour^[j])
+                        )
+                    )))
+        );
+    complex maps
+    )
 
 ///
 restart
@@ -2391,19 +2488,23 @@ isDegreeZeroSurjection(Module,Module) := (A,B)->(
     f := homomorphism(B0*random(source B0, (ring B0)^1));
     coker f == 0)
 
-isIsomorphic = method()
-isIsomorphic(Module,Module) := (A,B) -> (
-    --tests random degree 0 maps A->B, B->A and returns true
-    --if both are surjective.
-    if not(isHomogeneous A and isHomogeneous B) then 
-	  error"not implemented for inhomogeneous modules";
-    Ap := prune A;
-    Bp := prune B;
-    dA := set flatten degrees source gens Ap;
-    dB := set flatten degrees source gens Bp;
-    if dA =!= dB then false else    
-    isDegreeZeroSurjection(Ap,Bp) and isDegreeZeroSurjection(Bp,Ap)
-    )
+isIsomorphicStrict = method()
+isIsomorphicStrict(Module, Module) := (A,B) -> (
+    isIsomorphic(A, B, Strict => true, Homogeneous => true))
+-- This is now replaced and improved in Isomorphism package
+-- isIsomorphic = method()
+-- isIsomorphic(Module,Module) := o -> (A,B) -> (
+--     --tests random degree 0 maps A->B, B->A and returns true
+--     --if both are surjective.
+--     if not(isHomogeneous A and isHomogeneous B) then 
+-- 	  error"not implemented for inhomogeneous modules";
+--     Ap := prune A;
+--     Bp := prune B;
+--     dA := set flatten degrees source gens Ap;
+--     dB := set flatten degrees source gens Bp;
+--     if dA =!= dB then false else    
+--     isDegreeZeroSurjection(Ap,Bp) and isDegreeZeroSurjection(Bp,Ap)
+--     )
 
 
 
@@ -2490,11 +2591,14 @@ directImageComplex(Module,List) := opts -> (M,I) -> (
     --print cohomologyMatrix(sT,low,high);
     sTW := removeZeroTrailingTerms beilinsonWindow sT;
     --print betti sTW;
-    mi := min sTW; ma:=max sTW;
-    W1 := new ChainComplex;
-    W1.ring = E1;
-    apply(toList(mi..ma),i-> W1_i = E1^(-apply(degrees sTW_i,d->d_I))); 
-    apply(toList(mi+1..ma),i->W1.dd_i = map(W1_(i-1),W1_i,phi(sTW.dd_i)));
+    mi := min sTW; 
+    ma := max sTW;
+    modules := hashTable for i from mi to ma list 
+        i => E1^(-apply(degrees sTW_i,d->d_I));
+    maps := hashTable for i from mi+1 to ma list
+        i => map(modules#(i-1),modules#i,phi(sTW.dd_i));
+    W1 := if mi === ma then complex modules#mi 
+        else complex maps;
     beilinson (W1, opts)
     )
 
@@ -2627,7 +2731,7 @@ directImageAction(Ideal, Module) :=  (I,M)->(
     T:=tateResolution(Mgraph,-{n+2,d+2},{n+2,d+2});
     sT:=removeZeroTrailingTerms strand(T,toList(2:0),{0});
     mi := min sT; ma:=max sT;
-    W := new ChainComplex;
+    W := new Complex;
     W.ring = E1;
     apply(toList(mi..ma),i-> W_i = E1^(-apply(degrees sT_i,d->d_{1})));
     apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,signChange projOnEs sT.dd_i));
@@ -2657,7 +2761,7 @@ directImageAction(Ideal, Module) :=  (I,M)->(
      sT10 := removeZeroTrailingTerms strand(T10,toList(2:0),{0});
       
      mi = min sT10; ma=max sT10;
-     W10 := new ChainComplex;
+     W10 := new Complex;
      W10.ring = E1;
      apply(toList(mi..ma),i-> W10_i = E1^(-apply(degrees sT10_i,d->d_{1})));
      apply(toList(mi+1..ma),i->W10.dd_i = map(W10_(i-1),W10_i,projOnEs(sT10.dd_i)));
@@ -2682,7 +2786,7 @@ directImageAction(Ideal, Module) :=  (I,M)->(
 *-
 
 inverseQIsoFromTate=method()
-inverseQIsoFromTate(ChainComplex) :=  (W)->(
+inverseQIsoFromTate(Complex) :=  (W)->(
     -- Input: W, a Tate resolution on a single projective space
     -- W should be big enough so that the corresponding S-complex is exact
     
@@ -2711,24 +2815,52 @@ inverseQIsoFromTate(ChainComplex) :=  (W)->(
     R := ring B';
     kk := coefficientRing R;
     B'' := beilinson (W**E^{1}, BundleType=>DummyQuotientBundle) ** R^{1};
---    assert(B'' == coker phi);
+    assert(B'' == coker phi);
     psi := map(B'', B, id_B);
     
     -- computing pseudoinverse
-    mapsB := for i from (min B)+1 to max B list sub(B.dd_i,kk); -- reduction to the vector space maps
-    tempB := chainComplexFromData{min B, max B, mapsB};
+    tempB := complex hashTable for i from min B + 1 to max B list i => sub(B.dd_i, kk);
+    pinvtempB := pseudoInverse tempB;
+    assert(arePseudoInverses(tempB, pinvtempB));
     Binv:= (pseudoInverse tempB)**R; -- takes too much time in several cases
---    assert(arePseudoInverses(tempB, Binv));
 
---    splittingMapsFromB:= for i from min B to max B list psi_(i+1)*Binv.dd_(-i);
---    mapFromB:=map(B''[1],B,i->splittingMapsFromB_(i-min B));
-    
-    splittingMapsFromB':= for i from min B to max B list psi_(i+1)*Binv.dd_(-i)*phi_i;
-    qIs:= map(B''[1],B',i->splittingMapsFromB'_(i-min B));
-    
---    (B',B,B'',mapFromB,qIs)
+    qIs := map(B''[1], B', i -> psi_(i+1)*Binv.dd_(-i)*map(target phi_i, B'_i, phi_i));
+    assert(isQuism qIs);
     qIs
 )
+
+///
+-- to be removed: testing maps in above qIs
+i = 0
+B'_0
+source(psi_(i+1)*Binv.dd_(-i)*phi_i)
+target psi_1
+source psi_1
+target Binv.dd_(0)
+source Binv.dd_(0)
+target phi_0
+source phi_0
+(B''[1])_0
+target(psi_(i+1)*Binv.dd_(-i)*phi_i)
+
+i = -1
+assert(target(psi_(i+1)) === (B''[1])_i)
+assert(target(Binv.dd_(-i)) === source psi_(i+1))
+assert(source(Binv.dd_(-i)) === target phi_i)
+assert(source phi_i === B'_i) -- FAILS
+
+i = 0
+assert(target(psi_(i+1)) === (B''[1])_i)
+assert(target(Binv.dd_(-i)) === source psi_(i+1))
+assert(source(Binv.dd_(-i)) === target phi_i)
+assert(source phi_i === B'_i) -- fails
+
+i = 1
+assert(target(psi_(i+1)) === (B''[1])_i)
+assert(target(Binv.dd_(-i)) === source psi_(i+1))
+assert(source(Binv.dd_(-i)) === target phi_i)
+assert(source phi_i === B'_i)
+///
 
 
 --
@@ -2797,12 +2929,14 @@ tateOfDirectImage(Ideal,Module,Matrix) := (I,M,phi) -> (
     sT:=removeZeroTrailingTerms strand(T,toList(2:0),{0}); 
 --    sTW := removeZeroTrailingTerms beilinsonWindow sT;
     --print betti sTW;
-    mi := min sT; ma:=max sT;
-    W1 := new ChainComplex;
-    W1.ring = E1;
-    apply(toList(mi..ma),i-> W1_i = E1^(-apply(degrees sT_i,d->d_1))); 
-    apply(toList(mi+1..ma),i->W1.dd_i = map(W1_(i-1),W1_i,psi(sT.dd_i)));
-
+    mi := min sT; 
+    ma := max sT;
+    modules := hashTable for i from mi to ma list 
+        i => E1^(-apply(degrees sT_i,d->d_1));
+    maps := hashTable for i from mi+1 to ma list 
+        i => map(modules#(i-1),modules#i,psi(sT.dd_i));
+    W1 := if mi === ma then complex modules#mi 
+          else complex maps;
     IY:=saturate intersect apply(rank target phi, i->ker map(R, S1, phi^{i}));
     
     (IY,W1)
@@ -2817,7 +2951,7 @@ J=minors(2,m)
 dim J, degree J
 s=2, d=-2
 N=symmetricPower(s, coker m)**R^{d}
-betti res N
+betti freeResolution N
 ann N == J
 phi=transpose m
 RphiN=time directImageComplex(J,N,phi);
@@ -2830,7 +2964,7 @@ I=ker pphi
 isAction(I, apply(dim S, i->prune HH^1 ARphiN#1#i))
 
 R1=prune HH^1 source ARphiN#1#0
-isIsomorphic(truncate(2,R1),truncate(2,dual dual R1))
+isIsomorphicStrict(truncate(2,R1),truncate(2,dual dual R1))
 dual dual R1
 ----------------------
 s=3,d=1
@@ -2839,7 +2973,7 @@ N=symmetricPower(s, coker m)**R^{d}
 RphiN=time directImageComplex(J,N,phi);
 
 netList apply(toList(min RphiN.. max RphiN),i->
-          {-i, saturate annihilator HH^(-i) RphiN,betti res HH^(-i) RphiN})
+          {-i, saturate annihilator HH^(-i) RphiN,betti freeResolution HH^(-i) RphiN})
 
 R0=prune HH^0 RphiN
 dim R0, degree R0
@@ -2853,12 +2987,12 @@ keys ARphiN
 isAction(I, apply(dim S, i->prune HH^0 ARphiN#0#i))
 
 R0= prune HH^0 source ARphiN#0#0
-isIsomorphic(truncate(2,R0),truncate(2,dual dual R0))
+isIsomorphicStrict(truncate(2,R0),truncate(2,dual dual R0))
 dual dual R0
 ///
 
 actionOnDirectImage=method()
-actionOnDirectImage(Ideal,ChainComplex) := (I,T) -> (
+actionOnDirectImage(Ideal,Complex) := (I,T) -> (
     -- Input : T, the Tate resolution of a sheaf, or a complex on a projective variety Y in P^n of dim. d
     --         I, the ideal of Y (annihilating the sheaves appear in HH beilinson T)
     -- Output : retTable, a Hashtable whose keys are the cohomology indices i where R^i survives;
@@ -2898,11 +3032,19 @@ actionOnDirectImage(Ideal,ChainComplex) := (I,T) -> (
      ---------
     
      -- construct a complex representing R(pi \circ f)
-     mi := min T; ma:=max T;
-     W := new ChainComplex;
-     W.ring = E1;
-     apply(toList(mi..ma),i-> W_i = E1^(-apply(degrees T_i,d->d_{0})));
-     apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE T.dd_i));
+     -- mi := min T; ma:=max T;
+     -- W := new Complex;
+     -- W.ring = E1;
+     -- apply(toList(mi..ma),i-> W_i = E1^(-apply(degrees T_i,d->d_{0})));
+     -- apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE T.dd_i));
+
+     (mi, ma) := concentration T;
+     modulesW := hashTable for i from mi to ma list 
+         i =>  E1^(-apply(degrees T_i, d -> d_{0}));
+     mapsW := hashTable for i from mi+1 to ma list
+         i => map(modulesW#(i-1), modulesW#i, projOnE T.dd_i);
+     W := if mi === ma then complex {modulesW#mi}
+          else complex mapsW;
 
      BW := beilinson (W, BundleType=>DummyQuotientBundle);
      regW:=max apply(min HH BW..max HH BW, i->regularity HH_i BW);
@@ -2911,7 +3053,7 @@ actionOnDirectImage(Ideal,ChainComplex) := (I,T) -> (
      -- Need to extract linear submatrices of T (w.r.t. its degree)
      r:=max(n+1, regW);
           
-     Tlin := (dual res (coker transpose (T[ma]).dd_0, LengthLimit=>ma+r+1))[-ma];
+     Tlin := (dual freeResolution (coker transpose (T[ma]).dd_0, LengthLimit=>ma+r+1))[-ma];
      -- need : separate every strand of Tlin; by reading off the linear submatrices
      -- CAUTION : Tlin might be slightly different from T (choice of bases issue)
 
@@ -2919,18 +3061,34 @@ actionOnDirectImage(Ideal,ChainComplex) := (I,T) -> (
      linSubmatrix:=i->submatrixByDegrees(Tlin.dd_(-r), -r-1+i,-r+i); -- linear submatrix corresponding to R^i
 
      actionOnEachStrand:=linSub->(
-	sT := res (coker ((-1)^(r+1)*linSub), LengthLimit=>ma+r+1)[r+1];
+	sT := freeResolution (coker ((-1)^(r+1)*linSub), LengthLimit=>ma+r+1)[r+1];
 	sT' := (sT**E^{-1})[-1];
 		
-	sW:= new ChainComplex;
-	sW.ring = E1;
-	apply(toList(min sT..max sT),i->sW_i=E1^(-apply(degrees sT_i,d->d_{0})));
-	apply(toList(min sT+1..max sT),i->sW.dd_i=map(sW_(i-1),sW_i,projOnE sT.dd_i));
-	
-	sW' := new ChainComplex;
-	sW'.ring = E1;
-	apply(toList(min sT'..max sT'),i->sW'_i=E1^(-apply(degrees sT'_i,d->d_{0})));
-	apply(toList(min sT'+1..max sT'),i->sW'.dd_i=map(sW'_(i-1),sW'_i,projOnE sT'.dd_i));
+	-- sW:= new Complex;
+	-- sW.ring = E1;
+	-- apply(toList(min sT..max sT),i->sW_i=E1^(-apply(degrees sT_i,d->d_{0})));
+	-- apply(toList(min sT+1..max sT),i->sW.dd_i=map(sW_(i-1),sW_i,projOnE sT.dd_i));
+        
+        (minsT, maxsT) := concentration sT;
+        sWmodules := hashTable for i from minsT to maxsT list 
+            i =>  E1^(-apply(degrees sT_i, d -> d_{0}));
+        sWmaps := hashTable for i from minsT+1 to maxsT list
+            i => map(sWmodules#(i-1), sWmodules#i, projOnE sT.dd_i);
+        sW := if minsT === maxsT then complex {sWmodules#minsT}
+             else complex sWmaps;
+
+	-- sW' := new Complex;
+	-- sW'.ring = E1;
+	-- apply(toList(min sT'..max sT'),i->sW'_i=E1^(-apply(degrees sT'_i,d->d_{0})));
+	-- apply(toList(min sT'+1..max sT'),i->sW'.dd_i=map(sW'_(i-1),sW'_i,projOnE sT'.dd_i));
+
+        (minsT', maxsT') := concentration sT';
+        sW'modules := hashTable for i from minsT' to maxsT' list 
+            i =>  E1^(-apply(degrees sT'_i, d -> d_{0}));
+        sW'maps := hashTable for i from minsT'+1 to maxsT' list
+            i => map(sW'modules#(i-1), sW'modules#i, projOnE sT'.dd_i);
+        sW' := if minsT' === maxsT' then complex {sW'modules#minsT'}
+             else complex sW'maps;
 	
 	multMapOnW := j->(
 	    contrMap:=map((sT'[-r])_0, (sT[-r])_0, contract(E_j,sT.dd_(-r)));
@@ -3052,13 +3210,13 @@ actionOnDirectImage(Ideal, Module) := (I,M)->(
 
      -- construct a projected complex of E1-modules
      mi := min C; ma:=max C;
-     W := new ChainComplex;
+     W := new Complex;
      W.ring = E1;
      apply(toList(mi..ma),i-> W_i = E1^(-apply(degrees C_i,d->d_{0})));
      apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE C.dd_i));
 
      mi = min C'; ma=max C';
-     W' := new ChainComplex;
+     W' := new Complex;
      W'.ring = E1;
      apply(toList(mi..ma),i-> W'_i = E1^(-apply(degrees C'_i,d->d_{0})));
      apply(toList(mi+1..ma),i->W'.dd_i = map(W'_(i-1),W'_i,projOnE C'.dd_i));
@@ -3214,7 +3372,7 @@ m=matrix{{x_0,x_3,x_2},{x_3,x_2,x_1}}
 I=minors(2,m)
 -- M=symmetricPower(2,coker m) ** R^{1}
 M=(R^1/I)**R^{2} -- O(2) of a twisted cubic
-betti res M
+betti freeResolution M
 
 RM=time directImageComplex(I,M,matrix id_R);
 time prune HH RM
@@ -3235,7 +3393,7 @@ R=kk[x_0..x_3]
 m=matrix{{x_0,x_3,x_2},{x_3,x_2,x_1}}
 I=minors(2,m)
 M=directSum((R^1/I)**R^{1},(R^1/I)**R^{-3})
-betti res M
+betti freeResolution M
 
 time betti (RM=directImageComplex(I,M,matrix id_R)); -- 11.94 seconds
 time prune HH RM
@@ -3358,7 +3516,7 @@ dim I, degree I, genera I
 --M=symmetricPower(2,coker m) -- Ulrich
 M=(R^1/I)**R^{1}
 --M=(R^1/I)**R^{2} -- too high computational cost
-betti res M
+betti freeResolution M
 
 AA=time actionOnDirectImage(I,M);
 keys AA
@@ -3415,29 +3573,38 @@ betti (L=prune pushForward(phi,LCC))
 
 -- Take a truncation so that the resolution becomes linear
 Ltr = (truncate ({2,2},L))**S^{{2,2}};
-betti res Ltr
+betti freeResolution Ltr
 
 Q=symExt(presentation Ltr, E);
-T=time (res (coker Q,LengthLimit=>12))**E^{{2,2}}[4];
+T=time ((freeResolution (coker Q,LengthLimit=>12))**E^{{2,2}})[4];
 cohomologyMatrix (T, -{5,5},{3,3})
 sT=strand(T,{0,0},{0}); -- strand associated to Rpi_{*}L, where pi:C \times C \to C is the 2nd projection
 cohomologyMatrix (sT, -{5,5},{3,3})
 betti sT
 
-sTFull=new ChainComplex;
-sTFull.ring = ring sT
+-- sTFull=new Complex;
+-- sTFull.ring = ring sT
 ma=7;
-sTFull=(dual res (coker transpose (sT[ma]).dd_0, LengthLimit=>2*ma))[-ma];
+sTFull=(dual freeResolution (coker transpose (sT[ma]).dd_0, LengthLimit=>2*ma))[-ma];
 betti sTFull -- a Tate resolution for Rpi_{*}L, consisted of two strands
 -- note that the boundary maps of sTFull are not exactly same as the maps of sT (basis choice issue)
 
 (S',E')=productOfProjectiveSpaces({2},CoefficientField=>kk);
 projOnE=map(E', E, toList(3:0)|(gens E'));
-mi=min sTFull; ma=max sTFull;
-W=new ChainComplex;
-W.ring = E';
-apply(toList(mi..ma),i-> W_i = E'^(-apply(degrees sTFull_i,d->d_{1})));
-apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE sTFull.dd_i));
+--mi=min sTFull; ma=max sTFull;
+
+(mi, ma) = concentration sTFull;
+Wmodules = hashTable for i from mi to ma list 
+    i =>  E'^(-apply(degrees sTFull_i, d -> d_{1}));
+Wmaps = hashTable for i from mi+1 to ma list
+    i => map(Wmodules#(i-1), Wmodules#i, projOnE sTFull.dd_i);
+W = if mi === ma then complex {Wmodules#mi}
+      else complex Wmaps;
+
+-- W=new Complex;
+-- W.ring = E';
+-- apply(toList(mi..ma),i-> W_i = E'^(-apply(degrees sTFull_i,d->d_{1})));
+-- apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE sTFull.dd_i));
 
 
 betti W
@@ -3460,17 +3627,17 @@ R0piL = prune HH^0 beilinson W
 R1piL = prune HH^1 beilinson W
 
 degree R0piL
-betti res R0piL
+betti freeResolution R0piL
 primaryDecomposition ann R0piL
 
 degree R1piL
-betti res R1piL
+betti freeResolution R1piL
 primaryDecomposition ann R1piL
 
 R0=prune HH^0 source AA#0#0
 degree R0, rank R0, ann R0
 dual dual R0
-isIsomorphic(truncate(3, R0), truncate(3,dual dual R0))
+isIsomorphicStrict(truncate(3, R0), truncate(3,dual dual R0))
 -- R0 is isomorphic to O+O(-1)+O(-2)+O(-3), which is the pushforward of O_C.
 
 R1=prune HH^1 source AA#1#0
@@ -3514,30 +3681,41 @@ betti (L=prune (I1*(prune pushForward(phi,temp)))) -- O(D-P*C)
 --betti (L=prune pushForward(phi,temp))
 
 Ltr = (truncate ({2,2},L))**S^{{2,2}};
-betti res Ltr
+betti freeResolution Ltr
 
 Q=symExt(presentation Ltr, E);
-T=(res (coker Q,LengthLimit=>14))**E^{{2,2}}[4];
+T=((freeResolution (coker Q,LengthLimit=>14))**E^{{2,2}})[4];
 cohomologyMatrix (T, -{5,5},{5,5})
 sT=strand(T,{0,0},{0}); -- strand associated to Rpi_{*}L, where pi:C \times C \to C is the 2nd projection
 cohomologyMatrix (sT, -{5,5},{5,5})
 betti sT
 
-sTFull=new ChainComplex;
-sTFull.ring = ring sT
+-- sTFull=new Complex;
+-- sTFull.ring = ring sT
 ma=7;
-sTFull=(dual res (coker transpose (sT[ma]).dd_0, LengthLimit=>2*ma))[-ma];
+sTFull=(dual freeResolution (coker transpose (sT[ma]).dd_0, LengthLimit=>2*ma))[-ma];
 betti sTFull -- a Tate resolution for Rpi_{*}L, consisted of two strands
 -- note that the boundary maps of sTFull are not exactly same as the maps of sT (basis choice issue)
 
 (S',E')=productOfProjectiveSpaces({2},CoefficientField=>kk);
 projOnE=map(E', E, toList(3:0)|(gens E'));
-mi=min sTFull; ma=max sTFull;
-W=new ChainComplex;
-W.ring = E';
-apply(toList(mi..ma),i-> W_i = E'^(-apply(degrees sTFull_i,d->d_{1})));
-apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE sTFull.dd_i));
+
+-- mi=min sTFull; ma=max sTFull;
+-- W=new Complex;
+-- W.ring = E';
+-- apply(toList(mi..ma),i-> W_i = E'^(-apply(degrees sTFull_i,d->d_{1})));
+-- apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE sTFull.dd_i));
+
+(mi, ma) = concentration sTFull;
+Wmodules = hashTable for i from mi to ma list 
+    i =>  E'^(-apply(degrees sTFull_i, d -> d_{1}));
+Wmaps = hashTable for i from mi+1 to ma list
+    i => map(Wmodules#(i-1), Wmodules#i, projOnE sTFull.dd_i);
+W = if mi === ma then complex {Wmodules#mi}
+      else complex Wmaps;
+
 betti W
+
 
 IC=ideal(S'_0^3+S'_1^3+S'_2^3);
 AA=actionOnDirectImage(W,IC);
@@ -3578,7 +3756,7 @@ composedFunctions = () -> (
       B=beilinson T
       M'=prune HH^0 B
       prune HH^1 B
-      isIsomorphic(M,M')
+      isIsomorphicStrict(M,M')
      --Text
      -- We study the corner complex of T at c={0,0} . 
      --Example
@@ -3597,7 +3775,7 @@ composedFunctions = () -> (
       apply(coLP,h->dim h)
       M1=HH^0 LP
       betti M1,betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      --Text
      -- It works also for different syzygy modules in the corner complex.
      -- It works for all P=ker C.dd_k in the range where C.dd_k is computed 
@@ -3611,7 +3789,7 @@ composedFunctions = () -> (
       apply(coLP,h->dim h)
       M1=HH^(-k) LP
       betti M1, betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      --Text
      -- Note that we have to take HH^{(-k)} == HH_k because of the homological position in which
      -- P sits.
@@ -3624,7 +3802,7 @@ composedFunctions = () -> (
       apply(coLP,h->dim h)
       M1=HH^(-k) LP
       betti M1,betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      --Text
      -- Next we check the functor bgg on S-modules.
      --Example
@@ -3658,7 +3836,7 @@ composedFunctions = () -> (
      --Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
-      isIsomorphic(Mc',Mc)
+      isIsomorphicStrict(Mc',Mc)
      --Example
       c={3,1}
       cohomologyMatrix(T1,low,2*high)
@@ -3673,7 +3851,7 @@ composedFunctions = () -> (
      
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
-      isIsomorphic(Mc',Mc)
+      isIsomorphicStrict(Mc',Mc)
      --Text
      -- Now we test tateExtension.
      --Example
@@ -3689,7 +3867,7 @@ composedFunctions = () -> (
       cohomologyMatrix(beilinsonWindow T,low, high)
       B = beilinson T
       d={2,2}
-      T1=T**E^{d}[sum d]
+      T1=(T**E^{d})[sum d]
       cohomologyMatrix(beilinsonWindow T1,low,high)
       B1 =beilinson T1
       decompose annihilator HH^1 B1
@@ -3697,12 +3875,12 @@ composedFunctions = () -> (
       M1=HH^0 B1
       dim M1
       betti M1, betti M
-      isIsomorphic(M1,M**S^{-d})
+      isIsomorphicStrict(M1,M**S^{-d})
      --Text
      -- Another shift:
      --Example 
       d={-1,-2}
-      T2=T**E^{d}[sum d]
+      T2=(T**E^{d})[sum d]
       cohomologyMatrix(beilinsonWindow T2,low,high)
       cohomologyMatrix(T,low,high)
       B2 =beilinson T2
@@ -3710,7 +3888,7 @@ composedFunctions = () -> (
       M2=HH^0 B2
       dim M2
       betti M2, betti M, betti truncate(-d,M)
-      isIsomorphic(M2,truncate(-d,M)**S^{-d}")
+      isIsomorphicStrict(M2,truncate(-d,M)**S^{-d}")
 
 
 
@@ -3725,7 +3903,7 @@ high=3*n, low=-high
   -- the example 4.1 from the paper
 S.?TateData
 E.?TateData
-T1=(dual res(coker gens trim (ideal vars E)^2,LengthLimit=>11))[1]
+T1=(dual freeResolution(coker gens trim (ideal vars E)^2,LengthLimit=>11))[1]
 
 (ring T1).?TateData
 
@@ -3734,7 +3912,7 @@ cohomologyMatrix(T1,low,high)
 c={4,4}
 betti(uc= upperCorner(T1,c))
 ring uc
-T=res(coker uc,LengthLimit=>12)[sum c]
+T=freeResolution(coker uc,LengthLimit=>12)[sum c]
 betti T
 ring T
 cohomologyMatrix(T,2*low,2*high)
@@ -3761,7 +3939,7 @@ betti M1,betti M
 -- some how wrong twist
 M1'=M1**S^{{-2,-2}}
 betti M1',betti M
-isIsomorphic(M,M1')
+isIsomorphicStrict(M,M1')
 
 
 P=ker C.dd_2; betti P
@@ -3774,7 +3952,7 @@ M1=last coLP
 betti M1,betti M
 M1'=M1**S^{{-2,-2}}
 betti M1',betti M
-isIsomorphic(M,M1')
+isIsomorphicStrict(M,M1')
 -- we conclude: It works for various P=kerC.dd_p
 
 
@@ -3785,7 +3963,7 @@ cohomologyMatrix(RM,low,high)
 P=ker RM.dd_(-2)
 betti RM
 RM.dd_(-2)==0 -- Frank: I do not understand why the first differential is zero
-isIsomorphic(image(RM.dd_(-3)),image(T1.dd_(-3)))
+isIsomorphicStrict(image(RM.dd_(-3)),image(T1.dd_(-3)))
 
 
 --Testing Reciprocity
@@ -3799,7 +3977,7 @@ coLP=apply(toList(min LP1..max LP),i->prune HH^(-i) LP)
 apply(coLP,h->dim h)
 Mc=prune truncate(c,M)
 betti (Mc'=(first coLP)**S^{-{2,2}}), betti Mc
-isIsomorphic(Mc',Mc)
+isIsomorphicStrict(Mc',Mc)
 
 --Testing Reciprocity
 c={3,1}
@@ -3813,7 +3991,7 @@ apply(coLP,h->dim h)
 Mc=prune truncate(c,M)
 -- Frank: I do not understand why {-2,-2} is the right correction for the twist.
 betti (Mc'=(first coLP)**S^{-{2,2}}), betti Mc
-isIsomorphic(Mc',Mc)
+isIsomorphicStrict(Mc',Mc)
 
 --Testing Reciprocity
 c={3,2}
@@ -3827,7 +4005,7 @@ apply(coLP,h->dim h)
 Mc=prune truncate(c,M)
 -- Frank: I do not understand why {-2,-2} is the right correction for the twist.
 betti (Mc'=(first coLP)**S^{-{2,2}}), betti Mc
-isIsomorphic(Mc',Mc)
+isIsomorphicStrict(Mc',Mc)
 
 
 
@@ -3889,12 +4067,12 @@ document {
    }
 doc ///
    Key
-    isIsomorphic
-    (isIsomorphic,Module,Module)
+    isIsomorphicStrict
+    (isIsomorphicStrict,Module,Module)
    Headline
     probabilistic test for homogeneous isomorphism
    Usage
-    v = isIsomorphic(A,B)
+    v = isIsomorphicStrict(A,B)
    Inputs
     A:Module
     B:Module
@@ -3902,6 +4080,10 @@ doc ///
     v:Boolean
    Description
     Text
+     This is the same as @TO isIsomorphic@ but with additional
+     options @TT "Strict => true"@ and @TT "Homogeneous => true"@
+     added by default.
+
      First checks that the generator degrees are the same. Then
      computes a random degree 0 map A --> B and B --> A, 
      and returns true iff both are surjections.
@@ -3909,7 +4091,7 @@ doc ///
      S = ZZ/11[a,b]
      M = coker random(S^{-2,0,1,2}, S^{3:-3})
      N = coker (random(cover M, cover M)*presentation M)
-     tally apply(100, j->isIsomorphic(M,N))
+     tally apply(100, j->isIsomorphicStrict(M,N))
    Caveat
     If the function returns true then the modules ARE isomorphic. But if it returns false
     they may be isomorphic anyway.
@@ -3942,7 +4124,7 @@ doc ///
       betti P
       LP=bgg P 
       M = (HH^0 LP)**S^{-n}
-      betti res M
+      betti freeResolution M
       T = tateResolution(M,low,high) 
       cohomologyMatrix(T,low,high)
      Text 
@@ -3957,7 +4139,7 @@ doc ///
       B=beilinson T
       M'=prune HH^0 B
       prune HH^1 B
-      isIsomorphic(M,M')
+      isIsomorphicStrict(M,M')
      Text
       We study the corner complex of T at c=\{0,0\} . 
      Example
@@ -3976,7 +4158,7 @@ doc ///
       apply(coLP,h->dim h)
       M1=HH^0 LP
       betti M1,betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      Text
       It works also for different syzygy modules in the corner complex.
       It works for all P=ker C.dd_k in the range where C.dd_k is computed 
@@ -3990,7 +4172,7 @@ doc ///
       apply(coLP,h->dim h)
       M1=HH^(-k) LP
       betti M1, betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      Text
       Note that we have to take HH^{(-k)} == HH_k because of the homological position in which
       P sits.
@@ -4003,7 +4185,7 @@ doc ///
       apply(coLP,h->dim h)
       M1=HH^(-k) LP
       betti M1,betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      Text
       Next we check the functor bgg on S-modules.
      Example
@@ -4037,7 +4219,7 @@ doc ///
      Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
-      isIsomorphic(Mc',Mc)
+      isIsomorphicStrict(Mc',Mc)
      Example
       c={3,1}
       cohomologyMatrix(T1,low,2*high)
@@ -4052,7 +4234,7 @@ doc ///
      
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
-      isIsomorphic(Mc',Mc)
+      isIsomorphicStrict(Mc',Mc)
      Text
       Now we test tateExtension.
      Example
@@ -4068,7 +4250,7 @@ doc ///
       cohomologyMatrix(beilinsonWindow T,low, high)
       B = beilinson T
       d={2,2}
-      T1=T**E^{d}[sum d]
+      T1=(T**E^{d})[sum d]
       cohomologyMatrix(beilinsonWindow T1,low,high)
       B1 =beilinson T1
       decompose annihilator HH^1 B1
@@ -4076,12 +4258,12 @@ doc ///
       M1=HH^0 B1
       dim M1
       betti M1, betti M
-      isIsomorphic(M1,M**S^{-d})
+      isIsomorphicStrict(M1,M**S^{-d})
      Text
       Another shift:
      Example 
       d={-1,-2}
-      T2=T**E^{d}[sum d]
+      T2=(T**E^{d})[sum d]
       cohomologyMatrix(beilinsonWindow T2,low,high)
       cohomologyMatrix(T,low,high)
       B2 =beilinson T2
@@ -4089,7 +4271,7 @@ doc ///
       M2=HH^0 B2
       dim M2
       betti M2, betti M, betti truncate(-d,M)
-      isIsomorphic(M2,truncate(-d,M)**S^{-d})
+      isIsomorphicStrict(M2,truncate(-d,M)**S^{-d})
    SeeAlso
     bgg
     upperCorner
@@ -4097,7 +4279,7 @@ doc ///
     cohomologyMatrix
     beilinson
     tateExtension
-    isIsomorphic
+    isIsomorphicStrict
 ///
 
 
@@ -4105,7 +4287,7 @@ doc ///
    Key
     coarseMultigradedRegularity
     (coarseMultigradedRegularity, Module)
-    (coarseMultigradedRegularity, ChainComplex)
+    (coarseMultigradedRegularity, Complex)
     [coarseMultigradedRegularity, Strategy]
    Headline
     A truncation that has linear resolution
@@ -4114,7 +4296,7 @@ doc ///
    Inputs
     M:Module
      multi-graded module over a multi-graded polynomial ring
-    M:ChainComplex
+    M:Complex
      multi-graded module over a multi-graded polynomial ring
     Strategy => String
    Outputs
@@ -4128,8 +4310,8 @@ doc ///
      I = ideal(x_(0,0)^2,x_(1,0)^3,x_(2,0)^4)
      R = coarseMultigradedRegularity(S^1/I)
      N = truncate(R,S^1/I);
-     betti res N
-     netList toList tallyDegrees res N
+     betti freeResolution N
+     netList toList tallyDegrees freeResolution N
     Text
      See the proof of Proposition 2.7 in
        @ HREF("https://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces")@.
@@ -4189,12 +4371,6 @@ doc ///
 	peek S.TateData
 ///
 
-doc ///
-   Key
-    InitialDegree
-   Headline
-    Option for chainComplexMap
-///
 doc ///
    Key
     CoefficientField
@@ -4314,13 +4490,13 @@ doc ///
 doc ///
   Key
     upperCorner
-    (upperCorner,ChainComplex,List)
+    (upperCorner,Complex,List)
   Headline
     compute the upper corner
   Usage
      m=upperCorner(F,d)
   Inputs
-   F: ChainComplex
+   F: Complex
       over the exterior algebra
    d: List
       a (multi)-degree
@@ -4340,14 +4516,14 @@ doc ///
         n={1,2};
         (S,E) = productOfProjectiveSpaces n
 
-        F=dual res((ker transpose vars E)**E^{{ 2,3}},LengthLimit=>4)
+        F=dual freeResolution((ker transpose vars E)**E^{{ 2,3}},LengthLimit=>4)
 	cohomologyMatrix(F,-{3,3},{4,4})
         betti F
 	tallyDegrees F
         deg={2,1}
         m=upperCorner(F,deg);
         tally degrees target m, tally degrees source m
-        Fm=(res(coker m,LengthLimit=>4))[sum deg+1]
+        Fm=(freeResolution(coker m,LengthLimit=>4))[sum deg+1]
         betti Fm
         cohomologyMatrix(Fm,-{3,3},{4,4})
 ///
@@ -4357,13 +4533,13 @@ doc ///
 doc ///
   Key
     lowerCorner
-    (lowerCorner,ChainComplex,List)
+    (lowerCorner,Complex,List)
   Headline
     compute the lower corner
   Usage
      m=lowerCorner(F,d)
   Inputs
-   F: ChainComplex
+   F: Complex
       over the exterior algebra
    d: List
       a (multi)-degree
@@ -4378,13 +4554,13 @@ doc ///
      Example
         n={1,2};
 	(S,E) = productOfProjectiveSpaces n
-        F=dual res((ker transpose vars E)**E^{{ 2,3}},LengthLimit=>4)
+        F=dual freeResolution((ker transpose vars E)**E^{{ 2,3}},LengthLimit=>4)
         betti F
 	tallyDegrees F
         deg={2,1}
         m=lowerCorner(F,deg);
         tally degrees target m, tally degrees source m
-        Fm=(res(coker m,LengthLimit=>7))[sum deg]
+        Fm=(freeResolution(coker m,LengthLimit=>7))[sum deg]
         betti Fm
         cohomologyMatrix(Fm,-{3,3},{4,4})
 ///
@@ -4398,14 +4574,14 @@ doc ///
   Key
     cohomologyMatrix
     (cohomologyMatrix, Module, List, List)
-    (cohomologyMatrix,ChainComplex,List,List)
+    (cohomologyMatrix,Complex,List,List)
   Headline
     cohomology groups of a sheaf on P^{n_1}xP^{n_2}, or of (part) of a Tate resolution
   Usage
     H=cohomologyMatrix(M,low,high)
     H=cohomologyMatrix(T,low,high)
   Inputs
-    T: ChainComplex
+    T: Complex
        free complex over the exterior algebra
     M: Module
        graded module representing a sheaf on a product of projective spaces
@@ -4470,7 +4646,7 @@ doc ///
   Key
     cohomologyHashTable
     (cohomologyHashTable,Module,List,List)
-    (cohomologyHashTable,ChainComplex,List,List)
+    (cohomologyHashTable,Complex,List,List)
   Headline
     cohomology groups of a sheaf on a product of projective spaces, or of (part) of a Tate resolution
   Usage
@@ -4479,7 +4655,7 @@ doc ///
   Inputs
     M: Module
        graded module representing a sheaf on a product of projective spaces
-    T: ChainComplex
+    T: Complex
        free complex over the exterior algebra
     low: List
     high: List
@@ -4547,7 +4723,7 @@ doc ///
   Key
     eulerPolynomialTable
     (eulerPolynomialTable,Module,List,List)
-    (eulerPolynomialTable,ChainComplex,List,List)
+    (eulerPolynomialTable,Complex,List,List)
     (eulerPolynomialTable,HashTable)
   Headline
     cohomology groups of a sheaf on a product of projective spaces, or of (part) of a Tate resolution
@@ -4559,7 +4735,7 @@ doc ///
   Inputs
     M: Module
        graded module representing a sheaf on a product of projective spaces
-    T: ChainComplex
+    T: Complex
        free complex over the exterior algebra
     H': HashTable
        output of cohomologyHashTable  low: List
@@ -4627,13 +4803,13 @@ doc ///
 doc ///
   Key
     tallyDegrees
-    (tallyDegrees,ChainComplex)
+    (tallyDegrees,Complex)
   Headline
     collect the degrees of the generators of the terms in a free complex
   Usage
     tallyDegrees C
   Inputs
-    C: ChainComplex
+    C: Complex
         a complex of graded free modules
   Outputs
      : Sequence
@@ -4643,7 +4819,7 @@ doc ///
        Returns for each free module C_d in the complex the result of @ TO tally @ @ TO degrees @ C_d
      Example
         S=ZZ/101[x_0..x_1,y_0,z_0,Degrees=>{2:{2,0,0},1:{0,1,0},{0,0,1}}]
-	C =res ideal vars S
+	C =freeResolution ideal vars S
 	betti C
 	tallyDegrees C
 ///
@@ -4651,18 +4827,18 @@ doc ///
 doc ///
   Key
     trivialHomologicalTruncation
-    (trivialHomologicalTruncation,ChainComplex,ZZ,ZZ)
+    (trivialHomologicalTruncation,Complex,ZZ,ZZ)
   Headline
     return the trivial truncation of a chain complex
   Usage
-    trivialHomologicalTruncation(ChainComplex,d,e)
+    trivialHomologicalTruncation(Complex,d,e)
   Inputs
-    C: ChainComplex
+    C: Complex
     d: ZZ
     e: ZZ
        homological indices
   Outputs
-     : ChainComplex
+     : Complex
   Description
      Text
        Given a chain complex
@@ -4673,8 +4849,9 @@ doc ///
 
        0 <- C_d <- C_{d+1} <- ... < C_e <- 0
      Example
-       E=ZZ/101[e_0,e_1,SkewCommutative=>true];F=res ideal vars E;
-       C=dual res (coker transpose F.dd_3,LengthLimit=>8)[-3]
+       E=ZZ/101[e_0,e_1,SkewCommutative=>true];
+       F=freeResolution(ideal vars E, LengthLimit => 5);
+       C=dual freeResolution (coker transpose F.dd_3,LengthLimit=>8)[-3]
        C1=trivialHomologicalTruncation(C,-2,2)
        C2=trivialHomologicalTruncation(C1,-3,3)
        C3=trivialHomologicalTruncation(C2,2,2)
@@ -4687,14 +4864,14 @@ doc ///
 doc ///
   Key
     nonzeroMax
-    (nonzeroMax,ChainComplex)
+    (nonzeroMax,Complex)
   Headline
-    computes the homological position of the last non-zero module in a ChainComplex
+    computes the homological position of the last non-zero module in a Complex
   Usage
     nonzeroMin C
     nonzeroMax C
   Inputs
-    C: ChainComplex
+    C: Complex
   Outputs
      : ZZ
   Description
@@ -4705,7 +4882,7 @@ doc ///
        the largest positions of a non-zero module.
      Example
        S=ZZ/101[x,y]/ideal(x*y)
-       C=chainComplex(matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2})[1]
+       C=complex{matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2}}[1]
        C'=prependZeroMap appendZeroMap C
        min C', nonzeroMin C'
        max C', nonzeroMax C'
@@ -4717,13 +4894,13 @@ doc ///
 doc ///
   Key
     nonzeroMin
-    (nonzeroMin,ChainComplex)
+    (nonzeroMin,Complex)
   Headline
-    computes the homological position of the first non-zero module in a ChainComplex
+    computes the homological position of the first non-zero module in a Complex
   Usage
     nonzeroMin C
   Inputs
-    C: ChainComplex
+    C: Complex
   Outputs
      : ZZ
   Description
@@ -4734,8 +4911,8 @@ doc ///
        the smallest positions of a non-zero module.
      Example
        S=ZZ/101[x,y]/ideal(x*y)
-       C=chainComplex(matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2})[1]
-       isChainComplex C
+       C=complex{matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2}}[1]
+       isComplex C
        C'=prependZeroMap appendZeroMap C
        min C', nonzeroMin C'
        max C', nonzeroMax C'
@@ -4744,21 +4921,21 @@ doc ///
 doc ///
   Key
     appendZeroMap
-    (appendZeroMap,ChainComplex)
+    (appendZeroMap,Complex)
   Headline
     append a zero map to chain complex
   Usage
     appendZeroMap C
   Inputs
-    C: ChainComplex
+    C: Complex
   Outputs
-     : ChainComplex
+     : Complex
   Description
      Text
        Add a zero map after the last differential in a chain complex.
      Example
        S=ZZ/101[x,y]/ideal(x*y)
-       C=chainComplex(matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2})[1]
+       C=complex{matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2}}[1]
        appendZeroMap C
        prependZeroMap C
 ///
@@ -4766,21 +4943,21 @@ doc ///
 doc ///
   Key
     prependZeroMap
-    (prependZeroMap,ChainComplex)
+    (prependZeroMap,Complex)
   Headline
     prepend a zero map to chain complex
   Usage
     prependZeroMap C
   Inputs
-    C: ChainComplex
+    C: Complex
   Outputs
-     : ChainComplex
+     : Complex
   Description
      Text
        Add a zero map before the first differential in a chain complex.
      Example
        S=ZZ/101[x,y]/ideal(x*y)
-       C=chainComplex(matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2})[1]
+       C=complex{matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2}}[1]
        prependZeroMap C
        appendZeroMap C
 ///
@@ -4788,27 +4965,27 @@ doc ///
 doc ///
   Key
     removeZeroTrailingTerms
-    (removeZeroTrailingTerms,ChainComplex)
+    (removeZeroTrailingTerms,Complex)
   Headline
     remove trailing zero terms of a chain complex
   Usage
     removeZeroTrailingTerms C
   Inputs
-    C: ChainComplex
+    C: Complex
   Outputs
-     : ChainComplex
+     : Complex
   Description
      Text
        Remove trailing zero terms in a complex
      Example
        S=ZZ/101[x,y]/ideal(x*y)
-       C=prependZeroMap appendZeroMap chainComplex(matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2})[1]
+       C=prependZeroMap appendZeroMap complex{matrix{{x}},matrix{{y}}**S^{ -1},matrix{{x}}**S^{ -2}}[1]
        removeZeroTrailingTerms C
      Text
        If C has only one nonzero term, then the functions returns two zero maps.
      Example
        S=ZZ
-       C=prependZeroMap  chainComplex( map(S^0,S^1,0))[3]
+       C=prependZeroMap  complex{map(S^0,S^1,0)}[3]
        removeZeroTrailingTerms C
 ///
 
@@ -4831,21 +5008,21 @@ doc ///
        checks that all differentials compose to zero.
      Example
        S=ZZ/101[x,y]
-       C=res ideal vars S, C'=chainComplex(matrix{{x}},matrix{{y}})
+       C=freeResolution ideal vars S, C'=complex{matrix{{x}},matrix{{y}}}
        isChainComplex C, isChainComplex C'
      Text
        The buildin function @ TO dual @
-       for chainComplexes over the exterior algebra
+       for complexes over the exterior algebra
        does not return a complex, because the dual of a left module is a right module.
      Example
         kk=ZZ/101;n=4;
 	E=kk[e_0..e_n,SkewCommutative =>true]
 	m=map(E^{0,1},,matrix{{ e_0,e_1*e_2},{e_3*e_4,e_0*e_1*e_4}})
-	fm=res coker m
+	fm=freeResolution(coker m, LengthLimit => 5)
 	isChainComplex fm
 	dualfm = dual fm
 	isChainComplex dualfm
-	f2=res( coker dualfm.dd_(-5),LengthLimit=> 6)[6]
+	f2=freeResolution( coker dualfm.dd_(-5),LengthLimit=> 6)[6]
 	betti f2
 	betti dual fm
 ///
@@ -4854,16 +5031,16 @@ doc ///
 doc ///
    Key
     minimize
-    (minimize, ChainComplex)
+    (minimize, Complex)
    Headline
-    minimal quotient complex of a free ChainComplex
+    minimal quotient complex of a free Complex
    Usage
     m = minimize F
    Inputs
-    F:ChainComplex
+    F:Complex
      chain complex of free modules
    Outputs
-    m:ChainComplexMap
+    m:ComplexMap
      quasi-isomorphism F -> F', where F' is a minimal free complex
    Description
     Text
@@ -4879,11 +5056,11 @@ doc ///
      the map rho is not a chain complex map, but the image of
      (rho | d*rho): C ++ C[1] --> C is a subcomplex and
      the minimization of  C is the complex C/image(rho|d*rho).
-     The script returns the ChainComplexMap from the minimization to C.
+     The script returns the ComplexMap from the minimization to C.
      Example
        S=ZZ/101[x,y];
        m= map(S^{0,1},S^{0,-1}, matrix{{1,x},{y,x^2}})
-       C=chainComplex{m}
+       C=complex{m}
        Cmin=target minimize C
        betti C, betti Cmin
        m, Cmin.dd_1
@@ -4903,8 +5080,8 @@ doc ///
      Q = apply(len, i-> random(target difs0_i, target difs0_i))|
        {random(source difs0_(len-1), source difs0_(len-1))};
      difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
-     E = chainComplex difs1
-     isMinimalChainComplex E
+     E = complex difs1
+     isMinimalComplex E
     Text
      Now we minimize the result. The free summand we added to the end
      maps to zero, and thus is part of the minimization.
@@ -4914,7 +5091,7 @@ doc ///
      E[1] == source m
      E' = target m
      isChainComplex E'
-     isMinimalChainComplex E'
+     isMinimalComplex E'
 ///
 *-
 
@@ -4926,20 +5103,20 @@ doc ///
 doc ///
   Key
     regionComplex
-    (regionComplex,ChainComplex,List,Sequence)
+    (regionComplex,Complex,List,Sequence)
   Headline
     region complex
   Usage
     regionComplex(T,c,IJK)
   Inputs
-    T: ChainComplex
+    T: Complex
        over the exterior algebra
     c: List
        a (multi) degree
     IJK: Sequence
        a sequence (I,J,K) of disjoint subsets of \{0..t-1\}
   Outputs
-     : ChainComplex
+     : Complex
        a region complex of T
   Description
      Text
@@ -4950,8 +5127,9 @@ doc ///
      Example
         n={1,1};
         (S,E) = productOfProjectiveSpaces n;
-	T1 = (dual res trim (ideal vars E)^2)[1];
-	a=-{2,2};T2=T1**E^{a}[sum a];
+	T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 5))[1];
+	a=-{2,2};
+        T2=(T1**E^{a})[sum a];
 	W=beilinsonWindow T2,cohomologyMatrix(W,-2*n,2*n)
         T=tateExtension W;
 	cohomologyMatrix(T,-{3,3},{3,3})
@@ -4982,20 +5160,20 @@ doc ///
 doc ///
   Key
     strand
-    (strand,ChainComplex,List,List)
+    (strand,Complex,List,List)
   Headline
     take the strand
   Usage
     strand(T,c,I)
   Inputs
-    T: ChainComplex
+    T: Complex
        over the exterior algebra
     c: List
        a (multi) degree
     I: List
        a sublist of \{0..t-1\} , where t denotes the number of factors
   Outputs
-     : ChainComplex
+     : Complex
        the I-strand of T through c
   Description
      Text
@@ -5007,8 +5185,9 @@ doc ///
      Example
         n={1,1};
         (S,E) = productOfProjectiveSpaces n;
-	T1 = (dual res trim (ideal vars E)^2)[1];
-	a=-{2,2};T2=T1**E^{a}[sum a];
+	T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 5))[1];
+	a=-{2,2};
+        T2=(T1**E^{a})[sum a];
 	W=beilinsonWindow T2,cohomologyMatrix(W,-2*n,2*n)
         T=tateExtension W;
     	low = -{2,2};high = {2,2};
@@ -5034,26 +5213,26 @@ doc ///
 doc ///
   Key
     firstQuadrantComplex
-    (firstQuadrantComplex,ChainComplex,List)
+    (firstQuadrantComplex,Complex,List)
   Headline
     form the first quadrant complex
   Usage
     firstQuadrantComplex(T,c)
   Inputs
-    T: ChainComplex
+    T: Complex
        a (part of a) Tate resolution on a product of t projective spaces
     c: List
        cohomological degree of the lower corner of the first complex
   Outputs
-     : ChainComplex
+     : Complex
   Description
      Text
        Form the first quadrant complex with corner c of a (part of a) Tate resolution T as defined in
        @  HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @.
      Example
         (S,E) = productOfProjectiveSpaces {1,1};
-	T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
-        T=trivialHomologicalTruncation(T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
+	T1= (dual freeResolution( trim (ideal vars E)^2,LengthLimit=>8))[1];
+        T=trivialHomologicalTruncation(T2=freeResolution(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
     	betti T
 	cohomologyMatrix(T,-{4,4},{3,2})
     	fqT=firstQuadrantComplex(T,-{2,1});
@@ -5077,26 +5256,26 @@ doc ///
 doc ///
   Key
     lastQuadrantComplex
-    (lastQuadrantComplex,ChainComplex,List)
+    (lastQuadrantComplex,Complex,List)
   Headline
     form the last quadrant complex
   Usage
     lastQuadrantComplex(T,c)
   Inputs
-    T: ChainComplex
+    T: Complex
        a (part of a) Tate resolution on a product of t projective spaces
     c: List
        cohomological degree of the lower corner of the complementary first quadrant complex
   Outputs
-     : ChainComplex
+     : Complex
   Description
      Text
        Form the last quadrant complex with corner c of a (part of a) Tate resolution T as defined in
        @  HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @.
      Example
         (S,E) = productOfProjectiveSpaces {1,1};
-	T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
-        T=trivialHomologicalTruncation(T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
+	T1= (dual freeResolution( trim (ideal vars E)^2,LengthLimit=>8))[1];
+        T=trivialHomologicalTruncation(T2=freeResolution(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
     	betti T
 	cohomologyMatrix(T,-{4,4},{3,2})
     	fqT=firstQuadrantComplex(T,-{2,1});
@@ -5137,9 +5316,9 @@ doc ///
     A: Matrix
     	a homomorphism of multi-graded modules from M to N
   Outputs
-    T : ChainComplex
+    T : Complex
        a bounded free complex over the exterior algebra
-    phi : ChainComplexMap
+    phi : ComplexMap
        an induced map from T(M) to T(N) over the exterior algebra
   Description
      Text
@@ -5196,7 +5375,7 @@ doc ///
 doc ///
   Key
     cornerComplex
-    (cornerComplex,ChainComplex,List)
+    (cornerComplex,Complex,List)
     (cornerComplex,Module,List,List,List)
   Headline
     form the corner complex
@@ -5204,7 +5383,7 @@ doc ///
     C = cornerComplex(T,c)
     C = cornerComplex(M,c,low,high)
   Inputs
-    T: ChainComplex
+    T: Complex
        a (part of a) Tate resolution on a product of t projective spaces
     c: List
        cohomological degree of upper corner of the  last quadrant complex which is part of the corner complex
@@ -5215,7 +5394,7 @@ doc ///
     high:List
        a multidegree
   Outputs
-    C : ChainComplex
+    C : Complex
        The corner complex
   Description
      Text       
@@ -5234,8 +5413,8 @@ doc ///
      Example
         (S,E) = productOfProjectiveSpaces{1,1}
 	low = {-4,-4};high = {3,2};
-	T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
-	T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7];
+	T1= (dual freeResolution( trim (ideal vars E)^2,LengthLimit=>8))[1];
+	T2=freeResolution(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7];
      Text
         Finally, we can define T,
 	the sufficient part of the Tate resolution:
@@ -5330,16 +5509,16 @@ doc ///
 doc ///
   Key
     beilinsonWindow
-    (beilinsonWindow,ChainComplex)
+    (beilinsonWindow,Complex)
   Headline
     extract the subquotient complex which contributes to the Beilinson window
   Usage
     W=beilinsonWindow T
   Inputs
-    T: ChainComplex
+    T: Complex
        a (part of a) Tate resolution on a product of t projective spaces
   Outputs
-    W: ChainComplex
+    W: Complex
   Description
      Text
        Extract the terms which under the U-functor defined in
@@ -5349,13 +5528,13 @@ doc ///
      Example
         n={1,1};
         (S,E) = productOfProjectiveSpaces n;
-        W=(chainComplex {map(E^0,E^1,0),map(E^1,E^0,0)})[1]
+        W=(complex {map(E^0,E^1,0),map(E^1,E^0,0)})[1]
         time T=tateExtension W;
         cohomologyMatrix(T,-{3,3},{3,3})
 	W=beilinsonWindow T
 	cohomologyMatrix(W,-{2,2},{2,2})
         a={2,-3}
-        W2=beilinsonWindow (T**E^{a}[sum a])
+        W2=beilinsonWindow ((T**E^{a})[sum a])
         cohomologyMatrix(W2,-{2,2},{2,2})
         cohomologyMatrix(tateExtension W2,-{2,2},{2,2})
   SeeAlso
@@ -5366,16 +5545,16 @@ doc ///
 doc ///
   Key
     tateExtension
-    (tateExtension,ChainComplex)
+    (tateExtension,Complex)
   Headline
     extend the terms in the Beilinson window to a part of a corner complex of the corresponding Tate resolution
   Usage
     T=tateExtension W
   Inputs
-    W: ChainComplex
+    W: Complex
        terms in the Beilinson window of a Tate resolution
   Outputs
-    T: ChainComplex
+    T: Complex
        a corner complex of the corresponding Tate resolution
   Description
      Text
@@ -5389,9 +5568,9 @@ doc ///
      Example
         n={1,1};
         (S,E) = productOfProjectiveSpaces n;
-	T1 = (dual res trim (ideal vars E)^2)[1];
+	T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 5))[1];
 	a=-{2,2};
-	T2=T1**E^{a}[sum a];
+	T2=(T1**E^{a})[sum a];
 	W=beilinsonWindow T2
 	cohomologyMatrix(W,-2*n,2*n)
         T=tateExtension W
@@ -5411,7 +5590,7 @@ doc ///
 doc ///
   Key
     pushAboveWindow
-    (pushAboveWindow,ChainComplex)
+    (pushAboveWindow,Complex)
     (pushAboveWindow,List)
     (pushAboveWindow,Matrix)
     (pushAboveWindow,Matrix,Matrix)
@@ -5422,10 +5601,10 @@ doc ///
   Usage
     T=pushAboveWindow W
   Inputs
-    W: ChainComplex
+    W: Complex
        terms in the Beilinson window of a Tate resolution
   Outputs
-    T: ChainComplex
+    T: Complex
        a non-minimal version of the quadrant complex ?!? qT_{\le 0} of the Tate resolution T=T(W) ?
   Description
      Text
@@ -5440,10 +5619,10 @@ doc ///
      Example
         n={1,1};
         (S,E) = productOfProjectiveSpaces n;
-	T1 = (dual res trim (ideal vars E)^2)[1];
+	T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 5))[1];
     	isChainComplex T1
 	a=-{2,2};
-	T2=T1**E^{a}[sum a];
+	T2=(T1**E^{a})[sum a];
 	W=beilinsonWindow T2
 	cohomologyMatrix(W,-2*n,2*n)
         T=tateExtension W;
@@ -5465,7 +5644,7 @@ doc ///
     beilinson
     (beilinson,Module)
     (beilinson,Matrix)
-    (beilinson,ChainComplex)
+    (beilinson,Complex)
     [beilinson,BundleType]
   Headline
     apply the beilinson functor
@@ -5478,7 +5657,7 @@ doc ///
        a free module over the exterior algebra E
     psi: Matrix
        a map between free modules over E
-    T: ChainComplex
+    T: Complex
        a complex of free modules over E
     BundleType => Symbol
        the possible values are described in BundleType
@@ -5487,7 +5666,7 @@ doc ///
        a module over the symmetric algebra S
     phi: Matrix
        a map between S-modules
-    C: ChainComplex
+    C: Complex
        a chain complex of S-modules
   Description
      Text
@@ -5511,7 +5690,7 @@ doc ///
         psi=random(E^{{-1,0}}, E^{{-2,-1}})
 	phi=beilinson psi
 	beilinson(E^{{-1,0}})
-	T = chainComplex(psi)
+	T = complex{psi}
 	C = beilinson T
 	betti T
   SeeAlso
@@ -5779,9 +5958,9 @@ doc ///
     BundleType => Symbol
        the possible values are described in BundleType
   Outputs
-    RpiM: ChainComplex
+    RpiM: Complex
        a chain complex of modules over a symmetric algebra
-    RphiN: ChainComplex
+    RphiN: Complex
        a chain complex of modules over the coordinate ring of P^m
   Description
      Text
@@ -5850,7 +6029,7 @@ doc ///
        dim J, degree J
        s=2,d=-2
        N=symmetricPower(s,coker m)**R^{d}; 
-       betti res N
+       betti freeResolution N
        annihilator N == J
        phi= transpose m
        RphiN = directImageComplex(J,N,phi)
@@ -5864,7 +6043,7 @@ doc ///
        RphiN = directImageComplex(J,N,phi)
        T=ring RphiN
        netList apply(toList(min RphiN.. max RphiN),i-> 
-	   {-i, saturate annihilator HH^(-i) RphiN,betti res HH^(-i) RphiN})
+	   {-i, saturate annihilator HH^(-i) RphiN,betti freeResolution HH^(-i) RphiN})
        R0=prune HH^0 RphiN
        dim R0, degree R0
        betti (sR0Dual = syz transpose presentation R0)
@@ -5889,7 +6068,7 @@ doc ///
   actionOnDirectImage
   (actionOnDirectImage,Ideal,Module)
   (actionOnDirectImage,Ideal,Module,Matrix)
-  (actionOnDirectImage,Ideal,ChainComplex)
+  (actionOnDirectImage,Ideal,Complex)
  Headline
   recover the module structure via a Noether normalization
  Usage
@@ -5908,7 +6087,7 @@ doc ///
   phi: Matrix
       a k\times (m+1) matrix of homogeneous polynomials on P^n which define a morphism or rational map 
       phi:X\to P^m, i.e., the 2\times 2 minors of phi vanish on X
-  T: ChainComplex
+  T: Complex
       a (long enough) part of the Tate resolution of some complex of sheaves on Y
  Outputs
   retTable: HashTable
@@ -5991,25 +6170,25 @@ doc ///
       phi = map(SX,S,vars SX);
       betti (L=prune pushForward(phi,LX))
       Ltr = (truncate ({2,2},L))**S^{{2,2}};
-      betti res Ltr
+      betti freeResolution Ltr
   Text
       We read off (a finite subquotient of) the Tate resolution of Rf_{*}L as follows.
   Example
       Q=symExt(presentation Ltr, E);
-      T=(res (coker Q,LengthLimit=>12))**E^{{2,2}}[4];
+      T=((freeResolution (coker Q,LengthLimit=>12))**E^{{2,2}})[4];
       cohomologyMatrix (T, -{5,5},{3,3})
       sT=strand(T,{0,0},{0});
 
-      sTFull=new ChainComplex;
-      sTFull.ring = ring sT;
       ma=6;
-      sTFull=(dual res (coker transpose (sT[ma]).dd_0, LengthLimit=>2*ma))[-ma];
+      sTFull=(dual freeResolution (coker transpose (sT[ma]).dd_0, LengthLimit=>2*ma))[-ma];
       (S',E')=productOfProjectiveSpaces({2},CoefficientField=>kk);
       projOnE=map(E', E, toList(3:0)|(gens E'));
-      mi=min sTFull; ma=max sTFull;
-      W=new ChainComplex; W.ring = E';
-      apply(toList(mi..ma),i-> W_i = E'^(-apply(degrees sTFull_i,d->d_{1})));
-      apply(toList(mi+1..ma),i->W.dd_i = map(W_(i-1),W_i,projOnE sTFull.dd_i));
+      (mi, ma) = concentration sTFull;
+      Wmodules = hashTable for i from mi to ma list 
+          i =>  E'^(-apply(degrees sTFull_i, d -> d_{1}));
+      Wmaps = hashTable for i from mi+1 to ma list
+          i => map(Wmodules#(i-1), Wmodules#i, projOnE sTFull.dd_i);
+      W = if mi === ma then complex {Wmodules#mi} else complex Wmaps;
       betti W
   Text
       One can check that W has two strands (corresponding to R^0f_{*}L and R^1f_{*}L, respectively).
@@ -6042,12 +6221,12 @@ doc ///
       apply(keys retTable, i->isAction(J,prunedActionList(i)))
 	        
       M0=source (prunedActionList(0))_0
-      (rank M0, degree M0, betti res M0)
-      isIsomorphic(truncate(regularity M0, M0), truncate(regularity M0, dual dual M0))
+      (rank M0, degree M0, betti freeResolution M0)
+      isIsomorphicStrict(truncate(regularity M0, M0), truncate(regularity M0, dual dual M0))
       dual dual M0
 
       M1=source (prunedActionList(1))_0
-      (rank M1, degree M1, betti res M1)
+      (rank M1, degree M1, betti freeResolution M1)
   Text
       Note that the sheafification of M0 (=R^0(\pi \cdot f)_{*}L) is a rank 4 vector bundle O \oplus O(-1) \oplus O(-2) \oplus O(-3) on P^1,
       and the sheafification of M1 (= R^1(\pi \cdot f)_{*} L) is a torsion sheaf on P^1 supported on the double point at [1:0].
@@ -6056,7 +6235,7 @@ doc ///
  Caveat
      Note that the resulting complex is a chain complex instead of a cochain complex,
      so that for example HH^i RpiM = HH_{-i} RpiM. Also note that this requires a pseudo-inverse computation
-     of a split exact sequence, which might fail over finite fields (see SVDComplexes.m2 and its documentations).
+     of a split exact sequence, which might fail over finite fields (see @TO "SVDComplexes :: SVDComplexes"@).
  SeeAlso
       directImageComplex
 ///
@@ -6153,20 +6332,20 @@ doc ///
 -*
      doc ///
         Key
-	 resolutionOfChainComplex
-	 (resolutionOfChainComplex, ChainComplex)
-	 [resolutionOfChainComplex,LengthLimit]
+	 resolutionOfComplex
+	 (resolutionOfComplex, Complex)
+	 [resolutionOfComplex,LengthLimit]
         Headline
 	 free resolution of a chain complex
         Usage
-	 F = resolutionOfChainComplex C
+	 F = resolutionOfComplex C
         Inputs
-	 C:ChainComplex
+	 C:Complex
         Outputs
-	 F:ChainComplex
+	 F:Complex
         Description
          Text
-	  Given a chain complex C, the routine returns a surjective ChainComplexMap p:F->C from a free
+	  Given a chain complex C, the routine returns a surjective ComplexMap p:F->C from a free
 	  complex. The complex F is constructed from minimal free resolutions of the terms of C
 	  by the method of iterated mapping cones.
 
@@ -6194,10 +6373,10 @@ doc ///
 	  S = kk[a,b,c]
 	  R = S/ideal"ab2,a2c3"
 	  f = map(R,S,vars R)
-	  C = res(R^1/(ideal vars R))**(R^1/(ideal vars R)^5);
+	  C = freeResolution(R^1/(ideal vars R))**(R^1/(ideal vars R)^5);
 	  mods = for i from 0 to max C list pushForward(f, C_i);
-	  C = chainComplex for i from min C+1 to max C list map(mods_(i-1),mods_i,substitute(matrix C.dd_i,S));
-	  time m = resolutionOfChainComplex C;
+	  C = complex for i from min C+1 to max C list map(mods_(i-1),mods_i,substitute(matrix C.dd_i,S));
+	  time m = resolutionOfComplex C;
 	  betti source m
 	  betti target minimize source m
         SeeAlso
@@ -6207,8 +6386,8 @@ doc ///
 *-
 
 document {
-     Key => {isQuism, (isQuism,ChainComplexMap)},
-     Headline => "Test to see if the ChainComplexMap is a quasiisomorphism.",
+     Key => {isQuism, (isQuism,ComplexMap)},
+     Headline => "Test to see if the ComplexMap is a quasiisomorphism.",
      Usage => "isQuism(phi)",
      Inputs => {
 	  "phi" => {},
@@ -6221,8 +6400,8 @@ document {
      "in one degree, so isQuism could return bad information in that case.",
      EXAMPLE {
 	     "R = ZZ/101[a,b,c]",
-	     "kRes = res coker vars R",
-	     "multBya = extend(kRes,kRes,matrix{{a}})",
+	     "kRes = freeResolution coker vars R",
+	     "multBya = extend(kRes,kRes ** R^{-1},matrix{{a}})",
 	     "isQuism(multBya)",
 	     "F = extend(kRes,kRes,matrix{{1_R}})",
 	     "isQuism(F)",
@@ -6230,40 +6409,15 @@ document {
      }
 
 -*
-document {
-     Key => {chainComplexMap, (chainComplexMap,ChainComplex,ChainComplex,List),
-     [chainComplexMap,InitialDegree]},
-     Headline => "Defines a ChainComplexMap via a list of matrices.",
-     Usage => "chainComplexMap(D,C,mapList)",
-     Inputs => {
-	  "D" => ChainComplex => {"target of ChainComplexMap"},
-	  "C" => ChainComplex => {"source of ChainComplexMap"},
-	  "mapList" => List => {"list of maps defining the new ChainComplexMap"},
-     },
-     Outputs => {
-	  ChainComplexMap => {"The desired ChainComplexMap."},
-     },
-     EXAMPLE {
-	     "R = ZZ/101[a,b,c]",
-	     "kRes = res coker vars R",
-	     "multBya = extend(kRes,kRes,matrix{{a}})",
-	     "mapList = apply((min kRes..max kRes), i -> multBya_i)",
-	     "multBya2 = chainComplexMap(kRes,kRes,toList mapList)",
-	     "multBya2 == multBya",
-	     }
-     }
-*-
-
--*
 doc ///
    Key
-    isMinimalChainComplex
+    isMinimalComplex
    Headline
     tests for minimality
    Usage
-    b = isMinimalChainComplex C
+    b = isMinimalComplex C
    Inputs
-    C:ChainComplex
+    C:Complex
      chain complex of free modules
    Outputs
     b:Boolean
@@ -6321,9 +6475,9 @@ doc ///
     M: Module
       module over an symmetric algebra S
    Outputs
-    LP:ChainComplex
+    LP:Complex
      over a symmetric algebra
-    RM:ChainComplex
+    RM:Complex
      over a exterior algebra
    Description
     Text
@@ -6347,7 +6501,7 @@ doc ///
      LP = bgg P
      netList apply(toList(min LP..max LP), i-> decompose ann HH_i LP)
      M = prune HH_0 LP
-     betti res M
+     betti freeResolution M
      high = {3,3}
      cohomologyMatrix(M, -high, high)
     Example
@@ -6387,16 +6541,20 @@ doc ///
 ------------------------------------
 -----TESTS-----
 ------------------------------------
+-- isIsomorphicStrict decides whether two multigraded modules are isomorphic
+-- by a degree-preserving isomorphism.
 TEST ///
 S = ZZ/32003[a,b, Degrees =>{{1,0},{0,1}}]
 M = S^{{1,0},{0,1}}
 M' = S^{{0,1},{1,0}}
 A = S^{{1,-1}}
 B = S^1
-assert(isIsomorphic(M,M') ===true)
-assert(isIsomorphic(A,B) ===false)
+assert(isIsomorphicStrict(M,M') ===true)
+assert(isIsomorphicStrict(A,B) ===false)
 ///
 
+-- bgg sends a module to the linear complex over the exterior algebra;
+-- the result is a genuine complex with the expected Betti table.
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,2}
 P = prune truncate({1,2},E^1)
@@ -6409,6 +6567,8 @@ assert all(min L +1..max L, i-> L.dd_(i-1)*L.dd_i == 0)
 --       {-x_(1,2)}}) );
 ///
 
+-- tateResolution of a line bundle on P^1 x P^1, checked against its
+-- matrix of cohomology dimensions (cohomologyMatrix).
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,1};
 C = tateResolution (S^1,{0,0},{3,3});
@@ -6418,6 +6578,9 @@ assert (cohomRing = ZZ[h,k];
 	))
 ///
 
+-- beilinson recovers a sheaf from its Tate resolution: applying
+-- beilinsonWindow o tateResolution to HH_0(beilinson C) returns the
+-- Beilinson window of C unchanged.
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,2}
 M = S^{{-1,2}}
@@ -6434,6 +6597,8 @@ M' = HH_0 B
 assert(beilinsonWindow tateResolution(M',-high,high) == BW)
 ///
 
+-- the Tate-resolution / beilinson round trip: HH_0 of the Beilinson monad
+-- of the Tate resolution of M is isomorphic (not equal) to M.
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,2}
 M = coker random(S^2, S^{2:{-1,-1}})
@@ -6443,13 +6608,14 @@ BW = beilinsonWindow C
 betti BW
 B = beilinson C
 M' = HH_0 B
-assert isIsomorphic(M',M)
+assert isIsomorphicStrict(M',M)
 --note: isomorphic, not equal!
 BW' = beilinsonWindow tateResolution(M',-high,high)
 assert( all(2, i->BW_i == BW'_i))
-assert(isIsomorphic(coker BW.dd_1, coker BW'.dd_1))
+assert(isIsomorphicStrict(coker BW.dd_1, coker BW'.dd_1))
 ///
 
+-- the same Tate-resolution / beilinson round trip, in its shortest form.
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,2}
 M = coker random(S^2, S^{2:{-1,-1}})
@@ -6457,10 +6623,12 @@ high = {3,3}
 C = tateResolution(M,-high,high);
 B = beilinson C
 M' = HH_0 B
-assert isIsomorphic(M',M)
+assert isIsomorphicStrict(M',M)
 --note: isomorphic, not equal!
 ///
 
+-- the beilinson functor on P^1 x P^2: the basic bundles U^a, their
+-- tensor-product behaviour, vanishing outside the window, and zero maps.
 TEST ///
   -- XXX Mike working on this test
   -- of beilinson functor
@@ -6499,6 +6667,7 @@ TEST ///
       )
 ///
 
+-- the beilinson functor on the larger product P^3 x P^3.
 TEST ///
   -- test of beilinson
 -*
@@ -6523,6 +6692,9 @@ TEST ///
 ///
 
 
+-- functoriality of the beilinson functor: beilinson(f*g) equals
+-- beilinson(f)*beilinson(g), checked by the internal testBeilinson and
+-- testBeilinson1 harnesses (which assert internally).
 TEST ///
 
   -- tests of beilinson functoriality
@@ -6630,6 +6802,8 @@ elapsedTime   testBeilinson1 {1,1,1}
 
 
 
+-- symExt, tallyDegrees and cohomologyHashTable: the tallyDegrees entry
+-- agrees with the matching cohomologyHashTable entry.
 TEST ///
 -*
 restart
@@ -6645,7 +6819,7 @@ correspondence of positions in the cohomology Matrix and the tally"
          {0,x_(1,1)},
          {0,x_(1,2)}}
   mE = symExt(m,E)
-  betti(T = res coker mE)
+  betti(T = freeResolution(coker mE, LengthLimit => 6))
   TD = tallyDegrees T;
   CD = cohomologyHashTable(T, -{2,2},{1,1});
   assert((TD_0)#{-1,0} == CD#{{1,0},-1})
@@ -6659,6 +6833,8 @@ restart
 
 
 *-
+-- upperCorner exploration kept from the original suite (no assertions;
+-- see the authors' note below).
 TEST /// 
 --error"we don't know what this should be testing. Note that 'corner'
 --no longer exists"
@@ -6666,7 +6842,7 @@ TEST ///
 debug needsPackage "TateOnProducts"
 n={1,2}
 (S,E) = productOfProjectiveSpaces n
-F=dual (res((ker transpose vars E)**E^{{ 2,3}},LengthLimit=>10))
+F=dual (freeResolution((ker transpose vars E)**E^{{ 2,3}},LengthLimit=>10))
 cohomologyMatrix(F,-2*n,2*n)
 tallyDegrees F
 
@@ -6674,12 +6850,14 @@ deg = {2,1}
 m = upperCorner(F,deg)
 betti m
 tally degrees source m, tally degrees target m
-Fm=(res(coker m,LengthLimit=>10))[sum deg]
+Fm=(freeResolution(coker m,LengthLimit=>10))[sum deg]
 betti Fm
 betti F
 cohomologyMatrix(Fm,deg-{5,5},deg+{1,1})
 ///
 
+-- upperCorner / cornerComplex exploration kept from the original suite
+-- (no assertions; see the authors' note below).
 TEST ///
 --error"we don't know what this should be testing. Note that 'corner'
 --no longer exists"
@@ -6688,11 +6866,11 @@ debug needsPackage "TateOnProducts"
 n={1,1}
 (S,E) = productOfProjectiveSpaces n
 
-time fB=dual res(coker random(E^7,E^{13:{ -1,0},11:{0,-1}}),LengthLimit=>10);
+time fB=dual freeResolution(coker random(E^7,E^{13:{ -1,0},11:{0,-1}}),LengthLimit=>10);
 cohomologyMatrix(fB,-{1,1},{5,5})
 deg={3,3}
 m= upperCorner(fB,deg);
-f= res( coker  m,LengthLimit=> 10)[6]
+f= freeResolution( coker  m,LengthLimit=> 10)[6]
 tallyDegrees f
 cohomologyMatrix(f,-{3,3},{5,5})
 C= cornerComplex(f,{1,1});
@@ -6704,6 +6882,8 @@ cohomologyMatrix(C,-{3,3},{5,5})
 restart
 loadPackage ("TateOnProducts", Reload =>true)
 ///
+-- eulerPolynomialTable computed from a module agrees with the one
+-- computed from the corresponding cohomologyHashTable.
 TEST ///
 n={1,2}; (S,E) = productOfProjectiveSpaces n;
 M = S^1;
@@ -6717,24 +6897,16 @@ assert(pH == apply(pH', p -> (p_0,sub(p_1,CR))))
 
 
 
+-- beilinsonWindow on a resolution already inside the window is the
+-- identity on the differentials.
 TEST ///
 n={4}
 (S,E) = productOfProjectiveSpaces n
-C=res ideal vars E
-C1=C**E^{{ +1}}[0]
+C=freeResolution(ideal vars E, LengthLimit => 5)
+C1=(C**E^{{ +1}})[0]
 W=beilinsonWindow C1
 scan(min W+1 ..max W,k->assert(W.dd_k==C1.dd_k))
 ///
-
-TEST ///
-debug needsPackage "TateOnProducts"
-S=ZZ[x,y]/ideal(x*y)
-C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
-L=chainComplexData C
-C'=chainComplexFromData L
-assert(C'== C)
-///
-
 
 ///
 -- Frank: I removed this test many because I do not understand it
@@ -6742,12 +6914,12 @@ assert(C'== C)
 --loadPackage( "TateOnProducts", Reload=>true)
    n={2,1};
   (S,E) = productOfProjectiveSpaces n;
-  T1 = (dual res trim (ideal vars E)^2 [1]);
+  T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 6) [1]);
 --  cohomologyMatrix(T1,-3*n,3*n)
 --  beilinson  beilinsonWindow T1
   --beilinson T1
 --  beilinson(T1, BundleType=>QuotientBundle)
-  T2 = res(coker lowerCorner(T1, {2,2}), LengthLimit=>10)[4];
+  T2 = freeResolution(coker lowerCorner(T1, {2,2}), LengthLimit=>10)[4];
 --  cohomologyMatrix(T2,-3*n,3*n)
 --  BW2 = beilinsonWindow T2
 --  cohomologyMatrix(BW2, -5*n,5*n)
@@ -6788,7 +6960,7 @@ assert(C'== C)
   F3a = prune truncate(tdeg,F3);
   F2a = prune truncate(tdeg,F2);
 assert(numgens F3a == numgens F2a)
---  isIsomorphic(F3a, F2a) -- this is too slow!
+--  isIsomorphicStrict(F3a, F2a) -- this is too slow!
 
 
   -- Now shift another time
@@ -6815,7 +6987,7 @@ assert(  BW4.dd^2 == 0)
   m1 = (presentation tM) ** S^{tdeg};
   corner1 = symExt(m1,E);
   betti corner1
-  T5 = ((res(coker corner1, LengthLimit => 10)) ** E^{tdeg})[sum tdeg]
+  T5 = ((freeResolution(coker corner1, LengthLimit => 10)) ** E^{tdeg})[sum tdeg]
   cohomologyMatrix(oo, -5*n,5*n)
   BW5 =  beilinsonWindow T5
   betti BW5
@@ -6846,7 +7018,7 @@ assert(  BW4.dd^2 == 0)
   m1 = (presentation tM) ** S^{tdeg};
   betti m1
   corner1 = symExt(m1,E);
-  T = ((res(coker corner1, LengthLimit => 4)) ** E^{tdeg})[sum tdeg]
+  T = ((freeResolution(coker corner1, LengthLimit => 4)) ** E^{tdeg})[sum tdeg]
   betti T
 --  cohomologyMatrix(T, -5*n,5*n)
   T1 = T ** E^{{-3,0}}[-3];
@@ -6862,10 +7034,11 @@ assert(  BW4.dd^2 == 0)
 ///
 
 
+-- beilinsonBundle agrees with its generator-count shortcut numgensU, and
+-- the bundle on a product is the tensor product of the basic ones.
 TEST ///
 -- YYY
   -- test of beilinsonBundle and numgensU
-restart
   debug needsPackage "TateOnProducts"
 
   for n in toList({1,1}..{5,5}) do (
@@ -6891,6 +7064,8 @@ restart
 ------------------------------------
 
 -- Example of beilinson
+-- beilinsonBundle on P^3 x P^2: the trivial bundle, the rank of U^1, and
+-- the tensor-product decomposition of U^{a,b}.
 TEST ///
 --restart
   -- XXX
@@ -6913,6 +7088,7 @@ TEST ///
   assert(U3 ** V2 == beilinsonBundle({3,2},S))
 ///
 
+-- beilinsonBundle on P^2 x P^1: the same checks on a smaller product.
 TEST ///
 --restart
 --  needsPackage "TateOnProducts"
@@ -6928,6 +7104,8 @@ TEST ///
   assert(U2 ** V1 == beilinsonBundle({2,1},S))
 ///
 
+-- numgensU counts the generators of a Beilinson bundle, and beilinson is
+-- multiplicative on composable maps of free E-modules.
 TEST ///
 
 --restart
@@ -7003,10 +7181,10 @@ restart
   needsPackage "TateOnProducts"
   n={1,1};
   (S,E) = productOfProjectiveSpaces n;
-  T1 = (dual res trim (ideal (e_(0,1)*e_(1,1)))[1]);
+  T1 = (dual freeResolution(trim (ideal (e_(0,1)*e_(1,1))), LengthLimit => 5)[1]);
   cohomologyMatrix(T1,-3*n,3*n)
   a=-{2,2};
-  T2=T1**E^{a}[sum a];
+  T2=(T1**E^{a})[sum a];
   cohomologyMatrix(T2,-3*n,3*n)
   W=removeZeroTrailingTerms beilinsonWindow T2,cohomologyMatrix(W,-2*n,2*n)
   T = tateExtension W
@@ -7024,8 +7202,8 @@ restart
   Hs = prune HH UF;
   ann Hs_0
   ann Hs_1
-  Wt = chainComplex {W.dd_2}
-  Wt = chainComplex {W.dd_1}
+  Wt = complex {W.dd_2}
+  Wt = complex {W.dd_1}
   UF = beilinson Wt
 
 ///
@@ -7037,9 +7215,9 @@ restart
   n={2,1};
  (S,E) = productOfProjectiveSpaces n;
 
-  T1 = (dual res trim (ideal vars E)^2)[1];
+  T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 6))[1];
   a=-{2,2};
-  T2=T1**E^{a}[sum a];
+  T2=(T1**E^{a})[sum a];
   cohomologyMatrix(T2,-3*n,3*n)
   W=removeZeroTrailingTerms beilinsonWindow T2,cohomologyMatrix(W,-2*n,2*n)
   T = tateExtension W
@@ -7048,8 +7226,8 @@ restart
   Hs = prune HH UF;
   ann Hs_0
   ann Hs_1
-  Wt = chainComplex {W.dd_2}
-  Wt = chainComplex {W.dd_1}
+  Wt = complex {W.dd_2}
+  Wt = complex {W.dd_1}
   UF = beilinson Wt
 
 ///
@@ -7058,10 +7236,163 @@ restart
 
 
 
+
+------------------------------------
+-- The tests below were added in the 2026 test-audit pass to cover
+-- exported functions that previously had no asserting test.
+------------------------------------
+
+-- the BundleType option of beilinson selects how the Beilinson bundle U^a is
+-- presented.  All six values are exercised here on U^{1,0} over P^2 x P^1.
+TEST ///
+(S,E) = productOfProjectiveSpaces {2,1};
+F = E^{{-1,0}};
+-- PrunedQuotient is the default
+assert(beilinson F == beilinson(F, BundleType => PrunedQuotient))
+-- every bundle presentation has the rank of the sheaf U^{1,0}, namely 2
+assert(rank beilinson(F, BundleType => PrunedQuotient) == 2)
+assert(rank beilinson(F, BundleType => QuotientBundle) == 2)
+assert(rank beilinson(F, BundleType => SubBundle) == 2)
+assert(rank beilinson(F, BundleType => DummyQuotientBundle) == 2)
+-- FreeBundle returns the ambient free bundle, here of rank 3
+assert(rank beilinson(F, BundleType => FreeBundle) == 3)
+-- the presentations differ in their generator counts
+assert(numgens beilinson(F, BundleType => PrunedQuotient) == 3)
+assert(numgens beilinson(F, BundleType => QuotientBundle) == 6)
+-- MapsBetweenFreeBundles returns the embedding as a matrix of free bundles
+phi = beilinson(F, BundleType => MapsBetweenFreeBundles);
+assert(class phi === Matrix)
+assert(numgens source phi == 6 and numgens target phi == 3)
+-- an unknown BundleType value is rejected
+assert(try (beilinson(F, BundleType => getSymbol "Bogus"); false) else true)
+///
+
+-- upperCorner and lowerCorner extract corner submatrices of a (co)complex
+-- differential; the cokernel of an upper corner map resolves to a part of a
+-- Tate resolution.
+TEST ///
+(S,E) = productOfProjectiveSpaces {1,2};
+F = dual freeResolution((ker transpose vars E) ** E^{{2,3}}, LengthLimit => 10);
+m = upperCorner(F, {2,1});
+assert(isHomogeneous m)
+assert(betti m === new BettiTally from {(1,{-2,-1},-3) => 9, (0,{-2,-2},-4) => 18, (0,{-3,-1},-4) => 12})
+Fm = freeResolution(coker m, LengthLimit => 10)[sum {2,1}];
+assert(Fm.dd^2 == 0)
+ml = lowerCorner(F, {0,1});
+assert(isHomogeneous ml)
+assert(betti ml === new BettiTally from {(1,{0,0},0) => 1, (0,{0,-1},-1) => 3})
+-- upperCorner rejects a degree of the wrong length
+assert(try (upperCorner(F, {2}); false) else true)
+///
+
+-- firstQuadrantComplex, lastQuadrantComplex and cornerComplex split a
+-- (sufficiently large part of a) Tate resolution into quadrant pieces;
+-- each piece is a genuine homogeneous complex.
+TEST ///
+(S,E) = productOfProjectiveSpaces {1,1};
+T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 8))[1];
+T = trivialHomologicalTruncation(freeResolution(coker upperCorner(T1,{4,3}), LengthLimit => 13)[7], -5, 6);
+fqT = firstQuadrantComplex(T, -{2,1});
+lqT = lastQuadrantComplex(T, -{2,1});
+cT = cornerComplex(T, -{2,1});
+assert(fqT.dd^2 == 0 and isHomogeneous fqT)
+assert(lqT.dd^2 == 0 and isHomogeneous lqT)
+assert(cT.dd^2 == 0 and isHomogeneous cT)
+-- regression: the Betti tables of the three quadrant pieces
+assert(betti fqT === new BettiTally from {(-1,{2,-2},0) => 13, (-3,{-3,0},-3) => 2, (-3,{-3,1},-2) => 8, (0,{2,-1},1) => 8, (-2,{1,-2},-1) => 6, (1,{2,0},2) => 3, (1,{2,1},3) => 2, (-1,{1,-1},0) => 4, (0,{1,0},1) => 2, (-2,{0,-2},-2) => 1, (-1,{0,0},0) => 1, (-3,{-1,-2},-3) => 8, (0,{0,1},1) => 2, (-2,{-1,-1},-2) => 4, (-4,{-2,-2},-4) => 15, (-1,{-1,1},0) => 4, (-3,{-2,-1},-3) => 8, (-5,{-3,-2},-5) => 22, (-2,{-2,0},-2) => 1, (-4,{-3,-1},-4) => 12, (-2,{-2,1},-1) => 6})
+assert(betti lqT === new BettiTally from {(4,{4,2},6) => 17, (5,{4,3},7) => 28, (3,{3,2},5) => 12, (6,{4,4},8) => 39, (6,{6,2},8) => 27, (4,{3,3},6) => 20, (5,{5,2},7) => 22, (5,{3,4},7) => 28, (6,{5,3},8) => 36, (6,{3,5},8) => 36})
+assert(betti cT === new BettiTally from {(-1,{2,-2},0) => 13, (3,{4,2},6) => 17, (4,{4,3},7) => 28, (0,{2,-1},1) => 8, (-2,{1,-2},-1) => 6, (2,{3,2},5) => 12, (5,{4,4},8) => 39, (1,{2,0},2) => 3, (-1,{1,-1},0) => 4, (1,{2,1},3) => 2, (3,{3,3},6) => 20, (4,{3,4},7) => 28, (-2,{0,-2},-2) => 1, (0,{1,0},1) => 2, (5,{3,5},8) => 36, (-3,{-1,-2},-3) => 8, (-1,{0,0},0) => 1, (-2,{-1,-1},-2) => 4, (0,{0,1},1) => 2, (-4,{-2,-2},-4) => 15, (-3,{-2,-1},-3) => 8, (-1,{-1,1},0) => 4, (-5,{-3,-2},-5) => 22, (-2,{-2,0},-2) => 1, (-2,{-2,1},-1) => 6, (-4,{-3,-1},-4) => 12, (-3,{-3,0},-3) => 2, (-3,{-3,1},-2) => 8, (5,{6,2},8) => 27, (4,{5,2},7) => 22, (5,{5,3},8) => 36})
+///
+
+-- regionComplex extracts the subquotient of a Tate resolution supported on a
+-- region of multidegrees; strand is the special case (I,J,K) = ({},I,{}).
+TEST ///
+n = {1,1};
+(S,E) = productOfProjectiveSpaces n;
+T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 5))[1];
+a = -{2,2};
+T2 = (T1 ** E^{a})[sum a];
+W = beilinsonWindow T2;
+T = tateExtension W;
+assert(T.dd^2 == 0 and isHomogeneous T)
+rT = regionComplex(T, {1,0}, ({},{0},{}));
+sT = strand(T, {-1,0}, {1});
+assert(rT.dd^2 == 0 and isHomogeneous rT)
+assert(sT.dd^2 == 0 and isHomogeneous sT)
+-- strand(T,c,I) is by definition the region complex for (I,J,K) = ({},I,{})
+assert(sT == regionComplex(T, {-1,0}, ({},{1},{})))
+-- this vertical-line region fixes the first multidegree coordinate
+assert(all(flatten apply(toList(min rT..max rT), i -> degrees rT_i), d -> d_0 == -1))
+-- the {1}-strand fixes the second multidegree coordinate
+assert(all(flatten apply(toList(min sT..max sT), i -> degrees sT_i), d -> d_1 == 0))
+-- regression: Betti tables of the region complex and the strand
+assert(betti rT === new BettiTally from {(2,{-1,4},3) => 18, (-8,{-1,-7},-8) => 92, (-7,{-1,-6},-7) => 82, (-6,{-1,-5},-6) => 72, (-5,{-1,-4},-5) => 62, (-4,{-1,-3},-4) => 52, (-3,{-1,-2},-3) => 42, (-2,{-1,-1},-2) => 32, (-1,{-1,0},-1) => 22, (0,{-1,1},0) => 12, (1,{-1,2},1) => 2, (-9,{-1,-8},-9) => 102, (1,{-1,3},2) => 8})
+assert(betti sT === new BettiTally from {(-3,{-3,0},-3) => 36, (2,{3,0},3) => 6, (-4,{-4,0},-4) => 43, (2,{2,0},2) => 1, (-5,{-5,0},-5) => 50, (1,{1,0},1) => 8, (-6,{-6,0},-6) => 57, (0,{0,0},0) => 15, (-7,{-7,0},-7) => 64, (-1,{-1,0},-1) => 22, (-8,{-8,0},-8) => 71, (-2,{-2,0},-2) => 29, (3,{4,0},4) => 13, (-9,{-9,0},-9) => 78})
+///
+
+-- directImageComplex(M,I): the derived direct image of a sheaf on a product
+-- of projective spaces under the projection onto the factors indexed by I.
+-- Here M is a sheaf on P^1 x P^2 and we project onto the second factor P^2.
+TEST ///
+(S,E) = productOfProjectiveSpaces {1,2};
+M = (beilinson E^{{-1,-1}}) ** S^{{-2,-1}};
+RpiM = directImageComplex(M, {1});
+-- the result is a complex of modules over the coordinate ring of P^2
+assert(numgens ring RpiM == 3)
+assert(RpiM.dd^2 == 0 and isHomogeneous RpiM)
+assert(concentration RpiM === (-2,-1))
+assert(betti RpiM === new BettiTally from {(-1,{1},1) => 6, (-2,{0},0) => 2})
+///
+
+-- directImageComplex(J,N,phi): the derived direct image along a morphism
+-- phi: X -> P^m.  Here X is the cubic scroll in P^4 and phi maps it onto P^1.
+TEST ///
+kk = ZZ/101;
+R = kk[x_0..x_4];
+m = matrix {{x_0,x_1,x_3},{x_1,x_2,x_4}};
+J = minors(2,m);
+N = symmetricPower(2,coker m) ** R^{-2};
+phi = transpose m;
+RphiN = directImageComplex(J,N,phi);
+-- the direct image lives over the coordinate ring of the target P^1
+assert(numgens ring RphiN == 2)
+assert(RphiN.dd^2 == 0 and isHomogeneous RphiN)
+assert(betti RphiN === new BettiTally from {(0,{1},1) => 1})
+///
+
+-- actionOnDirectImage recovers the module structure of a direct image via a
+-- Noether normalization.  Here Y is the conic V(x_0 x_2 - x_1^2) in P^2 and M
+-- is its structure sheaf.
+TEST ///
+kk = ZZ/101;
+R = kk[x_0,x_1,x_2];
+I = ideal(x_0*x_2 - x_1^2);
+M = R^1/I;
+retTable = actionOnDirectImage(I, M);
+-- the structure sheaf of a curve has only R^0 surviving the projection
+assert(sort keys retTable === {0})
+-- the surviving cohomology carries one map per coordinate of the P^2
+assert(#(retTable#0) == 3)
+-- the induced maps assemble into an honest module action
+assert(isAction(I, apply(3, i -> prune HH^0 retTable#0#i)))
+///
+
+-- boundary case: the quadrant and corner complex routines return the zero
+-- complex unchanged.
+TEST ///
+(S,E) = productOfProjectiveSpaces {1,1};
+Z = complex E^0;
+assert(Z == 0)
+assert(firstQuadrantComplex(Z, {0,0}) == 0)
+assert(lastQuadrantComplex(Z, {0,0}) == 0)
+assert(cornerComplex(Z, {0,0}) == 0)
+///
+
 end--
 
 restart
 uninstallPackage"TateOnProducts"
+restart
 installPackage"TateOnProducts"
 --loadPackage("TateOnProducts",Reload=>true)
 viewHelp TateOnProducts
@@ -7078,10 +7409,10 @@ needsPackage "TateOnProducts"
 	m=map(E^{0,1},,matrix{{ e_0,e_1*e_2+e_3*e_4},{e_3*e_4-e_1*e_2,e_0*e_1*e_4}})
         isHomogeneous m
         dual m
-    	fm=res coker m
+    	fm=freeResolution(coker m, LengthLimit => 6)
 	betti fm
 	dualfm = dual fm
-	f2=res( coker dualfm.dd_(-1),LengthLimit=> 5)[2]
+	f2=freeResolution( coker dualfm.dd_(-1),LengthLimit=> 5)[2]
 	betti f2
 	betti dual fm
 
@@ -7092,11 +7423,11 @@ needsPackage "TateOnProducts"
         isHomogeneous m
         dual m
 	m1 = syz transpose syz transpose m
-    	fm=res (coker m, LengthLimit =>10)
-        fm1=res (coker m, LengthLimit =>10)
+    	fm=freeResolution (coker m, LengthLimit =>10)
+        fm1=freeResolution (coker m, LengthLimit =>10)
 	betti fm
 	dualfm = dual fm
-	f2=res( coker dualfm.dd_(-1),LengthLimit=> 10)[2]
+	f2=freeResolution( coker dualfm.dd_(-1),LengthLimit=> 10)[2]
 	f2.dd_0
 	betti f2
 	betti dual fm
@@ -7107,17 +7438,17 @@ n={1,2}
 (S,E) = productOfProjectiveSpaces n
 a={0,1}
 Ua=E^{ -a}
-W=chainComplex(map(E^0,Ua,0),map(Ua,E^0,0))[1]
+W=complex{map(E^0,Ua,0),map(Ua,E^0,0)}[1]
 time T=tateExtension(W)
 betti (qT=firstQuadrantComplex(T,{0,0}))
 cohomologyMatrix(qT,-n,2*n),cohomologyMatrix(T,-2*n,2*n)
 -------------
 
--- viewHelp res seems that a some point either Dan or Mike thought about installing res(ChainComplex)
+-- viewHelp res seems that a some point either Dan or Mike thought about installing res(Complex)
 methods res
 S=ZZ/101[x,y,z]/ideal(x*y)
 M0=((S^1/ideal y)**S^{2}), M1=S^1, M2=S^{ -1}
-C=chainComplex({map(M0,M1,matrix{{x^2}}),map(M1,M2,matrix{{y}})})
+C=complex({map(M0,M1,matrix{{x^2}}),map(M1,M2,matrix{{y}})})
 isHomogeneous C
 
 --------------
@@ -7132,7 +7463,7 @@ ff = select(gens E, v -> degree v =={0,1})
 up = random(E^{5:{1,0}}, E^3)
 right = random(E^{3:{0,1}}, E^3)
 tot = up||right
-T1 = res(coker tot, LengthLimit => 12);
+T1 = freeResolution(coker tot, LengthLimit => 12);
 high = {6,6}
 low = -high
 cohomologyMatrix(T1,low,high)
@@ -7140,7 +7471,7 @@ T2=cornerComplex(T1, -{5,5})
 --why the numbering of T2?
 betti T2
 phi = transpose T2.dd_9;
-T = dual res(image phi, LengthLimit=>15)**E^{{3,4}}
+T = dual freeResolution(image phi, LengthLimit=>15)**E^{{3,4}}
 high = high+{3,4}
 low = low+{3,4}
 cohomologyMatrix(T,low, high)
@@ -7151,7 +7482,7 @@ p = map(E1,E,matrix{{0,0}}|vars E1)
 sT' = p sT
 isHomogeneous sT'
 betti sT'
-tar = (sT'_(-15)); s = chainComplex for i from min sT'+1 to max sT'-1 list(
+tar = (sT'_(-15)); s = complex for i from min sT'+1 to max sT'-1 list(
 	phi = map(tar,,sT'.dd_(i+1));
 	tar = source phi;
 	phi);
@@ -7177,8 +7508,8 @@ BC = beilinson C
 betti BC
 tallyDegrees BC
 M' = HH_0 BC
-isIsomorphic(truncate({3,1},M), truncate({3,1},M'))
-isIsomorphic(truncate({2,0},M), truncate({2,0},M'))
+isIsomorphicStrict(truncate({3,1},M), truncate({3,1},M'))
+isIsomorphicStrict(truncate({2,0},M), truncate({2,0},M'))
 cohomologyMatrix(M,low,high)
 cohomologyMatrix(RM,low,high)
 
@@ -7196,8 +7527,8 @@ BT = beilinson T
 betti BT
 tallyDegrees BT
 M' = HH_0 BT
-isIsomorphic(truncate({3,0},M), truncate({3,0},M'))
-isIsomorphic(truncate({2,1},M), truncate({2,1},M'))
+isIsomorphicStrict(truncate({3,0},M), truncate({3,0},M'))
+isIsomorphicStrict(truncate({2,1},M), truncate({2,1},M'))
 
 C = cornerComplex(T,{0,0})
 cohomologyMatrix(C,low,high)
@@ -7210,7 +7541,7 @@ apply(betti C.dd_0)
 (values HH)
 (apply(8, i->ann HH_(-i)(bgg image C.dd_0)))/codim
 M' = HH_(-4)(bgg image C.dd_0);
-isIsomorphic(truncate({2,2},M), truncate({2,2},M'))
+isIsomorphicStrict(truncate({2,2},M), truncate({2,2},M'))
 cohomologyMatrix (M', low, high)
 cohomologyMatrix (M, low, high)
 
@@ -7226,24 +7557,24 @@ loadPackage "TateOnProducts"
 --I believe the time is all taken up with the resolution
         n={1,2}; 
         (S,E) = productOfProjectiveSpaces n;
-	T1 = (dual res trim (ideal vars E))[1];
+	T1 = (dual freeResolution(trim (ideal vars E), LengthLimit => 6))[1];
 	a=-{2,2};
-	T2=T1**E^{a}[sum a];
+	T2=(T1**E^{a})[sum a];
 	W=beilinsonWindow T2
 time    T=tateExtension W; -- 2 sec
 
         n={2,2};
         (S,E) = productOfProjectiveSpaces n;
-	T1 = (dual res trim (ideal vars E))[1];
+	T1 = (dual freeResolution(trim (ideal vars E), LengthLimit => 7))[1];
 	a=-{2,2};
-	T2=T1**E^{a}[sum a];
+	T2=(T1**E^{a})[sum a];
 	W=beilinsonWindow T2
 time    T=tateExtension W; -- 84 seconds
 
         n={1,1,1};
         (S,E) = productOfProjectiveSpaces n;
-	T1 = (dual res trim (ideal vars E)^2)[1];
+	T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 7))[1];
 	a=-{2,2,3};
-	T2=T1**E^{a}[sum a];
+	T2=(T1**E^{a})[sum a];
 	W=beilinsonWindow T2
 time    T=tateExtension W; -- still computing 10 minutes later...

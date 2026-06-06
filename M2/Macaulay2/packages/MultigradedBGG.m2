@@ -1,6 +1,6 @@
 newPackage("MultigradedBGG",
-    Version => "1.1",
-    Date => "5 June 2023",
+    Version => "1.2",
+    Date => "11 April 2025",
     Headline => "the multigraded BGG correspondence and differential modules",
     Authors => {
 	{Name => "Maya Banks",         	     Email => "mdbanks@wisc.edu",      HomePage => "https://sites.google.com/wisc.edu/mayabanks" },
@@ -8,10 +8,22 @@ newPackage("MultigradedBGG",
 	{Name => "Tara Gomes",	    	     Email => "gomes072@umn.edu",      HomePage => "https://cse.umn.edu/math/tara-gomes" },
 	{Name => "Prashanth Sridhar",	     Email => "pzs0094@auburn.edu",    HomePage => "https://sites.google.com/view/prashanthsridhar/home"},
 	{Name => "Eduardo Torres Davila",    Email => "torre680@umn.edu",      HomePage => "https://etdavila10.github.io/" },
-	{Name => "Sasha	Zotine",    	     Email => "18az45@queensu.ca",     HomePage => "https://sites.google.com/view/szotine/home" }
+	{Name => "Sasha Zotine",    	     Email => "zotinea@mcmaster.ca",   HomePage => "https://sites.google.com/view/szotine/home" }
     },
     PackageExports => {"NormalToricVarieties", "Complexes"},
-    Keywords => {"Commutative Algebra"}
+    Keywords => {"Commutative Algebra"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "The multigraded BGG correspondence in Macaulay2",
+	"acceptance date" => "2025-06-02",
+	"published article URI" => "https://msp.org/jsag/2025/15-1/p05.xhtml",
+	"published article DOI" => "10.2140/jsag.2025.15.57",
+	"published code URI" => "https://msp.org/jsag/2025/15-1/jsag-v15-n1-x05-MultigradedBGG.m2",
+	"version at publication" => "1.2",
+	"volume number" => "15",
+	"volume URI" => "https://msp.org/jsag/2025/15-1/"
+	}
   )
 
 export {
@@ -285,6 +297,9 @@ toricRR = method();
 toricRR(Module,List) := (N,L) ->(
     M := coker presentation N;
     S := ring M;
+    grade := #(degrees S)_0;
+    if L === {} then error "--expected non-empty list of degrees";
+    if any(L, l -> #l != grade) then error("--expected each multidegree to be of length " | grade); 
     if not isCommutative S then error "--base ring is not commutative";
     if heft S === null then error "--need a heft vector for polynomial ring";
     -- we need to modify L so that the "quotient" differential is well-defined
@@ -403,6 +418,11 @@ doc ///
       toricRR
       toricLL
       stronglyLinearStrand
+   References
+       Text
+       [1] @HREF{"https://arxiv.org/pdf/2202.00402v4","Linear strands of multigraded free resolutions"}@ (with Daniel Erman), Mathematische Annalen 390 (2024), 2707–2725
+       [2] @HREF{"https://arxiv.org/pdf/2108.03345v3","Tate resolutions on toric varieties"}@ (with Daniel Erman), Journal of the European Mathematical Society, published online (2024)
+
 ///
 
 doc ///
@@ -564,7 +584,7 @@ doc ///
    Headline
       converts a square zero matrix into a differential module
    Usage
-      differentialModule(f)cczx
+      differentialModule(f)
    Inputs
       f : Matrix
           representing a module map with the same source and target
@@ -922,6 +942,18 @@ doc ///
 	 N2 = toricRR(S^1, L2);
 	 phi = map(ring N2, ring N1, gens ring N2)
 	 assert(phi N1.dd_0 - N2.dd_0 == 0)
+      Text
+	 One can compute sheaf cohomology over weighted projective spaces using the multigraded BGG correspondence,
+	 A detailed explanation can be found in Example 3.3 of the paper accompanying this package. 
+      Example
+         X = weightedProjectiveSpace {1,1,2};
+	 S = ring X;
+	 M = coker matrix{{x_0, x_1}};
+	 D = toricRR(M, for i from 0 to 4 list {i})
+	 F = resDM(D, 3)
+	 F.dd_0
+	 kk = coker vars ring F_0;
+	 sum flatten entries basis({-2,-1}, Hom(kk, F_0)) == rank HH^0(X, sheaf(M**S^{{-2}}))
    Caveat
        A heft vector is necessary for the computation to produce a well-defined differential module.
    SeeAlso
@@ -1242,4 +1274,100 @@ TEST ///
   K = koszulComplex vars S
   assert(differential foldComplex(K, 0) == map(S^{{0}, 2:{-1}, {-2}},S^{{0}, 2:{-1}, {-2}},{{0, x, y, 0}, {0, 0, 0, -y}, {0, 0, 0, x}, {0, 0, 0, 0}}))
   assert(differential foldComplex(dual K, 0) == map(S^{{2}, 2:{1}, {0}},S^{{2}, 2:{1}, {0}},{{0, -y, x, 0}, {0, 0, 0, x}, {0, 0, 0, y}, {0, 0, 0, 0}}))
+///
+
+--------------------------------------------------
+--- Added coverage, compatibility, and stress tests
+--------------------------------------------------
+
+TEST ///
+-- DifferentialModule is a subtype of Complex: a differential module must be
+-- usable as a Complex, and the Matrix and Complex constructors must agree.
+S = QQ[x,y]
+phi = map(S^{0,1,1,2}, S^{0,1,1,2}, matrix{{0,x,y,1},{0,0,0,-y},{0,0,0,x},{0,0,0,0}}, Degree=>2)
+D = differentialModule phi
+assert(instance(D, DifferentialModule))
+assert(instance(D, Complex))
+assert(class D === DifferentialModule)
+assert(parent DifferentialModule === Complex)
+assert(instance(D_0, Module))
+assert(D == differentialModule(complex({-phi,-phi})[1]))
+///
+
+TEST ///
+-- Compatibility: the one-argument resDM(D) convenience form must agree with
+-- the explicit two-argument resDM(D, dim ring D + 1).
+S = QQ[x,y]
+phi = map(S^2, S^2, matrix{{x*y,y^2},{-x^2,-x*y}}, Degree=>2)
+D = differentialModule phi
+assert(resDM D == resDM(D, dim ring D + 1))
+///
+
+TEST ///
+-- dualRingToric round-trip: the Koszul dual of the Koszul dual recovers the
+-- grading and variable count; the SkewVariable option names the dual variables.
+S = ring hirzebruchSurface 3
+E = dualRingToric(S, SkewVariable => f)
+assert(isSkewCommutative E)
+assert(apply(gens E, toString) == {"f_0","f_1","f_2","f_3"})
+SD = dualRingToric E
+assert(not isSkewCommutative SD)
+assert(degrees SD == degrees S)
+assert(numgens SD == numgens S)
+assert(coefficientRing SD === coefficientRing S)
+///
+
+TEST ///
+-- foldComplex produces a differential module of the requested degree, and
+-- unfold produces a complex whose differentials are all the folded one.
+S = QQ[x,y,z]
+K = koszulComplex vars S
+F = foldComplex(K, 2)
+assert(instance(F, DifferentialModule))
+assert(degree F == {2})
+assert((F.dd_0)^2 == 0)
+phi = map(S^{1,1}, S^{1,1}, matrix{{x^2*y,x*y^2},{-x^3,-x^2*y}}, Degree=>3)
+DM = differentialModule phi
+C = unfold(DM, -2, 3)
+assert(instance(C, Complex))
+assert(concentration C == (-2, 4))
+assert(C.dd_0 == DM.dd_0)
+assert(C.dd_1 == C.dd_0)
+assert(degree C.dd_0 == {3})
+///
+
+TEST ///
+-- Stress test: toricRR of the residue field of several toric Cox rings, and of
+-- a random module, yields a differential module whose differential squares to
+-- zero, is homogeneous, and has homological degree -1.
+for X in {hirzebruchSurface 2, hirzebruchSurface 3, weightedProjectiveSpace {1,1,2}} do (
+   SX := ring X;
+   D := toricRR coker vars SX;
+   assert(instance(D, DifferentialModule));
+   assert((D.dd)^2 == 0);
+   assert(isHomogeneous D.dd_0);
+   assert(last degree D == -1);
+   )
+S = ring hirzebruchSurface 2
+D = toricRR coker random(S^1, S^{2:{-2,-1}})
+assert(instance(D, DifferentialModule))
+assert((D.dd)^2 == 0)
+assert(last degree D == -1)
+///
+
+TEST ///
+-- Stress test: toricLL of several modules over a Koszul-dual exterior algebra
+-- yields a homogeneous complex whose differential squares to zero; likewise the
+-- strongly linear strand.
+S = ring hirzebruchSurface 3
+E = dualRingToric S
+for N in {E^1, coker vars E, coker matrix{{e_0,e_1}}} do (
+   C := toricLL N;
+   assert(instance(C, Complex));
+   assert(isHomogeneous C);
+   assert((C.dd)^2 == 0);
+   )
+L = stronglyLinearStrand coker vars S
+assert(instance(L, Complex))
+assert((L.dd)^2 == 0)
 ///

@@ -80,6 +80,9 @@ sectionType = sectionNumber -> (
 
 -----------------------------------------------------------------------------
 keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
+	symbol ==   => "=\\!=",
+	symbol ===  => "=\\!=\\!=",
+	symbol =!=  => "=\\!\\ne\\!=",
 	symbol |-   => "\\vdash ",
 	symbol ..   => "\\,{.}{.}\\,",
 	symbol ..<  => "\\,{.}{.}{<}\\,",
@@ -124,10 +127,11 @@ keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
 	symbol |>  => "\\rangle ",
 	symbol |   => "\\mid",
 	symbol ||  => "\\mid\\mid",
-	symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-	symbol _*  => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-	symbol ^*  => "{}^*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
+	symbol ^** => "^{\\otimes}",
+	symbol _*  => "_*",
+	symbol ^*  => "^*",
 	symbol ·   => "\\cdot",
+	symbol ⊠  => "\\boxtimes"
 	},symbolBody)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -147,14 +151,14 @@ texMathLiteralTable := merge(texLiteralTable,
 	},last)
 texMathLiteral = texLiteral1 texMathLiteralTable
 -- TODO: expand and document this behavior
-suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
-suffixesRegExp := "\\w("|demark("|",suffixes)|")$";
-texVariable := x -> (
+suffixes := {"bar","tilde","hat","vec","ddot","dot","check","acute","grave","breve"};
+suffixesRegExp := "(\\S+?)\\s*("|demark("|",suffixes)|")$";
+texVariable = x -> (
     if x === "" then return "";
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb " | x#0 | "}";
     if last x === "'" then return texVariable substring(x, 0, #x-1) | "'";
     if (r := regex(suffixesRegExp, x)) =!= null then return (
-	r = r#1; "\\" | substring(r, x) | "{" | texVariable substring(x, 0, r#0) | "}");
+	"\\" | substring(r#2, x) | "{" | texVariable substring(r#1,x) | "}");
     if #x === 1 or regex("[^[:alnum:]]", x) =!= null then x else "\\mathit{" | x | "}")
 texMathSymbol :=
 texMath Symbol := texVariable @@ texMathLiteral @@ toString
@@ -196,10 +200,15 @@ texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\
 texMathMutable :=
 texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\right\\}")
 
-texMath HashTable := H -> if H.?texMath then H.texMath else (
-    if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary)
-    else if isMutable H then texMathMutable H
-    else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v))
+texMath HashTable := H -> (
+    texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v)
+    )
+
+texMath MutableHashTable := H -> (
+    if H.?texMath then H.texMath -- used by some rings, e.g., ZZ, QQ, RR
+    else if hasAttribute(H, ReverseDictionary)
+    then texMath toString getAttribute(H, ReverseDictionary)
+    else texMathMutable H)
 
 texMath Function := f -> texMath toString f
 

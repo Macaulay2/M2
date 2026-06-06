@@ -461,6 +461,7 @@ monomial Monoid::make_one() const
 }
 void Monoid::remove(monomial d) const
 {
+  (void) d;
 #if 0
 //   freemem(d);
 #endif

@@ -4,6 +4,7 @@ i1 : needsPackage "Truncations";
 i2 : lineNumber = 0;
 
 i1 : setRandomSeed();
+ -- initializing random seed
 
 i2 : symExt = (m,E) ->(
           ev := map(E,ring m,vars E);
@@ -87,7 +88,7 @@ o14 = E  <-- E  <-- E  <-- E  <-- E  <-- E  <-- E
                                                  
       0      1      2      3      4      5      6
 
-o14 : ChainComplex
+o14 : Complex
 
 i15 : betti T
 
@@ -109,7 +110,7 @@ i17 : sheafCohomology = (m,E,loDeg,hiDeg)->(
            k := length T;
            d := k-hiDeg+loDeg;
            if d > 0 then 
-              chainComplex apply(d+1 .. k, i->T.dd_(i))
+              complex apply(toList(d+1 .. k), i->T.dd_(i))
            else T);
 
 i18 : S=ZZ/32003[x_0..x_3];

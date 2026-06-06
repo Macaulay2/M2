@@ -9,7 +9,6 @@
 #include "ringelem.hpp"               // for ring_elem
 #include "style.hpp"                  // for GEOHEAP_SIZE
 
-#include <gmp.h>                      // for mpz_srcptr, mpq_srcptr
 #include <iosfwd>                     // for ostream, string
 #include <utility>                    // for pair
 #include <vector>                     // for vector
@@ -45,7 +44,7 @@ public:
   
   unsigned int computeHashValue(const Poly& a) const; // TODO
 
-  void init(Poly& f) const {}
+  void init(Poly& f) const { (void) f; }
   void clear(Poly& f) const;
   void setZero(Poly& f) const;
 

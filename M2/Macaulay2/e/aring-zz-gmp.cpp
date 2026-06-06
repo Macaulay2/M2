@@ -13,6 +13,7 @@ void ARingZZGMP::eval(const RingMap* map,
                       int first_var,
                       ring_elem& result) const
 {
+  (void) first_var;
   mpz_ptr f1 = static_cast<mpz_ptr>(const_cast<ElementType*>(&f));
   result = map->get_ring()->from_int(f1);
 }
@@ -25,6 +26,7 @@ void ARingZZGMP::elem_text_out(buffer& o,
 {
   char* str;
 
+  (void) p_parens;
   bool is_neg = (mpz_cmp_si(&a, 0) == -1);
   bool is_one = (mpz_cmp_si(&a, 1) == 0 || mpz_cmp_si(&a, -1) == 0);
 

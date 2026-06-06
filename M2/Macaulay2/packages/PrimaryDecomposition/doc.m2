@@ -682,6 +682,7 @@ Node
     topComponents
    (topComponents, Ideal)
    (topComponents, Module)
+   (topComponents, Module, ZZ)
   Headline
     compute top dimensional component of an ideal or module
   Usage

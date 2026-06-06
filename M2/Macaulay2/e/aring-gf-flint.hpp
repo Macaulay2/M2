@@ -8,6 +8,9 @@
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
+// includes gmp.h, which is required for FLINT functions that use GMP
+#include <M2/math-include.h>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/flint.h>      // for flint_rand_t, fmpz_t, ulong
@@ -204,7 +207,13 @@ class ARingGFFlint : public RingInterface
     return true;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
+  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
   void negate(ElementType& result, const ElementType& a) const
   {
     fq_zech_neg(&result, &a, mContext);

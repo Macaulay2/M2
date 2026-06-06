@@ -75,6 +75,18 @@ class PolyRingQuotient : public PolyRingFlat
     normal_form(result);
     return ret;
   }
+  virtual bool from_Interval(gmp_RRi a, ring_elem &result) const
+  {
+    bool ret = numerR_->from_Interval(a, result);
+    normal_form(result);
+    return ret;
+  }
+  virtual bool from_ComplexInterval(gmp_CCi a, ring_elem &result) const
+  {
+    bool ret = numerR_->from_ComplexInterval(a, result);
+    normal_form(result);
+    return ret;
+  }
   virtual bool from_double(double a, ring_elem &result) const
   {
     bool ret = numerR_->from_double(a, result);

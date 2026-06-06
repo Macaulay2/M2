@@ -5,14 +5,14 @@ newPackage(
     	Date => "August 25, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
-		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
+		  HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"}},
     	Headline => "rational parametrization of rational plane curves and related computations",
 	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false,
 	CacheExampleOutput => true,
 	AuxiliaryFiles => true,
 	PackageExports => {"AdjointIdeal"},
-	PackageImports => {"MapleInterface"}
+	PackageImports => {"Complexes", "MapleInterface"}
     	)
 
 -- For information see documentation key "Parametrization" below.
@@ -702,16 +702,6 @@ return(rslt);
 --p=rtpt(1180943,-14640196896);
 --p_(0,0)^2+1180943*p_(0,1)^2-14640196896*p_(0,2)^2
 
-sign=method()
-sign(ZZ):=(n)->(
-if n>0 then return(1);
-if n<0 then return(-1);
-0)
-sign(QQ):=(n)->(
-if n>0 then return(1);
-if n<0 then return(-1);
-0)
-
 -- Jval(ZZ,ZZ,ZZ)
 -- computes the index of the argument
 
@@ -1149,7 +1139,7 @@ doc ///
 
     For more theoretical details see 
     J. Boehm: Rational parametrization of rational curves,
-    @HREF"http://www.math.uni-sb.de/ag/schreyer/jb/diplom%20janko%20boehm.pdf"@.
+    @HREF"https://agag-jboehm.math.rptu.de/~boehm/diplom%20janko%20boehm.pdf"@.
 
     The package is work in progress, so there will be future improvements and more testing is necessary.
 
@@ -1763,8 +1753,7 @@ doc ///
 
 
 
-
-
+--test for rParametrizePlaneCurve, rParametrizeRNC, invertBirationalMap, isomorphicProjectionOfRNC, parametrize
 TEST ///
 K=QQ;
 R=K[v,u,z];
@@ -1775,8 +1764,26 @@ par=rParametrizeRNC(I);
 S=(ring par#0)/par#1;
 pI=substitute(par#0,S);
 assert(testParametrization(I,pI)==true);
-///
 
+J = ideal(linsys)
+pI1=rParametrizePlaneCurve(I0,J,parametrizeConic=>true);
+assert(testParametrization(I0,pI1)==true);
+
+L=invertBirationalMap(I0,linsys);
+assert(degree L#1==6);
+
+Irnc = mapToRNC(I0,J);
+ls = isomorphicProjectionOfRNC(Irnc);
+assert(class ls === Matrix);
+assert(numcols ls == 3);
+R2 = QQ[y_0..y_2];
+Iconic = ideal(y_0*y_2 - y_1^2 + y_2^2); 
+ls2 = isomorphicProjectionOfRNC(Iconic);
+assert(ls2 == vars R2);
+
+pI3 = parametrize(I0, J);
+assert(testParametrization(I0,pI3)==true);
+///
 
 
 TEST ///
@@ -1786,7 +1793,6 @@ I=ideal(y_0*y_2-y_1^2+y_2^2);
 par=rParametrizeConic(I);
 assert(testParametrization(I,par)==true);
 ///
-
 
 TEST ///
 assert(legendreSymbol(4,7)==1);
@@ -1809,16 +1815,6 @@ modularPower(8,10003,101)
 ///
 
 
-
-TEST ///
-K=QQ;
-R=K[v,u,z];
-I=ideal(v^8-u^3*(z+u)^5);
-J=ideal(u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6);
-pI=rParametrizePlaneCurve(I,J,parametrizeConic=>true);
-assert(testParametrization(I,pI)==true);
-///
-
 -- this test commented out because it requires the presence of maple
 -- TEST ///
 -- a=modularSquareRoot(626,1180943);
@@ -1836,14 +1832,7 @@ assert(chineseRemainder({1,2,3},{3,5,7})==52);
 ///
 
 TEST ///
-K=QQ;
-R=K[v,u,z];
-I=ideal(v^8-u^3*(z+u)^5);
-linsys=matrix {{u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6}};
-L=invertBirationalMap(I,linsys);
-assert(degree L#1==6);
+assert(modularInverse(4,16)==false)
 ///
-
-
 end
 

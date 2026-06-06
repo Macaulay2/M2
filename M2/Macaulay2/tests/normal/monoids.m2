@@ -26,11 +26,21 @@ monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => vars(0..3)]
 ---
 
 --- checking element access in towers
--* currently not working reliably
-R = ((frac(QQ[x,y]))[t,u])/(t^2-x,u^2-y)
-assert(sum({"x", "y", "t", "u"}, s -> s_R) === t + u + x + y)
+A0 = QQ[x,y]
+A1 = frac A0
+A2 = A1[t,u]
+A3 = A2/(t^2-x,u^2-y)
+assert instance(x+y, A1)
+assert instance(x+t, A3)
+assert all({x, "x", y, "y"}, s -> instance(value baseName s_A0, A1))
+assert all({x, "x", y, "y"}, s -> instance(value baseName s_A1, A1))
+assert all({x, "x", y, "y"}, s -> instance(value baseName s_A2, A1))
+assert all({x, "x", y, "y"}, s -> instance(value baseName s_A3, A1))
+assert all({t, "t", u, "u"}, s -> instance(value baseName s_A2, A3))
+assert all({t, "t", u, "u"}, s -> instance(value baseName s_A3, A3))
 
 -- promote
+-* currently not working reliably
 F = frac(QQ[x,y])
 S = F[t,u]
 R = S/(t-x)

@@ -178,6 +178,7 @@ Ring Monoid := PolynomialRing => (R, M) -> (
     RM.FlatMonoid = F;
     RM.numallvars = numallvars;
     RM.baseRings  = append(R.baseRings, R);
+    RM.cache      = new CacheTable;
     RM.promoteDegree = (
 	if F.Options.DegreeMap === null
 	then makepromoter degreeLength RM -- means the degree map is zero
@@ -285,6 +286,11 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
 
 antipode = method();
 antipode RingElement := (f) -> new ring f from rawAntipode raw f;
+
+midpoint PolynomialRing := R -> R.cache.midpoint ??= (
+    S := midpoint coefficientRing R;
+    if S === coefficientRing R then R
+    else S monoid R)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -91,7 +91,7 @@ dlsym0(e:Expr):Expr :=
 setupfun("dlsym", dlsym0);
 
 ffiTypeVoid := Ccode(voidPointer, "&ffi_type_void");
-ffiOk := Ccode(int, "FFI_OK");
+ffiOk := Ccode(uint, "FFI_OK");
 
 ffiTypeSize(e:Expr):Expr := (
     when e
@@ -99,12 +99,12 @@ ffiTypeSize(e:Expr):Expr := (
     else WrongArgPointer());
 setupfun("ffiTypeSize", ffiTypeSize);
 
-ffiError(r:int):Expr:=
-    if r == Ccode(int, "FFI_BAD_TYPEDEF")
+ffiError(r:uint):Expr:=
+    if r == Ccode(uint, "FFI_BAD_TYPEDEF")
     then buildErrorPacket("libffi: bad typedef")
-    else if r == Ccode(int, "FFI_BAD_ABI")
+    else if r == Ccode(uint, "FFI_BAD_ABI")
     then buildErrorPacket("libffi: bad ABI")
-    else if r == Ccode(int, "FFI_BAD_ARGTYPE")
+    else if r == Ccode(uint, "FFI_BAD_ARGTYPE")
     then buildErrorPacket("libffi: bad argtype")
     else buildErrorPacket("libffi: unknown");
 
@@ -119,7 +119,7 @@ ffiPrepCif(e:Expr):Expr :=
 			do provide when y.v.i is z:pointerCell do z.v
 			    else ffiTypeVoid;
 		    cif := Ccode(voidPointer, "getmem(sizeof(ffi_cif))");
-		    r := Ccode(int, "ffi_prep_cif((ffi_cif *)", cif,
+		    r := Ccode(uint, "ffi_prep_cif((ffi_cif *)", cif,
 			", FFI_DEFAULT_ABI, ",
 			argtypes, "->len, ",
 			"(ffi_type *) ", x.v, ", ",
@@ -143,7 +143,7 @@ ffiPrepCifVar(e:Expr):Expr :=
 				do provide when y.v.i is z:pointerCell do z.v
 				else ffiTypeVoid;
 			cif := Ccode(voidPointer, "getmem(sizeof(ffi_cif))");
-			r := Ccode(int, "ffi_prep_cif_var((ffi_cif *)", cif,
+			r := Ccode(uint, "ffi_prep_cif_var((ffi_cif *)", cif,
 			    ", FFI_DEFAULT_ABI, ",
 			    toInt(n), ", ",
 			    argtypes, "->len, ",
@@ -250,6 +250,10 @@ ffiIntegerType(e:Expr):Expr := (
     else WrongNumArgs(2));
 setupfun("ffiIntegerType", ffiIntegerType);
 
+gmpFinalizer(obj:voidPointer, clientData:voidPointer):void := (
+    Ccode(void, "(void)", obj);
+    Ccode(void, "mpz_clear((mpz_ptr)", clientData, ")"));
+
 -- returns pointer to integer object with given value
 -- inputs (x:ZZ, y:ZZ, signed:Boolean)
 -- x = value
@@ -270,7 +274,7 @@ ffiIntegerAddress(e:Expr):Expr := (
 			ptr := getMem(pointerSize);
 			Ccode(void, "*(mpz_ptr *)", ptr, " = ", z);
 			Ccode(void, "GC_REGISTER_FINALIZER(", ptr, ", ",
-			    "(GC_finalization_proc)mpz_clear, ", z, ", 0, 0)");
+			    gmpFinalizer, ", ", z, ", 0, 0)");
 			toExpr(ptr))
 		    else when a.2
 		    is signed:Boolean do (
@@ -381,6 +385,10 @@ ffiRealType(e:Expr):Expr := (
     else WrongArgZZ());
 setupfun("ffiRealType", ffiRealType);
 
+mpfrFinalizer(obj:voidPointer, clientData:voidPointer):void := (
+    Ccode(void, "(void)", obj);
+    Ccode(void, "mpfr_clear((mpfr_ptr)", clientData, ")"));
+
 -- returns pointer to real number object with given value
 -- inputs: (x:RR, y:ZZ)
 -- x = value
@@ -400,10 +408,8 @@ ffiRealAddress(e:Expr):Expr := (
 			Ccode(void, "mpfr_set(", z, ", ", x.v, ", MPFR_RNDN)");
 			ptr := getMem(pointerSize);
 			Ccode(void, "*(mpfr_ptr *)", ptr, " = ", z);
-			-- TODO: we get segfaults during garbage collection
-			-- if the following is uncommented
-			-- Ccode(void, "GC_REGISTER_FINALIZER(", ptr, ", ",
-			--  "(GC_finalization_proc)mpfr_clear, ", z, ", 0, 0)");
+			 Ccode(void, "GC_REGISTER_FINALIZER(", ptr, ", ",
+			     mpfrFinalizer, ", ", z, ", 0, 0)");
 			toExpr(ptr))
 		    else if bits == 32 || bits == 64 then (
 			ptr := getMemAtomic(bits / 8);
@@ -554,7 +560,7 @@ ffiGetStructOffsets(e:Expr):Expr :=
 	while Ccode(voidPointer, "(((ffi_type *)", x.v, ")->elements)[", n,
 	    "]") != nullPointer() do n = n + 1;
 	offsets := Ccode(voidPointer, "getmem((", n , ") * sizeof(size_t))");
-	r := Ccode(int, "ffi_get_struct_offsets(FFI_DEFAULT_ABI, ",
+	r := Ccode(uint, "ffi_get_struct_offsets(FFI_DEFAULT_ABI, ",
 	    "(ffi_type *)", x.v, ", (size_t *)", offsets, ")");
 	if r != ffiOk then return ffiError(r);
 	Expr(list(new Sequence len n at i do provide
@@ -574,7 +580,7 @@ ffiStructAddress(e:Expr):Expr := (
 			")->elements)[", n, "]") != nullPointer() do n = n + 1;
 		    offsets := Ccode(voidPointer, "getmem((", n ,
 			") * sizeof(size_t))");
-		    r := Ccode(int, "ffi_get_struct_offsets(FFI_DEFAULT_ABI, ",
+		    r := Ccode(uint, "ffi_get_struct_offsets(FFI_DEFAULT_ABI, ",
 			"(ffi_type *)", x.v, ", (size_t *)", offsets, ")");
 		    if r != ffiOk then return ffiError(r);
 		    result := getMem(Ccode(int, "((ffi_type *)", x.v,
@@ -615,7 +621,7 @@ ffiUnionType(e:Expr):Expr := (
 	for i from 0 to length(a.v) - 1 do (
 	    when a.v.i
 	    is p:pointerCell do (
-		if Ccode(int, "ffi_prep_cif((ffi_cif *)", cif,
+		if Ccode(uint, "ffi_prep_cif((ffi_cif *)", cif,
 		    ", FFI_DEFAULT_ABI, 0, ", p.v, ", NULL)") == ffiOk then (
 		    if Ccode(int, "((ffi_type *)", p.v , ")->size"
 			) > Ccode(int, "((ffi_type *)", x, ")->size"
@@ -666,7 +672,7 @@ ffiFunctionPointerAddress(e:Expr):Expr := (
 		    "ffi_closure_alloc(sizeof(ffi_closure), &", code, ")");
 		if closure == nullPointer() then return buildErrorPacket(
 		    "ffi_closure_alloc() returned NULL");
-		r := Ccode(int, "ffi_prep_closure_loc(", closure, ", ", cif.v,
+		r := Ccode(uint, "ffi_prep_closure_loc(", closure, ", ", cif.v,
 		    ", ", ffiClosureFunction, ", ", f, ", ", code, ")");
 		if r != ffiOk then return ffiError(r);
 		ptr := getMem(pointerSize);
@@ -679,3 +685,19 @@ ffiFunctionPointerAddress(e:Expr):Expr := (
 	else WrongArg(1, "a function"))
     else WrongNumArgs(2));
 setupfun("ffiFunctionPointerAddress", ffiFunctionPointerAddress);
+
+getMemory0(e:Expr):Expr := (
+    when e
+    is a:Sequence
+    do (
+	when a.0
+	is n:ZZcell do (
+	    if !isInt(n) then WrongArgSmallInteger(1)
+	    else when a.1
+	    is atomic:Boolean do (
+		if atomic.v then toExpr(getMemAtomic(toInt(n.v)))
+		else toExpr(getMem(toInt(n.v))))
+	    else WrongArgBoolean(2))
+	else WrongArgZZ(1))
+    else WrongNumArgs(2));
+setupfun("getMemory0", getMemory0);

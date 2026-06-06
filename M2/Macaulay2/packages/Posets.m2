@@ -26,6 +26,7 @@ newPackage(
             },
         DebuggingMode => false,
         PackageExports => {
+	    "Isomorphism",
             "SimplicialComplexes",
             "Graphs",
             "FourTiTwo",
@@ -39,7 +40,6 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2015/7-1/p02.xhtml",
 	     "published article DOI" => "10.2140/jsag.2015.7.9-15",
 	     "published code URI" => "https://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
 	     "release at publication" => "3a8d880a524f36a9668750375bb6079a7b00ea0f",
 	     "version at publication" => "1.1.2",
 	     "volume number" => "7",
@@ -101,7 +101,7 @@ export {
     "augmentPoset",
     "diamondProduct",
     "dropElements",
-    "isomorphism",
+  --"isomorphism",
   --"product",
     "removeIsomorphicPosets",
   --"union",
@@ -571,8 +571,7 @@ dropElements (Poset, Function) := Poset => (P, f) -> dropElements(P, select(P.Gr
 Poset - List := dropElements
 
 -- Inspired by Stembridge's Maple Package
-isomorphism = method()
-isomorphism (Poset, Poset) := HashTable => (P, Q) -> (
+isomorphism (Poset, Poset) := HashTable => o -> (P, Q) -> (
     -- Test for a quick bail-out (also puts the covering relations in the cache).
     if #P_* != #Q_* or #coveringRelations P != #coveringRelations Q then return null;
     -- Partition the vertices based on (#leq, #geq, #covering, #coveredBy).
@@ -1051,7 +1050,7 @@ transitiveOrientation Graph := Poset => opts -> G -> (
         true
         );
     E := toList \ edges G;
-    E = (if opts.Random then random else identity) join(E, reverse \ E);
+    E = (if opts.Random then shuffle else identity) join(E, reverse \ E);
     orientation := new MutableHashTable from apply(E, e -> e => 0);
     k := 0;
     for e in E do if orientation#e === 0 then (
@@ -1482,19 +1481,132 @@ fPolynomial Poset := RingElement => opts -> P -> (
     sum(-1..dim oP, i -> fV#(i+1) * R_0^(i + 1))
     )
 
-greeneKleitmanPartition = method(Options => {symbol Strategy => "antichains"})
+-- This is not exported; it is a helper function for `greeneKleitmanPartition`.
+frankNetwork := (P) -> (
+    -- (Following the notation of Section 8 of [Britz-Fomin, 1999].)
+    -- Essentially, make two copies of V(P), adjoin a source s to one copy and
+    -- a sink t to the other copy. Then form edges (s,x_p) and (x_p,t), as well
+    -- as edges (x_p,y_p') if p >= p' in P.
+    --
+    -- Since we can't compare Symbol == IndexedVariable (e.g., s == x_1), we
+    -- regard this network as a multipartite graph with four parts:
+    --
+    --    Level | Part
+    --    ------------
+    --      1   | source = s
+    --      2   | x_1 .. x_p
+    --      3   | y_1 .. y_p
+    --      4   | sink = t
+    --
+    -- So, we identify each vertex with the label (level, index). For instance, 
+    -- the vertex x_5 corresponds to the vertex (2, 5).
+
+    -- Make the underlying (di)graph of the network.
+    s := (1, 0);
+    t := (4, 0);
+
+    fromSourceEdges := for vertex in P_* list {s, (2, vertex)};
+    comparisonEdges := apply(allRelations P, edge -> {(2, first edge), 
+                                                     (3, last edge)});
+    toSinkEdges := for vertex in P_* list {(3, vertex), t};
+    G := digraph(fromSourceEdges | comparisonEdges | toSinkEdges);
+
+    -- Now, make all edge capacities c(e) equal to 1, with a cost function a(e)
+    -- defined by a(e) = 1 if e = (x_p,y_p); otherwise, a(e) = 0.
+    costFunction := new MutableHashTable from for edge in edges G list edge =>0;
+    for vertex in P_* do costFunction#({(2, vertex), (3, vertex)}) = 1;
+
+    (G, costFunction)
+)
+
+greeneKleitmanPartition = method(Options => {symbol Strategy => "auto"})
 greeneKleitmanPartition Poset := Partition => opts -> P -> (
     if P.cache.?greeneKleitmanPartition then return P.cache.greeneKleitmanPartition;
-    (C, f) := if opts.Strategy === "chains" then (chains P, identity)
-        else if opts.Strategy === "antichains" then (antichains P, conjugate)
-        else error "The option Strategy must either be 'chains' or 'antichains'.";
+    
+    strategy := if opts.Strategy === "auto" then (
+        -- For small posets, chains or antichains is usually quicker.
+        -- Otherwise, Britz-Fomin drastically outperforms.
+        if #P.GroundSet <= 7 then "chains" else "Britz-Fomin"
+    )
+    else if isMember(opts.Strategy, set {"chains", "antichains", "Britz-Fomin"}) then (
+        opts.Strategy
+    )
+    else (
+        error "The option Strategy must be 'auto', 'chains', 'antichains, or 'Britz-Fomin'"
+    );
+
     lambda := {};
-    k := 0;
-    while sum lambda < #P.GroundSet do (
-        lk := max apply(subsets(C, k = k + 1), c -> #unique flatten c);
-        lambda = append(lambda, lk - sum lambda);
+    if isMember(strategy, set {"chains", "antichains"}) then (
+        (C, f) := if strategy === "chains" then (chains P, identity)
+            else if strategy === "antichains" then (antichains P, conjugate);
+        k := 0;
+        while sum lambda < #P.GroundSet do (
+            lk := max apply(subsets(C, k = k + 1), c -> #unique flatten c);
+            lambda = append(lambda, lk - sum lambda);
+            );
+        lambda = f new Partition from lambda;
+    )
+    else (
+        -- (Following the notation of Section 7 of [Britz-Fomin, 1999].)
+        -- Initialize for the Ford-Fulkerson algorithm.
+        (G, cost) := frankNetwork P;
+        s := (1, 0);
+        t := (4, 0);
+        capacity := new MutableHashTable from for edge in edges G list edge => 1;
+        flow := new MutableHashTable from for edge in edges G list edge => 0;
+        potential := new MutableHashTable from for vertex in vertices G list vertex => 0;
+
+        -- We need to build the partition step-by-step.
+        lambdaPart := 0;
+        while sum lambda != #P.GroundSet do (
+            -- Ford-Fulkerson algorithm
+            -- Step MC1
+            G' := digraph(vertices G, {});
+            for edge in edges G do (
+                if potential#(last edge) - potential#(first edge) == cost#edge then (
+                    if flow#edge < capacity#edge then (
+                        G' = addEdges'(G', {edge});
+                    ) 
+                    else if flow#edge > 0 then (
+                        G' = addEdges'(G', {reverse edge});
+                    );
+                );
+            );
+            X := set flatten breadthFirstSearch(G', s);
+            if isMember(t, X) then (
+                -- Step MC2a
+                -- Increase the flow along an s-t path in G' by 1.
+                -- NOTE: The choice of path here *should not* matter, but might as 
+                --       well do it by a shortest path, since `findPaths` requires 
+                --       a distance argument.
+                pathsFromStart := findPaths(G', s, distance(G', s, t));
+                shortestPath := first select(pathsFromStart, somePath -> (first somePath == s) and (last somePath == t));
+                shortestPathAsEdges := apply(drop(shortestPath, -1), drop(shortestPath, 1), (u, v) -> {u, v});
+                for edge in shortestPathAsEdges do (
+                    if flow#?edge then (
+                        flow#edge += 1;
+                    )
+                    else (
+                        flow#(reverse edge) -= 1;
+                    );
+                );
+                -- We increased the value of the flow
+                if lambdaPart > 0 then ( lambda = append(lambda, lambdaPart); );
+            ) 
+            else (
+                -- Step MC2b
+                for vertex in vertices G do (
+                    if not isMember(vertex, X) then (
+                        potential#vertex += 1;
+                    );
+                );
+                -- We increased the value of the potential
+                lambdaPart += 1;
+            );
         );
-    P.cache.greeneKleitmanPartition = f new Partition from lambda
+        lambda = new Partition from reverse lambda;
+    );
+    P.cache.greeneKleitmanPartition = lambda
     )
 
 hPolynomial = method(Options => {symbol VariableName => getSymbol "q"})
@@ -2768,7 +2880,7 @@ doc ///
         (symbol _, Poset, ZZ)
         (symbol _, Poset, List)
         indexLabeling
-        isomorphism
+	(isomorphism, Poset, Poset)
         naturalLabeling
 ///
 
@@ -3062,7 +3174,7 @@ doc ///
             B == divisorPoset (2*3*5*7)
             B == divisorPoset (2^2*3*5)
     SeeAlso
-        isomorphism
+        (isomorphism, Poset, Poset)
         removeIsomorphicPosets
 ///
 
@@ -3167,7 +3279,6 @@ doc ///
 -- isomorphism
 doc ///
     Key
-        isomorphism
         (isomorphism,Poset,Poset)
     Headline
         computes an isomorphism between isomorphic posets
@@ -3256,14 +3367,13 @@ doc ///
             removeIsomorphicPosets L
     SeeAlso
         areIsomorphic
-        isomorphism
+        (isomorphism, Poset, Poset)
         Posets
 ///
 
 -- union
 doc ///
     Key
-        union
         (union,Poset,Poset)
         (symbol +,Poset,Poset)
     Headline
@@ -5085,12 +5195,14 @@ doc ///
         computes the Greene-Kleitman partition of a poset
     Usage
         l = greeneKleitmanPartition P
+        l = greeneKleitmanPartition(P, Strategy => "auto")
         l = greeneKleitmanPartition(P, Strategy => "chains")
         l = greeneKleitmanPartition(P, Strategy => "antichains")
+        l = greeneKleitmanPartition(P, Strategy => "Britz-Fomin")
     Inputs
         P:Poset
         Strategy=>String
-            either "chains" or "antichains"
+            one of "auto", "chains", "antichains", or "Britz-Fomin"
     Outputs
         l:Partition
             the Greene-Kleitman partition of $P$
@@ -5116,6 +5228,17 @@ doc ///
             partition of $n$ with $1$ part.
         Example
             greeneKleitmanPartition chain 10
+        Text
+            When the Strategy is "auto", for small posets, the strategies 
+            "chains" and "antichains" are used as a brute force search is 
+            performed. For larger posets, a max-flow computation is performed 
+            according to [BF01].
+    References
+        @UL {
+	        {"[BF01] Thomas Britz and Sergey Fomin, ",
+    	    HREF("https://doi.org/10.1006/aima.2000.1966", EM "Finite Posets and Ferrer Shapes"),
+	        ", Adv. Math., 158.1 (2001), pp. 86-127."}
+        }@
     SeeAlso
         chains
         antichains
@@ -6652,8 +6775,7 @@ assert(toString flagfPolynomial B === "6*q_0*q_1*q_2*q_3*q_4*q_5*q_6+6*q_0*q_1*q
 --assert(toString flaghPolynomial B === "q_1+q_2+q_3+q_4+q_5+1")
 assert(toString fPolynomial B === "6*q^7+37*q^6+96*q^5+135*q^4+110*q^3+51*q^2+12*q+1")
 assert(toString hPolynomial B === "5*q+1")
---Removed for time purposes (slow!)
---assert(greeneKleitmanPartition B === new Partition from {7,5})
+assert(greeneKleitmanPartition B === new Partition from {7,5})
 assert(moebiusFunction B === new HashTable from {(1,6) => 1, (24,48) => -1, (48,24) => 0, (1,8) => 0, (1,12) => 0, (32,48) => 0, (48,32) => 0, (1,16) => 0, (1,24) => 0, (48,48) => 1, (1,32) => 0, (96,1) => 0, (96,2) => 0, (96,3) => 0, (4,96) => 0, (96,4) => 0, (96,6) => 0, (8,96) => 0, (96,8) => 0, (12,96) => 0, (96,12) => 0, (16,96) => 1, (96,16) => 0, (1,48) => 0, (24,96) => 0, (96,24) => 0, (96,32) => 0, (32,96) => -1, (2,1) => 0, (2,2) => 1, (2,3) => 0, (2,4) => -1, (6,1) => 0, (2,6) => -1, (6,2) => 0, (6,3) => 0, (2,8) => 0, (6,4) => 0, (6,6) => 1, (6,8) => 0, (2,12) => 1, (96,48) => 0, (48,96) => -1, (6,12) => -1, (2,16) => 0, (6,16) => 0, (2,24) => 0, (6,24) => 0, (1,96) => 0, (2,32) => 0, (6,32) => 0, (2,48) => 0, (6,48) => 0, (96,96) => 1, (3,1) => 0, (3,2) => 0, (3,3) => 1, (3,4) => 0, (3,6) => -1, (3,8) => 0, (3,12) => 0, (3,16) => 0, (3,24) => 0, (2,96) => 0, (3,32) => 0, (6,96) => 0, (3,48) => 0, (4,1) => 0, (4,2) => 0, (4,3) => 0, (4,4) => 1, (8,1) => 0, (8,2) => 0, (4,6) => 0, (8,3) => 0, (8,4) => 0, (4,8) => -1, (12,1) => 0, (12,2) => 0, (8,6) => 0, (12,3) => 0, (12,4) => 0, (8,8) => 1, (4,12) => -1, (16,1) => 0, (12,6) => 0, (16,2) => 0, (16,3) => 0, (12,8) => 0, (8,12) => 0, (16,4) => 0, (4,16) => 0, (16,6) => 0, (8,16) => -1, (12,12) => 1, (16,8) => 0, (24,1) => 0, (24,2) => 0, (24,3) => 0, (24,4) => 0, (12,16) => 0, (4,24) => 1, (16,12) => 0, (24,6) => 0, (24,8) => 0, (8,24) => -1, (16,16) => 1, (32,1) => 0, (32,2) => 0, (32,3) => 0, (3,96) => 0, (24,12) => 0, (32,4) => 0, (12,24) => -1, (4,32) => 0, (32,6) => 0, (24,16) => 0, (8,32) => 0, (32,8) => 0, (16,24) => 0, (32,12) => 0, (12,32) => 0, (24,24) => 1, (32,16) => 0, (16,32) => -1, (48,1) => 0, (48,2) => 0, (48,3) => 0, (48,4) => 0, (4,48) => 0, (48,6) => 0, (24,32) => 0, (32,24) => 0, (8,48) => 1, (48,8) => 0, (12,48) => 0, (48,12) => 0, (32,32) => 1, (48,16) => 0, (16,48) => -1, (1,1) => 1, (1,2) => -1, (1,3) => -1, (1,4) => 0})
 assert(toString rankGeneratingFunction B === "q^6+2*q^5+2*q^4+2*q^3+2*q^2+2*q+1")
 assert(toString zetaPolynomial B == "(1/120)*q^6+(1/12)*q^5+(7/24)*q^4+(5/12)*q^3+(1/5)*q^2")
@@ -6726,6 +6848,255 @@ TEST ///
 P = poset({0,1,2,3,4},{{0,2},{2,3},{1,4},{0,4},{1,3}})
 assert(isRanked P == false)
 ///
+
+------------------------------------
+------------------------------------
+-- Tests added in the 2026 test-audit pass: assertions for exported
+-- functions that previously had no test coverage.
+------------------------------------
+------------------------------------
+
+-- hibiIdeal: the Hibi ideal of a poset is a monomial ideal in 2n variables
+-- whose generators biject with the order ideals of the poset.
+TEST ///
+H = hibiIdeal chain 3;
+assert(instance(H, MonomialIdeal))
+assert(numgens ring H == 6)
+-- chain n has n+1 order ideals, hence n+1 generators
+assert(numgens H == 4)
+assert(numgens hibiIdeal chain 4 == 5)
+-- each generator is squarefree of degree n
+assert(all(first entries gens H, m -> first degree m == 3))
+///
+
+-- hibiRing: the toric algebra isomorphic to the Hibi ring of a poset.  For a
+-- chain it is a polynomial ring, and the "kernel" and "4ti2" strategies agree.
+TEST ///
+H = hibiRing chain 4;
+assert(numgens H == 5)
+assert(numgens ideal H == 0)
+Hb = hibiRing booleanLattice 2;
+assert(numgens Hb == 6)
+assert(numgens ideal Hb == 1)
+H2 = hibiRing(booleanLattice 2, Strategy => "4ti2");
+assert(numgens H2 == numgens Hb)
+assert(numgens ideal H2 == numgens ideal Hb)
+///
+
+-- pPartitionRing: the toric algebra isomorphic to the P-partition ring; the
+-- "kernel" and "4ti2" strategies give the same minimally generated algebra.
+TEST ///
+P = poset {{1,2},{2,4},{3,4},{3,5}};
+R = pPartitionRing P;
+assert(instance(R, QuotientRing))
+assert(numgens R == 6)
+assert(numgens ideal R == 1)
+R2 = pPartitionRing(P, Strategy => "4ti2");
+assert(numgens R2 == numgens R)
+assert(numgens ideal R2 == numgens ideal R)
+///
+
+-- dominanceLattice: partitions of n under the dominance order.  For n <= 5 it
+-- is a chain; for n = 6 it is a non-chain lattice.
+TEST ///
+assert(dominanceLattice 2 == chain 2)
+assert(dominanceLattice 3 == chain 3)
+assert(dominanceLattice 4 == chain 5)
+assert(dominanceLattice 5 == chain 7)
+D = dominanceLattice 6;
+assert(#(D.GroundSet) == 11)
+assert(isLattice D)
+assert(D != chain 11)
+///
+
+-- facePoset: the poset of faces of a simplicial complex ordered by inclusion;
+-- the face poset of a (k-1)-simplex is the boolean lattice on k vertices.
+TEST ///
+R = QQ[a,b,c,d];
+F = facePoset simplicialComplex {a*b*c, c*d};
+assert(#(F.GroundSet) == 10)
+assert(#(coveringRelations F) == 15)
+assert(facePoset simplicialComplex {a*b*c} == booleanLattice 3)
+///
+
+-- intersectionLattice: the lattice of intersections of a hyperplane
+-- arrangement, ordered by containment.
+TEST ///
+R = QQ[x,y,z];
+P = intersectionLattice({x+y, x+z, y+z}, R);
+assert(#(P.GroundSet) == 8)
+assert(#(coveringRelations P) == 12)
+assert(isLattice P)
+///
+
+-- ncpLattice / ncPartitions: the non-crossing partition lattice and the list
+-- of non-crossing partitions of an n-set (counted by the Catalan numbers).
+TEST ///
+assert(#(ncPartitions 3) == 5)
+assert(#(ncPartitions 4) == 14)
+assert(#(ncPartitions 5) == 42)
+P = ncpLattice 3;
+assert(#(P.GroundSet) == 5)
+assert(isLattice P)
+assert(#((ncpLattice 4).GroundSet) == 14)
+///
+
+-- partitionLattice / setPartition: the lattice of set-partitions of an n-set
+-- (counted by the Bell numbers) and the underlying list of set-partitions.
+TEST ///
+assert(#(setPartition {2,3,5}) == 5)
+assert(#(setPartition 4) == 15)
+P = partitionLattice 3;
+assert(#(P.GroundSet) == 5)
+assert(isLattice P)
+assert(#((partitionLattice 4).GroundSet) == 15)
+-- for n = 4 the partition lattice and the non-crossing partition lattice differ
+assert(ncpLattice 4 != partitionLattice 4)
+///
+
+-- plueckerPoset: a poset on the subsets of {0,...,n-1} whose incomparable
+-- pairs encode the initial ideal of the Plücker relations.
+TEST ///
+P = plueckerPoset 4;
+assert(#(P.GroundSet) == 16)
+assert(#(coveringRelations P) == 20)
+///
+
+-- randomPoset: a random poset on n vertices with relation probability Bias.
+-- Bias => 1 forces a total order; Bias => 0 forces an antichain.
+TEST ///
+setRandomSeed 0;
+assert(#((randomPoset 8).GroundSet) == 8)
+assert(randomPoset(7, Bias => 1.0) == chain 7)
+A = randomPoset(7, Bias => 0.0);
+assert(#(coveringRelations A) == 0)
+assert(A == poset(toList(1..7), {}))
+///
+
+-- youngSubposet: a finite subposet of Young's lattice, given either by a
+-- partition-size bound or by a closed interval of partitions.
+TEST ///
+P = youngSubposet 4;
+assert(#(P.GroundSet) == 12)
+Q = youngSubposet({3,1}, {4,2,1});
+assert(#(Q.GroundSet) == 8)
+assert(#(coveringRelations Q) == 12)
+///
+
+-- texPoset: a TikZ-figure of the Hasse diagram of a poset, as a string;
+-- tex P is the same with no options.
+TEST ///
+S = texPoset booleanLattice 2;
+assert(instance(S, String))
+assert(match("tikzpicture", S))
+assert(instance(tex booleanLattice 2, String))
+assert(instance(texPoset(booleanLattice 2, Jitter => true), String))
+assert(instance(texPoset(booleanLattice 2, SuppressLabels => false), String))
+///
+
+-- gapConvertPoset: converts between Macaulay2 posets and GAP's poset format;
+-- converting back from GAP format augments the poset with a min and a max.
+TEST ///
+S = gapConvertPoset chain 3;
+assert(instance(S, String))
+assert(gapConvertPoset S == augmentPoset chain 3)
+-- the GAP string from the package documentation encodes augmented B_3
+Sdoc = "[ [ 3 ], [ 10 ], [ 4, 7, 9 ], [ 5, 6 ], [ 2 ], [ 2 ], [ 5, 8 ], [ 2 ], [ 6, 8 ], [  ] ]";
+assert(gapConvertPoset Sdoc == augmentPoset booleanLattice 3)
+///
+
+-- outputTexPoset: writes a LaTeX/TikZ representation of a poset to a file.
+TEST ///
+fn = temporaryFileName() | ".tex";
+outputTexPoset(booleanLattice 2, fn);
+assert(fileExists fn)
+assert(#(get fn) > 0)
+removeFile fn;
+///
+
+-- setPrecompute / setSuppressLabels: toggle the package-wide configuration
+-- flags, each returning the previous setting.
+TEST ///
+old = setPrecompute false;
+assert(instance(old, Boolean))
+-- setting it again returns the value just installed, and restores the original
+assert(setPrecompute old === false)
+oldSL = setSuppressLabels false;
+assert(instance(oldSL, Boolean))
+assert(setSuppressLabels oldSL === false)
+///
+
+-- the AntisymmetryStrategy option of the poset constructor: the "rank",
+-- "none", and "digraph" strategies agree on a valid poset, and only "none"
+-- skips the anti-symmetry check.
+TEST ///
+G = {a,b,c,d};
+R = {{a,b},{b,c},{a,d},{d,c}};
+assert(poset(G, R, AntisymmetryStrategy => "rank") == poset(G, R, AntisymmetryStrategy => "none"))
+assert(poset(G, R, AntisymmetryStrategy => "rank") == poset(G, R, AntisymmetryStrategy => "digraph"))
+-- a cyclic relation set is rejected by "rank" and by "digraph"
+assert(try (poset({a,b}, {{a,b},{b,a}}, AntisymmetryStrategy => "rank"); false) else true)
+assert(try (poset({a,b}, {{a,b},{b,a}}, AntisymmetryStrategy => "digraph"); false) else true)
+-- but "none" skips the check
+assert(try (poset({a,b}, {{a,b},{b,a}}, AntisymmetryStrategy => "none"); true) else false)
+-- an unknown strategy is an error
+assert(try (poset(G, R, AntisymmetryStrategy => "bogus"); false) else true)
+///
+
+-- labelPoset: relabels the ground set of a poset, producing an isomorphic copy.
+TEST ///
+P = chain 5;
+l = hashTable {1 => a, 2 => b, 3 => c, 4 => d, 5 => e};
+Q = labelPoset(P, l);
+assert(Q.GroundSet == {a,b,c,d,e})
+assert(P == Q)
+///
+
+-- isComparabilityGraph: a graph is a comparability graph iff it has a
+-- transitive orientation; a non-triangular odd cycle never does.
+TEST ///
+assert(isComparabilityGraph comparabilityGraph booleanLattice 3)
+assert(isComparabilityGraph comparabilityGraph chain 4)
+assert(not isComparabilityGraph graph {{1,2},{2,3},{3,4},{4,5},{1,5}})
+///
+
+-- (height, Poset): one less than the size of a longest maximal chain.
+TEST ///
+assert(height chain 5 == 4)
+assert(height booleanLattice 3 == 3)
+assert(height chain 1 == 0)
+-- an antichain has height 0
+assert(height poset({1,2,3}, {}) == 0)
+///
+
+-- (isomorphism, Poset, Poset): an isomorphism hash table when the posets are
+-- isomorphic, and null otherwise.
+TEST ///
+iso = isomorphism(booleanLattice 2, booleanLattice 2);
+assert(instance(iso, HashTable))
+assert(# keys iso == 4)
+assert(isomorphism(chain 2, chain 3) === null)
+assert(areIsomorphic(booleanLattice 2, booleanLattice 2))
+assert(not areIsomorphic(chain 2, chain 3))
+///
+
+-- diamondProduct and hasseDiagram: an invariant-level check (vertex and edge
+-- counts) of the kind that can stand in for a brittle literal comparison.
+TEST ///
+B = booleanLattice 2;
+-- the Hasse diagram of B_2 is a 4-cycle of covering relations
+assert(#(vertices hasseDiagram B) == 4)
+assert(#(edges hasseDiagram B) == 4)
+D = diamondProduct(B, B);
+assert(isLattice D)
+assert(#(D.GroundSet) == 10)
+assert(#(coveringRelations D) == 16)
+-- hasseDiagram has one directed edge per covering relation
+H = hasseDiagram D;
+assert(#(vertices H) == 10)
+assert(#(edges H) == 16)
+///
+
 
 end;
 

@@ -12,7 +12,7 @@
 #include "comp.hpp"                                       // for Computation
 #include "mat-linalg.hpp"                                 // for DMatLinAlg
 #include "dmat.hpp"                                       // for DMat
-#include "engine-exports.h"                               // for M2_arrayint
+#include "interface/m2-types.h"                           // for M2_arrayint
 #include "error.h"                                        // for ERROR
 #include "exceptions.hpp"                                 // for engine_error
 #include "freemod.hpp"                                    // for FreeModule
@@ -33,7 +33,6 @@
 #include "schreyer-resolution/res-schreyer-frame.hpp"     // for SchreyerFrame
 #include "schreyer-resolution/res-schreyer-order.hpp"     // for ResSchreyer...
 #include "timing.hpp"                                     // for timer, seconds
-#include <gmp.h>                                          // for mpz_clear
 #include <cstdlib>                                        // for exit, size_t
 #include <chrono>                                         // for common_type...
 #include <iostream>                                       // for operator<<

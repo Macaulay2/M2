@@ -77,6 +77,7 @@ namespace MatrixOps {
 template <typename Mat>
 size_t rank(const Mat& A)
 {
+  (void) A;
   throw exc::engine_error(
       "'rank' not implemented for this kind of matrix over this ring");
   return 0;
@@ -90,6 +91,8 @@ size_t rank(const Mat& A)
 template <typename Mat>
 void determinant(const Mat& A, typename Mat::ElementType& result_det)
 {
+  (void) A;
+  (void) result_det;
   throw exc::engine_error(
       "'determinant' not implemented for this kind of matrix over this ring");
 }
@@ -111,6 +114,8 @@ void determinant(const Mat& A, typename Mat::ElementType& result_det)
 template <typename Mat>
 bool inverse(const Mat& A, Mat& result_inv)
 {
+  (void) A;
+  (void) result_inv;
   throw exc::engine_error(
       "'invert' not implemented for this kind of matrix over this ring");
 }
@@ -127,6 +132,8 @@ bool inverse(const Mat& A, Mat& result_inv)
 template <typename Mat>
 size_t rowReducedEchelonForm(const Mat& A, Mat& result_rref)
 {
+  (void) A;
+  (void) result_rref;
   throw exc::engine_error(
       "'rowReducedEchelonForm' not implemented for this kind of matrix over "
       "this ring");
@@ -148,6 +155,9 @@ size_t rowReducedEchelonForm(const Mat& A, Mat& result_rref)
 template <typename Mat>
 void mult(const Mat& A, const Mat& B, Mat& result_product)
 {
+  (void) A;
+  (void) B;
+  (void) result_product;
   throw exc::engine_error(
       "'mult matrices' not implemented for this kind of matrix over this ring");
 }
@@ -168,6 +178,8 @@ void mult(const Mat& A, const Mat& B, Mat& result_product)
 template <typename Mat>
 size_t nullSpace(const Mat& A, Mat& result_nullspace)
 {
+  (void) A;
+  (void) result_nullspace;
   throw exc::engine_error(
       "'nullSpace' not implemented for this kind of matrix over this ring");
 }
@@ -176,6 +188,9 @@ size_t nullSpace(const Mat& A, Mat& result_nullspace)
 template <typename Mat>
 bool solveLinear(const Mat& A, const Mat& B, Mat& X)
 {
+  (void) A;
+  (void) B;
+  (void) X;
   throw exc::engine_error(
       "'solveLinear' not implemented for this kind of matrix over this ring");
 }
@@ -188,6 +203,9 @@ bool solveLinear(const Mat& A, const Mat& B, Mat& X)
 template <typename Mat>
 bool solveInvertible(const Mat& A, const Mat& B, Mat& X)
 {
+  (void) A;
+  (void) B;
+  (void) X;
   throw exc::engine_error(
       "'solveInvertible' not implemented for this kind of matrix over this "
       "ring");
@@ -208,6 +226,8 @@ bool solveInvertible(const Mat& A, const Mat& B, Mat& X)
 template <typename Mat>
 M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
 {
+  (void) A;
+  (void) row_profile;
   throw exc::engine_error(
       "'rankProfile' not implemented for this kind of matrix over this ring");
 }
@@ -221,6 +241,9 @@ template <typename Mat>
 void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
 // C = C + A*B
 {
+  (void) C;
+  (void) A;
+  (void) B;
   throw exc::engine_error(
       "'addMultipleTo' not implemented for this kind of matrix over this ring");
 }
@@ -234,6 +257,9 @@ template <typename Mat>
 void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
 // C = C - A*B
 {
+  (void) C;
+  (void) A;
+  (void) B;
   throw exc::engine_error(
       "'subtractMultipleTo' not implemented for this kind of matrix over this "
       "ring");
@@ -242,6 +268,9 @@ void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
 template <typename Mat>
 M2_arrayintOrNull LU(const Mat& A, Mat& L, Mat& U)
 {
+  (void) A;
+  (void) L;
+  (void) U;
   throw exc::engine_error(
       "'LU' not implemented for this kind of matrix over this ring");
 }
@@ -249,6 +278,10 @@ M2_arrayintOrNull LU(const Mat& A, Mat& L, Mat& U)
 template <typename Mat>
 M2_arrayintOrNull LUincremental(std::vector<size_t>& P, Mat& LU, const Mat& v, int i)
 {
+  (void) P;
+  (void) LU;
+  (void) v;
+  (void) i;
   throw exc::engine_error(
       "'LUincremental' not implemented for this kind of matrix over this ring");
 }
@@ -256,6 +289,10 @@ M2_arrayintOrNull LUincremental(std::vector<size_t>& P, Mat& LU, const Mat& v, i
 template <typename Mat>
 void triangularSolve(Mat& Lv, Mat& x, int m, int strategy)
 {
+  (void) Lv;
+  (void) x;
+  (void) m;
+  (void) strategy;
   throw exc::engine_error(
       "'triangularSolve' not implemented for this kind of matrix over this "
       "ring");
@@ -264,6 +301,8 @@ void triangularSolve(Mat& Lv, Mat& x, int m, int strategy)
 template <typename Mat, typename Mat2>
 bool eigenvalues(const Mat& A, Mat2& eigenvals)
 {
+  (void) A;
+  (void) eigenvals;
   throw exc::engine_error(
       "'eigenvalues' not implemented for this kind of matrix over this ring");
 }
@@ -271,6 +310,8 @@ bool eigenvalues(const Mat& A, Mat2& eigenvals)
 template <typename Mat, typename Mat2>
 bool eigenvaluesHermitian(const Mat& A, Mat2& eigenvals)
 {
+  (void) A;
+  (void) eigenvals;
   throw exc::engine_error(
       "'eigenvalues' not implemented for this kind of matrix over this ring");
 }
@@ -278,6 +319,9 @@ bool eigenvaluesHermitian(const Mat& A, Mat2& eigenvals)
 template <typename Mat, typename Mat2, typename Mat3>
 bool eigenvectors(const Mat& A, Mat2& eigenvals, Mat3& eigenvecs)
 {
+  (void) A;
+  (void) eigenvals;
+  (void) eigenvecs;
   throw exc::engine_error(
       "'eigenvectors' not implemented for this kind of matrix over this ring");
 }
@@ -285,6 +329,9 @@ bool eigenvectors(const Mat& A, Mat2& eigenvals, Mat3& eigenvecs)
 template <typename Mat, typename Mat2, typename Mat3>
 bool eigenvectorsHermitian(const Mat& A, Mat2& eigenvals, Mat3& eigenvecs)
 {
+  (void) A;
+  (void) eigenvals;
+  (void) eigenvecs;
   throw exc::engine_error(
       "'eigenvectors' not implemented for this kind of matrix over this ring");
 }
@@ -292,6 +339,10 @@ bool eigenvectorsHermitian(const Mat& A, Mat2& eigenvals, Mat3& eigenvecs)
 template <typename Mat>
 bool leastSquares(const Mat& A, const Mat& B, Mat& X, bool assume_full_rank)
 {
+  (void) A;
+  (void) B;
+  (void) X;
+  (void) assume_full_rank;
   throw exc::engine_error(
       "'leastSquares' not implemented for this kind of matrix over this ring");
 }
@@ -299,6 +350,11 @@ bool leastSquares(const Mat& A, const Mat& B, Mat& X, bool assume_full_rank)
 template <typename Mat, typename Mat2>
 bool SVD(const Mat& A, Mat2& Sigma, Mat& U, Mat& Vt, int strategy)
 {
+  (void) A;
+  (void) Sigma;
+  (void) U;
+  (void) Vt;
+  (void) strategy;
   throw exc::engine_error(
       "'SVD' not implemented for this kind of matrix over this ring");
 }
@@ -306,6 +362,10 @@ bool SVD(const Mat& A, Mat2& Sigma, Mat& U, Mat& Vt, int strategy)
 template <typename Mat, typename Mat2, typename Mat3>
 bool QR(const Mat& A, Mat2& Q, Mat3& R, bool return_QR)
 {
+  (void) A;
+  (void) Q;
+  (void) R;
+  (void) return_QR;
   throw exc::engine_error(
       "'QR' not implemented for this kind of matrix over this ring");
 }
@@ -313,6 +373,8 @@ bool QR(const Mat& A, Mat2& Q, Mat3& R, bool return_QR)
 template <typename T>
 void clean(gmp_RR epsilon, T& mat)
 {
+  (void) epsilon;
+  (void) mat;
   throw exc::engine_error(
       "'clean' not implemented for this kind of matrix over this ring");
 }
@@ -320,6 +382,8 @@ void clean(gmp_RR epsilon, T& mat)
 template <typename T>
 void increase_norm(gmp_RRmutable nm, const T& mat)
 {
+  (void) nm;
+  (void) mat;
   throw exc::engine_error(
       "'norm' not implemented for this kind of matrix over this ring");
 }
@@ -332,32 +396,20 @@ template <typename RT>
 void mult(const DMat<RT>& A, const DMat<RT>& B, DMat<RT>& result_product)
 {
   // printf("entering dmat mult\n");
-  typedef typename RT::ElementType ElementType;
-  typedef typename DMat<RT>::ConstIterator ConstIterator;
-
   assert(A.numColumns() == B.numRows());
   assert(A.numRows() == result_product.numRows());
   assert(B.numColumns() == result_product.numColumns());
 
-  ElementType* result = result_product.array();
-
   typename RT::Element tmp(A.ring());
-  // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
   for (size_t i = 0; i < A.numRows(); i++)
     for (size_t j = 0; j < B.numColumns(); j++)
       {
-        ConstIterator i1 = A.rowBegin(i);
-        ConstIterator iend = A.rowEnd(i);
-        ConstIterator j1 = B.columnBegin(j);
-
-        while (i1 != iend)
+        auto& val = result_product.entry(i,j);
+        for (size_t k = 0; k < A.numColumns(); ++k)
           {
-            A.ring().mult(tmp, *i1, *j1);
-            A.ring().add(*result, *result, tmp);
-            ++i1;
-            ++j1;
+            A.ring().mult(tmp, A.entry(i,k), B.entry(k,j));
+            A.ring().add(val, val, tmp);
           }
-        result++;
       }
 }
 
@@ -372,32 +424,20 @@ template <typename RT>
 void subtractMultipleTo(DMat<RT>& C, const DMat<RT>& A, const DMat<RT>& B)
 // C = C - A*B
 {
-  typedef typename RT::ElementType ElementType;
-  typedef typename DMat<RT>::ConstIterator ConstIterator;
-
   assert(A.numColumns() == B.numRows());
   assert(A.numRows() == C.numRows());
   assert(B.numColumns() == C.numColumns());
 
-  ElementType* result = C.array();
-
   typename RT::Element tmp(A.ring());
-  // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
   for (size_t i = 0; i < A.numRows(); i++)
     for (size_t j = 0; j < B.numColumns(); j++)
       {
-        ConstIterator i1 = A.rowBegin(i);
-        ConstIterator iend = A.rowEnd(i);
-        ConstIterator j1 = B.columnBegin(j);
-
-        while (i1 != iend)
+        auto& val = C.entry(i,j);
+        for (size_t k = 0; k < A.numColumns(); ++k)
           {
-            A.ring().mult(tmp, *i1, *j1);
-            A.ring().subtract(*result, *result, tmp);
-            ++i1;
-            ++j1;
+            A.ring().mult(tmp, A.entry(i,k), B.entry(k,j));
+            A.ring().subtract(val, val, tmp);
           }
-        result++;
       }
 }
 
@@ -601,30 +641,42 @@ void subtractMultipleTo(DMatZZpFFPACK& C,
 
 inline M2_arrayintOrNull LU(const DMatZZGMP& A, DMatZZGMP& L, DMatZZGMP& U)
 {
+  (void) A;
+  (void) L;
+  (void) U;
   throw exc::engine_error(
       "'LU' not implemented for this kind of matrix over this ring");
 }
 
 inline M2_arrayintOrNull rankProfile(const DMatZZGMP& A, bool row_profile)
 {
+  (void) A;
+  (void) row_profile;
   throw exc::engine_error(
       "'rankProfile' not implemented for this kind of matrix over this ring");
 }
 
 inline bool inverse(const DMatZZGMP& A, DMatZZGMP& result_inv)
 {
+  (void) A;
+  (void) result_inv;
   throw exc::engine_error(
       "'invert' not implemented for this kind of matrix over this ring");
 }
 
 inline size_t nullSpace(const DMatZZGMP& A, DMatZZGMP& result_nullspace)
 {
+  (void) A;
+  (void) result_nullspace;
   throw exc::engine_error(
       "'nullSpace' not implemented for this kind of matrix over this ring");
 }
 
 inline bool solveLinear(const DMatZZGMP& A, const DMatZZGMP& B, DMatZZGMP& X)
 {
+  (void) A;
+  (void) B;
+  (void) X;
   throw exc::engine_error(
       "'solveLinear' not implemented for this kind of matrix over this ring");
 }
@@ -633,6 +685,9 @@ inline bool solveInvertible(const DMatZZGMP& A,
                             const DMatZZGMP& B,
                             DMatZZGMP& X)
 {
+  (void) A;
+  (void) B;
+  (void) X;
   throw exc::engine_error(
       "'solveInvertible' not implemented for this kind of matrix over this "
       "ring");
@@ -744,6 +799,8 @@ inline bool solveLinear(const DMatZZ& A, const DMatZZ& B, DMatZZ& X)
 
 inline M2_arrayintOrNull rankProfile(const DMatZZ& A, bool row_profile)
 {
+  (void) A;
+  (void) row_profile;
   throw exc::engine_error(
       "'rankProfile' not implemented for this kind of matrix over this ring");
 }
@@ -1055,12 +1112,17 @@ inline bool solveLinear(const DMatQQFlint& A,
   // fmpq_mat_solve doesn't declare params const
   // DMatQQFlint& B1 = const_cast<DMatQQFlint&>(B);
   //    return fmpq_mat_solve(X.fmpq_mat(), B1.fmpq_mat(), A1.fmpq_mat());
+  (void) A;
+  (void) B;
+  (void) X;
   return false;
 }
 
 inline M2_arrayintOrNull rankProfile(const DMatQQFlint& A, bool row_profile)
 {
   // TODO: WRITE ME
+  (void) A;
+  (void) row_profile;
   throw exc::engine_error(
       "'rankProfile' not implemented for this kind of matrix over this ring");
 }
@@ -1179,16 +1241,20 @@ inline bool QR(const DMatCC& A, DMatCC& Q, DMatCC& R, bool return_QR)
 
 inline void clean(gmp_RR epsilon, DMatRR& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().zeroize_tiny(epsilon, mat.entry(r,c));
+      }
 }
 
 inline void increase_norm(gmp_RRmutable norm, const DMatRR& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().increase_norm(norm, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().increase_norm(norm, mat.entry(r,c));
+      }
 }
 
 ////////
@@ -1264,16 +1330,20 @@ inline bool SVD(const DMatCC& A,
 
 inline void clean(gmp_RR epsilon, DMatCC& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().zeroize_tiny(epsilon, mat.entry(r,c));
+      }
 }
 
 inline void increase_norm(gmp_RRmutable norm, const DMatCC& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().increase_norm(norm, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().increase_norm(norm, mat.entry(r,c));
+      }
 }
 
 /////////
@@ -1309,6 +1379,7 @@ inline bool leastSquares(const DMatRRR& A,
   DMatRRR& X,
   bool assume_full_rank)
 {
+  (void) assume_full_rank;
   return EigenM2::least_squares(&A, &B, &X);
 }
 
@@ -1324,16 +1395,20 @@ inline bool SVD(const DMatRRR& A,
 
 inline void clean(gmp_RR epsilon, DMatRRR& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().zeroize_tiny(epsilon, mat.entry(r,c));
+      }
 }
 
 inline void increase_norm(gmp_RRmutable norm, const DMatRRR& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().increase_norm(norm, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().increase_norm(norm, mat.entry(r,c));
+      }
 }
 
 /////////
@@ -1369,6 +1444,7 @@ inline bool leastSquares(const DMatCCC& A,
   DMatCCC& X,
   bool assume_full_rank)
 {
+  (void) assume_full_rank;
   return EigenM2::least_squares(&A, &B, &X);
 }
 
@@ -1384,17 +1460,22 @@ inline bool SVD(const DMatCCC& A,
 
 inline void clean(gmp_RR epsilon, DMatCCC& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().zeroize_tiny(epsilon, mat.entry(r,c));
+      }
 }
 
 inline void increase_norm(gmp_RRmutable norm, const DMatCCC& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().increase_norm(norm, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().increase_norm(norm, mat.entry(r,c));
+      }
 }
+
 };  // namespace MatrixOps
 
 #endif

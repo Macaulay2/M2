@@ -83,7 +83,8 @@ ring_elem sagbi::subduct1(int numslots,
     MatrixConstructor matT(T->make_FreeModule(1), 1);
     MatrixConstructor matS(S->make_FreeModule(1), 1);
     bool breakFlag = false;
-    
+
+    (void) numslots;
     while ((f != nullptr) && (breakFlag == false))
     {
         // tensorRingg = S#"inclusionAmbient" liftg

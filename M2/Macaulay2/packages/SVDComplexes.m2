@@ -22,7 +22,7 @@ newPackage(
             },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
 	Keywords => {"Homological Algebra", "Commutative Algebra"},
-	PackageExports => {"LLLBases"},
+	PackageExports => {"LLLBases", "Complexes"},
         DebuggingMode => false
         )
 
@@ -49,56 +49,17 @@ export {
 -- Some basic functions that should not be here --
 -- Move these to the core? -----------------------
 --------------------------------------------------
-debug Core
+--debug Core
 
-concentration = method()
-concentration ChainComplex := C -> (
-    goodspots := select(spots C, i -> C_i != 0);
-    if #goodspots == 0 then (0,0) else (min goodspots, max goodspots)
+clean(RR, Complex) := (epsilon, C) -> (
+    (loC, hiC) := concentration C;
+    if loC === hiC then return C;
+    complex hashTable for i from loC + 1 to hiC list i => clean(epsilon, C.dd_i)
     )
 
-chainComplex(HashTable) := (maps) -> (
-    -- maps should be a HashTable with keys integers.  values are maps at that spot.
-    rgs := (values maps)/ring//unique;
-    if #rgs != 1 then error "expected matrices over the same ring";
-    R := rgs#0;
-    C := new ChainComplex;
-    C.ring = R;
-    for i in keys maps do (
-        f := maps#i;
-        F := source f;
-        G := target f;
-        if C#?i then (if C#i =!= F then error("different modules at index "|i))
-        else C#i = F;
-        if C#?(i-1) then (if C#(i-1) =!= G then error("different modules at index "|i-1))
-        else C#(i-1) = G;
-        );
-    C.dd.cache = new CacheTable;
-    lo := min keys maps - 1;
-    hi := max keys maps;
-    for i from lo+1 to hi do C.dd#i = if maps#?i then maps#i else map(C_i, C_(i-1), 0);
-    C
-    )
-
-newChainComplexMap = method()
-newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
-     f := new ChainComplexMap;
-     f.cache = new CacheTable;
-     f.source = src;
-     f.target = tar;
-     f.degree = 0;
-     goodspots := select(spots src, i -> src_i != 0);
-     scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
-     f
-    )
-
-clean(RR, ChainComplex) := (epsilon, C) -> (
-    chainComplex hashTable for i from min C + 1 to max C list i => clean(epsilon, C.dd_i)
-    )
-
-clean(RR, ChainComplexMap) := (epsilon, f) -> (
+clean(RR, ComplexMap) := (epsilon, f) -> (
     H := hashTable for k in keys f list if instance(k,ZZ) then k => clean(epsilon, f_k) else continue;
-    newChainComplexMap(clean(epsilon, target f), clean(epsilon, source f), H)
+    map(clean(epsilon, target f), clean(epsilon, source f), H)
     )
 
 numericRank = method()
@@ -140,7 +101,7 @@ randomSL(ZZ) := opts -> n -> randomUpper(n,opts) * transpose randomUpper(n,opts)
 -----------------------------------------------
 
 laplacians = method()
-laplacians ChainComplex := (L) -> (
+laplacians Complex := (L) -> (
       laps := new MutableHashTable;
       for i from min L to max L do (
 	  laps#i=((transpose L.dd_(i))*L.dd_(i) + (L.dd_(i+1) * (transpose L.dd_(i+1)))));
@@ -170,7 +131,7 @@ SVDComplex = method(Options => {
         }
     )
 
-SVDComplex ChainComplex := opts -> (C) -> (
+SVDComplex Complex := opts -> (C) -> (
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
     (lo, hi) := concentration C;
     if lo === hi then (
@@ -221,10 +182,10 @@ SVDComplex ChainComplex := opts -> (C) -> (
             for i from 0 to rks#ell-1 do m_(rks#(ell-1)+i, i) = Sigmas#ell#i;
             matrix m -- TODO: make this via diagonal matrices and block matrices.
             );
-        sourceComplex := (chainComplex SigmaMatrices);
+        sourceComplex := (complex SigmaMatrices);
 	-- transpose all ortho matrices to get the map in the right direction 
 	for i from lo to hi do Orthos#i=transpose Orthos#i;
-        result := newChainComplexMap(C, sourceComplex,  new HashTable from Orthos);
+        result := map(C, sourceComplex,  new HashTable from Orthos);
         return ( new HashTable from hs,result);--,
 	 new HashTable from hs, new HashTable from smallestSing;
         );
@@ -273,17 +234,17 @@ SVDComplex ChainComplex := opts -> (C) -> (
 	    Orthos#ell = Orthos#ell * matrix d;
 	    matrix m
             );
-	sourceComplex = (chainComplex SigmaMatrices);
+	sourceComplex = (complex SigmaMatrices);
 	-- do not transpose all ortho matrices to get the map in the right direction 
         -- for i from lo to hi do Orthos#i=transpose Orthos#i;
-        U = newChainComplexMap(C, sourceComplex,  new HashTable from Orthos);
+        U = map(C, sourceComplex,  new HashTable from Orthos);
 	h := new HashTable from hs;
     	return(h,U);
 	);
     error "expected Strategy=>Projection or Strategy=>Laplacian"
     )
 
-SVDComplex(ChainComplex,ChainComplex) := opts -> (C,C') -> (
+SVDComplex(Complex,Complex) := opts -> (C,C') -> (
     -- returns a hash table of the ranks of the homology of C
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
     (lo, hi) := concentration C;
@@ -299,6 +260,8 @@ SVDComplex(ChainComplex,ChainComplex) := opts -> (C,C') -> (
     sigma1 := null; sigma1' := null;
     U := null; U' := null;
     Vt := null;Vt' := null;
+    if opts.Strategy == symbol Laplacian then 
+        error "not implemented for complexes in two precisions";
     if opts.Strategy == symbol Projection then (
         P0 := mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
         P0' := mutableIdentity(ring C, rank C_lo);
@@ -334,19 +297,17 @@ SVDComplex(ChainComplex,ChainComplex) := opts -> (C,C') -> (
             for i from 0 to rks#ell-1 do m_(rks#(ell-1)+i, i) = Sigmas#ell#i;
             matrix m -- TODO: make this via diagonal matrices and block matrices.
             );
-        sourceComplex := (chainComplex SigmaMatrices);
+        sourceComplex := (complex SigmaMatrices);
 	-- transpose all ortho matrices to get the map in the right direction 
 	for i from lo to hi do Orthos#i=transpose Orthos#i;
-        result := newChainComplexMap(C, sourceComplex,  new HashTable from Orthos);
-        return ( new HashTable from hs,result);--,
-	-- new HashTable from hs, new HashTable from smallestSing;
-	);   
-    if opts.Strategy == symbol Laplacian then error "not implemented for complexes in two precisions";
+        result := map(C, sourceComplex,  new HashTable from Orthos);
+        (new HashTable from hs, result)
+	)
     )
 
 
 SVDHomology = method (Options => options SVDComplex)
-SVDHomology ChainComplex := opts -> (C) -> (
+SVDHomology Complex := opts -> (C) -> (
     -- returns a hash table of the ranks of the homology of C
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
     (lo, hi) := concentration C;
@@ -421,7 +382,7 @@ SVDHomology ChainComplex := opts -> (C) -> (
     )
 
 
-SVDHomology(ChainComplex,ChainComplex) := opts -> (C,C') -> (
+SVDHomology(Complex,Complex) := opts -> (C,C') -> (
     -- returns a hash table of the ranks of the homology of C
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
     (lo, hi) := concentration C;
@@ -482,7 +443,7 @@ h
 Sigma =source U
 Sigma.dd_0
 errors=apply(toList(min CR+1..max CR),ell->C.dd_ell-U_(ell-1)*Sigma.dd_ell*transpose U_ell);
-maximalEntry chainComplex errors
+maximalEntry complex errors
 
 
 elapsedTime (h,U)=SVDComplex(CR,Strategy=>Laplacian);
@@ -490,12 +451,12 @@ h
 SigmaL =source U
 maximalEntry(SigmaL.dd_1 -Sigma.dd_1)
 errors=apply(toList(min C+1..max C),ell->C.dd_ell-U_(ell-1)*SigmaL.dd_ell*transpose U_ell);
-maximalEntry chainComplex errors
+maximalEntry complex errors
 
 ///
 
 projectToComplex=method()
-projectToComplex(ChainComplex,HashTable) := (B,hs) -> (
+projectToComplex(Complex,HashTable) := (B,hs) -> (
      -- returns a hash table of the ranks of the homology of C
     if ring B =!= RR_53 then error "excepted chain complex over the reals RR_53";
     (lo, hi) := concentration B;
@@ -538,10 +499,10 @@ projectToComplex(ChainComplex,HashTable) := (B,hs) -> (
      for i from lo to hi do Orthos#i=transpose Orthos#i;
      As := hashTable for ell from lo+1 to hi list ell => (
 	    Orthos#(ell-1)*SigmaMatrices#ell* transpose Orthos#ell);
-     return chainComplex As)
+     return complex As)
 
 euclideanDistance=method()
-euclideanDistance(ChainComplex,ChainComplex) := (A,B) -> (
+euclideanDistance(Complex,Complex) := (A,B) -> (
     (lo,hi) := (min A, max A);
     if (lo,hi) != (min B,max B) then error "expect complexes of the same range";
     for i from lo to hi do if  A_i =!= B_i then  error "expected complexe with free modules of the same ranks";
@@ -615,23 +576,27 @@ for i from 1 to 3 list maximalEntry(B.dd_i-A.dd_i)
         
 maxEntry = method()
 maxEntry(Matrix) := (m) -> (flatten entries m)/abs//max
-maxEntry(ChainComplexMap) := (F) -> max for m in spots F list maxEntry(F_m)
+maxEntry(ComplexMap) := (F) -> (
+    (lo, hi) := concentration F;
+    max for m from lo to hi list maxEntry(F_m)
+    )
 
 checkSVDComplex = (C, Fhs) -> (
     -- routine to find the smallest errors which occur.
     -- where here (F,hs) = SVDComplex C, C is a complex over RR_53.
     (F,hs, minsing) := Fhs;
-    debug Core;
+    (loF, hiF) := concentration F;
+    --debug Core;
     tar2 := (target F).dd^2;
     src2 := (source F).dd^2;
     val1 := maxEntry tar2;
     val2 := maxEntry src2;
-    vals3 := for m in spots F list (flatten entries (((transpose F_m) * F_m) - id_(source F_m)))/abs//max;
-    vals4 := for i in spots F list (
+    vals3 := for m from loF to hiF list (flatten entries (((transpose F_m) * F_m) - id_(source F_m)))/abs//max;
+    vals4 := for i from loF to hiF list (
         m := (target F).dd_i * F_i - F_(i-1) * (source F).dd_i;
         (flatten entries m)/abs//max
         );
-    vals5 := for i in spots F list (
+    vals5 := for i from loF to hiF list (
         m := (C.dd_i - ((transpose F_(i-1)) * (target F).dd_i * F_i));
         (flatten entries m)/abs//max
         );
@@ -639,7 +604,7 @@ checkSVDComplex = (C, Fhs) -> (
     )
 
 pseudoInverse=method(Options=> options SVDComplex)
-pseudoInverse ChainComplex := opts -> C -> ( -- old version, to be removed.
+pseudoInverse Complex := opts -> C -> ( -- old version, to be removed.
     if not ring C === RR_53 then pseudoInverse1 C else (
     U := last SVDComplex(C,Strategy=>opts.Strategy);
     SigmaComplex := source U;
@@ -651,12 +616,13 @@ pseudoInverse ChainComplex := opts -> C -> ( -- old version, to be removed.
 		    if A_(i,j)==0 then 0 else 1/(A_(i,j))))));
     CplusMats := apply(#SigmaPlus,i->
 	     U_(minC+i+1)*SigmaPlus_i* transpose U_(minC+i));
-    Cplus := (chainComplex reverse CplusMats);
+    Cplus := (complex reverse CplusMats);
     Cplus
     ))
 
-pseudoInverse ChainComplex := opts -> C -> (
-    if not ring C === RR_53 then pseudoInverse1 C else (
+pseudoInverse Complex := opts -> C -> (
+    if not ring C === RR_53 then 
+        return pseudoInverse1 C;
     U := last SVDComplex(C,Strategy=>opts.Strategy);
     SigmaComplex := source U;
     (loC,hiC) := concentration C;
@@ -667,15 +633,15 @@ pseudoInverse ChainComplex := opts -> C -> (
         sigmaPlus := matrix for r in eA list for a in r list if a == 0 then 0 else 1/a;
         (-i+1) => U_i * sigmaPlus * transpose U_(i-1)
         );
-    chainComplex CPlusMats
-    ))
+    complex CPlusMats
+    )
 
 pseudoInverse1=method()
     
-pseudoInverse1 ChainComplex := C -> (
+pseudoInverse1 Complex := C -> (
     if not isField ring C then error " expected a chain complex defined over a field";
     (lo,hi) := concentration C;
-    chainComplex hashTable for i from lo to hi list (-i+1) => pseudoInverse1 C.dd_i
+    complex hashTable for i from lo+1 to hi list (-i+1) => pseudoInverse1 C.dd_i
     )
 
 pseudoInverse1(Matrix) := M -> (
@@ -764,7 +730,7 @@ arePseudoInverses(Matrix,Matrix) := opts -> (A,B) -> (
     true
     )
 
-arePseudoInverses(ChainComplex, ChainComplex) := opts -> (A,B) -> (
+arePseudoInverses(Complex, Complex) := opts -> (A,B) -> (
     (loA,hiA) := concentration A;
     (loB,hiB) := concentration B;
     if loA != -hiB or loB != -hiA then (
@@ -786,8 +752,8 @@ TEST ///
   needsPackage "RandomComplexes"
   -- Simple boundary cases for pseudoInverse.
   m = matrix id_(QQ^2)
-  C = chainComplex {m}
-  CRR = chainComplex {m ** RR_53}
+  C = complex {m}
+  CRR = complex {m ** RR_53}
   C3 = C[-3]
   iC = pseudoInverse C
   iC3 = pseudoInverse C3
@@ -895,7 +861,7 @@ Pm,Pn
 *-
 
 conjugateComplex=method(Options=>{Height=>10})
-conjugateComplex ChainComplex := opts -> C -> (
+conjugateComplex Complex := opts -> C -> (
     minC:= min C;
     maxC:= max C;  
     U:=for i from minC to maxC list (
@@ -903,7 +869,7 @@ conjugateComplex ChainComplex := opts -> C -> (
 	randomSL(r,opts));
     C':=for i from minC+1 to maxC list (
 	U_(i-1)*C.dd_i*inverse U_i);
-    (chainComplex C')[-minC])
+    (complex C')[-minC])
     
 beginDocumentation()
 
@@ -1042,19 +1008,19 @@ doc ///
 doc ///
    Key
      SVDComplex
-     (SVDComplex,ChainComplex)
-     (SVDComplex,ChainComplex,ChainComplex)
+     (SVDComplex,Complex)
+     (SVDComplex,Complex,Complex)
      [SVDComplex,Strategy]
      [SVDComplex,Threshold]
    Headline
-     Compute the SVD decomposition of a chainComplex over RR
+     Compute the SVD decomposition of a chain complex over RR
    Usage
      (h,U)=SVDComplex C or
      (h,U)=SVDComplex(C,C')
    Inputs
-     C:ChainComplex
+     C:Complex
        over RR_{53}
-     C':ChainComplex
+     C':Complex
        in a lower precision
      Strategy => Symbol 
        Laplacian or Projection for the method used
@@ -1063,14 +1029,14 @@ doc ///
    Outputs
      h:HashTable
        the dimensions of the homology groups HH C
-     U:ChainComplexMap
+     U:ComplexMap
        a map C <- Sigma
-       where the source is the chainComplex of the singular value matrices
+       where the source is the chain complex of the singular value matrices
        and U is given by orthogonal matrices  
    Description
     Text
       We compute the singular value decomposition either by the iterated Projections or by the 
-      Laplacian method. In case the input consists of two chainComplexes we use the iterated  
+      Laplacian method. In case the input consists of two chain complexes we use the iterated  
       Projection method, and identify the stable singular values.
     Example
       needsPackage "RandomComplexes"
@@ -1084,14 +1050,14 @@ doc ///
       Sigma =source U
       Sigma.dd_0
       errors=apply(toList(min CR+1..max CR),ell->CR.dd_ell-U_(ell-1)*Sigma.dd_ell*transpose U_ell);
-      maximalEntry chainComplex errors
+      maximalEntry complex errors
 
       elapsedTime (hL,U)=SVDComplex(CR,Strategy=>Laplacian);
       hL === h
       SigmaL =source U;
       for i from min CR+1 to max CR list maximalEntry(SigmaL.dd_i -Sigma.dd_i)
       errors=apply(toList(min C+1..max C),ell->CR.dd_ell-U_(ell-1)*SigmaL.dd_ell*transpose U_ell);
-      maximalEntry chainComplex errors
+      maximalEntry complex errors
     Text
       The optional argument 
    Caveat
@@ -1103,19 +1069,19 @@ doc ///
 doc ///
    Key
      SVDHomology
-     (SVDHomology,ChainComplex)
-     (SVDHomology,ChainComplex,ChainComplex)
+     (SVDHomology,Complex)
+     (SVDHomology,Complex,Complex)
      [SVDHomology, Strategy]
      [SVDHomology,Threshold]
    Headline
-     Estimate the homology of a chainComplex over RR with the SVD decomposition
+     Estimate the homology of a chain complex over RR with the SVD decomposition
    Usage
      (h,h1)=SVDHomology C or
      (h,h1)=SVDHomology(C,C')
    Inputs
-     C:ChainComplex
+     C:Complex
        over RR_{53}
-     C':ChainComplex
+     C':Complex
        in a lower precision
      Strategy => Symbol 
        Laplacian or Projection for the method used
@@ -1135,7 +1101,7 @@ doc ///
       In case of the Laplacian method we record in h1 the smallest common Eigenvalues
       of the neighboring Laplacians, and the first Eigenvalue expected to be zero. 
       
-      In case the input consists of two chainComplexes we use the iterated  Projection method, and identify the stable
+      In case the input consists of two chain complexes we use the iterated  Projection method, and identify the stable
       singular values.
     Example
       needsPackage "RandomComplexes"
@@ -1167,22 +1133,22 @@ doc ///
 doc ///
    Key
      projectToComplex
-     (projectToComplex,ChainComplex,HashTable)
+     (projectToComplex,Complex,HashTable)
    Headline
      compute a nearby complex with the projection method
    Usage
      C = projectToComplex(D,h) or
    Inputs
-     D:ChainComplex
+     D:Complex
        an approximate complex over over RR_{53}
      h:HashTable
        the desired homology groups
    Outputs
-     C:ChainComplex
-       a nearby chainComplex
+     C:Complex
+       a nearby chain complex
    Description
     Text
-      Using the iterated projection method we compute a nearby chainComplex C with 
+      Using the iterated projection method we compute a nearby chain complex C with 
       homology h.
     Example
       needsPackage "RandomComplexes"
@@ -1221,7 +1187,7 @@ doc ///
    Key
      arePseudoInverses
      (arePseudoInverses,Matrix,Matrix)
-     (arePseudoInverses,ChainComplex,ChainComplex)
+     (arePseudoInverses,Complex,Complex)
    Headline
      check the Penrose relations for the pseudo inverse  
    Usage
@@ -1231,8 +1197,8 @@ doc ///
      A:Matrix
      B:Matrix
        or  
-     C:ChainComplex
-     Cplus:ChainComplex
+     C:Complex
+     Cplus:Complex
      Threshold => RR
        an absolute error up to which the identities should hold
    Outputs
@@ -1277,20 +1243,20 @@ doc ///
    Key
      pseudoInverse
      --(pseudoInverse,Matrix)
-     (pseudoInverse,ChainComplex)
+     (pseudoInverse,Complex)
    Headline
-     compute the pseudoInverse of a chainComplex 
+     compute the pseudoInverse of a chain complex 
    Usage
      Cplus = pseudoInverse C 
    Inputs
-     C:ChainComplex
+     C:Complex
        an approximate complex over an field 
      Strategy => Symbol 
        Laplacian or Projection for the method used
      Threshold => RR
        the relative threshold used to detect the zero singular values
    Outputs
-     Cplus:ChainComplex
+     Cplus:Complex
        the pseudo inverse complex
    Description
     Text
@@ -1331,14 +1297,14 @@ doc ///
 doc ///
    Key
      euclideanDistance     
-     (euclideanDistance,ChainComplex,ChainComplex)
+     (euclideanDistance,Complex,Complex)
    Headline
      compute the euclidean distance of two chain complexes
    Usage
      euclideanDistance(C,D) 
    Inputs
-     C:ChainComplex
-     D:ChainComplex 
+     C:Complex
+     D:Complex 
        two chain complexes over RR or QQ   
    Outputs
       :RR
@@ -1414,13 +1380,13 @@ doc ///
 doc ///
    Key
      laplacians     
-     (laplacians,ChainComplex)
+     (laplacians,Complex)
    Headline
      compute the laplacians of a chain complex
    Usage
      delta=laplacians C
    Inputs
-     C:ChainComplex
+     C:Complex
        defined over RR  
    Outputs
       delta:HashTable

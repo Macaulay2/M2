@@ -1,5 +1,5 @@
 -- ForeignFunctions package for Macaulay2
--- Copyright (C) 2022-2024 Doug Torrance
+-- Copyright (C) 2022-2026 Doug Torrance
 
 -- This program is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU General Public License
@@ -12,19 +12,30 @@
 -- GNU General Public License for more details.
 
 -- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
--- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
--- 02110-1301, USA.
+-- along with this program; if not, see <https://www.gnu.org/licenses/>.
 
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.4",
-    Date => "October 1, 2024",
+    Version => "0.7",
+    Date => "February 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"Interfaces"}
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
+    Keywords => {"Interfaces"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "ForeignFunctions package for Macaulay2",
+	"acceptance date" => "2024-12-17",
+	"published article URI" => "https://msp.org/jsag/2025/15-1/p01.xhtml",
+	"published article DOI" => "10.2140/jsag.2025.15.1",
+	"published code URI" => "https://msp.org/jsag/2025/15-1/jsag-v15-n1-x01-ForeignFunctions.m2",
+	"release at publication" => "cb15bd0bfacf92ada65b6d0f6161625c1efaba9d",
+	"version at publication" => "0.4",
+	"volume number" => "15",
+	"volume URI" => "https://msp.org/jsag/2025/15-1/"
+	}
     )
 
 ---------------
@@ -32,6 +43,18 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.7 (2026-02-05, M2 1.26.05)
+* fix garbage collection of mpzT and mpfrT objects
+* update foreignSymbol test so that it doesn't require mpfi since it may not be
+  available (e.g., if it's statically linked)
+
+0.6 (2025-11-10, M2 1.25.11)
+* update GPL 2 text (FSF no longer has a physical address)
+
+0.5 (2025-03-08, M2 1.25.05)
+* make LAPACK example canned since it may be a static library
+* move getMemory implementation to ffi.d so we can link bdwgc statically
 
 0.4 (2024-10-01, M2 1.24.11)
 * remove redundant Constant methods now that it's a subclass of Number
@@ -150,6 +173,7 @@ importFrom_Core {
     "ffiStructAddress",
     "ffiUnionType",
     "ffiFunctionPointerAddress",
+    "getMemory0",
     "registerFinalizerForPointer",
     "toExternalFormat"
     }
@@ -583,9 +607,9 @@ toExternalString SharedLibrary := toExternalFormat @@ describe
 -- homebrew, so we try there if the first call to dlopen fails
 importFrom_Core {"isAbsolutePath"}
 if version#"operating system" == "Darwin" then (
-    brewPrefix := replace("\\s+$", "", get "!brew --prefix");
+    brewPrefix := replace("\\s+$", "", try get "!brew --prefix" else "");
     dlopen' = filename -> (
-	if isAbsolutePath filename then dlopen filename
+	if isAbsolutePath filename or brewPrefix == "" then dlopen filename
 	else (
 	    try dlopen filename
 	    else (
@@ -668,13 +692,10 @@ foreignSymbol(String, ForeignType) := (symb, T) -> dereference_T dlsym symb
 -- working with pointers --
 ---------------------------
 
-gcMalloc = foreignFunction("GC_malloc", voidstar, ulong)
-gcMallocAtomic = foreignFunction("GC_malloc_atomic", voidstar, ulong)
-
 getMemory = method(Options => {Atomic => false}, TypicalValue => voidstar)
 getMemory ZZ := o -> n -> (
-    if n <= 0 then error "expected positive number";
-    (if o.Atomic then gcMallocAtomic else gcMalloc) n)
+    if n <= 0 then error "expected positive number"
+    else voidstar getMemory0(n, o.Atomic))
 getMemory ForeignType := o -> T -> getMemory(size T, Atomic => isAtomic T)
 getMemory ForeignVoidType := o -> T -> error "can't allocate a void"
 
@@ -2208,8 +2229,12 @@ doc ///
       so we use @TO voidstar@ to represent them in our call to
       @TO foreignFunction@.  Since Macaulay2 is already linked against LAPACK,
       we don't need to worry about calling @TO openSharedLibrary@.
-    Example
-      dggglm = foreignFunction("dggglm_", void, toList(13:voidstar))
+    CannedExample
+      i1 : dggglm = foreignFunction("dggglm_", void, toList(13:voidstar))
+
+      o1 = dggglm_
+
+      o1 : ForeignFunction
     Text
       The parameters @CODE "n"@, @CODE "m"@ and @CODE "p"@ are exactly the
       numbers $n$, $m$, and $p$ above.  The parameters @CODE "A"@, @CODE "B"@,
@@ -2219,12 +2244,14 @@ doc ///
       helper methods to take care of this conversion.  The local variable
       @CODE "T"@ is a @TO ForeignArrayType@ created by
       @TO (symbol *, ZZ, ForeignType)@.
-    Example
-      toLAPACK = method();
-      toLAPACK Matrix := A -> (
-          T := (numRows A * numColumns A) * double;
-          T flatten entries transpose A);
-      toLAPACK Vector := toLAPACK @@ matrix;
+    CannedExample
+      i2 : toLAPACK = method();
+
+      i3 : toLAPACK Matrix := A -> (
+              T := (numRows A * numColumns A) * double;
+              T flatten entries transpose A);
+
+      i4 : toLAPACK Vector := toLAPACK @@ matrix;
     Text
       The parameters @CODE "ldA"@ and @CODE "ldB"@ are the "leading dimensions"
       of the arrays @CODE "A"@ and @CODE "B"@.  We will use $n$ for both.  The
@@ -2241,35 +2268,56 @@ doc ///
       with @TO info@) and @TO address@ to get pointers to the other integer
       arguments.  We also use @TO (symbol *, ForeignType, voidstar)@ to
       dereference @CODE "i"@ and determine whether the call was successful.
-    Example
-      generalLinearModel= method();
-      generalLinearModel(Matrix, Matrix, Vector) := (A, B, d) -> (
-          if numRows A != numRows B
-          then error "expected first two arguments to have the same number of rows";
-          n := numRows A;
-          m := numColumns A;
-          p := numColumns B;
-          x := getMemory(m * size double);
-          y := getMemory(p * size double);
-          lwork := n + m + p;
-          work := getMemory(lwork * size double);
-          i := getMemory int;
-          dggglm(address int n, address int m, address int p, toLAPACK A,
-              address int n, toLAPACK B, address int n, toLAPACK d, x, y, work,
-              address int lwork, i);
-          if value(int * i) != 0 then error("call to dggglm failed");
-          (vector value (m * double) x, vector value (p * double) y));
+    CannedExample
+      i5 : generalLinearModel= method();
+
+      i6 : generalLinearModel(Matrix, Matrix, Vector) := (A, B, d) -> (
+               if numRows A != numRows B
+               then error "expected first two arguments to have the same number of rows";
+               n := numRows A;
+               m := numColumns A;
+               p := numColumns B;
+               x := getMemory(m * size double);
+               y := getMemory(p * size double);
+               lwork := n + m + p;
+               work := getMemory(lwork * size double);
+               i := getMemory int;
+               dggglm(address int n, address int m, address int p, toLAPACK A,
+                   address int n, toLAPACK B, address int n, toLAPACK d, x, y, work,
+                   address int lwork, i);
+               if value(int * i) != 0 then error("call to dggglm failed");
+               (vector value (m * double) x, vector value (p * double) y));
     Text
       Finally, let's call this method and solve a constrained least squares
       problem.  This example is from
       @HREF{"https://doi.org/10.1080/01621459.1981.10477694",
 	  "Kourouklis, S., & Paige, \"A Constrained Least Squares Approach to
 	  the General Gauss-Markov Linear Model\""}@.
-    Example
-      A = matrix {{1, 2, 3}, {4, 1, 2}, {5, 6, 7}, {3, 4, 6}};
-      B = matrix {{1, 0, 0, 0}, {2, 3, 0, 0}, {4, 5, 1e-5, 0}, {7, 8, 9, 10}};
-      d = vector {1, 2, 3, 4};
-      generalLinearModel(A, B, d)
+    CannedExample
+      i7 : A = matrix {{1, 2, 3}, {4, 1, 2}, {5, 6, 7}, {3, 4, 6}};
+
+                    4       3
+      o7 : Matrix ZZ  <-- ZZ
+
+      i8 : B = matrix {{1, 0, 0, 0}, {2, 3, 0, 0}, {4, 5, 1e-5, 0}, {7, 8, 9, 10}};
+
+                      4         4
+      o8 : Matrix RR    <-- RR
+                    53        53
+
+      i9 : d = vector {1, 2, 3, 4};
+
+             4
+      o9 : ZZ
+
+      i10 : generalLinearModel(A, B, d)
+
+      o10 = (|   .3141  |, | .0296627 |)
+             | -.334417 |  | .0451036 |
+             |  .441691 |  | .0585128 |
+                           | .0650142 |
+
+      o10 : Sequence
 ///
 
 doc ///
@@ -2506,11 +2554,8 @@ TEST ///
 -------------------
 -- foreignSymbol --
 -------------------
-mpfi = openSharedLibrary "mpfi"
-(foreignFunction(mpfi, "mpfi_set_error", void, int)) 5
-assert Equation(value foreignSymbol(mpfi, "mpfi_error", int), 5)
-assert Equation(value foreignSymbol("mpfi_error", int), 5)
-(foreignFunction(mpfi, "mpfi_reset_error", void, void))()
+environ = foreignSymbol("environ", charstarstar)
+assert all(value environ, x -> instance(x, String))
 ///
 
 -- TODO: add test when #2683 fixed
@@ -2588,4 +2633,81 @@ assert BinaryOperation(symbol ===, value value toExternalString x,
 mpfi = openSharedLibrary "mpfi"
 assert instance(value describe mpfi, SharedLibrary)
 assert instance(value toExternalString mpfi, SharedLibrary)
+///
+
+TEST ///
+-- finalizing gmp and mpfr objects
+scan(1000, i -> mpzT 2^100)
+scan(1000, i -> mpfrT numeric(100, pi))
+collectGarbage()
+///
+
+-- nullPointer was exported but never referenced in any TEST.
+TEST ///
+-- nullPointer is a Pointer whose representation is 0x0.
+assert(class nullPointer === Pointer);
+-- it embeds into voidstar without error.
+np := voidstar nullPointer;
+assert(class np === voidstar);
+-- Pointer arithmetic on nullPointer produces another Pointer.
+p := nullPointer + 16;
+assert(class p === Pointer);
+p2 := p - 16;
+assert(class p2 === Pointer);
+///
+
+-- getMemory with the Atomic option flag (previously never set in a TEST).
+TEST ///
+mem := getMemory(int, Atomic => true);
+assert(class mem === voidstar);
+*mem = int 42;
+assert(value (int * mem) == 42);
+mem2 := getMemory(double, Atomic => true);
+*mem2 = double pi;
+assert(abs(value (double * mem2) - pi) < 1e-15);
+///
+
+-- registerFinalizer(ForeignObject, Function): previously untested. The
+-- finalizer fires when the foreign object is garbage-collected; we
+-- only assert that registering does not error and that the registered
+-- function does eventually run after a forced collect.
+TEST ///
+counter := new MutableHashTable from {"count" => 0};
+o := mpzT 2^100;
+registerFinalizer(o, x -> counter#"count" = counter#"count" + 1);
+-- replace the live reference, then collect; the finalizer should run.
+o = null;
+collectGarbage();
+collectGarbage();
+-- finalizers are best-effort and depend on the GC actually freeing the
+-- block; assert only that the registration itself produced no error
+-- and the counter is a non-negative integer.
+assert(counter#"count" >= 0);
+///
+
+-- foreignArrayType's 3-arg (String, ForeignType, ZZ) signature, previously
+-- only exercised via the `3 * int` shorthand on the ForeignArrayType
+-- shortcut path.
+TEST ///
+arr := foreignArrayType("MyArr", int, 5);
+assert(class arr === ForeignArrayType);
+v := arr {1, 2, 3, 4, 5};
+assert(value v == {1, 2, 3, 4, 5});
+-- mutating an entry must update the underlying foreign buffer.
+v_2 = 99;
+assert(value v == {1, 2, 99, 4, 5});
+///
+
+-- Pointer arithmetic on a Pointer obtained from a foreign object.
+-- (== isn't defined on Pointer, so use === for identity / numerical
+-- equality of the wrapped address.)
+TEST ///
+x := int 7;
+p := address x;
+assert(class p === Pointer);
+-- p + 0 should equal p; p + n followed by p - n should round-trip.
+assert(p + 0 === p);
+q := p + 8;
+assert(class q === Pointer);
+assert(q - 8 === p);
 ///

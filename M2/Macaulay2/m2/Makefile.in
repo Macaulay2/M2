@@ -4,7 +4,7 @@
 all: initialize phase1
 include ../../include/config.Makefile
 VPATH = @srcdir@
-srcdir = $(shell cd @srcdir@; /bin/pwd)
+srcdir = $(shell cd @srcdir@; env pwd)
 
 USER ?= unknown-user
 
@@ -13,8 +13,9 @@ Makefile: Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 ##############################
 .SUFFIXES: .m2
 .PHONY: html initialize tags install-tmp
-DUMPEDM2FILES := Core.m2 startup.m2 version.m2 $(shell cat @srcdir@/loadsequence)
-DUMPEDM2SRCFILES := Core.m2 startup.m2.in version.m2.in
+DUMPEDM2FILES := Core.m2 exports.m2 startup.m2 version.m2 \
+	$(shell cat @srcdir@/loadsequence)
+DUMPEDM2SRCFILES := Core.m2 exports.m2 startup.m2.in version.m2.in
 DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2Doc/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/functions/*.m2 \
@@ -23,44 +24,21 @@ DUMPEDM2DOCFILES := \
 ############################## version.m2
 all: version.m2
 version.m2: version.m2.in ; ./config.status Macaulay2/m2/version.m2
-clean::; rm -f version.m2
 ############################## tvalues.m2
 STOP = --stop
 ARGS = -q --silent $(STOP) -e errorDepth=0
 TVFILES := $(wildcard @srcdir@/../d/*.d)
-all: tvalues.m2
-tvalues.m2: $(TVFILES) @pre_packagesdir@/Core
-	rm -f tvalues.m2 && @pre_exec_prefix@/bin/M2 $(ARGS) --no-preload -e 'exit 0'
-clean::;rm -f tvalues.m2
+all: @pre_packagesdir@/Core/tvalues.m2
+@pre_packagesdir@/Core/tvalues.m2: $(TVFILES) @pre_packagesdir@/Core
+	rm -f $@ && @pre_exec_prefix@/bin/M2 $(ARGS) --no-preload -e 'exit 0'
+clean::;rm -f @pre_packagesdir@/Core/tvalues.m2
 #################################
 all: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
-@srcdir@/TAGS: \
-		$(DUMPEDM2SRCFILES) \
-		$(shell @FIND@ @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \
-		../editors/emacs/make-M2-emacs-help.m2 \
-		../editors/make-M2-symbols.m2 \
-		@srcdir@/../*/COPYRIGHT \
-		@srcdir@/basictests/*.m2 \
-		@srcdir@/../packages/*.m2 \
-		@srcdir@/../packages/*/*.m2 \
-		@srcdir@/../tests/*/*.m2 \
-		@srcdir@/../packages/SimpleDoc/doc.txt \
-		loadsequence \
-		Makefile.in \
-		../editors/Makefile.in \
-		../tests/Makefile.in \
-		../tests/Makefile.test.in \
-		../tests/slow/Makefile.in \
-		../tests/engine/Makefile.in \
-		../packages/Makefile.in \
-		../../Makefile.in
+@srcdir@/TAGS: $(DUMPEDM2FILES) @pre_packagesdir@/Core/tvalues.m2
 	: making $@
-	@ set -e ; \
-	  cd @srcdir@ && \
-	  for i in $(patsubst @srcdir@/%, "%", $^) ; \
-	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
+	@ETAGS@ -o $@ $^ || true
 
 @srcdir@/TAGS.doc: Makefile.in $(shell @FIND@ @srcdir@/../packages/Macaulay2Doc -not \( -name .svn -prune \) -type d)
 	: making $@ : $^
@@ -81,7 +59,7 @@ gdb: .gdb-directories .gdbinit .gdb-files
 clean::; rm -f .gdb-directories
 .gdb-directories: ../../libraries/* Makefile
 	echo '# -*- sh -*-' >$@
-	/bin/echo 'echo -- loading .gdb-directories\n' >>$@
+	env echo 'echo -- loading .gdb-directories\n' >>$@
 	for i in \
 		../../libraries/*/build/*/. \
 		../../libraries/ntl/build/*/src/. \
@@ -92,15 +70,15 @@ clean::; rm -f .gdb-directories
 	   then echo directory $$i >>$@ ;\
 	   fi ;\
 	done
-	/bin/echo 'echo -- loaded .gdb-directories\n' >>$@
+	env echo 'echo -- loaded .gdb-directories\n' >>$@
 .gdbinit.$(USER):; touch $@
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo '# -*- sh -*-' >$@
-	/bin/echo 'echo -- loading .gdb-files\n' >>$@
+	env echo 'echo -- loading .gdb-files\n' >>$@
 	echo 'set environment LD_LIBRARY_PATH $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)' >>$@
 	echo 'file @pre_exec_prefix@/bin/M2@EXE@' >>$@
-	/bin/echo 'echo -- loaded .gdb-files\n' >>$@
+	env echo 'echo -- loaded .gdb-files\n' >>$@
 clean::; rm -f .gdb-files
 profile: gmon.out; LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
 clean::; rm -f profile
@@ -114,4 +92,3 @@ distclean: clean; rm -f Makefile version.m2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 # End:
-.NOTPARALLEL:

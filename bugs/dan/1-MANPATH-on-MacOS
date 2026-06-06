@@ -1,8 +1,0 @@
-on MacOS MANPATH is not set but man knows to look in /etc/man.conf
-
-    thallium$ grep "^MANPATH	" /etc/man.conf 
-    MANPATH	/usr/share/man
-    MANPATH	/usr/local/share/man
-    MANPATH	/usr/X11/man
-
-so after setup() we have screwed up the users' MANPATH

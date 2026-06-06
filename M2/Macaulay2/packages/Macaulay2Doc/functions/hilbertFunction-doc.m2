@@ -82,7 +82,7 @@ doc ///
     degreesRing
     reduceHilbert
     poincare
-    poincareN
+    "Complexes :: poincareN"
     hilbertSeries
     hilbertPolynomial
     numgens

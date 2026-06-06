@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - master
+      - stable
       - development
   schedule:
     - cron: '0 6 * * SUN' # runs tests on the main branch every Sunday at 06:00 UTC
@@ -39,22 +39,20 @@ jobs:
           - cmake
         os:
           - ubuntu-24.04
-          - macos-13
+          - macos-15
         compiler:
           - default
         include:
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-13 # TODO: switch to macos-14 for arm64 testing
-            compiler: clang-15
-            cxx: clang++
-            cc: clang
+            os: macos-15
+            compiler: brew-clang
         exclude:
           - build-system: cmake
-            os: macos-13
+            os: macos-15
             compiler: default
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
 # ----------------------
 #   Install missing tools and libraries for macOS
@@ -64,9 +62,10 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew config
+          brew update
           brew tap macaulay2/tap
-          brew install --overwrite python
-          brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve
+          brew install automake bison boost libtool tbb ccache ctags llvm make yasm libffi msolve googletest fplll eigen jansson r palp
+          brew install texinfo || true # sometimes post-install step fails
           brew install --only-dependencies macaulay2/tap/M2
           brew link factory --force
 
@@ -85,31 +84,45 @@ jobs:
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
-                  libnauty-dev nauty lrslib polymake pipx phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev msolve
+                  libnauty-dev nauty lrslib polymake pipx phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev \
+                  msolve libfplll-dev libjansson-dev r-base palp
 
 # ----------------------
 #   Steps common to all build variants
 # ----------------------
 
+      - name: Set up compiler
+        run: |
+          case "${{ matrix.compiler }}" in
+            default)
+              echo "Using default compiler"
+              ;;
+            brew-clang)
+              echo "Using Homebrew Clang"
+              echo "CC=clang"    >> $GITHUB_ENV
+              echo "CXX=clang++" >> $GITHUB_ENV
+              echo "$(brew --prefix llvm)/bin" >> $GITHUB_PATH
+              # https://github.com/Macaulay2/M2/issues/3967
+              # maybe remove after some future llvm release?
+              SDKROOT=$(xcrun --show-sdk-path)
+              echo "CXXFLAGS=-nostdinc++ -isystem $SDKROOT/usr/include/c++/v1 -isystem $SDKROOT/usr/include" >> $GITHUB_ENV
+              ;;
+          esac
+
       - name: Prepare build environment
         run: |
-          echo "CC=${{  matrix.cc  }}" >> $GITHUB_ENV
-          echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
-          then shopt -s expand_aliases
-               alias llvm-config="/usr/bin/llvm-config-16"
-               echo "/usr/lib/ccache"                     >> $GITHUB_PATH
+          then echo "/usr/lib/ccache"                     >> $GITHUB_PATH
                echo "/home/linuxbrew/.linuxbrew/bin"      >> $GITHUB_PATH
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
-               echo `brew --prefix llvm`/bin              >> $GITHUB_PATH
-               PATH=`brew --prefix llvm`/bin:$PATH
                echo `brew --prefix libtool`/libexec/gnubin >> $GITHUB_PATH
+               echo `brew --prefix bison`/bin             >> $GITHUB_PATH
+               echo "CPPFLAGS=-I$(brew --prefix)/include -I$(brew --prefix libomp)/include -I$(brew --prefix readline)/include" >> $GITHUB_ENV
+               echo "LDFLAGS= -L$(brew --prefix)/lib     -L$(brew --prefix libomp)/lib     -L$(brew --prefix readline)/lib"     >> $GITHUB_ENV
           fi
-          # Necessary for clang to find the right libomp
-          echo "LIBRARY_PATH=`llvm-config --libdir`" >> $GITHUB_ENV
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         if: matrix.build-system == 'cmake'
         id: restore-cache
         with:
@@ -140,8 +153,13 @@ jobs:
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core M2-emacs install-packages
-          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.build-system }}" == "cmake" ]]; then
+          cmake --build . --target M2-core M2-emacs
+
+      - name: Install packages using Ninja
+        if: matrix.build-system == 'cmake'
+        run: |
+          cmake --build . --target install-packages
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
               sudo apt-get install -y -q --no-install-recommends dpkg-dev
               echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
               cpack -G DEB
@@ -155,19 +173,21 @@ jobs:
         if: matrix.build-system == 'autotools'
         run: |
           ../../autogen.sh
-          export PYVERSION=`python3 -c "from sys import version_info; \
-            print(f'{version_info.major}.{version_info.minor}')"`
-          export CPPFLAGS="-I`brew --prefix`/include \
-            -I`brew --prefix libomp`/include         \
-            -I`brew --prefix readline`/include"
-          export  LDFLAGS="-L`brew --prefix`/lib \
-            -L`brew --prefix libomp`/lib         \
-            -L`brew --prefix readline`/lib       \
-            -L/Library/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
           export F77=gfortran-14
-          ../../configure --enable-download --with-system-gc
+          export FC=gfortran-14
+          ../../configure --with-system-gc --with-fplll
+
+      - name: Build libraries using Make
+        if: matrix.build-system == 'autotools'
+        run: |
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) -C libraries
 
       - name: Build Macaulay2 using Make
+        if: matrix.build-system == 'autotools'
+        run: |
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) PACKAGES=
+
+      - name: Install packages using Make
         if: matrix.build-system == 'autotools'
         run: |
           make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
@@ -193,7 +213,7 @@ jobs:
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && runner.os == 'Linux' && matrix.compiler == 'default'
         run: |
-          make check -o check-in-libraries
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) check -o check-in-libraries
           make -C Macaulay2/html-check-links check
 
       - name: Validate HTML documentation
@@ -209,7 +229,7 @@ jobs:
               make validate-html
             else
             # otherwise, just validate HTML docs for packages that have been updated
-              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq | xargs)
+              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq | sed 's/undistributed-packages//g' | xargs)
               make validate-html PACKAGES="$PACKAGES"
             fi
           else
@@ -223,7 +243,7 @@ jobs:
 
       - name: Upload build logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
            name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}-logs
            path: |
@@ -236,6 +256,7 @@ jobs:
              M2/BUILD/build/CMakeCache.txt
              M2/BUILD/build/CMakeFiles/CMakeError.log
              M2/BUILD/build/CMakeFiles/CMakeOutput.log
+             M2/BUILD/build/CMakeFiles/CMakeConfigureLog.yaml
              M2/BUILD/build/libraries/*/build/config.log
              # package example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
@@ -247,7 +268,7 @@ jobs:
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
         if: matrix.build-system == 'cmake' && runner.os == 'Linux' && success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
           path: |

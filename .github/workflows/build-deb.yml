@@ -1,0 +1,107 @@
+# This workflow builds Debian packages for the last 3 Debian releases
+# (currently trixie, bookworm, and bullseye)
+
+# After each Macaulay2 release, a new package is prepared for Debian unstable
+# (and a few days later, it migrates to Debian testing).  The packaging is
+# under version control in Debian's git forge, Salsa, at
+# https://salsa.debian.org/math-team/macaulay2, in the debian/latest branch
+
+# Backport the package to each of the supported releases and push to the
+# appropriate release branch, e.g., debian/trixie for trixie.  In many cases,
+# this is as simple as just merging the debian/latest branch.  Push each branch
+# to Salsa.
+
+# Once each branch is ready and pushed to Salsa, run this action using "workflow
+# dispatch" to generate each Debian package.
+
+# Download the artifacts and unzip them.  Push files using dput to
+# Repositories/Debian/mini-dinstall/incoming on the webserver, and then
+# run "mini-install -b -v" on the server.  Finally sign the Release files
+# in each directory (gpg --clearsign -o InRelease Release).
+
+name: Build Debian packages
+on: workflow_dispatch
+
+jobs:
+  build-deb:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        release:
+          - bullseye
+          - bookworm
+          - trixie
+        os:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+    container:
+      image: debian:${{ matrix.release }}
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y wget ca-certificates
+          if test ${{ matrix.release }} = "bullseye"; \
+          then wget -O /usr/share/keyrings/macaulay2-archive-key.asc https://macaulay2.com/Repositories/Debian/macaulay2-archive-key.asc; \
+          fi
+          wget -O /etc/apt/sources.list.d/macaulay2.sources https://macaulay2.com/Repositories/Debian/${{ matrix.release }}/macaulay2.sources
+          apt-get update
+          apt-get install -y 4ti2 bison cohomcalg coinor-csdp \
+            debhelper dh-linktree emacs-nox fflas-ffpack flex \
+            gfan gfortran install-info libboost-dev libboost-math-dev \
+            libboost-regex-dev libboost-stacktrace-dev libcdd-dev \
+            libeigen3-dev libffi-dev libflint-dev libfrobby-dev libfplll-dev \
+            libgc-dev libgdbm-dev libglpk-dev libgtest-dev libjansson-dev \
+            liblapack-dev liblzma-dev libmathic-dev libmathicgb-dev \
+            libmemtailor-dev libmpfi-dev libmpfr-dev libmps-dev libnauty-dev \
+            libnormaliz-dev libntl-dev libreadline-dev \
+            libsingular4-dev libtbb-dev libxml2-dev lrslib \
+            lsb-release msolve nauty normaliz pkgconf python3-dev \
+            r-base singular-data time topcom git devscripts dh-elpa
+
+          # arch-independent dependencies (amd64 build only)
+          if test ${{ matrix.os }} = "ubuntu-latest"; then
+            apt-get install -y faketime gdbmtool jdupes
+
+            # don't need javascript on bullseye (just use the vendored copies)
+            if test ${{ matrix.release }} != "bullseye"; then
+              apt-get install -y node-fortawesome-fontawesome-free       \
+                fonts-katex libjs-bootsidemenu libjs-bootstrap5 libjs-d3 \
+                libjs-jquery libjs-katex libjs-nouislider libjs-three    \
+                node-clipboard node-css-loader node-import-local         \
+                node-interpret node-prismjs node-prismjs-bibtex          \
+                node-rechoir node-style-loader npm pkg-js-tools webpack
+            fi
+          fi
+      - name: Clone repository
+        run: |
+          git clone https://salsa.debian.org/math-team/macaulay2
+          cd macaulay2
+          git checkout debian/${{ matrix.release }}
+      - name: Generate tarball
+        run: |
+          cd macaulay2
+          uscan --verbose --rename --force-download
+      - name: Build source package
+        run: |
+          cd macaulay2
+          dpkg-buildpackage --build=source
+      - name: Build binary package
+        run: |
+          dpkg-source -x macaulay2_*.dsc
+          cd macaulay2-*
+          if test ${{ matrix.os }} = "ubuntu-latest"; \
+          then dpkg-buildpackage --build=binary;      \
+          else dpkg-buildpackage --build=any;         \
+          fi
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.os }}-debian-${{ matrix.release }}
+          path: |
+            *.build
+            *.buildinfo
+            *.changes
+            *.deb

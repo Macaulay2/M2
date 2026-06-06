@@ -3,7 +3,6 @@
 -- Notes:
 --  Tests are here
 --  Unit tests for f4 free resolution code are in e/unit-tests/ResTest.cpp
---  packages/NonminimalComplexes: has further routines, doc, and maybe some tests.
 
 -- March 2018 todo list:
 -- 1. Allow multi-gradings
@@ -72,7 +71,7 @@ TEST ///
   -- test the zero ideal
   R = ZZ/101[a..d]
   I = ideal(0_R)
-  C = res(I, FastNonminimal => true)
+  C = res(I, Strategy => Nonminimal)
   betti'ans = new BettiTally from {(0,{0},0) => 1}
   assert(betti C == betti'ans)
   assert(C.dd_1 == 0)
@@ -87,7 +86,7 @@ TEST ///
   assert(betti'ans == minimalBetti (ideal I_*, DegreeLimit=>-1000))
 
   I = trim ideal(0_R)
-  C = res(I, FastNonminimal => true)
+  C = res(I, Strategy => Nonminimal)
   betti'ans = new BettiTally from {(0,{0},0) => 1}
   assert(betti C == betti'ans)
   assert(C.dd_1 == 0)
@@ -122,7 +121,7 @@ TEST ///
   -- test the unit ideal
   R = ZZ/101[a..d]
   I = ideal(1_R)
-  C = res(I, FastNonminimal => true)
+  C = res(I, Strategy => Nonminimal)
   betti'ans = new BettiTally from {}
   assert(betti(C,Minimize=>true) == betti'ans)
   assert(C.dd_1 == 1)
@@ -143,7 +142,7 @@ TEST ///
   -- test linear ideals.
   R = ZZ/101[a..d]
   I = ideal(a-d, b+13*a)
-  C = res(I, FastNonminimal => true)
+  C = res(I, Strategy => Nonminimal)
   betti'ans = new BettiTally from {(1,{1},1) => 2, (0,{0},0) => 1, (2,{2},2) => 1}
   assert(betti(C,Minimize=>true) == betti'ans)
   assert(numRows C.dd_1 == 1) 
@@ -157,26 +156,11 @@ TEST ///
   -- test linear ideal in exterior algebra
   R = ZZ/101[a..d, SkewCommutative=>true]
   I = ideal(a-d, b+13*a)
-  B1 = betti res I
-  C = res(ideal(I_*), FastNonminimal => true)
+  B1 = betti res(I, LengthLimit => 7)
+  C = res(ideal(I_*), LengthLimit => 7, Strategy => Nonminimal)
   assert(B1 == betti C)
   B1 = betti res (ideal(I_*), LengthLimit=>7)
-  B2 = betti res(ideal(I_*), FastNonminimal => true, LengthLimit=>7)
-  assert(B1 == B2)
-  assert(C.dd^2 == 0)
-///
-
-TEST ///
-  -- nonminimal resolution.
-  -- test linear ideal in exterior algebra
-  R = ZZ/101[a..d, SkewCommutative=>true]
-  I = ideal(a-d, b+13*a)
-  B1 = betti res I
-  C = res(ideal(I_*), FastNonminimal => true, LengthLimit => 5)
-  C.dd^2
-  assert(B1 == betti C)
-  B1 = betti res (ideal(I_*), LengthLimit=>7)
-  B2 = betti res(ideal(I_*), FastNonminimal => true, LengthLimit=>7)
+  B2 = betti res(ideal(I_*), Strategy => Nonminimal, LengthLimit=>7)
   assert(B1 == B2)
   assert(C.dd^2 == 0)
 ///
@@ -188,7 +172,7 @@ TEST ///
   I = ideal(a^4-a*c-d, b^3-c^2, a^8-d^2)
   isHomogeneous I
   B1 = betti res I
-  C = res(ideal(I_*), FastNonminimal=>true)
+  C = res(ideal(I_*), Strategy => Nonminimal)
   B2 = betti(C, Minimize=>true)
   B3 = minimalBetti ideal(I_*)
   assert(B1 == B2)
@@ -219,25 +203,25 @@ TEST ///
   S = ZZ/101[a..d]
   I = ideal(a*b-a-1, b^3-c*d-3)
   time res I
-  res(ideal(I_*), FastNonminimal => true)
+  res(ideal(I_*), Strategy => Nonminimal)
   
   -- don't allow quotient rings
   S = ZZ/101[a..d]
   I = ideal(a^2-b*c, b^2-c*d)
   R = S/I
   M = coker vars R
-  assert (try (res(M, FastNonminimal => true); false) else true) 
+  assert (try (res(M, Strategy => Nonminimal); false) else true) 
   
   -- don't allow Weyl algebras
 
   -- don't allow zero heft vectors
   -- this code never gets to non minimal res code in the engine.
   S = ZZ/101[a,b,c,d,Degrees=>{-1,1,2,-5}]  
-  assert try (res((ideal gens S)^3, FastNonminimal => true); false) else true;
+  assert try (res((ideal gens S)^3, Strategy => Nonminimal); false) else true;
   
   -- allow multi-gradings  
   S = ZZ/101[a,b,c,d,DegreeRank=>4]
-  C = res(ideal gens S, FastNonminimal=>true)
+  C = res(ideal gens S, Strategy => Nonminimal)
   assert isHomogeneous C
   assert(degrees C_0 === {{0, 0, 0, 0}})
   assert(degrees C_1 === {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}})
@@ -249,7 +233,7 @@ TEST ///
    R = ZZ/32003[a..d, Degrees=>transpose {{1,2,3,4},{1,0,-1,0}}]
    basis(degree(a*b*c*d)^2,R)
    I = ideal for i from 1 to 3 list random(degree((a*b*c*d)^2*c), R)
-   C = res(I, FastNonminimal=>true)
+   C = res(I, Strategy => Nonminimal)
 
    -- need to implement: find all the degrees where C might be not minimal, 
    -- for each: compute rank, fill in a betti table.  Note that this Betti table has multigrading.
@@ -277,7 +261,7 @@ TEST ///
   R = ZZ/101[a..d]
   M = coker vars R
   gbTrace = 1
-  C = res(M, FastNonminimal => true)
+  C = res(M, Strategy => Nonminimal)
   betti'ans = new BettiTally from {(0,{0},0) => 1, (3,{3},3) => 4, (1,{1},1) => 4, (4,{4},4) => 1, (2,{2},2) => 6}
   assert(betti'ans == betti C)
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
@@ -291,13 +275,14 @@ TEST ///
   F = R^{0,-1,-2}
   M = coker map(F,,{{a,0,0},{0,b,0},{0,0,c}})
   assert isHomogeneous M  
-  C = res(M, FastNonminimal => true)
+  C = res(M, Strategy => Nonminimal)
+  minBettiC = betti(C, Minimize=>true)
   assert(betti res M == betti C)
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
 
   M2 = coker map(F,,{{a,0,0},{0,b,0},{0,0,c}})
   assert(minimalBetti M2 == betti C) -- doesn't always hold, but does here.
-  assert(minimalBetti M2 == betti(C, Minimize=>true))
+  assert(minimalBetti M2 == minBettiC)
   assert isHomogeneous C
 ///
 
@@ -307,7 +292,7 @@ TEST ///
   M = coker map(F,,{{a,0,0},{0,0,b},{0,c,0}})
   M1 = coker map(F,,{{a,0,0},{0,0,b},{0,c,0}})
   isHomogeneous M  
-  C = res(M, FastNonminimal => true)
+  C = res(M, Strategy => Nonminimal)
   betti res M1 == betti C
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
   assert isHomogeneous C
@@ -317,7 +302,7 @@ TEST ///
 TEST ///
   R = ZZ/101[a..e]
   I = monomialCurveIdeal(R,{1,3,7,9})
-  C = res(I, FastNonminimal => true)
+  C = res(I, Strategy => Nonminimal)
   assert(betti(C, Minimize=>true) == betti res (ideal I_*))
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
 ///
@@ -364,7 +349,7 @@ TEST ///
 
   elapsedTime for i from 1 to 1000 do (
       J = ideal I_*;
-      res(J, Strategy=>4);
+      res(J, Strategy=>Nonminimal);
       )
   debug Core
   engineMemory()
@@ -374,7 +359,7 @@ TEST ///
 
   elapsedTime for i from 1 to 10 list (
       J = ideal I_*;
-      res(J, Strategy=>4)
+      res(J, Strategy=>Nonminimal)
       );
   debug Core
   engineMemory()
@@ -385,7 +370,7 @@ TEST ///
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
   I = ideal(m1*m2-m2*m1)
-  elapsedTime C = res(I, FastNonminimal => true)
+  elapsedTime C = res(I, Strategy => Nonminimal)
   elapsedTime  assert(betti(C,Minimize=>true) == betti res (ideal I_*))
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
   betti C
@@ -397,27 +382,6 @@ TEST ///
 
   betti(C, Minimize=>true)
   debug Core
-  assert(rawBetti(raw C.Resolution, 1) == betti(C))
-  assert(rawBetti(raw C.Resolution, 0) == betti C)
-  assert(rawBetti(raw C.Resolution, 4) == betti(C, Minimize=>true))
-  rawBetti(raw C.Resolution, 5)
-  --rawBetti(raw C.Resolution, 2) -- not implemented yet
-  --rawBetti(raw C.Resolution, 3) -- not implemented yet
-
-  kk = coefficientRing R
-
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,2,3)) == 12)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,2,4)) == 5)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,2,5)) == 1)
-
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,3,4)) == 9)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,3,5)) == 41)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,3,6)) == 7)
-
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,5)) == 2)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,6)) == 69)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,7)) == 20)
-  
   assert(schreyerOrder target C.dd_2 != 0)
   assert(schreyerOrder source C.dd_2 != 0)
 ///
@@ -426,7 +390,7 @@ TEST ///
   kk = ZZ/101
   R = kk[vars(0..4)]
   I = ideal"b2c,abc,a2c,a2de,b3d,bc2de,ac2de,ab2d2e,c3d2e2"
-  elapsedTime C = res(I, FastNonminimal => true)
+  elapsedTime C = res(I, Strategy => Nonminimal)
   C1 = res (ideal I_*)
   assert(betti C == betti C1)
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
@@ -438,19 +402,25 @@ TEST ///
   R = kk[a..f]
   I = ideal(a*b*c-d*e*f, a*b^2-d*c^2, a*e*f-d^2*b)
   gbTrace=3
-  elapsedTime C = res(I, FastNonminimal => true)
+  elapsedTime C = res(I, Strategy => Nonminimal)
   betti(C, Minimize=>true) == betti res ideal(I_*)
   betti(C)
   I = ideal I_*
   C1 = res(ideal gens gb I, Strategy=>1)
   debug Core
-  rawBetti(raw C1.Resolution, 1)
-  rawBetti(raw C1.Resolution, 0)
-
+  debug Complexes
+  -- Possibly remove this test?  Or make access to the raw computation reasonable!
+  rawcomp = C1.cache.Module.cache.ResolutionObject.RawComputation
+  b1 = rawBetti(rawcomp, 1)
+  b2 = rawBetti(rawcomp, 0)
+ 
   I = ideal I_*
   C2 = res(ideal gens gb I, Strategy=>0)
-  rawBetti(raw C2.Resolution, 1)
-  rawBetti(raw C2.Resolution, 0)  
+  rawcomp = C2.cache.Module.cache.ResolutionObject.RawComputation
+  b1' = rawBetti(rawcomp, 1)
+  b2' = rawBetti(rawcomp, 0)
+  assert(b2 === b2')
+  -- b1, b1' are different.
 ///
 
 ///
@@ -459,7 +429,7 @@ TEST ///
   I = Grassmannian(2,5,R)
   gbTrace=0
   elapsedTime minimalBetti I
-  elapsedTime C = res(I, FastNonminimal => true)
+  elapsedTime C = res(I, Strategy => Nonminimal)
   betti(C, Minimize=>true)
 ///
 
@@ -468,7 +438,7 @@ TEST ///
   R = kk[x_1..x_21]
   I = Grassmannian(1,6,R)
   elapsedTime minimalBetti I
-  elapsedTime C = res(I, FastNonminimal => true)
+  elapsedTime C = res(I, Strategy => Nonminimal)
   betti(C, Minimize=>true)
 ///
 
@@ -481,7 +451,7 @@ TEST ///
   I = minors(2,M)
   N = syz gens I
   minimalBetti coker N
-  C = res(coker N, FastNonminimal => true)
+  C = res(coker N, Strategy => Nonminimal)
   
   assert(betti(C,Minimize=>true) == betti res coker syz gens I)
   betti C
@@ -493,43 +463,43 @@ TEST ///
   m2 = genericMatrix(R,j,3,3)
   I = ideal(m1*m2-m2*m1)
   elapsedTime minimalBetti I
-  C = res(I, FastNonminimal => true)
+  C = res(I, Strategy => Nonminimal)
   betti C
   m3 = C.dd_2;
   gbTrace=0
   
-  res(coker C.dd_2, FastNonminimal => true)
-  res(coker C.dd_3, FastNonminimal => true)
-  res(coker C.dd_4, FastNonminimal => true)
-  res(coker C.dd_5, FastNonminimal => true)
-  res(coker C.dd_6, FastNonminimal => true)
-  res(coker C.dd_7, FastNonminimal => true)
-  res(coker C.dd_8, FastNonminimal => true)
-  assert(res(coker C.dd_9, FastNonminimal => true) == 0)
-  assert(res(coker C.dd_10, FastNonminimal => true) == 0)
+  res(coker C.dd_2, Strategy => Nonminimal)
+  res(coker C.dd_3, Strategy => Nonminimal)
+  res(coker C.dd_4, Strategy => Nonminimal)
+  res(coker C.dd_5, Strategy => Nonminimal)
+  res(coker C.dd_6, Strategy => Nonminimal)
+  res(coker C.dd_7, Strategy => Nonminimal)
+  res(coker C.dd_8, Strategy => Nonminimal)
+  assert(res(coker C.dd_9, Strategy => Nonminimal) == 0)
+  assert(res(coker C.dd_10, Strategy => Nonminimal) == 0)
 
   betti C
   
   gensI = schreyerOrder gens gb I
   P = gens gb syz gensI;
-  res(coker P, FastNonminimal => true)
+  res(coker P, Strategy => Nonminimal)
 ///
 
 TEST ///
   R = ZZ/101[a..f]
   m = map(R^0,R^1,0)
   gbTrace = 3
-  res(coker m, FastNonminimal => true)
+  res(coker m, Strategy => Nonminimal)
 ///
 
 TEST ///
   R = ZZ/101[a..f]
   I = ideal(a*b-e*f, a*c*e-f^3, a^2*c*d^2-b^2*e*f^2)
   time betti res I
-  elapsedTime C0 = res(ideal I_*, FastNonminimal => true)
+  elapsedTime C0 = res(ideal I_*, Strategy => Nonminimal)
   P = gens gb syz gens I
 
-  C1 = res(coker P, FastNonminimal => true)
+  C1 = res(coker P, Strategy => Nonminimal)
   B1 = minimalBetti coker P
   B2 = betti res coker P
   assert(B1 == B2)
@@ -545,7 +515,7 @@ TEST ///
   leadTerm M
   gens gb M
   P = gens gb image M
-  C = res(coker P, FastNonminimal => true)
+  C = res(coker P, Strategy => Nonminimal)
   assert(minimalBetti coker P == betti res coker P)
 ///
 
@@ -554,7 +524,7 @@ TEST ///
   R = ZZ/101[a..d]
   I = ideal random(R^1, R^{-2,-3,-4})
   P = gens gb syz gens I
-  betti res(coker P,  FastNonminimal => true)
+  betti res(coker P,  Strategy => Nonminimal)
   minimalBetti coker P
   
   F = source schreyerOrder gens I
@@ -562,9 +532,9 @@ TEST ///
   raw F
   P1 = map(F,,P)
   isHomogeneous P1
-  betti(res(coker P1, FastNonminimal => true), Minimize=>true)
+  betti(res(coker P1, Strategy => Nonminimal), Minimize=>true)
   res coker P1 -- this one looks wrong if one does not do the line before this? (MES: I don't see any issue here 3/2018)
-  -- ?? is this a bug??
+  -- ?? is this a bug??  BUG, it seems 
 ///
 
 TEST ///
@@ -578,46 +548,49 @@ TEST ///
   m = bgg(2,M,E);
   elapsedTime gens gb m;
   gbTrace=0
-  elapsedTime C1 = res(coker m, FastNonminimal => true, LengthLimit=>7)
+  elapsedTime C1 = res(coker m, Strategy => Nonminimal, LengthLimit=>7)
+  B0 = betti(C1, Minimize => true)
   B1 = minimalBetti(coker m, LengthLimit=>7)
-  B2 = betti res(coker m)
+  B2 = betti res(coker m, LengthLimit => 7)
   assert(B1 == B2)
 
   m = bgg(2,M,E);  
+  elapsedTime res(coker m, Strategy => Nonminimal, LengthLimit=>7)
   elapsedTime C2 = res(coker m, LengthLimit=>6)
   elapsedTime minimalBetti(coker m, LengthLimit=>6)
   assert(betti C2 == oo)
-  betti(C1, Minimize => true)
-  elapsedTime res(coker m, FastNonminimal=>true, LengthLimit=>7)
-  betti oo
-  
+
   m = bgg(3,M,E);
   elapsedTime gens gb m;
   elapsedTime B1 = minimalBetti(coker m, LengthLimit=>7) -- 1.4 sec
-  elapsedTime B2 = betti res(coker m) -- 27 seconds
-  time C1 = res(coker m, FastNonminimal => true, LengthLimit=>7) -- .65 sec if done without minimalBetti line.
-  assert(B1 == B2)
+  -- elapsedTime B2 = betti res(coker m, LengthLimit => 7) -- 27 seconds (in 2026: 10.5 sec M4 mac)
+  -- time C1 = res(coker m, Strategy => Nonminimal, LengthLimit=>7) -- .65 sec if done without minimalBetti line.
+  -- assert(B1 == B2)
 ///
 
 
 TEST ///
   -- this is a small-ish example used to get the logic of matrix building right
+  needsPackage "Complexes"
   setRandomSeed 0
   kk = ZZ/101
   R = kk[vars(0..3)]
   I = ideal fromDual random(R^1, R^{-3});
-  C = res(I, FastNonminimal => true)
-  
+  minimalBetti I
+  C = res(I, Strategy => Nonminimal)
+  betti(C, Minimize => true)  
+
   I = ideal(I_*)
-  elapsedTime C1 = res(I, FastNonminimal => true, DegreeLimit=>1) -- DOES NOTHING (i.e. does the whole thing) BUG
+  elapsedTime C1 = res(I, Strategy => Nonminimal, DegreeLimit=>1) -- DOES NOTHING (i.e. does the whole thing) BUG
 ----  assert(betti(C,Minimize=>true) != betti(C1,Minimize=>true)) -- totally non-minimal, so maybe it did do something. ACTUALLY: returns without doing ranks
   betti C1
-  elapsedTime C2 = res(I, FastNonminimal => true)
-  betti C2 == betti C
+  elapsedTime C2 = res(I, Strategy => Nonminimal)
+  assert(betti C2 == betti C)
   assert(C.dd^2 == 0)
   assert(isHomogeneous C)
   C1 = betti res ideal(I_*)
   assert(betti(C,Minimize=>true) == betti(C1,Minimize=>true))
+  minimalBetti I
   assert(minimalBetti I == betti C1)
 ///
 
@@ -628,9 +601,8 @@ TEST ///
   setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
   gbTrace=2
-  elapsedTime C = res(I, FastNonminimal => true)
-  minimalBetti I
-  betti(C, Minimize=>true)
+  elapsedTime C = res(I, Strategy => Nonminimal)
+  assert(minimalBetti I ===  betti(C, Minimize=>true))
   betti C
 ///
 
@@ -675,11 +647,11 @@ TEST ///
   stderr << "--EngineTests/Res.f4.m2: *** Warning: bypassing a test that takes too much memory." << endl;
   exit 0
 
-  elapsedTime C = res(I, FastNonminimal=>true)
+  elapsedTime C = res(I, Strategy => Nonminimal)
   gbTrace=2
   elapsedTime minimalBetti I
-
 ///
+
 -* TEST *- ///
   -- takes too much memory
   -- might take too long ...
@@ -689,11 +661,12 @@ TEST ///
   setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
   gbTrace=2
-  elapsedTime C = res(I, FastNonminimal => true) -- 49.39 seconds on MBP, 11.3 seconds in 2018
-  elapsedTime minimalBetti I  -- 75 sec in 2018
+  elapsedTime C = res(I, Strategy => Nonminimal) -- 49.39 seconds on MBP, 11.3 seconds in 2018, 8.6 sec in 2026.
+  elapsedTime C = res(I, Strategy => Nonminimal) -- 49.39 seconds on MBP, 11.3 seconds in 2018
+  elapsedTime minimalBetti I  -- 75 sec in 2018, 8.3 sec (after nonmin res is made) in 2026.
 
-  debug needsPackage "NonminimalComplexes"  
-  elapsedTime Cd = constantStrand(C, kk, 8) -- 1.7 sec
+  debug needsPackage "Complexes"  
+  elapsedTime Cd = constantStrand(C, 8) -- 1.7 sec
   Mk = Cd.dd_7;
   M = Mk ** R;
   elapsedTime M' = transpose M;
@@ -704,20 +677,6 @@ TEST ///
   -- over kk:
   elapsedTime gens gb Mk; -- >= 104  sec
   elapsedTime gens gb Mk'; --.01  sec
-
-  debug Core
-  kkp = ZZp(101, Strategy=>"Ffpack") -- use this ring for M1
-  debug Core
-  comp = fastNonminimalComputation C
-  elapsedTime M1 = rawResolutionGetMutableMatrix2B(comp, raw kk, 8, 7);
-  M1 = map(kk,M1);
-  elapsedTime M2 = sub(M1,kkp); -- uugh, very slow. crashed because of memory usage.
-  
-  elapsedTime rank M1
-  (numRows M1, numColumns M1)
-  class M1
-  ring M1
-  
 ///
 
 -* TEST *- ///  
@@ -726,7 +685,7 @@ TEST ///
   R = kk[vars(0..10)]
   setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
-  elapsedTime C = res(I, FastNonminimal => true)
+  elapsedTime C = res(I, Strategy => Nonminimal)
   elapsedTime B1 = minimalBetti I
   betti'ans = new BettiTally from {
       (0,{0},0) => 1, 
@@ -753,13 +712,13 @@ TEST ///
   I = ideal fromDual soc;
   time C = res I
   time B = betti res I
-  time F = res(ideal I_*, FastNonminimal=>true)
-  time B == betti(F, Minimize =>true)
+  time F = res(ideal I_*, Strategy => Nonminimal)
+  time B == betti(F, Minimize => true)
   assert(betti F != betti C)
   assert(F =!= C)
 
-  F = res(ideal I_*, FastNonminimal=>true)
-  assert(B == betti(F, Minimize =>true))
+  F = res(ideal I_*, Strategy => Nonminimal)
+  assert(B == betti(F, Minimize => true))
   C = res I;
   assert(B == betti C)
 
@@ -767,13 +726,13 @@ TEST ///
   C1 = res(I, Strategy=>1);
   C2 = res(I, Strategy=>2);
   C0 = res(I, Strategy=>0);
-  C4 = res(I, Strategy=>4);
+  C4 = res(I, Strategy=>Nonminimal);
   assert(C2 === C1)
   assert(C0 === C1)
-  assert(C4 === C1)
+  assert(C4 =!= C1)
 
   I = ideal I_*;
-  C4 = res(I, Strategy=>4);
+  C4 = res(I, Strategy=>Nonminimal);
   C1 = res(I, Strategy=>1);
   C2 = res(I, Strategy=>2);
   C0 = res(I, Strategy=>0);
@@ -785,7 +744,7 @@ TEST ///
 
 ///
   restart
-  debug needsPackage "NonminimalComplexes"
+  debug needsPackage "Complexes"
   kk = ZZ/101
   R = kk[vars(0..14)]
   M = genericMatrix(R,a,3,5)
@@ -794,12 +753,13 @@ TEST ///
   gbTrace=2
   --minimalBetti I^2
   J = I^2;
-  elapsedTime C = res(J, FastNonminimal=>true)
+  --elapsedTime C = res(J, Strategy => Nonminimal)
+  elapsedTime C = res(J, Strategy => Nonminimal)
   elapsedTime minimalBetti J
   gbTrace=0
   elapsedTime M = submatrixByDegrees(C.dd_3, {6}, {6});
   elapsedTime Mk = sub(M,kk);
-  elapsedTime C6 = constantStrand(C, kk, 6)
+  elapsedTime C6 = constantStrand(C, 6)
   assert(Mk == C6.dd_3)
   -- over R:
   elapsedTime gens gb M;
@@ -814,7 +774,7 @@ TEST ///
   elapsedTime gens gb Mk';
 
   elapsedTime M = submatrixByDegrees(C.dd_4, {7}, {7});
-  elapsedTime C7 = constantStrand(C, kk, 7)
+  elapsedTime C7 = constantStrand(C, 7)
   Mk = C7.dd_4;
   M = Mk ** R;
   elapsedTime M' = transpose M;
@@ -830,7 +790,7 @@ TEST ///
   time rank Mk -- very slow... 
   time rank Mk'
 
-  elapsedTime C7 = constantStrand(C, kk, 8) -- 4.02 sec IMPROVED THIS!
+  elapsedTime C7 = constantStrand(C, 8) -- 4.02 sec IMPROVED THIS!
   Mk = C7.dd_5;
   M = Mk ** R;
   elapsedTime M' = transpose M;
@@ -846,7 +806,7 @@ TEST ///
   time rank Mk -- very slow... 41 sec
   time rank Mk' -- also slow, since it is being done by dense methods: 53 sec
 
-  elapsedTime C9 = constantStrand(C, kk, 9) -- 4.86 sec
+  elapsedTime C9 = constantStrand(C, 9) -- 4.86 sec
   Mk = C9.dd_6;
   M = Mk ** R;
   elapsedTime M' = transpose M;
@@ -860,8 +820,7 @@ TEST ///
   elapsedTime gens gb Mk; -- .01 sec
   elapsedTime gens gb Mk'; -- .01 sec
 
-
-  elapsedTime C10 = constantStrand(C, kk, 10) -- 7.8 sec
+  elapsedTime C10 = constantStrand(C, 10) -- 7.8 sec
   Mk = C10.dd_7;
   M = Mk ** R;
   elapsedTime M' = transpose M;
@@ -879,13 +838,13 @@ TEST ///
   R = kk[vars(0..15)]
   M = genericMatrix(R,a,3,4)
   I = permanents(2,M)
-  elapsedTime C = res(I, FastNonminimal=>true)
+  elapsedTime C = res(I, Strategy => Nonminimal)
   gbTrace=2
   minimalBetti I
 
   J = I^2;
   gens gb J;  
-  elapsedTime C = res(J, FastNonminimal=>true)
+  elapsedTime C = res(J, Strategy => Nonminimal)
   gbTrace=2
   minimalBetti J
 ///
@@ -899,7 +858,7 @@ TEST ///
   I = randomMonomialIdeal(splice{20:4}, R)
   S = kk[vars(0..10), DegreeRank=>11]
   I = sub(I,S)
-  C = res(I, FastNonminimal=>true)
+  C = res(I, Strategy => Nonminimal)
 
   Ds = hashTable for i from 1 to length C list i => set keys tally degrees C_i;
   Es = hashTable for i from 2 to length C list i => toList(Ds#(i-1) * Ds#(i));

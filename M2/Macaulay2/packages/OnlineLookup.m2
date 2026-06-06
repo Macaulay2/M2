@@ -143,6 +143,8 @@ multidoc ///
  Node
   Key
    isc
+   (isc, Constant)
+   (isc, Number)
    (isc, String)
    (isc, RR)
   Headline
@@ -153,4 +155,21 @@ multidoc ///
     (@HREF "http://wayback.cecm.sfu.ca/projects/ISC/"@).
    Example
     isc (sqrt 2*pi)
+///
+
+-- oeis function
+TEST ///
+oeis {1,3,31,1145}
+instance(oeis {1,3,31,1145}, MarkUpType)
+///
+
+-- oeis options
+TEST ///
+L = apply(5,n->n!);
+oeis (L,Limit=>5);
+x= #oeis (L,Limit=>5)
+assert(x<=5)
+oeis (L,Limit=>1,Position=>2);
+y= #oeis (L,Limit=>1,Position=>2)
+assert(y==1)
 ///

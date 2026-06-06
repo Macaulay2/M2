@@ -558,7 +558,7 @@ Node
  Description
   Example
    xmlNewRoot "foo"
-   xmlDocDump oo
+   xmlDocDump oo -* no-capture-flag *-
  SeeAlso
   xmlDocDump
 Node
@@ -613,7 +613,7 @@ Node
    xmlAddElement(n,"key")
    xmlAddText(oo,"frobble 你好")
    n
-   xmlDocDump n   
+   xmlDocDump n -* no-capture-flag *-
  SeeAlso
   xmlNewRoot
 Node
@@ -688,6 +688,52 @@ TEST ///
      y = x.children#1;
      assert( (#y) === 1 )
      assert( (y.tag) === "bar" )
+///
+
+-- Cover the low-level Libxml round trip: xmlParse produces a
+-- LibxmlNode, toXMLnode lifts it to the high-level XMLnode form, and
+-- toLibxmlNode goes back down.
+TEST ///
+src := "<root><a>hello</a><b val=\"42\">world</b></root>";
+lib := xmlParse src;
+assert(class lib === LibxmlNode);
+n1 := toXMLnode lib;
+n2 := parse src;
+assert(class n1 === XMLnode);
+assert(class n2 === XMLnode);
+assert(n1.tag === n2.tag);
+assert(#(n1.children) == #(n2.children));
+-- Round trip back to LibxmlNode.
+lib2 := toLibxmlNode n2;
+assert(class lib2 === LibxmlNode);
+///
+
+-- xmlTypeTable / xmlTypeIndex: previously exported but never asserted
+-- on directly. xmlTypeDescription is a LibxmlNode -> String accessor,
+-- exercised separately below.
+TEST ///
+assert(class xmlTypeTable === HashTable);
+assert(class xmlTypeIndex === HashTable);
+-- Type 1 is the XML element node in libxml2.
+assert(xmlTypeTable#1 == "element node");
+assert(xmlTypeIndex#"element node" == 1);
+-- xmlTypeIndex and xmlTypeTable are inverses on their shared keys.
+assert(all(keys xmlTypeTable, k -> xmlTypeIndex#(xmlTypeTable#k) == k));
+///
+
+-- High-level getChildren / getAttributes on a parsed LibxmlNode --
+-- exported but no TEST previously exercised them directly.
+-- xmlParse returns the root element directly (not a document wrapper),
+-- so getChildren on it returns the immediate children.
+TEST ///
+src := "<doc><x>1</x><y attr1=\"one\" attr2=\"two\">v</y></doc>";
+lib := xmlParse src;
+kids := getChildren lib;
+assert(#kids == 2);  -- <x> and <y>
+ga := getAttributes (kids#1);  -- attributes of <y>
+assert(#ga == 2);
+-- xmlTypeDescription on a parsed element node returns "element node".
+assert(xmlTypeDescription lib == "element node");
 ///
 
 -- Local Variables:

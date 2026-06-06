@@ -65,6 +65,16 @@ header "
    #include <Eigen/Core>
 
    #include <libnormaliz/version.h>
+
+   #ifdef HAVE_FPLLL
+   #include <fplll.h>
+   #endif
+
+   #include <libxml/xmlversion.h>
+
+   #ifdef WITH_JANSSON
+   #include <jansson.h>
+   #endif
    ";
 
 header "
@@ -162,6 +172,14 @@ setupconst("version", Expr(toHashTable(Sequence(
 	  #endif
 	  "),
    "fflas_ffpack version" => ffpackVersion(),
+   "fplll version" => Ccode(constcharstar, "
+       #ifdef HAVE_FPLLL
+	   stringize(FPLLL_VERSION)
+       #else
+	   \"not present\"
+       #endif
+       "),
+   "libxml2 version" => Ccode(constcharstar, "LIBXML_DOTTED_VERSION"),
    "mpsolve version" => Ccode(constcharstar, "stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)" ),
    "python version" => Ccode(constcharstar,"
 	#ifdef WITH_PYTHON
@@ -176,6 +194,13 @@ setupconst("version", Expr(toHashTable(Sequence(
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"frobby_version"),
    "flint version" => Ccode(constcharstar,"FLINT_VERSION"),
+   "jansson version" => Ccode(constcharstar, "
+       #ifdef WITH_JANSSON
+           JANSSON_VERSION
+       #else
+           \"not present\"
+       #endif
+       "),
    "scscp version" => Ccode(constcharstar,"
 	 #ifdef HAVE_SCSCP
 	   stringize(SCSCP_VERSION_MAJOR) \".\" stringize(SCSCP_VERSION_MINOR) \".\" stringize(SCSCP_VERSION_PATCH)

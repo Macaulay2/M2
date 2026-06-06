@@ -78,7 +78,7 @@ document {
 	  },
      
      PARA{}, "Now we have seen how to construct fans, so we turn to functions on fans, 
-     for example the direct product (",TO directProduct,":",
+     for example the direct product (",TO (directProduct, Cone, Cone), "):",
      
      EXAMPLE {
 	  " F3 = fan {coneFromVData matrix {{1}},coneFromVData matrix {{-1}}}",
@@ -2558,12 +2558,6 @@ document {
 --      }
 
 document {
-     Key => directProduct,
-     Headline => "computes the direct product of two convex objects",
-     
-     }
-
-document {
      Key => {(directProduct,Cone,Cone), (directProduct,Cone,Polyhedron), 
 	  (directProduct,Polyhedron,Cone), (directProduct,Polyhedron,Polyhedron)},
      Headline => "computes the direct product of polyhedra and cones",
@@ -3144,7 +3138,7 @@ document {
      PARA{}, "Computes the direct product of ",TT "C1"," and ",TT "C2",". This is the cone 
      ",TT "{(x,y) | x in C1, y in C2}",", in the direct product of the ambient spaces.",
      
-     PARA{}, "See also ",TO directProduct,".",
+     PARA{}, "See also ",TO (directProduct, Cone, Cone),".",
      
      EXAMPLE {
 	  " C1 = coneFromVData matrix {{1,2},{2,1}}",
@@ -3170,7 +3164,7 @@ document {
      PARA{}, "Computes the direct product of ",TT "C"," and ",TT "P",". This is the 
      polyhedron ",TT "{(c,p) | c in C, p in P}",", in the direct product of the ambient spaces.", 
      
-     PARA{}, "See also ",TO directProduct,".",
+     PARA{}, "See also ",TO (directProduct, Cone, Cone),".",
      
      EXAMPLE {
 	  " C = coneFromVData matrix {{1,2},{2,1}}",
@@ -3196,7 +3190,7 @@ document {
      PARA{}, "Computes the direct product of ",TT "P"," and ",TT "C",". This is the polyhedron 
      ",TT "{(p,c) | p in P, x in C}",", in the direct product of the ambient spaces.", 
      
-     PARA{}, "See also ",TO directProduct,".",
+     PARA{}, "See also ",TO (directProduct, Cone, Cone),".",
      
      EXAMPLE {
 	  " P =convexHull matrix {{1},{-1}}",
@@ -3222,7 +3216,7 @@ document {
      PARA{}, "Computes the direct product of ",TT "P1"," and ",TT "P2",".This is the polyhedron 
      ",TT "{(x,y) | x in P1, y in P2}",", in the direct product of the ambient spaces.",
      
-     PARA{}, "See also ",TO directProduct,".",
+     PARA{}, "See also ",TO (directProduct, Cone, Cone),".",
      
      EXAMPLE {
 	  " P1 = convexHull matrix {{1,-1,0,0},{0,0,1,-1}}",

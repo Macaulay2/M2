@@ -99,7 +99,7 @@ doc ///
     Description
         Text
             @UL {
-                TO (resolution, Complex),
+                TO (freeResolution, Complex),
                 TO (resolutionMap, Complex),
                 TO (isShortExactSequence, ComplexMap, ComplexMap),
                 TO (isQuasiIsomorphism, ComplexMap),
@@ -1576,6 +1576,7 @@ doc ///
         canonicalTruncation(f, (lo, hi))
     Inputs
         f:ComplexMap
+          which commutes with the differentials
         lo:ZZ
             or {\tt -infinity} or {\tt null} (the latter two give no lower bound)
         hi:ZZ
@@ -1584,7 +1585,8 @@ doc ///
         :ComplexMap
     Description
         Text
-            Returns a new complex map which drops (sets to zero) all modules 
+            Returns a new complex map (commuting with the differentials)
+            which drops (sets to zero) all modules 
             outside the given range in the source, and modifies the ends to preserve homology
             in the given range.  The degree of the map {\tt f} is used to
             determine the truncation of the target.
@@ -1594,9 +1596,9 @@ doc ///
             R = ZZ/101[a..d];
             C = (freeResolution coker matrix{{a,b,c}})[1]
             D = freeResolution coker matrix{{a*b,a*c,b*c}}
-            E = freeResolution coker matrix{{a^2,b^2,c*d}}
-            f = randomComplexMap(D, C)
-            g = randomComplexMap(E, D)
+            E = (freeResolution coker matrix{{a^2*b,a*b*c,b*c*d}})[-1]
+            f = randomComplexMap(D, C, Cycle => true)
+            g = randomComplexMap(E, D, Cycle => true)
             h = g * f
         Text
             We use these maps to illustrate canonical truncation.
@@ -1784,7 +1786,7 @@ doc ///
         Text
             To avoid recomputation, this method caches its value.
     SeeAlso
-        (resolution, Complex)
+        (freeResolution, Complex)
         (freeResolution, Module)
         (isQuasiIsomorphism, ComplexMap)
 ///
@@ -3218,7 +3220,7 @@ doc ///
             assert isIsomorphism HH_1 f
         Text
             XXX TODO. Free resolutions of complexes produce quasi 
-            isomorphisms. (use example to doc of (resolution, Complex)).
+            isomorphisms. (use example to doc of (freeResolution, Complex)).
         Example
             D = complex{random(S^2, S^{-3,-3,-4})}
             prune HH D

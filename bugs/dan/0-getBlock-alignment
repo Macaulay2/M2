@@ -1,8 +1,0 @@
-The memory allocator provided with Singular-Factory is in the file libcfmem.a,
-and the routines are called getBlock, freeBlock, and reallocBlock.  I copied
-the routines into d/factory_allocator.c more than 10 years ago and continue to
-use the modified copy.  I may even have destroyed 8 byte alignment then while
-optimizing it for speed and not noticed it until now.  Fix it by aligning to
-something like sizeof(void *).  That will fix the test "assert( # factor g ==
-11 )" in test/factor.m2, because the advanced version of mpn_lshift used for
-x86_64/core 2 duo will get aligned data.

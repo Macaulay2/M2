@@ -33,7 +33,10 @@ List /  RingElement := List /  Number := List => (v,b) -> apply(v,x->x /  b)
 List // RingElement := List // Number := List => (v,b) -> apply(v,x->x // b)
 List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 
-VisibleList _ List := VisibleList => (x,y) -> apply(splice y, i -> x#i)
+VisibleList _ List := VisibleList => (L, ind) -> (
+    new class L from apply(splice ind, i -> L#i))
+String _ List := String => (s, ind) -> (
+    concatenate apply(splice ind, i -> s#i))
 
 Sequence .. Sequence := Sequence => (v,w) -> (
      n := #v;
@@ -228,15 +231,49 @@ flexibleOperators = sort flexibleOperators
 fixedOperators = sort fixedOperators
 allOperators = sort allOperators
 
-random List := opts -> s -> (
-     n := #s;
-     if n <= 1 then return s;
-     s = new MutableList from s;
-     for i from 1 to n-1 do (
-	  j := random (i+1);
-	  t := s#i ; s#i = s#j ; s#j = t;
-	  );
-     new List from s)
+randomElement = method()
+randomElement List := x -> (
+    if #x == 0 then error "expected a nonempty list";
+    x#(random(#x)))
+
+-- TODO: change to call randomElement instead (M2 1.26.11 or 1.27.05)
+seenRandomWarning := false;
+random List := opts -> (
+    x -> (
+	if not seenRandomWarning then (
+	    printerr(
+		"the behavior of random(List) will change soon; ",
+		"use shuffle(List) instead");
+	    seenRandomWarning = true);
+	shuffle x))
+
+randomSubset = method()
+-- Knuth Algorithm S, Art of Computer Programming, Section 3.4.2
+randomSubset(ZZ, ZZ) := (N, n) -> (
+    if n < 0 or n > N then error("expected an integer between 0 and ", N);
+    t := 0;
+    apply(n, m -> (
+	    while (N - t) * rawRandomRRUniform defaultPrecision >= n - m
+	    do t += 1;
+	    first (t, t += 1))))
+randomSubset ZZ := N -> (
+    if N < 0 then error "expected a nonnegative integer";
+    r := random 2^N;
+    for i to N - 1 list if r & 2^i != 0 then i else continue)
+randomSubset(VisibleList, ZZ) := (x, n) -> x_(randomSubset(#x, n))
+randomSubset VisibleList := x -> x_(randomSubset(#x))
+randomSubset(Set, ZZ) := (x, n) -> set randomSubset(toList x, n)
+randomSubset Set := x -> set randomSubset toList x
+
+shuffle = method()
+shuffle MutableList := s -> (
+    for i from 1 to #s-1 do (
+	j := random (i+1);
+	(s#i, s#j) = (s#j, s#i));
+    s)
+shuffle List := s -> toList shuffle new MutableList from s
+shuffle(List, ZZ) := shuffle @@ randomSubset
+
 -----------------------------------------------------------------------------
 -- sublists
 -----------------------------------------------------------------------------
@@ -293,6 +330,11 @@ deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e,
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
 
+deepSelect = method()
+deepSelect(BasicList, Type)     := (L, T) -> deepSelect(L, e -> instance(e, T))
+deepSelect(BasicList, Function) := (L, f) -> nonnull deepApply'(L,
+    e -> if f e then e, e -> instance(e, BasicList) and not f e)
+
 -----------------------------------------------------------------------------
 -- Tables (nested lists)
 -----------------------------------------------------------------------------
@@ -314,25 +356,6 @@ pack(ZZ, BasicList) := List => pack'
 -- TODO: deprecate these versions
 pack(String,    ZZ) :=
 pack(BasicList, ZZ) := List => (L, n) -> pack'(n, L)
-
------------------------------------------------------------------------------
-
-parallelApplyRaw = (L, f) ->
-     -- 'reverse's to minimize thread switching in 'taskResult's:
-     reverse (taskResult \ reverse apply(L, e -> schedule(f, e)));
-parallelApply = method(Options => {Strategy => null})
-parallelApply(BasicList, Function) := o -> (L, f) -> (
-     if o.Strategy === "raw" then return parallelApplyRaw(L, f);
-     n := #L;
-     numThreads := min(n + 1, maxAllowableThreads);
-     oldAllowableThreads := allowableThreads;
-     if allowableThreads < numThreads then allowableThreads = numThreads;
-     numChunks := 3 * numThreads;
-     res := if n <= numChunks then toList parallelApplyRaw(L, f) else
-	  flatten parallelApplyRaw(pack(L, ceiling(n / numChunks)), chunk -> apply(chunk, f));
-     allowableThreads = oldAllowableThreads;
-     res);
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

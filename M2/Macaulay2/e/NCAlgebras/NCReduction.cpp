@@ -852,6 +852,7 @@ public:
 
   size_t operator()(Monom m) const // hash function
   {
+    (void) m;
     return 0; 
   }
 

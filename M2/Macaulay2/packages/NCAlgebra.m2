@@ -15,7 +15,7 @@ newPackage("NCAlgebra",
      Keywords => {"Noncommutative Algebra", "Interfaces"},
      AuxiliaryFiles => true,
      CacheExampleOutput => true,
-     PackageExports =>{"IntegralClosure"},
+     PackageExports =>{"Complexes", "IntegralClosure"},
      OptionalComponentsPresent => bergmanPresent := run "type bergman >/dev/null 2>&1" === 0
      )
 

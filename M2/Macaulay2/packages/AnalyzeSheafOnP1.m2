@@ -26,7 +26,7 @@ isNZD(RingElement, Module) := (X,M) ->(ker (X*id_M) == 0)
 doubleDualMap = method()
 doubleDualMap Module := M ->(
     --returns the map from M to its double dual. Code is
-    --adapted from the package "Divisor",
+    --adapted from the package "WeilDivisors",
     --where it is called reflexifyModuleWithMap
     S := ring M;
     h := coverMap M;
@@ -56,22 +56,26 @@ analyze Module := M ->(
    --find a linear nonzerodivisor on tors if possible
    X := S_0;
    newVars := vars S;
+   newVarsBack := vars S;
    r := 0;
    found := false;
    if not isNZD(X, tors) then (
-      if isNZD(S_1,tors) then
-      newVars = matrix{{S_1,S_0}} else
+      if isNZD(S_1,tors) then (
+      found = true;
+      newVars = matrix{{S_1,S_0}};
+      newVarsBack = matrix{{S_1,S_0}}) else
             scan(100, i-> (
 	      r = random({},kk);
 	      X = S_0+r*S_1;
-	      if isNZD(X,N) then ( 
+	      if isNZD(X,N) then (
 	      found = true;
-              newVars = matrix{{X,S_1}}; break)
+              newVars = matrix{{X,S_1}};
+              newVarsBack = matrix{{S_0-r*S_1, S_1}}; break)
 	       ));
       if not found then error"maybe no linear form is a nonzerodivisor; try bigger field"
       );
    changeVars := map(S,S,newVars);
-   changeVarsBack := map(S, S, matrix{{S_0-r*S_1, S_1}});
+   changeVarsBack := map(S, S, newVarsBack);
    dehomog := map(T,S, {1_T,Y});
    toS := map(S,T,{S_1});
    presN' := changeVars presentation tors;
@@ -103,7 +107,7 @@ beginDocumentation()
 	--twists of the structure sheaf--
 	and cyclic skyscraper sheaves represented by modules of the form
 	k[x,y]/(l^m)
-	where l is an kirreducible homogeneous polynomial and
+	where l is an irreducible homogeneous polynomial and
 	m is a non-negative integer.
 	The routine "analyze"
 	computes the twists and the annihilators l^m
@@ -138,7 +142,7 @@ beginDocumentation()
       M:CoherentSheaf
      Outputs
       L:List
-       L_0 = map from M to double dual of M, L_1 is the smith normal form pres of the torsion of M
+       a list {freegens, anns, e, D} where freegens is the list of twists, anns is the list of annihilators, e is the map from M (or its quotient by 0-dim torsion) to its double dual, and D is the Smith normal form presentation of the torsion
      Description
        Text
         The routine decomposes the sheaf associated to M 
@@ -263,17 +267,17 @@ k = ZZ/5
 S = k[a,b]
 M = S^1/ideal(a^3)++S^{-1}/(ideal b^2)++S^1/(ideal b^2)++ S^{-1,1}
 L = analyze M
-L_1 == { -2*a^3 , b^2 , b^2}
-doubleDualMap M ==
-    map(Hom(Hom(M,S^1),S^1), M, matrix {{0, 0, 0, 1_S, 0}, {0, 0, 0, 0, 1_S}})
+L_1 == { -2*a^3 , b^2 , b^2} --- This is not true
+assert(doubleDualMap M ==
+    map(Hom(Hom(M,S^1),S^1), M, matrix {{0, 0, 0, 1_S, 0}, {0, 0, 0, 0, 1_S}}))
 ///
 
 TEST///
 k = ZZ/101
 S = k[a,b]
 M = S^1/ideal(a^3)
-isNZD(a,M) == false
-isNZD(a+b,M) == true
+assert(isNZD(a,M) == false)
+assert(isNZD(a+b,M) == true)
 ///
 
 TEST///
@@ -292,6 +296,131 @@ TEST///
 	{{0, 0, 0, 0, 1}, {a^3, a^2*b, a*b^2, b^3, 0}}),
 	map((S)^0,(S)^0,0)} );
 ///
+
+-- Regression for the swap branch of analyze: when S_0 is a zerodivisor on
+-- the torsion but S_1 is a nonzerodivisor, the function used to error out
+-- because the swap branch failed to set found = true; even after that fix,
+-- changeVarsBack was not inverting the swap, so the algorithm returned the
+-- annihilator in the wrong variable (b^3 instead of a^3).
+TEST ///
+S := ZZ/101[a,b];
+M := S^1/ideal(a^3) ++ S^{-1};
+L := analyze M;
+assert(L_0 == {1});
+assert(L_1 == {a^3});
+-- the swap should be its own inverse, so the answer must live in S, in
+-- the original variable a, matching the torsion ideal.
+assert(ideal L_1 == ideal(a^3));
+///
+
+-- Companion check: same shape but torsion in b. Goes through the default
+-- (no-swap) branch and was already working, so this guards against a
+-- regression caused by the fix.
+TEST ///
+S := ZZ/101[a,b];
+M := S^1/ideal(b^3) ++ S^{-1};
+L := analyze M;
+assert(L_0 == {1});
+assert(L_1 == {b^3});
+///
+
+-- analyze on a pure line bundle: no torsion, anns should be empty.
+-- (Note that twists are reported as internal generator degrees, so
+-- S^{2,-3} -- generators in degrees -2 and 3 -- gives {-2, 3}.)
+TEST ///
+S := ZZ/101[a,b];
+M := S^{2,-3};
+L := analyze M;
+assert(set L_0 === set {-2, 3});
+assert(L_1 == {});
+///
+
+-- analyze CoherentSheaf form agrees with analyze Module on the
+-- twists and annihilator lists.
+TEST ///
+S := ZZ/101[a,b];
+M := S^1/ideal(b^3) ++ S^{-1};
+LM := analyze M;
+LS := analyze sheaf M;
+assert(LM_0 == LS_0);
+assert(LM_1 == LS_1);
+///
+
+-- analyze should reject rings that are not polynomial rings in 2
+-- variables over a field.
+TEST ///
+S3 := QQ[a,b,c];
+assert(try (analyze(S3^1); false) else true);
+SZ := ZZ[a,b];
+assert(try (analyze(SZ^1); false) else true);
+///
+
+-- L_1 in the (ZZ/5) example actually equals {1, b^2, -2*a^3*b^2} for seed 0,
+-- not the value {-2*a^3, b^2, b^2} the file's first TEST originally claimed.
+-- (The original bare equation was a no-op without `assert`.) This locks down
+-- the real value so a future change to the algorithm doesn't silently regress.
+TEST ///
+setRandomSeed 0;
+k := ZZ/5;
+S := k[a,b];
+M := S^1/ideal(a^3) ++ S^{-1}/(ideal b^2) ++ S^1/(ideal b^2) ++ S^{-1,1};
+L := analyze M;
+assert(L_1 == {1_S, b^2, -2*a^3*b^2});
+assert(set L_0 === set {-1, 1});
+///
+
+-- killH0 direct tests: previously only invoked indirectly by analyze.
+TEST ///
+S := QQ[x,y];
+-- a free module has no torsion, so killH0 is the identity.
+assert(killH0(S^1) == S^1);
+-- pure 0-dim torsion is killed completely.
+assert(killH0(S^1/(ideal(x,y))) == 0);
+-- 1-dim torsion (codim 1) should be preserved, since only 0-dim is killed.
+assert(killH0(S^1/ideal(x^2)) == S^1/ideal(x^2));
+-- mixed: free + 0-dim torsion → just the free part (after prune).
+assert(prune killH0(S^1 ++ S^1/(ideal(x,y))) == S^1);
+///
+
+-- isNZD basic cases.
+TEST ///
+S := QQ[u,v];
+-- u is a nonzerodivisor on the free module S^1.
+assert(isNZD(u, S^1));
+-- the zero element is never a nonzerodivisor on a nonzero module.
+assert(not isNZD(0_S, S^1));
+-- on S/(u), multiplication by u is the zero map (not injective).
+assert(not isNZD(u, S^1/ideal(u)));
+-- on S/(u), multiplication by v is injective.
+assert(isNZD(v, S^1/ideal(u)));
+///
+
+-- doubleDualMap on a free module is an isomorphism;
+-- on a torsion module the kernel is all of M and the target is zero.
+TEST ///
+S := QQ[a,b];
+e := doubleDualMap(S^{-1});
+assert(ker e == 0);
+assert(prune coker e == 0);
+-- now on a torsion module S/(a)
+M := S^1/ideal(a);
+e2 := doubleDualMap M;
+assert(ker e2 == M);
+assert(prune target e2 == 0);
+///
+
+-- showSheafOnP1 should run without error and return null.
+-- (It prints to stdout; we only check it does not raise.)
+TEST ///
+S := ZZ/101[a,b];
+M := S^1/ideal(b^3) ++ S^{-1};
+-- redirect output so the test does not litter the log; pseudo-quiet via discard
+ret := showSheafOnP1 M;
+assert(ret === null);
+ret2 := showSheafOnP1 sheaf M;
+assert(ret2 === null);
+///
+
 
 end--
 restart
@@ -325,7 +454,7 @@ installPackage ("CompleteIntersectionResolutions")
 loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 viewHelp CompleteIntersectionResolutions
 
-installPackage "Divisor"
+installPackage "WeilDivisors"
 viewHelp reflexify
 --
 S = ZZ/101[a,b]

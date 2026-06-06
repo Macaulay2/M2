@@ -492,7 +492,11 @@ TEST ///
   vlist = first entries vars (l1#0);
   ambPull = ambient l1#0;
   ambId = ideal l1#0;
-assert( (#(minimalPrimes (ideal l1#0)) == 3) and (#vlist == 3) and (0 == (vlist#0)*(vlist#1)) and (0 == (vlist#0)*(vlist#2)) and (0 == (vlist#2)*(vlist#1)) and ( dim(l1#0) == 1) and (pdim ((Ext^2(ambPull^1/ambId, ambPull))**(l1#0)) > 0) )
+  assert( (#(minimalPrimes (ideal l1#0)) == 3) and (#vlist == 3) and (0 == (vlist#0)*(vlist#1))
+      and (0 == (vlist#0)*(vlist#2)) and (0 == (vlist#2)*(vlist#1))
+      and ( dim(l1#0) == 1)
+      --and (pdim ((Ext^2(ambPull^1/ambId, ambPull))**(l1#0)) > 0) -- this use of pdim isn't quite correct
+      )
 ///
 
 -- **TEST3**  We next construct an interesting example that should be Cohen-Macaulay (and seminormal and weakly normal, but not WN1, note we don't have a good way to check those things yet).  We also check that the singular locus with reduced structure, is regular.  (it should be a copy of A^1).  

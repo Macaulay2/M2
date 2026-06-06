@@ -21,7 +21,7 @@ newPackage(
                     },
         Headline => "random complexes over fields or the integers",
 	Keywords => {"Examples and Random Objects"},
-        PackageExports => {"SimplicialComplexes"},
+        PackageExports => {"Complexes", "SimplicialComplexes"},
 	PackageImports => {"LLLBases"}
         )
 
@@ -71,15 +71,15 @@ maximalEntry=method()
 maximalEntry(Matrix) := m -> (
     max(flatten entries m/abs)+0.0)
 
-maximalEntry(ChainComplex) := C -> (
+maximalEntry(Complex) := C -> (
     R:= ring C; 
     if not( R === ZZ or R === QQ or R === RR_53 ) then 
-    error "expect a ChainComplex over ZZ ,QQ or RR_53";
+    error "expect a Complex over ZZ ,QQ or RR_53";
     for i from min C+1 to max C list maximalEntry C.dd_i)
 
 disturb = method(Options => {Strategy => Discrete})
-disturb(ChainComplex,RR) := opts -> (C,epsilon) -> (   
-    chainComplex for i from 1 to length C list (
+disturb(Complex,RR) := opts -> (C,epsilon) -> (   
+    complex for i from 1 to length C list (
 	c := rank C_(i-1);
 	d := rank C_i;
 	e := maximalEntry C.dd_i;
@@ -92,10 +92,10 @@ disturb(ChainComplex,RR) := opts -> (C,epsilon) -> (
 		    entry=C.dd_i_(k,l)*(1+epsilon*(2*random(RR)-1)))))
 --	C.dd_i +e*epsilon*(2*random(RR^c,RR^d)-oneMatrix(c,d))
     ))
-disturb(ChainComplex,RR) := ChainComplex => opts -> (C,epsilon) -> (   
+disturb(Complex,RR) := Complex => opts -> (C,epsilon) -> (   
     if ring C =!= ZZ and ring C =!= QQ and not instance(ring C, RealField) then
       error "expected a chain complex over ZZ, QQ, or RR";
-    chainComplex for i from 1 to length C list (
+    complex for i from 1 to length C list (
 	c := rank C_(i-1);
 	d := rank C_i;
         elems := entries C.dd_i;
@@ -112,7 +112,7 @@ testTimeForLLLonSyzygies(ZZ,ZZ):= opts->(r,n)->(
     t1:=timing (B:=syz A**QQ);
     B=lift(B,ZZ);
     t2:=timing(C:=LLL B);
-    (append(maximalEntry chainComplex(A,B),maximalEntry C),t1#0,t2#0)
+    (append(maximalEntry complex{A,B},maximalEntry C),t1#0,t2#0)
     )
 
 TEST///
@@ -130,6 +130,13 @@ oneMatrix(ZZ,ZZ):= (n,m) -> matrix apply(n,i->apply(m,j-> 1))
 randomChainComplex(List,List):= opts -> (h,r)-> (
     -- lists h_0,..,h_n,r_1,...,r_n
     -- of possible possible homology dimensions and ranks of maps in a chain complex
+    -- FIXME: the matrix ranks r are always achieved, but the homology ranks
+    -- are not guaranteed to match h.  For large entries of r the random
+    -- products A*B*C can have homology ranks that differ from the requested
+    -- list h; one of the TEST blocks below even disables its homology check
+    -- for this reason ("ouch, this needs improvement").  The construction
+    -- should be reworked so that the homology ranks reliably equal h, as the
+    -- documentation promises.
     if #h =!= #r+1 then error "expected list of non-negative integers of length n+1 and n";
     rr:=append(prepend(0,r),0);
     c:=for i from 0 to #h-1 list h_i+rr_i+rr_(i+1); 
@@ -149,7 +156,7 @@ randomChainComplex(List,List):= opts -> (h,r)-> (
 	if opts.ZeroMean then C=C-mean*oneMatrix(rr_i,c_i);
 	L=append(L,A*B*C);
 	);
-    return chainComplex L)
+    return complex L)
 
 TEST ///
   needsPackage("SVDComplexes")
@@ -194,8 +201,8 @@ randomSimplicialComplex(ZZ,ZZ):= (k,n) -> (
    N:=#sets-k-2;
    I:=monomialIdeal apply(apply(n,i->sets_(random(N)+k+2)),s->product(s,i->x_i));
    c:=simplicialComplex I;
-   CQ:=chainComplex complex c; 
-   C:=(chainComplex apply(length CQ-1,i->lift(CQ.dd_(i+1),ZZ)))
+   CQ:=complex complex c; 
+   C:=(complex apply(length CQ-1,i->lift(CQ.dd_(i+1),ZZ)))
    )
 
 TEST ///
@@ -211,7 +218,7 @@ TEST ///
 ///
     
 normalize = method()
-normalize ChainComplex := C-> (
+normalize Complex := C-> (
     minC := min C;
     maxC := max C;
     D := if ring C === ZZ then C**QQ else C;
@@ -220,9 +227,9 @@ normalize ChainComplex := C-> (
 	    m := max(flatten entries D.dd_i/abs);
    	    (1/m) * D.dd_i
         );
-    -- this next line is not correct: it might negate some differentials.
-    -- if the complex has minC odd...
-    chainComplex C'[-minC]
+    -- place the complex back at its original starting degree; using a shift
+    -- here would negate the differentials when minC is odd
+    complex(C', Base => minC)
     )
  
 beginDocumentation()
@@ -234,7 +241,7 @@ doc ///
      support for creating random complexes over the integers 
    Description
     Text
-      We implement two methods to create a random @TO "ChainComplex"@ over the integers.
+      We implement two methods to create a random @TO "Complex"@ over the integers.
       The first method (@TO randomChainComplex@) builds the complex from products of randomly chosen matrices of desired rank.
       The limitation of this method to produce large complexes over the integers with
       moderate Height is the use of the LLL algorithm to improve the presentation of
@@ -270,7 +277,7 @@ doc ///
      ZeroMean => Boolean
        whether to balance the random numbers around zero
    Outputs
-     C:ChainComplex
+     C:Complex
        a random chain complex over the integers whose homology ranks match $h$, and 
        whose matrices have ranks given by $r$
    Description
@@ -314,7 +321,7 @@ doc ///
      k:ZZ
      n:ZZ
    Outputs
-     C:ChainComplex
+     C:Complex
        the chainComplex of the Stanley-Reisner simplicial complex of a random 
        square free monomial ideal in k+1 variables and n generators
    Description
@@ -333,17 +340,17 @@ doc ///
 doc ///
    Key
      normalize
-     (normalize,ChainComplex)
+     (normalize,Complex)
    Headline
-     normalize a ChainComplex over QQ or RR
+     normalize a Complex over QQ or RR
    Usage
      B = normalize C
    Inputs
-     C:ChainComplex
+     C:Complex
        over RR or QQ
    Outputs
-     B:ChainComplex
-       an isomorphic ChainComplex over QQ or RR
+     B:Complex
+       an isomorphic Complex over QQ or RR
    Description
     Text
        We divide each matrix by its entry of maximal absolute value, to obtain a complex with entries of absolute size $\le 1$.
@@ -358,14 +365,14 @@ doc ///
 doc ///
    Key
      maximalEntry
-     (maximalEntry,ChainComplex)
+     (maximalEntry,Complex)
      (maximalEntry,Matrix)
    Headline
      maximal absolute value of the entries of the matrix or matrices 
    Usage
      m = maximalEntries C
    Inputs
-     C:ChainComplex
+     C:Complex
        or a @TO "Matrix"@, over ZZ, QQ, or RR
    Outputs
      m:List
@@ -386,21 +393,21 @@ doc ///
 doc ///
    Key
      disturb
-     (disturb,ChainComplex,RR)
+     (disturb,Complex,RR)
      [disturb, Strategy]
    Headline
      disturb the matrices of a chain complex over RR
    Usage
      B = disturb(C,epsilon)
    Inputs
-     C:ChainComplex
+     C:Complex
        over RR or QQ
      epsilon:RR
      Strategy => Symbol
        either Discrete or Continuous, whether the disturbed values should be drawn from a
        discrete distribution or a continuous distribution
    Outputs
-     B:ChainComplex
+     B:Complex
        a sequence of matrices over RR
    Description
     Text
@@ -592,7 +599,7 @@ TEST ///
   BR = normalize CR
   BR.dd
   
-  D = chainComplex{map(RR^1, RR^3, 0), map(RR^3, RR^1, {{1.0},{3.0},{5.0}})}
+  D = complex{map(RR^1, RR^3, 0), map(RR^3, RR^1, {{1.0},{3.0},{5.0}})}
   D.dd^2
   normalize D
   D.dd
@@ -608,6 +615,114 @@ TEST ///
   C = randomChainComplex({1,1,1},{2,2})
   C.dd
   disturb(C,.000001)
+///
+
+TEST ///
+  -- maximalEntry of a matrix: the largest absolute value among the entries
+  assert(maximalEntry matrix{{1,-5,3},{2,4,-2}} == 5)
+  assert(maximalEntry matrix{{0,0},{0,0}} == 0)
+  assert(class maximalEntry matrix{{1,2}} === RR)
+  -- maximalEntry of a complex: one value per differential
+  setRandomSeed "rc-maximalEntry"
+  C = randomChainComplex({1,1,1},{2,2})
+  me = maximalEntry C
+  assert(class me === List and #me == max C - min C)
+  assert(all(me, x -> x >= 0))
+  -- it requires the ring to be ZZ, QQ, or RR_53
+  assert(try (maximalEntry(C ** (ZZ/5)); false) else true)
+///
+
+TEST ///
+  -- histogram(L, n) splits [min L, max L] into n equal bins and counts entries
+  assert(histogram(toList(1..10), 5) == {2,2,2,2,2})
+  -- the bin counts always sum to the length of the list
+  assert(sum histogram(toList(1..37), 7) == 37)
+  assert(sum histogram({0.5, 1.0, 1.0, 2.0, 9.0}, 4) == 5)
+  assert(#histogram(toList(1..20), 8) == 8)
+///
+
+TEST ///
+  -- randomChainComplex(h, r): a complex over ZZ with prescribed homology ranks h
+  -- and differential ranks r
+  setRandomSeed "rc-randomChainComplex"
+  h = {2,3,2}; r = {2,2}
+  C = randomChainComplex(h, r)
+  assert(instance(C, Complex))
+  assert(ring C === ZZ)
+  assert(C.dd^2 == 0)
+  assert(min C == 0 and max C == #h - 1)
+  assert(h == for i from 0 to #h-1 list rank HH_i C)
+  assert(r == for i from 1 to #r list rank C.dd_i)
+  -- the WithLLL and ZeroMean options
+  C2 = randomChainComplex(h, r, WithLLL => false, ZeroMean => false)
+  assert(C2.dd^2 == 0)
+  assert(r == for i from 1 to #r list rank C2.dd_i)
+  -- the homology list must be one longer than the rank list
+  assert(try (randomChainComplex({1,1}, {1,1}); false) else true)
+///
+
+TEST ///
+  -- randomSimplicialComplex(k, n): the integral chain complex of a random
+  -- Stanley-Reisner complex on k+1 variables with n monomial generators
+  setRandomSeed "rc-randomSimplicialComplex"
+  C = randomSimplicialComplex(7, 20)
+  assert(instance(C, Complex))
+  assert(ring C === ZZ)
+  assert(C.dd^2 == 0)
+  assert(all(min C .. max C, i -> rank HH_i C >= 0))
+///
+
+TEST ///
+  -- normalize scales each differential so its maximal entry is 1
+  setRandomSeed "rc-normalize"
+  C = randomChainComplex({1,1,1},{2,2})
+  B = normalize C
+  assert(instance(B, Complex))
+  assert(B.dd^2 == 0)
+  assert(all(maximalEntry B, x -> x == 1))
+  -- normalize preserves the indexing and the homology ranks
+  assert(min B == min C and max B == max C)
+  assert((for i from min C to max C list rank HH_i (C ** QQ)) ==
+         (for i from min B to max B list rank HH_i B))
+  -- a complex already over QQ is accepted
+  BQ = normalize(C ** QQ)
+  assert(all(maximalEntry BQ, x -> x == 1))
+  -- regression: a complex whose minimum degree is odd must be normalized
+  -- without a spurious sign flip on the differentials
+  D = C[1]
+  ND = normalize D
+  sc = max(flatten entries((D ** QQ).dd_0) / abs)
+  assert(ND.dd_0 == (1/sc) * (D ** QQ).dd_0)
+///
+
+TEST ///
+  -- disturb(C, epsilon) perturbs every differential entry by relative error
+  -- at most epsilon
+  setRandomSeed "rc-disturb"
+  C = (randomChainComplex({1,1,1},{2,2})) ** RR_53
+  eps = 1e-3
+  B = disturb(C, eps)
+  assert(instance(B, Complex))
+  assert(min B == min C and max B == max C)
+  assert(all(min C + 1 .. max C, i ->
+      maximalEntry(B.dd_i - C.dd_i) <= eps * maximalEntry(C.dd_i) + 1e-9))
+  -- the Continuous strategy is also supported
+  B2 = disturb(C, eps, Strategy => Continuous)
+  assert(instance(B2, Complex))
+  -- disturb requires a complex over ZZ, QQ, or RR
+  assert(try (disturb((randomChainComplex({1,1},{1})) ** (ZZ/7), eps); false) else true)
+///
+
+TEST ///
+  -- testTimeForLLLonSyzygies(r, n) returns the maximal entries of A, of the
+  -- syzygy basis, and of its LLL reduction, together with two timings
+  setRandomSeed "rc-LLL"
+  (m, t1, t2) = testTimeForLLLonSyzygies(8, 16, Height => 11)
+  assert(class m === List and #m == 3)
+  assert(all(m, x -> x >= 0))
+  assert(t1 >= 0 and t2 >= 0)
+  -- the LLL reduction does not increase the maximal entry of the syzygy basis
+  assert(m#2 <= m#1)
 ///
 	    
 end--
@@ -712,7 +827,7 @@ elapsedTime (h,U)=SVDComplex CR;
 Sigma = source U
 
 e=1e-10
-nearlyZero=elapsedTime chainComplex apply(length C,i->(U_i*Sigma.dd_(i+1)*transpose U_(i+1)-C.dd_(i+1)))
+nearlyZero=elapsedTime complex apply(length C,i->(U_i*Sigma.dd_(i+1)*transpose U_(i+1)-C.dd_(i+1)))
 -- needs speed up for multiplication
 maximalEntry nearlyZero
 ///
@@ -897,8 +1012,8 @@ Ud#0 *(source Ud).dd_1 *transpose Ud#1 - D.dd_1
 Ud#1 *(source Ud).dd_2 *transpose Ud#2 - D.dd_2 
 Ud#2 *(source Ud).dd_3 *transpose Ud#3 - D.dd_3 
 
-F=chainComplex apply(3,i->U#i *(source U).dd_(i+1) *transpose U#(i+1))
-E=chainComplex apply(3,i->Ud#i *(source Ud).dd_(i+1) *transpose Ud#(i+1))
+F=complex apply(3,i->U#i *(source U).dd_(i+1) *transpose U#(i+1))
+E=complex apply(3,i->Ud#i *(source Ud).dd_(i+1) *transpose Ud#(i+1))
 D.dd^2
 E.dd^2
 (h,Ue)=SVDComplex(E,Strategy=>Laplacian,Threshold=>1e-8);
@@ -945,7 +1060,7 @@ tex Cplus.dd_0
 tex CplusQ.dd_0
 
 
-B=chainComplex CplusQ
+B=complex CplusQ
 B.dd^2
 C.dd^2
 B[3]

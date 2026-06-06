@@ -49,6 +49,8 @@ ARingTower *ARingTower::create(const ARingTower &R,
                                const std::vector<std::string> &new_names)
 {
   // TODO: write
+  (void) R;
+  (void) new_names;
   return nullptr;
 }
 

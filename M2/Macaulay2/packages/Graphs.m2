@@ -393,14 +393,14 @@ vertices Digraph := List => D -> D#(symbol vertexSet)
 -------------------------------------------
 
 displayGraph = method()
-displayGraph (String, String, Digraph) := (dotfilename, jpgfilename, G) -> (
+displayGraph (String, String, Digraph) := (dotfilename, pngfilename, G) -> (
      writeDotFile(dotfilename, G);
-     runcmd(graphs'DotBinary  | " -Tjpg " | dotfilename | " -o " | jpgfilename);
-     show URL("file://" | toAbsolutePath jpgfilename);
+     runcmd(graphs'DotBinary  | " -Tpng " | dotfilename | " -o " | pngfilename);
+     show URL("file://" | toAbsolutePath pngfilename);
      )
 displayGraph (String, Digraph) := (dotfilename, G) -> (
-     jpgfilename := temporaryFileName() | ".jpg";
-     displayGraph(dotfilename, jpgfilename, G);
+     pngfilename := temporaryFileName() | ".png";
+     displayGraph(dotfilename, pngfilename, G);
      )
 displayGraph Digraph := G -> (
      dotfilename := temporaryFileName() | ".dot";
@@ -1154,16 +1154,7 @@ spectrum Graph := List => G -> sort toList eigenvalues (adjacencyMatrix G, Hermi
 
 
 
-topologicalSort = method(TypicalValue =>List)
-topologicalSort Digraph := List => D -> topologicalSort(D, "")
-topologicalSort (Digraph, String) := List => (D,s) -> (
-    if instance(D, Graph) or isCyclic D then error "Topological sorting is only defined for acyclic directed graphs.";
-    s = toLower s;
-    processor := if s == "random" then random
-        else if s == "min" then sort
-        else if s == "max" then rsort
-        else if s == "degree" then L -> last \ sort transpose {apply(L, v -> degree(D, v)), L}
-        else identity;
+attemptTopologicalSort = (D,processor) -> (
     S := processor sources D;
     L := {};
     v := null;
@@ -1172,7 +1163,23 @@ topologicalSort (Digraph, String) := List => (D,s) -> (
         L = L|{v};
         S = processor join(drop(S, 1), select(toList children (D, v), c -> isSubset(parents(D, c), L)));
         );
-    L
+    if #L == #(vertexSet D) then L else null
+    )
+
+topologicalSort = method(TypicalValue =>List)
+topologicalSort Digraph := List => D -> topologicalSort(D, "")
+topologicalSort (Digraph, String) := List => (D,s) -> (
+    if instance(D, Digraph) then (
+        s = toLower s;
+        processor := if s == "random" then shuffle
+            else if s == "min" then sort
+            else if s == "max" then rsort
+            else if s == "degree" then L -> last \ sort transpose {apply(L, v -> degree(D, v)), L}
+            else identity;
+        L := attemptTopologicalSort(D, processor);
+        if L =!= null then return L;
+    );
+    error "Topological sorting is only defined for acyclic directed graphs.";
     )
 
 
@@ -1270,14 +1277,7 @@ isConnected Graph := Boolean => G -> numberOfComponents G <= 1
 
 isCyclic = method()
 isCyclic Graph := Boolean => G -> isConnected G and all(vertexSet G, v -> degree(G, v) == 2)
-isCyclic Digraph := Boolean => G -> (
-        D := depthFirstSearch G;
-        any(vertexSet G, u ->
-            any(toList children(G, u), v ->
-                (D#symbol discoveryTime)#v < (D#symbol discoveryTime)#u and (D#symbol finishingTime)#u < (D#symbol finishingTime)#v
-                )
-            )
-        )
+isCyclic Digraph := Boolean => G -> attemptTopologicalSort(G, identity) === null
 
 isEulerian = method()
 isEulerian Graph := Boolean => G -> all(apply(vertexSet G, v -> degree(G,v)), even) and isConnected G
@@ -1367,7 +1367,6 @@ cartesianProduct(Graph, Graph) := Graph => (G, H) -> (
     graph(V, E, EntryMode => "edges")
     )
 
--- the 'directProduct' method is defined in 'Polyhedra'
 directProduct(Graph,Graph) := Graph => (G, H) -> (
     V := toList(set vertexSet G ** set vertexSet H);
     E := flatten for u in V list for v in V list
@@ -1582,7 +1581,7 @@ reindexBy (Graph, String) := Graph => (G, s) -> (
              );
         return graph (V', edges G)
         );
-    if s == "random" then return graph (random vertexSet G, edges G, EntryMode => "edges");
+    if s == "random" then return graph (shuffle vertexSet G, edges G, EntryMode => "edges");
     if s == "components" then return graph (flatten connectedComponents G, edges G, EntryMode => "edges");
     if s == "sort" then return graph (sort vertexSet G, edges G, EntryMode => "edges");
     )
@@ -1654,7 +1653,7 @@ reindexBy (Digraph, String) := Digraph => (D, s) -> (
              );
         return digraph (V', edges D, EntryMode => "edges")
         );
-    if s == "random" then return digraph(random vertexSet D, edges D, EntryMode => "edges");
+    if s == "random" then return digraph(shuffle vertexSet D, edges D, EntryMode => "edges");
     if s == "sort" then return digraph(sort vertexSet D, edges D, EntryMode => "edges");
     )
 
@@ -2119,13 +2118,13 @@ doc ///
     Headline
         displays a digraph or graph using Graphviz
     Usage
-        displayGraph(dotFileName,jpgFileName,G)
+        displayGraph(dotFileName,pngFileName,G)
         displayGraph(dotFileName,G)
         displayGraph G
     Inputs
         G:Digraph
         dotFileName:String
-        jpgFileName:String
+        pngFileName:String
     Description
         Text
             Displays a digraph or graph using Graphviz
@@ -5505,6 +5504,17 @@ TEST ///
    assert(topologicalSort D==={2,3,1})
 ///
 
+TEST ///
+-- check cycle detection in digraphs
+assert( isCyclic digraph({{1,2},{2,3},{3,1}}) === true )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{4,3}}) === true )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{2,4}}) === false )
+assert( isCyclic digraph({{1,3},{1,4},{2,4},{3,2},{4,3}}) === true )
+assert( isCyclic digraph({{1,3},{1,4},      {3,2},{4,3}}) === false )
+assert( isCyclic digraph({{1,2},{2,3},{3,4}}) === false )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{4,4}}) === true )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{5,5}}) === true )
+///
 
 TEST ///
 
@@ -5516,6 +5526,200 @@ TEST ///
 
 TEST ///
 assert Equation(degreeSequence pathGraph 5, {2, 2, 2, 1, 1})
+///
+
+TEST ///
+-- named-graph enumerators: vertex and edge counts
+ve = G -> (#vertexSet G, #edges G)
+assert(ve(completeGraph 5) == (5,10))
+assert(ve(cycleGraph 6) == (6,6))
+assert(ve(pathGraph 5) == (5,4))
+assert(ve(starGraph 5) == (6,5))
+assert(ve(wheelGraph 5) == (5,8))
+assert(ve(barbellGraph 3) == (6,7))
+assert(ve(circularLadder 4) == (8,12))
+assert(ve(prismGraph 4) == (8,12))
+assert(ve(cocktailParty 3) == (6,12))
+assert(ve(completeMultipartiteGraph {2,3}) == (5,6))
+assert(ve(crownGraph 4) == (8,12))
+assert(ve(doubleStar(2,3)) == (7,6))
+assert(ve(friendshipGraph 3) == (7,9))
+assert(ve(generalizedPetersenGraph(5,2)) == (10,15))
+assert(ve(kneserGraph(5,2)) == (10,15))
+assert(ve(ladderGraph 4) == (8,10))
+assert(ve(lollipopGraph(3,2)) == (5,5))
+assert(ve(rattleGraph(3,2)) == (5,5))
+assert(ve(thresholdGraph {1,0,1}) == (4,4))
+assert(ve(windmillGraph(3,3)) == (7,9))
+assert(ve(graphLibrary "petersen") == (10,15))
+///
+
+TEST ///
+-- graph products and operations: vertex and edge counts
+ve = G -> (#vertexSet G, #edges G)
+assert(ve(cartesianProduct(pathGraph 3, pathGraph 2)) == (6,7))
+assert(ve(tensorProduct(completeGraph 3, completeGraph 3)) == (9,18))
+assert(ve(strongProduct(pathGraph 2, pathGraph 2)) == (4,6))
+assert(ve(graphComposition(pathGraph 3, completeGraph 2)) == (6,11))
+assert(ve(disjointUnion {completeGraph 3, pathGraph 2}) == (5,4))
+assert(ve(graphPower(pathGraph 5, 2)) == (5,7))
+-- lexicographicProduct is a synonym for graphComposition
+assert(lexicographicProduct === graphComposition)
+///
+
+TEST ///
+-- derivative graphs: complement, line graph, underlying graph, transpose, barycenter
+ve = G -> (#vertexSet G, #edges G)
+assert(ve(complementGraph cycleGraph 5) == (5,5))
+assert(ve(complementGraph completeGraph 4) == (4,0))
+assert(ve(lineGraph pathGraph 4) == (3,2))
+assert(ve(lineGraph completeGraph 3) == (3,3))
+assert(ve(underlyingGraph digraph{{1,2},{2,3}}) == (3,2))
+assert(edges digraphTranspose digraph{{1,2},{2,3}} === {{2,1},{3,2}})
+assert(vertexSet barycenter pathGraph 5 === {2})
+///
+
+TEST ///
+-- matrix invariants: adjacency, degree, incidence, laplacian
+assert(adjacencyMatrix completeGraph 3 == matrix{{0,1,1},{1,0,1},{1,1,0}})
+assert(degreeMatrix completeGraph 3 == matrix{{2,0,0},{0,2,0},{0,0,2}})
+assert(incidenceMatrix cycleGraph 3 == matrix{{1,1,0},{1,0,1},{0,1,1}})
+assert(laplacianMatrix pathGraph 3 == matrix{{1,-1,0},{-1,2,-1},{0,-1,1}})
+///
+
+TEST ///
+-- boolean predicates on canonical graphs and digraphs
+assert isTree pathGraph 4
+assert isTree starGraph 4
+assert not isTree cycleGraph 4
+assert isRegular cycleGraph 5
+assert isRegular completeGraph 4
+assert not isRegular pathGraph 4
+assert isEulerian cycleGraph 4
+assert not isEulerian pathGraph 4
+assert hasEulerianTrail pathGraph 4
+assert not hasEulerianTrail completeGraph 4
+assert hasOddHole cycleGraph 5
+assert not hasOddHole completeGraph 4
+assert isPerfect completeGraph 4
+assert not isPerfect cycleGraph 5
+assert isLeaf(pathGraph 4, 0)
+assert not isLeaf(pathGraph 4, 1)
+assert isCM completeGraph 4
+assert isCM pathGraph 4
+D = digraph{{1,2},{2,3}}
+assert isSink(D, 3)
+assert not isSink(D, 1)
+assert isSource(D, 1)
+assert not isSource(D, 3)
+assert isStronglyConnected digraph{{1,2},{2,3},{3,1}}
+assert not isStronglyConnected D
+assert isWeaklyConnected D
+assert not isWeaklyConnected digraph({1,2,3,4},{{1,2}})
+assert isReachable(D, 3, 1)
+assert not isReachable(D, 1, 3)
+///
+
+TEST ///
+-- graph traversal: BFS, DFS, findPaths, distance, floydWarshall
+T = digraph{{1,2},{1,3},{2,4},{2,5}}
+assert(breadthFirstSearch(T,1) === {{1},{2,3},{4,5}})
+assert(reverseBreadthFirstSearch(T,4) === {{4},{2},{1}})
+assert(sort keys depthFirstSearch T === {discoveryTime, finishingTime})
+D = digraph{{1,2},{2,3}}
+assert(findPaths(D,1,2) === {{1,2,3}})
+assert(distance(pathGraph 5,0,4) == 4)
+H = distance(pathGraph 5,0)
+assert(H#0 == 0 and H#4 == 4)
+assert(distanceMatrix D == matrix{{0,1,2},{-1,0,1},{-1,-1,0}})
+assert((floydWarshall D)#(1,3) == 2)
+///
+
+TEST ///
+-- digraph relations and exported alias symbols
+D = digraph{{1,2},{2,3}}
+assert(children(D,1) === set{2})
+assert(parents(D,2) === set{1})
+assert(descendants(D,1) === set{1,2,3})
+assert(nondescendants(D,1) === set{})
+assert(forefathers(D,3) === set{1,2,3})
+assert(reachable(D,{1}) === {1,2,3})
+assert(sinks D === {3})
+assert(sources D === {1})
+assert(degreeIn(D,2) == 1)
+assert(degreeOut(D,1) == 1)
+assert(neighbors(pathGraph 4,1) === set{0,2})
+assert(closedNeighborhood(pathGraph 4,1) === set{0,1,2})
+assert(nonneighbors(pathGraph 4,0) === set{2,3})
+assert(sort leaves starGraph 4 === {1,2,3,4})
+assert(descendents === descendants)
+assert(foreFathers === forefathers)
+assert(nondescendents === nondescendants)
+assert(BFS === breadthFirstSearch)
+assert(DFS === depthFirstSearch)
+///
+
+TEST ///
+-- graph metrics: eccentricity, radius, center, girth, density, spectrum
+assert(eccentricity(pathGraph 5,0) == 4)
+assert(eccentricity(pathGraph 5,2) == 2)
+assert(radius pathGraph 5 == 2)
+assert(center pathGraph 5 === {2})
+assert(sort center cycleGraph 5 === {0,1,2,3,4})
+assert(girth cycleGraph 5 == 5)
+assert(girth completeGraph 4 == 3)
+assert(girth pathGraph 4 === infinity)
+assert(degeneracy completeGraph 4 == 3)
+assert(degeneracy pathGraph 5 == 1)
+assert(density completeGraph 4 == 1)
+assert(density cycleGraph 4 == 2/3)
+assert(degreeCentrality(completeGraph 4,0) == 1/4)
+assert(minimalDegree pathGraph 5 == 1)
+assert(minimalDegree completeGraph 4 == 3)
+assert(numberOfTriangles completeGraph 4 == 4)
+assert(numberOfTriangles cycleGraph 5 == 0)
+assert(clusteringCoefficient completeGraph 4 == 1)
+assert(clusteringCoefficient cycleGraph 4 == 0)
+-- spectrum returns floating-point (RR) eigenvalues; check within tolerance
+Sp = spectrum completeGraph 3
+assert(#Sp == 3)
+assert(abs(max Sp - 2) < 0.0001 and abs(min Sp + 1) < 0.0001)
+///
+
+TEST ///
+-- graph manipulations: add/delete vertices and edges, subgraphs, reindexing
+ve = G -> (#vertexSet G, #edges G)
+assert(ve(addEdge(pathGraph 3, set{0,2})) == (3,3))
+assert(ve(addEdges'(pathGraph 4, {{0,3}})) == (4,4))
+assert(ve(addVertex(pathGraph 3, 99)) == (4,2))
+assert(ve(addVertices(pathGraph 3, {7,8})) == (5,2))
+assert(bipartiteColoring pathGraph 4 === {{0,2},{1,3}})
+assert(ve(deleteVertex(pathGraph 4, 1)) == (3,1))
+assert(ve(deleteVertices(pathGraph 4, {0,1})) == (2,1))
+assert(removeNodes === deleteVertices)
+assert(sort vertexSet indexLabelGraph graph{{symbol a, symbol b},{symbol b, symbol c}} === {0,1,2})
+assert(ve(inducedSubgraph(pathGraph 5, {1,2,3})) == (3,2))
+assert(vertexSet reindexBy(pathGraph 4, "sort") === {0,1,2,3})
+assert(ve(spanningForest cycleGraph 4) == (4,3))
+assert(ve(vertexMultiplication(pathGraph 3, 1, 99)) == (4,4))
+///
+
+TEST ///
+-- ring-theoretic hooks and dot-file output
+ve = G -> (#vertexSet G, #edges G)
+assert(numgens edgeIdeal cycleGraph 3 == 3)
+assert(numgens coverIdeal cycleGraph 3 == 3)
+assert(class cliqueComplex completeGraph 3 === SimplicialComplex)
+assert(dim cliqueComplex completeGraph 3 == 2)
+assert(class independenceComplex pathGraph 3 === SimplicialComplex)
+assert(vertexCoverNumber cycleGraph 4 == 2)
+assert(vertexCovers cycleGraph 4 === {{0,2},{1,3}})
+assert(criticalEdges pathGraph 3 === {})
+R = QQ[symbol x, symbol y, symbol z]
+assert(ve(monomialGraph(monomialIdeal(x^2,y^2,z^2), 1)) == (3,3))
+fn = temporaryFileName() | ".dot"
+writeDotFile(fn, completeGraph 3)
+assert(fileExists fn and #get fn > 0)
 ///
 
 end;

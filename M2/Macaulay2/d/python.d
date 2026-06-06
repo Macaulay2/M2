@@ -3,7 +3,7 @@ use common;
 use util;
 use evaluate;
 
-header "#include <Python.h>";
+declarations "#include <Python.h>";
 
 WrongArgPythonObject():Expr := WrongArg("a python object");
 WrongArgPythonObject(n:int):Expr := WrongArg(n,"a python object");
@@ -13,7 +13,9 @@ import ErrOccurred():int;
 buildPythonErrorPacket():Expr := (
     e := ErrOccurred();
     if e == 1 then (
-	if !SuppressErrors then Ccode(void, "PyErr_Print()");
+	if !SuppressErrors
+	then Ccode(void, "PyErr_Print()")
+	else Ccode(void, "PyErr_Clear()");
 	buildErrorPacket("python error"))
     else if e == -1 then StopIterationE
     else nullE);
@@ -31,25 +33,71 @@ toExpr(r:pythonObjectOrNull):Expr := (
 	x.hash = h;
 	Expr(x)));
 
+import Initialize(exec:charstar):constcharstarOrNull;
 PyInitialize(e:Expr):Expr := (
     when e
-    is a:Sequence do (
-	if length(a) == 0 then (
-	    Ccode(void, "Py_Initialize()");
-	    nullE)
-	else WrongNumArgs(0))
-    else WrongNumArgs(0));
+    is s:stringCell do (
+	if Ccode(int, "Py_IsInitialized()") != 0 then return nullE;
+	r := Initialize(tocharstar(expandFileName(s.v)));
+	when r
+	is msg:constcharstar do buildErrorPacket(tostring(msg))
+	is null do nullE)
+    else WrongArgString());
 setupfun("pythonInitialize", PyInitialize);
 
-import RunSimpleString(s:string):int;
 PyRunSimpleString(e:Expr):Expr := (
-     when e is s:stringCell do if 0 == RunSimpleString(s.v) then nullE else buildPythonErrorPacket()
+     when e is s:stringCell do (
+	 if Ccode(int, "PyRun_SimpleString(", tocharstar(s.v), ")") == 0
+	 then nullE
+	 else buildPythonErrorPacket())
      else WrongArgString());
 setupfun("runSimpleString",PyRunSimpleString);
 
-import RunString(s:string):pythonObjectOrNull;
-PyRunString(e:Expr):Expr := when e is s:stringCell do toExpr(RunString(s.v)) else WrongArgString();
-setupfun("pythonRunString",PyRunString);
+PyEvalGetBuiltins(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then toExpr(Ccode(pythonObjectOrNull,
+		"PyEval_GetBuiltins()"))
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("pythonEvalGetBuiltins", PyEvalGetBuiltins);
+
+PyRunStringEval(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is s:stringCell do (
+		when a.1
+		is o:pythonObjectCell do toExpr(
+		    Ccode(pythonObjectOrNull,
+			"PyRun_String(", tocharstar(s.v), ", Py_eval_input, ",
+			o.v, ", NULL)"))
+		else WrongArgPythonObject(2))
+	    else WrongArgString(1))
+	else WrongNumArgs(1, 2))
+    else WrongNumArgs(1, 2));
+setupfun("pythonRunStringEval", PyRunStringEval);
+
+PyRunStringFile(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is s:stringCell do (
+		when a.1
+		is o:pythonObjectCell do (
+		    r := Ccode(pythonObjectOrNull,
+			"PyRun_String(", tocharstar(s.v), ", Py_file_input, ",
+			o.v, ", NULL)");
+		    when r
+		    is null do return buildPythonErrorPacket()
+		    else Expr(o))
+		else WrongArgPythonObject(2))
+	    else WrongArgString(1))
+	else WrongNumArgs(1, 2))
+    else WrongNumArgs(1, 2));
+setupfun("pythonRunStringFile", PyRunStringFile);
 
 import Main():int;
 PyMain(e:Expr):Expr := toExpr(Main());
@@ -66,30 +114,6 @@ PyObjectType(e:Expr):Expr := (
     is s:SpecialExpr do PyObjectType(s.e)
     else WrongArgPythonObject());
 setupfun("objectType",PyObjectType);
-
-PyObjectRichCompareBool(e1:Expr,e2:Expr,e3:Expr):Expr :=
-    when e1
-    is x:pythonObjectCell do
-	when e2
-	is y:pythonObjectCell do
-	    when e3
-	    is z:ZZcell do (
-		r := Ccode(int, "PyObject_RichCompareBool(",
-		    x.v, ", ", y.v, ", ",  toInt(z), ")");
-		if r == -1 then buildPythonErrorPacket()
-		else toExpr(r == 1))
-	    else WrongArgZZ(3)
-	is s:SpecialExpr do PyObjectRichCompareBool(e1, s.e, e3)
-	else WrongArgPythonObject(2)
-    is s:SpecialExpr do PyObjectRichCompareBool(s.e, e2, e3)
-    else WrongArgPythonObject(1);
-PyObjectRichCompareBool(e:Expr):Expr :=
-    when e
-    is a:Sequence do
-	if length(a) == 3 then PyObjectRichCompareBool(a.0, a.1, a.2)
-	else WrongNumArgs(3)
-    else WrongNumArgs(3);
-setupfun("pythonObjectRichCompareBool",PyObjectRichCompareBool);
 
 PyObjectHasAttrString(lhs:Expr,rhs:Expr):Expr :=
     when lhs
@@ -170,12 +194,19 @@ setupconst("pythonTrue",
     Expr(pythonObjectCell(Ccode(pythonObject, "Py_True"), hash_t(1))));
 setupconst("pythonFalse",
     Expr(pythonObjectCell(Ccode(pythonObject, "Py_False"), hash_t(0))));
+PyObjectIsTrue(e:Expr):Expr := (
+    when e
+    is x:pythonObjectCell do (
+	r := Ccode(int, "PyObject_IsTrue(", x.v, ")");
+	toExpr(r == 1))
+    else WrongArgPythonObject());
+setupfun("pythonObjectIsTrue", PyObjectIsTrue);
 
 ----------
 -- ints --
 ----------
 
-import LongAsZZ(z:ZZmutable, x:pythonObject):void;
+import LongAsZZ(z:ZZmutable, x:pythonObject):int;
 PyLongAsLong(e:Expr):Expr :=
     when e
     is x:pythonObjectCell do (
@@ -186,8 +217,8 @@ PyLongAsLong(e:Expr):Expr :=
 	else if overflow == 0 then toExpr(y)
 	else (
 	    z := newZZmutable();
-	    LongAsZZ(z, x.v);
-	    toExpr(moveToZZandclear(z))))
+	    if LongAsZZ(z, x.v) == -1 then buildPythonErrorPacket()
+	    else toExpr(moveToZZandclear(z))))
     is s:SpecialExpr do PyLongAsLong(s.e)
     else WrongArgPythonObject();
 setupfun("pythonLongAsLong",PyLongAsLong);

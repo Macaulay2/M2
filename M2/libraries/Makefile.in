@@ -4,7 +4,7 @@ BUILT_TARGETS = patch fetch all check unconfigure reinstall
 ALL_TARGETS = $(BUILT_TARGETS) clean distclean
 all:fetch
 $(ALL_TARGETS): Makefile.library
-$(foreach d,@LIBLIST@ @PROGLIST@ libtool M2,		\
+$(foreach d,@LIBLIST@ @PROGLIST@ M2 Macaulay2-docs,	\
 	$(foreach t, $(ALL_TARGETS),			\
 		$(eval $t-in-$d:; + $$(MAKE) -C $d $t)	\
 		$(eval .PHONY: $t $t-in-$d)))
@@ -52,7 +52,11 @@ $(foreach f,Makefile Makefile.library,					\
 show-licenses:; grep -wnH license @srcdir@/*/Makefile.in
 clean:; rm -rf final
 distclean:clean ; rm -f Makefile
+
+# can't check out submodules in parallel -- they fight over .git/config.lock
+# maybe check out submodules during configure instead?
+.NOTPARALLEL:
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries "
 # End:
-.NOTPARALLEL:

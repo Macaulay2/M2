@@ -17,6 +17,21 @@ cmake-make-appleclang:
 		-DBUILD_DOCS=on \
 		../../../..
 
+##	CC="`brew --prefix llvm`/bin/clang" CXX="`brew --prefix llvm`/bin/clang++" cmake \
+
+cmake-clang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-clang
+	cd builds.tmp/cmake-clang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DCMAKE_C_COMPILER="`brew --prefix llvm`/bin/clang" \
+		-DCMAKE_CXX_COMPILER="`brew --prefix llvm`/bin/clang++" \
+		-DBUILD_DOCS=on \
+		-DBUILD_NATIVE=off \
+		../../../..
+
 cmake-appleclang:
 	echo "git branch is " $(BRANCH)
 	mkdir -p builds.tmp/cmake-appleclang
@@ -24,7 +39,7 @@ cmake-appleclang:
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DBUILD_TESTING=on \
-		-DCMAKE_PREFIX_PATH="`brew --prefix libffi`" \
+		-DCMAKE_PREFIX_PATH="`brew --prefix libomp`" \
 		-DBUILD_DOCS=on \
 		-DBUILD_NATIVE=off \
 		../../../..

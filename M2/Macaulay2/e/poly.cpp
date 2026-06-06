@@ -259,6 +259,18 @@ bool PolyRing::from_Interval(gmp_RRi z, ring_elem &result) const
     return true;
 }
 
+bool PolyRing::from_ComplexInterval(gmp_CCi z, ring_elem &result) const
+{
+    ring_elem a;
+    if (!K_->from_ComplexInterval(z, a))
+      {
+        result = ZERO_RINGELEM;
+        return false;
+      }
+    result = fromCoefficient(a);
+    return true;
+}
+
 bool PolyRing::from_double(double z, ring_elem &result) const
 {
   ring_elem a;
@@ -649,7 +661,7 @@ ring_elem PolyRing::copy(const ring_elem f) const
   return head.next;
 }
 
-void PolyRing::remove(ring_elem &f) const {}
+void PolyRing::remove(ring_elem &f) const { (void) f; }
 void PolyRing::internal_negate_to(ring_elem &f) const
 {
   Nterm *v = f;
@@ -1834,6 +1846,9 @@ ring_elem *PolyRing::get_parts(const std::vector<int> &wts,
   // (3) Sort the array, by increasing weight values.
   // (4) Make an array, copy the elems to it.
 
+  (void) wts;
+  (void) f;
+  (void) result_len;
   return nullptr;
 }
 

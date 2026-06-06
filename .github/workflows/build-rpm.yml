@@ -1,0 +1,52 @@
+name: Build RPM packages
+on: workflow_dispatch
+
+jobs:
+  build-rpm:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+        distribution:
+          - fedora
+          - almalinux
+        release:
+          - 8
+          - 9
+          - 10
+          - 41
+          - 42
+          - 43
+        exclude:
+          - distribution: almalinux
+            release: 41
+          - distribution: almalinux
+            release: 42
+          - distribution: almalinux
+            release: 43
+          - distribution: fedora
+            release: 8
+          - distribution: fedora
+            release: 9
+          - distribution: fedora
+            release: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build RPM
+        run: |
+          cd M2/BUILD/rpm
+          make rpm DISTRIBUTION=${{ matrix.distribution }} \
+          RELEASE=${{ matrix.release }}
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.os }}-${{ matrix.distribution }}-${{ matrix.release }}
+          path: |
+            M2/BUILD/rpm/rpmbuild-*/BUILD/Macaulay2-*/M2/config.log
+            M2/BUILD/rpm/rpmbuild-*/BUILD/Macaulay2-*/M2/libraries/*/build/*/config.log
+            M2/BUILD/rpm/rpmbuild-*/BUILD/Macaulay2-*/M2/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
+            M2/BUILD/rpm/rpmbuild-*/RPMS/*/*.rpm

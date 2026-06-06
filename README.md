@@ -11,7 +11,6 @@ downloading binary releases.
 The structure of this directory is as follows:
 
 * `M2`: contains everything needed by a user to build Macaulay2.
-* `bugs`: contains older bug reports.
 
 See `CITATION.cff` for information about citing Macaulay2.
 
@@ -32,3 +31,24 @@ will normally contact the authors to get their approval of the change.  If a
 new package with mathematical content is submitted, it will normally be
 accepted if it can be installed with `installPackage` and the tests pass as
 determined by `check`, in the latest version of Macaulay2.
+
+### Copyright
+
+Copyright (C) 1993-2026 [The Macaulay2 Authors](
+https://github.com/Macaulay2/M2/wiki/The-Macaulay2-Authors)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, see https://www.gnu.org/licenses/.
+
+Macaulay2 binaries are licensed under GPL-3.0 due to linking with LGPL-3.0 libraries (FLINT, MPFR).
+See https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility

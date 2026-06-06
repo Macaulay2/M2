@@ -20,6 +20,7 @@ void ARingQQGMP::eval(const RingMap* map,
                       int first_var,
                       ring_elem& result) const
 {
+  (void) first_var;
   bool ok = map->get_ring()->from_rational(&f, result);
   if (!ok)
     {
@@ -37,6 +38,7 @@ void ARingQQGMP::elem_text_out(buffer& o,
   char s[1000];
   char* str;
 
+  (void) p_parens;
   bool is_neg = (mpq_sgn(&a) == -1);
   bool one = is_pm_one(a);
 

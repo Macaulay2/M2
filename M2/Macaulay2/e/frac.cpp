@@ -403,7 +403,7 @@ ring_elem FractionField::copy(const ring_elem a) const
   return FRAC_RINGELEM(g);
 }
 
-void FractionField::remove(ring_elem &a) const {}
+void FractionField::remove(ring_elem &a) const { (void) a; }
 void FractionField::internal_negate_to(ring_elem &a) const
 {
   frac_elem *f = FRAC_VAL(a);
@@ -711,6 +711,7 @@ ring_elem FractionField::get_terms(int nvars0,
                                    int,
                                    int) const
 {
+  (void) nvars0;
   return f;
 }
 

@@ -26,13 +26,20 @@ KaTeX := () -> (
           "\\QQ": "\\mathbb{Q}",
           "\\RR": "\\mathbb{R}",
           "\\CC": "\\mathbb{C}",
-          "\\PP": "\\mathbb{P}"
+          "\\PP": "\\mathbb{P}",
+          "\\OO": "\\mathcal{O}",
+          "\\Hom": "\\operatorname{Hom}",
+          "\\End": "\\operatorname{End}",
+          "\\Ext": "\\operatorname{Ext}",
+          "\\Tor": "\\operatorname{Tor}"
       }, delimiters = [
           { left: "$$",  right: "$$",  display: true},
           { left: "\\[", right: "\\]", display: true},
           { left: "$",   right: "$",   display: false},
           { left: "\\(", right: "\\)", display: false}
-      ], ignoredTags = ["tt", "script", "noscript", "style", "textarea", "pre", "code", "option"];
+      ], ignoredTags = [
+	  "kbd", "var", "samp", "script", "noscript",
+	  "style", "textarea", "pre", "code", "option" ];
       document.addEventListener("DOMContentLoaded", function() {
         renderMathInElement(document.body, { delimiters: delimiters, macros: macros, ignoredTags: ignoredTags, trust: true });
       });
@@ -100,8 +107,14 @@ html Hypertext := x -> (
 	sequence ct) else x;
     pushIndentLevel 1;
     (head, prefix, suffix, tail) := (
-	if instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
+	if instance(x, HypertextVoid) and class x =!= BR
+	or instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
 	if instance(x, HypertextParagraph) then (concatenate(indentLevel:"  "), "", "", newline) else ("","","",""));
+    -- LI should look like a paragraph if it doesn't have any containers
+    if instance(x, LI) then (
+	if not any(x, e -> instance(e, HypertextContainer)) then prefix = suffix = "" else (
+	    if not instance(first x, HypertextContainer) then prefix = "";
+	    if not instance(last  x, HypertextContainer) then suffix = ""));
     popIndentLevel(1, if instance(x, HypertextVoid)
 	then concatenate(head, "<", qname, attr, ">", tail)
 	else concatenate(head, "<", qname, attr, ">", prefix,
@@ -150,23 +163,28 @@ html COMMENT := x -> if match("--", concatenate x) then
 html HREF := x -> (
      r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html1);
      r = if match("^ +$", r) then #r : "&nbsp;&nbsp;" else r;
-     concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
+     concatenate("<a href=\"", toURL first x, "\">", r, "</a>")
      )
 
 html MENU := x -> html redoMENU x
 
 html INDENT := x -> html DIV append(toList x, "class"=>"indent")
 
-html TO   := x -> html TO2{tag := x#0, format tag | if x#?1 then x#1 else ""}
+html TO   := x -> html TO2 x
 html TO2  := x -> (
-    tag := getPrimaryTag fixup x#0;
-    fkey := format tag;
-    -- TODO: add this to htmlLiteral?
-    name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
-    if isUndocumented tag or isMissingDoc tag then concatenate(
-	html TT name, " (missing documentation)",
-	html COMMENT("tag: ", toString tag.Key)) else
-    concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, name}))
+    (tag, name) := (x#0, x#1);
+    -- TODO: add this to htmlLiteral? what is it even for?
+    name = if match("^ +$", name) then #name : "&nbsp;&nbsp;" else name;
+    if tag.Format != tag.Package then (
+	-- TODO: the primary tag should be resolved only using the dictionary,
+	-- without loading the package; cf. https://github.com/Macaulay2/M2/issues/4232
+	tag = getPrimaryTag fixup tag;
+	if isUndocumented tag or isMissingDoc tag then return concatenate(
+	    html TT name, " (missing documentation)",
+	    html COMMENT("tag: ", toString tag.Key)));
+    html ANCHOR {
+	"title" => htmlLiteral headline tag,
+	"href"  => toURL htmlFilename tag, name})
 
 ----------------------------------------------------------------------------
 -- html'ing non Hypertext
@@ -204,7 +222,7 @@ percentEncoding =  new MutableHashTable from toList apply(
     -- unreserved characters from RFC 3986
     -- ALPHA / DIGIT / "-" / "." / "_" / "~"
     -- we also add "/" and ":" since they're standard URL characters
-    -- also "#" for named anchors
+    -- also "#" for named anchors -- should we also add "?" and "="? what if a filename contains these?
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-._~/:#",
     c -> (c, c))
     -- everything else will be percent encoded and added to the hash table
@@ -214,4 +232,7 @@ urlEncode = method()
 urlEncode Nothing := identity
 urlEncode String := s -> concatenate apply(s, c -> (
 	if percentEncoding#?c then percentEncoding#c
-	else percentEncoding#c = "%" | toUpper changeBase(first ascii c, 16)))
+	else (
+	    a := first ascii c;
+	    percentEncoding#c = concatenate("%", if a < 0x10 then "0" else "",
+		toUpper changeBase(a, 16)))))

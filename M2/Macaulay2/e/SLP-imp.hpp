@@ -19,6 +19,9 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
     const MutableMat<SMat<RT> >* consts /* DMat<RT>& DMat_consts */)
     : mRing(consts->getMat().ring())
 {
+  (void) SLP;
+  (void) cPos;
+  (void) vPos;
   std::cerr << "SLEvaluatorConcrete constructor not defined for sparse matrices\n";  
   abort();
 }
@@ -31,6 +34,9 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
       const MutableMat<SMat<RT> >* empty
       ): mRing(empty->getMat().ring())
 {
+  (void) libName;
+  (void) nInputs;
+  (void) nOutputs;
   std::cerr << "SLEvaluatorConcrete constructor not defined for sparse matrices\n";  
   abort();
 }
@@ -237,10 +243,10 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs,
 
   if (isCompiled) {
     if(parametersAndInputs==nullptr) {
-      (*compiled_fn)(inputs.array(), outputs.array());
+      (*compiled_fn)(inputs.unsafeArray(), outputs.unsafeArray());
     } else {
-      std::copy(inputs.array(),inputs.array()+nInputs,parametersAndInputs+nParams); 
-      (*compiled_fn)(parametersAndInputs, outputs.array());
+      std::copy(inputs.unsafeArray(),inputs.unsafeArray()+nInputs,parametersAndInputs+nParams); 
+      (*compiled_fn)(parametersAndInputs, outputs.unsafeArray());
     }
     return true;
   } else {                           
@@ -777,6 +783,15 @@ bool HomotopyConcrete<RT, Algorithm>::track(
     gmp_RR infinity_threshold,
     bool checkPrecision)
 {
+  (void) inputs;
+  (void) outputs;
+  (void) output_extras;
+  (void) init_dt;
+  (void) min_dt;
+  (void) epsilon;
+  (void) max_corr_steps;
+  (void) infinity_threshold;
+  (void) checkPrecision;
   ERROR("track: not implemented for this type of ring");
   return false;
 }

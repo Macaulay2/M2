@@ -32,7 +32,12 @@ header "// TODO: remove the following headers
 #include <relem.hpp>                        // for RingElement";
 
 -- debugging:
-export engineMemory(e:Expr):Expr := toExpr(Ccode(string, "engineMemory()"));
+export engineMemory(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then toExpr(Ccode(string, "engineMemory()"))
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
 setupfun("engineMemory", engineMemory);
 
 -- testing C++ exceptions
@@ -40,41 +45,70 @@ header "#include <stdexcept>
 void test_catch0() { throw (std::runtime_error(\"test\")); }
 int test_catch() { try { test_catch0(); } catch (const std::runtime_error& x) { return 1; } return 0; }";
 
-export testCatch(e:Expr):Expr := toExpr(Ccode(bool,"0 != test_catch()"));
+export testCatch(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then toExpr(Ccode(bool,"0 != test_catch()"))
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
 setupfun("testCatch",testCatch);
 
 -- random numbers
 
 export rawRandomZZ(e:Expr):Expr := (
      when e
-     is Nothing do toExpr(Ccode(ZZ, "rawRandomInteger(", "NULL)"))
-     is maxN:ZZcell do toExpr(Ccode(ZZ, "rawRandomInteger(", maxN.v, ")"))
+     is Nothing do toExpr(Ccode(ZZorNull, "rawRandomInteger(", "NULL)"))
+     is maxN:ZZcell do toExpr(Ccode(ZZorNull, "rawRandomInteger(", maxN.v, ")"))
      else WrongArgZZ());
 setupfun("rawRandomZZ",rawRandomZZ);
+export rawFareyApproximation(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) != 2 then return WrongNumArgs(2);
+	when a.0
+	is x:RRcell do (
+	    when a.1
+	    is hgt:ZZcell do toExpr(Ccode(QQ,
+		    "rawFareyApproximation(", x.v, ", ", hgt.v, ")"))
+	    else WrongArgZZ(2))
+	else WrongArgRR(1))
+    else WrongNumArgs(2));
+setupfun("rawFareyApproximation", rawFareyApproximation);
 export rawRandomQQ(e:Expr):Expr := (
      when e
-     is Nothing do toExpr(Ccode(QQ, "rawRandomQQ(", "0)"))
-     is ht:ZZcell do toExpr(Ccode(QQ, "rawRandomQQ(", ht.v, ")"))
+     is ht:ZZcell do toExpr(Ccode(QQorNull, "rawRandomQQ(", ht.v, ")"))
      else WrongArgZZ());
 setupfun("rawRandomQQ",rawRandomQQ);
-export rawRandomRR(e:Expr):Expr := (
+export rawRandomRRUniform(e:Expr):Expr := (
      when e
-     is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallInteger() 
-     else toExpr(Ccode(RR, "rawRandomRR(", toULong(prec.v), ")"))
+     is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallUInteger()
+     else toExpr(Ccode(RR, "rawRandomRRUniform(", toULong(prec.v), ")"))
      else WrongArgZZ());
-setupfun("rawRandomRR",rawRandomRR);
+setupfun("rawRandomRRUniform",rawRandomRRUniform);
 export rawRandomRRNormal(e:Expr):Expr := (
      when e
-     is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallInteger()
+     is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallUInteger()
      else toExpr(Ccode(RR, "rawRandomRRNormal(", toULong(prec.v), ")"))
      else WrongArgZZ());
 setupfun("rawRandomRRNormal",rawRandomRRNormal);
 export rawRandomCC(e:Expr):Expr := (
      when e
-     is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallInteger() 
+     is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallUInteger()
      else toExpr(Ccode(CC, "rawRandomCC(", toULong(prec.v), ")"))
      else WrongArgZZ());
 setupfun("rawRandomCC",rawRandomCC);
+export rawRandomRRi(e:Expr):Expr := (
+    when e
+    is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallUInteger()
+    else toExpr(Ccode(RRi, "rawRandomRRi(", toULong(prec.v), ")"))
+    else WrongArgZZ());
+setupfun("rawRandomRRi", rawRandomRRi);
+export rawRandomCCi(e:Expr):Expr := (
+    when e
+    is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallUInteger()
+    else toExpr(Ccode(CCi, "rawRandomCCi(", toULong(prec.v), ")"))
+    else WrongArgZZ());
+setupfun("rawRandomCCi", rawRandomCCi);
 
 -----------------------------------------------------------------------------
 -- monomials
@@ -468,20 +502,26 @@ export rawConwayPolynomial(e:Expr):Expr := (
 setupfun("rawConwayPolynomial",rawConwayPolynomial);
 
 export rawRRi(e:Expr):Expr := (
-     when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
-     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRi(",toInt(prec),")" ))
+     when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1)
+     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRi(",toULong(prec),")" ))
      else WrongArgZZ(1));
 setupfun("rawRRi",rawRRi);
 
-export rawRR(e:Expr):Expr := (
+export rawCCi(e:Expr):Expr := (
      when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
-     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRR(",toInt(prec),")" ))
+     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_CCi(",toInt(prec),")" ))
+     else WrongArgZZ(1));
+setupfun("rawCCi",rawCCi);
+
+export rawRR(e:Expr):Expr := (
+     when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1)
+     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRR(",toULong(prec),")" ))
      else WrongArgZZ(1));
 setupfun("rawRR",rawRR);
 
 export rawCC(e:Expr):Expr := (
-     when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
-     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_CCC(",toInt(prec),")" ))
+     when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1)
+     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_CCC(",toULong(prec),")" ))
      else WrongArgZZ(1));
 setupfun("rawCC",rawCC);
 
@@ -929,6 +969,7 @@ export rawFromNumber(e:Expr):Expr := (
      is x:RRcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigReal(",R.p,",",x.v,")"))
      is x:CCcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigComplex(",R.p,",",x.v,")"))
      is x:RRicell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_Interval(",R.p,",",x.v,")"))
+     is x:CCicell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_ComplexInterval(",R.p,",",x.v,")"))
      else WrongArg(2,"an integer, real number, or complex number")
      else WrongArg(1,"a raw ring")
      else WrongNumArgs(2)
@@ -1042,6 +1083,13 @@ export rawToRRi(e:Expr):Expr := (
       else
     WrongArg("a raw ring element"));
 setupfun("rawToRRi",rawToRRi);
+
+export rawToCCi(e:Expr):Expr := (
+      when e
+      is x:RawRingElementCell do toExpr(Ccode(CCiorNull, "IM2_RingElement_to_ComplexInterval(",x.p, ")" ))
+      else
+    WrongArg("a raw ring element"));
+setupfun("rawToCCi",rawToCCi);
 
 export rawToCC(e:Expr):Expr := (
      when e
@@ -2115,6 +2163,25 @@ export rawMatrixEntry(e:Expr):Expr := (
      );
 setupfun("rawMatrixEntry",rawMatrixEntry);
 
+entriesArrayToExpr(entriesOrNull:RawRingElementArrayArrayOrNull):Expr := (
+    when entriesOrNull is entries:RawRingElementArrayArray do (
+        list(new Sequence len length(entries) do (
+            foreach row in entries do (
+                provide list(listClass, toExpr(row))))))
+    else (
+        nullE
+    ));
+
+export rawMatrixEntries(e:Expr):Expr := (
+    when e
+    is M:RawMutableMatrixCell do (
+        entriesArrayToExpr(Ccode(RawRingElementArrayArrayOrNull, "IM2_MutableMatrix_get_entries(", M.p, ")")))
+    is M:RawMatrixCell do (
+        entriesArrayToExpr(Ccode(RawRingElementArrayArrayOrNull, "IM2_Matrix_get_entries(", M.p, ")")))
+    else WrongArg("a raw matrix or mutable matrix")
+    );
+setupfun("rawMatrixEntries",rawMatrixEntries);
+
 export rawSortColumns(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else
@@ -2250,6 +2317,13 @@ export rawPfaffians(e:Expr):Expr := (
      );
 setupfun("rawPfaffians",rawPfaffians);
 
+export rawPfaffian(e:Expr):Expr := (
+    when e
+    is M:RawMatrixCell do toExpr(Ccode(RawRingElementOrNull,
+	    "IM2_Matrix_pfaffian(", M.p, ")"))
+    else WrongArgMatrix());
+setupfun("rawPfaffian", rawPfaffian);
+
 export rawTensor(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0
@@ -2371,7 +2445,7 @@ export rawMutableIdentity(e:Expr):Expr := (
      when s.0 is R:RawRingCell do
      when s.1 is nrows:ZZcell do if !isInt(nrows) then WrongArgSmallInteger(2) else
      when s.2 is preferDense:Boolean do
-     toExpr(Ccode(RawMutableMatrix, 
+     toExpr(Ccode(RawMutableMatrixOrNull,
 	       "IM2_MutableMatrix_identity(", 
 	       R.p, ",",
 	       toInt(nrows), ",",
@@ -2396,7 +2470,7 @@ export rawMutableMatrix(e:Expr):Expr := (
      when s.1 is nrows:ZZcell do if !isInt(nrows) then WrongArgSmallInteger(2) else
      when s.2 is ncols:ZZcell do if !isInt(ncols) then WrongArgSmallInteger(3) else
      when s.3 is preferDense:Boolean do
-     toExpr(Ccode(RawMutableMatrix, 
+     toExpr(Ccode(RawMutableMatrixOrNull,
 	       "IM2_MutableMatrix_make(", 
 	       R.p, ",",
 	       toInt(nrows), ",",

@@ -51,6 +51,9 @@ export hexvalue   (c:char ):int  := (
      );
 export hexvalue   (c:int ):int  := hexvalue(char(c));
 
+hexvalue(a:char, b:char, c:char, d:char):int := (
+    hexvalue(d) + 16*(hexvalue(c) + 16*(hexvalue(b) + 16*hexvalue(a))));
+
 export parseInt(s:string):ZZ := (
      i := zeroZZ;
      n := length(s);
@@ -90,7 +93,18 @@ export parseString(s:string):string := (
 	       else if c == '\\' then v << '\\'
 	       else if c == 'u' then (
 		    i = i+4;
-		    utf8(v, ((hexvalue(s.(i-3)) * 16 + hexvalue(s.(i-2))) * 16 + hexvalue(s.(i-1))) * 16 + hexvalue(s.i)))
+		    val := hexvalue(s.(i-3), s.(i-2), s.(i-1), s.i);
+		    -- high surrogate (0xd800 - 0xdbff)
+		    if 55296 <= val && val <= 56319 then (
+			if i + 6 < length(s) && s.(i+1) == '\\' && s.(i+2) == 'u'
+			then (
+			    val2 := hexvalue(s.(i+3), s.(i+4), s.(i+5), s.(i+6));
+			    -- low surrogate (0xdc00 - 0xdfff)
+			    if 56320 <= val2 && val2 <= 57343 then (
+				i = i + 6;
+				-- 0x10000 + 0x400*(high-0xd800) + low-0xdc00
+				val = 65536 + 1024*(val-55296) + val2-56320)));
+		    utf8(v, val))
 	       else if c == 'x' then (
 		    i = i + 2;
 		    v << char(hexvalue(s.(i - 1)) * 16 + hexvalue(s.i)))
@@ -126,6 +140,7 @@ export elseW := Word("-*dummy word: else*-",TCnone,hash_t(0),newParseinfo());		 
 export ofW := Word("-*dummy word: of*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export doW := Word("-*dummy word: do*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export listW := Word("-*dummy word: list*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export exceptW := Word("-*dummy word: except*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export fromW := Word("-*dummy word: from*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export inW := Word("-*dummy word: in*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export toW := Word("-*dummy word: to*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
@@ -182,14 +197,13 @@ accumulate(e:ParseTree,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
 	  );
      ret
      );
+makeParseError(token:Token, message:string):ParseTree := (
+     printErrorMessage(token, message);
+     errorTree);
 export errorunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     printErrorMessage(token1,"syntax error at '" + token1.word.name + "'");
-     errorTree
-     );
+     makeParseError(token1,"syntax error at '" + token1.word.name + "'"));
 export errorbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int,obeylines:bool):ParseTree := (
-     printErrorMessage(token2,"syntax error at '" + token2.word.name + "'");
-     errorTree
-     );
+     makeParseError(token2,"syntax error at '" + token2.word.name + "'"));
 export defaultunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      accumulate(ParseTree(token1),file,prec,obeylines)
      );
@@ -201,10 +215,12 @@ export unaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :=
      if ret == errorTree then ret
      else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines));
 export nunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+    -- e.g. return, continue, etc.
      ret := nparse(file,token1.word.parse.unaryStrength,obeylines);
      if ret == errorTree then ret
      else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines));
 export nnunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+    -- e.g. comma
      if token1.word.parse.precedence <= prec
      then errorunary(token1,file,prec,obeylines)
      else (
@@ -213,8 +229,7 @@ export nnunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree 
 	  else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines)));
 export defaultbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      if token2.followsNewline then (
-     	  printErrorMessage(token2,"missing semicolon or comma on previous line?");
-     	  errorTree)
+     	  makeParseError(token2,"missing semicolon or comma on previous line?"))
      else (
      	  ret := token2.word.parse.funs.unary(token2,file,precSpace-1,obeylines);
      	  if ret == errorTree then ret else ParseTree(Adjacent(lhs,ret))));
@@ -230,13 +245,13 @@ export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret
      );
 export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+    -- used by any nunaryop (e.g. code(() -> return) or continue, break, etc.)
+    -- and comma which is both nnunaryop and nbinaryop (e.g. code(() -> (,)))
      if prec == nopr then return errorTree;		    -- shouldn't ever happen
      token := peektoken(file,obeylines);
      if token == errorToken then return errorTree;
      ret := (
-	  if token == errorToken
-	  then errorTree
-	  else if token.word.parse.precedence > prec
+	  if token.word.parse.precedence > prec
      	  then (
      	       token = gettoken(file,obeylines);
 	       token.word.parse.funs.unary(token,file,prec,obeylines)
@@ -252,11 +267,12 @@ export binaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines
      if ret == errorTree then ret 
      else ParseTree(Binary(lhs, token2, ret)));
 export nbinaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
+    -- e.g. comma
      ret := nparse(file,token2.word.parse.binaryStrength,obeylines);
      if ret == errorTree then ret else ParseTree(Binary(lhs, token2, ret)));
 export arrowop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      e := parse(file,token2.word.parse.binaryStrength,obeylines);
-     if e == errorTree then e else ParseTree(Arrow(lhs, token2, e, dummyDesc)));
+     if e == errorTree then e else ParseTree(Arrow(lhs, e, dummyDesc)));
 MatchPair := {left:string, right:string, next:(null or MatchPair)};
 
 matchList := (null or MatchPair)(NULL);
@@ -284,9 +300,8 @@ export unaryparen(left:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
 	  if rightparen == right.word.name
 	  then accumulate(ParseTree(Parentheses(left,e,right)),file,prec,obeylines)
 	  else (
-	       printErrorMessage(right, "expected \"" + rightparen + "\"");
-	       printErrorMessage(left," ... to match this");
-	       errorTree)));
+	       makeParseError(right, "expected \"" + rightparen + "\"");
+	       makeParseError(left," ... to match this"))));
 export unarywhile(whileToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      predicate := parse(file,whileToken.word.parse.unaryStrength,false);
      if predicate == errorTree then return errorTree;
@@ -295,7 +310,7 @@ export unarywhile(whileToken:Token,file:TokenFile,prec:int,obeylines:bool):Parse
      if token2.word == doW then (
 	  doClause := parse(file,doW.parse.unaryStrength,obeylines);
 	  if doClause == errorTree then return errorTree;
-	  r := ParseTree(WhileDo(whileToken,predicate,token2,doClause));
+	  r := ParseTree(WhileDo(whileToken,predicate,doClause));
 	  accumulate(r,file,prec,obeylines))
      else if token2.word == listW then (
 	  listClause := parse(file,listW.parse.unaryStrength,obeylines);
@@ -305,15 +320,14 @@ export unarywhile(whileToken:Token,file:TokenFile,prec:int,obeylines:bool):Parse
 	       if doToken == errorToken then return errorTree;
 	       doClause := parse(file,doW.parse.unaryStrength,obeylines);
 	       if doClause == errorTree then return errorTree;
-	       ret := ParseTree(WhileListDo(whileToken,predicate,token2,listClause,doToken,doClause));
+	       ret := ParseTree(WhileListDo(whileToken,predicate,listClause,doClause));
 	       accumulate(ret,file,prec,obeylines))
 	  else (
-	       ret := ParseTree(WhileList(whileToken,predicate,token2,listClause));
+	       ret := ParseTree(WhileList(whileToken,predicate,listClause));
 	       accumulate(ret,file,prec,obeylines)))
      else (
-	  printErrorMessage(token2,"syntax error : expected 'do' or 'list'");
-	  printErrorMessage(whileToken," ... to match this 'while'");
-	  errorTree));
+	  makeParseError(token2,"syntax error : expected 'do' or 'list'");
+	  makeParseError(whileToken," ... to match this 'while'")));
 
 --Handle parsing a file following a for token
 export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -375,9 +389,8 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  accumulate(r,file,prec,obeylines))
      --if there is no do clause then it is an error
      else (
-	  printErrorMessage(token2,"syntax error : expected 'do' or 'list'");
-	  printErrorMessage(forToken," ... to match this 'for'");
-	  errorTree));
+	  makeParseError(token2,"syntax error : expected 'do' or 'list'");
+	  makeParseError(forToken," ... to match this 'for'")));
 
 -- unstringToken(q:Token):Token := (
 --      if q.word.typecode == TCstring 
@@ -396,25 +409,25 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 export unarysymbol(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     if arg.word.typecode != TCid then return makeParseError(arg, "syntax error: " + arg.word.name);
      r := ParseTree(Quote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unaryglobal(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     if arg.word.typecode != TCid then return makeParseError(arg, "syntax error: " + arg.word.name);
      r := ParseTree(GlobalQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unarythread(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     if arg.word.typecode != TCid then return makeParseError(arg, "syntax error: " + arg.word.name);
      r := ParseTree(ThreadQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unarylocal(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     if arg.word.typecode != TCid then return makeParseError(arg, "syntax error: " + arg.word.name);
      r := ParseTree(LocalQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -423,9 +436,8 @@ export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
      thenToken := gettoken(file,false);
      if thenToken == errorToken then return errorTree;
      if thenToken.word != thenW then (
-	  printErrorMessage(thenToken,"syntax error : expected 'then'");
-	  printErrorMessage(ifToken," ... to match this 'if'");
-	  return errorTree);
+	  makeParseError(thenToken,"syntax error : expected 'then'");
+	  return makeParseError(ifToken," ... to match this 'if'"));
      thenClause := parse(file,thenW.parse.unaryStrength,obeylines);
      if thenClause == errorTree then return errorTree;
      if peektoken(file,obeylines).word == elseW then (
@@ -446,24 +458,47 @@ export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  elseToken := gettoken(file,false);
 	  if elseToken == errorToken then return errorTree;
 	  if elseToken.word != elseW then (
-	       printErrorMessage(elseToken,"syntax error : expected 'else'");
-	       printErrorMessage(tryToken," ... to match this 'try'");
-	       return errorTree);
+	       makeParseError(elseToken,"syntax error : expected 'else'");
+	       return makeParseError(tryToken," ... to match this 'try'"));
 	  elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
 	  if elseClause == errorTree then return errorTree;
-	  accumulate(ParseTree(TryElse(tryToken,primary,elseToken,elseClause)),file,prec,obeylines))
+	  accumulate(ParseTree(TryElse(tryToken,primary,elseClause)),file,prec,obeylines))
      else if peektoken(file,obeylines).word == thenW then (
 	  thenToken := gettoken(file,false);
 	  if thenToken == errorToken then return errorTree;
 	  thenClause := parse(file,thenW.parse.unaryStrength,obeylines);
 	  if thenClause == errorTree then return errorTree;
-	  if peektoken(file,obeylines).word == elseW then (
+	  if peektoken(file,obeylines).word == exceptW then (
+	      exceptToken := gettoken(file,false);
+	      if exceptToken == errorToken then return errorTree;
+	      variable := parse(file,exceptW.parse.unaryStrength,obeylines);
+	      if variable == errorTree then return errorTree;
+	      if peektoken(file,obeylines).word == doW then (
+		  doToken := gettoken(file,false);
+		  if doToken == errorToken then return errorTree;
+		  doClause := parse(file,doW.parse.unaryStrength,obeylines);
+		  if doClause == errorTree then return errorTree;
+		  accumulate(ParseTree(TryThenDo(tryToken,primary,thenClause,variable,doClause,dummyDictionary)),file,prec,obeylines))
+	      else return makeParseError(exceptToken,"syntax error: expected 'do'"))
+	  else if peektoken(file,obeylines).word == elseW then (
 	       elseToken := gettoken(file,false);
 	       if elseToken == errorToken then return errorTree;
 	       elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
 	       if elseClause == errorTree then return errorTree;
-	       accumulate(ParseTree(TryThenElse(tryToken,primary,thenToken,thenClause,elseToken,elseClause)),file,prec,obeylines))
-	  else accumulate(ParseTree(TryThen(tryToken,primary,thenToken,thenClause)),file,prec,obeylines))
+	       accumulate(ParseTree(TryThenElse(tryToken,primary,thenClause,elseClause)),file,prec,obeylines))
+	  else accumulate(ParseTree(TryThen(tryToken,primary,thenClause)),file,prec,obeylines))
+     else if peektoken(file,obeylines).word == exceptW then (
+	  exceptToken := gettoken(file,false);
+	  if exceptToken == errorToken then return errorTree;
+	  variable := parse(file,exceptW.parse.unaryStrength,obeylines);
+	  if variable == errorTree then return errorTree;
+	  if peektoken(file,obeylines).word == doW then (
+	      doToken := gettoken(file,false);
+	      if doToken == errorToken then return errorTree;
+	      doClause := parse(file,doW.parse.unaryStrength,obeylines);
+	      if doClause == errorTree then return errorTree;
+	      accumulate(ParseTree(TryDo(tryToken,primary,variable,doClause,dummyDictionary)),file,prec,obeylines))
+	  else return makeParseError(exceptToken,"syntax error: expected 'do'"))
      else accumulate(ParseTree(Try(tryToken,primary)),file,prec,obeylines));
 export unarycatch(catchToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      primary := parse(file,catchToken.word.parse.unaryStrength,obeylines);
@@ -508,6 +543,8 @@ export treePosition(e:ParseTree):Position := (
     is t:TryThen          do combinePositionL(t.tryToken.position,   treePosition(t.sequel))
     is t:TryThenElse      do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
     is t:TryElse          do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
+    is t:TryDo            do combinePositionL(t.tryToken.position,   treePosition(t.doClause))
+    is t:TryThenDo        do combinePositionL(t.tryToken.position,   treePosition(t.doClause))
     is t:Catch            do combinePositionL(t.catchToken.position, treePosition(t.primary))
     is t:WhileDo          do combinePositionL(t.whileToken.position, treePosition(t.doClause))
     is t:WhileListDo      do combinePositionL(t.whileToken.position, treePosition(t.doClause))
@@ -522,7 +559,7 @@ export treePosition(e:ParseTree):Position := (
 	if t.newInitializer != dummyTree then t.newInitializer else
 	if t.newParent      != dummyTree then t.newParent      else t.newClass;
 	combinePositionL(t.newToken.position, treePosition(lastClass)))
-    is dummy do dummyPosition
+    is t:dummy do t.position
     );
 
 size(x:Token):int := Ccode(int,"sizeof(*",x,")");
@@ -534,7 +571,7 @@ export size(e:ParseTree):int := (
      is x:Token do size(x)
      is x:Adjacent do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs)
      is x:Binary do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.Operator)
-     is x:Arrow do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.Operator) + size(x.desc)
+     is x:Arrow do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.desc)
      is x:Unary do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
      is x:Postfix do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.Operator)
      is x:Quote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
@@ -545,15 +582,17 @@ export size(e:ParseTree):int := (
      is x:EmptyParentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right)
      is x:IfThen do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenClause)
      is x:IfThenElse do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenClause) + size(x.elseClause)
-    is x:TryThenElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel) + size(x.elseToken) + size(x.alternate)
-    is x:TryThen     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel)
-    is x:TryElse     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)                                      + size(x.elseToken) + size(x.alternate)
+    is x:TryThenElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.sequel) + size(x.alternate)
+    is x:TryThen     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.sequel)
+    is x:TryElse     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)                  + size(x.alternate)
     is x:Try         do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)
+    is x:TryDo       do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)                  + size(x.variable) + size(x.doClause)
+    is x:TryThenDo   do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.sequel) + size(x.variable) + size(x.doClause)
      is x:Catch do Ccode(int,"sizeof(*",x,")") + size(x.catchToken) + size(x.primary)
      is x:For do Ccode(int,"sizeof(*",x,")")+ size(x.forToken) + size(x.variable) + size(x.inClause) + size(x.fromClause) + size(x.toClause) + size(x.whenClause) + size(x.listClause) + size(x.doClause)
-     is x:WhileDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause)
-     is x:WhileList do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.listtoken) + size(x.listClause)
-     is x:WhileListDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause) + size(x.listtoken) + size(x.listClause)
+     is x:WhileDo do     Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.doClause)
+     is x:WhileList do   Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate)                    + size(x.listClause)
+     is x:WhileListDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.doClause) + size(x.listClause)
     is x:New do Ccode(int,"sizeof(*",x,")") + size(x.newToken) + size(x.newClass) + size(x.newParent) + size(x.newInitializer)
      );
 

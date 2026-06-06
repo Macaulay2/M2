@@ -16,7 +16,6 @@
 // #include "aring-glue.hpp"           // for ConcreteRing
 // #include "aring.hpp"                // for DummyRing, ring_GFFlintBig, ring_...
 // #include "buffer.hpp"               // for buffer
-// #include "f4/f4-mem.hpp"            // for F4Vec
 // #include "ring.hpp"                 // for Ring
 // #include "ringelem.hpp"             // for ring_elem
 
@@ -42,7 +41,6 @@
 #include "aring-glue.hpp"
 #include <variant>
 #include <type_traits>
-#include "f4/f4-mem.hpp"         // for F4Mem
 
 class Ring;
 using ComponentIndex = int;
@@ -296,8 +294,7 @@ public:
                            ElementArray& sparse, // output value: sets this value
                            int*& comps,
                            int first,
-                           int last,
-                           F4Vec& f4Vec) const
+                           int last) const
   {
     auto& dvec = * elementArray(dense);
     
@@ -308,7 +305,8 @@ public:
     for (int i = first; i >= 0 and i <= last; i++)
 	if (not mRing->is_zero(dvec[i])) len++;
 
-    comps = f4Vec.allocate(len);
+    //comps = f4Vec.allocate(len);
+    comps = new int[len];
 
     sparse = allocateElementArray(len);
     auto& svec = * elementArray(sparse);
@@ -384,6 +382,19 @@ public:
     return sparse;
   }
 
+  template<typename Container>
+  ElementArray elementArrayFromContainerOf_mpz_class(const Container& c) const
+  {
+    ElementArray sparse = allocateElementArray(c.size()); // initializes all elements
+    auto& svec = * elementArray(sparse); 
+    for (auto i = 0; i < c.size(); ++i)
+    {
+      __mpz_struct* x = const_cast<__mpz_struct*>(c[i].get_mpz_t());
+      mRing->set_from_mpz(svec[i], x);
+    }
+    return sparse;
+  }
+
   ring_elem ringElemFromElementArray(const ElementArray& sparse,
                                      int index) const
   {
@@ -452,6 +463,8 @@ public:
 
   long to_modp_long(const ElementArray& coeffs, size_t loc) const
   {
+    (void) coeffs;
+    (void) loc;
     return 0; // DANGER WILL ROBINSON!
   }
   
@@ -507,6 +520,7 @@ public:
   void from_ring_elem(ElementArray& coeffs, ring_elem numer, ring_elem denom) const
   // Appends numer/denom to coeffs array
   {
+    (void) denom;
     auto& svec = * elementArray(coeffs);
     FieldElement inumer;
     mRing->init(inumer);
@@ -543,6 +557,7 @@ inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArra
 {
   // TODO: this function ignores denom, this is non-intuitive and bug-prone.
     // TODO: this will fail: input is alas ZZ integers... not QQ elements...
+    (void) denom;
     auto& svec = * elementArray(coeffs);
     //ring_elem val = numer;
     FieldElement inumer;
@@ -716,9 +731,8 @@ public:
                            ElementArray& coeffs, // sets coeffs
                            int*& comps, // sets comps
                            int first,
-                           int last,
-                           F4Vec& f4Vec) const {
-    std::visit([&](auto& arg) { arg->denseToSparse(dense,coeffs,comps,first,last,f4Vec); }, mConcreteVector);  
+                           int last) const {
+    std::visit([&](auto& arg) { arg->denseToSparse(dense,coeffs,comps,first,last); }, mConcreteVector);  
   }
 
   template<typename LockType>
@@ -762,6 +776,11 @@ public:
     return std::visit([&](auto& arg) -> ElementArray { return arg->template elementArrayFromContainerOfLongs<Container>(c); }, mConcreteVector);
   }
   
+  template<class Container>
+  ElementArray elementArrayFromContainerOf_mpz_class(const Container& c) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->template elementArrayFromContainerOf_mpz_class<Container>(c); }, mConcreteVector);
+  }
+
   ring_elem ringElemFromElementArray(const ElementArray& coeffs,
                                      int index) const {
     return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromElementArray(coeffs,index); }, mConcreteVector);

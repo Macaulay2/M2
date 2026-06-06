@@ -21,7 +21,8 @@ M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
 M2outputHash     = "-- -*- M2-comint -*- hash: "
 separateM2output = str -> (
     L := separate(M2outputRE, "\n" | replace("\n+\\Z", "", str));
-    if #L<=1 then L else drop(L,1))
+    if #L == 0 then L else
+    if #L == 1 then {substring(1, L#0)} else drop(L,1))
 
 trimlines := L -> apply(L, x ->
     if instance(x, String) then (
@@ -123,8 +124,8 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
 protect symbol capture
 
 -- returns false if the inputs or the package are not known to behave well with capture
--- this is also used in testing.m2, where isTest is set to true.
-isCapturable = (inputs, pkg, isTest) -> (
+-- this is also used in testing.m2
+isCapturable = (inputs, pkg) -> (
     -- argumentMode is mainly used by ctest to select M2 subprocess arguments,
     -- or whether capture should be avoided; see packages/CMakeLists.txt
     -- alternatively, no-capture-flag can be used with an example or test
@@ -132,10 +133,8 @@ isCapturable = (inputs, pkg, isTest) -> (
     -- strip commented segments first
     inputs = replace("--.*$", "",            inputs);
     inputs = replace("-\\*(.|\n)*?\\*-", "", inputs);
-    -- TODO: remove this when the effects of capture on other packages is reviewed
-    (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
-    and not match({
-	    "FastMinors", "TerraciniLoci",
+    not match({
+	    "FastMinors", "TerraciniLoci", "OldPolyhedra", "Normaliz",
 	    "MultiprojectiveVarieties", "SpecialFanoFourfolds",
 	    "EngineTests", "ThreadedGB", "RunExternalM2"}, pkg#"pkgname")
     and not (match({"Cremona"}, pkg#"pkgname") and version#"pointer size" == 4)
@@ -143,7 +142,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
     and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
     and not match("(alarm|exec|exit|quit|restart|run)\\b",    inputs) -- these commands interrupt the interpreter
-    and not match("(capture|read|input|load|needs)\\b",       inputs) -- these commands hide undesirable functions
+    and not match("(capture|read|input|load|needs|check)\\b", inputs) -- these commands hide undesirable functions
     and not match("([Cc]ommand|fork|schedule|thread|Task)",   inputs) -- remove when threads work more predictably
     and not match("(temporaryFileName)",                      inputs) -- this is sometimes bug prone
     and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
@@ -209,22 +208,27 @@ captureExamples := (pkg, fkey) -> (
 	UserMode       => false,
 	PackageExports => pkg))
 
-getExampleOutputFilename := (pkg, fkey) -> (
-    if pkg#?"package prefix" and pkg#"package prefix" =!= null then (
-	packageLayout := detectCurrentLayout pkg#"package prefix";
-	if packageLayout === null then error "internal error: package layout not detected";
-	pkg#"package prefix" | replace("PKG", pkg#"pkgname", Layout#packageLayout#"packageexampleoutput") | toFilename fkey | ".out")
-    else error "internal error: package prefix is undefined")
+getExampleDirectory = (layout, pre, pkg) -> pre | replace("PKG", pkg, layout#"packageexampleoutput")
+getExampleFilename  = (layout, pre, pkg, fkey) -> getExampleDirectory(layout, pre, pkg) | toFilename fkey | ".out"
 
-getExampleOutput := (pkg, fkey) -> (
+getExampleOutput = method()
+getExampleOutput(Package, String) := (pkg, fkey) -> (
+    pkg#"example results"#fkey ??= getExampleOutput(pkg#"package prefix", pkg#"pkgname", fkey))
+getExampleOutput(String, String) := (pkgname, fkey) -> (
+    if (pkginfo := getPackageInfo pkgname) =!= null then (
+	getExampleOutput(pkginfo#"prefix", pkgname, fkey))
+    else error("could not locate package ", format pkgname, " under current prefixPath"))
+getExampleOutput(String, String, String) := (prefix, pkgname, fkey) -> (
+    filename := if (layoutID := detectCurrentLayout prefix) =!= null then (
+	getExampleFilename(Layout#layoutID, prefix, pkgname, fkey))
+    else error("could not detect layout for package ", format pkgname, " under ", prefix);
+    --
     -- TODO: only get from cache if the hash hasn't changed
-    if pkg#"example results"#?fkey then return pkg#"example results"#fkey;
-    verboseLog := if debugLevel > 1 then printerr else identity;
-    filename := getExampleOutputFilename(pkg, fkey);
+    verboseLog := if notify then printerr else identity;
     output := if fileExists filename
-    then ( verboseLog("info: reading cached example results from ", filename); get filename )
-    else ( verboseLog("info: capturing example results for ", fkey); captureExamples(pkg, fkey) );
-    pkg#"example results"#fkey = if output === null then {} else separateM2output output)
+    then ( verboseLog("info: reading cached example results from ", minimizeFilename filename); get filename )
+    else ( verboseLog("info: capturing example results for ", fkey); captureExamples(pkgname, fkey) );
+    if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
 -- TODO: store in a database instead
@@ -241,10 +245,10 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 captureExampleOutput = (desc, inputs, pkg, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     -- try capturing in the same process
-    if isCapturable(inputs, pkg, false) then (
+    if isCapturable(inputs, pkg) then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
-	(err, output) := capture(inputs, UserMode => false);
+	(err, output) := capture(inputs, UserMode => false, PackageExports => pkg);
 	alarm 0;			     -- cancel any alarms that were set
 	if err then printerr "capture failed; retrying ..."
 	else (outf << M2outputHash << inputhash << endl << output << close;

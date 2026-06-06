@@ -53,25 +53,26 @@ export isquote    (c:char):bool := (chartype(c) & QUOTE    ) != 0;
 
 -- c = two bytes concatenated
 export ismathoperator(c:int):bool := (
-    (c & 0xffe0) == 0xc2a0 || -- latin-1 punctuation/symbols
-    c == 0xc397            || -- multiplication sign
-    c == 0xc3b7            || -- division sign
-    (c & 0xfffc) == 0xe288 || -- mathematical operators
-    (c & 0xfffc) == 0xe2a8 || -- supplemental mathematical operators
-    c == 0xe29f            || -- misc. mathematical symbols A
-    (c & 0xfffe) == 0xe2a6 || -- misc. mathematical symbols B
-    (c & 0xfffc) == 0xe28c    -- misc. technical
+    (c & 0xffe0) == 0xc2a0 || -- latin-1 punctuation/symbols     (U+00A0-U+00BF)
+    c == 0xc397            || -- multiplication sign             (U+00D7)
+    c == 0xc3b7            || -- division sign                   (U+00F7)
+    (c & 0xfffe) == 0xe286 || -- arrows                          (U+2190-U+21FF)
+    (c & 0xfff8) == 0xe288 || -- math operators/misc technical   (U+2200-U+23FF)
+    c == 0xe29f            || -- misc math symbols/supp arrows A (U+27C0-U+27FF)
+    (c & 0xfffc) == 0xe2a4 || -- misc math symbols/supp arrows B (U+2900-U+29FF)
+    (c & 0xfff8) == 0xe2a8    -- supp math ops/misc sym & arrows (U+2A00-U+2BFF)
     );
 
 ismathoperator(c1:char, c2:char):bool := (
     ismathoperator((int(uchar(c1)) << 8) | int(uchar(c2))));
 
 export isvalidsymbol(s:string):bool := (
-     if !isalpha(s.0) then return false;
-     if ismathoperator(s.0, s.1) && length(s) == utf8charlength(s.0)
+     n := length(s);
+     if n > 0 && !isalpha(s.0) then return false;
+     if n > 1 && ismathoperator(s.0, s.1) && n == utf8charlength(s.0)
      then return true;
-     for i from 0 to length(s) - 1 do (
-	 if !isalnum(s.i) || ismathoperator(s.i, s.(i + 1))
+     for i from 0 to n - 1 do (
+	 if !isalnum(s.i) || (n > i + 1 && ismathoperator(s.i, s.(i + 1)))
 	 then return false);
      true);
 

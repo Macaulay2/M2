@@ -3,6 +3,9 @@
 #include "interface/random.h"
 #include "interface/gmp-util.h"
 
+#include "exceptions.hpp"
+#include "error.h"
+
 #define INITIALMAXINT 10
 
 #define IA 16807
@@ -50,21 +53,142 @@ int32_t rawRandomInt(int32_t max)
   return RandomSeed % max;
 }
 
+void rawSetRandomInteger(mpz_ptr result, gmp_ZZ maxN)
+/* if height is the null pointer, use the default height */
+{
+  if (maxN == nullptr) maxN = maxHeight;
+  if (mpz_cmp_si(maxN, 0) <= 0)
+    throw exc::engine_error("expected a positive height");
+
+  mpz_urandomm(result, state, maxN);
+}
+
 gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
 /* if height is the null pointer, use the default height */
 {
   mpz_ptr result = getmemstructtype(mpz_ptr);
   mpz_init(result);
-  if (maxN == nullptr)
-    mpz_urandomm(result, state, maxHeight);
-  else if (1 != mpz_sgn(maxN))
-    {
-      mpz_set_si(result, 0);
-    }
-  else
-    mpz_urandomm(result, state, maxN);
+
+  try {
+    rawSetRandomInteger(result, maxN);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
+
   mpz_reallocate_limbs(result);
   return result;
+}
+
+void rawSetFareyApproximation(mpq_ptr result, gmp_RR x, gmp_ZZ height)
+/* sets result = the nearest rational to x w/ denominator <= height */
+/* see https://en.wikipedia.org/wiki/Farey_sequence                 */
+{
+  int sgn;
+  mpfr_t fracpart, tmp1, tmp2;
+  mpz_t intpart, a, b, c, d, q, p;
+  mpq_t tmp3;
+
+  // get integer and fractional parts of |x|
+  sgn = mpfr_sgn(x);
+  mpfr_init2(fracpart, mpfr_get_prec(x));
+  mpfr_abs(fracpart, x, MPFR_RNDN);
+  mpz_init(intpart);
+  mpfr_get_z(intpart, fracpart, MPFR_RNDD);
+  mpfr_frac(fracpart, fracpart, MPFR_RNDN);
+
+  // goal: find nearest rational number to fracpart
+  // start w/ a/b = 0, p/q = 1/2, c/d = 1
+  mpfr_init2(tmp1, mpfr_get_prec(x));
+  mpfr_init2(tmp2, mpfr_get_prec(x));
+  mpz_init_set_ui(a, 0);
+  mpz_init_set_ui(b, 1);
+  mpz_init_set_ui(c, 1);
+  mpz_init_set_ui(d, 1);
+  mpz_init_set_ui(p, 1);
+  mpz_init_set_ui(q, 2);
+  mpq_init(tmp3);
+
+  // compute mediant p/q = (a+c)/(b+d) until q > height
+  while (mpz_cmp(q, height) <= 0) {
+    mpfr_mul_z(tmp1, fracpart, q, MPFR_RNDN);
+    // check if fracpart is to the left or right of p/q
+    // and update a/b or c/d accordingly
+    if (mpfr_cmp_z(tmp1, p) <= 0) {
+      mpz_set(c, p);
+      mpz_set(d, q);
+    } else {
+      mpz_set(a, p);
+      mpz_set(b, q);
+    }
+    mpz_add(p, a, c);
+    mpz_add(q, b, d);
+  }
+
+  // now check which endpoint is closest
+  // tmp1 = fracpart - a/b
+  mpfr_set_z(tmp1, a, MPFR_RNDN);
+  mpfr_neg(tmp1, tmp1, MPFR_RNDN);
+  mpfr_div_z(tmp1, tmp1, b, MPFR_RNDN);
+  mpfr_add(tmp1, tmp1, fracpart, MPFR_RNDN);
+
+  // tmp2 = c/d - fracpart
+  mpfr_set_z(tmp2, c, MPFR_RNDN);
+  mpfr_div_z(tmp2, tmp2, d, MPFR_RNDN);
+  mpfr_sub(tmp2, tmp2, fracpart, MPFR_RNDN);
+
+  if (mpfr_cmp(tmp1, tmp2) <= 0) {
+    mpq_set_z(result, a);
+    mpq_set_z(tmp3, b);
+  } else {
+    mpq_set_z(result, c);
+    mpq_set_z(tmp3, d);
+  }
+
+  // finally, add back intpart and negate if x < 0
+  mpq_div(result, result, tmp3);
+  mpq_set_z(tmp3, intpart);
+  mpq_add(result, result, tmp3);
+  mpq_set_si(tmp3, sgn, 1);
+  mpq_mul(result, result, tmp3);
+  mpq_canonicalize(result);
+
+  mpz_clears(intpart, a, b, c, d, p, q, nullptr);
+  mpfr_clears(fracpart, tmp1, tmp2, nullptr);
+  mpq_clear(tmp3);
+}
+
+gmp_QQ rawFareyApproximation(gmp_RR x, gmp_ZZ height)
+/* returns the nearest rational to x w/ denominator <= height */
+{
+  mpq_ptr result = getmemstructtype(mpq_ptr);
+  mpq_init(result);
+  rawSetFareyApproximation(result, x, height);
+  return moveTo_gmpQQ(result);
+}
+
+void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)
+/* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
+/* if height is the null pointer, use the default height */
+{
+  mpz_t d;
+
+  mpz_init(d);
+  if (height == nullptr) height = maxHeight;
+  if (mpz_cmp_si(height, 0) <= 0)
+    throw exc::engine_error("expected a positive height");
+
+  while (true) {
+    mpz_urandomm(mpq_numref(result), state, height);
+    mpz_urandomm(mpq_denref(result), state, height);
+    mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
+    mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
+    mpz_gcd(d, mpq_numref(result), mpq_denref(result));
+    if (mpz_cmp_ui(d, 1) == 0)
+      break;
+  }
+
+  mpz_clear(d);
 }
 
 gmp_QQ rawRandomQQ(gmp_ZZ height)
@@ -73,28 +197,18 @@ gmp_QQ rawRandomQQ(gmp_ZZ height)
 {
   mpq_ptr result = getmemstructtype(mpq_ptr);
   mpq_init(result);
-  if (height == nullptr) height = maxHeight;
-  mpz_urandomm(mpq_numref(result), state, height);
-  mpz_urandomm(mpq_denref(result), state, height);
-  mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
-  mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
-  mpq_canonicalize(result);
+
+  try {
+    rawSetRandomQQ(result, height);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
+
   return moveTo_gmpQQ(result);
 }
 
-void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)
-/* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
-/* if height is the null pointer, use the default height */
-{
-  if (height == nullptr) height = maxHeight;
-  mpz_urandomm(mpq_numref(result), state, height);
-  mpz_urandomm(mpq_denref(result), state, height);
-  mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
-  mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
-  mpq_canonicalize(result);
-}
-
-gmp_RR rawRandomRR(unsigned long precision)
+gmp_RR rawRandomRRUniform(unsigned long precision)
 /* returns a uniformly distributed random real with the given precision, in
  * range [0.0,1.0] */
 {
@@ -118,8 +232,8 @@ gmp_CC rawRandomCC(unsigned long precision)
  * [1.0,1.0] */
 {
   gmp_CCmutable result = getmemstructtype(gmp_CCmutable);
-  result->re = const_cast<gmp_RRmutable>(rawRandomRR(precision));
-  result->im = const_cast<gmp_RRmutable>(rawRandomRR(precision));
+  result->re = const_cast<gmp_RRmutable>(rawRandomRRUniform(precision));
+  result->im = const_cast<gmp_RRmutable>(rawRandomRRUniform(precision));
   return reinterpret_cast<gmp_CC>(result);
 }
 
@@ -140,6 +254,38 @@ double randomDouble()
   mpfr_clear(val);
   return result;
 }
+
+void rawSetRandomRRi(mpfi_ptr result)
+{
+  mpfr_t val;
+
+  mpfr_init2(val, mpfi_get_prec(result));
+  randomMpfr(val);
+  mpfi_set_fr(result,val);
+  randomMpfr(val);
+  mpfi_put_fr(result,val);
+  mpfr_clear(val);
+}
+
+gmp_RRi rawRandomRRi(unsigned long precision)
+{
+  mpfi_ptr result;
+
+  result = getmemstructtype(mpfi_ptr);
+  mpfi_init2(result, precision);
+  rawSetRandomRRi(result);
+
+  return moveTo_gmpRRi(result);
+}
+
+gmp_CCi rawRandomCCi(unsigned long precision)
+{
+  gmp_CCimutable result = getmemstructtype(gmp_CCimutable);
+  result->re = const_cast<gmp_RRimutable>(rawRandomRRi(precision));
+  result->im = const_cast<gmp_RRimutable>(rawRandomRRi(precision));
+  return reinterpret_cast<gmp_CCi>(result);
+}
+
 
 int system_randomint()
 {

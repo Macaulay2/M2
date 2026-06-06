@@ -29,9 +29,8 @@ newPackage(
 	    HomePage => "https://sites.google.com/site/profjkvermaiitbombay/"
 	    }
 	},
-    Headline => "Mixed Multiplicities",
     Headline => "Mixed Multiplicities of ideals",
-    PackageImports=>{"Divisor", "ReesAlgebra", "Depth", "Polyhedra"},
+    PackageImports => { "WeilDivisors", "ReesAlgebra", "Depth", "Polyhedra" },
     Keywords => {"Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
@@ -41,7 +40,6 @@ newPackage(
 	"published article URI" => "https://msp.org/jsag/2023/13-1/p01.xhtml",
 	"published article DOI" => "10.2140/jsag.2023.13.1",
 	"published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x01-MixedMultiplicity.m2",
-	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MixedMultiplicity.m2",
 	"release at publication" => "23c0f53e78831d43a978c61ccdc0cddef35efae7",
 	"version at publication" => "3.0",
 	"volume number" => "13",
@@ -945,6 +943,27 @@ TEST ///
   R = QQ[x,y,z];
   SMN = secMilnorNumbers(z^5 + x*y^7 + x^15)
   assert(SMN === hashTable{0 => 1, 1 => 4, 2 => 28, 3 => 364})
+///
+
+TEST ///
+-- VariableBaseName overrides the default "X" prefix used to label the
+-- multi-Rees / polytope-ring variables, for both multiReesIdeal and
+-- homIdealPolytope.
+  R = QQ[x,y];
+  m = ideal vars R;
+  I1 = multiReesIdeal(m^2, VariableBaseName => "Y");
+  assert(apply(gens ring I1, toString) == {"Y_0", "Y_1", "Y_2"});
+  I2 = homIdealPolytope({(-1,0),(0,-1),(1,0),(0,1)}, VariableBaseName => "T");
+  assert(apply(gens ring I2, toString) == {"T_1", "T_2", "T_3"});
+///
+
+TEST ///
+-- CoefficientRing switches the coefficient field of the polytope ring
+-- produced by homIdealPolytope; the variable structure is unchanged.
+  I3 = homIdealPolytope({(-1,0),(0,-1),(1,0),(0,1)}, CoefficientRing => ZZ/2);
+  assert(coefficientRing ring I3 === ZZ/2);
+  I3default = homIdealPolytope({(-1,0),(0,-1),(1,0),(0,1)});
+  assert(apply(gens ring I3, toString) == apply(gens ring I3default, toString));
 ///
 
 end--

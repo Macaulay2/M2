@@ -31,7 +31,7 @@ toExternalString Hypertext := s -> concatenate(toString class s, toExternalStrin
 
 new Hypertext from VisibleList := (M,x) -> x -- needed because otherwise next line takes over
 new Hypertext from Thing  := (M,x) -> {x}
-new Hypertext from Net    := (M,x) -> {toString x}
+new Hypertext from Net    := (M,x) -> between(BR(),unstack x)
 
 Hypertext#AfterPrint = x -> null
 
@@ -45,11 +45,16 @@ new URL from String := (URL, str) -> { str }
 -- relative URLs and filenames
 isAbsoluteURL = url -> match( "^(#|mailto:|[a-z]+://)", url )
 
+fileExists' = pth -> (
+    if match("#",pth) then pth = substring(0,lastMatch#0#0,pth);
+    fileExists pth
+)
+
 -- TODO: phase this one out eventually
 toURL = method()
 toURL String := pth -> (
      urlEncode if isAbsolutePath pth then concatenate(rootURI,
-	  if fileExists pth then realpath pth
+	  if fileExists' pth then realpath pth
 	  else (
 	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
 	       pth))
@@ -75,6 +80,12 @@ toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
 	  stderr << "--                      result        = " << r << endl;
 	  );
      urlEncode r)
+
+toURL FilePosition := p -> concatenate(
+	p#0,
+	"#L",toString p#1,":C",toString p#2,
+	if #p>=5 then ("-L",toString p#3,":C",toString p#4)
+	)
 
 -----------------------------------------------------------------------------
 -- MarkUpType type declarations
@@ -122,6 +133,7 @@ DIV        = new MarkUpType of HypertextContainer
 BR         = new MarkUpType of HypertextVoid
 HR         = new MarkUpType of HypertextVoid
 SCRIPT     = new MarkUpType of HypertextParagraph
+IFRAME     = new MarkUpType of HypertextContainer
 
 -- Headers
 HEADER1    = new MarkUpType of HypertextParagraph
@@ -169,7 +181,7 @@ PRE        = new MarkUpType of HypertextParagraph
 -- Tables
 TABLE      = new MarkUpType of HypertextContainer
 TR         = new MarkUpType of HypertextContainer
-TD         = new MarkUpType of Hypertext
+TD         = new MarkUpType of HypertextContainer
 TH         = new MarkUpType of TD
 
 -- Misc
@@ -250,6 +262,7 @@ new TOH  from Thing     := (TO, x) -> new TO from {x}
 new TO   from List      := (TO, x) -> if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 new TO2  from List      :=
 new TO2  from Sequence  := (TO2, x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
+new TO2  from TO        := (TO2, x) -> TO2 {x#0, format x#0 | (x#1 ?? "")}
 new TOH  from List      := (TOH, x) -> { makeDocumentTag x#0 }
 new HREF from List      := (HREF, x) -> (
     url := if x#?0 and (instance(x#0, String) or instance(x#0, Sequence) and #x#0 === 2 and all(x#0, y -> instance(y, String)))
@@ -361,6 +374,9 @@ addAttribute(TH,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(IMG,    htmlAttr | {"alt", "src", "srcset", "width", "height",
 	"sizes", "crossorigin", "longdesc", "referrerpolicy", "ismap", "usemap"})
 addAttribute(OL, htmlAttr | {"start"=>"0", "reversed", "type"})
+addAttribute(IFRAME, htmlAttr | {"allow", "allowfullscreen",
+	"allowpaymentrequest", "height", "loading", "name", "referrerpolicy",
+	"sandbox", "src", "srcdoc", "width"})
 buttonAttr = htmlAttr | {"autofocus","disabled",
     "form","formaction","formenctype","formmethod","formnovalidate","formtarget",
     "name", "type", "value"}
@@ -368,9 +384,6 @@ addAttribute(BUTTON, buttonAttr)
 addAttribute(INPUT, buttonAttr | {"accept","alt","checked",
 	"height", "list", "max", "maxlength", "min", "minlength", "multiple",
 	"pattern", "placeholder", "readonly", "required", "size", "src", "step", "width" })
-
-M2CODE = method()
-M2CODE Thing := x -> prepend("class" => "language-macaulay2", CODE x)
 
 -- Written by P. Zinn-Justin
 style = method(Options => true)
@@ -381,6 +394,22 @@ style Hypertext := true >> o -> x -> (
     ops = applyPairs(ops,(k,v)->if k==="style" then (k,concatenate(v, if v=!=null and #v>0 and last v =!= ";" then ";",str)) else if v=!=null then (k,v));
     new class x from (toList sequence arg | apply(pairs ops,a->new Option from a))
     )
+
+htmlClass = method()
+htmlClass Hypertext := x -> (
+    (ops,arg) := override(options class x,toSequence x);
+    if ops#"class" =!= null then separate(" ",ops#"class") else {}
+    )
+htmlClass(Hypertext,List) := (x,c) -> (
+    c = unique(htmlClass x | c);
+    i := position(toList x, y -> class y === Option and y#0 === "class");
+    if i=!=null then x = drop(x,{i,i});
+    append(x,"class"=>demark_" " c)
+    )
+htmlClass(Hypertext,String) := (x,s) -> htmlClass(x,{s})
+
+M2CODE = method()
+M2CODE Thing := x -> htmlClass(CODE x, "language-macaulay2")
 
 hypertext = method(Dispatch => Thing, TypicalValue => Hypertext)
 hypertext Hypertext := identity
@@ -409,7 +438,6 @@ hypertext Manipulator :=
 hypertext Nothing :=
 hypertext Boolean := SAMPc "constant"
 hypertext Type :=
-hypertext FilePosition :=
 hypertext Dictionary := SAMPc "class-name"
 hypertext String := SAMPc "string"
 hypertext Net := n -> PRE {
@@ -417,9 +445,14 @@ hypertext Net := n -> PRE {
     "class"=>"token net",
     if #n>0 and depth n!=0 then "style" => "vertical-align:"|toString(-100*depth n)|"%"
     }
+hypertext FilePosition := p -> SAMP HREF {
+    toURL p,
+    toString p};
 hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext RawObject := hypertext @@ net
+
+unique Hypertext := x -> new class x from unique toList x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -8,7 +8,7 @@ memoize(Function,List) := (f,initialValues) -> (
      values := new MutableHashTable from initialValues;
      x -> (
 	  -- This code is common to any function that has been memoized with initial values.
-	  if not values#?x then values#x = f(x) else values#x
+	  values#x ??= f(x)
 	  )
      )
 memoize Function := f -> memoize(f,{})

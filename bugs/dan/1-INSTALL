@@ -1,2 +1,0 @@
-Currently the INSTALL file doesn't appear in the rpm file.  Where can we put it
-so it will be seen by an installer?

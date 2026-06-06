@@ -41,7 +41,7 @@ namespace BIBasis
         std::size_t Size() const;
 
         const Triple<MonomType>* Find(const MonomType& monom) const;
-        Triple<MonomType>* const Back() const;
+        Triple<MonomType>* Back() const;
         
         void CollectNonMultiProlongations(Iterator& iterator, std::list<Triple<MonomType>*>& set);
     };
@@ -124,7 +124,7 @@ namespace BIBasis
     }
 
     template <typename MonomType>
-    Triple<MonomType>* const TSet<MonomType>::Back() const 
+    Triple<MonomType>* TSet<MonomType>::Back() const 
     { 
         return TripleList.back();
     }

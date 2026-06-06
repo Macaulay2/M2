@@ -22,7 +22,7 @@
 class PolynomialRing;
 class RingElement;
 
-engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
+const MonomialIdeal* /* or null */ IM2_MonomialIdeal_make(const Matrix *m, int n)
 {
   try
     {
@@ -49,7 +49,7 @@ const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
   }
 }
 
-M2_string MonomialIdeal_to_string(const MonomialIdeal *I)
+M2_string IM2_MonomialIdeal_to_string(const MonomialIdeal *I)
 {
   buffer o;
   try

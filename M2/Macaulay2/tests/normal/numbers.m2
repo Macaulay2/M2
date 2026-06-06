@@ -69,6 +69,36 @@ assert ch( +ii*.92837938475938759387539847539847p100e0)
 assert ch( -ii*.73249827349273948274398273498273p100e0)
 assert ch( -ii*.92837938475938759387539847539847p100e0)
 
+assert ch toCCi(2, 3)
+assert ch numeric infinity
+assert ch numeric(100, infinity)
+assert ch toCC numeric infinity
+assert ch toCC numeric(100, infinity)
+
+CCinf = toCC numeric infinity
+assert(CCinf === -CCinf)
+scan({5, 5/1, 5.0}, x -> (
+	y := toCC(53, x, numeric infinity);
+	assert ch y;
+	assert(y === CCinf);
+	y = toCC(53, numeric infinity);
+	assert ch y;
+	assert(y === CCinf)))
+
+chnan = x -> (
+    y := value toExternalString x;
+    precision y === precision x and not isANumber y)
+assert chnan numeric NotANumber
+assert chnan numeric(100, NotANumber)
+
+nan = numeric NotANumber
+CCnan = toCC nan
+chCCnan = chnan @@ realPart and chnan @@ imaginaryPart
+assert chCCnan CCnan
+scan({5, 5/1, 5.0}, x -> (
+	assert chCCnan toCC(53, x, nan);
+	assert chCCnan toCC(53, nan, x)))
+
 assert( 1. === 1. )
 assert( 1. =!= .1 )
 assert( hash 1p111 =!= hash 1p110 )
@@ -177,9 +207,16 @@ assert( ring(1p44+ii) === CC_44 )
 assert( round 3.4 === 3 )
 assert( round 3.5 === 4 )
 assert( round 4.5 === 4 )
+assert( round toRRi(exp 1, numeric pi) === 3 )
+assert( round pi === 3 )
 assert( round_1 .34 === .3 )
 assert( round_1 .35 === .4 )
 assert( round_1 .45 === .4 )
+assert( round_2 (1/3) == 0.33 )
+assert( round_2 pi === 3.14 )
+assert( round_2 toRRi(exp 1, numeric pi) === toRRi(2.72, 3.14) )
+assert( round_2 toCC(exp 1, numeric pi) === toCC(2.72, 3.14) )
+
 setRandomSeed 4
 assert( apply(20,i -> random 100) === {47, 38, 51, 74, 28, 50, 44, 25, 72, 16, 41, 61, 76, 89, 28, 27, 77, 34, 26, 57} ) -- version 1.1
 
@@ -273,6 +310,8 @@ assert( isReal (1/1) )
 assert( isReal pi )
 assert( not isReal ii )
 assert( not isReal infinity )
+assert isReal toCCi(1, 0)
+assert not isReal toCCi(0, 1)
 
 assert( instance(log(3.), RR) )
 assert( instance(log(3/1), RR) )
@@ -280,6 +319,8 @@ assert( instance(log(3), RR) )
 assert( instance(log(-3.), CC) )
 assert( instance(log(-3/1), CC) )
 assert( instance(log(-3), CC) )
+assert( instance(log toRRi(-3), CCi) )
+assert( instance(log toCCi(-3), CCi) )
 
 assert( instance(log(3.,2), RR) )
 assert( instance(log(3/1,2), RR) )
@@ -287,6 +328,8 @@ assert( instance(log(3,2), RR) )
 assert( instance(log(-3.,2), CC) )
 assert( instance(log(-3/1,2), CC) )
 assert( instance(log(-3,2), CC) )
+assert( instance(log(-3, toRRi 2), CCi) )
+assert( instance(log(-3, toCCi 2), CCi) )
 
 assert( instance(log(3.,-2), CC) )
 assert( instance(log(3/1,-2), CC) )
@@ -294,6 +337,8 @@ assert( instance(log(3,-2), CC) )
 assert( instance(log(-3.,-2), CC) )
 assert( instance(log(-3/1,-2), CC) )
 assert( instance(log(-3,-2), CC) )
+assert( instance(log(-3, toRRi(-2)), CCi) )
+assert( instance(log(-3, toCCi(-2)), CCi) )
 
 assert( instance(log(3.,2.), RR) )
 assert( instance(log(3/1,2.), RR) )
@@ -301,6 +346,8 @@ assert( instance(log(3,2.), RR) )
 assert( instance(log(-3.,2.), CC) )
 assert( instance(log(-3/1,2.), CC) )
 assert( instance(log(-3,2.), CC) )
+assert( instance(log(toRRi(-3), 2.), CCi) )
+assert( instance(log(toCCi(-3), 2.), CCi) )
 
 assert( instance(log(3.,-2.), CC) )
 assert( instance(log(3/1,-2.), CC) )
@@ -308,6 +355,8 @@ assert( instance(log(3,-2.), CC) )
 assert( instance(log(-3.,-2.), CC) )
 assert( instance(log(-3/1,-2.), CC) )
 assert( instance(log(-3,-2.), CC) )
+assert( instance(log(toRRi(-3), -2.), CCi) )
+assert( instance(log(toCCi(-3), -2.), CCi) )
 
 assert( instance(log(3.,2/1), RR) )
 assert( instance(log(3/1,2/1), RR) )
@@ -315,6 +364,8 @@ assert( instance(log(3,2/1), RR) )
 assert( instance(log(-3.,2/1), CC) )
 assert( instance(log(-3/1,2/1), CC) )
 assert( instance(log(-3,2/1), CC) )
+assert( instance(log(toRRi(-3), 2/1), CCi) )
+assert( instance(log(toCCi(-3), 2/1), CCi) )
 
 assert( instance(log(3.,-2/1), CC) )
 assert( instance(log(3/1,-2/1), CC) )
@@ -322,16 +373,16 @@ assert( instance(log(3,-2/1), CC) )
 assert( instance(log(-3.,-2/1), CC) )
 assert( instance(log(-3/1,-2/1), CC) )
 assert( instance(log(-3,-2/1), CC) )
+assert( instance(log(toRRi(-3), -2/1), CCi) )
+assert( instance(log(toCCi(-3), -2/1), CCi) )
 
-scan(((3.), (3/1), (3), (-3.), (-3/1), (-3)), x -> assert( abs(exp(log(x)) - x) < 1e-10) )
-scan((
-(3.,2), (3/1,2), (3,2), (-3.,2),
-(-3/1,2), (-3,2), (3.,-2), (3/1,-2), (3,-2), (-3.,-2), (-3/1,-2), (-3,-2),
-(3.,2.), (3/1,2.), (3,2.), (-3.,2.), (-3/1,2.), (-3,2.), (3.,-2.), (3/1,-2.),
-(3,-2.), (-3.,-2.), (-3/1,-2.), (-3,-2.), (3.,2/1), (3/1,2/1), (3,2/1),
-(-3.,2/1), (-3/1,2/1), (-3,2/1), (3.,-2/1), (3/1,-2/1), (3,-2/1), (-3.,-2/1),
-(-3/1,-2/1), (-3,-2/1)
-), (b,x) -> assert(abs(log(b,x)-log x/log b)<1e-10))
+scan(((3.), (3/1), (3), (-3.), (-3/1), (-3), toRRi 3, toCCi 3, toRRi(-3),
+	toCCi(-3)), x -> assert( abs(exp(log(x)) - x) < 1e-10) )
+funcs = {identity, x -> x/1, toRR, toCC, toRRi, toCCi}
+scan(apply(funcs ** funcs, (f, g) -> (f 3, f 2)),
+    (b, x) -> assert(abs(log(b,x) - log x/log b) < 1e-10))
+scan(apply(funcs ** funcs, (f, g) -> (f 3, f(-2))),
+    (b, x) -> assert(abs(log(b,x) - log x/log b) < 1e-10))
 
 assert( format_10 .00044448888 === ".00044448888" )
 assert( format_9 .00044448888 === ".00044448888" )
@@ -431,7 +482,7 @@ toExternalString (0 *(1-ii))
 toExternalString (0.*(1-ii))
 assert( 0*(1-ii) === 0.*(1-ii) )
 
-epsilon = 10 * 2.^-defaultPrecision
+epsilon = 1e-14
 small = z -> abs z < epsilon
 see = z -> (<< "see: " << z << endl; z)
 scan( {exp,log,sin,cos,sinh,cosh,tanh,coth,asin,acos,asinh,acosh,atan,acot,cot,tan,csc,sec}, 
@@ -442,7 +493,8 @@ scan( {exp,log,sin,cos,sinh,cosh,tanh,coth,asin,acos,asinh,acosh,atan,acot,cot,t
 	  )
      )
 
-scan({.2, 1.2, .2 + .3*ii,  1.2 - .13*ii}, z -> (
+scan({.2, 1.2, .2 + .3*ii,  1.2 - .13*ii, toRRi .2, toRRi 1.2,
+	toCCi(.2, .3), toCCi(1.2, .13)}, z -> (
      	  assert small(z - acosh cosh z);
 	  assert small(z - acos cos z);
 	  assert small(z - asinh sinh z);
@@ -456,11 +508,15 @@ assert( class asin .3 === RR )
 assert( class asin 1.3 === CC )
 assert( class acos .3 === RR )
 assert( class acos 1.3 === CC )
+assert( class acos toRRi .3 === RRi )
+assert( class acos toRRi 1.3 === CCi )
 
 assert( class acot .3 === RR )
 assert( class acot 1.3 === RR )
 assert( class acot (-.3) === RR )
 assert( class acot (-1.3) === RR )
+assert( class acos toRRi(-.3) === RRi )
+assert( class acos toRRi(-1.3) === CCi )
 
 assert( class asinh .3 === RR )
 assert( class asinh 1.3 === RR )
@@ -887,6 +943,7 @@ assert (abs(erf ii - 1.65042575879754*ii) < 1e-14)
 assert small(erfc 1 - (1 - erf 1))
 assert isMember(1 - erf 1, erfc interval 1)
 assert small abs (erfc ii - (1 - erf ii))
+assert isMember(erfc ii, erfc toCCi(0, 1))
 
 assert small(Gamma(5, 0) - Gamma 5)
 assert small(Gamma(1, 5) - exp(-5))
@@ -899,6 +956,11 @@ assert small abs(Gamma ii + 0.15494982830181067 + 0.49801566811835607*ii)
 assert small abs(Gamma(1, ii) - 0.54030230586813977 + 0.8414709848078965*ii)
 assert small abs(Gamma(ii, 1) - 0.18664859155306995 - 0.087482052563195759*ii)
 assert small abs(Gamma(ii, ii) + 0.014824818622885686 + 0.21654902748979538*ii)
+assert isMember(Gamma ii, Gamma toCCi(0, 1))
+assert isMember(Gamma(1, ii), Gamma(toCCi 1, toCCi(0, 1)))
+assert isMember(Gamma(ii, 1), Gamma(toCCi(0, 1), toCCi 1))
+assert isMember(Gamma(ii, ii), Gamma(toCCi(0, 1), toCCi (0, 1)))
+
 
 assert small(Gamma(1/2, 5) / Gamma(1/2) - regularizedGamma(1/2, 5))
 assert(abs(5 - inverseRegularizedGamma(1/2, regularizedGamma(1/2, 5))) < 1e-12)
@@ -906,13 +968,15 @@ assert small(1/5 - regularizedGamma(1/2, inverseRegularizedGamma(1/2, 1/5)))
 assert isMember(0.13533528323661269, regularizedGamma(1, interval 2))
 assert isMember(0.13533528323661269, regularizedGamma(interval 1, 2))
 assert isMember(0.13533528323661269, regularizedGamma(interval 1, interval 2))
-assert small abs(Gamma(1, ii) - 0.54030230586813977 + 0.8414709848078965*ii)
-assert small abs(Gamma(ii, 1) - 0.18664859155306996 - 0.0874820525631958*ii)
-assert small abs(Gamma(ii, ii) + 0.01482481862288569 + 0.2165490274897954*ii)
+assert isMember(regularizedGamma(1, ii), regularizedGamma(toCCi 1, toCCi(0, 1)))
+assert isMember(regularizedGamma(ii, 1), regularizedGamma(toCCi(0,1), toCCi 1))
+assert isMember(regularizedGamma(ii, ii), regularizedGamma(toCCi(0,1), toCCi(0, 1)))
+
 
 assert small(Digamma 1 + EulerConstant)
 assert isMember(-EulerConstant, Digamma interval 1)
 assert small(imaginaryPart Digamma ii - (1/2 + pi/2 * coth pi))
+assert isMember(Digamma ii, Digamma toCCi(0, 1))
 
 assert small(lngamma 0.5 - log sqrt pi)
 assert small(lngamma(1/2) - log sqrt pi)
@@ -920,10 +984,12 @@ assert small(lngamma 4 - log 6)
 assert small(lngamma pi - log Gamma pi)
 assert isMember(log sqrt pi, lngamma interval 0.5)
 assert small abs(lngamma ii - log Gamma ii)
+assert isMember(lngamma ii, lngamma toCCi(0, 1))
 
 assert small(zeta(-1) + 1/12)
 assert isMember(-1/12, zeta interval(-1))
 assert(abs zeta(1/2 + 14.1347251417347*ii) < 1e-14)
+assert isMember(zeta ii, zeta toCCi(0, 1))
 
 assert small(Beta(1, 2) - 1/2)
 assert isMember(1/2, Beta(1, interval 2))
@@ -932,6 +998,9 @@ assert isMember(1/2, Beta(interval 1, interval 2))
 assert small abs(Beta(1, 1 + ii) - 1/2 + 1/2*ii)
 assert small abs(Beta(1 + ii, 1) - 1/2 + 1/2*ii)
 assert small abs(Beta(1 + ii, 1 + ii) + 0.211272372936533 + 0.7655283165378*ii)
+assert isMember(Beta(1, 1 + ii), Beta(toCCi 1, toCCi(1, 1)))
+assert isMember(Beta(1 + ii, 1), Beta(toCCi(1, 1), toCCi 1))
+assert isMember(Beta(1 + ii, 1 + ii), Beta(toCCi(1, 1), toCCi(1, 1)))
 
 assert small(regularizedBeta(1/3, 4, 1) - 1/81)
 assert small(regularizedBeta(1/3, 4, 5) -
@@ -953,6 +1022,13 @@ assert (abs(regularizedBeta(ii, 2 + ii, 3) + 1.87091618715686 - 1.24727745810457
 assert (abs(regularizedBeta(ii, 2, 3 + ii) + 15.8472757835638 - 7.90719103740708*ii) < 1e-13)
 assert small abs(regularizedBeta(1/2, 2 + ii, 3 + ii) - 0.675624489980143 + 0.036930593255322*ii)
 assert (abs(regularizedBeta(ii, 2 + ii, 3 + ii) + 3.51460542799295 + 0.957530220804034*ii) < 1e-14)
+assert isMember(regularizedBeta(ii, 2, 3), regularizedBeta(toCCi(0, 1), toCCi 2, toCCi 3))
+assert isMember(regularizedBeta(1/2, 2 + ii, 3), regularizedBeta(toCCi(1/2), toCCi(2, 1), toCCi 3))
+assert isMember(regularizedBeta(1/2, 2, 3 + ii), regularizedBeta(toCCi(1/2), toCCi 2, toCCi(3, 1)))
+assert isMember(regularizedBeta(ii, 2 + ii, 3), regularizedBeta(toCCi(0, 1), toCCi(2, 1), toCCi 3))
+assert isMember(regularizedBeta(ii, 2, 3 + ii), regularizedBeta(toCCi(0, 1), toCCi 2, toCCi(3, 1)))
+assert isMember(regularizedBeta(1/2, 2 + ii, 3 + ii), regularizedBeta(toCCi(1/2), toCCi(2, 1), toCCi(3, 1)))
+assert isMember(regularizedBeta(ii, 2 + ii, 3 + ii), regularizedBeta(toCCi(0, 1), toCCi(2, 1), toCCi(3, 1)))
 
 -- a few values from Abrahamowitz & Stegun Table 9.1
 assert ( BesselJ(0, 0) == 1 )
@@ -969,6 +1045,9 @@ assert isMember(BesselJ(1, 2), BesselJ(interval 1, interval 2))
 assert small abs (BesselJ(1, ii) - 0.565159103992485*ii)
 assert (abs(BesselJ(ii, 1) - 1.64102417949508 + 0.437075010213683*ii) < 1e-14)
 assert small abs(BesselJ(ii, ii) - .395137431337008 + 0.221175556871848*ii)
+assert isMember(BesselJ(1, ii), BesselJ(toCCi 1, toCCi(0, 1)))
+assert isMember(BesselJ(ii, 1), BesselJ(toCCi(0, 1), toCCi 1))
+assert isMember(BesselJ(ii, ii), BesselJ(toCCi(0, 1), toCCi(0, 1)))
 
 assert small (BesselY(1, 2) - BesselY(1.0, 2.0))
 assert isMember(BesselY(1, 2), BesselY(1, interval 2))
@@ -977,6 +1056,13 @@ assert isMember(BesselY(1, 2), BesselY(interval 1, interval 2))
 assert small abs(BesselY(1, ii) + 0.565159103992484 - 0.383186043874565*ii)
 assert (abs(BesselY(ii, 1) + 0.476556612479964 + 1.50506915911039*ii) < 1e-14)
 assert small abs(BesselY(ii, ii) + 0.665181892391867 - 0.395137431337008*ii)
+assert isMember(BesselY(1, ii), BesselY(toCCi 1, toCCi(0, 1)))
+assert isMember(BesselY(ii, 1), BesselY(toCCi(0, 1), toCCi 1))
+assert isMember(BesselY(ii, ii), BesselY(toCCi(0, 1), toCCi(0, 1)))
+
+assert small(polylog(1, 1/2) - log 2)
+assert small(polylog(2, 1/2) - 1/12*pi^2 + 1/2*(log 2)^2)
+assert(polylog(3, 1) == zeta 3)
 
 assert Equation(truncate 1, 1)
 assert Equation(truncate 1.9, 1)
@@ -1081,6 +1167,16 @@ assert( not isANumber ((1/0.-1/0.) + 1*ii) )
 assert( not isANumber (1 + (ii/0.-ii/0.) ) )
 assert( not isANumber ((1 + ii/0.) - ii/0. ) )
 
+importFrom(Core, "rawFareyApproximation")
+assert( rawFareyApproximation(numeric pi, 10) == 22/7 )
+assert( rawFareyApproximation(numeric pi, 200) == 355/113 )
+assert( rawFareyApproximation(-pi, 10) == -22/7 )
+
+assert( sign 5 == 1 )
+assert( sign pi == 1 )
+assert( sign 0/1 == 0 )
+assert( sign(-3) == -1 )
+assert( sign(-5 * ii) == -ii )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"

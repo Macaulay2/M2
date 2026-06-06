@@ -178,6 +178,13 @@ isWellDefined ComplexMap := f -> (
         );
     for i from lo to hi do (
         g := f_i;
+        if not isWellDefined g then (
+            if debugLevel > 0 then (
+                << "-- expected all differentials to be well-defined morphisms" << endl;
+                << "--   differential at index " << i << " fails this condition" << endl;
+                );
+            return false;
+            );
         if source g =!= f.source_i or target g =!= f.target_(i+f.degree)
         then (
             if debugLevel > 0 then (
@@ -242,6 +249,7 @@ net ComplexMap := Net => f -> (
      )
 
 texMath ComplexMap := String => f -> texMath expression f
+mathML ComplexMap := String => f -> mathML expression f
 
 ComplexMap _ ZZ := Matrix => (f,i) -> (
     if f.map#?i then f.map#i else map((target f)_(i + degree f), (source f)_i, 0))
@@ -518,24 +526,36 @@ canonicalTruncation(ComplexMap,InfiniteNumber,InfiniteNumber) :=
 canonicalTruncation(ComplexMap,ZZ,Nothing) := 
 canonicalTruncation(ComplexMap,Nothing,ZZ) := ComplexMap => (f,lo,hi) -> canonicalTruncation(f, (lo,hi))
 
-part(List, ComplexMap) := ComplexMap => (deg, f) -> (
-    R := ring f;
-    A := coefficientRing R;
-    psi := map(A,R, DegreeMap => degR -> take(degR, - degreeLength A));
-    C := part(deg, source f);
-    D := part(deg, target f);
+truncateMatrixOpts := options(truncate, List, Matrix)
+truncate(ZZ,   ComplexMap) := truncate(InfiniteNumber, ComplexMap) :=
+truncate(List, ComplexMap) := ComplexMap => truncateMatrixOpts >> opts -> (degs, f) -> (
     d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, psi matrix basis(deg, f_i)), Degree => d)
-    )
-part(ZZ, ComplexMap) := ComplexMap => (deg, f) -> part({deg}, f)
+    C := truncate(degs, source f, opts);
+    D := if source f === target f then C else truncate(degs, target f, opts);
+    map(D, C, i -> inducedTruncationMap(D_(i+d), C_i, f_i), Degree => d))
 
-truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
-    C := truncate(e, source f);
-    D := truncate(e, target f);
+--------------------------------------------------------------------
+-- basis -----------------------------------------------------------
+--------------------------------------------------------------------
+-- returns the induced complex map between the graded components of
+-- the source and target complexes in the given degree, over the
+-- same ring as the input (as opposed to its coefficient ring)
+-- TODO: also define basis given a degree range and infinite ranges
+basis(ZZ,   ComplexMap) :=
+basis(List, ComplexMap) := ComplexMap => opts -> (deg, f) -> (
     d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
-    )
-truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
+    C := basis(deg, source f, opts);
+    D := if source f === target f then C else basis(deg, target f, opts);
+    map(D, C, i -> inducedBasisMap(D_(i+d), C_i, f_i), Degree => d))
+
+--------------------------------------------------------------------
+-- part ------------------------------------------------------------
+--------------------------------------------------------------------
+-- returns the induced complex map between the graded component of
+-- the source and target complexes in the given degree, but as a map
+-- over the coefficient ring instead
+part(ZZ,   ComplexMap) :=
+part(List, ComplexMap) := ComplexMap => (deg, f) -> (residueMap ring f) cover' basis(deg, f)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
@@ -689,6 +709,46 @@ randomComplexMap(Complex, Complex) := ComplexMap => o -> (D,C) -> (
     )
 
 --------------------------------------------------------------------
+-- Yoneda extensions -----------------------------------------------
+--------------------------------------------------------------------
+
+-- duplicated from OldChainComplexes/Ext.m2
+-- TODO: documentation is still in Macaulay2Doc
+Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
+     R := ring f;
+     if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
+     if R =!= ring N then error "expected modules over the same ring";
+     prune' := if opts.MinimalGenerators then prune else identity;
+     if i < 0 then map(R^0, R^0, {})
+     else if i === 0 then Hom(f, N, opts)
+     else prune'(
+	  g := freeResolution(f,LengthLimit=>i+1);
+	  Es := Ext^i(source f, N, opts);
+	  Et := Ext^i(target f, N, opts);
+	  psi := if Es.cache.?pruningMap then Es.cache.pruningMap else id_Es;
+	  phi := if Et.cache.?pruningMap then Et.cache.pruningMap else id_Et;
+	  psi^-1 * inducedMap(target psi, target phi, Hom(g_i, N, opts)) * phi))
+
+-- TODO: is this correct?
+-- c.f. https://github.com/Macaulay2/M2/issues/246
+-- duplicated from OldChainComplexes/Ext.m2
+-- TODO: documentation is still in Macaulay2Doc
+Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
+     R := ring f;
+     if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
+     if R =!= ring N then error "expected modules over the same ring";
+     prune' := if opts.MinimalGenerators then prune else identity;
+     if i < 0 then map(R^0, R^0, {})
+     else if i === 0 then Hom(N, f, opts)
+     else prune'(
+	  C := freeResolution(N,LengthLimit=>i+1);
+	  Es := Ext^i(N, source f, opts);
+	  Et := Ext^i(N, target f, opts);
+	  psi := if Es.cache.?pruningMap then Es.cache.pruningMap else id_Es;
+	  phi := if Et.cache.?pruningMap then Et.cache.pruningMap else id_Et;
+	  phi^-1 * inducedMap(target phi, target psi, Hom(C_i, f, opts)) * psi))
+
+--------------------------------------------------------------------
 -- tensor products -------------------------------------------------
 --------------------------------------------------------------------
 tensor(ComplexMap, ComplexMap) := ComplexMap => {} >> opts -> (f,g) -> (
@@ -804,7 +864,7 @@ extend(Complex,Complex,Matrix) := ComplexMap => opts -> (D, C, f) -> extend(D, C
 -- sign convention: Using Conrad (Grothendieck Duality) sign choice for cone, pg 8 of intro. 
 -- NOTE: one could extend this to complex maps which commute, but have nonzero degree,
 --  IF this would be useful at all.
-cone ComplexMap := Complex => f -> (
+cone ComplexMap := Complex => f -> f.cache.cone ??= (
     if not isComplexMorphism f then 
         error "expected a complex morphism";
     B := source f;
@@ -1369,8 +1429,7 @@ horseshoeResolution(Matrix, Matrix) := Sequence => opts -> (g,f) -> (
     horseshoeResolution(complex{g,f}, opts)
     )  
 
-connectingExtMap = method(Options => {Concentration => null,
-        LengthLimit => infinity})
+connectingExtMap = method(Options => {LengthLimit => infinity, Concentration => null})
 connectingExtMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
     F := freeResolution(M, LengthLimit => opts.LengthLimit);
     connectingMap(Hom(F, g), Hom(F, f), Concentration => opts.Concentration)

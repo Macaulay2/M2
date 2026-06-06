@@ -44,20 +44,25 @@ ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
 texMath ZZ := toString
 
 gcd = method(Binary => true)
-installMethod(gcd, () -> 0)
+gcd()      := () -> 0
 gcd(ZZ,ZZ) := ZZ => gcd0
 gcd(ZZ,QQ) := QQ => (x,y) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,ZZ) := QQ => (y,x) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,QQ) := QQ => (x,y) -> (
      d := denominator x * (denominator y // gcd(denominator x, denominator y));
      gcd(numerator (x * d), numerator (y * d)) / d)
+gcd ZZ := gcd QQ := identity
 
 abs = method()
-abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
+abs Number := abs0
 abs Constant := abs @@ numeric
 
+sign = method()
+sign Number := sign0
+sign Constant := sign @@ numeric
+
 lcm = method(Binary => true)
-installMethod(lcm, () -> 1)
+lcm()      := () -> 1
 lcm(ZZ,ZZ) := (f,g) -> (
     d := gcd(f, g);
     if d == 0 then 0
@@ -68,6 +73,7 @@ lcm(QQ,QQ) := (f,g) -> (
     d := gcd(f, g);
     if d == 0 then 0_QQ
     else abs f * (abs g / d))
+lcm ZZ := lcm QQ := identity
 
 odd  = x -> 1 === x%2
 even = x -> 0 === x%2
@@ -90,7 +96,12 @@ ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
 ZZ ^^ ZZ := bitxorfun
 Boolean xor Boolean := (x, y) -> x and not y or not x and y
 
-ZZ~ := bitnotfun
+Function and Function := (f, g) -> s -> f s and g s
+Function or  Function := (f, g) -> s -> f s or  g s
+Function xor Function := (f, g) -> s -> f s xor g s
+not Function := f -> s -> not f s
+
+~ ZZ := bitnotfun
 
 changeBase = method()
 changeBase(ZZ,     ZZ)     := String =>
@@ -98,23 +109,35 @@ changeBase(String, ZZ)     := ZZ     => changeBase0
 changeBase(String, ZZ, ZZ) := String => (s, oldbase, newbase) -> (
     changeBase(changeBase(s, oldbase), newbase))
 
------------------------------------------------------------------------------
--- AtomicInt
------------------------------------------------------------------------------
-
-AtomicInt.synonym = "atomic integer"
-
-scan({symbol +=, symbol -=, symbol &=, symbol |=, symbol ^^=},
-    op -> typicalValues#(op, AtomicInt) = ZZ)
-
-store = method()
-store(AtomicInt, ZZ) := atomicStore
-
-exchange = method()
-exchange(AtomicInt, ZZ) := atomicExchange
-
-compareExchange = method()
-compareExchange(AtomicInt, ZZ, ZZ) := atomicCompareExchange
+-- Tonelli-Shanks algorithm (used by various sqrt methods)
+legendreSymbol = (n, p) -> powermod(n, (p - 1)//2, p)
+tonelliShanks = (n, p) -> (
+    if n % p == 0 then return 0;
+    if n % p == 1 then return 1;
+    if not isPrime p then error "expected a prime";
+    if legendreSymbol(n, p) != 1 then error "not a quadratic residue";
+    (q, s) := (p - 1, 0);
+    while even q do (
+	q //= 2;
+	s += 1);
+    z := 2;
+    while legendreSymbol(z, p) != p - 1 do z += 1;
+    m := s;
+    c := powermod(z, q, p);
+    t := powermod(n, q, p);
+    r := powermod(n, (q + 1)//2, p);
+    while true do (
+	if t == 0 then return 0;
+	if t == 1 then return (
+	    if 2*r > p then p - r
+	    else r);
+	i := 0;
+	while powermod(t, 2^i, p) != 1 do i += 1;
+	b := powermod(c, 2^(m - i - 1), p);
+	m = i;
+	c = powermod(b, 2, p);
+	t = (t * c) % p;
+	r = (r * b) % p))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

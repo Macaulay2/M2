@@ -11,7 +11,7 @@ ReducedGB_Field::~ReducedGB_Field()
   Rideal = nullptr;
 }
 
-void ReducedGB_Field::set_gb(VECTOR(POLY) & polys0) {}
+void ReducedGB_Field::set_gb(VECTOR(POLY) & polys0) { (void) polys0; }
 struct ReducedGB_Field_sorter
 {
   GBRing *R;
@@ -104,6 +104,7 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
   frem->next = nullptr;
   POLY h = f;
   exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
+
   while (!R->gbvector_is_zero(h.f))
     {
       R->gbvector_get_lead_exponents(F, h.f, EXP);
@@ -140,11 +141,25 @@ void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
             }
         }
     }
+  
   h.f = head.next;
-  //  R->gbvector_remove_content(h.f, h.fsyz, use_denom, denom);
-  f.f = h.f;
+
+  ring_elem denom1;
+  ring_elem one_elem = R->get_flattened_coefficients()->one();
+  denom1 = R->get_flattened_coefficients()->one(); // is replaced on next line
   originalR->get_quotient_info()->gbvector_normal_form(
-      Fsyz, h.fsyz, use_denom, denom);
+                                                       Fsyz, h.fsyz, true, denom1);
+  if (EQ != R->get_flattened_coefficients()->compare_elems(denom1, one_elem))
+    {
+      // multiply h.f by denom1.
+      R->gbvector_mult_by_coeff_to(h.f, denom1);
+    }
+  if (use_denom)
+    {
+      R->get_flattened_coefficients()->mult_to(denom, denom1);
+    }
+  
+  f.f = h.f;
   f.fsyz = h.fsyz;
 }
 

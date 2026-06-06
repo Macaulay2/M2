@@ -11,15 +11,25 @@
 #include <algorithm>          // for stable_sort
 #include <vector>             // for vector, vector<>::iterator
 
+#if defined(WITH_TBB)
+F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0, mtbb::task_arena& scheduler)
+#else
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
-    : M(M0), gb(gb0), heap(nullptr), this_set(nullptr), nsaved_unneeded(0)
+#endif
+  : M(M0),
+    gb(gb0),
+    mSPairCompare(mSPairs),
+    mSPairQueue(mSPairCompare),
+    nsaved_unneeded(0),
+    mMinimizePairsSeconds(0)
+#if defined(WITH_TBB)
+  , mScheduler(scheduler)
+#endif
 {
   max_varpower_size = 2 * M->n_vars() + 1;
 
-  spair *used_to_determine_size = nullptr;
-  size_t spair_size =
-      sizeofspair(used_to_determine_size, M->max_monomial_size());
-  spair_stash = new stash("F4 spairs", spair_size);
+  //spair *used_to_determine_size = nullptr;
+  //mSPairSizeInBytes = sizeofspair(used_to_determine_size, M->max_monomial_size());
 }
 
 F4SPairSet::~F4SPairSet()
@@ -27,20 +37,6 @@ F4SPairSet::~F4SPairSet()
   // Deleting the stash deletes all memory used here
   // PS, VP are deleted automatically.
   M = nullptr;
-  heap = nullptr;
-  this_set = nullptr;
-  delete spair_stash;
-}
-
-spair *F4SPairSet::make_spair(spair_type type, int deg, int i, int j)
-{
-  spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
-  result->next = nullptr;
-  result->type = type;
-  result->deg = deg;
-  result->i = i;
-  result->j = j;
-  return result;
 }
 
 void F4SPairSet::insert_spair(pre_spair *p, int me)
@@ -49,27 +45,43 @@ void F4SPairSet::insert_spair(pre_spair *p, int me)
   int deg = p->deg1 + gb[me]->deg;
   // int me_component = M->get_component(gb[me]->f.monoms);
 
-  spair *result = make_spair(F4_SPAIR_SPAIR, deg, me, j);
+  spair result {SPairType::SPair, deg, me, j, nullptr};
+  
+  auto allocRange = mSPairLCMs.allocateArray<monomial_word>(M->max_monomial_size());
+  result.lcm = allocRange.first;
+  
+  M->from_varpower_monomial(p->quot, 0, result.lcm);
+  M->unchecked_mult(result.lcm, gb[me]->f.monoms, result.lcm);
 
-  M->from_varpower_monomial(p->quot, 0, result->lcm);
-  M->unchecked_mult(result->lcm, gb[me]->f.monoms, result->lcm);
+  mSPairLCMs.shrinkLastAllocate(allocRange.first,
+                                allocRange.second,
+                                allocRange.first + M->monomial_size(result.lcm));
 
-  result->next = heap;
-  heap = result;
+  auto sPairIndex = mSPairs.size();
+  mSPairs.push_back(result);  
+  mSPairQueue.push(sPairIndex);
+  
 }
 
-void F4SPairSet::delete_spair(spair *p) { spair_stash->delete_elem(p); }
+void F4SPairSet::delete_spair(spair *p) { delete p; }
 void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
 {
-  spair *p = make_spair(F4_SPAIR_GEN, deg, col, -1);
-  M->copy(lcm, p->lcm);
-  p->next = heap;
-  heap = p;
+  spair result {SPairType::Generator,deg,col,-1,nullptr};
+
+  auto allocRange = mSPairLCMs.allocateArray<monomial_word>(M->monomial_size(lcm));
+  result.lcm = allocRange.first;
+  
+  M->copy(lcm, result.lcm);
+
+  auto sPairIndex = mSPairs.size();
+  mSPairs.push_back(result);  
+  mSPairQueue.push(sPairIndex);
 }
 
 bool F4SPairSet::pair_not_needed(spair *p, gbelem *m)
 {
-  if (p->type != F4_SPAIR_SPAIR && p->type != F4_SPAIR_RING) return false;
+  // if (p->type != SPairType::SPair && p->type != SPairType::Ring) return false;
+  if (p->type != SPairType::SPair) return false;
   if (M->get_component(p->lcm) != M->get_component(m->f.monoms)) return false;
   return M->unnecessary(
       m->f.monoms, gb[p->i]->f.monoms, gb[p->j]->f.monoms, p->lcm);
@@ -81,98 +93,85 @@ int F4SPairSet::remove_unneeded_pairs()
   // and do so.  Return the number removed.
 
   // MES: Check the ones in this_set? Probably not needed...
-  spair head;
-  spair *p = &head;
+
+  if (gb.size() == 0) return 0;
+  
   gbelem *m = gb[gb.size() - 1];
-  int nremoved = 0;
+  //long nremoved = 0;
 
-  head.next = heap;
-  while (p->next != nullptr)
-    if (pair_not_needed(p->next, m))
-      {
-        nremoved++;
-        spair *tmp = p->next;
-        p->next = tmp->next;
-        tmp->next = nullptr;
-        delete_spair(tmp);
-      }
-    else
-      p = p->next;
-  heap = head.next;
-  return nremoved;
-}
-
-int F4SPairSet::determine_next_degree(int &result_number)
-{
-  spair *p;
-  int nextdeg;
-  int len = 1;
-  if (heap == nullptr)
+#if defined(WITH_TBB)
+  mScheduler.execute([&] {
+    mtbb::parallel_for(mtbb::blocked_range<int>{0, INTSIZE(mSPairs)},
+                       [&](const mtbb::blocked_range<int>& r)
+                       {
+                         for (auto i = r.begin(); i != r.end(); ++i)
+                           {
+                             if (pair_not_needed(&mSPairs[i],m))
+                               {
+                                 mSPairs[i].type = SPairType::Retired;
+                               }
+                           }
+                       });
+  });
+#else  
+  for (auto& p : mSPairs)
+  {
+    if (pair_not_needed(&p,m))
     {
-      result_number = 0;
-      return 0;
+      p.type = SPairType::Retired;
+      //++nremoved;
     }
-  nextdeg = heap->deg;
-  for (p = heap->next; p != nullptr; p = p->next)
-    if (p->deg > nextdeg)
-      continue;
-    else if (p->deg < nextdeg)
-      {
-        len = 1;
-        nextdeg = p->deg;
-      }
-    else
-      len++;
-  result_number = len;
-  return nextdeg;
+  }
+#endif  
+  return 0;
+  //return nremoved;
+  
 }
 
-int F4SPairSet::prepare_next_degree(int max, int &result_number)
-// Returns the (sugar) degree being done next, and collects all (or at
-// most 'max', if max>0) spairs in this lowest degree.
-// Returns the degree, sets result_number.
+std::pair<bool,int> F4SPairSet::setThisDegree()
 {
-  this_set = nullptr;
-  int result_degree = determine_next_degree(result_number);
-  if (result_number == 0) return 0;
-  if (max > 0 && max < result_number) result_number = max;
-  int len = result_number;
-  spair head;
-  spair *p;
-  head.next = heap;
-  p = &head;
-  while (p->next != nullptr)
-    if (p->next->deg != result_degree)
-      p = p->next;
-    else
-      {
-        spair *tmp = p->next;
-        p->next = tmp->next;
-        tmp->next = this_set;
-        this_set = tmp;
-        len--;
-        if (len == 0) break;
-      }
-  heap = head.next;
-  return result_degree;
+  if (mSPairQueue.empty()) return {false, 0};
+
+  auto queueTop = mSPairQueue.top();
+  while (mSPairs[queueTop].type == SPairType::Retired)
+    {
+      mSPairQueue.pop();
+      if (mSPairQueue.empty()) return {false, 0};
+      queueTop = mSPairQueue.top();
+    }
+
+  mThisDegree = mSPairs[queueTop].deg;
+  return {true,mThisDegree};
+
 }
 
-spair *F4SPairSet::get_next_pair()
+//spair *F4SPairSet::get_next_pair()
+std::pair<bool,spair> F4SPairSet::get_next_pair()
 // get the next pair in this degree (the one 'prepare_next_degree' set up')
-// returns 0 if at the end
 {
-  spair *result;
-  if (!this_set) return nullptr;
+  if (mSPairQueue.empty()) return {false, {}};
+  auto result = mSPairQueue.top();
+  if (mSPairs[result].deg != mThisDegree) return {false, {} };
+  mSPairQueue.pop();
+  return {true,mSPairs[result]};
+}
 
-  result = this_set;
-  this_set = this_set->next;
-  result->next = nullptr;
-  return result;
+void F4SPairSet::discardSPairsInCurrentDegree()
+{
+  while (not mSPairQueue.empty())
+    {
+      auto result = mSPairQueue.top();
+      if (mSPairs[result].deg != mThisDegree) return;
+      mSPairs[result].type = SPairType::Retired;
+      mSPairQueue.pop();
+    }
 }
 
 int F4SPairSet::find_new_pairs(bool remove_disjoints)
 // returns the number of new pairs found
 {
+  // this is used for "late" removal of spairs -- will need to be reworked
+  //   in the new priority_queue approach
   nsaved_unneeded += remove_unneeded_pairs();
   int len = construct_pairs(remove_disjoints);
   return len;
@@ -181,7 +180,7 @@ int F4SPairSet::find_new_pairs(bool remove_disjoints)
 void F4SPairSet::display_spair(spair *p)
 // A debugging routine which displays an spair
 {
-  if (p->type == F4_SPAIR_SPAIR)
+  if (p->type == SPairType::SPair)
     {
       fprintf(stderr, "[%d %d deg %d lcm ", p->i, p->j, p->deg);
       M->show(p->lcm);
@@ -196,7 +195,8 @@ void F4SPairSet::display_spair(spair *p)
 void F4SPairSet::display()
 // A debugging routine which displays the spairs in the set
 {
-  fprintf(stderr, "spair set\n");
+  /*
+    fprintf(stderr, "spair set\n");
   for (spair *p = heap; p != nullptr; p = p->next)
     {
       fprintf(stderr, "   ");
@@ -208,6 +208,7 @@ void F4SPairSet::display()
       fprintf(stderr, "   ");
       display_spair(p);
     }
+  */
 }
 
 ////////////////////////////////
@@ -222,7 +223,7 @@ pre_spair *F4SPairSet::create_pre_spair(int j)
   pre_spair *result = PS.allocate();
   result->quot = VP.reserve(max_varpower_size);
   result->j = j;
-  result->type = F4_SPAIR_SPAIR;
+  result->type = SPairType::SPair;;
   M->quotient_as_vp(gb[j]->f.monoms,
                     gb[gb.size() - 1]->f.monoms,
                     result->quot,
@@ -233,7 +234,7 @@ pre_spair *F4SPairSet::create_pre_spair(int j)
   return result;
 }
 
-void insert_pre_spair(VECTOR(VECTOR(pre_spair *)) & bins, pre_spair *p)
+void insert_pre_spair(std::vector<std::vector<pre_spair *>> & bins, pre_spair *p)
 {
   int d = p->deg1;
   if (d >= bins.size()) bins.resize(d + 1);
@@ -251,10 +252,10 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
   gbelem *me = gb[gb.size() - 1];
   int me_component = static_cast<int>(M->get_component(me->f.monoms));
 
-  typedef VECTOR(pre_spair *) spairs;
+  std::vector<std::vector<pre_spair *>> bins;
 
-  VECTOR(VECTOR(pre_spair *)) bins;
-
+  mtbb::tick_count t0 {mtbb::tick_count::now()};
+  
   // Loop through each element of gb, and create the pre_spair
   for (int i = 0; i < gb.size() - 1; i++)
     {
@@ -263,6 +264,9 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
       pre_spair *p = create_pre_spair(i);
       insert_pre_spair(bins, p);
     }
+
+  mtbb::tick_count t1 {mtbb::tick_count::now()};
+  mPrePairsSeconds += (t1-t0).seconds();  
 
   ////////////////////////////
   // Now minimalize the set //
@@ -279,9 +283,9 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
       std::stable_sort(bins[i].begin(), bins[i].end(), C);
 
       // Loop through each degree and potentially insert...
-      spairs::iterator first = bins[i].begin();
-      spairs::iterator next = first;
-      spairs::iterator end = bins[i].end();
+      auto first = bins[i].begin();
+      auto next = first;
+      auto end = bins[i].end();
       for (; first != end; first = next)
         {
           next = first + 1;
@@ -310,9 +314,81 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
         }
     }
   delete montab;
+  mtbb::tick_count t2 {mtbb::tick_count::now()};
+  mMinimizePairsSeconds += (t2-t1).seconds();
 
   return n_new_pairs;
 }
+
+#if 0
+// testing mathic and mathicgb routines...
+class TestPairQueueConfiguration
+{
+private:
+  // What should be here?
+  
+public:
+  TestPairQueueConfiguration(const gb_array& gb,
+                     XXX
+                     );
+  using PairData = MonomialInfo::OrderedMonomial;
+  void computePairData(
+                       size_t col,
+                       size_t row,
+                       PairData & m, // allocated space?
+                       ) const;
+
+  using CompareResult = bool;
+  bool compare(
+               size_t colA,
+               size_t rowA,
+               MonomialInfo::ConstOrderedMonomial a,
+               size_t colB,
+               size_t rowB,
+               MonomialInfo::ConstOrderedMonomial b) const
+  {
+    // What to change this test code to?
+    const auto cmp = orderMonoid().compare(*a, *b);
+    if (cmp == GT)
+      return true;
+    if (cmp == LT)
+      return false;
+      
+    const bool aRetired = mBasis.retired(rowA) || mBasis.retired(colA);
+    const bool bRetired = mBasis.retired(rowB) || mBasis.retired(colB);
+    if (aRetired || bRetired)
+      return !bRetired;
+      
+    if (mPreferSparseSPairs) {
+      const auto termCountA =
+        mBasis.basisElement(colA).termCount() +
+        mBasis.basisElement(rowA).termCount();
+      const auto termCountB =
+        mBasis.basisElement(colB).termCount() +
+        mBasis.basisElement(rowB).termCount();
+      if (termCountA > termCountB)
+        return true;
+      if (termCountA < termCountB)
+        return false;
+    }
+    return colA + rowA > colB + rowB;
+  }
+
+  bool cmpLessThan(bool v) const {return v;}
+};
+
+class TestSPairs
+{
+private:
+  mathic::PairQueue<TestPairQueueConfiguration> mPairQueue;
+
+public:
+  TestSPairs(gb_poly& currentGroebnerBasis);
+
+  ~TestSPairs() {} // anything here?
+
+};
+#endif
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

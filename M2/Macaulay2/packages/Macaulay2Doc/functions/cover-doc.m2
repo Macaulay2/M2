@@ -8,7 +8,7 @@ document {
      SeeAlso => {"ambient", "super"}}
 
 document {
-     Key => {(cover,Matrix)},
+     Key => {(cover,Matrix), (cover,MutableMatrix)},
      Headline => "get the map between the covering free modules",
      Usage => "cover f",
      Inputs => {"f"},
@@ -17,7 +17,8 @@ document {
      }
 
 document {
-     Key => {(cover, Module), (cover, GradedModule)},
+     Key => (cover, Module),
+     Headline => "get the covering free module",
      Usage => "F = cover M",
      Inputs => {"M"},
      Outputs => {"F" => {"the free module whose basis elements correspond to the generators of ", TT "M", "."}},

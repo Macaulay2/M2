@@ -32,6 +32,8 @@ option(WITH_FFI		"Link with the FFI library"		ON)
 option(WITH_XML		"Link with the libxml2 library"		ON)
 option(WITH_PYTHON	"Link with the Python library"		ON)
 option(WITH_MYSQL	"Link with the MySQL library"		OFF)
+option(WITH_JANSSON	"Link with the Jansson library"		ON)
+option(STATIC_BOOST     "Use the static version of Boost" ON)
 
 set(BUILD_PROGRAMS  "" CACHE STRING "Build programs, even if found")
 set(BUILD_LIBRARIES "" CACHE STRING "Build libraries, even if found")
@@ -54,6 +56,9 @@ set(PACKAGE_VERSION ${Macaulay2_VERSION})
 ## Summary of git status
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} fetch --tags https://github.com/Macaulay2/M2
+    ERROR_QUIET)
   execute_process(
     COMMAND ${GIT_EXECUTABLE} describe --tags --dirty
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -220,8 +225,12 @@ if(CMAKE_C_COMPILER_ID STREQUAL GNU)
   add_compile_options(-g3)
   add_link_options(-g3)
 elseif(CMAKE_C_COMPILER_ID STREQUAL AppleClang)
-  add_compile_options(-g --sysroot=${CMAKE_OSX_SYSROOT})
-  add_link_options(-g --sysroot=${CMAKE_OSX_SYSROOT})
+  add_compile_options(-g)
+  add_link_options(-g)
+  if(CMAKE_OSX_SYSROOT)
+    add_compile_options(--sysroot=${CMAKE_OSX_SYSROOT})
+    add_link_options(--sysroot=${CMAKE_OSX_SYSROOT})
+  endif()
 else()
   add_compile_options(-g)
   add_link_options(-g)

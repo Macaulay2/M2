@@ -69,7 +69,7 @@ cotanbun RingElement := f -> (
 
 ---------------------------------------------------------------------
 -- multiplicity -- 
--- given a Poincare polynomial for a module outputs its multiplicity
+-- given a Poincaré polynomial for a module outputs its multiplicity
 multiplicityPoincare := method()
 multiplicityPoincare RingElement := f-> (
      R := ring f;

@@ -8,14 +8,14 @@ namespace M2 {
 
 ARingQQFlint::ARingQQFlint()
 {
-  flint_randinit(mRandomState);
+  FLINT_RAND_INIT(mRandomState);
   mMaxHeight = 50;
 }
 
 // This function will likely not ever get called.
 ARingQQFlint::~ARingQQFlint()
 {
-  flint_randclear(mRandomState);
+  FLINT_RAND_CLEAR(mRandomState);
 }
 
 void ARingQQFlint::eval(const RingMap* map,
@@ -24,6 +24,8 @@ void ARingQQFlint::eval(const RingMap* map,
                         ring_elem& result) const
 {
   mpq_t temp;
+
+  (void) first_var;
   flint_mpq_init_set_readonly(temp, &f);
   bool ok = map->get_ring()->from_rational(temp, result);
   flint_mpq_clear_readonly(temp);
@@ -43,6 +45,7 @@ void ARingQQFlint::elem_text_out(buffer& o,
   char s[1000];
   char* str;
 
+  (void) p_parens;
   bool is_neg = (fmpq_sgn(&a) == -1);
   bool one = is_pm_one(a);
 

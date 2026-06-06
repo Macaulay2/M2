@@ -1472,7 +1472,40 @@ I1 = interval(.90,.96)
 I2 = interval(.31,.33)
 I3 = interval(-.33,-.27)
 I4 = interval(.9,1)
+--test KrawczykTest
 krawczykTest(f,matrix{{I1,I2,I3,I4}})
+
+--test certifyDistinctSolutions
+p1 = point{{.95,.32,-.30,.95}};
+p2 = point{{.65,.77,.76,-.64}};
+assert(certifyDistinctSolutions(f,p1,p2))
+assert(not certifyDistinctSolutions(f,p1,p1))
+
+--test certifyRealSolution
+p = point{{.954379,.318431,-.298633,.947949}};
+assert(certifyRealSolution(f,p))
+p = point{{.65,.77,.75,-.64}};
+assert(not certifyRealSolution(f,p))
+
+--test certifyRegularSolution
+assert(certifyRegularSolution(f,p1))
+
+--test certifySolutions
+C = certifySolutions(f,{p1,p2})
+assert(#C#"certifiedDistinct"==2)
+
+--test computeConstants
+(a,b,g) = computeConstants(f,p1)
+///
+
+--test certifySingularSolution
+TEST ///
+R = CC[x,y,z];
+f = polySystem {x^2+y+z-1,x+y^2+z-1,x+y+z^2-1};
+p = point{{1e-7-1e-7*ii,1e-7+1e-7*ii,1+1e-7}};
+assert(certifySingularSolution(f,p))
+p1 = point{{1e7-1e-7*ii,1e-7+1e-7*ii,1+1e-7}};
+assert(not certifySingularSolution(f,p1))
 ///
 
 

@@ -1048,7 +1048,7 @@ assert(h#"output file"===null);
 ///;
 
 -- Check that ulimits and statistics work
-TEST ///
+TEST /// -- no-check-flag (#3985)
 fn=temporaryFileName()|".m2";
 fn<<////
 spin = (x,t) -> (

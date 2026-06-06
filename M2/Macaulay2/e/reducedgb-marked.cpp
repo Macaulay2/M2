@@ -18,7 +18,7 @@ MarkedGB::~MarkedGB()
   freemem(leadterms);
 }
 
-void MarkedGB::set_gb(VECTOR(POLY) & polys0) {}
+void MarkedGB::set_gb(VECTOR(POLY) & polys0) { (void) polys0; }
 
 struct MarkedGB_sorter
 {
@@ -49,6 +49,7 @@ void MarkedGB::add_marked_elems(const VECTOR(gbvector *) & leadterms0,
                                 const VECTOR(POLY) & polys0,
                                 bool auto_reduced)
 {
+  (void) auto_reduced;
   // First sort these elements via increasing lex order (or monomial order?)
   // Next insert minimal elements into T, and polys
   const Monoid *M = originalR->getMonoid();
@@ -211,6 +212,8 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
   gbvector head;
   gbvector *frem = &head;
+  (void) use_denom;
+  (void) denom;
   frem->next = nullptr;
 
   gbvectorHeap fb(R, F);

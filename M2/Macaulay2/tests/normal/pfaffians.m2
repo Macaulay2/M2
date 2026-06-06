@@ -6,7 +6,9 @@ assert( pfaffians(1,m) == ideal(0_R) )
 assert( pfaffians(2,m) == ideal(a,b,c,d,e,f) )
 assert( pfaffians(3,m) == ideal(0_R) )
 assert( pfaffians(4,m) == ideal(c*d-b*e+a*f) )
+assert( pfaffian m == c*d-b*e+a*f )
 
+assert( pfaffian matrix {} == 1 )
 
 R = QQ[vars(0..9)]
 M = genericSkewMatrix(R,5)

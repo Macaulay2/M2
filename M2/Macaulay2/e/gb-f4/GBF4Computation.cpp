@@ -21,6 +21,7 @@ GBF4Computation::GBF4Computation(
       mMacaulayMatrix(),
       mVariableWeights(variableWeights)
 {
+  (void) strategy;
 }
 
 void GBF4Computation::initializeWithMatrix(const Matrix* M)

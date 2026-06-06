@@ -745,7 +745,12 @@ Matrix *Matrix::random(
                 int32_t u = rawRandomInt((int32_t)10000);
                 if (u > threshold) continue;
               }
-            mat.set_entry(j, i, R->random());
+            try {
+              mat.set_entry(j, i, R->random());
+            } catch (const exc::engine_error& e) {
+              ERROR(e.what());
+              return nullptr;
+            }
           }
     }
   else if (special_type == 1)
@@ -760,7 +765,12 @@ Matrix *Matrix::random(
                   int32_t u = rawRandomInt((int32_t)10000);
                   if (u > threshold) continue;
                 }
-              mat.set_entry(j, i, R->random());
+              try {
+                mat.set_entry(j, i, R->random());
+              } catch (const exc::engine_error& e) {
+                ERROR(e.what());
+                return nullptr;
+              }
             }
         }
     }

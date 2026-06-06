@@ -5,10 +5,11 @@ assert( (disassemble' even) === "(2-OP === 0 (2-OP % (local-fetch 0 0) 2))" );
 assert( (disassemble' odd) === "(2-OP === 1 (2-OP % (local-fetch 0 0) 2))" );
 assert( (disassemble'(() -> if true then 1)) === "(if (global-fetch [...]) then: 1 else: (null))" );
 assert( (disassemble'(() -> if true then 1 else 2)) === "(if (global-fetch [...]) then: 1 else: 2)" );
-assert( (disassemble'(() -> try true)) === "(try (global-fetch [...]) (null) (null))" );
-assert( (disassemble'(() -> try true then 1)) === "(try (global-fetch [...]) 1 (null))" );
-assert( (disassemble'(() -> try true else 2)) === "(try (global-fetch [...]) (null) 2)" );
-assert( (disassemble'(() -> try true then 1 else 2)) === "(try (global-fetch [...]) 1 2)" );
+assert( (disassemble'(() -> try true)) === "(try  framesize: 0 frameID: [...] code: (global-fetch [...]) then: (null) else: (null) do: (null))" );
+assert( (disassemble'(() -> try true then 1)) === "(try  framesize: 0 frameID: [...] code: (global-fetch [...]) then: 1 else: (null) do: (null))" );
+assert( (disassemble'(() -> try true else 2)) === "(try  framesize: 0 frameID: [...] code: (global-fetch [...]) then: (null) else: 2 do: (null))" );
+assert( (disassemble'(() -> try true then 1 else 2)) === "(try  framesize: 0 frameID: [...] code: (global-fetch [...]) then: 1 else: 2 do: (null))" );
+assert( (disassemble'(() -> try true except err do 3)) === "(try  framesize: 1 frameID: [...] code: (global-fetch [...]) then: (null) else: (null) do: 3)" );
 assert( (disassemble'(n -> for i in 1..n when odd i list 10*i do print i)) === "(for in: (2-OP .. 1 (local-fetch 0 0)) from: (null) to: (null) when: (adjacent (global-fetch [...]) (local-fetch 0 0)) list: (2-OP * 10 (local-fetch 0 0)) do: (adjacent (global-fetch [...]) (local-fetch 0 0)))" );
 assert( (disassemble'(n -> for i from 1 to n when odd i list 10*i do print i)) === "(for in: (null) from: 1 to: (local-fetch 0 0) when: (adjacent (global-fetch [...]) (local-fetch 0 0)) list: (2-OP * 10 (local-fetch 0 0)) do: (adjacent (global-fetch [...]) (local-fetch 0 0)))" );
 assert( (disassemble'(n -> for i from 1 to n when odd i list 10*i)) === "(for in: (null) from: 1 to: (local-fetch 0 0) when: (adjacent (global-fetch [...]) (local-fetch 0 0)) list: (2-OP * 10 (local-fetch 0 0)) do: (null))" );
@@ -43,7 +44,8 @@ assert( (disassemble'((a,b,c) -> a*b*c)) === "(2-OP * (2-OP * (local-fetch 0 0) 
 assert( (disassemble'((a,b,c) -> (a*b)*c)) === "(2-OP * (2-OP * (local-fetch 0 0) (local-fetch 1 0)) (local-fetch 2 0))" );
 assert( (disassemble'((a,b,c) -> a*(b*c))) === "(2-OP * (local-fetch 0 0) (2-OP * (local-fetch 1 0) (local-fetch 2 0)))" );
 needsPackage "FirstPackage"
-assert( (toString last code locate symbol firstFunction) === "PRE{CODE{class => language-macaulay2, firstFunction = method(TypicalValue => String)}}" );
+assert( (toString last code locate symbol firstFunction) === "PRE{CODE{firstFunction = method(TypicalValue => String), class => language-macaulay2}}" );
+
 end--
 -*
 -- to update this file simply run these lines:

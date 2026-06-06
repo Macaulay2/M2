@@ -52,7 +52,8 @@ document {
      a generating set, which is sometimes a larger 
      generating set than is required.  This routine returns a matrix
      whose columns generate the given ideal or module.",
-     SeeAlso => {trim, minimalPresentation}
+     SeeAlso => {trim, prune, minimalPresentation},
+     Subnodes => { TO [mingens, Strategy] },
      }
 
 document {

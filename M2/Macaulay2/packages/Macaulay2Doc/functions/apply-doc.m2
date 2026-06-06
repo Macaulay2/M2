@@ -8,7 +8,20 @@ document {
      Key => apply,
      Headline => "apply a function to each element",
      Usage => "apply(L,f) or apply(L1,L2,f)",
-     SeeAlso => {"applyKeys", "applyPairs", "applyValues", "applyTable", "lists and sequences"}
+     SeeAlso => {
+	 "lists and sequences",
+	 table,
+	 applyKeys,
+	 applyPairs,
+	 applyValues,
+	 applyTable,
+	 },
+     Subnodes => {
+	 TO (apply, ZZ, Function),
+	 TO (apply, BasicList, Function),
+	 TO (apply, BasicList, BasicList, Function),
+	 TO (apply, Thing, Function),
+         },
      }
 document { 
      Key => {(apply,BasicList,Function), (apply,String,Function)},

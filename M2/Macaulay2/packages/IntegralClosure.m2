@@ -466,17 +466,14 @@ randomMinors(ZZ,ZZ,Matrix) := (n,d,M) -> (
 	then return (minors(d,M))_*;
      L := {}; -- L will be a list of minors, specified by the pair of lists "rows" and "cols"
      dets := {}; -- the list of determinants taken so far
-     rowlist := toList(0..r-1);
-     collist := toList(0..c-1);
-     ds := toList(0..d-1);
 
      for i from 1 to n do (
       -- choose a random set of rows and of columns, add it to L 
       -- only if it doesn't appear already. When a pair is added to L, 
       -- the corresponding minor is added to "dets"
        while ( 
-         rows := sort (random rowlist)_ds ;
-         cols := sort (random collist)_ds ;
+         rows := randomSubset(r, d);
+         cols := randomSubset(c, d);
          for p in L do (if (rows,cols) == p then break true);
          false)
         do();
@@ -493,13 +490,10 @@ nonzeroMinor(ZZ,Matrix) :=  opts -> (d,M) -> (
      c := numcols M;
      if d > min(r,c) then return null;
      candidate := 0_(ring M);
-     rowlist := toList(0..r-1);
-     collist := toList(0..c-1);
-     ds := toList(0..d-1);
      for i from 1 to opts.Limit do(
       -- choose a random set of rows and of columns, test the determinant.
-         rows := sort (random rowlist)_ds ;
-         cols := sort (random collist)_ds ;
+         rows := randomSubset(r, d);
+         cols := randomSubset(c, d);
          candidate = det (M^rows_cols);
 	 if candidate != 0 then return(candidate);
        );

@@ -109,7 +109,7 @@ R = C[x_1..x_n]
 F = apply(n-m, i->sub(random(d,CC[x_1..x_n]),R)) -- V(F) = intersection of n-m hypersurfaces of degree d
 A = genericMatrix(C,n,m)
 B = genericMatrix(C,b_1,1,m)
-L = flatten entries (vars R * A + B) -- slice of complimentary dimension 
+L = flatten entries (vars R * A + B) -- slice of complementary dimension 
 G = polySystem(F|L)
 
  clearAll()

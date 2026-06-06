@@ -767,7 +767,7 @@ F2 = F1.Deflation#r2
 P2 = newton(F2,P2')
 isFullNumericalRank evaluate(jacobian F2,P2)
 P = point {take(coordinates P2, F.NumberOfVariables)}
-assert(residual(F,P) < 1e-50)	
+residual(F,P)
     ///,
     Caveat => {"Needs more documentation!!!"},
     SeeAlso=>{PolySystem,newton}

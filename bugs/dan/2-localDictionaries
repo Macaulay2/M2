@@ -1,7 +1,0 @@
-that dictionary doesn't look local:
-
-i41 : localDictionaries global a
-
-o41 = {Macaulay2#"private dictionary"}
-
-o41 : List

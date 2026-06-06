@@ -9,7 +9,7 @@
 #include <string>
 #include <sstream>
 
-#include "M2mem.h"  // for getmemvectortype, getmematomicvectortype
+#include "interface/m2-mem.h"  // for getmemvectortype, getmematomicvectortype
 #include "error.h"
 #include "monordering.hpp" // TODO: where can this go? it only defines one class
 

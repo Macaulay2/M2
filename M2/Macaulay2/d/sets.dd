@@ -14,13 +14,30 @@ makeSet(v:Sequence):Expr := (
      o.beingInitialized = true;
      foreach e in v do storeInHashTable(o,e,oneE);
      Expr(sethash(o,false)));
+makeSet(h:HashTable):Expr := (
+     x := newHashTable(Set,nothingClass);
+     x.beingInitialized = true;
+     x.numEntries = h.numEntries;
+     x.table = new array(KeyValuePair) len length(h.table) do (
+	  foreach bucket in h.table do (
+	       p := bucket;
+	       q := bucketEnd;
+	       while p != p.next do (
+		    q = KeyValuePair(p.key,p.hash,oneE,q);
+		    p = p.next;
+		    );
+	       provide q;
+	       );
+	  );
+     Expr(sethash(x,false)));
 makeSet(e:Expr):Expr := (
      when e
      is v:Sequence do makeSet(v)
      is w:List do if ancestor(w.Class,visibleListClass) then makeSet(w.v)
-     else WrongArg("a visible list")
-     else WrongArg("a visible list"));
-setupfun("set",makeSet);
+     else WrongArg("a visible list or a hash table")
+     is h:HashTable do makeSet(h)
+     else WrongArg("a visible list or a hash table"));
+setupfun("set",makeSet).Protected = false; -- will be overloaded in m2/set.m2
 
 -- object is beingInitialized:
 modify(object:HashTable,key:Expr,f:function(Expr):Expr,v:Expr):void := (

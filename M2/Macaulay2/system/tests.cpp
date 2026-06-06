@@ -57,6 +57,7 @@ static volatile bool started=false;
 
 static void* TS_Test2_Func1(void* vtup)
 {
+  (void) vtup;
   started=true;
   while(!atomic_load(&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field).field))
     {
@@ -67,9 +68,10 @@ static void* TS_Test2_Func1(void* vtup)
 }
 
 static void* TS_Test2_Func2(void* vtup)
- {
+{
+  (void) vtup;
   return NULL;
- }
+}
 
 static int TS_Test2()
  {

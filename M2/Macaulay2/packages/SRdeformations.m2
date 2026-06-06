@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"SRdeformations",
-    	Version => "0.51", 
+    	Version => "0.53",
     	Date => "July 12, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
@@ -10,7 +10,7 @@ newPackage(
     	Headline => "deformations of Stanley-Reisner rings and related computations",
 	Keywords => {"Combinatorial Commutative Algebra"},
     	DebuggingMode => false,
-     	PackageImports => { "ConvexInterface", "OldPolyhedra" },
+	PackageImports => { "ConvexInterface" },
         Configuration => {"UseConvex"=>false}
         )
 
@@ -32,20 +32,23 @@ please set up "ConvexInterface" first.
 If you don't have Maple/Convex or haven't set up "ConvexInterface"
 stay with the standard option UseConvex=>false.
 
-Then automatically the package "OldPolyhedra" is used,
+Then automatically the package "Polyhedra" is used,
 but that is several magnitudes slower compared to maple/convex.
 
-"OldPolyhedra" relies on the package "FourierMotzkin".
+"Polyhedra" relies on the package "FourierMotzkin".
 
 These packages are only used for computing convex hulls and lattice points thereof.
 Methods of "SRdeformations" relying on this package are so far:
 
+hull
 convHull
 globalSections
 
 *-
 
-
+importFrom_"Polyhedra" {
+    "facesAsCones", "facesAsPolyhedra", "ambDim", "linSpace", "halfspaces", "hyperplanes",
+    "faces", "vertices", "latticePoints", "coneFromVData", "dualCone", "convexHull" }
 
 -- the commands available to the user
 
@@ -3240,8 +3243,8 @@ degs:=prepend(1,(entries(-A))#0);
 if A==raysPPn(degs) then return(globalSectionsPPn(degs,v));
 le:=linesEquations(A,v);
 be:=boundaryEquations(A);
-C:=posHull(be,le);
-dC:=-(C#"dualgens")#0;
+C:=coneFromVData(be,le);
+dC:=transpose halfspaces C;
 L:=apply(entries transpose dC,j->cutRay vector j);
 Lv:=apply(L,j->sub(j,ZZ)-v);
 preLv:=apply(Lv,j->preImage(A,j));
@@ -3272,8 +3275,8 @@ be:=boundaryEquations(A);
 for j from 0 to #cL-1 do (
   be=be|(-be_{cL#j});
 );
-C:=posHull(be,le);
-dC:=-(C#"dualgens")#0;
+C:=coneFromVData(be,le);
+dC:=transpose halfspaces C;
 L:=apply(entries transpose dC,j->cutRay vector j);
 Lv:=apply(L,j->sub(j,ZZ)-v);
 preLv:=apply(Lv,j->preImage(A,j));
@@ -3376,10 +3379,10 @@ hull(List):=opts->(L)->(
 -- use "Convex" if available
 if ((options SRdeformations).Configuration)#"UseConvex"==true then return(hullConvex(L,opts));
 vA:=joinVectors(L);
-P:=posHull vA;
-d:=P#"dimension of the cone";
-embdim:=P#"ambient dimension";
-if embdim!=d or P#"dimension of lineality space">0 then error("expected cone of full dimension without lineality space");
+P:=coneFromVData vA;
+d:=dim P;
+embdim:=ambDim P;
+if embdim!=d or rank linSpace P > 0 then error("expected cone of full dimension without lineality space");
 A:=sub(transpose rays(P),ZZ);
 Adual:=-sub(transpose rays dualCone P,ZZ);
 n:=rank target A;
@@ -3402,7 +3405,7 @@ dCl:=newEmptyComplex(Rdual);
 --L1:={{},{face({},Cl,-1,0)}};
 L1:={{face({},Cl,-1,0)}};
 for j from 1 to d-1 do (
- fc:=faces(d-j,P);
+ fc:=facesAsCones(d-j,P);
  fc=apply(fc,j->sub(transpose rays j,ZZ));
  fc=apply(toList(0..(#fc-1)),jj->face(matrixToVarlist(fc#jj,R),Cl,j-1,jj));
  L1=append(L1,fc);
@@ -3471,9 +3474,9 @@ convHull(List):=opts->(L)->(
 if ((options SRdeformations).Configuration)#"UseConvex"==true then return(convHullConvex(L,opts));
 vA:=joinVectors(L);
 P:=convexHull vA;
-d:=P#"dimension of polyhedron";
-embdim:=P#"ambient dimension";
-if embdim!=d or P#"dimension of lineality space">0 then error("expected polytope of full dimension without lineality space");
+d:=dim P;
+embdim:=ambDim P;
+if embdim!=d or rank linSpace P > 0 then error("expected polytope of full dimension without lineality space");
 -- put QQ-ZZ test here !!!!!!!!!!!!
 A:=sub(transpose vertices(P),ZZ);
 n:=rank target A;
@@ -3491,8 +3494,8 @@ Cl:=newEmptyComplex(R);
 L1:={{face({},Cl,-1,0)}};
 AdualL:={};
 for j from 0 to d-1 do (
- fc:=faces(d-j,P);
- if j==d-1 then AdualL=apply(fc,j1->-1/((j1#"hyperplanes"#1)_(0,0))*(entries(j1#"hyperplanes"#0))#0);
+ fc:=facesAsPolyhedra(d-j,P);
+ if j==d-1 then AdualL=apply(fc,j1->-1/((last hyperplanes j1)_(0,0))*(entries(first hyperplanes j1))#0);
  fc=apply(fc,j->sub(transpose vertices j,ZZ));
  fc=apply(toList(0..(#fc-1)),jj->face(matrixToVarlist(fc#jj,R),Cl,j,jj));
  L1=append(L1,fc);
@@ -3866,7 +3869,12 @@ doc ///
 
       {\bf What' new:}
 
-        {\it Jul 13, 2010 (Version 0.52)}
+        {\it May 13, 2025 (Version 0.53)}
+
+           Minor changes to make the package compatible with @TO "Polyhedra::Polyhedra"@ (1.10).
+
+
+	{\it Jul 13, 2010 (Version 0.52)}
         
            Some changes to ensure compatibility with the current version of OldPolyhedra (1.1), in particular
            the method isSimplicial has been renamed to @TO isSimp@, as OldPolyhedra is now using the name
@@ -3951,13 +3959,13 @@ doc ///
 
       There are two choices of M2 packages to be called for computations with polyhedra:
 
-      @TO OldPolyhedra@:
+      @TO "Polyhedra::Polyhedra"@:
 
       Works without additional configuration, but is not very fast.
 
-      It uses the M2 package {\it FourierMotzkin}.
+      It uses the M2 package @TO "FourierMotzkin::FourierMotzkin"@.
 
-      To use {\it OldPolyhedra} do
+      To use {\it Polyhedra} do
 
       @TO loadPackage@("SRdeformations",Configuration=>\{"UseConvex"=>false\})
 
@@ -3965,11 +3973,11 @@ doc ///
 
       @TO loadPackage@("SRdeformations")
 
-      {\it ConvexInterface}:
+      @TO "ConvexInterface::ConvexInterface"@:
 
       This package has to be installed first, see its documentation for this.
 
-      It calls the Maple package Convex and is faster than OldPolyhedra, hence the preferable choice.
+      It calls the Maple package Convex and is faster than Polyhedra, hence the preferable choice.
       If you want to do non-trivial examples you have to go for it.
 
       To use it type
@@ -6210,7 +6218,7 @@ doc ///
   SeeAlso
      Complex
   Caveat
-     This uses the package OldPolyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
+     This uses the package {\it Polyhedra} to compute the facets. Too slow compared to Maple/convex.
 
      If the package {\it ConvexInterface} is loaded, then this command calls Maple/Convex.
      See the corresponding option explained at @TO SRdeformations@.
@@ -6393,9 +6401,7 @@ doc ///
      globalSections(A,b)
      globalSections(A,b,{1})
   Caveat
-    This uses the package OldPolyhedra.m2 (if ConvexInterface.m2 is not present) to compute the lattice points of a convex hull.
-    constructHilbertBasis of the package OldPolyhedra.m2 used by latticePoints overwrites global variable C.
-    Fixed this in my local version.
+    This uses the package {\it Polyhedra} (if ConvexInterface.m2 is not present) to compute the lattice points of a convex hull.
      
 ///
 
@@ -7677,7 +7683,7 @@ doc ///
     and non-Pfaffians) examples this may lead to an incorrect result. Use with care.
     This will be fixed at some point.
 
-    If using @TO OldPolyhedra@ to compute convex hulls and its faces instead of 
+    If using @TO "Polyhedra::Polyhedra"@ to compute convex hulls and its faces instead of 
     {\it ConvexInterface} you are limited to rather simple examples.
 ///
 
@@ -7718,7 +7724,7 @@ doc ///
     and non-Pfaffians) examples this may lead to an incorrect result. Use with care.
     This will be fixed at some point.
 
-    If using @TO OldPolyhedra@ to compute convex hulls and its faces instead of 
+    If using @TO "Polyhedra::Polyhedra"@ to compute convex hulls and its faces instead of 
     {\it ConvexInterface} you are limited to rather simple examples.
 ///
 
@@ -7883,10 +7889,264 @@ doc ///
      The cone is represented as a complex on its rays, hence if @TO (dim,Face)@ is applied to a @TO Face@ it
      will return the dimension of the corresponding cone minus one.
       
-     This uses the package OldPolyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
+     This uses the package {\it Polyhedra} to compute the facets. Too slow compared to Maple/convex.
 
      If the package {\it ConvexInterface} is loaded, then this command calls Maple/Convex.
      See the corresponding option explained at @TO SRdeformations@.
+///
+
+-- addCokerGrading
+TEST ///
+R=QQ[x_0..x_4];
+assert(addCokerGrading(R)==R.grading)
+
+addCokerGrading(R,{1,1,2,2,3});
+assert(addCokerGrading(R,{1,1,2,2,3})==R.grading)
+///
+
+-- addFaceDataToComplex
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+C=idealToComplex(I);
+Cl=newEmptyComplex(R);
+addFaceDataToComplex(Cl,fc C);
+assert(Cl==C)
+///
+
+-- addFacetDataToComplex
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+C=idealToComplex(I);
+Cl=newEmptyComplex(R);
+addFacetDataToComplex(Cl,facets C);
+assert(Cl==C)
+///
+
+-- bigTorusDegree, firstOrderDeformation
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+mg=mingens I;
+f=firstOrderDeformation(mg, vector {-1,-1,0,2,0})
+bigTorusDegree f
+
+assert(instance(f,FirstOrderDeformation))
+assert(instance(bigTorusDegree f, Vector))
+assert(bigTorusDegree f==vector {-1,-1,0,2,0})
+///
+
+--boundaryCyclicPolytope
+TEST ///
+R=QQ[x_0..x_5];
+B=boundaryCyclicPolytope(3,R);
+assert(instance(B,Complex))
+
+assert(isPolytope B==false)
+assert(dim B==2)
+assert(eulerCharacteristic B==1)
+///
+
+--boundaryOfPolytope
+TEST ///
+R=QQ[x_0..x_4];
+C=simplex(R);
+assert(isPolytope C)
+B=boundaryOfPolytope C;
+assert(dim B==3)
+assert(eulerCharacteristic B==-1)
+///
+
+-- closedStar
+TEST ///
+R=QQ[x_0..x_4];
+C=boundaryOfPolytope simplex(R);
+F=C.fc_0_0;
+L1=link(F,C);
+S1=closedStar(F,C);
+F=C.fc_1_0;
+L2=link(F,C);
+S2=closedStar(F,C);
+assert(dim L1!=dim L2)
+assert(dim S1==dim S2)
+assert(eulerCharacteristic L1==1)
+assert(eulerCharacteristic L2==-1)
+///
+
+--coComplex
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+dC=dualize C;
+fdC=fc dC;
+Rdual=simplexRing dC;
+dC1=coComplex(Rdual,fdC);
+assert(dC==dC1)
+///
+
+-- coComplexToIdeal
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+C0=simplex(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+C=idealToComplex(I);
+embeddingComplex C;
+idealToComplex(I,C0);
+complexToIdeal(C);
+cC=idealToCoComplex(I,C0);
+assert(cC==complement C)
+///
+
+--cokerElement
+TEST ///
+A= matrix {{-1, -1, -1}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+c2=cokerElement(vector {1,-1,0,0},A);
+assert(c2==(0_(class c2)))
+assert(iszero c2)
+///
+
+--complex
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+fC=fc C;
+C1=complex(R,fC);
+assert(C==C1)
+///
+
+--complexFromFacets
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+fC=facets C;
+C1=complexFromFacets(R,fC);
+assert(C1==C)
+///
+
+--coordinates
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading R;
+C=simplex R;
+bC=boundaryOfPolytope C;
+F=bC.fc_2_0;
+L=coordinates F
+assert(instance(L,List))
+assert(L=={{-1, -1, -1, -1}, {1, 0, 0, 0}, {0, 1, 0, 0}})
+///
+
+--denominatorMonomial
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+mg=mingens I;
+f=firstOrderDeformation(mg, vector {-1,-1,0,2,0});
+assert(denominatorMonomial f==x_0*x_1)
+///
+
+--dualGrading and dualize
+TEST ///
+R=QQ[x_0..x_4];
+C=simplex(R);
+grading C;
+dA=dualGrading C;
+assert(dA===grading dualize C)
+assert(dA===C.dualComplex.simplexRing.grading)
+///
+
+--edim
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+assert(dim C==2)
+assert(edim C==5)
+///
+
+--face
+TEST ///
+R=QQ[x_0..x_4];
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+C=idealToComplex I;
+F=C.fc_1_0;
+assert(F==face(vert F,C,1,0))
+///
+
+-- faceToMonomial
+TEST ///
+R=QQ[x_0..x_4];
+C=simplex R;
+F=C.fc_2_0;
+assert(faceToMonomial F== x_0*x_1*x_2)
+///
+
+--facets
+TEST ///
+R=QQ[x_0..x_5];
+C=fullCyclicPolytope(3,R);
+L=facets C;
+assert(instance(L,List))
+assert(L_0=={})
+assert(dim C==3)
+assert(edim C==3)
+assert(eulerCharacteristic C==0)
+assert(fvector C=={1,6,12,8,1})
+///
+
+-- gensSource
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+mg=mingens I;
+f=firstOrderDeformation(mg, vector {-1,-1,0,2,0});
+g=gensSource f;
+assert(instance(g, Matrix))
+assert(#g==5)
+///
+
+--intersectFaces
+TEST ///
+R=QQ[x_0..x_4];
+C=simplex R;
+F=C.fc_2_0;
+G=C.fc_2_1;
+FG=intersectFaces(F,G);
+assert(FG.vert=={x_0,x_1})
+H=C.fc_2_2
+FGH=intersectFaces({F,G,H})
+assert(FGH.vert=={x_0})
+///
+
+-- isEquidimensional
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+assert(isEquidimensional(C))
+
+R=QQ[x_0..x_2];
+I=intersect(ideal(x_0),ideal(x_1,x_2));
+C=idealToComplex I;
+bool=not(isEquidimensional(C))
+assert(bool)
+///
+
+--isNonzero
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+mg=mingens I;
+f=firstOrderDeformation(mg, vector {-1,-1,0,2,0});
+assert(isNonzero f)
+f1=firstOrderDeformation(mg, vector {-1,-1,2,0,0});
+bool = not(isNonzero(f1));
+assert(bool)
 ///
 
 

@@ -12,6 +12,7 @@ MACRO (_STARTUP_REGEX input retval with_newline)
   STRING (STRIP "${input}" _output)
   string(      REPLACE "\\" "\\\\"    _output "${_output}") # sed -e 's/\\/\\\\/g'
   string(REGEX REPLACE "\"" "\\\\\""  _output "${_output}") # set -e 's/"/\\"/g'
+  string(      REPLACE "??" "?\\?"    _output "${_output}") # sed -e 's/??/?\\\?/g'
   # Note: we could use s/(.*)\n/.../g but for now string(REGEX REPLACE) behave differently than `sed -e`
   # See https://gitlab.kitware.com/cmake/cmake/issues/16899
   string(PREPEND _output "\"")

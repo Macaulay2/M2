@@ -60,6 +60,8 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(
     int r,
     int c); /* drg: connected rawMatrixEntry, OK*/
 
+engine_RawRingElementArrayArrayOrNull IM2_Matrix_get_entries(const Matrix *M);
+
 /*******************************************************************************/
 const Matrix *IM2_Matrix_identity(
     const FreeModule *F,
@@ -240,6 +242,9 @@ const Matrix /* or null */ *rawMinors(
 const Matrix /* or null */ *IM2_Matrix_pfaffians(
     int p,
     const Matrix *M); /* drg: connected rawPfaffians*/
+
+const RingElement /* or null */ *IM2_Matrix_pfaffian(
+    const Matrix *M);
 
 const Matrix *rawMatrixCompress(
     const Matrix *M); /* connected rawMatrixCompress */

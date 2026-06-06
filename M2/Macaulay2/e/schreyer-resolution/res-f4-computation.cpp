@@ -10,6 +10,8 @@
 #include "matrix.hpp"
 #include "exceptions.hpp"
 
+#include <iostream>
+
 class ResolutionComputation;
 class MutableMatrix;
 
@@ -35,6 +37,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   // We assume also that the matrix is homogeneous.
   // If any of these are incorrect, an error message is provided, and
   // null is returned.
+  (void) strategy;
   const PolynomialRing* origR =
       groebnerBasisMatrix->get_ring()->cast_to_PolynomialRing();
   if (origR == nullptr)
@@ -215,6 +218,12 @@ M2_arrayint F4ResComputation::minimal_betti(M2_arrayint slanted_degree_limit,
   int top_slanted_degree = slanted_degree_limit->array[0];
   int new_length_limit = (length_limit->len == 1 ? length_limit->array[0]
                                                  : frame().maxLevel() - 1);
+
+  // std::cout << "---- show mComp ------------------------" << std::endl;
+  // mComp->show(0);
+  // std::cout << "stop, topdeg, newlength: " << stop_after_degree << " "
+  // << top_slanted_degree << " " << new_length_limit << std::endl;
+  // std::cout << "---- end show mComp ------------------------" << std::endl;
 
   BettiDisplay B = frame().minimalBettiNumbers(
       stop_after_degree, top_slanted_degree, new_length_limit);

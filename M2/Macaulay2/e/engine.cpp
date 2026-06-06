@@ -2,7 +2,8 @@
 
 #include "interface/random.h"
 #include "aring-glue.hpp"    // for initializeRationalRing
-#include "engine-exports.h"  // for M2_tostring, M2_string
+#include "interface/m2-types.h"
+//#include "engine-exports.h"  // for M2_tostring, M2_string
 #include "error.h"           // for error_message
 #include "hash.hpp"          // for MutableEngineObject
 #include "mem.hpp"           // for doubles, doubling_stash

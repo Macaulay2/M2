@@ -234,12 +234,12 @@ int add_constant_get_position(gc_vector<typename Field::element_type>& consts,
 /* create the part of slp computing f, return the position of the final
  * operation */
 template <class Field>
-int SLP<Field>::poly_to_horner_slp(int n,
+int SLP<Field>::poly_to_horner_slp(const int n,
                                    gc_vector<int>& prog,
                                    gc_vector<element_type>& consts,
                                    Nterm*& f)  // auxiliary
 {
-  int part_pos[n];  // absolute positions of the parts
+  std::vector<int> part_pos(n); // absolute positions of the parts
   int last_nonzero_part_pos = ZERO_CONST;
   for (int i = 0; i < n; i++)
     {
@@ -447,7 +447,7 @@ int SLP<Field>::diffPartReference(int n, int ref, int v, gc_vector<int>& prog)
 }
 
 template <class Field>
-int SLP<Field>::diffNodeInput(int n,
+int SLP<Field>::diffNodeInput(const int n,
                               int v,
                               gc_vector<int>& prog)  // used by jacobian
 {
@@ -459,7 +459,7 @@ int SLP<Field>::diffNodeInput(int n,
       case slpMULTIsum:
         {
           int n_summands = prog[(++i)++];
-          int part_pos[n_summands];
+          std::vector<int> part_pos(n_summands);
           int c = 0;  // count nonzeroes
           int last_non_zero = ZERO_CONST;
           for (int j = 0; j < n_summands; j++)
@@ -642,8 +642,8 @@ SLP<Field> /* or null */* SLP<Field>::jacobian(bool makeHxH,
     prog.push_back(program->array[i]);
   res->node_index = node_index;
 
-  int out_pos[res->rows_out *
-              res->cols_out];  // records absolute position of output entries
+  std::vector<int> out_pos(res->rows_out *
+                           res->cols_out);  // records absolute position of output entries
 
   for (int j = 0; j < num_outputs; j++)
     for (int i = 0; i < num_inputs; i++)

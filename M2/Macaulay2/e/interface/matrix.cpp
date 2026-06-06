@@ -80,8 +80,65 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(const Matrix *M,
   }
 }
 
+/* Returns the entries of the matrix in a flat array in row major order
+ */
+engine_RawRingElementArrayArrayOrNull IM2_Matrix_get_entries(const Matrix *M)
+{
+  try
+    {
+      int ncols = M->n_cols();
+      int nrows = M->n_rows();
+      if(nrows < 0 || ncols < 0)
+        {
+          ERROR("internal error: matrix has a negative size %d by %d",
+                nrows,
+                ncols);
+          return nullptr;
+        }
+      engine_RawRingElementArrayArray entries =
+          getmemarraytype(engine_RawRingElementArrayArray, nrows);
+      entries->len = nrows;
+      RingElement *zero =
+          RingElement::make_raw(M->get_ring(), M->get_ring()->zero());
+      for(int r = 0; r < nrows; r++)
+        {
+          engine_RawRingElementArray currRow =
+              getmemarraytype(engine_RawRingElementArray, ncols);
+          currRow->len = ncols;
+          std::fill_n(currRow->array, ncols, zero);
+          entries->array[r] = currRow;
+        }
+      //walk through the columns
+      for(int c = 0; c < ncols; c++)
+        {
+          const vec &column = M->elem(c);
+          for(const vecterm &term : column)
+            {
+              if(term.comp < 0 || term.comp >= nrows)
+                {
+                  ERROR("internal error: matrix contains invalid entries:"
+                        "row index %d out of range 0 .. %d",
+                        term.comp,
+                        nrows - 1);
+                  //Ignoring the entry and continuing
+                  continue;
+                }
+              entries->array[term.comp]->array[c] =
+                  RingElement::make_raw(M->get_ring(), term.coeff);
+            }
+        }
+      return entries;
+    } catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+  return nullptr;
+}
+
 const Matrix *IM2_Matrix_identity(const FreeModule *F, int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -92,6 +149,7 @@ const Matrix /* or null */ *IM2_Matrix_zero(const FreeModule *F,
                                             const FreeModule *G,
                                             int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -103,6 +161,7 @@ const Matrix /* or null */ *IM2_Matrix_make1(const FreeModule *target,
                                              const engine_RawRingElementArray M,
                                              int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -115,6 +174,7 @@ const Matrix /* or null */ *IM2_Matrix_make2(const FreeModule *target,
                                              const engine_RawRingElementArray M,
                                              int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -129,6 +189,7 @@ const Matrix /* or null */ *IM2_Matrix_make_sparse1(
     const engine_RawRingElementArray entries,
     int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -144,6 +205,7 @@ const Matrix /* or null */ *IM2_Matrix_make_sparse2(
     const engine_RawRingElementArray entries,
     int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -153,6 +215,7 @@ const Matrix /* or null */ *IM2_Matrix_make_sparse2(
 M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M)
 /* Is the matrix M implemented as dense? */
 {
+  (void) M;
 #ifdef DEVELOPMENT
 #warning not implemented yet
 #endif
@@ -169,6 +232,7 @@ const Matrix /* or null */ *IM2_Matrix_remake2(const FreeModule *target,
    the expected rank.
 */
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning prefer_dense not yet used
 #endif
@@ -184,6 +248,7 @@ const Matrix /* or null */ *IM2_Matrix_remake1(const FreeModule *target,
    columns of the matrix.
 */
 {
+  (void) preference;
   try
     {
 #ifdef DEVELOPMENT
@@ -205,6 +270,7 @@ const Matrix /* or null */ *IM2_Matrix_random(
     int special_type,  // 0: general, 1:upper triangular, others?
     int preference)
 {
+  (void) preference;
 #ifdef DEVELOPMENT
 #warning preference not yet used
 #endif
@@ -556,6 +622,11 @@ const Matrix /* or null */ *IM2_Matrix_pfaffians(int p, const Matrix *M)
   return M->pfaffians(p);
 }
 
+const RingElement /* or null */ *IM2_Matrix_pfaffian(const Matrix *M)
+{
+  return RingElement::make_raw(M->get_ring(), M->pfaffian());
+}
+
 const Matrix /* or null */ *IM2_Matrix_diff(const Matrix *M, const Matrix *N)
 {
   return M->diff(N, 1);
@@ -682,6 +753,7 @@ const Matrix /* or null */ *rawMatrixSplitContent(
 
 const Matrix /* or null */ *IM2_Matrix_remove_content(const Matrix *M)
 {
+  (void) M;
 #ifdef DEVELOPMENT
 #warning \
     "const Matrix /* or null */ * IM2_Matrix_remove_content(const Matrix *M) -- not implemented yet"
@@ -852,6 +924,7 @@ M2_string rawSLEvaluatorToString(M2SLEvaluator *sle)
 unsigned int rawSLEvaluatorHash(M2SLEvaluator *) { return 0; }
 M2SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs)
 {
+  (void) nConstantsAndInputs;
   return new M2SLProgram(new SLProgram);
 }
 M2_string rawSLProgramToString(M2SLProgram *slp)
@@ -991,12 +1064,15 @@ PointArray::RealVector getRealVector(const MutableMatrix *M, int col)
   PointArray::RealVector result;
   auto MC = dynamic_cast<const MutableMat<DMat<M2::ARingCC> > *>(M);
   // if (MC == nullptr)
-  auto i = MC->getMat().columnBegin(col);
-  auto iEnd = MC->getMat().columnEnd(col);
-  for (; i != iEnd; ++i)
+  if (MC == nullptr)
     {
-      result.push_back((*i).re);
-      result.push_back((*i).im);
+      throw exc::engine_error("expected mutable matrix over CC");
+    }
+
+  for (size_t r = 0; r < MC->getMat().numRows(); ++r)
+    {
+      result.push_back(MC->getMat().entry(r, col).re);
+      result.push_back(MC->getMat().entry(r, col).im);
     }
   return result;
 }

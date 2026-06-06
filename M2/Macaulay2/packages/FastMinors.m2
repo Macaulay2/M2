@@ -1,22 +1,29 @@
 newPackage( "FastMinors",
-Version => "1.2.6", Date => "May 15th, 2023", Authors => {
-    {Name => "Boyana Martinova",
-    Email=> "martinova@wisc.edu",
-    HomePage=> "https://sites.google.com/view/bmartinova"
+Version => "1.3.1", Date => "May 13th, 2026", Authors => {
+    {
+        Name => "Boyana Martinova",
+        Email=> "martinova@wisc.edu",
+        HomePage=> "https://sites.google.com/view/bmartinova"
     },
-    {Name => "Marcus Robinson",
-    Email => "mrobinso@reed.edu",
-    HomePage => "https://people.reed.edu/~mrobinso/"
+    {
+        Name => "Marcus Robinson",
+        Email => "mrobinso@reed.edu",
+        HomePage => "https://people.reed.edu/~mrobinso/"
     },
-    {Name => "Karl Schwede",
-    Email=> "schwede@math.utah.edu",
-    HomePage=> "http://www.math.utah.edu/~schwede"
+    {
+        Name => "Karl Schwede",
+        Email=> "schwede@math.utah.edu",
+        HomePage=> "http://www.math.utah.edu/~schwede"
     },
-    {Name => "Yuhui (Wei) Yao",
-    Email=> "yuhuiyao4ever@gmail.com"
+    {
+        Name => "Yuhui (Wei) Yao",
+        Email=> "yuhuiyao4ever@gmail.com"
     }
 }, --this file is in the public domain
-Headline => "faster linear algebra operations", PackageExports => {"RandomPoints"}, PackageImports => {"RandomPoints"}, DebuggingMode => false, Reload=>false,
+    Headline => "faster linear algebra operations",
+    PackageImports => {"Complexes"},
+    PackageExports => {"RandomPoints",  "PrimaryDecomposition"},
+    DebuggingMode => false, Reload=>false,
 Keywords => {"Linear Algebra"},
 Certification => {
     "journal name" => "Journal of Software for Algebra and Geometry",
@@ -26,7 +33,6 @@ Certification => {
     "published article URI" => "https://msp.org/jsag/2023/13-1/p02.xhtml",
     "published article DOI" => "10.2140/jsag.2023.13.13",
     "published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x02-FastMinors.m2",
-    "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/FastMinors.m2",
     "release at publication" => "22181a306749088a24c9ba6f04eda8e622edb5ff",
     "version at publication" => "1.2.6",
     "volume number" => "13",
@@ -71,7 +77,7 @@ export{
   "CodimCheckFunction",
   "PeriodicCheckFunction",
   --"RecursiveMinors",
-  --premade stratgies
+  --premade strategies
   "Recursive",
   "StrategyDefault",
   "StrategyDefaultNonRandom",
@@ -85,7 +91,8 @@ export{
   "PointOptions", --options to be based to the RandomPoints package
   "UseOnlyFastCodim",
   "RegularInCodimensionTutorial", --help file
-  "FastMinorsStrategyTutorial"
+  "FastMinorsStrategyTutorial",
+  "VerifyNonRegular"
 }
 
 protect MutableSmallest;
@@ -165,7 +172,8 @@ optRn := {
     UseOnlyFastCodim => false, 
 --    DegreeFunction => ( (t,i) -> ceiling((i+1)*t))
     SPairsFunction => (i -> ceiling(i^1.5)),
-    PointOptions => optPoints
+    PointOptions => optPoints,
+    VerifyNonRegular => false
 };
 
 optInternalChooseMinor := {
@@ -181,7 +189,7 @@ optProjDim := {
     Verbose => false,
     Strategy => StrategyDefault,
     DetStrategy => Cofactor,
-    MaxMinors => ((x,y) -> 5*x + 2*log_1.3(y)),
+    MaxMinors => ((x,y) -> 5*x + max(0, 2*log_1.3(y))),
     PointOptions => optPoints
 };
 
@@ -233,6 +241,7 @@ chooseSubmatrixLargestDegree(ZZ, Matrix) := opts -> (n1, M1) -> (
     i := 0;
     j := 0;
     curM1 := M1;
+    if (n1 < 0) or (n1 > min(rCt, cCt)) then error "chooseSubmatrixLargestDegree: not a valid submatrix size";
     --degreeMatrx := matrix apply(entries M1, l1 -> apply(l1, i->degree i));
     curList := null;
     curMax := null;
@@ -275,9 +284,7 @@ chooseSubmatrixLargestDegree(ZZ, Matrix) := opts -> (n1, M1) -> (
     while (j >= 0) do ( --compare entry j
         newCurRow = returnRowList#j;
         i = j-1;
-        --print "here1";
         while  (i >= 0) do (--compare entry j to previous terms in the list
-            --print "here2";
             if (newCurRow >= returnRowList#i) then (newCurRow = newCurRow + 1;);
             i = i-1;
         );
@@ -343,7 +350,7 @@ chooseRandomNonzeroSubmatrix(ZZ, Matrix) := opts -> (n1, M1) -> (
       --curList = flatten entries curM1;
       entryList = entries transpose matrix nonzeroEntries(curM1);
       if #entryList == 0 then return null;
-      curEntry = entryList#(random(#entryList));
+      curEntry = randomElement entryList;
       --print (curList#curMax);
       curRow = curEntry#0;
       curCol = curEntry#1;
@@ -369,9 +376,7 @@ chooseRandomNonzeroSubmatrix(ZZ, Matrix) := opts -> (n1, M1) -> (
   while (j >= 0) do ( --compare entry j
       newCurRow = returnRowList#j;
       i = j-1;
-      --print "here1";
       while  (i >= 0) do (--compare entry j to previous terms in the list
-          --print "here2";
           if (newCurRow >= returnRowList#i) then (newCurRow = newCurRow + 1;);
           i = i-1;
       );
@@ -422,7 +427,7 @@ replaceZeros(Matrix):= Matrix => opts->(M2) -> (
     largeGen:= null;
     if (instance(ring M2, PolynomialRing) or instance(ring M2, QuotientRing)) then (largeGen = (product gens myAmbient ring M2)^(2*largeDeg+2)) else (largeGen = (max(flatten entries M2))^2);
     if (sub(largeGen, ring M2) == 0) then (largeGen = (max(flatten entries M2))^2);
-    if (sub(largeGen, ring M2) == 0) then (largeGen == sub(1, ring M2));
+    if (sub(largeGen, ring M2) == 0) then (largeGen = sub(1, ring M2));
     largeGen = sub(largeGen, ring M2);
     unMute := matrix apply(entries M2, c -> apply(c, i->(if (i == 0) then largeGen else i)));
 
@@ -458,6 +463,7 @@ chooseSubmatrixSmallestDegree(ZZ, Matrix) := o -> (n1, M3) -> (
           M1 := new Matrix from M3;
           rCt := numRows M1;
           cCt := numColumns M1;
+          if (n1 < 0) or (n1 > min(rCt, cCt)) then error "chooseSubmatrixDegree: not a valid submatrix size";
           i := 0;
           j := 0;
           curM1 := M1;
@@ -470,7 +476,7 @@ chooseSubmatrixSmallestDegree(ZZ, Matrix) := o -> (n1, M3) -> (
 
           returnRowList := {};
           returnColList := {};
-
+          
           while (i < n1) do (
               --print concatenate("in loop, i =", toString(i));
               curList = flatten entries curM1;
@@ -533,7 +539,7 @@ chooseMinorSmallestDegree(ZZ, MutableMatrix) := o -> (n1, M1) -> (
 randomMaxPosition = method(Options=>{});
 randomMaxPosition(List) := o -> (L1) -> (
     newList := apply(#L1, i -> {L1#i, random((#L1)^2), i});
-    newList2 := random(newList);
+    newList2 := shuffle(newList);
     j := maxPosition(newList2);
     return ((newList2#j)#2);
 );
@@ -542,7 +548,7 @@ randomMaxPosition(List) := o -> (L1) -> (
 randomMinPosition = method(Options=>{});
 randomMinPosition(List) := o -> (L1) -> (
     newList := apply(#L1, i -> {L1#i, random((#L1)^2), i});
-    newList2 := random(newList);
+    newList2 := shuffle(newList);
     j := minPosition(newList2);
     return ((newList2#j)#2);
 );
@@ -551,7 +557,7 @@ randomMinPosition(List) := o -> (L1) -> (
 randomMinPositions = method(Options=>{});
 randomMinPositions(ZZ, List) := o -> (n1, L1) -> (
     newList := apply(#L1, i -> {L1#i, random((#L1)^2), i});
-    newList2 := random(newList);
+    newList2 := shuffle(newList);
     newList3 := sort(newList2);
     return apply(take(n1, newList3), z -> z#0);
 );
@@ -620,10 +626,11 @@ chooseRandomSubmatrix = method(Options=>{});
 
 chooseRandomSubmatrix(ZZ, Matrix) := opts -> (n1, M1) ->
 (
-    rowL := random(toList(0..(numRows M1 - 1)));
-    colL := random(toList(0..(numColumns M1 - 1)));
-    rowL = sort take(rowL, n1);
-    colL = take(colL, n1);
+    rCt := numRows M1;
+    cCt := numColumns M1;
+    if (n1 < 0) or (n1 > min(rCt, cCt)) then error "chooseRandomSubmatrix: not a valid submatrix size";
+    rowL := randomSubset(numRows M1, n1);
+    colL := shuffle(toList(0..<numColumns M1), n1);
     return {rowL, colL};
     )
 
@@ -643,10 +650,10 @@ reorderPolynomialRing = method(Options=>{});
 
 reorderPolynomialRing(Symbol, Ring) := opts-> (myOrder, R1) -> (
     if instance(R1, PolynomialRing) then(
-        if (debugLevel > 0) then print "reorderPolynomialRing: it is a polynomialRing";
+        if (debugLevel > 0) then printerr "reorderPolynomialRing: it is a polynomialRing";
         coeff := coefficientRing R1;
         genList := generators R1;
-        newGenList := random(genList);
+        newGenList := shuffle(genList);
         return coeff[newGenList, MonomialOrder => myOrder];)
     else (return R1);
 );
@@ -735,7 +742,7 @@ verifyStrategy := (passedStrat) -> (
 internalChooseMinor = method(Options=>optInternalChooseMinor);
 
 internalChooseMinor(ZZ, Ideal, Matrix, Matrix) := opts -> (minorSize, I1, nonzeroM, M1) -> (
-    --if (opts.Verbose or (debugLevel > 0)) then print "internalChooseMinor: starting.";
+    --if (opts.Verbose or (debugLevel > 0)) then printerr "internalChooseMinor: starting.";
     passedStrat := opts.Strategy;
     tempHash := new MutableHashTable from {LexLargest => 0, LexSmallestTerm => 0, LexSmallest => 0, GRevLexSmallestTerm => 0, GRevLexSmallest => 0, GRevLexLargest => 0, Random => 0, RandomNonzero => 0, Points => 0};
     if (passedStrat === LexLargest) then (tempHash#LexLargest = 100; passedStrat = tempHash);
@@ -764,14 +771,14 @@ internalChooseMinor(ZZ, Ideal, Matrix, Matrix) := opts -> (minorSize, I1, nonzer
         f = map(R2, ambR);
         M2 = f(nonzeroM);
         submatrixS1 = chooseSubmatrixSmallestDegree(minorSize, M2);
-        if (opts.Verbose) or debugLevel > 1 then print "internalChooseMinor: Choosing LexSmallest";
+        if (opts.Verbose) or debugLevel > 1 then printerr "internalChooseMinor: Choosing LexSmallest";
     )
     else if (myRandom < passedStrat#LexSmallest + passedStrat#LexSmallestTerm) then (
         R2 = reorderPolynomialRing(Lex, ambR); --do the same with respect to a Lex ordering
         f = map(R2, ambR);
         M2 = f(nonzeroM);
         submatrixS1 = chooseSubmatrixSmallestDegree(minorSize, selectSmallestTerms M2);
-        if (opts.Verbose) or debugLevel > 1 then print "internalChooseMinor: Choosing LexSmallestTerm";
+        if (opts.Verbose) or debugLevel > 1 then printerr "internalChooseMinor: Choosing LexSmallestTerm";
     )
     else if (myRandom < passedStrat#LexSmallest + passedStrat#LexSmallestTerm + passedStrat#LexLargest) then
     (
@@ -779,7 +786,7 @@ internalChooseMinor(ZZ, Ideal, Matrix, Matrix) := opts -> (minorSize, I1, nonzer
         f = map(R2, ambR);
         M2 = f(M1);
         submatrixS1 = chooseSubmatrixLargestDegree(minorSize, M2);
-        if (opts.Verbose) or debugLevel > 1 then print "internalChooseMinor: Choosing LexLargest";
+        if (opts.Verbose) or debugLevel > 1 then printerr "internalChooseMinor: Choosing LexLargest";
     )
     else if (myRandom < passedStrat#LexSmallest + passedStrat#LexSmallestTerm + passedStrat#LexLargest + passedStrat#GRevLexSmallest) then
     (
@@ -788,7 +795,7 @@ internalChooseMinor(ZZ, Ideal, Matrix, Matrix) := opts -> (minorSize, I1, nonzer
         M2 = f(matrix mutM2); --put the matrix in the ring with the new order
         submatrixS1 = chooseSubmatrixSmallestDegree(minorSize, M2);
         mutM2 = replaceSmallestTerm(submatrixS1, mutM2);
-        if (opts.Verbose) or debugLevel > 1 then print "internalChooseMinor: Choosing GRevLexSmallest";
+        if (opts.Verbose) or debugLevel > 1 then printerr "internalChooseMinor: Choosing GRevLexSmallest";
     )
     else if (myRandom < passedStrat#LexSmallest + passedStrat#LexSmallestTerm + passedStrat#LexLargest + passedStrat#GRevLexSmallest + passedStrat#GRevLexSmallestTerm) then
     (
@@ -797,7 +804,7 @@ internalChooseMinor(ZZ, Ideal, Matrix, Matrix) := opts -> (minorSize, I1, nonzer
         M2 = f(matrix mutM2); --put the matrix in the ring with the new order
         submatrixS1 = chooseSubmatrixSmallestDegree(minorSize, selectSmallestTerms M2);
         mutM2 = replaceSmallestTerm(submatrixS1, mutM2);
-        if (opts.Verbose) or debugLevel > 1 then print "internalChooseMinor: Choosing GRevLexSmallestTerm";
+        if (opts.Verbose) or debugLevel > 1 then printerr "internalChooseMinor: Choosing GRevLexSmallestTerm";
     )
     else if (myRandom < passedStrat#LexSmallest + passedStrat#LexSmallestTerm + passedStrat#LexLargest + passedStrat#GRevLexSmallest + passedStrat#GRevLexSmallestTerm + passedStrat#GRevLexLargest ) then (
         R2 = reorderPolynomialRing(GRevLex, ambR);
@@ -805,28 +812,28 @@ internalChooseMinor(ZZ, Ideal, Matrix, Matrix) := opts -> (minorSize, I1, nonzer
         M2 = f(matrix mutM1); --put the matrix in the ring with the new order
         submatrixS1 = chooseSubmatrixLargestDegree(minorSize, M2);
         mutM1 = replaceLargestTerm(submatrixS1, mutM1);
-        if (opts.Verbose) or debugLevel > 1 then print "internalChooseMinor: Choosing GRevLexLargest";
+        if (opts.Verbose) or debugLevel > 1 then printerr "internalChooseMinor: Choosing GRevLexLargest";
         --this needs to be written
     )
     else if (myRandom < passedStrat#LexSmallest + passedStrat#LexSmallestTerm + passedStrat#LexLargest + passedStrat#GRevLexSmallest + passedStrat#GRevLexSmallestTerm + passedStrat#GRevLexLargest + passedStrat#Random) then (
         submatrixS1 = chooseRandomSubmatrix(minorSize, M1);
-        if (opts.Verbose) or debugLevel > 1 then print "internalChooseMinor: Choosing Random";
+        if (opts.Verbose) or debugLevel > 1 then printerr "internalChooseMinor: Choosing Random";
     )
     else if (myRandom < passedStrat#LexSmallest + passedStrat#LexSmallestTerm + passedStrat#LexLargest + passedStrat#GRevLexSmallest + passedStrat#GRevLexSmallestTerm + passedStrat#GRevLexLargest + passedStrat#Random + passedStrat#RandomNonzero) then (
         submatrixS1 = chooseRandomNonzeroSubmatrix(minorSize, M1);
-        if (opts.Verbose) or debugLevel > 1 then print "internalChooseMinor: Choosing RandomNonZero";
+        if (opts.Verbose) or debugLevel > 1 then printerr "internalChooseMinor: Choosing RandomNonZero";
     )
     else if (myRandom < passedStrat#LexSmallest + passedStrat#LexSmallestTerm + passedStrat#LexLargest + passedStrat#GRevLexSmallest + passedStrat#GRevLexSmallestTerm + passedStrat#GRevLexLargest + passedStrat#Random + passedStrat#RandomNonzero + passedStrat#Points) then (
         if (char ambR == 0) then (
-            if (opts.Verbose) or debugLevel > 1 then print "internalChooseMinor: Choosing Points, but characteristic is zero, so defaulting to random instead.";
+            if (opts.Verbose) or debugLevel > 1 then printerr "internalChooseMinor: Choosing Points, but characteristic is zero, so defaulting to random instead.";
             submatrixS1 = chooseRandomSubmatrix(minorSize, M1); 
         )
         else (
-            if (opts.Verbose) or debugLevel > 0 then print "internalChooseMinor: Choosing Points";                                    
-            try (o = findANonZeroMinor(minorSize, M1, I1, new OptionTable from opts.PointOptions);) then submatrixS1 = {o#2, o#1} else ( submatrixS1 = chooseRandomSubmatrix(minorSize, M1); if (opts.Verbose) or debugLevel > 0 then print "internalChooseMinor: failed to find a point"; );            
+            if (opts.Verbose) or debugLevel > 0 then printerr "internalChooseMinor: Choosing Points";                                    
+            try (o = findANonZeroMinor(minorSize, M1, I1, new OptionTable from opts.PointOptions);) then submatrixS1 = {o#2, o#1} else ( submatrixS1 = chooseRandomSubmatrix(minorSize, M1); if (opts.Verbose) or debugLevel > 0 then printerr "internalChooseMinor: failed to find a point"; );            
         );
     );
-    --if (opts.Verbose or (debugLevel > 0)) then print "internalChooseMinor: finished.";
+    --if (opts.Verbose or (debugLevel > 0)) then printerr "internalChooseMinor: finished.";
     return submatrixS1;
 )
 
@@ -847,7 +854,9 @@ regularInCodimension(ZZ, Ring) := opts -> (n1, R1) -> (
         R1a = ambR/Id;
     );
 
-    if not (isField coefficientRing ambR) then return "Ambient ring is not field";
+    if not (isField coefficientRing ambR) then error "Ambient coefficient ring is not field";
+    if (not instance(ambR, PolynomialRing)) then error "Ambient ring is not a polynomial ring";
+    if (Id == 0) then return true;
 
     M1 := sub(jacobian Id, ambR);
     numberRelations := numColumns(M1);
@@ -894,6 +903,11 @@ regularInCodimension(ZZ, Ring) := opts -> (n1, R1) -> (
     myRandom := 0;
     local M2;
     local submatrixS1;
+    local decompList;
+    local dimList;
+    local ij;
+    local kQ;
+    local Mi6;   
     nextCodimCheck := opts.CodimCheckFunction(initToCompute);
     if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension: About to enter loop");
     while ( (r-d <= n1) and (i < numberOfMinorsCompute) and (#searchedSet < possibleMinors)) do (   
@@ -921,6 +935,21 @@ regularInCodimension(ZZ, Ring) := opts -> (n1, R1) -> (
             quotient1 = ambR/(Id+sumMinors);
             d = dim(ideal quotient1);
         );
+        if (opts.VerifyNonRegular) and (r-d <= n1) then (--if we should try to check if the ring is not regular
+            if (opts.Verbose or debugLevel > 0) then printerr "regularInCodimension: verify nonregularity";
+            decompList = minprimes(Id + sumMinors);
+            dimList = apply(decompList, jj -> dim jj);            
+            ij = 0;                         
+            while (ij < #dimList) do (
+                if (r - dimList#ij <= n1) then (--check if the ring is regular at the generic point of this prime
+                    --idealHt = r - dimList#ij;
+                    kQ = frac(ambR / decompList#ij);
+                    Mi6 = sub(M1, kQ);
+                    if (rank Mi6 < fullRank) then return false;
+                );
+                ij = ij + 1;
+            );
+        );
         if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension:  partial singular locus dimension computed, = ", toString(d));
         --j = j+1;
         --while (opts.CodimCheckFunction(i) >= nextCodimCheck) do nextCodimCheck = nextCodimCheck+1;
@@ -928,8 +957,8 @@ regularInCodimension(ZZ, Ring) := opts -> (n1, R1) -> (
     );
     if (opts.Verbose or debugLevel > 0) then print concatenate("regularInCodimension:  Loop completed, submatrices considered = ", toString(i), ", and computed = ", toString(# keys searchedSet), ".  singular locus dimension appears to be = ", toString(d));
     if ( r-d > n1) then (return true);
-    if  (r-d<n+1) and (#searchedSet <= possibleMinors) then (return null);
-    if (#searchedSet == possibleMinors) and ((r-d)<n1+1) then (return false);
+    if (#searchedSet == possibleMinors) and ((r-d)<n1+1) then (return false); --if we checked all minors...
+    return null; --if we can't determine based on the work done, return null
 );
 
 
@@ -944,11 +973,14 @@ chooseGoodMinors(ZZ, ZZ, Matrix) := opts -> (howMany, minorSize, M1) -> (
 
 chooseGoodMinors(ZZ, ZZ, Matrix, Ideal) := opts -> (howMany, minorSize, M1, I1) -> (
     if (not verifyStrategy(opts.Strategy)) then error "chooseGoodMinors: Expected a valid strategy, a HashTable or MutableHashTable with expected Keys.";
+    rCt := numRows M1;
+    cCt := numColumns M1;
+    if (minorSize < 0) or (minorSize > min(rCt, cCt)) then error "chooseGoodMinors: not a valid submatrix size";
     R1 := ring M1;
     if (howMany <= 0) then return trim ideal(sub(0, R1));
     ambR := myAmbient R1;
     Id := sub(I1, ambR) + ideal(R1);
-    possibleMinors := binomial(numColumns M1, minorSize)*binomial(numRows M1, minorSize);
+    possibleMinors := binomial(cCt, minorSize)*binomial(rCt, minorSize);
     M1 = sub(M1, ambR);
     mutM1 := mutableMatrix(M1);
     nonzeroM := replaceZeros(M1, Strategy=>opts.Strategy); --
@@ -1005,6 +1037,7 @@ projDim(Module) := opts -> (N1) -> (
     myRes := resolution minimalPresentation N1;
     myDiffs := myRes.dd;
     myLength := length myRes;
+    if (myLength == 0) then return 0;
     firstRank := rank myRes_myLength;
     if (debugLevel > 0) or opts.Verbose then print concatenate("projDim: resolution computed!  length =", toString myLength, " rank =", toString firstRank);
     firstDiff := myDiffs_myLength;
@@ -1017,10 +1050,10 @@ projDim(Module) := opts -> (N1) -> (
     else if instance(opts.MaxMinors, ZZ) then (
         minorsCount = opts.MaxMinors;)
     else if instance(opts.MaxMinors, Function) then (
-        if (debugLevel > 0) or opts.Verbose then print "projDim:  Using passed minors function.";
+        if (debugLevel > 0) or opts.Verbose then printerr "projDim:  Using passed minors function.";
         minorsCount = (opts.MaxMinors)(myDim, possibleMinors);)        
     else (
-        if (debugLevel > 0) or opts.Verbose then print "projDim:  Using default max minors function."; 
+        if (debugLevel > 0) or opts.Verbose then printerr "projDim:  Using default max minors function."; 
         minorsCount = 5*myDim + 2*log_1.3(possibleMinors); );
     if (debugLevel > 0) or opts.Verbose then print concatenate("projDim: going to try to find ", toString minorsCount, " minors.");
     
@@ -1031,7 +1064,7 @@ projDim(Module) := opts -> (N1) -> (
     if (curDim >= 0) then (return myLength);
 
     i := myLength-1;
-    if (debugLevel > 0) or opts.Verbose then print "projDim: computed dim, now starting loop.";
+    if (debugLevel > 0) or opts.Verbose then printerr "projDim: computed dim, now starting loop.";
     while (i>opts.MinDimension) and (curDim <= -1) do (
         --print concatenate("in loop: ", toString(i));
         firstRank = (rank myRes_i)-firstRank;
@@ -1126,7 +1159,7 @@ isRankAtLeast = method(Options => optIsRankAtLeast);
 isRankAtLeast(ZZ, Matrix) := opts -> (n1, M0) -> (
     if (not verifyStrategy(opts.Strategy)) then error "isRankAtLeast: Expected a valid strategy, a HashTable or MutableHashTable with expected Keys.";    
   if (opts.Threads <= 2) or (not isGlobalSymbol "nanosleep") or (allowableThreads <= 3) then (
-      if ((debugLevel > 0) or (opts.Verbose==true)) then print "isRankAtLeast: Going to single threaded version.";
+      if ((debugLevel > 0) or (opts.Verbose==true)) then printerr "isRankAtLeast: Going to single threaded version.";
       return isRankAtLeastSingle(n1, M0, opts); --single threaded version, implementation below.
   );
   if (M0 == 0) then return (n1 <= 0);
@@ -1232,7 +1265,7 @@ getSubmatrixOfRank(ZZ, Matrix) := opts -> (n1, M0) -> (
     subMatrix := null;
     val := null;
     if (debugLevel > 0) or opts.Verbose then print ("getSubmatrixOfRank: Trying to find a submatrix of rank at least: " | toString(n1) | " with attempts = " | toString(attempts) | ".  DetStrategy=>" | toString(opts.DetStrategy));
-    while (i < attempts)  do (
+    while (i < attempts) and (#searchedSet < possibleMinors) do (
         --if any(flatten entries matrix mutM2, z->z==0) then error "getSubmatrixOfRank: expected a matrix with no zero entries.";
         subMatrix = internalChooseMinor(n1,  Id, nonzeroM, M1, internalMinorsOptions++{MutableSmallest=>mutM2, MutableLargest=>mutM1});
         --if (debugLevel > 0) or opts.Verbose then print ("getSubmatrixOfRank: found subMatrix " | toString(subMatrix));
@@ -1273,11 +1306,11 @@ recursiveMinors =method(Options=>{MinorsCache => true, Threads=>0, Verbose=>fals
 
 recursiveMinors(ZZ, Matrix) := Ideal => opts -> (n, M1) -> (
     if not ((M1#cache)#?MinorsCache) then (M1.cache)#MinorsCache = new MutableHashTable from {};
-    --if not ((M1#cache)#?MinorsCache) then print "hello?";
+    --if not ((M1#cache)#?MinorsCache) then printerr "hello?";
     --if (n == numColumns M1) then M1 = transpose M1;
     H1 := null;
     if ((M1#cache)#MinorsCache)#?n then (
-        if (debugLevel > 0) or (opts.Verbose) then print "recursiveMinors: we found stored data, using it.";
+        if (debugLevel > 0) or (opts.Verbose) then printerr "recursiveMinors: we found stored data, using it.";
         H1 = ((M1#cache)#MinorsCache)#n; )
     else (
         H1 = recursiveMinorsTableP(n, M1, opts);
@@ -1293,7 +1326,7 @@ recursiveMinorsTableP = method(Options=>{MinorsCache => true, Threads=>0, Verbos
 recursiveMinorsTableP(ZZ, Matrix) := opts -> (n, M1) -> (
     if not ((M1#cache)#?MinorsCache) then (M1.cache)#MinorsCache = new MutableHashTable from {};
     if (opts.Threads <= 1) or (not isGlobalSymbol "nanosleep") then (
-        if (debugLevel > 0) then print "recursiveMinorsP: Going to single threaded version.";
+        if (debugLevel > 0) then printerr "recursiveMinorsP: Going to single threaded version.";
         return recursiveMinorsTable(n, M1);
     );
     rowCt := numRows M1;
@@ -1306,7 +1339,7 @@ recursiveMinorsTableP(ZZ, Matrix) := opts -> (n, M1) -> (
     if (debugLevel > 0) then    print ("recursiveMinorsTableP: about to recurse, minors of size" | toString(n));
     if (n > 2) then (
         if ((M1.cache).MinorsCache)#?(n-1) then (
-            if (debugLevel > 0) then print "recursiveMinorsTable: we found stored data, using it to avoid recursion.";
+            if (debugLevel > 0) then printerr "recursiveMinorsTable: we found stored data, using it to avoid recursion.";
             R1 = ((M1.cache).MinorsCache)#(n-1); )
         else (
             R1 = recursiveMinorsTableP(n-1, submatrix'(M1, {rowCt-1}, ),opts);
@@ -1314,14 +1347,14 @@ recursiveMinorsTableP(ZZ, Matrix) := opts -> (n, M1) -> (
     )
     else (
         if ((M1.cache).MinorsCache)#?n then (
-            if (debugLevel > 0) then print "recursiveMinorsTableP: we found stored data, using it.";
+            if (debugLevel > 0) then printerr "recursiveMinorsTableP: we found stored data, using it.";
             return ((M1.cache).MinorsCache)#n; )
         else (
             return new HashTable from  apply(L, i -> (i => det (M1^(i#0)_(i#1))) ); --this should be multithreaded too presumably...
         );
     );
     tempL := null;
-    if (debugLevel > 0) then print "recursiveMinorsTableP: did recursion, going to do tasks";
+    if (debugLevel > 0) then printerr "recursiveMinorsTableP: did recursion, going to do tasks";
     taskList := apply(opts.Threads, i -> (tempL =  take(L, {(i*(lenL-1))//(opts.Threads), ((i+1)*(lenL-1))//(opts.Threads)});    
         return createTask(temp, (tempL, n, M1, R1) ); ) );
     apply(taskList, t -> schedule t);
@@ -1338,7 +1371,7 @@ recursiveMinorsTableP(ZZ, Matrix) := opts -> (n, M1) -> (
 
 --this is just a temporary function
 temp = (Lis,n, M1, R1) -> (
-    --print "temp started";
+    --printerr "temp started";
 	K := apply(Lis, i -> (i => sum(0..n-1, curCol -> (-1)^(curCol)*M1_(i#0#(n-1), i#1#curCol)*R1#(toList drop(i#0, {n-1,n-1}), toList drop(i#1, {curCol, curCol})))));
 	return K
 );
@@ -1354,14 +1387,14 @@ recursiveMinorsTable = (n, M1) -> (
     R := {};
     if (n > 2) then (
         if ((M1.cache).MinorsCache)#?(n-1) then (
-            if (debugLevel > 0) then print "recursiveMinorsTable: we found stored data, using it to avoid recursion.";
+            if (debugLevel > 0) then printerr "recursiveMinorsTable: we found stored data, using it to avoid recursion.";
             R = ((M1.cache).MinorsCache)#(n-1); )
         else (
             R = recursiveMinorsTable(n-1, submatrix'(M1, {rowCt-1}, )))
         )
     else (
         if ((M1.cache).MinorsCache)#?n then (
-            if (debugLevel > 0) then print "recursiveMinorsTable: we found stored data, using it.";
+            if (debugLevel > 0) then printerr "recursiveMinorsTable: we found stored data, using it.";
             return ((M1.cache).MinorsCache)#n; )
         else (
             return new HashTable from  apply(L, i -> (i => det (M1^(i#0)_(i#1))) )
@@ -1578,6 +1611,13 @@ doc ///
             {\bf Summary.}  If you expect that finding a submatrix or computing a minor is relatively costly from a time perspective, then it makes sense to compute the codimension more frequently.  If computing the codimension is relatively costly we recommend computing the codimension less frequently, or using the {\tt UseOnlyFastCodim => true} with a high {\tt PairLimit}.  For example, if using {\tt StrategyPoints}, then choosing a submatrix can be quite slow, however each submatrix is very ``valuable'', in that adding it to the ideal of minors so far is quite likely to reduce the dimension of the singular locus.
             
             One may also change how minors (determinants of the Jacobian submatrix) are computed by using the @TO DetStrategy@ option.  
+        Text
+            {\bf Proving a singularity is not regular.}
+        Text
+            Sometimes you think that a variety is not regular in codimension n.  In that case, you can use the option {\tt VerifyNonRegular=>true}.  Below we have an example of a nodal elliptic curve cross P^1 expressed as a Segre prodcut, it is not even regular in codimension 1.
+        Example
+            B = ZZ/103[a,b,c,d,e,f]/ideal(d*e-c*f,b*e-a*f,b*c-a*d,b^3-b^2*f-d^2*f,a*b^2-a*b*f-c*d*f,a^2*b-a^2*f-c^2*f,a^3-a^2*e-c^2*e)
+            regularInCodimension(1, B, VerifyNonRegular=>true)
     SeeAlso
         regularInCodimension
         FastMinorsStrategyTutorial
@@ -1801,6 +1841,7 @@ doc ///
         [regularInCodimension, PairLimit]
         [regularInCodimension, UseOnlyFastCodim]
         [regularInCodimension, SPairsFunction]
+        [regularInCodimension, VerifyNonRegular]
         MinMinorsFunction
         CodimCheckFunction
         UseOnlyFastCodim
@@ -1811,6 +1852,7 @@ doc ///
     Inputs
         n: ZZ
         R: Ring
+            an equidimensional quotient of a polynomial ring over a field
         Modulus => Number
             work modulo the given prime modulus
         PairLimit => Number
@@ -1830,7 +1872,7 @@ doc ///
             true, if the ring is regular in codimension n, false if it determines it is not, and null if no determination is made
     Description
         Text
-            This function returns {\tt true} if R is regular in codimension {\tt n}, {\tt false} if it is not, and {\tt null} if it did not make a determination.
+            This function returns {\tt true} if R is regular in codimension {\tt n}, {\tt false} if it is not, and {\tt null} if it did not make a determination.  We assume that R is equidimensional and it is a quotient ring of a polynoimal ring over a field.
             It considers interesting minors of the jacobian matrix to try to verify that the ring is regular in codimension {\tt n}.
             It is frequently much faster at giving an affirmative answer than computing the dimension of the ideal of all minors of the Jacobian.
             We begin with a simple example which is R1, but not R2.
@@ -1870,6 +1912,10 @@ doc ///
             The function {\tt regularInCodimension} does not recompute determinants, so {\tt MaxMinors} or is only an upper bound on the number of minors computed.            
         Example
             time regularInCodimension(2, S, Verbose=>true, MaxMinors=>30)
+        Text
+            If you set the option {\tt VerifyNonRegular => true}, then Macaulay2 will try to verify that the ring is not regular in codimension n.  Turning this on means that when the set where the minors computed so far has codimension n, then it evaluates the matrix at the generic point of a minimal prime of that set.  If that evaluated Jacobian matrix has too low of a rank, then one has verified that variety is not regular in codimemsion n.  We consider the same example as above, but notice now the function returns false instead of true.  This sometimes can be slower and sometimes can be faster.
+        Example
+            time regularInCodimension(2, S, VerifyNonRegular=>true)
         Text
             This function has many options which allow you to fine tune the strategy used to find interesting minors.
             You can pass it a {\tt HashTable} specifying the strategy via the option {\tt Strategy}.  See @TO LexSmallest@ for how to construct this {\tt HashTable}.
@@ -2418,9 +2464,84 @@ assert(regularInCodimension(1, R, Strategy=>StrategyPoints, MinMinorsFunction =>
 TEST /// --check #17 (checking multi-graded support)
     S = ZZ/101[x,y, Degrees => {{1,0},{0,2}}]
     M = random(S^4, S^{5:{-3,-4}})
-    chooseGoodMinors(10, 2, M)
+    J = chooseGoodMinors(10, 2, M)
+    assert(instance(J, Ideal))
+    assert(numgens J == 10)
+    assert(ring J === S)
 ///
 
+TEST ///--check #18 (doing a projdim check)
+    R = QQ[x,y];
+    A = matrix {{-2*y+1, x^2+y^2-y, 2*x*y-x}, {2*x, 0, 2*y^2-2*y}};
+    B = matrix {{2*x*y-x, 4*x^2-1}, {2*y^2-2*y, 4*x*y-2*x}};
+    imA = image A;
+    imB = image B;
+    assert((projDim imA == 0) and (projDim imB == 0))
+///
 
+TEST ///--check #19 (checking [regularInCodim, VerifyNonRegular])
+    R = QQ[x,y,z]/(x^4+y^4+z^4)
+    S = QQ[a,b,c,d,e,f]
+    phi = map(R, S, first entries basis(2, R))
+    I = ker phi
+    A = S/I
+    assert(regularInCodimension(1, A))
+    assert(not regularInCodimension(2, A, VerifyNonRegular=>true))
+    C = ZZ/7[u,v,w]/(u^2*w-v^3)
+    assert(not regularInCodimension(1, C, VerifyNonRegular=>true))
+///
+
+TEST /// --check #20 (recursiveMinors agrees with the built-in minors)
+    -- recursiveMinors is a public-API parallel to "minors"; the two must agree
+    -- as ideals for every minor size and matrix.
+    R = QQ[a,b,c,d];
+    M = matrix{{a,b,c},{c,d,a},{b,a,d}};
+    assert(recursiveMinors(2, M) == minors(2, M));
+    assert(recursiveMinors(3, M) == minors(3, M));
+    assert(instance(recursiveMinors(2, M), Ideal));
+    S = ZZ/101[x_1..x_4];
+    M2 = matrix{{x_1, x_2, x_3, x_4}, {x_2, x_3, x_4, x_1}, {x_3, x_4, x_1, x_2}};
+    assert(recursiveMinors(2, M2) == minors(2, M2));
+///
+
+TEST /// --check #21 (chooseRandomSubmatrix and getSubmatrixOfRank)
+    -- both return a length-2 list of row and column index lists; the
+    -- submatrix returned by getSubmatrixOfRank must actually have the
+    -- requested rank.
+    setRandomSeed 0;
+    T = ZZ/101[x,y,z];
+    M = random(T^4, T^{-3,-4,-2,-3});
+    sub1 = chooseRandomSubmatrix(2, M);
+    assert(instance(sub1, List) and #sub1 == 2);
+    assert(#(sub1#0) == 2 and #(sub1#1) == 2);
+    g1 = getSubmatrixOfRank(3, M);
+    assert(instance(g1, List) and #g1 == 2);
+    assert(#(g1#0) == 3 and #(g1#1) == 3);
+    assert(isRankAtLeast(3, M^(g1#0)_(g1#1)));
+///
+
+TEST /// --check #22 (selector-symbol Strategies for regularInCodimension)
+    -- the eight bare selector symbols are each valid as Strategy values
+    -- (in addition to the bundled hash-table strategies exercised in #16);
+    -- each one independently confirms regularity in codimension 1 on a cone.
+    U = QQ[x,y,z]/ideal(x^2-y*z);
+    assert(regularInCodimension(1, U, Strategy=>LexLargest));
+    assert(regularInCodimension(1, U, Strategy=>LexSmallest));
+    assert(regularInCodimension(1, U, Strategy=>LexSmallestTerm));
+    assert(regularInCodimension(1, U, Strategy=>GRevLexLargest));
+    assert(regularInCodimension(1, U, Strategy=>GRevLexSmallest));
+    assert(regularInCodimension(1, U, Strategy=>GRevLexSmallestTerm));
+    assert(regularInCodimension(1, U, Strategy=>Random));
+    assert(regularInCodimension(1, U, Strategy=>RandomNonzero));
+///
 
 end
+T = ZZ/101[x1,x2,x3,x4,x5,x6,x7];
+ I =  ideal(x5*x6-x4*x7,x1*x6-x2*x7,x5^2-x1*x7,x4*x5-x2*x7,x4^2-x2*x6,x1*x4-x2*x5,x2*x3^3*x5+3*x2*x3^2*x7+8*x2^2*x5+3*x3*x4*x7-8*x4*x7+x6*x7,x1*x3^3*x5+3*x1*x3^2*x7+8*x1*x2*x5+3*x3*x5*x7-8*x5*x7+x7^2,x2*x3^3*x4+3*x2*x3^2*x6+8*x2^2*x4+3*x3*x4*x6-8*x4*x6+x6^2,x2^2*x3^3+3*x2*x3^2*x4+8*x2^3+3*x2*x3*x6-8*x2*x6+x4*x6,x1*x2*x3^3+3*x2*x3^2*x5+8*x1*x2^2+3*x2*x3*x7-8*x2*x7+x4*x7,x1^2*x3^3+3*x1*x3^2*x5+8*x1^2*x2+3*x1*x3*x7-8*x1*x7+x5*x7);
+ R=T/I;
+regularInCodimension(1, R, Strategy=>StrategyDefault)
+
+S = ZZ/101[x_1..x_8]
+    I = ideal(x_6^2-x_5*x_8,x_2*x_6-x_3*x_8,x_1*x_6-x_2*x_7,x_2*x_5-x_3*x_6,x_1*x_5-x_3*x_7,x_1*x_2+x_1*x_3+x_2*x_3+x_4*x_6,x_3*x_4*x_7+x_5*x_6+x_5*x_7+x_6*x_7,x_2*x_4*x_7+x_6*x_7+x_5*x_8+x_7*x_8,x_2*x_3*x_7+x_1*x_3*x_8+x_3^2*x_8+x_4*x_5*x_8,x_1*x_3*x_7+x_4*x_6*x_7-x_1^2*x_8-2*x_1*x_3*x_8-x_3^2*x_8-x_4*x_5*x_8-x_4*x_7*x_8,x_2^2*x_7-x_1*x_3*x_8,x_3^2*x_6+x_4*x_5*x_6+x_3^2*x_7-x_1*x_3*x_8-x_3^2*x_8-x_4*x_5*x_8,x_2*x_3*x_4+x_4^2*x_6-x_3*x_6-2*x_2*x_7-x_3*x_7-x_1*x_8-x_3*x_8,x_1*x_3*x_4+x_3*x_6+x_2*x_7+x_3*x_7,x_3^3+x_3*x_4*x_5+x_5^2+x_5*x_6,x_2*x_3^2+x_3*x_4*x_6+x_5*x_6+x_5*x_8,x_1*x_3^2-x_5*x_6,x_2^2*x_3+x_3*x_4*x_8+x_5*x_8+x_6*x_8,x_1^2*x_3-x_6*x_7,x_2^3+x_2*x_4*x_8+x_6*x_8+x_8^2,x_1^3+x_1*x_4*x_7+x_6*x_7+x_7^2,x_3^2*x_4*x_8+x_4^2*x_5*x_8-x_3*x_6*x_7-x_3*x_5*x_8-x_3*x_6*x_8-x_2*x_7*x_8-2*x_3*x_7*x_8,x_1^2*x_4*x_8+x_4^2*x_7*x_8-x_2*x_7^2-x_3*x_6*x_8-x_1*x_7*x_8-x_2*x_7*x_8-2*x_3*x_7*x_8,x_4*x_5*x_6*x_7+x_3^2*x_7^2-x_3^2*x_5*x_8-x_4*x_5^2*x_8-2*x_3^2*x_7*x_8-x_4*x_5*x_7*x_8+x_4*x_6*x_7*x_8-x_1^2*x_8^2-2*x_1*x_3*x_8^2-x_3^2*x_8^2-x_4*x_5*x_8^2-x_4*x_7*x_8^2,x_4^2*x_6*x_7-2*x_3*x_6*x_7-2*x_2*x_7^2-x_3*x_7^2-x_3*x_5*x_8-x_1*x_7*x_8-2*x_3*x_7*x_8,x_4^2*x_5*x_7*x_8-x_3*x_6*x_7^2-x_3*x_5*x_6*x_8-2*x_3*x_5*x_7*x_8-2*x_3*x_6*x_7*x_8-x_2*x_7^2*x_8-2*x_3*x_7^2*x_8)
+    dim R
+    time assert(not regularInCodimension(2, R, VerifyNonRegular=>true))

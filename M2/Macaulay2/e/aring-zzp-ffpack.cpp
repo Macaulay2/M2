@@ -22,6 +22,7 @@ void ARingZZpFFPACK::elem_text_out(buffer &o,
                                    bool print_plus,
                                    bool print_parens) const
 {
+  (void) print_parens;
   STT a = static_cast<STT>(elem);
   if (a == 1 and not print_one) return;
   if (a > 0 and print_plus) o << "+";
@@ -277,6 +278,7 @@ void ARingZZpFFPACK::eval(const RingMap *map,
                           int first_var,  // not used here. See ringmap.cpp
                           ring_elem &result) const
 {
+  (void) first_var;
   // translate f to map->target()
   long a = static_cast<long>(f);
   result = map->get_ring()->from_long(a);

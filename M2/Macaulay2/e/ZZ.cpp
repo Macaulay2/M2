@@ -67,7 +67,12 @@ std::pair<bool, long> RingZZ::coerceToLongInteger(ring_elem a) const
                                mpz_get_si(a.get_mpz()));
 }
 
-ring_elem RingZZ::random() const { return ring_elem(rawRandomInteger(nullptr)); }
+ring_elem RingZZ::random() const {
+  mpz_ptr result = new_elem();
+  rawSetRandomInteger(result, nullptr);
+  mpz_reallocate_limbs(result);
+  return ring_elem(result);
+}
 
 void RingZZ::elem_text_out(buffer &o,
                            const ring_elem ap,
@@ -75,6 +80,7 @@ void RingZZ::elem_text_out(buffer &o,
                            bool p_plus,
                            bool p_parens) const
 {
+  (void) p_parens;
   mpz_srcptr a = ap.get_mpz();
 
   char s[1000];
@@ -129,6 +135,9 @@ bool RingZZ::from_rational(mpq_srcptr q, ring_elem &result) const
 
 bool RingZZ::promote(const Ring *R, const ring_elem a, ring_elem &result) const
 {
+  (void) R;
+  (void) a;
+  (void) result;
   return false;
 }
 
@@ -184,7 +193,7 @@ ring_elem RingZZ::copy(const ring_elem f) const
 
 void RingZZ::remove(ring_elem &f) const
 {
-  // NOTHING
+  (void) f;
 }
 
 ring_elem RingZZ::preferred_associate(ring_elem f) const

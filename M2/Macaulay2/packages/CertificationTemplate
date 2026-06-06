@@ -9,7 +9,7 @@
 		"published article URI" => "",
 		"published article DOI" => "",
 		"published code URI" => "",
-		"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
+		"legacy name" => "",             -- if renamed since published
 		"release at publication" => "",  -- git commit number in hex
 		"version at publication" => "",
 		"volume number" => "13",

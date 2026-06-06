@@ -1,9 +1,0 @@
-Dan R points out :
-
-    Some trivial security could be obtained by startServer "127.0.0.1" which starts
-    a server that only binds to the "lo" interface, and therefore can only be
-    connected to from the local machine.
-
-so we can automate the SCSCP checks in 0-final-checks-before-distribution to some extent
-
-We may also want "make insecure-check" as the target.

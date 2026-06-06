@@ -1162,6 +1162,5 @@ EXAMPLE {
 "D = new Tally from {H => 2,C => 1};",
 "time phi = rationalMap D",
 "time ? image(phi,\"F4\")"},
-PARA{"See also the package ",HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.16/share/doc/Macaulay2/Divisor/html/index.html","Divisor"},", which provides general tools for working with divisors."},
+PARA{"See also the package ", TO "WeilDivisors::WeilDivisors", ", which provides general tools for working with divisors."},
 SeeAlso => {rationalMap,(rationalMap,Ideal,ZZ),(image,RationalMap,String)}}
-

@@ -181,6 +181,8 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
       // increase mComputationStatus if needed, mMinimalBetti, ...
       // computeFrame()
     }
+  // std::cout << "std::min(mMaxLength-1, length_limit): " << mMaxLength-1 << " " << length_limit << std::endl;
+  // length_limit = std::min(mMaxLength-1, length_limit);
 
 #if defined(WITH_TBB)
   // build the dependency graph
@@ -204,6 +206,10 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
   // Also note: if hideg is the highest degree that occurs in the frame, we do
   // not need to compute any matrices for these.
 
+  // std::cout << "res-schreyer-frame:208, mLoSlantedDegree, top_degree, "
+  //              "length_limit, mMaxLength: "
+  // << mLoSlantedDegree << " " << top_degree << " " << length_limit << " " << mMaxLength << std::endl;
+  
   for (int deg = mLoSlantedDegree; deg <= top_degree - 1; deg++)
     for (int lev = 1; lev <= length_limit + 1; lev++)
       {
@@ -244,8 +250,12 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
     }
 
   BettiDisplay B(mBettiMinimal);  // copy
+  // std::cout << "in res-schreyer-frame.cpp, minimalBettiNumbers A\n";
+  // B.output();
   B.resize(mLoSlantedDegree, top_degree, length_limit);
-
+  // std::cout << "in res-schreyer-frame.cpp, minimalBettiNumbers B\n";
+  // B.output();
+  // std::cout << "mMaxLength, mLevels.size(): " << mMaxLength << " " << mFrame.mLevels.size() << std::endl;
   return B;
 }
 
@@ -618,6 +628,7 @@ void SchreyerFrame::insertLevelZero(res_packed_monomial monom,
                                     int degree,
                                     int maxdeglevel0)
 {
+  (void) maxdeglevel0;
   auto& myframe = level(0);
   long idx = myframe.size();
   myframe.emplace_back(FrameElement(monom, degree));
@@ -843,6 +854,8 @@ void SchreyerFrame::setBettiDisplays()
         }
     }
 
+  // std::cout << "--- minimal betti set ---\n";
+  // mBettiMinimal.output();
 #if 0  
   // Now set the todo list of pairs (degree, level) for minimalization.
   for (int slanted_degree = lo; slanted_degree < hi; slanted_degree++)
@@ -965,6 +978,9 @@ void SchreyerFrame::computeRank(int slanted_degree, int lev)
       mBettiMinimal.entry(slanted_degree, lev) -= rk;
       if (slanted_degree <= mHiSlantedDegree and lev > 0)
         mBettiMinimal.entry(slanted_degree + 1, lev - 1) -= rk;
+
+      // std::cout << "--- minimal betti after computeRank: " << slanted_degree << " " << lev << std::endl;
+      // mBettiMinimal.output();
     }
   status = 3;
 }

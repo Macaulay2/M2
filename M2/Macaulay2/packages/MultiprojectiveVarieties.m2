@@ -28,7 +28,6 @@ newPackage(
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p14.xhtml",
 	 "published article DOI" => "10.2140/jsag.2021.11.143",
 	 "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x14-MultiprojectiveVarieties.m2",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiprojectiveVarieties.m2",
 	 "release at publication" => "5831dc6b020fae7365f257256b92539d5d496954",	    -- git commit number in hex
 	 "version at publication" => "2.3",
 	 "volume number" => "11",
@@ -40,10 +39,10 @@ requiredCremonaVersion := "5.2.1";
 if Cremona.Options.Version < requiredCremonaVersion then (
     <<endl<<"Your version of the Cremona package is outdated (required version "<<requiredCremonaVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
-    <<"https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages."<<endl;
+    <<"https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of Cremona in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
-    <<///(makeDirectory("Cremona"), for f in {"Cremona.m2","Cremona/documentation.m2","Cremona/examples.m2","Cremona/tests.m2"} do run("curl -s -o "|f|" https://raw.githubusercontent.com/Macaulay2/M2/master/M2/Macaulay2/packages/"|f));///<<endl<<endl<<"***"<<endl;
+    <<///(makeDirectory("Cremona"), for f in {"Cremona.m2","Cremona/documentation.m2","Cremona/examples.m2","Cremona/tests.m2"} do run("curl -s -o "|f|" https://raw.githubusercontent.com/Macaulay2/M2/stable/M2/Macaulay2/packages/"|f));///<<endl<<endl<<"***"<<endl;
     error("required Cremona package version "|requiredCremonaVersion|" or newer");
 );
 
@@ -1001,7 +1000,7 @@ line (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,p) -> (
     if dim V >= 2 then return linearSpan {p,point V};
     L := select(decompose V,l -> dim l == 1 and degree l == 1);
     if # L == 0 then error("failed to find line in "|toString(? X));
-    first random L    
+    randomElement L
 );
 line (EmbeddedProjectiveVariety,ZZ) := (X,n) -> (
     L := try line(X,point X) else null;
@@ -4637,4 +4636,94 @@ g = quadricFibration rationalMap((0_S)_S,1);
 assert(dim discriminant g == 1 and degree discriminant g == 8)
 h = quadricFibration multirationalMap first projections random({{1,1},{1,1},{1,2}},0_(PP_(ZZ/3331)^{2,3}));
 assert(dim discriminant h == 1 and degree discriminant h == 6)
+///
+
+TEST /// -- projectionMaps
+X = random({1,1},0_(PP_(ZZ/101)^{2,1}));
+p = projectionMaps X;
+assert(#p == 2 and all(p,m -> instance(m,MultirationalMap)));
+assert(source p_0 === X and source p_1 === X);
+assert(dim target p_0 == 2 and dim target p_1 == 1);
+///
+
+TEST /// -- intersection of multi-projective varieties
+K = ZZ/33331;
+p = point PP_K^{2,2};
+X = random({1,1},p);
+Y = random({2,1},p);
+assert(⋂ {X,Y} == X * Y);
+assert(isSubset(p,⋂ {X,Y}));
+///
+
+TEST /// -- ambientVariety
+p = point PP_(ZZ/65521)^3;
+Y = random({1},p);
+assert(ambientVariety(p % Y) === Y);
+///
+
+TEST /// -- sumUp and the ! operator
+X = PP_QQ^(1,3);
+assert(sumUp X === null and X! === null);
+///
+
+TEST /// -- sectionalGenus
+assert(sectionalGenus PP_QQ^(1,3) == 0);
+assert(sectionalGenus PP_QQ^(1,5) == 0);
+assert(sectionalGenus projectiveVariety ideal random(3,0_(PP_QQ^2)) == 1);
+///
+
+TEST /// -- degreeSequence
+R = (ZZ/333331)[y_0..y_5];
+Phi = multirationalMap {rationalMap for i to 2 list random(1,R),rationalMap for i to 2 list random(1,R)};
+d = degreeSequence Phi;
+assert(instance(d,List) and #d == #factor Phi and #d == 2);
+assert(all(d,a -> instance(a,Array)));
+///
+
+TEST /// -- linearlyNormalEmbedding
+X = PP_(ZZ/333331)^(1,4);
+f = linearlyNormalEmbedding X;
+assert(instance(f,MultirationalMap) and isIsomorphism f and source f === X);
+///
+
+TEST /// -- coneOfLines
+K = ZZ/33331;
+L = linearSpan {point PP_K^4,point PP_K^4};
+p = point L;
+assert(dim L == 1 and coneOfLines(L,p) == L);
+M = linearSpan {point PP_K^4,point PP_K^4,point PP_K^4};
+q = point M;
+assert(dim M == 2 and coneOfLines(M,q) == M);
+///
+
+TEST /// -- fiberProduct
+ringP3 = ZZ/33331[a..d];
+C = ideal(c^2-b*d,b*c-a*d,b^2-a*c);
+L = ideal(b+c+d,a-d);
+phi = first graph rationalMap C;
+psi = parametrize L;
+F = fiberProduct(phi,psi);
+p = projections F;
+phi' = check rationalMap({p_0,p_1},projectiveVariety source phi);
+psi' = check rationalMap({p_2},projectiveVariety source psi);
+assert(phi' * phi == psi' * psi);
+///
+
+TEST /// -- schubertCycle and cycleClass
+G = GG(ZZ/33331,1,5);
+S = schubertCycle({2,1},G);
+assert(instance(S,EmbeddedProjectiveVariety) and dim S == dim G - sum {2,1});
+S' = schubertCycle({3,0},G);
+assert(cycleClass(S + S') == cycleClass S + cycleClass S');
+assert(cycleClass schubertCycle({2,1},G,Standard=>true) == cycleClass S);
+///
+
+TEST /// -- RAT (hom-sets of rational maps)
+K = ZZ/3;
+R = ring PP_K^{1,2};
+H = Hom(PP_K^{1,2},PP_K^{1,3,2});
+assert(class H === RAT);
+F = {apply(2,i -> random({1,1},R)),apply(4,i -> random({0,1},R)),apply(3,i -> random({1,0},R))};
+f = H F;
+assert(instance(f,MultirationalMap) and f == (Hom(source f,target f)) entries f);
 ///

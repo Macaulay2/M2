@@ -2,6 +2,7 @@
 
 needs "monoids.m2"  -- for degreesMonoid
 needs "reals.m2" -- for inexact number
+needs "gateway.m2" -- for id
 
 -----------------------------------------------------------------------------
 -- Matrix
@@ -15,6 +16,7 @@ ring Matrix := f -> (
      if R =!= S then error "expected module map with source and target over the same ring";
      if f.?RingMap then error "expected module map with no ring map";
      R)
+-- FIXME: can't set the typical output type because Module isn't defined yet!
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
@@ -45,10 +47,12 @@ scan( {ZZ,QQ}, K -> (
 	  ))
 
 scan((
-	  (ZZ, { QQ, RR', CC', RRi' }),
-	  (QQ, { RR', CC', RRi' }),
-	  (RR',{ RR', CC', RRi' }),
-	  (CC', { CC' })
+	  (ZZ, { QQ, RR', CC', RRi', CCi' }),
+	  (QQ, { RR', CC', RRi', CCi' }),
+	  (RR',{ RR', CC', RRi', CCi' }),
+	  (CC', { CC', CCi' }),
+	  (RRi', { RRi', CCi' }),
+	  (CCi', { CCi' })
 	  ), 
      (K,Ls) -> scan(Ls, L -> (
 	       p := makepromoter 0;
@@ -77,6 +81,7 @@ Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
+norm(Number, Vector) := (p, v) -> norm(p, v#0)
 expression Vector := v -> VectorExpression apply(flatten entries super v#0,expression)
 net Vector := v -> net expression v
 describe Vector := v -> Describe expression FunctionApplication(
@@ -86,14 +91,7 @@ toString Vector := v -> toString expression v
 texMath Vector := v -> texMath expression v
 --html Vector := v -> html expression v
 
--- helper for Matrix#AfterPrint and Vector#AfterPrint
-moduleAbbrv = (M, abbrv) -> (
-    if isFreeModule M then M
-    else if hasAttribute(M, ReverseDictionary)
-    then getAttribute(M, ReverseDictionary)
-    else abbrv)
-
-Vector#AfterPrint = Vector#AfterNoPrint = v -> moduleAbbrv(module v, Vector)
+Vector.AfterPrint = Vector.AfterNoPrint = v -> moduleAbbrv module v ?? Vector
 
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
@@ -103,6 +101,7 @@ degree Vector := v -> (
      f := ambient v#0;
      first degrees source map(target f,,f))
 matrix Vector := opts -> v -> v#0
+vector Vector := identity
 new Matrix from Vector := (Matrix,v) -> v#0
 new Vector from Matrix := (M,f) -> (
      if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
@@ -155,22 +154,27 @@ isHomogeneous Vector := (v) -> isHomogeneous v#0
 Module = new Type of ImmutableType
 Module.synonym = "module"
 new Module from List := (Module,v) -> new Module of Vector from hashTable v
-new Module from Sequence := (Module,x) -> (
-     (R,rM) -> (
-	  assert instance(R,Ring);
-	  assert instance(rM,RawFreeModule);
-	  new Module of Vector from hashTable {
-     	       symbol cache => new CacheTable from { 
-		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
-		    },
-     	       symbol RawFreeModule => rM,
-     	       symbol ring => R,
-     	       symbol numgens => rawRank rM
-     	       })) x
+new Module from (Ring, RawFreeModule) := (Module, R, rM) -> (
+    new Module of Vector from hashTable {
+	symbol cache => new CacheTable from {
+	    cache => new MutableHashTable  -- this hash table is mutable, hence has a hash number that can serve as its age
+	    },
+	symbol RawFreeModule => rM,
+	symbol ring => R,
+	symbol numgens => rawRank rM
+	})
 
 vector(Module, Matrix) := (M, f) -> vector map(M,,entries f)
 vector(Module, List)   := (M, v) -> vector map(M,,apply(splice v, i -> {i}))
 vector(Module, RingElement) := vector(Module, Number) := (M, x) -> vector(M, {x})
+vector(Ring,       Matrix)      :=
+vector(RingFamily, Matrix)      := (R, f) -> vector(R^(numRows f), f)
+vector(Ring,       List)        :=
+vector(RingFamily, List)        := (R, v) -> vector(R^(#v), v)
+vector(Ring,       Number)      :=
+vector(Ring,       RingElement) :=
+vector(RingFamily, Number)      :=
+vector(RingFamily, RingElement) := (R, x) -> vector(R^1, {x})
 
 Module#id = M -> map(M, M, 1)
 raw Module := M -> M.RawFreeModule
@@ -240,6 +244,14 @@ toString Module := M -> toString expression M
 net Module := M -> net expression M
 texMath Module := M -> texMath expression M
 
+-- returns null if can't shorten (free module or assigned to variable)
+moduleAbbrv = M -> (
+    if isFreeModule M then expression M
+    else if hasAttribute(M, ReverseDictionary)
+    then getAttribute(M, ReverseDictionary))
+
+short Module := M -> moduleAbbrv M ?? expression M
+
 describe Module := M -> Describe (
      if M.?relations
      then if M.?generators
@@ -272,7 +284,7 @@ Ring ^ ZZ   := Module => (R, n) -> (
 Ring ^ List := Module => (R, degs) -> (
     if not R.?RawRing then error "non-engine free modules with degrees not implemented yet";
     -- check the args
-    degs = - splice degs;
+    degs = - splice\splice degs;
     degrk := degreeLength R;
     if #degs === 0 then ()
     else if isListOfIntegers degs        then ( if degrk != 1
@@ -347,7 +359,7 @@ isSubset(Module, Module) := (M, N) -> (
     ambient M === ambient N and
     if  not M.?relations and not N.?relations then issub(generators M, generators N)
     else if M.?relations and     N.?relations then (
-	isequal(M.relations, N.relations) and issub(generators M, generators N | N.relations))
+	isequal(M.relations, N.relations) and issub(generators M, fullgens N))
     -- see the code for subquotient: if present, M.relations is nonzero; same for N
     -- so one of the modules has nonzero relations and the other doesn't
     else false)

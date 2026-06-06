@@ -35,7 +35,7 @@ KK = ZZ/31991
 SE = KK[x,y,z]/(y^2*z - x*(x-z)*(x+3*z))
 
 -- The sections in this tutorial are
--- 
+
 -- A. Representation of divisors
 --
 -- B. Group operations on divisors

@@ -5,6 +5,7 @@ use evaluate;
 use parser;
 use texmacs;
 use actors5;
+use profiler;
 
 import dirname(s:string):string;
 
@@ -15,10 +16,10 @@ export setupargv():void := (
      setupconst("environment",toExpr(envp));
      );
 
-fileExitHooks := setupvar("fileExitHooks", Expr(emptyList));
-currentFileName := setupvar("currentFileName", nullE);
-currentPosFile  := dummyPosFile;
-currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
+fileExitHooks := setupvarThread("fileExitHooks", Expr(emptyList));
+currentFileName := setupvarThread("currentFileName", nullE);
+threadLocal currentPosFile  := dummyPosFile;
+currentFileDirectory := setupvarThread("currentFileDirectory", toExpr("./"));
 update(err:Error,prefix:string,f:Code):Error := (
      if !err.printed
      then printErrorMessage0(f,prefix + ": " + err.message)
@@ -186,7 +187,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					if err.message == returnMessage
 					|| err.message == continueMessage || err.message == continueMessageWithArg 
 					|| err.message == stepMessage || err.message == stepMessageWithArg 
-					|| err.message == breakMessage || err.message == throwMessage then (
+					|| err.message == breakMessage || err.message == throwMessage
+					|| err.message == finishMessage then (
 					     if stopIfBreakReturnContinue then return lastvalue;
 					     );
 					if err.message == unwindMessage then (
@@ -257,7 +259,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					else buildErrorPacket("error occurred in parsing")))))))));
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
-setInterpreterDepth(n:int):void := (
+export setInterpreterDepth(n:int):void := (
      interpreterDepth = n;
      setGlobalVariable(interpreterDepthS, toExpr(interpreterDepth)));
 incrementInterpreterDepth():void := setInterpreterDepth(interpreterDepth + 1);
@@ -324,7 +326,7 @@ topLevelPrompt():string := (
      if debugLevel == 123 then (
 	  p = "[" + tostring(promptcount) + "]  " + p;
 	  stderr <<  "-- topLevelPrompt:" 
-	  << " prompt = \"" << presentn(p) << "\""
+	  << " prompt = \"" << present(p) << "\""
 	  << endl;
 	  );
      promptcount = promptcount + 1;
@@ -359,7 +361,7 @@ loadprint(filename:string,dc:DictionaryClosure,returnIfError:bool):Expr := (
 	       if err.message == returnMessage
 	       || err.message == continueMessage || err.message == continueMessageWithArg
 	       || err.message == stepMessage || err.message == stepMessageWithArg
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else r
+	       || err.message == breakMessage || err.message == finishMessage then if err.value == dummyExpr then nullE else err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -375,7 +377,7 @@ load(filename:string):Expr := (
 	       if err.message == returnMessage
 	       || err.message == continueMessage || err.message == continueMessageWithArg
 	       || err.message == stepMessage || err.message == stepMessageWithArg
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else r
+	       || err.message == breakMessage || err.message == finishMessage then if err.value == dummyExpr then nullE else err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -488,11 +490,13 @@ setupfun("commandInterpreter",commandInterpreter);
 currentS := setupvar("current",nullE);
 debugger(f:Frame,c:Code):Expr := (
      -- stdIO << "-- recursionDepth = " << recursionDepth << endl;
+     finishTargetDepth = -1;
      oldrecursionDepth := recursionDepth;
      recursionDepth = 0;
      setDebuggingMode(false);
        oldDebuggerCode := getGlobalVariable(currentS);
        setGlobalVariable(currentS,Expr(PseudocodeClosure(f,c)));
+	 printMessage(codePosition(c), "entering debugger (enter 'help' to see commands)");
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
 		r := applyEE(debuggerHook,True);
@@ -503,14 +507,16 @@ debugger(f:Frame,c:Code):Expr := (
 		r := applyEE(debuggerHook,False);
 		when r is Error do return r else nothing;
 		);
+	 if debugLevel != 0 then
+	 printMessage(codePosition(c), "leaving debugger");
 	 decrementInterpreterDepth();
        setGlobalVariable(currentS,oldDebuggerCode);
      setDebuggingMode(true);
      recursionDepth = oldrecursionDepth;
      ret);
-debuggerFun = debugger;
+debuggerpointer = debugger;
 
-currentString := setupvar("currentString", nullE);
+currentString := setupvarThread("currentString", nullE);
 value(e:Expr):Expr := (
      when e
      is q:SymbolClosure do (
@@ -531,9 +537,10 @@ value(e:Expr):Expr := (
 	       if err.message == returnMessage
 	       || err.message == continueMessage || err.message == continueMessageWithArg 
 	       || err.message == stepMessage || err.message == stepMessageWithArg 
-	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value 
+	       || err.message == breakMessage || err.message == finishMessage then if err.value == dummyExpr then nullE else err.value 
 	       else r)
 	  else r)
+     is x:SpecialExpr do value(x.e)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
 setupfun("value'",value);
 
@@ -584,6 +591,52 @@ capture(e:Expr):Expr := (
      else WrongArg(1,"a string"));
 setupfun("capture", capture).Protected = false; -- will be overloaded in m2/examples.m2
 
+parse(e:Expr):Expr := (
+    when e
+    is code:stringCell do (
+	done := false;
+	numParsed := 0;
+	capacity := 4;
+	result := Sequence(nullE, nullE, nullE, nullE);
+	stringFile := stringTokenFile("currentString", code.v);
+	stringFile.posFile.file.fulllines = stdIO.fulllines; -- for TeXmacs mode
+	while true do (
+	    -- mimic the interpreter
+	    while true do (
+		-- lex for a bit until we see something to parse
+		t := peektoken(stringFile, true).word;
+		if t == wordEOF then ( -- end of string
+		    done = true;
+		    break)
+		else if t.parse.precedence <= SemicolonW.parse.precedence then (
+		    if t == SemicolonW || t == NewlineW || t == wordEOC then (
+			gettoken(stringFile, true);
+			nothing)
+		    -- extra right paren
+		    else return buildErrorPacket("syntax error: unmatched " +
+			t.name))
+		-- we found something to parse!
+		else break);
+	    if done then break;
+	    p := parse(stringFile, SemicolonW.parse.precedence, true);
+	    if p == errorTree
+	    then return buildErrorPacket("--backtrace: parse error--");
+	    numParsed = numParsed + 1;
+	    -- ran out of space -- time to grow our sequence
+	    if numParsed > capacity then (
+		capacity = 2 * capacity;
+		newResult := new Sequence len capacity do (
+		    foreach x in result do provide x;
+		    while true do provide nullE);
+		result = newResult);
+	    result.(numParsed - 1) = toExpr(p));
+	if numParsed == 0 then emptyList
+	else if numParsed == capacity then list(result)
+	else list(new Sequence len numParsed do (
+		foreach x in result do provide x)))
+    else WrongArgString());
+setupfun("parse", parse);
+
 normalExit := 0;
 errorExit := 1;
 interruptExit := 2;					    -- see also M2lib.c
@@ -617,6 +670,7 @@ export process():void := (
      setMaxAllowableThreads();
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
+     setStdError(stdError);
      -- we don't know the right directory; calls commandInterpreter and eventually returns:
      ret := readeval(stringTokenFile(startupFile.filename,startupFile.contents),false,false);
      when ret is err:Error do (
@@ -693,6 +747,41 @@ historyLength(e:Expr):Expr := (
 	else WrongNumArgs(0))
     else WrongNumArgs(0));
 setupfun("historyLength", historyLength);
+
+-- enter the debugger
+breakpoint(c:Code):Expr := (
+    e := debuggerpointer(localFrame, c);
+	
+    when e is err:Error do (
+		printMessage(codePosition(c), err.message);
+		if err.message == breakMessage then ( buildErrorPacket(unwindMessage) )
+		else if err.message == returnMessage then (
+			setSteppingFlag();
+			err.value)
+		else if err.message == stepMessage || err.message == stepMessageWithArg then (
+			setSteppingFlag();
+			stepCount = (
+				when err.value is step:ZZcell do
+					if isInt(step) then toInt(step) else 1
+				else 1);
+			if stepCount < 0 then (
+				microStepCount = - stepCount;
+				stepCount = -1;
+			);
+			eval(c))
+		else if err.message == continueMessage then (eval(c))
+		else if err.message == finishMessage then (
+			printMessage(codePosition(c), "finish has been called");
+			finishTargetDepth = recursionDepth - 1;
+			setSteppingFlag();
+			eval(c)
+		)
+		else e
+	)
+	else e
+);
+
+setupop(breakpointS, breakpoint);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "

@@ -3,6 +3,24 @@
 
 needs "modules.m2"
 
+notSameRing := (X,Y) -> (
+     if X === Y then error("expected ",pluralsynonym X, " for the same ring")
+     else error("expected ",synonym X," and ",synonym Y," for the same ring"))
+sameRing = (M,N) -> if ring M === ring N then (M,N) else notSameRing(class M,class N)
+notToSameRing := (X,Y) -> (
+     if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
+     else error("expected ",synonym X," and ",synonym Y," for compatible rings"))
+toSameRing = (M,N) -> (
+     R := ring M; S := ring N;
+     if R =!= S then (
+	 R' := if instance(R,InexactField) then ring R else R;
+	 S' := if instance(S,InexactField) then ring S else S;
+	 if isPromotable(R',S) then (promote(M,S),N)
+	 else if isPromotable(S',R) then (M,promote(N,R))
+	 else notToSameRing(class M,class N)
+	 )
+     else (M,N))
+
 oops := R -> error (
      if degreeLength R === 1
      then "expected degree to be an integer or list of integers of length 1"
@@ -79,31 +97,25 @@ InfiniteNumber * Matrix := (r,m) -> (map(target m, source m, matrix(r*(entries m
 Matrix * InfiniteNumber := (m,r) -> r*m
 Number * Matrix :=
 RingElement * Matrix := (r,m) -> (
-    if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
+    (r,m) = toSameRing(r,m);
      map(target m, source m, reduce(target m, raw r * raw m)))
 Matrix * Number :=
 Matrix * RingElement := (m,r) -> (
-    if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
+    (r,m) = toSameRing(r,m);
      map(target m, source m, reduce(target m, raw m * raw r)))
 Matrix / Number      :=
 Matrix / RingElement := (m,r) -> m * (1/r)
 
-toSameRing = (m,n) -> (
-     if ring m =!= ring n then (
-	  try (promote(m,ring n) , n) else
-	  try (m , promote(n,ring m))
-	  else error "expected compatible rings"
-	  )
-     else (m,n))
-
 Matrix _ Sequence := RingElement => (m,ind) -> (
-     if # ind === 2
-     then promote(rawMatrixEntry(m.RawMatrix, ind#0, ind#1), ring m)
-     else error "expected a sequence of length two"
-     )
+    n := (raw m)_ind;
+    if instance(n, RawRingElement) then promote(n, ring m)
+    else if instance(n, RawMatrix) then map(ring m, n)
+    else error "internal error")
 
-Number == Matrix :=
-RingElement == Matrix := (r,m) -> m == r
+Number      == Matrix :=
+RingElement == Matrix :=
+Number      == Vector :=
+RingElement == Vector := (r,m) -> m == r
 
 Matrix == Matrix := (f,g) -> (
     if source f === source g
@@ -115,26 +127,34 @@ Matrix == Matrix := (f,g) -> (
            target f == target g and 
            raw(super f * inducedMap(source f, source g)) === raw super g
     )
+Vector == Matrix := (v,m) -> matrix v == m
+Matrix == Vector := (m,v) -> m == matrix v
 
 Matrix == Number :=
 Matrix == RingElement := (m,f) -> m - f == 0		    -- slow!
+Vector == Number      :=
+Vector == RingElement := (v,f) -> matrix v == f
 Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero m.RawMatrix else m - i == 0
 
 Matrix + Matrix := Matrix => (
      (f,g) -> map(target f, source f, reduce(target f, raw f + raw g))
      ) @@ toSameRing
-Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
-RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
-Number + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
-Matrix + Number := (f,i) -> if i === 0 then f else f + i*id_(target f)
+Matrix + RingElement :=
+Matrix + Number      := (f,r) -> if r == 0 then f else f + r*id_(target f)
+RingElement + Matrix :=
+Number      + Matrix := (r,f) -> f + r
+Vector + Number := Vector + RingElement := (v,r) -> vector(matrix v + r)
+Number + Vector := RingElement + Vector := (r,v) -> vector(r + matrix v)
 
 Matrix - Matrix := Matrix => (
      (f,g) -> map(target f, source f, reduce(target f, raw f - raw g))
      ) @@ toSameRing
-Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
-RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
-Number - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
-Matrix - Number := (f,i) -> if i === 0 then f else f - i*id_(target f)
+Matrix - RingElement :=
+Matrix - Number      := (f,r) -> if r == 0 then f else f - r*id_(target f)
+RingElement - Matrix :=
+Number      - Matrix := (r,f) -> -f + r
+Vector - Number := Vector - RingElement := (v,r) -> vector(matrix v - r)
+Number - Vector := RingElement - Vector := (r,v) -> vector(r - matrix v)
 
 - Matrix := Matrix => f -> new Matrix from {
      symbol ring => ring f,
@@ -166,13 +186,8 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       q,
 	       Degree => degree m + if m.?RingMap then m.RingMap.cache.DegreeMap degree n else degree n))
      else (
-     	  R := ring m;
+	  (m,n) = toSameRing(m,n);
 	  S := ring target n;
-	  if R =!= S then ( -- use toSameRing?
-	       try m = promote(m,S) else
-	       try n = promote(n,R) else
-	       error "maps over incompatible rings";
-	       );
 	  M = target m;
 	  P := source m;
 	  N = source n;
@@ -180,13 +195,8 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  if not isFreeModule P or not isFreeModule Q or rank P =!= rank Q
 	  then error "maps not composable";
 	  dif := degrees P - degrees Q;
-	  deg := (
-	       if #dif === 0
-	       then degree m + degree n
-	       else if same dif
-	       then degree m + degree n + dif#0
- 	       else toList (degreeLength ring m:0)
-	       );
+	  deg := degree m + degree n;
+	  if #dif > 0 then if same dif then N = N ** S^{-dif#0} else deg = toList (degreeLength S:0);
 	  f := m.RawMatrix * n.RawMatrix;
 	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, 0);
 	  f = reduce(M,f);
@@ -195,8 +205,11 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  else map(M,N,f)))
 
 Matrix#1 = f -> (
-    if source f =!= target f then error "expected source and target to agree"
-    else id_(target f))
+    M := target f;
+    N := source f;
+    if (M =!= N) and (not isFreeModule M or not isFreeModule N or rank M =!= rank N)
+    then error "expected source and target to agree"
+    else id_M)
 Matrix ^ ZZ := Matrix => BinaryPowerMethod
 
 transpose Matrix := Matrix => (cacheValue symbol transpose) (
@@ -213,22 +226,37 @@ blocks := m -> if m.cache.?components then flatten apply(m.cache.components,bloc
 
 protect Blocks
 blockMatrixForm=false;  -- governs expression Matrix inclusion of blocks
-expression Matrix := m -> (
-    x := applyTable(entries m, expression);
-    d := degrees -* cover *- target m;
-    if not all(d, i -> all(i, j -> j == 0)) then x=append(x,Degrees=>{d, degrees source m});
-    if blockMatrixForm then (
-    	b1 := blocks target m;
-    	b2 := blocks source m;
-    	if #b1>1 or #b2>1 then x=append(x,Blocks=>{b1,b2});
-	);
-    MatrixExpression x
+expression Matrix := m -> MatrixExpression (
+    if m == 0 then {symbol zero => (target m, source m)}
+    else (
+	x := applyTable(entries m, expression);
+	d := degrees -* cover *- target m;
+	if not all(d, i -> all(i, j -> j == 0)) then x=append(x,Degrees=>{d, degrees source m});
+	if blockMatrixForm then (
+	    b1 := blocks target m;
+	    b2 := blocks source m;
+	    if #b1>1 or #b2>1 then x=append(x,Blocks=>{b1,b2});
+	    );
+	x)
     )
 
 net Matrix := net @@ expression
 toString Matrix := toString @@ expression
 texMath Matrix := texMath @@ expression
-short Matrix := short @@ expression
+short Matrix := m -> MatrixExpression ( -- can't go thru MatrixExpression
+    if m==0 then {symbol zero => (target m, source m)} else (
+	n1:=rank target m;
+	n2:=rank source m;
+	if n1>shortLength then
+	if n2>shortLength then
+	{{short m_(0,0),cdots,short m_(0,n2-1)},{vdots,ddots,vdots},{short m_(n1-1,0),cdots,short m_(n1-1,n2-1)}}
+	else
+	{apply(n2,i->short m_(0,i)),toList(n2:vdots),apply(n2,i->short m_(n1-1,i))}
+	else if n2>shortLength then
+	apply(n1,i->{short m_(i,0),cdots,short m_(i,n2-1)})
+	else applyTable(entries m,short)
+	)
+    )
 
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
@@ -239,11 +267,16 @@ describe Matrix := m -> (
     )
 toExternalString Matrix := m -> toString describe m;
 
+isIsomorphism = method(TypicalValue => Boolean)
 isIsomorphism Matrix := f -> cokernel f == 0 and kernel f == 0
 
 isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous target m and isHomogeneous source m and rawIsHomogeneous m.RawMatrix ) )
 
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
+
+-----------------------------------------------------------------------------
+-- directSum and friends
+-----------------------------------------------------------------------------
 
 ggConcatCols := (tar,src,mats) -> (
      map(tar,src,if mats#0 .?RingMap then mats#0 .RingMap,rawConcatColumns (raw\mats),Degree => if same(degree \ mats) then degree mats#0)
@@ -260,7 +293,7 @@ ggConcatBlocks = (tar,src,mats) -> (
      then f = map(target f, source f, f, Degree => degree mats#0#0);
      f)
 
-sameringMatrices = mats -> (
+sameRingMatrices = mats -> (
      if same apply(mats, m -> (if m.?RingMap then m.RingMap,ring target m, ring source m))
      then mats
      else (
@@ -269,7 +302,7 @@ sameringMatrices = mats -> (
 
 directSum Matrix := f -> Matrix.directSum (1 : f)
 Matrix.directSum = args -> (
-     args = sameringMatrices args;
+     args = sameRingMatrices args;
      R := ring args#0;
      if not all(args, f -> ring f === R) then error "expected matrices all over the same ring";
      new Matrix from {
@@ -318,28 +351,29 @@ indices HashTable := X -> (
      else error "expected an object with components"
      )
 
+-- This is used for methods like directSum or pullback/pushout
+-- which accept an arbitrary list of objects of the same type.
+applyUniformMethod = (symb, name) -> args -> (
+    if #args === 0 then error("expected at least one argument for ", name);
+    type := if uniform args then class args#0 else error("expected uniform objects for ", name);
+    meth := lookup(symb, type) ?? error("no method for ", name, " of ", pluralsynonym type);
+    if (Y := youngest args) =!= null and Y.?cache
+    then Y.cache#(symb, args) ??= meth args else meth args)
+
 directSum List := args -> directSum toSequence args
-directSum Sequence := args -> (
-    if #args === 0 then error "expected more than 0 arguments";
-    type := if uniform args then class args#0 else error "incompatible objects in direct sum";
-    meth := lookup(symbol directSum, type);
-    if meth === null then error "no method for direct sum";
-    Y := youngest args;
-    key := (directSum, args);
-    if Y === null or not Y.?cache then meth args else
-    if Y.cache#?key then Y.cache#key else Y.cache#key = meth args)
+directSum Sequence := applyUniformMethod(symbol directSum, "direct sum")
 
 -- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
 Option ++ Option := directSum
 directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
-     if #args === 0 then error "expected more than 0 arguments";
+     if #args === 0 then error "expected at least one argument";
      objects := apply(args,last);
      labels  := toList args/first;
      type := if uniform objects then class objects#0 else error "incompatible objects in direct sum";
      meth := lookup(symbol directSum, type);
-     if meth === null then error "no method for direct sum";
+     if meth === null then error("no method for direct sum of ", pluralsynonym type);
      M := meth objects;
      M.cache.indices = labels;
      ic := M.cache.indexComponents = new HashTable from apply(#labels, i -> labels#i => i);
@@ -368,7 +402,7 @@ RingElement || RingElement := Matrix => (r,s) -> matrix {{r}} || matrix {{s}}
 concatCols = mats -> (
      mats = nonnull toList mats;
      if # mats === 1 then return mats#0;
-     mats = sameringMatrices mats;
+     mats = sameRingMatrices mats;
      sources := apply(mats,source);
      -- if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
      targets := apply(mats,target);
@@ -378,7 +412,7 @@ concatCols = mats -> (
 concatRows = mats -> (
      mats = nonnull toList mats;
      if # mats === 1 then return mats#0;
-     mats = sameringMatrices mats;
+     mats = sameRingMatrices mats;
      sources := apply(mats,source);
      -- if not same sources then error "expected matrices in the same column to have equal sources";
      targets := apply(mats,target);
@@ -400,8 +434,8 @@ Matrix || Number := (f,g) -> concatRows(f,g*id_(source f))
 -----------------------------------------------------------------------------
 -- submatrix, submatrixByDegrees
 -----------------------------------------------------------------------------
-Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
-Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
+Matrix _ List := Matrix => (f,v) -> submatrix(f, v)  -- get some columns
+Matrix ^ List := Matrix => (f,v) -> submatrix(f, v,) -- get some rows
 
 Matrix _ ZZ := Vector => (m,i) -> (
      R := ring m;
@@ -411,10 +445,13 @@ Matrix _ ZZ := Vector => (m,i) -> (
      new target h from {h})
 
 -- given a map of free modules, find a submatrix of it
-submatrixFree = (m, rows, cols) -> map(ring m, if rows === null
-    then rawSubmatrix(raw cover m, listZZ cols)
-    else rawSubmatrix(raw cover m, listZZ rows,
-	if cols =!= null then listZZ cols else 0 .. numgens source m - 1))
+submatrixFree = (m, rows, cols) -> (
+    if rows =!= null then rows = adjustIndices(listZZ rows, numRows m);
+    if cols =!= null then cols = adjustIndices(listZZ cols, numColumns m);
+    map(ring m, if rows === null
+    then rawSubmatrix(raw cover m, cols)
+    else rawSubmatrix(raw cover m, rows,
+	if cols =!= null then cols else 0 .. numgens source m - 1)))
 -- given a module, find a part of the ambient module
 -- along with corresponding generators and relations
 sliceModule = (M, rows) -> (
@@ -429,17 +466,17 @@ submatrix  = method(TypicalValue => Matrix)
 submatrix' = method(TypicalValue => Matrix)
 
 submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(sliceModule(target m, rows), sliceModule(source m, cols), raw submatrixFree(m, rows, cols))
-submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(sliceModule(target m, rows), source m,                    raw submatrixFree(m, rows, null))
+submatrix(Matrix, VisibleList, Nothing)     := (m, rows, cols) -> map(sliceModule(target m, rows), source m,                    raw submatrixFree(m, rows, null))
 submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                    sliceModule(source m, cols), raw submatrixFree(m, null, cols))
-submatrix(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix(m, cols)
-submatrix(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
+submatrix(Matrix, Nothing,     VisibleList) := (m, rows, cols) -> submatrix(m, cols)
+submatrix(Matrix, Nothing,     Nothing)     := (m, rows, cols) -> m
 
 compl := (M, rows) -> if #(rows = listZZ rows) > 0 then toList(0 .. numgens M - 1) - set rows
 submatrix'(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> submatrix(m, compl(target m, rows), compl(source m, cols))
-submatrix'(Matrix, VisibleList, Nothing)     := (m, rows, null) -> submatrix(m, compl(target m, rows), null)
+submatrix'(Matrix, VisibleList, Nothing)     := (m, rows, cols) -> submatrix(m, compl(target m, rows), null)
 submatrix'(Matrix, VisibleList)              := (m,       cols) -> submatrix(m, null, compl(source m, cols))
-submatrix'(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix'(m, cols)
-submatrix'(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
+submatrix'(Matrix, Nothing,     VisibleList) := (m, rows, cols) -> submatrix'(m, cols)
+submatrix'(Matrix, Nothing,     Nothing)     := (m, rows, cols) -> m
 
 submatrixByDegrees = method()
 submatrixByDegrees(Matrix, Sequence, Sequence) := (m, tarBox, srcBox) -> (
@@ -484,7 +521,7 @@ bothFree := (f,g) -> (
      or not isFreeModule source g or not isFreeModule target g then error "expected a homomorphism between free modules"
      else (f,g))
 
-diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing 
+diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing
 diff(RingElement, RingElement) := RingElement => (f,g) -> (diff(matrix{{f}},matrix{{g}}))_(0,0)
 diff(Matrix, RingElement) := (m,f) -> diff(m,matrix{{f}})
 diff(RingElement, Matrix) := (f,m) -> diff(matrix{{f}},m)
@@ -531,25 +568,21 @@ leadTerm(Matrix) := Matrix => m -> (
 borel Matrix := Matrix => m -> generators borel monomialIdeal m
 
 clean(RR,Matrix) := (epsilon,M) -> map(target M, source M, clean(epsilon,raw M))
-norm(RR,Matrix) := (p,M) -> new RR from norm(p,raw M)
-norm(InfiniteNumber,Matrix) := (p,M) -> (
-     prec := precision M;
-     if prec === infinity then (
-	  error "expected a matrix over RR or CC";
-	  )
-     else (
-     	  norm(numeric(prec,p), M)
-	  )
-     )
-norm(Matrix) := (M) -> (
-     prec := precision M;
-     if prec === infinity then (
-	  error "expected a matrix over RR or CC";
-	  )
-     else (
-     	  norm(numeric(prec,infinity), M)
-	  )
-     )
+
+norm Matrix := norm_infinity
+norm(Number, Matrix) := (p, M) -> (
+    R := ring M;
+    if p == infinity then (
+	-- l^infty norm for RR and CC is implemented in the engine
+	if instance(R, RealField) or instance(R, ComplexField)
+	then (
+	    if precision p > precision R
+	    then p = numeric(precision R, infinity);
+	    new RR from norm(p, raw M))
+	else max apply(flatten entries M, norm))
+    else if isReal p and p >= 1
+    then (sum(flatten entries M, x -> (norm(p, x))^p))^(1/p)
+    else error "expected p >= 1")
 
 numRows Matrix := M -> numgens cover target M
 numColumns Matrix := M -> numgens cover source M
@@ -622,16 +655,33 @@ isSubquotient(Module,Module) := (M,N) -> (
      and
      ambient M === ambient N
      and
-     (generators M | relations M) % (generators N | relations N) == 0
+     fullgens M % fullgens N == 0
      and
      relations N % relations M == 0
      )
+
+-----------------------------------------------------------------------------
+-- inducedMap
+-----------------------------------------------------------------------------
 
 inducedMap = method (
      Options => {
 	  Verify => true,
 	  Degree => null 
 	  })
+-- TODO: hookify this, so people can add more application specific induced maps
+inducedMap(Module, Module)          := Matrix => opts -> (M, N) -> (
+    if ambient M =!= ambient N then error "inducedMap: expected modules with same ambient free module";
+    -- e.g. avoid a gb computation for inducedMap(M, image basis(d, M))
+    if N.cache.?Monomials and M === target N.cache.Monomials
+    then map(M, N, N.cache.Monomials, Degree => opts.Degree)
+    else inducedMap(M, N, id_(ambient N), opts))
+inducedMap(Module, Nothing, Matrix) := Matrix => opts -> (M, N, f) -> (
+    B := image f;
+    -- e.g. avoid a gb computation for inducedMap(image f, , f)
+    if M === target B.cache.Monomials
+    then map(M, source B.cache.Monomials, B.cache.Monomials, Degree => opts.Degree)
+    else inducedMap(M, source f, f, opts))
 inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
      N := target f;
      M := source f;
@@ -653,7 +703,6 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
 	  if not isWellDefined f' then error "inducedMap: expected matrix to induce a well-defined map";
 	  );
      f')
-inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
 inducedMap(Nothing,Module,Matrix) := o -> (M,N,f) -> inducedMap(target f,N, f,o)
 inducedMap(Nothing,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(target f,source f, f,o)
 
@@ -666,10 +715,6 @@ addHook((inducedMap, Module, Module, Matrix), Strategy => Default, (opts, N', M'
      f' := g // gbN';
      f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
      (f', g, gbN', gbM)))
-
-inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
-    if ambient M =!= ambient N then error "inducedMap: expected modules with same ambient free module";
-     inducedMap(M,N,id_(ambient N),o))
 
 -- TODO: deprecate this in favor of isWellDefined
 inducesWellDefinedMap = method(TypicalValue => Boolean)
@@ -687,25 +732,20 @@ inducesWellDefinedMap(Module,Nothing,Matrix) := (M,N,f) -> inducesWellDefinedMap
 inducesWellDefinedMap(Nothing,Module,Matrix) := (M,N,f) -> inducesWellDefinedMap(target f,N,f)
 inducesWellDefinedMap(Nothing,Nothing,Matrix) := (M,N,f) -> true
 
-vars Ring := Matrix => R -> (
-     g := generators R;
-     if R.?vars then R.vars else R.vars =
-     map(R^1,,{g}))
+-----------------------------------------------------------------------------
 
+vars Ring := Matrix => R -> R.vars ??= map(module R, , {generators R})
+
+relations  Module := Matrix => M -> (
+    if M.?relations then M.relations
+    else map(ambient M, (ring M)^0, 0))
+-- TODO: why are there two places for generators?
 generators Module := Matrix => opts -> M -> (
      if M.?generators then M.generators
      else if M.cache.?generators then M.cache.generators
      else M.cache.generators = id_(ambient M))
 
 Module_* := M -> apply(numgens M, i -> M_i)
-
-relations Module := Matrix => M -> (
-     if M.?relations then M.relations 
-     else (
-	  R := ring M;
-	  map(ambient M,R^0,0)
-	  )
-     )
 
 degrees Matrix := f -> {degrees target f, degrees source f}
 
@@ -732,6 +772,27 @@ degrees Ring := R -> degree \ generators R
 leadComponent = method()
 leadComponent Matrix := List => m -> nonnull for c to numColumns m - 1 list position(numRows m, r -> m_(r,c) != 0, Reverse => true)
 leadComponent Vector := ZZ   => v -> try first leadComponent matrix v else null
+
+midpoint Module := M -> M.cache.midpoint ??= (
+    R := midpoint ring M;
+    if R === ring M then M
+    else (
+	if not isFreeModule M then error "expected a free module";
+	R^(-degrees M)))
+
+intervalMatrixHelper := (func, f) -> (
+    M := midpoint target f;
+    N := midpoint source f;
+    if M === target f and N === source f then f
+    else map(M, N, apply(entries f, row -> func \ row)))
+
+midpoint   Matrix := f -> intervalMatrixHelper(midpoint,   f)
+left       Matrix := f -> intervalMatrixHelper(left,       f)
+right      Matrix := f -> intervalMatrixHelper(right,      f)
+lowerLeft  Matrix := f -> intervalMatrixHelper(lowerLeft,  f)
+lowerRight Matrix := f -> intervalMatrixHelper(lowerRight, f)
+upperLeft  Matrix := f -> intervalMatrixHelper(upperLeft,  f)
+upperRight Matrix := f -> intervalMatrixHelper(upperRight, f)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

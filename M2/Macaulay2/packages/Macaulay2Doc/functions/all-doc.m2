@@ -5,7 +5,11 @@
 document { 
      Key => all,
      Headline => "whether all elements satisfy a specified condition",
-     SeeAlso => { "scan", "apply", "select", "any", "member" }
+     SeeAlso => { "scan", "apply", "select", "any", "member" },
+     Subnodes => {
+	 TO (all, BasicList, Function),
+	 TO (all, BasicList, BasicList, Function),
+         },
      }
 document { 
      Key => {(all,BasicList,Function),(all,ZZ,Function),(all,BasicList)},

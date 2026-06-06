@@ -8,58 +8,10 @@
 
 #include <algorithm>
 #include <utility>
+#include <vector>
 
 template <typename ACoeffRing>
 class DMat;
-
-template <typename ACoeffRing>
-class DMatConstIterator
-{
- public:
-  typedef DMat<ACoeffRing> Mat;
-  typedef typename Mat::ElementType ElementType;
-
-  DMatConstIterator(const ElementType* start, size_t stride)
-      : mCurrent(start), mStride(stride)
-  {
-  }
-
-  void operator++() { mCurrent += mStride; }
-  const ElementType& operator*() { return *mCurrent; }
-  bool operator==(const DMatConstIterator& i) const { return (&(*i.mCurrent) == mCurrent); }
-  bool operator!=(const DMatConstIterator& i) const { return (&(*i.mCurrent) != mCurrent); }
- private:
-  const ElementType* mCurrent;
-  size_t mStride;
-};
-
-template <typename ACoeffRing>
-class DMatIterator
-{
- public:
-  typedef DMat<ACoeffRing> Mat;
-  typedef typename Mat::ElementType ElementType;
-
-  DMatIterator(ElementType* start, size_t stride)
-      : mCurrent(start), mStride(stride)
-  {
-  }
-
-  void operator++() { mCurrent += mStride; }
-  ElementType& operator*() { return *mCurrent; }
-  bool operator==(DMatConstIterator<ACoeffRing>& i) const
-  {
-    return (&(*i) == mCurrent);
-  }
-  bool operator!=(DMatConstIterator<ACoeffRing>& i) const
-  {
-    return (&(*i) != mCurrent);
-  }
-
- private:
-  ElementType* mCurrent;
-  size_t mStride;
-};
 
 // Special instantiations of DMat class
 #include "dmat-zz-flint.hpp"
@@ -74,32 +26,41 @@ class DMat
  public:
   typedef ACoeffRing CoeffRing;
   typedef typename ACoeffRing::ElementType ElementType;
-  typedef ElementType elem;
   typedef typename ACoeffRing::Element Element;
 
-  typedef DMatIterator<ACoeffRing> Iterator;
-  typedef DMatConstIterator<ACoeffRing> ConstIterator;
-
   DMat() : mRing(nullptr), mNumRows(0), mNumColumns(0), mArray(nullptr) {}
-  DMat(const ACoeffRing& R, size_t nrows, size_t ncols)
-      : mRing(&R), mNumRows(nrows), mNumColumns(ncols)
+  DMat(const ACoeffRing& R,
+       size_t nrows,
+       size_t ncols)
+      : mRing(&R),
+        mNumRows(nrows),
+        mNumColumns(ncols)
   {
     size_t len = mNumRows * mNumColumns;
     if (len == 0)
-      mArray = nullptr;
+      {
+        mArray = nullptr;
+      }
     else
       {
         mArray = newarray(ElementType,len);
-        //        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
           {
             ring().init(mArray[i]);
             ring().set_zero(mArray[i]);
           }
+        ElementType* next = mArray;
+        for (size_t r=0; r < mNumRows; ++r)
+          {
+            mRowPointers.push_back(next);
+            next += mNumColumns;
+          }
       }
   }
   DMat(const DMat<ACoeffRing>& M)
-      : mRing(&M.ring()), mNumRows(M.numRows()), mNumColumns(M.numColumns())
+      : mRing(&M.ring()),
+        mNumRows(M.numRows()),
+        mNumColumns(M.numColumns())
   {
     size_t len = mNumRows * mNumColumns;
     if (len == 0)
@@ -107,17 +68,29 @@ class DMat
     else
       {
         mArray = newarray(ElementType,len);
-        //        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
-          ring().init_set(mArray[i], M.array()[i]);
+          {
+            ring().init(mArray[i]);
+            ring().set_zero(mArray[i]);
+          }
+        ElementType* next = mArray;
+        for (size_t r=0; r < mNumRows; ++r)
+          {
+            mRowPointers.push_back(next);
+            next += mNumColumns;
+          }
+        for (size_t r = 0; r < mNumRows; ++r)
+          for (size_t c = 0; c < mNumColumns; ++c)
+            ring().init_set(entry(r,c), M.entry(r,c));
       }
   }
+
   ~DMat()
   {
     size_t len = mNumRows * mNumColumns;
     for (size_t i = 0; i < len; i++) ring().clear(mArray[i]);
-    //    if (mArray != 0) delete[] mArray;
     if (mArray != nullptr) freemem(mArray);
+    // don't need to free mRowPointers (they are pointers into mArray...)
   }
 
   // swap the actual matrices of 'this' and 'M'.
@@ -127,68 +100,21 @@ class DMat
     std::swap(mNumRows, M.mNumRows);
     std::swap(mNumColumns, M.mNumColumns);
     std::swap(mArray, M.mArray);
+    std::swap(mRowPointers, M.mRowPointers);
   }
 
   const ACoeffRing& ring() const { return *mRing; }
   size_t numRows() const { return mNumRows; }
   size_t numColumns() const { return mNumColumns; }
-  // column-major order (old)
-  // Iterator rowBegin(size_t row) { return Iterator(array() + row, numRows());
-  // }
-  // ConstIterator rowBegin(size_t row) const { return ConstIterator(array() +
-  // row, numRows()); }
-  // ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + row
-  // + numRows() * numColumns(), numRows()); }
 
-  // Iterator columnBegin(size_t col) { return Iterator(array() + col *
-  // numRows(), 1); }
-  // ConstIterator columnBegin(size_t col) const { return ConstIterator(array()
-  // + col * numRows(), 1); }
-  // ConstIterator columnEnd(size_t col) const { return ConstIterator(array() +
-  // (col+1) * numRows(), 1); }
-
-  // row-major order
-  Iterator rowBegin(size_t row)
-  {
-    return Iterator(array() + row * numColumns(), 1);
-  }
-  ConstIterator rowBegin(size_t row) const
-  {
-    return ConstIterator(array() + row * numColumns(), 1);
-  }
-  ConstIterator rowEnd(size_t row) const
-  {
-    return ConstIterator(array() + (row + 1) * numColumns(), 1);
-  }
-
-  Iterator columnBegin(size_t col)
-  {
-    return Iterator(array() + col, numColumns());
-  }
-  ConstIterator columnBegin(size_t col) const
-  {
-    return ConstIterator(array() + col, numColumns());
-  }
-  ConstIterator columnEnd(size_t col) const
-  {
-    return ConstIterator(array() + col + numRows() * numColumns(),
-                         numColumns());
-  }
-
-  // column-major order (old)
-  // ElementType& entry(size_t row, size_t column) { return mArray[mNumRows *
-  // column + row]; }
-  // const ElementType& entry(size_t row, size_t column) const { return
-  // mArray[mNumRows * column + row]; }
-
-  // row-major order
+  // default placement: elements in row-major order
   ElementType& entry(size_t row, size_t column)
   {
-    return mArray[mNumColumns * row + column];
+    return *(mRowPointers[row] + column);
   }
   const ElementType& entry(size_t row, size_t column) const
   {
-    return mArray[mNumColumns * row + column];
+    return *(mRowPointers[row] + column);
   }
 
   void resize(size_t new_nrows, size_t new_ncols)
@@ -197,16 +123,25 @@ class DMat
     swap(newMatrix);
   }
 
-  const ElementType* array() const { return mArray; }
-  ElementType*& array() { return mArray; }
+  // Get rid of these too!
   const ElementType* rowMajorArray() const { return mArray; }
   ElementType*& rowMajorArray() { return mArray; }
+
+  // These are labelled 'unsafe', as it s possible the rows
+  // are out of order (which happens in particular if
+  // certain flint functions created this.
+  const ElementType* unsafeArray() const { return mArray; }
+  ElementType*& unsafeArray() { return mArray; }
+  
  private:
   const ACoeffRing* mRing;
   size_t mNumRows;
   size_t mNumColumns;
   ElementType* mArray;
+  std::vector<ElementType*> mRowPointers;
 };
+
+
 
 #endif
 

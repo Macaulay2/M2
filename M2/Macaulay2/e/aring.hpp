@@ -8,6 +8,14 @@
 #include "ringelem.hpp"
 #include "buffer.hpp"
 
+#ifdef HAVE_FLINT_RAND_INIT
+#define FLINT_RAND_INIT(x) flint_rand_init(x)
+#define FLINT_RAND_CLEAR(x) flint_rand_clear(x)
+#else
+#define FLINT_RAND_INIT(x) flint_randinit(x)
+#define FLINT_RAND_CLEAR(x) flint_randclear(x)
+#endif
+
 class PolynomialRing;
 class RingMap;
 
@@ -32,11 +40,12 @@ enum RingID {
   ring_GFM2,
   ring_GFFlintBig,
   ring_GFFlintZech,
-  ring_RRi,
   ring_RR,
   ring_CC,
   ring_RRR,
   ring_CCC,
+  ring_RRi,
+  ring_CCi,
   ring_tower_ZZp,
   ring_old      ///< refers to all rings which are not ConcreteRing's.
 };
@@ -164,17 +173,39 @@ class DummyRing : public SimpleARing<DummyRing>
   void getGenerator(elem &result) const { result = 0; }
   const PolynomialRing &originalRing() const { return *mOriginalRing; }
   long coerceToLongInteger(ElementType a) const { return a; }
-  void lift_to_original_ring(ring_elem &result, const ElementType &f) const {}
-  M2_arrayint fieldElementToM2Array(ElementType el) const { return nullptr; }
-  void to_ring_elem(ring_elem &result, const ElementType &a) const {}
-  void from_ring_elem(ElementType &result, const ring_elem &a) const {}
+  void lift_to_original_ring(ring_elem &result, const ElementType &f) const
+    {
+      (void) result;
+      (void) f;
+    }
+  M2_arrayint fieldElementToM2Array(ElementType el) const
+    {
+      (void) el;
+      return nullptr;
+    }
+  void to_ring_elem(ring_elem &result, const ElementType &a) const
+    {
+      (void) result;
+      (void) a;
+    }
+  void from_ring_elem(ElementType &result, const ring_elem &a) const
+    {
+      (void) result;
+      (void) a;
+    }
   bool promote(const Ring *Rf, const ring_elem f, ElementType &result) const
   {
+    (void) Rf;
+    (void) f;
+    (void) result;
     return false;
   }
 
   bool lift(const Ring *Rg, const ElementType f, ring_elem &result) const
   {
+    (void) Rg;
+    (void) f;
+    (void) result;
     return false;
   }
 
@@ -183,6 +214,10 @@ class DummyRing : public SimpleARing<DummyRing>
             int first_var,
             ring_elem &result) const
   {
+    (void) map;
+    (void) f;
+    (void) first_var;
+    (void) result;
   }
 
   void text_out(buffer &o) const { o << "GF(dummy)"; }
@@ -190,68 +225,148 @@ class DummyRing : public SimpleARing<DummyRing>
                      const ElementType a,
                      bool p_one,
                      bool p_plus,
-                     bool p_parens) const {};
+                     bool p_parens) const
+    {
+      (void) o;
+      (void) a;
+      (void) p_one;
+      (void) p_plus;
+      (void) p_parens;
+    }
 
   void init_set(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
   void set_from_long(elem &result, long a) const { result = a; }
   void init(elem &result) const { result = 0; }
-  void set_from_mpz(elem &result, mpz_srcptr a) const { result = 0; }
-  bool set_from_mpq(elem &result, mpq_srcptr a) const { return false; }
-  bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
-  void set_var(elem &result, int v) const { result = 1; }
-  bool is_unit(const ElementType f) const { return false; }
-  bool is_zero(const ElementType f) const { return true; }
+  void set_from_mpz(elem &result, mpz_srcptr a) const
+    {
+      (void) a;
+      result = 0;
+    }
+  bool set_from_mpq(elem &result, mpq_srcptr a) const
+    {
+      (void) result;
+      (void) a;
+      return false;
+    }
+  bool set_from_BigReal(elem &result, gmp_RR a) const
+    {
+      (void) result;
+      (void) a;
+      return false;
+    }
+  void set_var(elem &result, int v) const
+    {
+      (void) v;
+      result = 1;
+    }
+  bool is_unit(const ElementType f) const
+    {
+      (void) f;
+      return false;
+    }
+  bool is_zero(const ElementType f) const
+    {
+      (void) f;
+      return true;
+    }
   bool is_equal(const ElementType f, const ElementType g) const
   {
+    (void) f;
+    (void) g;
     return false;
   }
   int compare_elems(const ElementType f, const ElementType g) const
   {
+    (void) f;
+    (void) g;
     return 1;
   }
 
   static void clear(elem &result) { result = 0; }
   void set_zero(elem &result) const { result = 0; }
   void copy(elem &result, const elem a) const { result = a; }
-  void negate(elem &result, const elem a) const {};
-  ;
+  void negate(elem &result, const elem a) const
+    {
+      (void) result;
+      (void) a;
+    }
 
-  void invert(elem &result, const elem a) const {};
-  ;
+  void invert(elem &result, const elem a) const
+    {
+      (void) result;
+      (void) a;
+    }
 
-  void add(elem &result, const elem a, const elem b) const {};
-  ;
+  void add(elem &result, const elem a, const elem b) const
+    {
+      (void) result;
+      (void) a;
+      (void) b;
+    }
 
   void subtract(ElementType &result,
                 const ElementType a,
-                const ElementType b) const {};
-  ;
+                const ElementType b) const
+    {
+      (void) result;
+      (void) a;
+      (void) b;
+    }
 
-  void subtract_multiple(elem &result, const elem a, const elem b) const {};
-  ;
+  void subtract_multiple(elem &result, const elem a, const elem b) const
+    {
+      (void) result;
+      (void) a;
+      (void) b;
+    }
 
-  void mult(elem &result, const elem a, const elem b) const {};
-  ;
+  void mult(elem &result, const elem a, const elem b) const
+    {
+      (void) result;
+      (void) a;
+      (void) b;
+    }
 
   ///@brief test doc
-  void divide(elem &result, const elem a, const elem b) const {};
-  ;
+  void divide(elem &result, const elem a, const elem b) const
+    {
+      (void) result;
+      (void) a;
+      (void) b;
+    }
 
-  void power(elem &result, const elem a, const int n) const {};
-  ;
+  void power(elem &result, const elem a, const int n) const
+    {
+      (void) result;
+      (void) a;
+      (void) n;
+    }
 
-  void power_mpz(elem &result, const elem a, mpz_srcptr n) const {};
-  ;
+  void power_mpz(elem &result, const elem a, mpz_srcptr n) const
+    {
+      (void) result;
+      (void) a;
+      (void) n;
+    }
 
   void syzygy(const ElementType a,
               const ElementType b,
               ElementType &x,
-              ElementType &y) const {};
-  ;
-
+              ElementType &y) const
+    {
+      (void) a;
+      (void) b;
+      (void) x;
+      (void) y;
+    }
   void random(ElementType &result) const { result = 0; }
-  void swap(ElementType &a, ElementType &b) const { assert(false); };
+  void swap(ElementType &a, ElementType &b) const
+    {
+      (void) a;
+      (void) b;
+      assert(false);
+    }
 };
 
 };  // namespace M2

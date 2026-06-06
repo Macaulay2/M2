@@ -2,21 +2,18 @@
 --- author(s): MES
 --- notes: some changes Sept 2018 LS
 
--*
--- TODO
-(isHomogeneous,Number)
-(isHomogeneous,PolynomialRing)
-(isHomogeneous,QuotientRing)
-*-
+undocumented {
+    (isHomogeneous, Number),
+}
 
 document { 
      Key => {isHomogeneous,
 	  (isHomogeneous,Ring),
-	  (isHomogeneous,ChainComplexMap),
+	  (isHomogeneous,QuotientRing),
+	  (isHomogeneous,PolynomialRing),
 	  (isHomogeneous,Matrix),
 	  (isHomogeneous,RingElement),
 	  (isHomogeneous,Module),
-	  (isHomogeneous,ChainComplex),
 	  (isHomogeneous,RingMap),
 	  (isHomogeneous,Vector),
 	  (isHomogeneous,Ideal)},
@@ -28,10 +25,9 @@ document {
 	       TO Vector, ", ",
 	       TO Matrix, ", ",
 	       TO Ideal, ", ",
-	       TO Module, ", ",
-	       TO RingMap, ", ",
-	       TO ChainComplex, ", or ",
-	       TO ChainComplexMap}
+	       TO Module, ", or ",
+	       TO RingMap
+               }
 	  },
      Outputs => {
 	  Boolean => {"whether ", TT "x", " is homogeneous."}
@@ -87,5 +83,5 @@ document {
      Caveat => {"No computation on the generators and relations is performed.
 	 For example, if inhomogeneous generators of a homogeneous ideal are given, then the return value is ", TO false, "."},
      PARA{},
-     SeeAlso => {degree, degrees, homogenize, "graded and multigraded polynomial rings", "graded modules", prune}
+     SeeAlso => {degree, degrees, homogenize, "graded and multigraded polynomial rings", prune}
      }

@@ -1,6 +1,7 @@
 HOMEPAGE = https://www.normaliz.uni-osnabrueck.de/
 # get releases from https://github.com/Normaliz/Normaliz/releases
-VERSION = 3.10.4
+VERSION = 3.11.1
+SHA256SUM = 9a00d590f0fdcad847e2189696d2842d97ed896ed36c22421874a364047f76e8
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 URL = https://github.com/Normaliz/Normaliz/releases/download/v$(VERSION)
@@ -13,29 +14,6 @@ CONFIGOPTIONS += --disable-shared \
 	--without-nauty           \
 	--without-e-antic
 
-# Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
-# I have filed a bug report, Bug ID# 8338749:
-OPENMP = no
-
-#### from their Makefile:
-ifeq ($(OPENMP),no)
- CXXFLAGS0 = -Wno-unknown-pragmas -DNO_OPENMP
-else
- CXXFLAGS0 = -fopenmp
-endif
-# -static doesn't work in Mac OS X, so override variables from normaliz's Makefile.configuration:
-# former value:
-# NORMFLAGS = -static
-# new value:
-NORMFLAGS = 
-####
-
-CXXFLAGS1 = $(CPPFLAGS) -Wall -O3 -Wno-unknown-pragmas -I .. -I . $(CXXFLAGS0)
-BUILDOPTIONS =  CXX="$(CXX)" \
-		NORMFLAGS="$(NORMFLAGS)" \
-		CXXFLAGS="$(CXXFLAGS1) -std=c++14" \
-		RANLIB="@RANLIB@" \
-		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
 PROGRAMS = source/normaliz
 STRIPFILES = source/normaliz
 LICENSEFILES = COPYING

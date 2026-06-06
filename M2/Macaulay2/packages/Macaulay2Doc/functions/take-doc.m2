@@ -9,7 +9,7 @@ doc ///
   (take, Thing, ZZ)
   (take, Thing, List)
  Headline
-  Take some elements from a list or sequence.
+  take some elements from a list or sequence
  Usage
   take(L, i)
   take(L, {j,k})

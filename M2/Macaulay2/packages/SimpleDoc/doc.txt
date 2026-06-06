@@ -16,20 +16,20 @@ Node
 
     Tree
       :Getting started with SimpleDoc
-        @TO2 {"Macaulay2Doc :: writing documentation", "Writing documentation in Macaulay2"}@
-        @TO2 {doc, "Using SimpleDoc for documentation"}@
-        @TO2 {"Text", "Using markup in documentation"}@
-        @TO2 {"Text::html(TEX)", "Using TeX in documentation"}@
+       - @TO2 {"Macaulay2Doc :: writing documentation", "Writing documentation in Macaulay2"}@
+       > @TO2 {doc, "Using SimpleDoc for documentation"}@
+       - @TO2 {"Text", "Using markup in documentation"}@
+       - @TO2 {"Text::html(TEX)", "Using TeX in documentation"}@
 
       :Templates for using the @TO (doc, String)@ method
-        "docExample"
-        "docTemplate"
-        packageTemplate
+       > "docExample"
+       * "docTemplate"
+       > packageTemplate
 
       :Documentation helpers
-        arXiv
-        stacksProject
-        wikipedia
+       > arXiv
+       > stacksProject
+       > wikipedia
   Contributors
     Andrew Hoefel contributed to this package.
 
@@ -80,7 +80,7 @@ Node
   Description
    Text
      The variable {\tt testExample} is a @TO String@ containing an example of
-     the use of @TO "Macaulay2Doc :: TEST(String)"@ to write a test case.
+     the use of @TO "Macaulay2Doc :: TEST"@ to write a test case.
    Code
     EXAMPLE { PRE testExample }
    Text
@@ -121,9 +121,7 @@ Node
     everything else must be further indented. Lines beginning with white space followed
     by two hyphens are ignored and can be used for commenting.
 
-    @TO (document, String)@ is a synonym for @TO doc@.
-    For backwards compatibility, the function @TT "multidoc"@ is also a synonym for @TO doc@.
-
+    For backwards compatibility, the function @TT "multidoc"@ is also a synonym for @TT "doc"@.
    Text
     @HEADER2 "Template for documentation strings"@
 
@@ -181,10 +179,13 @@ Node
                         " or ", TO HypertextParagraph, "."}},
                 { TT "Tree", " -- classify documentation nodes under headings",
                     PARA {
-                        "The lines in this section beginning with ", TT ":", " or ",
-                        TT "@", " are treated as subsections. The remaining lines are
+                        "The lines in this section beginning with ",
+			TT "- ", " are treated as subsection headlines, and may contain
+			Macaulay2 code or ", TO Hypertext, " wrapped in ", TT "@...@",
+			", while lines beginning with ", TT "* ", " or ", TT "> ", " are
                         treated as keys to a documentation node and are processed by the ",
                         TO TOH, " function, producing a link followed by the headline.
+			In particular, links beginning with ", TT "> ", " are treated as subnodes.
                         The purpose is to allow a classification of the documentation
                         nodes grouped under a subsections. Further indentation is treated
                         as further sub-classifications."}},
@@ -218,19 +219,23 @@ Node
                 { TO Heading, " -- similar to the ", TO Headline, " keyword" },
                 { TO BaseFunction, " -- the basename of the function; see ", TO [SYNOPSIS, BaseFunction] },
                 { "Keywords that can be repeated once for each synopsis: ", TO Usage, " (required), ",
-                    TO Inputs, ", ", TO Outputs, ", ", TO Consequences, ", and ", TO Description, "."}
+                    TO Inputs, ", ", TO Outputs, ", ", TO Consequences, ", and ", TT "Description", "."}
                 }, BR{}
             },
         { TOH Acknowledgement, BR{},
           TOH Contributors, BR{},
           TOH References,
+          TOH Citation,
             PARA {
                 "The text in these sections is parsed and rendered similar to the ",
                 TO Text, " subsection and can be used to acknowledge funding sources,
-                collaborators, and non-author contributors, or to provide references."}},
+                collaborators, and non-author contributors, or to provide references
+		or a preferred style citing the package in academic papers.
+		You can also use the ", TT "Tree", " keyword in the first line of this
+		section and use the nested tree structure described above." }},
         { TOH Caveat,
             PARA {
-                "The text in these sections is parsed and rendered similar to the ",
+                "The text in this section is parsed and rendered similar to the ",
                 TO Text, " subsection and can be used to inform users of potential
                 limits of the implementation."}},
         { TOH SeeAlso,
@@ -259,16 +264,13 @@ Node
    Text
     @HEADER2 "Markup keywords allowed in documentation strings"@
 
-    The markup keywords allowed include many TeX commands, as allowed in @TO TEX@; for
-    details and examples see @TO (html, TEX)@, allowing various mathematical expressions,
-    such as $\PP^3$ or $x_i^{33} + 1/2$, to be displayed in the html form of the documentation.
+    The documentation system allows using $\LaTeX$ commands, so mathematical expressions
+    may be displayed as $\PP^3$ or $x_i^{33} + 1/2$ in the html form of the documentation.
+    For details and examples see @TO (html, TEX)@.
 
     Also allowed is a pair of {\tt \@} characters, enclosing Macaulay2 code to be executed,
-    yielding appropriate hypertext.  For example
-   Pre
-    The @TO Key@ section is required.
-   Text
-    will include a link to another node of the documentation. This package also provides a
+    yielding appropriate hypertext.  For example "@TT "The \@TO Key\@ section is required"@"
+    will appear as "The @TO Key@ section is required." This package also provides a
     number of helper functions, such as the @TO arXiv@ function, which may be used to succinctly
     reference e-Prints. See @TO "Text"@ for other hypertext types.
 

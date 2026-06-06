@@ -2,6 +2,14 @@
 #include "gb-f4/MonomialView.hpp"
 #include <sstream>
 
+void BasicPoly::clear()
+{
+  // for (auto& num : mCoefficients) 
+  //   mpz_clear(num);  
+  mCoefficients.clear();
+  mComponents.clear();
+  mMonomials.clear();
+}
 std::string BasicPoly::toString(const std::vector<std::string> & varnames,
                                 bool print_one,
                                 bool print_plus,

@@ -8,6 +8,7 @@ newPackage("Matroids",
 	Headline => "computations with matroids",
 	Keywords => {"Matroids"},
 	HomePage => "https://github.com/jchen419/Matroids-M2",
+	PackageImports => {"Complexes"},
 	PackageExports => {"Graphs", "Posets"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -17,7 +18,6 @@ newPackage("Matroids",
 	     "published article URI" => "https://msp.org/jsag/2019/9-1/p03.xhtml",
 	     "published article DOI" => "10.2140/jsag.2019.9.19",
 	     "published code URI" => "https://msp.org/jsag/2019/9-1/jsag-v9-n1-x03-Matroids.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Matroids.m2",
 	     "release at publication" => "cf37f5a1eefc2fe7e6eef2868718256106805027",	    -- git commit number in hex
 	     "version at publication" => "0.9.7",
 	     "volume number" => "9",
@@ -463,7 +463,7 @@ hasMinor = method(Options => {Strategy => "flats"})
 hasMinor (Matroid, Matroid) := Boolean => opts -> (M, N) -> (
 	(n, m) := (#N.groundSet, #M.groundSet);
 	if n > m or rank N > rank M or #bases N > #bases M then return false;
-	if n == m then return M == N;
+	if n == m then return areIsomorphic(M,N);
 	if opts.Strategy === "flats" and isSimple N then (
 		v := fVector N;
 		truncatedLattice := select(flats(M, rank N, "corank"), f -> rank_M f >= rank M - rank N);
@@ -584,15 +584,24 @@ simpleMatroid Matroid := Matroid => M -> M \ set(select((ideal M)_*, m -> first 
 -----------------------------------------------------------------
 extension = method(Options => {CheckWellDefined => false, EntryMode => "modular cut"})
 extension (Matroid, List) := Matroid => o -> (M, K) -> (
-    K' := if o.EntryMode == "hyerplanes" then (
-	modularCut(M, K, CheckWellDefined => o.CheckWellDefined) 
-	) 
+    -- Note: K' is built as a list of Sets so that the hyperplane-membership
+    -- test `(set K')#?H` below (where H is a Set returned by hyperplanes M)
+    -- compares Sets to Sets.  Previously K' was built via `K/toList/sort`,
+    -- which produced a list of Lists; `(set K')#?H` then silently returned
+    -- false for every hyperplane and B' picked up *all* hyperplanes — an
+    -- incorrect elementary quotient.  Likewise, the "hyperplanes" branch
+    -- key was misspelled as "hyerplanes", so the documented usage
+    --   extension(M, H, EntryMode => "hyperplanes")
+    -- silently fell through to the (broken) else branch.
+    K' := if o.EntryMode == "hyperplanes" then (
+	modularCut(M, K, CheckWellDefined => o.CheckWellDefined)
+	)
         else (
 	    if o.CheckWellDefined and not isModularCut(M, K) then (
 		error "extension: Expected the second argument
 		to be a modular cut of the matroid given as the first argument."
     		);
-	    K/toList/sort
+	    K/toList/set
 	);
     E := toList M.groundSet;
     e := (max E) + 1;
@@ -747,7 +756,7 @@ relabel (Matroid, List) := Matroid => (M, perm) -> (
 )
 relabel Matroid := Matroid => M -> (
 	E := toList(0..<#M_*);
-	relabel(M, (transpose{E, random E})/toSequence//hashTable)
+	relabel(M, (transpose{E, shuffle E})/toSequence//hashTable)
 )
 
 -- Recursively finds all permutations inducing a bijection on circuits (note: permutations(10) is already slow on a typical machine)
@@ -772,7 +781,7 @@ getIsos (Matroid, Matroid) := List => (M, N) -> (
 	) else select(permutations(e), p -> all(C, c -> member(c/(i -> p#i), D)))
 )
 
-isomorphism (Matroid, Matroid) := HashTable => (M, N) -> ( -- assumes (M, N) satisfy "Could be isomorphic" by quickIsomorphismTest
+isomorphism (Matroid, Matroid) := HashTable => o -> (M, N) -> ( -- assumes (M, N) satisfy "Could be isomorphic" by quickIsomorphismTest
 	if M == N then return hashTable apply(#M_*, i -> (i, i));
 	-------------------------------
 	-- DFS: 9/12/23
@@ -1431,6 +1440,13 @@ load "./Matroids/doc-Matroids.m2"
 
 load "./Matroids/tests-Matroids.m2"
 
+-- Note: ./Matroids/foundations.m2 is an upstream in-development module that
+-- defines Pasture / Foundation / pasture / pastureMorphism / savePasture /
+-- saveFoundation / specificPasture and is not yet integrated into the public
+-- Matroids package; it is intentionally not loaded here.  See
+--   https://github.com/jchen419/Matroids-M2
+-- for upstream development.
+
 end--
 restart
 loadPackage("Matroids", Reload => true)
@@ -1440,6 +1456,4 @@ installPackage("Matroids", RerunExamples => true)
 viewHelp "Matroids"
 check "Matroids"
 
--- TODO:
--- Update documentation
--- reducedRowEchelonForm does not work with initial zero rows => cannot compute induced representation for e.g. (matroid completeGraph 4) / set{0,1,3}
+-- TODO: Update documentation

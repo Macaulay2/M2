@@ -6,17 +6,25 @@
 *-
 
 needs "gb.m2" -- for GroebnerBasis
-needs "res.m2" -- needed by minimalBetti
-needs "chaincomplexes.m2"
-needs "gradedmodules.m2"
 needs "hilbert.m2"
 needs "modules2.m2"
 
 -----------------------------------------------------------------------------
--- Local utilities
+-- unexported helper functions used in several packages
 -----------------------------------------------------------------------------
 
-nonzeroKeys = x -> select(keys x, k -> x#k != 0)
+unpackEngineBetti = w -> (
+    -- w is the result of e.g. rawGBBetti.
+    -- this is an array of ints, of the form:
+    -- [lodegree, hidegree, len, b(lodegree,0), b(lodegree,1), ..., b(lodegree,len), ... b(hidegree,len)]
+    (lo, hi, len) := (w#0, w#1, w#2);
+    w = pack(len+1, drop(w, 3));
+    w = flatten table(toList(lo .. hi), toList(0 .. len),
+	(i,j) -> ((j, {i+j}, i+j), w#(i-lo)#j)); -- no weight option used here
+    new BettiTally from select(w, (k,v) -> v != 0))
+
+-- used in EngineTests
+rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
 
 -----------------------------------------------------------------------------
 -- BettiTally type declarations and basic constructors
@@ -154,106 +162,33 @@ texMath MultigradedBettiTally := v -> (
 
 -- local function for selecting and computing the appropriate heft
 heftfun := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
-heftvec := (wt1, wt2) -> if wt1 =!= null then wt1 else if wt2 =!= null then wt2 else {}
+--heftvec := (wt1, wt2) -> if wt1 =!= null then wt1 else if wt2 =!= null then wt2 else {}
 
+-- betti(Matrix) is defined in OldChainComplexes now
 betti = method(TypicalValue => BettiTally, Options => { Weights => null, Minimize => false })
 betti GroebnerBasis := opts -> G -> betti(generators G, opts)
 betti Ideal         := opts -> I -> betti(generators I, opts)
 betti Module        := opts -> M -> betti(presentation M, opts)
-betti Matrix        := opts -> f -> betti(chainComplex f, opts)
+betti Matrix        := opts -> f -> missingPackage "either Complexes or OldChainComplexes"
 betti BettiTally    := opts -> B -> if opts.Weights === null then B else (
     heftfn := heftfun opts.Weights;
     applyKeys(B, (i,d,h) -> (i,d,heftfn d)))
 
-unpackEngineBetti = w -> (
-    -- w is the result of e.g. rawGBBetti.
-    -- this is an array of ints, of the form:
-    -- [lodegree, hidegree, len, b(lodegree,0), b(lodegree,1), ..., b(lodegree,len), ... b(hidegree,len)]
-    (lo, hi, len) := (w#0, w#1, w#2);
-    w = pack(len+1, drop(w, 3));
-    w = flatten table(toList(lo .. hi), toList(0 .. len),
-	(i,j) -> ((j, {i+j}, i+j), w#(i-lo)#j)); -- no weight option used here
-    new BettiTally from select(w, (k,v) -> v != 0))
-
--- used in EngineTests
-rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
-
-betti Resolution := opts -> X -> (
-    -- this version works only for rings of degree length 1
-    -- currently if opts.Minimize is true, then an error is given
-    -- unless the FastNonminimal=>true option was given for the free resolution.
-    B := rawBetti(X.RawComputation, if opts.Minimize then 4 else 0); -- the raw version takes no weight option
-    betti(B, Weights => heftvec(opts.Weights, heft ring X)))
-
-betti ChainComplex :=
-betti GradedModule := opts -> C -> (
-    R := ring C;
-    if C.?Resolution and degreeLength R === 1 and heft R === {1} then return betti(C.Resolution, opts);
-    if opts.Minimize then error "Minimize=>true is currently only supported for res(...,FastNonminimal=>true)";
-    complete C;
-    heftfn := heftfun heftvec(opts.Weights, heft R);
-    new BettiTally from flatten apply(
-	select(pairs C, (i,F) -> class i === ZZ),
-	(i,F) -> (
-	    if not isFreeModule F then error("betti: expected module at spot ", toString i, " in chain complex to be free");
-	    apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n))))
-
------------------------------------------------------------------------------
--- minimalBetti
------------------------------------------------------------------------------
 
 minimalBetti = method(
     TypicalValue => BettiTally,
     Options => {
-	DegreeLimit => null,
-	LengthLimit => infinity,
-	Weights => null,
-    ParallelizeByDegree => false -- currently: only used over primes fields of positive characteristic
-	})
-minimalBetti Ideal  := BettiTally => opts -> I -> minimalBetti(comodule I, opts)
-minimalBetti Module := BettiTally => opts -> M -> (
-    R := ring M;
-    weights := heftvec(opts.Weights, heft R);
-    degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
-    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
-    -- check to see if a cached resolution is sufficient
-    cacheKey := ResolutionContext{};
-    if M.cache#?cacheKey and isComputationDone(C := M.cache#cacheKey,
-	DegreeLimit => degreelimit, LengthLimit => lengthlimit)
-    then return betti(C.Result, Weights => weights);
-    -- if not, compute a fast non-minimal resolution
-    -- the following line is because we need to make sure we have the resolution
-    -- either complete, or one more than the desired minimal betti numbers.
-    
-    -- We see if we can now compute a non-minimal resolution.
-    -- If not, we compute a usual resolution.
-    -- TODO: this isn't quite correct.
-    useFastNonminimal := not isQuotientRing R and
-      char R > 0 and char R < (1<<15);
+	DegreeLimit         => null,
+	LengthLimit         => infinity,
+	ParallelizeByDegree => false, -- currently: only used over primes fields of positive characteristic
+	Weights             => null,
+    })
 
-    if not useFastNonminimal then 
-        return betti resolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
-    -- At this point, we think we are good to use the faster algorithm.        
-    -- First, we need to comppute the non-minimal resolution to one further step.
-    if instance(opts.LengthLimit, ZZ) then lengthlimit = lengthlimit + 1;
-    C = resolution(M,
-	StopBeforeComputation => true, FastNonminimal => true, ParallelizeByDegree => opts.ParallelizeByDegree,
-	DegreeLimit => degreelimit, LengthLimit => lengthlimit);
-    rC := if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation
-    -- TODO: when can this error happen?
-    else error "cannot use 'minimalBetti' with this input. Input must be an ideal or module in a
-    polynomial ring or skew commutative polynomial ring over a finite field, which is singly graded.
-    These restrictions might be removed in the future.";
-    --
-    B := unpackEngineBetti rawMinimalBetti(rC,
-	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
-	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {}
-        );
-    betti(B, Weights => weights))
+minimalBetti Ideal  :=
+minimalBetti Module := o -> M -> missingPackage "either Complexes or OldChainComplexes"
 
 -----------------------------------------------------------------------------
 
-pdim BettiTally := B -> if #(s := first \ nonzeroKeys B) > 0 then max s - min s else 0
 -- TODO: implement the following for MultigradedBettiTally
 poincare BettiTally := B -> (
     if #B === 0 then return 0;				    -- yes, it's not in a degree ring, but that should be okay
@@ -298,32 +233,15 @@ hilbertSeries(ZZ, BettiTally) := o -> (n,B) -> (
     Divide{num, denom})
 
 -----------------------------------------------------------------------------
-
-Ring ^ BettiTally := ChainComplex => (R,B) -> (
-    -- donated by Hans-Christian von Bothmer
-    -- given a betti Table B and a Ring R make a chainComplex
-    -- with zero maps over R  that has betti diagram B.
-    -- negative entries are ignored
-    -- rational entries produce an error
-    -- multigraded R's work only if the betti Tally contains degrees of the correct degree length
-    F := new ChainComplex;
-    F.ring = R;
-    scan(sort pairs B, (k,n) -> (
-	    (i, deg, wt) := k; -- (homological degree, multidegree, weight)
-	    -- use F_i since it gives 0 if F#i is not there:
-	    F#i = F_i ++ R^{n:-deg})); -- this could be a bit slow
-    F)
-
+-- pdim and regularity
 -----------------------------------------------------------------------------
--- regularity
------------------------------------------------------------------------------
+
+nonzeroKeys = x -> select(keys x, k -> x#k != 0)
+
+pdim Module     := M -> missingPackage "either Complexes or OldChainComplexes"
+pdim BettiTally := B -> if #(s := first \ nonzeroKeys B) > 0 then max s - min s else 0
 
 regularity = method(TypicalValue => ZZ, Options => { Weights => null })
-regularity   BettiTally := opts -> B -> max apply(nonzeroKeys betti(B, opts), (i,d,h) -> h-i)
-regularity ChainComplex := opts -> C -> regularity betti(C, opts)
-regularity        Ideal := opts -> I -> (
-    if I == 0 then -infinity else if I == 1 then 0
-    else 1 + regularity betti(resolution cokernel generators I, opts))
-regularity       Module := opts -> M -> (
-    if not isHomogeneous M then error "regularity: expected homogeneous module";
-    regularity betti(resolution minimalPresentation M, opts))
+regularity Ideal      :=
+regularity Module     := o -> M -> missingPackage "either Complexes or OldChainComplexes"
+regularity BettiTally := o -> B -> max apply(nonzeroKeys betti(B, o), (i, d, h) -> h-i)

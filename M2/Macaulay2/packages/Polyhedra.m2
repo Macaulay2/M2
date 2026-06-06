@@ -19,7 +19,6 @@ newPackage("Polyhedra",
 	 "published article URI" => "https://msp.org/jsag/2009/1-1/p03.xhtml",
 	 "published article DOI" => "10.2140/jsag.2009.1.11",
 	 "published code URI" => "https://msp.org/jsag/2009/1-1/jsag-v1-n1-x03-code.zip",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Polyhedra.m2",
  	 "release at publication" => "c065ec7651789907627333018dc7d675968639e4", -- git commit number in hex
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",

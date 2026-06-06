@@ -15,6 +15,7 @@ Dmodules
 WeylAlgebras
 HolonomicSystems
 BernsteinSato
+ConnectionMatrices
 Depth
 Elimination
 GenericInitialIdeal
@@ -37,7 +38,6 @@ Varieties
 Schubert2
 PushForward
 LocalRings
-PruneComplex
 BoijSoederberg
 BGG
 Bruns
@@ -110,7 +110,7 @@ InvariantRing
 QuillenSuslin
 EnumerationCurves
 Book3264Examples
-Divisor
+WeilDivisors
 EllipticCurves
 HighestWeights
 MinimalPrimes
@@ -122,7 +122,7 @@ TateOnProducts
 LatticePolytopes
 FiniteFittingIdeals
 HigherCIOperators
-LieTypes
+LieAlgebraRepresentations
 ConformalBlocks
 M0nbar
 AnalyzeSheafOnP1
@@ -145,8 +145,6 @@ RandomPoints
 SwitchingFields
 SpectralSequences
 SectionRing
-OldPolyhedra
-OldToricVectorBundles
 K3Carpets
 ChainComplexOperations
 NumericalCertification
@@ -166,9 +164,9 @@ Topcom
 Triangulations
 ReflexivePolytopesDB
 AbstractToricVarieties
-Licenses
 TestIdeals
 FrobeniusThresholds
+NonPrincipalTestIdeals
 Seminormalization
 AlgebraicSplines
 TriangularSets
@@ -176,11 +174,11 @@ Chordal
 Tropical
 SymbolicPowers
 Complexes
+OldChainComplexes
 GroebnerWalk
 RandomMonomialIdeals
 Matroids
 NumericalImplicitization
-NonminimalComplexes
 CoincidentRootLoci
 RelativeCanonicalResolution
 RandomCurvesOverVerySmallFiniteFields
@@ -249,6 +247,7 @@ OnlineLookup
 MergeTeX
 Probability
 Isomorphism
+DirectSummands
 CodingTheory
 WhitneyStratifications
 JSON

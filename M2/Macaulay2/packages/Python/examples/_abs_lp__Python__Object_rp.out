@@ -1,9 +1,0 @@
--- -*- M2-comint -*- hash: 1332381382166
-
-i1 : abs toPython(-12)
-
-o1 = 12
-
-o1 : PythonObject of class int
-
-i2 : 

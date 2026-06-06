@@ -241,6 +241,8 @@ void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar)
 MutableMatrix /* or null */ *ResolutionComputation::get_matrix(int level,
                                                                int degree)
 {
+  (void) level;
+  (void) degree;
   // the default version gives an error that it isn't defined
   ERROR("this function not defined for this resolution type");
   return nullptr;

@@ -28,7 +28,7 @@ Description
     An ideal, module, or chain complex may either be localized using @TO promote@ or using
     the @TO tensor@ product.
   Example
-    C = res I
+    C = freeResolution I
     D = C ** RM;
     E = pruneComplex D
   Text
@@ -47,7 +47,7 @@ Description
     @TO syz@, @TO resolution@, @TO mingens@, @TO minimalPresentation@, @TO trim@, @TO (length, Module)@,
     @TO isSubset@, @TO inducedMap@, @TO (quotient, Matrix, Matrix)@, @TO (remainder, Matrix, Matrix)@,
     @TO "Saturation :: quotient(Module,Module)"@, @TO saturate@, @TO annihilator@.
-    Most of these routines rely on the functions @TO liftUp@ and @TO "PruneComplex :: pruneComplex"@ and
+    Most of these routines rely on the functions @TO liftUp@ and @TO "Complexes :: pruneComplex"@ and
     take advantage of Nakayama's lemma and flatness of local rings.
 
     In addition, methods such as @TO map@, @TO modulo@, @TO subquotient@, @TO kernel@, @TO cokernel@,
@@ -57,7 +57,7 @@ Caveat
   Quotients of local rings are not implemented yet. Moreover, certain functions (such as symbol%,
   radical, minimalPrimes, leadingCoefficient) are ambiguous or not yet defined.
 SeeAlso
-  "PruneComplex :: PruneComplex"
+  "Complexes :: pruneComplex"
 Subnodes
   LocalRing
 ///
@@ -119,7 +119,7 @@ Node
       localResolution coker matrix{{x,y*z},{z*w,x}}
       oo.dd
       use R
-      res coker matrix{{x,y*z},{z*w,x}}
+      freeResolution coker matrix{{x,y*z},{z*w,x}}
       oo.dd
   Subnodes
     setMaxIdeal
@@ -268,7 +268,7 @@ Description
   Example
     R = ZZ/32003[vars(0..5)];
     I = ideal"abc-def,ab2-cd2-c,-b3+acd";
-    C = res I;
+    C = freeResolution I;
     M = ideal gens R;
     RM = localRing(R, M);
     F = C.dd_2;

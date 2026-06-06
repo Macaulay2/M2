@@ -550,25 +550,46 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-matrixOpts1 := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
-matrixOpts := m -> ( -- helper function
+matrixOpts1 := new OptionTable from {
+    Blocks => null,
+    Degrees => null,
+    symbol MutableMatrix => false,
+    symbol zero => null};
+matrixOpts = m -> ( -- helper function
     (opts,x) := override(matrixOpts1,toSequence m);
     (opts, if #x > 0 and class x#0 =!= List then { x } else toList x) -- because of #1548
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    if #m === 0 then return map(ZZ^0,ZZ^0,0); -- not great but best one can do
-    m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
+    if opts.zero =!= null
+    then (
+	if opts.MutableMatrix
+	then mutableMatrix(
+	    commonRing toList opts.zero, rank opts.zero#0, rank opts.zero#1)
+	else map(opts.zero#0, opts.zero#1, 0))
     -- TODO: keep track of blocks too
-    if opts.Degrees === null then m else (
-    R := ring m;
-    map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
-    ))
+    else (
+	m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
+	if opts.Degrees === null then m else (
+	    R := ring m;
+	    map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
+	    )))
 toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
     (opts,m) := matrixOpts x;
-    if opts.MutableMatrix then "mutableMatrix {" else "matrix {",
-    between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
-    "}" )
+    if opts.zero =!= null
+    then (
+	if opts.MutableMatrix
+	then ("mutableMatrix(",
+	    fmt commonRing toList opts.zero, ", ",
+	    fmt opts.zero#0, ", ",
+	    fmt opts.zero#1, ")")
+	else ("map(",
+	    fmt opts.zero#0, ", ",
+	    fmt opts.zero#1, ", 0)"))
+    else (
+	if opts.MutableMatrix then "mutableMatrix {" else "matrix {",
+	between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
+	"}" ))
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -912,8 +933,8 @@ toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
+    if opts.zero =!= null then return "0";
     blk := opts.Blocks =!= null; -- whether to display blocks
-    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
     net1 := if compactMatrixForm then toCompactString else net;
     vbox0 := if opts.Degrees === null then 0 else 1;
     (hbox,vbox) := if blk then (drop(accumulate(plus,0,opts.Blocks#0),-1),prepend(vbox0,accumulate(plus,vbox0,opts.Blocks#1))) else (false,{vbox0,vbox0+#m#0});
@@ -1114,7 +1135,7 @@ texMath Table := m -> (
 
 texMath MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
+    if opts.zero =!= null then return "0";
     blk := opts.Blocks =!= null; -- whether to display blocks
     if blk then ( j := 0; h := 0; );
     m = applyTable(m,texMath);
@@ -1156,13 +1177,9 @@ texMath VectorExpression := v -> (
 
 -----------------------------------------------------------------------------
 print =  x -> (
-    c := class x;
-    while not c#?{topLevelMode,print} do (
-	if c === Thing then (<< net x << endl; return); -- default
-	c = parent c;
-	);
-    c#{topLevelMode,print} x
-    )
+    f := lookup({topLevelMode, print}, class x);
+    if f === null then << net x << endl -- default
+    else f x;)
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)
@@ -1260,7 +1277,7 @@ toString Dots := x -> "..."
 net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
 -- used e.g. in chaincomplexes.m2
-shortLength := 8
+shortLength = 8
 shortStringLength := 3*shortLength
 short = method(Dispatch => Thing, TypicalValue => Expression)
 short Thing := x -> short expression x

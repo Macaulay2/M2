@@ -8,12 +8,15 @@ NCResComputation::NCResComputation(const FreeAlgebraQuotient& ring,
   mInputModuleGB(gbModuleMatrix) //,
    //mMaxLevel(max_level)
 {
+  (void) ring;
+  (void) max_level;
 }
 
 ResolutionComputation* createNCRes(const Matrix* gbModuleMatrix,
 				   int max_level,
 				   int strategy)
 {
+  (void) strategy;
   const M2FreeAlgebraQuotient* ring = gbModuleMatrix->get_ring()->cast_to_M2FreeAlgebraQuotient();
   if (ring != nullptr)  
     return new NCResComputation(ring->freeAlgebraQuotient(),*gbModuleMatrix,max_level);

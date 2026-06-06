@@ -59,7 +59,6 @@ newPackage(
 	    "published article URI" => "https://msp.org/jsag/2021/11-1/p11.xhtml",
 	    "published article DOI" => "10.2140/jsag.2021.11.113",
 	    "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x11-CodingTheory.m2",
-	    "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/CodingTheory.m2",
 	    "release at publication" => "9224486f3fc4b8e00e883570756ab969be351009",	    -- git commit number in hex
 	    "version at publication" => "1.0",
 	    "volume number" => "11",
@@ -1791,7 +1790,7 @@ C := linearCode G;
 for i from 1 to 1 do(
     message := transpose matrix {(for n from 1 to numgens target G list(random(R)))};
     codeword := (transpose G)*message;
-    errors := sum take(random entries basis target codeword, 3);
+    errors := sum randomSubset(entries basis target codeword, 3);
     errors = transpose matrix({errors});
     received := codeword+errors;
     decoded := syndromeDecode(C, received, 8);
@@ -3111,7 +3110,7 @@ doc ///
 			C = hammingCode(2,3);
 			msg = matrix {{1,0,1,0}};
 			v = msg*(C.GeneratorMatrix);
-			err = matrix take(random entries basis source v, 1);
+			err = matrix shuffle(entries basis source v, 1);
 			received = (transpose (v+err));
 			syndromeDecode(C, received, 3);
 		 	C.cache#"syndromeLUT"

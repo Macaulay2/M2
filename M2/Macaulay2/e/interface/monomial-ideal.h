@@ -31,7 +31,7 @@ typedef struct RingElement RingElement;
 extern "C" {
 #  endif
 
-engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n);
+const MonomialIdeal* /* or null */ IM2_MonomialIdeal_make(const Matrix *m, int n);
 /* drg: connected rawMonomialIdeal*/
 /* Given a matrix 'm' over an allowed base ring (as above), create the
    monomial ideal consisting of all of the lead monomials of the columns
@@ -43,7 +43,7 @@ const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I);
 /* Return a one row matrix over the base ring of I consisting
    of the monomials in I */
 
-M2_string IM2_MonomialIdeal_to_string(const MonomialIdeal *I); /* TODO */
+M2_string IM2_MonomialIdeal_to_string(const MonomialIdeal *I);
 
 unsigned int rawMonomialIdealHash(const MonomialIdeal *I);
 /* connected to 'hash', sequential, as it is mutable */

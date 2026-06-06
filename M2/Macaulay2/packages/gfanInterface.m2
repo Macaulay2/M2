@@ -753,7 +753,7 @@ gfanConvertToNewRing (PolynomialRing) := R1 -> (
   --produced by this method.
   R1Gens := gens R1;
   numDigits := length (toString (#R1Gens));
-  R2 := (coefficientRing R1) (for i in 1..#R1Gens list (
+  R2 := (coefficientRing R1) new Array from (for i in 1..#R1Gens list (
     value ("x" | demark ("",for i from 1 to numDigits-(length toString i) list "0") | toString i)
   ) );
   R2Gens := gens R2;
@@ -1013,9 +1013,9 @@ runGfanCommandCaptureBoth = (cmd, opts, data) -> (
 	if gfanProgram === null then
 	    gfanProgram = findProgram("gfan", "gfan --help",
 		Verbose => gfanVerbose,
-		-- version 0.6 is necessary for gfanMixedVolume
-		-- https://github.com/Macaulay2/M2/issues/1962
-		MinimumVersion => ("0.6",
+		-- version 0.8 is required (the 0.6.2 series predates several
+		-- features used here and is no longer supported upstream)
+		MinimumVersion => ("0.8",
 		    "gfan _version | head -2 | tail -1 | sed 's/gfan//'"));
 	tmpFile := gfanMakeTemporaryFile data;
 
@@ -2540,9 +2540,10 @@ gfanFunctions = hashTable {
 	gfanTropicalWeilDivisor => "gfan _tropicalweildivisor" -- v0.4
 }
 
+wrap' = (n, str) -> stack apply(lines str, wrap_n)
 gfanHelp = functionStr -> PRE TT(
     if gfanProgram === null then gfanProgram = findProgram("gfan", "gfan --help", RaiseError => false);
-    if gfanProgram =!= null then runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") else {})
+    if gfanProgram =!= null then wrap'_100 runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") else {})
 
 doc ///
 	Key
@@ -3145,7 +3146,7 @@ doc ///
 			a description of the Groebner cone of {\tt M} or {\tt I} or {\tt L}
 	Description
 		Text
-			This method computes the Grobener cone of the input in the case where {\tt M}, {\tt L}, {\tt I} are
+			This method computes the Groebner cone of the input in the case where {\tt M}, {\tt L}, {\tt I} are
 			reduced Groebner bases. If {\tt M}, {\tt L}, {\tt I} are only minimal bases, then
 			a smaller cone is produced.
 
@@ -4435,6 +4436,15 @@ doc///
 	 Bprime = markedPolynomialList {{x^2, y^3},{x^2 + y^2, y^3 + x*y + y^2}}
 	 assert equalMPL(B,Bprime)
 	 ///
+
+-- TEST gfanConvertToNewRing x NCAlgebra (cf. #3600)
+	TEST ///
+	debug needsPackage "gfanInterface"
+	R = QQ[a];
+	gfanConvertToNewRing(R);
+	needsPackage "NCAlgebra";
+	gfanConvertToNewRing(R)
+	///
 
 	-- TEST gfanBuchberger
 	TEST ///

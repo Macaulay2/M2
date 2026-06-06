@@ -84,7 +84,6 @@ export {
    "affinePreimage", 
    "bipyramid", 
    "ccRefinement", 
-   "directProduct",
    "dualCone", 
    "faceFan", 
    "imageFan", 
@@ -114,6 +113,7 @@ export {
    "barycentricTriangulation",
    "regularSubdivision",
    "minimalNonFaces",
-   "stanleyReisnerRing"
+   "stanleyReisnerRing",
+   "centroid",
 }
 

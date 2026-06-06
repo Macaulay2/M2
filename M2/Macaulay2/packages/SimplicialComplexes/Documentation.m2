@@ -2905,7 +2905,7 @@ doc ///
     	"Working with associated chain complexes"
 	(coefficientRing, SimplicialComplex)
 	(boundaryMap, ZZ, SimplicialComplex)
-	(resolution, Ideal)
+	(freeResolution, Ideal)
 	(homology, Complex)
 ///
 
@@ -4460,7 +4460,6 @@ doc ///
     Key
 	(cohomology, ZZ, SimplicialComplex, SimplicialComplex)
 	[(cohomology, ZZ, SimplicialComplex, SimplicialComplex), Degree]
-	[cohomology, Degree]
     Headline
     	compute the relative homology of two simplicial complexes
     Usage

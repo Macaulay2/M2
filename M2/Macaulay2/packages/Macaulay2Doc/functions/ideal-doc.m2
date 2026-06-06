@@ -9,6 +9,18 @@ undocumented (ideal,Ideal)
 document { 
      Key => ideal,
      Headline => "make an ideal",
+    SeeAlso => {
+	"Classic::ideal(String)",
+        },
+    Subnodes => {
+	-- TODO: combine some of these
+	TO (ideal, List),
+	TO (ideal, Matrix),
+	TO (ideal, Module),
+	TO (ideal, MonomialIdeal),
+	TO (ideal, Ring),
+	TO (ideal, RingElement),
+        },
      }
 document { 
      Key => {(ideal,List), (ideal,Sequence)},
@@ -95,7 +107,7 @@ document {
      }
 document { 
      Key => {(ideal,Ring), (ideal,QuotientRing)},
-     Headline => "returns the defining ideal",     
+     Headline => "get the defining ideal",
      Usage => "ideal R",
      Inputs => {
 	  "R"
@@ -122,7 +134,7 @@ document {
      }
 document { 
      Key => (ideal,MonomialIdeal),
-     Headline => "converts a monomial ideal to an ideal",     
+     Headline => "convert a monomial ideal to an ideal",
      Usage => "ideal I",
      Inputs => {
 	  "I"
@@ -147,7 +159,7 @@ document {
      }
 document { 
      Key => (ideal,Module),
-     Headline => "converts a module to an ideal",          
+     Headline => "convert a module to an ideal",
      Usage => "ideal M",
      Inputs => {
 	  "M" => "which is a submodule of a free module of rank 1"

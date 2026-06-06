@@ -341,7 +341,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
   return result;
 }
 
-extern void monomialOrderFree(MonomialOrder *mo) {}
+extern void monomialOrderFree(MonomialOrder *mo) { (void) mo; }
 static void MO_pack4(int nvars, const int *expon, int *slots)
 {
   int32_t i;

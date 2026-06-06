@@ -696,7 +696,7 @@ picture Matrix := o -> (M1) -> (
 
 picture Module := o -> M -> picture(id_M,o)
 picture Complex := o -> C -> netList apply(toList(min C+1..max C), i-> picture(C.dd_i,o))
-picture ChainComplex := o -> C -> netList apply(toList(min C+1..max C), i-> picture(C.dd_i,o))
+--picture ChainComplex := o -> C -> netList apply(toList(min C+1..max C), i-> picture(C.dd_i,o))
 
 flattenBlocks = method()
 flattenBlocks Module := (F) -> (
@@ -1023,7 +1023,7 @@ golodBetti0 = (F,G,b) ->(
     mods := apply(symbs, s -> 
 	directSum apply(#s, 
 	    i-> G_(s_i_0)**tensor(ring F, apply(s_i_1, j->F_(j))))); -- was tensorL
-   betti chainComplex apply(b,i->map(mods_i,mods_(i+1),0))
+   betti complex apply(b,i->map(mods_i,mods_(i+1),0))
    )
 
 
@@ -1283,7 +1283,7 @@ SeeAlso
 doc ///
 Key
  picture
- (picture, ChainComplex)
+-- (picture, ChainComplex)
  (picture, Complex)
  (picture, Matrix)
  (picture, Module)
@@ -1297,7 +1297,7 @@ Usage
  picture M
 Inputs
  F:Complex
- F:ChainComplex
+-- F:ChainComplex
  m:Matrix
   of map between labeled direct sum modules
  M:Module
@@ -1837,15 +1837,15 @@ oo.cache.indices
 A.cache.indices 
 
 labeledTensorChainComplex = method()
-labeledTensorChainComplex List := ChainComplex => L -> (
+labeledTensorChainComplex List := Complex => L -> (
     --L = {C_0..C_(p-1)}, list chain complexes. Form the tensor product of the C_i
     --in such a way that if the tensor products of the modules (C_i)_m are labeled,
     --then the modules of the tensor product are direct sums of modules from the hashtable, so that
     --componentsAndIndices applied to pC gives the correct list of indices, and
     --thus picture pC.dd_m works.
-    if class L_0 =!= ChainComplex then error"Input should be a list of ChainComplexes.";
+    if class L_0 =!= Complex then error"Input should be a list of ChainComplexes.";
     S := ring L_0;
-    if #L == 1 and class L_0 === ChainComplex then (
+    if #L == 1 and class L_0 === Complex then (
 	B := L_0;
 	F := for i from min B to max B list labeler({i}, B_i);
 	B' := complex for i from min B to max B -1 list map(F_(i-min B),F_(i+1-min B), B.dd_(i+1));
@@ -1884,7 +1884,7 @@ suitable := v-> if min v == 0 then position (v, vv -> vv == 1) else null;
 			                                (L_p).dd_(indsrc_p)**
                                tensor(S, apply(#L-p-1, q -> L_(p+q+1)_(indtar_(p+q+1)))))
 			))))));
-                   (chainComplex d)[-sum(L, ell -> min ell)])
+                   (complex d)[-sum(L, ell -> min ell)])
 B
 G
 labeledTensorChainComplex{chainComplex B,chainComplex G}

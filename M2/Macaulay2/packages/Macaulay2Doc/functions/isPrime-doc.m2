@@ -65,7 +65,7 @@ doc ///
 ///
 
 document { 
-     Key => {isPrime, (isPrime, ZZ)},
+     Key => {isPrime, (isPrime, ZZ), (isPrime, RingElement)},
      Headline => "whether a integer or polynomial is prime",
      Usage => "isPrime f",
      Inputs => {

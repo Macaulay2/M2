@@ -77,6 +77,7 @@ sampleInitFile := ///-- This is a sample init.m2 file provided with Macaulay2.
 
 readmeFile := ///Welcome to Macaulay2!
 
+-- TODO: move this to a node titled "application directory"
 This directory is used to contain data and code specific to Macaulay2.  For
 example, your initialization file, init.m2, is in this directory, and is
 automatically loaded upon startup of Macaulay2, unless you use the "-q" option.
@@ -142,9 +143,13 @@ exit = Command exitMethod
 -----------------------------------------------------------------------------
 
 setRandomSeed = method(Dispatch => Thing)
-setRandomSeed ZZ := seed -> randomSeed = seed		    -- magic assignment, calls rawSetRandomSeed internally
+setRandomSeed ZZ := seed -> (
+    printerr("setting random seed to ", toString seed);
+    randomSeed = seed) -- magic assignment, calls rawSetRandomSeed internally
 setRandomSeed String := seed -> setRandomSeed fold((i,j) -> 101*i + j, 0, ascii seed)
-setRandomSeed Sequence := seed -> if seed === () then rawRandomInitialize() else setRandomSeed hash seed
+setRandomSeed Sequence := seed -> if seed === () then (
+    printerr("initializing random seed");
+    rawRandomInitialize()) else setRandomSeed hash seed
 
 -----------------------------------------------------------------------------
 -- Layouts
@@ -200,8 +205,9 @@ searchPrefixPath = mapper -> (
 -- { prefix => { "package table" => { pkgname => < result of makePackageInfo > } } } *-
 installedPackagesByPrefix = new MutableHashTable
 
-allPackages = () -> (
-    unique sort flatten for prefix in
+allPackages = () -> unique sort join(
+    separate(" ", version#"packages"),
+    flatten for prefix in
     keys installedPackagesByPrefix list
     keys installedPackagesByPrefix#prefix#"package table")
 
@@ -213,10 +219,12 @@ getDBkeys := dbfn -> (
      dbkeys)
 
 makePackageInfo := (pkgname,prefix,dbfn,layoutIndex) -> (
+    pkgsrcdir := prefix | Layout#layoutIndex#"packages";
     new MutableHashTable from {
 	"name"             => pkgname,
 	"prefix"           => prefix,
 	"layout index"     => layoutIndex,
+	"source directory" => pkgsrcdir,
 	"doc db file name" => dbfn,
 	-- if this package is reinstalled, we can tell by checking this time stamp
 	-- (unless the package takes less than a second to install, which is unlikely)
@@ -278,6 +286,7 @@ getPackageInfoList = () -> flatten (
 	  else {})
 
 tallyInstalledPackages = () -> for prefix in prefixPath do (
+    if notify then printerr("tallying installed packages under ", prefix);
      if not isDirectory prefix then (
 	  remove(installedPackagesByPrefix,prefix);
 	  continue;
@@ -329,6 +338,9 @@ tallyInstalledPackages = () -> for prefix in prefixPath do (
 -- gdbm functions
 -----------------------------------------------------------------------------
 
+loadedDatabases = new MutableHashTable
+addEndFunction(() -> apply(values loadedDatabases, db -> if isOpen db then close db))
+
 -- gdbm makes architecture dependent files, so we try to distinguish them, in case
 -- they get mixed.  Yes, that's in addition to installing them in directories that
 -- are specified to be suitable for machine dependent data.
@@ -336,6 +348,20 @@ databaseSuffix := "-" | version#"endianness" | "-" | version#"pointer size" | ".
 
 databaseDirectory = (layout, pre, pkg) -> pre | replace("PKG", pkg, layout#"packagecache")
 databaseFilename  = (layout, pre, pkg) -> databaseDirectory(layout, pre, pkg) | "rawdocumentation" | databaseSuffix
+
+openDatabaseUntilExit = dbname -> if fileExists dbname then (
+    db := loadedDatabases#dbname ??= openDatabase dbname;
+    db) else if notify then printerr("database not present: ", minimizeFilename dbname)
+
+openPackageDatabase = method()
+openPackageDatabase String := pkgname -> (
+    if (pkginfo := getPackageInfo pkgname) =!= null then (
+	openDatabaseUntilExit pkginfo#"doc db file name")
+    else if notify then printerr("could not locate package ", format pkgname, " under current prefixPath"))
+openPackageDatabase(String, String) := (prefix, pkgname) -> (
+    if (layoutID := detectCurrentLayout prefix) =!= null then (
+	openDatabaseUntilExit databaseFilename(Layout#layoutID, prefix, pkgname))
+    else if notify then printerr("could not detect layout for package ", format pkgname, " under ", prefix))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

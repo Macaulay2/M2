@@ -52,15 +52,10 @@ export unwindMessage := "unhandled unwind command";
 export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
 export steppingMessage := "--stepping limit reached";
+export finishMessage := "unhandled finish command";
 --export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
 --export buildErrorPacket(pos:Position,message:string):Expr := Expr(Error(pos,message,nullE,false,dummyFrame));
 --export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
-export cwd():Expr := (
-     r := getcwd();
-     if r === "" then buildErrorPacket("can't get current working directory: " + syserrmsg())
-     else Expr(stringCell(r)));
-dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
-export debuggerFun := dummyDebuggerFun;
 export handleInterrupts := true;
 (threadLocal export stopIfError := true) = false;
 (threadLocal export debuggingMode := false) = true;
@@ -135,18 +130,6 @@ export unopNameList := unopNameListCell(dummyUnop,dummySymbol,self);
 export binopNameList := binopNameListCell(dummyBinop,dummySymbol,self);
 export ternopNameList := ternopNameListCell(dummyTernop,dummySymbol,self);
 export multopNameList := multopNameListCell(dummyMultop,dummySymbol,self);
-export getUnopName(f:unop):Symbol := (
-     p := unopNameList;
-     while true do (
-	  if p == p.next || p.f == f then return p.name;
-	  p = p.next;
-	  ));
-export getBinopName(f:binop):Symbol := (
-     p := binopNameList;
-     while true do (
-	  if p == p.next || p.f == f then return p.name;
-	  p = p.next;
-	  ));
 export getTernopName(f:ternop):Symbol := (
      p := ternopNameList;
      while true do (

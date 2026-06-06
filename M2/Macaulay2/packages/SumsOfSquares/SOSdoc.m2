@@ -551,7 +551,7 @@ doc /// --sosInIdeal
         It accepts two types of inputs that are useful for different purposes.
         The first invocation is to give a one row matrix with polynomial entries and a degree bound.
         The method then tries to find a sum of squares in the generated ideal.
-        More precisely, given equations $h_1(x),...,h_m(x)$, the method looks for polynomial multipliers $h_i(x)$ such that $\sum_i l_i(x) h_i(x)$ is a sum of squares.
+        More precisely, given equations $h_1(x),...,h_m(x)$, the method looks for polynomial multipliers $l_i(x)$ such that $\sum_i l_i(x) h_i(x)$ is a sum of squares.
      Example
         R = QQ[x,y,z];
         h = matrix {{x^2-4*x+2*y^2, 2*z^2-y^2+2}};

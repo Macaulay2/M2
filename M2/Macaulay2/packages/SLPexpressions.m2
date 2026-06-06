@@ -282,6 +282,11 @@ countGates GateMatrix := M -> (
     scan(flatten entries M, g->findTally(g,t));
     new HashTable from t
     ) 
+countGates Gate := g -> (
+    t := new MutableHashTable from {cache=>new CacheTable};
+    findTally(g,t);
+    new HashTable from t
+    ) 
 
 findTally = method()
 findTally (InputGate,MutableHashTable) := (g,t) -> if t.cache#?g then t.cache#g = t.cache#g+1 else (
@@ -744,7 +749,15 @@ XpC = X+C+2
 XXC = productGate{X,X,C}
 detXCCX = detGate{{X,C},{C,X}}
 XoC = X/C
-cCode (matrix{{XXC,detXCCX,0},{XoC,1,2}},matrix{{X,C}})
+-- cCode emits a C function "void evaluate(...)" with one y[i] assignment per
+-- output gate; redirect to a temp file and check the structure of the output.
+fn = temporaryFileName() | ".c"
+f = openOut fn
+cCode(matrix{{XXC,detXCCX,0},{XoC,1,2}}, matrix{{X,C}}, f)
+close f
+s = get fn
+assert(match("void evaluate", s) =!= null)
+assert(match("y\\[0\\]", s) =!= null)
 ///
 
 --fill m x n matrix with values from another matrix
@@ -883,6 +896,54 @@ GY = value(diff(Y,G),h)
 FY = value(diff(Y,F),h)
 assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
 ///
+
+TEST ///
+-- undeclareVariable reverses the effect of declareVariable on a Symbol: it
+-- restores the symbol's binding to itself (so its class returns to Symbol).
+declareVariable myVar
+assert(instance(myVar, InputGate))
+undeclareVariable myVar
+assert(instance(myVar, Symbol))
+assert(myVar === symbol myVar)
+///
+
+TEST ///
+-- constants returns the list of constant InputGates appearing in a gate
+-- expression; countGates returns a HashTable counting each gate class.
+X = inputGate symbol X
+C = inputGate symbol C
+D = detGate{{X,C},{C,X}}
+c1 = constants(3*D + 2*X)
+assert(instance(c1, List))
+assert(#c1 == 2)
+assert(#constants X == 0)
+assert(#constants gateMatrix{{D, 12*X}} == 1)
+ct = countGates matrix{{D, 12*X}}
+assert(instance(ct, HashTable))
+assert(ct#?DetGate and ct#?ProductGate and ct#?InputGate)
+assert(instance(countGates(X*X), HashTable))
+///
+
+------------------------
+-- expression, net, html
+expression InputGate := g -> expression g.Name
+expression SumGate := g -> Parenthesize sum(g.Inputs,expression)
+expression ProductGate := g -> Parenthesize product(g.Inputs,expression)
+expression DivideGate := g -> expression g.Inputs#0 / expression g.Inputs#1
+html GateMatrix := html @@ expression
+eGM:=
+expression GateMatrix := g -> new MatrixExpression from applyTable(g,expression)
+expression DetGate := g -> (expression det) eGM g.Inputs
+printLargeGate = g -> VerticalList { class g, "depth"=>depth g, "#gates"=> countGates g }
+net Gate := g -> (
+    n := net expression g;
+    if depth g < 6 and width n <= printWidth and height n <= printWidth then n
+    else net printLargeGate g
+    )
+html Gate := g -> (
+    e := expression g;
+    html if depth g < 6 and width net e <= printWidth then e else printLargeGate g
+    )
 
 beginDocumentation()
 -* run

@@ -1,18 +1,18 @@
 newPackage(
     "MatrixSchubert",
     AuxiliaryFiles => true,
-    Version => "1.0", 
-    Date => "November 30, 2023",
+    Version => "1.2",
+    Date => "May 8, 2025",
     Keywords => {"Combinatorics", "Commutative Algebra"},
     Authors => {
         {Name => "Ayah Almousa", 
-            Email => "almou007@umn.edu", 
+            Email => "aalmousa@sc.edu",
             HomePage => "http://sites.google.com/view/ayah-almousa"},
 	{Name=> "Sean Grate",
 	    Email => "sean.grate@auburn.edu",
 	    HomePage => "https://seangrate.com/"},
 	{Name => "Daoji Huang",
-	    Email => "huan0664@umn.edu",
+	    Email => "dhuang@ias.edu",
 	    HomePage => "https://daojihuang.me"},
         {Name => "Patricia Klein", 
             Email => "pjklein@tamu.edu", 
@@ -21,8 +21,8 @@ newPackage(
 	    Email => "alaclair@purdue.edu",
 	    HomePage=> "https://sites.google.com/view/adamlaclair/home"},
         {Name => "Yuyuan Luo",
-            Email => "lyuyuan@mit.edu",
-            HomePage=> "https://www.mit.edu/~lyuyuan/"}, 
+            Email => "yuyuan.luo@princeton.edu",
+            HomePage=> "https://yuyuan-luo.github.io/"},
 	{Name => "Joseph McDonough",
 	    Email => "mcdo1248@umn.edu",
 	    HomePage=> "https://jmcdonough98.github.io/"}
@@ -33,7 +33,19 @@ newPackage(
         "SimplicialDecomposability",
         "Posets",
         "MinimalPrimes"
-    }
+    },
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "The MatrixSchubert package for Macaulay2",
+	"acceptance date" => "2025-03-19",
+	"published article URI" => "https://msp.org/jsag/2025/15-1/p04.xhtml",
+	"published article DOI" => "10.2140/jsag.2025.15.41",
+	"published code URI" => "https://msp.org/jsag/2025/15-1/jsag-v15-n1-x04-MatrixSchubert.zip",
+	"version at publication" => "1.2",
+	"volume number" => "15",
+	"volume URI" => "https://msp.org/jsag/2025/15-1/"
+	}
 )
 
 export{

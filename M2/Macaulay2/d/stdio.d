@@ -106,7 +106,21 @@ export clearFileError(o:file):void := (
      );
 export fileErrorMessage(o:file):string := o.errorMessage;
 export noprompt():string := "";
-newbuffer():string := new string len bufsize do provide ' ';
+-- When newbuffer() is inlined, GCC cannot tell that GC_MALLOC_ATOMIC allocated
+-- bufsize bytes for the flexible array, so it spuriously warns that the
+-- memset writing bufsize bytes overflows a region of size 0.
+newbuffer():string := (
+    Ccode(void, "
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored \"-Warray-bounds\"
+#pragma GCC diagnostic ignored \"-Wstringop-overflow\"
+(void)0");
+    result := new string len bufsize do provide ' ';
+    Ccode(void, "
+#pragma GCC diagnostic pop
+(void)0");
+    result
+    );
 export stdError := newFile(
      -- contrast with stderr, defined in errio.d
      -- intended just for top level use where nets might be printed
@@ -136,6 +150,28 @@ texmacsprompt():string := (
      );
 texmacsreward():string := "\2verbatim:";
 
+export errmsg := {+ message:string };
+export FileCell := {file:file,next:(null or FileCell)};
+export openfiles := (null or FileCell)(NULL);
+addfile(o:file):file := (
+     openfiles = FileCell(o,openfiles);
+     o);
+rmfile(o:file):void := (
+     prevcell := (null or FileCell)(NULL);
+     x := openfiles;
+     while true do (
+	  when x is null do break
+	  is thiscell:FileCell do (
+	       if thiscell.file == o then (
+	       	    when prevcell is null do openfiles = thiscell.next
+	       	    is prevcell:FileCell do prevcell.next = thiscell.next
+		    )
+	       else prevcell = x;
+	       x = thiscell.next;
+	       )));
+addfile(stdIO);
+addfile(stdError);
+
 init():void := (
      stdIO.readline = stdIO.infd == STDIN && stdIO.inisatty ;
      foreach arg in args do (
@@ -164,6 +200,15 @@ init():void := (
 	       stdIO.readline = false; -- don't go thru readline
 	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
 	       stdIO.outisatty = true; -- not so important?
+	       STDERR = 1;
+	       rmfile(stdError);
+	       stdError = newFile(
+	         "stderr", 0,
+     	         false, "",
+     	         false,NOFD,NOFD,0,
+     	         false,NOFD  ,false,          "",        0,0,false,false,noprompt,noprompt,false,true,false,0,
+     	         true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1,false,1);
+	       addfile(stdError);
 	  )
 	  else
 	  if arg === "--read-only-files" then (
@@ -175,27 +220,6 @@ init():void := (
 
 everytime(init);
 
-export errmsg := {+ message:string };
-export FileCell := {file:file,next:(null or FileCell)};
-export openfiles := (null or FileCell)(NULL);
-addfile(o:file):file := (
-     openfiles = FileCell(o,openfiles);
-     o);
-rmfile(o:file):void := (
-     prevcell := (null or FileCell)(NULL);
-     x := openfiles;
-     while true do (
-	  when x is null do break
-	  is thiscell:FileCell do (
-	       if thiscell.file == o then (
-	       	    when prevcell is null do openfiles = thiscell.next
-	       	    is prevcell:FileCell do prevcell.next = thiscell.next
-		    )
-	       else prevcell = x;
-	       x = thiscell.next;
-	       )));
-addfile(stdIO);
-addfile(stdError);
 opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg) := (
      if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening a socket not permitted"));
      host0 := substr(filename,1);
@@ -656,45 +680,38 @@ export present(x:string):string := (
      fixesneeded := 0;
      foreach cc in x do (
 	  c := cc; 
-	  if c == char(0) || c == '\t' || c == '\b' || c == '\r' || c == '\"' || c == '\\' 
-	  then fixesneeded = fixesneeded + 1 
+	  if (c == '\"' ||
+	      c == '\\' ||
+	      c == '\b' ||
+	      c == '\f' ||
+	      c == '\n' ||
+	      c == '\r' ||
+	      c == '\t' )
+	  then fixesneeded = fixesneeded + 1
+	  else if 0 <= c && c < 32 then fixesneeded = fixesneeded + 5
 	  );
      if fixesneeded != 0 then (
 	  new string len length(x)+fixesneeded do foreach cc in x do (
 	       c := cc;
-	       if c == char(0) then (provide '\\'; provide '0';)
-	       else if c == '\r' then (provide '\\'; provide 'r';)
-	       else if c == '\b' then (provide '\\'; provide 'b';)
-	       else if c == '\t' then (provide '\\'; provide 't';)
+	       -- control characters understood by JSON
+	       if      c == '\b' then (provide '\\'; provide 'b')
+	       else if c == '\f' then (provide '\\'; provide 'f')
+	       else if c == '\n' then (provide '\\'; provide 'n')
+	       else if c == '\r' then (provide '\\'; provide 'r')
+	       else if c == '\t' then (provide '\\'; provide 't')
+	       else if 0 <= c && c < 32
+	       then ( -- escape all other control characters as \u00xy
+		   provide '\\'; provide 'u'; provide '0'; provide '0';
+		   if c < 16 then provide '0' else provide '1';
+		   lastdigit := c % 16;
+		   if lastdigit < 10 then provide '0' + lastdigit
+		   else provide 'a' + lastdigit - 10)
 	       else (
 		    if c == '\"' || c == '\\' then provide '\\';
-	       	    provide c;
-		    )
-	       ))
+		    provide c)))
      else x);
 
-export presentn(x:string):string := ( -- fix newlines and other special chars, also
-     fixesneeded := 0;
-     foreach cc in x do (
-	  c := cc; 
-	  if c < char(32) || c == '\"' || c == '\\'
-	  then fixesneeded = fixesneeded + 1 
-	  );
-     if fixesneeded != 0 then (
-	  new string len length(x)+fixesneeded do foreach cc in x do (
-	       c := cc;
-	       if c == char(0) then (provide '\\'; provide '0';)
-	       else if c == '\r' then (provide '\\'; provide 'r';)
-	       else if c == '\n' then (provide '\\'; provide 'n';)
-	       else if c == '\b' then (provide '\\'; provide 'b';)
-	       else if c == '\t' then (provide '\\'; provide 't';)
-	       else if c < char(32) then (provide '\\'; provide '?';)
-	       else (
-		    if c == '\"' || c == '\\' then provide '\\';
-	       	    provide c;
-		    )
-	       ))
-     else x);
+export format(s:string):string := "\"" + present(s) + "\"";
 
 export filbuf(o:file):int := (
 --      if o.fulllines then (

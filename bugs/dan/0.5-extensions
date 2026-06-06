@@ -1,7 +1,0 @@
-This sort of extension, done by a package, could silently conflict with those
-done by another package:
-
-   List ! := a -> product(a, r -> r!)
-
-Should we disallow it?
-

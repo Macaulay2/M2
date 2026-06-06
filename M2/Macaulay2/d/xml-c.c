@@ -18,7 +18,10 @@ static char *copystring(const char *s) {
 
 static void initxml() __attribute__ ((constructor));
 static void initxml() {
-  xmlGcMemSetup(freemem,(void *(*)(size_t))getmem,(void *(*)(size_t))getmem_atomic,(void *(*)(void *,size_t))getmoremem1,copystring);
+  xmlMemSetup((xmlFreeFunc) freemem,
+	      (xmlMallocFunc) getmem,
+	      (xmlReallocFunc) getmoremem1,
+	      (xmlStrdupFunc) copystring);
 }
 
 
@@ -67,10 +70,17 @@ xmlNode *xml_AddText(xmlNode *parent, M2_string content){
 
 M2_string xml_toString(xmlNode *n) {
   M2_string s;
-  xmlBuffer *buf = xmlBufferCreate();
-  int len = xmlNodeDump(buf,NULL,n,2,1);
-  s = M2_tostringn((char*)buf->content,len);
-  xmlBufferFree(buf);
+  xmlOutputBuffer *buf;
+  const xmlChar* content;
+  int len;
+
+  buf = xmlAllocOutputBuffer(NULL);
+  xmlNodeDumpOutput(buf, n->doc, n, 2, 1, NULL);
+  content = xmlOutputBufferGetContent(buf);
+  len = xmlOutputBufferGetSize(buf);
+  s = M2_tostringn((const char *)content, len);
+  xmlOutputBufferClose(buf);
+
   return s;
 }
 

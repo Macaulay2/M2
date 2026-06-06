@@ -6,7 +6,12 @@
 needs "methods.m2"
 needs "lists.m2"
 
+-- TODO: are these used in the documentation?
+-- TODO: how to find all missing keywords?
+-- TODO: is there a better place for these?
 typicalValues#(symbol timing) = Time
+typicalValues#(symbol elapsedTiming) = Time
+typicalValues#(symbol threadLocal) = Symbol
 typicalValues#(symbol local) = Symbol
 typicalValues#(symbol global) = Symbol
 typicalValues#(symbol symbol) = Symbol
@@ -51,8 +56,6 @@ take(BasicList,ZZ) := take(BasicList,List) := BasicList => take
 take(Thing,ZZ) := take(Thing,List) := List => take
 
 isMutable(Thing) := Boolean => isMutable
-hashTable List := HashTable => hashTable
-hashTable(Function,List) := HashTable => hashTable
 remove(MutableList,ZZ) := Nothing => remove
 remove(Database,String) := Nothing => remove
 remove(HashTable,Thing) := Nothing => remove
@@ -112,20 +115,22 @@ generateTypicalValues = (srcdir) -> (
     printerr("Generating typical values in ", relativizeFilename typicalValuesSource);
     outfile := openOut typicalValuesSource;
     for file in sort ddfiles do (
+	try src := get(srcdir | file) else continue;
 	comment := "-- typical values extracted from " | file;
-	srcstring := stack apply(pairs lines get(srcdir | file), (num, line) -> line | " -- " | file | ":" | num);
+	srcstring := stack apply(pairs lines src, (num, line) -> line | " -- " | file | ":" | num);
 	-- TODO: separate method key (\\1) and output type (\\2)
 	extracted := select(typicalValuesFormat | " -- (.*)$", "typval(\\1, \\2) -- \\3", toString srcstring);
 	extracted  = apply(extracted, line -> first select("(.*?)--(.*?)$", "\\1" | pad_(91-#line) "\t-- \\2", line));
 	if 0 < #extracted then outfile << comment << endl << stack extracted << endl);
-    close outfile)
+    outfile << "-- DONE: generated based on " | version#"git description" << endl << close)
 
--- if missing, tvalues.m2 is regenerated directly
-if not fileExists typicalValuesSource then generateTypicalValues(currentFileDirectory | "../d/")
+-- if missing or not successfully generated, tvalues.m2 is regenerated directly
+if not fileExists typicalValuesSource or not match("-- DONE", get typicalValuesSource)
+then generateTypicalValues(topSrcdir | "Macaulay2/d/")
 
 -----------------------------------------------------------------------------
 -- numerical functions that will be wrapped
-redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
+redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, polylog, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
     f -> f => method());
 variants := new MutableHashTable;
 
@@ -147,35 +152,35 @@ typval = x -> (
 	 f := redefs#f';
 	 args := drop(drop(x,-1),1);
 	 installMethod append(prepend(f,args),last x => f');
-	 if args === sequence RR then variants#(f,Number) = f' @@ numeric
+	 if args === sequence InexactNumber then variants#(f,Number) = f' @@ numeric
 	 else if #args === 2 then (
-	     if args#0 === RR then variants#(f,Number,args#1) = (x,y) -> f'(numeric_(precision y) x,y);
-	     if args#1 === RR then variants#(f,args#0,Number) = (x,y) -> f'(x,numeric_(precision x) y);
-	     if args === (RR,RR) then variants#(f,Number,Number) = (x,y) -> f'(numeric x,numeric y); -- phew
+	     if args#0 === InexactNumber then variants#(f,Number,args#1) = (x,y) -> f'(numeric_(precision y) x,y);
+	     if args#1 === InexactNumber then variants#(f,args#0,Number) = (x,y) -> f'(x,numeric_(precision x) y);
+	     if args === (InexactNumber,InexactNumber) then variants#(f,Number,Number) = (x,y) -> f'(numeric x,numeric y); -- phew
 	     )
 	 else if #args === 3 then (
-	     if args#0 === RR then
+	     if args#0 === InexactNumber then
 		 variants#(f, Number,   args#1, args#2) =
 		 (x,y,z) -> f'(numeric(min(precision y, precision z), x), y, z);
-	     if args#1 === RR then
+	     if args#1 === InexactNumber then
 		 variants#(f, args#0, Number,   args#2) =
 		 (x,y,z) -> f'(x, numeric(min(precision x, precision z), y), z);
-	     if args#2 === RR then
+	     if args#2 === InexactNumber then
 		 variants#(f, args#0, args#1, Number)   =
 		 (x,y,z) -> f'(x, y, numeric(min(precision x, precision y), z));
-	     if args#0 === RR and args#1 === RR then
+	     if args#0 === InexactNumber and args#1 === InexactNumber then
 		 variants#(f, Number,   Number,   args#2) =
 		 (x,y,z) ->
 		     f'(numeric_(precision z) x, numeric_(precision z) y, z);
-	     if args#0 === RR and args#2 === RR then
+	     if args#0 === InexactNumber and args#2 === InexactNumber then
 	         variants#(f, Number,   args#1, Number)   =
 		 (x,y,z) ->
 		     f'(numeric_(precision y) x, y, numeric_(precision y) z);
-	     if args#1 === RR and args#2 === RR then
+	     if args#1 === InexactNumber and args#2 === InexactNumber then
 		 variants#(f, args#0, Number,   Number)   =
 		 (x,y,z) ->
 		     f'(x, numeric_(precision x) y, numeric_(precision x) z);
-	     if args === (RR, RR, RR) then
+	     if args === (InexactNumber, InexactNumber, InexactNumber) then
 		 variants#(f, Number,   Number,   Number)   =
 		 (x,y,z) -> f'(numeric x, numeric y, numeric z);
 	     );
@@ -188,7 +193,7 @@ load typicalValuesSource
 scanPairs(redefs, (k,v) -> globalAssign(baseName k,v))
 scanPairs(new HashTable from variants, (args,f) -> (
 	installMethod append(args,f);
-	undocumented args;
+	undocumented' args;
 	))
 
 nilp := x -> (  -- degree of nilpotency
@@ -314,6 +319,8 @@ taylor (log1p, (x,n) -> (
     s
     ))
 
+-- now that sqrt is a method function, we can finally install this
+sqrt(ZZ, ZZ) := tonelliShanks
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

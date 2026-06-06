@@ -30,6 +30,7 @@
 #include "aring.hpp"
 #include "aring-glue.hpp"
 #include "aring-RRi.hpp"
+#include "aring-CCi.hpp"
 #include "aring-RR.hpp"
 #include "aring-CC.hpp"
 #include "aring-RRR.hpp"
@@ -93,6 +94,11 @@ const Ring /* or null */ *IM2_Ring_RRi(unsigned long prec)
   return M2::ConcreteRing<M2::ARingRRi>::create(prec);
 }
 
+const Ring /* or null */ *IM2_Ring_CCi(unsigned long prec)
+{
+  return M2::ConcreteRing<M2::ARingCCi>::create(prec);
+}
+
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)
 {
   if (prec <= 53) return M2::ConcreteRing<M2::ARingRR>::create();
@@ -126,6 +132,8 @@ const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 
 const Ring * /* or null */ rawDividedPowerRing(const Ring *K, const Monoid *M)
 {
+  (void) K;
+  (void) M;
 #if 0
   //TODO: MES, this function has not yet been implemented, or even placed in ring.h
   try {

@@ -57,7 +57,6 @@ newPackage(
        "published article URI" => "https://msp.org/jsag/2015/7-1/p01.xhtml",
        "published article DOI" => "10.2140/jsag.2015.7.1",
        "published code URI" => "https://msp.org/jsag/2015/7-1/jsag-v7-n1-x01-MultiplierIdeals.m2",
-       "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiplierIdeals.m2",
        "release at publication" => "a71903e3507b0384ece1ed43f815b9344258ed1a",
        "version at publication" => "1.1",
        "volume number" => "7",
@@ -106,6 +105,11 @@ newPackage(
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+-- TODO: `multiplierIdeal` and `logCanonicalThreshold` are commented out
+-- of the export list here.  The package nonetheless documents and extends
+-- both symbols (they arrive via PackageExports => {"HyperplaneArrangements"}).
+-- Either re-enable the exports for clarity or add a comment explaining
+-- the deliberate method-extension-without-re-export pattern.
 export {
   -- "multiplierIdeal",
   -- "logCanonicalThreshold",
@@ -1172,24 +1176,12 @@ jumpingDenominators(Matrix,ZZ) := (M,r) -> (
 
 
 --------------------------------------------------------------------------------
--- VIA DMODULES ----------------------------------------------------------------
---------------------------------------------------------------------------------
-
--- TEST ///
---   needsPackage "MultiplierIdeals";
---   R = QQ[x,y];
---   -- use R;
---   I = ideal(y^2-x^3,R);
---   assert(logCanonicalThreshold(I) == 5/6);
---   assert(multiplierIdealViaDmodules(I,1/2) == ideal(1_R));
---   assert(multiplierIdealViaDmodules(I,5/6) == ideal(x,y));
---   assert(multiplierIdealViaDmodules(I,1) == I);
--- ///  
-
---------------------------------------------------------------------------------
 -- MONOMIAL IDEALS -------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+-- TODO: `needsPackage "MultiplierIdeals"` usage across the TEST blocks
+-- below is inconsistent -- a few include it, most do not.  Both styles
+-- work under `check`, but pick one and apply uniformly.
 -- Compute a NewtonPolyhedron and intmat2monomialIdeal:
 -- go from Ideal -> Polyhedron -> Ideal, see if it is the same again
 TEST ///
@@ -1643,7 +1635,12 @@ TEST /// -- Example 3.9 of [Johnson, 2003] (thesis)
   R = QQ[x_1..x_12];
   X = genericMatrix(R,3,4);
   assert(I(X) == J(X));
-  -- TODO: re-enable these tests, which are commented due to failing github builds
+  -- The (3,5) case below is disabled: it passes in ~12s on Linux CI but
+  -- exceeds the macOS GitHub runner's memory budget and crashes the M2
+  -- process with an out-of-memory error.  Earlier comment claimed this
+  -- was a time-budget issue and re-enabled it; the actual constraint is
+  -- memory, not time.  Re-enable only when either macOS runners get more
+  -- RAM or the underlying algorithm is made more memory-efficient.
   -- R = QQ[x_1..x_15];
   -- X = genericMatrix(R,3,5);
   -- assert(I(X) == J(X));
@@ -1685,7 +1682,11 @@ TEST ///
 --------------------------------------------------------------------------------
 
 beginDocumentation()
-document { 
+-- TODO: this top-level doc node has Headline + PARA + References but no
+-- runnable EXAMPLE; `viewHelp MultiplierIdeals` is therefore pure prose.
+-- Adding a small EXAMPLE (e.g. `logCanonicalThreshold(ideal(y^2-x^3))`)
+-- would improve discoverability.
+document {
   Key => MultiplierIdeals,
   Headline => "multiplier ideals",
   PARA {

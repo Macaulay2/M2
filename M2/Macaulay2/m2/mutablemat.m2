@@ -13,7 +13,12 @@ entries MutableMatrix := m -> (
      applyTable(entries raw m, r -> promote(r,R)))
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
 precision MutableMatrix := precision @@ ring
-expression MutableMatrix := m -> MatrixExpression append(applyTable(entries m, expression), symbol MutableMatrix => true)
+expression MutableMatrix := m -> MatrixExpression append(
+    if m == 0 then (
+	R := ring m;
+	{symbol zero => (target m, source m)})
+    else applyTable(entries m, expression),
+    symbol MutableMatrix => true)
 texMath MutableMatrix := m -> texMath expression m
 net MutableMatrix := m -> net expression m
 toExternalString MutableMatrix := lookup(toExternalString, MutableHashTable)
@@ -30,7 +35,9 @@ new MutableMatrix from Matrix := (typeofMutableMatrix,m) -> map(ring m,rawMutabl
 
 mutableMatrix = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableMatrix Matrix := o -> m -> map(ring m, rawMutableMatrix(raw m, o.Dense))
-mutableMatrix List := o -> m -> (m1 := matrix m; map(ring m1, rawMutableMatrix(raw m1, o.Dense)))
+mutableMatrix(Ring,List) := o -> (R, m) -> mutableMatrix(matrix(R, m), o)
+mutableMatrix(RingFamily,List) := o -> (R, m) -> mutableMatrix(default R, m, o)
+mutableMatrix List := o -> m -> mutableMatrix(matrix m, o)
 mutableMatrix MutableMatrix := o -> (m) -> map(ring m, rawMutableMatrix(raw m, o.Dense))
 mutableMatrix(Ring,ZZ,ZZ) := o -> (R,nrows,ncols) -> map(R,rawMutableMatrix(raw R,nrows,ncols,o.Dense))
 mutableMatrix(RingFamily,ZZ,ZZ) := o -> (R,nrows,ncols) -> mutableMatrix(default R,nrows,ncols,o)
@@ -38,9 +45,9 @@ mutableMatrix(RingFamily,ZZ,ZZ) := o -> (R,nrows,ncols) -> mutableMatrix(default
 matrix MutableMatrix := o -> m -> map(ring m, rawMatrix raw m)
 
 clean(RR,MutableMatrix) := (epsilon,M) -> map(ring M, clean(epsilon,raw M))
-norm(RR,MutableMatrix) := (p,M) -> new RR from norm(p,raw M)
-norm(InexactField,MutableMatrix) := (p,M) -> norm(numeric(precision M, p), M)
-norm(MutableMatrix) := (M) -> new RR from norm(numeric(precision M,infinity),raw M)
+
+norm MutableMatrix := norm_infinity
+norm(Number, MutableMatrix) := lookup(norm, Number, Matrix)
 
 mutableIdentity = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableIdentity(Ring,ZZ) := o -> (R,nrows) -> 
@@ -92,13 +99,13 @@ promote(MutableMatrix,Number) := Matrix => (f,S) -> (
 --------------------------------
 -- submatrices -----------------
 --------------------------------
-MutableMatrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
-MutableMatrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
-submatrix(MutableMatrix,VisibleList,VisibleList) := (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
-submatrix(MutableMatrix,VisibleList            ) := (m,cols     ) -> map(ring m,rawSubmatrix(raw m, listZ toList splice cols))
-submatrix(MutableMatrix,Nothing    ,VisibleList) := (m,null,cols) -> submatrix(m,cols)
-submatrix(MutableMatrix, VisibleList, Nothing)     := (m, rows, null) -> map(ring m, rawSubmatrix(raw m, listZZ rows, 0 .. numColumns m - 1))
-submatrix(MutableMatrix, Nothing,     Nothing)     := (m, null, null) -> m
+MutableMatrix _ List := Matrix => (f,v) -> submatrix(f, v)  -- get some columns
+MutableMatrix ^ List := Matrix => (f,v) -> submatrix(f, v,) -- get some rows
+submatrix(MutableMatrix, VisibleList, VisibleList) := (m, rows, cols) -> submatrixFree(m, rows, cols)
+submatrix(MutableMatrix, VisibleList)              := (m,       cols) -> submatrixFree(m, null, cols)
+submatrix(MutableMatrix, Nothing,     VisibleList) := (m, rows, cols) -> submatrix(m, cols)
+submatrix(MutableMatrix, VisibleList, Nothing)     := (m, rows, cols) -> submatrixFree(m, rows, null)
+submatrix(MutableMatrix, Nothing,     Nothing)     := (m, rows, cols) -> m
 
 --------------------------------
 numRows(RawMutableMatrix) := (m) -> rawNumberOfRows m
@@ -106,6 +113,9 @@ numRows(MutableMatrix) := (m) -> rawNumberOfRows raw m
 
 numColumns(RawMutableMatrix) := (m) -> rawNumberOfColumns m
 numColumns(MutableMatrix) := (m) -> rawNumberOfColumns raw m
+
+target MutableMatrix := Module => m -> (ring m)^(numRows m)
+source MutableMatrix := Module => m -> (ring m)^(numColumns m)
 
 rowSwap = method()
 rowSwap(RawMutableMatrix,ZZ,ZZ) := (m,i,j) -> (rawMatrixRowSwap(m,i,j);m)
@@ -295,6 +305,8 @@ QRDecomposition Matrix := A -> (
      A = mutableMatrix(A,Dense=>true);
      (Q,R) := QRDecomposition A;
      (matrix Q,matrix R))
+
+cover MutableMatrix := MutableMatrix => identity
 
 rank MutableMatrix := (M) -> (
     if isField ring M then

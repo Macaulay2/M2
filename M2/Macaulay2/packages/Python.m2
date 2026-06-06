@@ -2,23 +2,23 @@
 this does not work unless M2 is compiled --with-python
 *-
 
-pythonPresent := Core#"private dictionary"#?"pythonRunString"
-
 newPackage("Python",
-    Version => "0.6",
-    Date => "January 28, 2024",
+    Version => "1.0",
+    Date => "November 8, 2025",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
 	    Email => "danielrichardgrayson@gmail.com",
 	    HomePage => "https://faculty.math.illinois.edu/~dan/"},
 	{Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
+    Configuration => {"executable" => null},
     Keywords => {"Interfaces"},
+    PackageImports => {"Text"},
     AuxiliaryFiles => true,
-    CacheExampleOutput => true,
-    OptionalComponentsPresent => pythonPresent
+    OptionalComponentsPresent => Core#"private dictionary"#?"pythonTrue",
+    UseCachedExampleOutput => true,
     )
 
 ---------------
@@ -26,6 +26,17 @@ newPackage("Python",
 ---------------
 
 -*
+
+1.0 (2025-11-08, M2 1.25.11)
+* New PythonContext class replacing undocumented Context class
+* getattr, hasattr, and settattr removed (use @@ and @@? now)
+* getitem and setitem removed (use _ now)
+* NumPy support added
+* New "pythonRunScript" for running multiline Python code
+* Add support for working with virtual environments and installing modules
+  using pip.
+* Significant documentation improvements, including two tutorials
+* Stop shipping cached examples since Python is supported by default now.
 
 0.6 (2024-01-28, M2 1.23)
 * add expression, net, texMath, describe, and toExternalString methods
@@ -62,144 +73,143 @@ newPackage("Python",
 
 *-
 
-verboseLog = if debugLevel > 0 then printerr else identity
-
-if pythonPresent then verboseLog "success: python is present" else (
-    verboseLog "warning: python is not present";
-    verboseLog "specify --with-python in `configure` options and recompile M2";
-    load "Python/no-python.m2";
-    load "Python/doc.m2";
+if not (options currentPackage).OptionalComponentsPresent
+then (
+    document {Key => "Python",
+	"Macaulay2 was built without Python support, so the Python package is ",
+	"not functional."};
+    printerr "warning; M2 was not compiled with Python support; ending";
     end)
 
 exportFrom_Core {
-    "runSimpleString",
     "PythonObject",
-    "objectType"}
+    "objectType",
+    "runSimpleString",
+    }
 
 importFrom_Core {
     "pythonComplexFromDoubles",
     "pythonDictNew",
     "pythonDictSetItem",
+    "pythonEvalGetBuiltins",
     "pythonFalse",
+    "pythonFloatAsDouble",
+    "pythonFloatFromDouble",
     "pythonImportImportModule",
     "pythonInitialize",
     "pythonListNew",
     "pythonListSetItem",
     "pythonLongAsLong",
     "pythonLongFromLong",
-    "pythonFloatAsDouble",
-    "pythonFloatFromDouble",
     "pythonNone",
+    "pythonObjectCall",
     "pythonObjectGetAttrString",
     "pythonObjectHasAttrString",
-    "pythonObjectRichCompareBool",
+    "pythonObjectIsTrue",
     "pythonObjectSetAttrString",
-    "pythonObjectCall",
     "pythonObjectStr",
-    "pythonRunString",
+    "pythonRunStringEval",
+    "pythonRunStringFile",
     "pythonSetNew",
     "pythonTrue",
     "pythonTupleNew",
     "pythonUnicodeAsUTF8",
     "pythonUnicodeFromString",
     "pythonWrapM2Function",
-    "toExternalFormat"
+    "toExternalFormat",
 }
 
-export { "pythonHelp", "context", "Preprocessor", "toPython",
+export {
+    -- class
+    "PythonContext",
+
+    -- methods
     "addPyToM2Function",
-    "getattr",
-    "getitem",
-    "hasattr",
     "import",
+    "installNumPyMethods",
+    "pipInstall",
+    "pythonHelp",
+    "pythonRunScript",
     "pythonValue",
-    "setattr",
-    "setitem",
-    "toFunction"
+    "setupVirtualEnvironment",
+    "toFunction",
+    "toPython",
 }
 
-exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
+executable = ((options currentPackage).Configuration#"executable" ??
+    get "!command -v python3 | tr -d '\n'")
 
-pythonInitialize()
+-- raise an error if we try initializing with a new Python executable
+-- store the information in ZZ since it will persist when reloading
+if ZZ#?"Python executable" and ZZ#"Python executable" != executable
+then error "can't reload package with a new python executable; restart first"
+pythonInitialize(ZZ#"Python executable" = executable)
 
-pythonHelp = Command (() -> pythonValue ///help()///)
+pythonHelp = Command (() -> builtins@@help())
 
-expression PythonObject := expression @@ pythonUnicodeAsUTF8 @@ pythonObjectStr
-toString PythonObject := toString @@ expression
-net PythonObject := net @@ expression
-texMath PythonObject := texMath @@ expression
+toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
+net PythonObject := net @@ toString
+texMath PythonObject := texMath @@ toString
+hypertext PythonObject := x -> SAMP { toString x, "class" => "language-python" }
+html PythonObject := html @@ hypertext
 
 describe PythonObject := x -> Describe FunctionApplication(pythonValue,
-    expression x@@"__repr__"())
+    toString x@@"__repr__"())
 toExternalString PythonObject := toExternalFormat @@ describe
 
+typename = x -> (
+    T := objectType x;
+    m := toString T@@"__module__";
+    (if m == "builtins" then "" else (m | ".")) | toString T@@"__qualname__")
+
 PythonObject.synonym = "python object"
-PythonObject#AfterPrint = x -> (
-     t := toString objectType x;
-     t = replace("<([a-z]+) '(.*)'>"," of \\1 \\2",t);
-     (PythonObject, t))
+PythonObject.AfterPrint = x -> (PythonObject, " of class ", typename x)
 
-pythonValue = method(Dispatch => Thing)
-pythonValue String := s -> (
+pythonValue = method(
+    Dispatch => Thing,
+    Options => {Global => null})
+pythonValue String := o -> s -> (
     if debugLevel > 0 then printerr("python command: ", s);
-    pythonRunString s)
-pythonValue Sequence := S -> pythonValue \\ concatenate \\ toString \ S
+    pythonRunStringEval(s, toPython(o.Global ?? pythonDictNew())))
+pythonValue Sequence := o -> s -> pythonValue(concatenate \\ toString \ s, o)
 
-numContexts = 0
-nextContext = method()
-installMethod(nextContext,
-    () -> (
-     	numContexts = numContexts + 1;
-     	"context" | toString numContexts)
-    )
-Context = new Type of HashTable
-globalAssignment Context
-use Context := c -> (scanPairs(c,(k,v) -> k <- v); c)
-context = method(Options => {
-	  Preprocessor => ""
-	  })
-context String := opts -> init -> (
-     dict := nextContext();
-     pythonValue("eval(compile( '",dict," = {}','','single' ),__builtins__) ");
-     access := s -> concatenate(dict,"[", format s, "]");
-     val := s -> pythonValue access s;
-     eval := s -> pythonValue concatenate("eval(compile(",s,",'','single' ),",dict,")");
-     evalstring := s -> eval replace("\n","\\n",format concatenate s);
-     evalstring init;
-     valuestring := s -> (
-	  evalstring("tmp = ",s);
-	  val "tmp");
-     stmt := if opts.Preprocessor === ""
-     then s -> (
-	  evalstring s;
-	  null)
-     else (
-	  s -> (
-	       evalstring("tmp = ",opts.Preprocessor,"(",format s,")");
-	       if debugLevel > 0 then stderr << "--intermediate value: tmp = " << format toString pythonValue access "tmp" << endl;
-	       eval access "tmp";
-	       null)
-	  );
-     expr := s -> (
-	  s = "temp = " | s;
-	  stmt s;
-	  val "temp");
-     stmtexpr := s -> if match(";$",s) then stmt s else expr s;
-     symbols := () -> pythonValue concatenate("__builtins__[",format dict,"].keys()");
-     use new Context from {
-	  global dict => dict,
-	  global val => val,
-	  global eval => evalstring,
-	  global valuestring => valuestring,
-	  global stmt => stmt,
-	  global expr => expr,
-	  global stmtexpr => stmtexpr,
-	  global symbols => symbols
-	  })
-Context String := (c,s) -> c.stmtexpr s
+pythonRunScript = method(
+    Dispatch => Thing,
+    Options => {Global => null})
+pythonRunScript String := o -> s -> (
+    if debugLevel > 0 then printerr("python command: ", s);
+    globals := toPython o.Global ?? pythonDictNew();
+    globals_"__builtins__" ??= pythonEvalGetBuiltins();
+    r := pythonRunStringFile(s, globals);
+    if isMember("__builtins__", r) then delete("__builtins__", r);
+    r)
+pythonRunScript Sequence := o -> s -> pythonRunScript(
+    concatenate \\ toString \ s, o)
+
+PythonObject @@  Thing := (x, y) -> pythonObjectGetAttrString(x, toString y)
+PythonObject @@? Thing := (x, y) -> pythonObjectHasAttrString(x, toString y)
+PythonObject @@  Thing  = (x, y, e) -> (
+    pythonObjectSetAttrString(x, toString y, toPython e))
+
+------------
+-- import --
+------------
 
 import = method()
-import(String) := pythonImportImportModule
+import String := pythonImportImportModule
+
+-- import modules we'll use
+ast      = import "ast"
+builtins = import "builtins"
+abc      = import "collections.abc"
+math     = import "math"
+numbers  = import "numbers"
+operator = import "operator"
+sys      = import "sys"
+
+-------------------------------------
+-- Python -> M2 conversion methods --
+-------------------------------------
 
 toFunction = method()
 toFunction PythonObject := x -> y -> (
@@ -215,96 +225,117 @@ toFunction PythonObject := x -> y -> (
     if debugLevel > 0 then printerr("output: ", toString r);
     r)
 
+isinstance = pythonObjectIsTrue @@ (toFunction builtins@@"isinstance")
+checktype = method()
+checktype(PythonObject, String)       := (x, type) -> typename x == type
+checktype(PythonObject, PythonObject) := isinstance
+
+-- remove hooks when reloading package
+importFrom(Core, "Hooks")
+remove(PythonObject, Hooks)
+
 addPyToM2Function = method()
-addPyToM2Function(String, Function, String) := (type, f, desc) ->
+addPyToM2Function(String,       Function, String) :=
+addPyToM2Function(PythonObject, Function, String) := (type, f, desc) ->
     addPyToM2Function({type}, f, desc)
-addPyToM2Function(List, Function, String) := (types, f, desc) ->
+addPyToM2Function(List, Function, String) := (types, f, desc) -> (
     addHook((value, PythonObject),
-	x -> if isMember(toString (objectType x)@@"__name__", types) then f x,
-	Strategy => desc)
+	x -> if any(types, type -> checktype(x, type)) then f x,
+	Strategy => desc))
 
 addHook((value, PythonObject),
-    x -> if toString (objectType x)@@"__name__"  != "NoneType" then x,
+    x -> ??x,
     Strategy => "unknown -> PythonObject")
-addPyToM2Function({"function", "builtin_function_or_method", "method-wrapper"},
-    toFunction, "function -> FunctionClosure")
+
+addPyToM2Function(
+    abc@@"Callable",
+    toFunction,
+    "collections.abc.Callable -> FunctionClosure")
 dictToHashTable = x -> hashTable for key in x list value key => value x_key
-addPyToM2Function("Counter", x -> new Tally from dictToHashTable x,
-    "Counter -> Tally")
-addPyToM2Function({"dict", "defaultdict"}, dictToHashTable, "dict -> HashTable")
+addPyToM2Function(
+    abc@@"Mapping",
+    dictToHashTable,
+    "collections.abc.Mapping -> HashTable")
 pyListToM2List = x -> for y in x list value y
-addPyToM2Function({"set", "frozenset"}, set @@ pyListToM2List, "set -> Set")
-addPyToM2Function("list", pyListToM2List, "list -> List")
-addPyToM2Function({"tuple", "range"}, toSequence @@ pyListToM2List,
-    "tuple -> Sequence")
-addPyToM2Function("str", toString, "str -> String")
 addPyToM2Function(
-    {"complex", "complex64", "complex128", "complex256"},
+    abc@@"Set",
+    set @@ pyListToM2List,
+    "collections.abc.Set -> Set")
+addPyToM2Function(
+    abc@@"Sequence",
+    toSequence @@ pyListToM2List,
+    "collections.abc.Sequence -> Sequence")
+addPyToM2Function(
+    abc@@"MutableSequence",
+    pyListToM2List,
+    "collections.abc.MutableSequence -> List")
+addPyToM2Function(
+    "str",
+    toString,
+    "str -> String")
+addPyToM2Function(
+    numbers@@"Complex",
     x -> toCC(pythonFloatAsDouble x@@"real", pythonFloatAsDouble x@@"imag"),
-    "complex -> CC")
+    "numbers.Complex -> CC")
 addPyToM2Function(
-    {"float", "float16", "float32", "float64", "float128"},
+    numbers@@"Real",
     pythonFloatAsDouble,
-    "float -> RR")
-pyInt = toFunction pythonValue "int"
+    "numbers.Real -> RR")
 addPyToM2Function(
-    {"int", "int8", "uint8", "int16", "uint16", "int32", "uint32",
-	"int64", "uint64", "longlong", "ulonglong"},
-    pythonLongAsLong @@ pyInt,
-    "int -> ZZ")
+    numbers@@"Integral",
+    pythonLongAsLong,
+    "numbers.Integral -> ZZ")
 addPyToM2Function(
-    {"bool", "bool_"},
-    x -> toString x == "True",
+    {builtins@@"bool", "numpy.bool_"},
+    pythonObjectIsTrue,
     "bool -> Boolean")
 value PythonObject := x -> runHooks((value, PythonObject), x)
 
--- Py_LT, Py_GT, and Py_EQ are #defines from /usr/include/python3.9/object.h
-PythonObject ? PythonObject := (x, y) ->
-    if pythonObjectRichCompareBool(x, y, -* Py_LT *- 0) then symbol < else
-    if pythonObjectRichCompareBool(x, y, -* Py_GT *- 4) then symbol > else
-    if pythonObjectRichCompareBool(x, y, -* Py_EQ *- 2) then symbol == else
-    incomparable
-PythonObject ? Thing := (x, y) -> x ? toPython y
-Thing ? PythonObject := (x, y) -> toPython x ? y
-
-PythonObject == PythonObject := (x, y) ->
-    pythonObjectRichCompareBool(x, y, -* Py_EQ *- 2)
-PythonObject == Thing := (x, y) -> x == toPython y
-Thing == PythonObject := (x, y) -> toPython x == y
-
-isimplemented = x -> value x@@"__class__"@@"__name__" != "NotImplementedType"
+-- binary operators
+truthy = x -> pythonObjectIsTrue toPython x
+importFrom(Core, "swap")
 scan({
-	(symbol +, "add"),
-	(symbol -, "sub"),
-	(symbol *, "mul"),
-	(symbol @, "matmul"),
-	(symbol /, "truediv"),
-	(symbol //, "floordiv"),
-	(symbol %, "mod"),
-	(symbol ^, "pow"),
-	(symbol <<, "lshift"),
-	(symbol >>, "rshift"),
-	(symbol &, "and"),
-	(symbol |, "or"),
-	(symbol ^^, "xor"),
-	(symbol and, "and"),
-	(symbol or, "or"),
-	(symbol xor, "xor")},
-    (op, name) -> (
-	m := "__" | name | "__";
-	rm := "__r" | name | "__";
-	local r;
-	installMethod(op, PythonObject, PythonObject, (x, y) ->
-	    if hasattr(x, m) and isimplemented(r = x@@m y) then r else
-	    if hasattr(y, rm) and isimplemented(r = y@@rm x) then r else
-	    error("no method for ", format toString op));
-	installMethod(op, PythonObject, Thing, (x, y) ->
-	    (lookup(op, PythonObject, PythonObject))(x, toPython y));
-	installMethod(op, Thing, PythonObject, (x, y) ->
-	    (lookup(op, PythonObject, PythonObject))(toPython x, y))
-	)
-    )
+	(symbol +,  toFunction operator@@"add"),
+	(symbol -,  toFunction operator@@"sub"),
+	(symbol *,  toFunction operator@@"mul"),
+	(symbol @,  toFunction operator@@"matmul"),
+	(symbol /,  toFunction operator@@"truediv"),
+	(symbol //, toFunction operator@@"floordiv"),
+	(symbol %,  toFunction operator@@"mod"),
+	(symbol ^,  toFunction operator@@"pow"),
+	(symbol **, toFunction operator@@"pow"),
+	(symbol <<, toFunction operator@@"lshift"),
+	(symbol >>, toFunction operator@@"rshift"),
+	(symbol &,  toFunction operator@@"and_"),
+	(symbol |,  toFunction operator@@"or_"),
+	(symbol ^^, toFunction operator@@"xor"),
+	(symbol ==, pythonObjectIsTrue @@ (toFunction operator@@"eq")),
+	(symbol ?,  (x, y) -> (
+		if pythonObjectIsTrue operator@@"lt"(x, y) then symbol <
+		else if pythonObjectIsTrue operator@@"gt"(x, y) then symbol >
+		else if pythonObjectIsTrue operator@@"eq"(x, y) then symbol ==
+		else incomparable)),
+	(isMember,  pythonObjectIsTrue @@ (toFunction operator@@"contains") @@ swap),
+	(quotientRemainder, (x, y) -> (
+		qr := builtins@@"divmod"(x, y);
+		(qr_0, qr_1))),
+	(round, (x, y) -> builtins@@"round"(y, x)),
+	-- TODO: if #3229 implemented, then simplify these
+	(symbol and, (x, y) -> if not truthy x then x else y),
+	(symbol or,  (x, y) -> if truthy x then x else y),
+	(symbol xor, (x, y) -> ( -- not a Python operator, but might as well
+		if      truthy x and not truthy y then x
+		else if truthy y and not truthy x then y
+		else toPython false))},
+    (op, f) -> (
+	installMethod(op, PythonObject, PythonObject, f);
+	installMethod(op, PythonObject, Thing,        f);
+	installMethod(op, Thing,        PythonObject, f)))
 
+delete(Thing, PythonObject) := (i, x) -> (
+    (operator@@"delitem")(x, i);)
+
+-- augmented assignment
 scan({
 	(symbol +=, "iadd"),
 	(symbol -=, "isub"),
@@ -314,6 +345,7 @@ scan({
 	(symbol //=, "ifloordiv"),
 	(symbol %=, "imod"),
 	(symbol ^=, "ipow"),
+	(symbol **=, "ipow"),
 	(symbol <<=, "ilshift"),
 	(symbol >>=, "irshift"),
 	(symbol &=, "iand"),
@@ -321,83 +353,194 @@ scan({
 	(symbol ^^=, "ixor")},
     (op, name) -> installMethod(op, PythonObject, (x, y) -> (
 	    m := "__" | name | "__";
-	    if hasattr(x, m) then x@@m y
+	    if x@@?m then x@@m y
 	    else Default)))
 
--PythonObject := o -> o@@"__neg__"()
-+PythonObject := o -> o@@"__pos__"()
-abs PythonObject := o -> o@@"__abs__"()
-PythonObject~ := o -> o@@"__invert__"()
-
-?? PythonObject := x -> if x != pythonNone then x
+-- unary operators
+scan({
+	(symbol +,   toFunction operator@@"pos"),
+	(symbol -,   toFunction operator@@"neg"),
+	(symbol ??,  x -> if x != pythonNone then x),
+	(symbol not, toFunction operator@@"not_"),
+	(symbol ~,   toFunction operator@@"invert"),
+	(abs,        toFunction operator@@"abs"),
+	(iterator,   toFunction builtins@@"iter"),
+	(length,     pythonLongAsLong @@ (toFunction builtins@@"len")),
+	(next,       toFunction builtins@@"next"),
+	(round,      toFunction builtins@@"round")
+	},
+    (op, f) -> installMethod(op, PythonObject, f))
 
 PythonObject Thing := (o, x) -> (toFunction o) x
 
-length PythonObject := x -> value x@@"__len__"()
+PythonObject_Thing := toFunction operator@@"getitem"
+PythonObject_Thing = (x, i, e) -> (
+    operator@@"setitem"(x, i, e);
+    e)
 
-next PythonObject := x -> x@@"__next__"();
+-----------------
+-- math module --
+-----------------
 
-iterator PythonObject := x -> x@@"__iter__"()
+-- unary methods
+scan({
+	acos,
+	acosh,
+	asin,
+	asinh,
+	atan,
+	atanh,
+	cos,
+	cosh,
+	erf,
+	erfc,
+	exp,
+	expm1,
+	floor,
+	log,
+	log1p,
+	sin,
+	sinh,
+	sqrt,
+	tan,
+	tanh
+	},
+    f -> installMethod(f, PythonObject, toFunction math@@f))
 
-getitem = method()
-getitem(PythonObject, Thing) :=
-PythonObject_Thing := (x, i) -> x@@"__getitem__" toPython i
+scan({
+	(ceiling,  "ceil"),
+	(symbol !, "factorial"),
+	(Gamma,    "gamma"),
+	(lngamma,  "lgamma")
+	},
+    (m2f, pyf) -> installMethod(m2f, PythonObject, toFunction math@@pyf))
 
-setitem = method()
-setitem(PythonObject, Thing, Thing) := (x, i, e) -> (
-    x@@"__setitem__"(i, e);
-    null)
-PythonObject_Thing = setitem
+isFinite   PythonObject := pythonObjectIsTrue @@ (toFunction math@@"isfinite")
+isInfinite PythonObject := pythonObjectIsTrue @@ (toFunction math@@"isinf")
+truncate   PythonObject := {} >> o -> toFunction math@@"trunc"
 
-getattr = method()
-getattr(PythonObject, String) := pythonObjectGetAttrString
-PythonObject @@ Thing := (x, y) -> getattr(x, toString y)
+-- binary methods
+scan({
+	atan2,
+	gcd
+	},
+    f -> (
+	g := toFunction math@@f;
+	installMethod(f, PythonObject, PythonObject, g);
+	installMethod(f, PythonObject, Thing,        g);
+	installMethod(f, Thing,        PythonObject, g)))
 
-hasattr = method()
-hasattr(PythonObject, String) := pythonObjectHasAttrString
+log(PythonObject, PythonObject) :=
+log(PythonObject, Thing)        :=
+log(Thing,        PythonObject) := (toFunction math@@log) @@ swap
 
-setattr = method()
-setattr(PythonObject, String, Thing) := (x, y, e) ->
-    pythonObjectSetAttrString(x, y, toPython e)
-PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
+-- lcm & 1-arg gcd not added until Python 3.9
+if math@@?lcm then (
+    gcd PythonObject := toFunction math@@gcd;
+    lcm PythonObject :=
+    lcm(PythonObject, PythonObject) :=
+    lcm(PythonObject, Thing)        :=
+    lcm(Thing,        PythonObject) := toFunction math@@lcm
+) else (
+    gcd PythonObject :=
+    lcm PythonObject := x -> (
+	if isinstance(x, numbers@@"Integral") then x
+	else error "expected an integer");
+    lcm(PythonObject, PythonObject) :=
+    lcm(PythonObject, Thing)        :=
+    lcm(Thing,        PythonObject) := (x, y) -> abs(x * y // gcd(x, y)))
 
-isMember(Thing,        PythonObject) := (x, y) -> false
-isMember(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
+-- comb not added until Python 3.8
+if math@@?"comb" then (
+    binomial(PythonObject, PythonObject) :=
+    binomial(PythonObject, Thing)        :=
+    binomial(Thing,        PythonObject) := toFunction math@@"comb"
+) else (
+    binomial(PythonObject, PythonObject) :=
+    binomial(PythonObject, Thing)        :=
+    binomial(Thing,        PythonObject) := (x,y) -> (
+	if x < y then pythonLongFromLong 0
+	else (
+	    r := d := pythonLongFromLong 1;
+	    while d <= y do (
+		r *= x;
+		r //= d;
+		x -= 1;
+		d += 1);
+	    r)))
 
-quotientRemainder(PythonObject, PythonObject) := (x, y) -> (
-    qr := x@@"__divmod__" y;
-    (qr_0, qr_1))
-quotientRemainder(PythonObject, Thing) := (x, y
-    ) -> quotientRemainder(x, toPython y)
-quotientRemainder(Thing, PythonObject) := (x, y
-    ) -> quotientRemainder(toPython x, y)
-
-round(PythonObject, PythonObject) := (n, x) -> x@@"__round__" n
-round(ZZ, PythonObject) := (n, x) -> round(toPython n, x)
-round PythonObject := x -> round(pythonNone, x)
-truncate PythonObject := {} >> o -> x -> x@@"__trunc__"()
-
--- __floor__ and __ceil__ were added for floats in Python 3.9
--- (https://bugs.python.org/issue38629), so we include backup definitions
--- for older versions
-if hasattr(pythonFloatFromDouble 1.0, "__floor__") then (
-    floor PythonObject := x -> x@@"__floor__"();
-    ceiling PythonObject := x -> x@@"__ceil__"()
-    ) else (
-    math := import "math";
-    floor PythonObject := toFunction math@@"floor";
-    ceiling PythonObject := toFunction math@@"ceil")
+-- remainder not added until Python 3.7
+if math@@?remainder then (
+    remainder(PythonObject, PythonObject) :=
+    remainder(PythonObject, Thing)        :=
+    remainder(Thing,        PythonObject) := toFunction math@@remainder
+) else (
+    remainder(PythonObject, PythonObject) :=
+    remainder(PythonObject, Thing)        :=
+    remainder(Thing,        PythonObject) := (x, y) -> x - y * round(x/y))
 
 help#0 PythonObject := x -> toString x@@"__doc__"
 
+-------------------
+-- PythonContext --
+-------------------
+
+-- based on Dan's original Context class
+
+PythonContext = new SelfInitializingType of MutableHashTable
+PythonContext.synonym = "Python context"
+globalAssignment PythonContext
+
+eval = toFunction builtins@@"eval"
+compile = toFunction builtins@@"compile"
+
+stmtexpr = (s, dict) -> (
+    try ast@@"parse"(s, "mode" => "eval")
+    then  eval(compile(s, "<string>", "eval"), dict)    -- expression
+    else (eval(compile(s, "<string>", "exec"), dict);)) -- statement
+
+new PythonContext := T -> T {symbol Dictionary => pythonDictNew()}
+new PythonContext from String := (T, s) -> (
+    dict := pythonDictNew();
+    stmtexpr(s, dict);
+    T {symbol Dictionary => dict})
+
+PythonContext String := (ctx, s) -> stmtexpr(s, ctx.Dictionary)
+PythonContext_String := (ctx, key) -> ctx.Dictionary_key
+
+importFrom(Core, "Abbreviate")
+listSymbols PythonObject := x -> (
+    if not isinstance(x, builtins@@"dict")
+    then error "expected a dictionary"
+    else TABLE prepend(
+	apply({"symbol", "class", "value"}, s -> TH {s}),
+	apply(toList x,
+	    symb -> (
+		val := x_symb;
+		apply({
+			symb,
+			typename val,
+			Abbreviate {val}}, s-> TD {s})))))
+listSymbols PythonContext := ctx -> listSymbols ctx.Dictionary
+
+use PythonContext := ctx -> (
+    scan(ctx.Dictionary, key -> (
+	    if not match("_", toString key)
+	    then getSymbol toString key <- ctx.Dictionary_key)))
+
+-------------------------------------
+-- M2 -> Python conversion methods --
+-------------------------------------
+
 toPython = method(Dispatch => Thing)
 toPython RR := pythonFloatFromDouble
-toPython QQ := toPython @@ toRR
+toPython RRi := pythonFloatFromDouble @@ midpoint
 toPython CC := x -> pythonComplexFromDoubles(realPart x, imaginaryPart x)
 toPython ZZ := pythonLongFromLong
+toPython Number := toPython @@ numeric
 toPython Boolean := x -> if x then pythonTrue else pythonFalse
-toPython Constant := x -> toPython(x + 0)
 toPython String := pythonUnicodeFromString
+toPython Symbol := toPython @@ toString
 toPython Sequence := x -> pythonTupleNew \\ toPython \ x
 toPython VisibleList := L -> (
     n := #L;
@@ -420,7 +563,61 @@ toPython Function := f -> (
 	    then m2args = m2args#0;
 	    toPython f m2args)))
 
+--------------------------
+-- virtual environments --
+--------------------------
+
+setupVirtualEnvironment = method()
+setupVirtualEnvironment String := dir -> (
+    if fileExists dir then error(dir, " already exists");
+    venv := try import "venv" else error("venv module not found");
+    builder := venv@@"EnvBuilder"("with_pip" => true);
+    builder@@"create" realpath dir;)
+
+pipInstall = method()
+pipInstall String := pkg -> (
+    py := toString sys@@"executable";
+    if run(py | " -m pip install " | pkg) != 0 then error "pip install failed")
+
+-------------------
+-- NumPy methods --
+-------------------
+
+-- we can't guarantee that numpy is available at startup, so we install dummy
+-- methods initially, and replace them once the user calls installNumPyMethods
+toPython Matrix        :=
+toPython Vector        :=
+toPython MutableMatrix := x -> error "call 'installNumPyMethods()' first"
+
+np = null
+installNumPyMethods = () -> (
+    if np === null then (
+	np = import "numpy";
+	toPython Matrix        :=
+	toPython Vector        :=
+	toPython MutableMatrix := (toFunction np@@"array") @@ entries;
+	addPyToM2Function(
+	    np@@"ndarray",
+	    x -> (
+		if x@@"ndim" == 0
+		then value x_()
+		else if x@@"ndim" == 1
+		then vector(value \ toList x)
+		else if x@@"ndim" == 2
+		then matrix apply(toList x, row -> value \ toList row)),
+	    "numpy.ndarray -> Matrix/Vector");
+	PythonObject#"numpy methods installed" = true);
+    np)
+
 load "Python/doc.m2"
+
+-- if in WebAppp mode, let's also import matplotlib and change the backend
+if topLevelMode === WebApp then try (
+    sys@@"path"@@append Python#"auxiliary files";
+    mpl := pythonImportImportModule "matplotlib";
+    mpl@@use "module://m2web_backend";
+)
+
 
 TEST ///
 -----------
@@ -437,21 +634,23 @@ checkInM2 {1, 3, 5, 7, 9}
 checkInM2 set {1, 3, 5, 7, 9}
 checkInM2 hashTable {"a" => 1, "b" => 2, "c" => 3}
 checkInM2 null
+
+builtins = import "builtins"
 assert BinaryOperation(symbol ===,
-    value pythonValue "frozenset([1, 3, 5, 7, 9])", set {1, 3, 5, 7, 9})
+    value builtins@@frozenset {1, 3, 5, 7, 9}, set {1, 3, 5, 7, 9})
 
 checkInPython = x -> (y := pythonValue x; assert Equation(toPython value y, y))
 checkInPython "True"
 checkInPython "5"
 checkInPython "3.14159"
-checkInPython "complex(1, 2)"
 checkInPython "'foo'"
 checkInPython "(1, 3, 5, 7, 9)"
 checkInPython "[1, 3, 5, 7, 9]"
 checkInPython "{1, 3, 5, 7, 9}"
 checkInPython "{'a': 1, 'b': 2, 'c': 3}"
 checkInPython "None"
-assert Equation((value pythonValue "abs")(-1), pythonValue "1")
+assert Equation(builtins@@complex(1, 2), toPython(1 + 2*ii))
+assert Equation((value builtins@@abs)(-1), pythonValue "1")
 assert Equation((toPython sqrt) 2, toPython sqrt 2)
 ///
 
@@ -484,112 +683,121 @@ TEST ///
 -----------------------
 -- binary operations --
 -----------------------
-x = pythonValue "5"
-y = pythonValue "2"
+x = toPython 5
+y = toPython 2
 
 -- addition
-assert Equation(x + y, pythonValue "7")
+assert Equation(x + y, 7)
 assert Equation(x + 2, 7)
 assert Equation(5 + y, 7)
 
 -- subtraction
-assert Equation(x - y, pythonValue "3")
+assert Equation(x - y, 3)
 assert Equation(x - 2, 3)
 assert Equation(5 - y, 3)
 
 -- multiplication
-assert Equation(x * y, pythonValue "10")
+assert Equation(x * y, 10)
 assert Equation(x * 2, 10)
 assert Equation(5 * y, 10)
 
 -- true division
-assert Equation(x / y, pythonValue "2.5")
+assert Equation(x / y, 2.5)
 assert Equation(x / 2, 2.5)
 assert Equation(5 / y, 2.5)
 
 -- floor division
-assert Equation(x // y, pythonValue "2")
+assert Equation(x // y, 2)
 assert Equation(x // 2, 2)
 assert Equation(5 // y, 2)
 
 -- modulo
-assert Equation(x % y, pythonValue "1")
+assert Equation(x % y, 1)
 assert Equation(x % 2, 1)
 assert Equation(5 % y, 1)
 
 -- power
-assert Equation(x ^ y, pythonValue "25")
+assert Equation(x ^ y, 25)
 assert Equation(x ^ 2, 25)
 assert Equation(5 ^ y, 25)
 
 -- left shift
-assert Equation(x << y, pythonValue "20")
+assert Equation(x << y, 20)
 assert Equation(x << 2, 20)
 assert Equation(5 << y, 20)
 
 -- right shift
-assert Equation(x >> y, pythonValue "1")
+assert Equation(x >> y, 1)
 assert Equation(x >> 2, 1)
 assert Equation(5 >> y, 1)
 
--- and
-assert Equation(x & y, pythonValue "0")
+-- bitwise and
+assert Equation(x & y, 0)
 assert Equation(x & 2, 0)
 assert Equation(5 & y, 0)
-assert Equation(x and y, pythonValue "0")
-assert Equation(x and 2, 0)
-assert Equation(5 and y, 0)
 
--- or
-assert Equation(x | y, pythonValue "7")
+-- bitwise or
+assert Equation(x | y, 7)
 assert Equation(x | 2, 7)
 assert Equation(5 | y, 7)
-assert Equation(x or y, pythonValue "7")
-assert Equation(x or 2, 7)
-assert Equation(5 or y, 7)
 
--- xor
-assert Equation(x ^^ y, pythonValue "7")
+-- bitwise xor
+assert Equation(x ^^ y, 7)
 assert Equation(x ^^ 2, 7)
 assert Equation(5 ^^ y, 7)
-assert Equation(x xor y, pythonValue "7")
-assert Equation(x xor 2, 7)
-assert Equation(5 xor y, 7)
+
+-- logical and
+assert Equation(x and y, 2)
+assert Equation(y and x, 5)
+assert Equation(0 and x, 0)
+
+-- logical or
+assert Equation(x or y, 5)
+assert Equation(y or x, 2)
+assert Equation(0 or y, 2)
+
+-- logical xor
+assert Equation(x xor y, false)
+assert Equation(x xor 0, 5)
+assert Equation(0 xor y, 2)
 
 ----------------------
 -- unary operations --
 ----------------------
 assert Equation(-x, -5)
 assert Equation(+x, 5)
+assert Equation(~x, -6)
+assert Equation(not x, false)
 ///
 
 TEST ///
 -----------------------
 -- string operations --
 -----------------------
-foo = pythonValue "'foo'"
-bar = pythonValue "'bar'"
+foo = toPython "foo"
+bar = toPython "bar"
 
 -- concatenation
-assert Equation(foo + bar, pythonValue "'foobar'")
+assert Equation(foo + bar, "foobar")
 assert Equation(foo + "bar", "foobar")
 assert Equation("foo" + bar, "foobar")
 
 -- repetition
-assert Equation(foo * pythonValue "2", pythonValue "'foofoo'")
+assert Equation(foo * toPython 2, "foofoo")
 assert Equation(foo * 2, "foofoo")
-assert Equation("foo" * pythonValue "2", "foofoo")
-assert Equation(pythonValue "2" * foo, pythonValue "'foofoo'")
+assert Equation("foo" * toPython 2, "foofoo")
+assert Equation(toPython 2 * foo, "foofoo")
 assert Equation(2 * foo, "foofoo")
-assert Equation(pythonValue "2" * "foo", "foofoo")
+assert Equation(toPython 2 * "foo", "foofoo")
 
 -- check a few methods
-assert Equation(foo@@capitalize(), pythonValue "'Foo'")
-assert Equation(foo@@center(5, "x"), pythonValue "'xfoox'")
-assert Equation((pythonValue "'{0}, {1}!'")@@format("Hello", "world"),
-    pythonValue "'Hello, world!'")
-assert Equation(foo@@replace("f", "F"), pythonValue "'Foo'")
-assert Equation(foo@@upper(), pythonValue "'FOO'")
+assert Equation(foo@@capitalize(), "Foo")
+assert Equation(foo@@center(5, "x"), "xfoox")
+assert Equation(
+    (toPython "{0}, {1}!")@@format("Hello", "world"),
+    "Hello, world!")
+assert Equation(foo@@replace("f", "F"), "Foo")
+assert Equation(foo@@upper(), "FOO")
 ///
 
 TEST ///
@@ -606,7 +814,7 @@ ChildPythonObject = new Type of PythonObject
 x = new ChildPythonObject from toPython 5
 y = new ChildPythonObject from toPython 10
 assert BinaryOperation(symbol <, x, y)
-assert hasattr(x, "__abs__")
+assert x@@?"__abs__"
 assert Equation(x@@"__abs__"(), 5)
 assert Equation(toString x, "5")
 assert Equation(value x, 5)
@@ -629,13 +837,10 @@ TEST ///
 -- abs
 assert Equation(abs toPython(-3), 3)
 
--- ~ (bitwise not)
-assert Equation((toPython 5)~, -6)
-
 -- __contains__
 assert isMember(toPython 3, toPython {1, 2, 3})
 assert not isMember(toPython 4, toPython {1, 2, 3})
-assert not isMember(3, toPython {1, 2, 3})
+assert isMember(3, toPython {1, 2, 3})
 
 -- divmod
 assert Equation(quotientRemainder(toPython 1234, toPython 456), (2, 322))
@@ -660,6 +865,11 @@ assert Equation(floor(-e), -3)
 -- mail.ceil
 assert Equation(ceiling e, 3)
 assert Equation(ceiling(-e), -2)
+
+-- del
+x = toPython hashTable {"foo" => "bar"}
+delete("foo", x)
+assert Equation(x, hashTable {})
 
 -- help
 x = help (import "math")@@cos
@@ -725,16 +935,24 @@ assert Equation(x ?? y, y)
 assert Equation(y ?? x, y)
 ///
 
--- not part of default testsuite since it requires numpy
+TEST ///
+-- pythonValue & pythonRunScript
+r = pythonRunScript "x = 5"
+x = pythonValue("x + 2", Global => r)
+r = pythonRunScript("x += 5", Global => hashTable{"x" => x})
+x = pythonValue("x + 7", Global => r)
+assert Equation(x, 19)
 ///
+
+TEST ///
 -----------
 -- NumPy --
 -----------
-np = import "numpy"
+try np = installNumPyMethods() else end -- skip if numpy not present
 
--- @ (__matmul__ operator)
-v = np@@array {1, 2, 3}
-w = np@@array {4, 5, 6}
+-- @ (matmul operator)
+v = toPython vector {1, 2, 3}
+w = toPython vector {4, 5, 6}
 assert Equation(v @ w, 32)
 
 -- scalar types
@@ -788,127 +1006,10 @@ checkNumPyComplexDtype "cdouble"
 checkNumPyComplexDtype "clongdouble"
 ///
 
+TEST ///
+-- Python < 3.9 compatibility
+assert Equation(gcd toPython 200, 200)
+assert Equation(lcm(toPython 200, toPython 300), 600)
+///
+
 end --------------------------------------------------------
-
-
-restart
-debugLevel = 1
-debuggingMode = false
-loadPackage "Python"
-
-pythonHelp
-quit
-
-runSimpleString "x=2"
-runSimpleString "print x"
-rs "dir()"
-rs "dict"
-rs "__builtins__.keys()"
-rs "range(2,100)"
-
--- module sys
--- http://docs.python.org/library/sys.html#module-sys
-sys = context "import sys";
-expr "sys.version"
-
-sys2 = context "from sys import *";
-sys2 "version"
-sys2 "modules.keys()"
-sys2 "copyright"
-sys2 "prefix"
-sys2 "executable"
-
-os = context "from os import *; import os";
-os "os.__doc__"
-os "os.name"
-os "dir()"
-os "link"
-os "dir(link)"
-os "link.__name__"
-os "link.__doc__"
-ascii toString os "linesep"
-os "path"
-os "path.__doc__"
-os "dir(path)"
-os "import os.path;"
-os "os.path.join.__doc__"
-os "os.path.join('asdf','qwer','wert')"
-
-math = context "from math import *";
-symbols()
-math "x = sin(3.4);"
-math "sin(3.4)"
-math "x"
-math "e"
-
-sage = context("from sage.all import *", Preprocessor => "preparse");
-sage "x = var('x');"
-sage "plot(sin(x));"
-sage "320"
-sage "sage"
-sage "dir(sage)"
-sage "sage.version"
-sage "version()"
-sage "dir(sage.version)"
-sage "sage.version.version"
-sage "dir(sage.categories.morphism)"
-sage "sage.categories.morphism.__file__"
-sage "sage.categories.morphism.__doc__"
-sage "sage.categories.morphism.homset.Hom"
-sage "dir(sage.categories.morphism.homset.Hom)"
-sage "sage.categories.morphism.homset.Hom.__doc__"
-hash sage "SymmetricGroup(3)"
-hash sage "SymmetricGroup(3)" == hash sage "SymmetricGroup(3)"
-hash sage "SymmetricGroup(2)"
-hash sage "SymmetricGroup(2)" == hash sage "SymmetricGroup(3)"
-sage "G = SymmetricGroup(3);"
-sage "G"
-sage "dir(G)"
-sage "G.set()"
-sage "G.sylow_subgroup(3)"
-sage "G.sylow_subgroup(2)"
-sage "G.dump.__doc__"
-sage "G.multiplication_table()"
-sage "plot"
-sage "preparse"
-sage "preparse('x=1')"
-sage "x=2^100"
-sage "x"
-sage "R.<x,y,z> = QQ[];;"
-sage "R"
-sage "x = var('x');"
-sage "plot(sin(x))"
-sage "plot(sin(x));"
-sage "show(plot(sin(x)))"
-sage "I = ideal(x^2,y*z);"
-sage "I"
-sage "dir(I)"
-sage "R.<t> = PowerSeriesRing(QQ);"
-sage "R"
-sage "exp(t)"
-
-sage "p = plot(sin(x));"
-p = sage "p"
-hash p			  -- this displays the plot and gives a hash code of 0!
-
-
-initspam()
-spam = context "from spam import *";
-symbols()
-expr "system"
-expr "system('echo hi there')"
-
-gc = context "import gc"
-expr "gc.set_debug(gc.DEBUG_LEAK)"
-expr "gc.set_debug(gc.DEBUG_STATS)"
-
-turtle = context "from turtle import *";
-t = turtle.stmt
-t "x=Pen()"
-t "x.color('blue')"
-t "x.forward(200)"
-t "x.left(200)"
-turtle "dir()"
-turtle "x.speed"
-t "x.speed('fastest')"
-turtle "speeds"

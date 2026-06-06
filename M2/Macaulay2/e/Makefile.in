@@ -6,9 +6,13 @@ DEPENDS = yes
 
 PRE.cc   = $(COMPILE.cc) -E 
 
-include @srcdir@/Makefile.files
+include Makefile.files
 include Makefile.common
-CPPFLAGS := -I@srcdir@ $(CPPFLAGS) -I../d -I@srcdir@/../c -I@srcdir@/../d -Wno-fatal-errors -Wno-unused-variable
+CPPFLAGS := -I@srcdir@ $(CPPFLAGS) \
+  -Wno-fatal-errors -Wno-unused-variable
+
+#  -I../d -I@srcdir@/../c -I@srcdir@/../d \
+
 CXXFLAGS += -Wno-unknown-pragmas -std=gnu++17 -Wno-macro-redefined
 
 DOXYGEN_CONF_DIR :=$(SRCDIR)/doxygen-settings
@@ -48,16 +52,12 @@ run-overflow-test : overflow-test Makefile
 	./overflow-test add   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
 	touch $@
 clean :: ; rm -f run-overflow-test
-overflow-test : overflow.o ../d/debug.o ../d/M2mem.o ../d/memdebug.o
+overflow-test : overflow.o #../d/debug.o ../d/M2mem.o ../d/memdebug.o
 clean :: ; rm -f overflow-test
 
 #all:; $(MAKE) -C f4
 
-ifeq "$(SHARED)" "yes"
-all: @pre_librariesdir@/libengine.so
-else
-all: $(ENGINE_OFILES)
-endif
+all: $(LIBENGINE)
 
 %.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
 %.s : %.cpp; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
@@ -68,7 +68,6 @@ endif
 %.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cpp; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
-@pre_librariesdir@/libengine.so : $(LOFILES); @CC@ -shared $^ $(OUTPUT_OPTION)
 
 MORE_OPTIONS = -Wno-cast-qual
 COMPILE.c += $(MORE_OPTIONS)
@@ -85,7 +84,7 @@ clean::
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 all: Makefile.common
 Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common
-Makefile.include : Makefile.include.in; cd ../..; ./config.status Macaulay2/e/Makefile.include
+Makefile.files : Makefile.files.in; cd ../..; ./config.status Macaulay2/e/Makefile.files
 clean::; rm -f *.dep dep-*.tmp typecode.db TAGS
 ifeq "$(DEPENDS)" "yes"
 include $(ENGINE_CFILES:.c=.dep) $(ENGINE_CCFILES:.cpp=.dep)
@@ -107,7 +106,7 @@ dups-okay: dups-tmp
 doxygen : ; cd @srcdir@ && doxygen
 distclean: clean; rm -f Makefile @srcdir@/TAGS
 
-SCCFLAGS += -I../d
+#SCCFLAGS += -I../d
 
 # we like using "struct" and "class" interchangeably
 CXXFLAGS += -Wno-mismatched-tags
@@ -160,7 +159,7 @@ help:
 	@ echo ""
 	@ echo "Current configuration:"
 	@ echo "    OS=@OS@ REL=@REL@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@"
 	@ echo ""
 	@ echo "targets:"
 	@ echo "  all               build/compile all files in Macaulay2/e [the default target]"
@@ -179,4 +178,3 @@ help:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e "
 # End:
 
-.NOTPARALLEL:

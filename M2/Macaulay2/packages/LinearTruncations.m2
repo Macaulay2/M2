@@ -7,7 +7,7 @@ newPackage(
 	{Name => "David Eisenbud", Email => "de@msri.org"},
 	{Name => "Navid Nemati", Email => "Navid.Nemati@inria.fr"}},
     Headline => "find the multigraded truncations that give linear resolutions",
-    PackageExports => {"Truncations", "TateOnProducts"},
+    PackageExports => {"Complexes", "TateOnProducts", "Truncations"},
     DebuggingMode => false,
     Keywords => {"Commutative Algebra"},
     Certification => {
@@ -18,7 +18,6 @@ newPackage(
 	 "published article URI" => "https://msp.org/jsag/2022/12-1/p02.xhtml",
 	 "published article DOI" => "10.2140/jsag.2022.12.11",
 	 "published code URI" => "https://msp.org/jsag/2022/12-1/jsag-v12-n1-x02-LinearTruncations.m2",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/LinearTruncations.m2",
 	 "release at publication" => "c1b72330821054c17b07c574649d98ac577cb3af",	    -- git commit number in hex
 	 "version at publication" => "1.0",
 	 "volume number" => "12",
@@ -169,9 +168,9 @@ coarseMultigradedRegularity' ChainComplex := F -> (
 partialRegularities = method()
 partialRegularities Module := M ->
     partialRegularities res prune M
-partialRegularities ChainComplex := F-> (
+partialRegularities Complex := F-> (
     t := degreeLength ring F;
-    range := toList(min F..max F-1);
+    range := toList(min F..max F);
     apply(t, i -> max flatten apply(range, j -> (
 		apply(degrees(F_j), ell -> ell_i - j)
 		)))
@@ -180,7 +179,7 @@ partialRegularities ChainComplex := F-> (
 -*
 --version that allows generation in multiple multidegrees
 isLinearComplex = method()
-isLinearComplex ChainComplex := F -> (
+isLinearComplex Complex := F -> (
     if F == 0 then return true;
     t := degreeLength ring F;
     range := toList(min F..max F-1);
@@ -192,11 +191,12 @@ isLinearComplex ChainComplex := F -> (
 
 isLinearComplex = method()
 --requires generators in single degree
-isLinearComplex ChainComplex := F -> (
+isLinearComplex Complex := F -> (
+    F = prune F; -- removes trailing zero modules.
     if F == 0 then return true;
     t := degreeLength ring F;
-    range := toList(min F..max F-1);
-    if #(unique degrees F_(range_0)) != 1 then return false;
+    range := toList(min F..max F);
+    if #(unique degrees F_(min F)) != 1 then return false;
     dF := apply(range, i -> (degrees(F_i))/sum);
     mindF := dF_(min F)_0;
     all(range, i -> max(dF_i) === mindF+i-range_0)
@@ -331,13 +331,13 @@ isQuasiLinear BettiTally := opts -> T -> (
 	    any(allowed_hdeg, em -> all(em + d - ell_1, j -> j >=0))
 	    ))
     )
-isQuasiLinear ChainComplex := opts -> F -> isQuasiLinear(betti F, opts)
+isQuasiLinear Complex := opts -> F -> isQuasiLinear(betti F, opts)
 
 -------------------------
 --bounds on linear truncations region
 
 supportOfTor = method()
-supportOfTor ChainComplex := F -> (
+supportOfTor Complex := F -> (
     for i from min F to max F list (
 	degs := unique degrees F_i;
 	if degs == {} then continue else degs
@@ -509,7 +509,7 @@ M = {
     {{{0,0}},{{-1,0},{0,-1}},{{-2,0},{-1,-1},{0,-2}},{{0,-4}},{}}
     };
 --twists appearing in chain complexes
-C = apply(M, L -> chainComplex(apply(#L - 1, i -> map(S^(L_i),S^(L_(i+1)),0))));
+C = apply(M, L -> complex(apply(#L - 1, i -> map(S^(L_i),S^(L_(i+1)),0))));
 A = {
     false,
     true,
@@ -555,6 +555,46 @@ TEST ///
 L = {{3,4,1},{5,8,1},{10,2,7}}
 assert all(L, ell -> all(ell - compMin L, i -> i >= 0))
 assert all(L, ell -> all(compMax L - ell, i -> i >= 0))
+///
+
+TEST ///
+-- linearTruncationsBound returns a list of multidegrees where the truncation
+-- of M has a linear resolution.  Verified on the doc-example module over
+-- (P^1)^3: the bound returns {{4,3,3}, {4,4,2}}, and every d in that list
+-- yields an isLinearComplex truncation.
+S = ZZ/101[x_0,x_1,y_0,y_1,z_0,z_1, Degrees=>{{1,0,0},{1,0,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1}}];
+I = ideal(x_0*x_1*y_0*z_0^2, x_1^2*y_0^2*y_1^2*z_0^2, x_0^3*y_0*z_1, x_0^2*x_1*y_1*z_0*z_1, x_0*x_1^2*y_1^2*z_0^3, x_1^3*y_0^2*y_1*z_1^2);
+M = S^1/I;
+L = linearTruncationsBound M;
+assert(L == {{4,3,3}, {4,4,2}});
+assert(all(L, d -> isLinearComplex res prune truncate(d, M)));
+///
+
+TEST ///
+-- isQuasiLinear in two of its three forms.
+-- (List, Module): verify the doc example.
+S = ZZ/101[x_0,x_1,y_0,y_1,z_0,z_1, Degrees=>{{1,0,0},{1,0,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1}}];
+I = ideal(x_0*x_1*y_0*z_0^2, x_1^2*y_0^2*y_1^2*z_0^2, x_0^3*y_0*z_1, x_0^2*x_1*y_1*z_0*z_1, x_0*x_1^2*y_1^2*z_0^3, x_1^3*y_0^2*y_1*z_1^2);
+M = S^1/I;
+assert(isQuasiLinear({4,3,2}, M));
+-- (BettiTally) form with explicit IrrelevantIdeal option.
+S2 = ZZ/101[x_0,x_1,y_0,y_1, Degrees=>{{1,0},{1,0},{0,1},{0,1}}];
+M2 = S2^1/ideal(x_0*y_0);
+F = res prune truncate({2,2}, M2);
+irr = ideal(x_0,x_1) * ideal(y_0,y_1);
+assert(isQuasiLinear(betti F, IrrelevantIdeal => irr));
+///
+
+TEST ///
+-- findRegion with Inner and Outer options: when Inner == Outer the function
+-- short-circuits and returns the minimal elements of the supplied set, here
+-- {{2,2}} (the minimum of {{2,2}, {3,3}}).
+S = ZZ/101[x_0,x_1,y_0,y_1, Degrees=>{{1,0},{1,0},{0,1},{0,1}}];
+M = S^1/ideal(x_0*y_0, x_1*y_1);
+trueP = (d, mod) -> true;
+known = {{2,2}, {3,3}};
+result = findRegion({{0,0},{4,4}}, M, trueP, Inner => known, Outer => known);
+assert(result == {{2,2}});
 ///
 
 -------------------------
@@ -647,7 +687,7 @@ doc ///
 Key
    partialRegularities
   (partialRegularities,Module)
-  (partialRegularities,ChainComplex)
+  (partialRegularities,Complex)
 Headline
   calculates Castelnuovo-Mumford regularity in each component of a multigrading
 Usage
@@ -655,7 +695,7 @@ Usage
 Inputs
   M: Module
     a multigraded module
-  F: ChainComplex
+  F: Complex
     the minimal free resolution of a module
 Outputs
   : List
@@ -683,13 +723,13 @@ SeeAlso
 doc ///
 Key
    isLinearComplex
-  (isLinearComplex,ChainComplex)
+  (isLinearComplex,Complex)
 Headline
   tests whether a complex of graded modules is linear
 Usage
   isLinearComplex F
 Inputs
-  F: ChainComplex
+  F: Complex
 Outputs
   : Boolean
     true if @TT "F"@ is a linear complex, false if it is not
@@ -1023,7 +1063,7 @@ Key
    IrrelevantIdeal
   (isQuasiLinear,List,Module)
   (isQuasiLinear,BettiTally)
-  (isQuasiLinear,ChainComplex)
+  (isQuasiLinear,Complex)
   [isQuasiLinear,IrrelevantIdeal]
 Headline
   checks whether degrees in the resolution of a truncation are at most those of the irrelevant ideal
@@ -1056,7 +1096,7 @@ Description
     isQuasiLinear(d,M)
   Text
     The condition comes from Theorem 2.9 in Berkesch, Erman, and Smith's paper "Virtual Resolutions for a Product of Projective Spaces."
-    The @TT "ChainComplex"@ and @TT "BettiTally"@ usages take the resolution of the truncation (or some other virtual resolution) directly.
+    The @TT "Complex"@ and @TT "BettiTally"@ usages take the resolution of the truncation (or some other virtual resolution) directly.
 Caveat
   If the resolution of the truncation is longer than the resolution of $S/B$ then @TT "isQuasiLinear"@ will return false.
 SeeAlso
@@ -1068,7 +1108,7 @@ doc ///
 Key
    supportOfTor
   (supportOfTor,Module)
-  (supportOfTor,ChainComplex)
+  (supportOfTor,Complex)
 Headline
   computes multidegrees in the support of Tor_i(M,k), where k is the residue field
 Usage
@@ -1076,7 +1116,7 @@ Usage
 Inputs
   M: Module
     a multigraded module
-  F: ChainComplex
+  F: Complex
     the minimal resolution of a module
 Outputs
   L: List

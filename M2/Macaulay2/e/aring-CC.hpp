@@ -115,6 +115,7 @@ class ARingCC : public SimpleARing<ARingCC>
 
   static void clear(ElementType& result)
   {
+    (void) result;
     // do nothing
   }
 
@@ -125,7 +126,12 @@ class ARingCC : public SimpleARing<ARingCC>
     result.im = 0.0;
   }
 
-  void set_var(ElementType& result, int v) const { set_from_long(result, 1); }
+  void set_var(ElementType& result, int v) const
+  {
+    (void) v;
+    set_from_long(result, 1);
+  }
+
   void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     result.re = mpz_get_d(a);
@@ -378,6 +384,7 @@ class ARingCC : public SimpleARing<ARingCC>
             int first_var,
             ring_elem& result) const
   {
+    (void) first_var;
     if (!map->get_ring()->from_complex_double(f.re, f.im, result))
       {
         result = map->get_ring()->from_long(0);

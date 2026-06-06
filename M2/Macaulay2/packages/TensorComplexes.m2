@@ -52,6 +52,7 @@ newPackage(
       Email => "dumitru.stamate@fmi.unibuc.ro"}},
   Headline => "multilinear algebra with labeled bases",
   Keywords => {"Commutative Algebra"},
+  PackageExports => {"Complexes"},
   DebuggingMode => false
   )
 
@@ -619,7 +620,7 @@ pureResTC1 (List,Ring) := LabeledModuleMap =>(d,kk)->(
 
 
 pureResTC=method()
-pureResTC (List,Ring):=ChainComplex => (d,kk)->(
+pureResTC (List,Ring):=Complex => (d,kk)->(
      res coker matrix pureResTC1(d,kk)
      ) 
 
@@ -637,7 +638,7 @@ pureResES1 (List,Ring) := LabeledModuleMap => o -> (d,kk)->(
      )
 
 pureResES=method()
-pureResES (List,Ring):=ChainComplex => (d,kk)->(
+pureResES (List,Ring):=Complex => (d,kk)->(
      res coker matrix pureResES1(d,kk)
      ) 
 
@@ -760,7 +761,7 @@ doc ///
       g = tensorComplex1(f,{0,0});
       transpose g
       betti res coker g
-      betti eagonNorthcott matrix entries matrix f
+      betti eagonNorthcottComplex matrix entries matrix f
       
     Text
       The following example is taken from the introduction to BEKS.
@@ -1144,7 +1145,7 @@ doc ///
      d: List
      kk: Ring
    Outputs
-     : ChainComplex
+     : Complex
    Description
     Text
       Given a degree sequence $d$, this function returns the pure resolution of
@@ -1206,7 +1207,7 @@ doc ///
      d: List
      kk: Ring
    Outputs
-     : ChainComplex
+     : Complex
    Description
     Text
       Given a degree sequence $d$, this function returns a balanced tensor complex
@@ -2136,6 +2137,64 @@ assert(hyperdeterminant f ==  det matrix tensorComplex1 (f,{0,1,2}))
 
 --add further tests!! esp of the non balanced case.
 --
+
+-- tests traceMap
+TEST ///
+S = ZZ/101[a,b,c]
+E = labeledModule S^3
+t = traceMap E
+-- traceMap E is the coevaluation map S^1 --> E ** E
+assert instance(t, LabeledModuleMap)
+assert(rank source t == 1)
+assert(rank target t == (rank E)^2)
+-- its matrix is the "diagonal": exactly rank E ones, the rest zero
+assert(all(flatten entries matrix t, e -> e == 0 or e == 1))
+assert(sum flatten entries matrix t == rank E)
+///
+
+-- tests minorsMap
+TEST ///
+kk = ZZ/101
+f = flattenedGenericTensor({3,3},kk)
+-- E must have the form wedge^b(source f) ** wedge^b(target f)
+E = exteriorPower(2, source f) ** exteriorPower(2, target f)
+m = minorsMap(f, E)
+assert instance(m, LabeledModuleMap)
+-- the entries of minorsMap are exactly the 2x2 minors of f
+assert(ideal flatten entries matrix m == minors(2, matrix f))
+-- the (Matrix,..) and (LabeledModuleMap,..) dispatches agree
+assert(matrix minorsMap(f, E) == matrix minorsMap(matrix f, E))
+-- a labeled module of the wrong format is rejected
+assert(try (minorsMap(f, source f); false) else true)
+///
+
+-- tests hyperdeterminantMatrix
+TEST ///
+kk = ZZ/101
+f = flattenedGenericTensor({3,2,2},kk)
+M = hyperdeterminantMatrix f
+assert instance(M, Matrix)
+-- the determinant of hyperdeterminantMatrix is the hyperdeterminant
+assert(det M == hyperdeterminant f)
+-- a tensor that is not of boundary format is rejected
+assert(try (hyperdeterminantMatrix flattenedGenericTensor({4,2,2},kk); false) else true)
+///
+
+-- tests pureResES1 and its MonSize option
+TEST ///
+kk = ZZ/101
+p = pureResES1({0,1,3,4}, kk)
+assert instance(p, LabeledModuleMap)
+-- resolving the cokernel of the first map gives the Eisenbud-Schreyer
+-- pure resolution with degree sequence (0,1,3,4)
+bp = betti res coker matrix p
+assert(bp == new BettiTally from {(0,{0},0)=>2, (1,{1},1)=>4, (2,{3},3)=>4, (3,{4},4)=>2})
+-- the MonSize option propagates without changing the result
+assert(betti res coker matrix pureResES1({0,1,3,4}, kk, MonSize => 8) == bp)
+-- a degree sequence that is not strictly increasing is rejected
+assert(try (pureResES1({0,2,2,4}, kk); false) else true)
+///
+
 end
 --------------------------------------------------------------------------------
 -- SCRATCH SPACE

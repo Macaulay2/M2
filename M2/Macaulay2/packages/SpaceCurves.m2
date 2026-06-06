@@ -14,6 +14,7 @@ newPackage(
 	      },
         Headline => "space curves",
 	Keywords => {"Examples and Random Objects"},
+        PackageImports => {"Complexes"},
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -23,7 +24,6 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2018/8-1/p04.xhtml",
 	     "published article DOI" => "10.2140/jsag.2018.8.31",
 	     "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x04-SpaceCurves.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SpaceCurves.m2",
 	     "release at publication" => "7853d911a8a484766a7828dc8e17aed701ce9fd6",	    -- git commit number in hex
 	     "version at publication" => "1.0",
 	     "volume number" => "8",
@@ -379,7 +379,7 @@ minimalCurveBetti Module := M -> (
 	    continue    
 	)    		
     );
-    betti chainComplex {random(R^1,(target (Q.dd_3)^cols)**R^{-h}),(Q.dd_3)^cols**R^{-h},
+    betti complex {random(R^1,(target (Q.dd_3)^cols)**R^{-h}),(Q.dd_3)^cols**R^{-h},
 	 Q.dd_4**R^{-h}, Q.dd_5**R^{-h}}
 )
 minimalCurveBetti Ideal := I -> minimalCurveBetti raoModule I
@@ -566,7 +566,7 @@ curve (ZZ,ZZ,Ring) := (d,g,R) -> (
     --generates a random curve of degree d and genus g in a given ring
     if 2*g == (d-1)*(d-2) then return ideal(random(1,R),random(d,R));
     L := smoothDivisors(d,g,R);
-    if L != {}  then return curve first random L
+    if L != {}  then return curve randomElement L
     else print "No smooth curve with this degree and genus exists!";   
 )
 curve (ZZ,ZZ) := (d,g) -> (
@@ -1422,8 +1422,58 @@ document {
 }
 document {
     Key => (net, Divisor),
-    Headline => "displays the coordinates of the Divisor"    
+    Headline => "displays the coordinates of the Divisor"
 }
+
+-- SpaceCurves previously had zero TEST blocks despite 31 exports.
+-- Add a smoke regression covering the main type-and-data pipeline:
+-- quadricSurface / cubicSurface / quarticSurfaceRational -> divisor
+-- -> curve, plus the standard ACM / Betti helpers.
+TEST ///
+R := ZZ/32003[x, y, z, w];
+-- The three documented surface constructors return the appropriate types.
+Q := quadricSurface R;
+assert(class Q === QuadricSurface);
+assert(Q.HyperplaneClass == {1, 1});
+assert(Q.CanonicalClass == {-2, -2});
+assert(Q.IntersectionPairing == matrix {{0, 1}, {1, 0}});
+C3 := cubicSurface R;
+assert(class C3 === CubicSurface);
+Qr := quarticSurfaceRational R;
+assert(class Qr === QuarticSurfaceRational);
+-- divisor on the quadric and curve from divisor.
+D := divisor({2, 3}, Q);
+assert(class D === Divisor);
+assert(D.Coordinate == {2, 3});
+assert(class D.Surface === QuadricSurface);
+C := curve D;
+assert(class C === Curve);
+-- A (2,3)-divisor on a smooth quadric in P^3 is a curve of degree 5
+-- and arithmetic genus 2.
+assert(degree ideal C == 5);
+assert(genus ideal C == 2);
+///
+
+-- Cover the ACM-Betti predicates and the helper generators that the
+-- audit flagged as having zero direct TEST coverage.
+TEST ///
+-- positiveChars: postulation characters of degree d.
+pc := positiveChars 3;
+assert(class pc === List);
+assert(#pc > 0);
+gamma := pc_0;
+-- generalACMBetti from a postulation character returns a BettiTally.
+B := generalACMBetti gamma;
+assert(class B === BettiTally);
+assert(isACMBetti B);
+assert(isSmoothACMBetti B);
+-- degreeMatrix takes a BettiTally and returns a Matrix.
+M := degreeMatrix B;
+assert(class M === Matrix);
+-- specializeACMBetti / allACMBetti return Lists.
+assert(class specializeACMBetti B === List);
+assert(class allACMBetti gamma === List);
+///
 
 end
 

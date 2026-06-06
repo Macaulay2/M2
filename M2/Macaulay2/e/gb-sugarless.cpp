@@ -110,6 +110,8 @@ GBinhom_comp *GBinhom_comp::create(const Matrix *m,
                                    M2_bool use_max_degree_limit,
                                    int max_degree_limit)
 {
+  (void) use_max_degree_limit;
+  (void) max_degree_limit;
   const PolynomialRing *P = m->get_ring()->cast_to_PolynomialRing();
   if (P == nullptr || P->getCoefficients()->is_ZZ())
     {
@@ -889,6 +891,7 @@ void GBinhom_comp::text_out(buffer &o) const
 /* This displays statistical information, and depends on the
    M2_gbTrace value */
 {
+  (void) o;
   stats();
 }
 

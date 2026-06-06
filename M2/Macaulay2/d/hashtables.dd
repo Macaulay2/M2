@@ -5,9 +5,18 @@ use classes;
 
 header "#include <cassert>";
 
--- applyEEE is not defined until evaluate.d,
--- so we use a pointer and populate it later.
-dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := g;
+-- applyEE and applyEEE are not defined until evaluate.d,
+-- so we use pointers and populate them later.
+dummyapplyEE(g:Expr,e:Expr):Expr := (
+    Ccode(void, "(void)", g);
+    Ccode(void, "(void)", e);
+    nullE);
+dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := (
+    Ccode(void, "(void)", g);
+    Ccode(void, "(void)", e0);
+    Ccode(void, "(void)", e1);
+    nullE);
+export applyEEpointer := dummyapplyEE;
 export applyEEEpointer := dummyapplyEEE;
 
 export hash(x:HashTable):hash_t := (
@@ -107,6 +116,7 @@ export remove(x:HashTable,key:Expr):Expr := (
 	  p = p.next);
      if !x.beingInitialized then unlock(x.mutex);
      ret);
+
 export storeInHashTable(x:HashTable,key:Expr,h:hash_t,value:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      if !x.beingInitialized then lockWrite(x.mutex);
@@ -214,6 +224,7 @@ export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,hand
      x.numEntries = x.numEntries + 1;
      if !x.beingInitialized then unlock(x.mutex);
      value);
+
 toHashTableError(i:int):Expr := buildErrorPacket("expected element at position "+tostring(i)+" to be a pair");
 toHashTableWithCollisionHandler(v:Sequence,handler:Expr):Expr := (
      o := newHashTable(hashTableClass,nothingClass);
@@ -255,17 +266,19 @@ export toHashTable(v:Sequence):Expr := (
      Expr(sethash(o,false)));
 toHashTable(e:Expr):Expr := (
      when e
+     -- # typical value: hashTable, BasicList, HashTable
      is w:List do toHashTable(w.v)
      is s:Sequence do (
-	  if length(s) != 2 then return WrongNumArgs(1,2);
-	  when s.0
-	  is FunctionClosure do nothing
-	  is CompiledFunction do nothing
-	  is CompiledFunctionClosure do nothing
-	  else return WrongArg(1,"a function");
-	  when s.1 is w:List do toHashTableWithCollisionHandler(w.v,s.0)
-	  else WrongArg(2,"a list"))
-     else WrongArg("a list"));
+	  if length(s) == 2 then (
+	      if isFunction(s.0) then (
+		  when s.1
+		  -- # typical value: hashTable, Function, BasicList, HashTable
+		  is w:Sequence do toHashTableWithCollisionHandler(w, s.0)
+		  is w:List do toHashTableWithCollisionHandler(w.v, s.0)
+		  else WrongArg(2, "a list or sequence"))
+	      else toHashTable(s))
+	  else toHashTable(s))
+     else WrongArg("a list or sequence"));
 setupfun("hashTable",toHashTable);
 
 copy(table:array(KeyValuePair)):array(KeyValuePair) := (
@@ -315,14 +328,26 @@ export copy(o:HashTable,newClass:HashTable,newMutable:bool):HashTable := copy(o,
 
 lookup(object:HashTable, key:Expr):Expr; -- forward declaration
 
+export robustPrintNet(e:Expr):Net := (
+    see := lookup(Class(e), RobustPrintNetE);
+    if see != notfoundE then
+    when applyEEpointer(see, e)
+    is n:Net do n else dummyNet);
+
+export robustPrintString(e:Expr):string := (
+    see := lookup(Class(e), RobustPrintStringE);
+    if see != notfoundE then
+    when applyEEpointer(see, e)
+    is s:stringCell do s.v else "");
+
 KeyNotFound(object:string, key:Expr):Expr := (
     -- TODO: implement a similar trick to call synonym(object)
     msg := "key not found in " + object;
     if !SuppressErrors then (
-	see := lookup(Class(key), RobustPrintE);
-	if see != notfoundE then
-	when applyEEEpointer(see, toExpr(msg), key)
-	is str:stringCell do msg = str.v else nothing);
+	n := robustPrintNet(key);
+	if n != dummyNet then (
+	    info := toString(HorizontalJoin(array(Net)(toNet("\t"), n)));
+	    msg = msg + ":\n" + info));
     buildErrorPacket(msg));
 
 export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
@@ -367,6 +392,45 @@ export lookup(object:HashTable,key:Expr):Expr := lookup(object,key,hash(key));
 export lookup(object:HashTable,key:SymbolClosure):Expr := (
      lookup(object,Expr(key),key.symbol.hash)
      );
+
+-----------------------------------------------------------------------------
+-- lookup and modify functions for augmented assignment operations
+
+-- This finds a single entry and locks the hash table for write, returning with the lock held
+-- This should be paired with updateAndUnlockHashTable or a call to unlockHashTable
+-- If the key isn't found, the table will be unlocked and a error returned
+export lookupAndLockHashTable(x:HashTable, key:Expr):Expr := (
+    h := hash(key);
+    if !x.beingInitialized then lockWrite(x.mutex);
+    hmod := int(h & (length(x.table)-1));
+    p := x.table.hmod;
+    while p != p.next do (
+        if p.key == key || equal(p.key,key)==True
+        then (
+            return p.value);
+        p = p.next);
+    unlock(x.mutex);
+    KeyNotFound("hash table", key));
+
+-- This must be called with the write lock held, it's intended to be the other half of lookupAndLockHashTable
+export updateAndUnlockHashTable(x:HashTable, key:Expr, value:Expr):Expr := (
+    if !x.Mutable then (
+        if !x.beingInitialized then unlock(x.mutex);
+        return buildErrorPacket("attempted to modify an immutable hash table"));
+    h := hash(key);
+    hmod := int(h & (length(x.table)-1));
+    p := x.table.hmod;
+    while p != p.next do (
+        if p.key == key || equal(p.key,key)==True
+        then (
+            p.value = value;
+            if !x.beingInitialized then unlock(x.mutex);
+            return value);
+        p = p.next);
+    if !x.beingInitialized then unlock(x.mutex);
+    KeyNotFound("hash table", key));
+
+export unlockHashTable(x:HashTable):void := if !x.beingInitialized then unlock(x.mutex);
 
 -----------------------------------------------------------------------------
 
@@ -452,8 +516,7 @@ export lookupUnaryValue(s:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key1 := Key1;
      key1.0 = Expr(s);
      key1.1 = meth;
-     -- the big numbers here are the same as in hash() for sequences in structure.d
-     lookup1(s, Expr(key1), (27449 * 27457 + s.hash) * 27457 + methhash));
+     lookup1(s, Expr(key1), (seqHashSeed * seqHashMult + s.hash) * seqHashMult + methhash));
 -----------------------------------------------------------------------------
 -- binary methods
 export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
@@ -473,17 +536,16 @@ threadLocal Key2 := Sequence(nullE,nullE,nullE);
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key2 := Key2;
      key2.0 = meth;
-     -- the big numbers here are the same as in hash() for sequences in structure.d
-     keyhash0 := 27449 * 27457 + methhash;
+     keyhash0 := seqHashSeed * seqHashMult + methhash;
      while true do (			  -- loop through ancestors of lhs
 	  key2.1 = Expr(lhs);
 	  lefthash := lhs.hash;
-	  keyhash1 := keyhash0 * 27457 + lefthash;
+	  keyhash1 := keyhash0 * seqHashMult + lefthash;
 	  rhsptr := rhs;
 	  while true do (		  -- loop through ancestors of rhs
 	       key2.2 = Expr(rhsptr);
      	       righthash := rhsptr.hash;
-	       keyhash := keyhash1 * 27457 + righthash;
+	       keyhash := keyhash1 * seqHashMult + righthash;
 	       s := lookup1(
 		    if lefthash > righthash then lhs else rhsptr,
 		    Expr(key2), keyhash);
@@ -501,8 +563,7 @@ export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:hash_t):
      key2.0 = Expr(lhs);
      key2.1 = Expr(rhs);
      key2.2 = meth;
-     -- the big numbers here are the same as in hash() for sequences in structure.d
-     keyhash := ((27449 * 27457 + lhs.hash) * 27457 + rhs.hash) * 27457 + methhash;
+     keyhash := ((seqHashSeed * seqHashMult + lhs.hash) * seqHashMult + rhs.hash) * seqHashMult + methhash;
      lookup1(if lhs.hash > rhs.hash then lhs else rhs, Expr(key2), keyhash));
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr):Expr := (
      lookupBinaryMethod(lhs,rhs,meth,hash(meth)));
@@ -528,22 +589,21 @@ threadLocal Key3 := Sequence(nullE,nullE,nullE,nullE);
 export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key3 := Key3;
      key3.0 = meth;
-     -- the big numbers here are the same is in hash() for sequences in structure.d
-     keyhash0 := 27449 * 27457 + methhash;
+     keyhash0 := seqHashSeed * seqHashMult + methhash;
      while true do (			  -- loop through ancestors of s1
 	  key3.1 = Expr(s1);
 	  s1hash := s1.hash;
-	  keyhash1 := keyhash0 * 27457 + s1hash;
+	  keyhash1 := keyhash0 * seqHashMult + s1hash;
 	  s2ptr := s2;
 	  while true do (		  -- loop through ancestors of s2
 	       key3.2 = Expr(s2ptr);
      	       s2hash := s2ptr.hash;
-	       keyhash2 := keyhash1 * 27457 + s2hash;
+	       keyhash2 := keyhash1 * seqHashMult + s2hash;
 	       s3ptr := s3;
 	       while true do (		  -- loop through ancestors of s3
 		    key3.3 = Expr(s3ptr);
 		    s3hash := s3ptr.hash;
-		    keyhash3 := keyhash2  * 27457 + s3hash;
+		    keyhash3 := keyhash2 * seqHashMult + s3hash;
 	       	    s := lookup1(
 			 if s1hash > s2hash then (
 			      if s1hash > s3hash then s1 else s3ptr
@@ -593,27 +653,26 @@ threadLocal Key4 := Sequence(nullE,nullE,nullE,nullE,nullE);
 export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key4 := Key4;
      key4.0 = meth;
-     -- the big numbers here are the same is in hash() for sequences in structure.d
-     keyhash0 := 27449 * 27457 + methhash;
+     keyhash0 := seqHashSeed * seqHashMult + methhash;
      while true do (			  -- loop through ancestors of s1
 	  key4.1 = Expr(s1);
 	  s1hash := s1.hash;
-	  keyhash1 := keyhash0 * 27457 + s1hash;
+	  keyhash1 := keyhash0 * seqHashMult + s1hash;
 	  s2ptr := s2;
 	  while true do (		  -- loop through ancestors of s2
 	       key4.2 = Expr(s2ptr);
      	       s2hash := s2ptr.hash;
-	       keyhash2 := keyhash1 * 27457 + s2hash;
+	       keyhash2 := keyhash1 * seqHashMult + s2hash;
 	       s3ptr := s3;
 	       while true do (		  -- loop through ancestors of s3
 		    key4.3 = Expr(s3ptr);
 		    s3hash := s3ptr.hash;
-		    keyhash3 := keyhash2  * 27457 + s3hash;
+		    keyhash3 := keyhash2 * seqHashMult + s3hash;
 		    s4ptr := s4;
 		    while true do (		  -- loop through ancestors of s4
 			 key4.4 = Expr(s4ptr);
 			 s4hash := s4ptr.hash;
-			 keyhash4 := keyhash3  * 27457 + s4hash;
+			 keyhash4 := keyhash3 * seqHashMult + s4hash;
 			 s := lookup1(
 			      if s1hash > s2hash then (
 				   if s1hash > s3hash 

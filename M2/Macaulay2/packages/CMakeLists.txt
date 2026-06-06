@@ -33,6 +33,7 @@ set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to o
 ## Arguments to M2
 set(errorDepth                  "1" CACHE STRING "set the error printing depth")
 set(debugLevel                  "0" CACHE STRING "set the debugging level")
+set(gbTrace                     "0" CACHE STRING "set the Groebner basis trace level")
 ## Options to installPackage
 set(CheckDocumentation       "true" CACHE STRING "check documentation for completeness")
 set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
@@ -72,21 +73,6 @@ set(M2_NEED_TEMPLATE    [[needsPackage("@package@", LoadDocumentation=>true, Deb
 set(M2_TEST_TEMPLATE    [[debug Core \; argumentMode = @ArgumentMode@ \; check(@_i@, "@package@")]])
 set(M2_INFO_TEMPLATE    [["info-"|"@package@" << #@package@#"test inputs" << close]]) # ignore the color
 set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false, Verbose=>$<IF:$<BOOL:${VERBOSE}>,true,false>)]])
-
-# TODO: simplify
-set(M2_DOC_TEMPLATE [[installPackage("@package@",
-  Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
-  RerunExamples          => ${RerunExamples},
-  CheckDocumentation     => ${CheckDocumentation},
-  IgnoreExampleErrors    => ${IgnoreExampleErrors},
-  RemakeAllDocumentation => ${RemakeAllDocumentation},
-  InstallPrefix          => "${M2_DIST_PREFIX}/",
-  UserMode               => false,
-  SeparateExec           => true,
-  DebuggingMode          => true,
-  MakeHTML               => false,
-  MakeInfo               => false,
-  MakePDF                => true)]])
 
 #################################################################################
 ## Declare all targets: {install,check,all,uninstall}-{packages,PACKAGE}
@@ -155,12 +141,12 @@ foreach(package IN LISTS PACKAGES)
     file(COPY ${package}  DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
   endif()
 
+
   ## Configuring the command strings
   _M2_STRING_CONFIGURE(M2_INSTALL_TEMPLATE M2_INSTALL_STRING TRUE)
   _M2_STRING_CONFIGURE(M2_CHECK_TEMPLATE   M2_CHECK_STRING)
   _M2_STRING_CONFIGURE(M2_NEED_TEMPLATE    M2_NEED_STRING)
   _M2_STRING_CONFIGURE(M2_INFO_TEMPLATE    M2_INFO_STRING)
-  _M2_STRING_CONFIGURE(M2_DOC_TEMPLATE     M2_DOC_STRING TRUE)
 
   ###############################################################################
   ## Enable USES_TERMINAL only for Macaulay2Doc and EngineTests
@@ -267,3 +253,6 @@ foreach(package IN LISTS PACKAGES)
     DEPENDS M2-core
     )
 endforeach()
+
+file(COPY LanguageServer/M2-language-server
+     DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})

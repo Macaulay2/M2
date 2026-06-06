@@ -28,11 +28,8 @@ class DMat<M2::ARingGFFlint>
   typedef M2::ARingGFFlint ACoeffRing;
   typedef ACoeffRing CoeffRing;
   typedef ACoeffRing::ElementType ElementType;
-  typedef ElementType elem;
-  typedef ACoeffRing::Element Element;
-
-  typedef DMatIterator<ACoeffRing> Iterator;
-  typedef DMatConstIterator<ACoeffRing> ConstIterator;
+  // typedef ElementType elem;
+  // typedef ACoeffRing::Element Element;
 
   DMat() : mRing(0) {}
   DMat(const ACoeffRing& R, size_t nrows, size_t ncols) : mRing(&R)
@@ -46,34 +43,6 @@ class DMat<M2::ARingGFFlint>
   }
 
   ~DMat() { fq_zech_mat_clear(mArray, ring().flintContext()); }
-  // storage for these rings is row-major, which is reflected in these iterator
-  // functions
-  Iterator rowBegin(size_t row)
-  {
-    return Iterator(array() + row * numColumns(), 1);
-  }
-  ConstIterator rowBegin(size_t row) const
-  {
-    return ConstIterator(array() + row * numColumns(), 1);
-  }
-  ConstIterator rowEnd(size_t row) const
-  {
-    return ConstIterator(array() + (row + 1) * numColumns(), 1);
-  }
-
-  Iterator columnBegin(size_t col)
-  {
-    return Iterator(array() + col, numColumns());
-  }
-  ConstIterator columnBegin(size_t col) const
-  {
-    return ConstIterator(array() + col, numColumns());
-  }
-  ConstIterator columnEnd(size_t col) const
-  {
-    return ConstIterator(array() + col + numRows() * numColumns(),
-                         numColumns());
-  }
 
   // swap the actual matrices of 'this' and 'M'.
   // The rings must be the same.
@@ -93,8 +62,6 @@ class DMat<M2::ARingGFFlint>
     return fq_zech_mat_ncols(mArray, ring().flintContext());
   }
 
-  const ElementType* array() const { return mArray->entries; }
-  ElementType*& array() { return mArray->entries; }
   ElementType& entry(size_t row, size_t column)
   {
     return *fq_zech_mat_entry(mArray, row, column);
@@ -109,6 +76,12 @@ class DMat<M2::ARingGFFlint>
     DMat newMatrix(ring(), new_nrows, new_ncols);
     swap(newMatrix);
   }
+
+  // These are labelled 'unsafe', as it s possible the rows
+  // are out of order (which happens in particular if
+  // certain flint functions created this.
+  const ElementType* unsafeArray() const { return mArray->entries; }
+  ElementType*& unsafeArray() { return mArray->entries; }
 
  public:
   // Access routines so that the flint fq_zech_mat interface may be used

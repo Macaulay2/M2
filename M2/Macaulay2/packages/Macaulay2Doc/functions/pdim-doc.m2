@@ -4,7 +4,7 @@
 
 document { 
      Key => pdim,
-     Headline => "calculate the projective dimension",
+     Headline => "compute the projective dimension",
      Usage => "pdim M",
      Caveat => { "For now, the method is to measure the length of a projective resolution."},
      SeeAlso => {}
@@ -12,7 +12,7 @@ document {
 
 document { 
      Key => (pdim, Module),
-     Headline => "calculate the projective dimension of a module",
+     Headline => "compute the projective dimension of a module",
      Usage => "pdim M",
      Inputs => {
 	  "M" => Module

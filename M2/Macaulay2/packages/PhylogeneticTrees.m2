@@ -18,6 +18,7 @@ newPackage(
 	  },
      Keywords => {"Applied Algebraic Geometry"},
      PackageImports => {
+	 "Isomorphism",	 
 	  "FourTiTwo"
 	  },
      PackageExports => {
@@ -32,7 +33,6 @@ newPackage(
 	  "published article URI" => "https://msp.org/jsag/2021/11-1/p01.xhtml",
           "published article DOI" => "10.2140/jsag.2021.11.1",
 	  "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x01-PhylogeneticTrees.m2",
-     	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PhylogeneticTrees.m2",
 	  "release at publication" => "abdf0903e7ffc31568c0cc4beb181368d943cb8d",	    -- git commit number in hex
 	  "version at publication" => "2.0",
 	  "volume number" => "11",
@@ -73,7 +73,7 @@ export {
     "rootedTrees",
     "rootedBinaryTrees",
     "unlabeledTrees",
-    "isIsomorphic"
+    --"isIsomorphic"
     }
 protect \ {Group, Automorphisms, AList, Buckets}
 --------------------------------------------------------------------
@@ -244,7 +244,7 @@ phyloToricLinears(LeafTree,Model) := opts -> (T,M) -> (
 	if #p < 2 then continue;
 	for j to #p-2 list sub(S_(p#j)-S_(p#(j+1)),S)
 	);
-    if not opts.Random then gensList else randomElement gensList
+    if not opts.Random then gensList else randomElement' gensList
     )
 
 
@@ -254,10 +254,10 @@ phyloToricQuads(ZZ,List,Model) := opts -> (n,E,M) -> phyloToricQuads(leafTree(n,
 phyloToricQuads(LeafTree,Model) := opts -> (T,M) -> (
     S := if opts.QRing =!= null then opts.QRing else qRing(T,M);
     quadTemplates := apply(#(group M), g->({{g,g},{g,g}},{{g,g},{g,g}},{0,3,2,1}));
-    if opts.Random then quadTemplates = randomElement quadTemplates;
+    if opts.Random then quadTemplates = randomElement' quadTemplates;
     newl := symbol newl;
     intEdges := internalEdges T;
-    if opts.Random then intEdges = randomElement intEdges;
+    if opts.Random then intEdges = randomElement' intEdges;
     gensList := flatten for e in intEdges list (
 	P := edgeCut(T,e,newl);
         fillTemplates(T,M,S,P,quadTemplates,newl,opts.Random)
@@ -274,7 +274,7 @@ phyloToricClaw(LeafTree,Model) := opts -> (T,M) -> (
     newl := symbol newl;
     clawHash := new MutableHashTable; --store claw invariants to avoid recomputing
     intVerts := (internalEdges T)|{set{l}};
-    if opts.Random then intVerts = randomElement intVerts;
+    if opts.Random then intVerts = randomElement' intVerts;
     gensList := flatten for e in intVerts list (
 	P := vertexCut(T,e,l,newl);
         if not clawHash#?(#P,M) then clawHash#(#P,M) = clawInvariants(#P,M);
@@ -295,7 +295,7 @@ phyloToricRandom(LeafTree,Model) := opts -> (T,M) -> (
     if #gensList > 0 then first gensList else phyloToricRandom(T,M,opts)
     )
 
-randomElement = L -> (
+randomElement' = L -> (
     if #L == 0 then return {};
     n := random(#L);
     {L#n}
@@ -321,7 +321,7 @@ fillTemplates = (T,M,S,P,temps,newl,rand) -> (
 	fbinom1 := flatten binom#1; --same for second monomial
 	PFCLists := apply(#fbinom0, j->(PFCs#(j%n))#(G#(fbinom0#j))); --for each entry of fbinom0(itself a list), the list of all coloring extensions
 	PFCi := (#(binom#2):0)..(toSequence apply(PFCLists,l->(#l-1))); --sequence of list indices for all combinations of coloring extensions
-	if rand then PFCi = toSequence randomElement PFCi;
+	if rand then PFCi = toSequence randomElement' PFCi;
 	newGens := for iList in PFCi list (
 	    CList0 := apply(#iList, j->(PFCLists#j)#(iList#j)); --a list of color extensions for first monomial
 	    CList1 := apply(binom#2, k->CList0#k); --permutations of the color extensions for second monomial
@@ -550,8 +550,8 @@ isIsomorphicRooted(LeafTree,Set,LeafTree,Set) := (T1,v1,T2,v2) -> (
     AHU(G1,v1) == AHU(G2,v2)
     )
 
-isIsomorphic = method()
-isIsomorphic(LeafTree,LeafTree) := (T1,T2) -> (
+--isIsomorphic = method()
+isIsomorphic(LeafTree,LeafTree) := o -> (T1,T2) -> (
     if #(leaves T1) != #(leaves T2) or #(edges T1) != #(edges T2) then return false;
     C1 := center graph T1;
     C2 := center graph T2;
@@ -1846,7 +1846,6 @@ doc///
 -- isIsomorphic
 doc///
     Key
-        isIsomorphic
 	(isIsomorphic,LeafTree,LeafTree)
     Headline
         check isomorphism of two tree

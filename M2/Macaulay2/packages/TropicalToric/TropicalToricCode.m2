@@ -31,7 +31,7 @@ refineMultiplicity (TropicalCycle, NormalToricVariety) := (T,X) ->(
 
 --input: normal toric varieties X,X' such that the identity on the lattices induces
 --       a toric map phi:X' -> X,
---       list mult of multiplcities of cones of X' of dimension k
+--       list mult of multiplicities of cones of X' of dimension k
 --output: list of degrees deg([Y'] * phi^*(V(sigma)), where [Y'] is the class of the cycle
 --        Y' in X' corresponding to the Minkowski weight given by mult.
 -- Note that here [Y'] * V(sigma') = mult_sigma' for every cone sigma' of X'.
@@ -100,7 +100,7 @@ poincareMatrix (NormalToricVariety,ZZ) := (X,k) ->(
 
 --input: smooth normal toric variety X, list of integers l representing
 --       a function in Hom(A^k(X),Z)
---output: the corresponding class in A^(m-k)(X) by Poincare duality,
+--output: the corresponding class in A^(m-k)(X) by Poincaré duality,
 --        where m is the maximum codimension such that A^m(X) is not zero
 --        ( recall that A^k(X) corresponds to orbits(X,n-k) )
 poincareDuality = method(TypicalValue => List)
@@ -122,7 +122,7 @@ classFromTropical (NormalToricVariety,Ideal) := (X, I) ->(
   mult := refineMultiplicity(T,X');
   --vector of products [V(J)]*[V(sigma)] in X
   prod := pushforwardMultiplicity(X,X',mult,k);
-  --apply Poincare duality
+  --apply Poincaré duality
   Y := poincareDuality(prod,X,k);
   m := #(max X)_0;
   O := orbits(X,dim X-(m-k));
@@ -146,7 +146,7 @@ classWonderfulCompactification (NormalToricVariety, Ideal, Ideal) := (X,I,J) ->(
     (multiplicities T)_(position(maxCones T, c -> isSubset(C,c)))
   ); --faster than mult := refineMultiplicity(T,X');
   prod := pushforwardMultiplicity(X,X',mult,k);
-  --apply Poincare duality
+  --apply Poincaré duality
   Y := poincareDuality(prod,X,k);
   O := orbits(X,n-m+k); --we want the cycle to have codimension inside X the same that T has inside T'
   D := sum apply(#O, s -> Y_s * X_(O_s));

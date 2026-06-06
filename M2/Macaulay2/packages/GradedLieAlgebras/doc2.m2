@@ -392,7 +392,7 @@ Headline =>
      be thought of as arbitrary.
      The weight of a derivation $d$ is the weight of $d$ as a graded map
      and may also be obtained as ", TT "d#weight.", 
-SeeAlso => {"firstDegree(LieElement)","sign","degreeLength"},
+SeeAlso => {"firstDegree(LieElement)",(sign, LieElement),"degreeLength"},
 SYNOPSIS {  
     Usage =>
       "w=weight(x)",   
@@ -983,7 +983,6 @@ document {
      }
 document {
 Key => {
-         sign,
        (sign,LieElement),
        (sign,ExtElement),
        (sign,LieDerivation)

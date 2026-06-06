@@ -1,29 +1,41 @@
 #include <Python.h>
 #include "python-exports.h"
 
+/* vendored from https://github.com/python/pythoncapi-compat
+ * suppress warnings we can't fix */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
+#include "pythoncapi_compat.h"
+#pragma GCC diagnostic pop
+
 #include <gmp.h>
 
-int python_RunSimpleString(M2_string s) {
-  char *t = M2_tocharstar(s);
-  int ret = PyRun_SimpleString(t);
-  GC_FREE(t);
-  return ret;
-}
+const char * python_Initialize(char *executable)
+{
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 8
+  PyConfig config;
+  PyStatus status;
 
-PyObject *globals, *locals;
+  PyConfig_InitIsolatedConfig(&config);
+  status = PyConfig_SetBytesString(&config, &config.executable, executable);
+  if (PyStatus_Exception(status))
+    goto exception;
 
-static void init() {
-  if (!globals) {
-#if 0    
-    globals = PyEval_GetGlobals(); /* this returns null because no frame is currently executing */
-#elif 1
-    globals = PyDict_New();
-    PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
+  status = Py_InitializeFromConfig(&config);
+
+exception:
+  PyConfig_Clear(&config);
+
+  if (PyStatus_Exception(status) != 0)
+    return status.err_msg;
+  else
+    return NULL;
 #else
-    globals = PyDict_New();
-    PyRun_String("import __builtin__ as __builtins__",Py_eval_input, globals, locals);
+  (void)executable;
+
+  Py_Initialize();
+  return NULL;
 #endif
-  }
 }
 
 /**************
@@ -37,14 +49,6 @@ int python_ErrOccurred(void) {
 		return -1;
 	} else
 		return (PyErr_Occurred() != NULL);
-}
-
-PyObject *python_RunString(M2_string s) {
-  char *t = M2_tocharstar(s);
-  init();
-  PyObject *ret = PyRun_String(t,Py_eval_input,globals,locals);
-  GC_FREE(t);
-  return ret;
 }
 
 int python_Main() {
@@ -61,6 +65,7 @@ int python_Main() {
 /* see http://docs.python.org/extending/extending.html for this example */
 
 static PyObject * spam_system(PyObject *self, PyObject *args) {
+  (void)self;
   const char *command;
   int sts;
   if (!PyArg_ParseTuple(args, "s", &command)) return NULL;
@@ -92,92 +97,128 @@ void python_initspam() {
 /* GMP <-> Python integer conversion routines from gmpy2
  * https://github.com/aleaxit/gmpy
  * Copyright 2000-2009 Alex Martelli
- * Copyright 2008-2023 Case Van Horsen
+ * Copyright 2008-2025 Case Van Horsen
  * LGPL-3.0+ */
 
-/* #define's from src/gmpy2_convert.h */
-#if PY_VERSION_HEX >= 0x030C0000
-#  define TAG_FROM_SIGN_AND_SIZE(is_neg, size) ((is_neg?2:(size==0)) | (((size_t)size) << 3))
-#  define _PyLong_SetSignAndDigitCount(obj, is_neg, size) (obj->long_value.lv_tag = TAG_FROM_SIGN_AND_SIZE(is_neg, size))
-#elif PY_VERSION_HEX >= 0x030900A4
-#  define _PyLong_SetSignAndDigitCount(obj, is_neg, size) (Py_SET_SIZE(obj, (is_neg?-1:1)*Py_SIZE(result)))
-#else
-#  define _PyLong_SetSignAndDigitCount(obj, is_neg, size) (Py_SIZE(obj) = (is_neg?-1:1)*Py_SIZE(result))
-#endif
-
-#if PY_VERSION_HEX >= 0x030C0000
-#  define GET_OB_DIGIT(obj) obj->long_value.ob_digit
-#  define _PyLong_IsNegative(obj) ((obj->long_value.lv_tag & 3) == 2)
-#  define _PyLong_DigitCount(obj) (obj->long_value.lv_tag >> 3)
-#else
-#  define GET_OB_DIGIT(obj) obj->ob_digit
-#  define _PyLong_IsNegative(obj) (Py_SIZE(obj) < 0)
-#  define _PyLong_DigitCount(obj) (_PyLong_IsNegative(obj)? -Py_SIZE(obj):Py_SIZE(obj))
-#endif
-
 /* mpz_set_PyLong from src/gmpy2_convert_gmp.c */
-void python_LongAsZZ(mpz_ptr z, PyObject *obj)
+int python_LongAsZZ(mpz_ptr z, PyObject *obj)
 {
-  int negative;
-  Py_ssize_t len;
-  PyLongObject *templong = (PyLongObject*)obj;
+#ifndef PYPY_VERSION
+    const PyLongLayout *layout = PyLong_GetNativeLayout();
+    PyLongExport long_export = {0, 0, 0, 0, 0};
 
-  len = _PyLong_DigitCount(templong);
-  negative = _PyLong_IsNegative(templong);
+    if (PyLong_Export(obj, &long_export) < 0) {
+        /* LCOV_EXCL_START */
+        return -1;
+        /* LCOV_EXCL_STOP */
+    }
+    if (long_export.digits) {
+        mpz_import(z, long_export.ndigits, layout->digits_order,
+                   layout->digit_size, layout->digit_endianness,
+                   layout->digit_size*8 - layout->bits_per_digit,
+                   long_export.digits);
+        if (long_export.negative) {
+            mpz_neg(z, z);
+        }
+        PyLong_FreeExport(&long_export);
+    }
+    else {
+        const int64_t value = long_export.value;
 
-  switch (len) {
-  case 1:
-    mpz_set_si(z, (sdigit)GET_OB_DIGIT(templong)[0]);
-    break;
-  case 0:
-    mpz_set_si(z, 0);
-    break;
-  default:
-    mpz_import(z, len, -1, sizeof(GET_OB_DIGIT(templong)[0]), 0,
-	       sizeof(GET_OB_DIGIT(templong)[0])*8 - PyLong_SHIFT,
-	       GET_OB_DIGIT(templong));
-  }
+        if (LONG_MIN <= value && value <= LONG_MAX) {
+            mpz_set_si(z, value);
+        }
+        else {
+            mpz_import(z, 1, -1, sizeof(int64_t), 0, 0, &value);
+            if (value < 0) {
+                mpz_t tmp;
+                mpz_init(tmp);
+                mpz_ui_pow_ui(tmp, 2, 64);
+                mpz_sub(z, z, tmp);
+                mpz_clear(tmp);
+            }
+        }
+    }
+    return 0;
+#else
+    int overflow;
+    long value = PyLong_AsLongAndOverflow(obj, &overflow);
+    if (!overflow) {
+        mpz_set_si(z, value);
+        return 0;
+    }
 
-  if (negative) {
-    mpz_neg(z, z);
-  }
-  return;
+    PyObject *s = PyNumber_ToBase(obj, 16);
+
+    if (!s) {
+        /* LCOV_EXCL_START */
+        return -1;
+        /* LCOV_EXCL_STOP */
+    }
+
+    const char *str = PyUnicode_AsUTF8(s), *p = str;
+
+    if (!str) {
+        /* LCOV_EXCL_START */
+        Py_DECREF(s);
+        return -1;
+        /* LCOV_EXCL_STOP */
+    }
+
+    int negative = (str[0] == '-');
+
+    p += 2;
+    if (negative) {
+        p++;
+    }
+    mpz_init_set_str(z, p, 16);
+    Py_DECREF(s);
+    if (negative) {
+        mpz_neg(z, z);
+    }
+    return 0;
+#endif
 }
 
 /* GMPy_PyLong_From_MPZ from src/gmpy2_convert_gmp.c */
 /* replace obj->z with z when updating */
 PyObject *python_LongFromZZ(mpz_srcptr z)
 {
-  int negative;
-  size_t count, size;
-  PyLongObject *result;
+    if (mpz_fits_slong_p(z)) {
+        return PyLong_FromLong(mpz_get_si(z));
+    }
 
-  /* Assume gmp uses limbs as least as large as the builtin longs do */
+#ifndef PYPY_VERSION
+    const PyLongLayout *layout = PyLong_GetNativeLayout();
+    size_t size = (mpz_sizeinbase(z, 2) +
+                   layout->bits_per_digit - 1)/layout->bits_per_digit;
+    void *digits;
+    PyLongWriter *writer = PyLongWriter_Create(mpz_sgn(z) < 0, size,
+                                               &digits);
+    if (writer == NULL) {
+        /* LCOV_EXCL_START */
+        return NULL;
+        /* LCOV_EXCL_STOP */
+    }
 
-  negative = mpz_sgn(z) < 0;
-  size = (mpz_sizeinbase(z, 2) + PyLong_SHIFT - 1) / PyLong_SHIFT;
+    mpz_export(digits, NULL, layout->digits_order, layout->digit_size,
+               layout->digit_endianness,
+               layout->digit_size*8 - layout->bits_per_digit, z);
+    return PyLongWriter_Finish(writer);
+#else
+    PyObject *str = GMPy_PyStr_From_MPZ(obj, 16, 0, NULL);
 
-  if (!(result = _PyLong_New(size))) {
-    /* LCOV_EXCL_START */
-    return NULL;
-    /* LCOV_EXCL_STOP */
-  }
+    if (!str) {
+        /* LCOV_EXCL_START */
+        return NULL;
+        /* LCOV_EXCL_STOP */
+    }
 
-  mpz_export(GET_OB_DIGIT(result), &count, -1, sizeof(GET_OB_DIGIT(result)[0]), 0,
-	     sizeof(GET_OB_DIGIT(result)[0])*8 - PyLong_SHIFT, z);
+    PyObject *res = PyLong_FromUnicodeObject(str, 16);
 
-  if (count == 0) {
-    GET_OB_DIGIT(result)[0] = 0;
-  }
-
-  /* long_normalize() is file-static so we must reimplement it */
-  /* longobjp = long_normalize(longobjp); */
-  while ((size>0) && (GET_OB_DIGIT(result)[size-1] == 0)) {
-    size--;
-  }
-
-  _PyLong_SetSignAndDigitCount(result, negative, size);
-  return (PyObject*)result;
+    Py_DECREF(str);
+    return res;
+#endif
 }
 
 #if 0

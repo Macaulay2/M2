@@ -1,6 +1,5 @@
 
 -- PURPOSE : Computing the direct product of two polyhedra in the direct product of their ambient spaces
-directProduct = method()
 
 --   INPUT : '(P,Q)',  two polyhedra
 --  OUTPUT : A polyhedron, the direct product
