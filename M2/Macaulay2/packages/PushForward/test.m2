@@ -412,6 +412,7 @@ assert(ring rS === R)
 assert(not isFreeModule rS)
 
 assert(pf(a_S * rB) - a * pf(rB) == 0)
+assert(a^2 * pf(rB) == 0)
 ///
 
 -- test 21

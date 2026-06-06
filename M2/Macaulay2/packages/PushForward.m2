@@ -203,17 +203,10 @@ makeModule(Module, RingMap) := (N, f) -> (
         map(auxN, A^k, f, sourceGens);
 
     rels := kernel mp;
-    ambientSpace := super rels;
-
-    -- add in any relations coming from f.
-    -- note we'll get the wrong answer if the kernel is nontrivial but computing it fails.
-    try(kernalAux := kernel f) then rels += kernalAux * ambientSpace;
-
-    -- some rings have can't trim so fallback to not trimming.  can raise `gcd: unimplemented for this ring`.
     rels = try(trim rels) else rels;
-    M := ambientSpace / rels;
-    pfmat' := N.cache.pruningMap * map(N, M, f, sourceGens);
+    M := super rels / rels;
 
+    pfmat' := N.cache.pruningMap * map(N, M, f, sourceGens);
     pf := (n) -> ( -- pf: N --> M
         n = N.cache.pruningMap^-1 * n;
         -- a bit hacky: we want to transpose without applying antipode
