@@ -76,7 +76,7 @@ COMPILE.cpp = $(COMPILE.cc)
 
 @pre_librariesdir@/libengine.so: $(LOFILES)
 	$(HIDE)$(MKDIR_P) $(@D)
-	@CC@ -shared $^ $(OUTPUT_OPTION)
+	@CXX@ -shared $(OPENMP_CXXFLAGS) $(OPENMP_LIBS) $^ $(OUTPUT_OPTION)
 
 @pre_librariesdir@/libengine.a: $(ENGINE_OFILES)
 	$(HIDE)$(MKDIR_P) $(@D)
