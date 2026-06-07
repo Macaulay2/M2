@@ -354,9 +354,8 @@ endif()
 ## Compile the engine
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 
-# TODO: remove STATIC once M2-engine can be used independently, then we can
-# set -DBUILD_SHARED_LIBS=ON to generate a shared library
-add_library(M2-engine STATIC ${SOURCES} ${HEADERS} ${TAGS})
+# Set -DBUILD_SHARED_LIBS=ON to generate a shared library
+add_library(M2-engine ${SOURCES} ${HEADERS} ${TAGS})
 
 # TODO: Which headers should be included in the development build?
 set_target_properties(M2-engine PROPERTIES PUBLIC_HEADER "${HEADERS}")
@@ -366,7 +365,7 @@ target_include_directories(M2-engine PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>)
 
 # TODO: make engine independent of interpreter headers
-target_link_libraries(M2-engine PUBLIC memtailor mathic mathicgb)
+target_link_libraries(M2-engine PUBLIC memtailor mathic mathicgb M2-supervisor)
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
@@ -414,9 +413,8 @@ target_compile_options(M2-engine PRIVATE
 ###############################################################################
 ## Export the target
 
-# TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
 install(TARGETS M2-engine mathicgb mathic memtailor EXPORT Macaulay2
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   COMPONENT devel EXCLUDE_FROM_ALL
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
   COMPONENT devel EXCLUDE_FROM_ALL)

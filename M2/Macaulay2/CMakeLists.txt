@@ -19,7 +19,6 @@ file(STRINGS "packages/\=distributed-packages" DISTRIBUTED_PACKAGES REGEX "^[a-z
 list(JOIN DISTRIBUTED_PACKAGES " " DISTRIBUTED_PACKAGES)
 
 # This tells CMake how to set the RPATH on the installed executable
-set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # Add extra compiler warning flags for Macaulay2
