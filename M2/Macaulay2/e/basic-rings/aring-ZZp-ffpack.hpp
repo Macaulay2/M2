@@ -14,6 +14,9 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#ifdef _OPENMP
+#define __FFLASFFPACK_USE_OPENMP
+#endif
 #define bool_constant givaro_bool_constant
 #include <fflas-ffpack/ffpack/ffpack.h>
 #undef bool_constant
