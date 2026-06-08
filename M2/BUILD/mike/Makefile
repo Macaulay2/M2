@@ -44,8 +44,36 @@ arm64-appleclang : always
 		-L`brew --prefix factory`/lib \
 		-L`brew --prefix libomp`/lib  \
 		-L`brew --prefix readline`/lib \
-		-L`brew --prefix python`/Frameworks/Python.framework/Versions/3.13/lib" \
+		-L`brew --prefix python`/Frameworks/Python.framework/Versions/3.14/lib" \
 	CPPFLAGS="-I`brew --prefix`/include   \
+	    -I`brew --prefix`/include/cddlib    \
+		-I`brew --prefix factory`/include   \
+		-I`brew --prefix libomp`/include    \
+		-I`brew --prefix readline`/include" \
+	F77="gfortran-15" \
+	PKG_CONFIG_PATH="`brew --prefix factory`/lib/pkgconfig"
+
+
+arm64-latestclang : always
+	mkdir -p builds.tmp/arm64-latestclang
+	cd builds.tmp/arm64-latestclang; ../../../../configure \
+	--enable-download --with-system-gc \
+	--with-system-memtailor --with-system-mathic \
+	--with-system-mathicgb \
+	CC="/opt/homebrew/opt/llvm/bin/clang" \
+	CXX="/opt/homebrew/opt/llvm/bin/clang++" \
+	--prefix="`pwd`/installed" \
+	LDFLAGS="-L/opt/homebrew/opt/llvm/lib \
+		-Wl,-rpath,/opt/homebrew/opt/lib \
+		-L/opt/homebrew/opt/lib \
+		-L`brew --prefix`/lib  \
+		-L`brew --prefix factory`/lib \
+		-L`brew --prefix libomp`/lib  \
+		-L`brew --prefix readline`/lib \
+		-L`brew --prefix python`/Frameworks/Python.framework/Versions/3.14/lib" \
+	CPPFLAGS="-I/opt/homebrew/opt/llvm/include \
+		-I/opt/homebrew/opt/llvm/include \
+		-I`brew --prefix`/include   \
 	    -I`brew --prefix`/include/cddlib    \
 		-I`brew --prefix factory`/include   \
 		-I`brew --prefix libomp`/include    \

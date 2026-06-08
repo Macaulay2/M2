@@ -1004,8 +1004,8 @@ doc ///
   Description
     Text
       {\bf Warning!} This package is experimental, and the interface
-      may still be cleaned up and changed.  Use only if that bothers
-      you not.
+      may still be cleaned up and changed (including defaults of optional arguments).  Use only if that bothers
+      you not!
     Text
       @SUBSECTION "Data of a triangulation"@
     Text
