@@ -26,10 +26,10 @@ header "// TODO: break apart this file so each piece includes only one:
 header "// TODO: remove the following headers
 #include <engine.h>                         // for IM2_Computation_set_stop
 #include <error.h>                          // for ERROR
-#include <ZZp.hpp>                          // for Z_mod
+#include <rings/ZZp.hpp>                          // for Z_mod
 #include <exceptions.hpp>                   // for engine_error, CATCH, TRY
-#include <monomial.hpp>                     // for EngineMonomial
-#include <relem.hpp>                        // for RingElement";
+#include <monomials/monomial.hpp>                     // for EngineMonomial
+#include <ring-elements/ring-element.hpp>                        // for RingElement";
 
 -- debugging:
 export engineMemory(e:Expr):Expr := (

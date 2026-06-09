@@ -50,6 +50,7 @@ char *getmem_malloc(size_t n)
 
 char *getmoremem (char *s, size_t old, size_t new) {
      void *p;
+     (void)old;
      enter_getmem();
      p = GC_REALLOC(s,new);
      if (p == NULL) outofmem2(new);

@@ -176,7 +176,7 @@ for b in flatten entries basis RB do (
      assert(h^* b == h'^* b))
 basis RY
 for b in flatten entries basis RY do (
-     assert(h_* b == h'_* b))--takes a long time, RY has a 2520-element basis
+     assert(h_* b == h'_* b))--TODO: takes a long time, RY has a 2520-element basis
 ///
 
 ----------

@@ -1968,6 +1968,65 @@ L = torAlgDataList(Q/I,{e, c, h, m, n, Class, p, q, r})
 assert( L === {6, 6, 4, 7, 1, "Golod", 0, 0, "-"} )
 ///
 
+-- #53 the predicates isCI, isGorenstein, isGolod
+TEST ///
+Q = QQ[x,y,z]
+Ici = ideal(x^2,y^2)
+Igolod = (ideal(x,y,z))^2
+Igor = ideal(x*z+y*z,x*y+y*z,x^2-y*z,y*z^2+z^3,y^3-z^3)
+Rci = Q/Ici
+Rgolod = Q/Igolod
+Rgor = Q/Igor
+-- a complete intersection is CI and (hence) Gorenstein, but not Golod
+assert(isCI Rci)
+assert(isGorenstein Rci)
+assert(not isGolod Rci)
+-- the square of the maximal ideal is Golod, but not CI or Gorenstein
+assert(isGolod Rgolod)
+assert(not isCI Rgolod)
+assert(not isGorenstein Rgolod)
+-- a Gorenstein ring that is not a complete intersection
+assert(isGorenstein Rgor)
+assert(not isCI Rgor)
+-- the predicates accept the defining ideal too, agreeing with the quotient ring
+assert(isCI Ici === isCI Rci)
+assert(isGolod Igolod === isGolod Rgolod)
+-- the predicates read the corresponding fields of the torAlgData hash table
+assert(isCI Rci === (torAlgData Rci)#"isCI")
+assert((torAlgData Rci)#"c" === 2)
+assert((torAlgData Rci)#"Class" === "C")
+///
+
+-- #54 torAlgDataPrint
+TEST ///
+Q = QQ[x,y,z]
+I = ideal(x^2,y^2)
+R = Q/I
+-- torAlgDataPrint returns a string with one "key=value " entry per key
+s = torAlgDataPrint(R, {c, Class})
+assert instance(s, String)
+assert(s === "c=2 Class=C \n")
+-- the Ideal form agrees with the QuotientRing form
+assert(torAlgDataPrint(I, {c, Class}) === s)
+///
+
+-- #55 setAttemptsAtGenericReduction
+TEST ///
+Q = QQ[x,y,z]
+R = Q/ideal(x^2,y^2)
+-- attemptsAtGenericReduction is unset until setAttemptsAtGenericReduction is called
+assert(not R.?attemptsAtGenericReduction)
+s = setAttemptsAtGenericReduction(R, 7)
+-- the function returns a String and sets R.attemptsAtGenericReduction
+assert instance(s, String)
+assert(R.attemptsAtGenericReduction === 7)
+-- with too few attempts, computing the Bass numbers of a higher-codepth ring fails
+Q6 = ZZ/2[u,v,w,x,y,z]
+R6 = Q6/ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3)
+setAttemptsAtGenericReduction(R6, 0)
+assert(try (torAlgClass R6; false) else true)
+///
+
 end
 
 

@@ -79,11 +79,13 @@ inferWeylAlgebra = F -> (
 
 -- Graded associative ring of the rational Weyl algebra
 -- Used for bookkeeping elements in R
+-- Note: after calling R = rationalWeylAlgebra D, x/y gives an error,
+-- so users should call F = baseFractionField D, then x/y or x/y*dx work fine
 rationalWeylAlgebra = memoize((D) -> (
     createDpairs D;
     w := first weights D;
-    R := baseFractionField(D);
-    (R)(monoid[D.dpairVars#1,
+    F := baseFractionField D;
+    F (monoid[D.dpairVars#1,
 	    MonomialOrder => WeightThenLexicographicOrder last pack_(#w//2) w ]))
 )
 

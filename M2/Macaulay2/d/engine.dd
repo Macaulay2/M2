@@ -95,10 +95,10 @@ header "
     #include <exceptions.hpp>
     #include <newdelete.hpp>
     #include <hash.hpp>
-    #include <monomial.hpp>
-    #include <relem.hpp>
-    #include <matrix.hpp>
-    #include <mat.hpp>
+    #include <monomials/monomial.hpp>
+    #include <ring-elements/ring-element.hpp>
+    #include <matrices/matrix.hpp>
+    #include <basic-mutable-matrices/mat.hpp>
 ";
 
 export EngineError(d:string):string := (

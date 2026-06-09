@@ -1,8 +1,8 @@
-#include "Basis.hpp"
+#include "gb-f4/Basis.hpp"
 
-#include "../mat.hpp"
-#include "../freemod.hpp"
-#include "../mutablemat.hpp"
+#include "basic-mutable-matrices/mat.hpp"
+#include "free-modules/freemod.hpp"
+#include "mutable-matrices/mutablemat.hpp"
 
 #if 0
 

@@ -1362,6 +1362,8 @@ pushAboveWindow1 Module := Matrix => M -> (
     then powers(v-D,irrList)**E^{ -D} else id_(E^{ -D}))
     )
 
+-- pushAboveWindow (internal): the result keeps the same target as its input
+-- and has all source generators pushed minimally outside the Beilinson window.
 TEST ///
 debug TateOnProducts
 (S,E) = productOfProjectiveSpaces {1,2}
@@ -1447,6 +1449,8 @@ pushAboveWindow Complex := Complex => C -> (
     -- chainComplexFromData(min C', M)
     );
 
+-- pushAboveWindow (internal) applied to a complex leaves its Beilinson
+-- window unchanged.
 TEST ///
 debug TateOnProducts
         n={1,1};
@@ -6537,6 +6541,8 @@ doc ///
 ------------------------------------
 -----TESTS-----
 ------------------------------------
+-- isIsomorphicStrict decides whether two multigraded modules are isomorphic
+-- by a degree-preserving isomorphism.
 TEST ///
 S = ZZ/32003[a,b, Degrees =>{{1,0},{0,1}}]
 M = S^{{1,0},{0,1}}
@@ -6547,6 +6553,8 @@ assert(isIsomorphicStrict(M,M') ===true)
 assert(isIsomorphicStrict(A,B) ===false)
 ///
 
+-- bgg sends a module to the linear complex over the exterior algebra;
+-- the result is a genuine complex with the expected Betti table.
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,2}
 P = prune truncate({1,2},E^1)
@@ -6559,6 +6567,8 @@ assert all(min L +1..max L, i-> L.dd_(i-1)*L.dd_i == 0)
 --       {-x_(1,2)}}) );
 ///
 
+-- tateResolution of a line bundle on P^1 x P^1, checked against its
+-- matrix of cohomology dimensions (cohomologyMatrix).
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,1};
 C = tateResolution (S^1,{0,0},{3,3});
@@ -6568,6 +6578,9 @@ assert (cohomRing = ZZ[h,k];
 	))
 ///
 
+-- beilinson recovers a sheaf from its Tate resolution: applying
+-- beilinsonWindow o tateResolution to HH_0(beilinson C) returns the
+-- Beilinson window of C unchanged.
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,2}
 M = S^{{-1,2}}
@@ -6584,6 +6597,8 @@ M' = HH_0 B
 assert(beilinsonWindow tateResolution(M',-high,high) == BW)
 ///
 
+-- the Tate-resolution / beilinson round trip: HH_0 of the Beilinson monad
+-- of the Tate resolution of M is isomorphic (not equal) to M.
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,2}
 M = coker random(S^2, S^{2:{-1,-1}})
@@ -6600,6 +6615,7 @@ assert( all(2, i->BW_i == BW'_i))
 assert(isIsomorphicStrict(coker BW.dd_1, coker BW'.dd_1))
 ///
 
+-- the same Tate-resolution / beilinson round trip, in its shortest form.
 TEST ///
 (S,E) = productOfProjectiveSpaces{1,2}
 M = coker random(S^2, S^{2:{-1,-1}})
@@ -6611,6 +6627,8 @@ assert isIsomorphicStrict(M',M)
 --note: isomorphic, not equal!
 ///
 
+-- the beilinson functor on P^1 x P^2: the basic bundles U^a, their
+-- tensor-product behaviour, vanishing outside the window, and zero maps.
 TEST ///
   -- XXX Mike working on this test
   -- of beilinson functor
@@ -6649,6 +6667,7 @@ TEST ///
       )
 ///
 
+-- the beilinson functor on the larger product P^3 x P^3.
 TEST ///
   -- test of beilinson
 -*
@@ -6673,6 +6692,9 @@ TEST ///
 ///
 
 
+-- functoriality of the beilinson functor: beilinson(f*g) equals
+-- beilinson(f)*beilinson(g), checked by the internal testBeilinson and
+-- testBeilinson1 harnesses (which assert internally).
 TEST ///
 
   -- tests of beilinson functoriality
@@ -6780,6 +6802,8 @@ elapsedTime   testBeilinson1 {1,1,1}
 
 
 
+-- symExt, tallyDegrees and cohomologyHashTable: the tallyDegrees entry
+-- agrees with the matching cohomologyHashTable entry.
 TEST ///
 -*
 restart
@@ -6809,6 +6833,8 @@ restart
 
 
 *-
+-- upperCorner exploration kept from the original suite (no assertions;
+-- see the authors' note below).
 TEST /// 
 --error"we don't know what this should be testing. Note that 'corner'
 --no longer exists"
@@ -6830,6 +6856,8 @@ betti F
 cohomologyMatrix(Fm,deg-{5,5},deg+{1,1})
 ///
 
+-- upperCorner / cornerComplex exploration kept from the original suite
+-- (no assertions; see the authors' note below).
 TEST ///
 --error"we don't know what this should be testing. Note that 'corner'
 --no longer exists"
@@ -6854,6 +6882,8 @@ cohomologyMatrix(C,-{3,3},{5,5})
 restart
 loadPackage ("TateOnProducts", Reload =>true)
 ///
+-- eulerPolynomialTable computed from a module agrees with the one
+-- computed from the corresponding cohomologyHashTable.
 TEST ///
 n={1,2}; (S,E) = productOfProjectiveSpaces n;
 M = S^1;
@@ -6867,6 +6897,8 @@ assert(pH == apply(pH', p -> (p_0,sub(p_1,CR))))
 
 
 
+-- beilinsonWindow on a resolution already inside the window is the
+-- identity on the differentials.
 TEST ///
 n={4}
 (S,E) = productOfProjectiveSpaces n
@@ -7002,10 +7034,11 @@ assert(  BW4.dd^2 == 0)
 ///
 
 
+-- beilinsonBundle agrees with its generator-count shortcut numgensU, and
+-- the bundle on a product is the tensor product of the basic ones.
 TEST ///
 -- YYY
   -- test of beilinsonBundle and numgensU
-restart
   debug needsPackage "TateOnProducts"
 
   for n in toList({1,1}..{5,5}) do (
@@ -7031,6 +7064,8 @@ restart
 ------------------------------------
 
 -- Example of beilinson
+-- beilinsonBundle on P^3 x P^2: the trivial bundle, the rank of U^1, and
+-- the tensor-product decomposition of U^{a,b}.
 TEST ///
 --restart
   -- XXX
@@ -7053,6 +7088,7 @@ TEST ///
   assert(U3 ** V2 == beilinsonBundle({3,2},S))
 ///
 
+-- beilinsonBundle on P^2 x P^1: the same checks on a smaller product.
 TEST ///
 --restart
 --  needsPackage "TateOnProducts"
@@ -7068,6 +7104,8 @@ TEST ///
   assert(U2 ** V1 == beilinsonBundle({2,1},S))
 ///
 
+-- numgensU counts the generators of a Beilinson bundle, and beilinson is
+-- multiplicative on composable maps of free E-modules.
 TEST ///
 
 --restart
@@ -7197,6 +7235,158 @@ restart
 ------------------------------------
 
 
+
+
+------------------------------------
+-- The tests below were added in the 2026 test-audit pass to cover
+-- exported functions that previously had no asserting test.
+------------------------------------
+
+-- the BundleType option of beilinson selects how the Beilinson bundle U^a is
+-- presented.  All six values are exercised here on U^{1,0} over P^2 x P^1.
+TEST ///
+(S,E) = productOfProjectiveSpaces {2,1};
+F = E^{{-1,0}};
+-- PrunedQuotient is the default
+assert(beilinson F == beilinson(F, BundleType => PrunedQuotient))
+-- every bundle presentation has the rank of the sheaf U^{1,0}, namely 2
+assert(rank beilinson(F, BundleType => PrunedQuotient) == 2)
+assert(rank beilinson(F, BundleType => QuotientBundle) == 2)
+assert(rank beilinson(F, BundleType => SubBundle) == 2)
+assert(rank beilinson(F, BundleType => DummyQuotientBundle) == 2)
+-- FreeBundle returns the ambient free bundle, here of rank 3
+assert(rank beilinson(F, BundleType => FreeBundle) == 3)
+-- the presentations differ in their generator counts
+assert(numgens beilinson(F, BundleType => PrunedQuotient) == 3)
+assert(numgens beilinson(F, BundleType => QuotientBundle) == 6)
+-- MapsBetweenFreeBundles returns the embedding as a matrix of free bundles
+phi = beilinson(F, BundleType => MapsBetweenFreeBundles);
+assert(class phi === Matrix)
+assert(numgens source phi == 6 and numgens target phi == 3)
+-- an unknown BundleType value is rejected
+assert(try (beilinson(F, BundleType => getSymbol "Bogus"); false) else true)
+///
+
+-- upperCorner and lowerCorner extract corner submatrices of a (co)complex
+-- differential; the cokernel of an upper corner map resolves to a part of a
+-- Tate resolution.
+TEST ///
+(S,E) = productOfProjectiveSpaces {1,2};
+F = dual freeResolution((ker transpose vars E) ** E^{{2,3}}, LengthLimit => 10);
+m = upperCorner(F, {2,1});
+assert(isHomogeneous m)
+assert(betti m === new BettiTally from {(1,{-2,-1},-3) => 9, (0,{-2,-2},-4) => 18, (0,{-3,-1},-4) => 12})
+Fm = freeResolution(coker m, LengthLimit => 10)[sum {2,1}];
+assert(Fm.dd^2 == 0)
+ml = lowerCorner(F, {0,1});
+assert(isHomogeneous ml)
+assert(betti ml === new BettiTally from {(1,{0,0},0) => 1, (0,{0,-1},-1) => 3})
+-- upperCorner rejects a degree of the wrong length
+assert(try (upperCorner(F, {2}); false) else true)
+///
+
+-- firstQuadrantComplex, lastQuadrantComplex and cornerComplex split a
+-- (sufficiently large part of a) Tate resolution into quadrant pieces;
+-- each piece is a genuine homogeneous complex.
+TEST ///
+(S,E) = productOfProjectiveSpaces {1,1};
+T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 8))[1];
+T = trivialHomologicalTruncation(freeResolution(coker upperCorner(T1,{4,3}), LengthLimit => 13)[7], -5, 6);
+fqT = firstQuadrantComplex(T, -{2,1});
+lqT = lastQuadrantComplex(T, -{2,1});
+cT = cornerComplex(T, -{2,1});
+assert(fqT.dd^2 == 0 and isHomogeneous fqT)
+assert(lqT.dd^2 == 0 and isHomogeneous lqT)
+assert(cT.dd^2 == 0 and isHomogeneous cT)
+-- regression: the Betti tables of the three quadrant pieces
+assert(betti fqT === new BettiTally from {(-1,{2,-2},0) => 13, (-3,{-3,0},-3) => 2, (-3,{-3,1},-2) => 8, (0,{2,-1},1) => 8, (-2,{1,-2},-1) => 6, (1,{2,0},2) => 3, (1,{2,1},3) => 2, (-1,{1,-1},0) => 4, (0,{1,0},1) => 2, (-2,{0,-2},-2) => 1, (-1,{0,0},0) => 1, (-3,{-1,-2},-3) => 8, (0,{0,1},1) => 2, (-2,{-1,-1},-2) => 4, (-4,{-2,-2},-4) => 15, (-1,{-1,1},0) => 4, (-3,{-2,-1},-3) => 8, (-5,{-3,-2},-5) => 22, (-2,{-2,0},-2) => 1, (-4,{-3,-1},-4) => 12, (-2,{-2,1},-1) => 6})
+assert(betti lqT === new BettiTally from {(4,{4,2},6) => 17, (5,{4,3},7) => 28, (3,{3,2},5) => 12, (6,{4,4},8) => 39, (6,{6,2},8) => 27, (4,{3,3},6) => 20, (5,{5,2},7) => 22, (5,{3,4},7) => 28, (6,{5,3},8) => 36, (6,{3,5},8) => 36})
+assert(betti cT === new BettiTally from {(-1,{2,-2},0) => 13, (3,{4,2},6) => 17, (4,{4,3},7) => 28, (0,{2,-1},1) => 8, (-2,{1,-2},-1) => 6, (2,{3,2},5) => 12, (5,{4,4},8) => 39, (1,{2,0},2) => 3, (-1,{1,-1},0) => 4, (1,{2,1},3) => 2, (3,{3,3},6) => 20, (4,{3,4},7) => 28, (-2,{0,-2},-2) => 1, (0,{1,0},1) => 2, (5,{3,5},8) => 36, (-3,{-1,-2},-3) => 8, (-1,{0,0},0) => 1, (-2,{-1,-1},-2) => 4, (0,{0,1},1) => 2, (-4,{-2,-2},-4) => 15, (-3,{-2,-1},-3) => 8, (-1,{-1,1},0) => 4, (-5,{-3,-2},-5) => 22, (-2,{-2,0},-2) => 1, (-2,{-2,1},-1) => 6, (-4,{-3,-1},-4) => 12, (-3,{-3,0},-3) => 2, (-3,{-3,1},-2) => 8, (5,{6,2},8) => 27, (4,{5,2},7) => 22, (5,{5,3},8) => 36})
+///
+
+-- regionComplex extracts the subquotient of a Tate resolution supported on a
+-- region of multidegrees; strand is the special case (I,J,K) = ({},I,{}).
+TEST ///
+n = {1,1};
+(S,E) = productOfProjectiveSpaces n;
+T1 = (dual freeResolution(trim (ideal vars E)^2, LengthLimit => 5))[1];
+a = -{2,2};
+T2 = (T1 ** E^{a})[sum a];
+W = beilinsonWindow T2;
+T = tateExtension W;
+assert(T.dd^2 == 0 and isHomogeneous T)
+rT = regionComplex(T, {1,0}, ({},{0},{}));
+sT = strand(T, {-1,0}, {1});
+assert(rT.dd^2 == 0 and isHomogeneous rT)
+assert(sT.dd^2 == 0 and isHomogeneous sT)
+-- strand(T,c,I) is by definition the region complex for (I,J,K) = ({},I,{})
+assert(sT == regionComplex(T, {-1,0}, ({},{1},{})))
+-- this vertical-line region fixes the first multidegree coordinate
+assert(all(flatten apply(toList(min rT..max rT), i -> degrees rT_i), d -> d_0 == -1))
+-- the {1}-strand fixes the second multidegree coordinate
+assert(all(flatten apply(toList(min sT..max sT), i -> degrees sT_i), d -> d_1 == 0))
+-- regression: Betti tables of the region complex and the strand
+assert(betti rT === new BettiTally from {(2,{-1,4},3) => 18, (-8,{-1,-7},-8) => 92, (-7,{-1,-6},-7) => 82, (-6,{-1,-5},-6) => 72, (-5,{-1,-4},-5) => 62, (-4,{-1,-3},-4) => 52, (-3,{-1,-2},-3) => 42, (-2,{-1,-1},-2) => 32, (-1,{-1,0},-1) => 22, (0,{-1,1},0) => 12, (1,{-1,2},1) => 2, (-9,{-1,-8},-9) => 102, (1,{-1,3},2) => 8})
+assert(betti sT === new BettiTally from {(-3,{-3,0},-3) => 36, (2,{3,0},3) => 6, (-4,{-4,0},-4) => 43, (2,{2,0},2) => 1, (-5,{-5,0},-5) => 50, (1,{1,0},1) => 8, (-6,{-6,0},-6) => 57, (0,{0,0},0) => 15, (-7,{-7,0},-7) => 64, (-1,{-1,0},-1) => 22, (-8,{-8,0},-8) => 71, (-2,{-2,0},-2) => 29, (3,{4,0},4) => 13, (-9,{-9,0},-9) => 78})
+///
+
+-- directImageComplex(M,I): the derived direct image of a sheaf on a product
+-- of projective spaces under the projection onto the factors indexed by I.
+-- Here M is a sheaf on P^1 x P^2 and we project onto the second factor P^2.
+TEST ///
+(S,E) = productOfProjectiveSpaces {1,2};
+M = (beilinson E^{{-1,-1}}) ** S^{{-2,-1}};
+RpiM = directImageComplex(M, {1});
+-- the result is a complex of modules over the coordinate ring of P^2
+assert(numgens ring RpiM == 3)
+assert(RpiM.dd^2 == 0 and isHomogeneous RpiM)
+assert(concentration RpiM === (-2,-1))
+assert(betti RpiM === new BettiTally from {(-1,{1},1) => 6, (-2,{0},0) => 2})
+///
+
+-- directImageComplex(J,N,phi): the derived direct image along a morphism
+-- phi: X -> P^m.  Here X is the cubic scroll in P^4 and phi maps it onto P^1.
+TEST ///
+kk = ZZ/101;
+R = kk[x_0..x_4];
+m = matrix {{x_0,x_1,x_3},{x_1,x_2,x_4}};
+J = minors(2,m);
+N = symmetricPower(2,coker m) ** R^{-2};
+phi = transpose m;
+RphiN = directImageComplex(J,N,phi);
+-- the direct image lives over the coordinate ring of the target P^1
+assert(numgens ring RphiN == 2)
+assert(RphiN.dd^2 == 0 and isHomogeneous RphiN)
+assert(betti RphiN === new BettiTally from {(0,{1},1) => 1})
+///
+
+-- actionOnDirectImage recovers the module structure of a direct image via a
+-- Noether normalization.  Here Y is the conic V(x_0 x_2 - x_1^2) in P^2 and M
+-- is its structure sheaf.
+TEST ///
+kk = ZZ/101;
+R = kk[x_0,x_1,x_2];
+I = ideal(x_0*x_2 - x_1^2);
+M = R^1/I;
+retTable = actionOnDirectImage(I, M);
+-- the structure sheaf of a curve has only R^0 surviving the projection
+assert(sort keys retTable === {0})
+-- the surviving cohomology carries one map per coordinate of the P^2
+assert(#(retTable#0) == 3)
+-- the induced maps assemble into an honest module action
+assert(isAction(I, apply(3, i -> prune HH^0 retTable#0#i)))
+///
+
+-- boundary case: the quadrant and corner complex routines return the zero
+-- complex unchanged.
+TEST ///
+(S,E) = productOfProjectiveSpaces {1,1};
+Z = complex E^0;
+assert(Z == 0)
+assert(firstQuadrantComplex(Z, {0,0}) == 0)
+assert(lastQuadrantComplex(Z, {0,0}) == 0)
+assert(cornerComplex(Z, {0,0}) == 0)
+///
 
 end--
 

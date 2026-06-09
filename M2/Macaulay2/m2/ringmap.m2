@@ -317,7 +317,7 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
 		graph := generators graphIdeal f;
 		assert( not isHomogeneous f or isHomogeneous graph );
 		SS := ring graph;
-		chh := checkHilbertHint graph;
+		chh := canUseHilbertHint graph;
 		if chh then (
 			-- compare with pushNonLinear
 			hf := poincare module target f;

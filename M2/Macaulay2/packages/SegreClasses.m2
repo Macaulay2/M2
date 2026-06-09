@@ -1128,6 +1128,41 @@ X=((W)*ideal(y)+ideal(f))
 assert(isComponentContained(X,Y)==true)
 ///
 
+TEST ///
+-- isMultiHom: detects whether an ideal is homogeneous for the multi-grading
+R = makeProductRing({1,2})
+x = gens R
+assert(isMultiHom ideal(x_0^2*x_2 + x_1^2*x_3))
+assert(not isMultiHom ideal(x_0^2*x_2 + x_1*x_2^2))
+assert(isMultiHom(x_0^2*x_2 + x_1^2*x_3))
+///
+
+TEST ///
+-- projectiveDegree: a single projective degree equals the matching
+-- coefficient of the projectiveDegrees list
+R = makeProductRing({3,3})
+x = gens R
+D = minors(2, matrix{{x_0..x_3},{x_4..x_7}})
+X = ideal(x_0*x_1, x_1*x_2, x_0*x_2)
+A = makeChowRing R
+pds = sum projectiveDegrees(X, D, A)
+assert all(flatten entries monomials pds, h -> projectiveDegree(X, D, h) == pds_h)
+assert(projectiveDegree(X, D, A_0^2*A_1^2) == 3)
+///
+
+TEST ///
+-- chowClass: the class of a degree-2 hypersurface in P^6 is 2h; the
+-- "prob" and "multidegree" strategies and the 1/2-argument forms agree
+R = makeProductRing({6})
+x = gens R
+J = ideal(x_0*x_2 - x_4*x_5)
+A = makeChowRing R
+assert(chowClass(J, A) == 2*A_0)
+assert(chowClass(J, A, Strategy => "prob") == chowClass(J, A))
+clX = chowClass(J, Strategy => "prob")
+assert(clX == chowClass(J, ring clX))
+///
+
 end
 	    
 

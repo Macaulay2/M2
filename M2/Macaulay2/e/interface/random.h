@@ -1,7 +1,7 @@
 // Copyright 2008 by Michael Stillman
 
-#ifndef _rand_h_
-#  define _rand_h_
+#ifndef M2_INTERFACE_RAND_H_
+#define M2_INTERFACE_RAND_H_
 
 #  include "engine-includes.hpp"
 

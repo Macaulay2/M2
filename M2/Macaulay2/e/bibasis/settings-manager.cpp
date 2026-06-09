@@ -7,7 +7,7 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#include "settings-manager.hpp"
+#include "bibasis/settings-manager.hpp"
 
 namespace BIBasis
 {

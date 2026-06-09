@@ -2735,6 +2735,67 @@ TEST /// --test #34, an interesting example based on a question of Abbas Nasrola
    assert(rat*ratI == identR1 and ratI*rat == identS1)
 ///
 
+TEST /// --test #35 (mapOntoImage)
+    R = QQ[x,y];
+    S = QQ[a,b,c];
+    f = map(R, S, {x^2, x*y, y^2}); --the Veronese embedding of P^1 as a conic
+    g = mapOntoImage f;
+    assert(instance(g, RingMap));
+    assert(idealOfImageOfMap g == 0); --mapOntoImage is dominant onto its image
+    T = QQ[u,v,w];
+    dom = map(T, T, {u,v,w}); --an already-dominant map is returned unchanged
+    assert(mapOntoImage dom === dom);
+    assert(instance(mapOntoImage rationalMapping f, RationalMapping));
+///
+
+TEST /// --test #36 (jacobianDualMatrix)
+    R = QQ[x,y];
+    S = QQ[a,b,c,d];
+    Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3}); --the twisted cubic
+    assert(instance(jacobianDualMatrix Pi, Matrix));
+    assert(instance(jacobianDualMatrix(Pi, Strategy=>ReesStrategy), Matrix));
+    assert(instance(jacobianDualMatrix(Pi, Strategy=>SaturationStrategy), Matrix));
+    phi = rationalMapping Pi;
+    assert(jacobianDualMatrix phi === jacobianDualMatrix phi); --result is cached on the RationalMapping
+///
+
+TEST /// --test #37 (sourceInversionFactor)
+    R = ZZ/7[x,y,z];
+    S = ZZ/7[a,b,c];
+    h = map(R, S, {y*z, x*z, x*y}); --the quadratic Cremona transformation
+    sf = sourceInversionFactor(h, Verbosity=>0);
+    assert(instance(sf, RingElement));
+    assert(ring sf === R);
+    assert(sf == x*y*z); --the Cremona composed with its inverse contributes the factor xyz
+///
+
+TEST /// --test #38 (inverseOfMap with SimisStrategy and with MinorsLimit)
+    R = ZZ/11[x,y,z];
+    S = ZZ/11[a,b,c];
+    h = rationalMapping(R, S, {y*z, x*z, x*y}); --quadratic Cremona
+    phi = rationalMapping(S, R, {b*c, a*c, a*b}); --its inverse
+    assert(inverseOfMap(h, AssumeDominant=>true, Strategy=>SimisStrategy, Verbosity=>0) == phi);
+    assert(inverseOfMap(h, AssumeDominant=>true, MinorsLimit=>0, Verbosity=>0) == phi);
+///
+
+TEST /// --test #39 (CheckBirational throws an error on a non-birational map)
+    R = QQ[x,y,z]/(x^3+y^3-z^3); --an elliptic curve
+    S = QQ[a,b];
+    f = map(R, S, {x, y-z}); --not birational onto its image
+    assert(isBirationalOntoImage(f, Verbosity=>0) == false);
+    assert(try (inverseOfMap(f, CheckBirational=>true, Verbosity=>0); false) else true);
+///
+
+TEST /// --test #40 (SaturateOutput option of baseLocusOfMap)
+    R = QQ[x,y,z];
+    f = map(R, R, {x^2*y, x^2*z, x*y*z});
+    bl = baseLocusOfMap f; --saturated, the default
+    blU = baseLocusOfMap(f, SaturateOutput=>false);
+    assert(bl == ideal(x*y, y*z, x*z));
+    assert(instance(blU, Ideal));
+    assert(saturate blU == bl); --saturating the unsaturated output recovers the base locus
+///
+
 
 ----Version information----
 --0.1  First version.

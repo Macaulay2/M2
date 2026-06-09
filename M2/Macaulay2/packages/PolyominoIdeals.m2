@@ -759,7 +759,7 @@ randomPolyominoWithFixedRank = method(Options => {})
 randomPolyominoWithFixedRank ZZ := opts -> n -> (
     Q := { {1,1} };  
     while (#Q < n) do (
-    allCandidates := flatten apply(Q, c -> admissibleCells(Q, c));
+    allCandidates := flatten apply(Q, c -> admissibleCells2(Q, c));
     available := toList(set allCandidates - set Q);
     newC:= available#(random(#available-1));
     Q = append(Q, newC);
@@ -774,9 +774,9 @@ randomPolyominoWithFixedRank ZZ := opts -> n -> (
 randomPolyomino = method(Options => {})
 randomPolyomino ZZ := opts -> m -> (
     n := random(1,m);
-    Q := { {1,1} };  
+    Q := { {1,1} };
     while (#Q < n) do (
-    allCandidates := flatten apply(Q, c -> admissibleCells(Q, c));
+    allCandidates := flatten apply(Q, c -> admissibleCells2(Q, c));
     available := toList(set allCandidates - set Q);
     newC := available#(random(#available-1));
     Q = append(Q, newC);
@@ -2180,6 +2180,118 @@ TEST ///
 -- rankCollection test
 Q = cellCollection { {1,1}, {1,2}, {2,1}, {2,2} };
 assert( rankCollection Q == 4 );
+///
+
+--------------------------------------------------------------------------------------------------
+------------------ Added coverage for untested exports and stress tests --------------------------
+--------------------------------------------------------------------------------------------------
+
+TEST ///
+-- rookNumber, standardRookNumber, standardNonAttackingRookConfigurations:
+-- consistency with the rook-polynomial and configuration siblings.
+Q = cellCollection {{1,1},{1,2},{2,1},{3,1},{3,2}};
+assert(instance(rookNumber Q, ZZ));
+assert(rookNumber Q == 3);
+assert(rookNumber Q == #allNonAttackingRookConfigurations Q);
+assert(rookNumber Q == first degree rookPolynomial Q);
+assert(instance(standardRookNumber Q, ZZ));
+assert(standardRookNumber Q == 2);
+assert(standardRookNumber Q == #standardNonAttackingRookConfigurations Q);
+assert(standardRookNumber Q == first degree standardRookPolynomial Q);
+assert(standardRookNumber Q <= rookNumber Q);
+S = standardNonAttackingRookConfigurations Q;
+assert(instance(S, List) and #S == 2);
+assert(apply(S, c -> #c) == {5, 4});
+///
+
+TEST ///
+-- polyoLattice: the lattice ideal of a collection of cells. The ambient ring
+-- has one variable per vertex, and the ideal is homogeneous since each cell
+-- relation has coefficient sum zero.
+Q = cellCollection {{1,1},{2,1},{1,2},{2,2}};
+L = polyoLattice Q;
+assert(instance(L, Ideal));
+assert(isHomogeneous L);
+assert(numgens ring L == #polyoVertices Q);
+assert(numgens L == 9);
+///
+
+TEST ///
+-- cellGraph: the graph with one vertex per cell and an edge between cells that
+-- share an edge. For the 2x2 block this is the 4-cycle.
+needsPackage "Graphs";
+Q = cellCollection {{1,1},{2,1},{1,2},{2,2}};
+G = cellGraph Q;
+assert(class G === Graph);
+assert(#vertices G == 4);
+assert(#edges G == 4);
+///
+
+TEST ///
+-- Field, TermOrder and RingChoice options of polyoIdeal / adjacent2MinorIdeal.
+Q = cellCollection {{1,1},{2,1},{1,2},{2,2}};
+assert(char ring polyoIdeal Q == 0);
+assert(char ring polyoIdeal(Q, Field => ZZ/101) == 101);
+assert(char ring adjacent2MinorIdeal(Q, Field => ZZ/101) == 101);
+assert(instance(polyoIdeal(Q, RingChoice => 2), Ideal));
+assert(numgens polyoIdeal(Q, RingChoice => 2) == numgens polyoIdeal Q);
+assert(toString describe ring polyoIdeal(Q, TermOrder => Lex)
+    != toString describe ring polyoIdeal(Q, TermOrder => GRevLex));
+///
+
+TEST ///
+-- Stress test: m x n rectangular polyominoes are row- and column-convex,
+-- convex, connected and simple, with rank m*n.
+rect = (m,n) -> cellCollection flatten for i from 1 to m list for j from 1 to n list {i,j};
+for m from 2 to 4 do for n from 2 to 4 do (
+   R = rect(m,n);
+   assert(rankCollection R == m*n);
+   assert(isRowConvex R and isColumnConvex R and isConvex R);
+   assert(collectionIsConnected R == (true, 1));
+   assert(collectionIsSimple R);
+   );
+///
+
+TEST ///
+-- Stress test: the adjacent 2-minor ideal is contained in the polyomino ideal
+-- for a range of rectangular polyominoes.
+rect = (m,n) -> cellCollection flatten for i from 1 to m list for j from 1 to n list {i,j};
+for m from 2 to 4 do for n from 2 to 3 do (
+   R = rect(m,n);
+   PI = polyoIdeal R;
+   AI = adjacent2MinorIdeal R;
+   assert(isSubset(sub(AI, ring PI), PI));
+   );
+///
+
+TEST ///
+-- Stress test: rook-number / rook-polynomial consistency across polyominoes,
+-- and palindromicity of the switching rook polynomial of square polyominoes.
+rect = (m,n) -> cellCollection flatten for i from 1 to m list for j from 1 to n list {i,j};
+testCells = {cellCollection {{1,1}}, cellCollection {{1,1},{1,2},{2,1},{3,1},{3,2}}, rect(2,2), rect(2,3), rect(3,3)};
+for Q in testCells do (
+   assert(rookNumber Q == first degree rookPolynomial Q);
+   assert(rookNumber Q == #allNonAttackingRookConfigurations Q);
+   assert(standardRookNumber Q == first degree standardRookPolynomial Q);
+   assert(standardRookNumber Q == #standardNonAttackingRookConfigurations Q);
+   assert(standardRookNumber Q <= rookNumber Q);
+   );
+assert(isPalindromic switchingRookPolynomial rect(2,2));
+assert(isPalindromic switchingRookPolynomial rect(3,3));
+///
+
+TEST ///
+-- Regression test: randomPolyominoWithFixedRank and randomPolyomino must
+-- produce genuine edge-connected polyominoes (not merely king-connected
+-- collections), since they grow the collection by orthogonally adjacent cells.
+for s from 1 to 12 do (
+   setRandomSeed s;
+   P = randomPolyominoWithFixedRank 7;
+   assert(rankCollection P == 7);
+   assert(first collectionIsConnected P);
+   R = randomPolyomino 9;
+   assert(first collectionIsConnected R);
+   );
 ///
 
 

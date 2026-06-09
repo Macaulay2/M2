@@ -204,7 +204,7 @@ randomPureBinomialIdeal(List, Ring) := Ideal => (L,S)->(
      )
 
 randomBinomialIdeal = method(TypicalValue => Ideal)
-randomBinomialIdeal(Sequence, Ring) := Ideal => (L,S)->randomPureBinomialIdeal(toList L, S)
+randomBinomialIdeal(Sequence, Ring) := Ideal => (L,S)->randomBinomialIdeal(toList L, S)
 randomBinomialIdeal(List, Ring) := Ideal => (L,S)->(
      --L=list of degrees of the generators
      kk:=ultimate (coefficientRing, S);
@@ -1485,6 +1485,154 @@ assert( (randomSquareFreeStep J) === {monomialIdeal map((S)^1,(S)^{{-2},{-2}},{{
 ///
 
 
+-- Tests added in the 2026 test-audit pass: cover the shelling-to-ideal API
+-- (idealFromShelling, idealChainFromShelling, randomShellableIdealChain,
+-- randomShellableIdeal), the AlexanderProbability option of
+-- randomSquareFreeStep, structural assertions for the three edge-ideal
+-- generators, and a regression test pinning the fix to
+-- randomBinomialIdeal(Sequence,Ring) (previously a cut-and-paste typo that
+-- routed through randomPureBinomialIdeal instead of the general-binomial
+-- branch).
+TEST ///
+  -- idealFromShelling: a single facet gives the ideal of the missing vertices
+  S = QQ[x_0..x_4];
+  assert(idealFromShelling(S, {{0,1,2}}) == monomialIdeal(x_3, x_4))
+  -- documented multi-facet example: the Stanley-Reisner ideal of the complex
+  P = {{1,2,4}, {0,1,4}, {0,2,4}, {0,3,4}};
+  I = idealFromShelling(S, P);
+  assert(class I === MonomialIdeal)
+  assert(I == monomialIdeal(x_0*x_1*x_2, x_1*x_3, x_2*x_3))
+  -- the List-only overload picks its own ring QQ[x_0..x_{n-1}]
+  I2 = idealFromShelling P;
+  assert(class I2 === MonomialIdeal)
+  assert(numgens ring I2 == 5)
+  assert(numgens I2 == 3)
+///
+
+TEST ///
+  -- idealChainFromShelling: chain of Stanley-Reisner ideals along the shelling
+  S = QQ[x_0..x_4];
+  P = {{1,2,4}, {0,1,4}, {0,2,4}, {0,3,4}};
+  L = idealChainFromShelling(S, P);
+  assert(class L === List)
+  assert(#L == #P)
+  assert(L_-1 == idealFromShelling(S, P))
+  -- chain is descending under inclusion: more facets => smaller SR ideal
+  assert(all(#L - 1, i -> isSubset(L_(i+1), L_i)))
+  -- List-only overload returns the right shape (its ring is a fresh copy of
+  -- QQ[x_0..x_{n-1}], so we don't compare ideals across rings)
+  L2 = idealChainFromShelling P;
+  assert(#L2 == #P)
+  assert(all(L2, J -> class J === MonomialIdeal))
+  assert(numgens L2_-1 == 3)
+///
+
+TEST ///
+  -- randomShellableIdeal: at a fixed seed, exercise the (Ring,ZZ,ZZ)
+  -- overload that the pre-existing TEST at line 761 was attempting but
+  -- forgot to wrap in an `assert`.
+  setRandomSeed 0
+  S = ZZ/101[a,b,c,d,e];
+  I = randomShellableIdeal(S, 2, 3);
+  assert(class I === MonomialIdeal)
+  assert(ring I === S)
+  assert(numgens I == 3)
+  assert(I == monomialIdeal(a*c, a*d, b*d))
+///
+
+TEST ///
+  -- randomShellableIdealChain: the complete-chain overload has the
+  -- binomial(n, m+1) length, and the explicit-k overload truncates.
+  -- Each entry is a MonomialIdeal in the supplied ring.
+  setRandomSeed 0
+  R = ZZ/101[y_0..y_3];
+  LC = randomShellableIdealChain(R, 1);
+  assert(#LC == binomial(numgens R, 2))
+  assert(all(LC, J -> class J === MonomialIdeal and ring J === R))
+  -- the chain is descending under inclusion
+  assert(all(#LC - 1, i -> isSubset(LC_(i+1), LC_i)))
+  -- the explicit-k overload truncates to k entries
+  setRandomSeed 0
+  LC2 = randomShellableIdealChain(R, 1, 4);
+  assert(#LC2 == 4)
+  assert(all(LC2, J -> class J === MonomialIdeal))
+///
+
+TEST ///
+  -- AlexanderProbability => 1 forces randomSquareFreeStep to return the
+  -- Alexander dual (this exercises the option default at line 133 / 164
+  -- which was otherwise never reached deterministically in the test suite).
+  S = ZZ/101[a,b,c,d,e];
+  I = monomialIdeal(a*b*c, a*b*d, a*c*d, a*c*e, b*c*d, b*d*e);
+  result = randomSquareFreeStep(I, AlexanderProbability => 1.0);
+  -- result is the prepare-triple {J, gens J, socle gens of J} where J = dual I
+  assert(class result === List)
+  assert(#result == 3)
+  assert(result_0 == dual I)
+  assert(class result_0 === MonomialIdeal)
+///
+
+TEST ///
+  -- isShelling on the output of randomShelling: every prefix is itself a
+  -- shelling (lifts the existing smoke check to a stronger property).
+  setRandomSeed 7
+  sh = randomShelling(6, 2, 8);
+  assert(isShelling sh)
+  assert(all(#sh, i -> isShelling take(sh, i+1)))
+  -- the complete-shelling overload has the predicted length
+  setRandomSeed 11
+  sh2 = randomShelling(5, 2);
+  assert(#sh2 == binomial(5, 3))
+  assert(isShelling sh2)
+///
+
+TEST ///
+  -- randomEdgeIdeal / randomBinomialEdgeIdeal / randomToricEdgeIdeal:
+  -- previously these three exports were only smoke-tested (TEST at line 383
+  -- had no assertions).  Pin down their output shape under a fixed seed.
+  setRandomSeed 42
+  (G1, EI1) = randomEdgeIdeal(6, 4);
+  assert(class EI1 === MonomialIdeal)
+  assert(class G1 === Graph)
+  assert(numgens EI1 == 4)
+  assert(numgens ring EI1 == 6)
+  -- every generator is a squarefree degree-2 monomial (an edge of G1)
+  assert(all(EI1_*, m -> first degree m == 2 and #support m == 2))
+  --
+  setRandomSeed 42
+  (BEI, G2) = randomBinomialEdgeIdeal(5, 4);
+  assert(class BEI === Ideal)
+  assert(class G2 === Graph)
+  assert(numgens BEI == 4)
+  -- the ambient ring has 2n variables (x_i and y_i for each vertex)
+  assert(numgens ring BEI == 10)
+  -- each generator is a degree-2 binomial (difference of two monomials)
+  assert(all(BEI_*, f -> first degree f == 2 and # terms f == 2))
+  --
+  setRandomSeed 1
+  (TEI, G3) = randomToricEdgeIdeal(4, 5);
+  assert(class TEI === Ideal)
+  assert(class G3 === Graph)
+  -- the ambient ring has one variable per edge
+  assert(numgens ring TEI == 5)
+///
+
+TEST ///
+  -- regression test for randomBinomialIdeal(Sequence, Ring): the Sequence
+  -- overload now dispatches to randomBinomialIdeal(List, Ring) and produces
+  -- *general* binomials (with random non-trivial coefficients), not pure
+  -- binomials.  Before the fix, it routed through randomPureBinomialIdeal.
+  S = ZZ/101[a,b,c,d,e];
+  setRandomSeed 123456
+  bL = randomBinomialIdeal({2,2,2}, S);
+  setRandomSeed 123456
+  bS = randomBinomialIdeal((2,2,2), S);
+  assert(bL == bS)
+  -- the Sequence and List forms are no longer pure-binomial degenerate
+  setRandomSeed 123456
+  bP = randomPureBinomialIdeal((2,2,2), S);
+  assert(bS != bP)
+///
 
 
 end--  

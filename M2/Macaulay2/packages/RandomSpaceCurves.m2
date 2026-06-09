@@ -265,7 +265,7 @@ randomHartshorneRaoModuleDiameter3oneDirection = (HRao,R) -> (
      -- find betti Numbers of the linear strand
      linearStrand := for i from 0 list (if e#?(i,{i},i) then e#(i,{i},i) else break);
      -- construction depends on length of linear strand.
-     if #linearStrand == 0 then error"linear Stand has length 0. This should never happen";
+     if #linearStrand == 0 then error"linear Strand has length 0. This should never happen";
      if #linearStrand == 1 then (
 	  -- first matrix can neither have nor be required to have linear syzygies
 	  -- choose first matrix randomly
@@ -599,7 +599,7 @@ doc ///
      with both {\tt 4b-10c_1 < a} and {\tt 4d-10c_3 < e}.
 
 
-     diameter {\ge} 4. he routine returns false, although we actually do know a couple of constructions which work in a few further cases.
+     diameter {\ge} 4. The routine returns false, although we actually do know a couple of constructions which work in a few further cases.
 
      The following example prints an overview table for the constructable cases:
    Example
@@ -802,6 +802,19 @@ TEST ///
      e = 1;
      betti res (M=(random hartshorneRaoModule)(1,HRao,R))
      assert(apply(toList(e..e+#HRao-1),i->hilbertFunction(i,M))==HRao)
+///
+
+-- Direct test for knownUnirationalComponentOfSpaceCurves. Previously
+-- this export had no `assert` -- it was only printed inside a doc
+-- EXAMPLE table.
+TEST ///
+-- Small (d, g) on the unirational table should return true.
+assert(knownUnirationalComponentOfSpaceCurves(8, 5));
+assert(knownUnirationalComponentOfSpaceCurves(4, 0));
+-- A (d, g) outside the package's constructible region should return
+-- false (the post-end scratch in the source notes that the table is
+-- not exhaustive; this pair is on the false side of the table).
+assert(not knownUnirationalComponentOfSpaceCurves(15, 22));
 ///
 
 

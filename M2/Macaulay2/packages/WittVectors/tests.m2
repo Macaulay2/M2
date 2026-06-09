@@ -9,9 +9,12 @@ witt(2, (GF 9)[x]/x^2)
 assert( (try witt(2,ZZ/15)) == null)
 assert( (try witt(2,QQ)) == null)
 assert( (try witt(2,QQ[x])) == null)
-print("1")
 ///
 
+-- TODO: this TEST is slow (~8 s); it computes fSplittingHeight on four
+-- distinct ideals (heights 1..4), with the height-4 step dominating.
+-- Consider splitting the height-4 case into a separate test or replacing
+-- it with a smaller ideal of the same height.
 --TEST 1
 TEST /// -- Check that the fSplittingHeight method gives back the correct number
     S = (ZZ/3)[x,y,z,w]
@@ -308,16 +311,21 @@ assert(wS-wS == 0)
 
 --TEST 24
 TEST ///
+-- Witt-vector arithmetic on GF(4)[x,y,z] with length 4.  Generators are
+-- kept at degree 1 so that the multiplicative-associativity check below
+-- runs in seconds rather than tens of seconds (it had no `assert`
+-- previously, so the slow triple-product was computed and silently
+-- discarded).
 R = GF(4)[x,y,z]
 WR = witt(4, R)
 w1 = random(1, WR)
 w2 = random(1, WR)
-w3 = random(3, WR)
+w3 = random(1, WR)
 assert(2*w2 == w2 + w2)
 assert(w2 - w2 == 0_WR)
 assert(1_WR*w3 == w3)
 assert( (w1 + w2) + w3 == w1 + (w2 + w3) )
-( (w1*w2)*w3 - w1*(w2*w3) )
+assert( (w1*w2)*w3 - w1*(w2*w3) == 0 )
 ///
 
 
@@ -336,6 +344,10 @@ assert( (w1 + w2) + w3 == w1 + (w2 + w3) )
 ///
 
 
+-- TODO: this TEST is slow (~9 s) -- fSplittingHeight of a height-8
+-- example.  The runtime is intrinsic to the height-8 computation; if
+-- it becomes a CI bottleneck, replace with a smaller height (e.g. 3
+-- or 4) or move the height-8 example to a separate `check`-only suite.
 --TEST 26
 TEST ///
 R=ZZ/3[x_0,x_1,x_2,x_3]
@@ -349,5 +361,38 @@ TEST ///
 R=ZZ/3[x_0,x_1,x_2,x_3]
 I=ideal((x_0^4+x_1^4+x_2^4+x_3^4)^2)
 assert(fSplittingHeight I == infinity)
+///
+
+
+--TEST 28
+TEST ///
+-- the Verschiebung map prepends a zero to the underlying tuple
+R = ZZ/5[x,y]
+w = witt{x,y}
+assert(verschiebung w == witt({0_R, x, y}))
+assert(toList verschiebung w == {0_R, x, y})
+-- on a length-1 element
+assert(verschiebung witt{x} == witt({0_R, x}))
+///
+
+
+--TEST 29
+TEST ///
+-- findFrobeniusLift with Nontrivial=>true returns a lift different from
+-- the standard Frobenius lift {x^2, y^2}
+S = (ZZ/2)[x,y]
+I = ideal(x^2 + y^3)
+Ldefault = findFrobeniusLift(2, I)
+Lnontrivial = findFrobeniusLift(2, I, Nontrivial => true)
+assert(Ldefault#0 != Lnontrivial#0)
+///
+
+
+--TEST 30
+TEST ///
+-- wittLength returns the truncation length of a Witt ring directly
+R = ZZ/5[x,y]
+assert(wittLength witt(3, R) == 3)
+assert(wittLength witt(5, R) == 5)
 ///
 

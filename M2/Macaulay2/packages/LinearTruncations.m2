@@ -557,6 +557,46 @@ assert all(L, ell -> all(ell - compMin L, i -> i >= 0))
 assert all(L, ell -> all(compMax L - ell, i -> i >= 0))
 ///
 
+TEST ///
+-- linearTruncationsBound returns a list of multidegrees where the truncation
+-- of M has a linear resolution.  Verified on the doc-example module over
+-- (P^1)^3: the bound returns {{4,3,3}, {4,4,2}}, and every d in that list
+-- yields an isLinearComplex truncation.
+S = ZZ/101[x_0,x_1,y_0,y_1,z_0,z_1, Degrees=>{{1,0,0},{1,0,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1}}];
+I = ideal(x_0*x_1*y_0*z_0^2, x_1^2*y_0^2*y_1^2*z_0^2, x_0^3*y_0*z_1, x_0^2*x_1*y_1*z_0*z_1, x_0*x_1^2*y_1^2*z_0^3, x_1^3*y_0^2*y_1*z_1^2);
+M = S^1/I;
+L = linearTruncationsBound M;
+assert(L == {{4,3,3}, {4,4,2}});
+assert(all(L, d -> isLinearComplex res prune truncate(d, M)));
+///
+
+TEST ///
+-- isQuasiLinear in two of its three forms.
+-- (List, Module): verify the doc example.
+S = ZZ/101[x_0,x_1,y_0,y_1,z_0,z_1, Degrees=>{{1,0,0},{1,0,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1}}];
+I = ideal(x_0*x_1*y_0*z_0^2, x_1^2*y_0^2*y_1^2*z_0^2, x_0^3*y_0*z_1, x_0^2*x_1*y_1*z_0*z_1, x_0*x_1^2*y_1^2*z_0^3, x_1^3*y_0^2*y_1*z_1^2);
+M = S^1/I;
+assert(isQuasiLinear({4,3,2}, M));
+-- (BettiTally) form with explicit IrrelevantIdeal option.
+S2 = ZZ/101[x_0,x_1,y_0,y_1, Degrees=>{{1,0},{1,0},{0,1},{0,1}}];
+M2 = S2^1/ideal(x_0*y_0);
+F = res prune truncate({2,2}, M2);
+irr = ideal(x_0,x_1) * ideal(y_0,y_1);
+assert(isQuasiLinear(betti F, IrrelevantIdeal => irr));
+///
+
+TEST ///
+-- findRegion with Inner and Outer options: when Inner == Outer the function
+-- short-circuits and returns the minimal elements of the supplied set, here
+-- {{2,2}} (the minimum of {{2,2}, {3,3}}).
+S = ZZ/101[x_0,x_1,y_0,y_1, Degrees=>{{1,0},{1,0},{0,1},{0,1}}];
+M = S^1/ideal(x_0*y_0, x_1*y_1);
+trueP = (d, mod) -> true;
+known = {{2,2}, {3,3}};
+result = findRegion({{0,0},{4,4}}, M, trueP, Inner => known, Outer => known);
+assert(result == {{2,2}});
+///
+
 -------------------------
 
 beginDocumentation()

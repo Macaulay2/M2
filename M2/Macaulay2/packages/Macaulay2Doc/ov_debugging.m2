@@ -607,7 +607,6 @@ document {
 document {
   Key => "breakpoint",
   Headline => "set a breakpoint to stop execution at a particular point in the code and enter the debugger",
-  Inputs => { "s" => String => "a string containing Macaulay2 code" },
   Usage => "breakpoint s",
   Consequences => {
     {"At the time the code including ", TT "breakpoint s", " is executed, the execution will stop right before ",

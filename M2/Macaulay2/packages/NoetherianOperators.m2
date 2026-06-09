@@ -3668,6 +3668,109 @@ assert(norm(n - num) < 1e-6)
 assert(norm(d - den) < 1e-6)
 ///
 
+------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: direct coverage
+-- for previously untested exports -- the punctual-Hilbert
+-- family (getIdealFromNoetherianOperators via the public
+-- noetherianOperators, joinIdeals, mapToPunctualHilbertScheme,
+-- solvePDE), eliminatingDual, the symbolic strategy/kernel
+-- options, and the colon(DualSpace, Ideal) stub.
+------------------------------------------------------------
+
+-- getIdealFromNoetherianOperators inverts noetherianOperators: for a primary
+-- ideal Q, recovering the ideal from its Noetherian operators and its radical
+-- returns Q.  The existing test exercises only the internal Hilbert-scheme
+-- routine; this one drives the public noetherianOperators entry point.
+TEST ///
+R = QQ[x_1,x_2,x_3]
+Q1 = ideal(x_1^2, x_2^2, x_1-x_2*x_3)             -- Palamodov's example
+Q2 = ideal(x_1^2, x_2^2, x_3^2)
+Q3 = ideal(x_1^2, x_2^2, x_3^2, x_1*x_2+x_1*x_3+x_2*x_3)
+assert(Q1 == getIdealFromNoetherianOperators(noetherianOperators Q1, radical Q1))
+assert(Q2 == getIdealFromNoetherianOperators(noetherianOperators Q2, radical Q2))
+assert(Q3 == getIdealFromNoetherianOperators(noetherianOperators Q3, radical Q3))
+///
+
+-- joinIdeals computes the join of two ideals.  The join of a prime P with an
+-- m-primary ideal is P-primary and is recovered by the Noetherian-operator
+-- round trip; joinIdeals requires both ideals to lie in the same ring.
+TEST ///
+R = QQ[x_1,x_2,x_3,x_4]
+MM = matrix{{x_3,x_1,x_2},{x_1,x_2,x_4}}
+P = minors(2,MM)
+M = ideal(x_1^2,x_2^2,x_3^2,x_4^2)
+Q = joinIdeals(P,M)
+assert(isPrimary Q)
+assert(Q == getIdealFromNoetherianOperators(noetherianOperators Q, P))
+A = QQ[a,b]; B = QQ[c,d]
+assert(try (joinIdeals(ideal A_0, ideal B_0); false) else true)
+///
+
+-- solvePDE solves a linear constant-coefficient PDE system, returning a
+-- differential primary decomposition.  By the Ehrenpreis-Palamodov principle
+-- the number of Noetherian multipliers equals the arithmetic multiplicity.
+TEST ///
+R = QQ[x_1,x_2,x_3,x_4]
+MW = matrix{{x_1*x_3, x_1*x_2, x_1^2*x_2}, {x_1^2, x_2^2, x_1^2*x_4}}
+U = image MW
+QI = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
+sols = solvePDE MW
+assert(class sols === List)
+assert(amult U == sum(sols / last / (l -> #l)))
+assert(class solvePDE U === List)
+assert(class solvePDE QI === List)
+///
+
+-- mapToPunctualHilbertScheme sends a primary ideal to a point of a punctual
+-- Hilbert scheme, returning an ideal.
+TEST ///
+R = QQ[x_1,x_2,x_3]
+Q1 = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
+Q2 = ideal(x_1^2, x_2^2, x_3^2)
+assert(class mapToPunctualHilbertScheme Q1 === Ideal)
+assert(class mapToPunctualHilbertScheme Q2 === Ideal)
+///
+
+-- eliminatingDual computes dual elements with bounded degree in a chosen set
+-- of variables.  When every variable is selected it agrees with truncatedDual;
+-- a proper subset gives a genuine eliminating dual space.
+TEST ///
+R = CC[x,y]
+I = ideal(x^2-y^3)
+ed = eliminatingDual(origin R, I, {0,1}, 4)
+td = truncatedDual(origin R, I, 4)
+assert(class ed === DualSpace)
+assert(hilbertFunction({0,1,2,3,4}, ed) == hilbertFunction({0,1,2,3,4}, td))
+e1 = eliminatingDual(origin R, I, {0}, 2)
+assert(class e1 === DualSpace)
+///
+
+-- noetherianOperators supports several symbolic strategies and kernel/integral
+-- options; each recovers the same primary ideal.  An unknown strategy is an
+-- error.
+TEST ///
+R = QQ[x_1,x_2,x_3]
+Q = ideal(x_1^2, x_2^2, x_3^2, x_1*x_2+x_1*x_3+x_2*x_3)
+P = radical Q
+assert(Q == getIdealFromNoetherianOperators(noetherianOperators(Q, Strategy => "MacaulayMatrix"), P))
+assert(Q == getIdealFromNoetherianOperators(noetherianOperators(Q, Strategy => "PunctualHilbert"), P))
+assert(Q == getIdealFromNoetherianOperators(noetherianOperators(Q, Strategy => "PunctualQuot"), P))
+assert(Q == getIdealFromNoetherianOperators(noetherianOperators(Q, Strategy => "MacaulayMatrix", KernelStrategy => "Gaussian"), P))
+assert(class noetherianOperators(Q, Strategy => "MacaulayMatrix", IntegralStrategy => true) === List)
+assert(class noetherianOperators(Q, Strategy => "MacaulayMatrix", IntegralStrategy => false) === List)
+assert(try (noetherianOperators(Q, Strategy => "Bogus"); false) else true)
+///
+
+-- the colon(DualSpace, Ideal) method is an unimplemented stub: it raises an
+-- error rather than silently returning a wrong answer.
+TEST ///
+R = CC[x,y]
+J = ideal x
+L = truncatedDual(point{{0_CC,0}}, ideal(x^2,y*x), 3)
+assert(class L === DualSpace)
+assert(try (colon(L, J); false) else true)
+///
+
 
 end
 

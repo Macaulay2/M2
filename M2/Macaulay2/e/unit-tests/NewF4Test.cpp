@@ -6,11 +6,11 @@
 #include <bitset>
 #include <gtest/gtest.h>
 
-#include "polyring.hpp"
-#include "util-polyring-creation.hpp"
+#include "rings/polyring.hpp"
+#include "unit-tests/util-polyring-creation.hpp"
 #include "gb-f4/MonomialHashTable.hpp"
 #include "gb-f4/MonomialLookupTable.hpp"
-#include "VectorArithmetic.hpp"
+#include "basic-rings/vector-arithmetic.hpp"
 #include "BasicPolyListParser.hpp"
 #include "gb-f4/PolynomialList.hpp"
 

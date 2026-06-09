@@ -2,7 +2,7 @@ SUBMODULE = true
 LICENSEFILES = COPYING
 # author: Bjarke Roune <bjarke@cs.au.dk>
 URL = https://github.com/Macaulay2/frobby
-VERSION = 0.9.8
+VERSION = 0.9.9
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 VPATH = @srcdir@

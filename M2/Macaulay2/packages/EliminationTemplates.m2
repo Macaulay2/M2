@@ -1003,8 +1003,8 @@ doc ///
     Description
       Text
         For a zero-dimensional polynomial ideal $I \subset R$, multiplication by a general linear form $f \in R$ induces a linear map $R/I \to R/I$, which can be represented using an action matrix.
-	For an ideal represented by a template matrix, the action matrix may from the template matrix by various triangularization schemes (RREF, LU Decomposition, etc.)
-	The eigeenvalues eigenvalues can be used to determine the (closed) points in the vanishing locus of $I$, as they give the values of $f$ on these points.
+	For an ideal represented by a template matrix, the action matrix may be obtained from the template matrix by various triangularization schemes (RREF, LU Decomposition, etc.)
+	The eigenvalues can be used to determine the (closed) points in the vanishing locus of $I$, as they give the values of $f$ on these points.
 	In this implementation, the action matrix is cached inside the template to facilitate quicker computation.
       Example
         R = QQ[x,y]
@@ -1028,7 +1028,7 @@ doc ///
     Headline
       computes template matrix
     Usage
-      M = (a, B, J)
+      M = getTemplateMatrix(a, B, J)
       M = getTemplateMatrix(sh, mp, J)
       getTemplateMatrix(E)
     Inputs
@@ -1554,6 +1554,49 @@ TEST /// -- Accessors and copyTemplate on a structurally-compatible specializati
   solsF = templateSolve F;
   assert(#solsF == degree I);
   assert(all(solsF, p -> 1e-6 > norm sub(gensJc, matrix{p})));
+///
+
+-- Direct test for getTemplate, which was previously only exercised
+-- indirectly through getTemplateMatrix / getActionMatrix.
+TEST ///
+-- ShiftSet and MonomialPartition are package-private types; pull them
+-- from the private dictionary to assert on the returned shape.
+ShiftSet' := value (EliminationTemplates#"private dictionary")#"ShiftSet";
+MonomialPartition' := value (EliminationTemplates#"private dictionary")#"MonomialPartition";
+R := QQ[x,y];
+I := ideal(x^4 + x*y + y^2 - 3, x^2*y + y^3 - 2);
+E := eliminationTemplate(x, I);
+out := getTemplate E;
+-- The returned pair is (ShiftSet, MonomialPartition).
+assert(class out === Sequence);
+assert(#out == 2);
+assert(class out_0 === ShiftSet');
+assert(class out_1 === MonomialPartition');
+-- After getTemplate the EliminationTemplate caches its monomial partition
+-- and shifts; a second call must hit the cache and yield the same pair.
+out2 := getTemplate E;
+assert(out_0 === out2_0);
+assert(out_1 === out2_1);
+///
+
+-- Regression for the internal parseMartyushevBases helper, which used to
+-- have inverted logic (`continue` on success rather than failure) so that
+-- every parseable basis was silently dropped and only failures fell
+-- through. The function is unexported; access via the private dictionary.
+TEST ///
+parseMB := value (EliminationTemplates#"private dictionary")#"parseMartyushevBases";
+R := QQ[x,y];
+fn := temporaryFileName() | "-bases.txt";
+fn << "[x, y, x^2]\n[1, x, y, x*y]\nthis line is not a basis\n[x^3]\n" << close;
+parsed := parseMB(fn, R);
+removeFile fn;
+-- Three of the four lines start with "[" and parse cleanly; the bogus
+-- line is filtered by the leading-character check.
+assert(class parsed === List);
+assert(#parsed == 3);
+assert(all(parsed, b -> class b === List));
+-- The first basis should be {x, y, x^2}.
+assert(set parsed_0 === set {x, y, x^2});
 ///
 
 

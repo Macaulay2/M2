@@ -1,7 +1,7 @@
 // Copyright 2005-2021  Michael E. Stillman
 
 #include "f4/moninfo.hpp"
-#include "monordering.hpp"                // for monomialOrderingToMatrix
+#include "monomials/monordering.hpp"                // for monomialOrderingToMatrix
 #include "newdelete.hpp"                  // for freemem, newarray_atomic
 
 #include <cstdio>                         // for fprintf, stderr, stdout

@@ -167,4 +167,22 @@ document {
 	PARA{"This function should work up to a size of 15 variables in the base ring"},
 	PARA{"This function is part of the package SymmetricPolynomials."}
 }
+
+-- buildSymmetricGB test
+TEST ///
+    R = QQ[x_1..x_2]
+    GB = buildSymmetricGB(R)
+    S = ring GB#0
+    assert(GB == {x_2^2-x_2*e_1+e_2,-x_1-x_2+e_1})
+///
+
+-- elementarySymmetric test
+TEST ///
+    R = QQ[x_1..x_5]
+    f = (product gens R)*(sum gens R)
+    E = elementarySymmetric f
+    R = ring E
+    assert(E == e_1*e_5)
+///
+
 end
