@@ -69,7 +69,6 @@ freeResolution Module := Complex => opts -> M -> (
         return FM;
         );
     if isFreeModule M then (
-        << "calling free module res code" << endl;
         if not M.cache.?Resolution then (
             FM = complex M;
             FM.cache.Nonminimal = false;
