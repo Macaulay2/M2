@@ -151,6 +151,10 @@ rm -fv %{buildroot}%{_infodir}/dir
 %{_mandir}/man1/*
 
 %changelog
+* Tue Jun 09 2026 Doug Torrance <dtorrance9@gatech.edu> - 1.26.06-0.1.m2
+- New release.
+- Install language server.
+
 * Sat May 09 2026 Doug Torrance <dtorrance@piedmont.edu> - 1.26.05-0.1.m2
 - New release.
 
