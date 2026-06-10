@@ -44,6 +44,14 @@ reduceAnisotropicPartQQDimension3 GrothendieckWittClass := GrothendieckWittClass
     -- We are looking for an element which is equivalent to (d - 1) mod p for each p in L1 and equivalent to p mod p^2 for each p in L2
     -- We use the solveCongruenceList method to find such an element
     alpha := solveCongruenceList(S1 | S2, L1 | L2);
+
+    -- The congruences determine alpha only up to multiples of the product of the moduli,
+    -- and the real place fixes its sign: for signature -3 (resp. 3) the real anisotropic
+    -- part is negative (resp. positive) definite, so alpha must be negative (resp. positive)
+    M := product(L1 | L2);
+    if getSignature(beta) == -3 and alpha > 0 then alpha = (alpha % M) - M;
+    if getSignature(beta) == 3 and alpha < 0 then alpha = (alpha % M) + M;
+
     a := getSquarefreePart alpha;
     makeDiagonalForm(QQ, a)
     )

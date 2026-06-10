@@ -938,3 +938,25 @@ twoH = makeDiagonalForm(QQ, (1, -1, 1, -1));
 aTwoH = getAnisotropicPart twoH;
 assert(getRank aTwoH == 0);
 ///
+
+-- Test 48 getAnisotropicPart for a form whose anisotropy is driven by the real place
+TEST ///
+beta = makeDiagonalForm(QQ, (-1, -1, -1, -1, -1, 1));
+a = getAnisotropicPart beta;
+assert(getRank a == getAnisotropicDimension beta);
+assert(isAnisotropic a);
+assert(isIsomorphicForm(a, makeDiagonalForm(QQ, (-1, -1, -1, -1))));
+assert(isIsomorphicForm(beta, addGW(a, makeHyperbolicForm(QQ, 2*getWittIndex beta))));
+///
+
+-- Test 49 getAnisotropicPart satisfies the Witt decomposition identity for either sign of the signature
+TEST ///
+for D in {(-1, -1, -1, -1, 1), (-2, -3, -5, -7, -11, 1),
+	(2, 3, 5, 7, 11, -1), (-1, -1, 2, 3, -5, 30)} do (
+    diagForm = makeDiagonalForm(QQ, D);
+    anisoPart = getAnisotropicPart diagForm;
+    assert(getRank anisoPart == getAnisotropicDimension diagForm);
+    assert(isAnisotropic anisoPart);
+    assert(isIsomorphicForm(diagForm, addGW(anisoPart, makeHyperbolicForm(QQ, 2*getWittIndex diagForm))));
+    );
+///
