@@ -108,6 +108,9 @@ pushFwd RingMap := Sequence => o -> (f) ->
     (pfB, matB, ringpf)
 )
 
+-- use this to cache the computation of the quotient ring B / ann N below so
+-- that we can later benefit from caching based on map(B / ann N , B).
+ANNIHILATORCACHE = new CacheTable
 
 pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
     if (cachedModule := getPushFwdModule(N, f, o)) =!= null then
@@ -115,7 +118,7 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
 
     A := source f;
     B := target f;
-    B' := B/ann N; -- N is finite over A iff A -> B' is a finite ring extension
+    B' := ANNIHILATORCACHE#(B, N) ??= B / ann N; -- N is finite over A iff A -> B' is a finite ring extension
     quot := map(B', B);
     g := quot * f;
     (pfN, pfmat', pf) := makeModule(N ** B', g);
@@ -172,7 +175,6 @@ pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
         map(N, M, pushforward(N, F * pushforward' M_{0..numgens M - 1}))
 )
 
-
 -- makeModule
 -- internal function which implements the push forward of a module.
 -- input:
@@ -188,7 +190,6 @@ pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
 --   the map mp is basically
 --     A^k --> auxN (over B)
 --   and its kernel are the A-relations of the elements auxN
---   TODO: stash the matB, pf?  Make accessor functions to go to/from gens of R over A, or M to M_A.
 makeModule = method()
 makeModule(Module, RingMap) := (N, f) -> (
     (matB, ringpf) := pushAuxHgs(f);
@@ -292,9 +293,12 @@ pushFwdRingHelper = (f) -> (
     (matB, mapf)
 )
 
+PUSHAUXHGSCACHE = new CacheTable
 
 pushAuxHgs = method()
 pushAuxHgs(RingMap) := (f) -> (
+    if PUSHAUXHGSCACHE#?f then return PUSHAUXHGSCACHE#f;
+
     if isInclusionOfCoefficientRing f then (
         if not isModuleFinite target f then error "inclusion of coefficientRing not a finite map.";
 
@@ -320,10 +324,11 @@ pushAuxHgs(RingMap) := (f) -> (
             cfs = map(B^(numrows cfs), B^(numcols cfs), cfs);
             lift(cfs, A)
         );
-        matB, mapf
+        PUSHAUXHGSCACHE#f = (matB, mapf);
     ) else (
-        pushFwdRingHelper(f)
-    )
+        PUSHAUXHGSCACHE#f = pushFwdRingHelper(f);
+    );
+    PUSHAUXHGSCACHE#f
 )
 
 isInclusionOfCoefficientRing = method()
