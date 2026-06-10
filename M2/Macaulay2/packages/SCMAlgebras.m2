@@ -54,7 +54,7 @@ Node
   Key
     PrimaryDataList
   Headline
-    Type created to store datas of the primary decomposition of an ideal $I$.
+    Type created to store data of the primary decomposition of an ideal $I$.
 ///);
 -------------------------------------------------------------------------
 PrimaryDataList = new Type of List
@@ -270,15 +270,15 @@ Node
       Let $I\subset S$ be a homogeneous ideal, with $d=\dim S/I$, and let $I=\displaystyle\bigcap_{j=1}^r Q_j$ be the minimal primary decomposition of $I$.
       For all $1\leq j\leq r$, let $P_j = \sqrt{Q_j}$ be the radical of $Q_j$. For all $-1\leq i\leq d$, the $i$th filter ideal of $I$ is $$I^{<i>} = \bigcap_{\dim S/{P_j}>i} Q_{j},$$
       where $I^{<-1>}=I$ and $I^{<d>}=S$.
-
-			In case a CODE(PrimaryDataList) $L$ is given as optional input, the function uses the informations stored in $L$ to avoid computing the primary decomposition of $I$ every time, useful when dealing with multiple calls.
+      
+      In case a PrimaryDataList $L$ is given as optional input, the function uses the information stored in $L$ to avoid computing the primary decomposition of $I$ every time, useful when dealing with multiple calls.
     Example
       S = QQ[x_1..x_10,y_1..y_10];
       E = {{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{6,7},{8,9},{8,10},{9,10}};
       J=ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
       filterIdeal(J,5)
   SeeAlso
-		getPrimaryData
+    getPrimaryData
     unmixedLayer
     minimumDimension
     isSCM
