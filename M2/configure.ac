@@ -1019,7 +1019,7 @@ AS_IF([test $BUILD_normaliz = no],
     [AC_MSG_CHECKING(whether the package normaliz is installed)
      AS_IF([command -v normaliz > /dev/null],
 	 [normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
-	  AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
+	  AX_COMPARE_VERSION([$normaliz_version], [ge], [3.6.3],
 	      [AC_MSG_RESULT([yes])
 	       AC_MSG_CHECKING([for libnormaliz])
 	       AC_LANG(C++)
@@ -1038,7 +1038,7 @@ AS_IF([test $BUILD_normaliz = no],
 		   [AC_MSG_RESULT([no, will build])
 		    BUILD_normaliz=yes
 		    LIBS=$SAVELIBS])],
-	      [AC_MSG_RESULT([yes, but < 2.11, will build])
+	      [AC_MSG_RESULT([yes, but < 3.6.3, will build])
 	       BUILD_normaliz=yes])],
         [AC_MSG_RESULT([no, will build])
          BUILD_normaliz=yes])])
