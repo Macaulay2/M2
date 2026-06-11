@@ -583,7 +583,7 @@ TEST ///
 S = QQ[x_1..x_4,y_1..y_4]
 E = {{1, 2}, {1, 3}, {1, 4}, {2, 3}, {3, 4}}
 J = ideal(for e in E list x_(e#0)*y_(e#1)-x_(e#1)*y_(e#0));
-assert(getPrimaryData(J) != {})
+assert(#getPrimaryData(J) > 0)
 ///
 
 
