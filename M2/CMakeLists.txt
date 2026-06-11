@@ -14,9 +14,9 @@
 ##  6. cmake --install BUILD/cmake
 ###############################################################################
 
-## Requires CMake version 3.24 and is tested with 3.30
-cmake_minimum_required(VERSION 3.24...3.30)
-cmake_policy(VERSION 3.24)
+## Requires CMake version 3.30 (for policy CMP0167 used in cmake/check-libraries.cmake)
+cmake_minimum_required(VERSION 3.30)
+cmake_policy(VERSION 3.30)
 cmake_policy(SET CMP0096 NEW) # preserve leading zeros in version number
 
 ## Use the C++20 standard
