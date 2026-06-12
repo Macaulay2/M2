@@ -53,6 +53,17 @@ inline constexpr bool has_set_from_BigReal<
     true;
 
 template <typename RT, typename = void>
+inline constexpr bool has_set_from_complex_double = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_complex_double<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_complex_double(
+        std::declval<typename RT::ElementType&>(),
+        std::declval<double>(),
+        std::declval<double>()))>> = true;
+
+template <typename RT, typename = void>
 inline constexpr bool has_set_from_BigComplex = false;
 
 template <typename RT>
@@ -97,24 +108,24 @@ bool get_from_ComplexInterval(const RT& R, typename RT::ElementType & a, gmp_CCi
 }
 
 template <typename RT>
+bool get_from_complex_double(const RT& R,
+                             typename RT::ElementType& a,
+                             double re,
+                             double im)
+{
+  if constexpr (detail::has_set_from_complex_double<RT>)
+    return R.set_from_complex_double(a, re, im);
+  else
+    return false;
+}
+
+template <typename RT>
 bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
 {
   if constexpr (detail::has_set_from_BigComplex<RT>)
     return R.set_from_BigComplex(a, b);
   else
     return false;
-}
-template <typename RT>
-bool get_from_complex_double(const RT& R,
-                             typename RT::ElementType& a,
-                             double re,
-                             double im)
-{
-  (void) R;
-  (void) a;
-  (void) re;
-  (void) im;
-  return false;
 }
 
 inline bool get_from_Interval(const ARingRRi& R,
@@ -137,30 +148,6 @@ inline bool get_from_Interval(const ARingCCi& R,
                               gmp_RRi b)
 {
     return R.set_from_Interval(a, b);
-}
-
-inline bool get_from_complex_double(const ARingCCC& R,
-                                    ARingCCC::ElementType& a,
-                                    double re,
-                                    double im)
-{
-  return R.set_from_complex_double(a, re, im);
-}
-
-inline bool get_from_complex_double(const ARingCC& R,
-                                    ARingCC::ElementType& a,
-                                    double re,
-                                    double im)
-{
-  return R.set_from_complex_double(a, re, im);
-}
-
-inline bool get_from_complex_double(const ARingCCi& R,
-                                    ARingCCi::ElementType& a,
-                                    double re,
-                                    double im)
-{
-  return R.set_from_complex_double(a, re, im);
 }
 
 // Promote an element of one ring to another.
