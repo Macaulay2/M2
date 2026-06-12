@@ -532,24 +532,11 @@ inline bool mylift(const ARingCC& R,
     
 /////////////////////////////////////////////////////
     
-inline bool mylift(const ARingRR& R,
-                    const ARingRRi& S,
-                    ARingRR::ElementType& result_gR,
-                    const ARingRRi::ElementType& gS)
-{
-    ARingRRR T(S.get_precision());
-    ARingRRR::Element gT(T);
-    auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
-    S.midpoint(gT,gS1);
-    bool liftstep = mylift(R,T,result_gR,gT);
-    S.diameter(gT,gS1);
-    return liftstep && T.is_zero(gT);
-}
-
-inline bool mylift(const ARingRRR& R,
-                    const ARingRRi& S,
-                    ARingRRR::ElementType& result_gR,
-                    const ARingRRi::ElementType& gS)
+template <typename RingR>
+bool mylift(const RingR& R,
+            const ARingRRi& S,
+            typename RingR::ElementType& result_gR,
+            const ARingRRi::ElementType& gS)
 {
     ARingRRR T(S.get_precision());
     ARingRRR::Element gT(T);
@@ -576,20 +563,6 @@ inline bool mylift(const ARingQQ& R,
 {
   (void) S;
   return R.set_from_BigReal(fR, &fS);
-}
-
-inline bool mylift(const ARingQQ& R,
-                    const ARingRRi& S,
-                    ARingQQ::ElementType& result_gR,
-                    const ARingRRi::ElementType& gS)
-{
-    ARingRRR T(S.get_precision());
-    ARingRRR::Element gT(T);
-    auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
-    S.midpoint(gT,gS1);
-    bool liftstep = mylift(R,T,result_gR,gT);
-    S.diameter(gT,gS1);
-    return liftstep && T.is_zero(gT);
 }
 
 // ZZ/p --> ZZ/p. 9 versions NONE OF THESE.
