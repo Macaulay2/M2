@@ -82,6 +82,16 @@ inline constexpr bool has_set_from_BigComplex<
     std::void_t<decltype(std::declval<const RT&>().set_from_BigComplex(
         std::declval<typename RT::ElementType&>(), std::declval<gmp_CC>()))>> =
     true;
+
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_ComplexInterval = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_ComplexInterval<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_ComplexInterval(
+        std::declval<typename RT::ElementType&>(), std::declval<gmp_CCi>()))>> =
+    true;
 }  // namespace detail
 
 template <typename RT>
@@ -112,12 +122,6 @@ bool get_from_Interval(const RT& R, typename RT::ElementType& a, gmp_RRi b)
 }
 
 template <typename RT>
-bool get_from_ComplexInterval(const RT& R, typename RT::ElementType & a, gmp_CCi b)
-{
-    return false;
-}
-
-template <typename RT>
 bool get_from_complex_double(const RT& R,
                              typename RT::ElementType& a,
                              double re,
@@ -138,12 +142,13 @@ bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
     return false;
 }
 
-inline bool get_from_ComplexInterval(const ARingCCi& R,
-                              ARingCCi::ElementType& a,
-                              gmp_CCi b)
+template <typename RT>
+bool get_from_ComplexInterval(const RT& R, typename RT::ElementType & a, gmp_CCi b)
 {
-    R.set(a, b);
-    return true;
+  if constexpr (detail::has_set_from_ComplexInterval<RT>)
+    return R.set_from_ComplexInterval(a, b);
+  else
+    return false;
 }
 
 // Promote an element of one ring to another.
