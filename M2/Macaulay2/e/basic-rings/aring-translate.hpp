@@ -51,6 +51,16 @@ inline constexpr bool has_set_from_BigReal<
     std::void_t<decltype(std::declval<const RT&>().set_from_BigReal(
         std::declval<typename RT::ElementType&>(), std::declval<gmp_RR>()))>> =
     true;
+
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_BigComplex = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_BigComplex<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_BigComplex(
+        std::declval<typename RT::ElementType&>(), std::declval<gmp_CC>()))>> =
+    true;
 }  // namespace detail
 
 template <typename RT>
@@ -89,10 +99,10 @@ bool get_from_ComplexInterval(const RT& R, typename RT::ElementType & a, gmp_CCi
 template <typename RT>
 bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
 {
-  (void) R;
-  (void) a;
-  (void) b;
-  return false;
+  if constexpr (detail::has_set_from_BigComplex<RT>)
+    return R.set_from_BigComplex(a, b);
+  else
+    return false;
 }
 template <typename RT>
 bool get_from_complex_double(const RT& R,
@@ -105,20 +115,6 @@ bool get_from_complex_double(const RT& R,
   (void) re;
   (void) im;
   return false;
-}
-
-inline bool get_from_BigComplex(const ARingCCC& R,
-                                ARingCCC::ElementType& a,
-                                gmp_CC b)
-{
-  return R.set_from_BigComplex(a, b);
-}
-
-inline bool get_from_BigComplex(const ARingCC& R,
-                                ARingCC::ElementType& a,
-                                gmp_CC b)
-{
-  return R.set_from_BigComplex(a, b);
 }
 
 inline bool get_from_Interval(const ARingRRi& R,
@@ -141,13 +137,6 @@ inline bool get_from_Interval(const ARingCCi& R,
                               gmp_RRi b)
 {
     return R.set_from_Interval(a, b);
-}
-
-inline bool get_from_BigComplex(const ARingCCi& R,
-                                ARingCCi::ElementType& a,
-                                gmp_CC b)
-{
-  return R.set_from_BigComplex(a, b);
 }
 
 inline bool get_from_complex_double(const ARingCCC& R,
