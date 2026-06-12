@@ -33,6 +33,16 @@ namespace M2 {
 
 namespace detail {
 template <typename RT, typename = void>
+inline constexpr bool has_set_from_double = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_double<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_double(
+        std::declval<typename RT::ElementType&>(), std::declval<double>()))>> =
+    true;
+
+template <typename RT, typename = void>
 inline constexpr bool has_set_from_BigReal = false;
 
 template <typename RT>
@@ -42,6 +52,15 @@ inline constexpr bool has_set_from_BigReal<
         std::declval<typename RT::ElementType&>(), std::declval<gmp_RR>()))>> =
     true;
 }  // namespace detail
+
+template <typename RT>
+bool get_from_double(const RT& R, typename RT::ElementType& a, double b)
+{
+  if constexpr (detail::has_set_from_double<RT>)
+    return R.set_from_double(a, b);
+  else
+    return false;
+}
 
 template <typename RT>
 bool get_from_BigReal(const RT& R, typename RT::ElementType& a, gmp_RR b)
@@ -76,14 +95,6 @@ bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
   return false;
 }
 template <typename RT>
-bool get_from_double(const RT& R, typename RT::ElementType& a, double b)
-{
-  (void) R;
-  (void) a;
-  (void) b;
-  return false;
-}
-template <typename RT>
 bool get_from_complex_double(const RT& R,
                              typename RT::ElementType& a,
                              double re,
@@ -110,20 +121,6 @@ inline bool get_from_BigComplex(const ARingCC& R,
   return R.set_from_BigComplex(a, b);
 }
 
-inline bool get_from_double(const ARingRRR& R,
-                            ARingRRR::ElementType& a,
-                            double b)
-{
-  return R.set_from_double(a, b);
-}
-  
-inline bool get_from_double(const ARingRRi& R,
-                            ARingRRi::ElementType& a,
-                            double b)
-{
-   return R.set_from_double(a, b);
-}  
-    
 inline bool get_from_Interval(const ARingRRi& R,
                               ARingRRi::ElementType& a,
                               gmp_RRi b)
@@ -139,13 +136,6 @@ inline bool get_from_ComplexInterval(const ARingCCi& R,
     return true;
 }
 
-inline bool get_from_double(const ARingCCi& R,
-                            ARingCCi::ElementType& a,
-                            double b)
-{
-   return R.set_from_double(a, b);
-}
-
 inline bool get_from_Interval(const ARingCCi& R,
                               ARingCCi::ElementType& a,
                               gmp_RRi b)
@@ -158,23 +148,6 @@ inline bool get_from_BigComplex(const ARingCCi& R,
                                 gmp_CC b)
 {
   return R.set_from_BigComplex(a, b);
-}
-
-inline bool get_from_double(const ARingRR& R, ARingRR::ElementType& a, double b)
-{
-  return R.set_from_double(a, b);
-}
-
-inline bool get_from_double(const ARingCCC& R,
-                            ARingCCC::ElementType& a,
-                            double b)
-{
-  return R.set_from_double(a, b);
-}
-
-inline bool get_from_double(const ARingCC& R, ARingCC::ElementType& a, double b)
-{
-  return R.set_from_double(a, b);
 }
 
 inline bool get_from_complex_double(const ARingCCC& R,
