@@ -186,13 +186,6 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
     return true;
   }
 
-  bool set_from_BigReal(elem &result, gmp_RR a) const
-  {
-    (void) result;
-    (void) a;
-    return false;
-  }
-
   void negate(elem &result, elem a) const
   {
     if (a != 0)

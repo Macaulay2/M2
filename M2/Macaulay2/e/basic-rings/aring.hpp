@@ -249,12 +249,6 @@ class DummyRing : public SimpleARing<DummyRing>
       (void) a;
       return false;
     }
-  bool set_from_BigReal(elem &result, gmp_RR a) const
-    {
-      (void) result;
-      (void) a;
-      return false;
-    }
   void set_var(elem &result, int v) const
     {
       (void) v;
