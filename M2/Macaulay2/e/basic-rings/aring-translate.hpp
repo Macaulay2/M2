@@ -3,6 +3,9 @@
 #ifndef M2_BASIC_RINGS_ARING_TRANSLATE_HPP_
 #define M2_BASIC_RINGS_ARING_TRANSLATE_HPP_
 
+#include <type_traits>
+#include <utility>
+
 ///////////////////////////////////////////////////////
 // Contains functions which are "ring translational" //
 ///////////////////////////////////////////////////////
@@ -27,13 +30,26 @@
 #include "basic-rings/aring-GF-flint.hpp"
 
 namespace M2 {
+
+namespace detail {
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_BigReal = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_BigReal<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_BigReal(
+        std::declval<typename RT::ElementType&>(), std::declval<gmp_RR>()))>> =
+    true;
+}  // namespace detail
+
 template <typename RT>
 bool get_from_BigReal(const RT& R, typename RT::ElementType& a, gmp_RR b)
 {
-  (void) R;
-  (void) a;
-  (void) b;
-  return false;
+  if constexpr (detail::has_set_from_BigReal<RT>)
+    return R.set_from_BigReal(a, b);
+  else
+    return false;
 }
 
 template <typename RT>
@@ -78,48 +94,6 @@ bool get_from_complex_double(const RT& R,
   (void) re;
   (void) im;
   return false;
-}
-
-inline bool get_from_BigReal(const ARingQQ& R,
-                             ARingQQ::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
-}
-
-inline bool get_from_BigReal(const ARingRR& R,
-                             ARingRR::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
-}
-
-inline bool get_from_BigReal(const ARingRRR& R,
-                             ARingRRR::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
-}
-    
-inline bool get_from_BigReal(const ARingRRi& R,
-                             ARingRRi::ElementType& a,
-                             gmp_RR b)
-{
-    return R.set_from_BigReal(a, b);
-}
-
-inline bool get_from_BigReal(const ARingCC& R,
-                             ARingCC::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
-}
-
-inline bool get_from_BigReal(const ARingCCC& R,
-                             ARingCCC::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
 }
 
 inline bool get_from_BigComplex(const ARingCCC& R,
@@ -184,13 +158,6 @@ inline bool get_from_BigComplex(const ARingCCi& R,
                                 gmp_CC b)
 {
   return R.set_from_BigComplex(a, b);
-}
-
-inline bool get_from_BigReal(const ARingCCi& R,
-                             ARingCCi::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
 }
 
 inline bool get_from_double(const ARingRR& R, ARingRR::ElementType& a, double b)
