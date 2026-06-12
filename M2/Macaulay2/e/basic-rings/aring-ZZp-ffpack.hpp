@@ -160,13 +160,6 @@ class ARingZZpFFPACK : public SimpleARing<ARingZZpFFPACK>
 
   bool set_from_mpq(ElementType &result, mpq_srcptr a) const;
 
-  bool set_from_BigReal(ElementType &result, gmp_RR a) const
-  {
-    (void) result;
-    (void) a;
-    return false;
-  }
-
   ElementType computeGenerator() const;
 
   void set_var(ElementType &result, int v) const

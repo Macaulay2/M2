@@ -227,13 +227,6 @@ class ARingTower : public RingInterface
     return false;
   }  // TODO: write this
 
-  bool set_from_BigReal(elem &result, gmp_RR a) const
-  {
-    (void) result;
-    (void) a;
-    return false;
-  }
-
   // arithmetic
   void negate(elem &result, elem a) const
   {

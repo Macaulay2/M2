@@ -3,6 +3,9 @@
 #ifndef M2_BASIC_RINGS_ARING_TRANSLATE_HPP_
 #define M2_BASIC_RINGS_ARING_TRANSLATE_HPP_
 
+#include <type_traits>
+#include <utility>
+
 ///////////////////////////////////////////////////////
 // Contains functions which are "ring translational" //
 ///////////////////////////////////////////////////////
@@ -27,211 +30,125 @@
 #include "basic-rings/aring-GF-flint.hpp"
 
 namespace M2 {
+
+namespace detail {
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_double = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_double<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_double(
+        std::declval<typename RT::ElementType&>(), std::declval<double>()))>> =
+    true;
+
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_BigReal = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_BigReal<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_BigReal(
+        std::declval<typename RT::ElementType&>(), std::declval<gmp_RR>()))>> =
+    true;
+
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_Interval = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_Interval<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_Interval(
+        std::declval<typename RT::ElementType&>(), std::declval<gmp_RRi>()))>> =
+    true;
+
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_complex_double = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_complex_double<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_complex_double(
+        std::declval<typename RT::ElementType&>(),
+        std::declval<double>(),
+        std::declval<double>()))>> = true;
+
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_BigComplex = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_BigComplex<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_BigComplex(
+        std::declval<typename RT::ElementType&>(), std::declval<gmp_CC>()))>> =
+    true;
+
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_ComplexInterval = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_ComplexInterval<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_ComplexInterval(
+        std::declval<typename RT::ElementType&>(), std::declval<gmp_CCi>()))>> =
+    true;
+}  // namespace detail
+
+template <typename RT>
+bool get_from_double(const RT& R, typename RT::ElementType& a, double b)
+{
+  if constexpr (detail::has_set_from_double<RT>)
+    return R.set_from_double(a, b);
+  else
+    return false;
+}
+
 template <typename RT>
 bool get_from_BigReal(const RT& R, typename RT::ElementType& a, gmp_RR b)
 {
-  (void) R;
-  (void) a;
-  (void) b;
-  return false;
+  if constexpr (detail::has_set_from_BigReal<RT>)
+    return R.set_from_BigReal(a, b);
+  else
+    return false;
 }
 
 template <typename RT>
 bool get_from_Interval(const RT& R, typename RT::ElementType& a, gmp_RRi b)
 {
-  (void) R;
-  (void) a;
-  (void) b;
-  return false;
-}
-
-template <typename RT>
-bool get_from_ComplexInterval(const RT& R, typename RT::ElementType & a, gmp_CCi b)
-{
+  if constexpr (detail::has_set_from_Interval<RT>)
+    return R.set_from_Interval(a, b);
+  else
     return false;
 }
 
-template <typename RT>
-bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
-{
-  (void) R;
-  (void) a;
-  (void) b;
-  return false;
-}
-template <typename RT>
-bool get_from_double(const RT& R, typename RT::ElementType& a, double b)
-{
-  (void) R;
-  (void) a;
-  (void) b;
-  return false;
-}
 template <typename RT>
 bool get_from_complex_double(const RT& R,
                              typename RT::ElementType& a,
                              double re,
                              double im)
 {
-  (void) R;
-  (void) a;
-  (void) re;
-  (void) im;
-  return false;
+  if constexpr (detail::has_set_from_complex_double<RT>)
+    return R.set_from_complex_double(a, re, im);
+  else
+    return false;
 }
 
-inline bool get_from_BigReal(const ARingQQ& R,
-                             ARingQQ::ElementType& a,
-                             gmp_RR b)
+template <typename RT>
+bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
 {
-  return R.set_from_BigReal(a, b);
+  if constexpr (detail::has_set_from_BigComplex<RT>)
+    return R.set_from_BigComplex(a, b);
+  else
+    return false;
 }
 
-inline bool get_from_BigReal(const ARingRR& R,
-                             ARingRR::ElementType& a,
-                             gmp_RR b)
+template <typename RT>
+bool get_from_ComplexInterval(const RT& R, typename RT::ElementType & a, gmp_CCi b)
 {
-  return R.set_from_BigReal(a, b);
-}
-
-inline bool get_from_BigReal(const ARingRRR& R,
-                             ARingRRR::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
-}
-    
-inline bool get_from_BigReal(const ARingRRi& R,
-                             ARingRRi::ElementType& a,
-                             gmp_RR b)
-{
-    return R.set_from_BigReal(a, b);
-}
-
-inline bool get_from_BigReal(const ARingCC& R,
-                             ARingCC::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
-}
-
-inline bool get_from_BigReal(const ARingCCC& R,
-                             ARingCCC::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
-}
-
-inline bool get_from_BigComplex(const ARingCCC& R,
-                                ARingCCC::ElementType& a,
-                                gmp_CC b)
-{
-  return R.set_from_BigComplex(a, b);
-}
-
-inline bool get_from_BigComplex(const ARingCC& R,
-                                ARingCC::ElementType& a,
-                                gmp_CC b)
-{
-  return R.set_from_BigComplex(a, b);
-}
-
-inline bool get_from_double(const ARingRRR& R,
-                            ARingRRR::ElementType& a,
-                            double b)
-{
-  return R.set_from_double(a, b);
-}
-  
-inline bool get_from_double(const ARingRRi& R,
-                            ARingRRi::ElementType& a,
-                            double b)
-{
-   return R.set_from_double(a, b);
-}  
-    
-inline bool get_from_Interval(const ARingRRi& R,
-                              ARingRRi::ElementType& a,
-                              gmp_RRi b)
-{
-    return R.set_from_Interval(a, b);
-}
-
-inline bool get_from_ComplexInterval(const ARingCCi& R,
-                              ARingCCi::ElementType& a,
-                              gmp_CCi b)
-{
-    R.set(a, b);
-    return true;
-}
-
-inline bool get_from_double(const ARingCCi& R,
-                            ARingCCi::ElementType& a,
-                            double b)
-{
-   return R.set_from_double(a, b);
-}
-
-inline bool get_from_Interval(const ARingCCi& R,
-                              ARingCCi::ElementType& a,
-                              gmp_RRi b)
-{
-    return R.set_from_Interval(a, b);
-}
-
-inline bool get_from_BigComplex(const ARingCCi& R,
-                                ARingCCi::ElementType& a,
-                                gmp_CC b)
-{
-  return R.set_from_BigComplex(a, b);
-}
-
-inline bool get_from_BigReal(const ARingCCi& R,
-                             ARingCCi::ElementType& a,
-                             gmp_RR b)
-{
-  return R.set_from_BigReal(a, b);
-}
-
-inline bool get_from_double(const ARingRR& R, ARingRR::ElementType& a, double b)
-{
-  return R.set_from_double(a, b);
-}
-
-inline bool get_from_double(const ARingCCC& R,
-                            ARingCCC::ElementType& a,
-                            double b)
-{
-  return R.set_from_double(a, b);
-}
-
-inline bool get_from_double(const ARingCC& R, ARingCC::ElementType& a, double b)
-{
-  return R.set_from_double(a, b);
-}
-
-inline bool get_from_complex_double(const ARingCCC& R,
-                                    ARingCCC::ElementType& a,
-                                    double re,
-                                    double im)
-{
-  return R.set_from_complex_double(a, re, im);
-}
-
-inline bool get_from_complex_double(const ARingCC& R,
-                                    ARingCC::ElementType& a,
-                                    double re,
-                                    double im)
-{
-  return R.set_from_complex_double(a, re, im);
-}
-
-inline bool get_from_complex_double(const ARingCCi& R,
-                                    ARingCCi::ElementType& a,
-                                    double re,
-                                    double im)
-{
-  return R.set_from_complex_double(a, re, im);
+  if constexpr (detail::has_set_from_ComplexInterval<RT>)
+    return R.set_from_ComplexInterval(a, b);
+  else
+    return false;
 }
 
 // Promote an element of one ring to another.
@@ -615,24 +532,11 @@ inline bool mylift(const ARingCC& R,
     
 /////////////////////////////////////////////////////
     
-inline bool mylift(const ARingRR& R,
-                    const ARingRRi& S,
-                    ARingRR::ElementType& result_gR,
-                    const ARingRRi::ElementType& gS)
-{
-    ARingRRR T(S.get_precision());
-    ARingRRR::Element gT(T);
-    auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
-    S.midpoint(gT,gS1);
-    bool liftstep = mylift(R,T,result_gR,gT);
-    S.diameter(gT,gS1);
-    return liftstep && T.is_zero(gT);
-}
-
-inline bool mylift(const ARingRRR& R,
-                    const ARingRRi& S,
-                    ARingRRR::ElementType& result_gR,
-                    const ARingRRi::ElementType& gS)
+template <typename RingR>
+bool mylift(const RingR& R,
+            const ARingRRi& S,
+            typename RingR::ElementType& result_gR,
+            const ARingRRi::ElementType& gS)
 {
     ARingRRR T(S.get_precision());
     ARingRRR::Element gT(T);
@@ -659,20 +563,6 @@ inline bool mylift(const ARingQQ& R,
 {
   (void) S;
   return R.set_from_BigReal(fR, &fS);
-}
-
-inline bool mylift(const ARingQQ& R,
-                    const ARingRRi& S,
-                    ARingQQ::ElementType& result_gR,
-                    const ARingRRi::ElementType& gS)
-{
-    ARingRRR T(S.get_precision());
-    ARingRRR::Element gT(T);
-    auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
-    S.midpoint(gT,gS1);
-    bool liftstep = mylift(R,T,result_gR,gT);
-    S.diameter(gT,gS1);
-    return liftstep && T.is_zero(gT);
 }
 
 // ZZ/p --> ZZ/p. 9 versions NONE OF THESE.
