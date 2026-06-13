@@ -155,12 +155,6 @@ pushNonLinear := (opts, f0, M) -> (
 	poincare cokernel m1 = hf
     );
 
-    mapbackdeg := d -> take(d, -(degreeLength S));
-    -- that choice of degree map was chosen to make the symmetricPower functor
-    -- homogeneous, but it doesn't have much else to recommend it.
-    -- we should really be *lifting* the result to S along the natural map
-    -- S -> G but lifting along an arbitrary RingMap is not supported.
-    mapback := map(S, G, map(S^1, S^r, 0) | vars S, DegreeMap => mapbackdeg);
 
     g := gb(m1,
 	StopBeforeComputation => opts.StopBeforeComputation,
@@ -168,10 +162,19 @@ pushNonLinear := (opts, f0, M) -> (
 	PairLimit             => opts.PairLimit
     );
 
-    -- MES: check if the monomial order restricts to R.  If so, then do `` forceGB result ''
+    -- this code used to set a custom DegreeMap on the projection from G to S
+    -- and had this accompanying note:
+    --  mapbackdeg := d -> take(d, -(degreeLength S));
+    --  that choice of degree map was chosen to make the symmetricPower functor
+    --  homogeneous, but it doesn't have much else to recommend it.
+    --  we should really be *lifting* the result to S along the natural map
+    --  S -> G but lifting along an arbitrary RingMap is not supported.
+    mapback := map(S, G, map(S^1, S^r, 0) | vars S);
     result := phiS^-1 mapback selectInSubring(if r > 0 then 1 else 0, generators g);
 
-    -- attempt to repair homogeneity if we had it to begin with.
+    -- MES: check if the monomial order restricts to R.  If so, then do `` forceGB result ''
+
+    -- repair homogeneity if we had it to begin with.
     if isHgs then result = try map(target result, , result) else result;
 
     result
