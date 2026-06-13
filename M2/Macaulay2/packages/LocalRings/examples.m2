@@ -217,7 +217,7 @@ assert({1,1,0,0} == for i from 0 to 3 list hilbertSamuelFunction(max RP, N, i))
 -- III. Additional examples:
 
 restart
-debug needsPackage "PruneComplex"
+debug needsPackage "Complexes"
 needsPackage "LocalRings"
 R = ZZ/32003[a..f]
 I = ideal"abc-def,ab2-cd2-c,acd-b3-1"
@@ -562,17 +562,12 @@ length N
 -------------------------------------------------------------------------------------------------------
 restart
 needsPackage "LocalRings"
-needsPackage "PruneComplex"
 debugLevel=1
-debug PruneComplex
 debug LocalRings
-elapsedTime check PruneComplex -- 17
 elapsedTime check LocalRings -- 15
 
-uninstallPackage "PruneComplex"
 uninstallPackage "LocalRings"
 
-installPackage "PruneComplex"
 installPackage "LocalRings"
 
 -------------------------------------------------------------------------------------------------------
@@ -584,7 +579,7 @@ make -j4 all-in-d all-in-e all-in-bin
 
 restart
 debug Core
-debug needsPackage "PruneComplex"
+debug needsPackage "Complexes"
 debug needsPackage "LocalRings"
   R = ZZ/32003[vars(0..3)]
   I = monomialCurveIdeal(R, {1, 3, 4})

@@ -44,7 +44,7 @@ ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
 texMath ZZ := toString
 
 gcd = method(Binary => true)
-installMethod(gcd, () -> 0)
+gcd()      := () -> 0
 gcd(ZZ,ZZ) := ZZ => gcd0
 gcd(ZZ,QQ) := QQ => (x,y) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,ZZ) := QQ => (y,x) -> gcd(x * denominator y, numerator y) / denominator y
@@ -54,7 +54,7 @@ gcd(QQ,QQ) := QQ => (x,y) -> (
 gcd ZZ := gcd QQ := identity
 
 abs = method()
-abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
+abs Number := abs0
 abs Constant := abs @@ numeric
 
 sign = method()
@@ -62,7 +62,7 @@ sign Number := sign0
 sign Constant := sign @@ numeric
 
 lcm = method(Binary => true)
-installMethod(lcm, () -> 1)
+lcm()      := () -> 1
 lcm(ZZ,ZZ) := (f,g) -> (
     d := gcd(f, g);
     if d == 0 then 0
@@ -101,7 +101,7 @@ Function or  Function := (f, g) -> s -> f s or  g s
 Function xor Function := (f, g) -> s -> f s xor g s
 not Function := f -> s -> not f s
 
-ZZ~ := bitnotfun
+~ ZZ := bitnotfun
 
 changeBase = method()
 changeBase(ZZ,     ZZ)     := String =>
@@ -138,24 +138,6 @@ tonelliShanks = (n, p) -> (
 	c = powermod(b, 2, p);
 	t = (t * c) % p;
 	r = (r * b) % p))
-
------------------------------------------------------------------------------
--- AtomicInt
------------------------------------------------------------------------------
-
-AtomicInt.synonym = "atomic integer"
-
-scan({symbol +=, symbol -=, symbol &=, symbol |=, symbol ^^=},
-    op -> typicalValues#(op, AtomicInt) = ZZ)
-
-store = method()
-store(AtomicInt, ZZ) := atomicStore
-
-exchange = method()
-exchange(AtomicInt, ZZ) := atomicExchange
-
-compareExchange = method()
-compareExchange(AtomicInt, ZZ, ZZ) := atomicCompareExchange
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

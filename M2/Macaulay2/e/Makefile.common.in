@@ -3,7 +3,7 @@
 # these are from include/config.Makefile
 CPPFLAGS := $(M2_CPPFLAGS) $(CPPFLAGS)
 CFLAGS   := $(M2_CFLAGS)   $(CFLAGS)
-CXXFLAGS := $(M2_CXXFLAGS) $(CXXFLAGS) -Wno-unused-local-typedefs
+CXXFLAGS := $(M2_CXXFLAGS) $(CXXFLAGS) -Wno-unused-local-typedefs $(OPENMP_CXXFLAGS)
 
 ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC
@@ -71,7 +71,16 @@ COMPILE.cpp = $(COMPILE.cc)
 %.dep: %.c
 #	$(WHY)
 	$(SHOW)"MKDEP $*.c"
+	$(HIDE)$(MKDIR_P) `dirname "$@"`
 	$(HIDE)@CC@  -MT $@ -MT $*.o -MM -MP $(CFLAGS)   $(CPPFLAGS) $(TARGET_ARCH) $(MORE_OPTIONS) $< >$*.dep
+
+@pre_librariesdir@/libengine.so: $(LOFILES)
+	$(HIDE)$(MKDIR_P) $(@D)
+	@CXX@ -shared $(OPENMP_CXXFLAGS) $(OPENMP_LIBS) $^ $(OUTPUT_OPTION)
+
+@pre_librariesdir@/libengine.a: $(ENGINE_OFILES)
+	$(HIDE)$(MKDIR_P) $(@D)
+	@AR@ rcs $@ $^
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e Makefile.common "

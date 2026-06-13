@@ -3,7 +3,7 @@
 #include "style.hpp"
 #include "hermite.hpp"
 #include "text-io.hpp"
-#include "matrix-con.hpp"
+#include "matrices/matrix-con.hpp"
 
 extern RingZZ *globalZZ;
 
@@ -168,6 +168,7 @@ hm_elem *HermiteComputation::merge(hm_elem *f, hm_elem *g)
               return head.next;
             }
         // Now fall through to merge f into the result:
+          [[fallthrough]];
         case -1:
           result->next = f;
           result = result->next;
@@ -345,6 +346,7 @@ const Matrix /* or null */ *HermiteComputation::get_syzygies()
 
 const Matrix /* or null */ *HermiteComputation::get_initial(int nparts)
 {
+  (void) nparts;
   MatrixConstructor mat(gens->rows(), 0);
   for (hm_elem *p = GB_list; p != nullptr; p = p->next)
     {

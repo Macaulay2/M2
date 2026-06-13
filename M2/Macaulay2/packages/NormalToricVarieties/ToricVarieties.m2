@@ -673,8 +673,10 @@ makePrimitive List := List => w -> (
    apply(w, i -> i // g) 
    );
 
-toricBlowup = method ()
-toricBlowup (List, NormalToricVariety, List) := NormalToricVariety => (s, X, v) -> (
+toricBlowup = method(Options => { WeilToClass => null })
+toricBlowup(List, NormalToricVariety)       := NormalToricVariety => opts -> (s, X) -> (
+    toricBlowup(s, X, makePrimitive sum ((rays X)_s), opts))
+toricBlowup(List, NormalToricVariety, List) := NormalToricVariety => opts -> (s, X, v) -> (
     coneList := max X;
     starIndex := positions (coneList, t -> all (s, i -> member (i,t)));
     star := coneList_starIndex;
@@ -693,7 +695,10 @@ toricBlowup (List, NormalToricVariety, List) := NormalToricVariety => (s, X, v) 
       	    if member (s#0,t) then continue
       	    else sort (t | s)
 	    );
-	Z := normalToricVariety (rays X, coneList | coneList', CoefficientRing => X.cache.CoefficientRing, Variable => X.cache.Variable);
+	Z := normalToricVariety(rays X, coneList | coneList',
+	    CoefficientRing => X.cache.CoefficientRing,
+	    Variable        => X.cache.Variable,
+	    WeilToClass     => opts.WeilToClass);
         Z.cache.toricBlowup = X;
         return Z
 	);
@@ -701,14 +706,12 @@ toricBlowup (List, NormalToricVariety, List) := NormalToricVariety => (s, X, v) 
 	if all (s, i -> member (i,t)) then continue
 	else t | {n}
 	);
-    Z = normalToricVariety (rays X | {v}, coneList | coneList', CoefficientRing => X.cache.CoefficientRing, Variable => X.cache.Variable);
+    Z = normalToricVariety(rays X | {v}, coneList | coneList',
+	CoefficientRing => X.cache.CoefficientRing,
+	Variable        => X.cache.Variable,
+	WeilToClass     => opts.WeilToClass);
     Z.cache.toricBlowup = X;
     Z
-    );
-
-toricBlowup (List, NormalToricVariety) := NormalToricVariety => (s,X) -> (
-    v := makePrimitive sum ((rays X)_s);
-    toricBlowup (s,X,v) 
     );
 
 makeSmooth = method(

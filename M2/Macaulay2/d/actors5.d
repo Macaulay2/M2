@@ -210,38 +210,39 @@ setup(BoxTimesS, boxtimesfun);
 shuffleproductfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, ShuffleProductS);
 setup(ShuffleProductS, shuffleproductfun);
 
-Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
-setuppostfix(TildeS,Tildefun);
+Tildefun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,TildeS);
+Tildefun1(rhs:Code):Expr := unarymethod(rhs,TildeS);
+setup(TildeS,Tildefun1,Tildefun2);
 
 PowerTildefun(rhs:Code):Expr := unarymethod(rhs,PowerTildeS);
-setuppostfix(PowerTildeS,PowerTildefun);
+setupop(PowerTildeS,PowerTildefun);
 
 UnderscoreTildefun(rhs:Code):Expr := unarymethod(rhs,UnderscoreTildeS);
-setuppostfix(UnderscoreTildeS,UnderscoreTildefun);
+setupop(UnderscoreTildeS,UnderscoreTildefun);
 
 ParenStarParenfun(rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
-setuppostfix(ParenStarParenS,ParenStarParenfun);
+setupop(ParenStarParenS,ParenStarParenfun);
 
 UnderscoreStarfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreStarS);
-setuppostfix(UnderscoreStarS,UnderscoreStarfun);
+setupop(UnderscoreStarS,UnderscoreStarfun);
 
 PowerStarfun(rhs:Code):Expr := unarymethod(rhs,PowerStarS);
-setuppostfix(PowerStarS,PowerStarfun);
+setupop(PowerStarS,PowerStarfun);
 
 --PowerSharpfun(rhs:Code):Expr := unarymethod(rhs,PowerSharpS);
---setuppostfix(PowerSharpS,PowerSharpfun);
+--setupop(PowerSharpS,PowerSharpfun);
 
 --UnderscoreSharpfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreSharpS);
---setuppostfix(UnderscoreSharpS,UnderscoreSharpfun);
+--setupop(UnderscoreSharpS,UnderscoreSharpfun);
 
 Exclamationfun(rhs:Code):Expr := unarymethod(rhs,ExclamationS);
-setuppostfix(ExclamationS,Exclamationfun);
+setupop(ExclamationS,Exclamationfun);
 
 PowerExclamationfun(rhs:Code):Expr := unarymethod(rhs,PowerExclamationS);
-setuppostfix(PowerExclamationS,PowerExclamationfun);
+setupop(PowerExclamationS,PowerExclamationfun);
 
 UnderscoreExclamationfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreExclamationS);
-setuppostfix(UnderscoreExclamationS,UnderscoreExclamationfun);
+setupop(UnderscoreExclamationS,UnderscoreExclamationfun);
 
 factorial(x:Expr):Expr := (
      when x

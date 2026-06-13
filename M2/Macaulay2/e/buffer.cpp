@@ -1,7 +1,10 @@
 #include "buffer.hpp"
+#include "rings/ringelem.hpp"
 #include <cstdio>
 #include <cstring>
 #include <cassert>
+#include <mpfr.h>
+#include <mpfi.h>
 
 void buffer::expand(int newcap)
 {
@@ -58,7 +61,7 @@ void buffer::put(double n)
 {
   const int N = 100;
   char s[N];
-  snprintf(s, N, "%lf", n);
+  snprintf(s, N, "%g", n);
   put(s, strlen(s));
 }
 
@@ -108,6 +111,77 @@ void buffer::put(unsigned long n, int width)
   char s[N];
   snprintf(s, N, "%*lu", width, n);
   put(s, strlen(s));
+}
+
+void buffer::put(mpfr_srcptr x)
+{
+  int n;
+  std::string s;
+
+  n = mpfr_snprintf(nullptr, 0, "%Rg", x);
+  s.resize(n);
+  mpfr_snprintf(s.data(), s.size() + 1, "%Rg", x);
+  put(s);
+}
+
+void buffer::put(mpfi_srcptr x)
+{
+  put('[');
+  put(&x->left);
+  put(',');
+  put(&x->right);
+  put(']');
+}
+
+void buffer::put(cc_doubles_srcptr x)
+{
+  if (x->re !=0 || (x->re == 0 && x->im == 0)) {
+    put(x->re);
+    if (x->im > 0)
+      put('+');
+  }
+
+  if (x->im != 0) {
+    if (x->im == -1)
+      put('-');
+    else if (x->im != 1)
+      put(x->im);
+    put('i');
+  }
+
+}
+
+void buffer::put(cc_srcptr x)
+{
+  if (mpfr_cmp_si(&x->re, 0) !=0 ||
+      (mpfr_cmp_si(&x->re, 0) == 0 && mpfr_cmp_si(&x->im, 0) == 0)) {
+    put(&x->re);
+    if (mpfr_cmp_si(&x->im, 0) > 0)
+      put('+');
+  }
+
+  if (mpfr_cmp_si(&x->im, 0) != 0) {
+    if (mpfr_cmp_si(&x->im, -1) == 0)
+      put('-');
+    else if (mpfr_cmp_si(&x->im, 1) != 0)
+      put(&x->im);
+    put('i');
+  }
+}
+
+void buffer::put(cci_srcptr x)
+{
+  if (!mpfi_is_zero(&x->re) ||
+      mpfi_is_zero(&x->re) && mpfi_is_zero(&x->im)) {
+    put(&x->re);
+    if (!mpfi_is_zero(&x->im))
+      put('+');
+  }
+
+  if (!mpfi_is_zero(&x->im)) {
+    put(&x->im);
+    put('i');
+  }
 }
 
 // Local Variables:

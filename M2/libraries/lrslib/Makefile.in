@@ -6,6 +6,7 @@
 HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
 URL = https://macaulay2.com/Downloads/OtherSourceCode/
 VERSION = 073
+SHA256SUM = c49a4ebd856183473d1d5a62785fcdfe1057d5d671d4b96f3a1250eb1afe4e83
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = lrslib-$(VERSION).tar.gz
 #PROGRAMS = lrs redund lra1 redund1 nash setupnash setupnash2 fourier buffer 2nash

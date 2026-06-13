@@ -73,7 +73,7 @@ pow = (n, lst) -> (
 -- Utility function that shuffles two list u and v according to a list ind
 -- of indices in 0 (for u) and 1 (for v)
 --
-shuffle = (ind, u, v) -> (
+shuffle' = (ind, u, v) -> (
     (i,j) := (-1,-1);
     return for k in (0..<#ind) list if ind_k==0 then (i=i+1; u_i) else (j=j+1; v_j);
 );
@@ -759,7 +759,7 @@ rationalPoints(Ideal) := opts -> I -> (
                 unusedR := k(monoid[x_{0..<unused}]);
                 R = k(monoid[x_{0..<n-unused}]);
                 x = gens R;
-                I = (map(R, ring I, shuffle(ind, (unused:0), x))) I;
+                I = (map(R, ring I, shuffle'(ind, (unused:0), x))) I;
             );
             -- enumeration of points and post-processing
             if PROJECTIVE then ( -- projective case
@@ -769,17 +769,17 @@ rationalPoints(Ideal) := opts -> I -> (
                     if AMOUNT then result = result*(#ELS)^unused+((#ELS)^unused-1)//(#ELS-1)
                     else (
                         -- shuffle and homogenize so that the first non-zero coordinate is 1
-                        result = flatten table(pow_unused ELS, result, homogCoord @@ shuffle_ind);
+                        result = flatten table(pow_unused ELS, result, homogCoord @@ shuffle'_ind);
                         -- extra points lying in a projective subspace
                         PP := findProjPoints(ideal 0_unusedR);
-                        result = result | PP / (x->homogCoord shuffle(ind, x, ((n-unused):0_k)));
+                        result = result | PP / (x->homogCoord shuffle'(ind, x, ((n-unused):0_k)));
                     );
                 );
             ) else ( -- affine case
                 result = findPoints I;
                 if unused > 0 then ( -- reconstruction
                     if AMOUNT then result = result*(#ELS)^unused
-                    else result = flatten table(pow_unused ELS, result, shuffle_ind);
+                    else result = flatten table(pow_unused ELS, result, shuffle'_ind);
                 );
             );
         ) else ( -- number field
@@ -1476,6 +1476,14 @@ TEST ///
         X = Proj(F[x,y,z]/((4*a+3)*x-5*z));
         assert(#rationalPoints(X, Bound=>3+1e-10) == 30);
     ) else continue;
+///
+-------------------------------------------------------------------------------
+TEST ///
+    R = QQ[x]
+    f = x^3 - 2
+    b = baseChange_7 f
+    assert(numgens ring b == 1)
+    assert(char(coefficientRing ring b) == 7)
 ///
 -------------------------------------------------------------------------------
 endPackage "RationalPoints2"

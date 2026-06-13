@@ -50,6 +50,7 @@ Node
       BesselJ
       BesselY
       agm
+      polylog
     :Trigonometric functions
       sin
       asin
@@ -152,34 +153,32 @@ document { Key => {CatalanConstant},
 doc ///
   Key
     log1p
-    (log1p,CC)
-    (log1p,RR)
-    (log1p,RRi)
+    (log1p,InexactNumber)
   Headline
     logarithm of 1+x
   Usage
     log1p x
     log1p I
   Inputs
-    x:{CC,RR}
-    I:RRi
+    x:{RR,CC}
+    I:{RRi,CCi}
   Outputs
     :{RR,CC}
       the logarithm of @TT "1+x"@
-    :{RRi}
+    :{RRi,CCi}
       an interval containing logarithm of 1 plus the points of @TT "I"@
   Description
     Example
       log1p 1p100e-10
       log(1 + 1p100e-10)
+      log1p interval(2,3)
+      log1p interval(1+2*ii,3+4*ii)
 ///
 
 doc ///
   Key
     expm1
-    (expm1,CC)
-    (expm1,RR)
-    (expm1,RRi)
+    (expm1,InexactNumber)
   Headline
     exponential minus 1
   Usage
@@ -191,30 +190,38 @@ doc ///
   Outputs
     :{RR,CC}
       the quantity @TT "exp(x)-1"@
-    :RRi
+    :{RRi,CCi}
       an interval containing the exponential of the points of @TT "I"@ minus one
   Description
     Example
       expm1 1p100e-10
       exp(1p100e-10)-1
+      expm1 interval(2,3)
+      expm1 interval(1+2*ii,3+4*ii)
 ///
 
-document { Key => {eint,(eint, RR),(eint,CC),(eint,RRi)},
+document { Key => {eint,(eint, InexactNumber)},
      Usage => "eint x",
      Headline => "exponential integral",
      Inputs => { "x" },
-     Outputs => { RR => { "the exponential integral of ", TT "x" }},
+     Outputs => { RR => { "the exponential integral of ", TT "x" },
+             RRi => { "an interval containing the exponential integral of the points of ", TT "x" },
+             CCi => { "a complex interval containing the exponential integral of the points of ", TT "x" }
+},
      EXAMPLE lines ///
      	  eint 2
      ///,
      PARA {"See ", wikipedia "Exponential integral", "."}
      }
 
-document { Key => {Digamma,(Digamma, RR),(Digamma,CC),(Digamma,RRi)},
+document { Key => {Digamma,(Digamma, InexactNumber)},
      Usage => "Digamma x",
      Headline => "Digamma function",
      Inputs => { "x" },
-     Outputs => { RR => { "the digamma function (logarithmic derivative of the gamma function) of ", TT "x" }},
+     Outputs => { RR => { "the digamma function (logarithmic derivative of the gamma function) of ", TT "x" },
+          RRi => { "an interval containing the digamma function (logarithmic derivative of the gamma function) of the points of ", TT "x" },
+          CCi => { "a complex interval containing the digamma function (logarithmic derivative of the gamma function) of the points of ", TT "x" }
+},
      EXAMPLE lines ///
 	  Digamma 6
      ///,
@@ -222,11 +229,14 @@ document { Key => {Digamma,(Digamma, RR),(Digamma,CC),(Digamma,RRi)},
      SeeAlso => {Gamma}
      }
 
-document { Key => {zeta,(zeta, RR),(zeta,CC),(zeta,RRi)},
+document { Key => {zeta,(zeta, InexactNumber)},
      Usage => "zeta x",
      Headline => "Riemann zeta function",
      Inputs => { "x" },
-     Outputs => { RR => { "the zeta function of ", TT "x" }},
+     Outputs => { RR => { "the zeta function of ", TT "x" },
+          RRi => { "an interval containing the the zeta function of the points of ", TT "x" },
+          CCi => { "a complex interval containing the the zeta function of the points of ", TT "x" }
+},
      EXAMPLE lines ///
      	  zeta 2
      ///,
@@ -235,12 +245,14 @@ document { Key => {zeta,(zeta, RR),(zeta,CC),(zeta,RRi)},
 
 document {
      --- author(s): L. Gold, Dan Grayson
-     Key => {acos,(acos,RR),(acos,CC),(acos, RRi)},
+     Key => {acos,(acos, InexactNumber)},
      Headline => "arccosine",
      Usage => "acos x\nacos I",
-     Inputs => { "x", "I" => RRi },
+     Inputs => { "x" => RR, "x" => CC, "I" => RRi, "I" => CCi },
      Outputs => { Number => { "the arccosine (in radians) of ", TT "x"},
-                  RRi => { "an interval containing the arccosines of the points of ", TT "I" }},
+                  RRi => { "an interval containing the arccosines of the points of ", TT "I" },
+                  CCi => { "a complex interval containing the arccosines of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      acos 0.5
      ///,
@@ -249,13 +261,14 @@ document {
 
 document {
      --- author(s): L. Gold, Dan Grayson
-     Key => {asin,(asin,RR),(asin,CC),(asin, RRi)},
+     Key => {asin,(asin,InexactNumber)},
      Headline => "arcsine",
      Usage => "asin x\nasin I",
-     Inputs => { "x", "I" => RRi },
+     Inputs => { "x" => RR, "x" => CC, "I" => RRi, "I" => CCi },
      Outputs => {
 	  Number => {"the arcsine (in radians) of ", TT "x"},
-      RRi => { "an interval containing the arcsines of the points of ", TT "I" }
+      RRi => { "an interval containing the arcsines of the points of ", TT "I" },
+      CCi => { "a complex interval containing the arcsines of the points of ", TT "I" }
 	  },
      EXAMPLE {
 	  "asin 1"
@@ -265,12 +278,14 @@ document {
 
 document {
      --- author(s): L. Gold
-     Key => {cosh, (cosh,RR),(cosh,CC),(cosh,RRi)},
+     Key => {cosh, (cosh,InexactNumber)},
      Headline => "compute the hyperbolic cosine",
      Usage => "cosh x\ncosh I",
-     Inputs => { "x", "I"=>RRi},
+     Inputs => { "x"=>RR, "x"=>CC, "I"=>RRi, "I"=>CCi},
      Outputs => { Number => { "the hyperbolic cosine of ", TT "x" },
-         RRi => { "an interval containing the hyerbolic cosines of the points of ", TT "I" } },
+         RRi => { "an interval containing the hyerbolic cosines of the points of ", TT "I" },
+        CCi => { "a complex interval containing the hyerbolic cosines of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      cosh .2
      ///,
@@ -301,12 +316,13 @@ document {
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
 
-document { Key => {sec,(sec,CC),(sec, RR),(sec, RRi)},
+document { Key => {sec,(sec,InexactNumber)},
      Usage => "sec x\nsec I",
      Headline => "secant",
-     Inputs => { "x", "I" => RRi },
+     Inputs => { "x" => RR, "x" => CC, "I" => RRi, "I" => CCi },
      Outputs => { RR => { "the secant of ", TT "x" },
-	 RRi => { "an interval containing the secants of the points of ", TT "I" }
+	 RRi => { "an interval containing the secants of the points of ", TT "I" },
+     CCi => { "a complex interval containing the secants of the points of ", TT "I" }
      },
      EXAMPLE lines ///
      	  sec(pi/3)
@@ -314,12 +330,13 @@ document { Key => {sec,(sec,CC),(sec, RR),(sec, RRi)},
      PARA {"See ", wikipedia "Trigonometric function", "."}
      }
 
-document { Key => {csc,(csc,CC),(csc, RR),(csc,RRi)},
+document { Key => {csc,(csc,InexactNumber)},
      Usage => "csc x\ncsc I",
      Headline => "cosecant",
-     Inputs => { "x","I"=>RRi },
+     Inputs => { "x"=>RR, "x" => CC, "I"=>RRi, "I"=>CCi },
      Outputs => { RR => { "the cosecant of ", TT "x" },
-        RRi => { "an interval containing the cosecants of the points of ", TT "I" }
+        RRi => { "an interval containing the cosecants of the points of ", TT "I" },
+        CCi => { "a complex interval containing the cosecants of the points of ", TT "I" }
     },
      EXAMPLE lines ///
      	  csc(pi/3)
@@ -327,12 +344,13 @@ document { Key => {csc,(csc,CC),(csc, RR),(csc,RRi)},
      PARA {"See ", wikipedia "Trigonometric function", "."}
      }
 
-document { Key => {cot,(cot, RR),(cot,CC),(cot,RRi)},
+document { Key => {cot,(cot, InexactNumber)},
      Usage => "cot x\ncot I",
      Headline => "cotangent",
-     Inputs => { "x", "I"=>RRi },
+     Inputs => { "x"=>RR, "x" => CC, "I"=>RRi, "I"=>CCi },
      Outputs => { RR => { "the cotangent of ", TT "x" },
-            RRi => { "an interval containing the cotangents of points of ", TT "I"}
+            RRi => { "an interval containing the cotangents of points of ", TT "I"},
+            CCi => { "a complex interval containing the cotangents of points of ", TT "I"}
     },
      EXAMPLE lines ///
      	  cot(pi/3)
@@ -340,12 +358,13 @@ document { Key => {cot,(cot, RR),(cot,CC),(cot,RRi)},
      PARA {"See ", wikipedia "Trigonometric function", "."}
      }
 
-document { Key => {sech,(sech,CC),(sech, RR),(sech, RRi)},
+document { Key => {sech,(sech,InexactNumber)},
      Usage => "sech x\nsech I",
      Headline => "hyperbolic secant",
-     Inputs => { "x", "I" => RRi },
+     Inputs => { "x"=>RR, "x" => CC, "I"=>RRi, "I"=>CCi },
      Outputs => { RR => { "the hyperbolic secant of ", TT "x" },
-	 RRi => { "an interval containing the hyerbolic secants of the points of ", TT "I" }
+	 RRi => { "an interval containing the hyerbolic secants of the points of ", TT "I" },
+     CCi => { "a complex interval containing the hyerbolic secants of the points of ", TT "I" }
      },
      EXAMPLE lines ///
      	  sech(pi/3)
@@ -353,12 +372,13 @@ document { Key => {sech,(sech,CC),(sech, RR),(sech, RRi)},
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
 
-document { Key => {csch,(csch,CC),(csch, RR),(csch,RRi)},
+document { Key => {csch,(csch,InexactNumber)},
      Usage => "csch x\ncsch I",
      Headline => "hyperbolic cosecant",
-     Inputs => { "x", "I"=>RRi },
+     Inputs => { "x"=>RR, "x" => CC, "I"=>RRi, "I"=>CCi },
      Outputs => { RR => { "the hyperbolic cosecant of ", TT "x" },
-	 RRi => { "an interval containing the hyperbolic cosecants of the points of ", TT "I" }
+	 RRi => { "an interval containing the hyperbolic cosecants of the points of ", TT "I" },
+     CCi => { "a complex interval containing the hyperbolic cosecants of the points of ", TT "I" }
      },
      EXAMPLE lines ///
      	  csch(pi/3)
@@ -366,12 +386,13 @@ document { Key => {csch,(csch,CC),(csch, RR),(csch,RRi)},
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
 
-document { Key => {coth,(coth,CC),(coth, RR),(coth,RRi)},
+document { Key => {coth,(coth,InexactNumber)},
      Usage => "coth x\ncoth I",
      Headline => "hyperbolic cotangent",
-     Inputs => { "x","I"=>RRi},
+     Inputs => { "x"=>RR, "x" => CC, "I"=>RRi, "I"=>CCi },
      Outputs => { RR => { "the hyperbolic cotangent of ", TT "x" },
-        RRi => { "an interval containing the hyperbolic cotangents of the points of ", TT "I" }
+        RRi => { "an interval containing the hyperbolic cotangents of the points of ", TT "I" },
+        CCi => { "a complex interval containing the hyperbolic cotangents of the points of ", TT "I" }
         },
      EXAMPLE lines ///
      	  coth(pi/3)
@@ -415,7 +436,9 @@ document { Key => {BesselY,(BesselY, ZZ, Number),(BesselY,Number,Number)},
      SeeAlso => { BesselJ }
      }
 
-document { Key => {agm, (agm, RR, RR), (agm,CC,CC), (agm,CC,RR), (agm,RR,CC)},
+document { Key => {
+	agm,
+	(agm,InexactNumber,InexactNumber)},
      Usage => "agm(x,y)",
      Inputs => { "x" => "a number", "y" => "a number" },
      Outputs => { {"the arithmetic-geometric mean of ", TT "x", " and ", TT "y"}},
@@ -427,7 +450,8 @@ document { Key => {agm, (agm, RR, RR), (agm,CC,CC), (agm,CC,RR), (agm,RR,CC)},
      }
 
 -- TODO: find a better place for these
-document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ), (size2,RRi)},
+document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ), (size2,RRi),
+	(size2,CCi)},
      Usage => "size2 x",
      Headline => "number of binary digits to the left of the point",
      Inputs => {"x" => Number},
@@ -444,7 +468,7 @@ document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ), (size2,RRi)},
      size2 (1/0.-1/0.)
      ///}
 
-document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),
+document { Key => {isReal,(isReal,CC),(isReal,CCi),(isReal,QQ),(isReal,RR),(isReal,ZZ),
 	(isReal, RRi), (isReal, Constant), (isReal, InfiniteNumber)},
      Usage => "isReal x",
      Headline => "whether a number is real",
@@ -511,34 +535,57 @@ document { Key => {isANumber, (isANumber,Number)},
      SeeAlso => {isFinite, isInfinite}
      }
 
-document {
-     Key => {norm,
-	  (norm, InfiniteNumber, Matrix),(norm, Matrix),(norm, RR, Matrix),(norm, InfiniteNumber, RingElement),(norm, MutableMatrix),
-	  (norm, RingElement),(norm, InexactField, MutableMatrix),(norm, RR, MutableMatrix),(norm, RR, RingElement),
-	  (norm,List),(norm,Vector),(norm,Number),(norm,RR,Number),(norm,InfiniteNumber,Number)
-	  },
-     Usage => "norm M\nnorm(p,M)",
-     Inputs => {
-	  "M"=>{ofClass{MutableMatrix,Matrix,RingElement,Number,Vector,List}},
-	  "p"=>{ofClass{RR,InfiniteNumber}, ", specifying which norm to compute.  Currently, only ", TT "p=infinity", " is accepted."}
-	  },
-     Outputs => {TEX{"the $L^p$-norm of ", TT "M", " computed to the minimum of the precisions of ", TT "M", " and of ", TT "p",
-	       "."}},
-     EXAMPLE lines ///
-	  printingPrecision = 2
-	  R = RR_100
-	  M = 10*random(R^3,R^10)
-	  norm M
-	  norm_(numeric_20 infinity) M
-	  norm {3/2,4,-5}
-	  ///,
-     "The norm of a polynomial is the norm of the vector of its coefficients.",
-     EXAMPLE lines ///
-	  RR[x]
-	  (1+x)^5
-	  norm oo
-	  ///
-     }
+doc ///
+  Key
+    norm
+    (norm,List)
+    (norm,Matrix)
+    (norm,MutableMatrix)
+    (norm,Number)
+    (norm,Number,List)
+    (norm,Number,Matrix)
+    (norm,Number,MutableMatrix)
+    (norm,Number,Number)
+    (norm,Number,RingElement)
+    (norm,Number,Vector)
+    (norm,RingElement)
+    (norm,Vector)
+  Headline
+    l^p norm
+  Usage
+    norm M
+    norm(p, M)
+  Inputs
+    p:Number -- specifying which norm to compute
+    M:{List, Matrix, MutableMatrix, Number, RingElement, Vector}
+  Outputs
+    :Number
+      The $\ell^p$-norm of @VAR "M"@, computed to the minimum of the precisions
+      of @VAR "M"@ and @VAR "p"@.
+  Description
+    Text
+      By default, the $\ell^\infty$ norm giving the maximum absolute entry is returned.
+    Example
+      printingPrecision = 2
+      R = RR_100
+      M = 10*random(R^3,R^10)
+      norm M
+      norm_(numeric_20 infinity) M
+      norm {3/2,4,-5}
+    Text
+      For finite $p$, the $\ell^p$ norm
+      $$\|M\|_p = \left(\sum_{i,j} |M_{ij}|^p\right)^{1/p}$$
+      is returned.  For example, when $p = 2$, this is the Frobenius norm.
+    Example
+      M = matrix {{3, 4}, {12, 84}}
+      norm_2 M
+    Text
+      The norm of a polynomial is the norm of the vector of its coefficients.
+    Example
+      RR[x]
+      (1+x)^5
+      norm oo
+///
 
 document { Key => {commonRing, (commonRing,List)},
      Usage => "commonRing v",

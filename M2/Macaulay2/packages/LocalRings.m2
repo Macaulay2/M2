@@ -36,8 +36,7 @@ newPackage(
         },
     Headline => "operations over a local ring R_p",
     Keywords => {"Commutative Algebra"},
-    PackageImports => {"OldChainComplexes"},
-    PackageExports => {"PruneComplex", "Saturation", "Complexes"},
+    PackageExports => {"Saturation", "Complexes"},
     AuxiliaryFiles => true
     )
 
@@ -63,7 +62,6 @@ export {
     "residueMap", -- not documented
     "maxIdeal" -- not documented
     }
-
 -- << "--------------------------------------------------------------------------------------" << endl;
 -- << "-- The LocalRings package is experimental, but old methods are still available.     --" << endl;
 -- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
@@ -505,7 +503,13 @@ beginDocumentation()
 load ("./LocalRings/doc.m2")
 
 end--
-
+restart
+load "LocalRings.m2"
+uninstallPackage"LocalRings"
+restart
+installPackage"LocalRings"
+check "LocalRings"
+viewHelp LocalRings
 --==================================== Under Development ====================================--
 --TODO: implement a prime filtration
 

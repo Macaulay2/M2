@@ -1,10 +1,10 @@
 newPackage(
     "IntegralClosure",
-    Version => "1.10", 
-    Date => "31 Dec 2020",
+    Version => "1.11", 
+    Date => "5 Jun 2026",
     Authors => {
         {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-        {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
+        {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://mikestillman.github.io"},
         {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"}
         },
     Headline => "integral closure",
@@ -14,15 +14,12 @@ newPackage(
         "ReesAlgebra" -- used for integral closure of an ideal
         },
     PackageExports => {
-        "MinimalPrimes" -- really helps speed up most computations here. Use minprimes.
+        "MinimalPrimes",
+        "PushForward"
         },
     DebuggingMode => false,
     AuxiliaryFiles => true
     )
-
--- The present version (for M2 1.16) is not done being cleaned up,
--- but it does fix a bad bug involving integral closure of ideals.
--- 
 
 importFrom_Core { "generatorSymbols" } -- use as R#generatorSymbols.
 importFrom_MinimalPrimes { "rad" } -- a function we seem to be using in integralClosure.
@@ -466,17 +463,14 @@ randomMinors(ZZ,ZZ,Matrix) := (n,d,M) -> (
 	then return (minors(d,M))_*;
      L := {}; -- L will be a list of minors, specified by the pair of lists "rows" and "cols"
      dets := {}; -- the list of determinants taken so far
-     rowlist := toList(0..r-1);
-     collist := toList(0..c-1);
-     ds := toList(0..d-1);
 
      for i from 1 to n do (
       -- choose a random set of rows and of columns, add it to L 
       -- only if it doesn't appear already. When a pair is added to L, 
       -- the corresponding minor is added to "dets"
        while ( 
-         rows := sort (random rowlist)_ds ;
-         cols := sort (random collist)_ds ;
+         rows := randomSubset(r, d);
+         cols := randomSubset(c, d);
          for p in L do (if (rows,cols) == p then break true);
          false)
         do();
@@ -493,13 +487,10 @@ nonzeroMinor(ZZ,Matrix) :=  opts -> (d,M) -> (
      c := numcols M;
      if d > min(r,c) then return null;
      candidate := 0_(ring M);
-     rowlist := toList(0..r-1);
-     collist := toList(0..c-1);
-     ds := toList(0..d-1);
      for i from 1 to opts.Limit do(
       -- choose a random set of rows and of columns, test the determinant.
-         rows := sort (random rowlist)_ds ;
-         cols := sort (random collist)_ds ;
+         rows := randomSubset(r, d);
+         cols := randomSubset(c, d);
          candidate = det (M^rows_cols);
 	 if candidate != 0 then return(candidate);
        );
@@ -687,36 +678,14 @@ isNormal(Ring) := Boolean => (R) -> (
 --------------------------------------------------------------------
 -- MES TODO: don't require homogeneous!!
 conductor = method()
-conductor RingMap := Ideal => (F) -> (
-     --Input:  A ring map where the target is finitely generated as a 
-     --module over the source.
-     --Output: The conductor of the target into the source.
-     --Assumption: if R = source F, then R.icFractions is set
-     --  or R is homogeneous
-     R := source F;
-     if false and R.?icFractions
-       then (
-            -- MES TODO: why is this commented out?
-	    -- here we have a set of fractions which generate the integral closure
-	    L := R.icFractions;
-	    L = apply(L, h -> {numerator h, denominator h});
-	    L = select(L, h -> h#1 != 1);
-	    ans := ideal(1_R);
-	    scan(L, h -> (
-		      L1 := (ideal h#1) : h#0;
-		      ans = trim intersect(ans, L1);
-		      ));
-	    ans
-	    )
-     else if isHomogeneous (source F)
-     	  then(M := presentation pushForward(F, (target F)^1);
-     	       P := target M;
-     	       intersect apply((numgens P)-1, i->(
-	       m:=matrix{P_(i+1)};
-	       I:=ideal modulo(m,matrix{P_0}|M))))
-	  else error "conductor: expected a homogeneous ideal in a graded ring"
-     )
-conductor Ring := (R) -> conductor icMap R
+conductor RingMap := Ideal => phi -> (
+    -- 3/25/26 TODO: do we want to cache the results?
+    pf := pushFwd phi;
+    assert(pf#1_(0,0) == 1);
+    pmod := pf_0_{0};
+    ann coker pmod
+    )
+conductor Ring := Ideal => R -> conductor icMap R
 
 icMap = method()
 icMap(Ring) := RingMap => R -> (
@@ -1155,8 +1124,8 @@ doc ///
       However, the interface to this routine is likely to change in future
       releases to more closely match the functions above.
       
-      The method used by integralClosure is a modification of the basic 
-      algorithm explained in Theo De Jong's paper {\em An Algorithm for 
+      The method used by integralClosure is a modification of the De Jong algorithm
+      presented in the paper: De Jong, T., {\em An Algorithm for 
 	  Computing the Integral Closure}, J. Symbolic Computation, 
 	  (1998) 26, 273-277.
 ///

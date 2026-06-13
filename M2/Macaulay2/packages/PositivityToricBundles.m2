@@ -1195,6 +1195,27 @@ document {
 --         Fortunately, it seems that the order is always chosen in the same way.
 --         If this changes at some point in the future, all tests will fail.
 
+-- Direct coverage for exports the audit flagged as having no TEST:
+-- isLocallyFree, cartierInd, separatesJets, and restrictToInvCurves.
+-- Use the tangent bundle of P^2, which is the simplest globally
+-- generated example.
+TEST ///
+V = tangentBundle(projectiveSpaceFan 2);
+-- TP^2 is locally free everywhere.
+assert(isLocallyFree V);
+-- Its Cartier index is 1 (the bundle is actually Cartier).
+assert(cartierInd V == 1);
+-- TP^2 is 1-jet ample (separates 1-jets).
+assert(separatesJets V == 1);
+-- The restriction to each invariant curve is encoded as a HashTable
+-- whose three values are the splitting types of TP^2 along each of
+-- the three invariant lines: each is {2, 1} or {1, 2}.
+ric := restrictToInvCurves V;
+assert(class ric === HashTable);
+assert(#ric == 3);
+assert(all(values ric, s -> sort s == {1, 2}));
+///
+
 -- Test 0
 TEST ///
 -- This is [RJS, Example 3.7]

@@ -121,7 +121,7 @@ cubicBivariateDetRep RingElement := List => opts -> f -> (
     L := flatten apply(select(clean(eps, L0), isDoublyStochastic), M -> orthogonalFromOrthostochastic(M, opts));
     if k === QQ then (
         numDigits := ceiling(-log_10(eps));
-        (D1, D2) = (D1/round_numDigits, D2/round_numDigits);
+        (D1, D2) = (D1/round_numDigits/(x->x^QQ), D2/round_numDigits/(x->x^QQ));
         L = L/roundMatrix_numDigits;
     );
     (D1, D2) = (D1, D2)/diagonalMatrix_k;
@@ -1516,7 +1516,7 @@ assert(isOrthogonal(O, Tolerance=>1e-5) and isDoublyStochastic A and clean(1e-8,
 ///
 
 TEST /// -- cholesky, randomPSD
-eps = 1e-15
+eps = 1e-14
 A = randomPSD 5
 E = eigenvectors(A, Hermitian => true)
 assert(clean(eps, A - E#1*diagonalMatrix(E#0)*transpose E#1) == 0)

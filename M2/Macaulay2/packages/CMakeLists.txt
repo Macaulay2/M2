@@ -33,6 +33,7 @@ set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to o
 ## Arguments to M2
 set(errorDepth                  "1" CACHE STRING "set the error printing depth")
 set(debugLevel                  "0" CACHE STRING "set the debugging level")
+set(gbTrace                     "0" CACHE STRING "set the Groebner basis trace level")
 ## Options to installPackage
 set(CheckDocumentation       "true" CACHE STRING "check documentation for completeness")
 set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
@@ -139,6 +140,7 @@ foreach(package IN LISTS PACKAGES)
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${package})
     file(COPY ${package}  DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
   endif()
+
 
   ## Configuring the command strings
   _M2_STRING_CONFIGURE(M2_INSTALL_TEMPLATE M2_INSTALL_STRING TRUE)
@@ -251,3 +253,6 @@ foreach(package IN LISTS PACKAGES)
     DEPENDS M2-core
     )
 endforeach()
+
+file(COPY LanguageServer/M2-language-server
+     DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})

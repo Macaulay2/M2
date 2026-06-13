@@ -1,4 +1,5 @@
 VERSION = 1.7.1
+SHA256SUM = 490de446eecf260de2d9df9b5663c566b75a59e18c14b1f46a2d84fb08deb490
 # URL = http://www.linalg.org
 URL = https://github.com/linbox-team/linbox/archive/refs/tags
 TARFILE = v$(VERSION).tar.gz

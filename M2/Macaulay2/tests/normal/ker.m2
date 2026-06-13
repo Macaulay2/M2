@@ -21,7 +21,7 @@ S=ZZ/101[t]
 f = map(S,R,{t^4,t^5,t^6})
 assert isHomogeneous f
 assert( ker f == ideal matrix {{b^2-a*c, a^3-c^2}} )
-assert checkHilbertHint generators graphIdeal f
+assert canUseHilbertHint generators graphIdeal f
 h = map(S^1,R^1,f,{{1}})
 assert( ker h == image matrix{{b^2-a*c, a^3-c^2}})
 
@@ -30,7 +30,7 @@ S=ZZ/101[t]
 f = map(S,R,{t^4,t^5,t^6},DegreeMap => d -> {4*d#0 + 5*d#1 + 6*d#2})
 assert isHomogeneous f
 assert( ker f == ideal matrix {{b^2-a*c, a^3-c^2}} )
-assert checkHilbertHint generators graphIdeal f
+assert canUseHilbertHint generators graphIdeal f
 h = map(S^1,R^1,f,{{1}})
 -- assert( ker h == image matrix{{b^2-a*c, a^3-c^2}})
 
@@ -40,9 +40,9 @@ S=ZZ/101[t]
 f = map(S,R,{t^4,t^5,t^6},DegreeMap => d -> {4*d#0 + 5*d#1 + 6*d#2})
 assert isHomogeneous f
 assert( ker f == ideal matrix {{b^2-a*c, a^3-c^2}} )
--- assert checkHilbertHint generators graphIdeal f
 
-end
+end--
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ker.out"
 -- End:

@@ -28,19 +28,17 @@ pygmentize -O full -o foo.html <path-to-m2-file>
 ```
 
 If you have an older version of Pygments, or would like to generate the
-Macaulay2 lexer yourself, run:
-
-
-```
-M2 --script <path-to-M2-source>/M2/Macaulay2/editors/make-M2-symbols.m2
-```
-
-The file `macaulay2.py` should appear in the `pygments` subdirectory of your
-current directory.  Then, if you want syntax highlighting for a Macaulay2 file,
-you would run:
+Macaulay2 lexer yourself, change to `M2/Macaulay2/editors` and run:
 
 ```
-cd pygments
+M2 --script make-M2-symbols.m2
+```
+
+This writes the file `pygments/macaulay2.py`. Then, if you want syntax
+highlighting for a Macaulay2 file with the generated lexer, run:
+
+```
+cd /path/to/M2/Macaulay2/editors/pygments
 pygmentize -x -l macaulay2.py:Macaulay2Lexer <path-to-m2-file>
 ```
 

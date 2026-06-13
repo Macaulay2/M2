@@ -5,13 +5,13 @@
 #include <assert.h>
 #include <string.h>
 
-#include "ExponentList.hpp"
-#include "ExponentVector.hpp"
+#include "monomials/ExponentList.hpp"
+#include "monomials/ExponentVector.hpp"
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
-#include "overflow.hpp"
-#include "polyring.hpp"
+#include "monomials/overflow.hpp"
+#include "rings/polyring.hpp"
 #include "util.hpp"
 
 // TODO: remove this
@@ -461,6 +461,7 @@ monomial Monoid::make_one() const
 }
 void Monoid::remove(monomial d) const
 {
+  (void) d;
 #if 0
 //   freemem(d);
 #endif

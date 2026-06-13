@@ -4,10 +4,6 @@
 --- The apply(HashTable,Function) in the "ways to use" section doesn't seem
 --- to have disappeared in my documentation, even though it is obsolete.
 
-undocumented {
-    (apply, Thing, Command),
-}
-
 document { 
      Key => apply,
      Headline => "apply a function to each element",

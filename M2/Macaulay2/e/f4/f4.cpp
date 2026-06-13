@@ -1,8 +1,8 @@
 // Copyright 2005-2021 Michael E. Stillman
 
 #include "f4/f4.hpp"
-#include "freemod.hpp"                 // for FreeModule
-#include "mat.hpp"                     // for MutableMatrix
+#include "free-modules/freemod.hpp"                 // for FreeModule
+#include "basic-mutable-matrices/mat.hpp"                     // for MutableMatrix
 #include "text-io.hpp"                 // for emit
 #include "buffer.hpp"                  // for buffer
 #include "error.h"                     // for error
@@ -16,8 +16,8 @@
 #include "f4/varpower-monomial.hpp"    // for varpower_word, varpower_monomial
 #include "interface/mutable-matrix.h"  // for IM2_MutableMatrix_make
 #include "interrupted.hpp"             // for system_interrupted
-#include "ring.hpp"                    // for Ring
-#include "ringelem.hpp"                // for ring_elem, vec
+#include "rings/ring.hpp"                    // for Ring
+#include "rings/ringelem.hpp"                // for ring_elem, vec
 #include "style.hpp"                   // for INTSIZE
 
 #include <gc/gc_allocator.h>           // for gc_allocator
@@ -77,6 +77,12 @@ F4GB::F4GB(const VectorArithmetic* VA,
       mSPairSet(mMonomialInfo, mGroebnerBasis)
 #endif
 {
+  (void) collect_syz;
+  (void) n_rows_to_keep;
+  (void) weights0;
+  (void) strategy;
+  (void) use_max_degree;
+  (void) max_degree;
   //  mLookupTable = new MonomialLookupTable(mMonomialInfo->n_vars());
   //  mSPairSet = new F4SPairSet(mMonomialInfo, mGroebnerBasis);
   mat = new coefficient_matrix;

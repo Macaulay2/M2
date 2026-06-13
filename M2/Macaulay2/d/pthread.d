@@ -231,6 +231,80 @@ export getIOThreadMode(e:Expr):Expr := (
     else WrongArg("a file or ()"));
 setupfun("getIOThreadMode", getIOThreadMode);
 
+WrongArgMutex():Expr := WrongArg("a mutex");
+
+mutexFinalizer(obj:voidPointer, data:voidPointer):void := (
+    mutex := Ccode(ThreadMutex, "*(pthread_mutex_t *)", obj);
+    destroy(mutex););
+
+mutexInit(e:Expr):Expr := (
+    when e
+    is HashTable do (
+	ptr := GCmalloc(Pointer "pthread_mutex_t *");
+	mutex := Ccode(ThreadMutex, "*", ptr);
+	r := init(mutex);
+	if r != 0 then return buildErrorPacketErrno("pthread_mutex_init", r);
+	Ccode(void, "GC_REGISTER_FINALIZER(", ptr, ", ",
+	    "(GC_finalization_proc)", mutexFinalizer, ", NULL, NULL, NULL)");
+	cell := mutexCell(mutex, hash_t(0));
+	cell.hash = hashFromAddress(Expr(cell));
+	Expr(cell))
+    else WrongArgHashTable());
+installMethod(NewS, mutexClass, mutexInit);
+
+lock(e:Expr):Expr := (
+    when e
+    is m:mutexCell do (
+	r := lock(m.v);
+	if r == 0 then nullE
+	else buildErrorPacketErrno("pthread_mutex_lock", r))
+    else WrongArgMutex());
+setupfun("lock0", lock);
+
+trylock(e:Expr):Expr := (
+    when e
+    is m:mutexCell do (
+	r := trylock(m.v);
+	if r == 0 then nullE
+	else buildErrorPacketErrno("pthread_mutex_trylock", r))
+    else WrongArgMutex());
+setupfun("tryLock0", trylock);
+
+unlock(e:Expr):Expr := (
+    when e
+    is m:mutexCell do (
+	r := unlock(m.v);
+	if r == 0 then nullE
+	else buildErrorPacketErrno("pthread_mutex_unlock", r))
+    else WrongArgMutex());
+setupfun("unlock0", unlock);
+
+-- env.0 = the mutex to lock/unlock
+-- env.1 = the function to call
+lockedFunction(e:Expr, env:Sequence):Expr := (
+    if length(env) == 2 then (
+	l := lock(env.0);
+	when l is Error do return l else nothing;
+	r := applyEE(env.1, e);
+	u := unlock(env.0);
+	when u is Error do u else r)
+    else buildErrorPacket("internal error: expected 2 values in environment"));
+
+lockFunction(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is mutexCell do (
+		if isFunction(a.1)
+		then Expr(CompiledFunctionClosure(
+			lockedFunction, nextHash(), a))
+		else WrongArg(2, "a function"))
+	    else WrongArg(1, "a mutex"))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("lockFunction", lockFunction);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "
 -- End:

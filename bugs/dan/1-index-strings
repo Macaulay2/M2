@@ -1,6 +1,0 @@
-this gets a random generator of R:
-
-    R = QQ[u,u]
-    R_"u"
-
-it should do something more definite

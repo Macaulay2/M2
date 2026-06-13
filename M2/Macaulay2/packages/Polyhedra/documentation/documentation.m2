@@ -105,6 +105,32 @@ doc ///
 
 doc ///
    Key
+      centroid
+      (centroid,Polyhedron)
+   Headline
+      computes the centroid or barycenter of a polyhedron
+   Usage
+      centroid P
+   Inputs
+      P:Polyhedron
+         a compact polyhedron
+   Outputs
+       :Matrix
+   Description
+      Text
+         The centroid of a polyhedron is the center of mass of the polyhedron.
+         This is computed by first triangulating the polyhedron, and then taking
+         a weighted sum of the barycenters of the simplices in the triangulation.
+      Example
+         centroid stdSimplex 3
+      Example
+         centroid hypercube 2
+   SeeAlso
+      barycentricTriangulation
+///
+
+doc ///
+   Key
       latticeVolume
       (latticeVolume,Polyhedron)
    Headline

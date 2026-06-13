@@ -212,7 +212,7 @@ doWriteNmzData List := matrices -> (
 	for i from 0 to numRows sgr - 1 do (
 	    s := "";
 	    for j from 0 to numColumns sgr - 1
-	    do s = s | sgr_(i,j) | " ";
+	    do s = s | toString(sgr_(i,j)) | " ";
 	    outf << s << endl;
 	    );
 	-- Until version 3.9.4, input type normal_toric_ideal was called lattice_ideal
@@ -1077,7 +1077,7 @@ document {
      PARA{},"This function creates an input file for ", TT "Normaliz", " containing one or several matrices, whose rows are considered according to the type:",
      UL {
          "integral closure, normalization: generators of a rational cone",
-         "polytope:   lattice points spanning a polytope",
+         "polytope:   lattice points or rational points spanning a polytope",
          "rees_algebra:   exponent vectors of monomials generating an ideal",
          "inequalities, equations, congruences:   constraints defining the cone to be computed",
          "inhom_inequalities, inhom_equations, inhom_congruences:   inhomogeneous constraints defining the cone to be computed",
@@ -1287,6 +1287,11 @@ TEST ///
 {1, 0, 2, 2, 1, 0, 0, 2, 1}}) )
     rmNmzFiles();
      ///,
+TEST ///
+-- check that normaliz works with rational polytopes
+V = matrix "1/2,0;-1/2,0;0,1;0,-1";
+C = normaliz(V, "polytope");
+///,
 }
 
 document{

@@ -54,7 +54,7 @@ indexOfVariable RingElement := ZZ => (elem) -> (
 --pads an ASM with a block identity matrix to view the ASM in a larger polynomial ring
 --useful for adding and intersecting ASM ideals of differing sizes
 --INPUT: an ASM, number of rows/columns to add
---OUTPUT: a new ASM from the old one with the same fulton generators, but forming a larger matrix
+--OUTPUT: a new ASM from the old one with the same Fulton generators, but forming a larger matrix
 --TODO: add docs and tests
 -----------------------------------
 padASM = method()
@@ -358,7 +358,7 @@ schubertDeterminantalIdeal List := o -> w -> (
 
 ----------------------------------------
 --INPUT: a list w corresponding to a permutation in 1-line notation
---OUTPUT: list of fulton generators for schubert determinantal ideal w
+--OUTPUT: list of Fulton generators for Schubert determinantal ideal w
 ---------------------------------------
 fultonGens = method(
     Options => {

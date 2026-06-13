@@ -1,5 +1,0 @@
-not quite working yet:
-
-i4 : methodOptions gcd
-
-i5 : methodOptions transpose

@@ -55,6 +55,7 @@ endmacro(_gc_check_version)
 if(NOT BDWGC_VERSION_OK)
   set(BDWGC_INCLUDE_DIR NOTFOUND)
   set(BDWGC_LIBRARIES NOTFOUND)
+  unset(BDWGC_CXX_SUPPORT CACHE)
 
   # search first if an BDWGCConfig.cmake is available in the system,
   # if successful this would set BDWGC_INCLUDE_DIR and the rest of

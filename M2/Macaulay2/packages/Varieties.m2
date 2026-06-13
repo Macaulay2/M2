@@ -71,7 +71,6 @@ export {
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
-    "RHom",
     -- Symbols
     "GlobalSectionLimit",
     "SaturationMap",
@@ -85,6 +84,7 @@ importFrom_Core {
     "toString'", "expressionValue", "unhold", -- TODO: prune these
     "concatBlocks", "concatCols", "concatRows",
     "addHook", "tryHooks", "cacheHooks",
+    "liftModule", "liftMorphism",
     "isMorphism", "isAbelianCategory",
     "BinaryPowerMethod",
     }
@@ -298,10 +298,6 @@ sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
 sheaf Ideal := Ideal^~ := CoherentSheaf =>     I  -> sheaf(variety ring I, module I)
 sheaf(Variety, Ideal)  := CoherentSheaf => (X, I) -> sheaf(X,              module I)
 
--- TODO: remove by M2 1.25
-tildeWarn = true
-Thing~ := x -> (if tildeWarn then (tildeWarn = false; printerr "Note: M~ is deprecated; use M^~ or sheaf instead."); x^~)
-
 OO = new ScriptedFunctor from {
      subscript => X -> applyMethod((symbol _,     OO, class X), (OO, X)),
      argument  => X -> applyMethod((symbol SPACE, OO, class X), (OO, X)),
@@ -497,21 +493,9 @@ checkVariety := (X, F) -> (
     if not isAffineRing ring X then error "expected a variety defined over a field";
     )
 
--- pushforward the module to PP^n via S/I <-- S
-flattenModule   = M -> cokernel flattenMorphism presentation M
-flattenMorphism = f -> (
-    g := presentation ring f;
-    S := ring g;
-    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
-    -- TODO: why doesn't lift(f, ring g) do this automatically?
-    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
--*
-flattenComplex = C -> (
-    (lo, hi) := C.concentration;
-    if lo === hi
-    then complex(flattenModule C_lo, Base => lo)
-    else complex applyValues(C.dd.map, flattenMorphism))
-*-
+-- these synonyms are added to avoid a merge conflict
+flattenModule   = liftModule
+flattenMorphism = liftMorphism
 
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring

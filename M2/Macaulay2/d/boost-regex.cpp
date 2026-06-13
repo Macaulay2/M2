@@ -54,6 +54,7 @@ M2_arrayint regex_search(const M2_string pattern,
                          int regex_flags,
                          int match_flags)
 {
+  (void) range;
 #if DEBUG_REGEX & 2
   std::cerr << "string:\t" << M2_tocharstar(text) << std::endl;
 #endif

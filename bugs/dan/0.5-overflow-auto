@@ -1,7 +1,0 @@
-examples will look better if we add
-
-	 overflow: auto;
-	 width; XXX;
-
-to the stye for PRE.  Then firefox will put in horizontal scroll bars for wide
-output, and we can turn off wrapping.

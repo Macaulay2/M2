@@ -17,7 +17,7 @@ loadAlternative String := name -> (
 )
 
 dropAlternatives = method()
-installMethod(dropAlternatives, o -> (alternative = new MutableHashTable))
+dropAlternatives() := o -> (alternative = new MutableHashTable)
 
 insertAlternatives = method()
 insertAlternatives MutableHashTable := newAlternatives -> (

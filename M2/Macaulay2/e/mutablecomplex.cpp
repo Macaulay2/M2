@@ -4,8 +4,8 @@
 #include "mutablecomplex.hpp"
 #include "engine-includes.hpp"
 #include "debug.hpp"
-#include "ring.hpp"
-#include "polyring.hpp"
+#include "rings/ring.hpp"
+#include "rings/polyring.hpp"
 #include <utility>
 #include <iostream>
 #include <algorithm>
@@ -27,6 +27,7 @@ size_t MutableComplex::complexity(const iterator &i, const size_t flags) const
 // TODO: save row/column totals in a separate vector and only update when
 // pruning a unit
 {
+  (void) flags;
   ring_elem e;
   const size_t n = i.index();
   const std::pair<size_t, size_t> u = *i;
@@ -66,6 +67,7 @@ size_t MutableComplex::complexity(const iterator &i, const size_t flags) const
 
 bool MutableComplex::next_unit(iterator &i, const size_t flags) const
 {
+  (void) flags;
   ring_elem e;
   for (; i < i.end(); ++i)
     {
@@ -189,6 +191,8 @@ void MutableComplex::prune_complex(size_t nsteps, size_t flags)
 
 std::vector<size_t> MutableComplex::prune_betti(size_t nsteps, size_t flags)
 {
+  (void) nsteps;
+  (void) flags;
   /* TODO:
    * separate all units into a square matrix (efficiently?)
    * start with the ones in sparcest row/column.
@@ -200,6 +204,7 @@ std::vector<size_t> MutableComplex::prune_betti(size_t nsteps, size_t flags)
 VECTOR(MutableMatrix *)
 MutableComplex::prune_morphisms(size_t nsteps, size_t flags)
 {
+  (void) nsteps;
   for (size_t n = 0; n < mMorphisms.size(); ++n)
     if (flags & FLAG_TRACE_MORPHISMS)
       if (mBetti[n] < mMorphisms[n]->n_cols())

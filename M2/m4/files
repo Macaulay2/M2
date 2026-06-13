@@ -1,5 +1,4 @@
 Makefile
-check-configure/Makefile
 include/config.Makefile
 include/configuration
 distributions/Makefile
@@ -9,7 +8,6 @@ distributions/top/INSTALL
 distributions/top/preremove
 distributions/top/postinstall
 distributions/tar/Makefile
-distributions/dmg/Makefile
 distributions/freebsd/Makefile
 distributions/freebsd/post-install
 distributions/freebsd/post-deinstall
@@ -19,7 +17,6 @@ libraries/M2/Makefile
 libraries/Macaulay2-docs/Makefile
 libraries/Makefile.library
 libraries/cddlib/Makefile
-libraries/cddplus/Makefile
 libraries/cohomcalg/Makefile
 libraries/csdp/Makefile
 libraries/eigen/Makefile
@@ -48,6 +45,7 @@ libraries/msolve/Makefile
 libraries/nauty/Makefile
 libraries/normaliz/Makefile
 libraries/ntl/Makefile
+libraries/palp/Makefile
 libraries/polymake/Makefile
 libraries/readline/Makefile
 libraries/tbb/Makefile
@@ -62,6 +60,7 @@ Macaulay2/bin/Makefile
 Macaulay2/bin/M2
 Macaulay2/e/Makefile
 Macaulay2/e/Makefile.common
+Macaulay2/e/Makefile.files
 Macaulay2/e/unit-tests/Makefile
 Macaulay2/editors/Makefile
 Macaulay2/html-check-links/Makefile

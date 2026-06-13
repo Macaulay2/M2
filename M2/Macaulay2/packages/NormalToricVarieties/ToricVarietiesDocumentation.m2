@@ -2276,7 +2276,7 @@ doc ///
 	    # (set rays Y' - set rays Y)
     Caveat 
         A singular normal toric variety almost never has a unique minimal
-	resolution.  This method returns only of one of the many minimal
+	resolution.  This method returns only one of the many minimal
 	resolutions.
     SeeAlso
         "resolving singularities"

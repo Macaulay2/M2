@@ -40,8 +40,8 @@ assert Equation(1 | 0 ^^ 1, 1)
 -----------------
 -- bitwise not --
 -----------------
-assert Equation(1138~, -1139)
-assert Equation((-1139)~, 1138)
+assert Equation(~1138, -1139)
+assert Equation(~-1139, 1138)
 
 -----------------
 -- expressions --

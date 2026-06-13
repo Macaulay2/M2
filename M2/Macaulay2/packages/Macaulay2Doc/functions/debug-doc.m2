@@ -22,7 +22,7 @@ Node
   Consequences
     Item
       symbols from the local dictionary @TT "fileDictionaries#filename"@ are added to
-      the private dictionary of @TT "User"@, and are therefore made visible to the user
+      the private dictionary of @TO "Macaulay2Doc::User"@, and are therefore made visible to the user
   Description
     Text
       This function allows access to the local symbols of a any loaded file.
@@ -51,7 +51,7 @@ Node
   Consequences
     Item
       if @TT "dict"@ is a local dictionary, its symbols are added to
-      the private dictionary of @TT "User"@, otherwise @TT "dict"@ is
+      the private dictionary of @TO "Macaulay2Doc::User"@, otherwise @TT "dict"@ is
       prepended to @TO "dictionaryPath"@, and in both cases the symbols
       are made visible to the user
   SeeAlso

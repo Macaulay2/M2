@@ -8,7 +8,7 @@ header "// required for equality checks
 #include <interface/monomial-ideal.h>       // for IM2_MonomialIdeal_is_equal
 #include <interface/ringelement.h>          // for IM2_RingElement_is_equal
 #include <interface/ringmap.h>              // for IM2_RingMap_is_equal
-#include <monomial.hpp>                     // for EngineMonomial"; -- TODO: remove this one
+#include <monomials/monomial.hpp>                     // for EngineMonomial"; -- TODO: remove this one
 
 equal(lhs:Expr,rhs:Expr):Expr;
 
@@ -154,6 +154,12 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       if strictequality(x.v,y.v) then True else False
 	       )
 	  else False)
+	 is x:CCicell do (
+		when rhs
+		is y:CCicell do (
+			if strictequality(x.v.re,y.v.re) && strictequality(x.v.im,y.v.im) then True else False
+	 )
+	 else False)
      is x:SymbolClosure do (
 	  when rhs 
 	  is y:SymbolClosure do (
@@ -262,6 +268,10 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is x:atomicIntCell do (
 	 when rhs
 	 is y:atomicIntCell do if x == y then True else False
+	 else False)
+     is x:mutexCell do (
+	 when rhs
+	 is y:mutexCell do if x == y then True else False
 	 else False)
      );
 

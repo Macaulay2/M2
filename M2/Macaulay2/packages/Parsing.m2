@@ -175,6 +175,10 @@ document { Key => Parsing,
      PARA {
 	  "See the package ", TO "Classic::Classic", " for a good example of  the use of this framework."
 	  },
+     EXAMPLE lines ///
+	  (ZZParser : charAnalyzer) "-123"
+	  (constParser "abc" : nonspaceAnalyzer) " a b c "
+     ///,
      Subnodes => {
 	  TO Analyzer,
 	  TO Parser,
@@ -194,6 +198,13 @@ document { Key => Parser,
 	  "When the input stream is exhausted, we call ", TT "p", " one more time like this: ", TT "p null", ".  The return value is ", TO "null", "
 	  if the parser is not in a terminal state.  Otherwise the return value is the parsed (and possibly evaluated) result."
 	  },
+     EXAMPLE lines ///
+	  p = constParser "abc";
+	  instance(p, Parser)
+	  q = p "a";
+	  instance(q, Parser)
+	  (((q "b") "c") null)
+     ///,
      Subnodes => {
 	  "simple parsers",
 	  TO deadParser,
@@ -225,6 +236,13 @@ document { Key => Analyzer,
 	  Actually, the analyzer is to return a pair: ", TT "(pos,token)", ", where ", TT "pos", " is a string indicating the position where ", TT "token", " was found in the input.
 	  A position will be a sort of thing which can be converted to string with ", TO "toString", " (for printing error messages) and can be sorted."
 	  },
+     EXAMPLE lines ///
+	  instance(charAnalyzer, Analyzer)
+	  a = charAnalyzer "ab";
+	  a()
+	  a()
+	  a() === null
+     ///,
      Subnodes => {
 	  TO charAnalyzer,
 	  TO nonspaceAnalyzer
@@ -273,6 +291,10 @@ document { Key => nonspaceAnalyzer,
 
 document { Key => nil,
      Headline => "a symbol a parser may return to indicate acceptance of the empty string of tokens",
+     EXAMPLE lines ///
+	  (optP constParser "abc" : charAnalyzer) ""
+	  (optP constParser "abc" : charAnalyzer) "abc"
+     ///,
      SeeAlso => { nullParser }
      }
 
@@ -301,6 +323,11 @@ document { Key => terminalParser,
 document { Key => nullParser,
      Headline => "a terminal parser that returns the value nil",
      SourceCode => nullParser,
+     EXAMPLE lines ///
+	  nullParser null
+	  nullParser "x" === null
+	  nullParser null === nil
+     ///,
      SeeAlso => { nil }
      }
 
@@ -499,7 +526,57 @@ document { Key => optP,
      ///,
      SeeAlso => {constParser, charAnalyzer, (symbol :, Parser, Analyzer)}
      }
-	  
+
+TEST ///
+debug needsPackage "Classic"
+parser = (p,s) -> (p : charAnalyzer) s
+assert( parser(symbolP, "x") === x )
+assert( parser(symbolP, "y") === y )
+assert( parser(NNParser, "234") === 234 )
+assert( parser(QQParser, "234/131") === 234/131 )
+assert( parser(QQParser, "-234/131") === -234/131 )
+assert( parser(optP constParser "-", "") === nil )
+assert( parser(andP(optP constParser "-",optP constParser "+"), "") === (nil,nil) )
+assert( parser(andP(optP constParser "-",optP constParser "+"), "+") === (nil,"+") )
+assert( parser(andP(optP constParser "-",optP constParser "+"), "-") === ("-",nil) )
+assert( parser(andP(optP constParser "-",optP constParser "+"), "-+") === ("-","+") )
+assert( (try parser(andP(optP constParser "-",optP constParser "+"), "+-") else oops) === oops )
+assert( parser(ZZParser, "234") === 234 )
+assert( parser(ZZParser, "-234") === -234 )
+assert( parser(ZZParser, "+234") === 234 )
+assert( parser(orP(NNParser,constParser "ab"), "234") === 234 )
+assert( parser(orP(NNParser,constParser "ab"), "ab") === "ab" )
+assert( (try parser(orP(NNParser,constParser "ab"), "a") else oops) === oops )
+assert( (try parser(orP(NNParser,constParser "ab"), "abc") else oops) === oops )
+assert( (try parser(andP(NNParser,constParser "ab"), "234a") else oops) === oops )
+assert( (try parser(andP(NNParser,constParser "ab"), "234b") else oops) === oops )
+assert( parser(andP(NNParser,constParser "ab"), "234ab") === (234,"ab") )
+assert( (try parser(andP(NNParser,constParser "ab"), "234abc") else oops) === oops )
+assert( parser(* andP(constParser ",", NNParser), ",33,4") === ((",",33),(",",4)) )
+R = QQ[a..t,x_0 .. x_9, y_(0,0) .. y_(3,3)]
+assert( parser(ringVariableP, "t") === t )
+assert( parser(ringVariableP, "x[3]") === x_3 )
+assert( parser(ringVariableP, "y[2,3]") === y_(2,3) )
+assert( parser(powerP, "t12") === t^12 )
+assert( parser(powerP, "x[3]12") === x_3^12 )
+assert( parser(powerP, "y[2,3]12") === y_(2,3)^12 )
+assert( parser(parenExprP, "(y[2,3]12)") === y_(2,3)^12 )
+assert( parser(monomialP, "3x[2]y[2,3]3") === 3*x_2*y_(2,3)^3 )
+assert( parser(monomialP, "x[2]y[2,3]3") === x_2*y_(2,3)^3 )
+assert( parser(monomialP, "3(x[2]y[2,3])3") === 3*x_2^3*y_(2,3)^3 )
+assert( parser(monomialP, "3(-2x[2]y[2,3])3") === -24*x_2^3*y_(2,3)^3 )
+assert( parser(polyP, "3x[2]y[2,3]3") === 3*x_2*y_(2,3)^3 )
+assert( parser(polyP, "x[2]y[2,3]3") === x_2*y_(2,3)^3 )
+assert( parser(polyP, "3(x[2]y[2,3])3") === 3*x_2^3*y_(2,3)^3 )
+assert( parser(polyP, "3(-2x[2]y[2,3]+3t)3") === -24*x_2^3*y_(2,3)^3+108*t*x_2^2*y_(2,3)^2-162*t^2*x_2*y_(2,3)+81*t^3 )
+assert( parser(polyP, "(1-2/3a)5") === -32/243*a^5+80/81*a^4-80/27*a^3+40/9*a^2-10/3*a+1 )
+assert( parser(arrayPolyP, "a") === {{a}} )
+assert( parser(arrayPolyP, "(a+1)5,b,c;d,e,f2-g") === {{a^5+5*a^4+10*a^3+10*a^2+5*a+1, b, c}, {d, e, f^2-g}} )
+i=3
+assert( ideal "a,b,c" === ideal(a,b,c) )
+assert( matrix "a,b,c;d,e,f" === matrix( {{a, b, c}, {d, e, f}}) )
+assert( matrix "a,b,c;d,x[i]5,(f-1)4" === matrix( {{a, b, c}, {d, x_3^5, f^4-4*f^3+6*f^2-4*f+1}}) )
+///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Parsing pre-install"

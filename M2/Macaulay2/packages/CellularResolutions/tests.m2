@@ -540,3 +540,100 @@ Cxyz = subcomplex(C,x*y*z);
 assert(isWellDefined Cxy);
 assert(#flatten values cells Cxyz == #flatten values cells C)
 ///
+
+-- Coverage tests for previously untested exports.
+
+TEST ///
+-- boundaryCells inspects the cells in the boundary of a cell.
+v1 = newSimplexCell {};
+v2 = newSimplexCell {};
+assert(boundaryCells v1 == {});
+e = newSimplexCell {v1,v2};
+assert(set boundaryCells e === set {v1,v2});
+v3 = newSimplexCell {};
+e13 = newSimplexCell {v1,v3};
+e23 = newSimplexCell {v2,v3};
+tri = newSimplexCell {e,e13,e23};
+bd = boundaryCells tri;
+assert(instance(bd, List));
+assert(#bd == 3);
+assert(set bd === set {e, e13, e23});
+///
+
+TEST ///
+-- cellComplexTorus builds the cell complex of the n-torus T^n.  The reduced
+-- homology of T^n in degree k is free of rank binomial(n,k).
+T0 = cellComplexTorus(QQ, 0);
+assert(dim T0 == 0);
+T1 = cellComplexTorus(QQ, 1);
+assert(dim T1 == 1);
+assert(prune HH_1 complex T1 == QQ^1);
+T2 = cellComplexTorus(QQ, 2);
+assert(dim T2 == 2);
+C2 = complex T2;
+assert(prune HH_0 C2 == QQ^0);
+assert(prune HH_1 C2 == QQ^2);
+assert(prune HH_2 C2 == QQ^1);
+assert(try (cellComplexTorus(QQ,-1); false) else true);
+///
+
+TEST ///
+-- taylorComplex of a monomial ideal with r generators is an (r-1)-simplex
+-- whose cells are labeled by lcm-subsets; the resulting augmented chain
+-- complex is a free resolution of S/I, so the reduced homology vanishes in
+-- every degree.
+S = QQ[x,y,z];
+I = monomialIdeal(x*y, y*z, x*z);
+T = taylorComplex I;
+assert(instance(T, CellComplex));
+assert(dim T == numgens I - 1);
+assert(#cells(0,T) == 3);
+assert(#cells(1,T) == 3);
+assert(#cells(2,T) == 1);
+C = complex T;
+assert(HH_0 C == 0);
+assert(HH_1 C == 0);
+assert(HH_2 C == 0);
+assert(try (taylorComplex(monomialIdeal 0_S); false) else true);
+///
+
+TEST ///
+-- The InferLabels option of relabelCellComplex controls whether cells absent
+-- from the relabeling table get their labels recomputed from their boundary
+-- (true) or keep their existing label (false).  Choose a starting label that
+-- differs from the lcm of the boundary so the two modes are distinguishable.
+S = QQ[x,y];
+v1 = newSimplexCell({}, x);
+v2 = newSimplexCell({}, y);
+e = newSimplexCell({v1,v2}, x^2*y^2);
+C = cellComplex(S, {e});
+Cinfer = relabelCellComplex(C, hashTable {}, InferLabels=>true);
+Ckeep  = relabelCellComplex(C, hashTable {}, InferLabels=>false);
+einfer = (cells(1, Cinfer))#0;
+ekeep  = (cells(1, Ckeep))#0;
+assert(cellLabel einfer == x*y);
+assert(cellLabel ekeep  == x^2*y^2);
+assert(cellLabel einfer =!= cellLabel ekeep);
+///
+
+TEST ///
+-- The LabelRing option of subcomplex overrides the default label ring
+-- (coefficientRing of the parent complex's ring); cellComplexSphere and
+-- cellComplexRPn produce the standard CW structures on S^n and RP^n and
+-- reject negative dimensions.
+S = QQ[x,y,z];
+I = monomialIdeal(x*y, y*z, x*z);
+T = taylorComplex I;
+SC1 = subcomplex(T, x*y*z);
+SC2 = subcomplex(T, x*y*z, LabelRing=>S);
+assert(ring SC1 === QQ);
+assert(ring SC2 === S);
+assert(dim cellComplexSphere(QQ,1) == 1);
+assert(prune HH_1 complex cellComplexSphere(QQ,1) == QQ^1);
+assert(prune HH_2 complex cellComplexSphere(QQ,2) == QQ^1);
+assert(try (cellComplexSphere(QQ,-1); false) else true);
+RP2 = cellComplexRPn(ZZ, 2);
+assert(dim RP2 == 2);
+assert(prune HH_1 complex RP2 == cokernel matrix {{2}});
+assert(try (cellComplexRPn(ZZ,-1); false) else true);
+///

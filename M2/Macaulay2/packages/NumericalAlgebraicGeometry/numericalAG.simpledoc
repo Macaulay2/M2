@@ -204,5 +204,5 @@ Description
 
 
 -- Local Variables:
--- compile-command: "make -C /Users/de/src/M2/Macaulay2/packages PACKAGES=BeginningMacaulay2 RemakeAllDocumentation=true IgnoreExampleErrors=false"
+-- compile-command: "make -C /Users/de/src/M2/Macaulay2/packages PACKAGES=Tutorials RemakeAllDocumentation=true IgnoreExampleErrors=false"
 -- End:

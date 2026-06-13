@@ -146,7 +146,7 @@ makeDualBasisFunction = (LAB) -> (
 -- level moved to lieAlgebraModules.m2
 
 
--- Implement fromula from de Graaf, page 98
+-- Implement formula from de Graaf, page 98
 star = (j, a) -> (
     R:=ring(a);
     ea:=first exponents(a);

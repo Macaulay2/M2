@@ -3,7 +3,8 @@ SHARED_UNITTEST_CCFILES := \
     M2-cpp-replacement \
     basics-test \
     fromStream \
-    util-polyring-creation
+    util-polyring-creation \
+    RingElem
 
 UNITTEST_CCFILES := \
     $(SHARED_UNITTEST_CCFILES) \
@@ -28,34 +29,24 @@ UNITTEST_CCFILES := \
     PolyRingTest \
     NewF4Test \
     MonoidTest \
-    MatrixIOTest
+    MatrixIOTest \
+    WeylAlgebraTest \
+    QuotientRingTest \
+    RingRRRTest \
+    RingCCCTest \
+    OverflowTest \
+    BRP-test \
+    RingCCCTest \
+    LatticePointsTest
 
-#    RingRRRTest \
-#    RingCCCTest \
 #    ARingGFTest \
-     
-
-SHARED_UNITTEST_CFILES += \
-    M2-replacement
-
-UNITTEST_CFILES += \
-    $(SHARED_UNITTEST_CFILES)
 
 UNITTEST_TARGET := testMain
 
 GTEST_DIR := $(BUILTLIBPATH)/include/gtest
 
-E_FILES := $(addprefix ../, $(INTERFACE) $(COMMANDS) $(C_FILES))
-F4_FILES := $(addprefix ../f4/, $(F4_CCFILES))
-E_OBJECT_FILES := $(addsuffix .o, $(E_FILES) $(F4_FILES))
-
-UNITTEST_FILES := $(UNITTEST_CCFILES) $(UNITTEST_CFILES)
-UNITTEST_SHARED_FILES := $(SHARED_UNITTEST_CCFILES) $(SHARED_UNITTEST_CFILES)
-
-UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_FILES)) ../../d/M2mem.o ../../d/memdebug.o ../../d/debug.o
-UNITTEST_SHARED_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_SHARED_FILES))
-
-
+UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_CCFILES))
+UNITTEST_SHARED_OBJECT_FILES :=  $(addsuffix .o, $(SHARED_UNITTEST_CCFILES))
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check"

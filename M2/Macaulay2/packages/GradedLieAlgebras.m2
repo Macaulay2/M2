@@ -151,10 +151,6 @@ export {
 -- Also, the elements of Q#diff belong to ambient(Q)=F.
 -- The ambient of Q=L/I where class I=LieIdeal is L, The elements of Q#diff belong to ambient(Q)=L.
 -- The ideal Q#ideal=I is an ideal of L.
- 
-
-recursionLimit=10000;
-
 
 ----------------------------------------
 --

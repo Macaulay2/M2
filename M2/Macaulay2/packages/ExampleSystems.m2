@@ -59,7 +59,7 @@ examples'names = {
     }
     
 for e in examples'names do 
-needs("./ExampleSystems/"|e|".m2")
+load("./ExampleSystems/"|e|".m2")
 
 beginDocumentation()
 
@@ -73,6 +73,11 @@ doc ///
                This package is a database for examples of polynomial systems in Macaulay2,
                including standard systems of interest in various applications, such as 
                engineering, chemistry, robotics, and economics.
+          Example
+               cyclic(5, QQ)
+          Text
+               The package exports each named system as a function; the example above
+               returns the cyclic 5-roots system over the rational numbers.
                
                {\bf References:} 
           Code
@@ -91,6 +96,172 @@ doc ///
   -- Headline
    -- examples of polynomial systems
 -- ///
+
+--test bellido
+TEST ///
+bellido(QQ)
+///
+
+--test boon
+TEST ///
+boon(QQ)
+///
+
+--test butcher
+TEST ///
+butcher(QQ)
+///
+
+--test camera1s
+TEST ///
+camera1s(RR_101)
+///
+
+--test caprasse
+TEST ///
+caprasse(QQ)
+///
+
+--test cassou
+TEST ///
+cassou(QQ)
+///
+
+--test chemequ
+TEST ///
+chemequ(RR_101)
+///
+
+--test cohn3
+TEST ///
+cohn3(QQ)
+///
+
+--test comb3000s
+TEST ///
+comb3000s(RR_101)
+///
+
+--test cyclic
+TEST ///
+cyclic(5, QQ)
+///
+
+--test dipole2
+TEST ///
+dipole2(RR_101)
+///
+
+--test eco8
+TEST ///
+eco8(QQ)
+///
+
+--test geneig
+TEST ///
+geneig(QQ)
+///
+
+--test heart
+TEST ///
+heart(RR_101)
+///
+
+--test katsura
+TEST ///
+katsura(10,QQ)
+///
+
+--test ku10
+TEST ///
+ku10(QQ)
+///
+
+--test lorentz
+TEST ///
+lorentz(QQ)
+///
+
+
+--test lumped
+TEST ///
+lumped(CC_53)
+///
+
+--test noon5
+TEST ///
+noon5(RR_101)
+///
+
+--test proddeco
+TEST ///
+proddeco(RR_101)
+///
+
+--test puma
+TEST ///
+puma(RR_101)
+///
+
+--test quadgrid
+TEST ///
+quadgrid(RR_101)
+///
+
+--test rabmo
+TEST ///
+rabmo(QQ)
+///
+
+--test randomGeneralizedEigenvalueProblem
+TEST ///
+randomGeneralizedEigenvalueProblem 5
+///
+
+--test randomSystem
+TEST ///
+randomSystem(2,3,QQ)
+///
+
+--test rbpl24s
+TEST ///
+rbpl24s(RR_53)
+///
+
+--test reimer5
+TEST ///
+reimer5(QQ)
+///
+
+--test rose
+TEST ///
+rose(QQ)
+///
+
+--test sendra
+TEST ///
+sendra(QQ)
+///
+
+--test trinks
+TEST ///
+trinks(QQ)
+///
+
+--test virasoro
+TEST ///
+virasoro(QQ)
+///
+
+--test wood
+TEST ///
+wood(RR_101)
+///
+
+--test wright
+TEST ///
+wright(QQ)
+///
 
 end
 
@@ -203,5 +374,4 @@ substitute(ExampleTable, List) := (E, L) -> (
 	       ))
      )
 substitute(ExampleTable, Option) := (E,subs) -> substitute(E, {subs})
-
 
