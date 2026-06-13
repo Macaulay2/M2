@@ -1643,7 +1643,7 @@ makeB'InputFile(String) := o ->(IFD)->(
        openedInputFile << toString(thePathVariable_(-1)) << " ; "<< endl);
      openedInputFile <<endl;
 --If userdefined homotopy then we write the parameters and in terms of the path variable.
-     if #o.PathVariable=!=0 then(
+     if #o.PathVariable=!=0 and #o.SetParameterGroup=!=0 then(
      if #o.SetParameterGroup=!=0 and not member( class((o.SetParameterGroup)_0 ),pairTypes) then error"Parameters should be set in terms of the pathvariable, e.g., x=>t,y=>t^2. ";
      oneGroupNames:=for i in o.SetParameterGroup list if class i ===List then first i else if class i===Option then first toList i;
      writeNamedListToB'InputFile("parameter",oneGroupNames,openedInputFile);
