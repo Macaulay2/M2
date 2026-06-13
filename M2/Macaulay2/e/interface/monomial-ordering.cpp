@@ -11,7 +11,7 @@
 
 #include "interface/m2-mem.h"  // for getmemvectortype, getmematomicvectortype
 #include "error.h"
-#include "monordering.hpp" // TODO: where can this go? it only defines one class
+#include "monomials/monordering.hpp" // TODO: where can this go? it only defines one class
 
 static struct mon_part_rec_ *mo_make(enum MonomialOrdering_type type,
                                      int nvars,

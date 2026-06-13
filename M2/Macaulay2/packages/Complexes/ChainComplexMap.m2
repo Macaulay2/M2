@@ -178,6 +178,13 @@ isWellDefined ComplexMap := f -> (
         );
     for i from lo to hi do (
         g := f_i;
+        if not isWellDefined g then (
+            if debugLevel > 0 then (
+                << "-- expected all differentials to be well-defined morphisms" << endl;
+                << "--   differential at index " << i << " fails this condition" << endl;
+                );
+            return false;
+            );
         if source g =!= f.source_i or target g =!= f.target_(i+f.degree)
         then (
             if debugLevel > 0 then (
@@ -520,7 +527,7 @@ canonicalTruncation(ComplexMap,ZZ,Nothing) :=
 canonicalTruncation(ComplexMap,Nothing,ZZ) := ComplexMap => (f,lo,hi) -> canonicalTruncation(f, (lo,hi))
 
 truncateMatrixOpts := options(truncate, List, Matrix)
-truncate(ZZ,   ComplexMap) :=
+truncate(ZZ,   ComplexMap) := truncate(InfiniteNumber, ComplexMap) :=
 truncate(List, ComplexMap) := ComplexMap => truncateMatrixOpts >> opts -> (degs, f) -> (
     d := degree f;
     C := truncate(degs, source f, opts);
@@ -857,7 +864,7 @@ extend(Complex,Complex,Matrix) := ComplexMap => opts -> (D, C, f) -> extend(D, C
 -- sign convention: Using Conrad (Grothendieck Duality) sign choice for cone, pg 8 of intro. 
 -- NOTE: one could extend this to complex maps which commute, but have nonzero degree,
 --  IF this would be useful at all.
-cone ComplexMap := Complex => f -> (
+cone ComplexMap := Complex => f -> f.cache.cone ??= (
     if not isComplexMorphism f then 
         error "expected a complex morphism";
     B := source f;

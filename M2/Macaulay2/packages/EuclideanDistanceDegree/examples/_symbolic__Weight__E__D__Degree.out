@@ -1,0 +1,24 @@
+-- -*- M2-comint -*- hash: 8919791488280722637
+
+i1 : R = QQ[x,y];
+
+i2 : F = {x^2 + y^2 - 1};
+
+i3 : (U,W) = ({12, 23}, {15, 331});
+
+i4 : UED = determinantalUnitEDDegree F
+
+o4 = 2
+
+i5 : GED = determinantalGenericEDDegree F
+
+o5 = 4
+
+i6 : ICP = symbolicWeightEDDegree(F, U, W, ReturnCriticalIdeal => true)
+
+                                    2    2
+o6 = ideal (316x*y - 7613x + 180y, x  + y  - 1)
+
+o6 : Ideal of R
+
+i7 : 

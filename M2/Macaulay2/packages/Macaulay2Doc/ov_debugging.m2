@@ -13,8 +13,10 @@ document {
 	TO "assert",
 	TO "generateAssertions",
 	TO "benchmark",
+	TO "breakpoint",
 	TO "Browse::browse",
 	TO "code",
+	TO "finish",
 	TO "current",
 	TO "currentPosition",
 	TO "lineNumber", -- TODO: rename to currentLineNumber
@@ -602,6 +604,26 @@ document {
      beforehand.",
      }
 
+document {
+  Key => "breakpoint",
+  Headline => "set a breakpoint to stop execution at a particular point in the code and enter the debugger",
+  Usage => "breakpoint s",
+  Consequences => {
+    {"At the time the code including ", TT "breakpoint s", " is executed, the execution will stop right before ",
+    TT "s", ", and the debugger will be entered."},
+  },
+  PARA { "Setting a breakpoint is a way to stop execution at a particular point in the code and enter the debugger.
+  Then, commands like ", TT "step", " ", TT "continue", " ", TT "finish", " and so on as in the following demonstration." },
+  EXAMPLE lines ///
+  load "Macaulay2Doc/demos/demo2.m2"
+  code h
+  h 1 
+  step 
+  finish 
+  ///,
+  SeeAlso => {"step", "continue", "finish", "break", "error"}
+}
+
 undocumented {(code, Nothing)}
 
 document {
@@ -682,6 +704,38 @@ document {
 	  EXAMPLE "code methods use"
 	  },
      SeeAlso => {"edit", "methods"}
+     }
+
+document {
+     Key => "finish",
+     Headline => "finish the current stack frame in the debugger",
+     Usage => "finish",
+     Inputs => {},
+     Consequences => {
+	  {"This command is defined within the debugger.  The current expression is executed and execution
+	       is continued until either (i) another stopping condition is encountered or (ii) the current stack frame is finished
+         running." }
+	  },
+     PARA {
+	  "One useful way to debug code suspected of being in error is to insert an explicit breakpoint, such
+	  as ", TT ///breakpoint "debug me"///, ", and start stepping from there. Once you have found the issue
+    within a function, you can call ", TT ///finish///, " to finish the function call.
+    In the following example, the function ", TT ///G///, " calls the function ", TT ///F///, " which has a
+    breakpoint defined inside of it. We execute ", TT ///G(1)///, " which will stop at the defined breakpoint.
+    We can step to get the next line. Once we see that next line, we want to run through the rest of the call to ",
+    TT ///F///, " but stop as soon as we get back up to the main call of ", TT ///G///, ". The final call to ", TO "continue",
+    " then finishes the call to ", TT ///G///, "."
+	  },
+     EXAMPLE lines ///
+     load "Macaulay2Doc/demos/demo2.m2"
+     code F
+     code G
+     G(1)
+     step
+     finish
+     continue
+     ///,
+     SeeAlso => { "debugging" , "step" , "continue" }
      }
 
 document {

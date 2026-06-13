@@ -2,8 +2,8 @@
 /* This is from Hanson's code, from his book: C interfaces and implementations.
    I have added c++ ifdef's to be able to use it from C++, MES, July 2002 */
 
-#ifndef TABLE_INCLUDED
-#define TABLE_INCLUDED
+#ifndef M2_TABLE_H_
+#define M2_TABLE_H_
 
 #define T Table_T
 struct T;

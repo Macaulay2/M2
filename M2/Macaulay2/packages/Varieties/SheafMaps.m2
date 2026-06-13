@@ -27,10 +27,6 @@ autotruncate = { MinimalGenerators => false } >> opts -> L -> (
     deg := max apply(L, f -> f.degree);
     apply(L, f -> subtruncate(deg, f.map, opts)))
 
--- TODO: confirm that this is the right choice
--- should regularity defined in Complexes do this??
-regularity' = M -> regularity flattenModule M
-
 -----------------------------------------------------------------------------
 -- SheafHom type declarations and basic constructors
 -----------------------------------------------------------------------------
@@ -157,8 +153,8 @@ SheafMap == SheafMap := Boolean => (psi, phi) -> psi === phi or (
     -- g := if phi.cache.?minimalPresentation then phi.cache.minimalPresentation.map else phi.map;
     -- if f == g then return true;
     -- r := 1 + max(
-    -- 	regularity' target f, regularity' source f,
-    -- 	regularity' target g, regularity' source g);
+    -- 	regularity target f, regularity source f,
+    -- 	regularity target g, regularity source g);
     -- truncate(r, f, MinimalGenerators => false) == truncate(r, g, MinimalGenerators => false))
 
 SheafMap == ZZ := Boolean => (f, n) -> ( if n === 0 then image f == n else matrix(prune f) == n)
@@ -196,7 +192,7 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> F === G 
 	-- TODO: using regularity in won't suffice in the multigraded case,
 	-- and multigradedRegularity may not be optimal. What should methods
 	-- that truncate the base module do instead?
-	r := 1 + max(regularity' F.module, regularity' G.module);
+	r := 1 + max(regularity F.module, regularity G.module);
 	truncate(r, F.module, MinimalGenerators => false),
 	truncate(r, G.module, MinimalGenerators => false));
     -- FIXME: this is incomplete, because we need to store pruning maps or embedding maps
@@ -406,7 +402,7 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     g := matrix f;
     -- truncate the underlying map so it is an isomorphism
     -- TODO: make this more efficient, e.g. look at degrees of ann coker g
-    e := max(regularity' ker g, regularity' coker g);
+    e := max(regularity ker g, regularity coker g);
     -- TODO: this is kludgy, but maybe it works?
     h := try inverse g else inverse truncate(e + 1, g);
     -- then invert and sheafify the new map
@@ -605,7 +601,7 @@ ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F,
         --probably just add in l3, P3, etc., take max as above
 	M = truncate(r, M, MinimalGenerators => false));
     -- TODO: can we truncate at the regularity of homology(f,g) instead?
-    reg := 1 + max(regularity' coker matrix f, regularity' ker matrix g);
+    reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
     -- TODO: verify the Base of the complex
     -- TODO: should lo be used somewhere?
     part_0 ExtLES(M,

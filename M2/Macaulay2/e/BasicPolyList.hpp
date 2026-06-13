@@ -3,7 +3,8 @@
 // This class really doesn't require any ring.
 // Current restriction: the coefficients must be an integral type. TODO: allow infinite precision integers too.
 //   TODO: how should we handle coefficients which are: GF(p^n), QQ, fraction fields? or even polynomials?
-#pragma once
+#ifndef M2_BASICPOLYLIST_HPP
+#define M2_BASICPOLYLIST_HPP
 
 #include "exceptions.hpp"
 
@@ -13,7 +14,7 @@
 #include <iostream>
 
 #include "BasicPoly.hpp"
-#include "PolynomialStream.hpp"
+#include "unused/PolynomialStream.hpp"
 
 class FreeModule;
 class Matrix;
@@ -102,6 +103,7 @@ const Matrix* toMatrix(const FreeModule *target, const BasicPolyList& Fs);
 auto basicPolyListFromString(std::vector<std::string> varNames, std::string polyPerLine) -> BasicPolyList;
 auto basicPolyListFromFile(std::vector<std::string> varNames, std::string fileName) -> BasicPolyList;
 
+#endif
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

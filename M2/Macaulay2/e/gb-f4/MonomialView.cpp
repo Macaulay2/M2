@@ -1,5 +1,5 @@
-#include "MonomialView.hpp"
-#include "../exceptions.hpp"
+#include "gb-f4/MonomialView.hpp"
+#include "exceptions.hpp"
 namespace newf4 {
 
 // a general splice command which handles lcm, product and quotient

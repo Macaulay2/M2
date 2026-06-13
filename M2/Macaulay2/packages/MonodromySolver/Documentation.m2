@@ -27,7 +27,7 @@ doc ///
                     TO monodromySolve
 		    } 
         Text
-            @TO monodromySolve@ is the core function, whose input may be @ofClass PolySystem@ or $ofClass GateSystem$.
+            @TO monodromySolve@ is the core function, whose input may be @ofClass PolySystem@ or @ofClass GateSystem@.
 	    As an additional input, a seed pair consisting of initial parameter and solution values may be provided.
 	    @TO solveFamily@ is a wrapper function that returns specific solutions and parameter values.
 	    @TO sparseMonodromySolve@ is a blackbox solver for systems without parameters, that calls the core function.
@@ -195,12 +195,26 @@ doc ///
 	    in parameter space
         PS:System
 	    with parameters as coefficients
+        GS:GateSystem
+            a gate system with parameters
     Outputs
         equations:List
             containing equations of system with parameters specialized at p0
+        G0:GateSystem
+            the gate system obtained by specializing the parameters of GS
     Headline
-            specialize parametric system at a point in the parameter space.///
-    
+            specialize parametric system at a point in the parameter space.
+    Description
+        Text
+            Specializes the parameters of a parametric system at the point
+            @TT "p0"@.
+        Example
+            R = CC[a,b][x,y];
+            F = polySystem {a*x+b*y, x^2-y};
+            p0 = point {{2,3}};
+            specializeSystem(p0,F)
+    ///
+
 doc ///
     Key
         createSeedPair
@@ -569,8 +583,20 @@ doc ///
     Description
         Text
             This only works on graphs which have been modified by a solver.
+        Example
+	    setRandomSeed 0;
+            declareVariable \ {A,B,C,D,X,Y};
+            F = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}});
+            (p0,x0) = createSeedPair F;
+            time (V,npaths) = monodromySolve(F,p0,{x0},NumberOfEdges=>3,NumberOfNodes=>5,TargetSolutionCount=>4,Verbose=>false);
+            getTrackTime V.Graph
+	Text
+	    time measures the elapsed time for the whole call, including graph construction, and other overhead.
+	    {\tt getTrackTime} reports only the cumulative time spent tracking paths along edges of the homotopy graph.
     SeeAlso    
         "elapsedTime"
+        "monodromySolve"
+        "HomotopyGraph"
     ///
     
 doc ///
@@ -601,32 +627,6 @@ doc ///
             (L, npaths) = dynamicFlowerSolve(polys.PolyMap,p0,{x0})
     ///   
 
-doc ///
-    Key
-        appendPoint
-        (appendPoint, PointArray, AbstractPoint)
-    Headline
-        append a point at the end of a PointArray
-    Usage
-        appendPoint(A,p)
-    Inputs
-        A:PointArray
-        p:AbstractPoint
-    ///
-
-doc ///
-    Key
-        appendPoints
-        (appendPoints, PointArray, List)
-    Headline
-        append a list of points at the end of a PointArray
-    Usage
-        appendPoints(A,L)
-    Inputs
-        A:PointArray
-        L:List
-    ///    
- 
 doc ///
     Key
         completeGraphInit
@@ -677,85 +677,37 @@ doc ///
 
 doc ///
     Key
-        pointArray
-    Headline
-        constructor for PointArray
-    Usage
-        A = pointArray L
-    Inputs
-        L:List
-            containing objects of type @TO AbstractPoint@
-    Outputs
-        A:PointArray
-    ///
-
-doc ///
-    Key
         PointArray
-    Headline
-            a container for solutions
-    Description
-        Text
-            PointArray is a data structure that organizes the solutions found
-            by a solver. Each @TO HomotopyNode @ object V has an associated
-            PointArray accessed via V.PartialSols. A "fingerprinting"
-            scheme allows for equality of points to be checked quickly.        
-    ///
-
-doc ///
-    Key
+        pointArray
+        appendPoint
+        (appendPoint, PointArray, AbstractPoint)
+        appendPoints
+        (appendPoints, PointArray, List)
         (indices,PointArray)
-    Headline
-        returns indices of a PointArray
-    Usage
-        indices A
-    Inputs
-        A:PointArray
-    SeeAlso
-        "indices"
-    ///
-
-
-doc ///
-    Key
         (length, PointArray)
-    Headline
-        number of items stored in a PointArray
-    Usage
-        length A
-    Inputs
-        A:PointArray
-    SeeAlso
-        "length"
-    ///
-
-doc ///
-    Key
         (net, PointArray)
-    Headline
-        pretty printing
-    Usage
-        net A 
-    Inputs
-        A:PointArray
-    SeeAlso
-        "Net"
-    ///
-
-doc ///
-    Key
         (member, AbstractPoint, PointArray)
     Headline
-        test point membership in a PointArray
-    Usage
-        member(p,A)
-    Inputs
-        p:AbstractPoint
-        A:PointArray
-    SeeAlso
-        "member"
-    ///
+        a container for numerical points
+    Description
+        Text
+            PointArray is a data structure that organizes the solutions found by a solver.
+	    Each @TO "HomotopyNode"@ object V has an associated PointArray accessed via V.PartialSols.
+	    A "fingerprinting" scheme allows for equality of points to be checked quickly.
 
+        Example
+            A = pointArray {}
+            p = point {{0,0}}
+            q = point {{1,0}}
+            r = point {{0,1}}
+            appendPoint(A,p)
+            length A
+            appendPoints(A,{q,r})
+            net A
+            length A
+            indices A
+            member(q,A)
+    ///
 
 doc ///
     Key

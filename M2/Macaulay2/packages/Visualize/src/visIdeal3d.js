@@ -1,12 +1,11 @@
 import * as THREE from "three";
 
-$('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
+$("#side").BootSideMenu({ side: "right", closeOnClick: false, width: "230px" });
 
-$(document).ready(function(){
-
+$(document).ready(function () {
   // show the ideal generators when clicked
-  $("#idealGens").on("click", function(){
-    $(this).html("Ideal Generators: "  + labels);
+  $("#idealGens").on("click", function () {
+    $(this).html("Ideal Generators: " + labels);
   });
 });
 
@@ -121,7 +120,8 @@ function init() {
   material = new THREE.MeshBasicMaterial({ color: 0x333333 });
   group = new THREE.Object3D();
   geometry = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(0, 0, 0)]);
+    new THREE.Vector3(0, 0, 0),
+  ]);
   const s = 1;
   const cube = new THREE.BoxGeometry(s, s, s);
   const edges = new THREE.EdgesGeometry(cube);
@@ -160,7 +160,8 @@ function init() {
 
   let lineGeometry = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-1, -1, -1),
-    new THREE.Vector3(-1, -1, maxX + 3)]);
+    new THREE.Vector3(-1, -1, maxX + 3),
+  ]);
   let line = new THREE.Line(lineGeometry, lineMaterial);
   group.add(line);
   lineMaterial = new THREE.LineBasicMaterial({
@@ -170,7 +171,8 @@ function init() {
   });
   lineGeometry = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-1, -1, -1),
-    new THREE.Vector3(maxY + 3, -1, -1)]);
+    new THREE.Vector3(maxY + 3, -1, -1),
+  ]);
   line = new THREE.Line(lineGeometry, lineMaterial);
   group.add(line);
   lineMaterial = new THREE.LineBasicMaterial({
@@ -180,7 +182,8 @@ function init() {
   });
   lineGeometry = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-1, -1, -1),
-    new THREE.Vector3(-1, maxZ + 3, -1)]);
+    new THREE.Vector3(-1, maxZ + 3, -1),
+  ]);
   line = new THREE.Line(lineGeometry, lineMaterial);
   group.add(line);
 
@@ -284,4 +287,3 @@ function onMouseWheel(event) {
   var wheelData = event.detail ? event.detail : event.wheelDelta;
   console.log(event);
 }
-

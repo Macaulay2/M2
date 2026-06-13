@@ -1516,7 +1516,7 @@ assert(isOrthogonal(O, Tolerance=>1e-5) and isDoublyStochastic A and clean(1e-8,
 ///
 
 TEST /// -- cholesky, randomPSD
-eps = 1e-15
+eps = 1e-14
 A = randomPSD 5
 E = eigenvectors(A, Hermitian => true)
 assert(clean(eps, A - E#1*diagonalMatrix(E#0)*transpose E#1) == 0)

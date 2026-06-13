@@ -11,9 +11,7 @@ dummydebugger(f:Frame,c:Code):Expr := (
     nullE);
 export debuggerpointer := dummydebugger;
 
--- enters the debugger (defined in interp.dd) at that spot
-breakpoint(c:Code):Expr := debuggerpointer(localFrame, c);
-setupop(breakpointS, breakpoint);
+
 
 export tostring(c:Code):string := (
     when c

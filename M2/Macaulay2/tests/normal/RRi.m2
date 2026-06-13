@@ -137,6 +137,8 @@ assert(promote(toCCi 2, R) == 2)
 f = map(CCi_53, RRi_53)
 assert Equation(f 2, toCCi 2)
 
+assert Equation(0.1 * matrix interval(1 + ii), matrix interval(0.1 + 0.1*ii))
+
 --- TO FIX: ---------------------------------------------
 
 -*

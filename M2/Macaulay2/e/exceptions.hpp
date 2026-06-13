@@ -1,5 +1,5 @@
-#ifndef _exceptions_h_
-#define _exceptions_h_
+#ifndef M2_EXCEPTIONS_HH_
+#define M2_EXCEPTIONS_HH_
 
 #include <stdexcept>
 #include <string>

@@ -1191,3 +1191,347 @@ assert(all(0..3, n -> (
     source cmn == target cmn and cmn == id_(source cmn)
     )))
 ///
+
+-- ============================================================
+-- minimizeDGModule + isMinimalSemifreeResolution (strengthened):
+-- Locks in the fix for the bug where minimalSemifreeResolution could
+-- leave residual scalar-unit entries (non-minimal over the DG algebra)
+-- and where isMinimalSemifreeResolution previously accepted any
+-- non-acyclic complex that happened to have aug-ideal entries.
+-- ============================================================
+
+-- Test: on a complete intersection, minimal A-semifree resolution
+-- per-degree ranks match Tor^S(M_S, k) by uniqueness of minimal res.
+TEST ///
+kk = ZZ/101
+P = kk[a,b]
+Q = P/(ideal(a^2, b^2))
+A = koszulComplexDGA ideal Q
+M = coker vars P
+F = minimalSemifreeResolution(A, M, EndDegree => 3)
+-- Expected: ranks = Betti numbers of k over Q = {1, 2, 3, 4, 5}.
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+assert(ranks == {1, 2, 3, 4, 5})
+assert(isMinimalSemifreeResolution F)
+-- Idempotent post-processing.
+F2 = minimizeDGModule F
+ranks2 = apply(max(F2.Degrees / first) + 1, d -> #select(F2.Degrees, e -> first e == d))
+assert(ranks == ranks2)
+///
+
+-- Test: the HMF Omega^3 regression case. Original algorithm gave a
+-- non-minimal output at hom-deg >= 2 (rank 14 at deg 2 instead of 13);
+-- patched gives the canonical minimal Betti numbers from Tor^S(M3, k).
+-- Uses EndDegree => 1 to keep the check fast while still exhibiting
+-- the raw-vs-minimized discrepancy.
+TEST ///
+kk = ZZ/101
+P = kk[a, b, c]
+Q = P/ideal(a^4, b^4, c^4)
+A = koszulComplexDGA ideal Q
+phi = map(Q, P)
+NS = coker (phi matrix{{P_0, P_1, P_2}, {P_1, P_2, P_0}})
+Fres = freeResolution(NS, LengthLimit => 4)
+M3 = coker Fres.dd_4
+MR = pushForward(map(Q, P), M3)
+F = minimalSemifreeResolution(A, MR, EndDegree => 1)
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+assert(ranks == {6, 9, 13})
+assert(isMinimalSemifreeResolution F)
+-- Without post-processing we get the older (non-minimal) ranks.
+Fraw = minimalSemifreeResolution(A, MR, EndDegree => 1, Minimize => false)
+rawRanks = apply(max(Fraw.Degrees / first) + 1, d -> #select(Fraw.Degrees, e -> first e == d))
+assert(rawRanks == {6, 10, 14})  -- pre-fix behavior: 2 extra contractible gens
+-- The unminimized output is still acyclic (just has scalar units).
+assert(not isMinimalSemifreeResolution Fraw)
+-- Minimizing the raw output agrees with the direct (Minimize=>true) call.
+Fmin = minimizeDGModule Fraw
+minRanks = apply(max(Fmin.Degrees / first) + 1, d -> #select(Fmin.Degrees, e -> first e == d))
+assert(minRanks == {6, 9, 13})
+///
+
+-- Test: acyclicClosure on ideals with mixed-degree generators
+-- (previously errored with "expected all degrees to have length L" in
+-- adjoinVariables when A.isHomogeneous = false but A.Degrees has
+-- length-2 elements; fix pads the new cycle degrees with zeros to
+-- match). Example: numerical semigroup k[t^3, t^4, t^5] whose
+-- defining ideal in k[a,b,c] has generators of degrees {2, 3, 3}.
+TEST ///
+kk = ZZ/101
+P = kk[a, b, c]
+I = ideal(b^2 - a*c, a^2*b - c^2, a^3 - b*c)
+Q = P/I
+K = koszulComplexDGA I
+-- This was the failing call before the fix:
+A = acyclicClosure(K, EndDegree => 3)
+assert(A =!= null)
+-- And the downstream min semifree resolution should now match Tor^R(k, k):
+F = minimalSemifreeResolution(A, coker vars P, EndDegree => 2)
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+expected = apply(toList(0..3), i -> rank (freeResolution(coker vars Q, LengthLimit => 4))_i)
+assert(ranks == take(expected, #ranks))
+assert(isMinimalSemifreeResolution F)
+///
+
+-- Test: strengthened isMinimalSemifreeResolution rejects non-acyclic
+-- complexes that happen to have aug-ideal entries.  Construct a
+-- deliberately broken DGModule by deleting a generator that was killing
+-- a cycle, and check the predicate returns false.
+TEST ///
+debug DGAlgebras
+kk = ZZ/101
+P = kk[a, b]
+Q = P/ideal(a^2, b^2)
+A = koszulComplexDGA ideal Q
+M = coker vars P
+F = minimalSemifreeResolution(A, M, EndDegree => 3)
+assert(isMinimalSemifreeResolution F)
+-- Surgically construct a broken DGModule with the same generators but
+-- with d(top-deg gen) zeroed out, breaking acyclicity at the next-to-top.
+topDeg = max(F.Degrees / first)
+topIdxs = positions(F.Degrees, d -> first d == topDeg)
+brokenDiffs = apply(#F.diff, k -> if member(k, topIdxs) then 0_(F.natural) else F.diff#k)
+Mbroken = freeDGModule(A, F.Degrees)
+setDiff(Mbroken, brokenDiffs)
+-- All entries that remain are still in aug ideal (we zeroed some out).
+-- But acyclicity at H_{top-1} is now broken.
+assert(not isMinimalSemifreeResolution Mbroken)
+///
+
+-- Test: weighted-grading numerical semigroup k[t^4, t^5, t^6, t^7] —
+-- harder case (5 mixed-degree generators) that wouldn't work in standard
+-- grading. With weighted grading, the defining ideal is homogeneous and
+-- the result matches Tor^Q exactly.
+TEST ///
+kk = ZZ/101
+P = kk[a, b, c, d, Degrees => {4, 5, 6, 7}]
+I = ideal(b^2 - a*c, b*c - a*d, c^2 - a^3, c*d - a^2*b, d^2 - a^2*c)
+assert isHomogeneous I
+Q = P/I
+K = koszulComplexDGA I
+A = acyclicClosure(K, EndDegree => 3)
+F = minimalSemifreeResolution(A, coker vars P, EndDegree => 2)
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+expected = apply(toList(0..3), i -> rank (freeResolution(coker vars Q, LengthLimit => 4))_i)
+assert(ranks == take(expected, #ranks))
+assert(isMinimalSemifreeResolution F)
+///
+
+-- Test: algorithmic consistency invariants —
+--   I1: Minimize=>false then minimizeDGModule gives same result as default.
+--   I2: minimizeDGModule is idempotent.
+--   I3: ranks at lower hom-deg agree across different EndDegree settings.
+-- Fast version on 3-var quadric CI residue field. The case where Minimize
+-- does nontrivial work (raw != minimized) is covered by the HMF Omega^3
+-- regression test above; here we just verify the invariants hold.
+TEST ///
+kk = ZZ/101
+P = kk[a, b, c]
+Q = P/ideal(a^2, b^2, c^2)
+A = koszulComplexDGA ideal Q
+M = coker vars P
+ranksOf = F -> apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+
+-- I1: Minimize-toggle agreement
+Fdir = minimalSemifreeResolution(A, M, EndDegree => 2)
+Fraw = minimalSemifreeResolution(A, M, EndDegree => 2, Minimize => false)
+FrawMin = minimizeDGModule Fraw
+assert(ranksOf Fdir == ranksOf FrawMin)
+
+-- I2: idempotence
+Fmin2 = minimizeDGModule Fdir
+assert(ranksOf Fdir == ranksOf Fmin2)
+
+-- I3: depth monotonicity (ranks at low hom-deg invariant of EndDegree)
+Fshallow = minimalSemifreeResolution(A, M, EndDegree => 2)
+Fdeep = minimalSemifreeResolution(A, M, EndDegree => 3)
+sR = ranksOf Fshallow
+dR = ranksOf Fdeep
+slen = length sR
+assert(take(dR, slen) == sR)
+///
+
+-- SLOW (~22s): the same three invariants exercised on a heavier case
+-- where Minimize actually does nontrivial work (HMF Omega^3 over
+-- (a^4,b^4,c^4), where raw rank 48 vs minimized rank 46), plus a 5-var
+-- quadric CI at EndDeg=4 for the depth-monotonicity check. Kept commented
+-- as enrichment; the fast version above tests the same invariants.
+-*
+TEST ///
+kk = ZZ/101
+P = kk[a, b, c]
+Q = P/ideal(a^4, b^4, c^4)
+A = koszulComplexDGA ideal Q
+phi = map(Q, P)
+NS3 = coker (phi matrix{{P_0, P_1, P_2}, {P_1, P_2, P_0}})
+Fres = freeResolution(NS3, LengthLimit => 4)
+M3 = coker Fres.dd_4
+MR3 = pushForward(phi, M3)
+
+ranksOf = F -> apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+
+Fdir = minimalSemifreeResolution(A, MR3, EndDegree => 2)
+Fraw = minimalSemifreeResolution(A, MR3, EndDegree => 2, Minimize => false)
+FrawMin = minimizeDGModule Fraw
+assert(ranksOf Fdir == ranksOf FrawMin)
+
+Fmin2 = minimizeDGModule Fdir
+assert(ranksOf Fdir == ranksOf Fmin2)
+
+P5 = kk[a, b, c, d, e]
+Q5 = P5/ideal(a^2, b^2, c^2, d^2, e^2)
+A5 = koszulComplexDGA ideal Q5
+M5 = coker vars P5
+Fshallow = minimalSemifreeResolution(A5, M5, EndDegree => 2)
+Fdeep = minimalSemifreeResolution(A5, M5, EndDegree => 4)
+sR = ranksOf Fshallow
+dR = ranksOf Fdeep
+slen = length sR
+assert(take(dR, slen) == sR)
+///
+*-
+
+-- Test: an HMF Omega^3 case over a 3-var quadric CI — exercises the
+-- pushForward -> HMF -> minimalSemifreeResolution pipeline on a small
+-- non-residue-field input.
+TEST ///
+kk = ZZ/101
+P = kk[a, b, c]
+Q = P/ideal(a^2, b^2, c^2)
+A = koszulComplexDGA ideal Q
+phi = map(Q, P)
+NS = coker (phi matrix{{P_0, P_1, P_2}, {P_1, P_2, P_0}})
+F = freeResolution(NS, LengthLimit => 4)
+M3 = coker F.dd_4
+MR3 = pushForward(phi, M3)
+Fres3 = minimalSemifreeResolution(A, MR3, EndDegree => 2)
+ranks = apply(max(Fres3.Degrees / first) + 1, d -> #select(Fres3.Degrees, e -> first e == d))
+expected = apply(toList(0..3), i -> rank (freeResolution(M3, LengthLimit => 3))_i)
+assert(ranks == take(expected, #ranks))
+assert(isMinimalSemifreeResolution Fres3)
+///
+
+-- SLOW (~38s): a deep HMF case (Omega^9) over (a^4,b^4,c^4). Exercises
+-- the algorithm on a deeper resolution with larger ranks. Kept commented
+-- as enrichment; the fast version above exercises the HMF code path
+-- much more cheaply.
+-*
+TEST ///
+kk = ZZ/101
+P = kk[a, b, c]
+Q = P/ideal(a^4, b^4, c^4)
+A = koszulComplexDGA ideal Q
+phi = map(Q, P)
+NS = coker (phi matrix{{P_0, P_1, P_2}, {P_1, P_2, P_0}})
+F = freeResolution(NS, LengthLimit => 10)
+M9 = coker F.dd_10
+MR9 = pushForward(phi, M9)
+Fres9 = minimalSemifreeResolution(A, MR9, EndDegree => 2)
+ranks = apply(max(Fres9.Degrees / first) + 1, d -> #select(Fres9.Degrees, e -> first e == d))
+expected = apply(toList(0..3), i -> rank (freeResolution(M9, LengthLimit => 3))_i)
+assert(ranks == take(expected, #ranks))
+assert(isMinimalSemifreeResolution Fres9)
+///
+*-
+
+-- Test: ADE hypersurface singularity (cusp A_2 = k[x,y]/(x^3 + y^2)) —
+-- one of the simplest non-CI-style hypersurface examples from the
+-- Yoshino / Buchweitz-Greuel-Schreyer classification. Verifies the
+-- algorithm on a singularity with classified MCMs.
+TEST ///
+kk = ZZ/101
+P = kk[x, y]
+Q = P/ideal(x^3 + y^2)
+A = koszulComplexDGA ideal Q
+F = minimalSemifreeResolution(A, coker vars P, EndDegree => 5)
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+expected = apply(toList(0..6), i -> rank (freeResolution(coker vars Q, LengthLimit => 6))_i)
+assert(ranks == take(expected, #ranks))
+assert(isMinimalSemifreeResolution F)
+///
+
+-- Test: generic determinantal — k over k[x_{ij}]/I_2(2x3 generic matrix).
+-- A classic non-CI example. Eagon-Northcott / Hilbert-Burch territory
+-- (Eisenbud "Geometry of Syzygies" Ch.6).
+TEST ///
+kk = ZZ/101
+P = kk[x_(1,1), x_(1,2), x_(1,3), x_(2,1), x_(2,2), x_(2,3)]
+Mgen = matrix{{x_(1,1), x_(1,2), x_(1,3)}, {x_(2,1), x_(2,2), x_(2,3)}}
+I = minors(2, Mgen)
+Q = P/I
+K = koszulComplexDGA I
+A = acyclicClosure(K, EndDegree => 2)
+F = minimalSemifreeResolution(A, coker vars P, EndDegree => 2)
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+expected = apply(toList(0..3), i -> rank (freeResolution(coker vars Q, LengthLimit => 3))_i)
+assert(ranks == take(expected, #ranks))
+assert(isMinimalSemifreeResolution F)
+///
+
+-- Test: Avramov-Buchweitz "line support variety" example. R/(a) over
+-- R = k[a,b]/(a^2, b^2). Support variety is a hyperplane in 1-dim
+-- projective space (i.e., a point), giving a periodic resolution.
+TEST ///
+kk = ZZ/101
+P = kk[a, b]
+Q = P/ideal(a^2, b^2)
+A = koszulComplexDGA ideal Q
+phi = map(Q, P)
+MQ = coker matrix{{phi a}}
+MR = pushForward(phi, MQ)
+F = minimalSemifreeResolution(A, MR, EndDegree => 5)
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+-- Periodic resolution: ranks {1, 1, 1, 1, 1, 1, ...} (all ones)
+assert(all(ranks, r -> r == 1))
+assert(#ranks >= 6)
+assert(isMinimalSemifreeResolution F)
+///
+
+-- Test: Twisted cubic in P^3 — coordinate ring of P^1 embedded in P^3
+-- via cubic monomials. Cohen-Macaulay but not Gorenstein.
+TEST ///
+kk = ZZ/101
+P = kk[a, b, c, d]
+I = minors(2, matrix{{a, b, c}, {b, c, d}})
+Q = P/I
+K = koszulComplexDGA I
+A = acyclicClosure(K, EndDegree => 2)
+F = minimalSemifreeResolution(A, coker vars P, EndDegree => 2)
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+expected = apply(toList(0..3), i -> rank (freeResolution(coker vars Q, LengthLimit => 3))_i)
+assert(ranks == take(expected, #ranks))
+assert(isMinimalSemifreeResolution F)
+///
+
+-- Test: Reiten trivial extension k[x] ⋉ k = k[x,y]/(y^2, xy).
+-- Produces Fibonacci-like growth in Betti numbers.
+TEST ///
+kk = ZZ/101
+P = kk[x, y]
+I = ideal(y^2, x*y)
+Q = P/I
+K = koszulComplexDGA I
+A = acyclicClosure(K, EndDegree => 3)
+F = minimalSemifreeResolution(A, coker vars P, EndDegree => 3)
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+-- Fibonacci-like sequence
+assert(ranks == {1, 2, 3, 5, 8})
+assert(isMinimalSemifreeResolution F)
+///
+
+-- Test: A_3-type matrix factorization module on k[x,y]/(x^4 - y^2).
+-- Periodic resolution of period 2 (Eisenbud's MF theory).
+TEST ///
+kk = ZZ/101
+P = kk[x, y]
+Q = P/ideal(x^4 - y^2)
+A = koszulComplexDGA ideal Q
+phi = map(Q, P)
+MQ = coker matrix{{phi(x^2 - y)}}
+MR = pushForward(phi, MQ)
+F = minimalSemifreeResolution(A, MR, EndDegree => 4)
+ranks = apply(max(F.Degrees / first) + 1, d -> #select(F.Degrees, e -> first e == d))
+-- MF module has rank-1 periodic resolution
+assert(ranks == {1, 1, 1, 1, 1, 1})
+assert(isMinimalSemifreeResolution F)
+///

@@ -1007,4 +1007,96 @@ S = ZZ/101[a,b];
             assert(f*h1 == id_(D**C))
 ///
 
+-- eulerMF: Koszul matrix factorization with respect to the Jacobian ideal
+TEST ///
+R = ZZ/101[x,y,z];
+f = x^2*y - y^3;
+K = eulerMF f;
+assert((isdFactorization K)_0)
+assert(isWellDefined K)
+///
+
+-- monomialMF: trivial d-fold factorization of a degree-d monomial
+TEST ///
+Q = QQ[x,y,z];
+f = x*y^2*z^3;
+C = monomialMF f;
+assert((isdFactorization C)_0)
+assert(period C == 6)
+assert(potential C == f)
+///
+
+-- collapseMF: collapse a d-fold factorization to (d-1)-fold by composing two differentials
+TEST ///
+Q = QQ[x_1,x_2,x_3];
+C = ZZdfactorization {x_1,x_2,x_3};
+C1 = collapseMF(C,1);
+assert((isdFactorization C1)_0)
+assert(period C1 == period C - 1)
+assert(potential C1 == potential C)
+///
+
+-- trivialMF: the trivial matrix factorization of an element f
+TEST ///
+Q = ZZ/101[a,b,c];
+f = a^3+b^3+c^3;
+T = trivialMF(Q^3, f);
+assert((isdFactorization T)_0)
+assert(isWellDefined T)
+assert(potential T == f)
+///
+
+-- fullCollapse: collapse a d-fold factorization to a 2-fold factorization
+TEST ///
+Q = ZZ/101[a,b];
+C = linearMF(a^4+b^4, t);
+Cc = fullCollapse(C,2,1);
+assert((isdFactorization Cc)_0)
+assert(period Cc == 2)
+///
+
+-- higherHomotopyFactorization: matrix factorization from a system of higher homotopies
+TEST ///
+S = ZZ/101[x,y,z];
+K = koszulComplex vars S;
+H = higherHomotopyFactorization({x^2,y^2,z^2}, K);
+assert((isdFactorization H)_0)
+H2 = higherHomotopyFactorization(x^3+y^3+z^3, K);
+assert((isdFactorization H2)_0)
+///
+
+-- zeroOutDegrees / toBranchedCover / branchedToMF: factorization <-> MCM module over a branched cover
+TEST ///
+S = zeroOutDegrees (ZZ/101[a..c]);
+C = koszulMF(a^3+b^3+c^3);
+M = toBranchedCover(C,z);
+liftM = sub(M, ambient ring M);
+assert(prune ker liftM == 0)
+assert((isdFactorization branchedToMF(M, S))_0)
+///
+
+-- mooreMF: the Moore matrix factorization
+TEST ///
+F = mooreMF 0;
+assert((isdFactorization F)_0)
+assert(isWellDefined F)
+assert(period F == 2)
+///
+
+-- rk1MCM2gen: rank-1 2-generated MCM modules over the Fermat cubic in 4 variables
+TEST ///
+F = rk1MCM2gen({2,3,4}, 0);
+assert((isdFactorization F)_0)
+assert(isWellDefined F)
+///
+
+-- adjointFactorization: the factorization of det M given by the classical adjoint
+TEST ///
+Q = QQ[x_(1,1)..x_(3,3)];
+M = genericMatrix(Q,3,3);
+F = adjointFactorization M;
+assert((isdFactorization F)_0)
+assert(potential F == determinant M)
+///
+
 

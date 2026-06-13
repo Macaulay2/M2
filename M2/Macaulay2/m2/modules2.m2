@@ -178,9 +178,11 @@ addHook((minimalPresentation, Module), (opts, M) -> (
 	  if R === ZZ then (
 	       f := presentation M;
 	       (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
-	       piv := select(pivots g,ij -> abs g_ij === 1);
+           pivs := pivots g;
+	       piv := select(pivs, ij -> abs g_ij === 1);
 	       rows := first \ piv;
-	       cols := last \ piv;
+           pivs = last \ pivs;
+           cols := last \ piv | select(toList(0..numColumns f - 1), i -> not isMember(i, pivs));
 	       (g,ch) = (submatrix'(g,rows,cols),submatrix'(ch,rows,));
 	       N := cokernel g;
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way

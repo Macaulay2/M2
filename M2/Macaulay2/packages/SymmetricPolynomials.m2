@@ -86,7 +86,16 @@ document {
 	Headline => "the algebra of symmetric polynomials",
 	PARA{"This package uses an explicit description of the Groebner basis of the ideal of obvious relations in this algebra based on:"},
 	PARA{"Grayson, Stillmann - Computations in the intersection theory of flag varieties, preprint, 2009"},
-	PARA{"Sturmfels - Algorithms in Invariant Theory, Springer Verlag, Vienna, 1993"}
+	PARA{"Sturmfels - Algorithms in Invariant Theory, Springer Verlag, Vienna, 1993"},
+	PARA{"Use ", TO elementarySymmetric, " to express a symmetric polynomial in terms of elementary symmetric functions, and use ", TO (elementarySymmetric,PolynomialRing), " to construct the corresponding map."},
+	EXAMPLE lines ///
+		n=5;
+		R=QQ[x_1..x_n];
+		f=(product gens R)*(sum gens R);
+		elementarySymmetric f
+		elementarySymmetric R
+	///,
+	SeeAlso => {elementarySymmetric, buildSymmetricGB}
 }
 
 document {
@@ -167,4 +176,22 @@ document {
 	PARA{"This function should work up to a size of 15 variables in the base ring"},
 	PARA{"This function is part of the package SymmetricPolynomials."}
 }
+
+-- buildSymmetricGB test
+TEST ///
+    R = QQ[x_1..x_2]
+    GB = buildSymmetricGB(R)
+    S = ring GB#0
+    assert(GB == {x_2^2-x_2*e_1+e_2,-x_1-x_2+e_1})
+///
+
+-- elementarySymmetric test
+TEST ///
+    R = QQ[x_1..x_5]
+    f = (product gens R)*(sum gens R)
+    E = elementarySymmetric f
+    R = ring E
+    assert(E == e_1*e_5)
+///
+
 end

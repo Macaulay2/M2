@@ -231,6 +231,8 @@ then DOCUMENTATION="html info"
 elif test "$DOCUMENTATION" = download
 then DOCUMENTATION=""
      BUILDLIST="$BUILDLIST Macaulay2-docs"
+     AC_CHECK_PROGS(GETCONF,getconf,false)
+     AS_IF([test $GETCONF = false], AC_MSG_ERROR([getconf is required]))
 else for DOCTYPE in $DOCUMENTATION
     do case $DOCTYPE in
             html|pdf)
@@ -445,14 +447,6 @@ AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,pr
 AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS=$enableval)
 AC_SUBST(SHARED,yes)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--disable-shared,disable building of shared libraries), SHARED=$enableval)
 
-dnl Under Mac OS X 10.15 the Gatekeeper makes it impossible for us to distribute shared libraries with our program to end users in disk image (*.dmg) format:
-dnl ... but we've given up on trying to satisfy the gatekeeper.  There is a strange error message when we try to link with libgmp.a:
-dnl     ld: illegal text-relocation to '___gmp_binvert_limb_table' in /Users/runner/runners/2.263.0/work/M2/M2/M2/BUILD/cicd/usr-host/lib/libgmp.a(mp_minv_tab.o) from '___gmpn_divexact_1' in /Users/runner/runners/2.263.0/work/M2/M2/M2/BUILD/cicd/usr-host/lib/libgmp.a(dive_1.o) for architecture x86_64
-dnl if test "$ISSUE_FLAVOR" = "MacOS"
-dnl then SHARED=no
-dnl      AC_MSG_NOTICE([disabling the building of shared libraries under Mac OS X])
-dnl fi
-
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" ENABLE_STRIP=no
 
@@ -520,21 +514,6 @@ then if test "$OPTIMIZE" = no
      fi
      if test "$DEBUG" = yes
      then AC_MSG_ERROR([--enable-debug and --enable-freebsd both specified])
-     fi
-fi
-
-AC_SUBST(DMG,no)
-AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS)), DMG=$enableval)
-if test "$DMG" = yes 
-then if test "$OPTIMIZE" = no
-     then AC_MSG_ERROR([--disable-optimize and --enable-dmg both specified])
-     fi
-     if test "$DEBUG" = yes
-     then AC_MSG_ERROR([--enable-debug and --enable-dmg both specified])
-     fi
-     if test $SHARED = yes
-     then SHARED=no
-          AC_MSG_WARN([--enable-dmg specified, so disabling the building of shared libraries])
      fi
 fi
 
@@ -611,7 +590,7 @@ AC_SUBST(BUILTLIBS)
 AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest tbb memtailor mathic mathicgb eigen ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
-AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty lrslib topcom cohomcalg msolve")
+AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty lrslib topcom cohomcalg msolve palp")
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
@@ -674,7 +653,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty lrslib msolve)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty lrslib msolve palp)]),
     [for i in $enableval
      do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
@@ -988,16 +967,8 @@ PATH=$SAVE
 
 AC_MSG_CHECKING(whether the package cohomcalg is installed)
 if command -v cohomcalg > /dev/null
-then if test "$OS" = Darwin -a "$DMG" = yes
-     then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
-          # the user just copies a directory tree to /Applications.  Change this when
-	  # porting to homebrew.
-     	  # Also, the package CohomCalg looks only in the directory where Macaulay2's binaries are
-	  AC_MSG_RESULT([yes, will build anyway])
-          BUILD_cohomcalg=yes
-     else AC_MSG_RESULT([yes])
-          FILE_PREREQS="$FILE_PREREQS `command -v cohomcalg`"
-     fi
+then AC_MSG_RESULT([yes])
+     FILE_PREREQS="$FILE_PREREQS `command -v cohomcalg`"
 else AC_MSG_RESULT([no, will build])
      BUILD_cohomcalg=yes
 fi
@@ -1005,10 +976,10 @@ fi
 AC_MSG_CHECKING(whether the package gfan is installed)
 if command -v gfan > /dev/null
 then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
-     AX_COMPARE_VERSION([$gfan_version], [ge], [0.6],
+     AX_COMPARE_VERSION([$gfan_version], [ge], [0.8],
           [AC_MSG_RESULT([yes])
            FILE_PREREQS="$FILE_PREREQS `command -v gfan`"],
-          [AC_MSG_RESULT([yes, but < 0.6, will build])
+          [AC_MSG_RESULT([yes, but < 0.8, will build])
            BUILD_gfan=yes])
 else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
@@ -1018,15 +989,7 @@ fi
 
 AC_MSG_CHECKING(whether the package lrs is installed)
 if command -v lrs > /dev/null
-then if test "$OS" = Darwin -a "$DMG" = yes
-     then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
-          # the user just copies a directory tree to /Applications.  Change this when
-	  # porting to homebrew.
-	  AC_MSG_RESULT([yes, will build anyway])
-          BUILD_lrslib=yes
-     else AC_MSG_RESULT(yes)
-          FILE_PREREQS="$FILE_PREREQS `command -v lrs`"
-     fi
+then AC_MSG_RESULT(yes)
 else AC_MSG_RESULT([no, will build])
      BUILD_lrslib=yes
 fi
@@ -1152,6 +1115,15 @@ found and $msolve_min_version is required; will build])
               BUILD_msolve=yes])],
          [AC_MSG_RESULT([no, will build])
           BUILD_msolve=yes])])
+
+dnl TODO: uncomment whne we require palp
+dnl AS_IF([test $BUILD_palp = no],
+dnl [AC_MSG_CHECKING([whether palp is installed])
+dnl  AS_IF([command -v poly.x > /dev/null],
+dnl      [AC_MSG_RESULT([yes])
+dnl       FILE_PREREQS="$FILE_PREREQS `command -v poly.x`"],
+dnl      [AC_MSG_RESULT([no, will build])
+dnl       BUILD_palp=yes])])
 
 AC_LANG([C++])
 AS_IF([test $BUILD_eigen = no],
@@ -2109,7 +2081,6 @@ AC_MSG_NOTICE([staging area for common files: $pre_prefix])
 AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 # Here we define the Macaulay2 layout, once and for all.
-# There is a hidden dependency: see M2/distributions/dmg/Makefile.in and adjust the number "../"s if the basic layout here is changed.
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)

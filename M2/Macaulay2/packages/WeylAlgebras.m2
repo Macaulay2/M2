@@ -18,7 +18,7 @@ newPackage("WeylAlgebras",
 	 "FourTiTwo"
          },
      PackageExports => {
-	 "OldChainComplexes",
+	 "Complexes"
 	 }
      )
 

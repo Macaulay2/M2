@@ -1138,8 +1138,44 @@ assert( (hVector(D))#2 == 6)
 assert( (hVector(D, Flag => true))#{1,1,0,1} == 1)
 ///
 
+-- Direct tests of shellingOrder (return shape + content, since prior tests only exercised it via isShellable)
+TEST ///
+R = QQ[a..e];
+S = simplicialComplex {a*b*c, b*c*d, c*d*e};
+O = shellingOrder S;
+assert(instance(O, List));
+assert(#O == #facets S);
+assert(isShelling O);
+assert(set O === set facets S);
+-- non-shellable input returns the empty list
+assert(shellingOrder simplicialComplex {a*b*c, c*d*e} == {});
+///
 
+-- Tests of the Permutation option of shellingOrder
+TEST ///
+R = QQ[a..e];
+S = simplicialComplex {a*b*c, b*c*d, c*d*e};
+O = shellingOrder(S, Permutation => {2,1,0});
+assert(isShelling O);
+assert(set O === set facets S);
+-- an invalid permutation (not a permutation of 0..n-1) errors
+assert(try (shellingOrder(S, Permutation => {0,1,1}); false) else true);
+-- Random and Permutation are mutually exclusive
+assert(try (shellingOrder(S, Random => true, Permutation => {0,1,2}); false) else true);
+///
 
+-- Tests of the Random option of shellingOrder (seeded for determinism)
+TEST ///
+R = QQ[a..e];
+S = simplicialComplex {a*b*c, b*c*d, c*d*e};
+setRandomSeed 0;
+O = shellingOrder(S, Random => true);
+assert(isShelling O);
+assert(set O === set facets S);
+-- same seed gives the same result
+setRandomSeed 0;
+assert(shellingOrder(S, Random => true) === O);
+///
 
 end
 

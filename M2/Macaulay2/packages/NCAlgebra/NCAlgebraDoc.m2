@@ -4359,7 +4359,8 @@ doc ///
       g I
 ///
 
-doc ///
+"doc" -- MES: can't run this.  Is this a new node, example doesn't exist?
+///
   Key
     (resolution, NCMatrix)
     NCChainComplex

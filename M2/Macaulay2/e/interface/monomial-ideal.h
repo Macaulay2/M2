@@ -1,5 +1,5 @@
-#ifndef _monomial_ideal_h_
-#  define _monomial_ideal_h_
+#ifndef M2_INTERFACE_MONOMIAL_IDEAL_H_
+#define M2_INTERFACE_MONOMIAL_IDEAL_H_
 
 #  include "engine-includes.hpp"
 

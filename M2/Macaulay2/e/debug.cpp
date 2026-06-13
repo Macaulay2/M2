@@ -1,13 +1,13 @@
 #include "debug.hpp"
 #include "text-io.hpp"
-#include "matrix.hpp"
-#include "relem.hpp"
-#include "gbring.hpp"
-#include "res-a1-poly.hpp"
-#include "res-a0-poly.hpp"
+#include "matrices/matrix.hpp"
+#include "ring-elements/ring-element.hpp"
+#include "groebner-computations/gbring.hpp"
+#include "resolutions/res-a1-poly.hpp"
+#include "resolutions/res-a0-poly.hpp"
 #include "hermite.hpp"
-#include "mat.hpp"
-#include "monideal.hpp"
+#include "basic-mutable-matrices/mat.hpp"
+#include "monomials/monideal.hpp"
 
 void showint(mpz_srcptr a)
 {

@@ -7895,6 +7895,260 @@ doc ///
      See the corresponding option explained at @TO SRdeformations@.
 ///
 
+-- addCokerGrading
+TEST ///
+R=QQ[x_0..x_4];
+assert(addCokerGrading(R)==R.grading)
+
+addCokerGrading(R,{1,1,2,2,3});
+assert(addCokerGrading(R,{1,1,2,2,3})==R.grading)
+///
+
+-- addFaceDataToComplex
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+C=idealToComplex(I);
+Cl=newEmptyComplex(R);
+addFaceDataToComplex(Cl,fc C);
+assert(Cl==C)
+///
+
+-- addFacetDataToComplex
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+C=idealToComplex(I);
+Cl=newEmptyComplex(R);
+addFacetDataToComplex(Cl,facets C);
+assert(Cl==C)
+///
+
+-- bigTorusDegree, firstOrderDeformation
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+mg=mingens I;
+f=firstOrderDeformation(mg, vector {-1,-1,0,2,0})
+bigTorusDegree f
+
+assert(instance(f,FirstOrderDeformation))
+assert(instance(bigTorusDegree f, Vector))
+assert(bigTorusDegree f==vector {-1,-1,0,2,0})
+///
+
+--boundaryCyclicPolytope
+TEST ///
+R=QQ[x_0..x_5];
+B=boundaryCyclicPolytope(3,R);
+assert(instance(B,Complex))
+
+assert(isPolytope B==false)
+assert(dim B==2)
+assert(eulerCharacteristic B==1)
+///
+
+--boundaryOfPolytope
+TEST ///
+R=QQ[x_0..x_4];
+C=simplex(R);
+assert(isPolytope C)
+B=boundaryOfPolytope C;
+assert(dim B==3)
+assert(eulerCharacteristic B==-1)
+///
+
+-- closedStar
+TEST ///
+R=QQ[x_0..x_4];
+C=boundaryOfPolytope simplex(R);
+F=C.fc_0_0;
+L1=link(F,C);
+S1=closedStar(F,C);
+F=C.fc_1_0;
+L2=link(F,C);
+S2=closedStar(F,C);
+assert(dim L1!=dim L2)
+assert(dim S1==dim S2)
+assert(eulerCharacteristic L1==1)
+assert(eulerCharacteristic L2==-1)
+///
+
+--coComplex
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+dC=dualize C;
+fdC=fc dC;
+Rdual=simplexRing dC;
+dC1=coComplex(Rdual,fdC);
+assert(dC==dC1)
+///
+
+-- coComplexToIdeal
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+C0=simplex(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+C=idealToComplex(I);
+embeddingComplex C;
+idealToComplex(I,C0);
+complexToIdeal(C);
+cC=idealToCoComplex(I,C0);
+assert(cC==complement C)
+///
+
+--cokerElement
+TEST ///
+A= matrix {{-1, -1, -1}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+c2=cokerElement(vector {1,-1,0,0},A);
+assert(c2==(0_(class c2)))
+assert(iszero c2)
+///
+
+--complex
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+fC=fc C;
+C1=complex(R,fC);
+assert(C==C1)
+///
+
+--complexFromFacets
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+fC=facets C;
+C1=complexFromFacets(R,fC);
+assert(C1==C)
+///
+
+--coordinates
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading R;
+C=simplex R;
+bC=boundaryOfPolytope C;
+F=bC.fc_2_0;
+L=coordinates F
+assert(instance(L,List))
+assert(L=={{-1, -1, -1, -1}, {1, 0, 0, 0}, {0, 1, 0, 0}})
+///
+
+--denominatorMonomial
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+mg=mingens I;
+f=firstOrderDeformation(mg, vector {-1,-1,0,2,0});
+assert(denominatorMonomial f==x_0*x_1)
+///
+
+--dualGrading and dualize
+TEST ///
+R=QQ[x_0..x_4];
+C=simplex(R);
+grading C;
+dA=dualGrading C;
+assert(dA===grading dualize C)
+assert(dA===C.dualComplex.simplexRing.grading)
+///
+
+--edim
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+assert(dim C==2)
+assert(edim C==5)
+///
+
+--face
+TEST ///
+R=QQ[x_0..x_4];
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+C=idealToComplex I;
+F=C.fc_1_0;
+assert(F==face(vert F,C,1,0))
+///
+
+-- faceToMonomial
+TEST ///
+R=QQ[x_0..x_4];
+C=simplex R;
+F=C.fc_2_0;
+assert(faceToMonomial F== x_0*x_1*x_2)
+///
+
+--facets
+TEST ///
+R=QQ[x_0..x_5];
+C=fullCyclicPolytope(3,R);
+L=facets C;
+assert(instance(L,List))
+assert(L_0=={})
+assert(dim C==3)
+assert(edim C==3)
+assert(eulerCharacteristic C==0)
+assert(fvector C=={1,6,12,8,1})
+///
+
+-- gensSource
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+mg=mingens I;
+f=firstOrderDeformation(mg, vector {-1,-1,0,2,0});
+g=gensSource f;
+assert(instance(g, Matrix))
+assert(#g==5)
+///
+
+--intersectFaces
+TEST ///
+R=QQ[x_0..x_4];
+C=simplex R;
+F=C.fc_2_0;
+G=C.fc_2_1;
+FG=intersectFaces(F,G);
+assert(FG.vert=={x_0,x_1})
+H=C.fc_2_2
+FGH=intersectFaces({F,G,H})
+assert(FGH.vert=={x_0})
+///
+
+-- isEquidimensional
+TEST ///
+R=QQ[x_0..x_5];
+C=boundaryCyclicPolytope(3,R);
+assert(isEquidimensional(C))
+
+R=QQ[x_0..x_2];
+I=intersect(ideal(x_0),ideal(x_1,x_2));
+C=idealToComplex I;
+bool=not(isEquidimensional(C))
+assert(bool)
+///
+
+--isNonzero
+TEST ///
+R=QQ[x_0..x_4];
+addCokerGrading(R);
+I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+mg=mingens I;
+f=firstOrderDeformation(mg, vector {-1,-1,0,2,0});
+assert(isNonzero f)
+f1=firstOrderDeformation(mg, vector {-1,-1,2,0,0});
+bool = not(isNonzero(f1));
+assert(bool)
+///
+
 
 -*
 installPackage("SRdeformations")

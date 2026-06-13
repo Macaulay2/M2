@@ -7,10 +7,10 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_JANETTREE_HPP
-#define BIBASIS_JANETTREE_HPP
+#ifndef M2_BIBASIS_JANETTREE_HPP
+#define M2_BIBASIS_JANETTREE_HPP
 
-#include "triple.hpp"
+#include "bibasis/triple.hpp"
 
 namespace BIBasis
 {
