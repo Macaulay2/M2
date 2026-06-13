@@ -1,8 +1,10 @@
+kk = ZZ/101
+
 -- homogeneous ring map with interesting degree map
-R = kk[a, b, DegreeGroup => ZZ^2];
-S = kk[s, t, u, DegreeGroup => ZZ^3]/ideal {s^3, t^5, u^7};
-f = map(S, R, {s^2, t^2*u^3}, DegreeMap => d -> d_0 * {2, 0, 0} + d_1 * {0, 2, 3});
-P = pushForward(f, S^1);
+R = kk[a, b, DegreeGroup => ZZ^2]
+S = kk[s, t, u, DegreeGroup => ZZ^3]/ideal {s^3, t^5, u^7}
+f = map(S, R, {s^2, t^2*u^3}, DegreeMap => d -> d_0 * {2, 0, 0} + d_1 * {0, 2, 3})
+P = pushForward(f, S^1)
 
 -- homogeneity is preserved
 assert(isHomogeneous f)
