@@ -5,12 +5,12 @@ assert try (substitute(v_1,RR);false) else true -- used to crash (<= 1.9.2)
 assert try (substitute(v_{1},RR);false) else true -- used to crash (<= 1.9.2)
 assert(ring lift(v_{1},RR_53) === RR_53)
 
--- issue 473: 
-assert try (sub(matrix{{1.0}},QQ);false) else true -- used to crash (<= 1.9.2)
+-- issue 473:
+assert( sub(matrix{{1.0}}, QQ) == matrix(QQ, 1) ) -- used to crash (<= 1.9.2)
 
 
 f = map(QQ,RR_53)
-assert try (f (matrix{{1.0}}); false) else true  -- used to crash (<= 1.9.2)
+assert (f (matrix{{1.0}}) == matrix(QQ, 1) ) -- used to crash (<= 1.9.2)
 
 C = matrix {{1_CC}}
 assert(ring lift(C,RR) === RR_53) -- works
