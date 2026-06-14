@@ -108,17 +108,13 @@ pushFwd RingMap := Sequence => o -> (f) ->
     (pfB, matB, ringpf)
 )
 
--- use this to cache the computation of the quotient ring B / ann N below so
--- that we can later benefit from caching based on map(B / ann N , B).
-ANNIHILATORCACHE = new CacheTable
-
 pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
     if (cachedModule := getPushFwdModule(N, f, o)) =!= null then
         return cachedModule;
 
     A := source f;
     B := target f;
-    B' := ANNIHILATORCACHE#(B, N) ??= B / ann N; -- N is finite over A iff A -> B' is a finite ring extension
+    B' := B / ann N;
     quot := map(B', B);
     g := quot * f;
     (pfN, pfmat', pf) := makeModule(N ** B', g);
@@ -293,12 +289,8 @@ pushFwdRingHelper = (f) -> (
     (matB, mapf)
 )
 
-PUSHAUXHGSCACHE = new CacheTable
-
 pushAuxHgs = method()
-pushAuxHgs(RingMap) := (f) -> (
-    if PUSHAUXHGSCACHE#?f then return PUSHAUXHGSCACHE#f;
-
+pushAuxHgs(RingMap) := (f) -> f.cache.pushAuxHgs ??= (
     if isInclusionOfCoefficientRing f then (
         if not isModuleFinite target f then error "inclusion of coefficientRing not a finite map.";
 
@@ -324,11 +316,10 @@ pushAuxHgs(RingMap) := (f) -> (
             cfs = map(B^(numrows cfs), B^(numcols cfs), cfs);
             lift(cfs, A)
         );
-        PUSHAUXHGSCACHE#f = (matB, mapf);
+        (matB, mapf)
     ) else (
-        PUSHAUXHGSCACHE#f = pushFwdRingHelper(f);
-    );
-    PUSHAUXHGSCACHE#f
+        pushFwdRingHelper(f)
+    )
 )
 
 isInclusionOfCoefficientRing = method()
