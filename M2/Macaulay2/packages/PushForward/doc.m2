@@ -15,9 +15,9 @@ doc ///
 
             In an algebraic sense, this is really a pull back, but thinking geometrically,
             the functions here implement the push forward of a module (or sheaf).
-
-            This package was originally implemented by Claudiu Raicu, some changes were
-            introduced by Karl Schwede, and later by David Eisenbud and Mike Stillman.
+    Contributors
+        This package was originally implemented by Claudiu Raicu, some changes were
+        introduced by Karl Schwede, and later by David Eisenbud and Mike Stillman.
     Subnodes
         (pushFwd, RingMap)
         (pushFwd, RingMap, Module)
