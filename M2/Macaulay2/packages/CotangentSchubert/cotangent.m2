@@ -65,10 +65,6 @@ expandElem := (P,vrs,els) -> (
 tautoClass = method(Dispatch=>{Thing,Thing,Type},Options=>true); -- "Chern classes" -- renamed tautoClass to avoid confusion with motivic classes
 zeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
 dualZeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
--- FIXME: canonicalClass is exported and documented but no method appears to
--- be installed in setupCotangent's body; calling canonicalClass on any ring
--- produced by setupCotangent (Borel/EquivLoc, equivariant or not) errors with
--- "no method found".  See the doc node at CotangentSchubert.m2:263-272.
 canonicalClass = method(Dispatch=>{Type},Options=>true) -- note the {}
 zeroSectionInv = method(Dispatch=>{Type},Options=>true) -- internal use only
 segreClass = method(Dispatch=>{Thing,Type},Options=>true)
@@ -149,7 +145,8 @@ defineB = (FF,n,Kth,Equiv) -> ( -- TODO remove FF
 
 -- diagonal algebra
 DiagonalAlgebra = new Type of Type;
-DiagonalAlgebra List := (D,l) -> new D from {map(D.Module,(ring D)^1,apply(splice l, i -> {i}))}; -- cannot be new D from List because would break existing Vector code
+-- Infer the source degree as vector does; new D from List breaks inherited Vector code.
+DiagonalAlgebra List := (D,l) -> new D from {map(D.Module,,apply(splice l, i -> {i}))};
 new DiagonalAlgebra from Module := (X,M) -> (
     D := new DiagonalAlgebra of Vector from hashTable { global Module => M };
     new D from Vector := (D,v) -> (
@@ -297,8 +294,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω0#j<ω0#k then 1-FF_0^-2*BB_k*BB_j^(-1) else 1))
 	    else AA -> product(n,j->product(n,k->if ω0#j<ω0#k then -FF_0+BB_j-BB_k else 1)));
-	if curCotOpts.Ktheory then canonicalClass AA :=  { Partial => true} >> o -> (cacheValue (canonicalClass,o.Partial)) (if o.Partial then AA -> lift(canonicalClass(AA,Partial=>false),AA)
-	    else AA -> product(n,j->product(n,k->if ω0#j<ω0#k then BB_k*BB_j^(-1) else 1)));
+	canonicalClass AA := { Partial => true} >> o -> (cacheValue (canonicalClass,o.Partial)) (if o.Partial then AA -> lift(canonicalClass(AA,Partial=>false),AA)
+	    else if curCotOpts.Ktheory then
+	    AA -> product(n,j->product(n,k->if ω0#j<ω0#k then BB_k*BB_j^(-1) else 1))
+	    else AA -> sum(n,j->sum(n,k->if ω0#j<ω0#k then BB_k-BB_j else 0_BB)));
 	zeroSectionInv AA := { Partial => true } >> o -> (cacheValue (zeroSectionInv,o.Partial)) (AA -> (zeroSection(AA,o))^(-1));
 	-- Segre Classes TODO rethink: closure?
 	sClasses AA := {Partial=>true} >> o -> (cacheValue (sClasses,o.Partial)) (if o.Partial then AA -> lift(sClasses(AA,Partial=>false),AA)
@@ -542,16 +541,17 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) }));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) }));
 	    canonicalClass D := {} >> o -> (cacheValue canonicalClass) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_(j+1)^-1*FF_(k+1) else 1))));
-	    installMethod(canonicalClass,{}>>o->()->canonicalClass D);
 	    ) else (
 	    zeroSection D := {} >> o -> (cacheValue zeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1))));
 	    zeroSectionInv D := {} >> o -> (cacheValue zeroSectionInv) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))));
 	    dualZeroSection D := {} >> o -> (cacheValue dualZeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then -FF_0+FF_(j+1)-FF_(k+1) else 1))));
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) }));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) }));
+	    canonicalClass D := {} >> o -> (cacheValue canonicalClass) (D -> D apply(I,i->sum(n,j->sum(n,k->if i#j<i#k then FF_(k+1)-FF_(j+1) else 0_FF))));
 	    );
 	installMethod(zeroSection,{}>>o->()->zeroSection D);
 	installMethod(dualZeroSection,{}>>o->()->dualZeroSection D);
+	installMethod(canonicalClass,{}>>o->()->canonicalClass D);
 	-- Chern classes of tautological bundles
 	tautoClass (ZZ,ZZ,D) := {} >> o -> (j,i,AA) -> (
             if i<1 or i>d+1 then error ("second index outside the range 1.."|toString(d+1));

@@ -269,9 +269,10 @@ multidoc ///
    Class of the canonical bundle of a flag variety
   Description
    Text
-    This function returns the class of the canonical bundle of the flag variety
-    in the cohomology ring given as argument (or the last ring defined with @TO {setupCotangent}@
-    if no argument is given).
+    This function returns the K-theory class of the canonical bundle of the flag variety
+    when @TT "Ktheory=>true"@, and its first Chern class when @TT "Ktheory=>false"@.
+    The ring is given as argument, or is the last ring defined with @TO {setupCotangent}@
+    if no argument is given.
  Node
   Key
    puzzle
@@ -461,6 +462,22 @@ assert(pushforwardToPoint 1_A == 0)
 -- pushforwardToPointFromCotangent of zeroSection * dualZeroSection equals
 -- the number of T-fixed points #I
 assert(pushforwardToPointFromCotangent(zeroSection A * dualZeroSection A) == #I)
+///
+
+TEST /// -- canonicalClass in cohomology and K-theory
+-- on P^1, the first Chern class is the difference of the two Chern roots
+(A,B,FF,I) = setupCotangent(1,2,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
+assert(canonicalClass A == tautoClass(1,2,A) - tautoClass(1,1,A))
+assert(canonicalClass() == canonicalClass B)
+-- the Borel and localization presentations agree after restriction
+(A,B,FF,I) = setupCotangent(1,2,Presentation=>Borel,Ktheory=>false,Equivariant=>true);
+r = restrict canonicalClass A;
+(D,FF,I) = setupCotangent(1,2,Presentation=>EquivLoc,Ktheory=>false,Equivariant=>true);
+assert(r == canonicalClass D)
+assert(canonicalClass() == canonicalClass D)
+-- retain the existing multiplicative K-theory behavior
+(D,FF,I) = setupCotangent(1,2,Presentation=>EquivLoc,Ktheory=>true,Equivariant=>true);
+assert(canonicalClass() == canonicalClass D)
 ///
 
 TEST /// -- inversion counts the inversions of a label string
