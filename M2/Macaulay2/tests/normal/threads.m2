@@ -87,6 +87,29 @@ assert Equation(getIOThreadMode f, 2)
 
 removeFile fn
 
+-- issue #3358
+Foo = taskResult schedule(() -> new Type of HashTable)
+assert BinaryOperation(symbol ===, youngest(Foo, Matrix), Foo)
+
+-- mutexes
+m = new Mutex
+
+lock m
+unlock m
+
+assert try tryLock m then true else false
+assert try tryLock m then false else true
+unlock m
+
+x = 0
+f = lock(i -> x += 1)
+parallelApply(1..1000, f)
+assert Equation(x, 1000)
+g = lock(m, () -> x += 1)
+h = lock(m, () -> x += 1)
+parallelApply(1..1000, i -> if i % 2 == 0 then g() else h())
+assert Equation(x, 2000)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test threads.out"
 -- End:

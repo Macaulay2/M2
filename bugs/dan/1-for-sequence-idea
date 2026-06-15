@@ -1,4 +1,0 @@
-make this work?  Jason would like it.
-
-i73 : for i from (1,1,1,1,1,1) to (1,2,3,4,5,6) do print i
-stdio:74:54:(3): error: expected an integer

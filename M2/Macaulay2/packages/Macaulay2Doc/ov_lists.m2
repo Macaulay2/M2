@@ -791,23 +791,50 @@ document {
     SeeAlso => sequence
 }
 
-document {
-     Key => MutableList,
-     Headline => "the class of all mutable lists",
-     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
-     PARA{},
-     "Normally the entries in a mutable list are not printed, to prevent
-     infinite loops in the printing routines.  To print them out, use 
-     ", TO "peek", ".",
-     EXAMPLE {
-	  "s = new MutableList from {a,b,c};",
-      	  "s#2 = 1234;",
-	  "s",
-      	  "peek s",
-	  },
-     SeeAlso => {"BasicList"},
-     Subnodes => { TO Bag },
-     }
+doc ///
+  Key
+     MutableList
+     (NewFromMethod, MutableList, ZZ)
+  Headline
+    the class of all mutable lists
+  Description
+    Text
+      For an overview of lists and sequences, see @TO "lists and sequences"@.
+
+      Normally the entries in a mutable list are not printed, to prevent
+      infinite loops in the printing routines.  To print them out, use @TO peek@.
+    Example
+      s = new MutableList from {a,b,c};
+      s#2 = 1234
+      s
+      peek s
+    Text
+      To construct a mutable list with a given length and whose entries are all
+      @TO null@, provide an integer.
+    Example
+      s = new MutableList from 6;
+      peek s
+    Text
+      If a value is assigned at a position that is not yet present in a mutable list,
+      then it grows accordingly, and any intermediate positions are filled with
+      @TO null@.
+    Example
+      t = new MutableList from {};
+      t#4 = e
+      peek t
+    Text
+      When working with mutable lists, be careful not to turn a linear algorithm into
+      a quadratic one by repeatedly appending to it.  Compare the following:
+    Example
+      s = new MutableList
+      elapsedTime scan(1000, i -> s#i = i^2) -- quadratic, since we grow s at each step
+      t = new MutableList from 1000
+      elapsedTime scan(1000, i -> t#i = i^2) -- linear
+  SeeAlso
+    BasicList
+  Subnodes
+    Bag
+///
 
 document {
     Key => {

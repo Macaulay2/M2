@@ -1,6 +1,6 @@
 // (c) 1994 Michael E. Stillman
-#ifndef _style_hh_
-#define _style_hh_
+#ifndef M2_STYLE_HH_
+#define M2_STYLE_HH_
 
 #include "newdelete.hpp"
 #include "engine-includes.hpp"

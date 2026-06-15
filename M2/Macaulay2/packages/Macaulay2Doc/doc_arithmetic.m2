@@ -33,8 +33,8 @@ document {
 document {
      Key => {numeric,(numeric,Matrix),(numeric,ZZ,Matrix),
 	  (numeric, Vector),(numeric, ZZ, Vector),
-	  (numeric, ZZ, CC), (numeric, RR), (numeric, RRi),
-      (numeric, ZZ, RRi),
+	  (numeric, ZZ, CC), (numeric, RR), (numeric, RRi), (numeric, CCi),
+      (numeric, ZZ, RRi), (numeric, ZZ, CCi),
         (numeric, CC), (numeric, ZZ, VisibleList),
 	  (numeric, VisibleList), (numeric, ZZ, Constant), (numeric, Constant),
 	  (numeric, InfiniteNumber, Constant),
@@ -75,40 +75,45 @@ document {
 
 document {
      Key => {realPart, (realPart,Number), (realPart,QQ), (realPart,ZZ),
-	 (realPart,InexactNumber)},
+	 (realPart,InexactNumber),"(realPart,CC)","(realPart,CCi)"},
      Headline => "real part",
      Usage => "realPart z",
-     Inputs => {"z" => "an integer, rational, real or complex number"},
-     Outputs => {"the real part of the complex number z."},
+     Inputs => {"z" => "an integer, rational, real or complex number, or a real or complex interval"},
+     Outputs => {"the real part of the complex number z or an interval containing the real parts of real or complex interval z"},
      EXAMPLE {
 	  "realPart(3/4)",
-	  "realPart(1.5+2*ii)"
+	  "realPart(1.5+2*ii)",
+      "realPart(interval(1+2*ii,3+4*ii))"
 	  },
      SeeAlso => {CC, imaginaryPart}
      }
 document {
      Key => {imaginaryPart,(imaginaryPart,Number), (imaginaryPart,QQ),
-	 (imaginaryPart,ZZ), (imaginaryPart,InexactNumber)},
+	 (imaginaryPart,ZZ), (imaginaryPart,InexactNumber),"(imaginaryPart,CCi)","(imaginaryPart,CC)"},
      Headline => "imaginary part",
      Usage => "imaginaryPart z",
-     Inputs => {"z" => "an integer, rational, real or complex number"},
-     Outputs => {"the imaginary part of the complex number z."},
+     Inputs => {"z" => "an integer, rational, real or complex number or a real or complex interval"},
+     Outputs => {"the imaginary part of the complex number z or an interval containing the complex parts of real or complex interval z."},
      EXAMPLE {
 	  "imaginaryPart(3/4)",
-	  "imaginaryPart(1.5+2*ii)"
+	  "imaginaryPart(1.5+2*ii)",
+      "imaginaryPart(interval(1+2*ii,3+4*ii))"
 	  },
      SeeAlso => {CC, realPart}
      }
 
 document {
-     Key => {conjugate,(conjugate,CC),(conjugate,Number),(conjugate,Constant)},
+     Key => {conjugate,(conjugate,CC),(conjugate,Number),(conjugate,CCi),(conjugate,Constant)},
      Headline => "complex conjugate",
      Usage => "conjugate z",
      Inputs => {"z"},
-     Outputs => {CC => {"the complex conjugate of ", TT "z"}},
+     Outputs => {CC => {"the complex conjugate of ", TT "z"},
+          CCi => {"a complex interval containing all complex conjugate of points of ", TT "z"}
+},
      EXAMPLE {
 	  "conjugate(1+2.5*ii)",
-	  "conjugate 3"
+	  "conjugate 3",
+      "conjugate interval(1+2*ii,3+4*ii)"
 	  }
      }
 

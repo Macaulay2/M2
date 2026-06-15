@@ -1,4 +1,0 @@
-import isprime(x:ZZ):bool;
-
-       add the flags as second optional argument.
-       document it

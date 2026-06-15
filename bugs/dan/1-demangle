@@ -1,3 +1,0 @@
-on some machines nm --demangle doesn't work, but nm | c++filt does
-
-fix configure.ac

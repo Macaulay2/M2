@@ -1,5 +1,0 @@
-i6 : help DegreeLimit
---warning: tag has no documentation: User :: pushForward(..., DegreeLimit => ...), key [pushForward, DegreeLimit]
---warning: tag has no documentation: User :: quotient(..., DegreeLimit => ...), key [quotient, DegreeLimit]
---warning: tag has no documentation: User :: syz(..., DegreeLimit => ...), key [syz, DegreeLimit]
-

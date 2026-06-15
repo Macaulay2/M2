@@ -1,6 +1,0 @@
--*- coding: utf-8 -*-
-
-oops, we allowed utf-8 to creep into a file name:
-
-  ~/to/Macaulay2/doc/Macaulay2-1.2/share/doc/Macaulay2/Macaulay2Doc/html/___Gröbner_spbases.html
-

@@ -1889,6 +1889,58 @@ TEST /// input (Schubert2#"source directory"|"Schubert2/blowup-test.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/BrillNoether-test.m2") ///
 TEST /// input (Schubert2#"source directory"|"Schubert2/SymmetricProduct-test.m2") ///
 
+-- direct TEST coverage for documented functions exercised only indirectly above
+
+TEST ///
+-- adams: the i-th Adams operation scales the degree-j part by i^j
+X = abstractVariety(3, QQ[c,d,e,Degrees=>{1,2,3}])
+f = 1 + c + d + e
+assert(adams(3, f) == 1 + 3*c + 9*d + 27*e)
+-- the first Adams operation is the identity, and Adams operations compose
+assert(adams(1, f) == f)
+assert(adams(2, adams(3, f)) == adams(6, f))
+-- on a sheaf: ch commutes with adams, and adams(-1,-) is the dual
+F = abstractSheaf(X, ChernCharacter => f)
+assert instance(adams(3, F), AbstractSheaf)
+assert(ch adams(3, F) == adams(3, ch F))
+assert(ch dual F == adams(-1, ch F))
+///
+
+TEST ///
+-- degeneracyLocus: the variety whose pushforward of 1 is the degeneracy class
+X = base(5, Bundle => (A,3,a), Bundle => (B,3,b))
+Z = degeneracyLocus(2, B, A)
+assert instance(Z, AbstractVariety)
+assert((Z/X)_* 1 == degeneracyLocus2(2, B, A))
+///
+
+TEST ///
+-- kernelBundle: the kernel bundle on a degeneracy locus, and its rank
+X = base(5, Bundle => (A,3,a), Bundle => (B,3,b))
+E = kernelBundle(2, B, A)
+assert instance(E, AbstractSheaf)
+assert instance(variety E, AbstractVariety)
+assert(rank E == 1)
+assert(rank kernelBundle(1, B, A) == 2)
+///
+
+TEST ///
+-- intermediates: the (Z, f, g) mediating an incidence correspondence
+P = flagBundle({1,3})
+G = flagBundle({2,2})
+I = incidenceCorrespondence(G, P)
+(Z, f, g) = intermediates I
+assert instance(Z, AbstractVariety)
+assert(instance(f, AbstractVarietyMap) and instance(g, AbstractVarietyMap))
+assert(source f === Z and target f === source I)
+assert(source g === Z and target g === target I)
+-- the correspondence factors through the intermediate: I_* = g_* f^*, I^* = f_* g^*
+RP = intersectionRing P
+RG = intersectionRing G
+assert all(flatten entries basis RP, x -> I_* x == g_* f^* x)
+assert all(flatten entries basis RG, y -> I^* y == f_* g^* y)
+///
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Schubert2 all check-Schubert2 RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"
 -- End:

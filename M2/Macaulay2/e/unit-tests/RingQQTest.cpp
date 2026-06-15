@@ -1,12 +1,12 @@
 // Copyright 2013 Michael E. Stillman
 
-#include "RingTest.hpp"
+#include "unit-tests/RingTest.hpp"
 
 static bool maxH_initialized = false;
 static mpz_t maxH;
 
-#include "aring-glue.hpp"
-#include "ZZp.hpp"
+#include "basic-rings/aring-glue.hpp"
+#include "rings/ZZp.hpp"
 
 template <>
 ring_elem getElement<RingQQ>(const RingQQ &R, int index)

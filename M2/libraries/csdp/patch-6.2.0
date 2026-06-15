@@ -6,7 +6,7 @@ diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/librari
  # CFLAGS settings for 64 bit Linux/unix systems.
  #
 -export CFLAGS=-m64 -march=native -mtune=native -Ofast -fopenmp -ansi -Wall -DBIT64 -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
-+export CFLAGS += -ansi -Wall -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
++export CFLAGS += -Wall -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
  #
  # LIBS settings for 64 bit Linux/unix systems.
  #

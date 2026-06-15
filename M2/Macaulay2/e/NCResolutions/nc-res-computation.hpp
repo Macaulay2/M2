@@ -1,12 +1,12 @@
 /* Copyright 2014-2021, Michael E. Stillman */
 
-#ifndef _nc_res_computation_hpp_
-#define _nc_res_computation_hpp_
+#ifndef M2_NCRESOLUTION_NC_RES_COMPUTATION_HPP_
+#define M2_NCRESOLUTION_NC_RES_COMPUTATION_HPP_
 
-#include "comp-res.hpp"
+#include "resolution/comp-res.hpp"
 #include "NCAlgebras/FreeAlgebraQuotient.hpp"
-#include "matrix.hpp"
-#include "matrix-con.hpp"
+#include "matrices/matrix.hpp"
+#include "matrices/matrix-con.hpp"
 
 class NCResComputation : public ResolutionComputation
 {
@@ -43,7 +43,12 @@ class NCResComputation : public ResolutionComputation
     return matCon.to_matrix();
   }
 
-  MutableMatrix /* or null */* get_matrix(int slanted_degree, int level) {return nullptr; }
+  MutableMatrix /* or null */* get_matrix(int slanted_degree, int level)
+  {
+    (void) slanted_degree;
+    (void) level;
+    return nullptr;
+  }
 
   const FreeModule /* or null */* get_free(int level) {
     if (level == 0) return mInputModuleGB.rows();
@@ -51,7 +56,11 @@ class NCResComputation : public ResolutionComputation
     return mInputModuleGB.get_ring()->make_FreeModule(0);
   }
 
-  M2_arrayint get_betti(int type) const { return nullptr; }
+  M2_arrayint get_betti(int type) const
+  {
+    (void) type;
+    return nullptr;
+  }
   // type is documented under rawResolutionBetti, in engine.h
 
   void text_out(buffer& o) const {

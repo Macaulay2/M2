@@ -1628,7 +1628,7 @@ genericRestriction = (phi) -> (
    K:=coefficientRing Pn;
    x:=local x;
    H:=K[x_0..x_(n-1)];
-   j:=map(H,Pn,random(toList(x_0..x_(n-1))|{random1 H}));
+   j:=map(H,Pn,shuffle(toList(x_0..x_(n-1))|{random1 H}));
    j=map(H/j(ideal target phi),target phi,toMatrix j);
    phi':=j*phi;
    phi'

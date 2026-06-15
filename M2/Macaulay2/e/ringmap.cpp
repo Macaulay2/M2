@@ -1,10 +1,10 @@
 // Copyright 1996  Michael E. Stillman
 
 #include "ringmap.hpp"
-#include "matrix.hpp"
-#include "matrix-con.hpp"
-#include "polyring.hpp"
-#include "relem.hpp"
+#include "matrices/matrix.hpp"
+#include "matrices/matrix-con.hpp"
+#include "rings/polyring.hpp"
+#include "ring-elements/ring-element.hpp"
 
 #include <iostream>
 RingMap::RingMap(const Matrix *m) : R(m->get_ring())

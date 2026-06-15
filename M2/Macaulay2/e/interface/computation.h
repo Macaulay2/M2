@@ -1,5 +1,5 @@
-#ifndef _computation_h_
-#  define _computation_h_
+#ifndef M2_INTERFACE_COMPUTATION_H_
+#define M2_INTERFACE_COMPUTATION_H_
 
 #  include "engine-includes.hpp"
 

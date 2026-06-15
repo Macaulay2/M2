@@ -1,9 +1,9 @@
 // Copyright 1997-2006 Michael E. Stillman
 
-#ifndef _ntuple_monomial_hpp_
-#define _ntuple_monomial_hpp_
+#ifndef M2_F4_NTUPLE_MONOMIAL_HPP_
+#define M2_F4_NTUPLE_MONOMIAL_HPP_
 
-#include "ExponentVector.hpp"
+#include "monomials/ExponentVector.hpp"
 
 // CAVEAT: NO overflow checking is done with this class.
 // TODO: make this file obsolete

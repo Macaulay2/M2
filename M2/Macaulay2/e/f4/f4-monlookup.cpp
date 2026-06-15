@@ -2,7 +2,7 @@
 
 #include "f4/f4-monlookup.hpp"
 #include "buffer.hpp"                // for buffer
-#include "engine-exports.h"          // for newline
+#include "interface/m2-types.h"      // for newline
 #include "f4/varpower-monomial.hpp"  // for varpower_word, const_varpower_mo...
 #include "text-io.hpp"               // for emit, emit_line
 

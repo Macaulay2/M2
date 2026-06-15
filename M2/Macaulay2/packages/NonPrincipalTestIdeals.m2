@@ -7,7 +7,7 @@ newPackage(
         {Name => "Karl Schwede", Email => "schwede@math.utah.edu", HomePage => "https://www.math.utah.edu/~schwede/"},
         {Name => "Hunter Simper", Email => "hunter.simper@utah.edu", HomePage => "https://www.huntersimper.com/"}},    
     Headline => "singularities of pairs with non-principal ideals",
-    Keywords => {"Commutative algebra", "Singularities"},
+    Keywords => {"Commutative Algebra", "Singularities"},
     DebuggingMode => false,
     Reload=>false,     
     PackageExports => {"WeilDivisors", "TestIdeals", "FrobeniusThresholds", "ReesAlgebra", "Complexes"}
@@ -300,7 +300,7 @@ reesModuleToIdeal(Ring, Module) := (Ideal, ZZ, Matrix) => o ->(R1, M2) ->
 	while ((i < #s2) and (flag == false)) do (
 		t = s2#i;
 		h = map(R1^1, M2**R1, {t});
-		if (isWellDefined(h) == false) then error "internalModuleToIdeal: Something went wrong, the map is not well defined.";
+		if (isWellDefined(h) == false) then error "reesModuleToIdeal: Something went wrong, the map is not well defined.";
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = trim ideal(t);
@@ -318,18 +318,18 @@ reesModuleToIdeal(Ring, Module) := (Ideal, ZZ, Matrix) => o ->(R1, M2) ->
 			--);
             --1/0;
 		)
-        else (print "warning");
+        else (if (debugLevel > 0) then print "reesModuleToIdeal: candidate map not injective; trying next generator");
 		i = i+1;
 	);
 	-- if that doesn't work, then try a random combination/embedding
      i = 0;
 	while ((flag == false) and (i < o.MTries) ) do (
 		coeffRing := coefficientRing(R1);
-        print coeffRing;
+        if (debugLevel > 0) then print coeffRing;
 		d := sum(#s2, z -> random(coeffRing, Height=>100000)*(s2#z));
        -- print d;
 		h = map(R1^1, M2**R1, {d});
-		if (isWellDefined(h) == false) then error "internalModuleToIdeal: Something went wrong, the map is not well defined.";
+		if (isWellDefined(h) == false) then error "reesModuleToIdeal: Something went wrong, the map is not well defined.";
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = trim ideal(d);
@@ -840,8 +840,6 @@ doc ///
             trim gradedReesPiece(2, ideal(1_T))
         Text
             Note the command @TO basis@ cannot be used in the extended Rees algebra case as it cannot handle rings with both positive and negative degrees.
-    Caveat
-        This method is peanut-butter-free.
     SeeAlso
         classicalReesAlgebra
         extendedReesAlgebra

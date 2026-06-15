@@ -249,6 +249,7 @@ quvf = (q,u,v)-> (
 	 if product(newMaxD,j->j+1)<product(maxD,j->j+1) 
 	 then maxD = newMaxD;
 	 ));
+     -- TODO: use table
      H := apply(toList((toList((n-k-1):0))..maxD), u->
 	 toPoly({(toList((k+1):0) | u | toList(n:0),1)},Rk)
 	 );

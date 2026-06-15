@@ -90,6 +90,7 @@ struct NODE {
 #define macro_variable_F 0x100000
 #define errmsg_given_F   0x200000
 #define package_active_F 0x400000
+#define used_F           0x800000
 #define none_F	   	0
 	       } symbol;
 	  struct TYPE {

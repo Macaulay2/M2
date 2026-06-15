@@ -5,21 +5,22 @@
 #include <vector>
 #include <memory>
 
-#include "aring-glue.hpp"
-#include "aring-m2-gf.hpp"
-#include "aring-qq.hpp"
-#include "aring-tower.hpp"
-#include "aring-zzp-ffpack.hpp"
-#include "aring-zzp.hpp"
+
+#include "basic-rings/aring-glue.hpp"
+#include "basic-rings/aring-m2-GF.hpp"
+#include "basic-rings/aring-QQ.hpp"
+#include "basic-rings/aring-tower.hpp"
+#include "basic-rings/aring-ZZp-ffpack.hpp"
+#include "basic-rings/aring-ZZp.hpp"
 #include "exceptions.hpp"
-#include "polyring.hpp"
-#include "relem.hpp"
+#include "rings/polyring.hpp"
+#include "ring-elements/ring-element.hpp"
 
 // include flint headers last to avoid #1674
-#include "aring-gf-flint-big.hpp"
-#include "aring-gf-flint.hpp"
-#include "aring-zz-flint.hpp"
-#include "aring-zzp-flint.hpp"
+#include "basic-rings/aring-GF-flint-big.hpp"
+#include "basic-rings/aring-GF-flint.hpp"
+#include "basic-rings/aring-ZZ-flint.hpp"
+#include "basic-rings/aring-ZZp-flint.hpp"
 
 const RingQQ *globalQQ;
 

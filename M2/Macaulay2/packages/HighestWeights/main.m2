@@ -219,7 +219,8 @@ highestWeightsDecomposition (Complex, ZZ, List) := HashTable => o -> (C,i,L) ->(
      h := new MutableHashTable from {i => L};
      temp := (h#i,id_(C_i));
      --if the complex is a resolution skip MinimalityTest
-     if C.?Resolution then mt:=false else mt=true;
+     ---- MES---- if C.?Resolution then mt:=false else mt=true;
+     mt := true;
      --propagate weights backwards from homological dimension i
      for j from i+1 to maxRight when C_j!=0 do (
 	  temp = propagateWeights(temp_1*C.dd_j,temp_0,MinimalityTest=>mt);

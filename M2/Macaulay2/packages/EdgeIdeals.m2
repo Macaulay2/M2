@@ -1038,7 +1038,7 @@ randomUniformHyperGraph (PolynomialRing,ZZ,ZZ) := (R,card,num) -> (
      if card <= 0 then error "cardinalities of hypergraphs must be positive integers";
      if num < 0 then error "number of edges must be nonnegative";
      if num > binomial(numgens R,card) then error "can't make that many edges";
-     edges := take(random subsets(gens R,card),num);
+     edges := shuffle(subsets(gens R,card),num);
      hyperGraph(R,edges)
      )
 
@@ -1049,7 +1049,7 @@ randomUniformHyperGraph (PolynomialRing,ZZ,ZZ) := (R,card,num) -> (
 -----------------------------------------------------------
 recursiveRandomHyperGraph = (V,L,D,BranchLimit,TerminateTime) -> (
      if #D === 0 then return L;
-     V = random V;
+     V = shuffle V;
      W := set take(V, D#0);
      if any(L, l -> all(W, w-> member(w#0,l))) then return null;
      if any(L, l -> all(l, w-> member(w#0,W))) then return null;

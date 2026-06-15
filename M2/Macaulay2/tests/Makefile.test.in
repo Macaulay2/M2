@@ -19,7 +19,7 @@ endif
 # make the stack limit always the same as it would be under MacOS
 SLIMIT ?= 8192
 
-LIMIT :=
+LIMIT =
 ifeq (@ULIMIT_T@,yes)
 LIMIT += ulimit -t $(TLIMIT) ;
 endif

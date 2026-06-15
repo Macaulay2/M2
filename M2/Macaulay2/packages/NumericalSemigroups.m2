@@ -1,117 +1,236 @@
 newPackage(
     "NumericalSemigroups",
     Version => "1.0",
-    Date => "October 25, 2024",
+    Date => "June 8, 2026",
     Headline => "Compute the Apery set and invariants of a numerical semigroup ring",
-    Authors => {{ Name => "David Eisenbud", Email => "de@berkeley.edu", HomePage => "http://eisenbud.github.io"},
-	        { Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "https://www.math.uni-sb.de/ag/schreyer/index.php/publications/publications-frank-olaf-schreyer"}},
+    Authors => {{ Name => "David Eisenbud",
+	         Email => "de@berkeley.edu",
+	         HomePage => "https://eisenbud.github.io"},
+	        { Name => "Frank-Olaf Schreyer",
+		  Email => "schreyer@math.uni-sb.de",
+		  HomePage => "https://www.math.uni-sb.de/ag/schreyer/index.php/publications/publications-frank-olaf-schreyer"},
+		{ Name => "Theodore Wittmer Lysek", Email => "tlysek44@gmail.com"}},
     AuxiliaryFiles => false,
     DebuggingMode => false,
-    PackageExports => {"FourierMotzkin","Normaliz", "IntegralClosure", "FastMinors",  "RandomPoints"},
+
+    PackageExports => {
+	"Complexes",
+	"Posets",
+	"FourierMotzkin",
+	"Normaliz",
+	"IntegralClosure",
+	},
     Keywords => {"Commutative Algebra", "Algebraic Geometry", "Combinatorics"}
+
     )
 ///
 restart
-
-loadPackage ("NumericalSemigroups", Reload=>true)
-check "NumericalSemigroups"
-uninstallPackage "NumericalSemigroups"
-restart
-installPackage "NumericalSemigroups"
-
-viewHelp "NumericalSemigroups"
-viewHelp Normaliz
-
+--TODO: fix, re-add syzDecomp; add tests for the arf stuff. change debug mode to false
+loadPackage("NumericalSemigroups", Reload => true)
 ///
---"done" indicates that there is a TEST installed for that function.
 export { 
-    "apery", --done FOS
-    "aperySet", --done FOS
-    "semigroup", -- done FOS
-    "isSymmetric",-- done FOS
-    "mu", --done
-    "socle",--done last
-    "type", -- done
-    "kunzMatrix", --done FOS
-    "semigroupIdeal", --done
+    "apery", --TEST created FOS
+    "aperySet", --TEST created FOS
+    "semigroup", -- TEST created FOS
+    "isSymmetric",-- TEST created FOS
+    "mu", --TEST created
+    "semigroupFromMu",
+    "semigroupsFromMatrix",
+    "socle",--TEST created last
+    "type", -- TEST created
+    "kunzMatrix", --TEST created FOS
+    "semigroupIdeal", --TEST created
     "semigroupRing", -- FOS: take a look
-    "aperySemigroupRing", -- done
-    "gaps", -- done
-    "isGapSequence", --done
-    "findSemigroups", --done
-    "sums", --done
-    "coneEquations",
+    "aperySemigroupRing", -- TEST created
+    "gaps", -- TEST created
+    "isGapSequence", --TEST created
+    "findSemigroups", --TEST created
+    "sums", --TEST created
+    "aperyConeEquations",
+    "muConeEquations",
     "coneRays",
-    "facetRays",
-    "allSemigroups",
-    "def1", --done -- degrees of first order deformations, or the generic first-order deformation itself.
+    "aperyFacetRays", -- returns a list
+    "muFacetRays", -- returns a matrix
+    "allSemigroups", -- list semigroups with given genus etc
+    "randomSemigroup",
+    "def1", --TEST created -- degrees of first order deformations, or the generic first-order deformation itself.
     "weight",
-    "makeUnfolding", -- done
-    "flatteningRelations", --done
-    "isSmoothableSemigroup", --done
-    "ewt",
+    "ewt", --effective weight
     "effectiveWeight", -- synonym for ewt
     "kunzRing",--done FOSthe semigroup ring of R mod the multiplicity element
     "burchIndex", --done
     "buchweitz", --done
     "buchweitzCriterion", --done
     "buchweitzSemigroups", --done
-    "findPoint", --done
-    "heuristicSmoothness", --done
-    "knownExample", --done FOS
-    "isARandomFiberSmooth", --done FOS
-    "getFlatFamily", --done FOS
-    "isWeierstrassSemigroup", -- done FOS
-    "nonWeierstrassSemigroups", -- done FOS
-    "LabBookProtocol", --done FOS
     "fractionalIdeal", --done
-    }
+    "infinitelyNearSemigroups",
+    "infinitelyNearModules",
+    "isArf",
+    "arfClosure",
+    "isMinimalMultiplicity",
+    "arfIndex",
+    "reduceByList",
+    "kunzPoset",
+    "syzFormat",
+    "isKnownExample",
+    ------seems to need the following, whose code I've brought from badNumericalSemigroups
+    "facetRays",
+    ----------Testing smoothability
+--    "flatteningRelations", --TEST created. EXAMPLES USE THIS ONE AND THERE'S CODE FOR IT, SO THEO IS INCLUDING FOR NOW
+}
 
 -* Code section *-
-coneEquations = method(Options => {"Inhomogeneous" => false})
-coneEquations ZZ := Matrix => o -> m -> (
-    -- Forms the equations of the homogeneous or inhomogeneous
-    --Kunz cone for multiplicity m
-    --the columns are the lexicographically ordered pairs {i,j}
-    --such that with 1<= i<=j<=m-1
-    --i+j != m.
-    --if o#"Inhomogeneous" == true, then the equations
-    --for the inhomogeneous Kunz cone are returned
+
+shape = method()
+shape Complex := F -> (
+    apply(1+length F, i-> rank F_i))
+shape Module := M ->(
+    n := numgens ring M;
+    F := res(M, LengthLimit => n+1);
+    shape F)
+    
+    
+
+aperyConeEquations = method()
+aperyConeEquations ZZ := Matrix => m -> (
+    --Returns a matrix whose columns
+    --are the coefficients of the
+    --inequalities defining the (homogeneous)
+    --Kunz cone of Apery sets for multiplicity m
+    --the column indices are the lexicographically ordered pairs {i,j}
+    --such that with 1<= i<=j<=m-1 and i+j != m.
+    --The output is an matrix M with m-1 rows
+    --such that if E*matrix{aperySet L}
+    --is a row of non-negative integers for
+    --any semigroup L of multiplicity m.
     cols :=  flatten for i from 1 to m-1 list
         for j from i to m-1 list {i,j};
     cols = select(cols, p -> sum p != m);
-    n := #cols;
-    eqns := map(ZZ^(m-1), ZZ^n, (i,j) -> (
-	if (sum cols_j -(i+1)) % m == 0 then -1 else if
-	    cols_j == {i+1,i+1} then 2  else if
-	       isMember(i+1, cols_j) and
-	       cols_j !={i+1,i+1} then 1 else 0));
-    if o#"Inhomogeneous" then
-      eqns || matrix{apply(n, j->
-	       if sum cols_j < m then 0 else -1)} else
-       eqns
-  )
+    Eq := transpose matrix apply(cols, p -> (
+	    eqj := new MutableList from toList (m-1:0);
+	    eqj#(p_0-1) = 1+ eqj#(p_0-1);
+	    eqj#(p_1-1) = 1+ eqj#(p_1 -1);
+	    eqj#((p_0+p_1)%m -1) = -1;
+	    toList eqj));
+    Eq
+)        
 
-coneEquations List := Matrix => o -> L ->(
-    K := kunzMatrix L;
-    m := 1 + numrows K;
-    --get the column indices of E
+aperyConeEquations List := Matrix => L ->(
+    -- If
+    -- M = aperyConeEquations (m = mult L),
+    -- then aperyConeEquations L
+    --returns M|M', whose columns
+    --represent the inequalities
+    --defining the face on which L lies.
+
+    --The output is an matrix M with m-1 rows
+    --such that if E*matrix{aperySet L}
+    --is a row of non-negative integers for
+    --any semigroup L of multiplicity m
+    --that satisfies the same equalities
+    --that L does.
+    A := aperySet L;
+    m := min L;
+    M := aperyConeEquations m;
     cols :=  flatten for i from 1 to m-1 list
         for j from i to m-1 list {i,j};
-    cols = select(cols, p -> sum p % m !=0);
-    --find the positions of the cone equations that are satisfied by L
-    pos := positions(cols, c -> K_(c_0-1, c_1-1) != 0);
-    coneEquations(m,o)|(-(coneEquations (m, o))_pos)
+    cols = select(cols, p -> sum p != m and
+	A_(p_0-1)+A_(p_1-1) == A_((p_0+p_1)%m-1));
+    if cols == {} then return M;
+    ML := transpose matrix apply (cols, p -> (
+	    eqj := new MutableList from toList (m-1:0);
+	    eqj#(p_0-1) = -1+ eqj#(p_0-1);
+	    eqj#(p_1-1) = -1+ eqj#(p_1 -1);
+	    eqj#((p_0+p_1)%m -1) = 1;
+	    toList eqj));
+    M|ML)
+
+muConeEquations = method()
+muConeEquations ZZ := List => m ->(
+    -- Returns M, where
+    -- M is a matrix with m rows.
+    -- The first m-1 rows are the
+    -- aperyConeEquations
+    -- and the last row gives the
+    -- constants in the inHomogeneous
+    -- inequalities satisfied by
+    -- mu L for all semigroups L
+    -- of multiplicity m
+    c := matrix{flatten for i from 1 to m-1 list (
+	        for j from i to m-1 list(
+		    if i+j == m then continue;
+		    if i+j < m then 0 else 1
+		    ))};
+    E := aperyConeEquations m;
+    E||c
+    )
+muConeEquations List := L -> (
+    m := min L;
+    Ec := muConeEquations m;
+    cols :=  flatten for i from 1 to m-1 list
+        for j from i to m-1 list {i,j};
+    A := aperySet L;
+    cols = select(cols, p -> sum p != m and
+	A_(p_0-1)+A_(p_1-1) == A_((p_0+p_1)%m-1));
+    if cols == {} then return Ec;
+    ML := transpose matrix apply (cols, p -> (
+	    eqj := new MutableList from toList (m-1:0);
+	    eqj#(p_0-1) = -1+ eqj#(p_0-1);
+	    eqj#(p_1-1) = -1+ eqj#(p_1 -1);
+	    eqj#((p_0+p_1)%m -1) = 1;
+	    toList eqj));
+    n := numcols ML;
+    cL:= map(ZZ^1, ZZ^n, 0);
+    Ec | (ML||cL)
+    )
+///
+
+restart
+loadPackage("NumericalSemigroups", Reload => true)
+A1 = aperySet {3,4,5}
+A2 = aperySet {3,5}
+A3 = aperySet {3,7}
+matrix{A1}* aperyConeEquations 3 
+matrix{A1}* aperyConeEquations {3,4,5}
+matrix{A1}*aperyConeEquations {3,5}
+matrix{A2}*aperyConeEquations {3,7}
+aperyConeEquations {3,7}
+matrix{A3}*aperyConeEquations {3,7}
+
+mu1 =matrix {mu {3,4,5}|{1}}
+mu2 = matrix {mu {3,5}|{1}}
+mu3 = matrix{mu {3,7}|{1}}
+mu3*muConeEquations 3
+mu2*muConeEquations {3,5}
+mu3*muConeEquations {3,5}
+mu3*muConeEquations {3,7}
+///
+
+isOnSameFace = method()
+isOnSameFace(List, List) := (L,L') ->(
+    m := min L;
+    if m != min L' then
+        error"semigroups must have the same multiplicity";
+    E := (aperyConeEquations m);
+    t := matrix{aperySet L} * E;
+    t' := matrix{aperySet L'} * E;
+    positions(t, tt -> tt === 0) ==
+    positions(t', tt -> tt === 0)
     )
 ///
 restart
 loadPackage("NumericalSemigroups", Reload => true)
-coneEquations(4, "Inhomogeneous" => true)
+aperyConeEquations 4
 L = {4,9,14,7}
-allSemigroups L
-coneEquations(L, "Inhomogeneous" => true)
+allSemigroups 3
+aperyConeEquations 3
+coneRays 3
+allSemigroups 5
+aperyConeEquations 5
+muConeEquations L
 betti((allSemigroups 5)_1)
 ///
+
 
 allSemigroups = method()
 allSemigroups ZZ := Sequence => m -> (
@@ -123,7 +242,7 @@ allSemigroups ZZ := Sequence => m -> (
     a set of module generators for the inhomogeneous
     Kunz cone.
     *-
-ineq := transpose coneEquations m;
+ineq := transpose aperyConeEquations m;
 cong:=id_(ZZ^(m-1))|(-1)*transpose matrix{toList(1..m-1)}|transpose matrix{toList(m-1:m)};
 trunc:=id_(ZZ^(m-1))|(-1)*transpose matrix{toList(m+1..2*m-1)};
 NL:={(ineq,"inequalities"),(cong, "inhom_congruences"),(trunc,"inhom_inequalities")};
@@ -136,7 +255,7 @@ moduleGenerators:=M^pos_{0..m-2};
 (hilbertBasis,moduleGenerators)
 )
 
-
+--FIXME
 allSemigroups List := Sequence => L -> (
 -*  Returns a matrix whose rows form a
     Hilbert basis for the face containing L
@@ -147,7 +266,7 @@ allSemigroups List := Sequence => L -> (
     Kunz cone.
 *-
 m:=min L;
-ineq0 := coneEquations m;
+ineq0 := (aperyConeEquations m);
 ap:=matrix{aperySet L};
 pos:=positions(toList(0..rank source ineq0-1),i->(ap*ineq0)_(0,i)==0);
 eq:=transpose ineq0_pos;
@@ -165,6 +284,37 @@ moduleGenerators:=M^pos_{0..m-2};
 (hilbertBasis,moduleGenerators)
 )
 
+///
+restart
+loadPackage("NumericalSemigroups", Reload => true)
+L = {4,7,9}
+allSemigroups L
+///
+
+randomSemigroup = method()
+-*
+Find the Apery set of a random semigroup L' on the same open face
+of the Kunz cone as L.
+After (H,M) = allSemigroups L, the Apery set of L'
+L' is obtained by prepending m to a random linear combination of the rows of H
+(using random integers 0..b-1) plus a random row of M.
+*-
+randomSemigroup (List, ZZ) := (L,b) -> (
+    (H,M) := allSemigroups L;
+    h := numRows H;
+    m := numRows M;
+    M1 := M^{random m}+sum apply(h, i-> (random b) * H^{i});
+    prepend(min L, flatten entries M1)
+    )
+randomSemigroup(ZZ,ZZ) := (mult,b) -> (
+    (H,M) := allSemigroups mult;
+    h := numRows H;
+    m := numRows M;
+    M1 := M^{random m}+sum apply(h, i-> (random b) * H^{i});
+    prepend(mult, flatten entries M1)
+    )
+    
+
 buchweitzCriterion = method()
 buchweitzCriterion(List) := L -> (
     G:=gaps L;
@@ -174,8 +324,8 @@ buchweitzCriterion(ZZ,List) := (m,L) -> (
     assert(#L==m-1);
     buchweitzCriterion(prepend(m,L)))
 
-///
 
+-*
 --what succeeded:
 
 
@@ -207,7 +357,7 @@ betti H, betti M
 
 i14 : elapsedTime (H,M)=allSemigroups 9;
 betti H, betti M
--*
+
 m=9
 elapsedTime (H,M)=allSemigroups m;
 betti H, betti M
@@ -244,7 +394,7 @@ o16 = Tally{0 => 3093}
 
 
 
-*-
+
 elapsedTime tally flatten apply(entries M,L->buchweitzCriterion (m,L))
 tally flatten apply(entries M,L->apply(entries H,h->buchweitzCriterion (m,L+h)))
 
@@ -278,10 +428,89 @@ viewHelp "fourierMotzkin"
 
 restart
 debug loadPackage("NumericalSemigroups", Reload => true)
+*-
+
+
+aperyFacetRays=method()
+
+aperyFacetRays(List) := Matrix => L -> (
+    --If L is the list of generators of a semigroup, this returns
+    --a matrix whose columns are the rays of the homogeneous
+    --Kunz cone that contain L. Note that this makes
+    --no particular sense, since L is really an element of
+    --the inhomogeneous Kunz cone.
+    L1:=if L_0==0 then drop(L,1) else L; 
+    A:=apery L1;
+    m:=A#"multiplicity";
+    halfSpaces := aperyConeEquations m; -- homogeneous cone eqns
+    a:=matrix{aperySet A};
+    eqpos:=positions(toList(0..rank source halfSpaces-1),
+	i->(a*halfSpaces)_{i}==0);
+    linEq:=halfSpaces_eqpos;
+    halfFacet:=halfSpaces%linEq;
+    fRays:=-(fourierMotzkin(halfFacet,linEq))_0;
+    fRays
+    )
+///
+restart
+loadPackage("NumericalSemigroups", Reload => true)
+L = {5,6,7,8,9}
+aperySet L
+A = aperyFacetRays {5,6,7,8,9}
+m = 6
+AA = coneRays m
+for i from 0 to numcols AA -1 list(
+    A = flatten entries AA_{i};
+    A' = set apply(A, a -> a%m);
+    A' == set toList (1..m-1)
+    )
+aperyFacetRays {6,9,13,16}
+rank oo
+M = (allSemigroups {6,9,13,16})_1
+LL =  apply(numrows M, i -> mingens({6}|(flatten entries M^{i})))
+netList apply(LL, L -> syzFormat L)
+netList apply(LL, L -> kunzMatrix L)
+code methods kunzMatrix
 
 ///
+isAperySet = method()
+isAperySet(ZZ, List) := Boolean => (m, A) ->(
+--test whether the list A is the Apery set of
+--a semigroup of multiplicity m
+    if #A != m-1 then return false;
+    all apply(m-1, i -> A_i % m == i+1)
+    )
 
-facetRays=method()
+-*
+///rather than computing the mucone separately, just translate to
+the homogeneous Apery cone
+///
+muFacetRays=method()
+muFacetRays(List) := Matrix => muL -> (
+    --matrix whose columns are the rays of the in homogeneous
+    --Kunz cone that contain muL
+    mmu := muL;
+    m :=#mmu+1; --multiplicity
+    halfSpaces := aperyConeEquations m; -- homogeneous cone eqns
+--    halfSpaces = aperyConeEquations L;
+    --note that the mu's satisfy the INhomogeneous cone eqns
+    eqpos:=positions(toList(0..numcols halfSpaces-1),
+	i->(matrix{mmu}*halfSpaces)_{i}==0);
+    linEq:=halfSpaces_eqpos;
+    halfFacet:=halfSpaces%linEq;
+    fRaysMu := -(fourierMotzkin(halfFacet,linEq))_0;
+    fRaysMu
+    )
+///
+needsPackage"NumericalSemigroups"
+L = {3,5,7}
+muL = mu L
+assert(isMember (L, semigroupsFromMatrix muFacetRays L))
+semigroupsFromMatrix muFacetRays L
+ ///
+*-
+
+facetRays = method()
 facetRays(List) := L -> (
     L1:=if L_0==0 then drop(L,1) else L; 
     A:=apery L1;
@@ -295,9 +524,78 @@ facetRays(List) := L -> (
     fRays
     )
 
-coneRays = method()
-coneRays ZZ := Matrix => m -> -(fourierMotzkin coneEquations m)_0
 
+coneEquations = method(Options => {"Inhomogeneous" => false})
+coneEquations ZZ := Matrix => o -> m -> (
+    -- Forms the equations of the homogeneous or inhomogeneous
+    --Kunz cone for multiplicity m
+    --the columns are the lexicographically ordered pairs {i,j}
+    --such that with 1<= i<=j<=m-1
+    --i+j != m.
+    --if o#"Inhomogeneous" == true, then the equations
+    --for the inhomogeneous Kunz cone are returned
+    cols :=  flatten for i from 1 to m-1 list
+        for j from i to m-1 list {i,j};
+    cols = select(cols, p -> sum p != m);
+    n := #cols;
+    eqns := map(ZZ^(m-1), ZZ^n, (i,j) -> (
+	if (sum cols_j -(i+1)) % m == 0 then -1 else if
+	    cols_j == {i+1,i+1} then 2  else if
+	       isMember(i+1, cols_j) and
+	       cols_j !={i+1,i+1} then 1 else 0));
+    if o#"Inhomogeneous" then
+      eqns || matrix{apply(n, j->
+	       if sum cols_j < m then 0 else -1)} else
+       eqns
+  )
+
+coneEquations List := Matrix => o -> L ->(
+    K := kunzMatrix L;
+    m := 1 + numrows K;
+    --get the column indices of E
+    cols :=  flatten for i from 1 to m-1 list
+        for j from i to m-1 list {i,j};
+    cols = select(cols, p -> sum p % m !=0);
+    --find the positions of the cone equations that are satisfied by L
+    pos := positions(cols, c -> K_(c_0-1, c_1-1) != 0);
+    coneEquations(m,o)|(-(coneEquations (m, o))_pos)
+    )
+
+
+
+semigroupFromMu = method()
+semigroupFromMu List :=  mmu -> (
+    mult := #mmu+1;
+    mingens({mult}| apply(mult-1, i-> i+1+ mult*mmu_i))
+    )
+
+semigroupsFromMatrix = method()
+semigroupsFromMatrix Matrix :=  M -> (
+    --columns of M should represent the mu vectors
+    --of semigroups of multiplicity = mult;
+    --for example, the output of facetRaysMu L
+    c := numcols M;
+    apply(c, j -> (
+	    v := flatten entries M_{j};
+	    if min v == 0 then v = apply(#v, i-> 1+v_i);
+	    semigroupFromMu v
+	    )
+	)
+    )
+
+TEST///-*semigroupFromMu, semigroupsFromMatrix*-
+debug needsPackage "NumericalSemigroups"
+L = {6,9,13,16}
+assert(L == semigroupFromMu mu L)
+assert(coneRays 4 == facetRays {4,5,6,7})
+
+///
+
+coneRays = method()
+coneRays ZZ := Matrix => m -> -(fourierMotzkin(aperyConeEquations m))_0
+///
+fourierMotzkin aperyConeEquations 4
+///
 
 findSemigroups = method()
 findSemigroups(ZZ,ZZ,ZZ) := (m,c,g) ->(
@@ -309,6 +607,7 @@ findSemigroups(ZZ,ZZ,ZZ) := (m,c,g) ->(
     GC := subsets(set candidates, g-m);
     GG := apply(GC, gc -> gc+set(1..m-1)+set{c-1});
       for G in GG list (
+	if #G <g then return{};	  
         s := isGapSequence(toList G);
 	if class s === List and gcd s == 1 then(
         mingens unique (s|apply(m, i->c+i))) else continue)
@@ -327,7 +626,8 @@ findSemigroups (ZZ,ZZ) := (m,g) -> (
 
 findSemigroups ZZ := g -> (
     --list all semigroups with g gaps.
-   L := {};
+   L0 := mingens toList(g+1..2*g+1);
+   L := {L0};
     for m from 2 to g+1 do (
 	    for c from m to 2*g do(
 			if (c-1)%m !=0 then (
@@ -450,9 +750,14 @@ sums (ZZ,List) := (n,L) ->(
     for i from 1 to n-1 do (L' = flatten apply(L', j -> apply(L, k -> j+k)));
     sort unique L')
 
-
-apery = method()
-apery List := HashTable => L -> (
+///
+restart
+loadPackage("NumericalSemigroups", Reload => true)
+apery({3,4}, "UpperBound" => 10)
+semigroup({3,4}, "UpperBound" => 10)
+///
+apery = method(Options => {"UpperBound" => 0})
+apery List := HashTable => o -> L ->(
     --require gcd = 1;
     if gcd L != 1 then error"requires relatively prime generating set";
     A := new MutableHashTable;
@@ -479,6 +784,10 @@ apery List := HashTable => L -> (
     A#"multiplicity" = m;
     A#"semigroup" = sort toList S;
     A#"conductor" = max A#"semigroup" - m +1;
+    if o#"UpperBound" > A#"conductor" then
+         A#"semigroup" =
+	 A#"semigroup"|
+	     toList(A#"conductor"+m..o#"UpperBound");
     hashTable pairs A
     )
 
@@ -489,8 +798,8 @@ aperySet HashTable := List => A -> (
     )
 aperySet List := L -> aperySet apery L
 
-semigroup = method()
-semigroup List := List => L -> (apery L)#"semigroup"
+semigroup = method(Options => {"UpperBound"=>0})
+semigroup List := List => o -> L -> (apery (L,o))#"semigroup"
 
 --conductor = method()
 conductor List := ZZ => L -> (apery L)#"conductor"
@@ -520,7 +829,7 @@ mu HashTable := List => H -> (
 genus List := ZZ => L -> sum mu L
 --number of gaps
 
-positiveResidue = (p,q) -> if p<0 then p + (1+abs p//q)*q else p%q -- assumes q>0
+--positiveResidue = (p,q) -> if p<0 then p + (1+abs p//q)*q else p%q -- assumes q>0
 --needs a version where c is known.
 --mingensSemigroup = method()
 --mingensSemigroup List := s -> (
@@ -589,25 +898,48 @@ kunzMatrix HashTable := Matrix => A -> (
 		a := A#(i+1)+A#(j+1)-A#((i+j+2)%m);
 		if a == 0 then 1 else 0)
     )))
+-- kunzTable HashTable := Table => A -> (
+--     m := A#"multiplicity";
+--     table(m-1, m-1, (i,j) -> (
+-- 	    if i+j+2 == m then "-" else (
+-- 		a := A#(i+1)+A#(j+1)-A#((i+j+2)%m);
+-- 		if a == 0 then 1 else 0)
+--     )))
+    
 
 kunzMatrix List := Matrix => L -> kunzMatrix apery L
 
 type = method()
 type List := ZZ => L -> #socle L
 
-semigroupRing = method(Options => {"BaseField" => ZZ/101,
+semigroupRing = method(Options => {"BaseField" => ZZ/10007,
 	                           "VariableName" => getSymbol "x",
 			           "MinimalGenerators" => true})
 			   
 semigroupRing List := Ring => o-> L -> (
+    if L == {1} then return o#"BaseField"[o#"VariableName"];
     I := semigroupIdeal(L,o);
     R := (ring I)/I;
     R.cache#"sgrp" = L;
     R
     )
-semigroupIdeal = method(Options => {"BaseField" => ZZ/(nextPrime 10^3),
+semigroupIdeal = method(Options => {"BaseField" => ZZ/10007,
 	                           "VariableName" => getSymbol "x",
 			           "MinimalGenerators" => true})
+
+kunzRing = method(Options => {"BaseField" => ZZ/10007,
+                           "VariableName" => getSymbol "x",
+		           "MinimalGenerators" => true}) 
+kunzRing List := Ring => o -> L -> (
+    --returns the semigroup ring of R mod the multiplicity element
+    R := semigroupRing(L,o);
+    m := min(gens R/degree);
+    newvars := select(gens R, x -> degree x > m);
+    newdegs := select(gens R/degree, d -> d>m);
+    S := coefficientRing R[newvars, Degrees => newdegs];
+    S/trim sub(ideal R, S)
+    )
+
 semigroupIdeal List := Ideal => o -> L -> (
     --Here the variables correspond to the given semigroup generators.
     if o#"MinimalGenerators" == true then L':= mingens L else L' = L;
@@ -629,9 +961,9 @@ restart
 loadPackage("NumericalSemigroups", Reload => true)
 LL = {{3,5},{3,4,5},{3,4}}
 L={4,5}
-assert all(LL, L -> transpose facetRays L * coneEquations L == 0)
+assert all(LL, L -> transpose facetRays L * aperyConeEquations L == 0)
 LL = {{3,5},{3,4,5},{3,4}}
-assert all(LL, L -> transpose coneEquations L * facetRays L == 0)
+assert all(LL, L -> transpose aperyConeEquations L * facetRays L == 0)
 netList apply(LL,L->ideal semigroupRing(L,symbol u))
 netList apply(LL,L->ideal semigroupRing(L))
 
@@ -779,108 +1111,8 @@ A#(i+1)+A#(j+1)-A#((i+j)%m+1)
 
 ///
 
-makeUnfolding=method(Options =>
-      {Verbose => false,
-      "BaseField" => ZZ/(nextPrime 10^3)})
-
-makeUnfolding Ideal := o-> I ->(
-    if not degreeLength ring I == 1 or
-       not isHomogeneous I or
-       I != trim I then
-       error "expected N-graded homogeneous ideal
-       given with minimal set of generators";
---    gbI := gb(I,ChangeMatrix =>true);
---    chMat := getChangeMatrix gbI;
-    S := ring I;
-    kk := coefficientRing S;
-    degs := flatten degrees source gens I;
-    unfoldingTerms := flatten for i from 0 to max degs-1 list (b:=basis(i,S/I); if b==0 then
-	continue else (entries b))_0;
-    unfoldingTerms2 := apply(degs,d->select(unfoldingTerms, t-> (degree t)_0 < d));
-    a := symbol a;
-    avars := flatten apply(#degs,i->apply(#unfoldingTerms2_i,j->a_{i,j}));
-    adegs := flatten apply(#degs,i->apply(unfoldingTerms2_i,t->degs_i-(degree t)_0));
-    A := kk[avars,Degrees=>adegs];
-    avars= reverse sort(gens A,y->degree y);
-    adegs=apply(avars,y->(degree y)_0);
-    A = kk[avars,Degrees=>adegs];
-    SA := kk[gens S|gens A,Degrees=>degrees S|degrees A];
-    avars = apply (#degs,i->apply(#unfoldingTerms2_i,j->a_{i,j}));
-    unfoldingTerms3 := matrix{apply(#degs,i->sum(#unfoldingTerms2_i,j->
-	    sub(a_{i,j},SA)*sub((unfoldingTerms2_i)_j,SA)))}; 
-    unfolding := sub(gens I,SA)+unfoldingTerms3;
-    (A,unfolding)
-    )
-
-makeUnfolding List := o-> L -> (
-        I:= trim ideal semigroupRing(L,"BaseField"=>o#"BaseField");
-	makeUnfolding I)
 
 
--*
-flatteningRelations1=method()
-flatteningRelations1(Ideal,Ring, Matrix) := (I,A,unfolding) -> (
-    gbI:=gb(I,ChangeMatrix=>true);
-    S := ring I;
-    SA := ring unfolding;
-    chMat:=getChangeMatrix gbI;
-    unfoldingGB := unfolding*sub(chMat,SA);
-    ldT := flatten entries leadTerm unfoldingGB;
-    s0:=syz sub(gens gbI,SA);s1:=null;
-    --Now we compute the Buchberger test syzygies
-    us:=null;testSyzygy1:=null;u1:=null;
-    while (
-	testSyzygy1=unfoldingGB*s0;
-	us=apply(ldT,u->(u1=contract(u,testSyzygy1);
-	   testSyzygy1=testSyzygy1-u*u1;
-	   u1));
-        s1=fold(us,{i,j}->i||j);
-	not s1 == 0 ) do (
-	s0 = s0-s1);
-    --The flatteningRelations are the coefficients of testSyzygy2
-    testSyzygy2:=unfoldingGB*s0;
-    ma := max flatten degrees source syz leadTerm gens gbI;
-    rems := reverse flatten for i from 0 to ma list (b:=basis(i,S^1/I); if b==0 then  continue else (entries b))_0;
-    us = apply(rems,u->(u1:=contract(sub(u,SA),testSyzygy2);testSyzygy2-sub(u,SA)*u1;
-	u1));
-    relsA:=sub(ideal(flatten us),A);
-    relsA
-     )
-*-
-
-flatteningRelations=method()
-flatteningRelations(Ideal,Ring, Matrix) := (I,A,unfolding) -> (
-    gbI:=gb(I,ChangeMatrix=>true);
-    S := ring I;
-    SA := ring unfolding;
-    chMat:=getChangeMatrix gbI;
-    unfoldingGB := unfolding*sub(chMat,SA);
-    -- can one use the build in gb algorithm to compute the
-    -- flattening relations faster
-    unfGBf:=forceGB unfoldingGB;
-    ldT := flatten entries leadTerm unfoldingGB;
-    s0:=syz sub(gens gbI,SA);
-    testSyzygy1:=unfoldingGB*s0;
-    testSyzygy2:=testSyzygy1%unfGBf;
-    u1:=null;
-    ma := max flatten degrees source syz leadTerm gens gbI;
-    rems := reverse flatten for i from 0 to ma list (b:=basis(i,S^1/I); if b==0 then  continue else (entries b))_0;
-    us := apply(rems,u->(u1=contract(sub(u,SA),testSyzygy2);testSyzygy2-sub(u,SA)*u1;
-	u1));
-    relsA:=sub(ideal(flatten us),A);
-    relsA
-     )
-
-
-
-
-isSmoothableSemigroup=method(Options =>
-      {Verbose => false,
-      "BaseField" => ZZ/(nextPrime 10^3)})
-
-isSmoothableSemigroup(List,RR,ZZ) := o-> (L,r,n) -> (
-    (I,J1,family) := getFlatFamily(L,r,n,o);
-    isARandomFiberSmooth(I,J1,family,o))
 
 
 ewt=method()
@@ -891,265 +1123,6 @@ ewt(List):= L -> (
     )
 effectiveWeight = method()
 effectiveWeight List := sgrp -> ewt sgrp
-
-findPoint=method(Options => {Verbose => false})
-    
-findPoint(Ideal) := o -> (c) -> (
-    c1 := prune c;  
-    R := ring c;
-    A1 := vars R % c;
-    if c1==0 then return sub(A1,random(R^1,R^(numgens R)));
-    if o.Verbose then << "has to solve" <<flush<< endl;
-    kk:= coefficientRing R;
-    leftOverVars := support c;
-    R1:=kk[support c];
-    cR1:=sub(c,R1);
-    isHomogeneous cR1;
-    if o.Verbose then (
-    elapsedTime point := sub(matrix randomPoints(cR1,Homogeneous=>false),kk);) else (
-                point = sub(matrix randomPoints(cR1,Homogeneous=>false),kk));
-    subs1:=apply(#leftOverVars,i->leftOverVars_i => point_(0,i));
-    assert(sub(cR1,subs1)==0);
-    --ring c === ring A1;
-    A2:=sub(sub(A1,subs1),R);
-    return sub(A2,random(R^1,R^(numgens R)));
-    )
-    
-    
- 
-
-getFlatFamily=method(Options =>
-      {Verbose => false,
-      "BaseField" => ZZ/(nextPrime 10^3)})
-
-getFlatFamily(List,RR,ZZ) := o -> (L,r,n) -> (
-    I := semigroupIdeal(L, "BaseField"=> o#"BaseField");
-    if o.Verbose then (
-        degsT1:=-def1 L;
-	<< "unfolding" <<endl<<flush;
-        elapsedTime (A,unfolding):= makeUnfolding I;) else (
-	degsT1=-def1 L;
-	(A,unfolding)= makeUnfolding I);
-    ma:=max degsT1;
-    S:=ring I;
-    SA:=ring unfolding;
-    restrict:=ideal select( gens A, aa->(degree aa)_0<=ma*r+n);
-    runfolding:=unfolding%sub(restrict,SA);
-    if o.Verbose then (
-	 <<"flatteningRelations"<<endl<<flush;
-          elapsedTime J:=flatteningRelations(I,A,runfolding);
-	  ) else (
-	 J=flatteningRelations(I,A,runfolding));
-    mA:= max flatten degrees A;
-    if o.Verbose then (
-	<<"next gb" << endl<<flush;
-	elapsedTime gbJ:=forceGB gens gb(J,DegreeLimit=>mA);) else (
-	gbJ=forceGB gens gb(J,DegreeLimit=>mA););
-	varsAmodJ:=vars A%gbJ;
-    J1:=sub(J,varsAmodJ);
-    family:=sub(runfolding,sub(vars S,SA)|sub(varsAmodJ,SA));
-    if J1==0 then assert (betti syz family==betti syz gens I);
-    (I,J1,family))
-
-isWeierstrassSemigroup=method(Options =>
-      {Verbose => false,
-      "BaseField" => ZZ/(nextPrime 10^3)})
-
-isWeierstrassSemigroup(List,RR) := o -> (L,r) -> (
-    if o.Verbose then (elapsedTime degT1:=def1(L);) else degT1=def1(L);
-    truncations:=-unique select(degT1,d->d<0);
-    I:=semigroupIdeal L;
-    S:=ring I;
-    (A,unfolding):=makeUnfolding I;
-    ma:=max flatten (gens A/degree);
-    truncations=select(truncations,d->d<ma*r+1);
-    J1:=null; family:= null;
-    for t in truncations do ( if o.Verbose then (<<t<<endl<<flush);
-	 (I,J1,family)=getFlatFamily(L,0.0,t-1);
-                 if isARandomFiberSmooth(I,J1,family,o) then
-		 ( break return true));
-    return false)
--*
-estimateTruncationRatio=method()
-estimateTruncationRatio(List) := LL -> (
-    I:=null;S:=null;A:=null;unfolding:=null;
-    J1:=null; family:= null;ratio:=null;degT1:=null;
-    truncations:=null;ma:=null;t:=null;answer:=null;
-    ratios:=apply(LL,L -> (
-	    <<L <<endl<<flush;
-	    elapsedTime degT1=def1(L);
-    truncations=-unique select(degT1,d->d<0);
-    I=semigroupIdeal L;
-    S=ring I;
-    (A,unfolding)=makeUnfolding I;    
-    ma=max flatten degrees A;
-    for t in truncations do (
-	elapsedTime (<<t<<endl<<flush;
-	elapsedTime (I,J1,family)=getFlatFamily(L,0.0,t-1);
-                 --<<(isARandomFiberSmooth(I,J1,family),t) <<flush<< endl;
-		 answer= isARandomFiberSmooth(I,J1,family));
-                 if answer then
-		 ( << t-1<<endl<<flush; ratio=(ma,max truncations,t-1); break ));
-	     ratio)
-	 );
-	 ratios)
-*-
-///
----- current test ---------
-restart
-debug loadPackage("NumericalSemigroups",Reload=>true)
-L={6, 9, 14, 19, 22}
-genus L
-
-apply(LL,L->(I=semigroupIdeal L; (A,unfolding)=makeUnfolding I;
-                mA= max flatten degrees A;degT1=-def1 L;(ma,max degT1)))
-
-
-
-elapsedTime isWeierstrassSemigroup L
-
-
-
-J1==0
-J1
-SA=ring family
-ffam=res ideal family
-ffam.dd_4
-isSmoothableSemigroup(L,0.2,0)
-///
-
-isARandomFiberSmooth=method(Options =>
-      {Verbose => false,
-      "BaseField" => ZZ/(nextPrime 10^3)})
-isARandomFiberSmooth(Ideal,Ideal,Matrix) := o -> (I,J1,family) -> (
-    S := ring I;
-    A := ring J1;
-    fib:=null;answer:= null;
-    if J1==0 then (fib = ideal sub(family,vars S|random(S^1,S^(numgens A)));
-	answer = heuristicSmoothness(fib);
-	if o.Verbose then <<answer <<endl<<flush;
-	return answer);   
-     kk := coefficientRing A;
-     
---decompose here
--*   
-     varsJ1:=support J1;
-     R1:=kk[varsJ1];  
-     elapsedTime J1ungraded:=trim ideal map(R1^1,,gens sub(J1,R1));
-     << "in isARandomFiber decomposition, " <<  "(numgens,#support): " << (numgens J1ungraded,#support J1ungraded)<< endl;
-
-     elapsedTime cJ1un:=decompose J1ungraded;
-     cJ1:=apply(cJ1un,c->ideal map(A^1,,gens sub(c,matrix{ varsJ1})));
-*-
-    if o.Verbose then (<<"decompose" <<endl<<flush;
-         elapsedTime cJ1:=decompose (J1); -- perhaps moved to a new ring
-         <<"number of components: "<< #cJ1 <<endl<<flush;) else (
-         cJ1=decompose J1);
-    A2:=null;point:=null; 
-    dims:=apply(cJ1,c->(
-	    A2=findPoint(c);
-	    --point=sub(sub(h,A2),coefficientRing A);
-	    point=sub(A2,coefficientRing A);
-	    assert(
-		sub(J1,point)==0);
-	    fib=ideal sub(family,vars S|point);
-	    ---break return fib;
-	    --assert(betti syz gens fib == betti syz gens I);
-	    answer = heuristicSmoothness(fib);
-	    --  singF=radical ideal gens gb (fib +minors(#mingens L-1,jacobian fib));
-	    if answer then -1 else 0
-	    --dim singF
-	    ));
-      if o.Verbose then (
-	  << "support c, codim c: " <<apply(cJ1,c->(#support c,codim c)) <<endl<<flush;
-	  <<dims <<endl<<flush;);
-      return min dims ==-1 )
-
- 
-///
-LL12d
-L=LL12d_2
-filterSmoothable(L,0.30,1)
-
-///
-
-
-  
-heuristicSmoothness=method(Options =>
-      {Verbose => false,
-      "BaseField" => ZZ/(nextPrime 10^3)})
-heuristicSmoothness(Ideal) := o -> fib -> (
-    --VerifyNonRegular:= null;
-    --regularInCodimension(1, (ring fib)/fib, VerifyNonRegular=>true, Verbose=>true) )
-    jac := jacobian fib;
-    kk:=coefficientRing ring fib;
-    R1:=kk[support fib];
-    points:= fib;N:=1;
-    numberOfSingPoints:=null;dimPoints:=null;
-    rad:=null;someMinors:=null;
-    while (
-	someMinors = chooseGoodMinors(20*N,numgens ring fib-1,jac);
-	points = ideal gens gb (points+someMinors);
-	dimPoints=dim points;
-	if dimPoints>-1 then (
-	    rad = radical points;
-	    numberOfSingPoints=degree sub(rad,R1););
-    dimPoints>-1 and numberOfSingPoints>1 and N<2) do (N=N+1);
-    if dimPoints==-1 then return true;
-    jacpt:=sub(jac,vars ring fib%rad);
-    if numberOfSingPoints==1 then (
-	return rank jacpt==codim fib) else (
-	if o.Verbose then (
-	<<"numberOfSingPoints "<<numberOfSingPoints <<endl<<flush;);
-        return false)
-	--return dim(rad+minors(codim fib,jacpt))==-1)
-    )
-
-
-knownExample=method()
-knownExample(List) := L-> (
-    if #L<=3 then return true;--determinantal
-    if #L == 4 and type L == 1 then return true;--pfaffian
-    --if L is a generalized Arithmeti cProgression L
-    --then in some cases the paper of Oneto and Tamone shows smoothness
-    g := genus L;
-    if ewt L < g or min L <5 then return true else false)
-
-nonWeierstrassSemigroups=method(Options =>
-      {Verbose => false,
-      "BaseField" => ZZ/(nextPrime 10^3)})
-nonWeierstrassSemigroups(ZZ,ZZ) := o -> (m,g) -> (
-    LL:= findSemigroups(m,g);
-    LLa:=select(LL,L->not knownExample L);
-    if o.Verbose then <<(#LL,#LLa) <<endl<<flush;
-    r:=0.65;
-    while ( LLa=select(LLa,L-> (
-		if o.Verbose then (<<L<<endl<<flush;
-		 elapsedTime not isSmoothableSemigroup(L,r,0,o)
-		 ) else (not isSmoothableSemigroup(L,r,0,o))));
-	     #LLa >6 ) do (r=r-0.05;if o.Verbose then (<<#LLa<<endl<<flush;<<endl;));
-    LLa=select(LLa,L->(if o.Verbose then (<<L<<endl<<flush;
-		elapsedTime not isWeierstrassSemigroup(L,r,o)) else (
-		not isWeierstrassSemigroup(L,r,o))));
-    if #LLa==0 then (<<(m,g," all semigroups are smoothable")<<flush<<endl);
-    LLa)
-
-nonWeierstrassSemigroups(ZZ,ZZ,List) := o -> (m,g,LLdifficult) -> (
-    LL:= findSemigroups(m,g);
-    LLa:=sort select(LL,L->not knownExample L);
-    <<(#LL,#LLa) <<endl<<flush;
-    LLa=select(LLa,L->not isMember(L,LLdifficult));
-    r:=0.6;
-    while ( elapsedTime LLa=select(LLa,L-> (<<L<<endl<<flush;
-		 not elapsedTime isSmoothableSemigroup(L,r,0,o)));
-	<<#LLa<<endl;<<endl<<flush;
-	#LLa >6 ) do (r=r-0.1);
-    <<LLa <<endl;
-    n:= 0;
-    elapsedTime LLa=select(LLa,L->(<<n<< L <<endl<<flush;n=n+1;
-		elapsedTime not isWeierstrassSemigroup(L,r,o)));
-    --if #LLa==0 then (<<(m,g," all but difficult semigroups are smoothable")<<flush<<endl);
-    LLa|LLdifficult)
 
 
 burchIndex = method()
@@ -1167,16 +1140,6 @@ isHomogeneous kunzRing L
 burchIndex {3,4,5}
 
 ///
-kunzRing = method()
-kunzRing List := Ring => L -> (
-    --returns the semigroup ring of R mod the multiplicity element
-    R := semigroupRing L;
-    m := min(gens R/degree);
-    newvars := select(gens R, x -> degree x > m);
-    newdegs := select(gens R/degree, d -> d>m);
-    S := coefficientRing R[newvars, Degrees => newdegs];
-    S/trim sub(ideal R, S)
-    )
 
 buchweitz = method()
 buchweitz ZZ := List => i -> (
@@ -1219,162 +1182,6 @@ buchweitzSemigroups (ZZ, ZZ) := (m,g) ->(
 	   LB) else {}
       )
 
-LabBookProtocol = method()
-LabBookProtocol ZZ := String => g ->(
-
-    if g == 7 then print("
-    LL7=findSemigroups 7;#LL7
-    LL7a=select(LL7,L->not knownExample L);#LL7a
-    elapsedTime LL7b=select(LL7a,L->not isSmoothableSemigroup(L,0.25,0))
-    LL7b=={} -- => every genus 7 semigroup is Weierstrass
-    ");
-
-    if g == 8 then print("
-	LL8=findSemigroups 8;#LL8
-	LL8a=select(LL8,L->not knownExample L);#LL8a
-	elapsedTime LL8b=select(LL8a,L-> not isSmoothableSemigroup(L,0.40,0)) -- 16.7345 seconds elapsed
-        LL8b=={{6,8,9,11}}
-	elapsedTime LL8c=select(LL8b,L-> not isWeierstrassSemigroup(L,0.15)) --  1.88664 seconds elapsed
-        LL8c=={} -- => every genus 8 semigroup is Weierstrass
-    ");
-
-    if g == 9 then print("
-    LL9=findSemigroups 9;#LL9
-    LL9a=select(LL9,L->not knownExample L);#LL9a
-    elapsedTime LL9b=select(LL9a,L->(not isSmoothableSemigroup(L,0.5,0)));#LL9b -- 134.401 seconds elapsed
-    LL9b
-    elapsedTime LL9c=select(LL9b,L->(not isSmoothableSemigroup(L,0.4,0)));  -- 26.7357 seconds elapsed
-    LL9c=={} -- => every genus 8 semigroup is Weierstrass
-    ");
-
-    if g == 10 then print("
-    LL10=findSemigroups 10;#LL10
-    LL10a=select(LL10,L->not knownExample L);#LL10a
-    elapsedTime LL10b=select(LL10a,L-> elapsedTime not isSmoothableSemigroup(L,0.6,0)); -- 418.486 seconds elapsed
-    #LL10b 
-    elapsedTime LL10c=select(LL10b,L->(<<L<<endl<<flush;elapsedTime not isSmoothableSemigroup(L,0.5,0))); -- 173.422 seconds elapsed-
-    #LL10c 
-    elapsedTime LL10d=select(LL10c,L->(<<L<<endl<<flush;elapsedTime not isSmoothableSemigroup(L,0.45,0))); -- 156.571 seconds elapsed
-    LL10d
-    elapsedTime LL10e=select(LL10d,L->(<<L<<endl<<flush;elapsedTime not isWeierstrassSemigroup(L,0.4)));   -- 197.321 seconds elapsed 
-    LL10e=={} -- => every genus 10 semigroup is Weierstrass
-    ");
-
-    if g == 11 then print("
-    LL11=findSemigroups 11;#LL11
-    LL11a=select(LL11,L->not knownExample L);#LL11a
-    last LL11a, last LL11 -- shows that all examples of genus 11 not covered by Plueger have multiplicity <= 10.
-
-    elapsedTime nonWeierstrassSemigroups(5,11) -- 117.422 seconds elapsed - 
-    LLdifficult={{6, 8, 17, 19, 21},{6, 8, 10, 19, 21, 23},{6, 9, 11, 14}}
-    elapsedTime nonWeierstrassSemigroups(6,11,LLdifficult,Verbose=>true)   -- 267.818 seconds elapsed
-    --(6, 11,  all but difficult semigroups are smoothable)
-    elapsedTime LL611=select(LLdifficult,L->(<<L<<endl<<flush;elapsedTime not isWeierstrassSemigroup(L,0.4,Verbose=>true)));   -- 197.l321 seconds elapsed 
-
-    elapsedTime nonWeierstrassSemigroups(7,11, LLdifficult, Verbose => true) --257 sec
-    LLdifficult={{8, 9, 11, 15, 21}}
-    elapsedTime nonWeierstrassSemigroups(8,11, LLdifficult, Verbose => true)
-    LLdifficult={}
-    elapsedTime nonWeierstrassSemigroups(9,11, LLdifficult, Verbose => true)
-    LLdifficult={}
-    elapsedTime nonWeierstrassSemigroups(10,11, LLdifficult, Verbose => true)
-    ");
-    )
-
-
-    
-///
-restart
-debug loadPackage( "NumericalSemigroups", Reload => true)
-LL11=findSemigroups 11;#LL11
-    LL11a=select(LL11,L->not knownExample L);#LL11a
-    last LL11a, last LL11 -- shows that all examples of genus 11 not covered by Plueger have multiplicity <= 10.
-
-LabBookProtocol 7
-    LL7=findSemigroups 7;#LL7
-    LL7a=select(LL7,L->not knownExample L);#LL7a
-    elapsedTime LL7b=select(LL7a,L->not isSmoothableSemigroup(L,0.25,0,Verbose=>true))
-    elapsedTime LL7b=select(LL7a,L->not isSmoothableSemigroup(L,0.25,0))
-    LL7b=={}
-      
-    LL8=findSemigroups 8;#LL8
-    LL8a=select(LL8,L->not knownExample L);#LL8a
-    elapsedTime LL8b=select(LL8a,L-> not isSmoothableSemigroup(L,0.40,0)) -- 16.7345 seconds elapsed
-    LL8b=={{6,8,9,11}}
-    elapsedTime LL8c=select(LL8b,L-> not isWeierstrassSemigroup(L,0.15)) -- 1.88664 seconds elapsed
-    LL8c=={} -- => every genus 8 semigroup is Weierstrass
-    
-    LL9=findSemigroups 9;#LL9
-    LL9a=select(LL9,L->not knownExample L);#LL9a
-    elapsedTime LL9b=select(LL9a,L->(not isSmoothableSemigroup(L,0.5,0)));#LL9b -- 134.401 seconds elapsed
-    LL9b
-    elapsedTime LL9c=select(LL9b,L->(not isSmoothableSemigroup(L,0.4,0)));  -- 26.7357 seconds elapsed
-    LL9c=={} -- => every genus 9 semigroup is Weierstrass
-
-
-    LL10=findSemigroups 10;#LL10
-    LL10a=select(LL10,L->not knownExample L);#LL10a
-    elapsedTime LL10b=select(LL10a,L-> elapsedTime not isSmoothableSemigroup(L,0.6,0)); -- 418.486 seconds elapsed
-    #LL10b 
-    elapsedTime LL10c=select(LL10b,L->(<<L<<endl<<flush;elapsedTime not isSmoothableSemigroup(L,0.5,0))); -- 173.422 seconds elapsed-
-    #LL10c 
-    elapsedTime LL10d=select(LL10c,L->(<<L<<endl<<flush;elapsedTime not isSmoothableSemigroup(L,0.45,0))); -- 156.571 seconds elapsed
-    LL10d
-    elapsedTime LL10e=select(LL10d,L->(<<L<<endl<<flush;elapsedTime not isWeierstrassSemigroup(L,0.4)));   -- 197.321 seconds elapsed 
-    LL10e=={} -- => every genus 10 semigroup is Weierstrass
-
-    elapsedTime nonWeierstrassSemigroups(5,11,Verbose =>true) -- 117.422 seconds elapsed - 
-
-    LLdifficult={{6, 8, 17, 19, 21},{6, 8, 10, 19, 21, 23},{6, 9, 11, 14}}
-    elapsedTime nonWeierstrassSemigroups(6,11,LLdifficult,Verbose=>true)   -- 267.818 seconds elapsed
-    --(6, 11,  all but difficult semigroups are smoothable)
-    elapsedTime LL611=select(LLdifficult,L->(<<L<<endl<<flush;elapsedTime not isWeierstrassSemigroup(L,0.4,Verbose=>true)));   -- 197.321 seconds elapsed 
-
-
-    LLdifficult ={}
-    elapsedTime nonWeierstrassSemigroups(7,11,LLdifficult,Verbose=>true)   -- 267.818 seconds elapsed
-    elapsedTime LL711=select(LLdifficult,L->(<<L<<endl<<flush;elapsedTime not isWeierstrassSemigroup(L,0.4,Verbose=>true)));   -- 197.321 seconds elapsed 
-    -- 951.724 seconds elapsed
-    --o3 == {}
-
-    LLdifficult ={{8, 9, 11, 15, 21}}
-    elapsedTime nonWeierstrassSemigroups(8,11,LLdifficult,Verbose=>true)   
-    elapsedTime LL811=select(LLdifficult,L->(<<L<<endl<<flush;elapsedTime not isWeierstrassSemigroup(L,0.4,Verbose=>true)));   -- 197.321 seconds elapsed 
-    
-
-    LLdifficult ={}
-    elapsedTime nonWeierstrassSemigroups(9,11,LLdifficult,Verbose=>true)   
-    elapsedTime LL911=select(LLdifficult,L->(<<L<<endl<<flush;elapsedTime not isWeierstrassSemigroup(L,0.4,Verbose=>true)));   -- 197.321 seconds elapsed 
-    -- 998.636 seconds elapsed
-    o4 = {}
-    
-        LLdifficult ={}
-    elapsedTime nonWeierstrassSemigroups(10,11,LLdifficult,Verbose=>true)   
-    elapsedTime LL1011=select(LLdifficult,L->(<<L<<endl<<flush;elapsedTime not isWeierstrassSemigroup(L,0.4,Verbose=>true)));   -- 197.321 seconds elapsed
-    -- 2104.78 seconds elapsed
-    --o5 == {}
-
-    
-     LLdifficult = {{6, 9, 17, 19, 20, 22},}
-     elapsedTime nonWeierstrassSemigroups(6,12,LLdifficult,Verbose=>true)   
-    elapsedTime LL612=select(LLdifficult,L->(<<L<<endl<<flush;elapsedTime not isWeierstrassSemigroup(L,0.4,Verbose=>true)));   -- 197.321 seconds elapsed 
-   
-
-
-
- 
-    LLdifficult={}
-    elapsedTime nonWeierstrassSemigroups(5,12,LLdifficult,Verbose=>true)  -- 152.485 seconds elapsed
-    oo == {}
- 
-    LLdifficult={}
-    elapsedTime nonWeierstrassSemigroups(7,12,LLdifficult,Verbose=>true)  -- 152.485 seconds elapsed
-    oo == {}
-
-   
-
-
-///    
      numberToMonomial = (R, n) -> (
 	 --n should be an element of the semigroup from which R is made.
 	 --Thus if n \equiv i mod m, we can express m as x_0^p*x_i
@@ -1389,32 +1196,100 @@ fractionalIdeal(List, List) := o -> (sgrp, mons) -> (
     --mons is a list of ZZ interpreted as generating a module in the quotient field of sgrp
     --with the option "Ideal" => false we get a list of integers, otherwise an ideal.
      if not gcd sgrp == 1 then error"sgrp has wrong quotient field";
-     c := conductor sgrp;
-     mons0 := min mons;
-     ans := {c}; -- a default value.
-     ss := semigroup sgrp;
-     nonGens :=sums(sgrp, mons);
-     newMons := sort (mons | nonGens);
-     for i from -mons0 to c do(
-        newMonsPlus := sums({i}, newMons);
-        m := select(newMonsPlus, j -> j<c);
-	if isSubset(m, ss) then(
-	        ans = sums({i}, newMons);
-	        break));
-     if not o#"Ideal" then ans else(
+     A := apery sgrp;
+     m := A#"multiplicity";
+     c := A#"conductor";
+     amp := max mons - min mons; --amplitude of mons
+     
+     sList := if amp < m then A#"semigroup"
+              else A#"semigroup" |
+	           toList(c+m..c+amp);
+     mons0 := apply(mons, j-> j-min mons);--now starts at 0.
+     mons1 := select(sums(sList,mons0),
+		      i -> i <= c+amp);
+--print mons0;
+     shift := (i,L) -> select(sums(sList,
+	               apply(L, j-> j+i)),i -> i <= c+amp) ;
+     sSet := set sList;
+     
+     monsi := mons1;
+     for i from m to c do(
+	 monsi = select(apply(mons1, j -> j+i), j-> j <= c+amp);
+         if isSubset(set monsi, sSet) then break);
+
+     if not o#"Ideal" then monsi else(
      R := semigroupRing sgrp;
      --now make ans into an ideal of R.
-     trim(ideal for n in ans list numberToMonomial(R,n))
+     trim(ideal for n in monsi list numberToMonomial(R,n))
      ))
 
 
-     
+fractionalIdeal(Ring, List) := Ideal => o-> (R, mons) -> (
+    --R should be a semigroup ring
+    sgrp := flatten((gens R)/degree);
+    I := fractionalIdeal(sgrp, mons, "Ideal" => true);
+    sub(I, R)
+    )
+
 ///
 restart
-debug loadPackage("NumericalSemigroups", Reload => true)
+loadPackage("NumericalSemigroups", Reload => true)
+sgrp = {5,8}
+R = semigroupRing {5,8}
+mons = {0,5,3, 11}
+fractionalIdeal(sgrp, mons, "Ideal" => false)
+fractionalIdeal(sgrp, mons)
+fractionalIdeal(R, mons)
+fractionalIdeal(sgrp,
+                semigroup({1},"UpperBound"=>32),
+                "Ideal" => false)
+fractionalIdeal(sgrp,
+                semigroup({1},"UpperBound"=>32))
+
+semigroup({1},"UpperBound"=> 32)
+fractionalIdeal(sgrp,
+
+semigroup sgrp
+infinitelyNearSemigroups {5,8}
+
+fractionalIdeal(sgrp, semigroup{1}, "Ideal" => false)
+mons = semigroup{1}
+///
+infinitelyNearSemigroups = method()
+infinitelyNearSemigroups List  := List => sgrp ->(
+    s := sgrp;
+    infNear := {s};
+    while not isMember(1,s) do (
+	m := min s;
+	s = mingens ({m}|apply(drop(s,1), i -> i -m));
+	infNear = infNear |{s}
+	);
+infNear 
+    )
+
+infinitelyNearModules = method()
+infinitelyNearModules Ring := List => R -> (
+        sgrp := flatten((gens R)/degree);
+	A := apery sgrp;
+	c := A#"conductor";
+	m := A#"multiplicity";
+	N := infinitelyNearSemigroups sgrp;
+	for s in N list module(
+	   fractionalIdeal(R,
+	                   semigroup(s,
+			             "UpperBound" => c-1)))
+	)
+	
+
+///
+restart
+loadPackage("NumericalSemigroups", Reload => true)
    sgrp = {5,9}
    R = semigroupRing sgrp
-   mons = semigroup sgrp
+netList (L = infinitelyNearModules R)
+apply(L, I -> flatten((flatten entries gens I)/degree))
+infinitelyNearSemigroups {5,9}
+semigroup {4,5}
    apply(mons, n -> numberToMonomial(R,n))
    fractionalIdeal(sgrp, mons_{4..7})
    numberToMonomial(R,23)
@@ -1427,7 +1302,175 @@ numberToMonomial(R,7)
 fractionalIdeal(sgrp, mons, "Ideal"=>false)
 fractionalIdeal(sgrp, mons)
 
+R = semigroupRing {5,8}
+infinitelyNearModules R
+infinitelyNearSemigroups{5,8}
 ///
+
+isArf = method()
+isArf List := sgrp ->(
+    infNear := infinitelyNearSemigroups mingens sgrp;
+    for s in infNear do
+        if not #s == min s then return false;
+    true)
+
+--------------Old arfClosure --------------
+-* to fix
+arfClosure = method()
+arfClosure List :=  L -> (
+    Ls := sort L;
+    arfL := {Ls_0};
+    apply (#L-1,i -> arfL = (arfL |{last arfL+Ls_(i+1)}));
+    arfL)
+*-
+
+
+--------------New arfClosure and arfIndex--------------
+-* slower version
+arfClosure = method()
+arfClosure List := sgrp -> (
+    S := semigroup sgrp;
+    Snext := A(S);
+    while Snext != S do (
+        S = Snext;
+        Snext = A(S);
+    );
+    mingens S
+)
+*-
+
+----faster version----
+arfClosure = method()
+arfClosure List := sgrp -> (
+    infNear := infinitelyNearSemigroups mingens sgrp;
+    mults := apply(drop(infNear, -1), s -> min s);
+    if #mults == 0 then return {1};
+    partialSums := apply(#mults, i -> sum take(mults, i+1));
+    m0 := first mults;
+    sLambda := last partialSums;
+    mingens (partialSums | apply(m0 - 1, i -> sLambda + i + 1)))
+
+
+
+--as far as I can tell, there's not such an easy shortcut for the arf index, so I'm keeping this for now
+arfIndex = method()
+arfIndex List := sgrp -> (
+    S := semigroup sgrp;
+    Snext := A(S);
+    count := 0;
+    while Snext != S do (
+        S = Snext;
+        Snext = A(S);
+        count = count + 1;
+    );
+    count
+)
+
+A = method()
+A List := S -> (
+    T := drop(S, 1);
+    n := #T;
+    maxT := T#(n - 1);
+    result := new MutableHashTable;
+    result#0 = true;
+    for i from 0 to n - 1 do
+        for j from 0 to i do
+            for k from 0 to j do (
+                v := T#i + T#j - T#k;
+                if v <= maxT then result#v = true;
+            );
+    sort keys result
+)
+
+///
+restart
+loadPackage("NumericalSemigroups", Reload => true)
+arfClosure {5,7,8}
+///
+
+isMinimalMultiplicity = t -> min t == #mingens t;
+-*
+syzDecomps = L -> (
+netList for s in L list(
+R := semigroupRing (s, "BaseField" => ZZ/32003);
+(infinitelyNearSemigroups s)/(ss-> min ss);
+inds := drop(infinitelyNearModules R, 1);
+{s,for M in inds list reduceByList(inds,
+	image((res M).dd_1))}
+))
+*-
+///
+L1 = findSemigroups 7;#L1
+L2 = select(L1, s -> isMinimalMultiplicity s);#L2
+L = select(L2, s -> not isArf s);#L
+syzDecomps L
+///
+----------Old arfIndex --------------
+-- arfIndex = s ->(
+--     si := infinitelyNearSemigroups s;
+--     ss := si_0;
+--     count := 0;
+--     while isMinimalMultiplicity (si_count) and count < # si-1
+--            do count = count+1;
+-- 	   if count == #ss-1 then count = #si;
+-- count)
+
+   needsPackage "Posets";
+kunzPoset = method(Options =>
+    {Jitter => true, "Display" => true})
+kunzPoset List := o -> L ->(
+   m:= min L;
+   A := prepend(0, aperySet L);
+   A' := apply(A, a-> a%m);
+   c := flatten(
+     for i in A list for j in A list(
+	if member (j-i, L) then {i%m,j%m} else continue));
+P := poset (A', c);
+if o#"Display" then
+displayPoset (P, SuppressLabels => false, Jitter => o.Jitter);
+P
+)
+
+positiveResidue = (p,q) -> if p<0 then p + (1+abs p//q)*q else p%q -- assumes q>0
+
+mingens List := List => o ->  s ->(
+    -- the o-> is necessary because
+    --mingens is defined in the system with options
+    s' := select (s, a -> a != 0);
+    g := gcd s';
+    if g != 1 then s' = apply(s', a -> a//g);
+    m := min s';
+    s' = aperySet s';
+    out :={};
+    for i from 1 to m-1 do
+         for j from 1 to m-1 do (
+	a := s'_(i-1);
+	b := s'_(j-1);
+	if a<=b then continue;
+	if a-b >= s'_(positiveResidue(i-j-1 , m)) then out = out | {i-1}
+	);
+    sort ({m}|toList (set s' - set(s'_out)))
+     )
+
+ syzFormat=method()
+syzFormat(List) := L -> (
+    I := semigroupIdeal(L,"BaseField"=>ZZ/10007);
+    fI := res I;
+    apply(length fI+1,i->rank fI_i)
+    )
+
+isKnownExample=method()
+isKnownExample(List) := L-> (
+    if #L<=3 then return true;--determinantal
+    if #L == 4 and type L == 1 then return true;--pfaffian
+    --if L is a generalized Arithmeti cProgression L
+    --then in some cases the paper of Oneto and Tamone shows smoothness
+    --if min L < 6 then return true; -- see Komeda,
+    --if genus L <8 then return true; --see Komeda, J. Pure Appl. Algebra 97 (1994), no. 1, 51–71
+    --if ewt L <g --Pflueger...
+    g :=genus L;
+    if g<8 or ewt L < g or min L < 6 then return true else false)
+
 -* Documentation section *-
 
 beginDocumentation()
@@ -1435,8 +1478,8 @@ beginDocumentation()
 
 document {
 Key => NumericalSemigroups,
-Headline => "Compute invariants of a numerical semigroup",
-   "In this package we consider numerical semigroups: that is, cofinite subsets of the natural numbers that are closed under sums.
+Headline => "Invariants of numerical semigroups",
+   "Numerical semigroups are cofinite subsets of the natural numbers that are closed under sums.
    We generally refer to these simply as semigroups.
    
    A semigroup S thus includes the empty sum, 0, but we input semigroups by giving generators, all nonzero.
@@ -1445,153 +1488,61 @@ Headline => "Compute invariants of a numerical semigroup",
    The conductor is 1 plus the largest element not in S. We generally specify a semigroup by giving
    a list of positive integers L with gcd = 1, representing the semigroup of all sums of
    elements of L.",
-
    PARA{},
-     SUBSECTION "Combinatorial properties of the Kunz cone",
+
+     SUBSECTION "Combinatorics of Semigroups",
      UL{
-	TO coneEquations,
+ 	TO apery,
+	TO gaps,
+	TO sums,
+	TO isGapSequence,
+ 	TO isSymmetric,
+	TO weight,
+	TO effectiveWeight,
+       },
+
+     SUBSECTION "Working with the Kunz cone",
+     UL{
+	TO aperyConeEquations,
+	TO muConeEquations,
 	TO mu,
+	TO semigroupFromMu,
 	TO facetRays,
 	TO coneRays,
 	TO allSemigroups,
+	TO semigroupsFromMatrix,
+	TO randomSemigroup,
 	TO findSemigroups,
 	TO buchweitzCriterion,
 	TO buchweitz,
 	TO buchweitzSemigroups,
         },
+
      SUBSECTION "Properties of semigroup rings",
      UL{
         TO burchIndex,
 	TO semigroupRing,
+	TO semigroupIdeal,	
 	TO socle,
+	TO type,
+	TO genus,
 	TO kunzRing,
-	TO isSymmetric
+	TO kunzPoset,
+	TO syzFormat,
+	TO reduceByList,
         },
-     SUBSECTION "Weierstrass semigroups",
-     "The question whether every semigroup is a Weierstrass semigroup was answered negatively 
-     by Buchweitz: the semigroup generated by {13, 14, 15, 16, 17, 18, 20, 22, 23} is not a Weierstrass semigroup,
-     as demonstrated in ", TO buchweitz,".
-     On the other hand Pinkham gave a positive criterion with deformation theory.
-     A semigroup is a Weierstrass semigroup if and only if the graded semigroup ring of L 
-     has a smoothing deformation with strictly positive deformation parameters.",
-     PARA{},
-
-     "In this section we implemented Pinkham's approach in POSITIVE CHARACTERISTIC. We plan
-     to extend the smoothing results to characteristic 0 in the future.",
+     SUBSECTION "Arf Semigroups",
      UL{
-	TO makeUnfolding,
-	TO flatteningRelations,
-        TO getFlatFamily,
-	TO findPoint,
-	TO isARandomFiberSmooth,
-	TO heuristicSmoothness,
---	TO isSmoothableSemigroup,
-	TO isWeierstrassSemigroup,
-	TO nonWeierstrassSemigroups,
-	TO LabBookProtocol,
-        }     
+ 	TO isArf,
+	TO arfIndex,
+	TO arfClosure,
+        TO fractionalIdeal,
+	TO infinitelyNearSemigroups,
+	TO infinitelyNearModules,
+	TO isMinimalMultiplicity,
+      }
 }
 
-doc ///
-Key
- LabBookProtocol
- (LabBookProtocol, ZZ)
-Headline
- Weierstrass Semigroups in Low genus
-Usage
- s = LabBookProtocol g
-Inputs
- g:ZZ
-  genus
-Outputs
- s:String
-  commands to study semigroups of genus g
-Description
-  Text
-   This function prints a series of commands that check that most semigroups of genus g (up to g = 10) are Weierstrass.
-   It outputs a short list of "difficult" examples that currently take too long to check.
-  Example
-   LabBookProtocol 7
-   LL7=findSemigroups 7;#LL7
-   LL7a=select(LL7,L->not knownExample L);#LL7a
-   elapsedTime LL7b=select(LL7a,L->not isSmoothableSemigroup(L,0.25,0,Verbose=>true))
-   elapsedTime LL7b=select(LL7a,L->not isSmoothableSemigroup(L,0.25,0))
-   LL7b=={}
-  Text
-    With the option Verbose=>true one gets timings on various parts of the computation.
-    To check all semigroups of genus g=8,9 and 10 takes about
-
-    18.2, 161.1 and 945.6 seconds respectively.
-
-  Example
-   LabBookProtocol 11
-  Text
-   Since the number of cases gets rather large, we break up the list of all semigroups
-   into sublists of semigroups of given multiplicity and call the function nonWeierstrassSemigroups:
-  Example
-   m=5,g=8
-   elapsedTime nonWeierstrassSemigroups(m,g,Verbose=>true)
-  Text
-   In the verbose mode we get timings of various computation steps and further information.
-   The first line,
-   (13,1),
-   indicates that there 13 semigroups of multiplicity 5 and genus 8 of which only 1 is not flagged
-   as smoothable by the function knownExample.
-   The second line,
-   {5,8,11,12},
-   gives the current semigroup.
-   The timing under various  headers tells how much time was used in each of the steps.
-  Example
-   L={6,8,9,11}
-   genus L
-   isWeierstrassSemigroup(L,0.2,Verbose=>true)
-  Text
-   The first integer, 6, tells that in this attempt deformation parameters of degree >= 6 were used and no smooth fiber was found.
-   Finally with all parameters of degree >= 4, the flatteningRelations define a scheme that decomposes into 2 components,
-   both affine spaces. If we encounter non affine components we print  "has to solve", and find a point in each such component.
-   We then print the number of singular points in the fiber.
-   Finally the output "{0,-1}" is the dimension of the singular loci of a random fiber over each component.
-   Thus the entry "-1" indicates that a general fiber of the second component is smooth.
-   
-SeeAlso
-  isSmoothableSemigroup
-  isWeierstrassSemigroup
-  nonWeierstrassSemigroups
-  knownExample
-///
-
-doc ///
-Key
- knownExample
- (knownExample, List)
-Headline
- Is L a known Weierstrass semigroup?
-Usage
- b = knownExample L
-Inputs
- g:ZZ
-  genus
-Outputs
- b:Boolean
-  true if L is a known example of a Weierstrass semigroup
-Description
-  Text
-   Certain semigroups are known to be Weierstrass. For example L has 2  or 3 generators only, by work of Pinkham and Sally. 
-   Another sort examples are semigroup with small weight ewt(L) < genus L by the work Nathan Pflueger extending
-   work of Eisenbud-Harris.
-  Example
-   L={7,12,13}
-   knownExample L
-   L={7,8,9,11,13}
-   ewt L, genus L
-   knownExample L
-   LL=findSemigroups(9,10);#LL
-   select(LL,L->not knownExample L)
-   #oo
-SeeAlso
-  LabBookProtocol
-  findSemigroups
-///
 
 doc ///
 Key
@@ -1908,11 +1859,6 @@ degrees fI_2
 elapsedTime (A,unfolding)=makeUnfolding I; -- 14.1952 seconds elapsed
 numgens A
 tally degrees A
-
-elapsedTime J=flatteningRelations(I,A,unfolding);
-elapsedTime gb J; dim J;
-elapsedTime (A1=vars A%J)
-
 ///
 
 
@@ -2097,7 +2043,7 @@ Outputs
   degrees of a basis of T^1(semigroupRing L)
 Description
   Text
-   T^1(B) is the tangent space to the versal deformation of
+   T^1(B) is the tangent space to the versal deformaion of
    the ring B, and is finite dimensional when B has isolated
    singularity. If B = S/I is a Cohen presentation, then
    T^1(B) = coker Hom(Omega_S, B) -> Hom(I/I^2, B).
@@ -2153,8 +2099,10 @@ Outputs
   of the face on which semigroup L lies
 Description
   Text
+   Note that this function computes the rays of the
+   closed face *not facet* on which L lies.
    Uses the Fourier-Motzkin algorithm to go from
-   the @TO coneEquations@ satisfied by the semigroup
+   the @TO aperyConeEquations@ satisfied by the semigroup
    to the rays. For example, in multiplicity 3,
    the cone has two rays, occupied by the
    semigroups semigroup{3,4} and semigroup{3,5},
@@ -2168,7 +2116,7 @@ Description
    facetRays{3,5}
    facetRays{3,4,5}
   Text
-   On the face with the @TO buchweitz@ example there are two facet rays:
+   On the facet with the @TO buchweitz@ example there are two facet rays:
   Example
    F = facetRays buchweitz 0
   Text
@@ -2177,27 +2125,25 @@ Description
    of genus 12, we eventually reach a semigroup that fails the Buchweitz
    test to be a Weierstrass semigroup:
   Example
-   b = {0}|flatten entries F_{1}
+   --this example is nonsense ; replace.
+   b =flatten( {0}| entries(F)_0 ) -- edited for minimal change STILL TO BE FIXED
    L = toList (13..25)
-   for i from 0 to 15 list (
-       L' = L+i*13*b;
-       G = gaps L';
-       #sums(G, G) - 3*(genus L' -1)
-       )
+   #L,#b
   Text
     We conjecture that the same phenomen  for any semigroup L0
     of multiplicity 13 in place of L. Here is a "random" example:
-  Example
-    setRandomSeed 0
-    L0 = {13}|aperySet ({13}|apply(1 + random 10, i->13+random 10))
-    for i from 0 to 20 list (
-       L' = L0+i*13*b;
-       G = gaps L';
-       #sums(G, G) - 3*(genus L' -1)
-       )
+  -- Example
+  --   setRandomSeed 0
+  --   L0 = {13}|aperySet ({13}|apply(1 + random 10, i->13+random 10))
+  --   i = 1
+  --   for i from 0 to 20 list (
+  --      L' = L0+i*13*b;
+  --      G = gaps L';
+  --      #sums(G, G) - 3*(genus L' -1)
+  --      )
 SeeAlso
  aperySet
- coneEquations
+ aperyConeEquations
  coneRays
 ///
 
@@ -2219,19 +2165,51 @@ Inputs
   the multiplicity of the semigroups
 Outputs
  H:Matrix
-  of integers; the rows form the Hilbert basis  of the cone
+  of integers; the rows form the Hilbert basis  of the cone;
  M:Matrix
   of module generators of the cone 
 Description
   Text
-   Using Normaliz we compute the face of the Kunz cone containing L.
-   In case of allSemigroups m the output describes the complete Kunz cone
-   of all semigroups of multiplicity m.
+   Using Normaliz we compute the face of the Kunz cone containing L
+   (or of the cone of semigroups of multiplicity m).
+   
+   Every semigroup of multiplicity m has Apery set of the form
+   m, mu_1*m+1, mu_2*m+2..mu_(m-1)*m+(m-1).
+   The sequence of mu_i for a semigroup L
+   is the value of mu(L).
+  Example
+   (H,M) = allSemigroups 3
+   H == matrix{
+             {3,3},
+	     {3,6},
+	     {6,3}
+	     }
+   M == matrix{
+             {4,5},
+	     {4,8},
+	     {7,5},
+	     {10,5}
+	     }
+  Text
+   Here the rows of the
+   first matrix, H, form a Hilbert basis, that is, a set
+   of semigroup generators, of
+   the semigroup of the possible mu(L) as L runs over the
+   semigroups of multiplicity 3. The rows of the the
+   second matrix, M, when prepened by the multiplicity 3,
+   are Apery sets of some semigroups such that every semigroup
+   of multiplicity 3 has Apery set equal to a linear combination
+   of the rows of H added to one of the rows of M.
   Example
    allSemigroups {4,7,9}
-   allSemigroups 4
   Text
-   On the face with the @TO buchweitz@ example there are two facet rays:
+   This means that all the semigroups on the same (open) face of the
+   Kunz cone as {4,7,9} can be obtained by taking a
+   linear combination of the rows of H, adding one of
+   the rows of M, and prepending the multiplicity 4.
+   
+   On the face with the @TO buchweitz@ example
+   there are two facet rays:
   Example
    (H,M) = allSemigroups buchweitz 0
   Text
@@ -2262,8 +2240,61 @@ Description
        )
 SeeAlso
  aperySet
- coneEquations
+ aperyConeEquations
  buchweitzCriterion
+///
+
+doc ///
+Node
+  Key
+   randomSemigroup
+   (randomSemigroup, List, ZZ)
+   (randomSemigroup, ZZ, ZZ)
+  Headline
+   Random semingroup on a given face of the Kunz cone
+  Usage
+   L' = randomSemigroup(L,b)
+   L' = randomSemigroup(m,b)   
+  Inputs
+   L:List
+    of generators of a semigroup
+   b:ZZ
+    bound for the random numbers to be used
+   m:ZZ
+    multiplicity
+  Outputs
+   L':List
+    Apery set of a semigroup
+  Description
+    Text
+     Find a random semigroup within a bounded portiion
+     of the open face of the Kunz cone containing L
+     (or of the interior of the Kunz cone, if a multiplicity m
+     is specified instead of a list.
+
+     After (H,M) = allSemigroups L, the Apery set of L'
+     is obtained by prepending m to
+     the sum of a random linear combination of the rows of H
+     (using random integers 0..b-1)
+     and a random row of M.
+
+     Since L' is on the same face as L, it shares many
+     homological properties, such as the total betti
+     numbers of the resolution of its semigroup ideal.
+    Example
+     L = {6,9,13,16}
+     L' = randomSemigroup({6,9,13,16}, 5)
+     mingens L'
+     F = res semigroupIdeal L;
+     F'= res semigroupIdeal L';
+     apply(1+length F, i-> rank F_i)
+     apply(1+length F', i-> rank F'_i)
+  Caveat
+   The list L' is an Apery set, so
+   may not be a minimal set of semigroup generators.
+  SeeAlso
+   allSemigroups
+   mingens
 ///
 
 doc ///
@@ -2325,423 +2356,7 @@ SeeAlso
  weight
  ///
 
-doc ///
-Key
- makeUnfolding
- (makeUnfolding, Ideal)
- (makeUnfolding, List) 
- [makeUnfolding, "BaseField"]
- [makeUnfolding, Verbose ]
-Headline
- Makes the universal homogeneous unfolding of an ideal with positive degree parameters
-Usage
- (A,unfolding) = makeUnfolding I
- (A,unfolding) = makeUnfolding sgrp
-Inputs
- I:Ideal
- sgrp:List
-  generators of a semigroup
-Outputs
- A: Ring
-   algebra of unfolding parameters
- unfolding: Matrix
-   equations of the unfolding
-Description
-  Text
-   Given a (quasi)homogeneous ideal in a ring S = kk[x_0..x_n]
-   the function creates a positively graded polynomial ring A = kk[a_{i,j}]
-   and computes the unfolding of I as an ideal 
-   of SA = kk[x_0..x_n, a_{i,j}]. This can be used as a step in computing the
-   semi-universal deformation of the affine cone defined by I.
 
-   In the case of
-
-   makeUnfolding sgrp
-
-   the routine first forms the ideal of the semigroup ring, and applies makeUnfolding to this.
-  Example
-   L={4,5,7}
-   I := semigroupIdeal L;
-   (A,unfolding):= makeUnfolding I;
-   S=ring I
-   fI=res I
-   degs=flatten (gens A/degree)
-   n=floor(max degs/2+3)
-   restricted=ideal select(gens A, y-> (degree y)_0<n);
-   SA=ring unfolding
-   runfolding=unfolding%sub(restricted,SA);
-   transpose runfolding
-   J=flatteningRelations(I,A,runfolding);
-   cJ=decompose J;#cJ
-   ideal prune (A/J)
-   family=runfolding%sub(J,SA);
-  Text
-   This is a flat family!
-  Example
-   betti res ideal family == betti res I
-   fiber=ideal sub(family,vars S|random(S^1,S^(numgens A)));
-   singFiber=radical ideal gens gb (fiber+minors(codim I,jacobian fiber))
-  Text
-   Thus the family is a smoothing of S/I so
-   the semigroup L in the example is a Weierstrass semigroup by Pinkham's thesis.
-SeeAlso
- flatteningRelations
-///
-
-doc ///
-Key
- flatteningRelations
- (flatteningRelations, Ideal, Ring, Matrix)
-Headline
- Compute the flattening relations of an unfolding
-Usage
- J= flattening(I,A,unfolding)
-Inputs
- I:Ideal
-  homogeneous with respect to a possibly nonstandard NN-grading
- A: Ring
-  the ring of parameters of the unfolding
- unfolding: Matrix
-  an unfolding of gens I
-Outputs
- J: Ideal
-   of A
-Description
-  Text
-   Given the tuple (I,A,unfolding) the function computes the flattening relations
-   via the set of Buchberger test syzygies.
-   The procedure terminates since the parameters
-   of A have positive degree, and the unfolding is homogeneous.
-  Example
-   L={4,6,7}
-   I = trim semigroupIdeal L;
-   (A,unfolding)=makeUnfolding I
-   S=ring I
-   fI=res I
-   degs=flatten (gens A/degree)
-   n=floor(max degs/2)+3
-   restricted=ideal select(gens A, y-> (degree y)_0<n);
-   SA=ring unfolding
-   runfolding=unfolding%sub(restricted,SA);
-   transpose runfolding
-   J=flatteningRelations(I,A,runfolding);
-   cJ=decompose J;#cJ
-   ideal prune (A/J)
-   family=runfolding%sub(J,SA);
-   betti res ideal family == betti res I
-  Text
-   Thus this is a flat family!
-  Example
-   fiber=ideal sub(family,vars S|random(S^1,S^(numgens A)));
-   singFiber=radical ideal gens gb (fiber+minors(codim I,jacobian fiber))
-  Text
-   Thus the family is a smoothing of S/I so
-   the semigroup L in the example is a Weierstrass semigroup by Pinkham's thesis.
-
-SeeAlso
- makeUnfolding
- ///
-
-doc ///
-Key
- findPoint
- (findPoint, Ideal)
- [findPoint, Verbose ]
-Headline
- Find a kk-rational point in a variety
-Usage
- point=findPoint c
-Inputs
- I:Ideal
-Outputs
- B: Matrix
-   coordinates of a point in the finite ground field
-Description
-  Text 
-   Given ideal c the functions adds random linear equations L to c to obtain
-   1-dimensional ideal. Since the ground field is finite, decompose the ideal c+L
-   will lead to a point with positive probability. Thus repeating will lead to success.
-  Example
-    kk=ZZ/101
-    R=kk[x_0..x_6]
-    c=ideal random(R^1,R^{2:-1,2:-2})
-    B=findPoint c
-    sub(c,B)==0
-
-  
-///
-
-
-doc ///
-Key
- isSmoothableSemigroup
- (isSmoothableSemigroup, List, RR, ZZ)
- [isSmoothableSemigroup, "BaseField"]
- [isSmoothableSemigroup, Verbose ]
-Headline
- Look for a smoothing family
-Usage
- b=isSmoothableSemigroup(L,r,n)
-Inputs
- L:List
-   the generators of a semigroup
- r:RR
- n:ZZ
-   numbers which influences the truncation
-Outputs
- b: Boolean
-   true if a smoothing family was found, false no smoothing family was found
-Description
-  Text
-    After computing an unfolding and restricting the
-    unfolding to variables of degree larger than
-    
-             (maximal degree of a parameter)*r+n,
-	     
-    we compute the flattening relations J of the restricted unfolding.
-    If J defines a union of components X,
-    we check whether the fiber over a random closed point of each X is smooth.
-    If we find a smooth fiber we return true, else we return false.
-  Example
-    L={6,8,9,11}
-    genus L
-    elapsedTime isSmoothableSemigroup(L,0.30,0)
-    elapsedTime isSmoothableSemigroup(L,0.14,0)
-SeeAlso
- makeUnfolding
- flatteningRelations
- getFlatFamily
- isARandomFiberSmooth
- ///
-
-
-doc ///
-Key
- isWeierstrassSemigroup
- (isWeierstrassSemigroup, List, RR)
- [isWeierstrassSemigroup, "BaseField"]
- [isWeierstrassSemigroup, Verbose]
-Headline
- Experimentally decide whether L is a Weierstrass semigroup
-Usage
- b=isWeierstrassSemgroup(L,r)
-Inputs
- L:List
-   the generators of a semigroup
- r:RR
-   numbers which influences the truncation
-Outputs
- b: Boolean
-   true if a smoothing family was found, false no smoothing family was found
-Description
-  Text
-    After computing an unfolding we successivly restricting the
-    unfolding to variables of degree larger  an integer n  for an n with
-    
-             n<=(maximal degree of a parameter)*r,
-	     
-    compute the flattening relations J of the restricted unfolding.
-    If J defines a union of components X,
-    we check whether the fiber over a random closed point of each X is smooth.
-    If we find a smooth fiber we return true, else we continue with n-1 until we checked
-    the full unfolding.
-  Example
-    L={6,8,9,11}
-    genus L
-    elapsedTime isWeierstrassSemigroup(L,0.15)
-SeeAlso
- makeUnfolding
- flatteningRelations
- getFlatFamily
- isARandomFiberSmooth
- ///
-
-doc ///
-Key
- nonWeierstrassSemigroups
- (nonWeierstrassSemigroups, ZZ,ZZ)
- (nonWeierstrassSemigroups, ZZ,ZZ,List)
- [nonWeierstrassSemigroups, "BaseField"]
- [nonWeierstrassSemigroups, Verbose]
-Headline
- Find possibly non Weierstrass Semigroups
-Usage
- LL=nonWeierstrassSemgroups(m,g)
- LL=nonWeierstrassSemgroups(m,g,LLdifficult)
-Inputs
- m:ZZ
-   the multiplicity of a semigroup
- g:ZZ
-   the genus of a semigroup
- LLdifficult: List
-   List of difficult semigroups which we exclude from the test
-Outputs
- LL: List
-   List of possible non Weierstrass semigroups including LLdifficult
-Description
-  Text
-    We test which semigroups of multiplicity m and genus g are smoothable.
-    If no smoothing was found then L is a candidate for a non Weierstrass semigroup.
-    In this search certain semigroups L in LLdifficult, where the computation is particular heavy are
-    excluded.
-  Example
-    elapsedTime nonWeierstrassSemigroups(6,7)
-    LLdifficult={{6, 8, 9, 11}}
-    elapsedTime nonWeierstrassSemigroups(6,8,LLdifficult,Verbose=>true)
-  Text
-   In the verbose mode we get timings of various computation steps and further information.
-   The first line,
-   (17,5),
-   indicates that there 17 semigroups of multiplicity 6 and genus 8 of which only 5 is not flagged
-   as smoothable by the function knownExample.
-   The second line,
-   {6, 7, 8, 17},
-   gives the current semigroup.
-   The timing under various  headers tells how much time was used in each of the steps.   
-SeeAlso
- isWeierstrassSemigroup
- LabBookProtocol
- ///
-
-
-
-
-
-
-
- 
-doc ///
-Key
- getFlatFamily
- (getFlatFamily, List, RR, ZZ)
- [getFlatFamily, "BaseField"]
- [getFlatFamily, Verbose ]
-Headline
- Compute the flat family depending on a subset of parameters of the universal unfolding
-Usage
- (I,J1,family)=getFlatFamily(L,RR,ZZ)
-Inputs
- L:List
-   the generators of a semigroup
- r:RR
- n:ZZ
-   numbers which influences the truncation
-Outputs
- I: Ideal
-    semigroup ideal
- J1:Ideal
-    flatness relations among the parameters
- family: Matrix
-    defining equation of the family
-Description
-  Text
-    After computing an unfolding and restricting the
-    unfolding to variables of degree larger than
-    
-             (maximal degree of a parameter)*r+n,
-    
-    we compute the flattening relations and remove dependent variables.
-    The remaining flattening relation are returned in the ideal J1.
-    Using the function isARandomFiberSmooth we then can check with good luck
-    whether a random fiber over some component of J1 is smooth.
-  Example
-    L={6,8,10,11}
-    genus L
-    (I,J1,family)=getFlatFamily(L,0.30,0);
-    betti res ideal family == betti res I
-    isARandomFiberSmooth(I,J1,family)
-    support family
-    support family /degree
-    gens ring J1 /degree
-  Text
-    Parameters of the universal unfolding of degree <= 22*0.3 are not used
-  Example
-    (I,J1,family)=getFlatFamily(L,0.00,11);
-    support family
-    support family /degree
-  Text
-    Parameters of the universal unfolding of degree < 11) are not used
-  Example
-    isARandomFiberSmooth(I,J1,family)
-    A = ring family
-    transpose family
-SeeAlso
- makeUnfolding
- flatteningRelations
- getFlatFamily
- isARandomFiberSmooth
- ///
-
-doc ///
-Key
- isARandomFiberSmooth
- (isARandomFiberSmooth, Ideal, Ideal, Matrix)
- [isARandomFiberSmooth, "BaseField"]
- [isARandomFiberSmooth, Verbose ]
-Headline
- Test whether a random fiber is smooth
-Usage
- b=isARandomFiberSmooth(I,J1,family)
-Inputs
- I: Ideal 
-  semigroup ideal
- J1:Ideal
-  flatness relations among the parameters
- family:Matrix
-   a flat family
-Outputs
- b: Boolean
-   true if a random fiber is smooth, false otherwise
-Description
-  Text    
-    We check whether a random fiber over a random closed point of each component of  J1 is smooth.
-    If we find a smooth fiber we return true, else we return false.
-  Example
-    L={6,8,10,11}
-    genus L
-    (I,J1,family)=getFlatFamily(L,0.30,0);
-    isARandomFiberSmooth(I,J1,family)
-    SA=ring family
-    transpose family
-SeeAlso
- makeUnfolding
- flatteningRelations
- getFlatFamily
- ///
-
- doc ///
-Key
-  heuristicSmoothness
-  (heuristicSmoothness, Ideal)
-  [heuristicSmoothness, "BaseField"]
-  [heuristicSmoothness, Verbose ]
-Headline
-  Check whether an affine curve is smooth
-Usage
-  b=heuristicSmoothness c
-Inputs
-  c: Ideal
-    of an affine curve
-Outputs
-  b: Boolean
-    true if the computation showes that c is smooth false otherwise
-Description
-  Text
-    We  check for smoothness using only some of the minors of
-    the jacobian matrix. If we are lucky this establishes smoothness.
-    With bad luck we might fail even in case when c is smooth.   
-  Example
-    kk=ZZ/2; S=kk[x_0..x_3]
-    setRandomSeed "some singular and some smooth curves";
-    elapsedTime tally apply(10,i-> (
-	    c=minors(2,random(S^2,S^{3:-2}));
-	    c=sub(c,x_0=>1);
-	    R=kk[support c];c=sub(c,R);
-	    heuristicSmoothness c))
-SeeAlso
-
-///
- 
 doc ///
 Key
  buchweitz
@@ -2957,7 +2572,7 @@ Outputs
  I: Ideal
 Description
   Text
-   The semingroup ideal of the semigroup generated by L
+   The semigroup ideal of the semigroup generated by L
    is the kernel of the map kk[x_0..x_(#L)] -> kk[t]
    sending x_i to t^(L_i), where kk is the specified BaseField,
    defaulting to ZZ/101 and x is the specified VariableName.
@@ -3047,6 +2662,9 @@ doc ///
 Key
  kunzRing
  (kunzRing, List)
+ [kunzRing, "BaseField"]
+ [kunzRing, "VariableName"]
+ [kunzRing, "MinimalGenerators"]
 Headline
  artinian reduction of a semigroup ring
 Usage
@@ -3059,11 +2677,13 @@ Outputs
   semigroup ring mod multiplicity element
 Description
   Text
-   returns the semigroup ring modulo the element of least degree.
-   The kunzRing shares many properties with the semigroup ring.
+   Returns the semigroup ring modulo the element of least degree.
+   The kunzRing shares many properties with the semigroup ring;
+   see @TO semigroupRing@ for explanations of the options.
   Example
    semigroupRing {3,5}
-   kunzRing {3,5} 
+   kunzRing {3,5}
+   kunzRing ({3,5,6}, "BaseField" => ZZ/32003, "VariableName" => y, "MinimalGenerators" => false)
   Text
    The Kunz ring is an invariant of the face of the Kunz cone which contains L.
    For all L in the interior of the corresponding face have isomorphic Kunz rings.
@@ -3080,6 +2700,7 @@ Key
  fractionalIdeal
  (fractionalIdeal, List, List)
  [fractionalIdeal, "Ideal"]
+ 
 Headline
  turn a fractional ideal into a proper ideal
 Usage
@@ -3118,15 +2739,122 @@ SeeAlso
 
 doc ///
 Key
- coneEquations
- (coneEquations, ZZ)
- (coneEquations, List)
- [coneEquations, "Inhomogeneous"]
+ infinitelyNearSemigroups
+ (infinitelyNearSemigroups, List)
 Headline
- Find the equations of the Kunz cones
+ The sequence of blowup semigroups of a numerical semigroup
 Usage
- M =  coneEquations m
- M = coneEquations sgrp
+ N = infinitelyNearSemigroups L
+Inputs
+ L: List
+  of positive integers, generating a numerical semigroup S
+Outputs
+ N: List
+  of lists of minimal generators of the successive blowups of S,
+  starting with S itself and ending with the trivial semigroup {1}
+Description
+  Text
+   Let R be the semigroup ring of a numerical semigroup S with
+   multiplicity m, and let \mathfrak{m} = (t^s : s \in S, s > 0) be
+   its maximal ideal. The \emph{blowup} of R at \mathfrak{m} is the
+   subring R[\mathfrak{m}/t^m] = R[t^{s-m} : s \in S, s > 0] of the
+   fraction field frac R; this blowup is again a semigroup ring,
+   namely the semigroup ring of the \emph{blowup semigroup} S',
+   generated by m together with s-m for every nonzero s in S.
+
+   Iterating this construction produces an ascending sequence of
+   semigroup rings R = R_0 \subseteq R_1 \subseteq R_2 \subseteq \dots,
+   each obtained from the previous by blowing up at its maximal ideal,
+   and a corresponding ascending sequence of semigroups
+   S = S_0 \subseteq S_1 \subseteq S_2 \subseteq \dots.
+   The sequence stabilizes after finitely many steps when S_r becomes
+   the trivial semigroup N (generated by 1), at which point R_r is the
+   integral closure of R in frac R.
+
+   The function infinitelyNearSemigroups returns this sequence as a
+   list of minimal generating sets, beginning with mingens S and
+   ending with {1}.
+  Example
+   infinitelyNearSemigroups {3,5,7}
+   infinitelyNearSemigroups {5,8}
+  Text
+   For an Arf semigroup, every blowup in the sequence has minimal
+   multiplicity (see @TO isArf@), and the sequence of multiplicities
+   determines the Arf closure (see @TO arfClosure@):
+  Example
+   N = infinitelyNearSemigroups {5,8,9,11,12}
+   apply(N, min)
+SeeAlso
+ infinitelyNearModules
+ isArf
+ arfClosure
+ semigroup
+///
+
+doc ///
+Key
+ infinitelyNearModules
+ (infinitelyNearModules, Ring)
+Headline
+ The sequence of blowups of a semigroup ring as fractional ideals
+Usage
+ MM = infinitelyNearModules R
+Inputs
+ R: Ring
+  a semigroup ring, as produced by @TO semigroupRing@
+Outputs
+ MM: List
+  of R-modules, one for each semigroup in
+  @TO infinitelyNearSemigroups@ applied to the underlying semigroup of R
+Description
+  Text
+   Let R be the semigroup ring of a numerical semigroup S, and let
+   S = S_0 \subseteq S_1 \subseteq \dots \subseteq S_r = N
+   be the sequence of blowups of S returned by
+   @TO infinitelyNearSemigroups@. Each S_i is a finitely generated
+   R-submodule of the fraction field frac R: namely, the R-module
+   generated (in frac R) by the monomials t^s for s in a generating
+   set of S_i.
+   
+   The function infinitelyNearModules returns the sequence of these
+   R-modules. The first entry is (an R-module isomorphic to) R itself.
+  Example
+   R = semigroupRing {3,5,7}
+   MM = infinitelyNearModules R
+   MM/numgens
+Caveat
+   The construction goes through @TO fractionalIdeal@, which clears
+   denominators by multiplying through by a high enough power of
+   the multiplicity element so as to produce an honest ideal of R.
+   As a result, the modules returned by infinitelyNearModules are
+   isomorphic to the actual infinitely near modules sitting inside
+   frac R, but their internal grading is shifted by the chosen
+   denominator. In other words, what these modules represent is
+   correct \emph{up to a degree shift}; if you need the natural
+   grading inherited from frac R, you must compensate for that shift
+   by hand.
+SeeAlso
+ infinitelyNearSemigroups
+ fractionalIdeal
+ semigroupRing
+ isArf
+///
+
+doc ///
+Key
+ aperyConeEquations
+ (aperyConeEquations, ZZ)
+ (aperyConeEquations, List)
+ muConeEquations
+ (muConeEquations, ZZ)
+ (muConeEquations, List)
+Headline
+ Inequalities defining the Kunz cones
+Usage
+ M =  aperyConeEquations m
+ M = aperyConeEquations sgrp
+ M =  muConeEquations m
+ M = muConeEquations sgrp
 Inputs
  m:ZZ
   multiplicity
@@ -3134,7 +2862,8 @@ Inputs
   generators of a semigroup
 Outputs
  M:Matrix
-  m-1 x d matrix whose columns represent inequalities defining the Kunz cone
+  m-1 x d matrix whose columns represent
+    inequalities defining the Kunz cone
 Description
   Text
    Let S be the numerical semigroup defined by a list sgrp,
@@ -3145,19 +2874,41 @@ Description
 
    a_i + a_j - a_(i+j) \geq 0.
 
-   where 1\leq i,j\leq m-1 and i+j\neq m is interpreted mod m.
-   The function coneEquations m returns an m-1 x d matrix of ZZ
+   where 1\leq i,j\leq m-1 and i+j\neq m is interpreted mod m.   
+
+   On the other hand, the inHomogeneous Kunz cone is
+   given by the equations
+
+   mu_i + m_j - mu_(i+j) \geq 0 if i+j<m
+   mu_i + m_j - mu_(i+j) -1  \geq 0 if i+j> m
+
+   The output of the function is the pair (E,c),
+   where, if L is a semigroup, then
+
+   matrix {Apery L} * E
+
+   is a non-negative matrix with entries divisible by m, and
+
+   matrix {mu L} *E - c
+
+   is a non-negative matrix.
+   The columns of E and c are indexed by the lexicographically
+   ordered pairs {i,j} with 1<= i<=j<=m-1 and i+j != m.
+   
+   
+
+   The function aperyConeEquations m returns an m-1 x d matrix of ZZ
    whose columns are the coefficients of the left hand sides of these inequalities.
-   The function coneEquations sgrp does the same, with additional columns representing
+   The function aperyConeEquations sgrp does the same, with additional columns representing
    the additional inequalities of this type that are satisfied by
    the Apery set apery(sgrp). For m = 3, the semigroup {3,4,5} is interior (and thus
    satisfies no further equations), while the semigroups {3,4} and {3,5} are on
    the two extremal rays of the cone.
   Example
-   coneEquations 3
-   coneEquations {3,4,5}
-   coneEquations {3,4}
-   coneEquations {3,5}
+   aperyConeEquations 3
+   aperyConeEquations {3,4,5}
+   aperyConeEquations {3,4}
+   aperyConeEquations {3,5}
    allSemigroups 3
   Text
    The inhomogeneous Kunz cone does the same, but for the numbers mu_i instead of
@@ -3165,19 +2916,21 @@ Description
 
    mu_i+mu_j - mu_(i+j) -1.
 
-   The function coneEquations(m, "Inhomogeneous" => true) returns the same matrix
-   as in the homogeneous case, with one more row, where the last row represents the
+   The function muConeEquations m,
+   returns the matrix
+   aperyConeEquations m
+   with one more row, where the last row represents the
    constant terms of this inquality:
   Example
-   eq=coneEquations(3, "Inhomogeneous" => true)
-   coneEquations({3,4,5}, "Inhomogeneous" => true)
-   coneEquations({3,4}, "Inhomogeneous" => true) 
-   coneEquations({3,5}, "Inhomogeneous" => true)
+   eq=muConeEquations 3
+   muConeEquations {3,4,5}
+   muConeEquations {3,4}
+   muConeEquations {3,5}
    (H,M)=allSemigroups 3
    (H,M)=allSemigroups 4
-   M1=(M|matrix apply(rank target M,i->{-1}))
-   eqInh=coneEquations(4, "Inhomogeneous" => true)
-   eqh=coneEquations(4)
+   M1=(M|matrix apply(rank target M,i->{1}))
+   eqInh=muConeEquations 4
+   eqh=aperyConeEquations 4
    M1*eqInh
    H*eqh
   Text
@@ -3189,6 +2942,7 @@ SeeAlso
  apery
  coneRays
 ///
+
 
 doc ///
 Key
@@ -3207,7 +2961,7 @@ Outputs
 Description
   Text
    Uses the Fourier-Motzkin algorithm to compute the rays from the list of supporting hyperplanes,
-   which is given by @TO coneEquations@. The number of rays grows rather quickly with m;
+   which is given by @TO aperyConeEquations@. The number of rays grows rather quickly with m;
    the actual number is unknown. Use @TO facetRays@ to determine the rays bounding the face
    on which a given semigroup lies.
   Example
@@ -3215,23 +2969,281 @@ Description
    coneRays 4
    facetRays {4,5,6}
 SeeAlso
- coneEquations
+ aperyConeEquations
  facetRays
 ///
 
+doc ///
+Node
+  Key
+   semigroupFromMu
+   (semigroupFromMu, List)
+  Headline
+   Inverse of the function mu
+  Usage
+   L = semigroupFromMu mm
+  Inputs
+   mm:List
+    of m-1 positive integers
+  Outputs
+   L:List
+    minimal generators of a semigroup
+  Description
+    Text
+     if A = {a_1..a_(m-1)}
+     is the Apery set of a semigroup L,
+     then mu L is the sequence of numbers (a_i -i)/m.
+     semigroupFromMu is the inverse operation.
+    Example
+     L = {6,9,13,16}
+     mm = mu L
+     semigroupFromMu mm
+  SeeAlso
+   mu
+///
+doc ///
+Node
+  Key
+   semigroupsFromMatrix
+   (semigroupsFromMatrix, Matrix)
+  Headline
+   applies semigroupFromMu to the columns of a matrix
+  Usage
+   ss = semigroupsFromMatrix M
+  Inputs
+   M:Matrix
+    of non-negative integers
+  Outputs
+   ss:List
+    of minimal generating sets of semigroups
+  Description
+    Text
+     If M = facetRays L then the columns of M
+     are the values of mu applied to the first
+     point on each ray of the minimal closed face
+     containing L.
+     In this case semigroupsFrom M returns the list
+     of semigroups corresponding to the rays,
+    Example
+     M1 = coneRays 4
+     netList semigroupsFromMatrix M1
+     (H,M) = allSemigroups 4
+  SeeAlso
+   coneRays
+   allSemigroups
+///
+
+doc ///
+Key
+ isArf
+ (isArf, List)
+Headline
+ test whether a numerical semigroup is Arf
+Usage
+ t = isArf L
+Inputs
+ L: List
+  of positive integers, generating a numerical semigroup S
+Outputs
+ t: Boolean
+  true if S is Arf
+Description
+  Text
+   A numerical semigroup S is \emph{Arf} if for every triple of elements
+   x \geq y \geq z in S, the element x+y-z also lies in S. Equivalently,
+   S is Arf if and only if every semigroup in the sequence of blowups
+   (the infinitely near semigroups of S) has minimal multiplicity, that is,
+   has multiplicity equal to its embedding dimension. The latter
+   characterization is what isArf actually checks.
+
+   The input L is interpreted as a generating set of a semigroup; it
+   need not be the minimal generating set, and isArf works with the
+   semigroup it generates.
+  Example
+   isArf {5,8,9,11,12}
+   isArf {5,8,9,12}
+   isArf {3,5,7}
+  Text
+   The trivial semigroup (all of N) is Arf:
+  Example
+   isArf {1}
+SeeAlso
+ arfClosure
+ arfIndex
+ infinitelyNearSemigroups
+ semigroup
+///
+
+doc ///
+Key
+ arfClosure
+ (arfClosure, List)
+Headline
+ Compute the Arf closure of a numerical semigroup
+Usage
+ A = arfClosure L
+Inputs
+ L: List
+  of positive integers, generating a numerical semigroup S
+Outputs
+ A: List
+  of minimal generators of the Arf closure of S
+Description
+  Text
+   A numerical semigroup S is \emph{Arf} if for every triple of elements
+   x \geq y \geq z in S, the element x+y-z also lies in S. Equivalently,
+   S is Arf if and only if every semigroup in the sequence of blowups
+   (the infinitely near semigroups of S) has minimal multiplicity, that is,
+   has multiplicity equal to its embedding dimension.
+
+   The \emph{Arf closure} Arf(S) is the smallest Arf semigroup containing S.
+   The function arfClosure returns a list of minimal generators of Arf(S).
+
+   The Arf closure is computed from the multiplicities of the infinitely
+   near semigroups of S: if those multiplicities are m_0, m_1, ..., m_(r-1),
+   then the partial sums m_0, m_0+m_1, ..., m_0+...+m_(r-1) lie in Arf(S),
+   and together with the integers immediately above the largest partial sum
+   (up to m_0 - 1 of them) they generate Arf(S).
+  Example
+   arfClosure {3,5,7}
+   arfClosure {5,8,9,12}
+   arfClosure {5,8,9,11,12}
+  Text
+   The third example is already Arf, so the Arf closure equals the input
+   semigroup (up to choice of minimal generators). The trivial semigroup
+   N (generated by 1) is its own Arf closure:
+  Example
+   arfClosure {1}
+SeeAlso
+ isArf
+ arfIndex
+ infinitelyNearSemigroups
+ semigroup
+ aperySet
+///
+
+doc ///
+Key
+ arfIndex
+ (arfIndex, List)
+Headline
+ Computes the Arf index of a numerical semigroup
+Usage
+ n = arfIndex L
+Inputs
+ L: List
+  of positive integers, generating a numerical semigroup S
+Outputs
+ n: ZZ
+  the Arf index of S
+Description
+  Text
+   Let A be the operator that sends a numerical semigroup S to the
+   semigroup obtained by adjoining all elements of the form x+y-z with
+   x \geq y \geq z in S (and x+y-z still bounded by the conductor region
+   under consideration). Iterating A eventually stabilizes at the Arf
+   closure of S; see @TO arfClosure@.
+
+   The function arfIndex returns the number of times A must be applied
+   to reach this fixed point. In particular, arfIndex L is 0 exactly when
+   the input semigroup is already Arf.
+  Example
+   arfIndex {5,8,9,11,12}
+   arfIndex {5,8,9,12}
+   arfIndex {3,5,7}
+SeeAlso
+ isArf
+ arfClosure
+ infinitelyNearSemigroups
+ semigroup
+///
+doc ///
+Key
+ isKnownExample
+ (isKnownExample, List)
+Headline
+ Is L a known Weierstrass semigroup?
+Usage
+ b = isKnownExample L
+Inputs
+ L:List
+  generators of the semigroup
+Outputs
+ b:Boolean
+  true if L is a known example of a Weierstrass semigroup
+Description
+  Text
+   Certain semigroups are known to be Weierstrass.
+   For example L has 2  or 3 generators only, by work of Pinkham and Sally. 
+   Eisenbud-Harris proved that semigroups L of @TO weight@(L)<@TO genus@(L) are smoothable, and
+   Pflueger extended this to show that semigroups L of @TO ewt@(L)<@TO genus@(L) are smoothable.
+   Komeda proved that anysemigroup with min L < 6 is Weierstrass.
+   In "A minimal non-Weierstrass Semigroup" by Eisenbud and Schreyer it is shown that all
+   semigroups of genus <13 are Weierstrass but that the semigroup {6,9,13,16}, of genus 13,
+   is not.
+  Example
+   L={7,12,13}
+   isKnownExample L
+   L={7,8,9,11,13}
+   ewt L, genus L
+   isKnownExample L
+   LL=findSemigroups(9,10);#LL
+   LL = flatten apply (11, g->findSemigroups g);#LL
+   Lknown = select(LL, s -> isKnownExample s);#Lknown
+   tally apply(Lknown, L->(
+	if #L <= 3 then "Hilbert-Burch" else
+	if #L == 4 and type L == 1 then "Buchsbaum-Eisenbud" else
+	if weight L < genus L then "Eisenbud-Harris" else
+	if ewt L < genus L then "Plueger" else
+	if min L <6 then "Komeda-Low Multiplicity"))
+
+
+SeeAlso
+  findSemigroups
+///
 
 --<<docTemplate
  -* Test section *-
+TEST///-* randomSemigroup *-
+     L = {6,9,13,16}
+     L' = randomSemigroup({6,9,13,16}, 5)
+     F = res semigroupIdeal L;
+     F'= res semigroupIdeal L';
+     assert(
+	 apply(1+length F, i-> rank F_i)==
+	 apply(1+length F', i-> rank F'_i)
+	 )
+///
+
+--Not sure about this test
+-- TEST///-* isArf*-
+-- assert(isArf {5,8,9,12} == false)
+-- assert(isArf {5,8,9,11,12}==true)
+-- assert(isArf {5,8,9,10,11}==false) -- the given gens aren't minimal
+--
+
+TEST///-* arfClosure and arfIndex*-
+-- the Arf closure of an Arf semigroup is the semigroup itself
+assert(isArf arfClosure {5,8,9,12})
+assert(isArf arfClosure {3,5,7})
+-- arfIndex is 0 exactly when the input is already Arf
+assert(arfIndex {5,8,9,11,12} == 0)
+assert(arfIndex {5,8,9,12} > 0)
+-- Arf closure is idempotent
+assert(arfClosure arfClosure {5,8,9,12} == arfClosure {5,8,9,12})
+assert(arfClosure {5,8,9,12} == {5, 8, 9, 11, 12})
+///
 
  TEST/// -*fractionalIdeal and numberToMonomial*-
-debug loadPackage("NumericalSemigroups", Reload => true)
-   sgrp = {3,5}
+--debug loadPackage("NumericalSemigroups", Reload => true)
+debug needsPackage "NumericalSemigroups"
+sgrp = {3,5}
    R = semigroupRing sgrp
    mons = semigroup sgrp
-   assert(apply(mons, n -> numberToMonomial(R,n)) == {1, x_0, x_2, x_0^2, x_0*x_2, x_0^3, x_2^2})
+   assert(apply(mons, n -> numberToMonomial(R,n)) == {1, R_0, R_1, R_0^2, R_0*R_1, R_0^3, R_1^2})
    assert(
     I := fractionalIdeal(sgrp, {2,3});
-    R := ring I;
+    R = ring I;
     I == ideal(R_1,R_0^2)
     )
 ///
@@ -3241,24 +3253,7 @@ assert(buchweitzSemigroups 6 == {})
 --elapsedTime buchweitzSemigroups(13,16)
 ///
 
-TEST///-*test of findPoint*-
-kk=ZZ/101
-R=kk[x_0..x_5]
-setRandomSeed 0
-c=ideal random(R^1,R^{2:-1,2:-2})
-point=findPoint c
-assert(sub(c,point)== 0)
-///	
 
-TEST///-*flattening and unfolding*-
-assert ((L = mingens {5,6, 8,9, 10,12, 13, 17}) == {5, 6, 8, 9})
-I=semigroupIdeal L
-(A,unfolding)=makeUnfolding I;
-assert(numgens A == 68)
-J=flatteningRelations(I,A,unfolding);
-numgens J
-assert(numgens J == 260)
-///
 
 TEST/// -*aperySemigroupRing *-
 L = {5,6}
@@ -3289,7 +3284,6 @@ assert(#sums(2, gaps buchweitz i) == 3*(genus B -1)+1)
 
 TEST/// -*def1*-
 assert(def1{2,3}  == {-6, -4})
-    
 ///
 
 TEST/// -*burchIndex*-
@@ -3349,19 +3343,14 @@ assert(mingens {8, 10, 31, 129, 130} == {8, 10, 31})
 
 TEST///-*socle*-
 L = {9, 23, 28, 31}
-socle L == {84, 79, 62}
+assert(socle L == {84, 79, 62})
+assert(socle {3,7} == {14})
+assert(type {3,4,5} == #socle {3,4,5})
 ///
 
 TEST/// -*conductor*-
 assert(conductor {7, 24} == 6*23)
 ///
-
-TEST///-*test of facetRays*-
-assert(facetRays{3,4} == matrix"1;2")
-assert(facetRays{3,5} == matrix"2;1")
-assert(facetRays{3,4,5} == matrix"1,2;2,1")
-///
-
 
 TEST///-*test of option*-
    R = semigroupRing({3,5,7}, "BaseField" => QQ)
@@ -3374,28 +3363,107 @@ TEST///-*test of allSemigroups*-
    assert(M==matrix{{4,5},{4,8},{7,5},{10,5}})
 ///
 
-   
-TEST///-*test of coneEquations*-
-    (H,M)=allSemigroups 3
-    eq=coneEquations 3
-    assert(all(flatten entries (H*eq),e->e>=0))
-    eqInh=coneEquations(3,"Inhomogeneous" => true)
-    M1=(M|matrix apply(rank target M,i->{-1}))
-    assert(all(flatten entries (M1*eqInh),e->e>=0))
+TEST///-*test of facetRays*-
+assert(facetRays{3,4} == matrix"1;2")
+assert(facetRays{3,5} == matrix"2;1")
+assert(facetRays{3,4,5} == matrix"1,2;2,1")
 ///
-   
-end--
 
--* Development section *-
+TEST/// -*buchweitzCriterion*-
+assert(buchweitzCriterion {7,12,13} == 0)
+assert(buchweitzCriterion buchweitz 0 == -1)
+assert(buchweitzCriterion buchweitz 2 == -1)
+assert(buchweitzCriterion(3,{4,5}) == buchweitzCriterion {3,4,5})
+///
+
+TEST/// -*isSymmetric*-
+assert(isSymmetric {3,5})
+assert(isSymmetric {7,9})
+assert(not isSymmetric {3,4,5})
+///
+
+TEST/// -*kunzMatrix*-
+assert(kunzMatrix {4,7} == matrix {{0,0,0},{0,0,1},{0,1,1}})
+assert(kunzMatrix {4,7} == transpose kunzMatrix {4,7})
+assert(kunzMatrix {4,7} == kunzMatrix apery {4,7})
+///
+
+TEST/// -*weight*-
+assert(weight {5,7} == 36)
+assert(weight {6,7} == 55)
+///
+
+TEST/// -*ewt and effectiveWeight*-
+assert(ewt {5,7} == 15)
+assert(ewt {6,7} == 20)
+assert(effectiveWeight {5,7} == ewt {5,7})
+assert(ewt {5,7} <= weight {5,7})
+///
+
+TEST/// -*kunzRing*-
+R = kunzRing {3,5};
+assert(dim R == 0)
+assert(isHomogeneous R)
+///
+
+TEST/// -*coneRays*-
+importFrom(NumericalSemigroups, "coneEquations")
+assert(coneRays 3 == matrix {{1,2},{2,1}})
+assert(all(flatten entries ((transpose coneEquations 4) * coneRays 4), e -> e >= 0))
+///
+
+TEST///-*test of aperyConeEquations, muConeEquations*-
+A1 = aperySet {3,4,5}
+A2 = aperySet {3,5}
+A3 = aperySet {3,7}
+assert(aperyConeEquations 3 == aperyConeEquations {3,4,5})
+assert((matrix{A1}*aperyConeEquations {3,5})_(0,2) == -6)
+assert(
+    aperyConeEquations {3,7} ==
+    matrix {{2, -1, -2}, {-1, 2, 1}})
+
+mu1 =matrix {mu {3,4,5}|{1}}
+mu2 = matrix {mu {3,5}|{1}}
+mu3 = matrix{mu {3,7}|{1}}
+mu3*muConeEquations 3
+mu2*muConeEquations {3,5}
+mu3*muConeEquations {3,5}
+mu3*muConeEquations {3,7}
+///
+
+
+TEST/// -*isKnownExample and findSemigroups*-
+elapsedTime LL = flatten apply (11, g->findSemigroups g);#LL
+assert(#LL == 478)
+elapsedTime Lknown = select(LL, s -> isKnownExample s);#Lknown
+assert(#LL - #Lknown == 116)
+
+tally apply(Lknown, L->(
+	if #L <= 3 then "Hilbert-Burch" else
+	if #L == 4 and type L == 1 then "Buchsbaum-Eisenbud" else
+	if weight L < genus L then "Eisenbud-Harris" else
+	if ewt L < genus L then "Plueger" else
+	if min L <6 then "Komeda-Low Multiplicity"))
+	
+///
+end--
 restart
-loadPackage ("NumericalSemigroups", Reload=>true)
+needsPackage "NumericalSemigroups"
+loadPackage ("NumericalSemigroups", Reload => true)
+check "NumericalSemigroups"
+
+restart
 uninstallPackage "NumericalSemigroups"
 restart
 installPackage "NumericalSemigroups"
 check "NumericalSemigroups"
 viewHelp "NumericalSemigroups"
+path
 
-
+prepend ("./", path)
+uninstallPackage "NumericalSemigroups"
+installPackage "NumericalSemigroups"
+peek loadedFiles
 
 L1={13,14,15,16,17,18,20,22}
 (gL1,bL1)=allSemigroups L1
@@ -3518,4 +3586,367 @@ tally apply(m,k->  #unique flatten apply(toList(1..m-1),i->(j=(k-i)%m; if j=!=0 
 
 18, 24, 25, 26, 28, 30, 33
 
+--resolutions over Arf rings and minimal multiplicity, not Arf, rings.
+restart
+loadPackage ("NumericalSemigroups", Reload => true)
+needsPackage "DirectSummands"
+needsPackage "Indecomposables"
 
+arfSequence = sgrp ->(
+R = semigroupRing (sgrp, "BaseField" => ZZ/32003);
+--infinitelyNearSemigroups sgrp;
+MM = drop(infinitelyNearModules R, 1);
+FF = apply(MM, M -> res (M, LengthLimit =>1));
+netList apply(#MM, i -> reduceByList(MM, image ((FF_i).dd_1))))
+
+testAtDepth = method()
+testAtDepth Ideal := I -> (
+dep = #gens ring I -length res I; -- depth of ring I, assuming I subset mm^2
+F = res (coker vars ((ring I)/I), LengthLimit => dep+1);
+reduceByList({image F.dd_dep}, image F.dd_(dep+1))
+)
+
+
+testAtDepth List := s -> testAtDepth semigroupIdeal s
+testAtDepth Ring := R -> testAtDepth ideal R
+
+isArf(sgrp = {5,8,9,11,12})
+arfSequence sgrp
+-- the syz of MM_0 is MM_0^4
+reduceByList(MM, image ((FF_0).dd_1))
+reduceByList(MM, image ((FF_1).dd_1))
+--the syz of MM_1 is MM_0^2++MM_1^2
+R = semigroupRing({5,9}, "BaseField" => ZZ/32003)
+(findSummands R)_1
+isArf(sgrp = {4,7,9,10})
+arfSequence sgrp
+isArf (sgrp = {4,11,13,14})
+arfSequence sgrp
+isArf (sgrp = {4,15,17,18})
+arfSequence sgrp
+
+--examples of minimal degree, not Arf:
+g = 9
+ss = findSemigroups g;#ss
+ss1 = select(ss, s-> not isArf s);#ss1
+ss2 = select(ss1, s-> #s == min s);#ss2
+netList ss2
+elapsedTime netList(ss2/(s -> testAtDepth s))--.25 sec for g = 7, 17sec for g=9
+
+--elapsedTime for s in ss2 list (findSummands semigroupRing s)_1--10 sec for g = 7
+
+s = {3,7,11}
+isArf s
+testAtDepth s
+R = semigroupRing s
+ideal R
+findSummands R
+
+needsPackage "Points"
+needsPackage "Indecomposables"
+I = randomPoints(3, 9)
+R = ring I/I
+L = findSummands R
+inds = {coker vars R, image vars R}
+F = res coker vars R
+elapsedTime reduceByList(inds, image F.dd_2)
+
+I = randomPoints(2, 5)
+R = ring I/I
+L = findSummands R
+L_1
+L_0_2
+inds = {coker vars R, image vars R}
+F = res coker vars R
+elapsedTime reduceByList(inds, image F.dd_2)
+ss = summands image F.dd_2
+isIsomorphic(ss_0,ss_1)
+netList ss
+(uniqueUpToIsomorphism summands image F.dd_2)_0_0 -- this is the ideal one of the points
+G = res oo 
+uniqueUpToIsomorphism summands image G.dd_2 -- coordinate rings of all the points, with different multiplities
+
+-- 5 points
+I = randomPoints(3, 5)
+R = ring I/I
+F = res coker vars R
+(uniqueUpToIsomorphism summands image F.dd_1)_0_0 -- first syz is the direct sum of the ideals of one of the  points
+G = res oo 
+numberOfSummands image G.dd_1 -- 1 irreducible
+numberOfSummands image G.dd_2 -- 1 irreducible (larger); this is the third syzygy
+
+-----
+--rational normal quartic
+restart
+loadPackage ("Indecomposables", Reload => true)
+loadPackage ("NumericalSemigroups", Reload => true)
+
+kk = ZZ/32003
+U = kk[s,t]
+mm = ideal(s,t)
+n=3
+S = kk[x_0..x_n]
+I = ker map(U,S,gens (mm^n))
+R = S/I
+findSummands R
+netList toList oo
+
+--three lines
+I = intersect(ideal(x_0,x_1), ideal(x_1,x_2), ideal(x_2, x_3))
+R = (ring I)/I
+findSummands R
+netList toList oo
+
+--cone over 3 points
+I = intersect(ideal(x_0,x_1), ideal(x_1,x_2), ideal(x_2, x_0))
+R = (ring I)/I
+findSummands R
+netList toList oo
+
+--
+Kobayashi and Takahashi example
+kk = ZZ/32003
+S = kk[x,y,z,t, Degrees => {3,5,7,3}]
+m = matrix"x,y,z;
+y,z,x3-t3"
+I = minors(2, m)
+R = S/I
+findSummands R
+--
+testAtDepth randomPoints(2,5)
+
+testAtDepth semigroupIdeal{3,8, 10} --min deg, not arf. passes test
+testAtDepth semigroupIdeal{4,5,6} --not min deg, not arf. fails test--it's CI!
+testAtDepth semigroupIdeal{4,5,7} --not min deg, not arf. fails test, is Golod
+semigroupRing{4,5,7}
+(findSummands semigroupRing{4,5,6,7})_1
+testAtDepth semigroupIdeal{4,9,10,11} -- min deg, not arf.  is Golod passes
+
+
+needsPackage "EagonResolution"
+viewHelp EagonResolution
+R = semigroupRing{3,8,13}
+F = eagonResolution eagon(R,3)
+picture (F, Display => "DisplayBlocks")
+summands coker F.dd_2
+transpose F.dd_3
+findSummands R
+summands image F.dd_2
+F.dd_2
+K = koszul vars R
+uniqueUpToIsomorphism summands ((ideal vars R)*image K.dd_2)
+
+---
+--3 lines in PP^3
+S = ZZ/32003[a,b,c,d]
+I =  intersect(ideal(a,b),ideal(b,c), ideal(a,c))
+I =  intersect(ideal(a,b),ideal(b,c), ideal(a,d))
+Q = ideal"ad-bc"
+I = intersect(Q+ (ideal(a,b))^2, ideal(a,c))
+betti res I
+testAtDepth I
+E = eagon(S/I,3)
+F = eagonResolution(E)
+picture(F, Display => "DisplayBlocks")
+findSummands(S/I)
+summands image F.dd_2
+K = koszul vars (R = S/I)
+summands prune image K.dd_2
+
+M = matrix"a2,b3,c5,d2;
+bc, acd, a2b2c, bd"
+isHomogeneous (m = map(S^2,,M))
+I = minors(2, m)
+isGolod(S/I)
+findSummands (S/I)
+F = res coker vars (R=S/I)
+summands image F.dd_3
+numberOfSummands image F.dd_3
+inds = {image F.dd_1, image F.dd_2, image F.dd_3}
+elapsedTime reduceByList(inds, image F.dd_4)
+
+
+
+
+
+--Simplest min deg non-Arf semigroup?
+restart
+loadPackage ( "NumericalSemigroups", Reload => true)
+needsPackage "NumericalSemigroups"
+needsPackage "Indecomposables"
+L = findSemigroups 8
+mmNotArf = select(L, s-> isMinimalMultiplicity s and not isArf s);#mmNotArf
+arf8 = select(L, s-> isArf s)
+
+--twisted cubic
+S = ZZ/32003[a,b,c,d]
+m = matrix"a,b,c;
+b,c,d"
+I = minors(2,m)
+R =ring I/I
+F = res coker vars R
+F.dd_2
+findSummands R
+betti F
+
+---
+s = arf8_6
+conductors = s -> (
+    slist = infinitelyNearSemigroups s;
+    RList = apply(#slist, i->semigroupRing slist_i);
+    R = Rlist_0
+    for S in Rlist list S
+semigroupRing slist_1
+slist_2
+for ss in slist list semigroupRing ss
+
+s = {3,5,7}
+R = semigroupRing( s, "BaseField" => ZZ/32003)
+MM = infinitelyNearModules R
+F =res   MM_2
+isIsomorphic(image F.dd_1, MM_1++MM_1)
+F.dd_1
+
+R1 = semigroupRing({2,3}, "BaseField" => ZZ/32003)
+F = res 
+NN =summands image F.dd_1
+isIsomorphic(NN_0, NN_1)
+isIsomorphic(NN_0, MM_1)
+isIsomorphic(NN_1, MM_2)
+
+PP = summands image (res  MM_1).dd_1
+(res  MM_1).dd_1
+degrees source oo
+
+
+
+s = {4,6,9,11}
+S6a
+
+data = g ->(
+S = findSemigroups g;
+Sa = select(S, ss-> isArf ss);
+netList for s in Sa list(
+R = semigroupRing (s, "BaseField" => ZZ/32003);
+(infinitelyNearSemigroups s)/(ss-> min ss);
+inds = drop(infinitelyNearModules R, 1);
+{s,for M in inds list reduceByList(inds, image((res M).dd_1))}
+))
+
+elapsedTime data 7
+g=3
+dS6a
+
+mingens s
+isArf s
+infinitelyNearModules semigroupRing s
+conductor s
+
+--is ann Ri_R iso to Ri
+S6a
+--s = {4,6,11,13}
+for s in S6a list(
+R = semigroupRing (s, "BaseField" => ZZ/32003);
+(infinitelyNearSemigroups s)/(ss-> min ss);
+inds = drop(infinitelyNearModules R, 1);
+inds
+for M in inds list(
+    e := (entries gens M)_0;
+    mine := min (e/degree);
+    p := positions(e, ee-> degree ee == mine);
+    x := e_(min p);
+    (isIsomorphic (module ann(M/ideal x) , M))_0
+    )
+)
+
+s = {3,5}
+prune((ideal gens R)/(ideal R_0))
+ann oo
+
+needsPackage "NumericalSemigroups"
+#arf for g<=7:2g-4 but 8->13, 9-> 17, 10->21
+g = 10
+elapsedTime L = findSemigroups g
+elapsedTime # unique select(L, s -> isArf s)
+
+r = 4;d=11
+L= toList(d-r+1..d)
+g = #gaps L
+m = (d-1)//(r-1)
+eps = (d-1)%(r-1)
+--ground truth:
+di = g+2*m+eps -2
+cod = 3*g-3-di
+--versus:
+ewt L
+weight L
+
+-----
+Confusion: facetRays buchweitz 0
+returns two rays, and one of the rays corresponds to
+the apery set of  buchweitz 0.
+
+But if a point on a cone lies on a ray, then
+(in dimension >2) it should lie on two facets
+(every face is an intersection of facets)
+so what is facetRays actually doing?
+
+???
+
+restart
+needsPackage "NumericalSemigroups"
+F = facetRays buchweitz 0
+mm = flatten entries F_{1}
+
+A1 = for i from 1 to 12 list 13*mm_(i-1)+i
+A2 = aperySet buchweitz 0
+assert(A1 == A2)
+
+This would make sense if "facetRays L" actually computes
+the rays of the closed face -- not facet -- on which L lies.
+
+facetRays {4,5,6}
+mu{4,5,6} is half of the sum of the facet rays
+
+----
+semigroupFromAperySet = a -> mingens prepend (#a+1, a)
+
+L = {6,9,13,16}
+LL = apply(numcols facetRays L, i ->(
+            (facetRays L)_{i} + transpose matrix {aperySet L}))
+ss = for M in LL list semigroupFromAperySet flatten entries M
+FF = apply(#ss, i-> res semigroupIdeal ss_i);
+(FF_0).dd_3
+degrees FF_0_3
+
+F = res semigroupIdeal L;
+F.dd_3
+degrees F_3
+
+ L in Lknown list (
+      if L =!= null then continue else L)
+
+---------
+LL = flatten apply (13, g -> findSemigroups g);#LL -- 1413
+Lknown = select(LL, L->isKnownExample L);#Lknown -- 781
+
+tally apply(Lknown, L->(
+	if #L == 2 then "Pinkham" else
+      	if #L== 3 then "Hilbert-Burch" else -- Waldi 1981 124
+      	if #L == 4 and type L == 1 then "Buchsbaum-Eisenbud" else -- Waldi 1981 16
+      	if weight L < genus L then "Eisenbud-Harris" else -- 1987 455
+      	if min L <6 then "Komeda-Low Multiplicity" else --1992 111
+	if genus L < 8 then "Komeda-Low genus" else --1994 -- 3
+      	if ewt L < genus L then "Plueger") --2018 -- 72
+    )
+
+netList flatten for i from 3 to 7 list (for j from i+1 to 8 list(
+          if gcd{i,j} == 1 then (i,j, genus {i,j}) else continue))
+
+netList  for i from 0 to 12 list ((1.618)^(i+1)/#findSemigroups i)
+24+99+16+455+112+72+3
+
+Haure's example (p. 165)
+: genus 11
+Gaps = {1,2,3,5,6,7,9,10,13,17,21}
+peek loadedFiles

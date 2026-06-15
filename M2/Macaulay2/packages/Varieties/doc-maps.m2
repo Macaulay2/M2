@@ -1,5 +1,4 @@
 undocumented {
-    sheafMap, -- deprecated
     -- TODO: document some of these
     (symbol SPACE, SheafMap, ZZ),
     (symbol +,   SheafMap, SheafMap),
@@ -92,14 +91,14 @@ Node
   Headline
     induced maps on coherent sheaves
 
-Node
-  Key
-    cotangentSurjection
+-- Node
+--   Key
+--     cotangentSurjection
 --   (cotangentSurjection, ProjectiveVariety)
 
-Node
-  Key
-    embeddedToAbstract
+-- Node
+--   Key
+--     embeddedToAbstract
 --   (embeddedToAbstract, ProjectiveVariety)
 
 -----------------------------------------------------------------------------

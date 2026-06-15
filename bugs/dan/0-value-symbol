@@ -1,7 +1,0 @@
-This should cause an error message, because it can lead to confusing bugs:
-
-    i25 : value "symbol"
-
-    o25 = {*end of file*}
-
-    o25 : Keyword

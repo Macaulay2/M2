@@ -97,33 +97,47 @@ localResolution Module := options -> (M) -> (
      if not R.?maxIdeal then error "use setMaxIdeal first!";
      maxlength := resolutionLength(R,options);
      if M.cache.?localResolution
-     then (C := M.cache.localResolution;
-     C.length = length C)
-     else (
-	  C = new ChainComplex;
-	  C.ring = R;
-	  -- f := presentation M;
-	  -- we have replaced presentation in the previous line by minimalPresentation. This has fixed a reported bug where
-	  -- localResolution returned a non-minimal presentation.
-	  -- We have included the above mentioned example in the tests section.
-	  f := relations minimalPresentation M;
-	  C#0 = target f;
-	  C#1 = source f;
-	  C.dd#1 = f;
-	  M.cache.localResolution = C;
-	  C.length = 1;
-	  );
-     i := C.length;
-     while i < maxlength and C.dd_i != 0 do (
-	  g := localsyz C.dd_i;
+     then (
+         C := M.cache.localResolution;
+         -- if a longer length is desired: we need to continue processing below
+         if true then return M.cache.localResolution;
+         );
+     if not M.cache#?"LocalResolutionMaps" then (
+         M.cache#"LocalResolutionMaps" = new MutableHashTable;
+         ----M.cache#"LocalResolutionModules" = new MutableHashTable;
+         -- C = new ChainComplex;
+         -- C.ring = R;
+         -- --f := presentation M;
+         -- we have replaced presentation in the previous line by minimalPresentation. This has fixed a reported bug where
+         -- localResolution returned a non-minimal presentation.
+         -- We have included the above mentioned example in the tests section.
+         f := relations minimalPresentation M;
+         ----M.cache#"LocalResolutionModules"#0 = target f;
+         ----M.cache#"LocalResolutionModules"#1 = source f;
+         M.cache#"LocalResolutionMaps"#1 = f;
+         -- C#0 = target f;
+         -- C#1 = source f;
+         -- C.dd#1 = f;
+         -- M.cache.localResolution = C;
+         -- C.length = 1;
+         -- i := C.length;
+         );
+     i := max keys M.cache#"LocalResolutionMaps";
+     while i < maxlength and M.cache#"LocalResolutionMaps"#i != 0 do (
+	  g := localsyz M.cache#"LocalResolutionMaps"#i;
 	  shield (
 	       i = i+1;
-	       C.dd#i = g;
-	       C#i = source g;
-	       C.length = i;
+               ----M.cache#"LocalResolutionModules"#i = source g;
+               M.cache#"LocalResolutionMaps"#i = g;
+	       -- C.dd#i = g;
+	       -- C#i = source g;
+	       -- C.length = i;
 	       );
 	  );
-     C)
+     len := max keys M.cache#"LocalResolutionMaps";
+     resmaps := for i from 1 to len list M.cache#"LocalResolutionMaps"#i;
+     M.cache.localResolution = complex resmaps -- also returns it
+     )
 
 beginDocumentation()
 
@@ -272,7 +286,7 @@ document {
 	  } | apply(keys options localResolution, o -> toString o => {"see ", TO [resolution, o]}),
      PARA "This method has option inputs that it inherits from ", TO resolution, ".",
      Outputs => {
-	  ChainComplex
+	  Complex
 	  },
      PARA "This function iterates ", TO localsyz, " to obtain a resolution over the local ring.",
      EXAMPLE lines ///

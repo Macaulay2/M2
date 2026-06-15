@@ -274,9 +274,12 @@ expression EngineRing := R -> if hasAttribute(R,ReverseDictionary) then expressi
 toString EngineRing := toString @@ expression
 net      EngineRing :=      net @@ expression
 texMath  EngineRing :=  texMath @@ expression
+mathML   EngineRing :=   mathML @@ expression
 
 ZZ _ EngineRing := 
 RR _ EngineRing :=
+CC _ EngineRing :=
+CCi _ EngineRing :=
 RRi _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
 
 new RingElement from RawRingElement := (R, f) -> (
@@ -314,6 +317,20 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
      describe FractionField := F -> Describe (expression frac) (describe last F.baseRings)
 
 -- freduce := (f) -> (numerator f)/(denominator f)
+
+isPromotable(FractionField,FractionField) := (F,G) -> lookup(promote,F,G) =!= null or (
+    R:=baseRing F; S:=baseRing G;
+    l:=lookup(promote,R,S);
+    l=!=null and (setupPromote(a->fraction(promote(numerator a,S),promote(denominator a,S)),F,G); true)
+    )
+
+lift(RingElement, RingElement) := opts -> (f, R) -> (
+    if (instance(class f,FractionField) and instance(R,FractionField) and (R1:=baseRing R; lookup(lift,baseRing class f,R1) =!= null)) then (
+	setupLift(a->fraction(lift(numerator a,R1),lift(denominator a,R1)),class f,R);
+	return lift(f,R,opts);
+	);
+    if opts.Verify then error ("cannot lift from "|toString class f|" to "|toString R)
+    )
 
 factoryAlmostGood = R -> (
     if instance(R,QuotientRing) then factoryAlmostGood ambient R
@@ -364,10 +381,6 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
      if R.?numallvars then F.numallvars=R.numallvars;
-     scan(R.baseRings, S -> if S.?frac and not isPromotable(S.frac,F) then (
-	     setupPromote(a->fraction(promote(numerator a,R),promote(denominator a,R)),S.frac,F);
-	     setupLift(a->fraction(lift(numerator a,S),lift(denominator a,S)),F,S.frac);
-	     ));
      F)
 
 -- methods for all ring elements
@@ -375,13 +388,23 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 clean(RR,Number) := (epsilon,f) -> if abs f < epsilon then f-f else f
 clean(RR,RingElement) := (epsilon,f) -> new ring f from clean(epsilon,raw f)
 
-norm(List) := z -> max(abs\z)
-norm(RR,Number) := (p,z) -> p-p+abs z
-norm(RR,RingElement) := (p,f) -> new RR from norm(p,raw f)
-norm(InfiniteNumber,Number) := 
-norm(InfiniteNumber,RingElement) := (p,f) -> norm(numeric(precision f, p), f)
-norm(RingElement) := (f) -> norm(numeric(precision f,infinity), f)
-norm Number := abs
+norm List        :=
+norm Number      :=
+norm RingElement := norm_infinity
+norm(Number, List) := (p, z) -> norm(p, matrix {z})
+norm(Number, Number) := (p, z) -> abs z
+norm(Number, RingElement) := (p, f) -> (
+    R := ring f;
+    -- l^infinity norm for polynomials over RR or CC in engine
+    if p == infinity and any(R.baseRings,
+	S -> instance(S, RealField) or instance(S, ComplexField))
+    then (
+	if precision p > precision R
+	then p = numeric(precision R, infinity);
+	norm(p, raw f))
+    else (
+	(mons, coeffs) := coefficients f;
+	norm(p, lift(coeffs, coefficientRing R))))
 
 degreeLength Ring := R -> R.degreeLength
 
@@ -465,10 +488,10 @@ ZZ ? RingElement := (m,y) -> m_(class y) ? y
 
 RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 
-toString RingElement := x -> toString expression x
-toExternalString RingElement := x -> toExternalFormat expression x
-net RingElement := x -> net expression x
-texMath RingElement := x -> texMath expression x
+toString         RingElement :=         toString @@ expression
+toExternalString RingElement := toExternalFormat @@ expression
+net              RingElement :=              net @@ expression
+texMath          RingElement :=          texMath @@ expression
 
 someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGetTerms(numgens ring f,raw f,i,n+i-1)
 

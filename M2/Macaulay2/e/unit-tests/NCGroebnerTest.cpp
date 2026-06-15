@@ -5,8 +5,8 @@
 #include "MemoryBlock.hpp"
 #include "interface/ring.h"
 
-#include "poly.hpp"
-#include "aring-glue.hpp"
+#include "rings/poly.hpp"
+#include "basic-rings/aring-glue.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/FreeAlgebraQuotient.hpp"
 #include "NCAlgebras/WordTable.hpp"
@@ -14,10 +14,10 @@
 #include "NCAlgebras/OverlapTable.hpp"
 #include "NCAlgebras/SuffixTree.hpp"
 #include "NCAlgebras/NCReduction.hpp"
-#include "monordering.hpp"
+#include "monomials/monordering.hpp"
 #include "monoid.hpp"
 
-#include "util-polyring-creation.hpp"
+#include "unit-tests/util-polyring-creation.hpp"
 
 /** MemoryBlock tests
  */

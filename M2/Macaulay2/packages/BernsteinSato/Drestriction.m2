@@ -170,7 +170,7 @@ DrestrictionIdeal(Ideal,List) := options -> (I,w) -> (
      outputRequest := {RestrictComplex, Explicit};
      outputTable := computeRestriction ((ring I)^1/I, w, -1, 1, 
 	  outputRequest, options);
-     M := cokernel (outputTable#RestrictComplex).dd#1;
+     M := cokernel (outputTable#RestrictComplex).dd_1;
      R := ring M;
      if M == 0 then outputIdeal := ideal 1_R
      else (
@@ -373,7 +373,7 @@ DintegrationIdeal(Ideal,List) := options -> (I,w) -> (
      outputRequest := {RestrictComplex, Explicit};
      outputTable := computeRestriction (W^1/IF, w, -1, 1, 
 	  outputRequest, options);
-     M := cokernel (outputTable#RestrictComplex).dd#1;
+     M := cokernel (outputTable#RestrictComplex).dd_1;
      resW := ring M;
      if M == 0 then outputIdeal := ideal 1_resW
      else (
@@ -554,8 +554,10 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      if member(Boundaries, output) then imList := {};
      if member(GenCycles, output) then explicitList := {};
      if member(RestrictComplex,output) then (
-	  restrictComplex := new ChainComplex;
-	  restrictComplex.ring = resW;
+         restrictComplexMaps := new MutableHashTable;
+         local restrictComplex;
+	  -- restrictComplex := new ChainComplex;
+	  -- restrictComplex.ring = resW;
 	  );
      outputList := {};
      if member(Cycles, output) or member(Boundaries, output) or
@@ -594,16 +596,17 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      	  pInfo(2, "\t No integer roots");
      	  pInfo(3, "\t time = " | tInfo); 
 	  if member(RestrictComplex, output) then (
-	       restrictComplex#n0 = resW^0;
-	       restrictComplex#n1 = resW^0;
-	       restrictComplex.dd#n0 = map(resW^0,resW^0,0);
-	       restrictComplex.dd#n1 = map(resW^0,resW^0,0);
-	       i = n0+1;
-	       while i < n1 do (
-	       	    restrictComplex#i = resW^0;
-	       	    restrictComplex.dd#i = map(resW^0,resW^0,0);
-	       	    i = i+1;
-	       	    );
+               restrictComplex = complex resW^0;
+	       -- restrictComplex#n0 = resW^0;
+	       -- restrictComplex#n1 = resW^0;
+	       -- restrictComplex.dd#n0 = map(resW^0,resW^0,0);
+	       -- restrictComplex.dd#n1 = map(resW^0,resW^0,0);
+	       -- i = n0+1;
+	       -- while i < n1 do (
+	       -- 	    restrictComplex#i = resW^0;
+	       -- 	    restrictComplex.dd#i = map(resW^0,resW^0,0);
+	       -- 	    i = i+1;
+	       -- 	    );
 	       );
 	  if member(HomologyModules, output) then
      	  homologyList = apply (toList(n0+1..n1-1), i ->  (i => resW^0));
@@ -649,8 +652,8 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      -- the monomial generators {dx^a} (as left D_m-module) of
      --      F_k1[u_i]((D_n/tD_n) e_i) / F_k0[u_i]((D_n/tD_n) e_i)
      tInfo = toString first timing (
-     	  s := numgens target C.dd#(n0+1);
-     	  targetDeg := degrees target C.dd#(n0+1);
+     	  s := numgens target C.dd_(n0+1);
+     	  targetDeg := degrees target C.dd_(n0+1);
      	  targetGens := {};
      	  if explicitFlag then targetMat := map(W^0,W^0,0);
      	  i = 0;
@@ -672,9 +675,9 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      	  -- "sourceGens" is a list of r lists, where the i-th list contains
      	  -- the monomial generators {dx^a} (as left D_m-module) of
      	  --    F_k1[u_i]((D_n/tD_n) e_i) / F_k0[u_i]((D_n/tD_n) e_i)
-     	  m := C.dd#(n0+1);
-     	  r := numgens C#(n0+1);
-     	  sourceDeg := degrees C#(n0+1);
+     	  m := C.dd_(n0+1);
+     	  r := numgens C_(n0+1);
+     	  sourceDeg := degrees C_(n0+1);
      	  sourceGens := {};
      	  if explicitFlag then sourceMat := map(W^0,W^0,0);
      	  i = 0;
@@ -724,10 +727,11 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	       oldDiff = WtoresW oldDiff;
 	       );
      	  if member(RestrictComplex, output) then (
-	       restrictComplex#n0 = resW^(rank target oldDiff);
-	       restrictComplex#(n0+1) = resW^(rank source oldDiff);
-	       restrictComplex.dd#(n0+1) = map(restrictComplex#n0,
-	       	    restrictComplex#(n0+1), oldDiff);
+	       -- restrictComplex#n0 = resW^(rank target oldDiff);
+	       -- restrictComplex#(n0+1) = resW^(rank source oldDiff);
+	       -- restrictComplex.dd#(n0+1) = map(restrictComplex#n0,
+	       -- 	    restrictComplex#(n0+1), oldDiff);
+               restrictComplexMaps#(n0+1) = map(resW^(rank target oldDiff), resW^(rank source oldDiff), oldDiff);
 	       );
      	  if member(Cycles, output) or member(Boundaries, output)
 	  or member(GenCycles, output) then (
@@ -747,16 +751,16 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      currDeg := n0 + 2;
      --newKernel = 0;
      --explicitKernel = 0;
-     while currDeg <= n1 and C#?(currDeg) do (
+     while currDeg <= n1 do ( -- and currDeg <= length C do (
 	  -- MAKE THE NEXT SOURCE MODULE
 	  -- "sourceGens" is a list of r lists, where the i-th list contains
 	  -- the monomial generators {dx^a} (as left D_m-module) of
 	  --    F_k1[u_i]((D_n/tD_n) e_i) / F_k0[u_i]((D_n/tD_n) e_i)
 	  pInfo(2, "\t Degree " | currDeg | "...");
 	  tInfo = toString first timing (
-	  r = numgens C#currDeg;
-	  m = C.dd#currDeg;
-	  sourceDeg = degrees C#(currDeg);
+	  r = numgens C_currDeg;
+	  m = C.dd_currDeg;
+	  sourceDeg = degrees C_(currDeg);
 	  sourceGens = {};
 	  if explicitFlag then sourceMat = map(W^0,W^0,0);
 	  i = 0;
@@ -806,9 +810,10 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  
 	  -- UPDATE THE OUTPUT LIST
 	  if member(RestrictComplex, output) then (
-	       restrictComplex#currDeg = resW^(rank source newDiff);
-	       restrictComplex.dd#currDeg = map(restrictComplex#(currDeg-1),
-		    restrictComplex#currDeg, newDiff);
+	       -- restrictComplex#currDeg = resW^(rank source newDiff);
+	       -- restrictComplex.dd#currDeg = map(restrictComplex#(currDeg-1),
+	       --      restrictComplex#currDeg, newDiff);
+               restrictComplexMaps#currDeg = map(source restrictComplexMaps#(currDeg-1), resW^(rank source newDiff), newDiff);
 	       );
 	  if member(HomologyModules, output) then (
 	       tempHomology := homology(zeroize oldDiff, zeroize newDiff);
@@ -875,7 +880,12 @@ if member(BFunction, output) then outputList = append(
 if member(VResolution, output) then outputList = append(
      outputList, VResolution => C);
 if member(RestrictComplex, output) then outputList = append(
-     outputList, RestrictComplex => restrictComplex);
+     outputList, RestrictComplex =>
+       if restrictComplex =!= null then
+           restrictComplex
+       else
+           complex restrictComplexMaps
+       );
 if member(ResToOrigRing, output) then outputList = append(
      outputList, ResToOrigRing => resWtoW);
 

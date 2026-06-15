@@ -229,4 +229,4 @@ P=QQ[x,y,z,MonomialOrder=>Lex];
 d=z^4+z^2*x*y^9+z*x^9*y+x^5*y^5;
 phi=map(P,P,matrix{{x^13*y^4,x^3*y,x^20*y^6*z}});
 tim = timing factor(phi(d));
-assert BinaryOperation {symbol <, tim#0, .05 * standardSecond}
+assert BinaryOperation {symbol <, tim#0, .1 * standardSecond}

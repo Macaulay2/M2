@@ -272,7 +272,7 @@ TEST /// -- another module GB test
 -*
   restart
 *-
-TEST /// -- inhomgeneity. Algorithm => LinearAlgebra, over finite field. Need to implement still
+TEST /// -- inhomogeneity. Algorithm => LinearAlgebra, over finite field. Need to implement still
   kk = ZZ/101;
   R1 = kk[a..g, MonomialSize=>8];
   setRandomSeed 42

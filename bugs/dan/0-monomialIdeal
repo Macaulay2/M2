@@ -1,4 +1,0 @@
-bad error message:
-
-i59 : monomialIdeal {}
-stdio:55:1:(3): error: expected a polynomial ring without quotient elements

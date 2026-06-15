@@ -39,17 +39,17 @@ jobs:
           - cmake
         os:
           - ubuntu-24.04
-          - macos-14
+          - macos-15
         compiler:
           - default
         include:
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-14
+            os: macos-15
             compiler: brew-clang
         exclude:
           - build-system: cmake
-            os: macos-14
+            os: macos-15
             compiler: default
     steps:
       - uses: actions/checkout@v6
@@ -63,9 +63,9 @@ jobs:
         run: |
           brew config
           brew update
+          brew trust macaulay2/tap
           brew tap macaulay2/tap
-          brew install --overwrite python
-          brew install automake bison boost libtool tbb ccache ctags llvm make ninja yasm libffi msolve googletest fplll eigen
+          brew install automake bison boost libtool tbb ccache ctags llvm make yasm libffi msolve googletest fplll eigen jansson r palp
           brew install texinfo || true # sometimes post-install step fails
           brew install --only-dependencies macaulay2/tap/M2
           brew link factory --force
@@ -86,7 +86,7 @@ jobs:
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
                   libnauty-dev nauty lrslib polymake pipx phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev \
-                  msolve libfplll-dev
+                  msolve libfplll-dev libjansson-dev r-base palp
 
 # ----------------------
 #   Steps common to all build variants
@@ -214,7 +214,7 @@ jobs:
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && runner.os == 'Linux' && matrix.compiler == 'default'
         run: |
-          make check -o check-in-libraries
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) check -o check-in-libraries
           make -C Macaulay2/html-check-links check
 
       - name: Validate HTML documentation
@@ -244,7 +244,7 @@ jobs:
 
       - name: Upload build logs
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
            name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}-logs
            path: |
@@ -257,6 +257,7 @@ jobs:
              M2/BUILD/build/CMakeCache.txt
              M2/BUILD/build/CMakeFiles/CMakeError.log
              M2/BUILD/build/CMakeFiles/CMakeOutput.log
+             M2/BUILD/build/CMakeFiles/CMakeConfigureLog.yaml
              M2/BUILD/build/libraries/*/build/config.log
              # package example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
@@ -268,7 +269,7 @@ jobs:
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
         if: matrix.build-system == 'cmake' && runner.os == 'Linux' && success()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
           path: |

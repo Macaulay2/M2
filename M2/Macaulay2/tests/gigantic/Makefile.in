@@ -27,4 +27,3 @@ Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/gigantic/M
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests/gigantic "
 # End:
 
-.NOTPARALLEL:

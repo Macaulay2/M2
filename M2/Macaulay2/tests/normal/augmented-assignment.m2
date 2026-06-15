@@ -74,6 +74,15 @@ assert Equation(x#0, 28)
 Foo @ Foo := (x, y) -> Foo(4*x#0 - 5*y#0)
 x @= Foo 7
 assert Equation(x#0, 77)
+Foo · Foo := (x,y) -> Foo(6*x#0 * 7*y#0)
+x ·= Foo 8
+assert Equation(x#0, 25872)
+Foo ⊠ Foo := (x,y) -> Foo((8*x#0) // (9*y#0))
+x ⊠= Foo 9
+assert Equation(x#0, 2555)
+Foo ⧢ Foo := (x,y) -> Foo(10*x#0 + 11*y#0)
+x ⧢= Foo 10
+assert Equation(x#0, 25660)
 
 -- local variable
 x := 2

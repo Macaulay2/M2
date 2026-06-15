@@ -7,7 +7,7 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#include "monom.hpp"
+#include "bibasis/monom.hpp"
 
 namespace BIBasis
 {

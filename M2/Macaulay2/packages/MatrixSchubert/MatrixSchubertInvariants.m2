@@ -1,6 +1,6 @@
 ----------------------
 --INPUT: matrixSchubertRegADI, takes a permutation in 1-line notation
---OUTPUT: returns the Castelnuovo-Mumford reguarity of the matrix 
+--OUTPUT: returns the Castelnuovo-Mumford regularity of the matrix 
 --        Schubert variety by computing the regularity of the antidiagonal initial ideal
 ------------------------------------------
 -- matrixSchubertRegADI = method()

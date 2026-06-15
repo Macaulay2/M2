@@ -1,0 +1,260 @@
+# -*- Makefile -*-
+
+##################
+## Source code ###
+##################
+
+INTERFACE2 = interrupted
+
+#  NCAlgebras/SuffixTree \
+
+INTERFACE = \
+	myalloc \
+	cytools/computeGV \
+	cytools/lattice_points \
+	cytools/lattice-points-normaliz \
+	cytools/cone-interior-point \
+	BasicPoly \
+	BasicPolyList \
+	BasicPolyListParser \
+	M2FreeAlgebra \
+	M2FreeAlgebraQuotient \
+	NAG/NAG \
+	NCAlgebras/FreeAlgebra \
+	NCAlgebras/FreeAlgebraQuotient \
+	NCAlgebras/FreeMonoid \
+	NCAlgebras/NCF4 \
+	NCAlgebras/NCGroebner \
+	NCAlgebras/NCReduction \
+	NCAlgebras/OverlapTable \
+	NCAlgebras/SuffixTree \
+	NCAlgebras/Word \
+	NCAlgebras/WordTable \
+	NCResolutions/nc-res-computation \
+	Polynomial \
+	SLP/SLP \
+	basic-mutable-matrices/dmat \
+	basic-mutable-matrices/lapack \
+	basic-mutable-matrices/mat \
+	basic-rings/aring \
+	basic-rings/aring-CC \
+	basic-rings/aring-CCC \
+	basic-rings/aring-CCi \
+	basic-rings/aring-GF-flint \
+	basic-rings/aring-GF-flint-big \
+	basic-rings/aring-QQ-flint \
+	basic-rings/aring-QQ-gmp \
+	basic-rings/aring-RR \
+	basic-rings/aring-RRR \
+	basic-rings/aring-RRi \
+	basic-rings/aring-ZZ-flint \
+	basic-rings/aring-ZZ-gmp \
+	basic-rings/aring-ZZp \
+	basic-rings/aring-ZZp-ffpack \
+	basic-rings/aring-ZZp-flint \
+	basic-rings/aring-m2-GF \
+	basic-rings/aring-tower \
+	basic-rings/reader \
+	bibasis/allocator \
+	bibasis/bibasis \
+	bibasis/launcher \
+	bibasis/monom \
+	bibasis/monomDL \
+	bibasis/monomDRL \
+	bibasis/monomLex \
+	bibasis/settings-manager \
+	buffer \
+	coeffrings \
+	comb \
+	computations/BRP \
+	computations/Eschreyer \
+	computations/LLL \
+	computations/assprime \
+	computations/comp \
+	computations/det \
+	computations/ntl-interface \
+	computations/pfaff \
+	cra \
+	debug \
+	eigen \
+	f4/f4 \
+	f4/f4-computation \
+	f4/f4-m2-interface \
+	f4/f4-monlookup \
+	f4/f4-spairs \
+	f4/hilb-fcn \
+	f4/monhashtable \
+	f4/moninfo \
+	finalize \
+	fplll-interface \
+	fractionfreeLU \
+	free-modules/freemod \
+	free-modules/schreyer-orders \
+	gauss \
+	gb-f4/Basis \
+	gb-f4/GBF4Computation \
+	gb-f4/GBF4Interface \
+	gb-f4/MacaulayMatrix \
+	gb-f4/MonomialHashTable \
+	gb-f4/MonomialLookupTable \
+	gb-f4/MonomialView \
+	gb-f4/PolynomialList \
+	gb-f4/SPairs \
+	groebner-computations/comp-gb \
+	groebner-computations/comp-gb-declared \
+	groebner-computations/comp-gb-proxy \
+	groebner-computations/gb-default \
+	groebner-computations/gb-homog2 \
+	groebner-computations/gb-sugarless \
+	groebner-computations/gb-toric \
+	groebner-computations/gb-walk \
+	groebner-computations/gbring \
+	groebner-computations/gbweight \
+	groebner-computations/reducedgb \
+	groebner-computations/reducedgb-ZZ \
+	groebner-computations/reducedgb-field \
+	groebner-computations/reducedgb-field-local \
+	groebner-computations/reducedgb-marked \
+	groebner-computations/sagbi \
+	groebner-computations/spair \
+	hermite \
+	hilb \
+	imonorder \
+	int-bag \
+	interreduce \
+	matrices/matrix \
+	matrices/matrix-con \
+	matrices/matrix-ncbasis \
+	matrices/matrix-stream \
+	mem \
+	memory-status \
+	monoid \
+	monomials/ExponentList \
+	monomials/monideal \
+	monomials/monideal-minprimes \
+	monomials/monomial \
+	monomials/monomial-collection \
+	monomials/monomial-sets \
+	monomials/monsort \
+	monomials/montable \
+	monomials/montableZZ \
+	monomials/overflow \
+	mutablecomplex \
+	myalloc \
+	resolution/betti \
+	resolution/comp-res \
+	resolutions/res-a0 \
+	resolutions/res-a0-poly \
+	resolutions/res-a1 \
+	resolutions/res-a1-poly \
+	resolutions/res-a2 \
+	ring-elements/ring-element \
+	ringmap \
+	rings/GF \
+	rings/ZZ \
+	rings/ZZp \
+	rings/dpoly \
+	rings/frac \
+	rings/localring \
+	rings/poly \
+	rings/polyquotient \
+	rings/polyring \
+	rings/qring \
+	rings/ring \
+	rings/ringelem \
+	rings/skew \
+	rings/skewpoly \
+	rings/solvable \
+	rings/tower \
+	rings/weylalg \
+	schreyer-resolutions/res-dep-graph \
+	schreyer-resolutions/res-f4 \
+	schreyer-resolutions/res-f4-computation \
+	schreyer-resolutions/res-f4-m2-interface \
+	schreyer-resolutions/res-f4-monlookup \
+	schreyer-resolutions/res-moninfo \
+	schreyer-resolutions/res-moninfo-dense \
+	schreyer-resolutions/res-moninfo-sparse \
+	schreyer-resolutions/res-monomial-sorter \
+	schreyer-resolutions/res-poly-ring \
+	schreyer-resolutions/res-schreyer-frame \
+	schur-rings/schur \
+	schur-rings/schur2 \
+	schur-rings/schurSn \
+	text-io
+
+COMMANDS = \
+	computations/BRP-gb \
+	computations/BRP-interface \
+	computations/ntl-debugio \
+	computations/ntl-internal \
+	engine \
+	interface/aring \
+	interface/cone \
+	interface/cra \
+	interface/factory \
+	interface/flint \
+	interface/freemodule \
+	interface/groebner \
+	interface/m2-mem \
+	interface/m2-types \
+	interface/matrix \
+	interface/monoid \
+	interface/monomial-ideal \
+	interface/monomial-ordering \
+	interface/mutable-matrix \
+	interface/polyroots \
+	interface/random \
+	interface/ring \
+	interface/ringelement \
+	interface/ringmap \
+	matrices/matrix-kbasis \
+	matrices/matrix-sort \
+	matrices/matrix-symm \
+	resolutions/res-a2-gb \
+	rings/ring-vecs
+
+NAMES_H = \
+	MemoryBlock \
+	NCAlgebras/Range \
+	VectorArithmetic \
+	basic-rings/vector-arithmetic \
+	f4/f4-types \
+	f4/memblock \
+	f4/ntuple-monomial \
+	f4/varpower-monomial \
+	hash \
+	m2tbb \
+	monomials/ExponentVector \
+	resolutions/res-a0-pair \
+	style \
+	util
+
+C_FILES = error table exptable cytools/box_enum # interface/m2-types interface/m2-mem
+
+D_FILES =
+DD_FILES = #test
+
+##############################
+## end of source code files ##
+##############################
+
+CC_FILES := $(INTERFACE) $(INTERFACE2) $(COMMANDS)
+FILES := $(CC_FILES) $(C_FILES)
+LOFILES := $(addsuffix .lo,$(CC_FILES) $(C_FILES))
+ENGINE_CCFILES := $(addsuffix .cpp,$(CC_FILES))
+ENGINE_CFILES := $(addsuffix .c,$(C_FILES))
+ENGINE_DDFILES := $(addsuffix .dd,$(DD_FILES))
+ENGINE_DFILES := $(addsuffix .d,$(D_FILES))
+ENGINE_OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES) $(D_FILES) $(DD_FILES))
+
+ifeq "$(SHARED)" "yes"
+ENGINE_OBJFILES := $(LOFILES)
+LIBENGINE = @pre_librariesdir@/libengine.so
+else
+ENGINE_OBJFILES := $(ENGINE_OFILES)
+LIBENGINE = @pre_librariesdir@/libengine.a
+endif
+
+HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE) $(INTERFACE2)) $(E_H)
+ENGINE_SRCFILES := $(ENGINE_CCFILES) $(ENGINE_CFILES) $(HHFILES) $(ENGINE_DDFILES) $(ENGINE_DFILES)

@@ -36,13 +36,119 @@ doc ///
         DivideGate
         DetGate
     Headline
-        the class of all gates
+        node types for straight-line programs
     Description
         Text
-            A gate is a building block of an evaluation circuit. For instance, an @TO InputGate@ represents an abstract unit of input, and a @TO SumGate@ takes a list of inputs, and has an output which represents the sum of the inputs. For more information on the types of gates available in this package, as well as how to construct gates, see @TO2{inputGate, "creating input gates"}@.
-            
-///
+            Expressions in an SLP are represented by directed acyclic graphs
+            whose nodes are instances of subclasses of @TO Gate@.
 
+	Code
+	    UL {
+		"SumGate -- a sum of gates",
+		"ProductGate -- a product of gates",
+		"DivideGate -- a quotient of gates",
+		"DetGate -- a determinant gate"
+		}
+
+        Text
+            These gates are assembled into @TO GateMatrix@ objects and
+            eventually compiled into straight-line programs.
+
+        Example
+            declareVariable \ {x,y}
+            f = (x+2*y)^2/(3*x-y)
+            class f
+	    support f
+	    constants f -- shows all constants used in the expression.
+    ///
+
+
+doc ///
+    Key
+        support
+        (support,InputGate)
+        (support,SumGate)
+        (support,ProductGate)
+        (support,DivideGate)
+        (support,DetGate)
+        (support,GateMatrix)
+    Headline
+        input gates appearing in an SLP expression
+    Usage
+        support f
+    Inputs
+        f:Gate
+            a gate expression
+    Outputs
+        L:List
+            the list of non-constant input gates appearing in f
+    Description
+        Text
+            Returns the input gates that occur in a gate expression, excluding
+            constant input gates. This is useful for determining which variables
+            an expression depends on.
+        Example
+            declareVariable \ {x,y,z}
+            f = (x-y)^2 + 3*z
+            support f
+    ///
+
+doc ///
+    Key
+        printAsSLP
+        (printAsSLP,List,List)
+        (printAsSLP,GateMatrix,GateMatrix)
+    Headline
+        print a straight-line program
+    Usage
+        printAsSLP(X,F)
+    Inputs
+        X:List
+            input variables
+        F:List
+            output expressions
+    Description
+        Text
+            Prints a straight-line program evaluating the given output expressions
+            in terms of the specified input variables.
+        Example
+            declareVariable \ {x,y}
+            f = (x+y)^2 - x*y
+            printAsSLP({x,y},{f})
+    SeeAlso
+        cCode
+        makeSLProgram
+    ///
+
+
+doc ///
+    Key
+        cCode
+        (cCode,List,List)
+        (cCode,GateMatrix,GateMatrix)
+    Headline
+        generate C code for evaluating a straight-line program
+    Usage
+        cCode(X,F)
+    Inputs
+        X:List
+            input variables
+        F:List
+            output expressions
+    Description
+        Text
+            Generates C code for evaluating the straight-line program
+            determined by the output expressions in terms of the specified
+            input variables.
+        Example
+            declareVariable \ {x,y}
+            f = (x+y)^2 - x*y
+            cCode({x,y},{f})
+    SeeAlso
+        printAsSLP
+        makeSLProgram
+    ///
+    
 doc ///
     Key
     	"creating gates"

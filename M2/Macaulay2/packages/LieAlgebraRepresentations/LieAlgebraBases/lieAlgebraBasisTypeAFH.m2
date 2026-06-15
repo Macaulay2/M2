@@ -3,6 +3,10 @@
 Hin = (i,n) -> ( Eijm(i,i,n) - Eijm(i+1,i+1,n));
 
 
+-- The next five functions about weights are for getting the basis elements
+-- into lex level order
+-- They aren't used for computing weights in representationWeights
+
 -- Want to change between Dynkin basis of the weight lattice and L_i basis
 -- Use the formula omega_j = L_1+...+L_j from [FH, Section 15]
 -- Very similar to the formula for type C in [FH, Section 17.2]
@@ -80,7 +84,8 @@ slnBasisElements = (n) -> (
 );
 
 
-
+-* 
+Not used anymore
 slnDualBasis = (n,B) -> (
     -- Create the basis elements    
     Hcoeffs := entries(inverse(1/1*cartanMatrix("A",n-1)));
@@ -93,12 +98,12 @@ slnDualBasis = (n,B) -> (
     sigma:=slnPermutation(n);
     apply(sigma, i -> unorderedDualBasis_i)
 );
-
+*-
 
 
 slnBasisLabels = (n) -> (
     -- Create the basis elements     
-    Hbasis := apply(n-1, i -> "H_"|toString(i+1));
+    Hbasis := apply(n-1, i -> "Ha_"|toString(i+1));
     Xbasis := flatten apply(n, i -> delete(null,apply(n, j -> if i<j then "E_"|toString(i+1,j+1) )));   
     Ybasis := flatten apply(n, i -> delete(null,apply(n, j -> if j<i then "E_"|toString(i+1,j+1) ))); 
     unorderedLabels:=flatten {Hbasis, Xbasis, Ybasis};

@@ -226,6 +226,7 @@ Node
     (about, String)
     (about, Symbol)
     (about, Type)
+    (about, Keyword)
   Headline
     search the documentation
   Usage
@@ -371,8 +372,8 @@ Node
 	  { M2CODE "help \"getting started\"", 		 "" },
 	  { M2CODE "help \"a first Macaulay2 session\"", "" },
 	  { M2CODE "help coker", 			 "-- show documentation for coker" },
-	  { M2CODE "help about Ext", 			 "-- show documentation about Ext" },
-	  { M2CODE "help about(\"Yoneda\", Body=>true)", "-- show documentation mentioning \"Yoneda\"" },
+	  { M2CODE "headlines about Ext", 		 "-- show a list of documentation headlines about Ext" },
+	  { M2CODE "headlines about(\"Yoneda\", Body=>true)", "-- show a list of documentation headlines mentioning \"Yoneda\"" },
 	  { M2CODE "printWidth = 80", 			 "-- set print width to 80 characters" },
 	  { M2CODE "viewHelp", 				 "-- view documentation in a browser" },
 	  { M2CODE "viewHelp coker", 			 "-- view documentation for coker in browser" },

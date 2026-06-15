@@ -6,6 +6,7 @@
 
 URL = https://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 4.4.1
+SHA256SUM = 345ec8ab2481135d18244e2a2ff6bc16e812a39a9eb5ac5d578956d8e0526e6e
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
@@ -74,15 +75,6 @@ Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/M
 #    extern "C" {
 #      #include <wchar.h>
 #    }
-
-.installed-$(VERSION) : $(LIBRARIESDIR)/include/factory/cf_assert.h \
-			$(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc
-$(LIBRARIESDIR)/include/factory/cf_assert.h : $(BUILDDIR)/cf_assert.h .compiled-$(VERSION) 
-	$(MKDIR_P) $(LIBRARIESDIR)/include/factory
-	@INSTALL_DATA@ $< $@
-$(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc : $(BUILDDIR)/templates/ftmpl_list.cc .compiled-$(VERSION) 
-	$(MKDIR_P) $(LIBRARIESDIR)/include/factory/templates
-	@INSTALL_DATA@ $< $@
 
 uninstall clean ::
 	if [ -d $(LIBRARIESDIR) ] ;\

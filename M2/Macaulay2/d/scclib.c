@@ -6,7 +6,7 @@
 #include "types.h"
 #include "M2mem.h"
 #include "../c/compat.c"
-#include "debug.h"
+#include <interface/m2-mem.h>
 
 #include "../system/supervisorinterface.h"
 
@@ -411,13 +411,13 @@ int system_fileMode(M2_string name) {
   struct stat buf;
   int r = stat(cname,&buf);
   freemem(cname);
-  return r == ERROR ? -1 : buf.st_mode & ~S_IFMT;
+  return r == ERROR ? -1 : (int)(buf.st_mode & ~S_IFMT);
 }
 
 int system_fileModeFD(int fd) {
   struct stat buf;
   int r = fstat(fd,&buf);
-  return r == ERROR ? -1 : buf.st_mode & ~S_IFMT;
+  return r == ERROR ? -1 : (int)(buf.st_mode & ~S_IFMT);
 }
 
 int system_chmod(M2_string name,int mode) {
@@ -448,7 +448,7 @@ int system_isRegularFile(M2_string name) {
   return r == ERROR ? -1 : S_ISREG(buf.st_mode);
 }
 
-int always(const struct dirent *p) { return 1; }
+int always(const struct dirent *p) { (void)p; return 1; }
 
 M2_ArrayString system_readDirectory(M2_string name) {
   int n=0, i=0;
@@ -854,7 +854,7 @@ int system_run(M2_string command){
      return r;
      }
 
-struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
+struct FUNCTION_CELL *pre_final_list, *final_list;
 
 void system_atend(void (*func)()){
      struct FUNCTION_CELL *this_final = (struct FUNCTION_CELL *)getmem(sizeof(struct FUNCTION_CELL));

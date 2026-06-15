@@ -519,9 +519,12 @@ assert( h * h^-1 == 1 )
 --
 R=ZZ/101[a,b]
 f = matrix {{a}}
+g = matrix {{a^2}}
 assert( source f != target f)
 assert( target f == target f^2 )
-assert( source f == source f^2 )
+assert( source f != source g )
+assert( f^2 == g )
+assert( f^0 == 1 )
 
 --
 R = ZZ/101[a..d]

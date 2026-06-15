@@ -1,5 +1,5 @@
-#ifndef _ring_h_
-#  define _ring_h_
+#ifndef M2_INTERFACE_RING_H_
+#define M2_INTERFACE_RING_H_
 
 #  include "engine-includes.hpp"
 
@@ -56,6 +56,9 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f);
 
 const Ring /* or null */ *IM2_Ring_RRi(unsigned long prec);
 /* drg: connected rawRRi */
+
+const Ring /* or null */ *IM2_Ring_CCi(unsigned long prec);
+/* drg: connected rawCCi */
 
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec);
 /* drg: connected rawRRR */

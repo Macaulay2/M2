@@ -148,6 +148,7 @@ documentableMethods = key -> select(methods key, isDocumentableMethod)
 
 subclasses = T -> keys fold(ancestors  T, showStructure(),      lookup)
 subobjects = T -> keys fold(ancestors' T, showClassStructure(), lookup)
+subobjects' = T -> if T === Package then { Core, User } else subobjects T
 descendants  = T -> flatten prepend(L := subclasses T, apply(L, descendants))
 descendants' = T -> flatten prepend(L := subobjects T, apply(L, descendants'))
 
@@ -165,7 +166,7 @@ documentationValue(Symbol, Type)  := (S, T) -> (
     -- functions on T
     c := smenu select(documentableMethods T, key -> not typicalValues#?key or typicalValues#key =!= T);
     -- objects of type T
-    e := smenu(toString \ subobjects T);
+    e := smenu(toString \ subobjects' T);
     DIV nonnull splice ( "class" => "waystouse",
 	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, ":"}, b),
 	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, ":"}, a),
@@ -316,6 +317,15 @@ getSource(Symbol, Package) := (S, pkg) -> (
     )
 
 -- Handling operators
+
+-- for each unicode operator, we give a pair:
+-- * unicode name
+-- * TeX name (for emacs TeX input mode -- null if not available)
+unicodeOperators := hashTable {
+    symbol · => ("middle dot", "\\cdot"),
+    symbol ⊠ => ("squared times", "\\boxtimes"),
+    symbol ⧢ => ("shuffle product",)}
+
 -- e.g. symbol +
 getOperator := key -> if operator#?key then (
     op := toString key;
@@ -326,6 +336,8 @@ getOperator := key -> if operator#?key then (
 		"The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
 	    PRE if key === symbol SPACE
 	    then "         X Y := (x,y) -> ..."
+	    else if (getParsing key)#0 <= (getParsing symbol :=)#0
+	    then "        (X "|op|" Y) := (x,y) -> ..."
 	    else "         X "|op|" Y := (x,y) -> ...",
 	    PARA {"where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."}},
 	if key === symbol ?? then { -- can't install binary methods
@@ -344,7 +356,15 @@ getOperator := key -> if operator#?key then (
 	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
 		"The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
 	    PRE ("         X "|op|" (x,y) -> ..."),
-	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}}
+	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}},
+	if unicodeOperators#?key then {
+	    PARA {"To insert this character in Emacs, you may press ", KBD "C-x 8 RET", " or ", KBD "M-x insert-char",
+		" and then enter ", format unicodeOperators#key#0, " in the minibuffer."},
+	    if (texcmd := unicodeOperators#key#1) =!= null
+	    then PARA {"Alternatively, you may press ", KBD "C-x RET C-\\", "  or ", KBD "M-x set-input-method",
+		" and then enter \"TeX\" in the minibuffer.  Afterwards, typing \"", texcmd,
+		"\" will input the character.  You may then toggle the input method using ", KBD "C-\\", " or ",
+		KBD "M-x toggle-input-method"}},
 	))
 
 -- TODO: expand this
@@ -361,11 +381,10 @@ getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     getOperator S)
 
 getLocation := tag -> if tag =!= null then (
-    pkg := package tag;
     docpos := locate tag;
     linepos := ":" | docpos#1 | ":" | docpos#2;
     docfile := toAbsolutePath docpos#0;
-    filename := replace(pkg#"source directory", "", docfile);
+    filename := replace(getpkgsrcdir tag.Package, "", docfile);
     HR{},
     DIV ( "class" => "waystouse",
 	fixup PARA (
@@ -381,8 +400,13 @@ getLocation := tag -> if tag =!= null then (
 getOption := (rawdoc, tag) -> if rawdoc =!= null and rawdoc#?tag then rawdoc#tag
 
 headline = method(Dispatch => Thing)
-headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag key, Headline)
-headline DocumentTag := tag -> getOption(fetchRawDocumentation getPrimaryTag tag, Headline)
+headline Thing := key -> getOption(
+    fetchRawDocumentation(makeDocumentTag key,
+	LoadDocumentation => false), Headline)
+headline DocumentTag := tag -> (
+    -- TODO: how can we make sure readPackage loads the correct package?
+    if isPackageNode tag then (readPackage tag.Package).Headline
+    else getOption(fetchRawDocumentation getPrimaryTag tag, Headline))
 
 headlines = method()
 headlines List := L -> (
@@ -428,7 +452,8 @@ getDefaultOptions := (nkey, opt) -> DIV (
 getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
-	desc = processExamples(package' tag, format tag, desc);
+	pkg := getpkgNoLoad tag.Package ?? tag.Package;
+	desc = processExamples(pkg, tag.Format, desc);
 	if instance(key, String) -- overview key
 	or instance(key, Package) then DIV { desc }
 	else DIV { SUBSECTION "Description", desc })
@@ -635,6 +660,7 @@ about Type     :=
 about Symbol   :=
 about ScriptedFunctor :=
 about Function := o -> f -> about("\\b" | toString f | "\\b", o)
+about Keyword := o -> f -> about("(?:^| )" | regexQuote toString f | "(?:$| )")
 about String   := o -> re -> lastabout = (
     packagesSeen := new MutableHashTable;
     NumberedVerticalList sort join(
