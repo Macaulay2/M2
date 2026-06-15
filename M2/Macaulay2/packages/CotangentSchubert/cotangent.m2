@@ -15,7 +15,6 @@ cotOpts := opts ++ { Presentation => EquivLoc }
 debug Core -- to use BaseRing, generatorSymbols, frame
 
 -- labeling of classes
--- TODO: LabelList is exported (at CotangentSchubert.m2:33) but has no doc node.
 LabelList = new Type of List;
 new LabelList from String := (T,s) -> (
     l:=separate(" ",s);

@@ -58,6 +58,16 @@ multidoc ///
     @HREF{"http://arxiv.org/abs/2306.13855","arXiv:2306.13855"}@.
  Node
   Key
+   LabelList
+  Headline
+   A list encoding a fixed point or puzzle label
+  Description
+   Text
+    @TT "LabelList"@ is a subtype of @TO{List}@ used to encode fixed points of flag
+    varieties and the corresponding labels of puzzles. The label list returned by
+    @TO{setupCotangent}@ consists of objects of this type.
+ Node
+  Key
    setupCotangent
    [setupCotangent,Presentation]
    [setupCotangent,Ktheory]
