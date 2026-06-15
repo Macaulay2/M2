@@ -1,13 +1,13 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.71",
-    Date => "25 Jul 2023", -- "22 Mar 2021",
+    Version => "0.8",
+    Date => "15 June 2026", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
     Headline => "Cotangent Schubert calculus",
-    Keywords => {"Intersection Theory", "Flag varieties"},
+    Keywords => {"Intersection Theory", "Flag Varieties", "Equivariant Cohomology"},
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
@@ -51,8 +51,10 @@ multidoc ///
 
     References: @BR{}@
     [1] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability I: invariant trilinear forms,
+    Communications of the American Mathematical Society 6:1-67,
     @HREF{"http://arxiv.org/abs/1706.10019","arXiv:1706.10019"}@. @BR{}@
     [2] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability II: multiplying motivic Segre classes,
+    Communications of the American Mathematical Society 6:68–152,
     @HREF{"http://arxiv.org/abs/2102.00563","arXiv:2102.00563"}@. @BR{}@
     [3] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability III: separated descents,
     @HREF{"http://arxiv.org/abs/2306.13855","arXiv:2306.13855"}@.
