@@ -98,6 +98,31 @@ multidoc ///
     are the same as above.
  Node
   Key
+   Partial
+  Headline
+   Choose the partial or full flag variety ring
+  Description
+   Text
+    This boolean option applies to class computations after using @TO{setupCotangent}@ with
+    @TT "Presentation=>Borel"@. Setting @TT "Partial=>true"@ returns a class in the
+    cohomology or K-theory ring @TT "A"@ of the specified partial flag variety, while
+    @TT "Partial=>false"@ returns the corresponding class in the ring @TT "B"@ of the
+    full flag variety.
+
+    The option is accepted by @TO{tautoClass}@, @TO{zeroSection}@,
+    @TO{dualZeroSection}@, @TO{canonicalClass}@, and the class families
+    @TO{sClass}@, @TO{stableClass}@, @TO{segreClass}@, @TO{chernClass}@,
+    @TO{schubertClass}@ and their primed variants.
+
+    When the ring @TT "A"@ is supplied explicitly, the default is @TT "Partial=>true"@.
+    When @TT "B"@ is supplied, or when the ring argument is omitted, the default is
+    @TT "Partial=>false"@.
+   Example
+    (A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Equivariant=>false);
+    schubertClass("0101",Partial=>true)
+    schubertClass("0101",Partial=>false)
+ Node
+  Key
    chernClass
    stableClass
    chernClass'
@@ -398,11 +423,8 @@ multidoc ///
   Caveat
    At the moment, the interactive part only works on nonequivariant puzzles.
 ///
--- TODO: 12 of the symbols listed below as `undocumented` also appear in
--- option-doc Usage sub-keys via [puzzle, Ktheory], [setupCotangent, Borel],
--- etc.  Either give each its own doc node or remove it from doc Usage.
 undocumented {
-    Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
+    Presentation, Ktheory, Equivariant, Borel, EquivLoc,
     Paths, Labels, Length, Steps, Ktheory', Separation,
     (restrict,Matrix),(restrict,Matrix,RingElement),
     (inversion,String),
