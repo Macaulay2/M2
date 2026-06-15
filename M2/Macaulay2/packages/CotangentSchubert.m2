@@ -7,7 +7,7 @@ newPackage(
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
     Headline => "Cotangent Schubert calculus",
-    Keywords => {"Intersection Theory"},
+    Keywords => {"Intersection Theory", "Flag varieties"},
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
@@ -194,16 +194,18 @@ multidoc ///
   Headline
    Compute the class of a tautological bundle
   Usage
-   tautoClass (i,j)
-   tautoClass (i,j,A)
+   tautoClass (j,i)
+   tautoClass (j,i,A)
   Inputs
-   i : ZZ
    j : ZZ
+   i : ZZ
    A : Ring
   Description
    Text
-    This function computes the i-th Chern class of the j-th tautological bundle of the flag variety whose K-theory (or cohomology)
+    This function computes the j-th Chern class of the i-th tautological bundle of the flag variety whose K-theory (or cohomology)
     ring is given by @TT "A"@. If @TT "A"@ is not specified, then the ring that was defined last is used.
+   Example
+    (A,B,FF,I) = setupCotangent(2,3,Presentation=>Borel); {tautoClass(1,1,A),tautoClass(2,1,A),tautoClass(1,2,A)}
  Node
   Key
    pushforwardToPoint
@@ -444,6 +446,9 @@ assert(class stableClass "0101" === B and class stableClass' "0101" === B)
 ///
 
 TEST /// -- tautoClass, zeroSection, dualZeroSection, and pushforwardToPointFromCotangent
+(A,B,FF,I)=setupCotangent(1,2,3,Presentation=>Borel)
+-- on a full flag, first Chern classes are just variables
+assert(all(1..3,i->tautoClass(1,i)==x_i))
 (A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
 -- the 0-th Chern class of any tautological bundle is the identity
 assert(tautoClass(0,1) == 1)
