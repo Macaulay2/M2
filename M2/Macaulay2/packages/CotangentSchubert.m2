@@ -317,6 +317,7 @@ multidoc ///
    [puzzle, Equivariant]
    [puzzle, Labels]
    [puzzle, Paths]
+   [puzzle, Separation]
    [puzzle, Steps]
    Puzzle
   Headline
@@ -351,9 +352,15 @@ multidoc ///
     this will not occur in normal puzzle computations). The special symbol "#" stands for any single digit,
     whereas "*" stands for any puzzle label.
 
+    Note that only puzzles up to d=3 are implemented.
+
+    One more symbol in boundary strings is allowed, namely "_"; this will trigger the option @TT "Separation"@ which allows the computation
+    of separated or almost separated descent puzzles, see paper [3] for details.
+
     @TT "Labels"@ and @TT "Paths"@ are drawing options which only affect HTML and TeX output of puzzles.
    Example
     puzzle ("0101","1001",Equivariant=>false)
+    puzzle("1_20__","4_32_4",Generic=>false,Equivariant=>false)
  Node
   Key
    fugacity
