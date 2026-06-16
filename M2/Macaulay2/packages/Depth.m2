@@ -914,6 +914,7 @@ I = ideal vars T;
 assert( depth(I,T) === 1 )
 assert( depth(I,T^1) === 1 )
 assert( depth T === 1 )
+///
 
 end--
 
