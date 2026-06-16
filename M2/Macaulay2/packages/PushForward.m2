@@ -205,6 +205,8 @@ makeModule(Module, RingMap) := (N, f) -> (
 
     pfmat' := N.cache.pruningMap * map(N, M, f, sourceGens);
     pf := (n) -> ( -- pf: N --> M
+        if numrows n === 0 then return map(M, A^(numcols n), 0);
+
         n = N.cache.pruningMap^-1 * n;
         -- a bit hacky: we want to transpose without applying antipode
         n' := transpose matrix for row in entries n list for c in row list antipode(c);
@@ -350,7 +352,8 @@ isModuleFinite Ring := Boolean => R -> (
     gensR := gens(R, CoefficientRing => coefficientRing R);
 
     -- this can be a strict subset
-    isEmpty(gensR - set relsR)
+    -- we are removing 0_R as this appears in the degenerate case of the zero-ring.
+    isEmpty(gensR - set relsR - set {0_R})
 )
 isModuleFinite RingMap := Boolean => (f) -> (
     if isInclusionOfCoefficientRing f then return isModuleFinite target f;

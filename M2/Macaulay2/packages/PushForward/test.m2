@@ -677,6 +677,18 @@ assert(gensM' == pushforward(f, pushforward' gensM'))
 assert(gensM == pushforward' pushforward(f, gensM))
 ///
 
+-- test 35
+TEST ///
+-- the case of the zero module shows up naturally when applying pushFwd to a
+-- free resolution which is why we are fussing over it.
+kk = ZZ/3
+R = kk[a]/a^2
+f = map(R, kk)
+M = R^0
+N = pushFwd(f, M)
+assert(pushforward' pushforward(N, 0_M) == 0_M)
+///
+
 -- it would be useful if there were a standardized way to encode functionality
 -- gaps in macaulay2.
 -- NONTEST - this should work but doesn't
