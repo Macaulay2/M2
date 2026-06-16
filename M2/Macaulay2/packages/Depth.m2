@@ -112,16 +112,6 @@ I = ideal vars T;
 assert( depth(I,T) === 0 )
 assert( depth(I,T^1) === 0 )
 assert( depth T === 0 )
-///
-
-TEST///
-S = ZZ/101[x_1..x_(9)];
-J = ideal(x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8);
-T = S/J^3; -- The ring T has dimension 1, not 0 as in the previous test.
-I = ideal vars T;
-assert( depth(I,T) === 1 )
-assert( depth(I,T^1) === 1 )
-assert( depth T === 1 )
 ///     
 
 TEST/// --- test 2
@@ -194,7 +184,7 @@ depth(Module) := ZZ => M -> (
     m := sub(presentation M, S0);
     COK := prune coker(sub(m,S0) | (presentation S ** target m));
     
-    numgens S0 - length freeResolution COK    
+    numgens S0 - length freeResolution COK
 --    depth(ideal gens ring M,M) -- old method
      )
 
@@ -884,9 +874,8 @@ TEST///  --- test 15
 ///
 TEST///  --- test 16
      S = ZZ/101[a,b,c,d]
-     ---K = koszulComplex vars S
-     ---apply(numgens S, i-> depth coker K.dd_(i+1))
-
+     K = koszul vars S
+     apply(numgens S, i-> depth coker K.dd_(i+1))
      I = ideal"ab,bc,cd,da"
      assert(codim I == 2)
      setRandomSeed 0
@@ -916,6 +905,15 @@ I = ideal "ax-by,cx-dy,ex-fy"
 assert (codim I == 2)
 assert(systemOfParameters(I, Seed => ideal "ex-fy") === ideal "ex-fy,ax-by")
 ///
+
+TEST///  --- test 20
+S = ZZ/101[x_1..x_(9)];
+J = ideal(x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8);
+T = S/J^3; -- The ring T has dimension 1, not 0 as in test 1.
+I = ideal vars T;
+assert( depth(I,T) === 1 )
+assert( depth(I,T^1) === 1 )
+assert( depth T === 1 )
 
 end--
 
