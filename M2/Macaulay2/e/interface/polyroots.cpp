@@ -12,6 +12,7 @@
 #include "basic-rings/aring.hpp"
 #include "error.h"
 #include "monoid.hpp"
+#include "rings/frac.hpp"
 #include "rings/polyring.hpp"
 #include "ring-elements/ring-element.hpp"
 #include "rings/ring.hpp"
@@ -26,6 +27,10 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
 {
   (void) unique;
   const Ring *R = p->get_ring();
+  if (const FractionField *frac = R->cast_to_FractionField()) {
+    R = frac->get_ring();
+    p = RingElement::make_raw(R, frac->numerator(p->get_value()));
+  }
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   const Monoid *M = P->getMonoid();
   if (P == nullptr) {
