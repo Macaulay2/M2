@@ -32,6 +32,17 @@
 namespace M2 {
 
 namespace detail {
+
+template <typename RT, typename = void>
+inline constexpr bool has_set_from_mpq = false;
+
+template <typename RT>
+inline constexpr bool has_set_from_mpq<
+    RT,
+    std::void_t<decltype(std::declval<const RT&>().set_from_mpq(
+        std::declval<typename RT::ElementType&>(),
+        std::declval<mpq_srcptr>()))>> = true;
+
 template <typename RT, typename = void>
 inline constexpr bool has_set_from_double = false;
 
@@ -181,93 +192,58 @@ bool mylift(const RingR& R,
 }
 
 /////////////////////////////////////////////////////
-inline bool mypromote(const ARingQQ& R,
-                      const ARingRR& S,
-                      const ARingQQ::ElementType& fR,
-                      ARingRR::ElementType& fS)
+template <typename RingS>
+bool mypromote(const ARingQQ& R,
+               const RingS& S,
+               const ARingQQ::ElementType& fR,
+               typename RingS::ElementType& fS)
 {
   (void) R;
-  return S.set_from_mpq(fS, &fR);
-}
-inline bool mypromote(const ARingQQ& R,
-                      const ARingRRR& S,
-                      const ARingQQ::ElementType& fR,
-                      ARingRRR::ElementType& fS)
-{
-  (void) R;
-  return S.set_from_mpq(fS, &fR);
-}
-inline bool mypromote(const ARingQQ& R,
-                      const ARingRRi& S,
-                      const ARingQQ::ElementType& fR,
-                      ARingRRi::ElementType& fS)
-{
-  (void) R;
-  return S.set_from_mpq(fS, &fR);
-}
-inline bool mypromote(const ARingQQ& R,
-                      const ARingCC& S,
-                      const ARingQQ::ElementType& fR,
-                      ARingCC::ElementType& fS)
-{
-  (void) R;
-  return S.set_from_mpq(fS, &fR);
-}
-inline bool mypromote(const ARingQQ& R,
-                      const ARingCCC& S,
-                      const ARingQQ::ElementType& fR,
-                      ARingCCC::ElementType& fS)
-{
-  (void) R;
-  return S.set_from_mpq(fS, &fR);
+  if constexpr (detail::has_set_from_mpq<RingS>)
+    return S.set_from_mpq(fS, &fR);
+  else
+    return false;
 }
 /////////////////////////////////////////////////////
-inline bool mypromote(const ARingRR& R,
-                      const ARingRR& S,
-                      const ARingRR::ElementType& fR,
-                      ARingRR::ElementType& fS)
-{
-  (void) R;
-  S.set_from_double(fS, fR);
-  return true;
-}
-inline bool mypromote(const ARingRR& R,
-                      const ARingRRR& S,
-                      const ARingRR::ElementType& fR,
-                      ARingRRR::ElementType& fS)
-{
-  (void) R;
-  S.set_from_double(fS, fR);
-  return true;
-}
-inline bool mypromote(const ARingRR& R,
-                      const ARingCC& S,
-                      const ARingRR::ElementType& fR,
-                      ARingCC::ElementType& fS)
-{
-  (void) R;
-  S.set_from_doubles(fS, fR, 0);
-  return true;
-}
-inline bool mypromote(const ARingRR& R,
-                      const ARingCCC& S,
-                      const ARingRR::ElementType& fR,
-                      ARingCCC::ElementType& fS)
-{
-  (void) R;
-  S.set_from_doubles(fS, fR, 0);
-  return true;
-}
-/////////////////////////////////////////////////////
-inline bool mypromote(const ARingRRR& R,
-                      const ARingRRR& S,
-                      const ARingRRR::ElementType& fR,
-                      ARingRRR::ElementType& fS)
+template <typename Ring>
+bool mypromote(const Ring& R,
+               const Ring& S,
+               const typename Ring::ElementType& fR,
+               typename Ring::ElementType& fS)
 {
   (void) R;
   S.set(fS, fR);
   return true;
 }
+/////////////////////////////////////////////////////
+inline bool mypromote(const ARingRR& R,
+                      const ARingRRR& S,
+                      const ARingRR::ElementType& fR,
+                      ARingRRR::ElementType& fS)
+{
+  (void) R;
+  S.set_from_double(fS, fR);
+  return true;
+}
+inline bool mypromote(const ARingRR& R,
+                      const ARingCC& S,
+                      const ARingRR::ElementType& fR,
+                      ARingCC::ElementType& fS)
+{
+  (void) R;
+  S.set_from_doubles(fS, fR, 0);
+  return true;
+}
+inline bool mypromote(const ARingRR& R,
+                      const ARingCCC& S,
+                      const ARingRR::ElementType& fR,
+                      ARingCCC::ElementType& fS)
+{
+  (void) R;
+  S.set_from_doubles(fS, fR, 0);
+  return true;
+}
+/////////////////////////////////////////////////////
 inline bool mypromote(const ARingRRR& R,
                       const ARingRR& S,
                       const ARingRRR::ElementType& fR,
@@ -299,15 +275,6 @@ inline bool mypromote(const ARingRRR& R,
   return true;
 }
 /////////////////////////////////////////////////////
-inline bool mypromote(const ARingRRi& R,
-                      const ARingRRi& S,
-                      const ARingRRi::ElementType& fR,
-                      ARingRRi::ElementType& fS)
-{
-  (void) R;
-  S.set(fS, fR);
-  return true;
-}
 inline bool mypromote(const ARingRR& R,
                       const ARingRRi& S,
                       const ARingRR::ElementType& fR,
@@ -328,15 +295,6 @@ inline bool mypromote(const ARingRRR& R,
 }
 /////////////////////////////////////////////////////
 inline bool mypromote(const ARingCC& R,
-                      const ARingCC& S,
-                      const ARingCC::ElementType& fR,
-                      ARingCC::ElementType& fS)
-{
-  (void) R;
-  S.set(fS, fR);
-  return true;
-}
-inline bool mypromote(const ARingCC& R,
                       const ARingCCC& S,
                       const ARingCC::ElementType& fR,
                       ARingCCC::ElementType& fS)
@@ -356,24 +314,7 @@ inline bool mypromote(const ARingCCC& R,
   S.set_from_BigReals(fS, &fR1.re, &fR1.im);
   return true;
 }
-inline bool mypromote(const ARingCCC& R,
-                      const ARingCCC& S,
-                      const ARingCCC::ElementType& fR,
-                      ARingCCC::ElementType& fS)
-{
-  (void) R;
-  S.set(fS, fR);
-  return true;
-}
 /////////////////////////////////////////////////////
-inline bool mypromote(const ARingCCi& R,
-                      const ARingCCi& S,
-                      const ARingCCi::ElementType& fR,
-                      ARingCCi::ElementType& fS)
-{
-  S.set(fS, fR);
-  return true;
-}
 inline bool mypromote(const ARingRR& R,
                       const ARingCCi& S,
                       const ARingRR::ElementType& fR,
