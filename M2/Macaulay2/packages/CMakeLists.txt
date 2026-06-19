@@ -256,3 +256,7 @@ endforeach()
 
 file(COPY LanguageServer/M2-language-server
      DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
+
+install(PROGRAMS LanguageServer/M2-language-server
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT ALL)
