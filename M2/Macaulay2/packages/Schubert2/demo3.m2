@@ -31,7 +31,7 @@ assert(chi(tangentBundle Y) == -80)
 
 clearAll
 
-W = weightedProjectiveSpace {1,1,1,1,1,1,2,2}
+W = WPS {1,1,1,1,1,1,2,2}
 h = chern_1(OO_W(1));
 assert(integral(h^7) == 1/4)
 E = 3*OO_W ++ 2*OO_W(-1);

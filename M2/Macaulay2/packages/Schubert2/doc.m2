@@ -1353,9 +1353,9 @@ Node
 
 Node
   Key
-    weightedProjectiveSpace
-    (weightedProjectiveSpace,List)
-    [weightedProjectiveSpace,VariableName]
+    WPS
+    (WPS,List)
+    [WPS,VariableName]
     weightedProjectiveBundle
     (weightedProjectiveBundle,List,AbstractVariety)
     (weightedProjectiveBundle,List)
@@ -1364,12 +1364,12 @@ Node
     make a weighted projective space, as an abstract variety
   Description
     Text
-      The function weightedProjectiveSpace {a_0,...,a_n} yields the weighted projective space
+      The function WPS {a_0,...,a_n} yields the weighted projective space
       $\PP^n(a_0,\ldots,a_n)$, as an abstract variety. More generally, weightedProjectiveBundle({a_0,...,a_n},X)
       is the product $\PP^n(a_0,\ldots,a_n)\times X$, viewed as a bundle over X.   
   Synopsis
     Usage
-      weightedProjectiveSpace weights
+      WPS weights
     Inputs
       weights : List
       VariableName => Thing
@@ -1403,7 +1403,7 @@ Node
         Here $Y$ misses the point
         of $W$ with nontrivial stabilizer; so we can use Schubert2 to compute that $\chi(Y, TY) = -81$.
       Example
-        W = weightedProjectiveSpace {1,1,1,1,1,1,1,2}
+        W = WPS {1,1,1,1,1,1,1,2}
         h = chern_1(OO_W(1));
         integral(h^7)
         E = 4*OO_W(-1) ++ OO_W;

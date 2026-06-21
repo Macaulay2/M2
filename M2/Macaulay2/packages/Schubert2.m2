@@ -39,7 +39,7 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "extensionAlgebra", "inclusion", "SubTangent", "SuperTangent",
      "SubDimension", "SuperDimension", "NormalClass", "Codimension",
      "symmetricDegeneracyLocus", "symmetricDegeneracyLocus2", "skewDegeneracyLocus", "skewDegeneracyLocus2",
-     "symmetricKernelBundle", "skewKernelBundle", "weightedProjectiveBundle", "weightedProjectiveSpace",
+     "symmetricKernelBundle", "skewKernelBundle", "weightedProjectiveBundle", "WPS",
      }
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
@@ -2110,12 +2110,12 @@ weightedProjectiveBundle List := opts -> weights -> (
      weightedProjectiveBundle(weights,point,VariableName => opts.VariableName)
      )
 
-weightedProjectiveSpace = method(
+WPS = method(
      Options => {VariableName => "h"},
      TypicalValue => AbstractVariety
      )
 
-weightedProjectiveSpace List := opts -> weights -> (
+WPS List := opts -> weights -> (
      weightedProjectiveBundle(weights,point,VariableName => opts.VariableName)
      )
 
