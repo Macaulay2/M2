@@ -231,9 +231,7 @@ doc ///
             m = pushforward(f, N_0)
             module target m
         Text
-            If you have used different options to create more than one pushFwd
-            along a ring map. Then you have to specify the target pushFwd
-            module.
+            If multiple push-forward have been created you can pushforward to any of them you specify.
         Example
             kk = ZZ/101;
             A = kk[a,b];
@@ -242,7 +240,6 @@ doc ///
             N = I/I^3
             M = pushFwd(N, NoPrune => true)
             M' = pushFwd(N, NoPrune => false)
-            try(pushforward(f, N_0)) -- this raises an error
             pushforward(M, N_0)
             pushforward(M', N_0)
         Text
@@ -284,7 +281,7 @@ doc ///
             A = kk[a] / ideal {a^2 + 2};
             N = module A;
             M = pushFwd N;
-            pushforward(M, N_{0}) 
+            pushforward(M, a * N_{0})
         Text
             If multiple push-forward have been created you can pushforward to any of them you specify.
         Example
@@ -320,8 +317,9 @@ doc ///
         Example
             kk = ZZ/101;
             A = kk[a] / ideal {a^2 + 2};
-            M = pushFwd module A;
-            pushforward(M, vector a)
+            N = module A;
+            M = pushFwd N;
+            pushforward(M, a * N_0)
         Text
             If multiple push-forward have been created you can pushforward to any of them you specify.
         Example
