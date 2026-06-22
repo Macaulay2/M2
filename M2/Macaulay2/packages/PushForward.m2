@@ -124,10 +124,6 @@ pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
 -- map elements from a ring/module to it's pushforward
 
 pushforward = method(Options => options pushFwd)
--- defaults to inclusion of coefficient ring
-pushforward(RingElement) := Matrix => opts -> (r) -> pushforward(map(ring r, coefficientRing ring r), map(module ring r, module ring r, matrix r), opts);
-pushforward(Vector) := Matrix => opts -> (v) -> pushforward(map(ring v, coefficientRing ring v), matrix v, opts)
-pushforward(Matrix) := Matrix => opts -> (n) -> pushforward(map(ring n, coefficientRing ring n), n, opts)
 -- accepts ring map and computes pushforward module if necessary
 pushforward(RingMap, RingElement) := Matrix => opts -> (f, r) -> pushforward(f, map(module ring r, module ring r, matrix r), opts);
 pushforward(RingMap, Vector) := Matrix => opts -> (f, x) -> pushforward(f, matrix x, opts)

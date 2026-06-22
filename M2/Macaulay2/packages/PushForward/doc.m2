@@ -246,13 +246,6 @@ doc ///
             pushforward(M, N_0)
             pushforward(M', N_0)
         Text
-            You can omit the ring map in which case the natural inclusion of the
-            coefficient ring is used.
-        Example
-            kk = ZZ/101;
-            A = kk[a,b] / ideal {a^2, b^3};
-            pushforward(1 + 2*a + 3*b + 4*a*b)
-        Text
             @TT "pushforward"@ and @TT "pushforward'"@ are inverse bijections
             (modulo the representation of elements as matrices or vectors).
         Example
@@ -262,80 +255,12 @@ doc ///
             I = ideal vars A;
             N = I/I^2;
             M = pushFwd N;
-            (matrix N_0, pushforward' pushforward N_0)
-            (matrix M_*, pushforward pushforward' matrix M_*)
+            (matrix N_0, pushforward' pushforward(f, N_0))
+            (matrix M_*, pushforward(f, pushforward' matrix M_*))
     SeeAlso
         pushforward'
 ///
 
-doc ///
-    Key
-        (pushforward, Matrix)
-    Headline
-        map element from a module to it's push-forward
-    Inputs
-        X:Matrix
-            $X: R^n \rightarrow N$ representing $n$ elements of $N$
-    Outputs
-        Y:Matrix
-            $Y$ gives $n$ elements of the push-forward module
-    Usage
-        Y = pushforward(X)
-    Description
-        Text
-            Pushes along implicit inclusion of coefficient ring.
-        Example
-            kk = ZZ/101;
-            A = kk[a] / ideal {a^2 + 2};
-            N = A^3;
-            X = matrix N_0;
-            pushforward X
-///
-
-doc ///
-    Key
-        (pushforward, Vector)
-    Headline
-        map element from a module to it's push-forward
-    Inputs
-        v:Vector
-    Outputs
-        Y:Matrix
-            $Y$ gives an element of the push-forward module
-    Usage
-        Y = pushforward(v)
-    Description
-        Text
-            Pushes along implicit inclusion of coefficient ring.
-        Example
-            kk = ZZ/101;
-            A = kk[a] / ideal {a^2 + 2};
-            N = A^3;
-            v = N_0;
-            pushforward vector v
-///
-
-doc ///
-    Key
-        (pushforward, RingElement)
-    Headline
-        map elements from a module to it's push-forward
-    Inputs
-        r:RingElement
-    Outputs
-        Y:Matrix
-            $Y$ gives an element of the push-forward module
-    Usage
-        Y = pushforward(r)
-    Description
-        Text
-            Pushes along implicit inclusion of coefficient ring.
-        Example
-            kk = ZZ/101;
-            A = kk[a] / ideal {a^2 + 2};
-            r = a;
-            pushforward a
-///
 
 doc ///
     Key
@@ -357,11 +282,11 @@ doc ///
         Example
             kk = ZZ/101;
             A = kk[a] / ideal {a^2 + 2};
-            M = pushFwd module A;
-            pushforward(M, matrix a)
+            N = module A;
+            M = pushFwd N;
+            pushforward(M, N_{0}) 
         Text
-            If multiple push-forward have been created with the same ring-map
-            this is required.
+            If multiple push-forward have been created you can pushforward to any of them you specify.
         Example
             kk = ZZ/101;
             A = kk[a,b];
@@ -371,7 +296,6 @@ doc ///
             M = pushFwd(N, NoPrune => true);
             M' = pushFwd(N, NoPrune => false);
             X = matrix N_0
-            try(pushforward(f, X)) -- this raises an error
             pushforward(M, X)
             pushforward(M', X)
 ///
@@ -397,10 +321,9 @@ doc ///
             kk = ZZ/101;
             A = kk[a] / ideal {a^2 + 2};
             M = pushFwd module A;
-            pushforward(M, a)
+            pushforward(M, vector a)
         Text
-            If multiple push-forward have been created with the same ring-map
-            this is required.
+            If multiple push-forward have been created you can pushforward to any of them you specify.
         Example
             kk = ZZ/101;
             A = kk[a,b];
@@ -410,7 +333,6 @@ doc ///
             M = pushFwd(N, NoPrune => true)
             M' = pushFwd(N, NoPrune => false)
             v = vector N_0
-            try(pushforward(f, v)) -- this raises an error
             pushforward(M, v)
             pushforward(M', v)
 ///
@@ -438,8 +360,7 @@ doc ///
             M = pushFwd module A;
             pushforward(M, a)
         Text
-            If multiple push-forward have been created with the same ring-map
-            this is required.
+            If multiple push-forward have been created you can pushforward to any of them you specify.
         Example
             kk = ZZ/101;
             A = kk[a,b]/ ideal {a^2, b^2};
@@ -574,8 +495,8 @@ doc ///
             I = ideal vars A;
             N = I/I^2;
             M = pushFwd N;
-            (matrix N_0, pushforward' pushforward N_0)
-            (matrix M_*, pushforward pushforward' matrix M_*)
+            (matrix N_0, pushforward' pushforward(M, N_0))
+            (matrix M_*, pushforward(M, pushforward' matrix M_*))
         Text
             If the argument is not an element of a module that is a
             push-forward, then an error is raised.

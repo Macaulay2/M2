@@ -429,7 +429,7 @@ ns = N_{0..numgens N - 1}
 -- without pruning
 o = new OptionTable from {NoPrune => true}
 M = pushFwd(N, o)
-assert(ns - pushforward' pushforward ns == 0)
+assert(ns - pushforward' pushforward(M, ns) == 0)
 
 -- with pruning (default)
 M = pushFwd(N)
@@ -449,7 +449,7 @@ ns = N_{0..numgens N - 1}
 -- without pruning
 o = new OptionTable from {NoPrune => true}
 M = pushFwd(N, o)
-assert(ns == pushforward' pushforward ns)
+assert(ns == pushforward' pushforward(M, ns))
 
 -- with pruning (default)
 M = pushFwd(N)
@@ -468,7 +468,7 @@ ns = N_{0..numgens N - 1}
 -- without pruning
 o = new OptionTable from {NoPrune => true}
 M = pushFwd(N, o)
-assert(ns == pushforward' pushforward ns)
+assert(ns == pushforward' pushforward(M, ns))
 
 -- with pruning (default)
 M = pushFwd(N)
@@ -512,7 +512,7 @@ assert(target pF == rS)
 --      V                   V
 --      M        --->       pM
 ms = pushforward' rS_{0..numgens rS - 1}
-assert(pF * (pushforward ms) - pushforward(F * ms) == 0)
+assert(pF * (pushforward(rS, ms)) - pushforward(rS, F * ms) == 0)
 ///
 
 -- test 26
@@ -530,7 +530,7 @@ M = pushFwd N
 
 ns = matrix N_{0..numgens N - 1}
 
-assert(pushforward(F * ns) == pF * pushforward(ns))
+assert(pushforward(M, F * ns) == pF * pushforward(M, ns))
 ///
 
 -- test 27
@@ -543,10 +543,10 @@ N = I^3/I^5
 M = pushFwd N
 
 ns = N_{0..numgens N - 1}
-assert(ns == pushforward' pushforward ns)
+assert(ns == pushforward' pushforward(M, ns))
 
 ms = M_{0..numgens M - 1}
-assert(ms == pushforward pushforward' ms)
+assert(ms == pushforward(M, pushforward' ms))
 ///
 
 -- test 28
@@ -554,6 +554,8 @@ TEST ///
 -- test various interfaces for pushforward and pushforward' methods
 kk = ZZ/101
 R = kk[a..c]
+f = map(R, kk)
+
 I = ideal vars R
 N = I/I^2
 M = pushFwd N
@@ -563,12 +565,16 @@ n = N_{0}
 m = M_{0}
 
 -- check vector and matrix interface for pushforward
-assert(n == pushforward' pushforward n)
-assert(n == pushforward' pushforward vector n)
+assert(n == pushforward' pushforward(M, n))
+assert(n == pushforward' pushforward(M, vector n))
+assert(n == pushforward' pushforward(f, n))
+assert(n == pushforward' pushforward(f, vector n))
 
 -- check vector and matrix interface for pushforward'
-assert(m == pushforward pushforward' m)
-assert(m == pushforward pushforward' vector m)
+assert(m == pushforward(M, pushforward' m))
+assert(m == pushforward(M, pushforward' vector m))
+assert(m == pushforward(f, pushforward' m))
+assert(m == pushforward(f, pushforward' vector m))
 
 -- check vector and matrix interface for pushforward with explicit f
 S = kk[x]
@@ -583,11 +589,7 @@ TEST ///
 -- pushforward interface for ring elements
 kk = ZZ/101
 R = kk[a..c]/ideal {a^2, b^3, c^5}
-
--- check pushforward interface with implicit inclusion of coefficient ring
 r = a + b + c
-pushFwd R
-assert(r * 1_R^1 == pushforward' pushforward r)
 
 -- check pushforward interface with explicit map
 S = kk[x]
@@ -600,9 +602,10 @@ assert(r * 1_R^1 == pushforward' pushforward(f, r))
 TEST ///
 kk = ZZ/101
 R = kk[a,b] / ideal {a^2 + 1, b^3 + a^2*b + 2}
+f = map(R, kk)
 M = first pushFwd R
 
-assert(matrix a + b == pushforward' pushforward(a + b))
+assert(matrix a + b == pushforward' pushforward(f, a + b))
 M' = first pushFwd(R, NoPrune => true)
 
 -- specifying explicit module
