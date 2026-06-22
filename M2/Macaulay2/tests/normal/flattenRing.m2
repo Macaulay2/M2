@@ -253,3 +253,9 @@ assert( target p === ring J )
 assert( source p === ring J )
 assert( target q === ring I )
 assert( source q === ring I )
+
+-- flattening a prime field gives the field itself
+kk = ZZ/101
+(F,p) = flattenRing kk
+assert( F === kk )
+assert( p 1 == 1 )

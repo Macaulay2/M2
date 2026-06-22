@@ -348,8 +348,8 @@ document {
 	       composition of ring maps.  Evaluation of elements in the source 
 	       of a ring map ", TT "G"," can also be done using ", TT "F(G(m))", ".",
 	       EXAMPLE { 
-		    "T = ZZ/5[x,y];",
-		    "G = map(T,S);",
+		    "T = ZZ/101[u,v];",
+		    "G = map(T,S,{-v^3,u,v});",
 		    "G*F",
 		    "use R; G(F(107*x+y+z))",
 		    },
