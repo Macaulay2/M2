@@ -5,6 +5,7 @@
 
 #include "basic-rings/aring.hpp"
 #include "basic-rings/aring-translate.hpp"
+#include "basic-rings/ring-structure.hpp"
 #include "rings/ring.hpp"
 
 #include "mutable-matrices/mutablemat.hpp"
@@ -608,6 +609,7 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
       resultS = copy(fR);
       return true;
     }
+  if (!M2::hasCanonicalMap(R, S)) return false;
   auto vR = RingPromoter::toVariant(R);
   auto vS = RingPromoter::toVariant(S);
   if (!vR || !vS) return false;
@@ -649,6 +651,7 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
       // MES:TODO!! WRITE ME
       return false;
     }
+  if (!M2::hasCanonicalMap(R, S)) return false;
   auto vR = RingPromoter::toVariant(R);
   auto vS = RingPromoter::toVariant(S);
   if (!vR || !vS) return false;
