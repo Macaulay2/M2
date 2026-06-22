@@ -485,7 +485,7 @@ S = kk[a..e, SkewCommutative => true];
 I = cokernel matrix {{a*b + c, d}}
 I' = pushFwd(I, o)
 ms = I'_{0..numgens I' - 1}
-assert(ms == pushforward pushforward' ms)
+assert(ms == pushforward(I', pushforward' ms))
 ///
 
 -- test 25
@@ -598,7 +598,6 @@ assert(r * 1_R^1 == pushforward' pushforward(f, r))
 
 -- test 30
 TEST ///
--- require explicit module in multiple pushforward case
 kk = ZZ/101
 R = kk[a,b] / ideal {a^2 + 1, b^3 + a^2*b + 2}
 M = first pushFwd R
@@ -606,10 +605,7 @@ M = first pushFwd R
 assert(matrix a + b == pushforward' pushforward(a + b))
 M' = first pushFwd(R, NoPrune => true)
 
--- errors bc two pushforwards
-try(pushforward(a + b)) then assert(false) else assert(true)
-
--- specifying explicit module works
+-- specifying explicit module
 assert(matrix {{a + b}} == pushforward' pushforward(M, a + b))
 assert(matrix {{a + b}} == pushforward' pushforward(M', a + b))
 ///

@@ -28,62 +28,19 @@ newPackage(
 -- Recently, David Eisenbud and Mike Stillman have extended it, fixing some bugs too.
 
 export {
-    "isModuleFinite",
     "pushFwd",
-    "NoPrune",
     "pushforward",
-    "pushforward'"
+    "pushforward'",
+    "isModuleFinite",
+    "NoPrune"
 }
-protect \ {PUSHFORWARDMODULES, PUSHFORWARDMAPS, PUSHFORWARDMAP'}
 
-
-
--- pushforward method --
--- map elements from a ring/module to it's pushforward
-pushforward = method()
-pushforward(RingMap, Matrix) := (f, n) -> (
-    N := module target n;
-    Ps := getPushforwards(N, f);
-    if Ps === null or #Ps == 0 then (
-        M := pushFwd(f, N);
-        P := getPushforwardByModule(N, M);
-        return P n;
-    );
-    if #Ps > 1 then error "more than one pushFwd exists for this ring map. specify pushFwd module.";
-
-    P = first Ps;
-    P n
-)
-pushforward(RingMap, Vector) := (f, v) -> pushforward(f, matrix v)
-pushforward(Matrix) := (n) -> pushforward(map(ring target n, coefficientRing ring target n), n)
-pushforward(Vector) := (v) -> pushforward(matrix v)
-pushforward(RingMap, RingElement) := (f, r) -> pushforward(f, map(module ring r, module ring r, matrix r))
-pushforward(RingElement) := (r) -> pushforward(map(ring r, coefficientRing ring r), r)
-pushforward(Module, Matrix) := (M, n) -> (
-    N := module target n;
-    P := getPushforwardByModule(N, M);
-    -- in rank 1 free case attempt to find the right module to pushforward to.
-    if P === null and N == module ring N then P = getPushforwardByModule(module ring N, M);
-    if P === null then error "argument module is not the pushforward of the module of argument element.";
-    P n
-);
-pushforward(Module, Vector) := (M, v) -> pushforward(M, matrix v);
-pushforward(Module, RingElement) := (M, r) -> pushforward(M, map(module ring r, module ring r, matrix r));
-
--- pushforward' method --
--- map elements from a pushforward module to the module that was pushed
-pushforward' = method()
-pushforward'(Matrix) := (m) -> (
-    P' := getPushforward'(module target m);
-    if P' === null then error "expected an element of a module of the form pushFwd(N)";
-    P' m
-)
-pushforward'(Vector) := (v) -> pushforward' matrix v
-
-
--- pushFwd method
+-------------
+-- pushFwd --
+-------------
 -- central export of this package. compute the push forward of various objects
 -- over a ring map if possible.
+
 pushFwd = method(Options => {NoPrune => false})
 pushFwd Ring := Sequence => o -> B -> pushFwd(map(B, coefficientRing B), o)
 pushFwd Module := Module => o -> M -> pushFwd(map(ring M, coefficientRing ring M), M, o)
@@ -97,21 +54,13 @@ pushFwd RingMap := Sequence => o -> (f) ->
 (
     B := target f;
     pfB := pushFwd(f, module B, o);
-    ringpf := getPushforwardWithOpts(B, f, o);
-    if ringpf === null then (
-        modulepf := getPushforwardWithOpts(module B, f, o);
-        ringpf = (b) -> modulepf matrix b;
-        setPushforwardCache(B, f, o, ringpf);
-    );
     matB := pushforward' pfB_{0..numgens pfB - 1};
+    ringpf := (b) -> (module B).cache.cache#(pushforward, pfB) matrix b;
 
     (pfB, matB, ringpf)
 )
 
-pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
-    if (cachedModule := getPushFwdModule(N, f, o)) =!= null then
-        return cachedModule;
-
+pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache.cache#(pushFwd, f, o) ??= (
     A := source f;
     B := target f;
     B' := B / ann N;
@@ -135,12 +84,9 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
         if isHomogeneous m then (try(map(N, , result)) else map(N, , matrix entries result))
         else result
     );
-    setPushforwardCache'(pfN, mapb);
 
     -- patch pf into a function N -> M
     mapf := (n) -> pf(n ** B');
-    setPushforwardCache(N, f, o, mapf);
-    setPushforwardByModuleCache(N, pfN, mapf);
 
     if (o.NoPrune == false) then (
         pfNPruned := prune pfN;
@@ -151,12 +97,17 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
         -- way you could actually pushforward['] out of a module you pruned by
         -- hand...
         p := (n) -> pruningmap^-1 * mapf(n);
-        setPushforwardCache(N, f, o, p);
-        setPushforwardCache'(pfNPruned, (m) -> mapb(pruningmap * m));
-        setPushforwardByModuleCache(N, pfNPruned, p);
-        pfNPruned
+        N.cache.cache#(pushforward, f, o) = p;
+        N.cache.cache#(pushforward, pfNPruned) = p;
+        pfNPruned.cache.cache#pushforward' = (m) -> mapb(pruningmap * m);
+
+        N.cache.cache#(pushFwd, f, o) = pfNPruned
     ) else (
-        pfN
+        N.cache.cache#(pushforward, f, o) = mapf;
+        N.cache.cache#(pushforward, pfN) = mapf;
+        pfN.cache.cache#pushforward' = mapb;
+
+        N.cache.cache#(pushFwd, f, o) = pfN
     )
 )
 
@@ -164,13 +115,86 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> (
 pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
     M := pushFwd(f, source F, o);
     N := pushFwd(f, target F, o);
-    if o.NoPrune == false then (
-        N' := target N.cache.pruningMap;
-        map(N, M, N.cache.pruningMap^-1 * pushforward(N', F * pushforward' M_{0..numgens M - 1}))
-    ) else
-        map(N, M, pushforward(N, F * pushforward' M_{0..numgens M - 1}))
+    map(N, M, pushforward(N, F * pushforward' M_{0..numgens M - 1}))
 )
 
+-----------------
+-- pushforward --
+-----------------
+-- map elements from a ring/module to it's pushforward
+
+pushforward = method(Options => options pushFwd)
+-- defaults to inclusion of coefficient ring
+pushforward(RingElement) := Matrix => opts -> (r) -> pushforward(map(ring r, coefficientRing ring r), map(module ring r, module ring r, matrix r), opts);
+pushforward(Vector) := Matrix => opts -> (v) -> pushforward(map(ring v, coefficientRing ring v), matrix v, opts)
+pushforward(Matrix) := Matrix => opts -> (n) -> pushforward(map(ring n, coefficientRing ring n), n, opts)
+-- accepts ring map and computes pushforward module if necessary
+pushforward(RingMap, RingElement) := Matrix => opts -> (f, r) -> pushforward(f, map(module ring r, module ring r, matrix r), opts);
+pushforward(RingMap, Vector) := Matrix => opts -> (f, x) -> pushforward(f, matrix x, opts)
+pushforward(RingMap, Matrix) := Matrix => opts -> (f, n) -> (
+    fM := pushFwd(f, target n, opts);
+    pushforward(fM, n)
+)
+-- pushforward to explicit module
+pushforward(Module, RingElement) := Matrix => opts -> (M, r) -> pushforward(M, map(module ring r, module ring r, matrix r), opts);
+pushforward(Module, Vector) := Matrix => opts -> (M, v) -> pushforward(M, matrix v, opts);
+pushforward(Module, Matrix) := Matrix => opts -> (M, n) -> (
+    N := module target n;
+    if not N.cache.cache#?(pushforward, M) then error "expected an element of a module of the form pushFwd(N)"
+    else N.cache.cache#(pushforward, M)(n)
+);
+
+------------------
+-- pushforward' --
+------------------
+-- map elements from a pushforward module to the module that was pushed
+
+pushforward' = method()
+pushforward'(Vector) := (v) -> pushforward' matrix v
+pushforward'(Matrix) := (m) -> (
+    M := module target m;
+    if not M.cache.cache#?pushforward' then error "expected an element of a module of the form pushFwd(N)"
+    else M.cache.cache#pushforward' m
+)
+
+--------------------
+-- isModuleFinite -- 
+--------------------
+-- compute whether a ring is module finite over source of a ring homomorphism
+isModuleFinite = method()
+isModuleFinite Ring := Boolean => R -> (
+    -- flatten R to gather all of the relevant relations
+    (fR, phiR) := flattenRing R;
+    I := leadTerm ideal fR;
+
+    R' := ring I;
+    flatRels := join(
+        flatten select(I_*/support, ell -> #ell == 1),
+        -- skew commuting variables don't contribute to failure of module-finiteness
+        try(apply(R'.SkewCommutative, (i) -> R'_i)) else {}
+    );
+    relsR := apply(flatRels, g -> phiR^-1 g);
+
+    -- these are the variables that relations need to cut down
+    gensR := gens(R, CoefficientRing => coefficientRing R);
+
+    -- this can be a strict subset
+    -- we are removing 0_R as this appears in the degenerate case of the zero-ring.
+    isEmpty(gensR - set relsR - set {0_R})
+)
+isModuleFinite RingMap := Boolean => (f) -> (
+    if isInclusionOfCoefficientRing f then return isModuleFinite target f;
+
+    (val, err) := trap pushFwdRingHelper(f);
+    if err =!= null then (
+        if toString err === ERRORNOTFINITE then return false else error err;
+    );
+    true
+)
+
+----------------------
+-- internal methods --
+----------------------
 -- makeModule
 -- internal function which implements the push forward of a module.
 -- input:
@@ -331,105 +355,6 @@ isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
     inc vars source inc == promote (vars source inc, target inc)
 )
 
-
--- isModuleFinite method
--- compute whether a ring is module finite over source of a ring homomorphism
-isModuleFinite = method()
-isModuleFinite Ring := Boolean => R -> (
-    -- flatten R to gather all of the relevant relations
-    (fR, phiR) := flattenRing R;
-    I := leadTerm ideal fR;
-
-    R' := ring I;
-    flatRels := join(
-        flatten select(I_*/support, ell -> #ell == 1),
-        -- skew commuting variables don't contribute to failure of module-finiteness
-        try(apply(R'.SkewCommutative, (i) -> R'_i)) else {}
-    );
-    relsR := apply(flatRels, g -> phiR^-1 g);
-
-    -- these are the variables that relations need to cut down
-    gensR := gens(R, CoefficientRing => coefficientRing R);
-
-    -- this can be a strict subset
-    -- we are removing 0_R as this appears in the degenerate case of the zero-ring.
-    isEmpty(gensR - set relsR - set {0_R})
-)
-isModuleFinite RingMap := Boolean => (f) -> (
-    if isInclusionOfCoefficientRing f then return isModuleFinite target f;
-
-    (val, err) := trap pushFwdRingHelper(f);
-    if err =!= null then (
-        if toString err === ERRORNOTFINITE then return false else error err;
-    );
-    true
-)
-
-------------------------
--- internal utilities --
-------------------------
-
--- cache manipulation --
--*
-use of cache in this package:
-when the pushforward of a module is computed - pushFwd(f, M) - we also generate
-maps to translate elements between M and pushFwd(f, M) and these methods are
-stored in various caches of related objects.
-
-Caced on M:
-- M.cache.PUSHFORWARDMAPS is a CacheTable whose keys have type (RingMap,
-OptionTable) and whose values are functions. when (f, o) => p then p is a
-function from M to pushWd(f, M, o)
-- M.cache.PUSHFORWARDMODULES is a CacheTable whose keys are Modules and whose
-values are a functions. When pushFwd(f, M) => p, then p is a function M ->
-pushFwd(f, M).
-
-Cached on pushFwd(f, M):
-- when N = pushFwd(f, M), then N.cache.PUSHFORWARDMAP' is a function N -> M
-
-Cached on target f:
-- If R = target f, then when pushFwd(f) is computed, we populate
-R.cache.PUSHFORWARDMAPS is a CacheTable whose kets have type (RingMap,
-OptionTable) and values are functions - the same as the first case for M above.
-*-
-
--- setters
-setPushforwardCache = (X, f, o, v) -> (
-    X.cache.PUSHFORWARDMAPS ??= new CacheTable;
-    X.cache.PUSHFORWARDMAPS#(f, o) = v;
-)
-setPushforwardCache' = (X, v) -> X.cache.PUSHFORWARDMAP' = v
-setPushforwardByModuleCache = (X, M, p) -> (
-    X.cache.PUSHFORWARDMODULES ??= new CacheTable;
-    X.cache.PUSHFORWARDMODULES#M = p;
-)
-
--- getters
-getPushforwards = (X, f) -> (
-    -- todo - structure cache in a way that doesn't require this scan over pairs
-    -- nested CacheTable?
-    if X.cache.?PUSHFORWARDMAPS then (
-        fmatches := select(pairs(X.cache.PUSHFORWARDMAPS), (k, v) -> first k === f);
-        apply(fmatches, (k, v) -> v)
-    )
-)
-getPushforwardWithOpts = (X, f, o) -> (
-    if X.cache.?PUSHFORWARDMAPS and X.cache.PUSHFORWARDMAPS#?(f, o) then
-        X.cache.PUSHFORWARDMAPS#(f, o)
-)
-getPushforward' = (X) -> (
-    if X.cache.?PUSHFORWARDMAP' then X.cache.PUSHFORWARDMAP'
-)
-getPushforwardByModule = (X, M) -> (
-    if X.cache.?PUSHFORWARDMODULES and X.cache.PUSHFORWARDMODULES#?M then
-        X.cache.PUSHFORWARDMODULES#M
-)
-getPushFwdModule = (X, f, o) -> (
-    cached := getPushforwardWithOpts(X, f, o);
-    -- 0_X is a nice canonical element to pushforward and see where we end up
-    -- todo - better strategy for looking up the module which is the pushforward along (f, o)
-    if cached =!= null then target cached matrix 0_X
-)
 
 -----------
 -- TESTS --
