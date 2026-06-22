@@ -315,6 +315,7 @@ set(SRCLIST
   basic-rings/aring-ZZp-flint
   basic-rings/aring-ZZp
   basic-rings/aring
+  basic-rings/ring-structure
   rings/frac
   rings/GF
   rings/localring
