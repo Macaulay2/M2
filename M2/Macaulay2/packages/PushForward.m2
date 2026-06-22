@@ -55,12 +55,12 @@ pushFwd RingMap := Sequence => o -> (f) ->
     B := target f;
     pfB := pushFwd(f, module B, o);
     matB := pushforward' pfB_{0..numgens pfB - 1};
-    ringpf := (b) -> (module B).cache.cache#(pushforward, pfB) matrix b;
+    ringpf := (b) -> (module B).cache#(pushforward, pfB) matrix b;
 
     (pfB, matB, ringpf)
 )
 
-pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache.cache#(pushFwd, f, o) ??= (
+pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??= (
     A := source f;
     B := target f;
     B' := B / ann N;
@@ -96,15 +96,17 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache.cache#(pushFwd, f, 
         -- methods and just returning the bare pruned module here instead?  that
         -- way you could actually pushforward['] out of a module you pruned by
         -- hand...
-        N.cache.cache#(pushforward, pfNPruned) = (n) -> pruningmap^-1 * mapf(n);
-        pfNPruned.cache.cache#pushforward' = (m) -> mapb(pruningmap * m);
+        pfNPruned.cache#pushforward' = (m) -> mapb(pruningmap * m);
+        pfNPruned.cache.formation = FunctionApplication { pushFwd, (f, N, o) };
+        N.cache#(pushforward, pfNPruned) = (n) -> pruningmap^-1 * mapf(n);
 
-        N.cache.cache#(pushFwd, f, o) = pfNPruned
+        N.cache#(pushFwd, f, o) = pfNPruned
     ) else (
-        N.cache.cache#(pushforward, pfN) = mapf;
-        pfN.cache.cache#pushforward' = mapb;
+        pfN.cache#pushforward' = mapb;
+        pfN.cache.formation = FunctionApplication { pushFwd, (f, N, o) };
+        N.cache#(pushforward, pfN) = mapf;
 
-        N.cache.cache#(pushFwd, f, o) = pfN
+        N.cache#(pushFwd, f, o) = pfN
     )
 )
 
@@ -131,8 +133,8 @@ pushforward(Module, RingElement) := Matrix => opts -> (M, r) -> pushforward(M, m
 pushforward(Module, Vector) := Matrix => opts -> (M, v) -> pushforward(M, matrix v, opts);
 pushforward(Module, Matrix) := Matrix => opts -> (M, n) -> (
     N := module target n;
-    if not N.cache.cache#?(pushforward, M) then error "expected an element of a module of the form pushFwd(N)"
-    else N.cache.cache#(pushforward, M)(n)
+    if not N.cache#?(pushforward, M) then error "expected an element of a module of the form pushFwd(N)"
+    else N.cache#(pushforward, M)(n)
 );
 
 ------------------
@@ -144,8 +146,8 @@ pushforward' = method()
 pushforward'(Vector) := (v) -> pushforward' matrix v
 pushforward'(Matrix) := (m) -> (
     M := module target m;
-    if not M.cache.cache#?pushforward' then error "expected an element of a module of the form pushFwd(N)"
-    else M.cache.cache#pushforward' m
+    if not M.cache#?pushforward' then error "expected an element of a module of the form pushFwd(N)"
+    else M.cache#pushforward' m
 )
 
 --------------------
