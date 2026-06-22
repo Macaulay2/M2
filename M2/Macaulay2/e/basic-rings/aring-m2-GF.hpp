@@ -94,6 +94,7 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
   ARingGFM2(const PolynomialRing &R, const ring_elem a);
 
   GFElement characteristic() const { return mGF.characteristic(); }
+  GFElement dimension() const { return mGF.dimension(); }
   void text_out(buffer &o) const;
 
   const PolynomialRing &originalRing() const { return mGF.ring(); }
