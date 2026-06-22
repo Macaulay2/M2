@@ -96,14 +96,11 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache.cache#(pushFwd, f, 
         -- methods and just returning the bare pruned module here instead?  that
         -- way you could actually pushforward['] out of a module you pruned by
         -- hand...
-        p := (n) -> pruningmap^-1 * mapf(n);
-        N.cache.cache#(pushforward, f, o) = p;
-        N.cache.cache#(pushforward, pfNPruned) = p;
+        N.cache.cache#(pushforward, pfNPruned) = (n) -> pruningmap^-1 * mapf(n);
         pfNPruned.cache.cache#pushforward' = (m) -> mapb(pruningmap * m);
 
         N.cache.cache#(pushFwd, f, o) = pfNPruned
     ) else (
-        N.cache.cache#(pushforward, f, o) = mapf;
         N.cache.cache#(pushforward, pfN) = mapf;
         pfN.cache.cache#pushforward' = mapb;
 
@@ -127,11 +124,9 @@ pushforward = method(Options => options pushFwd)
 -- accepts ring map and computes pushforward module if necessary
 pushforward(RingMap, RingElement) := Matrix => opts -> (f, r) -> pushforward(f, map(module ring r, module ring r, matrix r), opts);
 pushforward(RingMap, Vector) := Matrix => opts -> (f, x) -> pushforward(f, matrix x, opts)
-pushforward(RingMap, Matrix) := Matrix => opts -> (f, n) -> (
-    fM := pushFwd(f, target n, opts);
-    pushforward(fM, n)
-)
+pushforward(RingMap, Matrix) := Matrix => opts -> (f, n) -> pushforward(pushFwd(f, target n, opts), n, opts)
 -- pushforward to explicit module
+-- opts are ignored in these overrides
 pushforward(Module, RingElement) := Matrix => opts -> (M, r) -> pushforward(M, map(module ring r, module ring r, matrix r), opts);
 pushforward(Module, Vector) := Matrix => opts -> (M, v) -> pushforward(M, matrix v, opts);
 pushforward(Module, Matrix) := Matrix => opts -> (M, n) -> (
@@ -154,7 +149,7 @@ pushforward'(Matrix) := (m) -> (
 )
 
 --------------------
--- isModuleFinite -- 
+-- isModuleFinite --
 --------------------
 -- compute whether a ring is module finite over source of a ring homomorphism
 isModuleFinite = method()
