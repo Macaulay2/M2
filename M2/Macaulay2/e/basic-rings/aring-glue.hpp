@@ -263,7 +263,7 @@ class ConcreteRing : public Ring
     const ElementType &a = R->from_ring_elem_const(f);
     Element b(*R);
     ring_elem result;
-    R->set(b, a);
+    R->copy(b.value(), a);
     R->to_ring_elem(result, b);
     return result;
   }

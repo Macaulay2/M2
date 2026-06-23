@@ -212,7 +212,7 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
       for (size_t r=0; r<=c; r++)
         {
           if (r >= upper.numRows()) break;
-          upper.ring().set(*U1, *LUraw++);
+          upper.ring().copy(*U1, *LUraw++);
           U1 += upper.numColumns();
         }
       U++; // change to next column
@@ -224,7 +224,7 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
           auto L1 = L; // will increment by lower.numRows() each loop here
           for (size_t r=c+1; r<lower.numRows(); r++)
             {
-              lower.ring().set(*L1, *LUraw++);
+              lower.ring().copy(*L1, *LUraw++);
               L1 += lower.numColumns(); // to place next entry.
             }
           L++; // change to next column
@@ -249,10 +249,10 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
       for (size_t r = 0; r < LU.numRows(); r++)
         {
           if (r <= c)
-            ring().set(upper.entry(r, c), LU.entry(r, c));
+            ring().copy(upper.entry(r, c), LU.entry(r, c));
           else if (c < lower.numRows())
             {
-              ring().set(lower.entry(r, c), LU.entry(r, c));
+              ring().copy(lower.entry(r, c), LU.entry(r, c));
             }
         }
     }
@@ -345,7 +345,7 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
 
       // Step 1: set b to be the permuted i-th column of B.
       for (size_t r = 0; r < B.numRows(); r++)
-        ring().set(b[r], B.entry(perm[r], col));
+        ring().copy(b[r], B.entry(perm[r], col));
 
       /// printf("b:\n");
       /// debug_out_list(b, LU.numRows());
@@ -353,7 +353,7 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
       // Step 2: Solve Ly=b
       for (size_t i = 0; i < rk; i++)
         {
-          ring().set(y[i], b[i]);
+          ring().copy(y[i], b[i]);
           for (size_t j = 0; j < i; j++)
             {
               ring().mult(tmp, LU.entry(i, j), y[j]);
@@ -367,7 +367,7 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
       // Step 2B: see if the solution is consistent
       for (size_t i = rk; i < LU.numRows(); i++)
         {
-          ring().set(tmp, b[i]);
+          ring().copy(tmp.value(), b[i]);
           for (size_t j = 0; j < rk; j++)
             {
               ring().mult(tmp2, LU.entry(i, j), y[j]);
@@ -386,14 +386,14 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
       // and place x back into X as col-th column
       for (long i = rk - 1; i >= 0; --i)
         {
-          ring().set(x[i], y[i]);
+          ring().copy(x[i], y[i]);
           for (size_t j = i + 1; j <= rk - 1; j++)
             {
               ring().mult(tmp, LU.entry(i, pivotColumns[j]), x[j]);
               ring().subtract(x[i], x[i], tmp);
             }
           ring().divide(x[i], x[i], LU.entry(i, pivotColumns[i]));
-          ring().set(X.entry(pivotColumns[i], col), x[i]);
+          ring().copy(X.entry(pivotColumns[i], col), x[i]);
 
           /// buffer o;
           /// printf("after i=%ld\n", i);
@@ -436,7 +436,7 @@ void permuteRows(const Mat& B,
                 B.numColumns());  // leaves B alone if correct size already...
   for (long r = 0; r < B.numRows(); r++)
     for (long c = 0; c < B.numColumns(); c++)
-      B.ring().set(result.entry(r, c), B.entry(permutation[r], c));
+      B.ring().copy(result.entry(r, c), B.entry(permutation[r], c));
 }
 
 template <class Mat>
@@ -575,7 +575,7 @@ size_t DMatLinAlg<RingType>::kernel(Mat& X)
       for (long p = nextpivotidx - 1; p >= 0; p--)
         {
           // set X.entry(pivotColumns[p], colX)
-          ring().set(tmp, LU.entry(p, col));
+          ring().copy(tmp.value(), LU.entry(p, col));
           for (size_t i = nextpivotidx - 1; i >= p + 1; i--)
             {
               ring().mult(tmp2,
@@ -584,7 +584,7 @@ size_t DMatLinAlg<RingType>::kernel(Mat& X)
               ring().subtract(tmp, tmp, tmp2);
             }
           ring().divide(tmp, tmp, LU.entry(p, pivotColumns[p]));
-          ring().set(X.entry(pivotColumns[p], colX), tmp);
+          ring().copy(X.entry(pivotColumns[p], colX), tmp.value());
         }
       colX++;
       col++;

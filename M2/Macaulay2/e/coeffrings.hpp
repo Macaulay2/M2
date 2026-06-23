@@ -231,6 +231,7 @@ class CoefficientRingR
   void clear(elem &result) const { (void) result; }
 
   void set_zero(elem &result) const { result = R->zero(); }
+  void copy(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
   void set(elem &result, long a) const { result = R->from_long(a); }
   void set(elem &result, int a) const { result = R->from_long(a); }

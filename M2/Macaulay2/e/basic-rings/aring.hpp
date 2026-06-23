@@ -102,6 +102,11 @@ template <class ARing>
 class SimpleARing : public RingInterface
 {
  public:
+  template <typename ET>
+  void copy(ET& result, const ET& a) const
+  {
+    static_cast<const ARing*>(this)->set(result, a);
+  }
   /**
    * \brief A wrapper class for ElementType
    */

@@ -174,7 +174,7 @@ public:
     assert(comps[comps.size()-1] < dvec.size());
     
     auto len = comps.size();
-    for (ComponentIndex i = 0; i < len; i++) mRing->set(dvec[comps[i]],svec[i]);
+    for (ComponentIndex i = 0; i < len; i++) mRing->copy(dvec[comps[i]],svec[i]);
   }
 
    void denseCancelFromSparse(ElementArray& dense,
@@ -203,7 +203,7 @@ public:
 
     FieldElement b;
     mRing->init(b);
-    mRing->set(b, dvec[comps[0]]);
+    mRing->copy(b, dvec[comps[0]]);
 
     FieldElement one;
     mRing->init(one);
