@@ -142,7 +142,7 @@ algorithms#(factor, RingElement) = new MutableHashTable from {
 	R := coefficientRing(RM := ring f);
 	if not instance(R, FractionField)
 	then return null;
-	RM' := (baseRing R) RM.monoid;
+	RM' := (baseRing R) monoid RM;
 	toRM := map(RM, RM', generators RM);
 	toRM' := map(RM', RM, generators RM');
 	denom := lcm apply(listForm f, t -> denominator t_1);
