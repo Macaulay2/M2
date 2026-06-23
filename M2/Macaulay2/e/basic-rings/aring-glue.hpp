@@ -9,6 +9,9 @@
 
 #include "mutable-matrices/mutablemat.hpp"
 
+#include <optional>
+#include <variant>
+
 static const bool displayArithmeticCalls = false;
 
 #define COERCE_RING(RingType, R) dynamic_cast<const RingType *>(R)
@@ -557,48 +560,35 @@ ConcreteRing<RingType> *ConcreteRing<RingType>::create(Args &&...args)
 // to the routines in the namespace ARingTranslate
 
 namespace RingPromoter {
-  template <typename SourceRing, typename TargetRing>
-  bool promoter(const Ring *R,
-                const Ring *S,
-                const ring_elem fR,
-                ring_elem &resultS)
+  using RingVariant = std::variant<const ConcreteRing<ARingQQ> *,
+                                   const ConcreteRing<ARingRR> *,
+                                   const ConcreteRing<ARingRRR> *,
+                                   const ConcreteRing<ARingRRi> *,
+                                   const ConcreteRing<ARingCC> *,
+                                   const ConcreteRing<ARingCCC> *,
+                                   const ConcreteRing<ARingCCi> *>;
+
+  inline std::optional<RingVariant> toVariant(const Ring *R)
   {
-    assert(dynamic_cast<const ConcreteRing<SourceRing> *>(R) != 0);
-    assert(dynamic_cast<const ConcreteRing<TargetRing> *>(S) != 0);
-    const SourceRing &R1 =
-        dynamic_cast<const ConcreteRing<SourceRing> *>(R)->ring();
-    const TargetRing &S1 =
-        dynamic_cast<const ConcreteRing<TargetRing> *>(S)->ring();
-
-    typename SourceRing::Element fR1(R1);
-    typename TargetRing::Element gS1(S1);
-
-    R1.from_ring_elem(fR1, fR);
-    bool retval = mypromote(R1, S1, fR1, gS1);
-    if (retval) S1.to_ring_elem(resultS, gS1);
-    return retval;
-  }
-
-  template <typename SourceRing, typename TargetRing>
-  bool lifter(const Ring *R,
-              const Ring *S,
-              ring_elem &result_gR,
-              const ring_elem gS)
-  {
-    assert(dynamic_cast<const ConcreteRing<SourceRing> *>(R) != 0);
-    assert(dynamic_cast<const ConcreteRing<TargetRing> *>(S) != 0);
-    const SourceRing &R1 =
-        dynamic_cast<const ConcreteRing<SourceRing> *>(R)->ring();
-    const TargetRing &S1 =
-        dynamic_cast<const ConcreteRing<TargetRing> *>(S)->ring();
-
-    typename SourceRing::Element fR1(R1);
-    typename TargetRing::Element gS1(S1);
-
-    S1.from_ring_elem(gS1, gS);
-    bool retval = mylift(R1, S1, fR1, gS1);  // sets fR1.
-    if (retval) R1.to_ring_elem(result_gR, fR1);
-    return retval;
+    switch (R->ringID())
+      {
+        case M2::ring_QQ:
+          return static_cast<const ConcreteRing<ARingQQ> *>(R);
+        case M2::ring_RR:
+          return static_cast<const ConcreteRing<ARingRR> *>(R);
+        case M2::ring_RRR:
+          return static_cast<const ConcreteRing<ARingRRR> *>(R);
+        case M2::ring_RRi:
+          return static_cast<const ConcreteRing<ARingRRi> *>(R);
+        case M2::ring_CC:
+          return static_cast<const ConcreteRing<ARingCC> *>(R);
+        case M2::ring_CCC:
+          return static_cast<const ConcreteRing<ARingCCC> *>(R);
+        case M2::ring_CCi:
+          return static_cast<const ConcreteRing<ARingCCi> *>(R);
+        default:
+          return std::nullopt;
+      }
   }
 };
 
@@ -608,8 +598,6 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
                                      ring_elem &resultS) const
 {
   const Ring *S = this;
-  //    fprintf(stderr, "calling promote\n");
-  namespace RP = RingPromoter;
   if (R == globalZZ)
     {
       resultS = S->from_int(fR.get_mpz());
@@ -620,134 +608,26 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
       resultS = copy(fR);
       return true;
     }
-  switch (R->ringID())
-    {
-      case M2::ring_ZZp:
-        switch (S->ringID())
-          {
-            case M2::ring_ZZp:
-              return false;
-            case M2::ring_ZZpFfpack:
-              return RP::promoter<ARingZZp, ARingZZpFFPACK>(R, S, fR, resultS);
-            default:
-              return false;
-          }
-        break;
-      case M2::ring_ZZpFfpack:
-        switch (S->ringID())
-          {
-            case M2::ring_ZZp:
-              return RP::promoter<ARingZZpFFPACK, ARingZZp>(R, S, fR, resultS);
-            case M2::ring_ZZpFfpack:
-              return RP::promoter<ARingZZpFFPACK, ARingZZpFFPACK>(
-                  R, S, fR, resultS);
-            default:
-              return false;
-          }
-      case M2::ring_QQ:
-        switch (S->ringID())
-          {
-            case M2::ring_RR:
-              return RP::promoter<ARingQQ, ARingRR>(R, S, fR, resultS);
-            case M2::ring_RRR:
-              return RP::promoter<ARingQQ, ARingRRR>(R, S, fR, resultS);
-            case M2::ring_RRi:
-              return RP::promoter<ARingQQ, ARingRRi>(R, S, fR, resultS);
-            case M2::ring_CC:
-              return RP::promoter<ARingQQ, ARingCC>(R, S, fR, resultS);
-            case M2::ring_CCC:
-              return RP::promoter<ARingQQ, ARingCCC>(R, S, fR, resultS);
-            case M2::ring_CCi:
-             return RP::promoter<ARingQQ, ARingCCi>(R, S, fR, resultS);
-            default:
-              return false;
-          }
-      case M2::ring_RR:
-        switch (S->ringID())
-          {
-            case M2::ring_RR:
-              return RP::promoter<ARingRR, ARingRR>(R, S, fR, resultS);
-            case M2::ring_RRR:
-              return RP::promoter<ARingRR, ARingRRR>(R, S, fR, resultS);
-            case M2::ring_RRi:
-              return RP::promoter<ARingRR, ARingRRi>(R, S, fR, resultS);
-            case M2::ring_CC:
-              return RP::promoter<ARingRR, ARingCC>(R, S, fR, resultS);
-            case M2::ring_CCC:
-              return RP::promoter<ARingRR, ARingCCC>(R, S, fR, resultS);
-            case M2::ring_CCi:
-              return RP::promoter<ARingRR, ARingCCi>(R, S, fR, resultS);
-            default:
-              return false;
-          }
-      case M2::ring_RRR:
-        switch (S->ringID())
-          {
-            case M2::ring_RR:
-              return RP::promoter<ARingRRR, ARingRR>(R, S, fR, resultS);
-            case M2::ring_RRR:
-              return RP::promoter<ARingRRR, ARingRRR>(R, S, fR, resultS);
-            case M2::ring_RRi:
-              return RP::promoter<ARingRRR, ARingRRi>(R, S, fR, resultS);
-            case M2::ring_CC:
-              return RP::promoter<ARingRRR, ARingCC>(R, S, fR, resultS);
-            case M2::ring_CCC:
-              return RP::promoter<ARingRRR, ARingCCC>(R, S, fR, resultS);
-            case M2::ring_CCi:
-                return RP::promoter<ARingRRR, ARingCCi>(R, S, fR, resultS);
-            default:
-              return false;
-          }
-      case M2::ring_RRi:
-        switch (S->ringID())
-           {
-              case M2::ring_RR:
-                return RP::promoter<ARingRRi, ARingRR>(R, S, fR, resultS);
-              case M2::ring_RRR:
-                return RP::promoter<ARingRRi, ARingRRR>(R, S, fR, resultS);
-              case M2::ring_RRi:
-                return RP::promoter<ARingRRi, ARingRRi>(R, S, fR, resultS);
-               case M2::ring_CCi:
-                   return RP::promoter<ARingRRi,ARingCCi>(R, S, fR, resultS);
-              default:
-                 return false;
-          }
-      case M2::ring_CC:
-        switch (S->ringID())
-          {
-            case M2::ring_CC:
-              return RP::promoter<ARingCC, ARingCC>(R, S, fR, resultS);
-            case M2::ring_CCC:
-              return RP::promoter<ARingCC, ARingCCC>(R, S, fR, resultS);
-            case M2::ring_CCi:
-              return RP::promoter<ARingCC, ARingCCi>(R, S, fR, resultS);
-            default:
-              return false;
-          }
-      case M2::ring_CCC:
-        switch (S->ringID())
-          {
-            case M2::ring_CCC:
-              return RP::promoter<ARingCCC, ARingCCC>(R, S, fR, resultS);
-            case M2::ring_CC:
-              return RP::promoter<ARingCCC, ARingCC>(R, S, fR, resultS);
-            case M2::ring_CCi:
-              return RP::promoter<ARingCCC, ARingCCi>(R, S, fR, resultS);
-            default:
-              return false;
-          }
-        case M2::ring_CCi:
-          switch (S->ringID())
-             {
-                 case M2::ring_CCi:
-                   return RP::promoter<ARingCCi, ARingCCi>(R, S, fR, resultS);
-                default:
-                   return false;
-            }
-      default:
-        break;
-    };
-  return false;
+  auto vR = RingPromoter::toVariant(R);
+  auto vS = RingPromoter::toVariant(S);
+  if (!vR || !vS) return false;
+  return std::visit(
+      [&fR, &resultS](auto rptr, auto sptr) -> bool {
+        const auto &R1 = rptr->ring();
+        const auto &S1 = sptr->ring();
+        using SourceRing = std::decay_t<decltype(R1)>;
+        using TargetRing = std::decay_t<decltype(S1)>;
+        typename SourceRing::Element fR1(R1);
+        typename TargetRing::Element gS1(S1);
+        R1.from_ring_elem(fR1, fR);
+        if constexpr (std::is_same_v<SourceRing, TargetRing>)
+          S1.set(gS1, fR1);
+        else if (!mypromote(R1, S1, fR1, gS1))
+          return false;
+        S1.to_ring_elem(resultS, gS1);
+        return true;
+      },
+      *vR, *vS);
 }
 
 // given a natural map: R --> S = this,
@@ -759,8 +639,6 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
                                   ring_elem &result_gR) const
 {
   const Ring *S = this;
-
-  namespace RP = RingPromoter;
   if (R == S)
     {
       result_gR = gS;
@@ -771,102 +649,21 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
       // MES:TODO!! WRITE ME
       return false;
     }
-  switch (R->ringID())
-    {
-      case M2::ring_ZZp:
-        switch (S->ringID())
-          {
-            case M2::ring_ZZp:
-              return false;
-            case M2::ring_ZZpFfpack:
-              return RP::lifter<ARingZZp, ARingZZpFFPACK>(R, S, result_gR, gS);
-            default:
-              return false;
-          }
-        break;
-      case M2::ring_ZZpFfpack:
-        switch (S->ringID())
-          {
-            case M2::ring_ZZp:
-              return RP::lifter<ARingZZpFFPACK, ARingZZp>(R, S, result_gR, gS);
-            case M2::ring_ZZpFfpack:
-              return RP::lifter<ARingZZpFFPACK, ARingZZpFFPACK>(
-                  R, S, result_gR, gS);
-            default:
-              return false;
-          }
-      case M2::ring_QQ:
-        switch (S->ringID())
-          {
-            case M2::ring_RR:
-              return RP::lifter<ARingQQ, ARingRR>(R, S, result_gR, gS);
-            case M2::ring_RRR:
-              return RP::lifter<ARingQQ, ARingRRR>(R, S, result_gR, gS);
-            default:
-              return false;
-          }
-      case M2::ring_RR:
-        switch (S->ringID())
-          {
-            case M2::ring_RR:
-              return RP::lifter<ARingRR, ARingRR>(R, S, result_gR, gS);
-            case M2::ring_RRR:
-              return RP::lifter<ARingRR, ARingRRR>(R, S, result_gR, gS);
-            case M2::ring_RRi:
-              return RP::lifter<ARingRR, ARingRRi>(R, S, result_gR, gS);
-            case M2::ring_CC:
-              return RP::lifter<ARingRR, ARingCC>(R, S, result_gR, gS);
-            case M2::ring_CCC:
-              return RP::lifter<ARingRR, ARingCCC>(R, S, result_gR, gS);
-            default:
-              return false;
-          }
-      case M2::ring_RRR:
-        switch (S->ringID())
-          {
-            case M2::ring_RR:
-              return RP::lifter<ARingRRR, ARingRR>(R, S, result_gR, gS);
-            case M2::ring_RRR:
-              return RP::lifter<ARingRRR, ARingRRR>(R, S, result_gR, gS);
-            case M2::ring_RRi:
-              return RP::lifter<ARingRRR, ARingRRi>(R, S, result_gR, gS);
-            case M2::ring_CC:
-              return RP::lifter<ARingRRR, ARingCC>(R, S, result_gR, gS);
-            case M2::ring_CCC:
-              return RP::lifter<ARingRRR, ARingCCC>(R, S, result_gR, gS);
-            default:
-              return false;
-          }
-      case M2::ring_CC:
-        switch (S->ringID())
-          {
-            case M2::ring_CC:
-              return RP::lifter<ARingCC, ARingCC>(R, S, result_gR, gS);
-            case M2::ring_CCC:
-              return RP::lifter<ARingCCC, ARingCC>(R, S, result_gR, gS);
-            default:
-              return false;
-          }
-      case M2::ring_CCC:
-        switch (S->ringID())
-          {
-            case M2::ring_CC:
-              return RP::lifter<ARingCC, ARingCCC>(R, S, result_gR, gS);
-            case M2::ring_CCC:
-              return RP::lifter<ARingCCC, ARingCCC>(R, S, result_gR, gS);
-            default:
-              return false;
-          }
-      default:
-#ifndef NDEBUG
-        fprintf(stderr,
-                "oh no: rings not in list\n, R->ringID()=%d S->ringID()=%d\n",
-                R->ringID(),
-                S->ringID());
-#endif
-        break;
-    };
-  return false;
+  auto vR = RingPromoter::toVariant(R);
+  auto vS = RingPromoter::toVariant(S);
+  if (!vR || !vS) return false;
+  return std::visit(
+      [&gS, &result_gR](auto rptr, auto sptr) -> bool {
+        const auto &R1 = rptr->ring();
+        const auto &S1 = sptr->ring();
+        typename std::decay_t<decltype(R1)>::Element fR1(R1);
+        typename std::decay_t<decltype(S1)>::Element gS1(S1);
+        S1.from_ring_elem(gS1, gS);
+        bool retval = mylift(R1, S1, fR1, gS1);
+        if (retval) R1.to_ring_elem(result_gR, fR1);
+        return retval;
+      },
+      *vR, *vS);
 }
 
 // Note: the only promotion to 'this' allowed is ZZ --> this, which is covered
