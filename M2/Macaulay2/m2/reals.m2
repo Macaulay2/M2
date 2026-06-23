@@ -145,6 +145,11 @@ promote(RR,CCi') := (i,K) -> toCCi(toRRi(precision i,i,i),toRRi(precision i, 0,0
 promote(RRi,CCi') := (i,K) -> toCCi(i, interval 0)
 promote(CC,CCi') := (i,K) -> toCCi(toRRi(precision i,realPart i,realPart i),toRRi(precision i, imaginaryPart i, imaginaryPart i))
 promote(CCi,CCi') := (i,K) -> toCCi(realPart i, imaginaryPart i) -- this should be fixed
+
+-- e.g., isPromotable(RR_53, ...) = isPromotable(RR, ...)
+-- promote is set up in commonEngineRingInitializations in enginering.m2
+isPromotable(InexactField, Ring) := (R, S) -> isPromotable(class 0_R, S)
+
 lift(RingElement, InexactNumber) :=
 lift(Number,      InexactNumber) := opts -> (x, K) -> lift(x, default K, opts)
 
