@@ -291,7 +291,6 @@ trimPID := M -> if M.?relations then (if M.?generators then trimPID image genera
     (g,ch) := smithNormalForm(f, ChangeMatrix => {true, false});
     isunit := r -> r != 0 and degree r === {0};
     rows := select(min(rank source g,rank target g),i->isunit g_(i,i));
-    rows = rows | toList(rank target f..<rank target g); -- temporary fix for #3017
     ch = submatrix'(ch,rows,);
     p:=id_(target ch)//ch;
     q:=generators M*p;
