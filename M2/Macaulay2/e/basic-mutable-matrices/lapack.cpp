@@ -119,7 +119,7 @@ void fill_from_lapack_upper(const std::vector<double>& lapack_numbers,  // colum
     for (size_t r = 0; r <= c; ++r)
       {
         if (r >= upper.numRows()) break;
-        upper.ring().set_from_doubles(upper.entry(r, c), U[2*r], U[2*r+1]);
+        upper.ring().set(upper.entry(r, c), U[2*r], U[2*r+1]);
       }
 }
 
@@ -176,16 +176,16 @@ void fill_lower_and_upper(const std::vector<double>& lapack_numbers,  // column-
         {
           double re = *U++;
           double im = *U++;
-          ring.set_from_doubles(upper.entry(r, c), re, im);
+          ring.set(upper.entry(r, c), re, im);
           // upper.entry(r, c).re = *U++;
           // upper.entry(r, c).im = *U++;
         }
-      ring.set_from_long(lower.entry(c, c), 1);
+      ring.set(lower.entry(c, c), 1);
       for (size_t r = c+1 ; r <= lower.numColumns(); ++r)
         {
           double re = *U++;
           double im = *U++;
-          ring.set_from_doubles(lower.entry(r, c), re, im);
+          ring.set(lower.entry(r, c), re, im);
           // lower.entry(r,c).re = *U++;
           // lower.entry(r,c).im = *U++;
         }
@@ -353,7 +353,7 @@ bool Lapack::eigenvalues(const DMatRR *A, DMatCC *eigvals)
     {
       eigvals->resize(size, 1);
       for (int i = 0; i < size; i++)
-        eigvals->ring().set_from_doubles(eigvals->entry(i, 0), real[i], imag[i]);
+        eigvals->ring().set(eigvals->entry(i, 0), real[i], imag[i]);
     }
 
   delete [] real;
@@ -427,7 +427,7 @@ bool Lapack::eigenvectors(const DMatRR *A,
       double* eigenLoc = eigen; // current row (eigenvector) in the eigen array
       for (int j = 0; j < size; j++, eigenLoc += size)
         {
-          eigvals->ring().set_from_doubles(eigvals->entry(j,0), real[j], imag[j]);
+          eigvals->ring().set(eigvals->entry(j,0), real[j], imag[j]);
 
           // now set j-th column of eigvecs
           if (imag[j] == 0)
@@ -442,9 +442,9 @@ bool Lapack::eigenvectors(const DMatRR *A,
             {
               for (int i = 0; i < size; ++i)
                 {
-                  eigvecs->ring().set_from_doubles(eigvecs->entry(i,j),
+                  eigvecs->ring().set(eigvecs->entry(i,j),
                                                    eigenLoc[i], eigenLoc[size + i]);
-                  eigvecs->ring().set_from_doubles(eigvecs->entry(i,j+1),
+                  eigvecs->ring().set(eigvecs->entry(i,j+1),
                                                    eigenLoc[i], - eigenLoc[size + i]);
                 }
             }
@@ -1710,7 +1710,7 @@ bool Lapack::least_squares(const DMatCC *A, const DMatCC *b, DMatCC *x)
                 {
                   double re = copyb[copyloc++];
                   double im = copyb[copyloc++];
-                  x->ring().set_from_doubles(x->entry(i,j), re, im);
+                  x->ring().set(x->entry(i,j), re, im);
                 }
             }
         }
@@ -1811,7 +1811,7 @@ bool Lapack::least_squares_deficient(const DMatCC *A,
                 {
                   double re = copyb[copyloc++];
                   double im = copyb[copyloc++];
-                  x->ring().set_from_doubles(x->entry(i,j), re, im);
+                  x->ring().set(x->entry(i,j), re, im);
                 }
             }
         }

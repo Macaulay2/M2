@@ -219,7 +219,7 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
+          lower.ring().set(*L, 1); // diagonal entry of L should be 1
           L += lower.numColumns(); // pointing to entry right below diagonal
           auto L1 = L; // will increment by lower.numRows() each loop here
           for (size_t r=c+1; r<lower.numRows(); r++)
@@ -245,7 +245,7 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
 
   for (size_t c = 0; c < LU.numColumns(); c++)
     {
-      if (c < min) ring().set_from_long(lower.entry(c, c), 1);
+      if (c < min) ring().set(lower.entry(c, c), 1);
       for (size_t r = 0; r < LU.numRows(); r++)
         {
           if (r <= c)
@@ -278,9 +278,9 @@ void DMatLinAlg<RingType>::determinant(ElementType& result)
   assert(LU.numRows() == LU.numColumns());
 
   if (mLUObject.signOfPermutation())
-    ring().set_from_long(result, 1);
+    ring().set(result, 1);
   else
-    ring().set_from_long(result, -1);
+    ring().set(result, -1);
   for (size_t i = 0; i < LU.numRows(); i++)
     ring().mult(result, result, LU.entry(i, i));
 }
@@ -535,7 +535,7 @@ bool DMatLinAlg<RingType>::inverse(Mat& X)
 
   Mat id(ring(), LU.numRows(), LU.numRows());
   for (size_t i = 0; i < LU.numRows(); i++)
-    ring().set_from_long(id.entry(i, i), 1);
+    ring().set(id.entry(i, i), 1);
 
   solve(id, X);
   return true;
@@ -569,7 +569,7 @@ size_t DMatLinAlg<RingType>::kernel(Mat& X)
           continue;
         }
       // At this point, we are ready to create a column of X.
-      ring().set_from_long(X.entry(col, colX), -1);
+      ring().set(X.entry(col, colX), -1);
       // Now we loop through and set the elements in the rows of X = pivot
       // columns.
       for (long p = nextpivotidx - 1; p >= 0; p--)

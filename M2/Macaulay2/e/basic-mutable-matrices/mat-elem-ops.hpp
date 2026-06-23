@@ -446,8 +446,8 @@ class MatElementaryOps<DMat<RT> >
 
     Element pivot(M.ring()), coef(M.ring()), f(M.ring()), zero(M.ring()),
         one(M.ring());
-    M.ring().set_from_long(zero, 0);
-    M.ring().set_from_long(one, 1);
+    M.ring().set(zero, 0);
+    M.ring().set(one, 1);
 
     interchange_columns(M, c, nc);
     interchange_rows(M, r, nr);
@@ -480,8 +480,8 @@ class MatElementaryOps<DMat<RT> >
     size_t nc = M.numColumns() - 1;
 
     Element one(M.ring()), minus_one(M.ring());
-    M.ring().set_from_long(one, 1);
-    M.ring().set_from_long(minus_one, -1);
+    M.ring().set(one, 1);
+    M.ring().set(minus_one, -1);
 
     // After using the pivot element, it is moved to [nrows-1,ncols-1]
     // and nrows and ncols are decremented.

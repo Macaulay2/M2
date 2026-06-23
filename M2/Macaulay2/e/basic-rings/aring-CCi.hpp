@@ -133,12 +133,6 @@ class ARingCCi : public SimpleARing<ARingCCi>
     mpfi_set(&result.im, &a.im);
   }
 
-  void set(ElementType &result, const gmp_CCi a) const
-  {
-    mpfi_set(&result.re, a->re);
-    mpfi_set(&result.im, a->im);
-  }
-
   void set_zero(ElementType &result) const
   {
     mpfi_set_si(&result.re, 0);
@@ -155,11 +149,12 @@ class ARingCCi : public SimpleARing<ARingCCi>
     mpfi_set(&result.im, &a.im);
   }
 
-  void set_from_long(ElementType &result, long a) const
+  void set(ElementType &result, long a) const
   {
     mpfi_set_si(&result.re, a);
     mpfi_set_si(&result.im, 0);
   }
+  void set(ElementType &result, int a) const { set(result, (long)a); }
 
   void set_var(ElementType &result, int v) const
   {
@@ -167,81 +162,74 @@ class ARingCCi : public SimpleARing<ARingCCi>
     mpfi_set_si(&result.im, 0);
   }
 
-  void set_from_mpz(ElementType &result, mpz_srcptr a) const
+  void set(ElementType &result, mpz_srcptr a) const
   {
     mpfi_set_z(&result.re, a);
     mpfi_set_si(&result.im, 0);
   }
 
-  bool set_from_mpq(ElementType &result, mpq_srcptr a) const
+  bool set(ElementType &result, mpq_srcptr a) const
   {
     mpfi_set_q(&result.re, a);
     mpfi_set_si(&result.im, 0);
     return true;
   }
 
-  bool set_from_double(ElementType &result, double a) const
+  bool set(ElementType &result, double a) const
   {
     mpfi_set_d(&result.re, a);
     mpfi_set_si(&result.im, 0);
     return true;
   }
     
-  bool set_from_BigReal(ElementType &result, gmp_RR a) const
+  bool set(ElementType &result, gmp_RR a) const
   {
     mpfi_set_fr(&result.re, a);
     mpfi_set_si(&result.im, 0);
     return true;
   }
     
-  bool set_from_Interval(ElementType &result, gmp_RRi a) const
+  bool set(ElementType &result, gmp_RRi a) const
   {
     mpfi_set(&result.re, a);
     mpfi_set_si(&result.im, 0);
     return true;
   }
 
-  bool set_from_BigComplex(ElementType &result, gmp_CC a) const
+  bool set(ElementType &result, gmp_CC a) const
   {
     mpfi_set_fr(&result.re, a->re);
     mpfi_set_fr(&result.im, a->im);
     return true;
   }
 
-  bool set_from_BigComplex(ElementType &result, const cc_struct * a) const
+  bool set(ElementType &result, const cc_struct * a) const
   {
     mpfi_set_fr(&result.re, &a->re);
     mpfi_set_fr(&result.im, &a->im);
     return true;
   }
 
-  bool set_from_complex_double(ElementType &result, double re, double im) const
-  {
-    mpfi_set_d(&result.re, re);
-    mpfi_set_d(&result.im, im);
-    return true;
-  }
-
-  bool set_from_ComplexInterval(ElementType &result, gmp_CCi a) const
+  bool set(ElementType &result, gmp_CCi a) const
   {
     mpfi_set(&result.re, a->re);
     mpfi_set(&result.im, a->im);
     return true;
   }
 
-  bool set_from_ComplexInterval(ElementType &result, ElementType &a) const
+  bool set(ElementType &result, ElementType &a) const
   {
     mpfi_set(&result.re, &a.re);
     mpfi_set(&result.im, &a.im);
     return true;
   }
 
-  void set_from_BigReals(ElementType& result, gmp_RR re, gmp_RR im) const
+  void set(ElementType& result, gmp_RR re, gmp_RR im) const
     {
       mpfi_set_fr(&result.re, re);
       mpfi_set_fr(&result.im, im);
     }
-  void set_from_doubles(ElementType& result, double re, double im) const
+  void set(ElementType& result, double re, double im) const
     {
       mpfi_set_d(&result.re, re);
       mpfi_set_d(&result.im, im);

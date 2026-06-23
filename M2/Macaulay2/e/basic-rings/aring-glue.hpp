@@ -109,7 +109,7 @@ class ConcreteRing : public Ring
     if (displayArithmeticCalls) fprintf(stderr, "calling from_long\n");
     ring_elem result;
     Element a(*R);
-    R->set_from_long(a, n);
+    R->set(a, n);
     R->to_ring_elem(result, a);
     return result;
   }
@@ -119,14 +119,14 @@ class ConcreteRing : public Ring
     if (displayArithmeticCalls) fprintf(stderr, "calling from_int(mpz)\n");
     ring_elem result;
     Element a(*R);
-    R->set_from_mpz(a, n);
+    R->set(a, n);
     R->to_ring_elem(result, a);
     return result;
   }
   virtual bool from_rational(mpq_srcptr q, ring_elem &result) const
   {
     Element a(*R);
-    bool ret = R->set_from_mpq(a, q);
+    bool ret = R->set(a, q);
     if (ret) R->to_ring_elem(result, a);
     return ret;
   }
@@ -157,7 +157,7 @@ class ConcreteRing : public Ring
   virtual bool from_BigComplex(gmp_CC q, ring_elem &result) const
   {
     Element a(*R);
-    //      bool ret = R->set_from_BigComplex(a,q);
+    //      bool ret = R->set(a,q);
     bool ret = get_from_BigComplex(*R, a, q);
     if (ret) R->to_ring_elem(result, a);
     return ret;

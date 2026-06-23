@@ -34,11 +34,11 @@ void getElement<M2::ARingZZp>(const M2::ARingZZp& R,
                               M2::ARingZZp::ElementType& result)
 {
   if (index < 50)
-    R.set_from_long(result, index - 25);
+    R.set(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
-      R.set_from_mpz(result, a);
+      R.set(result, a);
     }
 }
 
@@ -51,7 +51,7 @@ void testCoerceToLongInteger(const RT& R)
     {
       typename RT::ElementType a;
       R.init(a);
-      R.set_from_long(a, i);
+      R.set(a, i);
       long b = R.coerceToLongInteger(a);
       if (b < 0) b += R.characteristic();
       EXPECT_EQ(b, i);
@@ -60,7 +60,7 @@ void testCoerceToLongInteger(const RT& R)
     {
       typename RT::ElementType a;
       R.init(a);
-      R.set_from_long(a, i);
+      R.set(a, i);
       long b = R.coerceToLongInteger(a);
       if (b < 0) b += R.characteristic();
       EXPECT_EQ(b, i);
@@ -153,11 +153,11 @@ void getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R,
                                     M2::ARingZZpFFPACK::ElementType& result)
 {
   if (index < 50)
-    R.set_from_long(result, index - 25);
+    R.set(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
-      R.set_from_mpz(result, a);
+      R.set(result, a);
     }
 }
 
@@ -173,9 +173,9 @@ TEST(ARingZZpFFPACK, create)
 
   M2::ARingZZpFFPACK::ElementType a;
   R.init(a);
-  R.set_from_long(a, 99);
-  R.set_from_long(a, 101);
-  R.set_from_long(a, 103);
+  R.set(a, 99);
+  R.set(a, 101);
+  R.set(a, 103);
   R.clear(a);
 }
 
@@ -268,7 +268,7 @@ TEST(ARingZZp, read)
   R.init(b);
   R.init(c);
   reader.read(i, b);
-  R.set_from_long(c, 3);
+  R.set(c, 3);
 
   EXPECT_TRUE(R.is_equal(b, c));
 }
@@ -283,11 +283,11 @@ void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R,
                                    M2::ARingZZpFlint::ElementType& result)
 {
   if (index < 50)
-    R.set_from_long(result, index - 25);
+    R.set(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
-      R.set_from_mpz(result, a);
+      R.set(result, a);
     }
 }
 
@@ -300,9 +300,9 @@ TEST(ARingZZpFlint, create)
 
   M2::ARingZZpFlint::ElementType a;
   R.init(a);
-  R.set_from_long(a, 99);
-  R.set_from_long(a, 101);
-  R.set_from_long(a, 103);
+  R.set(a, 99);
+  R.set(a, 101);
+  R.set(a, 103);
   R.clear(a);
 }
 

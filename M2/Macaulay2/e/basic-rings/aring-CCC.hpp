@@ -131,62 +131,50 @@ class ARingCCC : public SimpleARing<ARingCCC>
   }
 
   void copy(ElementType& result, const ElementType& a) const { set(result, a); }
-  void set_from_long(ElementType& result, long a) const
+  void set(ElementType& result, long a) const
   {
     mpfr_set_si(&result.re, a, MPFR_RNDN);
     mpfr_set_si(&result.im, 0, MPFR_RNDN);
   }
+  void set(ElementType& result, int a) const { set(result, (long)a); }
 
   void set_var(ElementType& result, int v) const
   {
     (void) v;
-    set_from_long(result, 1);
+    set(result, 1);
   }
 
-  void set_from_mpz(ElementType& result, mpz_srcptr a) const
+  void set(ElementType& result, mpz_srcptr a) const
   {
     mpfr_set_z(&result.re, a, MPFR_RNDN);
     mpfr_set_si(&result.im, 0, MPFR_RNDN);
   }
 
-  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
+  bool set(ElementType& result, mpq_srcptr a) const
   {
     mpfr_set_q(&result.re, a, MPFR_RNDN);
     mpfr_set_si(&result.im, 0, MPFR_RNDN);
     return true;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  bool set(ElementType& result, gmp_RR a) const
   {
     mpfr_set(&result.re, a, MPFR_RNDN);
     mpfr_set_si(&result.im, 0, MPFR_RNDN);
     return true;
   }
-  bool set_from_BigComplex(ElementType& result, gmp_CC a) const
+  bool set(ElementType& result, gmp_CC a) const
   {  //???
     mpfr_set(&result.re, a->re, MPFR_RNDN);
     mpfr_set(&result.im, a->im, MPFR_RNDN);
     return true;
   }
-  bool set_from_double(ElementType& result, double a) const
+  bool set(ElementType& result, double a) const
   {
     mpfr_set_d(&result.re, a, MPFR_RNDN);
     mpfr_set_si(&result.im, 0, MPFR_RNDN);
     return true;
   }
-  bool set_from_complex_double(ElementType& result, double re, double im) const
-  {
-    mpfr_set_d(&result.re, re, MPFR_RNDN);
-    mpfr_set_d(&result.im, im, MPFR_RNDN);
-    return true;
-  }
-  bool set_from_complex_mpfr(ElementType& result, mpfr_srcptr re, const mpfr_srcptr im) const
-  {
-    mpfr_set(&result.re, re, MPFR_RNDN);
-    mpfr_set(&result.im, im, MPFR_RNDN);
-    return true;
-  }
-
   // arithmetic
   void negate(ElementType& result, const ElementType& a) const
   {
@@ -413,7 +401,7 @@ class ARingCCC : public SimpleARing<ARingCCC>
   {
     ElementType curr_pow;
     init(curr_pow);
-    set_from_long(result, 1);
+    set(result, 1);
     if (n == 0)
       {
       }
@@ -534,15 +522,15 @@ class ARingCCC : public SimpleARing<ARingCCC>
   {
     mpfr_set(&c.im, &a, MPFR_RNDN);
   }
-  void set_from_BigReals(ElementType& result, gmp_RR re, gmp_RR im) const
+  void set(ElementType& result, gmp_RR re, gmp_RR im) const
   {
     mpfr_set(&result.re, re, MPFR_RNDN);
     mpfr_set(&result.im, im, MPFR_RNDN);
   }
-  void set_from_doubles(ElementType& result, double re, double im) const
+  void set(ElementType& result, double re, double im) const
   {
-    mRRR.set_from_double(result.re, re);
-    mRRR.set_from_double(result.im, im);
+    mRRR.set(result.re, re);
+    mRRR.set(result.im, im);
   }
 
   void zeroize_tiny(gmp_RR epsilon, ElementType& a) const

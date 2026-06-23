@@ -76,7 +76,7 @@ void ARingQQFlint::syzygy(const ElementType& a,
                           ElementType& y) const
 {
   assert(!is_zero(b));
-  set_from_long(x, 1);
+  set(x, 1);
   divide(y, a, b);
   negate(y, y);
 }

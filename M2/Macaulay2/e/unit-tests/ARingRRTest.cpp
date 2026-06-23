@@ -32,7 +32,7 @@ void getElement<M2::ARingRR>(const M2::ARingRR& R,
                              M2::ARingRR::ElementType& result)
 {
   if (index < 50)
-    R.set_from_long(result, index - 25);
+    R.set(result, index - 25);
   else
     R.random(result);
 }
@@ -40,7 +40,7 @@ void getElement<M2::ARingRR>(const M2::ARingRR& R,
 // void getElementRR(const M2::ARingRR&  R, int index, M2::ARingRR::ElementType&
 // result)
 //{
-//  if (index < 50) R.set_from_long(result, index-25);
+//  if (index < 50) R.set(result, index-25);
 //  else R.random(result);
 //}
 

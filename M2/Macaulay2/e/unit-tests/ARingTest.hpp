@@ -41,9 +41,9 @@ void testSomeMore(const T& R)
   R.init(c);
   R.init(d);
 
-  R.set_from_long(a, 27);
-  R.set_from_long(b, static_cast<int>(R.characteristic()) - 11);
-  R.set_from_long(c, 16);
+  R.set(a, 27);
+  R.set(b, static_cast<int>(R.characteristic()) - 11);
+  R.set(c, 16);
   R.add(d, a, b);
 
   buffer o;
@@ -105,20 +105,20 @@ void testCoercions(const T& R)
   mpz_init(base);
   mpq_init(n1);
 
-  // set_from_mpz
+  // set
   mpz_set_str(base, "2131236127486324783264782364", 10);
-  R.set_from_mpz(c, base);
+  R.set(c, base);
   for (int i = -1000; i < 1000; i++)
     {
       mpz_set_si(m, i);
       mpz_add(m, m, base);   // m = base + i
-      R.set_from_mpz(a, m);  // a = (base + i) mod charac
-      R.set_from_long(b, i);
+      R.set(a, m);  // a = (base + i) mod charac
+      R.set(b, i);
       R.add(b, c, b);                 // b = (base mod charac) + (i mod charac)
       EXPECT_TRUE(R.is_equal(a, b));  // a, b should be equal
     }
 
-  // set_from_mpq
+  // set
   for (int i = 1; i < 300; i++)
     {
       mpq_set_si(n1, 43999, i);
@@ -127,10 +127,10 @@ void testCoercions(const T& R)
       // check that (43999 mod charac)/(i mod charac) == n1 mod charac
       // if (i mod charac) is not zero.
       if (R.characteristic() == 0 or (i % R.characteristic()) == 0) continue;
-      bool ok = R.set_from_mpq(a, n1);
+      bool ok = R.set(a, n1);
       EXPECT_TRUE(ok);
-      R.set_from_long(b, 43999);
-      R.set_from_long(c, i);
+      R.set(b, 43999);
+      R.set(c, i);
       if (!R.is_zero(c))
         {
           R.divide(c, b, c);
@@ -282,7 +282,7 @@ void testMultiply(const T& R, int ntrials)
   R.init(c);
   R.init(d);
   R.init(zero);
-  R.set_from_long(zero, 0);
+  R.set(zero, 0);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
@@ -310,7 +310,7 @@ void testDivide(const T& R, int ntrials)
   R.init(c);
   R.init(d);
   R.init(zero);
-  R.set_from_long(zero, 0);
+  R.set(zero, 0);
   for (int i = 0; i < ntrials; i++)
     {
       // c = a*b
@@ -340,7 +340,7 @@ void testReciprocal(const T& R, int ntrials)
   R.init(b);
   R.init(c);
   R.init(one);
-  R.set_from_long(one, 1);
+  R.set(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       // c = 1/a
@@ -379,7 +379,7 @@ void testPower(const T& R, int ntrials)
   R.init(b);
   R.init(c);
   R.init(d);
-  R.set_from_long(one, 1);
+  R.set(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);

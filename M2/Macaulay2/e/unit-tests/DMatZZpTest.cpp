@@ -18,7 +18,7 @@ TEST(DMatZZp, create)
   RingZZp::ElementType a, b;
   R->init(a);
   R->init(b);
-  R->set_from_long(a, 13);
+  R->set(a, 13);
   R->set(M.entry(0, 2), a);
 
   R->set(b, M.entry(0, 2));
@@ -39,7 +39,7 @@ TEST(DMatZZp, submatrix)
   R->init(a);
   R->init(b);
 
-  R->set_from_long(a, 13);
+  R->set(a, 13);
   R->set(M.entry(0, 2), a);
 
   R->set(b, M.entry(0, 2));

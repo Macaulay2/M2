@@ -103,7 +103,7 @@ void fill_from_MatrixXmp(const MatrixXmpCC& orig, LMatrixCC& result)
   result.resize(numrows, numcols);
   for (int r=0; r<numrows; r++)
     for (int c=0; c<numcols; c++)
-      result.ring().set_from_doubles(result.entry(r,c),
+      result.ring().set(result.entry(r,c),
         orig(r,c).real(),
         orig(r,c).imag());
 }
@@ -341,7 +341,7 @@ void fill_from_MatrixXmp(const MatrixXmpCCC& orig, LMatrixCCC& result)
   result.resize(numrows, numcols);
   for (int r=0; r<numrows; r++)
     for (int c=0; c<numcols; c++)
-      result.ring().set_from_complex_mpfr(result.entry(r,c),
+      result.ring().set(result.entry(r,c),
       orig(r,c).real().mpfr_srcptr(),
       orig(r,c).imag().mpfr_srcptr());
 }

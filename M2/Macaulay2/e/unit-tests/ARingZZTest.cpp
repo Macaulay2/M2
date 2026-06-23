@@ -19,11 +19,11 @@ void getElement<M2::ARingZZ>(const M2::ARingZZ& R,
                              M2::ARingZZ::ElementType& result)
 {
   if (index < 50)
-    R.set_from_long(result, index - 25);
+    R.set(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
-      R.set_from_mpz(result, a);
+      R.set(result, a);
     }
 }
 
