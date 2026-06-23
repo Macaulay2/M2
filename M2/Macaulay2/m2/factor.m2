@@ -224,9 +224,17 @@ topCoefficients RingElement := f -> (
      	  (monoms_(0,0), coeffs_(0,0))))
 
 roots = method(Options => true);
-roots RingElement := {Precision => -1, Unique => false} >> o -> p ->
-  toList apply(rawRoots(raw p, o.Precision, o.Unique), r -> new CC from r)
-
+roots RingElement := {Precision => -1, Unique => false} >> o -> p -> (
+    (R,f) := flattenRing ring p;
+    if numgens R > 1 then (
+	p = f p;
+	exps := positions(transpose exponents p, x -> any(x,y->y=!=0));
+        if #exps == 0 then return {}
+	else if #exps > 1 then error "expected a univariate polynomial ring";
+	p = substitute(p,(baseRing R)(monoid[R_(exps#0)]));
+	);
+    toList apply(rawRoots(raw p, o.Precision, o.Unique), r -> new CC from r)
+  )
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
