@@ -100,7 +100,7 @@ inline constexpr bool has_set_from_ComplexInterval<
 }  // namespace detail
 
 template <typename RT>
-bool get_from_double(const RT& R, typename RT::ElementType& a, double b)
+bool try_set(const RT& R, typename RT::ElementType& a, double b)
 {
   if constexpr (detail::has_set_from_double<RT>)
     return R.set(a, b);
@@ -109,7 +109,7 @@ bool get_from_double(const RT& R, typename RT::ElementType& a, double b)
 }
 
 template <typename RT>
-bool get_from_BigReal(const RT& R, typename RT::ElementType& a, gmp_RR b)
+bool try_set(const RT& R, typename RT::ElementType& a, gmp_RR b)
 {
   if constexpr (detail::has_set_from_BigReal<RT>)
     return R.set(a, b);
@@ -118,7 +118,7 @@ bool get_from_BigReal(const RT& R, typename RT::ElementType& a, gmp_RR b)
 }
 
 template <typename RT>
-bool get_from_Interval(const RT& R, typename RT::ElementType& a, gmp_RRi b)
+bool try_set(const RT& R, typename RT::ElementType& a, gmp_RRi b)
 {
   if constexpr (detail::has_set_from_Interval<RT>)
     return R.set(a, b);
@@ -127,7 +127,7 @@ bool get_from_Interval(const RT& R, typename RT::ElementType& a, gmp_RRi b)
 }
 
 template <typename RT>
-bool get_from_complex_double(const RT& R,
+bool try_set(const RT& R,
                              typename RT::ElementType& a,
                              double re,
                              double im)
@@ -139,7 +139,7 @@ bool get_from_complex_double(const RT& R,
 }
 
 template <typename RT>
-bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
+bool try_set(const RT& R, typename RT::ElementType& a, gmp_CC b)
 {
   if constexpr (detail::has_set_from_BigComplex<RT>)
     return R.set(a, b);
@@ -148,7 +148,7 @@ bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
 }
 
 template <typename RT>
-bool get_from_ComplexInterval(const RT& R, typename RT::ElementType & a, gmp_CCi b)
+bool try_set(const RT& R, typename RT::ElementType & a, gmp_CCi b)
 {
   if constexpr (detail::has_set_from_ComplexInterval<RT>)
     return R.set(a, b);
