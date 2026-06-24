@@ -24,8 +24,11 @@ newPackage(
     AuxiliaryFiles => true
 )
 
--- note, this version has a slight change added by Karl Schwede.  It has an option to turn off the prune calls.
+-- Note, this version has a slight change added by Karl Schwede.  It has an option to turn off the prune calls.
 -- Recently, David Eisenbud and Mike Stillman have extended it, fixing some bugs too.
+-- Joel Dodge made a significant refactor of this package and extended its functionality to cover
+-- more ring maps and to implement the natural bijections between a module and it's
+-- pushforward.
 
 export {
     "pushFwd",
