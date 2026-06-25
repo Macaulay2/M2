@@ -254,12 +254,10 @@ makeModule(Module, RingMap) := (N, f) -> (
 -- f:RingMap
 -- input:
 --   f                  : RingMap
--- output: (optional (matB, mapf), optional errorString)
+-- output: (matB, mapf)
 --   matB               : matrix over B, with one row, whose entries form a basis for B over A.
 --   mapf               : a method that takes b \in B and returns a matrix of A-coefficients
 --                        for b with respect to matB.
---   errorString        : in case of validation failure an error string will be
---                        returned and the first return value is null is null.
 ERRORNOTFINITE = "not a finite map";
 pushFwdRingHelper = (f) -> (
     A := source f;
