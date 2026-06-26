@@ -761,6 +761,21 @@ scan(0..numgens H - 1, i -> assert(homomorphism'(f, homomorphism H_{i}) == H_{i}
 ///
 
 TEST ///
+-- skew symmetric computation
+-- compare Hom(f, - , F) with Hom(-, F) when F is free since we can compute this directly over R in that case
+kk = ZZ/11
+R = kk[a..c, SkewCommutative => true]
+f = map(R, kk)
+H = Hom(f, R^2, R^1)
+H' = Hom(R^2, R^1) -- R^1 is a bimodule so Hom can actually be computed as an R-module
+fH' = pushFwd(f, H')
+
+phi = map(H, fH', matrix {for i from 0 to numgens fH' - 1 list homomorphism'(f, homomorphism pushforward' fH'_{i})})
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_fH')
+///
+
+TEST ///
 -- Compute Ext over commutative ring finite map
 -- compare pushFwd(f, Ext^i(M, N)) with Ext^i(f, M, N)
 kk = ZZ/11
