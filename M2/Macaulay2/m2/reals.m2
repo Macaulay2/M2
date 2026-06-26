@@ -360,6 +360,7 @@ Thing ** InexactFieldFamily := (X,T) -> X ** default T
 
 generators InexactField := opts -> R -> {}
 isField InexactField := R -> true
+isCommutative InexactField := R -> true
 degreeLength InexactField := R -> 0
 frac InexactField := identity
 numgens InexactField := R -> 0
