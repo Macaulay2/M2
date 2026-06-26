@@ -16,10 +16,12 @@ Hom(RingMap, Ideal, Module) :=
 Hom(RingMap, Module, Ring) :=
 Hom(RingMap, Module, Ideal) := Module => opts -> (f, M, N) -> Hom(f, module M, module N, opts)
 Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
+    -- f: RingMap(R <- S)
+    -- M: R-module
+    -- N: R-module
     R := ring M;
     if R =!= ring N then error "expected modules over the same ring";
     if R =!= target f then error "expected modules over target f";
-    S := source f;
 
     Y := youngest(M.cache.cache, N.cache.cache);
     Y#(Hom, f, M, N, opts) ??= (
@@ -36,31 +38,30 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
 
         if MN == 0 or N == 0 then return H';
 
-        S := target f;
-        C := S / intersect(annihilator MN, annihilator N);
-        C' := first pushFwd(map(C, S) * f);
+        C := R / intersect(annihilator MN, annihilator N);
+        C' := first pushFwd(map(C, R) * f);
         -- checking linearity for these elements suffices
-        liftedGens := lift(pushforward'(C'_{0..numgens C'-1}), S);
+        liftedGens := lift(pushforward'(C'_{0..numgens C'-1}), R);
 
         rightCompose := compose(M', M', N');
         leftCompose := compose(M', N', N');
         gensH' := H'_{0..numgens H' - 1};
-        -- build the linear maps H' -> H' whose kernels witness S-linearity
-        H := kernel matrix for s in first entries liftedGens list (
+        -- build the linear maps H' -> H' whose kernels witness R-linearity
+        H := kernel matrix for r in first entries liftedGens list (
             -- todo: exploit direct sum decomposition in cases where M is free as in Ext computations
-            sMultForM := getStructureMap(f, M', s);
-            sMultForN := getStructureMap(f, N', s);
+            rMultForM := getStructureMap(f, M', r);
+            rMultForN := getStructureMap(f, N', r);
             -- wrap in nested list so we can assemble these into a block matrix outside of the loop
-            {map(H', H', rightCompose * (sMultForM ** gensH') - leftCompose * (gensH' ** sMultForN))}
+            {map(H', H', rightCompose * (rMultForM ** gensH') - leftCompose * (gensH' ** rMultForN))}
         );
 
         if opts.MinimalGenerators then H = trim H;
 
         -- it is not enough to just have the ambient hom module as they may coincide
         -- we need to move this so it does not get clobbered by the custom homomorphism function we store next.
-        H.cache#(homomorphism, S) = H'.cache.homomorphism;
+        H.cache#(homomorphism, R) = H'.cache.homomorphism;
         H.cache.homomorphism = (h) -> (
-            h' := H.cache#(homomorphism, S) h;
+            h' := H.cache#(homomorphism, R) h;
             map(N, M, pushforward'(h' * pushforward(M', q * M_{0..numgens M - 1})))
         );
         H.cache.toambienthommodule = inducedMap(H', H);
@@ -134,6 +135,10 @@ Ext(ZZ, RingMap, Ideal, Module) :=
 Ext(ZZ, RingMap, Module, Ring) :=
 Ext(ZZ, RingMap, Module, Ideal) := Module => opts -> (i, f, M, N) -> Ext(i, f, module M, module N, opts)
 Ext(ZZ, RingMap, Module, Module) := Module => opts -> (i, f, M, N) -> (
+    -- i: ZZ
+    -- f: RingMap(R <- S)
+    -- M: R-module
+    -- N: R-module
     R := ring M;
     if R =!= ring N then error "expected modules over the same ring";
     if R =!= target f then error "expected modules over target f";
@@ -210,9 +215,9 @@ yonedaExtension'(RingMap, Complex) := Matrix => opts -> (f, C) -> (
 -- helpers --
 -------------
 
-protect smap -- cache key
--- f:R -> S
--- M:a module which is a pushforward of an S-module along f
--- s:S
--- returns the R-linear endomorphism of M corresponding to multiplication by s
-getStructureMap = (f, M, s) -> M.cache#(smap, s) ??= homomorphism' map(M, M, pushforward(M, s * getPushFwdGens(M)))
+protect multiplication -- cache key
+-- f:S -> R
+-- M:a module which is a pushforward of an R-module along f
+-- r:R
+-- compute "multiplication by r" as an element of Hom_S(M, M)
+getStructureMap = (f, M, r) -> M.cache#(multiplication, r) ??= homomorphism' map(M, M, pushforward(M, r * getPushFwdGens(M)))
