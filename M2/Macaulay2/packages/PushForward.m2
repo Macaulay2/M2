@@ -64,6 +64,7 @@ pushFwd RingMap := Sequence => o -> (f) ->
     (pfB, matB, ringpf)
 )
 
+pushFwd(RingMap, Ideal) := Module => o -> (f, I) -> pushFwd(f, module I)
 pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??= (
     A := source f;
     B := target f;
