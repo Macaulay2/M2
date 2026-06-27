@@ -219,9 +219,7 @@ makeModule(Module, RingMap) := (N, f) -> (
     else
         map(auxN, A^k, f, sourceGens);
 
-    rels := kernel mp;
-    rels = try(trim rels) else rels;
-    M := super rels / rels;
+    M := source mp / kernel mp;
 
     pfmat' := N.cache.pruningMap * map(N, M, f, sourceGens);
     pf := (n) -> ( -- pf: N --> M
