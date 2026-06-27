@@ -25,20 +25,14 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
 
     Y := youngest(M.cache.cache, N.cache.cache);
     Y#(Hom, f, M, N, opts) ??= (
-        -- this does not change Hom and MN may be finite over f even if M is not
-        -- it would be natural to also replace N with the subset of elements
-        -- killed by ann M but this is a more complex construction.
-        MN := M / ann N;
-        q := map(MN, M, 1);
-
         -- allow setting PushForwardOpts via options
-        M' := pushFwd(f, MN, MinimalGenerators => opts.MinimalGenerators);
+        M' := pushFwd(f, M, MinimalGenerators => opts.MinimalGenerators);
         N' := pushFwd(f, N, MinimalGenerators => opts.MinimalGenerators);
         H' := Hom(M', N', opts);
 
-        if MN == 0 or N == 0 then return H';
+        if M == 0 or N == 0 then return H';
 
-        C := R / intersect(annihilator MN, annihilator N);
+        C := R / intersect(annihilator M, annihilator N);
         C' := first pushFwd(map(C, R) * f);
         -- checking linearity for these elements suffices
         liftedGens := lift(pushforward'(C'_{0..numgens C'-1}), R);
@@ -62,7 +56,7 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
         H.cache#(homomorphism, R) = H'.cache.homomorphism;
         H.cache.homomorphism = (h) -> (
             h' := H.cache#(homomorphism, R) h;
-            map(N, M, pushforward'(h' * pushforward(M', q * M_{0..numgens M - 1})))
+            map(N, M, pushforward'(h' * pushforward(M', M_{0..numgens M - 1})))
         );
         H.cache.toambienthommodule = inducedMap(H', H);
         H.cache.formation = FunctionApplication { Hom, (f, M, N) };
@@ -73,10 +67,6 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
 
 -- induced map: Hom(f, target F, M) -> Hom(f, source F, M)
 Hom(RingMap, Matrix, Module) := Matrix => opts -> (f, F, M) -> (
-    -- it may be that F is a map between modules which are not finite over f but
-    -- that there is still a well-defined pushforward due to finiteness of M.
-    F = map((target F)/ann M, (source F)/ann M, F);
-
     sourceModule := Hom(f, source F, M, opts);
     targetModule := Hom(f, target F, M, opts);
     if sourceModule == 0 or targetModule == 0 then return map(sourceModule, targetModule, 0);
@@ -93,10 +83,6 @@ Hom(RingMap, Matrix, Module) := Matrix => opts -> (f, F, M) -> (
 
 -- induced map: Hom(f, M, source F) -> Hom(f, M, target F)
 Hom(RingMap, Module, Matrix) := Matrix => opts -> (f, M, F) -> (
-    -- it may be that F is a map between modules which are not finite over f but
-    -- that there is still a well-defined pushforward due to finiteness of M.
-    F = map((target F)/ann M, (source F)/ann M, F);
-
     sourceModule := Hom(f, M, source F, opts);
     targetModule := Hom(f, M, target F, opts);
     if sourceModule == 0 or targetModule == 0 then return map(targetModule, sourceModule, 0);
@@ -116,7 +102,6 @@ Hom(RingMap, Matrix, Matrix) := Matrix => o -> (f, F, G) -> Hom(f, source F, G, 
 
 -- from a matrix L: M -> N and a RingMap f get the corresponding element of Hom(f, M, N)
 homomorphism'(RingMap, Matrix) := Matrix => opts -> (f, L) -> (
-    L = map(target L, source L / ann target L, L);
     H := Hom(f, source L, target L, opts);
     homomorphism'(pushFwd(f, L, MinimalGenerators => opts.MinimalGenerators), opts) // H.cache.toambienthommodule
 )
