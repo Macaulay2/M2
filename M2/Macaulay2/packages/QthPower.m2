@@ -960,7 +960,18 @@ document {
           Also this package contains the extension to examples over the rationals; 
 	  which, in turn, allows for quicker answers over ZZ/q for most large q,
 	  which can be produced if desired merely by changing the coefficient ring from QQ to ZZ/q."
-	  }
+	  },
+     PARA {
+	  "Start with a small finite-field example to compute an integral closure and inspect the size of the returned presentation."
+	  },
+     EXAMPLE lines ///
+          wtR = matrix{{5,6,6},{3,6,0}};
+          Rq = ZZ/23[u,v,w,Weights=>entries weightGrevlex(wtR)];
+          GB = {u^6+u^3*w-v^3*w^2};
+          (numerators,relicR,icR,wticR) = qthIntegralClosure(wtR,Rq,GB);
+          (#numerators, numgens ideal relicR)
+          ///,
+     SeeAlso => {qthIntegralClosure, rationalIntegralClosure, qthConductor, weightGrevlex}
      }
 --------------------------------------------------------------------------------------------------------
 document {
@@ -1412,8 +1423,6 @@ assert(delta == x^2);
 assert(ring delta === Rq);
 assert(isSubset(support delta, {x}));
 ///
-
-
 
 
 

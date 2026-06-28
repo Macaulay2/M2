@@ -768,9 +768,8 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
     }
   if (R == globalZZ)
     {
-      printf("error!! lift called with no ZZ lifting method\n");
       // MES:TODO!! WRITE ME
-      return true;
+      return false;
     }
   switch (R->ringID())
     {
@@ -793,6 +792,16 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
             case M2::ring_ZZpFfpack:
               return RP::lifter<ARingZZpFFPACK, ARingZZpFFPACK>(
                   R, S, result_gR, gS);
+            default:
+              return false;
+          }
+      case M2::ring_QQ:
+        switch (S->ringID())
+          {
+            case M2::ring_RR:
+              return RP::lifter<ARingQQ, ARingRR>(R, S, result_gR, gS);
+            case M2::ring_RRR:
+              return RP::lifter<ARingQQ, ARingRRR>(R, S, result_gR, gS);
             default:
               return false;
           }

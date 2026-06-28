@@ -195,6 +195,11 @@ document {
 	" by Gustav Sædén Ståhl.",
 		
 	PARA{}, "The following is an example illustrating the main functions provided in the package.",
+	EXAMPLE {
+	     "S = ZZ[x_0,x_1]",
+	     "quotScheme(S^2,1,{0})"
+	     },
+
 	UL {
 	     {TO "Fitting ideals of finite modules"},
 	     },

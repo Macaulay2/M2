@@ -248,9 +248,17 @@ doc ///
       syzygy matrices.
 
       The second method (@TO "randomSimplicialComplex"@) uses Stanley-Reisner rings from randomly chosen monomial ideals.
+    Example
+      h={1,4,6,5,1}
+      r={1,3,3,4}
+      C=randomChainComplex(h,r)
+      for i from 0 to 4 list rank HH_i C
    Caveat
       Some functionality here should be moved elsewhere, e.g. 
         @TO "disturb"@, @TO "histogram"@, @TO "maximalEntry"@, and @TO "normalize"@.
+   SeeAlso
+     randomChainComplex
+     disturb
 ///
  
 
@@ -505,6 +513,8 @@ doc ///
    Description
     Text
      If ZeroMean=>true then the integer of given Height values are randomly chosen with a zero mean
+    Example
+      randomChainComplex({20,20},{20},ZeroMean=>true)
 ///
 
 doc ///
@@ -516,6 +526,8 @@ doc ///
     Text
      If WithLLL=>true then syzygy matrices of the randomly chosen matrices
      are improved for their Height by applying the LLL algorithm.
+    Example
+      randomChainComplex({1,1,1},{2,2},Height=>5,WithLLL=>true)
 ///
 
 doc ///
@@ -528,6 +540,11 @@ doc ///
     Text
      If Strategy=>Continuous then we disturb the complex by floating point numbers
      otherwise by discrete values.
+    Example
+      C = randomChainComplex({1,1,1},{2,2})
+      CR = C**RR_53
+      disturb(CR,1e-4)
+      disturb(CR,1e-4,Strategy => Continuous)
    SeeAlso
      disturb
 ///

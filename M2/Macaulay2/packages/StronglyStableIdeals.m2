@@ -723,14 +723,27 @@ doc ///
         {\it Strongly stable ideals and segment ideals:}
 
           @TO lexIdeal@ -- Compute the saturated lexicographic ideal with a given Hilbert polynomial.
-          
-          @TO stronglyStableIdeals@ -- Compute the saturated strongly stable ideals with a given Hilbert polynomial.
-	  
-	  @TO isGenSegment@ -- Test whether there exists a term ordering such that each minimal generator of a strongly stable ideal is greater than all monomials of the same degree outside the ideal.
-      
-	  @TO isRegSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to its regularity is a segment. 	                   
 
-	  @TO isHilbSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to the Gotzmann number of its Hilbert polynomial is a segment. 
+          @TO stronglyStableIdeals@ -- Compute the saturated strongly stable ideals with a given Hilbert polynomial.
+
+          @TO isGenSegment@ -- Test whether there exists a term ordering such that each minimal generator of a strongly stable ideal is greater than all monomials of the same degree outside the ideal.
+
+          @TO isRegSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to its regularity is a segment.
+
+          @TO isHilbSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to the Gotzmann number of its Hilbert polynomial is a segment.
+   Example
+     QQ[t];
+     isHilbertPolynomial(3*t+4)
+     gotzmannNumber(3*t+4)
+     ideals = stronglyStableIdeals(3, 3);
+     #ideals
+     ideals#0
+  SeeAlso
+    isHilbertPolynomial
+    gotzmannNumber
+    gotzmannDecomposition
+    stronglyStableIdeals
+    lexIdeal
 ///   
 
 doc ///

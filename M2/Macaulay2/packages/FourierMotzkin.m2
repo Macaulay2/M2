@@ -264,6 +264,13 @@ document {
 	
 	PARA{}, "Here are some examples illustrating some uses of this
 	package.",
+	EXAMPLE {
+	     "R = matrix(QQ, {{1,0},{-2,1}})",
+	     "H = fourierMotzkin R",
+	     "H#0",
+	     "fourierMotzkin H"
+	     },
+
 	UL {
 	     {TO "Finding the facets of the cyclic polytope"},
 	     {TO "Finding the facets of the permutahedron"},
@@ -766,5 +773,4 @@ uninstallPackage "FourierMotzkin"
 path = prepend(homeDirectory | "Code/", path);
 installPackage "FourierMotzkin"
 check "FourierMotzkin"
-
 

@@ -1015,7 +1015,7 @@ document {
   Key => RandomCurvesOverVerySmallFiniteFields,
   Headline => "randomly chosen smooth canonical curves over small finite fields",
   "This package can be seen as a refined version of the ",
-  TO "RandomCanonicalCurves",
+  TO "RandomCurves::RandomCurves",
   " package, which catches all possible missteps in the constructions. 
   The construction follows the unirationality proof of M_g for g<=14 and the article ",
   HREF("http://arxiv.org/abs/1311.6962","Matrix factorizations and families of curves of genus 15"),

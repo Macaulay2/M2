@@ -16,8 +16,8 @@
 
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.7",
-    Date => "January 13, 2026",
+    Version => "0.8",
+    Date => "June 5, 2026",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance9@gatech.edu",
@@ -43,6 +43,10 @@ newPackage("Probability",
 ---------------
 
 -*
+
+0.8 (2026-06-05, M2 1.26.06)
+* update my contact info
+* updated tests (thanks to Taylor, Keller, and the M2@GT26 testing group!)
 
 0.7 (2026-01-13, M2 1.26.05)
 * use new syntactic sugar for installing nullary methods

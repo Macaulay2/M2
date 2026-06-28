@@ -395,7 +395,18 @@ document{
   Key => Pullback,
   Headline => "pullback in the category of rings",
   EM "Pullback", " is a package that implements pullback for diagrams of rings",
-  Caveat => "Works only for maps of rings finitely generated over a base field and one of the two maps is surjective"
+  TEX "Start with two maps to a common quotient ring and compute the resulting pullback ring.",
+  EXAMPLE lines ///
+  A = QQ[x];
+  B = A/ideal(x);
+  C = QQ[y];
+  f = map(B, A);
+  g = map(B, C, {0});
+  R = (pullback(f,g))#0;
+  (dim R, numgens ideal R)
+  ///,
+  Caveat => "Works only for maps of rings finitely generated over a base field and one of the two maps is surjective",
+  SeeAlso => {"Pullback::pullback(RingMap,RingMap)"}
   }
 
 document{
@@ -551,4 +562,3 @@ end
 --1.01, added support for C with no variables.  Improved documentation.  Turned off some printed text when Verbose is turned off.
 --1.02, improved documentation including adding documentation for the product of rings.
 --1.03, improved error reporting so that it provides useful information about the problem is
-

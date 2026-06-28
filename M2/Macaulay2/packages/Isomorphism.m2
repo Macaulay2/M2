@@ -235,10 +235,6 @@ isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
     if isFreeModule M and isFreeModule N then
     return isIsomorphismFree(N, M, o);
     --
-    tries := o.Tries ?? defaultNumTries char S;
-    if tries > 1 then return any(tries,
-	i -> isIsomorphic(N, M, o, Tries => 1));
-    --
     if o.Homogeneous == true and not (
 	isHomogeneous M and isHomogeneous N)
     then error "inputs not homogeneous";
@@ -262,6 +258,13 @@ isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
 	if class df_1 =!= List  then return false);
 	--now there is a chance at an isomorphism up to shift, 
 	--and df is the degree diff.
+
+    --
+    tries := o.Tries ?? defaultNumTries char S;
+    if tries > 1 then return any(tries,
+	i -> isIsomorphic(N, M, o, Tries => 1));
+    --
+
 
     --compute an appropriate random map g
     g := if o.Homogeneous and degreeLength S == 1

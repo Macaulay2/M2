@@ -1694,7 +1694,7 @@ document {
   which showed that the Kuznetsov component of X and the derived category of E are equivalent 
   by a Fourier-Mukai transformation (see Section 2 of [A. Bondal, D. Orlov, arXiv:alg-geom/9506012], 
   or Section 6 of [A. Bondal, D. Orlov, Proceedings of ICM, Vol. II (Beijing, 2002)]).",
-  
+
   PARA{},
   "We demonstrate this,
   over finite fields, with
@@ -1702,10 +1702,20 @@ document {
   and random Ulrich modules of lowest possible rank on the complete intersection
   of two quadrics for small g.",
     PARA{},
+    "A first example constructs a random pencil of quadrics and the associated Clifford module over a finite field.",
+    EXAMPLE {
+      "kk = ZZ/101;",
+      "setRandomSeed 0;",
+      "g = 1;",
+      "(S,qq,R,u,M1,M2,Mu1,Mu2) = randomNicePencil(kk,g);",
+      "C = cliffordModule(M1,M2,R);",
+      "C.hyperellipticBranchEquation"
+    },
+    PARA{},
      SUBSECTION "Types",
      UL{
-	TO CliffordModule,
-	TO RandomNicePencil,
+		TO CliffordModule,
+		TO RandomNicePencil,
 	TO VectorBundleOnE
        },
      SUBSECTION "Basic Construction of the Clifford Algebra",
@@ -2068,12 +2078,19 @@ doc ///
    Description
     Text
      the keys are
-	oddOperators => uOdd', 
-	evenOperators => uEv', 
-	evenCenter=>c0', 
-	oddCenter => c1', 
-	symmetricM => Q,
-	hyperellipticBranchEquation => f
+		oddOperators => uOdd',
+		evenOperators => uEv',
+		evenCenter=>c0',
+		oddCenter => c1',
+		symmetricM => Q,
+		hyperellipticBranchEquation => f
+    Example
+     kk = ZZ/101
+     setRandomSeed 0
+     g = 1
+     (S, qq, R, u, M1, M2, Mu1, Mu2) = randomNicePencil(kk,g);
+     C = cliffordModule(M1,M2,R)
+     C.hyperellipticBranchEquation
    SeeAlso
     cliffordModule
 ///
@@ -2633,6 +2650,12 @@ doc ///
      and a matrix representing the action of y.
      the only  key is
      yAction
+    Example
+     kk = ZZ/101
+     R = kk[s,t]
+     f = (s+2*t)*(s+t)*(s-t)*(s-2*t)
+     L0 = randomLineBundle(0,f)
+     (degOnE L0, orderInPic L0)
    SeeAlso
     vectorBundleOnE
     degOnE

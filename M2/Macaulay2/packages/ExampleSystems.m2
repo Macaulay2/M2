@@ -73,6 +73,11 @@ doc ///
                This package is a database for examples of polynomial systems in Macaulay2,
                including standard systems of interest in various applications, such as 
                engineering, chemistry, robotics, and economics.
+          Example
+               cyclic(5, QQ)
+          Text
+               The package exports each named system as a function; the example above
+               returns the cyclic 5-roots system over the rational numbers.
                
                {\bf References:} 
           Code
@@ -369,5 +374,4 @@ substitute(ExampleTable, List) := (E, L) -> (
 	       ))
      )
 substitute(ExampleTable, Option) := (E,subs) -> substitute(E, {subs})
-
 

@@ -240,16 +240,26 @@ doc ///
         A package for working with simplicial posets.
     Description
         Text
-	
-	    The primary purpose of this package is to implement the simplicial
-	    poset ring as defined by Richard P. Stanley in 1989. 
+            The primary purpose of this package is to implement the simplicial
+            poset ring as defined by Richard P. Stanley in 1989.
 
-    	    @HREF("https://www.semanticscholar.org/paper/f-vectors-and-h-vectors-of-simplicial-posets-Stanley/2787117152700af2abce3126dd7ba2325685d78b","Stanley's original paper.")@
+            @HREF("https://www.semanticscholar.org/paper/f-vectors-and-h-vectors-of-simplicial-posets-Stanley/2787117152700af2abce3126dd7ba2325685d78b","Stanley's original paper.")@
+        Example
+            P = fromFVector({1,6,5,1});
+            I = stanleyPosetIdeal(P);
+            R = ring(I)/I;
+            getFVector(P)
+            isSimplicial(P)
 
     Acknowledgement
-    	    This package uses some code from the  @TO "Posets"@ package.
-	    
-	    Thanks to @HREF("http://www-users.math.umn.edu/~reiner/","Victor Reiner")@. This project was his idea.
+        This package uses some code from the @TO "Posets"@ package.
+
+        Thanks to @HREF("http://www-users.math.umn.edu/~reiner/","Victor Reiner")@. This project was his idea.
+    SeeAlso
+        fromFVector
+        stanleyPosetIdeal
+        isSimplicial
+        "Example: Calculating a Stanley simplicial poset ring"
 ///
 
 -- Example
@@ -590,4 +600,3 @@ end--
 
 restart
 installPackage("SimplicialPosets")
-

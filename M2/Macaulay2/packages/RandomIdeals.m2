@@ -960,6 +960,11 @@ Inputs
 Description
  Text
   Controls how often the Alexander dual is taken
+ Example
+  setRandomSeed 1
+  S = ZZ/2[vars(0..3)]
+  J = monomialIdeal"ab,ad,bcd"
+  first randomSquareFreeStep(J, AlexanderProbability => 1.0)
 SeeAlso
   randomSquareFreeStep
 ///
@@ -1645,5 +1650,4 @@ restart
 installPackage "RandomIdeals"
 check "RandomIdeals"
 viewHelp RandomIdeals
-
 

@@ -1020,12 +1020,6 @@ document {
 load "./SLPexpressions/doc.m2"
 
 undocumented {
-printAsSLP,
-(printAsSLP,GateMatrix,GateMatrix),
-(printAsSLP,List,List),
-cCode,
-(cCode,GateMatrix,GateMatrix),
-(cCode,List,List),
 constants,
 (constants,DetGate),
 (constants,DivideGate),
@@ -1040,12 +1034,6 @@ constants,
 (net,InputGate),
 (net,ProductGate),
 (net,SumGate),
-(support,DetGate),
-(support,DivideGate),
-(support,GateMatrix),
-(support,InputGate),
-(support,ProductGate),
-(support,SumGate)
     }
 
 end

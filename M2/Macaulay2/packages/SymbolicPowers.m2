@@ -619,13 +619,20 @@ document {
 	   " Invent. Math. 147 (2002), no. 2, 349–369."}, 
        {"R. Villarreal.", EM " Monomial algebras.", " Second edition. Monographs and Research Notes 
 	   in Mathematics. CRC Press, Boca Raton, FL, 2015. xviii+686 pp. ISBN: 978-1-4822-3469-5."}, 
-       {"Hailong Dao, Alessandro De Stefani, Eloísa Grifo, Craig Huneke, and Luis Núñez-Betancourt. ", 
-	   EM "Symbolic powers of ideals.", "in Singularities and foliations. Geometry, topology and applications, pp. 387-432, Springer Proc. Math. Stat., 222, Springer, Cham, 2018. See ", HREF("https://arxiv.org/abs/1708.03010","https://arxiv.org/abs/1708.03010"), "."} 
-       },
+       {"Hailong Dao, Alessandro De Stefani, Eloísa Grifo, Craig Huneke, and Luis Núñez-Betancourt. ",
+		   EM "Symbolic powers of ideals.", "in Singularities and foliations. Geometry, topology and applications, pp. 387-432, Springer Proc. Math. Stat., 222, Springer, Cham, 2018. See ", HREF("https://arxiv.org/abs/1708.03010","https://arxiv.org/abs/1708.03010"), "."}
+	       },
+	  PARA{},
+	  "A first example asks for the smallest symbolic power contained in a fixed ordinary power.",
+	  EXAMPLE lines ///
+	  R = QQ[x,y,z];
+	  J = ideal(x*(y^3-z^3),y*(z^3-x^3),z*(x^3-y^3));
+	  containmentProblem(J,2)
+	  ///,
   
-   SUBSECTION "Contributors", "The following people have generously
-   contributed code or worked on our code at various Macaulay2
-   workshops.",
+	   SUBSECTION "Contributors", "The following people have generously
+	   contributed code or worked on our code at various Macaulay2
+	   workshops.",
      
      UL {
 	 "Ben Drabkin",
@@ -1524,10 +1531,19 @@ doc ///
          SampleSize
      Headline 
          optional parameter used for approximating asymptotic invariants that are defined as limits.
+     Description
+         Text
+             This option bounds the number of symbolic powers sampled when approximating
+             asymptotic invariants such as @TO waldschmidt@ and @TO asymptoticRegularity@.
+         Example
+             R = QQ[x,y,z];
+             J = ideal (x*(y^3-z^3),y*(z^3-x^3),z*(x^3-y^3));
+             waldschmidt(J, SampleSize=>5)
+             asymptoticRegularity(J, SampleSize=>5)
      SeeAlso
      	 waldschmidt
-	 lowerBoundResurgence
-	 asymptoticRegularity    
+		 lowerBoundResurgence
+		 asymptoticRegularity
 ///	   
 
 doc ///
@@ -1575,6 +1591,14 @@ doc ///
          InSymbolic
      Headline 
          an optional parameter used in containmentProblem.
+     Description
+         Text
+             Set this option to @TO true@ to ask the reverse containment question:
+             which ordinary power contains a given symbolic power.
+         Example
+             R = QQ[x,y,z];
+             J = ideal (x*(y^3-z^3),y*(z^3-x^3),z*(x^3-y^3));
+             containmentProblem(J,3,InSymbolic => true)
      SeeAlso
      	 containmentProblem
 

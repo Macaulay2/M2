@@ -1,10 +1,10 @@
--* 
+-*
 this does not work unless M2 is compiled --with-python
 *-
 
 newPackage("Python",
-    Version => "1.0",
-    Date => "November 8, 2025",
+    Version => "1.1",
+    Date => "June 5, 2026",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -26,6 +26,9 @@ newPackage("Python",
 ---------------
 
 -*
+
+1.1 (2026-06-05, M2 1.26.06)
+* update my contact info
 
 1.0 (2025-11-08, M2 1.25.11)
 * New PythonContext class replacing undocumented Context class

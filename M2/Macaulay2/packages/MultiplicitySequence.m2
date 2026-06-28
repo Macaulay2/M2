@@ -56,8 +56,6 @@ export {
     "printHilbertSequence"
  }
 
--- installMinprimes() -- for MinimalPrimes.m2
-
 getGenElts = method(Options => {symbol minTerms => -1, symbol numCandidates => 3})
 getGenElts (Ideal, ZZ) := List => opts -> (I, n) -> (
     G := flatten entries mingens I; -- I_*;
@@ -908,8 +906,6 @@ installPackage("MultiplicitySequence", RemakeAllDocumentation => true)
 uninstallPackage "MultiplicitySequence"
 check "MultiplicitySequence"
 viewHelp "MultiplicitySequence"
-needsPackage "MinimalPrimes"
-installMinprimes()
 debugLevel = 2
 
 elapsedTime multiplicitySequence I

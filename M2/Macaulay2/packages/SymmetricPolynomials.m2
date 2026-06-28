@@ -86,7 +86,16 @@ document {
 	Headline => "the algebra of symmetric polynomials",
 	PARA{"This package uses an explicit description of the Groebner basis of the ideal of obvious relations in this algebra based on:"},
 	PARA{"Grayson, Stillmann - Computations in the intersection theory of flag varieties, preprint, 2009"},
-	PARA{"Sturmfels - Algorithms in Invariant Theory, Springer Verlag, Vienna, 1993"}
+	PARA{"Sturmfels - Algorithms in Invariant Theory, Springer Verlag, Vienna, 1993"},
+	PARA{"Use ", TO elementarySymmetric, " to express a symmetric polynomial in terms of elementary symmetric functions, and use ", TO (elementarySymmetric,PolynomialRing), " to construct the corresponding map."},
+	EXAMPLE lines ///
+		n=5;
+		R=QQ[x_1..x_n];
+		f=(product gens R)*(sum gens R);
+		elementarySymmetric f
+		elementarySymmetric R
+	///,
+	SeeAlso => {elementarySymmetric, buildSymmetricGB}
 }
 
 document {
