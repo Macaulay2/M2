@@ -85,7 +85,12 @@ export {
 --	"gfanVectorListListToString", -- to make gfan input
 	"gfanVersion",
 	"toPolymakeFormat",
-	"multiplicitiesReorder"
+	"multiplicitiesReorder",
+	 "gfanConvertToNewRing",
+        "gfanIdealToString",
+        "runGfanCommand",
+        "gfanGroebnerComplex",
+        "gfanPadicInitialIdeal"
 }
 
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
@@ -2496,6 +2501,40 @@ gfanVersion  = () -> (
   o := new OptionTable from {};
   versionOutput := runGfanCommand("gfan _version", o, );
   substring((separate ("\n", versionOutput#0))#1,4)
+)
+
+
+--------------------------------------------------------
+-- gfan_padic
+--------------------------------------------------------
+
+gfanGroebnerComplex = method( Options=> {"groebnerComplex"=>true,"p" => 2} )
+
+gfanGroebnerComplex Ideal := opts -> (I) ->(
+    R := ring I;
+    K := coefficientRing R;
+    if not(K===QQ) then error("Your coefficient field needs to be QQ");
+    (ringMap, J):= gfanConvertToNewRing I;
+    --create the input string
+    input := gfanRingToString(target ringMap) | gfanIdealToString J;
+    output := runGfanCommand("gfan _padic", opts, input);  --need to understand how to give p
+    if(length(output#0)==0) then return "error: this complex is empty";
+    gfanParsePolyhedralFan output#0
+)
+
+gfanPadicInitialIdeal  = method(Options=> {"initialIdeal"=>true,"p" => 2} )
+
+gfanPadicInitialIdeal (Ideal,List) := opts -> (I,w) ->(
+        R := ring I;
+        K := coefficientRing R;
+        if not(K===QQ) then error("Your coefficient field needs to be QQ");
+        (ringMap, J):= gfanConvertToNewRing I;
+        --create the input string
+        wstring:= replace("{","(",toString w);
+        wstring = replace("}",")",wstring);
+        input := gfanRingToString(target ringMap) | gfanIdealToString J | wstring;
+        output := runGfanCommand("gfan _padic", opts, input);
+        gfanParseIdeal(output#0)
 )
 
 --------------------------------------------------------
