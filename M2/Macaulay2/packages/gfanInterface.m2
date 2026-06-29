@@ -2350,6 +2350,25 @@ gfanTropicalMultiplicity (List) := opts -> (L) -> (
 )
 
 --------------------------------------------------------
+-- gfan_tropicalprevariety
+--------------------------------------------------------
+
+gfanTropicalPrevariety = method(Options => {})
+
+
+gfanTropicalPrevariety (List) :=  -> opts -> (L) (
+    (ringMap,newL) := gfanConvertToNewRing(L);
+    L = newL;
+    input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
+    s:=runGfanCommand("gfan _tropicalprevariety",opts,input)
+
+)
+
+
+
+
+
+--------------------------------------------------------
 -- gfan_tropicalrank
 --------------------------------------------------------
 
