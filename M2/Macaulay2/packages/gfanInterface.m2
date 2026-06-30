@@ -4481,8 +4481,11 @@ doc///
 -- Tests
 ---------------------------------------
 
---status: need to fix comments in gfan, all of gfanFanProduct, in the
---middle of gfanGroebnerCone
+--status: need to fix comments in gfan, in the
+--middle of gfanGroebnerCone,
+--- functions with missing hashvalues: groebnerCone, HomogeneitySpace, MinkowskiSum, SecondaryFan, 
+-- functions with wrong output datatype: MixedVolume (string instead of int)
+-- math q: Stats.
 
 
 --        TEST gfan
