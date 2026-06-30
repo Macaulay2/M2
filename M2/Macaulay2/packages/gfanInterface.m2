@@ -93,6 +93,8 @@ export {
         "gfanPadicInitialIdeal"
 }
 
+importFrom(Polyhedra,{"pure","simplicial"})
+
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
 -- for backward compatibility
 if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
@@ -531,8 +533,8 @@ gfanParsePolyhedralFan String := o -> s -> (
 		
 		S=fanFromGfan({myrays,mylinspace,mymaximalcones,dimfan,puremanual,simplicialmanual,fVector});
 		
-		-- if not isPureSet then remove(S.cache,symbol pure);
-		-- if not isSimplicialSet then remove(S.cache,symbol simplicial);
+		 if not isPureSet then remove(S.cache,symbol pure);
+		 if not isSimplicialSet then remove(S.cache,symbol simplicial);
 	    );	    
 
 	    --re-writing the  multiplicities according to the new order of maximal cones 
@@ -4643,67 +4645,67 @@ doc///
 	-- ///
 	--
 	-- -- TEST gfanHomogenize
-	-- TEST ///
-	-- QQ[x,y];
-	-- L = {x+y, x^2*y + x};
-	-- H = gfanHomogenize(L, symbol z, "w" => {2,3})
-	-- assert(H == {x*z + y, x*z^5 + x^2*y})
-	-- QQ[x,y];
-	-- L = markedPolynomialList {{y}, {x+y}};
-	-- H = gfanHomogenize(L, symbol z,  "w" => {2,3})
-	-- assert(H == markedPolynomialList {{y}, {y + x*z}})
-	-- ///
+	 TEST ///
+	 QQ[x,y];
+	 L = {x+y, x^2*y + x};
+	 H = gfanHomogenize(L, symbol z, "w" => {2,3})
+	 assert(H == {x*z + y, x*z^5 + x^2*y})
+	 QQ[x,y];
+	 L = markedPolynomialList {{y}, {x+y}};
+	 H = gfanHomogenize(L, symbol z,  "w" => {2,3})
+	 assert(H == markedPolynomialList {{y}, {y + x*z}})
+	 ///
 	--
 	-- -- TEST gfanInitialForms
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- L = {x+y, x + z};
-	-- H = gfanInitialForms(L, {1,2,1});
-	-- assert(H == {y, x+z});
-	-- L = {x*y+z, x*z + y};
-	-- H = gfanInitialForms(L, {1,1,1});
-	-- assert(set H === set {x*y, x*z});
-	-- H = gfanInitialForms(L, {1,1,1}, "ideal" => true);
-	-- assert(set H === set {y^2 - z^2, x*y, x*z});
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 L = {x+y, x + z};
+	 H = gfanInitialForms(L, {1,2,1});
+	assert(H == {y, x+z});
+	 L = {x*y+z, x*z + y};
+	 H = gfanInitialForms(L, {1,1,1});
+	 assert(set H === set {x*y, x*z});
+	 H = gfanInitialForms(L, {1,1,1}, "ideal" => true);
+	 assert(set H === set {y^2 - z^2, x*y, x*z});
+	 ///
 	--
 	-- -- TEST gfanInteractive (SKIPPED)
 	--
 	-- -- TEST gfanIsMarkedGroebnerBasis
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- assert gfanIsMarkedGroebnerBasis ({x^2+y, y^3+z})
-	-- assert not gfanIsMarkedGroebnerBasis markedPolynomialList {{y,y^3}, {x^2+y, y^3+z}}
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 assert gfanIsMarkedGroebnerBasis ({x^2+y, y^3+z})
+	 assert not gfanIsMarkedGroebnerBasis markedPolynomialList {{y,y^3}, {x^2+y, y^3+z}}
+	 ///
 	--
 	-- -- TEST gfanKrullDimension
-	-- TEST ///
-	-- QQ[x,y,z,u,v];
-	-- L = {x^3, y^2};
-	-- assert(gfanKrullDimension gfanBuchberger L === 3)
-	-- ///
+	 TEST ///
+	 QQ[x,y,z,u,v];
+	 L = {x^3, y^2};
+	 assert(gfanKrullDimension gfanBuchberger L === 3)
+	 ///
 	--
 	-- -- TEST gfanLatticeIdeal
-	-- TEST ///
-	-- L = gfanLatticeIdeal {{2,-1,0},{3,0,-1}}
-	-- assert(L === {-x_0 *x_1 + x_2, x_0^2 - x_1})
-	-- ///
+	 TEST ///
+	 L = gfanLatticeIdeal {{2,-1,0},{3,0,-1}}
+	 assert(L === {x_0^2 - x_1,-x_0 *x_1 + x_2})
+	 ///
 	--
 	-- -- TEST gfanLeadingTerms
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- L = gfanMarkPolynomialSet({x*y^3+z^4, x^2*z^2 + y^3*z}, {-1,2,5})
-	-- I = gfanLeadingTerms L
-	-- assert( I == first L)
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 L = gfanMarkPolynomialSet({x*y^3+z^4, x^2*z^2 + y^3*z}, {-1,2,5})
+	 I = gfanLeadingTerms L
+	 assert( I == first L)
+	 ///
 	--
 	-- -- TEST gfanMarkPolynomialSet
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- equalMPL = (A,B) -> set transpose A === set transpose B
-	-- M = gfanMarkPolynomialSet({x + y + z, x^10 + y^4 + z^2, x^2*z + y^2}, {1, 3, 5})
-	-- assert equalMPL(M, markedPolynomialList {{z,y^4,x^2*z},{x+y+z,x^10+y^4+z^2,x^2*z+y^2}})
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 equalMPL = (A,B) -> set transpose A === set transpose B
+	 M = gfanMarkPolynomialSet({x + y + z, x^10 + y^4 + z^2, x^2*z + y^2}, {1, 3, 5})
+	 assert equalMPL(M, markedPolynomialList {{z,y^4,x^2*z},{x+y+z,x^10+y^4+z^2,x^2*z+y^2}})
+	 ///
 	--
 	-- -- TEST gfanMinkowskiSum
 	-- TEST ///
@@ -4717,39 +4719,39 @@ doc///
 	-- ///
 	--
 	-- -- TEST gfanMinors
-	-- TEST ///
-	-- M = gfanMinors(2,2,3)
-	-- assert(M == {-m_"01"*m_"10"+m_"00"*m_"11",-m_"02"*m_"10"+m_"00"*m_"12",-m_"02"*m_"11"+m_"01"*m_"12"})
-	-- ///
+	 TEST ///
+	 M = gfanMinors(2,2,3)
+	 assert(M == {-m_"01"*m_"10"+m_"00"*m_"11",-m_"02"*m_"10"+m_"00"*m_"12",-m_"02"*m_"11"+m_"01"*m_"12"})
+	 ///
 	-- -- TEST gfanMixedVolume
-	-- TEST ///
-	-- QQ[x1,x2,x3,x4]
-	-- mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
-	-- assert (mv == 16)
+	 -- TEST ///
+	 -- QQ[x1,x2,x3,x4]
+	 -- mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
+	 -- assert (mv == 16)
 	-- ///
 	-- -- TEST gfanPolynomialSetUnion
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- f = x + y + z;
-	-- g = x + y;
-	-- h = y + z;
-	-- L = markedPolynomialList {{z, y}, {f,g}}
-	-- M = markedPolynomialList {{x, y} , {f,h}}
-	-- U = gfanPolynomialSetUnion(L,M)
-	-- equalMPL = (A,B) -> set transpose A === set transpose B
-	-- assert equalMPL(U, markedPolynomialList {{z,y,y},{x+y+z,x+y,y+z}})
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 f = x + y + z;
+	 g = x + y;
+	 h = y + z;
+	 L = markedPolynomialList {{z, y}, {f,g}}
+	 M = markedPolynomialList {{x, y} , {f,h}}
+	 U = gfanPolynomialSetUnion(L,M)
+	 equalMPL = (A,B) -> set transpose A === set transpose B
+	 assert equalMPL(U, markedPolynomialList {{z,y,y},{x+y+z,x+y,y+z}})
+	 ///
 	--
 	-- -- TEST gfanRender SKIPPED
 	-- -- TEST gfanRenderStaircase SKIPPED
 	--
 	-- -- TEST gfanSaturation
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- I = ideal(y*z*(x-1), x*(z^2 - y));
-	-- S = gfanSaturation I;
-	-- assert(S == { z^2 -y, x-1})
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 I = ideal(y*z*(x-1), x*(z^2 - y));
+	 S = gfanSaturation I;
+	 assert(S == { z^2 -y, x-1})
+	 ///
 	--
 	-- -- TEST gfanSecondaryFan
 	-- TEST ///
