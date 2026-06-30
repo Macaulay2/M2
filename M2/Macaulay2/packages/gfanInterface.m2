@@ -4705,50 +4705,50 @@ doc///
 	 ///
 	--
 	-- -- TEST gfanMinkowskiSum
-	TEST ///
-	 QQ[x,y];
-	 M = gfanMinkowskiSum { x + y + x*y, x + y + x*y + 1}
-	 assert(M#"AMBIENT_DIM" === 2)
-	 assert(M#"MAXIMAL_CONES" == {{0, 1}, {0, 2}, {1, 3}, {2, 4}, {3, 4}})
-	 assert(M#"DIM" === 2)
-	 assert(M#"RAYS" == {{-1, -1}, {-1, 0}, {0, -1}, {0, 1}, {1, 0}})
-	 assert(M#"F_VECTOR" == {1, 5, 5})
-	 ///
+	-- TEST ///
+	-- QQ[x,y];
+	-- M = gfanMinkowskiSum { x + y + x*y, x + y + x*y + 1}
+	-- assert(M#"AMBIENT_DIM" === 2)
+	-- assert(M#"MAXIMAL_CONES" == {{0, 1}, {0, 2}, {1, 3}, {2, 4}, {3, 4}})
+	-- assert(M#"DIM" === 2)
+	-- assert(M#"RAYS" == {{-1, -1}, {-1, 0}, {0, -1}, {0, 1}, {1, 0}})
+	-- assert(M#"F_VECTOR" == {1, 5, 5})
+	-- ///
 	--
 	-- -- TEST gfanMinors
-	-- TEST ///
-	-- M = gfanMinors(2,2,3)
-	-- assert(M == {-m_"01"*m_"10"+m_"00"*m_"11",-m_"02"*m_"10"+m_"00"*m_"12",-m_"02"*m_"11"+m_"01"*m_"12"})
-	-- ///
+	 TEST ///
+	 M = gfanMinors(2,2,3)
+	 assert(M == {-m_"01"*m_"10"+m_"00"*m_"11",-m_"02"*m_"10"+m_"00"*m_"12",-m_"02"*m_"11"+m_"01"*m_"12"})
+	 ///
 	-- -- TEST gfanMixedVolume
-	-- TEST ///
-	-- QQ[x1,x2,x3,x4]
-	-- mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
-	-- assert (mv == 16)
+	 -- TEST ///
+	 -- QQ[x1,x2,x3,x4]
+	 -- mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
+	 -- assert (mv == 16)
 	-- ///
 	-- -- TEST gfanPolynomialSetUnion
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- f = x + y + z;
-	-- g = x + y;
-	-- h = y + z;
-	-- L = markedPolynomialList {{z, y}, {f,g}}
-	-- M = markedPolynomialList {{x, y} , {f,h}}
-	-- U = gfanPolynomialSetUnion(L,M)
-	-- equalMPL = (A,B) -> set transpose A === set transpose B
-	-- assert equalMPL(U, markedPolynomialList {{z,y,y},{x+y+z,x+y,y+z}})
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 f = x + y + z;
+	 g = x + y;
+	 h = y + z;
+	 L = markedPolynomialList {{z, y}, {f,g}}
+	 M = markedPolynomialList {{x, y} , {f,h}}
+	 U = gfanPolynomialSetUnion(L,M)
+	 equalMPL = (A,B) -> set transpose A === set transpose B
+	 assert equalMPL(U, markedPolynomialList {{z,y,y},{x+y+z,x+y,y+z}})
+	 ///
 	--
 	-- -- TEST gfanRender SKIPPED
 	-- -- TEST gfanRenderStaircase SKIPPED
 	--
 	-- -- TEST gfanSaturation
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- I = ideal(y*z*(x-1), x*(z^2 - y));
-	-- S = gfanSaturation I;
-	-- assert(S == { z^2 -y, x-1})
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 I = ideal(y*z*(x-1), x*(z^2 - y));
+	 S = gfanSaturation I;
+	 assert(S == { z^2 -y, x-1})
+	 ///
 	--
 	-- -- TEST gfanSecondaryFan
 	-- TEST ///
