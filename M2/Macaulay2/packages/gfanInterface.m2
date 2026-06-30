@@ -515,8 +515,18 @@ gfanParsePolyhedralFan String := o -> s -> (
 	    if P#?"Rays"==false then S=fan(myrays,mylinspace,mymaximalcones)
 	    else (
 		fVector := P#"FVector";
-		while (#fVector < P#"Dim"+1) do (fVector = {0}|fVector);
-		S=fanFromGfan({myrays,mylinspace,mymaximalcones,P#"Dim",P#"Pure",P#"Simplicial",fVector});
+		
+		dimfan := if P#?"Dim"==false then  length(fVector)+P#"LinealityDim"-1 else P#"Dim";
+		while (#fVector < dimfan+1) do (fVector = {0}|fVector);
+		isPureSet := P#?"Pure";
+		puremanual:= if not isPureSet then false else P#"Pure";
+		isSimplicialSet := P#?"Simplicial";
+		simplicialmanual := if not isSimplicialSet then false else P#"Simplicial";
+		
+		S=fanFromGfan({myrays,mylinspace,mymaximalcones,dimfan,puremanual,simplicialmanual,fVector});
+		
+		-- if not isPureSet then remove(S.cache,symbol pure);
+		-- if not isSimplicialSet then remove(S.cache,symbol simplicial);
 	    );	    
 
 	    --re-writing the  multiplicities according to the new order of maximal cones 
@@ -2366,8 +2376,8 @@ gfanTropicalPrevariety (List) :=  opts -> (L) -> (
     (ringMap,newL) := gfanConvertToNewRing(L);
     L = newL;
     input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
-    s:=runGfanCommand("gfan _tropicalprevariety",opts,input)
-
+    s:=runGfanCommand("gfan _tropicalprevariety",opts,input);
+    return gfanParsePolyhedralFan s
 )
 
 
@@ -4542,7 +4552,7 @@ doc///
 	 assert(maxCones(C) === {{0, 1}, {0, 2}, {1, 3}, {2, 3}})
 	 ///
 
-	-- TEST gfanFanLink
+	-- TEST gfanFanLinkFanPro
 	 TEST ///
 	 QQ[x,y];
 	 F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
@@ -4568,27 +4578,26 @@ doc///
          ///
          
 	-- TEST gfanFanProduct
--- 	TEST ///
--- 	 QQ[x,y];
--- 	 F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
--- 	 G = gfanToPolyhedralFan {markedPolynomialList{{y^2}, {x+y^2}}};
--- 	 C = gfanFanProduct(F,G);
---Problem is that gfanFanProduct returns two lists.	 
--- 	 assert(rank(target(rays(C))) === 4)
--- 	 assert(dim(C) === 4)
--- 	 assert isSimplicial(C)
--- 	 assert(rank(linealitySpace(C)) === 2)
--- 	 assert(rank(source(rays(C)) === 2)
---  	 assert(rays(C) === transpose matrix {{0, 0, -1, 2}, {1, -1, 0, 0}})
--- 	 assert(maxCones(C) === {{0, 1}})
--- 	 assert(linealitySpace(C) === {{1, 1, 0, 0}, {0, 0, 2, 1}})
---	 ///
+ 	TEST ///
+ 	 QQ[x,y];
+ 	 F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
+ 	 G = gfanToPolyhedralFan {markedPolynomialList{{y^2}, {x+y^2}}};
+ 	 C = gfanFanProduct(F,G); 
+ 	 assert(rank(target(rays(C#0))) === 4);
+ 	 assert(dim(C#0) === 4);
+ 	 assert isSimplicial(C#0);
+ 	 assert(rank(linealitySpace(C#0)) === 2);
+ 	 assert(rank(source(rays(C#0))) === 2);
+  	 assert(rays(C#0) === transpose matrix {{1, -1, 0, 0},{0, 0, -1, 2}});
+ 	 assert(maxCones(C#0) === {{0, 1}});
+ 	  assert(linealitySpace(C#0) === transpose matrix {{1, 1, 0, 0}, {0, 0, 2, 1}});
+	 ///
 	
 	-- TEST gfanGroebnerCone
 	TEST ///
 	  QQ[x,y];
 	  C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}} )
---	  assert(set C#"IMPLIED_EQUATIONS" === set {})
+	-- assert(set C#"IMPLIED_EQUATIONS" === set {})
 	  assert(rank target rays C  === 2)
 	-- assert(C#"RELATIVE_INTERIOR_POINT" === {1, 0})
 	  assert(linealitySpace(C) === transpose matrix {{1, 1}})
