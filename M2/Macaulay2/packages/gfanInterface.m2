@@ -93,6 +93,8 @@ export {
         "gfanPadicInitialIdeal"
 }
 
+importFrom(Polyhedra,{"pure","simplicial"})
+
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
 -- for backward compatibility
 if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
@@ -525,8 +527,8 @@ gfanParsePolyhedralFan String := o -> s -> (
 		
 		S=fanFromGfan({myrays,mylinspace,mymaximalcones,dimfan,puremanual,simplicialmanual,fVector});
 		
-		-- if not isPureSet then remove(S.cache,symbol pure);
-		-- if not isSimplicialSet then remove(S.cache,symbol simplicial);
+		 if not isPureSet then remove(S.cache,symbol pure);
+		 if not isSimplicialSet then remove(S.cache,symbol simplicial);
 	    );	    
 
 	    --re-writing the  multiplicities according to the new order of maximal cones 
@@ -4487,15 +4489,16 @@ doc///
 	  S = gfan({x^2*y -y^2, y^2*x - x^2}, "symmetry" => {{0,1,2}, {1,0,2}})
 	  assert(#S == 2)
 
-	  G = gfan(markedPolynomialList {{y^5, x*y^2, x^2},{y^5-y^2,x*y^2 - y^4, x^2 -y^4}}, "g" => true)
-	  Gprime = {
-	  	markedPolynomialList {{y^5,x*y^2,x^2},{y^5-y^2,-y^4+x*y^2,-y^4+x^2}},
-	  	markedPolynomialList {{y^4,x*y^2,x^2*y,x^3},{y^4-x^2,x*y^2-x^2,x^2*y-y^2,x^3-y^3}},
-	 	markedPolynomialList {{y^3,x*y^2,x^2*y,x^4},{-x^3+y^3,x*y^2-x^2,x^2*y-y^2,x^4-y^2}},
-	 	markedPolynomialList {{y^2,x^2*y,x^5},{-x^4+y^2,-x^4+x^2*y,x^5-x^2}}
-	 }
-         equalMPL = (A,B) -> set transpose A === set transpose B
-         equalListMPL = (As, Bs) -> (
+--	  G = gfan(markedPolynomialList {{y^5, x*y^2, x^2},{y^5-y^2,x*y^2 - y^4, x^2 -y^4}}, "g" => true)
+--	  Gprime = {
+--	  	markedPolynomialList {{y^5,x*y^2,x^2},{y^5-y^2,-y^4+x*y^2,-y^4+x^2}},
+--	  	markedPolynomialList {{y^4,x*y^2,x^2*y,x^3},{y^4-x^2,x*y^2-x^2,x^2*y-y^2,x^3-y^3}},
+--	 	markedPolynomialList {{y^3,x*y^2,x^2*y,x^4},{-x^3+y^3,x*y^2-x^2,x^2*y-y^2,x^4-y^2}},
+--	 	markedPolynomialList {{y^2,x^2*y,x^5},{-x^4+y^2,-x^4+x^2*y,x^5-x^2}}
+--	 }
+--       equalMPL = (A,B) -> set transpose A === set transpose B
+
+--      equalListMPL = (As, Bs) -> (
             if #As =!= #Bs then return false;
             remaining := Bs;
             all(As, a -> (
