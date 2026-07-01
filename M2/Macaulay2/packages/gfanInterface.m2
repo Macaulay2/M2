@@ -4725,8 +4725,16 @@ doc///
 	 ///
 	--
 	-- -- TEST gfanSecondaryFan
-	-- TEST ///
-	-- F = gfanSecondaryFan {{1,0},{1,1}, {1,2}, {1,2}}
+--	  TEST ///
+--To do - do both this test and the one afterwards with a repeated ray.
+--The math of this needs to be checked (the asserts are from previous authors)
+-- The issue is checking that the rays are what we expect in these cases, as gfan
+--choose rays in the othogonal space to the lineality space
+--	  F = gfanSecondaryFan {{1,0},{1,1}, {1,2}, {1,3}}
+--       	  assert(fVector(F) === {1, 4, 4})
+--FIXME
+	--
+--	F = gfanSecondaryFan {{1,0},{1,1}, {1,2}, {1,2}}
 	-- assert(F#"AMBIENT_DIM" ===  4)
 	-- assert(F#"MAXIMAL_CONES" == {{0, 1}, {0, 2}, {1, 3}, {2, 3}})
 	-- assert(F#"SIMPLICIAL" === true)
@@ -4734,14 +4742,13 @@ doc///
 	-- assert(F#"RAYS" == {{-2, 4, -1, -1}, {1, -2, -5, 6}, {1, -2, 6, -5}, {2, -4, 1, 1}})
 	-- assert(F#"ORTH_LINEALITY_SPACE" == {{1, -2, 0, 1}, {0, 0, 1, -1}})
 	-- assert(F#"CONES" == {{}, {0}, {1}, {2}, {3}, {0, 1}, {0, 2}, {1, 3}, {2, 3}})
-	-- assert(F#"LINEALITY_SPACE" == {{1, 0, -1, -1}, {0, 1, 2, 2}})
 	-- assert(F#"PURE" === true)
 	-- assert(F#"LINEALITY_DIM" === 2)
-	-- assert(F#"N_RAYS" === 4)
-	-- assert(F#"F_VECTOR" == {1, 4, 4})
+
 	-- ///
 	--
-	-- -- TEST gfanStats
+
+-- TEST gfanStats
 	-- TEST ///
 	TEST ///
         QQ[x,y,z];
