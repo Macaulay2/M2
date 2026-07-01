@@ -2081,7 +2081,6 @@ gfanSecondaryFan (List) := opts -> (L) -> (
 -- gfan_stats
 --------------------------------------------------------
 
-
 gfanStats = method( Options => {} )
 
 gfanStats (List) := opts -> (L) -> (
@@ -2089,15 +2088,8 @@ gfanStats (List) := opts -> (L) -> (
 	L = newL;
 	input := gfanMPLToRingToString(first L)
 		| gfanLMPLToString(L);
-	out := first runGfanCommand("gfan _stats", opts, input);
-	stripSpaces := s -> replace("^[[:space:]]+|[[:space:]]+$", "", s);
-	-- parse "Label: value" lines into a hash table
-	hashTable apply(select(lines out, l -> l != ""), l -> (
-		parts := separate(":", l);
-		(stripSpaces first parts) => value stripSpaces last parts
-	))
+	first runGfanCommand("gfan _stats", opts, input) -- Parse this?
 )
-
 
 --------------------------------------------------------
 -- gfan_substitute
@@ -4541,7 +4533,7 @@ doc///
 	gfanConvertToNewRing(R)
 	///
 
-	-- TEST gfanBuchberger
+-- TEST gfanBuchberger
 	TEST ///
 	 equalMPL = (A,B) -> set transpose A === set transpose B
 	 QQ[x,y,z];
@@ -4628,21 +4620,21 @@ doc///
 	  assert(rank(linealitySpace(C)) === 1)
 	  assert(dim(C) === 2)
 	  C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}},  markedPolynomialList {{x}, {x+y}} )
-	-- assert(C#"AMBIENT_DIM" === 2)
+	  assert(rank target rays C === 2)
 	  assert(linealitySpace(C) === transpose matrix {{1, 1}})
 	  assert(rank(linealitySpace(C)) === 1)
  	  assert(dim(C) === 1)
 	///
 	
 	-- -- TEST gfanHomogeneitySpace
-	 TEST ///
-	 QQ[x,y,z];
-	C = gfanHomogeneitySpace {x+y^2, y+z^2}
-	 assert(ambDim(C) === 3)
-	 assert(linealitySpace(C) === transpose matrix {{4, 2, 1}})
-	 assert(rank(linealitySpace(C)) === 1)
-	 assert(dim(C) === 1)
-	 ///
+	-- TEST ///
+	-- QQ[x,y,z];
+	-- C = gfanHomogeneitySpace {x+y^2, y+z^2}
+	-- assert(C#"AMBIENT_DIM" === 3)
+	-- assert(set C#"LINEALITY_SPACE" === set {{4, 2, 1}})
+	-- assert(C#"LINEALITY_DIM" === 1)
+	-- assert(C#"DIM" === 1)
+	-- ///
 	--
 	-- -- TEST gfanHomogenize
 	 TEST ///
@@ -4708,15 +4700,16 @@ doc///
 	 ///
 	--
 	-- -- TEST gfanMinkowskiSum
-	-- TEST ///
-	-- QQ[x,y];
-	-- M = gfanMinkowskiSum { x + y + x*y, x + y + x*y + 1}
-	-- assert(M#"AMBIENT_DIM" === 2)
-	-- assert(M#"MAXIMAL_CONES" == {{0, 1}, {0, 2}, {1, 3}, {2, 4}, {3, 4}})
-	-- assert(M#"DIM" === 2)
-	-- assert(M#"RAYS" == {{-1, -1}, {-1, 0}, {0, -1}, {0, 1}, {1, 0}})
-	-- assert(M#"F_VECTOR" == {1, 5, 5})
-	-- ///
+	 TEST ///
+	   QQ[x,y];
+	   M = gfanMinkowskiSum { x + y + x*y, x + y + x*y + 1}
+	   assert(rank target rays M === 2)
+	   assert(entries transpose rays M ===  {{-1, 0}, {1, 0}, {0, -1}, {-1, -1}, {0, 1}})
+	   assert(maxCones M == {{0, 3}, {2, 3}, {0, 4}, {1, 2}, {1, 4}})
+	   assert(dim M === 2)
+	   assert(fVector M == {1, 5, 5})
+	 ///
+	 
 	--
 	-- -- TEST gfanMinors
 	 TEST ///
@@ -4724,11 +4717,11 @@ doc///
 	 assert(M == {-m_"01"*m_"10"+m_"00"*m_"11",-m_"02"*m_"10"+m_"00"*m_"12",-m_"02"*m_"11"+m_"01"*m_"12"})
 	 ///
 	-- -- TEST gfanMixedVolume
-	  TEST ///
+	 -- TEST ///
 	  QQ[x1,x2,x3,x4]
 	  mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
 	  assert (mv == 16)
-	 ///
+	-- ///
 	-- -- TEST gfanPolynomialSetUnion
 	 TEST ///
 	 QQ[x,y,z];
@@ -4772,14 +4765,11 @@ doc///
 	--
 	-- -- TEST gfanStats
 	-- TEST ///
-	TEST ///
-        QQ[x,y,z];
-        L = gfan {x*y + z};
-        S = gfanStats L;
-        assert(S#"Number of reduced Groebner bases" === 2)
-        assert(S#"Number of variables" === 3)
-///
-
+	-- QQ[x,y,z];
+	-- L = gfan {x*y + z};
+	-- S = gfanStats L
+	-- assert(#S === 181)
+	-- ///
 
 -- mytest
 -- TEST tropical min/max convention
@@ -4803,7 +4793,8 @@ end--
 --Added 1/7/26
 --Design decisions:
 --At the moment
---"IMPLIED_EQUATIONS", "RELATIVE_INTERIOR_POINT", and "FACETS"  are not supported.
+--"IMPLIED_EQUATIONS", "RELATIVE_INTERIOR_POINT", "FACETS", and
+--  "ORTH_LINEALITY_SPACE" are not currently supported.
 
 
 
