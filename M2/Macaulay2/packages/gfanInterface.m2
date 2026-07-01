@@ -4627,14 +4627,14 @@ doc///
 	///
 	
 	-- -- TEST gfanHomogeneitySpace
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- C = gfanHomogeneitySpace {x+y^2, y+z^2}
-	-- assert(C#"AMBIENT_DIM" === 3)
-	-- assert(set C#"LINEALITY_SPACE" === set {{4, 2, 1}})
-	-- assert(C#"LINEALITY_DIM" === 1)
-	-- assert(C#"DIM" === 1)
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	C = gfanHomogeneitySpace {x+y^2, y+z^2}
+	 assert(ambDim(C) === 3)
+	 assert(linealitySpace(C) === transpose matrix {{4, 2, 1}})
+	 assert(rank(linealitySpace(C)) === 1)
+	 assert(dim(C) === 1)
+	 ///
 	--
 	-- -- TEST gfanHomogenize
 	 TEST ///
