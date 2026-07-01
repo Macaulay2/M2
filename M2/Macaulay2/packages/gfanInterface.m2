@@ -4615,34 +4615,25 @@ doc///
 	TEST ///
 	  QQ[x,y];
 	  C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}} )
-	-- assert(set C#"IMPLIED_EQUATIONS" === set {})
 	  assert(rank target rays C  === 2)
-	-- assert(C#"RELATIVE_INTERIOR_POINT" === {1, 0})
 	  assert(linealitySpace(C) === transpose matrix {{1, 1}})
 	  assert(rank(linealitySpace(C)) === 1)
 	  assert(dim(C) === 2)
-	-- assert(set C#"FACETS" === set {{1,-1}})
-	-- C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}},  markedPolynomialList {{x}, {x+y}} )
-	-- assert(set C#"IMPLIED_EQUATIONS" === set {{1, -1}})
+	  C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}},  markedPolynomialList {{x}, {x+y}} )
 	-- assert(C#"AMBIENT_DIM" === 2)
-	-- assert(C#"RELATIVE_INTERIOR_POINT" === {0, 0})
-	-- assert(set C#"LINEALITY_SPACE" === set {{1, 1}})
-	-- assert(C#"LINEALITY_DIM" === 1)
-	-- assert(C#"DIM" === 1)
-	-- assert(set C#"FACETS" === set {})
+	  assert(linealitySpace(C) === transpose matrix {{1, 1}})
+	  assert(rank(linealitySpace(C)) === 1)
+ 	  assert(dim(C) === 1)
 	///
 	
 	-- -- TEST gfanHomogeneitySpace
 	-- TEST ///
 	-- QQ[x,y,z];
 	-- C = gfanHomogeneitySpace {x+y^2, y+z^2}
-	-- assert(set C#"IMPLIED_EQUATIONS" === set {{1, 0, -4}, {0, 1, -2}})
 	-- assert(C#"AMBIENT_DIM" === 3)
-	-- assert(C#"RELATIVE_INTERIOR_POINT" === {0, 0, 0})
 	-- assert(set C#"LINEALITY_SPACE" === set {{4, 2, 1}})
 	-- assert(C#"LINEALITY_DIM" === 1)
 	-- assert(C#"DIM" === 1)
-	-- assert(set C#"FACETS" === set {})
 	-- ///
 	--
 	-- -- TEST gfanHomogenize
@@ -4797,6 +4788,15 @@ doc///
 --///
 
 end--
+
+--Added 1/7/26
+--Design decisions:
+--At the moment
+--"IMPLIED_EQUATIONS", "RELATIVE_INTERIOR_POINT", and "FACETS"  are not supported.
+
+
+
+
 
 restart
 --path = prepend(".",path)
