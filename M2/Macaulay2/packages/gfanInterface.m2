@@ -107,8 +107,6 @@ fig2devProgram = null
 
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
---minmax switch disabled
--- gfanTropicalMin = not gfanInterface#Options#Configuration#"tropicalMax"
 
 GfanTypes = {
 	{	"sym" => "AmbientDim",
@@ -458,8 +456,6 @@ multiplicitiesReorder (List):=(L)->(
 
 
 
---minmax switch is now disabled
---gfanParsePolyhedralFan = method(TypicalValue => PolyhedralObject, Options => {"GfanFileName" => null, "TropicalMinConventionApplies" => false })
 
 gfanParsePolyhedralFan = method(TypicalValue => PolyhedralObject, Options => {"GfanFileName" => null})
 gfanParsePolyhedralFan String := o -> s -> (
@@ -472,27 +468,6 @@ gfanParsePolyhedralFan String := o -> s -> (
 	rawBlocks := new MutableHashTable from apply(blocks, P -> first P => P#1);
 	parsedBlocks := apply(select(blocks, Q -> last Q =!= null), P -> GfanNameToPolyhedralName#(first P) => last P);
 	myhash := new MutableHashTable from parsedBlocks;
-
---minmax switch disabled
---	if gfanTropicalMin and o#"TropicalMinConventionApplies" then (
---		--print("tropical min convention invoked while parsing polyhedral fan");
---
---	-- adjust the fan
---		myhash#"Rays" = apply(myhash#"Rays", ray-> -ray);
---
---	-- adjust rawBlocks
---		myList := {"RAYS"};
---		apply(length myhash#"Rays", i -> (
---			myVector := between(" ", apply(myhash#"Rays"#i, coord -> toString(coord)));
---			myString := concatenate(myVector) | "  # " | toString(i);
---			myList = append(myList, myString);
---		));
---		rawBlocks#"RAYS" = myList;
---
---	-- adjust raw-string
---			myBlocks := prepend(header, values rawBlocks);
---			s = concatenate between("\n\n", apply(myBlocks, lines -> between("\n", lines)));
---	);
 	P := new gfanParseHeader(header) from myhash;
    	if gfanCachePolyhedralOutput then (
 
@@ -2195,8 +2170,6 @@ gfanTropicalBruteForce List := opts -> (L) -> (
 	output := runGfanCommand("gfan _tropicalbruteforce", opts, input);
 	--check if fan is empty
 	if (#select("empty",output#0)==1) then return "error: this fan is empty";
---minmax switch disabled
---	gfanParsePolyhedralFan append(output, "TropicalMinConventionApplies" => true)
 	gfanParsePolyhedralFan output
 )
 
@@ -2462,9 +2435,6 @@ gfanTropicalTraverse (List) := opts -> (L) -> (
 	output := runGfanCommand("gfan _tropicaltraverse", opts, input);
 	--check if the returned fan is empty
 	if(length(output#0)==0) then return "error: this fan is empty";
-	
---minmax switch disabled
---	gfanParsePolyhedralFan append(output, "TropicalMinConventionApplies" => true )
 	gfanParsePolyhedralFan output
 	
 )
@@ -4781,23 +4751,6 @@ doc///
         assert(S#"Number of variables" === 3)
 ///
 
-
--- mytest
--- TEST tropical min/max convention
---this test is obsolete as minmax switch is now disabled
---TEST /// -- by default the convention should be TROPICAL-MIN
---  QQ[x,y,z];
--- loadPackage("gfanInterface", Reload=>true, Configuration=>{ "tropicalMax"=> false });  
---  fan1 = gfanTropicalTraverse gfanTropicalStartingCone ideal(x+y+z);
---  assert( member({2,-1,-1}, fan1#"Rays"));
---///
-
---TEST /// -- alternatively TROPICAL-MAX can be specified on loading the package
---  QQ[x,y,z];
---  loadPackage("gfanInterface", Reload=>true, Configuration=>{ "tropicalMax"=> true });
---  fan1 = gfanTropicalTraverse gfanTropicalStartingCone ideal(x+y+z);
--- assert( member({-2,1,1}, fan1#"Rays"));
---///
 
 end--
 
