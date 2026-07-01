@@ -111,12 +111,13 @@ void FractionField::simplify(frac_elem *f) const
   if (use_gcd_simplify)
     {
       y = f->denom;
-      if (R_->is_equal(y, R_->one())) return;
-      x = f->numer;
-      const RingElement *a = RingElement::make_raw(R_, x);
-      const RingElement *b = RingElement::make_raw(R_, y);
-      const RingElement *c = rawGCDRingElement(a, b, nullptr, false);
-      if (!c) return;
+      if (!R_->is_equal(y, R_->one()))
+        {
+          x = f->numer;
+          const RingElement *a = RingElement::make_raw(R_, x);
+          const RingElement *b = RingElement::make_raw(R_, y);
+          const RingElement *c = rawGCDRingElement(a, b, nullptr, false);
+          if (!c) return;
 
 #if 0
       // Debugging code
@@ -131,10 +132,11 @@ void FractionField::simplify(frac_elem *f) const
             o << newline;
             emit(o.str());
 #endif
-      if (!R_->is_equal(c->get_value(), R_->one()))
-        {
-          f->numer = R_->divide(f->numer, c->get_value());
-          f->denom = R_->divide(f->denom, c->get_value());
+          if (!R_->is_equal(c->get_value(), R_->one()))
+            {
+              f->numer = R_->divide(f->numer, c->get_value());
+              f->denom = R_->divide(f->denom, c->get_value());
+            }
         }
       // Now, let's take the content of the denominator, and divide the
       // numerator
