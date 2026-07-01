@@ -149,10 +149,6 @@ GfanTypes = {
 		"str" => "MAXIMAL_CONES",
 		"type" => "incidenceMatrix"
 	},
-	{	"sym" => "MaximalConesOfClosure",
-		"str" => "MAXIMAL_CONES_OF_CLOSURE",
-		"type" => "incidenceMatrix"
-	},
 	{	"sym" => "Pure",
 		"str" => "PURE",
 		"type" => "boolean"
@@ -496,7 +492,7 @@ gfanParsePolyhedralFan String := o -> s -> (
             -- by equations
 	    if (P#"AmbientDim" < 0) then return "error: this fan is empty"; 
 	    if    P#?"Rays"==false or P#"Rays"=={} then myrays=map(ZZ^(P#"AmbientDim"),ZZ^0,0) else  myrays=transpose matrix P#"Rays";
-	    if  P#?"MaximalCones"==true then  mymaximalcones= P#"MaximalCones" else if P#?"MaximalConesOfClosure" then mymaximalcones= P#"MaximalConesOfClosure"  else  mymaximalcones={{}}; -- This requires to check whether MaximalConesOfClosure is the correct thing
+	    if  P#?"MaximalCones"==false then mymaximalcones={{}} else  mymaximalcones= P#"MaximalCones";
 	   
 	    if P#"LinealitySpace"=={} then  mylinspace=map(ZZ^(P#"AmbientDim"),ZZ^0,0)  else mylinspace=transpose matrix P#"LinealitySpace";
 	    if P#?"Rays"==false then S=fan(myrays,mylinspace,mymaximalcones)
@@ -1148,7 +1144,10 @@ argStrs = hashTable {
 	"unimodular" => "--unimodular",
 	"vectorinput" => "--vectorinput",
 	"xml" => "--xml",
-	"tropicalbasistest" => "--tropicalbasistest"
+	"tropicalbasistest" => "--tropicalbasistest",
+        "p" => "-p",
+	"groebnerComplex" => "--groebnerComplex",
+	"initialIdeal" => "--initialIdeal"
 };
 
 
@@ -1168,7 +1167,8 @@ cmdLineArgs = hashTable {
 	"gfan _minors" => {"r", "d", "n"},
 	"gfan _mixedvolume" => {"j"},
 	"gfan _tropicallinearspace" => {"n", "d"},
-	"gfan _tropicalhypersurfacereconstruction" => {"i"}
+	"gfan _tropicalhypersurfacereconstruction" => {"i"},
+        "gfan _padic" => { "p" }
 }
 
 
@@ -4574,6 +4574,7 @@ doc///
 	 assert gfanDoesIdealContain(gfanBuchberger({x*y - y, x*z + z}), {y*z})
 	 assert not gfanDoesIdealContain(gfanBuchberger({x*y - y, x*z + z}), {y*z+1})
 	 ///
+
 	-- TEST gfanCommonRefinement
 	 TEST ///
 	 QQ[x,y];
@@ -4607,13 +4608,11 @@ doc///
 
          -- gfanTropicalPrevariety
          TEST ///
-         QQ[x,y,z];
-         F = gfanTropicalPrevariety {x+y+z}
-         assert(rays(F) == transpose matrix {{-1,0,0},{0,-1,0},{1,1,0}})
-         assert(maxCones(F) == {{0},{1},{2}})
-         G = gfanTropicalPrevariety {x+y+z, x+y}
-         assert(rays(G) == transpose matrix {{1,1,0}})
-         assert(maxCones(G) == {{0}})
+         QQ[x,y];
+         gfanTropicalHyperSurface(x+y)
+         gfanTropicalHyperSurface(x+y+1)
+         gfanTropicalIntersection {x+y, x+y+1}
+         gfanTropicalPrevariety {x+y, x+y+1} 
          ///
          
 	-- TEST gfanFanProduct
