@@ -1908,22 +1908,19 @@ maximalConesFromList List := cones -> (
 ------------------------------
 -- gfan_mixedvolume
 --------------------------------------------------------
-
 gfanMixedVolume = method( Options => {
-	"j" => 1 --Number of threads used
-	}
+        "j" => 1 --Number of threads used
+        }
 )
-
 gfanMixedVolume (List) := opts -> (L) -> (
-	if #L == 0 then
-		return;
-		
-	L = (gfanConvertToNewRing(L))#1;
-	input := gfanRingToString(ring L#0) | gfanPolynomialListToString(L);
-
-	(runGfanCommand("gfan _mixedvolume", opts, input))#0
+    if #L == 0 then
+        return;
+    L = (gfanConvertToNewRing(L))#1;
+    input := gfanRingToString(ring L#0) | gfanPolynomialListToString(L);
+    out := (runGfanCommand("gfan _mixedvolume", opts, input))#0;
+    ls := select(lines out, l -> l =!= "");
+    value last ls
 )
-
 
 
 --------------------------------------------------------
@@ -4486,7 +4483,6 @@ doc///
 --- functions with missing hashvalues: groebnerCone, HomogeneitySpace, MinkowskiSum, SecondaryFan, 
 -- functions with wrong output datatype: MixedVolume (string instead of int)
 -- math q: Stats.
---  Need to test ==
 
 
 --        TEST gfan
@@ -4729,9 +4725,9 @@ doc///
 	 ///
 	-- -- TEST gfanMixedVolume
 	 -- TEST ///
-	 -- QQ[x1,x2,x3,x4]
-	 -- mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
-	 -- assert (mv == 16)
+	  QQ[x1,x2,x3,x4]
+	  mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
+	  assert (mv == 16)
 	-- ///
 	-- -- TEST gfanPolynomialSetUnion
 	 TEST ///
