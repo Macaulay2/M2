@@ -4483,6 +4483,7 @@ doc///
 --- functions with missing hashvalues: groebnerCone, HomogeneitySpace, MinkowskiSum, SecondaryFan, 
 -- functions with wrong output datatype: MixedVolume (string instead of int)
 -- math q: Stats.
+--  Need to test ==
 
 
 --        TEST gfan
