@@ -2081,6 +2081,7 @@ gfanSecondaryFan (List) := opts -> (L) -> (
 -- gfan_stats
 --------------------------------------------------------
 
+
 gfanStats = method( Options => {} )
 
 gfanStats (List) := opts -> (L) -> (
@@ -2088,8 +2089,15 @@ gfanStats (List) := opts -> (L) -> (
 	L = newL;
 	input := gfanMPLToRingToString(first L)
 		| gfanLMPLToString(L);
-	first runGfanCommand("gfan _stats", opts, input) -- Parse this?
+	out := first runGfanCommand("gfan _stats", opts, input);
+	stripSpaces := s -> replace("^[[:space:]]+|[[:space:]]+$", "", s);
+	-- parse "Label: value" lines into a hash table
+	hashTable apply(select(lines out, l -> l != ""), l -> (
+		parts := separate(":", l);
+		(stripSpaces first parts) => value stripSpaces last parts
+	))
 )
+
 
 --------------------------------------------------------
 -- gfan_substitute
@@ -4627,14 +4635,14 @@ doc///
 	///
 	
 	-- -- TEST gfanHomogeneitySpace
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- C = gfanHomogeneitySpace {x+y^2, y+z^2}
-	-- assert(C#"AMBIENT_DIM" === 3)
-	-- assert(set C#"LINEALITY_SPACE" === set {{4, 2, 1}})
-	-- assert(C#"LINEALITY_DIM" === 1)
-	-- assert(C#"DIM" === 1)
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	C = gfanHomogeneitySpace {x+y^2, y+z^2}
+	 assert(ambDim(C) === 3)
+	 assert(linealitySpace(C) === transpose matrix {{4, 2, 1}})
+	 assert(rank(linealitySpace(C)) === 1)
+	 assert(dim(C) === 1)
+	 ///
 	--
 	-- -- TEST gfanHomogenize
 	 TEST ///
@@ -4717,11 +4725,11 @@ doc///
 	 assert(M == {-m_"01"*m_"10"+m_"00"*m_"11",-m_"02"*m_"10"+m_"00"*m_"12",-m_"02"*m_"11"+m_"01"*m_"12"})
 	 ///
 	-- -- TEST gfanMixedVolume
-	 -- TEST ///
+	  TEST ///
 	  QQ[x1,x2,x3,x4]
 	  mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
 	  assert (mv == 16)
-	-- ///
+	 ///
 	-- -- TEST gfanPolynomialSetUnion
 	 TEST ///
 	 QQ[x,y,z];
@@ -4765,11 +4773,14 @@ doc///
 	--
 	-- -- TEST gfanStats
 	-- TEST ///
-	-- QQ[x,y,z];
-	-- L = gfan {x*y + z};
-	-- S = gfanStats L
-	-- assert(#S === 181)
-	-- ///
+	TEST ///
+        QQ[x,y,z];
+        L = gfan {x*y + z};
+        S = gfanStats L;
+        assert(S#"Number of reduced Groebner bases" === 2)
+        assert(S#"Number of variables" === 3)
+///
+
 
 -- mytest
 -- TEST tropical min/max convention
