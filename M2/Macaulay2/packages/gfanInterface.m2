@@ -1147,6 +1147,7 @@ argStrs = hashTable {
 	"trees" => "--trees",
 	"unimodular" => "--unimodular",
 	"vectorinput" => "--vectorinput",
+	"matrixoutput" => "--matrixoutput",
 	"xml" => "--xml",
 	"tropicalbasistest" => "--tropicalbasistest",
         "p" => "-p",
@@ -2363,7 +2364,10 @@ gfanTropicalMultiplicity (List) := opts -> (L) -> (
 -- gfan_tropicalprevariety
 --------------------------------------------------------
 
-gfanTropicalPrevariety = method(Options => {})
+gfanTropicalPrevariety = method(Options => {
+	"matrixoutput" => false
+	}
+)
 
 
 gfanTropicalPrevariety (List) :=  opts -> (L) -> (
@@ -2371,6 +2375,11 @@ gfanTropicalPrevariety (List) :=  opts -> (L) -> (
     L = newL;
     input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
     s:=runGfanCommand("gfan _tropicalprevariety",opts,input);
+    -- with --matrixoutput gfan prints each half-open cone as an ambient dimension
+    -- and three matrices (nonstrict inequalities, equations, strict inequalities)
+    -- as raw nested lists (valid M2 syntax) rather than a polyhedral complex;
+    -- return them as a List
+    if opts#"matrixoutput" then return value first s;
     return gfanParsePolyhedralFan s
 )
 
@@ -4260,6 +4269,7 @@ doc ///
 	Key
 		gfanTropicalPrevariety
 		(gfanTropicalPrevariety, List)
+		[gfanTropicalPrevariety, "matrixoutput"]
 	Headline
 		the tropical prevariety of a list of polynomials
 	Usage
@@ -4267,6 +4277,10 @@ doc ///
 	Inputs
 		L:List
 			of polynomials
+		"matrixoutput" => Boolean
+			corresponding to the {\tt --matrixoutput} flag of {\tt gfan _tropicalprevariety}, which
+			outputs each half-open cone as an ambient dimension and three matrices (nonstrict
+			inequalities, equations, strict inequalities) instead of a polyhedral complex
 	Outputs
 		F:Fan
 			the tropical prevariety, i.e. the common refinement of the tropical hypersurfaces of the polynomials in {\tt L}
@@ -4277,15 +4291,35 @@ doc ///
 			hypersurfaces of the individual polynomials. Unlike the tropical
 			variety, the prevariety depends only on the given generators.
 
-				Mathematically this computes the same object as @TO gfanTropicalIntersection@,
-				namely the common refinement (intersection) of the tropical hypersurfaces of
-				the input polynomials. The two differ only in the underlying gfan method and
-				implementation.
+			Mathematically this computes the same object as @TO gfanTropicalIntersection@,
+			namely the common refinement (intersection) of the tropical hypersurfaces of
+			the input polynomials. The two differ only in the underlying gfan method and
+			implementation.
 
 		Example
 			QQ[x,y,z];
-			gfanTropicalPrevariety {x+y+z}
-			gfanTropicalPrevariety {x+y+z, x+y}
+			F = gfanTropicalPrevariety {x+y+z}; (rays F, maxCones F)
+			F = gfanTropicalPrevariety {x+y+z, x+y}; (rays F, maxCones F)
+                       
+		Text
+			When the {\tt "matrixoutput" => true} option is given, the {\tt --matrixoutput}
+			flag is passed to {\tt gfan}, and the raw nested-list data produced by {\tt gfan}
+			is returned as a @TO List@ instead of a @TO Fan@.
+
+			With this flag {\tt gfan} outputs each half-open cone as an ambient dimension
+			together with three matrices describing the nonstrict inequalities, the
+			equations, and the strict inequalities, instead of a polyhedral complex.
+			The returned @TO List@ is a list of such cones, each of the form
+			{\tt {d, N, E, S}} where {\tt d} is the ambient dimension and {\tt N}, {\tt E},
+			{\tt S} are lists of rows for the nonstrict inequalities, equations, and strict
+			inequalities, respectively. For example, the single cone
+			{\tt {2, {(0,1)}, {(1,-1)}, {}}} lives in ambient dimension {\tt 2} and is
+			cut out by the nonstrict inequality {\tt (0,1)}, the equation {\tt (1,-1)}, and no
+			strict inequalities.
+
+		Example
+			QQ[x,y,z];
+			gfanTropicalPrevariety({x+y+z, x+y}, "matrixoutput" => true)
 
 		Text
 			@STRONG "gfan Documentation"@
@@ -4664,6 +4698,9 @@ doc///
          G = gfanTropicalPrevariety {x+y+z, x+y}
          assert(rays(G) == transpose matrix {{1,1,0}})
          assert(maxCones(G) == {{0}})
+         M = gfanTropicalPrevariety({x+y+z, x+y}, "matrixoutput" => true)
+         assert(class M === List)
+         assert(M == {{2,{(0,1)},{(1,-1)},{}}})
          ///
          
 	-- TEST gfanFanProduct
