@@ -80,6 +80,13 @@ assert try (a/b; false) else true
 getNonUnit B
 isField B
 -----------------------------------------------------------------------------
+R = QQ[a,b]/(a*b-1)
+F = frac R
+assert(numerator(1/b) == a)
+assert(denominator(1/b) == 1_R)
+assert(lift(1/b,R) == a)
+assert(lift((b+1)/b,R) == a+1)
+-----------------------------------------------------------------------------
 A = ZZ/101[a,b]/(a*b)
 L = toField A
 assert try (1/(a+b); false) else true

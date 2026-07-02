@@ -60,6 +60,20 @@ local_elem *LocalRing::make_elem(ring_elem a, ring_elem b) const
 
 local_elem *LocalRing::new_local_elem() const { return newitem(local_elem); }
 
+bool LocalRing::simplify_unit_denominator(local_elem *f) const
+{
+  if (mRing->is_equal(f->denom, mRing->one())) return true;
+  if (!mRing->is_unit(f->denom)) return false;
+
+  ring_elem denom_inverse = mRing->invert(f->denom);
+  ring_elem numer = mRing->mult(f->numer, denom_inverse);
+  mRing->remove(f->numer);
+  mRing->remove(f->denom);
+  f->numer = numer;
+  f->denom = mRing->one();
+  return true;
+}
+
 bool LocalRing::is_in_prime(const ring_elem f) const
 {
   MatrixConstructor mat(mRing->make_FreeModule(1), 1);
@@ -73,6 +87,7 @@ bool LocalRing::is_in_prime(const ring_elem f) const
 void LocalRing::simplify(local_elem *f) const
 {
   ring_elem x, y;
+  if (simplify_unit_denominator(f)) return;
   if (use_gcd_simplify)
     {
       y = f->denom;
@@ -124,6 +139,7 @@ void LocalRing::simplify(local_elem *f) const
           f->numer = mRing->divide_by_given_content(f->numer, ct);
           f->denom = mRing->divide_by_given_content(f->denom, ct);
         }
+      simplify_unit_denominator(f);
     }
   else
     {
@@ -141,6 +157,7 @@ void LocalRing::simplify(local_elem *f) const
       mRing->remove(f->denom);
       f->numer = y;
       f->denom = x;
+      simplify_unit_denominator(f);
     }
 }
 
@@ -280,6 +297,12 @@ bool LocalRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
           result = mRing->copy(h->numer);
           return true;
         }
+      else if (mRing->is_unit(h->denom))
+        {
+          ring_elem hinv = mRing->invert(h->denom);
+          result = mRing->mult(hinv, h->numer);
+          return true;
+        }
       else
         {
           if (mRing->is_field())
@@ -317,12 +340,11 @@ bool LocalRing::promote(const Ring *Rf,
 
 bool LocalRing::from_rational(mpq_srcptr n, ring_elem &result) const
 {
-  local_elem *f = new_local_elem();
-  f->numer = mRing->from_int(mpq_numref(n));
-  f->denom = mRing->from_int(mpq_denref(n));
-  bool ok = not mRing->is_zero(f->denom);
-  if (ok) result = ring_elem(f);
-  return ok;
+  ring_elem numer = mRing->from_int(mpq_numref(n));
+  ring_elem denom = mRing->from_int(mpq_denref(n));
+  if (mRing->is_zero(denom)) return false;
+  result = ring_elem(make_elem(numer, denom));
+  return true;
 }
 
 ring_elem LocalRing::from_long(long n) const

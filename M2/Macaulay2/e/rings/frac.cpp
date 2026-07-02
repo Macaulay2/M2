@@ -9,6 +9,7 @@
 #include "groebner-computations/gbring.hpp"
 #include "ring-elements/ring-element.hpp"
 #include "rings/polyring.hpp"
+#include "rings/polyquotient.hpp"
 #include "exceptions.hpp"
 
 #define FRAC_VAL(f) (reinterpret_cast<frac_elem *>((f).poly_val))
@@ -99,6 +100,30 @@ ring_elem FractionField::set_non_unit_frac(ring_elem top) const
   return zero();
 }
 
+bool FractionField::simplify_unit_denominator(frac_elem *f) const
+{
+  if (R_->is_equal(f->denom, R_->one())) return true;
+
+  ring_elem denom_inverse;
+  if (dynamic_cast<const PolyRingQuotient *>(R_) != nullptr)
+    {
+      denom_inverse = R_->invert(f->denom);
+      if (R_->is_zero(denom_inverse)) return false;
+    }
+  else
+    {
+      if (!R_->is_unit(f->denom)) return false;
+      denom_inverse = R_->invert(f->denom);
+    }
+
+  ring_elem numer = R_->mult(f->numer, denom_inverse);
+  R_->remove(f->numer);
+  R_->remove(f->denom);
+  f->numer = numer;
+  f->denom = R_->one();
+  return true;
+}
+
 ring_elem FractionField::fraction(const ring_elem top,
                                   const ring_elem bottom) const
 {
@@ -108,6 +133,7 @@ ring_elem FractionField::fraction(const ring_elem top,
 void FractionField::simplify(frac_elem *f) const
 {
   ring_elem x, y;
+  if (simplify_unit_denominator(f)) return;
   if (use_gcd_simplify)
     {
       y = f->denom;
@@ -161,6 +187,7 @@ void FractionField::simplify(frac_elem *f) const
           f->numer = R_->divide_by_given_content(f->numer, ct);
           f->denom = R_->divide_by_given_content(f->denom, ct);
         }
+      simplify_unit_denominator(f);
     }
   else
     {
@@ -178,6 +205,7 @@ void FractionField::simplify(frac_elem *f) const
       R_->remove(f->denom);
       f->numer = y;
       f->denom = x;
+      simplify_unit_denominator(f);
     }
 }
 
@@ -269,12 +297,11 @@ ring_elem FractionField::from_int(mpz_srcptr n) const
 
 bool FractionField::from_rational(mpq_srcptr n, ring_elem &result) const
 {
-  frac_elem *f = new_frac_elem();
-  f->numer = R_->from_int(mpq_numref(n));
-  f->denom = R_->from_int(mpq_denref(n));
-  bool ok = not R_->is_zero(f->denom);
-  if (ok) result = FRAC_RINGELEM(f);
-  return ok;
+  ring_elem numer = R_->from_int(mpq_numref(n));
+  ring_elem denom = R_->from_int(mpq_denref(n));
+  if (R_->is_zero(denom)) return false;
+  result = FRAC_RINGELEM(make_elem(numer, denom));
+  return true;
 }
 
 ring_elem FractionField::var(int v) const
@@ -340,6 +367,12 @@ bool FractionField::lift(const Ring *Rg,
       if (R_->is_equal(h->denom, R_->one()))
         {
           result = R_->copy(h->numer);
+          return true;
+        }
+      else if (R_->is_unit(h->denom))
+        {
+          ring_elem hinv = R_->invert(h->denom);
+          result = R_->mult(hinv, h->numer);
           return true;
         }
       else
