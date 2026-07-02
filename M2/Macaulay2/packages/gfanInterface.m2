@@ -2894,7 +2894,7 @@ doc ///
 		M:MarkedPolynomialList
 	Outputs
 		G:List
-			all @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner bases"}@ of {\tt I}, {\tt L}, or {\tt M}
+			all @TO2 {"MarkedPolynomialList", "marked reduced Groebner bases"}@ of {\tt I}, {\tt L}, or {\tt M}
 	Description
 		Text
 			This method produces all reduced Groebner
@@ -4161,6 +4161,11 @@ doc ///
 		Text
 			This method intersects a list of tropical hypersurfaces. The input is a list of polynomials whose tropicalizations give the hypersurfaces.
 
+				Mathematically this computes the same object as @TO gfanTropicalPrevariety@,
+				namely the common refinement (intersection) of the tropical hypersurfaces of
+				the input polynomials. The two differ only in the underlying gfan method and
+				implementation.
+
 		Example
 			QQ[x,y];
 			gfanTropicalHyperSurface(x+y)
@@ -4249,6 +4254,47 @@ doc ///
 			@STRONG "gfan Documentation"@
 
 			@gfanHelp "gfan _tropicalmultiplicity"@
+///
+
+doc ///
+	Key
+		gfanTropicalPrevariety
+		(gfanTropicalPrevariety, List)
+	Headline
+		the tropical prevariety of a list of polynomials
+	Usage
+		F = gfanTropicalPrevariety(L)
+	Inputs
+		L:List
+			of polynomials
+	Outputs
+		F:Fan
+			the tropical prevariety, i.e. the common refinement of the tropical hypersurfaces of the polynomials in {\tt L}
+	Description
+		Text
+			This method computes the tropical prevariety of a list of polynomials,
+			which is the intersection (common refinement) of the tropical
+			hypersurfaces of the individual polynomials. Unlike the tropical
+			variety, the prevariety depends only on the given generators.
+
+				Mathematically this computes the same object as @TO gfanTropicalIntersection@,
+				namely the common refinement (intersection) of the tropical hypersurfaces of
+				the input polynomials. The two differ only in the underlying gfan method and
+				implementation.
+
+		Example
+			QQ[x,y,z];
+			gfanTropicalPrevariety {x+y+z}
+			gfanTropicalPrevariety {x+y+z, x+y}
+
+		Text
+			@STRONG "gfan Documentation"@
+
+			@gfanHelp "gfan _tropicalprevariety"@
+	SeeAlso
+		gfanTropicalIntersection
+		gfanTropicalHyperSurface
+		gfanTropicalBasis
 ///
 
 doc ///
@@ -4403,7 +4449,7 @@ doc ///
 	Outputs
 	    	F:Fan 
 		G:List
-		        all @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner bases"}@ of {\tt I}.
+		        all @TO2 {"MarkedPolynomialList", "marked reduced Groebner bases"}@ of {\tt I}.
 		L:List
 	Description
 		Text
