@@ -157,7 +157,7 @@ B = QQ[x]/(x^2)
 N = B^1 ++ (B^1/(x))
 f = map(B,A)
 assert isModuleFinite f
-pN = pushFwd(f,N)
+pN = pushFwd(f,N, MinimalGenerators => true)
 assert(isFreeModule pN)
 assert(numgens pN == 3)
 ///
@@ -426,12 +426,10 @@ I = ideal {a, b};
 N = directSum(module I, module I^2);
 ns = N_{0..numgens N - 1}
 
--- without pruning
-o = new OptionTable from {NoPrune => true}
+o = new OptionTable from {MinimalGenerators => true}
 M = pushFwd(N, o)
 assert(ns - pushforward' pushforward(M, ns) == 0)
 
--- with pruning (default)
 M = pushFwd(N)
 assert(ns - pushforward' pushforward(M, ns) == 0)
 ///
@@ -446,8 +444,7 @@ I = ideal {a^2, b^2};
 N = directSum(I/I^2, I^2/I^3);
 ns = N_{0..numgens N - 1}
 
--- without pruning
-o = new OptionTable from {NoPrune => true}
+o = new OptionTable from {MinimalGenerators => true}
 M = pushFwd(N, o)
 assert(ns == pushforward' pushforward(M, ns))
 
@@ -465,8 +462,7 @@ x = random(1, F);
 N = cokernel matrix {x};
 ns = N_{0..numgens N - 1}
 
--- without pruning
-o = new OptionTable from {NoPrune => true}
+o = new OptionTable from {MinimalGenerators => true}
 M = pushFwd(N, o)
 assert(ns == pushforward' pushforward(M, ns))
 
@@ -478,12 +474,11 @@ assert(ns == pushforward' pushforward(M, ns))
 -- test 24
 TEST ///
 -- another skew commutative case that triggered a bug fix or two
-o = new OptionTable from {NoPrune => true}
 
 kk = ZZ/101
 S = kk[a..e, SkewCommutative => true];
 I = cokernel matrix {{a*b + c, d}}
-I' = pushFwd(I, o)
+I' = pushFwd I
 ms = I'_{0..numgens I' - 1}
 assert(ms == pushforward(I', pushforward' ms))
 ///
@@ -540,12 +535,13 @@ kk = ZZ/101
 R = kk[a..c]
 I = ideal vars R
 N = I^3/I^5
-M = pushFwd N
+M = pushFwd(N, MinimalGenerators => true)
 
 ns = N_{0..numgens N - 1}
 assert(ns == pushforward' pushforward(M, ns))
 
 ms = M_{0..numgens M - 1}
+-- puzzle: this equality fails if MinimalGenerators => true option is not used
 assert(ms == pushforward(M, pushforward' ms))
 ///
 
@@ -600,13 +596,15 @@ assert(r * 1_R^1 == pushforward' pushforward(f, r))
 
 -- test 30
 TEST ///
+-- require explicit module in multiple pushforward case
 kk = ZZ/101
 R = kk[a,b] / ideal {a^2 + 1, b^3 + a^2*b + 2}
 f = map(R, kk)
 M = first pushFwd R
 
+-- specifying ring map works
 assert(matrix a + b == pushforward' pushforward(f, a + b))
-M' = first pushFwd(R, NoPrune => true)
+M' = first pushFwd(R, MinimalGenerators => false)
 
 -- specifying explicit module
 assert(matrix {{a + b}} == pushforward' pushforward(M, a + b))
@@ -692,8 +690,72 @@ assert(pushforward' pushforward(N, 0_M) == 0_M)
 -- gaps in macaulay2.
 -- NONTEST - this should work but doesn't
 ///
--- field case
+
+-- the following test cases are all "bugs" that did not run successfully but
+-- have now been fixed.
+TEST ///
 kk = ZZ/101
-M = first pushFwd kk
-assert(M == module kk)
+A = kk[s,t]
+C = A[x,y,z]/(x^2, y^2, z^2)
+phi = map(C,A)
+f = map(C^1, A^4, phi, {{x,s*y,t*y, z}})
+ker f
+///
+
+TEST ///
+kk = ZZ/101
+A = kk[s,t]
+B = frac A
+C = B[x,y,z]/(x^2, y^2, z^2)
+phi = map(C,B)
+f = map(C^1, B^3, phi, {{x,s*y,z}})
+ker f
+///
+
+TEST ///
+s = symbol s; t = symbol t
+kk = ZZ/101
+A = frac(kk[s,t])
+L = A[symbol a.. symbol d]/(d-t, a-s, b*c-s*t, b^2-(s/t)*c^2)
+describe L
+ML = pushFwd(map(L,frac A), L^1) -- dim 4
+///
+
+TEST ///
+debug needsPackage "PushForward"
+s = symbol s; t = symbol t
+kk = ZZ/101
+A = frac(kk[s,t])
+L = A[symbol b, symbol c]/(b*c-s*t, b^2-(s/t)*c^2)
+basis L
+describe L
+inc = map(L, A)
+assert isInclusionOfCoefficientRing inc
+assert isModuleFinite L
+pushFwd inc
+ML = pushFwd(map(L,frac A), L^1)
+///
+
+TEST ///
+debug needsPackage "PushForward"
+s = symbol s; t = symbol t
+A = QQ
+L = A[symbol b, symbol c]/(b*c-13, b^3-c^2)
+describe L
+inc = map(L, A)
+assert isInclusionOfCoefficientRing inc
+assert isModuleFinite L
+(LA, bas, pf) = pushFwd inc -- this works
+pf(b^2+c^2)
+///
+
+TEST ///
+  s = symbol s; t = symbol t
+  kk = ZZ/101
+  A = frac(kk[s,t])
+  L = A[symbol b, symbol c]/(b^2-(s/t)*c^2 - c, c^3)
+  basis L
+  describe L
+  inc = map(L, A)
+  pushFwd inc
 ///

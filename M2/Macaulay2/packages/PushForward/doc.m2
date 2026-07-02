@@ -238,8 +238,8 @@ doc ///
             f = map(A, kk);
             I = ideal vars A;
             N = I/I^3
-            M = pushFwd(N, NoPrune => true)
-            M' = pushFwd(N, NoPrune => false)
+            M = pushFwd(N, MinimalGenerators => true)
+            M' = pushFwd(N, MinimalGenerators => false)
             pushforward(M, N_0)
             pushforward(M', N_0)
         Text
@@ -290,8 +290,8 @@ doc ///
             f = map(A, kk);
             I = ideal vars A;
             N = I/I^3;
-            M = pushFwd(N, NoPrune => true);
-            M' = pushFwd(N, NoPrune => false);
+            M = pushFwd(N, MinimalGenerators => true);
+            M' = pushFwd(N, MinimalGenerators => false);
             X = matrix N_0
             pushforward(M, X)
             pushforward(M', X)
@@ -328,8 +328,8 @@ doc ///
             f = map(A, kk);
             I = ideal vars A;
             N = I/I^3
-            M = pushFwd(N, NoPrune => true)
-            M' = pushFwd(N, NoPrune => false)
+            M = pushFwd(N, MinimalGenerators => true)
+            M' = pushFwd(N, MinimalGenerators => false)
             v = vector N_0
             pushforward(M, v)
             pushforward(M', v)
@@ -363,8 +363,8 @@ doc ///
             kk = ZZ/101;
             A = kk[a,b]/ ideal {a^2, b^2};
             f = map(A, kk);
-            M = first pushFwd(f, NoPrune => true)
-            M' = first pushFwd(f, NoPrune => false)
+            M = first pushFwd(f, MinimalGenerators => true)
+            M' = first pushFwd(f, MinimalGenerators => false)
             r = a + b
             try(pushforward(f, r)) -- this raises an error
             pushforward(M, r)
@@ -609,20 +609,21 @@ doc ///
 -------------
 doc ///
 Key
-  NoPrune
-  [pushFwd,NoPrune]
+  [pushFwd,MinimalGenerators]
 Headline
-  NoPrune option for pushFwd
+  MinimalGenerators option for pushFwd
 Description
  Text
   This is an optional argument for the @TO pushFwd@ function. Its default value is {\tt false},
-  which means that the presentation of a pushed forward module is pruned by default. If NoPrune
-  is set to {\tt true}, then the prune calls in pushFwd are turned off.
+  so that by default the presentation of the computed pushforward
+  module is not pruned. It is useful to pass this setting rather than pruning
+  by hand so that the resulting module "remembers" that it is a pushforward.
+  This lets the @TO pushforward@ and @TO pushforward'@ methods work well on elements.
  Example
-  R5=QQ[a..e]
-  R6=QQ[a..f]
-  M=coker genericMatrix(R6,a,2,3)
-  G=map(R6,R5,{a+b+c+d+e+f,b,c,d,e})
-  notpruned = pushFwd(G,M,NoPrune => true)
-  pruned = pushFwd(G,M)
+  R5 = QQ[a..e];
+  R6 = QQ[a..f];
+  M = coker genericMatrix(R6, a, 2, 3);
+  G = map(R6, R5, {a+b+c+d+e+f, b, c, d, e})
+  pushFwd(G, M) -- not pruned
+  pushFwd(G, M, MinimalGenerators => true) -- pruned
 ///

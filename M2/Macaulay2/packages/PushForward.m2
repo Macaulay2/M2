@@ -34,8 +34,7 @@ export {
     "pushFwd",
     "pushforward",
     "pushforward'",
-    "isModuleFinite",
-    "NoPrune"
+    "isModuleFinite"
 }
 
 -------------
@@ -43,8 +42,7 @@ export {
 -------------
 -- central export of this package. compute the push forward of various objects
 -- over a ring map if possible.
-
-pushFwd = method(Options => {NoPrune => false})
+pushFwd = method(Options => {MinimalGenerators => true})
 pushFwd Ring := Sequence => o -> B -> pushFwd(map(B, coefficientRing B), o)
 pushFwd Module := Module => o -> M -> pushFwd(map(ring M, coefficientRing ring M), M, o)
 pushFwd Matrix := Matrix => o -> d -> pushFwd(map(ring d, coefficientRing ring d), d, o)
@@ -57,74 +55,46 @@ pushFwd RingMap := Sequence => o -> (f) ->
 (
     B := target f;
     pfB := pushFwd(f, module B, o);
-    matB := pushforward' pfB_{0..numgens pfB - 1};
+    matB := getPushFwdGens(pfB);
     ringpf := (b) -> (module B).cache#(pushforward, pfB) matrix b;
 
     (pfB, matB, ringpf)
 )
 
+pushFwd(RingMap, Ideal) := Module => o -> (f, I) -> pushFwd(f, module I)
 pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??= (
     A := source f;
     B := target f;
-    B' := B / ann N;
-    quot := map(B', B);
-    g := quot * f;
-    (pfN, pfmat', pf) := makeModule(N ** B', g);
+    (pfN, pf', pf) := makeModule(N, f);
 
-    -- diagram chase
-
-    liftToN := map(N, N ** B', map(B, B'), N_{0..numgens N - 1});
-    auxmat := map(N, pfN, f, liftToN * pfmat');
-
-    -- patch auxmat into a function M -> N
-    mapb := (m) -> (
-        -- m is a map A^1 -> pfN so auxmapb*m is a map A^1 -> N.
-        -- since we want the source to be B^1 we have to do some shenanigans
-        -- here.
-        result := map(N, B^(numcols m), auxmat * m);
-        -- if needed we let map fix the degrees to make the result homogeneous.
-        -- the try here is to handle a strange case when there is a ring map attached to result
-        if isHomogeneous m then (try(map(N, , result)) else map(N, , matrix entries result))
-        else result
-    );
-
-    -- patch pf into a function N -> M
-    mapf := (n) -> pf(n ** B');
-
-    if (o.NoPrune == false) then (
+    if o.MinimalGenerators then (
+        -- prune and then push our pf / pf' maps through the pruningMap
         pfNPruned := prune pfN;
         pruningmap := pfNPruned.cache.pruningMap;
-        -- patch up our maps to work with the pruned module instead
-        -- todo(dodgejoel): consider placing this diagram chase in the pushforward / pushforward'
-        -- methods and just returning the bare pruned module here instead?  that
-        -- way you could actually pushforward['] out of a module you pruned by
-        -- hand...
-        pfNPruned.cache#pushforward' = (m) -> mapb(pruningmap * m);
+        pfNPruned.cache#pushforward' = (m) -> pf'(pruningmap * m);
         pfNPruned.cache.formation = FunctionApplication { pushFwd, (f, N, o) };
-        N.cache#(pushforward, pfNPruned) = (n) -> pruningmap^-1 * mapf(n);
+        N.cache#(pushforward, pfNPruned) = (n) -> pruningmap^-1 * pf(n);
 
         N.cache#(pushFwd, f, o) = pfNPruned
     ) else (
-        pfN.cache#pushforward' = mapb;
+        pfN.cache#pushforward' = pf';
         pfN.cache.formation = FunctionApplication { pushFwd, (f, N, o) };
-        N.cache#(pushforward, pfN) = mapf;
+        N.cache#(pushforward, pfN) = pf;
 
         N.cache#(pushFwd, f, o) = pfN
     )
 )
 
-
 pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
     M := pushFwd(f, source F, o);
     N := pushFwd(f, target F, o);
-    map(N, M, pushforward(N, F * pushforward' M_{0..numgens M - 1}))
+    map(N, M, pushforward(N, F * getPushFwdGens(M)))
 )
 
 -----------------
 -- pushforward --
 -----------------
 -- map elements from a ring/module to it's pushforward
-
 pushforward = method(Options => options pushFwd)
 -- accepts ring map and computes pushforward module if necessary
 pushforward(RingMap, RingElement) := Matrix => opts -> (f, r) -> pushforward(f, map(module ring r, module ring r, matrix r), opts);
@@ -144,7 +114,6 @@ pushforward(Module, Matrix) := Matrix => opts -> (M, n) -> (
 -- pushforward' --
 ------------------
 -- map elements from a pushforward module to the module that was pushed
-
 pushforward' = method()
 pushforward'(Vector) := (v) -> pushforward' matrix v
 pushforward'(Matrix) := (m) -> (
@@ -188,9 +157,9 @@ isModuleFinite RingMap := Boolean => (f) -> (
     true
 )
 
-----------------------
--- internal methods --
-----------------------
+--------------
+-- INTERNAL --
+--------------
 -- makeModule
 -- internal function which implements the push forward of a module.
 -- input:
@@ -206,14 +175,26 @@ isModuleFinite RingMap := Boolean => (f) -> (
 --   the map mp is basically
 --     A^k --> auxN (over B)
 --   and its kernel are the A-relations of the elements auxN
+
+protect pushfwdgens --cache key
+-- lift a basis for the a pushforward module M to the module it was pushed from
+getPushFwdGens = (M) -> M.cache.pushfwdgens ??= pushforward' M_{0..numgens M - 1}
+
 makeModule = method()
 makeModule(Module, RingMap) := (N, f) -> (
-    (matB, ringpf) := pushAuxHgs(f);
-    N = prune N;
-    auxN := ambient N/image relations N;
     A := source f;
-    k := (numgens ambient N) * (numgens source matB);
-    sourceGens := gens N ** matB;
+    B := target f;
+    q := map(B / ann N, B);
+    qinv := map(B, B / ann N);
+
+    (matB, ringpf) := pushAuxHgs(q * f);
+    ringpf' := (r) -> ringpf q r;
+    matB = qinv matB; -- lift A-gens for B / ann N to B
+
+    prunedN := prune N;
+    auxN := ambient prunedN/image relations prunedN;
+    k := (numgens ambient prunedN) * (numgens source matB);
+    sourceGens := gens prunedN ** matB;
     mp := if isHomogeneous f then
         try(map(auxN, , f, sourceGens)) else map(auxN, A^k, f, sourceGens)
     else
@@ -221,22 +202,32 @@ makeModule(Module, RingMap) := (N, f) -> (
 
     M := source mp / kernel mp;
 
-    pfmat' := N.cache.pruningMap * map(N, M, f, sourceGens);
     pf := (n) -> ( -- pf: N --> M
         if numrows n === 0 then return map(M, A^(numcols n), 0);
 
-        n = N.cache.pruningMap^-1 * n;
+        n = prunedN.cache.pruningMap^-1 * n;
         -- a bit hacky: we want to transpose without applying antipode
         n' := transpose matrix for row in entries n list for c in row list antipode(c);
         -- apply ringpf and stack as vectors
-        results := for i from 0 to numrows n' - 1 list reshape(A^(numgens M), A^1, ringpf n'^{i});
+        results := for i from 0 to numrows n' - 1 list reshape(A^(numgens M), A^1, ringpf' n'^{i});
         if isHomogeneous n then
             map(M, , matrix {results})
         else
             map(M, A^(numcols n), matrix {results})
     );
 
-    (M, pfmat', pf)
+    pfmat' := prunedN.cache.pruningMap * map(prunedN, M, f, sourceGens);
+    pf' := (m) -> (
+        -- source m == A^1 and we want a map with source B^1 so do some map
+        -- shenanigans here.
+        result := map(N, B^(numcols m), pfmat' * m);
+        -- if needed we let map fix the degrees to make the result homogeneous.
+        -- the try here is to handle a strange case when there is a ring map attached to result
+        if isHomogeneous m then (try(map(N, , result)) else map(N, , matrix entries result))
+        else result
+    );
+
+    (M, pf', pf)
 )
 
 -- what if B is an algebra over A (i.e. A is the coefficient ring of B)
@@ -359,8 +350,6 @@ load "./PushForward/test.m2"
 beginDocumentation()
 load "./PushForward/doc.m2"
 
-
-
 -------------------
 end
 -------------------
@@ -373,8 +362,6 @@ x = symbol x;y= symbol y;
 check PushForward
 viewHelp PushForward
 
-
-
 target oo == pr_0
 pushFwd(map(R',R), R'^1)
 ---
@@ -385,96 +372,8 @@ f = map(B,A)
 pushFwd(f,N)
 pushFwd f
 
--- example bug -----------------------------------
--- DE + MES
-
-///
-  restart
-  needsPackage "PushForward"
-
-
-  -- This one works
-  kk = ZZ/101
-  A = kk[s,t]
-  C = A[x,y,z]/(x^2, y^2, z^2)
-  phi = map(C,A)
-  f = map(C^1, A^4, phi, {{x,s*y,t*y, z}})
-  ker f
-
-  -- This one fails, degrees are screwed up.
-  kk = ZZ/101
-  A = kk[s,t]
-  B = frac A
-  C = B[x,y,z]/(x^2, y^2, z^2)
-  phi = map(C,B)
-  f = map(C^1, B^3, phi, {{x,s*y,z}})
-  ker f
-///
-
-TEST ///
--*
-  restart
-
-  needsPackage "NoetherNormalForm"
-*-
-  needsPackage "PushForward"
-  s = symbol s; t = symbol t
-  kk = ZZ/101
-  A = frac(kk[s,t])
-  L = A[symbol a.. symbol d]/(d-t, a-s, b*c-s*t, b^2-(s/t)*c^2)
-  describe L
-  ML = pushFwd(map(L,frac A), L^1) -- dim 4, free -- FAILS
-
-  -- simpler example which fails
-  -- FIX THIS: should not create a graph ring.
-  restart
-  debug needsPackage "PushForward"
-  s = symbol s; t = symbol t
-  kk = ZZ/101
-  A = frac(kk[s,t])
-  L = A[symbol b, symbol c]/(b*c-s*t, b^2-(s/t)*c^2)
-  basis L
-  describe L
-  inc = map(L, A)
-  assert isInclusionOfCoefficientRing inc
-  assert isModuleFinite L
-  pushFwd inc
-  ML = pushFwd(map(L,frac A), L^1)
-
-  -- FIX THIS: should not create a graph ring.
-  -- FIX ME?
-  restart
-  debug needsPackage "PushForward"
-  s = symbol s; t = symbol t
-  A = QQ
-  L = A[symbol b, symbol c]/(b*c-13, b^3-c^2)
-  describe L
-  inc = map(L, A)
-  assert isInclusionOfCoefficientRing inc
-  assert isModuleFinite L
-  (LA, bas, pf) = pushFwd inc -- this works
-  pf(b^2+c^2) -- maybe a better way?
-
-
-  restart
-  debug needsPackage "PushForward"
-  s = symbol s; t = symbol t
-  kk = ZZ/101
-  A = frac(kk[s,t])
-  L = A[symbol b, symbol c]/(b^2-(s/t)*c^2 - c, c^3)
-  basis L
-  describe L
-  inc = map(L, A)
-  pushForward(inc, A^1) -- now fails...
-  pushFwd inc
-///
-
-
-///
 -- Case 1.
 -- ring map is f : A --> B = A[xs]/I, A is a polynomial ring, quotient field, basic field.
-
-///
 
 ///
     Key
