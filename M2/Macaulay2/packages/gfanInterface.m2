@@ -2615,41 +2615,37 @@ gfanHelp = functionStr -> PRE TT(
     if gfanProgram =!= null then wrap'_100 runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") else {})
 
 doc ///
-	Key
-		"gfanInterface"
-	Headline
-		a Macaulay2 interface to gfan
-	Description
-		Text
-			@EM "gfanInterface"@ is an interface to Anders Jensen's Gfan software (available at @HREF "http://home.imf.au.dk/jensen/software/gfan/gfan.html"@), which is a C++
-			program to compute the Groebner fan (i.e. all the initial ideals) of an ideal.
-
-			The main function in this package is @TO gfan@ which computes all of the Groebner
-			bases and initial ideals of a given ideal.  A useful feature of this function is
-			that it can handle symmetries in the ideal. If you want the geometric information
-			of this list of Groebner basis, see @TO gfanGroebnerCone@.
-
-			Most of the functions in gfanInterface require @TO MarkedPolynomialList@
-			marked polynomial lists as input.
-			In a marked polynomial list, the leading term of each polynomial is distinguished.
-			New users should read the guide @TO "Conventions for calling methods with options"@.
-			Since {\tt gfan} is distributed with @EM "Macaulay2"@, one rarely needs to consult
-			the guide for @TO "Installation and Configuration of gfanInterface"@.
-
-			Most of functions in the gfan package are accessible through this interface.
-			If you wish to use one whose interface is not included here send a message to
-			the package author. Also, please feel free to suggest changes to the
-			parameter types and return types of each method.
-			
-			
+        Key
+                "gfanInterface"
+        Headline
+                a Macaulay2 interface to gfan
+        Description
+                Text
+                        @EM "gfanInterface"@ is an interface to Anders Jensen's Gfan software (available at @HREF "http://home.imf.au.dk/jensen/software/gfan/gfan.html"@), which is a C++
+                        program to compute the Groebner fan (i.e. all the initial ideals) of an ideal.
+                        The main function in this package is @TO gfan@ which computes all of the Groebner
+                        bases and initial ideals of a given ideal.  A useful feature of this function is
+                        that it can handle symmetries in the ideal. If you want the geometric information
+                        of this list of Groebner basis, see @TO gfanGroebnerCone@.
+                        Most of the functions in gfanInterface require @TO MarkedPolynomialList@
+                        marked polynomial lists as input.
+                        In a marked polynomial list, the leading term of each polynomial is distinguished.
+                        New users should read the guide @TO "Conventions for calling methods with options"@.
+                        Since {\tt gfan} is distributed with @EM "Macaulay2"@, one rarely needs to consult
+                        the guide for @TO "Installation and Configuration of gfanInterface"@.
+                        Most of functions in the gfan package are accessible through this interface.
+                        If you wish to use one whose interface is not included here send a message to
+                        the package author. Also, please feel free to suggest changes to the
+                        parameter types and return types of each method.
         Text
             @SUBSECTION "Contributors"@
         Text
-	    The following people have also contributed to the package:
-	Text
-	     @UL {
-	       {HREF("https://victoriaschleis.github.io/", "Victoria Schleis")}
-    	     }@
+            The following people have also contributed to the package:
+        Text
+             @UL {
+               {HREF("https://victoriaschleis.github.io/", "Victoria Schleis")},
+               {HREF("https://sites.google.com/view/gabrielriffo/home", "Gabriel Riffo")}
+             }@
 ///
 
 doc ///
