@@ -4351,19 +4351,16 @@ doc ///
 			{\tt gfan}, the preprocessing is independent of this data, so it is undefined
 			behavior to pass regions larger than where the intersection data was computed.
 
-			The half-open cones produced by {\tt "matrixoutput" => true} are exactly the tuples
+			The half-open cones produced by {\tt "matrixoutput" => true} (above) give an example of 
+                        the tuples 
 			{\tt (dim,nonstrict,equations,strict)} expected here (once each {\tt {d,N,E,S}} list is
-			turned into a sequence).  Feeding all of them back therefore restricts to the whole
-			prevariety and reproduces the unrestricted result.
-
-		Example
-			QQ[x,y,z];
-			M = gfanTropicalPrevariety({x+y+z, x+y}, "matrixoutput" => true)
-			H = gfanTropicalPrevariety({x+y+z, x+y}, "halfopenrestrictions" => apply(M, toSequence));
-			(rays H, maxCones H)
-
+			turned into a sequence) with a caveat: in the constant-coefficient case the restrictions
+                        live in the space dimension one higher. One way to think: the last coefficient is a constant;
+                        e.g., {\tt (1,-1,0)} below is the equation $x-y\geq 0$.     
 		Example
 			QQ[x,y];
+                        F = gfanTropicalPrevariety{x+y+x^2+y^2+x*y}
+                        (rays F, maxCones F)
 			F = gfanTropicalPrevariety({x+y+x^2+y^2+x*y}, "halfopenrestrictions" => {{3, {}, {(1, -1, 0)}, {}}});
 			(rays F, maxCones F)
 
