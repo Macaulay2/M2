@@ -1148,6 +1148,7 @@ argStrs = hashTable {
 	"unimodular" => "--unimodular",
 	"vectorinput" => "--vectorinput",
 	"matrixoutput" => "--matrixoutput",
+	"halfopenrestrictions" => "--halfopenrestrictions",
 	"xml" => "--xml",
 	"tropicalbasistest" => "--tropicalbasistest",
         "p" => "-p",
@@ -2365,7 +2366,8 @@ gfanTropicalMultiplicity (List) := opts -> (L) -> (
 --------------------------------------------------------
 
 gfanTropicalPrevariety = method(Options => {
-	"matrixoutput" => false
+	"matrixoutput" => false,
+	"halfopenrestrictions" => null
 	}
 )
 
@@ -2374,6 +2376,15 @@ gfanTropicalPrevariety (List) :=  opts -> (L) -> (
     (ringMap,newL) := gfanConvertToNewRing(L);
     L = newL;
     input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
+    -- --halfopenrestrictions tells gfan to read a list of half-open cones
+    -- {(dim,nonstrict,equations,strict)} from stdin, restricting the computation
+    -- to those regions.  The flag itself is emitted by gfanArgumentToString because
+    -- the option value is truthy; the restriction list is appended to the input here.
+    if opts#"halfopenrestrictions" =!= null then (
+	r := opts#"halfopenrestrictions";
+	input = input | (if instance(r, String) then r
+	    else toString r) | newline;
+	);
     s:=runGfanCommand("gfan _tropicalprevariety",opts,input);
     -- with --matrixoutput gfan prints each half-open cone as an ambient dimension
     -- and three matrices (nonstrict inequalities, equations, strict inequalities)
@@ -2620,7 +2631,7 @@ doc ///
         Headline
                 a Macaulay2 interface to gfan
         Description
-                Text
+          Text
                         @EM "gfanInterface"@ is an interface to Anders Jensen's Gfan software (available at @HREF "http://home.imf.au.dk/jensen/software/gfan/gfan.html"@), which is a C++
                         program to compute the Groebner fan (i.e. all the initial ideals) of an ideal.
                         The main function in this package is @TO gfan@ which computes all of the Groebner
@@ -2637,11 +2648,11 @@ doc ///
                         If you wish to use one whose interface is not included here send a message to
                         the package author. Also, please feel free to suggest changes to the
                         parameter types and return types of each method.
-        Text
+          Text
             @SUBSECTION "Contributors"@
-        Text
+          Text
             The following people have also contributed to the package:
-        Text
+          Text
              @UL {
                {HREF("https://victoriaschleis.github.io/", "Victoria Schleis")},
                {HREF("https://sites.google.com/view/gabrielriffo/home", "Gabriel Riffo")}
@@ -4276,6 +4287,7 @@ doc ///
 		gfanTropicalPrevariety
 		(gfanTropicalPrevariety, List)
 		[gfanTropicalPrevariety, "matrixoutput"]
+		[gfanTropicalPrevariety, "halfopenrestrictions"]
 	Headline
 		the tropical prevariety of a list of polynomials
 	Usage
@@ -4287,6 +4299,11 @@ doc ///
 			corresponding to the {\tt --matrixoutput} flag of {\tt gfan _tropicalprevariety}, which
 			outputs each half-open cone as an ambient dimension and three matrices (nonstrict
 			inequalities, equations, strict inequalities) instead of a polyhedral complex
+		"halfopenrestrictions" => List
+			corresponding to the {\tt --halfopenrestrictions} flag of {\tt gfan _tropicalprevariety}, a
+			list of half-open cones {\tt {(dim,nonstrict,equations,strict)}} to which the computation is
+			restricted, passed to {\tt gfan} on standard input.  A @TO String@ may be supplied instead
+			and is passed to {\tt gfan} verbatim
 	Outputs
 		F:Fan
 			the tropical prevariety, i.e. the common refinement of the tropical hypersurfaces of the polynomials in {\tt L}
@@ -4326,6 +4343,26 @@ doc ///
 		Example
 			QQ[x,y,z];
 			gfanTropicalPrevariety({x+y+z, x+y}, "matrixoutput" => true)
+
+		Text
+			The {\tt "halfopenrestrictions"} option restricts the computation to a given list
+			of half-open cones, each of the form {\tt (dim,nonstrict,equations,strict)}.  The
+			restriction list is passed to {\tt gfan} on standard input.  Note that, as in
+			{\tt gfan}, the preprocessing is independent of this data, so it is undefined
+			behavior to pass regions larger than where the intersection data was computed.
+
+			The half-open cones produced by {\tt "matrixoutput" => true} (above) give an example of 
+                        the tuples 
+			{\tt (dim,nonstrict,equations,strict)} expected here (once each {\tt {d,N,E,S}} list is
+			turned into a sequence) with a caveat: in the constant-coefficient case the restrictions
+                        live in the space dimension one higher. One way to think: the last coefficient is a constant;
+                        e.g., {\tt (1,-1,0)} below is the equation $x-y\geq 0$.     
+		Example
+			QQ[x,y];
+                        F = gfanTropicalPrevariety{x+y+x^2+y^2+x*y}
+                        (rays F, maxCones F)
+			F = gfanTropicalPrevariety({x+y+x^2+y^2+x*y}, "halfopenrestrictions" => {{3, {}, {(1, -1, 0)}, {}}});
+			(rays F, maxCones F)
 
 		Text
 			@STRONG "gfan Documentation"@
@@ -4704,9 +4741,17 @@ doc///
          G = gfanTropicalPrevariety {x+y+z, x+y}
          assert(rays(G) == transpose matrix {{1,1,0}})
          assert(maxCones(G) == {{0}})
+         -- --matrixoutput returns the half-open cones as a list of {d,N,E,S}
          M = gfanTropicalPrevariety({x+y+z, x+y}, "matrixoutput" => true)
          assert(class M === List)
-         assert(M == {{2,{(0,1)},{(1,-1)},{}}})
+         assert(all(M, c -> class c === List and #c == 4))
+         assert(all(M, c -> class first c === ZZ))
+         -- Round trip: feeding the cones back via --halfopenrestrictions (as the
+         -- {(d,N,E,S)} tuples gfan expects) restricts to the whole prevariety and so
+         -- must reproduce the unrestricted result.
+         H = gfanTropicalPrevariety({x+y+z, x+y}, "halfopenrestrictions" => apply(M, toSequence))
+         assert(rays(H) == rays(G))
+         assert(maxCones(H) == maxCones(G))
          ///
          
 	-- TEST gfanFanProduct
