@@ -2640,6 +2640,16 @@ doc ///
 			If you wish to use one whose interface is not included here send a message to
 			the package author. Also, please feel free to suggest changes to the
 			parameter types and return types of each method.
+			
+			
+        Text
+            @SUBSECTION "Contributors"@
+        Text
+	    The following people have also contributed to the package:
+	Text
+	     @UL {
+	       {HREF("https://victoriaschleis.github.io/", "Victoria Schleis")}
+    	     }@
 ///
 
 doc ///
