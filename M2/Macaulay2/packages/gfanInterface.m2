@@ -2382,16 +2382,22 @@ gfanTropicalPrevariety (List) :=  opts -> (L) -> (
     -- the option value is truthy; the restriction list is appended to the input here.
     if opts#"halfopenrestrictions" =!= null then (
 	r := opts#"halfopenrestrictions";
-	input = input | (if instance(r, String) then r
-	    else toString r) | newline;
+	-- Each cone's dimension (the first entry of the 4-tuple) must match the
+	-- number of variables of the polynomial ring.
+	n := numgens ring first L;
+	for cone in r do
+	    if first cone =!= n then error(
+		"gfanTropicalPrevariety: halfopenrestrictions cone dimension "
+		| toString first cone | " does not match the number of ring variables "
+		| toString n);
+	input = input | toString r | newline;
 	);
     s:=runGfanCommand("gfan _tropicalprevariety",opts,input);
     -- with --matrixoutput gfan prints each half-open cone as an ambient dimension
     -- and three matrices (nonstrict inequalities, equations, strict inequalities)
     -- as raw nested lists (valid M2 syntax) rather than a polyhedral complex;
     -- return them as a List
-    if opts#"matrixoutput" then return value first s;
-    return gfanParsePolyhedralFan s
+    if opts#"matrixoutput" then value first s else gfanParsePolyhedralFan s
 )
 
 
@@ -4302,8 +4308,8 @@ doc ///
 		"halfopenrestrictions" => List
 			corresponding to the {\tt --halfopenrestrictions} flag of {\tt gfan _tropicalprevariety}, a
 			list of half-open cones {\tt {(dim,nonstrict,equations,strict)}} to which the computation is
-			restricted, passed to {\tt gfan} on standard input.  A @TO String@ may be supplied instead
-			and is passed to {\tt gfan} verbatim
+			restricted, passed to {\tt gfan} on standard input.  Each cone's {\tt dim} (the first entry)
+			must equal the number of variables of the polynomial ring
 	Outputs
 		F:Fan
 			the tropical prevariety, i.e. the common refinement of the tropical hypersurfaces of the polynomials in {\tt L}
@@ -4361,7 +4367,7 @@ doc ///
 			QQ[x,y];
                         F = gfanTropicalPrevariety{x+y+x^2+y^2+x*y}
                         (rays F, maxCones F)
-			F = gfanTropicalPrevariety({x+y+x^2+y^2+x*y}, "halfopenrestrictions" => {{3, {}, {(1, -1, 0)}, {}}});
+			F = gfanTropicalPrevariety({x+y+x^2+y^2+x*y}, "halfopenrestrictions" => {{2, {}, {(1, -1)}, {}}});
 			(rays F, maxCones F)
 
 		Text
