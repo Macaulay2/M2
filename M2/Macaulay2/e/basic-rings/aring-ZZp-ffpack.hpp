@@ -154,11 +154,12 @@ class ARingZZpFFPACK : public SimpleARing<ARingZZpFFPACK>
 
   void copy(ElementType &result, const ElementType a) const;
 
-  void set_from_long(ElementType &result, long a) const;
+  void set(ElementType &result, long a) const;
+  void set(ElementType &result, int a) const { set(result, (long)a); }
 
-  void set_from_mpz(ElementType &result, mpz_srcptr a) const;
+  void set(ElementType &result, mpz_srcptr a) const;
 
-  bool set_from_mpq(ElementType &result, mpq_srcptr a) const;
+  bool set(ElementType &result, mpq_srcptr a) const;
 
   ElementType computeGenerator() const;
 

@@ -102,6 +102,11 @@ template <class ARing>
 class SimpleARing : public RingInterface
 {
  public:
+  template <typename ET>
+  void copy(ET& result, const ET& a) const
+  {
+    static_cast<const ARing*>(this)->set(result, a);
+  }
   /**
    * \brief A wrapper class for ElementType
    */
@@ -236,14 +241,13 @@ class DummyRing : public SimpleARing<DummyRing>
 
   void init_set(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
-  void set_from_long(elem &result, long a) const { result = a; }
   void init(elem &result) const { result = 0; }
-  void set_from_mpz(elem &result, mpz_srcptr a) const
+  void set(elem &result, mpz_srcptr a) const
     {
       (void) a;
       result = 0;
     }
-  bool set_from_mpq(elem &result, mpq_srcptr a) const
+  bool set(elem &result, mpq_srcptr a) const
     {
       (void) result;
       (void) a;

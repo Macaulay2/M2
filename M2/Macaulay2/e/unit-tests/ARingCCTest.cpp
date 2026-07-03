@@ -31,7 +31,7 @@ void getElement<M2::ARingCC>(const M2::ARingCC& C,
                              M2::ARingCC::ElementType& result)
 {
   if (index < 50)
-    C.set_from_long(result, index - 25);
+    C.set(result, index - 25);
   else
     C.random(result);
 }

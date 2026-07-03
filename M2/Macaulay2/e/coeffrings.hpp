@@ -60,14 +60,14 @@ class CoefficientRingZZp : public M2::SimpleARing<CoefficientRingZZp>
 #endif
   }
 
-  void set_from_long(elem &result, long a) const
+  void set(elem &result, long a) const
   {
     a = a % p;
     if (a < 0) a += p;
     result = log_table[a];
   }
   
-  void set_from_mpz(elem &result, mpz_t a) const
+  void set(elem &result, mpz_t a) const
   {
     mpz_t tmp;
     mpz_init_set_si(tmp, p);        // Convert int p to mpz_t
@@ -231,9 +231,11 @@ class CoefficientRingR
   void clear(elem &result) const { (void) result; }
 
   void set_zero(elem &result) const { result = R->zero(); }
+  void copy(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
-  void set_from_long(elem &result, long a) const { result = R->from_long(a); }
-  void set_from_mpz(elem &result, mpz_t a) const { result = R->from_int(a); }
+  void set(elem &result, long a) const { result = R->from_long(a); }
+  void set(elem &result, int a) const { result = R->from_long(a); }
+  void set(elem &result, mpz_t a) const { result = R->from_int(a); }
   bool is_zero(elem result) const { return R->is_zero(result); }
   bool is_equal(elem a, elem b) const { return R->is_equal(a, b); }
   bool is_unit(elem f) const { return R->is_unit(f); }

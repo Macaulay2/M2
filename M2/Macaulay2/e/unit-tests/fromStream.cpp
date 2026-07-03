@@ -22,7 +22,7 @@ std::istream &fromStream<M2::ARingZZp>(std::istream &i,
 {
   int a;
   i >> a;
-  R.set_from_long(result, a);
+  R.set(result, a);
   return i;
 }
 

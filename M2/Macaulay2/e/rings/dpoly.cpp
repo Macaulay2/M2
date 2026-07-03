@@ -1496,7 +1496,7 @@ DRing *DRing::create(long p, int nvars0, const TowerPolynomial *ext0)
   return new DRing(p, nvars0, ext0);
 }
 
-void DRing::set_from_int(TowerPolynomial &result, mpz_srcptr r)
+void DRing::set(TowerPolynomial &result, mpz_srcptr r)
 {
   mpz_t a;
   mpz_init(a);
@@ -1507,7 +1507,7 @@ void DRing::set_from_int(TowerPolynomial &result, mpz_srcptr r)
   result = D.from_long(level, c);
 }
 
-bool DRing::set_from_mpq(TowerPolynomial &result, mpq_srcptr r)
+bool DRing::set(TowerPolynomial &result, mpq_srcptr r)
 {
   // returns false if r doesn't lift
   mpz_t a;

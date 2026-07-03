@@ -119,7 +119,7 @@ class DMatLinAlg<M2::ARingQQ>
 //     fmpq_init(b);
 //     for (size_t c = 0; c < LU.numColumns(); c++)
 //       {
-//         if (c < min) L.ring().set_from_long(L.entry(c, c), 1);
+//         if (c < min) L.ring().set(L.entry(c, c), 1);
 //         for (size_t r = 0; r < LU.numRows(); r++)
 //           {
 //             if (r <= c)
@@ -131,8 +131,8 @@ class DMatLinAlg<M2::ARingQQ>
 
 //                 fmpq_set_fmpz_frac(b, fmpz_mat_entry(LU.value(), r, c), den);
 //                 flint_mpq_init_set_readonly(a, b);
-//                 assert(U.ring().set_from_mpq(U.entry(r, c), a));
-//                 U.ring().set_from_mpq(U.entry(r, c), a);  // ignore the result
+//                 assert(U.ring().set(U.entry(r, c), a));
+//                 U.ring().set(U.entry(r, c), a);  // ignore the result
 //                                                           // boolean: this
 //                                                           // operation should
 //                                                           // not fail
@@ -143,7 +143,7 @@ class DMatLinAlg<M2::ARingQQ>
 //                 mpz_t a;
 //                 flint_mpz_init_set_readonly(a,
 //                                             fmpz_mat_entry(LU.value(), r, c));
-//                 L.ring().set_from_mpz(L.entry(r, c), a);
+//                 L.ring().set(L.entry(r, c), a);
 //                 flint_mpz_clear_readonly(a);
 //               }
 //           }

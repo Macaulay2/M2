@@ -88,7 +88,7 @@ TEST(ARingGFFlint, create)
   //    for (int i=-5; i<R.characteristic(); i++)
   for (int i = -130; i < 130; i++)
     {
-      R.set_from_long(a, i);
+      R.set(a, i);
       M2_arrayint coeffs = R.fieldElementToM2Array(a);
       EXPECT_EQ(coeffs->len, 3);
       int imodp = i % 5;
