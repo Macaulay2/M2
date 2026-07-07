@@ -223,8 +223,12 @@ HIDE := $(if $(VERBOSE),,@)
 	$(SHOW)CC $*.c
 	$(HIDE)$(COMPILE.c) $< $(OUTPUT_OPTION)
 
-%.o: %.cc %.cpp
-	$(SHOW)CXX $<
+%.o: %.cc
+	$(SHOW)CXX $*.cc
+	$(HIDE)$(COMPILE.cc) $< $(OUTPUT_OPTION)
+
+%.o: %.cpp
+	$(SHOW)CXX $*.cpp
 	$(HIDE)$(COMPILE.cc) $< $(OUTPUT_OPTION)
 
 # Local Variables:

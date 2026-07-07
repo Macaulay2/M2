@@ -395,6 +395,9 @@ multidoc ///
   Caveat
    At the moment, the interactive part only works on nonequivariant puzzles.
 ///
+-- TODO: 12 of the symbols listed below as `undocumented` also appear in
+-- option-doc Usage sub-keys via [puzzle, Ktheory], [setupCotangent, Borel],
+-- etc.  Either give each its own doc node or remove it from doc Usage.
 undocumented {
     Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
     Paths, Labels, Length, Steps, Ktheory', Separation,
@@ -428,8 +431,74 @@ b=segreCls*(fugacityVector P);
 assert(a==b)
 ///
 
+TEST /// -- sum-rule identities for the primed/dual class families
+(A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
+-- segreClass' satisfies the same sum rule as segreClass
+assert(sum apply(I, segreClass') == 1)
+-- the primed families produce the same totals as the unprimed ones
+assert(sum apply(I, chernClass) == sum apply(I, chernClass'))
+assert(sum apply(I, sClass) == sum apply(I, sClass'))
+assert(sum apply(I, schubertClass) == sum apply(I, schubertClass'))
+-- stableClass and stableClass' both return elements of the cotangent ring B
+assert(class stableClass "0101" === B and class stableClass' "0101" === B)
+///
+
+TEST /// -- tautoClass, zeroSection, dualZeroSection, and pushforwardToPointFromCotangent
+(A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
+-- the 0-th Chern class of any tautological bundle is the identity
+assert(tautoClass(0,1) == 1)
+-- zeroSection and dualZeroSection live in A; on the even-dimensional Gr(2,4)
+-- with Equivariant=>false they coincide
+assert(class zeroSection A === A and class dualZeroSection A === A)
+assert(zeroSection A == dualZeroSection A)
+-- pushforwardToPoint of the unit is 0 (only the top class integrates to nonzero)
+assert(pushforwardToPoint 1_A == 0)
+-- pushforwardToPointFromCotangent of zeroSection * dualZeroSection equals
+-- the number of T-fixed points #I
+assert(pushforwardToPointFromCotangent(zeroSection A * dualZeroSection A) == #I)
+///
+
+TEST /// -- inversion counts the inversions of a label string
+assert(inversion "01" == 0)
+assert(inversion "10" == 1)
+assert(inversion "210" == 3)
+assert(inversion "0011" == 0)
+assert(inversion "0101" == 1)
+assert(inversion "1010" == 3)
+///
+
+TEST /// -- puzzle bottom labels, fugacity, and fugacityTally
+(D,FF,I) = setupCotangent(2,4,Ktheory=>true);
+P = puzzle("0101","0110");
+assert(#P == 12)
+-- bottom reads off the bottom boundary; each entry is a LabelList
+assert(all(P, p -> class bottom p === LabelList))
+-- fugacity of a single puzzle is an element of the base field
+assert(class fugacity P_0 === FF)
+-- fugacityTally is a VirtualTally indexed by the distinct bottom strings of P
+fT = fugacityTally P;
+assert(class fT === VirtualTally)
+assert(sort keys fT === sort unique apply(P, bottom))
+///
+
+TEST /// -- restrict computes the value of a Borel class at each T-fixed point
+(A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>true);
+-- restrict requires Equivariant=>true; output is a vector with one entry per fixed point
+r = restrict schubertClass("0101", A);
+assert(#entries r == #I)
+///
+
+TEST /// -- doublePuzzle produces a list of rhombus (double) puzzles
+(D,FF,I) = setupCotangent(2,4,Ktheory=>false);
+DP = doublePuzzle("0101","0101","0101","0101",Equivariant=>false);
+assert(class DP === List)
+assert(#DP == 2)
+///
+
 end
 
+-- TODO: ~50 lines of worked examples follow `end` and are dead code.  Several
+-- of them have natural `==` assertions and could be promoted to TEST blocks.
 (A,FF,I)=setupCotangent(1,2,Ktheory=>true)
 segreCls=sClass I
 segreInv=segreCls^(-1);

@@ -1,5 +1,5 @@
-#ifndef _gmp_util_h_
-#  define _gmp_util_h_
+#ifndef M2_INTERFACE_GMP_UTIL_H_
+#define M2_INTERFACE_GMP_UTIL_H_
 
 #  include "engine-includes.hpp"
 

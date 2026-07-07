@@ -2,14 +2,14 @@
 
 #include "cra.hpp"
 #include "error.h"
-#include "freemod.hpp"
-#include "matrix-con.hpp"
-#include "matrix.hpp"
+#include "matrices/matrix-con.hpp"
+#include "free-modules/freemod.hpp"
+#include "matrices/matrix.hpp"
 #include "monoid.hpp"
-#include "poly.hpp"
-#include "relem.hpp"
-#include "ring.hpp"
-#include "ringelem.hpp"
+#include "rings/poly.hpp"
+#include "ring-elements/ring-element.hpp"
+#include "rings/ring.hpp"
+#include "rings/ringelem.hpp"
 
 const RingElement *rawRingElementCRA(const RingElement *f,
                                      const RingElement *g,

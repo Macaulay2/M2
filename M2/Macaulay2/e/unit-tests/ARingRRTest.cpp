@@ -8,8 +8,8 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "aring-RR.hpp"
-#include "ARingTest.hpp"
+#include "basic-rings/aring-RR.hpp"
+#include "unit-tests/ARingTest.hpp"
 
 bool almostEqual(const M2::ARingRR& R,
                  unsigned long nbits,

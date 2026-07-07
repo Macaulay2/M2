@@ -66,6 +66,11 @@ newPackage(
 	     }
     	)
 
+-- TODO: the option symbols `Coefficients`, `VariableName`, `ShowTally`,
+-- `SaveBettis`, and `CountPure` are exported and documented but no TEST
+-- passes them with a non-default value and asserts the observable effect.
+-- A single flip-and-assert TEST per option would catch regressions in
+-- option dispatch.
 export {
     "randomMonomialSets",
     "randomMonomialSet",
@@ -2177,6 +2182,12 @@ doc ///
 
 --******************************************--
 -- TESTS     	     	       	    	    --
+-- TODO: every TEST below calls one of the `random*` entry points but none
+-- of them invokes `setRandomSeed`.  The current suite happens to be
+-- robust because most tests use p=0.0 or p=1.0 (deterministic boundary
+-- cases) -- but any TEST whose assertions depend on the RNG state would
+-- be a latent flakiness vector.  Seed the suite (e.g. `setRandomSeed 0`
+-- at the top of each TEST that calls a non-boundary `random*`).
 --******************************************--
 
 --************************--
@@ -2611,6 +2622,66 @@ TEST///
   stat = statistics(sample(ER(5,5,1.0),10),x->#x);
   assert(stat.Mean == 251)
   assert(stat.StdDev == 0)
+///
+
+--****************************--
+--  Sample/Model constructor and serialization round-trip  --
+--****************************--
+
+TEST ///
+  -- the `model` constructor builds a Model with Name, Parameters, and
+  -- a Generate function; `sample` then records ModelName, Parameters,
+  -- and SampleSize on the resulting Sample, and `getData` returns the
+  -- list of generated sets
+  R = QQ[x, y, z];
+  mymodel = model({R, 2, 1.0}, (myR, myD, myp) -> randomMonomialSet(myR, myD, myp), "MyTestModel");
+  assert(class mymodel === Model)
+  assert(mymodel.Name == "MyTestModel")
+  -- (M2 does not define == on PolynomialRing, so compare component-wise)
+  assert(#mymodel.Parameters == 3)
+  assert(mymodel.Parameters_0 === R)
+  assert(mymodel.Parameters_1 == 2)
+  assert(mymodel.Parameters_2 == 1.0)
+  s = sample(mymodel, 3);
+  assert(class s === Sample)
+  assert(s.ModelName == "MyTestModel")
+  assert(#s.Parameters == 3)
+  assert(s.Parameters_0 === R)
+  assert(s.Parameters_2 == 1.0)
+  assert(s.SampleSize == 3)
+  assert(#getData s == 3)
+///
+
+TEST ///
+  -- writeSample and sample(String) round-trip a Sample through the
+  -- filesystem; ModelName / SampleSize / Parameters survive verbatim,
+  -- and the Data list survives up to toString (the deserialized ring
+  -- is a freshly created ring object so === / == do not match directly)
+  s = sample(ER(2, 2, 1.0), 3);
+  tmpd = temporaryFileName() | "/";
+  writeSample(s, tmpd);
+  assert(fileExists tmpd)
+  s2 = sample tmpd;
+  assert(class s2 === Sample)
+  assert(s2.ModelName == s.ModelName)
+  assert(s2.SampleSize == s.SampleSize)
+  assert(toString s2.Parameters == toString s.Parameters)
+  assert(#(getData s2) == #(getData s))
+  assert(toString getData s2 == toString getData s)
+///
+
+TEST ///
+  -- statistics(Sample, Function) returns a HashTable carrying Mean,
+  -- StdDev, and a Histogram (a Tally over the per-sample values of f).
+  -- On ER(_,_,1.0) every generated monomial set is the same, so the
+  -- histogram has exactly one bucket containing all SampleSize entries.
+  ss = sample(ER(3, 2, 1.0), 4);
+  stat = statistics(ss, x -> #x);
+  assert(class stat === HashTable)
+  assert(stat.Mean == 9)
+  assert(stat.StdDev == 0)
+  assert(class stat.Histogram === Tally)
+  assert(stat.Histogram == new Tally from {9 => 4})
 ///
 
 end

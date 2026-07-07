@@ -1,5 +1,5 @@
-#ifndef _freemodule_h_
-#  define _freemodule_h_
+#ifndef M2_INTERFACE_FREEMODULE_H_
+#define M2_INTERFACE_FREEMODULE_H_
 
 #  include "engine-includes.hpp"
 

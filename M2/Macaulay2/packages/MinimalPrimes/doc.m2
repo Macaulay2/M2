@@ -1,5 +1,3 @@
-undocumented { installMinprimes }
-
 doc ///
 Node
   Key

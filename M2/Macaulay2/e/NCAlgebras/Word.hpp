@@ -1,5 +1,5 @@
-#ifndef _word_hpp_
-#define _word_hpp_
+#ifndef M2_NCALGEBRAS_WORD_HPP_
+#define M2_NCALGEBRAS_WORD_HPP_
 
 #include <iosfwd>    // for ostream
 #include <vector>    // for vector, vector<>::value_type

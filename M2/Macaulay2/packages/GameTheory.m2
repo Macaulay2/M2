@@ -883,7 +883,7 @@ doc ///
       -- For generic games, the ideal J1 models totally mixed Nash equilibria.
       J = probabilitySumIdeal(PR)
       J1 = I1 + J;
-      J2 = I1 + J;
+      J2 = I2 + J;
   References
     This package is based on the following papers:
          
@@ -1850,7 +1850,7 @@ doc ///
 
   SeeAlso
    toMarkovRing
-   mapToProbabilityRing
+   mapToMarkovRing
 ///
 
 ---------------------------
@@ -1890,8 +1890,8 @@ doc ///
     {\tt ciIdeal} computes the ideal of a list of conditional independence statements.
     The input can be the list of conditional independence statements itself,
     or a graph modelling the conditional dependencies between players.
-    This method is the same as @TO conditionalIndependenceIdeal@ from GameTheory.m2,
-    included here for convenience and compatibility with this package.   
+    This method is the same as @TO conditionalIndependenceIdeal@ from the
+    @TO "GraphicalModels"@ package, included here for convenience and compatibility with this package.
 
     A single conditional independence statement is a list consisting of three disjoint
     lists of indices for random variables, e.g. $\{ \{1,2\},\{4\}, \{3\} \}$
@@ -1938,10 +1938,10 @@ doc ///
        I1 == I2
  
   SeeAlso
-     conditionalIndependenceIdeal 
+     conditionalIndependenceIdeal
      mapToProbabilityRing
      toMarkovRing
-     ciIdeal
+     intersectWithCImodel
      globalMarkov
 ///
 
@@ -2696,6 +2696,41 @@ V = spohnIdeal(PR, X);
 I = spohnCI(PR, X, G);
 assert(V==I)
 ///
+
+-- KonstanzVariableName option: previously the only place it appeared
+-- was inside the konstanzMatrix doc example. Drive it via a TEST.
+TEST ///
+setRandomSeed 0;
+R := probabilityRing {2, 2};
+G := randomGame {2, 2};
+-- default option: the new ring built by konstanzMatrix uses k_i.
+km := konstanzMatrix(R, G);
+ringVars := toString vars ring km;
+assert(match("k_0", ringVars));
+-- explicit option: rename the konstanz variables.
+km2 := konstanzMatrix(R, G, KonstanzVariableName => "myZ");
+ringVars2 := toString vars ring km2;
+assert(match("myZ_0", ringVars2));
+-- and the default for the option is "k" (not, say, a Symbol).
+assert((options konstanzMatrix)#KonstanzVariableName === "k");
+///
+
+-- Input-guard error paths: spohnMatrices, konstanzMatrix, and
+-- toMarkovRing all depend on a probabilityRing's bookkeeping keys
+-- ("gameFormat", "probabilityVariable"). Passing a plain QQ[...] must
+-- error rather than silently misbehave.
+TEST ///
+setRandomSeed 0;
+P := QQ[a, b];
+G := randomGame {2, 2};
+assert(try (spohnMatrices(P, G); false) else true);
+assert(try (konstanzMatrix(P, G); false) else true);
+-- toMarkovRing has an explicit guard `if not R#?"gameFormat" then error`,
+-- so it should error with the dedicated message rather than crashing on
+-- a missing-key lookup.
+assert(try (toMarkovRing P; false) else true);
+///
+
 end
 
 --******************************************--

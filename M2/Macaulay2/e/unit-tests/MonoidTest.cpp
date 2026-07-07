@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "ExponentVector.hpp"
+#include "monomials/ExponentVector.hpp"
 #include "monoid.hpp"
 
 /** Monoid tests */

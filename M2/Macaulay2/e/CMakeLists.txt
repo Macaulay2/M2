@@ -23,26 +23,22 @@ endif()
 
 # TODO: determine the fate of these files
 set(UNDETERMINED
-  dmat-ffpack.cpp
-  franzi-brp-test.cpp
+  basic-mutable-matrices/dmat-ffpack.cpp
   overflow-test.cpp
-  test.dd
-  aring-wrap # both cpp and hpp
-  points # both cpp and hpp
+  unused/test.dd
   )
 
 # c files
 # TODO: convert to cpp or simplify if not needed
 # MES TODO:   monordering.c removed this, is that correct?
 set(CFILES
-  complex.c
   error.c
   exptable.c
   table.c
+  cytools/box_enum.c
   )
 # h files
 set(HFILES
-  complex.h
   error.h
   exptable.h
   table.h
@@ -55,42 +51,39 @@ set(HFILES
 set(HPPONLYFILES
   MemoryBlock.hpp
   NCAlgebras/Range.hpp
-  VectorArithmetic.hpp
+  basic-rings/vector-arithmetic.hpp
   timing.hpp
-  SLP-defs.hpp
-  SLP-imp.hpp
-  aring-glue.hpp
-  aring-qq.hpp
-  aring-translate.hpp
-  dmat-gf-flint-big.hpp
-  dmat-gf-flint.hpp
-  dmat-lu-inplace.hpp
-  dmat-lu-qq.hpp
-  dmat-lu-zzp-ffpack.hpp
-  dmat-lu-zzp-flint.hpp
-  dmat-lu.hpp
-  dmat-qq-flint.hpp
-  dmat-qq-interface-flint.hpp
-  dmat-zz-flint.hpp
-  dmat-zzp-flint.hpp
+  SLP/SLP-defs.hpp
+  SLP/SLP-imp.hpp
+  basic-mutable-matrices/dmat-gf-flint-big.hpp
+  basic-mutable-matrices/dmat-gf-flint.hpp
+  basic-mutable-matrices/dmat-lu-inplace.hpp
+  basic-mutable-matrices/dmat-lu-qq.hpp
+  basic-mutable-matrices/dmat-lu-zzp-ffpack.hpp
+  basic-mutable-matrices/dmat-lu-zzp-flint.hpp
+  basic-mutable-matrices/dmat-lu.hpp
+  basic-mutable-matrices/dmat-qq-flint.hpp
+  basic-mutable-matrices/dmat-qq-interface-flint.hpp
+  basic-mutable-matrices/dmat-zz-flint.hpp
+  basic-mutable-matrices/dmat-zzp-flint.hpp
   engine-includes.hpp
   exceptions.hpp
-  geobucket.hpp
-  geopoly.hpp
-  geovec.hpp
+  rings/geobucket.hpp
+  rings/geopoly.hpp
+  rings/geovec.hpp
   hash.hpp
-  mat-arith.hpp
-  mat-elem-ops.hpp
-  mat-linalg.hpp
-  mat-util.hpp
-  mutablemat-defs.hpp
-  mutablemat-imp.hpp
-  mutablemat.hpp
+  basic-mutable-matrices/mat-arith.hpp
+  basic-mutable-matrices/mat-elem-ops.hpp
+  basic-mutable-matrices/mat-linalg.hpp
+  basic-mutable-matrices/mat-util.hpp
+  mutable-matrices/mutablemat-defs.hpp
+  mutable-matrices/mutablemat-imp.hpp
+  mutable-matrices/mutablemat.hpp
   newdelete.hpp
-  ExponentVector.hpp
-  res-a0-pair.hpp
-  schur-poly-heap.hpp
-  smat.hpp
+  monomials/ExponentVector.hpp
+  resolutions/res-a0-pair.hpp
+  schur-rings/schur-poly-heap.hpp
+  basic-mutable-matrices/smat.hpp
   util.hpp
   style.hpp
   f4/f4-types.hpp
@@ -98,24 +91,26 @@ set(HPPONLYFILES
   f4/ntuple-monomial.hpp
   f4/varpower-monomial.hpp
   gb-f4/MonomialTypes.hpp
-  PolynomialStream.hpp
-  schreyer-resolution/res-memblock.hpp
-  schreyer-resolution/res-monomial-types.hpp
-  schreyer-resolution/res-schreyer-order.hpp
+  schreyer-resolutions/res-memblock.hpp
+  schreyer-resolutions/res-monomial-types.hpp
+  schreyer-resolutions/res-schreyer-order.hpp
+  unused/PolynomialStream.hpp
+  basic-rings/aring-glue.hpp
+  basic-rings/aring-QQ.hpp
+  basic-rings/aring-translate.hpp
   )
 
 # these files have .cpp file, but NOT .hpp file
 set(CPPONLYFILES
   engine.cpp # TODO: find a new home for the contents
-  franzi-gb.cpp
-  franzi-interface.cpp
-  matrix-kbasis.cpp
-  matrix-sort.cpp
-  matrix-symm.cpp
-  ntl-debugio.cpp
-  ntl-internal.cpp
-  res-a2-gb.cpp
-  ring-vecs.cpp
+  computations/BRP-gb.cpp
+  computations/BRP-interface.cpp
+  matrices/matrix-kbasis.cpp
+  matrices/matrix-sort.cpp
+  matrices/matrix-symm.cpp
+  computations/ntl-debugio.cpp
+  computations/ntl-internal.cpp
+  resolutions/res-a2-gb.cpp
   interface/aring.cpp
   interface/aring.h
   interface/computation.h # no .cpp yet
@@ -154,16 +149,21 @@ set(CPPONLYFILES
   interface/ringelement.h
   interface/ringmap.cpp
   interface/ringmap.h
+  rings/ring-vecs.cpp
   )
 
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
+  cytools/computeGV
+  cytools/lattice_points
+  cytools/lattice-points-normaliz
+  cytools/cone-interior-point
   BasicPoly
   BasicPolyList
   BasicPolyListParser
   myalloc
-  matrix-ncbasis
+  matrices/matrix-ncbasis
   M2FreeAlgebraQuotient
   M2FreeAlgebra
   NCAlgebras/Word
@@ -178,120 +178,86 @@ set(SRCLIST
   NCAlgebras/OverlapTable
   NCResolutions/nc-res-computation
   Polynomial
-  monomial-collection
-  Eschreyer
-  GF
-  LLL
-  NAG # TODO: move raw* functions to e/interface
-  SLP
-  ZZ
-  ZZp
-  aring-CC
-  aring-CCC
-  aring-RR
-  aring-RRR
-  aring-RRi
-  aring-CCi
-  aring-gf-flint-big
-  aring-gf-flint
-  aring-m2-gf
-  aring-qq-flint
-  aring-qq-gmp
-  aring-tower
-  aring-zz-flint
-  aring-zz-gmp
-  aring-zzp-ffpack
-  aring-zzp-flint
-  aring-zzp
-  aring
-  assprime
-  betti
+  monomials/monomial-collection
+  computations/Eschreyer
+  computations/LLL
+  NAG/NAG # TODO: move raw* functions to e/interface
+  SLP/SLP
+  computations/assprime
+  resolution/betti
   buffer
   coeffrings
   comb
-  comp-gb-declared
-  comp-gb-proxy
-  comp-gb
-  comp-res
-  comp
+  groebner-computations/comp-gb-declared
+  groebner-computations/comp-gb-proxy
+  groebner-computations/comp-gb
+  resolution/comp-res
+  computations/comp
   cra
   debug
-  det
-  dmat
-  dpoly
+  rings/dpoly
+  computations/det
   eigen
   finalize
   fplll-interface
-  frac
   fractionfreeLU
-  franzi-brp
-  freemod
+  computations/BRP
+  free-modules/freemod
   gauss
-  gb-default
-  gb-homog2
-  gb-sugarless
-  gb-toric
-  gb-walk
-  gbring
-  gbweight
+  groebner-computations/gb-default
+  groebner-computations/gb-homog2
+  groebner-computations/gb-sugarless
+  groebner-computations/gb-toric
+  groebner-computations/gb-walk
+  groebner-computations/gbring
+  groebner-computations/gbweight
   hermite
   hilb
   imonorder
   int-bag
   interreduce
   interrupted
-  lapack
-  localring
-  mat
-  matrix-con
-  matrix-stream
-  matrix
+  basic-mutable-matrices/lapack
+  basic-mutable-matrices/mat
+  basic-mutable-matrices/dmat
+  matrices/matrix-con
+  matrices/matrix-stream
+  matrices/matrix
   mem
   memory-status
-  monideal-minprimes
-  monideal
+  monomials/monideal-minprimes
+  monomials/monideal
   monoid
-  monomial-sets
-  monomial
-  monsort
-  montable
-  montableZZ
+  monomials/monomial-sets
+  monomials/monomial
+  monomials/monsort
+  monomials/montable
+  monomials/montableZZ
   mutablecomplex
-  ntl-interface
-  overflow
-  pfaff
-  poly
-  polyquotient
-  polyring
-  qring
-  reader
-  reducedgb-ZZ
-  reducedgb-field-local
-  reducedgb-field
-  reducedgb-marked
-  reducedgb
-  relem
-  res-a0-poly
-  res-a0
-  res-a1-poly
-  res-a1
-  res-a2
-  ring
-  ringelem
+  monomials/overflow
+  computations/ntl-interface
+  computations/pfaff
+  basic-rings/reader
+  groebner-computations/reducedgb-ZZ
+  groebner-computations/reducedgb-field-local
+  groebner-computations/reducedgb-field
+  groebner-computations/reducedgb-marked
+  groebner-computations/reducedgb
+  ring-elements/ring-element
+  resolutions/res-a0-poly
+  resolutions/res-a0
+  resolutions/res-a1-poly
+  resolutions/res-a1
+  resolutions/res-a2
   ringmap
-  sagbi
-  schorder
-  schur
-  schur2
-  schurSn
-  skew
-  skewpoly
-  solvable
-  spair
+  groebner-computations/sagbi
+  free-modules/schreyer-orders
+  schur-rings/schur
+  schur-rings/schur2
+  schur-rings/schurSn
+  groebner-computations/spair
   text-io
-  tower # TODO: move rawTowerTranslatePoly to e/interface
-  ExponentList
-  weylalg
+  monomials/ExponentList
   # Faugère's F4 Algorithm
   gb-f4/Basis
   gb-f4/GBF4Computation
@@ -311,17 +277,17 @@ set(SRCLIST
   f4/monhashtable
   f4/moninfo
   # Schreyer resolution a la Linear algebra (F4 Faugere style)
-  schreyer-resolution/res-f4-computation
-  schreyer-resolution/res-f4-m2-interface
-  schreyer-resolution/res-f4-monlookup
-  schreyer-resolution/res-f4
-  schreyer-resolution/res-moninfo-dense
-  schreyer-resolution/res-moninfo-sparse
-  schreyer-resolution/res-moninfo
-  schreyer-resolution/res-monomial-sorter
-  schreyer-resolution/res-poly-ring
-  schreyer-resolution/res-schreyer-frame
-  schreyer-resolution/res-dep-graph
+  schreyer-resolutions/res-f4-computation
+  schreyer-resolutions/res-f4-m2-interface
+  schreyer-resolutions/res-f4-monlookup
+  schreyer-resolutions/res-f4
+  schreyer-resolutions/res-moninfo-dense
+  schreyer-resolutions/res-moninfo-sparse
+  schreyer-resolutions/res-moninfo
+  schreyer-resolutions/res-monomial-sorter
+  schreyer-resolutions/res-poly-ring
+  schreyer-resolutions/res-schreyer-frame
+  schreyer-resolutions/res-dep-graph
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
@@ -331,14 +297,50 @@ set(SRCLIST
   bibasis/monomDRL
   bibasis/monomLex
   bibasis/settings-manager
-  )
+  basic-rings/aring-CC
+  basic-rings/aring-CCC
+  basic-rings/aring-RR
+  basic-rings/aring-RRR
+  basic-rings/aring-RRi
+  basic-rings/aring-CCi
+  basic-rings/aring-GF-flint-big
+  basic-rings/aring-GF-flint
+  basic-rings/aring-m2-GF
+  basic-rings/aring-QQ-flint
+  basic-rings/aring-QQ-gmp
+  basic-rings/aring-tower
+  basic-rings/aring-ZZ-flint
+  basic-rings/aring-ZZ-gmp
+  basic-rings/aring-ZZp-ffpack
+  basic-rings/aring-ZZp-flint
+  basic-rings/aring-ZZp
+  basic-rings/aring
+  rings/frac
+  rings/GF
+  rings/localring
+  rings/poly
+  rings/polyquotient
+  rings/polyring
+  rings/qring
+  rings/ring
+  rings/ringelem
+  rings/skew
+  rings/skewpoly
+  rings/solvable
+  rings/tower
+  rings/weylalg
+  rings/ZZ
+  rings/ZZp
+  schur-rings/schur
+  schur-rings/schur2
+  schur-rings/schurSn
+)
 
 list(TRANSFORM SRCLIST APPEND .cpp OUTPUT_VARIABLE CPPFILES)
 list(TRANSFORM SRCLIST APPEND .hpp OUTPUT_VARIABLE HPPFILES)
 
 set(SOURCES ${CPPONLYFILES} ${CPPFILES} ${CFILES})
 set(HEADERS ${HPPONLYFILES} ${HPPFILES} ${HFILES})
-list(APPEND HEADERS ${CMAKE_BINARY_DIR}/include/M2/config.h)
 
 ###############################################################################
 ## Generate TAGS file
@@ -446,6 +448,8 @@ if(BUILD_TESTING)
 
     unit-tests/util-polyring-creation.hpp
     unit-tests/util-polyring-creation.cpp
+    unit-tests/RingElem.hpp
+    unit-tests/RingElem.cpp
     unit-tests/NewF4Test.cpp
     unit-tests/MonoidTest.cpp
     unit-tests/PolyRingTest.cpp
@@ -462,7 +466,8 @@ if(BUILD_TESTING)
     unit-tests/ARingRRiTest.cpp
     unit-tests/ARingCCCTest.cpp
     unit-tests/NCGroebnerTest.cpp
-#    unit-tests/WeylAlgebraTest.cpp # TODO: add this file
+    unit-tests/WeylAlgebraTest.cpp
+    unit-tests/QuotientRingTest.cpp
 
     unit-tests/RingTest.hpp
     unit-tests/RingZZTest.cpp
@@ -482,7 +487,12 @@ if(BUILD_TESTING)
 
     unit-tests/MatrixIOTest.cpp
     unit-tests/fromStream.cpp
+    unit-tests/LatticePointsTest.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
+
+    unit-tests/OverflowTest.cpp
+    unit-tests/BasicPolyListParserTest.cpp
+    unit-tests/BRP-test.cpp
     )
 
   if(BDWGC_FOUND)
@@ -499,7 +509,7 @@ if(BUILD_TESTING)
   endif()
 
   target_compile_options(M2-unit-tests PRIVATE
-    -Wno-cast-qual # FIXME: caused by NAG.hpp:559:37 and NAG.hpp:603:37
+    -Wno-cast-qual # FIXME: caused by NAG/NAG.hpp:559:37 and NAG/NAG.hpp:603:37
     -Wno-sign-compare
     $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
     )

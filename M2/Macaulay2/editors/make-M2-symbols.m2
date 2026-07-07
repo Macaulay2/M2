@@ -13,9 +13,9 @@ generateGrammar("emacs/M2-symbols.el", x -> demark(" ", format \ x))
 -- Prism: Write macaulay2.js
 generateGrammar("prism/macaulay2.js", x -> demark("|", x))
 
--- Vim: Write m2.vim.syntax and m2.vim.dict
-generateGrammar("vim/m2.vim.syntax", x -> demark(" ", x))
-generateGrammar("vim/m2.vim.dict", x -> demark(" ", x)) -- TODO: is this necessary?
+-- Vim: Write syntax/m2.vim and dict/m2.vim.dict
+generateGrammar("vim/syntax/m2.vim", x -> demark(" ", x))
+generateGrammar("vim/dict/m2.vim.dict", x -> demark(" ", x))
 
 -- Pygments: Write macaulay2.py
 generateGrammar("pygments/macaulay2.py",

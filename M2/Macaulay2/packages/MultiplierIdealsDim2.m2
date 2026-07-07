@@ -650,7 +650,7 @@ document {
 document {
      Key  =>  MultiplicityJN,
      Headline  =>  "Computes the multiplicity as a jumping number.",
-     Usage  =>  "MultIdeal(F,E,jn)",
+     Usage  =>  "MultiplicityJN(F,E,jn)",
      Inputs  =>  {
         "F"  =>   "Matrix", 
         "E"  =>   "Matrix",
@@ -804,5 +804,39 @@ E = matrix(
  {  1,  0,  0,  1, -1}})
 F = matrix({{4,5,10,5,10}})
 assert(MultIdeal(F,E,1 / 2) == mutableMatrix({{1,1,2,1,2}}))
+///
+
+-- Cover the option branches the audit flagged as never exercised:
+--   * Unloading with UnloadingValue => true (returns Sequence not just
+--     the unloaded divisor).
+--   * algorithm => "Mult" branch of MultiplierIdeals (only "Tucker"
+--     was previously tested).
+--   * JumpingDivisor => true vs false: should produce tables with the
+--     same jumping-number keys.
+TEST ///
+E := matrix({{ -5,  0,  1,  0,  1},
+             {  0, -2,  1,  0,  0},
+             {  1,  1, -1,  0,  0},
+             {  0,  0,  0, -2,  1},
+             {  1,  0,  0,  1, -1}});
+D := matrix({{0,0,1,0,1}});
+F := matrix({{4,5,10,5,10}});
+-- UnloadingValue => true returns a (unloadedDivisor, value) pair.
+u := Unloading(D, E, UnloadingValue => true);
+assert(class u === Sequence);
+assert(#u == 2);
+assert(u_0 == mutableMatrix {{1, 1, 2, 1, 2}});
+assert(class u_1 === ZZ);
+-- algorithm => "Mult" produces an output of the same size as the default.
+TTucker := MultiplierIdeals(F, E, BiggestJN => 1);
+TMult := MultiplierIdeals(F, E, BiggestJN => 1, algorithm => "Mult");
+assert(#TTucker == #TMult);
+assert(set keys TTucker === set keys TMult);
+-- JumpingDivisor toggles only the net formatting; the table contents
+-- must be identical between the two branches.
+T1 := MultiplierIdeals(F, E, BiggestJN => 1, JumpingDivisor => true);
+T2 := MultiplierIdeals(F, E, BiggestJN => 1, JumpingDivisor => false);
+assert(set keys T1 === set keys T2);
+assert(#T1 == #T2);
 ///
 

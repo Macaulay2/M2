@@ -3,12 +3,12 @@
 #include "text-io.hpp"                      // for emit_wrapped
 #include "NCAlgebras/FreeAlgebra.hpp"       // for FreeAlgebra
 #include "NCAlgebras/OverlapTable.hpp"      // for OverlapTable
-#include "VectorArithmetic.hpp"             // for VectorArithmetic
+#include "basic-rings/vector-arithmetic.hpp"             // for VectorArithmetic
 #include "NCAlgebras/WordTable.hpp"         // for Overlap, WordTable
 #include "buffer.hpp"                       // for buffer
 #include "interface/m2-types.h"                 // for M2_gbTrace
-#include "ring.hpp"                         // for Ring
-#include "ringelem.hpp"                     // for ring_elem
+#include "rings/ring.hpp"                         // for Ring
+#include "rings/ringelem.hpp"                     // for ring_elem
 #include "../system/supervisorinterface.h"  // for getAllowableThreads
 
 #include <cassert>                          // for assert

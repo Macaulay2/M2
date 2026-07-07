@@ -329,3 +329,39 @@ TEST ///
   plotRegion({{-infinity, 2}, {2, -infinity}}, {0,0}, {3,3})
   n = 2 * regularity N; matrix table(n, n, (y, x) -> hilbertFunction_{n - y - 1, x} N)
 ///
+
+------ Tests for error handling
+TEST /// -- error handling: virtualOfPair, resolveViaFatPoint, isVirtual reject bad input
+  -- virtualOfPair: every degree in the list must match the ring's degree length
+  (S, E) = productOfProjectiveSpaces {1, 1}
+  I = ideal(S_0 * S_2)
+  assert(degreeLength S == 2)
+  assert instance(virtualOfPair(I, {{1, 2}}), Complex)         -- control: correct length
+  assert(try (virtualOfPair(I, {{1, 2, 3}}); false) else true)
+  assert(try (virtualOfPair(I, {{1}});       false) else true)
+  -- resolveViaFatPoint: the exponent vector needs one entry per irreducible factor
+  N = {1, 1, 2}
+  (T, F) = productOfProjectiveSpaces N
+  irr = intersect for n to #N - 1 list ideal select(gens T, i -> (degree i)#n == 1)
+  assert(#decompose irr == 3)
+  J = ideal(T_0, T_2, T_4)
+  assert(try (resolveViaFatPoint(J, irr, {2, 1});       false) else true)
+  assert(try (resolveViaFatPoint(J, irr, {2, 1, 0, 0}); false) else true)
+  -- isVirtual: the irrelevant ideal and the complex must be over the same ring
+  RA = ZZ/101[a_0, a_1]
+  RB = ZZ/101[b_0, b_1]
+  assert(try (isVirtual(ideal(a_0, a_1), complex {matrix {{b_0}}}); false) else true)
+///
+
+------ Additional tests for multigradedRegularity
+TEST /// -- multigradedRegularity: zero module and explicit LowerLimit/UpperLimit
+  -- the zero module has regularity -infinity in every component
+  X = toricProjectiveSpace(1) ** toricProjectiveSpace(2)
+  S = ring X
+  assert(multigradedRegularity(S, S^0) == {{-infinity, -infinity}})
+  -- LowerLimit and UpperLimit set the search box explicitly; a box that
+  -- brackets the true regularity must reproduce the default answer
+  (R, E) = productOfProjectiveSpaces {1, 1}
+  assert(multigradedRegularity(R, R^{{-2,-2}}, LowerLimit => {-5,-5}, UpperLimit => {5,5}) == {{2, 2}})
+  assert(multigradedRegularity(R, R^{{-1,-1}}, LowerLimit => {-2,-2}, UpperLimit => {4,4}) == {{1, 1}})
+///

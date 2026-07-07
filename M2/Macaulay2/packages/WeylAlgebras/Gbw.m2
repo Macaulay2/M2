@@ -186,11 +186,12 @@ gbw(Matrix, List) := opts -> (m, w) -> (
 --------------------------------------------------------------------------------
 
 -- This routine computes the characteristic ideal of a D-module
+-- TODO: reduce duplication
 characteristicIdeal = method()
 characteristicIdeal Ideal := I -> (
     if not isWeylAlgebra(W := ring I) then error "expected an ideal in a Weyl algebra";
     createDpairs W;
-    w := apply( toList(0..numgens W - 1),
+    w := apply(numgens W,
 	i -> if member(i, W.dpairInds#1) then 1 else 0 );
     ideal mingens inw (I, w)
     )
@@ -199,7 +200,7 @@ characteristicIdeal Module := M -> (
     if not isWeylAlgebra(W := ring M) then error "expected a module over a Weyl algebra";
     m := presentation M;
     createDpairs W;
-    w := apply( toList(0..numgens W - 1),
+    w := apply(numgens W,
 	i -> if member(i, W.dpairInds#1) then 1 else 0 );
     ideal mingens ann cokernel inw (m, w)
     )

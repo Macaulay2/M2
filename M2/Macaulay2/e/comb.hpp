@@ -1,6 +1,6 @@
 // Copyright 1997 by Michael E. Stillman
-#ifndef _comb_hh_
-#define _comb_hh_
+#ifndef M2_COMB_HH_
+#define M2_COMB_HH_
 
 #include <cassert>
 #include <vector>

@@ -10,8 +10,8 @@
 #  include <malloc.h>
 #endif
 
-#include "ExponentVector.hpp"
-#include "overflow.hpp"
+#include "monomials/ExponentVector.hpp"
+#include "monomials/overflow.hpp"
 
 std::vector<bool> laurentVariables(const MonomialOrder* mo)
 {

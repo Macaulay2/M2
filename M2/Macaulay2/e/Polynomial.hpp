@@ -1,8 +1,8 @@
-#ifndef _polynomial_hpp_
-#define _polynomial_hpp_
+#ifndef M2_POLYNOMIAL_HPP_
+#define M2_POLYNOMIAL_HPP_
 
 #include "newdelete.hpp"  // for our_new_delete
-#include "ringelem.hpp"   // for ring_elem
+#include "rings/ringelem.hpp"   // for ring_elem
 #include "style.hpp"      // for GT, LT, EQ
 
 #include <cassert>        // for assert

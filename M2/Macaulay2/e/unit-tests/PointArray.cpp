@@ -8,10 +8,11 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "NAG.hpp"
+#include "NAG/NAG.hpp"
 
 TEST(PointArray, constructor)
 {
+  std::srand(0);
   PointArray p(0.001, {0.3, 0.7});
   PointArray q(0.001, 10);
 }

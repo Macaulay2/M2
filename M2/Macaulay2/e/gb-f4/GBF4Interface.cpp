@@ -1,6 +1,6 @@
-#include "GBF4Interface.hpp"
+#include "gb-f4/GBF4Interface.hpp"
 
-#include "PolynomialList.hpp"
+#include "gb-f4/PolynomialList.hpp"
 
 //////////////////////////////////////////////////////////////////////////
 // getting polynomials/ideals/submodules to/from this code to M2, files //

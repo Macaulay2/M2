@@ -1,5 +1,5 @@
-#ifndef m2_mem_included
-#define m2_mem_included
+#ifndef M2_INTERFACE_M2_MEM_H
+#define M2_INTERFACE_M2_MEM_H
 
 #include <stdlib.h>
 

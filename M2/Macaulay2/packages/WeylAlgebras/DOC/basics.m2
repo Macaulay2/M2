@@ -506,6 +506,14 @@ doc ///
       makeWA(QQ[x,y])
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       holonomicRank I
+    Text
+      The holonomic rank is also determined by the number of standard monomials $\{\partial^\alpha\}$
+      with respect to a Gröbner basis of $I$ for any term order on $R$. For convenience, these
+      standard monomials, which form a basis for differential operators modulo the system, are cached.
+    Example
+      (comodule I).cache#"standard monomials"
+  References
+    See [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Algorithm 1.4.17] for more details.
   SeeAlso
     characteristicIdeal
     DsingularLocus

@@ -245,3 +245,57 @@ for n from 1 to 7 do (
 )
 ///
 
+TEST /// -- CRL is an alias for coincidentRootLocus
+assert(CRL === coincidentRootLocus);
+assert(CRL({3,2}) === coincidentRootLocus({3,2}));
+///
+
+TEST /// -- supsets
+X = coincidentRootLocus {3,2};
+sps = supsets X;
+assert(instance(sps, List) and all(sps, Y -> class Y === CoincidentRootLocus));
+assert(member(X, sps));
+assert(all(sps, Y -> isSubset(X, Y)));
+assert(apply(supsets coincidentRootLocus {3}, partition) === {{3}, {2,1}, {1,1,1}});
+///
+
+TEST /// -- realroots
+S = QQ[x,y];
+assert(# realroots((x-y)*(x+y)*(x-2*y)) == 3);
+assert(realroots(x^2+y^2) == {});
+assert(# realroots((x-y)^3) == 3);
+assert(# realroots(x*(x-y)*(x^2+y^2)) == 2);
+///
+
+TEST /// -- generic for CoincidentRootLocus and PolynomialRing
+X = coincidentRootLocus {3,2};
+G = generic X;
+assert(instance(G, RingElement));
+assert(isHomogeneous G);
+assert(degree G == prepend(X#"ambient", partition X));
+assert(degree generic coincidentRootLocus {3} == {3,3});
+R = QQ[x,y];
+assert(instance(generic R, RingElement));
+///
+
+TEST /// -- projectiveTangentSpace
+X = coincidentRootLocus {3,2};
+S = QQ[x,y];
+F = (x-y)^3 * x^2;
+assert(member(F, X));
+assert(instance(projectiveTangentSpace(X, F), Ideal));
+///
+
+TEST /// -- polarDegrees
+assert(polarDegrees coincidentRootLocus {3,1} == {6,6,0});
+assert(polarDegrees coincidentRootLocus {2,2} == {4,6,3});
+P = polarDegrees coincidentRootLocus {3,1,1};
+assert(instance(P, List) and #P == 4 and all(P, e -> instance(e,ZZ)));
+///
+
+TEST /// -- QepcadOptions is a registered option of realrank (does not require QEPCAD to verify)
+opts = options realrank;
+assert(opts#?QepcadOptions);
+assert(opts.QepcadOptions === (20000000, 10000));
+///
+
