@@ -163,7 +163,7 @@ pullback(RingMap, RingMap) := {Verbose => false} >> o -> (f,g) -> (
 	RtoAMap = map(A, R, apply(RImageInA, zz -> sub(zz,A)));
 
 	--now we check to see if A is a finite R-module.
-	try( AasRmodule = pushFwd(RtoAMap, NoPrune=>true) )  -- if this is reached, then A is finite as an R-mod,
+	try( AasRmodule = pushFwd(RtoAMap) )  -- if this is reached, then A is finite as an R-mod,
 	    then(   	--we are done, we can leave this giant loop.
 		AFiniteOverR = true;
 		if (o.Verbose == true) then (
@@ -233,7 +233,7 @@ pullback(RingMap, RingMap) := {Verbose => false} >> o -> (f,g) -> (
 	RtoAsumCasRingMap := map(AsumCasRing, R, varsCandidates );
 	
 	--now we push forward.
-	AsumCasRMod := pushFwd(RtoAsumCasRingMap, NoPrune=>true);
+	AsumCasRMod := pushFwd(RtoAsumCasRingMap);
 	
 	RtoAsumCasRModMap := map(AsumCasRMod#0,R^1,(AsumCasRMod#2)( sub(1,AsumCasRing) ));
 	-- done with that
@@ -243,23 +243,23 @@ pullback(RingMap, RingMap) := {Verbose => false} >> o -> (f,g) -> (
 	--We next describe the strategy, first view B as a C-module.  For every element of A, generating A as an R-module over R, consider the corresponding element of B (as a C-module).
 --These are implicitly C-module maps C->g_* B.  Pushforward each these maps as an R-module map.  We can then find the image of 1_C in B for each such map (now all is represented as an R-module).  With this information, we can construct (manually) a map from A (viewed as an R-module), to B=A/I (viewed as an R-module via the map C->B=A/I).  Ie, we know where the generators of A (as an R-module) go to in B.  Now, we can simply subtract those two maps A->B and C->B to get a map A \oplus C -> B (all defined over R).  Then take a kernel...
 
-	BasCmodule := pushFwd(g, NoPrune=>true);
+	BasCmodule := pushFwd(g);
 	--the following takes the generators of A as an R-module in B, and then represents
 	--them as elements when viewing B as a C-module
 	AmodGensInBasCModList := apply(first entries (AasRmodule#1), zz->(BasCmodule#2)(f(zz)));
 	--**Warning, in what is below I am assuming that C as an R-module is *always* represented as a quotient module.  In particular, 1 in R gets sent to 1 in C.  This should be fine as long as pushFwd behaves as expected.
 	--Now get a list of generators of A, in B, as an R-module, via the map through C.
 	m1 := null;
-	AmodGensInBasRModListTemp := apply(AmodGensInBasCModList, vv->( pushFwd(RtoCMap, vv, NoPrune=>true)) );
+	AmodGensInBasRModListTemp := apply(AmodGensInBasCModList, vv->( pushFwd(RtoCMap, vv)) );
 	AmodGensInBasRModList := apply(AmodGensInBasRModListTemp, vv->(map(target vv, R^1, matrix vv) ));
 	BasRmodule := target (AmodGensInBasRModList#0);
 	AtoBasRmoduleMap := map(BasRmodule, AasRmodule#0, matrix fold( (a,b)->(a|b), AmodGensInBasRModList));
-	CtoBasRmoduleMap := (-1)*pushFwd( RtoCMap, (BasCmodule#2)(sub(1,B)),  NoPrune=>true);
+	CtoBasRmoduleMap := (-1)*pushFwd( RtoCMap, (BasCmodule#2)(sub(1,B)));
 	AsumCtoBasRmoduleMap := AtoBasRmoduleMap|CtoBasRmoduleMap;
 	--that should construct AsumC -> B.  We can take the kernel etc.
 	--Now we need R -> AsumC.  Let's do this directly.
 	RtoAasRmodule := (AasRmodule#2)(sub(1,A));
-	CasRmodule = pushFwd(RtoCMap, NoPrune=>true);
+	CasRmodule = pushFwd(RtoCMap);
 	RtoCasRmodule := (CasRmodule#2)(sub(1,C));
 	RtoAsumCasRmodule := RtoAasRmodule || RtoCasRmodule;
 	AsumCasRmodule := source AsumCtoBasRmoduleMap;
@@ -281,7 +281,7 @@ pullback(RingMap, RingMap) := {Verbose => false} >> o -> (f,g) -> (
 --	addedKGens := null;
 	z := 1;
 	--warning, we are assuming here that the source of pushFwd of a map is the same as pushFwd of the same module
-	gensVector := (idempotent*sub(AasRmodule#1, AsumCasRing)) |((1-idempotent)*sub((pushFwd(RtoCMap, NoPrune=>true))#1, AsumCasRing) );
+	gensVector := (idempotent*sub(AasRmodule#1, AsumCasRing)) |((1-idempotent)*sub((pushFwd(RtoCMap))#1, AsumCasRing) );
 	if (isSubset(K, image currentMap)) then myFlag = true;
 	
 	while ((myFlag == false) and (i < #KGens) ) do (
