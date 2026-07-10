@@ -24,13 +24,17 @@ reduceAnisotropicPartQQDimension3 GrothendieckWittClass := GrothendieckWittClass
 	error "anisotropic dimension of form is not 3";
 
     d := getIntegralDiscriminant beta;
-    
+
     -- Build lists of relevant primes where the p-adic valuation of the discriminant is even or is odd
+    -- The prime 2 is always included: the dyadic place needs a congruence even when no
+    -- diagonal entry is even
     L1 := {1};
     L2 := {};
     S1 := {1};
     S2 := {};
-    for p in getRelevantPrimes(beta) do (
+    P := getRelevantPrimes beta;
+    if not member(2, P) then P = append(P, 2);
+    for p in P do (
 	if odd getPadicValuation(d,p) then (
 	    L1 = append(L1, p);
 	    S1 = append(S1, d - 1);
@@ -40,19 +44,23 @@ reduceAnisotropicPartQQDimension3 GrothendieckWittClass := GrothendieckWittClass
 	    S2 = append(S2, p)
 	    );
 	);
-    
+
     -- We are looking for an element which is equivalent to (d - 1) mod p for each p in L1 and equivalent to p mod p^2 for each p in L2
     -- We use the solveCongruenceList method to find such an element
     alpha := solveCongruenceList(S1 | S2, L1 | L2);
 
-    -- The congruences determine alpha only up to multiples of the product of the moduli,
-    -- and the real place fixes its sign: for signature -3 (resp. 3) the real anisotropic
-    -- part is negative (resp. positive) definite, so alpha must be negative (resp. positive)
+    -- At each completion where the anisotropic dimension of beta is 3, the unique square
+    -- class not represented by the local anisotropic part is that of -disc, whose p-adic
+    -- valuation has the parity of the valuation of d; the congruences force the valuation
+    -- of alpha to have the opposite parity, so alpha is represented at every finite place.
+    -- The congruences determine alpha only up to multiples of the product M of the moduli,
+    -- and the real place fixes the remaining freedom: alpha must have the sign of the
+    -- signature when the signature is +-3, and either sign is admissible when it is +-1
     M := product(L1 | L2);
-    if getSignature(beta) == -3 and alpha > 0 then alpha = (alpha % M) - M;
-    if getSignature(beta) == 3 and alpha < 0 then alpha = (alpha % M) + M;
-
-    a := getSquarefreePart alpha;
+    r := alpha % M;
+    a := getSquarefreePart(if getSignature(beta) > 0 then r else r - M);
+    if getAnisotropicDimensionQQ(addGW(beta, makeDiagonalForm(QQ, -a))) != 2 then
+	error "internal error: chosen element fails to reduce the anisotropic dimension";
     makeDiagonalForm(QQ, a)
     )
 
@@ -176,8 +184,9 @@ getAnisotropicPartQQ GrothendieckWittClass := GrothendieckWittClass => beta -> (
 	);
     
     if getAnisotropicDimension(beta) == 3 then (
-	outputForm = addGW(outputForm, reduceAnisotropicPartQQDimension3(beta));
-	alpha = (getMatrix reduceAnisotropicPartQQDimension3 beta)_(0,0);	
+	reduction3 := reduceAnisotropicPartQQDimension3 beta;
+	outputForm = addGW(outputForm, reduction3);
+	alpha = (getMatrix reduction3)_(0,0);
 	beta = addGW(beta, makeDiagonalForm(QQ, ((-1)*alpha)));
 	);
     
