@@ -9,25 +9,22 @@ needs "matrix1.m2"
 Hom = method(Options => {
     DegreeLimit         => null,
     MinimalGenerators   => true,
-    Strategy            => null,
+    Strategy            => null
 })
 
 End = method(Options => options Hom)
 End(Module) := Module => o -> M -> Hom(M, M, o)
 
 -- TODO: Hom(R, S) should work as well
-Hom(Ring, Ring)     :=
-Hom(Ring, Ideal)    :=
-Hom(Ring, Module)   :=
-Hom(Ideal, Ring)    :=
-Hom(Ideal, Ideal)   :=
-Hom(Ideal, Module)  :=
+Hom(Ring, Ring)   :=
+Hom(Ring, Ideal)  :=
+Hom(Ring, Module) :=
+Hom(Ideal, Ring)   :=
+Hom(Ideal, Ideal)  :=
+Hom(Ideal, Module) :=
 Hom(Module, Ring)   :=
 Hom(Module, Ideal)  := Module => opts -> (M, N) -> Hom(module M, module N, opts)
 Hom(Module, Module) := Module => opts -> (M, N) -> (
-    -- if not isCommutative ring M and not isFreeModule N then
-    --     error "Hom into non-free module over a non-commutative ring requires a pushforward map. See Hom(RingMap, Module, Module)";
-
     -- TODO: take advantage of cached results with higher e
     e := opts.DegreeLimit;
     if e === {} then e = null;
@@ -69,7 +66,6 @@ Hom(Matrix, Matrix) := Matrix => o -> (f, g) -> Hom(source f, g, o) * Hom(f, sou
 -----------------------------------------------------------------------------
 
 -- TODO: compare speed with Hom(M, R^1)
--- todo: what if R is noncommutative
 dual Module := Module => {} >> o -> F -> F.cache.dual ??= (
      if not isFreeModule F then kernel transpose presentation F
      else new Module from (ring F,rawDual raw F))
@@ -105,8 +101,6 @@ homomorphism Vector := v -> (
 
 homomorphism' = method(Options => options Hom)
 homomorphism' Matrix := Matrix => opts -> f -> (
-    -- if not isCommutative ring f  and not isFreeModule target f then
-    --     error "homomorphism' into non-free module over a non-commutative ring requires a pushforward map. See homomorphism'(RingMap, Module)";
     -- from a map M --> N produce a map R^1 -> Hom(M, N)
     adjoint(f, module ring f, source f, opts))
 

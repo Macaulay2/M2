@@ -7,14 +7,14 @@ f making M and N into finite source f modules.
 In particular this allows the computation of Hom_S(M, N) when S is a non-commutative ring
 in cases where M, N are finite over center S.
 *-
-Hom(RingMap, Ring, Ring) :=
-Hom(RingMap, Ring, Ideal) :=
+Hom(RingMap, Ring, Ring)   :=
+Hom(RingMap, Ring, Ideal)  :=
 Hom(RingMap, Ring, Module) :=
-Hom(RingMap, Ideal, Ring) :=
-Hom(RingMap, Ideal, Ideal) :=
+Hom(RingMap, Ideal, Ring)   :=
+Hom(RingMap, Ideal, Ideal)  :=
 Hom(RingMap, Ideal, Module) :=
-Hom(RingMap, Module, Ring) :=
-Hom(RingMap, Module, Ideal) := Module => opts -> (f, M, N) -> Hom(f, module M, module N, opts)
+Hom(RingMap, Module, Ring)   :=
+Hom(RingMap, Module, Ideal)  := Module => opts -> (f, M, N) -> Hom(f, module M, module N, opts)
 Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
     -- f: RingMap(R <- S)
     -- M: R-module
@@ -106,19 +106,19 @@ homomorphism'(RingMap, Matrix) := Matrix => opts -> (f, L) -> (
     homomorphism'(pushFwd(f, L, MinimalGenerators => opts.MinimalGenerators), opts) // H.cache.toambienthommodule
 )
 
-End(RingMap, Ring) :=
-End(RingMap, Ideal) := Module => o -> (f, X) -> Hom(f, module X, module X, o)
+End(RingMap, Ring)   :=
+End(RingMap, Ideal)  := Module => o -> (f, X) -> Hom(f, module X, module X, o)
 End(RingMap, Module) := Module => o -> (f, M) -> Hom(f, M, M, o)
 
 --- Ext ---
-Ext(ZZ, RingMap, Ring, Ring) :=
-Ext(ZZ, RingMap, Ring, Ideal) :=
+Ext(ZZ, RingMap, Ring, Ring)   :=
+Ext(ZZ, RingMap, Ring, Ideal)  :=
 Ext(ZZ, RingMap, Ring, Module) :=
-Ext(ZZ, RingMap, Ideal, Ring) :=
-Ext(ZZ, RingMap, Ideal, Ideal) :=
+Ext(ZZ, RingMap, Ideal, Ring)   :=
+Ext(ZZ, RingMap, Ideal, Ideal)  :=
 Ext(ZZ, RingMap, Ideal, Module) :=
-Ext(ZZ, RingMap, Module, Ring) :=
-Ext(ZZ, RingMap, Module, Ideal) := Module => opts -> (i, f, M, N) -> Ext(i, f, module M, module N, opts)
+Ext(ZZ, RingMap, Module, Ring)   :=
+Ext(ZZ, RingMap, Module, Ideal)  := Module => opts -> (i, f, M, N) -> Ext(i, f, module M, module N, opts)
 Ext(ZZ, RingMap, Module, Module) := Module => opts -> (i, f, M, N) -> (
     -- i: ZZ
     -- f: RingMap(R <- S)
