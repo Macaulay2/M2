@@ -1025,8 +1025,8 @@ set(topcom_PROGRAMS
   santos_22_triang       santos_dim4_triang      santos_triang)
 list(TRANSFORM topcom_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE topcom_PROGRAMS)
 ExternalProject_Add(build-topcom
-  URL               https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM-Downloads/TOPCOM-1_2_0_eta.tgz
-  URL_HASH          SHA256=ca11e5c68c3b9ab1b2d5f105e184c7e443517bcbf0281e5c7bae7330c0d6789e
+  URL               https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM-Downloads/TOPCOM-1_2_0g.tgz
+  URL_HASH          SHA256=e4171d4da98292577e4ec05e0769565bde5e6a74b9f106c86018d1ec677defd2
   PREFIX            libraries/topcom
   SOURCE_DIR        libraries/topcom/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles

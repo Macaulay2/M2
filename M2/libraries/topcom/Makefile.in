@@ -1,8 +1,8 @@
 HOMEPAGE = https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
 URL = https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM-Downloads
-VERSION = 1.2.0e
-TARVERSION= 1_2_0_eta
-SHA256SUM = ca11e5c68c3b9ab1b2d5f105e184c7e443517bcbf0281e5c7bae7330c0d6789e
+VERSION = 1.2.0g
+TARVERSION= 1_2_0g
+SHA256SUM = e4171d4da98292577e4ec05e0769565bde5e6a74b9f106c86018d1ec677defd2
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = TOPCOM-$(TARVERSION).tgz
 CPPFLAGS += -I$(BUILTLIBPATH)/include/cddlib
