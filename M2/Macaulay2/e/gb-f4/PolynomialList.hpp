@@ -1,10 +1,11 @@
-#pragma once
+#ifndef M2_GB_F4_POLYNOMIALLIST_HPP
+#define M2_GB_F4_POLYNOMIALLIST_HPP
 
-#include "../VectorArithmetic.hpp"
-#include "../BasicPolyList.hpp"
-#include "MonomialHashTable.hpp"
-#include "MonomialTypes.hpp"
-#include "PolynomialStream.hpp"
+#include "basic-rings/vector-arithmetic.hpp"
+#include "BasicPolyList.hpp"
+#include "gb-f4/MonomialHashTable.hpp"
+#include "gb-f4/MonomialTypes.hpp"
+#include "unused/PolynomialStream.hpp"
 
 namespace newf4 {
 
@@ -289,6 +290,7 @@ void toStream(const PolynomialList& Fs, S &str)
 
 } // end namespace newf4
 
+#endif
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

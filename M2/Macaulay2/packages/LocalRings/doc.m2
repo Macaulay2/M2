@@ -1,5 +1,3 @@
-undocumented { presentationComplex }
-
 doc ///
 Key
   LocalRings
@@ -78,10 +76,6 @@ Node
       P = ideal(x,y,z,w)
       setMaxIdeal P -- version 1.0
       R = localRing(S, P) -- version 2.0 and above
--- TODO
---    Text
---      @TO localComplement@
---    Example
     Text
       Computing syzygies using @TO localsyz@ and @TO syz@:
     Example
@@ -185,10 +179,9 @@ Node
    (symbol_, PolynomialRing, Ideal)
    (symbol_, PolynomialRing, RingElement)
   Headline
-    Constructor for local rings
+    Constructor for local rings at prime ideals
   Usage
     R_P
-    R_f
     localRing(R, P)
   Inputs
     R:PolynomialRing
@@ -196,7 +189,7 @@ Node
     P:Ideal
       a prime ideal for the localization
     f:RingElement
-      a ring element to localize (not yet implemented)
+      a ring element; localization by a single element is not implemented
   Outputs
     :LocalRing
       the local ring $R_{\mathfrac p}$
@@ -213,6 +206,10 @@ Node
     Text
       Note that the ideal $P$ is assumed to be prime. Use @TO (isWellDefined, LocalRing)@
       to confirm that a local ring is well defined.
+    Text
+      The syntax @TT "R_f"@ is reserved for localization by inverting a single ring element,
+      but this operation is not currently implemented in this package. Use @TT "R_P"@ or
+      @TT "localRing(R,P)"@ for localization at a prime ideal @TT "P"@.
 
 Node
   Key

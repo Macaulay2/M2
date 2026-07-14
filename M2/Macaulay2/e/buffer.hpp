@@ -1,7 +1,7 @@
 // Copyright 1997 by  Michael E. Stillman
 
-#ifndef _buffer_hpp_
-#define _buffer_hpp_
+#ifndef M2_BUFFER_HPP_
+#define M2_BUFFER_HPP_
 
 #include "newdelete.hpp"
 #include "engine-includes.hpp"

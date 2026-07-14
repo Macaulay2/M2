@@ -35,6 +35,8 @@ List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 
 VisibleList _ List := VisibleList => (L, ind) -> (
     new class L from apply(splice ind, i -> L#i))
+String _ List := String => (s, ind) -> (
+    concatenate apply(splice ind, i -> s#i))
 
 Sequence .. Sequence := Sequence => (v,w) -> (
      n := #v;

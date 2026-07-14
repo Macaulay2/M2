@@ -4,6 +4,7 @@
 #include <M2/gc-include.h>
 
 #include "interp-exports.h"
+#include "interrupts-exports.h"
 #include <interface/m2-types.h>
 
 #include "M2mem.h"
@@ -37,10 +38,6 @@ static bool gotArg(const char* arg, char* const * argv) {
   for (; *argv; argv++) if (0 == strcmp(arg, *argv)) return true;
   return false;
 }
-
-extern "C" void interrupts_clearInterruptFlag();
-extern "C" void interrupts_clearAlarmedFlag();
-extern "C" void interrupts_determineExceptionFlag();
 
 extern int have_arg_no_int;
 

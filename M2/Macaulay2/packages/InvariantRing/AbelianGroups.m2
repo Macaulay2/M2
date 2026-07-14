@@ -120,6 +120,34 @@ net DiagonalAction := D -> (
     stack {(net D.ring)|" <- "|net torus|net cyclicGroups|" via ","", net weightMatrix}
 )
 
+---- tex DiagonalAction
+-->-    Used to output tex for a diagonalAction object
+texMath DiagonalAction := D -> (
+    torus := "";
+    cyclicGroups := "";
+    r := D.rank;
+    g := D.numgens;
+    local weightMatrix;
+    if r > 0 then (
+        torus = (texMath coefficientRing D.ring) | "^*";
+	    if r > 1 then (
+            torus = ("\\left("| torus |"\\right)") | "^" | (texMath r);
+        );
+    );
+    if g > 0 then (
+	cyclicGroups = demark(" \\times ",
+	    apply(D.cyclicFactors, i -> texMath(ZZ) | "/" | toString(i))
+	    );
+        if r > 0 then (
+            torus = torus|" \\times ";
+            weightMatrix = D.weights
+        )
+        else weightMatrix = last D.weights;
+	)
+    else weightMatrix = first D.weights;
+    (texMath D.ring) | "\\curvearrowleft" | torus | cyclicGroups | "\\text{ via }" | (texMath weightMatrix)
+)
+
 
 ---- cyclicFactors
 -->- Method to access the cyclicFactors of a DiagonalAction

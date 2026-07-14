@@ -26,10 +26,10 @@ header "// TODO: break apart this file so each piece includes only one:
 header "// TODO: remove the following headers
 #include <engine.h>                         // for IM2_Computation_set_stop
 #include <error.h>                          // for ERROR
-#include <ZZp.hpp>                          // for Z_mod
+#include <rings/ZZp.hpp>                          // for Z_mod
 #include <exceptions.hpp>                   // for engine_error, CATCH, TRY
-#include <monomial.hpp>                     // for EngineMonomial
-#include <relem.hpp>                        // for RingElement";
+#include <monomials/monomial.hpp>                     // for EngineMonomial
+#include <ring-elements/ring-element.hpp>                        // for RingElement";
 
 -- debugging:
 export engineMemory(e:Expr):Expr := (
@@ -4551,6 +4551,122 @@ export rawZZfactor(e:Expr):Expr := (
   else WrongArgZZ()
   );
 setupfun("rawZZfactor",rawZZfactor);
+
+export rawGVInvariants(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 7 then (
+  if isSequenceOfSmallIntegers(s.0) then (curves := getSequenceOfSmallIntegers(s.0);
+  if isSequenceOfSmallIntegers(s.1) then (lightcone := getSequenceOfSmallIntegers(s.1);
+  if isSequenceOfSmallIntegers(s.2) then (grading := getSequenceOfSmallIntegers(s.2);
+  if isSequenceOfSmallIntegers(s.3) then (Q := getSequenceOfSmallIntegers(s.3);
+  if isSequenceOfSmallIntegers(s.4) then (nefPartition := getSequenceOfSmallIntegers(s.4);
+  if isSequenceOfSmallIntegers(s.5) then (intnums := getSequenceOfSmallIntegers(s.5);
+  if isSequenceOfSmallIntegers(s.6) then (settings := getSequenceOfSmallIntegers(s.6);
+    toExpr(Ccode(RawMutableMatrixOrNull,
+      "rawGVInvariants(",
+        curves, ",", lightcone, ",", grading, ",", Q, ",", nefPartition, ",", intnums, ",", settings, 
+      ")"
+    ))
+  ) else WrongArg(6, "a sequence of small integers")
+  ) else WrongArg(5, "a sequence of small integers")
+  ) else WrongArg(4, "a sequence of small integers")
+  ) else WrongArg(3, "a sequence of small integers")
+  ) else WrongArg(2, "a sequence of small integers")
+  ) else WrongArg(1, "a sequence of small integers")
+  ) else WrongArg(0, "a sequence of small integers")
+  ) else WrongNumArgs(7)
+  ) else WrongNumArgs(7)
+  );
+setupfun("rawGVInvariants",rawGVInvariants);
+
+-- Compute lattice points in a polyhedron, up to given bound.
+-- rawLatticePoints(A, b, B, N1, N2)
+--  A: RawMatrix over ZZ, m rows x d columns
+--  b: RawMatrix over ZZ, m rows x 1 column.
+--    the i-th constraint is (row i of A).(x1...xd) <= b_(i,0)
+--  B: bound: only find lattice points whose coordinates xi satisfy -B <= xi <= B.
+--  N1: maximum number of points to be found
+--  N2: maximum number of nodes to visit in the underlying search tree.
+-- returns: a MutableMatrix with d = #cols(A) rows, one column per lattice
+--   point satisfying the constraints above.
+-- TODO:
+--  - A and result should have the same type (both MutableMatrix)?
+export rawLatticePoints(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 5 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:RawMatrixCell do (b := wb.p;
+  when s.2 is wc:ZZcell do (
+  if isInt(wc) then (c := toInt(wc);
+  when s.3 is wd:ZZcell do (
+  if isLong(wd) then (d := toLong(wd);
+  when s.4 is wf:ZZcell do (
+  if isLong(wf) then (f := toLong(wf);
+    toExpr(Ccode(RawMutableMatrixOrNull,
+      "rawLatticePoints(",
+        a, ",", b, ",", c, ",", d, ",", f,
+      ")"
+    ))
+  ) else WrongArgSmallInteger(4)
+  ) else WrongArgZZ(4)
+  ) else WrongArgSmallInteger(3)
+  ) else WrongArgZZ(3)
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArg(1, "a raw matrix")
+  ) else WrongArg(0, "a raw matrix")
+  ) else WrongNumArgs(5)
+  ) else WrongNumArgs(5)
+  );
+setupfun("rawLatticePoints",rawLatticePoints);
+
+-- Compute ALL lattice points in a (bounded) polyhedron, via libnormaliz.
+-- rawLatticePointsNormaliz(A, b)
+--  A: RawMatrix over ZZ, m rows x d columns
+--  b: RawMatrix over ZZ, m rows x 1 column.
+--    the i-th constraint is (row i of A).(x1...xd) <= b_(i,0)
+-- returns: a MutableMatrix with d = #cols(A) rows, one column per lattice
+--   point satisfying the constraints above. The polyhedron must be bounded;
+--   otherwise an engine error is reported. Big-integer entries in A and b
+--   are supported.
+export rawLatticePointsNormaliz(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:RawMatrixCell do (b := wb.p;
+    toExpr(Ccode(RawMutableMatrixOrNull,
+      "rawLatticePointsNormaliz(",
+        a, ",", b,
+      ")"
+    ))
+  ) else WrongArg(1, "a raw matrix")
+  ) else WrongArg(0, "a raw matrix")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawLatticePointsNormaliz",rawLatticePointsNormaliz);
+
+-- rawConeInteriorPoint(A): test whether the cone {x : A*x <= 0} is
+-- full-dimensional, returning either a witness interior point or a
+-- dual certificate of degeneracy.
+--   A: RawMatrix over ZZ with m rows (inequalities) and n columns
+--      (ambient dimension); entries must fit in a C int.
+-- Returns: a 1-row MutableMatrix over RR_53.
+--   if full-dimensional:  2 + n columns, [1.0, tStar, x_1, ..., x_n]
+--                         where tStar > 0 and A*x <= 0 strictly (componentwise).
+--   else               :  2 + m columns, [0.0, tStar, y_1, ..., y_m]
+--                         where tStar == 0 and y >= 0, y^T A = 0
+--                         (a Farkas certificate of non-full-dimensionality).
+export rawConeInteriorPoint(e:Expr):Expr := (
+  when e is wC:RawMatrixCell do (C := wC.p;
+    toExpr(Ccode(RawMutableMatrixOrNull,
+      "rawConeInteriorPoint(",
+        C, 
+      ")"
+    ))
+  ) else WrongArg("a raw matrix")
+  );
+setupfun("rawConeInteriorPoint",rawConeInteriorPoint);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface.o "

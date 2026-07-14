@@ -1422,8 +1422,58 @@ document {
 }
 document {
     Key => (net, Divisor),
-    Headline => "displays the coordinates of the Divisor"    
+    Headline => "displays the coordinates of the Divisor"
 }
+
+-- SpaceCurves previously had zero TEST blocks despite 31 exports.
+-- Add a smoke regression covering the main type-and-data pipeline:
+-- quadricSurface / cubicSurface / quarticSurfaceRational -> divisor
+-- -> curve, plus the standard ACM / Betti helpers.
+TEST ///
+R := ZZ/32003[x, y, z, w];
+-- The three documented surface constructors return the appropriate types.
+Q := quadricSurface R;
+assert(class Q === QuadricSurface);
+assert(Q.HyperplaneClass == {1, 1});
+assert(Q.CanonicalClass == {-2, -2});
+assert(Q.IntersectionPairing == matrix {{0, 1}, {1, 0}});
+C3 := cubicSurface R;
+assert(class C3 === CubicSurface);
+Qr := quarticSurfaceRational R;
+assert(class Qr === QuarticSurfaceRational);
+-- divisor on the quadric and curve from divisor.
+D := divisor({2, 3}, Q);
+assert(class D === Divisor);
+assert(D.Coordinate == {2, 3});
+assert(class D.Surface === QuadricSurface);
+C := curve D;
+assert(class C === Curve);
+-- A (2,3)-divisor on a smooth quadric in P^3 is a curve of degree 5
+-- and arithmetic genus 2.
+assert(degree ideal C == 5);
+assert(genus ideal C == 2);
+///
+
+-- Cover the ACM-Betti predicates and the helper generators that the
+-- audit flagged as having zero direct TEST coverage.
+TEST ///
+-- positiveChars: postulation characters of degree d.
+pc := positiveChars 3;
+assert(class pc === List);
+assert(#pc > 0);
+gamma := pc_0;
+-- generalACMBetti from a postulation character returns a BettiTally.
+B := generalACMBetti gamma;
+assert(class B === BettiTally);
+assert(isACMBetti B);
+assert(isSmoothACMBetti B);
+-- degreeMatrix takes a BettiTally and returns a Matrix.
+M := degreeMatrix B;
+assert(class M === Matrix);
+-- specializeACMBetti / allACMBetti return Lists.
+assert(class specializeACMBetti B === List);
+assert(class allACMBetti gamma === List);
+///
 
 end
 

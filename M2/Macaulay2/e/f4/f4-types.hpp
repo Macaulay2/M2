@@ -1,11 +1,11 @@
 /* Copyright 2005-2021, Michael E. Stillman */
 
-#ifndef _F4types_h_
-#define _F4types_h_
+#ifndef M2_F4_F4TYPES_H_
+#define M2_F4_F4TYPES_H_
 
 
 #include <climits>                   // for INT_MIN
-#include "VectorArithmetic.hpp"      // for ElementArray
+#include "basic-rings/vector-arithmetic.hpp"      // for ElementArray
 #include "f4/f4-monlookup.hpp"       // for F4MonomialLookupTableT
 #include "f4/moninfo.hpp"            // for MonomialInfo, monomial_word, pac...
 #include "f4/varpower-monomial.hpp"  // for varpower_monomials, varpower_mon...

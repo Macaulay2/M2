@@ -2828,6 +2828,106 @@ TEST ///
       assert(toList augmentWeylFilling(T, 2, 5) == {{0,1},{2},{5}})
 ///
 
+-- schur: the Schur functor on a map -- identity, determinant, functoriality
+TEST ///
+  F = matrix{{1_QQ,2,4},{3,9,27},{4,16,64}}
+  assert instance(schur({2}, F), Matrix)
+  -- top exterior power S_(1,1,1) is the determinant
+  assert(schur({1,1,1}, F) == matrix{{det F}})
+  -- the functor preserves the identity
+  s = schur({3,1}, id_(QQ^3))
+  assert(s == id_(source s))
+  -- functoriality: S_lambda(A*B) = S_lambda(A) * S_lambda(B)
+  A = matrix{{1_QQ,2,0},{0,1,3},{1,0,1}}
+  B = matrix{{2_QQ,0,1},{1,1,0},{0,1,2}}
+  assert(schur({2,1}, A*B) == schur({2,1}, A) * schur({2,1}, B))
+///
+
+-- schurModulesMap / weylModulesMap: the identity-on-tableaux specification gives the identity map
+TEST ///
+  M = schurModule({2,1}, QQ^3)
+  sm = schurModulesMap(M, M, T -> {(1_QQ, T)})
+  assert instance(sm, Matrix)
+  assert(sm == id_M)
+  W = weylModule({2,1}, QQ^3)
+  assert(weylModulesMap(W, W, T -> {(1_QQ, T)}) == id_W)
+///
+
+-- normalize / augmentFilling: Schur-side tableau helpers
+TEST ///
+  -- normalize sorts each column, recording the Koszul sign
+  (c, Tn) = normalize(new Filling from {{1,0},{2,1}})
+  assert(c == 1)
+  assert(toList Tn == {{0,1},{1,2}})
+  -- a repeated entry in a column collapses the wedge to zero
+  assert(normalize(new Filling from {{0,0},{1,2}}) === (0, null))
+  -- augmentFilling appends an entry to a column (or starts a new rightmost column)
+  T = new Filling from {{0,1},{1}}
+  assert(toList augmentFilling(T,0,2) == {{0,1,2},{1}})
+  assert(toList augmentFilling(T,1,2) == {{0,1},{1,2}})
+  assert(toList augmentFilling(T,5,3) == {{0,1},{1},{3}})
+///
+
+-- weylNormalize / maxWeylFilling / towardWeylStandard: Weyl-side tableau helpers
+TEST ///
+  assert instance(weyl {{0,0,1},{1,2}}, WeylFilling)
+  -- weylNormalize sorts each row (no sign -- divided powers are symmetric)
+  assert(toList weylNormalize(new WeylFilling from {{2,0,1},{3,1}}) == {{0,1,2},{1,3}})
+  -- maxWeylFilling produces a Weyl-standard tableau of the given shape
+  mw = maxWeylFilling({3,2}, 4)
+  assert(toList mw == {{2,2,3},{3,3}})
+  assert(isWeylStandard mw === null)
+  -- towardWeylStandard of an already-standard filling is the singleton {T => 1}
+  Tstd = weyl {{0,1},{1,2}}
+  H = towardWeylStandard Tstd
+  assert(#H == 1)
+  assert(H#Tstd === 1)
+///
+
+-- weylStraighten: divided-power straightening into the Weyl-standard basis
+TEST ///
+  assert instance(weylStraighten weyl {{1,2},{0,0}}, HashTable)
+  -- an already-Weyl-standard filling straightens to itself
+  Tstd = weyl {{0,1},{1,2}}
+  H = weylStraighten Tstd
+  assert(#H == 1)
+  assert(H#Tstd === 1)
+  -- the module-evaluation form lands in the supplied Weyl module
+  W = weylModule({2,2}, QQ^3)
+  assert(class weylStraighten(weyl {{0,2},{1,0}}, W) === W)
+///
+
+-- dividedPower: rank formula, tensor-product identity, functoriality
+TEST ///
+  d2 = dividedPower(2, QQ^3)
+  -- D^d of a rank-n free module is free of rank binomial(n+d-1, d)
+  assert(rank d2 == binomial(4,2))
+  assert(rank dividedPower(3, QQ^4) == binomial(6,3))
+  -- the List form is the tensor product of divided powers
+  assert(dividedPower({2,1}, QQ^3) == d2 ** dividedPower(1, QQ^3))
+  -- the functor preserves the identity
+  dp = dividedPower(2, id_(QQ^3))
+  assert(dp == id_(source dp))
+///
+
+-- divMult / divComult: divided-power multiplication and comultiplication
+TEST ///
+  -- divMult returns {coefficient, sorted concatenation}
+  assert(divMult({0,0,1}, {0,1}) == {6, {0,0,0,1,1}})
+  -- divComult lists every way to split L into a pair (A,B) with #A = p
+  assert(divComult({0,0,1,2}, 2) == {{{0,0},{1,2}}, {{0,1},{0,2}}, {{0,2},{0,1}}, {{1,2},{0,0}}})
+///
+
+-- characterRep / decomposeRep: read a polynomial GL-representation off a matrix
+TEST ///
+  Rw = QQ[w_1..w_9]
+  G = genericMatrix(Rw, 3, 3)
+  -- the character read from schur({2,1}, genericMatrix) matches the abstract character
+  assert(toString characterRep schur({2,1}, G) == toString character({{2,1}}, 3))
+  -- S_2 of the standard representation is irreducible
+  assert(keys decomposeRep schur({2}, G) === {{2}})
+///
+
 end
 restart
 loadPackage "SchurFunctors"

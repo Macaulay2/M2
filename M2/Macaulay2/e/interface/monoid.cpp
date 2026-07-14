@@ -5,7 +5,7 @@
 #include "buffer.hpp"
 #include "error.h"
 #include "monoid.hpp"
-#include "ring.hpp"
+#include "rings/ring.hpp"
 #include "util.hpp"
 
 const Monoid* rawTrivialMonoid()

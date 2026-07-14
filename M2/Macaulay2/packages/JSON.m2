@@ -17,12 +17,12 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.6",
-    Date => "February 28, 2026",
+    Version => "0.7",
+    Date => "June 5, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
     Keywords => {"System"},
     PackageExports => {"Text"},
     PackageImports => {"Parsing"},
@@ -33,6 +33,10 @@ newPackage(
 ---------------
 
 -*
+
+0.7 (2026-06-05, M2 1.26.06)
+* update my contact info
+* updated tests (thanks to Taylor, Keller, and the M2@GT26 testing group!)
 
 0.6 (2026-02-28, M2 1.26.05)
 * parsing is now handled by jansson in the interpreter, which speeds things up
@@ -274,6 +278,7 @@ doc ///
     [toJSON,NameSeparator]
     [toJSON,Sort]
     Indent
+    IndentLevel
     ValueSeparator
     NameSeparator
   Headline
@@ -304,6 +309,12 @@ doc ///
       number of spaces to indent for each level of indentation.
     Example
       toJSON(x, Indent => 2)
+    Text
+      The @TT "IndentLevel"@ option is used internally to track the current
+      indentation depth.  It can also be set directly to format output as if
+      it were already nested inside a larger JSON value.
+    Example
+      toJSON(x, Indent => 2, IndentLevel => 1)
     Text
       Alternatively, the @TT "Indent"@ option can be a string corresponding to
       the indentation used for each level.
@@ -384,7 +395,11 @@ doc ///
 ///
 
 -- generate parsing test file
-///
+-- (Wrapped in -* ... *- below so the block is treated as a comment by M2
+-- rather than as a top-level string literal that is evaluated and
+-- discarded at load time. Run this snippet by hand to regenerate
+-- JSON/tests/parse.m2 from the upstream JSONTestSuite.)
+-*
 tmpdir = temporaryFileName()
 makeDirectory tmpdir
 run("cd " | tmpdir |" && git clone https://github.com/nst/JSONTestSuite")
@@ -412,4 +427,4 @@ for tst in sort select(tsts, f -> match("^y_", f)) do (
     outfile << "assert BinaryOperation(symbol ===, fromJSON " <<
     format testjson << ", " << toExternalString fromJSON testjson << ")" << endl)
 close outfile
-///
+*-

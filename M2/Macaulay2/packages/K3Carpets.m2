@@ -2192,7 +2192,104 @@ zBT=h#0 - minimalBetti degenerateK3(a,b,e)
 assert(sum(keys zBT,k->zBT#k)==0)
 ///
 
+-----------------------------------------------------------------------------
+-- Added coverage for exports that previously had no direct test.
+-----------------------------------------------------------------------------
 
+-- productOfProjectiveSpaces / smallDiagonal / irrelevantIdeal / hankelMatrix:
+-- the basic multigraded-ring and matrix constructors.
+TEST ///
+R = productOfProjectiveSpaces {1,3}
+assert(instance(R, PolynomialRing))
+assert(numgens R == 6)
+assert(sort unique((gens R)/degree) == {{0,1},{1,0}})
+assert(numgens productOfProjectiveSpaces 2 == 4)
+sd = smallDiagonal 4
+assert(instance(sd, Ideal) and isHomogeneous sd)
+assert(numgens sd == binomial(4,2))
+assert(numgens smallDiagonal productOfProjectiveSpaces 4 == numgens sd)
+irr = irrelevantIdeal productOfProjectiveSpaces 3
+assert(instance(irr, Ideal) and numgens irr == 2^3)
+HM = hankelMatrix(ZZ/101[xx_0..xx_4], 3, 3)
+assert(instance(HM, Matrix) and (numrows HM, numcols HM) == (3,3))
+assert(all(toList(1..2), i -> all(toList(0..1), j -> HM_(i,j) == HM_(i-1,j+1))))
+assert((numrows hankelMatrix(2,3), numcols hankelMatrix(2,3)) == (2,3))
+///
+
+-- correspondenceScroll / schemeInProduct: the square of the small diagonal of
+-- (P^1)x(P^1) yields, via correspondenceScroll, the same K3 carpet as carpet.
+TEST ///
+S = productOfProjectiveSpaces 2
+Delta = smallDiagonal S
+sc = correspondenceScroll(Delta, {3,3})
+assert(instance(sc, Ideal) and codim sc == 5)
+k3 = correspondenceScroll(Delta^2, {3,3})
+assert(betti minimalBetti k3 == betti minimalBetti carpet(3,3))
+Ssp = ZZ/101[aa,bb]
+J = schemeInProduct(ideal 0_Ssp, {matrix{{aa,bb}}, matrix{{aa,bb}}}, symbol Ysp)
+assert(instance(J, Ideal) and numgens J == 1)
+///
+
+-- Relative resolutions in the case of k-resonance: resonanceScroll, coxMatrices,
+-- relativeEquations, relativeResolution, relativeResolutionTwists, computeBound.
+-- computeBound 3 == 6 is the conjectured value k^2-k for k = 3.
+TEST ///
+assert(resonanceScroll(6,4,3) === ({2,1,1},{1,1,0}))
+(as,bs) = resonanceScroll(5,4,3)
+assert(sum as == 5+1-3 and sum bs == 4+1-3)
+cm = coxMatrices(6,5,4)
+assert(instance(cm, Sequence) and #cm == 4 and all(cm, m -> instance(m, Matrix)))
+re = relativeEquations(4,4,3)
+assert(instance(re, Ideal) and isHomogeneous re and numgens re == 9)
+F = relativeResolution(5,4,3)
+assert(instance(F, Complex) and length F == 4)
+tw = relativeResolutionTwists(as_0, bs_0, F)
+assert(instance(tw, List) and #tw == length F + 1)
+assert(computeBound(6,4,3) === (9,7))
+assert(computeBound 3 == 6)
+///
+
+-- carpetDet / resonanceDet / allGradings: the integer and resonance determinants
+-- of the crucial constant strand, and the regrading of a nonminimal resolution.
+TEST ///
+assert(carpetDet(3,3) == 16)
+rd = resonanceDet 3
+assert(instance(rd, Sequence) and #rd == 2)
+assert(instance(rd#0, Product) and instance(rd#1, Product))
+assert(value rd#0 == 2)
+Id = carpet(3,3)
+Fd = freeResolution(Id, Strategy => Nonminimal, LengthLimit => 2)
+degs = apply(4, i -> {1,0,i}) | apply(4, j -> {0,1,j})
+Sall = (coefficientRing ring Id)[gens ring Id, Degrees => degs]
+G = allGradings(Fd, Sall)
+assert(instance(G, Complex) and length G == length Fd)
+assert(all(toList(1..length G), i -> isHomogeneous G.dd_i))
+///
+
+-- carpetBettiTables / carpetBettiTable: Betti tables of a carpet over every
+-- prime field. The (3,3) carpet has exceptional characteristic 2, so its char-2
+-- table differs from the generic one; both have the same total Betti numbers as
+-- the actual carpet over that characteristic. Sizes kept small: carpetBettiTables
+-- at (6,6) is known to exhaust memory.
+TEST ///
+h = carpetBettiTables(3,3)
+assert(instance(h, HashTable) and sort keys h == {0,2})
+assert(all(keys h, p -> instance(carpetBettiTable(h,p), BettiTally)))
+assert(carpetBettiTable(3,3,0) == carpetBettiTable(h,0))
+assert(carpetBettiTable(h,2) != carpetBettiTable(h,0))
+assert(all(keys h, p -> sum values carpetBettiTable(h,p) == sum values minimalBetti carpet(3,3,Characteristic=>p)))
+///
+
+-- gorensteinDouble / canonicalHomotopies / homotopyRanks, and the Scrolls option
+-- of carpet. The Gorenstein double of the scroll S(3,3) is exactly carpet(3,3).
+TEST ///
+(Icar, xmat, ymat) = carpet(3,3, Scrolls => true)
+assert(instance(Icar, Ideal) and instance(xmat, Matrix) and instance(ymat, Matrix))
+assert(gorensteinDouble minors(2, xmat|ymat) == Icar)
+(Fch, hch) = canonicalHomotopies(7,3)
+assert(instance(Fch, Complex) and instance(hch, Function))
+assert(instance(homotopyRanks(7,3), Net))
+///
 
 end--
 

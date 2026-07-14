@@ -8,3 +8,5 @@ prism/prism.js
 prism/prism.js.LICENSE.txt
 pygments/macaulay2.py
 rouge/macaulay2.rb
+vim/dict/m2.vim.dict
+vim/syntax/m2.vim

@@ -235,3 +235,30 @@ TEST ///
   M = coker matrix "x2,y2"
   assert(super M == saturate 0_M and M / saturate 0_M == 0)
 ///
+
+-- Tests added in the 2026 test-audit pass: saturate boundary cases, power
+-- invariance, the inclusion I -> saturate(I,f), the stabilization
+-- saturate(I,f) = quotient(I,f^N) for N large, and isSupportedInZeroLocus
+-- boundary cases.
+TEST ///
+  R = QQ[x,y,z]
+  I = ideal(x^2*y, y^2*z)
+  -- saturating by 1 leaves the ideal unchanged
+  assert(saturate(I, 1_R) == I)
+  assert(saturate(I, ideal 1_R) == I)
+  -- saturating the zero ideal yields the zero ideal
+  assert(saturate(ideal 0_R, x) == ideal 0_R)
+  -- saturate is invariant under raising the divisor to a positive power
+  assert(saturate(I, x) == saturate(I, x^3))
+  -- the original ideal sits inside its saturation
+  assert(isSubset(I, saturate(I, x)))
+  -- saturate stabilizes the quotient sequence:
+  -- saturate(I, f) equals quotient(I, f^N) once N is large enough
+  assert(saturate(I, x) == quotient(I, x^10))
+  -- isSupportedInZeroLocus boundary cases
+  S = QQ[u,v]
+  m = ideal vars S
+  assert isSupportedInZeroLocus_m (S^0)
+  assert isSupportedInZeroLocus_m (S^1/m^2)
+  assert not isSupportedInZeroLocus_m (S^1)
+///

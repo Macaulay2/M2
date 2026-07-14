@@ -15,6 +15,7 @@ cotOpts := opts ++ { Presentation => EquivLoc }
 debug Core -- to use BaseRing, generatorSymbols, frame
 
 -- labeling of classes
+-- TODO: LabelList is exported (at CotangentSchubert.m2:33) but has no doc node.
 LabelList = new Type of List;
 new LabelList from String := (T,s) -> (
     l:=separate(" ",s);
@@ -61,9 +62,17 @@ expandElem := (P,vrs,els) -> (
     sub(C,ring first els) * product(#vrs, i -> (els#i)^(ee#i)) + expandElem(Q,vrs,els)
     )
 
+-- FIXME: tautoClass(i,j) errors with "array index out of bounds" when j is
+-- outside the (undocumented) range of valid tautological-bundle indices for
+-- the current setup.  The doc gives no bound on j; on setupCotangent(2,4)
+-- only j=1 is accepted (tautoClass(0,2) errors).
 tautoClass = method(Dispatch=>{Thing,Thing,Type},Options=>true); -- "Chern classes" -- renamed tautoClass to avoid confusion with motivic classes
 zeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
 dualZeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
+-- FIXME: canonicalClass is exported and documented but no method appears to
+-- be installed in setupCotangent's body; calling canonicalClass on any ring
+-- produced by setupCotangent (Borel/EquivLoc, equivariant or not) errors with
+-- "no method found".  See the doc node at CotangentSchubert.m2:263-272.
 canonicalClass = method(Dispatch=>{Type},Options=>true) -- note the {}
 zeroSectionInv = method(Dispatch=>{Type},Options=>true) -- internal use only
 segreClass = method(Dispatch=>{Thing,Type},Options=>true)

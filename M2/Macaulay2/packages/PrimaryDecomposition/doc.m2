@@ -118,6 +118,26 @@ Node
       I == intersect C
       #C
     Text
+      This function has one optional input @TT "Strategy"@, which accepts three
+      possible values used to determine the algorithm for finding embedded components.
+    Text
+      The available values are @TT "Res"@, which is closest to the original
+      Eisenbud-Huneke-Vasconcelos method, together with @TT "Hom"@ and @TT "Sat"@.
+    Text
+      If you want to specify the @TT "Strategy"@ to be used by @TO localize@ as well,
+      this can be specified by passing a @TT "Hybrid"@ Strategy in the form:
+      @TT "Hybrid{primaryDecomposition.Strategy, localize.Strategy}"@.
+    Example
+      kk = ZZ/3
+      R = kk[a,b]
+      I = ideal {a^2, a*b}
+      primaryDecomposition(I, Strategy => Hybrid{Res, 1})
+    Text
+      While the default (and typically fastest) strategy is @TT "Sat"@, it is recommended to try different
+      @TT "Strategy"@ values if the computation of a particular embedded component is taking too long.
+      One can start the computation with one strategy, and interrupt and resume with a different strategy
+      (even multiple times) if desired.
+    Text
       Recall that @TO "Macaulay2Doc :: List / Function"@ applies a function to each element of a
       list, returning the results as a list. This is often useful with lists of ideals,
       such as the list @TT "C"@ of primary components.
@@ -130,9 +150,14 @@ Node
       and can be obtained by using @TO (associatedPrimes, Ideal)@.
     Example
       associatedPrimes I / print;
-  Caveat
-    -- FIXME
-    The ground ring must be a prime field.
+    Text
+      Some strategies require the ground ring to be a prime field but results can
+      be obtained in some cases even for more general ground rings.
+    Example
+      kk = GF(9)
+      R = kk[a,b]
+      I = ideal {a^2, a*b}
+      primaryDecomposition(I)
   SeeAlso
     (primaryDecomposition, Module)
     (associatedPrimes, Ideal)
@@ -213,16 +238,13 @@ Node
       known primary components. To display detailed information throughout the computation, set the global variable
       @TO "debugLevel"@ to a value greater than 0, e.g. @TT "debugLevel=1"@ (or @TT "debugLevel=2"@ for even more detail).
 
-      This function has one optional input @TT "Strategy"@, which accepts 3
+      This function has one optional input @TT "Strategy"@, which accepts three
       possible values that determine the algorithm for finding embedded components.
-
--- FIXME
-      @UL {
-	  {TT "Res", PARA {"This strategy is closest to the original Eisenbud-Huneke-Vasconcelos method."}},
-	  {TT "Hom"},
-	  {TT "Sat"},
-	  }@
-
+    Text
+      The available values are @TT "Hybrid{Res}"@, which is closest to the original
+      Eisenbud-Huneke-Vasconcelos method, together with @TT "Hybrid{Hom}"@ and
+      @TT "Hybrid{Sat}"@.
+    Text
       While the default (and typically fastest) strategy is @TT "Sat"@, it is recommended to try different
       @TT "Strategy"@ values if the computation of a particular embedded component is taking too long.
       One can start the computation with one strategy, and interrupt and resume with a different strategy
@@ -430,13 +452,12 @@ Node
       Invent. Math. 110 (1992) 207-235. However, we use @TO (localize, Ideal, Ideal)@.
 
       The @TT "Strategy"@ option value sets the strategy option for @TO localize@, and should be one of the following:
-      -- TODO: The default value is 2.
 
       @UL{
-	  LI ("Strategy => 0", " -- Uses ", TT "localize", " Strategy 0"),
-	  LI ("Strategy => 1", " -- Uses ", TT "localize", " Strategy 1"),
-	  LI ("Strategy => 2", " -- Uses ", TT "localize", " Strategy 2")
-	  }@
+          LI ("Strategy => 0", " -- Uses ", TO "localize", " Strategy 0"),
+          LI ("Strategy => 1", " -- Uses ", TO "localize", " Strategy 1"),
+          LI ("Strategy => 2", " -- Uses ", TO "localize", " Strategy 2 - default")
+      }@
 
       The @TT "Increment"@ option value should be an integer. The algorithm given in
       Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235, relies on @TT "topComponents(I + P^m)"@

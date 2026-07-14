@@ -3,7 +3,7 @@
 #include <M2/gc-include.h>
 #include <M2/config.h>
 
-#include "m2-mem.h"
+#include "interface/m2-mem.h"
 
 /* #ifdef MEMDEBUG */
 /* #include <memdebug.h> */

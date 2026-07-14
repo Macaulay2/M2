@@ -8,8 +8,8 @@
 
 #include "exceptions.hpp"
 #include "monoid.hpp"
-#include "monomial.hpp"
-#include "relem.hpp"
+#include "monomials/monomial.hpp"
+#include "ring-elements/ring-element.hpp"
 
 PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
                         const PolyList& polys)

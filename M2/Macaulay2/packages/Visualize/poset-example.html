@@ -1,18 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Macaulay2: Poset Visualization</title>
-    <link href="css/common.css" rel="stylesheet">
-      
+    <link href="css/common.css" rel="stylesheet" />
+
     <script>
       //global variables
       activeSession = true;
       curEdit = false;
       curHighlight = false;
       menuOpen = true;
-      dataLabels = ['1', '2', '3', '4', '5', '6', '7'];
-      dataRelMatrix = [[1, 1, 1, 1, 0, 1, 1], [0, 1, 1, 1, 0, 1, 1], [0, 0, 1, 1, 0, 1, 1], [0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 1, 1, 1], [0, 0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 0, 0, 1]];
+      dataLabels = ["1", "2", "3", "4", "5", "6", "7"];
+      dataRelMatrix = [
+        [1, 1, 1, 1, 0, 1, 1],
+        [0, 1, 1, 1, 0, 1, 1],
+        [0, 0, 1, 1, 0, 1, 1],
+        [0, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1],
+        [0, 0, 0, 0, 0, 1, 1],
+        [0, 0, 0, 0, 0, 0, 1],
+      ];
       dataCovRel = null;
       dataGroupList = null;
       portData = 8080; // initializes port from user
@@ -27,56 +35,106 @@
   </head>
 
   <body>
+    <div id="side">
+      <h2>&#8202;&#8202;Menu</h2>
+      <div class="list-group" id="menuList">
+        <div class="list-group-item" id="sliderDiv">
+          <div style="height: 25px">Force variables</div>
+          <span style="display: inline-block; width: 60px"
+            >&#8202; Charge:</span
+          >
+          <div
+            class="noUi-extended"
+            id="charge-slider"
+            style="vertical-align: middle"
+          ></div>
+          <br />
+          <span style="display: inline-block; width: 60px">&#8202; Links:</span>
+          <div
+            class="noUi-extended"
+            id="linkdist-slider"
+            style="vertical-align: middle"
+          ></div>
+        </div>
+        <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
+        <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
+        <a id="highlightToggle" href="#" class="list-group-item"
+          >Highlight comparable elements</a
+        >
+        <a id="extremalNodeToggle" href="#" class="list-group-item"
+          >Fix extremal nodes</a
+        >
+        <a id="reset" href="#" class="list-group-item">Reset nodes</a>
+        <a id="forceToggle" href="#" class="list-group-item">Turn on force</a>
+        <a id="exportTikz" href="#" class="list-group-item"
+          >Generate TikZ code</a
+        >
 
-        <div id="side">
-          <h2>&#8202;&#8202;Menu</h2>
-          <div class="list-group" id="menuList">
-            <div class="list-group-item" id="sliderDiv"><div style="height:25px;">Force variables</div>
-            <span style="display:inline-block; width:60px;">&#8202; Charge:</span><div class="noUi-extended" id="charge-slider" style="vertical-align:middle;"></div><br>
-            <span style="display:inline-block; width:60px;">&#8202; Links:</span><div class="noUi-extended" id="linkdist-slider" style="vertical-align:middle;"></div>
-            </div>
-            <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
-            <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
-            <a id="highlightToggle" href="#" class="list-group-item">Highlight comparable elements</a>
-            <a id="extremalNodeToggle" href="#" class="list-group-item">Fix extremal nodes</a>
-            <a id="reset" href="#" class="list-group-item">Reset nodes</a>
-            <a id="forceToggle" href="#" class="list-group-item">Turn on force</a>
-            <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
-              
-            <a href="#collapse1" data-bs-toggle="collapse" class="list-group-item">Boolean tests &#9662;</a>
-                <div id="collapse1" class="panel-collapse collapse">
-                    <a id="isAtomic" href="#" class="list-group-item"> &nbsp;&nbsp; isAtomic</a>
-                    <a id="isBounded" href="#" class="list-group-item"> &nbsp;&nbsp; isBounded</a>
-                    <a id="isDistributive" href="#" class="list-group-item"> &nbsp;&nbsp; isDistributive</a>
-                    <a id="isGeometric" href="#" class="list-group-item"> &nbsp;&nbsp; isGeometric</a>
-                    <a id="isGraded" href="#" class="list-group-item"> &nbsp;&nbsp; isGraded</a>
-                    <a id="isLattice" href="#" class="list-group-item"> &nbsp;&nbsp; isLattice</a>
-                    <a id="isLowerSemilattice" href="#" class="list-group-item"> &nbsp;&nbsp; isLowerSemilattice</a>
-                    <a id="isLowerSemimodular" href="#" class="list-group-item"> &nbsp;&nbsp; isLowerSemimodular</a>
-                    <a id="isModular" href="#" class="list-group-item"> &nbsp;&nbsp; isModular</a>
-                    <a id="isRanked" href="#" class="list-group-item"> &nbsp;&nbsp; isRanked</a>
-                    <a id="isSperner" href="#" class="list-group-item"> &nbsp;&nbsp; isSperner</a>
-                    <a id="isStrictSperner" href="#" class="list-group-item"> &nbsp;&nbsp; isStrictSperner</a>
-                    <a id="isUpperSemilattice" href="#" class="list-group-item"> &nbsp;&nbsp; isUpperSemilattice</a>
-                    <a id="isUpperSemimodular" href="#" class="list-group-item"> &nbsp;&nbsp; isUpperSemimodular</a>
-                </div>
-            <a href="#collapse2" data-bs-toggle="collapse" class="list-group-item">Numerical invariants &#9662;</a>
-                <div id="collapse2" class="panel-collapse collapse">
-                    <a id="dilworthNumber" href="#" class="list-group-item"> &nbsp;&nbsp; dilworthNumber</a>
-                </div>
-              
-            <a id="endSession" href="#" class="list-group-item">End session</a> 
-          </div>
+        <a href="#collapse1" data-bs-toggle="collapse" class="list-group-item"
+          >Boolean tests &#9662;</a
+        >
+        <div id="collapse1" class="panel-collapse collapse">
+          <a id="isAtomic" href="#" class="list-group-item">
+            &nbsp;&nbsp; isAtomic</a
+          >
+          <a id="isBounded" href="#" class="list-group-item">
+            &nbsp;&nbsp; isBounded</a
+          >
+          <a id="isDistributive" href="#" class="list-group-item">
+            &nbsp;&nbsp; isDistributive</a
+          >
+          <a id="isGeometric" href="#" class="list-group-item">
+            &nbsp;&nbsp; isGeometric</a
+          >
+          <a id="isGraded" href="#" class="list-group-item">
+            &nbsp;&nbsp; isGraded</a
+          >
+          <a id="isLattice" href="#" class="list-group-item">
+            &nbsp;&nbsp; isLattice</a
+          >
+          <a id="isLowerSemilattice" href="#" class="list-group-item">
+            &nbsp;&nbsp; isLowerSemilattice</a
+          >
+          <a id="isLowerSemimodular" href="#" class="list-group-item">
+            &nbsp;&nbsp; isLowerSemimodular</a
+          >
+          <a id="isModular" href="#" class="list-group-item">
+            &nbsp;&nbsp; isModular</a
+          >
+          <a id="isRanked" href="#" class="list-group-item">
+            &nbsp;&nbsp; isRanked</a
+          >
+          <a id="isSperner" href="#" class="list-group-item">
+            &nbsp;&nbsp; isSperner</a
+          >
+          <a id="isStrictSperner" href="#" class="list-group-item">
+            &nbsp;&nbsp; isStrictSperner</a
+          >
+          <a id="isUpperSemilattice" href="#" class="list-group-item">
+            &nbsp;&nbsp; isUpperSemilattice</a
+          >
+          <a id="isUpperSemimodular" href="#" class="list-group-item">
+            &nbsp;&nbsp; isUpperSemimodular</a
+          >
+        </div>
+        <a href="#collapse2" data-bs-toggle="collapse" class="list-group-item"
+          >Numerical invariants &#9662;</a
+        >
+        <div id="collapse2" class="panel-collapse collapse">
+          <a id="dilworthNumber" href="#" class="list-group-item">
+            &nbsp;&nbsp; dilworthNumber</a
+          >
         </div>
 
-        <div class="container">
-          <div id="canvasElement2d"></div>
-        </div>
+        <a id="endSession" href="#" class="list-group-item">End session</a>
+      </div>
+    </div>
 
+    <div class="container">
+      <div id="canvasElement2d"></div>
+    </div>
 
-  <script src="js/visCommon.js"></script>
-  <script src="js/visPoset.js"></script>
+    <script src="js/visCommon.js"></script>
+    <script src="js/visPoset.js"></script>
   </body>
-
-
 </html>

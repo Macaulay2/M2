@@ -6,27 +6,27 @@
 #include <limits>
 #include <sstream>
 
-#include "Eschreyer.hpp"
+#include "computations/Eschreyer.hpp"
 #include "hilb.hpp"
-#include "comp-gb.hpp"
-#include "comp-res.hpp"
-#include "comp-gb-declared.hpp"
+#include "groebner-computations/comp-gb.hpp"
+#include "resolution/comp-res.hpp"
+#include "groebner-computations/comp-gb-declared.hpp"
 #include "text-io.hpp"
-#include "sagbi.hpp"
+#include "groebner-computations/sagbi.hpp"
 #include "exceptions.hpp"
-#include "gb-walk.hpp"
-#include "relem.hpp"
+#include "groebner-computations/gb-walk.hpp"
+#include "ring-elements/ring-element.hpp"
 #include "util.hpp"
-#include "matrix-ncbasis.hpp"
+#include "matrices/matrix-ncbasis.hpp"
 
 #include "M2FreeAlgebra.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/NCGroebner.hpp"
 #include "NCAlgebras/NCF4.hpp"
 
-#include "poly.hpp"
+#include "rings/poly.hpp"
 #include "interrupted.hpp"
-#include "schreyer-resolution/res-f4-computation.hpp"
+#include "schreyer-resolutions/res-f4-computation.hpp"
 
 class FreeModule;
 struct MonomialOrdering;
@@ -694,7 +694,7 @@ Matrix /* or null */ *rawSubduction1(int numparts,
 }
 
 #include "mathicgb.h"
-#include "matrix-stream.hpp"
+#include "matrices/matrix-stream.hpp"
 void rawDisplayMatrixStream(const Matrix *inputMatrix)
 {
   const Ring *R = inputMatrix->get_ring();
