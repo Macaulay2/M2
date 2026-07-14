@@ -223,8 +223,11 @@ bFunctionRoots RingElement := List => f -> (
      );
  
 getIntRoots = method()
+
+getIntRoots ZZ := 
 getIntRoots RingElement := List => f -> (
     R := ring f;
+    if f== 1_R then return {};
     if numgens R != 1 then error "expected univariate polynomial";
     unique flatten apply(toList factor f, pw -> (
         g := pw#0;
