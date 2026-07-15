@@ -125,8 +125,10 @@ resultant(RingElement, RingElement, RingElement) := o -> (f,g,x) ->
      det sylvesterMatrix(f,g,x)
 
 discriminant = method(Options => { Algorithm => null })
-discriminant(RingElement, RingElement) := RingElement => o -> (f,x) -> resultant(f, diff(x,f), x, o)
-
+discriminant(RingElement, RingElement) := RingElement => o -> (f,x) -> (
+     if diff(f,x) == 0 then return 0;
+     resultant(f, diff(x,f), x, o)
+)
 -----------------------------------------------
 -- documentation and tests
 -----------------------------------------------
