@@ -332,6 +332,13 @@ assert(isHomogeneous J)
 
 assert(eliminate(x,eliminate(y,I)) == eliminate(y,eliminate(x,I)))
 ///
+
+-- Resultant of a polynomial whose derivative is identically zero should return zero
+TEST ///
+R=ZZ/2[x]
+F=x^24+x^22+x^20+x^14+x^12+x^8+x^4
+assert(discriminant(F,x) == 0)
+///
 end
 loadPackage "Elimination"
 installPackage Elimination
