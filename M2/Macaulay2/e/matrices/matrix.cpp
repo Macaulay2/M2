@@ -1837,8 +1837,11 @@ static vec coeffs_of_vec(exponent_table *E,
               M->from_expvector(exp, mon);
               ring_elem t = P->make_flat_term(h.coeff, mon);
               vec v = P->make_vec(val - 1, t);
-              v->next = result;
-              result = v;
+              if (v != nullptr)
+                {
+                  v->next = result;
+                  result = v;
+                }
             }
         }
     }

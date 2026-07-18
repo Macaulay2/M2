@@ -326,36 +326,30 @@ bool FractionField::lift(const Ring *Rg,
                          const ring_elem f,
                          ring_elem &result) const
 {
-  // Rg = R ---> frac R
-  // f is an element of frac R.
+  // f is an element of frac R = this.  We try to lift it to Rg.
+  // Step 1: express f as an element g of R_.  Succeeds iff the denominator
+  //   is a unit in R_ (e.g. a non-zero constant in frac(QQ[x,y,z])).
+  // Step 2: if Rg == R_, return g; otherwise chain through R_->lift.
 
-  ring_elem
-      hdenom;  // used in the case when the denominator can be a unit, but not 1
-               // e.g. when this = frac (QQ[x,y,z]).  Is an element of
+  frac_elem *h = FRAC_VAL(f);
+  ring_elem g;
+
+  if (R_->is_equal(h->denom, R_->one()))
+    g = R_->copy(h->numer);
+  else if (R_->is_unit(h->denom))
+    {
+      ring_elem hinv = R_->invert(h->denom);
+      g = R_->mult(hinv, h->numer);
+    }
+  else
+    return false;
+
   if (Rg == R_)
     {
-      frac_elem *h = FRAC_VAL(f);
-      if (R_->is_equal(h->denom, R_->one()))
-        {
-          result = R_->copy(h->numer);
-          return true;
-        }
-      else
-        {
-          if (R_->is_field())
-            {
-              // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-              // try to lift denominator.  If can, can lift, otherwise not.
-              if (R_->lift(R_, h->denom, hdenom))
-                {
-                  ring_elem hinv = R_->invert(hdenom);
-                  result = R_->mult(hinv, h->numer);
-                  return true;
-                }
-            }
-        }
+      result = g;
+      return true;
     }
-  return false;
+  return R_->lift(Rg, g, result);
 }
 
 bool FractionField::is_unit(const ring_elem f) const
