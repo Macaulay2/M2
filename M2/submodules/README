@@ -1,8 +1,6 @@
 In this directory are the various git submodules corresponding to the git
 repositories of the various third party libraries we link with and of the third
-party programs we include.  We hope to convert all of the entries in
-../libraries to submodules eventually, maintaining our own git repositories for
-those libraries and programs, if necessary.
+party programs we include.
 
 Not all of these submodules get initialized when building Macaulay2, because
 some of them may be present already in the OS and detected by ../configure, but
