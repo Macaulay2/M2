@@ -162,7 +162,7 @@ coefficient(RingElement, RingElement) := (m, f) -> (
     R := ring f;
     k := coefficientRing R;
     -- TODO: audit this code and how it is used in towers and inexact fields
-    if size m === 1 and leadCoefficient m == 1
+    if instance(m, R) and size m === 1 and leadCoefficient m == 1
     then promote(rawCoefficient(raw k, raw f, rawLeadMonomialR m), k)
     else error "coefficient: expected a monomial from the same ring")
 
