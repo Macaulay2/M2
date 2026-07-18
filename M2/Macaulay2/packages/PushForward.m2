@@ -340,7 +340,6 @@ isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
     inc vars source inc == promote (vars source inc, target inc)
 )
 
-
 ---------
 -- Hom --
 ---------
@@ -371,23 +370,9 @@ viewHelp PushForward
 
 target oo == pr_0
 pushFwd(map(R',R), R'^1)
----
 A = QQ
 B = QQ[x]/(x^2)
 N = B^1 ++ (B^1/(x))
 f = map(B,A)
 pushFwd(f,N)
 pushFwd f
-
-///
-    Key
-    Headline
-    Usage
-    Inputs
-    Outputs
-    Description
-        Text
-        Example
-    Caveat
-    SeeAlso
-///

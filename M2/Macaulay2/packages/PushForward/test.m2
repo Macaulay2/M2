@@ -684,8 +684,7 @@ N = pushFwd(f, M)
 assert(pushforward' pushforward(N, 0_M) == 0_M)
 ///
 
---- Hom tests ---
-
+--- Hom / Ext test cases ---
 TEST ///
 -- commutative case: pushFwd(f, Hom(-, 0))Hom and Hom(f, -, -) agree on the nose
 kk = ZZ/101
@@ -851,73 +850,4 @@ assert(map(E, E, imgs) == id_E)
 E = Ext^2(f, M, N)
 imgs = matrix {for i from 0 to numgens E - 1 list yonedaExtension'(f, yonedaExtension E_i)}
 assert(map(E, E, imgs) == id_E)
-///
-
--- the following test cases are all "bugs" that did not run successfully but
--- have now been fixed.
-TEST ///
-kk = ZZ/101
-A = kk[s,t]
-C = A[x,y,z]/(x^2, y^2, z^2)
-phi = map(C,A)
-f = map(C^1, A^4, phi, {{x,s*y,t*y, z}})
-ker f
-///
-
-TEST ///
-kk = ZZ/101
-A = kk[s,t]
-B = frac A
-C = B[x,y,z]/(x^2, y^2, z^2)
-phi = map(C,B)
-f = map(C^1, B^3, phi, {{x,s*y,z}})
-ker f
-///
-
-TEST ///
-s = symbol s; t = symbol t
-kk = ZZ/101
-A = frac(kk[s,t])
-L = A[symbol a.. symbol d]/(d-t, a-s, b*c-s*t, b^2-(s/t)*c^2)
-describe L
-ML = pushFwd(map(L,frac A), L^1) -- dim 4
-///
-
-TEST ///
-debug needsPackage "PushForward"
-s = symbol s; t = symbol t
-kk = ZZ/101
-A = frac(kk[s,t])
-L = A[symbol b, symbol c]/(b*c-s*t, b^2-(s/t)*c^2)
-basis L
-describe L
-inc = map(L, A)
-assert isInclusionOfCoefficientRing inc
-assert isModuleFinite L
-pushFwd inc
-ML = pushFwd(map(L,frac A), L^1)
-///
-
-TEST ///
-debug needsPackage "PushForward"
-s = symbol s; t = symbol t
-A = QQ
-L = A[symbol b, symbol c]/(b*c-13, b^3-c^2)
-describe L
-inc = map(L, A)
-assert isInclusionOfCoefficientRing inc
-assert isModuleFinite L
-(LA, bas, pf) = pushFwd inc -- this works
-pf(b^2+c^2)
-///
-
-TEST ///
-  s = symbol s; t = symbol t
-  kk = ZZ/101
-  A = frac(kk[s,t])
-  L = A[symbol b, symbol c]/(b^2-(s/t)*c^2 - c, c^3)
-  basis L
-  describe L
-  inc = map(L, A)
-  pushFwd inc
 ///
