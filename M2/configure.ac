@@ -575,7 +575,7 @@ dnl Check for openmp and fail if it cannot be found.
 dnl This is required for building the library csdp and good for building the library normaliz
 AC_LANG(C++)
 BREW_ADD_FLAGS([libomp]) # keg-only
-AC_OPENMP
+M2_OPENMP
 if test "$ac_cv_prog_cxx_openmp" = unsupported
    then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
 fi
