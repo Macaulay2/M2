@@ -8,7 +8,10 @@ Not all of these submodules get initialized when building Macaulay2, because
 some of them may be present already in the OS and detected by ../configure, but
 if you wish to have a complete source tree that needs no network access or
 downloading during configuration and compilation, then just add "--recursive" to
-the "git clone" command line in ../INSTALL.
+the "git clone" command line in
+https://github.com/Macaulay2/M2/wiki/Building-M2-from-source-using-Autotools
+and
+https://github.com/Macaulay2/M2/wiki/Building-M2-from-source-using-CMake
 
 For instructions about adding a new submodule, follow the same instructions as
 presented in the file ../libraries/README.
