@@ -688,12 +688,71 @@ N = pushFwd(f, M)
 assert(pushforward' pushforward(N, 0_M) == 0_M)
 ///
 
--- it would be useful if there were a standardized way to encode functionality
--- gaps in macaulay2.
--- NONTEST - this should work but doesn't
-///
--- field case
+-- test 36
+TEST ///
+s = symbol s; t = symbol t
 kk = ZZ/101
-M = first pushFwd kk
-assert(M == module kk)
+A = frac(kk[s,t])
+L = A[symbol a.. symbol d]/(d-t, a-s, b*c-s*t, b^2-(s/t)*c^2)
+describe L
+ML = pushFwd(map(L,frac A), L^1) -- dim 4, free -- FAILS
+///
+
+-- test 37
+TEST ///
+debug needsPackage "PushForward"
+s = symbol s; t = symbol t
+kk = ZZ/101
+A = frac(kk[s,t])
+L = A[symbol b, symbol c]/(b*c-s*t, b^2-(s/t)*c^2)
+basis L
+describe L
+inc = map(L, A)
+assert isInclusionOfCoefficientRing inc
+assert isModuleFinite L
+pushFwd inc
+ML = pushFwd(map(L,frac A), L^1)
+///
+
+-- test 38
+TEST ///
+debug needsPackage "PushForward"
+s = symbol s; t = symbol t
+A = QQ
+L = A[symbol b, symbol c]/(b*c-13, b^3-c^2)
+inc = map(L, A)
+assert isInclusionOfCoefficientRing inc
+assert isModuleFinite L
+(LA, bas, pf) = pushFwd inc -- this works
+pf(b^2+c^2) -- maybe a better way?
+///
+
+-- test 39
+TEST ///
+s = symbol s; t = symbol t
+kk = ZZ/101
+A = frac(kk[s,t])
+L = A[symbol b, symbol c]/(b^2-(s/t)*c^2 - c, c^3)
+inc = map(L, A)
+-- pushForward(inc, L^1) this fails due to issue computing presentation of fraction field ring
+pushFwd(inc, L^1)
+///
+
+-- test 40
+TEST ///
+-- former DE + MES example bug
+kk = ZZ/101
+A = kk[s,t]
+C = A[x,y,z]/(x^2, y^2, z^2)
+phi = map(C,A)
+f = map(C^1, A^4, phi, {{x,s*y,t*y, z}})
+ker f
+
+kk = ZZ/101
+A = kk[s,t]
+B = frac A
+C = B[x,y,z]/(x^2, y^2, z^2)
+phi = map(C,B)
+f = map(C^1, B^3, phi, {{x,s*y,z}})
+ker f
 ///
