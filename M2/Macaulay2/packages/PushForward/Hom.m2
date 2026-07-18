@@ -165,14 +165,10 @@ Ext(ZZ, RingMap, Module, Module) := Module => opts -> (i, f, M, N) -> (
             )
         ) else (H, liftmap, invmap);
 
-
-        -- here should we trim?
-
         E.cache.yonedaExtension = liftmap';
         E.cache.yonedaExtension' = invmap';
-        -- in i <= 1 case this is a Hom already and we don't want to clobber
-        -- existing formation data so use ??= assignment
-        E.cache.formation ??= FunctionApplication { Ext, (i, f, M, N, opts) };
+        -- i == 0 is Hom case and it has it's own formation data
+        if i >= 1 then E.cache.formation = FunctionApplication { Ext, (i, f, M, N, opts) };
         E.cache.Ext = (i,M,N);
 
         E
@@ -200,9 +196,11 @@ yonedaExtension'(RingMap, Complex) := Matrix => opts -> (f, C) -> (
 -- helpers --
 -------------
 
-protect multiplication -- cache key
--- f:S -> R
--- M:a module which is a pushforward of an R-module along f
--- r:R
 -- compute "multiplication by r" as an element of Hom_S(M, M)
-getStructureMap = (f, M, r) -> M.cache#(multiplication, r) ??= homomorphism' map(M, M, pushforward(M, r * getPushFwdGens(M)))
+protect multiplication -- cache key
+getStructureMap = (f, M, r) -> (
+    -- f: S -> R
+    -- M: Module which is the pushforward of an R-module along f
+    -- r: RingElement of R
+    M.cache#(multiplication, r) ??= homomorphism' map(M, M, pushforward(M, r * getPushFwdGens(M)))
+)
