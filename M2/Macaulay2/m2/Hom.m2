@@ -13,7 +13,7 @@ Hom = method(Options => {
 })
 
 End = method(Options => options Hom)
-End(Module) := Module => o -> M -> Hom(M, M, o)
+End(Thing) := Thing => o -> X -> Hom(X, X, o)
 
 -- TODO: Hom(R, S) should work as well
 Hom(Ring, Ring)   :=
