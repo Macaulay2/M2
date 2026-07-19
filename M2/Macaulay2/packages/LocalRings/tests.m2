@@ -957,6 +957,15 @@ end--
   gens gb Iloc
 ///
 
+TEST /// -- normalize ambient-unit denominators
+R = QQ[x]
+RP = localRing(R, ideal x)
+f = sub(1/2, RP)
+assert(numerator f == 1/2_R)
+assert(denominator f == 1_R)
+assert(lift(f, R) == 1/2_R)
+///
+
 TEST ///
 -- promoting/lifting to/from fraction field
 S = QQ[x]
