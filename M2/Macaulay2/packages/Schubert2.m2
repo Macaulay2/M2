@@ -1282,7 +1282,7 @@ extensionAlgebra(RingMap, RingElement) := opts -> (f, c) -> (
      -- 1) it's not a ring map
      -- 2) in general promote(promote(d,B),D) != d.
      promote(D,B) := (d,B) -> (
-	  dcoeffs := apply(E_0..E_(n-1), m -> f(coefficient(D1_(m), DtowertoD^-1 d)));
+	  dcoeffs := apply(E_0..E_(n-1), m -> f(coefficient(D1_(m), (DtowertoD^-1 d)^D1)));
 	  dmatrix := matrix{apply(dcoeffs, coeff -> {coeff})};
 	  first flatten entries (Bbasis * dmatrix)
 	  );
