@@ -56,7 +56,10 @@ endpkg = msg -> (
 if not ForeignFunctions#"private dictionary"#?"foreignFunction"
 then endpkg "foreign function interface is not available"
 
-flint = try openSharedLibrary "flint" else endpkg "flint is not available"
+flint = (
+    try openSharedLibrary "flint"
+    else try foreignFunction("fmpz_init", void, voidstar) then null
+    else endpkg "flint is not available")
 
 export {
     -- methods
