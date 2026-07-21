@@ -16,8 +16,8 @@
 
 newPackage("Padic",
     Headline => "p-adic numbers",
-    Version => "0.2",
-    Date => "June 5, 2026",
+    Version => "0.3",
+    Date => "July 19, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
@@ -32,6 +32,9 @@ newPackage("Padic",
 ---------------
 
 -*
+
+0.3 (2026-07-19, M2 1.26.11)
+* add texMath and mathML methods
 
 0.2 (2026-06-05, M2 1.26.06)
 * update my contact info
@@ -216,6 +219,8 @@ PadicFieldFamily.synonym = "p-adic field family"
 expression PadicFieldFamily := kk -> Subscript(QQ, prime kk)
 net PadicFieldFamily := net @@ expression
 toString PadicFieldFamily := toString @@ expression
+texMath PadicFieldFamily := texMath @@ expression
+mathML PadicFieldFamily := mathML @@ expression
 
 PadicNumber = new Type of Number
 PadicNumber.synonym = "p-adic number"
@@ -497,6 +502,8 @@ undocumented {
     (expression, PadicFieldFamily),
     (net, PadicFieldFamily),
     (toString, PadicFieldFamily),
+    (texMath, PadicFieldFamily),
+    (mathML, PadicFieldFamily),
     (toString, PadicNumber),
     (peek', ZZ, PadicNumber),
     (describe, PadicNumber)}
