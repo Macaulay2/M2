@@ -43,7 +43,6 @@ Hom(Module, Module) := Module => opts -> (M, N) -> (
     H.cache.formation = FunctionApplication { Hom, (M, N, DegreeLimit => e) };
     H)
 
-
 basicHom = (M, N) -> kernel(transpose presentation M ** N)
 addHook((Hom, Module, Module), Strategy => Default,  (opts, M, N) -> basicHom(M, N))
 addHook((Hom, Module, Module), Strategy => Syzygies, (opts, M, N) -> (
