@@ -192,6 +192,8 @@ yonedaExtension'(RingMap, Complex) := Matrix => opts -> (f, C) -> (
     extd.cache.yonedaExtension' homomorphism'(f, yonedaMap, opts)
 )
 
+-- todo: yonedaMap'(RingMap, ChainComplexMap)
+
 -------------
 -- helpers --
 -------------

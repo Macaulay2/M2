@@ -340,9 +340,9 @@ isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
     inc vars source inc == promote (vars source inc, target inc)
 )
 
----------
--- Hom --
----------
+---------------
+-- Hom / Ext --
+---------------
 load "./PushForward/Hom.m2"
 
 -----------
@@ -355,6 +355,7 @@ load "./PushForward/test.m2"
 -------------------
 beginDocumentation()
 load "./PushForward/doc.m2"
+load "./PushForward/Hom-doc.m2"
 
 -------------------
 end
