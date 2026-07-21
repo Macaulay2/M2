@@ -247,6 +247,18 @@ toString PadicNumber := x -> (
     -- from src/padic/get_str.c
     n := (N - v) * (2 * numdigits p + numdigits max(abs v, abs N) + 5) + 1;
     value padicGetStr(concatenate(n:"\0"), x.number, x.context))
+expression PadicNumber := x -> (
+    s := toString x;
+    Sum apply(separate(" \\+ ", s), term -> (
+            factors := separate("\\*", term);
+            if #factors == 1 then value factors#0
+            else if #factors == 2
+            then Product(
+                value factors#0,
+                Power(value \ separate("\\^", factors#1))))))
+texMath PadicNumber := texMath @@ expression
+mathML PadicNumber := mathML @@ expression
+
 
 PadicNumber.AfterPrint = lookup(AfterPrint, InexactNumber)
 
@@ -505,6 +517,9 @@ undocumented {
     (texMath, PadicFieldFamily),
     (mathML, PadicFieldFamily),
     (toString, PadicNumber),
+    (expression, PadicNumber),
+    (texMath, PadicNumber),
+    (mathML, PadicNumber),
     (peek', ZZ, PadicNumber),
     (describe, PadicNumber)}
 
