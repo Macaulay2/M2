@@ -192,9 +192,6 @@ TEST///
   A = kk[s,t]
   -- note: this ideal is NOT the rational quartic, and in fact has an annihilator over A.
   L = A[symbol b, symbol c, Join => false]/(b*c-s*t, t*b^2-s*c^2, b^3-s*c^2, c^3 - t*b^2)
-  isHomogeneous L
-  describe L
-  basis(L, Variables => L_*)
   inc = map(L, A)
   assert isInclusionOfCoefficientRing inc
   assert isModuleFinite L
@@ -206,14 +203,11 @@ TEST///
 
 --test 11
 TEST///
-  debug  needsPackage "PushForward"
+  debug needsPackage "PushForward"
   s = symbol s; t = symbol t
   kk = ZZ/101
   A = kk[s,t]
   L = A[symbol b, symbol c, Join => false]/(b*c-s*t,c^3-b*t^2,s*c^2-b^2*t,b^3-s^2*c)
-  isHomogeneous L
-  describe L
-  basis(L, Variables => L_*)
   inc = map(L, A)
   assert isInclusionOfCoefficientRing inc
   assert isModuleFinite L
@@ -230,7 +224,6 @@ TEST///
   kk = ZZ/101
   L = kk[s, symbol b, symbol c, t]/(b*c-s*t, t*b^2-s*c^2, b^3-s*c^2, c^3 - t*b^2)
   A = kk[s,t]
-  isHomogeneous L
   inc = map(L, A)
   (M,B,pf) = pushFwd inc
   assert( B * inc presentation M  == 0)
@@ -694,8 +687,11 @@ s = symbol s; t = symbol t
 kk = ZZ/101
 A = frac(kk[s,t])
 L = A[symbol a.. symbol d]/(d-t, a-s, b*c-s*t, b^2-(s/t)*c^2)
-describe L
-ML = pushFwd(map(L,frac A), L^1) -- dim 4, free -- FAILS
+ML = pushFwd(map(L,frac A), module L)
+xs = ML_{0..numgens ML - 1}
+F = map(ML, ML, pushforward(ML, pushforward' xs))
+assert(F == id_ML)
+assert(pushforward(ML, basis L) == basis ML)
 ///
 
 -- test 37
@@ -705,13 +701,15 @@ s = symbol s; t = symbol t
 kk = ZZ/101
 A = frac(kk[s,t])
 L = A[symbol b, symbol c]/(b*c-s*t, b^2-(s/t)*c^2)
-basis L
-describe L
 inc = map(L, A)
 assert isInclusionOfCoefficientRing inc
 assert isModuleFinite L
 pushFwd inc
 ML = pushFwd(map(L,frac A), L^1)
+xs = ML_{0..numgens ML - 1}
+F = map(ML, ML, pushforward(ML, pushforward' xs))
+assert(F == id_ML)
+assert(pushforward' basis ML - basis L == 0)
 ///
 
 -- test 38
@@ -724,7 +722,11 @@ inc = map(L, A)
 assert isInclusionOfCoefficientRing inc
 assert isModuleFinite L
 (LA, bas, pf) = pushFwd inc -- this works
-pf(b^2+c^2) -- maybe a better way?
+xs = LA_{0..numgens LA - 1}
+F = map(LA, LA, pushforward(LA, pushforward' xs))
+assert(F == id_LA)
+assert(pushforward' basis LA == basis L)
+assert(matrix(b^2 + c^2) == pushforward' pf(b^2+c^2))
 ///
 
 -- test 39
@@ -735,24 +737,36 @@ A = frac(kk[s,t])
 L = A[symbol b, symbol c]/(b^2-(s/t)*c^2 - c, c^3)
 inc = map(L, A)
 -- pushForward(inc, L^1) this fails due to issue computing presentation of fraction field ring
-pushFwd(inc, L^1)
+P = pushFwd(inc, L^1)
+xs = P_{0..numgens P - 1}
+F = map(P, P, pushforward(P, pushforward' xs))
+assert(F == id_P)
+assert(pushforward' basis P - basis L == 0)
 ///
 
 -- test 40
 TEST ///
 -- former DE + MES example bug
+-- can compute ker of matrix between modules over different rings
+-- and check that an "obvious" element of the kernel is there
 kk = ZZ/101
 A = kk[s,t]
 C = A[x,y,z]/(x^2, y^2, z^2)
 phi = map(C,A)
 f = map(C^1, A^4, phi, {{x,s*y,t*y, z}})
-ker f
+x = matrix vector {0, -t, s, 0};
+assert(isSubset(image x, ker f))
+///
 
+-- test 41
+TEST ///
+-- former DE + MES example bug
+-- computation of kernel succeeds with trivial kernel
 kk = ZZ/101
 A = kk[s,t]
 B = frac A
 C = B[x,y,z]/(x^2, y^2, z^2)
 phi = map(C,B)
 f = map(C^1, B^3, phi, {{x,s*y,z}})
-ker f
+assert(ker f == 0)
 ///
