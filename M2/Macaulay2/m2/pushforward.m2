@@ -122,14 +122,15 @@ monomialOrderFromOpts = (opts) -> (
 -- a splitting of f.cache.DegreeMap to use as a DegreeMap when constructing the
 -- projection from graphRing f to source f.
 makeSectionForDegreeMap = (f) -> (
-    if degreeLength source f === 0 then return null;
+    -- if there are no degrees on the source then giving everything the empty degree is a section
+    if degreeLength source f === 0 then return d -> {};
 
     G := degreeGroup source f;
     -- the linear map that f induces on DegreeGroups as a matrix
     M := transpose matrix apply(entries G_{0..numgens G - 1}, f.cache.DegreeMap);
 
     -- if M is not injective then we cannot produce a section
-    if (kernel M != 0) then return null;
+    if (kernel M != 0) then error "degreemap not injective: no degree section"
 
     D := image M;
     (d) -> (
@@ -182,11 +183,9 @@ pushNonLinear := (opts, f0, M) -> (
 	PairLimit             => opts.PairLimit
     );
 
-    -- todo - what should happen here if the map on degree groups induced by f is not injective?
-    mapback := if (degmapback := makeSectionForDegreeMap(f)) =!= null then
-        map(S, G, map(S^1, S^r, 0) | vars S, DegreeMap => degmapback)
-    else
-        map(S, G, map(S^1, S^r, 0) | vars S);
+    -- todo: what should happen here if the map on degree groups induced by f is not injective?
+    degmapback := makeSectionForDegreeMap(f);
+    mapback := map(S, G, map(S^1, S^r, 0) | vars S, DegreeMap => degmapback);
 
     result := phiS^-1 mapback selectInSubring(if r > 0 then 1 else 0, generators g);
     -- MES: check if the monomial order restricts to R.  If so, then do `` forceGB result ''
