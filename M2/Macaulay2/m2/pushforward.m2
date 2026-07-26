@@ -159,6 +159,8 @@ pushNonLinear := (opts, f0, M) -> (
     if isHomogeneous M  then assert isHomogeneous m;
     if isHomogeneous f0 then assert isHomogeneous f;
 
+    ishgs := all({f, m}, isHomogeneous);
+
     s := numgens S;
     r := numgens R;
     monorder := (monomialOrderFromOpts opts)(r, s);
@@ -168,7 +170,7 @@ pushNonLinear := (opts, f0, M) -> (
     xvars := map(G, R, submatrix(vars G, toList(0..r - 1)));
     m1 := presentation (cokernel xvars m  **  cokernel generators J);
 
-    if opts.UseHilbertFunction and all({f, m}, isHomogeneous) then (
+    if opts.UseHilbertFunction and ishgs then (
 	-- compare with kernel RingMap
 	hf := poincare cokernel m;
 	T := degreesRing G;
@@ -183,9 +185,12 @@ pushNonLinear := (opts, f0, M) -> (
 	PairLimit             => opts.PairLimit
     );
 
-    -- todo: what should happen here if the map on degree groups induced by f is not injective?
-    degmapback := makeSectionForDegreeMap(f);
-    mapback := map(S, G, map(S^1, S^r, 0) | vars S, DegreeMap => degmapback);
+    mapback := if ishgs then
+        -- in the homogenous case, expect a degree map section
+        map(S, G, map(S^1, S^r, 0) | vars S, DegreeMap => makeSectionForDegreeMap(f))
+    else
+        -- otherwise it doesn't matter
+        map(S, G, map(S^1, S^r, 0) | vars S);
 
     result := phiS^-1 mapback selectInSubring(if r > 0 then 1 else 0, generators g);
     -- MES: check if the monomial order restricts to R.  If so, then do `` forceGB result ''
