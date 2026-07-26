@@ -130,7 +130,7 @@ makeSectionForDegreeMap = (f) -> (
     M := transpose matrix apply(entries G_{0..numgens G - 1}, f.cache.DegreeMap);
 
     -- if M is not injective then we cannot produce a section
-    if (kernel M != 0) then error "degreemap not injective: no degree section"
+    if (kernel M != 0) then error "degreemap not injective: no degree section";
 
     D := image M;
     (d) -> (
