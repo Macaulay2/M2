@@ -1303,7 +1303,7 @@ doc ///
     Subnodes
         "isSkewCommutative"
         "antipode"
-        "center"
+        "centerRing"
 ///
 
 document {

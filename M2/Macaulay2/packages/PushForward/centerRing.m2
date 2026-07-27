@@ -1,5 +1,5 @@
 -- help: what is the right way to add a strategy to a core method that relies on functionality in a package?
-addHook((center, Ring), Strategy => "isSkewAffineRing", (opts, R) -> (
+addHook((centerRing, Ring), Strategy => "isSkewAffineRing", (opts, R) -> (
     -- David Eisenbud observed this strategy for computing the center of a skew polynomial ring
     if not isPolynomialRing R then return null;
     if not isSkewAffineRing R then return null;
@@ -27,7 +27,7 @@ addHook((center, Ring), Strategy => "isSkewAffineRing", (opts, R) -> (
     -- the ideal defining the center is the annihilator of R^1 as a module over the polynomial ring Z'
     K := ann pushFwd(map(R', Z', ximages | yimages), R'^1);
     Z := Z'/K;
-    Z.formation = FunctionApplication {center, R};
+    Z.formation = FunctionApplication {centerRing, R};
 
     map(R, Z, phi^-1 matrix {ximages | yimages})
 ))

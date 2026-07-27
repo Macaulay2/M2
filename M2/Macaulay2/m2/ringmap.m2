@@ -244,10 +244,11 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
         (R, S) := (target f, source f);
         if not isCommutative S then return null;
         if isCommutative R then return null;
-        c := try(center R) else return null;
+        inc := try(centerRing R) else return null;
 
-        G := graphRing c;
-        C := source c;
+        C := source inc;
+        G := graphRing inc;
+
         -- include R into G
         includeR := map(G, R, submatrix(vars G, toList(0..(numgens R) - 1)));
         -- project from G to C
