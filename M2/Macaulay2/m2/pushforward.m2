@@ -130,13 +130,13 @@ makeSectionForDegreeMap = (f) -> (
     M := transpose matrix apply(entries G_{0..numgens G - 1}, f.cache.DegreeMap);
 
     -- if M is not injective then we cannot produce a section
-    if (kernel M != 0) then error "degreemap not injective: no degree section";
+    if (kernel M != 0) then return null;
 
     D := image M;
     (d) -> (
         -- d' is the element of degreeGroup target f corresponding to d
         d' := matrix transpose {d};
-        -- get coefficients for d' against generators for G ~ D.
+        -- get coefficients for d' against generators for G \isom D.
         -- this produces mild nonsense if d' is not in D but that doesn't matter
         -- since we only apply the resulting projecting to image f.
         flatten entries(d' // inducedMap(ambient D, D) // coverMap D)
@@ -185,11 +185,10 @@ pushNonLinear := (opts, f0, M) -> (
 	PairLimit             => opts.PairLimit
     );
 
-    mapback := if ishgs then
-        -- in the homogenous case, expect a degree map section
-        map(S, G, map(S^1, S^r, 0) | vars S, DegreeMap => makeSectionForDegreeMap(f))
+    mapback := if (mapbackdeg := makeSectionForDegreeMap(f)) =!= null then
+        -- use good degree map on the projection if possible
+        map(S, G, map(S^1, S^r, 0) | vars S, DegreeMap => mapbackdeg)
     else
-        -- otherwise it doesn't matter
         map(S, G, map(S^1, S^r, 0) | vars S);
 
     result := phiS^-1 mapback selectInSubring(if r > 0 then 1 else 0, generators g);
