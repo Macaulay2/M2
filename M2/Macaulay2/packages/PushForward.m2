@@ -347,8 +347,6 @@ isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
     inc vars source inc == promote (vars source inc, target inc)
 )
 
-load "./PushForward/centerRing.m2"
-
 
 -----------
 -- TESTS --
