@@ -43,8 +43,8 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
         -- build the linear maps H' -> H' whose kernels witness R-linearity
         H := kernel matrix for r in first entries liftedGens list (
             -- todo: exploit direct sum decomposition in cases where M is free as in Ext computations
-            rMultForM := getStructureMap(M', r);
-            rMultForN := getStructureMap(N', r);
+            rMultForM := getStructureMap(r, M');
+            rMultForN := getStructureMap(r, N');
             -- wrap in nested list so we can assemble these into a block matrix outside of the loop
             {map(H', H', rightCompose * (rMultForM ** gensH') - leftCompose * (gensH' ** rMultForN))}
         );
@@ -198,10 +198,47 @@ yonedaExtension'(RingMap, Complex) := Matrix => opts -> (f, C) -> (
 -- helpers --
 -------------
 
+pushFwdSource = (M) -> (
+    if not M.cache.?formation then return null;
+    if M.cache.formation#0 =!= pushFwd then return null;
+    M.cache.formation#1#1
+)
+
+pushFwdOpts = (M) -> (
+    if not M.cache.?formation then return null;
+    if M.cache.formation#0 =!= pushFwd then return null;
+    M.cache.formation#1#2
+)
+
+pushFwdRingMap = (M) -> (
+    if not M.cache.?formation then return null;
+    if M.cache.formation#0 =!= pushFwd then return null;
+    M.cache.formation#1#0
+)
+
+isRankOneFree = (M) -> isFreeModule M and rank M == 1
+
 -- compute "multiplication by r" as an element of Hom_S(M, M)
 protect multiplication -- cache key
-getStructureMap = (M, r) -> (
-    -- M: Module which is the pushforward of an R-module
+getStructureMap = (r, M) -> M.cache#(multiplication, r) ?? (
+    -- M: pushFwd of M to an S-module
     -- r: RingElement of R
-    M.cache#(multiplication, r) ??= homomorphism' map(M, M, pushforward(M, r * getPushFwdGens(M)))
+
+    -- reduce to components if they are all already pushforwards
+    if #components M > 1 and all(components M, C -> pushFwdSource C =!= null) then (
+        return homomorphism' directSum apply(components M, C -> homomorphism getStructureMap(r, C));
+    );
+
+    sourceM := pushFwdSource M;
+    if isRankOneFree sourceM then (
+        f := pushFwdRingMap M;
+        M' := pushFwd(f, module target f, pushFwdOpts M);
+        X := map(M', M', pushforward(M', r * getPushFwdGens(M')));
+        M'.cache#(multiplication, r) = homomorphism' X;
+        homomorphism' map(M, M, X)
+    ) else (
+        homomorphism' map(M, M, pushforward(M, r * getPushFwdGens(M)))
+    )
 )
+
+-- maybe split this into a separate method that also accepts the appropriate pushFwd of module R? and then cobbles things together?
