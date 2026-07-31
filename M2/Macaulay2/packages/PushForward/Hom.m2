@@ -43,8 +43,8 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
         -- build the linear maps H' -> H' whose kernels witness R-linearity
         H := kernel matrix for r in first entries liftedGens list (
             -- todo: exploit direct sum decomposition in cases where M is free as in Ext computations
-            rMultForM := getStructureMap(f, M', r);
-            rMultForN := getStructureMap(f, N', r);
+            rMultForM := getStructureMap(M', r);
+            rMultForN := getStructureMap(N', r);
             -- wrap in nested list so we can assemble these into a block matrix outside of the loop
             {map(H', H', rightCompose * (rMultForM ** gensH') - leftCompose * (gensH' ** rMultForN))}
         );
@@ -200,9 +200,8 @@ yonedaExtension'(RingMap, Complex) := Matrix => opts -> (f, C) -> (
 
 -- compute "multiplication by r" as an element of Hom_S(M, M)
 protect multiplication -- cache key
-getStructureMap = (f, M, r) -> (
-    -- f: S -> R
-    -- M: Module which is the pushforward of an R-module along f
+getStructureMap = (M, r) -> (
+    -- M: Module which is the pushforward of an R-module
     -- r: RingElement of R
     M.cache#(multiplication, r) ??= homomorphism' map(M, M, pushforward(M, r * getPushFwdGens(M)))
 )
