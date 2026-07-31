@@ -64,11 +64,26 @@ pushFwd RingMap := Sequence => o -> (f) ->
     (pfB, matB, ringpf)
 )
 
+protect computing
 pushFwd(RingMap, Ideal) := Module => o -> (f, I) -> pushFwd(f, module I)
 pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??= (
-    (pfN, pf', pf) := makeModule(N, f);
+    N.cache#(computing, pushFwd) = true;
+    N' := asDirectSum N;
+    Cs := components N';
 
-    if o.MinimalGenerators then (
+    (pfN, pf', pf) := if #Cs > 1 then (
+        pfCs := apply(Cs, C -> pushFwd(f, C));
+        auxpfN := directSum pfCs;
+        auxpf' := (m) -> (
+            map(N, N', id_N) * sum for i from 0 to #Cs - 1 list N'_[i] * pushforward'(map(pfCs#i, , auxpfN^[i] * m))
+        );
+        auxpf := (n) -> (
+            sum for i from 0 to #Cs - 1 list auxpfN_[i] * pushforward(pfCs#i, map(Cs#i, , N'^[i] * map(N', N, id_N') * n))
+        );
+        (auxpfN, auxpf', auxpf)
+    ) else makeModule(N, f);
+
+    result := if o.MinimalGenerators then (
         -- prune and then push our pf / pf' maps through the pruningMap
         pfNPruned := prune pfN;
         pruningmap := pfNPruned.cache.pruningMap;
@@ -83,7 +98,10 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??=
         N.cache#(pushforward, pfN) = pf;
 
         N.cache#(pushFwd, f, o) = pfN
-    )
+    );
+
+    N.cache#(computing, pushFwd) = false;
+    result
 )
 
 pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
@@ -158,6 +176,30 @@ isModuleFinite RingMap := Boolean => (f) -> (
     true
 )
 
+-- this is to reduce pushFwd of a free module to pushFwd of an untwisted rank one free module
+makeModuleRankeOneFree = (f, N) -> (
+    if not isFreeModule N or rank N =!= 1 then error "expected rank one free module";
+    -- if N == module target f and not N.cache#?(pushforward, f)then error "expected twisted free module";
+    (R, S) := (target f, source f);
+
+    X := pushFwd(f, module R);
+    auxpfN := if degreeGroup R == degreeGroup S then X ** S^(degrees N) else X;
+    if X != auxpfN then (
+        return (
+            auxpfN,
+            (m) -> pushforward'(map(X, auxpfN, gens X) * m),
+            (n) -> map(auxpfN, X, gens auxpfN) * pushforward(X, n)
+        );
+    ) else (
+        return (
+            X,
+            X.cache#pushforward',
+            N.cache#(pushforward, X)
+        );
+    );
+)
+
+
 --------------
 -- INTERNAL --
 --------------
@@ -184,6 +226,16 @@ makeModule = method()
 makeModule(Module, RingMap) := (N, f) -> (
     A := source f;
     B := target f;
+
+    -- ensure that we can benefit from caching by using the rank one free module
+    -- attached to the ring instead of a random other one
+    if N === module B then N = module B;
+
+     if isFreeModule N and rank N == 1 and not inComputation N then (
+        -- this reduces to computing cached pushFwd of module B
+        return makeModuleRankeOneFree(f, N)
+    );
+
     q := map(B / ann N, B);
     qinv := map(B, B / ann N);
 
@@ -230,6 +282,15 @@ makeModule(Module, RingMap) := (N, f) -> (
     );
 
     (M, pf', pf)
+)
+
+inComputation = (M) -> M.cache#?(computing, pushFwd) and M.cache#(computing, pushFwd)
+
+asDirectSum = (N) -> (
+    if N != 0 and isFreeModule N then (
+        R := ring N;
+        directSum apply(degrees N, d -> R^{-d})
+    ) else N
 )
 
 -- what if B is an algebra over A (i.e. A is the coefficient ring of B)

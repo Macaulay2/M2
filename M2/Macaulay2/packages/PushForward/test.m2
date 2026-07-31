@@ -446,11 +446,11 @@ ns = N_{0..numgens N - 1}
 
 o = new OptionTable from {MinimalGenerators => true}
 M = pushFwd(N, o)
-assert(ns == pushforward' pushforward(M, ns))
+assert(ns - pushforward' pushforward(M, ns) == 0)
 
 -- with pruning (default)
 M = pushFwd(N)
-assert(ns == pushforward' pushforward(M, ns))
+assert(ns - pushforward' pushforward(M, ns) == 0)
 ///
 
 -- test 23
@@ -631,8 +631,9 @@ fy = pushFwd matrix y
 fz = pushFwd matrix z
 fx = pushFwd matrix x_B
 g = pushFwd matrix(y*z -x_B*z^2)
+gg = fy*fz-fx*fz^2
 
-assert(g == fy*fz-fx*fz^2)
+assert(g - gg == 0)
 assert(fz^3-fy^7 == 0)
 ///
 
@@ -682,6 +683,20 @@ f = map(R, kk)
 M = R^0
 N = pushFwd(f, M)
 assert(pushforward' pushforward(N, 0_M) == 0_M)
+///
+
+-- test 36
+
+TEST ///
+kk = ZZ/101
+A = kk[x]
+B = A[y,z,Join => false]/(y^3 - x*z, z^3-y^7)
+f = map(B, A)
+M = pushFwd(f, B^1)
+F = random(B^5, B^5)
+pF = pushFwd(f, F)
+assert(numcols pF == numrows pF)
+assert(numcols pF == (numgens M) * 5)
 ///
 
 --- Hom / Ext test cases ---
