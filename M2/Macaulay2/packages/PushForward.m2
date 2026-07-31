@@ -176,12 +176,10 @@ isModuleFinite RingMap := Boolean => (f) -> (
     true
 )
 
--- this is to reduce pushFwd of a free module to pushFwd of an untwisted rank one free module
-makeModuleRankeOneFree = (f, N) -> (
-    if not isFreeModule N or rank N =!= 1 then error "expected rank one free module";
-    -- if N == module target f and not N.cache#?(pushforward, f)then error "expected twisted free module";
+-- this is to reduce pushFwd of a free module to pushFwd of module target f
+makeModuleRankOneFree = (f, N) -> (
     (R, S) := (target f, source f);
-
+    if not isFreeModule N or rank N != 1 then error "expected rank one free module";
     X := pushFwd(f, module R);
     auxpfN := if degreeGroup R == degreeGroup S then X ** S^(degrees N) else X;
     if X != auxpfN then (
@@ -227,13 +225,12 @@ makeModule(Module, RingMap) := (N, f) -> (
     A := source f;
     B := target f;
 
-    -- ensure that we can benefit from caching by using the rank one free module
-    -- attached to the ring instead of a random other one
+    -- replace B^1 with module B so we benefit from caching
     if N === module B then N = module B;
 
-     if isFreeModule N and rank N == 1 and not inComputation N then (
+    if isFreeModule N and rank N == 1 and not inComputation N then (
         -- this reduces to computing cached pushFwd of module B
-        return makeModuleRankeOneFree(f, N)
+        return makeModuleRankOneFree(f, N)
     );
 
     q := map(B / ann N, B);
