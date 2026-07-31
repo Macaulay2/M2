@@ -1,3 +1,12 @@
+-*
+computes the center of a ring R and returns the map from center(R) -> R
+
+maybe this should just be called "center" but the term is ubiquitous across
+mathematics and appears in several different. trying to merge them all into a
+single method runs into the awkwardness of method options leaking out to all
+the different overrides.
+*-
+
 centerRing = method(Options => {Strategy => null})
 centerRing(Ring) := RingMap => opts -> (R) -> R.cache.centerRing ??= (
     z := runHooks((centerRing, Ring), (opts, R), Strategy => opts.Strategy);
