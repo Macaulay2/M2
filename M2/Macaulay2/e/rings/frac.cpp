@@ -105,15 +105,16 @@ bool FractionField::simplify_unit_denominator(frac_elem *f) const
   if (R_->is_equal(f->denom, R_->one())) return true;
 
   ring_elem denom_inverse;
+  // TODO uniformise behaviour of invert for noninvertible elements
   if (dynamic_cast<const PolyRingQuotient *>(R_) != nullptr)
     {
-      denom_inverse = R_->invert(f->denom);
-      if (R_->is_zero(denom_inverse)) return false;
+      denom_inverse = R_->invert(f->denom); // for quotient rings, don't call is_unit since it calls invert internally
+      if (R_->is_zero(denom_inverse)) return false; // for non invertible elements, returns zero denominator
     }
   else
     {
-      if (!R_->is_unit(f->denom)) return false;
-      denom_inverse = R_->invert(f->denom);
+      if (!R_->is_unit(f->denom)) return false; // for polynomial rings, test with is_unit first
+      denom_inverse = R_->invert(f->denom); // because invert throws an error for noninvertible elements
     }
 
   ring_elem numer = R_->mult(f->numer, denom_inverse);
