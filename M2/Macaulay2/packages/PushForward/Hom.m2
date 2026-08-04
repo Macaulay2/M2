@@ -16,6 +16,7 @@ Hom(RingMap, Ideal, Module) :=
 Hom(RingMap, Module, Ring)   :=
 Hom(RingMap, Module, Ideal)  := Module => opts -> (f, M, N) -> Hom(f, module M, module N, opts)
 Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
+    -- todo: exploit direct sum structure of M to speed this up as in pushFwd code
     -- f: RingMap(R <- S)
     -- M: R-module
     -- N: R-module
