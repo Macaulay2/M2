@@ -52,7 +52,7 @@ bool interrupts_interruptShield;
 void* interpFunc(ArgCell* vargs);
 void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
-void  M2_flint_abort(void);
+FLINT_NORETURN void  M2_flint_abort(void);
 
 static void * GC_start_performance_measurement_0(void *) {
 #ifdef GC_start_performance_measurement /* added in bdwgc 8 */
@@ -130,7 +130,7 @@ void profiler_stacktrace(std::ostream &stream, int traceDepth) {
   }
 }
 
-void M2_flint_abort(void) {
+FLINT_NORETURN void M2_flint_abort(void) {
   profiler_stacktrace(std::cerr, 0);
   abort();
 }
