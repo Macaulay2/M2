@@ -32,7 +32,7 @@ TEST /// -- twisted cubic curve
 
 TEST ///
   X = Spec ZZ/101[x,y]/(y^2-x^3)
-  assert(toString ring X == "(ZZ/101)[x..y]/(-x^3+y^2)")
+  assert(toString ring X == "(ZZ/101)[x, y]/(-x^3+y^2)")
 ///
 
 TEST ///
