@@ -176,28 +176,6 @@ isModuleFinite RingMap := Boolean => (f) -> (
     true
 )
 
--- this is to reduce pushFwd of a free module to pushFwd of module target f
-makeModuleRankOneFree = (f, N) -> (
-    (R, S) := (target f, source f);
-    if not isFreeModule N or rank N != 1 then error "expected rank one free module";
-    X := pushFwd(f, module R);
-    auxpfN := if degreeGroup R == degreeGroup S then X ** S^(degrees N) else X;
-    if X != auxpfN then (
-        return (
-            auxpfN,
-            (m) -> pushforward'(map(X, auxpfN, gens X) * m),
-            (n) -> map(auxpfN, X, gens auxpfN) * pushforward(X, n)
-        );
-    ) else (
-        return (
-            X,
-            X.cache#pushforward',
-            N.cache#(pushforward, X)
-        );
-    );
-)
-
-
 --------------
 -- INTERNAL --
 --------------
@@ -279,6 +257,27 @@ makeModule(Module, RingMap) := (N, f) -> (
     );
 
     (M, pf', pf)
+)
+
+-- this is to reduce pushFwd of a free module to pushFwd of module target f
+makeModuleRankOneFree = (f, N) -> (
+    (R, S) := (target f, source f);
+    if not isFreeModule N or rank N != 1 then error "expected rank one free module";
+    X := pushFwd(f, module R);
+    auxpfN := if degreeGroup R == degreeGroup S then X ** S^(degrees N) else X;
+    if X != auxpfN then (
+        return (
+            auxpfN,
+            (m) -> pushforward'(map(X, auxpfN, gens X) * m),
+            (n) -> map(auxpfN, X, gens auxpfN) * pushforward(X, n)
+        );
+    ) else (
+        return (
+            X,
+            X.cache#pushforward',
+            N.cache#(pushforward, X)
+        );
+    );
 )
 
 inComputation = (M) -> M.cache#?(computing, pushFwd) and M.cache#(computing, pushFwd)
