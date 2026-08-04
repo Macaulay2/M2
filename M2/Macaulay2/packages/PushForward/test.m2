@@ -870,3 +870,184 @@ imgs = matrix {for i from 0 to numgens E - 1 list yonedaExtension'(f, yonedaExte
 assert(map(E, E, imgs) == id_E)
 *-
 ///
+
+TEST ///
+-- Hom and pushFwd functors compose nicely for homogeneous module
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+g = centerRing R
+C = source g
+h = map(C, kk)
+M = module ideal {a*b, b + c}
+N = module ideal {b*c, a * c}
+
+H = Hom(f, M, N)
+H' = pushFwd(h, Hom(g, M, N))
+
+imgs = matrix {for i from 0 to numgens H' - 1 list homomorphism'(f, homomorphism pushforward' H'_{i})}
+phi = map(H, H', imgs)
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_H')
+///
+
+TEST ///
+-- Hom and pushFwd functors compose nicely for free module
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+g = centerRing R
+C = source g
+h = map(C, kk)
+
+M = module R
+
+H = Hom(f, M, M)
+H' = pushFwd(h, Hom(g, M, M))
+
+imgs = matrix {for i from 0 to numgens H' - 1 list homomorphism'(f, homomorphism pushforward' H'_{i})}
+phi = map(H, H', imgs)
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_H')
+///
+
+TEST ///
+-- Hom and pushFwd functors compose nicely for non-homogeneous module
+-- ideal case
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+g = centerRing R
+C = source g
+h = map(C, kk)
+M = module ideal {a*b + c}
+
+-- check that H <> H via homomorphism maps is an isom
+-- 7 dimensional over kk
+H = Hom(f, M, M)
+imgs = matrix {for i from 0 to numgens H - 1 list homomorphism'(f, homomorphism H_{i})}
+phi = map(H, H, imgs)
+assert(phi == id_H)
+
+-- check that gH <> gH via homomorphism maps is an isom
+gH = Hom(g, M, M)
+imgs' = matrix {for i from 0 to numgens gH - 1 list homomorphism'(g, homomorphism gH_{i})}
+phi' = map(gH, gH, imgs')
+assert(phi' == id_gH)
+
+-- 8 dimensional over kk
+H' = pushFwd(h, gH)
+imgs'' = matrix {for i from 0 to numgens H' - 1 list pushforward(H', pushforward' H'_{i})}
+phi'' = map(H', H', imgs'')
+assert(phi'' == id_H')
+
+-- is it possible that it is not kk-linear? preposterous
+imgs = matrix {for i from 0 to numgens H' - 1 list homomorphism'(f, homomorphism pushforward' H'_{i})}
+phi = map(H, H', imgs)
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_H')
+///
+
+TEST ///
+-- Hom and pushFwd functors compose nicely for non-homogeneous module
+-- quotient by ideal case
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+g = centerRing R
+C = source g
+h = map(C, kk)
+M = R^1 / ideal {a*b + c}
+
+-- check that H <> H via homomorphism maps is an isom
+-- 7 dimensional over kk
+H = Hom(f, M, M)
+imgs = matrix {for i from 0 to numgens H - 1 list homomorphism'(f, homomorphism H_{i})}
+phi = map(H, H, imgs)
+assert(phi == id_H)
+
+-- check that gH <> gH via homomorphism maps is an isom
+gH = Hom(g, M, M)
+imgs' = matrix {for i from 0 to numgens gH - 1 list homomorphism'(g, homomorphism gH_{i})}
+phi' = map(gH, gH, imgs')
+assert(phi' == id_gH)
+
+-- 8 dimensional over kk
+H' = pushFwd(h, gH)
+imgs'' = matrix {for i from 0 to numgens H' - 1 list pushforward(H', pushforward' H'_{i})}
+phi'' = map(H', H', imgs'')
+assert(phi'' == id_H')
+
+-- is it possible that it is not kk-linear? preposterous
+imgs = matrix {for i from 0 to numgens H' - 1 list homomorphism'(f, homomorphism pushforward' H'_{i})}
+phi = map(H, H', imgs)
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_H')
+///
+
+TEST ///
+-- pushforward matrix along mutltiple ring maps is coherent after applying an
+-- appropriate change of basis on source and target
+-- commutative case
+kk = ZZ/101
+R = kk[a..d]/ideal {a^2, b^2, c^2, d^2}
+S = kk[x_0..x_5]
+f = map(R, kk)
+g = map(R, S, {a*b, a*c, a*d, b*c, b*d, c*d})
+h = map(S, kk)
+
+M = module ideal {a*b + c}
+M' = pushFwd(f, M)
+M'' = pushFwd(h, pushFwd(g, M))
+
+X = map(M, M, matrix d)
+
+A = pushFwd(f, X)
+B = pushFwd(h, pushFwd(g, X))
+
+assert(source A == M')
+assert(target A == M')
+assert(source B == M'')
+assert(target B == M'')
+
+-- the isomorphism from M' <> M''
+imgs = matrix {for i from 0 to numgens M' -1 list pushforward(M'', pushforward(pushFwd(g, M), pushforward' M'_{i}))}
+Y = map(M'', M', imgs)
+assert(A == Y^-1 * B * Y)
+///
+
+TEST ///
+-- pushforward matrix along mutltiple ring maps is coherent after applying an
+-- appropriate change of basis on source and target
+-- skew case
+kk = ZZ/101
+R = kk[a..d, SkewCommutative => true]
+S = kk[x_0..x_5, Degrees => {2,2,2,2,2,2}]
+f = map(R, kk)
+-- the image of S is the center of R but it doesn't even matter that it is so
+g = map(R, S, {a*b, a*c, a*d, b*c, b*d, c*d})
+h = map(S, kk)
+
+M = module ideal {a*b + c}
+M' = pushFwd(f, M)
+M''' = pushFwd(g, M)
+M'' = pushFwd(h, M''')
+
+H = Hom(f, M, M);
+X = homomorphism random(H);
+
+A = pushFwd(f, X)
+C = pushFwd(g, X)
+B = pushFwd(h, C)
+
+assert(source A == M')
+assert(target A == M')
+assert(source B == M'')
+assert(target B == M'')
+
+-- the isomorphism from M' <> M''
+imgs = matrix {for i from 0 to numgens M' -1 list pushforward(M'', pushforward(pushFwd(g, M), pushforward' M'_{i}))}
+Y = map(M'', M', imgs)
+
+assert(A == Y^-1 * B * Y)
+///

@@ -25,7 +25,7 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
 
     Y := youngest(M.cache.cache, N.cache.cache);
     Y#(Hom, f, M, N, opts) ??= (
-        -- allow setting PushForwardOpts via options
+        -- todo: allow setting PushForward Options independently from Hom Options?
         M' := pushFwd(f, M, MinimalGenerators => opts.MinimalGenerators);
         N' := pushFwd(f, N, MinimalGenerators => opts.MinimalGenerators);
         H' := Hom(M', N', opts);
@@ -34,18 +34,20 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
 
         C := R / intersect(annihilator M, annihilator N);
         C' := first pushFwd(map(C, R) * f);
+        -- puzzle: for non-commutative rings we need basis here and not just gens.
+        -- possibly due to failure of some associativity relations for modules over non-commutative rings?
+        testElements := if isCommutative R then C'_{0..numgens C' - 1} else basis C';
         -- checking linearity for these elements suffices
-        liftedGens := lift(pushforward'(C'_{0..numgens C'-1}), R);
+        liftedGens := lift(pushforward'(testElements), R);
 
         rightCompose := compose(M', M', N');
         leftCompose := compose(M', N', N');
         gensH' := H'_{0..numgens H' - 1};
         -- build the linear maps H' -> H' whose kernels witness R-linearity
         H := kernel matrix for r in first entries liftedGens list (
-            -- todo: exploit direct sum decomposition in cases where M is free as in Ext computations
             rMultForM := getStructureMap(r, M');
             rMultForN := getStructureMap(r, N');
-            -- wrap in nested list so we can assemble these into a block matrix outside of the loop
+            -- wrapping in nested list so we produce the correct block matrix outside the loop
             {map(H', H', rightCompose * (rMultForM ** gensH') - leftCompose * (gensH' ** rMultForN))}
         );
 
@@ -103,7 +105,8 @@ Hom(RingMap, Matrix, Matrix) := Matrix => o -> (f, F, G) -> Hom(f, source F, G, 
 -- from a matrix L: M -> N and a RingMap f get the corresponding element of Hom(f, M, N)
 homomorphism'(RingMap, Matrix) := Matrix => opts -> (f, L) -> (
     H := Hom(f, source L, target L, opts);
-    homomorphism'(pushFwd(f, L, MinimalGenerators => opts.MinimalGenerators), opts) // H.cache.toambienthommodule
+    result := homomorphism'(pushFwd(f, L, MinimalGenerators => opts.MinimalGenerators), opts);
+    result // H.cache.toambienthommodule
 )
 
 End(RingMap, Ring)   :=
@@ -221,8 +224,8 @@ isRankOneFree = (M) -> isFreeModule M and rank M == 1
 -- compute "multiplication by r" as an element of Hom_S(M, M)
 protect multiplication -- cache key
 getStructureMap = (r, M) -> M.cache#(multiplication, r) ?? (
-    -- M: pushFwd of M to an S-module
     -- r: RingElement of R
+    -- M: pushFwd of M to an S-module
 
     -- reduce to components if they are all already pushforwards
     if #components M > 1 and all(components M, C -> pushFwdSource C =!= null) then (
@@ -234,11 +237,10 @@ getStructureMap = (r, M) -> M.cache#(multiplication, r) ?? (
         f := pushFwdRingMap M;
         M' := pushFwd(f, module target f, pushFwdOpts M);
         X := map(M', M', pushforward(M', r * getPushFwdGens(M')));
+        -- handle the pushFwd of module target f by hand so that caching works
         M'.cache#(multiplication, r) = homomorphism' X;
         homomorphism' map(M, M, X)
     ) else (
         homomorphism' map(M, M, pushforward(M, r * getPushFwdGens(M)))
     )
 )
-
--- maybe split this into a separate method that also accepts the appropriate pushFwd of module R? and then cobbles things together?
