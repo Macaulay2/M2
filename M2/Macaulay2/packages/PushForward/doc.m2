@@ -1,3 +1,16 @@
+///
+Key
+Headline
+Usage
+Inputs
+Outputs
+Description
+    Text
+    Example
+Caveat
+SeeAlso
+///
+
 doc ///
     Key
         PushForward
@@ -22,6 +35,7 @@ doc ///
         (pushFwd, RingMap)
         (pushFwd, RingMap, Module)
         (pushFwd, RingMap, Matrix)
+        flattenDegreeMap
 ///
 
 -------------
