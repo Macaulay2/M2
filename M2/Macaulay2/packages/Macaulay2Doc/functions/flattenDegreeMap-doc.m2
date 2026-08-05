@@ -1,3 +1,4 @@
+doc ///
 Key
     flattenDegreeMap
     (flattenDegreeMap, RingMap)
@@ -43,3 +44,5 @@ Description
 SeeAlso
     flattenRing
     pushFwd
+
+///
