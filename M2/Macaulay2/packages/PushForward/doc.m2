@@ -35,7 +35,6 @@ doc ///
         (pushFwd, RingMap)
         (pushFwd, RingMap, Module)
         (pushFwd, RingMap, Matrix)
-        flattenDegreeMap
 ///
 
 -------------
