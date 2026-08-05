@@ -36,6 +36,7 @@ Description
         kk = ZZ/3
         R = kk[a..c, SkewCommutative => true]
         f = map(R, kk)
+        needsPackage "PushForward";
         -- no grading on pushFwd
         pushFwd(f, R^1)
 
