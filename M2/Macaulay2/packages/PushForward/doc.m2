@@ -112,7 +112,8 @@ doc ///
             input module, the degree map of $f$ must be the identity map. See @TO
             flattenDegreeMap@ for assistance producing such RingMaps.
         Example
-            R = ZZ/3[a..d, SkewCommutative => true]
+            kk = ZZ/3
+            R = kk[a..d, SkewCommutative => true]
             f = flattenDegreeMap map(R, kk)
             M = pushFwd(f, R^1)
             apply(values partition(degree, M_*), length)
