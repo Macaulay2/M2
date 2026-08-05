@@ -107,8 +107,18 @@ doc ///
             A = kk[a..d, SkewCommutative => true]
             N = module ideal vars A
             M = pushFwd N
+        Text
+            In order for the resulting module to be graded the same as the
+            input module, the degree map of $f$ must be the identity map. See @TO
+            flattenDegreeMap@ for assistance producing such RingMaps.
+        Example
+            R = ZZ/3[a..d, SkewCommutative => true]
+            f = flattenDegreeMap map(R, kk)
+            M = pushFwd(f, R^1)
+            apply(values partition(degree, M_*), length)
     SeeAlso
         (pushFwd, Matrix)
+        flattenDegreeMap
 ///
 
 doc ///

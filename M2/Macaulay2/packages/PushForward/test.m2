@@ -1051,3 +1051,13 @@ Y = map(M'', M', imgs)
 
 assert(A == Y^-1 * B * Y)
 ///
+
+TEST ///
+-- when we pushFwd along a RingMap with DegreeMap == identity, then the result
+-- is graded the same as the input module
+kk = ZZ/101
+R = kk[a..d, SkewCommutative => true]
+f = flattenDegreeMap map(R, kk)
+M = pushFwd(f, R^1)
+assert(apply(values partition(degree, M_*), length) == {1, 4, 6, 4, 1})
+///
