@@ -1061,3 +1061,33 @@ f = flattenDegreeMap map(R, kk)
 M = pushFwd(f, R^1)
 assert(apply(values partition(degree, M_*), length) == {1, 4, 6, 4, 1})
 ///
+
+TEST ///
+-- Hom out of higher rank free module
+-- commutative
+kk = ZZ/3
+R = kk[x, y, Degrees => {{3}, {2}}] / ideal {x^2 - y^3}
+S = kk[t];
+f = flattenDegreeMap map(R, S, {x*y}, DegreeMap => d -> 5 * d);
+I = ideal vars R;
+H = Hom(f, R^3, I/I^2)
+H' = Hom(R^3, I/I^2)
+fH = pushFwd(f, H')
+imgs = for i from 0 to numgens H - 1 list pushforward(fH, map(H', , homomorphism' homomorphism H_{i}))
+phi = map(fH, H, matrix {imgs})
+assert(phi * phi^-1 == id_fH)
+assert(phi^-1 * phi == id_H)
+///
+
+TEST ///
+-- Hom out of higher rank free module
+-- skew-commutative
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = flattenDegreeMap(map(R, kk))
+I = ideal vars R;
+H = Hom(f, R^3, I/I^2)
+imgs = for i from 0 to numgens H - 1 list homomorphism'(f, homomorphism H_{i})
+phi = map(H, H, matrix {imgs})
+assert(phi == id_H)
+///
