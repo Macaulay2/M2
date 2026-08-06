@@ -127,9 +127,12 @@ doc ///
         Example
             kk = ZZ/3
             R = kk[a..d, SkewCommutative => true]
-            f = flattenDegreeMap map(R, kk)
-            M = pushFwd(f, R^1)
-            apply(values partition(degree, M_*), length)
+            f = map(R, kk)
+            pushFwd(f, R^1) -- no grading
+
+            f' = flattenDegreeMap map(R, kk)
+            M = pushFwd(f', R^1)
+            apply(values partition(degree, M_*), length) -- graded like R^1 is
     SeeAlso
         (pushFwd, Matrix)
         flattenDegreeMap

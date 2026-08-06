@@ -31,17 +31,8 @@ Description
         -- canonical map is invertible
         g^-1
     Text
-        flattening the degree map in this way can be useful to preserve grading when computing pushFwd modules
-    Example
-        kk = ZZ/3
-        R = kk[a..c, SkewCommutative => true]
-        f = map(R, kk)
-        needsPackage "PushForward";
-        -- no grading on pushFwd
-        pushFwd(f, R^1)
-
-        -- after flattening degree map pushFwd is graded correctly
-        pushFwd(flattenDegreeMap f, R^1)
+        Flattening the degree map in this way can be useful to preserve grading
+        when computing push-forwards. See @TO (pushFwd, RingMap, Module)@.
 SeeAlso
     flattenRing
     pushFwd
