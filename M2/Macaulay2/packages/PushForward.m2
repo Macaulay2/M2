@@ -100,7 +100,7 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??=
         N.cache#(pushFwd, f, o) = pfN
     );
 
-    N.cache#(computing, pushFwd) = false;
+    remove(N.cache, (computing, pushFwd));
     result
 )
 
@@ -280,13 +280,11 @@ makeModuleRankOneFree = (f, N) -> (
     );
 )
 
-inComputation = (M) -> M.cache#?(computing, pushFwd) and M.cache#(computing, pushFwd)
+inComputation = (M) -> M.cache#?(computing, pushFwd)
 
 asDirectSum = (N) -> (
-    if N != 0 and isFreeModule N then (
-        R := ring N;
-        directSum apply(degrees N, d -> R^{-d})
-    ) else N
+    if (N == 0 or not isFreeModule N or #components N == numgens N) then N
+    else directSum apply(degrees N, d -> (ring N)^{-d})
 )
 
 -- what if B is an algebra over A (i.e. A is the coefficient ring of B)
