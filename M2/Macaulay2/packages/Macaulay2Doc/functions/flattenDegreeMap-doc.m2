@@ -32,7 +32,7 @@ Description
         g^-1
     Text
         Flattening the degree map in this way can be useful to preserve grading
-        when computing push-forwards. See @TO (pushFwd, RingMap, Module)@.
+        when computing push-forwards.
 SeeAlso
     flattenRing
 ///
