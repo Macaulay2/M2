@@ -35,6 +35,4 @@ Description
         when computing push-forwards. See @TO (pushFwd, RingMap, Module)@.
 SeeAlso
     flattenRing
-    pushFwd
-
 ///
