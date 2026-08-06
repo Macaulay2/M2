@@ -26,47 +26,51 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
 
     Y := youngest(M.cache.cache, N.cache.cache);
     Y#(Hom, f, M, N, opts) ??= (
+        M.cache#(computing, Hom, RingMap, Module, Module) = true;
         -- todo: allow setting PushForward Options independently from Hom Options?
         M' := pushFwd(f, M, MinimalGenerators => opts.MinimalGenerators);
         N' := pushFwd(f, N, MinimalGenerators => opts.MinimalGenerators);
         H' := Hom(M', N', opts);
 
-        if M == 0 or N == 0 then return H';
-
-        C := R / intersect(annihilator M, annihilator N);
-        C' := first pushFwd(map(C, R) * f);
-        -- puzzle: for non-commutative rings we need basis here and not just gens.
-        -- possibly due to failure of some associativity relations for modules over non-commutative rings?
-        testElements := if isCommutative R then C'_{0..numgens C' - 1} else basis C';
-        -- checking linearity for these elements suffices
-        liftedGens := lift(pushforward'(testElements), R);
-
-        rightCompose := compose(M', M', N');
-        leftCompose := compose(M', N', N');
-        gensH' := H'_{0..numgens H' - 1};
-        -- build the linear maps H' -> H' whose kernels witness R-linearity
-        H := kernel matrix for r in first entries liftedGens list (
-            rMultForM := getStructureMap(r, M');
-            rMultForN := getStructureMap(r, N');
-            -- wrapping in nested list so we produce the correct block matrix outside the loop
-            {map(H', H', rightCompose * (rMultForM ** gensH') - leftCompose * (gensH' ** rMultForN))}
+        -- early return in this degenerate case. cache contracts are fulfilled
+        -- by H' using the usual Hom construction without f.
+        if M == 0 or N == 0 then (
+            remove(Y, (computing, Hom, RingMap, Module, Module));
+            return H';
         );
 
-        if opts.MinimalGenerators then H = trim H;
+        M'' := asDirectSum M;
+        translate := Hom(map(M'', M, id_M''), N);
 
-        -- it is not enough to just have the ambient hom module as they may coincide
-        -- we need to move this so it does not get clobbered by the custom homomorphism function we store next.
-        H.cache#(homomorphism, R) = H'.cache.homomorphism;
-        H.cache.homomorphism = (h) -> (
-            h' := H.cache#(homomorphism, R) h;
-            map(N, M, pushforward'(h' * pushforward(M', M_{0..numgens M - 1})))
+        H := null;
+        if #components M'' > 1 then (
+            Cs := components M'';
+            CHoms := apply(Cs, C -> Hom(f, C, N));
+            auxH := directSum(CHoms);
+            H = if opts.MinimalGenerators then trim auxH else auxH;
+            remap := inducedMap(auxH, H);
+            H.cache.homomorphism = (h) -> (
+                -- do some decomposition song and dance here to map things around
+                map(N, M'', matrix {for i from 0 to #Cs - 1 list homomorphism map(CHoms_i, , auxH^[i] * (remap * h))}) * map(M'', M, id_M'')
+            );
+        ) else (
+            H = makeHomModule(f, M', N', H');
+            H = if opts.MinimalGenerators then trim H else H;
+            H.cache.homomorphism = (h) -> (
+                h' := H.cache#(homomorphism, R) h;
+                map(N, M, pushforward'(h' * pushforward(M', M_{0..numgens M - 1})))
+            );
         );
+
         H.cache.toambienthommodule = inducedMap(H', H);
+        H.cache#(homomorphism, R) = H'.cache.homomorphism;
         H.cache.formation = FunctionApplication { Hom, (f, M, N) };
 
+        remove(M.cache, (computing, Hom, RingMap, Module, Module));
         H
     )
 )
+
 
 -- induced map: Hom(f, target F, M) -> Hom(f, source F, M)
 Hom(RingMap, Matrix, Module) := Matrix => opts -> (f, F, M) -> (
@@ -202,6 +206,7 @@ yonedaExtension'(RingMap, Complex) := Matrix => opts -> (f, C) -> (
 -- helpers --
 -------------
 
+-- various convenience methods to unpack formation data from a pushFwd module
 pushFwdSource = (M) -> (
     if not M.cache.?formation then return null;
     if M.cache.formation#0 =!= pushFwd then return null;
@@ -245,3 +250,53 @@ getStructureMap = (r, M) -> M.cache#(multiplication, r) ?? (
         homomorphism' map(M, M, pushforward(M, r * getPushFwdGens(M)))
     )
 )
+
+-- f: RingMap S -> R
+-- M': Module, pushFwd of an R-module
+-- N': Module, pushFwd of an R-module
+-- H': Hom(M', N'), Hom as S-modules
+makeHomModule = (f, M', N', H') -> (
+    -- introduce pattern to handle rank one free case specially
+    -- as in the pushFwd code this requires replacing our module with *the* free
+    -- rank one thing and then twisting appropriately. this is mostly formal and
+    -- these things seem to be workign well.
+    R := target f;
+    M := pushFwdSource M';
+    N := pushFwdSource N';
+
+    if M === module R then M = module R;
+    if isRankOneFree M and not inHomComputation(M) then (
+        -- reduce to rank one free case here with a method that handles twisting
+        return makeHomFromRankOneFreeModule(f, M, N);
+    );
+
+    C := R / intersect(annihilator pushFwdSource M', annihilator pushFwdSource N');
+    C' := first pushFwd(map(C, R) * f);
+    -- puzzle: for non-commutative rings we need basis here and not just gens.
+    -- possibly due to failure of some associativity relations for modules over non-commutative rings?
+    testElements := if isCommutative R then C'_{0..numgens C' - 1} else basis C';
+    -- checking linearity for these elements suffices
+    liftedGens := lift(pushforward'(testElements), R);
+
+    rightCompose := compose(M', M', N');
+    leftCompose := compose(M', N', N');
+    gensH' := H'_{0..numgens H' - 1};
+    -- build the linear maps H' -> H' whose kernels witness R-linearity
+    H := kernel matrix for r in first entries liftedGens list (
+        rMultForM := getStructureMap(r, M');
+        rMultForN := getStructureMap(r, N');
+        -- wrapping in nested list so we produce the correct block matrix outside the loop
+        {map(H', H', rightCompose * (rMultForM ** gensH') - leftCompose * (gensH' ** rMultForN))}
+    );
+    H
+)
+
+-- reduce homs out of free modules to homs out of the canonical rank one free module
+makeHomFromRankOneFreeModule = (f, M, N) -> (
+    (S, R) := (source f, target f);
+    X := Hom(f, module R, N);
+    if degreeGroup R == degreeGroup S then X ** S^(degrees M) else X
+)
+
+-- to avoid infinite recursion
+inHomComputation = (M) -> M.cache#?(computing, Hom, RingMap, Module, Module)
