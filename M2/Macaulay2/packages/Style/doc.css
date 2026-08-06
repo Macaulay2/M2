@@ -126,6 +126,7 @@ div#buttons div {flex-grow: 1; align-self: flex-end;}
   z-index: 100;
   min-width: 300px;
   box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  text-align: left; /* don't inherit right alignment from div.right */
 }
 
 a.search-result {
