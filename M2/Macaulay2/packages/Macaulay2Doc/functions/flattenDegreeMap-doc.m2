@@ -16,19 +16,21 @@ Description
     Text
         $S'$ is isomorphic to $S$ but with degrees and DegreeGroup updated to match the image of $S$ under $f$.
     Example
-        kk = ZZ/3
-        S = kk[a]
-        R = S[t]
-        f = map(R, S)
+        kk = ZZ/3;
+        S = kk[a];
+        R = S[t];
+        f = map(R, S);
         f' = flattenDegreeMap f
-        target f'
-        assert(target f' == target f)
-        S' = source f'
+        assert(target f' === target f)
+        S' = source f';
+        describe S
+        degreeGroup S
+        describe S'
         degreeGroup S'
         assert(degreeGroup S' == degreeGroup R)
-        f'.cache.DegreeMap
-        g = map(S, source f')
-        -- canonical map is invertible
+        assert(f'.cache.DegreeMap === identity)
+        g = map(S, S')
+        -- the canonical map S' -> S is an isomorphism
         g^-1
     Text
         Flattening the degree map in this way can be useful to preserve grading
