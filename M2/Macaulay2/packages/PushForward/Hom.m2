@@ -16,7 +16,6 @@ Hom(RingMap, Ideal, Module) :=
 Hom(RingMap, Module, Ring)   :=
 Hom(RingMap, Module, Ideal)  := Module => opts -> (f, M, N) -> Hom(f, module M, module N, opts)
 Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
-    -- todo: exploit direct sum structure of M to speed this up as in pushFwd code
     -- f: RingMap(R <- S)
     -- M: R-module
     -- N: R-module
@@ -211,10 +210,6 @@ yonedaExtension'(RingMap, Complex) := Matrix => opts -> (f, C) -> (
 -- N': Module, pushFwd of an R-module
 -- H': Hom(M', N'), Hom as S-modules
 makeHomModule = (f, M', N', H') -> (
-    -- introduce pattern to handle rank one free case specially
-    -- as in the pushFwd code this requires replacing our module with *the* free
-    -- rank one thing and then twisting appropriately. this is mostly formal and
-    -- these things seem to be workign well.
     R := target f;
     M := pushFwdSource M';
     N := pushFwdSource N';
