@@ -157,11 +157,7 @@ export - (rhs:Expr) : Expr := (
 	  )
      is x:RawMutableMatrixCell do toExpr(-x.p)                      -- # typical value: symbol -, RawMutableMatrix, RawMutableMatrix
      is Error do rhs
-     else (
-	  method := lookup(Class(rhs),MinusS);
-	  if method == nullE
-	  then buildErrorPacket("no method found")
-	  else applyEE(method,Expr(rhs))));
+     else unarymethod(rhs, MinusS));
 minusfun1(rhs:Code):Expr := - eval(rhs);
 
 export (lhs:Expr) - (rhs:Expr) : Expr := (
@@ -603,7 +599,7 @@ BinaryPowerMethod(x:Expr,y:Expr,times:Expr,onex:Expr,inver:Expr):Expr := (
 	       );
 	  if i < 0 then (
 	       i = -i;
-	       if inver == nullE then return MissingMethod("^","InverseMethod");
+	       if inver == nullE then return MissingMethod("InverseMethod", x);
 	       x = applyEE(inver,x);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
@@ -644,11 +640,9 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       then return buildErrorPacket("missing unit element")
 	       else return applyEE(onex, x);
 	       );
-	  if i <= 0 then (
+	  if i < 0 then (
 	       i = -i;
-	       inver := lookup(Class(x),InverseS);
-	       if inver == nullE then return MissingMethod("^","InverseMethod");
-	       x = applyEE(inver,x);
+	       x = unarymethod(x, InverseS);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
