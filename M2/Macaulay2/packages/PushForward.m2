@@ -37,7 +37,8 @@ export {
     "pushFwd",
     "pushforward",
     "pushforward'",
-    "isModuleFinite"
+    "isModuleFinite",
+    "pushFwdGens"
 }
 
 -------------
@@ -58,7 +59,7 @@ pushFwd RingMap := Sequence => o -> (f) ->
 (
     B := target f;
     pfB := pushFwd(f, module B, o);
-    matB := getPushFwdGens(pfB);
+    matB := pushFwdGens(pfB);
     ringpf := (b) -> (module B).cache#(pushforward, pfB) matrix b;
 
     (pfB, matB, ringpf)
@@ -107,7 +108,7 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??=
 pushFwd(RingMap, Matrix) := Matrix => o -> (f, F) -> (
     M := pushFwd(f, source F, o);
     N := pushFwd(f, target F, o);
-    map(N, M, pushforward(N, F * getPushFwdGens(M)))
+    map(N, M, pushforward(N, F * pushFwdGens(M)))
 )
 
 -----------------
@@ -179,25 +180,25 @@ isModuleFinite RingMap := Boolean => (f) -> (
 --------------
 -- INTERNAL --
 --------------
+pushFwdGens = method()
+pushFwdGens(Module) := Matrix => (M) -> M.cache.pushFwdGens ??= pushforward' M_{0..numgens M - 1}
+
 -- makeModule
--- internal function which implements the push forward of a module.
+-- helper implementing the core pushforward computation
 -- input:
 --   N      : Module, a module over B
 --   f      : RingMap, A --> B
 -- output:
---   (M, F, p) : Sequence
+--   (M, pf', pf) : Sequence
 --   M      : the module N as an A-module.
---   F      : Matrix N <- M which provides one direction of the bijection between M and N.
---   p      : FunctionClosure M <- N providing the inverse of the bijection
+--   pf'    : FunctionClosure N <- M which provides one direction of the bijection between M and N.
+--   pf     : FunctionClosure M <- N providing the inverse of the pf'
 -- notes:
 --   if A is a field, this should be easier?
 --   the map mp is basically
 --     A^k --> auxN (over B)
 --   and its kernel are the A-relations of the elements auxN
-protect pushfwdgens --cache key
 -- lift a basis for the a pushforward module M to the module it was pushed from
-getPushFwdGens = (M) -> M.cache.pushfwdgens ??= pushforward' M_{0..numgens M - 1}
-
 makeModule = method()
 makeModule(Module, RingMap) := (N, f) -> (
     A := source f;
@@ -206,7 +207,7 @@ makeModule(Module, RingMap) := (N, f) -> (
     -- replace B^1 with module B so we benefit from caching
     if N === module B then N = module B;
 
-    if isFreeModule N and rank N == 1 and not inComputation N then (
+    if isRankOneFree N and not inComputation N then (
         -- this reduces to computing cached pushFwd of module B
         return makeModuleRankOneFree(f, N)
     );
@@ -262,7 +263,7 @@ makeModule(Module, RingMap) := (N, f) -> (
 -- this is to reduce pushFwd of a free module to pushFwd of module target f
 makeModuleRankOneFree = (f, N) -> (
     (R, S) := (target f, source f);
-    if not isFreeModule N or rank N != 1 then error "expected rank one free module";
+    if not isRankOneFree N then error "expected rank one free module";
     X := pushFwd(f, module R);
     auxpfN := if degreeGroup R == degreeGroup S then X ** S^(degrees N) else X;
     if X != auxpfN then (
@@ -394,6 +395,27 @@ isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
     if source inc =!= coefficientRing target inc then return false;
     inc vars source inc == promote (vars source inc, target inc)
 )
+
+-- various convenience methods to unpack formation data from a pushFwd module
+pushFwdSource = (M) -> (
+    if not M.cache.?formation then return null;
+    if M.cache.formation#0 =!= pushFwd then return null;
+    M.cache.formation#1#1
+)
+
+pushFwdOpts = (M) -> (
+    if not M.cache.?formation then return null;
+    if M.cache.formation#0 =!= pushFwd then return null;
+    M.cache.formation#1#2
+)
+
+pushFwdRingMap = (M) -> (
+    if not M.cache.?formation then return null;
+    if M.cache.formation#0 =!= pushFwd then return null;
+    M.cache.formation#1#0
+)
+
+isRankOneFree = (M) -> isFreeModule M and rank M == 1
 
 ---------------
 -- Hom / Ext --

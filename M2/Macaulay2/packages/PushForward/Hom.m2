@@ -206,51 +206,6 @@ yonedaExtension'(RingMap, Complex) := Matrix => opts -> (f, C) -> (
 -- helpers --
 -------------
 
--- various convenience methods to unpack formation data from a pushFwd module
-pushFwdSource = (M) -> (
-    if not M.cache.?formation then return null;
-    if M.cache.formation#0 =!= pushFwd then return null;
-    M.cache.formation#1#1
-)
-
-pushFwdOpts = (M) -> (
-    if not M.cache.?formation then return null;
-    if M.cache.formation#0 =!= pushFwd then return null;
-    M.cache.formation#1#2
-)
-
-pushFwdRingMap = (M) -> (
-    if not M.cache.?formation then return null;
-    if M.cache.formation#0 =!= pushFwd then return null;
-    M.cache.formation#1#0
-)
-
-isRankOneFree = (M) -> isFreeModule M and rank M == 1
-
--- compute "multiplication by r" as an element of Hom_S(M, M)
-protect multiplication -- cache key
-getStructureMap = (r, M) -> M.cache#(multiplication, r) ?? (
-    -- r: RingElement of R
-    -- M: pushFwd of M to an S-module
-
-    -- reduce to components if they are all already pushforwards
-    if #components M > 1 and all(components M, C -> pushFwdSource C =!= null) then (
-        return homomorphism' directSum apply(components M, C -> homomorphism getStructureMap(r, C));
-    );
-
-    sourceM := pushFwdSource M;
-    if isRankOneFree sourceM then (
-        f := pushFwdRingMap M;
-        M' := pushFwd(f, module target f, pushFwdOpts M);
-        X := map(M', M', pushforward(M', r * getPushFwdGens(M')));
-        -- handle the pushFwd of module target f by hand so that caching works
-        M'.cache#(multiplication, r) = homomorphism' X;
-        homomorphism' map(M, M, X)
-    ) else (
-        homomorphism' map(M, M, pushforward(M, r * getPushFwdGens(M)))
-    )
-)
-
 -- f: RingMap S -> R
 -- M': Module, pushFwd of an R-module
 -- N': Module, pushFwd of an R-module
@@ -270,7 +225,7 @@ makeHomModule = (f, M', N', H') -> (
         return makeHomFromRankOneFreeModule(f, M, N);
     );
 
-    C := R / intersect(annihilator pushFwdSource M', annihilator pushFwdSource N');
+    C := R / (intersect(annihilator pushFwdSource M', annihilator pushFwdSource N'));
     C' := first pushFwd(map(C, R) * f);
     -- puzzle: for non-commutative rings we need basis here and not just gens.
     -- possibly due to failure of some associativity relations for modules over non-commutative rings?
@@ -300,3 +255,27 @@ makeHomFromRankOneFreeModule = (f, M, N) -> (
 
 -- to avoid infinite recursion
 inHomComputation = (M) -> M.cache#?(computing, Hom, RingMap, Module, Module)
+
+-- compute "multiplication by r" as an element of Hom_S(M, M)
+protect multiplication -- cache key
+getStructureMap = (r, M) -> M.cache#(multiplication, r) ?? (
+    -- r: RingElement of R
+    -- M: pushFwd of M to an S-module
+
+    -- reduce to components if they are all already pushforwards
+    if #components M > 1 and all(components M, C -> pushFwdSource C =!= null) then (
+        return homomorphism' directSum apply(components M, C -> homomorphism getStructureMap(r, C));
+    );
+
+    sourceM := pushFwdSource M;
+    if isRankOneFree sourceM then (
+        f := pushFwdRingMap M;
+        M' := pushFwd(f, module target f, pushFwdOpts M);
+        X := map(M', M', pushforward(M', r * pushFwdGens(M')));
+        -- handle the pushFwd of module target f by hand so that caching works
+        M'.cache#(multiplication, r) = homomorphism' X;
+        homomorphism' map(M, M, X)
+    ) else (
+        homomorphism' map(M, M, pushforward(M, r * pushFwdGens(M)))
+    )
+)
