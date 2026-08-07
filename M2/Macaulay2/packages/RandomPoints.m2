@@ -1153,7 +1153,7 @@ getFieldSize(Ring):= (k1) -> (
         pp := char k1;
         l1 := ZZ/pp[];
         inc := map(k1, l1, {});
-        return pp^(rank ((pushFwd(inc))#0));
+        return pp^(rank ((pushFwd(inc))));
     );
     infinity
 )

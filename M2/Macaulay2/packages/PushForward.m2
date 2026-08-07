@@ -38,7 +38,8 @@ export {
     "pushforward",
     "pushforward'",
     "isModuleFinite",
-    "pushFwdGens"
+    "pushFwdGens",
+    "pushFwdRingMapShim"
 }
 
 -------------
@@ -47,23 +48,10 @@ export {
 -- central export of this package. compute the push forward of various objects
 -- over a ring map if possible.
 pushFwd = method(Options => {MinimalGenerators => true})
-pushFwd Ring := Sequence => o -> B -> pushFwd(map(B, coefficientRing B), o)
+pushFwd RingMap := Module => o -> (f) -> pushFwd(f, module target f, o)
+pushFwd Ring := Module => o -> R -> pushFwd(map(R, coefficientRing R), module R, o)
 pushFwd Module := Module => o -> M -> pushFwd(map(ring M, coefficientRing ring M), M, o)
-pushFwd Matrix := Matrix => o -> d -> pushFwd(map(ring d, coefficientRing ring d), d, o)
-
--- output is (pfB, matB, mapf) where
---   fB is B^1 as an A-module
---   matB is the set of monomials in B that form a set of generators as an A-module
---   mapf is a method that takes a ring element of B, and returns an element of pfB
-pushFwd RingMap := Sequence => o -> (f) ->
-(
-    B := target f;
-    pfB := pushFwd(f, module B, o);
-    matB := pushFwdGens(pfB);
-    ringpf := (b) -> (module B).cache#(pushforward, pfB) matrix b;
-
-    (pfB, matB, ringpf)
-)
+pushFwd Matrix := Matrix => o -> F -> pushFwd(map(ring F, coefficientRing ring F), F, o)
 
 protect computing
 pushFwd(RingMap, Ideal) := Module => o -> (f, I) -> pushFwd(f, module I)
@@ -82,7 +70,7 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??=
             sum for i from 0 to #Cs - 1 list auxpfN_[i] * pushforward(pfCs#i, map(Cs#i, , N'^[i] * map(N', N, id_N') * n))
         );
         (auxpfN, auxpf', auxpf)
-    ) else makeModule(N, f);
+    ) else makeModule(f, N);
 
     result := if o.MinimalGenerators then (
         -- prune and then push our pf / pf' maps through the pruningMap
@@ -177,6 +165,17 @@ isModuleFinite RingMap := Boolean => (f) -> (
     true
 )
 
+-- exported to shim over a change to the method signature for pushFwd(RingMap) and pushFwd(Module)
+-- these two overrides used to construct some auxiliary data and return it but now just return the module.
+-- call sites using this shim ought to be rewritten to appopriately use the below constructions instead.
+pushFwdRingMapShim = method()
+pushFwdRingMapShim(RingMap) := Sequence => (f) -> (
+    M := pushFwd(f, module target f);
+    matB := pushFwdGens(M);
+    ringpf := (b) -> (module target f).cache#(pushforward, M) matrix b;
+    (M, matB, ringpf)
+)
+
 --------------
 -- INTERNAL --
 --------------
@@ -186,71 +185,70 @@ pushFwdGens(Module) := Matrix => (M) -> M.cache.pushFwdGens ??= pushforward' M_{
 -- makeModule
 -- helper implementing the core pushforward computation
 -- input:
---   N      : Module, a module over B
---   f      : RingMap, A --> B
+--   f      : RingMap, S -> R
+--   N      : Module, a module over R
 -- output:
 --   (M, pf', pf) : Sequence
---   M      : the module N as an A-module.
+--   M      : the module N as an S-module.
 --   pf'    : FunctionClosure N <- M which provides one direction of the bijection between M and N.
 --   pf     : FunctionClosure M <- N providing the inverse of the pf'
 -- notes:
 --   if A is a field, this should be easier?
 --   the map mp is basically
---     A^k --> auxN (over B)
---   and its kernel are the A-relations of the elements auxN
+--     S^k --> auxN (over R)
+--   and its kernel are the S-relations of the elements auxN
 -- lift a basis for the a pushforward module M to the module it was pushed from
 makeModule = method()
-makeModule(Module, RingMap) := (N, f) -> (
-    A := source f;
-    B := target f;
+makeModule(RingMap, Module) := (f, N) -> (
+    (R, S) := (target f, source f);
 
-    -- replace B^1 with module B so we benefit from caching
-    if N === module B then N = module B;
+    -- replace R^1 with module R so we benefit from caching
+    if N === module R then N = module R;
 
     if isRankOneFree N and not inComputation N then (
-        -- this reduces to computing cached pushFwd of module B
+        -- this reduces to computing cached pushFwd of module R
         return makeModuleRankOneFree(f, N)
     );
 
-    q := map(B / ann N, B);
-    qinv := map(B, B / ann N);
+    q := map(R / ann N, R);
+    qinv := map(R, R / ann N);
 
-    (matB, ringpf) := pushAuxHgs(q * f);
+    (matR, ringpf) := pushAuxHgs(q * f);
     ringpf' := (r) -> ringpf q r;
-    matB = qinv matB; -- lift A-gens for B / ann N to B
+    matR = qinv matR; -- lift S-gens for R / ann N to R
 
     prunedN := prune N;
     auxN := ambient prunedN/image relations prunedN;
-    k := (numgens ambient prunedN) * (numgens source matB);
-    sourceGens := gens prunedN ** matB;
+    k := (numgens ambient prunedN) * (numgens source matR);
+    sourceGens := gens prunedN ** matR;
     mp := if isHomogeneous f then
-        try(map(auxN, , f, sourceGens)) else map(auxN, A^k, f, sourceGens)
+        try(map(auxN, , f, sourceGens)) else map(auxN, S^k, f, sourceGens)
     else
-        map(auxN, A^k, f, sourceGens);
+        map(auxN, S^k, f, sourceGens);
 
     rels := kernel mp;
     rels = try(trim rels) else rels;
     M := super rels / rels;
 
     pf := (n) -> ( -- pf: N --> M
-        if numrows n === 0 then return map(M, A^(numcols n), 0);
+        if numrows n === 0 then return map(M, S^(numcols n), 0);
 
         n = prunedN.cache.pruningMap^-1 * n;
         -- a bit hacky: we want to transpose without applying antipode
         n' := transpose matrix for row in entries n list for c in row list antipode(c);
         -- apply ringpf and stack as vectors
-        results := for i from 0 to numrows n' - 1 list reshape(A^(numgens M), A^1, ringpf' n'^{i});
+        results := for i from 0 to numrows n' - 1 list reshape(S^(numgens M), S^1, ringpf' n'^{i});
         if isHomogeneous n then
             map(M, , matrix {results})
         else
-            map(M, A^(numcols n), matrix {results})
+            map(M, S^(numcols n), matrix {results})
     );
 
     pfmat' := prunedN.cache.pruningMap * map(prunedN, M, f, sourceGens);
     pf' := (m) -> (
-        -- source m == A^1 and we want a map with source B^1 so do some map
+        -- source m == S^1 and we want a map with source R^1 so do some map
         -- shenanigans here.
-        result := map(N, B^(numcols m), pfmat' * m);
+        result := map(N, R^(numcols m), pfmat' * m);
         -- if needed we let map fix the degrees to make the result homogeneous.
         -- the try here is to handle a strange case when there is a ring map attached to result
         if isHomogeneous m then (try(map(N, , result)) else map(N, , matrix entries result))

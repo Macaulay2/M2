@@ -56,7 +56,8 @@ isSeminormal = method()
 
 isSeminormal(Ring) := R1 -> (
 	R1toR1SN := (seminormalize R1)#1;
-	pushList := pushFwd(R1toR1SN);
+        -- todo: remove the use of this shim. see it's implementation.
+	pushList := pushFwdRingMapShim(R1toR1SN);
 	myMap := (pushList#2)(sub(1, target R1toR1SN));
 	isSurjective myMap
 );
@@ -267,7 +268,8 @@ mapModules = method()
 mapModules(RingMap) := RingMapInput ->(
 --Creates a map from the Source viewed as a Source-module to the target viewed as a Source-module.
 --note needs loadPackage "PushForward";
-	actualMod:= pushFwd(RingMapInput);
+        -- todo: remove the use of this shim. see it's implementation.
+	actualMod:= pushFwdRingMapShim(RingMapInput);
 	tempVal:=target RingMapInput;
 	(actualMod#2)(sub(1, tempVal))
 )
@@ -438,11 +440,16 @@ intersectSeminormalizationAndExtension(RingMap, RingMap, ZZ) := (ff,gg, varInteg
 	BtoD := map(D, B);
 	AtoD := ASNtoD * f; --we write down all the maps in sight
 
-	pushASNtoD := pushFwd(ASNtoD); --now we view D as ASN module
-	pushBtoD := pushFwd(BtoD); --and D as a B module
-	pushf := pushFwd(f); --likewise ASN
-	pushg := pushFwd(g); --and B as A modules
-	pushAtoD := pushFwd(AtoD); --finally D as an A module
+        -- todo: remove the use of this shim. see it's implementation.
+	pushASNtoD := pushFwdRingMapShim(ASNtoD); --now we view D as ASN module
+        -- todo: remove the use of this shim. see it's implementation.
+	pushBtoD := pushFwdRingMapShim(BtoD); --and D as a B module
+        -- todo: remove the use of this shim. see it's implementation.
+	pushf := pushFwdRingMapShim(f); --likewise ASN
+        -- todo: remove the use of this shim. see it's implementation.
+	pushg := pushFwdRingMapShim(g); --and B as A modules
+        -- todo: remove the use of this shim. see it's implementation.
+	pushAtoD := pushFwdRingMapShim(AtoD); --finally D as an A module
 	ASNoverA := pushf#0; --we grab those modules
 	BoverA := pushg#0;
 	DoverA := pushAtoD#0;
@@ -1044,7 +1051,8 @@ TEST /// --#7 check that the non-semi-normal locus is the right set
 	R = trim prune ((pullback(f,g))#0); --this ring should not be seminormal...
 	snList = seminormalize(R);
 	RtoRSN = snList#1;
-	pushList = pushFwd(RtoRSN);
+        -- todo: remove the use of this shim. see it's implementation.
+	pushList = pushFwdRingMapShim(RtoRSN);
 	myMap = (pushList#2)(sub(1, target RtoRSN));
 	cond = radical ann coker myMap;
 	assert(dim radical cond == 1);
@@ -1060,7 +1068,8 @@ TEST /// --#8 check that the non-semi-normal locus is the right set again
 	R = trim prune ((pullback(f,g))#0); --this ring should not be seminormal
 	snList = seminormalize(R);
 	RtoRSN = snList#1;
-	pushList = pushFwd(RtoRSN);
+        -- todo: remove the use of this shim. see it's implementation.
+	pushList = pushFwdRingMapShim(RtoRSN);
 	myMap = (pushList#2)(sub(1, target RtoRSN));
 	cond = radical ann coker myMap;
 	assert(dim radical cond == 0);
@@ -1080,7 +1089,8 @@ TEST /// --#10 checking the example that had failed
 R = QQ[x,y]/ideal(x*y*(x-1));
 snmap = (seminormalize R)#1;
 assert(isInjective snmap);
-pfwd = pushFwd(snmap);
+-- todo: remove the use of this shim. see it's implementation.
+pfwd = pushFwdRingMapShim(snmap);
 assert( isFreeModule (pfwd#0) and (1 == rank(pfwd#0)))
 ///
 

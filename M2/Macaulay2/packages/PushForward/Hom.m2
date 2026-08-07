@@ -226,7 +226,7 @@ makeHomModule = (f, M', N', H') -> (
     );
 
     C := R / (intersect(annihilator pushFwdSource M', annihilator pushFwdSource N'));
-    C' := first pushFwd(map(C, R) * f);
+    C' := pushFwd(map(C, R) * f);
     -- puzzle: for non-commutative rings we need basis here and not just gens.
     -- possibly due to failure of some associativity relations for modules over non-commutative rings?
     testElements := if isCommutative R then C'_{0..numgens C' - 1} else basis C';

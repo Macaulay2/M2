@@ -344,7 +344,8 @@ needsPackage "PushForward";
 --this one computes the Frobenius pushforward of a module F^e_* M
 frobPF = method( TypicalValue => Sequence )
 
-frobPF ( ZZ, Ring ) := Sequence => ( n, A ) -> pushFwd frob( n, A )
+-- todo: remove the use of this shim. see it's implementation.
+frobPF ( ZZ, Ring ) := Sequence => ( n, A ) -> pushFwdRingMapShim(frob( n, A ))
 
 frobPF ( Module, ZZ, Ring ) := Module => ( M, n, A ) -> pushFwd( frob( n, A ), M )
 

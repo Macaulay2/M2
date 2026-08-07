@@ -34,10 +34,10 @@ TEST ///
 kk = QQ
 R = kk[x,y]/(x^2-y^3-y^5)
 R' = integralClosure R
-pr = pushFwd map(R',R)
-q = pr_0 / (pr_0)_0
+M = pushFwd map(R',R)
+q = M / M_0
 use R
-assert(ann q==ideal(x,y))
+assert(ann q == ideal(x,y))
 assert isModuleFinite map(R', R)
 ///
 
@@ -56,9 +56,9 @@ rs=map(S,R,{x_0,x_1})
 st=map(T,S,{t^3-1,t^4-t,t^5-t^2})
 assert isModuleFinite rs
 assert isModuleFinite st
-pst=pushFwd st
+pst = pushFwd st
 
-MT=pst_0
+MT = pst
 k=numgens MT
 
 un=transpose matrix{{1_S,(k-1):0}}
@@ -69,7 +69,7 @@ MMS=kernel mtt2
 
 r1=trim minimalPresentation kernel pushFwd(rs,mtt2)
 r2=trim minimalPresentation pushFwd(rs,MMS)
-r3=trim (pushFwd rs)_0
+r3=trim pushFwd rs
 
 assert(r1==r2)
 assert(flatten entries relations r2 == flatten entries relations r3)
@@ -143,11 +143,11 @@ B=PB/iB
 f=map(A,B,l)
 assert isModuleFinite f
 assert isModuleFinite g
-time h1=pushFwd g;
-ph1=cokernel promote(relations h1_0,B);
+time h1 = pushFwd g;
+ph1=cokernel promote(relations h1,B);
 time h2=pushFwd f;
 
-assert(ph1==h2_0)
+assert(ph1==h2)
 ///
 
 --test 8
@@ -199,8 +199,9 @@ TEST///
   assert isInclusionOfCoefficientRing inc
   assert isModuleFinite L
   assert isModuleFinite inc
-  (M,B,pf) = pushFwd inc
-  assert( B*presentation M  == 0)
+  M = pushFwd inc
+  B = pushFwdGens M
+  assert(B * presentation M  == 0)
   assert(numcols B == 5)
 ///
 
@@ -218,7 +219,8 @@ TEST///
   assert isInclusionOfCoefficientRing inc
   assert isModuleFinite L
   assert isModuleFinite inc
-  (M,B,pf) = pushFwd inc -- ok.  this works, but isn't awesome, as it uses a graph ideal.
+  M = pushFwd inc -- ok.  this works, but isn't awesome, as it uses a graph ideal.
+  B = pushFwdGens M
   assert( B*presentation M  == 0)
   assert(numcols B == 5)
 ///
@@ -232,7 +234,8 @@ TEST///
   A = kk[s,t]
   isHomogeneous L
   inc = map(L, A)
-  (M,B,pf) = pushFwd inc
+  M = pushFwd inc
+  B = pushFwdGens M
   assert( B * inc presentation M  == 0)
   assert(numcols B == 5)
   pushForward(inc, L^1)
@@ -243,9 +246,11 @@ TEST///
   kk = QQ
   A = kk[x]
   R = A[y, Join=> false]/(y^7-x^3-x^2)
-  (M,B,pf) = pushFwd map(R,A)
+  M = pushFwd map(R,A)
+  B = pushFwdGens M
   pushFwd matrix{{y}}
-  (M1,B1,pf1) = pushFwd R
+  M1 = pushFwd R
+  B1 = pushFwdGens M1
   assert(pushFwd(R^3) == pushFwd(map(R,A), R^3))
   -- this asserts among other things that the degrees on source B and source B1
   -- are the same which required some fussing to get right
@@ -253,12 +258,12 @@ TEST///
   assert(pushFwd matrix{{y}} == pushFwd(map(R,A),matrix{{y}}))
   assert(isFreeModule M and rank M == 7)
   assert(B == basis(R, Variables => R_*))
-  assert( pf(y+x)- matrix {{x}, {1}, {0}, {0}, {0}, {0}, {0}} == 0)
+  assert(pushforward(M1, y+x)- matrix {{x}, {1}, {0}, {0}, {0}, {0}, {0}} == 0)
   R' = integralClosure R
-  (M,B,pf) = pushFwd map(R',R)
+  M = pushFwd map(R',R)
   use R
   assert(M == cokernel(map(R^2,R^{{-6}, {-4}},{{-x^2-x,y^4}, {y^3,-x}})))
-  assert(pf w_(2,0) - matrix {{0}, {1}} == 0)
+  assert(pushforward(M, w_(2,0)) - matrix {{0}, {1}} == 0)
 ///
 
 --test 14
@@ -270,7 +275,7 @@ TEST ///
   I = ideal(y^4-x*y-(x^2+1)*z^2, z^4 - (x-1)*y-z^2 - z - y^3)
   B = R/I
   assert isModuleFinite map(B,A)
-  (M,g,pf) = pushFwd B
+  M = pushFwd B
   pushFwd B^1
   pushFwd B^{1}
   fy = pushFwd matrix{{y}}
@@ -289,7 +294,7 @@ TEST ///
   I = ideal(y^4-x*y-(x^2+1)*z^2, z^4 - (x-1)*y-z^2 - z - y^3)
   B = R/I
   assert isModuleFinite map(B,A)
-  (M,g,pf) = pushFwd B
+  M = pushFwd B
   pushFwd B^1
   pushFwd B^{1}
   fy = pushFwd matrix{{y}}
@@ -309,7 +314,7 @@ TEST ///
   I = ideal(y^4-x*y-(x^2+1)*z^2, z^4 - (x-1)*y-z^2 - z - y^3)
   B = R/I
   assert isModuleFinite map(B,A)
-  (M,g,pf) = pushFwd B
+  M = pushFwd B
   pushFwd B^1
   pushFwd B^{1}
   fy = pushFwd matrix{{y}}
@@ -322,7 +327,7 @@ TEST ///
   I = ideal(y^4-x*y-(x^2+1)*z^2, z^4 - (x-1)*y-z^2 - z - y^3)
   B = R/I
   assert isModuleFinite map(B,A)
-  (M,g,pf) = pushFwd B
+  M = pushFwd B
   pushFwd B^1
   pushFwd B^{{0,1}}
   fy = pushFwd matrix{{y}} -- good
@@ -400,7 +405,8 @@ kk = ZZ/101
 R = kk[a]/ideal a^3
 S' = R[b,c]
 S = S' / ideal {a^2, b^2, c^2}
-(rS, rB, pf) = pushFwd S
+rS = pushFwd S
+rB = pushFwdGens rS
 
 -- rS and S are isomorphic over R hence have the same kk dimension
 assert(degree rS === degree S)
@@ -411,8 +417,8 @@ assert(ring rS === R)
 -- rS is not free over R since multiplication by a^2 kills it
 assert(not isFreeModule rS)
 
-assert(pf(a_S * rB) - a * pf(rB) == 0)
-assert(a^2 * pf(rB) == 0)
+assert(pushforward(rS, a_S * rB) - a * pushforward(rS, rB) == 0)
+assert(a^2 * pushforward(rS, rB) == 0)
 ///
 
 -- test 21
@@ -496,7 +502,7 @@ F = map(S^1, S^1, matrix s)
 pF = pushFwd F
 
 -- get pushFwd of S^1 to an R-module and check it has the right source and target
-rS = first pushFwd S
+rS = pushFwd S
 
 assert(source pF == rS)
 assert(target pF == rS)
@@ -599,10 +605,10 @@ TEST ///
 kk = ZZ/101
 R = kk[a,b] / ideal {a^2 + 1, b^3 + a^2*b + 2}
 f = map(R, kk)
-M = first pushFwd R
+M = pushFwd R
 
 assert(matrix a + b == pushforward' pushforward(f, a + b))
-M' = first pushFwd(R, MinimalGenerators => false)
+M' = pushFwd(R, MinimalGenerators => false)
 
 -- specifying explicit module
 assert(matrix {{a + b}} == pushforward' pushforward(M, a + b))
@@ -614,10 +620,10 @@ TEST ///
 -- a simple edge cases around pushFwd of explicit ring map
 kk = ZZ/101
 R = kk[a]
-M = first pushFwd id_R
+M = pushFwd id_R
 assert(M == module R)
 -- repeat pushforward of ring map works
-M' = first pushFwd id_R
+M' = pushFwd id_R
 assert(M == module R)
 ///
 
@@ -644,7 +650,7 @@ kk = ZZ/101
 R = kk[a..c, SkewCommutative => {b, c}]
 T = kk[t]
 f = map(R, T, {a^2})
-(pR, matR, pf) = pushFwd f
+pR = pushFwd f
 assert(degree(pR) == 8)
 
 I = ideal vars R
