@@ -423,11 +423,3 @@ export TooManyArgs(name:string,m:int):Expr := (
      then buildErrorPacket(quoteit(name) + " expected at most 1 argument")
      else buildErrorPacket(quoteit(name) + " expected at most " 
 	  + tostring(m) + " arguments"));
-
-
-export MissingAssignmentMethod(method:Expr,left:Expr):Expr := (
-     when method is sc:SymbolClosure do buildErrorPacket("expected object to have an assignment method for " + quoteit(sc.symbol.word.name))
-     else buildErrorPacket("expected object to have an assignment method"));
-export MissingAssignmentMethodPair(method:Expr,left:Expr,right:Expr):Expr := (
-     when method is sc:SymbolClosure do buildErrorPacket("expected pair to have an assignment method for " + quoteit(sc.symbol.word.name))
-     else buildErrorPacket("expected pair to have an assignment method"));
