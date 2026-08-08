@@ -54,6 +54,7 @@ jobs:
         run: |
           brew config
           brew update
+          brew trust macaulay2/tap
           brew tap macaulay2/tap
           # Build tools
           brew install automake bison dylibbundler ccache ctags llvm make yasm googletest r
