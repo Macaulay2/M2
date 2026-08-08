@@ -171,9 +171,7 @@ isModuleFinite RingMap := Boolean => (f) -> (
 pushFwdRingMapShim = method()
 pushFwdRingMapShim(RingMap) := Sequence => (f) -> (
     M := pushFwd(f, module target f);
-    matB := pushFwdGens(M);
-    ringpf := (b) -> (module target f).cache#(pushforward, M) matrix b;
-    (M, matB, ringpf)
+    (M, pushFwdGens M, b -> pushforward(M, b))
 )
 
 --------------
