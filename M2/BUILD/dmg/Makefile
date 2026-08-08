@@ -18,6 +18,12 @@ SHELL       := /bin/bash
 .SHELLFLAGS := -e -o pipefail -c
 # .ONESHELL is required: the bundle target defines bash functions that are
 # called later in the same recipe.
+#
+# GNU make 3.82 or later is required, for both .ONESHELL and .SHELLFLAGS.
+# macOS ships 3.81 as /usr/bin/make and it ignores both silently -- recipes
+# then run one shell per line with neither -e nor pipefail, which breaks
+# multi-line shell constructs in confusing ways.  Every workflow job running
+# this makefile installs make from Homebrew for that reason.
 .ONESHELL:
 
 SRCDIR      := $(abspath ../..)

@@ -4,6 +4,9 @@
 # The resulting DMG presents a Macaulay2-VERSION directory alongside a
 # shortcut to /Applications so users can drag it there.  After installation,
 # users add /Applications/Macaulay2-VERSION/bin to their PATH.
+#
+# The DMG is built and tested in separate jobs so that it is tested on a
+# runner without the Homebrew formulas it was built against.
 
 name: Build macOS DMG
 
@@ -112,8 +115,86 @@ jobs:
         run: make all
 
 # ----------------------
+#   Upload artifacts
+# ----------------------
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.PKG_NAME }}-${{ matrix.arch }}-logs
+          path: |
+            M2/BUILD/build/config.log
+            M2/BUILD/build/include/*
+            M2/BUILD/build/libraries/*/build/*/config.log
+
+      - name: Upload DMG
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.PKG_NAME }}-${{ env.DMG_REVISION }}-${{ matrix.arch }}-macOS
+          path: "*.dmg"
+          retention-days: 7
+
+# ----------------------
 #   Test the DMG
 # ----------------------
+
+# This runs on a fresh runner that never installed the Homebrew formulas
+# used to build Macaulay2, so anything the DMG failed to bundle -- a dylib,
+# an external program, a data file such as Factory's gftables -- is missing
+# here just as it would be on a user's machine.  See issue #4596.
+#
+# GNU make is the one exception; see the step below.
+
+  test-dmg:
+    name: Test DMG (${{ matrix.arch }})
+    needs: build-dmg
+    # "needs" waits on the entire build-dmg matrix, so without this the whole
+    # test job is skipped whenever a single architecture fails to build -- we
+    # would lose the arm64 test results just because the x86_64 build broke.
+    # Run anyway; the architecture that failed to build has no DMG to download
+    # and fails below, which is what we want to see.
+    if: ${{ !cancelled() }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            arch: arm64
+          - os: macos-15-intel
+            arch: x86_64
+
+    steps:
+      # We do not build anything here, but the steps below run targets from
+      # M2/BUILD/dmg/Makefile and need M2/VERSION to name the artifact, so
+      # check out those two paths and nothing else.
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            /M2/BUILD/dmg/
+            /M2/VERSION
+          sparse-checkout-cone-mode: false
+
+      # M2/BUILD/dmg/Makefile needs GNU make 3.82 or later for .ONESHELL and
+      # .SHELLFLAGS; macOS ships 3.81.  This is a build tool rather than a
+      # library, so installing it does not weaken the test above.
+      - name: Install GNU make
+        run: |
+          brew install make
+          echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
+
+      - name: Determine package name
+        run: |
+          M2_VERSION=$(cat ../../VERSION)
+          echo "PKG_NAME=Macaulay2-$M2_VERSION" >> $GITHUB_ENV
+
+      - name: Download DMG
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ env.PKG_NAME }}-${{ env.DMG_REVISION }}-${{ matrix.arch }}-macOS
+          path: ${{ github.workspace }}
 
       - name: Install DMG
         env:
@@ -140,25 +221,3 @@ jobs:
           WORKSPACE: ${{ github.workspace }}
           ARCH: ${{ matrix.arch }}
         run: make run-package-tests
-
-# ----------------------
-#   Upload artifacts
-# ----------------------
-
-      - name: Upload build logs
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.PKG_NAME }}-${{ matrix.arch }}-logs
-          path: |
-            M2/BUILD/build/config.log
-            M2/BUILD/build/include/*
-            M2/BUILD/build/libraries/*/build/*/config.log
-
-      - name: Upload DMG
-        if: success()
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.PKG_NAME }}-${{ env.DMG_REVISION }}-${{ matrix.arch }}-macOS
-          path: "*.dmg"
-          retention-days: 7
