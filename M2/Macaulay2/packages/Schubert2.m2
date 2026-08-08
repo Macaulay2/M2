@@ -1090,8 +1090,9 @@ blowup(AbstractVarietyMap) :=
      Ndual := dual N;
      PN := projectiveBundle'(Ndual, VariableNames => {,{x}}); -- x = chern(1,OO_PN(1))
      C := intersectionRing PN;
-     -- todo: remove the use of this shim. see it's implementation.
-     (BasAModule, bas, iLowerMod2) := pushFwdRingMapShim(iupper);
+     BasAModule := pushFwd(iupper);
+     bas := pushFwdGens(BasAModule);
+     iLowerMod2 := (b) -> pushforward(BasAModule, b);
      -- iLowerMod(element b of B) = one column matrix over A whose product with bas is b
      iLowerMod := zz -> matrix(iLowerMod2(zz));
      n := numgens BasAModule;
@@ -1226,8 +1227,9 @@ extensionAlgebra(RingMap, RingElement) := opts -> (f, c) -> (
 	  if not (r == opts.Codimension) then error "Given codimension conflicts with degree of c";
 	  );
           
-     -- todo: remove the use of this shim. see it's implementation.
-     (BasAModule, Bbasis, fLowerMod2) := pushFwdRingMapShim(f);
+     BasAModule := pushFwd(f);
+     Bbasis := pushFwdGens(BasAModule);
+     fLowerMod2 := (b) -> pushforward(BasAModule, b);
      fLowerMod := zz -> matrix(fLowerMod2(zz));
      n := numgens BasAModule;
      

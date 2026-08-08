@@ -666,7 +666,7 @@ SeeAlso
 -------------
 doc ///
 Key
-    (pushFwd, MinimalGenerators)
+    [pushFwd, MinimalGenerators]
 Headline
     MinimalGenerators option for pushFwd
 Description

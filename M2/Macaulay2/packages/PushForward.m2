@@ -38,8 +38,7 @@ export {
     "pushforward",
     "pushforward'",
     "isModuleFinite",
-    "pushFwdGens",
-    "pushFwdRingMapShim"
+    "pushFwdGens"
 }
 
 -------------
@@ -163,15 +162,6 @@ isModuleFinite RingMap := Boolean => (f) -> (
         if toString err === ERRORNOTFINITE then return false else error err;
     );
     true
-)
-
--- exported to shim over a change to the method signature for pushFwd(RingMap) and pushFwd(Module)
--- these two overrides used to construct some auxiliary data and return it but now just return the module.
--- call sites using this shim ought to be rewritten to appropriately use the below constructions instead.
-pushFwdRingMapShim = method()
-pushFwdRingMapShim(RingMap) := Sequence => (f) -> (
-    M := pushFwd(f, module target f);
-    (M, pushFwdGens M, b -> pushforward(M, b))
 )
 
 --------------
