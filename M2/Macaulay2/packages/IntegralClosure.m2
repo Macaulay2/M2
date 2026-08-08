@@ -681,7 +681,7 @@ conductor = method()
 conductor RingMap := Ideal => phi -> (
     -- 3/25/26 TODO: do we want to cache the results?
     M := pushFwd phi;
-    assert(pushFwdGens(M)_(0,0) == 1);
+    assert((pushFwdGens M)_0 == 1);
     pmod := M_{0};
     ann coker pmod
     )
