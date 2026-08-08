@@ -380,8 +380,8 @@ Description
         kk = ZZ/101;
         A = kk[a,b]/ ideal {a^2, b^2};
         f = map(A, kk);
-        M = first pushFwd(f, MinimalGenerators => true)
-        M' = first pushFwd(f, MinimalGenerators => false)
+        M = pushFwd(f, MinimalGenerators => true)
+        M' = pushFwd(f, MinimalGenerators => false)
         r = a + b
         try(pushforward(f, r)) -- this raises an error
         pushforward(M, r)
