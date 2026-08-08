@@ -70,6 +70,9 @@ Description
 SeeAlso
     (pushFwd, RingMap, Module)
     (pushFwd, RingMap, Matrix)
+    pushFwdGens
+    pushforward
+    pushforward'
 ///
 
 doc ///
@@ -126,6 +129,9 @@ Description
 SeeAlso
     (pushFwd, Matrix)
     flattenDegreeMap
+    pushFwdGens
+    pushforward
+    pushforward'
 ///
 
 doc ///
@@ -204,6 +210,8 @@ SeeAlso
     (pushFwd, RingMap, Matrix)
     pushforward
     pushforward'
+    pushFwdGens
+    isModuleFinite
 ///
 
 -----------------
@@ -529,6 +537,7 @@ Description
         pushforward' matrix M_*
 SeeAlso
     pushforward
+    pushFwdGens
 ///
 
 doc ///
@@ -649,6 +658,7 @@ Description
         assert(numcols gs == 2 * 3)
 SeeAlso
     pushFwd
+    pushforward'
 ///
 
 -------------
@@ -656,7 +666,7 @@ SeeAlso
 -------------
 doc ///
 Key
-    [pushFwd,MinimalGenerators]
+    (pushFwd, MinimalGenerators)
 Headline
     MinimalGenerators option for pushFwd
 Description
