@@ -9,9 +9,17 @@ name: Build macOS DMG
 
 on:
   workflow_dispatch:
+    inputs:
+      revision:
+        description: 'DMG revision (bump when rebuilding a released version)'
+        required: false
+        default: '1'
   push:
     tags:
       - 'release-*'
+
+env:
+  DMG_REVISION: ${{ inputs.revision || '1' }}
 
 defaults:
   run:
@@ -151,6 +159,6 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ env.PKG_NAME }}-${{ matrix.arch }}-macOS
+          name: ${{ env.PKG_NAME }}-${{ env.DMG_REVISION }}-${{ matrix.arch }}-macOS
           path: "*.dmg"
           retention-days: 7

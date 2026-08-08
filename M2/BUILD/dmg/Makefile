@@ -1,14 +1,18 @@
 # Macaulay2 macOS DMG builder
 #
 # Targets:
-#   all   — configure, build, install, bundle deps, create DMG
-#   check — mount and test the DMG
+#   all   -- configure, build, install, bundle deps, create DMG
+#   check -- mount and test the DMG
 #
 # Variables (set via environment or make command line):
-#   WORKSPACE         — repository root (staging/ lives here; default: three levels up)
-#   ARCH              — arm64 or x86_64 (default: current machine architecture)
-#   DEPLOYMENT_TARGET — minimum macOS version (default: 14.0)
-#   RUNNER_TEMP       — scratch directory for DMG staging and testing (default: /tmp)
+#   WORKSPACE         -- repository root (staging/ lives here; default: three levels up)
+#   ARCH              -- arm64 or x86_64 (default: current machine architecture)
+#   DEPLOYMENT_TARGET -- minimum macOS version (default: 14.0)
+#   RUNNER_TEMP       -- scratch directory for DMG staging and testing (default: /tmp)
+#   DMG_REVISION      -- revision of the DMG for a given M2 version (default: 1)
+#   FACTORY_PREFIX    -- where factory is installed (default: brew --prefix factory)
+#   GFTABLES_SRC      -- gftables directory to bundle (default: $(FACTORY_PREFIX)/share/factory/gftables)
+#   GFTABLES_REL      -- where they go inside the prefix (default: share/Macaulay2/Core/factory)
 
 SHELL       := /bin/bash
 .SHELLFLAGS := -e -o pipefail -c
@@ -23,15 +27,33 @@ WORKSPACE         ?= $(abspath ../../..)
 ARCH              ?= $(shell uname -m)
 DEPLOYMENT_TARGET ?= 14.0
 RUNNER_TEMP       ?= /tmp
+# Bump when rebuilding the DMG for an M2 version that has already been
+# released; it appears in the DMG filename only, not in the volume name or the
+# installed directory.
+DMG_REVISION      ?= 1
 
 M2_VERSION   := $(shell cat $(SRCDIR)/VERSION)
 PKG_NAME     := Macaulay2-$(M2_VERSION)
 PKG          := $(WORKSPACE)/staging/$(PKG_NAME)
-DMG          := $(WORKSPACE)/$(PKG_NAME)-$(ARCH)-macOS.dmg
+DMG          := $(WORKSPACE)/$(PKG_NAME)-$(DMG_REVISION)-$(ARCH)-macOS.dmg
 LIB_DIR      := $(PKG)/lib/Macaulay2/lib
 PROGRAMS_DIR := $(PKG)/libexec/Macaulay2/bin
 BREW         := $(shell brew --prefix)
 NCPU         := $(shell sysctl -n hw.logicalcpu)
+
+# Factory's finite field addition tables.  Homebrew's factory keeps them
+# outside our prefix, so we stage a copy inside the DMG and tell configure to
+# record a ${prefix}-relative path; otherwise the absolute Homebrew path gets
+# compiled into M2-binary and M2 fails to start on machines without Homebrew.
+# See https://github.com/Macaulay2/M2/issues/4596.
+FACTORY_PREFIX   ?= $(shell brew --prefix factory 2>/dev/null)
+GFTABLES_SRC     ?= $(FACTORY_PREFIX)/share/factory/gftables
+GFTABLES_REL     ?= share/Macaulay2/Core/factory
+GFTABLES_STAGING := $(BUILDDIR)/usr-dist/common/$(GFTABLES_REL)
+# What configure records in the layout, e.g. ${datadir}/Macaulay2/Core/factory/.
+# It has to stay under $(datadir) and be written with an unexpanded ${datadir}
+# so that configure normalizes it to a ${prefix}-relative path.
+GFTABLESDIR      := $${datadir}/$(patsubst share/%,%,$(GFTABLES_REL))/
 
 F77          := gfortran-14
 FC           := gfortran-14
@@ -40,9 +62,22 @@ MOUNT_DIR        := $(RUNNER_TEMP)/M2-dmg
 INSTALL_DIR      := $(RUNNER_TEMP)/M2-installed
 INSTALLED_STAMP  := $(INSTALL_DIR)/.installed
 
-.PHONY: all configure build install programs bundle dmg install-dmg run-basic-tests run-core-tests run-package-tests check
+.PHONY: all gftables configure build install programs bundle dmg install-dmg run-basic-tests run-core-tests run-package-tests check
 
 all: dmg
+
+# ----------------------
+#   Stage Factory's gftables
+# ----------------------
+
+# The staging area is where the M2 that runs during the build looks for the
+# tables, and "make install" ships only what has been staged.
+
+gftables:
+	test -d "$(GFTABLES_SRC)" || \
+	    { echo "error: gftables not found at $(GFTABLES_SRC)" >&2; exit 1; }
+	mkdir -p $(GFTABLES_STAGING)
+	cp -RL $(GFTABLES_SRC) $(GFTABLES_STAGING)/
 
 # ----------------------
 #   Configure Macaulay2
@@ -54,13 +89,14 @@ configure:
 	cd $(BUILDDIR) && F77=$(F77) FC=$(FC) MACOSX_DEPLOYMENT_TARGET=$(DEPLOYMENT_TARGET) \
 	    $(SRCDIR)/configure \
 	    --prefix=$(PKG) \
+	    GFTABLESDIR='$(GFTABLESDIR)' \
 	    --with-system-libs --with-fplll --without-python
 
 # ----------------------
 #   Build Macaulay2
 # ----------------------
 
-build: configure
+build: configure gftables
 	$(MAKE) -C $(BUILDDIR) -j$(NCPU)
 
 # ----------------------
@@ -171,7 +207,7 @@ bundle: programs
 	done
 
 	# Rewrite @rpath/libXXX load commands in bin/ executables to direct
-	# @executable_path/… paths (they have -headerpad_max_install_names).
+	# @executable_path/... paths (they have -headerpad_max_install_names).
 	for exe in "$(PKG)/bin/"*; do
 	    [ -f "$$exe" ] && [ -x "$$exe" ] && [ ! -L "$$exe" ] || continue
 	    file "$$exe" | grep -q "Mach-O" || continue
@@ -244,6 +280,14 @@ $(INSTALLED_STAMP):
 	    ls -la $(INSTALL_DIR)/lib/Macaulay2/lib/ || echo "(missing)"
 	echo "=== M2-binary rpaths in install ===" && \
 	    otool -l $(INSTALL_DIR)/bin/M2-binary | grep -A2 LC_RPATH
+	echo "=== gftables in install ===" && \
+	    grep -n '"factory gftables"' $(INSTALL_DIR)/share/Macaulay2/Core/startup.m2
+	test -f $(INSTALL_DIR)/$(GFTABLES_REL)/gftables/961 || \
+	    { echo "error: gftables missing from the DMG" >&2; exit 1; }
+	if grep -Eq '"factory gftables" *=> *"/' $(INSTALL_DIR)/share/Macaulay2/Core/startup.m2; then
+	    echo "error: an absolute gftables path was baked into the DMG" >&2
+	    exit 1
+	fi
 	touch $(INSTALLED_STAMP)
 
 # ----------------------

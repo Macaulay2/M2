@@ -11,7 +11,6 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
 m4_include(m4/ax_compare_version.m4)
-m4_include(m4/ax_recursive_eval.m4)
 m4_include(m4/openmp.m4)
 m4_include(m4/search-libraries.m4)
 m4_include(m4/ax_boost_base.m4)
@@ -1538,10 +1537,21 @@ else
 	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/singular/factory/"
 	fi
     fi
-    AX_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
-    AC_CHECK_FILE([${GFTABLESDIR}gftables/961],,
-	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
-    FILE_PREREQS="$FILE_PREREQS ${GFTABLESDIR}gftables/961"
+    # An absolute path (which is what pkg-config gives us) is baked into
+    # startup.m2 verbatim, so we use the system tables where they are, as
+    # distribution packages want.  A caller may instead pass something like
+    # GFTABLESDIR='${datadir}/Macaulay2/Core/factory/' and stage a copy of the
+    # tables there; the normalization loop below then turns it into a
+    # ${prefix}-relative layout entry, which is what a relocatable binary
+    # distribution such as the macOS dmg needs.  We can only check for the
+    # tables in the former case, as the latter is not populated until "make
+    # install".
+    case $GFTABLESDIR in
+	/*) AC_CHECK_FILE([${GFTABLESDIR}gftables/961],,
+		[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
+	    FILE_PREREQS="$FILE_PREREQS ${GFTABLESDIR}gftables/961" ;;
+	*)  AC_MSG_NOTICE([gftables expected at $GFTABLESDIR, relative to the prefix]) ;;
+    esac
 fi
 
 if test $BUILD_factory = no
