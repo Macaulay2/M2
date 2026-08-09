@@ -320,13 +320,19 @@ $(INSTALLED_STAMP):
 #   Test the DMG
 # ----------------------
 
+# Run M2 the way the DMG tells users to, with bin/ on the PATH.  Invoking it
+# by absolute path instead would leave PHCpack.m2 and Bertini.m2 unable to
+# find phc and bertini, since they look with the shell rather than
+# findProgram, and both would quietly skip their tests.
+M2_INSTALLED := PATH="$(INSTALL_DIR)/bin:$$PATH" $(INSTALL_DIR)/bin/M2 -q
+
 run-basic-tests: $(INSTALLED_STAMP)
-	$(INSTALL_DIR)/bin/M2 -q --check 1
+	$(M2_INSTALLED) --check 1
 
 run-core-tests: $(INSTALLED_STAMP)
-	$(INSTALL_DIR)/bin/M2 -q --check 2
+	$(M2_INSTALLED) --check 2
 
 run-package-tests: $(INSTALLED_STAMP)
-	$(INSTALL_DIR)/bin/M2 -q --check 3
+	$(M2_INSTALLED) --check 3
 
 check: run-basic-tests run-core-tests run-package-tests
