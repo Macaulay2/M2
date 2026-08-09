@@ -87,6 +87,13 @@ assert(denominator(1/b) == 1_R)
 assert(lift(1/b,R) == a)
 assert(lift((b+1)/b,R) == a+1)
 -----------------------------------------------------------------------------
+K = toField(QQ[a]/(a^2-2))
+B = K[t]/(t^2-a)
+F = frac B
+f = 1/(t+1)
+assert(numerator f == 1_B)
+assert(denominator f == t+1)
+-----------------------------------------------------------------------------
 A = ZZ/101[a,b]/(a*b)
 L = toField A
 assert try (1/(a+b); false) else true

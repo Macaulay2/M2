@@ -91,7 +91,6 @@ void LocalRing::simplify(local_elem *f) const
   if (use_gcd_simplify)
     {
       y = f->denom;
-      if (mRing->is_equal(y, mRing->one())) return;
       x = f->numer;
       const RingElement *a = RingElement::make_raw(mRing, x);
       const RingElement *b = RingElement::make_raw(mRing, y);

@@ -9,7 +9,6 @@
 #include "groebner-computations/gbring.hpp"
 #include "ring-elements/ring-element.hpp"
 #include "rings/polyring.hpp"
-#include "rings/polyquotient.hpp"
 #include "exceptions.hpp"
 
 #define FRAC_VAL(f) (reinterpret_cast<frac_elem *>((f).poly_val))
@@ -106,10 +105,10 @@ bool FractionField::simplify_unit_denominator(frac_elem *f) const
 
   ring_elem denom_inverse;
   // TODO uniformise behaviour of invert for noninvertible elements
-  if (dynamic_cast<const PolyRingQuotient *>(R_) != nullptr)
+  if (R_->is_quotient_ring())
     {
       denom_inverse = R_->invert(f->denom); // for quotient rings, don't call is_unit since it calls invert internally
-      if (R_->is_zero(denom_inverse)) return false; // for non invertible elements, returns zero denominator
+      if (R_->is_zero(denom_inverse)) return false; // for non invertible elements, returns zero
     }
   else
     {
@@ -138,13 +137,11 @@ void FractionField::simplify(frac_elem *f) const
   if (use_gcd_simplify)
     {
       y = f->denom;
-      if (!R_->is_equal(y, R_->one()))
-        {
-          x = f->numer;
-          const RingElement *a = RingElement::make_raw(R_, x);
-          const RingElement *b = RingElement::make_raw(R_, y);
-          const RingElement *c = rawGCDRingElement(a, b, nullptr, false);
-          if (!c) return;
+      x = f->numer;
+      const RingElement *a = RingElement::make_raw(R_, x);
+      const RingElement *b = RingElement::make_raw(R_, y);
+      const RingElement *c = rawGCDRingElement(a, b, nullptr, false);
+      if (!c) return;
 
 #if 0
       // Debugging code
@@ -159,11 +156,10 @@ void FractionField::simplify(frac_elem *f) const
             o << newline;
             emit(o.str());
 #endif
-          if (!R_->is_equal(c->get_value(), R_->one()))
-            {
-              f->numer = R_->divide(f->numer, c->get_value());
-              f->denom = R_->divide(f->denom, c->get_value());
-            }
+      if (!R_->is_equal(c->get_value(), R_->one()))
+        {
+          f->numer = R_->divide(f->numer, c->get_value());
+          f->denom = R_->divide(f->denom, c->get_value());
         }
       // Now, let's take the content of the denominator, and divide the
       // numerator
