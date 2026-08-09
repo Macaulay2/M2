@@ -259,6 +259,20 @@ bundle: programs
 	    codesign --force --sign - "$$f" 2>/dev/null || true
 	done
 
+	# Unversioned aliases, e.g., libmpfi.dylib -> libmpfi.0.dylib.  bin/M2
+	# puts this directory on DYLD_LIBRARY_PATH, so dlopen finds libraries
+	# here by leaf name, but dylibbundler copies only the versioned files.
+	# These are the ones packages ask for by name: ForeignFunctions opens
+	# mpfi and Padic opens flint.  mpfr is not used by any test, but the
+	# ForeignFunctions documentation opens it, so include it as well and
+	# let users run the examples.  Done after signing so that the passes
+	# above skip the symlinks.
+	for name in mpfi flint mpfr; do
+	    versioned=$$(ls "$(LIB_DIR)/lib$$name."*.dylib 2>/dev/null | head -1)
+	    [ -n "$$versioned" ] || continue
+	    ln -sf "$$(basename "$$versioned")" "$(LIB_DIR)/lib$$name.dylib"
+	done
+
 	echo "=== lib/Macaulay2/lib/ after bundling ===" && ls -la "$(LIB_DIR)/"
 	echo "=== M2-binary rpaths ===" && otool -l "$(PKG)/bin/M2-binary" | grep -A2 LC_RPATH
 	echo "=== M2-binary load commands ===" && otool -L "$(PKG)/bin/M2-binary"
