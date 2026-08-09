@@ -129,9 +129,15 @@ programs: install
 	done
 	# phcpack and bertini are not on Homebrew; they are pre-staged by the
 	# workflow into RUNNER_TEMP.  Include each only if it was staged.
+	#
+	# These two go in bin/ rather than alongside the programs above, because
+	# PHCpack.m2 and Bertini.m2 look up their program with the shell rather
+	# than findProgram and so need it on the user's PATH.  bin/ is the
+	# directory the DMG tells users to add; $(PROGRAMS_DIR) is only ever
+	# searched by findProgram.
 	for prog in phc bertini; do
 	    src="$(RUNNER_TEMP)/$$prog"
-	    dst="$(PROGRAMS_DIR)/$$prog"
+	    dst="$(PKG)/bin/$$prog"
 	    if [ -f "$$src" ] && [ ! -f "$$dst" ]; then
 	        cp "$$src" "$$dst"
 	    fi
