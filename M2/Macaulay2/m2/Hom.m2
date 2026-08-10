@@ -45,7 +45,6 @@ Hom(Module, Module) := Module => opts -> (M, N) -> (
     )
 )
 
-rawTranspose = m -> transpose matrix for row in entries m list for x in row list antipode(x);
 basicHom = (M, N) -> kernel(transpose presentation M ** N)
 addHook((Hom, Module, Module), Strategy => Default,  (opts, M, N) -> basicHom(M, N))
 addHook((Hom, Module, Module), Strategy => Syzygies, (opts, M, N) -> (
