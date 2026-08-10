@@ -221,15 +221,16 @@ makeModule(RingMap, Module) := (f, N) -> (
     pf := (n) -> ( -- pf: N --> M
         if numrows n === 0 then return map(M, S^(numcols n), 0);
 
+        numElements := numcols n;
         n = prunedN.cache.pruningMap^-1 * n;
         -- a bit hacky: we want to transpose without applying antipode
-        n' := transpose matrix for row in entries n list for c in row list antipode(c);
+        n = matrix transpose entries n;
         -- apply ringpf and stack as vectors
-        results := for i from 0 to numrows n' - 1 list reshape(S^(numgens M), S^1, ringpf' n'^{i});
+        results := for i from 0 to numElements - 1 list reshape(S^(numgens M), S^1, ringpf' n^{i});
         if isHomogeneous n then
             map(M, , matrix {results})
         else
-            map(M, S^(numcols n), matrix {results})
+            map(M, S^(numElements), matrix {results})
     );
 
     pfmat' := prunedN.cache.pruningMap * map(prunedN, M, f, sourceGens);
