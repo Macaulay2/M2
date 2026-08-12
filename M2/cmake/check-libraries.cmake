@@ -48,21 +48,23 @@ if(STATIC_BOOST)
   message(STATUS "Using static Boost, if Boost is installed but not found, try setting STATIC_BOOST to OFF")
 endif()
 set(Boost_USE_STATIC_LIBS ${STATIC_BOOST})
-if(UNIX)
-  cmake_policy(SET CMP0167 OLD) # load CMake's FindBoost module
-  find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_addr2line)
-else()
-  find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_backtrace)
+find_package(Boost	REQUIRED QUIET COMPONENTS regex
+  OPTIONAL_COMPONENTS stacktrace_backtrace)
+
+# Finding a component only proves the Boost library exists, not that its backend can work.
+check_library_exists(backtrace backtrace_create_state "" LIBBACKTRACE)
+find_program(ADDR2LINE	NAMES	addr2line llvm-addr2line)
+
+if(Boost_STACKTRACE_BACKTRACE_FOUND AND LIBBACKTRACE)
+  set(Boost_stacktrace_lib Boost::stacktrace_backtrace backtrace)
+  set(Boost_stacktrace_definitions BOOST_STACKTRACE_LINK)
+elseif(ADDR2LINE)
+  # only header-only mode reads BOOST_STACKTRACE_USE_* and lets us set the addr2line path
+  set(Boost_stacktrace_definitions BOOST_STACKTRACE_USE_ADDR2LINE
+    BOOST_STACKTRACE_ADDR2LINE_LOCATION=${ADDR2LINE})
 endif()
-if(Boost_STACKTRACE_BACKTRACE_FOUND)
-  set(Boost_stacktrace_lib "Boost::stacktrace_backtrace")
-elseif(Boost_STACKTRACE_ADDR2LINE_FOUND)
-  set(Boost_stacktrace_lib "Boost::stacktrace_addr2line")
-else()
-  #fallback to header only mode
-  set(Boost_stacktrace_header_only YES)
-endif()
-set(CMAKE_REQUIRED_INCLUDES "${Boost_INCLUDE_DIR}")
+
+set(CMAKE_REQUIRED_INCLUDES "${Boost_INCLUDE_DIRS}")
 check_include_files(boost/math/tools/atomic.hpp
   HAVE_BOOST_MATH_TOOLS_ATOMIC_HPP)
 

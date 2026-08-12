@@ -1,6 +1,3 @@
-#define BOOST_STACKTRACE_USE_ADDR2LINE /* show source file and line number */
-// #define BOOST_STACKTRACE_USE_NOOP /* disable stacktrace */
-
 #include <M2/gc-include.h>
 
 #include "interp-exports.h"
