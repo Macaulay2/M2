@@ -66,7 +66,7 @@ endif()
 
 set(CMAKE_REQUIRED_INCLUDES "${Boost_INCLUDE_DIRS}")
 check_include_files(boost/math/tools/atomic.hpp
-  HAVE_BOOST_MATH_TOOLS_ATOMIC_HPP)
+  HAVE_BOOST_MATH_TOOLS_ATOMIC_HPP LANGUAGE CXX) # C++ only header
 
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
