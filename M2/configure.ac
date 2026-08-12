@@ -816,6 +816,21 @@ AS_IF([test $BUILD_lapack = yes],
      LAPACK_LIBS=-llapack])
 AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
 
+dnl This must come after the Fortran/BLAS/LAPACK detection above: gfortran
+dnl expands --coverage to -lgcov, which would then be baked into FCLIBS and
+dnl BLAS_LIBS and clash with the compiler's own coverage runtime at link time.
+AC_SUBST([GCOV],[no])
+AC_ARG_ENABLE([gcov],
+  [AS_HELP_STRING([--enable-gcov],
+     [enable gcc/gcov code coverage (implies -O0 and disables stripping)])],
+  [GCOV=$enableval])
+AS_IF([test "$GCOV" = yes],
+  [CFLAGS="$CFLAGS --coverage -O0"
+   CXXFLAGS="$CXXFLAGS --coverage -O0"
+   LDFLAGS="$LDFLAGS --coverage"
+   ENABLE_STRIP=no
+   OPTIMIZE=no])
+
 AS_IF([test $BUILD_givaro = no],
     [AC_LANG([C++])
      AC_CHECK_HEADER([givaro/givinteger.h],
@@ -1902,6 +1917,7 @@ AC_MSG_NOTICE([with  OS REL            = $OS $REL])
 AC_MSG_NOTICE([with  ARCH              = $ARCH])
 AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
+AC_MSG_NOTICE([with  GCOV              = $GCOV])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 AC_MSG_NOTICE([with  GIT_BRANCH        = $GIT_BRANCH])
 AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])
