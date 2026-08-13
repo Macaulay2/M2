@@ -837,8 +837,7 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 # https://users-math.au.dk/~jensen/software/gfan/gfan.html
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
 # TODO: would gfan benefit from enabling the USEFACTORY option?
-# gfan 0.8beta's Makefile hardcodes gcc-15/g++-15 on macOS (clang doesn't work),
-# and uses plain gcc/g++ on Linux. We pass the cddlib lib path via CDD_LINKOPTIONS.
+# We pass the cddlib lib path via CDD_LINKOPTIONS.
 ExternalProject_Add(build-gfan
   URL               https://users-math.au.dk/~jensen/software/gfan/gfan0.8beta.tar.gz
   URL_HASH          SHA256=fa7884e5f317c50f8fb4f37bcf5d419f0fd5f7b90d6037349d1957ea73cebbee
@@ -846,6 +845,7 @@ ExternalProject_Add(build-gfan
   SOURCE_DIR        libraries/gfan/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/gfan/patch-0.8beta
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
                       cddnoprefix=yes
