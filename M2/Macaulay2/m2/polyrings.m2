@@ -154,6 +154,7 @@ Ring Monoid := PolynomialRing => (R, M) -> (
     MWeyl := if MOpts.?WeylAlgebra     then MOpts.WeylAlgebra else {};
     RSkew := if ROpts.?SkewCommutative then ROpts.SkewCommutative else {};
     MSkew := if MOpts.?SkewCommutative then MOpts.SkewCommutative else {};
+    if any(MSkew, i -> i > nvars) then error "SkewCommutative indices must be a subset of variable indices";
     -- FIXME: remove once Weyl variables are stored as indices in the monoid
     RWeyl = monoidIndices_R RWeyl;
     MWeyl = monoidIndices_M MWeyl;
@@ -259,28 +260,36 @@ pn := (v,nw) -> (
      n)
 selop = new HashTable from { GRevLex => pg, Weights => pw, Lex => pn, RevLex => pn, GroupLex => pn, GroupRevLex => pn, NCLex => pn }
 selmo = (v,mo) -> ( off = 0; apply(mo, x -> if instance(x,Option) and selop#?(x#0) then x#0 => selop#(x#0)(v,x#1) else x))
-ord := (v,nv) -> (
-     n := -1;
-     for i in v do (
-	  if not instance(i,ZZ) or i < 0 or i >= nv then error("selectVariables: expected an increasing list of numbers in the range 0..",toString(nv-1));
-	  if i <= n then error "selectVariables: expected a strictly increasing list";
-	  n = i;
-	  ))     
+ensureOrdered := (v, nv) -> (
+    n := -1;
+    for i in v do (
+        if not instance(i, ZZ) or i < 0 or i >= nv
+            then error("selectVariables: expected an increasing list of numbers in the range 0..",toString(nv-1));
+        if i <= n then error "selectVariables: expected a strictly increasing list";
+        n = i;
+    )
+)
 selectVariables = method()
 selectVariables(List,PolynomialRing) := (v,R) -> (
-     v = splice v;
-     ord(v,numgens R);
-     o := new MutableHashTable from options R;
-     o.MonomialOrder = selmo(v,o.MonomialOrder);
-     o.Variables = o.Variables_v;
-     o.Degrees = o.Degrees_v;
-     o = new OptionTable from o;
-     S := (coefficientRing R)(monoid [o]);
-     f := map(R,S,(generators R)_v);
-     g := map(S,R,apply(generators R, v->substitute(v,S)));
-     setupPromote f;
-     setupLift g;
-     (S,f))
+    v = splice v;
+    ensureOrdered(v, numgens R);
+    o := new MutableHashTable from options R;
+    o.MonomialOrder = selmo(v, o.MonomialOrder);
+    o.Variables = o.Variables_v;
+    o.Degrees = o.Degrees_v;
+    -- reindex skew variables into the new variables array
+    skews := set o.SkewCommutative;
+    o.SkewCommutative = positions(v, i -> isMember(i, skews));
+
+    o = new OptionTable from o;
+    S := (coefficientRing R)(monoid [o]);
+    f := map(R, S, (generators R)_v);
+    g := map(S, R, apply(generators R, v -> substitute(v, S)));
+    setupPromote f;
+    setupLift g;
+
+    (S,f)
+)
 
 -----------------------------------------------------------------------------
 

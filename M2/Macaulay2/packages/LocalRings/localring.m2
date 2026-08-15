@@ -67,7 +67,11 @@ localRing(EngineRing, Ideal) := (R, P) ->
         RP.localRing    = RP;
         RP.maxIdeal     =  P;
         commonEngineRingInitializations RP;
-	RP.residueMap   = map(frac(R/P), RP, vars R % P);
+	RP.residueMap   = try map(frac(R/P), RP, vars R % P) else (
+            K := frac prune(R/P);
+            kvars := (map(K, R/P)) (vars R % P);
+            map(K, RP, kvars)
+        );
          expression RP := r -> expression numerator r / expression denominator r;
            toString RP := r -> toString expression r;
            baseName RP := r -> if denominator r == 1 then baseName numerator r
@@ -91,14 +95,26 @@ localRing(EngineRing, Ideal) := (R, P) ->
         if R.?generatorExpressions then RP.generatorExpressions = R.generatorExpressions;
         if R.?indexSymbols then RP.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,RP));
         if R.?indexStrings then RP.indexStrings = applyValues(R.indexStrings, r -> promote(r,RP));
-	setupPromote(
-	    f -> numerator f / denominator f,
-	    RP, frac R);
-	liftFromFractionFieldMap := map(RP, frac R);
-	setupLift(f -> (
-		if isMember(denominator f, RP.maxIdeal)
-		then error "expected a denominator outside the maximal ideal"
-		else liftFromFractionFieldMap f),
-	    frac R, RP);
+
+        fracR := try(frac R);
+        if fracR =!= null then (
+            -- only set up promote and lift between RP and frac R in cases when frac R exists
+            setupPromote(
+                f -> numerator f / denominator f,
+                RP,
+                fracR
+            );
+            liftFromFractionFieldMap := map(RP, fracR);
+            setupLift(
+                f -> (
+                    if isMember(denominator f, RP.maxIdeal)
+                    then error "expected a denominator outside the maximal ideal"
+                    else liftFromFractionFieldMap f
+                ),
+                fracR,
+                RP
+            );
+        );
+
         RP
-        )
+    )
