@@ -898,8 +898,6 @@ _ADD_COMPONENT_DEPENDENCY(programs lrslib gmp LRSLIB)
 
 
 # https://github.com/coin-or/Csdp
-# TODO: what to do when OpenMP is not found
-# TODO: set CFLAGS instead of CC, this is tricky due to csdp's Makefile
 ExternalProject_Add(build-csdp
   URL               https://github.com/coin-or/Csdp/archive/releases/6.2.0.tar.gz
   URL_HASH          SHA256=3d341974af1f8ed70e1a37cc896e7ae4a513375875e5b46db8e8f38b7680b32f
@@ -911,9 +909,14 @@ ExternalProject_Add(build-csdp
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/csdp/patch-6.2.0
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
-                      "CC=${CMAKE_C_COMPILER} ${OpenMP_C_FLAGS} ${CFLAGS}"
-                      LDLIBS=${OpenMP_C_LDLIBS}
-                      "LIBS=-L../lib -lsdp ${LA_LIBRARIES} -lm"
+                      CC=${CMAKE_C_COMPILER}
+                      AR=${CMAKE_AR}
+                      CFLAGS=${CFLAGS}
+                      CPPFLAGS=${CPPFLAGS}
+                      LDFLAGS=${LDFLAGS}
+                      OPENMP_CFLAGS=${OpenMP_C_FLAGS}
+                      OPENMP_LIBS=${OpenMP_C_LDLIBS}
+                      BLAS_LIBS=${LA_LIBRARIES}
   INSTALL_COMMAND   ${CMAKE_STRIP} solver/csdp
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/csdp
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE README ${M2_INSTALL_LICENSESDIR}/csdp
