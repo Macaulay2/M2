@@ -38,11 +38,13 @@ endforeach()
 # General compile flags
 string(REPLACE ";" " " COMPILEFLAGS "${COMPILE_OPTIONS}")
 
+string(TOUPPER "${CMAKE_BUILD_TYPE}" BUILD_TYPE)
+
 # C compiler flags
-set(CFLAGS   "${CMAKE_C_FLAGS}")
+set(CFLAGS   "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${BUILD_TYPE}}")
 
 # C++ compiler flags
-set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
+set(CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${BUILD_TYPE}}")
 
 # Linker flags
 string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
