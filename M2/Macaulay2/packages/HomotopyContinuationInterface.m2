@@ -24,7 +24,6 @@ newPackage(
     Headline => "an interface to HomotopyContinuation.jl",
     Keywords => {"Numerical Algebraic Geometry"},
     PackageExports => {"NAGtypes"},
-    DebuggingMode => true
     )
 
 export {
