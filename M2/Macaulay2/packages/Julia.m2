@@ -48,15 +48,15 @@ jlNothing = foreignSymbol(libjulia, "jl_nothing", voidstar)
 jlNothingType = foreignSymbol(libjulia, "jl_nothing_type", voidstar)
 jlStringType = foreignSymbol(libjulia, "jl_string_type", voidstar)
 
--- symbols not exported by C APIx
-jlDictType = jlGetGlobal(jlBaseModule, jlSymbol "Dict")
-jlShowerror = jlGetGlobal(jlBaseModule, jlSymbol "showerror")
-
 --------------------
 -- initialization --
 --------------------
 
 jlInit()
+
+-- symbols not exported by C API (now that we're initialized)
+jlDictType = jlGetGlobal(jlBaseModule, jlSymbol "Dict")
+jlShowerror = jlGetGlobal(jlBaseModule, jlSymbol "showerror")
 
 -------------------
 -- JuliaFunction --
