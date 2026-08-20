@@ -43,15 +43,9 @@ jlUnboxFloat64 = foreignFunction(libjulia, "jl_unbox_float64", double, voidstar)
 jlUnboxInt64 = foreignFunction(libjulia, "jl_unbox_int64", int64, voidstar)
 
 -- symbols
-jlAnytupleType = foreignSymbol(libjulia, "jl_anytuple_type", voidstar)
-jlArrayType = foreignSymbol(libjulia, "jl_array_type", voidstar)
 jlBaseModule = foreignSymbol(libjulia, "jl_base_module", voidstar)
-jlBoolType = foreignSymbol(libjulia, "jl_bool_type", voidstar)
-jlFloat64Type = foreignSymbol(libjulia, "jl_float64_type", voidstar)
-jlInt64Type = foreignSymbol(libjulia, "jl_int64_type", voidstar)
 jlNothing = foreignSymbol(libjulia, "jl_nothing", voidstar)
-jlNothingType = foreignSymbol(libjulia, "jl_nothing_type", voidstar)
-jlStringType = foreignSymbol(libjulia, "jl_string_type", voidstar)
+jlTypeType = foreignSymbol(libjulia, "jl_type_type", voidstar)
 
 --------------------
 -- initialization --
@@ -61,7 +55,6 @@ jlInit()
 
 -- symbols not exported by C API (now that we're initialized)
 jlDeleteGlobal = jlGetGlobal(jlBaseModule, jlSymbol "delete!")
-jlDictType = jlGetGlobal(jlBaseModule, jlSymbol "Dict")
 jlSetindexGlobal = jlGetGlobal(jlBaseModule, jlSymbol "setindex!")
 jlShowerror = jlGetGlobal(jlBaseModule, jlSymbol "showerror")
 
@@ -157,11 +150,11 @@ JuliaObjectOrError = ptr -> (
 -- M2 -> julia --
 -----------------
 
-new JuliaObject from Boolean := (T, x) -> T jlBoxBool if x then 1 else 0
-new JuliaObject from ZZ := (T, x) -> T jlBoxInt64 x
-new JuliaObject from RR := (T, x) -> T jlBoxFloat64 x
+new JuliaObject from Boolean := (T, x) -> jlBoxBool if x then 1 else 0
+new JuliaObject from ZZ := (T, x) -> jlBoxInt64 x
+new JuliaObject from RR := (T, x) -> jlBoxFloat64 x
 new JuliaObject from Number := (T, x) -> T numeric x
-new JuliaObject from String := (T, x) -> T jlCstrToString x
+new JuliaObject from String := (T, x) -> jlCstrToString x
 new JuliaObject from List := (T, x) -> jlVect toSequence x
 new JuliaObject from Sequence := (T, x) -> jlTuple x
 new JuliaObject from HashTable := (T, x) -> jlDict(jlPair \ toSequence pairs x)
