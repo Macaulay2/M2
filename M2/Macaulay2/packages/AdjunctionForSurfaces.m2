@@ -1,8 +1,9 @@
 ///
 restart
 loadPackage( "AdjunctionForSurfaces",Reload=>true)
-
- 
+installPackage("AdjunctionForSurfaces")
+viewHelp "AdjunctionForSurfaces"
+3
 uninstallPackage("AdjunctionForSurfaces")
 
 restart
@@ -16,8 +17,8 @@ peek loadedFiles
 
 newPackage(
 	"AdjunctionForSurfaces",
-    	Version => "0.5", 
-    	Date => "January 24, 2024",
+    	Version => "1.0", 
+    	Date => "July, 2026",
     	Authors => { 
 	         {Name => "Frank-Olaf Schreyer", 
 		  Email => "schreyer@math.uni-sb.de", 
@@ -25,7 +26,7 @@ newPackage(
 	         },
     	Headline => "Adjunction for Surfaces",
         PackageImports => {"Complexes"},
-	Keywords => {"Projective Algebraic Geometry"}
+	Keywords => {"Projective Algebraic Geometry","Algebraic Geometry"}
     	)
 
 export {
@@ -605,8 +606,8 @@ doc ///
   Headline
     perform the adjunction process
   Usage
-     (numList,adjList,ptsList,J)=adjointMatrix(I)
-     (numList,adjList,ptsList,J)=adjointMatrix(I,N)
+     (numList,adjList,ptsList,J)=adjunctionProcess(I)
+     (numList,adjList,ptsList,J)=adjunctionProcess(I,N)
   Inputs 
     I: Ideal
            of a projective surface
@@ -624,8 +625,9 @@ doc ///
   Description
      Text
         Adjunction determines the image X' of X under the morphism phi: X -> X'
-	defined by |H+K|. By Sommese and Van de Ven [SVdV]
-	|H+K| is birational and blows down presisely all (-1) lines of unless
+	defined by |H+K|. By Sommese and Van de Ven [SVdV] the linear system 
+	|H+K| defines a birational morphism which blows down presisely all (-1) lines
+	and is biregular otherwise of unless
 	
 	(1) X is a P2 linearly or quadratically embedded, or ruled in lines,
 	
@@ -635,7 +637,7 @@ doc ///
 	maps X to a curve B and the fibers are conics, or
 	
 	(4) X is an element of one of the four families of exceptions where |K+H|
-	defines a finite to 1 map. See TO "specialFamiliesOfSommeseVandeVen".
+	defines a finite to 1 map. See @TO "specialFamiliesOfSommeseVandeVen"@.
 	
 	Since a (-1) conic on X become (-1) line on X', repeating this process finally reaches 
 	a minimal surface unless X has negative Kodaira dimension.
@@ -673,7 +675,9 @@ doc ///
 	elapsedTime betti(I'=trim ker phi)
 	I'== I
         elapsedTime basePts=primaryDecomposition ideal H;
-	tally apply(basePts,c->(dim c, degree c, betti c))  		
+	tally apply(basePts,c->(dim c, degree c, betti c))
+SeeAlso
+  specialFamiliesOfSommeseVandeVen
 ///	 
 
 
