@@ -36,6 +36,7 @@ jlExceptionClear = foreignFunction(libjulia, "jl_exception_clear", void, void)
 jlExceptionOccurred = foreignFunction(libjulia, "jl_exception_occurred", voidstar, void)
 jlGetGlobal = foreignFunction(libjulia, "jl_get_global", voidstar, {voidstar, voidstar})
 jlInit = foreignFunction(libjulia, "jl_init", void, void)
+jlIsa = foreignFunction(libjulia, "jl_isa", int, {voidstar, voidstar})
 jlStringPtr = foreignFunction(libjulia, "jl_string_ptr", charstar, voidstar)
 jlSymbol = foreignFunction(libjulia, "jl_symbol", voidstar, charstar)
 jlUnboxBool = foreignFunction(libjulia, "jl_unbox_bool", int, voidstar)
@@ -169,8 +170,9 @@ getJlBool = x -> value jlUnboxBool x == 1
 juliaToM2Functions = new MutableList
 addJuliaToM2Function = method()
 addJuliaToM2Function(String, Function) := (typename, f) -> (
-    type := jlEvalString typename;
-    if type === null then error new JuliaError;
+    type := JuliaObjectOrError jlEvalString typename;
+    if value jlIsa(type, jlTypeType) == 0
+    then error "expected argument 1 to be a Julia type";
     key := #juliaToM2Functions;
     jlEvalString concatenate("@eval M2Julia value_key(x::", typename, ") = ", toString key);
     juliaToM2Functions#key = f)
