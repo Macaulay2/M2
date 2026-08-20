@@ -7,23 +7,60 @@ export {
 
 needsPackage "ForeignFunctions"
 
+--------------------------------
+-- foreign function interface --
+--------------------------------
+
+-- TODO: make this configurable
+-- maybe autodetect
 libjulia = openSharedLibrary("libjulia", FileName => "/home/profzoom/.julia/juliaup/julia-1.12.7+0.x64.linux.gnu/lib/libjulia.so.1.12.7")
-jlInit = foreignFunction(libjulia, "jl_init", void, void)
-jlInit()
 
--------------------
--- JuliaFunction --
--------------------
-
-jlGetGlobal = foreignFunction(libjulia, "jl_get_global", voidstar, {voidstar, voidstar})
-jlBaseModule = foreignSymbol(libjulia, "jl_base_module", voidstar)
+-- functions
+jlBoxBool = foreignFunction(libjulia, "jl_box_bool", voidstar, int8)
+jlBoxFloat64 = foreignFunction(libjulia, "jl_box_float64", voidstar, double)
+jlBoxInt64 = foreignFunction(libjulia, "jl_box_int64", voidstar, int64)
+jlCall = foreignFunction(libjulia, "jl_call", voidstar, {voidstar, voidstarstar, uint32})
 jlCall0 = foreignFunction(libjulia, "jl_call0", voidstar, voidstar)
 jlCall1 = foreignFunction(libjulia, "jl_call1", voidstar, {voidstar, voidstar})
 jlCall2 = foreignFunction(libjulia, "jl_call2", voidstar, {voidstar, voidstar, voidstar})
 jlCall3 = foreignFunction(libjulia, "jl_call3", voidstar, {voidstar, voidstar, voidstar, voidstar})
 jlCall4 = foreignFunction(libjulia, "jl_call4", voidstar, {voidstar, voidstar, voidstar, voidstar, voidstar})
-jlCall = foreignFunction(libjulia, "jl_call", voidstar, {voidstar, voidstarstar, uint32})
+jlCstrToString = foreignFunction(libjulia, "jl_cstr_to_string", voidstar, charstar)
+jlExceptionClear = foreignFunction(libjulia, "jl_exception_clear", void, void)
+jlExceptionOccurred = foreignFunction(libjulia, "jl_exception_occurred", voidstar, void)
+jlGetGlobal = foreignFunction(libjulia, "jl_get_global", voidstar, {voidstar, voidstar})
+jlInit = foreignFunction(libjulia, "jl_init", void, void)
+jlIsa = foreignFunction(libjulia, "jl_isa", int, {voidstar, voidstar})
+jlStringPtr = foreignFunction(libjulia, "jl_string_ptr", charstar, voidstar)
 jlSymbol = foreignFunction(libjulia, "jl_symbol", voidstar, charstar)
+jlUnboxBool = foreignFunction(libjulia, "jl_unbox_bool", int, voidstar)
+jlUnboxFloat64 = foreignFunction(libjulia, "jl_unbox_float64", double, voidstar)
+jlUnboxInt64 = foreignFunction(libjulia, "jl_unbox_int64", int, voidstar)
+
+-- symbols
+jlAnytupleType = foreignSymbol(libjulia, "jl_anytuple_type", voidstar)
+jlArrayType = foreignSymbol(libjulia, "jl_array_type", voidstar)
+jlBaseModule = foreignSymbol(libjulia, "jl_base_module", voidstar)
+jlBoolType = foreignSymbol(libjulia, "jl_bool_type", voidstar)
+jlFloat64Type = foreignSymbol(libjulia, "jl_float64_type", voidstar)
+jlInt64Type = foreignSymbol(libjulia, "jl_int64_type", voidstar)
+jlNothing = foreignSymbol(libjulia, "jl_nothing", voidstar)
+jlNothingType = foreignSymbol(libjulia, "jl_nothing_type", voidstar)
+jlStringType = foreignSymbol(libjulia, "jl_string_type", voidstar)
+
+-- symbols not exported by C APIx
+jlDictType = jlGetGlobal(jlBaseModule, jlSymbol "Dict")
+jlShowerror = jlGetGlobal(jlBaseModule, jlSymbol "showerror")
+
+--------------------
+-- initialization --
+--------------------
+
+jlInit()
+
+-------------------
+-- JuliaFunction --
+-------------------
 
 JuliaFunction = new SelfInitializingType of FunctionClosure
 JuliaFunction.synonym = "Julia function"
@@ -48,6 +85,17 @@ new JuliaFunction from String := (T, s) -> (
 new JuliaFunction from Function :=
 new JuliaFunction from Symbol   := (T, s) -> T toString s
 
+-- functions we'll use
+Dict = JuliaFunction "Dict"
+Pair = JuliaFunction "Pair"
+iterate = JuliaFunction "iterate"
+repr = JuliaFunction "repr"
+sprint = JuliaFunction "sprint"
+string = JuliaFunction "string"
+tuple = JuliaFunction "tuple"
+typeof = JuliaFunction "typeof"
+vect = JuliaFunction "vect"
+
 -----------------
 -- JuliaObject --
 -----------------
@@ -55,24 +103,17 @@ new JuliaFunction from Symbol   := (T, s) -> T toString s
 JuliaObject = new SelfInitializingType of voidstar
 JuliaObject.synonym = "Julia object"
 
-repr = JuliaFunction "repr"
-string = JuliaFunction "string"
-typeof = JuliaFunction "typeof"
-
 toString JuliaObject := value @@ string
 net JuliaObject := value @@ repr_"text/plain"
 toExternalString JuliaObject := value @@ repr
-
 JuliaObject.AfterPrint = x -> (JuliaObject, " of type ", typeof x)
+
+-- TODO: garbage collection
+new JuliaObject from voidstar := (T, x) -> x
 
 --------------------
 -- error handling --
 --------------------
-
-jlExceptionOccurred = foreignFunction(libjulia, "jl_exception_occurred", voidstar, void)
-jlExceptionClear = foreignFunction(libjulia, "jl_exception_clear", void, void)
-sprint = JuliaFunction "sprint"
-showerror = jlGetGlobal(jlBaseModule, jlSymbol "showerror")
 
 JuliaError = new SelfInitializingType of Error
 
@@ -82,86 +123,53 @@ new JuliaError := T -> (
     then error "no Julia error occurred"
     else (
         jlExceptionClear();
-        T value sprint(showerror, exc)))
+        T value sprint(jlShowerror, exc)))
 
 -----------------
 -- M2 -> julia --
 -----------------
 
-jlBoxBool = foreignFunction(libjulia, "jl_box_bool", voidstar, int8)
 new JuliaObject from Boolean := (T, x) -> T jlBoxBool if x then 1 else 0
-
-jlBoxInt64 = foreignFunction(libjulia, "jl_box_int64", voidstar, int64)
 new JuliaObject from ZZ := (T, x) -> T jlBoxInt64 x
-
-jlBoxFloat64 = foreignFunction(libjulia, "jl_box_float64", voidstar, double)
 new JuliaObject from RR := (T, x) -> T jlBoxFloat64 x
 new JuliaObject from Number := (T, x) -> T numeric x
-
-jlCstrToString = foreignFunction(libjulia, "jl_cstr_to_string", voidstar, charstar)
 new JuliaObject from String := (T, x) -> T jlCstrToString x
-
-vect = JuliaFunction "vect"
 new JuliaObject from List := (T, x) -> vect toSequence x
-
-tuple = JuliaFunction "tuple"
 new JuliaObject from Sequence := (T, x) -> tuple x
-
-Dict = JuliaFunction "Dict"
-Pair = JuliaFunction "Pair"
 new JuliaObject from HashTable := (T, x) -> Dict(Pair \ toSequence pairs x)
-
--- by defining a HashTable method, we overwrote this one...
-new JuliaObject from voidstar := (T, x) -> x
-
-jlNothing = JuliaObject foreignSymbol(libjulia, "jl_nothing", voidstar)
 new JuliaObject from Nothing := (T, x) -> jlNothing
 
 -----------------
 -- julia -> M2 --
 -----------------
 
-jlUnboxBool = foreignFunction(libjulia, "jl_unbox_bool", int, voidstar)
 getJlBool = x -> value jlUnboxBool x == 1
-
-jlIsa = foreignFunction(libjulia, "jl_isa", int, {voidstar, voidstar})
 isa = (x, T) -> value jlIsa(x, T) == 1
 
-jlBoolType = foreignSymbol(libjulia, "jl_bool_type", voidstar)
 addHook((value, JuliaObject),
         x -> if isa(x, jlBoolType) then getJlBool x,
         Strategy => "Bool -> Boolean")
 
-jlInt64Type = foreignSymbol(libjulia, "jl_int64_type", voidstar)
-jlUnboxInt64 = foreignFunction(libjulia, "jl_unbox_int64", int, voidstar)
 addHook((value, JuliaObject),
         x -> if isa(x, jlInt64Type) then value jlUnboxInt64 x,
         Strategy => "Int64 -> ZZ")
 
-jlFloat64Type = foreignSymbol(libjulia, "jl_float64_type", voidstar)
-jlUnboxFloat64 = foreignFunction(libjulia, "jl_unbox_float64", double, voidstar)
 addHook((value, JuliaObject),
         x -> if isa(x, jlFloat64Type) then value jlUnboxFloat64 x,
         Strategy => "Float64 -> RR")
 
-jlStringType = foreignSymbol(libjulia, "jl_string_type", voidstar)
-jlStringPtr = foreignFunction(libjulia, "jl_string_ptr", charstar, voidstar)
 addHook((value, JuliaObject),
         x -> if isa(x, jlStringType) then value jlStringPtr x,
         Strategy => "String -> String")
 
--- we get toList & toSequence for free using iterators
-jlArrayType = foreignSymbol(libjulia, "jl_array_type", voidstar)
 addHook((value, JuliaObject),
         x -> if isa(x, jlArrayType) then value \ toList x,
         Strategy => "Array -> List")
 
-jlAnytupleType = foreignSymbol(libjulia, "jl_anytuple_type", voidstar)
 addHook((value, JuliaObject),
         x -> if isa(x, jlAnytupleType) then value \ toSequence x,
         Strategy => "Tuple -> Sequence")
 
-jlDictType = jlGetGlobal(jlBaseModule, jlSymbol "Dict")
 addHook((value, JuliaObject),
         x -> if isa(x, jlDictType) then hashTable apply(toList x, kv -> value \ (kv_1, kv_2)),
         Strategy => "Dict -> HashTable")
@@ -176,8 +184,6 @@ JuliaObject_Thing := JuliaFunction "getindex"
 JuliaObject_Thing = ((x, i, e) -> (x, e, i)) @@ (JuliaFunction "setindex!")
 delete(JuliaObject, Thing) := JuliaFunction "delete!"
 
-jlNothingType = foreignSymbol(libjulia, "jl_nothing_type", voidstar)
-iterate = JuliaFunction "iterate"
 iterator JuliaObject := x -> Iterator (
     iter := iterate x;
     () -> (
