@@ -1,8 +1,12 @@
 newPackage "Julia"
 
 export {
+    -- classes
     "JuliaFunction",
     "JuliaObject",
+
+    -- methods
+    "juliaValue",
 }
 
 needsPackage "ForeignFunctions"
@@ -26,6 +30,7 @@ jlCall2 = foreignFunction(libjulia, "jl_call2", voidstar, {voidstar, voidstar, v
 jlCall3 = foreignFunction(libjulia, "jl_call3", voidstar, {voidstar, voidstar, voidstar, voidstar})
 jlCall4 = foreignFunction(libjulia, "jl_call4", voidstar, {voidstar, voidstar, voidstar, voidstar, voidstar})
 jlCstrToString = foreignFunction(libjulia, "jl_cstr_to_string", voidstar, charstar)
+jlEvalString = foreignFunction(libjulia, "jl_eval_string", voidstar, charstar)
 jlExceptionClear = foreignFunction(libjulia, "jl_exception_clear", void, void)
 jlExceptionOccurred = foreignFunction(libjulia, "jl_exception_occurred", voidstar, void)
 jlGetGlobal = foreignFunction(libjulia, "jl_get_global", voidstar, {voidstar, voidstar})
@@ -35,7 +40,7 @@ jlStringPtr = foreignFunction(libjulia, "jl_string_ptr", charstar, voidstar)
 jlSymbol = foreignFunction(libjulia, "jl_symbol", voidstar, charstar)
 jlUnboxBool = foreignFunction(libjulia, "jl_unbox_bool", int, voidstar)
 jlUnboxFloat64 = foreignFunction(libjulia, "jl_unbox_float64", double, voidstar)
-jlUnboxInt64 = foreignFunction(libjulia, "jl_unbox_int64", int, voidstar)
+jlUnboxInt64 = foreignFunction(libjulia, "jl_unbox_int64", int64, voidstar)
 
 -- symbols
 jlAnytupleType = foreignSymbol(libjulia, "jl_anytuple_type", voidstar)
@@ -55,7 +60,9 @@ jlStringType = foreignSymbol(libjulia, "jl_string_type", voidstar)
 jlInit()
 
 -- symbols not exported by C API (now that we're initialized)
+jlDeleteGlobal = jlGetGlobal(jlBaseModule, jlSymbol "delete!")
 jlDictType = jlGetGlobal(jlBaseModule, jlSymbol "Dict")
+jlSetindexGlobal = jlGetGlobal(jlBaseModule, jlSymbol "setindex!")
 jlShowerror = jlGetGlobal(jlBaseModule, jlSymbol "showerror")
 
 -------------------
@@ -89,15 +96,18 @@ new JuliaFunction from Function :=
 new JuliaFunction from Symbol   := (T, s) -> T toString s
 
 -- functions we'll use
-Dict = JuliaFunction "Dict"
-Pair = JuliaFunction "Pair"
-iterate = JuliaFunction "iterate"
-repr = JuliaFunction "repr"
-sprint = JuliaFunction "sprint"
-string = JuliaFunction "string"
-tuple = JuliaFunction "tuple"
-typeof = JuliaFunction "typeof"
-vect = JuliaFunction "vect"
+jlDelete = JuliaFunction "delete!"
+jlDict = JuliaFunction "Dict"
+jlGetindex = JuliaFunction "getindex"
+jlIterate = JuliaFunction "iterate"
+jlPair = JuliaFunction "Pair"
+jlRepr = JuliaFunction "repr"
+jlSetindex = JuliaFunction "setindex!"
+jlSprint = JuliaFunction "sprint"
+jlString = JuliaFunction "string"
+jlTuple = JuliaFunction "tuple"
+jlTypeof = JuliaFunction "typeof"
+jlVect = JuliaFunction "vect"
 
 -----------------
 -- JuliaObject --
@@ -106,13 +116,26 @@ vect = JuliaFunction "vect"
 JuliaObject = new SelfInitializingType of voidstar
 JuliaObject.synonym = "Julia object"
 
-toString JuliaObject := value @@ string
-net JuliaObject := value @@ repr_"text/plain"
-toExternalString JuliaObject := value @@ repr
-JuliaObject.AfterPrint = x -> (JuliaObject, " of type ", typeof x)
+toString JuliaObject := value @@ jlString
+net JuliaObject := value @@ jlRepr_"text/plain"
+toExternalString JuliaObject := value @@ jlRepr
+JuliaObject.AfterPrint = x -> (JuliaObject, " of type ", jlTypeof x)
 
--- TODO: garbage collection
-new JuliaObject from voidstar := (T, x) -> x
+-- keep a dict of known julia objects so they don't get garbage
+-- collected out from under us
+knownObjects = jlEvalString ///
+module M2Julia
+    const known_objects = Dict{Int64, Any}()
+end
+M2Julia.known_objects
+///
+knownObjectCount = 0
+finalizer = key -> x -> jlCall2(jlDeleteGlobal, knownObjects, jlBoxInt64 key)
+new JuliaObject from voidstar := (T, x) -> (
+    jlCall3(jlSetindexGlobal, knownObjects, x, jlBoxInt64 knownObjectCount);
+    registerFinalizer(x, finalizer knownObjectCount);
+    knownObjectCount += 1;
+    x)
 
 --------------------
 -- error handling --
@@ -126,7 +149,7 @@ new JuliaError := T -> (
     then error "no Julia error occurred"
     else (
         jlExceptionClear();
-        T value sprint(jlShowerror, exc)))
+        T value jlSprint(jlShowerror, exc)))
 
 -----------------
 -- M2 -> julia --
@@ -137,9 +160,9 @@ new JuliaObject from ZZ := (T, x) -> T jlBoxInt64 x
 new JuliaObject from RR := (T, x) -> T jlBoxFloat64 x
 new JuliaObject from Number := (T, x) -> T numeric x
 new JuliaObject from String := (T, x) -> T jlCstrToString x
-new JuliaObject from List := (T, x) -> vect toSequence x
-new JuliaObject from Sequence := (T, x) -> tuple x
-new JuliaObject from HashTable := (T, x) -> Dict(Pair \ toSequence pairs x)
+new JuliaObject from List := (T, x) -> jlVect toSequence x
+new JuliaObject from Sequence := (T, x) -> jlTuple x
+new JuliaObject from HashTable := (T, x) -> jlDict(jlPair \ toSequence pairs x)
 new JuliaObject from Nothing := (T, x) -> jlNothing
 
 -----------------
@@ -183,17 +206,17 @@ value JuliaObject := x -> runHooks((value, JuliaObject), x)
 -- iterators --
 ---------------
 
-JuliaObject_Thing := JuliaFunction "getindex"
-JuliaObject_Thing = ((x, i, e) -> (x, e, i)) @@ (JuliaFunction "setindex!")
-delete(JuliaObject, Thing) := JuliaFunction "delete!"
+JuliaObject_Thing := jlGetindex
+JuliaObject_Thing = (x, i, e) -> jlSetindex(x, e, i)
+delete(JuliaObject, Thing) := jlDelete
 
 iterator JuliaObject := x -> Iterator (
-    iter := iterate x;
+    iter := jlIterate x;
     () -> (
         if iter == jlNothing then StopIteration
         else first(
             iter_1,
-            iter = iterate(x, iter_2))))
+            iter = jlIterate(x, iter_2))))
 
 ---------------------
 -- unary operators --
@@ -279,6 +302,16 @@ Thing       ? JuliaObject := (x, y) -> (
     else if getJlBool jlge(x, y) then symbol >
     else if x == y then symbol ==
     else incomparable)
+
+----------------
+-- evaluation --
+----------------
+
+juliaValue = method()
+juliaValue String := s -> JuliaObject jlEvalString s
+juliaValue Sequence := s -> juliaValue(concatenate \\ toString \ s)
+
+beginDocumentation()
 
 TEST ///
 -- roundtrip
