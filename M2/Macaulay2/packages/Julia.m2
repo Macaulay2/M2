@@ -65,6 +65,9 @@ jlInit()
 JuliaFunction = new SelfInitializingType of FunctionClosure
 JuliaFunction.synonym = "Julia function"
 
+net      JuliaFunction :=
+toString JuliaFunction := f -> (frames f)#0#1
+
 new JuliaFunction from String := (T, s) -> (
     f := jlGetGlobal(jlBaseModule, jlSymbol s);
     if value f === nullPointer
