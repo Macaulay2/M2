@@ -172,8 +172,9 @@ value JuliaObject := x -> runHooks((value, JuliaObject), x)
 -- iterators --
 ---------------
 
-getindex = JuliaFunction "getindex"
-JuliaObject_ZZ := (x, i) -> getindex(x, i)
+JuliaObject_Thing := JuliaFunction "getindex"
+JuliaObject_Thing = ((x, i, e) -> (x, e, i)) @@ (JuliaFunction "setindex!")
+delete(JuliaObject, Thing) := JuliaFunction "delete!"
 
 jlNothingType = foreignSymbol(libjulia, "jl_nothing_type", voidstar)
 iterate = JuliaFunction "iterate"
