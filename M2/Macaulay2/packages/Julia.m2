@@ -79,8 +79,8 @@ new JuliaFunction from String := (T, s) -> (
     f := jlGetGlobal(jlBaseModule, jlSymbol s);
     if value f === nullPointer
     then error("'", s, "' is not a Julia function");
-    x -> (
-        ptr :=  if instance(x, Sequence) then (
+    x -> JuliaObjectOrError(
+        if instance(x, Sequence) then (
             x = apply(x, y -> JuliaObject y);
             if #x == 0 then jlCall0 f
             else if #x == 1 then jlCall1(f, x#0)
@@ -88,10 +88,7 @@ new JuliaFunction from String := (T, s) -> (
             else if #x == 3 then jlCall3(f, x#0, x#1, x#2)
             else if #x == 4 then jlCall4(f, x#0, x#1, x#2, x#3)
             else jlCall(f, toList x, #x))
-        else jlCall1(f, JuliaObject x);
-        if value ptr === nullPointer
-        then error new JuliaError
-        else JuliaObject ptr))
+        else jlCall1(f, x)))
 new JuliaFunction from Function :=
 new JuliaFunction from Symbol   := (T, s) -> T toString s
 
@@ -150,6 +147,11 @@ new JuliaError := T -> (
     else (
         jlExceptionClear();
         T value jlSprint(jlShowerror, exc)))
+
+JuliaObjectOrError = ptr -> (
+    if value ptr === nullPointer
+    then error new JuliaError
+    else JuliaObject ptr)
 
 -----------------
 -- M2 -> julia --
@@ -303,7 +305,7 @@ Thing       ? JuliaObject := (x, y) -> (
 ----------------
 
 juliaValue = method()
-juliaValue String := s -> JuliaObject jlEvalString s
+juliaValue String := JuliaObjectOrError @@ jlEvalString
 juliaValue Sequence := s -> juliaValue(concatenate \\ toString \ s)
 
 beginDocumentation()
