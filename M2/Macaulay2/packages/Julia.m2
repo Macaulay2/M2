@@ -6,6 +6,7 @@ export {
     "JuliaObject",
 
     -- methods
+    "addJuliaToM2Function",
     "juliaValue",
 }
 
@@ -35,7 +36,6 @@ jlExceptionClear = foreignFunction(libjulia, "jl_exception_clear", void, void)
 jlExceptionOccurred = foreignFunction(libjulia, "jl_exception_occurred", voidstar, void)
 jlGetGlobal = foreignFunction(libjulia, "jl_get_global", voidstar, {voidstar, voidstar})
 jlInit = foreignFunction(libjulia, "jl_init", void, void)
-jlIsa = foreignFunction(libjulia, "jl_isa", int, {voidstar, voidstar})
 jlStringPtr = foreignFunction(libjulia, "jl_string_ptr", charstar, voidstar)
 jlSymbol = foreignFunction(libjulia, "jl_symbol", voidstar, charstar)
 jlUnboxBool = foreignFunction(libjulia, "jl_unbox_bool", int, voidstar)
@@ -170,37 +170,32 @@ new JuliaObject from Nothing := (T, x) -> jlNothing
 -----------------
 
 getJlBool = x -> value jlUnboxBool x == 1
-isa = (x, T) -> value jlIsa(x, T) == 1
 
-addHook((value, JuliaObject),
-        x -> if isa(x, jlBoolType) then getJlBool x,
-        Strategy => "Bool -> Boolean")
+juliaToM2Functions = new MutableList
+addJuliaToM2Function = method()
+addJuliaToM2Function(String, Function) := (typename, f) -> (
+    type := jlEvalString typename;
+    if type === null then error new JuliaError;
+    key := #juliaToM2Functions;
+    jlEvalString concatenate("@eval M2Julia value_key(x::", typename, ") = ", toString key);
+    juliaToM2Functions#key = f)
 
-addHook((value, JuliaObject),
-        x -> if isa(x, jlInt64Type) then value jlUnboxInt64 x,
-        Strategy => "Int64 -> ZZ")
+jlEvalString "@eval M2Julia value_key(x) = -1"
+addJuliaToM2Function("Bool", getJlBool)
+addJuliaToM2Function("Int64", value @@ jlUnboxInt64)
+addJuliaToM2Function("Float64", value @@ jlUnboxFloat64)
+addJuliaToM2Function("String", value @@ jlStringPtr)
+addJuliaToM2Function("AbstractArray", x -> value \ toList x)
+addJuliaToM2Function("Tuple", x -> value \ toSequence x)
+addJuliaToM2Function("AbstractDict", x -> hashTable apply(toList x, kv -> value \ (kv_1, kv_2)))
+addJuliaToM2Function("Nothing", x -> null)
 
-addHook((value, JuliaObject),
-        x -> if isa(x, jlFloat64Type) then value jlUnboxFloat64 x,
-        Strategy => "Float64 -> RR")
-
-addHook((value, JuliaObject),
-        x -> if isa(x, jlStringType) then value jlStringPtr x,
-        Strategy => "String -> String")
-
-addHook((value, JuliaObject),
-        x -> if isa(x, jlArrayType) then value \ toList x,
-        Strategy => "Array -> List")
-
-addHook((value, JuliaObject),
-        x -> if isa(x, jlAnytupleType) then value \ toSequence x,
-        Strategy => "Tuple -> Sequence")
-
-addHook((value, JuliaObject),
-        x -> if isa(x, jlDictType) then hashTable apply(toList x, kv -> value \ (kv_1, kv_2)),
-        Strategy => "Dict -> HashTable")
-
-value JuliaObject := x -> runHooks((value, JuliaObject), x)
+m2JuliaValueKey = jlEvalString "M2Julia.value_key"
+value JuliaObject := x -> (
+    key := value jlUnboxInt64 jlCall1(m2JuliaValueKey, x);
+    if key == -1 then error("no method found for applying 'value' to: ", newline,
+                            "\t", x, " (of type ", jlTypeof x, ")")
+    else juliaToM2Functions#key x)
 
 ---------------
 -- iterators --
