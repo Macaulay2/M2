@@ -16,6 +16,21 @@
 -- of crashing the whole computation. Contributions and testing on real
 -- examples are very welcome.
 
+-- Check whether `julia` is on PATH *and* the HomotopyContinuation.jl
+-- package is installed and loadable. We do this by asking Julia
+-- itself, rather than just checking for the executable, since a
+-- bare Julia install with no HC.jl would otherwise report as present.
+hcPresenceCheck = () -> (
+    checkScript := "try\n    using HomotopyContinuation\n    exit(0)\ncatch\n    exit(1)\nend\n";
+    tmpFile := temporaryFileName() | ".jl";
+    tmpFile << checkScript << close;
+    exitCode := try run("julia " | tmpFile | " > NUL 2>&1") else -1;
+    removeFile tmpFile;
+    exitCode === 0
+    )
+
+hcPresent = hcPresenceCheck()
+
 newPackage(
     "HomotopyContinuationInterface",
     Version => "0.2",
@@ -24,8 +39,9 @@ newPackage(
     Headline => "an interface to HomotopyContinuation.jl",
     Keywords => {"Numerical Algebraic Geometry"},
     PackageExports => {"NAGtypes"},
+    OptionalComponentsPresent => hcPresent,
+    CacheExampleOutput => true,
     )
-
 export {
     "solveHC",
     "monodromySolveHC",
