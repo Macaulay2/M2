@@ -17,6 +17,7 @@
 #ifdef _OPENMP
 #define __FFLASFFPACK_USE_OPENMP
 #endif
+#define MKL_Complex16 double /* issue #3372 */
 #define bool_constant givaro_bool_constant
 #include <fflas-ffpack/ffpack/ffpack.h>
 #undef bool_constant
