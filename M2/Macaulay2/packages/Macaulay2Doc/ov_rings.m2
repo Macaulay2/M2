@@ -1265,9 +1265,18 @@ doc ///
             basis R
             basis(2,R)
         Text
-            You can declare that only a subset of the variables are skew-commutative.
+            You can declare that only a subset of the variables are skew-commutative by passing them explicitly.
         Example
             R = QQ[a..c, SkewCommutative => {b, c}]
+            a*b == b*a
+            a*c == c*a
+            b*c == -c*b
+        Text
+            You can also declare skew variables by passing indices into the
+            array of variables. As usual, negative indices can be used and these are
+            interpreted as an offset from the end of the variables array.
+        Example
+            R = QQ[a..c, SkewCommutative => {-1, 1}]
             a*b == b*a
             a*c == c*a
             b*c == -c*b

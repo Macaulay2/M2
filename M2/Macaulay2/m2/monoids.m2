@@ -504,7 +504,7 @@ processSkew := (n, skewvars) -> sort toList(
     if skewvars === false then {}      else
     if instance(skewvars, VisibleList) then (
         inds := flatten apply(listSplice skewvars, processVars);
-        unique apply(inds, i -> processIndex(n, i))
+        unique apply(inds, i -> if instance(i, ZZ) then processIndex(n, i) else i)
     ) else error "SkewCommutative: expected option to be true, false, or a list or indices or variables")
 
 processWeyl := weylvars -> (
