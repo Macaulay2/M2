@@ -159,6 +159,7 @@ JuliaObject Thing := (f, x) -> juliaCall(f, x)
 jlDelete = JuliaFunction "delete!"
 jlDict = JuliaFunction "Dict"
 jlGetindex = JuliaFunction "getindex"
+jlInt = JuliaFunction "Int"
 jlIterate = JuliaFunction "iterate"
 jlPair = JuliaFunction "Pair"
 jlRationalDivision = JuliaFunction "//"
@@ -218,6 +219,7 @@ addJuliaToM2Function("Float64", value @@ jlUnboxFloat64)
 -- TODO: Int128, UInt128, Float16, BigInt, BigFloat
 addJuliaToM2Function("Rational", x -> value numerator x / value denominator x)
 addJuliaToM2Function("Complex", x -> value realPart x + ii * value imaginaryPart x)
+addJuliaToM2Function("Char", utf8 @@ value @@ jlInt)
 addJuliaToM2Function("String", value @@ jlStringPtr)
 addJuliaToM2Function("AbstractArray", x -> value \ toList x)
 addJuliaToM2Function("Tuple", x -> value \ toSequence x)
@@ -399,6 +401,7 @@ assertRoundTrip pi
 assertRoundTrip(2/3)
 assertRoundTrip(2 + 3*ii)
 assertRoundTrip "foo"
+assert Equation(value (JuliaObject "🐂")_1, "🐂") -- char
 assertRoundTrip null
 assertRoundTrip {1, 2, 3}
 assertRoundTrip (1, 2, 3)
