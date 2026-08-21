@@ -7,6 +7,7 @@ export {
 
     -- methods
     "addJuliaToM2Function",
+    "juliaSymbol",
     "juliaValue",
 }
 
@@ -64,49 +65,9 @@ jlInit()
 
 -- symbols not exported by C API (now that we're initialized)
 jlDeleteGlobal = jlGetGlobal(jlBaseModule, jlSymbol "delete!")
+jlGetGlobalGlobal = jlGetGlobal(jlBaseModule, jlSymbol "getglobal")
 jlSetindexGlobal = jlGetGlobal(jlBaseModule, jlSymbol "setindex!")
 jlShowerror = jlGetGlobal(jlBaseModule, jlSymbol "showerror")
-
--------------------
--- JuliaFunction --
--------------------
-
-JuliaFunction = new SelfInitializingType of FunctionClosure
-JuliaFunction.synonym = "Julia function"
-
-net      JuliaFunction :=
-toString JuliaFunction := f -> (frames f)#0#1
-
-new JuliaFunction from String := (T, s) -> (
-    f := jlGetGlobal(jlBaseModule, jlSymbol s);
-    if value f === nullPointer
-    then error("'", s, "' is not a Julia function");
-    x -> JuliaObjectOrError(
-        if instance(x, Sequence) then (
-            x = apply(x, y -> JuliaObject y);
-            if #x == 0 then jlCall0 f
-            else if #x == 1 then jlCall1(f, x#0)
-            else if #x == 2 then jlCall2(f, x#0, x#1)
-            else if #x == 3 then jlCall3(f, x#0, x#1, x#2)
-            else if #x == 4 then jlCall4(f, x#0, x#1, x#2, x#3)
-            else jlCall(f, toList x, #x))
-        else jlCall1(f, x)))
-new JuliaFunction from Function :=
-new JuliaFunction from Symbol   := (T, s) -> T toString s
-
--- functions we'll use
-jlDelete = JuliaFunction "delete!"
-jlDict = JuliaFunction "Dict"
-jlGetindex = JuliaFunction "getindex"
-jlIterate = JuliaFunction "iterate"
-jlPair = JuliaFunction "Pair"
-jlRepr = JuliaFunction "repr"
-jlSetindex = JuliaFunction "setindex!"
-jlSprint = JuliaFunction "sprint"
-jlString = JuliaFunction "string"
-jlTuple = JuliaFunction "tuple"
-jlTypeof = JuliaFunction "typeof"
-jlVect = JuliaFunction "vect"
 
 -----------------
 -- JuliaObject --
@@ -115,9 +76,9 @@ jlVect = JuliaFunction "vect"
 JuliaObject = new SelfInitializingType of voidstar
 JuliaObject.synonym = "Julia object"
 
-toString JuliaObject := value @@ jlString
-net JuliaObject := value @@ jlRepr_"text/plain"
-toExternalString JuliaObject := value @@ jlRepr
+toString JuliaObject := x -> value jlString x
+net JuliaObject := x -> value jlRepr("text/plain", x)
+toExternalString JuliaObject := x -> value jlRepr x
 JuliaObject.AfterPrint = x -> (JuliaObject, " of type ", jlTypeof x)
 
 -- keep a dict of known julia objects so they don't get garbage
@@ -154,6 +115,55 @@ JuliaObjectOrError = ptr -> (
     if value ptr === nullPointer
     then error new JuliaError
     else JuliaObject ptr)
+
+-----------------
+-- juliaSymbol --
+-----------------
+
+juliaSymbol = method()
+juliaSymbol String := s -> JuliaObjectOrError jlCall2(jlGetGlobalGlobal, jlBaseModule, jlSymbol s)
+juliaSymbol Symbol   :=
+juliaSymbol Function := juliaSymbol @@ toString
+
+-------------------
+-- JuliaFunction --
+-------------------
+
+JuliaFunction = new SelfInitializingType of FunctionClosure
+JuliaFunction.synonym = "Julia function"
+
+net      JuliaFunction :=
+toString JuliaFunction := f -> (frames f)#0#1
+
+juliaCall = (f, x) -> JuliaObjectOrError(
+    if instance(x, Sequence) then (
+        x = apply(x, y -> JuliaObject y);
+        if #x == 0 then jlCall0 f
+        else if #x == 1 then jlCall1(f, x#0)
+        else if #x == 2 then jlCall2(f, x#0, x#1)
+        else if #x == 3 then jlCall3(f, x#0, x#1, x#2)
+        else if #x == 4 then jlCall4(f, x#0, x#1, x#2, x#3)
+        else jlCall(f, toList x, #x))
+    else jlCall1(f, JuliaObject x))
+
+new JuliaFunction from JuliaObject := (T, f) -> x -> juliaCall(f, x)
+new JuliaFunction from String := (T, s) -> T juliaSymbol s
+new JuliaFunction from Function :=
+new JuliaFunction from Symbol   := (T, s) -> T toString s
+
+-- functions we'll use
+jlDelete = JuliaFunction "delete!"
+jlDict = JuliaFunction "Dict"
+jlGetindex = JuliaFunction "getindex"
+jlIterate = JuliaFunction "iterate"
+jlPair = JuliaFunction "Pair"
+jlRepr = JuliaFunction "repr"
+jlSetindex = JuliaFunction "setindex!"
+jlSprint = JuliaFunction "sprint"
+jlString = JuliaFunction "string"
+jlTuple = JuliaFunction "tuple"
+jlTypeof = JuliaFunction "typeof"
+jlVect = JuliaFunction "vect"
 
 -----------------
 -- M2 -> julia --
@@ -280,6 +290,8 @@ scan({
 -------------
 -- methods --
 -------------
+
+JuliaObject Thing := (f, x) -> juliaCall(f, x)
 
 isFinite JuliaObject := getJlBool @@ (JuliaFunction "isfinite")
 isInfinite JuliaObject := getJlBool @@ (JuliaFunction "isinf")
