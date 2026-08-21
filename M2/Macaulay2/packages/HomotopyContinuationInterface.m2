@@ -20,7 +20,7 @@
 -- package is installed and loadable. We do this by asking Julia
 -- itself, rather than just checking for the executable, since a
 -- bare Julia install with no HC.jl would otherwise report as present.
-hcPresent = (run "command -v julia > /dev/null" == 0) and isDirectory "~/.julia/packages/HomotopyContinuation"
+hcPresent := (run "command -v julia > /dev/null" == 0) and isDirectory "~/.julia/packages/HomotopyContinuation"
 
 newPackage(
     "HomotopyContinuationInterface",
