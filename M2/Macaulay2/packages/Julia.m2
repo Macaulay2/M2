@@ -125,6 +125,9 @@ juliaSymbol String := s -> JuliaObjectOrError jlCall2(jlGetGlobalGlobal, jlBaseM
 juliaSymbol Symbol   :=
 juliaSymbol Function := juliaSymbol @@ toString
 
+-- julia symbols we'll use
+jlIm = juliaSymbol "im"
+
 -------------------
 -- JuliaFunction --
 -------------------
@@ -150,6 +153,7 @@ new JuliaFunction from JuliaObject := (T, f) -> x -> juliaCall(f, x)
 new JuliaFunction from String := (T, s) -> T juliaSymbol s
 new JuliaFunction from Function :=
 new JuliaFunction from Symbol   := (T, s) -> T toString s
+JuliaObject Thing := (f, x) -> juliaCall(f, x)
 
 -- functions we'll use
 jlDelete = JuliaFunction "delete!"
@@ -157,10 +161,12 @@ jlDict = JuliaFunction "Dict"
 jlGetindex = JuliaFunction "getindex"
 jlIterate = JuliaFunction "iterate"
 jlPair = JuliaFunction "Pair"
+jlRationalDivision = JuliaFunction "//"
 jlRepr = JuliaFunction "repr"
 jlSetindex = JuliaFunction "setindex!"
 jlSprint = JuliaFunction "sprint"
 jlString = JuliaFunction "string"
+jlTrunc = JuliaFunction "trunc"
 jlTuple = JuliaFunction "tuple"
 jlTypeof = JuliaFunction "typeof"
 jlVect = JuliaFunction "vect"
@@ -171,7 +177,9 @@ jlVect = JuliaFunction "vect"
 
 new JuliaObject from Boolean := (T, x) -> jlBoxBool if x then 1 else 0
 new JuliaObject from ZZ := (T, x) -> jlBoxInt64 x
+new JuliaObject from QQ := (T, x) -> jlRationalDivision(numerator x, denominator x)
 new JuliaObject from RR := (T, x) -> jlBoxFloat64 x
+new JuliaObject from CC := (T, x) -> realPart x + jlIm * imaginaryPart x
 new JuliaObject from Number := (T, x) -> T numeric x
 new JuliaObject from String := (T, x) -> jlCstrToString x
 new JuliaObject from List := (T, x) -> jlVect toSequence x
@@ -205,9 +213,11 @@ addJuliaToM2Function("UInt8", value @@ jlUnboxUint8)
 addJuliaToM2Function("UInt16", value @@ jlUnboxUint16)
 addJuliaToM2Function("UInt32", value @@ jlUnboxUint32)
 addJuliaToM2Function("UInt64", value @@ jlUnboxInt64)
--- TODO: Int128, UInt128, Float16
 addJuliaToM2Function("Float32", value @@ jlUnboxFloat32)
 addJuliaToM2Function("Float64", value @@ jlUnboxFloat64)
+-- TODO: Int128, UInt128, Float16, BigInt, BigFloat
+addJuliaToM2Function("Rational", x -> value numerator x / value denominator x)
+addJuliaToM2Function("Complex", x -> value realPart x + ii * value imaginaryPart x)
 addJuliaToM2Function("String", value @@ jlStringPtr)
 addJuliaToM2Function("AbstractArray", x -> value \ toList x)
 addJuliaToM2Function("Tuple", x -> value \ toSequence x)
@@ -237,27 +247,64 @@ iterator JuliaObject := x -> Iterator (
             iter_1,
             iter = jlIterate(x, iter_2))))
 
----------------------
--- unary operators --
----------------------
+-------------------
+-- unary methods --
+-------------------
 
 scan({
     symbol +,
     symbol -,
-    symbol ~
+    symbol ~,
+    abs,
+    round,
+    floor,
+    sqrt,
+    exp,
+    expm1,
+    log,
+    log1p,
+    sin,
+    cos,
+    tan,
+    cot,
+    sec,
+    csc,
+    sinh,
+    cosh,
+    tanh,
+    coth,
+    sech,
+    csch,
+    asin,
+    acos,
+    atan,
+    acot,
+    asinh,
+    acosh,
+    atanh,
+    acoth,
+    numerator,
+    denominator
 }, op -> (
     f := JuliaFunction op;
     installMethod(op, JuliaObject, f)))
 
 scan({
-    (symbol not, symbol !)
+    (symbol not, symbol !),
+    (ceiling, "ceil"),
+    (realPart, "real"),
+    (imaginaryPart, "imag"),
+    (conjugate, "conj")
 }, (m2op, jlop) -> (
     f := JuliaFunction jlop;
     installMethod(m2op, JuliaObject, f)))
 
-----------------------
--- binary operators --
-----------------------
+isFinite JuliaObject := getJlBool @@ (JuliaFunction "isfinite")
+isInfinite JuliaObject := getJlBool @@ (JuliaFunction "isinf")
+
+--------------------
+-- binary methods --
+--------------------
 
 scan({
     symbol +,
@@ -270,7 +317,10 @@ scan({
     symbol &,
     symbol |,
     symbol >>, -- TODO: what to do about >>>?
-    symbol <<
+    symbol <<,
+    gcd,
+    lcm,
+    log
 },
      op -> (
          f := JuliaFunction op;
@@ -280,23 +330,14 @@ scan({
 
 scan({
     (symbol //, "÷"),
-    (symbol ^^, "⊻")
+    (symbol ^^, "⊻"),
+    (atan2, atan)
 },
      (m2op, jlop) -> (
          f := JuliaFunction jlop;
          installMethod(m2op, JuliaObject, JuliaObject, f);
          installMethod(m2op, JuliaObject, Thing, f);
          installMethod(m2op, Thing, JuliaObject, f)))
-
--------------
--- methods --
--------------
-
-JuliaObject Thing := (f, x) -> juliaCall(f, x)
-
-isFinite JuliaObject := getJlBool @@ (JuliaFunction "isfinite")
-isInfinite JuliaObject := getJlBool @@ (JuliaFunction "isinf")
-
 
 -- can't use JuliaFunction w/ &&/||, so roll our own
 -- use Thing on RHS to support (greedy) short-circuiting
@@ -313,7 +354,6 @@ JuliaObject == JuliaObject :=
 JuliaObject == Thing       :=
 Thing       == JuliaObject := getJlBool @@ jleq
 
-
 jlle = JuliaFunction symbol <
 jlge = JuliaFunction symbol >
 JuliaObject ? JuliaObject :=
@@ -323,6 +363,22 @@ Thing       ? JuliaObject := (x, y) -> (
     else if getJlBool jlge(x, y) then symbol >
     else if x == y then symbol ==
     else incomparable)
+
+-- these only accept a julia type as the first argument, so
+-- (Thing, JuliaObject) doesn't make sense
+round(JuliaObject, Thing) := lookup(round, JuliaObject)
+floor(JuliaObject, Thing) := lookup(floor, JuliaObject)
+ceiling(JuliaObject, Thing) := lookup(ceiling, JuliaObject)
+
+truncate JuliaObject         := {} >> o -> x -> jlTrunc x
+truncate(JuliaObject, Thing) := {} >> o -> (T, x) -> jlTrunc(T, x)
+
+quotientRemainder(JuliaObject, JuliaObject) :=
+quotientRemainder(JuliaObject, Thing)       :=
+quotientRemainder(Thing,       JuliaObject) := toSequence @@ (JuliaFunction "divrem")
+
+gcd JuliaObject := lookup(gcd, JuliaObject, JuliaObject)
+lcm JuliaObject := lookup(lcm, JuliaObject, JuliaObject)
 
 ----------------
 -- evaluation --
@@ -340,6 +396,8 @@ assertRoundTrip = x -> assert Equation(value JuliaObject x, x)
 assertRoundTrip true
 assertRoundTrip 5
 assertRoundTrip pi
+assertRoundTrip(2/3)
+assertRoundTrip(2 + 3*ii)
 assertRoundTrip "foo"
 assertRoundTrip null
 assertRoundTrip {1, 2, 3}
@@ -483,6 +541,111 @@ TEST ///
 -- methods
 assert isFinite JuliaObject 5
 assert isInfinite JuliaObject infinity
+
+isa = value @@ (JuliaFunction "isa")
+Int8 = juliaSymbol "Int8"
+Float64 = juliaSymbol "Float64"
+
+assert Equation(round JuliaObject 2.9, 3)
+assert Equation(x = round(Int8, 2.9), 3)
+assert isa(x, Int8)
+assert Equation(floor JuliaObject 2.9, 2)
+assert Equation(x = floor(Int8, 2.9), 2)
+assert isa(x, Int8)
+assert Equation(ceiling JuliaObject 2.9, 3)
+assert Equation(x = ceiling(Int8, 2.9), 3)
+assert isa(x, Int8)
+assert Equation(truncate JuliaObject 2.9, 2)
+assert Equation(x = truncate(Int8, 2.9), 2)
+assert isa(x, Int8)
+
+assert Equation(quotientRemainder(JuliaObject 10, JuliaObject 3), (3, 1))
+assert Equation(quotientRemainder(JuliaObject 10, 3), (3, 1))
+assert Equation(quotientRemainder(10, JuliaObject 3), (3, 1))
+
+assert Equation(gcd JuliaObject 5, 5)
+assert Equation(gcd(10, JuliaObject 15, JuliaObject 20, 25), 5)
+assert Equation(lcm JuliaObject 5, 5)
+assert Equation(lcm(10, JuliaObject 15, JuliaObject 20, 25), 300)
+
+assert Equation(abs JuliaObject 5, 5)
+assert Equation(abs JuliaObject(-5), 5)
+assert Equation(abs JuliaObject(-5.5), 5.5)
+
+assert Equation(x = sqrt JuliaObject 4, 2)
+assert isa(x, Float64)
+assert Equation(exp JuliaObject 0, 1)
+assert Equation(expm1 JuliaObject 0, 0)
+assert Equation(log JuliaObject 1, 0)
+assert Equation(log1p JuliaObject 0, 0)
+assert Equation(log(JuliaObject 2, JuliaObject 8), 3)
+assert Equation(log(JuliaObject 2, 8), 3)
+assert Equation(log(2, JuliaObject 8), 3)
+
+epsilon = 1e-15
+assertNear = (x, y) -> assert BinaryOperation(symbol <, abs(value x - y), epsilon)
+assertNear(sqrt JuliaObject 2, sqrt 2)
+assertNear(exp JuliaObject 1, exp 1)
+assertNear(expm1 JuliaObject 1, expm1 1)
+assertNear(log JuliaObject 2, log 2)
+assertNear(log1p JuliaObject 1, log1p 1)
+assertNear(log(JuliaObject 3, 5), log(3, 5))
+
+assert Equation(sin JuliaObject 0, 0)
+assert Equation(cos JuliaObject 0, 1)
+assert Equation(tan JuliaObject 0, 0)
+assert Equation(sec JuliaObject 0, 1)
+assert Equation(sinh JuliaObject 0, 0)
+assert Equation(cosh JuliaObject 0, 1)
+assert Equation(tanh JuliaObject 0, 0)
+assert Equation(sech JuliaObject 0, 1)
+assert Equation(asin JuliaObject 0, 0)
+assert Equation(acos JuliaObject 1, 0)
+assert Equation(atan JuliaObject 0, 0)
+assert Equation(asinh JuliaObject 0, 0)
+assert Equation(acosh JuliaObject 1, 0)
+assert Equation(atanh JuliaObject 0, 0)
+assert Equation(atan2(JuliaObject 0, JuliaObject 1), 0)
+
+assertNear(sin JuliaObject 0.5, sin 0.5)
+assertNear(cos JuliaObject 0.5, cos 0.5)
+assertNear(tan JuliaObject 0.5, tan 0.5)
+assertNear(cot JuliaObject 0.5, cot 0.5)
+assertNear(sec JuliaObject 0.5, sec 0.5)
+assertNear(csc JuliaObject 0.5, csc 0.5)
+assertNear(sinh JuliaObject 0.5, sinh 0.5)
+assertNear(cosh JuliaObject 0.5, cosh 0.5)
+assertNear(tanh JuliaObject 0.5, tanh 0.5)
+assertNear(coth JuliaObject 0.5, coth 0.5)
+assertNear(sech JuliaObject 0.5, sech 0.5)
+assertNear(csch JuliaObject 0.5, csch 0.5)
+assertNear(asin JuliaObject 0.5, asin 0.5)
+assertNear(acos JuliaObject 0.5, acos 0.5)
+assertNear(atan JuliaObject 0.5, atan 0.5)
+assertNear(asinh JuliaObject 0.5, asinh 0.5)
+assertNear(atanh JuliaObject 0.5, atanh 0.5)
+assertNear(acot JuliaObject 2., acot 2.)
+assertNear(acosh JuliaObject 2., acosh 2.)
+assertNear(acoth JuliaObject 2., acoth 2.)
+assertNear(atan2(JuliaObject 1, JuliaObject 1), atan2(1, 1))
+assertNear(atan2(JuliaObject 1, 1), atan2(1, 1))
+assertNear(atan2(1, JuliaObject 1), atan2(1, 1))
+assertNear(atan2(JuliaObject 1, JuliaObject(-1)), atan2(1, -1))
+assertNear(atan2(JuliaObject 1, -1), atan2(1, -1))
+assertNear(atan2(1, JuliaObject(-1)), atan2(1, -1))
+assertNear(atan2(JuliaObject(-1), JuliaObject 1), atan2(-1, 1))
+assertNear(atan2(JuliaObject(-1), 1), atan2(-1, 1))
+assertNear(atan2(-1, JuliaObject 1), atan2(-1, 1))
+assertNear(atan2(JuliaObject(-1), JuliaObject(-1)), atan2(-1, -1))
+assertNear(atan2(JuliaObject(-1), -1), atan2(-1, -1))
+assertNear(atan2(-1, JuliaObject(-1)), atan2(-1, -1))
+
+assert Equation(numerator JuliaObject(3/5), 3)
+assert Equation(denominator JuliaObject(3/5), 5)
+
+assert Equation(realPart JuliaObject(2 + 3*ii), 2)
+assert Equation(imaginaryPart JuliaObject(2 + 3*ii), 3)
+assert Equation(conjugate JuliaObject(2 + 3*ii), 2 - 3*ii)
 ///
 
 end
