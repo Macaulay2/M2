@@ -24,7 +24,7 @@ hcPresenceCheck = () -> (
     checkScript := "try\n    using HomotopyContinuation\n    exit(0)\ncatch\n    exit(1)\nend\n";
     tmpFile := temporaryFileName() | ".jl";
     tmpFile << checkScript << close;
-    exitCode := try run("julia " | tmpFile | " > NUL 2>&1") else -1;
+    exitCode := try run("julia " | tmpFile | " > /dev/null 2>&1") else -1;
     removeFile tmpFile;
     exitCode === 0
     )
