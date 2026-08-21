@@ -205,6 +205,7 @@ addJuliaToM2Function("UInt8", value @@ jlUnboxUint8)
 addJuliaToM2Function("UInt16", value @@ jlUnboxUint16)
 addJuliaToM2Function("UInt32", value @@ jlUnboxUint32)
 addJuliaToM2Function("UInt64", value @@ jlUnboxInt64)
+-- TODO: Int128, UInt128, Float16
 addJuliaToM2Function("Float32", value @@ jlUnboxFloat32)
 addJuliaToM2Function("Float64", value @@ jlUnboxFloat64)
 addJuliaToM2Function("String", value @@ jlStringPtr)
@@ -345,6 +346,21 @@ assertRoundTrip {1, 2, 3}
 assertRoundTrip (1, 2, 3)
 x = hashTable {(true, 5), (numeric pi, "foo"), (null, {1, 2, 3})}
 assert BinaryOperation(symbol ===, value JuliaObject x, x)
+///
+
+TEST ///
+-- integer types
+assert Equation(value (juliaSymbol "Int8") 5, 5)
+assert Equation(value (juliaSymbol "Int16") 5, 5)
+assert Equation(value (juliaSymbol "Int32") 5, 5)
+assert Equation(value (juliaSymbol "Int64") 5, 5)
+assert Equation(value (juliaSymbol "UInt8") 5, 5)
+assert Equation(value (juliaSymbol "UInt16") 5, 5)
+assert Equation(value (juliaSymbol "UInt32") 5, 5)
+assert Equation(value (juliaSymbol "UInt64") 5, 5)
+-- floating-point types
+assert Equation(value (juliaSymbol "Float32") 5, 5)
+assert Equation(value (juliaSymbol "Float64") 5, 5)
 ///
 
 TEST ///
