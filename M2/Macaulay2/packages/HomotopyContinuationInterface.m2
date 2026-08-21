@@ -20,16 +20,7 @@
 -- package is installed and loadable. We do this by asking Julia
 -- itself, rather than just checking for the executable, since a
 -- bare Julia install with no HC.jl would otherwise report as present.
-hcPresenceCheck = () -> (
-    checkScript := "try\n    using HomotopyContinuation\n    exit(0)\ncatch\n    exit(1)\nend\n";
-    tmpFile := temporaryFileName() | ".jl";
-    tmpFile << checkScript << close;
-    exitCode := try run("julia " | tmpFile | " > /dev/null 2>&1") else -1;
-    removeFile tmpFile;
-    exitCode === 0
-    )
-
-hcPresent = hcPresenceCheck()
+hcPresent = (run "command -v julia > /dev/null" == 0) and isDirectory "~/.julia/packages/HomotopyContinuation"
 
 newPackage(
     "HomotopyContinuationInterface",
