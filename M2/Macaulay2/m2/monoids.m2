@@ -494,11 +494,18 @@ processVars(Thing, Thing) := (x, xx) -> findSymbols {x}
 processVars(ZZ,    Thing) := (n, xx) -> makeVars(n, xx)
 processVars ZZ := x -> {x}
 
-processSkew := (n, skewvars) -> toList(
+processIndex = (n, i) -> (
+    if i < -n or i >= n then error "invalid variable index";
+    if i < 0 then n + i else i
+)
+
+processSkew := (n, skewvars) -> sort toList(
     if skewvars === true  then 0 ..< n else
     if skewvars === false then {}      else
-    if instance(skewvars, VisibleList) then flatten apply(listSplice skewvars, processVars)
-    else error "SkewCommutative: expected option to be true, false, or a list or indices or variables")
+    if instance(skewvars, VisibleList) then (
+        inds := flatten apply(listSplice skewvars, processVars);
+        unique apply(inds, i -> processIndex(n, i))
+    ) else error "SkewCommutative: expected option to be true, false, or a list or indices or variables")
 
 processWeyl := weylvars -> (
     (xvars, dvars, hvar) := ({}, {}, {});

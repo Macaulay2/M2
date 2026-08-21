@@ -154,7 +154,6 @@ Ring Monoid := PolynomialRing => (R, M) -> (
     MWeyl := if MOpts.?WeylAlgebra     then MOpts.WeylAlgebra else {};
     RSkew := if ROpts.?SkewCommutative then ROpts.SkewCommutative else {};
     MSkew := if MOpts.?SkewCommutative then MOpts.SkewCommutative else {};
-    if any(MSkew, i -> i > nvars) then error "SkewCommutative indices must be a subset of variable indices";
     -- FIXME: remove once Weyl variables are stored as indices in the monoid
     RWeyl = monoidIndices_R RWeyl;
     MWeyl = monoidIndices_M MWeyl;
