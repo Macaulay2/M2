@@ -46,7 +46,6 @@ m2-need-template = "needsPackage(\"$(1)\",LoadDocumentation=>true,DebuggingMode=
 m2-check-template = "check($(1),UserMode=>false,Verbose=>$(Verbose)); exit 0"
 $(foreach i,\
 	$(sort $(ALL_PACKAGES)),\
-	$(eval check: check-$i)\
 	$(eval check-$i:; \
 		@pre_bindir@/M2 -q --no-preload $(STOP)                 \
 			-e $(call m2-need-template,$i)                  \
@@ -102,7 +101,7 @@ $(foreach i, $(ALL_PACKAGES), $(eval $(call bld,$i)))
 ifeq "$(ReinstallPackages)" "true"
 $(foreach i, $(PACKAGES), $(eval all: unmark-$i))
 endif
-$(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
+$(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i) $(eval check: check-$i))
 
 # make packages Style, FirstPackage, and Macaulay2Doc get installed
 # before the others:
