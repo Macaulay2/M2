@@ -159,12 +159,14 @@ JuliaObject Thing := (f, x) -> juliaCall(f, x)
 jlDelete = JuliaFunction "delete!"
 jlDict = JuliaFunction "Dict"
 jlGetindex = JuliaFunction "getindex"
+jlGetproperty = JuliaFunction "getproperty"
 jlInt = JuliaFunction "Int"
 jlIterate = JuliaFunction "iterate"
 jlPair = JuliaFunction "Pair"
 jlRationalDivision = JuliaFunction "//"
 jlRepr = JuliaFunction "repr"
 jlSetindex = JuliaFunction "setindex!"
+jlSetproperty = JuliaFunction "setproperty!"
 jlSprint = JuliaFunction "sprint"
 jlString = JuliaFunction "string"
 jlTrunc = JuliaFunction "trunc"
@@ -240,6 +242,9 @@ value JuliaObject := x -> (
 JuliaObject_Thing := jlGetindex
 JuliaObject_Thing = (x, i, e) -> jlSetindex(x, e, i)
 delete(JuliaObject, Thing) := jlDelete
+
+JuliaObject@@Thing := (x, i) -> jlGetproperty(x, jlSymbol toString i)
+JuliaObject@@Thing = (x, i, e) -> jlSetproperty(x, e, jlSymbol toString i)
 
 iterator JuliaObject := x -> Iterator (
     iter := jlIterate x;
