@@ -619,7 +619,7 @@ doc ///
     adjList: List
        list of adjoint matrices
     ptsList: List
-       list of ideal if the exceptional points
+       list of ideals of the exceptional points
     J: Ideal
         ideal of the final surface in the adjunction process       
   Description
@@ -627,7 +627,7 @@ doc ///
         Adjunction determines the image X' of X under the morphism phi: X -> X'
 	defined by |H+K|. By Sommese and Van de Ven [SVdV] the linear system 
 	|H+K| defines a birational morphism which blows down presisely all (-1) lines
-	and is biregular otherwise of unless
+	and is biregular otherwise unless
 	
 	(1) X is a P2 linearly or quadratically embedded, or ruled in lines,
 	
