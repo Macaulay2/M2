@@ -55,6 +55,7 @@ jlUnboxUint8 = foreignFunction(libjulia, "jl_unbox_uint8", uint8, voidstar)
 
 -- symbols
 jlBaseModule = foreignSymbol(libjulia, "jl_base_module", voidstar)
+jlMainModule = foreignSymbol(libjulia, "jl_main_module", voidstar)
 jlNothing = foreignSymbol(libjulia, "jl_nothing", voidstar)
 jlTypeType = foreignSymbol(libjulia, "jl_type_type", voidstar)
 
@@ -66,10 +67,10 @@ jlInit()
 addEndFunction(() -> jlAtexitHook 0)
 
 -- symbols not exported by C API (now that we're initialized)
-jlDeleteGlobal = jlGetGlobal(jlBaseModule, jlSymbol "delete!")
-jlGetGlobalGlobal = jlGetGlobal(jlBaseModule, jlSymbol "getglobal")
-jlSetindexGlobal = jlGetGlobal(jlBaseModule, jlSymbol "setindex!")
-jlShowerror = jlGetGlobal(jlBaseModule, jlSymbol "showerror")
+jlDeleteGlobal = jlGetGlobal(jlMainModule, jlSymbol "delete!")
+jlGetGlobalGlobal = jlGetGlobal(jlMainModule, jlSymbol "getglobal")
+jlSetindexGlobal = jlGetGlobal(jlMainModule, jlSymbol "setindex!")
+jlShowerror = jlGetGlobal(jlMainModule, jlSymbol "showerror")
 
 -----------------
 -- JuliaObject --
@@ -134,7 +135,7 @@ juliaSymbol Thing := juliaSymbol @@ toString
 --------------------
 
 juliaGetGlobal = method()
-juliaGetGlobal String := s -> juliaCall(jlGetGlobalGlobal, (jlBaseModule, jlSymbol s))
+juliaGetGlobal String := s -> juliaCall(jlGetGlobalGlobal, (jlMainModule, jlSymbol s))
 juliaGetGlobal Thing := juliaGetGlobal @@ toString
 
 -------------------
@@ -181,7 +182,7 @@ jlString = JuliaFunction "string"
 jlTrunc = JuliaFunction "trunc"
 jlTuple = JuliaFunction "tuple"
 jlTypeof = JuliaFunction "typeof"
-jlVect = JuliaFunction "vect"
+jlVect = JuliaFunction juliaCall(jlGetGlobalGlobal, (jlBaseModule, jlSymbol "vect"))
 
 -- globals we'll use
 jlIm = juliaGetGlobal "im"
