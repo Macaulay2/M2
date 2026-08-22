@@ -9,9 +9,6 @@ ALL_PACKAGES = $(shell cat @srcdir@/=distributed-packages)
 # this one can be overridden by the user:
 PACKAGES = $(ALL_PACKAGES)
 
-# packages under development that should be checked but not installed:
-DEVEL = EngineTests
-
 MakeDocumentation ?= $(if @DOCUMENTATION@,true,false)
 MakeHTML ?= $(if $(filter html, @DOCUMENTATION@),true,false)
 MakeInfo ?= $(if $(filter info, @DOCUMENTATION@),true,false)
@@ -48,7 +45,7 @@ ArgumentMode = defaultMode
 m2-need-template = "needsPackage(\"$(1)\",LoadDocumentation=>true,DebuggingMode=>true)"
 m2-check-template = "check($(1),UserMode=>false,Verbose=>$(Verbose)); exit 0"
 $(foreach i,\
-	$(sort $(ALL_PACKAGES) $(DEVEL)),\
+	$(sort $(ALL_PACKAGES)),\
 	$(eval check::check-$i)\
 	$(eval check-$i:; \
 		@pre_bindir@/M2 -q --no-preload $(STOP)                 \
