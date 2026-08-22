@@ -299,8 +299,7 @@ scan({
     atanh,
     acoth,
     numerator,
-    denominator,
-    length
+    denominator
 }, op -> (
     f := JuliaFunction op;
     installMethod(op, JuliaObject, f)))
