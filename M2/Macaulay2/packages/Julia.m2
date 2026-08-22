@@ -298,7 +298,8 @@ scan({
     atanh,
     acoth,
     numerator,
-    denominator
+    denominator,
+    length
 }, op -> (
     f := JuliaFunction op;
     installMethod(op, JuliaObject, f)))
@@ -315,6 +316,7 @@ scan({
 
 isFinite JuliaObject := getJlBool @@ (JuliaFunction "isfinite")
 isInfinite JuliaObject := getJlBool @@ (JuliaFunction "isinf")
+length JuliaObject := value @@ (JuliaFunction length)
 
 --------------------
 -- binary methods --
@@ -661,6 +663,8 @@ assert Equation(denominator JuliaObject(3/5), 5)
 assert Equation(realPart JuliaObject(2 + 3*ii), 2)
 assert Equation(imaginaryPart JuliaObject(2 + 3*ii), 3)
 assert Equation(conjugate JuliaObject(2 + 3*ii), 2 - 3*ii)
+
+assert Equation(length {1, 2, 3, 4}, 4)
 ///
 
 end
