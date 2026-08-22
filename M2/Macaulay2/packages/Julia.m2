@@ -22,6 +22,7 @@ libfile = get "!julia -e 'using Libdl; print(Libdl.dlpath(\"libjulia\"))' 2> /de
 libjulia = openSharedLibrary("libjulia", FileName => libfile)
 
 -- functions
+jlAtexitHook = foreignFunction(libjulia, "jl_atexit_hook", void, int)
 jlBoxBool = foreignFunction(libjulia, "jl_box_bool", voidstar, int8)
 jlBoxFloat64 = foreignFunction(libjulia, "jl_box_float64", voidstar, double)
 jlBoxInt64 = foreignFunction(libjulia, "jl_box_int64", voidstar, int64)
@@ -62,6 +63,7 @@ jlTypeType = foreignSymbol(libjulia, "jl_type_type", voidstar)
 --------------------
 
 jlInit()
+addEndFunction(() -> jlAtexitHook 0)
 
 -- symbols not exported by C API (now that we're initialized)
 jlDeleteGlobal = jlGetGlobal(jlBaseModule, jlSymbol "delete!")
