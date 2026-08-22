@@ -40,7 +40,7 @@ jlInit = foreignFunction(libjulia, "jl_init", void, void)
 jlIsa = foreignFunction(libjulia, "jl_isa", int, {voidstar, voidstar})
 jlStringPtr = foreignFunction(libjulia, "jl_string_ptr", charstar, voidstar)
 jlSymbol = foreignFunction(libjulia, "jl_symbol", voidstar, charstar)
-jlUnboxBool = foreignFunction(libjulia, "jl_unbox_bool", int, voidstar)
+jlUnboxBool = foreignFunction(libjulia, "jl_unbox_bool", int8, voidstar)
 jlUnboxFloat32 = foreignFunction(libjulia, "jl_unbox_float32", float, voidstar)
 jlUnboxFloat64 = foreignFunction(libjulia, "jl_unbox_float64", double, voidstar)
 jlUnboxInt16 = foreignFunction(libjulia, "jl_unbox_int16", int16, voidstar)
@@ -96,6 +96,7 @@ new JuliaObject from voidstar := (T, x) -> (
     registerFinalizer(x, finalizer knownObjectCount);
     knownObjectCount += 1;
     x)
+new JuliaObject from JuliaObject := (T, x) -> x
 
 --------------------
 -- error handling --
@@ -222,7 +223,7 @@ addJuliaToM2Function("Int64", value @@ jlUnboxInt64)
 addJuliaToM2Function("UInt8", value @@ jlUnboxUint8)
 addJuliaToM2Function("UInt16", value @@ jlUnboxUint16)
 addJuliaToM2Function("UInt32", value @@ jlUnboxUint32)
-addJuliaToM2Function("UInt64", value @@ jlUnboxInt64)
+addJuliaToM2Function("UInt64", value @@ jlUnboxUint64)
 addJuliaToM2Function("Float32", value @@ jlUnboxFloat32)
 addJuliaToM2Function("Float64", value @@ jlUnboxFloat64)
 -- TODO: Int128, UInt128, Float16, BigInt, BigFloat
