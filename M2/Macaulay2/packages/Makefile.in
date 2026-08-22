@@ -46,7 +46,7 @@ m2-need-template = "needsPackage(\"$(1)\",LoadDocumentation=>true,DebuggingMode=
 m2-check-template = "check($(1),UserMode=>false,Verbose=>$(Verbose)); exit 0"
 $(foreach i,\
 	$(sort $(ALL_PACKAGES)),\
-	$(eval check::check-$i)\
+	$(eval check: check-$i)\
 	$(eval check-$i:; \
 		@pre_bindir@/M2 -q --no-preload $(STOP)                 \
 			-e $(call m2-need-template,$i)                  \
@@ -116,7 +116,7 @@ all: @pre_bindir@/M2-language-server
 	cp $< $@
 
 # the Info-validate function doesn't work well enough to be useful:
-# check::check-info
+# check: check-info
 
 clean::; rm -rf tmp
 big-check:
