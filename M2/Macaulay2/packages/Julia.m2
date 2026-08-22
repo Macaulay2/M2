@@ -7,6 +7,7 @@ export {
 
     -- methods
     "addJuliaToM2Function",
+    "juliaGetGlobal",
     "juliaSymbol",
     "juliaValue",
 }
@@ -121,12 +122,16 @@ JuliaObjectOrError = ptr -> (
 -----------------
 
 juliaSymbol = method()
-juliaSymbol String := s -> JuliaObjectOrError jlCall2(jlGetGlobalGlobal, jlBaseModule, jlSymbol s)
-juliaSymbol Symbol   :=
-juliaSymbol Function := juliaSymbol @@ toString
+juliaSymbol String := s -> JuliaObject jlSymbol s
+juliaSymbol Thing := juliaSymbol @@ toString
 
--- julia symbols we'll use
-jlIm = juliaSymbol "im"
+--------------------
+-- juliaGetGlobal --
+--------------------
+
+juliaGetGlobal = method()
+juliaGetGlobal String := s -> juliaCall(jlGetGlobalGlobal, (jlBaseModule, jlSymbol s))
+juliaGetGlobal Thing := juliaGetGlobal @@ toString
 
 -------------------
 -- JuliaFunction --
@@ -150,7 +155,7 @@ juliaCall = (f, x) -> JuliaObjectOrError(
     else jlCall1(f, JuliaObject x))
 
 new JuliaFunction from JuliaObject := (T, f) -> x -> juliaCall(f, x)
-new JuliaFunction from String := (T, s) -> T juliaSymbol s
+new JuliaFunction from String := (T, s) -> T juliaGetGlobal s
 new JuliaFunction from Function :=
 new JuliaFunction from Symbol   := (T, s) -> T toString s
 JuliaObject Thing := (f, x) -> juliaCall(f, x)
@@ -173,6 +178,9 @@ jlTrunc = JuliaFunction "trunc"
 jlTuple = JuliaFunction "tuple"
 jlTypeof = JuliaFunction "typeof"
 jlVect = JuliaFunction "vect"
+
+-- globals we'll use
+jlIm = juliaGetGlobal "im"
 
 -----------------
 -- M2 -> julia --
@@ -416,17 +424,17 @@ assert BinaryOperation(symbol ===, value JuliaObject x, x)
 
 TEST ///
 -- integer types
-assert Equation(value (juliaSymbol "Int8") 5, 5)
-assert Equation(value (juliaSymbol "Int16") 5, 5)
-assert Equation(value (juliaSymbol "Int32") 5, 5)
-assert Equation(value (juliaSymbol "Int64") 5, 5)
-assert Equation(value (juliaSymbol "UInt8") 5, 5)
-assert Equation(value (juliaSymbol "UInt16") 5, 5)
-assert Equation(value (juliaSymbol "UInt32") 5, 5)
-assert Equation(value (juliaSymbol "UInt64") 5, 5)
+assert Equation(value (juliaGetGlobal "Int8") 5, 5)
+assert Equation(value (juliaGetGlobal "Int16") 5, 5)
+assert Equation(value (juliaGetGlobal "Int32") 5, 5)
+assert Equation(value (juliaGetGlobal "Int64") 5, 5)
+assert Equation(value (juliaGetGlobal "UInt8") 5, 5)
+assert Equation(value (juliaGetGlobal "UInt16") 5, 5)
+assert Equation(value (juliaGetGlobal "UInt32") 5, 5)
+assert Equation(value (juliaGetGlobal "UInt64") 5, 5)
 -- floating-point types
-assert Equation(value (juliaSymbol "Float32") 5, 5)
-assert Equation(value (juliaSymbol "Float64") 5, 5)
+assert Equation(value (juliaGetGlobal "Float32") 5, 5)
+assert Equation(value (juliaGetGlobal "Float64") 5, 5)
 ///
 
 TEST ///
@@ -551,8 +559,8 @@ assert isFinite JuliaObject 5
 assert isInfinite JuliaObject infinity
 
 isa = value @@ (JuliaFunction "isa")
-Int8 = juliaSymbol "Int8"
-Float64 = juliaSymbol "Float64"
+Int8 = juliaGetGlobal "Int8"
+Float64 = juliaGetGlobal "Float64"
 
 assert Equation(round JuliaObject 2.9, 3)
 assert Equation(x = round(Int8, 2.9), 3)
