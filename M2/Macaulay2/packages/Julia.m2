@@ -677,3 +677,71 @@ end
 restart
 loadPackage("Julia", FileName => "~/src/macaulay2/M2-2/M2/Macaulay2/packages/Julia.m2", Reload => true)
 check oo
+
+-----------
+-- TODO! --
+-----------
+
+-- bugs
+--  * new JuliaObject from ZZ boxes an Int64, so anything that doesn't
+--    fit is silently truncated -- JuliaObject 2^70 is 0.  Use BigInt,
+--    and likewise Rational{BigInt} for QQ, which has the same bug, and
+--    BigFloat for RR, which currently rounds to a double.
+--  * addJuliaToM2Function resolves the type name twice in different
+--    scopes: jl_eval_string runs in Main, but @eval M2Julia resolves it
+--    inside M2Julia, which only has "using Base", so a third-party type
+--    like Oscar.ZZRingElem isn't visible there.  Worse, that
+--    jl_eval_string return isn't checked, so the UndefVarError is
+--    discarded and the registration reports success.  Define the method
+--    from Main, as @eval Main M2Julia.value_key(x::T) = k, and wrap the
+--    call in JuliaObjectOrError.
+
+-- documentation
+--  * write the documentation; there are no doc nodes at all yet
+--  * caveat: == and hash disagree for JuliaObject, and hash is
+--    interpreter level, so they shouldn't be used as keys in hash
+--    tables -- looking one up with an equal but distinct object misses
+
+-- packaging
+--  * fill in the newPackage options: Version, Headline, Date, Authors,
+--    Keywords, and PackageImports => {"ForeignFunctions"} in place of
+--    the needsPackage call
+--  * add a Configuration option for the libjulia path, falling back to
+--    asking the julia binary, so that packagers needn't have julia
+--    installed; give a useful error when neither is available
+--  * a Pkg entry point, cf. pipInstall, so that a wrapper package can
+--    install and version-pin the julia packages it needs
+
+-- julia -> M2
+--  * Int128, UInt128, Float16, BigInt, BigFloat (see above)
+--  * NamedTuple, which julia APIs return all the time
+--  * value flattens a 2-d array column-major, so the shape is lost;
+--    size is right there, so nested lists would work
+
+-- M2 -> julia
+--  * keyword arguments, which Oscar and HomotopyContinuation both use
+--    pervasively: build a NamedTuple out of Options and hand it to
+--    Core.kwcall(nt, f, args...), which already works today
+--  * a way to call M2 functions from julia, cf. pythonWrapM2Function
+
+-- methods
+--  * juliaGetGlobal only looks in Main, so there's no way to reach a
+--    name that Base declares public but doesn't export (cf. vect) or
+--    anything in another module; take a module argument, or split a
+--    qualified name like "Base.vect" on the dots
+--  * >>> (see above)
+--  * x_(i, j) passes the subscript through as a single tuple, so both
+--    multi-dimensional indexing and typed array construction fail:
+--    A_(1, 2) and Int8_(1, 2, 3) need to splat a Sequence, the way
+--    getindex(A, 1, 2) already does
+
+-- tests
+--  * iterators, getindex/setindex, getproperty/setproperty, delete,
+--    JuliaError, juliaSymbol, juliaValue, strings
+
+-- embedding
+--  * ForeignFunctions dlopens with RTLD_LAZY only, but embedding julia
+--    is generally documented to want RTLD_GLOBAL, so ccalls inside
+--    third-party julia packages may fail to resolve their symbols
+--  * jl_init installs its own signal handlers alongside M2's; check that
+--    interrupting a long-running julia call still works
