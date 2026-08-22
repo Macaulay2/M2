@@ -669,7 +669,7 @@ assert Equation(realPart JuliaObject(2 + 3*ii), 2)
 assert Equation(imaginaryPart JuliaObject(2 + 3*ii), 3)
 assert Equation(conjugate JuliaObject(2 + 3*ii), 2 - 3*ii)
 
-assert Equation(length {1, 2, 3, 4}, 4)
+assert Equation(length JuliaObject {1, 2, 3, 4}, 4)
 ///
 
 end
