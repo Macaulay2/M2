@@ -494,17 +494,21 @@ processVars(Thing, Thing) := (x, xx) -> findSymbols {x}
 processVars(ZZ,    Thing) := (n, xx) -> makeVars(n, xx)
 processVars ZZ := x -> {x}
 
-processIndex = (n, i) -> (
-    if i < -n or i >= n then error "invalid variable index";
+processItem = (vars, v) -> (
+    i := if instance(v, Symbol) then position(vars, s -> s == v ) else v;
+    if not instance(i, ZZ) then error("SkewCommutative: invalid value `" | toString v | "`");
+    n := #vars;
+    if i < -n or i >= n then error("SkewCommutative: invalid value `" | toString i | "`");
     if i < 0 then n + i else i
 )
 
-processSkew := (n, skewvars) -> sort toList(
+processSkew := (vars, skewvars) -> sort toList(
+    n := #vars;
     if skewvars === true  then 0 ..< n else
     if skewvars === false then {}      else
     if instance(skewvars, VisibleList) then (
-        inds := flatten apply(listSplice skewvars, processVars);
-        unique apply(inds, i -> if instance(i, ZZ) then processIndex(n, i) else i)
+        skewitems := flatten apply(listSplice skewvars, processVars);
+        unique apply(skewitems, x -> processItem(vars, x))
     ) else error "SkewCommutative: expected option to be true, false, or a list or indices or variables")
 
 processWeyl := weylvars -> (
@@ -543,7 +547,7 @@ setMonoidOptions = opts -> (
     --	);
     -- TODO: bring the sanity checking for the Weyl and Skew variables here
     opts.WeylAlgebra = processWeyl opts.WeylAlgebra;
-    opts.SkewCommutative = processSkew(n, opts.SkewCommutative);
+    opts.SkewCommutative = processSkew(opts.Variables, opts.SkewCommutative);
     -- TODO: allow rings with only some invertible variables
     if class opts.Inverses =!= Boolean then error "expected Inverses option to be true or false";
     -- TODO: allow rings with some skew commuting variables and some inverses https://github.com/Macaulay2/M2/issues/1440

@@ -451,39 +451,45 @@ Node
       Useful values are 8, 16, and 32.
 
 Node
-  Key
-    [monoid, SkewCommutative]
-  Headline
-    specify skew commuting variables in the ring
-  Usage
-    monoid[e_0..e_3, SkewCommutative => true]
-    monoid[u,v,x,y,  SkewCommutative => {u,v}]
-  Description
-    Text
-      The @TT "SkewCommutative"@ option specifies which variables will skew-commute
-      when the monoid is used to create a ring. The value @TT "true"@ indicates that
-      all of the variables skew-commute. Otherwise, the value of the option may be a
-      list of symbols or indices corresponding to the skew-commuting variables.
-    Example
-      ZZ/101[e_0..e_3,       SkewCommutative => true]
-      (e_0+e_1+e_2+e_3)^2
-      ZZ/101[x,y,vars(0..4), SkewCommutative => vars(0..4)]
-      c*b*a*d
-      ZZ/101[x,y,vars(0..4), SkewCommutative => {2..6}]
-      c*b*a*d
-    Example
-      R = ZZ[x,y,z, SkewCommutative => {x,y}]
-      x*y
-      y*x
-      x*z-z*x
-    Text
-      This option may also be used when creating a new ring from an existing ring,
-      creating a tensor product ring, or symmetric algebra.
-  SeeAlso
-    monoid
-    newRing
-    (tensor, Ring, Ring)
-    symmetricAlgebra
+    Key
+        [monoid, SkewCommutative]
+    Headline
+        specify skew commuting variables in the ring
+    Usage
+        monoid[e_0..e_3, SkewCommutative => true]
+        monoid[u,v,x,y,  SkewCommutative => {u,v}]
+    Description
+        Text
+            The @TT "SkewCommutative"@ option specifies which variables will skew-commute
+            when the monoid is used to create a ring. The value @TT "true"@ indicates that
+            all of the variables skew-commute. Otherwise, the value of the option may be a
+            list of symbols or indices corresponding to the skew-commuting variables.
+        Example
+            ZZ/101[e_0..e_3,       SkewCommutative => true]
+            (e_0+e_1+e_2+e_3)^2
+            ZZ/101[x,y,vars(0..4), SkewCommutative => vars(0..4)]
+            c*b*a*d
+            ZZ/101[x,y,vars(0..4), SkewCommutative => {2..6}]
+            c*b*a*d
+        Example
+            R = ZZ[x,y,z, SkewCommutative => {x,y}]
+            x*y
+            y*x
+            x*z-z*x
+        Text
+            Integer and symbols can be mixed. You can specify positive or
+            negative indices into the array of variables.
+        Example
+            R = ZZ[a..d, SkewCommutative => {-1, a, b}]
+            {a^2, b^2, c^2, d^2}
+        Text
+            This option may also be used when creating a new ring from an existing ring,
+            creating a tensor product ring, or symmetric algebra.
+    SeeAlso
+        monoid
+        newRing
+        (tensor, Ring, Ring)
+        symmetricAlgebra
 
 Node
   Key
