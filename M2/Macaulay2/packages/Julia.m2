@@ -79,8 +79,10 @@ JuliaObject = new SelfInitializingType of voidstar
 JuliaObject.synonym = "Julia object"
 
 toString JuliaObject := x -> value jlString x
-net JuliaObject := x -> value jlRepr("text/plain", x)
-toExternalString JuliaObject := x -> value jlRepr x
+net JuliaObject := x -> net value jlRepr("text/plain", x)
+describe JuliaObject := x -> Describe FunctionApplication(juliaValue, value jlRepr x)
+importFrom(Core, "toExternalFormat")
+toExternalString JuliaObject := toExternalFormat @@ describe
 JuliaObject.AfterPrint = x -> (JuliaObject, " of type ", jlTypeof x)
 
 -- keep a dict of known julia objects so they don't get garbage
