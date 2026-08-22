@@ -18,9 +18,8 @@ needsPackage "ForeignFunctions"
 -- foreign function interface --
 --------------------------------
 
--- TODO: make this configurable
--- maybe autodetect
-libjulia = openSharedLibrary("libjulia", FileName => "/home/profzoom/.julia/juliaup/julia-1.12.7+0.x64.linux.gnu/lib/libjulia.so.1.12.7")
+libfile = get "!julia -e 'using Libdl; print(Libdl.dlpath(\"libjulia\"))' 2> /dev/null"
+libjulia = openSharedLibrary("libjulia", FileName => libfile)
 
 -- functions
 jlBoxBool = foreignFunction(libjulia, "jl_box_bool", voidstar, int8)
