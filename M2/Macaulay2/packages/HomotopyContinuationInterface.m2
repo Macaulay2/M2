@@ -32,6 +32,7 @@ newPackage(
     PackageExports => {"NAGtypes"},
     OptionalComponentsPresent => hcPresent,
     CacheExampleOutput => true,
+    AuxiliaryFiles => true,
     )
 export {
     "solveHC",
