@@ -14,6 +14,9 @@ on:
     branches:
       - stable
       - development
+  push:
+    branches:
+      - development # seed cache after merging a PR
   schedule:
     - cron: '0 6 * * SUN' # runs tests on the main branch every Sunday at 06:00 UTC
 
@@ -25,6 +28,10 @@ concurrency:
 defaults:
   run:
     working-directory: M2/BUILD/build
+
+env:
+  # skip documentation & tests when seeding cache
+  SEED_CACHE_ONLY: ${{ github.event_name == 'push' }}
 
 jobs:
   build:
@@ -123,15 +130,12 @@ jobs:
                echo "LDFLAGS= -L$(brew --prefix)/lib     -L$(brew --prefix libomp)/lib     -L$(brew --prefix readline)/lib"     >> $GITHUB_ENV
           fi
 
-      - uses: actions/cache@v5
-        if: matrix.build-system == 'cmake'
-        id: restore-cache
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1.2.23
         with:
-          path: |
-            ~/.ccache
-            ~/work/M2/M2/M2/BUILD/build/usr-host
-          key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake', '.github/workflows/test_build.yml') }}
-
+          key: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}
+          evict-old-files: job
+          save: ${{ github.event_name == 'push' }} # to development on merge
 
 # ----------------------
 #   Configure and build M2 using CMake
@@ -157,7 +161,7 @@ jobs:
           cmake --build . --target M2-core M2-emacs
 
       - name: Install packages using Ninja
-        if: matrix.build-system == 'cmake'
+        if: matrix.build-system == 'cmake' && env.SEED_CACHE_ONLY != 'true'
         run: |
           cmake --build . --target install-packages
           if [[ "${{ runner.os }}" == "Linux" ]]; then
@@ -189,7 +193,7 @@ jobs:
           make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) PACKAGES=
 
       - name: Install packages using Make
-        if: matrix.build-system == 'autotools'
+        if: matrix.build-system == 'autotools' && env.SEED_CACHE_ONLY != 'true'
         run: |
           make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
 
@@ -198,7 +202,7 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && runner.os == 'macOS'
+        if: matrix.build-system == 'cmake' && runner.os == 'macOS' && env.SEED_CACHE_ONLY != 'true'
         run: |
           set -xe
           ./M2 -q --check 1
@@ -212,13 +216,13 @@ jobs:
           # TODO: add Macaulay2/tests/engine when https://github.com/Macaulay2/M2/issues/1213 is fixed
 
       - name: Run Tests using Autotools
-        if: matrix.build-system == 'autotools' && runner.os == 'Linux' && matrix.compiler == 'default'
+        if: matrix.build-system == 'autotools' && runner.os == 'Linux' && matrix.compiler == 'default' && env.SEED_CACHE_ONLY != 'true'
         run: |
           make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) check -o check-in-libraries
           make -C Macaulay2/html-check-links check
 
       - name: Validate HTML documentation
-        if: matrix.build-system == 'autotools' && runner.os == 'Linux'
+        if: matrix.build-system == 'autotools' && runner.os == 'Linux' && env.SEED_CACHE_ONLY != 'true'
         run: |
           pipx install html5validator
           if test ${{ github.event_name }} = pull_request
@@ -268,7 +272,7 @@ jobs:
              M2/BUILD/build/Macaulay2/tests/*/*.errors
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && success()
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && success() && env.SEED_CACHE_ONLY != 'true'
         uses: actions/upload-artifact@v7
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
