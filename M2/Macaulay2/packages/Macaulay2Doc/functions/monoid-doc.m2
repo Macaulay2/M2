@@ -477,7 +477,7 @@ Node
             y*x
             x*z-z*x
         Text
-            Integer and symbols can be mixed. You can specify positive or
+            Integers and symbols can be mixed. You can specify positive or
             negative indices into the array of variables.
         Example
             R = ZZ[a..d, SkewCommutative => {-1, a, b}]
