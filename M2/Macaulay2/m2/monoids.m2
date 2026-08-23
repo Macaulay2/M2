@@ -481,7 +481,7 @@ dedupSymbols = varlist -> (
 findSymbols = varlist -> dedupSymbols toList apply(pairs listSplice varlist,
     -- varlist is a list or sequence of items we wish to use for variable names.
     -- these may be: Symbol's, RingElement's (which are variables in a ring) or lists or sequences of such.
-    -- Return value: a List of Symbol's and IndexVariable's (or an error message gets issued)
+    -- Return value: a List of Symbol's and IndexedVariable's (or an error message gets issued)
     (i, var) -> try ( if class var === ZZ then var else checkSymbol baseName' var ) else error concatenate(
 	"encountered object not usable as variable at position ", toString i, " in list:",
 	newline, 8, silentRobustNetWithClass(max(printWidth, 80) - 8, 5, 3, var)))
@@ -494,11 +494,14 @@ processVars(Thing, Thing) := (x, xx) -> findSymbols {x}
 processVars(ZZ,    Thing) := (n, xx) -> makeVars(n, xx)
 processVars ZZ := x -> {x}
 
-processItem = (vars, v) -> (
-    i := if instance(v, Symbol) then position(vars, s -> s == v ) else v;
+processSkewItem = (vars, v) -> (
+    -- when v is a Symbol or IndexedVariable replace it with an index into the vars array
+    i := if instance(v, ZZ) then v else position(vars, s -> s === v );
     if not instance(i, ZZ) then error("SkewCommutative: invalid value `" | toString v | "`");
     n := #vars;
+    -- validate range of integer input
     if i < -n or i >= n then error("SkewCommutative: invalid value `" | toString i | "`");
+    -- replace a negative index with the appropriate non-negative index
     if i < 0 then n + i else i
 )
 
@@ -508,7 +511,7 @@ processSkew := (vars, skewvars) -> sort toList(
     if skewvars === false then {}      else
     if instance(skewvars, VisibleList) then (
         skewitems := flatten apply(listSplice skewvars, processVars);
-        unique apply(skewitems, x -> processItem(vars, x))
+        unique apply(skewitems, x -> processSkewItem(vars, x))
     ) else error "SkewCommutative: expected option to be true, false, or a list or indices or variables")
 
 processWeyl := weylvars -> (
