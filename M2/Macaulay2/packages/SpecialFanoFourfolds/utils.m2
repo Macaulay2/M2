@@ -82,7 +82,8 @@ VirtualInverseWeightedRationalMap EmbeddedProjectiveVariety := (Phi,Z) -> (
 VirtualInverseWeightedRationalMap * MultirationalMap := (Phi,Psi) -> (
     if Psi#"image" === null then (
         << "-- virtual maps used; computing image and composition..." << endl;
-        image Psi;
+        -- image Psi; -- too slow
+        image(Psi,"F4");
     );
     Eta := new VirtualInverseWeightedRationalMap from {
         symbol cache => new CacheTable,
@@ -378,7 +379,7 @@ isStandardK3surface EmbeddedProjectiveVariety := (cacheValue "is standard K3 sur
         if degree S != 2*g-2 then return false;
         if euler hilbertPolynomial S != 2 then return false;
         if dim linearSpan S < dim ambient S then return false;
-        if g >= 6 and degrees S =!= {({2},binomial(g-2,2))} then << "-- notice: ideal generators deviate from expected quadrics for a K3 of genus " << g << endl;
+        if g >= 6 and degrees S =!= {({2},binomial(g-2,2))} then << "-- notice: ideal generators differ from those of a general K3 of genus " << g << endl;
         return true;
     )
 );
@@ -543,7 +544,9 @@ describeMirrorFourfoldAndK3 HodgeSpecialFourfold := X -> (
     );
     if s <= 3 then return descr;
     pUtilde := polarizedK3surface(X,Verbose=>true);  -- already in cache
-    descr || ((net "Lattice intersection matrix on Ũ: ") | (net latticeMatrix pUtilde))
+    M := latticeMatrix pUtilde;
+    isDetAsExpected := () -> (A := latticeIntersectionMatrix3x3 X; if ring A =!= ZZ then return false; (det A) + (det M) == 0);
+    descr || ((net "Lattice intersection matrix on Ũ: ") | (net M) | net(if isDetAsExpected() then " (det = "|(toString det M)|") ✓" else ""))
 );
 
 isDeformationP2P2 = X -> (
@@ -577,4 +580,26 @@ printInfoOnExceptionalCurves = (L,C) -> (
     );
     if degree L == 1 then return "Exceptional curves: 1 line and other curves of degree > 1";
     "Exceptional curves: " | (toString degree L) | " lines and other curves of degree > 1"
+);
+
+expectedGenusOfK3FromExceptionalCurves = (U,L,C) -> (
+    a := if dim L == 1 then degree L else 0;
+    b := if dim C == 1 then degree C else 0;
+    d := degree U;
+    g := sectionalGenus U;
+    if b != 0 and (not isPresumedRationalNormalCurve C) then return;
+    d' := d + a + b^2;
+    g' := g + binomial(b,2);
+    if d' != 2*g'-2 then return;
+    g'
+);
+
+unverifiedExpectedGenusOfK3FromExceptionalCurves = (X,U,L,C) -> (
+    g' := expectedGenusOfK3FromExceptionalCurves(U,L,C);
+    if g' =!= null then return (true,g');
+    if isFanoMapStandard X and recognizeDSCF X === "DSCF-V1-20" then return (true, (sectionalGenus U)+2);
+    << "-- warning: expected invariants of the K3 surface unavailable; unverified values may be used" << endl;
+    if isFanoMapStandard X and member(recognizeDSCF X,{"DSCF-V1-5","DSCF-V1-14"}) then return (false, (sectionalGenus U)+1);
+    if isFanoMapStandard X and recognizeDSCF X === "DSCF-V1-16" then (false, sectionalGenus U);
+    (false, 2)
 );
