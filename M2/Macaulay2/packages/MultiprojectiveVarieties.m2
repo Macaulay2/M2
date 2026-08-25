@@ -1565,6 +1565,28 @@ image (MultirationalMap,String) := (Phi,alg) -> (
     return Phi#"image";
 );
 
+-- consider implementing image(MultihomogeneousRationalMap,String) in Cremona.m2
+image (WeightedRationalMap,String) := (Phi,alg) -> (
+    -- if alg =!= "F4" and alg =!= "MGB" then error "expected Strategy to be \"F4\" or \"MGB\"";
+    if Phi#"image" =!= null then return image Phi;
+    n := dim ambient source Phi;
+    m := dim ambient target Phi;
+    K := coefficientRing Phi;
+    t := local t; x := local x;
+    R := K[t_0..t_n, x_0..x_m, MonomialOrder=>Eliminate(n+1)];
+    s := map(R,ring ambient source Phi,{t_0..t_n});
+    F := s lift(matrix Phi,ring ambient source Phi);
+    I := s ideal source Phi;
+    s' := map(R,ring ambient target Phi,{x_0..x_m});
+    J := s' ideal target Phi;
+    V := I + J + ideal(F - matrix{{x_0..x_m}});
+    G := groebnerBasis(V,Strategy=>alg);
+    G' := ideal sub(selectInSubring(1,G),K[x_0..x_m]);
+    Z := projectiveVariety(sub(G',vars ring ambient target Phi),MinimalGenerators=>false,Saturate=>false);
+    forceImage(Phi,Z);
+    image Phi
+);
+
 forceImage (MultirationalMap,MultiprojectiveVariety) := (Phi,X) -> (
     if X === target Phi then (if Phi#"isDominant" === null then Phi#"isDominant" = true; return);
     if ring ideal X =!= ring ideal target Phi then error "expected a subvariety of the target of the map";
@@ -4726,4 +4748,13 @@ assert(class H === RAT);
 F = {apply(2,i -> random({1,1},R)),apply(4,i -> random({0,1},R)),apply(3,i -> random({1,0},R))};
 f = H F;
 assert(instance(f,MultirationalMap) and f == (Hom(source f,target f)) entries f);
+///
+
+TEST /// -- image(WeightedRationalMap,String)
+K = ZZ/65521;
+X = random({{3},{3}},0_(PP_K(1,1,2,2,3)));
+f = (rationalMap point X)|X;
+Y = image(f,"F4");
+assert(dim Y == 2 and degree Y == 4 and degrees Y === {({1}, 2), ({2}, 6)})
+assert(image f === Y)
 ///
