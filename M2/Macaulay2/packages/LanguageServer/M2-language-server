@@ -1,6 +1,13 @@
 #!/bin/sh
 
-M2 --silent --stop                    \
+dir=$(dirname "$0")
+if [ -x "$dir/M2" ]; then
+    M2="$dir/M2"
+else
+    M2=M2
+fi
+
+"$M2" --silent --stop                 \
    -e 'clearEcho stdio'               \
    -e 'needsPackage "LanguageServer"' \
    -e 'server = new LSPServer'        \
