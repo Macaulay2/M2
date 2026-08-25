@@ -86,6 +86,7 @@ rationalSurfaceWithAttachedPlaneInCubicFourfold (EmbeddedProjectiveVariety,Visib
     X := cubicFourfold(S' & planeC',cubicS',Verbose=>o.Verbose);
     X.cache#"Construction" = "X = specialFourfold surface("|(toString toSequence ai1i2i3)|","|(toString toSequence dj1j2j3)|");";
     X.cache#"DataConstruction" = (S,C,piLin);
+    X.cache#(append(surfaces X,"intersection of surface cycles in cubic fourfold")) = -(first dj1j2j3)^2 + sum toList drop(dj1j2j3,1);
     surfaceIntersectionNumber(X,Verbose=>o.Verbose,Verify=>true,"AttemptComputation"=>false);
     if o.Verbose then <<endl<<describe X<<endl;
     S'.cache#"attachedPlane" = planeC';
@@ -344,6 +345,128 @@ quadricFibration DoublySpecialCubicFourfold := o -> X -> (
     first X.cache#"quadricFibrationCubicFourfoldInC8"
 );
 
+parameterCount DoublySpecialCubicFourfold := o -> X -> (
+    if not any(surfaces X, isPlaneInP5) then error "not implemented yet: parameterCount for a DoublySpecialCubicFourfold not containing a plane";
+    (S,P) := surfaces X;
+    if not isPlaneInP5 P then (
+        if o.Verbose then << "-- (swapping surfaces)" << endl;
+        return parameterCount(swap X,Verbose=>o.Verbose);
+    );
+    if not instance(S,RationalSurfaceWithAttachedPlaneInCubicFourfold) then error "not implemented yet: parameterCount for a DoublySpecialCubicFourfold not constructed via specialFourfold(surface((...),(...)))";
+    assert(S.cache#"attachedPlane" === P and S.cache#"pickedCubicFourfold" === X);
+    (ai1i2i3,dj1j2j3) := value substring(27, X.cache#"Construction");
+    C := S * P;
+    CurveInPn := (X.cache#"DataConstruction")_1;
+    n := dim ambient CurveInPn;
+    r := dim linearSpan CurveInPn;
+    if o.Verbose then (
+        << "-- starting parameterCount computation" << endl;
+        << "-- input: cubic fourfold X containing two surfaces:" << endl;
+        << "  -- S = surface" << toString(ai1i2i3,dj1j2j3) << ": " << surfaceDescription S << endl;
+        if n > 5 then (
+            << "  -- (projected from PP^" << n << " with center a PP^" << n-6 << " ⊂ PP^" << r << " (⊂ PP^" << n << "))" << endl;
+        ) else (
+            << "  -- (already in P^5, not obtained by projection)" << endl;
+        );
+        << "  -- P: " << surfaceDescription P << endl;
+        << "  -- C = S ∩ P: " << ? ideal((parametrize P)^^ C) << endl;
+    );
+    numPts := sum toList drop(ai1i2i3,1);
+    modCountPts := max(2*numPts - 8, 0);
+    if o.Verbose then << endl << "-- moduli count for " << numPts << " points in ℙ²: " << modCountPts << endl;
+    dimGrass := (n-5)*(r-n+6); -- dim GG(n-6,PP^r)
+    numPts2 := sum toList drop(dj1j2j3,1);
+    m := dim target multirationalMap rationalMap(ring(PP_(coefficientRing X)^2), {first dj1j2j3, numPts2});
+    if o.Verbose then << "-- dimension of the space of plane curves of degree " << first dj1j2j3 << " passing through " << numPts2 << " general points: " << m << endl;
+    if n > 5 and o.Verbose then << "-- dim GG(" << n-6 << "," << r << ") = " << dimGrass << endl;
+    dimAutS := 0;
+    if n > 5 or numPts > 4 then (
+        if o.Verbose then << "-- assuming dim Aut(S,ℙ⁵) = " << dimAutS << endl;
+    ) else (
+        if o.Verbose then << "-- computing h^0(T_S)..." << endl;
+        dimAutS = rank HH^0 tangentSheaf variety S;
+        if o.Verbose then << "-- h^0(T_S) = " << dimAutS << endl;
+    );
+    dimFamReducSurf := modCountPts + m + dimGrass + (35 - dimAutS);
+    if o.Verbose then << "-- dimension of the family of reducible surfaces S ∪ P in ℙ⁵: " << modCountPts << " + " << m << " + " << (if n > 5 then dimGrass|" + (" else "(") << 35 << " - " << dimAutS << ") = " << dimFamReducSurf << endl;
+    if o.Verbose then << "-- computing the normal sheaf of S in ℙ⁵..." << endl << flush;
+    N := normalSheaf S;
+    if o.Verbose then << "-- normal sheaf computed; computing h^0(N_{S,ℙ⁵})..." << endl << flush;
+    h0N := rankHH(0,N);
+    if o.Verbose then << "-- h^0(N_{S,ℙ⁵}) = " << h0N << endl << flush;
+    emo := cond -> if cond then " 🙂" else " 🙁";
+    if o.Verbose then << "-- h^0(N_{S,ℙ⁵}) - (" << modCountPts << " + " << 35 << " - " << dimAutS << ") = " << h0N - (modCountPts + 35 - dimAutS) << emo(h0N == modCountPts + 35 - dimAutS) << endl;
+    if h0N != modCountPts + 35 - dimAutS and o.Verbose then (
+        << "  -- computing Ext^1(I_{S,ℙ⁵},O_S)..." << endl << flush;
+        rkExt1S := rankExt1 S;
+        << "  -- rank Ext^1(I_{S,ℙ⁵},O_S) = " << rkExt1S << endl << flush;
+    );
+    if o.Verbose then << "-- computing h^0(N_{C,S})..." << endl;
+    h0NCS := rank HH^0 normalSheaf(C,S);
+    if o.Verbose then << "-- h^0(N_{C,S}) = " << h0NCS << endl;
+    if o.Verbose then << "-- dimension of the family of reducible surfaces S ∪ P in ℙ⁵ (alternative method): h^0(N_{S,ℙ⁵}) + h^0(N_{C,S}) = " << h0N + h0NCS << emo(h0N + h0NCS == dimFamReducSurf) << endl;
+    b := dim target rationalMap(S+P,3);
+    if o.Verbose then << "-- h^0(I_{S ∪ P, ℙ⁵}(3)) = " << b+1 << endl;
+    if o.Verbose then << "-- dimension of the incidence variety {(S,P,X) : S ∪ P ⊂ X}: " << dimFamReducSurf << " + " << b << " = " << dimFamReducSurf + b << endl;
+    if o.Verbose then << endl << "-- computing the normal sheaf of S in X..." << endl << flush;
+    NSX := normalSheaf(S,X);
+    if o.Verbose then << "-- normal sheaf computed; computing h^0(N_{S,X})..." << endl << flush;
+    h0NSX := rankHH(0,NSX);
+    if o.Verbose then << "-- h^0(N_{S,X}) = " << h0NSX << endl << flush;
+    if o.Verbose then << "-- computing the normal sheaf of P in X..." << endl << flush;
+    NPX := normalSheaf(P,X);
+    if o.Verbose then << "-- normal sheaf computed; computing h^0(N_{P,X})..." << endl << flush;
+    h0NPX := rankHH(0,NPX);
+    if o.Verbose then << "-- h^0(N_{P,X}) = " << h0NPX << endl << flush;
+    if h0NPX != 0 then error "expected to obtain h^0(N_{P,X}) = 0";
+    local dimFamReducSurfInX;
+    if h0NSX + h0NPX == 0 then (
+        dimFamReducSurfInX = 0;
+    ) else (
+        V := S + P;
+        if o.Verbose then << "-- computing the normal sheaf of S ∪ P in X..." << endl << flush;
+        NVX := normalSheaf(V,X);
+        if o.Verbose then << "-- normal sheaf computed; computing h^0(N_{S ∪ P,X})..." << endl << flush;
+        h0NVX := rankHH(0,NVX);
+        if o.Verbose then << "-- h^0(N_{S ∪ P,X}) = " << h0NVX << endl << flush;
+        if o.Verbose then << "-- computing N_{S ∪ P,X} ⊗ I_{C,S ∪ P}..." << endl << flush;
+        NVXrel := relativeNormalSheaf(C,V,X);
+        if o.Verbose then << "-- relative normal sheaf computed; computing h^0(N_{S ∪ P,X} ⊗ I_{C,S ∪ P})..." << endl << flush;
+        h0NVXrel := rankHH(0,NVXrel);
+        if o.Verbose then << "-- h^0(N_{S ∪ P,X} ⊗ I_{C,S ∪ P}) = " << h0NVXrel << endl << flush;
+        a := rankHH(0,normalSheaf(C,P));
+        a' := binomial((degree C)+2,2) - 1 - numberNodes S;
+        if o.Verbose then << "-- dimension of the family of curves C ⊂ P: " << a' << " (h^0(N_{C,P}) = " << a << ")" << endl;
+        dimFamReducSurfInX = min(h0NVX, h0NSX + h0NPX, h0NVXrel + a');
+    );
+    if o.Verbose then << "-- upper bound for the dimension of the family of reducible surfaces S ∪ P in X: " << dimFamReducSurfInX << endl;
+    z := 54 - (dimFamReducSurf + b - dimFamReducSurfInX);
+    if o.Verbose then << "-- codim. in C_8 of {[X] : S ∪ P ⊂ X} ≤ " << 54 << " - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << emo(z == 1) << endl;
+    return X.cache#(S,P,"parameterCount") = (z, (b+1, dimFamReducSurf, dimFamReducSurfInX));
+);
+
+relativeNormalSheaf = method(TypicalValue => CoherentSheaf);
+relativeNormalSheaf (MultiprojectiveVariety,MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y,Z) -> (
+    if Y.cache#?("relativeNormalSheaf",X,Z) then return Y.cache#("relativeNormalSheaf",X,Z);
+    if not (isSubset(X,Y) and isSubset(Y,Z)) then error "expected a triple of nested varieties";
+    N := normalSheaf(Y,Z);
+    I := new CoherentSheafOnEmbeddedProjectiveVariety from sheaf sub(ideal X,ring variety N);
+    if projectiveVariety gens ideal I.variety != Y then error "internal error encountered";
+    I.variety.cache#"embedded projective variety" = Y;
+    NI := new CoherentSheafOnEmbeddedProjectiveVariety from (N ** I);
+    if projectiveVariety gens ideal NI.variety != Y then error "internal error encountered";
+    NI.variety.cache#"embedded projective variety" = Y;
+    Y.cache#("relativeNormalSheaf",X,Z) = NI
+);
+
+rankExt1 = method(TypicalValue => ZZ);
+rankExt1 MultiprojectiveVariety := X -> (
+    I := idealOfSubvariety X;
+    R := (ring I)/I;
+    E1 := Ext^1(sheaf((module I) ** R), sheaf R);
+    rank E1
+);
+
 ------------------------------------------------------------------------
 ----------- Recognition and auxiliary utilities for D. S. C. F. --------
 ------------------------------------------------------------------------
@@ -415,11 +538,9 @@ isSurfaceUknownToBeAlreadyEquidimensional = (X,mu) -> (
     return false;
 );
 
-isNormalizationKnownToTerminateQuickly = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-17", "DSCF-V1-27", "DSCF-V1-30"});
+isNormalizationKnownToTerminateQuickly = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-4", "DSCF-V1-17", "DSCF-V1-27", "DSCF-V1-30"});
 
-isHigherDegreeCurveInExceptionalSetKnownToBeSpecial = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-34","DSCF-V1-40"});
-
-isSelfIntersectionVerificationKnownToBeSuperfluous = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-40"});
+isSelfIntersectionVerificationKnownToBeSuperfluous = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-34", "DSCF-V1-40"});
 
 someExceptionalCurvesKnownToAppearWithMultiplicity = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-5", "DSCF-V1-14"});
 
@@ -429,7 +550,11 @@ setStrategyDSCFtoK3 = (X,Str) -> (
         if member(recognizeDSCF X,{"DSCF-V1-13","DSCF-V1-18","DSCF-V1-24","DSCF-V1-25","DSCF-V1-27","DSCF-V1-31","DSCF-V1-40"}) then return "Approximate";
         return "Inverse";
     );
-    if isFanoMapToP2xP2 X then return "Approximate";
+    if isFanoMapToP2xP2 X then (
+        -- cases 6, 21, 33, 39 are faster
+        if member(recognizeDSCF X,{"DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-6", "DSCF-V1-8", "DSCF-V1-9", "DSCF-V1-12", "DSCF-V1-21", "DSCF-V1-26", "DSCF-V1-30", "DSCF-V1-33", "DSCF-V1-36", "DSCF-V1-39"}) then return "Inverse";
+        return "Approximate";
+    );
     return "Inverse";
 );
 
@@ -437,13 +562,16 @@ setStrategyDSCFtoPolarize = (Utilde,Str) -> (
     if Str =!= null then return Str;
     X := recoverFourfold Utilde;
     (mu,U,LC,f) := building Utilde;
-    if U.cache#?"special curves on U" or isHigherDegreeCurveInExceptionalSetKnownToBeSpecial(X) then return "SpecialCurve";
     if isFanoMapStandard X then (
-        if member(recognizeDSCF X,{"DSCF-V1-6","DSCF-V1-21","DSCF-V1-26","DSCF-V1-30","DSCF-V1-33","DSCF-V1-36","DSCF-V1-39"}) then return "MapFromU";
-        if f =!= null then return "MapFromW" else return "MapFromW-Virtual";
+        if U.cache#?"special curves on U" then (
+            if member(recognizeDSCF X, {"DSCF-V1-6", "DSCF-V1-31", "DSCF-V1-32", "DSCF-V1-34", "DSCF-V1-37", "DSCF-V1-40"}) or (not U.cache#?"birational maps from X to W and from W to X") then (
+                if f =!= null or isNormalizationKnownToTerminateQuickly X then return "SpecialCurve" else return "SpecialCurve-Virtual";
+            );
+        );
+        if f =!= null or isNormalizationKnownToTerminateQuickly X then return "Genus2Curve" else return "Genus2Curve-Virtual";
     );
     if isFanoMapToP2xP2 X then (
-        if f =!= null then return "MapFromU" else return "MapFromU-Virtual";
+        if f =!= null or isNormalizationKnownToTerminateQuickly X then return "MapFromU" else return "MapFromU-Virtual";
     );
     return "MapFromU";
 );

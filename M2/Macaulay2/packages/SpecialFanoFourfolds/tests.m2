@@ -398,13 +398,11 @@ T = polarizedK3surface polarizedK3surface X;
 assert(computationStatus T == 4)
 f = map(T,1,1);
 assert(source f === projectiveVariety T and dim ambient source f == 4 and dim ambient target f == 8)
-E = T(1,1);
-assert(E === image f and degree E == 14 and sectionalGenus E == 8)
-assert((latticePolarization T)(1,1) === E)
+E = image f;
+assert(dim E == 2 and degree E == 14 and sectionalGenus E == 8)
 T' = polarizedK3surface(T,Strategy=>"MapFromU-Virtual")
 assert(computationStatus T == 3)
 assert instance(T'(1,1),LatticePolarizationOnK3Surface)
-assert((polarizedK3surface(T,Strategy=>"SpecialCurve"))(1,1) === E)
 ///
 
 TEST /// -- test 29 isAdmissible
@@ -428,4 +426,22 @@ assert(isAdmissibleGM 20);
 assert(not isAdmissibleGM 8);   -- d must exceed 8
 assert(not isAdmissibleGM 12);  -- a small prime in d with the wrong residue mod 4
 assert(not isAdmissibleGM 16);  -- d % 8 must not be 0
+///
+
+TEST /// -- test 31 -- K3 surface of genus 2
+X = specialFourfold surface((2,0),(1,0));
+E = polarizedK3surface polarizedK3surface(X,Strategy=>"Genus2Curve")
+assert(genus E == 4 and degree surface E == 6)
+E' = E(0,1)
+assert(genus E' == 2 and degree surface E' == 6 and degrees ring ambient surface E' === {{1},{1},{1},{3}})
+f = compose last building E'
+assert(source f === (building E)_1 and target f === surface E')
+(p,q) := (point source f,point target f)
+assert(p == f^* f p and q == f f^* q)
+assert(E(2) === E')
+L' = latticePolarization E'
+h = map(L',1,1)
+assert(instance(h,WeightedRationalMap) and dim target h == 12)
+g = quadricFibration map(L',1,0);
+assert(dim discriminant g == 1 and degree discriminant g == 6 and dim singularLocus discriminant g == -1)
 ///
