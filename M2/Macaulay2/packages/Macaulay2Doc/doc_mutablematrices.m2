@@ -336,3 +336,61 @@ document {
      EXAMPLE "columnRankProfile transpose mutableMatrix {{1,2,3}, {0,0,0.}, {3,4,5} }",
      SeeAlso => { rowRankProfile }
      }
+
+document { Key => {mutableMatrix,
+	  (mutableMatrix, MutableMatrix),
+	  (mutableMatrix, Matrix),
+	  (mutableMatrix, List),
+	  (mutableMatrix, Ring, List),
+	  (mutableMatrix, RingFamily, List),
+	  [mutableMatrix, Dense]},
+     Headline => "make a mutable matrix",
+     Usage => "mutableMatrix m",
+     Inputs => { "m" => {ofClass{Matrix, MutableMatrix, List}},
+	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
+	  },
+     Outputs => {{ "a new mutable matrix whose entries are obtained from ", TT "m", ".  If ", TT "m", " is a list, it should
+	       be a doubly nested list (table) of ring elements, all from the same ring." }},
+     EXAMPLE lines ///
+     	  f = mutableMatrix {{1,2,3,4}}
+	  f_(0,2)
+	  f_(0,2) = 33
+	  f
+	  R = QQ[a..z]
+	  mutableMatrix genericMatrix(R,3,3)
+     ///
+     }
+document { Key => {(mutableMatrix, Ring, ZZ, ZZ),(mutableMatrix, RingFamily, ZZ, ZZ) },
+     Headline => "make a mutable matrix filled with zeroes",
+     Usage => "mutableMatrix(R,nrows,ncols)",
+     Inputs => { "R",
+	          "nrows",
+		  "ncols",
+	  	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
+		  },
+     Outputs => {{"an ", TT "nrows", " by ", TT "ncols", " mutable matrix filled with zeroes from the ring ", TT "R" }},
+     EXAMPLE lines ///
+         m = mutableMatrix(QQ,10,20)
+	 m_(5,5) = 11/13
+	 m
+     ///,
+     SeeAlso => {mutableIdentity, mutableMatrix}
+     }
+document { Key => {(mutableIdentity, Ring, ZZ),(mutableIdentity, RingFamily, ZZ),
+	  [mutableIdentity,Dense],
+	  mutableIdentity},
+     Headline => "make a mutable identity matrix",
+     Usage => "mutableIdentity(R,nrows)",
+     Inputs => { "R",
+	  "nrows",
+	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
+	  },
+     Outputs => {
+	  MutableMatrix => {"an ", TT "nrows", " by ", TT "nrows", " mutable identity matrix filled with elements of the ring ", TT "R" }},
+     EXAMPLE lines ///
+         m = mutableIdentity(QQ,10)
+	 m_(5,5) = 11/13
+	 m
+     ///,
+     SeeAlso => {mutableMatrix}
+     }
