@@ -22,6 +22,7 @@ expression MutableMatrix := m -> MatrixExpression append(
 texMath MutableMatrix := m -> texMath expression m
 net MutableMatrix := m -> net expression m
 toExternalString MutableMatrix := lookup(toExternalString, MutableHashTable)
+MutableMatrix.AfterPrint = Matrix.AfterPrint
 
 map(Ring,RawMutableMatrix) := opts -> (R,m) -> (
      new MutableMatrix from {
