@@ -412,15 +412,21 @@ doc ///
     (mutableMatrix, MutableMatrix)
     (mutableMatrix, Matrix)
     (mutableMatrix, List)
+    (mutableMatrix, Number)
+    (mutableMatrix, RingElement)
     (mutableMatrix, Ring, List)
+    (mutableMatrix, Ring, Number)
+    (mutableMatrix, Ring, RingElement)
     (mutableMatrix, RingFamily, List)
+    (mutableMatrix, RingFamily, Number)
+    (mutableMatrix, RingFamily, RingElement)
     [mutableMatrix, Dense]
   Headline
     make a mutable matrix
   Usage
     mutableMatrix m
   Inputs
-    m:{Matrix, MutableMatrix, List}
+    m:{Matrix, MutableMatrix, List, Number, RingElement}
     Dense => Boolean
       whether the encoding of the matrix should be dense or not: see
       @TO MutableMatrix@
@@ -437,6 +443,15 @@ doc ///
       f
       R = QQ[a..z]
       mutableMatrix genericMatrix(R,3,3)
+    Text
+      If the argument is a number or a ring element, then the result is a
+      $1\times 1$ mutable matrix.  The ring may be given as well, as the
+      first argument.
+    Example
+      mutableMatrix 5
+      ring oo
+      mutableMatrix(RR, 5)
+      ring oo
 ///
 
 doc ///
