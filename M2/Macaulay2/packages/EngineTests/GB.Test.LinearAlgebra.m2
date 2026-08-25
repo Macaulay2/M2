@@ -371,6 +371,91 @@ TEST /// -- multigradings
   assert(gbA == gbC)
 ///
 
+-- Tests added to cover the monomial_word int64_t fix (was 'long', which is
+-- 32-bit on armhf).  The original failing case was GF(125) with MonomialSize=>8.
+-- These tests exercise other extension fields, more variables, and MonomialSize=>16
+-- to give broader coverage on 32-bit platforms.
+
+-*
+  restart
+*-
+TEST /// -- F4 over GF(4) = GF(2^2) with MonomialSize=>8
+  kk = GF 4;
+  R1 = kk[a..f, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-3,-3,-4,-4});
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, DegreeLimit => 8);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra, DegreeLimit => 8);
+  assert(gbC == gbB)
+///
+
+-*
+  restart
+*-
+TEST /// -- F4 over GF(9) = GF(3^2) with MonomialSize=>8
+  kk = GF 9;
+  R1 = kk[a..f, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-3,-3,-4,-4});
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, DegreeLimit => 8);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra, DegreeLimit => 8);
+  assert(gbC == gbB)
+///
+
+-*
+  restart
+*-
+TEST /// -- F4 over GF(27) = GF(3^3) with MonomialSize=>8
+  kk = GF 27;
+  R1 = kk[a..f, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-3,-3,-4,-4});
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, DegreeLimit => 8);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra, DegreeLimit => 8);
+  assert(gbC == gbB)
+///
+
+-*
+  restart
+*-
+TEST /// -- F4 over GF(125) with MonomialSize=>16 (GRevLex2 packing path)
+  kk = GF 125;
+  R1 = kk[a..g, MonomialSize=>16];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-4,-4,-5,-5});
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, DegreeLimit => 10);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra, DegreeLimit => 10);
+  assert(gbC == gbB)
+///
+
+-*
+  restart
+*-
+TEST /// -- F4 over ZZ/101 with MonomialSize=>8 and more variables (10)
+  -- More variables stress more monomial slots and the hash accumulator.
+  kk = ZZ/101;
+  R1 = kk[a..j, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-3,-3,-3,-3});
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, DegreeLimit => 6);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra, DegreeLimit => 6);
+  assert(gbC == gbB)
+///
+
+-*
+  restart
+*-
+TEST /// -- F4 over GF(125) with 10 variables and MonomialSize=>8
+  -- Combines non-prime field with more variables than the original failing test.
+  kk = GF 125;
+  R1 = kk[a..j, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-3,-3,-3,-3});
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, DegreeLimit => 6);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra, DegreeLimit => 6);
+  assert(gbC == gbB)
+///
+
 -- todo:
 --  error for quotient rings (for LinearAlgebra)
 --  error for exterior algebra
