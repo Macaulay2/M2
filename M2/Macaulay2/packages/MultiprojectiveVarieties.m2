@@ -11,8 +11,8 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "2.7.1", 
-    Date => "April 18, 2023",
+    Version => "2.7.2", 
+    Date => "August 26, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -1568,7 +1568,8 @@ image (MultirationalMap,String) := (Phi,alg) -> (
 -- consider implementing image(MultihomogeneousRationalMap,String) in Cremona.m2
 image (WeightedRationalMap,String) := (Phi,alg) -> (
     -- if alg =!= "F4" and alg =!= "MGB" then error "expected Strategy to be \"F4\" or \"MGB\"";
-    if Phi#"image" =!= null then return image Phi;
+    if Phi#"image" =!= null then return Phi#"image";
+    if Phi#"isDominant" === true then return target Phi;
     n := dim ambient source Phi;
     m := dim ambient target Phi;
     K := coefficientRing Phi;
@@ -1582,9 +1583,10 @@ image (WeightedRationalMap,String) := (Phi,alg) -> (
     V := I + J + ideal(F - matrix{{x_0..x_m}});
     G := groebnerBasis(V,Strategy=>alg);
     G' := ideal sub(selectInSubring(1,G),K[x_0..x_m]);
-    Z := projectiveVariety(sub(G',vars ring ambient target Phi),MinimalGenerators=>false,Saturate=>false);
-    forceImage(Phi,Z);
-    image Phi
+    Phi#"image" = projectiveVariety(sub(G',vars ring ambient target Phi),MinimalGenerators=>false,Saturate=>false);
+    Phi#"isDominant" = Phi#"image" == target Phi;
+    if Phi#"isDominant" then Phi#"image" = target Phi;
+    Phi#"image"
 );
 
 forceImage (MultirationalMap,MultiprojectiveVariety) := (Phi,X) -> (
