@@ -691,7 +691,9 @@ document {
 
 doc ///
   Key
-    changeDirectory
+     changeDirectory
+    (changeDirectory, String)
+    1:changeDirectory
   Headline
     change the current working directory
   Usage
@@ -702,7 +704,8 @@ doc ///
     :String -- the new working directory
   Description
     Text
-      Change the current working directory to @VAR "dir"@.
+      Change the current working directory to @VAR "dir"@.  Any relatives paths
+      in @TO "path"@ are updated accordingly.
     Example
       dir = temporaryFileName()
       makeDirectory dir
@@ -710,7 +713,11 @@ doc ///
       currentDirectory()
     Text
       If @VAR "dir"@ is omitted, then the current working directory
-      is changed to the user's home directory.
+      is changed to the user's home directory
+  Caveat
+    Calling this function in Emacs will break the "jump to source" feature when
+    clicking on the output of @TO locate@ unless you also update Emacs's working
+    directory with @KBD "M-x cd"@..
   SeeAlso
     currentDirectory
 ///
