@@ -600,6 +600,6 @@ unverifiedExpectedGenusOfK3FromExceptionalCurves = (X,U,L,C) -> (
     if isFanoMapStandard X and recognizeDSCF X === "DSCF-V1-20" then return (true, (sectionalGenus U)+2);
     << "-- warning: expected invariants of the K3 surface unavailable; unverified values may be used" << endl;
     if isFanoMapStandard X and member(recognizeDSCF X,{"DSCF-V1-5","DSCF-V1-14"}) then return (false, (sectionalGenus U)+1);
-    if isFanoMapStandard X and recognizeDSCF X === "DSCF-V1-16" then (false, sectionalGenus U);
+    if isFanoMapStandard X and recognizeDSCF X === "DSCF-V1-16" then return (false, sectionalGenus U);
     (false, 2)
 );
