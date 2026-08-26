@@ -34,7 +34,7 @@ newPackage(
 	}
 )
 
-requiredMultiprojectiveVarietiesVersion := "2.7.1";
+requiredMultiprojectiveVarietiesVersion := "2.7.2";
 if MultiprojectiveVarieties.Options.Version < requiredMultiprojectiveVarietiesVersion then (
     <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version "<<requiredMultiprojectiveVarietiesVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
