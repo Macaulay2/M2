@@ -48,3 +48,11 @@ f = x^4 + y^4 + z^4;
 R = S / ideal(f);
 I = ideal(x^3, x^2+y^2);
 integralClosure(I) -- crashed, now ok.
+
+-- git issue #732: resume a min-gens computation with a Hilbert hint
+R = QQ[a..k]
+I = trim ideal(a*b+c*d, a*e+b*f+c*g+d*h)
+M = cokernel gens I
+use degreesRing R
+M.cache.poincare = 1-2*T^2+T^4
+assert(dim I == 9)
