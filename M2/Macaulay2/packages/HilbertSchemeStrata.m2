@@ -253,7 +253,7 @@ document {
   generators of an ideal corresponding to a point in the Hilbert scheme, and then to compute the 
   flattening relations via Buchberger tests. The main purpose of this package 
   is to provide code for the computations of Section 13.5 of [S25]. 
-  A more complete package is profide by Nathan Ilten [N].", 
+  A more complete package is provided by Nathan Ilten [N].", 
 
    PARA{},
     SUBSECTION "Setup for the construction",
