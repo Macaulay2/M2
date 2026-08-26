@@ -608,7 +608,7 @@ doc ///
     Text
       Given a family fam over Spec R, the function returns the 
       pullback family under the map R to ring h.
-      We illustate this with the Piene-Schlessinger example.     
+      We illustrate this with the Piene-Schlessinger example.     
     Example
      kk=QQ
      S=kk[x_0..x_3]--,MonomialOrder=>Lex]
