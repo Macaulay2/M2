@@ -442,7 +442,7 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
     if o.Verbose then << "-- upper bound for the dimension of the family of reducible surfaces S ∪ P in X: " << dimFamReducSurfInX << endl;
     z := 54 - (dimFamReducSurf + b - dimFamReducSurfInX);
     if o.Verbose then << "-- codim. in C_8 of {[X] : S ∪ P ⊂ X} ≤ " << 54 << " - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << emo(z == 1) << endl;
-    return X.cache#(S,P,"parameterCount") = (z, (b+1, dimFamReducSurf, dimFamReducSurfInX));
+    X.cache#(S,P,"parameterCount") = (z, (b+1, dimFamReducSurf, dimFamReducSurfInX))
 );
 
 relativeNormalSheaf = method(TypicalValue => CoherentSheaf);

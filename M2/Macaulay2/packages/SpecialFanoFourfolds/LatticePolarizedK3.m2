@@ -31,10 +31,11 @@ coefficientRing LatticePolarizationOnK3Surface := L -> coefficientRing L#"Underl
 recoverFourfold LatticePolarizationOnK3Surface := L -> L#"DoublySpecialFourfold";
 basis LatticePolarizationOnK3Surface := o -> L -> (
     if L.cache#?"LatticePolarizationBasis" then return L.cache#"LatticePolarizationBasis";
+    if L#"isVirtual" then error "cannot determine a basis for a virtual lattice";
     S := L#"UnderlyingSurface";
     H := S * random(1,0_S);
     C := L#"specialCurve";
-    assert(dim H == 1 and dim C == 1);
+    if not(dim H == 1 and C =!= null and dim C == 1) then error "internal error encountered while determining a basis for the lattice";
     L.cache#"LatticePolarizationBasis" = (H%S,C%S)
 );
 surface LatticePolarizationOnK3Surface := L -> L#"UnderlyingSurface";
@@ -127,6 +128,7 @@ mapDefinedByLatticePolarization (LatticePolarizationOnK3Surface,ZZ,ZZ,ZZ) := o -
     if g <= 0 then error "map target must have dimension >= 1";
     M := latticeMatrix L;
     if 2*g - 2 != a^2*M_(0,0) + 2*a*b*M_(0,1) + b^2*M_(1,1) then error "internal error: target of map between K3 surfaces would lie in an unexpected projective space";
+    if L#"isVirtual" then error "cannot determine the map defined by a virtual lattice";
     T := L#"UnderlyingSurface";
     if dim T == -1 then error "underlying K3 surface not fully computed";
     C := L#"specialCurve";
@@ -226,9 +228,12 @@ scanPolarizations (ZZ,Matrix) := (i,M) -> (
         for b from -i to i do (
             g' = (a^2*(2*g-2) + 2*a*b*d + b^2*n + 2)/2;
             d' = a*d + b*n;
-            if floor g' == g' and g' >= 2 and d' >= 1 and gcd(a,b) == 1 and (2*g'-2)*n - d'^2 != 0 then (
+            if floor g' == g' and g' >= 3 and d' >= 1 and gcd(a,b) == 1 and (2*g'-2)*n - d'^2 != 0 then (
                 g' = lift(g',ZZ);
                 L = prepend((g', d', n, a, b, (2*g'-2)*n - d'^2), L);
+            );
+            if g' == 2 and a*(2*g-2) + b*d >= 1 and gcd(a,b) == 1 and 2*(2*g-2) - (a*(2*g-2) + b*d)^2 != 0 then (
+                L = prepend((2, a*(2*g-2) + b*d, 2*g-2, a, b, 2*(2*g-2) - (a*(2*g-2) + b*d)^2), L);
             );
         );
     );
@@ -528,7 +533,7 @@ K3SurfaceFromDoublySpecialCubicFourfold Sequence := (E,ab) -> (
     );
     if Verb then (
         if det A != det M then (
-            << ("-- incorrect lattice discriminant on the genus "|(toString g)|" K3 surface: "|(toString det A)) << endl;
+            << "-- incorrect lattice discriminant on the genus " << g << " K3 surface: " << det A << endl;
         ) else (
             << "-- (✓) polarized K3 surface of genus "<< g << " in " << (net P) << " successfully constructed" << endl;
         );
@@ -537,17 +542,22 @@ K3SurfaceFromDoublySpecialCubicFourfold Sequence := (E,ab) -> (
 );
 
 K3SurfaceFromDoublySpecialCubicFourfold ZZ := (E,g) -> (
+    if g < 2 then error "expected genus at least 2";
     M := latticeMatrix latticePolarization E;
     findPair := () -> (
         bound := 15;
-        cond := (a,b) -> a^2*M_(0,0) + 2*a*b*M_(0,1) + b^2*M_(1,1) == 2*g - 2;
+        cond := (a,b) -> (
+            if gcd(a,b) != 1 or a^2*M_(0,0) + 2*a*b*M_(0,1) + b^2*M_(1,1) != 2*g - 2 then return false;
+            if g == 2 then return a*M_(0,0) + b*M_(0,1) >= 1 and 2*M_(0,0) - (a*M_(0,0) + b*M_(0,1))^2 != 0;
+            a*M_(0,1) + b*M_(1,1) >= 1 and (2*g-2)*M_(1,1) - (a*M_(0,1) + b*M_(1,1))^2 != 0
+        );
         for a to bound do (
             for b to bound do (
                 if cond(a,b) then return (a,b);
                 if cond(a,-b) then return (a,-b);
             );
         );
-        error("failed to find a divisor D = aH+bC on K3 surface with D^2 = "|toString(2*g-2));
+        error("failed to find a valid divisor D = aH+bC on K3 surface with D^2 = "|toString(2*g-2));
     );
     (a,b) := findPair();
     E(a,b,Verbose=>true)
