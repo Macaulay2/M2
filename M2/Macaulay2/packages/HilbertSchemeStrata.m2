@@ -598,7 +598,7 @@ doc ///
     fam: Matrix
         of generators of ideal depending on some parameter in R
     S: Ring
-       the embient ring of of the special fiber
+       the ambient ring of of the special fiber
     h: Matrix 
        describing a substitution R to ring h   	 
   Outputs
