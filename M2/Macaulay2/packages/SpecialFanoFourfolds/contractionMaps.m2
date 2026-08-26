@@ -84,6 +84,11 @@ exceptionalCurves DoublySpecialCubicFourfold := o -> X -> (
     if o.Verbose then << "-- obtaining surface U corresponding to fourfold X..." << endl;
     U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
     if U.cache#?"exceptionalCurves" then return U.cache#"exceptionalCurves";
+    if isExceptionalLinesFastApplicable X then (
+        if o.Verbose then << "-- determining exceptional lines on U (fast method)..." << endl;
+        fastLinesU := exceptionalLinesFast(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
+        return U.cache#"exceptionalCurves" = (fastLinesU,(0_U)%U);
+    );
     if o.Verbose then << endl << "-- obtaining surface U' corresponding to another fourfold X'..." << endl;
     X' := random X;
     if ideal X' == ideal X then (
@@ -200,6 +205,51 @@ fixHigherDegreeExceptionalCurvesIfNecessary = (X,U,Str,Verb) -> (
         );
     );
     return U.cache#"exceptionalCurves";
+);
+
+exceptionalLinesFast = method(Options => {Verbose => true, Strategy => null});
+exceptionalLinesFast DoublySpecialCubicFourfold := o -> X -> (
+    mu := fanoMapDSCF(X,Verbose=>o.Verbose);
+    U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
+    g := quadricFibration X;
+    S := surface X;
+    gS := g|S;
+    pts := decompose baseLocus inverse gS;
+    assert all(pts, p -> isPoint p);
+    if o.Verbose then << "  -- number of points in the base locus of (π_P)|S^(-1): " << #pts << endl;
+    L := {}; C := {}; D := {};
+    local F;
+    for p in pts do (
+        F = gS^* p;
+        assert(dim F == 1);
+        if degree F == 1
+        then L = append(L,p)
+        else if degree F == 2 and isPresumedRationalNormalCurve F
+        then C = append(C,p)
+        else D = append(D,p);
+    );
+    if o.Verbose then (
+        << "  -- curves in the pullback via (π_P)|S: lines: " << #L << "; conics: " << #C;
+        if #D > 0 then << "; remaining curve degrees: " << toString apply(D, p -> degree(gS^* p));
+        << endl;
+    );
+    linesU := apply(L, p -> mu g^* p);
+    if not all(linesU, l -> dim l == 1 and degree l == 1 and isSubset(l,U)) then error "something went wrong: expected to obtain lines on surface U";
+    nodesU := apply(C, p -> mu g^* p);
+    if not all(nodesU, p -> isPoint p and dim tangentSpace(U,p) > 2) then error "something went wrong: expected to obtain nodes on surface U";
+    if #nodesU > 0 and (not U.cache#?"singularLocus") then U.cache#"singularLocus" = (sum nodesU)%U;
+    LinesU := (0_U)%U;
+    if #linesU > 0 then (
+        LinesU = (sum linesU)%U;
+        LinesU.cache#"Decomposition" = linesU;
+    );
+    LinesU
+);
+
+isExceptionalLinesFastApplicable = method();
+isExceptionalLinesFastApplicable DoublySpecialCubicFourfold := X -> (
+    if not isFanoMapStandard X then return false;
+    member(recognizeDSCF X, {"DSCF-V1-1", "DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-7", "DSCF-V1-8", "DSCF-V1-9", "DSCF-V1-11", "DSCF-V1-12", "DSCF-V1-15", "DSCF-V1-16", "DSCF-V1-17", "DSCF-V1-18", "DSCF-V1-21", "DSCF-V1-23", "DSCF-V1-25", "DSCF-V1-26", "DSCF-V1-28", "DSCF-V1-29", "DSCF-V1-30", "DSCF-V1-32", "DSCF-V1-33", "DSCF-V1-35", "DSCF-V1-36", "DSCF-V1-37", "DSCF-V1-38", "DSCF-V1-39", "DSCF-V1-40"})
 );
 
 mapFromExceptionalCurves = method(Options => {Verbose => true, Strategy => null, "Normalization" => false, "ForceExperimentalNormalization" => false, "TargetExpDim" => null, "IsK3Type" => true});
