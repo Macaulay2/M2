@@ -593,7 +593,7 @@ doc ///
   Headline 
    substitute a family of ideal using h
   Usage
-    fam1 = substitute(fam,S,h)
+    fam1 = substituteFamily(fam,S,h)
   Inputs
     fam: Matrix
         of generators of ideal depending on some parameter in R
