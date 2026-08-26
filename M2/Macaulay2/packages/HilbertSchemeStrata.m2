@@ -479,7 +479,7 @@ doc ///
   Description
     Text
       The list L is list of edges of an oriented graph.
-      The functions checks whether the graph is dericted, i.e., contains no loops.
+      The function checks whether the graph is directed, i.e., contains no loops.
     Example
       L={(0,1),(0,2),(1,2)}
       isDirectedGraph L
