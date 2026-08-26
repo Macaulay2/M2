@@ -124,7 +124,7 @@ mapDefinedByLatticePolarization = method(Options => {Verbose => true, Verify => 
 
 mapDefinedByLatticePolarization (LatticePolarizationOnK3Surface,ZZ,ZZ,ZZ) := o -> (L,g,a,b) -> (
     if L.cache#?("map",g,a,b) then return L.cache#("map",g,a,b);
-    if g < 2 then error "genus of K3 surface must be >= 2";
+    if g <= 0 then error "map target must have dimension >= 1";
     M := latticeMatrix L;
     if 2*g - 2 != a^2*M_(0,0) + 2*a*b*M_(0,1) + b^2*M_(1,1) then error "internal error: target of map between K3 surfaces would lie in an unexpected projective space";
     T := L#"UnderlyingSurface";
@@ -183,17 +183,18 @@ mapDefinedByLatticePolarization (LatticePolarizationOnK3Surface,WeightedProjecti
     T := projectiveVariety kernel(map toRationalMap h, SubringLimit=>1);
     if dim T != 2 then error "expected the image to be a surface";
     if o.Verify and degrees T =!= {({6}, 1)} then (
-        if o.Verbose then (
-            << "  -- expected the image to be a surface of degree 6 in PP(1,1,1,3), but obtained: " << (? T) << endl;
-            << "  -- recomputing image using standard methods..." << endl;
-        );
-        T = image(h,"F4");
-        if degrees T =!= {({6}, 1)} then error("expected the image to be a surface of degree 6 in PP(1,1,1,3), but obtained: "|toString(? T));
+        error("expected the image to be a surface of degree 6 in PP(1,1,1,3), but obtained: "|toString(? T));
+    --  if o.Verbose then (
+    --      << "  -- expected the image to be a surface of degree 6 in PP(1,1,1,3), but obtained: " << (? T) << endl;
+    --      << "  -- recomputing image using standard methods..." << endl;
+    --  );
+    --  T = image(h,"F4");
+    --  if degrees T =!= {({6}, 1)} then error("expected the image to be a surface of degree 6 in PP(1,1,1,3), but obtained: "|toString(? T));
     );
     if h#"image" === null then forceImage(h,T);
     h = rationalMap(h,Dominant=>true);
-    if o.Verbose then << "  -- obtained map to sextic surface in PP(1,1,1,3)" << endl;
     if o.Verify then (
+        if o.Verbose then << "  -- obtained map to sextic surface in PP(1,1,1,3)" << endl;
         p := point source h;
         if p != h^* h p then error "expected to obtain a birational map";
         p = point target h;
@@ -205,7 +206,7 @@ mapDefinedByLatticePolarization (LatticePolarizationOnK3Surface,WeightedProjecti
     L.cache#("map",P,a,b) = h
 );
 
-map(LatticePolarizationOnK3Surface,ZZ,ZZ) := o -> (L,a,b) -> mapDefinedByLatticePolarization(L,a,b,Verbose=>true,Verify=>true);
+map(LatticePolarizationOnK3Surface,ZZ,ZZ) := o -> (L,a,b) -> mapDefinedByLatticePolarization(L,a,b,Verbose=>false,Verify=>true);
 
 ------------------------------------------------------------------------
 ------------------------------------------------------------------------
@@ -460,6 +461,13 @@ recoverFourfold EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> recoverF
 
 K3SurfaceFromDoublySpecialCubicFourfold Sequence := (E,ab) -> (
     Verb := true;
+    if #ab == 3 and instance(last ab,Option) then (
+        opt := toSequence last ab;
+        if first opt =!= Verbose then error "Verbose is the only available option";
+        Verb = last opt;
+        if not instance(Verb,Boolean) then error "expected a Boolean value";
+        ab = take(ab,2);
+    );
     if not(#ab == 2 and instance(first ab,ZZ) and instance(last ab,ZZ)) then error "expected a sequence of two integers";
     (a,b) := ab;
     if E.cache#?("EmbeddedByLatticePolarization",a,b) then return E.cache#("EmbeddedByLatticePolarization",a,b);
@@ -470,7 +478,7 @@ K3SurfaceFromDoublySpecialCubicFourfold Sequence := (E,ab) -> (
     if g < 2 then error "invalid pair of integers: map target would have dimension < 2";
     K := coefficientRing E;
     P := if g == 2 then PP_K(1,1,1,3) else PP_K^g;
-    if Verb then << "-- (▫) constructing K3 surface of genus "<< g << " in " << (net P) << endl;
+    if Verb then << "-- (▪) constructing K3 surface of genus "<< g << " in " << (net P) << endl;
     if isVirtualLatticeK3 E then (
         if Verb then << "  -- using divisor D = aH+bC, with D^2=" << 2*g-2 << "=2*" << g << "-2, where (a,b) = " << toString(a,b) << endl;
         errLog := "lattice polarization is virtual; rerun polarizedK3surface with an appropriate option, e.g. Strategy=>\"SpecialCurve\"";
@@ -502,11 +510,29 @@ K3SurfaceFromDoublySpecialCubicFourfold Sequence := (E,ab) -> (
         if not(v00 == 2 and v11 == degree Y) then error("unexpected lattice matrix on the genus 2 K3 surface: "|(toString A));
     ) else (
         D = h L#"specialCurve";
+        if dim D == -1 and sectionalGenus(L#"specialCurve") > 0 then (
+            if Verb then << "  -- need to move curve divisor on K3 surface" << endl;
+            Q := L#"specialCurve";
+            gQ := sectionalGenus Q;
+            mQ := mapDefinedByLatticePolarization(L,gQ,0,1,Verbose=>Verb,Verify=>true);
+            Q' := mQ^* random(1,0_(target mQ));
+            if dim Q' == 1 and degree Q' == degree Q and sectionalGenus Q' == gQ and dim(Q*Q') == 0 and degree(Q*Q') == 2*gQ-2 then (
+                D = h Q';
+            ) else (
+                if Verb then << "  -- failed to move curve divisor" << endl;
+            );
+        );
         if dim D != 1 then error "failed to obtain divisor curve for polarization";
-        if degree D != a*M_(0,1) + b*M_(1,1) then error "failed to obtain polarization: divisor curve has unexpected degree";
+        if degree D != a*M_(0,1) + b*M_(1,1) then error("failed to obtain polarization: divisor curve has degree "|(toString degree D)|", expected "|toString(a*M_(0,1) + b*M_(1,1)));
         A = matrix {{2*g-2, degree D}, {degree D, M_(1,1)}};
     );
-    if det A != det M then << ("-- incorrect lattice discriminant on the genus "|(toString g)|" K3 surface: "|(toString det A)) << endl;
+    if Verb then (
+        if det A != det M then (
+            << ("-- incorrect lattice discriminant on the genus "|(toString g)|" K3 surface: "|(toString det A)) << endl;
+        ) else (
+            << "-- (✓) polarized K3 surface of genus "<< g << " in " << (net P) << " successfully constructed" << endl;
+        );
+    );
     E.cache#("EmbeddedByLatticePolarization",a,b) = embeddedK3SurfaceFromDoublySpecialCubicFourfold(E,h,D,A)
 );
 
@@ -523,7 +549,8 @@ K3SurfaceFromDoublySpecialCubicFourfold ZZ := (E,g) -> (
         );
         error("failed to find a divisor D = aH+bC on K3 surface with D^2 = "|toString(2*g-2));
     );
-    E findPair()
+    (a,b) := findPair();
+    E(a,b,Verbose=>true)
 );
 
 ------------------------------------------------------------------------
