@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.8.1",
-    Date => "August 26, 2026",
+    Date => "August 27, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -34,7 +34,7 @@ newPackage(
 	}
 )
 
-requiredMultiprojectiveVarietiesVersion := "2.7.2";
+requiredMultiprojectiveVarietiesVersion := "2.7.1";
 if MultiprojectiveVarieties.Options.Version < requiredMultiprojectiveVarietiesVersion then (
     <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version "<<requiredMultiprojectiveVarietiesVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
@@ -110,6 +110,8 @@ load "./SpecialFanoFourfolds/AssociatedSurfaces.m2";
 load "./SpecialFanoFourfolds/contractionMaps.m2";
 
 load "./SpecialFanoFourfolds/mirrorFourfolds.m2";
+
+load "./SpecialFanoFourfolds/LatticePolarizations.m2";
 
 load "./SpecialFanoFourfolds/LatticePolarizedK3.m2";
 
