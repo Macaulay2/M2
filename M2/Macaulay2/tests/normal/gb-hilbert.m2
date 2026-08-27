@@ -1,5 +1,4 @@
 -- test of canUseHilbertHint, Hilbert hint code with M2.
-restart
 R1 = ZZ/101[x,y,z, Degrees => {1,2,3}];
 assert canUseHilbertHint R1
 R2 = ZZ[x,y,z];
@@ -22,7 +21,7 @@ assert not canUseHilbertHint I
 Rlex = ZZ/101[a,b,c,d, Degrees => {2:{1,0}, 2:{0,1}}, MonomialOrder => Lex]
 Ilex = sub(I, Rlex)
 gblex = gens gb(Ilex, Hilbert => hf) -- gives warning, but no error
-assert(numgens ideal gblex == 37) -- happens with given random seed, at least....
+assert(ideal gblex == Ilex)
 
 -- git issue # 3937
 p = 32003
@@ -37,7 +36,7 @@ S = R/(x^3 - y^2*z)
 T = S/(y*w^2 - z*x^2)
 f = map(T, S)
 assert not isWellDefined inverse f -- kernel of a non-welldefined ring map is undefined behavior, but should not crash.
-(ans, err) = trap kernel inverse f -- internal error: incorrect Hilbert function given, aborting, crashses.
+(ans, err) = trap kernel inverse f -- used to abort when given an incorrect Hilbert function
 assert(ans === null)
 -- now it doesn't crash, but the error message is not so good either...
 assert(toString err === "incorrect Hilbert function given")
