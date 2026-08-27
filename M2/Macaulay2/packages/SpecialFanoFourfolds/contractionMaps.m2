@@ -249,7 +249,7 @@ exceptionalLinesFast DoublySpecialCubicFourfold := o -> X -> (
 isExceptionalLinesFastApplicable = method();
 isExceptionalLinesFastApplicable DoublySpecialCubicFourfold := X -> (
     if not isFanoMapStandard X then return false;
-    member(recognizeDSCF X, {"DSCF-V1-1", "DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-7", "DSCF-V1-8", "DSCF-V1-9", "DSCF-V1-11", "DSCF-V1-12", "DSCF-V1-15", "DSCF-V1-16", "DSCF-V1-17", "DSCF-V1-18", "DSCF-V1-21", "DSCF-V1-23", "DSCF-V1-25", "DSCF-V1-26", "DSCF-V1-28", "DSCF-V1-29", "DSCF-V1-30", "DSCF-V1-32", "DSCF-V1-33", "DSCF-V1-35", "DSCF-V1-36", "DSCF-V1-37", "DSCF-V1-38", "DSCF-V1-39", "DSCF-V1-40"})
+    member(recognizeDSCF X, {"DSCF-V1-1", "DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-7", "DSCF-V1-8", "DSCF-V1-9", "DSCF-V1-11", "DSCF-V1-12", "DSCF-V1-15", "DSCF-V1-16", "DSCF-V1-17", "DSCF-V1-18", "DSCF-V1-21", "DSCF-V1-23", "DSCF-V1-25", "DSCF-V1-26", "DSCF-V1-28", "DSCF-V1-29", "DSCF-V1-30", "DSCF-V1-32", "DSCF-V1-33", "DSCF-V1-35", "DSCF-V1-36", "DSCF-V1-37", "DSCF-V1-38", "DSCF-V1-39"}) --, "DSCF-V1-40"})
 );
 
 mapFromExceptionalCurves = method(Options => {Verbose => true, Strategy => null, "Normalization" => false, "ForceExperimentalNormalization" => false, "TargetExpDim" => null, "IsK3Type" => true});
