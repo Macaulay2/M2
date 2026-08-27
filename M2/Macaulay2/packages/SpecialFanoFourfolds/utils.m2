@@ -81,7 +81,7 @@ VirtualInverseWeightedRationalMap EmbeddedProjectiveVariety := (Phi,Z) -> (
 );
 VirtualInverseWeightedRationalMap * MultirationalMap := (Phi,Psi) -> (
     if Psi#"image" === null then (
-        << "-- virtual maps used; computing image and composition..." << endl;
+        << "-- virtual maps used; computing image (using \"F4\") and composition..." << endl;
         -- image Psi; -- too slow
         image(Psi,"F4");
     );
@@ -602,4 +602,24 @@ unverifiedExpectedGenusOfK3FromExceptionalCurves = (X,U,L,C) -> (
     if isFanoMapStandard X and member(recognizeDSCF X,{"DSCF-V1-5","DSCF-V1-14"}) then return (false, (sectionalGenus U)+1);
     if isFanoMapStandard X and recognizeDSCF X === "DSCF-V1-16" then return (false, sectionalGenus U);
     (false, 2)
+);
+
+sanityCheckDSCF = method();
+sanityCheckDSCF K3SurfaceFromDoublySpecialCubicFourfold := E -> (
+    X := recoverFourfold E;
+    (mu,U,LC,f) := building E;
+    if mu.cache#?("InternalConsistencyChecked",X) then return mu.cache#("InternalConsistencyChecked",X);
+    if not isFanoMapStandard X then return mu.cache#("InternalConsistencyChecked",X) = false;
+    (L,C) := toSequence LC;
+    W := target mu;
+    for i from 1 to 40 do (
+        if recognizeDSCF X === "DSCF-V1-"|(toString i) then (
+            if knownDataForRecognizedDSCF i == (degreeOfDefiningForms mu, dim W, degree W, sectionalGenus W, degrees W, dim U, degree U, sectionalGenus U, euler hilbertPolynomial U, degrees U, dim L, degree L, dim C, degree C) then (
+                return mu.cache#("InternalConsistencyChecked",X) = true;
+            ) else (
+                error("data inconsistency detected for recognized DSCF example n. "|(toString i));
+            );
+        );
+    );
+    mu.cache#("InternalConsistencyChecked",X) = false
 );

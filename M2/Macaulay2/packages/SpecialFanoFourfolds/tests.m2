@@ -431,17 +431,20 @@ assert(not isAdmissibleGM 16);  -- d % 8 must not be 0
 TEST /// -- test 31 -- K3 surface of genus 2
 X = specialFourfold surface((2,0),(1,0));
 E = polarizedK3surface polarizedK3surface(X,Strategy=>"Genus2Curve")
-assert(genus E == 4 and degree surface E == 6)
-E' = E(0,1)
-assert(genus E' == 2 and degree surface E' == 6 and degrees ring ambient surface E' === {{1},{1},{1},{3}})
-f = compose last building E'
-assert(source f === (building E)_1 and target f === surface E')
+assert(genus E == 4 and degree E == 6 and degree surface E == 6)
+E' = E(1,0,Verbose=>true)
+assert(genus E' == 4 and degree E' == 6 and degree surface E' == 6)
+E'' = E'(0,1)
+assert(genus E'' == 2 and degree E'' == 2 and degree surface E'' == 6 and degrees ring ambient surface E'' === {{1},{1},{1},{3}})
+(f1,f2,f3) = last building E'';
+f = f1 * f2 * f3;
+assert(source f === (building E)_1 and target f === surface E'')
 (p,q) := (point source f,point target f)
 assert(p == f^* f p and q == f f^* q)
-assert(E(2) === E')
-L' = latticePolarization E'
-h = map(L',1,1)
+assert(E'(2,Verbose=>false) === E'')
+L'' = latticePolarization E''
+h = map(L'',1,1)
 assert(instance(h,WeightedRationalMap) and dim target h == 12)
-g = quadricFibration map(L',1,0);
-assert(dim discriminant g == 1 and degree discriminant g == 6 and dim singularLocus discriminant g == -1)
+g = quadricFibration map(L'',1,0);
+assert(dim target g == 2 and dim discriminant g == 1 and degree discriminant g == 6 and dim singularLocus discriminant g == -1)
 ///
