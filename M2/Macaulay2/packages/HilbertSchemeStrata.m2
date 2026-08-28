@@ -49,15 +49,31 @@ extraTerms(Ideal,ZZ,RingElement) := (I,d,m) ->(
     matrix{select(L,t-> t<m)})
 
 extraTerms(Ideal,ZZ,Ideal) := (I,d,qperp) ->(
-    q1:=ideal image basis(d,module qperp);
-    mingens trim ideal (gens q1%I))
+    S:=ring I;
+    qperp1 := sub(qperp,S);
+    L1:=(entries gens ideal image basis(d,module qperp1))_0;
+    ltI:= (entries (gens leadTerm I))_0;
+    matrix{select(L1,t->all(ltI,l->leadTerm t<l))}
+    )
+/// -* Test extraTerms(Ideal,ZZ,Ideal) *-
+      kk=QQ
+      S=kk[x_0..x_3]
+      I=ideal(x_0*x_2+x_1*x_3)
+      d=2
+      qperp=ideal(basis(2,S)*syz diff(I_0,basis(2,S)))
+      M3=extraTerms(I,2,qperp)
+      M3%qperp==0
 
+///
 
 unfolding=method()
+
 unfolding(Ideal,Ring) := (I,R) -> (
     kk:= coefficientRing R;
     lTs:=apply(numgens I,i-> leadTerm I_i);
-    tailTerms:=apply(lTs,m->extraTerms(I,(degree m)_0,m));
+    lTs1:= apply(lTs,t->sub(t,R));
+    I1 := ideal lTs1;
+    tailTerms:=apply(lTs1,m->extraTerms(I1,(degree m)_0,m));
     ind :=flatten apply(#lTs,i->apply(rank source  tailTerms_i,j->(i,j)));   
     a :=symbol a;
     Ra:=kk[apply(ind,ij->a_ij)];
@@ -68,6 +84,22 @@ unfolding(Ideal,Ring) := (I,R) -> (
     unfold:=map(RA^1,F,matrix{apply(#lTs,i->sub(lTs_i,RA)+tails_i)});
     return (unfold,Ra))
 
+/// -* test unfolding(Ideal,Ring) *-
+S=QQ[x_0..x_3]
+I=ideal (x_0^2,x_0*x_1,x_0*x_2,x_1^3)
+(fam,Ra)=unfolding I
+transpose fam
+R=QQ[gens S,MonomialOrder=>Lex]
+(fam1,Ra1)=unfolding(I,S)
+#gens Ra1,#gens Ra
+betti fam1, betti fam
+#support fam1, #support fam
+apply(4,i->(#terms fam_(0,i),#terms fam1_(0,i)))
+netList {fam_(0,3),fam1_(0,3)}
+S3=gens (ideal vars S)^3
+	contract(sub(S3,ring fam),fam_(0,3))
+	contract(sub(S3,ring fam1),fam1_(0,3))
+///
 unfolding(Ideal,Ideal) := (I,qperp) -> (
     R:= ring I;
     kk:= coefficientRing R;
@@ -294,7 +326,7 @@ doc ///
   Headline 
    computes the unfolding of an ideal
   Usage
-   (unf,R) = unfolding(I)
+   (unf,R) = unfolding(I0)
    (unf,R) = unfolding(I0,S)
    (unf,R) = unfolding(I0,I1)
   Inputs
@@ -342,8 +374,11 @@ doc ///
      betti base, betti J
      dim ring J
      dim J
-     J_0 
-     unf_{2}, support J_0
+     J_0
+    Text
+     The polynomial J_0 is reducible. J1 below defines the restriction of the base
+     where the fist factor is zero. J2 is the residual component.
+    Example
      J1= trim( J+ideal ((support J_0)_0))
      betti(J2=trim (J:J1))
      dim J1, dim J2
@@ -425,10 +460,10 @@ doc ///
   Key 
    extraTerms
    (extraTerms,Ideal,ZZ)
-   (extraTerms,Ideal,ZZ,Ideal)
    (extraTerms,Ideal,ZZ,RingElement)
+   (extraTerms,Ideal,ZZ,Ideal)
   Headline 
-   computes the unfolding of the GB induced by an unfolding of the generators   
+   computes the unfolding terms for an unfolding of I   
   Usage
    M = extraTerms(I,d)
    M = extraTerms(I,d,m)
@@ -448,14 +483,22 @@ doc ///
   Description
     Text
       The function computes the possible unfolding terms in degree d.
-      In the second version, only terms larger than m in the monomial order of S
-      are allowed. In the third version only terms in J are allowed.
+      In the second version, only terms larger than m in the monomial order of ring I are allowed.
+      In the third version only terms in J are allowed.
     Example
       kk=QQ
       S=kk[x_0..x_3]
+      sort (entries gens (ideal vars S)^2)_0
       q=ideal(x_0*x_2+x_1*x_3)
       M1=extraTerms(q,2)
       M2=extraTerms(q,2,leadTerm q_0)
+      S=kk[x_0..x_3,MonomialOrder=>Lex]
+      sort (entries gens (ideal vars S)^2)_0
+      q=ideal(x_0*x_2+x_1*x_3)
+      M1=extraTerms(q,2)
+      M2=extraTerms(q,2,leadTerm q_0)
+      S=kk[x_0..x_3]
+      q=sub(q,S)
       qperp=ideal(basis(2,S)*syz diff(q_0,basis(2,S)))
       M3=extraTerms(q,2,qperp)
       M3%qperp==0
@@ -521,7 +564,6 @@ doc ///
       (unf,R)=unfolding I;
       base=flatteningRelations(I,unf,R);
       betti base
-
     Text
       We analyse the base further.
     Example
@@ -711,7 +753,6 @@ assert(not isDirectedGraph L)
 TEST /// -* 4 *-
 --- vsp4
 kk=QQ
---kk=ZZ/101
 S=kk[x_0..x_3]
 q=x_0*x_2+x_1*x_3
 s2=basis(2,S)
@@ -729,8 +770,12 @@ gens gb I
 
 (I1,unf1)=passToGB(I,unf)
 elapsedTime betti( J=flatteningRelations(I1,unf1,R))
-
-
+(J0,h)=removeVariables J
+fam=substituteFamily(unf1,S,h)
+support fam
+fiber=ideal sub(fam,vars S|random(kk^1,kk^(#support fam- #gens S)))
+betti res fiber == betti res I
+assert(gens fiber %qperp==0)
 
 ///
 
@@ -754,6 +799,8 @@ end
 restart
 installPackage "HilbertSchemeStrata"
 loadPackage "HilbertSchemeStrata"
+
+
 
 
 
