@@ -4,14 +4,14 @@ newPackage(
     Date => "2025/11/21",
     Headline => "(open) Cylindrical Algebraic Decompositions",
     Authors => {
-    { Name => "Lee, C.", 
-      Email => "cel34@bath.ac.uk", 
-      HomePage => "https://people.bath.ac.uk/cel34/"},
-    { Name => "del Rio, T.", 
-      Email => "teresodra@gmail.com", 
-      HomePage => "https://sites.google.com/view/tereso"},    
-    { Name => "Rahkooy, H.", 
-      Email => "rahkooy@maths.ox.ac.uk", 
+    { Name => "Lee, C.",
+      Email => "corin.lee@hotmail.co.uk",
+      HomePage => "https://cel34-bath.github.io/index.html"},
+    { Name => "del Rio, T.",
+      Email => "teresodra@gmail.com",
+      HomePage => "https://sites.google.com/view/tereso"},
+    { Name => "Rahkooy, H.",
+      Email => "rahkooy@gmail.com",
       HomePage => "https://people.maths.ox.ac.uk/rahkooy/"}
     },
 
@@ -40,7 +40,7 @@ export {
 -- finds the support of a list of Polynomials
 -- overloads original command to return the combined support of a list of polynomials.
 support(List) := (L) -> (
-    L1:=select(L, p -> not liftable(p, QQ));
+    L1 := select(L, p -> not liftable(p, QQ));
     unique flatten (L1/support)
     )
 
@@ -54,19 +54,19 @@ factorsInList(List) := (L) -> (
 
 -- Evaluates the given RingElement or List of RingElements at a point given by a MutableHashTable.
 evaluatePolynomials = method()
-evaluatePolynomials(RingElement,MutableHashTable) := (p, alpha) -> (
-    p = sub(p, apply(keys alpha, k -> k => alpha#k)); -- substitute in all of the values for the variables specified in alpha.
-    if liftable(p,QQ) then p = lift(p,QQ); -- if the output is a constant, lift it.
+evaluatePolynomials(RingElement, MutableHashTable) := (p, alpha) -> (
+    p = sub(p, apply(keys alpha, values alpha, (k, v) -> k => v)); -- substitute in all of the values for the variables specified in alpha.
+    if liftable(p, QQ) then p = lift(p, QQ); -- if the output is a constant, lift it.
     p
     )
-evaluatePolynomials(List,MutableHashTable) := (L, alpha) -> (
+evaluatePolynomials(List, MutableHashTable) := (L, alpha) -> (
     apply(L, p -> evaluatePolynomials(p, alpha))
 )
 
 -- Finds the lead coefficient of a ring element with respect to a variable
 leadCoefficient(RingElement, RingElement) := (p, v) -> (
-  d := degree(v,p); -- obtain the highest degree of the specified variable
-  contract(v^d,p) -- return the coefficient of the leading term.
+  d := degree(v, p); -- obtain the highest degree of the specified variable
+  contract(v^d, p) -- return the coefficient of the leading term.
 )
 
 -- Choose the next variable to project according to the heuristic gmods
@@ -78,7 +78,7 @@ gmodsHeuristic(List, List) := (L, variables) -> (
 
 -- Does one step of the projection phase
 lazardProjection = method()
-lazardProjection(List, RingElement) := (L,v) -> (
+lazardProjection(List, RingElement) := (L, v) -> (
   -- if not(member(v, L)) then error "declared variable not present in list";
   L = factorsInList(L); -- ensure input polynomials are irreducible and pairwise relatively prime.
   L0 := {};
@@ -90,8 +90,8 @@ lazardProjection(List, RingElement) := (L,v) -> (
   -- so we will just slot these back in later)
   -- "return the parts of each poly p in L that rely on v"
   L1 := flatten apply(L, p -> {leadCoefficient(p, v), p - v*contract(v, p), discriminant(p, v)}); -- leading coefficients, trailing coefficients, discriminants
-  L2 := for p in subsets(L,2) list resultant(p#0,p#1,v); -- resultants
-  factorsInList join(L0,L1,L2) -- combine these into one list, as squarefree factors.
+  L2 := for p in subsets(L, 2) list resultant(p#0, p#1, v); -- resultants
+  factorsInList join(L0, L1, L2) -- combine these into one list, as squarefree factors.
   )
 
 -- Creates a full Lazard projection
@@ -121,22 +121,22 @@ samplePoints(List) := (L) -> (
     A := QQ(monoid[support L]);
     h := sub(product L, A);
     intervalSize := 1; 
-    ourRoots := realRootIsolation(h,intervalSize); -- call RealRoots:-realRootIsolation (isolates real solutions of h in intervals of width at most 1)
+    ourRoots := realRootIsolation(h, intervalSize); -- call RealRoots:-realRootIsolation (isolates real solutions of h in intervals of width at most 1)
     if #ourRoots==0 then (
         SP := {0_QQ}; -- if the polynomials have no roots, choose 0.
       )
       else (
     -- if two consecutive intervals have a shared start/end point that is a root then refine intervals:
       for i from 0 to #ourRoots-2 do (
-        while (ourRoots#i#1)==(ourRoots#(i+1)#0) and sub(h,{(support h)#0=>ourRoots#i#1})==0 do (
+        while (ourRoots#i#1)==(ourRoots#(i+1)#0) and sub(h, {(support h)#0=>ourRoots#i#1})==0 do (
           intervalSize = intervalSize/2;
-          ourRoots = realRootIsolation(h,intervalSize);
+          ourRoots = realRootIsolation(h, intervalSize);
         );
       );
       SP = for i from 0 to #ourRoots-2 list (ourRoots#i#1+ourRoots#(i+1)#0)/2; -- if there is only one root, this correctly returns an empty list.
       -- Add the beginning of the first interval and the end of the last interval to the list, but each of which -+1 in order to avoid them being a root:
-      -- (putting all roots into QQ - get +-1 in ZZ if one root
-      SP = join({((ourRoots#0#0)-1)_QQ},SP,{((ourRoots#-1#1)+1)_QQ});
+      -- (putting all roots into QQ - get +-1 in ZZ if one root)
+      SP = join({((ourRoots#0#0)-1)_QQ}, SP, {((ourRoots#-1#1)+1)_QQ});
     );
     SP
   )
@@ -173,7 +173,7 @@ openCAD = method()
 openCAD(List) := (L) -> (
   (S, ordering) := projectionPhase(L);
   alpha := new MutableHashTable;
-  liftingPoint(S, ordering,alpha)
+  liftingPoint(S, ordering, alpha)
 )
 
 -- Checks if there is a point in or above the given cell in which all the polynomials given in the list are strictly positive
@@ -191,8 +191,8 @@ positivePoint(List, MutableHashTable) := (L, cell) -> (
         );
         null --no point exists
     ) else (
-        evaluations := evaluatePolynomials(L,cell#"point");
-        evaluations = for e in evaluations list lift(e,QQ); -- elements in list were in R and not treated as numbers, this fixes that.
+        evaluations := evaluatePolynomials(L, cell#"point");
+        evaluations = for e in evaluations list lift(e, QQ); -- elements in list were in R and not treated as numbers, this fixes that.
         if all(evaluations, e->(e>0)) then cell#"point" else null
     )
 )
@@ -244,7 +244,7 @@ Description
     The CAD of $\mathbb{R}^2$ with respect to $\mathcal{F}$ decomposes the plane into cells where the signs of the two polynomials are constant.
 
   Example
-    R = QQ[x,y]
+    R = QQ[x, y]
     f_1 = x^2 + y^2 - 1, f_2 = x^3 - y^2;
     F = {f_1, f_2}
     C0 = openCAD F
@@ -279,9 +279,9 @@ doc ///
     Text
       This function returns all of the factors that appear in a list of RingElements, ignoring constants and multiplicity.
     Example
-      R=QQ[x_1,x_2,x_3]
+      R=QQ[x_1, x_2, x_3]
       p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-      L={p0,p1,p2}
+      L={p0, p1, p2}
       factorsInList(L)
   SeeAlso
   Subnodes
@@ -295,8 +295,8 @@ doc ///
   Headline
     Evaluate polynomial(s) at point.
   Usage
-    evaluatePolynomials(p,alpha)
-    evaluatePolynomials(L,alpha)
+    evaluatePolynomials(p, alpha)
+    evaluatePolynomials(L, alpha)
   Inputs
     p:RingElement
       polynomial in a ring.
@@ -314,20 +314,20 @@ doc ///
       Given the polynomial (p) or list of polynomials (L) and sample point (alpha), evaluatePolynomials evaluates the 
       polynomial(s) at the sample point and returns the evaluated polynomial(s). 
       This is used in the lifting phase of the CAD, where a polynomial in k variables is evaluated at a 
-      point $\alpha \in \mathbb{R}[x_1,\dots,x_{k-1}]$ to return a univariate polynomial in $\mathbb{R}[x_k]$.
+      point $\alpha \in \mathbb{R}[x_1, \dots, x_{k-1}]$ to return a univariate polynomial in $\mathbb{R}[x_k]$.
     Example
-      R=QQ[x_0,x_1,x_2,x_3]
+      R=QQ[x_0, x_1, x_2, x_3]
       alpha = new MutableHashTable;
       alpha#(x_0) = 3, alpha#(x_1) = 4, alpha#(x_2) = 1;
       p0=x_1^2*x_0-2*x_3*x_2
-      evaluatePolynomials(p0,alpha)
+      evaluatePolynomials(p0, alpha)
       alpha1 := copy alpha;
       alpha1#(x_3) = -2;
-      evaluatePolynomials(p0,alpha1)
+      evaluatePolynomials(p0, alpha1)
       p1=x_0*(x_1-1)*(x_2-2)*(x_3-3);
-      L = {p0,p1}
-      evaluatePolynomials(L,alpha)
-      evaluatePolynomials(L,alpha1)
+      L = {p0, p1}
+      evaluatePolynomials(L, alpha)
+      evaluatePolynomials(L, alpha1)
   SeeAlso
 ///
 
@@ -338,7 +338,7 @@ doc ///
   Headline
     Lead coefficient with respect to a variable.
   Usage
-    leadCoefficient(p,v)
+    leadCoefficient(p, v)
   Inputs
     p:RingElement
       a polynomial in the ring.
@@ -351,9 +351,9 @@ doc ///
     Text
       The leading coefficient of a RingElement with respect to a variable is returned.
     Example
-      R=QQ[x_1,x_2,x_3]
+      R=QQ[x_1, x_2, x_3]
       p=x_1^2*x_2-x_1*x_3+x_3^3
-      leadCoefficient(p,x_1)
+      leadCoefficient(p, x_1)
   SeeAlso
 ///
 
@@ -364,7 +364,7 @@ doc ///
   Headline
     Determine the next variable to project.
   Usage
-    gmodsHeuristic(L,variables)
+    gmodsHeuristic(L, variables)
   Inputs
     L:List
       of polynomials in several variables.
@@ -379,10 +379,10 @@ doc ///
       variable that appears earlier in support(L) is returned. This heuristic is motivated by the complexity analysis of CAD. Further information regarding this 
       heuristic can be found in @HREF "https://doi.org/10.1007/978-3-031-14788-3_17"@.
     Example
-      R=QQ[x_1,x_2,x_3]
+      R=QQ[x_1, x_2, x_3]
       p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3, p3=-x_1*x_2;
-      L={p0,p1,p2,p3}
-      gmodsHeuristic(L,support(L))
+      L={p0, p1, p2, p3}
+      gmodsHeuristic(L, support(L))
   SeeAlso
 ///
 
@@ -393,7 +393,7 @@ doc ///
   Headline
     Lazard projection with respect to a variable.
   Usage
-    lazardProjection(L,v)
+    lazardProjection(L, v)
   Inputs
     L:List
       of polynomials all in the same ring.
@@ -410,10 +410,10 @@ doc ///
       polynomials w.r.t v, the discriminants of the polynomials w.r.t v and the resultants between each pair of polynomials 
       w.r.t v. For openCAD, the trailing coefficients are not needed.
     Example
-      R=QQ[x_1,x_2,x_3]
+      R=QQ[x_1, x_2, x_3]
       p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-      L={p0,p1,p2}
-      L2 = lazardProjection(L,x_1)
+      L={p0, p1, p2}
+      L2 = lazardProjection(L, x_1)
   SeeAlso
     leadCoefficient
     factorsInList
@@ -444,9 +444,9 @@ doc ///
       polynomials from level 1 to level $n$, and the list of variables, ordered so that the first $k$ variables of the list are the variables of the polynomials
       at level $k$.
     Example
-      R=QQ[x_1,x_2,x_3]
+      R=QQ[x_1, x_2, x_3]
       p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-      L={p0,p1,p2}
+      L={p0, p1, p2}
       projectionPhase(L)
   SeeAlso
     gmodsHeuristic
@@ -482,11 +482,11 @@ doc ///
     Example
       R=QQ[x]
       p0=x^2-1, p1=x^3-1;
-      L1={p0,p1}
+      L1={p0, p1}
       samplePoints(L1)
 
       p2=5*x^3+1, p3=x^2-1, p4=1/2*x^5+3*x-1;
-      L2={p2,p3,p4}
+      L2={p2, p3, p4}
       samplePoints(L2)
   SeeAlso
   Subnodes
@@ -494,12 +494,12 @@ doc ///
 
 doc ///
   Key
-    (liftingPoint, List, List,MutableHashTable)
+    (liftingPoint, List, List, MutableHashTable)
     liftingPoint
   Headline
     OpenCAD above the point given.
   Usage
-    liftingPoint(S,ordering,alpha)
+    liftingPoint(S, ordering, alpha)
   Inputs
     S:List
       of lists of RingElements, representing the projection polynomials of each level.
@@ -515,13 +515,13 @@ doc ///
       Given the projection phase of a CAD (S), liftingPoint creates an Open Cylindrical Algebraic Decomposition, which breaks the space into cells where 
       the signs of the polynomials in each element of S are constant.
     Example
-      R=QQ[x_1,x_2,x_3]
+      R=QQ[x_1, x_2, x_3]
       p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-      L={p0,p1,p2}
+      L={p0, p1, p2}
       alpha = new MutableHashTable
       alpha#(x_2) = -2, alpha#(x_3) = -3/32;
-      (S,ordering) =  projectionPhase(L)
-      LP = liftingPoint(S,ordering,alpha)
+      (S, ordering) =  projectionPhase(L)
+      LP = liftingPoint(S, ordering, alpha)
       hashify LP
   SeeAlso
     evaluatePolynomials
@@ -549,15 +549,15 @@ doc ///
     Text
       An open CAD is a mathematical object that decomposes the space into cells in which the given polynomials are sign invariant.
     Example
-      R=QQ[x_1,x_2,x_3]
+      R=QQ[x_1, x_2, x_3]
       p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-      L={p0,p1,p2}
+      L={p0, p1, p2}
       openCAD(L)
       hashify openCAD(L)
       
-      R=QQ[x_1,x_2]
+      R=QQ[x_1, x_2]
       p0=x_1-x_2, p1=x_1^3+x_2^2;
-      L={p0,p1}
+      L={p0, p1}
       openCAD(L)
       hashify openCAD(L)
   SeeAlso
@@ -575,7 +575,7 @@ doc ///
   Headline
     Checks if there is a point above the cell where all polynomials are positive.
   Usage
-    positivePoint(L,cell)
+    positivePoint(L, cell)
   Inputs
     L:List
       a list of polynomials.
@@ -590,9 +590,9 @@ doc ///
     Example
       R=QQ[x]
       p0=x^2-1, p1=x;
-      L={p0,p1}
+      L={p0, p1}
       C=openCAD(L);
-      PP=positivePoint(L,C);
+      PP=positivePoint(L, C);
       hashify(PP)
   SeeAlso
   Subnodes
@@ -622,7 +622,7 @@ doc ///
     Example
       R=QQ[x]
       p0=x^2-1, p1=x;
-      L={p0,p1}
+      L={p0, p1}
       FS=findPositiveSolution(L)
   SeeAlso
     openCAD
@@ -656,7 +656,7 @@ doc ///
     Text
       This method takes a MutableHashTable, HashTable, List or MutableList and turns any MutableHashTables within into HashTables, leaving everything else the same.
     Example
-      R=QQ[x_1,x_2];
+      R=QQ[x_1, x_2];
       M = new MutableHashTable from {-1_QQ=>new MutableHashTable from {-5/2=>new MutableHashTable from {"point"=>new MutableHashTable from {x_1=>-1_QQ, x_2=>-5/2}}}};
       hashify M
   SeeAlso
@@ -669,104 +669,104 @@ doc ///
 
 TEST /// -* factorsInList test *-
 -- Test 0
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-  L={p0,p1,p2}
+  L={p0, p1, p2}
   F = factorsInList(L)
-  answer = {x_2,x_1,x_1^2*x_2+x_3^3-x_1*x_3,x_3,x_2^2+1}
+  answer = {x_2, x_1, x_1^2*x_2+x_3^3-x_1*x_3, x_3, x_2^2+1}
   assert(sort F === sort answer)
 ///
 
 TEST /// -* evaluatePolynomials test *-
 -- Test 1
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p=x_1^2*x_2-x_1*x_3+x_3^3
   alpha = new MutableHashTable;
   alpha#(x_1) = 1, alpha#(x_2) = 3;
-  E = evaluatePolynomials(p,alpha)
+  E = evaluatePolynomials(p, alpha)
   assert(E == 3-x_3+x_3^3)
 ///
 
 TEST /// -* evaluatePolynomials test (List)*-
 -- Test 2
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-  L={p0,p1,p2}
+  L={p0, p1, p2}
   alpha = new MutableHashTable
   alpha#(x_1) = 1, alpha#(x_2) = 3;
-  E = evaluatePolynomials(L,alpha)
+  E = evaluatePolynomials(L, alpha)
   assert(E == {3, 3-x_3+x_3^3, 9*x_3+x_3})
 ///
 
 TEST /// -* leadCoefficient test *-
 -- Test 3
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p=x_1^2*x_2-x_1*x_3+x_3^3
-  L = leadCoefficient(p,x_1)
-  assert(leadCoefficient(p,x_1) == x_2)
+  L = leadCoefficient(p, x_1)
+  assert(leadCoefficient(p, x_1) == x_2)
 ///
 
 TEST /// -* gmodsHeuristic test *-
 -- Test 4
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3, p3=-x_1*x_2;
-  L={p0,p1,p2,p3}  
-  assert(gmodsHeuristic(L,support(L)) == x_1)
+  L={p0, p1, p2, p3}  
+  assert(gmodsHeuristic(L, support(L)) == x_1)
 ///
 
 TEST /// -* lazardProjection test *-
 -- Test 5
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-  L={p0,p1,p2}
-  LP = lazardProjection(L,x_1)
-  assert(LP === {x_2,x_3,x_2^2+1,4*x_2*x_3-1})
+  L={p0, p1, p2}
+  LP = lazardProjection(L, x_1)
+  assert(LP === {x_2, x_3, x_2^2+1, 4*x_2*x_3-1})
 ///
 
 TEST /// -* projectionPhase test *-
 -- Test 6
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-  L={p0,p1,p2}
+  L={p0, p1, p2}
   PP = projectionPhase(L)
-  answerS = {{x_2,x_2^2+1}, {x_2,x_3,x_2^2+1,4*x_2*x_3-1}, {x_2,x_1,x_1^2*x_2+x_3^3-x_1*x_3,x_3,x_2^2+1}}
+  answerS = {{x_2, x_2^2+1}, {x_2, x_3, x_2^2+1, 4*x_2*x_3-1}, {x_2, x_1, x_1^2*x_2+x_3^3-x_1*x_3, x_3, x_2^2+1}}
   answerordering = {x_2, x_3, x_1}
-  assert(PP == (answerS,answerordering))
+  assert(PP == (answerS, answerordering))
 ///
 
 TEST /// -* samplePoints test *-
 -- Test 7
   R=QQ[x]
   p0=x^2-1, p1=x^3-1
-  L={p0,p1}
+  L={p0, p1}
   SP = samplePoints(L)
   assert(SP == {-3, -1/2, 2})
 ///
 
 TEST /// -* liftingPoint test *-
 -- Test 8
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1*x_2+x_3^2;
-  L={p0,p1}
-  (S,ordering) = projectionPhase(L)
+  L={p0, p1}
+  (S, ordering) = projectionPhase(L)
   alpha = new MutableHashTable
   alpha#(x_3) = -1_QQ, alpha#(x_1) = 1_QQ;
-  LP = liftingPoint(S,ordering,alpha)
+  LP = liftingPoint(S, ordering, alpha)
 
   cellLevelThreeA = new MutableHashTable from {"point"=>new MutableHashTable from {x_3=>-1_QQ, x_1=>1_QQ, x_2=>-3/4}}
   cellLevelThreeB = new MutableHashTable from {"point"=>new MutableHashTable from {x_3=>-1_QQ, x_1=>1_QQ, x_2=>-5/2}  }
   cellLevelThreeC = new MutableHashTable from {"point"=>new MutableHashTable from {x_3=>-1_QQ, x_1=>1_QQ, x_2=>1_QQ}}  
 
-  cellLevelTwo = new MutableHashTable from {-3/4_QQ=>cellLevelThreeA, -5/2_QQ=>cellLevelThreeB, 1_QQ=>cellLevelThreeC, "point"=>new MutableHashTable from {x_3=>-1_QQ, x_1=>1_QQ}, "polynomials"=>{x_2,1_QQ,x_2+1}}
+  cellLevelTwo = new MutableHashTable from {-3/4_QQ=>cellLevelThreeA, -5/2_QQ=>cellLevelThreeB, 1_QQ=>cellLevelThreeC, "point"=>new MutableHashTable from {x_3=>-1_QQ, x_1=>1_QQ}, "polynomials"=>{x_2, 1_QQ, x_2+1}}
 
   assert(hashify(LP) === hashify(cellLevelTwo))
 ///
 
 TEST /// -* openCAD test *-
 -- Test 9
-  R=QQ[x_1,x_2]
+  R=QQ[x_1, x_2]
   p0=x_1^2+x_2, p1=x_1^3*x_2^2;
-  L={p0,p1}
+  L={p0, p1}
   C=openCAD(L)
 
   cellLevelThreeA = new MutableHashTable from {"point"=>new MutableHashTable from {x_1=>-1_QQ, x_2=>-5/2}}
@@ -776,8 +776,8 @@ TEST /// -* openCAD test *-
   cellLevelThreeE = new MutableHashTable from {"point"=>new MutableHashTable from {x_1=>1_QQ, x_2=>-3/4}}
   cellLevelThreeF = new MutableHashTable from {"point"=>new MutableHashTable from {x_1=>1_QQ, x_2=>1_QQ}}
   
-  ptLevelTwoA = new MutableHashTable from {-5/2=>cellLevelThreeA, -3/4=>cellLevelThreeB, 1_QQ=>cellLevelThreeC, "point"=>new MutableHashTable from {x_1=>-1_QQ}, "polynomials"=>{x_2+1,x_2,-1_QQ}}
-  ptLevelTwoB = new MutableHashTable from {-5/2=>cellLevelThreeD, -3/4=>cellLevelThreeE, 1_QQ=>cellLevelThreeF, "point"=>new MutableHashTable from {x_1=>1_QQ}, "polynomials"=>{x_2+1,x_2,1_QQ}}  
+  ptLevelTwoA = new MutableHashTable from {-5/2=>cellLevelThreeA, -3/4=>cellLevelThreeB, 1_QQ=>cellLevelThreeC, "point"=>new MutableHashTable from {x_1=>-1_QQ}, "polynomials"=>{x_2+1, x_2, -1_QQ}}
+  ptLevelTwoB = new MutableHashTable from {-5/2=>cellLevelThreeD, -3/4=>cellLevelThreeE, 1_QQ=>cellLevelThreeF, "point"=>new MutableHashTable from {x_1=>1_QQ}, "polynomials"=>{x_2+1, x_2, 1_QQ}}  
   ptLevelTwoC = new MutableHashTable
   
   cellLevelOne = new MutableHashTable from {-1_QQ=>ptLevelTwoA, 1_QQ=>ptLevelTwoB, "point"=>ptLevelTwoC, "polynomials"=>{x_1}}
@@ -788,11 +788,11 @@ TEST /// -* openCAD test *-
 
 TEST /// -* positivePoint test 1*-
 -- Test 10
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3, p3=-x_1*x_2;
-  L={p0,p1,p2,p3};
+  L={p0, p1, p2, p3};
   C=openCAD(L)
-  PP=positivePoint(L,C)
+  PP=positivePoint(L, C)
   assert(PP == null)
 /// 
   
@@ -800,50 +800,50 @@ TEST /// -* positivePoint test 2*-
 -- Test 11
   R=QQ[x]
   p0=x^2-1, p1=x;
-  L={p0,p1};
+  L={p0, p1};
   C=openCAD(L)
-  PP=positivePoint(L,C)
+  PP=positivePoint(L, C)
   answer = new MutableHashTable from {x => 2_QQ}
   assert(hashify PP === hashify answer)
 ///
 
 TEST /// -* findPositiveSolution test 1*-
 -- Test 12
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3;
-  L={p0,p1,p2}
+  L={p0, p1, p2}
   PP = new HashTable from {x_2=>1_QQ, x_3=>5/4, x_1=>1_QQ};
   assert(findPositiveSolution L === (true, PP))
 ///
 
 TEST /// -* findPositiveSolution test 2*-
 -- Test 13
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3, p3=-x_1*x_2;
-  L={p0,p1,p2,p3}
-  assert(findPositiveSolution L === (false,null))  
+  L={p0, p1, p2, p3}
+  assert(findPositiveSolution L === (false, null))  
 ///
 
 TEST /// -* findPositiveSolution test 3*-
 -- Test 14
-  R=QQ[x_1,x_2,x_3]
+  R=QQ[x_1, x_2, x_3]
   p0=x_1*x_2, p1=x_1^2*x_2-x_1*x_3+x_3^3, p2=x_2^2*x_3+x_3, p3=-x_1*x_2;
-  L={p0,p1,p2,p3}
-  assert(findPositiveSolution L === (false,null))
+  L={p0, p1, p2, p3}
+  assert(findPositiveSolution L === (false, null))
 /// 
   
 TEST /// -* findPositiveSolution test 4*-
 -- Test 15
   R=QQ[x]
   p0=x^2-1, p1=x;
-  L={p0,p1}
+  L={p0, p1}
   PP = new HashTable from {x => 2_QQ};
   assert(findPositiveSolution L === (true, PP))
 ///
 
 TEST /// -* hashify test*-
 -- Test 16
-  R=QQ[x_1,x_2]
+  R=QQ[x_1, x_2]
   MCell = new MutableHashTable from {-1_QQ=>new MutableHashTable from {-5/2=>new MutableHashTable from {"point"=>new MutableHashTable from {x_1=>-1_QQ, x_2=>-5/2}}}}
   HCell = new HashTable from {-1_QQ=>new HashTable from {-5/2=>new HashTable from {"point"=>new HashTable from {x_1=>-1_QQ, x_2=>-5/2}}}}
   assert(hashify MCell === HCell)
