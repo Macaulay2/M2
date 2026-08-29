@@ -403,6 +403,11 @@ assert(dim E == 2 and degree E == 14 and sectionalGenus E == 8)
 T' = polarizedK3surface(T,Strategy=>"MapFromU-Virtual")
 assert(computationStatus T == 3)
 assert instance(T'(1,1),LatticePolarizationOnK3Surface)
+Y = toExternalString X;
+assert(#Y > 10000)
+Y = value Y;
+assert(recognizeDSCF Y === "DSCF-V1-6")
+assert(sanityCheckDSCF polarizedK3surface Y)
 ///
 
 TEST /// -- test 29 isAdmissible
