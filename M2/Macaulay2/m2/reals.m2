@@ -573,6 +573,10 @@ ring RealField := R -> RR
 ring RealIntervalField := R -> RRi
 ring ComplexIntervalField := R -> CCi
 
+InexactField.EnterMethod = kk -> first (
+    defaultPrecision, defaultPrecision = precision kk)
+InexactField.ExitMethod = prec -> defaultPrecision = prec
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

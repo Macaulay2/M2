@@ -629,7 +629,8 @@ document { Key => "defaultPrecision",
      1/3.
      RR[x]
      numeric pi
-     ///
+     ///,
+     SeeAlso => {symbol with},
      }
 
 undocumented {
