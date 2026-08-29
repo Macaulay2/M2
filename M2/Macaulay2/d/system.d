@@ -105,11 +105,12 @@ import openout(filename:string):int;
 import openoutappend(filename:string):int;
 import opensocket(host:string,serv:string):int;
 import openlistener(interface:string,serv:string):int;
+import netstrerror(errcode:int):string;
 import acceptBlocking(sd:int):int;
 import acceptNonblocking(sd:int):int;
+import getpeername(sockd:int,host:string,serv:string):int;
+import getsockname(sockd:int,host:string,serv:string):int;
 import syserrmsg():string;				    -- uses errno
-import strerror():constcharstar;			    -- uses errno 
-export strerror(errnum:int):string := tostring(Ccode(constcharstar,"strerror(",errnum,")"));
 import atend(f:function():void):void;
 import run(command:string):int;
 export pipe(fildes:array(int)):int := Ccode(returns,"
@@ -129,13 +130,9 @@ import strcmp(s:string,t:string):int;
 import strnumcmp(s:string,t:string):int;
 import randomint():int;
 export wait(pid:int):int := Ccode(returns, "
-     #ifdef HAVE_WAITPID
       int status;
       if (waitpid(pid,&status,0) == -1) return -1;
       return status;
-     #else
-      return -1;
-     #endif
      ");
 import waitNoHang(pid:array(int)):array(int);
 import select(s:array(int)):array(int);
