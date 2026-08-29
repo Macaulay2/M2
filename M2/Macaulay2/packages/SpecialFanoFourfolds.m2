@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.8.1",
-    Date => "August 27, 2026",
+    Date => "August 29, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
