@@ -505,6 +505,7 @@ export {
 	"applicationDirectory",
 	"apply",
 	"applyKeys",
+    "applyMatrix",
 	"applyPairs",
 	"applyTable",
 	"applyValues",

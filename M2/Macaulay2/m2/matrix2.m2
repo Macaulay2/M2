@@ -783,6 +783,9 @@ permanents(ZZ,Matrix) := Ideal => (p,M) -> (
      F := map(ring M, R2,flatten entries M);
      F D1)
 
+applyMatrix = method()
+applyMatrix(Matrix,Function) := (M,f) -> (matrix apply(entries M,i->apply(i,f)))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
