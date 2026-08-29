@@ -178,7 +178,7 @@ building EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> (
 recoverFourfold EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> recoverFourfold E#"ParentK3Surface";
 
 K3SurfaceFromDoublySpecialCubicFourfold Sequence := (E,ab) -> (
-    Verb := true;
+    Verb := false;
     if #ab >= 2 and #ab <= 3 and instance(last ab,Option) then (
         opt := toSequence last ab;
         if first opt =!= Verbose then error "Verbose is the only available option";
@@ -265,4 +265,4 @@ K3SurfaceFromDoublySpecialCubicFourfold Sequence := (E,ab) -> (
     E.cache#("EmbeddedByLatticePolarization",a,b) = embeddedK3SurfaceFromDoublySpecialCubicFourfold(E,h,D,A)
 );
 
-K3SurfaceFromDoublySpecialCubicFourfold ZZ := (E,g) -> E(g,Verbose=>true);
+K3SurfaceFromDoublySpecialCubicFourfold ZZ := (E,g) -> E(g,Verbose=>false);

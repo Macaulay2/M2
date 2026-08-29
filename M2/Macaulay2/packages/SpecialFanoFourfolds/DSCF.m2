@@ -467,6 +467,83 @@ rankExt1 MultiprojectiveVariety := X -> (
     rank E1
 );
 
+toExternalString DoublySpecialCubicFourfold := X -> (
+    x := local x;
+    K := coefficientRing X;
+    ringP5 := K[x_0..x_5];
+    (S,T) := surfaces X;
+    headerDate := "";
+    try headerDate = " on "|(get "!date");
+    s := ///-- DSCF object exported by toExternalString/// | headerDate;
+    s = s | ///-- needsPackage "SpecialFanoFourfolds";/// | newline;
+    s = s | "(i -> (K := " | toExternalString K | ";" | newline;
+    s = s | "x := local x; ringP5 := K[x_0..x_5];" | newline;
+    s = s | "S := projectiveVariety(" | toString sub(ideal S,vars ringP5) | ",Saturate=>false);" | newline;
+    s = s | "T := projectiveVariety(" | toString sub(ideal T,vars ringP5) | ",Saturate=>false);" | newline;
+    s = s | "X := projectiveVariety(" | toString sub(ideal X,vars ringP5) | ",Saturate=>false);" | newline;
+    s = s | "X = specialFourfold(S & T,X,NumNodes=>" | toString apply(surfaces X,numberNodes) | ",InputCheck=>0);" | newline;
+    if X.cache#?(S,T,"labelDSCF") then s = s | ///X.cache#(S,T,"labelDSCF") = "/// | toString X.cache#(S,T,"labelDSCF") | ///";/// | newline;
+    if S.cache#?"euler" then s = s | ///S.cache#"euler" = /// | toString euler S | ";" | newline;
+    if T.cache#?"euler" then s = s | ///T.cache#"euler" = /// | toString euler T | ";" | newline;
+    if S.cache#?"FiniteNumberOfNodes" then s = s | ///S.cache#"FiniteNumberOfNodes" = /// | toString numberNodes S | ";" | newline;
+    if T.cache#?"FiniteNumberOfNodes" then s = s | ///T.cache#"FiniteNumberOfNodes" = /// | toString numberNodes T | ";" | newline;
+    if S.cache#?"rationalParametrization" or T.cache#?"rationalParametrization" then (
+        t := local t; ringP2 := K[t_0..t_2];
+        s = s | "t := local t; ringP2 := K[t_0..t_2];" | newline;
+        if S.cache#?"rationalParametrization" then s = s | ///S.cache#"rationalParametrization" = (Hom(projectiveVariety ringP2,S)) /// | toString entries sub(matrix parametrize S,vars ringP2) | ";" | newline;
+        if T.cache#?"rationalParametrization" then s = s | ///T.cache#"rationalParametrization" = (Hom(projectiveVariety ringP2,T)) /// | toString entries sub(matrix parametrize T,vars ringP2) | ";" | newline;
+    );
+    if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold") then s = s | ///X.cache#(S,T,"intersection of surface cycles in cubic fourfold") = /// | toString X.cache#(S,T,"intersection of surface cycles in cubic fourfold") | ";" | newline;
+    if S.cache#?("FanoMapDSCF",T) and isFanoMapStandard X then (
+        mu := fanoMapDSCF X;
+        m := dim ambient target mu;
+        y := local y;
+        ringAmbientW := K[y_0..y_m];
+        s = s | "y := local y; ringAmbientW := K[y_0..y_" | toString m | "];" | newline;
+        s = s | "mu := (Hom(projectiveVariety ringP5,projectiveVariety ringAmbientW)) " | toString entries sub(matrix mu,vars ringP5) | ";" | newline;
+        if m > 4 then (
+            s = s | "forceImage(mu,projectiveVariety(" | toString sub(ideal target mu,vars ringAmbientW) | ",Saturate=>false));" | newline;
+        ) else (
+            s = s | "forceImage(mu,target mu);" | newline;
+        );
+        s = s | "mu = rationalMap(mu,Dominant=>true);" | newline;
+        s = s | ///mu.cache#"FanoMapType" = "Standard";/// | newline;
+        s = s | ///X.cache#"FanoMapType" = "Standard";/// | newline;
+        s = s | ///S.cache#("FanoMapDSCF",T) = mu;/// | newline;
+        if mu.cache#?("surfaceDeterminingInverseOfFanoMap",X) then (
+            U := surfaceDeterminingInverseOfFanoMap X;
+            s = s | "U := projectiveVariety(" | toString sub(ideal U,vars ringAmbientW) | ",Saturate=>false);" | newline;
+            s = s | ///mu.cache#("surfaceDeterminingInverseOfFanoMap",X) = U;/// | newline;
+            if U.cache#?"exceptionalCurves" then (
+                (L,C) := exceptionalCurves X;
+                s = s | "L := " | (if dim L >= 0 then "projectiveVariety(" | toString sub(ideal L,vars ringAmbientW) | ",Saturate=>false)" else "0_U") | ";" | newline;
+                s = s | "C := " | (if dim C >= 0 then "projectiveVariety(" | toString sub(ideal C,vars ringAmbientW) | ",Saturate=>false)" else "0_U") | ";" | newline;
+                s = s | ///U.cache#"exceptionalCurves" = (L%U,C%U);/// | newline;
+            );
+            if U.cache#?"special curves on U" and #(U.cache#"special curves on U") > 0 then s = s | ///U.cache#"special curves on U" = apply(/// | toString apply(U.cache#"special curves on U", D -> sub(ideal D,vars ringAmbientW)) | ", D -> (projectiveVariety(D,Saturate=>false))%U);" | newline;
+            if U.cache#?"Genus2CurveOnSurfaceU" then s = s | ///U.cache#"Genus2CurveOnSurfaceU" = (projectiveVariety( /// | toString sub(ideal U.cache#"Genus2CurveOnSurfaceU",vars ringAmbientW) | ",Saturate=>false))%U;" | newline;
+            if U.cache#?"strategy for surface U" then s = s | ///U.cache#"strategy for surface U" = "/// | toString U.cache#"strategy for surface U" | ///";/// | newline;
+            if U.cache#?"birational maps from X to W and from W to X" then (
+                eta := last U.cache#"birational maps from X to W and from W to X";
+                s = s | "mu' := mu|X;" | newline;
+                s = s | "eta := (Hom(target mu',source mu')) " | toString entries sub(matrix eta,vars ringAmbientW) | ";" | newline;
+                s = s | ///mu'#"inverse" = eta; eta#"inverse" = mu';/// | newline;
+                s = s | ///U.cache#"birational maps from X to W and from W to X" = (mu',eta);/// | newline;
+            );
+            if U.cache#?"Normalization" then (
+                normU := multirationalMap normalization U;
+                z := local z;
+                r := dim ambient source normU;
+                ringAmbNormU := K[z_0..z_r,Degrees=>degrees ring ambient source normU];
+                s = s | "z := local z; ringAmbNormU := K[z_0..z_" | toString r | ",Degrees=>" | toString degrees ringAmbNormU | "];" | newline;
+                s = s | "NormU := projectiveVariety(" | toString sub(ideal source normU,vars ringAmbNormU) | ",Saturate=>false);" | newline;
+                s = s | ///U.cache#"Normalization" = toRationalMap((Hom(NormU,U)) /// | toString entries sub(matrix normU,vars ringAmbNormU) | ");" | newline;
+            );
+        );
+    );
+    s | "X))()"
+);
+
 ------------------------------------------------------------------------
 ----------- Recognition and auxiliary utilities for D. S. C. F. --------
 ------------------------------------------------------------------------
