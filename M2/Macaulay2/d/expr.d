@@ -108,6 +108,48 @@ export completions(s:string):array(string) := (
 	  unlock(d.symboltable.mutex);
 	  d != d.outerDictionary) do d = d.outerDictionary;
      extract(v));
+
+-- This assumes x is a valid symbol name; arbitrary strings would need format from stdio.d.
+completionJSONQuote(x:string):string := "\"" + x + "\"";
+
+completionKind(e:Expr):string := when e
+     is FunctionClosure do "function"
+     is CompiledFunction do "function"
+     is CompiledFunctionClosure do "function"
+     is List do "list"
+     is Sequence do "sequence"
+     is h:HashTable do if h.Mutable then "mutable-hash-table" else "hash-table"
+     is stringCell do "string"
+     is Net do "net"
+     is NetFile do "net"
+     is SymbolClosure do "symbol"
+     is SymbolBody do "symbol"
+     is s:SpecialExpr do completionKind(s.e)
+     else "other";
+
+export completionInfoJSON(s:string):string := (
+     n := length(s);
+     if n == 0 then return "[]";
+     ret := "[";
+     first := true;
+     d := globalDictionary;
+     while (
+	  lockRead(d.symboltable.mutex);
+	  foreach bucket in d.symboltable.buckets do (
+	       b := bucket;
+	       while true do when b
+	       is null do break
+	       is q:SymbolListCell do (
+		    t := q.word.name;
+		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then (
+			 if first then first = false else ret = ret + ",";
+			 ret = ret + "{\"name\":" + completionJSONQuote(t)
+			      + ",\"kind\":" + completionJSONQuote(completionKind(getGlobalVariable(q.entry))) + "}";
+			 );
+		    b = q.next; ));
+	  unlock(d.symboltable.mutex);
+	  d != d.outerDictionary) do d = d.outerDictionary;
+     ret + "]");
 export DictionaryList := {
      dictionary:Dictionary,
      next:DictionaryList				    -- pointer to self indicates end
