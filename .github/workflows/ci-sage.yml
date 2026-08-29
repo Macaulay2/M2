@@ -1,0 +1,115 @@
+name: Run Sage CI
+##
+## This GitHub Actions workflow uses the portability testing framework
+## of passagemath (https://github.com/passagemath).
+##
+##  - Documentation: https://doc.sagemath.org/html/en/developer/portability_testing.html
+##
+##  - Deployment of ci-sage.yml in upstream projects is tracked at
+##    https://github.com/passagemath/passagemath/issues/704
+##
+##  - Contact: @passagemath/ci team on GitHub
+##
+## This GitHub Actions workflow provides:
+##
+##  - portability testing, by building and testing this project on many platforms
+##    (Linux variants and macOS), each with two configurations (installed packages),
+##
+##  - continuous integration, by building and testing other software
+##    that depends on this project.
+##
+## It runs on every push of a tag to the GitHub repository
+## and can also be invoked manually ("workflow_dispatch").
+##
+## The testing can be monitored in the "Actions" tab of the GitHub repository.
+##
+## After all jobs have finished (or are canceled) and a short delay,
+## tar files of all logs are made available as "build artifacts".
+##
+## The workflow consists of two jobs:
+##
+##  - First, it builds a source distribution of the project
+##    and generates a script "update-pkgs.sh".  It uploads them
+##    as a build artifact named upstream.
+##
+##  - Second, it checks out a copy of the SageMath source tree.
+##    It downloads the upstream artifact and replaces the project's
+##    package in the SageMath distribution by the newly packaged one
+##    from the upstream artifact, by running the script "update-pkgs.sh".
+##    Then it builds a small portion of the Sage distribution.
+##
+## Many copies of the second step are run in parallel for each of the tested
+## systems/configurations.
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    # Allow to run manually
+    inputs:
+      macaulay2_targets:
+        description: 'Targets to build before M2-core, e.g., build-normaliz'
+        required: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  # Ubuntu packages to install so that the project's "make dist" can succeed
+  DIST_PREREQ: git
+  # Name of this project in the Sage distribution
+  SPKG:        macaulay2
+  REMOVE_PATCHES:   "*"
+
+jobs:
+
+  dist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out ${{ env.SPKG }}
+        uses: actions/checkout@v4
+        with:
+          path: build/pkgs/${{ env.SPKG }}/src
+      - name: Install prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $DIST_PREREQ
+
+      - name: Run make dist, prepare upstream artifact
+        run: |
+          (cd build/pkgs/${{ env.SPKG }}/src && git archive --format=tar.gz --prefix=${{ env.SPKG }}-git/ HEAD > ${{ env.SPKG }}-git.tar.gz) \
+          && mkdir -p upstream && cp build/pkgs/${{ env.SPKG }}/src/*.tar.gz upstream/${{ env.SPKG }}-git.tar.gz \
+          && echo "sage-package create ${{ env.SPKG }} --version git --tarball ${{ env.SPKG }}-git.tar.gz --type=optional" > upstream/update-pkgs.sh \
+          && if [ -n "${{ env.REMOVE_PATCHES }}" ]; then echo "(cd ../build/pkgs/${{ env.SPKG }}/patches && rm -f ${{ env.REMOVE_PATCHES }}; :)" >> upstream/update-pkgs.sh; fi \
+          && ls -l upstream/
+      - uses: actions/upload-artifact@v4
+        with:
+          path: upstream
+          name: upstream
+
+  linux:
+    uses: passagemath/passagemath/.github/workflows/docker.yml@main
+    with:
+      extra_sage_packages: gdbm git libxml2 gfortran cmake python3 openblas zlib readline sqlite libpng bzip2 liblzma libffi openssl
+      targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="macaulay2" SAGE_MACAULAY2_TARGETS="${{ github.event.inputs.macaulay2_targets }}" macaulay2
+      # Standard setting: Test the current HEAD of passagemath:
+      sage_repo: passagemath/passagemath
+      sage_ref: main
+      upstream_artifact: upstream
+      # We prefix the image name with the SPKG name ("macaulay2-") to avoid the error
+      # 'Package "sage-docker-..." is already associated with another repository.'
+      docker_push_repository: ghcr.io/${{ github.repository }}/macaulay2-
+    needs: [dist]
+
+  macos:
+    uses: passagemath/passagemath/.github/workflows/macos.yml@main
+    with:
+      extra_sage_packages: gdbm git libxml2 gfortran cmake python3 openblas zlib readline sqlite libpng bzip2 liblzma libffi openssl
+      targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="macaulay2" SAGE_MACAULAY2_TARGETS="${{ github.event.inputs.macaulay2_targets }}" macaulay2
+      # Standard setting: Test the current HEAD of passagemath:
+      sage_repo: passagemath/passagemath
+      sage_ref: main
+      upstream_artifact: upstream
+    needs: [dist]
