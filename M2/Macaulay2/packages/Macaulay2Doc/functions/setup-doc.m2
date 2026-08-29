@@ -48,20 +48,33 @@ Node
   Key
     setupEmacs
     1:setupEmacs
+    (setupEmacs, String)
   Usage
     setupEmacs()
+    setupEmacs s
+  Inputs
+    s:String -- defaults to "emacs" when absent
   Consequences
     Item
-      The initialization file for Emacs (@TT ".emacs"@ in your home directory) will have lines
-      added to allow the Macaulay2 Emacs mode to operate. The user is prompted before the file
-      is modified and offered the opportunity to review or reject the change.
+      The M2 package for Emacs is installed.  The initialization file for Emacs (@TT ".emacs"@ in
+      your home directory) will have lines added to help the Macaulay2 Emacs mode to operate. The
+      user is prompted before the file is modified and offered the opportunity to review or reject
+      the change.
   Description
     Text
-      A backup files is made carefully, and if a mangled initialization file is detected,
-      it will not be modified. The lines added are bracketed by comment lines containing
-      the phrases @TT "Macaulay 2 start"@ and @TT "Macaulay 2 end"@.
+      Emacs will be run in batch mode to install the Macaulay2 major mode package.  If @CODE "emacs"@
+      is not available on the @CODE "PATH"@, then you may specify the path to the Emacs binary using
+      @VAR "s"@.
 
-      The function @TO setup@ does all this and more.
+      In addition, your @CODE ".emacs"@ file will be modified.  A backup file is made carefully, and
+      if a mangled initialization file is detected, it will not be modified. The lines added are
+      bracketed by comment lines containing the phrases @TT "Macaulay 2 start"@ and @TT "Macaulay 2
+      end"@.  These lines load a second file initialization file, @CODE ".emacs-Macaulay2"@, which
+      checks to see if the M2 Emacs package was successfully installed, and if not, loads it manually.
+      It also binds @KBD "F12"@ to the function to start a new M2 process.
+
+      The function @TO setup@ also sets up the Emacs initialization files as described above, but
+      does not attempt to install the M2 Emacs package.
   SeeAlso
     setup
 ///
