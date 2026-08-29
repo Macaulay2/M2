@@ -566,6 +566,7 @@ subringIntersection(Subring, Subring) := IntersectedSubring => opts -> (S1, S2) 
         "ambientRing" => A,
         "flattenedRing" => Q,
         "generators" => intersectionGens,
+        "originalGenerators" => S1#"inverseFlatteningMap" intersectionGens,
         "presentationRing" => subductionRing,
         "presentationMap" => presentationMap,
         cache => new CacheTable from {},
