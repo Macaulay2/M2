@@ -28,8 +28,8 @@ export {
 	"MarkedPolynomialList",
 	"markedPolynomialList",
 	"MPLConverter",
-	"polymakeFanToFan",
-	"polymakeConeToCone",
+--	"polymakeFanToFan",
+--	"polymakeConeToCone",
 	"gfan", -- done!
 	"gfanBuchberger", -- done!
 	"gfanDoesIdealContain", -- done!
@@ -68,6 +68,7 @@ export {
 	"gfanTropicalHyperSurface", -- v0.4 -- done!
 	"gfanTropicalHyperSurfaceReconstruction",
 	"gfanTropicalIntersection", -- done!
+        "gfanTropicalPrevariety", -- TODO: under development
 	"gfanTropicalLifting",
 	"gfanTropicalLinearSpace", -- v0.4 -- done! doc needs double checking
 	"gfanTropicalMultiplicity", -- example needed.
@@ -84,8 +85,15 @@ export {
 --	"gfanVectorListListToString", -- to make gfan input
 	"gfanVersion",
 	"toPolymakeFormat",
-	"multiplicitiesReorder"
+	"multiplicitiesReorder",
+	 "gfanConvertToNewRing",
+        "gfanIdealToString",
+        "runGfanCommand",
+        "gfanGroebnerComplex",
+        "gfanPadicInitialIdeal"
 }
+
+importFrom(Polyhedra,{"pure","simplicial"})
 
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
 -- for backward compatibility
@@ -99,8 +107,6 @@ fig2devProgram = null
 
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
---minmax switch disabled
--- gfanTropicalMin = not gfanInterface#Options#Configuration#"tropicalMax"
 
 GfanTypes = {
 	{	"sym" => "AmbientDim",
@@ -141,6 +147,10 @@ GfanTypes = {
 	},
 	{	"sym" => "MaximalCones",
 		"str" => "MAXIMAL_CONES",
+		"type" => "incidenceMatrix"
+	},
+	{	"sym" => "MaximalConesOfClosure",
+		"str" => "MAXIMAL_CONES_OF_CLOSURE",
 		"type" => "incidenceMatrix"
 	},
 	{	"sym" => "Pure",
@@ -209,6 +219,12 @@ MarkedPolynomialList.synonym = "marked polynomial list";
   -- and L and inL have the same length, and the
   -- the monomial inL#i is the marked monomial, which
   -- should occur with the same coefficient in L#i.
+  
+MarkedPolynomialList == MarkedPolynomialList := (As, Bs) -> (
+	    set transpose As == set transpose Bs
+);
+
+
 
 markedPolynomialList = method();
 markedPolynomialList List := L -> (
@@ -444,8 +460,6 @@ multiplicitiesReorder (List):=(L)->(
 
 
 
---minmax switch is now disabled
---gfanParsePolyhedralFan = method(TypicalValue => PolyhedralObject, Options => {"GfanFileName" => null, "TropicalMinConventionApplies" => false })
 
 gfanParsePolyhedralFan = method(TypicalValue => PolyhedralObject, Options => {"GfanFileName" => null})
 gfanParsePolyhedralFan String := o -> s -> (
@@ -458,27 +472,6 @@ gfanParsePolyhedralFan String := o -> s -> (
 	rawBlocks := new MutableHashTable from apply(blocks, P -> first P => P#1);
 	parsedBlocks := apply(select(blocks, Q -> last Q =!= null), P -> GfanNameToPolyhedralName#(first P) => last P);
 	myhash := new MutableHashTable from parsedBlocks;
-
---minmax switch disabled
---	if gfanTropicalMin and o#"TropicalMinConventionApplies" then (
---		--print("tropical min convention invoked while parsing polyhedral fan");
---
---	-- adjust the fan
---		myhash#"Rays" = apply(myhash#"Rays", ray-> -ray);
---
---	-- adjust rawBlocks
---		myList := {"RAYS"};
---		apply(length myhash#"Rays", i -> (
---			myVector := between(" ", apply(myhash#"Rays"#i, coord -> toString(coord)));
---			myString := concatenate(myVector) | "  # " | toString(i);
---			myList = append(myList, myString);
---		));
---		rawBlocks#"RAYS" = myList;
---
---	-- adjust raw-string
---			myBlocks := prepend(header, values rawBlocks);
---			s = concatenate between("\n\n", apply(myBlocks, lines -> between("\n", lines)));
---	);
 	P := new gfanParseHeader(header) from myhash;
    	if gfanCachePolyhedralOutput then (
 
@@ -503,14 +496,24 @@ gfanParsePolyhedralFan String := o -> s -> (
             -- by equations
 	    if (P#"AmbientDim" < 0) then return "error: this fan is empty"; 
 	    if    P#?"Rays"==false or P#"Rays"=={} then myrays=map(ZZ^(P#"AmbientDim"),ZZ^0,0) else  myrays=transpose matrix P#"Rays";
-	    if  P#?"MaximalCones"==false then mymaximalcones={{}} else  mymaximalcones= P#"MaximalCones";
+	    if  P#?"MaximalCones"==true then  mymaximalcones= P#"MaximalCones" else if P#?"MaximalConesOfClosure" then mymaximalcones= P#"MaximalConesOfClosure"  else  mymaximalcones={{}}; -- This requires to check whether MaximalConesOfClosure is the correct thing
 	   
 	    if P#"LinealitySpace"=={} then  mylinspace=map(ZZ^(P#"AmbientDim"),ZZ^0,0)  else mylinspace=transpose matrix P#"LinealitySpace";
 	    if P#?"Rays"==false then S=fan(myrays,mylinspace,mymaximalcones)
 	    else (
 		fVector := P#"FVector";
-		while (#fVector < P#"Dim"+1) do (fVector = {0}|fVector);
-		S=fanFromGfan({myrays,mylinspace,mymaximalcones,P#"Dim",P#"Pure",P#"Simplicial",fVector});
+		
+		dimfan := if P#?"Dim"==false then  length(fVector)+P#"LinealityDim"-1 else P#"Dim";
+		while (#fVector < dimfan+1) do (fVector = {0}|fVector);
+		isPureSet := P#?"Pure";
+		puremanual:= if not isPureSet then false else P#"Pure";
+		isSimplicialSet := P#?"Simplicial";
+		simplicialmanual := if not isSimplicialSet then false else P#"Simplicial";
+		
+		S=fanFromGfan({myrays,mylinspace,mymaximalcones,dimfan,puremanual,simplicialmanual,fVector});
+		
+		 if not isPureSet then remove(S.cache,symbol pure);
+		 if not isSimplicialSet then remove(S.cache,symbol simplicial);
 	    );	    
 
 	    --re-writing the  multiplicities according to the new order of maximal cones 
@@ -1144,8 +1147,13 @@ argStrs = hashTable {
 	"trees" => "--trees",
 	"unimodular" => "--unimodular",
 	"vectorinput" => "--vectorinput",
+	"matrixoutput" => "--matrixoutput",
+	"halfopenrestrictions" => "--halfopenrestrictions",
 	"xml" => "--xml",
-	"tropicalbasistest" => "--tropicalbasistest"
+	"tropicalbasistest" => "--tropicalbasistest",
+        "p" => "-p",
+	"groebnerComplex" => "--groebnerComplex",
+	"initialIdeal" => "--initialIdeal"
 };
 
 
@@ -1165,7 +1173,8 @@ cmdLineArgs = hashTable {
 	"gfan _minors" => {"r", "d", "n"},
 	"gfan _mixedvolume" => {"j"},
 	"gfan _tropicallinearspace" => {"n", "d"},
-	"gfan _tropicalhypersurfacereconstruction" => {"i"}
+	"gfan _tropicalhypersurfacereconstruction" => {"i"},
+        "gfan _padic" => { "p" }
 }
 
 
@@ -1884,22 +1893,19 @@ maximalConesFromList List := cones -> (
 ------------------------------
 -- gfan_mixedvolume
 --------------------------------------------------------
-
 gfanMixedVolume = method( Options => {
-	"j" => 1 --Number of threads used
-	}
+        "j" => 1 --Number of threads used
+        }
 )
-
 gfanMixedVolume (List) := opts -> (L) -> (
-	if #L == 0 then
-		return;
-		
-	L = (gfanConvertToNewRing(L))#1;
-	input := gfanRingToString(ring L#0) | gfanPolynomialListToString(L);
-
-	(runGfanCommand("gfan _mixedvolume", opts, input))#0
+    if #L == 0 then
+        return;
+    L = (gfanConvertToNewRing(L))#1;
+    input := gfanRingToString(ring L#0) | gfanPolynomialListToString(L);
+    out := (runGfanCommand("gfan _mixedvolume", opts, input))#0;
+    ls := select(lines out, l -> l =!= "");
+    value last ls
 )
-
 
 
 --------------------------------------------------------
@@ -2060,6 +2066,7 @@ gfanSecondaryFan (List) := opts -> (L) -> (
 -- gfan_stats
 --------------------------------------------------------
 
+
 gfanStats = method( Options => {} )
 
 gfanStats (List) := opts -> (L) -> (
@@ -2067,8 +2074,15 @@ gfanStats (List) := opts -> (L) -> (
 	L = newL;
 	input := gfanMPLToRingToString(first L)
 		| gfanLMPLToString(L);
-	first runGfanCommand("gfan _stats", opts, input) -- Parse this?
+	out := first runGfanCommand("gfan _stats", opts, input);
+	stripSpaces := s -> replace("^[[:space:]]+|[[:space:]]+$", "", s);
+	-- parse "Label: value" lines into a hash table
+	hashTable apply(select(lines out, l -> l != ""), l -> (
+		parts := separate(":", l);
+		(stripSpaces first parts) => value stripSpaces last parts
+	))
 )
+
 
 --------------------------------------------------------
 -- gfan_substitute
@@ -2166,8 +2180,6 @@ gfanTropicalBruteForce List := opts -> (L) -> (
 	output := runGfanCommand("gfan _tropicalbruteforce", opts, input);
 	--check if fan is empty
 	if (#select("empty",output#0)==1) then return "error: this fan is empty";
---minmax switch disabled
---	gfanParsePolyhedralFan append(output, "TropicalMinConventionApplies" => true)
 	gfanParsePolyhedralFan output
 )
 
@@ -2350,6 +2362,49 @@ gfanTropicalMultiplicity (List) := opts -> (L) -> (
 )
 
 --------------------------------------------------------
+-- gfan_tropicalprevariety
+--------------------------------------------------------
+
+gfanTropicalPrevariety = method(Options => {
+	"matrixoutput" => false,
+	"halfopenrestrictions" => null
+	}
+)
+
+
+gfanTropicalPrevariety (List) :=  opts -> (L) -> (
+    (ringMap,newL) := gfanConvertToNewRing(L);
+    L = newL;
+    input := gfanRingToString(ring first L) | gfanPolynomialListToString(L);
+    -- --halfopenrestrictions tells gfan to read a list of half-open cones
+    -- {(dim,nonstrict,equations,strict)} from stdin, restricting the computation
+    -- to those regions.  The flag itself is emitted by gfanArgumentToString because
+    -- the option value is truthy; the restriction list is appended to the input here.
+    if opts#"halfopenrestrictions" =!= null then (
+	r := opts#"halfopenrestrictions";
+	-- Each cone's dimension (the first entry of the 4-tuple) must match the
+	-- number of variables of the polynomial ring.
+	n := numgens ring first L;
+	for cone in r do
+	    if first cone =!= n then error(
+		"gfanTropicalPrevariety: halfopenrestrictions cone dimension "
+		| toString first cone | " does not match the number of ring variables "
+		| toString n);
+	input = input | toString r | newline;
+	);
+    s:=runGfanCommand("gfan _tropicalprevariety",opts,input);
+    -- with --matrixoutput gfan prints each half-open cone as an ambient dimension
+    -- and three matrices (nonstrict inequalities, equations, strict inequalities)
+    -- as raw nested lists (valid M2 syntax) rather than a polyhedral complex;
+    -- return them as a List
+    if opts#"matrixoutput" then value first s else gfanParsePolyhedralFan s
+)
+
+
+
+
+
+--------------------------------------------------------
 -- gfan_tropicalrank
 --------------------------------------------------------
 
@@ -2414,9 +2469,6 @@ gfanTropicalTraverse (List) := opts -> (L) -> (
 	output := runGfanCommand("gfan _tropicaltraverse", opts, input);
 	--check if the returned fan is empty
 	if(length(output#0)==0) then return "error: this fan is empty";
-	
---minmax switch disabled
---	gfanParsePolyhedralFan append(output, "TropicalMinConventionApplies" => true )
 	gfanParsePolyhedralFan output
 	
 )
@@ -2476,6 +2528,40 @@ gfanVersion  = () -> (
   o := new OptionTable from {};
   versionOutput := runGfanCommand("gfan _version", o, );
   substring((separate ("\n", versionOutput#0))#1,4)
+)
+
+
+--------------------------------------------------------
+-- gfan_padic
+--------------------------------------------------------
+
+gfanGroebnerComplex = method( Options=> {"groebnerComplex"=>true,"p" => 2} )
+
+gfanGroebnerComplex Ideal := opts -> (I) ->(
+    R := ring I;
+    K := coefficientRing R;
+    if not(K===QQ) then error("Your coefficient field needs to be QQ");
+    (ringMap, J):= gfanConvertToNewRing I;
+    --create the input string
+    input := gfanRingToString(target ringMap) | gfanIdealToString J;
+    output := runGfanCommand("gfan _padic", opts, input);  
+    if(length(output#0)==0) then return "error: this complex is empty";
+    gfanParsePolyhedralFan output#0
+)
+
+gfanPadicInitialIdeal  = method(Options=> {"initialIdeal"=>true,"p" => 2} )
+
+gfanPadicInitialIdeal (Ideal,List) := opts -> (I,w) ->(
+        R := ring I;
+        K := coefficientRing R;
+        if not(K===QQ) then error("Your coefficient field needs to be QQ");
+        (ringMap, J):= gfanConvertToNewRing I;
+        --create the input string
+        wstring:= replace("{","(",toString w);
+        wstring = replace("}",")",wstring);
+        input := gfanRingToString(target ringMap) | gfanIdealToString J | wstring;
+        output := runGfanCommand("gfan _padic", opts, input);
+        gfanParseIdeal(output#0)
 )
 
 --------------------------------------------------------
@@ -2546,31 +2632,37 @@ gfanHelp = functionStr -> PRE TT(
     if gfanProgram =!= null then wrap'_100 runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") else {})
 
 doc ///
-	Key
-		"gfanInterface"
-	Headline
-		a Macaulay2 interface to gfan
-	Description
-		Text
-			@EM "gfanInterface"@ is an interface to Anders Jensen's Gfan software (available at @HREF "http://home.imf.au.dk/jensen/software/gfan/gfan.html"@), which is a C++
-			program to compute the Groebner fan (i.e. all the initial ideals) of an ideal.
-
-			The main function in this package is @TO gfan@ which computes all of the Groebner
-			bases and initial ideals of a given ideal.  A useful feature of this function is
-			that it can handle symmetries in the ideal. If you want the geometric information
-			of this list of Groebner basis, see @TO gfanGroebnerCone@.
-
-			Most of the functions in gfanInterface require @TO MarkedPolynomialList@
-			marked polynomial lists as input.
-			In a marked polynomial list, the leading term of each polynomial is distinguished.
-			New users should read the guide @TO "Conventions for calling methods with options"@.
-			Since {\tt gfan} is distributed with @EM "Macaulay2"@, one rarely needs to consult
-			the guide for @TO "Installation and Configuration of gfanInterface"@.
-
-			Most of functions in the gfan package are accessible through this interface.
-			If you wish to use one whose interface is not included here send a message to
-			the package author. Also, please feel free to suggest changes to the
-			parameter types and return types of each method.
+        Key
+                "gfanInterface"
+        Headline
+                a Macaulay2 interface to gfan
+        Description
+          Text
+                        @EM "gfanInterface"@ is an interface to Anders Jensen's Gfan software (available at @HREF "http://home.imf.au.dk/jensen/software/gfan/gfan.html"@), which is a C++
+                        program to compute the Groebner fan (i.e. all the initial ideals) of an ideal.
+                        The main function in this package is @TO gfan@ which computes all of the Groebner
+                        bases and initial ideals of a given ideal.  A useful feature of this function is
+                        that it can handle symmetries in the ideal. If you want the geometric information
+                        of this list of Groebner basis, see @TO gfanGroebnerCone@.
+                        Most of the functions in gfanInterface require @TO MarkedPolynomialList@
+                        marked polynomial lists as input.
+                        In a marked polynomial list, the leading term of each polynomial is distinguished.
+                        New users should read the guide @TO "Conventions for calling methods with options"@.
+                        Since {\tt gfan} is distributed with @EM "Macaulay2"@, one rarely needs to consult
+                        the guide for @TO "Installation and Configuration of gfanInterface"@.
+                        Most of functions in the gfan package are accessible through this interface.
+                        If you wish to use one whose interface is not included here send a message to
+                        the package author. Also, please feel free to suggest changes to the
+                        parameter types and return types of each method.
+          Text
+            @SUBSECTION "Contributors"@
+          Text
+            The following people have also contributed to the package:
+          Text
+             @UL {
+               {HREF("https://victoriaschleis.github.io/", "Victoria Schleis")},
+               {HREF("https://sites.google.com/view/gabrielriffo/home", "Gabriel Riffo")}
+             }@
 ///
 
 doc ///
@@ -2834,7 +2926,7 @@ doc ///
 		M:MarkedPolynomialList
 	Outputs
 		G:List
-			all @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner bases"}@ of {\tt I}, {\tt L}, or {\tt M}
+			all @TO2 {"MarkedPolynomialList", "marked reduced Groebner bases"}@ of {\tt I}, {\tt L}, or {\tt M}
 	Description
 		Text
 			This method produces all reduced Groebner
@@ -4101,6 +4193,11 @@ doc ///
 		Text
 			This method intersects a list of tropical hypersurfaces. The input is a list of polynomials whose tropicalizations give the hypersurfaces.
 
+				Mathematically this computes the same object as @TO gfanTropicalPrevariety@,
+				namely the common refinement (intersection) of the tropical hypersurfaces of
+				the input polynomials. The two differ only in the underlying gfan method and
+				implementation.
+
 		Example
 			QQ[x,y];
 			gfanTropicalHyperSurface(x+y)
@@ -4189,6 +4286,98 @@ doc ///
 			@STRONG "gfan Documentation"@
 
 			@gfanHelp "gfan _tropicalmultiplicity"@
+///
+
+doc ///
+	Key
+		gfanTropicalPrevariety
+		(gfanTropicalPrevariety, List)
+		[gfanTropicalPrevariety, "matrixoutput"]
+		[gfanTropicalPrevariety, "halfopenrestrictions"]
+	Headline
+		the tropical prevariety of a list of polynomials
+	Usage
+		F = gfanTropicalPrevariety(L)
+	Inputs
+		L:List
+			of polynomials
+		"matrixoutput" => Boolean
+			corresponding to the {\tt --matrixoutput} flag of {\tt gfan _tropicalprevariety}, which
+			outputs each half-open cone as an ambient dimension and three matrices (nonstrict
+			inequalities, equations, strict inequalities) instead of a polyhedral complex
+		"halfopenrestrictions" => List
+			corresponding to the {\tt --halfopenrestrictions} flag of {\tt gfan _tropicalprevariety}, a
+			list of half-open cones {\tt {(dim,nonstrict,equations,strict)}} to which the computation is
+			restricted, passed to {\tt gfan} on standard input.  Each cone's {\tt dim} (the first entry)
+			must equal the number of variables of the polynomial ring
+	Outputs
+		F:Fan
+			the tropical prevariety, i.e. the common refinement of the tropical hypersurfaces of the polynomials in {\tt L}
+	Description
+		Text
+			This method computes the tropical prevariety of a list of polynomials,
+			which is the intersection (common refinement) of the tropical
+			hypersurfaces of the individual polynomials. Unlike the tropical
+			variety, the prevariety depends only on the given generators.
+
+			Mathematically this computes the same object as @TO gfanTropicalIntersection@,
+			namely the common refinement (intersection) of the tropical hypersurfaces of
+			the input polynomials. The two differ only in the underlying gfan method and
+			implementation.
+
+		Example
+			QQ[x,y,z];
+			F = gfanTropicalPrevariety {x+y+z}; (rays F, maxCones F)
+			F = gfanTropicalPrevariety {x+y+z, x+y}; (rays F, maxCones F)
+                       
+		Text
+			When the {\tt "matrixoutput" => true} option is given, the {\tt --matrixoutput}
+			flag is passed to {\tt gfan}, and the raw nested-list data produced by {\tt gfan}
+			is returned as a @TO List@ instead of a @TO Fan@.
+
+			With this flag {\tt gfan} outputs each half-open cone as an ambient dimension
+			together with three matrices describing the nonstrict inequalities, the
+			equations, and the strict inequalities, instead of a polyhedral complex.
+			The returned @TO List@ is a list of such cones, each of the form
+			{\tt {d, N, E, S}} where {\tt d} is the ambient dimension and {\tt N}, {\tt E},
+			{\tt S} are lists of rows for the nonstrict inequalities, equations, and strict
+			inequalities, respectively. For example, the single cone
+			{\tt {2, {(0,1)}, {(1,-1)}, {}}} lives in ambient dimension {\tt 2} and is
+			cut out by the nonstrict inequality {\tt (0,1)}, the equation {\tt (1,-1)}, and no
+			strict inequalities.
+
+		Example
+			QQ[x,y,z];
+			gfanTropicalPrevariety({x+y+z, x+y}, "matrixoutput" => true)
+
+		Text
+			The {\tt "halfopenrestrictions"} option restricts the computation to a given list
+			of half-open cones, each of the form {\tt (dim,nonstrict,equations,strict)}.  The
+			restriction list is passed to {\tt gfan} on standard input.  Note that, as in
+			{\tt gfan}, the preprocessing is independent of this data, so it is undefined
+			behavior to pass regions larger than where the intersection data was computed.
+
+			The half-open cones produced by {\tt "matrixoutput" => true} (above) give an example of 
+                        the tuples 
+			{\tt (dim,nonstrict,equations,strict)} expected here (once each {\tt {d,N,E,S}} list is
+			turned into a sequence) with a caveat: in the constant-coefficient case the restrictions
+                        live in the space dimension one higher. One way to think: the last coefficient is a constant;
+                        e.g., {\tt (1,-1,0)} below is the equation $x-y\geq 0$.     
+		Example
+			QQ[x,y];
+                        F = gfanTropicalPrevariety{x+y+x^2+y^2+x*y}
+                        (rays F, maxCones F)
+			F = gfanTropicalPrevariety({x+y+x^2+y^2+x*y}, "halfopenrestrictions" => {{2, {}, {(1, -1)}, {}}});
+			(rays F, maxCones F)
+
+		Text
+			@STRONG "gfan Documentation"@
+
+			@gfanHelp "gfan _tropicalprevariety"@
+	SeeAlso
+		gfanTropicalIntersection
+		gfanTropicalHyperSurface
+		gfanTropicalBasis
 ///
 
 doc ///
@@ -4343,7 +4532,7 @@ doc ///
 	Outputs
 	    	F:Fan 
 		G:List
-		        all @TO2 {"Marked Groebner Basis Example", "marked reduced Groebner bases"}@ of {\tt I}.
+		        all @TO2 {"MarkedPolynomialList", "marked reduced Groebner bases"}@ of {\tt I}.
 		L:List
 	Description
 		Text
@@ -4404,9 +4593,51 @@ doc///
 -- Tests
 ---------------------------------------
 
---status: need to fix comments in gfan, all of gfanFanProduct, in the
---middle of gfanGroebnerCone
+--status: need to fix comments in gfan, in the
+--middle of gfanGroebnerCone,
+--- functions with missing hashvalues: groebnerCone, HomogeneitySpace, MinkowskiSum, SecondaryFan, 
+-- functions with wrong output datatype: MixedVolume (string instead of int)
+-- math q: Stats.
+--  Need to test ==
+-- TEST gfanIdealToString
+    TEST ///
+    QQ[x,y,z];
+    I = ideal(x^2 + y, x*z);
+    S = gfanIdealToString I;
+    assert(class S === String)
+    assert(match("x", S))
+    ///
 
+-- TEST toString, net, texMath, expression for MarkedPolynomialList
+    TEST ///
+    QQ[x,y,z];
+    L = markedPolynomialList {{x^2, y}, {x^2 + y^2, x*z + y}};
+    assert(class toString L === String)
+    assert(class net L === Net)
+    assert(class texMath L === String)
+    assert(instance(expression L, Expression))
+    ///
+
+-- TEST gfanVersion
+    TEST ///
+    gfanVer := gfanVersion();
+    assert(class gfanVer === String)
+    ///
+    -- TEST MarkedPolynomialList type
+    TEST ///
+        QQ[x,y,z];
+        L = markedPolynomialList {{x^2, y^2}, {x^2 + y^2 + z^2, x^2 + y^2 + z^2}};
+        assert(class L === MarkedPolynomialList)
+        assert(instance(L, MarkedPolynomialList))
+    ///
+
+    -- TEST gfanFunctions
+        TEST ///
+           assert(class gfanFunctions === HashTable)
+           assert(gfanFunctions#gfan === "gfan")
+           assert(gfanFunctions#gfanBuchberger === "gfan _buchberger")
+           assert(gfanFunctions#gfanStats === "gfan _stats")
+    ///
 
 --        TEST gfan
 	TEST ///
@@ -4418,14 +4649,23 @@ doc///
 	  S = gfan({x^2*y -y^2, y^2*x - x^2}, "symmetry" => {{0,1,2}, {1,0,2}})
 	  assert(#S == 2)
 
---	  G = gfan(markedPolynomialList {{y^5, x*y^2, x^2},{y^5-y^2,x*y^2 - y^4, x^2 -y^4}}, "g" => true)
---	  Gprime = {
---	  	markedPolynomialList {{y^5,x*y^2,x^2},{y^5-y^2,-y^4+x*y^2,-y^4+x^2}},
---	  	markedPolynomialList {{y^4,x*y^2,x^2*y,x^3},{y^4-x^2,x*y^2-x^2,x^2*y-y^2,x^3-y^3}},
---	 	markedPolynomialList {{y^3,x*y^2,x^2*y,x^4},{-x^3+y^3,x*y^2-x^2,x^2*y-y^2,x^4-y^2}},
---	 	markedPolynomialList {{y^2,x^2*y,x^5},{-x^4+y^2,-x^4+x^2*y,x^5-x^2}}
---	 }
---	 assert(G == Gprime)  -- may fail if the order of output changes
+	  G = gfan(markedPolynomialList {{y^5, x*y^2, x^2},{y^5-y^2,x*y^2 - y^4, x^2 -y^4}}, "g" => true)
+	  Gprime = {
+	  	markedPolynomialList {{y^5,x*y^2,x^2},{y^5-y^2,-y^4+x*y^2,-y^4+x^2}},
+	  	markedPolynomialList {{y^4,x*y^2,x^2*y,x^3},{y^4-x^2,x*y^2-x^2,x^2*y-y^2,x^3-y^3}},
+	 	markedPolynomialList {{y^3,x*y^2,x^2*y,x^4},{-x^3+y^3,x*y^2-x^2,x^2*y-y^2,x^4-y^2}},
+	 	markedPolynomialList {{y^2,x^2*y,x^5},{-x^4+y^2,-x^4+x^2*y,x^5-x^2}}
+	 }
+--         equalListMPL = (As, Bs) -> (
+--            if #As =!= #Bs then return false;
+--            remaining := Bs;
+--            all(As, a -> (
+--            i := position(remaining, b -> a==b);
+--            if i === null then return false;
+--           true
+--           ))
+--         )   
+        assert (G == Gprime)
 	 ///
 -- 	TEST MPLConverter
 	 TEST ///
@@ -4446,7 +4686,7 @@ doc///
 	gfanConvertToNewRing(R)
 	///
 
-	-- TEST gfanBuchberger
+-- TEST gfanBuchberger
 	TEST ///
 	 equalMPL = (A,B) -> set transpose A === set transpose B
 	 QQ[x,y,z];
@@ -4467,7 +4707,6 @@ doc///
 	 assert gfanDoesIdealContain(gfanBuchberger({x*y - y, x*z + z}), {y*z})
 	 assert not gfanDoesIdealContain(gfanBuchberger({x*y - y, x*z + z}), {y*z+1})
 	 ///
-
 	-- TEST gfanCommonRefinement
 	 TEST ///
 	 QQ[x,y];
@@ -4483,7 +4722,7 @@ doc///
 	 assert(maxCones(C) === {{0, 1}, {0, 2}, {1, 3}, {2, 3}})
 	 ///
 
-	-- TEST gfanFanLink
+	-- TEST gfanFanLinkFanPro
 	 TEST ///
 	 QQ[x,y];
 	 F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
@@ -4499,169 +4738,210 @@ doc///
 	 assert(maxCones(C) === {{0,1}})
 	 ///
 
+         -- gfanTropicalPrevariety
+         TEST ///
+         QQ[x,y,z];
+         F = gfanTropicalPrevariety {x+y+z}
+         assert(rays(F) == transpose matrix {{-1,0,0},{0,-1,0},{1,1,0}})
+         assert(maxCones(F) == {{0},{1},{2}})
+         G = gfanTropicalPrevariety {x+y+z, x+y}
+         assert(rays(G) == transpose matrix {{1,1,0}})
+         assert(maxCones(G) == {{0}})
+         -- --matrixoutput returns the half-open cones as a list of {d,N,E,S}
+         M = gfanTropicalPrevariety({x+y+z, x+y}, "matrixoutput" => true)
+         assert(class M === List)
+         assert(all(M, c -> class c === List and #c == 4))
+         assert(all(M, c -> class first c === ZZ))
+         -- Round trip: feeding the cones back via --halfopenrestrictions (as the
+         -- {(d,N,E,S)} tuples gfan expects) restricts to the whole prevariety and so
+         -- must reproduce the unrestricted result.
+         H = gfanTropicalPrevariety({x+y+z, x+y}, "halfopenrestrictions" => apply(M, toSequence))
+         assert(rays(H) == rays(G))
+         assert(maxCones(H) == maxCones(G))
+         ///
+         
 	-- TEST gfanFanProduct
--- 	TEST ///
--- 	 QQ[x,y];
--- 	 F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
--- 	 G = gfanToPolyhedralFan {markedPolynomialList{{y^2}, {x+y^2}}};
--- 	 C = gfanFanProduct(F,G);
---Problem is that gfanFanProduct returns two lists.	 
--- 	 assert(rank(target(rays(C))) === 4)
--- 	 assert(dim(C) === 4)
--- 	 assert isSimplicial(C)
--- 	 assert(rank(linealitySpace(C)) === 2)
--- 	 assert(rank(source(rays(C)) === 2)
---  	 assert(rays(C) === transpose matrix {{0, 0, -1, 2}, {1, -1, 0, 0}})
--- 	 assert(maxCones(C) === {{0, 1}})
--- 	 assert(linealitySpace(C) === {{1, 1, 0, 0}, {0, 0, 2, 1}})
---	 ///
+ 	TEST ///
+ 	 QQ[x,y];
+ 	 F = gfanToPolyhedralFan {markedPolynomialList{{x}, {x+y}}};
+ 	 G = gfanToPolyhedralFan {markedPolynomialList{{y^2}, {x+y^2}}};
+ 	 C = gfanFanProduct(F,G); 
+ 	 assert(rank(target(rays(C#0))) === 4);
+ 	 assert(dim(C#0) === 4);
+ 	 assert isSimplicial(C#0);
+ 	 assert(rank(linealitySpace(C#0)) === 2);
+ 	 assert(rank(source(rays(C#0))) === 2);
+  	 assert(rays(C#0) === transpose matrix {{1, -1, 0, 0},{0, 0, -1, 2}});
+ 	 assert(maxCones(C#0) === {{0, 1}});
+ 	  assert(linealitySpace(C#0) === transpose matrix {{1, 1, 0, 0}, {0, 0, 2, 1}});
+	 ///
 	
 	-- TEST gfanGroebnerCone
 	TEST ///
 	  QQ[x,y];
 	  C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}} )
---	  assert(set C#"IMPLIED_EQUATIONS" === set {})
 	  assert(rank target rays C  === 2)
-	-- assert(C#"RELATIVE_INTERIOR_POINT" === {1, 0})
 	  assert(linealitySpace(C) === transpose matrix {{1, 1}})
 	  assert(rank(linealitySpace(C)) === 1)
 	  assert(dim(C) === 2)
-	-- assert(set C#"FACETS" === set {{1,-1}})
-	-- C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}},  markedPolynomialList {{x}, {x+y}} )
-	-- assert(set C#"IMPLIED_EQUATIONS" === set {{1, -1}})
-	-- assert(C#"AMBIENT_DIM" === 2)
-	-- assert(C#"RELATIVE_INTERIOR_POINT" === {0, 0})
-	-- assert(set C#"LINEALITY_SPACE" === set {{1, 1}})
-	-- assert(C#"LINEALITY_DIM" === 1)
-	-- assert(C#"DIM" === 1)
-	-- assert(set C#"FACETS" === set {})
+	  C = gfanGroebnerCone( markedPolynomialList {{x}, {x+y}},  markedPolynomialList {{x}, {x+y}} )
+	  assert(rank target rays C === 2)
+	  assert(linealitySpace(C) === transpose matrix {{1, 1}})
+	  assert(rank(linealitySpace(C)) === 1)
+ 	  assert(dim(C) === 1)
 	///
-	
+	-- TEST gfanTropicalIntersection
+    TEST ///
+        QQ[x,y];
+
+
+        I = gfanTropicalIntersection {x+y, x+y+1};
+        assert(instance(I, Sequence))
+        assert(#I === 2)
+        F = I#0;
+        mult = I#1;
+        assert(instance(F, Fan))
+        assert(mult === {1})
+        assert(ambDim(F) === 2)
+        assert(dim(F) === 1)
+        assert(rays(F) === matrix{{1},{1}})
+        assert(maxCones(F) === {{0}})
+
+
+        isBasis = gfanTropicalIntersection({x+y, x+y+1}, "tropicalbasistest" => true);
+        assert(isBasis === false)
+    ///
 	-- -- TEST gfanHomogeneitySpace
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- C = gfanHomogeneitySpace {x+y^2, y+z^2}
-	-- assert(set C#"IMPLIED_EQUATIONS" === set {{1, 0, -4}, {0, 1, -2}})
-	-- assert(C#"AMBIENT_DIM" === 3)
-	-- assert(C#"RELATIVE_INTERIOR_POINT" === {0, 0, 0})
-	-- assert(set C#"LINEALITY_SPACE" === set {{4, 2, 1}})
-	-- assert(C#"LINEALITY_DIM" === 1)
-	-- assert(C#"DIM" === 1)
-	-- assert(set C#"FACETS" === set {})
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 C = gfanHomogeneitySpace {x+y^2, y+z^2}
+	 assert(ambDim(C) === 3)
+	 assert(linealitySpace(C) === transpose matrix {{4, 2, 1}})
+	 assert(rank(linealitySpace(C)) === 1)
+	 assert(dim(C) === 1)
+	 ///
 	--
 	-- -- TEST gfanHomogenize
-	-- TEST ///
-	-- QQ[x,y];
-	-- L = {x+y, x^2*y + x};
-	-- H = gfanHomogenize(L, symbol z, "w" => {2,3})
-	-- assert(H == {x*z + y, x*z^5 + x^2*y})
-	-- QQ[x,y];
-	-- L = markedPolynomialList {{y}, {x+y}};
-	-- H = gfanHomogenize(L, symbol z,  "w" => {2,3})
-	-- assert(H == markedPolynomialList {{y}, {y + x*z}})
-	-- ///
+	 TEST ///
+	 QQ[x,y];
+	 L = {x+y, x^2*y + x};
+	 H = gfanHomogenize(L, symbol z, "w" => {2,3})
+	 assert(H == {x*z + y, x*z^5 + x^2*y})
+	 QQ[x,y];
+	 L = markedPolynomialList {{y}, {x+y}};
+	 H = gfanHomogenize(L, symbol z,  "w" => {2,3})
+	 assert(H == markedPolynomialList {{y}, {y + x*z}})
+	 ///
 	--
 	-- -- TEST gfanInitialForms
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- L = {x+y, x + z};
-	-- H = gfanInitialForms(L, {1,2,1});
-	-- assert(H == {y, x+z});
-	-- L = {x*y+z, x*z + y};
-	-- H = gfanInitialForms(L, {1,1,1});
-	-- assert(set H === set {x*y, x*z});
-	-- H = gfanInitialForms(L, {1,1,1}, "ideal" => true);
-	-- assert(set H === set {y^2 - z^2, x*y, x*z});
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 L = {x+y, x + z};
+	 H = gfanInitialForms(L, {1,2,1});
+	assert(H == {y, x+z});
+	 L = {x*y+z, x*z + y};
+	 H = gfanInitialForms(L, {1,1,1});
+	 assert(set H === set {x*y, x*z});
+	 H = gfanInitialForms(L, {1,1,1}, "ideal" => true);
+	 assert(set H === set {y^2 - z^2, x*y, x*z});
+	 ///
 	--
 	-- -- TEST gfanInteractive (SKIPPED)
 	--
 	-- -- TEST gfanIsMarkedGroebnerBasis
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- assert gfanIsMarkedGroebnerBasis ({x^2+y, y^3+z})
-	-- assert not gfanIsMarkedGroebnerBasis markedPolynomialList {{y,y^3}, {x^2+y, y^3+z}}
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 assert gfanIsMarkedGroebnerBasis ({x^2+y, y^3+z})
+	 assert not gfanIsMarkedGroebnerBasis markedPolynomialList {{y,y^3}, {x^2+y, y^3+z}}
+	 ///
 	--
 	-- -- TEST gfanKrullDimension
-	-- TEST ///
-	-- QQ[x,y,z,u,v];
-	-- L = {x^3, y^2};
-	-- assert(gfanKrullDimension gfanBuchberger L === 3)
-	-- ///
+	 TEST ///
+	 QQ[x,y,z,u,v];
+	 L = {x^3, y^2};
+	 assert(gfanKrullDimension gfanBuchberger L === 3)
+	 ///
 	--
 	-- -- TEST gfanLatticeIdeal
-	-- TEST ///
-	-- L = gfanLatticeIdeal {{2,-1,0},{3,0,-1}}
-	-- assert(L === {-x_0 *x_1 + x_2, x_0^2 - x_1})
-	-- ///
+	 TEST ///
+	 L = gfanLatticeIdeal {{2,-1,0},{3,0,-1}}
+	 assert(L === {x_0^2 - x_1,-x_0 *x_1 + x_2})
+	 ///
 	--
 	-- -- TEST gfanLeadingTerms
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- L = gfanMarkPolynomialSet({x*y^3+z^4, x^2*z^2 + y^3*z}, {-1,2,5})
-	-- I = gfanLeadingTerms L
-	-- assert( I == first L)
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 L = gfanMarkPolynomialSet({x*y^3+z^4, x^2*z^2 + y^3*z}, {-1,2,5})
+	 I = gfanLeadingTerms L
+	 assert( I == first L)
+	 ///
 	--
 	-- -- TEST gfanMarkPolynomialSet
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- equalMPL = (A,B) -> set transpose A === set transpose B
-	-- M = gfanMarkPolynomialSet({x + y + z, x^10 + y^4 + z^2, x^2*z + y^2}, {1, 3, 5})
-	-- assert equalMPL(M, markedPolynomialList {{z,y^4,x^2*z},{x+y+z,x^10+y^4+z^2,x^2*z+y^2}})
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 equalMPL = (A,B) -> set transpose A === set transpose B
+	 M = gfanMarkPolynomialSet({x + y + z, x^10 + y^4 + z^2, x^2*z + y^2}, {1, 3, 5})
+	 assert equalMPL(M, markedPolynomialList {{z,y^4,x^2*z},{x+y+z,x^10+y^4+z^2,x^2*z+y^2}})
+	 ///
 	--
 	-- -- TEST gfanMinkowskiSum
-	-- TEST ///
-	-- QQ[x,y];
-	-- M = gfanMinkowskiSum { x + y + x*y, x + y + x*y + 1}
-	-- assert(M#"AMBIENT_DIM" === 2)
-	-- assert(M#"MAXIMAL_CONES" == {{0, 1}, {0, 2}, {1, 3}, {2, 4}, {3, 4}})
-	-- assert(M#"DIM" === 2)
-	-- assert(M#"RAYS" == {{-1, -1}, {-1, 0}, {0, -1}, {0, 1}, {1, 0}})
-	-- assert(M#"F_VECTOR" == {1, 5, 5})
-	-- ///
+	 TEST ///
+	   QQ[x,y];
+	   M = gfanMinkowskiSum { x + y + x*y, x + y + x*y + 1}
+	   assert(rank target rays M === 2)
+	   assert(entries transpose rays M ===  {{-1, 0}, {1, 0}, {0, -1}, {-1, -1}, {0, 1}})
+	   assert(maxCones M == {{0, 3}, {2, 3}, {0, 4}, {1, 2}, {1, 4}})
+	   assert(dim M === 2)
+	   assert(fVector M == {1, 5, 5})
+	 ///
+	 
 	--
 	-- -- TEST gfanMinors
-	-- TEST ///
-	-- M = gfanMinors(2,2,3)
-	-- assert(M == {-m_"01"*m_"10"+m_"00"*m_"11",-m_"02"*m_"10"+m_"00"*m_"12",-m_"02"*m_"11"+m_"01"*m_"12"})
-	-- ///
+	 TEST ///
+	 M = gfanMinors(2,2,3)
+	 assert(M == {-m_"01"*m_"10"+m_"00"*m_"11",-m_"02"*m_"10"+m_"00"*m_"12",-m_"02"*m_"11"+m_"01"*m_"12"})
+	 ///
 	-- -- TEST gfanMixedVolume
-	-- TEST ///
-	-- QQ[x1,x2,x3,x4]
-	-- mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
-	-- assert (mv == 16)
-	-- ///
+	  TEST ///
+	  QQ[x1,x2,x3,x4]
+	  mv = gfanMixedVolume({x1+x2+x3+x4,x1*x2+x2*x3+x3*x4+x4*x1,x1*x2*x3+x2*x3*x4+x3*x4*x1+x4*x1*x2,x1*x2*x3*x4-1})
+	  assert (mv == 16)
+	 ///
 	-- -- TEST gfanPolynomialSetUnion
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- f = x + y + z;
-	-- g = x + y;
-	-- h = y + z;
-	-- L = markedPolynomialList {{z, y}, {f,g}}
-	-- M = markedPolynomialList {{x, y} , {f,h}}
-	-- U = gfanPolynomialSetUnion(L,M)
-	-- equalMPL = (A,B) -> set transpose A === set transpose B
-	-- assert equalMPL(U, markedPolynomialList {{z,y,y},{x+y+z,x+y,y+z}})
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 f = x + y + z;
+	 g = x + y;
+	 h = y + z;
+	 L = markedPolynomialList {{z, y}, {f,g}}
+	 M = markedPolynomialList {{x, y} , {f,h}}
+	 U = gfanPolynomialSetUnion(L,M)
+	 equalMPL = (A,B) -> set transpose A === set transpose B
+	 assert equalMPL(U, markedPolynomialList {{z,y,y},{x+y+z,x+y,y+z}})
+	 ///
 	--
 	-- -- TEST gfanRender SKIPPED
 	-- -- TEST gfanRenderStaircase SKIPPED
 	--
 	-- -- TEST gfanSaturation
-	-- TEST ///
-	-- QQ[x,y,z];
-	-- I = ideal(y*z*(x-1), x*(z^2 - y));
-	-- S = gfanSaturation I;
-	-- assert(S == { z^2 -y, x-1})
-	-- ///
+	 TEST ///
+	 QQ[x,y,z];
+	 I = ideal(y*z*(x-1), x*(z^2 - y));
+	 S = gfanSaturation I;
+	 assert(S == { z^2 -y, x-1})
+	 ///
 	--
 	-- -- TEST gfanSecondaryFan
-	-- TEST ///
-	-- F = gfanSecondaryFan {{1,0},{1,1}, {1,2}, {1,2}}
+--	  TEST ///
+--To do - do both this test and the one afterwards with a repeated ray.
+--The math of this needs to be checked (the asserts are from previous authors)
+-- The issue is checking that the rays are what we expect in these cases, as gfan
+--choose rays in the othogonal space to the lineality space
+--	  F = gfanSecondaryFan {{1,0},{1,1}, {1,2}, {1,3}}
+--       	  assert(fVector(F) === {1, 4, 4})
+--FIXME
+	--
+--	F = gfanSecondaryFan {{1,0},{1,1}, {1,2}, {1,2}}
 	-- assert(F#"AMBIENT_DIM" ===  4)
 	-- assert(F#"MAXIMAL_CONES" == {{0, 1}, {0, 2}, {1, 3}, {2, 3}})
 	-- assert(F#"SIMPLICIAL" === true)
@@ -4669,39 +4949,34 @@ doc///
 	-- assert(F#"RAYS" == {{-2, 4, -1, -1}, {1, -2, -5, 6}, {1, -2, 6, -5}, {2, -4, 1, 1}})
 	-- assert(F#"ORTH_LINEALITY_SPACE" == {{1, -2, 0, 1}, {0, 0, 1, -1}})
 	-- assert(F#"CONES" == {{}, {0}, {1}, {2}, {3}, {0, 1}, {0, 2}, {1, 3}, {2, 3}})
-	-- assert(F#"LINEALITY_SPACE" == {{1, 0, -1, -1}, {0, 1, 2, 2}})
 	-- assert(F#"PURE" === true)
 	-- assert(F#"LINEALITY_DIM" === 2)
-	-- assert(F#"N_RAYS" === 4)
-	-- assert(F#"F_VECTOR" == {1, 4, 4})
+
 	-- ///
 	--
-	-- -- TEST gfanStats
+
+-- TEST gfanStats
 	-- TEST ///
-	-- QQ[x,y,z];
-	-- L = gfan {x*y + z};
-	-- S = gfanStats L
-	-- assert(#S === 181)
-	-- ///
+	TEST ///
+        QQ[x,y,z];
+        L = gfan {x*y + z};
+        S = gfanStats L;
+        assert(S#"Number of reduced Groebner bases" === 2)
+        assert(S#"Number of variables" === 3)
+///
 
--- mytest
--- TEST tropical min/max convention
---this test is obsolete as minmax switch is now disabled
---TEST /// -- by default the convention should be TROPICAL-MIN
---  QQ[x,y,z];
--- loadPackage("gfanInterface", Reload=>true, Configuration=>{ "tropicalMax"=> false });  
---  fan1 = gfanTropicalTraverse gfanTropicalStartingCone ideal(x+y+z);
---  assert( member({2,-1,-1}, fan1#"Rays"));
---///
-
---TEST /// -- alternatively TROPICAL-MAX can be specified on loading the package
---  QQ[x,y,z];
---  loadPackage("gfanInterface", Reload=>true, Configuration=>{ "tropicalMax"=> true });
---  fan1 = gfanTropicalTraverse gfanTropicalStartingCone ideal(x+y+z);
--- assert( member({-2,1,1}, fan1#"Rays"));
---///
 
 end--
+
+--Added 1/7/26
+--Design decisions:
+--At the moment
+--"IMPLIED_EQUATIONS", "RELATIVE_INTERIOR_POINT", "FACETS", and
+--  "ORTH_LINEALITY_SPACE" are not currently supported.
+
+
+
+
 
 restart
 --path = prepend(".",path)
