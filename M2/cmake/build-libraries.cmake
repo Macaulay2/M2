@@ -415,10 +415,17 @@ ExternalProject_Add(build-factory
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
+# Copy again when GFTABLESDIR moves, so that building factory ourselves replaces
+# the tables copied from the version already on the system.
+set(GFTABLES_DEST ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
+if(GFTABLESDIR AND (NOT EXISTS ${GFTABLES_DEST}/gftables
+    OR NOT "${GFTABLESDIR}" STREQUAL "${GFTABLES_COPIED_FROM}"))
   message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
-  file(COPY ${GFTABLESDIR}/gftables
-    DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory FOLLOW_SYMLINK_CHAIN)
+  # clear the previous copy first; file(COPY) skips files whose timestamps match
+  file(REMOVE_RECURSE ${GFTABLES_DEST}/gftables)
+  file(COPY ${GFTABLESDIR}/gftables DESTINATION ${GFTABLES_DEST} FOLLOW_SYMLINK_CHAIN)
+  set(GFTABLES_COPIED_FROM "${GFTABLESDIR}"
+    CACHE INTERNAL "directory the distributed gftables were copied from")
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "gmp;ntl;flint" FACTORY_FOUND)
 
