@@ -320,6 +320,7 @@ bumpPrecedence();
      export breakpointS    := special("breakpoint",    unaryop, precSpace, wide);
      export profileS       := special("profile",       unaryop, precSpace, wide);
      export shieldS        := special("shield",        unaryop, precSpace, wide);
+     export guardS         := special("guard",         unaryop, precSpace, wide);
      export trapS          := special("trap",          unaryop, precSpace, wide);
      export throwS         := special("throw",        nunaryop, precSpace, wide);
      export returnS        := special("return",       nunaryop, precSpace, wide);
