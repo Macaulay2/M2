@@ -6,7 +6,7 @@ reverse(e:Expr):Expr := (
      when e
      -- # typical value: reverse, BasicList, BasicList
      is a:Sequence do Expr(reverse(a))
-     is a:List do Expr(reverse(a))
+     is a:List do list(a.Class, reverse(a.v), a.Mutable)
      -- # typical value: reverse, String, String
      is s:stringCell do toExpr(reverse(s.v))
      else WrongArg("a list, sequence, or string"));
@@ -109,10 +109,6 @@ export toArrayExpr(v:array(int)):Sequence := (
      new Sequence len length(v) do foreach i in v do provide Expr(ZZcell(toInteger(i)))
      );
 
-export newlist(classs:HashTable,v:Sequence):List := (
-     x := List(classs,v,hash_t(0),false);
-     x.hash = hash(x);
-     x);
 export basictype(o:HashTable):HashTable := (
      while true do (
 	  if o.parent == thingClass then return o;

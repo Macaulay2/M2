@@ -533,7 +533,8 @@ between(Thing,VisibleList) := List => (m,v) -> mingle(v,#v-1:m)
 
 length Dictionary := s -> #s
 length String := s -> #s
-length VisibleList := s -> #s
+length VisibleList :=
+length MutableList := s -> #s
 
 Nothing == Nothing := Boolean => (x,y) -> x === y			    -- actually, x and y must both be "null"!
 

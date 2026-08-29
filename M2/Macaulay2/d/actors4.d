@@ -1181,7 +1181,7 @@ join(e:Expr):Expr := (
 	  is Sequence do join(a)
 	  is List do join(a)
 	  else applyEE(getGlobalVariable(joinIteratorsS), e))
-     is c:List do if c.Mutable then Expr(copy(c)) else e
+     is c:List do if c.Mutable then copy(Expr(c)) else e
      else WrongArg("lists or sequences"));
 setupfun("join",join);
 
