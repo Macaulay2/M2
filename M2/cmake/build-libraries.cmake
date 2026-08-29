@@ -1025,13 +1025,13 @@ set(topcom_PROGRAMS
   santos_22_triang       santos_dim4_triang      santos_triang)
 list(TRANSFORM topcom_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE topcom_PROGRAMS)
 ExternalProject_Add(build-topcom
-  URL               https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM-Downloads/TOPCOM-1_1_2.tgz
-  URL_HASH          SHA256=4fb10754ee5b76056441fea98f2c8dee5db6f2984d8c14283b49239ad4378ab6
+  URL               https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM-Downloads/TOPCOM-1_2_0g.tgz
+  URL_HASH          SHA256=e4171d4da98292577e4ec05e0769565bde5e6a74b9f106c86018d1ec677defd2
   PREFIX            libraries/topcom
   SOURCE_DIR        libraries/topcom/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/topcom/patch-1.1.2
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/topcom/patch-1.2.0g
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
