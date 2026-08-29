@@ -2,7 +2,6 @@
 
 #include "f4/f4-spairs.hpp"
 
-#include "mem.hpp"            // for stash
 #include "style.hpp"          // for INTSIZE
 
 #include <gc/gc_allocator.h>  // for gc_allocator
@@ -34,7 +33,6 @@ F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
 
 F4SPairSet::~F4SPairSet()
 {
-  // Deleting the stash deletes all memory used here
   // PS, VP are deleted automatically.
   M = nullptr;
 }
