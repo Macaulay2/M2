@@ -36,6 +36,7 @@ TAGS tags: @srcdir@/TAGS
 	@srcdir@/schreyer-resolutions/*.hpp @srcdir@/schreyer-resolutions/*.cpp \
 	@srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 	@srcdir@/bibasis/*.hpp @srcdir@/bibasis/*.cpp \
+	@srcdir@/benchmarks/*.cpp \
 	@srcdir@/unit-tests/*.cpp
 	@ echo " ** making TAGS file"
 	@ cd @srcdir@ && @ETAGS@ $(patsubst @srcdir@/%, %, $^)
@@ -81,6 +82,21 @@ endif
 
 clean check::
 	$(MAKE) -C unit-tests $@
+
+clean::
+	$(MAKE) -C benchmarks $@
+
+.PHONY: benchmarks run-benchmarks
+ifeq (@ENABLE_BENCHMARKS@,yes)
+benchmarks: $(LIBENGINE)
+	$(MAKE) -C benchmarks all
+run-benchmarks: $(LIBENGINE)
+	$(MAKE) -C benchmarks run
+else
+benchmarks run-benchmarks:
+	@echo "Macaulay2 was configured without --enable-benchmarks" >&2
+	@false
+endif
 
 # this requires gnu sort and gnu uniq commands
 NMFLAGS = -o

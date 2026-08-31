@@ -678,6 +678,29 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries glpk gmp GLPK_FOUND)
 
 
+# https://github.com/google/benchmark
+if(BUILD_BENCHMARKS)
+ExternalProject_Add(build-benchmark
+  PREFIX            libraries/benchmark
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/benchmark
+  BINARY_DIR        libraries/benchmark/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
+                    -DBENCHMARK_ENABLE_TESTING=OFF
+                    -DBENCHMARK_ENABLE_INSTALL=ON
+                    -DBENCHMARK_INSTALL_DOCS=OFF
+                    -DBENCHMARK_INSTALL_TOOLS=OFF
+  TEST_COMMAND      ${CMAKE_COMMAND} -E true
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+_ADD_COMPONENT_DEPENDENCY(libraries benchmark "" BENCHMARK_FOUND)
+endif()
+
+
 # https://github.com/google/googletest
 ExternalProject_Add(build-googletest
   PREFIX            libraries/googletest
@@ -1296,4 +1319,3 @@ if(VERBOSE)
      CXXFLAGS          = ${CXXFLAGS}
      LDFLAGS           = ${LDFLAGS}\n")
 endif()
-

@@ -137,6 +137,7 @@ find_package(GMP	6.0.0 REQUIRED)
 #   cddlib	Double Description Method of Motzkin	(needs gmp)
 #   msolve	Multivariate polynomial system solver	(needs gmp, mpfr, flint)
 #   mpsolve	Multiprecision Polynomial SOLVEr	(needs gmp, mpfr)
+#   benchmark	C++ microbenchmark library
 #   googletest	C++ unit-testing library
 #   glpk	GNU Linear Programming Kit              (needs gmp)
 #   givaro	prime field and algebraic computations	(needs gmp)
@@ -170,6 +171,12 @@ find_package(EAntic	2.0.0 QUIET) # only needed when libnormaliz.so needs it
 find_package(MSolve	0.7.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
+if(BUILD_BENCHMARKS)
+  find_package(benchmark 1.9.5 CONFIG QUIET)
+  # The package name is lowercase, while the generic library handling below
+  # expects an uppercase <NAME>_FOUND variable.
+  set(BENCHMARK_FOUND ${benchmark_FOUND})
+endif()
 find_package(GTest	1.16)
 #find_package(Memtailor 1.0.0)
 #find_package(Mathic    1.0.0)
@@ -183,6 +190,9 @@ pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 set(LIBRARY_OPTIONS
   Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
   GTest GLPK Givaro FFLAS_FFPACK Normaliz)
+if(BUILD_BENCHMARKS)
+  list(APPEND LIBRARY_OPTIONS benchmark)
+endif()
 
 ###############################################################################
 ## Optional libraries:
@@ -277,6 +287,11 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
       unset(${_name}_MAIN_LIBRARY_DEBUG CACHE)
       unset(${_name}_LIBRARY_DEBUG CACHE)
       unset(${_name}_LIBRARY CACHE)
+      # benchmark's package name and cache entry are lowercase.
+      if(_name STREQUAL "BENCHMARK")
+        unset(benchmark_DIR CACHE)
+        unset(benchmark_FOUND)
+      endif()
     else()
       # exists on the system
     endif()

@@ -13,6 +13,7 @@
 # use CMAKE_BUILD_TYPE=RelWithDebInfo        instead of PROFILING
 # use CMAKE_BUILD_TYPE=RelMinSize            for minimized release
 # use BUILD_TESTING=ON                       to build the testing tree
+# use BUILD_BENCHMARKS=ON                    to build engine benchmarks
 
 option(DEVELOPMENT	"Set the DEVELOPMENT macro in config.h"	OFF)
 option(EXPERIMENT	"Set the EXPERIMENT macro in config.h"	OFF)
@@ -24,6 +25,7 @@ option(GIT_SUBMODULE	"Update submodules during build"	ON)
 option(BUILD_NATIVE	"Use native SIMD instructions"		ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(BUILD_DOCS	"Build internal documentation"		OFF)
+option(BUILD_BENCHMARKS "Build Google Benchmark engine benchmarks" OFF)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
 option(WITH_OMP		"Link with the OpenMP library"		ON)
 option(WITH_TBB		"Link with the TBB library"		ON)
@@ -104,6 +106,7 @@ message("## Configure Macaulay2
      BUILD_NATIVE      = ${BUILD_NATIVE}
      BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}
      BUILD_TESTING     = ${BUILD_TESTING}
+     BUILD_BENCHMARKS  = ${BUILD_BENCHMARKS}
      BUILD_DOCS        = ${BUILD_DOCS}\n
      COVERAGE          = ${COVERAGE}
      MEMDEBUG          = ${MEMDEBUG}
