@@ -1,0 +1,29 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "cpptools",
+      "pattern": [
+        {
+          "regexp": "^(.*?):(\\d+):(\\d*):?\\s+(?:fatal\\s+)?(warning|error):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      ]
+    },
+    {
+      "owner": "macaulay2",
+      "pattern": [
+        {
+          "regexp": "^(\\S+):(\\d+):(\\d+):\\(\\d+\\):\\[\\d\\]: error: (.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "message": 4
+        }
+      ]
+    }
+  ]
+}

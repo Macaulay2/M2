@@ -132,6 +132,8 @@ jobs:
             ~/work/M2/M2/M2/BUILD/build/usr-host
           key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake', '.github/workflows/test_build.yml') }}
 
+      - name: Register problem matcher
+        run: echo "::add-matcher::.github/problem-matchers.json"
 
 # ----------------------
 #   Configure and build M2 using CMake
