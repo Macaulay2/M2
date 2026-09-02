@@ -5,7 +5,7 @@ Node
   Key
     WeylAlgebras
   Headline
-    algorithms for D-modules
+    algorithms for $D$-modules
   Description
     Text
       To begin, read the @TO "Dmodules::D-modules tutorial"@.
@@ -21,7 +21,7 @@ Node
 	@TOH "stafford"@
 	@TOH "makeCyclic"@
 	@TOH "Dprune"@
-      :Basic invariants of D-modules
+      :Basic invariants of $D$-modules
 	@TOH "Ddim"@
 	@TOH "isHolonomic"@
 	@TOH "holonomicRank"@
@@ -51,6 +51,9 @@ Node
     "DsingularLocus"
 
     "Dtrace"
+
+  References
+    See the bibliography at @TO "Works Cited"@.
 ///
 
 -*
@@ -84,15 +87,34 @@ document {
 
 -----------------------------------------------
 
-document {
-    Key => {Dtrace, (Dtrace, ZZ), (Dtrace, Sequence)},
-    Headline => "set or get the depth of comments made by D-module routines",
-    Usage => "Dtrace n\nDtrace()",
-    Inputs => { "n" => ZZ => { "new level" } },
-    Outputs => { ZZ => { "old level" } }
-    }
+--- old format (commented out) ---
+-- document {
+--     Key => {Dtrace, (Dtrace, ZZ), (Dtrace, Sequence)},
+--     Headline => "set or get the depth of comments made by D-module routines",
+--     Usage => "Dtrace n\nDtrace()",
+--     Inputs => { "n" => ZZ => { "new level" } },
+--     Outputs => { ZZ => { "old level" } }
+--     }
 
-end
+doc ///
+  Key
+    Dtrace
+    (Dtrace, ZZ)
+    (Dtrace, Sequence)
+  Headline
+    set or get the depth of comments made by $D$-module routines
+  Usage
+    Dtrace n
+    Dtrace()
+  Inputs
+    n:ZZ
+      new level
+  Outputs
+    :ZZ
+      old level
+///
+
+end--
 ------------------------------------------------------------------------------------------------------------
 THE END
 restart

@@ -28,9 +28,9 @@ Node
        see @TO [IHmodule, LocStrategy]@
   Outputs
      :HashTable
-      a table including the intersection cohomology groups of the irreducible variety Spec($R/I$), 
+      a table containing the intersection cohomology groups of the irreducible variety Spec($R/I$)
      :Module
-      the intersection cohomology group in degree d
+      the intersection cohomology group in degree $d$
   Description
     Text
      This routine computes the middle intersection cohomology groups of the irreducible variety defined by $I$ in the affine space Spec($R$).
@@ -39,7 +39,7 @@ Node
       I = ideal(x^2+y^3)
       intersectionCohomology(I)
   Caveat
-     Must be over a ring of characteristic 0. The ideal $I$ should have only 1 minimal prime.
+     The ambient ring must have characteristic 0. The ideal $I$ should have only 1 minimal prime.
 
 Node
   Key
@@ -58,7 +58,7 @@ Node
      LocCohomStrategy=>Sequence -- (String, String)
        see @TO [localCohom, Strategy]@ and @TO[localCohom, LocStrategy]@
      LocStrategy=>String
-       see @TO [Dlocalize, Strategy]@, or for regular sequence use CompleteIntersection
+       see @TO [Dlocalize, Strategy]@, or use @TT "CompleteIntersection"@ when the generators form a regular sequence
   Outputs
      :Module
         the intersection cohomology $D$-module
@@ -70,14 +70,13 @@ Node
        I=ideal(x^2+y^3)
        IHmodule(I)
     Text 
-       When the given generators of $I$ form a regular sequence, use LocStrategy=>CompleteIntersection for a generally faster algorithm, which implements the determination of the IC module in terms of the fundamental class as described in: 
-       D. Barlet and M. Kashiwara, Le réseau $L^2$ d’un système holonome régulier, Invent. Math. 86 (1986), no. 1, 35–62. 
+       When the given generators of $I$ form a regular sequence, use @TT "LocStrategy=>CompleteIntersection"@ for a generally faster algorithm, which implements the determination of the IC module in terms of the fundamental class as described in [@TO2 ("WeylAlgebras :: Works Cited", "BK86")@].
     Example
        R=QQ[x,y]
        I=ideal(x^2+y^3)
        IHmodule(I, LocStrategy=>CompleteIntersection)
   
   Caveat
-      Must be a ring of characteristic 0. The ideal $I$ should have only 1 minimal prime.
+      The ambient ring must have characteristic 0. The ideal $I$ should have only 1 minimal prime.
   
 ///
