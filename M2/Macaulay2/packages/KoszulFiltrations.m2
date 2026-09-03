@@ -12,7 +12,7 @@ newPackage(
 	{Name => "Thomas Westerbäck", Email => "thomas.westerback@mdu.se",
 	    HomePage=>"https://www.mdu.se/en/malardalen-university/staff?id=thomas.westerback"}},
     Headline => "Computational tools for Koszul filtrations",
-    Keywords => {"Koszul algebra","Koszul filtration","Linear filtration","Linear flag"},
+    Keywords => {"Commutative Algebra"},
     DebuggingMode => false
     )
 
