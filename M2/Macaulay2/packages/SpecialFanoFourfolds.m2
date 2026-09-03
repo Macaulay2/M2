@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.8.1",
-    Date => "August 29, 2026",
+    Date => "September 3, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -81,7 +81,8 @@ export{
     "beauvilleMap",
     "polarizedK3surface",
     "latticePolarization",
-    "swap"
+    "swap",
+    "example"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
