@@ -50,7 +50,7 @@ SeeAlso => {(discriminant, CubicFourfold)}}
 
 undocumented{(expression, GushelMukaiFourfold), (describe, GushelMukaiFourfold)}
 
-document {Key => {Verbose, [cubicFourfold, Verbose], [gushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [polarizedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose]},
+document {Key => {Verbose, [cubicFourfold, Verbose], [gushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [polarizedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose], [example, Verbose]},
 Headline => "request verbose feedback"}
 
 document {Key => {gushelMukaiFourfold, (gushelMukaiFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (gushelMukaiFourfold, Ideal, Ideal), [gushelMukaiFourfold, InputCheck]},
@@ -416,7 +416,7 @@ Usage => "trisecantFlop i",
 Inputs => {"i" => ZZ => {"an integer between 0 and 17"}},
 Outputs => {{"the i-th example of birational map ",TEX///$X\dashrightarrow W$///," in accordance to the Table 1 in the paper ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"},"."}},
 PARA{"This function requires the package ",HREF{"https://github.com/giovannistagliano/TrisecantFlops","TrisecantFlops"},". If not present the user will be asked to automatically install the package."},
-SeeAlso => {(specialFourfold, String, ZZ)}}
+SeeAlso => {(specialFourfold, String, ZZ), (example, String)}}
 undocumented {(trisecantFlop,ZZ)}
 
 document {Key => {(specialFourfold, String, ZZ)},
@@ -425,7 +425,7 @@ Usage => "specialFourfold(str,i)",
 Inputs => {"str" => String => {"such as \"",TT"prebuilt-example-in-P5","\" or \"",TT"prebuilt-example-in-P7","\"."}, "i" => ZZ},
 Outputs => {HodgeSpecialFourfold => {"the i-th example of fourfold in accordance with some classification (e.g., ",TT"specialFourfold(\"prebuilt-example-in-P5\",i)"," is the same as ",TO2{(source,MultirationalMap),"source"}," ",TO trisecantFlop,TT"(i)","."}},
 PARA{"This function requires the package ",HREF{"https://github.com/giovannistagliano/TrisecantFlops","TrisecantFlops"},". If not present the user will be asked to automatically install the package."},
-SeeAlso => trisecantFlop}
+SeeAlso => {trisecantFlop, (example, String)}}
 
 undocumented {(random, HodgeSpecialFourfold), (symbol **, HodgeSpecialFourfold,Ring), (map, HodgeSpecialFourfold), (describe, HodgeSpecialFourfold)}
 
@@ -477,14 +477,14 @@ EXAMPLE {"X = specialFourfold(PP_(ZZ/65521)[2,2]);", "W = mirrorFourfold X;", "U
 EXAMPLE {"X' = specialFourfold \"tau-quadric\";", "W' = mirrorFourfold X';", "U' = surface W';", "mirrorFourfold W'", "(building associatedK3surface X')_1", "assert(oo === U')"},
 SeeAlso => {associatedK3surface}}
 
-document {
-Key => {(toExternalString, HodgeSpecialFourfold)},
+document {Key => {(toExternalString, HodgeSpecialFourfold)},
 Headline => "convert to a readable string",
 Usage => "toExternalString X",
 Inputs => {"X" => HodgeSpecialFourfold},
 Outputs => {String => {"a string representation of ",TT "X",", which can be used, in conjunction with ",TO "value",", to read the object back into the program later"}},
-PARA{"Some of the internal data of the input ",TT"X"," are included in the returned string."},
-EXAMPLE {"describe (X = specialFourfold \"tau-quadric\")", "str = toExternalString X;", "describe (value str)"}}
+PARA{"Besides the data needed to reconstruct ",TT"X",", the returned string also includes some internal data of ",TT"X","."},
+EXAMPLE {"describe (X = specialFourfold \"tau-quadric\")", "str = toExternalString X;", "describe (value str)"},
+SeeAlso => {(store, HodgeSpecialFourfold)}}
 
 undocumented {(expression, HodgeSpecialFourfold)}
 
@@ -571,3 +571,32 @@ Inputs => {"X" => DoublySpecialCubicFourfold},
 Outputs => {DoublySpecialCubicFourfold => {"the same fourfold with the order of the two surfaces reversed."}},
 EXAMPLE {"S = random({3:{1}},0_(PP_(ZZ/65521)^5));", "T = random S;", "X = specialFourfold (S & T);", "surfaces X", "Y = swap X;", "surfaces Y", "assert(X == Y)"},
 SeeAlso => {surfaces}}
+
+document {Key => {example, (example, String), (example, ZZ), (example, String, ZZ), (example, ZZ, ZZ)},
+Headline => "retrieve a stored fourfold example",
+Usage => "example name"|newline|"example(name,n)",
+Inputs => {"name" => String => {"the name assigned when the example was stored"}, "n" => ZZ => {"an optional integer indicating the type of fourfold"}},
+Outputs => {HodgeSpecialFourfold => {"a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},"."}},
+PARA {"This function retrieves a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},TT"(X,name)","."},
+PARA {"The optional argument ",TT"n"," is only needed when the same name is used by stored examples of different fourfold types. Its values correspond to the following fourfold types: doubly special cubic fourfolds (",TEX///$n=0$///,"), cubic fourfolds (",TEX///$n=1$///,"), Gushel-Mukai fourfolds (",TEX///$n=2$///,"), intersections of three quadrics in ",TEX///$\mathbb{P}^7$///," (",TEX///$n=3$///,"), and other Hodge-special fourfolds (",TEX///$n=4$///,")."},
+EXAMPLE {"X = specialFourfold \"DSCF-1\";","name = store X","X' = example name;","assert(describe X == describe X')"},
+SeeAlso => {(store,HodgeSpecialFourfold, String), (toExternalString, HodgeSpecialFourfold)}}
+
+document {Key => {(store, HodgeSpecialFourfold, String), (store, HodgeSpecialFourfold, ZZ), (store, HodgeSpecialFourfold)},
+Headline => "store a fourfold example",
+Usage => "store(X,name)"|newline|"store X",
+Inputs => {"X" => HodgeSpecialFourfold,"name" => String => {"an optional name for the example"}},
+Outputs => {String => {"the name assigned to the stored example"}},
+PARA {"This function stores the fourfold ",TT"X"," so that it can later be retrieved with ",TO2{(example,String),"example"},TT"(name)",". When no name is specified, one is chosen automatically. Examples are created via ",TO2{(toExternalString,HodgeSpecialFourfold),"toExternalString"}," and stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"}, TT"SpecialFanoFourfoldsExamples/","', where they can also be managed manually. They persist across Macaulay2 sessions and preserve some previously computed internal data of the original fourfold."},
+EXAMPLE {"X = specialFourfold random({3:{1}},0_(PP_(ZZ/65521)^5));","name = store X;","X' = example name;","assert(describe X == describe X')"},
+SeeAlso => {(example, String), (store, String), (toExternalString, HodgeSpecialFourfold)}}
+
+document {Key => {(store, String)},
+Headline => "import stored examples from an archive",
+Usage => "store f",
+Inputs => {"f" => String => {"a .tar.gz archive containing stored fourfold examples"}},
+Outputs => {},
+PARA {"Imports the stored examples contained in the archive ", TT"f",". Such archives can be created from a previously used ",TT"SpecialFanoFourfoldsExamples"," directory, for example with ",TT"tar -czf examples.tar.gz SpecialFanoFourfoldsExamples","."},
+PARA {"To remove all stored examples, use ",TT"store \"\"","."},
+EXAMPLE {"store \"\""},
+SeeAlso => {(store, HodgeSpecialFourfold), (example, String)}}

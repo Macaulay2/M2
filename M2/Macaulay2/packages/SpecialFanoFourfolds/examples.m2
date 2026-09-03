@@ -73,6 +73,118 @@ prebuiltExamplesOfRationalFourfolds = memoize(() -> (
 ));
 
 ------------------------------------------------------------------------
+------------------------ User-defined examples -------------------------
+------------------------------------------------------------------------
+
+examplesPath = applicationDirectory() | "SpecialFanoFourfoldsExamples";
+examplesDir = () -> (
+    if not(fileExists examplesPath and isDirectory examplesPath) then mkdir(examplesPath | "/");
+    if not(fileExists examplesPath and isDirectory examplesPath) then error("failed to create user examples directory: " | examplesPath);
+    examplesPath
+);
+
+availableExamplesWithPrefix = pfx -> sort apply(select(readDirectory examplesDir(), s -> #s > #pfx + 4 and substring(s,0,#pfx) == pfx and substring(s,#s-4,4) == ".dat"), s' -> substring(s',#pfx,#s'-4-#pfx));
+availableExamples = () -> (
+    T := {"dscf_","cf_","gm_","i3q_","hsf_"};
+    flatten for i to #T-1 list apply(availableExamplesWithPrefix T_i, a -> (i,a))
+);
+
+printAvailableExamples = () -> (
+    s := "-- Currently available examples:" | newline;
+    s = s | "-- Doubly special cubic 4-folds: example(name,0), name in " | (toString availableExamplesWithPrefix "dscf_") | newline;
+    s = s | "-- Cubic 4-folds:                example(name,1), name in " | (toString availableExamplesWithPrefix "cf_") | newline;
+    s = s | "-- Gushel-Mukai 4-folds:         example(name,2), name in " | (toString availableExamplesWithPrefix "gm_") | newline;
+    s = s | "-- Int. of 3 quadrics in ℙ^7:    example(name,3), name in " | (toString availableExamplesWithPrefix "i3q_") | newline;
+    s = s | "-- Other fourfolds:              example(name,4), name in " | (toString availableExamplesWithPrefix "hsf_");
+    s
+);
+
+example = method(Options => {Verbose => true});
+example (String,ZZ) := o -> (str,n) -> (
+    (pfx,cls) := if n == 0
+                 then ("dscf_",DoublySpecialCubicFourfold)
+                 else if n == 1
+                 then ("cf_",CubicFourfold)
+                 else if n == 2
+                 then ("gm_",GushelMukaiFourfold)
+                 else if n == 3
+                 then ("i3q_",IntersectionOfThreeQuadricsInP7)
+                 else if n == 4
+                 then ("hsf_",HodgeSpecialFourfold)
+                 else error("invalid example type " | (toString n) | "; expected an integer between 0 and 4");
+    F := examplesDir() | "/" | pfx | str | ".dat";
+    if not fileExists F then error("example \"" | str | "\" not found." | newline | printAvailableExamples());
+    if o.Verbose then << "-- loading example data..." << endl;
+    dataString := get F;
+    if o.Verbose then << "-- evaluating example data..." << endl;
+    X := value dataString;
+    if not instance(X,cls) then error "corrupted example data";
+    if o.Verbose then << "-- all done." << endl;
+    X
+);
+example (ZZ,ZZ) := o -> (i,n) -> example(toString i,n,Verbose=>o.Verbose);
+example String := o -> str -> (
+    S := select(availableExamples(), a -> last a == str);
+    if #S == 0 then error("example \"" | str | "\" not found." | newline | printAvailableExamples());
+    if #S > 1 then error("the name \"" | str | "\" is used by examples of different fourfold types." | newline | "Please use example(name,n) and specify the type." | newline | printAvailableExamples());
+    example(str,first first S,Verbose=>o.Verbose)
+);
+example ZZ := o -> i -> example(toString i,Verbose=>o.Verbose);
+
+store (HodgeSpecialFourfold,String) := (X,str) -> (
+    pfx := if instance(X,DoublySpecialCubicFourfold)
+           then "dscf_"
+           else if instance(X,CubicFourfold)
+           then "cf_"
+           else if instance(X,GushelMukaiFourfold)
+           then "gm_"
+           else if instance(X,IntersectionOfThreeQuadricsInP7)
+           then "i3q_"
+           else "hsf_";
+    F :=  examplesDir() | "/" | pfx | str | ".dat";
+    if fileExists F then error("example \"" | str | "\" already exists; please choose another name");
+    F << toExternalString X << close;
+    if not fileExists F then error("failed to store example \"" | str | "\"");
+    << "-- example \"" << str << "\" stored" << endl << printAvailableExamples() << endl;
+    str
+);
+store (HodgeSpecialFourfold,ZZ) := (X,i) -> store(X,toString i);
+store HodgeSpecialFourfold := X -> (
+    pfx := if instance(X,DoublySpecialCubicFourfold)
+           then "dscf_"
+           else if instance(X,CubicFourfold)
+           then "cf_"
+           else if instance(X,GushelMukaiFourfold)
+           then "gm_"
+           else if instance(X,IntersectionOfThreeQuadricsInP7)
+           then "i3q_"
+           else "hsf_";
+    i := 0;
+    str := pfx | (toString vars i);
+    F :=  examplesDir() | "/" | pfx | str | ".dat";
+    while fileExists F do (
+        i = i + 1;
+        str = pfx | (toString vars i);
+        F =  examplesDir() | "/" | pfx | str | ".dat";
+    );
+    store(X,str)
+);
+store String := f -> (
+    if f === "" then (
+        run("rm -rf '" | examplesPath | "'");
+        if fileExists examplesPath then error "failed to remove the existing examples directory";
+        << "-- stored examples removed" << endl;
+        return;
+    );
+    if not fileExists f then error("file not found: " | f);
+    if #f < 7 or substring(f,#f-7,7) =!= ".tar.gz" then error "expected a .tar.gz archive";
+    store "";
+    run("tar -xzf '" | f | "' -C '" | applicationDirectory() | "'");
+    if not fileExists examplesPath then error "failed to import examples from archive";
+    << "-- examples imported from \"" << f << "\"" << endl << printAvailableExamples() << endl;
+);
+
+------------------------------------------------------------------------
 ---------------------- Prime Fano fourfolds ----------------------------
 ------------------------------------------------------------------------
 
