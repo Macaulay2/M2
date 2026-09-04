@@ -17,7 +17,6 @@ undocumented {
      (symbol _, MonoidElement, Thing),
      (symbol _, MonoidElement, Monoid),
      (symbol _, RingElement, MonoidElement),
-     (symbol _, PolynomialRing, List),
      (symbol _, RingElement, RingElement), --coeff of monomials in polynomial -- deprecate or obsolete
      (symbol _, Ring, String), -- these three are kept for backwards compatibility
      (symbol _, Ring, Symbol), -- maybe should be deprecated?
@@ -249,6 +248,7 @@ document {
      Key => {
 	 "get a monomial by exponent vector",
 	 (symbol _, Ring, List),
+	 (symbol _, RingFamily, List),
      },
      Headline => "make a monomial from a list of exponents",
      Usage => "R_w",

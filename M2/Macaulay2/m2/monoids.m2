@@ -22,7 +22,7 @@ madeTrivialMonoid := false
 
 dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
 
-makeSparse := v -> select(pairs v, (k, v) -> v != 0)
+makeSparse = v -> select(pairs v, (k, v) -> v != 0)
 
 listSplice := L -> deepSplice flatten sequence L
 
@@ -212,8 +212,11 @@ Monoid _*     := List => M -> vars M
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
 Monoid _ ZZ   := MonoidElement => (M, i) -> (vars M)#i
-Monoid _ List := MonoidElement => (M, v) -> if #v === 0 then M#1 else product(
-    take(vars M, #v), v, (x, i) -> x^i)
+Monoid _ List := MonoidElement => (M, v) -> (
+    if #v > (n := numgens M)
+    then error("expected at most ", n, " exponent",
+               if n == 1 then "" else "s");
+    new M from rawMakeMonomial makeSparse v)
 
 ZZ            _ Monoid := MonoidElement => (i, M) -> if i === 1 then M#1 else error "expected integer to be 1"
 RingElement   _ Monoid :=

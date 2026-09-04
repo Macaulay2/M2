@@ -31,9 +31,17 @@ isWeylAlgebra PolynomialRing := R -> isWeylAlgebra coefficientRing R or ( o := o
 isSkewCommutative PolynomialRing := R -> isSkewCommutative coefficientRing R or (
     R.?SkewCommutative and 0 < #R.SkewCommutative)
 
--- TODO: is the second one needed?
-Ring _ List :=
-PolynomialRing _ List := RingElement => (R, v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
+Ring _ List := RingElement => (R, v) -> (
+    if #v == 0 then 1_R
+    else if #v > (m := R.numallvars ?? numgens R)
+    then error("expected at most ", m, " exponent",
+               if m == 1 then "" else "s")
+    else (
+        kk := coefficientRing ambient R;
+        n := numgens R;
+        new R from rawTerm(raw R, raw kk_(drop(v, n)),
+                           rawMakeMonomial makeSparse take(v, n))))
+RingFamily _ List := RingElement => (R, v) -> (default R)_v
 
 coefficientRing PolynomialRing := R -> last R.baseRings
 ambient PolynomialRing := identity
