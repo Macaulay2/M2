@@ -475,6 +475,29 @@ ring_elem LocalRing::copy(const ring_elem a) const
 
 void LocalRing::remove(ring_elem &a) const { (void) a; }
 
+ring_elem LocalRing::makeTerm(const Ring* coeffR,
+                              const ring_elem a,
+                              const_varpower monom) const
+{
+  varpower::Vector num, den;
+  ring_elem num_elem, den_elem, result;
+
+  varpower::split_signs(monom, num, den);
+
+  den_elem = get_ring()->makeTerm(coeffR, coeffR->one(), den.data());
+  if (!varpower::is_one(den.data()) && is_in_prime(den_elem))
+    throw exc::engine_error("attempt to divide by a non-unit");
+
+  num_elem = get_ring()->makeTerm(coeffR, a, num.data());
+
+  if (varpower::is_one(den.data()))
+    promote(get_ring(), num_elem, result);
+  else
+    result = fraction(num_elem, den_elem);
+
+  return result;
+}
+
 ring_elem LocalRing::negate(const ring_elem a) const
 {
   const local_elem *f = a.get_local_elem();
