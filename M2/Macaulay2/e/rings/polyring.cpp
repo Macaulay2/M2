@@ -187,8 +187,17 @@ ring_elem PolynomialRing::makeTerm(const Ring *coeffR,
                                    const_varpower monom) const
 {
   int nvars0 = n_vars();
+  for (index_varpower i = monom; i.valid(); ++i) {
+    if (i.exponent() < 0 && !getMonoid()->isLaurentVariable(i.var()))
+      throw exc::engine_error("expected a nonnegative exponent");
+  }
+
   const PolynomialRing *K = coeffR->cast_to_PolynomialRing();
   if (K != nullptr && K != getCoefficients()) nvars0 -= K->n_vars();
+
+  if (!varpower::is_one(monom) && varpower::topvar(monom) >= nvars0)
+    throw exc::engine_error("too many variables in monomial");
+
   exponents_t exp = newarray_atomic(int, nvars0);
   varpower::to_expvector(nvars0, monom, exp);
   return make_logical_term(coeffR, a, exp);
