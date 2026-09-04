@@ -283,14 +283,7 @@ class Ring : public MutableEngineObject
 
   virtual ring_elem makeTerm(const Ring* coeffR,
                              const ring_elem a,
-                             const_varpower monom) const
-  {
-    (void) coeffR;
-    (void) a;
-    (void) monom;
-
-    throw exc::engine_error("not implemented for this ring");
-  }
+                             const_varpower monom) const;
 
   // Returns the element in the polynomial ring A corresponding to the element
   // a.
