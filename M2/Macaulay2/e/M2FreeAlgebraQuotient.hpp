@@ -130,9 +130,11 @@ public:
   void debug_display(const Poly* f) const;
   void debug_display(const ring_elem ff) const;
 
-  void makeTerm(Poly& result, const ring_elem a, const int* monom) const;
-  
-  ring_elem makeTerm(const ring_elem a, const int* monom) const;
+  void makeTerm(Poly& result, const ring_elem a, const_varpower monom) const;
+  ring_elem makeTerm(const Ring *coeffR,
+                     const ring_elem a,
+                     const_varpower monom) const override;
+
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 };

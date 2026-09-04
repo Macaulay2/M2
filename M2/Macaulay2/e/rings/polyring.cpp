@@ -182,6 +182,18 @@ Matrix *PolynomialRing::getPresentation() const
   return mat.to_matrix();
 }
 
+ring_elem PolynomialRing::makeTerm(const Ring *coeffR,
+                                   const ring_elem a,
+                                   const_varpower monom) const
+{
+  int nvars0 = n_vars();
+  const PolynomialRing *K = coeffR->cast_to_PolynomialRing();
+  if (K != nullptr && K != getCoefficients()) nvars0 -= K->n_vars();
+  exponents_t exp = newarray_atomic(int, nvars0);
+  varpower::to_expvector(nvars0, monom, exp);
+  return make_logical_term(coeffR, a, exp);
+}
+
 class SumCollectorPolyHeap : public SumCollector
 {
   polyheap H;

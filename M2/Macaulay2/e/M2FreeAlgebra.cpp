@@ -319,8 +319,12 @@ void M2FreeAlgebra::makeTerm(Poly& result, const ring_elem a, const_varpower mon
   monoid().fromMonomial(monom, result.getMonomInserter());
 }
 
-ring_elem M2FreeAlgebra::makeTerm(const ring_elem a, const_varpower monom) const
+ring_elem M2FreeAlgebra::makeTerm(const Ring *coeffR,
+                                  const ring_elem a,
+                                  const_varpower monom) const
 {
+  if (coefficientRing() != coeffR)
+    throw exc::engine_error("wrong coefficient ring");
   auto result = new Poly;
   makeTerm(*result, a, monom);
   return reinterpret_cast<Nterm*>(result);

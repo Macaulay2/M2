@@ -118,9 +118,9 @@ IM2_RingElement_homogenize(const RingElement *a, int v, M2_arrayint wts);
 const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
                                                       const RingElement *a,
                                                       const EngineMonomial *m);
-/* R must be a polynomial ring, and 'a' an element of the
-   coefficient ring of R.  Returns a*m, if this is a valid
-   element of R.  Returns NULL if not (with an error message). */
+/* 'a' an element of the coefficient ring of R.  Returns a*m, if this is a
+   valid element of R.  Returns NULL if not (with an error message).
+*/
 
 const RingElement /* or null */ *IM2_RingElement_get_terms(
     int nvars, /* n variables in an outermost monoid */
@@ -293,9 +293,8 @@ const RingElement /* or null */ *IM2_RingElement_term(
     const Ring *R,
     const RingElement *a,
     const EngineMonomial *m); /* drg: connected rawTerm*/
-/* R must be a polynomial ring, and 'a' an element of the
-   coefficient ring of R.  Returns a*m, if this is a valid
-   element of R.  Returns NULL if not (with an error message).
+/* 'a' an element of the coefficient ring of R.  Returns a*m, if this is a
+   valid element of R.  Returns NULL if not (with an error message).
 */
 
 const RingElement /* or null */ *IM2_RingElement_get_terms(

@@ -529,36 +529,14 @@ IM2_RingElement_homogenize(const RingElement *a, int v, M2_arrayint wts)
 const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
                                                       const RingElement *a,
                                                       const EngineMonomial *m)
-/* R must be a polynomial ring, and 'a' an element of the
-   coefficient ring of R.  Returns a*m, if this is a valid
-   element of R.  Returns NULL if not (with an error message). */
+/* 'a' an element of the coefficient ring of R.  Returns a*m, if this is a
+   valid element of R.  Returns NULL if not (with an error message).
+*/
 {
   try {
-    const PolynomialRing *P = R->cast_to_PolynomialRing();
-    if (P != nullptr)
-      {
-        int nvars0 = P->n_vars();
-        const PolynomialRing *K = a->get_ring()->cast_to_PolynomialRing();
-        if (K != nullptr && K != P->getCoefficients()) nvars0 -= K->n_vars();
-        exponents_t exp = newarray_atomic(int, nvars0);
-        varpower::to_expvector(nvars0, m->ints(), exp);
-        ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
-        return RingElement::make_raw(R,val);
-      }
-    auto Q = dynamic_cast<const M2FreeAlgebraOrQuotient *>(R);
-    if (Q != nullptr)
-      {
-        if (Q->coefficientRing() != a->get_ring())
-          {
-            ERROR("wrong coefficient ring");
-            return nullptr;
-          }
-        return RingElement::make_raw(Q,
-                                     Q->makeTerm(a->get_value(),
-                                                 m->ints()));
-      }
-    ERROR("requires a polynomial ring");
-    return nullptr;
+    return RingElement::make_raw(R, R->makeTerm(a->get_ring(),
+                                                a->get_value(),
+                                                m->ints()));
   }
   catch (exc::engine_error& e) {
     ERROR(e.what());
