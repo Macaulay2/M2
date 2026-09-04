@@ -175,6 +175,10 @@ class ExponentList
     return true;
   }
 
+  // split positive & negative exponents into two vectors w/ positive exponents
+  // e.g., {(0,2),(1,-3)} -> {(0,2)}, {(1,3)}
+  static void split_signs(ConstExponents a, Vector& num, Vector& den);
+
   /* These should satisfy: lcm(p,q) == pq
      returns 0 if the pair (p,q) should be REMOVED
      Returns 1 iff either (a) m does not divide pq, or
