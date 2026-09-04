@@ -141,7 +141,7 @@ bipyramid Polyhedron := P -> (
    v := matrix toList(n:{1_QQ,1_QQ});
    v = (1/n)*V*v;
    << "Compute barycenter done." << endl;
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    M := promote(rays C, QQ);
    LS := promote(linealitySpace C, QQ);
    r := ring M;
@@ -165,7 +165,7 @@ bipyramid Polyhedron := P -> (
 --     	         point (0,...,0,1)
 pyramid = method(TypicalValue => Polyhedron)
 pyramid Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    M := rays C;
    LS := linealitySpace C;
    -- Embedding into n+1 space and adding the new vertex

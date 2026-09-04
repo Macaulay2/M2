@@ -21,10 +21,11 @@ isFullDimensional PolyhedralObject := X -> ambDim X == dim X
 -- PURPOSE : Giving the rays
 --   INPUT : 'PO'  a PolyhedralObject
 --  OUTPUT : a Matrix, containing the rays of PO as column vectors
-rays PolyhedralObject := {} >> o -> PO -> getProperty(PO, rays)
+-- (installed per-type in core/<type>/properties.m2, since each type computes
+-- it differently; rays itself is Macaulay2's core method, not Polyhedra's)
 
 linealitySpace = method(TypicalValue => Matrix)
-linealitySpace PolyhedralObject := PO -> getProperty(PO, computedLinealityBasis)
+-- installed per-type in core/<type>/properties.m2, same reason as rays above
 
 
 isWellDefined PolyhedralObject := Ph -> true

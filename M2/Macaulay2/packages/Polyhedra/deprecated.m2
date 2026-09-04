@@ -4,6 +4,24 @@ warning := (name, version) -> if not warned#?name then (
      stderr << "Warning: This method is deprecated and will be removed in version " << version << " of Polyhedra. Please consider using " << name << " instead." << endl;
      )
 
+-- getSufficientRayData (Cone) and getSufficientVertexData (Polyhedron) were
+-- internal (unexported) helpers unified and renamed to getVRepresentation;
+-- kept as redirects since other code may still call them by name even
+-- though they were never part of the documented interface.
+getSufficientRayData = method()
+getSufficientRayData Cone := C -> (
+   warning("getVRepresentation", "1.11");
+   getVRepresentation C)
+getSufficientRayData Polyhedron := P -> (
+   warning("getVRepresentation", "1.11");
+   getVRepresentation P)
+
+getSufficientVertexData = method()
+getSufficientVertexData Polyhedron := P -> (
+   warning("getVRepresentation", "1.11");
+   getVRepresentation P)
+
+
 triangulate = method()
 triangulate Polyhedron := P -> (
    warning("regularTriangulation or barycentricTriangulation", "1.11");
