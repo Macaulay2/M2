@@ -11,3 +11,9 @@ K = toField kk
 R = K[x, y]
 G = a*x^28+x^28 + a*x^2*y^5
 assert(terms G === {(a+1)*x^28, a*x^2*y^5})
+
+-- previously, rawTerm returned 0 and then we'd segfault creating the ideal
+debug Core
+R = QQ[x,y]
+assert try rawTerm(raw R, raw 1_(ZZ/2), rawMakeMonomial {(0,1)}) then false else true
+ideal vars R
