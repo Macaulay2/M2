@@ -18,10 +18,10 @@ TEST(DMatZZp, create)
   RingZZp::ElementType a, b;
   R->init(a);
   R->init(b);
-  R->set_from_long(a, 13);
-  R->set(M.entry(0, 2), a);
+  R->set(a, 13);
+  R->copy(M.entry(0, 2), a);
 
-  R->set(b, M.entry(0, 2));
+  R->copy(b, M.entry(0, 2));
   EXPECT_TRUE(R->is_equal(a, b));
 }
 
@@ -39,16 +39,16 @@ TEST(DMatZZp, submatrix)
   R->init(a);
   R->init(b);
 
-  R->set_from_long(a, 13);
-  R->set(M.entry(0, 2), a);
+  R->set(a, 13);
+  R->copy(M.entry(0, 2), a);
 
-  R->set(b, M.entry(0, 2));
+  R->copy(b, M.entry(0, 2));
   EXPECT_TRUE(R->is_equal(a, b));
 
   // No check is done that there is no aliasing here...
   // Should there be
   submatrix(M, 0, 0, 1, 1) = submatrix(M, 0, 2, 1, 1);
-  R->set(b, M.entry(0, 0));
+  R->copy(b, M.entry(0, 0));
   EXPECT_TRUE(R->is_equal(a, b));
 
   submatrix(M, 0, 0, 2, 2) = 0;
@@ -57,14 +57,14 @@ TEST(DMatZZp, submatrix)
   submatrix(M, 0, 2, 2, 2) = 0;
   EXPECT_TRUE(MatrixOps::isZero(M));
 
-  R->set(M.entry(4, 4), a);
+  R->copy(M.entry(4, 4), a);
   EXPECT_FALSE(MatrixOps::isZero(M));
 
   submatrix(M) = 0;
   EXPECT_TRUE(MatrixOps::isZero(M));
 
   MatZZp N(*R, 2, 2);
-  R->set(N.entry(0, 0), a);
+  R->copy(N.entry(0, 0), a);
   displayMat(N);
   std::cout << std::endl;
   displayMat(M);

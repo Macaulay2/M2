@@ -45,7 +45,7 @@ void getElement<M2::ARingRRi>(const M2::ARingRRi& R,
                               M2::ARingRRi::ElementType& result)
 {
   if (index < 50)
-    R.set_from_long(result, index - 25);
+    R.set(result, index - 25);
   else
     R.random(result);
 }

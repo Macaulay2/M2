@@ -149,7 +149,7 @@ inline const CCC* cast_to_CCC(const Ring* R)
 inline ring_elem from_doubles(const CCC* C, double re, double im)
 {
   M2::ARingCC::Element a(C->ring());
-  C->ring().set_from_doubles(a, re, im);
+  C->ring().set(a, re, im);
   ring_elem result;
   C->ring().to_ring_elem(result, a);
   return result;

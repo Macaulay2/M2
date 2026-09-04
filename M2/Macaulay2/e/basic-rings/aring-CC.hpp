@@ -120,62 +120,56 @@ class ARingCC : public SimpleARing<ARingCC>
   }
 
   void copy(ElementType& result, const ElementType& a) const { set(result, a); }
-  void set_from_long(ElementType& result, long a) const
+  void set(ElementType& result, long a) const
   {
     result.re = static_cast<double>(a);
     result.im = 0.0;
   }
+  void set(ElementType& result, int a) const { set(result, (long)a); }
 
   void set_var(ElementType& result, int v) const
   {
     (void) v;
-    set_from_long(result, 1);
+    set(result, 1);
   }
 
-  void set_from_mpz(ElementType& result, mpz_srcptr a) const
+  void set(ElementType& result, mpz_srcptr a) const
   {
     result.re = mpz_get_d(a);
     result.im = 0.0;
   }
 
-  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
+  bool set(ElementType& result, mpq_srcptr a) const
   {
     result.re = mpq_get_d(a);
     result.im = 0.0;
     return true;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  bool set(ElementType& result, gmp_RR a) const
   {
     result.re = mpfr_get_d(a, MPFR_RNDN);
     result.im = 0.0;
     return true;
   }
-  bool set_from_BigReals(ElementType& result, gmp_RR re, gmp_RR im) const
+  bool set(ElementType& result, gmp_RR re, gmp_RR im) const
   {
     result.re = mpfr_get_d(re, MPFR_RNDN);
     result.im = mpfr_get_d(im, MPFR_RNDN);
     return true;
   }
-  bool set_from_BigComplex(ElementType& result, gmp_CC a) const
+  bool set(ElementType& result, gmp_CC a) const
   {
     result.re = mpfr_get_d(a->re, MPFR_RNDN);
     result.im = mpfr_get_d(a->im, MPFR_RNDN);
     return true;
   }
-  bool set_from_double(ElementType& result, double a) const
+  bool set(ElementType& result, double a) const
   {
     result.re = a;
     result.im = 0;
     return true;
   }
-  bool set_from_complex_double(ElementType& result, double re, double im) const
-  {
-    result.re = re;
-    result.im = im;
-    return true;
-  }
-
   // arithmetic
   void negate(ElementType& result, const ElementType& a) const
   {
@@ -314,7 +308,7 @@ class ARingCC : public SimpleARing<ARingCC>
   {
     ElementType curr_pow;
     init(curr_pow);
-    set_from_long(result, 1);
+    set(result, 1);
     if (n == 0)
       {
       }
@@ -404,7 +398,7 @@ class ARingCC : public SimpleARing<ARingCC>
     return moveTo_gmpCC(result);
   }
 
-  void set_from_doubles(ElementType& result, double re, double im) const
+  void set(ElementType& result, double re, double im) const
   {
     result.re = re;
     result.im = im;

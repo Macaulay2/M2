@@ -83,28 +83,29 @@ class ARingZZGMP : public SimpleARing<ARingZZGMP>
   }
 
   void set_zero(ElementType& result) const { mpz_set_si(&result, 0); }
-  void set_from_long(ElementType& result, long a) const
+  void set(ElementType& result, long a) const
   {
     mpz_set_si(&result, a);
   }
+  void set(ElementType& result, int a) const { mpz_set_si(&result, a); }
 
-  void set_from_mpz(ElementType& result, mpz_srcptr a) const
+  void set(ElementType& result, mpz_srcptr a) const
   {
-    // printf("ARingZZ::calling set_from_mpz\n");
+    // printf("ARingZZ::calling set\n");
     mpz_set(&result, a);
   }
 
-  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
+  bool set(ElementType& result, mpq_srcptr a) const
   {
     if (mpz_cmp_si(mpq_denref(a), 1) == 0)
       {
-        set_from_mpz(result, mpq_numref(a));
+        set(result, mpq_numref(a));
         return true;
       }
     return false;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  bool set(ElementType& result, gmp_RR a) const
   {
     (void) result;
     (void) a;
