@@ -15,28 +15,50 @@ document {
      PARA{},
      SeeAlso => {GF,cover,super}
      }
-document { 
-     Key => {(ambient,Ring),(ambient,PolynomialRing),(ambient,QuotientRing)},
-     Headline => "ambient polynomial ring",
-     Usage => "ambient R",
-     Inputs => {
-	  "R" => {"a polynomial ring or a quotient of a polynomial ring"}
-	  },
-     Outputs => {
-	  Ring => {"the polynomial ring of which this ring is a quotient"}
-	  },
-     EXAMPLE {
-	  "A = ZZ[a..d];",
-     	  "B = A/(3*a^2-1);",
-	  "C = B/(a*b-3);",
-	  "describe C",
-	  "ambient C"
-	  },
-     "If R is not a quotient of a polynomial ring, an error is given.",
-     Caveat => {"If the ring is a ", TO GaloisField, ", then the meaning is
-	  different.  See ", TO (ambient,GaloisField), "."},
-     SeeAlso => {}
-     }
+
+doc ///
+  Key
+    (ambient, Ring)
+    (ambient, PolynomialRing)
+    (ambient, QuotientRing)
+    (ambient, FractionField)
+  Headline
+    ambient ring
+  Usage
+    ambient R
+  Inputs
+    R:Ring
+  Outputs
+    :Ring
+  Description
+    Text
+      The ambient ring of a polynomial ring is itself.
+    Example
+      A = ZZ[a..d];
+      ambient A
+    Text
+      The ambient ring of a quotient ring is the ring of which it is a quotient.
+    Example
+      B = A/(3*a^2-1);
+      ambient B
+      C = B/(a*b-3);
+      ambient C
+    Text
+      The ring used to create a fraction field is the ambient ring of the
+      resulting fraction field.
+    Example
+      F = frac A
+      ambient F
+    Text
+      If @VAR "R"@ is not a polynomial ring, quotient ring, fraction field, or
+      Galois field, then an error is given.
+    Example
+      trap ambient ZZ
+  Caveat
+    If the ring is a @TO GaloisField@, then the meaning is different.  See
+    @TO (ambient, GaloisField)@.
+///
+
 document { 
      Key => (ambient,GaloisField),
      Headline => "corresponding quotient ring",
