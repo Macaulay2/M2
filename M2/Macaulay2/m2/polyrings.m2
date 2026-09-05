@@ -56,7 +56,7 @@ generators PolynomialRing := opts -> R -> (
 
 char      PolynomialRing :=      char @@ coefficientRing
 precision PolynomialRing := precision @@ coefficientRing
-numgens   PolynomialRing := numgens @@ monoid
+numgens   PolynomialRing := R -> R.cache.numgens ??= numgens monoid R
 options   PolynomialRing := options @@ monoid
 dim       PolynomialRing := R -> dim coefficientRing R + #generators R - (
     if R.?SkewCommutative then #R.SkewCommutative else 0)
