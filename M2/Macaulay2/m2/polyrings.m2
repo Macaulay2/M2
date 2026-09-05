@@ -49,6 +49,18 @@ Ring _ List := RingElement => (R, v) -> (
                          rawMakeMonomialFromExponents v))))
 RingFamily _ List := RingElement => (R, v) -> (default R)_v
 
+List _ Ring := RingElement => (v, R) -> (
+    if #v == 0 then 0_R
+    else (
+        kk := coefficientRing ambient R;
+        new R from rawSum apply(toSequence v, mc -> (
+            if not instance(mc, Sequence)
+            then error "expected a list of sequences";
+            if #mc =!= 2
+            then error "expected a list of pairs";
+            rawTerm(raw R, raw mc#1_kk, rawMakeMonomialFromExponents mc#0)))))
+List _ RingFamily := RingElement => (v, R) -> v_(default R)
+
 coefficientRing PolynomialRing := R -> last R.baseRings
 ambient PolynomialRing := identity
 monoid PolynomialRing := o -> R -> R.monoid
