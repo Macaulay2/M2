@@ -60,6 +60,20 @@ TEST(QuotientRing, sphere)
   EXPECT_EQ(lhs, rhs);
 }
 
+// makeTerm reduces the term modulo the quotient ideal.
+TEST(QuotientRing, makeTerm)
+{
+  const PolynomialRing* A = simplePolynomialRing(101, {"x", "y"});
+  const Ring* R = simpleQuotientRing(A, {"x^2-y"});
+  ASSERT_NE(R, nullptr);
+  const Ring* kk = R->cast_to_PolynomialRing()->getCoefficients();
+
+  // x^3*y reduces to x*y^2 modulo x^2-y
+  std::vector<int> vp = varpowerOf({{1, 1}, {0, 3}});
+  ring_elem t = R->makeTerm(kk, kk->from_long(1), vp.data());
+  EXPECT_TRUE(R->is_equal(t, monomialOf(R, {{0, 1}, {1, 2}})));
+}
+
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

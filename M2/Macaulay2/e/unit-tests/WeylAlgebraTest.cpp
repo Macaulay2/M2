@@ -206,3 +206,17 @@ TEST(PolyRingFromString, basic)
   auto g_expected = x.power(3) + x * y * z * 2 - y * y + z;
   EXPECT_EQ(g, g_expected);
 }
+
+TEST(WeylAlgebra, makeTerm)
+{
+  const WeylAlgebra* R = simpleWeylAlgebra(101, {"x", "dx"}, {0}, {1});
+  ASSERT_NE(R, nullptr);
+  const Ring* kk = R->getCoefficients();
+
+  std::vector<int> vp = varpowerOf({{1, 2}, {0, 1}});
+  ring_elem t = R->makeTerm(kk, kk->from_long(1), vp.data());
+  EXPECT_TRUE(R->is_equal(t, monomialOf(R, {{0, 1}, {1, 2}})));
+
+  ring_elem u = R->makeTerm(kk, kk->from_long(3), vp.data());
+  EXPECT_TRUE(R->is_equal(u, R->mult(R->from_long(3), t)));
+}

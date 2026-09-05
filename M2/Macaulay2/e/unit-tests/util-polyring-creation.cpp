@@ -198,6 +198,26 @@ const Ring* simpleQuotientRing(const PolynomialRing* R,
   return PolynomialRing::create_quotient(R, gb);
 }
 
+std::vector<int> varpowerOf(const std::vector<std::pair<int, int>>& pairs)
+{
+  std::vector<int> vp;
+  vp.push_back(static_cast<int>(2 * pairs.size() + 1));
+  for (const auto& p : pairs)
+    {
+      vp.push_back(p.first);
+      vp.push_back(p.second);
+    }
+  return vp;
+}
+
+ring_elem monomialOf(const Ring* R, const std::vector<std::pair<int, int>>& pairs)
+{
+  ring_elem result = R->one();
+  for (const auto& p : pairs)
+    result = R->mult(result, R->power(R->var(p.first), p.second));
+  return result;
+}
+
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

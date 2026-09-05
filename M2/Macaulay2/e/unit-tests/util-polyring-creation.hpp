@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <gtest/gtest.h>
+#include <utility>
 #include <vector>
 
 #include "interface/monomial-ordering.h"
@@ -35,6 +36,16 @@ const WeylAlgebra* simpleWeylAlgebra(long p,
                                      const std::vector<int> derivs);
 
 class Matrix;
+
+// Helpers for testing Ring::makeTerm.
+
+// Build a varpower [2n+1, v1, e1, ..., vn, en] from (variable, exponent)
+// pairs.  The pairs must be in decreasing order of variable.
+std::vector<int> varpowerOf(const std::vector<std::pair<int, int>>& pairs);
+
+// The same monomial, built with the ring's own arithmetic, so that the result
+// of makeTerm can be compared against something built a different way.
+ring_elem monomialOf(const Ring* R, const std::vector<std::pair<int, int>>& pairs);
 
 // Create a 1-row matrix (ideal generators) from polynomial strings.
 // Each string is a polynomial like "x^2+3*x*y-1".
