@@ -1,5 +1,7 @@
 // Copyright 2010 Michael E. Stillman
 
+#include <algorithm>
+
 #include "rings/tower.hpp"
 
 #include "monomials/ExponentList.hpp"
@@ -467,6 +469,7 @@ ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
   for (Nterm& t : fR)
     {
       M->to_expvector(t.monom, exp);
+      std::reverse(exp, exp + nvars); // variables are in reverse order
       std::pair<bool, long> res = K->coerceToLongInteger(t.coeff);
       assert(res.first);
       int c1 = static_cast<int>(res.second);
