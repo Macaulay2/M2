@@ -132,7 +132,7 @@ midpoint Ring := R -> (
 intervalPolyHelper := (func, f) -> (
     R := midpoint ring f;
     if R === ring f then f
-    else sum(listForm f, (m, c) -> func c * product(#m, i -> R_i^(m#i))))
+    else sum(listForm f, (m, c) -> func c * R_m))
 
 midpoint   RingElement := f -> intervalPolyHelper(midpoint,   f)
 left       RingElement := f -> intervalPolyHelper(left,       f)
