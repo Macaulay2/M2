@@ -77,6 +77,8 @@ degree MonoidElement := m -> (
 baseName MonoidElement := m -> if #(s := rawSparseListFormMonomial raw m) == 1 and s#0#1 == 1
     then (class m).generatorSymbols#(s#0#0) else error "expected a generator"
 
+rawOne = R -> R.rawOne ??= raw 1_R
+
 promote(IndexedVariable, RingElement) := RingElement => (m, R) -> promote(value m, R)
 promote(MonoidElement, RingElement) := RingElement => (m, R) -> (
     k := coefficientRing first flattenRing R;
@@ -85,7 +87,7 @@ promote(MonoidElement, RingElement) := RingElement => (m, R) -> (
     or instance(m, monoid R)
     or instance(m, R.FlatMonoid)
     -- TODO: what does rawTerm expect?
-    then new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial)
+    then new R from rawTerm(R.RawRing, rawOne k, m.RawMonomial)
     else "expected monomial from same ring")
 
 lift(IndexedVariable, MonoidElement) := MonoidElement => (m, M) -> lift(value m, M)
@@ -120,7 +122,7 @@ leadMonomial RingElement := RingElement => f -> (
      R := ring f;
      k := coefficientRing R;
      n := numgens monoid R;
-     leadMonomial R := f -> new R from rawTerm(raw R, raw 1_k, rawLeadMonomial(n, raw f)); -- quicker the second time
+     leadMonomial R := f -> new R from rawTerm(raw R, rawOne k, rawLeadMonomial(n, raw f)); -- quicker the second time
      leadMonomial f)
 
 listForm = method()

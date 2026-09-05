@@ -32,15 +32,21 @@ isSkewCommutative PolynomialRing := R -> isSkewCommutative coefficientRing R or 
     R.?SkewCommutative and 0 < #R.SkewCommutative)
 
 Ring _ List := RingElement => (R, v) -> (
-    if #v == 0 then 1_R
-    else if #v > (m := R.numallvars ?? numgens R)
+    if #v == 0 then return 1_R;
+    n := numgens R;
+    if #v > (m := R.numallvars ?? n)
     then error("expected at most ", m, " exponent",
                if m == 1 then "" else "s")
     else (
         kk := coefficientRing ambient R;
-        n := numgens R;
-        new R from rawTerm(raw R, raw kk_(drop(v, n)),
-                           rawMakeMonomialFromExponents take(v, n))))
+        new R from (
+            if #v > n
+            then rawTerm(raw R,
+                         raw kk_(drop(v, n)),
+                         rawMakeMonomialFromExponents take(v, n))
+            else rawTerm(raw R,
+                         rawOne kk,
+                         rawMakeMonomialFromExponents v))))
 RingFamily _ List := RingElement => (R, v) -> (default R)_v
 
 coefficientRing PolynomialRing := R -> last R.baseRings
