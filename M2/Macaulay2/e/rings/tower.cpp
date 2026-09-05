@@ -175,6 +175,35 @@ void Tower::remove(ring_elem &) const
   // nothing needed to remove?  Or should we remove it?
 }
 
+ring_elem Tower::makeTerm(const Ring* coeffR,
+                          const ring_elem a,
+                          const_varpower monom) const
+{
+  if (!coeffR->isFinitePrimeField() ||
+      coeffR->characteristic() != characteristic())
+    throw exc::engine_error("wrong coefficient ring");
+
+  for (index_varpower i = monom; i.valid(); ++i) {
+    if (i.exponent() < 0)
+      throw exc::engine_error("expected nonnegative exponents");
+    if (i.var() >= n_vars())
+      throw exc::engine_error("unknown variable");
+  }
+
+  auto [ok, n] = coeffR->coerceToLongInteger(a);
+  if (ok) {
+    exponents_t exp = new int[n_vars()];
+    varpower::to_expvector(n_vars(), monom, exp);
+    std::reverse(exp, exp + n_vars()); // variables are in reverse order
+    TowerPolynomial result = nullptr;
+    D->add_term(result, n, exp);
+    delete[] exp;
+    return TOWER_RINGELEM(result);
+  } else {
+    throw exc::engine_error("could not coerce coefficient to integer");
+  }
+}
+
 ring_elem Tower::negate(const ring_elem g) const
 {
   TowerPolynomial f1;
