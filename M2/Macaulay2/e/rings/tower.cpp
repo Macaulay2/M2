@@ -18,6 +18,9 @@ bool Tower::initialize(long charac0,
                        M2_ArrayString names0,
                        const VECTOR(ring_elem) & extensions)
 {
+  if (charac0 == 0)
+    throw exc::engine_error("expected coefficient ring with characteristic p > 0");
+
   initialize_ring(charac0);
   declare_field();
 
