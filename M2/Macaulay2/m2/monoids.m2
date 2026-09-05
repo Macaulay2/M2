@@ -22,8 +22,6 @@ madeTrivialMonoid := false
 
 dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
 
-makeSparse = v -> select(pairs v, (k, v) -> v != 0)
-
 listSplice := L -> deepSplice flatten sequence L
 
 baseName' = var -> baseName if instance(var, String) and match("[[:alnum:]$]+", var) then getSymbol var else var
@@ -216,7 +214,7 @@ Monoid _ List := MonoidElement => (M, v) -> (
     if #v > (n := numgens M)
     then error("expected at most ", n, " exponent",
                if n == 1 then "" else "s");
-    new M from rawMakeMonomial makeSparse v)
+    new M from rawMakeMonomialFromExponents v)
 
 ZZ            _ Monoid := MonoidElement => (i, M) -> if i === 1 then M#1 else error "expected integer to be 1"
 RingElement   _ Monoid :=

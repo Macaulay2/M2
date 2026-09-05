@@ -40,7 +40,7 @@ Ring _ List := RingElement => (R, v) -> (
         kk := coefficientRing ambient R;
         n := numgens R;
         new R from rawTerm(raw R, raw kk_(drop(v, n)),
-                           rawMakeMonomial makeSparse take(v, n))))
+                           rawMakeMonomialFromExponents take(v, n))))
 RingFamily _ List := RingElement => (R, v) -> (default R)_v
 
 coefficientRing PolynomialRing := R -> last R.baseRings

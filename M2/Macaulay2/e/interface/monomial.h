@@ -4,5 +4,6 @@
 #include "monomials/monomial.hpp"
 
 EngineMonomial *rawMakeMonomial(M2_arrayint m);
+EngineMonomial *rawMakeMonomialFromExponents(M2_arrayint m);
 
 #endif /* M2_INTERFACE_MONOMIAL_H_ */
