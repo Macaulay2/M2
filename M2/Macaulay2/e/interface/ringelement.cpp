@@ -918,6 +918,36 @@ const RingElement /* or null */ *IM2_RingElement_fraction(const Ring *R,
   }
 }
 
+const RingElement /* or null */ *rawSum(const engine_RawRingElementArray terms)
+{
+  try {
+    if (terms->len > 0) {
+      const Ring *R = terms->array[0]->get_ring();
+
+      for (int i = 1; i < terms->len; ++i) {
+        if (terms->array[i]->get_ring() != R) {
+          ERROR("expected terms from the same ring");
+          return nullptr;
+        }
+      }
+
+      SumCollector *H = R->make_SumCollector();
+      for (int i = 0; i < terms->len; ++i)
+          H->add(terms->array[i]->get_value());
+
+      RingElement *result = RingElement::make_raw(R, H->getValue());
+      delete H;
+      return result;
+    } else {
+      ERROR("expected at least one ring element");
+      return nullptr;
+    }
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
+}
+
 gmp_ZZorNull rawSchurDimension(const RingElement *f)
 {
   try

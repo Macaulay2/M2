@@ -430,6 +430,8 @@ const RingElement /* or null */ *IM2_RingElement_fraction(
     const RingElement *a,
     const RingElement *b); /* drg: connected rawFraction*/
 
+const RingElement /* or null */ *rawSum(const engine_RawRingElementArray terms);
+
 gmp_ZZ /* or null */ rawSchurDimension(
     const RingElement *f); /* connected rawSchurDimension */
 /* f should be a polynomial whose base ring was created using rawSchurRing

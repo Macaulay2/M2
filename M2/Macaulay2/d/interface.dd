@@ -1474,6 +1474,15 @@ export rawFraction(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawFraction",rawFraction);
 
+export rawSum(e:Expr):Expr := (
+    if isSequenceOfRingElements(e)
+    then toExpr(Ccode(RawRingElementOrNull,
+                      "rawSum(",
+                      getSequenceOfRingElements(e),
+                      ")"))
+    else WrongArg("a sequence of ring elements"));
+setupfun("rawSum", rawSum);
+
 export rawFactor(e:Expr):Expr := (
      when e
      is x:RawRingElementCell do (
