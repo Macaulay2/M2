@@ -145,3 +145,85 @@ m = rawMakeMonomial {(0,1)}
 scan({"Flint", "FlintBig", "New", "Old"}, s -> (
     F := GF(9, Strategy => s);
     assert Equation(new F from rawTerm(raw F, raw 2_(ZZ/3), m), 2*F_0)))
+
+---------------
+-- List_Ring --
+---------------
+
+R = QQ[x,y,z]
+assert Equation({({2,0,3}, 1/2)}_R, 1/2*x^2*z^3)
+assert Equation({({0,0,0}, 3/4)}_R, 3/4)
+assert Equation({({2}, 1)}_R, x^2)  -- short exponent vectors pad with zeros
+assert Equation({({}, 5)}_R, 5)
+assert Equation({}_R, 0)            -- the empty sum, not the empty product
+assert(ring {}_R === R)
+
+-- coefficients are promoted
+assert Equation({({1,0,0}, 3)}_R, 3*x)
+
+-- the terms need not be sorted, repeated monomials are collected
+assert Equation({({0,1,0}, 1), ({2,0,0}, 1)}_R, x^2+y)
+assert Equation({({1,0,0}, 1), ({1,0,0}, 2)}_R, 3*x)
+assert Equation({({1,0,0}, 1), ({1,0,0}, -1)}_R, 0)
+assert Equation({({1,0,0}, 0)}_R, 0)
+
+f = x^2*z^3 - 1/2*y + 7
+assert Equation((listForm f)_R, f)
+
+assert try {{1,1,1}}_R then false else true       -- pairs, not lists
+assert try {({1,1,1}, 1, 1)}_R then false else true
+assert try {(1, 2)}_R then false else true        -- exponents must be a list
+assert try {({1/2,0,0}, 1)}_R then false else true
+assert try {({1,1,1,1}, 1)}_R then false else true -- too many exponents
+assert try {({-1,0,0}, 1)}_R then false else true  -- negative, not Laurent
+assert try {({1,0,0}, 1_(ZZ/2))}_R then false else true -- no promotion
+
+R = ZZ/101[x,y]
+assert Equation({({1,1}, 3)}_R, 3*x*y)
+f = 3*x*y + 5
+assert Equation((listForm f)_R, f)
+
+R = QQ[x,y, Inverses => true, MonomialOrder => Lex]
+assert Equation({({-2,3}, 1)}_R, x^(-2)*y^3)
+assert Equation({({-2,-3}, 1/2)}_R, 1/2*x^(-2)*y^(-3))
+f = x^(-2)*y^3 + x*y^(-1)
+assert Equation((listForm f)_R, f)
+
+R = QQ[x,y]/ideal(x^2-y)
+assert Equation({({3,1}, 1)}_R, x*y^2)  -- reduced modulo the ideal
+f = x*y^2 + 1
+assert Equation((listForm f)_R, f)
+
+R = QQ[x,dx, WeylAlgebra => {x => dx}]
+assert Equation({({1,2}, 1)}_R, x*dx^2)
+f = x*dx^2 + dx
+assert Equation((listForm f)_R, f)
+
+R = QQ[x,y,z, SkewCommutative => true]
+assert Equation({({1,0,1}, 1)}_R, x*z)
+f = x*z - y*z
+assert Equation((listForm f)_R, f)
+
+R = QQ[a][x,y]
+assert Equation({({1,1}, 1)}_R, x*y)
+assert Equation({({1,1}, a^3)}_R, a^3*x*y)
+f = (a^2+1)*x*y + a
+assert Equation((listForm f)_R, f)
+
+F = GF 9
+R = F[x,y]
+assert Equation({({1,0}, F_0)}_R, F_0*x)
+f = F_0*x + 1
+assert Equation((listForm f)_R, f)
+
+R = frac(QQ[x,y])
+assert Equation({({1,-2}, 1)}_R, x/y^2)
+assert Equation({({1,0}, 1), ({0,-1}, 1)}_R, x + 1/y)
+
+R = (ZZ/101)[x,y, Constants => true]
+assert Equation({({2,3}, 1)}_R, x^2*y^3)
+assert Equation({({2,3}, 1), ({1,0}, 5)}_R, x^2*y^3 + 5*x)
+
+-- List _ RingFamily
+assert Equation({}_RR, 0)
+assert(ring {}_RR === RR_53)
