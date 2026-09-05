@@ -268,7 +268,48 @@ document {
 	  S_{1,1,1}
 	  S_{1,1,1,4}
 	  ///,
+     SeeAlso => {(symbol _, List, Ring)}
      }
+
+doc ///
+  Key
+    (symbol _, List, Ring)
+    (symbol _, List, RingFamily)
+  Headline
+    make a polynomial from a list of terms
+  Usage
+    L_R
+  Inputs
+    L:List
+      of pairs @CODE "(m, c)"@, where @VAR "m"@ is a list of exponents and
+      @VAR "c"@ is a coefficient
+    R:Ring
+  Outputs
+    :RingElement
+      the polynomial of @VAR "R"@ with the given terms
+  Description
+    Text
+      This is the inverse of @TO listForm@.
+    Example
+      R = QQ[x,y,z]
+      {({2,0,3}, 1/2), ({0,1,0}, -1)}_R
+      f = x^2*z^3 - 1/2*y + 7
+      (listForm f)_R
+    Text
+      The terms need not be given in order, monomials may be repeated, and
+      each coefficient is promoted into the coefficient ring of @VAR "R"@.
+    Example
+      {({0,1,0}, 3), ({1,0,0}, 1), ({1,0,0}, 2)}_R
+    Text
+      The empty list gives zero, the empty sum.
+    Example
+      {}_R
+  SeeAlso
+    listForm
+    standardForm
+    (symbol _, Ring, List)
+///
+
 document { 
      Key => (symbol _, IndexedVariable, Ring), -- ring variable by name
      Headline => "get a ring variable by name",
