@@ -357,6 +357,31 @@ AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
 AC_CHECK_SIZEOF([long])
 AC_SUBST(SIZEOF_LONG,$ac_cv_sizeof_long)
 
+dnl Check for Homebrew packages
+
+AC_CHECK_PROGS([BREW], [brew], [false])
+
+dnl BREW_ADD_FLAG([FORMULA], [DIR], [FLAG], [PREFIX], [SEPARATOR])
+dnl adds PREFIX$(brew --prefix FORMULA)/DIR (if it exists) to FLAG,
+dnl separated by SEPARATOR
+AC_DEFUN([BREW_ADD_FLAG],
+    [AS_IF([test "x$BREW" = xbrew -a -d $($BREW --prefix $1)/$2],
+         [$3="${$3+$$3$5}$4$($BREW --prefix $1)/$2"])])
+
+dnl BREW_ADD_FLAGS([FORMULA])
+dnl adds:
+dnl -L$(brew --prefix FORMULA)/lib to LDFLAGS,
+dnl -I$(brew --prefix FORMULA)/include to CPPFLAGS, and
+dnl $(brew --prefix)/lib/pkgconfig to PKG_CONFIG_PATH
+AC_DEFUN([BREW_ADD_FLAGS],
+    [BREW_ADD_FLAG([$1], [lib],           [LDFLAGS],         [-L], [ ])
+     BREW_ADD_FLAG([$1], [include],       [CPPFLAGS],        [-I], [ ])
+     BREW_ADD_FLAG([$1], [lib/pkgconfig], [PKG_CONFIG_PATH], [],   [:])])
+
+BREW_ADD_FLAGS
+
+export PKG_CONFIG_PATH
+
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h elf.h execinfo.h syscall.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
@@ -548,7 +573,8 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 dnl Check for openmp and fail if it cannot be found.
 dnl This is required for building the library csdp and good for building the library normaliz
 AC_LANG(C++)
-AC_OPENMP
+BREW_ADD_FLAGS([libomp]) # keg-only
+M2_OPENMP
 if test "$ac_cv_prog_cxx_openmp" = unsupported
    then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
 fi
@@ -1217,7 +1243,8 @@ fi
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,curses tinfo ncurses,,AC_MSG_ERROR([[not found: library containing symbol tgoto; tried libcurses, libncurses, and libtinfo)]]))
 if test $BUILD_readline = no
-then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
+then BREW_ADD_FLAGS([readline]) # keg-only
+     AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
 fi
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(rl_set_prompt,readline,,BUILD_readline=yes)
@@ -1494,6 +1521,7 @@ AS_IF([test "x$with_fplll" = "xyes"],
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
+    BREW_ADD_FLAGS([factory]) # keg-only
     AC_MSG_CHECKING([whether factory library is installed])
     FACTORY_MINVERSION=4.2.0
     if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
