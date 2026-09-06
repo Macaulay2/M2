@@ -42,6 +42,17 @@ R = QQ[x,dx, WeylAlgebra => {x => dx}]
 assert Equation(R_{1,2}, x*dx^2)
 R = QQ[x,y,z, SkewCommutative => true]
 assert Equation(R_{1,0,1}, x*z)
+-- the square of a skew commutative variable is zero
+assert Equation(R_{2,0,0}, 0)
+assert Equation(R_{1,0,2}, 0)
+assert Equation(R_{0,3,0}, 0)
+S = R/ideal(x*y)
+assert Equation(S_{1,0,1}, x*z)
+assert Equation(S_{0,0,2}, 0)
+R = QQ[x,y,a,b, SkewCommutative => {2,3}]
+-- only the skew commutative variables square to zero
+assert Equation(R_{2,0,0,0}, x^2)
+assert Equation(R_{0,0,2,0}, 0)
 
 R = QQ[a][x,y]
 assert Equation(R_{2,1}, x^2*y)
@@ -203,6 +214,8 @@ R = QQ[x,y,z, SkewCommutative => true]
 assert Equation({({1,0,1}, 1)}_R, x*z)
 f = x*z - y*z
 assert Equation((listForm f)_R, f)
+assert Equation({({2,0,0}, 1)}_R, 0)
+assert Equation({({2,0,0}, 1), ({1,0,1}, 1)}_R, x*z)
 
 R = QQ[a][x,y]
 assert Equation({({1,1}, 1)}_R, x*y)

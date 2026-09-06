@@ -29,6 +29,12 @@ const PolynomialRing* simplePolynomialRing(const Ring* kk,
 // This create a polynomial ring with all degrees 1, and with GRevLex order
 const PolynomialRing* simplePolynomialRing(int p, const std::vector<std::string>& names);
 
+// Creates a skew commutative ring, with degree rank one, GRevLex monomial
+// order.  skewvars lists the indices of the anti-commuting variables.
+const PolynomialRing* simpleSkewPolynomialRing(int p,
+                                               const std::vector<std::string>& names,
+                                               const std::vector<int>& skewvars);
+
 // Creates a Weyl algebra, with degree rank one, GRevLex monomial order.
 const WeylAlgebra* simpleWeylAlgebra(long p,
                                      const std::vector<std::string> varnames,

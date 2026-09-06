@@ -200,6 +200,10 @@ ring_elem PolynomialRing::makeTerm(const Ring *coeffR,
 
   exponents_t exp = newarray_atomic(int, nvars0);
   varpower::to_expvector(nvars0, monom, exp);
+
+  if (is_skew_commutative() && getSkewInfo().exp_is_zero(exp, nvars0))
+    return from_long(0);
+
   return make_logical_term(coeffR, a, exp);
 }
 
