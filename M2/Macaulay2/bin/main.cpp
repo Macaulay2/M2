@@ -55,7 +55,7 @@ void* testFunc(ArgCell* p);
 void  M2_flint_abort(void);
 
 static void * GC_start_performance_measurement_0(void *) {
-#ifdef GC_start_performance_measurement /* added in bdwgc 8 */
+#if GC_VERSION_MAJOR >= 8 /* GC_start_performance_measurement added in bdwgc 8 */
   GC_start_performance_measurement();
 #endif
   return NULL;
