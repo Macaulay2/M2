@@ -45,19 +45,22 @@ new URL from String := (URL, str) -> { str }
 -- relative URLs and filenames
 isAbsoluteURL = url -> match( "^(#|mailto:|[a-z]+://)", url )
 
-fileExists' = pth -> (
-    if match("#",pth) then pth = substring(0,lastMatch#0#0,pth);
-    fileExists pth
-)
+splitURLFragment = pth -> (
+    if match("#", pth) then (
+	i := lastMatch#0#0;
+	(substring(0, i, pth), substring(i, pth)))
+    else (pth, ""))
 
 -- TODO: phase this one out eventually
 toURL = method()
 toURL String := pth -> (
-     urlEncode if isAbsolutePath pth then concatenate(rootURI,
-	  if fileExists' pth then realpath pth
-	  else (
-	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
-	       pth))
+     urlEncode if isAbsolutePath pth then (
+	  (filename, fragment) := splitURLFragment pth;
+	  concatenate(rootURI,
+	       if fileExists filename then realpath filename | fragment
+	       else (
+		    stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
+		    pth)))
      else if isAbsoluteURL pth then pth
      else (
 	  r := if htmlDirectory === null then pth else relativizeFilename(htmlDirectory, pth);
