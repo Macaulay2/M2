@@ -7,12 +7,13 @@ needs "modules.m2"
 needs "matrix1.m2"
 
 Hom = method(Options => {
-	DegreeLimit       => null,
-	MinimalGenerators => true,
-	Strategy          => null,
-	})
+    DegreeLimit         => null,
+    MinimalGenerators   => true,
+    Strategy            => null
+})
 
-End = options Hom >> o -> M -> Hom(M, M, o)
+End = method(Options => options Hom)
+End(Thing) := Thing => o -> X -> Hom(X, X, o)
 
 -- TODO: Hom(R, S) should work as well
 Hom(Ring, Ring)   :=
@@ -32,16 +33,19 @@ Hom(Module, Module) := Module => opts -> (M, N) -> (
     -- M.cache is a hashless (hence ageless) CacheTable, but
     -- M.cache.cache is a MutableHashTable, hence has an age.
     Y := youngest(M.cache.cache, N.cache.cache);
-    if Y#?(Hom, M, N, e) then return Y#(Hom, M, N, e);
-    H := runHooks((Hom, Module, Module), (opts, M, N), Strategy => opts.Strategy);
-    if H === null then error "Hom: no strategy found for the given input";
-    trim' := if opts.MinimalGenerators then trim else identity;
-    -- a hack: we really want to type "Hom(M, N) = ..."
-    H = Y#(Hom, M, N, e) = if opts.MinimalGenerators then trim H else H;
-    H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f + degree f);
-    H.cache.formation = FunctionApplication { Hom, (M, N, DegreeLimit => e) };
-    H)
+    Y#(Hom, M, N, e) ?? (
+        H := runHooks((Hom, Module, Module), (opts, M, N), Strategy => opts.Strategy);
+        if H === null then error "Hom: no strategy found for the given input";
+        trim' := if opts.MinimalGenerators then trim else identity;
+        -- a hack: we really want to type "Hom(M, N) = ..."
+        H = Y#(Hom, M, N, e) = if opts.MinimalGenerators then trim H else H;
+        H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f + degree f);
+        H.cache.formation = FunctionApplication { Hom, (M, N, DegreeLimit => e) };
+        H
+    )
+)
 
+rawTranspose = m -> transpose matrix for row in entries m list for x in row list antipode(x);
 basicHom = (M, N) -> kernel(transpose presentation M ** N)
 addHook((Hom, Module, Module), Strategy => Default,  (opts, M, N) -> basicHom(M, N))
 addHook((Hom, Module, Module), Strategy => Syzygies, (opts, M, N) -> (
