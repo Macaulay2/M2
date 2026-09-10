@@ -9,6 +9,7 @@
 #include "monoid.hpp"      // for Monoid
 #include "rings/poly.hpp"        // for PolyRing
 #include "rings/polyring.hpp"    // for PolynomialRing
+#include "ring-elements/ring-element.hpp" // for get_value
 
 const Monoid *Ring::degree_monoid() const { return degree_ring->getMonoid(); }
 #if 1
@@ -279,6 +280,48 @@ bool Ring::from_complex_double(double re, double im, ring_elem &result) const
   (void) im;
   result = from_long(0);
   return false;
+}
+
+ring_elem Ring::makeTerm(const Ring *coeffR,
+                         const ring_elem a,
+                         const_varpower monom) const
+{
+  if (isGaloisField()) {
+    const RingElement *gen;
+    ring_elem c;
+
+    if (!coeffR->isFinitePrimeField() ||
+        coeffR->characteristic() != characteristic())
+      throw exc::engine_error("wrong coefficient ring");
+
+    auto [ok, n] = coeffR->coerceToLongInteger(a);
+    if (ok)
+      c = from_long(n);
+    else // shouldn't happen
+      throw exc::engine_error("could not coerce coefficient to integer");
+
+    switch (varpower::npairs(monom)) {
+    case 0:
+      return c;
+
+    case 1:
+      gen = getGenerator();
+
+      if (gen == nullptr) {
+        throw exc::engine_error("no generator for Galois field");
+      } else {
+        if (monom[1] == 0)
+          return mult(c, power(gen->get_value(), monom[2]));
+        else
+          throw exc::engine_error("unknown variable");
+      }
+
+    default:
+      throw exc::engine_error("expected at most 1 exponent");
+    }
+  } else {
+    throw exc::engine_error("not implemented for this ring");
+  }
 }
 
 ring_elem Ring::random() const

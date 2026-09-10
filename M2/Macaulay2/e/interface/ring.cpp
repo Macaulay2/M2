@@ -511,7 +511,13 @@ const Ring *rawSchurSnRing(const Ring *A, int n)
 
 const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names)
 {
-  return Tower::create(static_cast<int>(charac), names);
+  try {
+    return Tower::create(static_cast<int>(charac), names);
+  }
+  catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 const Ring /* or null */ *rawTowerRing2(const Ring *R1,

@@ -88,6 +88,10 @@ class FractionField : public Ring
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
 
+  ring_elem makeTerm(const Ring* coeffR,
+                     const ring_elem a,
+                     const_varpower monom) const override;
+
   void internal_negate_to(ring_elem &f) const;
   void internal_add_to(ring_elem &f, ring_elem &g) const;
   void internal_subtract_to(ring_elem &f, ring_elem &g) const;
