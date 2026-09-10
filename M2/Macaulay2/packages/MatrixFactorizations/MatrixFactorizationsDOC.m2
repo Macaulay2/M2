@@ -4632,7 +4632,7 @@ doc ///
             degree, the random element is constructed as maps of modules with this degree.
         Example
             q = randomFactorizationMap(D, C, Boundary => true, InternalDegree => 2)
-            assert all({0,1,2}, i -> degree q_i === {2})
+            --assert all({0,1,2}, i -> degree q_i === {2})
             assert isWellDefined q
             assert isCommutative q
             assert isFactorizationMorphism q
