@@ -1,17 +1,16 @@
 # @configure_input@
 # DOTS is the path to M2/Macaulay2 from this directory
 DOTS = ../..
-include $(DOTS)/../include/config.Makefile
-VPATH = @srcdir@
 
 ifeq "@DEBUG@" "no"
-VLIMIT = 2000000
-TLIMIT = 1000
+TLIMIT ?= 1000
 else
-# give the debug version more time and space
-VLIMIT = 3000000
-TLIMIT = 1200
+# give the debug version more time
+TLIMIT ?= 1200
 endif
+
+include $(DOTS)/../include/config.Makefile
+VPATH = @srcdir@
 
 SRCDIR = @srcdir@
 include ../Makefile.test

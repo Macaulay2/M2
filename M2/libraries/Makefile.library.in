@@ -1,5 +1,7 @@
 # -*- Makefile -*-
 LIBRARY_MODE = yes
+TLIMIT ?= 100
+VLIMIT ?= 400000
 include ../../include/config.Makefile
 TARFILE_DIR = @abs_top_srcdir@/BUILD/tarfiles
 export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
@@ -285,35 +287,13 @@ ifneq (@DOWNLOAD@,yes)
 	@ false
 endif
 
-SLIMIT ?= 8192
-TLIMIT ?= 100
-VLIMIT ?= 400000
-LIMIT := :
-ifeq (@ULIMIT_T@,yes)
-LIMIT += ; ulimit -t $(TLIMIT)
-endif
-ifeq (@ULIMIT_V@,yes)
-LIMIT += ; ulimit -v $(VLIMIT)
-endif
-ifeq (@ULIMIT_S@,yes)
-LIMIT += ; ulimit -s $(SLIMIT)
-endif
-ifeq (@ULIMIT_T@,yes)
-LIMIT += ; ulimit -t
-endif
-ifeq (@ULIMIT_V@,yes)
-LIMIT += ; ulimit -v
-endif
-ifeq (@ULIMIT_S@,yes)
-LIMIT += ; ulimit -s
-endif
 recheck:
 	rm -f .checked-$(VERSION)
 	$(MAKE) check
 check: .checked-$(VERSION)
 .checked-$(VERSION) : .compiled-$(VERSION)
 	$(WHY)
-	+ set -x; $(LIMIT); $(CDBUILDDIR) && $(CHECKCMD)
+	+ set -x; $(LIMIT) $(CDBUILDDIR) && $(CHECKCMD)
 	touch $@
 
 ls:; ls -la . tarfiles
@@ -337,6 +317,12 @@ help:;
 	@ echo "  check                       check whether library compiled correctly"
 	@ echo "  recheck                     check, even if we've checked before"
 	@ echo "  update-submodule            update git submodule for library (if applicable)"
+	@ echo ""
+	@ echo "options, for running the library's own tests:"
+	@ echo ""
+	@ echo "  TLIMIT=$(TLIMIT)                  cpu time limit, in seconds"
+	@ echo "  VLIMIT=$(VLIMIT)               virtual memory limit, in kilobytes"
+	@ echo "  SLIMIT=$(SLIMIT)                 stack size limit, in kilobytes"
 	@ echo ""
 autotool-versions:
 	whereis autoconf

@@ -2,6 +2,8 @@
 # this makefile is run from a subdirectory, hence an extra ../ in the paths
 VPATH = $(chapter_srcdir)
 EXPECTED ?= test.out.expected
+TLIMIT ?= 1200
+VLIMIT ?= 3200000
 include ../../../../include/config.Makefile
 all: check
 # we depend on "diff" accepting some options that perhaps only GNU diff does
@@ -12,18 +14,6 @@ check: test.out.expected.trim test.out.trim
 	fi
 diff:
 	diff -B -b -u test.out.expected.trim test.out.trim
-
-LIMIT :=
-ifeq (@ULIMIT_T@,yes)
-LIMIT += ulimit -t 1200 ;
-endif
-ifeq (@ULIMIT_V@,yes)
-LIMIT += ulimit -v 3200000 ;
-endif
-ifeq (@ULIMIT_S@,yes)
-LIMIT += ulimit -s 8192 ;
-endif
-
 
 PATHJOIN := 'path = join({"./","$(chapter_srcdir)/"},path)'
 M2CMD := nice -18 @pre_exec_prefix@/bin/M2 --stop -q -e $(PATHJOIN) --print-width 0 --silent

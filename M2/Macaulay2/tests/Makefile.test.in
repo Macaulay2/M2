@@ -5,28 +5,6 @@
 DEFERRED ?= no
 
 DOTS ?= ../..
-ifeq "@DEBUG@" "no"
-TLIMIT ?= 90
-# one test doesn't work with only 150MB RAM, ext-total.m2, on a 64 bit intel machine:
-VLIMIT ?= 2000000
-else
-# give the debug version more time and space
-TLIMIT ?= 140
-VLIMIT ?= 2000000
-endif
-# make the stack limit always the same as it would be under MacOS
-SLIMIT ?= 8192
-
-LIMIT =
-ifeq (@ULIMIT_T@,yes)
-LIMIT += ulimit -t $(TLIMIT) ;
-endif
-#ifeq (@ULIMIT_V@,yes)
-#LIMIT += ulimit -v $(VLIMIT) ;
-#endif
-ifeq (@ULIMIT_S@,yes)
-LIMIT += ulimit -s $(SLIMIT) ;
-endif
 
 TESTFILES := $(wildcard $(SRCDIR)/*.m2)
 
