@@ -3,7 +3,6 @@
 VPATH = $(chapter_srcdir)
 EXPECTED ?= test.out.expected
 TLIMIT ?= 1200
-VLIMIT ?= 3200000
 include ../../../../include/config.Makefile
 all: check
 # we depend on "diff" accepting some options that perhaps only GNU diff does

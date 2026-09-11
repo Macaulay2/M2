@@ -5,10 +5,8 @@ DOTS ?= ../../..
 
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 20
-VLIMIT ?= 600000
 else
 TLIMIT ?= 60
-VLIMIT ?= 700000
 endif
 
 include $(DOTS)/../include/config.Makefile
