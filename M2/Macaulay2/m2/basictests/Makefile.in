@@ -1,7 +1,7 @@
 # @configure_input@
 
 # DOTS is the path to M2/Macaulay2 from this directory
-DOTS ?= ../../..
+DOTS ?= ../..
 
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 20
@@ -33,17 +33,17 @@ ARGS := --silent -q --stop --no-core -e 'srcdir = "@srcdir@/"'
 	@ touch $@
 
 clean::	; rm -f *.okay
-LOADLIBES += @GC_LIBS@
+LOADLIBES += -lgc -pthread
 testgc:
 check-gc: testgc.okay
 testgc.okay : testgc ; ./testgc && touch $@
 clean::; rm -f testgc
 clean::; rm -rf *.dSYM
-Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2Doc/basictests/Makefile
+Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/m2/basictests/Makefile
 distclean :clean; rm -f Makefile
 check: check-return-code
 check-return-code :; if echo 'error "foo"' | @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) 2>/dev/null 1>&2 ; then false ; else true ; fi
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/basictests "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/m2/basictests "
 # End:
