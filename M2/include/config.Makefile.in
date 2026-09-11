@@ -202,6 +202,11 @@ export GC_LARGE_ALLOC_WARN_INTERVAL=1
 
 # Resource limits for running our tests and the libraries' self-checks.
 
+# M2 reserves a stack per thread, so the memory it needs before running any
+# code grows with the number of processors; without a count, impose no limit
+M2_NPROC := $(shell getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null)
+M2_VLIMIT := $(if $(M2_NPROC),$(shell expr 600000 + 140000 '*' $(M2_NPROC) + 2000000))
+
 # cpu time, in seconds
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 90
@@ -209,6 +214,8 @@ else
 # give the debug version more time
 TLIMIT ?= 140
 endif
+# virtual memory, in kilobytes
+VLIMIT ?= $(M2_VLIMIT)
 # stack size in kilobytes, always the same as it would be under MacOS
 SLIMIT ?= 8192
 

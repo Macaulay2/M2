@@ -269,6 +269,7 @@ help:
 	@ echo ""
 	@ echo "options for running the tests:"
 	@ echo "  TLIMIT=$(TLIMIT)            cpu time limit, in seconds"
+	@ echo "  VLIMIT=$(VLIMIT)      virtual memory limit, in kilobytes"
 	@ echo "  SLIMIT=$(SLIMIT)         stack size limit, in kilobytes"
 	@ echo ""
 	@ echo "make install options:"
