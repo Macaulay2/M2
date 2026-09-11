@@ -40,7 +40,7 @@ status-files: $(TESTFILES)
 	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
 		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
-		   GC_MAXIMUM_HEAP_SIZE=400M time @pre_exec_prefix@/bin/M2 $(ARGS) >>$*.errors 2>&1 ; \
+		   $(GCLIMIT) time @pre_exec_prefix@/bin/M2 $(ARGS) >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     <$*.errors $(FILTER) ; \
@@ -53,7 +53,7 @@ status-files: $(TESTFILES)
 	@ grep -En '^--status:' $< /dev/null || true
 	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
-		if GC_MAXIMUM_HEAP_SIZE=400M time @pre_exec_prefix@/bin/M2 $(ARGS) <$< >>$*.errors 2>&1 ; \
+		if $(GCLIMIT) time @pre_exec_prefix@/bin/M2 $(ARGS) <$< >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \
