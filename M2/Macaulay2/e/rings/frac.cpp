@@ -99,6 +99,31 @@ ring_elem FractionField::set_non_unit_frac(ring_elem top) const
   return zero();
 }
 
+bool FractionField::simplify_unit_denominator(frac_elem *f) const
+{
+  if (R_->is_equal(f->denom, R_->one())) return true;
+
+  ring_elem denom_inverse;
+  // TODO uniformise behaviour of invert for noninvertible elements
+  if (R_->is_quotient_ring())
+    {
+      denom_inverse = R_->invert(f->denom); // for quotient rings, don't call is_unit since it calls invert internally
+      if (R_->is_zero(denom_inverse)) return false; // for non invertible elements, returns zero
+    }
+  else
+    {
+      if (!R_->is_unit(f->denom)) return false; // for polynomial rings, test with is_unit first
+      denom_inverse = R_->invert(f->denom); // because invert throws an error for noninvertible elements
+    }
+
+  ring_elem numer = R_->mult(f->numer, denom_inverse);
+  R_->remove(f->numer);
+  R_->remove(f->denom);
+  f->numer = numer;
+  f->denom = R_->one();
+  return true;
+}
+
 ring_elem FractionField::fraction(const ring_elem top,
                                   const ring_elem bottom) const
 {
@@ -108,10 +133,10 @@ ring_elem FractionField::fraction(const ring_elem top,
 void FractionField::simplify(frac_elem *f) const
 {
   ring_elem x, y;
+  if (simplify_unit_denominator(f)) return;
   if (use_gcd_simplify)
     {
       y = f->denom;
-      if (R_->is_equal(y, R_->one())) return;
       x = f->numer;
       const RingElement *a = RingElement::make_raw(R_, x);
       const RingElement *b = RingElement::make_raw(R_, y);
@@ -159,6 +184,7 @@ void FractionField::simplify(frac_elem *f) const
           f->numer = R_->divide_by_given_content(f->numer, ct);
           f->denom = R_->divide_by_given_content(f->denom, ct);
         }
+      simplify_unit_denominator(f);
     }
   else
     {
@@ -176,6 +202,7 @@ void FractionField::simplify(frac_elem *f) const
       R_->remove(f->denom);
       f->numer = y;
       f->denom = x;
+      simplify_unit_denominator(f);
     }
 }
 
@@ -267,12 +294,11 @@ ring_elem FractionField::from_int(mpz_srcptr n) const
 
 bool FractionField::from_rational(mpq_srcptr n, ring_elem &result) const
 {
-  frac_elem *f = new_frac_elem();
-  f->numer = R_->from_int(mpq_numref(n));
-  f->denom = R_->from_int(mpq_denref(n));
-  bool ok = not R_->is_zero(f->denom);
-  if (ok) result = FRAC_RINGELEM(f);
-  return ok;
+  ring_elem numer = R_->from_int(mpq_numref(n));
+  ring_elem denom = R_->from_int(mpq_denref(n));
+  if (R_->is_zero(denom)) return false;
+  result = FRAC_RINGELEM(make_elem(numer, denom));
+  return true;
 }
 
 ring_elem FractionField::var(int v) const

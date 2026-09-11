@@ -34,6 +34,13 @@ debug Core
   assert isWellDefined f
   assert isWellDefined g
   assert(f == g)  -- fails in version 1.13
+
+  -- issue #4461 fix
+  F = frac(QQ[y])
+  a = matrix{{1/2}} * matrix{{y}}
+  b = matrix{{y/2}}
+  assert(a_(0,0) === b_(0,0))
+  assert(a == b)
 end--
 
 -- Local Variables:
