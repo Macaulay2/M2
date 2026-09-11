@@ -1425,28 +1425,27 @@ AX_BOOST_BASE([1.65],,
 CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
 LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
 
-AC_MSG_CHECKING([whether the Boost::Stacktrace library is available])
 AC_LANG(C++)
+dnl the addr2line backend execs this, and boost's default of /usr/bin/addr2line is absent on macOS
+AC_PATH_PROGS([ADDR2LINE], [addr2line llvm-addr2line])
+dnl the backtrace backend needs libbacktrace, which the boost library may not carry itself
+AC_CHECK_LIB([backtrace], [backtrace_create_state])
+
+AC_MSG_CHECKING([which Boost::Stacktrace backend is usable])
 SAVECPPFLAGS=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS -DBOOST_STACKTRACE_LINK"
 SAVELIBS=$LIBS
-FOUND_stacktrace_library=no
-for stacktrace_library in backtrace addr2line
-do
-    LIBS="$SAVELIBS -lboost_stacktrace_${stacktrace_library}"
-    AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM([#include <boost/stacktrace.hpp>
-         ], [boost::stacktrace::stacktrace();])],
-        [AC_MSG_RESULT([yes, boost_stacktrace_${stacktrace_library}])
-         FOUND_stacktrace_library=yes
-         break],)
-done
-if test $FOUND_stacktrace_library = no
-then
-    AC_MSG_RESULT([no, will use header-only library])
-    CPPFLAGS=$SAVECPPFLAGS
-    LIBS=$SAVELIBS
-fi
+CPPFLAGS="$CPPFLAGS -DBOOST_STACKTRACE_LINK"
+LIBS="$LIBS -lboost_stacktrace_backtrace"
+AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([#include <boost/stacktrace.hpp>
+     ], [boost::stacktrace::stacktrace();])],
+    [AC_MSG_RESULT([boost_stacktrace_backtrace])],
+    dnl only header-only mode reads BOOST_STACKTRACE_USE_* and lets us set the addr2line path
+    [AC_MSG_RESULT([header-only${ADDR2LINE:+ with $ADDR2LINE}])
+     CPPFLAGS=$SAVECPPFLAGS
+     LIBS=$SAVELIBS
+     AS_IF([test -n "$ADDR2LINE"],
+         [CPPFLAGS="$CPPFLAGS -DBOOST_STACKTRACE_USE_ADDR2LINE -DBOOST_STACKTRACE_ADDR2LINE_LOCATION=$ADDR2LINE"])])
 
 AX_BOOST_REGEX
 LIBS="$LIBS $BOOST_REGEX_LIB"
