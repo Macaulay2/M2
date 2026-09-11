@@ -3,6 +3,14 @@
 # DOTS is the path to M2/Macaulay2 from this directory
 DOTS ?= ../../..
 
+ifeq "@DEBUG@" "no"
+TLIMIT ?= 20
+VLIMIT ?= 600000
+else
+TLIMIT ?= 60
+VLIMIT ?= 700000
+endif
+
 include $(DOTS)/../include/config.Makefile
 VPATH = @srcdir@
 
@@ -20,28 +28,6 @@ check: $(TESTRESULTS) check-gc
 $(TESTRESULTS) : @pre_exec_prefix@/bin/M2@EXE@
 
 ARGS := --silent -q --stop --no-core -e 'srcdir = "@srcdir@/"'
-
-ifeq "@DEBUG@" "no"
-TLIMIT ?= 20
-VLIMIT ?= 600000
-else
-TLIMIT ?= 60
-VLIMIT ?= 700000
-endif
-
-# make the stack limit always the same as it would be under MacOS
-SLIMIT ?= 8192
-
-LIMIT :=
-ifeq (@ULIMIT_T@,yes)
-LIMIT += ulimit -t $(TLIMIT) ;
-endif
-ifeq (@ULIMIT_V@,yes)
-LIMIT += ulimit -v $(VLIMIT) ;
-endif
-ifeq (@ULIMIT_S@,yes)
-LIMIT += ulimit -s $(SLIMIT) ;
-endif
 
 %.okay : %.m2
 	@ echo testing $<

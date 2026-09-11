@@ -200,6 +200,23 @@ endif
 # libgc
 export GC_LARGE_ALLOC_WARN_INTERVAL=1
 
+# Resource limits for running our tests and the libraries' self-checks.
+
+# cpu time, in seconds
+ifeq "@DEBUG@" "no"
+TLIMIT ?= 90
+else
+# give the debug version more time
+TLIMIT ?= 140
+endif
+# stack size in kilobytes, always the same as it would be under MacOS
+SLIMIT ?= 8192
+
+# not :=, since the values may be set later
+LIMIT = $(if $(filter yes,@ULIMIT_T@),$(if $(TLIMIT),ulimit -t $(TLIMIT) ;))	\
+	$(if $(filter yes,@ULIMIT_V@),$(if $(VLIMIT),ulimit -v $(VLIMIT) ;))	\
+	$(if $(filter yes,@ULIMIT_S@),$(if $(SLIMIT),ulimit -s $(SLIMIT) ;))
+
 # status info
 WHY = @ (if [ -f $@ ] ;						\
 	 then echo "=== remaking $@ in $$(basename $$PWD) :" ;	\
