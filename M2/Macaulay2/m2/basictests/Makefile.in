@@ -23,11 +23,9 @@ ARGS := --silent -q --stop --no-core -e 'srcdir = "@srcdir@/"'
 
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 20
-MLIMIT ?= 600000
 VLIMIT ?= 600000
 else
 TLIMIT ?= 60
-MLIMIT ?= 700000
 VLIMIT ?= 700000
 endif
 
@@ -37,9 +35,6 @@ SLIMIT ?= 8192
 LIMIT :=
 ifeq (@ULIMIT_T@,yes)
 LIMIT += ulimit -t $(TLIMIT) ;
-endif
-ifeq (@ULIMIT_M@,yes)
-LIMIT += ulimit -m $(MLIMIT) ;
 endif
 ifeq (@ULIMIT_V@,yes)
 LIMIT += ulimit -v $(VLIMIT) ;
