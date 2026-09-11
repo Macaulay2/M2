@@ -218,6 +218,10 @@ endif
 VLIMIT ?= $(M2_VLIMIT)
 # stack size in kilobytes, always the same as it would be under MacOS
 SLIMIT ?= 8192
+GC_MAXIMUM_HEAP_SIZE ?= 400M
+
+# libgc warns about an empty value rather than ignoring it
+GCLIMIT = $(if $(GC_MAXIMUM_HEAP_SIZE),GC_MAXIMUM_HEAP_SIZE=$(GC_MAXIMUM_HEAP_SIZE),env -u GC_MAXIMUM_HEAP_SIZE)
 
 # not :=, since the values may be set later
 LIMIT = $(if $(filter yes,@ULIMIT_T@),$(if $(TLIMIT),ulimit -t $(TLIMIT) ;))	\
