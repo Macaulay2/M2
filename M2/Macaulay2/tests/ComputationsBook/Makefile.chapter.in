@@ -20,9 +20,6 @@ endif
 ifeq (@ULIMIT_V@,yes)
 LIMIT += ulimit -v 3200000 ;
 endif
-ifeq (@ULIMIT_M@,yes)
-LIMIT += ulimit -m 800000 ;
-endif
 ifeq (@ULIMIT_S@,yes)
 LIMIT += ulimit -s 8192 ;
 endif

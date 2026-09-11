@@ -287,14 +287,10 @@ endif
 
 SLIMIT ?= 8192
 TLIMIT ?= 100
-MLIMIT ?= 400000
 VLIMIT ?= 400000
 LIMIT := :
 ifeq (@ULIMIT_T@,yes)
 LIMIT += ; ulimit -t $(TLIMIT)
-endif
-ifeq (@ULIMIT_M@,yes)
-LIMIT += ; ulimit -m $(MLIMIT)
 endif
 ifeq (@ULIMIT_V@,yes)
 LIMIT += ; ulimit -v $(VLIMIT)
@@ -304,9 +300,6 @@ LIMIT += ; ulimit -s $(SLIMIT)
 endif
 ifeq (@ULIMIT_T@,yes)
 LIMIT += ; ulimit -t
-endif
-ifeq (@ULIMIT_M@,yes)
-LIMIT += ; ulimit -m
 endif
 ifeq (@ULIMIT_V@,yes)
 LIMIT += ; ulimit -v
