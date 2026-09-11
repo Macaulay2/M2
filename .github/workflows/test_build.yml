@@ -65,7 +65,7 @@ jobs:
           brew update
           brew trust macaulay2/tap
           brew tap macaulay2/tap
-          brew install automake bison boost libtool tbb ccache ctags llvm make yasm libffi msolve googletest fplll eigen jansson r palp
+          brew install automake bison boost libtool tbb ccache ctags llvm make yasm libffi msolve googletest fplll eigen jansson r palp julia
           brew install texinfo || true # sometimes post-install step fails
           brew install --only-dependencies macaulay2/tap/M2
           brew link factory --force
@@ -131,6 +131,19 @@ jobs:
             ~/.ccache
             ~/work/M2/M2/M2/BUILD/build/usr-host
           key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake', '.github/workflows/test_build.yml') }}
+
+      - name: Determine Julia version
+        id: julia
+        run: echo "version=`julia --version | awk '{print $3}'`" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v5
+        with:
+          path: ~/.julia
+          key: julia-depot-${{ matrix.os }}-${{ steps.julia.outputs.version }}
+          restore-keys: julia-depot-${{ matrix.os }}-
+
+      - name: Install Julia packages
+        run: julia -e 'using Pkg; Pkg.add("HomotopyContinuation")'
 
 
 # ----------------------
