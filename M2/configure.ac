@@ -1456,14 +1456,18 @@ AC_CHECK_HEADERS([boost/math/special_functions.hpp],
     [AC_MSG_ERROR([Boost Math Toolkit not available])])
 AC_SEARCH_LIBS([ldexpq], [quadmath])
 
-AC_SUBST(ULIMIT_T,yes)
-AC_SUBST(ULIMIT_M,yes)
-AC_SUBST(ULIMIT_V,yes)
-AC_SUBST(ULIMIT_S,yes)
-( ulimit -t 2000 2>/dev/null) || ULIMIT_T=no
-( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
-( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
-( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
+dnl Whether the shell can set the limits we use when testing; see
+dnl include/config.Makefile.in.  Probe the largest values used, since a
+dnl smaller probe could succeed where the limit itself fails.
+AC_ARG_VAR([ULIMIT_T], [set to "no" for no cpu time limit when testing])
+AC_ARG_VAR([ULIMIT_V], [set to "no" for no memory limit when testing])
+AC_ARG_VAR([ULIMIT_S], [set to "no" for no stack size limit when testing])
+AS_IF([test -z "$ULIMIT_T"],
+      [ULIMIT_T=yes; (ulimit -t 1200 2>/dev/null) || ULIMIT_T=no])
+AS_IF([test -z "$ULIMIT_V"],
+      [ULIMIT_V=yes; (ulimit -v 3200000 2>/dev/null) || ULIMIT_V=no])
+AS_IF([test -z "$ULIMIT_S"],
+      [ULIMIT_S=yes; (ulimit -s 8192 2>/dev/null) || ULIMIT_S=no])
 
 AC_SUBST(ENABLE_LINBOX,no)
 AC_ARG_ENABLE(linbox,
