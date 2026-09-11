@@ -10,6 +10,8 @@ USER ?= unknown-user
 
 all: initialize
 Makefile: Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
+check:; $(MAKE) -C basictests check
+clean::; $(MAKE) -C basictests clean
 ##############################
 .SUFFIXES: .m2
 .PHONY: html initialize tags install-tmp
