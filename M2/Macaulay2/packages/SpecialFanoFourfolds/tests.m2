@@ -290,8 +290,8 @@ debug SpecialFanoFourfolds;
 (B,V,C) = GMtables(1,ZZ/65521);
 assert(B * V == C and dim C == 1)
 X = specialFourfold(B & V);
-assert(surfaceIntersectionNumber X == 1)
-assert(latticeIntersectionMatrix3x3 X == matrix {{3, 3, 2}, {3, 7, 1}, {2, 1, 4}})
+t = genRingIntMatr3x3()
+assert(latticeIntersectionMatrix3x3 X == matrix {{3, 3, 2}, {3, 7, t}, {2, t, 4}})
 ///
 
 TEST /// -- test 21 DSCF

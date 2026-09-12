@@ -261,6 +261,7 @@ HodgeSpecialFourfold ? HodgeSpecialFourfold := (X,Y) -> (
 parameterCount = method(Options => {Verbose => false})
 
 parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,X) -> (
+    if (not o.Verbose) and X.cache#?(S,"parameterCount") then return X.cache#(S,"parameterCount");
     isSing := true;
     if S.cache#?"isSmooth" then isSing = not isSmooth S else (
         if S.cache#?"singularLocus" or S.cache#?"nonSaturatedSingularLocus" then isSing = dim singLocus S >= 0 else (
@@ -321,12 +322,14 @@ parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,
     if o.Verbose then <<(if c > 1 then "dim GG("|toString(c-1)|",P(H^0(O_(P^"|toString(n)|")("|toString(d)|")))) = " else "dim P(H^0(O_(P^"|toString(n)|")("|toString(d)|"))) = ")|toString(c * (binomial(n+d,d) - c))<<endl;
     w := c*(binomial(n+d,d)-c) - (h0N+M-h0NX);
     if o.Verbose then <<"codim{[X] : S ⊂ X} <= "|toString(w)<<endl;
-    return X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX));
+    if X.cache#?(S,"parameterCount") and X.cache#(S,"parameterCount") =!= (w,(m,h0N,h0NX)) then error "internal error encountered in parameterCount: cached and computed values differ";
+    X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX))
 );
 
 parameterCount HodgeSpecialFourfold := o -> X -> (
-    Y := ambientFivefold X;
     S := surface X;
+    if (not o.Verbose) and X.cache#?(S,"parameterCount") then return X.cache#(S,"parameterCount");
+    Y := ambientFivefold X;
     a := degreeHypersurface X;
     if o.Verbose then <<"S: "|toString(? ideal S)<<endl;
     if o.Verbose then <<"X: "|toString(? ideal X)<<endl;
@@ -358,7 +361,8 @@ parameterCount HodgeSpecialFourfold := o -> X -> (
     w := Amb-1 - (h0N + m-1 - h0NX);
     if o.Verbose then <<"codim{[X] : S ⊂ X ⊂ Y} <= "|toString(w)<<endl;
     if o.Verbose and instance(X,IntersectionOfThreeQuadricsInP7) then infoAboutParameterCountInAmbientP7(w,(m,h0N,h0NX));
-    return X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX));
+    if X.cache#?(S,"parameterCount") and X.cache#(S,"parameterCount") =!= (w,(m,h0N,h0NX)) then error "internal error encountered in parameterCount: cached and computed values differ";
+    X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX))
 );
 
 CoherentSheafOnEmbeddedProjectiveVariety = new Type of CoherentSheaf;
@@ -490,10 +494,14 @@ toExternalString HodgeSpecialFourfold := X -> (
     K := coefficientRing X;
     n := dim ambient X;
     R := K[x_0..x_n];
-    s := ///needsPackage "SpecialFanoFourfolds";///|newline;
-    s = s|"(i -> (x := local x;"|newline;
-    s = s|"R := "|toExternalString(K)|"[x_0..x_"|toString(n)|"];"|newline;
+    headerDate := "";
+    try headerDate = " on "|(get "!date");
+    s := ///-- Fourfold object exported by toExternalString///|headerDate;
+    s = s|///-- needsPackage "SpecialFanoFourfolds";///|newline;
+    s = s|"(i -> (K := "|toExternalString(K)|";"|newline;
+    s = s|"x := local x; R := K[x_0..x_"|toString(n)|"];"|newline;
     s = s|"S := projectiveVariety "|toString sub(ideal surface X,vars R)|";"|newline;
+    try ambientFivefold X else error "not implemented yet: toExternalString for a HodgeSpecialFourfold without an ambient fivefold";
     if codim ambientFivefold X == 0 then s = s|"V := ambient S;"|newline else s = s|"V := projectiveVariety "|toString sub(ideal ambientFivefold X,vars R)|";"|newline;
     s = s|"X := projectiveVariety "|toString sub(ideal X,vars R)|";"|newline;
     if instance(X,CubicFourfold)
@@ -503,11 +511,17 @@ toExternalString HodgeSpecialFourfold := X -> (
     s = s|"X = specialFourfold(S,X,V,InputCheck=>0);"|newline;
     if (surface X).cache#?"euler" then s = s|///(surface X).cache#"euler" = ///|toString(euler surface X)|";"|newline;
     if (surface X).cache#?"FiniteNumberOfNodes" then s = s|///(surface X).cache#"FiniteNumberOfNodes" = ///|toString(numberNodes surface X)|";"|newline;
+    if (surface X).cache#?"rationalParametrization" then (
+        t := local t; ringP2 := K[t_0..t_2];
+        s = s|"t := local t; ringP2 := K[t_0..t_2];"|newline;
+        s = s|///(surface X).cache#"rationalParametrization" = (Hom(projectiveVariety ringP2,surface X)) ///|toString entries sub(matrix parametrize surface X,vars ringP2)|";"|newline;
+    );
+    if X.cache#?(surface X,"parameterCount") then s = s|///X.cache#(surface X,"parameterCount") = ///|(toString X.cache#(surface X,"parameterCount"))|";"|newline;
     N := numgens target map X -1;
     if N >= 6 and (map X)#"idealImage" =!= null then (
         z := local z; Z := K[z_0..z_N];
         phi := sub(map X,R,Z);
-        s = s|"z := local z; Z := "|toExternalString(K)|"[z_0..z_"|toString(N)|"];"|newline;
+        s = s|"z := local z; Z := K[z_0..z_"|toString(N)|"];"|newline;
         s = s|///(surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X) = rationalMap(ring V,Z,///|(toString entries phi)|");"|newline;
         s = s|"forceImage(map X,"|(toString image phi)|");"|newline;
     );
@@ -517,7 +531,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         y := local y;
         T := K[y_0..y_m];
         mu = sub(mu,R,T);
-        s = s|"y := local y; T := "|toExternalString(K)|"[y_0..y_"|toString(m)|"];"|newline;
+        s = s|"y := local y; T := K[y_0..y_"|toString(m)|"];"|newline;
         if m > 4 then s = s|"T = T/"|toString ideal target mu|";"|newline;
         s = s|"mu := rationalMap map(ring V,T,"|toString entries mu|");"|newline;
         s = s|"forceImage(mu,ideal(0_(target mu)));"|newline;
@@ -533,8 +547,16 @@ toExternalString HodgeSpecialFourfold := X -> (
                 s = s|"C := "|(if dim C >= 0 then "projectiveVariety("|toString sub(ideal C,vars T)|",Saturate=>false)" else "0_U")|";"|newline;
                 s = s|///U.cache#"exceptionalCurves" = (L%U,C%U);///|newline;
             );
+            if U.cache#?"Normalization" then (
+                normU := multirationalMap normalization U;
+                w := local w;
+                dimAmbNormU := dim ambient source normU;
+                ringAmbNormU := K[w_0..w_dimAmbNormU,Degrees=>degrees ring ambient source normU];
+                s = s|"w := local w; ringAmbNormU := K[w_0..w_"|(toString dimAmbNormU)|",Degrees=>"|(toString degrees ringAmbNormU)|"];"|newline;
+                s = s|"NormU := projectiveVariety("|(toString sub(ideal source normU,vars ringAmbNormU))|",Saturate=>false);"|newline;
+                s = s|///U.cache#"Normalization" = toRationalMap((Hom(NormU,U)) ///|(toString entries sub(matrix normU,vars ringAmbNormU))|");"|newline;
+            );
         );
     );
-    s = s|"X))()";
-    return s;
+    s = s|"X))()"
 );
