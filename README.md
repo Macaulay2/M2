@@ -13,6 +13,8 @@ The structure of this directory is as follows:
 * `M2`: contains everything needed by a user to build Macaulay2.
 
 See `CITATION.cff` for information about citing Macaulay2.
+See [BENCHMARK.md](BENCHMARK.md) for building, running, and extending the engine
+benchmarks.
 
 ### Contributions
 

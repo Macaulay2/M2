@@ -1,0 +1,32 @@
+SUBMODULE = true
+LIBNAME = benchmark
+URL = https://github.com/google/benchmark
+VERSION = 1.9.5
+
+ifeq (@OPTIMIZE@,yes)
+BENCHMARK_CMAKE_BUILD_TYPE = Release
+else
+BENCHMARK_CMAKE_BUILD_TYPE = Debug
+endif
+
+CONFIGURECMD = cmake . -DCMAKE_INSTALL_PREFIX=$(PREFIX) \
+	-DCMAKE_INSTALL_LIBDIR=lib \
+	-DCMAKE_BUILD_TYPE=$(BENCHMARK_CMAKE_BUILD_TYPE) \
+	-DBENCHMARK_ENABLE_TESTING=OFF \
+	-DBENCHMARK_ENABLE_INSTALL=ON \
+	-DBENCHMARK_INSTALL_DOCS=OFF \
+	-DBENCHMARK_INSTALL_TOOLS=OFF
+
+LICENSEFILES = LICENSE
+MLIMIT = 1400000
+VLIMIT = 1400000
+TLIMIT = 400
+
+CHECKTARGET = .
+
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/benchmark/Makefile
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "make -C $M2BUILDDIR/libraries/benchmark "
+# End:

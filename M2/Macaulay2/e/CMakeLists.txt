@@ -1,5 +1,6 @@
 ###############################################################################
-## This directory contains the rules for building M2-engine and M2-unit-tests
+## This directory contains the rules for building M2-engine, M2-unit-tests,
+## and M2-benchmarks
 ## memtailor, mathic, and mathicgb are also imported as subdirectories here
 ## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
 
@@ -514,4 +515,28 @@ if(BUILD_TESTING)
     $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags> # FIXME
     )
 
+endif()
+
+###############################################################################
+## To try, run ./M2-benchmarks in Macaulay2/e
+
+if(BUILD_BENCHMARKS)
+  add_executable(M2-benchmarks EXCLUDE_FROM_ALL
+    benchmarks/benchmarkMain.cpp
+    unit-tests/M2-cpp-replacement.cpp
+    benchmarks/ExponentVectorBenchmark.cpp
+    benchmarks/SubsetBenchmark.cpp
+    )
+
+  if(BDWGC_FOUND)
+    target_link_libraries(M2-benchmarks M2-engine ${BDWGC_LIBRARIES} ${CMAKE_DL_LIB})
+  endif()
+
+  if(BENCHMARK_FOUND)
+    target_link_libraries(M2-benchmarks benchmark::benchmark)
+  endif()
+
+  target_compile_options(M2-benchmarks PRIVATE
+    -Wno-sign-compare
+    )
 endif()

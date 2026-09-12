@@ -586,7 +586,7 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest tbb memtailor mathic mathicgb eigen ")
+AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox benchmark gtest tbb memtailor mathic mathicgb eigen ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty lrslib topcom cohomcalg msolve palp")
@@ -652,7 +652,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty lrslib msolve palp)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox benchmark 4ti2 gfan normaliz csdp nauty lrslib msolve palp)]),
     [for i in $enableval
      do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
@@ -1355,6 +1355,39 @@ else AC_LANG(C++)
     AS_IF([test $BUILD_mathicgb = yes],
           [AC_MSG_WARN([mathicgb not found, will build])])
 fi
+
+AC_ARG_ENABLE([benchmarks],
+    [AS_HELP_STRING([--enable-benchmarks],
+        [build the Google Benchmark-based engine benchmarks @<:@default=no@:>@])],
+    [ENABLE_BENCHMARKS=$enableval],
+    [ENABLE_BENCHMARKS=no])
+AS_CASE([$ENABLE_BENCHMARKS],
+    [yes|no], [],
+    [AC_MSG_ERROR([--enable-benchmarks accepts only yes or no])])
+AC_SUBST([ENABLE_BENCHMARKS])
+
+AS_IF([test "x$ENABLE_BENCHMARKS" = "xyes" && test "x$BUILD_benchmark" = "xno"],
+    [AC_LANG([C++])
+     AC_CHECK_HEADER([benchmark/benchmark.h],
+        [AC_MSG_CHECKING([whether benchmark library is installed])
+         SAVELIBS=$LIBS
+         LIBS="-lbenchmark $LIBS"
+         AC_LINK_IFELSE(
+             [AC_LANG_PROGRAM([
+                 #include <benchmark/benchmark.h>
+                 ], [
+                 int argc = 0;
+                 char **argv = nullptr;
+                 benchmark::Initialize(&argc, argv)])],
+             [AC_MSG_RESULT([yes])],
+             [AC_MSG_RESULT([no; will build])
+              BUILD_benchmark=yes])
+         LIBS=$SAVELIBS],
+        [AC_MSG_NOTICE([benchmark headers not found; will build])
+         BUILD_benchmark=yes])])
+AS_IF([test "x$BUILD_benchmark" = "xyes"],
+     AS_IF([test "x$CMAKE" = "xfalse"],
+        [AC_MSG_ERROR([cmake is required to build benchmark])]))
 
 AS_IF([test "x$BUILD_gtest" = "xno"],
     [AC_LANG([C++])
