@@ -2,14 +2,16 @@
 newPackage(
 	"Schubert2",
 	AuxiliaryFiles => true,
-    	Version => "0.7",
-    	Date => "April 24, 2013",
+    	Version => "0.8",
+    	Date => "May 28, 2026",
 	Authors => {
-	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
-	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
-	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no", HomePage => "http://stromme.uib.no/home/" },
-	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Charley Crissman", Email => "charleyc@math.berkeley.edu", HomePage => "http://math.berkeley.edu/~charleyc/"}
+	     {Name => "Daniel R. Grayson", Email => "danielrichardgrayson@gmail.com", HomePage => "https://www.graysonfamily.org/dan/"},
+	     {Name => "Michael E. Stillman", Email => "mes15@cornell.edu", HomePage => "https://pi.math.cornell.edu/~mike/"},
+	     {Name => "Stein A. Strømme" },
+	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "https://eisenbud.github.io/"},
+	     {Name => "Charley Crissman", Email => "charley.crissman@bellevuecollege.edu" },
+	     {Name => "Burt Totaro", Email => "totaro@math.ucla.edu", HomePage => "https://www.math.ucla.edu/~totaro/"},
+	     {Name => "Jiahe Wang", Email => "jiahewang@math.ucla.edu", HomePage => "https://sites.google.com/view/jiahewang/home"},
 	     },
 	HomePage => "https://macaulay2.com/",
     	Headline => "characteristic classes for varieties without equations",
@@ -35,7 +37,10 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "tautologicalLineBundle", "bundles", "schubertRing",
      "DefaultPushForward", "DefaultPullBack", "DefaultIntegral", "abstractVarietyMap",
      "extensionAlgebra", "inclusion", "SubTangent", "SuperTangent",
-     "SubDimension", "SuperDimension", "NormalClass", "Codimension"}
+     "SubDimension", "SuperDimension", "NormalClass", "Codimension",
+     "symmetricDegeneracyLocus", "symmetricDegeneracyLocus2", "skewDegeneracyLocus", "skewDegeneracyLocus2",
+     "symmetricKernelBundle", "skewKernelBundle", "weightedProjectiveBundle", "WPS",
+     }
 
 -- not exported, for now: "logg", "expp", "reciprocal", "ToddClass"
 protect ChernCharacter
@@ -1841,6 +1846,280 @@ degeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
      G := flagBundle({m-k,k},A);
      S := first G.Bundles;
      sectionZeroLocus Hom(S,(G/X)^* B))
+
+
+
+------------------------------------------------------------
+-- Symmetric degeneracy locus as an abstract variety.
+-- This yields an abstract variety S that is a resolution of singularities of the locus S_0
+-- where a general symmetric map E -> E^* tensor L has rank at most k,
+-- following Fulton's Intersection Theory, Example 14.4.11.
+-- Here E is a vector bundle and L is a line bundle.
+-- (It is assumed that there are enough such maps that S_0 has the expected dimension.)
+-- If the map E -> E^* tensor L never has rank less than k, then S is isomorphic
+-- to the actual degeneracy locus S_0.
+------------------------------------------------------------
+
+symmetricDegeneracyLocus = method(TypicalValue => AbstractVariety)
+
+symmetricDegeneracyLocus(ZZ,AbstractSheaf) := (k, E) -> (
+     X := variety E;
+     symmetricDegeneracyLocus(k, E, OO_X)
+     )
+
+symmetricDegeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k, E, L) -> (
+     X := variety E;
+     if X =!= variety L then error "expected bundles on the same variety";
+     if rank L != 1 then error "the second sheaf should be a line bundle";
+     e := rank E;
+     G := flagBundle({e-k,k}, E);
+     S := G.Bundles#0;
+     Q := G.Bundles#1;
+     p := G/X;
+     sectionZeroLocus(
+         ((dual(Q) ** dual(S)) ** (p^*L)) ++ (symmetricPower(2,dual(S)) ** (p^*L))
+          )
+     )
+
+------------------------------------------------------------
+-- This yields an abstract variety S that is a resolution of singularities of the locus S_0
+-- where a general skew-symmetric map E -> E^* tensor L has rank at most k,
+-- following Fulton's Intersection Theory, Example 14.4.11.
+-- Here E is a vector bundle, L is a line bundle, and k is even.
+-- (It is assumed that there are enough such maps that S_0 has the expected dimension.)
+-- If the map E -> E^* tensor L never has rank less than k, then S is isomorphic
+-- to the actual degeneracy locus S_0.
+------------------------------------------------------------
+
+skewDegeneracyLocus = method(TypicalValue => AbstractVariety)
+
+skewDegeneracyLocus(ZZ,AbstractSheaf) := (k, E) -> (
+     X := variety E;
+     skewDegeneracyLocus(k, E, OO_X)
+     )
+
+skewDegeneracyLocus(ZZ,AbstractSheaf,AbstractSheaf) := (k, E, L) -> (
+     X := variety E;
+     if X =!= variety L then error "expected bundles on the same variety";
+     if rank L != 1 then error "the second sheaf should be a line bundle";
+     e := rank E;
+     if not even k then error "the rank bound should be even";
+     G := flagBundle({e-k,k}, E);
+     S := G.Bundles#0;
+     Q := G.Bundles#1;
+     p := G/X;
+     sectionZeroLocus(
+        ((dual(Q) ** dual(S)) ** (p^*L)) ++ (exteriorPower(2,dual(S)) ** (p^*L))
+          )
+     )
+------------------------------------------------------------
+-- Helper: Schur class s_lambda(F).
+--
+-- This is the Schur polynomial in the Chern classes of F:
+--
+--      s_lambda(F) = det(c_{lambda_i + j - i}(F)).
+--
+-- It is different from ch(schur(lambda,F)).
+------------------------------------------------------------
+
+schurClass = (lambda,F) -> (
+     X := variety F;
+     A := intersectionRing X;
+     l := #lambda;
+
+     c := i -> (
+          if i == 0 then 1_A
+          else if i < 0 then 0_A
+          else chern(i,F)
+          );
+
+     det matrix apply(l, i -> apply(l, j -> c(lambda#i + j - i)))
+     )
+
+------------------------------------------------------------
+-- Symmetric degeneracy class on the original base.
+-- This is the Harris--Tu closed formula, Theorems 1 and 10.
+-- Convention: a general symmetric map E -> E^* tensor L.
+------------------------------------------------------------
+
+symmetricDegeneracyLocus2 = method(TypicalValue => RingElement)
+
+symmetricDegeneracyLocus2(ZZ,AbstractSheaf) := (k,E) -> (
+     X := variety E;
+     symmetricDegeneracyLocus2(k,E,OO_X)
+     )
+
+symmetricDegeneracyLocus2(ZZ,AbstractSheaf,AbstractSheaf) := (k,E,L) -> (
+     X := variety E;
+     if X =!= variety L then error "expected bundles on the same variety";
+     if rank L != 1 then error "the second sheaf should be a line bundle";
+     n := rank E;
+     if k < 0 or k > n then error "the rank bound should be between 0 and the rank of the first bundle";
+
+     d := n-k;
+     codim := d*(d+1)//2;
+
+     F := dual(E) ** (L ^** (1/2));
+
+     if d == 0 then 1_(intersectionRing X)
+     else part(codim, (2^d) * schurClass(reverse toList(1..d), F))
+     )
+
+------------------------------------------------------------
+-- Skew-symmetric degeneracy class on the original base.
+-- This is the Harris--Tu closed formula, Theorems 8 and 10.
+-- Convention: a general skew-symmetric map E -> E^* tensor L.
+------------------------------------------------------------
+
+skewDegeneracyLocus2 = method(TypicalValue => RingElement)
+
+skewDegeneracyLocus2(ZZ,AbstractSheaf) := (k,E) -> (
+     X := variety E;
+     skewDegeneracyLocus2(k,E,OO_X)
+     )
+
+skewDegeneracyLocus2(ZZ,AbstractSheaf,AbstractSheaf) := (k,E,L) -> (
+     X := variety E;
+     if X =!= variety L then error "expected bundles on the same variety";
+     if rank L != 1 then error "the second sheaf should be a line bundle";
+     n := rank E;
+     if k < 0 or k > n then error "the rank bound should be between 0 and the rank of the first bundle";
+     if not even k then error "the rank bound should be even";
+
+     d := n-k;
+     codim := d*(d-1)//2;
+
+     F := dual(E) ** (L ^** (1/2));
+
+     if d <= 1 then 1_(intersectionRing X)
+     else part(codim, schurClass(reverse toList(1..d-1), F))
+     ) 
+
+------------------------------------------------------------
+--kernel bundle for a symmetric map
+------------------------------------------------------------
+symmetricKernelBundle = method(TypicalValue => AbstractSheaf)
+
+symmetricKernelBundle(ZZ,AbstractSheaf) := (k,E) -> (
+     X := variety E;
+     symmetricKernelBundle(k,E,OO_X)
+     )
+
+symmetricKernelBundle(ZZ,AbstractSheaf,AbstractSheaf) := (k,E,L) -> (
+     X := variety E;
+     Z := symmetricDegeneracyLocus(k,E,L);
+     G := target Z.StructureMap;
+     S := first G.Bundles;
+     K := (Z/G)^* S;
+     Z.StructureMap = Z/X;
+     K
+     )
+
+------------------------------------------------------------
+--kernel bundle for a skew-symmetric map
+------------------------------------------------------------
+
+skewKernelBundle = method(TypicalValue => AbstractSheaf)
+
+skewKernelBundle(ZZ,AbstractSheaf) := (k,E) -> (
+     X := variety E;
+     skewKernelBundle(k,E,OO_X)
+     )
+
+skewKernelBundle(ZZ,AbstractSheaf,AbstractSheaf) := (k,E,L) -> (
+     X := variety E;
+     Z := skewDegeneracyLocus(k,E,L);
+     G := target Z.StructureMap;
+     S := first G.Bundles;
+     K := (Z/G)^* S;
+     Z.StructureMap = Z/X;
+     K
+     ) 
+ 
+------------------------------------------------------------
+--trivial weighted projective bundle over X
+------------------------------------------------------------
+weightedProjectiveBundle = method(
+     Options => {VariableName => "h"},
+     TypicalValue => AbstractVariety
+     )
+
+weightedProjectiveBundle(List,AbstractVariety) := opts -> (weights,X) -> (
+     if #weights == 0 then error "expected a nonempty list of weights";
+     if not all(weights, a -> instance(a,ZZ) and a > 0)
+     then error "expected positive integer weights";
+
+     n := #weights - 1;
+     prodW := product weights;
+
+     Hsym := if instance(opts.VariableName,String)
+             then getSymbol opts.VariableName
+             else opts.VariableName;
+
+     S := intersectionRing X;
+
+     -- A^*(X)[h]/(h^(n+1)).
+     U := S(monoid [{Hsym},
+          Degrees => {1},
+          Join => false,
+          DegreeRank => 1]);
+
+     H := U_0;
+     A := U / ideal(H^(n+1));
+     h := A_0;
+
+     WP := abstractVariety(dim X + n,A);
+
+     WP.Base = X;
+     WP.Weights = weights;
+
+     -- Pullback from the base.
+     pullback := method();
+     pullback S := r -> promote(r,A);
+     pullback ZZ := a -> promote(a,A);
+     pullback QQ := a -> promote(a,A);
+
+     -- Pushforward: pi_*(alpha H^n) = alpha/(a_0...a_n).
+     pushforward := method();
+     pushforward A := f -> promote(coefficient(h^n,f),S) / prodW;
+     pushforward ZZ := a -> pushforward promote(a,A);
+     pushforward QQ := a -> pushforward promote(a,A);
+
+     Trel := sum(weights, a -> OO_WP(a*h)) - OO_WP;
+
+     p := abstractVarietyMap(X,WP,pullback,pushforward,
+          TangentBundle => Trel);
+
+     WP.StructureMap = p;
+
+     -- Integration on WP is integration after pushing forward to X.
+     integral A := f -> integral (p_* f);
+
+     WP.TautologicalLineBundle =
+          abstractSheaf(WP, Rank => 1, ChernClass => 1_A + h);
+
+     if X.?TangentBundle
+     then WP.TangentBundle = Trel + p^*(tangentBundle X)
+     else WP.TangentBundle = Trel;
+
+     use WP;
+     WP
+     )
+
+weightedProjectiveBundle List := opts -> weights -> (
+     weightedProjectiveBundle(weights,point,VariableName => opts.VariableName)
+     )
+
+WPS = method(
+     Options => {VariableName => "h"},
+     TypicalValue => AbstractVariety
+     )
+
+WPS List := opts -> weights -> (
+     weightedProjectiveBundle(weights,point,VariableName => opts.VariableName)
+     )
+
+
 
 kernelBundle = method(TypicalValue => AbstractVariety)
 kernelBundle(ZZ,AbstractSheaf,AbstractSheaf) := (k,B,A) -> (
