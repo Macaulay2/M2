@@ -99,7 +99,7 @@ printAvailableExamples = () -> (
     s
 );
 
-example = method(Options => {Verbose => true});
+example = method(Options => {Verbose => false});
 example (String,ZZ) := o -> (str,n) -> (
     (pfx,cls) := if n == 0
                  then ("dscf_",DoublySpecialCubicFourfold)
@@ -131,7 +131,9 @@ example String := o -> str -> (
 );
 example ZZ := o -> i -> example(toString i,Verbose=>o.Verbose);
 
-store (HodgeSpecialFourfold,String) := (X,str) -> (
+store (HodgeSpecialFourfold,String,Option) := (X,str,opt) -> (
+    o := toList opt;
+    if not(#o == 2 and first o === Verbose) then error "Verbose is the only available option for store(HodgeSpecialFourfold,String)";
     pfx := if instance(X,DoublySpecialCubicFourfold)
            then "dscf_"
            else if instance(X,CubicFourfold)
@@ -145,11 +147,13 @@ store (HodgeSpecialFourfold,String) := (X,str) -> (
     if fileExists F then error("example \"" | str | "\" already exists; please choose another name");
     F << toExternalString X << close;
     if not fileExists F then error("failed to store example \"" | str | "\"");
-    << "-- example \"" << str << "\" stored" << endl << printAvailableExamples() << endl;
+    if last o then << "-- example \"" << str << "\" stored" << endl << printAvailableExamples() << endl;
     str
 );
-store (HodgeSpecialFourfold,ZZ) := (X,i) -> store(X,toString i);
-store HodgeSpecialFourfold := X -> (
+store (HodgeSpecialFourfold,ZZ,Option) := (X,i,opt) -> store(X,toString i,opt);
+store (HodgeSpecialFourfold,String) := (X,str) -> store(X,str,Verbose=>false);
+store (HodgeSpecialFourfold,ZZ) := (X,i) -> store(X,i,Verbose=>false);
+store (HodgeSpecialFourfold,Option) := (X,opt) -> (
     pfx := if instance(X,DoublySpecialCubicFourfold)
            then "dscf_"
            else if instance(X,CubicFourfold)
@@ -167,16 +171,28 @@ store HodgeSpecialFourfold := X -> (
         str = pfx | (toString vars i);
         F =  examplesDir() | "/" | pfx | str | ".dat";
     );
-    store(X,str)
+    store(X,str,opt)
 );
+store HodgeSpecialFourfold := X -> store(X,Verbose=>false);
 store String := f -> (
+    if f === "@" then (
+        archiveName := "Examples_" | first lines get("!date +%Y-%m-%d_%H-%M");
+        archivePath := currentDirectory() | archiveName | ".tar.gz";
+        examplesDir();
+        run("tar -czf '" | archivePath | "' -C '" | applicationDirectory() | "' SpecialFanoFourfoldsExamples");
+        if not fileExists archivePath then error("failed to create the examples archive at: " | archivePath);
+        << "-- examples exported to \"" << archivePath << "\"" << endl;
+        return archiveName;
+    );
     if f === "" then (
         run("rm -rf '" | examplesPath | "'");
         if fileExists examplesPath then error "failed to remove the existing examples directory";
         << "-- stored examples removed" << endl;
         return;
     );
-    if not fileExists f then error("file not found: " | f);
+    if not fileExists f then (
+        if fileExists(f | ".tar.gz") then f = f | ".tar.gz" else error("file not found: " | f);
+    );
     if #f < 7 or substring(f,#f-7,7) =!= ".tar.gz" then error "expected a .tar.gz archive";
     store "";
     run("tar -xzf '" | f | "' -C '" | applicationDirectory() | "'");
