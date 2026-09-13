@@ -1186,7 +1186,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
     Y := youngest(M.cache.cache,N.cache.cache);
     Y#(Ext,i,M,N) ??= (
         R := ring M;
-        if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
+        -- if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
         if R =!= ring N then error "expected modules over the same ring";
         if i < 0 then (
             H = R^0;

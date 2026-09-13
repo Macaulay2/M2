@@ -74,18 +74,20 @@ document {
 	  },
      BOLD "Operations involving modules",
      UL {
-	  TO pushForward,
-	  TO (symbol **, RingMap, Module)
-	  },
+        TO pushForward,
+        TO PushForward,
+        TO (symbol **, RingMap, Module)
+    },
      Subnodes => {
-	 TO (symbol SPACE, RingMap, RingElement),
+        TO (symbol SPACE, RingMap, RingElement),
         TO (kernel, RingMap),
         TO (source, RingMap),
         TO (target, RingMap),
         TO (symbol ^, RingMap, ZZ),
 	TO newCoordinateSystem,
-         }
-     }
+        TO flattenDegreeMap
+    }
+}
 
 document {
      Key => "substitution and maps between rings",
