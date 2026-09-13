@@ -33,7 +33,7 @@ class ARingCCi : public SimpleARing<ARingCCi>
   typedef cci_struct elem;
   typedef elem ElementType;
 
-  ARingCCi(unsigned long precision) : mPrecision(precision) {}
+  ARingCCi(unsigned long precision = 53) : mPrecision(precision) {}
   // ring informational
   size_t characteristic() const { return 0; }
   unsigned long get_precision() const { return mPrecision; }
@@ -244,6 +244,14 @@ class ARingCCi : public SimpleARing<ARingCCi>
     {
       return a.im;
     }
+  void set_real_part_from_doubles(ElementType& c, double left, double right) const
+  {
+    mpfi_interv_d(&c.re, left, right);
+  }
+  void set_imaginary_part_from_doubles(ElementType& c, double left, double right) const
+  {
+    mpfi_interv_d(&c.im, left, right);
+  }
   void set_real_part(ElementType& c, ARingRRi::ElementType& a) const
     {
       mpfi_set(&c.re, &a);

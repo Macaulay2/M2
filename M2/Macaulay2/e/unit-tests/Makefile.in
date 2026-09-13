@@ -26,8 +26,10 @@ fullCheck: $(UNITTEST_TARGET)
 $(UNITTEST_TARGET) : $(UNITTEST_OBJECT_FILES) $(LIBENGINE)
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
+GTEST_FILTER = *
+
 runtests: $(UNITTEST_TARGET)
-	time ./$(UNITTEST_TARGET)
+	time ./$(UNITTEST_TARGET) --gtest_filter="$(GTEST_FILTER)"
 
 MORE_OPTIONS = -Wno-cast-qual
 COMPILE.cc += $(MORE_OPTIONS)

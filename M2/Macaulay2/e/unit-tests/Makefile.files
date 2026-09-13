@@ -15,6 +15,7 @@ UNITTEST_CCFILES := \
     ARingQQGmpTest \
     ARingRRTest \
     ARingCCTest \
+    ARingCCiTest \
     ARingRRRTest \
     ARingRRiTest \
     ARingCCCTest \
