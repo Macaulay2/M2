@@ -8,16 +8,16 @@ dominantCharacterHighestWeight (RootSystem,Weight) := (R,l) -> (
     rootNorms := R#((keys R)#1);
     sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
     l' := entries l;
-    poin := new MutableHashTable;
+    myPoincare := new MutableHashTable;
     if not R#?"poincare1" then (
         x := local x;
         ZZ[x];
         for t in subsets toList(1..rank(R)) do (
-            poin#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
+            myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
             );
-        R#"poincare1" = new HashTable from poin;
+        R#"poincare1" = new HashTable from myPoincare;
         );
-    poin = R#"poincare1";
+    myPoincare = R#"poincare1";
     -- start the translation into python;
     fractions := import "fractions";
     Fraction := (fractions)@@("Fraction");
@@ -28,7 +28,7 @@ dominantCharacterHighestWeight (RootSystem,Weight) := (R,l) -> (
     M = entries M/(r -> r/(p -> (Fraction numerator p) / (Fraction denominator p)));
     M = toPython M;
     rootNorms = toPython rootNorms;
-    poinc := toPython poin;
+    poinc := toPython myPoincare;
     dominant := import "dominantCharacterHighestWeight";
     result := dominant@@("dominantCharacterHighestWeight")(posRoots,lam, rho, simpleRoots, rootNorms, M, poinc);
     character := value pythonValue toString result;
@@ -105,16 +105,16 @@ symmetricPower (ZZ, Weight,RootSystem) := (n,l,R) -> (
         rootNorms := R#((keys R)#1);
         sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
         l' := entries l;
-        poin := new MutableHashTable;
+        myPoincare := new MutableHashTable;
         if not R#?"poincare1" then (
             x := local x;
             ZZ[x];
             for t in subsets toList(1..rank(R)) do (
-                poin#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
+                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
                 );
-            R#"poincare1" = new HashTable from poin;
+            R#"poincare1" = new HashTable from myPoincare;
             );
-        poin = R#"poincare1";
+        myPoincare = R#"poincare1";
         -- start the translation into python;
         fractions := import "fractions";
         Fraction := (fractions)@@("Fraction");
@@ -127,7 +127,7 @@ symmetricPower (ZZ, Weight,RootSystem) := (n,l,R) -> (
         n = toPython n;
         tau = toPython tau;
         rootNorms = toPython rootNorms;
-        poinc := toPython poin;
+        poinc := toPython myPoincare;
         sym := import "symmetricPower";
         result := sym@@("symmetricPower")(n, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau);
         decomp := value pythonValue toString result;
@@ -152,16 +152,16 @@ multipleSymmetricPowerLie(ZZ, Weight, RootSystem) := (k, l, R) -> (
         rootNorms := R#((keys R)#1);
         sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
         l' := entries l;
-        poin := new MutableHashTable;
+        myPoincare := new MutableHashTable;
         if not R#?"poincare1" then (
             x := local x;
             ZZ[x];
             for t in subsets toList(1..rank(R)) do (
-                poin#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
+                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
                 );
-            R#"poincare1" = new HashTable from poin;
+            R#"poincare1" = new HashTable from myPoincare;
             );
-        poin = R#"poincare1";
+        myPoincare = R#"poincare1";
         -- start the translation into python;
         fractions := import "fractions";
         Fraction := (fractions)@@("Fraction");
@@ -175,7 +175,7 @@ multipleSymmetricPowerLie(ZZ, Weight, RootSystem) := (k, l, R) -> (
         k = toPython k;
         tau = toPython tau;
         rootNorms = toPython rootNorms;
-        poinc := toPython poin;
+        poinc := toPython myPoincare;
         sym := import "multipleSymmetricPower";
         result := sym@@("multipleSymmetricPower")(k, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
         decomp := value pythonValue toString result;
@@ -206,16 +206,16 @@ multipleSymmetricPowerLie (ZZ, HashTable, RootSystem) := (k, L, R) -> (
         L' = for l in keys L' list (
             (l,L'#l)
             );
-        poin := new MutableHashTable;
+        myPoincare := new MutableHashTable;
         if not R#?"poincare1" then (
             x := local x;
             ZZ[x];
             for t in subsets toList(1..rank(R)) do (
-                poin#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
+                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
                 );
-            R#"poincare1" = new HashTable from poin;
+            R#"poincare1" = new HashTable from myPoincare;
             );
-        poin = R#"poincare1";
+        myPoincare = R#"poincare1";
         -- start the translation into python;
         fractions := import "fractions";
         Fraction := (fractions)@@("Fraction");
@@ -229,7 +229,7 @@ multipleSymmetricPowerLie (ZZ, HashTable, RootSystem) := (k, L, R) -> (
         k = toPython k;
         tau = toPython tau;
         rootNorms = toPython rootNorms;
-        poinc := toPython poin;
+        poinc := toPython myPoincare;
         sym := import "multipleSymmetricPower";
         result := sym@@("multipleSymmetricPower")(k, L', posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
         decomp := value pythonValue toString result;
@@ -260,16 +260,16 @@ exteriorPower (ZZ, Weight, RootSystem) := o -> (n,l,R) -> (
         rootNorms := R#((keys R)#1);
         sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
         l' := entries l;
-        poin := new MutableHashTable;
+        myPoincare := new MutableHashTable;
         if not R#?"poincare1" then (
             x := local x;
             ZZ[x];
             for t in subsets toList(1..rank(R)) do (
-                poin#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
+                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
                 );
-            R#"poincare1" = new HashTable from poin;
+            R#"poincare1" = new HashTable from myPoincare;
             );
-        poin = R#"poincare1";
+        myPoincare = R#"poincare1";
         -- start the translation into python;
         fractions := import "fractions";
         Fraction := (fractions)@@("Fraction");
@@ -282,7 +282,7 @@ exteriorPower (ZZ, Weight, RootSystem) := o -> (n,l,R) -> (
         n = toPython n;
         tau = toPython tau;
         rootNorms = toPython rootNorms;
-        poinc := toPython poin;
+        poinc := toPython myPoincare;
         alt := import "exteriorPower";
         result := alt@@("exteriorPower")(n, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau);
         decomp := value pythonValue toString result;
@@ -308,16 +308,16 @@ multipleExteriorPowerLie(ZZ, Weight, RootSystem) := (k, l, R) -> (
         rootNorms := R#((keys R)#1);
         sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
         l' := entries l;
-        poin := new MutableHashTable;
+        myPoincare := new MutableHashTable;
         if not R#?"poincare1" then (
             x := local x;
             ZZ[x];
             for t in subsets toList(1..rank(R)) do (
-                poin#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
+                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
                 );
-            R#"poincare1" = new HashTable from poin;
+            R#"poincare1" = new HashTable from myPoincare;
             );
-        poin = R#"poincare1";
+        myPoincare = R#"poincare1";
         -- start the translation into python;
         fractions := import "fractions";
         Fraction := (fractions)@@("Fraction");
@@ -331,7 +331,7 @@ multipleExteriorPowerLie(ZZ, Weight, RootSystem) := (k, l, R) -> (
         k = toPython k;
         tau = toPython tau;
         rootNorms = toPython rootNorms;
-        poinc := toPython poin;
+        poinc := toPython myPoincare;
         ext := import "multipleExteriorPower";
         result := ext@@("multipleExteriorPower")(k, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
         decomp := value pythonValue toString result;
@@ -362,16 +362,16 @@ multipleExteriorPowerLie (ZZ, HashTable, RootSystem) := (k, L, R) -> (
         L' = for l in keys L' list (
             (l,L'#l)
             );
-        poin := new MutableHashTable;
+        myPoincare := new MutableHashTable;
         if not R#?"poincare1" then (
             x := local x;
             ZZ[x];
             for t in subsets toList(1..rank(R)) do (
-                poin#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
+                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
                 );
-            R#"poincare1" = new HashTable from poin;
+            R#"poincare1" = new HashTable from myPoincare;
             );
-        poin = R#"poincare1";
+        myPoincare = R#"poincare1";
         -- start the translation into python;
         fractions := import "fractions";
         Fraction := (fractions)@@("Fraction");
@@ -385,7 +385,7 @@ multipleExteriorPowerLie (ZZ, HashTable, RootSystem) := (k, L, R) -> (
         k = toPython k;
         tau = toPython tau;
         rootNorms = toPython rootNorms;
-        poinc := toPython poin;
+        poinc := toPython myPoincare;
         ext := import "multipleExteriorPower";
         result := ext@@("multipleExteriorPower")(k, L', posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
         decomp := value pythonValue toString result;

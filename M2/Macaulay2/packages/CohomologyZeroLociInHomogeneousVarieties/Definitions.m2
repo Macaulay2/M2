@@ -65,7 +65,7 @@ homogeneousVariety (RootSystem,Set) := (R,S) -> (
 
 Gr = method(TypicalValue => HomogeneousVariety);
 Gr List := p -> (
-    if #p =!= 2 then error "expected a list of lenght two";
+    if #p =!= 2 then error "expected a list of length two";
     k := p#0;
     n := p#1;
     R := rootSystemA(n-1);
@@ -84,7 +84,7 @@ Fl List := p -> (
 
 OGr = method(TypicalValue => HomogeneousVariety);
 OGr List := p -> (
-    if #p =!= 2 then error "expected a list of lenght two";
+    if #p =!= 2 then error "expected a list of length two";
     k := p#0;
     m := p#1;
     if (even m) then (
@@ -103,7 +103,7 @@ OGr List := p -> (
 
 SGr = method(TypicalValue => HomogeneousVariety);
 SGr List := p -> (
-    if #p =!= 2 then error "expected a list of lenght two";
+    if #p =!= 2 then error "expected a list of length two";
     k := p#0;
     m := p#1;
     if (odd m) then error "expected an even dimensional vector space";
@@ -344,6 +344,6 @@ summands HomogeneousVectorBundle := F -> (
     )
 
 
--- aux method for the otpion Verbose in hodgeNumbers
+-- aux method for the option Verbose in hodgeNumbers
 timedIf = method();
 timedIf (Boolean, Function) := (v, f) -> if v then elapsedTime f() else f();

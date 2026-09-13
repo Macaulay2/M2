@@ -1,4 +1,4 @@
--------------------------------- Weights arithmetics ----------------------------------------------------------------
+-------------------------------- Weights arithmetic ----------------------------------------------------------------
 
 -- project the weights to the sublattice of the semisimple part of the parabolic subgroup
 toParabolicWeights = method();

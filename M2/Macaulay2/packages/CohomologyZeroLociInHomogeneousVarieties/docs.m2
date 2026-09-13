@@ -46,7 +46,7 @@ document {
     PARA {"Most of the representation-theoretic core (such as tensor products, ",
 	"symmetric and exterior powers of representations) is delegated to a set of auxiliary Python routines, ",
 	"called through the package ", TT "Python."},
-    PARA {EM "Acknowledgement: ", "the basic Lie-theoretic constrctions of this package are built on top of the ",
+    PARA {EM "Acknowledgement: ", "the basic Lie-theoretic constructions of this package are built on top of the ",
 	"package ", TT "WeylGroups", " by Baptiste Calmès and Viktor Petrov. Moreover, we gained inspirations for many representation-theoretic functions ",
         "from the program ", TT "LiE", " and from the the package ", TT "HighestWeights", " by Federico Galetto."
         },
