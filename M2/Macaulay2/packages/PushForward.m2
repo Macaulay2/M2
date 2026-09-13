@@ -186,6 +186,7 @@ pushFwdGens(Module) := Matrix => (M) -> M.cache.pushFwdGens ??= pushforward' M_{
 --     S^k --> auxN (over R)
 --   and its kernel are the S-relations of the elements auxN
 -- lift a basis for the a pushforward module M to the module it was pushed from
+protect pushFwdAuxMaps;
 makeModule = method()
 makeModule(RingMap, Module) := (f, N) -> (
     (R, S) := (target f, source f);
@@ -198,12 +199,7 @@ makeModule(RingMap, Module) := (f, N) -> (
         return makeModuleRankOneFree(f, N)
     );
 
-    q := map(R / ann N, R);
-    qinv := map(R, R / ann N);
-
-    (matR, ringpf) := pushAuxHgs(q * f);
-    ringpf' := (r) -> ringpf q r;
-    matR = qinv matR; -- lift S-gens for R / ann N to R
+    (matR, ringpf) := pushAuxHgs(f, ann N);
 
     prunedN := prune N;
     auxN := ambient prunedN/image relations prunedN;
@@ -226,7 +222,7 @@ makeModule(RingMap, Module) := (f, N) -> (
         -- a bit hacky: we want to transpose without applying antipode
         n = matrix transpose entries n;
         -- apply ringpf and stack as vectors
-        results := for i from 0 to numElements - 1 list reshape(S^(numgens M), S^1, ringpf' n^{i});
+        results := for i from 0 to numElements - 1 list reshape(S^(numgens M), S^1, ringpf n^{i});
         if isHomogeneous n then
             map(M, , matrix {results})
         else
@@ -247,7 +243,8 @@ makeModule(RingMap, Module) := (f, N) -> (
     (M, pf', pf)
 )
 
--- this is to reduce pushFwd of a free module to pushFwd of module target f
+-- this is to reduce computing the pushFwd of a free module to the computation
+-- of pushFwd of a rank one free module.
 makeModuleRankOneFree = (f, N) -> (
     (R, S) := (target f, source f);
     if not isRankOneFree N then error "expected rank one free module";
@@ -344,8 +341,15 @@ pushFwdRingHelper = (f) -> (
 )
 
 pushAuxHgs = method()
-pushAuxHgs(RingMap) := (f) -> f.cache.pushAuxHgs ??= (
-    if isInclusionOfCoefficientRing f then (
+pushAuxHgs(RingMap, Ideal) := (f, I) -> f.cache#(pushAuxHgs, I) ??= (
+    -- we push the ideal into the interface for this function so we can more
+    -- effectively cache this computation across different modules with the same annihilator.
+    R := ring I;
+    q := map(R/I, R);
+    qinv := map(R, R/I);
+    f = q * f;
+
+    (resmatb, resmapf) := if isInclusionOfCoefficientRing f then (
         if not isModuleFinite target f then error "inclusion of coefficientRing not a finite map.";
 
         A := source f;
@@ -373,7 +377,8 @@ pushAuxHgs(RingMap) := (f) -> f.cache.pushAuxHgs ??= (
         (matB, mapf)
     ) else (
         pushFwdRingHelper(f)
-    )
+    );
+    (qinv resmatb, (r) -> resmapf q r)
 )
 
 isInclusionOfCoefficientRing = method()
