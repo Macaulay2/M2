@@ -91,10 +91,10 @@ if not hasNumPy then (
     installOK := true;
     try (pipInstall "numpy";) else installOK = false;
     if installOK then (
-        hasNumPy = true;
-        try (import "numpy";) else hasNumPy = false;
-        );
-    );
+    	try (((import "sys")@@("path"))@@append((import "site")@@getusersitepackages());) else();
+    hasNumPy = true;
+    try(import "numpy";) else hasNumPy = false;
+    ););
 
 if not hasNumPy then
     error ///CohomologyZeroLociInHomogeneousVarieties requires the Python
