@@ -122,10 +122,9 @@ PACKAGE-DISTCLEAN-TARGET := distclean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
 fetch: download-enabled
 ifeq ($(SUBMODULE),true)
-fetch: .submodule-updated
-.submodule-updated:
+fetch: @abs_top_srcdir@/submodules/$(LIBNAME)/.git
+@abs_top_srcdir@/submodules/$(LIBNAME)/.git:
 	$(MAKE) update-submodule
-	touch $@
 update-submodule:
 	if git rev-parse 2> /dev/null;                          \
 	then                                                    \
@@ -140,7 +139,6 @@ update-submodule:
 	fi
 
 clean::
-	rm -f .submodule-updated
 	if git rev-parse 2> /dev/null;                                         \
 	then                                                                   \
 		@GIT@ submodule deinit @abs_top_srcdir@/submodules/$(LIBNAME); \

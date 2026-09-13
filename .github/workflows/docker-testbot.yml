@@ -1,0 +1,43 @@
+# This workflow builds the Macaulay2 testbot Docker image from
+# M2/BUILD/docker/testbot/Dockerfile and pushes it to GitHub Packages,
+# tagged with the current Macaulay2 version (see M2/VERSION) and "latest".
+#
+# The resulting image is published at
+# https://github.com/Macaulay2/M2/pkgs/container/testbot
+
+name: Build and push testbot Docker image
+
+on: workflow_dispatch
+
+env:
+  IMAGE_NAME: ghcr.io/macaulay2/testbot
+
+jobs:
+  docker-testbot:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Determine image tags
+        run: |
+          M2_VERSION=$(cat M2/VERSION)
+          echo "M2_VERSION=$M2_VERSION" >> "$GITHUB_ENV"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: M2/BUILD/docker/testbot
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:v${{ env.M2_VERSION }}
+            ${{ env.IMAGE_NAME }}:latest

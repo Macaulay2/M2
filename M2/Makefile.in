@@ -120,6 +120,30 @@ unmark-packages:; $(MAKE) -C Macaulay2/packages $@
 reconfigure: reconfigure-top-only unconfigure-libs 
 unconfigure-libs:; $(MAKE) -C libraries unconfigure
 remove-deps:; find . -name \*.dep -delete
+
+## gcc/gcov code coverage (configure with --enable-gcov).  Coverage data (.gcda)
+## accumulates whenever a coverage-built binary exits, so run the unit tests,
+## "make check", or M2 itself first; these targets only clear and report on it.
+GCOVR = gcovr
+## extra gcovr options, e.g. GCOVR_OPTIONS='--filter Macaulay2/e/'
+GCOVR_OPTIONS =
+COVERAGE_DIR = $(CURDIR)/coverage
+COVERAGE_INDEX = $(COVERAGE_DIR)/index.html
+COVERAGE_ROOT = @srcdir@
+## a positional search path rather than --object-directory, so that gcovr runs
+## gcov in each data file's own directory and can resolve VPATH sources
+COVERAGE_OBJDIR = @builddir@
+## gcov may report a function on several lines (e.g. inlines at -O0); merge them
+COVERAGE_MERGE_MODE = merge-use-line-min
+.PHONY: coverage-reset coverage-report
+coverage-reset:; find . -name \*.gcda -delete
+coverage-report:
+	@ $(MKDIR_P) $(COVERAGE_DIR)
+	$(GCOVR) --root $(COVERAGE_ROOT) $(COVERAGE_OBJDIR) \
+		--merge-mode-functions=$(COVERAGE_MERGE_MODE) $(GCOVR_OPTIONS) \
+		--html-details $(COVERAGE_INDEX) --print-summary
+## print the path as an OSC 8 hyperlink, so terminals make it clickable
+	@ printf 'coverage report: \033]8;;file://%s%s\033\\%s\033]8;;\033\\\n' "$$(hostname)" "$(COVERAGE_INDEX)" "$(COVERAGE_INDEX)"
 find-conflicts:; grep -r -nH --exclude-dir BUILD -e '^<<<<<<< ' @srcdir@ || true
 log-archive:; find . -name config.log |xargs tar xzf config-logs.tgz
 shell:; PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) bash
@@ -208,6 +232,8 @@ help:
 	@ echo "  relink-nostrip    remove M2@EXE@ and rebuild it, unstripped"
 	@ echo "  install           make and install files"
 	@ echo "  check             run the tests"
+	@ echo "  coverage-reset    clear accumulated gcov coverage data (requires --enable-gcov)"
+	@ echo "  coverage-report   generate an HTML coverage report with gcovr"
 	@ echo "  clean             remove all generated files except configured files"
 	@ echo "  distclean         remove all generated files"
 	@ echo "  dist              generate a source tarball for distribution"

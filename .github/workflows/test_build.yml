@@ -242,6 +242,22 @@ jobs:
 #   Upload build artifacts
 # ----------------------
 
+      - name: Gather Style assets
+        if: matrix.build-system == 'autotools' && runner.os == 'Linux' && success()
+        run: |
+          make -C Macaulay2/editors prism/prism.js
+          mkdir -p /tmp/style-assets
+          cp Macaulay2/editors/prism/prism.js*                    /tmp/style-assets/
+          cp usr-dist/common/share/Macaulay2/Style/search-data.js /tmp/style-assets/
+
+      - name: Upload Style assets
+        if: matrix.build-system == 'autotools' && runner.os == 'Linux' && success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: style-assets
+          path: /tmp/style-assets/
+          if-no-files-found: error
+
       - name: Upload build logs
         if: always()
         uses: actions/upload-artifact@v7

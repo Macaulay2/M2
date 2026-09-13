@@ -61,12 +61,11 @@ isGFSquare RingElement := Boolean => a -> (
 
 getSquareSymbol = method()
 getSquareSymbol (ZZ,ZZ) := ZZ => (a,p) -> (
-    R := GF(p);
     e1 := getPadicValuation(a,p);
     if even e1 then (
     	a1 := sub(a/(p^e1), ZZ);
-	a2 := sub(a1, R);
-	if isGFSquare a2 then return 1 else return -1;
+	-- Euler's criterion via powermod, which works for primes of any size
+	if powermod(a1, (p-1)//2, p) == 1 then return 1 else return -1;
         );
     return 0;
     )
@@ -94,7 +93,8 @@ isEqualUpToPadicSquare (ZZ,ZZ,ZZ) := Boolean => (a,b,p) -> (
         else (
     	    -- c1 will be an integer coprime to p
 	    c1 := getSquarefreePart(a1*b1);
-	    return isGFSquare sub(c1, GF(p)); 
+	    -- Euler's criterion via powermod, which works for primes of any size
+	    return powermod(c1, (p-1)//2, p) == 1;
 	    );
         )
     else (
@@ -198,7 +198,8 @@ solveCongruencePair(ZZ,ZZ,ZZ,ZZ) := (a,b,n,m) -> (
     L := computeExtendedEuclidean(n,m);
     u := L#0;
     v := L#1;
-    a - k*u*n % n*m
+    -- Parenthesization matters: % has the same precedence as * in Macaulay2
+    (a - k*u*n) % (n*m)
     )
 
 -- This is adapted from the chineseRemainder method from the Parametrization package

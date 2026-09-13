@@ -76,6 +76,14 @@ assert(promote(x_R,T) == x_T)
 assert(lift(x_T,R) == x_R)
 assert(lift(z,R,Verify=>false) === null)
 
+-- lift from fraction field to base/coefficient rings (issue #3896)
+F=frac R
+assert(lift(1/123_F, R) == 1/123)
+assert(lift(1/123_F, QQ) == 1/123)
+assert(lift((x/123)_F, R) == x/123)
+assert(lift((x/123)_F, QQ, Verify=>false) === null)
+assert(lift(1/x_F, R, Verify=>false) === null)
+
 R=QQ[x_1,x_2]
 R'=QQ[e_1,e_2,Degrees=>{1,2}]
 f=map(R,R',{x_1+x_2,x_1*x_2})

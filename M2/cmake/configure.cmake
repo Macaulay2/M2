@@ -20,6 +20,7 @@ option(LINTING		"Enable linting source files"		OFF)
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
 option(PROFILING	"Enable profiling build flags"		OFF)
 option(COVERAGE		"Enable Clang code coverage test"	OFF)
+option(GCOV		"Enable gcc/gcov code coverage"		OFF)
 option(GIT_SUBMODULE	"Update submodules during build"	ON)
 option(BUILD_NATIVE	"Use native SIMD instructions"		ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
@@ -106,6 +107,7 @@ message("## Configure Macaulay2
      BUILD_TESTING     = ${BUILD_TESTING}
      BUILD_DOCS        = ${BUILD_DOCS}\n
      COVERAGE          = ${COVERAGE}
+     GCOV              = ${GCOV}
      MEMDEBUG          = ${MEMDEBUG}
      PROFILING         = ${PROFILING}\n
      DEVELOPMENT       = ${DEVELOPMENT}
@@ -199,6 +201,11 @@ if(PROFILING)
   add_compile_definitions(PROFILING)
   add_compile_options(-pg)
   add_link_options(-pg)
+endif()
+if(GCOV)
+  # -O0 keeps the line attribution in the coverage data meaningful
+  add_compile_options(--coverage -O0)
+  add_link_options(--coverage)
 endif()
 
 # Flags based on build type

@@ -128,12 +128,13 @@ optionFixes := hashTable {
      GroupLex => intOption,
      GroupRevLex => intOption,
      NCLex => intOption,
-     GRevLex => grevOption
+     GRevLex => grevOption,
+     GLex => (key,n) -> ( checkCount n; (Weights => toList (n:1), fixup1(Lex => n)) )
      }
      
 ordOption := o -> if numvars > varcount then fixup1 ( o => numvars - varcount )
 symbolFixes := hashTable {
-     GLex => o -> (Weights => toList (numvars:1), fixup1 Lex),
+     GLex => ordOption,
      RevLex => ordOption,
      GRevLex => ordOption,
      Lex => ordOption

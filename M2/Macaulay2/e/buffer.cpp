@@ -135,7 +135,7 @@ void buffer::put(mpfi_srcptr x)
 
 void buffer::put(cc_doubles_srcptr x)
 {
-  if (x->re !=0 || (x->re == 0 && x->im == 0)) {
+  if (x->re !=0 || x->im == 0) {
     put(x->re);
     if (x->im > 0)
       put('+');
@@ -153,14 +153,13 @@ void buffer::put(cc_doubles_srcptr x)
 
 void buffer::put(cc_srcptr x)
 {
-  if (mpfr_cmp_si(&x->re, 0) !=0 ||
-      (mpfr_cmp_si(&x->re, 0) == 0 && mpfr_cmp_si(&x->im, 0) == 0)) {
+  if (!mpfr_zero_p(&x->re) || mpfr_zero_p(&x->im)) {
     put(&x->re);
     if (mpfr_cmp_si(&x->im, 0) > 0)
       put('+');
   }
 
-  if (mpfr_cmp_si(&x->im, 0) != 0) {
+  if (!mpfr_zero_p(&x->im)) {
     if (mpfr_cmp_si(&x->im, -1) == 0)
       put('-');
     else if (mpfr_cmp_si(&x->im, 1) != 0)
@@ -171,8 +170,7 @@ void buffer::put(cc_srcptr x)
 
 void buffer::put(cci_srcptr x)
 {
-  if (!mpfi_is_zero(&x->re) ||
-      mpfi_is_zero(&x->re) && mpfi_is_zero(&x->im)) {
+  if (!mpfi_is_zero(&x->re) || mpfi_is_zero(&x->im)) {
     put(&x->re);
     if (!mpfi_is_zero(&x->im))
       put('+');

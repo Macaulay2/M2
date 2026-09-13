@@ -485,8 +485,8 @@ endif()
 
 # https://github.com/algebraic-solving/msolve
 ExternalProject_Add(build-msolve
-  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.9.5.tar.gz
-  URL_HASH          SHA256=92b94775cd5a046de307e2ad0fc576d2631e43fbd0eb7749517a033d7e77ddf4
+  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.10.1.tar.gz
+  URL_HASH          SHA256=ce0743cc33d1dc8484193268d9220e8624ed015e521903b9228b3b38a5981291
   PREFIX            libraries/msolve
   SOURCE_DIR        libraries/msolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -498,7 +498,7 @@ ExternalProject_Add(build-msolve
                       $<$<BOOL:${OpenMP_FOUND}>:--enable-openmp>
                       "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS} -I${MPFR_INCLUDE_DIRS} -I${FLINT_INCLUDE_DIR}"
                       CFLAGS=${CFLAGS}
-		      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} -L${MPFR_LIBRARIES} -L${FLINT_LIBRARIES}"
+		      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} -L${MPFR_LIBRARY_DIRS} -L${FLINT_LIBRARY_DIR}"
                       CC=${CMAKE_C_COMPILER}
 		      "OPENMP_CFLAGS=${OpenMP_C_FLAGS} ${OpenMP_C_LDLIBS}"
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}

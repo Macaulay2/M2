@@ -162,7 +162,7 @@ coefficient(RingElement, RingElement) := (m, f) -> (
     R := ring f;
     k := coefficientRing R;
     -- TODO: audit this code and how it is used in towers and inexact fields
-    if size m === 1 and leadCoefficient m == 1
+    if instance(m, R) and size m === 1 and leadCoefficient m == 1
     then promote(rawCoefficient(raw k, raw f, rawLeadMonomialR m), k)
     else error "coefficient: expected a monomial from the same ring")
 
@@ -481,7 +481,7 @@ dedupSymbols = varlist -> (
 findSymbols = varlist -> dedupSymbols toList apply(pairs listSplice varlist,
     -- varlist is a list or sequence of items we wish to use for variable names.
     -- these may be: Symbol's, RingElement's (which are variables in a ring) or lists or sequences of such.
-    -- Return value: a List of Symbol's and IndexVariable's (or an error message gets issued)
+    -- Return value: a List of Symbol's and IndexedVariable's (or an error message gets issued)
     (i, var) -> try ( if class var === ZZ then var else checkSymbol baseName' var ) else error concatenate(
 	"encountered object not usable as variable at position ", toString i, " in list:",
 	newline, 8, silentRobustNetWithClass(max(printWidth, 80) - 8, 5, 3, var)))
@@ -494,11 +494,25 @@ processVars(Thing, Thing) := (x, xx) -> findSymbols {x}
 processVars(ZZ,    Thing) := (n, xx) -> makeVars(n, xx)
 processVars ZZ := x -> {x}
 
-processSkew := (n, skewvars) -> toList(
+processSkewItem = (vars, v) -> (
+    -- when v is a Symbol or IndexedVariable replace it with an index into the vars array
+    i := if instance(v, ZZ) then v else position(vars, s -> s === v );
+    if not instance(i, ZZ) then error("SkewCommutative: invalid value `" | toString v | "`");
+    n := #vars;
+    -- validate range of integer input
+    if i < -n or i >= n then error("SkewCommutative: invalid value `" | toString i | "`");
+    -- replace a negative index with the appropriate non-negative index
+    if i < 0 then n + i else i
+)
+
+processSkew := (vars, skewvars) -> sort toList(
+    n := #vars;
     if skewvars === true  then 0 ..< n else
     if skewvars === false then {}      else
-    if instance(skewvars, VisibleList) then flatten apply(listSplice skewvars, processVars)
-    else error "SkewCommutative: expected option to be true, false, or a list or indices or variables")
+    if instance(skewvars, VisibleList) then (
+        skewitems := flatten apply(listSplice skewvars, processVars);
+        unique apply(skewitems, x -> processSkewItem(vars, x))
+    ) else error "SkewCommutative: expected option to be true, false, or a list or indices or variables")
 
 processWeyl := weylvars -> (
     (xvars, dvars, hvar) := ({}, {}, {});
@@ -536,7 +550,7 @@ setMonoidOptions = opts -> (
     --	);
     -- TODO: bring the sanity checking for the Weyl and Skew variables here
     opts.WeylAlgebra = processWeyl opts.WeylAlgebra;
-    opts.SkewCommutative = processSkew(n, opts.SkewCommutative);
+    opts.SkewCommutative = processSkew(opts.Variables, opts.SkewCommutative);
     -- TODO: allow rings with only some invertible variables
     if class opts.Inverses =!= Boolean then error "expected Inverses option to be true or false";
     -- TODO: allow rings with some skew commuting variables and some inverses https://github.com/Macaulay2/M2/issues/1440
