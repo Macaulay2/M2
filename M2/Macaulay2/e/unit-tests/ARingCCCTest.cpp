@@ -196,8 +196,11 @@ TEST(ARingCCC, axioms)
       C.mult(d, a, e);  // a*(b*c)
       C.mult(e, a, b);
       C.mult(e, e, c);  // (a*b)*c
-      EXPECT_TRUE(almostEqual(
-          C, 93, d, e));  // MES: I'm not sure how equal these should be.
+      // The tolerance is absolute, but the rounding error scales with the
+      // size of the result: the trial with a = 24 (integer) and b, c random
+      // gives |a*b*c| up to ~48, and 2^-93 failed for about 1 in 7000
+      // random choices of b, c.
+      EXPECT_TRUE(almostEqual(C, 90, d, e));
 
       // Test distributivity
       // test: a*(b+c) == a*b + a*c
@@ -206,7 +209,7 @@ TEST(ARingCCC, axioms)
       C.mult(b, a, b);
       C.mult(c, a, c);
       C.add(e, b, c);  // a*b + a*c
-      EXPECT_TRUE(almostEqual(C, 93, d, e));
+      EXPECT_TRUE(almostEqual(C, 90, d, e));  // see associativity comment
     }
   C.clear(e);
   C.clear(d);
