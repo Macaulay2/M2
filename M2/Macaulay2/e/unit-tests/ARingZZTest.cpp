@@ -6,7 +6,8 @@
 #include <sstream>
 #include <memory>
 #include <gtest/gtest.h>
-#include <mpfr.h>
+#include <gmp.h>
+#include <flint/fmpz.h>
 
 #include "basic-rings/aring-ZZ-flint.hpp"
 #include "unit-tests/ARingTest.hpp"
@@ -59,6 +60,72 @@ TEST(ARingZZ, arithmetic)
   //  testPower(R, ntrials);  // this test can't work, as it expects a finite
   //  field
   testAxioms(R, ntrials);
+}
+
+TEST(ARingZZ, is_unit)
+{
+  M2::ARingZZ R;
+  M2::ARingZZ::ElementType a;
+
+  R.init(a);
+
+  R.set(a, 1);
+  EXPECT_TRUE(R.is_unit(a));
+
+  R.set(a, -1);
+  EXPECT_TRUE(R.is_unit(a));
+
+  R.set(a, 2);
+  EXPECT_FALSE(R.is_unit(a));
+
+  fmpz_set_str(&a, "36893488147419103232", 10);
+  EXPECT_FALSE(R.is_unit(a));
+}
+
+TEST(ARingZZ, compare_elems)
+{
+  M2::ARingZZ R;
+  M2::ARingZZ::ElementType a, b;
+
+  R.init(a);
+  R.init(b);
+
+  R.set_zero(a);
+  R.set(b, 1);
+  EXPECT_EQ(R.compare_elems(a, b), -1);
+  EXPECT_EQ(R.compare_elems(b, a), 1);
+  EXPECT_EQ(R.compare_elems(a, a), 0);
+
+  fmpz_set_str(&a, "36893488147419103232", 10);
+  fmpz_set_str(&b, "36893488147419103233", 10);
+  EXPECT_EQ(R.compare_elems(a, b), -1);
+  EXPECT_EQ(R.compare_elems(b, a), 1);
+  EXPECT_EQ(R.compare_elems(a, a), 0);
+}
+
+TEST(ARingZZ, init_set)
+{
+  M2::ARingZZ R;
+  M2::ARingZZ::ElementType a, b;
+
+  R.init(a);
+  fmpz_set_str(&a, "36893488147419103232", 10);
+  R.init_set(b, a);
+
+  EXPECT_EQ(R.compare_elems(a, b), 0);
+}
+
+TEST(ARingZZ, set)
+{
+  M2::ARingZZ R;
+  M2::ARingZZ::ElementType a, b;
+
+  R.init(a);
+  R.init(b);
+  fmpz_set_str(&a, "36893488147419103232", 10);
+  R.set(b, a);
+
+  EXPECT_EQ(R.compare_elems(a, b), 0);
 }
 
 // Local Variables:
