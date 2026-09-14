@@ -539,7 +539,7 @@ export {
 	"capture",
 	"catch",
 	"ceiling",
-        "centerRing",
+    "centerRing",
 	"centerString",
 	"changeBase",
 	"changeDirectory",
