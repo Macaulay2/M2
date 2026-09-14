@@ -10,6 +10,7 @@
 #include <flint/fmpz.h>
 
 #include "basic-rings/aring-ZZ-flint.hpp"
+#include "basic-rings/aring-QQ-gmp.hpp"
 #include "unit-tests/ARingTest.hpp"
 
 extern gmp_ZZ getRandomInteger();
@@ -126,9 +127,114 @@ TEST(ARingZZ, set)
   R.set(b, a);
 
   EXPECT_EQ(R.compare_elems(a, b), 0);
+
+  M2::ARingQQGMP S;
+  M2::ARingQQGMP::ElementType c,d,e;
+  
+  S.init(c);
+  S.set(c,57);
+  R.set(a,&c);
+  R.set(b,57);
+  EXPECT_EQ(R.compare_elems(a, b), 0);
+
+  S.init(d);
+  S.set(d,2);
+  S.init(e);
+  S.divide(e,c,d);
+  EXPECT_FALSE(R.set(a,&e));
 }
+
+TEST(ARingZZ, set_var)
+{
+  M2::ARingZZ R;
+  M2::ARingZZ::ElementType a, b;
+
+  R.init(a);
+  R.init(b);
+
+  R.set_zero(a);
+  R.set(b, 1);
+
+  R.set_var(a,5);
+  
+  EXPECT_EQ(R.compare_elems(a,b), 0);
+
+  R.set(a,57);
+  R.set_var(a,3);
+  
+  EXPECT_EQ(R.compare_elems(a, b), 0);
+}
+
+
+TEST(ARingZZ, invert)
+{
+  M2::ARingZZ R;
+  M2::ARingZZ::ElementType a, b, c;
+
+  R.init(a);
+  R.init(b);
+  R.init(c);
+  
+  R.set(b, 1);
+  R.set(c, 1);
+
+  R.invert(a,b);
+  EXPECT_EQ(R.compare_elems(a,c), 0);
+  
+  R.set(b,-1);
+  R.set(c,-1);
+  R.invert(a,b);
+
+  EXPECT_EQ(R.compare_elems(a,c), 0);
+
+  R.set(b,57);
+  R.set(c,0);
+  R.invert(a,b);
+  
+  EXPECT_EQ(R.compare_elems(a,c), 0);
+}
+
+// Divide is getting tested in the divisible case up above
+//
+
+
+TEST(ARingZZ, dividewhendivisible)
+{
+  M2::ARingZZ R;
+  M2::ARingZZ::ElementType a, b, c, d;
+
+  R.init(a);
+  R.init(b);
+  R.init(c);
+  R.init(d);
+  
+  R.set(a, 8);
+  R.set(b, 4);
+  R.divide(c,a,b);
+  R.set(d, 2);
+
+  EXPECT_EQ(R.compare_elems(c,d), 0);
+}
+
+
+TEST(ARingZZ, dividenondivisible)
+{
+  M2::ARingZZ R;
+  M2::ARingZZ::ElementType a, b, c;
+
+  R.init(a);
+  R.init(b);
+  R.init(c);
+
+  R.set(a, 2);
+  R.set(b, 3);
+
+  //EXPECT_THROW(R.divide(c,a,b),exc::engine_error);
+}
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
 // indent-tabs-mode: nil
 // End:
+
