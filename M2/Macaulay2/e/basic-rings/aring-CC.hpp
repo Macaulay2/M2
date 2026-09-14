@@ -210,7 +210,7 @@ class ARingCC : public SimpleARing<ARingCC>
                      const RealElementType& a,
                      const ElementType& b) const
   {
-    ElementType result;
+    ElementType result = res;
     result.re += a * b.re;
     result.im += a * b.im;
     set(res, result);
@@ -220,7 +220,7 @@ class ARingCC : public SimpleARing<ARingCC>
                      const ElementType& a,
                      const ElementType& b) const
   {
-    ElementType result;
+    ElementType result = res;
     result.re += a.re * b.re - a.im * b.im;
     result.im += a.im * b.re + a.re * b.im;
     set(res, result);
