@@ -286,21 +286,48 @@ TEST(ARingRR, power_and_invert)
 
 TEST(ARingRR, invert)
 {
-    EXPECT_TRUE(true);
-    M2::ARingRR R;
-    ARingElementGenerator<M2::ARingRR> gen(R);
-    M2::ARingRR::ElementType a, b, c, d;
-    R.init(a);
-    R.init(b);
-    R.init(c);
-    R.init(d);
-    R.set(b, 2.0);
-    R.set(c, 1.0);
-    R.set(d, 0.5);
-    R.invert(b,b);
-    EXPECT_TRUE(b == d);
-    // TODO: This fails. Fix the invert function to maybe throw on NaN and inf.
-    EXPECT_THROW(R.invert(a,a), std::runtime_error);
+  M2::ARingRR R;
+  M2::ARingRR::ElementType a, b, c, d;
+  R.init(a);
+  R.init(b);
+  R.init(c);
+  R.init(d);
+  R.set(b, 2.0);
+  R.set(c, 1.0);
+  R.set(d, 0.5);
+  R.invert(b,b);
+  EXPECT_TRUE(b == d);
+  // TODO: This fails. Fix the invert function to maybe throw on NaN and inf.
+  EXPECT_THROW(R.invert(a,a), std::runtime_error);
+}
+
+TEST(ARingRR, zeroize_tiny) 
+{
+  mpfr_t eps;
+  mpfr_init2(eps,53);
+  mpfr_set_str(eps, "1e-7", 10, MPFR_RNDN);
+  
+  M2::ARingRR R;
+  M2::ARingRR::ElementType a, b;
+  R.init_set(a, 0.00000009);
+  R.init_set(b, 0.00000011);
+
+  R.zeroize_tiny(eps, a);
+  R.zeroize_tiny(eps, b);
+  EXPECT_EQ(0, a);
+  EXPECT_NE(0, b);
+
+  mpfr_clear(eps);
+}
+
+TEST(ARingRR, is_unit)
+{
+  M2::ARingRR R;
+  M2::ARingRR::ElementType a, b;
+  R.init(a);
+  R.init_set(b, 0.5);
+  EXPECT_TRUE(R.is_unit(b));
+  EXPECT_FALSE(R.is_unit(a));
 }
 
 // TODO: syzygy?
