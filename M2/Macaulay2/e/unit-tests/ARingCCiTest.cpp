@@ -21,7 +21,7 @@ TEST(ARingCCi, isZero)
   C.init(a);
 
   // a = 0
-  C.set_from_long(a, 0);
+  C.set(a, 0);
   EXPECT_TRUE(C.is_zero(a));
 
   // a = [0,1]
