@@ -508,6 +508,14 @@ TEST_F(ARingCCi, IntervalPredicates)
   // value zero.
 
   {
+    // Zero imaginary endpoints must not hide a real interval away from zero.
+    SCOPED_TRACE("is zero: positive real interval with zero imaginary part");
+    setBounds(a, 1, 2, 0, 0);
+
+    EXPECT_FALSE(C.is_zero(a));
+  }
+
+  {
     // These ranges include zero but also include other values. They must
     // not be reported as exactly zero.
     SCOPED_TRACE("is zero: rectangle contains zero");

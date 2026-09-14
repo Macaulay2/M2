@@ -528,7 +528,14 @@ TEST_F(ARingCC, Powers)
   // call should fail instead of using a shortened exponent.
   mpz_set_ui(exponent, 1);
   mpz_mul_2exp(exponent, exponent, 100);
-  EXPECT_THROW(C.power_mpz(result, a, exponent), exc::engine_error);
+  EXPECT_THROW(C.power_mpz(result, a, exponent), exc::engine_error)
+      << "positive mpz exponent outside the supported range";
+
+  // A negative exponent outside the supported range must also be rejected,
+  // rather than being shortened to an integer before taking a reciprocal.
+  mpz_neg(exponent, exponent);
+  EXPECT_THROW(C.power_mpz(result, a, exponent), exc::engine_error)
+      << "negative mpz exponent outside the supported range";
   mpz_clear(exponent);
 }
 
@@ -645,6 +652,8 @@ TEST_F(ARingCC, Formatting)
     const Example cases[] = {
         {1, 0, ""},
         {-1, 0, "-"},
+        // A nonzero imaginary part prevents shortening -1 to just a sign.
+        {-1, 1, "-1+i"},
         {0, 1, "i"},
         {1, 1, "1+i"},
         {2, 0, "2"},
