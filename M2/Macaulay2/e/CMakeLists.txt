@@ -462,6 +462,7 @@ if(BUILD_TESTING)
     unit-tests/ARingQQGmpTest.cpp
     unit-tests/ARingRRTest.cpp
     unit-tests/ARingCCTest.cpp
+    unit-tests/ARingCCiTest.cpp
     unit-tests/ARingRRRTest.cpp
     unit-tests/ARingRRiTest.cpp
     unit-tests/ARingCCCTest.cpp
