@@ -35,6 +35,9 @@ ${_esc}]8;;file://${_host}${_coverage_index}${_esc}\\${_coverage_index}${_esc}]8
       # --object-directory, so that gcovr runs gcov in each data file's own
       # directory and can resolve every source
       COMMAND ${GCOVR} --root ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
+        # the libraries' configure scripts leave .gcno files behind for
+        # conftest.c sources they deleted, which gcov cannot resolve
+        --exclude-directories ${CMAKE_BINARY_DIR}/libraries
         # gcov may report a function on several lines (e.g. inlines at -O0)
         --merge-mode-functions=merge-use-line-min ${_gcovr_options}
         --html-details ${_coverage_index} --print-summary
