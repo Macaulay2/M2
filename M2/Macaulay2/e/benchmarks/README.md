@@ -1,14 +1,42 @@
 # Benchmarking Macaulay2
 
 Macaulay2 uses [Google Benchmark](https://github.com/google/benchmark) for
-repeatable C++ microbenchmarks of engine code. The integration intentionally
-parallels the existing GoogleTest setup: a pinned submodule supplies a fallback
-dependency, a small wrapper initializes the M2 engine, and benchmark sources
-live beside the engine unit tests.
+repeatable C++ microbenchmarks of engine code. The standalone `M2-benchmarks`
+executable initializes the M2 engine before running the benchmarks; it is run
+from the shell, not from the Macaulay2 interpreter.
 
 Benchmarking is opt-in. It is not part of `make check` or `ctest`, because
 performance measurements are sensitive to build flags, hardware, and machine
 load and should not determine whether correctness tests pass.
+
+## Install Google Benchmark
+
+Install Google Benchmark separately before enabling benchmarks. Macaulay2 does
+not download or build it. For Debian or Ubuntu:
+
+```sh
+sudo apt install libbenchmark-dev
+```
+
+On macOS with Homebrew:
+
+```sh
+brew install google-benchmark
+```
+
+If your system has no package, follow the upstream
+[installation instructions](https://github.com/google/benchmark#installation)
+and install it into a prefix of your choice. For CMake, pass
+`-DCMAKE_PREFIX_PATH=/path/to/prefix` (or
+`-Dbenchmark_DIR=/path/to/prefix/lib/cmake/benchmark`). For Autotools, pass
+`CPPFLAGS="-I/path/to/prefix/include"` and
+`LDFLAGS="-L/path/to/prefix/lib -Wl,-rpath,/path/to/prefix/lib"` when configuring;
+use `lib64` instead of `lib` if appropriate. For Homebrew, the prefix is
+`$(brew --prefix google-benchmark)`.
+
+These instructions assume the usual Macaulay2 build dependencies and setup;
+see [the build guide](../../../BUILD/README.md). Benchmarking is disabled by
+default and does not require Google Benchmark unless explicitly enabled.
 
 ## Quick start with CMake
 
@@ -23,9 +51,9 @@ cmake --build build --target M2-benchmarks
 ./build/Macaulay2/e/M2-benchmarks
 ```
 
-The `build-libraries` step installs any missing M2 dependencies, including the
-pinned Google Benchmark fallback, into `build/usr-host` and reruns CMake. If all
-dependencies are already available on the system, that step is harmless.
+The `build-libraries` step installs missing M2 dependencies into
+`build/usr-host` and reruns CMake. Google Benchmark must already be installed
+when configuring with `BUILD_BENCHMARKS=ON`.
 
 Useful runner options include:
 
@@ -58,15 +86,15 @@ Add `--enable-benchmarks` when configuring an out-of-tree M2 build. For
 example, from an empty build directory:
 
 ```sh
-/path/to/M2/configure --enable-download --enable-benchmarks
-make -C libraries/benchmark
+/path/to/repository/M2/configure --enable-download --enable-benchmarks --enable-optimize
+make
 make -C Macaulay2/e benchmarks
 make -C Macaulay2/e run-benchmarks
 ```
 
-If the system already provides `benchmark/benchmark.h` and `-lbenchmark`, the
-configure check uses those instead of building the submodule. Pass runner flags
-through `BENCHMARK_ARGS`:
+Configuration checks for the installed `benchmark/benchmark.h` and
+`-lbenchmark` and fails if they are unavailable. Pass runner flags through
+`BENCHMARK_ARGS`:
 
 ```sh
 make -C Macaulay2/e run-benchmarks \
@@ -77,29 +105,6 @@ The executable is `Macaulay2/e/benchmarks/M2-benchmarks` within the build tree,
 so it can also be run directly.
 
 ## Implementation
-
-The dependency is pinned at Google Benchmark v1.9.5 in
-`M2/submodules/benchmark`. Its build is modeled on GoogleTest:
-
-| GoogleTest integration | Google Benchmark integration |
-| --- | --- |
-| `M2/submodules/googletest` | `M2/submodules/benchmark` |
-| `M2/libraries/gtest/Makefile.in` | `M2/libraries/benchmark/Makefile.in` |
-| `M2/Macaulay2/e/unit-tests` | `M2/Macaulay2/e/benchmarks` |
-| `testMain.cpp` calls `IM2_initialize()` | `benchmarkMain.cpp` calls `IM2_initialize()` |
-| `M2-unit-tests` | `M2-benchmarks` |
-| CMake `BUILD_TESTING` | CMake `BUILD_BENCHMARKS` |
-
-The Autotools path detects the system header and library in `configure.ac`. If
-they are unavailable, the standard M2 library machinery builds the submodule
-through `M2/libraries/benchmark/Makefile.in`. The engine Makefile exposes
-`benchmarks` and `run-benchmarks` targets.
-
-The CMake path looks for the installed `benchmark::benchmark` target. If it is
-missing, `build-libraries` uses the same `ExternalProject` pattern as
-GoogleTest, installs the library beneath `usr-host`, and reruns configuration.
-Google Benchmark's own tests, documentation, and tools are disabled in both
-fallback builds.
 
 `benchmarkMain.cpp` deliberately replaces upstream's `BENCHMARK_MAIN()` macro.
 It initializes M2 before handing command-line processing and execution to
@@ -150,6 +155,10 @@ loop. Correctness belongs in the corresponding GoogleTest test first.
 
 ## Comparing results
 
+The optional `compare.py` tool comes from a separate checkout of
+[Google Benchmark](https://github.com/google/benchmark), and may require the
+Python dependencies listed in its `tools/requirements.txt`.
+
 Capture a baseline and a contender on the same machine with the same compiler,
 build type, power settings, and background load:
 
@@ -160,7 +169,7 @@ mkdir -p benchmark-results
 # Rebuild after the candidate change.
 ./build/Macaulay2/e/M2-benchmarks \
   --benchmark_out=benchmark-results/contender.json
-python M2/submodules/benchmark/tools/compare.py benchmarks \
+python /path/to/google-benchmark/tools/compare.py benchmarks \
   benchmark-results/baseline.json benchmark-results/contender.json
 ```
 

@@ -532,9 +532,7 @@ if(BUILD_BENCHMARKS)
     target_link_libraries(M2-benchmarks M2-engine ${BDWGC_LIBRARIES} ${CMAKE_DL_LIB})
   endif()
 
-  if(BENCHMARK_FOUND)
-    target_link_libraries(M2-benchmarks benchmark::benchmark)
-  endif()
+  target_link_libraries(M2-benchmarks benchmark::benchmark)
 
   target_compile_options(M2-benchmarks PRIVATE
     -Wno-sign-compare
