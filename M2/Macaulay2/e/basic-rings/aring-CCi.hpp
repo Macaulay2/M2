@@ -76,12 +76,12 @@ class ARingCCi : public SimpleARing<ARingCCi>
 
     bool is_empty(const ElementType &f) const { return mpfi_is_empty(&f.re)>0 || mpfi_is_empty(&f.im)>0; }
     bool is_member(const ARingCCC::ElementType &a, const ElementType &f) const { return mpfi_cmp_fr(&f.re,&a.re) == 0 && mpfi_cmp_fr(&f.im,&a.im) == 0; }
-    bool is_member(const ARingRRi::ElementType &a, const ElementType &f) const { return mpfi_cmp(&f.re,&a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(const ARingRRR::ElementType &a, const ElementType &f) const { return mpfi_cmp_fr(&f.re,&a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(mpq_srcptr a, const ElementType &f) const { return mpfi_cmp_q(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(mpz_srcptr a, const ElementType &f) const { return mpfi_cmp_z(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(long a, const ElementType &f) const { return mpfi_cmp_si(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(double a, const ElementType &f) const { return mpfi_cmp_d(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0); }
+    bool is_member(const ARingRRi::ElementType &a, const ElementType &f) const { return mpfi_cmp(&f.re,&a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(const ARingRRR::ElementType &a, const ElementType &f) const { return mpfi_cmp_fr(&f.re,&a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(mpq_srcptr a, const ElementType &f) const { return mpfi_cmp_q(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(mpz_srcptr a, const ElementType &f) const { return mpfi_cmp_z(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(long a, const ElementType &f) const { return mpfi_cmp_si(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(double a, const ElementType &f) const { return mpfi_cmp_d(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
     
     bool is_subset(const ElementType &g, const ElementType &f) const { return mpfi_cmp_fr(&f.re,&(g.re.left)) == 0 and mpfi_cmp_fr(&f.re,&(g.re.right)) == 0 and mpfi_cmp_fr(&f.im,&(g.im.left)) == 0 and mpfi_cmp_fr(&f.im,&(g.im.right)) == 0; }
 
@@ -158,7 +158,8 @@ class ARingCCi : public SimpleARing<ARingCCi>
 
   void set_var(ElementType &result, int v) const
   {
-    mpfi_set_si(&result.re, v);
+    (void) v;
+    mpfi_set_si(&result.re, 1);
     mpfi_set_si(&result.im, 0);
   }
 
@@ -441,16 +442,22 @@ class ARingCCi : public SimpleARing<ARingCCi>
       mpfi_mid(&a.im,&b.im);
   }
     
-  void diameter(ARingRRi::ElementType &a, const ElementType &b) const {
-      mpfi_t temp;
-      mpfi_set(&a,&b.re);
-      mpfi_sqr(&a,&a);
-      mpfi_set(temp,&b.im);
-      mpfi_sqr(temp,temp);
-      mpfi_add(&a,&a,temp);
-      mpfi_sqrt(&a,&a);
+  void diameter(ARingRRi::ElementType &a, const ElementType &b) const
+  {
+    mpfi_t height;
+    mpfi_init2(height, get_precision());
+    // Compute the side lengths with outward rounding, then the diagonal.
+    mpfi_set_fr(&a, &b.re.right);
+    mpfi_sub_fr(&a, &a, &b.re.left);
+    mpfi_set_fr(height, &b.im.right);
+    mpfi_sub_fr(height, height, &b.im.left);
+    mpfi_sqr(&a, &a);
+    mpfi_sqr(height, height);
+    mpfi_add(&a, &a, height);
+    mpfi_sqrt(&a, &a);
+    mpfi_clear(height);
   }
-    
+
   void elem_text_out(buffer &o,
                      const ElementType &a,
                      bool p_one,
@@ -529,6 +536,7 @@ class ARingCCi : public SimpleARing<ARingCCi>
   void abs(ElementType &result, const ElementType &a) const
   {
       mpfi_t temp;
+      mpfi_init2(temp, get_precision());
       mpfi_set(&result.re,&a.re);
       mpfi_sqr(&result.re,&result.re);
       mpfi_set(temp,&a.im);
@@ -536,6 +544,7 @@ class ARingCCi : public SimpleARing<ARingCCi>
       mpfi_add(&result.re,&result.re,temp);
       mpfi_sqrt(&result.re,&result.re);
       mpfi_set_si(&result.im,0);
+      mpfi_clear(temp);
   }
 
   void abs_squared(ElementType &result, const ElementType &a) const
