@@ -1,6 +1,8 @@
 // Copyright 2012-2013 Michael E. Stillman
 
+#include <cmath>
 #include <cstdio>
+#include <stdexcept>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -69,6 +71,24 @@ void testRingNegateRR(const M2::ARingRR& R, int ntrials)
   R.clear(c);
   R.clear(b);
   R.clear(a);
+}
+
+TEST(ARingRR, compare_elems) 
+{
+  M2::ARingRR R;
+  M2::ARingRR::ElementType a, b, c, d;
+  R.init(a);
+  R.init(b);
+  R.init(c);
+  R.init(d);
+  R.set(a, 0.0);
+  R.set(b, -0.0);
+  R.set(c, -0.01);
+  R.set(d, 0.01);
+  EXPECT_EQ(R.compare_elems(a,b),0);
+  EXPECT_EQ(R.compare_elems(c,d),-1);
+  EXPECT_EQ(R.compare_elems(d,a),1);
+
 }
 
 TEST(ARingRR, negate)
@@ -262,6 +282,25 @@ TEST(ARingRR, power_and_invert)
   R.clear(c);
   R.clear(b);
   R.clear(a);
+}
+
+TEST(ARingRR, invert)
+{
+    EXPECT_TRUE(true);
+    M2::ARingRR R;
+    ARingElementGenerator<M2::ARingRR> gen(R);
+    M2::ARingRR::ElementType a, b, c, d;
+    R.init(a);
+    R.init(b);
+    R.init(c);
+    R.init(d);
+    R.set(b, 2.0);
+    R.set(c, 1.0);
+    R.set(d, 0.5);
+    R.invert(b,b);
+    EXPECT_TRUE(b == d);
+    // TODO: This fails. Fix the invert function to maybe throw on NaN and inf.
+    EXPECT_THROW(R.invert(a,a), std::runtime_error);
 }
 
 // TODO: syzygy?
