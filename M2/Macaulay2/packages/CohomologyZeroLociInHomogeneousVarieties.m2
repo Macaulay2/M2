@@ -80,36 +80,12 @@ If you compiled Macaulay2 from source, reconfigure and rebuild with:
     ./configure --with-python
 and reinstall this package afterwards.///;
 
-------------------------------------------------------------------
--- Check numpy 
-------------------------------------------------------------------
-hasNumPy := true;
-try (import "numpy";) else hasNumPy = false;
-
-if not hasNumPy then (
-    print "CohomologyZeroLociInHomogeneousVarieties: numpy was not found; attempting automatic installation with pipInstall...";
-    installOK := true;
-    try (pipInstall "numpy";) else installOK = false;
-    if installOK then (
-    	try (((import "sys")@@("path"))@@append((import "site")@@getusersitepackages());) else();
-    hasNumPy = true;
-    try(import "numpy";) else hasNumPy = false;
-    ););
-
-if not hasNumPy then
-    error ///CohomologyZeroLociInHomogeneousVarieties requires the Python
-package numpy, which could not be found or installed automatically.
-
-Please install it manually by running one of the following commands in a
-terminal (outside Macaulay2), then restart Macaulay2 and reload this
-package:
-    python3 -m pip install numpy
-    pip install numpy
-
-If Macaulay2 is configured to use a specific Python executable (for
-example inside a virtual environment), make sure numpy is installed in
-that same environment. See the Python package's documentation on
-setupVirtualEnvironment and the "executable" Configuration option.///;
+hasNumPy := true; 
+try (import "numpy";) else hasNumPy = false; 
+if not hasNumPy then error ///CohomologyZeroLociInHomogeneousVarieties requires the Python package numpy, 
+which could not be found. Please install it by following the instructions in the Python package's tutorial on creating a virtual environment and installing NumPy: 
+https://www.macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/Python/html/___Python_sptutorial_co_spcreating_spa_spvirtual_spenvironment_spand_spinstalling_sp__Num__Py.html 
+Then restart Macaulay2 with the Python package's "executable" option set to the virtual environment's Python executable, and reload this package.///;
 
 ((import "sys")@@("path"))@@append(toPython (packageDir | "CohomologyZeroLociInHomogeneousVarieties/pythonFiles/"));
 
