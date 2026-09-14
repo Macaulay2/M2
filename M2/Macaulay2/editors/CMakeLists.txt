@@ -32,9 +32,11 @@ add_custom_command(OUTPUT ${GRAMMAR_FILES}
 
 find_program(EMACS NAMES emacs)
 if(NOT EMACS)
-  message(STATUS "Emacs not found; skipping M2-emacs target")
+  message(STATUS "Emacs not found; skipping Emacs package")
+  add_custom_target(M2-emacs)
 elseif(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2)
-  message(WARNING "Macaulay2/editors/emacs submodule is missing; skipping M2-emacs target")
+  message(WARNING "Macaulay2/editors/emacs submodule is missing; skipping Emacs package")
+  add_custom_target(M2-emacs)
 else()
 # TODO: only the emacs target is installed in usr-dist by default
 set(M2_INSTALL_EMACSDIR
