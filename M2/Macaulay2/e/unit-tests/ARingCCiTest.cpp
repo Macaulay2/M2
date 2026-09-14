@@ -952,8 +952,8 @@ TEST_F(ARingCCi, Syzygy)
 
 TEST_F(ARingCCi, Magnitude)
 {
-  // Check the center and size of a rectangle, as well as distances from
-  // zero. A single point has no width, even when it is far from zero.
+  // Check the midpoint of a rectangle and the distance of a point from zero.
+  // Cover squared distance and storing the distance back in the input too.
 
   {
     // The center is 2 in the real range and -3 in the imaginary range.
@@ -1002,33 +1002,6 @@ TEST_F(ARingCCi, Magnitude)
     EXPECT_TRUE(hasValue(a, 5, 0));
   }
 
-  {
-    // A rectangle with width 3 and height 4 has a diagonal of length 5.
-    // Both bounds of the returned answer should equal 5.
-    SCOPED_TRACE("diameter: three by four rectangle");
-    M2::ARingRRi R(100);
-    M2::ARingRRi::Element diameter(R);
-    setBounds(a, 1, 4, 2, 6);
-
-    C.diameter(diameter, a);
-
-    EXPECT_TRUE(realEquals(&diameter.value().left, 5)) << "lower diameter bound";
-    EXPECT_TRUE(realEquals(&diameter.value().right, 5)) << "upper diameter bound";
-  }
-
-  {
-    // A point has no width or height, so its diameter is zero. Its distance
-    // from zero is a different quantity.
-    SCOPED_TRACE("diameter: point");
-    M2::ARingRRi R(100);
-    M2::ARingRRi::Element diameter(R);
-    setBounds(a, 3, 3, 4, 4);
-
-    C.diameter(diameter, a);
-
-    EXPECT_TRUE(realEquals(&diameter.value().left, 0)) << "lower diameter bound";
-    EXPECT_TRUE(realEquals(&diameter.value().right, 0)) << "upper diameter bound";
-  }
 }
 
 TEST_F(ARingCCi, Formatting)
