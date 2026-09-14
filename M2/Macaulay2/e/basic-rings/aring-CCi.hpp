@@ -442,22 +442,16 @@ class ARingCCi : public SimpleARing<ARingCCi>
       mpfi_mid(&a.im,&b.im);
   }
     
-  void diameter(ARingRRi::ElementType &a, const ElementType &b) const
-  {
-    mpfi_t height;
-    mpfi_init2(height, get_precision());
-    // Compute the side lengths with outward rounding, then the diagonal.
-    mpfi_set_fr(&a, &b.re.right);
-    mpfi_sub_fr(&a, &a, &b.re.left);
-    mpfi_set_fr(height, &b.im.right);
-    mpfi_sub_fr(height, height, &b.im.left);
-    mpfi_sqr(&a, &a);
-    mpfi_sqr(height, height);
-    mpfi_add(&a, &a, height);
-    mpfi_sqrt(&a, &a);
-    mpfi_clear(height);
+  void diameter(ARingRRi::ElementType &a, const ElementType &b) const {
+      mpfi_t temp;
+      mpfi_set(&a,&b.re);
+      mpfi_sqr(&a,&a);
+      mpfi_set(temp,&b.im);
+      mpfi_sqr(temp,temp);
+      mpfi_add(&a,&a,temp);
+      mpfi_sqrt(&a,&a);
   }
-
+    
   void elem_text_out(buffer &o,
                      const ElementType &a,
                      bool p_one,
