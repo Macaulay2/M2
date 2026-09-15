@@ -1,205 +1,208 @@
 // Copyright 2017 Michael E. Stillman
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <memory>
+#include "schreyer-resolutions/res-moninfo.hpp"
+
 #include <gtest/gtest.h>
 
-#include "schreyer-resolutions/res-moninfo.hpp"
+#include <vector>
+
+namespace {
+
+template <typename Monoid>
+void checkEncoding()
+{
+  Monoid monoid(4, {1, 1, 1, 1}, {}, MonomialOrderingType::GRevLex);
+  // Squares and mixed quadratic monomials exercise repeated and distinct
+  // variables.
+  for (int i = 0; i < monoid.n_vars(); ++i)
+    for (int j = i; j < monoid.n_vars(); ++j)
+      {
+        SCOPED_TRACE(::testing::Message() << "variables " << i << ", " << j);
+        int exponents[4] = {}, decoded[4] = {};
+        int encoded[12] = {}, reencoded[12] = {};
+        exponents[i]++;
+        exponents[j]++;
+        component_index component;
+
+        monoid.from_expvector(exponents, 3, encoded);
+        monoid.to_expvector(encoded, decoded, component);
+        EXPECT_EQ(component, 3);
+        for (int k = 0; k < 4; ++k)
+          EXPECT_EQ(decoded[k], exponents[k]) << "coordinate " << k;
+        monoid.from_expvector(decoded, 3, reencoded);
+        EXPECT_TRUE(monoid.is_equal(encoded, reencoded));
+      }
+}
+
+template <typename Monoid>
+void checkMultiplication(int identitySize, int twoVariableSize)
+{
+  Monoid monoid(4, {1, 1, 1, 1}, {}, MonomialOrderingType::GRevLex);
+  {
+    // Multiplication by one preserves both exponents and representation size.
+    SCOPED_TRACE("multiply: identity");
+    int zero[4] = {}, input[] = {0, 1, 0, 3}, decoded[4] = {};
+    int identity[12] = {}, value[12] = {}, product[12] = {};
+    component_index component;
+    monoid.from_expvector(zero, 0, identity);
+    monoid.from_expvector(input, 0, value);
+    monoid.mult(identity, value, product);
+    monoid.to_expvector(product, decoded, component);
+    EXPECT_EQ(monoid.monomial_size(identity), identitySize);
+    EXPECT_EQ(monoid.monomial_size(value), twoVariableSize);
+    EXPECT_EQ(monoid.monomial_size(product), twoVariableSize);
+    EXPECT_EQ(component, 0);
+    for (int k = 0; k < 4; ++k)
+      EXPECT_EQ(decoded[k], input[k]) << "coordinate " << k;
+  }
+  // Every quadratic times every variable must add the corresponding exponents.
+  for (int i = 0; i < 4; ++i)
+    for (int j = i; j < 4; ++j)
+      for (int k = 0; k < 4; ++k)
+        {
+          SCOPED_TRACE(::testing::Message()
+                       << "variables " << i << ", " << j << ", " << k);
+          int left[4] = {}, right[4] = {}, decoded[4] = {}, expected[4] = {};
+          int a[12] = {}, b[12] = {}, product[12] = {};
+          component_index component;
+          left[i]++;
+          left[j]++;
+          right[k]++;
+          expected[i]++;
+          expected[j]++;
+          expected[k]++;
+          monoid.from_expvector(left, 0, a);
+          monoid.from_expvector(right, 0, b);
+
+          monoid.mult(a, b, product);
+          monoid.to_expvector(product, decoded, component);
+          EXPECT_EQ(component, 0);
+          for (int index = 0; index < 4; ++index)
+            EXPECT_EQ(decoded[index], expected[index])
+                << "coordinate " << index;
+          if (identitySize == 6)
+            EXPECT_EQ(monoid.monomial_size(product), 6);
+          else
+            EXPECT_EQ(monoid.monomial_size(product),
+                      monoid.monomial_size(a) + monoid.monomial_size(b) - 3);
+        }
+}
+
+// Unit exponent vectors expose truncation at the first and last variable.
+void checkVariableEncoding(int variables)
+{
+  ResMonoidDense monoid(variables,
+                        std::vector<int>(variables, 1),
+                        {},
+                        MonomialOrderingType::GRevLex);
+  for (int variable : {0, variables - 1})
+    {
+      SCOPED_TRACE(::testing::Message() << "variables " << variables
+                                        << ", nonzero coordinate " << variable);
+      std::vector<int> expected(variables, 0), actual(variables, -1);
+      std::vector<int> encoded(monoid.max_monomial_size());
+      expected[variable] = 1;
+      component_index component = -1;
+
+      ASSERT_TRUE(monoid.from_expvector(expected.data(), 3, encoded.data()));
+      ASSERT_TRUE(
+          monoid.to_expvector(encoded.data(), actual.data(), component));
+      EXPECT_EQ(actual, expected);
+      EXPECT_EQ(component, 3);
+    }
+}
+
+}  // namespace
 
 TEST(ResMonoidDense, create)
 {
-  ResMonoidDense M1(4,
-                    std::vector<int>{1, 1, 1, 1},
-                    std::vector<int>{},
-                    MonomialOrderingType::GRevLex);
-
-  ResMonoidDense M2(4,
-                    std::vector<int>{1, 2, 3, 4},
-                    std::vector<int>{1, 1, 1, 1, 1, 1, 0, 0},
-                    MonomialOrderingType::Weights);
-
-  ResMonoidDense M3(4,
-                    std::vector<int>{1, 1, 1, 1},
-                    std::vector<int>{},
-                    MonomialOrderingType::Lex);
-
-  EXPECT_EQ(4, M1.n_vars());
-  std::vector<res_monomial_word> monomspace(100);
-  EXPECT_EQ(100, monomspace.size());
+  // Each supported ordering retains the requested number of variables.
+  {
+    SCOPED_TRACE("construct: grevlex");
+    ResMonoidDense monoid(4, {1, 1, 1, 1}, {}, MonomialOrderingType::GRevLex);
+    EXPECT_EQ(monoid.n_vars(), 4);
+  }
+  {
+    SCOPED_TRACE("construct: weighted");
+    ResMonoidDense monoid(4,
+                          {1, 2, 3, 4},
+                          {1, 1, 1, 1, 1, 1, 0, 0},
+                          MonomialOrderingType::Weights);
+    EXPECT_EQ(monoid.n_vars(), 4);
+  }
+  {
+    SCOPED_TRACE("construct: lex");
+    ResMonoidDense monoid(4, {1, 1, 1, 1}, {}, MonomialOrderingType::Lex);
+    EXPECT_EQ(monoid.n_vars(), 4);
+  }
 }
 
 TEST(ResMonoidDense, encodeDecode)
 {
-  ResMonoidDense M(4,
-                   std::vector<int>{1, 1, 1, 1},
-                   std::vector<int>{},
-                   MonomialOrderingType::GRevLex);
-
-  // Loop through a number of exponent vectors, encode, then decode.
-
-  for (int i = 0; i < M.n_vars(); i++)
-    for (int j = i; j < M.n_vars(); j++)
-      {
-        int exp[]{0, 0, 0, 0};
-        exp[i]++;
-        exp[j]++;
-        int mon[]{0, 0, 0, 0, 0, 0, 0, 0};
-        // first encode
-        M.from_expvector(exp, 3, mon);
-        // now decode
-        component_index comp;
-        int exp2[]{0, 0, 0, 0};
-        M.to_expvector(mon, exp2, comp);
-        EXPECT_EQ(3, comp);
-        for (int k = 0; k < M.n_vars(); k++) EXPECT_EQ(exp[k], exp2[k]);
-        std::cout << "i=" << i << " j=" << j << " mon = ";
-        M.dump(std::cout, mon);
-        std::cout << std::endl;
-      }
+  // Dense encodings preserve the exponent vector and module component.
+  checkEncoding<ResMonoidDense>();
 }
 
 TEST(ResMonoidSparse, encodeDecode)
 {
-  ResMonoidSparse M(4,
-                    std::vector<int>{1, 1, 1, 1},
-                    std::vector<int>{},
-                    MonomialOrderingType::GRevLex);
-
-  // Loop through a number of exponent vectors, encode, then decode.
-
-  for (int i = 0; i < M.n_vars(); i++)
-    for (int j = i; j < M.n_vars(); j++)
-      {
-        int exp[]{0, 0, 0, 0};
-        int mon[]{0, 0, 0, 0, 0, 0, 0, 0};
-        component_index comp;
-        int exp2[]{0, 0, 0, 0};
-        int mon2[]{0, 0, 0, 0, 0, 0, 0, 0};
-
-        exp[i]++;
-        exp[j]++;
-        // first encode
-        M.from_expvector(exp, 3, mon);
-        // now decode
-        M.to_expvector(mon, exp2, comp);
-        EXPECT_EQ(3, comp);
-        for (int k = 0; k < M.n_vars(); k++) EXPECT_EQ(exp[k], exp2[k]);
-        // now re-encode
-        M.from_expvector(exp2, 3, mon2);
-        EXPECT_TRUE(M.is_equal(mon, mon2));
-        // now display
-        std::cout << "i=" << i << " j=" << j << " mon = ";
-        M.dump(std::cout, mon);
-        std::cout << std::endl;
-      }
+  // Sparse encodings preserve the exponent vector and module component.
+  checkEncoding<ResMonoidSparse>();
 }
 
 TEST(ResMonoidDense, mult)
 {
-  ResMonoidDense M(4,
-                   std::vector<int>{1, 1, 1, 1},
-                   std::vector<int>{},
-                   MonomialOrderingType::GRevLex);
-
-  int exp1[]{0, 0, 0, 0};
-  int exp2[]{0, 1, 0, 3};
-  int exp3[]{0, 0, 0, 0};
-  int mon1[]{0, 0, 0, 0, 0, 0};
-  int mon2[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int mon3[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int mon[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int comp;
-  M.from_expvector(exp1, 0, mon1);
-  M.from_expvector(exp2, 0, mon2);
-  M.mult(mon1, mon2, mon);
-  M.to_expvector(mon, exp3, comp);
-  EXPECT_EQ(6, M.monomial_size(mon1));
-  EXPECT_EQ(6, M.monomial_size(mon2));
-  EXPECT_EQ(6, M.monomial_size(mon));
-
-  for (int i = 0; i < M.n_vars(); i++)
-    for (int j = i; j < M.n_vars(); j++)
-      for (int k = 0; k < M.n_vars(); k++)
-        {
-          int exp1[]{0, 0, 0, 0};
-          exp1[i]++;
-          exp1[j]++;
-          int exp2[]{0, 0, 0, 0};
-          exp2[k]++;
-          M.from_expvector(exp1, 0, mon1);
-          M.from_expvector(exp2, 0, mon2);
-          M.mult(mon1, mon2, mon);
-          M.mult(mon1, mon2, mon3);
-          EXPECT_TRUE(M.is_equal(mon, mon3));
-          M.to_expvector(mon, exp3, comp);
-          int exp3a[]{0, 0, 0, 0};
-          exp3a[i]++;
-          exp3a[j]++;
-          exp3a[k]++;
-          for (int ell = 0; ell < M.n_vars(); ell++)
-            EXPECT_EQ(exp3[ell], exp3a[ell]);
-          EXPECT_EQ(M.monomial_size(mon), M.monomial_size(mon1));
-          EXPECT_EQ(M.monomial_size(mon), M.monomial_size(mon2));
-        }
+  // Dense products add exponents in a fixed-size representation.
+  checkMultiplication<ResMonoidDense>(6, 6);
 }
 
 TEST(ResMonoidSparse, mult)
 {
-  ResMonoidSparse M(4,
-                    std::vector<int>{1, 1, 1, 1},
-                    std::vector<int>{},
-                    MonomialOrderingType::GRevLex);
-
-  int exp1[]{0, 0, 0, 0};
-  int exp2[]{0, 1, 0, 3};
-  int exp3[]{0, 0, 0, 0};
-  int mon1[]{0, 0, 0, 0, 0, 0};
-  int mon2[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int mon3[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int mon[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int comp;
-  M.from_expvector(exp1, 0, mon1);
-  M.from_expvector(exp2, 0, mon2);
-  M.mult(mon1, mon2, mon);
-  M.to_expvector(mon, exp3, comp);
-  EXPECT_EQ(3, M.monomial_size(mon1));
-  EXPECT_EQ(7, M.monomial_size(mon2));
-  EXPECT_EQ(7, M.monomial_size(mon));
-
-  for (int i = 0; i < M.n_vars(); i++)
-    for (int j = i; j < M.n_vars(); j++)
-      for (int k = 0; k < M.n_vars(); k++)
-        {
-          int exp1[]{0, 0, 0, 0};
-          exp1[i]++;
-          exp1[j]++;
-          int exp2[]{0, 0, 0, 0};
-          exp2[k]++;
-          M.from_expvector(exp1, 0, mon1);
-          M.from_expvector(exp2, 0, mon2);
-          M.mult(mon1, mon2, mon);
-          M.mult(mon1, mon2, mon3);
-          EXPECT_TRUE(M.is_equal(mon, mon3));
-          M.to_expvector(mon, exp3, comp);
-          int exp3a[]{0, 0, 0, 0};
-          exp3a[i]++;
-          exp3a[j]++;
-          exp3a[k]++;
-          for (int ell = 0; ell < M.n_vars(); ell++)
-            EXPECT_EQ(exp3[ell], exp3a[ell]);
-          EXPECT_EQ(M.monomial_size(mon),
-                    M.monomial_size(mon1) + M.monomial_size(mon2) - 3);
-        }
+  // Sparse products add exponents in a variable-length representation.
+  checkMultiplication<ResMonoidSparse>(3, 7);
 }
 
-TEST(ResMonoidDense, encode5) {}
-TEST(ResMonoidDense, encode6) {}
-TEST(ResMonoidDense, concatenateResMonoidDense) {}
-TEST(ResMonoidDense, outOfRange) {}
-TEST(ResMonoidDense, encodeBoundary) {}
-// Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
-// indent-tabs-mode: nil
-// End:
+TEST(ResMonoidDense, encode5)
+{
+  // Five-variable encodings retain the first and last coordinates.
+  checkVariableEncoding(5);
+}
+
+TEST(ResMonoidDense, encode6)
+{
+  // Six-variable encodings retain the first and last coordinates.
+  checkVariableEncoding(6);
+}
+
+TEST(ResMonoidDense, concatenateResMonoidDense)
+{
+  // Dense resolution monomials expose multiplication, not a concatenation API.
+  GTEST_SKIP() << "ResMonoidDense has no concatenation operation; mult checks "
+                  "multiplication";
+}
+
+TEST(ResMonoidDense, outOfRange)
+{
+  // The reserved guard bit makes an encoded module component invalid.
+  ResMonoidDense monoid(2, {1, 1}, {}, MonomialOrderingType::GRevLex);
+  std::vector<int> encoded(monoid.max_monomial_size());
+  monoid.one(1 << 28, encoded.data());
+
+  EXPECT_FALSE(monoid.check_monomial(encoded.data()));
+}
+
+TEST(ResMonoidDense, encodeBoundary)
+{
+  // The largest component below the reserved guard bit still round-trips.
+  ResMonoidDense monoid(2, {1, 1}, {}, MonomialOrderingType::GRevLex);
+  constexpr component_index largestComponent = (1 << 28) - 1;
+  std::vector<int> encoded(monoid.max_monomial_size());
+  int exponents[] = {-1, -1};
+  component_index component = -1;
+  ASSERT_TRUE(monoid.one(largestComponent, encoded.data()));
+
+  EXPECT_TRUE(monoid.check_monomial(encoded.data()));
+  ASSERT_TRUE(monoid.to_expvector(encoded.data(), exponents, component));
+  EXPECT_EQ(component, largestComponent);
+  EXPECT_EQ(exponents[0], 0);
+  EXPECT_EQ(exponents[1], 0);
+}

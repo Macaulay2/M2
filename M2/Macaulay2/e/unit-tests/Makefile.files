@@ -21,6 +21,7 @@ UNITTEST_CCFILES := \
     ARingRRiTest \
     ARingCCCTest \
     ARingZZpTest \
+    ARingGFTest \
     RingZZTest \
     RingZZpTest \
     RingQQTest \
@@ -62,10 +63,8 @@ UNITTEST_CCFILES := \
     RingCCCTest \
     OverflowTest \
     BRP-test \
-    RingCCCTest \
+    BasicPolyListParserTest \
     LatticePointsTest
-
-#    ARingGFTest \
 
 UNITTEST_TARGET := testMain
 

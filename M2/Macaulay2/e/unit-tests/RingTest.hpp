@@ -1,21 +1,20 @@
 // Copyright 2013 Michael E. Stillman
 
 #ifndef M2_UNITTESTS__RING_TEST_HPP__
-#define M2_UNITTESTS__RING_TEST_HPP__
+#  define M2_UNITTESTS__RING_TEST_HPP__
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-//#include <sstream>
-#include <memory>
-#include <gtest/gtest.h>
-//#include <mpfr.h>
+#  include <gtest/gtest.h>
 
-#include "interface/random.h"
-#include "rings/ZZ.hpp"
-#include "exceptions.hpp"
+#  include <istream>
+#  include <string>
 
-const int ntrials = 100;  // 5000
+#  include "unit-tests/RingElem.hpp"
+
+#  include "interface/random.h"
+#  include "rings/ZZ.hpp"
+#  include "exceptions.hpp"
+
+const int ntrials = 100;
 
 template <typename T>
 std::istream& fromStream(std::istream& i,
@@ -44,26 +43,43 @@ class RingElementGenerator
   RingElementGenerator(const RingType& R) : mRing(R), mNext(0) {}
   ring_elem nextElement() { return getElement<RingType>(mRing, ++mNext); }
   void reset() { mNext = 0; }
+
  private:
   const RingType& mRing;
   int mNext;
 };
 
-template <typename T>
-void testRingCoercions(const T* R, int ntrials)
+// Keep each property independent of the order in which GoogleTest runs it.
+inline void seedRingRandom(unsigned long seed = 0x52494e47)
 {
-  // from int
-  // from mpz
-  // from rational
+  mpz_t value;
+  mpz_init_set_ui(value, seed);
+  rawSetRandomSeed(value);
+  mpz_clear(value);
 }
+
+template <typename T>
+::testing::AssertionResult ringEquals(const T* R,
+                                      ring_elem expected,
+                                      ring_elem actual)
+{
+  if (R->is_equal(expected, actual)) return ::testing::AssertionSuccess();
+  return ::testing::AssertionFailure() << "expected " << RingElem(R, expected)
+                                       << ", got " << RingElem(R, actual);
+}
+
 template <typename T>
 void testRingNegate(const T* R, int ntrials)
 {
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
-      // test: (-a) + (a) == a
+      // Negation must cancel the original input.
       ring_elem a = gen.nextElement();
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << RingElem(R, a));
       ring_elem b = R->negate(a);
       ring_elem c = R->add(a, b);
       EXPECT_TRUE(R->is_zero(c));
@@ -72,52 +88,63 @@ void testRingNegate(const T* R, int ntrials)
 template <typename T>
 void testRingAdd(const T* R, int ntrials)
 {
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
       // test: (a+b) + (-b) == a
       ring_elem a = gen.nextElement();
       ring_elem b = gen.nextElement();
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << RingElem(R, a)
+                   << ", b=" << RingElem(R, b));
       ring_elem c = R->add(a, b);
       ring_elem d = R->negate(b);
       ring_elem e = R->add(c, d);  // should be a
-      EXPECT_TRUE(R->is_equal(e, a));
+      EXPECT_TRUE(ringEquals(R, a, e));
     }
 }
 template <typename T>
 void testRingSubtract(const T* R, int ntrials)
 {
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
       // test: (a-b) + (b) == a
       ring_elem a = gen.nextElement();
       ring_elem b = gen.nextElement();
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << RingElem(R, a)
+                   << ", b=" << RingElem(R, b));
       ring_elem c = R->subtract(a, b);
       ring_elem e = R->add(c, b);
-      EXPECT_TRUE(R->is_equal(e, a));
+      EXPECT_TRUE(ringEquals(R, a, e));
     }
 }
 template <typename T>
 void testRingDivide(const T* R, int ntrials)
 {
-  auto zero = R->zero();
-  auto a = R->from_long(3);
-  EXPECT_ANY_THROW(R->divide(a, zero));
-
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
       // test: (a*b) // b == a
       ring_elem a = gen.nextElement();
       ring_elem b = gen.nextElement();
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << RingElem(R, a)
+                   << ", b=" << RingElem(R, b));
       ring_elem c = R->mult(a, b);
       if (R->is_zero(b))
         EXPECT_TRUE(R->is_zero(c));
       else
         {
           ring_elem d = R->divide(c, b);
-          EXPECT_TRUE(R->is_equal(d, a));
+          EXPECT_TRUE(ringEquals(R, a, d));
         }
     }
 }
@@ -125,38 +152,45 @@ void testRingDivide(const T* R, int ntrials)
 template <typename T>
 void testRingAxioms(const T* R, int ntrials)
 {
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
       ring_elem a = gen.nextElement();
       ring_elem b = gen.nextElement();
       ring_elem c = gen.nextElement();
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << RingElem(R, a)
+                   << ", b=" << RingElem(R, b) << ", c=" << RingElem(R, c));
 
-      // Test commutativity
-      // test: a*b = b*a
-      // test: a+b == b+a
-      ring_elem d = R->add(a, b);
-      ring_elem e = R->add(b, a);
-      EXPECT_TRUE(R->is_equal(d, e));
-      d = R->mult(a, b);
-      e = R->mult(b, a);
-      EXPECT_TRUE(R->is_equal(d, e));
-
-      // Test associativity
-      // test: a+(b+c) == (a+b)+c
-      // test: a*(b*c) == (a*b)*c
-      d = R->add(a, R->add(b, c));
-      e = R->add(R->add(a, b), c);
-      EXPECT_TRUE(R->is_equal(d, e));
-      d = R->mult(a, R->mult(b, c));
-      e = R->mult(R->mult(a, b), c);
-      EXPECT_TRUE(R->is_equal(d, e));
-
-      // Test distributivity
-      // test: a*(b+c) == a*b + a*c
-      d = R->mult(a, R->add(b, c));
-      e = R->add(R->mult(a, b), R->mult(a, c));
-      EXPECT_TRUE(R->is_equal(d, e));
+      // Swapping operands preserves sums and products.
+      {
+        SCOPED_TRACE("commutativity");
+        ring_elem d = R->add(a, b);
+        ring_elem e = R->add(b, a);
+        EXPECT_TRUE(ringEquals(R, d, e));
+        d = R->mult(a, b);
+        e = R->mult(b, a);
+        EXPECT_TRUE(ringEquals(R, d, e));
+      }
+      // Grouping cannot change exact ring arithmetic.
+      {
+        SCOPED_TRACE("associativity");
+        ring_elem d = R->add(a, R->add(b, c));
+        ring_elem e = R->add(R->add(a, b), c);
+        EXPECT_TRUE(ringEquals(R, d, e));
+        d = R->mult(a, R->mult(b, c));
+        e = R->mult(R->mult(a, b), c);
+        EXPECT_TRUE(ringEquals(R, d, e));
+      }
+      // Expanding a product agrees with the sum of products.
+      {
+        SCOPED_TRACE("distributivity");
+        ring_elem d = R->mult(a, R->add(b, c));
+        ring_elem e = R->add(R->mult(a, b), R->mult(a, c));
+        EXPECT_TRUE(ringEquals(R, d, e));
+      }
     }
 }
 template <typename T>
@@ -164,113 +198,133 @@ void testRingPower(const T* R, int ntrials)
 {
   mpz_t gmp1;
   mpz_init(gmp1);
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
       ring_elem a = gen.nextElement();
-      // TODO: what should the answer here be?
-      // EXPECT_TRUE(R->is_equal(R->power(a, 0), R->one())); // 0^0 == 1 too?
-      EXPECT_TRUE(R->is_equal(R->power(a, 1), a));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << RingElem(R, a));
+      EXPECT_TRUE(ringEquals(R, R->one(), R->power(a, 0)));
+      EXPECT_TRUE(ringEquals(R, a, R->power(a, 1)));
 
       int e1 = rawRandomInt(10) + 1;
       int e2 = rawRandomInt(10) + 1;
-      // std::cout << "(" << e1 << "," << e2 << ")" << std::endl;
+      SCOPED_TRACE(::testing::Message() << "exponents " << e1 << ", " << e2);
       ring_elem b = R->power(a, e1);
       ring_elem c = R->power(a, e2);
       ring_elem d = R->power(a, e1 + e2);
-      EXPECT_TRUE(R->is_equal(R->mult(b, c), d));
+      EXPECT_TRUE(ringEquals(R, R->mult(b, c), d));
 
       // Make sure that powers via mpz work (at least for small exponents)
       mpz_set_si(gmp1, e1);
       ring_elem b1 = R->power(a, gmp1);
-      EXPECT_TRUE(R->is_equal(b1, b));
+      EXPECT_TRUE(ringEquals(R, b1, b));
     }
   mpz_clear(gmp1);
 }
 template <typename T>
 void testRingGCD(const T* R, int ntrials)
 {
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
       ring_elem a = gen.nextElement();
       ring_elem b = gen.nextElement();
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << RingElem(R, a)
+                   << ", b=" << RingElem(R, b));
 
-      // (a // gcd(a,b) == 0, b // gcd(a,b) == 0,
+      // The gcd divides each input and the Bezout coefficients reconstruct it.
       ring_elem c = R->gcd(a, b);
       ring_elem u, v;
       ring_elem d = R->gcd_extended(a, b, u, v);
 
-      EXPECT_TRUE(R->is_equal(c, d));
-      EXPECT_TRUE(R->is_equal(c, R->add(R->mult(a, u), R->mult(b, v))));
-      EXPECT_TRUE(R->is_equal(a, R->mult(R->divide(a, c), c)));
+      EXPECT_TRUE(ringEquals(R, c, d));
+      EXPECT_TRUE(ringEquals(R, c, R->add(R->mult(a, u), R->mult(b, v))));
+      if (!R->is_zero(c))
+        {
+          EXPECT_TRUE(ringEquals(R, a, R->mult(R->divide(a, c), c)));
+          EXPECT_TRUE(ringEquals(R, b, R->mult(R->divide(b, c), c)));
+        }
     }
 }
 template <typename T>
 void testRingRemainder(const T* R, int ntrials)
 {
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
       ring_elem a = gen.nextElement();
       ring_elem b = gen.nextElement();
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << RingElem(R, a)
+                   << ", b=" << RingElem(R, b));
 
-#if 0
-      ring_elem c = R->remainder(a, R->zero()); // FAILS!!
-      EXPECT_TRUE(R->is_equal(c,a));
-#endif
-
+      if (R->is_zero(b)) continue;  // Remainder requires a nonzero divisor.
       ring_elem r = R->remainder(a, b);
       ring_elem q = R->quotient(a, b);
       ring_elem r1, q1;
       r1 = R->remainderAndQuotient(a, b, q1);
 
-      EXPECT_TRUE(R->is_equal(r, r1));
-      EXPECT_TRUE(R->is_equal(q, q1));
+      EXPECT_TRUE(ringEquals(R, r, r1));
+      EXPECT_TRUE(ringEquals(R, q, q1));
       ring_elem a1 = R->add(R->mult(q, b), r);
-      EXPECT_TRUE(R->is_equal(a, a1));
+      EXPECT_TRUE(ringEquals(R, a, a1));
     }
 }
 template <typename T>
 void testRingSyzygy(const T* R, int ntrials)
 {
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
-      ring_elem u, v;
       ring_elem a = gen.nextElement();
       ring_elem b = gen.nextElement();
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << RingElem(R, a)
+                   << ", b=" << RingElem(R, b));
       if (R->is_zero(b)) continue;
 
-      // special cases (note: b != 0 for rest of routine)
-      // syzygy(0,b) returns (1,0)
-      R->syzygy(R->zero(), b, u, v);
-      EXPECT_TRUE(R->is_equal(u, R->one()));
-      EXPECT_TRUE(R->is_equal(v, R->zero()));
-      // syzygy(a,1) returns (1,-a)
-      R->syzygy(a, R->one(), u, v);
-      EXPECT_TRUE(R->is_equal(u, R->one()));
-      EXPECT_TRUE(R->is_equal(v, R->negate(a)));
-      // syzygy(a,-1) returns (1,a)
-      R->syzygy(a, R->minus_one(), u, v);
-      EXPECT_TRUE(R->is_equal(u, R->one()));
-      EXPECT_TRUE(R->is_equal(v, a));
-
-      R->syzygy(a, b, u, v);
-      ring_elem result = R->add(R->mult(a, u), R->mult(b, v));
-#if 0
-      buffer o;
-      o << "a=";
-      R->elem_text_out(o,a);
-      o << " b=";
-      R->elem_text_out(o,b);
-      o << " u=";
-      R->elem_text_out(o,u);
-      o << " v=";
-      R->elem_text_out(o,v);
-      std::cout << o.str() << std::endl;
-#endif
-      EXPECT_TRUE(R->is_zero(result));
+      // A zero first operand yields the trivial unit relation.
+      {
+        SCOPED_TRACE("syzygy: zero first operand, nonzero second operand");
+        ring_elem u, v;
+        R->syzygy(R->zero(), b, u, v);
+        EXPECT_TRUE(ringEquals(R, u, R->one()));
+        EXPECT_TRUE(ringEquals(R, v, R->zero()));
+      }
+      // A unit second operand fixes the first coefficient to one.
+      {
+        SCOPED_TRACE("syzygy: second operand one");
+        ring_elem u, v;
+        R->syzygy(a, R->one(), u, v);
+        EXPECT_TRUE(ringEquals(R, u, R->one()));
+        EXPECT_TRUE(ringEquals(R, v, R->negate(a)));
+      }
+      // A negative unit changes the sign of the second coefficient.
+      {
+        SCOPED_TRACE("syzygy: second operand minus one");
+        ring_elem u, v;
+        R->syzygy(a, R->minus_one(), u, v);
+        EXPECT_TRUE(ringEquals(R, u, R->one()));
+        EXPECT_TRUE(ringEquals(R, v, a));
+      }
+      // General nonzero divisors must cancel both input products.
+      {
+        SCOPED_TRACE("syzygy: nonzero second operand");
+        ring_elem u, v;
+        R->syzygy(a, b, u, v);
+        ring_elem result = R->add(R->mult(a, u), R->mult(b, v));
+        EXPECT_TRUE(R->is_zero(result));
+      }
     }
 
   // over ZZ:

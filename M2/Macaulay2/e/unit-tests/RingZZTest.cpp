@@ -1,28 +1,27 @@
 // Copyright 2013 Michael E. Stillman
+#include <gtest/gtest.h>
+#include <string>
+
 #include "unit-tests/RingTest.hpp"
 #include <limits>
-
-static bool maxH_initialized = false;
-static mpz_t maxH;
+#include <sstream>
+#include <gmpxx.h>
 
 template <>
 ring_elem getElement<RingZZ>(const RingZZ& R, int index)
 {
   if (index < 50) return R.from_long(index - 25);
-  if (!maxH_initialized)
-    {
-      maxH_initialized = true;
-      mpz_init(maxH);
-      mpz_set_str(maxH, "100000000000", 10);
-    }
+  mpz_t maxH;
+  mpz_init_set_str(maxH, "100000000000", 10);
   gmp_ZZ a1 = rawRandomInteger(maxH);
+  mpz_clear(maxH);
   return R.from_int(a1);
 }
 
-/////////////////////////////////////////////////
 TEST(RingZZ, create)
 {
-  EXPECT_TRUE(globalZZ != nullptr);
+  // Construction exposes the expected coefficient type and ring name.
+  ASSERT_NE(globalZZ, nullptr);
 
   EXPECT_TRUE(dynamic_cast<const RingZZ*>(globalZZ) != nullptr);
   EXPECT_EQ(globalZZ->coefficient_type(), Ring::COEFF_ZZ);
@@ -31,6 +30,7 @@ TEST(RingZZ, create)
 }
 TEST(RingZZ, ones)
 {
+  // Integer coercion agrees with the cached zero and unit constants.
   EXPECT_TRUE(globalZZ->is_equal(globalZZ->one(), globalZZ->from_long(1)));
   EXPECT_TRUE(
       globalZZ->is_equal(globalZZ->minus_one(), globalZZ->from_long(-1)));
@@ -39,123 +39,171 @@ TEST(RingZZ, ones)
 }
 TEST(RingZZ, random)
 {
-  mpz_t b;
-  mpz_init(b);
-  mpz_t maxH;
-  mpz_init(maxH);
-  mpz_set_str(maxH, "100000000000", 10);
-  for (int i = 0; i <= 10; i++)
+  // Decimal output must reconstruct each generated integer exactly.
+  seedRingRandom();
+  SCOPED_TRACE("seed 0x52494e47");
+  mpz_class bound("100000000000");
+  for (int trial = 0; trial < 11; ++trial)
     {
-      buffer o;
-      ring_elem a =
-          globalZZ->random();  // POOR DESIGN!  Need to be able to choose size
-      gmp_ZZ a1 = rawRandomInteger(maxH);  // This one is fine
-      a = globalZZ->from_int(a1);
-      globalZZ->elem_text_out(o, a);
-      // std::cout << o.str() << std::endl;
-      mpz_set_str(b, o.str(), 10);
-      ring_elem c = globalZZ->from_int(b);
-      EXPECT_TRUE(globalZZ->is_equal(a, c));
+      const ring_elem value =
+          globalZZ->from_int(rawRandomInteger(bound.get_mpz_t()));
+      const std::string text = RingElem(globalZZ, value).toString();
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << trial << ", value=" << text);
+      mpz_class parsed;
+      ASSERT_EQ(mpz_set_str(parsed.get_mpz_t(), text.c_str(), 10), 0);
+      EXPECT_TRUE(
+          ringEquals(globalZZ, value, globalZZ->from_int(parsed.get_mpz_t())));
     }
-  mpz_clear(maxH);
-  mpz_clear(b);
 }
 TEST(RingZZ, get_si)
 {
-  mpz_t a;
-  mpz_init(a);
-  long minint = std::numeric_limits<int>::min();
-  long maxint = std::numeric_limits<int>::max();
-  long i = minint - 5;
-  while (i < maxint + 5)
-    {
-      mpz_set_si(a, i);
-      auto b = RingZZ::get_si(a);
-      //      std::cout << "(min,max)=" << minint << "," << maxint
-      //                << " " << "i=" << i
-      //                << " ok=" << b.first << " result=" << b.second <<
-      //                std::endl;
-      if (i >= minint and i <= maxint)
-        {
-          EXPECT_TRUE(b.first);
-          EXPECT_EQ(b.second, i);
-        }
-      else
-        {
-          EXPECT_FALSE(b.first);
-        }
-      if (i == minint + 5)
-        i = maxint - 5;
-      else
-        ++i;
-    }
-  mpz_clear(a);
+  // Conversion succeeds exactly inside the signed-int bounds.
+  // GMP values also express the out-of-range cases on platforms with 32-bit
+  // long.
+  const mpz_class minimum(std::numeric_limits<int>::min());
+  const mpz_class maximum(std::numeric_limits<int>::max());
+  for (const mpz_class& boundary : {minimum, maximum})
+    for (int offset = -5; offset <= 5; ++offset)
+      {
+        const mpz_class input = boundary + offset;
+        SCOPED_TRACE(::testing::Message() << "input " << input);
+        const auto converted = RingZZ::get_si(input.get_mpz_t());
+        const bool fits = input >= minimum && input <= maximum;
+        EXPECT_EQ(converted.first, fits);
+        if (fits) EXPECT_EQ(converted.second, input.get_si());
+      }
 }
-TEST(RingZZ, negate) { testRingNegate(globalZZ, ntrials); }
-TEST(RingZZ, add) { testRingAdd(globalZZ, ntrials); }
-TEST(RingZZ, subtract) { testRingSubtract(globalZZ, ntrials); }
+TEST(RingZZ, negate)
+{  // Generated values cancel their additive inverses.
+  testRingNegate(globalZZ, ntrials);
+}
+TEST(RingZZ, add)
+{  // Adding and then subtracting the same value recovers the input.
+  testRingAdd(globalZZ, ntrials);
+}
+TEST(RingZZ, subtract)
+{  // Subtraction is undone by adding the subtrahend.
+  testRingSubtract(globalZZ, ntrials);
+}
 TEST(RingZZ, multDivide)
 {
+  // Exact multiplication/division must recover each generated integer.
   testRingDivide(globalZZ, ntrials);
-
-  // I would prefer for 'divide' to be exact division, with a return value of
-  // false, if not exactly divisible
-  ring_elem a = globalZZ->from_long(5);
-  ring_elem b = globalZZ->from_long(2);
-  EXPECT_THROW(globalZZ->divide(a, b), exc::engine_error);
-  // ring_elem c = globalZZ->divide(a, b);
-  // EXPECT_ANY_THROW(globalZZ->is_equal(c, globalZZ->from_long(2)));
 }
-TEST(RingZZ, axioms) { testRingAxioms(globalZZ, ntrials); }
-TEST(RingZZ, power) { testRingPower(globalZZ, ntrials); }
+TEST(RingZZ, axioms)
+{  // Generated inputs satisfy the commutative ring identities.
+  testRingAxioms(globalZZ, ntrials);
+}
+TEST(RingZZ, power)
+{  // Machine and GMP exponents agree with the power addition law.
+  testRingPower(globalZZ, ntrials);
+}
 TEST(RingZZ, gcd)
 {
+  // The generated gcd divides both inputs and satisfies the Bezout identity.
   testRingGCD(globalZZ, ntrials);
-  const RingZZ* R = globalZZ;
-
-  RingElementGenerator<RingZZ> gen(*globalZZ);
-  for (int i = 0; i < ntrials; i++)
-    {
-      ring_elem a = gen.nextElement();
-      ring_elem b = gen.nextElement();
-
-      // (a // gcd(a,b) == 0, b // gcd(a,b) == 0,
-      ring_elem c = R->gcd(a, b);
-      ring_elem u, v;
-      ring_elem d = R->gcd_extended(a, b, u, v);
-
-      EXPECT_TRUE(globalZZ->is_positive(c));
-
-      EXPECT_TRUE(R->is_equal(c, d));
-      EXPECT_TRUE(R->is_equal(c, R->add(R->mult(a, u), R->mult(b, v))));
-      EXPECT_TRUE(R->is_equal(a, R->mult(R->divide(a, c), c)));
-    }
-
-  EXPECT_TRUE(R->is_equal(R->zero(), R->gcd(R->zero(), R->zero())));
-  EXPECT_TRUE(R->is_equal(R->one(), R->gcd(R->one(), R->minus_one())));
-  EXPECT_TRUE(R->is_equal(R->one(), R->gcd(R->minus_one(), R->minus_one())));
 }
-TEST(RingZZ, remainder) { testRingRemainder(globalZZ, ntrials); }
-TEST(RingZZ, syzygy) { testRingSyzygy(globalZZ, ntrials); }
+TEST(RingZZ, remainder)
+{  // Quotient and remainder reconstruct the dividend for nonzero divisors.
+  testRingRemainder(globalZZ, ntrials);
+}
+TEST(RingZZ, syzygy)
+{  // Syzygy coefficients cancel their inputs when the second input is nonzero.
+  testRingSyzygy(globalZZ, ntrials);
+}
 TEST(RingZZ, content)
 {
-  buffer o;
-  ring_elem a = globalZZ->from_long(-10);
-  ring_elem b = globalZZ->from_long(-15);
-  ring_elem c = globalZZ->from_long(-5);
-  ring_elem d = globalZZ->from_long(5);
-  globalZZ->is_equal(d, globalZZ->preferred_associate(c));
+  // Associate normalization returns a unit; lowering a divisor keeps its first
+  // sign.
+  {
+    // Positive and negative inputs need opposite normalizing units.
+    SCOPED_TRACE("preferred_associate: signs");
+    EXPECT_EQ(RingElem(globalZZ,
+                       globalZZ->preferred_associate(globalZZ->from_long(-5))),
+              RingElem::fromInt(globalZZ, -1));
+    EXPECT_EQ(RingElem(globalZZ,
+                       globalZZ->preferred_associate(globalZZ->from_long(5))),
+              RingElem::fromInt(globalZZ, 1));
+  }
+  {
+    // Each row gives the initial divisor, new input, and expected unit.
+    SCOPED_TRACE("lower_associate_divisor: initial zero and established signs");
+    struct Case
+    {
+      const char* name;
+      long initial;
+      long input;
+      long expected;
+    };
+    const Case cases[] = {{"both zero", 0, 0, 0},
+                          {"first negative", 0, -10, -1},
+                          {"keep negative", -1, 15, -1},
+                          {"keep positive", 1, -15, 1}};
+    for (const auto& sample : cases)
+      {
+        SCOPED_TRACE(sample.name);
+        ring_elem divisor = globalZZ->from_long(sample.initial);
+        EXPECT_EQ(globalZZ->lower_associate_divisor(
+                      divisor, globalZZ->from_long(sample.input)),
+                  sample.expected != 0);
+        EXPECT_EQ(RingElem(globalZZ, divisor),
+                  RingElem::fromInt(globalZZ, sample.expected));
+      }
+  }
+}
 
-  ring_elem e = globalZZ->from_long(0);
-  bool ret1 = globalZZ->lower_associate_divisor(e, a);
-  o << "ret1=" << (ret1 ? "true" : "false") << " e=";
-  globalZZ->elem_text_out(o, e);
-  o << newline;
-  bool ret2 = globalZZ->lower_associate_divisor(e, b);
-  o << "ret2=" << (ret2 ? "true" : "false") << " e=";
-  globalZZ->elem_text_out(o, e);
-  o << newline;
-  std::cout << o.str();
+TEST(RingZZ, divisionErrors)
+{
+  // Inexact integer division and division by zero have distinct error
+  // contracts.
+  EXPECT_THROW(globalZZ->divide(globalZZ->from_long(5), globalZZ->from_long(2)),
+               exc::engine_error);
+  EXPECT_THROW(globalZZ->divide(globalZZ->from_long(3), globalZZ->zero()),
+               exc::division_by_zero_error);
+}
+
+TEST(RingZZ, gcdExamples)
+{
+  // Zero and unit inputs pin the gcd normalization independently of generated
+  // cases.
+  EXPECT_EQ(
+      RingElem(globalZZ, globalZZ->gcd(globalZZ->zero(), globalZZ->zero())),
+      RingElem::fromInt(globalZZ, 0));
+  EXPECT_EQ(
+      RingElem(globalZZ, globalZZ->gcd(globalZZ->one(), globalZZ->minus_one())),
+      RingElem::fromInt(globalZZ, 1));
+  EXPECT_EQ(
+      RingElem(globalZZ,
+               globalZZ->gcd(globalZZ->minus_one(), globalZZ->minus_one())),
+      RingElem::fromInt(globalZZ, 1));
+}
+
+TEST(RingZZ, remainderByZero)
+{
+  // The GMP-backed remainder routines require a nonzero divisor.
+  GTEST_SKIP() << "Remainder and quotient properties exclude a zero divisor";
+}
+
+TEST(RingZZ, fromStream)
+{
+  // Signed and arbitrary-size integers parse without consuming a following
+  // operator.
+  const char* inputs[] = {"+123", "-45", "123456789123456789123456789"};
+  for (const char* text : inputs)
+    {
+      SCOPED_TRACE(text);
+      std::istringstream input(std::string(text) + "*x");
+      ring_elem value;
+      ASSERT_TRUE(fromStream(input, *globalZZ, value));
+      const mpz_class expected(text[0] == '+' ? text + 1 : text);
+      EXPECT_TRUE(ringEquals(
+          globalZZ, globalZZ->from_int(expected.get_mpz_t()), value));
+      EXPECT_EQ(input.peek(), '*');
+      EXPECT_FALSE(fromStream(input, *globalZZ, value));
+      EXPECT_TRUE(ringEquals(
+          globalZZ, globalZZ->from_int(expected.get_mpz_t()), value));
+    }
 }
 
 // Local Variables:

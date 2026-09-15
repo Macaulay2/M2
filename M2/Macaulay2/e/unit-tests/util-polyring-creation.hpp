@@ -1,32 +1,34 @@
 #ifndef M2_UNIT_TESTS_UTIL_POLYRING_CREATION_HPP
-#define M2_UNIT_TESTS_UTIL_POLYRING_CREATION_HPP
+#  define M2_UNIT_TESTS_UTIL_POLYRING_CREATION_HPP
 
-#include <iostream>
-#include <memory>
-#include <gtest/gtest.h>
-#include <vector>
+#  include <string>
+#  include <vector>
 
-#include "interface/monomial-ordering.h"
-#include "monomials/monordering.hpp"
-#include "interface/ring.h"
-#include "interface/aring.h"
-#include "monoid.hpp"
-#include "rings/poly.hpp"
-#include "rings/polyring.hpp"
+#  include "interface/monomial-ordering.h"
+#  include "monomials/monordering.hpp"
+#  include "interface/ring.h"
+#  include "interface/aring.h"
+#  include "monoid.hpp"
+#  include "rings/poly.hpp"
+#  include "rings/polyring.hpp"
 
 const Monoid* degreeMonoid(const std::vector<std::string>& names);
 
 const PolynomialRing* degreeRing(const std::vector<std::string>& names);
 
-const PolynomialRing* degreeRing(int ndegrees);// TODO: currently requires ndegrees is 1!
+// This overload currently supports only a single grading.
+const PolynomialRing* degreeRing(int ndegrees);
 
 // This create a polynomial ring with all degrees 1.
-const PolynomialRing* simplePolynomialRing(const Ring* kk,
-                                           const std::vector<std::string>& names,
-                                           MonomialOrdering* monorder);
+const PolynomialRing* simplePolynomialRing(
+    const Ring* kk,
+    const std::vector<std::string>& names,
+    MonomialOrdering* monorder);
 
 // This create a polynomial ring with all degrees 1, and with GRevLex order
-const PolynomialRing* simplePolynomialRing(int p, const std::vector<std::string>& names);
+const PolynomialRing* simplePolynomialRing(
+    int p,
+    const std::vector<std::string>& names);
 
 // Creates a Weyl algebra, with degree rank one, GRevLex monomial order.
 const WeylAlgebra* simpleWeylAlgebra(long p,

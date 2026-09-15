@@ -31,8 +31,9 @@ The two build systems keep separate lists, and both must be updated:
 Existing registered sources need no new entry for additional tests.
 
 Forgetting one is the most common mistake here, and it is silent: the file still
-compiles when you build it by hand, so nothing complains. `ARingGFTest.cpp` is
-commented out of both lists and went stale for years without a failing build:
+compiles when you build it by hand, so nothing complains. Before the style
+retrofit, `ARingGFTest.cpp` was commented out of both lists and went stale for
+years without a failing build:
 
 ```
 # in Macaulay2/e/CMakeLists.txt

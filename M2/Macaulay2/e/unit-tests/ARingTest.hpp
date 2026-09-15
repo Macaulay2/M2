@@ -1,21 +1,26 @@
 #ifndef M2_UNITTESTS__RING_TEST_HPP__
-#define M2_UNITTESTS__RING_TEST_HPP__
+#  define M2_UNITTESTS__RING_TEST_HPP__
 
-#include "interface/random.h"
-#include "exceptions.hpp"  // for exc::division_by_zero_error
+#  include <gmpxx.h>
+#  include <gtest/gtest.h>
 
-#include "exceptions.hpp"
-#include "matrices/matrix-con.hpp"
-#include "matrices/matrix.hpp"
-#include "ringmap.hpp"
-#include "free-modules/freemod.hpp"
-#include "rings/ring.hpp"
+#  include <iostream>
+#  include <istream>
+#  include <string>
+
+#  include "interface/random.h"
+#  include "exceptions.hpp"  // for exc::division_by_zero_error
+
+#  include "matrices/matrix-con.hpp"
+#  include "matrices/matrix.hpp"
+#  include "ringmap.hpp"
+#  include "free-modules/freemod.hpp"
+#  include "rings/ring.hpp"
 
 const int ntrials = 1000;
-// const int ntrials = 1000000; // not good for the ssd - system swaps
-// memory....
 
-// Give generated cases a repeatable GMP random stream. The caller traces the seed.
+// Give generated cases a repeatable GMP random stream. The caller traces the
+// seed.
 inline void seedRandom(unsigned long seed)
 {
   mpz_t value;
@@ -47,6 +52,7 @@ class ARingElementGenerator
     getElement<RingType>(mRing, ++mNext, result);
   }
   void reset() { mNext = 0; }
+
  private:
   const RingType& mRing;
   int mNext;
@@ -57,56 +63,37 @@ std::istream& fromStream(std::istream& i,
                          const T& R,
                          typename T::ElementType& result);
 
+// A worked integer-coercion example, independent of the field characteristic.
 template <typename T>
 void testSomeMore(const T& R)
 {
-  typename T::ElementType a, b, c, d;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
-
+  SCOPED_TRACE("add: 27 + (-11) = 16");
+  typename T::Element a(R), b(R), expected(R), actual(R);
   R.set(a, 27);
-  R.set(b, static_cast<int>(R.characteristic()) - 11);
-  R.set(c, 16);
-  R.add(d, a, b);
+  R.set(b, -11);
+  R.set(expected, 16);
 
-  buffer o;
-  o << "a=";
-  R.elem_text_out(o, a, true);
-  o << " b=";
-  R.elem_text_out(o, b, true);
-  o << " c=";
-  R.elem_text_out(o, c, true);
-  o << " d=a+b=";
-  R.elem_text_out(o, d, true);
-  std::cout << o.str() << std::endl;
+  R.add(actual, a, b);
 
-  EXPECT_TRUE(R.is_equal(c, d));
-
-  R.clear(a);
-  R.clear(b);
-  R.clear(c);
-  R.clear(d);
+  EXPECT_TRUE(R.is_equal(expected, actual))
+      << "expected " << describeElement(R, expected) << ", actual "
+      << describeElement(R, actual);
 }
 
 template <typename T>
 void testNegate(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, b;
-  R.init(a);
-  R.init(b);
+  typename T::Element a(R), b(R);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a));
       R.negate(b, a);
       R.add(b, a, b);
       EXPECT_TRUE(R.is_zero(b));  // test: (-a) + a == 0
     }
-  R.clear(a);
-  R.clear(b);
 }
 
 template <typename T>
@@ -121,32 +108,36 @@ std::string ringName(const T& R)
 template <typename T>
 void testCoercions(const T& R)
 {
-  typename T::ElementType a, b, c;
+  typename T::Element a(R), b(R), c(R);
   mpz_t m, base;
   mpq_t n1;
-  R.init(a);
-  R.init(b);
-  R.init(c);
   mpz_init(m);
   mpz_init(base);
   mpq_init(n1);
 
-  // set
+  // A large integer plus a small offset must coerce additively.
   mpz_set_str(base, "2131236127486324783264782364", 10);
   R.set(c, base);
   for (int i = -1000; i < 1000; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "integer coercion: base + " << i);
       mpz_set_si(m, i);
-      mpz_add(m, m, base);   // m = base + i
-      R.set(a, m);  // a = (base + i) mod charac
+      mpz_add(m, m, base);  // m = base + i
+      R.set(a, m);          // a = (base + i) mod charac
       R.set(b, i);
       R.add(b, c, b);                 // b = (base mod charac) + (i mod charac)
       EXPECT_TRUE(R.is_equal(a, b));  // a, b should be equal
     }
 
-  // set
+  // Fractions whose denominator survives reduction must agree with division.
+  // Characteristic-zero rings have different rational-coercion contracts;
+  // their own suites exercise representability and rounding.
+  if (R.characteristic() == 0)
+    std::cout << "[ SKIPPED ] generic rational coercion: characteristic-zero "
+                 "contract is ring-specific\n";
   for (int i = 1; i < 300; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "rational coercion: 43999/" << i);
       mpq_set_si(n1, 43999, i);
       mpq_canonicalize(n1);  // n1 = 43999/i
 
@@ -164,9 +155,6 @@ void testCoercions(const T& R)
         }
     }
 
-  R.clear(a);
-  R.clear(b);
-  R.clear(c);
   mpz_clear(m);
   mpz_clear(base);
   mpq_clear(n1);
@@ -176,19 +164,15 @@ template <typename T>
 void testAxioms(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, b, c, d, e, f;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
-  R.init(e);
-  R.init(f);
+  typename T::Element a(R), b(R), c(R), d(R), e(R), f(R);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
       gen.nextElement(b);
       gen.nextElement(c);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b) << ", c=" << describeElement(R, c));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a) << ", b="
+                   << describeElement(R, b) << ", c=" << describeElement(R, c));
 
       // Test commutativity
       // test: a*b = b*a
@@ -246,102 +230,61 @@ void testAxioms(const T& R, int ntrials)
       R.subtract(d, a, a);
       EXPECT_TRUE(R.is_zero(d));
     }
-  R.clear(a);
-  R.clear(b);
-  R.clear(c);
-  R.clear(d);
-  R.clear(e);
-  R.clear(f);
 }
 
 template <typename T>
 void testAdd(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, b, c, d;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
+  typename T::Element a(R), b(R), c(R), d(R);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
       gen.nextElement(b);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a)
+                   << ", b=" << describeElement(R, b));
       R.add(c, a, b);  // c = a+b
       R.negate(d, b);  // d = -b
 
-#if 0
-      buffer o;
-      o << "a=";
-      R.elem_text_out(o, a , true, false, false);
-      o << " b=";
-      R.elem_text_out(o, b , true, false, false);
-      o << " a+b=";
-      R.elem_text_out(o, c , true, false, false);
-      o << " -b=";
-      R.elem_text_out(o, d , true, false, false);
-#endif
-
       R.add(d, c, d);  // d = (a+b) + (-b)
 
-#if 0
-      o << " a=";
-      R.elem_text_out(o, d , true, false, false);
-      std::cout << o.str() << std::endl;
-#endif
       EXPECT_TRUE(R.is_equal(d, a));
     }
-  R.clear(a);
-  R.clear(b);
-  R.clear(c);
-  R.clear(d);
 }
 
 template <typename T>
 void testSubtract(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, b, c, d;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
+  typename T::Element a(R), b(R), c(R), d(R);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
       gen.nextElement(b);
-      gen.nextElement(c);
-      gen.nextElement(d);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b) << ", c=" << describeElement(R, c) << ", d=" << describeElement(R, d));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a)
+                   << ", b=" << describeElement(R, b));
       R.add(c, a, b);       // c = a+b
       R.subtract(d, c, b);  // d = (a+b) - b
       EXPECT_TRUE(R.is_equal(d, a));
     }
-  R.clear(a);
-  R.clear(b);
-  R.clear(c);
-  R.clear(d);
 }
 
 template <typename T>
 void testMultiply(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, b, c, d, zero, one;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
-  R.init(zero);
-  R.init(one);
+  typename T::Element a(R), b(R), c(R), d(R), zero(R), one(R);
   R.set(zero, 0);
   R.set(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
       gen.nextElement(b);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a)
+                   << ", b=" << describeElement(R, b));
 
       R.mult(c, a, zero);
       EXPECT_TRUE(R.is_equal(c, zero));
@@ -368,24 +311,13 @@ void testMultiply(const T& R, int ntrials)
       R.negate(d, d);
       EXPECT_TRUE(R.is_equal(c, d));
     }
-  R.clear(a);
-  R.clear(b);
-  R.clear(c);
-  R.clear(d);
-  R.clear(zero);
-  R.clear(one);
 }
 
 template <typename T>
 void testDivide(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, b, c, d, zero;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
-  R.init(zero);
+  typename T::Element a(R), b(R), c(R), d(R), zero(R);
   R.set(zero, 0);
   for (int i = 0; i < ntrials; i++)
     {
@@ -393,83 +325,60 @@ void testDivide(const T& R, int ntrials)
       // c//a == b
       gen.nextElement(a);
       gen.nextElement(b);
-      gen.nextElement(c);
-      gen.nextElement(d);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b) << ", c=" << describeElement(R, c) << ", d=" << describeElement(R, d));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a)
+                   << ", b=" << describeElement(R, b));
       if (R.is_zero(a)) continue;
       R.mult(c, a, b);
       R.divide(d, c, a);
       EXPECT_TRUE(R.is_equal(b, d));
     }
-  R.clear(a);
-  R.clear(b);
-  R.clear(c);
-  R.clear(d);
-  R.clear(zero);
 }
 
 template <typename T>
 void testReciprocal(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, b, c, one;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(one);
+  typename T::Element a(R), b(R), c(R), one(R);
   R.set(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       // c = 1/a
       // 1/a * a == 1
       gen.nextElement(a);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a));
       if (R.is_zero(a)) continue;
       R.invert(b, a);
       R.mult(c, b, a);
       EXPECT_TRUE(R.is_equal(c, one));
     }
-  R.clear(a);
-  R.clear(b);
-  R.clear(c);
-  R.clear(one);
+}
+
+template <typename T>
+mpz_class finiteFieldCardinality(const T& R)
+{
+  return mpz_class(static_cast<unsigned long>(R.cardinality()));
 }
 
 template <typename T>
 void testPower(const T& R, int ntrials)
 {
-  // test the following: (x=generator of the finite field, q = card of field)
-  // check: x^i != x, for 2 <= i <= characteristic-??
-  // x^q == x
-  // x^(q-1) == 1
-  // x^(-1) * x == 1
-  // x^(-2) * x^2 == 1
-
-  // a^2 == a*a, for various a
-  // a^3 == a*a*a
-  // a^0 == 1, what if a == 0?
-  // 1^n == 1, various n
-  // q goes through power_mpz: the cardinality need not fit in power()'s
-  // exponent argument (int here, int32_t for ffpack, long for flint).
+  // Frobenius and nonzero group-order identities use GMP exponents because
+  // the field order need not fit the machine exponent accepted by power().
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, c, d, one;
-  mpz_t q, qminus1;
-  mpz_init(q);
-  mpz_init(qminus1);
-  mpz_set_ui(q, static_cast<unsigned long>(R.cardinality()));
-  mpz_sub_ui(qminus1, q, 1);
+  typename T::Element a(R), c(R), d(R), one(R);
+  const mpz_class q = finiteFieldCardinality(R);
+  const mpz_class qminus1 = q - 1;
 
-  R.init(one);
-  R.init(a);
-  R.init(c);
-  R.init(d);
   R.set(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a));
 
-      R.power_mpz(c, a, q);
+      R.power_mpz(c, a, q.get_mpz_t());
       EXPECT_TRUE(R.is_equal(c, a));  // test a^q == a
 
       R.power(c, a, 0);  // test a^0 == 1, including a == 0
@@ -488,7 +397,7 @@ void testPower(const T& R, int ntrials)
 
       if (R.is_zero(a)) continue;
 
-      R.power_mpz(c, a, qminus1);
+      R.power_mpz(c, a, qminus1.get_mpz_t());
       EXPECT_TRUE(R.is_equal(c, one));  // test a^(q-1) == 1
 
       R.power(c, a, -1);  // test a^-1 * a == 1
@@ -500,12 +409,6 @@ void testPower(const T& R, int ntrials)
       R.mult(d, c, d);
       EXPECT_TRUE(R.is_equal(d, a));
     }
-  R.clear(a);
-  R.clear(c);
-  R.clear(d);
-  R.clear(one);
-  mpz_clear(q);
-  mpz_clear(qminus1);
 }
 
 // Division by zero throws, and every nonzero element of a field is a unit.
@@ -513,11 +416,7 @@ template <typename T>
 void testFieldDivideByZero(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, c, zero, one;
-  R.init(a);
-  R.init(c);
-  R.init(zero);
-  R.init(one);
+  typename T::Element a(R), c(R), zero(R), one(R);
   R.set_zero(zero);
   R.set(one, 1);
 
@@ -527,7 +426,8 @@ void testFieldDivideByZero(const T& R, int ntrials)
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a));
       EXPECT_THROW(R.divide(c, a, zero), exc::division_by_zero_error);
       if (R.is_zero(a)) continue;
 
@@ -537,10 +437,6 @@ void testFieldDivideByZero(const T& R, int ntrials)
       R.divide(c, a, a);  // a/a == 1
       EXPECT_TRUE(R.is_equal(c, one));
     }
-  R.clear(a);
-  R.clear(c);
-  R.clear(zero);
-  R.clear(one);
 }
 
 template <typename T>
@@ -548,18 +444,14 @@ void testFiniteField(const T& R, int ntrials)
 {
   testCoercions(R);
   testNegate(R, ntrials);
-  testAdd(R, ntrials);       // fails in char 2, ffpack (negating 1 gives -1)...
-  testSubtract(R, ntrials);  // fails in char 2, ffpack
+  testAdd(R, ntrials);
+  testSubtract(R, ntrials);
   testMultiply(R, ntrials);
-  testDivide(R, ntrials);  // fails in char 2, ffpack
+  testDivide(R, ntrials);
   testReciprocal(R, ntrials);
-  testPower(R, ntrials);  // fails?
+  testPower(R, ntrials);
   testAxioms(R, ntrials);
   testFieldDivideByZero(R, ntrials);
-
-  // TODO: test promote, lift, syzygy(?), (ringmaps)
-  // test random number generation?
-  // get generator
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -578,9 +470,9 @@ void testStorage(const T& R, int ntrials)
   R.set_zero(zero);
   for (int i = 0; i < ntrials; i++)
     {
-      SCOPED_TRACE(i);
       gen.nextElement(a);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a));
       R.set(saved, a);
 
       R.set(b, a);
@@ -620,10 +512,11 @@ void testComparisons(const T& R, int ntrials)
   typename T::Element a(R), b(R), c(R);
   for (int i = 0; i < ntrials; i++)
     {
-      SCOPED_TRACE(i);
       gen.nextElement(a);
       gen.nextElement(b);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a)
+                   << ", b=" << describeElement(R, b));
       R.copy(c, a);
 
       EXPECT_TRUE(R.is_equal(a, a));
@@ -649,10 +542,11 @@ void testAliasing(const T& R, int ntrials)
   typename T::Element a(R), b(R), expected(R), result(R);
   for (int i = 0; i < ntrials; i++)
     {
-      SCOPED_TRACE(i);
       gen.nextElement(a);
       gen.nextElement(b);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a)
+                   << ", b=" << describeElement(R, b));
 
       R.add(expected, a, b);
       R.copy(result, a);
@@ -706,11 +600,12 @@ void testSubtractMultiple(const T& R, int ntrials)
   typename T::Element a(R), b(R), c(R), expected(R), result(R);
   for (int i = 0; i < ntrials; i++)
     {
-      SCOPED_TRACE(i);
       gen.nextElement(a);
       gen.nextElement(b);
       gen.nextElement(c);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b) << ", c=" << describeElement(R, c));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a) << ", b="
+                   << describeElement(R, b) << ", c=" << describeElement(R, c));
 
       R.mult(expected, a, b);
       R.subtract(expected, c, expected);
@@ -752,9 +647,9 @@ void testPowerAgreement(const T& R, int ntrials, int maxExponent = 16)
   mpz_init(n);
   for (int i = 0; i < ntrials; i++)
     {
-      SCOPED_TRACE(i);
       gen.nextElement(a);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a));
       R.copy(d, one);
       for (int e = 0; e <= maxExponent; e++)
         {
@@ -798,9 +693,9 @@ void testRingElemRoundTrip(const T& R, int ntrials)
   typename T::Element a(R), b(R);
   for (int i = 0; i < ntrials; i++)
     {
-      SCOPED_TRACE(i);
       gen.nextElement(a);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a));
       ring_elem f;
       R.to_ring_elem(f, a);
       R.from_ring_elem(b, f);
@@ -817,9 +712,9 @@ void testFromRingElemConst(const T& R, int ntrials)
   typename T::Element a(R);
   for (int i = 0; i < ntrials; i++)
     {
-      SCOPED_TRACE(i);
       gen.nextElement(a);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a));
       ring_elem f;
       R.to_ring_elem(f, a);
       ASSERT_TRUE(R.is_equal(a, R.from_ring_elem_const(f)));
@@ -835,10 +730,11 @@ void testSyzygy(const T& R, int ntrials)
   typename T::Element a(R), b(R), x(R), y(R), u(R), v(R);
   for (int i = 0; i < ntrials; i++)
     {
-      SCOPED_TRACE(i);
       gen.nextElement(a);
       gen.nextElement(b);
-      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ", a=" << describeElement(R, a)
+                   << ", b=" << describeElement(R, b));
       if (R.is_zero(b)) continue;  // syzygy asserts b is nonzero
       R.syzygy(a, b, x, y);
       R.mult(u, a, x);
@@ -857,16 +753,6 @@ inline const RingMap* identityRingMap(const Ring* R)
   MatrixConstructor mat(F, 1);
   mat.set_entry(0, 0, R->one());
   return RingMap::make(mat.to_matrix());
-}
-
-template <typename T>
-void testARingInterface(const T& R)
-{
-  // this test makes sure that all of the interface functions required
-  // actually exist.
-
-  const M2::RingID rid = R.ringID;
-  std::cout << "ring ID: " << rid << std::endl;
 }
 
 #endif

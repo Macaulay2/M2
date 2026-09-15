@@ -1,5 +1,9 @@
 // Copyright 2026, The Macaulay2 Authors.
 
+#include <string>
+#include <vector>
+#include <algorithm>
+
 #include "util.hpp"
 #include "unit-tests/util-polyring-creation.hpp"
 #include "rings/weylalg.hpp"
@@ -22,24 +26,17 @@
 // associativeAlgebra
 // groebnerAlgebra
 
-
 const Monoid* degreeMonoid(const std::vector<std::string>& names)
 {
   std::vector<int> wts;
-  for (int i=0; i<names.size(); i++)
-    wts.push_back(-1);
-  MonomialOrdering* mo = MonomialOrderings::join
-    ({
-      MonomialOrderings::Weights(wts),
-      MonomialOrderings::GroupLex(names.size()),
-      MonomialOrderings::PositionUp()
-    });
+  for (int i = 0; i < names.size(); i++) wts.push_back(-1);
+  MonomialOrdering* mo =
+      MonomialOrderings::join({MonomialOrderings::Weights(wts),
+                               MonomialOrderings::GroupLex(names.size()),
+                               MonomialOrderings::PositionUp()});
 
-  return Monoid::create(mo,
-                        IM2_Ring_trivial_polyring()->cast_to_PolynomialRing(),
-                        names,
-                        {},
-                        {});
+  return Monoid::create(
+      mo, IM2_Ring_trivial_polyring()->cast_to_PolynomialRing(), names, {}, {});
 }
 
 const PolynomialRing* degreeRing(const std::vector<std::string>& names)
@@ -62,59 +59,45 @@ const Monoid* simpleMonoid(const std::vector<std::string>& names,
                            const std::vector<int>& degs,
                            const std::vector<int>& heft)
 {
-  // a few checks:
-  // (#vars of degrees ring) * #vars == #degs
-  // #heft == #gens degreesRing.
-  // heft of each degree vector for each vector should be > 0, if heft is non-empty.
+  // Callers supply one degree vector per variable and one heft per grading.
+  // Nonempty heft vectors must give positive weight to each variable.
 
-  const Monoid* M = Monoid::create(
-                             monorder,
-                             degRing,
-                             names,
-                             degs,
-                             heft
-                             );
+  return Monoid::create(monorder, degRing, names, degs, heft);
 }
 
-                           
-const PolynomialRing* simplePolynomialRing(const Ring* kk,
-                                           const std::vector<std::string>& names,
-                                           MonomialOrdering* monorder)
+const PolynomialRing* simplePolynomialRing(
+    const Ring* kk,
+    const std::vector<std::string>& names,
+    MonomialOrdering* monorder)
 {
   // degrees are all set to 1. (degree ring has one variable)
   // heft is 1.
 
-  // Now create the monomial order.  This one is a pain in the butt!
   std::vector<int> degs;
-  for (int i=0; i<names.size(); i++) degs.push_back(1);
+  for (int i = 0; i < names.size(); i++) degs.push_back(1);
   std::vector<int> heft {1};
 
-  const Monoid* M = Monoid::create(
-                             monorder,
-                             degreeRing(1),
-                             names,
-                             degs,
-                             heft
-                             );
-  if (M == nullptr) return nullptr; // an error should have been constructed
+  const Monoid* M = simpleMonoid(names, monorder, degreeRing(1), degs, heft);
+  if (M == nullptr) return nullptr;  // an error should have been constructed
   return PolyRing::create(kk, M);
 }
 
-const PolynomialRing* simplePolynomialRing(int p, const std::vector<std::string>& names)
+const PolynomialRing* simplePolynomialRing(
+    int p,
+    const std::vector<std::string>& names)
 {
   // if p is 0, use QQ.
   // degrees are all set to 1. (degree ring has one variable)
   // heft is 1.
   // monomial order is grevlex.
 
-  const Ring *kk = (p > 0 ? rawARingZZpFlint(p) : IM2_Ring_QQ());
-  if (kk == nullptr) return nullptr; // one of these routines would have made an error.
+  const Ring* kk = (p > 0 ? rawARingZZpFlint(p) : IM2_Ring_QQ());
+  if (kk == nullptr)
+    return nullptr;  // one of these routines would have made an error.
 
-  MonomialOrdering* monorder = MonomialOrderings::join
-    ({
-      MonomialOrderings::GRevLex(names.size()),
-      MonomialOrderings::PositionUp()
-    });
+  MonomialOrdering* monorder =
+      MonomialOrderings::join({MonomialOrderings::GRevLex(names.size()),
+                               MonomialOrderings::PositionUp()});
 
   return simplePolynomialRing(kk, names, monorder);
 }
@@ -129,51 +112,39 @@ const WeylAlgebra* simpleWeylAlgebra(long p,
   // heft is 1.
   // monomial order is grevlex.
 
-  const Ring *kk = (p > 0 ? rawARingZZpFlint(p) : IM2_Ring_QQ());
-  if (kk == nullptr) return nullptr; // one of these routines would have made an error.
+  const Ring* kk = (p > 0 ? rawARingZZpFlint(p) : IM2_Ring_QQ());
+  if (kk == nullptr)
+    return nullptr;  // one of these routines would have made an error.
 
-  MonomialOrdering* monorder = MonomialOrderings::join
-    ({
-      MonomialOrderings::GRevLex(names.size()),
-      MonomialOrderings::PositionUp()
-    });
+  MonomialOrdering* monorder =
+      MonomialOrderings::join({MonomialOrderings::GRevLex(names.size()),
+                               MonomialOrderings::PositionUp()});
 
   int n = static_cast<int>(comms.size());
-  std::vector<int> degs(2*n, -1);
+  std::vector<int> degs(2 * n, -1);
   std::fill_n(degs.begin(), n, 1);
 
-  const Monoid* M = Monoid::create(
-                                   monorder,
-                                   degreeRing(1),
-                                   names,
-                                   degs,
-                                   {1});
+  const Monoid* M = Monoid::create(monorder, degreeRing(1), names, degs, {1});
 
   M2_arrayint derivs1 = stdvector_to_M2_arrayint(derivs);
   M2_arrayint comms1 = stdvector_to_M2_arrayint(comms);
-  auto W = WeylAlgebra::create(kk,
-                          M,
-                          derivs1,
-                          comms1,
-                          -1);
-  
+  auto W = WeylAlgebra::create(kk, M, derivs1, comms1, -1);
+
   return W;
 }
-
 
 const Matrix* idealFromStrings(const PolynomialRing* R,
                                const std::vector<std::string>& polys)
 {
   auto varnames = R->getMonoid()->variableNames();
   BasicPolyList bpList;
-  for (const auto& s : polys)
-    bpList.push_back(parseBasicPoly(s, varnames));
+  for (const auto& s : polys) bpList.push_back(parseBasicPoly(s, varnames));
   return toMatrix(R->make_FreeModule(1), bpList);
 }
 
 const Matrix* computeGB(const Matrix* M)
 {
-  M2_arrayint weights = stdvector_to_M2_arrayint(std::vector<int>{});
+  M2_arrayint weights = stdvector_to_M2_arrayint(std::vector<int> {});
   Computation* C = IM2_GB_make(M,
                                false,  // collect_syz
                                0,      // n_rows_to_keep

@@ -9,6 +9,8 @@
 // gtest groups (LatticePoints / LatticePointsRaw).
 
 #include <set>
+#include <string>
+#include <utility>
 #include <stdexcept>
 #include <vector>
 
@@ -26,19 +28,19 @@
 #include "rings/ring.hpp"
 
 using M2::cytools::latticePoints;
-using M2::cytools::LatticePointsResult;
 using M2::cytools::latticePointsNormaliz;
 using M2::cytools::LatticePointsNormalizResult;
+using M2::cytools::LatticePointsResult;
 
 namespace {
 
 // Brute-force enumeration of lattice points in [-B,B]^dim satisfying
 // H * v >= rhs (componentwise). Returns a set for easy comparison against
 // the box_enum-produced points.
-std::set<std::vector<int>> bruteForce(
-    int dim, int B,
-    const std::vector<std::vector<int>>& H,
-    const std::vector<int>& rhs)
+std::set<std::vector<int>> bruteForce(int dim,
+                                      int B,
+                                      const std::vector<std::vector<int>>& H,
+                                      const std::vector<int>& rhs)
 {
   std::set<std::vector<int>> out;
   std::vector<int> v(dim, -B);
@@ -50,13 +52,21 @@ std::set<std::vector<int>> bruteForce(
           long s = 0;
           for (int i = 0; i < dim; ++i)
             s += static_cast<long>(H[j][i]) * static_cast<long>(v[i]);
-          if (s < rhs[j]) { ok = false; break; }
+          if (s < rhs[j])
+            {
+              ok = false;
+              break;
+            }
         }
       if (ok) out.insert(v);
 
       // increment v lexicographically over [-B,B]^dim
       int i = 0;
-      while (i < dim && v[i] == B) { v[i] = -B; ++i; }
+      while (i < dim && v[i] == B)
+        {
+          v[i] = -B;
+          ++i;
+        }
       if (i == dim) break;
       ++v[i];
     }
@@ -64,14 +74,12 @@ std::set<std::vector<int>> bruteForce(
 }
 
 std::set<std::vector<int>> asSet(const LatticePointsResult& r)
-{
-  return std::set<std::vector<int>>(r.points.begin(), r.points.end());
-}
+{ return std::set<std::vector<int>>(r.points.begin(), r.points.end()); }
 
 // Generous defaults for the search caps in tests where we expect the search
 // to terminate well before either limit. 1<<24 nodes is plenty for the small
 // problems below; the largest brute-force ground truth here is (2*3+1)^3 = 343.
-constexpr long kBigN  = 1L << 20;
+constexpr long kBigN = 1L << 20;
 constexpr long kBigNN = 1L << 24;
 
 }  // namespace
@@ -82,6 +90,7 @@ constexpr long kBigNN = 1L << 24;
 
 TEST(LatticePoints, BoxOnly_dim2_B1)
 {
+  // Every point in the two-dimensional unit box appears exactly once.
   auto r = latticePoints(/*dim*/ 2, /*B*/ 1, {}, {}, kBigN, kBigNN);
   EXPECT_EQ(r.points.size(), 9u);  // (2*1+1)^2
 
@@ -94,8 +103,10 @@ TEST(LatticePoints, BoxOnly_dim2_B1)
 
 TEST(LatticePoints, BoxOnly_dim3_B2)
 {
+  // The three-dimensional radius-two box contains exactly 125 distinct points.
   auto r = latticePoints(3, 2, {}, {}, kBigN, kBigNN);
   EXPECT_EQ(r.points.size(), 125u);  // (2*2+1)^3
+  EXPECT_EQ(asSet(r), bruteForce(3, 2, {}, {}));
 }
 
 TEST(LatticePoints, BoxOnly_dim1_B0)
@@ -103,7 +114,7 @@ TEST(LatticePoints, BoxOnly_dim1_B0)
   // Degenerate: only the origin.
   auto r = latticePoints(1, 0, {}, {}, kBigN, kBigNN);
   ASSERT_EQ(r.points.size(), 1u);
-  EXPECT_EQ(r.points[0], std::vector<int>{0});
+  EXPECT_EQ(r.points[0], std::vector<int> {0});
 }
 
 // ---------------------------------------------------------------------------
@@ -150,11 +161,19 @@ TEST(LatticePoints, Infeasible_xGeq1_AndXLeqMinus1)
   std::vector<int> rhs = {1, 1};
   auto r = latticePoints(1, 2, H, rhs, kBigN, kBigNN);
   EXPECT_EQ(r.points.size(), 0u);
-  // TODO: assert r.n_nodes >= 1 here once box_enum.h is fixed upstream.
-  // Currently when set_bounds returns 0 at the root, _box_enum_c jumps
-  // straight to its end: label without ever executing `*N_nodes = 1`,
-  // so n_nodes leaks the caller's initial value (0). Issue reported
-  // to the author; one-line fix is to initialize *N_nodes at the top.
+}
+
+// Disabled because initially infeasible bounds return before counting the root.
+// Re-enable when the documented root-inclusive node count is preserved on this
+// early-return path.
+// https://github.com/Macaulay2/M2/issues/4702
+TEST(LatticePoints, DISABLED_infeasibleRootNodeCount)
+{
+  // The documented node count includes the root even when its bounds are
+  // infeasible.
+  const auto result = latticePoints(1, 2, {{1}, {-1}}, {1, 1}, kBigN, kBigNN);
+  EXPECT_TRUE(result.points.empty());
+  EXPECT_GE(result.n_nodes, 1);
 }
 
 // ---------------------------------------------------------------------------
@@ -169,7 +188,12 @@ TEST(LatticePoints, SoftCap_MaxNOut_ReturnsPartial)
   const long cap = 10;
   auto r = latticePoints(2, 10, {}, {}, cap, kBigNN);
   EXPECT_EQ(r.points.size(), static_cast<size_t>(cap));
-  // No exception thrown -- if we got here, the soft-cap behavior is intact.
+  EXPECT_EQ(asSet(r).size(), r.points.size());
+  for (const auto& point : r.points)
+    {
+      ASSERT_EQ(point.size(), 2);
+      for (int coordinate : point) EXPECT_LE(std::abs(coordinate), 10);
+    }
 }
 
 TEST(LatticePoints, SoftCap_MaxNOut_ExactlyAtBound)
@@ -182,17 +206,15 @@ TEST(LatticePoints, SoftCap_MaxNOut_ExactlyAtBound)
 TEST(LatticePoints, HardCap_MaxNNodes_Throws)
 {
   // Tiny node budget on a problem that expands the search tree past it.
-  EXPECT_THROW(
-      latticePoints(2, 10, {}, {}, kBigN, /*max_N_nodes*/ 5),
-      std::runtime_error);
+  EXPECT_THROW(latticePoints(2, 10, {}, {}, kBigN, /*max_N_nodes*/ 5),
+               std::runtime_error);
 }
 
 TEST(LatticePoints, DimTooLarge_Throws)
 {
   // box_enum's MAX_SUPPORTED_DIM is 256.
-  EXPECT_THROW(
-      latticePoints(/*dim*/ 257, /*B*/ 0, {}, {}, kBigN, kBigNN),
-      std::runtime_error);
+  EXPECT_THROW(latticePoints(/*dim*/ 257, /*B*/ 0, {}, {}, kBigN, kBigNN),
+               std::runtime_error);
 }
 
 // ---------------------------------------------------------------------------
@@ -201,20 +223,18 @@ TEST(LatticePoints, DimTooLarge_Throws)
 
 TEST(LatticePoints, RhsLengthMismatch_Throws)
 {
+  // Every constraint row must have a corresponding right-hand side.
   std::vector<std::vector<int>> H = {{1, 0}, {0, 1}};
   std::vector<int> rhs = {0};  // length 1, should be 2
-  EXPECT_THROW(
-      latticePoints(2, 1, H, rhs, kBigN, kBigNN),
-      std::runtime_error);
+  EXPECT_THROW(latticePoints(2, 1, H, rhs, kBigN, kBigNN), std::runtime_error);
 }
 
 TEST(LatticePoints, HRowLengthMismatch_Throws)
 {
+  // A constraint row must have exactly the declared number of coordinates.
   std::vector<std::vector<int>> H = {{1, 0, 0}};  // row length 3, dim is 2
   std::vector<int> rhs = {0};
-  EXPECT_THROW(
-      latticePoints(2, 1, H, rhs, kBigN, kBigNN),
-      std::runtime_error);
+  EXPECT_THROW(latticePoints(2, 1, H, rhs, kBigN, kBigNN), std::runtime_error);
 }
 
 // ===========================================================================
@@ -266,7 +286,8 @@ std::set<std::vector<int>> pointsAsSet(const MutableMatrix* M)
 // for Hv >= rhs. This keeps a single source-of-truth enumerator and also
 // documents the sign-flip the engine wrapper performs internally.
 std::set<std::vector<int>> bruteForceAxLeqB(
-    int dim, int B,
+    int dim,
+    int B,
     const std::vector<std::vector<int>>& A,
     const std::vector<int>& b)
 {
@@ -361,8 +382,7 @@ TEST(LatticePointsRaw, WrongShape_b_Errors)
   MutableMatrix* M = rawLatticePoints(Am, bm_row, 3, kBigN, kBigNN);
   EXPECT_EQ(M, nullptr);
   std::string msg = consumeEngineError();
-  EXPECT_NE(msg.find("column matrix"), std::string::npos)
-      << "msg was: " << msg;
+  EXPECT_NE(msg.find("column matrix"), std::string::npos) << "msg was: " << msg;
 }
 
 TEST(LatticePointsRaw, BigInt_b_Errors)
@@ -381,8 +401,7 @@ TEST(LatticePointsRaw, BigInt_b_Errors)
   MutableMatrix* M = rawLatticePoints(Am, bm, 3, kBigN, kBigNN);
   EXPECT_EQ(M, nullptr);
   std::string msg = consumeEngineError();
-  EXPECT_NE(msg.find("does not fit"), std::string::npos)
-      << "msg was: " << msg;
+  EXPECT_NE(msg.find("does not fit"), std::string::npos) << "msg was: " << msg;
 }
 
 // ===========================================================================
@@ -399,15 +418,12 @@ std::vector<std::vector<mpz_class>> toMpz(
     const std::vector<std::vector<int>>& A)
 {
   std::vector<std::vector<mpz_class>> out(A.size());
-  for (size_t i = 0; i < A.size(); ++i)
-    out[i].assign(A[i].begin(), A[i].end());
+  for (size_t i = 0; i < A.size(); ++i) out[i].assign(A[i].begin(), A[i].end());
   return out;
 }
 
 std::vector<mpz_class> toMpz(const std::vector<int>& v)
-{
-  return std::vector<mpz_class>(v.begin(), v.end());
-}
+{ return std::vector<mpz_class>(v.begin(), v.end()); }
 
 std::set<std::vector<int>> asIntSet(const LatticePointsNormalizResult& r)
 {
@@ -424,7 +440,8 @@ std::set<std::vector<int>> asIntSet(const LatticePointsNormalizResult& r)
 
 // Append rows |x_i| <= B (i.e., x_i <= B and -x_i <= B) to (A, b). Used to
 // make a polytope bounded so Normaliz can enumerate.
-void addBox(int dim, int B,
+void addBox(int dim,
+            int B,
             std::vector<std::vector<int>>& A,
             std::vector<int>& b)
 {
@@ -482,16 +499,18 @@ TEST(LatticePointsNormaliz, AgreesWithBoxEnum_Simplex_dim3)
 {
   // Cross-check: the same simplex through both helpers must give the same
   // answer. (LatticePoints test "Simplex_dim3_B3" hits 20 points.)
-  std::vector<std::vector<int>> A = {{-1, 0, 0}, {0, -1, 0}, {0, 0, -1},
-                                     {1, 1, 1}};
+  std::vector<std::vector<int>> A = {
+      {-1, 0, 0}, {0, -1, 0}, {0, 0, -1}, {1, 1, 1}};
   std::vector<int> b = {0, 0, 0, 3};
 
   auto rNm = latticePointsNormaliz(3, toMpz(A), toMpz(b));
-  auto rBox = latticePoints(3, /*B*/ 3,
-                            /*H*/ {{1, 0, 0}, {0, 1, 0}, {0, 0, 1},
-                                   {-1, -1, -1}},
-                            /*rhs*/ {0, 0, 0, -3},
-                            kBigN, kBigNN);
+  auto rBox =
+      latticePoints(3,
+                    /*B*/ 3,
+                    /*H*/ {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {-1, -1, -1}},
+                    /*rhs*/ {0, 0, 0, -3},
+                    kBigN,
+                    kBigNN);
 
   EXPECT_EQ(rNm.points.size(), 20u);
   EXPECT_EQ(rBox.points.size(), 20u);
@@ -515,18 +534,16 @@ TEST(LatticePointsNormaliz, Unbounded_Throws)
   } catch (const std::runtime_error& e)
     {
       std::string msg(e.what());
-      EXPECT_NE(msg.find("unbounded"), std::string::npos)
-          << "msg was: " << msg;
+      EXPECT_NE(msg.find("unbounded"), std::string::npos) << "msg was: " << msg;
   }
 }
 
 TEST(LatticePointsNormaliz, UnboundedRay_Throws)
 {
   // 2D unbounded: x >= 0, y == 0 (via y <= 0 and -y <= 0). Recession rank 1.
-  std::vector<std::vector<mpz_class>> A = {
-      {mpz_class(-1), mpz_class(0)},
-      {mpz_class(0), mpz_class(1)},
-      {mpz_class(0), mpz_class(-1)}};
+  std::vector<std::vector<mpz_class>> A = {{mpz_class(-1), mpz_class(0)},
+                                           {mpz_class(0), mpz_class(1)},
+                                           {mpz_class(0), mpz_class(-1)}};
   std::vector<mpz_class> b = {mpz_class(0), mpz_class(0), mpz_class(0)};
 
   EXPECT_THROW(latticePointsNormaliz(2, A, b), std::runtime_error);
@@ -534,36 +551,41 @@ TEST(LatticePointsNormaliz, UnboundedRay_Throws)
 
 TEST(LatticePointsNormaliz, BigInt_RhsAccepted)
 {
-  // b entry of 2^40 -- box_enum would reject this (fits-in-int check),
-  // Normaliz must accept it. We use a tiny constraint set so the polytope
-  // collapses to one point at the origin via a tight box around it.
-  std::vector<std::vector<mpz_class>> A = {
-      {mpz_class(1), mpz_class(0)}, {mpz_class(-1), mpz_class(0)},
-      {mpz_class(0), mpz_class(1)}, {mpz_class(0), mpz_class(-1)}};
+  // A redundant 2^40 bound must be accepted while tighter constraints
+  // restrict enumeration to the three points (0,-2), (0,-1), and (0,0).
+  std::vector<std::vector<mpz_class>> A = {{mpz_class(1), mpz_class(0)},
+                                           {mpz_class(-1), mpz_class(0)},
+                                           {mpz_class(0), mpz_class(1)},
+                                           {mpz_class(0), mpz_class(-1)}};
   mpz_class big = mpz_class(1) << 40;  // 2^40, > INT_MAX
-  std::vector<mpz_class> b = {mpz_class(0), mpz_class(0),
-                              mpz_class(0), big};
+  std::vector<mpz_class> b = {mpz_class(0), mpz_class(0), mpz_class(0), big};
   // Constraints: x <= 0, x >= 0, y <= 0, y >= -2^40.
   // Lattice points: (0, y) for y in [-2^40, 0] -- way too many to enumerate.
   // Tighten with a finite box on y so we can count.
-  A.push_back({mpz_class(0), mpz_class(1)});  b.push_back(mpz_class(2));
-  A.push_back({mpz_class(0), mpz_class(-1)}); b.push_back(mpz_class(2));
+  A.push_back({mpz_class(0), mpz_class(1)});
+  b.push_back(mpz_class(2));
+  A.push_back({mpz_class(0), mpz_class(-1)});
+  b.push_back(mpz_class(2));
   // Now lattice points are (0, y) for y in [-2, 0]: 3 points.
 
   auto r = latticePointsNormaliz(2, A, b);
   EXPECT_EQ(r.points.size(), 3u);
+  EXPECT_EQ(asIntSet(r),
+            (std::set<std::vector<int>> {{0, -2}, {0, -1}, {0, 0}}));
 }
 
 TEST(LatticePointsNormaliz, ShapeMismatch_Throws)
 {
-  std::vector<std::vector<mpz_class>> A = {
-      {mpz_class(1), mpz_class(0)}, {mpz_class(0), mpz_class(1)}};
+  // Normaliz rejects mismatched constraint and right-hand-side counts.
+  std::vector<std::vector<mpz_class>> A = {{mpz_class(1), mpz_class(0)},
+                                           {mpz_class(0), mpz_class(1)}};
   std::vector<mpz_class> b = {mpz_class(0)};  // length 1, should be 2
   EXPECT_THROW(latticePointsNormaliz(2, A, b), std::runtime_error);
 }
 
 TEST(LatticePointsNormaliz, RowLengthMismatch_Throws)
 {
+  // Normaliz rejects constraint rows with the wrong dimension.
   std::vector<std::vector<mpz_class>> A = {
       {mpz_class(1), mpz_class(0), mpz_class(0)}};  // length 3, dim is 2
   std::vector<mpz_class> b = {mpz_class(0)};
@@ -617,10 +639,10 @@ TEST(LatticePointsNormalizRaw, BigInt_b_Accepted)
   const Matrix* Am = makeZZ({{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 0}});
 
   MatrixConstructor bcon(globalZZ->make_FreeModule(5), 1);
-  bcon.set_entry(0, 0, globalZZ->from_long(0));   // x <=  0
-  bcon.set_entry(1, 0, globalZZ->from_long(0));   // -x <= 0
-  bcon.set_entry(2, 0, globalZZ->from_long(0));   // y <=  0
-  bcon.set_entry(3, 0, globalZZ->from_long(0));   // -y <= 0
+  bcon.set_entry(0, 0, globalZZ->from_long(0));  // x <=  0
+  bcon.set_entry(1, 0, globalZZ->from_long(0));  // -x <= 0
+  bcon.set_entry(2, 0, globalZZ->from_long(0));  // y <=  0
+  bcon.set_entry(3, 0, globalZZ->from_long(0));  // -y <= 0
   mpz_t big;
   mpz_init(big);
   mpz_ui_pow_ui(big, 2, 40);
@@ -649,6 +671,7 @@ TEST(LatticePointsNormalizRaw, Unbounded_Errors)
 
 TEST(LatticePointsNormalizRaw, NonZZ_b_Errors)
 {
+  // The engine wrapper rejects right-hand sides over a finite field.
   const Matrix* Am = makeZZ({{1, 0}, {0, 1}});
 
   Ring* Fp = Z_mod::create(101);
@@ -665,12 +688,12 @@ TEST(LatticePointsNormalizRaw, NonZZ_b_Errors)
 
 TEST(LatticePointsNormalizRaw, WrongShape_b_Errors)
 {
+  // The engine wrapper requires a column of right-hand sides.
   const Matrix* Am = makeZZ({{1, 0}, {0, 1}});
   const Matrix* bm_row = makeZZ({{2, 2}});  // 1 x 2 instead of 2 x 1
 
   MutableMatrix* M = rawLatticePointsNormaliz(Am, bm_row);
   EXPECT_EQ(M, nullptr);
   std::string msg = consumeEngineError();
-  EXPECT_NE(msg.find("column matrix"), std::string::npos)
-      << "msg was: " << msg;
+  EXPECT_NE(msg.find("column matrix"), std::string::npos) << "msg was: " << msg;
 }

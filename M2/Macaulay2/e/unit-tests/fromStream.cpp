@@ -1,70 +1,43 @@
-// Read an object from the given stream.
-// 'result' must be previously 'init'ed
-// 'i' is incremented to directly past the part read
-// an exception is raised on bad input?
+// Read one integer, leaving the suffix unread and the output unchanged on
+// failure. ARing outputs must already be initialized by the caller.
 
 #include "unit-tests/RingTest.hpp"
+
+#include <gmpxx.h>
+
+#include <istream>
+
 #include "basic-rings/aring-ZZp.hpp"
 #include "rings/ZZp.hpp"
 
-template <typename T>
-std::istream &fromStream(std::istream &i,
-                         const T &R,
-                         typename T::ElementType &result);
-
-template <typename T>
-bool fromStream(std::istream &i, const T &R, ring_elem &result);
-
 template <>
-std::istream &fromStream<M2::ARingZZp>(std::istream &i,
-                                       const M2::ARingZZp &R,
-                                       M2::ARingZZp::ElementType &result)
+std::istream& fromStream<M2::ARingZZp>(std::istream& input,
+                                       const M2::ARingZZp& ring,
+                                       M2::ARingZZp::ElementType& result)
 {
-  int a;
-  i >> a;
-  R.set(result, a);
-  return i;
+  int value;
+  if (input >> value) ring.set(result, value);
+  return input;
 }
 
 template <>
-bool fromStream<Z_mod>(std::istream &i, const Z_mod &R, ring_elem &result)
+bool fromStream<Z_mod>(std::istream& input,
+                       const Z_mod& ring,
+                       ring_elem& result)
 {
-  while (isspace(i.peek())) i.get();
-
-  if (!isdigit(i.peek()) && i.peek() != '+' && i.peek() != '-') return false;
-
-  int a;
-  i >> a;
-  result = R.from_long(a);
+  int value;
+  if (!(input >> value)) return false;
+  result = ring.from_long(value);
   return true;
 }
 
 template <>
-bool fromStream<RingZZ>(std::istream &i, const RingZZ &R, ring_elem &result)
+bool fromStream<RingZZ>(std::istream& input,
+                        const RingZZ& ring,
+                        ring_elem& result)
 {
-  while (isspace(i.peek())) i.get();
-
-  if (!isdigit(i.peek()) && i.peek() != '+' && i.peek() != '-') return false;
-
-  const int original_s_len = 100;
-  char original_s[original_s_len];
-  char *s_str = original_s;
-  char *s = s_str;
-  //  int s_len = original_s_len;
-  //  int len = 0;
-  while (isdigit(i.peek()))
-    {
-      // NOT DONE BEING WRITTEN!!!!!!
-    }
-  *s++ = '\0';
-
-  int a;
-  i >> a;
-  result = R.from_long(a);
+  mpz_class value;
+  if (!(input >> value)) return false;
+  result = ring.from_int(value.get_mpz_t());
   return true;
 }
-
-// Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
-// indent-tabs-mode: nil
-// End:
