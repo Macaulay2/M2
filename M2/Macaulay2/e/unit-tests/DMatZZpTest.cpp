@@ -2,8 +2,18 @@
 #include <gtest/gtest.h>
 
 #include "unit-tests/DMatTest.hpp"
+#include "unit-tests/ARingMatrixTest.hpp"
+#include "basic-mutable-matrices/mat-arith.hpp"
 #include "basic-rings/aring-ZZp.hpp"
 #include "basic-rings/aring-glue.hpp"
+
+// Defined in ARingZZpTest.cpp.  Declaring the explicit specialization here is
+// required: without it, using the generator below implicitly instantiates the
+// primary template, which is ill-formed even though it happens to link.
+template <>
+void getElement<M2::ARingZZp>(const M2::ARingZZp& R,
+                              int index,
+                              M2::ARingZZp::ElementType& result);
 
 TEST(DMatZZp, create)
 {
@@ -15,10 +25,10 @@ TEST(DMatZZp, create)
 
   EXPECT_TRUE(&M.ring() == R);
 
-  RingZZp::ElementType a, b;
-  R->init(a);
-  R->init(b);
-  R->set(a, 13);
+  RingZZp::Element a(*R), b(*R);
+
+  ARingElementGenerator<RingZZp> gen(*R);
+  gen.nextElement(a);
   R->copy(M.entry(0, 2), a);
 
   R->copy(b, M.entry(0, 2));
@@ -35,11 +45,18 @@ TEST(DMatZZp, submatrix)
 
   EXPECT_TRUE(&M.ring() == R);
 
-  RingZZp::ElementType a, b;
-  R->init(a);
-  R->init(b);
+  RingZZp::Element a(*R), b(*R);
 
-  R->set(a, 13);
+  // The isZero assertions below need 'a' to be nonzero, and the '*= a' case
+  // needs it to be a unit.  Over the field ZZ/101 nonzero implies unit, so a
+  // nonzero draw suffices -- but the draw must be checked: the deterministic
+  // prefix of getElement<> starts at -24, which is 0 in characteristic 2 or 3.
+  ARingElementGenerator<RingZZp> gen(*R);
+  do
+    {
+      gen.nextElement(a);
+    }
+  while (R->is_zero(a));
   R->copy(M.entry(0, 2), a);
 
   R->copy(b, M.entry(0, 2));
@@ -63,8 +80,13 @@ TEST(DMatZZp, submatrix)
   submatrix(M) = 0;
   EXPECT_TRUE(MatrixOps::isZero(M));
 
+  // The assertions below depend on specific positions of N being nonzero, so
+  // use Identity rather than a generated fill: that holds whatever values the
+  // element generator happens to produce.
+  ARingMatrixGenerator<MatZZp> matgen(*R);
   MatZZp N(*R, 2, 2);
-  R->copy(N.entry(0, 0), a);
+  matgen.nextMatrix(N, MatrixShape::Identity);
+
   displayMat(N);
   std::cout << std::endl;
   displayMat(M);
@@ -75,9 +97,6 @@ TEST(DMatZZp, submatrix)
   displayMat(M);
   std::cout << std::endl;
   EXPECT_FALSE(MatrixOps::isZero(M));
-
-  R->clear(a);
-  R->clear(b);
 }
 
 // Local Variables:
