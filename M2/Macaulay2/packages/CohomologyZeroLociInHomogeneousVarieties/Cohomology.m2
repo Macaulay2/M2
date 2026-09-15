@@ -20,7 +20,7 @@ bottPython HomogeneousVectorBundle := E -> (
     bottP := import "bott_py";
     --bottPy := symbol bottPy;
     result := bottP@@("bottPy")(S, m, rho,simpleRoots, posRoots, rootNorms, M, d);
-    E#"cohomology" = toList(value result)
+    E#"cohomology" = toList(value pythonValue stripNumpyRepr toString result)
     );
 
 bott = method(); 

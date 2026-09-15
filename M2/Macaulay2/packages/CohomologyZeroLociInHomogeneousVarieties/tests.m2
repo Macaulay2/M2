@@ -67,7 +67,7 @@ rank E
 R = rootSystemB(3);
 X = homogeneousVariety(R,set{2,3});
 l = weight(R,{0,1,0});
-E = homogeneousVectorBundle({l},{2},X);
+E = homogeneousVectorBundle({l},{1},X);
 rank E
 R = rootSystemD(4);
 X = homogeneousVariety(R,set{2,4});
@@ -358,7 +358,7 @@ Y = embeddedVariety F;
 eulerCharacteristicTangent(1,Y)
 R = rootSystemD(4);
 X = homogeneousVariety(R,set{2,3,4});
-F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{1},X);
 Y = embeddedVariety F;
 eulerCharacteristicTangent(2,Y)
 ///
@@ -366,17 +366,17 @@ eulerCharacteristicTangent(2,Y)
 TEST ///
 R = rootSystemA(4);
 X = homogeneousVariety(R,set{1,3,4});
-F = homogeneousVectorBundle({weight(R,{0,0,1,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,0,1,0})},{1},X);
 Y = embeddedVariety F;
 chiTangent(1,Y)
 R = rootSystemC(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{0,1,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,1,0})},{1},X);
 Y = embeddedVariety F;
 chiTangent(1,Y)
 R = rootSystemF4;
 X = homogeneousVariety(R,set{2,3,4});
-F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{1},X);
 Y = embeddedVariety F;
 chiTangent(2,Y)
 ///
@@ -384,19 +384,19 @@ chiTangent(2,Y)
 TEST ///
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 E = homogeneousVectorBundle({weight(R,{0,1,0})},{1},X);
 eulerCharacteristicTangentTwisted(1,Y,E)
 R = rootSystemB(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 E = homogeneousVectorBundle({weight(R,{0,0,1})},{1},X);
 eulerCharacteristicTangentTwisted(1,Y,E)
 R = rootSystemD(4);
 X = homogeneousVariety(R,set{2,3,4});
-F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{1},X);
 Y = embeddedVariety F;
 E = homogeneousVectorBundle({weight(R,{1,0,0,0})},{1},X);
 eulerCharacteristicTangentTwisted(2,Y,E)
@@ -405,12 +405,12 @@ eulerCharacteristicTangentTwisted(2,Y,E)
 TEST ///
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 eulerCharacteristicStructure Y
 R = rootSystemC(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{0,1,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,1,0})},{1},X);
 Y = embeddedVariety F;
 eulerCharacteristicStructure Y
 R = rootSystemE(6);
@@ -423,12 +423,12 @@ eulerCharacteristicStructure Y
 TEST ///
 R = rootSystemA(4);
 X = homogeneousVariety(R,set{1,3,4});
-F = homogeneousVectorBundle({weight(R,{0,0,1,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,0,1,0})},{1},X);
 Y = embeddedVariety F;
 chiStructure Y
 R = rootSystemD(4);
 X = homogeneousVariety(R,set{2,3,4});
-F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{1},X);
 Y = embeddedVariety F;
 chiStructure Y
 R = rootSystemG2;
@@ -445,7 +445,7 @@ X = Gr{1,3};
 volumeFano X
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 volumeFano Y
 ///
@@ -453,18 +453,18 @@ volumeFano Y
 TEST ///
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 G = filtrationBundle({structureSheaf X,F},X);
 cohomologyRestriction(X,F,G)
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 G = filtrationBundle({structureSheaf X,F},X);
 cohomologyRestriction(Y,G)
 R = rootSystemB(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 G = filtrationBundle({structureSheaf X,F},X);
 cohomologyRestriction(X,F,G)
 ///
@@ -501,7 +501,7 @@ hn2 = hodgeNumbers(2,X);
 peek hn2
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 hn3 = hodgeNumbers Y;
 peek hn3
@@ -514,7 +514,7 @@ X = Gr{2,4};
 displayHN(1,X)
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 displayHN Y
 ///
@@ -522,19 +522,19 @@ displayHN Y
 TEST ///
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 hn = hochschildNumbers Y;
 peek hn
 R = rootSystemC(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 hn2 = hochschildNumbers Y;
 peek hn2
 R = rootSystemD(4);
 X = homogeneousVariety(R,set{2,3,4});
-F = homogeneousVectorBundle({weight(R,{1,0,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0,0})},{1},X);
 Y = embeddedVariety F;
 hn3 = hochschildNumbers Y;
 peek hn3
@@ -543,19 +543,19 @@ peek hn3
 TEST ///
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 E = homogeneousVectorBundle({weight(R,{0,1,0})},{1},X);
 hochschildNumbersTwisted(Y,E)
 R = rootSystemB(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 E = homogeneousVectorBundle({weight(R,{0,0,1})},{1},X);
 hochschildNumbersTwisted(Y,E)
 R = rootSystemD(4);
 X = homogeneousVariety(R,set{2,3,4});
-F = homogeneousVectorBundle({weight(R,{1,0,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0,0})},{1},X);
 Y = embeddedVariety F;
 E = homogeneousVectorBundle({weight(R,{1,0,0,0})},{1},X);
 hochschildNumbersTwisted(Y,E)
@@ -564,17 +564,17 @@ hochschildNumbersTwisted(Y,E)
 TEST ///
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 displayHochN Y
 R = rootSystemC(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 displayHochN Y
 R = rootSystemG2;
 X = homogeneousVariety(R,set{2});
-F = homogeneousVectorBundle({weight(R,{0,1})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,1})},{1},X);
 Y = embeddedVariety F;
 displayHochN Y
 ///
@@ -591,7 +591,7 @@ vol2
 chiT2
 R = rootSystemA(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{1,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0})},{1},X);
 Y = embeddedVariety F;
 (vol3,chiT3,chiCot3,hodge3) = invariants(Y,maxChiT=>1);
 vol3

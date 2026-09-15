@@ -15,7 +15,9 @@ globalAssignment EmbeddedVariety;
 
 
 
-
+-- NumPy 2.x changed the repr() of scalar types (e.g. np.int64(4) instead of just 4)
+stripNumpyRepr = method() 
+stripNumpyRepr String := s -> replace("np\\.[a-zA-Z0-9_]+\\(([^()]*)\\)", "\\1", s)
 
 newParabolic = method(TypicalValue => ParabolicGroup);
 newParabolic (RootSystem,Set) := (R,S) -> (

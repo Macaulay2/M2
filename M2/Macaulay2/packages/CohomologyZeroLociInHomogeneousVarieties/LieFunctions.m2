@@ -31,7 +31,7 @@ dominantCharacterHighestWeight (RootSystem,Weight) := (R,l) -> (
     poinc := toPython myPoincare;
     dominant := import "dominantCharacterHighestWeight";
     result := dominant@@("dominantCharacterHighestWeight")(posRoots,lam, rho, simpleRoots, rootNorms, M, poinc);
-    character := value pythonValue toString result;
+    character := value pythonValue stripNumpyRepr toString result;
     character = new Tally from character;
     character = character/(v -> weight(R,toList v));
     return character;
@@ -56,7 +56,7 @@ tensorProduct (Weight,Weight,RootSystem,HashTable) := (l1,l2,R,W) -> (
     W =  toPython (W/(w -> toSequence entries w));
     tensorP := import "tensorProduct";
     result := tensorP@@("tensorProduct")(lam1, lam2, simpleRoots, rho, W, tau);
-    output := value pythonValue toString result;
+    output := value pythonValue stripNumpyRepr toString result;
     output = new Tally from output;
     output = output/(v -> weight(R,toList v));
     return new HashTable from output;
@@ -130,7 +130,7 @@ symmetricPower (ZZ, Weight,RootSystem) := (n,l,R) -> (
         poinc := toPython myPoincare;
         sym := import "symmetricPower";
         result := sym@@("symmetricPower")(n, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau);
-        decomp := value pythonValue toString result;
+        decomp := value pythonValue stripNumpyRepr toString result;
         decomp = new Tally from decomp;
         decomp = decomp/(v -> weight(R,toList v));
         return new HashTable from decomp;
@@ -178,7 +178,7 @@ multipleSymmetricPowerLie(ZZ, Weight, RootSystem) := (k, l, R) -> (
         poinc := toPython myPoincare;
         sym := import "multipleSymmetricPower";
         result := sym@@("multipleSymmetricPower")(k, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
-        decomp := value pythonValue toString result;
+        decomp := value pythonValue stripNumpyRepr toString result;
         decomp = decomp/(d -> new Tally from d);
         decomp = decomp/(tal -> new HashTable from tal/(v -> weight(R,toList v)));
         return decomp;
@@ -232,7 +232,7 @@ multipleSymmetricPowerLie (ZZ, HashTable, RootSystem) := (k, L, R) -> (
         poinc := toPython myPoincare;
         sym := import "multipleSymmetricPower";
         result := sym@@("multipleSymmetricPower")(k, L', posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
-        decomp := value pythonValue toString result;
+        decomp := value pythonValue stripNumpyRepr toString result;
         output := new MutableHashTable;
         for w in keys decomp do (
             dec := decomp#w/(d -> new Tally from d);
@@ -285,7 +285,7 @@ exteriorPower (ZZ, Weight, RootSystem) := o -> (n,l,R) -> (
         poinc := toPython myPoincare;
         alt := import "exteriorPower";
         result := alt@@("exteriorPower")(n, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau);
-        decomp := value pythonValue toString result;
+        decomp := value pythonValue stripNumpyRepr toString result;
         decomp = new Tally from decomp;
         decomp = decomp/(v -> weight(R,toList v));
         return new HashTable from decomp;
@@ -334,7 +334,7 @@ multipleExteriorPowerLie(ZZ, Weight, RootSystem) := (k, l, R) -> (
         poinc := toPython myPoincare;
         ext := import "multipleExteriorPower";
         result := ext@@("multipleExteriorPower")(k, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
-        decomp := value pythonValue toString result;
+        decomp := value pythonValue stripNumpyRepr toString result;
         decomp = decomp/(d -> new Tally from d);
         decomp = decomp/(tal -> new HashTable from tal/(v -> weight(R,toList v)));
         return decomp;
@@ -388,7 +388,7 @@ multipleExteriorPowerLie (ZZ, HashTable, RootSystem) := (k, L, R) -> (
         poinc := toPython myPoincare;
         ext := import "multipleExteriorPower";
         result := ext@@("multipleExteriorPower")(k, L', posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
-        decomp := value pythonValue toString result;
+        decomp := value pythonValue stripNumpyRepr toString result;
         output := new MutableHashTable;
         for w in keys decomp do (
             dec := decomp#w/(d -> new Tally from d);
