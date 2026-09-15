@@ -2,8 +2,7 @@
 
 Conventions for adding or revising engine unit tests in this directory.
 For C++ formatting and include order see `Macaulay2/e/STYLE.txt`, which applies
-here too. See the `README` in this directory for why `M2-cpp-replacement.cpp`
-must be linked in.
+here too.
 
 Apply these rules to the tests you are changing. Do not reformat unrelated
 tests to bring them into agreement with this guide.
@@ -90,40 +89,51 @@ Lay out setup, the operation, and the checks in that order, separated by blank
 lines where it helps. Set each case's inputs explicitly; never rely on values
 left behind by an earlier case. Use small scopes for cases with their own setup,
 and name them with `SCOPED_TRACE`, including the operation and the input
-condition — `divide: imaginary divisor`.
+condition — `"init set: source changes"` in `ARingCCCTest.cpp`. The test name
+must identify the behavior described by its opening comment; scope and table
+case names must identify the conditions described by their nearby comments.
+Structure each case so its setup establishes those conditions and its assertions
+check the claimed outcome.
 
 ### Layout example
 
-Generic on purpose, to show the shape without blessing any one engine file as a
-template. Real tests should exercise the engine component being changed.
+From `ARingCCCTest.cpp`, using its `ARingCCC` fixture and `Ring` alias. The
+existing name `Construction` is preserved here; new test names use camelCase.
+The two scopes match the requested-precision and default-precision cases
+explained in their comments.
 
 ```cpp
-namespace {
-
-class IntegerSequence : public ::testing::Test
+TEST_F(ARingCCC, Construction)
 {
- protected:
-  std::vector<int> values;
-};
-
-TEST_F(IntegerSequence, storage)
-{
-  // Copying and clearing preserve the right values.
+  // Check the ring name and the precision it reports. The default settings
+  // and requested settings should agree with the values used to create the
+  // ring.
 
   {
-    // Changing the original must not damage a saved copy.
-    SCOPED_TRACE("copy: original changes");
-    values = {2, 7};
+    // Try several requested precisions. Both the stored precision and the
+    // printed name should reflect the request.
+    SCOPED_TRACE("create: requested precision");
+    for (unsigned long precision : {53UL, 100UL, 200UL})
+      {
+        SCOPED_TRACE(::testing::Message() << "precision " << precision);
+        Ring ring(precision);
 
-    const auto saved = values;
-    values[0] = 9;
+        EXPECT_EQ(ring.get_precision(), precision);
+        EXPECT_EQ(ringName(ring), "ACCC_" + std::to_string(precision));
+      }
+  }
 
-    EXPECT_EQ(saved, (std::vector<int>{2, 7}));
-    EXPECT_EQ(values, (std::vector<int>{9, 7}));
+  {
+    // Create the ring without settings. Check the defaults reported to
+    // callers.
+    SCOPED_TRACE("create: default precision");
+    Ring defaultRing;
+
+    EXPECT_EQ(defaultRing.get_precision(), 53);
+    EXPECT_EQ(defaultRing.characteristic(), 0);
+    EXPECT_EQ(ringName(defaultRing), "ACCC_53");
   }
 }
-
-}  // namespace
 ```
 
 For repeated steps with different inputs, define a local case struct with a
@@ -208,14 +218,39 @@ quietly becomes the standard.
 ## 9. Several implementations of one contract
 
 Once the checks live in a helper, run them over every implementation from one
-list, with a traits struct supplying construction and limits:
+list, with a traits struct supplying construction and limits.
+
+These excerpts from `ARingZZpTest.cpp` show one factory specialization and the
+fixture registration; the file also defines factories for FFPACK and Flint.
 
 ```cpp
-template <typename RT> struct ARingFactory;   // specialize per class
-// ... static make(p), static supports(p), static name()
+template <typename RT>
+struct ARingFactory;
 
-typedef ::testing::Types<A, B, C> Types;
-TYPED_TEST_SUITE(MySuite, Types);
+template <>
+struct ARingFactory<M2::ARingZZp>
+{
+  static const char* name() { return "ARingZZp"; }
+  // two newarray_atomic(int, p) tables and an O(p^2) primitive-root search
+  static const char* limit() { return "table size; p <= 32749"; }
+  static bool supports(unsigned long p) { return p <= 32749; }
+  static std::unique_ptr<M2::ARingZZp> make(unsigned long p)
+  {
+    return std::unique_ptr<M2::ARingZZp>(new M2::ARingZZp(p));
+  }
+};
+```
+
+```cpp
+template <typename RT>
+class ZZpRing : public ::testing::Test
+{
+};
+
+typedef ::testing::
+    Types<M2::ARingZZp, M2::ARingZZpFFPACK, M2::ARingZZpFlint>
+        ZZpTypes;
+TYPED_TEST_SUITE(ZZpRing, ZZpTypes);
 ```
 
 `supports()` becomes the single declared place each implementation's limits
@@ -232,12 +267,12 @@ out call reports nothing and rots unnoticed. `ARingZZTest.cpp` drops two checks
 this way, and no test run will ever mention it:
 
 ```cpp
-testDivide(R, ntrials);
-//  testReciprocal(R, ntrials); // this test is not applicable, as this
-//  is not a field
-//  testPower(R, ntrials);  // this test can't work, as it expects a
-//  finite field
-testAxioms(R, ntrials);
+  testDivide(R, ntrials);
+  //  testReciprocal(R, ntrials); // this test is not applicable, as this is not
+  //  a field
+  //  testPower(R, ntrials);  // this test can't work, as it expects a finite
+  //  field
+  testAxioms(R, ntrials);
 ```
 
 The reasons given are sound; the problem is that only a reader of that file will
@@ -245,7 +280,13 @@ ever learn them.
 
 ## 11. Recording a known defect
 
-Prefix the test `DISABLED_`, and say what is wrong and what would re-enable it.
+Prefix the test `DISABLED_`. In a comment block immediately above the test or
+at the start of its body, explain the bug, why the test is disabled, and what
+would allow it to be re-enabled. That same block must include a direct URL to
+the specific posted issue in the
+[Macaulay2/M2 issue tracker](https://github.com/Macaulay2/M2/issues).
+A link to the tracker alone or an unposted issue placeholder is insufficient;
+find the existing bug report or file one before adding the disabled test.
 This commentary is allowed to be longer than usual.
 
 Then run it and confirm it fails:
@@ -264,10 +305,17 @@ When pinning behavior you believe is wrong, do not assert the bad constant:
 whoever fixes the bug then has to edit the test, which invites editing it
 wrongly. Assert the property that exposes it.
 
+From `ARingZZpTest.cpp`, in
+`ARingZZpFFPACK.advertisedMaxModulusIsBelowTheRealOne`:
+
 ```cpp
-EXPECT_LT(getMaxModulus(), FieldType::maxCardinality());   // good
-EXPECT_EQ(getMaxModulus(), 32767);                         // not this
+  EXPECT_LT(static_cast<double>(M2::ARingZZpFFPACK::getMaxModulus()),
+            static_cast<double>(M2::ARingZZpFFPACK::FieldType::maxCardinality()));
 ```
+
+This characterizes the discrepancy without hardcoding the advertised value.
+For a disabled regression test, assert the intended corrected behavior so that
+fixing the linked bug makes the test pass (section 11).
 
 ## 13. Comments are hypotheses
 
@@ -315,11 +363,30 @@ count, which looks like a result and is not.
   differ per class and the values reach 2^64.
 - Exponent types differ too (`int`, `int32_t`, `long`). Large exponents go
   through `power_mpz`.
-- Honor documented preconditions even when nothing enforces them.
-  `ARingZZp::subtract_multiple` says "we assume: a, b are NONZERO!!" and has no
-  assert; a zero argument silently returns a wrong answer.
+- Honor documented preconditions even when nothing enforces them, and make
+  them explicit in case names and structure. `ARingZZp::subtract_multiple`
+  says "we assume: a, b are NONZERO!!" and has no assert; a zero argument
+  silently returns a wrong answer. Name the valid case to identify the nonzero
+  operands, explain the precondition in its nearby comment, and establish it
+  in setup or guard the operation as `ARingZZpTest.cpp` does below. Put any
+  regression for zero operands in a separately named test with its own bug
+  explanation and issue link if disabled (section 11).
 - Exact vs approximate: RR and CC cannot use exact `is_equal`, and define their
   own tolerant helpers rather than reusing the shared ones.
+
+The guarded case in `ZZpRing.elementOperations` (`ARingZZpTest.cpp`):
+
+```cpp
+      if (!R.is_zero(a) && !R.is_zero(b))
+        {
+          R.set(c, 7);
+          R.subtract_multiple(c, a, b);
+          R.set(e, 7);
+          R.mult(d, a, b);
+          R.subtract(e, e, d);
+          EXPECT_TRUE(R.is_equal(c, e));
+        }
+```
 
 ## 16. Reuse what is here
 
@@ -331,8 +398,9 @@ count, which looks like a result and is not.
 | `util.hpp` | `stdvector_to_M2_arrayint` |
 
 For private or protected members, use the friend accessor pattern: declare
-`friend class FooTestAccessor` in the engine header, and define the accessor with
-static forwarders in the test, as `WeylAlgebraTest.cpp` does:
+`friend class WeylAlgebraTestAccessor` in the engine header, and define the
+accessor with static forwarders in the test. This excerpt from
+`WeylAlgebraTest.cpp` omits the other forwarders:
 
 ```cpp
 class WeylAlgebraTestAccessor {
