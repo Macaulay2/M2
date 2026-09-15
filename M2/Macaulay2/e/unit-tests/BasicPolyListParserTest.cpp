@@ -141,7 +141,6 @@ TEST(ParseMsolveFromString, ParsesVariableHeader)
 
     expectTerm(polys[0], 0, 1, {3, 0, 1});
     expectTerm(polys[0], 1, 1, {3, 1, 1});
-
     expectTerm(polys[1], 0, 1, {3, 2, 2});
 }
 

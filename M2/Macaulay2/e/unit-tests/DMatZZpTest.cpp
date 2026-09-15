@@ -1,11 +1,9 @@
-#include <memory>
 #include <gtest/gtest.h>
 
-#include "unit-tests/DMatTest.hpp"
+#include "basic-mutable-matrices/mat-linalg.hpp"
 #include "unit-tests/ARingMatrixTest.hpp"
 #include "basic-mutable-matrices/mat-arith.hpp"
 #include "basic-rings/aring-ZZp.hpp"
-#include "basic-rings/aring-glue.hpp"
 
 // Defined in ARingZZpTest.cpp.  Declaring the explicit specialization here is
 // required: without it, using the generator below implicitly instantiates the
@@ -15,31 +13,74 @@ void getElement<M2::ARingZZp>(const M2::ARingZZp& R,
                               int index,
                               M2::ARingZZp::ElementType& result);
 
+typedef M2::ARingZZp RingZZp;
+typedef DMat<M2::ARingZZp> MatZZp;
+
 TEST(DMatZZp, create)
 {
-  typedef M2::ARingZZp RingZZp;
-  typedef DMat<M2::ARingZZp> MatZZp;
+  RingZZp R = M2::ARingZZp(101);
+  MatZZp M(R, 5, 5);
 
-  RingZZp* R = new RingZZp(101);
-  MatZZp M(*R, 5, 5);
+  EXPECT_TRUE(&M.ring() == &R);
 
-  EXPECT_TRUE(&M.ring() == R);
+  RingZZp::Element a(R), b(R);
 
-  RingZZp::Element a(*R), b(*R);
-
-  ARingElementGenerator<RingZZp> gen(*R);
+  ARingElementGenerator<RingZZp> gen(R);
   gen.nextElement(a);
-  R->copy(M.entry(0, 2), a);
+  R.copy(M.entry(0, 2), a);
 
-  R->copy(b, M.entry(0, 2));
-  EXPECT_TRUE(R->is_equal(a, b));
+  R.copy(b, M.entry(0, 2));
+  EXPECT_TRUE(R.is_equal(a, b));
+}
+
+TEST(DMatZZp, symmetricIsSymmetric)
+{
+  RingZZp* R = new RingZZp(101);
+  ARingMatrixGenerator<MatZZp> matgen(*R);
+  MatZZp N(*R, 5, 5);
+  MatZZp M(*R, 5, 5);
+  matgen.nextMatrix(N, MatrixShape::Symmetric);
+  MatrixOps::transpose(N, M);
+  EXPECT_TRUE(MatrixOps::isEqual(N, M));
+}
+
+TEST(DMatZZp, identityIsNeutral)
+{
+  RingZZp* R = new RingZZp(101);
+  ARingMatrixGenerator<MatZZp> matgen(*R);
+  MatZZp M(*R, 5, 5);
+  MatZZp N(*R, 5, 5);
+  MatZZp I(*R, 5, 5);
+  matgen.nextMatrix(M, MatrixShape::Dense);
+  matgen.nextMatrix(I, MatrixShape::Identity);
+  MatrixOps::mult(M, I, N);
+  EXPECT_TRUE(MatrixOps::isEqual(N, M));
+}
+
+TEST(DMatZZp, scaleByCharacteristic)
+{
+  int characteristic = 101;
+  RingZZp* R = new RingZZp(characteristic);
+  ARingMatrixGenerator<MatZZp> matgen(*R);
+  RingZZp::Element a(*R);
+  R->init(a);
+  R->set(a,characteristic);
+  MatZZp M(*R, 5, 5);
+  matgen.nextMatrix(M, MatrixShape::Dense);
+  EXPECT_FALSE(MatrixOps::isZero(M));
+  MatrixOps::scalarMultInPlace(M, a);
+  EXPECT_TRUE(MatrixOps::isZero(M));
+}
+
+TEST(DMatZZp, addition)
+{
+  RingZZp R(101);
+  testMatrixAdd<MatZZp>(R, ntrials, 2, 2);
+  testMatrixAdd<MatZZp>(R, ntrials, 2, 3);
 }
 
 TEST(DMatZZp, submatrix)
 {
-  typedef M2::ARingZZp RingZZp;
-  typedef DMat<M2::ARingZZp> MatZZp;
-
   RingZZp* R = new RingZZp(101);
   MatZZp M(*R, 5, 5);
 
@@ -87,15 +128,9 @@ TEST(DMatZZp, submatrix)
   MatZZp N(*R, 2, 2);
   matgen.nextMatrix(N, MatrixShape::Identity);
 
-  displayMat(N);
-  std::cout << std::endl;
-  displayMat(M);
-  std::cout << std::endl;
   submatrix(M, 0, 1, 2, 2) = submatrix(N);
   submatrix(M, 0, 0, 2, 2) += submatrix(N);
   submatrix(M, 0, 0, 2, 2) *= a;
-  displayMat(M);
-  std::cout << std::endl;
   EXPECT_FALSE(MatrixOps::isZero(M));
 }
 
