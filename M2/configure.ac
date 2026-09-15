@@ -17,6 +17,7 @@ m4_include(m4/ax_boost_base.m4)
 m4_include(m4/ax_boost_regex.m4)
 m4_include(m4/ax_blas.m4)
 m4_include(m4/ax_lapack.m4)
+m4_include(m4/ax_check_compile_flag.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -828,6 +829,14 @@ AS_IF([test "$GCOV" = yes],
   [CFLAGS="$CFLAGS --coverage -O0"
    CXXFLAGS="$CXXFLAGS --coverage -O0"
    LDFLAGS="$LDFLAGS --coverage"
+   dnl Record absolute source paths in the .gcno files, so that gcovr can
+   dnl find the sources of objects built in a parent directory.
+   AX_CHECK_COMPILE_FLAG([-fprofile-abs-path],
+     [CFLAGS="$CFLAGS -fprofile-abs-path"])
+   AC_LANG_PUSH([C++])
+   AX_CHECK_COMPILE_FLAG([-fprofile-abs-path],
+     [CXXFLAGS="$CXXFLAGS -fprofile-abs-path"])
+   AC_LANG_POP([C++])
    ENABLE_STRIP=no
    OPTIMIZE=no])
 
