@@ -12,12 +12,12 @@
 
 #include "unit-tests/ARingTest.hpp"
 
-extern gmp_ZZ getRandomInteger();
+typedef M2::ARingQQFlint RingType;
 
 template <>
-void getElement<M2::ARingQQFlint>(const M2::ARingQQFlint& R,
-                                  int index,
-                                  M2::ARingQQFlint::ElementType& result)
+void getElement<RingType>(const RingType& R,
+                          int index,
+                          RingType::ElementType& result)
 {
   if (index < 50)
     R.set(result, index - 25);
@@ -27,61 +27,62 @@ void getElement<M2::ARingQQFlint>(const M2::ARingQQFlint& R,
     }
 }
 
-TEST(ARingQQFlint, create)
+#include "unit-tests/ARingQQTest.hpp"
+
+INSTANTIATE_TYPED_TEST_SUITE_P(ARingQQFlint,
+                               ARingQQ,
+                               ::testing::Types<RingType>);
+
+namespace {
+
+// Cases specific to the flint implementation.
+class ARingQQFlint : public ::testing::Test
 {
-  M2::ARingQQFlint R;
+ protected:
+  RingType R;
+};
 
-  M2::ARingQQFlint::ElementType a;
-  buffer o;
-
-  ARingElementGenerator<M2::ARingQQFlint> gen(R);
-  R.init(a);
-  gen.nextElement(a);
-
+TEST_F(ARingQQFlint, Construction)
+{
+  // static_cast avoids odr-using ringID, which has no out-of-line definition.
+  EXPECT_EQ(static_cast<int>(RingType::ringID),
+            static_cast<int>(M2::ring_QQFlint));
   EXPECT_EQ(ringName(R), "QQFlint");
-  EXPECT_EQ(R.cardinality(), static_cast<size_t>(-1));
-  EXPECT_EQ(R.characteristic(), 0);
-  R.clear(a);
 }
 
-TEST(ARingQQFlint, display)
+TEST_F(ARingQQFlint, Formatting)
 {
-  M2::ARingQQFlint R;
-
-  M2::ARingQQFlint::ElementType a, b;
+  RingType::Element a(R), b(R);
   buffer o;
 
-  ARingElementGenerator<M2::ARingQQFlint> gen(R);
-  R.init(a);
-  R.init(b);
+  ARingElementGenerator<RingType> gen(R);
   gen.nextElement(a);
   gen.nextElement(b);
   R.divide(a, a, b);
   R.elem_text_out(o, a, true, false, false);
-  EXPECT_TRUE(strcmp(o.str(), "24/23") == 0);
-  std::cout << "a = ." << o.str() << "." << std::endl;
-
-  EXPECT_EQ(ringName(R), "QQFlint");
-  EXPECT_EQ(R.cardinality(), static_cast<size_t>(-1));
-  EXPECT_EQ(R.characteristic(), 0);
-  R.clear(a);
+  EXPECT_EQ(std::string(o.str()), "24/23");
 }
 
-TEST(ARingQQFlint, arithmetic)
+TEST_F(ARingQQFlint, Conversions)
 {
-  M2::ARingQQFlint R;
+  RingType::Element a(R), expected(R);
+  ring_elem f = globalZZ->from_long(-12);
 
-  testCoercions(R);
-  testNegate(R, ntrials);
-  testAdd(R, ntrials);
-  testSubtract(R, ntrials);
-  testMultiply(R, ntrials);
-  testDivide(R, ntrials);
-  testReciprocal(R, ntrials);
-  //  testPower(R, ntrials);  // this test can't work, as it expects a finite
-  //  field
-  testAxioms(R, ntrials);
+  {
+    SCOPED_TRACE("promote: ZZ --> QQ");
+    EXPECT_TRUE(R.promote(globalZZ, f, a));
+    R.set(expected, -12);
+    EXPECT_TRUE(R.is_equal(a, expected));
+  }
+
+  {
+    SCOPED_TRACE("promote: nothing else promotes, and nothing lifts");
+    EXPECT_FALSE(R.promote(globalQQ, f, a));
+    EXPECT_FALSE(R.lift(globalZZ, a, f));
+  }
 }
+
+}  // namespace
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "

@@ -11,6 +11,7 @@ UNITTEST_CCFILES := \
     NCGroebnerTest \
     PointArray \
     ARingZZTest \
+    ARingZZGmpTest \
     ARingQQFlintTest \
     ARingQQGmpTest \
     ARingRRTest \
