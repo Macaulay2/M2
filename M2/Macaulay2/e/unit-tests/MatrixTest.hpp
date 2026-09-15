@@ -23,6 +23,7 @@
 #define M2_UNITTESTS__MATRIX_TEST_HPP__
 
 #include <cassert>
+#include <initializer_list>
 
 #include "unit-tests/RingTest.hpp"
 #include "unit-tests/MatrixShape.hpp"
@@ -139,6 +140,71 @@ void fillRingElemShape(const RingType& R,
     }
 }
 
+// Explicit-entry application shared by both generators below.  'setEntry' has
+// the same signature as in fillRingElemShape.  Only the given positions are
+// written, so these compose with a shaped fill.
+template <typename RingType, typename SetEntry>
+void applyRingElemEntries(const RingType& R,
+                          std::initializer_list<MatrixEntry> entries,
+                          size_t nrows,
+                          size_t ncols,
+                          SetEntry setEntry)
+{
+  for (const auto& e : entries)
+    {
+      assert(e.row < nrows && e.col < ncols);
+      setEntry(e.row, e.col, R.from_long(e.coeff));
+    }
+}
+
+template <typename RingType, typename SetEntry>
+void applyRingElemEntries(const RingType& R,
+                          std::initializer_list<long> values,
+                          size_t nrows,
+                          size_t ncols,
+                          SetEntry setEntry)
+{
+  assert(values.size() == nrows * ncols &&
+         "row-major entry list must have exactly numRows*numColumns values");
+  size_t i = 0;
+  for (long v : values)
+    {
+      setEntry(i / ncols, i % ncols, R.from_long(v));
+      i++;
+    }
+}
+
+// Ring-element coefficients.  gc_vector, not std::vector: these hold GC
+// pointers that must stay traceable while only the buffer references them.
+template <typename RingType, typename SetEntry>
+void applyRingElemEntries(const RingType& R,
+                          const VECTOR(MatrixElementEntry<ring_elem>)& entries,
+                          size_t nrows,
+                          size_t ncols,
+                          SetEntry setEntry)
+{
+  (void)R;
+  for (const auto& e : entries)
+    {
+      assert(e.row < nrows && e.col < ncols);
+      setEntry(e.row, e.col, e.coeff);
+    }
+}
+
+template <typename RingType, typename SetEntry>
+void applyRingElemEntries(const RingType& R,
+                          const VECTOR(ring_elem)& values,
+                          size_t nrows,
+                          size_t ncols,
+                          SetEntry setEntry)
+{
+  (void)R;
+  assert(values.size() == nrows * ncols &&
+         "row-major entry list must have exactly numRows*numColumns values");
+  for (size_t i = 0; i < values.size(); i++)
+    setEntry(i / ncols, i % ncols, values[i]);
+}
+
 template <typename RingType>
 class MutableMatrixGenerator
 {
@@ -168,6 +234,65 @@ class MutableMatrixGenerator
     return result;
   }
 
+  // Explicitly specified entries, in any of four forms:
+  //   {{0,1,1}, {2,0,5}}                      triples, integer coefficients
+  //   {1,2,3, 4,5,6}                          row-major, integer coefficients
+  //   VECTOR(MatrixElementEntry<ring_elem>)   triples, ring elements
+  //   VECTOR(ring_elem)                       row-major, ring elements
+  // Only the given positions are written, so these compose with fillMatrix():
+  // apply a shape first, then override individual entries.
+  //
+  // These are spelled out rather than templated because a template parameter
+  // cannot be deduced from a braced-init-list.
+  MutableMatrix* nextMatrix(size_t nrows,
+                            size_t ncols,
+                            bool dense,
+                            std::initializer_list<MatrixEntry> entries)
+  {
+    return build(nrows, ncols, dense, entries);
+  }
+  MutableMatrix* nextMatrix(size_t nrows,
+                            size_t ncols,
+                            bool dense,
+                            std::initializer_list<long> entries)
+  {
+    return build(nrows, ncols, dense, entries);
+  }
+  MutableMatrix* nextMatrix(
+      size_t nrows,
+      size_t ncols,
+      bool dense,
+      const VECTOR(MatrixElementEntry<ring_elem>) & entries)
+  {
+    return build(nrows, ncols, dense, entries);
+  }
+  MutableMatrix* nextMatrix(size_t nrows,
+                            size_t ncols,
+                            bool dense,
+                            const VECTOR(ring_elem) & entries)
+  {
+    return build(nrows, ncols, dense, entries);
+  }
+
+  void setEntries(MutableMatrix& result,
+                  std::initializer_list<MatrixEntry> entries)
+  {
+    applyTo(result, entries);
+  }
+  void setEntries(MutableMatrix& result, std::initializer_list<long> entries)
+  {
+    applyTo(result, entries);
+  }
+  void setEntries(MutableMatrix& result,
+                  const VECTOR(MatrixElementEntry<ring_elem>) & entries)
+  {
+    applyTo(result, entries);
+  }
+  void setEntries(MutableMatrix& result, const VECTOR(ring_elem) & entries)
+  {
+    applyTo(result, entries);
+  }
+
   void fillMatrix(MutableMatrix& result) { fillMatrix(result, mShape); }
 
   void fillMatrix(MutableMatrix& result, MatrixShape shape)
@@ -195,6 +320,30 @@ class MutableMatrixGenerator
   void reset() { mElements.reset(); }
 
  private:
+  template <typename Entries>
+  MutableMatrix* build(size_t nrows,
+                       size_t ncols,
+                       bool dense,
+                       const Entries& entries)
+  {
+    MutableMatrix* result =
+        MutableMatrix::zero_matrix(&mRing, nrows, ncols, dense);
+    applyTo(*result, entries);
+    return result;
+  }
+
+  template <typename Entries>
+  void applyTo(MutableMatrix& result, const Entries& entries)
+  {
+    applyRingElemEntries(mRing,
+                         entries,
+                         result.n_rows(),
+                         result.n_cols(),
+                         [&result](size_t r, size_t c, ring_elem a) {
+                           result.set_entry(r, c, a);
+                         });
+  }
+
   const RingType& mRing;
   RingElementGenerator<RingType> mElements;
   MatrixShape mShape = MatrixShape::Dense;
@@ -230,6 +379,35 @@ class MatrixGenerator
     return mat.to_matrix();
   }
 
+  // Explicitly specified entries, in the same four forms as
+  // MutableMatrixGenerator::setEntries.  Matrix is immutable and has no
+  // set_entry, so supplying them here is the only way to get a Matrix with
+  // known entries.
+  Matrix* nextMatrix(size_t nrows,
+                     size_t ncols,
+                     std::initializer_list<MatrixEntry> entries)
+  {
+    return build(nrows, ncols, entries);
+  }
+  Matrix* nextMatrix(size_t nrows,
+                     size_t ncols,
+                     std::initializer_list<long> entries)
+  {
+    return build(nrows, ncols, entries);
+  }
+  Matrix* nextMatrix(size_t nrows,
+                     size_t ncols,
+                     const VECTOR(MatrixElementEntry<ring_elem>) & entries)
+  {
+    return build(nrows, ncols, entries);
+  }
+  Matrix* nextMatrix(size_t nrows,
+                     size_t ncols,
+                     const VECTOR(ring_elem) & entries)
+  {
+    return build(nrows, ncols, entries);
+  }
+
   // Caller-supplied free modules, for degree-aware tests.
   Matrix* nextMatrix(const FreeModule* target, const FreeModule* source)
   {
@@ -257,6 +435,24 @@ class MatrixGenerator
   void reset() { mElements.reset(); }
 
  private:
+  template <typename Entries>
+  Matrix* build(size_t nrows, size_t ncols, const Entries& entries)
+  {
+    const FreeModule* target = mRing.make_FreeModule(static_cast<int>(nrows));
+    MatrixConstructor mat(target, static_cast<int>(ncols));
+    applyRingElemEntries(mRing,
+                         entries,
+                         nrows,
+                         ncols,
+                         [&mat](size_t r, size_t c, ring_elem a) {
+                           mat.set_entry(static_cast<int>(r),
+                                         static_cast<int>(c),
+                                         a);
+                         });
+    mat.compute_column_degrees();
+    return mat.to_matrix();
+  }
+
   void fill(MatrixConstructor& mat,
             size_t nrows,
             size_t ncols,

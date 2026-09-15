@@ -24,6 +24,25 @@ enum class MatrixShape {
   PrescribedRank    // sum of mRank outer products; rank <= mRank
 };
 
+// An explicitly specified entry, as a (row, column, coefficient) triple.
+// MatrixEntry carries an integer coefficient, which the ring converts; use
+// MatrixElementEntry<E> to give a coefficient that has no integer form, such
+// as a particular element of GF(p^k).
+struct MatrixEntry
+{
+  size_t row;
+  size_t col;
+  long coeff;
+};
+
+template <typename E>
+struct MatrixElementEntry
+{
+  size_t row;
+  size_t col;
+  E coeff;
+};
+
 // Does position (r,c) get a nonzero entry, at the given density?
 // Uses the global PRNG, so a generator's reset() cannot reproduce the pattern.
 inline bool selectPosition(double density)

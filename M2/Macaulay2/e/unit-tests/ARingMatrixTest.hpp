@@ -19,6 +19,7 @@
 #define M2_UNITTESTS__ARING_MATRIX_TEST_HPP__
 
 #include <cassert>
+#include <vector>
 
 #include "unit-tests/ARingTest.hpp"
 #include "unit-tests/MatrixShape.hpp"
@@ -144,6 +145,60 @@ class ARingMatrixGenerator
               if (shapeCoversPosition(shape, r, c)) fillEntry(result, r, c);
           return;
       }
+  }
+
+  // Explicitly specified entries, for tests that need a known matrix rather
+  // than a generated one.  All four forms only write the positions they are
+  // given, so they compose with nextMatrix(): shape first, then override.
+  // Combine with MatrixShape::Zero for a blank canvas.
+
+  // Triples, integer coefficients: {{0,1,1}, {0,4,2}, {2,0,5}}
+  void setEntries(MatType& M, std::initializer_list<MatrixEntry> entries)
+  {
+    Element a(mRing);
+    for (const auto& e : entries)
+      {
+        assert(e.row < M.numRows() && e.col < M.numColumns());
+        mRing.set(a, static_cast<int>(e.coeff));
+        Setter::set(M, e.row, e.col, a);
+      }
+  }
+
+  // Row-major, integer coefficients: {1,2,3, 4,5,6} for a 2x3 matrix.
+  void setEntries(MatType& M, std::initializer_list<long> values)
+  {
+    assert(values.size() == M.numRows() * M.numColumns() &&
+           "row-major entry list must have exactly numRows*numColumns values");
+    Element a(mRing);
+    size_t i = 0;
+    for (long v : values)
+      {
+        mRing.set(a, static_cast<int>(v));
+        Setter::set(M, i / M.numColumns(), i % M.numColumns(), a);
+        i++;
+      }
+  }
+
+  // Triples and row-major with ring-element coefficients.  These take vectors
+  // rather than initializer lists: the elements have to be constructed against
+  // a ring first anyway, and for a ring whose ElementType is int (ARingZZp)
+  // an initializer_list overload would be ambiguous with the integer forms.
+  void setEntries(MatType& M,
+                  const std::vector<MatrixElementEntry<ElementType>>& entries)
+  {
+    for (const auto& e : entries)
+      {
+        assert(e.row < M.numRows() && e.col < M.numColumns());
+        Setter::set(M, e.row, e.col, e.coeff);
+      }
+  }
+
+  void setEntries(MatType& M, const std::vector<ElementType>& values)
+  {
+    assert(values.size() == M.numRows() * M.numColumns() &&
+           "row-major entry list must have exactly numRows*numColumns values");
+    for (size_t i = 0; i < values.size(); i++)
+      Setter::set(M, i / M.numColumns(), i % M.numColumns(), values[i]);
   }
 
   void setShape(MatrixShape shape) { mShape = shape; }
