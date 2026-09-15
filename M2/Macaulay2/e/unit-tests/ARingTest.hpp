@@ -3,6 +3,13 @@
 
 #include "interface/random.h"
 
+#include "exceptions.hpp"
+#include "matrices/matrix-con.hpp"
+#include "matrices/matrix.hpp"
+#include "ringmap.hpp"
+#include "free-modules/freemod.hpp"
+#include "rings/ring.hpp"
+
 const int ntrials = 1000;
 // const int ntrials = 1000000; // not good for the ssd - system swaps
 // memory....
@@ -425,6 +432,295 @@ void testFiniteField(const T& R, int ntrials)
   // TODO: test promote, lift, syzygy(?), (ringmaps)
   // test random number generation?
   // get generator
+}
+
+////////////////////////////////////////////////////////////////////
+// Generic ARing contracts, for any ring with a getElement<>
+// specialization.  Call these rather than restating them.
+////////////////////////////////////////////////////////////////////
+
+// set/copy/init_set are deep copies, set_zero zeroes, swap exchanges.
+// The only helper that copies with set(); the rest use copy(), since a
+// ring with an integral ElementType has no set(e, e) overload.
+template <typename T>
+void testStorage(const T& R, int ntrials)
+{
+  ARingElementGenerator<T> gen(R);
+  typename T::Element a(R), b(R), saved(R), zero(R);
+  R.set_zero(zero);
+  for (int i = 0; i < ntrials; i++)
+    {
+      SCOPED_TRACE(i);
+      gen.nextElement(a);
+      R.set(saved, a);
+
+      R.set(b, a);
+      EXPECT_TRUE(R.is_equal(b, saved));
+      R.set_zero(a);
+      EXPECT_TRUE(R.is_zero(a));
+      EXPECT_TRUE(R.is_equal(b, saved)) << "set: shares storage with source";
+
+      R.set(a, saved);
+      R.copy(b, a);
+      EXPECT_TRUE(R.is_equal(b, saved));
+      R.set_zero(a);
+      EXPECT_TRUE(R.is_equal(b, saved)) << "copy: shares storage with source";
+
+      // init_set, via Element(R, a)
+      R.set(a, saved);
+      {
+        typename T::Element c(R, a);
+        EXPECT_TRUE(R.is_equal(c, saved));
+        R.set_zero(a);
+        EXPECT_TRUE(R.is_equal(c, saved)) << "init_set: shares storage";
+      }
+
+      R.set(a, saved);
+      R.set(b, zero);
+      R.swap(a, b);
+      EXPECT_TRUE(R.is_zero(a));
+      EXPECT_TRUE(R.is_equal(b, saved));
+    }
+}
+
+// is_equal, compare_elems and computeHashValue agree with each other.
+template <typename T>
+void testComparisons(const T& R, int ntrials)
+{
+  ARingElementGenerator<T> gen(R);
+  typename T::Element a(R), b(R), c(R);
+  for (int i = 0; i < ntrials; i++)
+    {
+      SCOPED_TRACE(i);
+      gen.nextElement(a);
+      gen.nextElement(b);
+      R.copy(c, a);
+
+      EXPECT_TRUE(R.is_equal(a, a));
+      EXPECT_EQ(R.compare_elems(a, a), 0);
+      EXPECT_TRUE(R.is_equal(a, c));
+      EXPECT_EQ(R.compare_elems(a, c), 0);
+      EXPECT_EQ(R.is_equal(a, b), R.compare_elems(a, b) == 0);
+
+      int cmp = R.compare_elems(a, b);
+      EXPECT_EQ(cmp, -R.compare_elems(b, a));
+      EXPECT_GE(cmp, -1);
+      EXPECT_LE(cmp, 1);
+
+      EXPECT_EQ(R.computeHashValue(a), R.computeHashValue(c));
+    }
+}
+
+// The output of an arithmetic operation may alias its inputs.
+template <typename T>
+void testAliasing(const T& R, int ntrials)
+{
+  ARingElementGenerator<T> gen(R);
+  typename T::Element a(R), b(R), expected(R), result(R);
+  for (int i = 0; i < ntrials; i++)
+    {
+      SCOPED_TRACE(i);
+      gen.nextElement(a);
+      gen.nextElement(b);
+
+      R.add(expected, a, b);
+      R.copy(result, a);
+      R.add(result, result, b);
+      EXPECT_TRUE(R.is_equal(result, expected)) << "add: result aliases a";
+      R.copy(result, b);
+      R.add(result, a, result);
+      EXPECT_TRUE(R.is_equal(result, expected)) << "add: result aliases b";
+
+      R.subtract(expected, a, b);
+      R.copy(result, a);
+      R.subtract(result, result, b);
+      EXPECT_TRUE(R.is_equal(result, expected)) << "subtract: result aliases a";
+      R.copy(result, b);
+      R.subtract(result, a, result);
+      EXPECT_TRUE(R.is_equal(result, expected)) << "subtract: result aliases b";
+
+      R.mult(expected, a, b);
+      R.copy(result, a);
+      R.mult(result, result, b);
+      EXPECT_TRUE(R.is_equal(result, expected)) << "mult: result aliases a";
+      R.copy(result, b);
+      R.mult(result, a, result);
+      EXPECT_TRUE(R.is_equal(result, expected)) << "mult: result aliases b";
+
+      R.mult(expected, a, a);
+      R.copy(result, a);
+      R.mult(result, result, result);
+      EXPECT_TRUE(R.is_equal(result, expected)) << "mult: all three alias";
+
+      R.negate(expected, a);
+      R.copy(result, a);
+      R.negate(result, result);
+      EXPECT_TRUE(R.is_equal(result, expected)) << "negate: result aliases a";
+
+      // subtract_multiple accumulates: result -= a*b
+      R.mult(expected, a, b);
+      R.negate(expected, expected);
+      R.add(expected, a, expected);
+      R.copy(result, a);
+      R.subtract_multiple(result, a, b);
+      EXPECT_TRUE(R.is_equal(result, expected)) << "subtract_multiple: a - a*b";
+    }
+}
+
+// subtract_multiple accumulates result -= a*b rather than overwriting.
+template <typename T>
+void testSubtractMultiple(const T& R, int ntrials)
+{
+  ARingElementGenerator<T> gen(R);
+  typename T::Element a(R), b(R), c(R), expected(R), result(R);
+  for (int i = 0; i < ntrials; i++)
+    {
+      SCOPED_TRACE(i);
+      gen.nextElement(a);
+      gen.nextElement(b);
+      gen.nextElement(c);
+
+      R.mult(expected, a, b);
+      R.subtract(expected, c, expected);
+      R.copy(result, c);
+      R.subtract_multiple(result, a, b);
+      EXPECT_TRUE(R.is_equal(result, expected));
+
+      // subtracting a zero multiple is a no-op
+      R.copy(result, c);
+      R.set_zero(a);
+      R.subtract_multiple(result, a, b);
+      EXPECT_TRUE(R.is_equal(result, c));
+    }
+}
+
+// For a coefficient ring every variable maps to 1.
+template <typename T>
+void testCoefficientRingSetVar(const T& R)
+{
+  typename T::Element a(R), one(R);
+  R.set(one, 1);
+  for (int v = 0; v < 5; v++)
+    {
+      SCOPED_TRACE(v);
+      R.set_var(a, v);
+      EXPECT_TRUE(R.is_equal(a, one));
+    }
+}
+
+// power and power_mpz agree, and a^n is the n-fold product.  power's
+// exponent type varies by ring, so stay within [0, maxExponent].
+template <typename T>
+void testPowerAgreement(const T& R, int ntrials, int maxExponent = 16)
+{
+  ARingElementGenerator<T> gen(R);
+  typename T::Element a(R), b(R), c(R), d(R), one(R);
+  R.set(one, 1);
+  mpz_t n;
+  mpz_init(n);
+  for (int i = 0; i < ntrials; i++)
+    {
+      SCOPED_TRACE(i);
+      gen.nextElement(a);
+      R.copy(d, one);
+      for (int e = 0; e <= maxExponent; e++)
+        {
+          SCOPED_TRACE(e);
+          R.power(b, a, e);
+          mpz_set_si(n, e);
+          R.power_mpz(c, a, n);
+          EXPECT_TRUE(R.is_equal(b, c)) << "power and power_mpz disagree";
+          EXPECT_TRUE(R.is_equal(b, d)) << "a^n is not the n-fold product";
+          R.mult(d, d, a);
+        }
+      R.power(b, a, 0);
+      EXPECT_TRUE(R.is_equal(b, one)) << "a^0 != 1";
+    }
+  mpz_clear(n);
+}
+
+// power_mpz rejects exponents that do not fit in an int.
+template <typename T>
+void testPowerMpzOutOfRange(const T& R)
+{
+  typename T::Element a(R), b(R);
+  R.set(a, 2);
+  mpz_t n;
+  mpz_init(n);
+
+  mpz_set_str(n, "4294967296", 10);  // 2^32, too large for an int
+  EXPECT_THROW(R.power_mpz(b, a, n), exc::engine_error);
+
+  mpz_set_str(n, "-4294967296", 10);
+  EXPECT_THROW(R.power_mpz(b, a, n), exc::engine_error);
+
+  mpz_clear(n);
+}
+
+// to_ring_elem and from_ring_elem are inverse to each other.
+template <typename T>
+void testRingElemRoundTrip(const T& R, int ntrials)
+{
+  ARingElementGenerator<T> gen(R);
+  typename T::Element a(R), b(R);
+  for (int i = 0; i < ntrials; i++)
+    {
+      SCOPED_TRACE(i);
+      gen.nextElement(a);
+      ring_elem f;
+      R.to_ring_elem(f, a);
+      R.from_ring_elem(b, f);
+      EXPECT_TRUE(R.is_equal(a, b));
+    }
+}
+
+// from_ring_elem_const must agree with from_ring_elem.  ASSERT, not
+// EXPECT: a ring that gets this wrong gets it wrong on every element.
+template <typename T>
+void testFromRingElemConst(const T& R, int ntrials)
+{
+  ARingElementGenerator<T> gen(R);
+  typename T::Element a(R);
+  for (int i = 0; i < ntrials; i++)
+    {
+      SCOPED_TRACE(i);
+      gen.nextElement(a);
+      ring_elem f;
+      R.to_ring_elem(f, a);
+      ASSERT_TRUE(R.is_equal(a, R.from_ring_elem_const(f)));
+      ASSERT_EQ(R.compare_elems(a, R.from_ring_elem_const(f)), 0);
+    }
+}
+
+// syzygy returns (x, y) with a*x + b*y == 0 and x, y not both zero.
+template <typename T>
+void testSyzygy(const T& R, int ntrials)
+{
+  ARingElementGenerator<T> gen(R);
+  typename T::Element a(R), b(R), x(R), y(R), u(R), v(R);
+  for (int i = 0; i < ntrials; i++)
+    {
+      SCOPED_TRACE(i);
+      gen.nextElement(a);
+      gen.nextElement(b);
+      if (R.is_zero(b)) continue;  // syzygy asserts b is nonzero
+      R.syzygy(a, b, x, y);
+      R.mult(u, a, x);
+      R.mult(v, b, y);
+      R.add(u, u, v);
+      EXPECT_TRUE(R.is_zero(u)) << "a*x + b*y != 0";
+      EXPECT_FALSE(R.is_zero(x) and R.is_zero(y)) << "trivial syzygy";
+    }
+}
+
+// A ring map with the given target.  ARing::eval only consults
+// map->get_ring(), so a 1x1 identity map is enough to drive it.
+inline const RingMap* identityRingMap(const Ring* R)
+{
+  FreeModule* F = R->make_FreeModule(1);
+  MatrixConstructor mat(F, 1);
+  mat.set_entry(0, 0, R->one());
+  return RingMap::make(mat.to_matrix());
 }
 
 template <typename T>
