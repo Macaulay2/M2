@@ -14,20 +14,55 @@
 #include "basic-rings/aring-RR.hpp"
 #include "unit-tests/ARingTest.hpp"
 
+// bool almostEqual(const M2::ARingRR& R,
+//                  unsigned long nbits,
+//                  const M2::ARingRR::ElementType& a,
+//                  const M2::ARingRR::ElementType& b)
+// {
+//   M2::ARingRR::ElementType epsilon = pow(2, static_cast<double>(-nbits));
+//   M2::ARingRR::ElementType c;
+//   R.subtract(c, a, b);
+//   // std::cout << "a = " << a << ", b = " << b << ", c = " << c << ", a-b = " <<
+//   // a-b;
+//   R.abs(c, c);
+//   // std::cout << ", |c| = " << c << ", epsilon = " << epsilon  << std::endl;
+//   return R.compare_elems(c, epsilon) < 0;
+// }
+
 bool almostEqual(const M2::ARingRR& R,
                  unsigned long nbits,
                  const M2::ARingRR::ElementType& a,
                  const M2::ARingRR::ElementType& b)
 {
-  M2::ARingRR::ElementType epsilon = pow(2, static_cast<double>(-nbits));
-  M2::ARingRR::ElementType c;
+  M2::ARingRR::ElementType epsilon = std::ldexp(1.0, -static_cast<int>(nbits));
+  double c = 0.0;
   R.subtract(c, a, b);
-  // std::cout << "a = " << a << ", b = " << b << ", c = " << c << ", a-b = " <<
-  // a-b;
   R.abs(c, c);
-  // std::cout << ", |c| = " << c << ", epsilon = " << epsilon  << std::endl;
   return R.compare_elems(c, epsilon) < 0;
 }
+
+// Use relative error when an identity involves products larger than one.
+static double relativeTolerance(unsigned long nbits, double a, double b)
+{
+  return std::ldexp(std::max({1.0, std::fabs(a), std::fabs(b)}),
+                    -static_cast<int>(nbits));
+}
+
+TEST(ARingRR, almostEqual_tolerance)
+{
+  M2::ARingRR R;
+  auto nbits = R.get_precision() - 2;
+  EXPECT_TRUE(almostEqual(R, nbits, 1.0, 1.0));
+  EXPECT_TRUE(almostEqual(R, nbits, 1.0, std::nextafter(1.0, 2.0)));
+  EXPECT_FALSE(almostEqual(R, nbits, 1.0, 2.0));
+  EXPECT_FALSE(almostEqual(R, nbits, 2.0, 1.0));
+  EXPECT_EQ(relativeTolerance(nbits, 0.0, 0.5), std::ldexp(1.0, -51));
+  EXPECT_EQ(relativeTolerance(nbits, -32.0, 16.0), std::ldexp(32.0, -51));
+}
+
+
+
+
 
 template <>
 void getElement<M2::ARingRR>(const M2::ARingRR& R,
