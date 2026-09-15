@@ -2,6 +2,7 @@
 #define M2_UNITTESTS__RING_TEST_HPP__
 
 #include "interface/random.h"
+#include "exceptions.hpp"  // for exc::division_by_zero_error
 
 const int ntrials = 1000;
 // const int ntrials = 1000000; // not good for the ssd - system swaps
@@ -195,6 +196,29 @@ void testAxioms(const T& R, int ntrials)
       R.mult(f, a, c);
       R.add(e, e, f);
       EXPECT_TRUE(R.is_equal(d, e));
+
+      // test: (b+c)*a == b*a + c*a
+      R.add(d, b, c);
+      R.mult(d, d, a);
+      R.mult(e, b, a);
+      R.mult(f, c, a);
+      R.add(e, e, f);
+      EXPECT_TRUE(R.is_equal(d, e));
+
+      // Test identities
+      // test: a+0 == a, a*1 == a, a*0 == 0
+      R.set_zero(f);
+      R.add(d, a, f);
+      EXPECT_TRUE(R.is_equal(d, a));
+      R.mult(d, a, f);
+      EXPECT_TRUE(R.is_zero(d));
+      R.set(f, 1);
+      R.mult(d, a, f);
+      EXPECT_TRUE(R.is_equal(d, a));
+
+      // test: a-a == 0
+      R.subtract(d, a, a);
+      EXPECT_TRUE(R.is_zero(d));
     }
   R.clear(a);
   R.clear(b);
@@ -276,28 +300,51 @@ template <typename T>
 void testMultiply(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, b, c, d, zero;
+  typename T::ElementType a, b, c, d, zero, one;
   R.init(a);
   R.init(b);
   R.init(c);
   R.init(d);
   R.init(zero);
+  R.init(one);
   R.set(zero, 0);
+  R.set(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
       gen.nextElement(b);
-      gen.nextElement(c);
-      gen.nextElement(d);
+
       R.mult(c, a, zero);
       EXPECT_TRUE(R.is_equal(c, zero));
-      // TODO: finish this with more tests
+
+      // a*1 == a
+      R.mult(c, a, one);
+      EXPECT_TRUE(R.is_equal(c, a));
+
+      // multiplying by 2 and 3 agrees with repeated addition
+      R.add(c, a, a);
+      R.set(d, 2);
+      R.mult(d, a, d);
+      EXPECT_TRUE(R.is_equal(c, d));
+
+      R.add(c, c, a);
+      R.set(d, 3);
+      R.mult(d, a, d);
+      EXPECT_TRUE(R.is_equal(c, d));
+
+      // a*(-b) == -(a*b)
+      R.negate(c, b);
+      R.mult(c, a, c);
+      R.mult(d, a, b);
+      R.negate(d, d);
+      EXPECT_TRUE(R.is_equal(c, d));
     }
   R.clear(a);
   R.clear(b);
   R.clear(c);
   R.clear(d);
   R.clear(zero);
+  R.clear(one);
 }
 
 template <typename T>
@@ -371,26 +418,45 @@ void testPower(const T& R, int ntrials)
   // a^3 == a*a*a
   // a^0 == 1, what if a == 0?
   // 1^n == 1, various n
+  // q goes through power_mpz: the cardinality need not fit in power()'s
+  // exponent argument (int here, int32_t for ffpack, long for flint).
   ARingElementGenerator<T> gen(R);
-  typename T::ElementType a, b, c, d, one;
-  int q = static_cast<int>(R.cardinality());
+  typename T::ElementType a, c, d, one;
+  mpz_t q, qminus1;
+  mpz_init(q);
+  mpz_init(qminus1);
+  mpz_set_ui(q, static_cast<unsigned long>(R.cardinality()));
+  mpz_sub_ui(qminus1, q, 1);
+
   R.init(one);
   R.init(a);
-  R.init(b);
   R.init(c);
   R.init(d);
   R.set(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
-      gen.nextElement(b);
 
-      R.power(c, a, q);
+      R.power_mpz(c, a, q);
       EXPECT_TRUE(R.is_equal(c, a));  // test a^q == a
+
+      R.power(c, a, 0);  // test a^0 == 1, including a == 0
+      EXPECT_TRUE(R.is_equal(c, one));
+
+      R.power(c, one, i);  // test 1^n == 1
+      EXPECT_TRUE(R.is_equal(c, one));
+
+      R.power(c, a, 2);  // test a^2 == a*a
+      R.mult(d, a, a);
+      EXPECT_TRUE(R.is_equal(c, d));
+
+      R.power(c, a, 3);  // test a^3 == a*a*a
+      R.mult(d, d, a);
+      EXPECT_TRUE(R.is_equal(c, d));
 
       if (R.is_zero(a)) continue;
 
-      R.power(c, a, q - 1);
+      R.power_mpz(c, a, qminus1);
       EXPECT_TRUE(R.is_equal(c, one));  // test a^(q-1) == 1
 
       R.power(c, a, -1);  // test a^-1 * a == 1
@@ -403,9 +469,44 @@ void testPower(const T& R, int ntrials)
       EXPECT_TRUE(R.is_equal(d, a));
     }
   R.clear(a);
-  R.clear(b);
   R.clear(c);
   R.clear(d);
+  R.clear(one);
+  mpz_clear(q);
+  mpz_clear(qminus1);
+}
+
+// Division by zero throws, and every nonzero element of a field is a unit.
+template <typename T>
+void testFieldDivideByZero(const T& R, int ntrials)
+{
+  ARingElementGenerator<T> gen(R);
+  typename T::ElementType a, c, zero, one;
+  R.init(a);
+  R.init(c);
+  R.init(zero);
+  R.init(one);
+  R.set_zero(zero);
+  R.set(one, 1);
+
+  EXPECT_THROW(R.invert(c, zero), exc::division_by_zero_error);
+  EXPECT_FALSE(R.is_unit(zero));
+
+  for (int i = 0; i < ntrials; i++)
+    {
+      gen.nextElement(a);
+      EXPECT_THROW(R.divide(c, a, zero), exc::division_by_zero_error);
+      if (R.is_zero(a)) continue;
+
+      EXPECT_TRUE(R.is_unit(a));
+      R.divide(c, zero, a);  // 0/a == 0
+      EXPECT_TRUE(R.is_zero(c));
+      R.divide(c, a, a);  // a/a == 1
+      EXPECT_TRUE(R.is_equal(c, one));
+    }
+  R.clear(a);
+  R.clear(c);
+  R.clear(zero);
   R.clear(one);
 }
 
@@ -421,6 +522,7 @@ void testFiniteField(const T& R, int ntrials)
   testReciprocal(R, ntrials);
   testPower(R, ntrials);  // fails?
   testAxioms(R, ntrials);
+  testFieldDivideByZero(R, ntrials);
 
   // TODO: test promote, lift, syzygy(?), (ringmaps)
   // test random number generation?
