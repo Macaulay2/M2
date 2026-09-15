@@ -263,8 +263,8 @@ live, instead of being scattered across call sites or implied by absence. Use
 
 If a case does not apply, say so in code, with a reason, at runtime —
 `GTEST_SKIP()`, or a printed line from the `supports()` predicate. A commented
-out call reports nothing and rots unnoticed. `ARingZZTest.cpp` drops two checks
-this way, and no test run will ever mention it:
+out call reports nothing and rots unnoticed. Before the style retrofit,
+`ARingZZTest.cpp` dropped two checks this way, invisible in test output:
 
 ```cpp
   testDivide(R, ntrials);
@@ -285,8 +285,11 @@ at the start of its body, explain the bug, why the test is disabled, and what
 would allow it to be re-enabled. That same block must include a direct URL to
 the specific posted issue in the
 [Macaulay2/M2 issue tracker](https://github.com/Macaulay2/M2/issues).
-A link to the tracker alone or an unposted issue placeholder is insufficient;
-find the existing bug report or file one before adding the disabled test.
+A link to the tracker alone or an unposted issue placeholder is insufficient.
+Before filing a report, search both open and closed issues for the component,
+operation, and observed failure, and read plausible matches. Link the existing
+issue when it describes the same defect; file a new report only when that
+pre-check finds no match. Do this before adding the disabled test.
 This commentary is allowed to be longer than usual.
 
 Then run it and confirm it fails:

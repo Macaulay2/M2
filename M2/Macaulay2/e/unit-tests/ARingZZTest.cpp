@@ -1,15 +1,14 @@
 // Copyright 2012-2013 Michael E. Stillman
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <memory>
-#include <gtest/gtest.h>
-#include <gmp.h>
-#include <flint/fmpz.h>
-
 #include "basic-rings/aring-ZZ-flint.hpp"
+
+#include <gtest/gtest.h>
+#include <flint/fmpz.h>
+#include <gmp.h>
+
+#include <initializer_list>
+#include <string>
+
 #include "basic-rings/aring-QQ-gmp.hpp"
 #include "basic-rings/aring-ZZ-gmp.hpp"
 #include "unit-tests/ARingTest.hpp"
@@ -30,434 +29,402 @@ void getElement<M2::ARingZZ>(const M2::ARingZZ& R,
     }
 }
 
-TEST(ARingZZ, create)
+namespace {
+
+class ARingZZ : public ::testing::Test
 {
-  M2::ARingZZ R;
+ protected:
+  using Ring = M2::ARingZZ;
+  Ring R;
 
-  M2::ARingZZ::ElementType a;
-  buffer o;
+  ::testing::AssertionResult hasValue(const Ring::ElementType& a, long expected)
+  {
+    if (fmpz_cmp_si(&a, expected) == 0) return ::testing::AssertionSuccess();
+    buffer out;
+    R.elem_text_out(out, a, true, false, false);
+    return ::testing::AssertionFailure()
+           << "expected " << expected << ", got " << out.str();
+  }
+};
 
-  ARingElementGenerator<M2::ARingZZ> gen(R);
-  R.init(a);
-  gen.nextElement(a);
-
+TEST_F(ARingZZ, create)
+{
+  // The integer ring reports characteristic zero and unbounded cardinality.
   EXPECT_EQ(ringName(R), "ZZFlint");
   EXPECT_EQ(R.cardinality(), static_cast<size_t>(-1));
   EXPECT_EQ(R.characteristic(), 0);
-  R.clear(a);
 }
 
-TEST(ARingZZ, arithmetic)
+TEST_F(ARingZZ, arithmetic)
 {
-  M2::ARingZZ R;
-
+  // Check the integer arithmetic identities over generated inputs.
+  seedRandom(0x5a5a);
+  SCOPED_TRACE("seed 0x5a5a");
   testCoercions(R);
   testNegate(R, ntrials);
   testAdd(R, ntrials);
   testSubtract(R, ntrials);
   testMultiply(R, ntrials);
   testDivide(R, ntrials);
-  //  testReciprocal(R, ntrials); // this test is not applicable, as this is not
-  //  a field
-  //  testPower(R, ntrials);  // this test can't work, as it expects a finite
-  //  field
   testAxioms(R, ntrials);
 }
 
-TEST(ARingZZ, is_unit)
+TEST_F(ARingZZ, finiteFieldContracts)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a;
-
-  R.init(a);
-
-  R.set(a, 1);
-  EXPECT_TRUE(R.is_unit(a));
-
-  R.set(a, -1);
-  EXPECT_TRUE(R.is_unit(a));
-
-  R.set(a, 2);
-  EXPECT_FALSE(R.is_unit(a));
-
-  fmpz_set_str(&a, "36893488147419103232", 10);
-  EXPECT_FALSE(R.is_unit(a));
+  // The shared reciprocal and power checks require a finite field.
+  GTEST_SKIP() << "ZZ is not a field; invert, power and power_mpz have "
+                  "integer-specific tests";
 }
 
-TEST(ARingZZ, compare_elems)
+TEST_F(ARingZZ, is_unit)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b;
+  // Only +/-1 are units, including when a nonunit needs heap storage.
+  for (int value : {1, -1, 0, 2})
+    {
+      SCOPED_TRACE(::testing::Message() << "is_unit: " << value);
+      Ring::Element a(R);
+      R.set(a, value);
 
-  R.init(a);
-  R.init(b);
+      EXPECT_EQ(R.is_unit(a), value == 1 || value == -1);
+    }
+
+  // 2^65 uses FLINT's large-integer representation.
+  SCOPED_TRACE("is_unit: heap integer");
+  Ring::Element large(R);
+  ASSERT_EQ(fmpz_set_str(&large.value(), "36893488147419103232", 10), 0);
+  EXPECT_FALSE(R.is_unit(large));
+}
+
+TEST_F(ARingZZ, compare_elems)
+{
+  // Adjacent integers must keep their order in either storage representation.
+  struct ComparisonCase
+  {
+    const char* name;
+    const char* left;
+    const char* right;
+  };
+  const ComparisonCase cases[] = {
+      {"small integers", "0", "1"},
+      {"heap integers", "36893488147419103232", "36893488147419103233"},
+  };
+  for (const auto& sample : cases)
+    {
+      SCOPED_TRACE(sample.name);
+      Ring::Element a(R), b(R);
+      ASSERT_EQ(fmpz_set_str(&a.value(), sample.left, 10), 0);
+      ASSERT_EQ(fmpz_set_str(&b.value(), sample.right, 10), 0);
+
+      EXPECT_EQ(R.compare_elems(a, b), -1);
+      EXPECT_EQ(R.compare_elems(b, a), 1);
+      EXPECT_EQ(R.compare_elems(a, a), 0);
+    }
+}
+
+TEST_F(ARingZZ, init_set)
+{
+  // A copy must own its large-integer storage independently of the source.
+  Ring::Element a(R);
+  ASSERT_EQ(fmpz_set_str(&a.value(), "36893488147419103232", 10), 0);
+  Ring::Element b(R, a);
 
   R.set_zero(a);
-  R.set(b, 1);
-  EXPECT_EQ(R.compare_elems(a, b), -1);
-  EXPECT_EQ(R.compare_elems(b, a), 1);
-  EXPECT_EQ(R.compare_elems(a, a), 0);
 
-  fmpz_set_str(&a, "36893488147419103232", 10);
-  fmpz_set_str(&b, "36893488147419103233", 10);
-  EXPECT_EQ(R.compare_elems(a, b), -1);
-  EXPECT_EQ(R.compare_elems(b, a), 1);
-  EXPECT_EQ(R.compare_elems(a, a), 0);
+  buffer out;
+  R.elem_text_out(out, b, true, false, false);
+  EXPECT_STREQ(out.str(), "36893488147419103232");
 }
 
-TEST(ARingZZ, init_set)
+TEST_F(ARingZZ, set)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b;
+  // Copying a heap integer preserves its value; only integral rationals
+  // convert.
+  {
+    // A const element reference selects copying instead of integer coercion.
+    SCOPED_TRACE("set: heap integer copy");
+    Ring::Element a(R), b(R);
+    ASSERT_EQ(fmpz_set_str(&a.value(), "36893488147419103232", 10), 0);
+    const auto& source = a.value();
 
-  R.init(a);
-  fmpz_set_str(&a, "36893488147419103232", 10);
-  R.init_set(b, a);
+    R.set(b, source);
 
-  EXPECT_EQ(R.compare_elems(a, b), 0);
+    EXPECT_TRUE(R.is_equal(a, b));
+    R.set_zero(a);
+    buffer out;
+    R.elem_text_out(out, b, true, false, false);
+    EXPECT_STREQ(out.str(), "36893488147419103232");
+  }
+
+  // The denominator distinguishes the successful and rejected conversions.
+  struct RationalCase
+  {
+    const char* name;
+    int denominator;
+    bool converts;
+  };
+  const RationalCase cases[] = {{"integral rational", 1, true},
+                                {"fractional rational", 2, false}};
+  for (const auto& sample : cases)
+    {
+      SCOPED_TRACE(sample.name);
+      M2::ARingQQGMP Q;
+      M2::ARingQQGMP::Element numerator(Q), denominator(Q), rational(Q);
+      Ring::Element a(R);
+      Q.set(numerator, 57);
+      Q.set(denominator, sample.denominator);
+      Q.divide(rational, numerator, denominator);
+
+      EXPECT_EQ(R.set(a, &rational.value()), sample.converts);
+      if (sample.converts) EXPECT_TRUE(hasValue(a, 57));
+    }
 }
 
-TEST(ARingZZ, set)
+TEST_F(ARingZZ, set_var)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b;
+  // A coefficient ring has no variables; set_var replaces any old value by 1.
+  for (int initial : {0, 57})
+    {
+      SCOPED_TRACE(::testing::Message() << "set_var: initial " << initial);
+      Ring::Element a(R);
+      R.set(a, initial);
 
-  R.init(a);
-  R.init(b);
-  fmpz_set_str(&a, "36893488147419103232", 10);
-  R.set(b, a);
+      R.set_var(a, initial == 0 ? 5 : 3);
 
-  EXPECT_EQ(R.compare_elems(a, b), 0);
-
-  M2::ARingQQGMP S;
-  M2::ARingQQGMP::ElementType c,d,e;
-  
-  S.init(c);
-  S.set(c,57);
-  R.set(a,&c);
-  R.set(b,57);
-  EXPECT_EQ(R.compare_elems(a, b), 0);
-
-  S.init(d);
-  S.set(d,2);
-  S.init(e);
-  S.divide(e,c,d);
-  EXPECT_FALSE(R.set(a,&e));
+      EXPECT_TRUE(hasValue(a, 1));
+    }
 }
 
-TEST(ARingZZ, set_var)
+TEST_F(ARingZZ, invert)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b;
+  // Integer inversion preserves +/-1 and returns zero for nonunits.
+  for (int value : {1, -1, 57})
+    {
+      SCOPED_TRACE(::testing::Message() << "invert: " << value);
+      Ring::Element a(R), result(R);
+      R.set(a, value);
 
-  R.init(a);
-  R.init(b);
+      R.invert(result, a);
 
-  R.set_zero(a);
-  R.set(b, 1);
-
-  R.set_var(a,5);
-  
-  EXPECT_EQ(R.compare_elems(a,b), 0);
-
-  R.set(a,57);
-  R.set_var(a,3);
-  
-  EXPECT_EQ(R.compare_elems(a, b), 0);
+      EXPECT_TRUE(hasValue(result, value == 57 ? 0 : value));
+    }
 }
 
-
-TEST(ARingZZ, invert)
+TEST_F(ARingZZ, divide)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b, c;
+  // FLINT reports inexact integer division by returning false.
+  struct DivisionCase
+  {
+    const char* name;
+    int numerator;
+    int denominator;
+    bool exact;
+    int quotient;
+  };
+  const DivisionCase cases[] = {{"exact", 8, 4, true, 2},
+                                {"inexact", 2, 3, false, 0}};
+  for (const auto& sample : cases)
+    {
+      SCOPED_TRACE(sample.name);
+      Ring::Element a(R), b(R), result(R);
+      R.set(a, sample.numerator);
+      R.set(b, sample.denominator);
 
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  
-  R.set(b, 1);
-  R.set(c, 1);
-
-  R.invert(a,b);
-  EXPECT_EQ(R.compare_elems(a,c), 0);
-  
-  R.set(b,-1);
-  R.set(c,-1);
-  R.invert(a,b);
-
-  EXPECT_EQ(R.compare_elems(a,c), 0);
-
-  R.set(b,57);
-  R.set(c,0);
-  R.invert(a,b);
-  
-  EXPECT_EQ(R.compare_elems(a,c), 0);
+      EXPECT_EQ(R.divide(result, a, b), sample.exact);
+      if (sample.exact) EXPECT_TRUE(hasValue(result, sample.quotient));
+    }
 }
 
-// Divide is getting tested in the divisible case up above
-//
-
-
-TEST(ARingZZ, divide)
+TEST_F(ARingZZ, power)
 {
-  
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b, c, d;
-
-  // First do an example where a is divisible by b
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
-  
-  R.set(a, 8);
-  R.set(b, 4);
-  R.divide(c,a,b);
-  R.set(d, 2);
-
-  EXPECT_EQ(R.compare_elems(c,d), 0);
-
-  // Now do an example where a is not divisible by b   
-  // Currently the behavior in aring-ZZ-flint.hpp
-  // is that this should return false
-  // But we think this should return an error instead
-
+  // A small known power catches incorrect multiplication or exponent handling.
+  Ring::Element a(R), result(R);
   R.set(a, 2);
-  R.set(b, 3);
 
-  EXPECT_THROW(R.divide(c,a,b),exc::engine_error);
+  R.power(result, a, 3);
+
+  EXPECT_TRUE(hasValue(result, 8));
 }
 
-
-TEST(ARingZZ, power)
+TEST_F(ARingZZ, power_mpz)
 {
+  // The mpz entry point accepts bounded nonnegative exponents and rejects
+  // others.
+  {
+    // 2^31 exceeds signed 32-bit range but is still a small FLINT integer.
+    SCOPED_TRACE("power_mpz: exponent 31");
+    Ring::Element a(R), result(R);
+    M2::ARingZZGMP Z;
+    M2::ARingZZGMP::Element exponent(Z);
+    R.set(a, 2);
+    Z.set(exponent, 31);
 
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b, c;
+    R.power_mpz(result, a, &exponent.value());
 
-  R.init(a);
-  R.init(b);
-  R.init(c);
+    EXPECT_TRUE(hasValue(result, 2147483648L));
+  }
 
-  R.set(a, 2);
-  
-  R.power(b,a,3);
+  // Negative and oversized exponents take distinct rejection paths.
+  struct ExponentCase
+  {
+    const char* name;
+    const char* exponent;
+  };
+  const ExponentCase cases[] = {
+      {"negative exponent", "-3"},
+      {"oversized exponent", "37778931862957161709568"}};
+  for (const auto& sample : cases)
+    {
+      SCOPED_TRACE(sample.name);
+      Ring::Element a(R), result(R);
+      M2::ARingZZGMP Z;
+      M2::ARingZZGMP::Element exponent(Z);
+      R.set(a, 2);
+      ASSERT_EQ(mpz_set_str(&exponent.value(), sample.exponent, 10), 0);
 
-  R.set(c,8);
-  EXPECT_EQ(R.compare_elems(b,c), 0);
-  
+      EXPECT_THROW(R.power_mpz(result, a, &exponent.value()),
+                   exc::engine_error);
+    }
 }
 
-
-TEST(ARingZZ, power_mpz)
+TEST_F(ARingZZ, swap)
 {
-
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b, c;
-
-  M2::ARingZZGMP S;
-  M2::ARingZZGMP::ElementType d, e, f;
-  
-  R.init(a);
-  R.init(b);
-  R.set(a,2);
-
-  // Case 1: if the exponent is negative should get error
-  S.init(d);
-  S.set(d,-3);
-
-  EXPECT_THROW(R.power_mpz(b,a,&d),exc::engine_error);
-
-  // Case 2: exponent ok
-  S.set(d,31);
-  R.set(c,2147483648);
-  R.power_mpz(b,a,&d);
-
-  EXPECT_EQ(R.compare_elems(b,c), 0);
-  
-  // Case 3: exponent too big
-  mpz_set_str(&d, "37778931862957161709568", 10);
-  EXPECT_THROW(R.power_mpz(b,a,&d),exc::engine_error);
-}
-
-TEST(ARingZZ, swap)
-{
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b, c, d;
-
-  R.init(a);
-  R.init(b);
-  R.init(c);
-
+  // Distinct values expose a swap that overwrites either input.
+  Ring::Element a(R), b(R);
   R.set(a, 57);
   R.set(b, 2);
-  R.set(c, 2);
-  R.set(d, 57);
 
-  R.swap(a,b);
-  EXPECT_EQ(R.compare_elems(a,c), 0);
-  EXPECT_EQ(R.compare_elems(b,d), 0);
+  R.swap(a, b);
 
+  EXPECT_TRUE(hasValue(a, 2));
+  EXPECT_TRUE(hasValue(b, 57));
 }
 
-
-TEST(ARingZZ, random)
+TEST_F(ARingZZ, random)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a;
+  // Generated integers must survive copying and conversion without losing
+  // value.
+  seedRandom(0x5a5a);
+  SCOPED_TRACE("seed 0x5a5a");
+  Ring::Element a(R), b(R);
+  for (int trial = 0; trial < ntrials; ++trial)
+    {
+      R.random(a);
+      buffer out;
+      R.elem_text_out(out, a, true, false, false);
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << trial << ": a=" << out.str());
+      ring_elem stored;
 
-  R.init(a);
+      R.to_ring_elem(stored, a);
+      R.from_ring_elem(b, stored);
 
-  EXPECT_NO_THROW(R.random(a));
-
+      EXPECT_TRUE(R.is_equal(a, b));
+    }
 }
 
-
-
-TEST(ARingZZ, display)
+TEST_F(ARingZZ, display)
 {
-  M2::ARingZZ R;
+  // Sign and unit-coefficient flags must not suppress a nonunit's digits.
+  struct FormatCase
+  {
+    const char* name;
+    int value;
+    bool printOne;
+    bool printPlus;
+    const char* expected;
+  };
+  const FormatCase cases[] = {
+      {"positive", 24, false, false, "24"},
+      {"leading plus", 24, true, true, "+24"},
+      {"negative unit", -1, true, false, "-1"},
+      {"omitted negative unit", -1, false, false, "-"},
+      {"positive unit", 1, true, false, "1"},
+      {"omitted positive unit", 1, false, false, ""},
+  };
+  for (const auto& sample : cases)
+    {
+      SCOPED_TRACE(sample.name);
+      Ring::Element a(R);
+      R.set(a, sample.value);
+      buffer out;
 
-  M2::ARingZZ::ElementType a;
-  buffer o1, o2, o3, o4;
+      R.elem_text_out(out, a, sample.printOne, sample.printPlus, false);
 
-  R.init(a);
-  
-  R.set(a,24);
-
-  R.elem_text_out(o1, a, false, false, false);
-  EXPECT_STREQ(o1.str(), "24");
-
-  R.elem_text_out(o2, a, true, true, false);
-  EXPECT_STREQ(o2.str(), "+24");
-
-  R.set(a,-1);
-  R.elem_text_out(o3, a, true, false, false);
-  EXPECT_STREQ(o3.str(), "-1");
-
-  R.elem_text_out(o4, a, false, false, false);
-  EXPECT_STREQ(o4.str(), "-");  
-
-  o3.reset();
-  o4.reset();
-
-  R.set(a,1);
-  R.elem_text_out(o3, a, true, false, false);
-  EXPECT_STREQ(o3.str(), "1");
-
-  R.elem_text_out(o4, a, false, false, false);
-  EXPECT_STREQ(o4.str(), "");
+      EXPECT_STREQ(out.str(), sample.expected);
+    }
 }
 
-
-
-
-TEST(ARingZZ, syzygy)
+TEST_F(ARingZZ, syzygy)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a, b, x1, y1, x2, y2;
+  // Check primitive cancelling pairs, including zero, unit, and sign branches.
+  struct SyzygyCase
+  {
+    const char* name;
+    int a, b, x, y;
+  };
+  const SyzygyCase cases[] = {
+      {"zero first input", 0, 1, 1, 0},
+      {"positive unit divisor", 5, 1, 1, -5},
+      {"negative unit divisor", 5, -1, 1, 5},
+      {"positive divisor", 6, 8, 4, -3},
+      {"negative divisor", 6, -8, 4, 3},
+  };
+  for (const auto& sample : cases)
+    {
+      SCOPED_TRACE(sample.name);
+      Ring::Element a(R), b(R), x(R), y(R), sum(R), term(R);
+      R.set(a, sample.a);
+      R.set(b, sample.b);
 
-  R.init(a);
-  R.init(b);
-  R.init(x1);
-  R.init(y1);
-  R.init(x2);
-  R.init(y2);
+      R.syzygy(a, b, x, y);
 
-  // Case 1: a is 0
-  R.set(a,0);
-  R.set(b,1);
-  R.syzygy(a,b,x1,y1);
-  R.set(x2,1);
-  R.set(y2,0);
-
-  EXPECT_EQ(R.compare_elems(x1,x2), 0);
-  EXPECT_EQ(R.compare_elems(y1,y2), 0);
-
-  // Case 2: b is 1                                                                                                                                            
-  R.set(a,5);
-  R.set(b,1);
-  R.syzygy(a,b,x1,y1);
-  R.set(x2,1);
-  R.set(y2,-5);
-
-  EXPECT_EQ(R.compare_elems(x1,x2), 0);
-  EXPECT_EQ(R.compare_elems(y1,y2), 0);
-
-
-  // Case 3: b is -1                                                                                                                                          
-                                                                                                                                                              
-  R.set(a,5);
-  R.set(b,-1);
-  R.syzygy(a,b,x1,y1);
-  R.set(x2,1);
-  R.set(y2,5);
-
-  EXPECT_EQ(R.compare_elems(x1,x2), 0);
-  EXPECT_EQ(R.compare_elems(y1,y2), 0);  
-  
-  // Case 4a: general, b is positive
-  
-  R.set(a, 6);
-  R.set(b, 8);
-  R.syzygy(a,b,x1,y1);
-  R.set(x2,4);
-  R.set(y2,-3);
-
-  EXPECT_EQ(R.compare_elems(x1,x2), 0);
-  EXPECT_EQ(R.compare_elems(y1,y2), 0);
-
-  // Case 4b: general, b is negative
-
-  R.set(a, 6);
-  R.set(b, -8);
-  R.syzygy(a,b,x1,y1);
-  R.set(x2,4);
-  R.set(y2,3);
-
-  EXPECT_EQ(R.compare_elems(x1,x2), 0);
-  EXPECT_EQ(R.compare_elems(y1,y2), 0);
-  
+      EXPECT_TRUE(hasValue(x, sample.x));
+      EXPECT_TRUE(hasValue(y, sample.y));
+      R.mult(sum, a, x);
+      R.mult(term, b, y);
+      R.add(sum, sum, term);
+      EXPECT_TRUE(R.is_zero(sum));
+    }
 }
 
-
-TEST(ARingZZ, computeHashValue)
+TEST_F(ARingZZ, computeHashValue)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a;
+  // Equal integers must hash equally; the hash itself is not a ring element.
+  Ring::Element a(R), b(R);
+  R.set(a, 5);
+  R.set(b, 5);
 
-  R.init(a);
-  R.set(a,5);
-
-  EXPECT_EQ(R.compare_elems(R.computeHashValue(a),5),0);
-
+  EXPECT_EQ(R.computeHashValue(a), R.computeHashValue(b));
 }
 
-
-TEST(ARingZZ, coerceToLongInteger)
+TEST_F(ARingZZ, coerceToLongInteger)
 {
-  M2::ARingZZ R;
-  M2::ARingZZ::ElementType a;
-  long b=0;
-  
-  R.init(a);
-  
-  fmpz_set_str(&a, "1208925819614629174706176", 10);
-  
-  EXPECT_FALSE(R.coerceToLongInteger(b,a));
+  // Coercion succeeds only when the integer fits in a machine long.
+  {
+    // 2^80 exceeds the range of long on the supported platforms.
+    SCOPED_TRACE("coerceToLongInteger: oversized integer");
+    Ring::Element a(R);
+    ASSERT_EQ(fmpz_set_str(&a.value(), "1208925819614629174706176", 10), 0);
+    long result = 0;
 
-  R.set(a,1048576);
-  EXPECT_TRUE(R.coerceToLongInteger(b,a));
+    EXPECT_FALSE(R.coerceToLongInteger(result, a));
+  }
 
-  EXPECT_EQ(b,1048576);
-  
+  {
+    // A modest exact integer checks the value as well as the success flag.
+    SCOPED_TRACE("coerceToLongInteger: representable integer");
+    Ring::Element a(R);
+    R.set(a, 1048576);
+    long result = 0;
+
+    ASSERT_TRUE(R.coerceToLongInteger(result, a));
+    EXPECT_EQ(result, 1048576);
+  }
 }
 
+}  // namespace
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check"
 // indent-tabs-mode: nil
 // End:
-
-

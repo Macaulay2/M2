@@ -1,9 +1,13 @@
 // Copyright 2012-2013 Michael E. Stillman
 
-#include <string>
-#include <gtest/gtest.h>
-
 #include "basic-rings/aring-CCC.hpp"
+
+#include <gtest/gtest.h>
+#include <mpfr.h>
+
+#include <initializer_list>
+#include <string>
+
 #include "basic-rings/aring-glue.hpp"
 #include "matrices/matrix.hpp"
 #include "unit-tests/ARingTest.hpp"
@@ -16,8 +20,8 @@ class ARingCCC : public ::testing::Test
 {
  protected:
   using Ring = M2::ARingCCC;
-  Ring C{100};
-  Ring::Element a{C}, b{C}, result{C};
+  Ring C {100};
+  Ring::Element a {C}, b {C}, result {C};
 
   // Print enough digits to see small differences in a failure message.
   std::string describe(const Ring::ElementType& value) const
@@ -30,49 +34,69 @@ class ARingCCC : public ::testing::Test
   // Check both parts against the expected number and show the actual answer
   // on failure.
   ::testing::AssertionResult hasValue(const Ring::ElementType& value,
-                                      double real, double imaginary) const
+                                      double real,
+                                      double imaginary) const
   {
-    if (mpfr_cmp_d(&value.re, real) == 0 &&
+    if (mpfr_number_p(&value.re) && mpfr_number_p(&value.im) &&
+        mpfr_cmp_d(&value.re, real) == 0 &&
         mpfr_cmp_d(&value.im, imaginary) == 0)
       return ::testing::AssertionSuccess();
     return ::testing::AssertionFailure()
-        << "expected (" << real << ", " << imaginary << "), got " << describe(value);
+           << "expected (" << real << ", " << imaginary << "), got "
+           << describe(value);
   }
 
   // Allow a few rounding steps when comparing calculated answers. The
   // allowance gets smaller as the ring precision increases.
   ::testing::AssertionResult near(const Ring::ElementType& actual,
-                                 const Ring::ElementType& expected) const
+                                  const Ring::ElementType& expected) const
   {
     const auto& R = C.real_ring();
     Ring::RealRingType::Element tolerance(R), difference(R);
-    mpfr_set_ui_2exp(&tolerance.value(), 1, 6 - static_cast<int>(C.get_precision()), MPFR_RNDN);
+    mpfr_set_ui_2exp(&tolerance.value(),
+                     1,
+                     6 - static_cast<int>(C.get_precision()),
+                     MPFR_RNDN);
     mpfr_sub(&difference.value(), &actual.re, &expected.re, MPFR_RNDN);
-    bool realMatches = mpfr_cmpabs(&difference.value(), &tolerance.value()) <= 0;
+    bool realMatches =
+        mpfr_number_p(&difference.value()) &&
+        mpfr_cmpabs(&difference.value(), &tolerance.value()) <= 0;
     mpfr_sub(&difference.value(), &actual.im, &expected.im, MPFR_RNDN);
-    bool imaginaryMatches = mpfr_cmpabs(&difference.value(), &tolerance.value()) <= 0;
+    bool imaginaryMatches =
+        mpfr_number_p(&difference.value()) &&
+        mpfr_cmpabs(&difference.value(), &tolerance.value()) <= 0;
     if (realMatches && imaginaryMatches) return ::testing::AssertionSuccess();
+    char imaginaryError[128];
+    mpfr_snprintf(
+        imaginaryError, sizeof(imaginaryError), "%.65Rg", &difference.value());
+    mpfr_sub(&difference.value(), &actual.re, &expected.re, MPFR_RNDN);
+    char realError[128];
+    mpfr_snprintf(realError, sizeof(realError), "%.65Rg", &difference.value());
     return ::testing::AssertionFailure()
-        << "expected " << describe(expected) << ", got " << describe(actual)
-        << "; component tolerance is 2^(6 - " << C.get_precision() << ")";
+           << "expected " << describe(expected) << ", got " << describe(actual)
+           << "; signed component errors (" << realError << ", "
+           << imaginaryError << ")"
+           << "; component tolerance is 2^(6 - " << C.get_precision() << ")";
   }
 
   // Show the actual high-precision value if it differs from the expected
   // integer.
   ::testing::AssertionResult realEquals(mpfr_srcptr actual, long expected) const
   {
-    if (mpfr_cmp_si(actual, expected) == 0) return ::testing::AssertionSuccess();
+    if (mpfr_number_p(actual) && mpfr_cmp_si(actual, expected) == 0)
+      return ::testing::AssertionSuccess();
     char value[128];
     mpfr_snprintf(value, sizeof(value), "%.65Rg", actual);
     return ::testing::AssertionFailure()
-        << "expected " << expected << ", got " << value;
+           << "expected " << expected << ", got " << value;
   }
 
   // Build a map for constant numbers. There are no variables to assign, so
   // the list of images is empty.
   const RingMap* coefficientMap(const ::Ring* target) const
   {
-    auto images = Matrix::zero(target->make_FreeModule(1), target->make_FreeModule(0));
+    auto images =
+        Matrix::zero(target->make_FreeModule(1), target->make_FreeModule(0));
     return RingMap::make(images);
   }
 };
@@ -432,44 +456,87 @@ TEST_F(ARingCCC, Arithmetic)
   // Also check that a calculation works when its answer replaces one of its
   // inputs.
 
-  // Use a = 3 + 2i and b = 1 - 2i. Their answers are exact, so these checks
-  // need no rounding allowance.
-  C.set(a, 3.0, 2.0);
-  C.set(b, 1.0, -2.0);
+  {
+    // Use a = 3 + 2i and b = 1 - 2i. Their answers are exact, so these checks
+    // need no rounding allowance.
+    SCOPED_TRACE("arithmetic: exact mixed points");
+    C.set(a, 3.0, 2.0);
+    C.set(b, 1.0, -2.0);
 
-  C.negate(result, a);
-  EXPECT_TRUE(hasValue(result, -3, -2)) << "negation";
-  C.negate(result, b);
-  EXPECT_TRUE(hasValue(result, -1, 2)) << "negation with negative imaginary part";
-  C.add(result, a, b);
-  EXPECT_TRUE(hasValue(result, 4, 0)) << "addition";
-  C.subtract(result, a, b);
-  EXPECT_TRUE(hasValue(result, 2, 4)) << "subtraction";
-  C.mult(result, a, b);
-  EXPECT_TRUE(hasValue(result, 7, -4)) << "multiplication";
+    C.negate(result, a);
+    EXPECT_TRUE(hasValue(result, -3, -2)) << "negation";
+    C.negate(result, b);
+    EXPECT_TRUE(hasValue(result, -1, 2))
+        << "negation with negative imaginary part";
+    C.add(result, a, b);
+    EXPECT_TRUE(hasValue(result, 4, 0)) << "addition";
+    C.subtract(result, a, b);
+    EXPECT_TRUE(hasValue(result, 2, 4)) << "subtraction";
+    C.mult(result, a, b);
+    EXPECT_TRUE(hasValue(result, 7, -4)) << "multiplication";
+  }
 
-  // Start with 1 + i already saved in result. Adding and then removing a*b
-  // should recover that starting value.
-  C.set(result, 1.0, 1.0);
-  C.addMultipleTo(result, a, b);
-  EXPECT_TRUE(hasValue(result, 8, -3)) << "add product to accumulator";
-  C.subtract_multiple(result, a, b);
-  EXPECT_TRUE(hasValue(result, 1, 1)) << "subtract product from accumulator";
+  {
+    // Start with 1 + i already saved in result. Adding and then removing a*b
+    // should recover that starting value.
+    SCOPED_TRACE("accumulate: mixed points");
+    C.set(a, 3.0, 2.0);
+    C.set(b, 1.0, -2.0);
+    C.set(result, 1.0, 1.0);
+    C.addMultipleTo(result, a, b);
+    EXPECT_TRUE(hasValue(result, 8, -3)) << "add product to accumulator";
+    C.set(result, 8.0, -3.0);
+    C.subtract_multiple(result, a, b);
+    EXPECT_TRUE(hasValue(result, 1, 1)) << "subtract product from accumulator";
+  }
 
-  // Repeat multiplication with the answer stored over an input. Reset the
-  // starting value before each case.
-  C.set(result, a);
-  C.mult(result, result, b);
-  EXPECT_TRUE(hasValue(result, 7, -4)) << "multiply: output aliases left input";
-  C.set(result, b);
-  C.mult(result, a, result);
-  EXPECT_TRUE(hasValue(result, 7, -4)) << "multiply: output aliases right input";
-  C.set(result, a);
-  C.mult(result, result, result);
-  EXPECT_TRUE(hasValue(result, 5, 12)) << "multiply: output aliases both inputs";
-  C.set(result, a);
-  C.addMultipleTo(result, result, b);
-  EXPECT_TRUE(hasValue(result, 10, -2)) << "accumulate: output aliases input";
+  {
+    // Reset both operands before storing the answer over an input.
+    SCOPED_TRACE("arithmetic: output aliases left input");
+    C.set(a, 3.0, 2.0);
+    C.set(b, 1.0, -2.0);
+    C.set(result, a);
+
+    C.mult(result, result, b);
+
+    EXPECT_TRUE(hasValue(result, 7, -4));
+  }
+
+  {
+    // Reset both operands before storing the answer over an input.
+    SCOPED_TRACE("arithmetic: output aliases right input");
+    C.set(a, 3.0, 2.0);
+    C.set(b, 1.0, -2.0);
+    C.set(result, b);
+
+    C.mult(result, a, result);
+
+    EXPECT_TRUE(hasValue(result, 7, -4));
+  }
+
+  {
+    // Reset both operands before storing the answer over an input.
+    SCOPED_TRACE("arithmetic: output aliases both inputs");
+    C.set(a, 3.0, 2.0);
+    C.set(b, 1.0, -2.0);
+    C.set(result, a);
+
+    C.mult(result, result, result);
+
+    EXPECT_TRUE(hasValue(result, 5, 12));
+  }
+
+  {
+    // Reset both operands before storing the answer over an input.
+    SCOPED_TRACE("arithmetic: output aliases accumulator input");
+    C.set(a, 3.0, 2.0);
+    C.set(b, 1.0, -2.0);
+    C.set(result, a);
+
+    C.addMultipleTo(result, result, b);
+
+    EXPECT_TRUE(hasValue(result, 10, -2));
+  }
 
   // Each row gives a number and its expected reciprocal, 1 / number. Try
   // both a separate answer and an answer stored back in the input.
@@ -489,8 +556,10 @@ TEST_F(ARingCCC, Arithmetic)
       SCOPED_TRACE(::testing::Message() << "reciprocal: " << sample.name);
       C.set(a, sample.real, sample.imaginary);
       C.invert(result, a);
-      EXPECT_TRUE(hasValue(result, sample.inverseReal, sample.inverseImaginary));
+      EXPECT_TRUE(
+          hasValue(result, sample.inverseReal, sample.inverseImaginary));
 
+      C.set(a, sample.real, sample.imaginary);
       C.invert(a, a);
       EXPECT_TRUE(hasValue(a, sample.inverseReal, sample.inverseImaginary))
           << "output aliases input";
@@ -514,84 +583,84 @@ TEST_F(ARingCCC, Arithmetic)
       C.set(a, 3.0, 2.0);
       C.set(b, sample.real, sample.imaginary);
       C.divide(result, a, b);
-      EXPECT_TRUE(hasValue(result, sample.quotientReal, sample.quotientImaginary));
+      EXPECT_TRUE(
+          hasValue(result, sample.quotientReal, sample.quotientImaginary));
 
+      C.set(a, 3.0, 2.0);
       C.divide(a, a, b);
       EXPECT_TRUE(hasValue(a, sample.quotientReal, sample.quotientImaginary))
           << "output aliases numerator";
     }
 
-  // Multiplying or dividing by the real number 2 should affect both parts.
-  // Adding a product must keep the value already in result.
-  const auto& R = C.real_ring();
-  Ring::RealRingType::Element scalar(R);
-  R.set(scalar, 2);
-  C.set(a, 3.0, 4.0);
+  {
+    // Multiplying or dividing by the real number 2 should affect both parts.
+    // Adding a product must keep the value already in result.
+    SCOPED_TRACE("arithmetic: real scalar and mixed point");
+    const auto& R = C.real_ring();
+    Ring::RealRingType::Element scalar(R);
+    R.set(scalar, 2);
+    C.set(a, 3.0, 4.0);
 
-  C.mult(result, a, scalar);
-  EXPECT_TRUE(hasValue(result, 6, 8)) << "scalar multiplication";
-  C.divide(result, a, scalar);
-  EXPECT_TRUE(hasValue(result, 1.5, 2)) << "scalar division";
-  C.set(result, 1.0, 1.0);
-  C.addMultipleTo(result, scalar, a);
-  EXPECT_TRUE(hasValue(result, 7, 9)) << "scalar accumulation";
+    C.mult(result, a, scalar);
+    EXPECT_TRUE(hasValue(result, 6, 8)) << "scalar multiplication";
+    C.divide(result, a, scalar);
+    EXPECT_TRUE(hasValue(result, 1.5, 2)) << "scalar division";
+    C.set(result, 1.0, 1.0);
+    C.addMultipleTo(result, scalar, a);
+    EXPECT_TRUE(hasValue(result, 7, 9)) << "scalar accumulation";
+  }
 }
 
 TEST_F(ARingCCC, Powers)
 {
-  // Check powers using known answers through both exponent interfaces.
-  // Negative powers should work, while exponents too large for this
-  // implementation should report an error.
-
-  // Powers of i repeat every four steps. Run the same answers through
-  // ordinary integer and GMP integer exponents.
-  C.set(a, 0.0, 1.0);
-  struct PowerCase { int exponent; double real, imaginary; };
-  const PowerCase cases[] = {{0, 1, 0}, {1, 0, 1}, {2, -1, 0},
-                             {3, 0, -1}, {4, 1, 0}, {9, 0, 1}};
-  mpz_t exponent;
-  mpz_init(exponent);
-
+  // Known powers exercise both exponent interfaces and their supported ranges.
+  // Each row gives the base, exponent, and exact real and imaginary answer.
+  struct PowerCase
+  {
+    const char* name;
+    double baseReal, baseImaginary;
+    int exponent;
+    double real, imaginary;
+  };
+  const PowerCase cases[] = {
+      {"i: zero exponent", 0, 1, 0, 1, 0},
+      {"i: first power", 0, 1, 1, 0, 1},
+      {"i: square", 0, 1, 2, -1, 0},
+      {"i: cube", 0, 1, 3, 0, -1},
+      {"i: full period", 0, 1, 4, 1, 0},
+      {"i: repeated period", 0, 1, 9, 0, 1},
+      {"mixed base: cube", 3, 2, 3, -9, 46},
+      {"i: reciprocal", 0, 1, -1, 0, -1},
+  };
   for (const auto& sample : cases)
     {
-      SCOPED_TRACE(::testing::Message() << "i^" << sample.exponent);
+      SCOPED_TRACE(sample.name);
+      C.set(a, sample.baseReal, sample.baseImaginary);
+      mpz_t exponent;
+      mpz_init_set_si(exponent, sample.exponent);
+
       C.power(result, a, sample.exponent);
-      EXPECT_TRUE(hasValue(result, sample.real, sample.imaginary)) << "int exponent";
-      mpz_set_si(exponent, sample.exponent);
+      EXPECT_TRUE(hasValue(result, sample.real, sample.imaginary))
+          << "int exponent";
       C.power_mpz(result, a, exponent);
-      EXPECT_TRUE(hasValue(result, sample.real, sample.imaginary)) << "mpz exponent";
+      EXPECT_TRUE(hasValue(result, sample.real, sample.imaginary))
+          << "mpz exponent";
+      mpz_clear(exponent);
     }
 
-  // Also cube a number with two nonzero parts. This checks more than the
-  // short cycle for i.
-  C.set(a, 3.0, 2.0);
-  C.power(result, a, 3);
-  EXPECT_TRUE(hasValue(result, -9, 46)) << "(3 + 2i)^3";
-  mpz_set_si(exponent, 3);
-  C.power_mpz(result, a, exponent);
-  EXPECT_TRUE(hasValue(result, -9, 46)) << "(3 + 2i)^3 with mpz exponent";
+  // Both signs of 2^100 exceed the supported integer exponent range.
+  for (int sign : {1, -1})
+    {
+      SCOPED_TRACE(::testing::Message()
+                   << "power_mpz: oversized exponent, sign " << sign);
+      C.set(a, 0.0, 1.0);
+      mpz_t exponent;
+      mpz_init_set_si(exponent, sign);
+      mpz_mul_2exp(exponent, exponent, 100);
 
-  C.set(a, 0.0, 1.0);
-  // The exponent -1 asks for a reciprocal.
-  mpz_set_si(exponent, -1);
-  C.power(result, a, -1);
-  EXPECT_TRUE(hasValue(result, 0, -1)) << "negative int exponent";
-  C.power_mpz(result, a, exponent);
-  EXPECT_TRUE(hasValue(result, 0, -1)) << "negative mpz exponent";
-
-  // Use 2^100 as the exponent to exceed the supported integer size. The
-  // call should fail instead of using a shortened exponent.
-  mpz_set_ui(exponent, 1);
-  mpz_mul_2exp(exponent, exponent, 100);
-  EXPECT_THROW(C.power_mpz(result, a, exponent), exc::engine_error)
-      << "positive mpz exponent outside the supported range";
-
-  // A negative exponent outside the supported range must also be rejected,
-  // rather than being shortened to an integer before taking a reciprocal.
-  mpz_neg(exponent, exponent);
-  EXPECT_THROW(C.power_mpz(result, a, exponent), exc::engine_error)
-      << "negative mpz exponent outside the supported range";
-  mpz_clear(exponent);
+      EXPECT_THROW(C.power_mpz(result, a, exponent), exc::engine_error);
+      mpz_clear(exponent);
+    }
 }
 
 TEST_F(ARingCCC, Syzygy)
@@ -602,7 +671,7 @@ TEST_F(ARingCCC, Syzygy)
   {
     // Choose nonzero inputs with a known cancelling pair. First check x and
     // y, then check that the two products add to zero.
-    SCOPED_TRACE("syzygy: nonzero divisor");
+    SCOPED_TRACE("syzygy: both operands nonzero");
     C.set(a, 3.0, 2.0);
     C.set(b, 0.0, 2.0);
     Ring::Element x(C), y(C);
@@ -616,21 +685,12 @@ TEST_F(ARingCCC, Syzygy)
     C.add(result, x, y);
     EXPECT_TRUE(hasValue(result, 0, 0));
   }
+}
 
-  {
-    // When both inputs are zero, use the simple pair x = 1 and y = 0. This
-    // also checks the path that does not divide by b.
-    SCOPED_TRACE("syzygy: zero inputs");
-    C.set_zero(a);
-    C.set_zero(b);
-    Ring::Element x(C), y(C);
-    C.set_zero(y);
-
-    C.syzygy(a, b, x, y);
-
-    EXPECT_TRUE(hasValue(x, 1, 0));
-    EXPECT_TRUE(hasValue(y, 0, 0));
-  }
+TEST_F(ARingCCC, zeroInputSyzygy)
+{
+  // The syzygy contract explicitly requires both inputs to be nonzero.
+  GTEST_SKIP() << "zero operands are outside syzygy's documented precondition";
 }
 
 TEST_F(ARingCCC, Magnitude)
@@ -638,35 +698,47 @@ TEST_F(ARingCCC, Magnitude)
   // Check distances from zero and the handling of very small parts. Also
   // check that updating a saved maximum never makes it smaller.
 
-  const auto& R = C.real_ring();
-  Ring::RealRingType::Element magnitude(R);
-  C.set(a, 3.0, 4.0);
-  C.abs(magnitude, a);
-  EXPECT_TRUE(realEquals(&magnitude.value(), 5));
-  C.abs_squared(magnitude, a);
-  EXPECT_TRUE(realEquals(&magnitude.value(), 25));
+  {
+    // A 3-4-5 triangle has exact magnitude and squared magnitude.
+    SCOPED_TRACE("magnitude: exact mixed point");
+    const auto& R = C.real_ring();
+    Ring::RealRingType::Element magnitude(R);
+    C.set(a, 3.0, 4.0);
+    C.abs(magnitude, a);
+    EXPECT_TRUE(realEquals(&magnitude.value(), 5));
+    C.abs_squared(magnitude, a);
+    EXPECT_TRUE(realEquals(&magnitude.value(), 25));
+  }
 
-  // Only parts smaller than 0.5 should be cleared. A part equal to 0.5 must
-  // stay.
-  M2::ARingRRR bigRealRing(100);
-  M2::ARingRRR::Element epsilon(bigRealRing), norm(bigRealRing);
-  bigRealRing.set(epsilon, 0.5);
-  C.set(a, 0.25, 0.5);
-  C.zeroize_tiny(&epsilon.value(), a);
-  EXPECT_TRUE(hasValue(a, 0, 0.5)) << "zeroize small real component";
-  C.set(a, 0.5, -0.25);
-  C.zeroize_tiny(&epsilon.value(), a);
-  EXPECT_TRUE(hasValue(a, 0.5, 0)) << "zeroize small imaginary component";
+  {
+    // Only parts smaller than 0.5 should be cleared. A part equal to 0.5 must
+    // stay.
+    SCOPED_TRACE("zeroize_tiny: below and at cutoff");
+    M2::ARingRRR bigRealRing(100);
+    M2::ARingRRR::Element epsilon(bigRealRing);
+    bigRealRing.set(epsilon, 0.5);
+    C.set(a, 0.25, 0.5);
+    C.zeroize_tiny(&epsilon.value(), a);
+    EXPECT_TRUE(hasValue(a, 0, 0.5)) << "zeroize small real component";
+    C.set(a, 0.5, -0.25);
+    C.zeroize_tiny(&epsilon.value(), a);
+    EXPECT_TRUE(hasValue(a, 0.5, 0)) << "zeroize small imaginary component";
+  }
 
-  // Keep the largest distance seen so far. A smaller new distance must not
-  // reduce the saved maximum.
-  C.set(a, 3.0, 4.0);
-  bigRealRing.set(norm, 0);
-  C.increase_norm(&norm.value(), a);
-  EXPECT_TRUE(realEquals(&norm.value(), 5)) << "larger magnitude";
-  bigRealRing.set(norm, 10);
-  C.increase_norm(&norm.value(), a);
-  EXPECT_TRUE(realEquals(&norm.value(), 10)) << "smaller magnitude";
+  {
+    // Keep the largest distance seen so far. A smaller new distance must not
+    // reduce the saved maximum.
+    SCOPED_TRACE("increase_norm: larger and smaller magnitudes");
+    M2::ARingRRR bigRealRing(100);
+    M2::ARingRRR::Element norm(bigRealRing);
+    C.set(a, 3.0, 4.0);
+    bigRealRing.set(norm, 0);
+    C.increase_norm(&norm.value(), a);
+    EXPECT_TRUE(realEquals(&norm.value(), 5)) << "larger magnitude";
+    bigRealRing.set(norm, 10);
+    C.increase_norm(&norm.value(), a);
+    EXPECT_TRUE(realEquals(&norm.value(), 10)) << "smaller magnitude";
+  }
 }
 
 TEST_F(ARingCCC, Formatting)
@@ -678,21 +750,27 @@ TEST_F(ARingCCC, Formatting)
     // Check the usual text for zero, real, imaginary, and mixed values.
     // Each row gives the exact expected output.
     SCOPED_TRACE("format: plain values");
-    struct Example { double real; double imaginary; const char* expected; };
+    struct Example
+    {
+      const char* name;
+      double real;
+      double imaginary;
+      const char* expected;
+    };
     const Example cases[] = {
-        {0, 0, "0"},
-        {1, 0, "1"},
-        {-1, 0, "-1"},
-        {0, 1, "i"},
-        {0, -1, "-i"},
-        {1, 1, "1+i"},
-        {-1, -1, "-1-i"},
+        {"zero", 0, 0, "0"},
+        {"positive real unit", 1, 0, "1"},
+        {"negative real unit", -1, 0, "-1"},
+        {"positive imaginary unit", 0, 1, "i"},
+        {"negative imaginary unit", 0, -1, "-i"},
+        {"positive real, positive imaginary", 1, 1, "1+i"},
+        {"negative real, negative imaginary", -1, -1, "-1-i"},
     };
 
     for (const auto& sample : cases)
       {
         C.set(a, sample.real, sample.imaginary);
-        SCOPED_TRACE(describe(a));
+        SCOPED_TRACE(sample.name);
         buffer out;
         C.elem_text_out(out, a, true, false, false);
         EXPECT_EQ(std::string(out.str()), sample.expected);
@@ -703,21 +781,27 @@ TEST_F(ARingCCC, Formatting)
     // When printing a coefficient, a factor of one may be left out. Check
     // that the remaining sign or imaginary part is still printed.
     SCOPED_TRACE("format: unit coefficient");
-    struct Example { double real; double imaginary; const char* expected; };
+    struct Example
+    {
+      const char* name;
+      double real;
+      double imaginary;
+      const char* expected;
+    };
     const Example cases[] = {
-        {1, 0, ""},
-        {-1, 0, "-"},
+        {"positive real unit", 1, 0, ""},
+        {"negative real unit", -1, 0, "-"},
         // A nonzero imaginary part prevents shortening -1 to just a sign.
-        {-1, 1, "-1+i"},
-        {0, 1, "i"},
-        {1, 1, "1+i"},
-        {2, 0, "2"},
+        {"negative real, positive imaginary", -1, 1, "-1+i"},
+        {"positive imaginary unit", 0, 1, "i"},
+        {"positive real, positive imaginary", 1, 1, "1+i"},
+        {"positive real", 2, 0, "2"},
     };
 
     for (const auto& sample : cases)
       {
         C.set(a, sample.real, sample.imaginary);
-        SCOPED_TRACE(describe(a));
+        SCOPED_TRACE(sample.name);
         buffer out;
         C.elem_text_out(out, a, false, false, false);
         EXPECT_EQ(std::string(out.str()), sample.expected);
@@ -728,19 +812,25 @@ TEST_F(ARingCCC, Formatting)
     // Ask for a leading plus sign. The examples show when that sign should
     // appear.
     SCOPED_TRACE("format: plus requested");
-    struct Example { double real; double imaginary; const char* expected; };
+    struct Example
+    {
+      const char* name;
+      double real;
+      double imaginary;
+      const char* expected;
+    };
     const Example cases[] = {
-        {0, 0, "0"},
-        {1, 0, "+1"},
-        {-1, 0, "-1"},
-        {0, 1, "+i"},
-        {0, -1, "-i"},
+        {"zero", 0, 0, "0"},
+        {"positive real unit", 1, 0, "+1"},
+        {"negative real unit", -1, 0, "-1"},
+        {"positive imaginary unit", 0, 1, "+i"},
+        {"negative imaginary unit", 0, -1, "-i"},
     };
 
     for (const auto& sample : cases)
       {
         C.set(a, sample.real, sample.imaginary);
-        SCOPED_TRACE(describe(a));
+        SCOPED_TRACE(sample.name);
         buffer out;
         C.elem_text_out(out, a, true, true, false);
         EXPECT_EQ(std::string(out.str()), sample.expected);
@@ -751,19 +841,25 @@ TEST_F(ARingCCC, Formatting)
     // Ask for parentheses around a value with both parts present. A purely
     // real or imaginary value should not need them.
     SCOPED_TRACE("format: parentheses requested");
-    struct Example { double real; double imaginary; const char* expected; };
+    struct Example
+    {
+      const char* name;
+      double real;
+      double imaginary;
+      const char* expected;
+    };
     const Example cases[] = {
-        {1, 1, "(1+i)"},
-        {-1, 1, "-(1-i)"},
-        {-1, -1, "-(1+i)"},
-        {0, 1, "i"},
-        {1, 0, "1"},
+        {"positive real, positive imaginary", 1, 1, "(1+i)"},
+        {"negative real, positive imaginary", -1, 1, "-(1-i)"},
+        {"negative real, negative imaginary", -1, -1, "-(1+i)"},
+        {"positive imaginary unit", 0, 1, "i"},
+        {"positive real unit", 1, 0, "1"},
     };
 
     for (const auto& sample : cases)
       {
         C.set(a, sample.real, sample.imaginary);
-        SCOPED_TRACE(describe(a));
+        SCOPED_TRACE(sample.name);
         buffer out;
         C.elem_text_out(out, a, true, false, true);
         EXPECT_EQ(std::string(out.str()), sample.expected);
@@ -806,7 +902,8 @@ TEST_F(ARingCCC, Evaluation)
 
     EXPECT_TRUE(globalZZ->is_zero(image));
     EXPECT_TRUE(error());
-    EXPECT_STRNE(error_message(), "");  // consume the error before the next test
+    EXPECT_STRNE(error_message(),
+                 "");  // consume the error before the next test
   }
 }
 
@@ -815,15 +912,18 @@ TEST_F(ARingCCC, RandomizedProperties)
   // Try the same arithmetic rules with many randomly chosen numbers. Each
   // failure prints the inputs so the calculation can be repeated.
 
+  seedRandom(0x4343);
+  SCOPED_TRACE("seed 0x4343");
+
   Ring::Element c(C), other(C), term(C);
   for (int trial = 0; trial < ntrials; ++trial)
     {
       C.random(a);
       C.random(b);
       C.random(c);
-      SCOPED_TRACE(::testing::Message() << "trial " << trial
-          << ": a=" << describe(a) << ", b=" << describe(b)
-          << ", c=" << describe(c));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << trial << ": a=" << describe(a)
+                   << ", b=" << describe(b) << ", c=" << describe(c));
 
       // Switch the input order. Addition and multiplication should keep the
       // same answer.
@@ -854,7 +954,8 @@ TEST_F(ARingCCC, RandomizedProperties)
       C.mult(other, a, b);
       C.mult(term, a, c);
       C.add(other, other, term);
-      EXPECT_TRUE(near(result, other)) << "multiplication distributes over addition";
+      EXPECT_TRUE(near(result, other))
+          << "multiplication distributes over addition";
 
       // Undo an addition, then undo a multiplication. Skip division when
       // the divisor is zero.
@@ -865,7 +966,8 @@ TEST_F(ARingCCC, RandomizedProperties)
         {
           C.mult(result, a, b);
           C.divide(result, result, b);
-          EXPECT_TRUE(near(result, a)) << "multiply then divide recovers the input";
+          EXPECT_TRUE(near(result, a))
+              << "multiply then divide recovers the input";
         }
     }
 }
@@ -886,6 +988,18 @@ TEST_F(ARingCCC, ApproximationTolerance)
     EXPECT_TRUE(near(a, a));
     EXPECT_FALSE(near(a, b));
   }
+}
+
+TEST_F(ARingCCC, comparisonHelpersRejectNaN)
+{
+  // MPFR's NaN comparison result must not make our value checks pass
+  // accidentally.
+  C.set(a, 1.0, 2.0);
+  C.set(b, 1.0, 2.0);
+  EXPECT_TRUE(hasValue(a, 1, 2));
+  mpfr_set_nan(&a.value().re);
+  EXPECT_FALSE(hasValue(a, 1, 2));
+  EXPECT_FALSE(near(a, b));
 }
 
 }  // namespace

@@ -15,6 +15,23 @@ const int ntrials = 1000;
 // const int ntrials = 1000000; // not good for the ssd - system swaps
 // memory....
 
+// Give generated cases a repeatable GMP random stream. The caller traces the seed.
+inline void seedRandom(unsigned long seed)
+{
+  mpz_t value;
+  mpz_init_set_ui(value, seed);
+  rawSetRandomSeed(value);
+  mpz_clear(value);
+}
+
+template <typename T>
+std::string describeElement(const T& R, const typename T::ElementType& value)
+{
+  buffer out;
+  R.elem_text_out(out, value, true, false, false);
+  return out.str();
+}
+
 template <typename RingType>
 void getElement(const RingType& R,
                 int index,
@@ -83,6 +100,7 @@ void testNegate(const T& R, int ntrials)
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
       R.negate(b, a);
       R.add(b, a, b);
       EXPECT_TRUE(R.is_zero(b));  // test: (-a) + a == 0
@@ -170,6 +188,7 @@ void testAxioms(const T& R, int ntrials)
       gen.nextElement(a);
       gen.nextElement(b);
       gen.nextElement(c);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b) << ", c=" << describeElement(R, c));
 
       // Test commutativity
       // test: a*b = b*a
@@ -248,6 +267,7 @@ void testAdd(const T& R, int ntrials)
     {
       gen.nextElement(a);
       gen.nextElement(b);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
       R.add(c, a, b);  // c = a+b
       R.negate(d, b);  // d = -b
 
@@ -293,6 +313,7 @@ void testSubtract(const T& R, int ntrials)
       gen.nextElement(b);
       gen.nextElement(c);
       gen.nextElement(d);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b) << ", c=" << describeElement(R, c) << ", d=" << describeElement(R, d));
       R.add(c, a, b);       // c = a+b
       R.subtract(d, c, b);  // d = (a+b) - b
       EXPECT_TRUE(R.is_equal(d, a));
@@ -320,6 +341,7 @@ void testMultiply(const T& R, int ntrials)
     {
       gen.nextElement(a);
       gen.nextElement(b);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
 
       R.mult(c, a, zero);
       EXPECT_TRUE(R.is_equal(c, zero));
@@ -373,6 +395,7 @@ void testDivide(const T& R, int ntrials)
       gen.nextElement(b);
       gen.nextElement(c);
       gen.nextElement(d);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b) << ", c=" << describeElement(R, c) << ", d=" << describeElement(R, d));
       if (R.is_zero(a)) continue;
       R.mult(c, a, b);
       R.divide(d, c, a);
@@ -400,6 +423,7 @@ void testReciprocal(const T& R, int ntrials)
       // c = 1/a
       // 1/a * a == 1
       gen.nextElement(a);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
       if (R.is_zero(a)) continue;
       R.invert(b, a);
       R.mult(c, b, a);
@@ -443,6 +467,7 @@ void testPower(const T& R, int ntrials)
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
 
       R.power_mpz(c, a, q);
       EXPECT_TRUE(R.is_equal(c, a));  // test a^q == a
@@ -502,6 +527,7 @@ void testFieldDivideByZero(const T& R, int ntrials)
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
       EXPECT_THROW(R.divide(c, a, zero), exc::division_by_zero_error);
       if (R.is_zero(a)) continue;
 
@@ -554,6 +580,7 @@ void testStorage(const T& R, int ntrials)
     {
       SCOPED_TRACE(i);
       gen.nextElement(a);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
       R.set(saved, a);
 
       R.set(b, a);
@@ -596,6 +623,7 @@ void testComparisons(const T& R, int ntrials)
       SCOPED_TRACE(i);
       gen.nextElement(a);
       gen.nextElement(b);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
       R.copy(c, a);
 
       EXPECT_TRUE(R.is_equal(a, a));
@@ -624,6 +652,7 @@ void testAliasing(const T& R, int ntrials)
       SCOPED_TRACE(i);
       gen.nextElement(a);
       gen.nextElement(b);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
 
       R.add(expected, a, b);
       R.copy(result, a);
@@ -681,6 +710,7 @@ void testSubtractMultiple(const T& R, int ntrials)
       gen.nextElement(a);
       gen.nextElement(b);
       gen.nextElement(c);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b) << ", c=" << describeElement(R, c));
 
       R.mult(expected, a, b);
       R.subtract(expected, c, expected);
@@ -724,6 +754,7 @@ void testPowerAgreement(const T& R, int ntrials, int maxExponent = 16)
     {
       SCOPED_TRACE(i);
       gen.nextElement(a);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
       R.copy(d, one);
       for (int e = 0; e <= maxExponent; e++)
         {
@@ -769,6 +800,7 @@ void testRingElemRoundTrip(const T& R, int ntrials)
     {
       SCOPED_TRACE(i);
       gen.nextElement(a);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
       ring_elem f;
       R.to_ring_elem(f, a);
       R.from_ring_elem(b, f);
@@ -787,6 +819,7 @@ void testFromRingElemConst(const T& R, int ntrials)
     {
       SCOPED_TRACE(i);
       gen.nextElement(a);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a));
       ring_elem f;
       R.to_ring_elem(f, a);
       ASSERT_TRUE(R.is_equal(a, R.from_ring_elem_const(f)));
@@ -805,6 +838,7 @@ void testSyzygy(const T& R, int ntrials)
       SCOPED_TRACE(i);
       gen.nextElement(a);
       gen.nextElement(b);
+      SCOPED_TRACE(::testing::Message() << "trial " << i << ", a=" << describeElement(R, a) << ", b=" << describeElement(R, b));
       if (R.is_zero(b)) continue;  // syzygy asserts b is nonzero
       R.syzygy(a, b, x, y);
       R.mult(u, a, x);

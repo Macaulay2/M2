@@ -1,17 +1,22 @@
 // Copyright 2012-2013 Michael E. Stillman
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <memory>
-#include <gtest/gtest.h>
-#include <mpfr.h>
+#include "basic-rings/aring-ZZp.hpp"
 
+#include <gtest/gtest.h>
+#include <gmp.h>
+
+#include <cctype>
+#include <cstddef>
+#include <iostream>
+#include <memory>
+#include <sstream>
+#include <initializer_list>
+#include <string>
+
+#include "basic-rings/aring-ZZp-ffpack.hpp"
+#include "basic-rings/aring-ZZp-flint.hpp"
 #include "basic-rings/reader.hpp"
 #include "rings/ZZp.hpp"
-#include "basic-rings/aring-ZZp-ffpack.hpp"
-#include "basic-rings/aring-ZZp.hpp"
 #include "unit-tests/ARingTest.hpp"
 
 static bool maxH_initialized = false;
@@ -42,12 +47,38 @@ void getElement<M2::ARingZZp>(const M2::ARingZZp& R,
     }
 }
 
-// Checks that coerceToLongInteger inverts set() at both ends of 0..p-1.
-// The characteristic must not be held in a signed long: it can be just under
-// 2^64 (flint), where "characteristic() - 10000" wraps negative.  That, not
-// any defect in coerceToLongInteger, is why this used to be skipped for large
-// characteristics.  The top of the range is reached via -1, -2, ... so no
-// value near 2^64 has to fit in a long.
+template <>
+void getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R,
+                                    int index,
+                                    M2::ARingZZpFFPACK::ElementType& result)
+{
+  if (index < 50)
+    R.set(result, index - 25);
+  else
+    {
+      gmp_ZZ a = getRandomInteger();
+      R.set(result, a);
+    }
+}
+
+template <>
+void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R,
+                                   int index,
+                                   M2::ARingZZpFlint::ElementType& result)
+{
+  if (index < 50)
+    R.set(result, index - 25);
+  else
+    {
+      gmp_ZZ a = getRandomInteger();
+      R.set(result, a);
+    }
+}
+
+namespace {
+
+// Check both ends of 0..p-1 using unsigned arithmetic; p may exceed 2^63.
+// Reach the upper end through negative representatives that fit in long.
 template <typename RT>
 void testCoerceToLongInteger(const RT& R)
 {
@@ -62,18 +93,22 @@ void testCoerceToLongInteger(const RT& R)
   // bottom of the range: 0, 1, 2, ...
   for (ulong i = 0; i < top; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "lower residue " << i);
       R.set(a, static_cast<long>(i));
       long b = R.coerceToLongInteger(a);
-      ulong c = (b < 0 ? static_cast<ulong>(b) + charac : static_cast<ulong>(b));
+      ulong c =
+          (b < 0 ? static_cast<ulong>(b) + charac : static_cast<ulong>(b));
       EXPECT_EQ(c, i);
     }
 
   // top of the range: p-1, p-2, ... reached as -1, -2, ...
   for (ulong k = 1; k <= window && k <= charac; k++)
     {
+      SCOPED_TRACE(::testing::Message() << "upper residue p-" << k);
       R.set(a, -static_cast<long>(k));
       long b = R.coerceToLongInteger(a);
-      ulong c = (b < 0 ? static_cast<ulong>(b) + charac : static_cast<ulong>(b));
+      ulong c =
+          (b < 0 ? static_cast<ulong>(b) + charac : static_cast<ulong>(b));
       EXPECT_EQ(c, charac - k);
     }
 
@@ -82,42 +117,42 @@ void testCoerceToLongInteger(const RT& R)
 
 TEST(RingZZp, create)
 {
+  // The ring reports the chosen prime and preserves basic field values.
+
   const Z_mod* R = Z_mod::create(101);
-  EXPECT_FALSE(R == nullptr);
-  buffer o;
-  o << "Ring being tested: ";
-  R->text_out(o);
-  fprintf(stdout, "%s\n", o.str());
+  ASSERT_NE(R, nullptr);
+  EXPECT_EQ(R->characteristic(), 101);
 }
 
 TEST(ARingZZp, create)
 {
+  // The ring reports the chosen prime and preserves basic field values.
+
   M2::ARingZZp R(101);
 
   M2::ARingZZp::ElementType a;
   buffer o;
 
-  ARingElementGenerator<M2::ARingZZp> gen(R);
   R.init(a);
-  gen.nextElement(a);
 
   EXPECT_EQ(ringName(R), "AZZ/101");
   EXPECT_EQ(R.cardinality(), 101);
   EXPECT_EQ(R.characteristic(), 101);
-  // Now check what the generator is, as an integer
-  R.init(a);
+  // The variable placeholder must be a nonzero field generator.
   R.set_var(a, 0);
   R.elem_text_out(o, a, true, true, false);
-  std::cout << "generator is " << o.str() << std::endl;
+  EXPECT_FALSE(R.is_zero(a));
+  EXPECT_FALSE(std::string(o.str()).empty());
   R.clear(a);
 }
 
 TEST(ARingZZp, fromStream)
 {
+  // Parsing signed coefficients stops at the first nonnumeric token.
+
   std::istringstream i("+1234 +345 -235*a");
   M2::ARingZZp R(32003);
-  M2::ARingZZp::ElementType a;
-  R.init(a);
+  M2::ARingZZp::Element a(R);
   const long expected[] = {1234, 345, -235};
   int n = 0;
   while (true)
@@ -134,32 +169,16 @@ TEST(ARingZZp, fromStream)
     }
   EXPECT_EQ(n, 3);
   EXPECT_EQ(i.peek(), '*');  // parsing stops at the '*' before the variable
-  R.clear(a);
-}
-
-template <>
-void getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R,
-                                    int index,
-                                    M2::ARingZZpFFPACK::ElementType& result)
-{
-  if (index < 50)
-    R.set(result, index - 25);
-  else
-    {
-      gmp_ZZ a = getRandomInteger();
-      R.set(result, a);
-    }
 }
 
 TEST(ARingZZpFFPACK, create)
 {
+  // The ring reports the chosen prime and preserves basic field values.
+
   M2::ARingZZpFFPACK R(101);
 
   EXPECT_EQ(ringName(R), "ZZpFPACK(101,1)");
   testSomeMore(R);
-
-  std::cout << "max modulus for ffpack zzp: "
-            << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
 
   M2::ARingZZpFFPACK::ElementType a;
   R.init(a);
@@ -174,6 +193,9 @@ TEST(ARingZZpFFPACK, create)
 
 TEST(ARingZZp, read)
 {
+  // A large signed coefficient reduces modulo p without consuming the variable
+  // token.
+
   std::string a = "-42378489327498312749c3";
   std::istringstream i(a);
 
@@ -186,28 +208,19 @@ TEST(ARingZZp, read)
   R.set(c, 3);
 
   EXPECT_TRUE(R.is_equal(b, c));
+  EXPECT_EQ(i.peek(), 'c');
+  R.clear(b);
+  R.clear(c);
 }
 
 ////////////////////////////
 // Flint ZZ/p arithmetic ///
 ////////////////////////////
-#include "basic-rings/aring-ZZp-flint.hpp"
-template <>
-void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R,
-                                   int index,
-                                   M2::ARingZZpFlint::ElementType& result)
-{
-  if (index < 50)
-    R.set(result, index - 25);
-  else
-    {
-      gmp_ZZ a = getRandomInteger();
-      R.set(result, a);
-    }
-}
 
 TEST(ARingZZpFlint, create)
 {
+  // The ring reports the chosen prime and preserves basic field values.
+
   M2::ARingZZpFlint R(101);
 
   EXPECT_EQ(ringName(R), "AZZFlint/101");
@@ -216,19 +229,15 @@ TEST(ARingZZpFlint, create)
   M2::ARingZZpFlint::ElementType a;
   R.init(a);
   R.set(a, 99);
+  EXPECT_EQ(R.coerceToLongInteger(a), -2);
   R.set(a, 101);
+  EXPECT_TRUE(R.is_zero(a));
   R.set(a, 103);
+  EXPECT_EQ(R.coerceToLongInteger(a), 2);
   R.clear(a);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// The ZZ/p test matrix                                                    //
-//                                                                         //
-// Every ZZ/p ARing runs the same checks over the same list of moduli.      //
-// Cells a class cannot support are declared by ARingFactory::supports and  //
-// reported, rather than being left out silently as they were before.       //
-/////////////////////////////////////////////////////////////////////////////
-
+// Run the shared field contract for each backend and supported modulus.
 template <typename RT>
 struct ARingFactory;
 
@@ -305,18 +314,28 @@ class ZZpRing : public ::testing::Test
 {
 };
 
-typedef ::testing::
-    Types<M2::ARingZZp, M2::ARingZZpFFPACK, M2::ARingZZpFlint>
-        ZZpTypes;
+typedef ::testing::Types<M2::ARingZZp, M2::ARingZZpFFPACK, M2::ARingZZpFlint>
+    ZZpTypes;
 TYPED_TEST_SUITE(ZZpRing, ZZpTypes);
 
 TYPED_TEST(ZZpRing, arithmetic)
 {
+  // Each supported backend/modulus pair satisfies the shared finite-field
+  // contract.
+
+  seedRandom(0x5a70);
+  SCOPED_TRACE("seed 0x5a70");
+
   typedef ARingFactory<TypeParam> F;
   int ran = 0;
   for (const ModulusCase& m : zzpModuli)
     {
-      if (sizeof(unsigned long) <= 4 && m.p > 0xffffffffUL) continue;
+      if (sizeof(unsigned long) <= 4 && m.p > 0xffffffffUL)
+        {
+          std::cout << "  skipping modulus requiring a 64-bit unsigned long"
+                    << std::endl;
+          continue;
+        }
       if (!F::supports(m.p))
         {
           std::cout << "  skipping " << F::name() << " p=" << m.p << " ("
@@ -333,18 +352,8 @@ TYPED_TEST(ZZpRing, arithmetic)
   EXPECT_GT(ran, 0);
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-// Modulus-range characterization tests                                    //
-//                                                                         //
-// The three ZZ/p backends cap their modulus for three unrelated reasons.   //
-// The tests below pin down what the ARing classes themselves do, so that   //
-// changing any of it is a visible, deliberate act rather than a silent     //
-// one.  They deliberately stay inside the ARing layer and do not call      //
-// interface/aring.h; the caps enforced there (ARingZZp at 32749,           //
-// Strategy => "Ffpack" at 32766) are recorded in README.anton-dima         //
-// instead.  See that file for the full write-up.                           //
-/////////////////////////////////////////////////////////////////////////////
+// Backend range limits and their interface implications are in
+// README.anton-dima.
 
 // Multiplicative order of a mod p, computed directly.
 static long multiplicativeOrder(long a, long p)
@@ -358,22 +367,17 @@ static long multiplicativeOrder(long a, long p)
   return -1;
 }
 
-// A-D: bug --- range should be checked
-// ARingZZp::ARingZZp(size_t p0) stores p = static_cast<int>(p0).  Constructing
-// the class directly, bypassing rawARingZZp's range check, with p0 > INT_MAX
-// truncates silently: the ring then reports one characteristic while reducing
-// by another.  Enable once the constructor guards the narrowing.
+// The constructor silently narrows size_t to int. Disabled until it rejects
+// unsupported moduli before narrowing or allocating tables.
+// https://github.com/Macaulay2/M2/issues/4698
 TEST(ARingZZp, DISABLED_constructorRejectsModulusAboveIntMax)
 {
-  const size_t p0 = (size_t(1) << 32) + 101;  // truncates to 101
-  M2::ARingZZp R(p0);
+  // An unsupported modulus must be rejected before narrowing or allocating
+  // tables.
+  if (sizeof(size_t) <= 4) GTEST_SKIP() << "requires a 64-bit size_t";
+  const size_t modulus = (size_t(1) << 32) + 101;
 
-  M2::ARingZZp::ElementType a;
-  R.init(a);
-  R.set(a, 101);
-  // 101 is not zero modulo p0, but it is modulo the truncated modulus.
-  EXPECT_FALSE(R.is_zero(a));
-  R.clear(a);
+  EXPECT_THROW({ M2::ARingZZp R(modulus); }, exc::engine_error);
 }
 
 TEST(ARingZZp, findPrimitiveRoot)
@@ -383,6 +387,7 @@ TEST(ARingZZp, findPrimitiveRoot)
 
   for (long p : {3L, 5L, 7L, 101L, 32749L})
     {
+      SCOPED_TRACE(::testing::Message() << "primitive root: p=" << p);
       long g = M2::ARingZZp::findPrimitiveRoot(static_cast<int>(p));
       EXPECT_GT(g, 1);
       EXPECT_LT(g, p);
@@ -393,17 +398,12 @@ TEST(ARingZZp, findPrimitiveRoot)
 
 TEST(ARingZZpFFPACK, advertisedMaxModulusIsBelowTheRealOne)
 {
-  // getMaxModulus() returns a hardcoded 0x7fff behind "#if 1", commented "I
-  // have no idea what value would be correct here", with the real Givaro query
-  // stranded in the dead #else.
-  //
-  // Givaro's ceiling for Modular<double> is 94906266 = floor(2^26*sqrt(2) +
-  // 1/2), since Compute_t must hold p(p-1) exactly in a 53-bit mantissa.  This
-  // asserts only the relationship -- that what we advertise is short of what
-  // the backend supports -- rather than pinning the stub's current value,
-  // which would just have to be updated when the stub is fixed.
-  EXPECT_LT(static_cast<double>(M2::ARingZZpFFPACK::getMaxModulus()),
-            static_cast<double>(M2::ARingZZpFFPACK::FieldType::maxCardinality()));
+  // The advertised ceiling is below Givaro's supported ceiling; pin their
+  // relationship. Backend limits and the historical stub are explained in
+  // README.anton-dima.
+  EXPECT_LT(
+      static_cast<double>(M2::ARingZZpFFPACK::getMaxModulus()),
+      static_cast<double>(M2::ARingZZpFFPACK::FieldType::maxCardinality()));
 }
 
 TEST(ARingZZpFFPACK, backendWorksFarAboveAdvertisedMaxModulus)
@@ -411,8 +411,12 @@ TEST(ARingZZpFFPACK, backendWorksFarAboveAdvertisedMaxModulus)
   // Concrete evidence for the test above: the class handles moduli far beyond
   // what getMaxModulus() advertises.  32771 is the first prime above the stub;
   // 94906249 is the largest prime at or below Givaro's real ceiling.
+  seedRandom(0x5a70);
+  SCOPED_TRACE("seed 0x5a70");
+
   for (unsigned long p : {32771UL, 33500479UL, 66000007UL, 94906249UL})
     {
+      SCOPED_TRACE(::testing::Message() << "backend modulus " << p);
       M2::ARingZZpFFPACK R(static_cast<M2::ARingZZpFFPACK::UTT>(p));
       EXPECT_EQ(R.characteristic(), p);
       testCoerceToLongInteger(R);
@@ -424,6 +428,8 @@ TEST(ARingZZpFFPACK, backendWorksFarAboveAdvertisedMaxModulus)
 
 TEST(ARingZZpFFPACK, generator)
 {
+  // The chosen generator is nonzero and has full multiplicative order.
+
   M2::ARingZZpFFPACK R(101);
   M2::ARingZZpFFPACK::ElementType g = R.getGenerator();
   EXPECT_FALSE(R.is_zero(g));
@@ -443,6 +449,8 @@ TEST(ARingZZpFFPACK, generator)
 
 TEST(ARingZZpFlint, generatorAndDiscreteLog)
 {
+  // The generator has order p-1 and discreteLog inverts all its powers.
+
   const long p = 101;
   M2::ARingZZpFlint R(p);
 
@@ -463,6 +471,7 @@ TEST(ARingZZpFlint, generatorAndDiscreteLog)
   // discreteLog inverts power on the generator, over a full period
   for (int k = 0; k < p - 1; k++)
     {
+      SCOPED_TRACE(::testing::Message() << "discreteLog: exponent " << k);
       R.power(a, g, k);
       EXPECT_EQ(R.discreteLog(a), k);
     }
@@ -482,17 +491,12 @@ TEST(ARingZZpFlint, generatorAndDiscreteLog)
 
 TEST(ARingZZpFlint, coerceToLongIntegerNear2to64)
 {
-  if (sizeof(unsigned long) <= 4)
-    GTEST_SKIP() << "seems to be a 32 bit machine";
+  // Balanced representatives remain correct near the largest 64-bit prime.
 
-  // coerceToLongInteger is total for every p < 2^64, contrary to the
-  // long-standing "this fails for charac > 2^63" comment on the
-  // arithmetic18446744073709551557 test.  The balanced representative always
-  // fits in a long, because |rep| <= p/2 < 2^63.  The intermediate
-  // "long result = f" does overflow for f > 2^63, but the signed/unsigned
-  // conversions in the comparison and the subtraction round-trip, so the
-  // result comes out right.  What actually used to fail was the test helper
-  // holding the characteristic in a long; see testCoerceToLongInteger above.
+  if (sizeof(unsigned long) <= 4)
+    GTEST_SKIP() << "requires a 64-bit unsigned long";
+
+  // Balanced representatives fit in long even though the modulus exceeds 2^63.
   const size_t p = 18446744073709551557UL;  // largest prime < 2^64
   M2::ARingZZpFlint R(p);
 
@@ -500,6 +504,7 @@ TEST(ARingZZpFlint, coerceToLongIntegerNear2to64)
   const size_t vals[] = {0, 1, 2, p / 2 - 1, p / 2, p / 2 + 1, p - 2, p - 1};
   for (size_t f : vals)
     {
+      SCOPED_TRACE(::testing::Message() << "balanced representative: " << f);
       M2::ARingZZpFlint::ElementType a;
       R.init(a);
       a = static_cast<M2::ARingZZpFlint::ElementType>(f);
@@ -509,12 +514,18 @@ TEST(ARingZZpFlint, coerceToLongIntegerNear2to64)
       R.clear(a);
     }
 
-  // and the full helper, which the arithmetic test above still skips
+  // Check both ends of the range as well as the midpoint cases above.
   testCoerceToLongInteger(R);
 }
 
 TYPED_TEST(ZZpRing, elementOperations)
 {
+  // Generated values check comparisons, equal hashes, valid products and
+  // independent swaps.
+
+  seedRandom(0x5a70);
+  SCOPED_TRACE("seed 0x5a70");
+
   auto Rp = ARingFactory<TypeParam>::make(101);
   const TypeParam& R = *Rp;
 
@@ -530,6 +541,9 @@ TYPED_TEST(ZZpRing, elementOperations)
     {
       gen.nextElement(a);
       gen.nextElement(b);
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << i << ": a=" << describeElement(R, a)
+                   << ", b=" << describeElement(R, b));
 
       // compare_elems agrees with is_equal and is antisymmetric
       int cmp = R.compare_elems(a, b);
@@ -540,10 +554,11 @@ TYPED_TEST(ZZpRing, elementOperations)
       if (R.is_equal(a, b))
         EXPECT_EQ(R.computeHashValue(a), R.computeHashValue(b));
 
-      // subtract_multiple: c = c - a*b.  Nonzero a, b only; see
-      // ARingZZp.DISABLED_subtractMultipleByZero.
+      // ARingZZp requires both factors nonzero; other backends also accept
+      // zero.
       if (!R.is_zero(a) && !R.is_zero(b))
         {
+          SCOPED_TRACE("subtract_multiple: both factors nonzero");
           R.set(c, 7);
           R.subtract_multiple(c, a, b);
           R.set(e, 7);
@@ -554,11 +569,10 @@ TYPED_TEST(ZZpRing, elementOperations)
 
       // swap.  init_set, not set: for an integral ElementType set(c, a) binds
       // to the integer-coercion overload instead of copying.
-      R.init_set(c, a);
-      R.init_set(d, b);
-      R.swap(c, d);
-      EXPECT_TRUE(R.is_equal(c, b));
-      EXPECT_TRUE(R.is_equal(d, a));
+      typename TypeParam::Element left(R, a), right(R, b);
+      R.swap(left, right);
+      EXPECT_TRUE(R.is_equal(left, b));
+      EXPECT_TRUE(R.is_equal(right, a));
     }
 
   R.clear(a);
@@ -570,9 +584,8 @@ TYPED_TEST(ZZpRing, elementOperations)
 
 TEST(ARingZZp, ringElemRoundTrip)
 {
-  // ARingZZp stores an element as the exponent of a primitive root, and swaps
-  // 0 with p-1 when converting to and from ring_elem.  Neither direction had
-  // any coverage.
+  // Round trips preserve every field value, including the swapped encodings of
+  // 0 and 1.
   const int p = 101;
   M2::ARingZZp R(p);
   M2::ARingZZp::ElementType a, b;
@@ -581,6 +594,7 @@ TEST(ARingZZp, ringElemRoundTrip)
 
   for (int i = 0; i < p; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "residue " << i);
       R.set(a, i);
       ring_elem r;
       R.to_ring_elem(r, a);
@@ -603,42 +617,53 @@ TEST(ARingZZp, ringElemRoundTrip)
   R.clear(b);
 }
 
-// ARingZZp::subtract_multiple documents "we assume: a, b are NONZERO!!" but
-// checks nothing -- mult() special-cases zero, subtract_multiple() omits that
-// test for speed, so a zero operand is read as a real exponent and the result
-// is silently wrong.  ffpack and flint have no such precondition.
+// Zero factors violate the current NONZERO precondition and give a wrong
+// result. This regression is disabled until the contract and implementation
+// support zero. https://github.com/Macaulay2/M2/issues/4699
 TEST(ARingZZp, DISABLED_subtractMultipleByZero)
 {
+  // Extending the contract must make either zero factor preserve the
+  // accumulator.
   M2::ARingZZp R(101);
-  M2::ARingZZp::ElementType a, c, zero;
-  R.init(a);
-  R.init(c);
-  R.init(zero);
-  R.set_zero(zero);
+  struct ProductCase
+  {
+    const char* name;
+    int left, right;
+  };
+  const ProductCase cases[] = {{"zero left factor", 0, 5},
+                               {"zero right factor", 5, 0}};
+  for (const auto& sample : cases)
+    {
+      SCOPED_TRACE(sample.name);
+      M2::ARingZZp::Element a(R), b(R), result(R);
+      R.set(a, sample.left);
+      R.set(b, sample.right);
+      R.set(result, 7);
 
-  R.set(a, 5);
-  R.set(c, 7);
-  R.subtract_multiple(c, zero, a);  // c -= 0*a, so c should still be 7
-  EXPECT_EQ(R.coerceToNonnegativeLongInteger(c), 7);
+      R.subtract_multiple(result, a, b);
 
-  R.clear(a);
-  R.clear(c);
-  R.clear(zero);
+      EXPECT_EQ(R.coerceToNonnegativeLongInteger(result), 7);
+    }
 }
 
 TEST(ARingZZp, coerceToNonnegativeLongInteger)
 {
+  // All residues return their canonical representative in 0..p-1.
+
   const int p = 101;
   M2::ARingZZp R(p);
   M2::ARingZZp::ElementType a;
   R.init(a);
   for (int i = 0; i < p; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "residue " << i);
       R.set(a, i);
       EXPECT_EQ(R.coerceToNonnegativeLongInteger(a), i);
     }
   R.clear(a);
 }
+
+}  // namespace
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
