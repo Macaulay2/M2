@@ -56,6 +56,23 @@ ${_esc}]8;;file://${_host}${_coverage_index}${_esc}\\${_coverage_index}${_esc}]8
   if(NOT GCOVR)
     message(WARNING "gcovr not found; the coverage-report target will not be created")
   else()
+    # --merge-mode-functions needs gcovr 6.0; older gcovr doesn't report
+    # function coverage at all, so there is nothing to merge
+    execute_process(COMMAND ${GCOVR} --version
+      OUTPUT_VARIABLE _gcovr_version_output ERROR_QUIET
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(_gcovr_version_output MATCHES "gcovr ([0-9]+\\.[0-9]+)")
+      set(_gcovr_version ${CMAKE_MATCH_1})
+    endif()
+    if(_gcovr_version VERSION_GREATER_EQUAL 6.0)
+      # gcov may report a function on several lines (e.g. inlines at -O0)
+      set(_gcovr_merge_mode --merge-mode-functions=merge-use-line-min)
+    else()
+      set(_gcovr_merge_mode "")
+      message(STATUS "gcovr ${_gcovr_version} predates 6.0; coverage-report \
+will not merge functions reported on several lines")
+    endif()
+
     add_custom_target(coverage-report
       COMMENT "Generating gcov coverage report"
       COMMAND ${CMAKE_COMMAND} -E make_directory ${_coverage_dir}
@@ -67,8 +84,7 @@ ${_esc}]8;;file://${_host}${_coverage_index}${_esc}\\${_coverage_index}${_esc}]8
         # the libraries' configure scripts leave .gcno files behind for
         # conftest.c sources they deleted, which gcov cannot resolve
         --exclude-directories ${CMAKE_BINARY_DIR}/libraries
-        # gcov may report a function on several lines (e.g. inlines at -O0)
-        --merge-mode-functions=merge-use-line-min ${_gcovr_options}
+        ${_gcovr_merge_mode} ${_gcovr_options}
         --html-details ${_coverage_index} --print-summary
       COMMAND ${CMAKE_COMMAND} -E echo "${_coverage_link}"
       USES_TERMINAL VERBATIM)

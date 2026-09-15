@@ -455,7 +455,9 @@ if(BUILD_TESTING)
     unit-tests/PolyRingTest.cpp
 
     unit-tests/ARingTest.hpp
+    unit-tests/ARingQQTest.hpp
     unit-tests/ARingZZTest.cpp
+    unit-tests/ARingZZGmpTest.cpp
     unit-tests/ARingZZpTest.cpp
 #    unit-tests/ARingGFTest.cpp # TODO: needs rework - ARingGFFlint API has changed
     unit-tests/ARingQQFlintTest.cpp
