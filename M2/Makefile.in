@@ -133,14 +133,19 @@ COVERAGE_ROOT = @srcdir@
 ## a positional search path rather than --object-directory, so that gcovr runs
 ## gcov in each data file's own directory and can resolve VPATH sources
 COVERAGE_OBJDIR = @builddir@
-## gcov may report a function on several lines (e.g. inlines at -O0); merge them
+## gcov may report a function on several lines (e.g. inlines at -O0); merge them.
+## --merge-mode-functions needs gcovr 6.0, so probe for it; older gcovr doesn't
+## report function coverage at all, so there is nothing to merge.
 COVERAGE_MERGE_MODE = merge-use-line-min
+COVERAGE_MERGE_OPTION = \
+	$$($(GCOVR) --help 2>&1 | grep -q -- --merge-mode-functions && \
+		echo --merge-mode-functions=$(COVERAGE_MERGE_MODE))
 .PHONY: coverage-reset coverage-report
 coverage-reset:; find . -name \*.gcda -delete
 coverage-report:
 	@ $(MKDIR_P) $(COVERAGE_DIR)
 	$(GCOVR) --root $(COVERAGE_ROOT) $(COVERAGE_OBJDIR) \
-		--merge-mode-functions=$(COVERAGE_MERGE_MODE) $(GCOVR_OPTIONS) \
+		$(COVERAGE_MERGE_OPTION) $(GCOVR_OPTIONS) \
 		--html-details $(COVERAGE_INDEX) --print-summary
 ## print the path as an OSC 8 hyperlink, so terminals make it clickable
 	@ printf 'coverage report: \033]8;;file://%s%s\033\\%s\033]8;;\033\\\n' "$$(hostname)" "$(COVERAGE_INDEX)" "$(COVERAGE_INDEX)"
