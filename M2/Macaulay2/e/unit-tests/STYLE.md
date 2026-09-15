@@ -8,19 +8,15 @@ must be linked in.
 Apply these rules to the tests you are changing. Do not reformat unrelated
 tests to bring them into agreement with this guide.
 
-## 1. Which test system
+## 1. Tests in this directory
 
-Three exist, and they do not overlap much.
+This guide applies to `Macaulay2/e/unit-tests/`: C++ tests written with
+GoogleTest and linked against `M2-engine`. Add or extend tests here to exercise
+the engine component under test directly through its C++ interface.
 
-- **This directory** — gtest, C++, linked against `M2-engine`. Use it for
-  anything reachable from C++.
-- **`Macaulay2/packages/EngineTests.m2`** — drives the `raw*` interface from the
-  M2 language. Use it for what needs a `Ring*` or `RingMap*`: `promote`, `lift`,
-  `eval`, ring maps.
-- **`Macaulay2/tests/engine/`** — older raw-interface `.m2` scripts.
-
-If a routine is untestable here because it takes a `Ring*`, that is a signal to
-test it in EngineTests, not to skip it.
+Use the fixtures and helpers available in this directory for setup (see
+section 16). If a behavior cannot be exercised here, document the coverage gap
+and its cause. Keep test additions within this directory.
 
 ## 2. Adding a test file
 
