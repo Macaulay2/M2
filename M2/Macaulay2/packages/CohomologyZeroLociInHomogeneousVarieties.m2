@@ -81,7 +81,7 @@ If you compiled Macaulay2 from source, reconfigure and rebuild with:
 and reinstall this package afterwards.///;
 
 hasNumPy := true; 
-try (import "numpy";) else hasNumPy = false; 
+try (runSimpleString "import numpy; import numpy as np";) else hasNumPy = false; 
 if not hasNumPy then error ///CohomologyZeroLociInHomogeneousVarieties requires the Python package numpy, 
 which could not be found. Please install it by following the instructions in the Python package's tutorial on creating a virtual environment and installing NumPy: 
 https://www.macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/Python/html/___Python_sptutorial_co_spcreating_spa_spvirtual_spenvironment_spand_spinstalling_sp__Num__Py.html 
