@@ -480,7 +480,10 @@ if(BUILD_TESTING)
     unit-tests/RingRRRTest.cpp
     unit-tests/RingTowerTest.cpp
 
+    unit-tests/MatrixShape.hpp
     unit-tests/DMatTest.hpp
+    unit-tests/ARingMatrixTest.hpp
+    unit-tests/MatrixTest.hpp
     unit-tests/DMatZZpTest.cpp
 
     unit-tests/ResTest.cpp
