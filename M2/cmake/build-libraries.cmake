@@ -605,6 +605,7 @@ ExternalProject_Add(build-fflas_ffpack
   PREFIX            libraries/fflas_ffpack
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack
   BINARY_DIR        libraries/fflas_ffpack/build
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/fflas_ffpack/patch-2.5.0
   CONFIGURE_COMMAND ${fflas_ffpack_AUTOGEN} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       # --enable-precompilation # build errors
