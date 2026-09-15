@@ -125,6 +125,8 @@ remove-deps:; find . -name \*.dep -delete
 ## accumulates whenever a coverage-built binary exits, so run the unit tests,
 ## "make check", or M2 itself first; these targets only clear and report on it.
 GCOVR = gcovr
+## the gcov matching the compiler that wrote the .gcno files, found by configure
+GCOV_EXECUTABLE = @GCOV_EXECUTABLE@
 ## extra gcovr options, e.g. GCOVR_OPTIONS='--filter Macaulay2/e/'
 GCOVR_OPTIONS =
 COVERAGE_DIR = $(CURDIR)/coverage
@@ -145,6 +147,7 @@ coverage-reset:; find . -name \*.gcda -delete
 coverage-report:
 	@ $(MKDIR_P) $(COVERAGE_DIR)
 	$(GCOVR) --root $(COVERAGE_ROOT) $(COVERAGE_OBJDIR) \
+		--gcov-executable '$(GCOV_EXECUTABLE)' \
 		$(COVERAGE_MERGE_OPTION) $(GCOVR_OPTIONS) \
 		--html-details $(COVERAGE_INDEX) --print-summary
 ## print the path as an OSC 8 hyperlink, so terminals make it clickable
