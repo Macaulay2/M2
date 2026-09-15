@@ -10,6 +10,34 @@ if(GCOV)
     "Extra options passed to gcovr, e.g. --filter Macaulay2/e/")
   separate_arguments(_gcovr_options UNIX_COMMAND "${GCOVR_OPTIONS}")
 
+  # gcovr shells out to gcov, which segfaults or errors out on .gcno files
+  # written by a different compiler version, so derive it from the compiler
+  # instead of picking up whatever gcov comes first on the path
+  set(GCOV_EXECUTABLE "" CACHE STRING
+    "gcov program used by the coverage-report target (default: from the compiler)")
+  if(NOT GCOV_EXECUTABLE)
+    get_filename_component(_cxx_dir ${CMAKE_CXX_COMPILER} DIRECTORY)
+    get_filename_component(_cxx_name ${CMAKE_CXX_COMPILER} NAME)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      # clang writes gcov-format data that only llvm's own shim reads back
+      find_program(_gcov NAMES llvm-cov HINTS ${_cxx_dir} NO_CACHE)
+      if(_gcov)
+	set(_gcov "${_gcov} gcov")
+      endif()
+    else()
+      # e.g. g++-mp-15 -> gcov-mp-15, x86_64-linux-gnu-g++-11 -> ...-gcov-11
+      string(REGEX REPLACE "g\\+\\+|gcc|c\\+\\+" "gcov" _gcov_name ${_cxx_name})
+      find_program(_gcov NAMES ${_gcov_name} gcov HINTS ${_cxx_dir} NO_CACHE)
+    endif()
+    set(GCOV_EXECUTABLE "${_gcov}")
+  endif()
+  if(NOT GCOV_EXECUTABLE)
+    message(WARNING "no gcov matching ${CMAKE_CXX_COMPILER} found; "
+      "the coverage-report target will likely fail")
+    set(GCOV_EXECUTABLE gcov)
+  endif()
+  message(STATUS "Using GCOV_EXECUTABLE = ${GCOV_EXECUTABLE}")
+
   set(_coverage_dir ${CMAKE_BINARY_DIR}/coverage)
   set(_coverage_index ${_coverage_dir}/index.html)
 
@@ -52,6 +80,7 @@ will not merge functions reported on several lines")
       # --object-directory, so that gcovr runs gcov in each data file's own
       # directory and can resolve every source
       COMMAND ${GCOVR} --root ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
+        --gcov-executable "${GCOV_EXECUTABLE}"
         # the libraries' configure scripts leave .gcno files behind for
         # conftest.c sources they deleted, which gcov cannot resolve
         --exclude-directories ${CMAKE_BINARY_DIR}/libraries
