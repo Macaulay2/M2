@@ -11,4 +11,4 @@ work, not to how tests are written.
 - Report which checks actually ran, and any limits on what you validated. Do not
   claim tests or coverage were rerun if they were not. For comment-only edits,
   checking the diff for unintended code changes is sufficient.
-- Do not describe work as having been done by an AI in test comments.
+- Mention in the commit message your exact model (e.g. Claude Opus 5, GPT 5.6 Astra, Qwen3.8, etc.) -- do not comment in the test file regarding AI generation.
