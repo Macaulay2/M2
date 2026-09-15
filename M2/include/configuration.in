@@ -86,7 +86,6 @@ ULIMIT_M=@ULIMIT_M@
 ULIMIT_T=@ULIMIT_T@
 ULIMIT_V=@ULIMIT_V@
 WGET=@WGET@
-XCODE=@XCODE@
 YACC=@YACC@
 abs_builddir=@abs_builddir@
 abs_srcdir=@abs_srcdir@
