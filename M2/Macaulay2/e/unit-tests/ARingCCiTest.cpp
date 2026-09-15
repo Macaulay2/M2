@@ -1102,7 +1102,8 @@ TEST_F(ARingCCi, Magnitude)
     EXPECT_TRUE(hasValue(a, 5, 0));
   }
 
-  // Diameter remains a coverage gap; see ARingTestNotes.md.
+  // Diameter remains untested: its MPFI temporary is uninitialized, and the
+  // intended diameter convention needs clarification.
 }
 
 TEST_F(ARingCCi, Formatting)

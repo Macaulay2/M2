@@ -172,8 +172,12 @@ obvious.
 A comment earns its place by saying what the code cannot: a precondition, the
 reason for a constant, the defect being pinned. Never restate the next line, and
 never narrate every assertion. Prefer one sentence to three. If an explanation
-genuinely needs a paragraph, put it in a notes file or the commit message and
-leave a one-line pointer.
+genuinely needs a paragraph, put it in the commit message or PR description.
+
+Never create Markdown notes, reports, summaries, or other documentation files
+unless the user explicitly requests them. Keep explanations in relevant test
+comments, commit messages, or PR descriptions; a request to change tests does
+not authorize adding a separate Markdown file.
 
 Do not reflow or relocate existing commentary without cause. Churn costs review
 attention and hides the real change.
