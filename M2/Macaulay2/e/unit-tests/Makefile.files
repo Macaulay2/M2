@@ -28,7 +28,7 @@ UNITTEST_CCFILES := \
     MatrixShape \
     DMatTest \
     ARingMatrixTest \
-    MatrixTest \ 
+    MatrixTest \
     DMatZZpTest \
     DMatZZpFFPACKTest \
     DMatZZpFlintTest \
