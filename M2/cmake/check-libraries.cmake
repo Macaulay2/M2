@@ -142,6 +142,20 @@ find_package(GMP	6.0.0 REQUIRED)
 #   givaro	prime field and algebraic computations	(needs gmp)
 #  fflas_ffpack	Finite Field Linear Algebra Routines	(needs gmp, givaro + LAPACK)
 
+set(LIBRARY_OPTIONS
+  Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
+  GTest GLPK Givaro FFLAS_FFPACK Normaliz)
+
+# A cached <Package>_DIR outranks CMAKE_PREFIX_PATH, so drop it for anything we
+# intend to build ourselves before searching for it below.
+string(TOUPPER "${BUILD_LIBRARIES}" BUILD_LIBRARIES)
+foreach(_library IN LISTS LIBRARY_OPTIONS)
+  string(TOUPPER "${_library}" _name)
+  if(BUILD_LIBRARIES MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_LIBRARIES)
+    unset(${_library}_DIR CACHE)
+  endif()
+endforeach()
+
 # Prior to 3.4.1, find_package for Eigen3 doesn't support version ranges
 # but Ubuntu only has 3.4.0 right now, so we should support it
 # For Eigen 5.0 and later, the way the version checking is setup, specifying
@@ -179,10 +193,6 @@ find_package(GLPK      4.59.0)
 pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.4.3)
 pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 # TODO: add FindModules for these two as well
-
-set(LIBRARY_OPTIONS
-  Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
-  GTest GLPK Givaro FFLAS_FFPACK Normaliz)
 
 ###############################################################################
 ## Optional libraries:
