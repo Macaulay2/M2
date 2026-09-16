@@ -30,11 +30,14 @@ add_custom_command(OUTPUT ${GRAMMAR_FILES}
 ###############################################################################
 ## Generating the M2-mode package for Emacs
 
-if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2)
-  message(WARNING "Macaulay2/editors/emacs submodule is missing; skipping M2-emacs target")
-  return()
-endif()
-
+find_program(EMACS NAMES emacs)
+if(NOT EMACS)
+  message(STATUS "Emacs not found; skipping Emacs package")
+  add_custom_target(M2-emacs)
+elseif(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2)
+  message(WARNING "Macaulay2/editors/emacs submodule is missing; skipping Emacs package")
+  add_custom_target(M2-emacs)
+else()
 # TODO: only the emacs target is installed in usr-dist by default
 set(M2_INSTALL_EMACSDIR
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs/site-lisp/macaulay2)
@@ -54,6 +57,7 @@ add_custom_command(OUTPUT ${EMACS_FILES}
   MAIN_DEPENDENCY emacs/make-M2-emacs-help.m2
   WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
   DEPENDS emacs/M2-symbols.el make-M2-symbols.m2)
+endif()
 
 ################################################################################
 ## Generating prism.js/highlight.js for syntax highlighting in the html
