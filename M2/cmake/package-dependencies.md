@@ -106,12 +106,22 @@ these bootstrap packages.
 The checked-in `package-dependencies.cmake` avoids requiring an existing M2 when
 configuring a fresh source build. CMake includes this file; it does not run the
 M2 audit, Python generator, or dependency test scripts during configuration.
-Regenerate it after adding, removing, or changing declared imports or literal
-body/example/test imports, or changing `=distributed-packages`:
+After adding, removing, or changing declared imports or literal body/example/test
+imports, or changing `=distributed-packages`, regenerate
+`M2/cmake/package-dependencies.cmake` by running the following commands from the
+repository root:
 
 ```sh
-python3 M2/cmake/package-dependencies.py --m2 /path/to/M2
+python3 M2/cmake/package-dependencies.py --m2 M2
+python3 M2/cmake/package-dependencies.py --m2 M2 --check
+git diff -- M2/cmake/package-dependencies.cmake
 ```
+
+The first command writes the updated manifest, the second verifies it, and the
+third shows the changes to review and commit. These commands use the installed
+`M2` on your `PATH`; replace `--m2 M2` with `--m2 /absolute/path/to/M2` to select
+another executable. Regeneration needs Python 3 and M2, but no configured CMake
+build directory.
 
 Commit the manifest alongside the source changes. CI checks it using the same
 command with `--check` and rejects stale data. The generator validates the graph
@@ -145,9 +155,31 @@ external executables and their versions are not tracked by this manifest.
 ## Reinstalling after untracked changes
 
 To force a package to reinstall after changing an external dependency, remove
-its `.cmake-installed` file under the build's `usr-dist` directory and rebuild
-`install-<package>`. To force all installs, remove all such stamps. Do not delete
-stamps while another build is running.
+its `.cmake-installed` file under the build's `usr-dist` directory, then run
+`cmake --build <build-directory> --target install-<package>`. Replace
+`<build-directory>` with your existing CMake build directory and `<package>`
+with the case-sensitive package name. For example, from the repository root,
+to reinstall Graphs in a build configured in `M2/BUILD/build`:
+
+```sh
+find M2/BUILD/build/usr-dist -type f -path '*/Graphs/.cmake-installed' -delete
+cmake --build M2/BUILD/build --target install-Graphs
+```
+
+Adjust the build path in both commands if yours differs. The `find` command
+removes only Graphs' completion stamp, regardless of the platform-specific
+installation subdirectory. The build command reinstalls Graphs and any
+prerequisites that need updating; it works with both Ninja and Makefile builds.
+
+To force all selected packages to reinstall, remove all completion stamps and
+build the `install-packages` target:
+
+```sh
+find M2/BUILD/build/usr-dist -type f -name .cmake-installed -delete
+cmake --build M2/BUILD/build --target install-packages
+```
+
+Do not delete stamps while another build is running.
 
 ## CI and tests
 
