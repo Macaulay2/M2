@@ -1,0 +1,28 @@
+name: Build development container
+
+on:
+  push:
+    branches: [development]
+  workflow_dispatch:
+    inputs:
+      clean:
+        description: Ignore the cached build and refresh system dependencies
+        type: boolean
+        default: false
+
+# Every development update gets its own build. Only the current branch head
+# may advance the shared development image tag.
+concurrency:
+  group: development-container-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'Macaulay2/M2' && github.ref == 'refs/heads/development'
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/cmake-container.yml
+    with:
+      publish: true
+      clean: ${{ inputs.clean == true }}
