@@ -64,6 +64,18 @@ if(BUILD_COVERAGE)
 endif()
 
 ###############################################################################
+# Add gcc/gcov code coverage flags
+if(GCOV)
+  set(_gcov_targets M2-interpreter M2-supervisor M2-engine M2-binary)
+  if(BUILD_TESTING)
+    list(APPEND _gcov_targets M2-unit-tests)
+  endif()
+  foreach(_target IN LISTS _gcov_targets)
+    _ADD_GCOV(${_target})
+  endforeach()
+endif()
+
+###############################################################################
 ## Install instructions, which are also are very important for CPack
 
 if(NOT VERBOSE)

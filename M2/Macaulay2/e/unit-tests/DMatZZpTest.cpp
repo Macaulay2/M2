@@ -1,105 +1,182 @@
-#include <memory>
+#include "basic-mutable-matrices/mat-arith.hpp"
+
 #include <gtest/gtest.h>
 
-#include "unit-tests/DMatTest.hpp"
-#include "unit-tests/ARingMatrixTest.hpp"
-#include "basic-mutable-matrices/mat-arith.hpp"
 #include "basic-rings/aring-ZZp.hpp"
-#include "basic-rings/aring-glue.hpp"
+#include "basic-mutable-matrices/mat-linalg.hpp"
+#include "unit-tests/ARingMatrixTest.hpp"
+#include "unit-tests/MatrixShape.hpp"
 
-// Defined in ARingZZpTest.cpp.  Declaring the explicit specialization here is
-// required: without it, using the generator below implicitly instantiates the
-// primary template, which is ill-formed even though it happens to link.
+// The matrix generator uses the specialization defined in ARingZZpTest.cpp.
 template <>
 void getElement<M2::ARingZZp>(const M2::ARingZZp& R,
                               int index,
                               M2::ARingZZp::ElementType& result);
 
+namespace {
+
+using Ring = M2::ARingZZp;
+using Matrix = DMat<Ring>;
+
+::testing::AssertionResult entryEquals(const Matrix& matrix,
+                                       size_t row,
+                                       size_t column,
+                                       long expected)
+{
+  Ring::Element value {matrix.ring()};
+  matrix.ring().set(value, expected);
+  if (matrix.ring().is_equal(matrix.entry(row, column), value))
+    return ::testing::AssertionSuccess();
+  return ::testing::AssertionFailure()
+         << "entry (" << row << ", " << column << ") differs from " << expected;
+}
+
 TEST(DMatZZp, create)
 {
-  typedef M2::ARingZZp RingZZp;
-  typedef DMat<M2::ARingZZp> MatZZp;
+  // The dense matrix retains its coefficient ring and stores a known nonzero
+  // entry.
+  Ring ring(101);
+  Matrix matrix(ring, 5, 5);
+  EXPECT_EQ(&matrix.ring(), &ring);
+  EXPECT_EQ(matrix.numRows(), 5);
+  EXPECT_EQ(matrix.numColumns(), 5);
+  ring.set(matrix.entry(0, 2), 7);
+  EXPECT_TRUE(entryEquals(matrix, 0, 2, 7));
+  EXPECT_TRUE(entryEquals(matrix, 0, 0, 0));
+}
 
-  RingZZp* R = new RingZZp(101);
-  MatZZp M(*R, 5, 5);
+TEST(DMatZZp, symmetricIsSymmetric)
+{
+  // A generated symmetric matrix is unchanged by transposition.
+  Ring R(101);
+  ARingMatrixGenerator<Matrix> matgen(R);
+  Matrix N(R, 5, 5);
+  Matrix M(R, 5, 5);
+  matgen.nextMatrix(N, MatrixShape::Symmetric);
+  MatrixOps::transpose(N, M);
+  EXPECT_TRUE(MatrixOps::isEqual(N, M));
+}
 
-  EXPECT_TRUE(&M.ring() == R);
+TEST(DMatZZp, identityIsNeutral)
+{
+  // Multiplication by the identity preserves every entry.
+  Ring R(101);
+  ARingMatrixGenerator<Matrix> matgen(R);
+  Matrix M(R, 5, 5);
+  Matrix N(R, 5, 5);
+  Matrix I(R, 5, 5);
+  matgen.nextMatrix(M, MatrixShape::Dense);
+  matgen.nextMatrix(I, MatrixShape::Identity);
+  MatrixOps::mult(M, I, N);
+  EXPECT_TRUE(MatrixOps::isEqual(N, M));
+}
 
-  RingZZp::Element a(*R), b(*R);
+TEST(DMatZZp, scaleByCharacteristic)
+{
+  // The characteristic maps to zero and annihilates a nonzero matrix.
+  int characteristic = 101;
+  Ring R(characteristic);
+  ARingMatrixGenerator<Matrix> matgen(R);
+  Ring::Element a(R);
+  R.set(a, characteristic);
+  Matrix M(R, 5, 5);
+  matgen.nextMatrix(M, MatrixShape::Dense);
+  EXPECT_FALSE(MatrixOps::isZero(M));
+  MatrixOps::scalarMultInPlace(M, a);
+  EXPECT_TRUE(MatrixOps::isZero(M));
+}
 
-  ARingElementGenerator<RingZZp> gen(*R);
-  gen.nextElement(a);
-  R->copy(M.entry(0, 2), a);
+TEST(DMatZZp, addition)
+{
+  // Entrywise ring sums check addition for square and rectangular matrices.
+  seedRandom(0x444d4154);
+  SCOPED_TRACE("seed 0x444d4154");
+  Ring R(101);
+  testMatrixAdd<Matrix>(R, ntrials, 2, 2);
+  testMatrixAdd<Matrix>(R, ntrials, 2, 3);
+}
 
-  R->copy(b, M.entry(0, 2));
-  EXPECT_TRUE(R->is_equal(a, b));
+TEST(DMatZZp, negateInPlace)
+{
+  // In-place negation agrees with multiplication by minus one.
+  Ring R(101);
+  ARingMatrixGenerator<Matrix> matgen(R);
+  Matrix M(R, 5, 5);
+  Matrix N(R, 5, 5);
+  matgen.nextMatrix(M, MatrixShape::Dense);
+  submatrix(N) = submatrix(M);
+  EXPECT_TRUE(MatrixOps::isEqual(N, M));
+  MatrixOps::negateInPlace(N);
+  Ring::Element minusOne(R);
+  R.set(minusOne, -1);
+  MatrixOps::scalarMultInPlace(M, minusOne);
+  EXPECT_TRUE(MatrixOps::isEqual(M, N));
 }
 
 TEST(DMatZZp, submatrix)
 {
-  typedef M2::ARingZZp RingZZp;
-  typedef DMat<M2::ARingZZp> MatZZp;
-
-  RingZZp* R = new RingZZp(101);
-  MatZZp M(*R, 5, 5);
-
-  EXPECT_TRUE(&M.ring() == R);
-
-  RingZZp::Element a(*R), b(*R);
-
-  // The isZero assertions below need 'a' to be nonzero, and the '*= a' case
-  // needs it to be a unit.  Over the field ZZ/101 nonzero implies unit, so a
-  // nonzero draw suffices -- but the draw must be checked: the deterministic
-  // prefix of getElement<> starts at -24, which is 0 in characteristic 2 or 3.
-  ARingElementGenerator<RingZZp> gen(*R);
-  do
-    {
-      gen.nextElement(a);
-    }
-  while (R->is_zero(a));
-  R->copy(M.entry(0, 2), a);
-
-  R->copy(b, M.entry(0, 2));
-  EXPECT_TRUE(R->is_equal(a, b));
-
-  // No check is done that there is no aliasing here...
-  // Should there be
-  submatrix(M, 0, 0, 1, 1) = submatrix(M, 0, 2, 1, 1);
-  R->copy(b, M.entry(0, 0));
-  EXPECT_TRUE(R->is_equal(a, b));
-
-  submatrix(M, 0, 0, 2, 2) = 0;
-  EXPECT_FALSE(MatrixOps::isZero(M));
-
-  submatrix(M, 0, 2, 2, 2) = 0;
-  EXPECT_TRUE(MatrixOps::isZero(M));
-
-  R->copy(M.entry(4, 4), a);
-  EXPECT_FALSE(MatrixOps::isZero(M));
-
-  submatrix(M) = 0;
-  EXPECT_TRUE(MatrixOps::isZero(M));
-
-  // The assertions below depend on specific positions of N being nonzero, so
-  // use Identity rather than a generated fill: that holds whatever values the
-  // element generator happens to produce.
-  ARingMatrixGenerator<MatZZp> matgen(*R);
-  MatZZp N(*R, 2, 2);
-  matgen.nextMatrix(N, MatrixShape::Identity);
-
-  displayMat(N);
-  std::cout << std::endl;
-  displayMat(M);
-  std::cout << std::endl;
-  submatrix(M, 0, 1, 2, 2) = submatrix(N);
-  submatrix(M, 0, 0, 2, 2) += submatrix(N);
-  submatrix(M, 0, 0, 2, 2) *= a;
-  displayMat(M);
-  std::cout << std::endl;
-  EXPECT_FALSE(MatrixOps::isZero(M));
+  // Each submatrix operation starts with its own entries and checks exact
+  // positions.
+  Ring ring(101);
+  {
+    // Copying a one-entry view preserves the source while filling the
+    // destination.
+    SCOPED_TRACE("assign: separate one-entry views");
+    Matrix matrix(ring, 5, 5);
+    ring.set(matrix.entry(0, 2), 7);
+    submatrix(matrix, 0, 0, 1, 1) = submatrix(matrix, 0, 2, 1, 1);
+    EXPECT_TRUE(entryEquals(matrix, 0, 0, 7));
+    EXPECT_TRUE(entryEquals(matrix, 0, 2, 7));
+  }
+  {
+    // Zeroing one view leaves entries outside it intact.
+    SCOPED_TRACE("zero: partial view");
+    Matrix matrix(ring, 5, 5);
+    ring.set(matrix.entry(0, 0), 3);
+    ring.set(matrix.entry(0, 2), 7);
+    submatrix(matrix, 0, 0, 2, 2) = 0;
+    EXPECT_TRUE(entryEquals(matrix, 0, 0, 0));
+    EXPECT_TRUE(entryEquals(matrix, 0, 2, 7));
+    EXPECT_FALSE(MatrixOps::isZero(matrix));
+  }
+  {
+    // A view covering the only nonzero entry clears the whole matrix.
+    SCOPED_TRACE("zero: covering view");
+    Matrix matrix(ring, 5, 5);
+    ring.set(matrix.entry(0, 2), 7);
+    submatrix(matrix, 0, 2, 2, 2) = 0;
+    EXPECT_TRUE(MatrixOps::isZero(matrix));
+  }
+  {
+    // The full view includes the final row and column.
+    SCOPED_TRACE("zero: full view");
+    Matrix matrix(ring, 5, 5);
+    ring.set(matrix.entry(4, 4), 7);
+    submatrix(matrix) = 0;
+    EXPECT_TRUE(MatrixOps::isZero(matrix));
+  }
+  {
+    // Shifted identity blocks expose destination offsets and scalar
+    // multiplication.
+    SCOPED_TRACE("assign, add, and scale: shifted identity");
+    Matrix matrix(ring, 5, 5), identity(ring, 2, 2);
+    ring.set(identity.entry(0, 0), 1);
+    ring.set(identity.entry(1, 1), 1);
+    Ring::Element scalar {ring};
+    ring.set(scalar, 7);
+    submatrix(matrix, 0, 1, 2, 2) = submatrix(identity);
+    submatrix(matrix, 0, 0, 2, 2) += submatrix(identity);
+    submatrix(matrix, 0, 0, 2, 2) *= scalar;
+    for (size_t row = 0; row < 5; ++row)
+      for (size_t column = 0; column < 5; ++column)
+        {
+          const long expected = row == 0 && column <= 1   ? 7
+                                : row == 1 && column == 1 ? 7
+                                : row == 1 && column == 2 ? 1
+                                                          : 0;
+          EXPECT_TRUE(entryEquals(matrix, row, column, expected));
+        }
+  }
 }
 
-// Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
-// indent-tabs-mode: nil
-// End:
+}  // namespace

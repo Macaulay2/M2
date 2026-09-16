@@ -31,6 +31,7 @@ along with CYTools.  If not, see <https://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
+#include <functional> // for std::ref
 
 //// MES: added this to the file /////////////
 using CurveAndGVCollection =
