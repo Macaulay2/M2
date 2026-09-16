@@ -218,12 +218,16 @@ clean DoublySpecialCubicFourfold := X -> (
     R := K[x_0..x_5];
     S' := Var sub(sub(ideal S,vars R),vars ring ambient X);
     if S.cache#?"euler" then S'.cache#"euler" = S.cache#"euler";
+    if S.cache#?"ConstructionParameters" then S'.cache#"ConstructionParameters" = S.cache#"ConstructionParameters";
     T' := Var sub(sub(ideal T,vars R),vars ring ambient X);
     if T.cache#?"euler" then T'.cache#"euler" = T.cache#"euler";
+    if T.cache#?"ConstructionParameters" then T'.cache#"ConstructionParameters" = T.cache#"ConstructionParameters";
     X' := Var sub(sub(ideal X,vars R),vars ring ambient X);
     nS := if S.cache#?"FiniteNumberOfNodes" then S.cache#"FiniteNumberOfNodes" else null;
     nT := if T.cache#?"FiniteNumberOfNodes" then T.cache#"FiniteNumberOfNodes" else null;
-    cubicFourfold(S' & T',X',InputCheck=>0,NumNodes=>(nS,nT))
+    X' = cubicFourfold(S' & T',X',InputCheck=>0,NumNodes=>(nS,nT));
+    if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold") then X'.cache#(S',T',"intersection of surface cycles in cubic fourfold") = X.cache#(S,T,"intersection of surface cycles in cubic fourfold");
+    X'
 );
 
 swap = method();
@@ -237,6 +241,7 @@ swap DoublySpecialCubicFourfold := X -> (
     nS := if S.cache#?"FiniteNumberOfNodes" then S.cache#"FiniteNumberOfNodes" else null;
     nT := if T.cache#?"FiniteNumberOfNodes" then T.cache#"FiniteNumberOfNodes" else null;
     Y := cubicFourfold(T & S,Var idX,InputCheck=>0,NumNodes=>(nT,nS),Verbose=>false);
+    if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold") then Y.cache#(T,S,"intersection of surface cycles in cubic fourfold") = X.cache#(S,T,"intersection of surface cycles in cubic fourfold");
     X.cache#"swappedSurfaces" = Y;
     Y.cache#"swappedSurfaces" = X;
     Y
@@ -289,6 +294,7 @@ quadricFibration DoublySpecialCubicFourfold := o -> X -> (
     if dim Z == 0 and degree Z == 1 then resFib = "The generic quadric fiber meets the other surface residually in a single point";
     if dim Z == -1 then resFib = "The generic quadric fiber meets the other surface residually in the empty set";
     X.cache#"quadricFibrationCubicFourfoldInC8" = (h, dim Z == 0 and degree Z == 1, resFib);
+    X.cache#"numberOfResidualPointsInGenericQuadricFiber" = if dim Z == 1 then infinity else (if dim Z == -1 then 0 else degree Z);
     first X.cache#"quadricFibrationCubicFourfoldInC8"
 );
 
@@ -405,6 +411,8 @@ toExternalString DoublySpecialCubicFourfold := X -> (
     );
     if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold") then s = s | ///X.cache#(S,T,"intersection of surface cycles in cubic fourfold") = /// | toString X.cache#(S,T,"intersection of surface cycles in cubic fourfold") | ";" | newline;
     if X.cache#?(S,T,"parameterCount") then s = s | ///X.cache#(S,T,"parameterCount") = /// | toString X.cache#(S,T,"parameterCount") | ";" | newline;
+    if X.cache#?(S,"parameterCount") then s = s|///X.cache#(S,"parameterCount") = ///|(toString X.cache#(S,"parameterCount"))|";"|newline;
+    if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" then s = s|///X.cache#"numberOfResidualPointsInGenericQuadricFiber" = ///|(toString X.cache#"numberOfResidualPointsInGenericQuadricFiber")|";"|newline;
     if S.cache#?("FanoMapDSCF",T) and isFanoMapStandard X then (
         mu := fanoMapDSCF X;
         m := dim ambient target mu;
@@ -455,63 +463,111 @@ toExternalString DoublySpecialCubicFourfold := X -> (
     s | "X))()"
 );
 
+DoublySpecialCubicFourfold ? DoublySpecialCubicFourfold := (X,Y) -> (
+    MX := latticeIntersectionMatrix3x3 X;
+    MY := latticeIntersectionMatrix3x3 Y;
+    if ring MX === ZZ and ring MY === ZZ then (
+        if det MX < det MY then return symbol <;
+        if det MX > det MY then return symbol >;
+    );
+    (S,T) := surfaces X;
+    (U,V) := surfaces Y;
+    if X.cache#?(S,T,"parameterCount") and Y.cache#?(U,V,"parameterCount") then (
+        if first X.cache#(S,T,"parameterCount") < first Y.cache#(U,V,"parameterCount") then return symbol <;
+        if first X.cache#(S,T,"parameterCount") > first Y.cache#(U,V,"parameterCount") then return symbol >;
+    );
+    if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" and Y.cache#?"numberOfResidualPointsInGenericQuadricFiber" then (
+        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" === 1 and Y.cache#"numberOfResidualPointsInGenericQuadricFiber" =!= 1 then return symbol <;
+        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" =!= 1 and Y.cache#"numberOfResidualPointsInGenericQuadricFiber" === 1 then return symbol >;
+        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" < Y.cache#"numberOfResidualPointsInGenericQuadricFiber" then return symbol <;
+        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" > Y.cache#"numberOfResidualPointsInGenericQuadricFiber" then return symbol >;
+    );
+    (dX,dY) := (discriminant X,discriminant Y);
+    if dX < dY then return symbol <;
+    if dX > dY then return symbol >;
+    if degree S < degree U then return symbol <;
+    if degree S > degree U then return symbol >;
+    if degree T < degree V then return symbol <;
+    if degree T > degree V then return symbol >;
+    if sectionalGenus S < sectionalGenus U then return symbol <;
+    if sectionalGenus S > sectionalGenus U then return symbol >;
+    if sectionalGenus T < sectionalGenus V then return symbol <;
+    if sectionalGenus T > sectionalGenus V then return symbol >;
+    if S.cache#?"ConstructionParameters" and U.cache#?"ConstructionParameters" then (
+        cS := splice S.cache#"ConstructionParameters";
+        cU := splice U.cache#"ConstructionParameters";
+        if cS < cU then return symbol <;
+        if cS > cU then return symbol >;
+    );
+    if T.cache#?"ConstructionParameters" and V.cache#?"ConstructionParameters" then (
+        cT := splice T.cache#"ConstructionParameters";
+        cV := splice V.cache#"ConstructionParameters";
+        if cT < cV then return symbol <;
+        if cT > cV then return symbol >;
+    );
+    if ideal X == ideal Y and S == U and T == V then return symbol ==;
+    incomparable
+);
+
 ------------------------------------------------------------------------
 ----------- Recognition and auxiliary utilities for D. S. C. F. --------
 ------------------------------------------------------------------------
 
--* -- recognizeDSCF --
-debug SpecialFanoFourfolds;
-getInv = i -> (X := exampleDSCFourfoldC8(i,ZZ/65521); (S,T) := surfaces X; C := S * T; invX := (degrees S,degree S,sectionalGenus S,euler hilbertPolynomial S,eulerCharacteristic S,numberNodes S, degrees T,degree T,sectionalGenus T,euler hilbertPolynomial T,eulerCharacteristic T,numberNodes T,degrees C,degree C,degrees(S + T)); "if invX === "|(toString invX)|" then return X.cache#(S,T,\"labelDSCF\") = \"DSCF-V1-"|toString(i)|"\"");
-getInvTot = () -> (L := ""; for i from 1 to 40 do L = L|newline|getInv(i); L);
-*-
 recognizeDSCF = X -> (
     (S,T) := surfaces X;
     if X.cache#?(S,T,"labelDSCF") then return X.cache#(S,T,"labelDSCF");
     C := S * T;
+    STinX := (latticeIntersectionMatrix3x3 X)_(1,2);
+    fib := null;
+    if isPlaneInP5 T then (
+        if not X.cache#?"numberOfResidualPointsInGenericQuadricFiber" then quadricFibration X;
+        fib = X.cache#"numberOfResidualPointsInGenericQuadricFiber";
+    );
     invX := (degrees S,degree S,sectionalGenus S,euler hilbertPolynomial S,eulerCharacteristic S,numberNodes S,
              degrees T,degree T,sectionalGenus T,euler hilbertPolynomial T,eulerCharacteristic T,numberNodes T,
-             degrees C,degree C,degrees(S + T));
-    if invX === ({({2},4)},6,2,1,10,0,{({1},3)},1,0,1,3,0,{({1},3), ({2},1)},2,{({2},3), ({3},1)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-1";
-    if invX === ({({2},5)},5,1,1,7,0,{({1},3)},1,0,1,3,0,{({1},3), ({2},1)},2,{({2},4)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-2";
-    if invX === ({({2},3), ({3},1)},7,3,1,12,0,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},3)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-3";
-    if invX === ({({2},1), ({3},8)},8,3,0,6,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},1), ({3},7)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-4";
-    if invX === ({({3},7), ({4},4)},10,4,-2,-4,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},7), ({4},3)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-5";
-    if invX === ({({2},6)},4,0,1,3,0,{({1},3)},1,0,1,3,0,{({1},3), ({2},1)},2,{({2},5)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-6";
-    if invX === ({({2},2), ({3},5)},7,2,0,3,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},2), ({3},4)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-7";
-    if invX === ({({2},1), ({3},8)},8,3,0,5,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},1), ({3},7)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-8";
-    if invX === ({({2},3), ({3},2)},6,1,0,0,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},3), ({3},1)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-9";
-    if invX === ({({3},10), ({4},1)},9,3,-2,-7,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},10)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-10";
-    if invX === ({({2},1), ({3},6), ({4},1)},9,4,-1,1,2,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},1), ({3},6)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-11";
-    if invX === ({({2},2), ({3},3), ({4},1)},8,3,-1,-1,2,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},2), ({3},3)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-12";
-    if invX === ({({3},7), ({4},2)},10,4,-2,-6,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},7), ({4},1)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-13";
-    if invX === ({({3},4), ({4},9), ({5},1)},11,4,-5,-23,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},4), ({4},9)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-14";
-    if invX === ({({3},10), ({4},1)},9,3,-2,-8,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},10)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-15";
-    if invX === ({({3},1), ({4},21), ({5},1)},12,5,-5,-23,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},1), ({4},21)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-16";
-    if invX === ({({2},1), ({3},7), ({4},1)},8,2,-2,-10,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},1), ({3},7)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-17";
-    if invX === ({({3},7), ({4},2)},10,4,-2,-7,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},7), ({4},1)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-18";
-    if invX === ({({3},6), ({4},2), ({5},1)},11,5,-4,-16,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},6), ({4},2)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-19";
-    if invX === ({({3},1), ({4},21), ({5},1)},12,5,-5,-24,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},1), ({4},21)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-20";
-    if invX === ({({2},2), ({3},4), ({4},1)},7,1,-2,-13,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},2), ({3},4)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-21";
-    if invX === ({({3},7), ({4},1), ({5},1)},10,3,-5,-26,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},7), ({4},1)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-22";
-    if invX === ({({3},9), ({5},1)},10,4,-4,-18,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},9)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-23";
-    if invX === ({({3},4), ({4},9), ({5},1)},11,4,-5,-25,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},4), ({4},9)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-24";
-    if invX === ({({3},6), ({4},2), ({5},1)},11,5,-4,-17,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},6), ({4},2)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-25";
-    if invX === ({({2},1), ({3},6), ({5},1)},9,3,-4,-20,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({2},1), ({3},6)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-26";
-    if invX === ({({3},1), ({4},21), ({5},1)},12,5,-5,-25,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},1), ({4},21)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-27";
-    if invX === ({({3},7), ({4},1), ({5},1)},10,3,-5,-27,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},7), ({4},1)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-28";
-    if invX === ({({3},4), ({4},9), ({5},1)},11,4,-5,-26,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},4), ({4},9)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-29";
-    if invX === ({({3},10), ({5},1)},9,2,-5,-29,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},10)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-30";
-    if invX === ({({3},3), ({4},12), ({6},1)},12,5,-8,-41,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},3), ({4},12)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-31";
-    if invX === ({({3},3), ({4},12), ({6},1)},12,5,-8,-42,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},3), ({4},12)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-32";
-    if invX === ({({2},1), ({3},7), ({5},1)},8,1,-5,-32,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({2},1), ({3},7)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-33";
-    if invX === ({({3},4), ({4},9), ({6},1)},11,3,-9,-51,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},4), ({4},9)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-34";
-    if invX === ({({3},6), ({4},2), ({6},1)},11,4,-8,-43,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},6), ({4},2)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-35";
-    if invX === ({({3},9), ({6},1)},10,3,-8,-45,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},9)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-36";
-    if invX === ({({3},4), ({4},9), ({6},1)},11,3,-9,-52,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},4), ({4},9)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-37";
-    if invX === ({({3},7), ({4},2), ({6},1)},10,2,-9,-54,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},7), ({4},2)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-38";
-    if invX === ({({3},10), ({6},1)},9,1,-9,-57,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},10)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-39";
-    if invX === ({({3},6), ({4},3), ({7},1)},11,3,-13,-76,14,{({1},3)},1,0,1,3,0,{({1},3), ({7},1)},7,{({3},6), ({4},3)}) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-40";
-    if invX === ({({2}, 6)}, 4, 0, 1, 3, 0, {({1}, 3)}, 1, 0, 1, 3, 0, {({1}, 3), ({2}, 3)}, 3, {({2}, 3), ({3}, 3)}) then return X.cache#(S,T,"labelDSCF") = "Tregub1";
+             degrees C,degree C,degrees(S + T),
+             STinX,fib);
+    if invX === ({({2},4)},6,2,1,10,0,{({1},3)},1,0,1,3,0,{({1},3), ({2},1)},2,{({2},3), ({3},1)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-1";
+    if invX === ({({2},5)},5,1,1,7,0,{({1},3)},1,0,1,3,0,{({1},3), ({2},1)},2,{({2},4)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-2";
+    if invX === ({({2},3), ({3},1)},7,3,1,12,0,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},3)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-3";
+    if invX === ({({2},1), ({3},8)},8,3,0,6,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},1), ({3},7)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-4";
+    if invX === ({({3},7), ({4},4)},10,4,-2,-4,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},7), ({4},3)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-5";
+    if invX === ({({2},6)},4,0,1,3,0,{({1},3)},1,0,1,3,0,{({1},3), ({2},1)},2,{({2},5)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-6";
+    if invX === ({({2},2), ({3},5)},7,2,0,3,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},2), ({3},4)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-7";
+    if invX === ({({2},1), ({3},8)},8,3,0,5,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},1), ({3},7)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-8";
+    if invX === ({({2},3), ({3},2)},6,1,0,0,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},3), ({3},1)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-9";
+    if invX === ({({3},10), ({4},1)},9,3,-2,-7,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},10)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-10";
+    if invX === ({({2},1), ({3},6), ({4},1)},9,4,-1,1,2,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},1), ({3},6)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-11";
+    if invX === ({({2},2), ({3},3), ({4},1)},8,3,-1,-1,2,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},2), ({3},3)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-12";
+    if invX === ({({3},7), ({4},2)},10,4,-2,-6,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},7), ({4},1)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-13";
+    if invX === ({({3},4), ({4},9), ({5},1)},11,4,-5,-23,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},4), ({4},9)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-14";
+    if invX === ({({3},10), ({4},1)},9,3,-2,-8,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},10)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-15";
+    if invX === ({({3},1), ({4},21), ({5},1)},12,5,-5,-23,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},1), ({4},21)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-16";
+    if invX === ({({2},1), ({3},7), ({4},1)},8,2,-2,-10,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},1), ({3},7)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-17";
+    if invX === ({({3},7), ({4},2)},10,4,-2,-7,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},7), ({4},1)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-18";
+    if invX === ({({3},6), ({4},2), ({5},1)},11,5,-4,-16,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},6), ({4},2)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-19";
+    if invX === ({({3},1), ({4},21), ({5},1)},12,5,-5,-24,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},1), ({4},21)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-20";
+    if invX === ({({2},2), ({3},4), ({4},1)},7,1,-2,-13,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},2), ({3},4)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-21";
+    if invX === ({({3},7), ({4},1), ({5},1)},10,3,-5,-26,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},7), ({4},1)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-22";
+    if invX === ({({3},9), ({5},1)},10,4,-4,-18,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},9)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-23";
+    if invX === ({({3},4), ({4},9), ({5},1)},11,4,-5,-25,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},4), ({4},9)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-24";
+    if invX === ({({3},6), ({4},2), ({5},1)},11,5,-4,-17,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},6), ({4},2)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-25";
+    if invX === ({({2},1), ({3},6), ({5},1)},9,3,-4,-20,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({2},1), ({3},6)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-26";
+    if invX === ({({3},1), ({4},21), ({5},1)},12,5,-5,-25,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},1), ({4},21)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-27";
+    if invX === ({({3},7), ({4},1), ({5},1)},10,3,-5,-27,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},7), ({4},1)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-28";
+    if invX === ({({3},4), ({4},9), ({5},1)},11,4,-5,-26,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},4), ({4},9)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-29";
+    if invX === ({({3},10), ({5},1)},9,2,-5,-29,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},10)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-30";
+    if invX === ({({3},3), ({4},12), ({6},1)},12,5,-8,-41,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},3), ({4},12)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-31";
+    if invX === ({({3},3), ({4},12), ({6},1)},12,5,-8,-42,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},3), ({4},12)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-32";
+    if invX === ({({2},1), ({3},7), ({5},1)},8,1,-5,-32,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({2},1), ({3},7)}, -3, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-33";
+    if invX === ({({3},4), ({4},9), ({6},1)},11,3,-9,-51,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},4), ({4},9)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-34";
+    if invX === ({({3},6), ({4},2), ({6},1)},11,4,-8,-43,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},6), ({4},2)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-35";
+    if invX === ({({3},9), ({6},1)},10,3,-8,-45,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},9)}, -3, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-36";
+    if invX === ({({3},4), ({4},9), ({6},1)},11,3,-9,-52,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},4), ({4},9)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-37";
+    if invX === ({({3},7), ({4},2), ({6},1)},10,2,-9,-54,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},7), ({4},2)}, -3, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-38";
+    if invX === ({({3},10), ({6},1)},9,1,-9,-57,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},10)}, -4, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-39";
+    if invX === ({({3},6), ({4},3), ({7},1)},11,3,-13,-76,14,{({1},3)},1,0,1,3,0,{({1},3), ({7},1)},7,{({3},6), ({4},3)}, -4, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-40";
+    if invX === ({({2}, 6)}, 4, 0, 1, 3, 0, {({1}, 3)}, 1, 0, 1, 3, 0, {({1}, 3), ({2}, 3)}, 3, {({2}, 3), ({3}, 3)}, 3, 1) then return X.cache#(S,T,"labelDSCF") = "Tregub1";
     X.cache#(S,T,"labelDSCF") = "NotRecognized"
 );
 
@@ -664,30 +720,41 @@ exampleDSCFourfoldC8 (ZZ,Ring) := o -> (i,K) -> (
 );
 
 check DoublySpecialCubicFourfold := o -> X -> (
+    if X.cache#?"CheckDSCFResult" then return X;
+    error2 := str -> (X.cache#"CheckDSCFResult" = str; error str);
+    if ring latticeIntersectionMatrix3x3 X === ZZ and det latticeIntersectionMatrix3x3 X <= 0 then error2("invalid lattice rank 3 discriminant: "|(toString det latticeIntersectionMatrix3x3 X));
+    if discriminant X <= 0 then error2 "invalid discriminant of cubic fourfold";
     (S,P) := surfaces X;
-    if not instance(S,RationalSurfaceWithAttachedPlaneInCubicFourfold) then error "expected a cubic fourfold constructed via specialFourfold(surface((...),(...)))";
-    (S',C',pr) := X.cache#"DataConstruction";
-    C := pr C';
-    if not isSubset(C, S * P) then error "projection of curve is not contained in surface-plane intersection";
-    D := (S * P) \\ C;
-    if dim D != -1 then error("surface-plane intersection contains extra components: " | (? ideal D));
+    C := S * P;
+    if not(isPlaneInP5 P and dim C == 1 and S.cache#?"ConstructionParameters") then (
+        if o.Verbose then << "-- check skipped: expected a cubic fourfold constructed via specialFourfold(surface((...),(...)))" << endl;
+        X.cache#"CheckDSCFResult" = null;
+        return X;
+    );
+    if X.cache#?"DataConstruction" then (
+        (S',C',pr) := X.cache#"DataConstruction";
+        C'' := pr C';
+        if not isSubset(C'',C) then error2 "projection of curve is not contained in surface-plane intersection";
+        if dim(C \\ C'') != -1 then error2 "surface-plane intersection contains extra components";
+    );
     SingC := support singularLocus C;
     n := S.cache#"FiniteNumberOfNodes";
-    if degree SingC == n then (
+    if (dim SingC == 0 and degree SingC == n) or (dim SingC == -1 and n == 0) then (
         if o.Verbose then << "-- verified: surface-plane intersection has correct number of nodes (" << n << ")" << endl;
     ) else (
-        error("incorrect number of nodes in surface-plane intersection: expected " | (toString n) | ", obtained " | (toString degree SingC));
+        error2 "incorrect number of nodes in surface-plane intersection";
     );
     SingS := support singularLocus S;
-    if not isSubset(SingC, SingS) then error "singular locus of intersection curve is not contained in the singular locus of the surface";
+    if not isSubset(SingC, SingS) then error2 "singular locus of intersection curve is not contained in the singular locus of the surface";
     resSing := SingS \\ SingC;
     if dim resSing == -1 then (
-        if o.Verbose then << "-- verified: surface is smooth outside the curve" << endl;
+        if o.Verbose then << "-- verified: surface is smooth outside the singular locus of the curve" << endl;
     ) else (
         errLog := if dim resSing == 0 then (toString degree resSing) | " points" else "singular locus is not 0-dimensional";
-        error("surface has singularities outside the curve: " | errLog);
+        error2("surface has singular points outside the singular locus of the curve: " | errLog);
     );
-    return X;
+    X.cache#"CheckDSCFResult" = true;
+    X
 );
 
 discoverCubicFourfoldsInC8 = (e,dmin,dmax,Nmin,Nmax,summaryFileName,rationalSectionOnly,maxTime,NewCollectionFourfolds) -> (
@@ -733,6 +800,14 @@ discoverCubicFourfoldsInC8 = (e,dmin,dmax,Nmin,Nmax,summaryFileName,rationalSect
                                                 <<"-- something went wrong when calling 'surface((...),(...))'"<<endl;
                                                 continue;
                                             );
+                                            if ring latticeIntersectionMatrix3x3 X === ZZ and det latticeIntersectionMatrix3x3 X <= 0 then (
+                                                <<"-- invalid lattice rank 3 discriminant: "<<(det latticeIntersectionMatrix3x3 X)<<endl;
+                                                continue;
+                                            );
+                                            if discriminant X <= 0 then (
+                                                <<"-- invalid discriminant: "<<(discriminant X)<<endl;
+                                                continue;
+                                            );
                                             quadricFibration X;
                                             if rationalSectionOnly and (not X.cache#"quadricFibrationCubicFourfoldInC8"_1) then (
                                                 <<"-- fourfold not allowed: "<<X.cache#"quadricFibrationCubicFourfoldInC8"_2<<endl;
@@ -741,11 +816,24 @@ discoverCubicFourfoldsInC8 = (e,dmin,dmax,Nmin,Nmax,summaryFileName,rationalSect
                                             if (not rationalSectionOnly) and X.cache#"quadricFibrationCubicFourfoldInC8"_1 and 1 != (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) then (
                                                 <<"-- exception: "<<(a,i1,i2,i3,i4)<<","<<(d,u1,u2,u3,u4)<<" -> surface is a section but formula not satisfied: 1 != (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) = "<<((a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4))<<endl;
                                             );
-                                            T = surface X;
-                                            P = surface X.cache#"parentCubicFourfold";
+                                            (T,P) = surfaces X;
                                             assert(degree P == 1);
                                             C = T * P;
-                                            if not member((degrees T,betti res ideal T,degree T,sectionalGenus T,euler hilbertPolynomial T,eulerCharacteristic T,numberNodes T,dim C,degree C,degrees(T + P)), apply(NewCollectionFourfolds, Y -> (degrees surface Y,betti res ideal surface Y,degree surface Y,sectionalGenus surface Y,euler hilbertPolynomial surface Y,eulerCharacteristic surface Y,numberNodes surface Y,dim((surface Y)*(surface Y.cache#"parentCubicFourfold")),degree((surface Y)*(surface Y.cache#"parentCubicFourfold")),degrees((surface Y)+(surface Y.cache#"parentCubicFourfold"))))) then (
+                                            if not member((entries latticeIntersectionMatrix3x3 X,X.cache#"quadricFibrationCubicFourfoldInC8"_2,degrees T,betti res ideal T,degree T,sectionalGenus T,euler hilbertPolynomial T,eulerCharacteristic T,numberNodes T,dim C,degree C,degrees(T + P)), apply(NewCollectionFourfolds, Y -> (entries latticeIntersectionMatrix3x3 Y,Y.cache#"quadricFibrationCubicFourfoldInC8"_2, degrees surface Y,betti res ideal surface Y,degree surface Y,sectionalGenus surface Y,euler hilbertPolynomial surface Y,eulerCharacteristic surface Y,numberNodes surface Y,dim((first surfaces Y)*(last surfaces Y)),degree((first surfaces Y)*(last surfaces Y)),degrees((first surfaces Y)+(last surfaces Y))))) then (
+                                                try (
+                                                    alarm(3*maxTime);
+                                                    <<"-- checking fourfold..."<<endl;
+                                                    check(X,Verbose=>true);
+                                                    alarm 0;
+                                                ) else (
+                                                    alarm 0;
+                                                    if X.cache#?"CheckDSCFResult" and instance(X.cache#"CheckDSCFResult",String) then (
+                                                        <<"-- check not passed: "<<X.cache#"CheckDSCFResult"<<endl;
+                                                        continue;
+                                                    );
+                                                    <<"-- possible alarm triggered: "<<humanReadableSeconds(3*maxTime)<<endl;
+                                                );
+                                                if not X.cache#?"CheckDSCFResult" then X.cache#"CheckDSCFResult" = false;
                                                 instanceCount = instanceCount + 1;
                                                 X.cache#"instanceCount" = instanceCount;
                                                 X.cache#"calculationTime" = runTime();
@@ -760,7 +848,7 @@ discoverCubicFourfoldsInC8 = (e,dmin,dmax,Nmin,Nmax,summaryFileName,rationalSect
                                                 SummaryFile<<"Time to reach last fourfold in list: "<<runTime()<<endl;
                                                 SummaryFile<<"Number of distinct fourfolds found: "<<#NewCollectionFourfolds<<endl<<endl<<"Summary:"<<endl;
                                                 for Y in NewCollectionFourfolds do (
-                                                    SummaryFile<<position(NewCollectionFourfolds,i->i===Y)+1<<") obtained after "<<Y.cache#"calculationTime"<<", instance: "<<Y.cache#"instanceCount"<<endl<<Y.cache#"Construction"<<endl;
+                                                    SummaryFile<<position(NewCollectionFourfolds,i->i===Y)+1<<") obtained after "<<Y.cache#"calculationTime"<<", instance: "<<Y.cache#"instanceCount"<<endl<<Y.cache#"Construction"<<" check: "<<Y.cache#"CheckDSCFResult"<<endl;
                                                     DataFile<<Y.cache#"Construction"<<endl;
                                                     SummaryFile<<describe Y<<endl;
                                                     SummaryFile<<endl;
