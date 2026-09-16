@@ -25,10 +25,6 @@ UNITTEST_CCFILES := \
     RingZZpTest \
     RingQQTest \
     RingTowerTest \
-    MatrixShape \
-    DMatTest \
-    ARingMatrixTest \
-    MatrixTest \ 
     DMatZZpTest \
     DMatZZpFFPACKTest \
     DMatZZpFlintTest \
