@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "error.h"
 #include "basic-rings/aring-ZZp.hpp"
 #include "basic-rings/aring-ZZp-ffpack.hpp"
 #include "basic-rings/aring-ZZp-flint.hpp"
@@ -444,8 +445,10 @@ TYPED_TEST(SMatTest, duplicatePermutationsAreRejected)
   Mat matrix(ring, 3, 3);
   this->fill(matrix, {2, 0, 3, 0, 5, 0, 7, 0, 11});
   EXPECT_FALSE(matrix.row_permute(0, indices({1, 1, 0})));
+  EXPECT_STREQ(error_message(), "expected permutation");
   this->expectMatrix(matrix, 3, 3, {2, 0, 3, 0, 5, 0, 7, 0, 11});
   EXPECT_FALSE(matrix.column_permute(0, indices({1, 1, 0})));
+  EXPECT_STREQ(error_message(), "expected permutation");
   this->expectMatrix(matrix, 3, 3, {2, 0, 3, 0, 5, 0, 7, 0, 11});
 }
 
