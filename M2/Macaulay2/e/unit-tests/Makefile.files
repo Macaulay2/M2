@@ -49,6 +49,14 @@ UNITTEST_CCFILES := \
     SubsetTest \
     PolyRingTest \
     NewF4Test \
+    ExponentVectorTest \
+    ExponentListTest \
+    EngineMonomialTest \
+    MonomialTableTest \
+    MonomialIdealTest \
+    MonomialCollectionsTest \
+    MonomialSortTest \
+    MonomialOrderingTest \
     MonoidTest \
     MatrixIOTest \
     WeylAlgebraTest \

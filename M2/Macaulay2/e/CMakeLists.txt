@@ -451,6 +451,14 @@ if(BUILD_TESTING)
     unit-tests/RingElem.hpp
     unit-tests/RingElem.cpp
     unit-tests/NewF4Test.cpp
+    unit-tests/ExponentVectorTest.cpp
+    unit-tests/ExponentListTest.cpp
+    unit-tests/EngineMonomialTest.cpp
+    unit-tests/MonomialTableTest.cpp
+    unit-tests/MonomialIdealTest.cpp
+    unit-tests/MonomialCollectionsTest.cpp
+    unit-tests/MonomialSortTest.cpp
+    unit-tests/MonomialOrderingTest.cpp
     unit-tests/MonoidTest.cpp
     unit-tests/PolyRingTest.cpp
 
