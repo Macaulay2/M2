@@ -46,7 +46,7 @@ class ARingRRi : public SimpleARing<ARingRRi>
   // ElementType informational ////
   /////////////////////////////////
 
-  bool is_unit(const ElementType &f) const { return !is_zero(f); }
+  bool is_unit(const ElementType &f) const { return !is_member((long)0,f); }
   bool is_zero(const ElementType &f) const { return mpfr_cmp_si(&(f.left), 0) == 0 and mpfr_cmp_si(&(f.right), 0) == 0; }
   bool is_equal(const ElementType &f, const ElementType &g) const
   {
@@ -165,6 +165,90 @@ class ARingRRi : public SimpleARing<ARingRRi>
   {
     mpfi_set(&result, a);
     return true;
+  }
+
+  bool set_left(ElementType &result, ARingRRR::ElementType &a) const
+  {
+      mpfr_set(&(result.left),&a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, long a) const
+  {
+      mpfr_set_si(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, int a) const
+  {
+      set_left(result,(long)a);
+      return true;
+  }
+
+  bool set_left(ElementType &result, mpz_srcptr a) const
+  {
+      mpfr_set_z(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, mpq_srcptr a) const
+  {
+      mpfr_set_q(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, double a) const
+  {
+      mpfr_set_d(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, gmp_RR a) const
+  {
+      mpfr_set(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_right(ElementType &result, ARingRRR::ElementType &a) const
+  {
+      mpfr_set(&(result.right),&a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, long a) const
+  {
+      mpfr_set_si(&(result.right),a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, int a) const
+  {
+      set_right(result,(long)a);
+      return true;
+  }
+
+  bool set_right(ElementType &result, mpz_srcptr a) const
+  {
+      mpfr_set_z(&(result.right),a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, mpq_srcptr a) const
+  {
+      mpfr_set_q(&(result.right),a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, double a) const
+  {
+      mpfr_set_d(&(result.right),a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, gmp_RR a) const
+  {
+      mpfr_set(&(result.right),a,MPFR_RNDU);
+      return true;
   }
 
   // arithmetic

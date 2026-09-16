@@ -10,6 +10,7 @@
 #include "basic-rings/aring-RRR.hpp"
 #include "basic-rings/aring-glue.hpp"
 #include "unit-tests/ARingTest.hpp"
+#include "interface/matrix.cpp"
 
 // For debugging purposes, use
 //mpfr_printf("a=(%.20Rf,%.20Rf)\n",&(a.left), &(a.right));
@@ -55,6 +56,113 @@ TEST(ARingRRi, create)
   M2::ARingRRi R(100);
   EXPECT_EQ(ringName(R), "ARRi_100");
   EXPECT_EQ(R.characteristic(), 0);
+}
+
+TEST(ARingRRi, comparison)
+{
+    M2::ARingRRi R(100);
+    M2::ARingRRR S(100);
+    M2::ARingRRi::ElementType a, b, c, d, e, f, g, h;
+    M2::ARingRRR::ElementType m, n;
+    gmp_ZZ p = to_gmp_ZZ(2);
+
+    R.init(a);
+    R.init(b);
+    R.init(c);
+    R.init(d);
+    R.init(e);
+    R.init(f);
+    R.init(g);
+    R.init(h);
+
+    S.init(m);
+    S.init(n);
+
+    R.set_from_doubles(a,0,0);
+    R.set_from_doubles(b,0,1);
+    R.set_from_doubles(c,0,-1);
+    R.set_from_doubles(d,-1,1);
+
+    EXPECT_TRUE(R.is_member((long)0,a));
+    EXPECT_FALSE(R.is_unit(a));
+    EXPECT_FALSE(R.is_unit(b));
+    EXPECT_FALSE(R.is_unit(c));
+    EXPECT_FALSE(R.is_unit(d));
+
+    EXPECT_TRUE(R.is_zero(a));
+    EXPECT_FALSE(R.is_zero(b));
+    EXPECT_FALSE(R.is_zero(c));
+    EXPECT_FALSE(R.is_zero(d));
+
+    R.set_from_doubles(a,1,2);
+    R.set_from_doubles(b,1,3);
+    R.set_from_doubles(c,2,3);
+    R.set_from_doubles(d,4,5);
+    R.set_from_doubles(e,3,2);
+
+    EXPECT_EQ(R.computeHashValue(c),2622094);
+    EXPECT_TRUE(R.is_equal(a,a));
+    EXPECT_FALSE(R.is_equal(a,b));
+    EXPECT_FALSE(R.is_equal(a,c));
+    EXPECT_FALSE(R.is_equal(a,d));
+    EXPECT_FALSE(R.is_equal(b,c));
+    EXPECT_FALSE(R.is_equal(b,d));
+    EXPECT_FALSE(R.is_equal(c,d));
+    EXPECT_TRUE(R.is_equal(c,e));
+
+    R.set(f,2);
+    R.set(g,2);
+    R.set(h,3);
+
+    EXPECT_TRUE(R.is_equal(f,g));
+    EXPECT_FALSE(R.is_equal(f,h));
+
+    EXPECT_EQ(R.compare_elems(a,d),-1);
+    EXPECT_EQ(R.compare_elems(d,c),1);
+    EXPECT_EQ(R.compare_elems(b,c),0);
+    EXPECT_EQ(R.compare_elems(f,g),0);
+    EXPECT_EQ(R.compare_elems(f,d),-1);
+    EXPECT_EQ(R.compare_elems(h,a),1);
+
+    R.set_left(a,3);
+
+    EXPECT_TRUE(R.is_empty(a));
+    EXPECT_FALSE(R.is_empty(b));
+    EXPECT_FALSE(R.is_empty(h));
+
+    EXPECT_TRUE(R.is_member((long)2,b));
+    EXPECT_FALSE(R.is_member((long)4,b));
+    EXPECT_TRUE(R.is_member(2.3,e));
+    EXPECT_FALSE(R.is_member(1.6,e));
+
+    S.set(m,2.4);
+    S.set(n,3.6);
+
+    EXPECT_TRUE(R.is_member(m,e));
+    EXPECT_FALSE(R.is_member(n,e));
+
+    R.set(a,b);
+    R.copy(d,b);
+
+    EXPECT_TRUE(R.is_equal(a,b));
+    EXPECT_TRUE(R.is_equal(b,d));
+    EXPECT_FALSE(R.is_equal(a,c));
+    EXPECT_FALSE(R.is_equal(d,e));
+
+    R.set_from_doubles(a,1,3);
+    R.set_from_doubles(b,2,3);
+    R.set_from_doubles(c,1,2);
+    R.set_from_doubles(d,-1,0);
+    R.set_from_doubles(e,4,5);
+
+    EXPECT_TRUE(R.is_subset(b,a));
+    EXPECT_TRUE(R.is_subset(c,a));
+    EXPECT_FALSE(R.is_subset(d,a));
+    EXPECT_FALSE(R.is_subset(e,a));
+
+    EXPECT_TRUE(R.is_member(p,a));
+    EXPECT_TRUE(R.is_member(p,b));
+    EXPECT_FALSE(R.is_member(p,e));
 }
 
 void testRingNegateRRi(const M2::ARingRRi& R, const M2::ARingRRR& S, int ntrials)
