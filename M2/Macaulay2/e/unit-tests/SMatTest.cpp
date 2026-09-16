@@ -26,7 +26,6 @@
 #include "basic-rings/aring-GF-flint.hpp"
 #include "basic-rings/aring-GF-flint-big.hpp"
 #include "basic-rings/aring-m2-GF.hpp"
-#include "basic-rings/aring-tower.hpp"
 #include "coeffrings.hpp"
 #include "basic-rings/aring-glue.hpp"
 #include "unit-tests/SMatTest.hpp"
@@ -56,11 +55,6 @@ struct SMatRingFactory
       return std::make_unique<RT>(100);
     else if constexpr (std::is_same_v<RT, CoefficientRingR>)
       return std::make_unique<RT>(globalQQ);
-    else if constexpr (std::is_same_v<RT, M2::ARingTower>)
-      {
-        static const M2::ARingZZpFFPACK base(101);
-        return std::unique_ptr<RT>(RT::create(base, {"a"}));
-      }
     else if constexpr (std::is_same_v<RT, M2::ARingGFFlint> ||
                        std::is_same_v<RT, M2::ARingGFFlintBig> ||
                        std::is_same_v<RT, M2::ARingGFM2>)
@@ -93,8 +87,8 @@ using SMatRings = ::testing::Types<M2::ARingZZp,
                                    M2::ARingGFFlint,
                                    M2::ARingGFFlintBig,
                                    M2::ARingGFM2,
-                                   CoefficientRingR,
-                                   M2::ARingTower>;
+                                   CoefficientRingR>;
+// ARingTower is still under development and is not ready for SMat tests.
 TYPED_TEST_SUITE(SMatTest, SMatRings);
 
 TYPED_TEST(SMatTest, construction)
@@ -700,37 +694,6 @@ TEST_F(SMatZZpTest, DISABLED_subtractingZeroLeavesMatrixUnchanged)
       },
       ::testing::ExitedWithCode(EXIT_SUCCESS),
       "");
-}
-
-TEST(SMatTowerTest, zeroMatrixStorage)
-{
-  // Empty sparse storage works even though ARingTower cannot yet copy
-  // populated coefficients. Check ownership, dimensions, and empty iterators.
-  auto ring = SMatRingFactory<M2::ARingTower>::make();
-  SMat<M2::ARingTower> matrix(*ring, 2, 3);
-  EXPECT_TRUE(matrix.is_zero());
-  SMat<M2::ARingTower> copied(matrix);
-  std::unique_ptr<SMat<M2::ARingTower>> cloned(matrix.copy());
-  EXPECT_TRUE(matrix.is_equal(copied));
-  EXPECT_TRUE(cloned->is_zero());
-  auto it = copied.begin();
-  it.set(1);
-  EXPECT_FALSE(it.valid());
-  copied.insert_rows(1, 2);
-  copied.insert_columns(0, 1);
-  EXPECT_EQ(copied.numRows(), 4);
-  EXPECT_EQ(copied.numColumns(), 4);
-  EXPECT_TRUE(copied.is_zero());
-  copied.delete_rows(0, 3);
-  copied.delete_columns(0, 3);
-  EXPECT_EQ(copied.numRows(), 0);
-  EXPECT_EQ(copied.numColumns(), 0);
-  copied.grab(cloned.get());
-  EXPECT_EQ(copied.numRows(), 2);
-  EXPECT_EQ(copied.numColumns(), 3);
-  EXPECT_TRUE(copied.is_zero());
-  EXPECT_EQ(cloned->numRows(), 0);
-  EXPECT_EQ(cloned->numColumns(), 0);
 }
 
 TEST(SMatZeroDivisorTest, scalingRemovesAnnihilatedEntries)

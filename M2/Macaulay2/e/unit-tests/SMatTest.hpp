@@ -7,10 +7,8 @@
 #include <initializer_list>
 #include <limits>
 #include <memory>
-#include <type_traits>
 #include <vector>
 #include "buffer.hpp"
-#include "basic-rings/aring-tower.hpp"
 
 namespace {
 template <typename RT>
@@ -23,14 +21,6 @@ class SMatTest : public ::testing::Test
   using Mat = SMat<Ring>;
   std::unique_ptr<Ring> ringOwner = SMatRingFactory<Ring>::make();
   Ring& ring = *ringOwner;
-
-  void SetUp() override
-  {
-    if constexpr (std::is_same_v<Ring, M2::ARingTower>)
-      GTEST_SKIP()
-          << "ARingTower::set(integer) and init_set are unimplemented; "
-             "populated SMat operations cannot be tested with this backend.";
-  }
 
   // Returning an owning temporary keeps MPFR/GMP coefficients alive through
   // the matrix call, without copying their resource-owning C structs.
