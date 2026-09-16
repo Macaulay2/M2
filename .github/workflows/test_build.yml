@@ -140,7 +140,7 @@ jobs:
       - name: Configure Macaulay2 using CMake
         if: matrix.build-system == 'cmake'
         run: |
-          cmake -S../.. -B. -GNinja \
+          cmake --preset default -S../.. -B. \
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
