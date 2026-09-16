@@ -88,6 +88,9 @@ endif
 
 M2_LDFLAGS += $(LDFLAGS)
 
+CXXFLAGS   += $(GCOV_CXXFLAGS)
+M2_LDFLAGS += $(GCOV_LDFLAGS)
+
 ifeq ($(MAPFILE)-@HAVE_WL_MAP@,yes-yes)
 ## - use this to get a memory map listing from the gnu linker
 M2_LDFLAGS  += -Wl,-Map,mapfile
