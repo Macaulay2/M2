@@ -1,8 +1,9 @@
 name: Build development container
 
 on:
+  # The job selects the trusted branch below, allowing forks to test this
+  # workflow on a separate branch using a repository variable.
   push:
-    branches: [development]
   workflow_dispatch:
     inputs:
       clean:
@@ -18,7 +19,7 @@ concurrency:
 
 jobs:
   build:
-    if: github.repository == 'Macaulay2/M2' && github.ref == 'refs/heads/development'
+    if: github.ref == format('refs/heads/{0}', vars.M2_CI_DEVELOPMENT_BRANCH || 'development')
     permissions:
       contents: read
       packages: write

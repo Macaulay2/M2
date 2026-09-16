@@ -6,14 +6,16 @@ existing jobs.
 
 ## Development builds and PR builds
 
-Every push to `development` in `Macaulay2/M2` runs
+Every push to `development` runs
 [Build development container](../../../../.github/workflows/development-container.yml).
 The shared [container workflow](../../../../.github/workflows/cmake-container.yml)
 first tries an image for the preceding commit, then the latest compatible
 successful development build. If neither can be pulled, it builds a fresh
 Ubuntu 24.04 environment from this directory's Dockerfile.
 
-After a successful build and tests, it publishes to GitHub Container Registry:
+After a successful build and tests, it publishes to GitHub Container Registry
+under the current repository owner's namespace. For the upstream repository:
+
 
 - `ghcr.io/macaulay2/m2-ci-cmake:sha-<commit>-<environment-key>` identifies the
   development revision used to build the image.
@@ -27,6 +29,27 @@ and test GitHub's PR merge revision, including pinned submodules, on top of that
 image. They never publish their resulting containers. Pushes to development also
 run the tests before publication. The existing scheduled and manually dispatched
 Build and Test workflow uses the same Linux/CMake job for its checked-out commit.
+
+## Testing in a personal fork
+
+The workflows also work in forks. In `dimpase/M2`, both publication and cache
+lookup use `ghcr.io/dimpase/m2-ci-cmake`; they do not write to the upstream
+registry. The OCI source label links to the fork. After merging upstream, the
+same workflow automatically uses `ghcr.io/macaulay2/m2-ci-cmake`. Images do not
+need transferring: the first upstream run builds and publishes its own cache.
+
+To test before merging, enable Actions in the fork and set the repository Actions
+variable `M2_CI_DEVELOPMENT_BRANCH` to `incremental-container-ci`. Then push a
+commit to that branch. Only pushes to the selected branch can publish; PR jobs
+never publish. The variable defaults to `development` when unset. Make the fork's
+GHCR package public after its first publication, just as for the upstream package.
+
+A subsequent push to the selected branch tests incremental reuse. To test PR
+consumption, open a PR in the fork against `development` with these workflows in
+its merge revision, or manually dispatch **Build and Test Macaulay2** on the test
+branch if manual dispatch is available. Linux/CMake is enabled in forks; the
+existing restrictions on other build variants are unchanged. Unset the variable
+when finished testing, or switch it to the fork's intended development branch.
 
 ## What is reused
 
@@ -86,9 +109,13 @@ from scratch remains supported and is the fallback for a missing registry asset.
 4. Review required status-check names: the Linux/CMake job now calls a reusable
    workflow, so its displayed check name gains the called job's name.
 
-To refresh OS packages or recover from an unsuitable cache, dispatch **Build
-development container** on the `development` branch with **clean** enabled. This
-ignores previous build images and reinstalls the system dependencies. Apt package
+To refresh OS packages or recover from an unsuitable cache, increment
+`.github/ci/cache-version` and merge that change into `development`. This selects
+a new environment key and rebuilds the system dependencies. Alternatively,
+dispatch **Build development container** on `development` with **clean** enabled
+once the workflow is available for manual dispatch (GitHub requires its dispatch
+trigger to exist on the repository's default branch; see the
+[workflow dispatch documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch)). Apt package
 updates are not detected by the source-derived environment key; periodically run
 this clean refresh. Old commit-tagged images can be removed through GHCR package
 version management; retain the desired development cache tags. This workflow

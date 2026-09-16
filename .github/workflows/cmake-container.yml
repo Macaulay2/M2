@@ -15,12 +15,15 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     env:
-      IMAGE: ghcr.io/macaulay2/m2-ci-cmake
+      DEVELOPMENT_BRANCH: ${{ vars.M2_CI_DEVELOPMENT_BRANCH || 'development' }}
     steps:
       - uses: actions/checkout@v6
         with:
           submodules: recursive
           persist-credentials: false
+
+      - name: Select repository registry namespace
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/m2-ci-cmake" >> "$GITHUB_ENV"
 
       - name: Test snapshot and cache handling
         run: python3 -m unittest discover -s .github/ci -p 'test_*.py' -v
@@ -93,7 +96,7 @@ jobs:
       # Publication is allowed only for the trusted development branch. No token
       # or Docker socket is ever passed into the build container.
       - name: Log in to GitHub Container Registry
-        if: inputs.publish && github.repository == 'Macaulay2/M2' && github.ref == 'refs/heads/development' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: inputs.publish && github.ref == format('refs/heads/{0}', vars.M2_CI_DEVELOPMENT_BRANCH || 'development') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -101,7 +104,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish successful development build
-        if: inputs.publish && github.repository == 'Macaulay2/M2' && github.ref == 'refs/heads/development' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: inputs.publish && github.ref == format('refs/heads/{0}', vars.M2_CI_DEVELOPMENT_BRANCH || 'development') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         env:
           REVISION: ${{ steps.snapshot.outputs.revision }}
           CACHE_KEY: ${{ steps.snapshot.outputs.key }}
@@ -111,14 +114,15 @@ jobs:
           # object files in an ever-growing chain of container layers.
           image="$IMAGE:sha-$REVISION-$CACHE_KEY"
           docker export m2-ci | docker import \
-            --change 'USER 10001:10001' --change 'ENV HOME=/home/builder' \
+            --change 'USER 10001:10001' \
+            --change 'ENV HOME=/home/builder TZ=Etc/UTC DEBIAN_FRONTEND=noninteractive' \
             --change 'WORKDIR /opt/m2' --change 'CMD ["bash"]' \
-            --change 'LABEL org.opencontainers.image.source=https://github.com/Macaulay2/M2' \
+            --change "LABEL org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
             --change "LABEL org.opencontainers.image.revision=$REVISION" \
             --change "LABEL org.macaulay2.ci.cache-key=$CACHE_KEY" - "$image"
           docker push "$image"
           # Do not advance the alias for a revision already superseded on development.
-          head=$(gh api repos/Macaulay2/M2/git/ref/heads/development --jq .object.sha)
+          head=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$DEVELOPMENT_BRANCH" --jq .object.sha)
           if [[ "$head" == "$REVISION" ]]; then
             docker tag "$image" "$IMAGE:development-$CACHE_KEY"
             docker push "$IMAGE:development-$CACHE_KEY"

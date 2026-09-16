@@ -28,7 +28,6 @@ defaults:
 
 jobs:
   cmake-linux:
-    if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
     name: cmake-ubuntu-24.04-default
     permissions:
       contents: read
