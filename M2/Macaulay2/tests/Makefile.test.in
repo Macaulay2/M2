@@ -5,33 +5,6 @@
 DEFERRED ?= no
 
 DOTS ?= ../..
-ifeq "@DEBUG@" "no"
-TLIMIT ?= 90
-# one test doesn't work with only 150MB RAM, ext-total.m2, on a 64 bit intel machine:
-MLIMIT ?=  800000
-VLIMIT ?= 2000000
-else
-# give the debug version more time and space
-TLIMIT ?= 140
-MLIMIT ?= 1200000
-VLIMIT ?= 2000000
-endif
-# make the stack limit always the same as it would be under MacOS
-SLIMIT ?= 8192
-
-LIMIT =
-ifeq (@ULIMIT_T@,yes)
-LIMIT += ulimit -t $(TLIMIT) ;
-endif
-ifeq (@ULIMIT_M@,yes)
-LIMIT += ulimit -m $(MLIMIT) ;
-endif
-#ifeq (@ULIMIT_V@,yes)
-#LIMIT += ulimit -v $(VLIMIT) ;
-#endif
-ifeq (@ULIMIT_S@,yes)
-LIMIT += ulimit -s $(SLIMIT) ;
-endif
 
 TESTFILES := $(wildcard $(SRCDIR)/*.m2)
 
@@ -67,7 +40,7 @@ status-files: $(TESTFILES)
 	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
 		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
-		   GC_MAXIMUM_HEAP_SIZE=400M time @pre_exec_prefix@/bin/M2 $(ARGS) >>$*.errors 2>&1 ; \
+		   $(GCLIMIT) time @pre_exec_prefix@/bin/M2 $(ARGS) >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     <$*.errors $(FILTER) ; \
@@ -80,7 +53,7 @@ status-files: $(TESTFILES)
 	@ grep -En '^--status:' $< /dev/null || true
 	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
-		if GC_MAXIMUM_HEAP_SIZE=400M time @pre_exec_prefix@/bin/M2 $(ARGS) <$< >>$*.errors 2>&1 ; \
+		if $(GCLIMIT) time @pre_exec_prefix@/bin/M2 $(ARGS) <$< >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \
