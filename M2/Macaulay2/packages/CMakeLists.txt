@@ -158,10 +158,13 @@ set(_default_dependencies
 # M2-core is a custom target: it provides ordering, but not file-level freshness.
 file(GLOB_RECURSE _package_core_sources CONFIGURE_DEPENDS
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/*.m2)
+# Match the normalized paths registered by Core's configure_file calls; aliases
+# containing /../ can produce duplicate regeneration outputs in Ninja.
+get_filename_component(_package_core_dir ${CMAKE_CURRENT_SOURCE_DIR}/../m2 ABSOLUTE)
 file(GLOB _package_core_inputs CONFIGURE_DEPENDS
-  ${CMAKE_CURRENT_SOURCE_DIR}/../m2/*.m2
-  ${CMAKE_CURRENT_SOURCE_DIR}/../m2/*.m2.in
-  ${CMAKE_CURRENT_SOURCE_DIR}/../m2/loadsequence)
+  ${_package_core_dir}/*.m2
+  ${_package_core_dir}/*.m2.in
+  ${_package_core_dir}/loadsequence)
 # The Core directory is populated at configure time; refresh its copies when
 # their inputs change, as well as invalidating the installed packages.
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${_package_core_inputs})
