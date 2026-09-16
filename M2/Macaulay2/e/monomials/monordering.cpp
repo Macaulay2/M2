@@ -153,9 +153,23 @@ MonomialOrdering* MonomialOrderings::GRevLex(const std::vector<int>& degrees, in
 
   enum MonomialOrdering_type type;
   if (allOne)
-    type = packing == 2 ? MO_GREVLEX2 : packing == 4 ? MO_GREVLEX4 : MO_GREVLEX;
+    {
+      if (packing == 2)
+        type = MO_GREVLEX2;
+      else if (packing == 4)
+        type = MO_GREVLEX4;
+      else
+        type = MO_GREVLEX;
+    }
   else
-    type = packing == 2 ? MO_GREVLEX2_WTS : packing == 4 ? MO_GREVLEX4_WTS : MO_GREVLEX_WTS;
+    {
+      if (packing == 2)
+        type = MO_GREVLEX2_WTS;
+      else if (packing == 4)
+        type = MO_GREVLEX4_WTS;
+      else
+        type = MO_GREVLEX_WTS;
+    }
   auto result = makeOrdering(1);
   result->array[0] = makePart(type, degrees.size(), allOne ? nullptr : degrees.data());
   return result;
@@ -319,7 +333,13 @@ std::vector<int> MonomialOrderings::nonTermOrderVariables(const MonomialOrdering
             break;
           case MO_WEIGHTS:
             for (int j = next; j < part->nvars; ++j)
-              if (relation[j] == 0) relation[j] = part->wts[j] > 0 ? 1 : part->wts[j] < 0 ? -1 : 0;
+              if (relation[j] == 0)
+                {
+                  if (part->wts[j] > 0)
+                    relation[j] = 1;
+                  else if (part->wts[j] < 0)
+                    relation[j] = -1;
+                }
             break;
           case MO_POSITION_UP: case MO_POSITION_DOWN: break;
         }
