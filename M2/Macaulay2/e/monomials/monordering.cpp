@@ -260,6 +260,9 @@ std::string MonomialOrderings::toString(const MonomialOrdering* mo)
 
 bool MonomialOrderings::isLex(const MonomialOrdering* mo)
 {
+  // The monomial order is lex if what?
+  // one lex block, no grevlex blocks, no weightvector blocks.
+  // only: lex block and position blocks are allowed.
   int blocks = 0;
   for (int i = 0; i < mo->len; ++i)
     switch (mo->array[i]->type)
@@ -440,14 +443,18 @@ bool monomialOrderingToMatrix(const MonomialOrdering& mo,
     }
   if (last == LEX)
     {
+      // last block was lex, so use lex tie-breaker
       matrix.resize(lastElement);
       if (rows == componentIsBeforeRow) componentIsBeforeRow = -1;
       baseIsRevLex = false;
     }
   else if (last == REVLEX)
     {
+      // last block was revlex, so use revlex tie-breaker
       if (rows == componentIsBeforeRow) componentIsBeforeRow = -1;
       matrix.resize(lastElement);
     }
+  // last block is a weight vector, so use revlex as the tie-breaker.
+  // nothing to change here.
   return true;
 }
