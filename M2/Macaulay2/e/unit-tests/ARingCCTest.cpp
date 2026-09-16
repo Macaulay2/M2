@@ -620,12 +620,6 @@ TEST_F(ARingCC, Syzygy)
   }
 }
 
-TEST_F(ARingCC, zeroInputSyzygy)
-{
-  // The syzygy contract explicitly requires both inputs to be nonzero.
-  GTEST_SKIP() << "zero operands are outside syzygy's documented precondition";
-}
-
 TEST_F(ARingCC, Magnitude)
 {
   // Check distances from zero and the handling of very small parts. Also

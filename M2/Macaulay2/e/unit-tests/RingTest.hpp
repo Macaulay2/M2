@@ -1,18 +1,18 @@
 // Copyright 2013 Michael E. Stillman
 
 #ifndef M2_UNITTESTS__RING_TEST_HPP__
-#  define M2_UNITTESTS__RING_TEST_HPP__
+#define M2_UNITTESTS__RING_TEST_HPP__
 
-#  include <gtest/gtest.h>
+#include <gtest/gtest.h>
 
-#  include <istream>
-#  include <string>
+#include <istream>
+#include <string>
 
-#  include "unit-tests/RingElem.hpp"
+#include "unit-tests/RingElem.hpp"
 
-#  include "interface/random.h"
-#  include "rings/ZZ.hpp"
-#  include "exceptions.hpp"
+#include "interface/random.h"
+#include "rings/ZZ.hpp"
+#include "exceptions.hpp"
 
 const int ntrials = 100;
 

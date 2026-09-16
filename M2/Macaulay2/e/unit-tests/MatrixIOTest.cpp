@@ -88,30 +88,6 @@ TEST(MatrixIO, readMsolve)
     }
 }
 
-TEST(MatrixIO, readMsolveBig1)
-{
-  // This benchmark needs a large external msolve fixture absent from the
-  // repository.
-  GTEST_SKIP()
-      << "External msolve benchmark data is not part of the unit-test fixtures";
-}
-
-TEST(MatrixIO, readMsolveBig2)
-{
-  // This benchmark needs a large external msolve fixture absent from the
-  // repository.
-  GTEST_SKIP()
-      << "External msolve benchmark data is not part of the unit-test fixtures";
-}
-
-TEST(MatrixIO, readMsolveBig3)
-{
-  // This benchmark needs a large external msolve fixture absent from the
-  // repository.
-  GTEST_SKIP()
-      << "External msolve benchmark data is not part of the unit-test fixtures";
-}
-
 TEST(MatrixIO, readPolys)
 {
   // Newline-separated polynomials preserve their matrix entries without a

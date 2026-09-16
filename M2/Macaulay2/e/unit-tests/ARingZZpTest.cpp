@@ -352,9 +352,6 @@ TYPED_TEST(ZZpRing, arithmetic)
   EXPECT_GT(ran, 0);
 }
 
-// Backend range limits and their interface implications are in
-// README.anton-dima.
-
 // Multiplicative order of a mod p, computed directly.
 static long multiplicativeOrder(long a, long p)
 {
@@ -398,9 +395,9 @@ TEST(ARingZZp, findPrimitiveRoot)
 
 TEST(ARingZZpFFPACK, advertisedMaxModulusIsBelowTheRealOne)
 {
-  // The advertised ceiling is below Givaro's supported ceiling; pin their
-  // relationship. Backend limits and the historical stub are explained in
-  // README.anton-dima.
+  // getMaxModulus() returns the historical 0x7fff stub, restricting interface
+  // construction even though Givaro's Modular<double> supports larger moduli.
+  // Pin the discrepancy against Givaro's own limit, not a copied constant.
   EXPECT_LT(
       static_cast<double>(M2::ARingZZpFFPACK::getMaxModulus()),
       static_cast<double>(M2::ARingZZpFFPACK::FieldType::maxCardinality()));
@@ -615,35 +612,6 @@ TEST(ARingZZp, ringElemRoundTrip)
 
   R.clear(a);
   R.clear(b);
-}
-
-// Zero factors violate the current NONZERO precondition and give a wrong
-// result. This regression is disabled until the contract and implementation
-// support zero. https://github.com/Macaulay2/M2/issues/4699
-TEST(ARingZZp, DISABLED_subtractMultipleByZero)
-{
-  // Extending the contract must make either zero factor preserve the
-  // accumulator.
-  M2::ARingZZp R(101);
-  struct ProductCase
-  {
-    const char* name;
-    int left, right;
-  };
-  const ProductCase cases[] = {{"zero left factor", 0, 5},
-                               {"zero right factor", 5, 0}};
-  for (const auto& sample : cases)
-    {
-      SCOPED_TRACE(sample.name);
-      M2::ARingZZp::Element a(R), b(R), result(R);
-      R.set(a, sample.left);
-      R.set(b, sample.right);
-      R.set(result, 7);
-
-      R.subtract_multiple(result, a, b);
-
-      EXPECT_EQ(R.coerceToNonnegativeLongInteger(result), 7);
-    }
 }
 
 TEST(ARingZZp, coerceToNonnegativeLongInteger)

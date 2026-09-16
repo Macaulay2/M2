@@ -179,12 +179,6 @@ TEST(RingZZ, gcdExamples)
       RingElem::fromInt(globalZZ, 1));
 }
 
-TEST(RingZZ, remainderByZero)
-{
-  // The GMP-backed remainder routines require a nonzero divisor.
-  GTEST_SKIP() << "Remainder and quotient properties exclude a zero divisor";
-}
-
 TEST(RingZZ, fromStream)
 {
   // Signed and arbitrary-size integers parse without consuming a following

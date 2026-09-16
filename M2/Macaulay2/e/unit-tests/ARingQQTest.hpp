@@ -1,19 +1,19 @@
 #ifndef M2_UNITTESTS__ARING_QQ_TEST_HPP__
-#  define M2_UNITTESTS__ARING_QQ_TEST_HPP__
+#define M2_UNITTESTS__ARING_QQ_TEST_HPP__
 
 // Everything the two QQ implementations have in common.  Each .cpp
 // specializes getElement<> and then instantiates this suite.
 
-#  include <gtest/gtest.h>
-#  include <gmp.h>
+#include <gtest/gtest.h>
+#include <gmp.h>
 
-#  include <initializer_list>
-#  include <string>
+#include <initializer_list>
+#include <string>
 
-#  include "unit-tests/ARingTest.hpp"
+#include "unit-tests/ARingTest.hpp"
 
-#  include "basic-rings/aring-glue.hpp"
-#  include "rings/ZZ.hpp"
+#include "basic-rings/aring-glue.hpp"
+#include "rings/ZZ.hpp"
 
 namespace {
 
@@ -403,7 +403,12 @@ TYPED_TEST_P(ARingQQ, RandomizedProperties)
   typename TypeParam::Element a(R), b(R);
 
   seedRandom(0x5151);
-  SCOPED_TRACE("seed 0x5151");
+  // QQFlint owns a private FLINT state initialized afresh with each fixture;
+  // seedRandom controls the engine stream used by QQGMP and random exponents.
+  SCOPED_TRACE(
+      TypeParam::ringID == M2::ring_QQFlint
+          ? "engine seed 0x5151; QQFlint uses a fresh FLINT default seed"
+          : "engine seed 0x5151");
   testStorage(R, ntrials);
   testComparisons(R, ntrials);
   testRingElemRoundTrip(R, ntrials);
@@ -436,13 +441,6 @@ TYPED_TEST_P(ARingQQ, RandomizedProperties)
   EXPECT_TRUE(sawDistinct);
 }
 
-TYPED_TEST_P(ARingQQ, finiteFieldPowerContract)
-{
-  // The shared testPower helper assumes finite cardinality.
-  GTEST_SKIP() << "QQ is infinite; Powers and RandomizedProperties exercise "
-                  "rational powers";
-}
-
 REGISTER_TYPED_TEST_SUITE_P(ARingQQ,
                             Construction,
                             Storage,
@@ -453,8 +451,7 @@ REGISTER_TYPED_TEST_SUITE_P(ARingQQ,
                             Syzygy,
                             Formatting,
                             Evaluation,
-                            RandomizedProperties,
-                            finiteFieldPowerContract);
+                            RandomizedProperties);
 
 }  // namespace
 

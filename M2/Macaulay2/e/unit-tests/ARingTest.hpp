@@ -1,21 +1,21 @@
 #ifndef M2_UNITTESTS__RING_TEST_HPP__
-#  define M2_UNITTESTS__RING_TEST_HPP__
+#define M2_UNITTESTS__RING_TEST_HPP__
 
-#  include <gmpxx.h>
-#  include <gtest/gtest.h>
+#include <gmpxx.h>
+#include <gtest/gtest.h>
 
-#  include <iostream>
-#  include <istream>
-#  include <string>
+#include <iostream>
+#include <istream>
+#include <string>
 
-#  include "interface/random.h"
-#  include "exceptions.hpp"  // for exc::division_by_zero_error
+#include "interface/random.h"
+#include "exceptions.hpp"  // for exc::division_by_zero_error
 
-#  include "matrices/matrix-con.hpp"
-#  include "matrices/matrix.hpp"
-#  include "ringmap.hpp"
-#  include "free-modules/freemod.hpp"
-#  include "rings/ring.hpp"
+#include "matrices/matrix-con.hpp"
+#include "matrices/matrix.hpp"
+#include "ringmap.hpp"
+#include "free-modules/freemod.hpp"
+#include "rings/ring.hpp"
 
 const int ntrials = 1000;
 
@@ -135,25 +135,26 @@ void testCoercions(const T& R)
   if (R.characteristic() == 0)
     std::cout << "[ SKIPPED ] generic rational coercion: characteristic-zero "
                  "contract is ring-specific\n";
-  for (int i = 1; i < 300; i++)
-    {
-      SCOPED_TRACE(::testing::Message() << "rational coercion: 43999/" << i);
-      mpq_set_si(n1, 43999, i);
-      mpq_canonicalize(n1);  // n1 = 43999/i
+  else
+    for (int i = 1; i < 300; i++)
+      {
+        SCOPED_TRACE(::testing::Message() << "rational coercion: 43999/" << i);
+        mpq_set_si(n1, 43999, i);
+        mpq_canonicalize(n1);  // n1 = 43999/i
 
-      // check that (43999 mod charac)/(i mod charac) == n1 mod charac
-      // if (i mod charac) is not zero.
-      if (R.characteristic() == 0 or (i % R.characteristic()) == 0) continue;
-      bool ok = R.set(a, n1);
-      EXPECT_TRUE(ok);
-      R.set(b, 43999);
-      R.set(c, i);
-      if (!R.is_zero(c))
-        {
-          R.divide(c, b, c);
-          EXPECT_TRUE(R.is_equal(a, c));
-        }
-    }
+        // check that (43999 mod charac)/(i mod charac) == n1 mod charac
+        // if (i mod charac) is not zero.
+        if ((i % R.characteristic()) == 0) continue;
+        bool ok = R.set(a, n1);
+        EXPECT_TRUE(ok);
+        R.set(b, 43999);
+        R.set(c, i);
+        if (!R.is_zero(c))
+          {
+            R.divide(c, b, c);
+            EXPECT_TRUE(R.is_equal(a, c));
+          }
+      }
 
   mpz_clear(m);
   mpz_clear(base);

@@ -339,10 +339,4 @@ TEST_F(ARingRRi, power_and_invert)
   mpz_clear(exponent);
 }
 
-TEST_F(ARingRRi, inverseContainingZero)
-{
-  // A finite reciprocal enclosure requires an interval that excludes zero.
-  GTEST_SKIP() << "Reciprocal properties exclude intervals containing zero";
-}
-
 }  // namespace

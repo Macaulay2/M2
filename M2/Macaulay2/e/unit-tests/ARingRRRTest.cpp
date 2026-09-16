@@ -1,6 +1,7 @@
 // Copyright 2012-2013 Michael E. Stillman
 
 #include "basic-rings/aring-RRR.hpp"
+#include "basic-rings/aring-RR.hpp"
 
 #include <gtest/gtest.h>
 #include <mpfr.h>
@@ -364,11 +365,30 @@ TEST(ARingRRR, get_precision)
   S.clear(b);
 }
 
-TEST(ARingRRR, init_is_zero)
+// Unlike RR, RRR initialization leaves NaN, which is_zero misclassifies as
+// zero. Re-enable when init produces an actual zero at the requested precision.
+// https://github.com/Macaulay2/M2/issues/4697
+TEST(ARingRRR, DISABLED_init_is_zero)
 {
-  // init allocates MPFR storage; it does not promise an initial value.
-  GTEST_SKIP() << "ARingRRR::init does not initialize to zero; set_zero is "
-                  "tested in set_coercions";
+  // Check the value independently of RRR's defective NaN comparisons.
+  M2::ARingRR machineRing;
+  M2::ARingRR::ElementType machineZero;
+  machineRing.init(machineZero);
+  EXPECT_EQ(machineZero, 0.0);
+  machineRing.clear(machineZero);
+
+  for (unsigned long precision : {53UL, 100UL, 200UL})
+    {
+      SCOPED_TRACE(::testing::Message() << "precision " << precision);
+      M2::ARingRRR R(precision);
+      M2::ARingRRR::ElementType a;
+      R.init(a);
+
+      EXPECT_EQ(mpfr_get_prec(&a), precision);
+      EXPECT_FALSE(mpfr_nan_p(&a));
+      EXPECT_TRUE(mpfr_zero_p(&a));
+      R.clear(a);
+    }
 }
 
 TEST(ARingRRR, precision_matters)
@@ -727,12 +747,6 @@ TEST(ARingRRR, swap)
   R.clear(a);
 }
 
-TEST(ARingRRR, inverseOfZero)
-{
-  // The reciprocal contract requires a nonzero input.
-  GTEST_SKIP() << "invert(0) is outside the documented precondition";
-}
-
 TEST(ARingRRR, invert)
 {
   // Reciprocals of nonzero powers of two are exact, including in place.
@@ -913,13 +927,6 @@ TEST(ARingRRR, syzygy)
   R.clear(x);
   R.clear(b);
   R.clear(a);
-}
-
-TEST(ARingRRR, syzygy_b_zero)
-{
-  // The syzygy contract explicitly excludes zero inputs.
-  GTEST_SKIP()
-      << "syzygy requires nonzero a and b; see the nonzero cases in syzygy";
 }
 
 TEST(ARingRRR, zeroize_tiny)

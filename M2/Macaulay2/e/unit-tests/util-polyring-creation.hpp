@@ -1,16 +1,16 @@
 #ifndef M2_UNIT_TESTS_UTIL_POLYRING_CREATION_HPP
-#  define M2_UNIT_TESTS_UTIL_POLYRING_CREATION_HPP
+#define M2_UNIT_TESTS_UTIL_POLYRING_CREATION_HPP
 
-#  include <string>
-#  include <vector>
+#include <string>
+#include <vector>
 
-#  include "interface/monomial-ordering.h"
-#  include "monomials/monordering.hpp"
-#  include "interface/ring.h"
-#  include "interface/aring.h"
-#  include "monoid.hpp"
-#  include "rings/poly.hpp"
-#  include "rings/polyring.hpp"
+#include "interface/monomial-ordering.h"
+#include "monomials/monordering.hpp"
+#include "interface/ring.h"
+#include "interface/aring.h"
+#include "monoid.hpp"
+#include "rings/poly.hpp"
+#include "rings/polyring.hpp"
 
 const Monoid* degreeMonoid(const std::vector<std::string>& names);
 

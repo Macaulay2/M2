@@ -1044,12 +1044,6 @@ TEST_F(ARingCCi, Syzygy)
   }
 }
 
-TEST_F(ARingCCi, zeroInputSyzygy)
-{
-  // The syzygy contract explicitly requires both inputs to be nonzero.
-  GTEST_SKIP() << "zero operands are outside syzygy's documented precondition";
-}
-
 TEST_F(ARingCCi, Magnitude)
 {
   // Check the center of a rectangle and distances from zero. Verify both

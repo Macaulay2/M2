@@ -173,13 +173,6 @@ TEST(ResMonoidDense, encode6)
   checkVariableEncoding(6);
 }
 
-TEST(ResMonoidDense, concatenateResMonoidDense)
-{
-  // Dense resolution monomials expose multiplication, not a concatenation API.
-  GTEST_SKIP() << "ResMonoidDense has no concatenation operation; mult checks "
-                  "multiplication";
-}
-
 TEST(ResMonoidDense, outOfRange)
 {
   // The reserved guard bit makes an encoded module component invalid.

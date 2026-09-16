@@ -452,13 +452,6 @@ TEST_F(ARingZZGMP, RandomizedProperties)
   EXPECT_TRUE(sawDistinct);
 }
 
-TEST_F(ARingZZGMP, finiteFieldContracts)
-{
-  // The shared reciprocal and power helpers assume a finite field.
-  GTEST_SKIP() << "ZZ is not a field; Arithmetic and Powers cover its "
-                  "integer-specific operations";
-}
-
 }  // namespace
 
 // Local Variables:

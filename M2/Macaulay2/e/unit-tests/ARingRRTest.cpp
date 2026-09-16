@@ -359,12 +359,6 @@ TEST(ARingRR, power_and_invert)
   R.clear(a);
 }
 
-TEST(ARingRR, inverseOfZero)
-{
-  // The reciprocal contract requires a nonzero input.
-  GTEST_SKIP() << "invert(0) is outside the documented precondition";
-}
-
 TEST(ARingRR, invert)
 {
   // Reciprocals of nonzero powers of two are exact, including in place.
@@ -816,13 +810,6 @@ TEST(ARingRR, syzygy)
   R.clear(x);
   R.clear(b);
   R.clear(a);
-}
-
-TEST(ARingRR, syzygy_b_zero)
-{
-  // The syzygy contract explicitly excludes zero inputs.
-  GTEST_SKIP()
-      << "syzygy requires nonzero a and b; see the nonzero cases in syzygy";
 }
 
 TEST(ARingRR, increase_norm)

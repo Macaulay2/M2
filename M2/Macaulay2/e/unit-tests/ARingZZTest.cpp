@@ -69,13 +69,6 @@ TEST_F(ARingZZ, arithmetic)
   testAxioms(R, ntrials);
 }
 
-TEST_F(ARingZZ, finiteFieldContracts)
-{
-  // The shared reciprocal and power checks require a finite field.
-  GTEST_SKIP() << "ZZ is not a field; invert, power and power_mpz have "
-                  "integer-specific tests";
-}
-
 TEST_F(ARingZZ, is_unit)
 {
   // Only +/-1 are units, including when a nonunit needs heap storage.
