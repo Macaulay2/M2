@@ -2,16 +2,17 @@
 ## CMake is a cross-platform system for generating build environments using
 ## native tools such as Make and Ninja or IDEs such as Xcode and Visual Studio.
 ##
-## See INSTALL-CMake.md for a comprehensive guide to building M2 using CMake.
+## See BUILD/README.md and the Macaulay2 wiki for CMake build instructions.
 ## Take a look at cmake/configure.cmake for a list of options
 ## and read cmake/check-libraries.cmake for a list of requirements.
 ##
-## Short instructions:
-##  1. cmake -GNinja -S . -B BUILD/cmake
+## Short instructions (from this directory; requires Ninja):
+##     export CMAKE_GENERATOR=Ninja
+##  1. cmake -S . -B BUILD/cmake
 ##  2. cmake --build BUILD/cmake --target build-libraries build-programs
-##  2. cmake --build BUILD/cmake --target M2-engine M2-binary M2-core M2-emacs
-##  2. cmake --build BUILD/cmake --target install-packages check-packages
-##  6. cmake --install BUILD/cmake
+##  3. cmake --build BUILD/cmake --target M2-engine M2-binary M2-core M2-emacs
+##  4. cmake --build BUILD/cmake --target install-packages check-packages
+##  5. cmake --install BUILD/cmake
 ###############################################################################
 
 ## Requires CMake version 3.30 (for policy CMP0167 used in cmake/check-libraries.cmake)

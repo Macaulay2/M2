@@ -2,6 +2,27 @@ See the [Macaulay2 wiki](https://github.com/Macaulay2/M2/wiki) for current
 build requirements and instructions, especially the "Building M2 from source"
 pages for the autotools and CMake workflows.
 
+For CMake, install Ninja along with the build requirements listed in the wiki.
+To make Ninja the default generator in your shell, run:
+
+```sh
+export CMAKE_GENERATOR=Ninja
+```
+
+Add this line to your shell startup file (for example, `~/.bashrc` for Bash)
+to use it in future shell sessions. It applies to all CMake projects configured
+from that environment. From the source directory containing `CMakeLists.txt`
+(the parent of this directory), you can then configure without `-G Ninja`:
+
+```sh
+cmake -S . -B BUILD/cmake
+```
+
+An explicit `-G` option overrides this default. Existing build directories
+retain their generator; use a fresh build directory when switching generators.
+See the [CMake documentation](https://cmake.org/cmake/help/latest/envvar/CMAKE_GENERATOR.html)
+for details.
+
 This directory may be used as a convenient location for the build directory
 trees.  For example, it may contain subdirectories `Linux-i686` and
 `Linux-x86_64`.  Those directories in turn may contain subdirectories, if
