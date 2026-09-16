@@ -1,58 +1,53 @@
-#include <gtest/gtest.h>
-#include <cstdint>
-#include <initializer_list>
-#include "exceptions.hpp"
 #include "monomials/overflow.hpp"
 
+#include <gtest/gtest.h>
 
-volatile int x = 200;
+#include <cstdint>
+#include <initializer_list>
+
+#include "exceptions.hpp"
 
 TEST(OverflowTest, Throw)
 {
-    EXPECT_THROW(
-        safe::ov("throw overflow exception"),
-        exc::overflow_exception
-    );
+  // The common overflow path exposes the documented exception type.
+  EXPECT_THROW(safe::ov("throw overflow exception"), exc::overflow_exception);
 }
 
 TEST(OverflowTest, SubOverflow)
 {
-    EXPECT_THROW(
-        safe::sub(INT32_MIN, 1 - x + x),
-        exc::overflow_exception
-    );
+  // Subtracting one from the smallest signed integer must not wrap.
+  volatile int minimum = INT32_MIN;
+  EXPECT_THROW(safe::sub(minimum, 1), exc::overflow_exception);
 }
 
 TEST(OverflowTest, AddOverflow)
 {
-    EXPECT_THROW(
-        safe::add(INT32_MAX, 1 - x + x),
-        exc::overflow_exception
-    );
+  // Adding one to the largest signed integer must not wrap.
+  volatile int maximum = INT32_MAX;
+  EXPECT_THROW(safe::add(maximum, 1), exc::overflow_exception);
 }
 
 TEST(OverflowTest, MultOverflow)
 {
-    EXPECT_THROW(
-        safe::mult(0x8000, 0x10000 - x + x),
-        exc::overflow_exception
-    );
+  // The positive product 2^31 does not fit a signed 32-bit integer.
+  volatile int factor = 0x8000;
+  EXPECT_THROW(safe::mult(factor, 0x10000), exc::overflow_exception);
 }
 
 TEST(OverflowTest, DivOverflow)
 {
-    EXPECT_THROW(
-        safe::div(INT32_MIN, -1 - x + x),
-        exc::overflow_exception
-    );
+  // Negating the minimum value through division is the signed division overflow
+  // case.
+  volatile int minimum = INT32_MIN;
+  EXPECT_THROW(safe::div(minimum, -1), exc::overflow_exception);
 }
 
 TEST(OverflowTest, MinusOverflow)
 {
-    EXPECT_THROW(
-        safe::minus(INT32_MIN - x + x),
-        exc::overflow_exception
-    );
+  // Unary negation must reject the minimum value without overflowing in test
+  // setup.
+  volatile int minimum = INT32_MIN;
+  EXPECT_THROW(safe::minus(minimum), exc::overflow_exception);
 }
 
 namespace {

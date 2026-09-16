@@ -31,8 +31,9 @@ The two build systems keep separate lists, and both must be updated:
 Existing registered sources need no new entry for additional tests.
 
 Forgetting one is the most common mistake here, and it is silent: the file still
-compiles when you build it by hand, so nothing complains. `ARingGFTest.cpp` is
-commented out of both lists and went stale for years without a failing build:
+compiles when you build it by hand, so nothing complains. Before the style
+retrofit, `ARingGFTest.cpp` was commented out of both lists and went stale for
+years without a failing build:
 
 ```
 # in Macaulay2/e/CMakeLists.txt
@@ -172,8 +173,14 @@ obvious.
 A comment earns its place by saying what the code cannot: a precondition, the
 reason for a constant, the defect being pinned. Never restate the next line, and
 never narrate every assertion. Prefer one sentence to three. If an explanation
-genuinely needs a paragraph, put it in a notes file or the commit message and
-leave a one-line pointer.
+genuinely needs a paragraph, put it in the commit message or PR description.
+
+Never create Markdown notes, reports, summaries, or other documentation files
+unless the user explicitly requests them. Keep explanations in relevant test
+comments, commit messages, or PR descriptions; a request to change tests does
+not authorize adding a separate Markdown file. Existing documentation may be
+maintained or referenced when relevant; this restriction concerns creating new
+files.
 
 Do not reflow or relocate existing commentary without cause. Churn costs review
 attention and hides the real change.
@@ -261,22 +268,18 @@ live, instead of being scattered across call sites or implied by absence. Use
 
 ## 10. Declare exclusions; never omit them
 
-If a case does not apply, say so in code, with a reason, at runtime —
-`GTEST_SKIP()`, or a printed line from the `supports()` predicate. A commented
-out call reports nothing and rots unnoticed. `ARingZZTest.cpp` drops two checks
-this way, and no test run will ever mention it:
+Use `GTEST_SKIP()` for a real test that cannot run in the current environment,
+such as a case needing a wider machine integer or an unavailable fixture.
+Keep its assertions reachable when that runtime condition is satisfied. In a
+typed case matrix, report unsupported backends or inputs with a reason from
+the `supports()` predicate.
 
-```cpp
-  testDivide(R, ntrials);
-  //  testReciprocal(R, ntrials); // this test is not applicable, as this is not
-  //  a field
-  //  testPower(R, ntrials);  // this test can't work, as it expects a finite
-  //  field
-  testAxioms(R, ntrials);
-```
-
-The reasons given are sound; the problem is that only a reader of that file will
-ever learn them.
+Do not register unconditional skip-only placeholders for nonexistent operations,
+inapplicable algebraic laws, or inputs outside a documented precondition. Explain
+those fixed limits beside the applicable tests. Test rejection of invalid inputs
+only when the API promises an exception or checks the precondition. A missing
+assertion is not permission to invoke undefined behavior. Track known defects
+with disabled, issue-linked assertions as described below.
 
 ## 11. Recording a known defect
 
@@ -285,8 +288,11 @@ at the start of its body, explain the bug, why the test is disabled, and what
 would allow it to be re-enabled. That same block must include a direct URL to
 the specific posted issue in the
 [Macaulay2/M2 issue tracker](https://github.com/Macaulay2/M2/issues).
-A link to the tracker alone or an unposted issue placeholder is insufficient;
-find the existing bug report or file one before adding the disabled test.
+A link to the tracker alone or an unposted issue placeholder is insufficient.
+Before filing a report, search both open and closed issues for the component,
+operation, and observed failure, and read plausible matches. Link the existing
+issue when it describes the same defect; file a new report only when that
+pre-check finds no match. Do this before adding the disabled test.
 This commentary is allowed to be longer than usual.
 
 Then run it and confirm it fails:
@@ -368,9 +374,9 @@ count, which looks like a result and is not.
   says "we assume: a, b are NONZERO!!" and has no assert; a zero argument
   silently returns a wrong answer. Name the valid case to identify the nonzero
   operands, explain the precondition in its nearby comment, and establish it
-  in setup or guard the operation as `ARingZZpTest.cpp` does below. Put any
-  regression for zero operands in a separately named test with its own bug
-  explanation and issue link if disabled (section 11).
+  in setup or guard the operation as `ARingZZpTest.cpp` does below. A request
+  to extend the contract belongs in an issue, not a disabled regression for
+  inputs the current contract excludes.
 - Exact vs approximate: RR and CC cannot use exact `is_equal`, and define their
   own tolerant helpers rather than reusing the shared ones.
 
