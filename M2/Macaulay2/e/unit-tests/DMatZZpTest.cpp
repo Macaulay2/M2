@@ -4,6 +4,7 @@
 #include "unit-tests/ARingMatrixTest.hpp"
 #include "basic-mutable-matrices/mat-arith.hpp"
 #include "basic-rings/aring-ZZp.hpp"
+#include "unit-tests/MatrixShape.hpp"
 
 // Defined in ARingZZpTest.cpp.  Declaring the explicit specialization here is
 // required: without it, using the generator below implicitly instantiates the
@@ -77,6 +78,22 @@ TEST(DMatZZp, addition)
   RingZZp R(101);
   testMatrixAdd<MatZZp>(R, ntrials, 2, 2);
   testMatrixAdd<MatZZp>(R, ntrials, 2, 3);
+}
+
+TEST(DMatZZp, negateInPlace)
+{
+  RingZZp R(101);
+  ARingMatrixGenerator<MatZZp> matgen(R);
+  MatZZp M(R, 5, 5);
+  MatZZp N(R, 5, 5);
+  matgen.nextMatrix(M, MatrixShape::Dense);
+  submatrix(N) = submatrix(M);
+  EXPECT_TRUE(MatrixOps::isEqual(N, M));
+  MatrixOps::negateInPlace(N);
+  RingZZp::Element minusOne(R);
+  R.set(minusOne, -1);
+  MatrixOps::scalarMultInPlace(M, minusOne);
+  EXPECT_TRUE(MatrixOps::isEqual(M, N));
 }
 
 TEST(DMatZZp, submatrix)
