@@ -6,11 +6,12 @@
 ## Take a look at cmake/configure.cmake for a list of options
 ## and read cmake/check-libraries.cmake for a list of requirements.
 ##
-## Short instructions (from this directory; the default preset uses Ninja):
-##  1. cmake --preset default
-##  2. cmake --build --preset default --target build-libraries build-programs
-##  3. cmake --build --preset default --target M2-engine M2-binary M2-core M2-emacs
-##  4. cmake --build --preset default --target install-packages check-packages
+## Short instructions (from this directory; requires Ninja):
+##     export CMAKE_GENERATOR=Ninja
+##  1. cmake -S . -B BUILD/cmake
+##  2. cmake --build BUILD/cmake --target build-libraries build-programs
+##  3. cmake --build BUILD/cmake --target M2-engine M2-binary M2-core M2-emacs
+##  4. cmake --build BUILD/cmake --target install-packages check-packages
 ##  5. cmake --install BUILD/cmake
 ###############################################################################
 

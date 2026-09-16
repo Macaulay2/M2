@@ -105,4 +105,3 @@ LOGFILE
 /libraries/ntl/check-once
 /Macaulay2/tests/ComputationsBook/programming/foo
 /cmake-build-*
-/CMakeUserPresets.json

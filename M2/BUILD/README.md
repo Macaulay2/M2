@@ -3,27 +3,25 @@ build requirements and instructions, especially the "Building M2 from source"
 pages for the autotools and CMake workflows.
 
 For CMake, install Ninja along with the build requirements listed in the wiki.
-From the source directory containing `CMakeLists.txt` (the parent of this
-directory), use the default preset:
+To make Ninja the default generator in your shell, run:
 
 ```sh
-cmake --preset default
-cmake --build --preset default --target build-libraries build-programs
-cmake --build --preset default --target M2-engine M2-binary M2-core M2-emacs
-cmake --build --preset default --target install-packages check-packages
-cmake --install BUILD/cmake
+export CMAKE_GENERATOR=Ninja
 ```
 
-The preset selects Ninja and uses `BUILD/cmake` as the build directory. Add
-configuration options such as `-DCMAKE_BUILD_TYPE=Release` to the first command.
-The preset must be requested explicitly: plain `cmake` without `--preset` or
-`-G` still uses CMake's usual generator selection. To use Makefiles instead,
-configure a separate build directory with
-`cmake -S . -B BUILD/make -G "Unix Makefiles"`, then build with
-`cmake --build BUILD/make --target M2-core`. An existing build directory keeps
-its generator; use a fresh directory when switching generators. If overriding
-the preset's build directory with `-B`, use `cmake --build <directory>` for
-subsequent builds.
+Add this line to your shell startup file (for example, `~/.bashrc` for Bash)
+to use it in future shell sessions. It applies to all CMake projects configured
+from that environment. From the source directory containing `CMakeLists.txt`
+(the parent of this directory), you can then configure without `-G Ninja`:
+
+```sh
+cmake -S . -B BUILD/cmake
+```
+
+An explicit `-G` option overrides this default. Existing build directories
+retain their generator; use a fresh build directory when switching generators.
+See the [CMake documentation](https://cmake.org/cmake/help/latest/envvar/CMAKE_GENERATOR.html)
+for details.
 
 This directory may be used as a convenient location for the build directory
 trees.  For example, it may contain subdirectories `Linux-i686` and
