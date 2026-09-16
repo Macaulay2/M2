@@ -493,6 +493,7 @@ if(BUILD_TESTING)
     unit-tests/ARingMatrixTest.hpp
     unit-tests/MatrixTest.hpp
     unit-tests/DMatZZpTest.cpp
+    unit-tests/SMatTest.cpp
     unit-tests/DMatZZpFFPACKTest.cpp
     unit-tests/DMatZZpFlintTest.cpp
     unit-tests/DMatZZTest.cpp
