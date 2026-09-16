@@ -95,6 +95,21 @@ installation and Info compression create `.cmake-installed` beside the package's
 stamp, so the next invocation retries it and skips unchanged completed packages.
 Existing installations without the new stamp are installed once.
 
+`all-<package>` first builds `install-<package>`, then runs the package checks;
+`all-packages` does this for all selected packages. Completed installations are
+reused, but checks run on every invocation. If installation fails, that package's
+checks do not run. If only its checks fail, retrying runs the checks again
+without repeating the successful installation. For example:
+
+```sh
+cmake --build M2/BUILD/build --target all-Graphs
+cmake --build M2/BUILD/build --target all-packages
+```
+
+Replace `M2/BUILD/build` with your configured build directory. The standalone
+`check-<package>` and `check-packages` targets still run checks without first
+building the corresponding installation targets.
+
 All installs depend on `M2-core` and track the M2 binary and Core source files.
 Style initializes the shared documentation search index; FirstPackage follows
 Style, and Macaulay2Doc follows both. Every other package follows Macaulay2Doc.
@@ -203,6 +218,8 @@ python3 M2/cmake/tests/test_package_build_graph.py
 `test_incremental_packages.py` exercises the real package CMake rules with a small fake installer
 under both Ninja and Unix Makefiles. It covers restart, freshness, failed
 compression, missing outputs, selected-package import closure, and source cycles.
+It also checks that combined `all-*` targets reuse installations, rerun checks,
+and recover correctly from installation and check failures.
 
 `test_package_build_graph.py` configures all distributed packages with a stub
 runtime and checks that the generated Ninja graph is acyclic. This also exercises

@@ -39,10 +39,12 @@ for generator in ['Ninja','Unix Makefiles']:
         r=subprocess.run(['cmake','-S',str(src),'-B',str(build),'-G',generator],stdout=log,stderr=subprocess.STDOUT)
     assert r.returncode==0,(root/(generator+'.log')).read_text()
     if generator=='Ninja':
-        r=subprocess.run(['ninja','-C',str(build),'-t','commands','install-packages'],capture_output=True,text=True)
-        assert r.returncode==0,r.stdout+r.stderr
-        assert r.stdout.count('installPackage(')==package_count,r.stdout[-2000:]
-        dot=subprocess.check_output(['ninja','-C',str(build),'-t','graph','install-packages'],text=True)
+        for target in ['install-packages', 'all-packages']:
+            r=subprocess.run(['ninja','-C',str(build),'-t','commands',target],capture_output=True,text=True)
+            assert r.returncode==0,r.stdout+r.stderr
+            assert r.stdout.count('installPackage(')==package_count,r.stdout[-2000:]
+            assert r.stdout.count('check(')==(package_count if target=='all-packages' else 0),r.stdout[-2000:]
+        dot=subprocess.check_output(['ninja','-C',str(build),'-t','graph','all-packages'],text=True)
         edges=defaultdict(set); degree=defaultdict(int)
         for a,b in re.findall(r'"([^"]+)" -> "([^"]+)"',dot):
             if b not in edges[a]:
@@ -55,6 +57,6 @@ for generator in ['Ninja','Unix Makefiles']:
                 degree[b]-=1
                 if degree[b]==0:queue.append(b)
         assert count==len(degree),'cycle in generated Ninja graph'
-        print(f'PASS: all {package_count} real package installation targets have an acyclic Ninja build graph',flush=True)
+        print(f'PASS: all {package_count} real package installation/check targets have an acyclic Ninja build graph',flush=True)
     print('PASS: full package CMake configuration:',generator,flush=True)
 print(root)

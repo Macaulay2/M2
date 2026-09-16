@@ -26,15 +26,21 @@ for generator in ['Ninja','Unix Makefiles']:
 import sys,re
 from pathlib import Path
 root=Path(__file__).resolve().parents[2]
-pkg=re.search(r'installPackage\\("([^\"]+)"', ' '.join(sys.argv)).group(1)
-with (root/'calls').open('a') as f: f.write(pkg+'\\n')
-if (root/('fail-'+pkg)).exists(): sys.exit(1)
-marker=root/'dist/lib/Macaulay2'/pkg/'.installed'
-marker.parent.mkdir(parents=True,exist_ok=True)
-marker.touch()
-info=root/'dist/info'/ (pkg+'.info')
-info.parent.mkdir(parents=True,exist_ok=True)
-if not (root/('gzip-fail-'+pkg)).exists(): info.write_text(pkg)
+for operation, pkg in re.findall(r'(installPackage|check)\\("([^\"]+)"', ' '.join(sys.argv)):
+    if operation == 'check':
+        assert (root/'dist/lib/Macaulay2'/pkg/'.cmake-installed').exists(), 'checked before installation completed'
+        with (root/'checks').open('a') as f: f.write(pkg+'\\n')
+        if (root/('fail-check-'+pkg)).exists(): sys.exit(1)
+        continue
+    with (root/'calls').open('a') as f: f.write(pkg+'\\n')
+    if (root/('fail-'+pkg)).exists(): sys.exit(1)
+    marker=root/'dist/lib/Macaulay2'/pkg/'.installed'
+    marker.parent.mkdir(parents=True,exist_ok=True)
+    marker.touch()
+    info=root/'dist/info'/ (pkg+'.info')
+    info.parent.mkdir(parents=True,exist_ok=True)
+    if not (root/('gzip-fail-'+pkg)).exists(): info.write_text(pkg)
+
 ''')
     (src/'fake-m2.py').chmod(0o755)
     (src/'CMakeLists.txt').write_text('''cmake_minimum_required(VERSION 3.30)
@@ -59,12 +65,15 @@ add_subdirectory(packages)
     def configure(*args):
         r=subprocess.run(['cmake','-S',str(src),'-B',str(build),'-G',generator,*args],capture_output=True,text=True)
         assert r.returncode==0,r.stdout+r.stderr
-    def run(expected,fail=False):
+    def run(expected,fail=False,target='install-packages',checks=()):
         (build/'calls').write_text('')
-        r=subprocess.run(['cmake','--build',str(build),'--target','install-packages','--parallel','4'],capture_output=True,text=True)
+        (build/'checks').write_text('')
+        r=subprocess.run(['cmake','--build',str(build),'--target',target,'--parallel','4'],capture_output=True,text=True)
         assert (r.returncode!=0)==fail,r.stdout+r.stderr
         calls=(build/'calls').read_text().splitlines()
         assert sorted(calls)==sorted(expected),(generator,calls,expected,r.stdout+r.stderr)
+        checked=(build/'checks').read_text().splitlines()
+        assert sorted(checked)==sorted(checks),(generator,checked,checks,r.stdout+r.stderr)
     def touch(path):
         time.sleep(1.05); path.touch()
     configure()
@@ -89,6 +98,24 @@ add_subdirectory(packages)
     touch(src/'m2/core.m2'); run(['Style','FirstPackage','Macaulay2Doc','Example']); run([])
     touch(src/'main.c'); run(['Style','FirstPackage','Macaulay2Doc','Example']); run([])
     print('PASS:',generator,'failure/restart, no-op, sources, prerequisites, options, source additions/removals, compression failure, missing outputs, runtime changes',flush=True)
+
+    # Combined targets reuse installations, but checks are explicit actions.
+    all_packages=['Style','FirstPackage','Macaulay2Doc','Example']
+    run([],target='all-packages',checks=all_packages)
+    run([],target='all-packages',checks=all_packages)
+    run([],target='all-Example',checks=['Example'])
+    touch(packages/'Example.m2')
+    run(['Example'],target='all-Example',checks=['Example'])
+    (build/'fail-Example').touch(); touch(packages/'Example.m2')
+    run(['Example'],True,target='all-Example')
+    (build/'fail-Example').unlink()
+    run(['Example'],target='all-Example',checks=['Example'])
+    (build/'fail-check-Example').touch()
+    run([],True,target='all-Example',checks=['Example'])
+    (build/'fail-check-Example').unlink()
+    run([],target='all-Example',checks=['Example'])
+    run([])
+    print('PASS:',generator,'combined targets reuse completed installs, rerun checks, and handle install/check failures',flush=True)
 
     # A selected package must build its imports, even when omitted from PACKAGES.
     (packages/'Provider.m2').write_text('Provider')
