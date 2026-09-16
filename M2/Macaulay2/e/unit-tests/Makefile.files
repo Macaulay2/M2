@@ -26,6 +26,7 @@ UNITTEST_CCFILES := \
     RingQQTest \
     RingTowerTest \
     DMatZZpTest \
+    SMatTest \
     ResTest \
     SubsetTest \
     PolyRingTest \

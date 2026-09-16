@@ -485,6 +485,7 @@ if(BUILD_TESTING)
     unit-tests/ARingMatrixTest.hpp
     unit-tests/MatrixTest.hpp
     unit-tests/DMatZZpTest.cpp
+    unit-tests/SMatTest.cpp
 
     unit-tests/ResTest.cpp
     unit-tests/PointArray.cpp
