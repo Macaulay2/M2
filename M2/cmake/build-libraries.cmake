@@ -598,13 +598,16 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro gmp GIVARO_FOUND)
 # https://linbox-team.github.io/fflas-ffpack/
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
+# autogen.sh and the patch below write into the source tree, so build from a copy
 string(REGEX REPLACE
-  "./configure$" "${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/autogen.sh" fflas_ffpack_AUTOGEN "${CONFIGURE}")
+  "./configure$" "<SOURCE_DIR>/autogen.sh" fflas_ffpack_AUTOGEN "${CONFIGURE}")
 set(fflas_ffpack_LICENSEFILES ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/COPYING)
 ExternalProject_Add(build-fflas_ffpack
   PREFIX            libraries/fflas_ffpack
-  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack
+  SOURCE_DIR        libraries/fflas_ffpack/source
   BINARY_DIR        libraries/fflas_ffpack/build
+  DOWNLOAD_COMMAND  ${CMAKE_COMMAND} -E copy_directory
+                      ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack <SOURCE_DIR>
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/fflas_ffpack/patch-2.5.0
   CONFIGURE_COMMAND ${fflas_ffpack_AUTOGEN} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
