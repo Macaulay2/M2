@@ -20,7 +20,7 @@ jobs:
         run: |
           sudo add-apt-repository -y -n ppa:macaulay2/macaulay2
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends macaulay2
+          sudo apt-get install -y --no-install-recommends macaulay2 ninja-build
 
       - name: Test the graph checker
         run: M2 --script M2/Macaulay2/m2/check-package-dependencies.m2 --self-test
@@ -47,3 +47,13 @@ jobs:
 
       - name: Check declared package dependencies
         run: M2 --script M2/Macaulay2/m2/check-package-dependencies.m2
+
+      - name: Check the CMake dependency manifest
+        run: python3 M2/cmake/package-dependencies.py --m2 M2 --check
+
+      - name: Test dependency generation and incremental installation
+        run: |
+          python3 M2/cmake/tests/test_package_dependencies.py
+          python3 M2/cmake/tests/test_dependency_manifest.py
+          python3 M2/cmake/tests/test_incremental_packages.py
+          python3 M2/cmake/tests/test_package_build_graph.py
