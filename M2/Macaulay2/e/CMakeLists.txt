@@ -485,6 +485,21 @@ if(BUILD_TESTING)
     unit-tests/ARingMatrixTest.hpp
     unit-tests/MatrixTest.hpp
     unit-tests/DMatZZpTest.cpp
+    unit-tests/DMatZZpFFPACKTest.cpp
+    unit-tests/DMatZZpFlintTest.cpp
+    unit-tests/DMatZZTest.cpp
+    unit-tests/DMatZZGMPTest.cpp
+    unit-tests/DMatQQGMPTest.cpp
+    unit-tests/DMatQQFlintTest.cpp
+    unit-tests/DMatRRTest.cpp
+    unit-tests/DMatRRRTest.cpp
+    unit-tests/DMatRRiTest.cpp
+    unit-tests/DMatCCTest.cpp
+    unit-tests/DMatCCCTest.cpp
+    unit-tests/DMatCCiTest.cpp
+    unit-tests/DMatGFM2Test.cpp
+    unit-tests/DMatGFFlintTest.cpp
+    unit-tests/DMatGFFlintBigTest.cpp
 
     unit-tests/ResTest.cpp
     unit-tests/PointArray.cpp

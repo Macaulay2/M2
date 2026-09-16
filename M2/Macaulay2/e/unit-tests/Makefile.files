@@ -25,7 +25,26 @@ UNITTEST_CCFILES := \
     RingZZpTest \
     RingQQTest \
     RingTowerTest \
+    MatrixShape \
+    DMatTest \
+    ARingMatrixTest \
+    MatrixTest \ 
     DMatZZpTest \
+    DMatZZpFFPACKTest \
+    DMatZZpFlintTest \
+    DMatZZTest \
+    DMatZZGMPTest \
+    DMatQQGMPTest \
+    DMatQQFlintTest \
+    DMatRRTest \
+    DMatRRRTest \
+    DMatRRiTest \
+    DMatCCTest \
+    DMatCCCTest \
+    DMatCCiTest \
+    DMatGFM2Test \
+    DMatGFFlintTest \
+    DMatGFFlintBigTest \
     ResTest \
     SubsetTest \
     PolyRingTest \
