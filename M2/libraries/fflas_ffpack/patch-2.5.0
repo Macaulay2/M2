@@ -61,3 +61,30 @@ diff -u b/fflas-ffpack/config-blas.h b/fflas-ffpack/config-blas.h
      }
  
  }
+
+From 50d4dd82c6e16990acfaff97ed219bd47711138e Mon Sep 17 00:00:00 2001
+From: Doug Torrance <dtorrance9@gatech.edu>
+Date: Tue, 15 Sep 2026 14:41:35 -0400
+Subject: [PATCH] Include <exception> for std::terminate; needed w/ clang 23
+Forwarded: https://github.com/linbox-team/fflas-ffpack/pull/422
+
+---
+ fflas-ffpack/field/rns-double-recint.inl | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fflas-ffpack/field/rns-double-recint.inl b/fflas-ffpack/field/rns-double-recint.inl
+index fcaf3a19..bf473221 100644
+--- a/fflas-ffpack/field/rns-double-recint.inl
++++ fflas-ffpack-2.5.0/fflas-ffpack/field/rns-double-recint.inl
+@@ -28,6 +28,8 @@
+ #ifndef __FFLASFFPACK_field_rns_double_recint_INL
+ #define __FFLASFFPACK_field_rns_double_recint_INL
+ 
++#include <exception>
++
+ #include "fflas-ffpack/fflas/fflas_freduce.h"
+ 
+ namespace FFPACK {
+-- 
+2.55.0
+
