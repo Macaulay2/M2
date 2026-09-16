@@ -309,6 +309,7 @@ TEST /// -- test 22 DSCF
 debug SpecialFanoFourfolds;
 L = discoverCubicFourfoldsInC8({4,4,3,2,1},1,4,5,7,"test_file",true,300,{});
 assert(apply(L,discriminant) == {14, 20, 24, 32, 38})
+assert(apply(L, X -> det latticeIntersectionMatrix3x3 X) == {29, 37, 37, 45, 45})
 assert(fileExists "test_file.txt" and fileExists "test_file_commands.m2")
 removeFile "test_file.txt"
 removeFile "test_file_commands.m2"
