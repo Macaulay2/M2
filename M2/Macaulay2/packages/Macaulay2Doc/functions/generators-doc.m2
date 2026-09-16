@@ -140,6 +140,7 @@ document {
      }
 document { 
      Key => {(generators,Ring),
+             (generators,RingFamily),
 	  [generators,CoefficientRing]
 	  },
      Headline => "the list of generators of a ring",

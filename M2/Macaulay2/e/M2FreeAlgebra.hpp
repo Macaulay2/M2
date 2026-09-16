@@ -44,8 +44,6 @@ public:
 
   virtual ring_elem from_coefficient(const ring_elem a) const = 0;
 
-  virtual ring_elem makeTerm(const ring_elem a, const_varpower monom) const = 0;
-
   // casting functions
   virtual const M2FreeAlgebraOrQuotient * cast_to_M2FreeAlgebraOrQuotient()  const { return this; }
   virtual       M2FreeAlgebraOrQuotient * cast_to_M2FreeAlgebraOrQuotient()        { return this; }
@@ -165,8 +163,9 @@ public:
   void debug_display(const Poly* f) const;
   void debug_display(const ring_elem ff) const;
 
-  ring_elem makeTerm(const ring_elem a, const_varpower monom) const;
-
+  ring_elem makeTerm(const Ring *coeffR,
+                     const ring_elem a,
+                     const_varpower monom) const override;
   void makeTerm(Poly& result, const ring_elem a, const_varpower monom) const;
 };
 
