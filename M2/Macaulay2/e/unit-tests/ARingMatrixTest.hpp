@@ -18,6 +18,8 @@
 #ifndef M2_UNITTESTS__ARING_MATRIX_TEST_HPP__
 #define M2_UNITTESTS__ARING_MATRIX_TEST_HPP__
 
+#include <gtest/gtest.h>
+
 #include <cassert>
 #include <vector>
 
@@ -25,6 +27,7 @@
 #include "unit-tests/MatrixShape.hpp"
 #include "basic-mutable-matrices/dmat.hpp"
 #include "basic-mutable-matrices/smat.hpp"
+#include "basic-mutable-matrices/mat-arith.hpp"
 
 // DMat hands out a mutable entry reference; SMat only has set_entry.  In an
 // ARing, CoeffRing::elem and CoeffRing::ElementType are the same typedef, so
@@ -322,6 +325,46 @@ class ARingMatrixGenerator
   double mDensity = 1.0;
   size_t mRank = 0;
 };
+
+// Check matrix addition against entrywise ring arithmetic. Keep the generator
+// across trials so that its deterministic prefix is followed by random draws.
+template <typename MatType>
+void testMatrixAdd(const typename MatType::CoeffRing& R,
+                   int ntrials,
+                   size_t nrows,
+                   size_t ncols)
+{
+  typedef typename MatType::CoeffRing CoeffRing;
+  typedef typename CoeffRing::Element Element;
+  typedef MatrixEntrySetter<MatType> Entries;
+
+  ARingMatrixGenerator<MatType> matgen(R);
+  Element a(R), b(R), actual(R), expected(R);
+
+  for (int trial = 0; trial < ntrials; ++trial)
+    {
+      // Fresh matrices each trial; B starts at zero.
+      MatType M(R, nrows, ncols);
+      MatType N(R, nrows, ncols);
+      MatType B(R, nrows, ncols);
+
+      matgen.nextMatrix(M);
+      matgen.nextMatrix(N);
+      MatrixOps::addInPlace(B, M);
+      MatrixOps::addInPlace(B, N);
+
+      for (size_t i = 0; i < nrows; ++i)
+        for (size_t j = 0; j < ncols; ++j)
+          {
+            Entries::get(M, i, j, a);
+            Entries::get(N, i, j, b);
+            Entries::get(B, i, j, actual);
+            R.add(expected, a, b);
+            EXPECT_TRUE(R.is_equal(actual, expected))
+                << "trial " << trial << ", entry (" << i << ", " << j << ")";
+          }
+    }
+}
 
 #endif
 

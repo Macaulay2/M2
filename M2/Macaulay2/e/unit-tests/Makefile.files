@@ -27,10 +27,33 @@ UNITTEST_CCFILES := \
     RingTowerTest \
     DMatZZpTest \
     SMatTest \
+    DMatZZpFFPACKTest \
+    DMatZZpFlintTest \
+    DMatZZTest \
+    DMatZZGMPTest \
+    DMatQQGMPTest \
+    DMatQQFlintTest \
+    DMatRRTest \
+    DMatRRRTest \
+    DMatRRiTest \
+    DMatCCTest \
+    DMatCCCTest \
+    DMatCCiTest \
+    DMatGFM2Test \
+    DMatGFFlintTest \
+    DMatGFFlintBigTest \
     ResTest \
     SubsetTest \
     PolyRingTest \
     NewF4Test \
+    ExponentVectorTest \
+    ExponentListTest \
+    EngineMonomialTest \
+    MonomialTableTest \
+    MonomialIdealTest \
+    MonomialCollectionsTest \
+    MonomialSortTest \
+    MonomialOrderingTest \
     MonoidTest \
     MatrixIOTest \
     WeylAlgebraTest \

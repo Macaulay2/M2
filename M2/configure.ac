@@ -817,25 +817,26 @@ AS_IF([test $BUILD_lapack = yes],
      LAPACK_LIBS=-llapack])
 AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
 
-dnl This must come after the Fortran/BLAS/LAPACK detection above: gfortran
-dnl expands --coverage to -lgcov, which would then be baked into FCLIBS and
-dnl BLAS_LIBS and clash with the compiler's own coverage runtime at link time.
 AC_SUBST([GCOV],[no])
 AC_ARG_ENABLE([gcov],
   [AS_HELP_STRING([--enable-gcov],
      [enable gcc/gcov code coverage (implies -O0 and disables stripping)])],
   [GCOV=$enableval])
+dnl kept out of CFLAGS/CXXFLAGS/LDFLAGS: only our own code is instrumented
+AC_SUBST([GCOV_CFLAGS])
+AC_SUBST([GCOV_CXXFLAGS])
+AC_SUBST([GCOV_LDFLAGS])
 AS_IF([test "$GCOV" = yes],
-  [CFLAGS="$CFLAGS --coverage -O0"
-   CXXFLAGS="$CXXFLAGS --coverage -O0"
-   LDFLAGS="$LDFLAGS --coverage"
+  [GCOV_CFLAGS="--coverage -O0"
+   GCOV_CXXFLAGS="--coverage -O0"
+   GCOV_LDFLAGS="--coverage"
    dnl Record absolute source paths in the .gcno files, so that gcovr can
    dnl find the sources of objects built in a parent directory.
    AX_CHECK_COMPILE_FLAG([-fprofile-abs-path],
-     [CFLAGS="$CFLAGS -fprofile-abs-path"])
+     [GCOV_CFLAGS="$GCOV_CFLAGS -fprofile-abs-path"])
    AC_LANG_PUSH([C++])
    AX_CHECK_COMPILE_FLAG([-fprofile-abs-path],
-     [CXXFLAGS="$CXXFLAGS -fprofile-abs-path"])
+     [GCOV_CXXFLAGS="$GCOV_CXXFLAGS -fprofile-abs-path"])
    AC_LANG_POP([C++])
    ENABLE_STRIP=no
    OPTIMIZE=no])

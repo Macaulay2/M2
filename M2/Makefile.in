@@ -129,6 +129,12 @@ GCOVR = gcovr
 GCOV_EXECUTABLE = @GCOV_EXECUTABLE@
 ## extra gcovr options, e.g. GCOVR_OPTIONS='--filter Macaulay2/e/'
 GCOVR_OPTIONS =
+## restrict the report, e.g. COVERAGE_SOURCES='Macaulay2/e/matrix.cpp'
+COVERAGE_SOURCES =
+## gcovr resolves a relative --filter against its own working directory, not --root
+## ($(abspath) drops a trailing slash, which the filter needs as a path boundary)
+COVERAGE_FILTER = $(if $(filter /%,$1),$1,$(abspath @abs_top_srcdir@/$1)$(if $(filter %/,$1),/))
+COVERAGE_FILTERS = $(foreach f,$(COVERAGE_SOURCES),--filter $(call COVERAGE_FILTER,$f))
 COVERAGE_DIR = $(CURDIR)/coverage
 COVERAGE_INDEX = $(COVERAGE_DIR)/index.html
 COVERAGE_ROOT = @srcdir@
@@ -148,7 +154,7 @@ coverage-report:
 	@ $(MKDIR_P) $(COVERAGE_DIR)
 	$(GCOVR) --root $(COVERAGE_ROOT) $(COVERAGE_OBJDIR) \
 		--gcov-executable '$(GCOV_EXECUTABLE)' \
-		$(COVERAGE_MERGE_OPTION) $(GCOVR_OPTIONS) \
+		$(COVERAGE_MERGE_OPTION) $(COVERAGE_FILTERS) $(GCOVR_OPTIONS) \
 		--html-details $(COVERAGE_INDEX) --print-summary
 ## print the path as an OSC 8 hyperlink, so terminals make it clickable
 	@ printf 'coverage report: \033]8;;file://%s%s\033\\%s\033]8;;\033\\\n' "$$(hostname)" "$(COVERAGE_INDEX)" "$(COVERAGE_INDEX)"
@@ -242,6 +248,7 @@ help:
 	@ echo "  check             run the tests"
 	@ echo "  coverage-reset    clear accumulated gcov coverage data (requires --enable-gcov)"
 	@ echo "  coverage-report   generate an HTML coverage report with gcovr"
+	@ echo "                    (restrict it with COVERAGE_SOURCES='path/to/file.cpp ...')"
 	@ echo "  clean             remove all generated files except configured files"
 	@ echo "  distclean         remove all generated files"
 	@ echo "  dist              generate a source tarball for distribution"

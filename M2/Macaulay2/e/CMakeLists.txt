@@ -451,6 +451,14 @@ if(BUILD_TESTING)
     unit-tests/RingElem.hpp
     unit-tests/RingElem.cpp
     unit-tests/NewF4Test.cpp
+    unit-tests/ExponentVectorTest.cpp
+    unit-tests/ExponentListTest.cpp
+    unit-tests/EngineMonomialTest.cpp
+    unit-tests/MonomialTableTest.cpp
+    unit-tests/MonomialIdealTest.cpp
+    unit-tests/MonomialCollectionsTest.cpp
+    unit-tests/MonomialSortTest.cpp
+    unit-tests/MonomialOrderingTest.cpp
     unit-tests/MonoidTest.cpp
     unit-tests/PolyRingTest.cpp
 
@@ -486,6 +494,21 @@ if(BUILD_TESTING)
     unit-tests/MatrixTest.hpp
     unit-tests/DMatZZpTest.cpp
     unit-tests/SMatTest.cpp
+    unit-tests/DMatZZpFFPACKTest.cpp
+    unit-tests/DMatZZpFlintTest.cpp
+    unit-tests/DMatZZTest.cpp
+    unit-tests/DMatZZGMPTest.cpp
+    unit-tests/DMatQQGMPTest.cpp
+    unit-tests/DMatQQFlintTest.cpp
+    unit-tests/DMatRRTest.cpp
+    unit-tests/DMatRRRTest.cpp
+    unit-tests/DMatRRiTest.cpp
+    unit-tests/DMatCCTest.cpp
+    unit-tests/DMatCCCTest.cpp
+    unit-tests/DMatCCiTest.cpp
+    unit-tests/DMatGFM2Test.cpp
+    unit-tests/DMatGFFlintTest.cpp
+    unit-tests/DMatGFFlintBigTest.cpp
 
     unit-tests/ResTest.cpp
     unit-tests/PointArray.cpp
