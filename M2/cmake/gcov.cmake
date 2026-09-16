@@ -1,10 +1,18 @@
 ###############################################################################
 # gcc/gcov code coverage (configure with -DGCOV=ON; the instrumentation flags
-# themselves are set in configure.cmake).  Coverage data (.gcda) accumulates
-# whenever a coverage-built binary exits, so run ctest or M2 itself first; these
-# targets only clear and report on it.
+# themselves are added per target by _ADD_GCOV below).  Coverage data (.gcda)
+# accumulates whenever a coverage-built binary exits, so run ctest or M2 itself
+# first; these targets only clear and report on it.
 
 if(GCOV)
+  # -O0 keeps the line attribution meaningful; -fprofile-abs-path records
+  # absolute source paths, so gcovr can resolve objects built in a parent dir
+  function(_ADD_GCOV _target)
+    target_compile_options(${_target} PRIVATE --coverage -O0
+      $<$<NOT:$<CXX_COMPILER_ID:AppleClang,Clang>>:-fprofile-abs-path>)
+    target_link_options(${_target} PRIVATE --coverage)
+  endfunction()
+
   find_program(GCOVR NAMES gcovr)
   set(GCOVR_OPTIONS "" CACHE STRING
     "Extra options passed to gcovr, e.g. --filter Macaulay2/e/")
