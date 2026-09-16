@@ -242,8 +242,8 @@ endif()
 # Common flags
 # TODO: reduce these if possible
 add_link_options(-L${M2_HOST_PREFIX}/lib)
+include_directories(BEFORE SYSTEM ${M2_HOST_PREFIX}/include)
 add_compile_options(
-  -I${M2_HOST_PREFIX}/include
   -I${CMAKE_SOURCE_DIR}/include
   -I${CMAKE_BINARY_DIR}/include
   )
