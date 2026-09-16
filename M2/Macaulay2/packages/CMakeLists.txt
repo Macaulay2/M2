@@ -118,6 +118,21 @@ set(_default_dependencies
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.installed)
 set(EngineTests_dependencies ${_default_dependencies})
 
+# Depend on completion of the entire install, including compression.  For
+# packages outside PACKAGES, keep using their existing installation marker.
+foreach(_dependency IN ITEMS Style FirstPackage Macaulay2Doc)
+  if(_dependency IN_LIST PACKAGES)
+    foreach(_consumer IN ITEMS Macaulay2Doc EngineTests _default)
+      list(TRANSFORM ${_consumer}_dependencies REPLACE
+        "/${_dependency}/\\.installed$" "/${_dependency}/.cmake-installed")
+    endforeach()
+  endif()
+endforeach()
+
+# M2-core is a custom target: it provides ordering, but not file-level freshness.
+file(GLOB_RECURSE _package_core_sources CONFIGURE_DEPENDS
+  ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/*.m2)
+
 # TODO: automate this process
 # 2. FourTiTwo needs 4ti2
 # 3. CohomCalg needs cohomcalg
@@ -133,7 +148,7 @@ set(EngineTests_dependencies ${_default_dependencies})
 
 foreach(package IN LISTS PACKAGES)
   ## Make a list of package sources to detect changes
-  file(GLOB_RECURSE ${package}_sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${package}.m2 ${package}/*)
+  file(GLOB_RECURSE ${package}_sources CONFIGURE_DEPENDS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${package}.m2 ${package}/*)
 
   ## Copy package and auxiliary folder to usr-dist
   file(COPY ${package}.m2 DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR})
@@ -155,13 +170,7 @@ foreach(package IN LISTS PACKAGES)
     set(USES_TERMINAL USES_TERMINAL)
   else()
     unset(USES_TERMINAL)
-    foreach(_dep IN LISTS _default_dependencies)
-      if(TARGET ${_dep})
-	list(APPEND ${package}_dependencies ${_dep})
-      elseif(NOT EXISTS ${_dep})
-	list(APPEND ${package}_dependencies ${_dep})
-      endif()
-    endforeach()
+    list(APPEND ${package}_dependencies ${_default_dependencies})
   endif()
 
   ## TODO: remove this; see https://github.com/Macaulay2/M2/pull/1483
@@ -178,15 +187,37 @@ foreach(package IN LISTS PACKAGES)
     DEPENDS M2-core ${${package}_sources}
     )
 
-  ## Custom target for installing the package
-  add_custom_target(install-${package}
+  ## File-based installation rule.  The stamp is removed before attempting an
+  ## install and written only after every step succeeds, so failed builds retry.
+  set(_install_stamp ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}/.cmake-installed)
+  set(_install_marker ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}/.installed)
+  set(_install_info ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}/${package}.info.gz)
+  # Track option changes and added/removed sources even with Makefile generators.
+  set(_install_inputs ${CMAKE_CURRENT_BINARY_DIR}/install-${package}-$<CONFIG>.inputs)
+  file(GENERATE OUTPUT ${_install_inputs} CONTENT
+    "${M2_ARGS}\n${M2_INSTALL_STRING}\n${M2_INFO_STRING}\n${${package}_sources}\n${_package_core_sources}\n")
+  # Order the owning targets too, so parallel Make builds do not run a shared
+  # prerequisite's installation command in multiple recursive make processes.
+  set(_install_targets)
+  foreach(_dep IN LISTS ${package}_dependencies)
+    get_filename_component(_dependency ${_dep} DIRECTORY)
+    get_filename_component(_dependency ${_dependency} NAME)
+    if(_dependency IN_LIST PACKAGES)
+      list(APPEND _install_targets install-${_dependency})
+    endif()
+  endforeach()
+  add_custom_target(install-${package} DEPENDS ${_install_stamp} ${_install_marker} ${_install_info})
+  add_custom_command(OUTPUT ${_install_stamp} ${_install_marker} ${_install_info}
     COMMENT "Installing package ${package}"
+    COMMAND ${CMAKE_COMMAND} -E rm -f ${_install_stamp}
     COMMAND ${M2} ${M2_ARGS} -e ${M2_INSTALL_STRING} -e ${M2_INFO_STRING} -e "exit 0"
     COMMAND gzip -nf9 ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}/${package}.info
+    COMMAND ${CMAKE_COMMAND} -E touch ${_install_stamp}
     VERBATIM
     ${USES_TERMINAL}
-    DEPENDS M2-core ${${package}_dependencies}
-    BYPRODUCTS ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}/.installed
+    DEPENDS M2-core M2-binary ${_install_targets} ${${package}_sources} ${${package}_dependencies}
+      ${_package_core_sources} ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/tvalues.m2
+      ${_install_inputs} ${CMAKE_CURRENT_LIST_FILE}
     )
 
   ## Custom target for generating PDF documentation for the package
