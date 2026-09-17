@@ -95,6 +95,12 @@ installation and Info compression create `.cmake-installed` beside the package's
 stamp, so the next invocation retries it and skips unchanged completed packages.
 Existing installations without the new stamp are installed once.
 
+Core source files are watched for additions and removals. The generated Core
+output directory is not watched: `tvalues.m2` is created during the build and
+has an explicit dependency, so its first appearance must not trigger a glob
+mismatch or change the recorded package-installation inputs. Runtime binary and
+Core source changes still invalidate package installations.
+
 `all-<package>` first builds `install-<package>`, then runs the package checks;
 `all-packages` does this for all selected packages. Completed installations are
 reused, but checks run on every invocation. If installation fails, that package's
