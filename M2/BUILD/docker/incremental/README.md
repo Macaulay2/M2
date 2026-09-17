@@ -82,17 +82,20 @@ the cached build directory, since configure-time staging copies and external
 build stamps may otherwise retain removed inputs. This is a conservative fallback
 until those deletion cases can be handled incrementally.
 
-The container configures with `WITH_MAPLE=OFF` (from #4722). CMake preserves
-cached Maple-dependent examples in MapleInterface, AdjointIdeal, Parametrization
-and ConvexInterface, while other packages retain `RerunExamples=true`. All
-packages remain selected, including their independent checks. Missing or stale
-shipped example caches still cause errors rather than silently passing.
+The container configures with `WITH_MAPLE=OFF` (from #4722) and
+`RespectCachedExampleOutput=ON`. The latter inspects each loaded package's
+resolved `UseCachedExampleOutput` option before installing it. Packages that
+request shipped examples (for example NCAlgebra when Bergman is absent) receive
+`RerunExamples=false`. Other packages retain `RerunExamples=true`; Maple's
+per-package exceptions also remain in effect. All packages stay selected,
+including their independent checks. Missing or stale shipped example caches
+still cause errors rather than silently passing.
 
 `all-packages` installs only packages whose inputs changed and runs package checks
-every time. `RerunExamples=true` reruns examples when a package actually needs
-installation, including after a dependency changes, subject to the optional Maple
-exceptions above. The job also runs the Core
-checks, C++ unit tests and ComputationsBook tests, and produces a Debian package.
+every time. Examples rerun when a package needs installation, including after a
+dependency changes, subject to the package cache policy above. The job also runs
+the Core checks, C++ unit tests and ComputationsBook tests, and produces a Debian
+package.
 Logs and packages are uploaded as workflow artifacts. A failed build or test never
 replaces the development cache.
 

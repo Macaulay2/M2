@@ -39,6 +39,7 @@ set(CheckDocumentation       "true" CACHE STRING "check documentation for comple
 set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
 set(RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
 set(RerunExamples           "false" CACHE STRING "rerun example outpuat files")
+option(RespectCachedExampleOutput "Honor package cached-example policy even when rerunning examples" OFF)
 ## Arguments to the M2 subprocess that runs individual tests and examples; see runFile in m2/run.m2
 set(ArgumentMode "InvertArgs|SetOutputFile|SetCaptureErr|NoCapture" # |ArgNoThreads for --no-threads
   CACHE INTERNAL "bitmask for ctest check arguments")
@@ -104,6 +105,17 @@ set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
   UserMode               => false,
   SeparateExec           => true,
   DebuggingMode          => true)]])
+# Load once, as installPackage(String) normally does, then inspect the resolved
+# options (including defaults and runtime optional-component detection).
+if(RespectCachedExampleOutput)
+  string(REPLACE "installPackage(\"@package@\"," "(pkg -> installPackage(pkg,"
+    M2_INSTALL_TEMPLATE "${M2_INSTALL_TEMPLATE}")
+  string(REPLACE "\${_package_rerun_examples},"
+    "(\${_package_rerun_examples} and not (options pkg).UseCachedExampleOutput),"
+    M2_INSTALL_TEMPLATE "${M2_INSTALL_TEMPLATE}")
+  string(APPEND M2_INSTALL_TEMPLATE
+    ") loadPackage(\"@package@\", DebuggingMode => true, LoadDocumentation => true, Reload => true)")
+endif()
 set(M2_NEED_TEMPLATE    [[needsPackage("@package@", LoadDocumentation=>true, DebuggingMode=>true)]])
 set(M2_TEST_TEMPLATE    [[debug Core \; argumentMode = @ArgumentMode@ \; check(@_i@, "@package@")]])
 set(M2_INFO_TEMPLATE    [["info-"|"@package@" << #@package@#"test inputs" << close]]) # ignore the color

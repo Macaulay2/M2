@@ -55,5 +55,6 @@ jobs:
         run: |
           python3 M2/cmake/tests/test_package_dependencies.py
           python3 M2/cmake/tests/test_dependency_manifest.py
+          python3 M2/cmake/tests/test_cached_examples.py
           python3 M2/cmake/tests/test_incremental_packages.py
           python3 M2/cmake/tests/test_package_build_graph.py

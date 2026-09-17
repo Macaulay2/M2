@@ -105,3 +105,17 @@ The detection tests use simulated executables and require no Maple license:
 ```sh
 python3 M2/cmake/tests/test_find_maple.py
 ```
+
+### Package example policy in CMake
+
+`-DRespectCachedExampleOutput=ON` makes package installation respect the loaded
+package's `UseCachedExampleOutput` setting, even with `-DRerunExamples=true`.
+M2 resolves this setting using its normal defaults and optional-component checks.
+For example, NCAlgebra requests cached examples when Bergman is unavailable.
+Packages requesting cached output receive `RerunExamples=false`; other packages
+keep the requested value. Package installation and independent tests are retained,
+and missing or stale example caches are still errors if execution cannot succeed.
+
+This option defaults to `OFF`, preserving explicit forced reruns in ordinary
+builds. Container CI enables it. It affects CMake's package installation commands,
+not direct calls to M2's `installPackage`.

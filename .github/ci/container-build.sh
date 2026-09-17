@@ -29,7 +29,7 @@ export CMAKE_BUILD_PARALLEL_LEVEL=${CMAKE_BUILD_PARALLEL_LEVEL:-2}
 export CCACHE_DISABLE=1 OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=1
 cmake -S "$source_dir/M2" -B "$build_dir" -G Ninja \
     -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF -DGIT_SUBMODULE=OFF \
-    -DSTATIC_BOOST=OFF -DBUILD_TESTING=ON -DWITH_MAPLE=OFF -DRerunExamples=true -DCMAKE_INSTALL_PREFIX=/usr \
+    -DSTATIC_BOOST=OFF -DBUILD_TESTING=ON -DWITH_MAPLE=OFF -DRerunExamples=true -DRespectCachedExampleOutput=ON -DCMAKE_INSTALL_PREFIX=/usr \
     -DPARALLEL_JOBS="$CMAKE_BUILD_PARALLEL_LEVEL" -DCOMMIT_COUNT=0 -DGIT_COMMIT="$revision"
 cmake --build "$build_dir" --target build-libraries build-programs
 cmake --build "$build_dir" --target M2-core M2-emacs M2-unit-tests \
