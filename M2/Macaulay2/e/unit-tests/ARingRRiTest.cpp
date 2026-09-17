@@ -8,6 +8,8 @@
 #include "unit-tests/ARingTest.hpp"
 #include "interface/matrix.cpp"
 
+#include<iostream>
+
 template <>
 void getElement<M2::ARingRRi>(const M2::ARingRRi& R,
                               int index,
@@ -21,7 +23,7 @@ void getElement<M2::ARingRRi>(const M2::ARingRRi& R,
 
 namespace {
 
-class ARingRRi : public ::testing::Test
+class ARingRRiFixture : public ::testing::Test
 {
  protected:
   using Ring = M2::ARingRRi;
@@ -78,7 +80,7 @@ class ARingRRi : public ::testing::Test
   }
 };
 
-TEST_F(ARingRRi, create)
+TEST_F(ARingRRiFixture, create)
 {
   // Construction retains the requested precision and identifies a real interval
   // ring.
@@ -93,7 +95,11 @@ TEST(ARingRRi, comparison)
     M2::ARingRRR S(100);
     M2::ARingRRi::ElementType a, b, c, d, e, f, g, h;
     M2::ARingRRR::ElementType m, n;
-    gmp_ZZ p = to_gmp_ZZ(2);
+    mpz_t p;
+    mpq_t q;
+    double u, v;
+    mpfr_t r;
+    mpfi_t s;
 
     R.init(a);
     R.init(b);
@@ -189,9 +195,102 @@ TEST(ARingRRi, comparison)
     EXPECT_FALSE(R.is_subset(d,a));
     EXPECT_FALSE(R.is_subset(e,a));
 
+    mpz_init(p);
+    mpz_set_si(p,2);
+
     EXPECT_TRUE(R.is_member(p,a));
     EXPECT_TRUE(R.is_member(p,b));
     EXPECT_FALSE(R.is_member(p,e));
+
+    mpq_init(q);
+    mpq_set_si(q,7,4);
+
+    EXPECT_TRUE(R.is_member(q,a));
+    EXPECT_FALSE(R.is_member(q,e));
+
+    R.set(a,p);
+    EXPECT_TRUE(R.is_member(p,a));
+
+    mpq_init(q);
+    mpq_set_si(q,7,5);
+
+    R.set(b,q);
+    EXPECT_TRUE(R.is_member(q,b));
+
+    u = 5./3.;
+
+    R.set(c,u);
+    EXPECT_TRUE(R.is_member(u,c));
+    v = R.coerceToDouble(c);
+    EXPECT_EQ(u,v);
+
+    mpfr_init(r);
+    mpfr_set_si(r,4.3,MPFR_RNDN);
+
+    mpfi_init(s);
+    mpfi_set_si(s,2.3);
+
+    R.set(d,r);
+    R.set(e,s);
+
+    R.is_member(4.3,d);
+    R.is_member(2.3,e);
+
+    R.clear(a);
+    R.clear(b);
+    R.clear(c);
+    R.clear(d);
+    R.clear(e);
+    R.clear(f);
+    R.clear(g);
+    R.clear(h);
+    S.clear(m);
+    S.clear(n);
+
+    mpz_clear(p);
+    mpq_clear(q);
+
+    mpfr_clear(r);
+    mpfi_clear(s);
+}
+
+TEST(ARingRRi, leftandright)
+{
+    M2::ARingRRi R(100);
+    M2::ARingRRR S(100);
+    M2::ARingRRi::ElementType a, b, c, d, e, f, g, h;
+    M2::ARingRRR::ElementType m, n;
+    mpz_t p;
+    mpq_t q;
+    double u, v;
+    mpfr_t r;
+    mpfi_t s;
+
+    R.init(a);
+
+    S.init(m);
+    S.init(n);
+
+    R.set_from_doubles(a,1,3);
+    S.set(m,2.3);
+
+    R.set_left(a,m);
+    R.left(n,a);
+
+    EXPECT_TRUE(S.is_equal(n,m));
+
+    S.set(m,1);
+    R.set_right(a,m);
+
+    EXPECT_TRUE(R.is_empty(a));
+
+    R.set_left(a,1.5);
+    R.set_right(a,2.5);
+
+    S.set(n,1);
+    R.diameter(m,a);
+
+    EXPECT_TRUE(S.is_equal(m,n));
 }
 
 TEST(ARingRRi, subtract)
@@ -227,7 +326,7 @@ TEST(ARingRRi, subtract)
   R.clear(a);
 }
 
-TEST_F(ARingRRi, arithmeticExamples)
+TEST_F(ARingRRiFixture, arithmeticExamples)
 {
   // Dyadic endpoints make the expected interval bounds exactly representable.
   // Each case starts with fresh operands, including the aliasing examples.
@@ -285,7 +384,7 @@ TEST_F(ARingRRi, arithmeticExamples)
   }
 }
 
-TEST_F(ARingRRi, negate)
+TEST_F(ARingRRiFixture, negate)
 {
   // Adding an interval to its negation must enclose zero, even for wide
   // intervals.
@@ -304,7 +403,7 @@ TEST_F(ARingRRi, negate)
     }
 }
 
-TEST_F(ARingRRi, add)
+TEST_F(ARingRRiFixture, add)
 {
   // Cancellation may widen an interval; it must still contain the original
   // range.
@@ -325,7 +424,7 @@ TEST_F(ARingRRi, add)
     }
 }
 
-TEST_F(ARingRRi, subtract)
+TEST_F(ARingRRiFixture, subtract)
 {
   // Undoing subtraction encloses the input; subtracting a product encloses
   // zero.
@@ -355,7 +454,7 @@ TEST_F(ARingRRi, subtract)
     }
 }
 
-TEST_F(ARingRRi, multDivide)
+TEST_F(ARingRRiFixture, multDivide)
 {
   // Multiplication followed by division encloses the input when zero is
   // excluded.
@@ -381,7 +480,7 @@ TEST_F(ARingRRi, multDivide)
     }
 }
 
-TEST_F(ARingRRi, axioms)
+TEST_F(ARingRRiFixture, axioms)
 {
   // Commutativity preserves bounds. Reassociated and distributed expressions
   // must overlap, since interval dependency can give them different widths.
@@ -433,7 +532,7 @@ TEST_F(ARingRRi, axioms)
     }
 }
 
-TEST_F(ARingRRi, power_and_invert)
+TEST_F(ARingRRiFixture, power_and_invert)
 {
   // Power interfaces agree for nonnegative exponents. A reciprocal of an
   // interval excluding zero gives a product containing one.
