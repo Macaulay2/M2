@@ -97,6 +97,7 @@ assert all(toList(0..3), i -> (
 		    j -> matrix{W.dpairVars#1})) == 0) ));
 ///
 
+
 TEST ///
 --2015-06: Uli's bug (rewritten by Avi in 2019-07 to remove dependence on gkz)
 W = QQ[x_1..x_3, D_1..D_3, WeylAlgebra => {x_1=>D_1, x_2=>D_2, x_3=>D_3}];
@@ -107,10 +108,39 @@ assert( toString RM#1 == "cokernel matrix {{x_1, x_3*D_3+1}}" );
 ///
 
 TEST ///
-  -- moved from tests/normal/dd-modules.m2
   R = QQ[x,y]
   A = deRhamAll(x^2+y^3)
   assert A.?TransferCycles
   B = deRhamAll(x^2+y^2)
-  assert B.?TransferCycles -- seems to fail for homogeneous polynomials
+  assert B.?TransferCycles 
 ///
+
+
+TEST ///
+  R = QQ[s]
+  f = s*(s^2-s-1)
+  assert(getIntRoots f == {0_ZZ})
+  f = (2*s-3)*f
+  assert(getIntRoots f == {0_ZZ})
+  f = f*(2*s-4)*(s-13)*(s-15)^2
+  assert(f == value(factorBFunction f)*leadCoefficient(f))
+  assert(sort getIntRoots f == {0,2,13,15})
+  f = f*(2*s-17)^4
+  assert(f == value(factorBFunction f)*leadCoefficient(f))
+///
+
+
+TEST ///
+   W = QQ[x, dx, a, Da, WeylAlgebra => {{x, dx}, {a, Da}}]
+   M = cokernel matrix {{-x*a+1, x^2*a^4*Da^2-2*x^2*dx*a^2*Da+2*x^2*a^3*Da+x^2*dx^2+2*x*a^2*Da-2*x*dx+1}}
+   N = Dintegration(0,M,{0,1})
+   use ring N
+   assert(cokernel matrix {{x^2*dx^2+2*x*dx-1}} == N)
+///
+
+TEST ///
+  makeWA(QQ[x])
+  I = ideal(x^2*dx^2 -2*x*dx + 1)
+  assert(I == WeylClosure I)
+///  
+

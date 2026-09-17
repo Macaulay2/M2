@@ -10,7 +10,7 @@ doc ///
     WeylClosure(I,f)
   Inputs
     I:Ideal
-      a left ideal of the Weyl Algebra
+      a left ideal of the Weyl algebra
     f:RingElement
       a polynomial
   Outputs
@@ -18,10 +18,10 @@ doc ///
       the Weyl closure (w.r.t. $f$) of $I$
   Description
     Text
-     Let $D$ be the Weyl algebra 
-     with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over a field $K$
+     Let $D$ be the Weyl algebra
+     with generators $x_1,\dots,x_n$ and $dx_1,\dots,dx_n$ over a field $K$
      of characteristic zero, and denote
-     $R = K(x_1..x_n)<\partial_1..\partial_n>$, 
+     $R = K(x_1,\dots,x_n)\langle dx_1,\dots,dx_n\rangle$,
      the ring of differential
      operators with rational function coefficients. The {\em Weyl closure}
      of an ideal $I$ in $D$ is the intersection of the extended ideal
@@ -42,8 +42,8 @@ doc ///
       holonomicRank I
       WeylClosure I
   Caveat
-    The ideal I should be of finite holonomic rank, which can be tested
-    manually by using the function holonomicRank. The Weyl closure of non-finite rank
+    The ideal $I$ should be of finite holonomic rank, which can be tested
+    manually using @TO holonomicRank@. The Weyl closure of non-finite-rank
     ideals or arbitrary submodules has not been implemented.
   SeeAlso
     Dlocalize
