@@ -46,6 +46,25 @@ results to false without launching Maple, even if `MAPLE_EXECUTABLE` is cached.
 The configure output reports the interface as enabled, unavailable, or explicitly
 disabled, together with convex availability.
 
+To disable probing, or restore the default behavior in an existing build:
+
+```sh
+cmake -S M2 -B M2/BUILD/build -DWITH_MAPLE=OFF
+cmake -S M2 -B M2/BUILD/build -DWITH_MAPLE=ON
+```
+
+Example status lines (only one applies to a given configuration):
+
+```text
+-- Maple interface: enabled; convex: TRUE
+-- Maple interface: unavailable; convex: FALSE
+-- Maple interface: disabled (WITH_MAPLE=OFF); convex: FALSE
+```
+
+"Enabled" here describes CMake's availability result. `WITH_MAPLE=OFF` does
+not remove the distributed M2 interface packages or prevent a user from loading
+them later; runtime configuration and package execution policy are separate.
+
 When `WITH_MAPLE=ON`, CMake searches for command-line `maple` or `cmaple` and executes a small arithmetic
 probe. Finding an executable alone does not establish that its license works.
 Maple is optional: an absent executable, failed probe or timeout does not prevent
