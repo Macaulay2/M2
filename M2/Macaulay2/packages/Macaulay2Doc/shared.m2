@@ -17,6 +17,7 @@ document { Key => extend, Headline => "extend an object",    methodstr,
     },
 }
 
+document { Key => center,       methodstr, SeeAlso => { "Graphs::center(Graph)", "GradedLieAlgebras::center(LieAlgebra)" } }
 document { Key => complete,     methodstr, SeeAlso => { "OldChainComplexes::complete(ChainComplex)" } }
 document { Key => minimize,     methodstr, SeeAlso => { "Complexes::minimize(Complex)" } }
 document { Key => decompose,    Headline => "decompose an object", methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
