@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - M2/cmake/FindMaple.cmake
+      - M2/cmake/check-maple.cmake
       - M2/cmake/tests/test_find_maple.py
       - .github/workflows/cmake-probes.yml
   pull_request:
     paths:
       - M2/cmake/FindMaple.cmake
+      - M2/cmake/check-maple.cmake
       - M2/cmake/tests/test_find_maple.py
       - .github/workflows/cmake-probes.yml
 

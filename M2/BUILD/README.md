@@ -39,7 +39,14 @@ using Docker to build Linux container images running Macaulay2.
 
 ### Optional Maple detection (CMake)
 
-CMake searches for command-line `maple` or `cmaple` and executes a small arithmetic
+`WITH_MAPLE` defaults to `ON`: CMake enables Maple support if a working
+installation is available, but missing Maple is not a configuration error.
+Configure with `-DWITH_MAPLE=OFF` to disable detection and set both availability
+results to false without launching Maple, even if `MAPLE_EXECUTABLE` is cached.
+The configure output reports the interface as enabled, unavailable, or explicitly
+disabled, together with convex availability.
+
+When `WITH_MAPLE=ON`, CMake searches for command-line `maple` or `cmaple` and executes a small arithmetic
 probe. Finding an executable alone does not establish that its license works.
 Maple is optional: an absent executable, failed probe or timeout does not prevent
 configuration, and CMake never downloads Maple. The optional `convex` Maple

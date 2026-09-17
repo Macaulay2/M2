@@ -18,7 +18,7 @@ class MapleDetectionTests(unittest.TestCase):
         self.script = self.root / 'check.cmake'
         self.script.write_text(f'''cmake_minimum_required(VERSION 3.30)
 list(PREPEND CMAKE_MODULE_PATH "{MODULES}")
-find_package(Maple OPTIONAL_COMPONENTS Convex)
+include(check-maple)
 file(WRITE "${{CMAKE_CURRENT_BINARY_DIR}}/result" "${{Maple_FOUND}};${{Maple_Convex_FOUND}}")
 ''')
 
@@ -27,14 +27,31 @@ file(WRITE "${{CMAKE_CURRENT_BINARY_DIR}}/result" "${{Maple_FOUND}};${{Maple_Con
         self.executable.chmod(0o755)
 
     def probe(self, *args):
-        subprocess.run(['cmake', f'-DMAPLE_EXECUTABLE={self.executable}',
+        result = subprocess.run(['cmake', f'-DMAPLE_EXECUTABLE={self.executable}',
                         '-DMAPLE_PROBE_TIMEOUT=0.2', *args,
                         '-P', str(self.script)], cwd=self.root, check=True,
                        capture_output=True, text=True)
+        self.output = result.stdout
         return (self.root / 'result').read_text()
 
-    def test_absent(self):
+    def test_disabled_does_not_execute(self):
+        self.fake('open("executed", "w").close()\n')
+        self.assertEqual(self.probe('-DWITH_MAPLE=OFF'), 'FALSE;FALSE')
+        self.assertFalse((self.root / 'executed').exists())
+        self.assertIn('disabled (WITH_MAPLE=OFF)', self.output)
+
+    def test_enabled_then_disabled_resets_results(self):
+        self.fake('print("M2_MAPLE_42")\n')
+        self.script.write_text(self.script.read_text().replace(
+            'include(check-maple)',
+            'include(check-maple)\nset(WITH_MAPLE OFF)\ninclude(check-maple)'))
         self.assertEqual(self.probe(), 'FALSE;FALSE')
+        self.assertIn('Maple interface: enabled', self.output)
+        self.assertIn('disabled (WITH_MAPLE=OFF)', self.output)
+
+    def test_absent(self):
+        self.assertEqual(self.probe('-DWITH_MAPLE=ON'), 'FALSE;FALSE')
+        self.assertIn('Maple interface: unavailable', self.output)
 
     def test_license_failure_even_with_zero_exit(self):
         self.fake('print("License unavailable")\n')
