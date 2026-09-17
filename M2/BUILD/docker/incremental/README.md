@@ -91,8 +91,13 @@ per-package exceptions also remain in effect. All packages stay selected,
 including their independent checks. Missing or stale shipped example caches
 still cause errors rather than silently passing.
 
-`all-packages` installs only packages whose inputs changed and runs package checks
-every time. Examples rerun when a package needs installation, including after a
+The build job uses `install-packages` to install only packages whose inputs
+changed. It exports the completed container as a two-day workflow artifact. A
+separate job on a fresh runner imports this filesystem, restores the PAX archive,
+and uses `check-packages` to run package checks every time. Each job has its own
+180-minute allowance. When testing fails, rerun failed jobs while the intermediate
+artifact is retained; the successful build job need not run again. Intermediate
+artifacts are not published as successful development images. Examples rerun when a package needs installation, including after a
 dependency changes, subject to the package cache policy above. The job also runs
 the Core checks, C++ unit tests and ComputationsBook tests, and produces a Debian
 package.
@@ -104,6 +109,25 @@ unbounded accumulation of old object files in layers. Consequently each snapshot
 uploads a full compressed filesystem; timings and download size should be
 compared against the previous CI before claiming a particular speedup. Building
 from scratch remains supported and is the fallback for a missing registry asset.
+
+## Compiler cache and parallelism
+
+The image retains a bounded 512 MiB ccache at `/opt/m2/ccache`, in addition to
+compiled objects. It can reuse identical C/C++ compilations after outputs are
+invalidated or removed, and its statistics are printed after each build. It does
+not cache M2 package installations or examples. A change to M2-core can invalidate
+all package installations; ccache does not eliminate that work. External build
+systems are not automatically covered by CMake's compiler launcher.
+
+Each runner chooses the smaller of `nproc` and its RAM divided by 2 GiB (minimum
+one job), and reports that limit in the job summary. This controls CMake/Ninja,
+external-library build parallelism and ComputationsBook tests. The container no
+longer has a hard two-CPU quota. OpenMP and OpenBLAS use one thread per process to
+avoid multiplying the package-level parallelism. Declared imports and the
+Style/FirstPackage/Macaulay2Doc bootstrap still impose ordering; a package's own
+checks run sequentially. C++ unit suites remain serial, as in the previous CI.
+These limits balance memory use against CPU concurrency rather than assuming
+that every command can safely run at once.
 
 ## Enabling and maintaining the registry asset
 
@@ -152,7 +176,7 @@ python3 .github/ci/source_snapshot.py . /tmp/m2-ci-source
 docker build -t m2-ci-environment M2/BUILD/docker/incremental
 docker run --rm --init --cap-drop ALL --security-opt no-new-privileges --cpus 2 \
   --mount type=bind,source=/tmp/m2-ci-source,target=/input,readonly \
-  m2-ci-environment bash /input/.github/ci/container-build.sh
+  m2-ci-environment bash -c 'bash /input/.github/ci/container-build.sh build && bash /input/.github/ci/container-build.sh test'
 ```
 
 The snapshot contains committed sources, so commit local changes before using

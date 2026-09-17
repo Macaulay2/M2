@@ -14,6 +14,9 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     timeout-minutes: 180
+    outputs:
+      revision: ${{ steps.snapshot.outputs.revision }}
+      key: ${{ steps.snapshot.outputs.key }}
     env:
       DEVELOPMENT_BRANCH: ${{ vars.M2_CI_DEVELOPMENT_BRANCH || 'development' }}
     steps:
@@ -57,18 +60,36 @@ jobs:
           fi
           echo "image=$image" >> "$GITHUB_OUTPUT"
 
-      - name: Build and test the revision
+      - name: Build runtime and install packages
         env:
           BASE_IMAGE: ${{ steps.image.outputs.image }}
-          SAVE_BUILD_CACHE: ${{ inputs.publish }}
         run: |
           mkdir -p "$RUNNER_TEMP/m2-results"
+          # Allow about 2 GiB per concurrent job, up to the runner CPU count.
+          memory_jobs=$(awk '/MemTotal/ {print int($2 / 2097152)}' /proc/meminfo)
+          jobs=$(nproc)
+          (( memory_jobs < jobs )) && jobs=$memory_jobs
+          (( jobs < 1 )) && jobs=1
+          echo "Build parallelism: $jobs jobs" >> "$GITHUB_STEP_SUMMARY"
           docker create --name m2-ci --init --cap-drop ALL --security-opt no-new-privileges \
-            --cpus 2 --env CMAKE_BUILD_PARALLEL_LEVEL=2 --env SAVE_BUILD_CACHE \
+            --env "CMAKE_BUILD_PARALLEL_LEVEL=$jobs" \
             --mount "type=bind,source=$RUNNER_TEMP/m2-source,target=/input,readonly" \
-            "$BASE_IMAGE" bash /input/.github/ci/container-build.sh
+            "$BASE_IMAGE" bash /input/.github/ci/container-build.sh build
           set -o pipefail
           docker start --attach m2-ci 2>&1 | tee "$RUNNER_TEMP/m2-results/build.log"
+
+      - name: Save intermediate build state
+        run: |
+          mkdir -p "$RUNNER_TEMP/m2-state"
+          docker export m2-ci > "$RUNNER_TEMP/m2-state/filesystem.tar"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          overwrite: true
+          name: cmake-intermediate-build
+          path: ${{ runner.temp }}/m2-state/filesystem.tar
+          compression-level: 1
+          retention-days: 2
 
       - name: Collect logs and Debian packages
         if: always()
@@ -82,13 +103,75 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: cmake-ubuntu-container-logs
+          overwrite: true
+          name: cmake-ubuntu-container-build-logs
+          path: ${{ runner.temp }}/m2-results/
+
+      - name: Remove the temporary container
+        if: always()
+        run: docker rm -f m2-ci || true
+
+  test:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      DEVELOPMENT_BRANCH: ${{ vars.M2_CI_DEVELOPMENT_BRANCH || 'development' }}
+    steps:
+      - name: Select repository registry namespace
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/m2-ci-cmake" >> "$GITHUB_ENV"
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: cmake-intermediate-build
+          path: ${{ runner.temp }}/m2-state
+
+      - name: Restore build container
+        run: |
+          docker import \
+            --change 'USER 10001:10001' \
+            --change 'ENV HOME=/home/builder TZ=Etc/UTC DEBIAN_FRONTEND=noninteractive' \
+            --change 'WORKDIR /opt/m2' --change 'CMD ["bash"]' \
+            "$RUNNER_TEMP/m2-state/filesystem.tar" m2-ci-built
+          rm "$RUNNER_TEMP/m2-state/filesystem.tar"
+
+      - name: Test packages and runtime, and create Debian packages
+        env:
+          SAVE_BUILD_CACHE: ${{ inputs.publish }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/m2-results"
+          memory_jobs=$(awk '/MemTotal/ {print int($2 / 2097152)}' /proc/meminfo)
+          jobs=$(nproc)
+          (( memory_jobs < jobs )) && jobs=$memory_jobs
+          (( jobs < 1 )) && jobs=1
+          echo "Test parallelism: $jobs jobs" >> "$GITHUB_STEP_SUMMARY"
+          docker create --name m2-ci --init --cap-drop ALL --security-opt no-new-privileges \
+            --env "CMAKE_BUILD_PARALLEL_LEVEL=$jobs" --env SAVE_BUILD_CACHE \
+            m2-ci-built bash -c 'tar -xf /opt/m2/build-cache.tar -C /opt/m2 && rm /opt/m2/build-cache.tar && exec bash /opt/m2/source/.github/ci/container-build.sh test'
+          set -o pipefail
+          docker start --attach m2-ci 2>&1 | tee "$RUNNER_TEMP/m2-results/test.log"
+
+      - name: Collect logs and Debian packages
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/m2-results" "$RUNNER_TEMP/m2-debs"
+          if docker container inspect m2-ci >/dev/null 2>&1; then
+            docker cp m2-ci:/opt/m2/logs/. "$RUNNER_TEMP/m2-results/" || true
+            docker cp m2-ci:/opt/m2/artifacts/. "$RUNNER_TEMP/m2-debs/" || true
+          fi
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          overwrite: true
+          name: cmake-ubuntu-container-test-logs
           path: ${{ runner.temp }}/m2-results/
 
       - uses: actions/upload-artifact@v7
         if: success()
         with:
-          name: Macaulay2-${{ steps.snapshot.outputs.revision }}-ubuntu-x86_64
+          overwrite: true
+          name: Macaulay2-${{ needs.build.outputs.revision }}-ubuntu-x86_64
           path: ${{ runner.temp }}/m2-debs/*.deb
           if-no-files-found: error
           retention-days: 1
@@ -106,8 +189,8 @@ jobs:
       - name: Publish successful development build
         if: inputs.publish && github.ref == format('refs/heads/{0}', vars.M2_CI_DEVELOPMENT_BRANCH || 'development') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         env:
-          REVISION: ${{ steps.snapshot.outputs.revision }}
-          CACHE_KEY: ${{ steps.snapshot.outputs.key }}
+          REVISION: ${{ needs.build.outputs.revision }}
+          CACHE_KEY: ${{ needs.build.outputs.key }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Flatten the filesystem so successive snapshots do not accumulate old

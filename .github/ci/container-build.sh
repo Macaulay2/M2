@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+stage=${1:-build}
+case "$stage" in build|test) ;; *) echo "Unknown stage: $stage" >&2; exit 2 ;; esac
 
 # These paths must remain the same in the publisher and every consumer.
 source_dir=/opt/m2/source
@@ -22,31 +24,39 @@ if [[ -f /opt/m2/build-cache.tar ]]; then
     rm /opt/m2/build-cache.tar
 fi
 
-python3 /input/.github/ci/prepare_source.py /input "$source_dir" "$build_dir"
-revision=$(python3 -c 'import json; print(json.load(open("/input/.ci-snapshot.json"))["revision"])')
 export CMAKE_BUILD_PARALLEL_LEVEL=${CMAKE_BUILD_PARALLEL_LEVEL:-2}
-# Objects themselves are cached; avoid storing a second copy in ccache.
-export CCACHE_DISABLE=1 OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=1
-cmake -S "$source_dir/M2" -B "$build_dir" -G Ninja \
-    -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF -DGIT_SUBMODULE=OFF \
-    -DSTATIC_BOOST=OFF -DBUILD_TESTING=ON -DWITH_MAPLE=OFF -DRerunExamples=true -DRespectCachedExampleOutput=ON -DCMAKE_INSTALL_PREFIX=/usr \
-    -DPARALLEL_JOBS="$CMAKE_BUILD_PARALLEL_LEVEL" -DCOMMIT_COUNT=0 -DGIT_COMMIT="$revision"
-cmake --build "$build_dir" --target build-libraries build-programs
-cmake --build "$build_dir" --target M2-core M2-emacs M2-unit-tests \
-    memtailor-unit-tests mathic-unit-tests mathicgb-unit-tests
-# Install only stale packages; checks deliberately run on every invocation.
-cmake --build "$build_dir" --target all-packages
-"$build_dir/M2" -q --check 1
-"$build_dir/M2" -q --check 2
-"$build_dir/M2" -q --check 3
-cmake --build "$build_dir" --target M2-tests
-ctest --test-dir "$build_dir" -j 1 --output-on-failure -R unit-tests
-ctest --test-dir "$build_dir" -j 2 --output-on-failure -R ComputationsBook
-(cd "$build_dir" && cpack -G DEB)
-cp "$build_dir"/Macaulay2-*.deb /opt/m2/artifacts/
-printf '%s\n' "$revision" > /opt/m2/revision
+# Bound nested numerical threads; parallelism comes from independent build jobs.
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export CCACHE_DIR=/opt/m2/ccache CCACHE_MAXSIZE=512M CCACHE_COMPILERCHECK=content
+unset CCACHE_DISABLE
+if [[ "$stage" == build ]]; then
+    python3 /input/.github/ci/prepare_source.py /input "$source_dir" "$build_dir"
+    revision=$(python3 -c 'import json; print(json.load(open("/input/.ci-snapshot.json"))["revision"])')
+    cmake -S "$source_dir/M2" -B "$build_dir" -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF -DGIT_SUBMODULE=OFF \
+        -DSTATIC_BOOST=OFF -DBUILD_TESTING=ON -DWITH_MAPLE=OFF \
+        -DRerunExamples=true -DRespectCachedExampleOutput=ON -DCMAKE_INSTALL_PREFIX=/usr \
+        -DPARALLEL_JOBS="$CMAKE_BUILD_PARALLEL_LEVEL" -DCOMMIT_COUNT=0 -DGIT_COMMIT="$revision"
+    cmake --build "$build_dir" --target build-libraries build-programs
+    cmake --build "$build_dir" --target M2-core M2-emacs M2-unit-tests \
+        memtailor-unit-tests mathic-unit-tests mathicgb-unit-tests
+    cmake --build "$build_dir" --target install-packages
+    ccache --show-stats
+    printf '%s\n' "$revision" > /opt/m2/revision
+else
+    # Package checks always run, using the installations from the build job.
+    cmake --build "$build_dir" --target check-packages
+    "$build_dir/M2" -q --check 1
+    "$build_dir/M2" -q --check 2
+    "$build_dir/M2" -q --check 3
+    cmake --build "$build_dir" --target M2-tests
+    ctest --test-dir "$build_dir" -j 1 --output-on-failure -R unit-tests
+    ctest --test-dir "$build_dir" -j "$CMAKE_BUILD_PARALLEL_LEVEL" --output-on-failure -R ComputationsBook
+    (cd "$build_dir" && cpack -G DEB)
+    cp "$build_dir"/Macaulay2-*.deb /opt/m2/artifacts/
+fi
 
-if [[ "${SAVE_BUILD_CACHE:-false}" == true ]]; then
+if [[ "$stage" == build || "${SAVE_BUILD_CACHE:-false}" == true ]]; then
     collect_logs
     tar --format=pax -cf /opt/m2/build-cache.tar -C /opt/m2 source build
     rm -rf "$source_dir" "$build_dir"
