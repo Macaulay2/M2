@@ -201,34 +201,85 @@ default, every ZZ/p ring creation currently pays a factorization of p-1
 6. Other observations
 --------------------------------------------------------------------------------
 
-  - ARingZZp::ARingZZp(size_t p0) stores p = static_cast<int>(p0)
-    (aring-ZZp.cpp:56).  Constructing the class directly, bypassing
-    rawARingZZp's range check, with p0 > INT_MAX truncates silently.
+  Most of what this section first listed was fixed by the work described above:
+  the assertion-free tests, the hand-rolled large-characteristic cases,
+  testMultiply checking only a*0 == 0, the missing a^0 and EXPECT_THROW
+  coverage, and the "commented out because" comments, which went away with the
+  tests they sat on.  What remains:
 
-  - Stale comments in ARingZZpTest.cpp that contradict the code: lines 188-190
-    say "commented out because it appears wrong" and 224-225 say "commented out
-    because it takes too long", but neither test is commented out -- both run
-    and pass.  Likewise ARingTest.hpp:417-422 claims testAdd/testSubtract/
-    testDivide "fail in char 2, ffpack"; the char-2 tests now pass.
+  - ARingZZp::ARingZZp(size_t p0) stores p = static_cast<int>(p0).  Constructing
+    the class directly, bypassing rawARingZZp's range check, with p0 > INT_MAX
+    truncates silently.
 
-  - ARingZZpFFPACK.arithmetic101 is the only arithmetic101 that skips
-    testCoerceToLongInteger.  Nothing marks this as deliberate.
-
-  - ARingZZpFFPACK.create sets 99, 101 and 103 with no EXPECT;
-    ARingZZp.fromStream has no assertion at all and only prints.
-
-  - The eight large-characteristic cases each re-list testCoercions/testNegate/
-    .../testAxioms by hand instead of calling testFiniteField, solely to omit
-    testPower.  Root cause: ARingTest.hpp:376 does
-    "int q = static_cast<int>(R.cardinality())", which overflows for flint's
-    large primes.
-
-  - Harness gaps in ARingTest.hpp: testMultiply checks only a*0 == 0 (and says
-    so in its own TODO); testAxioms omits identities and right distributivity;
-    testPower never tests a^0; there is no EXPECT_THROW anywhere, although
-    divide and invert both throw division_by_zero_error.
+  - ARingTest.hpp still annotates testAdd, testSubtract and testDivide as
+    failing "in char 2, ffpack".  They do not; all three run at p=2 in the
+    matrix.  Left in place rather than churn unrelated commentary.
 
   - Adjacent, outside ZZ/p scope: ARingTest.hpp and RingTest.hpp share the
-    include guard M2_UNITTESTS__RING_TEST_HPP__ and both define ntrials (1000
-    vs 100).  ARingTest.hpp:128 short-circuits on characteristic() == 0, which
-    skips the entire rational half of testCoercions for ZZ, QQ, RR and CC.
+    include guard M2_UNITTESTS__RING_TEST_HPP__ and define different values of
+    ntrials (1000 vs 100).  testCoercions short-circuits on
+    characteristic() == 0, skipping its entire rational half for exactly the
+    characteristic-0 rings where rationals matter.
+
+
+--------------------------------------------------------------------------------
+7. Remaining work (postponed)
+--------------------------------------------------------------------------------
+
+Stage 1 -- tests only, no engine changes -- is done and landed.  Everything
+below is deliberately postponed, not in progress.  It is recorded so the next
+person does not have to rediscover it.
+
+Stage 2, engine fixes.  Each changes engine code and flips or updates a test
+that already exists.  Roughly in order of payoff:
+
+  S1  Replace ARingZZpFFPACK::getMaxModulus().  It returns a hardcoded 0x7fff
+      behind "#if 1", with the real Givaro query stranded in the dead #else;
+      Givaro's Modular<double>::maxCardinality() is 94906266.  Not cosmetic:
+      interface/aring.cpp gates ring creation on it, so Strategy => "Ffpack"
+      errors out above p = 32766 while the backend handles 94.9 million.
+      Note the tripwire cuts both ways --
+      ARingZZpFFPACK.advertisedMaxModulusIsBelowTheRealOne asserts
+      getMaxModulus() < maxCardinality(), so this fix makes them equal and that
+      assertion must become EXPECT_LE or be retired.  That is the
+      characterization test doing its job.
+
+  S2  Validate the flint modulus.  Neither ARingZZpFlint(size_t) nor
+      rawARingZZpFlint checks anything, not primality and not range, while
+      rawARingZZp enforces 2..32749.
+
+  S3  Settle the 2^63 question.  This is not coerceToLongInteger, which is total
+      for every p < 2^64 -- see section 5.  The constraint is
+      Ring::mCharacteristic, a signed long fed from the ARing's size_t, so a
+      ring at the largest prime below 2^64 reports a characteristic of -59
+      through the generic Ring interface.  Enforce p < 2^63, or widen the type.
+
+  S4  Make generator computation lazy.  ARingZZpFlint's constructor factors p-1
+      on every ZZ/p creation and flint is the default strategy; ARingZZp runs an
+      O(p^2) primitive-root search eagerly.  ARingZZpFFPACK is already lazy.
+
+  S5  Guard the ARingZZp narrowing noted in section 6.  Flips
+      ARingZZp.DISABLED_constructorRejectsModulusAboveIntMax.
+
+  S6  Decide ARingZZp::subtract_multiple -- restore the zero check, assert in
+      debug builds, or leave it to callers.  Flips
+      ARingZZp.DISABLED_subtractMultipleByZero.
+
+  S7  Minor: copy() is missing from ARingZZpFlint, so init_set is the only copy
+      operation the three classes have in common.
+
+Stage 3, coverage the ARing layer cannot reach.  promote, lift and eval take a
+Ring* or a RingMap*, so they belong in Macaulay2/packages/EngineTests.m2, which
+already drives the same ZZ/p strategies through the raw interface.  Reachable
+but still untested: ARingZZp::syzygy, ARingZZp::random, ARingZZpFFPACK::field().
+
+Stage 4, the two shared-harness defects in section 6.  Fixing the
+characteristic-0 skip will surface real failures in the ZZ, QQ, RR and CC tests;
+triage those as findings rather than silencing them.
+
+Descoped by decision, recorded so it is not mistaken for an oversight: Galois
+fields.  ARingGFTest.cpp is commented out of both build lists and does not
+compile against the current API, so no GF(p^n) is under test anywhere;
+ARingGFFlintBig and ARingGFM2 have never had a test file; and ARingGFM2::random
+draws rawRandomInt(characteristic()) rather than the field order, so random
+elements never leave the prime subfield.
