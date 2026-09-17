@@ -17,6 +17,7 @@ m4_include(m4/ax_boost_base.m4)
 m4_include(m4/ax_boost_regex.m4)
 m4_include(m4/ax_blas.m4)
 m4_include(m4/ax_lapack.m4)
+m4_include(m4/ax_check_compile_flag.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -841,20 +842,63 @@ AS_IF([test $BUILD_lapack = yes],
      LAPACK_LIBS=-llapack])
 AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
 
-dnl This must come after the Fortran/BLAS/LAPACK detection above: gfortran
-dnl expands --coverage to -lgcov, which would then be baked into FCLIBS and
-dnl BLAS_LIBS and clash with the compiler's own coverage runtime at link time.
 AC_SUBST([GCOV],[no])
 AC_ARG_ENABLE([gcov],
   [AS_HELP_STRING([--enable-gcov],
      [enable gcc/gcov code coverage (implies -O0 and disables stripping)])],
   [GCOV=$enableval])
+dnl kept out of CFLAGS/CXXFLAGS/LDFLAGS: only our own code is instrumented
+AC_SUBST([GCOV_CFLAGS])
+AC_SUBST([GCOV_CXXFLAGS])
+AC_SUBST([GCOV_LDFLAGS])
 AS_IF([test "$GCOV" = yes],
-  [CFLAGS="$CFLAGS --coverage -O0"
-   CXXFLAGS="$CXXFLAGS --coverage -O0"
-   LDFLAGS="$LDFLAGS --coverage"
+  [GCOV_CFLAGS="--coverage -O0"
+   GCOV_CXXFLAGS="--coverage -O0"
+   GCOV_LDFLAGS="--coverage"
+   dnl Record absolute source paths in the .gcno files, so that gcovr can
+   dnl find the sources of objects built in a parent directory.
+   AX_CHECK_COMPILE_FLAG([-fprofile-abs-path],
+     [GCOV_CFLAGS="$GCOV_CFLAGS -fprofile-abs-path"])
+   AC_LANG_PUSH([C++])
+   AX_CHECK_COMPILE_FLAG([-fprofile-abs-path],
+     [GCOV_CXXFLAGS="$GCOV_CXXFLAGS -fprofile-abs-path"])
+   AC_LANG_POP([C++])
    ENABLE_STRIP=no
    OPTIMIZE=no])
+
+dnl gcovr shells out to gcov, which segfaults or errors out on .gcno files
+dnl written by a different compiler version, so derive it from $CXX instead of
+dnl picking up whatever gcov happens to come first on $PATH.
+AC_ARG_VAR([GCOV_EXECUTABLE],
+  [gcov program used by "make coverage-report" (default: derived from CXX)])
+AS_IF([test "$GCOV" = yes && test -z "$GCOV_EXECUTABLE"],
+  [AC_MSG_CHECKING([for a gcov matching $CXX])
+   cxx_prog=`echo "$CXX" | sed -e 's| .*||'`
+   cxx_dir=`AS_DIRNAME(["$cxx_prog"])`
+   cxx_base=`AS_BASENAME(["$cxx_prog"])`
+   AS_CASE([$cxx_base],
+     [*clang*],
+       [dnl clang writes gcov-format data that only llvm's own shim reads back
+        AS_IF([test -x "$cxx_dir/llvm-cov"],
+	  [GCOV_EXECUTABLE="$cxx_dir/llvm-cov gcov"],
+	  [GCOV_EXECUTABLE="llvm-cov gcov"])],
+     [dnl e.g. g++-mp-15 -> gcov-mp-15, x86_64-linux-gnu-g++-11 -> ...-gcov-11
+      gcov_base=`echo "$cxx_base" | sed -e 's|g++|gcov|' -e 's|gcc|gcov|' \
+	-e 's|c++|gcov|' -e 's|^cc$|gcov|'`
+      AS_IF([test "x$gcov_base" = "x$cxx_base"], [gcov_base=gcov])
+      AS_IF([test -x "$cxx_dir/$gcov_base"],
+	[GCOV_EXECUTABLE="$cxx_dir/$gcov_base"],
+	[GCOV_EXECUTABLE=$gcov_base])
+      gcov_version=`$GCOV_EXECUTABLE --version 2>/dev/null | sed -n '1s|.* ||p'`
+      cxx_version=`$cxx_prog -dumpfullversion 2>/dev/null ||
+		   $cxx_prog -dumpversion 2>/dev/null`
+      AS_IF([test -n "$gcov_version" && test "x$gcov_version" != "x$cxx_version"],
+	[gcov_mismatch="$GCOV_EXECUTABLE is version $gcov_version, but $cxx_base is version $cxx_version"])])
+   AC_MSG_RESULT([$GCOV_EXECUTABLE])
+   AS_IF([test -n "$gcov_mismatch"],
+     [AC_MSG_WARN([$gcov_mismatch;
+"make coverage-report" will likely fail -- pass GCOV_EXECUTABLE=... to configure])])])
+AS_IF([test -z "$GCOV_EXECUTABLE"], [GCOV_EXECUTABLE=gcov])
 
 AS_IF([test $BUILD_givaro = no],
     [AC_LANG([C++])
@@ -1949,6 +1993,7 @@ AC_MSG_NOTICE([with  ARCH              = $ARCH])
 AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GCOV              = $GCOV])
+AC_MSG_NOTICE([with  GCOV_EXECUTABLE   = $GCOV_EXECUTABLE])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 AC_MSG_NOTICE([with  GIT_BRANCH        = $GIT_BRANCH])
 AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])

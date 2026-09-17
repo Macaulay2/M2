@@ -38,7 +38,7 @@ ARingZZpFFPACK::ElementType ARingZZpFFPACK::computeGenerator() const
   for (UTT currIntElem = 2; currIntElem < mCharac; currIntElem++)
     {
       ElementType currElem;
-      set_from_long(currElem, currIntElem);
+      set(currElem, (long)currIntElem);
       bool found = true;
       ElementType tmpElem = currElem;
       for (UTT count = 0; count < mCharac - 2; count++)
@@ -101,22 +101,22 @@ void ARingZZpFFPACK::copy(ElementType &result, const ElementType a) const
 }
 
 /// @todo possible problem if type UTT is smaller than an int?
-void ARingZZpFFPACK::set_from_long(ElementType &result, long a) const
+void ARingZZpFFPACK::set(ElementType &result, long a) const
 {
   mFfpackField.init(result, a);
 }
 
-void ARingZZpFFPACK::set_from_mpz(ElementType &result, mpz_srcptr a) const
+void ARingZZpFFPACK::set(ElementType &result, mpz_srcptr a) const
 {
   unsigned long b = static_cast<UTT>(mpz_fdiv_ui(a, mCharac));
   mFfpackField.init(result, b);
 }
 
-bool ARingZZpFFPACK::set_from_mpq(ElementType &result, mpq_srcptr a) const
+bool ARingZZpFFPACK::set(ElementType &result, mpq_srcptr a) const
 {
   ElementType n, d;
-  set_from_mpz(n, mpq_numref(a));
-  set_from_mpz(d, mpq_denref(a));
+  set(n, mpq_numref(a));
+  set(d, mpq_denref(a));
   if (is_zero(d)) return false;
   divide(result, n, d);
   return true;
@@ -192,7 +192,7 @@ void ARingZZpFFPACK::power(ElementType &result,
       if (n < 0)
         throw exc::division_by_zero_error();
       else if (n == 0)
-        set_from_long(result, 1);
+        set(result, 1);
       else
         set_zero(result);
       return;
@@ -205,7 +205,7 @@ void ARingZZpFFPACK::power(ElementType &result,
       n = -n;
     }
   n = n % (mCharac - 1);
-  set_from_long(result, 1);
+  set(result, 1);
   if (n == 0) return;
 
   // Now use doubling algorithm
@@ -231,7 +231,7 @@ void ARingZZpFFPACK::power_mpz(ElementType &result,
       if (mpz_sgn(n) < 0)
         throw exc::division_by_zero_error();
       else if (mpz_sgn(n) == 0)
-        set_from_long(result, 1);
+        set(result, 1);
       else
         set_zero(result);
     }

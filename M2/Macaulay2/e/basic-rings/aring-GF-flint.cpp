@@ -130,7 +130,7 @@ void ARingGFFlint::getGenerator(ElementType& result_gen) const
       fq_zech_init(&mCachedGenerator, mContext);
       if (mCharacteristic == 2 and mDimension == 1)
         // This is currently a bug in flint...
-        set_from_long(mCachedGenerator, 1);
+        set(mCachedGenerator, 1);
       else
         fq_zech_gen(&mCachedGenerator, mContext);
 

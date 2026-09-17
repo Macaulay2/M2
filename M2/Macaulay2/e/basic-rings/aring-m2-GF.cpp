@@ -131,7 +131,7 @@ void ARingGFM2::fromSmallIntegerCoefficients(
   for (long i = 0; i < poly.size(); i++)
     if (poly[i] != 0)
       {
-        set_from_long(a, poly[i]);
+        set(a, poly[i]);
         power(b, mGF.generatorExponent(), i);
         mult(a, a, b);
         add(result, result, a);

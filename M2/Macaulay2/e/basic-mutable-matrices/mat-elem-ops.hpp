@@ -54,7 +54,7 @@ class MatElementaryOps<DMat<RT> >
         --row;
         if (!mat.ring().is_zero(mat.entry(row, col)))
           {
-            mat.ring().set(result, mat.entry(row, col));
+            mat.ring().copy(result, mat.entry(row, col));
             return row;
           }
       }
@@ -192,8 +192,8 @@ class MatElementaryOps<DMat<RT> >
         ring.mult(g2, b2, mat.entry(r2,c));
         ring.add(g1, g1, g2);
 
-        ring.set(mat.entry(r1,c), f1);
-        ring.set(mat.entry(r2,c), g1);
+        ring.copy(mat.entry(r1,c), f1.value());
+        ring.copy(mat.entry(r2,c), g1.value());
       }
   }
 
@@ -229,8 +229,8 @@ class MatElementaryOps<DMat<RT> >
         ring.mult(g2, b2, mat.entry(r, c2));
         ring.add(g1, g1, g2);
 
-        ring.set(mat.entry(r, c1), f1);
-        ring.set(mat.entry(r, c2), g1);
+        ring.copy(mat.entry(r, c1), f1.value());
+        ring.copy(mat.entry(r, c2), g1.value());
       }
   }
 
@@ -446,8 +446,8 @@ class MatElementaryOps<DMat<RT> >
 
     Element pivot(M.ring()), coef(M.ring()), f(M.ring()), zero(M.ring()),
         one(M.ring());
-    M.ring().set_from_long(zero, 0);
-    M.ring().set_from_long(one, 1);
+    M.ring().set(zero, 0);
+    M.ring().set(one, 1);
 
     interchange_columns(M, c, nc);
     interchange_rows(M, r, nr);
@@ -480,8 +480,8 @@ class MatElementaryOps<DMat<RT> >
     size_t nc = M.numColumns() - 1;
 
     Element one(M.ring()), minus_one(M.ring());
-    M.ring().set_from_long(one, 1);
-    M.ring().set_from_long(minus_one, -1);
+    M.ring().set(one, 1);
+    M.ring().set(minus_one, -1);
 
     // After using the pivot element, it is moved to [nrows-1,ncols-1]
     // and nrows and ncols are decremented.
@@ -556,7 +556,7 @@ class MatElementaryOps<DMat<RT> >
     // assert(c1-c0+1<=result.numColumns());
     for (size_t r = r0; r <= r1; r++)
       for (size_t c = c0; c <= c1; c++)
-        mat.ring().set(result.entry(r - r0, c - c0), mat.entry(r, c));
+        mat.ring().copy(result.entry(r - r0, c - c0), mat.entry(r, c));
   }
 
   static void setFromSubmatrix(const Mat& mat,
@@ -569,8 +569,8 @@ class MatElementaryOps<DMat<RT> >
     result.resize(rows->len, cols->len);  // resets to a zero matrix
     for (size_t r = 0; r < rows->len; r++)
       for (size_t c = 0; c < cols->len; c++)
-        mat.ring().set(result.entry(r, c),
-                       mat.entry(rows->array[r], cols->array[c]));
+        mat.ring().copy(result.entry(r, c),
+                        mat.entry(rows->array[r], cols->array[c]));
   }
 
   static void setFromSubmatrix(const Mat& mat, M2_arrayint cols, Mat& result)
@@ -580,17 +580,17 @@ class MatElementaryOps<DMat<RT> >
     result.resize(mat.numRows(), cols->len);  // resets to a zero matrix
     for (size_t r = 0; r < mat.numRows(); r++)
       for (size_t c = 0; c < cols->len; c++)
-        mat.ring().set(result.entry(r, c), mat.entry(r, cols->array[c]));
+        mat.ring().copy(result.entry(r, c), mat.entry(r, cols->array[c]));
   }
 
   static void getEntry(const Mat& mat, size_t r, size_t c, ElementType& result)
   {
-    mat.ring().set(result, mat.entry(r, c));
+    mat.ring().copy(result, mat.entry(r, c));
   }
 
   static void setEntry(Mat& mat, size_t r, size_t c, const ElementType& a)
   {
-    mat.ring().set(mat.entry(r, c), a);
+    mat.ring().copy(mat.entry(r, c), a);
   }
 
  private:

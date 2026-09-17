@@ -1,43 +1,14 @@
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <memory>
+#include "basic-rings/aring-RRi.hpp"
+
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "basic-rings/aring-RRi.hpp"
-#include "basic-rings/aring-RRR.hpp"
-#include "basic-rings/aring-glue.hpp"
+#include <string>
+
 #include "unit-tests/ARingTest.hpp"
+#include "interface/matrix.cpp"
 
-// For debugging purposes, use
-//mpfr_printf("a=(%.20Rf,%.20Rf)\n",&(a.left), &(a.right));
-
-bool almostEqual(const M2::ARingRRi& R,
-                 int nbits,
-                 const M2::ARingRRi::ElementType& a,
-                 const M2::ARingRRi::ElementType& b)
-{
-    mpfr_t epsilon;
-    mpfr_init2(epsilon, R.get_precision());
-    mpfr_set_ui_2exp(epsilon, 1, -nbits, MPFR_RNDN);
-    
-    mpfr_t c,d;
-    mpfr_init2(c, R.get_precision());
-    mpfr_init2(d, R.get_precision());
-    
-    mpfr_sub(c,&(a.left),&(b.left),MPFR_RNDN);
-    mpfr_sub(d,&(a.right),&(b.right),MPFR_RNDN);
-    
-    bool retL = mpfr_cmpabs(c, epsilon) < 0,
-         retR = mpfr_cmpabs(d, epsilon) < 0;
-    
-    mpfr_clear(d);
-    mpfr_clear(c);
-    mpfr_clear(epsilon);
-    return retL and retR;
-}
+#include<iostream>
 
 template <>
 void getElement<M2::ARingRRi>(const M2::ARingRRi& R,
@@ -45,75 +16,281 @@ void getElement<M2::ARingRRi>(const M2::ARingRRi& R,
                               M2::ARingRRi::ElementType& result)
 {
   if (index < 50)
-    R.set_from_long(result, index - 25);
+    R.set(result, index - 25);
   else
     R.random(result);
 }
 
-TEST(ARingRRi, create)
+namespace {
+
+class ARingRRiFixture : public ::testing::Test
 {
-  M2::ARingRRi R(100);
+ protected:
+  using Ring = M2::ARingRRi;
+  Ring R {100};
+
+  void SetUp() override { seedRandom(0x525269); }
+
+  std::string describe(const Ring::ElementType& value) const
+  {
+    char text[256];
+    mpfr_snprintf(
+        text, sizeof(text), "[%.35Rg, %.35Rg]", &value.left, &value.right);
+    return text;
+  }
+
+  bool numeric(const Ring::ElementType& value) const
+  {
+    return !mpfr_nan_p(&value.left) && !mpfr_nan_p(&value.right);
+  }
+
+  ::testing::AssertionResult contains(const Ring::ElementType& outer,
+                                      const Ring::ElementType& inner) const
+  {
+    if (numeric(outer) && numeric(inner) &&
+        mpfr_cmp(&outer.left, &inner.left) <= 0 &&
+        mpfr_cmp(&outer.right, &inner.right) >= 0)
+      return ::testing::AssertionSuccess();
+    return ::testing::AssertionFailure()
+           << describe(outer) << " does not contain " << describe(inner);
+  }
+
+  // Different expressions can have different interval widths because repeated
+  // occurrences of an operand are treated independently. Their ranges overlap.
+  ::testing::AssertionResult overlaps(const Ring::ElementType& a,
+                                      const Ring::ElementType& b) const
+  {
+    if (numeric(a) && numeric(b) && mpfr_cmp(&a.left, &b.right) <= 0 &&
+        mpfr_cmp(&b.left, &a.right) <= 0)
+      return ::testing::AssertionSuccess();
+    return ::testing::AssertionFailure()
+           << "disjoint ranges: " << describe(a) << " and " << describe(b);
+  }
+
+  ::testing::AssertionResult hasBounds(const Ring::ElementType& value,
+                                       double left,
+                                       double right) const
+  {
+    if (numeric(value) && mpfr_cmp_d(&value.left, left) == 0 &&
+        mpfr_cmp_d(&value.right, right) == 0)
+      return ::testing::AssertionSuccess();
+    return ::testing::AssertionFailure()
+           << "expected [" << left << ", " << right << "], got "
+           << describe(value);
+  }
+};
+
+TEST_F(ARingRRiFixture, create)
+{
+  // Construction retains the requested precision and identifies a real interval
+  // ring.
   EXPECT_EQ(ringName(R), "ARRi_100");
   EXPECT_EQ(R.characteristic(), 0);
+  EXPECT_EQ(R.get_precision(), 100);
 }
 
-void testRingNegateRRi(const M2::ARingRRi& R, const M2::ARingRRR& S, int ntrials)
-{
-    ARingElementGenerator<M2::ARingRRi> gen(R);
-    M2::ARingRRi::ElementType a, b, c;
-    R.init(a);
-    R.init(b);
-    R.init(c);
-    
-    M2::ARingRRR::ElementType d;
-    S.init(d);
-    for (int i = 0; i < ntrials; i++)
-    {
-        // test: (-a) + (a) == 0
-        gen.nextElement(a);
-        R.negate(b,a);
-        R.add(c,a,b);
-        R.midpoint(d,c);
-        EXPECT_TRUE(S.is_zero(d));
-    }
-    S.clear(d);
-    R.clear(c);
-    R.clear(b);
-    R.clear(a);
-}
-
-TEST(ARingRRi, negate)
+TEST(ARingRRi, comparison)
 {
     M2::ARingRRi R(100);
     M2::ARingRRR S(100);
-    testRingNegateRRi(R, S, ntrials);
+    M2::ARingRRi::ElementType a, b, c, d, e, f, g, h;
+    M2::ARingRRR::ElementType m, n;
+    mpz_t p;
+    mpq_t q;
+    double u, v;
+    mpfr_t r;
+    mpfi_t s;
+
+    R.init(a);
+    R.init(b);
+    R.init(c);
+    R.init(d);
+    R.init(e);
+    R.init(f);
+    R.init(g);
+    R.init(h);
+
+    S.init(m);
+    S.init(n);
+
+    R.set_from_doubles(a,0,0);
+    R.set_from_doubles(b,0,1);
+    R.set_from_doubles(c,0,-1);
+    R.set_from_doubles(d,-1,1);
+
+    EXPECT_TRUE(R.is_member((long)0,a));
+    EXPECT_FALSE(R.is_unit(a));
+    EXPECT_FALSE(R.is_unit(b));
+    EXPECT_FALSE(R.is_unit(c));
+    EXPECT_FALSE(R.is_unit(d));
+
+    EXPECT_TRUE(R.is_zero(a));
+    EXPECT_FALSE(R.is_zero(b));
+    EXPECT_FALSE(R.is_zero(c));
+    EXPECT_FALSE(R.is_zero(d));
+
+    R.set_from_doubles(a,1,2);
+    R.set_from_doubles(b,1,3);
+    R.set_from_doubles(c,2,3);
+    R.set_from_doubles(d,4,5);
+    R.set_from_doubles(e,3,2);
+
+    EXPECT_EQ(R.computeHashValue(c),2622094);
+    EXPECT_TRUE(R.is_equal(a,a));
+    EXPECT_FALSE(R.is_equal(a,b));
+    EXPECT_FALSE(R.is_equal(a,c));
+    EXPECT_FALSE(R.is_equal(a,d));
+    EXPECT_FALSE(R.is_equal(b,c));
+    EXPECT_FALSE(R.is_equal(b,d));
+    EXPECT_FALSE(R.is_equal(c,d));
+    EXPECT_TRUE(R.is_equal(c,e));
+
+    R.set(f,2);
+    R.set(g,2);
+    R.set(h,3);
+
+    EXPECT_TRUE(R.is_equal(f,g));
+    EXPECT_FALSE(R.is_equal(f,h));
+
+    EXPECT_EQ(R.compare_elems(a,d),-1);
+    EXPECT_EQ(R.compare_elems(d,c),1);
+    EXPECT_EQ(R.compare_elems(b,c),0);
+    EXPECT_EQ(R.compare_elems(f,g),0);
+    EXPECT_EQ(R.compare_elems(f,d),-1);
+    EXPECT_EQ(R.compare_elems(h,a),1);
+
+    R.set_left(a,3);
+
+    EXPECT_TRUE(R.is_empty(a));
+    EXPECT_FALSE(R.is_empty(b));
+    EXPECT_FALSE(R.is_empty(h));
+
+    EXPECT_TRUE(R.is_member((long)2,b));
+    EXPECT_FALSE(R.is_member((long)4,b));
+    EXPECT_TRUE(R.is_member(2.3,e));
+    EXPECT_FALSE(R.is_member(1.6,e));
+
+    S.set(m,2.4);
+    S.set(n,3.6);
+
+    EXPECT_TRUE(R.is_member(m,e));
+    EXPECT_FALSE(R.is_member(n,e));
+
+    R.set(a,b);
+    R.copy(d,b);
+
+    EXPECT_TRUE(R.is_equal(a,b));
+    EXPECT_TRUE(R.is_equal(b,d));
+    EXPECT_FALSE(R.is_equal(a,c));
+    EXPECT_FALSE(R.is_equal(d,e));
+
+    R.set_from_doubles(a,1,3);
+    R.set_from_doubles(b,2,3);
+    R.set_from_doubles(c,1,2);
+    R.set_from_doubles(d,-1,0);
+    R.set_from_doubles(e,4,5);
+
+    EXPECT_TRUE(R.is_subset(b,a));
+    EXPECT_TRUE(R.is_subset(c,a));
+    EXPECT_FALSE(R.is_subset(d,a));
+    EXPECT_FALSE(R.is_subset(e,a));
+
+    mpz_init(p);
+    mpz_set_si(p,2);
+
+    EXPECT_TRUE(R.is_member(p,a));
+    EXPECT_TRUE(R.is_member(p,b));
+    EXPECT_FALSE(R.is_member(p,e));
+
+    mpq_init(q);
+    mpq_set_si(q,7,4);
+
+    EXPECT_TRUE(R.is_member(q,a));
+    EXPECT_FALSE(R.is_member(q,e));
+
+    R.set(a,p);
+    EXPECT_TRUE(R.is_member(p,a));
+
+    mpq_init(q);
+    mpq_set_si(q,7,5);
+
+    R.set(b,q);
+    EXPECT_TRUE(R.is_member(q,b));
+
+    u = 5./3.;
+
+    R.set(c,u);
+    EXPECT_TRUE(R.is_member(u,c));
+    v = R.coerceToDouble(c);
+    EXPECT_EQ(u,v);
+
+    mpfr_init(r);
+    mpfr_set_si(r,4.3,MPFR_RNDN);
+
+    mpfi_init(s);
+    mpfi_set_si(s,2.3);
+
+    R.set(d,r);
+    R.set(e,s);
+
+    R.is_member(4.3,d);
+    R.is_member(2.3,e);
+
+    R.clear(a);
+    R.clear(b);
+    R.clear(c);
+    R.clear(d);
+    R.clear(e);
+    R.clear(f);
+    R.clear(g);
+    R.clear(h);
+    S.clear(m);
+    S.clear(n);
+
+    mpz_clear(p);
+    mpq_clear(q);
+
+    mpfr_clear(r);
+    mpfi_clear(s);
 }
 
-TEST(ARingRRi, add)
+TEST(ARingRRi, leftandright)
 {
-  M2::ARingRRi R(100);
-  ARingElementGenerator<M2::ARingRRi> gen(R);
-  M2::ARingRRi::ElementType a, b, c, d, e;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
-  R.init(e);
-  for (int i = 0; i < ntrials; i++)
-    {
-      // test: (a+b) + (-b) == a
-      gen.nextElement(a);
-      gen.nextElement(b);
-      R.add(c, a, b);
-      R.negate(d, b);
-      R.add(e, c, d);  // should be a
-      EXPECT_TRUE(R.is_subset(a,e));
-    }
-  R.clear(e);
-  R.clear(d);
-  R.clear(c);
-  R.clear(b);
-  R.clear(a);
+    M2::ARingRRi R(100);
+    M2::ARingRRR S(100);
+    M2::ARingRRi::ElementType a, b, c, d, e, f, g, h;
+    M2::ARingRRR::ElementType m, n;
+    mpz_t p;
+    mpq_t q;
+    double u, v;
+    mpfr_t r;
+    mpfi_t s;
+
+    R.init(a);
+
+    S.init(m);
+    S.init(n);
+
+    R.set_from_doubles(a,1,3);
+    S.set(m,2.3);
+
+    R.set_left(a,m);
+    R.left(n,a);
+
+    EXPECT_TRUE(S.is_equal(n,m));
+
+    S.set(m,1);
+    R.set_right(a,m);
+
+    EXPECT_TRUE(R.is_empty(a));
+
+    R.set_left(a,1.5);
+    R.set_right(a,2.5);
+
+    S.set(n,1);
+    R.diameter(m,a);
+
+    EXPECT_TRUE(S.is_equal(m,n));
 }
 
 TEST(ARingRRi, subtract)
@@ -126,7 +303,7 @@ TEST(ARingRRi, subtract)
   R.init(b);
   R.init(c);
   R.init(e);
-    
+
   M2::ARingRRR::ElementType f;
   S.init(f);
   for (int i = 0; i < ntrials; i++)
@@ -149,136 +326,257 @@ TEST(ARingRRi, subtract)
   R.clear(a);
 }
 
-TEST(ARingRRi, multDivide)
+TEST_F(ARingRRiFixture, arithmeticExamples)
 {
-  M2::ARingRRi R(100);
-  ARingElementGenerator<M2::ARingRRi> gen(R);
-  M2::ARingRRi::ElementType a, b, c, d;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
-  for (int i = 0; i < ntrials; i++)
-    {
-      // test: (a*b) // b == a
-      gen.nextElement(a);
-      gen.nextElement(b);
-      R.mult(c, a, b);
-      if (R.is_member(0L,b))
-          EXPECT_TRUE(R.is_member(0L,c));
-      else
-        {
-          R.divide(d, c, b);
-          EXPECT_TRUE(R.is_subset(a,d));
-        }
-    }
-  R.clear(d);
-  R.clear(c);
-  R.clear(b);
-  R.clear(a);
+  // Dyadic endpoints make the expected interval bounds exactly representable.
+  // Each case starts with fresh operands, including the aliasing examples.
+  {
+    // Negation reverses the endpoint order as well as the signs.
+    SCOPED_TRACE("negate: interval crosses zero");
+    Ring::Element a {R}, result {R};
+    R.set_from_doubles(a, -2, 3);
+    R.negate(result, a);
+    EXPECT_TRUE(hasBounds(result, -3, 2));
+    R.negate(a, a);
+    EXPECT_TRUE(hasBounds(a, -3, 2));
+  }
+  {
+    // Independent intervals add and subtract endpoint bounds.
+    SCOPED_TRACE("add/subtract: disjoint positive intervals");
+    Ring::Element a {R}, b {R}, result {R};
+    R.set_from_doubles(a, 1, 2);
+    R.set_from_doubles(b, 3, 4);
+    R.add(result, a, b);
+    EXPECT_TRUE(hasBounds(result, 4, 6));
+    R.subtract(result, a, b);
+    EXPECT_TRUE(hasBounds(result, -3, -1));
+  }
+  {
+    // Multiplication takes the smallest and largest endpoint products.
+    SCOPED_TRACE("multiply: mixed signs");
+    Ring::Element a {R}, b {R}, result {R};
+    R.set_from_doubles(a, -2, 3);
+    R.set_from_doubles(b, 4, 5);
+    R.mult(result, a, b);
+    EXPECT_TRUE(hasBounds(result, -10, 15));
+  }
+  {
+    // Division and inversion use an interval that excludes zero.
+    SCOPED_TRACE("divide/invert: positive denominator");
+    Ring::Element a {R}, b {R}, result {R};
+    R.set_from_doubles(a, 2, 4);
+    R.set_from_doubles(b, 2, 4);
+    R.divide(result, a, b);
+    EXPECT_TRUE(hasBounds(result, 0.5, 2));
+    R.invert(result, b);
+    EXPECT_TRUE(hasBounds(result, 0.25, 0.5));
+  }
+  {
+    // Point intervals have the ordinary integer power values, including 0^0.
+    SCOPED_TRACE("power: exact point values");
+    Ring::Element a {R}, result {R};
+    R.set(a, -2);
+    R.power(result, a, 3);
+    EXPECT_TRUE(hasBounds(result, -8, -8));
+    R.set_zero(a);
+    R.power(result, a, 0);
+    EXPECT_TRUE(hasBounds(result, 1, 1));
+  }
 }
 
-TEST(ARingRRi, axioms)
+TEST_F(ARingRRiFixture, negate)
 {
-  M2::ARingRRi R(100);
-  M2::ARingRRR S(100);
-  ARingElementGenerator<M2::ARingRRi> gen(R);
-  M2::ARingRRi::ElementType a, b, c, d, e;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
-  R.init(e);
-    
-  for (int i = 0; i < ntrials; i++)
+  // Adding an interval to its negation must enclose zero, even for wide
+  // intervals.
+  SCOPED_TRACE("seed 0x525269");
+  ARingElementGenerator<Ring> gen(R);
+  Ring::Element a {R}, b {R}, result {R}, zero {R};
+  R.set_zero(zero);
+  for (int trial = 0; trial < ntrials; ++trial)
+    {
+      gen.nextElement(a);
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << trial << ", a=" << describe(a));
+      R.negate(b, a);
+      R.add(result, a, b);
+      EXPECT_TRUE(contains(result, zero));
+    }
+}
+
+TEST_F(ARingRRiFixture, add)
+{
+  // Cancellation may widen an interval; it must still contain the original
+  // range.
+  SCOPED_TRACE("seed 0x525269");
+  ARingElementGenerator<Ring> gen(R);
+  Ring::Element a {R}, b {R}, sum {R}, negative {R}, result {R};
+  for (int trial = 0; trial < ntrials; ++trial)
+    {
+      gen.nextElement(a);
+      gen.nextElement(b);
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << trial << ", a=" << describe(a)
+                   << ", b=" << describe(b));
+      R.add(sum, a, b);
+      R.negate(negative, b);
+      R.add(result, sum, negative);
+      EXPECT_TRUE(contains(result, a));
+    }
+}
+
+TEST_F(ARingRRiFixture, subtract)
+{
+  // Undoing subtraction encloses the input; subtracting a product encloses
+  // zero.
+  SCOPED_TRACE("seed 0x525269");
+  ARingElementGenerator<Ring> gen(R);
+  Ring::Element a {R}, b {R}, difference {R}, result {R}, zero {R};
+  R.set_zero(zero);
+  for (int trial = 0; trial < ntrials; ++trial)
+    {
+      gen.nextElement(a);
+      gen.nextElement(b);
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << trial << ", a=" << describe(a)
+                   << ", b=" << describe(b));
+      {
+        SCOPED_TRACE("subtract then add");
+        R.subtract(difference, a, b);
+        R.add(result, difference, b);
+        EXPECT_TRUE(contains(result, a));
+      }
+      {
+        SCOPED_TRACE("subtract_multiple: accumulator starts at the product");
+        R.mult(result, a, b);
+        R.subtract_multiple(result, a, b);
+        EXPECT_TRUE(contains(result, zero));
+      }
+    }
+}
+
+TEST_F(ARingRRiFixture, multDivide)
+{
+  // Multiplication followed by division encloses the input when zero is
+  // excluded.
+  SCOPED_TRACE("seed 0x525269");
+  ARingElementGenerator<Ring> gen(R);
+  Ring::Element a {R}, b {R}, product {R}, result {R}, zero {R};
+  R.set_zero(zero);
+  for (int trial = 0; trial < ntrials; ++trial)
+    {
+      gen.nextElement(a);
+      gen.nextElement(b);
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << trial << ", a=" << describe(a)
+                   << ", b=" << describe(b));
+      R.mult(product, a, b);
+      if (R.is_member(0L, b))
+        EXPECT_TRUE(contains(product, zero));
+      else
+        {
+          R.divide(result, product, b);
+          EXPECT_TRUE(contains(result, a));
+        }
+    }
+}
+
+TEST_F(ARingRRiFixture, axioms)
+{
+  // Commutativity preserves bounds. Reassociated and distributed expressions
+  // must overlap, since interval dependency can give them different widths.
+  SCOPED_TRACE("seed 0x525269");
+  ARingElementGenerator<Ring> gen(R);
+  Ring::Element a {R}, b {R}, c {R}, left {R}, right {R}, temp {R};
+  for (int trial = 0; trial < ntrials; ++trial)
     {
       gen.nextElement(a);
       gen.nextElement(b);
       gen.nextElement(c);
-      // Test commutativity
-      // test: a*b = b*a
-      // test: a+b == b+a
-      R.add(d, a, b);
-      R.add(e, b, a);
-      EXPECT_TRUE(R.is_equal(d,e));
-      R.mult(d, a, b);
-      R.mult(e, b, a);
-      EXPECT_TRUE(R.is_equal(d,e));
-
-      // Test associativity
-      // test: a+(b+c) == (a+b)+c
-      // test: a*(b*c) == (a*b)*c
-      R.add(e, b, c);
-      R.add(d, a, e);  // a+(b+c)
-      R.add(e, a, b);
-      R.add(e, e, c);  // (a+b)+c
-      EXPECT_TRUE(almostEqual(R,-94,d,e));
-
-      R.mult(e, b, c);
-      R.mult(d, a, e);  // a*(b*c)
-      R.mult(e, a, b);
-      R.mult(e, e, c);  // (a*b)*c
-        
-      EXPECT_TRUE(almostEqual(R,-94,d,e));
-
-      // Test distributivity
-      // test: a*(b+c) == a*b + a*c
-      R.add(e, b, c);
-      R.mult(d, a, e);  // a*(b+c)
-      R.mult(b, a, b);
-      R.mult(c, a, c);
-      R.add(e, b, c);  // a*b + a*c
-        
-      EXPECT_TRUE(almostEqual(R,-94,d,e));
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << trial << ", a=" << describe(a)
+                   << ", b=" << describe(b) << ", c=" << describe(c));
+      {
+        // Swapping operands does not change interval dependency.
+        SCOPED_TRACE("commutativity");
+        R.add(left, a, b);
+        R.add(right, b, a);
+        EXPECT_TRUE(R.is_equal(left, right));
+        R.mult(left, a, b);
+        R.mult(right, b, a);
+        EXPECT_TRUE(R.is_equal(left, right));
+      }
+      {
+        // Different rounding sequences must describe compatible ranges.
+        SCOPED_TRACE("associativity");
+        R.add(temp, b, c);
+        R.add(left, a, temp);
+        R.add(temp, a, b);
+        R.add(right, temp, c);
+        EXPECT_TRUE(overlaps(left, right));
+        R.mult(temp, b, c);
+        R.mult(left, a, temp);
+        R.mult(temp, a, b);
+        R.mult(right, temp, c);
+        EXPECT_TRUE(overlaps(left, right));
+      }
+      {
+        // Distribution repeats a, which can widen the right-hand enclosure.
+        SCOPED_TRACE("distributivity");
+        R.add(temp, b, c);
+        R.mult(left, a, temp);
+        R.mult(temp, a, b);
+        R.mult(right, a, c);
+        R.add(right, temp, right);
+        EXPECT_TRUE(overlaps(left, right));
+      }
     }
-  R.clear(e);
-  R.clear(d);
-  R.clear(c);
-  R.clear(b);
-  R.clear(a);
 }
 
-TEST(ARingRRi, power_and_invert)
+TEST_F(ARingRRiFixture, power_and_invert)
 {
-  M2::ARingRRi R(100);
-  ARingElementGenerator<M2::ARingRRi> gen(R);
-  M2::ARingRRi::ElementType a, b, c, d;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  R.init(d);
-  mpz_t gmp1;
-  mpz_init(gmp1);
-  
-  for (int i = 0; i < ntrials; i++)
+  // Power interfaces agree for nonnegative exponents. A reciprocal of an
+  // interval excluding zero gives a product containing one.
+  SCOPED_TRACE("seed 0x525269");
+  ARingElementGenerator<Ring> gen(R);
+  Ring::Element a {R}, b {R}, c {R}, result {R}, one {R};
+  R.set(one, 1);
+  mpz_t exponent;
+  mpz_init(exponent);
+  for (int trial = 0; trial < ntrials; ++trial)
     {
       gen.nextElement(a);
-      // TODO: what should the answer here be?
-      // EXPECT_TRUE(R->is_equal(R->power(a, 0), R->one())); // 0^0 == 1 too?
-      R.power(b, a, 1);
-      EXPECT_TRUE(R.is_equal(b, a));
-
-      int e1 = rawRandomInt(10) + 1;
-      int e2 = rawRandomInt(10) + 1;
-      R.power(b, a, e1);
-      R.power(c, a, e2);
-      R.power(d, a, e1 + e2);
-      R.mult(c, b, c);
-      EXPECT_TRUE(almostEqual(R,-94,c,d));
-
-      // Make sure that powers via mpz work (at least for small exponents)
-      mpz_set_si(gmp1, e1);
-      R.power_mpz(d, a, gmp1);
-      EXPECT_TRUE(R.is_equal(d, b));
+      const int e1 = rawRandomInt(10) + 1;
+      const int e2 = rawRandomInt(10) + 1;
+      SCOPED_TRACE(::testing::Message()
+                   << "trial " << trial << ", a=" << describe(a)
+                   << ", exponents=" << e1 << ", " << e2);
+      {
+        // Repeated operands may widen products, but their enclosures overlap.
+        SCOPED_TRACE("power: compatible enclosures and exponent interfaces");
+        R.power(b, a, 0);
+        EXPECT_TRUE(hasBounds(b, 1, 1));
+        R.power(b, a, 1);
+        EXPECT_TRUE(R.is_equal(b, a));
+        R.power(b, a, e1);
+        R.power(c, a, e2);
+        R.mult(c, b, c);
+        R.power(result, a, e1 + e2);
+        EXPECT_TRUE(overlaps(c, result));
+        mpz_set_si(exponent, e1);
+        R.power_mpz(result, a, exponent);
+        EXPECT_TRUE(R.is_equal(result, b));
+      }
+      if (!R.is_member(0L, a))
+        {
+          // Reciprocal cancellation requires the entire interval to exclude
+          // zero.
+          SCOPED_TRACE("invert: zero excluded");
+          R.invert(b, a);
+          R.mult(result, a, b);
+          EXPECT_TRUE(contains(result, one));
+        }
     }
-  mpz_clear(gmp1);
-  R.clear(d);
-  R.clear(c);
-  R.clear(b);
-  R.clear(a);
+  mpz_clear(exponent);
 }
 
-// Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
-// indent-tabs-mode: nil
-// End:
+}  // namespace

@@ -30,7 +30,7 @@ class ARingRRi : public SimpleARing<ARingRRi>
   typedef __mpfi_struct elem;
   typedef elem ElementType;
 
-  ARingRRi(unsigned long precision) : mPrecision(precision) {}
+  ARingRRi(unsigned long precision = 53) : mPrecision(precision) {}
   // ring informational
   size_t characteristic() const { return 0; }
   unsigned long get_precision() const { return mPrecision; }
@@ -46,7 +46,7 @@ class ARingRRi : public SimpleARing<ARingRRi>
   // ElementType informational ////
   /////////////////////////////////
 
-  bool is_unit(const ElementType &f) const { return !is_zero(f); }
+  bool is_unit(const ElementType &f) const { return !is_member((long)0,f); }
   bool is_zero(const ElementType &f) const { return mpfr_cmp_si(&(f.left), 0) == 0 and mpfr_cmp_si(&(f.right), 0) == 0; }
   bool is_equal(const ElementType &f, const ElementType &g) const
   {
@@ -121,43 +121,134 @@ class ARingRRi : public SimpleARing<ARingRRi>
     mpfi_set(&result, &a);
   }
 
-  void set_from_long(ElementType &result, long a) const
+  void set(ElementType &result, long a) const
   {
     mpfi_set_si(&result, a);
   }
+  void set(ElementType &result, int a) const { set(result, (long)a); }
 
   void set_var(ElementType &result, int v) const
   {
     mpfi_set_si(&result, v);
   }
 
-  void set_from_mpz(ElementType &result, mpz_srcptr a) const
+  void set(ElementType &result, mpz_srcptr a) const
   {
     mpfi_set_z(&result, a);
   }
 
-  bool set_from_mpq(ElementType &result, mpq_srcptr a) const
+  bool set(ElementType &result, mpq_srcptr a) const
   {
     mpfi_set_q(&result, a);
     return true;
   }
 
-  bool set_from_double(ElementType &result, double a) const
+  bool set(ElementType &result, double a) const
   {
     mpfi_set_d(&result, a);
     return true;
   }
-    
-  bool set_from_BigReal(ElementType &result, gmp_RR a) const
+
+  bool set_from_doubles(ElementType &result, double left, double right) const
+  {
+    mpfi_interv_d(&result, left, right);
+    return true;
+  }
+
+  bool set(ElementType &result, gmp_RR a) const
   {
     mpfi_set_fr(&result, a);
     return true;
   }
     
-  bool set_from_Interval(ElementType &result, gmp_RRi a) const
+  bool set(ElementType &result, gmp_RRi a) const
   {
     mpfi_set(&result, a);
     return true;
+  }
+
+  bool set_left(ElementType &result, ARingRRR::ElementType &a) const
+  {
+      mpfr_set(&(result.left),&a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, long a) const
+  {
+      mpfr_set_si(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, int a) const
+  {
+      set_left(result,(long)a);
+      return true;
+  }
+
+  bool set_left(ElementType &result, mpz_srcptr a) const
+  {
+      mpfr_set_z(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, mpq_srcptr a) const
+  {
+      mpfr_set_q(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, double a) const
+  {
+      mpfr_set_d(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_left(ElementType &result, gmp_RR a) const
+  {
+      mpfr_set(&(result.left),a,MPFR_RNDD);
+      return true;
+  }
+
+  bool set_right(ElementType &result, ARingRRR::ElementType &a) const
+  {
+      mpfr_set(&(result.right),&a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, long a) const
+  {
+      mpfr_set_si(&(result.right),a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, int a) const
+  {
+      set_right(result,(long)a);
+      return true;
+  }
+
+  bool set_right(ElementType &result, mpz_srcptr a) const
+  {
+      mpfr_set_z(&(result.right),a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, mpq_srcptr a) const
+  {
+      mpfr_set_q(&(result.right),a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, double a) const
+  {
+      mpfr_set_d(&(result.right),a,MPFR_RNDU);
+      return true;
+  }
+
+  bool set_right(ElementType &result, gmp_RR a) const
+  {
+      mpfr_set(&(result.right),a,MPFR_RNDU);
+      return true;
   }
 
   // arithmetic

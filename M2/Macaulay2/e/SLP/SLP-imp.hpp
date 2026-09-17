@@ -159,7 +159,7 @@ void SLEvaluatorConcrete<RT>::computeNextNode()
   switch (*nIt++)
     {
       case SLProgram::MProduct:
-        ring().set_from_long(v, 1);
+        ring().set(v, 1);
         for (int i = 0; i < *numInputsIt; i++)
           ring().mult(v, v, *(vIt + (*inputPositionsIt++)));
         numInputsIt++;
@@ -418,13 +418,13 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   typedef MatElementaryOps<DMat<RT> > MatOps;
 
   RealElement t_step(R), min_step2(R), epsilon2(R), infinity_threshold2(R);
-  R.set_from_BigReal(t_step, init_dt);  // initial step
-  R.set_from_BigReal(min_step2, min_dt);
+  R.set(t_step, init_dt);  // initial step
+  R.set(min_step2, min_dt);
   R.mult(min_step2, min_step2, min_step2);  // min_step^2
-  R.set_from_BigReal(epsilon2, epsilon);
+  R.set(epsilon2, epsilon);
   int tolerance_bits = int(log2(fabs(R.coerceToDouble(epsilon2))));
   R.mult(epsilon2, epsilon2, epsilon2);  // epsilon^2
-  R.set_from_BigReal(infinity_threshold2, infinity_threshold);
+  R.set(infinity_threshold2, infinity_threshold);
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
   int num_successes_before_increase = 3;
 
@@ -433,10 +433,10 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   // constants
   RealElement one(R), two(R), four(R), six(R), one_half(R), one_sixth(R);
   RealElementType& dt_factor = one_half;
-  R.set_from_long(one, 1);
-  R.set_from_long(two, 2);
-  R.set_from_long(four, 4);
-  R.set_from_long(six, 6);
+  R.set(one, 1);
+  R.set(two, 2);
+  R.set(four, 4);
+  R.set(six, 6);
   R.divide(one_half, one, two);
   R.divide(one_sixth, one, six);
 
@@ -749,8 +749,8 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       for (size_t i = 0; i <= n; i++) C.set(ou.entry(i, s), x0c0.entry(i, 0));
       C.set(ou.entry(n + 1, s), dc);  // store last increment attempted
       if (status == PROCESSING) status = REGULAR;
-      oe.ring().set_from_long(oe.entry(0, s), status);
-      oe.ring().set_from_long(oe.entry(1, s), count);
+      oe.ring().set(oe.entry(0, s), status);
+      oe.ring().set(oe.entry(1, s), count);
     }
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();

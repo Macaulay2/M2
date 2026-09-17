@@ -11,23 +11,50 @@ UNITTEST_CCFILES := \
     NCGroebnerTest \
     PointArray \
     ARingZZTest \
+    ARingZZGmpTest \
     ARingQQFlintTest \
     ARingQQGmpTest \
     ARingRRTest \
     ARingCCTest \
+    ARingCCiTest \
     ARingRRRTest \
     ARingRRiTest \
     ARingCCCTest \
     ARingZZpTest \
+    ARingGFTest \
     RingZZTest \
     RingZZpTest \
     RingQQTest \
     RingTowerTest \
     DMatZZpTest \
+    SMatTest \
+    DMatZZpFFPACKTest \
+    DMatZZpFlintTest \
+    DMatZZTest \
+    DMatZZGMPTest \
+    DMatQQGMPTest \
+    DMatQQFlintTest \
+    DMatRRTest \
+    DMatRRRTest \
+    DMatRRiTest \
+    DMatCCTest \
+    DMatCCCTest \
+    DMatCCiTest \
+    DMatGFM2Test \
+    DMatGFFlintTest \
+    DMatGFFlintBigTest \
     ResTest \
     SubsetTest \
     PolyRingTest \
     NewF4Test \
+    ExponentVectorTest \
+    ExponentListTest \
+    EngineMonomialTest \
+    MonomialTableTest \
+    MonomialIdealTest \
+    MonomialCollectionsTest \
+    MonomialSortTest \
+    MonomialOrderingTest \
     MonoidTest \
     MatrixIOTest \
     WeylAlgebraTest \
@@ -36,10 +63,8 @@ UNITTEST_CCFILES := \
     RingCCCTest \
     OverflowTest \
     BRP-test \
-    RingCCCTest \
+    BasicPolyListParserTest \
     LatticePointsTest
-
-#    ARingGFTest \
 
 UNITTEST_TARGET := testMain
 

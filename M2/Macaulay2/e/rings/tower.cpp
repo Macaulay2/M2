@@ -106,21 +106,21 @@ M2_arrayint Tower::support(const ring_elem a) const
 ring_elem Tower::from_long(long n) const
 {
   TowerPolynomial f;
-  D->set_from_long(f, n);
+  D->set(f, n);
   return TOWER_RINGELEM(f);
 }
 
 ring_elem Tower::from_int(mpz_srcptr n) const
 {
   TowerPolynomial f;
-  D->set_from_int(f, n);
+  D->set(f, n);
   return TOWER_RINGELEM(f);
 }
 
 bool Tower::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   TowerPolynomial f;
-  if (not D->set_from_mpq(f, q)) return false;
+  if (not D->set(f, q)) return false;
   result = TOWER_RINGELEM(f);
   return true;
 }

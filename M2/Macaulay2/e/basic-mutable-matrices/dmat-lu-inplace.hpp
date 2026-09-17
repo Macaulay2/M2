@@ -161,7 +161,7 @@ inline size_t DMatLUinPlace<M2::ARingRRR>::findPivot(size_t row, size_t col)
       if (ring().compare_elems(abs, largest) > 0)
         {
           best_row_so_far = i;
-          ring().set(largest, abs);
+          ring().copy(largest, abs);
         }
     }
   return best_row_so_far;
@@ -388,14 +388,14 @@ void LUUtil<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
 
   for (size_t c = 0; c < LU.numColumns(); c++)
     {
-      if (c < min) LU.ring().set_from_long(lower.entry(c, c), 1);
+      if (c < min) LU.ring().set(lower.entry(c, c), 1);
       for (size_t r = 0; r < LU.numRows(); r++)
         {
           if (r <= c)
-            LU.ring().set(upper.entry(r, c), LU.entry(r, c));
+            LU.ring().copy(upper.entry(r, c), LU.entry(r, c));
           else if (c < lower.numRows())
             {
-              LU.ring().set(lower.entry(r, c), LU.entry(r, c));
+              LU.ring().copy(lower.entry(r, c), LU.entry(r, c));
             }
         }
     }

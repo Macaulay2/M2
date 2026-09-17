@@ -11,7 +11,7 @@ void Reader<ARingZZp>::read(std::istream& i, ElementType& result)
   mpz_t a;
   mpz_init(a);
   i >> a;
-  mRing.set_from_mpz(result, a);
+  mRing.set(result, a);
   mpz_clear(a);
 }
 }

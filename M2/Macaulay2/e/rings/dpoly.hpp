@@ -308,16 +308,16 @@ class DRing : public our_new_delete
     result = D.var(level, n);
   }
 
-  void set_from_long(TowerPolynomial &result, long r)
+  void set(TowerPolynomial &result, long r)
   {
     r = r % P;
     if (r < 0) r += P;
     result = D.from_long(level, r);
   }
 
-  void set_from_int(TowerPolynomial &result, mpz_srcptr r);  // written
+  void set(TowerPolynomial &result, mpz_srcptr r);  // written
 
-  bool set_from_mpq(TowerPolynomial &result, mpq_srcptr r);  // written
+  bool set(TowerPolynomial &result, mpq_srcptr r);  // written
 
   void set_random(TowerPolynomial &result) { result = D.random(level); }
   void elem_text_out(buffer &o,
