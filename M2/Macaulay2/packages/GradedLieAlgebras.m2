@@ -34,7 +34,6 @@ newPackage(
   
 export {
     "boundaries",
-    "center",
     "computedDegree",
     "cycles",
     "differential",
@@ -564,8 +563,7 @@ annihilator(FGLieSubAlgebra):=opts->(S)->(
     quotient(zeroIdeal L,S)
     );
 
-center=method()
-center(LieAlgebra):=L->(
+center(LieAlgebra):= {} >> o -> L->(
     c:=annihilator(fullLieSubAlgebra L);
     new LieIdeal from c
     );
