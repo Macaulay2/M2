@@ -26,4 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - run: python3 -m unittest discover -s M2/cmake/tests -v
+      # Other tests in this directory need an installed M2. This job only
+      # exercises the standalone Maple probes and generated install commands.
+      - run: |
+          python3 M2/cmake/tests/test_find_maple.py -v
+          python3 M2/cmake/tests/test_maple_examples.py -v
