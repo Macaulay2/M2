@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 3.30)
+
+# The container has no proprietary Maple installation. Exclude its interface
+# and declared dependents, or the package import closure would add it back.
+include("${SOURCE}/M2/cmake/package-dependencies.cmake")
+file(STRINGS "${SOURCE}/M2/Macaulay2/packages/=distributed-packages"
+  packages REGEX "^[a-zA-Z0-9]+$")
+set(excluded MapleInterface)
+set(changed TRUE)
+while(changed)
+  set(changed FALSE)
+  foreach(package IN LISTS M2_DEPENDENCY_PACKAGES)
+    if(package IN_LIST excluded)
+      continue()
+    endif()
+    foreach(dependency IN LISTS M2_PACKAGE_IMPORTS_${package})
+      if(dependency IN_LIST excluded)
+        list(APPEND excluded "${package}")
+        set(changed TRUE)
+        break()
+      endif()
+    endforeach()
+  endforeach()
+endwhile()
+list(REMOVE_ITEM packages ${excluded})
+message(STATUS "Container CI skips packages requiring Maple: ${excluded}")
+file(WRITE "${OUTPUT}" "${packages}")

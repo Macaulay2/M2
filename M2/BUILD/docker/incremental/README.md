@@ -82,6 +82,15 @@ the cached build directory, since configure-time staging copies and external
 build stamps may otherwise retain removed inputs. This is a conservative fallback
 until those deletion cases can be handled incrementally.
 
+The container does not have Maple. Before configuring, `select-packages.cmake`
+excludes `MapleInterface` and all packages that transitively declare it as an
+import; otherwise CMake's import closure would restore the excluded package.
+Currently these are `MapleInterface`, `AdjointIdeal`, `ConvexInterface`,
+`Parametrization`, `TriangularSets`, `Chordal`, `CodingTheory` and `SRdeformations`.
+The selection is recomputed from the checked-in dependency manifest for each
+revision and passed through `PACKAGES`. Normal builds keep their existing package
+selection, and example failures in the remaining CI packages remain fatal.
+
 `all-packages` installs only packages whose inputs changed and runs package checks
 every time. `RerunExamples=true` reruns examples when a package actually needs
 installation, including after a dependency changes. The job also runs the Core
