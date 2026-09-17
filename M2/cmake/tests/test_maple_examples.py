@@ -20,6 +20,10 @@ class MapleExamplesTests(unittest.TestCase):
             packages = src / 'packages'
             packages.mkdir(parents=True)
             shutil.copy(ROOT / 'M2/Macaulay2/packages/CMakeLists.txt', packages)
+            (src / 'cmake').mkdir()
+            shutil.copytree(ROOT / 'M2/cmake/package-install', src / 'cmake/package-install')
+            (src / 'cmake/package-dependencies.cmake').write_text(
+                'set(M2_DEPENDENCY_PACKAGES ' + ' '.join(names) + ')\n')
             for name in names:
                 (packages / (name + '.m2')).write_text(name)
             (packages / 'LanguageServer').mkdir()
@@ -39,6 +43,7 @@ set(BUILD_TESTING OFF)
 set(DISTRIBUTED_PACKAGES "''' + ';'.join(names) + '''")
 file(MAKE_DIRECTORY "${M2_DIST_PREFIX}/share/Core")
 file(WRITE "${M2_DIST_PREFIX}/share/Core/tvalues.m2" "")
+add_custom_target(M2-binary)
 add_custom_target(M2-core)
 add_subdirectory(packages)
 ''')

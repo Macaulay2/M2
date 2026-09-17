@@ -48,7 +48,7 @@ def environment_key(root, modules):
     # Reset external-library stamps and compiler checks when their inputs change.
     paths = [root / 'M2/CMakeLists.txt', root / 'M2/VERSION', root / '.gitmodules']
     paths += [root / '.github/ci' / name for name in
-              ('source_snapshot.py', 'prepare_source.py', 'container-build.sh', 'select-packages.cmake', 'cache-version')]
+              ('source_snapshot.py', 'prepare_source.py', 'container-build.sh', 'cache-version')]
     paths += [root / 'M2/BUILD/docker/incremental/Dockerfile']
     paths += [p for p in (root / 'M2/cmake').glob('*.cmake')
               if p.name != 'package-dependencies.cmake']

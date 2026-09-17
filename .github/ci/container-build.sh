@@ -27,14 +27,9 @@ revision=$(python3 -c 'import json; print(json.load(open("/input/.ci-snapshot.js
 export CMAKE_BUILD_PARALLEL_LEVEL=${CMAKE_BUILD_PARALLEL_LEVEL:-2}
 # Objects themselves are cached; avoid storing a second copy in ccache.
 export CCACHE_DISABLE=1 OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=1
-cmake -DSOURCE="$source_dir" -DOUTPUT=/opt/m2/packages.txt \
-    -P /input/.github/ci/select-packages.cmake
-# Export for both initial configuration and build-libraries' reconfiguration.
-export PACKAGES
-PACKAGES=$(cat /opt/m2/packages.txt)
 cmake -S "$source_dir/M2" -B "$build_dir" -G Ninja \
     -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF -DGIT_SUBMODULE=OFF \
-    -DSTATIC_BOOST=OFF -DBUILD_TESTING=ON -DRerunExamples=true -DCMAKE_INSTALL_PREFIX=/usr \
+    -DSTATIC_BOOST=OFF -DBUILD_TESTING=ON -DWITH_MAPLE=OFF -DRerunExamples=true -DCMAKE_INSTALL_PREFIX=/usr \
     -DPARALLEL_JOBS="$CMAKE_BUILD_PARALLEL_LEVEL" -DCOMMIT_COUNT=0 -DGIT_COMMIT="$revision"
 cmake --build "$build_dir" --target build-libraries build-programs
 cmake --build "$build_dir" --target M2-core M2-emacs M2-unit-tests \
