@@ -2,6 +2,7 @@
 
 #include "monomials/monordering.hpp"
 
+#include <algorithm>
 #include <sstream>
 
 #include "error.h"
@@ -309,8 +310,10 @@ int MonomialOrderings::numberOfInvertibleVariables(const MonomialOrdering* mo)
 std::vector<int> MonomialOrderings::firstWeightVector(const MonomialOrdering* mo)
 {
   if (mo->len == 0 || mo->array[0]->type != MO_WEIGHTS) return {};
-  auto result = std::vector<int>(numberOfVariables(mo), 0);
-  for (int i = 0; i < mo->array[0]->nvars; ++i) result[i] = mo->array[0]->wts[i];
+  // nvars is the length of the weight vector here, not a variable count
+  auto result = std::vector<int>(mo->array[0]->wts,
+                                 mo->array[0]->wts + mo->array[0]->nvars);
+  result.resize(numberOfVariables(mo), 0);
   return result;
 }
 
@@ -335,14 +338,17 @@ std::vector<int> MonomialOrderings::nonTermOrderVariables(const MonomialOrdering
               if (relation[next] == 0) relation[next] = -1;
             break;
           case MO_WEIGHTS:
-            for (int j = next; j < part->nvars; ++j)
-              if (relation[j] == 0)
-                {
-                  if (part->wts[j] > 0)
-                    relation[j] = 1;
-                  else if (part->wts[j] < 0)
-                    relation[j] = -1;
-                }
+            {
+              int top = std::min(part->nvars, static_cast<int>(relation.size()));
+              for (int j = next; j < top; ++j)
+                if (relation[j] == 0)
+                  {
+                    if (part->wts[j] > 0)
+                      relation[j] = 1;
+                    else if (part->wts[j] < 0)
+                      relation[j] = -1;
+                  }
+            }
             break;
           case MO_POSITION_UP: case MO_POSITION_DOWN: break;
         }
