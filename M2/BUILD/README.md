@@ -86,12 +86,19 @@ Omit `MAPLE_CONVEX_DIR` when convex is already on Maple's library search path.
 license availability is not permanently cached. When cross-compiling, probes
 are not executed and Maple is reported unavailable.
 
-These are build-host detection results, not installed-runtime configuration.
-They do not change package selection, the `RerunExamples` option, or M2's cached
-example policy. For a custom runtime executable, also set `MapleInterface`'s
+CMake uses these build-host results when constructing package installation
+commands. When Maple is unavailable or `WITH_MAPLE=OFF`, it passes
+`RerunExamples=false` for `MapleInterface`, `AdjointIdeal` and `Parametrization`;
+`ConvexInterface` also uses that setting when convex is unavailable. These
+packages ship cached examples requiring the optional software. All other packages
+retain the requested `RerunExamples` setting. Package selection and independent
+checks are unchanged. Cached examples must still exist and have matching input
+hashes: missing or stale caches can require execution and report an error.
+
+These results are not installed-runtime configuration. For a custom runtime executable, also set `MapleInterface`'s
 `MapleCommand` configuration; `ConvexInterface` similarly uses `ConvexPath`.
-In particular, forcing `RerunExamples=true` still requires the external software
-used by those examples. An external M2 instance does not read CMake's results.
+An explicit `installPackage(..., RerunExamples => true)` call outside the CMake
+build still requires the external software used by those examples. An external M2 instance does not read CMake's results.
 
 The detection tests use simulated executables and require no Maple license:
 

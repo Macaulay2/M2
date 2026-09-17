@@ -6,12 +6,16 @@ on:
       - M2/cmake/FindMaple.cmake
       - M2/cmake/check-maple.cmake
       - M2/cmake/tests/test_find_maple.py
+      - M2/cmake/tests/test_maple_examples.py
+      - M2/Macaulay2/packages/CMakeLists.txt
       - .github/workflows/cmake-probes.yml
   pull_request:
     paths:
       - M2/cmake/FindMaple.cmake
       - M2/cmake/check-maple.cmake
       - M2/cmake/tests/test_find_maple.py
+      - M2/cmake/tests/test_maple_examples.py
+      - M2/Macaulay2/packages/CMakeLists.txt
       - .github/workflows/cmake-probes.yml
 
 permissions:
@@ -22,4 +26,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - run: python3 M2/cmake/tests/test_find_maple.py -v
+      - run: python3 -m unittest discover -s M2/cmake/tests -v
