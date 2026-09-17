@@ -156,8 +156,13 @@ set(_default_dependencies
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.cmake-installed)
 
 # M2-core is a custom target: it provides ordering, but not file-level freshness.
-file(GLOB_RECURSE _package_core_sources CONFIGURE_DEPENDS
+# Snapshot configure-time copies, not a watched build-output directory.
+# tvalues.m2 appears later during M2-core; its explicit dependency is below in
+# package-install/CMakeLists.txt. Watching its appearance causes a spurious
+# GLOB mismatch and changes the installation input list after the first build.
+file(GLOB_RECURSE _package_core_sources
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/*.m2)
+list(FILTER _package_core_sources EXCLUDE REGEX "/tvalues\\.m2$")
 # Match the normalized paths registered by Core's configure_file calls; aliases
 # containing /../ can produce duplicate regeneration outputs in Ninja.
 get_filename_component(_package_core_dir ${CMAKE_CURRENT_SOURCE_DIR}/../m2 ABSOLUTE)

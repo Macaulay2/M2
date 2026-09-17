@@ -57,9 +57,12 @@ set(BUILD_DOCS ON)
 set(BUILD_TESTING OFF)
 file(MAKE_DIRECTORY "${M2_DIST_PREFIX}/bin" "${M2_DIST_PREFIX}/share/Core")
 configure_file(fake-m2.py "${M2_DIST_PREFIX}/bin/M2" COPYONLY)
-configure_file(main.c "${M2_DIST_PREFIX}/share/Core/tvalues.m2" COPYONLY)
+# Model the real build: tvalues.m2 is absent at configuration time.
+add_custom_command(OUTPUT "${M2_DIST_PREFIX}/share/Core/tvalues.m2"
+  COMMAND ${CMAKE_COMMAND} -E touch "${M2_DIST_PREFIX}/share/Core/tvalues.m2"
+  DEPENDS M2-binary)
 add_executable(M2-binary main.c)
-add_custom_target(M2-core DEPENDS M2-binary)
+add_custom_target(M2-core DEPENDS M2-binary "${M2_DIST_PREFIX}/share/Core/tvalues.m2")
 add_subdirectory(packages)
 ''')
     def configure(*args):
@@ -70,6 +73,8 @@ add_subdirectory(packages)
         (build/'checks').write_text('')
         r=subprocess.run(['cmake','--build',str(build),'--target',target,'--parallel','4'],capture_output=True,text=True)
         assert (r.returncode!=0)==fail,r.stdout+r.stderr
+        if 'GLOB mismatch' in r.stdout+r.stderr:
+            assert '/Core/tvalues.m2' not in r.stdout+r.stderr,r.stdout+r.stderr
         calls=(build/'calls').read_text().splitlines()
         assert sorted(calls)==sorted(expected),(generator,calls,expected,r.stdout+r.stderr)
         checked=(build/'checks').read_text().splitlines()
@@ -83,6 +88,7 @@ add_subdirectory(packages)
     (build/'fail-Macaulay2Doc').unlink()
     run(['Macaulay2Doc','Example'])
     run([])
+    # Creating tvalues during the first build must not change the input list.
     configure(); run([])
     touch(packages/'Example.m2'); run(['Example']); run([])
     touch(packages/'Style.m2'); run(['Style','FirstPackage','Macaulay2Doc','Example'])
