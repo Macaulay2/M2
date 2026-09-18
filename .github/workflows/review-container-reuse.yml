@@ -56,7 +56,7 @@ jobs:
               assert not changed, 'Unexpected rebuilt outputs: ' + repr(changed[:30])
               print('PASS: preserved timestamps for', len(state), 'compiled outputs and package stamps')
           PY
-      - name: Rebuild and verify reuse
+      - name: Rebuild and verify unchanged outputs
         run: |
           memory_jobs=$(awk '/MemTotal/ {print int($2 / 2097152)}' /proc/meminfo)
           jobs=$(nproc)
@@ -67,7 +67,10 @@ jobs:
             --env "CMAKE_BUILD_PARALLEL_LEVEL=$jobs" \
             --mount "type=bind,source=$RUNNER_TEMP/m2-review-source,target=/input,readonly" \
             --mount "type=bind,source=$RUNNER_TEMP/audit.py,target=/audit.py,readonly" \
-            "$REVIEW_IMAGE" bash -c '
+            "$REVIEW_IMAGE" sleep infinity
+          docker start m2-review
+          set -o pipefail
+          docker exec m2-review bash -c '
               set -e
               tar -xf /opt/m2/build-cache.tar -C /opt/m2
               rm /opt/m2/build-cache.tar
@@ -75,10 +78,12 @@ jobs:
               bash /input/.github/ci/container-build.sh build
               tar -xf /opt/m2/build-cache.tar -C /opt/m2
               rm /opt/m2/build-cache.tar
-              python3 /audit.py after
-              bash /input/.github/ci/container-build.sh test'
+              python3 /audit.py after' 2>&1 | tee "$RUNNER_TEMP/review-results/reuse.log"
+      - name: Run all checks against the reused build
+        run: |
           set -o pipefail
-          docker start --attach m2-review 2>&1 | tee "$RUNNER_TEMP/review-results/reuse.log"
+          docker exec m2-review bash /input/.github/ci/container-build.sh test \
+            2>&1 | tee "$RUNNER_TEMP/review-results/tests.log"
       - name: Collect diagnostics
         if: always()
         run: |
