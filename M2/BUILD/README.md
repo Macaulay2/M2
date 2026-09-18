@@ -36,3 +36,21 @@ such as `x86_64-Linux-Ubuntu-8.10`.  (Actually, this is being changed...)
 
 Alternatively, see the [Docker guide](docker/README.md) for instructions on
 using Docker to build Linux container images running Macaulay2.
+
+CMake initializes only the submodules it needs: the bundled engine libraries
+(memtailor, mathic, and mathicgb), the Emacs package, and fallback libraries that
+were not found on the system. System FLINT, for example, avoids both its checkout
+and its fallback build rules. Previously built fallback libraries keep their
+build/test targets across reconfiguration.
+
+To explicitly build a fallback even when the system library is available, select
+it before configuring, for example `cmake -DBUILD_LIBRARIES=FLINT ../..`, then run
+`cmake --build . --target build-libraries`. Multiple library names use a quoted
+semicolon-separated list. Unneeded submodule-backed `build-<library>` targets
+are not created until that fallback is selected.
+
+For offline builds, initialize the required submodules first and configure with
+`-DGIT_SUBMODULE=OFF`; configuration reports any missing required sources.
+This option disables Git updates, not the source requirements. Source archives
+must likewise contain the required submodule contents. CI checkouts should avoid
+initializing all submodules recursively in advance to benefit from this selection.
