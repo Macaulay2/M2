@@ -35,7 +35,7 @@ with (state / 'calls').open('a') as out:
     out.write(json.dumps([name, args]) + '\\n')
 if name == 'cmake' and '-S' in args:
     build = pathlib.Path(args[args.index('-B') + 1])
-    build.mkdir(parents=True)
+    build.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(__file__, build / 'M2')
     (build / 'M2').chmod(0o755)
 if name == 'cmake' and 'install-packages' in args:
@@ -54,6 +54,15 @@ if name == 'cpack':
                 (tools / name).symlink_to(mock)
             env = dict(os.environ, PATH=str(tools) + os.pathsep + os.environ['PATH'],
                        TEST_STATE=str(state), CMAKE_BUILD_PARALLEL_LEVEL='3')
+            subprocess.run(['bash', str(driver), 'dependencies'], env=env, check=True, capture_output=True)
+            self.assertTrue((state / 'build-cache.tar').exists())
+            self.assertFalse((state / 'build').exists())
+            calls = [json.loads(line) for line in (state / 'calls').read_text().splitlines()]
+            self.assertTrue(any('build-libraries' in args and 'build-programs' in args
+                                for name, args in calls))
+            self.assertFalse(any('M2-core' in args or 'install-packages' in args
+                                 or name in ['M2', 'ctest', 'cpack'] for name, args in calls))
+            (state / 'calls').write_text('')
             subprocess.run(['bash', str(driver), 'build'], env=env, check=True, capture_output=True)
             self.assertTrue((state / 'build-cache.tar').exists())
             self.assertFalse((state / 'build').exists())

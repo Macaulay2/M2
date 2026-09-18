@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:24.04 AS build-dependencies
 
 ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -26,3 +26,14 @@ ENV HOME=/home/builder
 USER 10001:10001
 WORKDIR /opt/m2
 CMD ["bash"]
+
+# Prebuild every library/program selected by M2's normal fallback detection.
+# Preserve their installation paths and ExternalProject stamps in the same PAX
+# archive used by the full build. No M2 runtime or package installation runs here.
+FROM build-dependencies AS dependency-builder
+COPY . /input
+ARG BUILD_JOBS=2
+RUN CMAKE_BUILD_PARALLEL_LEVEL="$BUILD_JOBS" bash /input/.github/ci/container-build.sh dependencies
+
+FROM build-dependencies
+COPY --chown=10001:10001 --from=dependency-builder /opt/m2/build-cache.tar /opt/m2/build-cache.tar

@@ -11,7 +11,20 @@ Every push to `development` runs
 The shared [container workflow](../../../../.github/workflows/cmake-container.yml)
 first tries an image for the preceding commit, then the latest compatible
 successful development build. If neither can be pulled, it builds a fresh
-Ubuntu 24.04 environment from this directory's Dockerfile.
+Ubuntu 24.04 environment from this directory's Dockerfile. That environment
+already contains the external libraries and programs selected by M2's fallback
+detection. A temporary Docker stage runs `container-build.sh dependencies`, which
+configures M2 and executes its existing `build-libraries` and `build-programs`
+targets. This builds the required patched Factory (and any other missing or
+outdated component) using the same URLs, checksums, patches and compiler options
+as the main build. It does not compile M2 or install M2 packages.
+
+The stage checkpoints the source and dependency build tree into `build-cache.tar`,
+including `usr-host`, auxiliary programs/data and ExternalProject stamps. The
+final environment image carries this archive; consumers restore it at the same
+paths, avoiding relocation problems and unnecessary dependency rebuilds. The
+normal build still checks dependencies, so changes to required versions or
+patches are not silently ignored.
 
 After a successful build and tests, it publishes to GitHub Container Registry
 under the current repository owner's namespace. For the upstream repository:
@@ -182,7 +195,8 @@ Docker (use an unused snapshot destination):
 ```sh
 git submodule update --init --recursive
 python3 .github/ci/source_snapshot.py . /tmp/m2-ci-source
-docker build -t m2-ci-environment M2/BUILD/docker/incremental
+docker build -t m2-ci-environment \
+  -f /tmp/m2-ci-source/M2/BUILD/docker/incremental/Dockerfile /tmp/m2-ci-source
 docker run --rm --init --cap-drop ALL --security-opt no-new-privileges --cpus 2 \
   --mount type=bind,source=/tmp/m2-ci-source,target=/input,readonly \
   m2-ci-environment bash -c 'bash /input/.github/ci/container-build.sh build && bash /input/.github/ci/container-build.sh test'

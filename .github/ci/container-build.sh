@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 stage=${1:-build}
-case "$stage" in build|test) ;; *) echo "Unknown stage: $stage" >&2; exit 2 ;; esac
+case "$stage" in dependencies|build|test) ;; *) echo "Unknown stage: $stage" >&2; exit 2 ;; esac
 
 # These paths must remain the same in the publisher and every consumer.
 source_dir=/opt/m2/source
@@ -29,7 +29,7 @@ export CMAKE_BUILD_PARALLEL_LEVEL=${CMAKE_BUILD_PARALLEL_LEVEL:-2}
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 export CCACHE_DIR=/opt/m2/ccache CCACHE_MAXSIZE=512M CCACHE_COMPILERCHECK=content
 unset CCACHE_DISABLE
-if [[ "$stage" == build ]]; then
+if [[ "$stage" != test ]]; then
     python3 /input/.github/ci/prepare_source.py /input "$source_dir" "$build_dir"
     revision=$(python3 -c 'import json; print(json.load(open("/input/.ci-snapshot.json"))["revision"])')
     source /input/.github/ci/container-environment.sh
@@ -38,9 +38,11 @@ if [[ "$stage" == build ]]; then
         -DRerunExamples=true -DRespectCachedExampleOutput=ON -DCacheExampleOutput=false \
         -DPARALLEL_JOBS="$CMAKE_BUILD_PARALLEL_LEVEL" -DCOMMIT_COUNT=0 -DGIT_COMMIT="$revision"
     cmake --build "$build_dir" --target build-libraries build-programs
-    cmake --build "$build_dir" --target M2-core M2-emacs M2-unit-tests \
-        memtailor-unit-tests mathic-unit-tests mathicgb-unit-tests
-    cmake --build "$build_dir" --target install-packages
+    if [[ "$stage" == build ]]; then
+        cmake --build "$build_dir" --target M2-core M2-emacs M2-unit-tests \
+            memtailor-unit-tests mathic-unit-tests mathicgb-unit-tests
+        cmake --build "$build_dir" --target install-packages
+    fi
     ccache --show-stats
     printf '%s\n' "$revision" > /opt/m2/revision
 else
@@ -56,7 +58,7 @@ else
     cp "$build_dir"/Macaulay2-*.deb /opt/m2/artifacts/
 fi
 
-if [[ "$stage" == build || "${SAVE_BUILD_CACHE:-false}" == true ]]; then
+if [[ "$stage" != test || "${SAVE_BUILD_CACHE:-false}" == true ]]; then
     collect_logs
     tar --format=pax -cf /opt/m2/build-cache.tar -C /opt/m2 source build
     rm -rf "$source_dir" "$build_dir"

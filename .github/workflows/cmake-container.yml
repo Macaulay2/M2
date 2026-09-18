@@ -55,7 +55,9 @@ jobs:
           fi
           if [[ -z "$image" ]]; then
             echo "Cache unavailable or clean build requested; building from scratch." >> "$GITHUB_STEP_SUMMARY"
-            docker build -t m2-ci-environment "$RUNNER_TEMP/m2-source/M2/BUILD/docker/incremental"
+            docker build -t m2-ci-environment \
+              -f "$RUNNER_TEMP/m2-source/M2/BUILD/docker/incremental/Dockerfile" \
+              "$RUNNER_TEMP/m2-source"
             image=m2-ci-environment
           fi
           echo "image=$image" >> "$GITHUB_OUTPUT"
