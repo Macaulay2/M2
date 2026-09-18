@@ -48,15 +48,31 @@ and report `MEMT_DEBUG=ON` or `OFF`. Those flags are also propagated to consumer
 Both metadata formats must describe the installed library's ABI correctly;
 installations with only headers and a library are not selected automatically.
 
+`CMAKE_PREFIX_PATH` is a shared list of installation prefixes for all dependencies,
+not a memtailor-specific setting. Standard system prefixes usually need no extra
+option. For nonstandard installations, include memtailor's prefix alongside any
+other dependency prefixes you need. The `-D` option takes a **semicolon-separated**
+CMake list; quote it to protect the semicolons from the shell.
+
 For example, from `M2/BUILD/build`, use:
 
 ```sh
-cmake -GNinja -DMEMTAILOR_PROVIDER=SYSTEM -DCMAKE_PREFIX_PATH=/path/to/memtailor ../..
+cmake -GNinja -DMEMTAILOR_PROVIDER=SYSTEM \
+  '-DCMAKE_PREFIX_PATH=/opt/memtailor;/opt/another-dependency' ../..
 cmake --build . --target memtailor-unit-tests
 ctest --test-dir . --output-on-failure -R 'unit-tests:(Arena|BufferPool|MemoryBlocks)\.'
 ```
 
-`memtailor_DIR` can instead name the directory containing `memtailorConfig.cmake`.
+Alternatively, the `CMAKE_PREFIX_PATH` **environment variable** uses colons on
+Unix (semicolons on Windows). On Unix, prepend a prefix while preserving existing
+entries with:
+
+```sh
+export CMAKE_PREFIX_PATH="/opt/memtailor${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+```
+
+`memtailor_DIR` can instead name the directory containing `memtailorConfig.cmake`
+when only memtailor's location needs to be specified.
 For a pkg-config installation outside the usual search paths, set
 `PKG_CONFIG_PATH=/path/to/memtailor/lib/pkgconfig` (or `lib64/pkgconfig`).
 Debug M2 builds require a memtailor installation built with `MEMT_DEBUG`, because
