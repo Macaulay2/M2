@@ -27,3 +27,14 @@ jobs:
     with:
       publish: true
       clean: ${{ inputs.clean == true }}
+
+  # Temporary review-only validation; remove together with the called workflow.
+  review:
+    needs: build
+    if: github.repository == 'dimpase/M2'
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/review-container-reuse.yml
+    with:
+      revision: ${{ github.sha }}

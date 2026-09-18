@@ -182,3 +182,9 @@ docker run --rm --init --cap-drop ALL --security-opt no-new-privileges --cpus 2 
 The snapshot contains committed sources, so commit local changes before using
 this reproduction command. Substitute a published development image for
 `m2-ci-environment` to test reuse. These runs are disposable and publish nothing.
+
+The container sets `CacheExampleOutput=false`: generated example output stays in
+the build tree rather than being copied back into source `examples/` directories.
+Reading committed example caches remains enabled according to each package's
+policy. Writing caches into the source snapshot makes the next source overlay
+look like an input change, causing unnecessary package reinstallations.

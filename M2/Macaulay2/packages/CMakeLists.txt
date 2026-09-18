@@ -39,6 +39,7 @@ set(CheckDocumentation       "true" CACHE STRING "check documentation for comple
 set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
 set(RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
 set(RerunExamples           "false" CACHE STRING "rerun example outpuat files")
+set(CacheExampleOutput       "null" CACHE STRING "write example caches back to package sources (null follows package policy)")
 option(RespectCachedExampleOutput "Honor package cached-example policy even when rerunning examples" OFF)
 ## Arguments to the M2 subprocess that runs individual tests and examples; see runFile in m2/run.m2
 set(ArgumentMode "InvertArgs|SetOutputFile|SetCaptureErr|NoCapture" # |ArgNoThreads for --no-threads
@@ -46,7 +47,7 @@ set(ArgumentMode "InvertArgs|SetOutputFile|SetCaptureErr|NoCapture" # |ArgNoThre
 
 # Allow arguments above to be set via environment variables
 foreach(_var in ITEMS PACKAGES PACKAGES_DEVEL errorDepth debugLevel gbTrace
-    CheckDocumentation IgnoreExampleErrors RemakeAllDocumentation RerunExamples ArgumentMode)
+    CheckDocumentation IgnoreExampleErrors RemakeAllDocumentation RerunExamples CacheExampleOutput ArgumentMode)
   if(DEFINED ENV{${_var}})
     message("## Set via environment:   ${_var}\t= $ENV{${_var}} (default: ${${_var}})")
     set(${_var} "$ENV{${_var}}")
@@ -98,6 +99,7 @@ set(M2_ARGS -q --stop --silent --no-preload --no-threads -e errorDepth=${errorDe
 set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
   Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
   RerunExamples          => ${_package_rerun_examples},
+  CacheExampleOutput     => ${CacheExampleOutput},
   CheckDocumentation     => ${CheckDocumentation},
   IgnoreExampleErrors    => ${IgnoreExampleErrors},
   RemakeAllDocumentation => ${RemakeAllDocumentation},

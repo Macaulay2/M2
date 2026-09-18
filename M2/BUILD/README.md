@@ -119,3 +119,8 @@ and missing or stale example caches are still errors if execution cannot succeed
 This option defaults to `OFF`, preserving explicit forced reruns in ordinary
 builds. Container CI enables it. It affects CMake's package installation commands,
 not direct calls to M2's `installPackage`.
+
+For builds that must leave package sources unchanged, use
+`-DCacheExampleOutput=false`. This prevents `installPackage` from writing example
+results into source `examples/` directories; it does not disable reading cached
+examples. The default, `null`, follows each package's write-cache policy.
