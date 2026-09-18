@@ -74,10 +74,19 @@ invalidating all installed packages. Exact revision provenance is recorded in
 `/opt/m2/revision`, the image tag and OCI revision label, and the Debian package
 filename. This is a CI build asset, not a release image with Git checkout metadata.
 
-Changes to the Dockerfile, CI build/transfer scripts, top-level CMake settings,
-CMake environment/library modules, M2 version or submodule revisions select a new
-environment key and therefore a clean environment. Ordinary package edits and
-manifest changes keep the same key. Deleted files or file-type changes discard
+Changes to the Dockerfile, `container-environment.sh` compiler/library options,
+top-level CMake settings, CMake environment/library modules, library patches, M2 version or
+submodule revisions select a new environment key and therefore a clean environment.
+Package options such as `CacheExampleOutput` stay in `container-build.sh` and do
+not change that key: CMake updates installation commands while preserving external
+libraries and compiled outputs that remain valid. Ordinary package edits and
+manifest changes also keep the same key.
+
+Build/transfer script contents are not hashed wholesale. Keep compiler/library
+options in `container-environment.sh`; bump `.github/ci/cache-version` for changes
+to generators, fixed paths, archive format or other incompatible script behavior.
+Version 2 introduces this separation; pre-version-2 images require a one-time
+fresh build. Deleted files or file-type changes discard
 the cached build directory, since configure-time staging copies and external
 build stamps may otherwise retain removed inputs. This is a conservative fallback
 until those deletion cases can be handled incrementally.

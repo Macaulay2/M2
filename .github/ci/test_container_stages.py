@@ -15,7 +15,8 @@ class ContainerStagesTests(unittest.TestCase):
             incoming = root / 'input'
             scripts = incoming / '.github/ci'
             scripts.mkdir(parents=True)
-            (scripts / 'prepare_source.py').write_bytes((ci / 'prepare_source.py').read_bytes())
+            for name in ('prepare_source.py', 'container-environment.sh'):
+                (scripts / name).write_bytes((ci / name).read_bytes())
             (incoming / '.ci-snapshot.json').write_text(json.dumps(
                 {'revision': 'fixture', 'key': 'fixture', 'files': {}}))
             state = root / 'opt'

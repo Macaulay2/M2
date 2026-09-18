@@ -1,10 +1,12 @@
 """Exercise the source transfer that makes restored CMake builds incremental."""
+import hashlib
 import json
 import os
 import shutil
 from pathlib import Path
 import subprocess
 import tempfile
+import tarfile
 import unittest
 
 from prepare_source import prepare
@@ -73,6 +75,89 @@ class SnapshotTests(unittest.TestCase):
         (root / 'M2/VERSION').write_text('2.0')
         self.assertNotEqual(key, environment_key(root, {'deps/library': 'abc'}))
         self.assertNotEqual(key, environment_key(root, {'deps/library': 'def'}))
+
+    def test_package_policy_and_orchestration_do_not_invalidate_environment(self):
+        root = self.root / 'source'
+        scripts = root / '.github/ci'
+        scripts.mkdir(parents=True)
+        environment = scripts / 'container-environment.sh'
+        environment.write_text('cmake_environment_args=(-DCMAKE_BUILD_TYPE=Release)')
+        version = scripts / 'cache-version'
+        version.write_text('2')
+        key = environment_key(root, {})
+        for name in ('container-build.sh', 'prepare_source.py', 'source_snapshot.py'):
+            (scripts / name).write_text('changed package policy or orchestration')
+            self.assertEqual(key, environment_key(root, {}))
+        environment.write_text('cmake_environment_args=(-DCMAKE_BUILD_TYPE=Debug)')
+        self.assertNotEqual(key, environment_key(root, {}))
+        key = environment_key(root, {})
+        version.write_text('3')
+        self.assertNotEqual(key, environment_key(root, {}))
+        key = environment_key(root, {})
+        dockerfile = root / 'M2/BUILD/docker/incremental/Dockerfile'
+        dockerfile.parent.mkdir(parents=True)
+        dockerfile.write_text('FROM changed-toolchain')
+        self.assertNotEqual(key, environment_key(root, {}))
+        key = environment_key(root, {})
+        patch = root / 'M2/libraries/factory/patch-4.4.1'
+        patch.parent.mkdir(parents=True)
+        patch.write_text('changed library patch')
+        self.assertNotEqual(key, environment_key(root, {}))
+
+    def test_package_policy_change_preserves_external_project(self):
+        incoming = self.incoming()
+        scripts = incoming / '.github/ci'
+        scripts.mkdir(parents=True)
+        policy = scripts / 'container-build.sh'
+        policy.write_text('CacheExampleOutput=null')
+        library = self.root / 'factory-source'
+        library.mkdir()
+        (library / 'factory.c').write_text('int factory(void) { return 42; }')
+        (library / 'CMakeLists.txt').write_text(
+            'cmake_minimum_required(VERSION 3.24)\nproject(factory C)\n'
+            'add_library(factory STATIC factory.c)\n'
+            'install(TARGETS factory ARCHIVE DESTINATION lib)\n')
+        archive = self.root / 'factory.tar.gz'
+        with tarfile.open(archive, 'w:gz') as out:
+            out.add(library, arcname='factory')
+        digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+        (incoming / 'CMakeLists.txt').write_text(f'''cmake_minimum_required(VERSION 3.24)
+project(ExternalReuse C)
+include(ExternalProject)
+ExternalProject_Add(build-factory
+  URL "{archive.as_uri()}"
+  URL_HASH SHA256={digest}
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+  PREFIX factory
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
+  BUILD_COMMAND ${{CMAKE_COMMAND}} --build <BINARY_DIR> --parallel 2)
+file(READ "${{CMAKE_SOURCE_DIR}}/.github/ci/container-build.sh" policy)
+add_custom_command(OUTPUT installed
+  COMMAND ${{CMAKE_COMMAND}} -E echo "${{policy}}"
+  COMMAND ${{CMAKE_COMMAND}} -E touch installed
+  DEPENDS "${{CMAKE_SOURCE_DIR}}/.github/ci/container-build.sh")
+add_custom_target(packages ALL DEPENDS installed)
+add_dependencies(packages build-factory)
+''')
+        source, build = self.root / 'source', self.root / 'build'
+        def run():
+            self.metadata(incoming, key=environment_key(incoming, {}))
+            prepare(incoming, source, build)
+            subprocess.run(['cmake', '-S', str(source), '-B', str(build), '-G', 'Ninja'],
+                           check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            return subprocess.check_output(['cmake', '--build', str(build), '--parallel', '2'], text=True)
+        run()
+        stamp = build / 'factory/src/build-factory-stamp'
+        watched = [build / 'factory/lib/libfactory.a',
+                   stamp / 'build-factory-download', stamp / 'build-factory-install']
+        before = [p.stat().st_mtime_ns for p in watched]
+        package_stamp = (build / 'installed').stat().st_mtime_ns
+        policy.write_text('CacheExampleOutput=false')
+        output = run()
+        self.assertEqual(before, [p.stat().st_mtime_ns for p in watched])
+        self.assertNotEqual(package_stamp, (build / 'installed').stat().st_mtime_ns)
+        self.assertIn('CacheExampleOutput=false', output)
+        self.assertIn('no work to do', run())
 
     def incoming(self):
         path = self.root / 'incoming'

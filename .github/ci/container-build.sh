@@ -32,10 +32,10 @@ unset CCACHE_DISABLE
 if [[ "$stage" == build ]]; then
     python3 /input/.github/ci/prepare_source.py /input "$source_dir" "$build_dir"
     revision=$(python3 -c 'import json; print(json.load(open("/input/.ci-snapshot.json"))["revision"])')
+    source /input/.github/ci/container-environment.sh
     cmake -S "$source_dir/M2" -B "$build_dir" -G Ninja \
-        -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF -DGIT_SUBMODULE=OFF \
-        -DSTATIC_BOOST=OFF -DBUILD_TESTING=ON -DWITH_MAPLE=OFF \
-        -DRerunExamples=true -DRespectCachedExampleOutput=ON -DCacheExampleOutput=false -DCMAKE_INSTALL_PREFIX=/usr \
+        "${cmake_environment_args[@]}" -DWITH_MAPLE=OFF \
+        -DRerunExamples=true -DRespectCachedExampleOutput=ON -DCacheExampleOutput=false \
         -DPARALLEL_JOBS="$CMAKE_BUILD_PARALLEL_LEVEL" -DCOMMIT_COUNT=0 -DGIT_COMMIT="$revision"
     cmake --build "$build_dir" --target build-libraries build-programs
     cmake --build "$build_dir" --target M2-core M2-emacs M2-unit-tests \

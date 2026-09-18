@@ -45,13 +45,16 @@ def inventory(root):
 
 
 def environment_key(root, modules):
-    # Reset external-library stamps and compiler checks when their inputs change.
+    # Key compiler/library compatibility, not build orchestration or package
+    # policy. Bump cache-version for incompatible path/archive/script changes.
     paths = [root / 'M2/CMakeLists.txt', root / 'M2/VERSION', root / '.gitmodules']
     paths += [root / '.github/ci' / name for name in
-              ('source_snapshot.py', 'prepare_source.py', 'container-build.sh', 'cache-version')]
+              ('container-environment.sh', 'cache-version')]
     paths += [root / 'M2/BUILD/docker/incremental/Dockerfile']
     paths += [p for p in (root / 'M2/cmake').glob('*.cmake')
               if p.name != 'package-dependencies.cmake']
+    # ExternalProject patch commands do not track patch contents themselves.
+    paths += [p for p in (root / 'M2/libraries').rglob('*') if p.is_file()]
     digest = hashlib.sha256(json.dumps(modules, sort_keys=True).encode())
     for path in sorted(paths):
         if path.is_file():
