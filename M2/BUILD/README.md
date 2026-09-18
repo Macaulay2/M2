@@ -38,12 +38,15 @@ Alternatively, see the [Docker guide](docker/README.md) for instructions on
 using Docker to build Linux container images running Macaulay2.
 
 For the CMake build, `MEMTAILOR_PROVIDER` controls memtailor selection:
-`AUTO` (the default) uses an installed memtailor 1.4 or newer CMake package
+`AUTO` (the default) uses an installed memtailor 1.4 or newer package
 when compatible, otherwise the bundled source; `SYSTEM` requires the installed
 package; `BUNDLED` always builds the bundled source. Configuration reports the
-selected provider and, for a fallback, the reason. Older installations providing
-only headers, a library, or pkg-config metadata are not selected automatically:
-the CMake package must export `memtailor::memtailor` and its ABI compile definitions.
+selected provider and, for a fallback, the reason. CMake first looks for a config
+package exporting `memtailor::memtailor`, then tries `pkg-config` for `memtailor`.
+A configure-time compile/link check uses the selected target's flags to determine
+and report `MEMT_DEBUG=ON` or `OFF`. Those flags are also propagated to consumers.
+Both metadata formats must describe the installed library's ABI correctly;
+installations with only headers and a library are not selected automatically.
 
 For example, from `M2/BUILD/build`, use:
 
@@ -54,6 +57,8 @@ ctest --test-dir . --output-on-failure -R 'unit-tests:(Arena|BufferPool|MemoryBl
 ```
 
 `memtailor_DIR` can instead name the directory containing `memtailorConfig.cmake`.
+For a pkg-config installation outside the usual search paths, set
+`PKG_CONFIG_PATH=/path/to/memtailor/lib/pkgconfig` (or `lib64/pkgconfig`).
 Debug M2 builds require a memtailor installation built with `MEMT_DEBUG`, because
 bundled mathic and mathicgb use its debug class layout. `AUTO` falls back to the
 bundled library on a mismatch; `SYSTEM` reports an error. A multi-configuration
