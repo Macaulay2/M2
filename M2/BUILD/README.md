@@ -36,3 +36,26 @@ such as `x86_64-Linux-Ubuntu-8.10`.  (Actually, this is being changed...)
 
 Alternatively, see the [Docker guide](docker/README.md) for instructions on
 using Docker to build Linux container images running Macaulay2.
+
+For the CMake build, `MEMTAILOR_PROVIDER` controls memtailor selection:
+`AUTO` (the default) uses an installed memtailor 1.4 or newer CMake package
+when compatible, otherwise the bundled source; `SYSTEM` requires the installed
+package; `BUNDLED` always builds the bundled source. Configuration reports the
+selected provider and, for a fallback, the reason. Older installations providing
+only headers, a library, or pkg-config metadata are not selected automatically:
+the CMake package must export `memtailor::memtailor` and its ABI compile definitions.
+
+For example, from `M2/BUILD/build`, use:
+
+```sh
+cmake -GNinja -DMEMTAILOR_PROVIDER=SYSTEM -DCMAKE_PREFIX_PATH=/path/to/memtailor ../..
+cmake --build . --target memtailor-unit-tests
+ctest --test-dir . --output-on-failure -R 'unit-tests:(Arena|BufferPool|MemoryBlocks)\.'
+```
+
+`memtailor_DIR` can instead name the directory containing `memtailorConfig.cmake`.
+Debug M2 builds require a memtailor installation built with `MEMT_DEBUG`, because
+bundled mathic and mathicgb use its debug class layout. `AUTO` falls back to the
+bundled library on a mismatch; `SYSTEM` reports an error. A multi-configuration
+build offering Debug has the same requirement. The `memtailor-unit-tests` target
+remains available with either provider when `BUILD_TESTING` is enabled.
