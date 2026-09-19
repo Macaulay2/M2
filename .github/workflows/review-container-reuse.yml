@@ -26,7 +26,7 @@ jobs:
       - name: Export the exact published source revision
         id: snapshot
         run: python3 .github/ci/source_snapshot.py . "$RUNNER_TEMP/m2-review-source" >> "$GITHUB_OUTPUT"
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

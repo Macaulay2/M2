@@ -182,7 +182,7 @@ jobs:
       # or Docker socket is ever passed into the build container.
       - name: Log in to GitHub Container Registry
         if: inputs.publish && github.ref == format('refs/heads/{0}', vars.M2_CI_DEVELOPMENT_BRANCH || 'development') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
