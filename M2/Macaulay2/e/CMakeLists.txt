@@ -1,41 +1,18 @@
 ###############################################################################
 ## This directory contains the rules for building M2-engine and M2-unit-tests
-## Select memtailor and build the bundled mathic and mathicgb libraries here
+## Select system or bundled memtailor, mathic and mathicgb libraries here
 ## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
 
 set(with_tbb ${WITH_TBB}) # for mathicgb
 
-include(select-memtailor)
-add_subdirectory(mathic)
-add_subdirectory(mathicgb)
+include(select-mathic-libraries)
+include(mathic-library-tests)
 
-# Exercise the selected external library using the bundled tests. Keep the
-# target available to CI, without compiling a second copy of the library.
-if(_memtailor_external AND BUILD_TESTING)
-  if(NOT GTEST_FOUND)
-    find_package(GTest QUIET)
-  endif()
-  add_executable(memtailor-unit-tests
-    memtailor/test/ArenaTest.cpp
-    memtailor/test/BufferPoolTest.cpp
-    memtailor/test/MemoryBlocksTest.cpp
-    memtailor/test/testMain.cpp)
-  if(GTEST_FOUND)
-    target_link_libraries(memtailor-unit-tests memtailor GTest::GTest GTest::Main)
-  else()
-    target_link_libraries(memtailor-unit-tests memtailor gtest)
-  endif()
-  include(GoogleTest)
-  gtest_discover_tests(memtailor-unit-tests TEST_PREFIX unit-tests:)
-endif()
-
-target_compile_options(mathicgb PRIVATE
-  -Wall -Wextra -Wno-unused-parameter -Wno-unused-value -Wno-unused-variable -Wno-sign-compare
-  -Wno-deprecated-declarations
-  )
-
-if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
-  add_compile_definitions(MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+if(NOT _mathicgb_external)
+  target_compile_options(mathicgb PRIVATE
+    -Wall -Wextra -Wno-unused-parameter -Wno-unused-value -Wno-unused-variable -Wno-sign-compare
+    -Wno-deprecated-declarations
+    )
 endif()
 
 ###############################################################################
@@ -440,7 +417,7 @@ target_compile_options(M2-engine PRIVATE
 ## Export the target
 
 # TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
-install(TARGETS M2-engine mathicgb mathic ${_bundled_memtailor_targets} EXPORT Macaulay2
+install(TARGETS M2-engine ${_bundled_mathic_targets} EXPORT Macaulay2
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
   COMPONENT devel EXCLUDE_FROM_ALL
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2

@@ -1,0 +1,24 @@
+name: CMake mathic library providers
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/mathic-providers.yml'
+      - 'M2/cmake/select-mathic-libraries.cmake'
+      - 'M2/cmake/tests/test_mathic_providers.py'
+  push:
+    branches: [development]
+    paths:
+      - '.github/workflows/mathic-providers.yml'
+      - 'M2/cmake/select-mathic-libraries.cmake'
+      - 'M2/cmake/tests/test_mathic_providers.py'
+permissions:
+  contents: read
+jobs:
+  providers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install probe dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ pkg-config
+      - name: Check system and bundled provider selection
+        run: python3 M2/cmake/tests/test_mathic_providers.py -v

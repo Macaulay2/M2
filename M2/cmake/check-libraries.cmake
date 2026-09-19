@@ -171,9 +171,8 @@ find_package(MSolve	0.7.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
 find_package(GTest	1.16)
-# memtailor is selected in Macaulay2/e by select-memtailor.cmake.
-#find_package(Mathic    1.0.0)
-#find_package(Mathicgb  1.0.0)
+# memtailor, mathic and mathicgb are selected in Macaulay2/e
+# by select-mathic-libraries.cmake.
 find_package(GLPK      4.59.0)
 
 pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.4.3)
