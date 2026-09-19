@@ -137,6 +137,7 @@ find_package(GMP	6.0.0 REQUIRED)
 #   cddlib	Double Description Method of Motzkin	(needs gmp)
 #   msolve	Multivariate polynomial system solver	(needs gmp, mpfr, flint)
 #   mpsolve	Multiprecision Polynomial SOLVEr	(needs gmp, mpfr)
+#   benchmark	C++ microbenchmark library
 #   googletest	C++ unit-testing library
 #   glpk	GNU Linear Programming Kit              (needs gmp)
 #   givaro	prime field and algebraic computations	(needs gmp)
@@ -170,6 +171,9 @@ find_package(EAntic	2.0.0 QUIET) # only needed when libnormaliz.so needs it
 find_package(MSolve	0.7.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
+if(BUILD_BENCHMARKS)
+  find_package(benchmark CONFIG REQUIRED)
+endif()
 find_package(GTest	1.16)
 #find_package(Memtailor 1.0.0)
 #find_package(Mathic    1.0.0)

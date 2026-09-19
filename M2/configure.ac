@@ -1382,6 +1382,34 @@ else AC_LANG(C++)
           [AC_MSG_WARN([mathicgb not found, will build])])
 fi
 
+AC_ARG_ENABLE([benchmarks],
+    [AS_HELP_STRING([--enable-benchmarks],
+        [build the Google Benchmark-based engine benchmarks @<:@default=no@:>@])],
+    [ENABLE_BENCHMARKS=$enableval],
+    [ENABLE_BENCHMARKS=no])
+AS_CASE([$ENABLE_BENCHMARKS],
+    [yes|no], [],
+    [AC_MSG_ERROR([--enable-benchmarks accepts only yes or no])])
+AC_SUBST([ENABLE_BENCHMARKS])
+
+AS_IF([test "x$ENABLE_BENCHMARKS" = "xyes"],
+    [AC_LANG([C++])
+     AC_CHECK_HEADER([benchmark/benchmark.h],
+        [AC_MSG_CHECKING([whether benchmark library is installed])
+         SAVELIBS=$LIBS
+         LIBS="-lbenchmark -pthread $LIBS"
+         AC_LINK_IFELSE(
+             [AC_LANG_PROGRAM([
+                 #include <benchmark/benchmark.h>
+                 ], [
+                 int argc = 0;
+                 char **argv = nullptr;
+                 benchmark::Initialize(&argc, argv)])],
+             [AC_MSG_RESULT([yes])],
+             [AC_MSG_ERROR([Google Benchmark is required for --enable-benchmarks; install it and set LDFLAGS if needed (see Macaulay2/e/benchmarks/README.md)])])
+         LIBS=$SAVELIBS],
+        [AC_MSG_ERROR([Google Benchmark headers are required for --enable-benchmarks; install them and set CPPFLAGS if needed (see Macaulay2/e/benchmarks/README.md)])])])
+
 AS_IF([test "x$BUILD_gtest" = "xno"],
     [AC_LANG([C++])
      AC_CHECK_HEADER([gtest/gtest.h],

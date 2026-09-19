@@ -1,0 +1,12 @@
+BENCHMARK_CCFILES := \
+    benchmarkMain \
+    M2-cpp-replacement \
+    ExponentVectorBenchmark \
+    SubsetBenchmark
+
+BENCHMARK_TARGET := M2-benchmarks
+BENCHMARK_OBJECT_FILES := $(addsuffix .o, $(BENCHMARK_CCFILES))
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/benchmarks run"
+# End:
