@@ -114,7 +114,10 @@ including their independent checks. Missing or stale shipped example caches
 still cause errors rather than silently passing.
 
 The build job uses `install-packages` to install only packages whose inputs
-changed. It exports the completed container as a two-day workflow artifact. A
+changed. A core source change rebuilds the affected compiled objects and relinks
+M2, then invalidates all package installations so they are installed and checked
+against the changed core. A package-only change preserves compiled core outputs
+and reinstalls that package and its dependent packages. It exports the completed container as a two-day workflow artifact. A
 separate job on a fresh runner imports this filesystem, restores the PAX archive,
 and uses `check-packages` to run package checks every time. Each job has its own
 180-minute allowance. When testing fails, rerun failed jobs while the intermediate
