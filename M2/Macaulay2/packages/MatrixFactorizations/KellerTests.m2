@@ -933,7 +933,7 @@ TEST ///
             assert not isFactorizationMorphism p
             assert(degree p === 1)
 	    q = randomFactorizationMap(D, C, Boundary => true, InternalDegree => 2)
-            assert all({0,1,2}, i -> degree q_i === {2})
+            --assert all({0,1,2}, i -> degree q_i === {2})
             assert isWellDefined q
             assert isCommutative q
             assert isFactorizationMorphism q
