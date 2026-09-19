@@ -43,35 +43,37 @@ default and does not require Google Benchmark unless explicitly enabled.
 Use a release build for meaningful timings. From the repository root:
 
 ```sh
-cmake -S M2 -B build -GNinja \
+mkdir -p M2/BUILD/build
+cd M2/BUILD/build
+cmake -GNinja -S ../.. -B . \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_BENCHMARKS=ON
-cmake --build build --target build-libraries
-cmake --build build --target M2-benchmarks
-./build/Macaulay2/e/M2-benchmarks
+cmake --build . --target build-libraries
+cmake --build . --target M2-benchmarks
+./Macaulay2/e/M2-benchmarks
 ```
 
 The `build-libraries` step installs missing M2 dependencies into
-`build/usr-host` and reruns CMake. Google Benchmark must already be installed
+`usr-host` and reruns CMake. Google Benchmark must already be installed
 when configuring with `BUILD_BENCHMARKS=ON`.
 
-Useful runner options include:
+From the same build directory, useful runner options include:
 
 ```sh
 # List benchmark names without running them.
-./build/Macaulay2/e/M2-benchmarks --benchmark_list_tests
+./Macaulay2/e/M2-benchmarks --benchmark_list_tests
 
 # Run only subset benchmarks.
-./build/Macaulay2/e/M2-benchmarks '--benchmark_filter=BM_Subset.*'
+./Macaulay2/e/M2-benchmarks '--benchmark_filter=BM_Subset.*'
 
 # Repeat runs and report aggregate statistics.
-./build/Macaulay2/e/M2-benchmarks \
+./Macaulay2/e/M2-benchmarks \
   --benchmark_repetitions=10 \
   --benchmark_report_aggregates_only=true
 
 # Save machine-readable results.
 mkdir -p benchmark-results
-./build/Macaulay2/e/M2-benchmarks \
+./Macaulay2/e/M2-benchmarks \
   --benchmark_out=benchmark-results/results.json \
   --benchmark_out_format=json
 ```
@@ -160,14 +162,14 @@ The optional `compare.py` tool comes from a separate checkout of
 Python dependencies listed in its `tools/requirements.txt`.
 
 Capture a baseline and a contender on the same machine with the same compiler,
-build type, power settings, and background load:
+build type, power settings, and background load. From the CMake build directory:
 
 ```sh
 mkdir -p benchmark-results
-./build/Macaulay2/e/M2-benchmarks \
+./Macaulay2/e/M2-benchmarks \
   --benchmark_out=benchmark-results/baseline.json
 # Rebuild after the candidate change.
-./build/Macaulay2/e/M2-benchmarks \
+./Macaulay2/e/M2-benchmarks \
   --benchmark_out=benchmark-results/contender.json
 python /path/to/google-benchmark/tools/compare.py benchmarks \
   benchmark-results/baseline.json benchmark-results/contender.json
