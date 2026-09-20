@@ -396,6 +396,7 @@ toExternalString DoublySpecialCubicFourfold := X -> (
     s = s | "T := projectiveVariety(" | toString sub(ideal T,vars ringP5) | ",Saturate=>false);" | newline;
     s = s | "X := projectiveVariety(" | toString sub(ideal X,vars ringP5) | ",Saturate=>false);" | newline;
     s = s | "X = specialFourfold(S & T,X,NumNodes=>" | toString apply(surfaces X,numberNodes) | ",InputCheck=>0);" | newline;
+    if X.cache#?"CustomData" then s = s | ///X.cache#"CustomData" = /// | toString X.cache#"CustomData" | ";" | newline;
     if X.cache#?(S,T,"labelDSCF") then s = s | ///X.cache#(S,T,"labelDSCF") = "/// | toString X.cache#(S,T,"labelDSCF") | ///";/// | newline;
     if S.cache#?"ConstructionParameters" then s = s | ///S.cache#"ConstructionParameters" = /// | toString S.cache#"ConstructionParameters" | ";" | newline;
     if T.cache#?"ConstructionParameters" then s = s | ///T.cache#"ConstructionParameters" = /// | toString T.cache#"ConstructionParameters" | ";" | newline;
@@ -458,6 +459,13 @@ toExternalString DoublySpecialCubicFourfold := X -> (
                 s = s | "NormU := projectiveVariety(" | toString sub(ideal source normU,vars ringAmbNormU) | ",Saturate=>false);" | newline;
                 s = s | ///U.cache#"Normalization" = toRationalMap((Hom(NormU,U)) /// | toString entries sub(matrix normU,vars ringAmbNormU) | ");" | newline;
             );
+            if U.cache#?"MapToMinimalK3Surface" and (not instance(U.cache#"MapToMinimalK3Surface",WeightedRationalMap)) and instance(target U.cache#"MapToMinimalK3Surface",EmbeddedProjectiveVariety) and (U.cache#"MapToMinimalK3Surface")#"image" =!= null then (
+                Psi := U.cache#"MapToMinimalK3Surface";
+                v := local v; ringAmbUtilde := K[v_0..v_(dim target Psi)];
+                s = s | "v := local v; ringAmbUtilde := K[v_0..v_" | (toString dim target Psi) | "];" | newline;
+                s = s | ///U.cache#"MapToMinimalK3Surface" = (Hom(U,projectiveVariety ringAmbUtilde)) /// | (toString entries sub(matrix Psi,vars ringAmbientW)) | ";" | newline;
+                s = s | ///forceImage(U.cache#"MapToMinimalK3Surface",projectiveVariety(/// | (toString sub(ideal image Psi,vars ringAmbUtilde)) | ",Saturate=>false));" | newline;
+            );
         );
     );
     s | "X))()"
@@ -466,16 +474,22 @@ toExternalString DoublySpecialCubicFourfold := X -> (
 DoublySpecialCubicFourfold ? DoublySpecialCubicFourfold := (X,Y) -> (
     MX := latticeIntersectionMatrix3x3 X;
     MY := latticeIntersectionMatrix3x3 Y;
+    if ring MX === ZZ and ring MY =!= ZZ then return symbol <;
+    if ring MX =!= ZZ and ring MY === ZZ then return symbol >;
     if ring MX === ZZ and ring MY === ZZ then (
         if det MX < det MY then return symbol <;
         if det MX > det MY then return symbol >;
     );
     (S,T) := surfaces X;
     (U,V) := surfaces Y;
+    if X.cache#?(S,T,"parameterCount") and (not Y.cache#?(U,V,"parameterCount")) then return symbol <;
+    if (not X.cache#?(S,T,"parameterCount")) and Y.cache#?(U,V,"parameterCount") then return symbol >;
     if X.cache#?(S,T,"parameterCount") and Y.cache#?(U,V,"parameterCount") then (
         if first X.cache#(S,T,"parameterCount") < first Y.cache#(U,V,"parameterCount") then return symbol <;
         if first X.cache#(S,T,"parameterCount") > first Y.cache#(U,V,"parameterCount") then return symbol >;
     );
+    if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" and (not Y.cache#?"numberOfResidualPointsInGenericQuadricFiber") then return symbol <;
+    if (not X.cache#?"numberOfResidualPointsInGenericQuadricFiber") and Y.cache#?"numberOfResidualPointsInGenericQuadricFiber" then return symbol >;
     if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" and Y.cache#?"numberOfResidualPointsInGenericQuadricFiber" then (
         if X.cache#"numberOfResidualPointsInGenericQuadricFiber" === 1 and Y.cache#"numberOfResidualPointsInGenericQuadricFiber" =!= 1 then return symbol <;
         if X.cache#"numberOfResidualPointsInGenericQuadricFiber" =!= 1 and Y.cache#"numberOfResidualPointsInGenericQuadricFiber" === 1 then return symbol >;
