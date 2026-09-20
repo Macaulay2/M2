@@ -245,6 +245,8 @@ HodgeSpecialFourfold ? HodgeSpecialFourfold := (X,Y) -> (
         if (even(a+b) and odd(b)) and (odd(a'+b') and even(b')) then return symbol <;
         if (odd(a+b) and even(b)) and (even(a'+b') and odd(b')) then return symbol >;
     );
+    if X.cache#?(surface X,"parameterCount") and (not Y.cache#?(surface Y,"parameterCount")) then return symbol <;
+    if (not X.cache#?(surface X,"parameterCount")) and Y.cache#?(surface Y,"parameterCount") then return symbol >;
     if X.cache#?(surface X,"parameterCount") and Y.cache#?(surface Y,"parameterCount") then (
         if first X.cache#(surface X,"parameterCount") < first Y.cache#(surface Y,"parameterCount") then return symbol <;
         if first X.cache#(surface X,"parameterCount") > first Y.cache#(surface Y,"parameterCount") then return symbol >;
@@ -253,9 +255,12 @@ HodgeSpecialFourfold ? HodgeSpecialFourfold := (X,Y) -> (
     if degree surface X > degree surface Y then return symbol >;
     if sectionalGenus surface X < sectionalGenus surface Y then return symbol <;
     if sectionalGenus surface X > sectionalGenus surface Y then return symbol >;
-    if (surface X).cache#?"linear system on PP^2" and (surface Y).cache#?"linear system on PP^2" then return (((surface X).cache#"linear system on PP^2") ? ((surface Y).cache#"linear system on PP^2"));
-    if X == Y and surface X == surface Y then return symbol ==;
-    return incomparable;
+    if (surface X).cache#?"linear system on PP^2" and (surface Y).cache#?"linear system on PP^2" then (
+        if (surface X).cache#"linear system on PP^2" < (surface Y).cache#"linear system on PP^2" then return symbol <;
+        if (surface X).cache#"linear system on PP^2" > (surface Y).cache#"linear system on PP^2" then return symbol >;
+    );
+    if ideal X == ideal Y and surface X == surface Y then return symbol ==;
+    incomparable
 );
 
 parameterCount = method(Options => {Verbose => false})
@@ -509,6 +514,7 @@ toExternalString HodgeSpecialFourfold := X -> (
     if instance(X,GushelMukaiFourfold)
     then s = s|"X = specialFourfold(S,X,InputCheck=>0);"|newline|///X.cache#"AmbientFivefold" = V;///|newline else
     s = s|"X = specialFourfold(S,X,V,InputCheck=>0);"|newline;
+    if X.cache#?"CustomData" then s = s|///X.cache#"CustomData" = ///|(toString X.cache#"CustomData")|";"|newline;
     if (surface X).cache#?"euler" then s = s|///(surface X).cache#"euler" = ///|toString(euler surface X)|";"|newline;
     if (surface X).cache#?"FiniteNumberOfNodes" then s = s|///(surface X).cache#"FiniteNumberOfNodes" = ///|toString(numberNodes surface X)|";"|newline;
     if (surface X).cache#?"rationalParametrization" then (
@@ -555,6 +561,13 @@ toExternalString HodgeSpecialFourfold := X -> (
                 s = s|"w := local w; ringAmbNormU := K[w_0..w_"|(toString dimAmbNormU)|",Degrees=>"|(toString degrees ringAmbNormU)|"];"|newline;
                 s = s|"NormU := projectiveVariety("|(toString sub(ideal source normU,vars ringAmbNormU))|",Saturate=>false);"|newline;
                 s = s|///U.cache#"Normalization" = toRationalMap((Hom(NormU,U)) ///|(toString entries sub(matrix normU,vars ringAmbNormU))|");"|newline;
+            );
+            if U.cache#?"MapToMinimalK3Surface" and (not instance(U.cache#"MapToMinimalK3Surface",WeightedRationalMap)) and instance(target U.cache#"MapToMinimalK3Surface",EmbeddedProjectiveVariety) and (U.cache#"MapToMinimalK3Surface")#"image" =!= null then (
+                Psi := U.cache#"MapToMinimalK3Surface";
+                v := local v; ringAmbUtilde := K[v_0..v_(dim target Psi)];
+                s = s|"v := local v; ringAmbUtilde := K[v_0..v_"|(toString dim target Psi)|"];"|newline;
+                s = s|///U.cache#"MapToMinimalK3Surface" = (Hom(U,projectiveVariety ringAmbUtilde)) ///|(toString entries sub(matrix Psi,vars T))|";"|newline;
+                s = s|///forceImage(U.cache#"MapToMinimalK3Surface",projectiveVariety(///|(toString sub(ideal image Psi,vars ringAmbUtilde))|",Saturate=>false));"|newline;
             );
         );
     );
