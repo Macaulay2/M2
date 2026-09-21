@@ -2,7 +2,6 @@
 # The engine and editor sources are always needed. ExternalProject sources are
 # needed only for missing libraries, or to keep testing a previous local build.
 set(_m2_required_submodules submodules/memtailor submodules/mathic submodules/mathicgb)
-set(GOOGLETEST_FOUND ${GTEST_FOUND})
 foreach(_name IN ITEMS bdwgc flint frobby givaro fflas_ffpack googletest)
   string(TOUPPER "${_name}" _upper)
   set(_m2_build_${_name} FALSE)

@@ -118,6 +118,7 @@ ENDFUNCTION (_ADD_COMPONENT_DEPENDENCY)
 ###############################################################################
 ## Pre-build actions
 
+set(GOOGLETEST_FOUND ${GTEST_FOUND})
 include(submodules)
 
 # Create directories so copy instructions don't create files in their place

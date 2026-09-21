@@ -62,6 +62,7 @@ class SubmoduleTests(unittest.TestCase):
         script = self.work / "check.cmake"
         script.write_text("cmake_minimum_required(VERSION 3.24)\n" +
                           "".join(f'set({key} "{value}")\n' for key, value in values.items()) +
+                          "set(GOOGLETEST_FOUND ${GTEST_FOUND})\n" +
                           f'include("{MODULE}")\n' +
                           "".join(f'message(STATUS "fallback {name}=${{_m2_build_{name}}}")\n'
                                   for name in FALLBACKS))
