@@ -158,8 +158,6 @@ AC_CHECK_PROGS(PKG_CONFIG,pkg-config,false)
 if test $PKG_CONFIG = false; then AC_MSG_ERROR(pkg-config is required); fi
 AC_CHECK_PROGS(ETAGS,etags ctags,false)
 if test "$ETAGS" = false; then AC_MSG_WARN(without etags no TAGS files will be made); fi
-AC_CHECK_PROGS(EMACS,emacs,false)
-if test "$EMACS" = false; then AC_MSG_NOTICE([Emacs not found; skipping Emacs package]); fi
 AC_CHECK_PROGS(LINTIAN,lintian,false)
 AC_CHECK_PROGS(OTOOL,otool,false)
 AC_CHECK_PROGS(TAR,gtar gnutar tar,false)
