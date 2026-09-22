@@ -16,6 +16,8 @@ Node
       no longer edits initialization files. In Emacs, @TT "M-x M2"@ starts a session
       and @TT "M-x M2-help"@ opens the bundled guide. Configure @TT "M2-exe"@ for a
       local executable or @TT "M2-command"@ for an SSH or container command.
+  Subnodes
+    setupEmacs
 
 
 Node
