@@ -9,7 +9,6 @@ import unittest
 MODULE = Path(__file__).resolve().parents[1] / "submodules.cmake"
 REQUIRED = ["submodules/" + name for name in ("memtailor", "mathic", "mathicgb")]
 FALLBACKS = ("bdwgc", "flint", "frobby", "givaro", "fflas_ffpack", "googletest")
-EDITOR = "Macaulay2/editors/emacs"
 
 
 class SubmoduleTests(unittest.TestCase):
@@ -28,7 +27,7 @@ class SubmoduleTests(unittest.TestCase):
         cls.pinned = cls.run_command("git", "rev-parse", "HEAD", cwd=cls.library).stdout.strip()
         cls.upstream = cls.root / "upstream"
         cls.run_command("git", "init", str(cls.upstream))
-        for path in REQUIRED + [EDITOR] + ["submodules/" + n for n in FALLBACKS]:
+        for path in REQUIRED + ["submodules/" + n for n in FALLBACKS]:
             cls.run_command("git", "submodule", "add", str(cls.library), "M2/" + path,
                             cwd=cls.upstream)
         cls.run_command("git", "commit", "-am", "submodules", cwd=cls.upstream)
@@ -71,11 +70,12 @@ class SubmoduleTests(unittest.TestCase):
     def test_system_libraries_are_not_checked_out(self):
         result = self.configure()
         self.assertEqual(result.returncode, 0, result.stdout)
-        for path in REQUIRED + [EDITOR]:
+        for path in REQUIRED:
             directory = self.repo / "M2" / path
             self.assertTrue((directory / "README").exists())
             revision = self.run_command("git", "rev-parse", "HEAD", cwd=directory).stdout.strip()
             self.assertEqual(revision, self.pinned)
+        self.assertFalse((self.repo / "M2/Macaulay2/editors/emacs").exists())
         for name in FALLBACKS:
             self.assertFalse((self.repo / "M2/submodules" / name / "README").exists())
             self.assertIn(f"fallback {name}=FALSE", result.stdout)

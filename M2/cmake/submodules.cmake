@@ -1,5 +1,5 @@
 # check-libraries.cmake has already applied BUILD_LIBRARIES overrides.
-# The engine and editor sources are always needed. ExternalProject sources are
+# The bundled engine sources are always needed. ExternalProject sources are
 # needed only for missing libraries, or to keep testing a previous local build.
 set(_m2_required_submodules submodules/memtailor submodules/mathic submodules/mathicgb)
 foreach(_name IN ITEMS bdwgc flint frobby givaro fflas_ffpack googletest)
@@ -17,9 +17,9 @@ foreach(_name IN ITEMS bdwgc flint frobby givaro fflas_ffpack googletest)
 endforeach()
 
 if(GIT_SUBMODULE AND GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
-  message(STATUS "Updating required submodules: ${_m2_required_submodules};Macaulay2/editors/emacs")
+  message(STATUS "Updating required submodules: ${_m2_required_submodules}")
   execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --
-      ${_m2_required_submodules} Macaulay2/editors/emacs
+      ${_m2_required_submodules}
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     RESULT_VARIABLE _m2_submodule_result)
   if(NOT _m2_submodule_result EQUAL 0)
@@ -28,7 +28,6 @@ if(GIT_SUBMODULE AND GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
 endif()
 
 # Support offline builds and source archives containing the required sources.
-# Retain the editors' existing warning/skip behavior if Emacs sources are absent.
 foreach(_path IN LISTS _m2_required_submodules)
   file(GLOB _m2_submodule_files "${CMAKE_SOURCE_DIR}/${_path}/*")
   list(FILTER _m2_submodule_files EXCLUDE REGEX "/\\.(git|nogit)$")
