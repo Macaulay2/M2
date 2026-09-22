@@ -9,7 +9,7 @@
 ## Short instructions:
 ##  1. cmake -GNinja -S . -B BUILD/cmake
 ##  2. cmake --build BUILD/cmake --target build-libraries build-programs
-##  2. cmake --build BUILD/cmake --target M2-engine M2-binary M2-core M2-emacs
+##  2. cmake --build BUILD/cmake --target M2-engine M2-binary M2-core
 ##  2. cmake --build BUILD/cmake --target install-packages check-packages
 ##  6. cmake --install BUILD/cmake
 ###############################################################################

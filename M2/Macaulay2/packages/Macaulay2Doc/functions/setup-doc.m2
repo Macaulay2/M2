@@ -7,7 +7,7 @@ Node
     setup()
   Consequences
     Item
-      Initialization files for Emacs and the standard command shells will
+      Initialization files for the standard command shells will
       have lines added to them to allow the Macaulay2 files to be found.
       A missing initialization file will be created only if doing so will not
       prevent the command shell from reading further initialization files.
@@ -50,18 +50,12 @@ Node
     1:setupEmacs
   Usage
     setupEmacs()
-  Consequences
-    Item
-      The initialization file for Emacs (@TT ".emacs"@ in your home directory) will have lines
-      added to allow the Macaulay2 Emacs mode to operate. The user is prompted before the file
-      is modified and offered the opportunity to review or reject the change.
   Description
     Text
-      A backup files is made carefully, and if a mangled initialization file is detected,
-      it will not be modified. The lines added are bracketed by comment lines containing
-      the phrases @TT "Macaulay 2 start"@ and @TT "Macaulay 2 end"@.
-
-      The function @TO setup@ does all this and more.
+      This function is deprecated. It prints instructions for installing the separate Emacs
+      interface from @HREF "https://github.com/Macaulay2/M2-emacs#installation"@.
+      It does not modify any files. Install the interface using an Emacs package manager;
+      @TO setup@ now configures only command shells.
   SeeAlso
     setup
 ///

@@ -98,8 +98,6 @@ Obsoletes: Macaulay2-common < %{version}-%{release}
 Provides:  Macaulay2-common = %{version}-%{release}
 Obsoletes: Macaulay2-doc < %{version}-%{release}
 Provides:  Macaulay2-doc = %{version}-%{release}
-Obsoletes: Macaulay2-emacs < %{version}-%{release}
-Provides:  Macaulay2-emacs = %{version}-%{release}
 Provides:  macaulay2 = %{version}-%{release}
 
 %description
@@ -144,7 +142,6 @@ rm -fv %{buildroot}%{_infodir}/dir
 %{_bindir}/M2-language-server
 %{_prefix}/lib/Macaulay2/
 %{_libexecdir}/Macaulay2/
-%{_datadir}/emacs/site-lisp/macaulay2/
 %{_datadir}/Macaulay2/
 %{_docdir}/Macaulay2/
 %{_infodir}/*.info*

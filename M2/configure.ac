@@ -2005,14 +2005,6 @@ test "$pdfdir"      || AC_SUBST(pdfdir,'${docdir}')
 test "$psdir"       || AC_SUBST(psdir,'${docdir}')
 test "$localedir"   || AC_SUBST(localedir,'${datarootdir}/locale')
 
-AC_ARG_WITH([emacsdir],
-    [AS_HELP_STRING([--with-emacsdir=...],
-        [set installation directory for installing Emacs Lisp files;
-         must begin with ${prefix} or ${exec_prefix}])],
-    [emacsdir=$withval],
-    [emacsdir=${datarootdir}/emacs/site-lisp/macaulay2])
-AC_SUBST(emacsdir)
-
 # Here we normalize all the configure variables so each one begins either with ${prefix} or with ${exec_prefix},
 # so they can be handled more simply in Macaulay2, by a single text replacement.
 save_prefix=$prefix
@@ -2030,8 +2022,7 @@ sysconfdir=/nowhere
 sharedstatedir=/nowhere
 localstatedir=/nowhere
 for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
-         psdir pdfdir dvidir htmldir localedir GFTABLESDIR docdir datarootdir \
-         emacsdir
+         psdir pdfdir dvidir htmldir localedir GFTABLESDIR docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
@@ -2070,7 +2061,6 @@ AC_SUBST(pre_htmldir)
 AC_SUBST(pre_localedir)
 AC_SUBST(pre_docdir)
 AC_SUBST(pre_datarootdir)
-AC_SUBST(pre_emacsdir)
 
 AC_SUBST(tail_bindir)
 AC_SUBST(tail_datadir)
@@ -2090,7 +2080,6 @@ AC_SUBST(tail_htmldir)
 AC_SUBST(tail_localedir)
 AC_SUBST(tail_docdir)
 AC_SUBST(tail_datarootdir)
-AC_SUBST(tail_emacsdir)
 
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])

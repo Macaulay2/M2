@@ -377,35 +377,6 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      supplantFileFile(tmp,filename,true);
      false)
 
-emacstempl := ///
-;; add "/PREFIX/DIR" to VAR if it isn't there
-(add-to-list 'VAR "/PREFIX/DIR")
-///
-
-emacsenvtempl := ///
-;; add "/PREFIX/DIR" to VAR if it isn't there
-(if (not (string-match "/PREFIX/DIR" (getenv "VAR")))
-     (setenv "VAR" "/PREFIX/DIR:$VAR" t))
-///
-
-dotemacsFix0 = ///
-;; this version will give an error if M2-init.el is not found:
-(load "M2-init")
-
-;; this version will not give an error if M2-init.el is not found:
-;; (load "M2-init" t)
-
-;; You may comment out the following line with an initial semicolon if you 
-;; want to use your f12 key for something else.  However, this action
-;; will be undone the next time you run setup() or setupEmacs().
-(global-set-key [ f12 ] 'M2)
-
-;; Prevent Emacs from inserting a superfluous "See" or "see" in front
-;; of the hyperlinks when reading documentation in Info mode.
-(setq Info-hide-note-references 'hide)
-///
-
-emacsHeader := ";; -*-emacs-lisp-*-\n"
 shHeader := "#-*-sh-*-\n"
 
 bashtempl := ///
@@ -442,12 +413,6 @@ shellfixes := {
      ("MANPATH", currentLayout#"man",":"),
      ("INFOPATH", currentLayout#"info",":"),
      ("LD_LIBRARY_PATH", currentLayout#"lib","")}
-emacsfixes := {
-     ("load-path", currentLayout#"emacs", emacstempl),
-     -- the exec-path fix is not needed, because we exec the shell and ask it to find M2
-     -- ("exec-path", currentLayout#"bin", emacstempl),
-     ("Info-default-directory-list", currentLayout#"info", emacstempl),
-     ("PATH", currentLayout#"bin", emacsenvtempl)}
 
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
 fix := (var,dir,rest,templ) -> replace_(":REST",rest) replace_("VAR",var) replace_("DIR",stripdir dir) templ
@@ -456,7 +421,6 @@ startToken := "## Macaulay 2 start"
 endToken := "## Macaulay 2 end"
 M2profile := ".profile-Macaulay2"
 M2login   := ".login-Macaulay2"
-M2emacs   := ".emacs-Macaulay2"
 M2profileRead := replace("filename",M2profile,
 ///if [ -f ~/filename ]
 then . ~/filename
@@ -465,26 +429,19 @@ fi
 M2loginRead   := replace("filename",M2login,
 ///if ( -e ~/filename ) source ~/filename
 ///)
-M2emacsRead   := replace("filename",format ("~/"|M2emacs),
-///(load filename t)
-///)
-
 local dotprofileFix
 local dotloginFix
-local dotemacsFix
 
 setupEmacs = method()
 setup = method()
-mungeEmacs = () -> (
-     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir,templ) -> fix(var,dir,"",templ)), dotemacsFix0);
-     supplantStringFile(dotemacsFix,"~/"|M2emacs,false);
-     mungeFile("~/"|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
-     )
 prelim := () -> (
      promptUser = true;
      if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
      )
-setupEmacs() := () -> ( prelim(); mungeEmacs(); )
+setupEmacs() := () -> (
+     << "setupEmacs() is deprecated; Emacs support is installed separately." << endl
+     << "Install and configure it from Emacs; see https://github.com/Macaulay2/M2-emacs#installation" << endl;
+     )
 setup() := () -> (
      prelim();
      dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,bashtempl)));
@@ -503,9 +460,7 @@ setup() := () -> (
      -- zsh:
      mungeFile("~/.zprofile",startToken,endToken,M2profileRead) or
      -- csh and tcsh:
-     mungeFile("~/.login",startToken,endToken,M2loginRead) or
-     -- emacs:
-     mungeEmacs(); )
+     mungeFile("~/.login",startToken,endToken,M2loginRead); )
 
 scanLines = method()
 ifbrk := x -> if x =!= null then break x

@@ -152,7 +152,7 @@ jobs:
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core M2-emacs
+          cmake --build . --target M2-core
 
       - name: Install packages using Ninja
         if: matrix.build-system == 'cmake'

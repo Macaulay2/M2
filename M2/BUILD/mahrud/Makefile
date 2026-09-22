@@ -44,6 +44,5 @@ cmake-build-with-brew:
 	cmake -GNinja -S../.. -Bcmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$(OPT_PREFIX)"
 	cmake --build cmake --target build-libraries build-programs
 	cmake --build cmake --target install-packages
-	cmake --build cmake --target M2-emacs
 
 #TODO: can we skip building factory? use FTABLESDIR=/usr/share/factory/ 
