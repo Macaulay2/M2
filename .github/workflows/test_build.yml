@@ -158,6 +158,10 @@ jobs:
         run: |
           cmake --build . --target M2-core
 
+      - name: Test the language server launcher
+        if: matrix.build-system == 'cmake'
+        run: python3 ../../cmake/tests/test_language_server.py usr-dist/*/bin/M2-language-server
+
       - name: Install packages using Ninja
         if: matrix.build-system == 'cmake'
         run: |
