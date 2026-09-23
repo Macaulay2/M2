@@ -176,7 +176,24 @@ static int read_via_readline(char *buf,int len,char *prompt) {
     if (p == NULL) return 0;	/* EOF */
     i = 0;
     plen = strlen(p);
-    add_history(p);
+    /* readline 8+ with bracketed paste mode can return a multi-line string
+       when the user pastes text containing newlines.  add_history on such a
+       string would store one entry for the whole paste, but M2's line counter
+       increments for every '\n' it sees, breaking the 1:1 correspondence that
+       code.m2 relies on when fetching history by line number.  Split at each
+       embedded newline so every logical line gets its own history entry. */
+    {
+      char *s = p;
+      char *nl;
+      while ((nl = strchr(s, '\n')) != NULL) {
+	char saved = *nl;
+	*nl = '\0';
+	add_history(s);
+	*nl = saved;
+	s = nl + 1;
+      }
+      add_history(s);
+    }
   }
   r = plen - i;
   if (r > len) r = len;
