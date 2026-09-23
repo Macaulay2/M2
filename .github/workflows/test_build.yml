@@ -131,9 +131,6 @@ jobs:
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2.23
         with:
-          path: |
-            ~/.ccache
-            ~/work/M2/M2/BUILD/build/usr-host
           key: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}
           evict-old-files: job
           save: ${{ github.event_name == 'push' }} # to development on merge
