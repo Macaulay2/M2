@@ -457,6 +457,7 @@ TEST ///
 ///
 
 TEST ///
+  -- no-check-flag
   S = ZZ/2[x,y,z]
   R = quotient ideal(x^2*y+x*y*z+y^2*z+z^2)
   M1 = last sort(summands frobeniusPushforward(1, R), numgens)

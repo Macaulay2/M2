@@ -4,6 +4,7 @@
 #include <M2/gc-include.h>
 
 #include "interp-exports.h"
+#include "interrupts-exports.h"
 #include <interface/m2-types.h>
 
 #include "M2mem.h"
@@ -38,10 +39,6 @@ static bool gotArg(const char* arg, char* const * argv) {
   return false;
 }
 
-extern "C" void interrupts_clearInterruptFlag();
-extern "C" void interrupts_clearAlarmedFlag();
-extern "C" void interrupts_determineExceptionFlag();
-
 extern int have_arg_no_int;
 
 extern int tokens_stopIfError_id;
@@ -58,7 +55,7 @@ void* testFunc(ArgCell* p);
 void  M2_flint_abort(void);
 
 static void * GC_start_performance_measurement_0(void *) {
-#ifdef GC_start_performance_measurement /* added in bdwgc 8 */
+#if GC_VERSION_MAJOR >= 8 /* GC_start_performance_measurement added in bdwgc 8 */
   GC_start_performance_measurement();
 #endif
   return NULL;

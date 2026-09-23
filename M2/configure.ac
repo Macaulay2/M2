@@ -11,7 +11,6 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
 m4_include(m4/ax_compare_version.m4)
-m4_include(m4/ax_recursive_eval.m4)
 m4_include(m4/openmp.m4)
 m4_include(m4/search-libraries.m4)
 m4_include(m4/ax_boost_base.m4)
@@ -358,6 +357,31 @@ AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
 AC_CHECK_SIZEOF([long])
 AC_SUBST(SIZEOF_LONG,$ac_cv_sizeof_long)
 
+dnl Check for Homebrew packages
+
+AC_CHECK_PROGS([BREW], [brew], [false])
+
+dnl BREW_ADD_FLAG([FORMULA], [DIR], [FLAG], [PREFIX], [SEPARATOR])
+dnl adds PREFIX$(brew --prefix FORMULA)/DIR (if it exists) to FLAG,
+dnl separated by SEPARATOR
+AC_DEFUN([BREW_ADD_FLAG],
+    [AS_IF([test "x$BREW" = xbrew -a -d $($BREW --prefix $1)/$2],
+         [$3="${$3+$$3$5}$4$($BREW --prefix $1)/$2"])])
+
+dnl BREW_ADD_FLAGS([FORMULA])
+dnl adds:
+dnl -L$(brew --prefix FORMULA)/lib to LDFLAGS,
+dnl -I$(brew --prefix FORMULA)/include to CPPFLAGS, and
+dnl $(brew --prefix)/lib/pkgconfig to PKG_CONFIG_PATH
+AC_DEFUN([BREW_ADD_FLAGS],
+    [BREW_ADD_FLAG([$1], [lib],           [LDFLAGS],         [-L], [ ])
+     BREW_ADD_FLAG([$1], [include],       [CPPFLAGS],        [-I], [ ])
+     BREW_ADD_FLAG([$1], [lib/pkgconfig], [PKG_CONFIG_PATH], [],   [:])])
+
+BREW_ADD_FLAGS
+
+export PKG_CONFIG_PATH
+
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h elf.h execinfo.h syscall.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
@@ -399,7 +423,6 @@ test "$DEBUG" = "yes" && ENABLE_STRIP=no
 # note: we build many programs for inclusion in the distribution -- stripping them saves 9MB of 70
 
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
-AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
 AC_SUBST(CC_THREAD_SUPPORT)
 AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
@@ -549,7 +572,8 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 dnl Check for openmp and fail if it cannot be found.
 dnl This is required for building the library csdp and good for building the library normaliz
 AC_LANG(C++)
-AC_OPENMP
+BREW_ADD_FLAGS([libomp]) # keg-only
+M2_OPENMP
 if test "$ac_cv_prog_cxx_openmp" = unsupported
    then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
 fi
@@ -817,6 +841,21 @@ AS_IF([test $BUILD_lapack = yes],
      LAPACK_LIBS=-llapack])
 AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
 
+dnl This must come after the Fortran/BLAS/LAPACK detection above: gfortran
+dnl expands --coverage to -lgcov, which would then be baked into FCLIBS and
+dnl BLAS_LIBS and clash with the compiler's own coverage runtime at link time.
+AC_SUBST([GCOV],[no])
+AC_ARG_ENABLE([gcov],
+  [AS_HELP_STRING([--enable-gcov],
+     [enable gcc/gcov code coverage (implies -O0 and disables stripping)])],
+  [GCOV=$enableval])
+AS_IF([test "$GCOV" = yes],
+  [CFLAGS="$CFLAGS --coverage -O0"
+   CXXFLAGS="$CXXFLAGS --coverage -O0"
+   LDFLAGS="$LDFLAGS --coverage"
+   ENABLE_STRIP=no
+   OPTIMIZE=no])
+
 AS_IF([test $BUILD_givaro = no],
     [AC_LANG([C++])
      AC_CHECK_HEADER([givaro/givinteger.h],
@@ -1019,7 +1058,7 @@ AS_IF([test $BUILD_normaliz = no],
     [AC_MSG_CHECKING(whether the package normaliz is installed)
      AS_IF([command -v normaliz > /dev/null],
 	 [normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
-	  AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
+	  AX_COMPARE_VERSION([$normaliz_version], [ge], [3.6.3],
 	      [AC_MSG_RESULT([yes])
 	       AC_MSG_CHECKING([for libnormaliz])
 	       AC_LANG(C++)
@@ -1038,7 +1077,7 @@ AS_IF([test $BUILD_normaliz = no],
 		   [AC_MSG_RESULT([no, will build])
 		    BUILD_normaliz=yes
 		    LIBS=$SAVELIBS])],
-	      [AC_MSG_RESULT([yes, but < 2.11, will build])
+	      [AC_MSG_RESULT([yes, but < 3.6.3, will build])
 	       BUILD_normaliz=yes])],
         [AC_MSG_RESULT([no, will build])
          BUILD_normaliz=yes])])
@@ -1218,7 +1257,8 @@ fi
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,curses tinfo ncurses,,AC_MSG_ERROR([[not found: library containing symbol tgoto; tried libcurses, libncurses, and libtinfo)]]))
 if test $BUILD_readline = no
-then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
+then BREW_ADD_FLAGS([readline]) # keg-only
+     AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
 fi
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(rl_set_prompt,readline,,BUILD_readline=yes)
@@ -1442,14 +1482,18 @@ AC_CHECK_HEADERS([boost/math/special_functions.hpp],
     [AC_MSG_ERROR([Boost Math Toolkit not available])])
 AC_SEARCH_LIBS([ldexpq], [quadmath])
 
-AC_SUBST(ULIMIT_T,yes)
-AC_SUBST(ULIMIT_M,yes)
-AC_SUBST(ULIMIT_V,yes)
-AC_SUBST(ULIMIT_S,yes)
-( ulimit -t 2000 2>/dev/null) || ULIMIT_T=no
-( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
-( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
-( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
+dnl Whether the shell can set the limits we use when testing; see
+dnl include/config.Makefile.in.  Probe the largest values used, since a
+dnl smaller probe could succeed where the limit itself fails.
+AC_ARG_VAR([ULIMIT_T], [set to "no" for no cpu time limit when testing])
+AC_ARG_VAR([ULIMIT_V], [set to "no" for no memory limit when testing])
+AC_ARG_VAR([ULIMIT_S], [set to "no" for no stack size limit when testing])
+AS_IF([test -z "$ULIMIT_T"],
+      [ULIMIT_T=yes; (ulimit -t 1200 2>/dev/null) || ULIMIT_T=no])
+AS_IF([test -z "$ULIMIT_V"],
+      [ULIMIT_V=yes; (ulimit -v 3200000 2>/dev/null) || ULIMIT_V=no])
+AS_IF([test -z "$ULIMIT_S"],
+      [ULIMIT_S=yes; (ulimit -s 8192 2>/dev/null) || ULIMIT_S=no])
 
 AC_SUBST(ENABLE_LINBOX,no)
 AC_ARG_ENABLE(linbox,
@@ -1495,6 +1539,7 @@ AS_IF([test "x$with_fplll" = "xyes"],
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
+    BREW_ADD_FLAGS([factory]) # keg-only
     AC_MSG_CHECKING([whether factory library is installed])
     FACTORY_MINVERSION=4.2.0
     if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
@@ -1538,10 +1583,21 @@ else
 	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/singular/factory/"
 	fi
     fi
-    AX_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
-    AC_CHECK_FILE([${GFTABLESDIR}gftables/961],,
-	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
-    FILE_PREREQS="$FILE_PREREQS ${GFTABLESDIR}gftables/961"
+    # An absolute path (which is what pkg-config gives us) is baked into
+    # startup.m2 verbatim, so we use the system tables where they are, as
+    # distribution packages want.  A caller may instead pass something like
+    # GFTABLESDIR='${datadir}/Macaulay2/Core/factory/' and stage a copy of the
+    # tables there; the normalization loop below then turns it into a
+    # ${prefix}-relative layout entry, which is what a relocatable binary
+    # distribution such as the macOS dmg needs.  We can only check for the
+    # tables in the former case, as the latter is not populated until "make
+    # install".
+    case $GFTABLESDIR in
+	/*) AC_CHECK_FILE([${GFTABLESDIR}gftables/961],,
+		[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
+	    FILE_PREREQS="$FILE_PREREQS ${GFTABLESDIR}gftables/961" ;;
+	*)  AC_MSG_NOTICE([gftables expected at $GFTABLESDIR, relative to the prefix]) ;;
+    esac
 fi
 
 if test $BUILD_factory = no
@@ -1892,6 +1948,7 @@ AC_MSG_NOTICE([with  OS REL            = $OS $REL])
 AC_MSG_NOTICE([with  ARCH              = $ARCH])
 AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
+AC_MSG_NOTICE([with  GCOV              = $GCOV])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 AC_MSG_NOTICE([with  GIT_BRANCH        = $GIT_BRANCH])
 AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])
@@ -1994,13 +2051,6 @@ do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v=
 done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
-
-if test $BUILD_factory = no
-then PRE_GFTABLESDIR="$GFTABLESDIR"
-else
-PRE_GFTABLESDIR="$pre_datadir/Macaulay2/Core/factory/"
-fi
-AC_SUBST(PRE_GFTABLESDIR)
 
 AC_SUBST(pre_bindir) dnl In Macaulay2/bin/M2.in we assume that $pre_bindir/.. is $pre_exec_prefix, which follows from pre_bindir=${pre_exec_prefix}/bin.
 AC_SUBST(pre_datadir)

@@ -69,6 +69,7 @@ Node
     isBorel
     isCommutative
     isAffineRing
+    isSkewAffineRing
 
 Node
   Key

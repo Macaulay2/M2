@@ -14,9 +14,9 @@
 ##  6. cmake --install BUILD/cmake
 ###############################################################################
 
-## Requires CMake version 3.24 and is tested with 3.30
-cmake_minimum_required(VERSION 3.24...3.30)
-cmake_policy(VERSION 3.24)
+## Requires CMake version 3.30 (for policy CMP0167 used in cmake/check-libraries.cmake)
+cmake_minimum_required(VERSION 3.30)
+cmake_policy(VERSION 3.30)
 cmake_policy(SET CMP0096 NEW) # preserve leading zeros in version number
 
 ## Use the C++20 standard
@@ -68,6 +68,7 @@ include(prechecks) ## CMake macros for preprocessor checks and linting
 include(CTest)     ## CMake module for generating a 'test' target for all unit-tests
 include(profiling) ## CMake macros for profiling Macaulay2 code
 include(configure) ## CMake script for configuring various variables
+include(gcov)      ## CMake targets for gcc/gcov code coverage
 include(check-libraries) ## CMake script for checking which libraries exist and which need to be built
 include(build-libraries) ## CMake script for downloading, building, and installing external libraries
 include(startup) ## CMake script for messy substitutions in Macaulay2/bin/startup.c

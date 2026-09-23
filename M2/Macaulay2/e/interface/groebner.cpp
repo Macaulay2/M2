@@ -114,7 +114,7 @@ Computation /* or null */ *IM2_GB_make(
                                       strategy,
                                       numThreads,
                                       max_reduction_count);
-  } catch (const exc::engine_error& e)
+  } catch (const std::runtime_error& e)
     {
       ERROR(e.what());
       return nullptr;
@@ -151,7 +151,7 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
                                                strategy,
                                                numThreads,
                                                parallelizeByDegree);
-  } catch (const exc::engine_error& e)
+  } catch (const std::runtime_error& e)
     {
       ERROR(e.what());
       return nullptr;
@@ -307,7 +307,7 @@ Computation /* or null */ *rawStartComputation(Computation *C)
         }
 
       return error() ? nullptr : C;
-  } catch (const exc::engine_error& e)
+  } catch (const std::runtime_error& e)
     {
       ERROR(e.what());
       return nullptr;
@@ -932,33 +932,40 @@ const Matrix* polyListToMatrix(const M2FreeAlgebraOrQuotient* A,
 
 const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int strategy)
 {
-  const Ring* R = input->get_ring();
-  const M2FreeAlgebra* A = R->cast_to_M2FreeAlgebra();
-  if (A != nullptr and input->n_rows() == 1)
+  try
     {
-      auto elems = matrixToPolyList(A, input);
-      bool isF4 = strategy & 16;
-      bool isParallel = strategy & 32;
-      if (isF4)
+      const Ring* R = input->get_ring();
+      const M2FreeAlgebra* A = R->cast_to_M2FreeAlgebra();
+      if (A != nullptr and input->n_rows() == 1)
         {
-          int numthreads = M2_numTBBThreads; // settable from front end.
-          // std::cout << "Using numthreads = " << numthreads << std::endl;
-          NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy, (isParallel ? numthreads : 1));
-          G.compute(maxdeg); // this argument is actually the soft degree limit
-          auto result = copyPolyVector(A, G.currentValue());
-          return polyListToMatrix(A, result, 1, result.size()); // consumes the Poly's in result
-        }
-      else
-        {
-          NCGroebner G(A->freeAlgebra(), elems, maxdeg, strategy);
-          G.compute(maxdeg); // this argument is actually the soft degree limit
-          auto result = copyPolyVector(A, G.currentValue());
-          return polyListToMatrix(A, result, 1, result.size()); // consumes the Poly's in result
-        }
+          auto elems = matrixToPolyList(A, input);
+          bool isF4 = strategy & 16;
+          bool isParallel = strategy & 32;
+          if (isF4)
+            {
+              int numthreads = M2_numTBBThreads; // settable from front end.
+              // std::cout << "Using numthreads = " << numthreads << std::endl;
+              NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy, (isParallel ? numthreads : 1));
+              G.compute(maxdeg); // this argument is actually the soft degree limit
+              auto result = copyPolyVector(A, G.currentValue());
+              return polyListToMatrix(A, result, 1, result.size()); // consumes the Poly's in result
+            }
+          else
+            {
+              NCGroebner G(A->freeAlgebra(), elems, maxdeg, strategy);
+              G.compute(maxdeg); // this argument is actually the soft degree limit
+              auto result = copyPolyVector(A, G.currentValue());
+              return polyListToMatrix(A, result, 1, result.size()); // consumes the Poly's in result
+            }
 
-    }
-  ERROR("expected a one row matrix over a noncommutative algebra");
-  return nullptr;
+        }
+      ERROR("expected a one row matrix over a noncommutative algebra");
+      return nullptr;
+  } catch (const std::runtime_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+  }
 }
 
 const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* reducerMatrix)

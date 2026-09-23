@@ -63,6 +63,9 @@ defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStyle
     SCRIPT {"src" => getStyleFile "prism.js", ""},
     SCRIPT {"var current_version = '", version#"VERSION", "';"},
     SCRIPT {"src" => getStyleFile "version-select.js"},
+    SCRIPT {"src" => getStyleFile "lunr.min.js", ""},
+    SCRIPT {"src" => getStyleFile "search-data.js", ""},
+    SCRIPT {"src" => getStyleFile "search.js", ""},
     LINK {
 	"rel" => "icon", "type" => "image/x-icon",
 	"href" => getStyleFile "icon.gif"}}
