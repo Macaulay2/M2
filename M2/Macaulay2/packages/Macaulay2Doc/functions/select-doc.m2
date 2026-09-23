@@ -128,34 +128,44 @@ document {
      SeeAlso => {(select,BasicList,Function),partition}
      }
 
-document { 
-    Key => {
-	 selectValues,
-	(selectValues, HashTable, Function),
-	(selectValues, ZZ, HashTable, Function),
-	(select, HashTable, Function),
-	(select, ZZ, HashTable, Function),
-    },
-     Headline => "select part of a hash table by values",
-     Usage => "selectValues(v,f)\nselectValues(n,v,f)",
-     Inputs => { "n" => ZZ, "v" => HashTable, "f" => {"returning either ", TO "true", " or ", TO "false"} },
-     Outputs => {
-	  {"whose pairs are those key-value pairs ", TT "(k,w)", " of the hash table ", TT "v", " that
-	       yield ", TT "true", " when the function ", TT "f", " is applied to the value ", TT "w", ".",
-	   "If ", TT "n", " is provided, at most ", TT "n", " pairs will be selected."}
-	  },
-     "The hash table ", TT "v", " should be immutable: to scan the values in a mutable hash
-     table, use ", TT "scan(values x, f)", ".",
-     EXAMPLE {
-	  "x = new HashTable from { x => 1, y => 2, z => 3 }",
-	  "select(x,odd)",
-	  "select(1,x,odd)"
-	  },
-     SeeAlso => {
-	 partition,
-	 selectKeys,
-	 selectPairs}
-     }
+doc ///
+  Key
+     selectValues
+    (selectValues, HashTable, Function)
+    (selectValues, ZZ, HashTable, Function)
+    (select, HashTable, Function)
+    (select, ZZ, HashTable, Function)
+  Headline
+    select part of a hash table by values
+  Usage
+    selectValues(v,f)
+    selectValues(n,v,f)
+  Inputs
+    n:ZZ
+    v:HashTable
+    f:Function -- returning either @TO true@ or @TO false@
+  Outputs
+    :HashTable
+      whose pairs are those key-value pairs @TT "(k,w)"@ of the hash table
+      @TT "v"@ that yield @TT "true"@ when the function @TT "f"@ is applied to
+      the value @TT "w"@.  If @TT "n"@ is provided, at most @TT "n"@ pairs will
+      be selected.
+  Description
+    Example
+      x = hashTable {(x, 1), (y, 2), (z, 3)}
+      select(x,odd)
+      select(1,x,odd)
+  Caveat
+    When applied to @ofClass MutableHashTable@, this function does not lock it
+    like most functions. The function argument should not modify the hash table
+    as a side effect.  If it does, results may be incorrect or unpredictable. If
+    such side effects are unavoidable, acquire your own @TO Mutex@ before
+    calling this function.
+  SeeAlso
+    partition
+    selectKeys
+    selectPairs
+///
 
 document { 
      Key => (select,BasicList,Function),
@@ -237,7 +247,7 @@ doc ///
     selectKeys(n, x, f)
   Inputs
     n:ZZ
-    x:HashTable -- must be immutable
+    x:HashTable
     f:Function
   Outputs
     :HashTable
@@ -249,6 +259,12 @@ doc ///
       x = hashTable{(1, a), (2, b), (3, c), (4, d), (5, e)}
       selectKeys(x, odd)
       selectKeys(2, x, odd)
+  Caveat
+    When applied to @ofClass MutableHashTable@, this function does not lock it
+    like most functions. The function argument should not modify the hash table
+    as a side effect.  If it does, results may be incorrect or unpredictable. If
+    such side effects are unavoidable, acquire your own @TO Mutex@ before
+    calling this function.
   SeeAlso
     selectValues
     selectPairs
@@ -287,7 +303,11 @@ doc ///
       selectPairs(toList(1..10), (i, x) -> even x)
       selectPairs(3, toList(1..10), (i, x) -> even x)
   Caveat
-    If @CODE "x"@ is a hash table, then it must be immutable.
+    When applied to @ofClass MutableHashTable@, this function does not lock it
+    like most functions. The function argument should not modify the hash table
+    as a side effect.  If it does, results may be incorrect or unpredictable. If
+    such side effects are unavoidable, acquire your own @TO Mutex@ before
+    calling this function.
   SeeAlso
     selectValues
     selectKeys
