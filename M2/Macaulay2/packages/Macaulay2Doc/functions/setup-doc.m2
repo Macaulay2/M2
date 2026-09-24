@@ -52,10 +52,13 @@ Node
     setupEmacs()
   Description
     Text
-      This function is deprecated. It prints instructions for installing the separate Emacs
-      interface from @HREF "https://github.com/Macaulay2/M2-emacs#installation"@.
-      It does not modify any files. Install the interface using an Emacs package manager;
-      @TO setup@ now configures only command shells.
+      Adds a block to @TT "~/.emacs"@ that downloads the separate Emacs interface
+      from @HREF "https://github.com/Macaulay2/M2-emacs"@ using Git. On each Emacs
+      startup, the block updates an existing checkout with a fast-forward pull;
+      if the update fails, the installed copy remains available. Git and network
+      access are needed for the first download. The user is prompted before
+      @TT "~/.emacs"@ is modified, and an existing file is backed up.
+      The block also binds @TT "F12"@ to start M2. @TO setup@ configures command shells.
   SeeAlso
     setup
 ///

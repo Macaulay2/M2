@@ -12,8 +12,8 @@ Node
     Text
       The Emacs interface is maintained and installed separately from Macaulay2.
       See @HREF {"https://github.com/Macaulay2/M2-emacs#installation", "M2-emacs installation and usage instructions"}@.
-      Install it through an Emacs package manager; @TO setupEmacs@ is deprecated and
-      no longer edits initialization files. In Emacs, @TT "M-x M2"@ starts a session
+      Run @TO setupEmacs@ to add automatic installation and updates to @TT "~/.emacs"@,
+      or install it through an Emacs package manager. In Emacs, @TT "M-x M2"@ starts a session
       and @TT "M-x M2-help"@ opens the bundled guide. Configure @TT "M2-exe"@ for a
       local executable or @TT "M2-command"@ for an SSH or container command.
   Subnodes

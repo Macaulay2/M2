@@ -429,6 +429,31 @@ fi
 M2loginRead   := replace("filename",M2login,
 ///if ( -e ~/filename ) source ~/filename
 ///)
+M2emacsRead := ///;; Install the Macaulay2 Emacs mode from its own repository.
+;; Git updates an existing checkout on each Emacs startup. An offline startup
+;; continues to use the last downloaded version.
+(let* ((m2-mode-dir (expand-file-name "site-lisp/Macaulay2" user-emacs-directory))
+       (m2-mode-git (executable-find "git")))
+  (when m2-mode-git
+    (cond
+     ((file-directory-p (expand-file-name ".git" m2-mode-dir))
+      (unless (zerop (call-process m2-mode-git nil nil nil "-C" m2-mode-dir
+                                   "pull" "--ff-only" "--quiet"))
+        (message "Macaulay2 Emacs mode update failed; using installed copy")))
+     ((not (file-exists-p m2-mode-dir))
+      (make-directory (file-name-directory m2-mode-dir) t)
+      (unless (zerop (call-process m2-mode-git nil nil nil "clone" "--quiet"
+                                   "https://github.com/Macaulay2/M2-emacs.git"
+                                   m2-mode-dir))
+        (message "Macaulay2 Emacs mode download failed")))))
+  (unless m2-mode-git
+    (message "Install Git to download or update the Macaulay2 Emacs mode"))
+  (when (file-exists-p (expand-file-name "M2.el" m2-mode-dir))
+    (add-to-list 'load-path m2-mode-dir)
+    (require 'M2-mode)))
+(global-set-key (kbd "<f12>") 'M2)
+(setq Info-hide-note-references 'hide)
+///
 local dotprofileFix
 local dotloginFix
 
@@ -439,8 +464,8 @@ prelim := () -> (
      if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
      )
 setupEmacs() := () -> (
-     << "setupEmacs() is deprecated; Emacs support is installed separately." << endl
-     << "Install and configure it from Emacs; see https://github.com/Macaulay2/M2-emacs#installation" << endl;
+     prelim();
+     mungeFile("~/.emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead);
      )
 setup() := () -> (
      prelim();
