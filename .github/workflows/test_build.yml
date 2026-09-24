@@ -197,7 +197,11 @@ jobs:
       - name: Install packages using Make
         if: matrix.build-system == 'autotools'
         run: |
-          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            make -j1
+          else
+            make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
+          fi
 
 # ----------------------
 #   Run tests
