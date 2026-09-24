@@ -429,28 +429,28 @@ fi
 M2loginRead   := replace("filename",M2login,
 ///if ( -e ~/filename ) source ~/filename
 ///)
-M2emacsRead := ///;; Install the Macaulay2 Emacs mode from its own repository.
-;; Git updates an existing checkout on each Emacs startup. An offline startup
-;; continues to use the last downloaded version.
-(let* ((m2-mode-dir (expand-file-name "site-lisp/Macaulay2" user-emacs-directory))
-       (m2-mode-git (executable-find "git")))
-  (when m2-mode-git
-    (cond
-     ((file-directory-p (expand-file-name ".git" m2-mode-dir))
-      (unless (zerop (call-process m2-mode-git nil nil nil "-C" m2-mode-dir
-                                   "pull" "--ff-only" "--quiet"))
-        (message "Macaulay2 Emacs mode update failed; using installed copy")))
-     ((not (file-exists-p m2-mode-dir))
-      (make-directory (file-name-directory m2-mode-dir) t)
-      (unless (zerop (call-process m2-mode-git nil nil nil "clone" "--quiet"
-                                   "https://github.com/Macaulay2/M2-emacs.git"
-                                   m2-mode-dir))
-        (message "Macaulay2 Emacs mode download failed")))))
-  (unless m2-mode-git
-    (message "Install Git to download or update the Macaulay2 Emacs mode"))
-  (when (file-exists-p (expand-file-name "M2.el" m2-mode-dir))
-    (add-to-list 'load-path m2-mode-dir)
-    (require 'M2-mode)))
+M2emacsRead := ///;; Install and update the Macaulay2 Emacs package with package.el.
+(require 'package)
+(add-to-list 'package-archives
+             '("macaulay2" . "https://raw.githubusercontent.com/Macaulay2/M2-emacs/elpa/") t)
+(add-to-list 'package-pinned-packages '(M2 . "macaulay2"))
+(package-initialize)
+(defun M2-update-emacs-package ()
+  "Install or update the M2 package from the Macaulay2 archive."
+  (condition-case update-error
+      (progn
+        (let ((package-archives (list (assoc "macaulay2" package-archives))))
+          (package-refresh-contents))
+        (let ((candidate (cadr (assq 'M2 package-archive-contents))))
+          (if candidate
+              (unless (package-installed-p 'M2 (package-desc-version candidate))
+                (package-install candidate))
+            (message "M2 is not yet available in the Macaulay2 package archive"))))
+    (error (message "Could not update the M2 Emacs package: %s"
+                    (error-message-string update-error)))))
+(if (package-installed-p 'M2)
+    (run-with-idle-timer 5 nil #'M2-update-emacs-package)
+  (M2-update-emacs-package))
 (global-set-key (kbd "<f12>") 'M2)
 (setq Info-hide-note-references 'hide)
 ///

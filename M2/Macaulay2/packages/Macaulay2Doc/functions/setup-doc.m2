@@ -52,11 +52,11 @@ Node
     setupEmacs()
   Description
     Text
-      Adds a block to @TT "~/.emacs"@ that downloads the separate Emacs interface
-      from @HREF "https://github.com/Macaulay2/M2-emacs"@ using Git. On each Emacs
-      startup, the block updates an existing checkout with a fast-forward pull;
-      if the update fails, the installed copy remains available. Git and network
-      access are needed for the first download. The user is prompted before
+      Adds a block to @TT "~/.emacs"@ that uses Emacs' built-in package manager
+      to install the separate Emacs interface from the Macaulay2 package archive.
+      On later Emacs startups, it checks for updates after Emacs becomes idle.
+      If an update fails, the installed package remains available. Network
+      access is needed for installation and updates. The user is prompted before
       @TT "~/.emacs"@ is modified, and an existing file is backed up.
       The block also binds @TT "F12"@ to start M2. @TO setup@ configures command shells.
   SeeAlso
