@@ -34,6 +34,12 @@ env:
   SEED_CACHE_ONLY: ${{ github.event_name == 'push' }}
 
 jobs:
+  cmake-linux:
+    name: cmake-ubuntu-24.04-default
+    permissions:
+      contents: read
+    uses: ./.github/workflows/cmake-container.yml
+
   build:
     if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
     name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}
@@ -55,6 +61,10 @@ jobs:
             os: macos-15
             compiler: brew-clang
         exclude:
+          # Linux CMake reuses the development container in the job above.
+          - build-system: cmake
+            os: ubuntu-24.04
+            compiler: default
           - build-system: cmake
             os: macos-15
             compiler: default

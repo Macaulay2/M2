@@ -26,6 +26,8 @@ option(BUILD_NATIVE	"Use native SIMD instructions"		ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(BUILD_DOCS	"Build internal documentation"		OFF)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
+# WITH_MAPLE (default ON) and its detection controls are defined in
+# cmake/check-maple.cmake; see BUILD/README.md#optional-maple-detection-cmake.
 option(WITH_OMP		"Link with the OpenMP library"		ON)
 option(WITH_TBB		"Link with the TBB library"		ON)
 option(WITH_FFI		"Link with the FFI library"		ON)
