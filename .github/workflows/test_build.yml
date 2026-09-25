@@ -139,6 +139,10 @@ jobs:
 #   Configure and build M2 using CMake
 # ----------------------
 
+      - name: Test selective CMake submodule checkout
+        if: matrix.build-system == 'cmake'
+        run: python3 ../../cmake/tests/test_submodules.py
+
       - name: Configure Macaulay2 using CMake
         if: matrix.build-system == 'cmake'
         run: |
