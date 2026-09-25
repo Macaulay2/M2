@@ -18,8 +18,9 @@ thread_local std::vector<stdiop0_Position> M2_stack;";
 
 -- TODO: implement better std::vector utilities
 -- push and pop the given positions in the top-level call stack log
-stackpush(p:Position):Expr := ( Ccode(void, "M2_stack.emplace_back(", p, ")"); locate(p) );
-stackpop(e:Expr):Expr      := ( Ccode(void, "M2_stack.pop_back()"); e );
+stackpush(p:Position, key:Expr):Expr := ( Ccode(void, "M2_stack.emplace_back(", p, ")"); key );
+stackpush(p:Position):Expr           := ( Ccode(void, "M2_stack.emplace_back(", p, ")"); locate(p) );
+stackpop(e:Expr):Expr                := ( Ccode(void, "M2_stack.pop_back()"); e );
 
 -- if traceDepth = 0, _prints_ the engine stacktrace using Boost::stacktrace
 -- if traceDepth > 0, returns a sequence of positions from the parsing tree
@@ -40,7 +41,14 @@ setupfun("stacktrace", stacktrace).Protected = false; -- will be overloaded in m
 -- TODO: this should be thread local as well
 ProfileTable := newHashTable(Tally, nothingClass);
 ProfileTable.beingInitialized = false; -- mutex locks will occur
-setupconst("ProfileTable", Expr(ProfileTable));
+profileTableS := setupvar("ProfileTable", Expr(ProfileTable));
+
+resetProfileTable(e:Expr):Expr := (
+    ProfileTable = newHashTable(Tally, nothingClass);
+    ProfileTable.beingInitialized = false; -- for technical reasons
+    setGlobalVariable(profileTableS, Expr(ProfileTable));
+    nullE);
+setupfun("resetProfileTable", resetProfileTable).Protected = false; -- will be overwritten in m2/profile.m2
 
 -- increments the entry corresponding to key in ProfileTable.
 increment(key:Expr, data:Sequence):Expr := (
@@ -58,17 +66,25 @@ increment(key:Expr, data:Sequence):Expr := (
 -- increments the stopwatch, pops the stack, and returns the value!
 -- Note: wallTimer calls evalraw, not eval
 measure(c:Code):Expr := stackpop(increment(stackpush(codePosition(c)), wallTimer(c)));
+measure(c:Code, label:Expr):Expr := (
+    pos := codePosition(c);
+    key := Expr(Sequence(label, locate(pos)));
+    stackpop(increment(stackpush(pos, key), wallTimer(c))));
 
 -- when profiling = true is set, eval is substituted with evalprof,
 -- so that everytime evalraw recursively calls eval, this one runs.
 export evalprof(c:Code):Expr := (
-    -- stdIO << tostring(codePosition(c)) << " " << tostring(c) << endl;
+    -- higher profileDepth limits low-level data collection
+    if codePosition(c).loadDepth < profileDepth then return evalraw(c);
+    -- this profiles every type of code, but is incredibly slow
+    -- stackpush(codePosition(c));
+    -- stackpop(evalraw(c));
     when c
     is c:ifCode do (
-	p := measure(c.predicate);
+	p := measure(c.predicate, toExpr("predicate"));
 	when p is Error do p
-	else if p == True  then measure(c.thenClause)
-	else if p == False then measure(c.elseClause)
+	else if p == True  then measure(c.thenClause, toExpr("then"))
+	else if p == False then measure(c.elseClause, toExpr("else"))
 	else printErrorMessageE(c.predicate, "expected true or false"))
     is v:semiCode do (
 	i := 0;
@@ -76,13 +92,15 @@ export evalprof(c:Code):Expr := (
 	r := nullE;
 	n := length(w);
 	while i < n do (
-	    r = measure(w.i);
+	    r = measure(w.i, toExpr(""));
 	    i = when r is Error do n else i+1);
 	r)
+    is a:adjacentCode do (
+	when a.lhs
+	is g:globalMemoryReferenceCode
+	do measure(c, getGlobalVariable(g.var))
+	else evalraw(c))
     else evalraw(c));
---    (
---	stackpush(codePosition(c));
---	stackpop(evalraw(c))));
 evalprofpointer = evalprof;
 
 -- briefly enables the profiler and evaluates the code that follows,
@@ -96,3 +114,10 @@ profile(c:Code):Expr := (
     -- increment the total time in profiler and return the result
     increment(toExpr("total"), data));
 setupop(profileS, profile);
+
+-- blocks the profiler and debugger
+guard(c:Code):Expr := (
+    pos := codePosition(c);
+    pos.loadDepth = ushort(0);
+    eval(c));
+setupop(guardS, guard);

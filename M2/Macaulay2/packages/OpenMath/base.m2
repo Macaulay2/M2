@@ -334,7 +334,7 @@ fromOpenMath Thing := x -> (
 -------- With error handling, and automatic reference thing ------------
 ------------------------------------------------------------------------
 
-guard = f -> x -> (
+guard' = f -> x -> (
 	theOMerror = null;
 	try f x else
 		if theOMerror === null then
@@ -345,8 +345,8 @@ guard = f -> x -> (
 			theOMerror
 )
 openMath = method();
-openMath Thing := guard (x -> replaceMultipleIDs toOpenMath x)
+openMath Thing := guard' (x -> replaceMultipleIDs toOpenMath x)
 
-value XMLnode := guard fromOpenMath 
+value XMLnode := guard' fromOpenMath
 val = method();
-val XMLnode := guard fromOpenMath
+val XMLnode := guard' fromOpenMath

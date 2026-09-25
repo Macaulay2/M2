@@ -164,7 +164,7 @@ o27 = -- code for method: dual(MonomialIdeal,List)
       /Users/dan/src/M2/Macaulay2/m2/option.m2:6:20-10:34: --source code:
         (opts,f) -> args -> (
              -- Common code for functions created with >> to process options and arguments.
-             uncurry(f, override (opts,args))
+             guard uncurry(f, override (opts,args))
              )
       | symbol   class              value                                                   location of symbol
       | ------   -----              -----                                                   ------------------                              
