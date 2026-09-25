@@ -9,49 +9,18 @@
 -- documentation, and tests are not discovered by readPackage.
 -- Exit status: 0 = acyclic, 1 = cycles, 2 = unreadable/invalid/missing headers.
 
--- Tarjan's algorithm: report whole strongly connected components, rather than
--- one DFS back edge or an exponentially large list of overlapping cycles.
-packageDependencyComponents = graph -> (
-    indices := new MutableHashTable;
-    low := new MutableHashTable;
-    active := new MutableHashTable;
-    stack := {};
-    counter := 0;
-    components := {};
-    local visit;
-    visit = vertex -> (
-        indices#vertex = counter;
-        low#vertex = counter;
-        counter = counter + 1;
-        stack = prepend(vertex, stack);
-        active#vertex = true;
-        scan(graph#vertex, neighbor -> (
-            if not indices#?neighbor then (
-                visit neighbor;
-                low#vertex = min(low#vertex, low#neighbor)
-                )
-            else if active#neighbor then
-                low#vertex = min(low#vertex, indices#neighbor);
-            ));
-        if low#vertex == indices#vertex then (
-            component := {};
-            finished := false;
-            while not finished do (
-                member := first stack;
-                stack = drop(stack, 1);
-                active#member = false;
-                component = prepend(member, component);
-                finished = member == vertex;
-                );
-            components = append(components, sort component);
-            );
-        );
-    scan(sort keys graph, vertex -> if not indices#?vertex then visit vertex);
-    sort components
-    );
+-- Load the checkout's Graphs package so the audit uses the SCC method under test.
+loadPackage("Graphs", FileName => currentFileDirectory | "../packages/Graphs.m2", Reload => true);
 
-packageDependencyCycles = graph -> select(packageDependencyComponents graph,
-    component -> #component > 1 or isMember(first component, graph#(first component)));
+packageDependencyCycles = adjacency -> (
+    vertices := sort keys adjacency;
+    arcs := flatten apply(vertices, name -> apply(adjacency#name,
+        dependency -> {name, dependency}));
+    D := digraph(vertices, arcs, EntryMode => "edges");
+    sort apply(select(stronglyConnectedComponents D,
+        component -> #component > 1 or member(first component,
+            children(D, first component))), sort)
+    );
 
 if isMember("--self-test", commandLine) then (
     assert(packageDependencyCycles(hashTable {"A" => {"B", "C"},
@@ -62,7 +31,7 @@ if isMember("--self-test", commandLine) then (
         == {{"A", "B"}, {"C", "D", "E"}});
     assert(packageDependencyCycles(hashTable {"A" => {"B"}, "B" => {"C"},
         "C" => {"A", "D"}, "D" => {"B"}}) == {{"A", "B", "C", "D"}});
-    assert(packageDependencyComponents(hashTable {}) == {});
+    assert(packageDependencyCycles(hashTable {}) == {});
     print "PASS: dependency graph self-tests";
     exit 0;
     );
@@ -82,14 +51,14 @@ packageNames = sort unique packageNames;
 -- Nested readPackage calls in headers must also use this source tree.
 path = prepend(packageDirectory, path);
 
-graph = new MutableHashTable from {"Core" => {}, "User" => {}};
+adjacency = new MutableHashTable from {"Core" => {}, "User" => {}};
 edgeKinds = new MutableHashTable;
 problems = {};
 headerCount = 0;
 local readHeader;
 readHeader = name -> (
-    if graph#?name then return;
-    graph#name = {}; -- mark before descending, including in the cyclic case
+    if adjacency#?name then return;
+    adjacency#name = {}; -- mark before descending, including in the cyclic case
     filename := packageDirectory | name | ".m2";
     if not fileExists filename then (
         problems = append(problems, "missing package source: " | filename);
@@ -106,15 +75,15 @@ readHeader = name -> (
             if not instance(dependency, String) then
                 problems = append(problems, name | ": non-string " | toString kind | " entry")
             else (
-                graph#name = append(graph#name, dependency);
+                adjacency#name = append(adjacency#name, dependency);
                 edge := (name, dependency);
                 if not edgeKinds#?edge then edgeKinds#edge = {};
                 edgeKinds#edge = append(edgeKinds#edge, toString kind);
                 );
             ));
         ));
-    graph#name = sort unique graph#name;
-    scan(graph#name, readHeader);
+    adjacency#name = sort unique adjacency#name;
+    scan(adjacency#name, readHeader);
     );
 scan(packageNames, readHeader);
 
@@ -122,11 +91,11 @@ print("Read " | toString headerCount | " package headers from " | packageDirecto
 print("Roots: " | toString (#packageNames) | "; dependency edges: " | toString (#(keys edgeKinds)));
 if showEdges then scan(sort keys edgeKinds, edge ->
     print(edge#0 | " -> " | edge#1 | " [" | demark(", ", edgeKinds#edge) | "]"));
-cycles = packageDependencyCycles graph;
+cycles = packageDependencyCycles adjacency;
 print("Cyclic components: " | toString (#cycles));
 scan(cycles, component -> (
     print("  {" | demark(", ", component) | "}");
-    scan(component, name -> scan(select(graph#name, dependency -> isMember(dependency, component)),
+    scan(component, name -> scan(select(adjacency#name, dependency -> isMember(dependency, component)),
         dependency -> print("    " | name | " -> " | dependency | " [" |
             demark(", ", edgeKinds#(name, dependency)) | "]")));
     ));
