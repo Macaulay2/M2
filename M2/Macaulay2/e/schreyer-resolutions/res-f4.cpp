@@ -14,38 +14,6 @@
 #include <algorithm>
 #include "timing.hpp"
 
-#if 0
-// This is test code which should be removed, or placed elsewhere!
-#include <thread>
-#include "../../system/supervisor.hpp"
-#include "../../system/supervisorinterface.h"
-static long val[2];
-static void* testFcn1(void* vint)
-{
-  long v = reinterpret_cast<long>(vint);
-  std::cout << "starting fcn1 with v = " << v << std::endl;
-  val[0] = 10;
-  return nullptr;
-}
-static void* testFcn2(void* vint)
-{
-  long v = reinterpret_cast<long>(vint);
-  std::cout << "starting fcn2 with v = " << v << std::endl;
-  val[1] = 20;
-  return nullptr;
-}
-void testTasks()
-{
-  val[0] = 666;
-  val[1] = 666;
-  ThreadTask* t1 = createThreadTask("task 1", testFcn1, reinterpret_cast<void*>(1L), 0, 0, 0);
-  ThreadTask* t2 = createThreadTask("task 1", testFcn2, reinterpret_cast<void*>(2L), 0, 0, 0);
-  pushTask(t1);
-  pushTask(t2);
-  waitOnTask(t2);
-  std::cout << val[0] << " " << val[1] << std::endl;
-}
-#endif
 
 F4Res::F4Res(SchreyerFrame& res)
     : mFrame(res),
@@ -53,12 +21,6 @@ F4Res::F4Res(SchreyerFrame& res)
       mSchreyerRes(new ResMonomialsWithComponent(res.ring().monoid())),
       mHashTable(mSchreyerRes.get(), 10)
 {
-#if 0
-  std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
-  std::cout << "testing thread tasks" << std::endl;
-  testTasks();
-  std::cout << "  done testing thread tasks" << std::endl;
-#endif
 }
 
 F4Res::~F4Res()

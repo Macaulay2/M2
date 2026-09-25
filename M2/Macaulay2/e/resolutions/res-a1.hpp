@@ -81,8 +81,6 @@ class res_comp : public ResolutionComputation
   const Ring *K;
   const Matrix *generator_matrix;  // Input matrix of generators, possibly a GB,
                                    // possibly not
-  stash *res_pair_stash;
-  stash *mi_stash;
 
   // The current state of the computation
   int n_level;   // Current level

@@ -19,7 +19,6 @@
 #include "int-bag.hpp"         // for Bag, int_bag
 #include "interrupted.hpp"     // for system_interrupted
 #include "matrices/matrix.hpp"          // for Matrix
-#include "mem.hpp"             // for stash
 #include "monomials/monideal.hpp"        // for MonomialIdeal, operator!=, Nmi_node
 #include "monoid.hpp"          // for Monoid
 #include "rings/polyring.hpp"        // for PolynomialRing
@@ -92,12 +91,11 @@ void partition_table::merge_in(const_varpower m)
     }
 }
 
-partition_table::partition_table(int nvars, stash *mi_stash0)
+partition_table::partition_table(int nvars)
     : n_vars(nvars),
       n_sets(nvars),
       adad(nvars),
-      aoccurs(nvars),
-      mi_stash(mi_stash0)
+      aoccurs(nvars)
 {
   dad = adad.data();
   occurs = aoccurs.data();
@@ -154,7 +152,7 @@ void partition_table::partition(MonomialIdeal *&I,
 
   int first = result.size();
   for (k = 0; k < n_sets; k++)
-    result.push_back(new MonomialIdeal(I->get_ring(), mi_stash));
+    result.push_back(new MonomialIdeal(I->get_ring()));
 
   // Now partition the monomials
   Bag *b;
@@ -267,12 +265,11 @@ static int find_pivot(const MonomialIdeal &I,
 static void iquotient_and_sum(MonomialIdeal &I,
                               const_varpower m,
                               MonomialIdeal *&quot,
-                              MonomialIdeal *&sum,
-                              stash *mi_stash)
+                              MonomialIdeal *&sum)
 {
   gc_vector<Bag*> elems;
-  sum = new MonomialIdeal(I.get_ring(), mi_stash);
-  quot = new MonomialIdeal(I.get_ring(), mi_stash);
+  sum = new MonomialIdeal(I.get_ring());
+  quot = new MonomialIdeal(I.get_ring());
   Bag *bmin = new Bag();
   varpower::copy(m, bmin->monom());
   sum->insert_minimal(bmin);
@@ -345,12 +342,11 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
       R(RR),
       M(S->getMonoid()),
       D(S->degree_monoid()),
-      mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
       input_mat(m),
       this_comp(0),
       n_components(m->n_rows()),
       current(nullptr),
-      part_table(std::max(1, S->n_vars()), mi_stash)
+      part_table(std::max(1, S->n_vars()))
 {
   assert(D == R->getMonoid());
   one = R->getCoefficientRing()->from_long(1);
@@ -373,12 +369,11 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
       R(RR),
       M(S->getMonoid()),
       D(S->degree_monoid()),
-      mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
       input_mat(nullptr),
       this_comp(0),
       n_components(1),
       current(nullptr),
-      part_table(S->n_vars(), mi_stash)
+      part_table(S->n_vars())
 {
   assert(D == R->getMonoid());
   one = R->getCoefficientRing()->from_long(1);
@@ -416,7 +411,6 @@ hilb_comp::~hilb_comp()
   R->getCoefficientRing()->remove(one);
   R->getCoefficientRing()->remove(minus_one);
   D->remove(LOCAL_deg1);
-  delete mi_stash;
 }
 
 int hilb_comp::calc(int n_steps)
@@ -513,7 +507,7 @@ void hilb_comp::recurse(MonomialIdeal *&I, const_varpower pivot_vp)
   M->degree_of_varpower(pivot_vp, LOCAL_deg1);
   current->h1 = R->make_flat_term(one, LOCAL_deg1);  // t^(deg vp)
   MonomialIdeal *quot, *sum;
-  iquotient_and_sum(*I, pivot_vp, quot, sum, mi_stash);
+  iquotient_and_sum(*I, pivot_vp, quot, sum);
   delete I;
   part_table.partition(sum, current->monids);
   current->first_sum = current->monids.size() - 1;

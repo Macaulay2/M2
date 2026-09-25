@@ -7,8 +7,6 @@
 #include "schreyer-resolutions/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolutions/res-monomial-types.hpp"  // for res_varpower_m...
 class buffer;  // lines 13-13
-class stash;
-
 class buffer;
 
 template <typename Key>
@@ -51,7 +49,6 @@ class ResF4MonomialLookupTableT : public our_new_delete
     }
   };
 
-  stash *mi_stash;
   VECTOR(mi_node *) mis;
   int count;
 
@@ -77,7 +74,7 @@ class ResF4MonomialLookupTableT : public our_new_delete
   void insert1(mi_node *&p, const_varpower_monomial m, Key k);
 
  public:
-  ResF4MonomialLookupTableT(int nvars, stash *mi_stash = nullptr);
+  ResF4MonomialLookupTableT(int nvars);
   ~ResF4MonomialLookupTableT();
 
   //  // Should we write these two routines?
@@ -134,8 +131,7 @@ class ResF4MonomialLookupTableT : public our_new_delete
 
 void minimalize_res_varpower_monomials(const VECTOR(res_varpower_monomial) &
                                            elems,
-                                       VECTOR(int) & result_minimals,
-                                       stash *mi_stash = nullptr);
+                                       VECTOR(int) & result_minimals);
 
 #endif
 

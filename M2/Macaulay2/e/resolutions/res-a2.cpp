@@ -82,8 +82,6 @@ void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)
   originalR = m->get_ring()->cast_to_PolynomialRing();
   if (originalR == nullptr) assert(0);
   GR = originalR->get_gb_ring();
-  mi_stash = new stash("res mi nodes", sizeof(Nmi_node));
-
   FreeModule *Fsyz = originalR->make_Schreyer_FreeModule();
   if (length <= 0)
     {
@@ -121,7 +119,7 @@ void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)
 
   nodes[0] = new gb_emitter(m);
   nodes[1] =
-      new gb2_comp(Fsyz, mi_stash, nodes[0], lo_degree, origsyz, 1, strategy);
+      new gb2_comp(Fsyz, nodes[0], lo_degree, origsyz, 1, strategy);
   nodes[0]->set_output(nodes[1]);
   if (n_nodes == 2)
     {
@@ -138,12 +136,12 @@ void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)
         {
           FreeModule *F = originalR->make_Schreyer_FreeModule();
           nodes[i] =
-              new gb2_comp(F, mi_stash, nodes[i - 1], deg++, -1, i, strategy);
+              new gb2_comp(F, nodes[i - 1], deg++, -1, i, strategy);
           nodes[i - 1]->set_output(nodes[i]);
         }
       FreeModule *F = originalR->make_Schreyer_FreeModule();
       nodes[n_nodes - 1] = new gb2_comp(
-          F, mi_stash, nodes[n_nodes - 2], deg++, 0, n_nodes - 1, strategy);
+          F, nodes[n_nodes - 2], deg++, 0, n_nodes - 1, strategy);
       nodes[n_nodes - 1]->set_output(nullptr);
     }
   strategy_flags = strategy;
@@ -173,7 +171,6 @@ gbres_comp::~gbres_comp()
       delete nodes[i];
     }
 
-  delete mi_stash;
 }
 
 //---- state machine (roughly) for the computation ----

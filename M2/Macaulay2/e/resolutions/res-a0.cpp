@@ -434,8 +434,6 @@ void res2_comp::initialize(const Matrix *mat,
   exp_size = EXPONENT_BYTE_SIZE(P->n_vars());
   monom_size = MONOMIAL_BYTE_SIZE(M->monomial_size());
 
-  res2_pair_stash = new stash("res2pair", sizeof(res2_pair));
-  mi_stash = new stash("res2 minodes", sizeof(Nmi_node));
 
   length_limit = -3;  // The resolution is always kept at least in range
                       // 0 .. length_limit + 2.
@@ -592,8 +590,6 @@ res2_comp::~res2_comp()
   int i;
   for (i = 0; i < resn.size(); i++) remove_res2_level(resn[i]);
 
-  delete res2_pair_stash;
-  delete mi_stash;
   delete R;
 }
 //////////////////////////////////////////////
@@ -618,7 +614,7 @@ res2_pair *res2_comp::new_res2_pair(res2_pair *first,
 //   if (second != NULL)
 //     p->syz->next = R->new_term(K->from_long(-1), basemon, second);
 #endif
-  p->mi = new MonomialIdeal(P, mi_stash);
+  p->mi = new MonomialIdeal(P);
   p->pivot_term = nullptr;
 
   return p;
@@ -638,7 +634,7 @@ res2_pair *res2_comp::new_base_res2_pair(int i)
   monomial m = M->make_one();
   p->syz = R->new_term(K->from_long(1), m, p);  // circular link...
   M->remove(m);
-  p->mi = new MonomialIdeal(P, mi_stash);
+  p->mi = new MonomialIdeal(P);
   p->pivot_term = nullptr;
   return p;
 }
@@ -655,7 +651,7 @@ res2_pair *res2_comp::new_res2_pair(int i)
                                    1 - lodegree);
   p->compare_num = 0;
   p->syz = R->from_vector(base_components, (*generator_matrix)[i]);
-  p->mi = new MonomialIdeal(P, mi_stash);
+  p->mi = new MonomialIdeal(P);
   p->pivot_term = nullptr;
   return p;
 }
