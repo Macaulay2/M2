@@ -6,9 +6,11 @@
 // TODO: fix this
 #  if defined(__cplusplus)
 class Matrix;
+class PolynomialRing;
 class RingElement;
 #  else
 typedef struct Matrix Matrix;
+typedef struct PolynomialRing PolynomialRing;
 typedef struct RingElement RingElement;
 #  endif
 
@@ -29,6 +31,8 @@ const RingElement *rawExtendedGCDRingElement(const RingElement *f,
                                              const RingElement *g,
                                              const RingElement **A,
                                              const RingElement **B);
+
+M2_bool factoryGoodRing(const PolynomialRing *P);
 
 const RingElement *rawPseudoRemainder(const RingElement *f,
                                       const RingElement *g);
