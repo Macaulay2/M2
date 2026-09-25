@@ -62,10 +62,21 @@ trackBertini (List,List,List,OptionTable) := List => (S,T,solS,o) -> (
 trackBertini (PolySystem,PolySystem,List,OptionTable) := List => (S,T,solS,o) -> trackBertini (equations S, equations T, solS, o)
 
 refineBertini = method()
-refineBertini (PolySystem,AbstractPoint,OptionTable) := List => (F,x,o) -> (              
-    -- bits to decimals 
+refineBertini (PolySystem,AbstractPoint,OptionTable) := List => (F,x,o) -> (
+    -- bits to decimals
     decimals := if o.Bits =!= infinity then ceiling(o.Bits * log 2 / log 10) else log_10 o.ErrorTolerance;
-    first bertiniRefineSols(decimals, equations F, {x}) -*toBertiniOptions o*-
+    -- bertiniRefineSols only accepts points that came from a Bertini run, i.e.,
+    -- that carry cache.MainDataDirectory and cache.PathNumber (set by importMainDataFile).
+    -- If x lacks this, run a trivial (constant) user homotopy starting at x to bring
+    -- it into a Bertini session before sharpening. Bertini's UserHomotopy:2 requires
+    -- at least one parameter to be defined, so we declare a dummy one (unused in F)
+    -- and set it equal to the path variable.
+    y := if x.cache.?MainDataDirectory then x else (
+	t := local bertiniRefineSolsPathVariable;
+	s := local bertiniRefineSolsDummyParameter;
+	first bertiniUserHomotopy(t, {s=>t}, equations F, {x})
+	);
+    first bertiniRefineSols(decimals, {y})
     -- bertiniRefineSols may reorder points!!!
     )
 toBertiniOptions'numericalIrreducibleDecomposition = o -> new OptionTable from {Verbose=>false,BertiniInputConfiguration=>{Bertini$RandomSeed=>0}}
