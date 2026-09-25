@@ -1893,10 +1893,7 @@ ring_elem PolyRing::make_logical_term(const Ring *coeffR,
       return make_flat_term(a, m);
     }
   if (logicalK == nullptr)
-    {
-      ERROR("expected actual coefficient ring");
-      return from_long(0);
-    }
+      throw exc::engine_error("expected actual coefficient ring");
   nvars0 -= logicalK->n_vars();
 
   Nterm head;
