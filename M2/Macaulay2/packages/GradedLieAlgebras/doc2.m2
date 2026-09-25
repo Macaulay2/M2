@@ -1205,7 +1205,6 @@ Description
 doc ///
 
 Key
-  center
      (center,LieAlgebra)
     
      

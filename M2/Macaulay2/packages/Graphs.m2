@@ -120,7 +120,6 @@ export {
         "discoveryTime",
         "finishingTime",
     "BFS",
-    "center",
     "children",
     "chromaticNumber",
     "cliqueComplex",
@@ -727,8 +726,7 @@ breadthFirstSearch (Digraph, Thing) := List => (G, v) -> (
 
 BFS = breadthFirstSearch
 
-center = method()
-center Graph := List => G -> select(vertexSet G, i -> eccentricity(G, i) == radius G)
+center Graph := List => {} >> o -> G -> select(vertexSet G, i -> eccentricity(G, i) == radius G)
 
 children = method()
 children (Digraph, Thing) := Set => (G, v) -> (
@@ -2258,7 +2256,7 @@ doc///
             barycenter pathGraph 6
             barycenter completeGraph 6
     SeeAlso
-        center
+        (center, Graph)
 ///
 
 --complementGraph
@@ -3046,7 +3044,6 @@ doc ///
 --center
 doc ///
     Key
-        center
         (center,Graph)
     Headline
         Returns the center of a graph
@@ -3314,7 +3311,7 @@ doc ///
             L = apply(vertexSet pathGraph 5, i -> degreeCentrality (pathGraph 5, i))
             sum L
     SeeAlso
-        center
+        (center, Graph)
         distance
         degree
 ///
