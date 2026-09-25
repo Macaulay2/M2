@@ -29,6 +29,7 @@ UNITTEST_CCFILES := \
     PolyRingTest \
     NewF4Test \
     MonoidTest \
+    MonomialInfoTest \
     MatrixIOTest \
     WeylAlgebraTest \
     QuotientRingTest \

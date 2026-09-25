@@ -39,8 +39,8 @@ bool check_poly(const ResPolyRing& R,
       else
         {
           // Now compare to previous monomial
-          long comp1 = M.get_component(prev);
-          long comp2 = M.get_component(i.monomial());
+          auto comp1 = M.get_component(prev);
+          auto comp2 = M.get_component(i.monomial());
           int result = M.compare_schreyer(prev,
                                           i.monomial(),
                                           ord.mTotalMonom[comp1],
