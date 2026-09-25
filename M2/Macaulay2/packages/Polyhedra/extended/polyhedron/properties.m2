@@ -1,7 +1,7 @@
 compute#Polyhedron#computedNormal = method()
 compute#Polyhedron#computedNormal Polyhedron := P -> (
    if not isCompact P then error ("The polyhedron must be compact");
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    L := hilbertBasis C;
    n := ambDim P;
    -- Do all lattice points lie in height one?
@@ -68,7 +68,7 @@ compute#Polyhedron#computedEhrhart Polyhedron := P -> (
 
 compute#Polyhedron#computedPolar = method()
 compute#Polyhedron#computedPolar Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    CD := dualCone C;
    result := new HashTable from {
       underlyingCone => CD

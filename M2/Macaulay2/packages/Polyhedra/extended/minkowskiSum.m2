@@ -15,8 +15,8 @@ minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
 )
 
 pointwiseMinkowskiSum = (P1,P2) -> (
-     vertexData1 := getSufficientVertexData(P1);
-     vertexData2 := getSufficientVertexData(P2);
+     vertexData1 := getVRepresentation(P1);
+     vertexData2 := getVRepresentation(P2);
      -- Vertices or points:
      V1 := vertexData1#0;
      V2 := vertexData2#0;
