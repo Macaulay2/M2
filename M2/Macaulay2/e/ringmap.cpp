@@ -5,6 +5,7 @@
 #include "matrices/matrix-con.hpp"
 #include "rings/polyring.hpp"
 #include "ring-elements/ring-element.hpp"
+#include "exceptions.hpp"
 
 #include <iostream>
 RingMap::RingMap(const Matrix *m) : R(m->get_ring())
@@ -143,12 +144,17 @@ ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
                              int first_var,
                              int nvars_in_source) const
 {
+  bool result_is_zero = false;
   for (index_varpower i = vp; i.valid(); ++i)
     {
       int v = first_var + i.var();
       if (v >= nvars || _elem[v].is_zero)
-        return R->from_long(0);  // The result is zero.
+        {
+          if (i.exponent() < 0) throw exc::division_by_zero_error();
+          result_is_zero = true;
+        }
     }
+  if (result_is_zero) return R->from_long(0);
 
   // If K is a coeff ring of R, AND map is an identity on K,
   // then don't recurse: use this value directly.
