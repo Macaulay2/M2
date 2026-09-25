@@ -717,12 +717,12 @@ runBasicTests(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("runBasicTests",runBasicTests);
 
-getHistory(e:Expr):Expr := (
-    when e is n:ZZcell do if isInt(n)
-    then toExpr(tostring(getHistory(toInt(n))))
-    else WrongArgSmallInteger()
-    else WrongArgZZ());
-setupfun("getHistory", getHistory);
+getStdioSource(e:Expr):Expr := (
+    when e is s:Sequence do
+    if length(s) == 0 then toExpr(getStdioSource())
+    else WrongNumArgs(0)
+    else WrongNumArgs(0));
+setupfun("getStdioSource", getStdioSource);
 
 readHistory(e:Expr):Expr := (
     when e is filename:stringCell

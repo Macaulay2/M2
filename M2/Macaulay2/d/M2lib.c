@@ -136,14 +136,6 @@ int system_appendHistory(int n, char *filename)
   return append_history(n, filename);
 }
 
-void system_addHistory(char *buf) { add_history(buf); }
-char *system_getHistory(const int n)
-{
-  HIST_ENTRY *entry = history_get(n);
-  if (entry != NULL) return entry->line;
-  return NULL;
-}
-
 int system_historyLength() { return history_length; }
 
 void system_initReadlineVariables(void) {
