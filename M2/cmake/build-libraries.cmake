@@ -118,18 +118,8 @@ ENDFUNCTION (_ADD_COMPONENT_DEPENDENCY)
 ###############################################################################
 ## Pre-build actions
 
-if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
-  ## Update submodules as needed
-  if(GIT_SUBMODULE)
-    message(STATUS "Submodule update")
-    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      RESULT_VARIABLE GIT_SUBMOD_RESULT)
-    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-      message(WARNING "git submodule update failed, please checkout submodules manually")
-    endif()
-  endif()
-endif()
+set(GOOGLETEST_FOUND ${GTEST_FOUND})
+include(submodules)
 
 # Create directories so copy instructions don't create files in their place
 file(MAKE_DIRECTORY ${M2_HOST_PREFIX}/bin)
@@ -176,6 +166,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries eigen "" EIGEN3_FOUND)
 # https://github.com/ivmai/bdwgc/
 # TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
+if(_m2_build_bdwgc)
 ExternalProject_Add(build-bdwgc
   PREFIX            libraries/bdwgc
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/bdwgc
@@ -208,6 +199,7 @@ ExternalProject_Add(build-bdwgc
   STEP_TARGETS      install test
   )
 _ADD_COMPONENT_DEPENDENCY(libraries bdwgc "" BDWGC_FOUND)
+endif()
 
 
 # https://www.mpfr.org/
@@ -342,6 +334,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries ntl gmp NTL_FOUND)
 
 
 # https://github.com/Macaulay2/flint2
+if(_m2_build_flint)
 ExternalProject_Add(build-flint
   PREFIX            libraries/flint
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
@@ -373,6 +366,7 @@ if(NOT FLINT_FOUND)
   set(FLINT_ROOT ${M2_HOST_PREFIX})
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries flint "gmp;mpfr;ntl" FLINT_FOUND)
+endif()
 
 
 # https://github.com/Singular/Sources/tree/spielwiese/factory
@@ -433,6 +427,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries factory "gmp;ntl;flint" FACTORY_FOUND)
 
 
 # https://github.com/Macaulay2/frobby (previously https://www.broune.com/frobby)
+if(_m2_build_frobby)
 ExternalProject_Add(build-frobby
   PREFIX            libraries/frobby
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/frobby
@@ -450,6 +445,7 @@ ExternalProject_Add(build-frobby
   STEP_TARGETS      install test
   )
 _ADD_COMPONENT_DEPENDENCY(libraries frobby gmp FROBBY_FOUND)
+endif()
 
 
 # https://github.com/cddlib/cddlib
@@ -568,6 +564,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "gmp;mpfr" MPSOLVE_FOUND)
 
 
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
+if(_m2_build_givaro)
 string(REGEX REPLACE
   "./configure$" "${CMAKE_SOURCE_DIR}/submodules/givaro/autogen.sh" givaro_AUTOGEN "${CONFIGURE}")
 set(givaro_LICENSEFILES COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt)
@@ -602,12 +599,14 @@ ExternalProject_Add(build-givaro
   STEP_TARGETS      install test
   )
 _ADD_COMPONENT_DEPENDENCY(libraries givaro gmp GIVARO_FOUND)
+endif()
 
 
 # https://linbox-team.github.io/fflas-ffpack/
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
 # autogen.sh and the patch below write into the source tree, so build from a copy
+if(_m2_build_fflas_ffpack)
 string(REGEX REPLACE
   "./configure$" "<SOURCE_DIR>/autogen.sh" fflas_ffpack_AUTOGEN "${CONFIGURE}")
 set(fflas_ffpack_LICENSEFILES ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/COPYING)
@@ -659,6 +658,7 @@ if(NOT FFLAS_FFPACK_FOUND AND (NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4
   _ADD_STEP_DEPENDENCY(fflas_ffpack givaro)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack gmp FFLAS_FFPACK_FOUND)
+endif()
 
 
 # https://www.gnu.org/software/glpk/
@@ -692,6 +692,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries glpk gmp GLPK_FOUND)
 
 
 # https://github.com/google/googletest
+if(_m2_build_googletest)
 ExternalProject_Add(build-googletest
   PREFIX            libraries/googletest
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/googletest
@@ -702,9 +703,9 @@ ExternalProject_Add(build-googletest
   EXCLUDE_FROM_ALL  ON
   STEP_TARGETS      install
   )
-set(GOOGLETEST_FOUND ${GTEST_FOUND})
 if(BUILD_TESTING)
   _ADD_COMPONENT_DEPENDENCY(libraries googletest "" GOOGLETEST_FOUND)
+endif()
 endif()
 
 
