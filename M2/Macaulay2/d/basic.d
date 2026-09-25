@@ -83,8 +83,8 @@ export hash(x:List):hash_t := (
      h := x.Class.hash + 23407;
      foreach y in x.v do h = h * 1299833 + hash(y);
      h);
-export sethash(x:List,is_mutable:bool):List := (
-     if is_mutable 
+export sethash(x:List):List := (
+     if x.Mutable
      then (
 	  x.Mutable = true;
 	  x.hash = nextHash();
@@ -96,33 +96,18 @@ export sethash(x:List,is_mutable:bool):List := (
      x);
 export copy(v:Sequence):Sequence := (
      new Sequence len length(v) do foreach i in v do provide i);
-export copy(a:List):List := List(
-     a.Class, 
-     new Sequence len length(a.v) do foreach i in a.v do provide i,
-     a.hash,
-     a.Mutable);
 export reverse(a:Sequence):Sequence := (
      n := length(a);
      new Sequence len n do (n = n-1; provide a.n));
-export reverse(a:List):List := sethash( 
-     List( a.Class, reverse(a.v), hash_t(0), a.Mutable), a.Mutable 
-     );
 export seq():Expr := emptySequenceE;
 export seq(e:Expr):Expr := Expr(Sequence(e));
 export seq(e:Expr,f:Expr):Expr := Expr(Sequence(e,f));
 export seq(e:Expr,f:Expr,g:Expr):Expr := Expr(Sequence(e,f,g));
-export list(a:Sequence):Expr := (
-     r := List(listClass,a,hash_t(0),false);
-     r.hash = hash(r);
-     Expr(r));     
-export list(classs:HashTable,a:Sequence):Expr := (
-     r := List(classs,a,hash_t(0),false);
-     r.hash = hash(r);
-     Expr(r));     
 export list(classs:HashTable,a:Sequence,is_mutable:bool):Expr := (
-     r := List(classs,a,hash_t(0),is_mutable);
-     r.hash = hash(r);
-     Expr(r));     
+     r := List(classs,a,hash_t(0),is_mutable, length(a));
+     Expr(sethash(r)));
+export list(classs:HashTable,a:Sequence):Expr := list(classs, a, false);
+export list(a:Sequence):Expr := list(listClass, a);
 export list(classs:HashTable,e:Expr):Expr := (
      when e
      is a:Sequence do list(classs,a)
@@ -134,10 +119,7 @@ export list(e:Expr,f:Expr):Expr := list(Sequence(e,f));
 export list(e:Expr,f:Expr,g:Expr):Expr := list(Sequence(e,f,g));
 export list(e:Expr,f:Expr,g:Expr,h:Expr):Expr := list(Sequence(e,f,g,h));
 
-export Array(a:Sequence):Expr := (
-     r := List(arrayClass,a,hash_t(0),false);
-     r.hash = hash(r);
-     Expr(r));
+export Array(a:Sequence):Expr := list(arrayClass, a);
 export Array(e:Expr):Expr := (
      when e
      is a:Sequence do Array(a)
@@ -148,10 +130,7 @@ export Array(e:Expr,f:Expr):Expr := Array(Sequence(e,f));
 export Array(e:Expr,f:Expr,g:Expr):Expr := Array(Sequence(e,f,g));
 export Array(e:Expr,f:Expr,g:Expr,h:Expr):Expr := Array(Sequence(e,f,g,h));
 
-export AngleBarList(a:Sequence):Expr := (
-     r := List(angleBarListClass,a,hash_t(0),false);
-     r.hash = hash(r);
-     Expr(r));
+export AngleBarList(a:Sequence):Expr := list(angleBarListClass, a);
 export emptyAngleBarList := AngleBarList(Sequence());
 
 -- Local Variables:

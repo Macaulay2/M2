@@ -202,13 +202,12 @@ setupconst("FilePosition", Expr(filePositionClass));
 export locate(p:Position):Expr := (
     if p == dummyPosition || p == tempPosition
     then nullE
-    else Expr(sethash(List(filePositionClass,
+    else list(filePositionClass,
 		Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.lineL)), toExpr(int(p.columnL)),
 		    toExpr(int(p.lineR)), toExpr(int(p.columnR)),
-		    toExpr(int(p.lineF)), toExpr(int(p.columnF))),
-		hash_t(0), false), false)));
+		    toExpr(int(p.lineF)), toExpr(int(p.columnF)))));
 
 locate(e:Expr):Expr := (
     when e

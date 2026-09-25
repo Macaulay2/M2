@@ -822,14 +822,6 @@ doc ///
       t = new MutableList from {};
       t#4 = e
       peek t
-    Text
-      When working with mutable lists, be careful not to turn a linear algorithm into
-      a quadratic one by repeatedly appending to it.  Compare the following:
-    Example
-      s = new MutableList
-      elapsedTime scan(1000, i -> s#i = i^2) -- quadratic, since we grow s at each step
-      t = new MutableList from 1000
-      elapsedTime scan(1000, i -> t#i = i^2) -- linear
   SeeAlso
     BasicList
   Subnodes
