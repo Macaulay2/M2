@@ -17,3 +17,7 @@ assert(baseFilename "foo////" == "foo")
 assert(baseFilename "" == "")
 assert(baseFilename "/" == "/")
 assert(baseFilename "////" == "/")
+
+-- issue #4392
+assert try stdio << close then false else true
+assert try stderr << close then false else true
