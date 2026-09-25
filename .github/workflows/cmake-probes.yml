@@ -1,0 +1,33 @@
+name: CMake optional dependency probes
+
+on:
+  push:
+    paths:
+      - M2/cmake/FindMaple.cmake
+      - M2/cmake/check-maple.cmake
+      - M2/cmake/tests/test_find_maple.py
+      - M2/cmake/tests/test_maple_examples.py
+      - M2/Macaulay2/packages/CMakeLists.txt
+      - .github/workflows/cmake-probes.yml
+  pull_request:
+    paths:
+      - M2/cmake/FindMaple.cmake
+      - M2/cmake/check-maple.cmake
+      - M2/cmake/tests/test_find_maple.py
+      - M2/cmake/tests/test_maple_examples.py
+      - M2/Macaulay2/packages/CMakeLists.txt
+      - .github/workflows/cmake-probes.yml
+
+permissions:
+  contents: read
+
+jobs:
+  maple:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      # Other tests in this directory need an installed M2. This job only
+      # exercises the standalone Maple probes and generated install commands.
+      - run: |
+          python3 M2/cmake/tests/test_find_maple.py -v
+          python3 M2/cmake/tests/test_maple_examples.py -v
