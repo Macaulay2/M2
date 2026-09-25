@@ -1,0 +1,820 @@
+newPackage "Julia"
+
+export {
+    -- classes
+    "JuliaFunction",
+    "JuliaObject",
+
+    -- methods
+    "addJuliaToM2Function",
+    "juliaGetGlobal",
+    "juliaSymbol",
+    "juliaValue",
+}
+
+needsPackage "ForeignFunctions"
+
+--------------------------------
+-- foreign function interface --
+--------------------------------
+
+libfile = get "!julia -e 'using Libdl; print(Libdl.dlpath(\"libjulia\"))' 2> /dev/null"
+libjulia = openSharedLibrary("libjulia", FileName => libfile)
+
+-- functions
+jlAtexitHook = foreignFunction(libjulia, "jl_atexit_hook", void, int)
+jlBoxBool = foreignFunction(libjulia, "jl_box_bool", voidstar, int8)
+jlBoxFloat64 = foreignFunction(libjulia, "jl_box_float64", voidstar, double)
+jlBoxInt64 = foreignFunction(libjulia, "jl_box_int64", voidstar, int64)
+jlCall = foreignFunction(libjulia, "jl_call", voidstar, {voidstar, voidstarstar, uint32})
+jlCall0 = foreignFunction(libjulia, "jl_call0", voidstar, voidstar)
+jlCall1 = foreignFunction(libjulia, "jl_call1", voidstar, {voidstar, voidstar})
+jlCall2 = foreignFunction(libjulia, "jl_call2", voidstar, {voidstar, voidstar, voidstar})
+jlCall3 = foreignFunction(libjulia, "jl_call3", voidstar, {voidstar, voidstar, voidstar, voidstar})
+jlCall4 = foreignFunction(libjulia, "jl_call4", voidstar, {voidstar, voidstar, voidstar, voidstar, voidstar})
+jlCstrToString = foreignFunction(libjulia, "jl_cstr_to_string", voidstar, charstar)
+jlEvalString = foreignFunction(libjulia, "jl_eval_string", voidstar, charstar)
+jlExceptionClear = foreignFunction(libjulia, "jl_exception_clear", void, void)
+jlExceptionOccurred = foreignFunction(libjulia, "jl_exception_occurred", voidstar, void)
+jlGetGlobal = foreignFunction(libjulia, "jl_get_global", voidstar, {voidstar, voidstar})
+jlInit = foreignFunction(libjulia, "jl_init", void, void)
+jlIsa = foreignFunction(libjulia, "jl_isa", int, {voidstar, voidstar})
+jlStringPtr = foreignFunction(libjulia, "jl_string_ptr", charstar, voidstar)
+jlSymbol = foreignFunction(libjulia, "jl_symbol", voidstar, charstar)
+jlUnboxBool = foreignFunction(libjulia, "jl_unbox_bool", int8, voidstar)
+jlUnboxFloat32 = foreignFunction(libjulia, "jl_unbox_float32", float, voidstar)
+jlUnboxFloat64 = foreignFunction(libjulia, "jl_unbox_float64", double, voidstar)
+jlUnboxInt16 = foreignFunction(libjulia, "jl_unbox_int16", int16, voidstar)
+jlUnboxInt32 = foreignFunction(libjulia, "jl_unbox_int32", int32, voidstar)
+jlUnboxInt64 = foreignFunction(libjulia, "jl_unbox_int64", int64, voidstar)
+jlUnboxInt8 = foreignFunction(libjulia, "jl_unbox_int8", int8, voidstar)
+jlUnboxUint16 = foreignFunction(libjulia, "jl_unbox_uint16", uint16, voidstar)
+jlUnboxUint32 = foreignFunction(libjulia, "jl_unbox_uint32", uint32, voidstar)
+jlUnboxUint64 = foreignFunction(libjulia, "jl_unbox_uint64", uint64, voidstar)
+jlUnboxUint8 = foreignFunction(libjulia, "jl_unbox_uint8", uint8, voidstar)
+
+-- symbols
+jlBaseModule = foreignSymbol(libjulia, "jl_base_module", voidstar)
+jlMainModule = foreignSymbol(libjulia, "jl_main_module", voidstar)
+jlNothing = foreignSymbol(libjulia, "jl_nothing", voidstar)
+jlTypeType = foreignSymbol(libjulia, "jl_type_type", voidstar)
+
+--------------------
+-- initialization --
+--------------------
+
+jlInit()
+addEndFunction(() -> jlAtexitHook 0)
+
+-- symbols not exported by C API (now that we're initialized)
+jlDeleteGlobal = jlGetGlobal(jlMainModule, jlSymbol "delete!")
+jlGetGlobalGlobal = jlGetGlobal(jlMainModule, jlSymbol "getglobal")
+jlSetindexGlobal = jlGetGlobal(jlMainModule, jlSymbol "setindex!")
+jlShowerror = jlGetGlobal(jlMainModule, jlSymbol "showerror")
+
+-----------------
+-- JuliaObject --
+-----------------
+
+JuliaObject = new SelfInitializingType of voidstar
+JuliaObject.synonym = "Julia object"
+
+toString JuliaObject := x -> value jlString x
+net JuliaObject := x -> net value jlRepr("text/plain", x)
+describe JuliaObject := x -> Describe FunctionApplication(juliaValue, value jlRepr x)
+importFrom(Core, "toExternalFormat")
+toExternalString JuliaObject := toExternalFormat @@ describe
+JuliaObject.AfterPrint = x -> (JuliaObject, " of type ", jlTypeof x)
+
+-- keep a dict of known julia objects so they don't get garbage
+-- collected out from under us
+knownObjects = jlEvalString ///
+module M2Julia
+    const known_objects = Dict{Int64, Any}()
+end
+M2Julia.known_objects
+///
+knownObjectCount = 0
+finalizer = key -> x -> jlCall2(jlDeleteGlobal, knownObjects, jlBoxInt64 key)
+new JuliaObject from voidstar := (T, x) -> (
+    jlCall3(jlSetindexGlobal, knownObjects, x, jlBoxInt64 knownObjectCount);
+    registerFinalizer(x, finalizer knownObjectCount);
+    knownObjectCount += 1;
+    x)
+new JuliaObject from JuliaObject := (T, x) -> x
+
+--------------------
+-- error handling --
+--------------------
+
+JuliaError = new SelfInitializingType of Error
+
+new JuliaError := T -> (
+    exc := jlExceptionOccurred();
+    if value exc === nullPointer
+    then error "no Julia error occurred"
+    else (
+        jlExceptionClear();
+        T value jlSprint(jlShowerror, exc)))
+
+JuliaObjectOrError = ptr -> (
+    if value ptr === nullPointer
+    then error new JuliaError
+    else JuliaObject ptr)
+
+-----------------
+-- juliaSymbol --
+-----------------
+
+juliaSymbol = method()
+juliaSymbol String := s -> JuliaObject jlSymbol s
+juliaSymbol Thing := juliaSymbol @@ toString
+
+--------------------
+-- juliaGetGlobal --
+--------------------
+
+juliaGetGlobal = method()
+juliaGetGlobal String := s -> juliaCall(jlGetGlobalGlobal, (jlMainModule, jlSymbol s))
+juliaGetGlobal Thing := juliaGetGlobal @@ toString
+
+-------------------
+-- JuliaFunction --
+-------------------
+
+JuliaFunction = new SelfInitializingType of FunctionClosure
+JuliaFunction.synonym = "Julia function"
+
+net      JuliaFunction :=
+toString JuliaFunction := f -> (frames f)#0#1
+
+juliaCall = (f, x) -> JuliaObjectOrError(
+    if instance(x, Sequence) then (
+        x = apply(x, y -> JuliaObject y);
+        if #x == 0 then jlCall0 f
+        else if #x == 1 then jlCall1(f, x#0)
+        else if #x == 2 then jlCall2(f, x#0, x#1)
+        else if #x == 3 then jlCall3(f, x#0, x#1, x#2)
+        else if #x == 4 then jlCall4(f, x#0, x#1, x#2, x#3)
+        else jlCall(f, toList x, #x))
+    else jlCall1(f, JuliaObject x))
+
+new JuliaFunction from JuliaObject := (T, f) -> x -> juliaCall(f, x)
+new JuliaFunction from String := (T, s) -> T juliaGetGlobal s
+new JuliaFunction from Function :=
+new JuliaFunction from Symbol   := (T, s) -> T toString s
+JuliaObject Thing := (f, x) -> juliaCall(f, x)
+
+-- functions we'll use
+jlDelete = JuliaFunction "delete!"
+jlDict = JuliaFunction "Dict"
+jlGetindex = JuliaFunction "getindex"
+jlGetproperty = JuliaFunction "getproperty"
+jlInt = JuliaFunction "Int"
+jlIterate = JuliaFunction "iterate"
+jlPair = JuliaFunction "Pair"
+jlRationalDivision = JuliaFunction "//"
+jlRepr = JuliaFunction "repr"
+jlSetindex = JuliaFunction "setindex!"
+jlSetproperty = JuliaFunction "setproperty!"
+jlSprint = JuliaFunction "sprint"
+jlString = JuliaFunction "string"
+jlTrunc = JuliaFunction "trunc"
+jlTuple = JuliaFunction "tuple"
+jlTypeof = JuliaFunction "typeof"
+jlVect = JuliaFunction juliaCall(jlGetGlobalGlobal, (jlBaseModule, jlSymbol "vect"))
+
+-- globals we'll use
+jlIm = juliaGetGlobal "im"
+
+-----------------
+-- M2 -> julia --
+-----------------
+
+new JuliaObject from Boolean := (T, x) -> jlBoxBool if x then 1 else 0
+new JuliaObject from ZZ := (T, x) -> jlBoxInt64 x
+new JuliaObject from QQ := (T, x) -> jlRationalDivision(numerator x, denominator x)
+new JuliaObject from RR := (T, x) -> jlBoxFloat64 x
+new JuliaObject from CC := (T, x) -> realPart x + jlIm * imaginaryPart x
+new JuliaObject from Number := (T, x) -> T numeric x
+new JuliaObject from String := (T, x) -> jlCstrToString x
+new JuliaObject from List := (T, x) -> jlVect toSequence x
+new JuliaObject from Sequence := (T, x) -> jlTuple x
+new JuliaObject from HashTable := (T, x) -> jlDict(jlPair \ toSequence pairs x)
+new JuliaObject from Nothing := (T, x) -> jlNothing
+
+-----------------
+-- julia -> M2 --
+-----------------
+
+getJlBool = x -> value jlUnboxBool x == 1
+
+juliaToM2Functions = new MutableList
+addJuliaToM2Function = method()
+addJuliaToM2Function(String, Function) := (typename, f) -> (
+    type := JuliaObjectOrError jlEvalString typename;
+    if value jlIsa(type, jlTypeType) == 0
+    then error "expected argument 1 to be a Julia type";
+    key := #juliaToM2Functions;
+    jlEvalString concatenate("@eval M2Julia value_key(x::", typename, ") = ", toString key);
+    juliaToM2Functions#key = f)
+
+jlEvalString "@eval M2Julia value_key(x) = -1"
+addJuliaToM2Function("Bool", getJlBool)
+addJuliaToM2Function("Int8", value @@ jlUnboxInt8)
+addJuliaToM2Function("Int16", value @@ jlUnboxInt16)
+addJuliaToM2Function("Int32", value @@ jlUnboxInt32)
+addJuliaToM2Function("Int64", value @@ jlUnboxInt64)
+addJuliaToM2Function("UInt8", value @@ jlUnboxUint8)
+addJuliaToM2Function("UInt16", value @@ jlUnboxUint16)
+addJuliaToM2Function("UInt32", value @@ jlUnboxUint32)
+addJuliaToM2Function("UInt64", value @@ jlUnboxUint64)
+addJuliaToM2Function("Float32", value @@ jlUnboxFloat32)
+addJuliaToM2Function("Float64", value @@ jlUnboxFloat64)
+-- TODO: Int128, UInt128, Float16, BigInt, BigFloat
+addJuliaToM2Function("Rational", x -> value numerator x / value denominator x)
+addJuliaToM2Function("Complex", x -> value realPart x + ii * value imaginaryPart x)
+addJuliaToM2Function("Char", utf8 @@ value @@ jlInt)
+addJuliaToM2Function("String", value @@ jlStringPtr)
+addJuliaToM2Function("AbstractArray", x -> value \ toList x)
+addJuliaToM2Function("Tuple", x -> value \ toSequence x)
+addJuliaToM2Function("AbstractDict", x -> hashTable apply(toList x, kv -> value \ (kv_1, kv_2)))
+addJuliaToM2Function("Nothing", x -> null)
+
+m2JuliaValueKey = jlEvalString "M2Julia.value_key"
+value JuliaObject := x -> (
+    key := value jlUnboxInt64 jlCall1(m2JuliaValueKey, x);
+    if key == -1 then error("no method found for applying 'value' to: ", newline,
+                            "\t", x, " (of type ", jlTypeof x, ")")
+    else juliaToM2Functions#key x)
+
+---------------
+-- iterators --
+---------------
+
+JuliaObject_Thing := jlGetindex
+JuliaObject_Thing = (x, i, e) -> jlSetindex(x, e, i)
+delete(JuliaObject, Thing) := jlDelete
+
+JuliaObject@@Thing := (x, i) -> jlGetproperty(x, jlSymbol toString i)
+JuliaObject@@Thing = (x, i, e) -> jlSetproperty(x, e, jlSymbol toString i)
+
+iterator JuliaObject := x -> Iterator (
+    iter := jlIterate x;
+    () -> (
+        if iter == jlNothing then StopIteration
+        else first(
+            iter_1,
+            iter = jlIterate(x, iter_2))))
+
+-------------------
+-- unary methods --
+-------------------
+
+scan({
+    symbol +,
+    symbol -,
+    symbol ~,
+    abs,
+    round,
+    floor,
+    sqrt,
+    exp,
+    expm1,
+    log,
+    log1p,
+    sin,
+    cos,
+    tan,
+    cot,
+    sec,
+    csc,
+    sinh,
+    cosh,
+    tanh,
+    coth,
+    sech,
+    csch,
+    asin,
+    acos,
+    atan,
+    acot,
+    asinh,
+    acosh,
+    atanh,
+    acoth,
+    numerator,
+    denominator
+}, op -> (
+    f := JuliaFunction op;
+    installMethod(op, JuliaObject, f)))
+
+scan({
+    (symbol not, symbol !),
+    (ceiling, "ceil"),
+    (realPart, "real"),
+    (imaginaryPart, "imag"),
+    (conjugate, "conj")
+}, (m2op, jlop) -> (
+    f := JuliaFunction jlop;
+    installMethod(m2op, JuliaObject, f)))
+
+isFinite JuliaObject := getJlBool @@ (JuliaFunction "isfinite")
+isInfinite JuliaObject := getJlBool @@ (JuliaFunction "isinf")
+length JuliaObject := value @@ (JuliaFunction length)
+
+--------------------
+-- binary methods --
+--------------------
+
+scan({
+    symbol +,
+    symbol -,
+    symbol *,
+    symbol /,
+    symbol \,
+    symbol ^,
+    symbol %,
+    symbol &,
+    symbol |,
+    symbol >>, -- TODO: what to do about >>>?
+    symbol <<,
+    gcd,
+    lcm,
+    log
+},
+     op -> (
+         f := JuliaFunction op;
+         installMethod(op, JuliaObject, JuliaObject, f);
+         installMethod(op, JuliaObject, Thing, f);
+         installMethod(op, Thing, JuliaObject, f)))
+
+scan({
+    (symbol //, "÷"),
+    (symbol ^^, "⊻"),
+    (atan2, atan)
+},
+     (m2op, jlop) -> (
+         f := JuliaFunction jlop;
+         installMethod(m2op, JuliaObject, JuliaObject, f);
+         installMethod(m2op, JuliaObject, Thing, f);
+         installMethod(m2op, Thing, JuliaObject, f)))
+
+-- can't use JuliaFunction w/ &&/||, so roll our own
+-- use Thing on RHS to support (greedy) short-circuiting
+JuliaObject and JuliaObject := (x, y) -> value x and value y
+JuliaObject and Thing       := (x, y) -> value x and y
+Boolean     and JuliaObject := (x, y) -> x and value y
+
+JuliaObject or JuliaObject := (x, y) -> value x or value y
+JuliaObject or Thing       := (x, y) -> value x or y
+Boolean     or JuliaObject := (x, y) -> x or value y
+
+jleq = JuliaFunction symbol ==
+JuliaObject == JuliaObject :=
+JuliaObject == Thing       :=
+Thing       == JuliaObject := getJlBool @@ jleq
+
+jlle = JuliaFunction symbol <
+jlge = JuliaFunction symbol >
+JuliaObject ? JuliaObject :=
+JuliaObject ? Thing       :=
+Thing       ? JuliaObject := (x, y) -> (
+    if getJlBool jlle(x, y) then symbol <
+    else if getJlBool jlge(x, y) then symbol >
+    else if x == y then symbol ==
+    else incomparable)
+
+-- these only accept a julia type as the first argument, so
+-- (Thing, JuliaObject) doesn't make sense
+round(JuliaObject, Thing) := lookup(round, JuliaObject)
+floor(JuliaObject, Thing) := lookup(floor, JuliaObject)
+ceiling(JuliaObject, Thing) := lookup(ceiling, JuliaObject)
+
+truncate JuliaObject         := {} >> o -> x -> jlTrunc x
+truncate(JuliaObject, Thing) := {} >> o -> (T, x) -> jlTrunc(T, x)
+
+quotientRemainder(JuliaObject, JuliaObject) :=
+quotientRemainder(JuliaObject, Thing)       :=
+quotientRemainder(Thing,       JuliaObject) := toSequence @@ (JuliaFunction "divrem")
+
+gcd JuliaObject := lookup(gcd, JuliaObject, JuliaObject)
+lcm JuliaObject := lookup(lcm, JuliaObject, JuliaObject)
+
+----------------
+-- evaluation --
+----------------
+
+juliaValue = method()
+juliaValue String := JuliaObjectOrError @@ jlEvalString
+juliaValue Sequence := s -> juliaValue(concatenate \\ toString \ s)
+
+beginDocumentation()
+
+TEST ///
+-- roundtrip
+assertRoundTrip = x -> assert Equation(value JuliaObject x, x)
+assertRoundTrip true
+assertRoundTrip 5
+assertRoundTrip pi
+assertRoundTrip(2/3)
+assertRoundTrip(2 + 3*ii)
+assertRoundTrip "foo"
+assert Equation(value (JuliaObject "🐂")_1, "🐂") -- char
+assertRoundTrip null
+assertRoundTrip {1, 2, 3}
+assertRoundTrip (1, 2, 3)
+x = hashTable {(true, 5), (numeric pi, "foo"), (null, {1, 2, 3})}
+assert BinaryOperation(symbol ===, value JuliaObject x, x)
+///
+
+TEST ///
+-- integer types
+assert Equation(value (juliaGetGlobal "Int8") 5, 5)
+assert Equation(value (juliaGetGlobal "Int16") 5, 5)
+assert Equation(value (juliaGetGlobal "Int32") 5, 5)
+assert Equation(value (juliaGetGlobal "Int64") 5, 5)
+assert Equation(value (juliaGetGlobal "UInt8") 5, 5)
+assert Equation(value (juliaGetGlobal "UInt16") 5, 5)
+assert Equation(value (juliaGetGlobal "UInt32") 5, 5)
+assert Equation(value (juliaGetGlobal "UInt64") 5, 5)
+-- floating-point types
+assert Equation(value (juliaGetGlobal "Float32") 5, 5)
+assert Equation(value (juliaGetGlobal "Float64") 5, 5)
+///
+
+TEST ///
+----------------
+-- arithmetic --
+----------------
+-- unary plus
+assert Equation(+JuliaObject 6, JuliaObject 6)
+
+-- unary minus
+assert Equation(-JuliaObject 6, JuliaObject(-6))
+
+-- binary plus
+assert Equation(JuliaObject 6 + JuliaObject 3, JuliaObject 9)
+assert Equation(JuliaObject 6 + 3, JuliaObject 9)
+assert Equation(6 + JuliaObject 3, JuliaObject 9)
+
+-- binary minus
+assert Equation(JuliaObject 6 - JuliaObject 3, JuliaObject 3)
+assert Equation(JuliaObject 6 - 3, JuliaObject 3)
+assert Equation(6 - JuliaObject 3, JuliaObject 3)
+
+-- times
+assert Equation(JuliaObject 6 * JuliaObject 3, JuliaObject 18)
+assert Equation(JuliaObject 6 * 3, JuliaObject 18)
+assert Equation(6 * JuliaObject 3, JuliaObject 18)
+
+-- divide
+assert Equation(JuliaObject 7 / JuliaObject 2, JuliaObject 3.5)
+assert Equation(JuliaObject 7 / 2, JuliaObject 3.5)
+assert Equation(7 / JuliaObject 2, JuliaObject 3.5)
+
+-- integer divide
+assert Equation(JuliaObject 7 // JuliaObject 3, JuliaObject 2)
+assert Equation(JuliaObject 7 // 3, JuliaObject 2)
+assert Equation(7 // JuliaObject 3, JuliaObject 2)
+
+-- inverse divide
+assert Equation(JuliaObject 2 \ JuliaObject 7, JuliaObject 3.5)
+assert Equation(JuliaObject 2 \ 7, JuliaObject 3.5)
+assert Equation(2 \ JuliaObject 7, JuliaObject 3.5)
+
+-- power
+assert Equation((JuliaObject 6) ^ (JuliaObject 3), JuliaObject 216)
+assert Equation((JuliaObject 6) ^ 3, JuliaObject 216)
+assert Equation(6 ^ (JuliaObject 3), JuliaObject 216)
+
+-- remainder
+assert Equation(JuliaObject 7 % JuliaObject 3, JuliaObject 1)
+assert Equation(JuliaObject 7 % 3, JuliaObject 1)
+assert Equation(7 % JuliaObject 3, JuliaObject 1)
+
+-- negation
+assert Equation(not JuliaObject true, JuliaObject false)
+
+-- and
+assert(JuliaObject true and JuliaObject true)
+assert(JuliaObject true and true)
+assert(true and JuliaObject true)
+assert not (JuliaObject false and 5) -- short-circuits
+
+-- or
+assert(JuliaObject false or JuliaObject true)
+assert(JuliaObject false or true)
+assert(false or JuliaObject true)
+assert(JuliaObject true or 5) -- short-circuits
+
+-- bitwise not
+assert Equation(~JuliaObject 5, JuliaObject(-6))
+
+-- bitwise and
+assert Equation(JuliaObject 5 & JuliaObject 6, JuliaObject 4)
+assert Equation(JuliaObject 5 & 6, JuliaObject 4)
+assert Equation(5 & JuliaObject 6, JuliaObject 4)
+
+-- bitwise or
+assert Equation(JuliaObject 5 | JuliaObject 6, JuliaObject 7)
+assert Equation(JuliaObject 5 | 6, JuliaObject 7)
+assert Equation(5 | JuliaObject 6, JuliaObject 7)
+
+-- bitwise xor
+assert Equation(JuliaObject 5 ^^ JuliaObject 6, JuliaObject 3)
+assert Equation(JuliaObject 5 ^^ 6, JuliaObject 3)
+assert Equation(5 ^^ JuliaObject 6, JuliaObject 3)
+
+-- arithmetic shift right
+assert Equation(JuliaObject 192 >> JuliaObject 5, JuliaObject 6)
+assert Equation(JuliaObject 192 >> 5, JuliaObject 6)
+assert Equation(192 >> JuliaObject 5, JuliaObject 6)
+
+-- arithmetic shift left
+assert Equation(JuliaObject 6 << JuliaObject 5, JuliaObject 192)
+assert Equation(JuliaObject 6 << 5, JuliaObject 192)
+assert Equation(6 << JuliaObject 5, JuliaObject 192)
+///
+
+TEST ///
+-- comparison
+assert BinaryOperation(symbol <, JuliaObject 2, JuliaObject 3)
+assert BinaryOperation(symbol <, JuliaObject 2, 3)
+assert BinaryOperation(symbol <, 2, JuliaObject 3)
+assert BinaryOperation(symbol <=, JuliaObject 2, JuliaObject 3)
+assert BinaryOperation(symbol <=, JuliaObject 2, 3)
+assert BinaryOperation(symbol <=, 2, JuliaObject 3)
+assert BinaryOperation(symbol <=, JuliaObject 2, JuliaObject 2)
+assert BinaryOperation(symbol <=, JuliaObject 2, 2)
+assert BinaryOperation(symbol <=, 2, JuliaObject 2)
+assert BinaryOperation(symbol >, JuliaObject 4, JuliaObject 3)
+assert BinaryOperation(symbol >, JuliaObject 4, 3)
+assert BinaryOperation(symbol >, 4, JuliaObject 3)
+assert BinaryOperation(symbol >=, JuliaObject 4, JuliaObject 3)
+assert BinaryOperation(symbol >=, JuliaObject 4, 3)
+assert BinaryOperation(symbol >=, 4, JuliaObject 3)
+assert BinaryOperation(symbol >=, JuliaObject 2, JuliaObject 2)
+assert BinaryOperation(symbol >=, JuliaObject 2, 2)
+assert BinaryOperation(symbol >=, 2, JuliaObject 2)
+///
+
+TEST ///
+-- methods
+assert isFinite JuliaObject 5
+assert isInfinite JuliaObject infinity
+
+isa = value @@ (JuliaFunction "isa")
+Int8 = juliaGetGlobal "Int8"
+Float64 = juliaGetGlobal "Float64"
+
+assert Equation(round JuliaObject 2.9, 3)
+assert Equation(x = round(Int8, 2.9), 3)
+assert isa(x, Int8)
+assert Equation(floor JuliaObject 2.9, 2)
+assert Equation(x = floor(Int8, 2.9), 2)
+assert isa(x, Int8)
+assert Equation(ceiling JuliaObject 2.9, 3)
+assert Equation(x = ceiling(Int8, 2.9), 3)
+assert isa(x, Int8)
+assert Equation(truncate JuliaObject 2.9, 2)
+assert Equation(x = truncate(Int8, 2.9), 2)
+assert isa(x, Int8)
+
+assert Equation(quotientRemainder(JuliaObject 10, JuliaObject 3), (3, 1))
+assert Equation(quotientRemainder(JuliaObject 10, 3), (3, 1))
+assert Equation(quotientRemainder(10, JuliaObject 3), (3, 1))
+
+assert Equation(gcd JuliaObject 5, 5)
+assert Equation(gcd(10, JuliaObject 15, JuliaObject 20, 25), 5)
+assert Equation(lcm JuliaObject 5, 5)
+assert Equation(lcm(10, JuliaObject 15, JuliaObject 20, 25), 300)
+
+assert Equation(abs JuliaObject 5, 5)
+assert Equation(abs JuliaObject(-5), 5)
+assert Equation(abs JuliaObject(-5.5), 5.5)
+
+assert Equation(x = sqrt JuliaObject 4, 2)
+assert isa(x, Float64)
+assert Equation(exp JuliaObject 0, 1)
+assert Equation(expm1 JuliaObject 0, 0)
+assert Equation(log JuliaObject 1, 0)
+assert Equation(log1p JuliaObject 0, 0)
+assert Equation(log(JuliaObject 2, JuliaObject 8), 3)
+assert Equation(log(JuliaObject 2, 8), 3)
+assert Equation(log(2, JuliaObject 8), 3)
+
+epsilon = 1e-15
+assertNear = (x, y) -> assert BinaryOperation(symbol <, abs(value x - y), epsilon)
+assertNear(sqrt JuliaObject 2, sqrt 2)
+assertNear(exp JuliaObject 1, exp 1)
+assertNear(expm1 JuliaObject 1, expm1 1)
+assertNear(log JuliaObject 2, log 2)
+assertNear(log1p JuliaObject 1, log1p 1)
+assertNear(log(JuliaObject 3, 5), log(3, 5))
+
+assert Equation(sin JuliaObject 0, 0)
+assert Equation(cos JuliaObject 0, 1)
+assert Equation(tan JuliaObject 0, 0)
+assert Equation(sec JuliaObject 0, 1)
+assert Equation(sinh JuliaObject 0, 0)
+assert Equation(cosh JuliaObject 0, 1)
+assert Equation(tanh JuliaObject 0, 0)
+assert Equation(sech JuliaObject 0, 1)
+assert Equation(asin JuliaObject 0, 0)
+assert Equation(acos JuliaObject 1, 0)
+assert Equation(atan JuliaObject 0, 0)
+assert Equation(asinh JuliaObject 0, 0)
+assert Equation(acosh JuliaObject 1, 0)
+assert Equation(atanh JuliaObject 0, 0)
+assert Equation(atan2(JuliaObject 0, JuliaObject 1), 0)
+
+assertNear(sin JuliaObject 0.5, sin 0.5)
+assertNear(cos JuliaObject 0.5, cos 0.5)
+assertNear(tan JuliaObject 0.5, tan 0.5)
+assertNear(cot JuliaObject 0.5, cot 0.5)
+assertNear(sec JuliaObject 0.5, sec 0.5)
+assertNear(csc JuliaObject 0.5, csc 0.5)
+assertNear(sinh JuliaObject 0.5, sinh 0.5)
+assertNear(cosh JuliaObject 0.5, cosh 0.5)
+assertNear(tanh JuliaObject 0.5, tanh 0.5)
+assertNear(coth JuliaObject 0.5, coth 0.5)
+assertNear(sech JuliaObject 0.5, sech 0.5)
+assertNear(csch JuliaObject 0.5, csch 0.5)
+assertNear(asin JuliaObject 0.5, asin 0.5)
+assertNear(acos JuliaObject 0.5, acos 0.5)
+assertNear(atan JuliaObject 0.5, atan 0.5)
+assertNear(asinh JuliaObject 0.5, asinh 0.5)
+assertNear(atanh JuliaObject 0.5, atanh 0.5)
+assertNear(acot JuliaObject 2., acot 2.)
+assertNear(acosh JuliaObject 2., acosh 2.)
+assertNear(acoth JuliaObject 2., acoth 2.)
+assertNear(atan2(JuliaObject 1, JuliaObject 1), atan2(1, 1))
+assertNear(atan2(JuliaObject 1, 1), atan2(1, 1))
+assertNear(atan2(1, JuliaObject 1), atan2(1, 1))
+assertNear(atan2(JuliaObject 1, JuliaObject(-1)), atan2(1, -1))
+assertNear(atan2(JuliaObject 1, -1), atan2(1, -1))
+assertNear(atan2(1, JuliaObject(-1)), atan2(1, -1))
+assertNear(atan2(JuliaObject(-1), JuliaObject 1), atan2(-1, 1))
+assertNear(atan2(JuliaObject(-1), 1), atan2(-1, 1))
+assertNear(atan2(-1, JuliaObject 1), atan2(-1, 1))
+assertNear(atan2(JuliaObject(-1), JuliaObject(-1)), atan2(-1, -1))
+assertNear(atan2(JuliaObject(-1), -1), atan2(-1, -1))
+assertNear(atan2(-1, JuliaObject(-1)), atan2(-1, -1))
+
+assert Equation(numerator JuliaObject(3/5), 3)
+assert Equation(denominator JuliaObject(3/5), 5)
+
+assert Equation(realPart JuliaObject(2 + 3*ii), 2)
+assert Equation(imaginaryPart JuliaObject(2 + 3*ii), 3)
+assert Equation(conjugate JuliaObject(2 + 3*ii), 2 - 3*ii)
+
+assert Equation(length JuliaObject {1, 2, 3, 4}, 4)
+///
+
+end
+
+restart
+loadPackage("Julia", FileName => "~/src/macaulay2/M2-2/M2/Macaulay2/packages/Julia.m2", Reload => true)
+check oo
+
+-----------
+-- TODO! --
+-----------
+
+-- bugs
+--  * new JuliaObject from ZZ boxes an Int64, so anything that doesn't
+--    fit is silently truncated -- JuliaObject 2^70 is 0.  QQ has the
+--    same bug, and RR rounds to a double.  See "bignums" below.
+--  * addJuliaToM2Function resolves the type name twice in different
+--    scopes: jl_eval_string runs in Main, but @eval M2Julia resolves it
+--    inside M2Julia, which only has "using Base", so a third-party type
+--    like Oscar.ZZRingElem isn't visible there.  Worse, that
+--    jl_eval_string return isn't checked, so the UndefVarError is
+--    discarded and the registration reports success.  Define the method
+--    from Main, as @eval Main M2Julia.value_key(x::T) = k, and wrap the
+--    call in JuliaObjectOrError.
+
+-- documentation
+--  * write the documentation; there are no doc nodes at all yet
+--  * caveat: == and hash disagree for JuliaObject, and hash is
+--    interpreter level, so they shouldn't be used as keys in hash
+--    tables -- looking one up with an equal but distinct object misses
+
+-- packaging
+--  * fill in the newPackage options: Version, Headline, Date, Authors,
+--    Keywords, and PackageImports => {"ForeignFunctions"} in place of
+--    the needsPackage call
+--  * add a Configuration option for the libjulia path, so that
+--    packagers can point at it without a julia binary
+--  * add an escape hatch when julia isn't found, as RInterface does
+--    for R: OptionalComponentsPresent =>
+--    run("command -v julia > /dev/null") == 0 in newPackage, a second
+--    guard on ForeignFunctions#"private dictionary"#?"foreignFunction"
+--    in case M2 was built without libffi, and an endpkg helper that
+--    installs a stub doc node for the package key before calling end.
+--    Both guards need to come before the libfile line.
+--  * a Pkg entry point, cf. pipInstall, so that a wrapper package can
+--    install and version-pin the julia packages it needs
+
+-- julia -> M2
+--  * Float16
+--  * Int128, UInt128, BigInt, BigFloat -- see "bignums" below
+--  * NamedTuple, which julia APIs return all the time
+--  * value flattens a 2-d array column-major, so the shape is lost;
+--    size is right there, so nested lists would work
+
+-- M2 -> julia
+--  * keyword arguments, which Oscar and HomotopyContinuation both use
+--    pervasively: build a NamedTuple out of Options and hand it to
+--    Core.kwcall(nt, f, args...), which already works today
+--  * a way to call M2 functions from julia, cf. pythonWrapM2Function
+
+-- bignums
+--  * follow julia's own rule for integer literals and use the smallest
+--    of Int64, Int128, and BigInt that fits, so that JuliaObject 5
+--    behaves like typing 5 in julia.  QQ then follows from ZZ as
+--    Rational{BigInt}; RR wants BigFloat, but toString gives only 6
+--    digits, so use toExternalString and strip the "pNNN" suffix, and
+--    pass the precision as a keyword.
+--
+--  * Int128/UInt128: the C API's box and unbox calls stop at 64 bits,
+--    but jl_new_bits(type, ptr) boxes any primitive bits type from its
+--    bytes, and jl_data_ptr(v) is just v, so unboxing is a 16-byte read.
+--    Nothing 128-bit crosses libffi by value, which is just as well,
+--    since ffiIntegerType only handles 8, 16, 32, and 64 bits.
+--
+--      jlNewBits = foreignFunction(libjulia, "jl_new_bits", voidstar,
+--          {voidstar, voidstar})
+--      -- 0x61626364 reads as "abcd" on big-endian, "dcba" on little
+--      loOffset = if version#"endianness" == "abcd" then 8 else 0
+--      hiOffset = 8 - loOffset
+--      toInt128 = x -> (
+--          buf := getMemory 16;
+--          *voidstar(value buf + loOffset) = uint64 (x % 2^64);
+--          *voidstar(value buf + hiOffset) = int64  (x // 2^64);
+--          JuliaObject jlNewBits(juliaGetGlobal "Int128", buf))
+--      fromInt128 = z -> (
+--          p := value voidstar z;  -- value z would try to convert!
+--          value uint64 (p + loOffset) +
+--              2^64 * value int64 (p + hiOffset))
+--
+--  * BigInt has no C API support at all, so copy through gmp.  Julia
+--    ships its own libgmp and points it at julia's allocators (see
+--    base/gmp.jl), so the *receiving* side has to do the allocating:
+--    for julia -> M2 we call __gmpz_set into an mpzT, and for
+--    M2 -> julia julia ccalls it.  BigInt is layout-identical to
+--    __mpz_struct, so pointer_from_objref hands back a usable mpz_ptr.
+--    Going the other way, "voidstar m" gives the mpz_ptr stored inside
+--    an mpzT -- "voidstar address m" does not, since that re-wraps the
+--    outer address.
+--
+--      juliaValue ///
+--      module M2GMP
+--          function from_mpz(p::Ptr{Cvoid})
+--              z = BigInt()
+--              ccall((:__gmpz_set, :libgmp), Cvoid,
+--                  (Ref{BigInt}, Ptr{Cvoid}), z, p)
+--              z
+--          end
+--      end
+--      ///
+--
+--      mpzSet = foreignFunction("__gmpz_set", void, {mpzT, voidstar})
+--      fromJulia = z -> (
+--          p := jlUnboxVoidPointer(
+--              (JuliaFunction "pointer_from_objref") z);
+--          d := mpzT 0; mpzSet(d, p); value d)
+--      toJulia = x -> (
+--          m := mpzT x;
+--          r := jlFromMpz JuliaObject jlBoxVoidPointer value voidstar m;
+--          m;  -- keep m alive across the call
+--          r)
+--
+--    strings work too -- parse(BigInt, toString x) out, __gmpz_set_str
+--    into an mpzT back -- and are marginally faster below ~10000 digits,
+--    since ~2.5 ms of per-call overhead dominates either way.  Don't use
+--    M2's value to parse the incoming decimal string, though: that runs
+--    the M2 parser over the digits and is 600x slower.
+
+-- methods
+--  * juliaGetGlobal only looks in Main, so there's no way to reach a
+--    name that Base declares public but doesn't export (cf. vect) or
+--    anything in another module; take a module argument, or split a
+--    qualified name like "Base.vect" on the dots
+--  * >>> (see above)
+--  * x_(i, j) passes the subscript through as a single tuple, so both
+--    multi-dimensional indexing and typed array construction fail:
+--    A_(1, 2) and Int8_(1, 2, 3) need to splat a Sequence, the way
+--    getindex(A, 1, 2) already does
+
+-- tests
+--  * iterators, getindex/setindex, getproperty/setproperty, delete,
+--    JuliaError, juliaSymbol, juliaValue, strings
+
+-- embedding
+--  * ForeignFunctions dlopens with RTLD_LAZY only, but embedding julia
+--    is generally documented to want RTLD_GLOBAL, so ccalls inside
+--    third-party julia packages may fail to resolve their symbols
+--  * jl_init installs its own signal handlers alongside M2's; check that
+--    interrupting a long-running julia call still works
