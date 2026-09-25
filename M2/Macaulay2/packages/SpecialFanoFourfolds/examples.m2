@@ -78,7 +78,7 @@ prebuiltExamplesOfRationalFourfolds = memoize(() -> (
 
 examplesPath = applicationDirectory() | "SpecialFanoFourfoldsExamples";
 examplesDir = () -> (
-    if not(fileExists examplesPath and isDirectory examplesPath) then mkdir(examplesPath | "/");
+    if not isDirectory examplesPath then makeDirectory(examplesPath | "/");
     if not(fileExists examplesPath and isDirectory examplesPath) then error("failed to create user examples directory: " | examplesPath);
     examplesPath
 );
