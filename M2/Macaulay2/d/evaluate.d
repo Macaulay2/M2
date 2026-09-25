@@ -1298,6 +1298,21 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 	else ParallelAssignmentError(nlhs))
     else ParallelAssignmentError(nlhs));
 
+evalWithDoCode(c:withDoCode):Expr := (
+    x := eval(c.primary);
+    when x is Error do return x else nothing;
+    entermethod := lookup(Class(x), EnterMethodE);
+    if entermethod == nullE
+    then return buildErrorPacket("no enter method found");
+    exitmethod := lookup(Class(x), ExitMethodE);
+    if exitmethod == nullE
+    then return buildErrorPacket("no exit method found");
+    before := applyEE(entermethod, x);
+    when before is Error do return before else nothing;
+    r := eval(c.doClause);
+    applyEE(exitmethod, before);
+    r);
+
 -- helper function used when evaluating tryCode and by null coalescion
 -- tryCaughtError is false unless an (non-interrupting) error occurred
 threadLocal tryCaughtError := false;
@@ -1738,6 +1753,7 @@ export evalraw(c:Code):Expr := (
 	  is c:newOfCode do NewOfFun(c.newClause,c.ofClause)
 	  is c:newFromCode do NewFromFun(c.newClause,c.fromClause)
 	  is c:newOfFromCode do NewOfFromFun(c.newClause,c.ofClause,c.fromClause)
+	  is c:withDoCode do evalWithDoCode(c)
 	  is nullCode do return nullE
 	  is v:realCode do return Expr(RRcell(v.x))
 	  is v:integerCode do return Expr(ZZcell(v.x))

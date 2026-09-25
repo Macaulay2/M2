@@ -42,6 +42,7 @@ export codePosition(c:Code):Position := ( -- TODO retire
     is f:adjacentCode              do f.position
     is f:functionCode              do f.position
     is f:catchCode                 do f.position
+    is f:withDoCode                do f.position
     is f:Error                     do f.position
     );
 

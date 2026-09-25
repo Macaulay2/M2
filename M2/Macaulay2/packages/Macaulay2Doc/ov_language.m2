@@ -548,6 +548,7 @@ document {
 	TO "break",
 	TO "continue",
 	TO "return",
+	TO "with",
     }
 }
 
@@ -1265,6 +1266,67 @@ document {
      ///,
      Subnodes => TO seeParsing
      }
+
+doc ///
+  Key
+    symbol with
+    symbol EnterMethod
+    symbol ExitMethod
+  Headline
+    context management
+  Usage
+    with x do y
+  Inputs
+    x:Thing
+    y: -- Macaulay2 code
+  Description
+    Text
+      First, @VAR "x"@ is evaluated.  The @M2CODE "EnterMethod"@ for the
+      type of @VAR "x"@ is run with @VAR "x"@ as input.  Then @VAR "y"@ is
+      evaluated, and finally the @M2CODE "ExitMethod"@ for the type of
+      @VAR "x"@ is run with the output of the enter method as input, even if
+      evaluating @VAR "y"@ failed.  The output of the exit method is ignored.
+
+      For most Macaulay2 types, the enter method returns @VAR "x"@ and the
+      exit method returns @TO null@, essentially doing nothing.  But there are
+      several useful cases.
+
+      If @VAR "x"@ is @ofClass File@, then @TO close@ is called on exit.
+    Example
+      file = openOut temporaryFileName();
+      try with file do (file << "Hello, world!" << endl; 1/0)
+      isOpen file
+    Text
+      If @VAR "x"@ is @ofClass Mutex@, then @TO lock@ is called on entrance and
+      @TO unlock@ on exit.
+    Example
+      mutex = new Mutex
+      with mutex do last trap tryLock mutex
+      tryLock mutex
+      unlock mutex
+    Text
+      If @VAR "x"@ is @ofClass EngineRing@, then @TO (use, Ring)@ is called
+      on entrance, but the previous values of the variables of the ring are
+      restored on exit.
+    Example
+      R = QQ[x]
+      x = 5
+      with R do x^2 + 3
+      x
+    Text
+      If @VAR "x"@ is @ofClass InexactField@, then @TO "defaultPrecision"@ is
+      set to the precision of the given field on entrance and restored on exit.
+    Example
+      with RR_100 do numeric pi
+      numeric pi
+    Text
+      It is possible to define enter and exit methods for any type.
+    Example
+      X = new Type of HashTable;
+      X.EnterMethod = x -> (print "hi!"; "bye!");
+      X.ExitMethod = print;
+      with new X do print "in the do clause!"
+///
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

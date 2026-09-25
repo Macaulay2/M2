@@ -145,6 +145,7 @@ export Unary  := {+Operator:Token, rhs:ParseTree};
 export Postfix:= {+lhs:ParseTree, Operator:Token};
 export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := {+ left:Token, right:Token };
+export WithDo := {+ withToken:Token, primary:ParseTree, doClause:ParseTree};
 export dummy := {+position:Position};
 
 export ParseTree := (
@@ -153,7 +154,7 @@ export ParseTree := (
     or Unary or Binary or Postfix or IfThen or IfThenElse
     or Try or TryThen or TryThenElse or TryElse or TryThenDo or TryDo or Catch
     or WhileDo or WhileListDo or WhileList or For
-    or New
+    or New or WithDo
     or dummy );
 
 -- Code
@@ -242,6 +243,8 @@ export newFromCode   := {+newClause:Code,fromClause:Code,position:Position};
 export newOfCode     := {+newClause:Code,ofClause:Code,position:Position};
 export newCode       := {+newClause:Code,position:Position};
 
+export withDoCode := {+primary:Code,doClause:Code,position:Position};
+
 export CodeSequence     := tarray(Code);
 export sequenceCode     := {+x:CodeSequence, position:Position};
 export listCode         := {+y:CodeSequence, position:Position};
@@ -274,7 +277,7 @@ export Code := (
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
      or sequenceCode or listCode or arrayCode or angleBarListCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode
-     or whileDoCode or whileListCode or whileListDoCode
+     or whileDoCode or whileListCode or whileListDoCode or withDoCode
      or ifCode or tryCode or adjacentCode or functionCode or catchCode
      or Error						    -- for tail recursion
      );

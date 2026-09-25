@@ -86,6 +86,7 @@ export tostring(c:Code):string := (
     is x:newFromCode   do concatenate(array(string)("(new ", tostring(x.newClause),                                " from: ", tostring(x.fromClause), ")"))
     is x:newOfCode     do concatenate(array(string)("(new ", tostring(x.newClause), " of: ", tostring(x.ofClause), ")"))
     is x:newCode       do concatenate(array(string)("(new ", tostring(x.newClause), ")"))
+    is x:withDoCode    do concatenate(array(string)("(with ", tostring(x.primary), " do: ", tostring(x.doClause), ")"))
     );
 
 export toExpr(c:Code):Expr := Pseudocode(c);
@@ -165,6 +166,8 @@ export toList(c:Code):Expr := (
     is x:newFromCode   do list(toExpr("new"), seq(toExpr(x.newClause),                                           list(toExpr("from"), toExpr(x.fromClause))))
     is x:newOfCode     do list(toExpr("new"), seq(toExpr(x.newClause), list(toExpr("of"),   toExpr(x.ofClause))))
     is x:newCode       do list(toExpr("new"), seq(toExpr(x.newClause)))
+    --
+    is x:withDoCode    do list(toExpr("with"), seq(toExpr(x.primary), list(toExpr("do"), toExpr(x.doClause))))
     --
     else toExpr(tostring(c)));
 
@@ -426,4 +429,8 @@ export toExpr(e:ParseTree):Expr := (
 	toExpr(n.newClass),
 	toExpr(n.newParent),
 	toExpr(n.newInitializer))
+    is w:WithDo do list(
+	toExpr("WithDo"),
+	toExpr(w.primary),
+	toExpr(w.doClause))
     is dummy do list(toExpr("dummy")));
