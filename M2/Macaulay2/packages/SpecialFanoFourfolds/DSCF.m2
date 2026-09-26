@@ -87,7 +87,7 @@ rationalSurfaceWithAttachedPlaneInCubicFourfold (EmbeddedProjectiveVariety,Visib
     X := cubicFourfold(S' & planeC',cubicS',Verbose=>o.Verbose);
     X.cache#"Construction" = "X = specialFourfold surface"|(toString take(S'.cache#"ConstructionParameters",2))|";";
     X.cache#"DataConstruction" = (S,C,piLin);
-    X.cache#(append(surfaces X,"intersection of surface cycles in cubic fourfold")) = -(first dj1j2j3)^2 + sum toList drop(dj1j2j3,1);
+    -- X.cache#(append(surfaces X,"intersection of surface cycles in cubic fourfold")) = -(first dj1j2j3)^2 + sum toList drop(dj1j2j3,1);
     if o.Verbose then << endl << describe X << endl;
     S'.cache#"pickedCubicFourfold" = X;
     S'
@@ -174,6 +174,24 @@ genRingIntMatr3x3 = memoize(() -> (
     first gens K
 ));
 
+intersectionOfSurfaceCyclesInCubicFourfold = method();
+intersectionOfSurfaceCyclesInCubicFourfold DoublySpecialCubicFourfold := X -> (
+    (S,P) := surfaces X;
+    if X.cache#?(S,P,"intersection of surface cycles in cubic fourfold") then return X.cache#(S,P,"intersection of surface cycles in cubic fourfold");
+    if isPlaneInP5 P then (
+        h := quadricFibration X;
+        Q := h^* point target h;
+        QS := Q * S;
+        degQS := if dim QS == -1 then 0 else (if dim QS == 0 then degree QS else null);
+        if degQS === null or dim Q != 2 or degree Q != 2 then return X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = genRingIntMatr3x3();
+        return X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = degree(S) - degQS;
+    ) else (
+        if dim(S * P) == -1 then return X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = 0;
+        if dim(S * P) == 0 then return X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = degree(S * P);
+    );
+    X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = genRingIntMatr3x3()
+);
+
 latticeIntersectionMatrix3x3 = method();
 latticeIntersectionMatrix3x3 DoublySpecialCubicFourfold := X -> (
     (S,T) := surfaces X;
@@ -188,11 +206,7 @@ latticeIntersectionMatrix3x3 DoublySpecialCubicFourfold := X -> (
     S2   := MS_(1,1);   -- S^2
     h2T  := MT_(0,1);   -- H^2 * T = deg T
     T2   := MT_(1,1);   -- T^2
-    ST := if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold")
-          then X.cache#(S,T,"intersection of surface cycles in cubic fourfold")
-          else if dim(S * T) <= 0
-          then degree(S * T)
-          else genRingIntMatr3x3();
+    ST := intersectionOfSurfaceCyclesInCubicFourfold X;
     A := matrix {
         {h2sq, h2S,  h2T},
         {h2S,  S2,   ST },
