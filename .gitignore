@@ -12,6 +12,8 @@
 /M2/.idea
 /M2/tmp
 /builds
+/build/
+/benchmark-results/
 *~
 .DS_Store
 .#*
