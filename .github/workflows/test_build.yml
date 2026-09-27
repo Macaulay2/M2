@@ -139,6 +139,10 @@ jobs:
 #   Configure and build M2 using CMake
 # ----------------------
 
+      - name: Test selective CMake submodule checkout
+        if: matrix.build-system == 'cmake'
+        run: python3 ../../cmake/tests/test_submodules.py
+
       - name: Configure Macaulay2 using CMake
         if: matrix.build-system == 'cmake'
         run: |
@@ -156,7 +160,11 @@ jobs:
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core M2-emacs
+          cmake --build . --target M2-core
+
+      - name: Test the language server launcher
+        if: matrix.build-system == 'cmake'
+        run: python3 ../../cmake/tests/test_language_server.py usr-dist/*/bin/M2-language-server
 
       - name: Install packages using Ninja
         if: matrix.build-system == 'cmake' && env.SEED_CACHE_ONLY != 'true'
@@ -193,7 +201,11 @@ jobs:
       - name: Install packages using Make
         if: matrix.build-system == 'autotools' && env.SEED_CACHE_ONLY != 'true'
         run: |
-          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            make -j1
+          else
+            make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
+          fi
 
 # ----------------------
 #   Run tests
