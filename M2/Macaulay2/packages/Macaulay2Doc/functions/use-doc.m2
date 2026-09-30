@@ -74,5 +74,5 @@ document {
 	 ///,
      Caveat => {"Any values stored in the variables that have been assigned to are lost,
 	  hence this operation should not be used by code in a package."},
-     SeeAlso => {GlobalAssignHook}
+     SeeAlso => {GlobalAssignHook, symbol with}
      }

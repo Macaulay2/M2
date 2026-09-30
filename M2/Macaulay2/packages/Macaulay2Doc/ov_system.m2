@@ -1478,7 +1478,8 @@ document {
      it has received all its input.",
      PARA{},
      "If the file is ", TT "stdio", " then it is left open, and
-     no error is signaled."
+     no error is signaled.",
+     SeeAlso => {symbol with},
      }
 
 document {

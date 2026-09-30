@@ -321,6 +321,7 @@ export convert0(e:ParseTree):Code := (
 	else if n.newInitializer == dummyTree
 	then Code(newOfCode(    convert(n.newClass), convert(n.newParent),                            pos))
 	else Code(newOfFromCode(convert(n.newClass), convert(n.newParent), convert(n.newInitializer), pos)))
+    is w:WithDo do Code(withDoCode(convert(w.primary), convert(w.doClause), pos))
     is d:dummy do dummyCode
     );
 
