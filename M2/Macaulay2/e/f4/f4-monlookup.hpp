@@ -79,11 +79,11 @@ class F4MonomialLookupTableT
   //        // to be the key of that element.
   //        // If m is not divisible, then insert (m,k), and return true.
 
-  void insert_minimal_vp(long comp, const_varpower_monomial m, Key k);
+  void insert_minimal_vp(monomial_word comp, const_varpower_monomial m, Key k);
 
-  bool insert_vp(long comp, const_varpower_monomial m, Key &k);
+  bool insert_vp(monomial_word comp, const_varpower_monomial m, Key &k);
 
-  bool find_one_divisor_vp(long comp,
+  bool find_one_divisor_vp(monomial_word comp,
                            const_varpower_monomial m,
                            Key &result_k) const;
 
@@ -93,7 +93,7 @@ class F4MonomialLookupTableT
   // Search.  Return whether a monomial which divides 'm' is
   // found.  If so, return true, set the key.
 
-  void find_all_divisors_vp(long comp,
+  void find_all_divisors_vp(monomial_word comp,
                             const_varpower_monomial m,
                             std::vector<Key> & result_k) const;
 

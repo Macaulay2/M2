@@ -4,12 +4,14 @@
 #define M2_F4_MONINFO_HPP_
 
 #include "interface/m2-types.h"           // for M2_arrayint, M2_arrayint_st...
+#include "f4/monomial-word.hpp"           // for monomial_word, packed_monomial
 #include "f4/ntuple-monomial.hpp"         // for ntuple_word, const_ntuple_m...
 #include "f4/varpower-monomial.hpp"       // for varpower_word, index_varpow...
 #include "interface/monomial-ordering.h"  // for MonomialOrdering
 #include "newdelete.hpp"                  // for our_new_delete
 #include "rings/skew.hpp"                       // for SkewMultiplication
 
+#include <cinttypes>
 #include <iostream>
 
 #if 0
@@ -26,11 +28,6 @@
 
 #endif
 
-// typedef int64_t monomial_word; // Used for all types of monomials.  Is this
-// OK?
-typedef long monomial_word;  // Used for all types of monomials.  Is this OK?
-typedef monomial_word *packed_monomial;
-typedef const monomial_word *const_packed_monomial;
 // format: [hash,component,e1,...,envars],
 // where [e1,...,envars] is packed.
 // OR: [hash,component,weight,e1,...,envars]
@@ -107,7 +104,7 @@ class MonomialInfo : public our_new_delete
   int componentLocation() const { return mComponentLoc; }
   int positionUp() { return mPositionUp; }
   
-  long hash_value(const_packed_monomial m) const { return *m; }
+  uint64_t hash_value(const_packed_monomial m) const { return static_cast<uint64_t>(*m); }
   // This hash value is an ADDITIVE hash (trick due to A. Steel)
 
   void copy(const_packed_monomial src, packed_monomial target) const
@@ -115,20 +112,20 @@ class MonomialInfo : public our_new_delete
     for (int i = 0; i < nslots; i++) *target++ = *src++;
   }
 
-  long last_exponent(const_packed_monomial m) const { return m[nslots - 1]; }
-  void set_component(long component, packed_monomial m) const
+  monomial_word last_exponent(const_packed_monomial m) const { return m[nslots - 1]; }
+  void set_component(monomial_word component, packed_monomial m) const
   {
     m[1] = component;
   }
 
-  long get_component(const_packed_monomial m) const
+  monomial_word get_component(const_packed_monomial m) const
   {
     ncalls_get_component++;
     return m[1];
   }
 
   bool from_expvector(const_ntuple_monomial e,
-                            long comp,
+                            monomial_word comp,
                             packed_monomial result) const
   {
     // Pack the vector e[0]..e[nvars-1],comp.  Create the hash value at the same
@@ -146,10 +143,10 @@ class MonomialInfo : public our_new_delete
     const int *wt = mWeightVectors.data();
     for (int j = 0; j < mNumWeights; j++, wt += nvars)
       {
-        long val = 0;
+        monomial_word val = 0;
         for (int i = 0; i < nvars; i++)
           {
-            long a = e[i];
+            monomial_word a = e[i];
             if (a > 0) val += a * wt[i];
           }
         result[2 + j] = val;
@@ -171,7 +168,7 @@ class MonomialInfo : public our_new_delete
     return skew->mult_sign(m + 2 + mNumWeights, n + 2 + mNumWeights);
   }
 
-  bool one(long comp, packed_monomial result) const
+  bool one(monomial_word comp, packed_monomial result) const
   {
     // Pack the vector (0,...,0,comp) with nvars zeroes.
     // Hash value = 0. ??? Should the hash-function take component into account
@@ -184,7 +181,7 @@ class MonomialInfo : public our_new_delete
 
   bool to_expvector(const_packed_monomial m,
                           ntuple_monomial result,
-                          long &result_comp) const
+                          monomial_word &result_comp) const
   {
     // Unpack the monomial m.
     ncalls_to_expvector++;
@@ -229,7 +226,7 @@ class MonomialInfo : public our_new_delete
   }
 
   void from_varpower_monomial(const_varpower_monomial m,
-                              long comp,
+                              monomial_word comp,
                               packed_monomial result) const
   {
     // 'result' must have enough space allocated
@@ -254,12 +251,12 @@ class MonomialInfo : public our_new_delete
     const int *wt = mWeightVectors.data();
     for (int j = 0; j < mNumWeights; j++, wt += nvars)
       {
-        long val = 0;
+        monomial_word val = 0;
         for (index_varpower_monomial i = m; i.valid(); ++i)
           {
             varpower_word v = i.var();
             varpower_word e = i.exponent();
-            long w = wt[v];
+            monomial_word w = wt[v];
             if (e == 1)
               val += w;
             else
@@ -362,7 +359,7 @@ class MonomialInfo : public our_new_delete
     const_packed_monomial n1 = n + nslots;
     for (int i = nslots - 2; i > 0; i--)
       {
-        varpower_word cmp = *--m1 - *--n1;
+        monomial_word cmp = *--m1 - *--n1;
         if (cmp < 0) return -1;
         if (cmp > 0) return 1;
       }
@@ -376,21 +373,21 @@ class MonomialInfo : public our_new_delete
                        const_packed_monomial n,
                        const_packed_monomial m0,
                        const_packed_monomial n0,
-                       long tie1,
-                       long tie2) const
+                       int tie1,
+                       int tie2) const
   {
     ncalls_compare++;
 #if 0
     printf("compare_schreyer: ");
     printf("  m=");
     showAlpha(m);
-    printf("  n=");    
+    printf("  n=");
     showAlpha(n);
-    printf("  m0=");    
+    printf("  m0=");
     showAlpha(m0);
-    printf("  n0=");    
+    printf("  n0=");
     showAlpha(n0);
-    printf("  tiebreakers: %ld %ld\n", tie1, tie2);
+    printf("  tiebreakers: %d %d\n", tie1, tie2);
 #endif
     const_packed_monomial m1 = m + nslots;
     const_packed_monomial n1 = n + nslots;
@@ -398,7 +395,7 @@ class MonomialInfo : public our_new_delete
     const_packed_monomial n2 = n0 + nslots;
     for (int i = nslots - 2; i > 0; i--)
       {
-        varpower_word cmp = *--m1 - *--n1 + *--m2 - *--n2;
+        monomial_word cmp = *--m1 - *--n1 + *--m2 - *--n2;
         if (cmp < 0) return -1;
         if (cmp > 0) return 1;
       }
@@ -415,7 +412,7 @@ class MonomialInfo : public our_new_delete
     const_packed_monomial n1 = n + 2;
     for (int i = nslots - 2; i > 0; i--)
       {
-        varpower_word cmp = *m1++ - *n1++;
+        monomial_word cmp = *m1++ - *n1++;
         if (cmp > 0) return -1;
         if (cmp < 0) return 1;
       }
@@ -433,7 +430,7 @@ class MonomialInfo : public our_new_delete
     const_packed_monomial n1 = n + 2;
     for (int i = 0; i < mNumWeights; i++)
       {
-        varpower_word cmp = *m1++ - *n1++;
+        monomial_word cmp = *m1++ - *n1++;
         if (cmp > 0) return -1;
         if (cmp < 0) return 1;
       }
@@ -441,7 +438,7 @@ class MonomialInfo : public our_new_delete
     n1 = n + nslots;
     for (int i = nvars - 1; i > 0; i--)
       {
-        varpower_word cmp = *--m1 - *--n1;
+        monomial_word cmp = *--m1 - *--n1;
         if (cmp < 0) return -1;
         if (cmp > 0) return 1;
       }
@@ -464,7 +461,7 @@ class MonomialInfo : public our_new_delete
     const_packed_monomial n1 = n + 2;
     for (int i = 0; i < mNumWeights; i++)
       {
-        varpower_word cmp = *m1++ - *n1++;
+        monomial_word cmp = *m1++ - *n1++;
         if (cmp > 0) return GT;
         if (cmp < 0) return LT;
       }
@@ -474,7 +471,7 @@ class MonomialInfo : public our_new_delete
         n1 = n + nslots;
         for (int i = nvars - 1; i >= 0; i--)
           {
-            varpower_word cmp = *--m1 - *--n1;
+            monomial_word cmp = *--m1 - *--n1;
             if (cmp < 0) return GT;
             if (cmp > 0) return LT;
           }
@@ -483,7 +480,7 @@ class MonomialInfo : public our_new_delete
           n1 = n + firstvar;
           for (int i = 0; i < nvars; ++i)
             {
-              varpower_word cmp = *m1++ - *n1++;
+              monomial_word cmp = *m1++ - *n1++;
               if (cmp > 0) return GT;
               if (cmp < 0) return LT;
             }
@@ -638,7 +635,7 @@ class MonomialInfo : public our_new_delete
     for (int i = nvars - 1; i >= 0; --i)
       {
         if (a[i] != 0 && b[i] != 0) are_disjoint = false;
-        long c = a[i] - b[i];
+        monomial_word c = a[i] - b[i];
         if (c > 0)
           {
             *r++ = i;

@@ -261,7 +261,7 @@ void F4MonomialLookupTableT<Key>::reset_expvector(
 }
 
 template <typename Key>
-bool F4MonomialLookupTableT<Key>::find_one_divisor_vp(long comp,
+bool F4MonomialLookupTableT<Key>::find_one_divisor_vp(monomial_word comp,
                                                       const_varpower_monomial m,
                                                       Key &result_k) const
 {
@@ -278,7 +278,7 @@ bool F4MonomialLookupTableT<Key>::find_one_divisor_vp(long comp,
 
 template <typename Key>
 void F4MonomialLookupTableT<Key>::find_all_divisors_vp(
-    long comp,
+    monomial_word comp,
     const_varpower_monomial m,
     std::vector<Key> & result_k) const
 {
@@ -299,7 +299,7 @@ bool F4MonomialLookupTableT<Key>::find_one_divisor_packed(
     Key &result_k) const
 // mi is the top: where to start looking
 {
-  long comp = M->get_component(m);
+  monomial_word comp = M->get_component(m);
   if (comp >= mis.size()) return false;
   mi_node *mi = mis[comp];
   if (mi == nullptr) return false;
@@ -313,7 +313,7 @@ void F4MonomialLookupTableT<Key>::find_all_divisors_packed(
     const_packed_monomial m,
     std::vector<Key> & result_k) const
 {
-  long comp = M->get_component(m);
+  monomial_word comp = M->get_component(m);
   if (comp >= mis.size()) return;
   mi_node *mi = mis[comp];
   if (mi == nullptr) return;
@@ -322,7 +322,7 @@ void F4MonomialLookupTableT<Key>::find_all_divisors_packed(
 }
 
 template <typename Key>
-void F4MonomialLookupTableT<Key>::insert_minimal_vp(long comp,
+void F4MonomialLookupTableT<Key>::insert_minimal_vp(monomial_word comp,
                                                     const_varpower_monomial m,
                                                     Key k)
 {
@@ -335,7 +335,7 @@ void F4MonomialLookupTableT<Key>::insert_minimal_vp(long comp,
 }
 
 template <typename Key>
-bool F4MonomialLookupTableT<Key>::insert_vp(long comp,
+bool F4MonomialLookupTableT<Key>::insert_vp(monomial_word comp,
                                             const_varpower_monomial m,
                                             Key &k)
 // Insert the monomial 'm' with key 'k', if it
