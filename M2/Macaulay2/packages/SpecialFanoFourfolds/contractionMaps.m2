@@ -84,17 +84,23 @@ exceptionalCurves DoublySpecialCubicFourfold := o -> X -> (
     if o.Verbose then << "-- obtaining surface U corresponding to fourfold X..." << endl;
     U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
     if U.cache#?"exceptionalCurves" then return U.cache#"exceptionalCurves";
+    if isExceptionalLinesFastApplicable X then (
+        if o.Verbose then << "-- determining exceptional lines on U (fast method)..." << endl;
+        fastLinesU := exceptionalLinesFast(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
+        return U.cache#"exceptionalCurves" = (fastLinesU,(0_U)%U);
+    );
     if o.Verbose then << endl << "-- obtaining surface U' corresponding to another fourfold X'..." << endl;
     X' := random X;
     if ideal X' == ideal X then (
         if o.Verbose then << "-- obtained X == X'" << endl;
         if U.cache#?"special curves on U" then (
-            -- Used in case "DSCF-V1-27"; consider generalizing this approach for other cases.
+            -- Used in cases "DSCF-V1-20" and "DSCF-V1-27"
             SpecialLines := select(U.cache#"special curves on U", D -> degree D == 1);
             SpecialLines = if #SpecialLines == 0 then (0_U)%U else (sum SpecialLines)%U;
-            OtherCurves := select(U.cache#"special curves on U", D -> degree D > 1);
+            OtherCurves := select(U.cache#"special curves on U", D -> degree D > 1 and isPresumedRationalNormalCurve D);
             OtherCurves = if #OtherCurves == 0 then (0_U)%U else (sum OtherCurves)%U;
-            return U.cache#"exceptionalCurves" = (SpecialLines,OtherCurves);
+            U.cache#"exceptionalCurves" = (SpecialLines,OtherCurves);
+            return fixHigherDegreeExceptionalCurvesIfNecessary(X,U,o.Strategy,o.Verbose);
         );
         return U.cache#"exceptionalCurves" = ((0_U)%U,(0_U)%U);
     );
@@ -153,7 +159,97 @@ exceptionalCurves DoublySpecialCubicFourfold := o -> X -> (
     C := E \ L;
     if degree C != degree E - degree L then error "decomposition failed: multiplicity detected in exceptional lines (not currently supported)";
     if someExceptionalCurvesKnownToAppearWithMultiplicity X then C = C \\ L;
-    U.cache#"exceptionalCurves" = (L%U,C%U)
+    U.cache#"exceptionalCurves" = (L%U,C%U);
+    fixHigherDegreeExceptionalCurvesIfNecessary(X,U,o.Strategy,o.Verbose)
+);
+
+fixHigherDegreeExceptionalCurvesIfNecessary = (X,U,Str,Verb) -> (
+    if isFanoMapStandard X then (
+        local L; local C;
+        if member(recognizeDSCF X, {"DSCF-V1-31", "DSCF-V1-34"}) then (
+            -- last(U.cache#"exceptionalCurves") determines a conic curve on the surface U'' corresponding to another fourfold X''
+            assert(U.cache#?"special curves on U" and #(U.cache#"special curves on U") == 1);
+            (L,C) = U.cache#"exceptionalCurves";
+            C' := first U.cache#"special curves on U";
+            D := C \ C';
+            assert(sectionalGenus D == 7 and isPresumedRationalNormalCurve C' and degree C' == 2 and D + C' == C);
+            U.cache#"special curves on U" = {D};
+            if Verb then << "-- applied refinement to higher-degree exceptional curves" << endl;
+            return U.cache#"exceptionalCurves" = (L,C'%U);
+        );
+        if member(recognizeDSCF X, {"DSCF-V1-32", "DSCF-V1-37", "DSCF-V1-40"}) then (
+            -- last(U.cache#"exceptionalCurves") yields a smooth curve which will be used for polarization
+            assert(not U.cache#?"special curves on U");
+            (L,C) = U.cache#"exceptionalCurves";
+            if recognizeDSCF X === "DSCF-V1-32" then assert(degree L == 4 and degree C == 11 and sectionalGenus C == 4);
+            if recognizeDSCF X === "DSCF-V1-37" then assert(degree L == 2 and degree C == 13 and sectionalGenus C == 4);
+            if recognizeDSCF X === "DSCF-V1-40" then assert(degree L == 5 and degree C == 18 and sectionalGenus C == 8);
+            U.cache#"special curves on U" = {C};
+            if Verb then << "-- applied refinement to higher-degree exceptional curves" << endl;
+            return U.cache#"exceptionalCurves" = (L,(0_U)%U);
+        );
+        if member(recognizeDSCF X, {"DSCF-V1-14"}) then (
+            -- last(U.cache#"exceptionalCurves") is singular and does not meet in dimension 1 the surface U'' corresponding to another fourfold X''
+            (L,C) = U.cache#"exceptionalCurves";
+            if Verb then << "-- applied refinement to higher-degree exceptional curves" << endl;
+            return U.cache#"exceptionalCurves" = (L,(0_U)%U);
+        );
+        if recognizeDSCF X === "DSCF-V1-20" then (
+            (L,C) = U.cache#"exceptionalCurves";
+            assert(dim L == -1 and dim C == 1 and degree C == 4);
+            if Verb then << "  -- computing the Fano scheme of lines for surface U in PP^5..." << endl;
+            L = Fano Fano(1,U);
+            assert(dim L == 1 and degree L == 3 and isSubset(L,U));
+            if Verb then << "-- applied refinement to exceptional curves on U" << endl;
+            return U.cache#"exceptionalCurves" = (L%U,C);
+        );
+    );
+    return U.cache#"exceptionalCurves";
+);
+
+exceptionalLinesFast = method(Options => {Verbose => true, Strategy => null});
+exceptionalLinesFast DoublySpecialCubicFourfold := o -> X -> (
+    mu := fanoMapDSCF(X,Verbose=>o.Verbose);
+    U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
+    g := quadricFibration X;
+    S := surface X;
+    gS := g|S;
+    pts := decompose baseLocus inverse gS;
+    assert all(pts, p -> isPoint p);
+    if o.Verbose then << "  -- number of points in the base locus of (π_P)|S^(-1): " << #pts << endl;
+    L := {}; C := {}; D := {};
+    local F;
+    for p in pts do (
+        F = gS^* p;
+        assert(dim F == 1);
+        if degree F == 1
+        then L = append(L,p)
+        else if degree F == 2 and isPresumedRationalNormalCurve F
+        then C = append(C,p)
+        else D = append(D,p);
+    );
+    if o.Verbose then (
+        << "  -- curves in the pullback via (π_P)|S: lines: " << #L << "; conics: " << #C;
+        if #D > 0 then << "; remaining curve degrees: " << toString apply(D, p -> degree(gS^* p));
+        << endl;
+    );
+    linesU := apply(L, p -> mu g^* p);
+    if not all(linesU, l -> dim l == 1 and degree l == 1 and isSubset(l,U)) then error "something went wrong: expected to obtain lines on surface U";
+    nodesU := apply(C, p -> mu g^* p);
+    if not all(nodesU, p -> isPoint p and dim tangentSpace(U,p) > 2) then error "something went wrong: expected to obtain nodes on surface U";
+    if #nodesU > 0 and (not U.cache#?"singularLocus") then U.cache#"singularLocus" = (sum nodesU)%U;
+    LinesU := (0_U)%U;
+    if #linesU > 0 then (
+        LinesU = (sum linesU)%U;
+        LinesU.cache#"Decomposition" = linesU;
+    );
+    LinesU
+);
+
+isExceptionalLinesFastApplicable = method();
+isExceptionalLinesFastApplicable DoublySpecialCubicFourfold := X -> (
+    if not isFanoMapStandard X then return false;
+    member(recognizeDSCF X, {"DSCF-V1-1", "DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-7", "DSCF-V1-8", "DSCF-V1-9", "DSCF-V1-11", "DSCF-V1-12", "DSCF-V1-15", "DSCF-V1-16", "DSCF-V1-17", "DSCF-V1-18", "DSCF-V1-21", "DSCF-V1-23", "DSCF-V1-25", "DSCF-V1-26", "DSCF-V1-28", "DSCF-V1-29", "DSCF-V1-30", "DSCF-V1-32", "DSCF-V1-33", "DSCF-V1-35", "DSCF-V1-36", "DSCF-V1-37", "DSCF-V1-38", "DSCF-V1-39"}) --, "DSCF-V1-40"})
 );
 
 mapFromExceptionalCurves = method(Options => {Verbose => true, Strategy => null, "Normalization" => false, "ForceExperimentalNormalization" => false, "TargetExpDim" => null, "IsK3Type" => true});
@@ -191,15 +287,16 @@ mapFromExceptionalCurves (EmbeddedProjectiveVariety,Sequence) := o -> (U,dab) ->
     );
     if withNorm and d == 1 and a == 0 and b == 0 then return toNormU;
     local f;
+    expectedTargetSpace := if o#"TargetExpDim" =!= null then " in PP^"|toString(o#"TargetExpDim") else "";
     if toNormU === null then (
-        if o.Verbose then << "-- computing the map f from U to the minimal " << strSurf << " surface" << endl << flush;
+        if o.Verbose then << "-- computing the map f from U to the minimal " << strSurf << " surface" << expectedTargetSpace << endl << flush;
         H := random(1,0_U);
         D := {(H,d)};
         if a > 0 and dim L != -1 then D = append(D,(L,a));
         if b > 0 and dim C != -1 then D = append(D,(C,b));
         f = mapDefinedByDivisor(U,D);
     ) else (
-        if o.Verbose then << "-- computing the map from the normalization of U to the minimal " << strSurf << " surface" << endl << flush;
+        if o.Verbose then << "-- computing the map from the normalization of U to the minimal " << strSurf << " surface" << expectedTargetSpace << endl << flush;
         H' := random(1,0_(target toNormU));
         D' := {(H',d)};
         if a > 0 and dim L != -1 then D' = append(D',(toNormU L,a));
@@ -211,7 +308,7 @@ mapFromExceptionalCurves (EmbeddedProjectiveVariety,Sequence) := o -> (U,dab) ->
         return null;
     );
     makeImageMapWithStrategy(f,o.Strategy,o#"TargetExpDim",o.Verbose);
-    if o.Verbose and o#"IsK3Type" and (not isStandardK3surface image f) then << "-- note: invariant mismatch for standard K3 surface" << endl;
+    if o.Verbose and o#"IsK3Type" and (not isStandardK3surface image f) then << "-- warning: invariant mismatch for standard K3 surface" << endl;
     f
 );
 
@@ -245,13 +342,20 @@ contractionMap (EmbeddedProjectiveVariety,HodgeSpecialFourfold) := o -> (U,X) ->
     withNorm := o#"ForceNormalization";
     if not U.cache#?"exceptionalCurves" then error "exceptional curves not found in cache: method exceptionalCurves() must be called first";
     (L,C) := U.cache#"exceptionalCurves";
+    f := null;
     genK3 := null;
-    if instance(X,DoublySpecialCubicFourfold) and dim C == -1 then (
-        genK3 = sectionalGenus U;
+    if instance(X,DoublySpecialCubicFourfold) then (
+        genK3 = last unverifiedExpectedGenusOfK3FromExceptionalCurves(X,U,L,C);
+        if genK3 === null or genK3 === 2 then (
+            if o.Verbose then (
+                << "-- failed to determine expected invariants of the K3 surface Ũ" << endl;
+                << "-- skipping computation of the map f : U -> Ũ" << endl;
+            );
+            return;
+        );
     ) else if instance(X,CubicFourfold) or instance(X,GushelMukaiFourfold) then (
         genK3 = lift((discriminant(X)+2)/2,ZZ);
     );
-    f := null;
     -------------------------------------
     --- CubicFourfold and GMFourfold ----
     if recognize X === 17 then (
@@ -266,7 +370,7 @@ contractionMap (EmbeddedProjectiveVariety,HodgeSpecialFourfold) := o -> (U,X) ->
             return null;
         );
         makeImageMapWithStrategy(f,o.Strategy,genK3,o.Verbose);
-        if o.Verbose and (not isStandardK3surface image f) then << "-- note: invariant mismatch for standard K3 surface" << endl;
+        if o.Verbose and (not isStandardK3surface image f) then << "-- warning: invariant mismatch for standard K3 surface" << endl;
         return saveAndReturnMap(f,U);
     );
     if recognize X === 1 then (
@@ -275,7 +379,7 @@ contractionMap (EmbeddedProjectiveVariety,HodgeSpecialFourfold) := o -> (U,X) ->
         if o.Verbose then << "-- computing normalization of the surface image" << endl;
         f = multirationalMap super toRationalMap(f * inverse3 normalization(target f,Verbose=>false));
         assert(dim target f == genK3 and f#"image" =!= null);
-        if o.Verbose and (not isStandardK3surface image f) then << "-- note: invariant mismatch for standard K3 surface" << endl;
+        if o.Verbose and (not isStandardK3surface image f) then << "-- warning: invariant mismatch for standard K3 surface" << endl;
         return saveAndReturnMap(f,U);
     );
     if recognize X === "C42" then (
@@ -317,7 +421,7 @@ contractionMap (EmbeddedProjectiveVariety,HodgeSpecialFourfold) := o -> (U,X) ->
                 if o.Verbose then << "-- failed to compute map to minimal K3 surface; result is a map to PP^" << dim target f << " instead of PP^" << genK3 << endl;
                 return null;
             );
-            if o.Verbose and (not isStandardK3surface image f) then << "-- note: invariant mismatch for standard K3 surface" << endl;
+            if o.Verbose and (not isStandardK3surface image f) then << "-- warning: invariant mismatch for standard K3 surface" << endl;
             return saveAndReturnMap(f,U);
         ) else (
             if o.Verbose then << "-- skipping computation of the map f from U to the minimal K3 surface of degree " << discriminant X << endl << "-- re-run associatedK3surface to finalize computation" << endl;
@@ -362,9 +466,14 @@ contractionMap (EmbeddedProjectiveVariety,HodgeSpecialFourfold) := o -> (U,X) ->
         f = mapFromExceptionalCurves(U,(1,0,0),Verbose=>o.Verbose,"Normalization"=>false);
         return saveAndReturnMap(f,U);
     );
-    if instance(X,DoublySpecialCubicFourfold) and isHigherDegreeCurveInExceptionalSetKnownToBeSpecial X then (
-        f = mapFromExceptionalCurves(U,(1,1,0),Verbose=>o.Verbose,Strategy=>o.Strategy,"Normalization"=>false);
-        return saveAndReturnMap(f,U);
+    if instance(X,DoublySpecialCubicFourfold) and isFanoMapStandard X and recognizeDSCF X === "DSCF-V1-20" then (
+        if withNorm then (
+            f = mapFromExceptionalCurves(U,(1,1,2),Verbose=>o.Verbose,"Normalization"=>true,"TargetExpDim"=>genK3);
+            return saveAndReturnMap(f,U);
+        ) else (
+            if o.Verbose then << "-- skipping computation of the map f from U to the minimal K3 surface of genus " << genK3 << endl << "-- re-run polarizedK3surface to finalize computation" << endl;
+            return;
+        );
     );
     -------------------------------------
     (EulerExpVal,IsK3Type) := if instance(X,IntersectionOfThreeQuadricsInP7) then (4,false) else (2,true);

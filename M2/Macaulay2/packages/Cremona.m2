@@ -2128,7 +2128,7 @@ toExternalString RationalMap := Phi -> (
     if Psi =!= null then Z' := Psi#"idealImage";
     str := ///(o -> (
 n := ///|toString(n)|///; m := ///|toString(m)|///;
-K := ///|toString(K)|///;
+K := ///|toExternalString(K)|///;
 x := local x; y := local y;
 Pn := K[x_0..x_n]; Pm := K[y_0..y_m];
 I := ///|toString ideal source Phi|///;
