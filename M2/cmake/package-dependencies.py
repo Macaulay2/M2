@@ -1,0 +1,178 @@
+#!/usr/bin/env python3
+"""Generate CMake package dependencies using the M2 header audit.
+
+Run from any directory with an installed M2:
+  python3 M2/cmake/package-dependencies.py --m2 /path/to/M2
+Use --check in CI to reject an outdated checked-in manifest.
+
+Header imports provide installation ordering. Literal package-loading calls in
+bodies/examples/tests conservatively provide source dependencies only: lazy
+imports and examples may legitimately form cycles. Computed package names cannot
+be resolved statically; this is not a general M2 parser or evaluator.
+"""
+import argparse
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+
+def tokens(text):
+    """Skip comments, preserve strings, and recognize M2's raw doc/test strings."""
+    i = 0
+    while i < len(text):
+        if text.startswith("--", i):
+            end = text.find("\n", i)
+            i = len(text) if end < 0 else end
+        elif text.startswith("-*", i):
+            i += 2
+            depth = 1
+            while i < len(text) and depth:
+                if text.startswith("-*", i):
+                    depth += 1
+                    i += 2
+                elif text.startswith("*-", i):
+                    depth -= 1
+                    i += 2
+                else:
+                    i += 1
+        elif text.startswith("///", i):
+            end = text.find("///", i + 3)
+            if end < 0:
+                end = len(text)
+            yield "raw", text[i + 3:end]
+            i = end + 3
+        elif text[i] == '"':
+            start = i + 1
+            i += 1
+            while i < len(text):
+                if text[i] == "\\":
+                    i += 2
+                elif text[i] == '"':
+                    break
+                else:
+                    i += 1
+            yield "string", text[start:i]
+            i += 1
+        elif text[i].isalpha():
+            start = i
+            i += 1
+            while i < len(text) and text[i].isalnum():
+                i += 1
+            yield "word", text[start:i]
+        else:
+            if not text[i].isspace():
+                yield "punct", text[i]
+            i += 1
+
+
+def literal_imports(text, known):
+    stream = list(tokens(text))
+    found = set()
+    for i, (kind, value) in enumerate(stream):
+        if kind == "raw":
+            found.update(literal_imports(value, known))
+        if kind != "word" or value not in {"needsPackage", "loadPackage", "importFrom"}:
+            continue
+        j = i + 1
+        if j < len(stream) and stream[j][1] in {"(", "_"}:
+            j += 1
+        if j < len(stream):
+            arg_kind, arg = stream[j]
+            if arg in known and (arg_kind == "string" or
+                                (value == "importFrom" and arg_kind == "word")):
+                found.add(arg)
+    return found
+
+
+def check_install_order(graph):
+    """Check header imports together with the documentation bootstrap edges."""
+    ordered = {name: set(imports) for name, imports in graph.items()}
+    for name in ordered:
+        if name == "FirstPackage":
+            ordered[name].add("Style")
+        elif name == "Macaulay2Doc":
+            ordered[name].update({"Style", "FirstPackage"})
+        elif name != "Style":
+            ordered[name].add("Macaulay2Doc")
+    done = set()
+    path = []
+
+    def visit(name):
+        if name in path:
+            raise RuntimeError("Cyclic installation dependencies: " +
+                               " -> ".join(path[path.index(name):] + [name]))
+        if name in done:
+            return
+        if name not in ordered:
+            raise RuntimeError("Missing installation prerequisite: " + name)
+        path.append(name)
+        for dependency in sorted(ordered[name]):
+            visit(dependency)
+        path.pop()
+        done.add(name)
+
+    for name in sorted(ordered):
+        visit(name)
+
+
+def generate(m2, source):
+    packages = source / "Macaulay2/packages"
+    names = sorted(line for line in (packages / "=distributed-packages").read_text().splitlines()
+                   if re.fullmatch(r"[a-zA-Z0-9]+", line))
+    audit = source / "Macaulay2/m2/check-package-dependencies.m2"
+    result = subprocess.run([m2, "--script", str(audit), "--edges", str(packages)],
+                            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode:
+        raise RuntimeError(result.stdout + result.stderr)
+    graph = {name: set() for name in names}
+    for line in result.stdout.splitlines():
+        edge = re.fullmatch(r"([a-zA-Z0-9]+) -> ([a-zA-Z0-9]+) \[.*\]", line)
+        if edge:
+            name, dependency = edge.groups()
+            if name not in graph or (dependency not in graph and dependency not in {"Core", "User"}):
+                raise RuntimeError("Dependency outside distributed packages: " + line)
+            if dependency not in {"Core", "User"}:
+                graph[name].add(dependency)
+    check_install_order(graph)
+    output = ["# Generated by cmake/package-dependencies.py; do not edit by hand.\n",
+              "# Header imports order installation; literal body imports track sources only.\n",
+              f'set(M2_DEPENDENCY_PACKAGES "{";".join(names)}")\n']
+    for name in names:
+        files = [packages / (name + ".m2")]
+        if (packages / name).is_dir():
+            files.extend(sorted((packages / name).rglob("*.m2")))
+        imports = set(graph[name])
+        for file in files:
+            imports.update(literal_imports(file.read_text(errors="replace"), graph))
+        imports.discard(name)
+        output.append(f'set(M2_PACKAGE_IMPORTS_{name} "{";".join(sorted(graph[name]))}")\n')
+        output.append(f'set(M2_PACKAGE_SOURCES_{name} "{";".join(sorted(imports))}")\n')
+    return "".join(output)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--m2", default="M2", help="external M2 executable")
+    parser.add_argument("--check", action="store_true", help="check rather than update the manifest")
+    args = parser.parse_args()
+    source = Path(__file__).resolve().parent.parent
+    destination = source / "cmake/package-dependencies.cmake"
+    try:
+        content = generate(args.m2, source)
+    except (OSError, RuntimeError) as error:
+        print(error, file=sys.stderr)
+        return 1
+    if args.check:
+        if not destination.exists() or destination.read_text() != content:
+            print("Package dependency manifest is stale. Run: python3 M2/cmake/package-dependencies.py", file=sys.stderr)
+            return 1
+        print("Package dependency manifest is up to date.")
+    else:
+        destination.write_text(content)
+        print("Wrote", destination)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
