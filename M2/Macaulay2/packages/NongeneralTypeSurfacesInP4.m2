@@ -256,7 +256,7 @@ chiNX(12,13,2)
 ///
 
 kodairaSpencerSequence=method()
--- compute the dimesion of the cohomology groups of the Kodaira-Spencer sequence
+-- compute the dimension of the cohomology groups of the Kodaira-Spencer sequence
 -- Input: X ideal of a surface in P4
 -- Output : cohoDims, 3x3 Matrix of
 --          dimension of the cohomology groups in the long exact sequence
@@ -991,7 +991,7 @@ tateResolutionOfSurface(Ideal,ZZ) := (X,n) -> (
 
 
 tangentToMonad = method();
--- DESCTRIPTION : This command computes the dimension of the tangent space to the space 'M' of monads of the form a*OMega^3(3)->b*Omega^2(2)++c*Omega^1(1)->d*OO at a specfic example
+-- DESCTRIPTION : This command computes the dimension of the tangent space to the space 'M' of monads of the form a*OMega^3(3)->b*Omega^2(2)++c*Omega^1(1)->d*OO at a specific example
 --                by taking the derivative of the composite of differentials. The dimension of the space of isomophism classes of monads is
 --                dim (M)-(a^2+b^2+c^2+5*b*c+d^2-1). 
 tangentToMonad(Ideal) := X -> (
@@ -1108,7 +1108,7 @@ schreyerSurfaceFromModule(Ideal) := M -> (
 schreyerSurface=method(Options=>{Smooth=>true,Verbose=>false})
 --Input: P4: coordinate ring of P4
 --       s: integer desired number of extra syzygies
--- Output: X, homogenous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
+-- Output: X, homogeneous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
 --           is either rational or non-minimal Enriques
 -- Method: search for a H^1-module M with s extra syzygies leading to a surface X, so s>=2.
 schreyerSurface(Ring,Number) := opt -> (P4,s) -> (
@@ -1155,7 +1155,7 @@ dim saturate singX
 findRandomSchreyerSurface=method()
 --Input: P4: coordinate ring of P4
 --       s: integer desired number of extra syzygies
--- Output: X, homogenous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
+-- Output: X, homogeneous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
 --          if X is smooth then X is either rational or non-minimal Enriques
 -- Method: search for a H^1-module M with s extra syzygies leading to a surface X, so s>=2.
 findRandomSchreyerSurface(Ring) := P4 -> (
@@ -1164,7 +1164,7 @@ findRandomSchreyerSurface(Ring) := P4 -> (
 findRandomSchreyerSurface(Ring,Number) := (P4,s) -> (
     --Input: P4: coordinate ring of P4
     --       s: integer desired number of extra syzygies
-    -- Output: X, homogenous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
+    -- Output: X, homogeneous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
     --           is either rational or non-minimal Enriques
     -- Method: search for a H^1-module M with s extra syzygies leading to a surface X, so s>=2.
 
@@ -1193,7 +1193,7 @@ findRandomSmoothSchreyerSurface=method(Options=>{Verbose=>true})
 findRandomSmoothSchreyerSurface(Ring,Number) := opt -> (P4,s) -> (
     -- Input: P4: coordinate ring of P4
     --       s: integer desired number of extra syzygies
-    -- Output: X, homogenous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
+    -- Output: X, homogeneous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
     --           is either rational or non-minimal Enriques
     -- Method: search for a H^1-module M with s extra syzygies leading to a surface X, so s>=2.
 
