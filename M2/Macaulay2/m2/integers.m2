@@ -110,18 +110,19 @@ changeBase(String, ZZ, ZZ) := String => (s, oldbase, newbase) -> (
     changeBase(changeBase(s, oldbase), newbase))
 
 -- Tonelli-Shanks algorithm (used by various sqrt methods)
-legendreSymbol = (n, p) -> powermod(n, (p - 1)//2, p)
+-- note: this exports 0, 1, p-1 as integers, not 0,1,-1
+legendreSymbolTonelliShanks = (n, p) -> powermod(n, (p - 1)//2, p)
 tonelliShanks = (n, p) -> (
     if n % p == 0 then return 0;
     if n % p == 1 then return 1;
     if not isPrime p then error "expected a prime";
-    if legendreSymbol(n, p) != 1 then error "not a quadratic residue";
+    if legendreSymbolTonelliShanks(n, p) != 1 then error "not a quadratic residue";
     (q, s) := (p - 1, 0);
     while even q do (
 	q //= 2;
 	s += 1);
     z := 2;
-    while legendreSymbol(z, p) != p - 1 do z += 1;
+    while legendreSymbolTonelliShanks(z, p) != p - 1 do z += 1;
     m := s;
     c := powermod(z, q, p);
     t := powermod(n, q, p);
@@ -138,6 +139,12 @@ tonelliShanks = (n, p) -> (
 	c = powermod(b, 2, p);
 	t = (t * c) % p;
 	r = (r * b) % p))
+
+-- Adds exportable Legendre symbol, returning -1,0,1
+legendreSymbol = method()
+legendreSymbol(ZZ, ZZ) := ZZ => (n, p) -> (
+    r := powermod(n, (p - 1)//2, p);
+    if r == p - 1 then -1 else r)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
