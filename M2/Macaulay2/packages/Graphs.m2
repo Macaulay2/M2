@@ -166,6 +166,7 @@ export {
     "sinks",
     "sources",
     "spectrum",
+    "stronglyConnectedComponents",
     "vertexCoverNumber",
     "vertexCovers",
     --
@@ -1213,6 +1214,46 @@ vertexCovers Graph := List => G -> (
     J := coverIdeal G;
     factoredIdealList := apply(J_*, indices);
     apply(factoredIdealList, i -> (vertexSet G)_i)
+    )
+
+stronglyConnectedComponents = method()
+stronglyConnectedComponents Digraph := List => D -> (
+    indices := new MutableHashTable;
+    low := new MutableHashTable;
+    active := new MutableHashTable;
+    stack := {};
+    counter := 0;
+    components := {};
+    local visit;
+    visit = vertex -> (
+        indices#vertex = counter;
+        low#vertex = counter;
+        counter = counter + 1;
+        stack = prepend(vertex, stack);
+        active#vertex = true;
+        scan(toList children(D, vertex), neighbor -> (
+            if not indices#?neighbor then (
+                visit neighbor;
+                low#vertex = min(low#vertex, low#neighbor)
+                )
+            else if active#neighbor then
+                low#vertex = min(low#vertex, indices#neighbor);
+            ));
+        if low#vertex == indices#vertex then (
+            component := {};
+            finished := false;
+            while not finished do (
+                member := first stack;
+                stack = drop(stack, 1);
+                active#member = false;
+                component = prepend(member, component);
+                finished = member == vertex;
+                );
+            components = append(components, component);
+            );
+        );
+    scan(vertexSet D, vertex -> if not indices#?vertex then visit vertex);
+    components
     )
 
 weaklyConnectedComponents = method()
@@ -4699,6 +4740,32 @@ doc ///
         isReachable
 ///
 
+doc ///
+    Key
+        stronglyConnectedComponents
+        (stronglyConnectedComponents, Digraph)
+    Headline
+        finds the strongly connected components of a digraph
+    Usage
+        C = stronglyConnectedComponents D
+    Inputs
+        D:Digraph
+    Outputs
+        C:List
+            lists of vertices, one for each strongly connected component
+    Description
+        Text
+            Two vertices belong to the same component when each is reachable
+            from the other. The order of the components and their vertices is
+            unspecified. The implementation uses Tarjan's algorithm.
+        Example
+            D = digraph({1,2,3,4}, {{1,2},{2,1},{2,3},{3,4},{4,3}}, EntryMode => "edges");
+            stronglyConnectedComponents D
+    SeeAlso
+        isStronglyConnected
+        weaklyConnectedComponents
+///
+
 --isTree
 doc ///
     Key
@@ -5614,6 +5681,11 @@ assert isSource(D, 1)
 assert not isSource(D, 3)
 assert isStronglyConnected digraph{{1,2},{2,3},{3,1}}
 assert not isStronglyConnected D
+assert(sort apply(stronglyConnectedComponents D, sort) === {{1},{2},{3}})
+assert(sort apply(stronglyConnectedComponents digraph({1,2,3,4},
+    {{1,2},{2,1},{2,3},{3,4},{4,3}}, EntryMode => "edges"), sort)
+    === {{1,2},{3,4}})
+assert(stronglyConnectedComponents digraph({}, {}, EntryMode => "edges") === {})
 assert isWeaklyConnected D
 assert not isWeaklyConnected digraph({1,2,3,4},{{1,2}})
 assert isReachable(D, 3, 1)
