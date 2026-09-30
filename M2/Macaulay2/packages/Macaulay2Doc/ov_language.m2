@@ -767,11 +767,14 @@ doc ///
       apply(-3..3, i -> try 1/i except err do err)
       oo#3
     Text
+      If @VAR "x"@ is a function and @M2CODE "try"@ appears in the statement,
+      then a new function that incorporates @M2CODE "try"@ is returned, e.g.,
+      @M2CODE "try f"@ becomes @M2CODE "x -> try f x"@.
+    Example
+      f = x -> 1/x
+      apply(-5..5, try f else 0)
+    Text
       The behavior of interrupts (other than alarms) is unaffected.
-  Caveat
-    We will change the behavior of this function soon so that it will be
-    possible to catch errors of a particular type.  Meanwhile, users are
-    recommended to use this function sparingly, if at all.
   SeeAlso
     symbol trap
 ///
