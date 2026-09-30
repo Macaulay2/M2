@@ -101,6 +101,31 @@ doc ///
 
 doc ///
   Key
+    legendreSymbol
+    (legendreSymbol,ZZ,ZZ)
+  Headline
+    Compute the Legendresymbol.
+  Usage
+    legendreSymbol(a,p)
+  Inputs
+    a:ZZ
+    p:ZZ
+        an odd prime.
+  Outputs
+    :ZZ
+        0 if a is divisible by p, 1 if a is a quadratic residue mod p and -1 if a is not a quadratic residue mod p.
+  Description
+   Text
+     Computes Legendre-symbol a over p.
+
+   Example
+     legendreSymbol(4,7)
+     legendreSymbol(5,7)
+     legendreSymbol(14,7)
+
+
+doc ///
+  Key
     log
     (log,InexactNumber)
     (log,InexactNumber,InexactNumber)
