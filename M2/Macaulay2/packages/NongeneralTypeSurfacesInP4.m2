@@ -1563,7 +1563,7 @@ schreyerSurfaceWith2LinearSyzygies(Ring) := opt -> P4 -> (
     scroll:=minors(2,m2x3);
     hypPlane:=ideal P4_1;
     lines1:={ideal(P4_4,P4_2,P4_1),ideal(P4_3,P4_1,P4_0),ideal(P4_2,P4_1,P4_0)};
-    -- two rulings ond the directrix of the scroll
+    -- two rulings and the directrix of the scroll
     q2x2 := matrix{{P4_0,P4_2}}||random(P4^1,P4^{2:-1})%hypPlane;
     quadric := hypPlane+minors(2,q2x2);
     -- a quadric surface with a ruling containing the directrix
@@ -1627,7 +1627,7 @@ schreyerSurfaceWith2or3LinearSyzygies(Ring,ZZ) := opt -> (P4,s) -> (
     scroll:=minors(2,m2x3);
     hypPlane:=ideal P4_1;
     lines1:={ideal(P4_4,P4_2,P4_1),ideal(P4_3,P4_1,P4_0),ideal(P4_2,P4_1,P4_0)};
-    -- two rulings ond the directrix of the scroll
+    -- two rulings and the directrix of the scroll
     q2x2 := matrix{{P4_0,P4_2}}||random(P4^1,P4^{2:-1})%hypPlane;
     quadric := hypPlane+minors(2,q2x2);
     -- a quadric surface with a ruling containing the directrix
@@ -2472,7 +2472,7 @@ abo112224Or111234Surface( Ring, Ring, ZZ):= opt -> (P4,P3,h) -> (
 	 -- count=1;
           while ( -- syz bb as desired
 	      while (
-		  --- A 3x5 matrix with 3x2 rigth submatrix of rank 1 along three lines in chain that contains at least 4 of the 3x5 matrix' rank 2 points, the middle line has three points where the 3x5 matrix has rank 2
+		  --- A 3x5 matrix with 3x2 right submatrix of rank 1 along three lines in chain that contains at least 4 of the 3x5 matrix' rank 2 points, the middle line has three points where the 3x5 matrix has rank 2
 --m3x5=random(P3^3,P3^2)*matrix{ {P3_0},{P3_1}}|random(P3^3,P3^2)*matrix{ {P3_0},{P3_3}}|random(P3^3,P3^{1:-1})|matrix{ {0,P3_0},{P3_1,0},{P3_2,P3_3}};
 m3x5=transpose(transpose(random(P3^2,P3^3)*matrix{ {P3_0},{P3_2},{P3_3}})|matrix{ {0}})|random(P3^3,P3^3)*matrix{ {P3_0},{P3_2},{P3_3}}|random(P3^3,P3^2)*matrix{ {P3_1},{P3_2}}|matrix{ {0,P3_0},{P3_1,P3_2},{P3_2,P3_3}};
 m3x4=sub(transpose (sub(diff(sub(vars P3,P3xP4),transpose (sub(vars P4,P3xP4)*sub(transpose m3x5,P3xP4))),P4)), vars E);
@@ -2735,7 +2735,7 @@ abo111117Surface(Ring,Ring) := o -> (P4,E) -> (
     )
 
 
-/// -* checks an abo111117Surfaces the partion and the residualInQuintics 
+/// -* checks an abo111117Surfaces the partition and the residualInQuintics 
 --     takes too long for an honest test *-
 kk=ZZ/nextPrime 10^3
 P4=kk[x_0..x_4]
@@ -4306,7 +4306,7 @@ H1module(PolynomialRing,ZZ):= (P4,a)->(
     )
 
 K3surfaceD11S11Ln=method()
--- K3 surface of degree 11 and sectional genus 11 witha 6-secant lines (B4.8-11)
+-- K3 surface of degree 11 and sectional genus 11 with a 6-secant lines (B4.8-11)
 --     PURPOSE : Construct a nonsingular K3 surface of degree 11 and sectional genus 11 with 'n' 6-secant lines
 --       INPUT : 'P4', the homogeneous coordinate ring of projective fourspace and an integer between 0 and 3 
 --      OUTPUT : Ideal of the K3 surface of degree 10 with 'n' 6-secant lines
