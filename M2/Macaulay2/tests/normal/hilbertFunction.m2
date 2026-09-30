@@ -54,8 +54,8 @@ R = ZZ/2[y_{1,1}..y_{3,3},x_{1,1}..x_{3,3},Degrees => {9:{1,2},9:{1,1}}]/ideal (
 time hs = hilbertSeries(R,Reduce=>true);
 a = time (
      HS = numerator hs;
-     use ring HS;
-     hilbFunc = (k,u) -> coefficient(T_0^k*T_1^u,HS);
+     HR := ring HS;
+     hilbFunc = (k,u) -> coefficient(HR_0^k*HR_1^u,HS);
      hilbFunc(3,6))
 assert( a == 80 )
 b = time hilbertFunction({3,6},R)			   -- this was too slow
