@@ -81,6 +81,14 @@ assert(changeBase("0xdeadbeef", 0) == 0xdeadbeef)
 
 assert(powermod(sqrt(5, 41), 2, 41) == 5)
 
+-- test Legendre symbol
+assert(legendreSymbol(4,7)==1);
+assert(legendreSymbol(5,7)==-1);
+assert(legendreSymbol(14,7)==0);
+assert(legendreSymbol(3, 2) == 1)
+assert(legendreSymbol(4, 2) == 0)
+assert try (legendreSymbol(2, 15); false) else true
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test integer.out"
