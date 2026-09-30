@@ -143,6 +143,8 @@ tonelliShanks = (n, p) -> (
 -- Adds exportable Legendre symbol, returning -1,0,1
 legendreSymbol = method()
 legendreSymbol(ZZ, ZZ) := ZZ => (n, p) -> (
+    if not isPrime p then error "expected a prime";
+    if p == 2 then return n % 2;
     r := powermod(n, (p - 1)//2, p);
     if r == p - 1 then -1 else r)
 
