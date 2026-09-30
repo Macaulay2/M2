@@ -200,6 +200,7 @@ COMMANDS = \
 	interface/m2-types \
 	interface/matrix \
 	interface/monoid \
+	interface/monomial \
 	interface/monomial-ideal \
 	interface/monomial-ordering \
 	interface/mutable-matrix \

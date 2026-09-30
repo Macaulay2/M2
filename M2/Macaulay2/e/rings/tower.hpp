@@ -62,6 +62,10 @@ class Tower : public Ring
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
 
+  ring_elem makeTerm(const Ring* coeffR,
+                     const ring_elem a,
+                     const_varpower monom) const override;
+
   virtual ring_elem negate(const ring_elem f) const;
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;
