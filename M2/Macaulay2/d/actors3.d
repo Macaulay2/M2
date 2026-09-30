@@ -2198,9 +2198,7 @@ applyPairs(e:Expr):Expr := (
     is a:Sequence do (
 	if length(a) == 2 then (
 	    when a.0
-	    is o:HashTable do (
-		if o.Mutable then WrongArgImmutableHashTable(1)
-		else mappairs(a.1, o))
+	    is o:HashTable do mappairs(a.1, o)
 	    -- # typical value: applyPairs, BasicList, Function, List
 	    -- # typical value: applyPairs, Dictionary, Function, List
 	    -- # typical value: applyPairs, Thing, Function, Iterator
