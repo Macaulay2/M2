@@ -45,8 +45,6 @@ void dvector(gc_vector<T>& a);
 template <typename T>
 void dvector(std::vector<T>& a);
 
-extern "C" void dstash();
-
 extern "C" void dRRR(gmp_RR a);
 
 extern "C" void pring(const Ring *R);

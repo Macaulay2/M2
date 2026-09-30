@@ -22,11 +22,6 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
   K = P->getCoefficientRing();
   generator_matrix = mat;
 
-  // These next two lines may be added next (5/2/06)
-  //  res_degree_stash      = new stash("resDegree", sizeof(res_degree));
-  //  res_level_stash       = new stash("resLevel", sizeof(res_level));
-  res_pair_stash = new stash("respair", sizeof(res_pair));
-  mi_stash = new stash("res minodes", sizeof(Nmi_node));
 
   for (i = 0; i <= LengthLimit; i++) resn.push_back(new res_level);
 
@@ -67,11 +62,11 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
         p->base_monom = M->make_one();
       else
         p->base_monom = M->make_new(S->base_monom(i));
-      p->mi = new MonomialIdeal(P, mi_stash);
+      p->mi = new MonomialIdeal(P);
       p->syz_type = SYZ_MINIMAL;
       p->base_comp = p;
       base_components.push_back(p);
-      search_mi.push_back(new MonomialIdeal(P, mi_stash));
+      search_mi.push_back(new MonomialIdeal(P));
 
       int d = mat->rows()->primary_degree(i);
       res_degree *mypairs = make_degree_set(0, d);
@@ -126,8 +121,6 @@ res_comp::~res_comp()
 
   for (i = 0; i < search_mi.size(); i++) delete search_mi[i];
 
-  delete res_pair_stash;
-  delete mi_stash;
   delete R;
 
   // base_components have all been removed by this point
@@ -141,7 +134,7 @@ void res_comp::remove_res_pair(res_pair *p)
   R->remove(p->syz);
   R->remove(p->stripped_syz);
   M->remove(p->base_monom);
-  res_pair_stash->delete_elem(p);
+  freemem(p);
 }
 
 void res_comp::remove_res_degree(res_degree *p)
@@ -209,7 +202,7 @@ res_degree *res_comp::get_degree_set(int level, int d) const
 
 res_pair *res_comp::new_res_pair()
 {
-  res_pair *result = reinterpret_cast<res_pair *>(res_pair_stash->new_elem());
+  res_pair *result = newarray_clear(res_pair, 1);
   result->me = 0;
   result->compare_num = 0;
   result->base_monom = nullptr;
@@ -236,7 +229,7 @@ res_pair *res_comp::new_res_pair(int syztype, res_pair *first, res_pair *second)
   result->second = second;
   result->base_comp = first->base_comp;
   result->syz_type = syztype;
-  result->mi = new MonomialIdeal(P, mi_stash);
+  result->mi = new MonomialIdeal(P);
   return result;
 }
 
@@ -250,7 +243,7 @@ res_pair *res_comp::new_res_pair(int i)
   p->base_monom = M->make_new(p->syz->monom);
   p->base_comp = p->syz->comp;
   p->first = p->base_comp;
-  p->mi = new MonomialIdeal(P, mi_stash);
+  p->mi = new MonomialIdeal(P);
 
   return p;
 }
@@ -265,7 +258,7 @@ res_pair *res_comp::new_res_pair(int syztype, resterm *f)
   p->base_monom = M->make_new(f->monom);
   p->base_comp = f->comp->base_comp;
   p->first = f->comp;
-  p->mi = new MonomialIdeal(P, mi_stash);
+  p->mi = new MonomialIdeal(P);
 
   return p;
 }
@@ -685,7 +678,7 @@ void res_comp::new_pairs(res_pair *p)
   mi_orig->insert_minimal(new Bag(p, vp));
 
   VECTOR(Bag *) rejects;
-  MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects, mi_stash);
+  MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects);
   for (auto& b : rejects)
     delete b;
 

@@ -11,10 +11,9 @@ res_poly::res_poly(PolynomialRing *RR)
 {
   element_size = sizeof(resterm *) + sizeof(res_pair *) + sizeof(ring_elem) +
                  sizeof(int) * M->monomial_size();
-  resterm_stash = new stash("resterm", element_size);
 }
 
-res_poly::~res_poly() { delete resterm_stash; }
+res_poly::~res_poly() {}
 inline int res_poly::compare(const resterm *a, const resterm *b) const
 {
   int cmp = M->compare(a->monom, b->monom);
@@ -27,7 +26,7 @@ inline int res_poly::compare(const resterm *a, const resterm *b) const
 
 resterm *res_poly::new_term() const
 {
-  resterm *result = reinterpret_cast<resterm *>(resterm_stash->new_elem());
+  resterm *result = reinterpret_cast<resterm *>(newarray_clear(char, element_size));
   result->next = nullptr;
   return result;
 }
@@ -79,7 +78,7 @@ void res_poly::remove(resterm *&f) const
       resterm *tmp = f;
       f = f->next;
       K->remove(tmp->coeff);
-      resterm_stash->delete_elem(tmp);
+      freemem(tmp);
     }
 }
 
@@ -172,13 +171,13 @@ void res_poly::add_to(resterm *&f, resterm *&g) const
           g = g->next;
           K->add_to(tmf->coeff, tmg->coeff);
           if (K->is_zero(tmf->coeff))
-            resterm_stash->delete_elem(tmf);
+            freemem(tmf);
           else
             {
               result->next = tmf;
               result = result->next;
             }
-          resterm_stash->delete_elem(tmg);
+          freemem(tmg);
           if (g == nullptr)
             {
               result->next = f;

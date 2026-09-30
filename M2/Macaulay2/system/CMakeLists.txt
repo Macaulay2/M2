@@ -8,7 +8,7 @@ add_library(M2-supervisor OBJECT
   m2fileinterface.h     m2file.hpp     m2file.cpp     # used by stdio.d
   pthread-methods.hpp # used by m2file
   gc_std.hpp          # used by m2file and supervisor
-  mutex.h             # used by mem.hpp and pthread0.d
+  mutex.h             # used by pthread0.d
   mutexclass.hpp      # used by supervisor.hpp and m2file.hpp and m2util.hpp
   tests.cpp           # TS_test is used in actors5.d
   )

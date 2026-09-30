@@ -9,7 +9,6 @@
 #include "interrupted.hpp"
 
 void gb2_comp::setup(FreeModule *FFsyz,
-                     stash *mi_stash0,
                      gb_node *ggens,
                      int lodeg,
                      int origsyz,
@@ -27,8 +26,6 @@ void gb2_comp::setup(FreeModule *FFsyz,
   GR = originalR->get_gb_ring();
   M = GR->get_flattened_monoid();
   K = GR->get_flattened_coefficients();
-
-  mi_stash = mi_stash0;
 
   F = const_cast<FreeModule *>(ggens->output_free_module());
 
@@ -57,7 +54,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
   monideals.push_back(nullptr);
   for (i = 0; i < F->rank(); i++)
     {
-      monideal_pair *p = new monideal_pair(originalR, mi_stash);
+      monideal_pair *p = new monideal_pair(originalR);
       monideals.push_back(p);
     }
 
@@ -73,14 +70,13 @@ void gb2_comp::setup(FreeModule *FFsyz,
 }
 
 gb2_comp::gb2_comp(FreeModule *Fsyz0,
-                   stash *mi_stash0,
                    gb_node *gens0,
                    int lodegree,
                    int origsyz,
                    int level0,
                    int strat)
 {
-  setup(Fsyz0, mi_stash0, gens0, lodegree, origsyz, level0, strat);
+  setup(Fsyz0, gens0, lodegree, origsyz, level0, strat);
 }
 void gb2_comp::set_output(gb_node *p)
 {
@@ -265,7 +261,7 @@ void gb2_comp::find_pairs(gb_elem *p)
   // the proper degree.
 
   VECTOR(Bag *) rejects;
-  MonomialIdeal *mi = new MonomialIdeal(originalR, elems, rejects, mi_stash);
+  MonomialIdeal *mi = new MonomialIdeal(originalR, elems, rejects);
   for (auto& b : rejects)
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
@@ -618,7 +614,7 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
 
   for (int i = monideals.size(); i <= F->rank(); i++)
     {
-      monideal_pair *p = new monideal_pair(originalR, mi_stash);
+      monideal_pair *p = new monideal_pair(originalR);
       monideals.push_back(p);
     }
 

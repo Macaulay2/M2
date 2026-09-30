@@ -45,7 +45,7 @@ static void exponents_show(FILE *fil, exponents_t exp, int nvars)
 
 MonomialTable::mon_term *MonomialTable::make_list_head()
 {
-  mon_term *t = reinterpret_cast<mon_term *>(mon_term_stash->new_elem());
+  mon_term *t = newarray_clear(mon_term, 1);
   t->_next = t->_prev = t;
   t->_val = -1;
   t->_lead = nullptr;
@@ -62,7 +62,6 @@ MonomialTable *MonomialTable::make(int nvars)
 {
   MonomialTable *result;
   result = new MonomialTable;
-  result->mon_term_stash = new stash("montable terms", sizeof(mon_term));
   result->_nvars = nvars;
   result->_count = 0;
   /* The first entry is a dummy entry.  Components
@@ -83,11 +82,10 @@ MonomialTable::~MonomialTable()
           mon_term *tmp = t->_next;
           tmp->_prev->_next = tmp->_next;
           tmp->_next->_prev = t;
-          mon_term_stash->delete_elem(tmp);
+          freemem(tmp);
         }
       _head[i] = nullptr;
     }
-  delete mon_term_stash;
   _count = 0;
 }
 
@@ -232,7 +230,7 @@ void MonomialTable::insert(exponents_t exp, int comp, int id)
   mon_term *t;
 
   /* Make a new mon_term including exp */
-  mon_term *newterm = reinterpret_cast<mon_term *>(mon_term_stash->new_elem());
+  mon_term *newterm = newarray_clear(mon_term, 1);
   newterm->_lead = exp;
   newterm->_mask = exponents::mask(_nvars, exp);
   newterm->_val = id;

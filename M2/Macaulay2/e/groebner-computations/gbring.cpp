@@ -9,7 +9,6 @@
 #include "basic-rings/aring-glue.hpp"
 #include "coeffrings.hpp"
 #include "free-modules/freemod.hpp"
-#include "mem.hpp"
 #include "rings/ring.hpp"
 #include "free-modules/schreyer-orders.hpp"
 #include "text-io.hpp"
@@ -18,17 +17,9 @@
 #define sizeofgbvector(s, len) \
   (sizeof(*s) - sizeof(s->monom) + (len) * sizeof(s->monom[0]))
 
-void GBRing::memstats()
-{
-  buffer o;
-  mem->stats(o);
-  emit(o.str());
-}
-
 gbvector *GBRing::new_raw_term()
 {
-  void *p = mem->new_elem();
-  return (reinterpret_cast<gbvector *>(p));
+  return reinterpret_cast<gbvector *>(newarray_clear(char, gbvector_size));
 }
 
 /*************************
@@ -43,10 +34,7 @@ exponents_t GBRing::exponents_make()
 
 void GBRing::exponents_delete(exponents_t e) { freemem(e); }
 ////////////////////////////////////////////////////////////////
-GBRing::~GBRing()
-{
-  delete mem;  // all other things will be garbage collected
-}
+GBRing::~GBRing() {}
 GBRingPoly::~GBRingPoly() {}
 GBRingWeyl::~GBRingWeyl() {}
 GBRingWeylZZ::~GBRingWeylZZ() {}
@@ -73,7 +61,6 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
   monom_size = MONOMIAL_BYTE_SIZE(M->monomial_size());
 
   gbvector_size = sizeofgbvector(((gbvector *)nullptr), M->monomial_size());
-  mem = new stash("gbvector", gbvector_size);
 
   const Z_mod *Kp = K->cast_to_Z_mod();
   if (Kp != nullptr) zzp = Kp->get_CoeffRing();
@@ -281,8 +268,7 @@ void GBRing::gbvector_remove_term(gbvector *f)
   // It is not clear whether we should try to free elements of K
   f->next = nullptr;
   f->coeff = ZERO_RINGELEM;
-  mem->delete_elem(f);
-  // GC_FREE(reinterpret_cast<char *>(f));
+  freemem(f);
 }
 
 void GBRing::gbvector_remove(gbvector *f0)

@@ -97,8 +97,6 @@ class res2_comp : public ResolutionComputation
   const Matrix
       *generator_matrix;  // Input matrix of generators, needs to be a GB.
 
-  stash *res2_pair_stash;
-  stash *mi_stash;
 
   VECTOR(res2_level *) resn;  // The resolution itself
 

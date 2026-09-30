@@ -126,7 +126,6 @@ INTERFACE = \
 	matrices/matrix-con \
 	matrices/matrix-ncbasis \
 	matrices/matrix-stream \
-	mem \
 	memory-status \
 	monoid \
 	monomials/ExponentList \
