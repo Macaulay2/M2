@@ -9,9 +9,6 @@ ALL_PACKAGES = $(shell cat @srcdir@/=distributed-packages)
 # this one can be overridden by the user:
 PACKAGES = $(ALL_PACKAGES)
 
-# packages under development that should be checked but not installed:
-DEVEL = EngineTests
-
 MakeDocumentation ?= $(if @DOCUMENTATION@,true,false)
 MakeHTML ?= $(if $(filter html, @DOCUMENTATION@),true,false)
 MakeInfo ?= $(if $(filter info, @DOCUMENTATION@),true,false)
@@ -48,8 +45,7 @@ ArgumentMode = defaultMode
 m2-need-template = "needsPackage(\"$(1)\",LoadDocumentation=>true,DebuggingMode=>true)"
 m2-check-template = "check($(1),UserMode=>false,Verbose=>$(Verbose)); exit 0"
 $(foreach i,\
-	$(sort $(ALL_PACKAGES) $(DEVEL)),\
-	$(eval check::check-$i)\
+	$(sort $(ALL_PACKAGES)),\
 	$(eval check-$i:; \
 		@pre_bindir@/M2 -q --no-preload $(STOP)                 \
 			-e $(call m2-need-template,$i)                  \
@@ -105,7 +101,7 @@ $(foreach i, $(ALL_PACKAGES), $(eval $(call bld,$i)))
 ifeq "$(ReinstallPackages)" "true"
 $(foreach i, $(PACKAGES), $(eval all: unmark-$i))
 endif
-$(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
+$(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i) $(eval check: check-$i))
 
 # make packages Style, FirstPackage, and Macaulay2Doc get installed
 # before the others:
@@ -119,7 +115,7 @@ all: @pre_bindir@/M2-language-server
 	cp $< $@
 
 # the Info-validate function doesn't work well enough to be useful:
-# check::check-info
+# check: check-info
 
 clean::; rm -rf tmp
 big-check:

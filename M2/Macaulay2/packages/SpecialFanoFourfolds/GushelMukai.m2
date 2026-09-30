@@ -358,6 +358,7 @@ isAdmissibleGM GushelMukaiFourfold := X -> isAdmissibleGM discriminant X;
 
 parameterCount GushelMukaiFourfold := o -> X -> (
     S := surface X;
+    if (not o.Verbose) and X.cache#?(S,"parameterCount") then return X.cache#(S,"parameterCount");
     Y := ambientFivefold X;
     if o.Verbose then <<"S: "|toString(? ideal S)<<endl;
     if o.Verbose then <<"X: GM fourfold containing S"<<endl;
@@ -386,7 +387,8 @@ parameterCount GushelMukaiFourfold := o -> X -> (
     if o.Verbose then <<"dim P(H^0(O_Y(2))) = 39"<<endl;
     w := 39 - (h0N + m-1 - h0NX);
     if o.Verbose then <<"codim{[X] : S ⊂ X ⊂ Y} <= "|toString(w)<<endl;
-    return X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX));
+    if X.cache#?(S,"parameterCount") and X.cache#(S,"parameterCount") =!= (w,(m,h0N,h0NX)) then error "internal error encountered in parameterCount: cached and computed values differ";
+    X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX))
 );
 
 sigmaQuadric = method();
