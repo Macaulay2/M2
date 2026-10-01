@@ -1,0 +1,39 @@
+# @configure_input@
+include ../../../include/config.Makefile
+VPATH = @srcdir@:@srcdir@/../unit-tests
+SRCDIR = @srcdir@
+DEPENDS = yes
+include ../Makefile.common
+include ../Makefile.files
+include @srcdir@/Makefile.files
+export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
+
+CPPFLAGS := -I. -I@srcdir@ -I@srcdir@/.. $(CPPFLAGS)
+CXXFLAGS += -std=gnu++17 -Wno-sign-conversion
+
+LOADLIBES += @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@ -lbenchmark -pthread @OPENMP_CXXFLAGS@ @OPENMP_LIBS@
+
+.PHONY: run
+
+all: $(BENCHMARK_TARGET)
+
+$(BENCHMARK_TARGET): $(BENCHMARK_OBJECT_FILES) $(LIBENGINE)
+	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+
+run: $(BENCHMARK_TARGET)
+	time ./$(BENCHMARK_TARGET) $(BENCHMARK_ARGS)
+
+MORE_OPTIONS = -Wno-cast-qual
+COMPILE.cc += $(MORE_OPTIONS)
+
+Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/e/benchmarks/Makefile
+clean::; rm -f *.o *.rpo *.dep dep-*.tmp $(BENCHMARK_TARGET)
+distclean: clean; rm -f Makefile
+
+ifeq "$(DEPENDS)" "yes"
+include $(BENCHMARK_CCFILES:=.dep)
+endif
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/benchmarks run"
+# End:
