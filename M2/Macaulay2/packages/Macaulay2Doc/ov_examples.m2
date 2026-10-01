@@ -11,6 +11,7 @@ Node
     power
     powermod
     (sqrt, ZZ, ZZ)
+    legendreSymbol
     lcm
     gcd
     gcdCoefficients
