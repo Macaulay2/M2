@@ -79,8 +79,8 @@ convexHull Matrix := Mvert -> (
 convexHull(Polyhedron,Polyhedron) := (P1,P2) -> (
 	-- Checking for input errors
 	if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same ambient space");
-   C1 := getProperty(P1, underlyingCone);
-   C2 := getProperty(P2, underlyingCone);
+   C1 := getUnderlyingCone P1;
+   C2 := getUnderlyingCone P2;
    result := new HashTable from {
       ambientDimension => ambDim P1,
       underlyingCone => coneFromVData(C1, C2)
@@ -97,7 +97,7 @@ convexHull List := L -> (
          else l
       )
    );
-   cones := apply(polyhedra, p -> getProperty(p, underlyingCone));
+   cones := apply(polyhedra, p -> getUnderlyingCone p);
    underLyingResult := coneFromVData(cones);
    result := new HashTable from {
       underlyingCone => underLyingResult
@@ -109,7 +109,7 @@ convexHull List := L -> (
 polyhedron = method()
 polyhedron Cone := C -> (
    n := ambDim C;
-   rayData := getSufficientRayData C;
+   rayData := getVRepresentation C;
    r := ring rayData#0;
    vertex := map(ZZ^n, ZZ^1, 0);
    convexHull(vertex, rayData#0, rayData#1)

@@ -7,8 +7,8 @@ contains = method(TypicalValue => Boolean)
 contains(Polyhedron,Polyhedron) := (P1,P2) -> (
    -- checking for input errors
    if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same ambient space");
-   C1 := getProperty(P1, underlyingCone);
-   C2 := getProperty(P2, underlyingCone);
+   C1 := getUnderlyingCone P1;
+   C2 := getUnderlyingCone P2;
    contains(C1, C2)
 )
 
@@ -23,21 +23,21 @@ contains(Cone,Cone) := (C1,C2) -> (
    local C1eq;
    -- Extracting inequalities of C1
    if hasProperty(C1, facets) then C1ineq = facets C1
-   else if hasProperty(C1, inequalities) then C1ineq = getProperty(C1, inequalities)
+   else if hasProperty(C1, inequalities) then C1ineq = getInequalities C1
    else C1ineq = facets C1;
    -- Extracting equations of C1
    if hasProperty(C1, computedHyperplanes) then C1eq = hyperplanes C1
-   else if hasProperty(C1, equations) then C1eq = getProperty(C1, equations)
+   else if hasProperty(C1, equations) then C1eq = getEquations C1
    else C1eq = hyperplanes C1;
    local C2rays;
    local C2lineality;
    -- Extracting rays of C2
    if hasProperty(C2, rays) then C2rays = rays C2
-   else if hasProperty(C2, inputRays) then C2rays = getProperty(C2, inputRays)
+   else if hasProperty(C2, inputRays) then C2rays = getInputRays C2
    else C2rays = rays C2;
    -- Extracting lineality of C2
    if hasProperty(C2, computedLinealityBasis) then C2lineality = linealitySpace C2
-   else if hasProperty(C2, inputLinealityGenerators) then C2lineality = getProperty(C2, inputLinealityGenerators)
+   else if hasProperty(C2, inputLinealityGenerators) then C2lineality = getInputLinealityGenerators C2
    else C2lineality = linealitySpace C2;
    gens := C2rays | C2lineality | (-C2lineality);
    positiveTest := flatten entries (C1ineq * gens);

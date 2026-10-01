@@ -7,17 +7,15 @@ normalFan Polyhedron := P -> (
 )      
 
 
-vertices Polyhedron := P -> (
-   getProperty(P, computedVertices)
-)
+-- vertices Polyhedron is installed in core/polyhedron/properties.m2
 
 --   INPUT : '(P,Q)'  two Polyhedra
 --  OUTPUT : 'true' or 'false'
 isFace(Polyhedron,Polyhedron) := (P,Q) -> (
    -- Checking if the two polyhedra lie in the same space and computing the dimension difference
    if not isEmpty P then (
-      CP := getProperty(P, underlyingCone);
-      CQ := getProperty(Q, underlyingCone);
+      CP := getUnderlyingCone P;
+      CQ := getUnderlyingCone Q;
       isFace(CP, CQ)
    ) else return ambDim P == ambDim Q
 )
@@ -46,20 +44,17 @@ latticePoints Polyhedron := P -> (
 
 
 
--- PURPOSE: Getting data from the vertex side that determines polyhedron
---          completely, avoid fourierMotzkin. Always pick best possible data.
-getSufficientVertexData = method()
-getSufficientVertexData Polyhedron := P -> (
+-- PURPOSE: Getting a (vertices, rays, linealityGenerators) V-representation
+--          of a Polyhedron, preferring whatever is cheaply available -- see
+--          getVRepresentation Cone in core/cone/methods.m2 for the same idea
+--          one representation level down.
+getVRepresentation Polyhedron := P -> (
    if hasProperties(P, {computedVertices, rays, computedLinealityBasis}) then (
-      return(vertices P, rays P, linealitySpace P)
+      (vertices P, rays P, linealitySpace P)
    ) else if hasProperties(P, {points, inputRays, inputLinealityGenerators}) then (
-      return (
-         getProperty(P, points),
-         getProperty(P, inputRays),
-         getProperty(P, inputLinealityGenerators)
-      )
+      (getPoints P, getInputRays P, getInputLinealityGenerators P)
    ) else (
-      return(vertices P, rays P, linealitySpace P)
+      (vertices P, rays P, linealitySpace P)
    )
 )
 
@@ -73,10 +68,10 @@ facesAsPolyhedra(ZZ, Polyhedron) := (d, P) -> (
 )
 
 
-hyperplanes Polyhedron := P -> getProperty(P, computedHyperplanes)
+-- hyperplanes Polyhedron and facets Polyhedron are installed in
+-- core/polyhedron/properties.m2
 linSpace Polyhedron := P -> linealitySpace P
 halfspaces Polyhedron := P -> facets P
-facets Polyhedron := P -> getProperty(P, facets)
 
 
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
@@ -119,12 +114,12 @@ isWellDefined Polyhedron := P -> getProperty(P, isWellDefined)
 nVertices Polyhedron := P -> getProperty(P, nVertices)
 
 cone (Polyhedron) := P->(
-   getProperty(P,underlyingCone)
+   getUnderlyingCone P
 )
 
 dualFaceRepresentationMap Polyhedron := P -> (
    if not isCompact P then error("Only works for bounded polyhedra for now.");
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    getProperty(C, facetRayDataConverter)
 )
 

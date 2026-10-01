@@ -1,29 +1,33 @@
-compute#Polyhedron#computedVertices = method()
-compute#Polyhedron#computedVertices Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
-   n := ambDim P;
-   homogVert := promote(rays C, QQ);
-   vList := {};
-   rList := {};
-   latticeTest := true;
-   for i from 0 to numColumns homogVert - 1 do (
-      current := homogVert_i;
-      if current_0 > 0 then (
-         if current_0 > 1 then latticeTest = false;
-         current = (1/(current_0)) * current;
-         vList = append(vList, slice(current, 1..n));
-      ) else if current_0 == 0 then (
-         rList = append(rList, slice(current, 1..n));
-      ) else (
-         error("Something went wrong, vertex with negative height.");
+-- vertices/rays/facets/hyperplanes/linealitySpace mutually reference each
+-- other's computation for Polyhedron (via the underlying Cone), so migrated
+-- together; see the analogous block in core/cone/properties.m2.
+vertices Polyhedron := (cacheValue symbol computedVertices) (
+   P -> (
+      C := getUnderlyingCone P;
+      n := ambDim P;
+      homogVert := promote(rays C, QQ);
+      vList := {};
+      rList := {};
+      latticeTest := true;
+      for i from 0 to numColumns homogVert - 1 do (
+         current := homogVert_i;
+         if current_0 > 0 then (
+            if current_0 > 1 then latticeTest = false;
+            current = (1/(current_0)) * current;
+            vList = append(vList, slice(current, 1..n));
+         ) else if current_0 == 0 then (
+            rList = append(rList, slice(current, 1..n));
+         ) else (
+            error("Something went wrong, vertex with negative height.");
+         );
       );
-   );
-   setProperty(P, lattice, latticeTest);
-   vMat := matrixFromVectorList(vList, n, QQ);
-   rMat := matrixFromVectorList(rList, n, QQ);
-   setProperty(P, rays, rMat);
-   setProperty(P, empty, numColumns vMat == 0);
-   return vMat
+      setProperty(P, lattice, latticeTest);
+      vMat := matrixFromVectorList(vList, n, QQ);
+      rMat := matrixFromVectorList(rList, n, QQ);
+      setProperty(P, rays, rMat);
+      setProperty(P, empty, numColumns vMat == 0);
+      vMat
+   )
 )
 
 
@@ -35,15 +39,16 @@ compute#Polyhedron#lattice Polyhedron := P -> (
 
 compute#Polyhedron#empty = method()
 compute#Polyhedron#empty Polyhedron := P -> (
-   if hasProperty(P, points) then (numColumns getProperty(P, points)) == 0
+   if hasProperty(P, points) then (numColumns getPoints P) == 0
    else (numColumns vertices P) == 0
 )
 
 
-compute#Polyhedron#rays = method()
-compute#Polyhedron#rays Polyhedron := P -> (
-   vertices P;
-   getProperty(P, rays)
+rays Polyhedron := {} >> o -> (cacheValue rays) (
+   P -> (
+      vertices P;
+      rays P
+   )
 )
 
 
@@ -52,111 +57,145 @@ compute#Polyhedron#computedDimension Polyhedron := P -> (
    if isEmpty P then
       return -1
    else
-      C := getProperty(P, underlyingCone);
+      C := getUnderlyingCone P;
       dim C - 1
 )
 
 
-compute#Polyhedron#computedLinealityBasis = method()
-compute#Polyhedron#computedLinealityBasis Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
-   result := promote(linealitySpace C, QQ);
-   test := all(0..(numColumns result - 1), i-> result_i_0 == 0);
-   if not test then error("Something went wrong while computing linealitySpace.");
-   submatrix(result, 1..(numRows result -1), 0..(numColumns result - 1))
+linealitySpace Polyhedron := (cacheValue symbol computedLinealityBasis) (
+   P -> (
+      C := getUnderlyingCone P;
+      result := promote(linealitySpace C, QQ);
+      test := all(0..(numColumns result - 1), i-> result_i_0 == 0);
+      if not test then error("Something went wrong while computing linealitySpace.");
+      submatrix(result, 1..(numRows result -1), 0..(numColumns result - 1))
+   )
 )
 
 
-compute#Polyhedron#underlyingCone = method()
-compute#Polyhedron#underlyingCone Polyhedron := P -> (
-   result := {};
-   local r;
-   local pMat;
-   local rMat;
-   local ezero;
-   local L;
-   -- Copy every information the polyhedron provides to the
-   -- underlyingCone.
-   if hasProperties(P, {points, inputRays}) then (
-      pMat = prependOnes getProperty(P, points);
-      rMat = prependZeros getProperty(P, inputRays);
-      result = append(result, inputRays => (pMat | rMat));
-   );
-   if hasProperties(P, {computedVertices, rays}) then (
-      pMat = prependOnes getProperty(P, computedVertices);
-      rMat = prependZeros getProperty(P, rays);
-      result = append(result, rays => (pMat | rMat));
-   );
-   if hasProperty(P, inputLinealityGenerators) then (
-      pMat = prependZeros getProperty(P, inputLinealityGenerators);
-      result = append(result, inputLinealityGenerators => pMat);
-   );
-   if hasProperty(P, computedLinealityBasis) then (
-      pMat = prependZeros getProperty(P, computedLinealityBasis);
-      result = append(result, computedLinealityBasis => pMat);
-   );
-   if hasProperty(P, facets) then (
-      L = getProperty(P, facets);
-      pMat = -L#1 | L#0;
-      ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
-      result = append(result, inequalities => ezero || (-pMat));
-   ) else if hasProperty(P, inequalities) then (
-      L = getProperty(P, inequalities);
-      pMat = -L#1 | L#0;
-      ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
-      -- At this point we do not know whether the height inequality
-      -- is implied.
-      result = append(result, inequalities => ezero || (-pMat));
-   );
-   if hasProperty(P, computedHyperplanes) then (
-      L = getProperty(P, computedHyperplanes);
-      pMat = (-L#1) | L#0;
-      result = append(result, computedHyperplanes => pMat);
-   );
-   if hasProperty(P, equations) then (
-      L = getProperty(P, equations);
-      pMat = (-L#1) | L#0;
-      result = append(result, equations => pMat);
-   );
-   resultHash := new HashTable from result;
-   internalConeConstructor resultHash
+-- points, like inputRays/inputLinealityGenerators (see core/cone/properties.m2),
+-- is pure construction-time data with no compute# fallback.
+getPoints = method()
+getPoints Polyhedron := (cacheValue symbol points) (
+   P -> error("No points set for this Polyhedron.")
+)
+
+getInputRays Polyhedron := (cacheValue symbol inputRays) (
+   P -> error("No input rays set for this Polyhedron.")
+)
+
+getInputLinealityGenerators Polyhedron := (cacheValue symbol inputLinealityGenerators) (
+   P -> error("No input lineality generators set for this Polyhedron.")
+)
+
+getInequalities Polyhedron := (cacheValue symbol inequalities) (
+   P -> error("No inequalities set for this Polyhedron.")
+)
+
+getEquations Polyhedron := (cacheValue symbol equations) (
+   P -> error("No equations set for this Polyhedron.")
 )
 
 
-compute#Polyhedron#facets = method()
-compute#Polyhedron#facets Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
-   hpC := promote(hyperplanes C, QQ);
-   result := promote(facets C, QQ);
-   -- Elimination of the trivial half-space
-   ezero := matrix {flatten {1 , toList (((numgens source result)-1):0)}};
-   ezero = promote(ezero, QQ);
-   trivialIndex := positions(0..(numRows result)-1, i -> 
-      if numRows hpC != 0 then pointInSameDirection(transpose ezero, transpose result^{i}, transpose hpC)
-      else ezero === result^{i}
-   );
-   if #trivialIndex > 0 then (
-      trivialIndex = trivialIndex#0;
-   ) else (
-      trivialIndex = -1;
-   );
-   result = result^(toList select(0..(numRows result)-1, i -> i != trivialIndex));
-   (- submatrix(result, 0..(numRows result - 1), 1..(numColumns result -1)), result_{0})
+-- Some constructors set underlyingCone directly at construction time; for
+-- the rest, it is computed here (lazily, cached via cacheValue under the
+-- same cache key underlyingCone would have used) from whatever data the
+-- Polyhedron was actually given. Named getUnderlyingCone, not underlyingCone,
+-- since the latter is a protected symbol used as the property/cache key.
+getUnderlyingCone = method()
+getUnderlyingCone Polyhedron := (cacheValue symbol underlyingCone) (
+   P -> (
+      result := {};
+      local r;
+      local pMat;
+      local rMat;
+      local ezero;
+      local L;
+      -- Copy every information the polyhedron provides to the
+      -- underlyingCone.
+      if hasProperties(P, {points, inputRays}) then (
+         pMat = prependOnes getPoints P;
+         rMat = prependZeros getInputRays P;
+         result = append(result, inputRays => (pMat | rMat));
+      );
+      if hasProperties(P, {computedVertices, rays}) then (
+         pMat = prependOnes vertices P;
+         rMat = prependZeros rays P;
+         result = append(result, rays => (pMat | rMat));
+      );
+      if hasProperty(P, inputLinealityGenerators) then (
+         pMat = prependZeros getInputLinealityGenerators P;
+         result = append(result, inputLinealityGenerators => pMat);
+      );
+      if hasProperty(P, computedLinealityBasis) then (
+         pMat = prependZeros linealitySpace P;
+         result = append(result, computedLinealityBasis => pMat);
+      );
+      if hasProperty(P, facets) then (
+         L = facets P;
+         pMat = -L#1 | L#0;
+         ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
+         result = append(result, inequalities => ezero || (-pMat));
+      ) else if hasProperty(P, inequalities) then (
+         L = getInequalities P;
+         pMat = -L#1 | L#0;
+         ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
+         -- At this point we do not know whether the height inequality
+         -- is implied.
+         result = append(result, inequalities => ezero || (-pMat));
+      );
+      if hasProperty(P, computedHyperplanes) then (
+         L = hyperplanes P;
+         pMat = (-L#1) | L#0;
+         result = append(result, computedHyperplanes => pMat);
+      );
+      if hasProperty(P, equations) then (
+         L = getEquations P;
+         pMat = (-L#1) | L#0;
+         result = append(result, equations => pMat);
+      );
+      resultHash := new HashTable from result;
+      internalConeConstructor resultHash
+   )
 )
 
 
-compute#Polyhedron#computedHyperplanes = method()
-compute#Polyhedron#computedHyperplanes Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
-   result := promote(hyperplanes C, QQ);
-   (submatrix(result, 0..(numRows result - 1), 1..(numColumns result -1)), -result_{0})
+facets Polyhedron := (cacheValue facets) (
+   P -> (
+      C := getUnderlyingCone P;
+      hpC := promote(hyperplanes C, QQ);
+      result := promote(facets C, QQ);
+      -- Elimination of the trivial half-space
+      ezero := matrix {flatten {1 , toList (((numgens source result)-1):0)}};
+      ezero = promote(ezero, QQ);
+      trivialIndex := positions(0..(numRows result)-1, i ->
+         if numRows hpC != 0 then pointInSameDirection(transpose ezero, transpose result^{i}, transpose hpC)
+         else ezero === result^{i}
+      );
+      if #trivialIndex > 0 then (
+         trivialIndex = trivialIndex#0;
+      ) else (
+         trivialIndex = -1;
+      );
+      result = result^(toList select(0..(numRows result)-1, i -> i != trivialIndex));
+      (- submatrix(result, 0..(numRows result - 1), 1..(numColumns result -1)), result_{0})
+   )
+)
+
+
+hyperplanes Polyhedron := (cacheValue symbol computedHyperplanes) (
+   P -> (
+      C := getUnderlyingCone P;
+      result := promote(hyperplanes C, QQ);
+      (submatrix(result, 0..(numRows result - 1), 1..(numColumns result -1)), -result_{0})
+   )
 )
 
 
 compute#Polyhedron#verticesThroughFacets = method()
 compute#Polyhedron#verticesThroughFacets Polyhedron := P -> (
    facetsP := facets P;
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    facetVectors := facetsP#0;
    facetValues := facets;
    verticesP := vertices P;
@@ -173,7 +212,7 @@ compute#Polyhedron#verticesThroughFacets Polyhedron := P -> (
 
 compute#Polyhedron#isWellDefined = method()
 compute#Polyhedron#isWellDefined Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    return isWellDefined C
 )
 
@@ -182,7 +221,7 @@ compute#Polyhedron#facetToFacetMap = method()
 compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
    facetsP := facets P;
    facetsP = (-facetsP#1) | facetsP#0;
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    facetsC := promote(facets C, QQ);
    rayCorrespondenceMap( - transpose facetsC, transpose facetsP)
 )
@@ -190,7 +229,7 @@ compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
 
 compute#Polyhedron#computedNormalFan = method()
 compute#Polyhedron#computedNormalFan Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    raysC := rays C;
    raysNF := - transpose (facets P)#0;
    facetMap := getProperty(P, facetToFacetMap);
@@ -212,7 +251,7 @@ compute#Polyhedron#computedNormalFan Polyhedron := P -> (
 
 compute#Polyhedron#ambientDimension = method()
 compute#Polyhedron#ambientDimension Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    ambDim C - 1
 )
 
@@ -220,7 +259,7 @@ compute#Polyhedron#ambientDimension Polyhedron := P -> (
 compute#Polyhedron#computedLatticePoints = method()
 compute#Polyhedron#computedLatticePoints Polyhedron := P -> (
    if isEmpty P then error("Polyhedron is empty!");
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    H := hilbertBasis C;
    result := select(H, h -> h_(0,0) == 1);
    result = apply(result, r -> submatrix(r, 1..(numRows r -1) ,(1:0)));
@@ -229,7 +268,7 @@ compute#Polyhedron#computedLatticePoints Polyhedron := P -> (
 
 compute#Polyhedron#computedFacesThroughRays = method()
 compute#Polyhedron#computedFacesThroughRays Polyhedron := P -> (
-   C := getProperty(P, underlyingCone);
+   C := getUnderlyingCone P;
    vertP := vertices P;
    raysP := rays P;
    raysC := rays C;
