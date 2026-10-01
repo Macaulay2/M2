@@ -116,7 +116,7 @@ doc ///
         0 if a is divisible by p, 1 if a is a quadratic residue mod p and -1 if a is not a quadratic residue mod p.
   Description
    Text
-     Computes Legendre-symbol a over p.
+     Computes the Legendre symbol of $a$ modulo $p$.
 
    Example
      legendreSymbol(4,7)
