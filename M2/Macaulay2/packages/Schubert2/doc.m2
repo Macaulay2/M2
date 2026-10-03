@@ -1296,6 +1296,8 @@ Node
        If $F$ is omitted, then a projective space of dimension $n$ over $X$ is produced.
        If $X$ is omitted, then @ TO point @ is used as the base.
   Description
+   Text
+    Recall, given a vector bundle $E\to X$, there are two conventions for its projectivization. The first is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E^\vee)$, in which case $\mathcal{O}(-1)$ is the tautological bundle of rank one subbundles of $E$. This is the convention in Fulton, and is given by the method @ TO projectiveBundle @. The second is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E)$, in which case $\mathcal{O}(1)$ is the universal rank one quotient of $E$. This is the convention in EGA, and is given by the method @ TO projectiveBundle' @.
    Example
     X = projectiveBundle' 4
     F = OO_X(2) ++ OO_X(3) ++ OO_X(4)
@@ -1335,13 +1337,18 @@ Node
        If $F$ is omitted, then a projective space of dimension $n$ over $X$ is produced.
        If $X$ is omitted, then @ TO point @ is used as the base.
   Description
+   Text
+    Recall, given a vector bundle $E\to X$, there are two conventions for its projectivization. The first is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E^\vee)$, in which case $\mathcal{O}(-1)$ is the tautological bundle of rank one subbundles of $E$. This is the convention in Fulton, and is given by the method @ TO projectiveBundle @. The second is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E)$, in which case $\mathcal{O}(1)$ is the universal rank one quotient of $E$. This is the convention in EGA, and is given by the method @ TO projectiveBundle' @.
    Example
     X = projectiveBundle 4
     F = OO_X(2) ++ OO_X(3) ++ OO_X(4)
     Y = projectiveBundle F
     dim Y
-    integral (chern_1 OO_Y(1))^(dim Y)
-    bundles X/rank
+   Text
+    As a warning, for every flag bundle in this package, we have that {\tt OO_Y(1)} is the @TO tautologicalLineBundle @. Thus even though @TO projectiveBundle @ returns the same bundle as in Fulton, the convention for what $\mathcal{O}_{\mathbb{P}(E)}(1)$ means is different. For us, {\tt OO_Y(1)} means the tautological line bundle, while Fulton's $\mathcal{O}_Y(1)$ would be obtained by taking {\tt dual first bundles Y}.
+   Example
+    print chern OO_Y(1)
+    print chern dual first bundles Y
   Caveat
    Perhaps this should be merged with @ TO abstractProjectiveSpace @.  (The optional arguments are slightly different.)
 --------
@@ -1769,12 +1776,16 @@ Node
      the total Segre class of {\tt A}, defined as the reciprocal of the Chern class of the {\em dual} of {\tt A}.  (In
      a future version, the dual may be omitted, and an alternative function {\tt segre'} may be introduced.)
   Description
+    Text
+      The total @TO segre @ class of a sheaf $E$ returns $s(E) = 1/c(E^\vee)$. This is a legacy convention from the original Schubert package for Maple, and the reader should be warned that this differs from Fulton's convention.
     Example
       base(4, Bundle => (B,3,b))
       chern B
       segre B
   SeeAlso
      chern
+     projectiveBundle'
+     projectiveBundle
 Node
   Key
     (segre,ZZ,AbstractSheaf)
