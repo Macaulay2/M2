@@ -1297,7 +1297,7 @@ Node
        If $X$ is omitted, then @ TO point @ is used as the base.
   Description
    Text
-    Recall, given a vector bundle $E\to X$, there are two conventions for its projectivization. The first is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E^\vee)$, in which case $\mathcal{O}(1)$ is the tautological bundle of rank one subbundles of $E$. This is the convention in Fulton, and is given by the method @ TO projectiveBundle @. The second is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E)$, in which case $\mathcal{O}(1)$ is the universal rank one quotient of $E$. This is the convention in EGA, and is given by the method @ TO projectiveBundle' @.
+    Recall, given a vector bundle $E\to X$, there are two conventions for its projectivization. The first is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E^\vee)$, in which case $\mathcal{O}(-1)$ is the tautological bundle of rank one subbundles of $E$. This is the convention in Fulton, and is given by the method @ TO projectiveBundle @. The second is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E)$, in which case $\mathcal{O}(1)$ is the universal rank one quotient of $E$. This is the convention in EGA, and is given by the method @ TO projectiveBundle' @.
    Example
     X = projectiveBundle' 4
     F = OO_X(2) ++ OO_X(3) ++ OO_X(4)
@@ -1338,7 +1338,7 @@ Node
        If $X$ is omitted, then @ TO point @ is used as the base.
   Description
    Text
-    Recall, given a vector bundle $E\to X$, there are two conventions for its projectivization. The first is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E^\vee)$, in which case $\mathcal{O}(1)$ is the tautological bundle of rank one subbundles of $E$. This is the convention in Fulton, and is given by the method @ TO projectiveBundle @. The second is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E)$, in which case $\mathcal{O}(1)$ is the universal rank one quotient of $E$. This is the convention in EGA, and is given by the method @ TO projectiveBundle' @.
+    Recall, given a vector bundle $E\to X$, there are two conventions for its projectivization. The first is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E^\vee)$, in which case $\mathcal{O}(-1)$ is the tautological bundle of rank one subbundles of $E$. This is the convention in Fulton, and is given by the method @ TO projectiveBundle @. The second is $\mathbb{P}(E) := \mathrm{Proj}(\mathrm{Sym} E)$, in which case $\mathcal{O}(1)$ is the universal rank one quotient of $E$. This is the convention in EGA, and is given by the method @ TO projectiveBundle' @.
    Example
     X = projectiveBundle 4
     F = OO_X(2) ++ OO_X(3) ++ OO_X(4)
