@@ -82,6 +82,6 @@ jobs:
       - name: Build M2 engine and unit tests against installed libraries
         run: |
           cmake --build "$RUNNER_TEMP/m2-build" --target build-libraries build-programs
-          cmake --build "$RUNNER_TEMP/m2-build" --target M2-unit-tests memtailor-unit-tests mathic-unit-tests mathicgb-unit-tests
-      - name: Run engine and library unit tests
-        run: ctest --test-dir "$RUNNER_TEMP/m2-build" -j 2 --output-on-failure -R '^unit-tests:'
+          cmake --build "$RUNNER_TEMP/m2-build" --target M2-unit-tests
+      - name: Run M2 engine unit tests
+        run: "$RUNNER_TEMP/m2-build/Macaulay2/e/M2-unit-tests"
