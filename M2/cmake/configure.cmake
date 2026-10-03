@@ -202,11 +202,6 @@ if(PROFILING)
   add_compile_options(-pg)
   add_link_options(-pg)
 endif()
-if(GCOV)
-  # -O0 keeps the line attribution in the coverage data meaningful
-  add_compile_options(--coverage -O0)
-  add_link_options(--coverage)
-endif()
 
 # Flags based on build type
 # Note: certain flags are initialized by CMake based on the compiler and build type.

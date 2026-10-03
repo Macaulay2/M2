@@ -174,7 +174,7 @@ public:
     assert(comps[comps.size()-1] < dvec.size());
     
     auto len = comps.size();
-    for (ComponentIndex i = 0; i < len; i++) mRing->set(dvec[comps[i]],svec[i]);
+    for (ComponentIndex i = 0; i < len; i++) mRing->copy(dvec[comps[i]],svec[i]);
   }
 
    void denseCancelFromSparse(ElementArray& dense,
@@ -203,11 +203,11 @@ public:
 
     FieldElement b;
     mRing->init(b);
-    mRing->set(b, dvec[comps[0]]);
+    mRing->copy(b, dvec[comps[0]]);
 
     FieldElement one;
     mRing->init(one);
-    mRing->set_from_long(one, 1);
+    mRing->set(one, 1);
     if (not mRing->is_equal(svec[0], one))  // should be minus_one
       mRing->negate(b, b);
 
@@ -377,7 +377,7 @@ public:
     auto& svec = * elementArray(sparse); 
     for (auto i = 0; i < c.size(); ++i)
     {
-      mRing->set_from_long(svec[i], c[i]);
+      mRing->set(svec[i], c[i]);
     }
     return sparse;
   }
@@ -390,7 +390,7 @@ public:
     for (auto i = 0; i < c.size(); ++i)
     {
       __mpz_struct* x = const_cast<__mpz_struct*>(c[i].get_mpz_t());
-      mRing->set_from_mpz(svec[i], x);
+      mRing->set(svec[i], x);
     }
     return sparse;
   }
@@ -477,7 +477,7 @@ public:
     auto& svec = * elementArray(coeffs);
     FieldElement one;
     mRing->init(one);
-    mRing->set_from_long(one, 1);
+    mRing->set(one, 1);
     svec.emplace_back(one); // This grabs 'one' in cases where it is allocated...  I think...!
   }
 
@@ -486,7 +486,7 @@ public:
     auto& svec = * elementArray(coeffs);
     FieldElement minus_one;
     mRing->init(minus_one);
-    mRing->set_from_long(minus_one,-1);
+    mRing->set(minus_one,-1);
     svec.emplace_back(minus_one);
   }
 
