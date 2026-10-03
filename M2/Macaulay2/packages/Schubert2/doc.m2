@@ -1344,8 +1344,11 @@ Node
     F = OO_X(2) ++ OO_X(3) ++ OO_X(4)
     Y = projectiveBundle F
     dim Y
-    integral (chern_1 OO_Y(1))^(dim Y)
-    bundles X/rank
+   Text
+    As a warning, for every flag bundle in this package, we have that {\tt OO_Y(1)} is the @TO tautologicalLineBundle @. Thus even though @TO projectiveBundle @ returns the same bundle as in Fulton, the convention for what $\mathcal{O}_{\mathbb{P}(E)}(1)$ means is different. For us, {\tt OO_Y(1)} means the tautological line bundle, while Fulton's $\mathcal{O}_Y(1)$ would be obtained by taking {\tt dual first bundles Y}.
+   Example
+    print chern OO_Y(1)
+    print chern dual first bundles Y
   Caveat
    Perhaps this should be merged with @ TO abstractProjectiveSpace @.  (The optional arguments are slightly different.)
 --------
