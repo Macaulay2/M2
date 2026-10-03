@@ -75,7 +75,7 @@ jobs:
       - name: Configure M2 with installed mathic libraries
         run: |
           cmake -S M2 -B "$RUNNER_TEMP/m2-build" -GNinja \
-            -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
+            -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF -DWITH_OMP=OFF \
             -DCMAKE_PREFIX_PATH="$(brew --prefix);$(brew --prefix libffi)" \
             -DMEMTAILOR_PROVIDER=SYSTEM -DMATHIC_PROVIDER=SYSTEM \
             -DMATHICGB_PROVIDER=SYSTEM
