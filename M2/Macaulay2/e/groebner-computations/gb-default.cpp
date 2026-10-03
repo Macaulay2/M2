@@ -2671,8 +2671,6 @@ Computation /* or null */ *gbA::set_hilbert_function(const RingElement *hf)
 {
   // TODO Problems here:
   //  -- check that the ring is correct
-  //  -- if the computation has already been started, this will fail
-  //     So probably an error should be given, and 0 returned in this case.
 
   // We may only use the Hilbert function if syzygies are not being collected
   // since otherwise we will miss syzygies
@@ -2690,7 +2688,10 @@ Computation /* or null */ *gbA::set_hilbert_function(const RingElement *hf)
       hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
       use_hilb = true;
       hilb_new_elems = true;
-      state = STATE_HILB;
+      // A computation stopped mid-degree must first finish auto-reduction and
+      // create pairs for its new elements.  Those phases naturally lead to
+      // STATE_HILB; only a computation at a degree boundary must be redirected.
+      if (state == STATE_NEWDEGREE) state = STATE_HILB;
     }
 
   return this;
