@@ -1773,12 +1773,16 @@ Node
      the total Segre class of {\tt A}, defined as the reciprocal of the Chern class of the {\em dual} of {\tt A}.  (In
      a future version, the dual may be omitted, and an alternative function {\tt segre'} may be introduced.)
   Description
+    Text
+      The total @TO segre @ class of a sheaf $E$ returns $s(E) = 1/c(E^\vee)$. This is a legacy convention from the original Schubert package for Maple, and the reader should be warned that this differs from Fulton's convention.
     Example
       base(4, Bundle => (B,3,b))
       chern B
       segre B
   SeeAlso
      chern
+     projectiveBundle'
+     projectiveBundle
 Node
   Key
     (segre,ZZ,AbstractSheaf)
