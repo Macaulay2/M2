@@ -454,3 +454,29 @@ assert(instance(h,WeightedRationalMap) and dim target h == 12)
 g = quadricFibration map(L'',1,0);
 assert(dim target g == 2 and dim discriminant g == 1 and degree discriminant g == 6 and dim singularLocus discriminant g == -1)
 ///
+
+TEST /// -- test 32 -- texTable
+debug SpecialFanoFourfolds;
+checkTexTable = F -> (
+    if findProgram("pdflatex",RaiseError=>false) === null then return;
+    texTableRaw(F,"OpenPDF"=>false);
+    assert fileExists "tableK3.pdf";
+    removeFile "tableK3.pdf";
+    texTableRaw(F,"IncludeK3Info"=>false,"OpenPDF"=>false);
+    assert fileExists "tableAll.pdf";
+    removeFile "tableAll.pdf";
+    if instance(F_0,IntersectionOfThreeQuadricsInP7) then associatedCastelnuovoSurface F_0 else associatedK3surface F_0;
+    if instance(F_0,DoublySpecialCubicFourfold) then polarizedK3surface F_0;
+    apply(F,parameterCount);
+    texTableRaw(F,"OpenPDF"=>false);
+    assert fileExists "tableK3.pdf";
+    removeFile "tableK3.pdf";
+    texTableRaw(F,"IncludeK3Info"=>false,"OpenPDF"=>false);
+    assert fileExists "tableAll.pdf";
+    removeFile "tableAll.pdf";
+);
+checkTexTable {cubicFourfold "quartic scroll", cubicFourfold(PP_(ZZ/65521)^(2,2))};
+checkTexTable {specialFourfold "plane in PP^7"};
+X = specialFourfold surface((2,0,0),(1,0,0));
+checkTexTable {X,X}
+///
