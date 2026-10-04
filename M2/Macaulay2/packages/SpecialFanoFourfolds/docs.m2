@@ -50,7 +50,7 @@ SeeAlso => {(discriminant, CubicFourfold)}}
 
 undocumented{(expression, GushelMukaiFourfold), (describe, GushelMukaiFourfold)}
 
-document {Key => {Verbose, [cubicFourfold, Verbose], [gushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [polarizedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose], [example, Verbose]},
+document {Key => {Verbose, [cubicFourfold, Verbose], [gushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [polarizedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose], [example, Verbose], [texTables, Verbose]},
 Headline => "request verbose feedback"}
 
 document {Key => {gushelMukaiFourfold, (gushelMukaiFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (gushelMukaiFourfold, Ideal, Ideal), [gushelMukaiFourfold, InputCheck]},
@@ -599,3 +599,15 @@ Outputs => {},
 PARA {"Imports the stored examples contained in the archive ", TT"f",". To export the current examples into a timestamped archive, use ",TT"store \"@\"",". To remove all stored examples, use ",TT"store \"\"","."},
 EXAMPLE {"store specialFourfold \"quartic scroll\"", "store \"@\"", "store oo", "store \"\""},
 SeeAlso => {(store, HodgeSpecialFourfold), (example, String)}}
+
+document {Key => {texTables, (texTables, List), [texTables, KeepFiles], [texTables, FileName]},
+Headline => "generate summary tables for collections of fourfolds",
+Usage => "texTables L",
+Inputs => {"L" => List => {"of Hodge-special fourfolds"}},
+Outputs => {Sequence => {"a pair ", TEX///$(L',L'')$///, " where ", TEX///$L'$///, " is a reordering of the input list and ", TEX///$L''$///, " is the subsequence corresponding to the examples appearing in the K3 table; both are ordered according to the rows of the corresponding tables"}},
+PARA {"This function generates two PDF tables summarizing the data available for the fourfolds in ", TEX///$L$///, ". Each row corresponds to one example."},
+PARA {"The first table collects general information such as discriminants (hence the corresponding Noether-Lefschetz loci), parameter counts and construction data. Numerical invariants are not computed by this method; they are reported only when already available in the cache of the corresponding example."},
+PARA {"The second table is restricted to examples for which an associated K3 surface can be constructed. In addition to the fourfold data, the rows may include information on the associated K3 surfaces whenever such data has already been computed through methods such as ", TO associatedK3surface, " or ", TO polarizedK3surface, "."},
+PARA {"Optional inputs:"},
+UL {{TO "KeepFiles", " -- if set to ", TO true, ", preserves the intermediate ", TT ".tex", " files used to generate the PDF tables;"}, {TO "FileName", " -- specifies a common prefix for the generated files."}},
+SeeAlso => {associatedK3surface, polarizedK3surface}}

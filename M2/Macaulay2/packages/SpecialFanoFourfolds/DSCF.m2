@@ -322,6 +322,8 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
     );
     if not S.cache#?"ConstructionParameters" then error "not implemented yet: parameterCount for a DoublySpecialCubicFourfold not constructed via specialFourfold(surface((...),(...)))";
     (ai1i2i3,dj1j2j3,n,r) := S.cache#"ConstructionParameters";
+    numPts := sum toList drop(ai1i2i3,1);
+    if eulerCharacteristic S != 3 + numPts - 6*(numberNodes S) then error("parameterCount: minimality condition not satisfied for surface"|(toString ai1i2i3));
     C := S * P;
     if o.Verbose then (
         << "-- starting parameterCount computation" << endl;
@@ -335,7 +337,6 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
         << "  -- P: " << surfaceDescription P << endl;
         << "  -- C = S ∩ P: " << ? ideal((parametrize P)^^ C) << endl;
     );
-    numPts := sum toList drop(ai1i2i3,1);
     modCountPts := max(2*numPts - 8, 0);
     if o.Verbose then << endl << "-- moduli count for " << numPts << " points in ℙ²: " << modCountPts << endl;
     dimGrass := (n-5)*(r-n+6); -- dim GG(n-6,PP^r)
@@ -343,14 +344,8 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
     m := dim target multirationalMap rationalMap(ring(PP_(coefficientRing X)^2), {first dj1j2j3, numPts2});
     if o.Verbose then << "-- dimension of the space of plane curves of degree " << first dj1j2j3 << " passing through " << numPts2 << " general points: " << m << endl;
     if n > 5 and o.Verbose then << "-- dim GG(" << n-6 << "," << r << ") = " << dimGrass << endl;
-    dimAutS := 0;
-    if n > 5 or numPts > 4 then (
-        if o.Verbose then << "-- assuming dim Aut(S,ℙ⁵) = " << dimAutS << endl;
-    ) else (
-        if o.Verbose then << "-- computing h^0(T_S)..." << endl;
-        dimAutS = rank HH^0 tangentSheaf variety S;
-        if o.Verbose then << "-- h^0(T_S) = " << dimAutS << endl;
-    );
+    dimAutS := max(0, 8 - 2*numPts);
+    if o.Verbose then << "-- taking dim Aut(S,ℙ⁵) = " << dimAutS << endl;
     dimFamReducSurf := modCountPts + m + dimGrass + (35 - dimAutS);
     if o.Verbose then << "-- dimension of the family of reducible surfaces S ∪ P in ℙ⁵: " << modCountPts << " + " << m << " + " << (if n > 5 then dimGrass|" + (" else "(") << 35 << " - " << dimAutS << ") = " << dimFamReducSurf << endl;
     b := dim target rationalMap(S+P,3);
@@ -370,27 +365,8 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
     dimFamReducSurfInX := h0NSX + h0NPX;
     if o.Verbose then << "-- upper bound for the dimension of the family of reducible surfaces S ∪ P in X: " << dimFamReducSurfInX << endl;
     z := 54 - (dimFamReducSurf + b - dimFamReducSurfInX);
-    if z <= 0 then (
-        if o.Verbose then << endl << "-- ⚠ invalid codimension estimate in C_8: 54 - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << endl << "-- recomputing dimension of incidence variety using normal sheaves" << endl;
-        if o.Verbose then << endl << "-- computing the normal sheaf of S in ℙ⁵..." << endl << flush;
-        N := normalSheaf S;
-        if o.Verbose then << "-- normal sheaf computed; computing h^0(N_{S,ℙ⁵})..." << endl << flush;
-        h0N := rankHH(0,N);
-        if o.Verbose then << "-- h^0(N_{S,ℙ⁵}) = " << h0N << endl << flush;
-        if o.Verbose then << "-- computing h^0(N_{C,S})..." << endl;
-        h0NCS := rank HH^0 normalSheaf(C,S);
-        if o.Verbose then << "-- h^0(N_{C,S}) = " << h0NCS << endl;
-        dimFamReducSurf' := h0N + h0NCS;
-        if o.Verbose then (
-            << "-- dimension of the family of reducible surfaces S ∪ P in ℙ⁵: h^0(N_{S,ℙ⁵}) + h^0(N_{C,S}) = " << dimFamReducSurf';
-            if dimFamReducSurf' == dimFamReducSurf then << " (same as before)" else << " (≠ " << dimFamReducSurf << ")";
-            << endl;
-            << "-- dimension of the incidence variety {(S,P,X) : S ∪ P ⊂ X}: " << dimFamReducSurf' << " + " << b << " = " << dimFamReducSurf' + b << endl;
-        );
-        dimFamReducSurf = dimFamReducSurf';
-        z = 54 - (dimFamReducSurf + b - dimFamReducSurfInX);
-    );
-    if o.Verbose then << "-- codim. in C_8 of {[X] : S ∪ P ⊂ X} ≤ " << 54 << " - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << (if z <= 0 then " ⚠" else (if z == 1 then " ✅" else "")) << endl;
+    if z <= 0 then error("invalid codimension estimate in C_8: "|(toString z));
+    if o.Verbose then << "-- codim. in C_8 of {[X] : S ∪ P ⊂ X} ≤ " << 54 << " - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << (if z == 1 then " ✅" else "") << endl;
     if X.cache#?(S,P,"parameterCount") and X.cache#(S,P,"parameterCount") =!= (z, (b+1, dimFamReducSurf, dimFamReducSurfInX)) then error "internal error encountered in parameterCount: cached and computed values differ";
     X.cache#(S,P,"parameterCount") = (z, (b+1, dimFamReducSurf, dimFamReducSurfInX))
 );
