@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.8.1",
-    Date => "September 26, 2026",
+    Date => "October 4, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -82,7 +82,8 @@ export{
     "polarizedK3surface",
     "latticePolarization",
     "swap",
-    "example"
+    "example",
+    "texTables"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
@@ -119,6 +120,8 @@ load "./SpecialFanoFourfolds/LatticePolarizedK3.m2";
 load "./SpecialFanoFourfolds/examples.m2";
 
 load "./SpecialFanoFourfolds/utils.m2";
+
+load "./SpecialFanoFourfolds/LatexTables.m2";
 
 load "./SpecialFanoFourfolds/HodgeSpecialSurfaces.m2";
 
