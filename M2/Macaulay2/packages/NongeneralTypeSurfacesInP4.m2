@@ -25,7 +25,7 @@ newPackage(
 	        { Name => "Kristian Ranestad", Email => "ranestad@math.uio.no",HomePage => "https://www.mn.uio.no/math/english/people/aca/ranestad"},
 	        { Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "https://www.math.uni-sb.de/ag/schreyer"}},
     AuxiliaryFiles => false,
-    DebuggingMode => true,
+    DebuggingMode => false,
     PackageExports => {"BGG","AdjunctionForSurfaces","PrimaryDecomposition","Varieties","FastMinors"},
     Keywords => {"Algebraic Geometry", "Projective Algebraic Geometry"},
     --HomePage =>  "todo",
@@ -991,7 +991,8 @@ tateResolutionOfSurface(Ideal,ZZ) := (X,n) -> (
 
 
 tangentToMonad = method();
--- DESCTRIPTION : This command computes the dimension of the tangent space to the space 'M' of monads of the form a*OMega^3(3)->b*Omega^2(2)++c*Omega^1(1)->d*OO at a specific example
+-- DESCTRIPTION : This command computes the dimension of the tangent space to the space 'M' of monads of the form a*OMega^3(3)->b*Omega^2(2)++c*Omega^1(1)->d*OO
+--                at a specific example
 --                by taking the derivative of the composite of differentials. The dimension of the space of isomophism classes of monads is
 --                dim (M)-(a^2+b^2+c^2+5*b*c+d^2-1). 
 tangentToMonad(Ideal) := X -> (
@@ -1108,7 +1109,7 @@ schreyerSurfaceFromModule(Ideal) := M -> (
 schreyerSurface=method(Options=>{Smooth=>true,Verbose=>false})
 --Input: P4: coordinate ring of P4
 --       s: integer desired number of extra syzygies
--- Output: X, homogeneous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
+-- Output: X, homogeenous ideal of a surface of degree 11 sectionalGenus 10 and pg=q=0.
 --           is either rational or non-minimal Enriques
 -- Method: search for a H^1-module M with s extra syzygies leading to a surface X, so s>=2.
 schreyerSurface(Ring,Number) := opt -> (P4,s) -> (
@@ -6032,10 +6033,10 @@ Description
                  -1  0  1  2 3 4 5  6  7   8
     o9 = total: 124 75 39 15 4 4 8 27 75 156
             -4:   1  .  .  . . . .  .  .   .
-	        -3: 123 75 39 15 2 . .  .  .   .
-		    -2:   .  .  .  . 2 . .  .  .   .
-		    -1:   .  .  .  . . 4 5  .  .   .
-		     0:   .  .  .  . . . 3 27 75 156
+	    -3: 123 75 39 15 2 . .  .  .   .
+	    -2:   .  .  .  . 2 . .  .  .   .
+	    -1:   .  .  .  . . 4 5  .  .   .
+	     0:   .  .  .  . . . 3 27 75 156
 
     o9 : BettiTally
     i10 : B==B'
@@ -9535,12 +9536,17 @@ Description
   CannedExample
     i1 : P4=ZZ/3[x_0..x_4];
     i2 : setRandomSeed("carefully chosen good randomSeed ");
-    -- setting random seed to 138829667546446909693617136322436953342431360411403175217286822495497
+     -- setting random seed to 1374551163826207026669476597718446062516322785733807474238809552086
     i3 : elapsedTime X=findRandomSmoothSchreyerSurface(P4,2);
-    -- .305077s elapsed
-    1
-    -- 4.78983s elapsed
-
+    -- 3.43072s elapsed
+    trials to get a surface = 4
+    -- 12.8419s elapsed
+    trials to get a surface = 7
+    -- 5.68296s elapsed
+    trials to get a surface = 11
+    -- 1.14677s elapsed
+    trials to get a surface = 12
+    -- 46.0453s elapsed
     o3 : Ideal of P4
     i4 : minimalBetti X
 
@@ -12249,7 +12255,7 @@ Example
     P4=kk[x_0..x_4];
     E=kk[e_0..e_4,SkewCommutative=>true];
     mdKRs={};
-    setRandomSeed("carefully chosen randomSeed");
+    setRandomSeed("a carefully chosen randomSeed");
     elapsedTime mdKRs'=collectAboSurfaces(mdKRs,P4,E,1) 
 
 *-
@@ -12293,16 +12299,15 @@ Description
     i2 : P4=kk[x_0..x_4];
     i3 : E=kk[e_0..e_4,SkewCommutative=>true];
     i4 : mdKRs={};
-    i5 : setRandomSeed("carefully chosen randomSeed");
-    -- setting random seed to 130783826824055887938028823731402206818653657496837223808
+    i5 : setRandomSeed("a carefully chosen randomSeed");
+    -- setting random seed to 12859679952387275013532894778375581621061831532490241355126
     i6 : elapsedTime mdKRs'=collectAboSurfaces(mdKRs,P4,E,1)
-    -- 10.7997s elapsed
-    K = {1, 1, 1, 3, 3, 3}
+    -- 29.851s elapsed
+    K = {1, 1, 2, 2, 3, 3}
     count1= 1
-    count=1, (K,R)= ({1, 1, 1, 3, 3, 3}, Tally{((2, 1), (1, 6)) => 4 }), dim Hom = 1
-                                               ((2, 4), (1, 21)) => 1
+    count=1, (K,R)= ({1, 1, 2, 2, 3, 3}, Tally{((2, 1), (1, 6)) => 5}), dim Hom = 1
     count1= 1
-    -- 50.4777s elapsed
+    -- 38.2455s elapsed
 
     o6 = {(| 6e_0-5e_1+e_2-9e_3   -8e_0-6e_1+7e_4     e_0+6e_1-3e_2+e_3+4e_4   
 	   | -9e_0-2e_1+8e_2+4e_3 e_0-3e_1-8e_2-6e_4  -3e_0-2e_1+4e_2+3e_3-7e_4
@@ -12354,7 +12359,7 @@ elapsedTime apply(7,k->minimalBetti (X=specificAboSurface(P4,E,k)))
     kk=ZZ/7;
     P4=kk[x_0..x_4];
     E=kk[e_0..e_4,SkewCommutative=>true];    
-    setRandomSeed("carefully choosen fast randomSeed");
+    setRandomSeed("a carefully chosen fast randomSeed");
     elapsedTime (X,m3x4)=randomAboSurface(P4,E);
     saturate minors(2,sub(m3x4,vars P4))
     setRandomSeed("same start");
@@ -12416,10 +12421,10 @@ Description
     i1 : kk=ZZ/7;
     i2 : P4=kk[x_0..x_4];
     i3 : E=kk[e_0..e_4,SkewCommutative=>true];
-    i4 : setRandomSeed("carefully choosen fast randomSeed");
-    -- setting random seed to 1374551163826207026669476597251851023179306320125668960254614211770
+    i4 : setRandomSeed("a carefully chosen fast randomSeed");
+    -- setting random seed to 135156528710285155265756859190185484361550416639925961092515395802088
     i5 : elapsedTime (X,m3x4)=randomAboSurface(P4,E);
-    -- 37.8333s elapsed
+    -- 69.7315s elapsed
     i6 : saturate minors(2,sub(m3x4,vars P4))
 
     o6 = ideal 1
@@ -12993,7 +12998,7 @@ Outputs
   of a degree 8 surface
 Description
   Text
-    We construct the surface from a randomly choosen differential T.dd_3
+    We construct the surface from a randomly chosen differential T.dd_3
     of the Tate resolution of the desired ideal. (From the shape of the Betti table
     of the Tate resolution T below, one can deduce that this matrix determines the Tate resolution,
     and hence the ideal.)
@@ -13502,7 +13507,7 @@ Outputs
   of a degree 10 sectional genus 8 Ranestad surface in P4
 Description
   Text
-    We construct the surface from a carefully choosen H^1_*(I_X) module of the ideal sheaf I_X
+    We construct the surface from a carefully chosen H^1_*(I_X) module of the ideal sheaf I_X
     with Hilbert function (2,5,3).
   CannedExample
     i1 : kk=ZZ/nextPrime 10^3;
@@ -13664,7 +13669,7 @@ Outputs
   of an Enriques surface of degree 10 in P4
 Description
   Text
-    We construct the surface from a carefully choosen H^1_*(I_X) module of the ideal sheaf I_X
+    We construct the surface from a carefully chosen H^1_*(I_X) module of the ideal sheaf I_X
     with Hilbert function (2,5,3).
   CannedExample
     i1 : kk=ZZ/nextPrime 10^3;
@@ -16251,7 +16256,7 @@ Outputs
 Description
   Text
    These abelian surfaces are linked via two quintics to a Horrocks-Mumford surface.
-   The construction uses this liason.
+   The construction uses this liaison.
   CannedExample
    i1 : kk=ZZ/nextPrime 10^3;
    i2 : P4=kk[x_0..x_4];
@@ -17236,7 +17241,7 @@ Key
  ellipticSurfaceD12S14Linfinite
  (ellipticSurfaceD12S14Linfinite,PolynomialRing)
 Headline
- construct a Popescu surface, an elliptic surface of degree 12, sectional genus 14 and infinitly many 6-secant line
+ construct a Popescu surface, an elliptic surface of degree 12, sectional genus 14 and infinitley many 6-secant line
 Usage
  X=ellipticSurfaceD12S14Linfinite P4
 Inputs
@@ -17515,7 +17520,7 @@ Outputs
 Description
   Text
    We construct a specific elliptic surface of degree 13 and sectional genus 16 from
-   a specficAboSurface of number k via linkage. The function needs the ground field
+   a specificAboSurface of number k via linkage. The function needs the ground field
    kk=ZZ/19 and a number k in {1,2,4,6}.
   CannedExample
    i1 : kk=ZZ/19;
@@ -18164,7 +18169,7 @@ Description
     linear system |(H;1^2,4)|. The Picard group of a general Y has rank 2 with
     intersection matrix (A^2,A.B,B^2)=(6,8,6). The hyperplane is H=A+B.
 
-    The 4-fold base point p3 can be choosen arbitrarily. The image of Y under
+    The 4-fold base point p3 can be chosen arbitrarily. The image of Y under
     |(H;4)| maps Y to a surface X1 in P5, which has a nonCM double points q.
     The base points {p1,p2} are the preimage of q in Y, and X is the projection of X1 from q.
   CannedExample
@@ -18272,7 +18277,7 @@ SeeAlso
   Text
     Note that $1225={7 \choose 4}^2$ is the Betti number beta_{7,8} of the ideal of 2x2 minors of the generic 4x4 matrix.
     Although, the Fano variety fano is not a transversal section of this ideal, this particular Tor-groups
-    survives in the restiction.
+    survives in the restriction.
 *-
 
 
@@ -18426,7 +18431,7 @@ Description
     the generic 5x5 matrix.
     Although, the Fano variety fano in P16 is a non-transversal linear section of the
     Segre-product P4xP4 in P24, this particular Tor-group
-    survives in total under the restiction.  
+    survives in total under the restriction.  
         
 References
    Kemeny, M., Betti numbers of curves and multiple-point loci, J. Pure Appl. Algebra 226 (2022), no. 11.
@@ -19568,7 +19573,7 @@ Description
     Horrocks-Mumford matrix compared to 3*2*10-1 dimenensional family of all matrices.
     So the codimsion is
     20=3*2*10-1-(2*(5-3)+8+3+24). 
-    Thus the runnig time to find an example is about 3.5 hours
+    Thus the running time to find an example is about 3.5 hours
     over ZZ/2.
 SeeAlso
   horrocksMumfordSurface
@@ -19628,7 +19633,7 @@ Description
   Text
     The matrix m2x5 defines a vector bundle of rank 2 and chern polynomial
     1-t+4t^2. The functions computes partial information about the variety
-    of unstable planes, which following [BHM] is the interesction of a
+    of unstable planes, which following [BHM] is the intersection of a
     the Grassmannian G(2,5) with a P1xP4 in P9. By [DS] this variety should coincide with
     Shioda's modular variety. We verify some of the assertians. In particular,
     that the singular fibers are 12 pentagons, which come in pairs.
@@ -19884,7 +19889,7 @@ Headline
  an option
 Description
   Text
-    An option key which is usually used to obtain additonal output which gives the number of attemps to find
+    An option key which is usually used to obtain additional output which gives the number of attempts to find
     a certain object during a random search.
 ///
 
