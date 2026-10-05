@@ -81,7 +81,7 @@ ZZp Ideal := opts -> (I) -> (
          savedQuotients#(typ, n)
      else (
 	  if not isPrime n or n > 2^64
-	  then return ZZ[DegreeRank => 0]/n;
+	  then return savedQuotients#(typ, n) = ZZ[DegreeRank => 0]/n;
 	  S := new QuotientRing from 
       if typ === "Ffpack" then rawARingGaloisField(n,1)  
         else if typ === "Flint" then rawARingZZpFlint n
