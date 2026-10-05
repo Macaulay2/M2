@@ -28,7 +28,7 @@ newPackage(
     DebuggingMode => false,
     PackageExports => {"BGG","AdjunctionForSurfaces","PrimaryDecomposition","Varieties","FastMinors"},
     Keywords => {"Algebraic Geometry", "Projective Algebraic Geometry"},
-    --HomePage =>  "todo",
+    HomePage =>  "https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages",
     )
 
 export {
@@ -4679,7 +4679,8 @@ ellipticSurfaceD12S14L0(PolynomialRing):=P4 -> (
 
 ellipticSurfaceD12S14Linfinite=method()
 -- Elliptic surface of degree 12 and sectional genus 14 with infinitely many 6 secant line (B7.9)
---     PURPOSE : Construct a nonsingular elliptic surface of degree 12 and sectional genus 14 with infinitely many 6-secant lines
+--     PURPOSE : Construct a nonsingular elliptic surface of degree 12 and sectional genus 14 with
+--               infinitely many 6-secant lines
 --       INPUT : 'P4', the homogeneous coordinate ring of projective fourspace 
 --      OUTPUT : Ideal of the elliptic surface of degree 12
 -- DESCRIPTION : This function constructs the elliptic surface as the homology of a Beilinson monad 
@@ -4909,8 +4910,10 @@ Headline => "Construction of smooth non-general type surfaces in P4",
     surface not of general type.
 
    During that period, there was a flourish of activities to construct such surfaces, in part using Computer Algebra. In this package we review
-   those constructions, which, after 30 years of Macaulay2, have become simpler and faster. Moreover, we have discovered a few further 
-   examples.",
+   those constructions, which, after 30 years of Macaulay2, have become simpler and faster. 
+   Moreover, we have discovered a few further 
+   examples. We summarized our findings in the paper ", 
+    HREF("https://arxiv.org/abs/2607.16753","Non-general type surfaces in P4, an update"), ".",
 
    PARA{},
      SUBSECTION "Rational surfaces",
@@ -5010,7 +5013,8 @@ Headline => "unirational families of rational surfaces",
 document {
 Key => featuredSurfaces,
 Headline => "Surfaces featured in our paper -- Nongeneral type surfaces in P4, an update",
-PARA{"In our paper [ARS2026], we discuss with some details the following surfaces.
+PARA{"In our paper ", HREF("https://arxiv.org/abs/2607.16753","[ARS2026]"), " we 
+      discuss with some details the following surfaces.
       The documentation of these functions gives some ideas and techniques for how we approached the 
       investigation of various surfaces."},
    SUBSECTION "Linear systems and liaison",
@@ -17241,7 +17245,7 @@ Key
  ellipticSurfaceD12S14Linfinite
  (ellipticSurfaceD12S14Linfinite,PolynomialRing)
 Headline
- construct a Popescu surface, an elliptic surface of degree 12, sectional genus 14 and infinitley many 6-secant line
+ construct a Popescu surface, an elliptic surface of degree 12, sectional genus 14 and infinitely many 6-secant line
 Usage
  X=ellipticSurfaceD12S14Linfinite P4
 Inputs
