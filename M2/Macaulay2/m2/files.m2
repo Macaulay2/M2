@@ -527,6 +527,12 @@ scanLines(Function,String) := (p,inf) -> (		    -- the function p can use "break
      ret)
 scanLines(Function,List) := (p,infs) -> scan(infs,inf->scanLines(p,inf))
 
+changeDirectory = method()
+changeDirectory String := newdir -> (
+    path = apply(path, dir -> minimizeFilename relativizeFilename(newdir, dir));
+    changeDirectory0 newdir)
+changeDirectory () := () -> changeDirectory "~"
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
