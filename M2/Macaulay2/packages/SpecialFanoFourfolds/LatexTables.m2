@@ -17,7 +17,7 @@ texTableRaw = method(Options => {Verbose => true,
                                 KeepFiles => false,
                                 FileName => null,
                                 "SortRows" => true,
-                                "OpenPDF" => true,
+                                "OpenPDF" => false,
                                 "IncludeK3Info" => true,
                                 "RowColor" => null,
                                 "ExampleID" => null,
@@ -120,7 +120,7 @@ texTableRaw List := o -> L -> (
     if fileExists(tableName | ".pdf") then removeFile(tableName | ".pdf");
     (tableName | ".tex") << latexTablePreamble(#L, if o#"IncludeK3Info" then 50 else 30) << (if o#"IncludeK3Info" then latexTableHeaderK3(first L) else latexTableHeaderAll(first L)) << tableRows << latexTableEnding(first L) << close;
     pdflatex := findProgram("pdflatex",RaiseError=>true);
-    runProgram(pdflatex,tableName | " > /dev/null 2>&1",RaiseError=>true,Verbose=>false);
+    runProgram(pdflatex, "\"" | tableName | ".tex\" > /dev/null 2>&1", RaiseError=>true, Verbose=>false);
     -- a := run("pdflatex " | tableName | " > /dev/null 2>&1");
     -- if a =!= 0 then error "LaTeX compilation error";
     try removeFile(tableName | ".log");
@@ -128,7 +128,7 @@ texTableRaw List := o -> L -> (
     if not o.KeepFiles then removeFile(tableName | ".tex");
     if fileExists(tableName | ".pdf") then (
         if o.Verbose then << "-- file " << tableName << ".pdf successfully created in " << currentDirectory() << endl;
-        if o#"OpenPDF" then run("open " | tableName | ".pdf &");
+        if o#"OpenPDF" then run("open \"" | tableName | ".pdf\" &");
     );
     L
 );
