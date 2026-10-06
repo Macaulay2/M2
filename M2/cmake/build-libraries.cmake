@@ -254,8 +254,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpfr gmp MPFR_FOUND)
 
 # http://perso.ens-lyon.fr/nathalie.revol/software.html
 ExternalProject_Add(build-mpfi
-  URL               ${M2_SOURCE_URL}/mpfi-1.5.4.tar.gz
-  URL_HASH          SHA256=32e6ad529c97aa5ce03e28d01c921d1bce1a464fb4c57fbc248d7be21e652782
+  URL               https://gitlab.inria.fr/mpfi/mpfi/-/archive/1.5.5/mpfi-1.5.5.tar.gz
+  URL_HASH          SHA256=47df389d0a529f98fec4c8d400c3f18e1d292c59efd91dd6fcab840da38cc5b9
   PREFIX            libraries/mpfi
   SOURCE_DIR        libraries/mpfi/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
