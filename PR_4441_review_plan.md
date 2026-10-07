@@ -4,6 +4,8 @@ Every changed line gets **two reviewers**, nobody reviews their own changes, and
 
 **How to use this:** find your name below. Each unit you review is a checkbox, with its files (or commits) as sub-boxes. Tick a file when you've reviewed it, and the unit when you're done with it. "With" names the other reviewer on that unit.
 
+**Before merging:** delete this file and every review-notes directory (e.g. `PR4441-CC-CCC-review/`) from the branch, so they do not land in `development`.
+
 ## Overview
 
 ### By reviewer
