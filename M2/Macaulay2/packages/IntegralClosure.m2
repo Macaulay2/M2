@@ -1536,9 +1536,9 @@ doc ///
      S' = QQ[symbol a .. symbol f]
      M' = genericSymmetricMatrix(S',a,3)
      I' = minors(2,M')
-     center = ideal(b,c,e,a-d,d-f)
+     center' = ideal(b,c,e,a-d,d-f)
      S = QQ[a,b,c,d,e]
-     p = map(S'/I',S,gens center)
+     p = map(S'/I',S,gens center')
      I = kernel p
      betti res I
      R = S/I
@@ -1548,9 +1548,9 @@ doc ///
      S' = QQ[a..f]
      M' = genericSymmetricMatrix(S',a,3)
      I' = minors(2,M')
-     center = ideal(b,e,a-d,d-f)
+     center' = ideal(b,e,a-d,d-f)
      S = QQ[a,b,d,e]
-     p = map(S'/I',S,gens center)
+     p = map(S'/I',S,gens center')
      I = kernel p
      betti res I
      R = S/I
