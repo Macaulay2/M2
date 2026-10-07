@@ -32,7 +32,7 @@ texTableRaw List := o -> L -> (
     if o#"IncludeK3Info" then (
         if o.Verbose then << "-- selecting fourfolds with an associated K3 surface..." << endl;
         hasK3 := X -> (
-            if instance(X,DoublySpecialCubicFourfold) then return X.cache#"quadricFibrationCubicFourfoldInC8"_1;
+            if instance(X,DoublySpecialCubicFourfold) then return hasRationalSection X;
             if instance(X,CubicFourfold) then return isAdmissible X;
             if instance(X,GushelMukaiFourfold) then return isAdmissibleGM X;
             if instance(X,IntersectionOfThreeQuadricsInP7) then return true; -- forced
@@ -111,7 +111,7 @@ texTableRaw List := o -> L -> (
             if DSCFcase then tableRows = tableRows | " & " | (exampleID X);
             tableRows = tableRows | " & " | (toString i);
         ) else (
-            if DSCFcase then tableRows = tableRows | " & " | (tex X.cache#"numberOfResidualPointsInGenericQuadricFiber");
+            if DSCFcase then tableRows = tableRows | " & " | (tex X.cache#(append(surfaces X,"numberOfResidualPointsInGenericQuadricFiber")));
         );
     );
     tableName := o.FileName;
@@ -195,10 +195,9 @@ parameterCountTex DoublySpecialCubicFourfold := X -> (
         w1 = tex w';
     ) else (
         x' = 1 + dim target rationalMap(S,3);
-        if X.cache#?"CustomData" and instance(X.cache#"CustomData",List) then (
-            w'' := first first X.cache#"CustomData";
-            (x'',y'',z'') := last first X.cache#"CustomData";
-            if not(w'' === null and x'' === x') then error errLog;
+        if X.cache#?(S,"CustomParameterCount") then (
+            (x'',y'',z'') := X.cache#(S,"CustomParameterCount");
+            if x'' =!= x' then error errLog;
             if z === " - " then z = z'';
             if z =!= z'' then error errLog;
             if y'' =!= null then (

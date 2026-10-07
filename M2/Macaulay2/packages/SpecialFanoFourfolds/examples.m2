@@ -99,8 +99,8 @@ printAvailableExamples = () -> (
     s
 );
 
-example = method(Options => {Verbose => false});
-example (String,ZZ) := o -> (str,n) -> (
+example = method(Options => {Verbose => true});
+exampleMem = memoize((str,n,verb) -> (
     (pfx,cls) := if n == 0
                  then ("dscf_",DoublySpecialCubicFourfold)
                  else if n == 1
@@ -114,14 +114,15 @@ example (String,ZZ) := o -> (str,n) -> (
                  else error("invalid example type " | (toString n) | "; expected an integer between 0 and 4");
     F := examplesDir() | "/" | pfx | str | ".dat";
     if not fileExists F then error("example \"" | str | "\" not found." | newline | printAvailableExamples());
-    if o.Verbose then << "-- loading example data..." << endl;
+    if verb then << "-- loading example(\"" << str << "\"," << n << ")..." << endl;
     dataString := get F;
-    if o.Verbose then << "-- evaluating example data..." << endl;
+    if verb then << "-- evaluating example(\"" << str << "\"," << n << ")..." << endl;
     X := value dataString;
     if not instance(X,cls) then error "corrupted example data";
-    if o.Verbose then << "-- all done." << endl;
+    if verb then << "-- example(\"" << str << "\"," << n << ") ready." << endl;
     X
-);
+));
+example (String,ZZ) := o -> (str,n) -> exampleMem(str,n,o.Verbose);
 example (ZZ,ZZ) := o -> (i,n) -> example(toString i,n,Verbose=>o.Verbose);
 example String := o -> str -> (
     S := select(availableExamples(), a -> last a == str);
@@ -187,6 +188,7 @@ store String := f -> (
     if f === "" then (
         run("rm -rf '" | examplesPath | "'");
         if fileExists examplesPath then error "failed to remove the existing examples directory";
+        memoizeClear exampleMem;
         << "-- stored examples removed" << endl;
         return;
     );
@@ -197,7 +199,12 @@ store String := f -> (
     store "";
     run("tar -xzf '" | f | "' -C '" | applicationDirectory() | "'");
     if not fileExists examplesPath then error "failed to import examples from archive";
-    << "-- examples imported from \"" << f << "\"" << endl << printAvailableExamples() << endl;
+    << "-- examples imported from \"" << f << "\"" << endl;
+    if fileExists(examplesPath | "/welcome.m2") then (
+        load(examplesPath | "/welcome.m2");
+    ) else (
+        << printAvailableExamples() << endl;
+    );
 );
 
 ------------------------------------------------------------------------
