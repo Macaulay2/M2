@@ -1,5 +1,7 @@
 #!/bin/sh
 
+progname=${0##*/}
+
 dir=$(dirname "$0")
 if [ -x "$dir/M2" ]; then
     M2="$dir/M2"
@@ -7,7 +9,52 @@ else
     M2=M2
 fi
 
-"$M2" --silent --stop                 \
+usage() {
+    cat <<EOF
+Usage: $progname [OPTION]...
+
+Start the Macaulay2 language server, communicating with a client over standard
+input and output using the Language Server Protocol.  It is normally launched
+by an editor or IDE rather than run interactively.
+
+Options:
+  -h, --help     print this help message and exit
+  -v, --version  print version information and exit
+
+Report bugs at <https://github.com/Macaulay2/M2/issues>.
+EOF
+}
+
+while [ $# -gt 0 ]; do
+    case $1 in
+	-h|--help)
+	    usage
+	    exit 0
+	    ;;
+	-v|--version)
+	    exec "$M2" --silent                                         \
+	               -e 'needsPackage "LanguageServer"'               \
+	               -e "<< \"$progname \""                           \
+	               -e '<< (options LanguageServer).Version << endl' \
+	               -e 'exit 0'
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+	-*)
+	    echo "$progname: unrecognized option '$1'" >&2
+	    usage >&2
+	    exit 1
+	    ;;
+	*)
+	    break
+	    ;;
+    esac
+    shift
+done
+
+exec "$M2" --silent --stop            \
    -e 'clearEcho stdio'               \
    -e 'needsPackage "LanguageServer"' \
    -e 'server = new LSPServer'        \
