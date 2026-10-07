@@ -259,7 +259,7 @@ HodgeSpecialFourfold ? HodgeSpecialFourfold := (X,Y) -> (
         if (surface X).cache#"linear system on PP^2" < (surface Y).cache#"linear system on PP^2" then return symbol <;
         if (surface X).cache#"linear system on PP^2" > (surface Y).cache#"linear system on PP^2" then return symbol >;
     );
-    if ideal X == ideal Y and surface X == surface Y then return symbol ==;
+    if ring ambient X === ring ambient Y and ideal X == ideal Y and surface X == surface Y then return symbol ==;
     incomparable
 );
 
