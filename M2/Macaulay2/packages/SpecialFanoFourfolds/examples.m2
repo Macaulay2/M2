@@ -119,6 +119,7 @@ exampleMem = memoize((str,n,verb) -> (
     if verb then << "-- evaluating example(\"" << str << "\"," << n << ")..." << endl;
     X := value dataString;
     if not instance(X,cls) then error "corrupted example data";
+    X.cache#"exampleNameInArchive" = str;
     if verb then << "-- example(\"" << str << "\"," << n << ") ready." << endl;
     X
 ));
@@ -144,7 +145,7 @@ store (HodgeSpecialFourfold,String,Option) := (X,str,opt) -> (
            else if instance(X,IntersectionOfThreeQuadricsInP7)
            then "i3q_"
            else "hsf_";
-    F :=  examplesDir() | "/" | pfx | str | ".dat";
+    F := examplesDir() | "/" | pfx | str | ".dat";
     if fileExists F then error("example \"" | str | "\" already exists; please choose another name");
     F << toExternalString X << close;
     if not fileExists F then error("failed to store example \"" | str | "\"");
@@ -165,12 +166,12 @@ store (HodgeSpecialFourfold,Option) := (X,opt) -> (
            then "i3q_"
            else "hsf_";
     i := 0;
-    str := pfx | (toString vars i);
-    F :=  examplesDir() | "/" | pfx | str | ".dat";
+    str := if X.cache#?"exampleNameInArchive" then X.cache#"exampleNameInArchive" else pfx | (toString vars i);
+    F := examplesDir() | "/" | pfx | str | ".dat";
     while fileExists F do (
         i = i + 1;
-        str = pfx | (toString vars i);
-        F =  examplesDir() | "/" | pfx | str | ".dat";
+        str = if X.cache#?"exampleNameInArchive" then (X.cache#"exampleNameInArchive") | "_" | (toString i) else pfx | (toString vars i);
+        F = examplesDir() | "/" | pfx | str | ".dat";
     );
     store(X,str,opt)
 );
@@ -189,7 +190,15 @@ store String := f -> (
         run("rm -rf '" | examplesPath | "'");
         if fileExists examplesPath then error "failed to remove the existing examples directory";
         memoizeClear exampleMem;
-        << "-- stored examples removed" << endl;
+        << "-- local examples archive cleared" << endl;
+        return;
+    );
+    if #f >= 8 and substring(f,0,8) === "https://" then (
+        tmpArchive := "ExamplesArchiveSFF";
+        run("curl -fLs -o " | tmpArchive | ".tar.gz " | f);
+        if not fileExists(tmpArchive | ".tar.gz") then error("failed to download archive from " | f);
+        store tmpArchive;
+        removeFile(tmpArchive | ".tar.gz");
         return;
     );
     if not fileExists f then (
@@ -199,7 +208,7 @@ store String := f -> (
     store "";
     run("tar -xzf '" | f | "' -C '" | applicationDirectory() | "'");
     if not fileExists examplesPath then error "failed to import examples from archive";
-    << "-- examples imported from \"" << f << "\"" << endl;
+    << "-- examples archive successfully imported" << endl;
     if fileExists(examplesPath | "/welcome.m2") then (
         load(examplesPath | "/welcome.m2");
     ) else (
