@@ -410,7 +410,7 @@ toExternalString DoublySpecialCubicFourfold := X -> (
     s = s | "T := projectiveVariety(" | toString sub(ideal T,vars ringP5) | ",Saturate=>false);" | newline;
     s = s | "X := projectiveVariety(" | toString sub(ideal X,vars ringP5) | ",Saturate=>false);" | newline;
     s = s | "X = specialFourfold(S & T,X,NumNodes=>" | toString apply(surfaces X,numberNodes) | ",InputCheck=>0);" | newline;
-    if X.cache#?"CustomData" then s = s | ///X.cache#"CustomData" = /// | toString X.cache#"CustomData" | ";" | newline;
+    if X.cache#?"CustomData" then s = s | ///X.cache#"CustomData" = /// | "///" | toString X.cache#"CustomData" | "///;" | newline;
     if X.cache#?(S,T,"labelDSCF") then s = s | ///X.cache#(S,T,"labelDSCF") = "/// | toString X.cache#(S,T,"labelDSCF") | ///";/// | newline;
     if S.cache#?"ConstructionParameters" then s = s | ///S.cache#"ConstructionParameters" = /// | toString S.cache#"ConstructionParameters" | ";" | newline;
     if T.cache#?"ConstructionParameters" then s = s | ///T.cache#"ConstructionParameters" = /// | toString T.cache#"ConstructionParameters" | ";" | newline;

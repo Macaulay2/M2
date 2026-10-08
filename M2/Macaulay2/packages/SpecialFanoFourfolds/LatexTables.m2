@@ -22,7 +22,9 @@ texTableRaw = method(Options => {Verbose => true,
                                 "RowColor" => null,
                                 "ExampleID" => null,
                                 "NoetherLefschetzLocus" => null,
-                                "PolarizationDataOnK3" => null});
+                                "PolarizationDataOnK3" => null,
+                                "PaperWidth" => null,
+                                "PaperHeight" => null});
 texTableRaw List := o -> L -> (
     if #L == 0 then error "expected a non-empty list";
     if not all(L, X -> instance(X,HodgeSpecialFourfold)) then error "expected a list of Hodge-special fourfolds";
@@ -118,7 +120,9 @@ texTableRaw List := o -> L -> (
     if tableName === null then (if o#"IncludeK3Info" then tableName = "tableK3" else tableName = "tableAll");
     if fileExists(tableName | ".tex") then removeFile(tableName | ".tex");
     if fileExists(tableName | ".pdf") then removeFile(tableName | ".pdf");
-    (tableName | ".tex") << latexTablePreamble(#L, if o#"IncludeK3Info" then 50 else 30) << (if o#"IncludeK3Info" then latexTableHeaderK3(first L) else latexTableHeaderAll(first L)) << tableRows << latexTableEnding(first L) << close;
+    paperwidth := if o#"PaperWidth" =!= null then o#"PaperWidth" else (if o#"IncludeK3Info" then 50 else 30);
+    paperheight := if o#"PaperHeight" =!= null then o#"PaperHeight" else max(10, ceiling(1.11 * #L));
+    (tableName | ".tex") << latexTablePreamble(paperheight,paperwidth) << (if o#"IncludeK3Info" then latexTableHeaderK3(first L) else latexTableHeaderAll(first L)) << tableRows << latexTableEnding(first L) << close;
     pdflatex := findProgram("pdflatex",RaiseError=>true);
     runProgram(pdflatex, "\"" | tableName | ".tex\" > /dev/null 2>&1", RaiseError=>true, Verbose=>false);
     -- a := run("pdflatex " | tableName | " > /dev/null 2>&1");
@@ -283,7 +287,7 @@ latexTablePreamble (ZZ,ZZ) := (n,m) -> ///
 \usepackage[utf8]{inputenc}
 \usepackage[
     paperwidth=/// | (toString m) | ///cm,
-    paperheight=/// | (toString max(10, ceiling(1.11 * n))) | ///cm,
+    paperheight=/// | (toString n) | ///cm,
     margin=1cm
 ]{geometry}
 \usepackage{amsmath}
