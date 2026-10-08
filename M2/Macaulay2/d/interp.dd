@@ -496,7 +496,7 @@ debugger(f:Frame,c:Code):Expr := (
      setDebuggingMode(false);
        oldDebuggerCode := getGlobalVariable(currentS);
        setGlobalVariable(currentS,Expr(PseudocodeClosure(f,c)));
-	 printMessage(codePosition(c), "entering debugger (enter 'help' to see commands)");
+	 printMessage(codePosition(c), "\n"+ "ENTERING DEBUGGER (enter 'help' to see commands, enter 'break' to quit the debugger)");
 	 incrementInterpreterDepth();
 	   if debuggerHook != nullE then (
 		r := applyEE(debuggerHook,True);
