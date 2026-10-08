@@ -1218,42 +1218,41 @@ vertexCovers Graph := List => G -> (
 
 stronglyConnectedComponents = method()
 stronglyConnectedComponents Digraph := List => D -> (
-    indices := new MutableHashTable;
-    low := new MutableHashTable;
-    active := new MutableHashTable;
-    stack := {};
-    counter := 0;
-    components := {};
+    discovery := new MutableHashTable;
+    lowLink := new MutableHashTable;
+    onStack := new MutableHashTable;
+    -- Each vertex is pushed once; s is the number of vertices on the stack.
+    S := new MutableList from toList(#vertexSet D:null);
+    s := 0;
+    t := 0;
+    C := new MutableHashTable;
     local visit;
-    visit = vertex -> (
-        indices#vertex = counter;
-        low#vertex = counter;
-        counter = counter + 1;
-        stack = prepend(vertex, stack);
-        active#vertex = true;
-        scan(toList children(D, vertex), neighbor -> (
-            if not indices#?neighbor then (
-                visit neighbor;
-                low#vertex = min(low#vertex, low#neighbor)
+    visit = v -> (
+        discovery#v = t;
+        lowLink#v = t;
+        t = t + 1;
+        S#s = v;
+        s = s + 1;
+        onStack#v = true;
+        scan(toList children(D, v), w -> (
+            if not discovery#?w then (
+                visit w;
+                lowLink#v = min(lowLink#v, lowLink#w)
                 )
-            else if active#neighbor then
-                low#vertex = min(low#vertex, indices#neighbor);
+            else if onStack#w then
+                lowLink#v = min(lowLink#v, discovery#w);
             ));
-        if low#vertex == indices#vertex then (
-            component := {};
-            finished := false;
-            while not finished do (
-                member := first stack;
-                stack = drop(stack, 1);
-                active#member = false;
-                component = prepend(member, component);
-                finished = member == vertex;
+        if lowLink#v == discovery#v then
+            -- Popping through v collects this component without copying S.
+            C#(#C) = while onStack#v list (
+                s = s - 1;
+                w := S#s;
+                onStack#w = false;
+                w
                 );
-            components = append(components, component);
-            );
         );
-    scan(vertexSet D, vertex -> if not indices#?vertex then visit vertex);
-    components
+    scan(vertexSet D, v -> if not discovery#?v then visit v);
+    apply(#C, i -> C#i)
     )
 
 weaklyConnectedComponents = method()
