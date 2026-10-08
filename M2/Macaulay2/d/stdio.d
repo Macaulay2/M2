@@ -5,6 +5,7 @@ use errio;
 use gmp;
 use expr;
 use stdio0;
+use varstrin;
 
 header "#include \"../system/m2fileinterface.h\"
 	#include <assert.h>";
@@ -143,6 +144,8 @@ export stdIO  := newFile("stdio",  0,
 
 export interpreterDepth := 0;
 export lineNumber := 0;
+stdioSource := newvarstring(bufsize);
+export getStdioSource():string := tostring(stdioSource);
 texmacsprompt():string := (
      s := "";
      for i from 1 to interpreterDepth do s = s + "i";
@@ -757,11 +760,7 @@ export filbuf(o:file):int := (
 	       r = (
 		    if o.infd == NOFD 
 		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
-		    else (
-			ret := read(o.infd,o.inbuffer,n,o.insize);
-			if ret > 0 && o == stdIO
-			then addHistory(tocharstarn(o.inbuffer, ret - 1));
-			ret)));
+		    else read(o.infd,o.inbuffer,n,o.insize)));
 	  if r == ERROR then (
 	       fileErrorMessage(o,"read");
 	       return r;
@@ -854,6 +853,7 @@ export getc(o:file):int := (
      else if o.bol && !o.readline then maybeprompt(o);
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
+     if o == stdIO then stdioSource << c;
      if o.echo && o.echoindex < o.inindex then (
 	  while o.echoindex < o.insize && (
 	       e := o.inbuffer.(o.echoindex);
