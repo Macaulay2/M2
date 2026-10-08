@@ -1,7 +1,7 @@
 newPackage(
     "CylindricalAlgebraicDecomposition",
     Version => "1.0.4",
-    Date => "2025/11/21",
+    Date => "2026/08/28",
     Headline => "(open) Cylindrical Algebraic Decompositions",
     Authors => {
     { Name => "Lee, C.",
