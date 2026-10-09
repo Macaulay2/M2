@@ -53,7 +53,7 @@ add_custom_command(OUTPUT ${EMACS_FILES}
   COMMAND ${CMAKE_COMMAND} -E copy M2-emacs-help.txt M2-emacs.m2 M2-symbols.el.gz ${CMAKE_CURRENT_SOURCE_DIR}/emacs
   MAIN_DEPENDENCY emacs/make-M2-emacs-help.m2
   WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
-  DEPENDS emacs/M2-symbols.el make-M2-symbols.m2)
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/emacs/M2-symbols.el make-M2-symbols.m2)
 
 ################################################################################
 ## Generating prism.js/highlight.js for syntax highlighting in the html
