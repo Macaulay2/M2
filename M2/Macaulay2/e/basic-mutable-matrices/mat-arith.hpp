@@ -83,7 +83,7 @@ struct SubMatrix
         long cA = begin_column;
         long cB = src.begin_column;
         for (; cA < end_column; ++cA, ++cB)
-          matrix.ring().set(matrix.entry(rA, cA), src.matrix.entry(rB, cB));
+          matrix.ring().copy(matrix.entry(rA, cA), src.matrix.entry(rB, cB));
       }
   }
 
@@ -236,7 +236,7 @@ void transpose(const DMat<RT>& A, DMat<RT>& result)
 
   for (int r = 0; r < A.numRows(); ++r)
     for (int c = 0; c < A.numColumns(); ++c)
-      A.ring().set(result.entry(c,r), A.entry(r,c));
+      A.ring().copy(result.entry(c,r), A.entry(r,c));
 }
 
 //  wA = 0
@@ -269,7 +269,7 @@ void set(DMat<RT>& A, MatrixWindow wA, const DMat<RT>& B, MatrixWindow wB)
       long cA = wA.begin_column;
       long cB = wB.begin_column;
       for (; cA < wA.end_column; ++cA, ++cB)
-        A.ring().set(A.entry(rA, cA), B.entry(rB, cB));
+        A.ring().copy(A.entry(rA, cA), B.entry(rB, cB));
     }
 }
 

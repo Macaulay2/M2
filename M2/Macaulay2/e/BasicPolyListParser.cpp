@@ -277,9 +277,8 @@ BasicPolyList parseBasicPolyListFromString(std::string contents, const Identifie
           continue;
         }
 
-      BasicPoly F;
-      parseBasicPoly(thisline, idenMap, F);
-      Fs.push_back(F);
+      Fs.emplace_back();
+      parseBasicPoly(thisline, idenMap, Fs.back());
     }
   return Fs;
 }
@@ -333,9 +332,8 @@ BasicPolyList parseMsolveFromString(std::string contents)
           continue;
         }
 
-      BasicPoly F;
-      parseBasicPoly(thisline, idenMap, F);
-      Fs.push_back(F);
+      Fs.emplace_back();
+      parseBasicPoly(thisline, idenMap, Fs.back());
     }
   return Fs;
 }

@@ -556,7 +556,7 @@ void setDMatFromSparseMatrixGenerator(Gen& G, DMat<RingType>& M)
     {
       for (int j=0; j<i.components().size(); ++j)
       {
-        M.ring().set_from_long(M.entry(i.components()[j], i.column()), i.coefficients()[j]);
+        M.ring().set(M.entry(i.components()[j], i.column()), i.coefficients()[j]);
       }
     }
 }
@@ -570,7 +570,7 @@ void setDMatFromSparseMatrixGeneratorTransposed(Gen& G, DMat<RingType>& M)
     {
       for (int j=0; j<i.components().size(); ++j)
       {
-        M.ring().set_from_long(M.entry(i.column(), i.components()[j]), i.coefficients()[j]);
+        M.ring().set(M.entry(i.column(), i.components()[j]), i.coefficients()[j]);
       }
     }
 }

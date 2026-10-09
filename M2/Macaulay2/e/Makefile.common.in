@@ -5,6 +5,10 @@ CPPFLAGS := $(M2_CPPFLAGS) $(CPPFLAGS)
 CFLAGS   := $(M2_CFLAGS)   $(CFLAGS)
 CXXFLAGS := $(M2_CXXFLAGS) $(CXXFLAGS) -Wno-unused-local-typedefs $(OPENMP_CXXFLAGS)
 
+CFLAGS   += $(GCOV_CFLAGS)
+CXXFLAGS += $(GCOV_CXXFLAGS)
+LDFLAGS  += $(GCOV_LDFLAGS)
+
 ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC
 endif
@@ -76,7 +80,7 @@ COMPILE.cpp = $(COMPILE.cc)
 
 @pre_librariesdir@/libengine.so: $(LOFILES)
 	$(HIDE)$(MKDIR_P) $(@D) || test -d $(@D)
-	@CXX@ -shared $(OPENMP_CXXFLAGS) $(OPENMP_LIBS) $^ $(OUTPUT_OPTION)
+	@CXX@ -shared $(GCOV_LDFLAGS) $(OPENMP_CXXFLAGS) $(OPENMP_LIBS) $^ $(OUTPUT_OPTION)
 
 @pre_librariesdir@/libengine.a: $(ENGINE_OFILES)
 	$(HIDE)$(MKDIR_P) $(@D) || test -d $(@D)

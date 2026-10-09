@@ -29,15 +29,24 @@ MACRO (_SCC_TRANSLATE _source _prev)
     set(_dependency ${${_prev}_source})
   endif()
 
+  # the compiler runs from the top of the build tree, so the paths that scc1
+  # records in its "# line" directives have to be relative to that
+  file(RELATIVE_PATH _rel_source
+    ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${_source})
+  file(RELATIVE_PATH _rel_bindir ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
+  # scc1 names its output after the basename of its input, so it lands in the
+  # working directory and has to be moved back here
   add_custom_command(OUTPUT ${_name}-tmp.${_ext} ${_name}-exports.h ${_name}.sig ${_name}.dep
     COMMENT "Generating ${_name}-tmp.${_ext}"
     COMMAND
-      scc1 ${SCCFLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
+      scc1 ${SCCFLAGS} -I${_rel_bindir} ${_rel_source}
     COMMAND
-      mv ${_name}.sig.tmp ${_name}.sig &&
-      mv ${_name}.dep.tmp ${_name}.dep &&
-      mv ${_name}-exports.h.tmp ${_name}-exports.h
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      mv ${_name}-tmp.${_ext} ${CMAKE_CURRENT_BINARY_DIR}/${_name}-tmp.${_ext} &&
+      mv ${_name}.sig.tmp ${CMAKE_CURRENT_BINARY_DIR}/${_name}.sig &&
+      mv ${_name}.dep.tmp ${CMAKE_CURRENT_BINARY_DIR}/${_name}.dep &&
+      mv ${_name}-exports.h.tmp ${CMAKE_CURRENT_BINARY_DIR}/${_name}-exports.h
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/${_source}
     DEPENDS scc1 ${_dependency})
 
