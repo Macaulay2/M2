@@ -7,9 +7,6 @@
 
 needsPackage "Style"
 
--- Emacs: Write M2-symbols.el
-generateGrammar("emacs/M2-symbols.el", x -> demark(" ", format \ x))
-
 -- Prism: Write macaulay2.js
 generateGrammar("prism/macaulay2.js", x -> demark("|", x))
 
@@ -22,5 +19,5 @@ generateGrammar("pygments/macaulay2.py",
     x -> demark("," | newline | "    ", format \ x))
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/editors M2-editors "
 -- End:

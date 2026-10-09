@@ -1957,7 +1957,6 @@ layoutMap := new HashTable from {
     "bin" => "executable files (M2)",
     "data" => "architecture independent data files",
     "docdir" => "documentation for Macaulay2 packages",
-    "emacs" => "Emacs source files (*.el, *.elc)",
     "factory gftables" => "directory for files containing addition tables in small finite fields used by the library 'factory'",
     "info" => "documentation in info form",
     "lib" => "architecture dependent data and executable files",
