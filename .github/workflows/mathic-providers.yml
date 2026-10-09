@@ -1,0 +1,87 @@
+name: CMake mathic library providers
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/mathic-providers.yml'
+      - 'M2/cmake/select-mathic-libraries.cmake'
+      - 'M2/cmake/tests/test_mathic_providers.py'
+  push:
+    branches: [development]
+    paths:
+      - '.github/workflows/mathic-providers.yml'
+      - 'M2/cmake/select-mathic-libraries.cmake'
+      - 'M2/cmake/tests/test_mathic_providers.py'
+permissions:
+  contents: read
+jobs:
+  providers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install probe dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ pkg-config
+      - name: Check system and bundled provider selection
+        run: python3 M2/cmake/tests/test_mathic_providers.py -v
+  installed-libraries:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install M2 dependencies from Homebrew bottles
+        run: |
+          brew update
+          brew trust macaulay2/tap
+          brew tap macaulay2/tap
+          brew install automake bison boost libtool tbb ccache ctags llvm make yasm libffi msolve googletest fplll eigen jansson r palp ninja pkgconf
+          brew install texinfo || true
+          brew install --only-dependencies macaulay2/tap/M2
+          brew install macaulay2/tap/memtailor macaulay2/tap/mathic macaulay2/tap/mathicgb
+          brew link factory --force
+      # The tap's release bottles install libraries and headers, but no CMake
+      # package config or .pc files. Point pkg-config at the real bottle files.
+      - name: Describe installed mathic libraries to pkg-config
+        run: |
+          mkdir -p "$RUNNER_TEMP/mathic-pc"
+          tbb_prefix=$(brew --prefix tbb)
+          for spec in memtailor:1.4 mathic:1.5 mathicgb:1.4; do
+            lib=${spec%%:*}
+            version=${spec#*:}
+            prefix=$(brew --prefix "macaulay2/tap/$lib")
+            test -f "$prefix/lib/lib$lib.a" -o -f "$prefix/lib/lib$lib.dylib"
+            requires=
+            extra_libs=
+            extra_cflags=
+            case "$lib" in
+              mathic) requires=memtailor ;;
+              mathicgb)
+                requires='mathic memtailor'
+                extra_libs="-L$tbb_prefix/lib -ltbb"
+                extra_cflags="-I$tbb_prefix/include"
+                ;;
+            esac
+            cat > "$RUNNER_TEMP/mathic-pc/$lib.pc" <<EOF
+          prefix=$prefix
+          libdir=\${prefix}/lib
+          includedir=\${prefix}/include
+          Name: $lib
+          Description: Homebrew Macaulay2/tap $lib bottle
+          Version: $version
+          Requires: $requires
+          Libs: -L\${libdir} -l$lib $extra_libs
+          Cflags: -I\${includedir} $extra_cflags
+          EOF
+          done
+          echo "PKG_CONFIG_PATH=$RUNNER_TEMP/mathic-pc" >> "$GITHUB_ENV"
+      - name: Configure M2 with installed mathic libraries
+        run: |
+          cmake -S M2 -B "$RUNNER_TEMP/m2-build" -GNinja \
+            -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF -DWITH_OMP=OFF \
+            -DCMAKE_PREFIX_PATH="$(brew --prefix);$(brew --prefix libffi)" \
+            -DMEMTAILOR_PROVIDER=SYSTEM -DMATHIC_PROVIDER=SYSTEM \
+            -DMATHICGB_PROVIDER=SYSTEM
+      - name: Build M2 engine and unit tests against installed libraries
+        run: |
+          cmake --build "$RUNNER_TEMP/m2-build" --target build-libraries build-programs
+          cmake --build "$RUNNER_TEMP/m2-build" --target M2-unit-tests
+      - name: Run M2 engine unit tests
+        run: "$RUNNER_TEMP/m2-build/Macaulay2/e/M2-unit-tests"
