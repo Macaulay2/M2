@@ -69,7 +69,7 @@ export {
    "spohnCI"
 }
 
-
+-- Version 1.0 of the package has been reviewed and is on track for an acceptance recommendation in the Journal of Software for Algebra and Geometry. 
 --***************************************--
 --   METHODS FOR CORRELATED EQUILIBRIA   --
 --***************************************--
@@ -817,7 +817,7 @@ doc ///
     Text
      {\bf Game Theory} is a package for several equilibrium concepts in game theory. It constructs the algebro-geometric and
      combinatorial models for Nash, correlated, dependency, and conditional independence equilibria. The latter three notions of
-     equilibria are all generalizations of Nash equilibria. An $n$-player game in normal form is defined by $n$-tensors of format
+     equilibria are all generalizations of Nash equilibria. The accompanying paper for this package is [@HREF("https://arxiv.org/abs/2507.16755","The GameTheory package for Macaulay2")@]. An $n$-player game in normal form is defined by $n$-tensors of format
      $d_1 \times d_2 \times \cdots \times d_n$, where $d_i$ is the number of pure strategies of player $i$.
      The entry $\{j_1, j_2, \cdots, j_n\}$ of the $i$-th (payoff) tensor for player $i$ is the payoff when player $1$ chooses
      strategy $j_1$, player $2$ chooses strategy $j_2$, and so on. One can define a specific game or a random game, e.g.,
