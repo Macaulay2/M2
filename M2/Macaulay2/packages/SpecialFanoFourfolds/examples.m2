@@ -5,6 +5,7 @@
 
 trisecantFlop = method(Options => {Verbose => false});
 trisecantFlop ZZ := o -> i -> (
+    if o.Verbose then << "-- warning: trisecantFlop may be deprecated in a future version. Consider importing examples with store and accessing them via example instead." << endl;
     try needsPackage "TrisecantFlops" else (
         git := findProgram("git", "git --help");
         dir := temporaryFileName() | "/";
@@ -135,7 +136,7 @@ example ZZ := o -> i -> example(toString i,Verbose=>o.Verbose);
 
 store (HodgeSpecialFourfold,String,Option) := (X,str,opt) -> (
     o := toList opt;
-    if not(#o == 2 and first o === Verbose) then error "Verbose is the only available option for store(HodgeSpecialFourfold,String)";
+    if not(#o == 2 and first o === RaiseError) then error "RaiseError is the only available option for store(HodgeSpecialFourfold,String)";
     pfx := if instance(X,DoublySpecialCubicFourfold)
            then "dscf_"
            else if instance(X,CubicFourfold)
@@ -146,16 +147,22 @@ store (HodgeSpecialFourfold,String,Option) := (X,str,opt) -> (
            then "i3q_"
            else "hsf_";
     F := examplesDir() | "/" | pfx | str | ".dat";
-    if fileExists F then error("example \"" | str | "\" already exists; please choose another name");
+    alreadyExists := fileExists F;
+    if (last o) and alreadyExists then error("example \"" | str | "\" already exists; please choose another name or use RaiseError=>false to overwrite it");
     F << toExternalString X << close;
-    if not fileExists F then error("failed to store example \"" | str | "\"");
-    if last o then << "-- example \"" << str << "\" stored" << endl << printAvailableExamples() << endl;
+    if not fileExists F then error("failed to save example \"" | str | "\"");
+    if alreadyExists then (
+        << "-- example \"" << str << "\" successfully overwritten" << endl;
+    ) else (
+        << "-- example \"" << str << "\" successfully stored" << endl;
+    );
     str
 );
 store (HodgeSpecialFourfold,ZZ,Option) := (X,i,opt) -> store(X,toString i,opt);
-store (HodgeSpecialFourfold,String) := (X,str) -> store(X,str,Verbose=>false);
-store (HodgeSpecialFourfold,ZZ) := (X,i) -> store(X,i,Verbose=>false);
-store (HodgeSpecialFourfold,Option) := (X,opt) -> (
+store (HodgeSpecialFourfold,String) := (X,str) -> store(X,str,RaiseError=>true);
+store (HodgeSpecialFourfold,ZZ) := (X,i) -> store(X,i,RaiseError=>true);
+store HodgeSpecialFourfold := X -> (
+    if X.cache#?"exampleNameInArchive" then return store(X,X.cache#"exampleNameInArchive",RaiseError=>false);
     pfx := if instance(X,DoublySpecialCubicFourfold)
            then "dscf_"
            else if instance(X,CubicFourfold)
@@ -166,16 +173,15 @@ store (HodgeSpecialFourfold,Option) := (X,opt) -> (
            then "i3q_"
            else "hsf_";
     i := 0;
-    str := if X.cache#?"exampleNameInArchive" then X.cache#"exampleNameInArchive" else pfx | (toString vars i);
+    str := pfx | (toString vars i);
     F := examplesDir() | "/" | pfx | str | ".dat";
     while fileExists F do (
         i = i + 1;
-        str = if X.cache#?"exampleNameInArchive" then (X.cache#"exampleNameInArchive") | "_" | (toString i) else pfx | (toString vars i);
+        str = pfx | (toString vars i);
         F = examplesDir() | "/" | pfx | str | ".dat";
     );
-    store(X,str,opt)
+    store(X,str,RaiseError=>true)
 );
-store HodgeSpecialFourfold := X -> store(X,Verbose=>false);
 store String := f -> (
     if f === "@" then (
         archiveName := "Examples_" | first lines get("!date +%Y-%m-%d_%H-%M");
@@ -193,12 +199,15 @@ store String := f -> (
         << "-- local examples archive cleared" << endl;
         return;
     );
+    if f === "~" then f = "https://raw.githubusercontent.com/giovannistagliano/SpecialFanoFourfoldsExamples/refs/heads/main/ExamplesSFF.tar.gz";
     if #f >= 8 and substring(f,0,8) === "https://" then (
-        tmpArchive := "ExamplesArchiveSFF";
-        run("curl -fLs -o " | tmpArchive | ".tar.gz " | f);
-        if not fileExists(tmpArchive | ".tar.gz") then error("failed to download archive from " | f);
+        curl := findProgram("curl", "curl -h");
+        tmpArchive := temporaryFileName() | ".tar.gz";
+        << "-- downloading examples archive..." << endl;
+        runProgram(curl, "-fLs -o " | tmpArchive | " " | f, RaiseError=>true, Verbose=>false);
+        if not fileExists tmpArchive then error("failed to download archive from " | f);
         store tmpArchive;
-        removeFile(tmpArchive | ".tar.gz");
+        -- removeFile tmpArchive;
         return;
     );
     if not fileExists f then (

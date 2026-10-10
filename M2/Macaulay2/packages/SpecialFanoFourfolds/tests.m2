@@ -459,19 +459,19 @@ TEST /// -- test 32 -- texTable
 debug SpecialFanoFourfolds;
 checkTexTable = F -> (
     if findProgram("pdflatex",RaiseError=>false) === null then return;
-    texTableRaw(F,"OpenPDF"=>false);
+    texTableRaw(F,OpenPDF=>false);
     assert fileExists "tableK3.pdf";
     removeFile "tableK3.pdf";
-    texTableRaw(F,"IncludeK3Info"=>false,"OpenPDF"=>false);
+    texTableRaw(F,"IncludeK3Info"=>false,OpenPDF=>false);
     assert fileExists "tableAll.pdf";
     removeFile "tableAll.pdf";
     if instance(F_0,IntersectionOfThreeQuadricsInP7) then associatedCastelnuovoSurface F_0 else associatedK3surface F_0;
     if instance(F_0,DoublySpecialCubicFourfold) then polarizedK3surface F_0;
     apply(F,parameterCount);
-    texTableRaw(F,"OpenPDF"=>false);
+    texTableRaw(F,OpenPDF=>false);
     assert fileExists "tableK3.pdf";
     removeFile "tableK3.pdf";
-    texTableRaw(F,"IncludeK3Info"=>false,"OpenPDF"=>false);
+    texTableRaw(F,"IncludeK3Info"=>false,OpenPDF=>false);
     assert fileExists "tableAll.pdf";
     removeFile "tableAll.pdf";
 );
