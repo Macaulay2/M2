@@ -623,12 +623,24 @@ Inputs => {"n" => ZZ => {"an integer between 0 and 4 specifying a type of fourfo
 Outputs => {Sequence => {"the output of ", TO texTables, " applied to all examples of the specified type currently available in the local examples archive"}},
 PARA {"This method retrieves all examples of the specified type currently available in the local examples archive and generates summary tables for them."},
 PARA {"The correspondence between values of ", TT"n", " and fourfold types is as follows: 0 for doubly special cubic fourfolds, 1 for cubic fourfolds, 2 for Gushel-Mukai fourfolds, 3 for intersections of three quadrics in ", TEX///$\mathbb P^7$///, ", and 4 for other Hodge-special fourfold examples."},
-EXAMPLE {"X = cubicFourfold surface((2,0),(1,0));",
+if findProgram("pdflatex", RaiseError => false) =!= null
+then EXAMPLE {"X = cubicFourfold surface((2,0),(1,0));",
 "parameterCount X; polarizedK3surface polarizedK3surface X; -- compute and cache some data for X",
 "store X; -- store X in the local examples archive",
 "store X; -- store a second copy of X under a different name",
 "texTables(0,Verbose=>true,KeepFiles=>true,OpenPDF=>false,FileName=>\"myTable\"); -- generate tables from all stored DSCF examples",
-"get \"myTableK3.tex\""},
+"get \"myTableK3.tex\""}
+else PRE ///
+i1 : X = cubicFourfold surface((2,0),(1,0));
+
+i2 : parameterCount X; polarizedK3surface polarizedK3surface X; -- compute and cache some data for X
+
+i3 : store X; -- store X in the local examples archive
+
+i4 : store X; -- store a second copy of X under a different name
+
+i5 : texTables(0,Verbose=>true,KeepFiles=>true,OpenPDF=>true,FileName=>"myTable"); -- generate tables from all stored DSCF examples
+///,
 SeeAlso => {texTables, (store,String), example}}
 
 undocumented{(texTables, Nothing)}
