@@ -39,9 +39,7 @@ texTableRaw = method(Options => {Verbose => true,
                                 "RowColor" => null,
                                 "ExampleID" => null,
                                 "NoetherLefschetzLocus" => null,
-                                "PolarizationDataOnK3" => null,
-                                "PaperWidth" => null,
-                                "PaperHeight" => null});
+                                "PolarizationDataOnK3" => null});
 texTableRaw List := o -> L -> (
     if #L == 0 then error "expected a non-empty list";
     if not all(L, X -> instance(X,HodgeSpecialFourfold)) then error "expected a list of Hodge-special fourfolds";
@@ -139,13 +137,9 @@ texTableRaw List := o -> L -> (
     if tableName === null then (if o#"IncludeK3Info" then tableName = "tableK3" else tableName = "tableAll");
     if fileExists(tableName | ".tex") then removeFile(tableName | ".tex");
     if fileExists(tableName | ".pdf") then removeFile(tableName | ".pdf");
-    paperwidth := if o#"PaperWidth" =!= null then o#"PaperWidth" else (if o#"IncludeK3Info" then 50 else 30);
-    paperheight := if o#"PaperHeight" =!= null then o#"PaperHeight" else max(10, ceiling(1.11 * #L));
-    (tableName | ".tex") << latexTablePreamble(paperheight,paperwidth) << (if o#"IncludeK3Info" then latexTableHeaderK3(first L,exampleID =!= false) else latexTableHeaderAll(first L,exampleID =!= false)) << tableRows << latexTableEnding(first L) << close;
+    (tableName | ".tex") << latexTablePreamble() << (if o#"IncludeK3Info" then latexTableHeaderK3(first L,exampleID =!= false) else latexTableHeaderAll(first L,exampleID =!= false)) << tableRows << latexTableEnding(first L) << close;
     pdflatex := findProgram("pdflatex",RaiseError=>true);
     runProgram(pdflatex, "\"" | tableName | ".tex\" > /dev/null 2>&1", RaiseError=>true, Verbose=>false);
-    -- a := run("pdflatex " | tableName | " > /dev/null 2>&1");
-    -- if a =!= 0 then error "LaTeX compilation error";
     try removeFile(tableName | ".log");
     try removeFile(tableName | ".aux");
     if not o.KeepFiles then removeFile(tableName | ".tex");
@@ -168,7 +162,6 @@ tableRowFourfoldInfoTex DoublySpecialCubicFourfold := X -> (
     row := ///$\mathfrak{S}/// | (texMath matrix {toList ai1i2i3, toList dj1j2j3}) | /// $ & $\begin{array}{c} \deg(S)=/// | (toString degree S) | " , g(S)= " | (toString sectionalGenus S) | /// \\ \operatorname{gens\,id.}: /// | (degreesVarTex S) | /// \\ \deg(C)= /// | (toString degree C) | " , n(C)= " | (toString numberNodes S) | /// \end{array}$ ///;
     A := latticeIntersectionMatrix3x3 X;
     q := quotientRemainder(det A,8);
-    -- z := if last q == 5 then " = " | (toString first q) | /// \cdot 8 + /// | (toString last q) | " = " else " = ";
     z := " = " | (toString first q) | /// \cdot 8 + /// | (toString last q) | " = ";
     row | " & $" | toString(det A) | z | /// \det /// | (texMath A) | "$ "
 );
@@ -300,36 +293,26 @@ minimalK3Tex HodgeSpecialFourfold := o -> X -> (
     /// $\begin{array}{c} g(\widetilde{U}) = /// | (toString sectionalGenus U) | /// \\ \deg(\widetilde{U})= /// | (toString degree U) | /// \end{array} $ ///
 );
 
-latexTablePreamble = method();
-latexTablePreamble (ZZ,ZZ) := (n,m) -> ///
-\documentclass[10pt]{amsart}
+latexTablePreamble = () -> ///\documentclass[margin=10pt]{standalone}
 \usepackage[utf8]{inputenc}
-\usepackage[
-    paperwidth=/// | (toString m) | ///cm,
-    paperheight=/// | (toString n) | ///cm,
-    margin=1cm
-]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{color,colortbl}
 \usepackage{xcolor}
 \usepackage[most]{tcolorbox}
-\usepackage{adjustbox}
 \usepackage{multirow}
-\usepackage{url}
-\usepackage{lscape}
 \usepackage{verbatim}
 \begin{document}
-\thispagestyle{empty}
+
+%\begin{table}[htbp]
+%\centering
+%\footnotesize
 ///;
 
 latexTableHeaderK3 = method();
 -- X is used only for method dispatch
 latexTableHeaderK3(DoublySpecialCubicFourfold,Boolean) := (X,WithExampleID) -> (
     T := ///
-\begin{table}[htbp]
-\centering
-\footnotesize
 \begin{tabular}{|c///;
     if WithExampleID then T = T | "|c";
     T = T | ///||c|c|l|c||l|c|c|c|c||c|c|c|c|c|r|c||c|}
@@ -343,9 +326,6 @@ $i$ & ///;
 );
 latexTableHeaderK3(HodgeSpecialFourfold,Boolean) := (X,WithExampleID) -> (
     T := ///
-\begin{table}[htbp]
-\centering
-\footnotesize
 \begin{tabular}{|c///;
     if WithExampleID then T = T | "|c";
     T = T | ///||c|c|l|c||l|c|c|c||c|c|c|c|c||c|}
@@ -362,9 +342,6 @@ latexTableHeaderAll = method();
 -- X is used only for method dispatch
 latexTableHeaderAll(DoublySpecialCubicFourfold,Boolean) := (X,WithExampleID) -> (
     T := ///
-\begin{table}[htbp]
-\centering
-\footnotesize
 \begin{tabular}{|c///;
     if WithExampleID then T = T | "|c";
     T = T | ///||c|c|c|c|l|c|c|c|c|c|}
@@ -378,9 +355,6 @@ $i$ & ///;
 );
 latexTableHeaderAll(HodgeSpecialFourfold,Boolean) := (X,WithExampleID) -> (
     T := ///
-\begin{table}[htbp]
-\centering
-\footnotesize
 \begin{tabular}{|c///;
     if WithExampleID then T = T | "|c";
     T = T | ///||c|c|c|c|l|c|c|c|}
@@ -398,11 +372,9 @@ latexTableEnding = method();
 latexTableEnding DoublySpecialCubicFourfold := X -> ///
 \\ \hline
 \end{tabular}
-\end{table}
+%\end{table}
 
 \begin{comment}
-\clearpage
-\newpage
 \begin{center}
 {\footnotesize \today. (\textdagger): $\left(\dim\{S\cup P: S\cup P \subset \mathbb{P}^5\}, h^0(N_{S,\mathbb{P}^5})\right)$;
 (\textdaggerdbl): $\left( h^0({\mathcal I}_{S\cup P,\mathbb{P}^5}(3)),h^0({\mathcal I}_{S,\mathbb{P}^5}(3)) \right)$;
@@ -415,11 +387,9 @@ latexTableEnding DoublySpecialCubicFourfold := X -> ///
 latexTableEnding HodgeSpecialFourfold := X -> ///
 \\ \hline
 \end{tabular}
-\end{table}
+%\end{table}
 
 \begin{comment}
-\clearpage
-\newpage
 \begin{center}
 {\footnotesize \today. (\textdagger): $h^0(N_{S,\mathbb{P}^n})$;
 (\textdaggerdbl): $h^0({\mathcal I}_{S,\mathbb{P}^n}(e))$;
