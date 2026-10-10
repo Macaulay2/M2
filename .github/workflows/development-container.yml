@@ -1,0 +1,29 @@
+name: Build development container
+
+on:
+  # The job selects the trusted branch below, allowing forks to test this
+  # workflow on a separate branch using a repository variable.
+  push:
+  workflow_dispatch:
+    inputs:
+      clean:
+        description: Ignore the cached build and refresh system dependencies
+        type: boolean
+        default: false
+
+# Every development update gets its own build. Only the current branch head
+# may advance the shared development image tag.
+concurrency:
+  group: development-container-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == format('refs/heads/{0}', vars.M2_CI_DEVELOPMENT_BRANCH || 'development')
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/cmake-container.yml
+    with:
+      publish: true
+      clean: ${{ inputs.clean == true }}
