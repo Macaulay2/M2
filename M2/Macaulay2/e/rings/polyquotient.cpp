@@ -162,6 +162,9 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
 {
   if (nvars_ == 1 && n_quotients() == 1 && K_->is_field() && ! K_->is_fraction_field())
     {
+      // Avoid setting the engine error state for unsupported coefficient rings.
+      if (!factoryGoodRing(getAmbientRing())) return from_long(0);
+
       ring_elem g = quotient_element(0);
 
       RingElement *f1 = RingElement::make_raw(getAmbientRing(), f);
@@ -169,14 +172,7 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
       const RingElement *u1;
       const RingElement *v1;
       const RingElement *ret = rawExtendedGCDRingElement(f1, g1, &u1, &v1);
-      if (ret == nullptr)
-        {
-          // one reason this might return nullptr is if the coefficient ring is not
-          // ZZ/n, ZZ, or QQ
-          // now what do we do?
-          // we can't return nullptr
-          INTERNAL_ERROR("ring element gcd computation failed");
-        }
+      if (ret == nullptr) return from_long(0);
       if (!getAmbientRing()->is_unit(ret->get_value())) return from_long(0);
       return u1->get_value();
     }
