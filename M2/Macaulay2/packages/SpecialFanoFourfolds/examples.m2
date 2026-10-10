@@ -5,6 +5,7 @@
 
 trisecantFlop = method(Options => {Verbose => false});
 trisecantFlop ZZ := o -> i -> (
+    if o.Verbose then << "-- warning: trisecantFlop may be deprecated in a future version. Consider importing examples with store and accessing them via example instead." << endl;
     try needsPackage "TrisecantFlops" else (
         git := findProgram("git", "git --help");
         dir := temporaryFileName() | "/";
@@ -99,8 +100,8 @@ printAvailableExamples = () -> (
     s
 );
 
-example = method(Options => {Verbose => false});
-example (String,ZZ) := o -> (str,n) -> (
+example = method(Options => {Verbose => true});
+exampleMem = memoize((str,n,verb) -> (
     (pfx,cls) := if n == 0
                  then ("dscf_",DoublySpecialCubicFourfold)
                  else if n == 1
@@ -114,14 +115,16 @@ example (String,ZZ) := o -> (str,n) -> (
                  else error("invalid example type " | (toString n) | "; expected an integer between 0 and 4");
     F := examplesDir() | "/" | pfx | str | ".dat";
     if not fileExists F then error("example \"" | str | "\" not found." | newline | printAvailableExamples());
-    if o.Verbose then << "-- loading example data..." << endl;
+    if verb then << "-- loading example(\"" << str << "\"," << n << ")..." << endl;
     dataString := get F;
-    if o.Verbose then << "-- evaluating example data..." << endl;
+    if verb then << "-- evaluating example(\"" << str << "\"," << n << ")..." << endl;
     X := value dataString;
     if not instance(X,cls) then error "corrupted example data";
-    if o.Verbose then << "-- all done." << endl;
+    X.cache#"exampleNameInArchive" = str;
+    if verb then << "-- example(\"" << str << "\"," << n << ") ready." << endl;
     X
-);
+));
+example (String,ZZ) := o -> (str,n) -> exampleMem(str,n,o.Verbose);
 example (ZZ,ZZ) := o -> (i,n) -> example(toString i,n,Verbose=>o.Verbose);
 example String := o -> str -> (
     S := select(availableExamples(), a -> last a == str);
@@ -133,7 +136,7 @@ example ZZ := o -> i -> example(toString i,Verbose=>o.Verbose);
 
 store (HodgeSpecialFourfold,String,Option) := (X,str,opt) -> (
     o := toList opt;
-    if not(#o == 2 and first o === Verbose) then error "Verbose is the only available option for store(HodgeSpecialFourfold,String)";
+    if not(#o == 2 and first o === RaiseError) then error "RaiseError is the only available option for store(HodgeSpecialFourfold,String)";
     pfx := if instance(X,DoublySpecialCubicFourfold)
            then "dscf_"
            else if instance(X,CubicFourfold)
@@ -143,17 +146,23 @@ store (HodgeSpecialFourfold,String,Option) := (X,str,opt) -> (
            else if instance(X,IntersectionOfThreeQuadricsInP7)
            then "i3q_"
            else "hsf_";
-    F :=  examplesDir() | "/" | pfx | str | ".dat";
-    if fileExists F then error("example \"" | str | "\" already exists; please choose another name");
+    F := examplesDir() | "/" | pfx | str | ".dat";
+    alreadyExists := fileExists F;
+    if (last o) and alreadyExists then error("example \"" | str | "\" already exists; please choose another name or use RaiseError=>false to overwrite it");
     F << toExternalString X << close;
-    if not fileExists F then error("failed to store example \"" | str | "\"");
-    if last o then << "-- example \"" << str << "\" stored" << endl << printAvailableExamples() << endl;
+    if not fileExists F then error("failed to save example \"" | str | "\"");
+    if alreadyExists then (
+        << "-- example \"" << str << "\" successfully overwritten" << endl;
+    ) else (
+        << "-- example \"" << str << "\" successfully stored" << endl;
+    );
     str
 );
 store (HodgeSpecialFourfold,ZZ,Option) := (X,i,opt) -> store(X,toString i,opt);
-store (HodgeSpecialFourfold,String) := (X,str) -> store(X,str,Verbose=>false);
-store (HodgeSpecialFourfold,ZZ) := (X,i) -> store(X,i,Verbose=>false);
-store (HodgeSpecialFourfold,Option) := (X,opt) -> (
+store (HodgeSpecialFourfold,String) := (X,str) -> store(X,str,RaiseError=>true);
+store (HodgeSpecialFourfold,ZZ) := (X,i) -> store(X,i,RaiseError=>true);
+store HodgeSpecialFourfold := X -> (
+    if X.cache#?"exampleNameInArchive" then return store(X,X.cache#"exampleNameInArchive",RaiseError=>false);
     pfx := if instance(X,DoublySpecialCubicFourfold)
            then "dscf_"
            else if instance(X,CubicFourfold)
@@ -165,15 +174,14 @@ store (HodgeSpecialFourfold,Option) := (X,opt) -> (
            else "hsf_";
     i := 0;
     str := pfx | (toString vars i);
-    F :=  examplesDir() | "/" | pfx | str | ".dat";
+    F := examplesDir() | "/" | pfx | str | ".dat";
     while fileExists F do (
         i = i + 1;
         str = pfx | (toString vars i);
-        F =  examplesDir() | "/" | pfx | str | ".dat";
+        F = examplesDir() | "/" | pfx | str | ".dat";
     );
-    store(X,str,opt)
+    store(X,str,RaiseError=>true)
 );
-store HodgeSpecialFourfold := X -> store(X,Verbose=>false);
 store String := f -> (
     if f === "@" then (
         archiveName := "Examples_" | first lines get("!date +%Y-%m-%d_%H-%M");
@@ -187,7 +195,19 @@ store String := f -> (
     if f === "" then (
         run("rm -rf '" | examplesPath | "'");
         if fileExists examplesPath then error "failed to remove the existing examples directory";
-        << "-- stored examples removed" << endl;
+        memoizeClear exampleMem;
+        << "-- local examples archive cleared" << endl;
+        return;
+    );
+    if f === "~" then f = "https://raw.githubusercontent.com/giovannistagliano/SpecialFanoFourfoldsExamples/refs/heads/main/ExamplesSFF.tar.gz";
+    if #f >= 8 and substring(f,0,8) === "https://" then (
+        curl := findProgram("curl", "curl -h");
+        tmpArchive := temporaryFileName() | ".tar.gz";
+        << "-- downloading examples archive..." << endl;
+        runProgram(curl, "-fLs -o " | tmpArchive | " " | f, RaiseError=>true, Verbose=>false);
+        if not fileExists tmpArchive then error("failed to download archive from " | f);
+        store tmpArchive;
+        -- removeFile tmpArchive;
         return;
     );
     if not fileExists f then (
@@ -197,7 +217,12 @@ store String := f -> (
     store "";
     run("tar -xzf '" | f | "' -C '" | applicationDirectory() | "'");
     if not fileExists examplesPath then error "failed to import examples from archive";
-    << "-- examples imported from \"" << f << "\"" << endl << printAvailableExamples() << endl;
+    << "-- examples archive successfully imported" << endl;
+    if fileExists(examplesPath | "/welcome.m2") then (
+        load(examplesPath | "/welcome.m2");
+    ) else (
+        << printAvailableExamples() << endl;
+    );
 );
 
 ------------------------------------------------------------------------

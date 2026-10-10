@@ -259,7 +259,7 @@ HodgeSpecialFourfold ? HodgeSpecialFourfold := (X,Y) -> (
         if (surface X).cache#"linear system on PP^2" < (surface Y).cache#"linear system on PP^2" then return symbol <;
         if (surface X).cache#"linear system on PP^2" > (surface Y).cache#"linear system on PP^2" then return symbol >;
     );
-    if ideal X == ideal Y and surface X == surface Y then return symbol ==;
+    if ring ambient X === ring ambient Y and ideal X == ideal Y and surface X == surface Y then return symbol ==;
     incomparable
 );
 
@@ -514,7 +514,8 @@ toExternalString HodgeSpecialFourfold := X -> (
     if instance(X,GushelMukaiFourfold)
     then s = s|"X = specialFourfold(S,X,InputCheck=>0);"|newline|///X.cache#"AmbientFivefold" = V;///|newline else
     s = s|"X = specialFourfold(S,X,V,InputCheck=>0);"|newline;
-    if X.cache#?"CustomData" then s = s|///X.cache#"CustomData" = ///|(toString X.cache#"CustomData")|";"|newline;
+    if X.cache#?"CustomData" then s = s|///X.cache#"CustomData" = ///|"///"|(toString X.cache#"CustomData")|"///;"|newline;
+    if (surface X).cache#?"linear system on PP^2" then s = s|///(surface X).cache#"linear system on PP^2" = ///|(toString (surface X).cache#"linear system on PP^2")|";"|newline;
     if (surface X).cache#?"euler" then s = s|///(surface X).cache#"euler" = ///|toString(euler surface X)|";"|newline;
     if (surface X).cache#?"FiniteNumberOfNodes" then s = s|///(surface X).cache#"FiniteNumberOfNodes" = ///|toString(numberNodes surface X)|";"|newline;
     if (surface X).cache#?"rationalParametrization" then (

@@ -87,7 +87,6 @@ rationalSurfaceWithAttachedPlaneInCubicFourfold (EmbeddedProjectiveVariety,Visib
     X := cubicFourfold(S' & planeC',cubicS',Verbose=>o.Verbose);
     X.cache#"Construction" = "X = specialFourfold surface"|(toString take(S'.cache#"ConstructionParameters",2))|";";
     X.cache#"DataConstruction" = (S,C,piLin);
-    -- X.cache#(append(surfaces X,"intersection of surface cycles in cubic fourfold")) = -(first dj1j2j3)^2 + sum toList drop(dj1j2j3,1);
     if o.Verbose then << endl << describe X << endl;
     S'.cache#"pickedCubicFourfold" = X;
     S'
@@ -126,10 +125,11 @@ describe DoublySpecialCubicFourfold := X -> (
     d1 := discriminant X;
     d2 := discriminant Y;
     A := latticeIntersectionMatrix3x3 X;
+    (q,r) := quotientRemainder(det A,8);
     Cd1Cd2 := "C_"|(toString d1);
     if d1 != d2 then Cd1Cd2 = Cd1Cd2|" ∩ C_"|(toString d2);
     descr := "Cubic fourfold in "|Cd1Cd2|" over "|toString(coefficientRing X)|" of lattice discriminant";
-    descr = descr||((net(newline|"det("))|(net A)|(net(newline|") = "|(toString det A))));
+    descr = descr||((net(newline|"det("))|(net A)|(net(newline|") = "|(toString det A)|" = "|(toString q)|"*8 + "|(toString r))));
     descr = descr||net "containing two surfaces:";
     descr = descr||net(" - " | surfaceDescription(3,S,true));
     descr = descr||net(" - " | surfaceDescription(3,T,true));
@@ -149,12 +149,24 @@ describe DoublySpecialCubicFourfold := X -> (
     );
     if isPlaneInP5 T or isPlaneInP5 S then (
         idX := if substring(0,8,recognizeDSCF X) === "DSCF-V1-" then "   {ID: "|substring(8,recognizeDSCF X)|"}" else "";
-        h := quadricFibration X;
-        symb := if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then "★ " else "☆ ";
-        descr = descr||(symb|X.cache#"quadricFibrationCubicFourfoldInC8"_2);
-        if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then descr = descr||((computationStatusLog X)|idX);
+        symb := if hasRationalSection X then "★ " else "☆ ";
+        descr = descr||(symb|(genericQuadricFiberDescription X));
+        if hasRationalSection X then descr = descr||((computationStatusLog X)|idX);
         if computationStatus X >= 1 then descr = descr || (describeMirrorFourfoldAndK3 X);
     );
+    if X.cache#?(append(surfaces X,"parameterCount")) then (
+        (w,xyz) := X.cache#(append(surfaces X,"parameterCount"));
+        (x,y,z) := xyz;
+        if w =!= 54 - (y+(x-1)-z) then error "internal error encountered";
+        descr = descr || ("Parameter count: "|(toString w)|" = 54 - ("|(toString y)|" + "|toString(x-1)|" - "|(toString z)|")");
+        if X.cache#?(surface X,"parameterCount") then (
+            (w,xyz) = X.cache#(surface X,"parameterCount");
+            (x,y,z) = xyz;
+            if w =!= 55 - (y+(x-1)-z) then error "internal error encountered";
+            descr = descr || ("                 "|(toString w)|" = 55 - ("|(toString y)|" + "|toString(x-1)|" - "|(toString z)|")");
+        );
+    );
+    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
     net expression descr
 );
 
@@ -292,24 +304,36 @@ unfuse CubicFourfold := X -> (
 );
 
 quadricFibration DoublySpecialCubicFourfold := o -> X -> (
-    if X.cache#?"quadricFibrationCubicFourfoldInC8" then return first X.cache#"quadricFibrationCubicFourfoldInC8";
-    (T,P) := surfaces X;
-    if not isPlaneInP5 P then (P,T) = (T,P);
-    if not isPlaneInP5 P then error "one of the two surfaces is required to be a plane";
+    (S,T) := surfaces X;
+    if X.cache#?(S,T,"quadricFibration") then return X.cache#(S,T,"quadricFibration");
+    if not(isPlaneInP5 S or isPlaneInP5 T) then error "quadricFibration: one of the two surfaces is required to be a plane";
+    (S',P) := (S,T);
+    if not isPlaneInP5 P then (S',P) = (T,S);
     h := quadricFibration(rationalMap(P_X),Verify=>false);
-    if not(codim target h == 0 and dim target h == 2) then error "something went wrong in the construction of the quadric fibration, target != PP^2";
+    if not(codim target h == 0 and dim target h == 2) then error "something went wrong in the construction of the quadric fibration: target != PP^2";
     F := h^* point target h;
-    if not(dim F == 2 and degree F == 2) then error "something went wrong in the construction of the quadric fibration, the generic fiber is not a quadric surface";
-    Z := (F * T)\\P;
+    if not(dim F == 2 and degree F == 2) then error "something went wrong in the construction of the quadric fibration: the generic fiber is not a quadric surface";
+    Z := (F * S')\\P;
     assert(dim Z <= 1);
-    resFib := "";
-    if dim Z == 1 then resFib = "The generic quadric fiber meets the other surface residually along a curve";
-    if dim Z == 0 and degree Z != 1 then resFib = "The generic quadric fiber meets the other surface residually in "|(toString degree Z)|" points";
-    if dim Z == 0 and degree Z == 1 then resFib = "The generic quadric fiber meets the other surface residually in a single point";
-    if dim Z == -1 then resFib = "The generic quadric fiber meets the other surface residually in the empty set";
-    X.cache#"quadricFibrationCubicFourfoldInC8" = (h, dim Z == 0 and degree Z == 1, resFib);
-    X.cache#"numberOfResidualPointsInGenericQuadricFiber" = if dim Z == 1 then infinity else (if dim Z == -1 then 0 else degree Z);
-    first X.cache#"quadricFibrationCubicFourfoldInC8"
+    X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber") = if dim Z == 1 then infinity else (if dim Z == -1 then 0 else degree Z);
+    X.cache#(S,T,"quadricFibration") = h
+);
+
+hasRationalSection = method();
+hasRationalSection DoublySpecialCubicFourfold := X -> (
+    (S,T) := surfaces X;
+    if not X.cache#?(S,T,"numberOfResidualPointsInGenericQuadricFiber") then quadricFibration X;
+    n := X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber");
+    n === 1
+);
+
+genericQuadricFiberDescription = method();
+genericQuadricFiberDescription DoublySpecialCubicFourfold := X -> (
+    if hasRationalSection X then return "The generic quadric fiber meets the other surface residually in a single point";
+    n := X.cache#(append(surfaces X,"numberOfResidualPointsInGenericQuadricFiber"));
+    if n === infinity then return "The generic quadric fiber meets the other surface residually along a curve";
+    if n > 1 then return "The generic quadric fiber meets the other surface residually in "|n|" points";
+    if n == 0 then return "The generic quadric fiber meets the other surface residually in the empty set";
 );
 
 parameterCount DoublySpecialCubicFourfold := o -> X -> (
@@ -322,6 +346,8 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
     );
     if not S.cache#?"ConstructionParameters" then error "not implemented yet: parameterCount for a DoublySpecialCubicFourfold not constructed via specialFourfold(surface((...),(...)))";
     (ai1i2i3,dj1j2j3,n,r) := S.cache#"ConstructionParameters";
+    numPts := sum toList drop(ai1i2i3,1);
+    if eulerCharacteristic S != 3 + numPts - 6*(numberNodes S) then error("parameterCount: minimality condition not satisfied for surface"|(toString ai1i2i3));
     C := S * P;
     if o.Verbose then (
         << "-- starting parameterCount computation" << endl;
@@ -335,7 +361,6 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
         << "  -- P: " << surfaceDescription P << endl;
         << "  -- C = S ∩ P: " << ? ideal((parametrize P)^^ C) << endl;
     );
-    numPts := sum toList drop(ai1i2i3,1);
     modCountPts := max(2*numPts - 8, 0);
     if o.Verbose then << endl << "-- moduli count for " << numPts << " points in ℙ²: " << modCountPts << endl;
     dimGrass := (n-5)*(r-n+6); -- dim GG(n-6,PP^r)
@@ -343,14 +368,8 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
     m := dim target multirationalMap rationalMap(ring(PP_(coefficientRing X)^2), {first dj1j2j3, numPts2});
     if o.Verbose then << "-- dimension of the space of plane curves of degree " << first dj1j2j3 << " passing through " << numPts2 << " general points: " << m << endl;
     if n > 5 and o.Verbose then << "-- dim GG(" << n-6 << "," << r << ") = " << dimGrass << endl;
-    dimAutS := 0;
-    if n > 5 or numPts > 4 then (
-        if o.Verbose then << "-- assuming dim Aut(S,ℙ⁵) = " << dimAutS << endl;
-    ) else (
-        if o.Verbose then << "-- computing h^0(T_S)..." << endl;
-        dimAutS = rank HH^0 tangentSheaf variety S;
-        if o.Verbose then << "-- h^0(T_S) = " << dimAutS << endl;
-    );
+    dimAutS := max(0, 8 - 2*numPts);
+    if o.Verbose then << "-- taking dim Aut(S,ℙ⁵) = " << dimAutS << endl;
     dimFamReducSurf := modCountPts + m + dimGrass + (35 - dimAutS);
     if o.Verbose then << "-- dimension of the family of reducible surfaces S ∪ P in ℙ⁵: " << modCountPts << " + " << m << " + " << (if n > 5 then dimGrass|" + (" else "(") << 35 << " - " << dimAutS << ") = " << dimFamReducSurf << endl;
     b := dim target rationalMap(S+P,3);
@@ -370,27 +389,8 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
     dimFamReducSurfInX := h0NSX + h0NPX;
     if o.Verbose then << "-- upper bound for the dimension of the family of reducible surfaces S ∪ P in X: " << dimFamReducSurfInX << endl;
     z := 54 - (dimFamReducSurf + b - dimFamReducSurfInX);
-    if z <= 0 then (
-        if o.Verbose then << endl << "-- ⚠ invalid codimension estimate in C_8: 54 - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << endl << "-- recomputing dimension of incidence variety using normal sheaves" << endl;
-        if o.Verbose then << endl << "-- computing the normal sheaf of S in ℙ⁵..." << endl << flush;
-        N := normalSheaf S;
-        if o.Verbose then << "-- normal sheaf computed; computing h^0(N_{S,ℙ⁵})..." << endl << flush;
-        h0N := rankHH(0,N);
-        if o.Verbose then << "-- h^0(N_{S,ℙ⁵}) = " << h0N << endl << flush;
-        if o.Verbose then << "-- computing h^0(N_{C,S})..." << endl;
-        h0NCS := rank HH^0 normalSheaf(C,S);
-        if o.Verbose then << "-- h^0(N_{C,S}) = " << h0NCS << endl;
-        dimFamReducSurf' := h0N + h0NCS;
-        if o.Verbose then (
-            << "-- dimension of the family of reducible surfaces S ∪ P in ℙ⁵: h^0(N_{S,ℙ⁵}) + h^0(N_{C,S}) = " << dimFamReducSurf';
-            if dimFamReducSurf' == dimFamReducSurf then << " (same as before)" else << " (≠ " << dimFamReducSurf << ")";
-            << endl;
-            << "-- dimension of the incidence variety {(S,P,X) : S ∪ P ⊂ X}: " << dimFamReducSurf' << " + " << b << " = " << dimFamReducSurf' + b << endl;
-        );
-        dimFamReducSurf = dimFamReducSurf';
-        z = 54 - (dimFamReducSurf + b - dimFamReducSurfInX);
-    );
-    if o.Verbose then << "-- codim. in C_8 of {[X] : S ∪ P ⊂ X} ≤ " << 54 << " - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << (if z <= 0 then " ⚠" else (if z == 1 then " ✅" else "")) << endl;
+    if z <= 0 then error("invalid codimension estimate in C_8: "|(toString z));
+    if o.Verbose then << "-- codim. in C_8 of {[X] : S ∪ P ⊂ X} ≤ " << 54 << " - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << (if z == 1 then " ✅" else "") << endl;
     if X.cache#?(S,P,"parameterCount") and X.cache#(S,P,"parameterCount") =!= (z, (b+1, dimFamReducSurf, dimFamReducSurfInX)) then error "internal error encountered in parameterCount: cached and computed values differ";
     X.cache#(S,P,"parameterCount") = (z, (b+1, dimFamReducSurf, dimFamReducSurfInX))
 );
@@ -410,7 +410,7 @@ toExternalString DoublySpecialCubicFourfold := X -> (
     s = s | "T := projectiveVariety(" | toString sub(ideal T,vars ringP5) | ",Saturate=>false);" | newline;
     s = s | "X := projectiveVariety(" | toString sub(ideal X,vars ringP5) | ",Saturate=>false);" | newline;
     s = s | "X = specialFourfold(S & T,X,NumNodes=>" | toString apply(surfaces X,numberNodes) | ",InputCheck=>0);" | newline;
-    if X.cache#?"CustomData" then s = s | ///X.cache#"CustomData" = /// | toString X.cache#"CustomData" | ";" | newline;
+    if X.cache#?"CustomData" then s = s | ///X.cache#"CustomData" = /// | "///" | toString X.cache#"CustomData" | "///;" | newline;
     if X.cache#?(S,T,"labelDSCF") then s = s | ///X.cache#(S,T,"labelDSCF") = "/// | toString X.cache#(S,T,"labelDSCF") | ///";/// | newline;
     if S.cache#?"ConstructionParameters" then s = s | ///S.cache#"ConstructionParameters" = /// | toString S.cache#"ConstructionParameters" | ";" | newline;
     if T.cache#?"ConstructionParameters" then s = s | ///T.cache#"ConstructionParameters" = /// | toString T.cache#"ConstructionParameters" | ";" | newline;
@@ -427,7 +427,8 @@ toExternalString DoublySpecialCubicFourfold := X -> (
     if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold") then s = s | ///X.cache#(S,T,"intersection of surface cycles in cubic fourfold") = /// | toString X.cache#(S,T,"intersection of surface cycles in cubic fourfold") | ";" | newline;
     if X.cache#?(S,T,"parameterCount") then s = s | ///X.cache#(S,T,"parameterCount") = /// | toString X.cache#(S,T,"parameterCount") | ";" | newline;
     if X.cache#?(S,"parameterCount") then s = s|///X.cache#(S,"parameterCount") = ///|(toString X.cache#(S,"parameterCount"))|";"|newline;
-    if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" then s = s|///X.cache#"numberOfResidualPointsInGenericQuadricFiber" = ///|(toString X.cache#"numberOfResidualPointsInGenericQuadricFiber")|";"|newline;
+    if X.cache#?(S,"CustomParameterCount") then s = s | ///X.cache#(S,"CustomParameterCount") = /// | toString X.cache#(S,"CustomParameterCount") | ";" | newline;
+    if X.cache#?(S,T,"numberOfResidualPointsInGenericQuadricFiber") then s = s|///X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber") = ///|(toString X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber"))|";"|newline;
     if S.cache#?("FanoMapDSCF",T) and isFanoMapStandard X then (
         mu := fanoMapDSCF X;
         m := dim ambient target mu;
@@ -502,13 +503,13 @@ DoublySpecialCubicFourfold ? DoublySpecialCubicFourfold := (X,Y) -> (
         if first X.cache#(S,T,"parameterCount") < first Y.cache#(U,V,"parameterCount") then return symbol <;
         if first X.cache#(S,T,"parameterCount") > first Y.cache#(U,V,"parameterCount") then return symbol >;
     );
-    if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" and (not Y.cache#?"numberOfResidualPointsInGenericQuadricFiber") then return symbol <;
-    if (not X.cache#?"numberOfResidualPointsInGenericQuadricFiber") and Y.cache#?"numberOfResidualPointsInGenericQuadricFiber" then return symbol >;
-    if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" and Y.cache#?"numberOfResidualPointsInGenericQuadricFiber" then (
-        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" === 1 and Y.cache#"numberOfResidualPointsInGenericQuadricFiber" =!= 1 then return symbol <;
-        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" =!= 1 and Y.cache#"numberOfResidualPointsInGenericQuadricFiber" === 1 then return symbol >;
-        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" < Y.cache#"numberOfResidualPointsInGenericQuadricFiber" then return symbol <;
-        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" > Y.cache#"numberOfResidualPointsInGenericQuadricFiber" then return symbol >;
+    if X.cache#?(S,T,"numberOfResidualPointsInGenericQuadricFiber") and (not Y.cache#?(U,V,"numberOfResidualPointsInGenericQuadricFiber")) then return symbol <;
+    if (not X.cache#?(S,T,"numberOfResidualPointsInGenericQuadricFiber")) and Y.cache#?(U,V,"numberOfResidualPointsInGenericQuadricFiber") then return symbol >;
+    if X.cache#?(S,T,"numberOfResidualPointsInGenericQuadricFiber") and Y.cache#?(U,V,"numberOfResidualPointsInGenericQuadricFiber") then (
+        if X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber") === 1 and Y.cache#(U,V,"numberOfResidualPointsInGenericQuadricFiber") =!= 1 then return symbol <;
+        if X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber") =!= 1 and Y.cache#(U,V,"numberOfResidualPointsInGenericQuadricFiber") === 1 then return symbol >;
+        if X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber") < Y.cache#(U,V,"numberOfResidualPointsInGenericQuadricFiber") then return symbol <;
+        if X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber") > Y.cache#(U,V,"numberOfResidualPointsInGenericQuadricFiber") then return symbol >;
     );
     (dX,dY) := (discriminant X,discriminant Y);
     if dX < dY then return symbol <;
@@ -533,7 +534,7 @@ DoublySpecialCubicFourfold ? DoublySpecialCubicFourfold := (X,Y) -> (
         if cT < cV then return symbol <;
         if cT > cV then return symbol >;
     );
-    if ideal X == ideal Y and S == U and T == V then return symbol ==;
+    if ring ambient X === ring ambient Y and ideal X == ideal Y and S == U and T == V then return symbol ==;
     incomparable
 );
 
@@ -548,8 +549,8 @@ recognizeDSCF = X -> (
     STinX := (latticeIntersectionMatrix3x3 X)_(1,2);
     fib := null;
     if isPlaneInP5 T then (
-        if not X.cache#?"numberOfResidualPointsInGenericQuadricFiber" then quadricFibration X;
-        fib = X.cache#"numberOfResidualPointsInGenericQuadricFiber";
+        if not X.cache#?(S,T,"numberOfResidualPointsInGenericQuadricFiber") then quadricFibration X;
+        fib = X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber");
     );
     invX := (degrees S,degree S,sectionalGenus S,euler hilbertPolynomial S,eulerCharacteristic S,numberNodes S,
              degrees T,degree T,sectionalGenus T,euler hilbertPolynomial T,eulerCharacteristic T,numberNodes T,
@@ -836,18 +837,17 @@ discoverCubicFourfoldsInC8 = (e,dmin,dmax,Nmin,Nmax,summaryFileName,rationalSect
                                                 <<"-- invalid discriminant: "<<(discriminant X)<<endl;
                                                 continue;
                                             );
-                                            quadricFibration X;
-                                            if rationalSectionOnly and (not X.cache#"quadricFibrationCubicFourfoldInC8"_1) then (
-                                                <<"-- fourfold not allowed: "<<X.cache#"quadricFibrationCubicFourfoldInC8"_2<<endl;
+                                            if rationalSectionOnly and (not hasRationalSection X) then (
+                                                <<"-- fourfold not allowed: "<<(genericQuadricFiberDescription X)<<endl;
                                                 continue;
                                             );
-                                            if (not rationalSectionOnly) and X.cache#"quadricFibrationCubicFourfoldInC8"_1 and 1 != (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) then (
+                                            if (not rationalSectionOnly) and (hasRationalSection X) and 1 != (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) then (
                                                 <<"-- exception: "<<(a,i1,i2,i3,i4)<<","<<(d,u1,u2,u3,u4)<<" -> surface is a section but formula not satisfied: 1 != (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) = "<<((a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4))<<endl;
                                             );
                                             (T,P) = surfaces X;
                                             assert(degree P == 1);
                                             C = T * P;
-                                            if not member((entries latticeIntersectionMatrix3x3 X,X.cache#"quadricFibrationCubicFourfoldInC8"_2,degrees T,betti res ideal T,degree T,sectionalGenus T,euler hilbertPolynomial T,eulerCharacteristic T,numberNodes T,dim C,degree C,degrees(T + P)), apply(NewCollectionFourfolds, Y -> (entries latticeIntersectionMatrix3x3 Y,Y.cache#"quadricFibrationCubicFourfoldInC8"_2, degrees surface Y,betti res ideal surface Y,degree surface Y,sectionalGenus surface Y,euler hilbertPolynomial surface Y,eulerCharacteristic surface Y,numberNodes surface Y,dim((first surfaces Y)*(last surfaces Y)),degree((first surfaces Y)*(last surfaces Y)),degrees((first surfaces Y)+(last surfaces Y))))) then (
+                                            if not member((entries latticeIntersectionMatrix3x3 X,genericQuadricFiberDescription X,degrees T,betti res ideal T,degree T,sectionalGenus T,euler hilbertPolynomial T,eulerCharacteristic T,numberNodes T,dim C,degree C,degrees(T + P)), apply(NewCollectionFourfolds, Y -> (entries latticeIntersectionMatrix3x3 Y,genericQuadricFiberDescription Y,degrees surface Y,betti res ideal surface Y,degree surface Y,sectionalGenus surface Y,euler hilbertPolynomial surface Y,eulerCharacteristic surface Y,numberNodes surface Y,dim((first surfaces Y)*(last surfaces Y)),degree((first surfaces Y)*(last surfaces Y)),degrees((first surfaces Y)+(last surfaces Y))))) then (
                                                 try (
                                                     alarm(3*maxTime);
                                                     <<"-- checking fourfold..."<<endl;

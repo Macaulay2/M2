@@ -605,21 +605,24 @@ unverifiedExpectedGenusOfK3FromExceptionalCurves = (X,U,L,C) -> (
 );
 
 sanityCheckDSCF = method();
-sanityCheckDSCF K3SurfaceFromDoublySpecialCubicFourfold := E -> (
-    X := recoverFourfold E;
-    (mu,U,LC,f) := building E;
+sanityCheckDSCF DoublySpecialCubicFourfold := X -> (
+    if computationStatus X < 2 then return;
+    mu := (first surfaces X).cache#("FanoMapDSCF",last surfaces X);
     if mu.cache#?("InternalConsistencyChecked",X) then return mu.cache#("InternalConsistencyChecked",X);
     if not isFanoMapStandard X then return mu.cache#("InternalConsistencyChecked",X) = false;
-    (L,C) := toSequence LC;
     W := target mu;
+    U := mu.cache#("surfaceDeterminingInverseOfFanoMap",X);
+    (L,C) := U.cache#"exceptionalCurves";
     for i from 1 to 40 do (
         if recognizeDSCF X === "DSCF-V1-"|(toString i) then (
             if knownDataForRecognizedDSCF i == (degreeOfDefiningForms mu, dim W, degree W, sectionalGenus W, degrees W, dim U, degree U, sectionalGenus U, euler hilbertPolynomial U, degrees U, dim L, degree L, dim C, degree C) then (
+                -- << "-- consistency check passed for recognized DSCF example " << i << endl;
                 return mu.cache#("InternalConsistencyChecked",X) = true;
             ) else (
-                error("data inconsistency detected for recognized DSCF example n. "|(toString i));
+                error("data inconsistency detected for recognized DSCF example "|(toString i));
             );
         );
     );
     mu.cache#("InternalConsistencyChecked",X) = false
 );
+sanityCheckDSCF K3SurfaceFromDoublySpecialCubicFourfold := E -> sanityCheckDSCF recoverFourfold E;
