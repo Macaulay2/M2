@@ -3,21 +3,38 @@
 ----------------------------- LaTeX tables -----------------------------
 ------------------------------------------------------------------------
 
-texTables = method(Options => {Verbose => false, KeepFiles => false, FileName => null});
+texTables = method(Options => {Verbose => true, KeepFiles => false, FileName => null, OpenPDF => false});
 
 texTables List := o -> L -> (
+    if o.Verbose then << "-- building LaTeX tables with texTables()..." << endl;
     (F1,F2) := (null,null);
     if o.FileName =!= null then (F1,F2) = (o.FileName | "All", o.FileName | "K3");
-    L1 := texTableRaw(L,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>F1,"IncludeK3Info"=>false);
-    L2 := texTableRaw(L,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>F2,"IncludeK3Info"=>true);
+    L1 := texTableRaw(L,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>F1,OpenPDF=>o.OpenPDF,"IncludeK3Info"=>false);
+    L2 := texTableRaw(L,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>F2,OpenPDF=>o.OpenPDF,"IncludeK3Info"=>true);
     (L1,L2)
+);
+
+texTables ZZ := o -> n -> (
+    if n < 0 or n > 4 then error("invalid example type " | (toString n) | "; expected 0 (DoublySpecialCubicFourfold), 1 (CubicFourfold), 2 (GushelMukaiFourfold), 3 (IntersectionOfThreeQuadricsInP7), or 4 (other HodgeSpecialFourfold examples)");
+    A := select(availableExamples(), x -> first x === n);
+    if #A == 0 then error "no examples of the specified type are available in the local examples archive";
+    if o.Verbose then << "-- loading " << #A << " examples from the local examples archive..." << endl;
+    L := apply(A, y -> example(last y,n,Verbose=>o.Verbose));
+    texTables(L,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>o.FileName,OpenPDF=>o.OpenPDF)
+);
+
+texTables Nothing := o -> nu -> ( --undocumented
+    N := select(5, n -> number(availableExamples(), x -> first x === n) > 0);
+    if #N == 0 then error "no examples are available in the local examples archive";
+    if #N == 1 then return {(first N, texTables(first N,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>"table",OpenPDF=>o.OpenPDF))};
+    for n in N list (n, texTables(n,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>("table"|(toString n)),OpenPDF=>o.OpenPDF))
 );
 
 texTableRaw = method(Options => {Verbose => true,
                                 KeepFiles => false,
                                 FileName => null,
+                                OpenPDF => false,
                                 "SortRows" => true,
-                                "OpenPDF" => false,
                                 "IncludeK3Info" => true,
                                 "RowColor" => null,
                                 "ExampleID" => null,
@@ -31,6 +48,7 @@ texTableRaw List := o -> L -> (
     DSCFcase := all(L, X -> instance(X,DoublySpecialCubicFourfold));
     if (not DSCFcase) and any(L, X -> instance(X,DoublySpecialCubicFourfold)) then error "expected a list of Hodge-special fourfolds of the same type; either all entries must be DSCFs or none of them";
     for X in L do describe X;
+    if DSCFcase then apply(L,sanityCheckDSCF);
     if o#"IncludeK3Info" then (
         if o.Verbose then << "-- selecting fourfolds with an associated K3 surface..." << endl;
         hasK3 := X -> (
@@ -75,8 +93,15 @@ texTableRaw List := o -> L -> (
         if instance(X,DoublySpecialCubicFourfold) then (
             disc = discriminant X;
             Cd1Cd2 := /// $\mathcal C_{/// | (toString disc) | "}";
-            if disc != 8 then Cd1Cd2 = Cd1Cd2 | ///\cap \mathcal C_8 ///;
-            return(Cd1Cd2 | "$ ");
+            if disc != 8 then Cd1Cd2 = Cd1Cd2 | /// \cap \mathcal C_8 ///;
+            ThirdHassettDiscriminant := {(((2,0,0,0,0),(1,0,0,0,0)), 14),(((5,8,2,0,0),(3,7,2,0,0)), 14),(((4,8,0,0,0),(3,8,0,0,0)), 12),(((5,10,1,0,0),(3,8,1,0,0)), 18),(((5,7,2,0,0),(3,6,2,0,0)), 20),(((6,5,5,0,0),(3,5,4,0,0)), 24),(((4,7,0,0,0),(3,7,0,0,0)), 20),(((5,6,2,0,0),(3,5,2,0,0)), 30),(((4,6,0,0,0),(3,6,0,0,0)), 32),(((6,0,7,0,0),(3,0,7,0,0)), 12),(((7,5,6,1,0),(3,2,6,1,0)), 12),(((7,2,7,1,0),(3,0,7,1,0)), 14),(((6,4,6,0,0),(3,3,6,0,0)), 12),(((6,3,6,0,0),(3,2,6,0,0)), 14),(((6,2,6,0,0),(3,1,6,0,0)), 20),(((5,8,0,1,0),(3,8,0,1,0)), 12),(((6,1,6,0,0),(3,0,6,0,0)), 30),(((6,6,5,0,0),(3,4,5,0,0)), 14),(((6,5,5,0,0),(3,3,5,0,0)), 18),(((7,3,9,0,0),(3,0,9,0,0)), 14),(((7,3,7,1,0),(3,1,7,1,0)), 14),(((7,2,9,0,0),(3,1,8,0,0)), 18),(((5,7,0,1,0),(3,7,0,1,0)), 20),(((7,2,7,1,0),(3,2,6,1,0)), 20),(((7,1,7,1,0),(3,1,6,1,0)), 24),(((7,0,10,0,0),(3,0,9,0,0)), 20),(((5,6,0,1,0),(3,6,0,1,0)), 32)};
+            n := position(ThirdHassettDiscriminant, i -> first i == take((surface X).cache#"ConstructionParameters",2));
+            if n === null then (
+                Cd1Cd2 = Cd1Cd2 | "$ ";
+            ) else (
+                Cd1Cd2 = Cd1Cd2 | /// \cap \mathcal C_{/// | (toString last ThirdHassettDiscriminant_n) | "} $ ";
+            );
+            return Cd1Cd2;
         );
         if instance(X,CubicFourfold) then return(/// $\mathcal C_{/// | (toString discriminant X) | "}$ ");
         if instance(X,GushelMukaiFourfold) then (
@@ -85,9 +110,9 @@ texTableRaw List := o -> L -> (
             (a,b) := last cycleClass X;
             if disc % 8 == 2 then (
                 if even(a+b) and odd(b)
-                then D = D|"'"
+                then D = D | "'"
                 else if odd(a+b) and even(b)
-                then D = D|"''"
+                then D = D | "''"
                 else error "internal error encountered";
             );
             return(D | "$ ");
@@ -95,22 +120,16 @@ texTableRaw List := o -> L -> (
         " - "
     ));
     exampleID := o#"ExampleID";
-    if DSCFcase and exampleID === null then exampleID = (X -> (
-        if substring(0,8,recognizeDSCF X) =!= "DSCF-V1-" then return " - ";
-        i := value substring(8,recognizeDSCF X);
-        if not(instance(i,ZZ) and i >= 1 and i <= 40) then return " - ";
-        tex i
-    ));
+    if exampleID === null then exampleID = (X -> if X.cache#?"exampleNameInArchive" then tex X.cache#"exampleNameInArchive" else " - ");
     tableRows := "";
     local X;
     for i from 1 to #L do (
         X = L_(i-1);
         tableRows = tableRows | ///\\/// | newline | ///\hline/// | newline | (rowColor X) | (toString i) | " & ";
-        if DSCFcase then tableRows = tableRows | (exampleID X) | " & ";
+        if exampleID =!= false then tableRows = tableRows | (exampleID X) | " & ";
         tableRows = tableRows | (tableRowFourfoldInfoTex X) | " & " | (noetherLefschetzLocus X) | " & " | (parameterCountTex X);
         if o#"IncludeK3Info" then (
             tableRows = tableRows | " & " | (associatedK3Tex X) | " & " | minimalK3Tex(X,"PolarizationDataOnK3"=>polarizationDataOnK3);
-            if DSCFcase then tableRows = tableRows | " & " | (exampleID X);
             tableRows = tableRows | " & " | (toString i);
         ) else (
             if DSCFcase then tableRows = tableRows | " & " | (tex X.cache#(append(surfaces X,"numberOfResidualPointsInGenericQuadricFiber")));
@@ -122,7 +141,7 @@ texTableRaw List := o -> L -> (
     if fileExists(tableName | ".pdf") then removeFile(tableName | ".pdf");
     paperwidth := if o#"PaperWidth" =!= null then o#"PaperWidth" else (if o#"IncludeK3Info" then 50 else 30);
     paperheight := if o#"PaperHeight" =!= null then o#"PaperHeight" else max(10, ceiling(1.11 * #L));
-    (tableName | ".tex") << latexTablePreamble(paperheight,paperwidth) << (if o#"IncludeK3Info" then latexTableHeaderK3(first L) else latexTableHeaderAll(first L)) << tableRows << latexTableEnding(first L) << close;
+    (tableName | ".tex") << latexTablePreamble(paperheight,paperwidth) << (if o#"IncludeK3Info" then latexTableHeaderK3(first L,exampleID =!= false) else latexTableHeaderAll(first L,exampleID =!= false)) << tableRows << latexTableEnding(first L) << close;
     pdflatex := findProgram("pdflatex",RaiseError=>true);
     runProgram(pdflatex, "\"" | tableName | ".tex\" > /dev/null 2>&1", RaiseError=>true, Verbose=>false);
     -- a := run("pdflatex " | tableName | " > /dev/null 2>&1");
@@ -132,7 +151,7 @@ texTableRaw List := o -> L -> (
     if not o.KeepFiles then removeFile(tableName | ".tex");
     if fileExists(tableName | ".pdf") then (
         if o.Verbose then << "-- file " << tableName << ".pdf successfully created in " << currentDirectory() << endl;
-        if o#"OpenPDF" then run("open \"" | tableName | ".pdf\" &");
+        if o.OpenPDF then run("open \"" | tableName | ".pdf\" &");
     );
     L
 );
@@ -306,57 +325,73 @@ latexTablePreamble (ZZ,ZZ) := (n,m) -> ///
 
 latexTableHeaderK3 = method();
 -- X is used only for method dispatch
-latexTableHeaderK3 DoublySpecialCubicFourfold := X -> ///
+latexTableHeaderK3(DoublySpecialCubicFourfold,Boolean) := (X,WithExampleID) -> (
+    T := ///
 \begin{table}[htbp]
-%\renewcommand{\arraystretch}{1.5}
 \centering
-%\tabcolsep=1.5pt
 \footnotesize
-\begin{tabular}{|c|c||c|c|l|c||l|c|c|c|c||c|c|c|c|c|r|c||c|c|}
+\begin{tabular}{|c///;
+    if WithExampleID then T = T | "|c";
+    T = T | ///||c|c|l|c||l|c|c|c|c||c|c|c|c|c|r|c||c|}
 \hline
-$i$ & ID & surface $S\subset X\subset \mathbb{P}^5$ & $S, C=S\cap P$ & & &  codim. in ${\mathcal C}_8$ &(\textdagger) & (\textdaggerdbl) & (\textsection) & (\textasteriskcentered) & $\mu:\mathbb{P}^5\dashrightarrow W$ & $W$ & $U$ & exc. curves & $\widetilde{U}$ & & K3 & ID & $i$
- \\
+$i$ & ///;
+    if WithExampleID then T = T | "ID & ";
+    T = T | ///surface $S\subset X\subset \mathbb{P}^5$ & $S, C=S\cap P$ & & & parameter count &(\textdagger) & (\textdaggerdbl) & (\textsection) & (\textasteriskcentered) & $\mu:\mathbb{P}^5\dashrightarrow W$ & $W$ & $U$ & exc. curves & $\widetilde{U}$ & & K3 & $i$ \\
 \hline
 ///;
-latexTableHeaderK3 HodgeSpecialFourfold := X -> ///
+    T
+);
+latexTableHeaderK3(HodgeSpecialFourfold,Boolean) := (X,WithExampleID) -> (
+    T := ///
 \begin{table}[htbp]
-%\renewcommand{\arraystretch}{1.5}
 \centering
-%\tabcolsep=1.5pt
 \footnotesize
-\begin{tabular}{|c||c|c|l|c||l|c|c|c||c|c|c|c|c||c|}
+\begin{tabular}{|c///;
+    if WithExampleID then T = T | "|c";
+    T = T | ///||c|c|l|c||l|c|c|c||c|c|c|c|c||c|}
 \hline
-$i$ & surface $S\subset X$ & & & & parameter count &(\textdagger) & (\textdaggerdbl) & (\textsection) & $\mu$ & $W$ & $U$ & exc. curves & $\widetilde{U}$ & $i$
- \\
+$i$ & ///;
+    if WithExampleID then T = T | "ID & ";
+    T = T | ///surface $S\subset X$ & & & & parameter count &(\textdagger) & (\textdaggerdbl) & (\textsection) & $\mu$ & $W$ & $U$ & exc. curves & $\widetilde{U}$ & $i$ \\
 \hline
 ///;
+    T
+);
 
 latexTableHeaderAll = method();
 -- X is used only for method dispatch
-latexTableHeaderAll DoublySpecialCubicFourfold := X -> ///
+latexTableHeaderAll(DoublySpecialCubicFourfold,Boolean) := (X,WithExampleID) -> (
+    T := ///
 \begin{table}[htbp]
-%\renewcommand{\arraystretch}{1.5}
 \centering
-%\tabcolsep=1.5pt
 \footnotesize
-\begin{tabular}{|c|c||c|c|c|c|l|c|c|c|c||c|}
+\begin{tabular}{|c///;
+    if WithExampleID then T = T | "|c";
+    T = T | ///||c|c|c|c|l|c|c|c|c|c|}
 \hline
-$i$ & ID & surface $S\subset X\subset \mathbb{P}^5$ & $S, C=S\cap P$ & & & codim. in ${\mathcal C}_8$ &(\textdagger) & (\textdaggerdbl) & (\textsection) & (\textasteriskcentered) & $\scriptstyle (Q\cap S)\setminus P$
- \\
+$i$ & ///;
+    if WithExampleID then T = T | "ID & ";
+    T = T | ///surface $S\subset X\subset \mathbb{P}^5$ & $S, C=S\cap P$ & & & parameter count & (\textdagger) & (\textdaggerdbl) & (\textsection) & (\textasteriskcentered) & $\scriptstyle (Q\cap S)\setminus P$ \\
 \hline
 ///;
-latexTableHeaderAll HodgeSpecialFourfold := X -> ///
+    T
+);
+latexTableHeaderAll(HodgeSpecialFourfold,Boolean) := (X,WithExampleID) -> (
+    T := ///
 \begin{table}[htbp]
-%\renewcommand{\arraystretch}{1.5}
 \centering
-%\tabcolsep=1.5pt
 \footnotesize
-\begin{tabular}{|c||c|c|c|c|l|c|c|c|}
+\begin{tabular}{|c///;
+    if WithExampleID then T = T | "|c";
+    T = T | ///||c|c|c|c|l|c|c|c|}
 \hline
-$i$ & surface $S\subset X$ & & & & parameter count &(\textdagger) & (\textdaggerdbl) & (\textsection)
- \\
+$i$ & ///;
+    if WithExampleID then T = T | "ID & ";
+    T = T | ///surface $S\subset X$ & & & & parameter count & (\textdagger) & (\textdaggerdbl) & (\textsection) \\
 \hline
 ///;
+    T
+);
 
 latexTableEnding = method();
 -- X is used only for method dispatch
