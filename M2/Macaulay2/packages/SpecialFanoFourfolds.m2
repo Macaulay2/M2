@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.8.1",
-    Date => "October 10, 2026",
+    Date => "October 12, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -84,7 +84,8 @@ export{
     "swap",
     "example",
     "texTables",
-    "OpenPDF"
+    "OpenPDF",
+    "localExamplesArchive"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
