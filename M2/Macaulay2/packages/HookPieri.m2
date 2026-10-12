@@ -3734,8 +3734,8 @@ hpAssembleHookTabloid = (lam, hooks) -> (
 ------------------------------------------------------------
 
 hpDiagonalHookBases = (lam, n) -> (
-    shs := hpDiagonalHookShapes lam;
-    for sh in shs list hookSSYTBasis(sh#0, sh#1, n)
+    hookShapes := hpDiagonalHookShapes lam;
+    for sh in hookShapes list hookSSYTBasis(sh#0, sh#1, n)
 );
 
 ------------------------------------------------------------
@@ -4782,11 +4782,11 @@ hpStraightenRank2FromAnyHooks = (caller,T) -> (
     totalIters := 0;
 
     for kOuter in keys HT1 do (
-        cOuter := HT1#kOuter;
-        if cOuter == 0 then continue;
+        outerCoefficient := HT1#kOuter;
+        if outerCoefficient == 0 then continue;
         for kInner in keys HT2 do (
             cInner := HT2#kInner;
-            coeffPair := cOuter * cInner;
+            coeffPair := outerCoefficient * cInner;
             if coeffPair == 0 then continue;
 
             Tnew := hpHooksInternalToNestedRows(kOuter, kInner);
