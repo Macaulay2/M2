@@ -176,8 +176,6 @@ import realpath(filename:string):(null or string);
 import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
-import getHistory(n:int):charstar;
-import addHistory(s:charstar):void;
 import appendHistory(n:int,f:charstar):int;
 import readHistory(f:charstar):int;
 import historyLength():int;
