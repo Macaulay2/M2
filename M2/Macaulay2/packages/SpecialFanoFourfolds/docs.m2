@@ -579,29 +579,41 @@ Headline => "retrieve a stored fourfold example",
 Usage => "example name"|newline|"example(name,n)",
 Inputs => {"name" => String => {"the name assigned when the example was stored"}, "n" => ZZ => {"an optional integer indicating the type of fourfold"}},
 Outputs => {HodgeSpecialFourfold => {"a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},"."}},
-PARA {"This function retrieves a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},TT"(X,name)","."},
+PARA {"This function retrieves a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},TT"(X,name)",". The local archive of stored examples may be inspected and managed through ",TO localExamplesArchive,TT"()","."},
 PARA {"The optional argument ",TT"n"," is only needed when the same name is used by stored examples of different fourfold types. Its values correspond to the following fourfold types: doubly special cubic fourfolds (",TEX///$n=0$///,"), cubic fourfolds (",TEX///$n=1$///,"), Gushel-Mukai fourfolds (",TEX///$n=2$///,"), intersections of three quadrics in ",TEX///$\mathbb{P}^7$///," (",TEX///$n=3$///,"), and other Hodge-special fourfolds (",TEX///$n=4$///,")."},
 EXAMPLE {"X = specialFourfold \"DSCF-1\";","name = store X","X' = example name;","assert(describe X == describe X')"},
-SeeAlso => {(store,HodgeSpecialFourfold, String), (toExternalString, HodgeSpecialFourfold)}}
+PARA {"To suppress the informative messages displayed while loading an example, use the option ",TT"Verbose=>false","."},
+SeeAlso => {(store, HodgeSpecialFourfold, String), (toExternalString, HodgeSpecialFourfold), localExamplesArchive}}
 
 document {Key => {(store, HodgeSpecialFourfold, String), (store, HodgeSpecialFourfold, ZZ), (store, HodgeSpecialFourfold)},
 Headline => "store a fourfold example",
 Usage => "store(X,name)"|newline|"store X",
 Inputs => {"X" => HodgeSpecialFourfold,"name" => String => {"an optional name for the example"}},
 Outputs => {String => {"the name assigned to the stored example"}},
-PARA {"This function stores the fourfold ",TT"X"," so that it can later be retrieved with ",TO2{(example,String),"example"},TT"(name)",". When no name is specified, one is chosen automatically. Examples are created via ",TO2{(toExternalString,HodgeSpecialFourfold),"toExternalString"}," and stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"}, TT"SpecialFanoFourfoldsExamples/","', where they could also be managed manually. They persist across Macaulay2 sessions and preserve some previously computed internal data of the original fourfold."},
+PARA {"This function stores the fourfold ",TT"X"," so that it can later be retrieved with ",TO2{(example,String),"example"},TT"(name)",". When no name is specified, one is chosen automatically. Examples are created via ",TO2{(toExternalString,HodgeSpecialFourfold),"toExternalString"}," and stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"},TT"SpecialFanoFourfoldsExamples/","'. The local archive may be inspected and managed through ",TO localExamplesArchive,TT"()",". Stored examples persist across Macaulay2 sessions and preserve some previously computed internal data of the original fourfold."},
 EXAMPLE {"X = specialFourfold random({3:{1}},0_(PP_(ZZ/65521)^5));","name = store X;","X' = example name;","assert(describe X == describe X')"},
-SeeAlso => {(example, String), (store, String), (toExternalString, HodgeSpecialFourfold)}}
+SeeAlso => {(example, String), (store, String), (toExternalString, HodgeSpecialFourfold), localExamplesArchive}}
+
+document {Key => {localExamplesArchive},
+Headline => "access and manage the local examples archive",
+Usage => "localExamplesArchive()",
+Inputs => {}, Outputs => {},
+PARA {"This function returns an object representing the local archive of stored fourfold examples. Examples are typically added to the archive with ",TO2{(store,HodgeSpecialFourfold),"store"}," and retrieved with ",TO example,". Examples are stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"},TT"SpecialFanoFourfoldsExamples/","'. When displayed, the object provides an overview of the examples currently available and those already loaded in memory."},
+PARA {"The local examples archive may be cleared with ",TT"clean localExamplesArchive()",". All examples currently available in the local examples archive may be exported to a timestamped .tar.gz archive with ",TT"export localExamplesArchive()",". Such an archive may later be imported with ",TT"importFrom(archive,localExamplesArchive())","."},
+PARA {"If ",TT"archive"," is a URL, then ",TT"importFrom(archive,localExamplesArchive())"," first downloads the archive and then imports it. To import examples directly from the author's GitHub repository, use ",TT"importFrom(\"@\",localExamplesArchive())","."},
+PARA {"By default, importing an archive replaces the current contents of the local examples archive. To safely import an archive only if no existing example would be overwritten, use ",TT"importFrom(archive,localExamplesArchive(),KeepFiles=>true)","."},
+PARA {"Examples may be removed from the local archive with ",TT"delete(X,localExamplesArchive())",", ",TT"delete(name,n,localExamplesArchive())",", or ",TT"delete(n,localExamplesArchive())",". The latter deletes all examples of fourfold type ",TT"n","."},
+EXAMPLE {"A = localExamplesArchive()","clean A","X = cubicFourfold \"quartic scroll\";","scan(4,i -> store(X,i)) -- storing four copies of X with numeric names","A","(X1,X2,X3) = (example 1,example 2,example 3); -- loading some of the examples","A","store X2 -- updating a loaded example","name = store specialFourfold(surface((4,6,1),(1,2,0)));","A","Y = example(name,Verbose=>false); -- loading another example","A","archive = export A","delete(X2,A) -- deleting a loaded example","importFrom(archive,A)","clean A","importFrom(archive,A,KeepFiles=>true)"},
+SeeAlso => {(store, HodgeSpecialFourfold), (example, String), (store, String)}}
 
 document {Key => {(store, String)},
-Headline => "import and export archives of examples",
-Usage => "store f",
+Headline => "import archives of examples",
+Usage => "store f"|newline|"importFrom(f,localExamplesArchive())"|newline|"importFrom(f,localExamplesArchive(),KeepFiles=>true)",
 Inputs => {"f" => String => {"a .tar.gz archive containing fourfold examples (or a URL pointing to such an archive)"}},
 Outputs => {},
-PARA {"Imports examples from the archive ", TT"f",". Conversely, to export all examples currently available in the local examples archive to a timestamped .tar.gz archive, use ",TT"store \"@\"",". To clear the local examples archive, use ",TT"store \"\"","."},
-EXAMPLE {"store specialFourfold \"quartic scroll\"", "store \"@\"", "store oo", "store \"\""},
-PARA {"To import examples from the author's GitHub repository, use ", TT"store \"~\"","."},
-SeeAlso => {(store, HodgeSpecialFourfold), (example, String)}}
+PARA {"This function imports examples into the local archive represented by ",TO localExamplesArchive,TT"()",". The argument ",TT"f"," may be a local .tar.gz archive, a URL pointing to such an archive, or the special string ",TT"\"@\""," referring to the author's GitHub repository of examples."},
+PARA {"By default, the imported archive replaces the current contents of the local examples archive. To safely import an archive only if no existing example would be overwritten, use ",TT"importFrom(f,localExamplesArchive(),KeepFiles=>true)","."},
+SeeAlso => {localExamplesArchive, (store, HodgeSpecialFourfold), (example, String)}}
 
 document {Key => {texTables, (texTables, List), [texTables, KeepFiles], [texTables, FileName]},
 Headline => "generate summary tables for collections of fourfolds",
@@ -621,7 +633,7 @@ Headline => "generate summary tables from stored examples",
 Usage => "texTables n",
 Inputs => {"n" => ZZ => {"an integer between 0 and 4 specifying a type of fourfold example"}},
 Outputs => {Sequence => {"the output of ", TO texTables, " applied to all examples of the specified type currently available in the local examples archive"}},
-PARA {"This method retrieves all examples of the specified type currently available in the local examples archive and generates summary tables for them."},
+PARA {"This method retrieves all examples of the specified type currently available in the local examples archive managed through ",TO localExamplesArchive,TT"()"," and generates summary tables for them."},
 PARA {"The correspondence between values of ", TT"n", " and fourfold types is as follows: 0 for doubly special cubic fourfolds, 1 for cubic fourfolds, 2 for Gushel-Mukai fourfolds, 3 for intersections of three quadrics in ", TEX///$\mathbb P^7$///, ", and 4 for other Hodge-special fourfold examples."},
 if findProgram("pdflatex", RaiseError => false) =!= null
 then EXAMPLE {"X = cubicFourfold surface((2,0),(1,0));",
@@ -641,7 +653,7 @@ i4 : store X; -- store a second copy of X under a different name
 
 i5 : texTables(0,Verbose=>true,KeepFiles=>true,OpenPDF=>true,FileName=>"myTable"); -- generate tables from all stored DSCF examples
 ///,
-SeeAlso => {texTables, (store,String), example}}
+SeeAlso => {texTables, (store, String), example, localExamplesArchive}}
 
 undocumented{(texTables, Nothing)}
 
