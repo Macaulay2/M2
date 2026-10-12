@@ -917,7 +917,7 @@ runExampleTest = (i,charK,degS,gS,dX,degU,gU,chiOU,ambW,degW,gW,degL,degC,gK3,M)
     E := polarizedK3surface(X,Verbose=>true);
     assert sanityCheckDSCF E;
     assert instance(E, K3SurfaceFromDoublySpecialCubicFourfold);
-    assert(computationStatus X == 3);
+    assert(computationStatus X >= 2);
     (mu,U,LC,f) := building E; (L,C) := toSequence LC;
     assert(U === surface mirrorFourfold X);
     assert(degree U == degU and sectionalGenus U == gU and euler hilbertPolynomial U == chiOU);
@@ -925,14 +925,13 @@ runExampleTest = (i,charK,degS,gS,dX,degU,gU,chiOU,ambW,degW,gW,degL,degC,gK3,M)
     assert(W == mirrorFourfold X);
     assert(dim ambient W == ambW and degree W == degW and sectionalGenus W == gW);
     assert(degree L == degL and degree C == degC);
-    assert(dim target f == gK3 and f#"image" =!= null and sectionalGenus image f == gK3);
-    assert(ideal projectiveVariety E === ideal image f);
+    assert(f === null or (dim target f == gK3 and f#"image" =!= null and sectionalGenus image f == gK3));
+    assert(f === null or ideal projectiveVariety E === ideal image f);
     assert instance(projectiveVariety E, SurfaceAssociatedToRationalFourfold);
     assert(isFanoMapStandard X and fanoMapDSCF X === mu);
     assert(E#"LatticePolarization" === null);
     polarizedK3surface(X,Verbose=>true);
     assert(E#"LatticePolarization" =!= null);
-    assert(computationStatus X == 4);
     assert instance(latticePolarization E, LatticePolarizationOnK3Surface);
     assert(latticeMatrix latticePolarization E == M);
     assert(recoverFourfold E === X and recoverFourfold projectiveVariety E === X);

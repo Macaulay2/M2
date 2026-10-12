@@ -24,7 +24,7 @@ texTables ZZ := o -> n -> (
 );
 
 texTables Nothing := o -> nu -> ( --undocumented
-    N := select(5, n -> number(availableExamples(), x -> first x === n) > 0);
+    N := select(4, n -> number(availableExamples(), x -> first x === n) > 0);
     if #N == 0 then error "no examples are available in the local examples archive";
     if #N == 1 then return {(first N, texTables(first N,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>"table",OpenPDF=>o.OpenPDF))};
     for n in N list (n, texTables(n,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>("table"|(toString n)),OpenPDF=>o.OpenPDF))

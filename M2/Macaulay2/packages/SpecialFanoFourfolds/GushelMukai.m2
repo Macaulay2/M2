@@ -235,6 +235,7 @@ discriminant GushelMukaiFourfold := o -> X -> (
     (a,b) := last cycleClass X;
     n := if S.cache#?"FiniteNumberOfNodes" or S.cache#?"singularLocus" or S.cache#?"nonSaturatedSingularLocus" or (S.cache#?"fitVariety" and (S.cache#"fitVariety").cache#?"nonSaturatedSingularLocus") then numberNodes S else 0;
     S2 := 3*a + 4*b + 2*KSHS + 2*KS2 - 12*chiOS + 2*n;
+    X.cache#(S,"LatticeIntersectionMatrix") = matrix {{2,0,b},{0,2,a-b},{b,a-b,S2}};
     d := 4*S2 - 2*(b^2+(a-b)^2);
     if S.cache#?"FiniteNumberOfNodes" then X.cache#(surface X,"discriminantFourfold") = (S2,d);
     d

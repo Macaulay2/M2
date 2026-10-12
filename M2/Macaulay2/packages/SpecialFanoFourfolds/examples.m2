@@ -84,37 +84,207 @@ examplesDir = () -> (
     examplesPath
 );
 
-availableExamplesWithPrefix = pfx -> sort apply(select(readDirectory examplesDir(), s -> #s > #pfx + 4 and substring(s,0,#pfx) == pfx and substring(s,#s-4,4) == ".dat"), s' -> substring(s',#pfx,#s'-4-#pfx));
-availableExamples = () -> (
-    T := {"dscf_","cf_","gm_","i3q_","hsf_"};
-    flatten for i to #T-1 list apply(availableExamplesWithPrefix T_i, a -> (i,a))
+fourfoldTypeId = method();
+fourfoldTypeId ZZ := n -> (
+    if n == 0 then return ("dscf_", DoublySpecialCubicFourfold);
+    if n == 1 then return ("cf_", CubicFourfold);
+    if n == 2 then return ("gm_", GushelMukaiFourfold);
+    if n == 3 then return ("i3q_", IntersectionOfThreeQuadricsInP7);
+    if n == 4 then return ("hsf_", HodgeSpecialFourfold);
+    error("invalid fourfold type identifier " | (toString n) | "; expected an integer between 0 and 4");
+);
+fourfoldTypeId HodgeSpecialFourfold := X -> (
+    if instance(X,DoublySpecialCubicFourfold) then return 0;
+    if instance(X,CubicFourfold) then return 1;
+    if instance(X,GushelMukaiFourfold) then return 2;
+    if instance(X,IntersectionOfThreeQuadricsInP7) then return 3;
+    4
 );
 
-printAvailableExamples = () -> (
-    s := "-- Currently available examples:" | newline;
-    s = s | "-- Doubly special cubic 4-folds: example(name,0), name in " | (toString availableExamplesWithPrefix "dscf_") | newline;
-    s = s | "-- Cubic 4-folds:                example(name,1), name in " | (toString availableExamplesWithPrefix "cf_") | newline;
-    s = s | "-- Gushel-Mukai 4-folds:         example(name,2), name in " | (toString availableExamplesWithPrefix "gm_") | newline;
-    s = s | "-- Int. of 3 quadrics in ℙ^7:    example(name,3), name in " | (toString availableExamplesWithPrefix "i3q_") | newline;
-    s = s | "-- Other fourfolds:              example(name,4), name in " | (toString availableExamplesWithPrefix "hsf_");
+availableExamplesWithPrefix = pfx -> sort apply(select(readDirectory examplesDir(), s -> #s > #pfx + 4 and substring(s,0,#pfx) == pfx and substring(s,#s-4,4) == ".dat"), s' -> substring(s',#pfx,#s'-4-#pfx));
+availableExamples = () -> flatten for i to 4 list apply(availableExamplesWithPrefix first fourfoldTypeId i, a -> (i,a));
+
+LocalExamplesArchive = new Type of Nothing;
+localExamplesArchive = () -> new LocalExamplesArchive from null;
+
+LocalExamplesArchive#{WebApp,AfterPrint} = LocalExamplesArchive#{WebApp,AfterNoPrint} = LocalExamplesArchive#{Standard,AfterPrint} = LocalExamplesArchive#{Standard,AfterNoPrint} = A -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Local examples archive of Hodge-special fourfolds" << endl;
+    << displayLocalExamplesArchive() << endl;
+);
+
+displayLocalExamplesArchive = () -> (
+    A := availableExamples();
+    A' := apply(pairs memoizeValues exampleMem, p -> reverse take(first p,2)); -- users should consistently use either example(...,Verbose=>true) or example(...,Verbose=>false)
+    s := "-- Number of examples: " | (toString length A) | " (loaded: " | (toString length A') | ")";
+    local B; local B';
+    for i to 4 do (
+        B = apply(select(A, a -> first a == i), last);
+        B' = apply(select(A', a -> first a == i), last);
+        if #B > 0 then (
+            s = s | newline | "-- example(ϑ," | (toString i) | "), ϑ ∈ " | (compactListOfNames B);
+            if #B' > 0 then s = s | " (loaded: ϑ ∈ " | (compactListOfNames B') | ")";
+        );
+    );
     s
+);
+
+convertNumericString = n -> (
+    if not instance(n,String) then error "expected a string";
+    I := apply(toList(0..9),toString);
+    if #n > 0 and all(toList n, i -> member(i,I)) then value n else n
+);
+
+compactListOfNames = L -> (
+    if not instance(L,List) then error "expected a list";
+    L = apply(L,convertNumericString);
+    Z := sort select(L, i -> instance(i,ZZ));
+    Y := sort select(L, i -> not instance(i,ZZ));
+    strZ := toString Z;
+    if #Z >= 3 and toList(min Z .. max Z) === Z then strZ = "{" | (toString min Z) | ",...," | (toString max Z) | "}";
+    strY := toString Y;
+    if #Z > 0 and #Y > 0 then return (strZ | " ∪ " | strY);
+    if #Z > 0 and #Y == 0 then return strZ;
+    if #Z == 0 and #Y > 0 then return strY;
+    "{}"
+);
+
+clean LocalExamplesArchive := A -> (
+    e := run("rm -rf '" | examplesPath | "'");
+    if e =!= 0 or fileExists examplesPath then error "failed to clean local examples archive";
+    memoizeClear exampleMem;
+    << "-- local examples archive cleared" << endl;
+    localExamplesArchive()
+);
+
+export LocalExamplesArchive := A -> (
+    archiveName := "ExamplesSFF_" | first lines get("!date +%Y-%m-%d_%H-%M");
+    archivePath := currentDirectory() | archiveName | ".tar.gz";
+    examplesDir();
+    e := run("tar -czf '" | archivePath | "' -C '" | applicationDirectory() | "' SpecialFanoFourfoldsExamples");
+    if not(e === 0 and fileExists archivePath) then error "failed to export archive";
+    << "-- examples archive successfully exported to \"" << archivePath << "\"" << endl;
+    archiveName
+);
+
+importArchive = f -> (
+    if not instance(f,String) then error "expected a string";
+    if not fileExists f then (
+        if fileExists(f | ".tar.gz") then f = f | ".tar.gz" else error("file not found: " | f);
+    );
+    if #f < 7 or substring(f,#f-7,7) =!= ".tar.gz" then error "expected a .tar.gz archive";
+    clean localExamplesArchive();
+    e := run("tar -xzf '" | f | "' -C '" | applicationDirectory() | "'");
+    if not(e === 0 and fileExists examplesPath) then error "failed to import archive";
+    << "-- examples archive successfully imported" << endl;
+    if fileExists(examplesPath | "/welcome.m2") then load(examplesPath | "/welcome.m2");
+    localExamplesArchive()
+);
+
+downloadArchive = f -> (
+    if not instance(f,String) then error "expected a string";
+    if f === "@" then f = "https://raw.githubusercontent.com/giovannistagliano/SpecialFanoFourfoldsExamples/refs/heads/main/ExamplesSFF.tar.gz";
+    if not(#f >= 8 and substring(f,0,8) === "https://") then error "expected a url: https://...";
+    curl := findProgram("curl", "curl -h");
+    tmpArchive := temporaryFileName() | ".tar.gz";
+    << "-- downloading examples archive..." << endl;
+    runProgram(curl, "-fLs -o " | tmpArchive | " " | f, RaiseError=>true, Verbose=>false);
+    if not fileExists tmpArchive then error("failed to download archive from " | f);
+    importArchive tmpArchive
+);
+
+mergeArchive = f -> (
+    if not instance(f,String) then error "expected a string";
+    if not fileExists f then (
+        if fileExists(f | ".tar.gz") then f = f | ".tar.gz" else error("file not found: " | f);
+    );
+    if #f < 7 or substring(f,#f-7,7) =!= ".tar.gz" then error "expected a .tar.gz archive";
+    dir := temporaryFileName();
+    makeDirectory dir;
+    run("tar -xzf '" | f | "' -C '" | dir | "'");
+    newFiles := readDirectory(dir | "/SpecialFanoFourfoldsExamples");
+    newFiles = select(newFiles, s -> not member(s, {"welcome.m2", ".", ".."}));
+    oldFiles := readDirectory examplesDir();
+    if any(newFiles, s -> member(s, oldFiles)) then error "cannot merge archive: some examples already exist in the local archive; use KeepFiles=>false to replace it";
+    welcome := examplesDir() | "/welcome.m2";
+    if fileExists welcome then (
+        << "-- removing existing welcome.m2" << endl;
+        removeFile welcome;
+    );
+    e := run("tar -xzkf '" | f | "' -C '" | applicationDirectory() | "'");
+    if e =!= 0 then error "failed to merge archive";
+    << "-- examples archive successfully merged" << endl;
+    localExamplesArchive()
+);
+
+importFrom (String,LocalExamplesArchive,Option) := (f,A,opt) -> (
+    o := toList opt;
+    if not(#o == 2 and first o === KeepFiles) then error "KeepFiles is the only available option for importFrom(String,LocalExamplesArchive)";
+    if f === "" then return clean localExamplesArchive();
+    isURL := (#f >= 8 and substring(f,0,8) === "https://") or f === "@";
+    if isURL and (last o) then error "not implemented yet: importing a remote archive with KeepFiles=>true; use default KeepFiles=>false to replace the local archive";
+    if isURL then return downloadArchive f;
+    if last o then return mergeArchive f;
+    importArchive f
+);
+importFrom (String,LocalExamplesArchive) := (f,A) -> importFrom(f,A,KeepFiles=>false);
+store String := f -> importFrom(f,localExamplesArchive());
+
+delete (HodgeSpecialFourfold,LocalExamplesArchive) := (X,A) -> (
+    if not X.cache#?"exampleNameInArchive" then error "cannot delete: fourfold was not loaded from the local examples archive";
+    str := X.cache#"exampleNameInArchive";
+    n := fourfoldTypeId X;
+    pfx := first fourfoldTypeId n;
+    F := examplesDir() | "/" | pfx | str | ".dat";
+    if not fileExists F then error("example \"" | str | "\" was loaded from file \"" | F | "\", but this file no longer exists");
+    removeFile F;
+    if fileExists F then error("failed to delete file \"" | F | "\"");
+    X1 := remove(memoizeValues exampleMem,(str,n,true));
+    X2 := remove(memoizeValues exampleMem,(str,n,false));
+    if X =!= X1 and X =!= X2 then (<< "-- warning: example(\"" << str << "\"," << n << ") was not present in the cache of example" << endl);
+    << "-- example(\"" << str << "\"," << n << ") deleted" << endl;
+    localExamplesArchive()
+);
+delete (String,ZZ,LocalExamplesArchive) := (str,n,A) -> (
+    S := apply(pairs memoizeValues exampleMem, p -> (take(first p,2),last p));
+    m := position(S, p -> first p === (str,n));
+    if m =!= null then (
+        << "-- deleting loaded example(\"" << str << "\"," << n << ")" << endl;
+        X := last S_m;
+        return delete(X,A);
+    );
+    pfx := first fourfoldTypeId n;
+    F := examplesDir() | "/" | pfx | str | ".dat";
+    if not fileExists F then error "example not found in the local examples archive";
+    removeFile F;
+    if fileExists F then error("failed to delete file \"" | F | "\"");
+    << "-- example(\"" << str << "\"," << n << ") deleted" << endl;
+    localExamplesArchive()
+);
+delete (ZZ,LocalExamplesArchive) := (n,A) -> (
+    << "-- deleting all example(*," << n << "), type: " << (toString last fourfoldTypeId n) << endl;
+    for s in select(availableExamples(), a -> first a == n) do delete(last s,n,A);
+    localExamplesArchive()
+);
+
+forgetType = method();
+forgetType (String,ZZ,LocalExamplesArchive) := (str,n,A) -> (
+    oldFile := examplesDir() | "/" | (first fourfoldTypeId n) | str | ".dat";
+    if not fileExists oldFile then error "example not found in the local examples archive";
+    newFile := examplesDir() | "/" | (first fourfoldTypeId 4) | str | ".dat";
+    if n == 4 then return localExamplesArchive();
+    if fileExists newFile then error "cannot forget type: target example already exists";
+    copyFile(oldFile,newFile,Verbose=>true);
+    if not fileExists newFile then error "failed to move example";
+    delete(str,n,A);
+    << "-- example(\"" << str << "\"," << n << ") moved to example(\"" << str << "\",4)" << endl;
+    localExamplesArchive()
 );
 
 example = method(Options => {Verbose => true});
 exampleMem = memoize((str,n,verb) -> (
-    (pfx,cls) := if n == 0
-                 then ("dscf_",DoublySpecialCubicFourfold)
-                 else if n == 1
-                 then ("cf_",CubicFourfold)
-                 else if n == 2
-                 then ("gm_",GushelMukaiFourfold)
-                 else if n == 3
-                 then ("i3q_",IntersectionOfThreeQuadricsInP7)
-                 else if n == 4
-                 then ("hsf_",HodgeSpecialFourfold)
-                 else error("invalid example type " | (toString n) | "; expected an integer between 0 and 4");
+    (pfx,cls) := fourfoldTypeId n;
     F := examplesDir() | "/" | pfx | str | ".dat";
-    if not fileExists F then error("example \"" | str | "\" not found." | newline | printAvailableExamples());
+    if not fileExists F then error("example \"" | str | "\" not found." | newline | displayLocalExamplesArchive());
     if verb then << "-- loading example(\"" << str << "\"," << n << ")..." << endl;
     dataString := get F;
     if verb then << "-- evaluating example(\"" << str << "\"," << n << ")..." << endl;
@@ -128,8 +298,8 @@ example (String,ZZ) := o -> (str,n) -> exampleMem(str,n,o.Verbose);
 example (ZZ,ZZ) := o -> (i,n) -> example(toString i,n,Verbose=>o.Verbose);
 example String := o -> str -> (
     S := select(availableExamples(), a -> last a == str);
-    if #S == 0 then error("example \"" | str | "\" not found." | newline | printAvailableExamples());
-    if #S > 1 then error("the name \"" | str | "\" is used by examples of different fourfold types." | newline | "Please use example(name,n) and specify the type." | newline | printAvailableExamples());
+    if #S == 0 then error("example \"" | str | "\" not found." | newline | displayLocalExamplesArchive());
+    if #S > 1 then error("the name \"" | str | "\" is used by examples of different fourfold types." | newline | "Please use example(name,n) and specify the type." | newline | displayLocalExamplesArchive());
     example(str,first first S,Verbose=>o.Verbose)
 );
 example ZZ := o -> i -> example(toString i,Verbose=>o.Verbose);
@@ -137,15 +307,7 @@ example ZZ := o -> i -> example(toString i,Verbose=>o.Verbose);
 store (HodgeSpecialFourfold,String,Option) := (X,str,opt) -> (
     o := toList opt;
     if not(#o == 2 and first o === RaiseError) then error "RaiseError is the only available option for store(HodgeSpecialFourfold,String)";
-    pfx := if instance(X,DoublySpecialCubicFourfold)
-           then "dscf_"
-           else if instance(X,CubicFourfold)
-           then "cf_"
-           else if instance(X,GushelMukaiFourfold)
-           then "gm_"
-           else if instance(X,IntersectionOfThreeQuadricsInP7)
-           then "i3q_"
-           else "hsf_";
+    pfx := first fourfoldTypeId fourfoldTypeId X;
     F := examplesDir() | "/" | pfx | str | ".dat";
     alreadyExists := fileExists F;
     if (last o) and alreadyExists then error("example \"" | str | "\" already exists; please choose another name or use RaiseError=>false to overwrite it");
@@ -163,15 +325,7 @@ store (HodgeSpecialFourfold,String) := (X,str) -> store(X,str,RaiseError=>true);
 store (HodgeSpecialFourfold,ZZ) := (X,i) -> store(X,i,RaiseError=>true);
 store HodgeSpecialFourfold := X -> (
     if X.cache#?"exampleNameInArchive" then return store(X,X.cache#"exampleNameInArchive",RaiseError=>false);
-    pfx := if instance(X,DoublySpecialCubicFourfold)
-           then "dscf_"
-           else if instance(X,CubicFourfold)
-           then "cf_"
-           else if instance(X,GushelMukaiFourfold)
-           then "gm_"
-           else if instance(X,IntersectionOfThreeQuadricsInP7)
-           then "i3q_"
-           else "hsf_";
+    pfx := first fourfoldTypeId fourfoldTypeId X;
     i := 0;
     str := pfx | (toString vars i);
     F := examplesDir() | "/" | pfx | str | ".dat";
@@ -181,48 +335,6 @@ store HodgeSpecialFourfold := X -> (
         F = examplesDir() | "/" | pfx | str | ".dat";
     );
     store(X,str,RaiseError=>true)
-);
-store String := f -> (
-    if f === "@" then (
-        archiveName := "Examples_" | first lines get("!date +%Y-%m-%d_%H-%M");
-        archivePath := currentDirectory() | archiveName | ".tar.gz";
-        examplesDir();
-        run("tar -czf '" | archivePath | "' -C '" | applicationDirectory() | "' SpecialFanoFourfoldsExamples");
-        if not fileExists archivePath then error("failed to create the examples archive at: " | archivePath);
-        << "-- examples exported to \"" << archivePath << "\"" << endl;
-        return archiveName;
-    );
-    if f === "" then (
-        run("rm -rf '" | examplesPath | "'");
-        if fileExists examplesPath then error "failed to remove the existing examples directory";
-        memoizeClear exampleMem;
-        << "-- local examples archive cleared" << endl;
-        return;
-    );
-    if f === "~" then f = "https://raw.githubusercontent.com/giovannistagliano/SpecialFanoFourfoldsExamples/refs/heads/main/ExamplesSFF.tar.gz";
-    if #f >= 8 and substring(f,0,8) === "https://" then (
-        curl := findProgram("curl", "curl -h");
-        tmpArchive := temporaryFileName() | ".tar.gz";
-        << "-- downloading examples archive..." << endl;
-        runProgram(curl, "-fLs -o " | tmpArchive | " " | f, RaiseError=>true, Verbose=>false);
-        if not fileExists tmpArchive then error("failed to download archive from " | f);
-        store tmpArchive;
-        -- removeFile tmpArchive;
-        return;
-    );
-    if not fileExists f then (
-        if fileExists(f | ".tar.gz") then f = f | ".tar.gz" else error("file not found: " | f);
-    );
-    if #f < 7 or substring(f,#f-7,7) =!= ".tar.gz" then error "expected a .tar.gz archive";
-    store "";
-    run("tar -xzf '" | f | "' -C '" | applicationDirectory() | "'");
-    if not fileExists examplesPath then error "failed to import examples from archive";
-    << "-- examples archive successfully imported" << endl;
-    if fileExists(examplesPath | "/welcome.m2") then (
-        load(examplesPath | "/welcome.m2");
-    ) else (
-        << printAvailableExamples() << endl;
-    );
 );
 
 ------------------------------------------------------------------------
