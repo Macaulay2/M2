@@ -28,6 +28,7 @@ class MapleExamplesTests(unittest.TestCase):
             (src / 'CMakeLists.txt').write_text('''cmake_minimum_required(VERSION 3.30)
 project(MapleExamples NONE)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+set(CMAKE_INSTALL_BINDIR bin)
 set(M2_DIST_PREFIX "${CMAKE_BINARY_DIR}/dist")
 set(M2_INSTALL_BINDIR bin)
 set(M2_INSTALL_LIBDIR lib)
@@ -52,10 +53,12 @@ add_subdirectory(packages)
             for enabled, maple, convex, rerun, cached in cases:
                 with self.subTest(enabled=enabled, maple=maple, convex=convex, rerun=rerun):
                     build = root / 'build'
-                    subprocess.run(['cmake', '-S', str(src), '-B', str(build), '-G', 'Ninja',
-                                    f'-DWITH_MAPLE={enabled}', f'-DMaple_FOUND={maple}',
-                                    f'-DMaple_Convex_FOUND={convex}', f'-DRerunExamples={rerun}'],
-                                   check=True, capture_output=True)
+                    configure = subprocess.run(
+                        ['cmake', '-S', str(src), '-B', str(build), '-G', 'Ninja',
+                         f'-DWITH_MAPLE={enabled}', f'-DMaple_FOUND={maple}',
+                         f'-DMaple_Convex_FOUND={convex}', f'-DRerunExamples={rerun}'],
+                        capture_output=True, text=True)
+                    self.assertEqual(configure.returncode, 0, configure.stdout + configure.stderr)
                     commands = subprocess.check_output(
                         ['ninja', '-C', str(build), '-t', 'commands', 'install-packages'], text=True)
                     # Ninja's shell quoting escapes the embedded M2 quotes.
