@@ -113,10 +113,10 @@ terraciniLocus(ZZ, Matrix, Ideal) := o -> (r, A, I) -> (
     Z := genericMatrix(Q, n + 1, r);
     duplicate := intersect apply(subsets(r, 2), ij ->
 	recursiveMinors(2, Z_ij, o));
-    result = saturate(result, duplicate);
-    blocksingular := recursiveMinors(rk, A, o);
-    singular := intersect apply(r, i -> sub(blocksingular, opts#i));
-    radical result : radical singular)
+    result = radical saturate(result, duplicate);
+    blocksingular := radical recursiveMinors(rk, A, o);
+    scan(r, i -> result = result : sub(blocksingular, opts#i));
+    result)
 
 terraciniLocus(ZZ, RingMap) := o -> (r, f) -> (
     terraciniLocus(r, jacobian matrix f, ideal 0_(target f), o))
