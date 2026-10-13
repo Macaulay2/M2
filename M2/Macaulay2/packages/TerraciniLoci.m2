@@ -122,6 +122,7 @@ terraciniLocus(ZZ, RingMap) := o -> (r, f) -> (
     terraciniLocus(r, jacobian matrix f, ideal 0_(target f), o))
 
 terraciniLocus(ZZ, Ideal) := o -> (r, I) -> (
+    if r > 2 then error "expected r <= 2";
     terraciniLocus(r, transpose jacobian I, I, o))
 
 beginDocumentation()
