@@ -6305,15 +6305,17 @@ TEST ///
 
     -- Before-and-after examples must show their mathematical inputs,
     -- either at assignment or by an explicit display.
+    -- Installed help can come from the documentation database without
+    -- populating the transient example-input table.
     visibleExampleValue := (node,variableName) -> (
-        inputLines := flatten apply((P#"example inputs")#node,lines);
+        inputLines := lines toString examples makeTag(node,Package=>"KacMoody");
         any(inputLines,line -> (
             match("^[[:space:]]*"|variableName|"[[:space:]]*=",line)
             and not match(";[[:space:]]*$",line)))
         or any(inputLines,line -> match(
             "^[[:space:]]*"|variableName|"[[:space:]]*$",line))
     );
-    assert(all({
+    visibilityFixtures := {
         {"demazureOperator","C"},
         {"dualCharacter","C"},
         {"dualCharacter","Cd"},
@@ -6321,7 +6323,17 @@ TEST ///
         {"characterCoefficient","C"},
         {"restrictCharacter","C"},
         {"decomposeCharacter","P"}
-    },fixture -> visibleExampleValue(fixture#0,fixture#1)));
+    };
+    assert(all(visibilityFixtures,fixture ->
+        visibleExampleValue(fixture#0,fixture#1)));
+
+    -- The same checks must work with no transient example inputs.
+    savedExampleInputs := P#"example inputs";
+    P#"example inputs" = new MutableHashTable;
+    visibleWithoutCache := try all(visibilityFixtures,fixture ->
+        visibleExampleValue(fixture#0,fixture#1)) else false;
+    P#"example inputs" = savedExampleInputs;
+    assert(visibleWithoutCache);
 ///
 
 
