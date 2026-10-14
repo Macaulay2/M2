@@ -36,7 +36,7 @@ void MonomialHashTable<ValueType>::initialize(int logsize0)
 template <typename ValueType>
 void MonomialHashTable<ValueType>::insert(value m)
 {
-  long hashval = HASHVALUE(m) & hashmask;
+  auto hashval = HASHVALUE(m) & hashmask;
   while (hashtab[hashval])
     {
       hashval++;

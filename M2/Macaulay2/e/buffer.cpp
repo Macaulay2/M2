@@ -57,6 +57,14 @@ void buffer::put(long n)
   put(s, strlen(s));
 }
 
+void buffer::put(long long n)
+{
+  const int N = 100;
+  char s[N];
+  snprintf(s, N, "%lld", n);
+  put(s, strlen(s));
+}
+
 void buffer::put(double n)
 {
   const int N = 100;
