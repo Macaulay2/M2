@@ -341,6 +341,16 @@ TEST ///
   assert isWellDefined C
   assert(HH C != complex coker f0)
   assert(prune HH C == complex coker f0)
+
+  C = complex R
+  D = complex R
+  assert(C == D)
+  assert(C =!= D)
+  -- these operations didn't work before isIdentical
+  -- was used internally instead of === and =!=
+  id_C | id_D
+  id_C || id_D
+  id_C // id_D
 ///
 
 TEST ///
