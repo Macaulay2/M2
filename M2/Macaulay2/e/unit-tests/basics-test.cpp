@@ -1,46 +1,41 @@
 // Copyright 2012 Michael E. Stillman
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <memory>
 #include <gtest/gtest.h>
-#include <mpfr.h>
+
+#include <string>
+#include <vector>
 
 #include "buffer.hpp"
 #include "text-io.hpp"
 #include "util.hpp"
 
-bool testfcn() { return true; }
 TEST(Nothing, ideal)
 {
-  EXPECT_EQ(true, testfcn());
-  EXPECT_FALSE(!(testfcn()));
+  // Appending an empty string leaves the accumulated text unchanged.
+  buffer output;
+  output << "ideal" << "";
+  EXPECT_STREQ(output.str(), "ideal");
 }
 
 TEST(Buffer, make1)
 {
-  buffer o;
-  char *s = o.str();
-  // fprintf(stderr, ".[%s].\n", s);
-  int c = strcmp("", s);
-  EXPECT_EQ(c, 0);
+  // A fresh buffer exposes an empty, terminated string.
+  buffer output;
+  EXPECT_STREQ(output.str(), "");
 }
 
 TEST(Buffer, make2)
 {
-  buffer o;
-  o << "hi there";
-  char *s = o.str();
-  // fprintf(stderr, "..%s..\n", s);
-  int c = strcmp("hi there", s);
-  EXPECT_EQ(c, 0);
+  // Appended text is preserved exactly in the buffer's string view.
+  buffer output;
+  output << "hi there";
+  EXPECT_STREQ(output.str(), "hi there");
 }
 
 TEST(Util, m2array2stdvec)
 {
-  std::vector<int> a{1, 3, 6, 4};
+  // Array conversion preserves the order of distinct integer entries.
+  std::vector<int> a {1, 3, 6, 4};
   M2_arrayint b = stdvector_to_M2_arrayint(a);
   std::vector<int> c = M2_arrayint_to_stdvector<int>(b);
   EXPECT_EQ(a, c);
@@ -48,7 +43,8 @@ TEST(Util, m2array2stdvec)
 
 TEST(Util, m2arrayint_zero)
 {
-  std::vector<int> a{};
+  // Empty arrays stay empty through both conversion directions.
+  std::vector<int> a {};
   M2_arrayint b = stdvector_to_M2_arrayint(a);
   std::vector<int> c = M2_arrayint_to_stdvector<int>(b);
   EXPECT_EQ(a, c);
@@ -56,28 +52,36 @@ TEST(Util, m2arrayint_zero)
 
 TEST(Util, m2array2stdvec_big)
 {
-  std::vector<long long> a{-1453853049583, 3, 6, 4, -2};
+  // Conversion explicitly narrows each entry to the engine integer array type.
+  std::vector<long long> a {-1453853049583, 3, 6, 4, -2};
   M2_arrayint b = stdvector_to_M2_arrayint(a);
   std::vector<long long> c = M2_arrayint_to_stdvector<long long>(b);
-  EXPECT_FALSE(a == c);
+  ASSERT_EQ(c.size(), a.size());
+  for (size_t index = 0; index < a.size(); ++index)
+    {
+      SCOPED_TRACE(::testing::Message()
+                   << "index " << index << ", input " << a[index]);
+      EXPECT_EQ(c[index], static_cast<int>(a[index]));
+    }
 }
 
 TEST(Util, m2array2stdvec_check)
 {
-  std::vector<int> a{-145385, 3, 6, 4, -2};
+  // Negative and positive integer entries survive a round trip.
+  std::vector<int> a {-145385, 3, 6, 4, -2};
   M2_arrayint b = stdvector_to_M2_arrayint(a);
   auto c = M2_arrayint_to_stdvector<int>(b);
   EXPECT_EQ(a, c);
 }
 
-#if 0
-TEST(Util, m2strings_basic) {
+TEST(Util, m2strings_basic)
+{
+  // String arrays preserve names, digits, and underscores in order.
   std::vector<std::string> a {"a", "b", "c1", "d2", "e_3"};
   M2_ArrayString b = stdvector_to_M2_ArrayString(a);
   auto c = M2_ArrayString_to_stdvector(b);
-  EXPECT_EQ(a,c);
+  EXPECT_EQ(a, c);
 }
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "

@@ -1,8 +1,6 @@
-// In BUILD tree in Macaulay2/e:
-// ./M2-unit-tests --gtest_filter="*F4*"
+#include <string>
 
 #include <vector>
-#include <iostream>
 #include <memory>
 #include <gtest/gtest.h>
 
@@ -20,68 +18,62 @@
 
 TEST(PolyRing, createDegreesRing)
 {
-  const Ring* DR = degreeRing(1);
+  // Degree rings preserve the requested grading variables over ZZ.
+  const PolynomialRing* DR = degreeRing(1);
   EXPECT_FALSE(error());
-  EXPECT_TRUE(DR != nullptr);
+  ASSERT_NE(DR, nullptr);
 
-  buffer o;
-  DR->text_out(o);
-  std::cout << "ring is " << o.str() << std::endl;
+  EXPECT_EQ(DR->getCoefficients(), globalZZ);
+  EXPECT_EQ(DR->n_vars(), 1);
 }
 
 TEST(PolyRing, createDegreesRing2)
 {
-  const Ring* DR = degreeRing({"t1", "t2"});
+  // Degree rings preserve the requested grading variables over ZZ.
+  const PolynomialRing* DR = degreeRing({"t1", "t2"});
   EXPECT_FALSE(error());
-  EXPECT_TRUE(DR != nullptr);
+  ASSERT_NE(DR, nullptr);
 
-  buffer o;
-  DR->text_out(o);
-  std::cout << "ring is " << o.str() << std::endl;
+  EXPECT_EQ(DR->getCoefficients(), globalZZ);
+  EXPECT_EQ(DR->getMonoid()->variableNames(),
+            (std::vector<std::string> {"t1", "t2"}));
 }
 
 TEST(PolyRing, create1)
 {
-  // Creaating a polynomial ring from C++.
-  // Plan: this should be a simple constructor call!
+  // Construction retains the four variable names and the coefficient field.
 
   // Create coefficient ring
-  const Ring* kk = rawARingZZpFlint(101); // or IM2_Ring_ZZ(), IM2_Ring_QQ(), and others...
-  EXPECT_TRUE(kk != nullptr);
+  const Ring* kk = rawARingZZpFlint(101);
+  ASSERT_NE(kk, nullptr);
 
-  // Now create the monomial order.  This one is a pain in the butt!
-  std::vector<std::string> varnames { "a", "b", "c", "d" };
-  std::vector<int> degs {1,1,1,1};
+  // Equal degrees select the standard graded reverse lexicographic order.
+  std::vector<std::string> varnames {"a", "b", "c", "d"};
+  std::vector<int> degs {1, 1, 1, 1};
   std::vector<int> heft {1};
 
-  MonomialOrdering* mo = rawGRevLexMonomialOrdering(stdvector_to_M2_arrayint(degs), 32);
-  const Monoid* M = Monoid::create(
-                             mo,
-                             degreeRing(1),
-                             varnames,
-                             degs,
-                             heft
-                             );
-  EXPECT_TRUE(M != nullptr);
+  MonomialOrdering* mo =
+      rawGRevLexMonomialOrdering(stdvector_to_M2_arrayint(degs), 32);
+  const Monoid* M = Monoid::create(mo, degreeRing(1), varnames, degs, heft);
+  ASSERT_NE(M, nullptr);
 
-  const Ring* R = PolyRing::create(kk, M);
+  const PolynomialRing* R = PolyRing::create(kk, M);
 
-  EXPECT_TRUE(R != nullptr);
-  buffer o;
-  R->text_out(o);
-  std::cout << "ring is " << o.str() << std::endl;
+  ASSERT_NE(R, nullptr);
+  EXPECT_EQ(R->getMonoid()->variableNames(),
+            (std::vector<std::string> {"a", "b", "c", "d"}));
+  EXPECT_EQ(R->characteristic(), 101);
 }
 
 TEST(PolyRing, createSimple)
 {
-  // Creaating a polynomial ring from C++.
-  // Plan: this should be a simple constructor call!
+  // Construction retains the four variable names and the coefficient field.
 
   // Create coefficient ring
-  const Ring* R = simplePolynomialRing(101, { "a", "b", "c", "d" });
+  const PolynomialRing* R = simplePolynomialRing(101, {"a", "b", "c", "d"});
 
-  EXPECT_TRUE(R != nullptr);
-  buffer o;
-  R->text_out(o);
-  std::cout << "ring is " << o.str() << std::endl;
+  ASSERT_NE(R, nullptr);
+  EXPECT_EQ(R->getMonoid()->variableNames(),
+            (std::vector<std::string> {"a", "b", "c", "d"}));
+  EXPECT_EQ(R->characteristic(), 101);
 }

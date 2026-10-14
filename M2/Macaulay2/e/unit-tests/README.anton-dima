@@ -1,0 +1,285 @@
+================================================================================
+ZZ/p ARing classes: coverage baseline and audit notes
+================================================================================
+
+Working notes for the ZZ/p unit-test effort on branch 'arings'.  Scope is the
+three ZZ/p ARing implementations only; Galois fields are out of scope here.
+
+
+--------------------------------------------------------------------------------
+1. Coverage baseline
+--------------------------------------------------------------------------------
+
+Measured 2026-09-14, before any ZZ/p unit-test changes.  Recorded so later work
+can be measured against a known starting point.
+
+How to reproduce:
+
+  cmake -DGCOV=ON ... <other flags>          # see BUILD/anton/Makefile, target cmake-gcov
+  cmake --build . --target M2-unit-tests
+  cmake --build . --target coverage-reset    # clear accumulated .gcda counters
+  ./Macaulay2/e/M2-unit-tests                # 277 tests, all passing at baseline
+  gcovr --root <srcdir> Macaulay2/e/CMakeFiles \
+        --merge-mode-functions=merge-use-line-min \
+        --gcov-ignore-errors=all --filter '.*aring-ZZp.*' --txt
+
+Point gcovr at Macaulay2/e/CMakeFiles rather than at just the M2-engine object
+directory.  Most of each ARing class is inline code in the .hpp, which gcov
+attributes to whichever translation unit instantiated it -- including the
+unit-test TUs.  Narrowing the search to the engine objects alone makes the
+headers report a spuriously low line count at 0%.
+
+"base" is the starting point.  "gen" adds the generator, discreteLog and
+modulus-range tests.  "matrix" adds the typed test matrix (section 2).  "ops"
+adds the strengthened helpers and the element-operation tests (section 3).
+
+Note the test count falls from 283 to 268 at the matrix step while coverage
+rises: eighteen hand-written per-modulus tests collapse into three typed ones
+that each cover more ground.  Final count is 273, plus 2 disabled.
+
+  File                  Lines    base      gen     matrix     ops
+  ----------------------------------------------------------------------
+  aring-ZZp.cpp            49   45 91%   45 91%   45 91%    45 91%
+  aring-ZZp.hpp           150   83 56%   83 56%   90 61%   141 94%
+  aring-ZZp-ffpack.cpp    143   79 55%   91 63%   96 67%   119 83%
+  aring-ZZp-ffpack.hpp     35   14 40%   23 65%   23 65%    26 74%
+  aring-ZZp-flint.cpp      35   26 74%   31 88%   31 88%    31 88%
+  aring-ZZp-flint.hpp     105   72 68%   73 69%   79 75%    94 89%
+  ----------------------------------------------------------------------
+  TOTAL                   517  319 62%  346 67%  364 70%   456 88%
+
+Still uncovered, and why:
+
+  - promote / lift / eval (ring maps) in all three.  These take a Ring* or a
+    RingMap*, so they cannot be reached from an ARing-level test.
+  - ARingZZp::syzygy, ARingZZp::random.
+  - ARingZZpFFPACK::field().
+
+
+--------------------------------------------------------------------------------
+2. The test matrix
+--------------------------------------------------------------------------------
+
+ARingZZpTest.cpp drives all three classes through one TYPED_TEST over one list
+of moduli, from p=2 up to the largest prime below 2^64.  ARingFactory<RT>
+supplies make() and supports(); supports() is the single place each class's
+ceiling is written down, and cells that fall outside it are printed with the
+reason rather than being silently absent, which is how they were expressed
+before.
+
+This replaced eighteen per-modulus tests.  Those had drifted: ffpack never ran
+above 32767 or at 32771, only some called testCoerceToLongInteger, and every
+large-characteristic case hand-rolled a copy of testFiniteField with testPower
+left out.
+
+testPower was what forced that duplication -- it held the cardinality in an
+int, which truncates above 2^31.  It now builds an mpz and calls power_mpz for
+the q and q-1 exponents, keeping power() for the small ones (-1, -2, 3).  So
+testPower runs at every modulus now, including 2^63 and 2^64 for flint, and
+power_mpz has coverage in all three classes for the first time.
+
+
+--------------------------------------------------------------------------------
+3. Element operations, and two API traps
+--------------------------------------------------------------------------------
+
+testMultiply used to check only a*0 == 0 (it said so in its own TODO); it now
+also covers a*1, agreement with repeated addition, and a*(-b) == -(a*b).
+testAxioms gained the identities, right distributivity and a-a == 0.  testPower
+gained a^0, 1^n, a^2 and a^3.  testFieldDivideByZero is new: divide(a,0) and
+invert(0) must throw, 0/a == 0, a/a == 1, and every nonzero element is a unit.
+There was previously no EXPECT_THROW anywhere in the aring harness.
+
+Two things to know before writing more of these:
+
+  - set(c, a) is not a copy.  Where ElementType is an integral type -- int for
+    ARingZZp, double for ffpack -- passing an element to set() binds to the
+    integer-coercion overload and reinterprets the element's internal value.
+    Use init_set.  copy() exists on ARingZZp and ARingZZpFFPACK but not on
+    ARingZZpFlint, so init_set is the only copy the three have in common.
+
+  - ARingZZp::subtract_multiple requires nonzero arguments.  Elements are
+    exponents of a primitive root, with 0 reserved for the field's zero, so
+    zero has no valid exponent and needs a special case.  mult() has it;
+    subtract_multiple() drops it for speed (the comment there cites a 15-20%
+    gain from mimicking coeffrings.cpp) and documents "we assume: a, b are
+    NONZERO!!".  Nothing checks it -- there is no assert in the whole file --
+    so a zero operand silently yields a wrong answer rather than failing.  It
+    stays in bounds, so it is not a memory-safety issue.  ffpack and flint
+    store ordinary residues and have no such precondition.
+    Recorded as ARingZZp.DISABLED_subtractMultipleByZero.
+
+
+--------------------------------------------------------------------------------
+4. The three classes differ at the core
+--------------------------------------------------------------------------------
+
+They are not variations on one representation:
+
+  ARingZZp         discrete log -- an element is the *exponent* of a primitive
+                   root, stored as int, backed by log_table/exp_table.
+                   0 -> 0, p-1 -> 1.  Strategy => "Aring".
+  ARingZZpFFPACK   residue as a double, via Givaro::Modular<double>.
+                   Strategy => "Ffpack".
+  ARingZZpFlint    residue 0..p-1 as mp_limb_t, via flint nmod.
+                   The default strategy for ZZ/p.
+
+Legacy non-ARing counterpart: Z_mod (rings/ZZp.hpp), Strategy => "Old".
+
+Both ARingZZp and ARingZZpFlint compute a primitive root eagerly in the
+constructor; ARingZZpFFPACK computes its generator lazily.  Since Flint is the
+default, every ZZ/p ring creation currently pays a factorization of p-1
+(n_primitive_root_prime), whether or not a generator is ever used.
+
+
+--------------------------------------------------------------------------------
+5. Modulus limits -- three unrelated causes
+--------------------------------------------------------------------------------
+
+  ARingZZp        cap 32749, enforced at interface/aring.cpp:43.
+                  Reason: two newarray_atomic(int, p) tables, plus an O(p^2)
+                  primitive-root search in findPrimitiveRoot.  A real limit.
+
+  ARingZZpFFPACK  native 94906266, enforced 32766.
+                  Givaro's Modular<double>::maxCardinality() is 94906266 =
+                  floor(2^26*sqrt(2) + 1/2), because Compute_t must hold p(p-1)
+                  exactly and a double has a 53-bit mantissa.
+                  But getMaxModulus() returns a hardcoded 0x7fff behind #if 1,
+                  commented "I have no idea what value would be correct here",
+                  with the real Givaro query stranded in the dead #else.
+                  This is not cosmetic: interface/aring.cpp:165 gates ring
+                  creation on it, so Strategy => "Ffpack" errors out above
+                  p = 32766 despite the backend handling 94.9 million.
+                  Corroboration that 32767 is wrong: the class's own
+                  to_ring_elem comment says the max is "about 70 million in
+                  2013"; the constructor asserts against Givaro's real
+                  maxCardinality() (but is compiled out under -DNDEBUG); and
+                  the existing tests already construct FFPACK rings at
+                  33500479, 66000007 and 67108859, and pass.
+
+  ARingZZpFlint   native 2^64-1, assumed < 2^63, enforced nowhere.
+                  flint's nmod handles the full unsigned 64-bit range
+                  (nmod.h:33-42 handles the high-bit-set case explicitly).
+                  Neither ARingZZpFlint(size_t) nor rawARingZZpFlint validates
+                  anything.
+                  The reason for M2's < 2^63 assumption is the type chain at
+                  the engine level, and only that: Ring::mCharacteristic is a
+                  signed long (rings/ring.hpp:69, whose own comment admits
+                  "not all rings will have characteristic that fits in a long
+                  int"), rawRingCharacteristic returns long, and
+                  ConcreteRing<ARingZZpFlint>::create feeds the ARing's
+                  size_t characteristic straight into initialize_ring(long).
+                  So a ring built at the largest prime below 2^64 reports a
+                  characteristic of -59 through the generic Ring interface.
+                  The ARing class itself is fine at that size.
+
+                  NOTE, because it is easy to get this backwards:
+                  coerceToLongInteger is *not* broken above 2^63.  It is total
+                  for every p < 2^64.  The balanced representative always fits
+                  in a long, since |rep| <= p/2 < 2^63.  The intermediate
+                  "long result = f" does overflow when f > 2^63, but the
+                  signed/unsigned conversions in "result > characteristic()/2"
+                  and in "result -= characteristic()" round-trip on two's
+                  complement, so the answer comes out right.  Verified
+                  directly at p = 18446744073709551557 across both sides of
+                  the p/2 boundary; see ARingZZpFlint.coerceToLongIntegerNear2to64.
+                  (It does lean on implementation-defined conversions, which
+                  is worth cleaning up, but it is not a wrong answer.)
+
+                  What actually used to fail, and what the old
+                  "this fails for charac > 2^63" comment on the
+                  arithmetic18446744073709551557 test was really about, was
+                  the *test helper*: testCoerceToLongInteger held the
+                  characteristic in a long, so "characteristic() - 10000"
+                  wrapped to -10059 once p exceeded 2^63 and the second loop
+                  walked an entirely different range.  The helper now uses
+                  unsigned arithmetic and reaches the top of the range through
+                  the negative representatives, and the call is enabled again.
+
+
+--------------------------------------------------------------------------------
+6. Other observations
+--------------------------------------------------------------------------------
+
+  Most of what this section first listed was fixed by the work described above:
+  the assertion-free tests, the hand-rolled large-characteristic cases,
+  testMultiply checking only a*0 == 0, the missing a^0 and EXPECT_THROW
+  coverage, and the "commented out because" comments, which went away with the
+  tests they sat on.  What remains:
+
+  - ARingZZp::ARingZZp(size_t p0) stores p = static_cast<int>(p0).  Constructing
+    the class directly, bypassing rawARingZZp's range check, with p0 > INT_MAX
+    truncates silently.
+
+  - ARingTest.hpp still annotates testAdd, testSubtract and testDivide as
+    failing "in char 2, ffpack".  They do not; all three run at p=2 in the
+    matrix.  Left in place rather than churn unrelated commentary.
+
+  - Adjacent, outside ZZ/p scope: ARingTest.hpp and RingTest.hpp share the
+    include guard M2_UNITTESTS__RING_TEST_HPP__ and define different values of
+    ntrials (1000 vs 100).  testCoercions short-circuits on
+    characteristic() == 0, skipping its entire rational half for exactly the
+    characteristic-0 rings where rationals matter.
+
+
+--------------------------------------------------------------------------------
+7. Remaining work (postponed)
+--------------------------------------------------------------------------------
+
+Stage 1 -- tests only, no engine changes -- is done and landed.  Everything
+below is deliberately postponed, not in progress.  It is recorded so the next
+person does not have to rediscover it.
+
+Stage 2, engine fixes.  Each changes engine code and flips or updates a test
+that already exists.  Roughly in order of payoff:
+
+  S1  Replace ARingZZpFFPACK::getMaxModulus().  It returns a hardcoded 0x7fff
+      behind "#if 1", with the real Givaro query stranded in the dead #else;
+      Givaro's Modular<double>::maxCardinality() is 94906266.  Not cosmetic:
+      interface/aring.cpp gates ring creation on it, so Strategy => "Ffpack"
+      errors out above p = 32766 while the backend handles 94.9 million.
+      Note the tripwire cuts both ways --
+      ARingZZpFFPACK.advertisedMaxModulusIsBelowTheRealOne asserts
+      getMaxModulus() < maxCardinality(), so this fix makes them equal and that
+      assertion must become EXPECT_LE or be retired.  That is the
+      characterization test doing its job.
+
+  S2  Validate the flint modulus.  Neither ARingZZpFlint(size_t) nor
+      rawARingZZpFlint checks anything, not primality and not range, while
+      rawARingZZp enforces 2..32749.
+
+  S3  Settle the 2^63 question.  This is not coerceToLongInteger, which is total
+      for every p < 2^64 -- see section 5.  The constraint is
+      Ring::mCharacteristic, a signed long fed from the ARing's size_t, so a
+      ring at the largest prime below 2^64 reports a characteristic of -59
+      through the generic Ring interface.  Enforce p < 2^63, or widen the type.
+
+  S4  Make generator computation lazy.  ARingZZpFlint's constructor factors p-1
+      on every ZZ/p creation and flint is the default strategy; ARingZZp runs an
+      O(p^2) primitive-root search eagerly.  ARingZZpFFPACK is already lazy.
+
+  S5  Guard the ARingZZp narrowing noted in section 6.  Flips
+      ARingZZp.DISABLED_constructorRejectsModulusAboveIntMax.
+
+  S6  Decide ARingZZp::subtract_multiple -- restore the zero check, assert in
+      debug builds, or leave it to callers.  Flips
+      ARingZZp.DISABLED_subtractMultipleByZero.
+
+  S7  Minor: copy() is missing from ARingZZpFlint, so init_set is the only copy
+      operation the three classes have in common.
+
+Stage 3, coverage the ARing layer cannot reach.  promote, lift and eval take a
+Ring* or a RingMap*, so they belong in Macaulay2/packages/EngineTests.m2, which
+already drives the same ZZ/p strategies through the raw interface.  Reachable
+but still untested: ARingZZp::syzygy, ARingZZp::random, ARingZZpFFPACK::field().
+
+Stage 4, the two shared-harness defects in section 6.  Fixing the
+characteristic-0 skip will surface real failures in the ZZ, QQ, RR and CC tests;
+triage those as findings rather than silencing them.
+
+Descoped by decision, recorded so it is not mistaken for an oversight: Galois
+fields.  ARingGFTest.cpp is commented out of both build lists and does not
+compile against the current API, so no GF(p^n) is under test anywhere;
+ARingGFFlintBig and ARingGFM2 have never had a test file; and ARingGFM2::random
+draws rawRandomInt(characteristic()) rather than the field order, so random
+elements never leave the prime subfield.

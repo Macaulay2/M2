@@ -33,7 +33,7 @@ void addMultipleTo(DMatZZpFFPACK& C,
 
   DMatZZpFFPACK::ElementType b;
   C.ring().init(b);
-  C.ring().set_from_long(b, 1);
+  C.ring().set(b, 1);
   FFLAS::fgemm(C.ring().field(),
                tB,
                tA,
@@ -55,7 +55,7 @@ void addMultipleTo(DMatZZpFFPACK& C,
                    const DMatZZpFFPACK& B)
 {
   DMatZZpFFPACK::ElementType one;
-  A.ring().set_from_long(one, 1);
+  A.ring().set(one, 1);
 
   addMultipleTo(C, one, A, B);
 }
@@ -65,7 +65,7 @@ void subtractMultipleTo(DMatZZpFFPACK& C,
                         const DMatZZpFFPACK& B)
 {
   DMatZZpFFPACK::ElementType minus_one;
-  A.ring().set_from_long(minus_one, -1);
+  A.ring().set(minus_one, -1);
   addMultipleTo(C, minus_one, A, B);
 }
 
@@ -96,7 +96,7 @@ void determinant(const DMatZZpFFPACK& mat, ZZpFFPACK::ElementType& result_det)
     {
       // 26 April 2014: this branch is needed as FFPACK gives answer of 0 in
       // this case.
-      mat.ring().set_from_long(result_det, 1);
+      mat.ring().set(result_det, 1);
     }
   else
     {
