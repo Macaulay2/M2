@@ -347,7 +347,6 @@ isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
     inc vars source inc == promote (vars source inc, target inc)
 )
 
-
 -----------
 -- TESTS --
 -----------
@@ -358,8 +357,6 @@ load "./PushForward/test.m2"
 -------------------
 beginDocumentation()
 load "./PushForward/doc.m2"
-
-
 
 -------------------
 end
@@ -373,118 +370,11 @@ x = symbol x;y= symbol y;
 check PushForward
 viewHelp PushForward
 
-
-
 target oo == pr_0
 pushFwd(map(R',R), R'^1)
----
 A = QQ
 B = QQ[x]/(x^2)
 N = B^1 ++ (B^1/(x))
 f = map(B,A)
 pushFwd(f,N)
 pushFwd f
-
--- example bug -----------------------------------
--- DE + MES
-
-///
-  restart
-  needsPackage "PushForward"
-
-
-  -- This one works
-  kk = ZZ/101
-  A = kk[s,t]
-  C = A[x,y,z]/(x^2, y^2, z^2)
-  phi = map(C,A)
-  f = map(C^1, A^4, phi, {{x,s*y,t*y, z}})
-  ker f
-
-  -- This one fails, degrees are screwed up.
-  kk = ZZ/101
-  A = kk[s,t]
-  B = frac A
-  C = B[x,y,z]/(x^2, y^2, z^2)
-  phi = map(C,B)
-  f = map(C^1, B^3, phi, {{x,s*y,z}})
-  ker f
-///
-
-TEST ///
--*
-  restart
-
-  needsPackage "NoetherNormalForm"
-*-
-  needsPackage "PushForward"
-  s = symbol s; t = symbol t
-  kk = ZZ/101
-  A = frac(kk[s,t])
-  L = A[symbol a.. symbol d]/(d-t, a-s, b*c-s*t, b^2-(s/t)*c^2)
-  describe L
-  ML = pushFwd(map(L,frac A), L^1) -- dim 4, free -- FAILS
-
-  -- simpler example which fails
-  -- FIX THIS: should not create a graph ring.
-  restart
-  debug needsPackage "PushForward"
-  s = symbol s; t = symbol t
-  kk = ZZ/101
-  A = frac(kk[s,t])
-  L = A[symbol b, symbol c]/(b*c-s*t, b^2-(s/t)*c^2)
-  basis L
-  describe L
-  inc = map(L, A)
-  assert isInclusionOfCoefficientRing inc
-  assert isModuleFinite L
-  pushFwd inc
-  ML = pushFwd(map(L,frac A), L^1)
-
-  -- FIX THIS: should not create a graph ring.
-  -- FIX ME?
-  restart
-  debug needsPackage "PushForward"
-  s = symbol s; t = symbol t
-  A = QQ
-  L = A[symbol b, symbol c]/(b*c-13, b^3-c^2)
-  describe L
-  inc = map(L, A)
-  assert isInclusionOfCoefficientRing inc
-  assert isModuleFinite L
-  (LA, bas, pf) = pushFwd inc -- this works
-  pf(b^2+c^2) -- maybe a better way?
-
-
-  restart
-  debug needsPackage "PushForward"
-  s = symbol s; t = symbol t
-  kk = ZZ/101
-  A = frac(kk[s,t])
-  L = A[symbol b, symbol c]/(b^2-(s/t)*c^2 - c, c^3)
-  basis L
-  describe L
-  inc = map(L, A)
-  pushForward(inc, A^1) -- now fails...
-  pushFwd inc
-///
-
-
-///
--- Case 1.
--- ring map is f : A --> B = A[xs]/I, A is a polynomial ring, quotient field, basic field.
-
-///
-
-///
-    Key
-    Headline
-    Usage
-    Inputs
-    Outputs
-    Description
-        Text
-        Example
-    Caveat
-    SeeAlso
-///
