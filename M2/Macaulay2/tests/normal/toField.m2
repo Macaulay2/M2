@@ -8,6 +8,11 @@ assert( dim I == 2 )					    -- fails in 1.2
 assert( dim Proj (R/I) == 1 )				    -- fails in 1.2
 assert( hilbertPolynomial I == - 15 * hilbertPolynomial (QQ[x]) + 6 * hilbertPolynomial (QQ[x,y]) ) -- fails in 1.2
 
+-- Extended GCD is unavailable over some nested algebraic coefficient fields.
+F = toField(QQ[i]/(i^2+1))
+K = toField(F[r]/(r^4-2))
+assert try (r^-1; false) else true
+
 
 A = ZZ[a]/(a^2+3);
 L = toField A
