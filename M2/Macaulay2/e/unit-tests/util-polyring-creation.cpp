@@ -2,6 +2,7 @@
 
 #include "util.hpp"
 #include "unit-tests/util-polyring-creation.hpp"
+#include "rings/skewpoly.hpp"
 #include "rings/weylalg.hpp"
 #include "interface/ring.h"
 #include "interface/aring.h"
@@ -119,6 +120,31 @@ const PolynomialRing* simplePolynomialRing(int p, const std::vector<std::string>
   return simplePolynomialRing(kk, names, monorder);
 }
 
+const PolynomialRing* simpleSkewPolynomialRing(int p,
+                                               const std::vector<std::string>& names,
+                                               const std::vector<int>& skewvars)
+{
+  // if p is 0, use QQ.
+  // degrees are all set to 1. (degree ring has one variable)
+  // heft is 1.
+  // monomial order is grevlex.
+
+  const Ring *kk = (p > 0 ? rawARingZZpFlint(p) : IM2_Ring_QQ());
+  if (kk == nullptr) return nullptr; // one of these routines would have made an error.
+
+  MonomialOrdering* monorder = MonomialOrderings::join
+    ({
+      MonomialOrderings::GRevLex(names.size()),
+      MonomialOrderings::PositionUp()
+    });
+
+  std::vector<int> degs(names.size(), 1);
+  const Monoid* M = Monoid::create(monorder, degreeRing(1), names, degs, {1});
+  if (M == nullptr) return nullptr;
+
+  return SkewPolynomialRing::create(kk, M, stdvector_to_M2_arrayint(skewvars));
+}
+
 const WeylAlgebra* simpleWeylAlgebra(long p,
                                      const std::vector<std::string> names,
                                      const std::vector<int> comms,
@@ -196,6 +222,26 @@ const Ring* simpleQuotientRing(const PolynomialRing* R,
   const Matrix* gb = computeGB(I);
   if (gb == nullptr) return nullptr;
   return PolynomialRing::create_quotient(R, gb);
+}
+
+std::vector<int> varpowerOf(const std::vector<std::pair<int, int>>& pairs)
+{
+  std::vector<int> vp;
+  vp.push_back(static_cast<int>(2 * pairs.size() + 1));
+  for (const auto& p : pairs)
+    {
+      vp.push_back(p.first);
+      vp.push_back(p.second);
+    }
+  return vp;
+}
+
+ring_elem monomialOf(const Ring* R, const std::vector<std::pair<int, int>>& pairs)
+{
+  ring_elem result = R->one();
+  for (const auto& p : pairs)
+    result = R->mult(result, R->power(R->var(p.first), p.second));
+  return result;
 }
 
 // Local Variables:

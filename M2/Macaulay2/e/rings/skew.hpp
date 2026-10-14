@@ -35,6 +35,7 @@ class SkewMultiplication
   int diff(const int *exp1, const int *exp2, int *result) const;
   int divide(const int *exp1, const int *exp2, int *result) const;
   bool exp_is_zero(const int *exp) const;
+  bool exp_is_zero(const int *exp, int n) const;
 };
 
 #endif
