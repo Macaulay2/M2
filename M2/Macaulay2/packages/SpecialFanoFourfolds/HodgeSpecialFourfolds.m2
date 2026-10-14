@@ -514,6 +514,12 @@ toExternalString HodgeSpecialFourfold := X -> (
     if instance(X,GushelMukaiFourfold)
     then s = s|"X = specialFourfold(S,X,InputCheck=>0);"|newline|///X.cache#"AmbientFivefold" = V;///|newline else
     s = s|"X = specialFourfold(S,X,V,InputCheck=>0);"|newline;
+    if instance(X,GushelMukaiFourfold) and X.cache#?"toGrass" then (
+        mapToG14 := toGrass X;
+        if target mapToG14 === GG(coefficientRing X,1,4) then (
+            s = s|///X.cache#"toGrass" = (Hom(X,GG(K,1,4))) ///|(toString entries sub(matrix mapToG14,vars R))|";"|newline;
+        );
+    );
     if X.cache#?"CustomData" then s = s|///X.cache#"CustomData" = ///|"///"|(toString X.cache#"CustomData")|"///;"|newline;
     if (surface X).cache#?"linear system on PP^2" then s = s|///(surface X).cache#"linear system on PP^2" = ///|(toString (surface X).cache#"linear system on PP^2")|";"|newline;
     if (surface X).cache#?"euler" then s = s|///(surface X).cache#"euler" = ///|toString(euler surface X)|";"|newline;
