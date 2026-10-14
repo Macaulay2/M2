@@ -155,3 +155,101 @@ doc ///
     iterator
     next
 ///
+
+doc ///
+  Key
+    ProgressBar
+  Headline
+    class for progress bars
+  Description
+    Text
+      This is a class designed to show progress as an @TO Iterator@ is exhausted.
+      A @TT "ProgressBar"@ object is designed as a wrapper for an @TO Iterator@, 
+      so much of the functionality is similar.
+    Example
+      someIterable = toList(1..25);
+      for throwaway in progressBar someIterable do (
+          for i from 0 to 100 do 22313*22131
+      )
+  Subnodes
+    progressBar
+  SeeAlso
+    Iterator
+///
+
+doc ///
+  Key
+    progressBar
+    (progressBar, Iterator)
+    (progressBar, List)
+    (progressBar, Set)
+    TotalIterations
+    BarCharacter
+    [progressBar, TotalIterations]
+    [progressBar, Description]
+    [progressBar, BarCharacter]
+  Headline
+    display a progress bar
+  Usage
+    progressBar x
+    progressBar(x, TotalIterations=>ZZ)
+  Inputs
+    x:Thing
+    TotalIterations=>ZZ
+    Description=>String
+    BarCharacter=>String
+  Outputs
+    :Thing -- likely an @TO Iterator@
+  Description
+    Text
+      A progress bar is an object that is used to show progress as an 
+      iterator-like object is exhausted. Any where an iterator-like object
+      is used, an progress bar can likely be used to display progress.
+      The progress bar visual consists of an optional description, the bar,
+      the elapsed time since starting running through the iterator, an 
+      estimation of the time remaining, and the average time taken per 
+      iteration or per unit of time (depending on which ratio is greater than 
+      one).
+    Example
+      someIterable = toList(1..25);
+      for throwaway in progressBar someIterable do (
+          -- A nontrivial computation
+          for i from 0 to 100 do 22313*22131
+      )
+    Text
+      For lists and sets, the length of the iterable is known and can be used
+      to track progress accurately. However, for an @TO Iterator@ object, its
+      length is not necessarily known. In this case, the progress bar's visual
+      bar will not update, though the elapsed time will still update.
+    Example
+      for throwaway in progressBar iterator(1..25) do (
+        -- A nontrivial computation
+          for i from 0 to 100 do 22313*22131
+      )
+    Text
+      To bypass this, the @TT "TotalIterations"@ optional argument is available
+      to provide the @TT "ProgressBar"@ a way to estimate completion.
+    Example
+      for throwaway in progressBar(iterator(1..25), TotalIterations=>25) do (
+        -- A nontrivial computation
+          for i from 0 to 100 do 22313*22131
+      )
+    Text
+      The @TT "Description"@ optional argument can be used to provide a 
+      description of the progress bar.
+    Example
+      for throwaway in progressBar(toList(1..25), Description=>"Calculating nothing...") do (
+        -- A nontrivial computation
+          for i from 0 to 100 do 22313*22131
+      )
+    Text
+      The @TT "BarCharacter"@ optional argument can be used to change the visuals 
+      of the bar in the progress bar.
+    Example
+      for throwaway in progressBar(toList(1..25), BarCharacter=>"🔥") do (
+        -- A nontrivial computation
+          for i from 0 to 100 do 22313*22131
+      )
+  SeeAlso
+    iterator
+///
