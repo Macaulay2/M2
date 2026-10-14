@@ -1786,6 +1786,7 @@ backtraceS := dummySymbol;
 debugLevelS := dummySymbol;
 engineDebugLevelS := dummySymbol;
 debuggingModeS := dummySymbol;
+profileDepthS := dummySymbol;
 errorDepthS := dummySymbol;
 gbTraceS := dummySymbol;
 numTBBThreadsS := dummySymbol;
@@ -1832,6 +1833,7 @@ syms := SymbolSequence(
      (  engineDebugLevelS = setupvarThread("engineDebugLevel",toExpr(engineDebugLevel));  engineDebugLevelS  ),
      (  debuggingModeS = setupvarThread("debuggingMode",toExpr(debuggingMode));  debuggingModeS  ),
      (  defaultPrecisionS = setupvar("defaultPrecision",toExpr(defaultPrecision));  defaultPrecisionS  ),
+     (  profileDepthS = setupvar("profileDepth", toExpr(profileDepth));  profileDepthS  ),
      (  errorDepthS = setupvar("errorDepth",toExpr(errorDepth));  errorDepthS  ),
      (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ), 
      (  numTBBThreadsS = setupvar("numTBBThreads",toExpr(numTBBThreads));  numTBBThreadsS  ),
@@ -1866,6 +1868,10 @@ export setLoadDepth(b:ushort):void := (
 export setErrorDepth(b:ushort):void := (
      errorDepth = b;
      setGlobalVariable(errorDepthS,toExpr(b));
+     );
+export setProfileDepth(b:ushort):void := (
+     profileDepth = b;
+     setGlobalVariable(profileDepthS,toExpr(b));
      );
 export setLineNumber(b:int):void := (
      if b < 0 then b = 1;				    -- start over
@@ -1943,6 +1949,10 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       else if sym === errorDepthS then (
 		    if !isUShort(i.v) then return buildErrorPacket("errorDepth: expected integer in range 0 .. 255");
 		    errorDepth = toUShort(i.v);
+		    e)
+	       else if sym === profileDepthS then (
+		    if !isUShort(i.v) then return buildErrorPacket("profileDepth: expected integer in range 0 .. 255");
+		    profileDepth = toUShort(i.v);
 		    e)
 	       else if isInt(i) then (
 		    n := toInt(i);
