@@ -344,7 +344,10 @@ needsPackage "PushForward";
 --this one computes the Frobenius pushforward of a module F^e_* M
 frobPF = method( TypicalValue => Sequence )
 
-frobPF ( ZZ, Ring ) := Sequence => ( n, A ) -> pushFwd frob( n, A )
+frobPF ( ZZ, Ring ) := Sequence => ( n, A ) -> (
+    M := pushFwd(frob( n, A ));
+    (M, pushFwdGens M, b -> pushforward(M, b))
+)
 
 frobPF ( Module, ZZ, Ring ) := Module => ( M, n, A ) -> pushFwd( frob( n, A ), M )
 

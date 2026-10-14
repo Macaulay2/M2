@@ -680,9 +680,9 @@ isNormal(Ring) := Boolean => (R) -> (
 conductor = method()
 conductor RingMap := Ideal => phi -> (
     -- 3/25/26 TODO: do we want to cache the results?
-    pf := pushFwd phi;
-    assert(pf#1_(0,0) == 1);
-    pmod := pf_0_{0};
+    M := pushFwd phi;
+    assert((pushFwdGens M)_0 == 1);
+    pmod := M_{0};
     ann coker pmod
     )
 conductor Ring := Ideal => R -> conductor icMap R

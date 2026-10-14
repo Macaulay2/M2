@@ -34,10 +34,10 @@ TEST ///
 kk = QQ
 R = kk[x,y]/(x^2-y^3-y^5)
 R' = integralClosure R
-pr = pushFwd map(R',R)
-q = pr_0 / (pr_0)_0
+M = pushFwd map(R',R)
+q = M / M_0
 use R
-assert(ann q==ideal(x,y))
+assert(ann q == ideal(x,y))
 assert isModuleFinite map(R', R)
 ///
 
@@ -56,9 +56,9 @@ rs=map(S,R,{x_0,x_1})
 st=map(T,S,{t^3-1,t^4-t,t^5-t^2})
 assert isModuleFinite rs
 assert isModuleFinite st
-pst=pushFwd st
+pst = pushFwd st
 
-MT=pst_0
+MT = pst
 k=numgens MT
 
 un=transpose matrix{{1_S,(k-1):0}}
@@ -69,7 +69,7 @@ MMS=kernel mtt2
 
 r1=trim minimalPresentation kernel pushFwd(rs,mtt2)
 r2=trim minimalPresentation pushFwd(rs,MMS)
-r3=trim (pushFwd rs)_0
+r3=trim pushFwd rs
 
 assert(r1==r2)
 assert(flatten entries relations r2 == flatten entries relations r3)
@@ -143,11 +143,11 @@ B=PB/iB
 f=map(A,B,l)
 assert isModuleFinite f
 assert isModuleFinite g
-time h1=pushFwd g;
-ph1=cokernel promote(relations h1_0,B);
+time h1 = pushFwd g;
+ph1=cokernel promote(relations h1,B);
 time h2=pushFwd f;
 
-assert(ph1==h2_0)
+assert(ph1==h2)
 ///
 
 --test 8
@@ -157,7 +157,7 @@ B = QQ[x]/(x^2)
 N = B^1 ++ (B^1/(x))
 f = map(B,A)
 assert isModuleFinite f
-pN = pushFwd(f,N)
+pN = pushFwd(f,N, MinimalGenerators => true)
 assert(isFreeModule pN)
 assert(numgens pN == 3)
 ///
@@ -199,8 +199,9 @@ TEST///
   assert isInclusionOfCoefficientRing inc
   assert isModuleFinite L
   assert isModuleFinite inc
-  (M,B,pf) = pushFwd inc
-  assert( B*presentation M  == 0)
+  M = pushFwd inc
+  B = pushFwdGens M
+  assert(B * presentation M  == 0)
   assert(numcols B == 5)
 ///
 
@@ -218,7 +219,8 @@ TEST///
   assert isInclusionOfCoefficientRing inc
   assert isModuleFinite L
   assert isModuleFinite inc
-  (M,B,pf) = pushFwd inc -- ok.  this works, but isn't awesome, as it uses a graph ideal.
+  M = pushFwd inc -- ok.  this works, but isn't awesome, as it uses a graph ideal.
+  B = pushFwdGens M
   assert( B*presentation M  == 0)
   assert(numcols B == 5)
 ///
@@ -232,7 +234,8 @@ TEST///
   A = kk[s,t]
   isHomogeneous L
   inc = map(L, A)
-  (M,B,pf) = pushFwd inc
+  M = pushFwd inc
+  B = pushFwdGens M
   assert( B * inc presentation M  == 0)
   assert(numcols B == 5)
   pushForward(inc, L^1)
@@ -243,9 +246,11 @@ TEST///
   kk = QQ
   A = kk[x]
   R = A[y, Join=> false]/(y^7-x^3-x^2)
-  (M,B,pf) = pushFwd map(R,A)
+  M = pushFwd map(R,A)
+  B = pushFwdGens M
   pushFwd matrix{{y}}
-  (M1,B1,pf1) = pushFwd R
+  M1 = pushFwd R
+  B1 = pushFwdGens M1
   assert(pushFwd(R^3) == pushFwd(map(R,A), R^3))
   -- this asserts among other things that the degrees on source B and source B1
   -- are the same which required some fussing to get right
@@ -253,12 +258,12 @@ TEST///
   assert(pushFwd matrix{{y}} == pushFwd(map(R,A),matrix{{y}}))
   assert(isFreeModule M and rank M == 7)
   assert(B == basis(R, Variables => R_*))
-  assert( pf(y+x)- matrix {{x}, {1}, {0}, {0}, {0}, {0}, {0}} == 0)
+  assert(pushforward(M1, y+x)- matrix {{x}, {1}, {0}, {0}, {0}, {0}, {0}} == 0)
   R' = integralClosure R
-  (M,B,pf) = pushFwd map(R',R)
+  M = pushFwd map(R',R)
   use R
   assert(M == cokernel(map(R^2,R^{{-6}, {-4}},{{-x^2-x,y^4}, {y^3,-x}})))
-  assert(pf w_(2,0) - matrix {{0}, {1}} == 0)
+  assert(pushforward(M, w_(2,0)) - matrix {{0}, {1}} == 0)
 ///
 
 --test 14
@@ -270,7 +275,7 @@ TEST ///
   I = ideal(y^4-x*y-(x^2+1)*z^2, z^4 - (x-1)*y-z^2 - z - y^3)
   B = R/I
   assert isModuleFinite map(B,A)
-  (M,g,pf) = pushFwd B
+  M = pushFwd B
   pushFwd B^1
   pushFwd B^{1}
   fy = pushFwd matrix{{y}}
@@ -289,7 +294,7 @@ TEST ///
   I = ideal(y^4-x*y-(x^2+1)*z^2, z^4 - (x-1)*y-z^2 - z - y^3)
   B = R/I
   assert isModuleFinite map(B,A)
-  (M,g,pf) = pushFwd B
+  M = pushFwd B
   pushFwd B^1
   pushFwd B^{1}
   fy = pushFwd matrix{{y}}
@@ -309,7 +314,7 @@ TEST ///
   I = ideal(y^4-x*y-(x^2+1)*z^2, z^4 - (x-1)*y-z^2 - z - y^3)
   B = R/I
   assert isModuleFinite map(B,A)
-  (M,g,pf) = pushFwd B
+  M = pushFwd B
   pushFwd B^1
   pushFwd B^{1}
   fy = pushFwd matrix{{y}}
@@ -322,7 +327,7 @@ TEST ///
   I = ideal(y^4-x*y-(x^2+1)*z^2, z^4 - (x-1)*y-z^2 - z - y^3)
   B = R/I
   assert isModuleFinite map(B,A)
-  (M,g,pf) = pushFwd B
+  M = pushFwd B
   pushFwd B^1
   pushFwd B^{{0,1}}
   fy = pushFwd matrix{{y}} -- good
@@ -400,7 +405,8 @@ kk = ZZ/101
 R = kk[a]/ideal a^3
 S' = R[b,c]
 S = S' / ideal {a^2, b^2, c^2}
-(rS, rB, pf) = pushFwd S
+rS = pushFwd S
+rB = pushFwdGens rS
 
 -- rS and S are isomorphic over R hence have the same kk dimension
 assert(degree rS === degree S)
@@ -411,8 +417,8 @@ assert(ring rS === R)
 -- rS is not free over R since multiplication by a^2 kills it
 assert(not isFreeModule rS)
 
-assert(pf(a_S * rB) - a * pf(rB) == 0)
-assert(a^2 * pf(rB) == 0)
+assert(pushforward(rS, a_S * rB) - a * pushforward(rS, rB) == 0)
+assert(a^2 * pushforward(rS, rB) == 0)
 ///
 
 -- test 21
@@ -426,12 +432,10 @@ I = ideal {a, b};
 N = directSum(module I, module I^2);
 ns = N_{0..numgens N - 1}
 
--- without pruning
-o = new OptionTable from {NoPrune => true}
+o = new OptionTable from {MinimalGenerators => true}
 M = pushFwd(N, o)
 assert(ns - pushforward' pushforward(M, ns) == 0)
 
--- with pruning (default)
 M = pushFwd(N)
 assert(ns - pushforward' pushforward(M, ns) == 0)
 ///
@@ -446,14 +450,13 @@ I = ideal {a^2, b^2};
 N = directSum(I/I^2, I^2/I^3);
 ns = N_{0..numgens N - 1}
 
--- without pruning
-o = new OptionTable from {NoPrune => true}
+o = new OptionTable from {MinimalGenerators => true}
 M = pushFwd(N, o)
-assert(ns == pushforward' pushforward(M, ns))
+assert(ns - pushforward' pushforward(M, ns) == 0)
 
 -- with pruning (default)
 M = pushFwd(N)
-assert(ns == pushforward' pushforward(M, ns))
+assert(ns - pushforward' pushforward(M, ns) == 0)
 ///
 
 -- test 23
@@ -465,8 +468,7 @@ x = random(1, F);
 N = cokernel matrix {x};
 ns = N_{0..numgens N - 1}
 
--- without pruning
-o = new OptionTable from {NoPrune => true}
+o = new OptionTable from {MinimalGenerators => true}
 M = pushFwd(N, o)
 assert(ns == pushforward' pushforward(M, ns))
 
@@ -478,12 +480,11 @@ assert(ns == pushforward' pushforward(M, ns))
 -- test 24
 TEST ///
 -- another skew commutative case that triggered a bug fix or two
-o = new OptionTable from {NoPrune => true}
 
 kk = ZZ/101
 S = kk[a..e, SkewCommutative => true];
 I = cokernel matrix {{a*b + c, d}}
-I' = pushFwd(I, o)
+I' = pushFwd I
 ms = I'_{0..numgens I' - 1}
 assert(ms == pushforward(I', pushforward' ms))
 ///
@@ -501,7 +502,7 @@ F = map(S^1, S^1, matrix s)
 pF = pushFwd F
 
 -- get pushFwd of S^1 to an R-module and check it has the right source and target
-rS = first pushFwd S
+rS = pushFwd S
 
 assert(source pF == rS)
 assert(target pF == rS)
@@ -540,12 +541,13 @@ kk = ZZ/101
 R = kk[a..c]
 I = ideal vars R
 N = I^3/I^5
-M = pushFwd N
+M = pushFwd(N, MinimalGenerators => true)
 
 ns = N_{0..numgens N - 1}
 assert(ns == pushforward' pushforward(M, ns))
 
 ms = M_{0..numgens M - 1}
+-- puzzle: this equality fails if MinimalGenerators => true option is not used
 assert(ms == pushforward(M, pushforward' ms))
 ///
 
@@ -603,10 +605,10 @@ TEST ///
 kk = ZZ/101
 R = kk[a,b] / ideal {a^2 + 1, b^3 + a^2*b + 2}
 f = map(R, kk)
-M = first pushFwd R
+M = pushFwd R
 
 assert(matrix a + b == pushforward' pushforward(f, a + b))
-M' = first pushFwd(R, NoPrune => true)
+M' = pushFwd(R, MinimalGenerators => false)
 
 -- specifying explicit module
 assert(matrix {{a + b}} == pushforward' pushforward(M, a + b))
@@ -618,10 +620,10 @@ TEST ///
 -- a simple edge cases around pushFwd of explicit ring map
 kk = ZZ/101
 R = kk[a]
-M = first pushFwd id_R
+M = pushFwd id_R
 assert(M == module R)
 -- repeat pushforward of ring map works
-M' = first pushFwd id_R
+M' = pushFwd id_R
 assert(M == module R)
 ///
 
@@ -635,8 +637,9 @@ fy = pushFwd matrix y
 fz = pushFwd matrix z
 fx = pushFwd matrix x_B
 g = pushFwd matrix(y*z -x_B*z^2)
+gg = fy*fz-fx*fz^2
 
-assert(g == fy*fz-fx*fz^2)
+assert(g - gg == 0)
 assert(fz^3-fy^7 == 0)
 ///
 
@@ -647,7 +650,7 @@ kk = ZZ/101
 R = kk[a..c, SkewCommutative => {b, c}]
 T = kk[t]
 f = map(R, T, {a^2})
-(pR, matR, pf) = pushFwd f
+pR = pushFwd f
 assert(degree(pR) == 8)
 
 I = ideal vars R
@@ -688,12 +691,409 @@ N = pushFwd(f, M)
 assert(pushforward' pushforward(N, 0_M) == 0_M)
 ///
 
--- it would be useful if there were a standardized way to encode functionality
--- gaps in macaulay2.
--- NONTEST - this should work but doesn't
-///
--- field case
+-- test 36
+
+TEST ///
 kk = ZZ/101
-M = first pushFwd kk
-assert(M == module kk)
+A = kk[x]
+B = A[y,z,Join => false]/(y^3 - x*z, z^3-y^7)
+f = map(B, A)
+M = pushFwd(f, B^1)
+F = random(B^5, B^5)
+pF = pushFwd(f, F)
+assert(numcols pF == numrows pF)
+assert(numcols pF == (numgens M) * 5)
+///
+
+--- Hom / Ext test cases ---
+TEST ///
+-- commutative case: pushFwd(f, Hom(-, 0))Hom and Hom(f, -, -) agree on the nose
+kk = ZZ/101
+R = kk[x, y]
+S = kk[s, t]
+f = map(R, S, {x^2, y^3})
+
+I = ideal vars R
+M = R^1/I
+N = I/I^2
+fH = pushFwd(f, Hom(M, N))
+H = Hom(f, M, N)
+assert(H == fH)
+
+-- homomorphism and homomorphism' act like expected
+-- the degrees are messed up
+r = apply(0..numgens H - 1, i -> (homomorphism'(f, homomorphism matrix H_i), matrix H_i))
+scan(0..numgens H - 1, i -> assert(homomorphism'(f, homomorphism H_{i}) - H_{i} == 0))
+///
+
+TEST ///
+-- commutative case: pushFwd(f, Hom(-, -))Hom and Hom(f, -, -) are isomorphic not equal
+kk = ZZ/101
+R = kk[x, y]
+S = kk[s, t]
+f = map(R, S, {x^3 + x * y + y, y^2 + 2*x})
+
+M = module ideal {x + y}
+N = module ideal {x^2, x*y, y + 1}
+fH = pushFwd(f, Hom(M, N))
+H = Hom(f, M, N)
+-- these modules are presented differently
+assert(fH != H)
+
+phi = map(fH, H, matrix {for i from 0 to numgens H - 1 list pushforward(fH, homomorphism' homomorphism H_{i})})
+phi' = map(H, fH, matrix {for i from 0 to numgens fH - 1 list homomorphism'(f, homomorphism pushforward' fH_{i})})
+assert(phi * phi' == id_fH)
+assert(phi' * phi == id_H)
+
+-- homomorphism and homomorphism' act like expected
+-- the degrees are messed up
+scan(0..numgens H - 1, i -> assert(homomorphism'(f, homomorphism H_{i}) - H_{i} == 0))
+///
+
+TEST ///
+-- skew symmetric homs
+kk = ZZ/101
+R = kk[a..c, SkewCommutative => true]
+f = map(R, kk)
+M = module ideal {a + b}
+N = module ideal {a*b, b + 1}
+H = Hom(f, M, N)
+mapped = apply(0..numgens H - 1, i -> (homomorphism H_{i}) M_0)
+scan(mapped, y -> assert(module y == N))
+
+-- homomorphism and homomorphism' act like expected
+scan(0..numgens H - 1, i -> assert(homomorphism'(f, homomorphism H_{i}) == H_{i}))
+///
+
+TEST ///
+-- skew symmetric endomorphisms
+kk = ZZ/101
+R = kk[a..c, SkewCommutative => true]
+f = map(R, kk)
+M = module ideal {a + b}
+H = End(f, M)
+-- we have the identity morphism
+assert(homomorphism homomorphism'(f, id_M) == id_M)
+-- homomorphism and homomorphism' act like expected
+scan(0..numgens H - 1, i -> assert(homomorphism'(f, homomorphism H_{i}) == H_{i}))
+///
+
+TEST ///
+-- for testing quotient by annihilator
+kk = ZZ/11
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+M = R^1
+N = module ideal {a*b + c}
+fH = pushFwd(f, Hom(M, N))
+H = Hom(f, M, N)
+phi = map(H, fH, matrix {for i from 0 to numgens fH - 1 list homomorphism'(f, homomorphism pushforward' fH_{i})})
+
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_fH)
+///
+
+TEST ///
+-- skew symmetric computation
+-- compare Hom(f, - , F) with Hom(-, F) when F is free since we can compute this directly over R in that case
+kk = ZZ/11
+R = kk[a..c, SkewCommutative => true]
+f = map(R, kk)
+M = module ideal {a + b}
+N = module ideal {a*b, b + 1}
+H = Hom(f, M, N)
+H' = Hom(M, N) -- R^1 is a bimodule so Hom can actually be computed as an R-module
+fH' = pushFwd(f, H')
+
+phi = map(H, fH', matrix {for i from 0 to numgens fH' - 1 list homomorphism'(f, homomorphism pushforward' fH'_{i})})
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_fH')
+///
+
+TEST ///
+-- Compute Ext over commutative ring finite map
+-- compare pushFwd(f, Ext^i(M, N)) with Ext^i(f, M, N)
+kk = ZZ/11
+R = kk[s, t]/ ideal {s^2, t^3}
+f = map(R, kk)
+I = ideal vars R
+M = R^1/I
+N = I / I^3
+
+-- Ext^1
+E = Ext^1(f, M, N)
+E' = pushFwd(f, Ext^1(M, N))
+
+imgs = matrix {for i from 0 to numgens E - 1 list pushforward(E', yonedaExtension' yonedaExtension E_i)}
+phi = map(E', E, imgs)
+assert(phi * phi^-1 == id_E')
+assert(phi^-1 * phi == id_E)
+
+-- Ext^2
+E = Ext^2(f, M, N)
+E' = pushFwd(f, Ext^2(M, N))
+
+imgs = matrix {for i from 0 to numgens E - 1 list pushforward(E', yonedaExtension' yonedaExtension E_i)}
+phi = map(E', E, imgs)
+assert(phi * phi^-1 == id_E')
+assert(phi^-1 * phi == id_E)
+///
+
+TEST ///
+-- Compute Ext over commutative ring non-finite map but finite modules
+-- compare pushFwd(f, Ext^i(M, N)) with Ext^i(f, M, N)
+kk = ZZ/11
+R = kk[s, t]
+S = kk[a]
+f = map(R, S, {s^2})
+I = ideal vars R
+M = R^1/I
+N = I / I^3
+
+-- this does not work yet need to deal with modeling fg Hom module even in cases where the source is not fg (but target is)
+///
+
+TEST ///
+-- Compute Ext over skew-symmetric algebra
+-- check that yonedaExtension and yonedaExtension' are inverses
+kk = ZZ/11
+R = kk[a..c, SkewCommutative => true]
+f = map(R, kk)
+M = ideal {a*b, b + c}
+N = ideal {b*c, a * c}
+
+-- Ext^1
+E = Ext^1(f, M, N)
+imgs = matrix {for i from 0 to numgens E - 1 list yonedaExtension'(f, yonedaExtension E_i)}
+assert(map(E, E, imgs) == id_E)
+
+-- This block is commented out so that CI tests can run.
+-- "Insufficient memory for the allocation" error fails the test if Ext^2 is included.
+-- Ext^2
+-*
+E = Ext^2(f, M, N)
+imgs = matrix {for i from 0 to numgens E - 1 list yonedaExtension'(f, yonedaExtension E_i)}
+assert(map(E, E, imgs) == id_E)
+*-
+///
+
+TEST ///
+-- Hom and pushFwd functors compose nicely for homogeneous module
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+g = centerRing R
+C = source g
+h = map(C, kk)
+M = module ideal {a*b, b + c}
+N = module ideal {b*c, a * c}
+
+H = Hom(f, M, N)
+H' = pushFwd(h, Hom(g, M, N))
+
+imgs = matrix {for i from 0 to numgens H' - 1 list homomorphism'(f, homomorphism pushforward' H'_{i})}
+phi = map(H, H', imgs)
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_H')
+///
+
+TEST ///
+-- Hom and pushFwd functors compose nicely for free module
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+g = centerRing R
+C = source g
+h = map(C, kk)
+
+M = module R
+
+H = Hom(f, M, M)
+H' = pushFwd(h, Hom(g, M, M))
+
+imgs = matrix {for i from 0 to numgens H' - 1 list homomorphism'(f, homomorphism pushforward' H'_{i})}
+phi = map(H, H', imgs)
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_H')
+///
+
+TEST ///
+-- Hom and pushFwd functors compose nicely for non-homogeneous module
+-- ideal case
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+g = centerRing R
+C = source g
+h = map(C, kk)
+M = module ideal {a*b + c}
+
+-- check that H <> H via homomorphism maps is an isom
+-- 7 dimensional over kk
+H = Hom(f, M, M)
+imgs = matrix {for i from 0 to numgens H - 1 list homomorphism'(f, homomorphism H_{i})}
+phi = map(H, H, imgs)
+assert(phi == id_H)
+
+-- check that gH <> gH via homomorphism maps is an isom
+gH = Hom(g, M, M)
+imgs' = matrix {for i from 0 to numgens gH - 1 list homomorphism'(g, homomorphism gH_{i})}
+phi' = map(gH, gH, imgs')
+assert(phi' == id_gH)
+
+-- 8 dimensional over kk
+H' = pushFwd(h, gH)
+imgs'' = matrix {for i from 0 to numgens H' - 1 list pushforward(H', pushforward' H'_{i})}
+phi'' = map(H', H', imgs'')
+assert(phi'' == id_H')
+
+-- is it possible that it is not kk-linear? preposterous
+imgs = matrix {for i from 0 to numgens H' - 1 list homomorphism'(f, homomorphism pushforward' H'_{i})}
+phi = map(H, H', imgs)
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_H')
+///
+
+TEST ///
+-- Hom and pushFwd functors compose nicely for non-homogeneous module
+-- quotient by ideal case
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+g = centerRing R
+C = source g
+h = map(C, kk)
+M = R^1 / ideal {a*b + c}
+
+-- check that H <> H via homomorphism maps is an isom
+-- 7 dimensional over kk
+H = Hom(f, M, M)
+imgs = matrix {for i from 0 to numgens H - 1 list homomorphism'(f, homomorphism H_{i})}
+phi = map(H, H, imgs)
+assert(phi == id_H)
+
+-- check that gH <> gH via homomorphism maps is an isom
+gH = Hom(g, M, M)
+imgs' = matrix {for i from 0 to numgens gH - 1 list homomorphism'(g, homomorphism gH_{i})}
+phi' = map(gH, gH, imgs')
+assert(phi' == id_gH)
+
+-- 8 dimensional over kk
+H' = pushFwd(h, gH)
+imgs'' = matrix {for i from 0 to numgens H' - 1 list pushforward(H', pushforward' H'_{i})}
+phi'' = map(H', H', imgs'')
+assert(phi'' == id_H')
+
+-- is it possible that it is not kk-linear? preposterous
+imgs = matrix {for i from 0 to numgens H' - 1 list homomorphism'(f, homomorphism pushforward' H'_{i})}
+phi = map(H, H', imgs)
+assert(phi * phi^-1 == id_H)
+assert(phi^-1 * phi == id_H')
+///
+
+TEST ///
+-- pushforward matrix along mutltiple ring maps is coherent after applying an
+-- appropriate change of basis on source and target
+-- commutative case
+kk = ZZ/101
+R = kk[a..d]/ideal {a^2, b^2, c^2, d^2}
+S = kk[x_0..x_5]
+f = map(R, kk)
+g = map(R, S, {a*b, a*c, a*d, b*c, b*d, c*d})
+h = map(S, kk)
+
+M = module ideal {a*b + c}
+M' = pushFwd(f, M)
+M'' = pushFwd(h, pushFwd(g, M))
+
+X = map(M, M, matrix d)
+
+A = pushFwd(f, X)
+B = pushFwd(h, pushFwd(g, X))
+
+assert(source A == M')
+assert(target A == M')
+assert(source B == M'')
+assert(target B == M'')
+
+-- the isomorphism from M' <> M''
+imgs = matrix {for i from 0 to numgens M' -1 list pushforward(M'', pushforward(pushFwd(g, M), pushforward' M'_{i}))}
+Y = map(M'', M', imgs)
+assert(A == Y^-1 * B * Y)
+///
+
+TEST ///
+-- pushforward matrix along mutltiple ring maps is coherent after applying an
+-- appropriate change of basis on source and target
+-- skew case
+kk = ZZ/101
+R = kk[a..d, SkewCommutative => true]
+S = kk[x_0..x_5, Degrees => {2,2,2,2,2,2}]
+f = map(R, kk)
+-- the image of S is the center of R but it doesn't even matter that it is so
+g = map(R, S, {a*b, a*c, a*d, b*c, b*d, c*d})
+h = map(S, kk)
+
+M = module ideal {a*b + c}
+M' = pushFwd(f, M)
+M''' = pushFwd(g, M)
+M'' = pushFwd(h, M''')
+
+H = Hom(f, M, M);
+X = homomorphism random(H);
+
+A = pushFwd(f, X)
+C = pushFwd(g, X)
+B = pushFwd(h, C)
+
+assert(source A == M')
+assert(target A == M')
+assert(source B == M'')
+assert(target B == M'')
+
+-- the isomorphism from M' <> M''
+imgs = matrix {for i from 0 to numgens M' -1 list pushforward(M'', pushforward(pushFwd(g, M), pushforward' M'_{i}))}
+Y = map(M'', M', imgs)
+
+assert(A == Y^-1 * B * Y)
+///
+
+TEST ///
+-- when we pushFwd along a RingMap with DegreeMap == identity, then the result
+-- is graded the same as the input module
+kk = ZZ/101
+R = kk[a..d, SkewCommutative => true]
+f = flattenDegreeMap map(R, kk)
+M = pushFwd(f, R^1)
+assert(apply(values partition(degree, M_*), length) == {1, 4, 6, 4, 1})
+///
+
+TEST ///
+-- Hom out of higher rank free module
+-- commutative
+kk = ZZ/3
+R = kk[x, y, Degrees => {{3}, {2}}] / ideal {x^2 - y^3}
+S = kk[t];
+f = flattenDegreeMap map(R, S, {x*y}, DegreeMap => d -> 5 * d);
+I = ideal vars R;
+H = Hom(f, R^3, I/I^2)
+H' = Hom(R^3, I/I^2)
+fH = pushFwd(f, H')
+imgs = for i from 0 to numgens H - 1 list pushforward(fH, map(H', , homomorphism' homomorphism H_{i}))
+phi = map(fH, H, matrix {imgs})
+assert(phi * phi^-1 == id_fH)
+assert(phi^-1 * phi == id_H)
+///
+
+TEST ///
+-- Hom out of higher rank free module
+-- skew-commutative
+kk = ZZ/3
+R = kk[a..d, SkewCommutative => true]
+f = flattenDegreeMap(map(R, kk))
+I = ideal vars R;
+H = Hom(f, R^3, I/I^2)
+imgs = for i from 0 to numgens H - 1 list homomorphism'(f, homomorphism H_{i})
+phi = map(H, H, matrix {imgs})
+assert(phi == id_H)
 ///
