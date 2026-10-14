@@ -4917,12 +4917,12 @@ submoduleSum(SubWeylModuleFp, SubWeylModuleFp) := (S, T) -> (
     p := S#"prime";
     basisAt := new MutableHashTable;
     for mu in W#"weightsList" do (
-        hasS := (S#"basisAt")#?mu;
-        hasT := (T#"basisAt")#?mu;
-        if not hasS and not hasT then continue;
-        combined := if hasS and hasT then
+        hasLeftWeight := (S#"basisAt")#?mu;
+        hasRightWeight := (T#"basisAt")#?mu;
+        if not hasLeftWeight and not hasRightWeight then continue;
+        combined := if hasLeftWeight and hasRightWeight then
                         (S#"basisAt")#mu | (T#"basisAt")#mu
-                    else if hasS then (S#"basisAt")#mu
+                    else if hasLeftWeight then (S#"basisAt")#mu
                     else (T#"basisAt")#mu;
         independent := qolProtocolIndependentColumns combined;
         if numcols independent > 0 then basisAt#mu = independent;
@@ -7164,10 +7164,10 @@ qolCheckWeylModule = opts -> M -> (
         if publicOffsets#?upper then (
             upperOff := publicOffsets#upper;
             upperDim := qolModuleWeightDimension(M, upper);
-            validE := ePublic === null or
+            raisingBlockValid := ePublic === null or
                 (instance(ePublic, Matrix) and ring ePublic === R and
                  numrows ePublic == upperDim and numcols ePublic == lowerDim);
-            if not validE then (
+            if not raisingBlockValid then (
                 weightwiseOK = false;
                 recordFailure("weightwiseActionE", (mu, i), ePublic);
             ) else (
