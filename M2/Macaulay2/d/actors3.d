@@ -107,11 +107,7 @@ listComparison(s:Sequence, t:Sequence):Expr := (
 	True)
     else False);
 
-equalmethod(x:Expr,y:Expr):Expr := (
-     method := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
-     if method == nullE 
-     then MissingMethodPair(EqualEqualS,x,y)
-     else applyEEE(method,x,y));
+equalmethod(x:Expr,y:Expr):Expr := binarymethod(x, y, EqualEqualS);
 EqualEqualfun(x:Expr,y:Expr):Expr := (
      -- some cases, where the types are equal, call immediately for strict equality
      -- some cases call for simple recursive routines

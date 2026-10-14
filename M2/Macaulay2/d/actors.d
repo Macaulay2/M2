@@ -157,11 +157,7 @@ export - (rhs:Expr) : Expr := (
 	  )
      is x:RawMutableMatrixCell do toExpr(-x.p)                      -- # typical value: symbol -, RawMutableMatrix, RawMutableMatrix
      is Error do rhs
-     else (
-	  method := lookup(Class(rhs),MinusS);
-	  if method == nullE
-	  then buildErrorPacket("no method found")
-	  else applyEE(method,Expr(rhs))));
+     else unarymethod(rhs, MinusS));
 minusfun1(rhs:Code):Expr := - eval(rhs);
 
 export (lhs:Expr) - (rhs:Expr) : Expr := (
@@ -603,7 +599,7 @@ BinaryPowerMethod(x:Expr,y:Expr,times:Expr,onex:Expr,inver:Expr):Expr := (
 	       );
 	  if i < 0 then (
 	       i = -i;
-	       if inver == nullE then return MissingMethod("^","InverseMethod");
+	       if inver == nullE then return MissingMethod("InverseMethod", x);
 	       x = applyEE(inver,x);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
@@ -644,11 +640,9 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       then return buildErrorPacket("missing unit element")
 	       else return applyEE(onex, x);
 	       );
-	  if i <= 0 then (
+	  if i < 0 then (
 	       i = -i;
-	       inver := lookup(Class(x),InverseS);
-	       if inver == nullE then return MissingMethod("^","InverseMethod");
-	       x = applyEE(inver,x);
+	       x = unarymethod(x, InverseS);
 	       );
 	  if !isInt(i) then return buildErrorPacket("'^' expects a small integer exponent");
 	  n := toInt(i);
@@ -1155,7 +1149,10 @@ installMethodFun(args:CodeSequence):Expr := installMethodFun2(eval(args.1),args)
 InstallMethodFun = installMethodFun;
 setup(ColonEqualS,InstallMethodFun);
 
-mess1 := "objects on left hand side of assignment are not types (use ':=' instead?)";
+operatorName(e:Expr):string := (
+    when e
+    is s:SymbolClosure do s.symbol.word.name
+    else "<<unknown>>");
 
 -- this new version just looks up a method for user code, which *could* do the same thing
 installValueFun(args:CodeSequence):Expr := (
@@ -1166,27 +1163,9 @@ installValueFun(args:CodeSequence):Expr := (
      y := eval(args.2);
      when y is Error do return y else nothing;
      meth := lookupBinaryMethod(Class(x),Class(y),Expr(Sequence(oper,EqualE))); -- i.e., x*y=z is looked up under ((symbol *,symbol =),class x,class y)
-     if meth == nullE then return MissingAssignmentMethodPair(oper,x,y);
-     z := eval(args.3);
-     applyEEEE(meth,x,y,z));
--- this old version was used for stashing values somewhere
--- installValueFun(args:CodeSequence):Expr := (
---      a := eval(args.1);
---      when a is Error do a
---      is aa:HashTable do (
--- 	  b := eval(args.2);
--- 	  when b is Error do b 
--- 	  is bb:HashTable do (
--- 	       opr := eval(args.0);
--- 	       when opr is Error do opr
--- 	       else (
--- 		    x := eval(args.3);
--- 		    when x is Error do x
--- 		    else installValue(opr,aa,bb,x)
--- 		    )
--- 	       )
--- 	  else buildErrorPacket(mess1))
---      else buildErrorPacket(mess1));
+     if meth == nullE
+     then MissingMethodPair("(" + operatorName(oper) + ", =)", x, y)
+     else applyEEEE(meth, x, y, eval(args.3)));
 InstallValueFun = installValueFun;
 setup(EqualS,InstallValueFun);
 
@@ -1211,29 +1190,9 @@ unaryInstallValueFun(meth:Code,lhs:Code,rhs:Code):Expr := (
      y := eval(lhs);
      when y is Error do return y else nothing;
      method := lookup(Class(y),Expr(Sequence(oper,EqualE))); -- i.e., *y=z is looked up under ((symbol *,symbol =),class y)
-     if method == nullE then return MissingAssignmentMethod(oper,y);
-     z := eval(rhs);
-     applyEEE(method,y,z));
--- this old version was used for stashing values somewhere
--- unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
---      Argtype := eval(argtype);
---      when Argtype is Error 
---      do Argtype 
---      else when Argtype is
---      o:HashTable do (
--- 	  methv := eval(meth);
--- 	  when methv is Error do methv else (
--- 	       bodyv := eval(body);
--- 	       when bodyv is Error do bodyv else (
--- 	  	    storeInHashTable(o,
--- 			 Expr(Sequence(methv)),  -- distinguishing feature of "values"
--- 			      	   	  -- so after -x the answer can be stored in x#(seq quote -)
--- 			 bodyv)
--- 		    )
--- 	       )
--- 	  )
---      else printErrorMessageE(argtype,"expected a hash table")
---      );
+     if method == nullE
+     then MissingMethod("(" + operatorName(oper) + ", =)", y)
+     else applyEEE(method, y, eval(rhs)));
 UnaryInstallValueFun = unaryInstallValueFun;
 setup(EqualS,UnaryInstallValueFun);
 
