@@ -30,6 +30,7 @@ newPackage(
     Headline => "Canonical subalgebra bases (aka SAGBI/Khovanskii bases)",
     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
     DebuggingMode => false, -- set to true only during development
+    PackageExports => {"Subrings"},
     Keywords => {"Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
