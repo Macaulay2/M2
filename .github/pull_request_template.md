@@ -1,5 +1,4 @@
-<!--
-Thank you for contributing to Macaulay2!
+Please go to the `Preview` tab and select the appropriate sub-template:
 
-Please read https://github.com/Macaulay2/M2/wiki/Pull-requests for instructions.
--->
+* [New Package or Contribution to an Existing Package](?expand=1&template=package_contribution_template.md)
+* [Small Changes](?expand=1&template=small_change_template.md)
