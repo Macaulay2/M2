@@ -147,8 +147,6 @@ interface.o :						\
 	@srcdir@/../e/monoid.hpp			\
 	@srcdir@/../e/style.hpp				\
 	@srcdir@/../e/buffer.hpp			\
-	@srcdir@/../e/mem.hpp				\
-	@srcdir@/../e/../system/mutex.h			\
 	@srcdir@/../e/imonorder.hpp			\
 	@srcdir@/../e/basic-rings/aring.hpp				\
 	@srcdir@/../e/exceptions.hpp			\
@@ -231,8 +229,6 @@ engine.o :						\
 	@srcdir@/../e/monomials/monomial.hpp			\
 	@srcdir@/../e/buffer.hpp			\
 	@srcdir@/../e/style.hpp				\
-	@srcdir@/../e/mem.hpp				\
-	@srcdir@/../system/mutex.h			\
 	@srcdir@/../e/ring-elements/ring-element.hpp				\
 	@srcdir@/../e/rings/ring.hpp				\
 	@srcdir@/../e/basic-rings/aring.hpp				\

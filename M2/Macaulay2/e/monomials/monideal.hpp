@@ -8,7 +8,6 @@
 #include "int-bag.hpp"
 #include "rings/ring.hpp"
 #include "rings/polyring.hpp"
-#include "mem.hpp"
 
 #if 0
 SparseMonomial: pointer to an array of ints.  First is the length.  [len, v1, e1, v2, e2, ..., vr, er]
@@ -71,10 +70,7 @@ class MonomialIdeal : public EngineObject
 {
   const PolynomialRing *R;
   Nmi_node *mi;
-  int count;  // We hack this a bit: the low order bit (count%1==1) means that
-              // we own the stash
-              // count//2 is the actual number of nodes here.
-  stash *mi_stash;
+  int count;  // count/2 is the number of nodes
   friend class AssociatedPrimes;
   friend class MinimalPrimes;
 
@@ -99,17 +95,15 @@ class MonomialIdeal : public EngineObject
   virtual unsigned int computeHashValue() const;
 
  public:
-  MonomialIdeal(const PolynomialRing *RR, stash *mi_stash = nullptr);
+  MonomialIdeal(const PolynomialRing *RR);
   virtual ~MonomialIdeal() { remove_MonomialIdeal(); }
 
   MonomialIdeal(const PolynomialRing *R0,
                 VECTOR(Bag *) &elems, // we now own these elements
-                VECTOR(Bag *) &rejects, // except for the ones we place into here
-                stash *mi_stash0 = nullptr);
+                VECTOR(Bag *) &rejects); // except for the ones we place into here
 
   MonomialIdeal(const PolynomialRing *R0,
-                VECTOR(Bag *) &elems, // we now own these elements, and will free those not needed
-                stash *mi_stash0 = nullptr);
+                VECTOR(Bag *) &elems); // we now own these elements, and will free those not needed
   
   MonomialIdeal *copy() const;
 
@@ -244,11 +238,6 @@ struct monideal_pair : public our_new_delete
   {
   }
 
-  monideal_pair(const PolynomialRing *R, stash *mi_stash)
-      : mi(new MonomialIdeal(R, mi_stash)),
-        mi_search(new MonomialIdeal(R, mi_stash))
-  {
-  }
 };
 
 //-----------------------------------------------------------------
