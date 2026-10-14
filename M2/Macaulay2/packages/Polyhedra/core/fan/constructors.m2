@@ -122,7 +122,9 @@ fan Cone := C -> (
    n := numColumns raysC;
    mc := {toList (0..(n-1))};
    result := fan(raysC, linealityC, mc);
-   setProperty(result, honestMaxObjects, new HashTable from {mc#0 => C});
+   -- Pre-seed maxCones(result, Cone): we already have the (only) maximal
+   -- cone at hand, no need to rebuild it via coneFromVData later.
+   result.cache#(symbol maxCones => Cone) = {C};
    result
 )
 

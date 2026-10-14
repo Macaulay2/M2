@@ -5,8 +5,8 @@
 intersection(Polyhedron,Polyhedron) := {} >> o -> (P1,P2) -> (
 	-- Checking if P1 and P2 lie in the same space
 	if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same ambient space");
-   C1 := getProperty(P1, underlyingCone);
-   C2 := getProperty(P2, underlyingCone);
+   C1 := getUnderlyingCone P1;
+   C2 := getUnderlyingCone P2;
    C12 := intersection(C1, C2);
    result := new HashTable from {
       underlyingCone => C12

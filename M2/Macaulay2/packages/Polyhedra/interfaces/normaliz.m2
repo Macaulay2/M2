@@ -17,9 +17,9 @@ normalizPolyhedra#Cone#computedHilbertBasis Cone := C -> (
    ) else if hasProperties(C, {facets, computedHyperplanes}) then (
       return HBFromNormalizCone normaliz({(facets C, "inequalities"), (hyperplanes C, "equations")})
    ) else if hasProperty(C, inputRays) then (
-      return HBFromNormalizCone normaliz(transpose getProperty(C, inputRays), "integral_closure")
+      return HBFromNormalizCone normaliz(transpose getInputRays C, "integral_closure")
    ) else if hasProperties(C, {inequalities, equations}) then (
-      return HBFromNormalizCone normaliz({(getProperty(C, inequalities), "inequalities"), (getProperty(C, equations), "equations")})
+      return HBFromNormalizCone normaliz({(getInequalities C, "inequalities"), (getEquations C, "equations")})
    ) else (
       if debugLevel > 2 then << "Normaliz computing with rays." << endl;
       return HBFromNormalizCone normaliz(transpose rays C, "integral_closure")
