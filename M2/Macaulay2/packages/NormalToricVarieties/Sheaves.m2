@@ -104,6 +104,18 @@ cotangentSheaf(List, NormalToricVariety) := CoherentSheaf => opts -> (a, X) -> (
     then X#(cotangentSheaf, a)
     else X#(cotangentSheaf, a) = tensor apply(#a, i -> pullback(X^[i], cotangentSheaf(a#i, Xs#i))))
 
+-- This additional hook is valid beyond toric varieties, but for toric varieties
+-- it essentially builds on `monomials ToricDivisor` for basis of the Cox ring.
+-- basis' calls rawHilbertBasis which uses a parallelized algorithm from Normaliz,
+-- hence is significantly faster than the standard algorithm in the engine.
+-- Note: this computation can't be interrupted without restarting M2,
+-- and the order of resulting monomials may be different.
+-- TODO: this is temporarily disabled, for now
+-- importFrom_Core "raw"
+-- importFrom_Truncations "basis'"
+-- addHook((basis, List, List, Module), Strategy => Toric,
+--     (opts, lo, hi, M) -> if degreeLength ring M > 1 and lo === hi
+--     and instance(variety ring M, NormalToricVariety) then raw basis'(lo, M, opts))
 
 -- THIS FUNCTION IS NOT EXPORTED.  Given a normal toric variety, this function
 -- creates a HashTable describing the cohomology of all twists of the
@@ -135,6 +147,7 @@ setupHHOO = X -> (
 	);
     -- create rings
     degS := degrees S; 
+    ClX := classGroup X;
     X.cache.rawHHOO = new HashTable from apply(d+1, 
 	i -> {i, apply(sigma#i, s -> (
 	  	    v := - degree product(n, 
@@ -143,7 +156,7 @@ setupHHOO = X -> (
 	  	    degT := apply(n, 
 	    		j -> if member(j,s#0) then -degS#j else degS#j
 			);
-	  	    T := (ZZ/2)(monoid [gens S, Degrees => degT]);
+		    T := (ZZ/2)(monoid [gens S, Degrees => degT, DegreeGroup => ClX]);
 	  	    {v,T,s#0,s#1}
 		    )
 		)

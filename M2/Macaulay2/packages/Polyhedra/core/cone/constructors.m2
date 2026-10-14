@@ -74,6 +74,10 @@ coneFromVData = method(TypicalValue => Cone)
 --  OUTPUT : 'C'  a Cone
 -- COMMENT : The description by rays and lineality space is stored in C as well 
 --		 as the description by defining half-spaces and hyperplanes.
+coneFromVData Matrix := Mrays -> Mrays.cache.cone ??= (
+    -- the default lineality space is zero
+    coneFromVData(Mrays, map(target Mrays, (ring Mrays)^0, 0)))
+
 coneFromVData(Matrix,Matrix) := (Mrays,LS) -> (
    if numRows Mrays =!= numRows LS then error("rays and linSpace generators must lie in the same space");
    result := new HashTable from {
@@ -100,16 +104,6 @@ coneFromHData(Matrix, Matrix) := (ineq, eq) -> (
    };
    return internalConeConstructor result
 
-)
-
-
-
---   INPUT : 'R'  a Matrix containing the generating rays as column vectors
-coneFromVData Matrix := R -> (
-   r := ring R;
-   -- Generating the zero lineality space LS
-   LS := map(target R, r^0,0);
-   coneFromVData(R,LS)
 )
 
 
