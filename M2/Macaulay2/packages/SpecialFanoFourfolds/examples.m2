@@ -110,6 +110,7 @@ localExamplesArchive = () -> new LocalExamplesArchive from null;
 LocalExamplesArchive#{WebApp,AfterPrint} = LocalExamplesArchive#{WebApp,AfterNoPrint} = LocalExamplesArchive#{Standard,AfterPrint} = LocalExamplesArchive#{Standard,AfterNoPrint} = A -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Local examples archive of Hodge-special fourfolds" << endl;
     << displayLocalExamplesArchive() << endl;
+    << "-- More info: ? oo" << endl;
 );
 
 displayLocalExamplesArchive = () -> (
@@ -126,6 +127,59 @@ displayLocalExamplesArchive = () -> (
         );
     );
     s
+);
+
+? LocalExamplesArchive := A -> (
+    << ///-- Usage: 𝔸 = localExamplesArchive()
+-- Main commands:
+-- example(ϑ,n), example ϑ           load an example from archive 𝔸
+-- store X                           save or update a fourfold X in 𝔸
+-- store(X,ϑ)                        save a fourfold X in 𝔸 with name ϑ
+-- isMember(X,𝔸)                     test membership in 𝔸
+-- importFrom(𝑓,𝔸), store 𝑓          import examples into 𝔸 from file 𝑓
+-- importFrom(𝑓,𝔸,KeepFiles=>true)   do not overwrite existing examples
+-- importFrom("@",𝔸), store "@"      import examples from GitHub into 𝔸
+-- export 𝔸                          export all examples in 𝔸
+-- show 𝔸                            creation times and file sizes
+-- texTables(n,𝔸)                    generate summary tables from examples of type n
+-- delete(ϑ,n,𝔸), delete(X,𝔸)        remove an example from 𝔸
+-- delete(n,𝔸)                       remove all examples of type n from 𝔸
+-- clean 𝔸                           remove all examples from 𝔸
+-- forgetType(...,𝔸) [internal]      move examples in 𝔸 to the generic section
+-- Fourfold types:
+-- 0 = doubly special cubic fourfolds, 1 = cubic fourfolds,
+-- 2 = Gushel-Mukai fourfolds, 3 = intersections of three quadrics in ℙ⁷,
+-- 4 = generic Hodge-special fourfolds/// << endl;
+);
+
+displayDatesAndSizes = () -> (
+    getSavedDate := f -> (
+        s := first lines get f;
+        t := "-- Fourfold object exported by toExternalString on ";
+        if substring(s,0,#t) === t then return substring(s,#t);
+        t = "-- DSCF object exported by toExternalString on ";
+        if substring(s,0,#t) === t then return substring(s,#t);
+        << "-- warning: saved date not found" << endl;
+        ""
+    );
+    getFileSize := f -> " (" | (toString round(fileLength(f)/1024.0)) | " KB)";
+    E := availableExamples();
+    if #E == 0 then return "";
+    local E';
+    local F;
+    z := "-- Creation times and file sizes:";
+    for n to 4 do (
+        E' = apply(select(E, e -> first e === n), last);
+        if #E' == 0 then continue;
+        for str in E' do (
+            F = examplesDir() | "/" | (first fourfoldTypeId n) | str | ".dat";
+            z = z | newline | "example(\"" | str | "\"," | (toString n) | ") -> " | (getSavedDate F) | (getFileSize F);
+        );
+    );
+    z
+);
+show LocalExamplesArchive := A -> (
+    << displayDatesAndSizes() << endl;
 );
 
 convertNumericString = n -> (
@@ -229,6 +283,15 @@ importFrom (String,LocalExamplesArchive,Option) := (f,A,opt) -> (
 importFrom (String,LocalExamplesArchive) := (f,A) -> importFrom(f,A,KeepFiles=>false);
 store String := f -> importFrom(f,localExamplesArchive());
 
+isMember (HodgeSpecialFourfold,LocalExamplesArchive) := (X,A) -> (
+    -- heuristic test; may fail after delete/store operations
+    if not X.cache#?"exampleNameInArchive" then return false;
+    str := X.cache#"exampleNameInArchive";
+    pfx := first fourfoldTypeId fourfoldTypeId X;
+    F := examplesDir() | "/" | pfx | str | ".dat";
+    fileExists F
+);
+
 delete (HodgeSpecialFourfold,LocalExamplesArchive) := (X,A) -> (
     if not X.cache#?"exampleNameInArchive" then error "cannot delete: fourfold was not loaded from the local examples archive";
     str := X.cache#"exampleNameInArchive";
@@ -261,7 +324,7 @@ delete (String,ZZ,LocalExamplesArchive) := (str,n,A) -> (
     localExamplesArchive()
 );
 delete (ZZ,LocalExamplesArchive) := (n,A) -> (
-    << "-- deleting all example(*," << n << "), type: " << (toString last fourfoldTypeId n) << endl;
+    << "-- deleting all example(*," << n << ")" << endl;
     for s in select(availableExamples(), a -> first a == n) do delete(last s,n,A);
     localExamplesArchive()
 );
@@ -284,7 +347,7 @@ example = method(Options => {Verbose => true});
 exampleMem = memoize((str,n,verb) -> (
     (pfx,cls) := fourfoldTypeId n;
     F := examplesDir() | "/" | pfx | str | ".dat";
-    if not fileExists F then error("example \"" | str | "\" not found." | newline | displayLocalExamplesArchive());
+    if not fileExists F then error("example(\"" | str | "\"," | (toString n) | ") not found." | newline | displayLocalExamplesArchive());
     if verb then << "-- loading example(\"" << str << "\"," << n << ")..." << endl;
     dataString := get F;
     if verb then << "-- evaluating example(\"" << str << "\"," << n << ")..." << endl;
@@ -299,7 +362,7 @@ example (ZZ,ZZ) := o -> (i,n) -> example(toString i,n,Verbose=>o.Verbose);
 example String := o -> str -> (
     S := select(availableExamples(), a -> last a == str);
     if #S == 0 then error("example \"" | str | "\" not found." | newline | displayLocalExamplesArchive());
-    if #S > 1 then error("the name \"" | str | "\" is used by examples of different fourfold types." | newline | "Please use example(name,n) and specify the type." | newline | displayLocalExamplesArchive());
+    if #S > 1 then error("the name \"" | str | "\" is used by examples of different fourfold types." | newline | "Use example(ϑ,n) to specify the type." | newline | displayLocalExamplesArchive());
     example(str,first first S,Verbose=>o.Verbose)
 );
 example ZZ := o -> i -> example(toString i,Verbose=>o.Verbose);

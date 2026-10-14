@@ -22,6 +22,7 @@ texTables ZZ := o -> n -> (
     L := apply(A, y -> example(last y,n,Verbose=>o.Verbose));
     texTables(L,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>o.FileName,OpenPDF=>o.OpenPDF)
 );
+texTables (ZZ,LocalExamplesArchive) := o -> (n,A) -> texTables(n,Verbose=>o.Verbose,KeepFiles=>o.KeepFiles,FileName=>o.FileName,OpenPDF=>o.OpenPDF);
 
 texTables Nothing := o -> nu -> ( --undocumented
     N := select(4, n -> number(availableExamples(), x -> first x === n) > 0);
