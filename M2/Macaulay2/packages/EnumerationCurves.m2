@@ -1051,15 +1051,6 @@ TEST ///
     assert(rationalCurve(4) == 15517926796875/64)
 ///
 
--- Slower test: rationalCurve(5) takes ~12s on a current laptop, which
--- is why it was originally commented out.  The value
--- 229305888887648 is Katz's classical enumeration of degree-5
--- rational curves on a general quintic threefold; without this
--- assertion the degree-5 code path has zero direct coverage.
-TEST ///
-    assert(rationalCurve(5) == 229305888887648)
-///
-
 -- rationalCurve(1, D) for the five complete-intersection Calabi-Yau
 -- threefold types.  Previously only D = {5} was tested via
 -- rationalCurve(1).
