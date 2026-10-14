@@ -522,6 +522,16 @@ export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  if newinitializer == errorTree then return errorTree;
 	  );
      accumulate(ParseTree(New(newtoken,newclass,newparent,newinitializer)),file,prec,obeylines));
+export unarywith(withToken:Token,file:TokenFile,prec:int, obeylines:bool):ParseTree := (
+     primary := parse(file,withToken.word.parse.unaryStrength,obeylines);
+     if primary == errorTree then return errorTree;
+     doToken := gettoken(file,false);
+     if doToken.word == doW then (
+	 doClause := parse(file,doW.parse.unaryStrength,obeylines);
+	 if doClause == errorTree then errorTree
+	 else accumulate(ParseTree(WithDo(withToken,primary,doClause)),file,prec,obeylines))
+     else if doToken == errorToken then errorTree
+     else makeParseError(doToken,"syntax error: expected 'do'"));
 
 export treePosition(e:ParseTree):Position := (
     when e
@@ -559,6 +569,7 @@ export treePosition(e:ParseTree):Position := (
 	if t.newInitializer != dummyTree then t.newInitializer else
 	if t.newParent      != dummyTree then t.newParent      else t.newClass;
 	combinePositionL(t.newToken.position, treePosition(lastClass)))
+    is t:WithDo do combinePositionL(t.withToken.position, treePosition(t.doClause))
     is t:dummy do t.position
     );
 
@@ -594,6 +605,7 @@ export size(e:ParseTree):int := (
      is x:WhileList do   Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate)                    + size(x.listClause)
      is x:WhileListDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.doClause) + size(x.listClause)
     is x:New do Ccode(int,"sizeof(*",x,")") + size(x.newToken) + size(x.newClass) + size(x.newParent) + size(x.newInitializer)
+    is x:WithDo do Ccode(int,"sizeof(*",x,")") + size(x.withToken) + size(x.primary) + size(x.doClause)
      );
 
 -- Local Variables:

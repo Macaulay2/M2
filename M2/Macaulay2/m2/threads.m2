@@ -29,14 +29,17 @@ net Mutex := x -> toString (
 
 lock = method()
 lock Mutex := lock0
-lock(Mutex, Function) := lockFunction -- defined in pthread.d
-lock Function := f -> lockFunction(new Mutex, f)
+lock(Mutex, Function) := (mutex, f) -> x -> with mutex do f x
+lock Function := f -> lock(new Mutex, f)
 
 tryLock = method()
 tryLock Mutex := tryLock0
 
 unlock = method()
 unlock Mutex := unlock0
+
+Mutex.EnterMethod = mutex -> (lock mutex; mutex)
+Mutex.ExitMethod = unlock
 
 -----------------------------------------------------------------------------
 
