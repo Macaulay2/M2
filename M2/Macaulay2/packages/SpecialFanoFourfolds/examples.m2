@@ -105,6 +105,8 @@ availableExamplesWithPrefix = pfx -> sort apply(select(readDirectory examplesDir
 availableExamples = () -> flatten for i to 4 list apply(availableExamplesWithPrefix first fourfoldTypeId i, a -> (i,a));
 
 LocalExamplesArchive = new Type of Nothing;
+globalAssignment LocalExamplesArchive;
+LocalExamplesArchive.synonym = "local examples archive";
 localExamplesArchive = () -> new LocalExamplesArchive from null;
 
 LocalExamplesArchive#{WebApp,AfterPrint} = LocalExamplesArchive#{WebApp,AfterNoPrint} = LocalExamplesArchive#{Standard,AfterPrint} = LocalExamplesArchive#{Standard,AfterNoPrint} = A -> (
@@ -156,8 +158,6 @@ displayDatesAndSizes = () -> (
     getSavedDate := f -> (
         s := first lines get f;
         t := "-- Fourfold object exported by toExternalString on ";
-        if substring(s,0,#t) === t then return substring(s,#t);
-        t = "-- DSCF object exported by toExternalString on ";
         if substring(s,0,#t) === t then return substring(s,#t);
         << "-- warning: saved date not found" << endl;
         ""
@@ -211,9 +211,11 @@ clean LocalExamplesArchive := A -> (
 );
 
 export LocalExamplesArchive := A -> (
-    archiveName := "ExamplesSFF_" | first lines get("!date +%Y-%m-%d_%H-%M");
+    archiveName := "ExamplesSFF_" | first lines get "!date +%Y-%m-%d_%H-%M";
     archivePath := currentDirectory() | archiveName | ".tar.gz";
-    examplesDir();
+    welcome := examplesDir() | "/welcome.m2";
+    message := "-- " | concatenate(40:"-") | newline | "-- Hodge-special fourfold examples archive." | newline | "-- Created: " | (first lines get "!date +%Y-%m-%d") | newline | "-- " | concatenate(40:"-");
+    welcome << "<< ///" << endl << message << endl << "///" << close;
     e := run("tar -czf '" | archivePath | "' -C '" | applicationDirectory() | "' SpecialFanoFourfoldsExamples");
     if not(e === 0 and fileExists archivePath) then error "failed to export archive";
     << "-- examples archive successfully exported to \"" << archivePath << "\"" << endl;
@@ -260,10 +262,7 @@ mergeArchive = f -> (
     oldFiles := readDirectory examplesDir();
     if any(newFiles, s -> member(s, oldFiles)) then error "cannot merge archive: some examples already exist in the local archive; use KeepFiles=>false to replace it";
     welcome := examplesDir() | "/welcome.m2";
-    if fileExists welcome then (
-        << "-- removing existing welcome.m2" << endl;
-        removeFile welcome;
-    );
+    if fileExists welcome then removeFile welcome;
     e := run("tar -xzkf '" | f | "' -C '" | applicationDirectory() | "'");
     if e =!= 0 then error "failed to merge archive";
     << "-- examples archive successfully merged" << endl;
