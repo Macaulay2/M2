@@ -1,7 +1,8 @@
-# we modify this from the autoconf version to detect what to do for apple clang
+# we modify this from the autoconf version (AC_OPENMP) to detect what to do for
+# apple clang (see discussion at https://github.com/Macaulay2/M2/pull/850)
 
 
-# AC_OPENMP
+# M2_OPENMP
 # ---------
 # Check which options need to be passed to the C compiler to support OpenMP.
 # Set the OPENMP_CFLAGS / OPENMP_CXXFLAGS / OPENMP_FFLAGS variable to these
@@ -12,7 +13,7 @@
 # supports OpenMP. It also is careful to not pass options to compilers that
 # misinterpret them; for example, most compilers accept "-openmp" and create
 # an output file called 'penmp' rather than activating OpenMP support.
-AC_DEFUN([AC_OPENMP],
+AC_DEFUN([M2_OPENMP],
 [
   OPENMP_[]_AC_LANG_PREFIX[]FLAGS=
   AC_ARG_ENABLE([openmp],

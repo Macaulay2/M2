@@ -83,3 +83,11 @@ assert Equation(M^{-1}, mutableMatrix {{4, 5, 6}})
 A = mutableMatrix {{10}}
 B = submatrix(A, {0}, {0})
 assert(hash A != hash B)
+
+-- 1 by 1 constructors
+S = QQ[t]
+assert Equation(mutableMatrix 5, mutableMatrix {{5}})
+assert Equation(mutableMatrix t, mutableMatrix {{t}})
+assert Equation(mutableMatrix(QQ, 5), mutableMatrix {{5/1}})
+assert Equation(mutableMatrix(S, t), mutableMatrix {{t}})
+assert Equation(mutableMatrix(RR, 5), mutableMatrix {{5.}})

@@ -278,7 +278,7 @@ i57 : time H = Ext(N,N);
 
 i58 : ring H
 
-o58 = K[X ..X , x..y]
+o58 = K[X , X , x, y]
          1   2
 
 o58 : PolynomialRing
@@ -760,7 +760,7 @@ i115 : prune Hom(k,H)
 
 o115 = 0
 
-o115 : K[X ..X , x..y]-module
+o115 : K[X , X , x, y]-module
           1   2
 
 i116 : criticalDegree = M -> (

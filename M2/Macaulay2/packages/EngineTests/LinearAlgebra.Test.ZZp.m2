@@ -49,6 +49,10 @@ TEST ///
   b = transpose mutableMatrix matrix(R, {{11,9,11,3}})
   LUdecomposition M
   assert(rank M == 4)
+
+  -- used to return -1
+  assert try rank mutableMatrix(R, 1, Dense => false) then false else true
+
   assert(rawLinAlgRankProfile(raw M, false) == {1,2,3,5})
   L = solve(M, b)
   assert(M*L - b  == 0)
