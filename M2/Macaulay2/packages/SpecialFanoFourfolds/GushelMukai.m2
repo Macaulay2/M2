@@ -217,6 +217,13 @@ describe GushelMukaiFourfold := X -> (
     if recognize X === "october2021-20" then descr = descr|newline|"(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)";
     if recognize X === "april2022-GM42''" then descr = descr|newline|"(strange example discovered in October 2021)";
     if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
+    if X.cache#?(surface X,"parameterCount") then (
+        (w,xyz) := X.cache#(surface X,"parameterCount");
+        (x,y,z) := xyz;
+        if w =!= 39 - (y+(x-1)-z) then error "internal error encountered";
+        descr = descr || ("Parameter count: " | toString w | " = 39 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+    );
+    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
     net expression descr
 );
 

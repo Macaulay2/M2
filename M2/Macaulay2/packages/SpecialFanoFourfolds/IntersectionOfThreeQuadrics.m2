@@ -20,6 +20,13 @@ describe IntersectionOfThreeQuadricsInP7 := X -> (
     if member(recognize X,{"surf-5-7-0-1","surf-5-10-1","internal-projection-K3-genus-8","surf-4-3-1-external","surf-5-6-2-nodal","surf-7-1-9"}) then descr = descr|newline|"(This is a rational fourfold discovered in August 2022)";
     if recognize X === "planeInPP7" then descr = descr|newline|"(This is a classical example of rational fourfold)";
     if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
+    if X.cache#?(surface X,"parameterCount") then (
+        (w,xyz) := X.cache#(surface X,"parameterCount");
+        (x,y,z) := xyz;
+        if w =!= 33 - (y+(x-1)-z) then error "internal error encountered";
+        descr = descr || ("Parameter count: " | toString w | " = 33 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+    );
+    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
     net expression descr
 );
 
