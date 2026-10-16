@@ -1,6 +1,6 @@
 newPackage(
    "GameTheory",
-   Version => "1.0",
+   Version => "1.1",
    Date => "May, 2025",
    Authors => {
       {Name => "Erin Connelly",
@@ -33,8 +33,7 @@ newPackage(
    },
    Headline => "computing equilibria in game theory",
    Keywords => {"Game Theory"},
-   PackageExports => {"Polyhedra","GraphicalModels"},
-   PackageImports => {"Polyhedra"}
+   PackageExports => {"Polyhedra","GraphicalModels"}
    )
 
 export {
@@ -68,8 +67,7 @@ export {
    "intersectWithCImodel",
    "spohnCI"
 }
-
--- Version 1.0 of the package has been reviewed and is on track for an acceptance recommendation in the Journal of Software for Algebra and Geometry. 
+ 
 --***************************************--
 --   METHODS FOR CORRELATED EQUILIBRIA   --
 --***************************************--
