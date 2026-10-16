@@ -880,6 +880,39 @@ doc ///
     and @TO probabilityRing@. In particular, for an $n$-player game, the players are labeled $0, \ldots, n-1$, and if player $i$ has $d_i$ pure strategies,
     they are labeled $0, \ldots, d_i-1$.
     Methods related to Nash and correlated equilibria (such as @TO correlatedEquilibria@, @TO nashEquilibriumRing@ and @TO nashEquilibriumIdeal@) create probability variables using the symbol $p$; if $p$ already holds a value in the current session, it is cleared with a warning. The variable name can be customized in @TO probabilityRing@ and @TO konstanzMatrix@ via the options @TO ProbabilityVariableName@ and @TO KonstanzVariableName@.
+  Subnodes
+    :methods for payoff tensors
+      Tensor
+      enumerateTensorIndices
+      zeroTensor
+      randomTensor
+      randomGame
+      indexset
+      slice
+      getVariableToIndexset
+    :correlated equilibria
+      correlatedEquilibria
+      assemblePolynomial
+      assemblePlayeriPolynomials
+    :Nash equilibria
+      nashEquilibriumRing
+      nashEquilibriumIdeal
+      numberTMNE
+      deltaList
+      blockDerangements
+    :dependency equilibria
+      probabilityRing
+      probabilitySumIdeal
+      spohnMatrices
+      spohnIdeal
+      konstanzMatrix
+    :conditional independence equilibria
+      toMarkovRing
+      mapToMarkovRing
+      mapToProbabilityRing
+      ciIdeal
+      intersectWithCImodel
+      spohnCI
 ///
 
 ------------------------------------------
