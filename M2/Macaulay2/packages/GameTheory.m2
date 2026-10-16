@@ -187,6 +187,10 @@ slice (Tensor, List, List) := (T, Lstart, Lend) -> (
 getVariableToIndexset = method()
 getVariableToIndexset(Ring, List) := (R, ki) -> (
    p := position(apply(gens R, i -> last baseName i), i -> i == ki);
+   if p === null then
+      error("Index " | toString(ki) | " not found in the polynomial ring. "
+            | "Expected one of the following variables: "
+            | toString(apply(gens R, g -> last baseName g)));
    R_p
    )
 
@@ -252,6 +256,11 @@ assemblePlayeriPolynomials(Ring, Tensor, ZZ) := (PR, Xi, i) -> (
 
 correlatedEquilibria = method()
 correlatedEquilibria List := X -> (
+   if #X == 0 then 
+      error "correlatedEquilibria: expected a nonempty list of payoff tensors";
+   if not all(X, t -> class t === Tensor) then 
+      error "correlatedEquilibria: expected a list of Tensors";
+   
    F := coefficientRing (X#0);
    FBi := indexset (X#0);
    p := getSymbol "p";
