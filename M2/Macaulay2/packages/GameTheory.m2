@@ -92,11 +92,7 @@ enumerateTensorIndices List := s -> (
       start := enumerateTensorIndices s#0;
       ri := toList (1..(length(s)-1));
       rest := enumerateTensorIndices s_ri;
-      result := {};
-      for s in start do
-         for r in rest do
-            result = append(result, join(s,r));
-      result
+      flatten for sVal in start list for rVal in rest list join(sVal,rVal)
       )
 
 ---------------------------------------------------------
@@ -177,12 +173,8 @@ slice = method()
 slice (Tensor, List, List) := (T, Lstart, Lend) -> (
    dims := format T;
    iteratingPosition := length Lstart;
-   result := {};
-   for i from 0 to dims#iteratingPosition -1 do (
-      mindex := join(Lstart, {i}, Lend);
-      result = append(result, T#mindex);
-   );
-   result
+   for i from 0 to dims#iteratingPosition - 1 list
+      T#(join(Lstart, {i}, Lend))
    )
 
 ---------------------------------------------------
@@ -242,15 +234,10 @@ assemblePolynomial(Ring, Tensor, List) := (PR, Xi, ikl) -> (
 
 assemblePlayeriPolynomials = method()
 assemblePlayeriPolynomials(Ring, Tensor, ZZ) := (PR, Xi, i) -> (
-   result := {};
    di := (format Xi)#i;
-   for k from 0 to di-1 do (
-      for l from 0 to di-1 do (
-         poly := assemblePolynomial(PR, Xi, {i,k,l});
-         result = append(result, poly);
-      );
-   );
-   result
+   flatten for k from 0 to di-1 list
+     for l from 0 to di-1 list
+        assemblePolynomial(PR, Xi, {i,k,l})
    )
 
 -------------------------------------------------------------
@@ -454,8 +441,7 @@ directProductList List := L -> (
 deltaList = method()
 deltaList List := d -> (
     n := #d;
-    result := {};
-    for i from 0 to (n - 1) do (
+    flatten apply(toList(0..(n-1)), i -> (
         polyFactors := for j from 0 to (n - 1) list (
             if j == i then (
                 convexHull(matrix(apply(d#i - 1, k -> {0})))
@@ -464,11 +450,8 @@ deltaList List := d -> (
             )
         );
         P := directProductList(polyFactors);
-        for rep from 1 to (d#i - 1) do (
-            result = append(result, P)
-	    );
-	);
-    result
+        apply(toList(1..(d#i - 1)), rep -> P)
+        ))
     )
 
 --------------------------------------------------------------------------
@@ -492,11 +475,8 @@ blockDerangements List := D -> (
     PP := permutations flatten F;                    
     partsPP := toList set apply(PP, p -> 
         apply(#D, i -> set apply(D#i - 1, j -> p#(j + sum(i, k -> D#k - 1)))));
-    BD := {};                                         
-    for p in partsPP do 
-        if toList set flatten apply(#D, i -> apply(toList(p#i), j -> j#0 != i)) == {true} 
-        then BD = append(BD, p);                     
-    return BD
+    select(partsPP, p -> 
+        toList set flatten apply(#D, i -> apply(toList(p#i), j -> j#0 != i)) == {true})
     )
 
 --------------------------------------------------------------------------------
