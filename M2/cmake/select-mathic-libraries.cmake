@@ -40,7 +40,7 @@ set(_m2_mathic_macro_mathicgb MATHICGB_DEBUG)
 
 foreach(lib IN ITEMS memtailor mathic mathicgb)
   string(TOUPPER ${lib} upper)
-  set(${upper}_PROVIDER AUTO CACHE STRING "${lib} provider: AUTO, SYSTEM, or BUNDLED")
+  set(${upper}_PROVIDER BUNDLED CACHE STRING "${lib} provider: BUNDLED, SYSTEM, or AUTO")
   set_property(CACHE ${upper}_PROVIDER PROPERTY STRINGS AUTO SYSTEM BUNDLED)
   if(NOT ${upper}_PROVIDER MATCHES "^(AUTO|SYSTEM|BUNDLED)$")
     message(FATAL_ERROR "${upper}_PROVIDER must be AUTO, SYSTEM, or BUNDLED")

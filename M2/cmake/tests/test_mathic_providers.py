@@ -66,65 +66,90 @@ class Providers(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout)
             return (self.root / 'build/selection').read_text()
 
+    def configure_auto(self, *options, **kwargs):
+        return self.configure(*[f'-D{x.upper()}_PROVIDER=AUTO' for x in LIBS],
+                              *options, **kwargs)
+
+    def test_default_bundled(self):
+        self.assertEqual(self.configure(), 'FALSE;FALSE;FALSE')
+
+    def test_default_skips_system_discovery(self):
+        for lib in LIBS:
+            p = self.prefix / f'lib/cmake/{lib}/{lib}Config.cmake'
+            p.write_text('message(FATAL_ERROR "Unexpected system discovery")\n')
+        self.assertEqual(self.configure(), 'FALSE;FALSE;FALSE')
+
     def test_system(self):
         self.assertEqual(self.configure(*[f'-D{x.upper()}_PROVIDER=SYSTEM' for x in LIBS]),
                          'TRUE;TRUE;TRUE')
 
     def test_release_libraries_in_debug_engine(self):
-        self.assertEqual(self.configure('-DCMAKE_BUILD_TYPE=Debug'), 'TRUE;TRUE;TRUE')
+        self.assertEqual(self.configure_auto('-DCMAKE_BUILD_TYPE=Debug'), 'TRUE;TRUE;TRUE')
 
     def test_bundled(self):
         self.assertEqual(self.configure(*[f'-D{x.upper()}_PROVIDER=BUNDLED' for x in LIBS]),
                          'FALSE;FALSE;FALSE')
 
     def test_dependency_fallback(self):
-        self.assertEqual(self.configure('-DMEMTAILOR_PROVIDER=BUNDLED'), 'FALSE;FALSE;FALSE')
+        self.assertEqual(self.configure_auto('-DMEMTAILOR_PROVIDER=BUNDLED'),
+                         'FALSE;FALSE;FALSE')
+
+    def test_missing_system_package(self):
+        self.configure('-DMEMTAILOR_PROVIDER=SYSTEM',
+                       '-DCMAKE_DISABLE_FIND_PACKAGE_memtailor=TRUE',
+                       '-DCMAKE_DISABLE_FIND_PACKAGE_PkgConfig=TRUE',
+                       error='Cannot use system memtailor: no memtailor')
+
+    def test_missing_auto_package(self):
+        self.assertEqual(self.configure_auto('-DCMAKE_DISABLE_FIND_PACKAGE_memtailor=TRUE',
+                                             '-DCMAKE_DISABLE_FIND_PACKAGE_PkgConfig=TRUE'),
+                         'FALSE;FALSE;FALSE')
 
     def test_explicit_inconsistent_providers(self):
         self.configure('-DMEMTAILOR_PROVIDER=BUNDLED', '-DMATHIC_PROVIDER=SYSTEM',
                        error='system mathic requires system memtailor')
 
     def test_debug_bundled_dependency_layout(self):
-        self.assertEqual(self.configure('-DCMAKE_BUILD_TYPE=Debug',
-                                        '-DMATHICGB_PROVIDER=BUNDLED'), 'FALSE;FALSE;FALSE')
+        self.assertEqual(self.configure_auto('-DCMAKE_BUILD_TYPE=Debug',
+                                             '-DMATHICGB_PROVIDER=BUNDLED'), 'FALSE;FALSE;FALSE')
 
     def test_debug_system_dependency_layout_error(self):
-        self.configure('-DCMAKE_BUILD_TYPE=Debug', '-DMATHICGB_PROVIDER=BUNDLED',
-                       '-DMEMTAILOR_PROVIDER=SYSTEM',
-                       error='bundled Debug mathic/mathicgb requires MEMT_DEBUG=ON')
+        self.configure_auto('-DCMAKE_BUILD_TYPE=Debug', '-DMATHICGB_PROVIDER=BUNDLED',
+                            '-DMEMTAILOR_PROVIDER=SYSTEM',
+                            error='bundled Debug mathic/mathicgb requires MEMT_DEBUG=ON')
 
     def test_tbb_mismatch_fallback(self):
-        self.assertEqual(self.configure('-DWITH_TBB=OFF'), 'TRUE;TRUE;FALSE')
+        self.assertEqual(self.configure_auto('-DWITH_TBB=OFF'), 'TRUE;TRUE;FALSE')
 
     def test_tbb_mismatch_required(self):
-        self.configure('-DWITH_TBB=OFF', '-DMATHICGB_PROVIDER=SYSTEM',
-                       error='disagrees with WITH_TBB=OFF')
+        self.configure_auto('-DWITH_TBB=OFF', '-DMATHICGB_PROVIDER=SYSTEM',
+                            error='disagrees with WITH_TBB=OFF')
 
     def test_transitive_abi_mismatch(self):
         p = self.prefix / 'lib/cmake/mathic/mathicConfig.cmake'
         with p.open('a') as out:
             out.write('set_property(TARGET mathic::mathic PROPERTY '
                       'INTERFACE_COMPILE_DEFINITIONS MEMT_DEBUG)\n')
-        self.assertEqual(self.configure(), 'TRUE;FALSE;FALSE')
+        self.assertEqual(self.configure_auto(), 'TRUE;FALSE;FALSE')
 
     def test_pkg_config(self):
-        self.assertEqual(self.configure(*[f'-DCMAKE_DISABLE_FIND_PACKAGE_{x}=TRUE'
-                                          for x in LIBS]), 'TRUE;TRUE;TRUE')
+        self.assertEqual(self.configure_auto(*[f'-DCMAKE_DISABLE_FIND_PACKAGE_{x}=TRUE'
+                                               for x in LIBS]), 'TRUE;TRUE;TRUE')
 
     def test_no_tbb_system_library(self):
         p = self.prefix / 'lib/cmake/mathicgb/mathicgbConfig.cmake'
         with p.open('a') as out:
             out.write('set_property(TARGET mathicgb::mathicgb PROPERTY '
                       'INTERFACE_COMPILE_DEFINITIONS MATHICGB_NO_TBB)\n')
-        self.assertEqual(self.configure('-DWITH_TBB=OFF'), 'TRUE;TRUE;TRUE')
+        self.assertEqual(self.configure_auto('-DWITH_TBB=OFF'), 'TRUE;TRUE;TRUE')
 
     def test_reconfigure_refreshes_abi(self):
-        self.assertEqual(self.configure(), 'TRUE;TRUE;TRUE')
+        self.assertEqual(self.configure_auto(), 'TRUE;TRUE;TRUE')
         p = self.prefix / 'lib/cmake/mathic/mathicConfig.cmake'
         with p.open('a') as out:
             out.write('set_property(TARGET mathic::mathic PROPERTY '
                       'INTERFACE_COMPILE_DEFINITIONS MEMT_DEBUG)\n')
-        self.assertEqual(self.configure(), 'TRUE;FALSE;FALSE')
+        self.assertEqual(self.configure_auto(), 'TRUE;FALSE;FALSE')
 
     def test_unusable_metadata(self):
         p = self.prefix / 'include/mathic.h'

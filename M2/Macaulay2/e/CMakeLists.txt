@@ -1,12 +1,11 @@
 ###############################################################################
 ## This directory contains the rules for building M2-engine and M2-unit-tests
 ## Select system or bundled memtailor, mathic and mathicgb libraries here
-## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
+## - run unit tests:  ctest -R unit-tests (includes bundled library tests)
 
 set(with_tbb ${WITH_TBB}) # for mathicgb
 
 include(select-mathic-libraries)
-include(mathic-library-tests)
 
 if(NOT _mathicgb_external)
   target_compile_options(mathicgb PRIVATE
