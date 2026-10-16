@@ -407,22 +407,6 @@ nashEquilibriumIdeal (Ring, List) := (R, L) -> (
     ideal fullGeneratingSet
     )
 
----------------------------------------------------------------
--- directProductList (List)
---
--- Given a list of polytopes, it computes their direct product.
----------------------------------------------------------------
-
-directProductList = method()
-directProductList List := L -> (
-    if #L == 0 then error "Empty list of polytopes";
-    P := L#0;
-    for i from 1 to (#L - 1) do (
-        P = directProduct(P, L#i);
-	);
-    P
-    )
-
 ------------------------------------------------------------------
 -- deltaList (Ring, List)
 --
@@ -449,7 +433,7 @@ deltaList List := d -> (
                 simplex(d#j - 1)
             )
         );
-        P := directProductList(polyFactors);
+        P := if #polyFactors == 1 then polyFactors#0 else directProduct \\ polyFactors;
         apply(toList(1..(d#i - 1)), rep -> P)
         ))
     )
@@ -541,7 +525,7 @@ probabilityRing List := Ring => opts -> Di -> (
 probabilitySumIdeal = method()
 probabilitySumIdeal Ring := Ideal => R -> (
     vars := gens R;
-    summing := sum(vars, x->x);
+    summing := sum vars;
     return ideal(summing - 1);
     )
 
@@ -611,13 +595,11 @@ konstanzMatrix (Ring, List) := Matrix => opts -> (PR, X) -> (
     LinearForms := apply(n, i -> (M_i * matrix{{(k_i)_konstanzRing}, {-1}})
 	);
     P := vector(apply(J, j -> p#j));
-    fold((M0, M1) -> M0 || M1, 
-         apply(n, i -> transpose matrix apply(Di_i,
-                                              j -> diff(P, (LinearForms_i)_(j, 0))
-					      )
-					  )
-				      )
-				  )
+    matrix apply(n, i -> {transpose matrix apply(Di_i,
+                                             j -> diff(P, (LinearForms_i)_(j, 0))
+                                             )
+                      })
+    )
 
 
 
@@ -888,6 +870,7 @@ doc ///
     Throughout the package, we followed Macaulay2's convention of zero-based indexing. This can be seen e.g., in the methods of @TO nashEquilibriumRing@
     and @TO probabilityRing@. In particular, for an $n$-player game, the players are labeled $0, \ldots, n-1$, and if player $i$ has $d_i$ pure strategies,
     they are labeled $0, \ldots, d_i-1$.
+    Methods related to Nash and correlated equilibria (such as @TO correlatedEquilibria@, @TO nashEquilibriumRing@ and @TO nashEquilibriumIdeal@) create probability variables using the symbol $p$; if $p$ already holds a value in the current session, it is cleared with a warning. The variable name can be customized in @TO probabilityRing@ and @TO konstanzMatrix@ via the options @TO ProbabilityVariableName@ and @TO KonstanzVariableName@.
 ///
 
 ------------------------------------------
@@ -936,6 +919,8 @@ doc ///
 doc ///
   Key
     Tensor
+    (format, Tensor)
+    (coefficientRing, Tensor)
   Headline
     a mutable hash table representing a tensor
   Usage
@@ -1478,6 +1463,7 @@ doc ///
   Key
       probabilityRing
       (probabilityRing, List)
+      ProbabilityVariableName
   Headline
       ring of probability distributions of a game indexed by ordered multi-indices
   Usage
@@ -1558,7 +1544,8 @@ doc ///
 
 doc ///
   Key
-    randomGame 
+    randomGame
+    (randomGame, List)
   Headline
     construct a game of a given format with arbitrary payoffs
   Usage
@@ -1601,7 +1588,8 @@ doc ///
 
 doc ///
   Key
-    spohnMatrices   
+    spohnMatrices
+    (spohnMatrices, Ring, List)
   Headline
     compute the list of Spohn matrices of a given game
   Usage
@@ -1640,6 +1628,7 @@ doc ///
 doc ///
   Key
     spohnIdeal
+    (spohnIdeal, Ring, List)
   Headline
     compute the ideal of the Spohn variety of a given game
   Usage
@@ -1677,6 +1666,8 @@ doc ///
 doc ///
   Key
     konstanzMatrix
+    (konstanzMatrix, Ring, List)
+    KonstanzVariableName
   Headline
     construct the Konstanz matrix of a given game
   Usage
@@ -2376,28 +2367,6 @@ ComputedGens = first entries gens I;
 TargetGens = {p_{1,1} * p_{2,0}, -2 * p_{0,0} * p_{2,0} - p_{0,1} * p_{2,0} + 2 * p_{0,1} * p_{2,1},
     p_{0,0} * p_{1,1} - p_{0,1} * p_{1,1}, p_{0,0} + p_{0,1} - 1, p_{1,0} + p_{1,1} - 1, p_{2,0} + p_{2,1} - 1};
 assert(ComputedGens == TargetGens)
-///
-
-------------------------------
---- TEST directProductList ---
-------------------------------
-TEST ///
-debug needsPackage "GameTheory"
-P1 = simplex 1;   -- dim=1
-P2 = simplex 2;   -- dim=2
-P = directProductList {P1,P2};
-assert(dim P == 3);
-
-v1 = entries transpose vertices P1;
-v2 = entries transpose vertices P2;
-expectedVerts = flatten apply(v1, u -> apply(v2, w -> u | w));
-assert(sort entries transpose vertices P == sort expectedVerts)
-///
-
-TEST ///
-debug needsPackage "GameTheory"
-Q = simplex 3;  -- a tetrahedron should just return that unchanged
-assert(directProductList {Q} === Q)
 ///
 
 ----------------------
