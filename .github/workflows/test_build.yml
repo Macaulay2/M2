@@ -162,6 +162,8 @@ jobs:
         run: |
           cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
+            -DMEMTAILOR_PROVIDER=BUNDLED -DMATHIC_PROVIDER=BUNDLED \
+            -DMATHICGB_PROVIDER=BUNDLED \
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
             --debug-trycompile
