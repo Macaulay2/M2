@@ -627,9 +627,9 @@ sanityCheckDSCF DoublySpecialCubicFourfold := X -> (
 );
 sanityCheckDSCF K3SurfaceFromDoublySpecialCubicFourfold := E -> sanityCheckDSCF recoverFourfold E;
 
-updateSpecialFanoFourfoldsPackage = method();
-updateSpecialFanoFourfoldsPackage (String,String,List) := (dir,baseURL,singleFilePkgs) -> (
-    if not all(singleFilePkgs, F -> instance(F, String)) then error "expected a list of package names";
+updatePackage = method();
+updatePackage (String,String,List) := (dir,baseURL,singleFilePkgs) -> (
+    if not (# singleFilePkgs > 0 and all(singleFilePkgs, F -> instance(F, String))) then error "expected a list of package names";
     if dir === "" then dir = currentDirectory();
     if not isDirectory dir then error "expected a directory";
     if baseURL === "" then baseURL = "https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/";
@@ -640,7 +640,7 @@ updateSpecialFanoFourfoldsPackage (String,String,List) := (dir,baseURL,singleFil
     if dir =!= dir' then << "-- warning: the specified directory contains spaces; consider moving it before updating." << endl;
     ans := "";
     while not member(ans, {"y", "yes", "Y", "Yes"}) do (
-        ans = read("Download the latest versions of SpecialFanoFourfolds and related packages to " | dir | "? (y/n) ");
+        ans = read("Download the latest versions of " | first singleFilePkgs | " and other packages to " | dir | "? (y/n) ");
         if member(ans, {"n", "no", "N", "No"}) then (
             << "-- update cancelled." << endl;
             return;
@@ -651,14 +651,19 @@ updateSpecialFanoFourfoldsPackage (String,String,List) := (dir,baseURL,singleFil
         runProgram(curl, "-fLs -o " | D | F | ".m2 " | baseURL | D | F | ".m2", RunDirectory=>dir', RaiseError=>true, Verbose=>false);
         if not fileExists(dir | D | F | ".m2") then error("missing file: " | F | ".m2");
     );
-    downloadSingleFile("","SpecialFanoFourfolds");
-    makeDirectory(dir | "SpecialFanoFourfolds");
-    AuxF := {"AssociatedSurfaces", "CubicFourfolds", "DSCF", "FanoMaps", "HodgeSpecialFourfolds", "IntersectionOfThreeQuadrics", "tests", "Congruences", "docs", "examples", "GushelMukai", "HodgeSpecialSurfaces", "mirrorFourfolds", "contractionMaps", "LatticePolarizations", "LatticePolarizedK3", "utils", "LatexTables"};
-    assert(#AuxF == 18);
-    for F in AuxF do downloadSingleFile("SpecialFanoFourfolds/",F);
     for F in singleFilePkgs do downloadSingleFile("",F);
+    if member("SpecialFanoFourfolds", singleFilePkgs) then (
+        makeDirectory(dir | "SpecialFanoFourfolds");
+        AuxF := {"AssociatedSurfaces", "CubicFourfolds", "DSCF", "FanoMaps", "HodgeSpecialFourfolds", "IntersectionOfThreeQuadrics", "tests", "Congruences", "docs", "examples", "GushelMukai", "HodgeSpecialSurfaces", "mirrorFourfolds", "contractionMaps", "LatticePolarizations", "LatticePolarizedK3", "utils", "LatexTables"};
+        assert(#AuxF == 18);
+        for F in AuxF do downloadSingleFile("SpecialFanoFourfolds/",F);
+    );
+    if member("Cremona", singleFilePkgs) then (
+        makeDirectory(dir | "Cremona");
+        for F in {"examples", "documentation", "tests"} do downloadSingleFile("Cremona/",F);
+    );
     << "-- update completed; relaunch M2 to load the new package versions." << endl;
     sleep 2;
     exit 0;
 );
-updateSpecialFanoFourfoldsPackage String := dir -> updateSpecialFanoFourfoldsPackage(dir,"",{"MultiprojectiveVarieties"});
+updatePackage String := dir -> updatePackage(dir,"",{"SpecialFanoFourfolds", "MultiprojectiveVarieties"});

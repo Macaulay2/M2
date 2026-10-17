@@ -117,7 +117,7 @@ LocalExamplesArchive#{WebApp,AfterPrint} = LocalExamplesArchive#{WebApp,AfterNoP
 
 displayLocalExamplesArchive = () -> (
     A := availableExamples();
-    A' := apply(pairs memoizeValues exampleMem, p -> reverse take(first p,2)); -- users should consistently use either example(...,Verbose=>true) or example(...,Verbose=>false)
+    A' := unique apply(pairs memoizeValues exampleMem, p -> reverse take(first p,2));
     s := "-- Number of examples: " | (toString length A) | " (loaded: " | (toString length A') | ")";
     local B; local B';
     for i to 4 do (
@@ -138,6 +138,7 @@ displayLocalExamplesArchive = () -> (
 -- store X                           save or update a fourfold X in 𝔸
 -- store(X,ϑ)                        save a fourfold X in 𝔸 with name ϑ
 -- isMember(X,𝔸)                     test membership in 𝔸
+-- diff(X,𝔸)                         compare X with its stored version
 -- importFrom(𝑓,𝔸), store 𝑓          import examples into 𝔸 from file 𝑓
 -- importFrom(𝑓,𝔸,KeepFiles=>true)   do not overwrite existing examples
 -- importFrom("@",𝔸), store "@"      import examples from GitHub into 𝔸
@@ -291,6 +292,20 @@ isMember (HodgeSpecialFourfold,LocalExamplesArchive) := (X,A) -> (
     fileExists F
 );
 
+diff (HodgeSpecialFourfold,LocalExamplesArchive) := (X,A) -> (
+    if not X.cache#?"exampleNameInArchive" then error "expected a fourfold loaded from the local examples archive";
+    str := X.cache#"exampleNameInArchive";
+    n := fourfoldTypeId X;
+    pfx := first fourfoldTypeId n;
+    F := examplesDir() | "/" | pfx | str | ".dat";
+    if not fileExists F then error("example file not found: " | F);
+    newX := temporaryFileName() | ".dat";
+    newX << toExternalString X << close;
+    git := findProgram("git", "git --version");
+    Out := runProgram(git, " diff --no-index --color -U0 \"" | F | "\" \"" | newX | "\"", Verbose=>false, RaiseError=>false);
+    << stack drop(lines Out#"output",4) << endl;
+);
+
 delete (HodgeSpecialFourfold,LocalExamplesArchive) := (X,A) -> (
     if not X.cache#?"exampleNameInArchive" then error "cannot delete: fourfold was not loaded from the local examples archive";
     str := X.cache#"exampleNameInArchive";
@@ -356,7 +371,12 @@ exampleMem = memoize((str,n,verb) -> (
     if verb then << "-- example(\"" << str << "\"," << n << ") ready." << endl;
     X
 ));
-example (String,ZZ) := o -> (str,n) -> exampleMem(str,n,o.Verbose);
+example (String,ZZ) := o -> (str,n) -> (
+    X := exampleMem(str,n,o.Verbose);
+    if not ((memoizeValues exampleMem)#?(str,n,o.Verbose) and (memoizeValues exampleMem)#(str,n,o.Verbose) === X) then error "internal error encountered: bad example cache state";
+    (memoizeValues exampleMem)#(str,n,not o.Verbose) = X;
+    X
+);
 example (ZZ,ZZ) := o -> (i,n) -> example(toString i,n,Verbose=>o.Verbose);
 example String := o -> str -> (
     S := select(availableExamples(), a -> last a == str);
@@ -369,12 +389,15 @@ example ZZ := o -> i -> example(toString i,Verbose=>o.Verbose);
 store (HodgeSpecialFourfold,String,Option) := (X,str,opt) -> (
     o := toList opt;
     if not(#o == 2 and first o === RaiseError) then error "RaiseError is the only available option for store(HodgeSpecialFourfold,String)";
-    pfx := first fourfoldTypeId fourfoldTypeId X;
+    n := fourfoldTypeId X;
+    pfx := first fourfoldTypeId n;
     F := examplesDir() | "/" | pfx | str | ".dat";
     alreadyExists := fileExists F;
     if (last o) and alreadyExists then error("example \"" | str | "\" already exists; please choose another name or use RaiseError=>false to overwrite it");
     F << toExternalString X << close;
     if not fileExists F then error("failed to save example \"" | str | "\"");
+    remove(memoizeValues exampleMem,(str,n,true));
+    remove(memoizeValues exampleMem,(str,n,false));
     if alreadyExists then (
         << "-- example \"" << str << "\" successfully overwritten" << endl;
     ) else (

@@ -610,7 +610,7 @@ toExternalString HodgeSpecialFourfold := X -> (
     ) else (
         s = s | "forceImage(mu,target mu);" | newline;
     );
-    s = s | "mu = rationalMap(mu,image mu);" | newline;
+    s = s | "mu = rationalMap(mu,Dominant=>true);" | newline;
     if instance(X,DoublySpecialCubicFourfold) then (
         s = s | ///mu.cache#"FanoMapType" = "Standard";/// | newline;
         s = s | ///X.cache#"FanoMapType" = "Standard";/// | newline;
