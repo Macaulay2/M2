@@ -5,3 +5,6 @@ instructions, build guides, and contributor information. The "Building M2 from
 source" section of the wiki is the current entry point for the autotools and
 CMake build workflows.
 
+
+For the optional Maple/convex CMake probes, `WITH_MAPLE` switch, custom paths,
+and their runtime limitations, see [Optional Maple detection](BUILD/README.md#optional-maple-detection-cmake).
