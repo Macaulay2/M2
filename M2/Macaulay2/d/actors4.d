@@ -250,10 +250,7 @@ selectPairs(e:Expr):Expr := (
     is a:Sequence do (
 	if length(a) == 2 then (
 	    when a.0
-	    is obj:HashTable do (
-		if obj.Mutable
-		then WrongArgImmutableHashTable(1)
-		else selectPairs(obj.numEntries, obj, a.1))
+	    is obj:HashTable do selectPairs(obj.numEntries, obj, a.1)
 	    -- # typical value: selectPairs, BasicList, Function, List
 	    else select(pairs(a.0), a.1))
 	else if length(a) == 3 then (
@@ -262,10 +259,7 @@ selectPairs(e:Expr):Expr := (
 		if !isInt(n) then WrongArgSmallInteger(1)
 		else (
 		    when a.1 is obj:HashTable
-		    do (
-			if obj.Mutable
-			then WrongArgImmutableHashTable(2)
-			else selectPairs(toInt(n), obj, a.2))
+		    do selectPairs(toInt(n), obj, a.2)
 		    -- # typical value: selectPairs, ZZ, BasicList, Function, List
 		    else select(a.0, pairs(a.1), a.2, nullE, nullE)))
 	    else WrongArgZZ(1))
