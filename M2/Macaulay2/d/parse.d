@@ -319,7 +319,8 @@ export List := {+
      Class:HashTable,
      v:Sequence,
      hash:hash_t,
-     Mutable:bool
+     Mutable:bool,
+     capacity:int -- amount of allocated memory (for mutable lists)
      };
 
 export Error := {+

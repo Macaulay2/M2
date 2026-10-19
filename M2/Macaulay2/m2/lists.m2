@@ -11,6 +11,8 @@ needs "methods.m2"
  MutableList.synonym = "mutable list"
 AngleBarList.synonym = "angle bar list"
 
+size BasicList := ZZ => size0
+
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)
 Option ? Option := (s,t) -> toSequence s ? toSequence t
 

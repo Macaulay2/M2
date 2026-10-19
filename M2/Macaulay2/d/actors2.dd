@@ -58,11 +58,7 @@ toList(e:Expr):Expr := (
      is a:Sequence do list(a)
      is b:List do (
 	  if b.Class == listClass then e
-	  else Expr(
-	       sethash(
-	       	    List(listClass, if b.Mutable then copy(b.v) else b.v,
-		    	 hash_t(0), false),
-	       	    false)))
+	  else list(if b.Mutable then copy(b.v) else b.v))
      is s:stringCell do list(strtoseq(s))
      is c:PseudocodeClosure do toList(c.code)
      is c:Pseudocode do toList(c.code)
@@ -184,7 +180,9 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
 	       else if classs == sequenceClass then Expr(o.v)
 	       else (
 	       	    is_mutable := ancestor(classs,mutableListClass);
-		    Expr(sethash( List(classs, if is_mutable || o.Mutable then copy(o.v) else o.v, hash_t(0),false), is_mutable))))
+		    list(classs,
+			if is_mutable || o.Mutable then copy(o.v) else o.v,
+			is_mutable)))
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is v:Sequence do (
@@ -193,7 +191,9 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
 	       else if classs == sequenceClass then Expr(v)
 	       else (
 	       	    is_mutable := ancestor(classs,mutableListClass);
-		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, hash_t(0),false), is_mutable))))
+		    list(classs,
+			if is_mutable then copy(v) else v,
+			is_mutable)))
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is s:SpecialExpr do (
@@ -224,12 +224,9 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
 	       else if classs == sequenceClass then Expr(o.v)
 	       else (
 		    is_mutable := ancestor(classs,mutableListClass);
-		    Expr(
-			 sethash(
-			      List(classs,
-				   if is_mutable || o.Mutable then copy(o.v) else o.v,
-				   hash_t(0),false),
-			      is_mutable))))
+		    list(classs,
+			if is_mutable || o.Mutable then copy(o.v) else o.v,
+			is_mutable)))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
@@ -239,7 +236,9 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
 	       if classs == sequenceClass then Expr(v)
 	       else (
 		    is_mutable := ancestor(classs,mutableListClass);
-		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, hash_t(0),false), is_mutable))))
+		    list(classs,
+			if is_mutable then copy(v) else v,
+			is_mutable)))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
@@ -297,7 +296,7 @@ makenew(classs:HashTable,parent:HashTable):Expr := (
 	  then buildErrorPacket("expected Nothing as parent for list")
 	  else if classs == sequenceClass
 	  then Expr(emptySequence)
-	  else Expr(sethash( List(classs,emptySequence,hash_t(0),false), ancestor(classs,mutableListClass))))
+	  else list(classs, emptySequence,ancestor(classs,mutableListClass)))
      else if basicType == dictionaryClass then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
      else buildErrorPacket("basic type for 'new' method should have been BasicList, HashTable, or Dictionary"));
 makenew(classs:HashTable):Expr := makenew(classs,nothingClass);
@@ -376,8 +375,9 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 			    else newClass(newInitExpr, classs, false))
 			else newClass(newInitExpr,classs,false))
 		    is p:List do (
-			 if p.Class == classs
-			 then Expr(if p.Mutable then copy(p) else p)
+			 if p.Class == classs then (
+			     if p.Mutable then list(classs, copy(p.v), true)
+			     else newInitExpr)
 			 else newClass(newInitExpr,classs,false))
 		    is p:HashTable do (
 			 if p.Class == classs
@@ -406,8 +406,9 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 			 when newInitExpr
 			 is p:Sequence do newClassParent(newInitExpr,classs,parent,false)
 			 is p:List do (
-			      if p.Class == classs && nothingClass == parent
-			      then Expr(if p.Mutable then copy(p) else p)
+			      if p.Class == classs && nothingClass == parent then (
+				  if p.Mutable then list(classs, copy(p.v), true)
+				  else newInitExpr)
 			      else newClassParent(newInitExpr,classs,parent,false))
 			 is p:HashTable do (
 			      if p.Class == classs && p.parent == parent
