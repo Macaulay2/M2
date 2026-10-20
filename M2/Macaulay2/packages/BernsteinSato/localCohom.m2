@@ -19,7 +19,7 @@ localCohom = method(Options => {Strategy => Walther, LocStrategy => null})
 ----------------------------------------------------------------------------------------
 
 localCohom(      Ideal) := HashTable => o ->    I  -> localCohom(toList (0..numgens I), I, o)
-localCohom(ZZ,   Ideal) := HashTable => o -> (n,I) -> (localCohom({n}, I, o))#n
+localCohom(ZZ,   Ideal) := Module => o -> (n,I) -> (localCohom({n}, I, o))#n
 localCohom(List, Ideal) := HashTable => o -> (l,I) -> (
      -- Promote I to the Weyl algebra if it is not already there
      if #(ring I).monoid.Options.WeylAlgebra == 0
