@@ -93,7 +93,7 @@ jobs:
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
                   libnauty-dev nauty lrslib polymake pipx phcpack libtbb-dev qepcad \
-                  msolve libfplll-dev libjansson-dev r-base palp
+                  msolve libfplll-dev libjansson-dev r-base palp bergman
 
 # ----------------------
 #   Install Bertini
