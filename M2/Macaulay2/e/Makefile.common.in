@@ -65,21 +65,21 @@ COMPILE.cpp = $(COMPILE.cc)
 %.dep: %.cpp
 #	$(WHY)
 	$(SHOW)"MKDEP $*.cpp"
-	$(HIDE)$(MKDIR_P) `dirname "$@"`
+	$(HIDE)$(MKDIR_P) `dirname "$@"` || test -d `dirname "$@"`
 	$(HIDE)@CXX@ -MT $@ -MT $*.o -MM -MP $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) $(MORE_OPTIONS) $< >$*.dep
 
 %.dep: %.c
 #	$(WHY)
 	$(SHOW)"MKDEP $*.c"
-	$(HIDE)$(MKDIR_P) `dirname "$@"`
+	$(HIDE)$(MKDIR_P) `dirname "$@"` || test -d `dirname "$@"`
 	$(HIDE)@CC@  -MT $@ -MT $*.o -MM -MP $(CFLAGS)   $(CPPFLAGS) $(TARGET_ARCH) $(MORE_OPTIONS) $< >$*.dep
 
 @pre_librariesdir@/libengine.so: $(LOFILES)
-	$(HIDE)$(MKDIR_P) $(@D)
+	$(HIDE)$(MKDIR_P) $(@D) || test -d $(@D)
 	@CXX@ -shared $(OPENMP_CXXFLAGS) $(OPENMP_LIBS) $^ $(OUTPUT_OPTION)
 
 @pre_librariesdir@/libengine.a: $(ENGINE_OFILES)
-	$(HIDE)$(MKDIR_P) $(@D)
+	$(HIDE)$(MKDIR_P) $(@D) || test -d $(@D)
 	@AR@ rcs $@ $^
 
 # Local Variables:

@@ -244,7 +244,7 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
         (R, S) := (target f, source f);
         if not isCommutative S then return null;
         if isCommutative R then return null;
-        inc := try(centerRing R) else return null;
+        inc := try(center R) else return null;
 
         C := source inc;
         G := graphRing inc;

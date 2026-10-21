@@ -1,2 +1,4 @@
-This build directory is kept empty, for use with the build instructions in the file
-../../INSTALL.
+This build directory is kept empty, for use with the build instructions at
+https://github.com/Macaulay2/M2/wiki/Building-M2-from-source-using-Autotools
+and
+https://github.com/Macaulay2/M2/wiki/Building-M2-from-source-using-CMake

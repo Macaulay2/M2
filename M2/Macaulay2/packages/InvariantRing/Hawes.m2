@@ -216,7 +216,7 @@ secondaryInvariants(List,FiniteGroupAction):=o->(P,G)->(
 	  apply(
 	       flatten entries ((coefficients pol)#0),degree
 	       ),
-	  D->{D,coefficient((sub(t,ZZ[t]))^(D_0),pol)}
+	  D->{D,coefficient(t^(D_0),pol)}
 	  );
      -- outputs a list of lists of the form {{d},c} where d is a featuring 
      -- degree in pol and c is the corresponding coefficient. Thus there 

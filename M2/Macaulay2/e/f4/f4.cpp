@@ -677,7 +677,7 @@ void F4GB::gauss_reduce(bool diagonalize)
                          threadLocalDense_t::reference my_dense = threadLocalDense.local();
                          for (auto i = r.begin(); i != r.end(); ++i)
                          {
-                               bool newNonzeroReduction = gauss_reduce_row(spair_rows[i], my_dense);
+                               gauss_reduce_row(spair_rows[i], my_dense);
                          }
                        });
   });

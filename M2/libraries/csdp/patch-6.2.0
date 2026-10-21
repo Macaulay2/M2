@@ -1,19 +1,121 @@
-diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/Makefile Csdp-6.2.0/Makefile
---- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/Makefile	2017-07-17 17:34:04.000000000 -0700
-+++ Csdp-6.2.0/Makefile	2018-12-26 15:34:22.000000000 -0800
-@@ -11,49 +11,50 @@
+Description: Include <stdio.h> to avoid declaring printf implicitly
+Origin: https://github.com/coin-or/Csdp/commit/a346b2f
+Last-Update: 2026-08-16
+
+diff --git Csdp-6.2.0/lib/user_exit.c Csdp-6.2.0/lib/user_exit.c
+index 589bf44..f0aa0c8 100644
+--- Csdp-6.2.0/lib/user_exit.c
++++ Csdp-6.2.0/lib/user_exit.c
+@@ -3,6 +3,7 @@
+  * 0, so that psd will not stop.
+  */
+ 
++#include <stdio.h>
+ #include "declarations.h"
+ 
+ 
+Description: Make the build configurable instead of hardcoded
+ What changed and why
+ --------------------
+ .
+ The top level Makefile hardcodes CFLAGS and LIBS with "export", which cannot
+ be overridden usefully: a makefile assignment beats the environment, so
+ "CFLAGS=... make" is silently ignored, while "make CFLAGS=..." replaces the
+ whole line, taking -I../include and the feature macros with it.  There is no
+ LDFLAGS at all.
+ .
+ The flags the build itself requires are now kept apart from the ones the
+ user owns (CPPFLAGS, CFLAGS, LDFLAGS, BLAS_LIBS, LIBS), so that neither can
+ clobber the other.  The feature macros are detected rather than asserted,
+ and -m64, -march=native, -Ofast, -ansi and -static are gone from the
+ defaults; -std=gnu99 replaces -ansi, since the sources use K&R definitions
+ that C23 removed.  GNU rather than strict mode, because the code calls
+ POSIX interfaces that a strict mode is not obliged to declare.  GNU make is
+ now required.
+ .
+ Configuring the build
+ ---------------------
+ .
+ Every variable below can be set in the environment or on the make command
+ line:
+ .
+     make CC=clang CFLAGS="-O3 -g" BLAS_LIBS="-lopenblas"
+ .
+     CC              The C compiler.  Default: cc
+     CFLAGS          Optimization and warning flags.  Default: -O2 -Wall.
+                     CSDP is a numerical code, so -Ofast is not recommended.
+     CPPFLAGS        Additional preprocessor flags.
+     LDFLAGS         Additional linker flags.
+     BLAS_LIBS       The BLAS and LAPACK libraries, plus any Fortran run time
+                     library they need.  Default: -llapack -lblas
+     LIBS            Anything else to link against.  Additive, with no
+                     default, so that a build system exporting an empty LIBS
+                     -- as FreeBSD's bsd.port.mk does -- cannot knock out the
+                     BLAS.
+     OPENMP_CFLAGS   The flag that enables OpenMP.  Default: -fopenmp
+     OPENMP_LIBS     The corresponding link flag.  Default: empty
+     prefix          Installation prefix.  Default: /usr/local
+     exec_prefix     Default: $(prefix)
+     bindir          Where the programs go.  Default: $(exec_prefix)/bin
+     DESTDIR         Staging directory prepended to the install paths.
+     TOOL_PREFIX     A prefix for the installed names of theta, complement,
+                     graphtoprob and rand_graph, whose names are generic.
+                     TOOL_PREFIX=csdp- installs csdp-theta and so on.  The
+                     solver is always installed as csdp.
+ .
+ With OpenBLAS, which supplies both BLAS and LAPACK:
+ .
+     make BLAS_LIBS="-L/opt/OpenBLAS/lib -lopenblas"
+ .
+ On macOS, with Accelerate and Homebrew's libomp:
+ .
+     make BLAS_LIBS="-framework Accelerate" \
+         OPENMP_CFLAGS="-Xpreprocessor -fopenmp -I$(brew --prefix libomp)/include" \
+         OPENMP_LIBS="-L$(brew --prefix libomp)/lib -lomp"
+ .
+ Without OpenMP at all:
+ .
+     make OPENMP_CFLAGS=
+ .
+ To install into a staging directory:
+ .
+     make install DESTDIR=/tmp/stage prefix=/usr TOOL_PREFIX=csdp-
+ .
+ Finally, -DCAPSBLAS, -DCAPSLAPACK, -DNOUNDERBLAS, -DNOUNDERLAPACK and
+ -DHIDDENSTRLEN may rarely be needed, if the BLAS or LAPACK symbols are
+ capitalized, lack a trailing underscore, or take hidden Fortran string
+ lengths.  Pass them in CPPFLAGS.
+Author: Doug Torrance <dtorrance9@gatech.edu>
+Author: Claude Opus 5 <noreply@anthropic.com>
+Forwarded: https://github.com/coin-or/Csdp/pull/22
+Last-Update: 2026-08-17
+
+diff --git Csdp-6.2.0/Makefile Csdp-6.2.0/Makefile
+index 3430806..6190dd6 100644
+--- Csdp-6.2.0/Makefile
++++ Csdp-6.2.0/Makefile
+@@ -5,60 +5,49 @@
+ # rebuild the system with "make clean" followed by "make all".
  #
- # CFLAGS settings for 64 bit Linux/unix systems.
  #
+-# You can change the C compiler by setting CC=...
+-#
+-# CC=gcc
+-#
+-# CFLAGS settings for 64 bit Linux/unix systems.
+-#
 -export CFLAGS=-m64 -march=native -mtune=native -Ofast -fopenmp -ansi -Wall -DBIT64 -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
-+export CFLAGS += -Wall -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
- #
- # LIBS settings for 64 bit Linux/unix systems.
- #
+-#
+-# LIBS settings for 64 bit Linux/unix systems.
+-#
 -export LIBS=-static -L../lib -lsdp -llapack -lblas -lm
-+export LIBS=-L../lib -lsdp -llapack -lblas -lm
-+
++# Build settings are in Makefile.inc.  Every variable there can be set in the
++# environment or on the make command line; see INSTALL.
  #
++include Makefile.inc
++
++.PHONY: all clean install unitTest
++
  #
  # On most systems, this should handle everything.
  #
@@ -22,8 +124,8 @@ diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/librari
 -	cd solver; make csdp
 -	cd theta; make all
 -	cd example; make all
-+	$(MAKE) -C lib libsdp.a
-+	$(MAKE) -C solver csdp
++	$(MAKE) -C lib all
++	$(MAKE) -C solver all
 +	$(MAKE) -C theta all
 +	$(MAKE) -C example all
  
@@ -31,26 +133,31 @@ diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/librari
  # Perform a unitTest
  #
  
- unitTest:
+-unitTest:
 -	cd test; make all
++unitTest: all
 +	$(MAKE) -C test all
  
  #
 -# Install the executables in /usr/local/bin.
-+# Install the executables in $(prefix)/bin.
++# Install the executables in $(bindir).  install is among the .PHONY targets
++# above so that the INSTALL file does not satisfy it on case insensitive
++# filesystems.
  #
- 
- install:
+-
+-install:
 -	cp -f solver/csdp /usr/local/bin
 -	cp -f theta/theta /usr/local/bin
 -	cp -f theta/graphtoprob /usr/local/bin
 -	cp -f theta/complement /usr/local/bin
 -	cp -f theta/rand_graph /usr/local/bin
-+	cp -f solver/csdp $(prefix)/bin
-+	cp -f theta/theta $(prefix)/bin
-+	cp -f theta/graphtoprob $(prefix)/bin
-+	cp -f theta/complement $(prefix)/bin
-+	cp -f theta/rand_graph $(prefix)/bin
++install: all
++	$(INSTALL) -d "$(DESTDIR)$(bindir)"
++	$(INSTALL_PROGRAM) solver/csdp "$(DESTDIR)$(bindir)/csdp"
++	$(INSTALL_PROGRAM) theta/theta "$(DESTDIR)$(bindir)/$(TOOL_PREFIX)theta"
++	$(INSTALL_PROGRAM) theta/graphtoprob "$(DESTDIR)$(bindir)/$(TOOL_PREFIX)graphtoprob"
++	$(INSTALL_PROGRAM) theta/complement "$(DESTDIR)$(bindir)/$(TOOL_PREFIX)complement"
++	$(INSTALL_PROGRAM) theta/rand_graph "$(DESTDIR)$(bindir)/$(TOOL_PREFIX)rand_graph"
  
  #
  # Clean out all of the directories.
@@ -62,103 +169,264 @@ diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/librari
 -	cd theta; make clean
 -	cd test; make clean
 -	cd example; make clean
+-
+-
+-
+-
+-
+-
+-
+-
 +	$(MAKE) -C lib clean
 +	$(MAKE) -C solver clean
 +	$(MAKE) -C theta clean
 +	$(MAKE) -C test clean
 +	$(MAKE) -C example clean
- 
- 
- 
-diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/example/Makefile Csdp-6.2.0/example/Makefile
---- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/example/Makefile	2017-07-17 16:47:30.000000000 -0700
-+++ Csdp-6.2.0/example/Makefile	2018-12-26 15:34:22.000000000 -0800
-@@ -6,7 +6,7 @@
+diff --git Csdp-6.2.0/Makefile.inc Csdp-6.2.0/Makefile.inc
+new file mode 100644
+index 0000000..b5d6205
+--- /dev/null
++++ Csdp-6.2.0/Makefile.inc
+@@ -0,0 +1,92 @@
++#
++# Build settings shared by the subdirectory Makefiles.  Every variable here
++# can be set in the environment or on the make command line, for example
++#
++#	make CC=clang CFLAGS="-O3 -g" BLAS_LIBS="-lopenblas"
++#
++# GNU make is required.  See INSTALL for the full list of variables.
++#
++# CSDP_CPPFLAGS and CSDP_CFLAGS hold the flags the build itself requires.
++# They are kept separate from CPPFLAGS and CFLAGS so that setting the latter
++# cannot silently drop -I../include or the feature macros.
++#
++
++CC ?= cc
++INSTALL ?= install
++INSTALL_PROGRAM ?= $(INSTALL) -m 755
++INSTALL_DATA ?= $(INSTALL) -m 644
++
++# theta, complement, graphtoprob and rand_graph have rather generic names, so
++# distributors may want to install them under a prefix, e.g. TOOL_PREFIX=csdp-
++TOOL_PREFIX ?=
++
++prefix ?= /usr/local
++exec_prefix ?= $(prefix)
++bindir ?= $(exec_prefix)/bin
++
++CFLAGS ?= -O2 -Wall
++
++# Set OPENMP_CFLAGS to nothing to build CSDP without OpenMP.
++OPENMP_CFLAGS ?= -fopenmp
++OPENMP_LIBS ?=
++
++# The BLAS and LAPACK libraries, plus any Fortran run time library they need.
++# On macOS this is "-framework Accelerate".
++BLAS_LIBS ?= -llapack -lblas
++
++# LIBS is anything else to link against.  It is deliberately additive and has
++# no default, so that a build system which exports an empty LIBS -- FreeBSD's
++# bsd.port.mk does -- cannot knock out the BLAS.
++
++# Where the top of the tree is, relative to whichever makefile included this
++# one: "./" at the top level, "../" from a subdirectory, and so on.  Spelling
++# the paths this way rather than hardcoding ../ keeps them right whatever the
++# depth, and keeps them relative, which -I and -L in a reproducible build want
++# to be.
++CSDP_TOP := $(dir $(lastword $(MAKEFILE_LIST)))
++
++CSDP_CPPFLAGS = -I$(CSDP_TOP)include
++CSDP_CFLAGS = -std=gnu99
++# The build's own -L has to precede the user's LDFLAGS, for the same reason
++# CSDP_CPPFLAGS precedes CPPFLAGS: -L is searched in command line order, so a
++# -L naming a directory that already holds an installed libsdp would otherwise
++# win over the one just built here.
++CSDP_LDFLAGS = -L$(CSDP_TOP)lib
++CSDP_LIBS = -lsdp
++
++# The probes below have to see the same compiler and flags as the build, or
++# they will answer for the wrong target: a packager who selects 32 bit with
++# CFLAGS=-m32 rather than CC="gcc -m32" would otherwise get -DBIT64.
++CSDP_PROBE = $(CC) $(CPPFLAGS) $(CFLAGS)
++
++# Both of these are POSIX interfaces that Windows lacks: USESIGTERM needs
++# setrlimit(), and USEGETTIME needs gettimeofday().  Probe with -include
++# rather than a here-doc, so that these lines contain no "#", which make 3.81
++# would take as the start of a comment.
++ifneq ($(shell : | $(CSDP_PROBE) -E -include sys/resource.h - >/dev/null 2>&1 && echo yes),)
++CSDP_CPPFLAGS += -DUSESIGTERM
++endif
++
++ifneq ($(shell : | $(CSDP_PROBE) -E -include sys/time.h - >/dev/null 2>&1 && echo yes),)
++CSDP_CPPFLAGS += -DUSEGETTIME
++endif
++
++LONG_BYTES := $(shell echo csdp_long __SIZEOF_LONG__ | $(CSDP_PROBE) -E -P - \
++	2>/dev/null | sed -n '/csdp_long/s/[^0-9]//gp')
++ifeq ($(LONG_BYTES),8)
++CSDP_CPPFLAGS += -DBIT64
++endif
++
++# USEOPENMP includes <omp.h> and calls the OpenMP runtime, so define it only
++# when we are actually compiling with OpenMP.
++ifneq ($(strip $(OPENMP_CFLAGS)),)
++CSDP_CPPFLAGS += -DUSEOPENMP -DSETNUMTHREADS
++endif
++
++CSDP_COMPILE = $(CC) $(CSDP_CPPFLAGS) $(CPPFLAGS) $(CSDP_CFLAGS) \
++	$(OPENMP_CFLAGS) $(CFLAGS)
++CSDP_LINK = $(CC) $(CSDP_CFLAGS) $(OPENMP_CFLAGS) $(CFLAGS) \
++	$(CSDP_LDFLAGS) $(LDFLAGS)
++
++%.o: %.c
++	$(CSDP_COMPILE) -c $< -o $@
+diff --git Csdp-6.2.0/example/Makefile Csdp-6.2.0/example/Makefile
+index 8c7f000..f4a4697 100644
+--- Csdp-6.2.0/example/Makefile
++++ Csdp-6.2.0/example/Makefile
+@@ -1,12 +1,16 @@
+ #
+ # Target all builds everything.
+ #
++include ../Makefile.inc
++
++.PHONY: all clean
++
+ all: example
+ #
  # This builds the example code.
  #
  example: example.o 
 -	$(CC) $(CFLAGS) example.o $(LIBS) -o example
-+	$(CC) $(CFLAGS) example.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o example
++	$(CSDP_LINK) example.o $(CSDP_LIBS) $(BLAS_LIBS) $(LIBS) $(OPENMP_LIBS) -lm -o example
  #
  # To clean up the directory.
  #
-diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/lib/user_exit.c Csdp-6.2.0/lib/user_exit.c
---- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/lib/user_exit.c	2017-07-21 09:32:48.000000000 -0700
-+++ Csdp-6.2.0/lib/user_exit.c	2018-12-26 15:34:22.000000000 -0800
-@@ -13,6 +13,7 @@
- #include <sys/time.h>
- #include <sys/resource.h>
- #include <signal.h>
-+#include <stdio.h>
- 
- int sigterm_signaled=0;
- 
-diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/solver/Makefile Csdp-6.2.0/solver/Makefile
---- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/solver/Makefile	2017-07-17 16:47:30.000000000 -0700
-+++ Csdp-6.2.0/solver/Makefile	2018-12-26 15:34:22.000000000 -0800
-@@ -1,8 +1,10 @@
+@@ -15,6 +19,3 @@ clean:
+ 	rm -f example
+ 	rm -f prob.dat-s
+ 	rm -f prob.sol
+-
+-
+-
+diff --git Csdp-6.2.0/lib/Makefile Csdp-6.2.0/lib/Makefile
+index 05878f2..e968f6c 100644
+--- Csdp-6.2.0/lib/Makefile
++++ Csdp-6.2.0/lib/Makefile
+@@ -1,20 +1,20 @@
+ #
+ #  Build the library.
+ #
+-libsdp.a: readprob.o sdp.o op_o.o psd_feas.o op_a.o op_at.o  Fnorm.o calc_pobj.o calc_dobj.o trace_prod.o zero_mat.o mat_mult.o sym_mat.o copy_mat.o addscaledmat.o  user_exit.o make_i.o allocmat.o initsoln.o initparams.o add_mat.o writesol.o readsol.o easysdp.o writeprob.o solvesys.o makefill.o mat_multsp.o norms.o linesearch.o matvec.o chol.o  qreig.o tweakgap.o freeprob.o packed.o  sortentries.o
+-	ar cr libsdp.a  readprob.o sdp.o op_o.o psd_feas.o op_a.o op_at.o  Fnorm.o calc_pobj.o calc_dobj.o trace_prod.o zero_mat.o mat_mult.o sym_mat.o copy_mat.o addscaledmat.o  user_exit.o make_i.o allocmat.o initsoln.o initparams.o add_mat.o writesol.o readsol.o easysdp.o writeprob.o solvesys.o makefill.o mat_multsp.o norms.o linesearch.o matvec.o chol.o qreig.o tweakgap.o freeprob.o packed.o sortentries.o
+-#
+-# On some systems, you might need to add after "ar cr libsdp.a ..."
+-#        ranlib libsdp.a
+-#
++include ../Makefile.inc
++
++.PHONY: all clean
++
++OBJS = readprob.o sdp.o op_o.o psd_feas.o op_a.o op_at.o  Fnorm.o calc_pobj.o calc_dobj.o trace_prod.o zero_mat.o mat_mult.o sym_mat.o copy_mat.o addscaledmat.o  user_exit.o make_i.o allocmat.o initsoln.o initparams.o add_mat.o writesol.o readsol.o easysdp.o writeprob.o solvesys.o makefill.o mat_multsp.o norms.o linesearch.o matvec.o chol.o  qreig.o tweakgap.o freeprob.o packed.o  sortentries.o
++
++all: libsdp.a
++
++libsdp.a: $(OBJS)
++	$(AR) crs libsdp.a $(OBJS)
++
+ #
+ # To clean things up.
+ #
+ clean:
+ 	rm -f *.o
+ 	rm -f libsdp.a
+-
+-
+-
+-
+-
+diff --git Csdp-6.2.0/solver/Makefile Csdp-6.2.0/solver/Makefile
+index 4466e45..4b54d84 100644
+--- Csdp-6.2.0/solver/Makefile
++++ Csdp-6.2.0/solver/Makefile
+@@ -1,13 +1,17 @@
  #
  #  This builds the stand alone solver.
  #
++include ../Makefile.inc
++
++.PHONY: all clean
++
++all: csdp
 +
  csdp: csdp.o 
 -	$(CC) $(CFLAGS) csdp.o $(LIBS) -o csdp
-+	$(CC) $(CFLAGS) csdp.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o csdp
-+
++	$(CSDP_LINK) csdp.o $(CSDP_LIBS) $(BLAS_LIBS) $(LIBS) $(OPENMP_LIBS) -lm -o csdp
  #
  # To clean out the directory:
  #
-diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/theta/Makefile Csdp-6.2.0/theta/Makefile
---- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/theta/Makefile	2017-07-17 16:47:30.000000000 -0700
-+++ Csdp-6.2.0/theta/Makefile	2018-12-26 15:34:22.000000000 -0800
-@@ -6,23 +6,23 @@
+ clean:
+ 	rm -f *.o
+ 	rm -f csdp
+-
+-
+diff --git Csdp-6.2.0/test/Makefile Csdp-6.2.0/test/Makefile
+index 0c0064f..ead2ea9 100644
+--- Csdp-6.2.0/test/Makefile
++++ Csdp-6.2.0/test/Makefile
+@@ -10,6 +10,8 @@
+ # 1.0e-6.  
+ #
+ 
++.PHONY: all clean
++
+ all: theta1.out g50.out 
+  
+ #
+diff --git Csdp-6.2.0/theta/Makefile Csdp-6.2.0/theta/Makefile
+index e3097de..2cf2f1c 100644
+--- Csdp-6.2.0/theta/Makefile
++++ Csdp-6.2.0/theta/Makefile
+@@ -1,28 +1,32 @@
+ #
+ # Target all builds everything.
+ #
++include ../Makefile.inc
++
++.PHONY: all clean
++
+ all: theta complement rand_graph graphtoprob
+ #
  # This builds the theta number code. 
  #
  theta: theta.o 
 -	$(CC) $(CFLAGS) theta.o $(LIBS) -o theta
-+	$(CC) $(CFLAGS) theta.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o theta
++	$(CSDP_LINK) theta.o $(CSDP_LIBS) $(BLAS_LIBS) $(LIBS) $(OPENMP_LIBS) -lm -o theta
  #
  # Complement computes the complement of a graph.
  #
  complement: complement.o 
 -	$(CC) $(CFLAGS) complement.o $(LIBS) -o complement
-+	$(CC) $(CFLAGS) complement.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o complement
++	$(CSDP_LINK) complement.o $(CSDP_LIBS) $(BLAS_LIBS) $(LIBS) $(OPENMP_LIBS) -lm -o complement
  #
  # rand_graph generates a random graph.  
  #
  rand_graph: rand_graph.o
 -	$(CC) $(CFLAGS) rand_graph.o $(LIBS) -o rand_graph
-+	$(CC) $(CFLAGS) rand_graph.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o rand_graph
++	$(CSDP_LINK) rand_graph.o $(CSDP_LIBS) $(BLAS_LIBS) $(LIBS) $(OPENMP_LIBS) -lm -o rand_graph
  #
  # graphtoprob converts a file in the graph format to an SDP problem in our
  # SDP format.
  #
  graphtoprob: graphtoprob.o 
 -	$(CC) $(CFLAGS) graphtoprob.o $(LIBS) -o graphtoprob
-+	$(CC) $(CFLAGS) graphtoprob.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o graphtoprob
++	$(CSDP_LINK) graphtoprob.o $(CSDP_LIBS) $(BLAS_LIBS) $(LIBS) $(OPENMP_LIBS) -lm -o graphtoprob
  #
  # To clean up the directory.
  #
-diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/theta/rand_graph.c Csdp-6.2.0/theta/rand_graph.c
---- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/theta/rand_graph.c	2006-07-12 11:52:29.000000000 -0700
-+++ Csdp-6.2.0/theta/rand_graph.c	2018-12-26 15:34:32.000000000 -0800
-@@ -30,7 +30,7 @@
-   FILE *fidout;
-   int i;
-   int j;
--  int n;
-+  int n=0;
-   int m;
-   int s;
-   double p;
-@@ -44,8 +44,8 @@
-     {
-       printf("Usage: rand_graph <file> <n> <p> [<seed>] \n");
-       exit(1);
--    };
--  if (argc >= 4)
-+    }
-+  else
-     {
-       fidout=fopen(*++argv,"w");
-       n=atoi(*++argv);
+@@ -32,5 +36,3 @@ clean:
+ 	rm -f complement
+ 	rm -f rand_graph
+ 	rm -f graphtoprob
+-
+-

@@ -7,14 +7,13 @@ single method runs into the awkwardness of method options leaking out to all
 the different overrides.
 *-
 
-centerRing = method(Options => {Strategy => null})
-centerRing(Ring) := RingMap => opts -> (R) -> R.cache.centerRing ??= (
-    z := runHooks((centerRing, Ring), (opts, R), Strategy => opts.Strategy);
-    if z =!= null then z else error "centerRing: no strategy for computing center of the given ring"
+center(Ring) := RingMap => opts -> (R) -> R.cache.center ??= (
+    z := runHooks((center, Ring), (opts, R), Strategy => opts.Strategy);
+    if z =!= null then z else error "center: no strategy for computing center of the given ring"
 )
 
-addHook((centerRing, Ring), Strategy => "isCommutative", (opts, R) -> if isCommutative R then map(R, R) else null)
-addHook((centerRing, Ring), Strategy => "isSkewAffineRing", (opts, R) -> (
+addHook((center, Ring), Strategy => "isCommutative", (opts, R) -> if isCommutative R then map(R, R) else null)
+addHook((center, Ring), Strategy => "isSkewAffineRing", (opts, R) -> (
     -- David Eisenbud observed this strategy for computing the center of a skew polynomial ring
     if not isPolynomialRing R then return null;
     if not isSkewAffineRing R then return null;
@@ -46,7 +45,7 @@ addHook((centerRing, Ring), Strategy => "isSkewAffineRing", (opts, R) -> (
     -- the ideal defining the center is the annihilator of R^1 as a module over the polynomial ring S
     K := annihilator pushFwd(map(R', S, ximages | yimages), R'^1);
     Z := S/K;
-    Z.formation = FunctionApplication {centerRing, R};
+    Z.formation = FunctionApplication {center, R};
 
     map(R, Z, phi^-1 matrix {ximages | yimages})
 ))

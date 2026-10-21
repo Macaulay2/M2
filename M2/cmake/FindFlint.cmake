@@ -10,6 +10,7 @@
 #  FLINT_FOUND		- system has the FLINT library with correct version
 #  FLINT_ROOT		- the FLINT install prefix
 #  FLINT_INCLUDE_DIR	- the FLINT include directory
+#  FLINT_LIBRARY_DIR	- the directory containing the FLINT library
 #  FLINT_LIBRARIES	- the FLINT library
 #  FLINT_VERSION	- FLINT version
 
@@ -89,8 +90,12 @@ if(NOT FLINT_FOUND)
 
   string(REGEX REPLACE "/include.*" "" FLINT_ROOT "${FLINT_INCLUDE_DIR}")
 
+  if(FLINT_LIBRARIES)
+    get_filename_component(FLINT_LIBRARY_DIR "${FLINT_LIBRARIES}" DIRECTORY)
+  endif()
+
   include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Flint DEFAULT_MSG FLINT_ROOT FLINT_INCLUDE_DIR FLINT_LIBRARIES FLINT_VERSION_OK)
+  find_package_handle_standard_args(Flint DEFAULT_MSG FLINT_ROOT FLINT_INCLUDE_DIR FLINT_LIBRARY_DIR FLINT_LIBRARIES FLINT_VERSION_OK)
 
   mark_as_advanced(FLINT_ROOT FLINT_INCLUDE_DIR FLINT_LIBRARIES)
 
