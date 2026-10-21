@@ -12,12 +12,16 @@
 #include <sstream>
 #include <initializer_list>
 #include <string>
+#include <vector>
 
+#include "basic-rings/vector-arithmetic.hpp"
 #include "basic-rings/aring-ZZp-ffpack.hpp"
 #include "basic-rings/aring-ZZp-flint.hpp"
+#include "basic-rings/aring-m2-GF.hpp"
 #include "basic-rings/reader.hpp"
 #include "rings/ZZp.hpp"
 #include "unit-tests/ARingTest.hpp"
+#include "unit-tests/util-polyring-creation.hpp"
 
 static bool maxH_initialized = false;
 static mpz_t maxH;
@@ -629,6 +633,149 @@ TEST(ARingZZp, coerceToNonnegativeLongInteger)
       EXPECT_EQ(R.coerceToNonnegativeLongInteger(a), i);
     }
   R.clear(a);
+}
+
+// The rings whose elements are int exponents of a primitive element.  There an
+// element copy and an integer conversion store different values, so code that
+// mixes up set() and set_from_long() goes wrong silently.
+template <typename RT>
+struct TestRing;
+
+template <>
+struct TestRing<M2::ARingZZp>
+{
+  M2::ARingZZp ring{5};
+};
+
+// x is primitive in GF(3)[x]/(x^2 + x + 2), a field with nine elements.
+template <>
+struct TestRing<M2::ARingGFM2>
+{
+  const PolynomialRing* P = simplePolynomialRing(3, {"x"});
+  const PolynomialRing* Q = dynamic_cast<const PolynomialRing*>(
+      simpleQuotientRing(P, {"x^2+x+2"}));
+  M2::ARingGFM2 ring{*Q, Q->var(0)};
+};
+
+template <>
+struct TestRing<CoefficientRingZZp>
+{
+  const Z_mod* zmod = Z_mod::create(5);
+  const CoefficientRingZZp& ring = *zmod->get_CoeffRing();
+};
+
+template <typename RT>
+class ExponentRingVectors : public ::testing::Test
+{
+ protected:
+  using Element = typename RT::ElementType;
+
+  TestRing<RT> mTestRing;
+  const RT& R = mTestRing.ring;
+  ConcreteVectorArithmetic<RT> vectors{nullptr, &R};
+
+  ::testing::AssertionResult hasEntries(const ElementArray& v,
+                                        const std::vector<long>& expected) const
+  {
+    if (vectors.size(v) != expected.size())
+      return ::testing::AssertionFailure()
+             << "expected " << expected.size() << " entries, got "
+             << vectors.size(v);
+    for (size_t i = 0; i < expected.size(); i++)
+      {
+        Element actual, wanted;
+        R.init(actual);
+        R.init(wanted);
+        R.from_ring_elem(actual, vectors.ringElemFromElementArray(v, i));
+        R.set_from_long(wanted, expected[i]);
+        if (!R.is_equal(actual, wanted))
+          return ::testing::AssertionFailure()
+                 << "entry " << i << " is not " << expected[i];
+      }
+    return ::testing::AssertionSuccess();
+  }
+};
+
+using ExponentRings =
+    ::testing::Types<M2::ARingZZp, M2::ARingGFM2, CoefficientRingZZp>;
+TYPED_TEST_SUITE(ExponentRingVectors, ExponentRings);
+
+TYPED_TEST(ExponentRingVectors, denseToSparse)
+{
+  // Moving entries into a sparse vector copies the stored elements; converting
+  // them as integers instead changes both entries in each of these rings.
+  auto& vectors = this->vectors;
+
+  {
+    SCOPED_TRACE("denseToSparse: positions array");
+    ElementArray dense =
+        vectors.elementArrayFromContainerOfLongs(std::vector<long>{1, 2});
+    ElementArray sparse;
+    int* positions = nullptr;
+
+    vectors.denseToSparse(dense, sparse, positions, 0, 1);
+
+    EXPECT_TRUE(this->hasEntries(sparse, {1, 2}));
+
+    delete[] positions;
+    vectors.deallocateElementArray(sparse);
+    vectors.deallocateElementArray(dense);
+  }
+
+  {
+    SCOPED_TRACE("denseToSparse: memory block");
+    ElementArray dense =
+        vectors.elementArrayFromContainerOfLongs(std::vector<long>{1, 2});
+    ElementArray sparse = vectors.allocateElementArray();
+    Range<int> positions;
+    MemoryBlock block;
+
+    vectors.denseToSparse(dense, sparse, positions, 0, 1, block);
+
+    EXPECT_TRUE(this->hasEntries(sparse, {1, 2}));
+
+    vectors.deallocateElementArray(sparse);
+    vectors.deallocateElementArray(dense);
+  }
+}
+
+TYPED_TEST(ExponentRingVectors, pushBackOneAndMinusOne)
+{
+  // The appended constants must be 1 and -1, not the elements whose exponents
+  // are 1 and -1.
+  auto& vectors = this->vectors;
+  ElementArray coeffs = vectors.allocateElementArray();
+
+  vectors.pushBackOne(coeffs);
+  vectors.pushBackMinusOne(coeffs);
+
+  EXPECT_TRUE(this->hasEntries(coeffs, {1, -1}));
+
+  vectors.deallocateElementArray(coeffs);
+}
+
+TYPED_TEST(ExponentRingVectors, denseCancelFromSparse)
+{
+  // Cancelling dense row (1, 1) against pivot row (1, 2) leaves (0, -1) and
+  // records the multiplier -1.  A wrong constant 1 makes the pivot's lead
+  // coefficient look like -1, and the wrong multiple is subtracted.
+  auto& vectors = this->vectors;
+  const int columns[] = {0, 1};
+  const Range<const int> comps(columns, columns + 2);
+  ElementArray dense =
+      vectors.elementArrayFromContainerOfLongs(std::vector<long>{1, 1});
+  ElementArray pivot =
+      vectors.elementArrayFromContainerOfLongs(std::vector<long>{1, 2});
+  ElementArray multipliers = vectors.allocateElementArray();
+
+  vectors.denseCancelFromSparse(dense, pivot, comps, multipliers);
+
+  EXPECT_TRUE(this->hasEntries(dense, {0, -1}));
+  EXPECT_TRUE(this->hasEntries(multipliers, {-1}));
+
+  vectors.deallocateElementArray(multipliers);
+  vectors.deallocateElementArray(pivot);
+  vectors.deallocateElementArray(dense);
 }
 
 }  // namespace

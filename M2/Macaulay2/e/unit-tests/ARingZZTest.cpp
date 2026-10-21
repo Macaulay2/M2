@@ -7,6 +7,7 @@
 #include <gmp.h>
 
 #include <initializer_list>
+#include <limits>
 #include <string>
 
 #include "basic-rings/aring-QQ-gmp.hpp"
@@ -169,6 +170,30 @@ TEST_F(ARingZZ, set)
 
       EXPECT_EQ(R.set_from_mpq(a, &rational.value()), sample.converts);
       if (sample.converts) EXPECT_TRUE(hasValue(a, 57));
+    }
+}
+
+TEST_F(ARingZZ, setFromLong)
+{
+  // Every long converts, including those just outside FLINT's small-integer
+  // range [COEFF_MIN, COEFF_MAX].  An element copy would misread the values
+  // above COEFF_MAX as heap pointers.
+  for (long value : {0L,
+                     1L,
+                     -1L,
+                     COEFF_MAX,
+                     COEFF_MAX + 1,
+                     COEFF_MIN,
+                     COEFF_MIN - 1,
+                     std::numeric_limits<long>::max(),
+                     std::numeric_limits<long>::min()})
+    {
+      SCOPED_TRACE(::testing::Message() << "set_from_long: " << value);
+      Ring::Element a(R);
+
+      R.set_from_long(a, value);
+
+      EXPECT_TRUE(hasValue(a, value));
     }
 }
 
