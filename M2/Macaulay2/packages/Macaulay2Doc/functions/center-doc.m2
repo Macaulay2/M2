@@ -3,7 +3,7 @@ Key
     center
 Headline
     Compute the center of various mathematical objects
-SeeAlso
+Subnodes
     "center(Ring)"
     "Graphs::center(Graph)"
     "GradedLieAlgebras::center(LieAlgebra)"
@@ -54,7 +54,7 @@ Description
         assert(center kk === id_kk)
 
         R = ZZ/5[a..c] / ideal {a^2 + b, b^2 + c^3, c^2 - a*b^2}
-         assert(center R === id_R)
+        assert(center R === id_R)
 Caveat
     Currently only implemented for commutative rings and skew affine rings.
 SeeAlso
