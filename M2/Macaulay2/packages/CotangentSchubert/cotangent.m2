@@ -15,7 +15,6 @@ cotOpts := opts ++ { Presentation => EquivLoc }
 debug Core -- to use BaseRing, generatorSymbols, frame
 
 -- labeling of classes
--- TODO: LabelList is exported (at CotangentSchubert.m2:33) but has no doc node.
 LabelList = new Type of List;
 new LabelList from String := (T,s) -> (
     l:=separate(" ",s);
@@ -62,17 +61,9 @@ expandElem := (P,vrs,els) -> (
     sub(C,ring first els) * product(#vrs, i -> (els#i)^(ee#i)) + expandElem(Q,vrs,els)
     )
 
--- FIXME: tautoClass(i,j) errors with "array index out of bounds" when j is
--- outside the (undocumented) range of valid tautological-bundle indices for
--- the current setup.  The doc gives no bound on j; on setupCotangent(2,4)
--- only j=1 is accepted (tautoClass(0,2) errors).
 tautoClass = method(Dispatch=>{Thing,Thing,Type},Options=>true); -- "Chern classes" -- renamed tautoClass to avoid confusion with motivic classes
 zeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
 dualZeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
--- FIXME: canonicalClass is exported and documented but no method appears to
--- be installed in setupCotangent's body; calling canonicalClass on any ring
--- produced by setupCotangent (Borel/EquivLoc, equivariant or not) errors with
--- "no method found".  See the doc node at CotangentSchubert.m2:263-272.
 canonicalClass = method(Dispatch=>{Type},Options=>true) -- note the {}
 zeroSectionInv = method(Dispatch=>{Type},Options=>true) -- internal use only
 segreClass = method(Dispatch=>{Thing,Type},Options=>true)
@@ -153,7 +144,8 @@ defineB = (FF,n,Kth,Equiv) -> ( -- TODO remove FF
 
 -- diagonal algebra
 DiagonalAlgebra = new Type of Type;
-DiagonalAlgebra List := (D,l) -> new D from {map(D.Module,(ring D)^1,apply(splice l, i -> {i}))}; -- cannot be new D from List because would break existing Vector code
+-- Infer the source degree as vector does; new D from List breaks inherited Vector code.
+DiagonalAlgebra List := (D,l) -> new D from {map(D.Module,,apply(splice l, i -> {i}))};
 new DiagonalAlgebra from Module := (X,M) -> (
     D := new DiagonalAlgebra of Vector from hashTable { global Module => M };
     new D from Vector := (D,v) -> (
@@ -258,9 +250,9 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	BB := defineB(FF,n,curCotOpts.Ktheory,curCotOpts.Equivariant);
 	x := getSymbol "x";
 	-- Chern classes
-	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
-	v := (j,i) -> x_(j,toList(dims#i+1..dims#(i+1))); -- variable name
-	e := (j,i) -> elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k)); -- expression in terms of Chern roots
+	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i+1)));
+	v := (j,i) -> x_(j,toList(dims#(i-1)+1..dims#i)); -- variable name
+	e := (j,i) -> elem(j,apply(dims#(i-1)..dims#i-1,k->BB_k)); -- expression in terms of Chern roots
 	args := v\inds;
 	if curCotOpts.Ktheory then (
 	    args = append(args,DegreeRank=>0);
@@ -283,12 +275,16 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    b = sub(b,AB);
 	    -- scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));
 	    -- fails because of https://github.com/Macaulay2/M2/issues/2020
-	    v := seq -> apply(toList seq, j -> AB_j);
-	    scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
+	    vv := seq -> apply(toList seq, j -> AB_j);
+	    scan(d+1,i->b=expandElem(b,vv(dims#i..dims#(i+1)-1),vv(n+dims#i..n+dims#(i+1)-1)));
 	    sub(b,AA)
 	    ),BB,AA);
 	--
-	tautoClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> if o.Partial then AA_(dims#i+j-1) else e (j,i);
+	tautoClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> ( -- j^th Chern class of i^th tautological bundle
+            if i<1 or i>d+1 then error ("second index outside the range 1.."|toString(d+1));
+            if j<0 or j>dimdiffs#(i-1) then error ("first index outside the range 0.."|toString(dimdiffs#(i-1)));
+            if o.Partial then AA_(dims#(i-1)+j-1) else e (j,i)
+            );
 	zeroSection AA := { Partial => true} >> o -> (cacheValue (zeroSection,o.Partial)) (if o.Partial then AA -> lift(zeroSection(AA,Partial=>false),AA)
 	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω0#j<ω0#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
@@ -297,8 +293,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω0#j<ω0#k then 1-FF_0^-2*BB_k*BB_j^(-1) else 1))
 	    else AA -> product(n,j->product(n,k->if ω0#j<ω0#k then -FF_0+BB_j-BB_k else 1)));
-	if curCotOpts.Ktheory then canonicalClass AA :=  { Partial => true} >> o -> (cacheValue (canonicalClass,o.Partial)) (if o.Partial then AA -> lift(canonicalClass(AA,Partial=>false),AA)
-	    else AA -> product(n,j->product(n,k->if ω0#j<ω0#k then BB_k*BB_j^(-1) else 1)));
+	canonicalClass AA := { Partial => true} >> o -> (cacheValue (canonicalClass,o.Partial)) (if o.Partial then AA -> lift(canonicalClass(AA,Partial=>false),AA)
+	    else if curCotOpts.Ktheory then
+	    AA -> product(n,j->product(n,k->if ω0#j<ω0#k then BB_k*BB_j^(-1) else 1))
+	    else AA -> sum(n,j->sum(n,k->if ω0#j<ω0#k then BB_k-BB_j else 0_BB)));
 	zeroSectionInv AA := { Partial => true } >> o -> (cacheValue (zeroSectionInv,o.Partial)) (AA -> (zeroSection(AA,o))^(-1));
 	-- Segre Classes TODO rethink: closure?
 	sClasses AA := {Partial=>true} >> o -> (cacheValue (sClasses,o.Partial)) (if o.Partial then AA -> lift(sClasses(AA,Partial=>false),AA)
@@ -542,18 +540,23 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) }));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) }));
 	    canonicalClass D := {} >> o -> (cacheValue canonicalClass) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_(j+1)^-1*FF_(k+1) else 1))));
-	    installMethod(canonicalClass,{}>>o->()->canonicalClass D);
 	    ) else (
 	    zeroSection D := {} >> o -> (cacheValue zeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1))));
 	    zeroSectionInv D := {} >> o -> (cacheValue zeroSectionInv) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))));
 	    dualZeroSection D := {} >> o -> (cacheValue dualZeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then -FF_0+FF_(j+1)-FF_(k+1) else 1))));
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) }));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) }));
+	    canonicalClass D := {} >> o -> (cacheValue canonicalClass) (D -> D apply(I,i->sum(n,j->sum(n,k->if i#j<i#k then FF_(k+1)-FF_(j+1) else 0_FF))));
 	    );
 	installMethod(zeroSection,{}>>o->()->zeroSection D);
 	installMethod(dualZeroSection,{}>>o->()->dualZeroSection D);
+	installMethod(canonicalClass,{}>>o->()->canonicalClass D);
 	-- Chern classes of tautological bundles
-	tautoClass (ZZ,ZZ,D) := {} >> o -> (j,i,AA) -> D apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
+	tautoClass (ZZ,ZZ,D) := {} >> o -> (j,i,AA) -> (
+            if i<1 or i>d+1 then error ("second index outside the range 1.."|toString(d+1));
+            if j<0 or j>dimdiffs#(i-1) then error ("first index outside the range 0.."|toString(dimdiffs#(i-1)));
+            D apply(I,s->elem(j,apply((subs s)#(i-1),k->FF_(k+1))))
+            );
 	tautoClass (ZZ,ZZ) := {} >> o -> (j,i) -> tautoClass(j,i,D);
 	-- pushforward to point
 	pushforwardToPoint D := pushforwardToPoint Vector := m -> ((weights D)*m)_0;

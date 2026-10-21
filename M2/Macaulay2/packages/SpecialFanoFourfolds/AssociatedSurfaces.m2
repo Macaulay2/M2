@@ -144,7 +144,8 @@ associatedUnderlyingK3Raw DoublySpecialCubicFourfold := o -> X -> (
     Str := setStrategyDSCFtoK3(X,o.Strategy);
     (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>Str);
     U := ambientVariety L;
-    f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>Str,"ForceNormalization"=>isNormalizationKnownToTerminateQuickly(X));
+    -- f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>Str,"ForceNormalization"=>isNormalizationKnownToTerminateQuickly(X));
+    f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>Str,"ForceNormalization"=>false);
     Utilde := makeSurfaceAssociated(X,mu,U,{L,C},f);
     if o.Verbose then printFinalLog Utilde;
     Utilde

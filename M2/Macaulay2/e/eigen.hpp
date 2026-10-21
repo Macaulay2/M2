@@ -1,6 +1,12 @@
 #ifndef M2__EIGEN_HPP_
 #define M2__EIGEN_HPP_
 
+#if EIGEN_MAJOR_VERSION >= 5
+  #define EIGEN_BDCSVD_SVD(MatrixType, AXmp) Eigen::BDCSVD<MatrixType, Eigen::ComputeThinU | Eigen::ComputeThinV> svd(AXmp);
+#else
+  #define EIGEN_BDCSVD_SVD(MatrixType, AXmp) Eigen::BDCSVD<MatrixType> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+#endif
+
 #include "basic-mutable-matrices/dmat.hpp"
 #include "basic-rings/aring-RR.hpp"
 #include "basic-rings/aring-CC.hpp"

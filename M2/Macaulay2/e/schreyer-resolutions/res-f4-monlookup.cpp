@@ -509,7 +509,7 @@ int ResF4MonomialLookupTableT<Key>::debug_check(mi_node *const p,
 template <typename Key>
 void ResF4MonomialLookupTableT<Key>::debug_check() const
 {
-  int nfound = 0;
+  [[maybe_unused]] int nfound = 0;
   for (typename VECTOR(mi_node *)::const_iterator i = mis.begin();
        i != mis.end();
        i++)

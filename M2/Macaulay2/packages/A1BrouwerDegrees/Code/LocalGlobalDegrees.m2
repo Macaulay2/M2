@@ -126,7 +126,7 @@ getGlobalA1Degree List := GrothendieckWittClass => Endo -> (
     B := mutableMatrix id_(kk^m);
     for i from 0 to m - 1 do (
         for j from 0 to m - 1 do
-            B_(i,j) = phi0(coefficient((sBXProm_(0,i)**sBYProm_(0,j))_(0,0), bezDetRed));
+            B_(i,j) = phi0(coefficient((sBXProm_(0,i)**sBYProm_(0,j))_(0,0), bezDetRed_Rquot));
         );
     makeGWClass matrix B
     )
@@ -261,7 +261,7 @@ getLocalA1Degree (List, Ideal) := GrothendieckWittClass => (Endo,p) -> (
     B:= mutableMatrix id_(kk^m);
     for i from 0 to m - 1 do (
         for j from 0 to m - 1 do
-            B_(i,j) = phi0(coefficient((sBXProm_i**sBYProm_j)_(0,0), bezDetRed));
+            B_(i,j) = phi0(coefficient((sBXProm_i**sBYProm_j)_(0,0), bezDetRed_Rquot));
         );
     makeGWClass matrix B
     )
