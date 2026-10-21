@@ -238,12 +238,10 @@ fanoMapDSCFstandard DoublySpecialCubicFourfold := o -> X -> (
     found := false;
     linSys := null;
     if isPlaneInP5 T then (
-        quadricFibration X;
-        assert X.cache#?"quadricFibrationCubicFourfoldInC8";
-        if o.Verbose and (not X.cache#"quadricFibrationCubicFourfoldInC8"_1) then (
-            <<"-- warning: fanoMap: possible infinite loop. " << X.cache#"quadricFibrationCubicFourfoldInC8"_2 << endl;
+        if o.Verbose and (not hasRationalSection X) then (
+            <<"-- warning: fanoMap: possible infinite loop. " << (genericQuadricFiberDescription X) << endl;
         );
-        if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then (
+        if hasRationalSection X then (
             for d from startingDegreeFanoMapDSCFstandard X do (
                 if o.Verbose then << "-- fanoMap: attempting map μ with linear system of degree " << d << "..." << endl << flush;
                 try mu = fanoMapDSCFstandard(X,d,1,d-1,Verify=>true,Verbose=>o.Verbose);

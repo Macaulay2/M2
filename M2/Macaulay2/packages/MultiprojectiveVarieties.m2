@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7.2", 
-    Date => "August 27, 2026",
+    Date => "October 17, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -1022,8 +1022,7 @@ linearlyNormalEmbedding EmbeddedProjectiveVariety := X -> (
         I = rationalMap(saturate ideal matrix(i,f),d_i);
         if numgens ambient target I -1 > dim linearSpan X then (
             I = multirationalMap rationalMap(I,Dominant=>true);
-            if ring source I =!= ring X then error "internal error encountered";
-            I#"source" = X;
+            setSource(X,I);
             if dim target I == dim X then (I#"isBirational" = true; return I);
         );
     );
@@ -1202,7 +1201,7 @@ toString MultirationalMap := Phi -> "rationalMap("|(toString apply(factor Phi,f 
 multirationalMap = method(TypicalValue => MultirationalMap);
 
 multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
-    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a list of rational maps";
+    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a nonempty list of RationalMap or MultihomogeneousRationalMap objects";
     R := unique apply(L,source);
     if #R != 1 then error "expected a list of rational maps from the same source variety";
     R = first R;
@@ -1231,7 +1230,7 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
 );
 
 multirationalMap List := L -> (
-    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a list of rational maps";    
+    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a nonempty list of RationalMap or MultihomogeneousRationalMap objects"; 
     Y := productVars apply(L,f -> projectiveVariety(target f,Saturate=>false));
     Phi := multirationalMap(L,Y);
     if #L == 1 then (
@@ -1244,8 +1243,7 @@ multirationalMap List := L -> (
         if # (first L)#"projectiveDegrees" > 0 then Phi#"multidegree" = (first L)#"projectiveDegrees";
         if instance(first L,RationalMap) and (first L)#"inverseRationalMap" =!= null then (
             Phi#"inverse" = multirationalMap({(first L)#"inverseRationalMap"},source Phi);
-            if ring source Phi#"inverse" =!= ring Y then error "internal error encountered";
-            (Phi#"inverse")#"source" = Y;
+            setSource(Y,Phi#"inverse");
             (Phi#"inverse")#"isDominant" = true;
             (Phi#"inverse")#"isBirational" = true;
             Phi#"isDominant" = true;
@@ -1273,7 +1271,7 @@ rationalMap List := o -> L -> ( -- this redefines a method in Cremona.m2
     Phi := multirationalMap L;
     if o.Dominant === null then return Phi;
     if o.Dominant === true or o.Dominant === infinity then return multirationalMap(Phi,image Phi);
-    if instance(o.Dominant,ZZ) and #L == 1 then return multirationalMap(Phi,projectiveVariety(image(super first factor Phi,o.Dominant),Saturate=>true));
+    if instance(o.Dominant,ZZ) then return multirationalMap(Phi,image(Phi,o.Dominant));
     if instance(o.Dominant,Ideal) then return check multirationalMap(Phi,projectiveVariety(o.Dominant));
     if instance(o.Dominant,MultiprojectiveVariety) then return check multirationalMap(Phi,o.Dominant);
     error "invalid value for option Dominant";
@@ -1323,8 +1321,7 @@ multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
     L := factor Phi;
     if Y === ambient target Phi then L = apply(L,super);
     Psi := multirationalMap(L,Y);
-    if ring source Psi =!= ring source Phi then error "internal error encountered";
-    Psi#"source" = source Phi;
+    setSource(source Phi,Psi);
     Psi#"image" = Phi#"image";
     if Psi#"image" === Y then Psi#"isDominant" = true;
     if Phi.cache#?"compositionWithSegreEmbedding" then Psi.cache#"compositionWithSegreEmbedding" = Phi.cache#"compositionWithSegreEmbedding";
@@ -1418,8 +1415,7 @@ compose (MultirationalMap,MultirationalMap) := MultirationalMap => {} >> o -> (P
     if ring ambient target Phi === ring ambient source Psi and target Phi == source Psi then (
         f := toRingMap(Phi,ring source Psi);
         Eta := multirationalMap(apply(factor Psi,g -> rationalMap(compose(f,map g),Dominant=>"notSimplify")),target Psi);
-        if ring source Eta =!= ring source Phi then error "internal error encountered: bad source found";
-        Eta#"source" = source Phi;
+        setSource(source Phi,Eta);
         if Phi#"isDominant" === true and Psi#"isDominant" === true then Eta#"isDominant" = true;
         if Phi#"isBirational" === true and Psi#"isBirational" === true then Eta#"isBirational" = true;
         return Phi.cache#("composition",Psi) = Eta;
@@ -1454,8 +1450,7 @@ RationalMap == MultirationalMap := (Phi,Psi) -> multirationalMap {Phi} == Psi;
 
 multirationalMap MultiprojectiveVariety := X -> (
     I := multirationalMap(projections X,X);
-    if ring source I =!= ring X then error "internal error encountered: bad source found";
-    I#"source" = X;
+    setSource(X,I);
     I#"isDominant" = true;
     I#"isBirational" = true;
     I#"baseLocus" = 0_X;
@@ -1590,15 +1585,21 @@ image (WeightedRationalMap,String) := (Phi,alg) -> (
 );
 
 forceImage (MultirationalMap,MultiprojectiveVariety) := (Phi,X) -> (
-    if X === target Phi then (if Phi#"isDominant" === null then Phi#"isDominant" = true; return);
     if ring ideal X =!= ring ideal target Phi then error "expected a subvariety of the target of the map";
     if Phi#"image" =!= null then error "not permitted to reassign image of rational map";
+    if X === target Phi then (
+        if Phi#"isDominant" === false then error "cannot force a nondominant map to be dominant";
+        Phi#"isDominant" = true;
+        if # shape X > 1 then return;
+    );
     if # shape X > 1 then error "not implemented yet: forceImage for rational maps with target a multi-projective variety";
     f := toRationalMap Phi;
-    assert(multirationalMap f === Phi);
-    forceImage(f,sub(ideal X,target f));
+    if multirationalMap f =!= Phi then error "internal error: inconsistent RationalMap-to-MultirationalMap cache";
+    if X === target Phi then return;
+    if f#"idealImage" === null then forceImage(f,sub(ideal X,target f));
     multirationalMap f;
-    assert(Phi#"image" =!= null and Phi#"image" == X);
+    if Phi#"image" === null then error "internal error: image not propagated from RationalMap to MultirationalMap";
+    if Phi#"image" != X then error "internal error: propagated image does not match the assigned image";
     Phi#"image" = X;
 );
 forceImage (MultirationalMap,ZZ) := (Phi,d) -> forceImage(Phi,image(Phi,d));
@@ -1884,8 +1885,7 @@ inverse (MultirationalMap,Option) := (Phi,opt) -> (
         psi
     );
     Psi := multirationalMap(L,source Phi);
-    if ring source Psi =!= ring target Phi then error "internal error encountered";  
-    Psi#"source" = target Phi;
+    setSource(target Phi,Psi);
     if b >= 2 then (check Psi; try checkRepresentatives Psi else error "something went wrong in calculating the inverse map: wrong representatives"; <<"-- representatives of "<<toString expression Psi<<" have been successfully checked!"<<endl);
     Psi#"isBirational" = true;
     Psi#"isDominant" = true;
@@ -1963,10 +1963,11 @@ isIsomorphism MultirationalMap := Phi -> (
 
 MultirationalMap | MultiprojectiveVariety := (Phi,X) -> (
     if X === source Phi then return Phi;
+    if X.cache#?("restrictionOfMap",Phi) then return X.cache#("restrictionOfMap",Phi);
     if ring ideal source Phi =!= ring ideal X then error "expected a subvariety in the ambient space of the source";
     if not isSubset(X,source Phi) then error "expected a subvariety of the source";
     I := multirationalMap(X,source Phi,false);
-    I * Phi
+    X.cache#("restrictionOfMap",Phi) = I * Phi
 );
 
 MultirationalMap | List := (Phi,d) -> (
@@ -1979,9 +1980,10 @@ MultihomogeneousRationalMap | MultiprojectiveVariety := (Phi,X) -> (multirationa
 
 MultirationalMap || MultiprojectiveVariety := (Phi,Y) -> (
     if Y === target Phi then return Phi;
+    if Y.cache#?("corestrictionOfMap",Phi) then return Y.cache#("corestrictionOfMap",Phi);
     X := Phi^* Y;
     I := multirationalMap(X,source Phi,false);
-    multirationalMap(I * Phi,Y)
+    Y.cache#("corestrictionOfMap",Phi) = multirationalMap(I * Phi,Y)
 );
 
 MultirationalMap || List := (Phi,d) -> (
@@ -2344,7 +2346,7 @@ hyperplaneSection EmbeddedProjectiveVariety := (cacheValue "hyperplaneSection") 
 hyperplaneSection (ZZ,EmbeddedProjectiveVariety) := (n,X) -> (for i to n-1 do X = hyperplaneSection X; return X);
 
 setSource = (X,F) -> (
-    if ring source F =!= ring X then error "internal error encountered -- bad source variety";
+    if ring source F =!= ring X then error "internal error encountered: map has an incompatible source variety";
     F#"source" = X;
     F
 );
