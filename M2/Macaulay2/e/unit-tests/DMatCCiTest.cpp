@@ -12,7 +12,7 @@ void getElement<M2::ARingCCi>(const M2::ARingCCi& R,
                               M2::ARingCCi::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     R.random(result);
 }

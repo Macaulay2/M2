@@ -27,7 +27,7 @@ class SMatTest : public ::testing::Test
   class Scalar : public Ring::Element
   {
    public:
-    Scalar(const Ring& R, int value) : Ring::Element(R) { R.set(*this, value); }
+    Scalar(const Ring& R, int value) : Ring::Element(R) { R.set_from_long(*this, value); }
   };
 
   Scalar scalar(int value) const { return Scalar(ring, value); }
@@ -74,7 +74,7 @@ class SMatTest : public ::testing::Test
         for (size_t r = 0; r < rows; ++r)
           {
             SCOPED_TRACE(::testing::Message() << "row " << r);
-            R.set(expected, values[r * cols + c]);
+            R.set_from_long(expected, values[r * cols + c]);
             bool nonzero = !R.is_zero(expected);
             EXPECT_EQ(matrix.get_entry(r, c, actual), nonzero);
             if (nonzero)
@@ -94,7 +94,7 @@ class SMatTest : public ::testing::Test
           {
             if (count != 0)
               {
-                R.set(expected, values[lead * cols + c]);
+                R.set_from_long(expected, values[lead * cols + c]);
                 EXPECT_TRUE(equal(R, leading, expected));
               }
             R.clear(leading);
@@ -110,7 +110,7 @@ class SMatTest : public ::testing::Test
           {
             ASSERT_LT(visited, count);
             ASSERT_LT(it.row(), previous);
-            R.set(expected, values[it.row() * cols + c]);
+            R.set_from_long(expected, values[it.row() * cols + c]);
             EXPECT_FALSE(R.is_zero(it.value()));
             EXPECT_TRUE(equal(R, it.value(), expected));
             previous = it.row();

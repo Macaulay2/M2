@@ -109,11 +109,10 @@ class ARingRRR : public SimpleARing<ARingRRR>
     mpfr_set(&result, &a, MPFR_RNDN);
   }
 
-  void set(ElementType &result, long a) const
+  void set_from_long(ElementType &result, long a) const
   {
     mpfr_set_si(&result, a, MPFR_RNDN);
   }
-  void set(ElementType &result, int a) const { set(result, (long)a); }
 
   void set_var(ElementType &result, int v) const
   {
@@ -121,23 +120,23 @@ class ARingRRR : public SimpleARing<ARingRRR>
     mpfr_set_si(&result, 1, MPFR_RNDN);
   }
 
-  void set(ElementType &result, mpz_srcptr a) const
+  void set_from_mpz(ElementType &result, mpz_srcptr a) const
   {
     mpfr_set_z(&result, a, MPFR_RNDN);
   }
 
-  bool set(ElementType &result, mpq_srcptr a) const
+  bool set_from_mpq(ElementType &result, mpq_srcptr a) const
   {
     mpfr_set_q(&result, a, MPFR_RNDN);
     return true;
   }
 
-  bool set(ElementType &result, double a) const
+  bool set_from_double(ElementType &result, double a) const
   {
     mpfr_set_d(&result, a, MPFR_RNDN);
     return true;
   }
-  bool set(ElementType &result, gmp_RR a) const
+  bool set_from_BigReal(ElementType &result, gmp_RR a) const
   {
     mpfr_set(&result, a, MPFR_RNDN);
     return true;

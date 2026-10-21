@@ -16,7 +16,7 @@ std::istream& fromStream<M2::ARingZZp>(std::istream& input,
                                        M2::ARingZZp::ElementType& result)
 {
   int value;
-  if (input >> value) ring.set(result, value);
+  if (input >> value) ring.set_from_long(result, value);
   return input;
 }
 

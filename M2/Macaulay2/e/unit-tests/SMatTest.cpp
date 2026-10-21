@@ -201,7 +201,7 @@ TYPED_TEST(SMatTest, grabSwapsRingShapeAndEntries)
   Mat first(ring, 2, 1), second(otherRing, 1, 2);
   this->fill(first, {2, -3});
   typename Ring::Element value(otherRing);
-  otherRing.set(value, 4);
+  otherRing.set_from_long(value, 4);
   second.set_entry(0, 1, value);
 
   first.grab(&second);
@@ -395,7 +395,7 @@ TYPED_TEST(SMatTest, dotProducts)
     {
       SCOPED_TRACE(sample.name);
       typename Ring::Element result(ring);
-      ring.set(result, 19);
+      ring.set_from_long(result, 19);
       matrix.dot_product(sample.first, sample.second, result);
       EXPECT_TRUE(ring.is_equal(result, this->scalar(sample.expected)))
           << "expected " << sample.expected;

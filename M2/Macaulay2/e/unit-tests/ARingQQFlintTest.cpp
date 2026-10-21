@@ -17,7 +17,7 @@ void getElement<RingType>(const RingType& R,
                           RingType::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     {
       R.random(result);
@@ -56,8 +56,8 @@ TEST_F(ARingQQFlint, Formatting)
   RingType::Element a(R), b(R);
   buffer o;
 
-  R.set(a, 24);
-  R.set(b, 23);
+  R.set_from_long(a, 24);
+  R.set_from_long(b, 23);
   R.divide(a, a, b);
   R.elem_text_out(o, a, true, false, false);
   EXPECT_EQ(std::string(o.str()), "24/23");
@@ -75,7 +75,7 @@ TEST_F(ARingQQFlint, Conversions)
     // A negative integer exposes sign loss in promotion.
     SCOPED_TRACE("promote: ZZ --> QQ");
     EXPECT_TRUE(R.promote(globalZZ, f, a));
-    R.set(expected, -12);
+    R.set_from_long(expected, -12);
     EXPECT_TRUE(R.is_equal(a, expected));
   }
 
@@ -83,7 +83,7 @@ TEST_F(ARingQQFlint, Conversions)
     // Use a genuine source element even when the source ring is unsupported.
     SCOPED_TRACE("promote: unsupported source; lift unsupported");
     f = globalQQ->from_long(-12);
-    R.set(a, -12);
+    R.set_from_long(a, -12);
     EXPECT_FALSE(R.promote(globalQQ, f, a));
     EXPECT_FALSE(R.lift(globalZZ, a, f));
   }
@@ -95,7 +95,7 @@ TEST_F(ARingQQFlint, DISABLED_fromRingElemConst)
   // integer. Disabled until it agrees with the copying accessor on the original
   // value. https://github.com/Macaulay2/M2/issues/4696
   RingType::Element a(R), copied(R);
-  R.set(a, -24);
+  R.set_from_long(a, -24);
   ring_elem stored;
   R.to_ring_elem(stored, a);
 

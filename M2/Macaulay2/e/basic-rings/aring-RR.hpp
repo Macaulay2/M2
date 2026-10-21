@@ -81,6 +81,7 @@ class ARingRR : public SimpleARing<ARingRR>
 
   void init(ElementType &result) const { result = 0.0; }
   void init_set(ElementType &result, const ElementType &a) const { result = a; }
+  void set(ElementType &result, const ElementType &a) const { result = a; }
   void set_zero(ElementType &result) const { result = 0.0; }
   static void clear(ElementType &result)
   {
@@ -88,11 +89,10 @@ class ARingRR : public SimpleARing<ARingRR>
   }
 
   void copy(ElementType &result, const ElementType &a) const { set(result, a); }
-  void set(ElementType &result, long a) const
+  void set_from_long(ElementType &result, long a) const
   {
     result = static_cast<double>(a);
   }
-  void set(ElementType &result, int a) const { result = a; }
 
   void set_var(ElementType &result, int v) const
   {
@@ -100,23 +100,23 @@ class ARingRR : public SimpleARing<ARingRR>
     result = 1.0;
   }
 
-  void set(ElementType &result, mpz_srcptr a) const
+  void set_from_mpz(ElementType &result, mpz_srcptr a) const
   {
     result = mpz_get_d(a);
   }
 
-  bool set(ElementType &result, mpq_srcptr a) const
+  bool set_from_mpq(ElementType &result, mpq_srcptr a) const
   {
     result = mpq_get_d(a);
     return true;
   }
 
-  bool set(ElementType &result, gmp_RR a) const
+  bool set_from_BigReal(ElementType &result, gmp_RR a) const
   {
     result = mpfr_get_d(a, MPFR_RNDN);
     return true;
   }
-  bool set(ElementType &result, double a) const
+  bool set_from_double(ElementType &result, double a) const
   {
     result = a;
     return true;

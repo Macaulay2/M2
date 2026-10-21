@@ -21,7 +21,7 @@ void getElement<RingType>(const RingType& R,
                           RingType::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     {
       R.random(result);
@@ -58,8 +58,8 @@ TEST_F(ARingQQGMP, Formatting)
   RingType::Element a(R), b(R);
   buffer o;
 
-  R.set(a, 24);
-  R.set(b, 23);
+  R.set_from_long(a, 24);
+  R.set_from_long(b, 23);
   R.divide(a, a, b);
   R.elem_text_out(o, a, true, false, false);
   EXPECT_EQ(std::string(o.str()), "24/23");
@@ -77,7 +77,7 @@ TEST_F(ARingQQGMP, Conversions)
     mpz_init(result);
 
     // integers lift
-    R.set(a, -12);
+    R.set_from_long(a, -12);
     EXPECT_TRUE(R.lift_to_mpz(result, a));
     EXPECT_EQ(mpz_cmp_si(result, -12), 0);
 
@@ -90,7 +90,7 @@ TEST_F(ARingQQGMP, Conversions)
     mpq_init(q);
     mpq_set_si(q, 3, 4);
     mpq_canonicalize(q);
-    EXPECT_TRUE(R.set(a, q));
+    EXPECT_TRUE(R.set_from_mpq(a, q));
     EXPECT_FALSE(R.lift_to_mpz(result, a));
     mpq_clear(q);
 
@@ -131,30 +131,30 @@ TEST_F(ARingQQGMP, Conversions)
     for (auto& c : cases)
       {
         SCOPED_TRACE(c.name);
-        EXPECT_TRUE(R.set(a, c.value));
+        EXPECT_TRUE(R.set_from_double(a, c.value));
         mpq_t q;
         mpq_init(q);
         mpq_set_si(q, c.num, c.den);
         mpq_canonicalize(q);
-        EXPECT_TRUE(R.set(expected, q));
+        EXPECT_TRUE(R.set_from_mpq(expected, q));
         EXPECT_TRUE(R.is_equal(a, expected));
         mpq_clear(q);
       }
 
     // DBL_MIN has no simpler approximation than its exact binary value.
-    EXPECT_TRUE(R.set(a, DBL_MIN));
+    EXPECT_TRUE(R.set_from_double(a, DBL_MIN));
     mpq_t exact;
     mpq_init(exact);
     mpq_set_d(exact, DBL_MIN);
-    EXPECT_TRUE(R.set(expected, exact));
+    EXPECT_TRUE(R.set_from_mpq(expected, exact));
     EXPECT_TRUE(R.is_equal(a, expected));
     EXPECT_EQ(mpq_get_d(&a.value()), DBL_MIN);
     mpq_clear(exact);
 
     // non-numbers are rejected
-    EXPECT_FALSE(R.set(a, std::nan("")));
-    EXPECT_FALSE(R.set(a, HUGE_VAL));
-    EXPECT_FALSE(R.set(a, -HUGE_VAL));
+    EXPECT_FALSE(R.set_from_double(a, std::nan("")));
+    EXPECT_FALSE(R.set_from_double(a, HUGE_VAL));
+    EXPECT_FALSE(R.set_from_double(a, -HUGE_VAL));
   }
 
   {
@@ -166,30 +166,30 @@ TEST_F(ARingQQGMP, Conversions)
     mpfr_init2(x, 100);
 
     mpfr_set_zero(x, 1);
-    EXPECT_TRUE(R.set(a, x));
+    EXPECT_TRUE(R.set_from_BigReal(a, x));
     EXPECT_TRUE(R.is_zero(a));
 
     mpfr_set_si(x, -7, MPFR_RNDN);
-    EXPECT_TRUE(R.set(a, x));
-    R.set(expected, -7);
+    EXPECT_TRUE(R.set_from_BigReal(a, x));
+    R.set_from_long(expected, -7);
     EXPECT_TRUE(R.is_equal(a, expected));
 
     // 1/3 at 100 bits rounds back from 1/3
     mpfr_set_si(x, 1, MPFR_RNDN);
     mpfr_div_si(x, x, 3, MPFR_RNDN);
-    EXPECT_TRUE(R.set(a, x));
+    EXPECT_TRUE(R.set_from_BigReal(a, x));
     mpq_t q;
     mpq_init(q);
     mpq_set_si(q, 1, 3);
-    EXPECT_TRUE(R.set(expected, q));
+    EXPECT_TRUE(R.set_from_mpq(expected, q));
     EXPECT_TRUE(R.is_equal(a, expected));
 
     mpfr_set_si(x, -22, MPFR_RNDN);
     mpfr_div_si(x, x, 7, MPFR_RNDN);
-    EXPECT_TRUE(R.set(a, x));
+    EXPECT_TRUE(R.set_from_BigReal(a, x));
     mpq_set_si(q, -22, 7);
     mpq_canonicalize(q);
-    EXPECT_TRUE(R.set(expected, q));
+    EXPECT_TRUE(R.set_from_mpq(expected, q));
     EXPECT_TRUE(R.is_equal(a, expected));
 
     // A fractional part above 1/2 rounds up, so the remainder goes
@@ -197,23 +197,23 @@ TEST_F(ARingQQGMP, Conversions)
     // which set() has to normalize.
     mpfr_set_si(x, 9, MPFR_RNDN);
     mpfr_div_si(x, x, 10, MPFR_RNDN);
-    EXPECT_TRUE(R.set(a, x));
+    EXPECT_TRUE(R.set_from_BigReal(a, x));
     mpq_set_si(q, 9, 10);
     mpq_canonicalize(q);
-    EXPECT_TRUE(R.set(expected, q));
+    EXPECT_TRUE(R.set_from_mpq(expected, q));
     EXPECT_TRUE(R.is_equal(a, expected));
 
     mpfr_set_si(x, -8, MPFR_RNDN);
     mpfr_div_si(x, x, 5, MPFR_RNDN);
-    EXPECT_TRUE(R.set(a, x));
+    EXPECT_TRUE(R.set_from_BigReal(a, x));
     mpq_set_si(q, -8, 5);
     mpq_canonicalize(q);
-    EXPECT_TRUE(R.set(expected, q));
+    EXPECT_TRUE(R.set_from_mpq(expected, q));
     EXPECT_TRUE(R.is_equal(a, expected));
 
     // an irrational: the result must round back to x
     mpfr_const_pi(x, MPFR_RNDN);
-    EXPECT_TRUE(R.set(a, x));
+    EXPECT_TRUE(R.set_from_BigReal(a, x));
     mpfr_t y;
     mpfr_init2(y, 100);
     mpfr_set_q(y, &a.value(), MPFR_RNDN);
@@ -222,11 +222,11 @@ TEST_F(ARingQQGMP, Conversions)
 
     // non-numbers are rejected
     mpfr_set_nan(x);
-    EXPECT_FALSE(R.set(a, x));
+    EXPECT_FALSE(R.set_from_BigReal(a, x));
     mpfr_set_inf(x, 1);
-    EXPECT_FALSE(R.set(a, x));
+    EXPECT_FALSE(R.set_from_BigReal(a, x));
     mpfr_set_inf(x, -1);
-    EXPECT_FALSE(R.set(a, x));
+    EXPECT_FALSE(R.set_from_BigReal(a, x));
 
     mpq_clear(q);
     mpfr_clear(x);
@@ -244,7 +244,7 @@ TEST_F(ARingQQGMP, doubleRoundTrip)
       SCOPED_TRACE(::testing::Message() << "set(double): sqrt(" << i << ")="
                                         << std::setprecision(17) << input);
       RingType::Element value(R);
-      ASSERT_TRUE(R.set(value, input));
+      ASSERT_TRUE(R.set_from_double(value, input));
       mpfr_t rounded;
       mpfr_init2(rounded, 53);
 

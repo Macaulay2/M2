@@ -17,11 +17,11 @@ void getElement<M2::ARingZZGMP>(const M2::ARingZZGMP& R,
                                 M2::ARingZZGMP::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
-      R.set(result, a);
+      R.set_from_mpz(result, a);
     }
 }
 
@@ -75,14 +75,14 @@ TEST_F(ARingZZGMP, Comparisons)
   {
     // Both unit signs and several nonunits expose overly broad unit predicates.
     SCOPED_TRACE("is_unit: the only units of ZZ are 1 and -1");
-    R.set(a, 1);
+    R.set_from_long(a, 1);
     EXPECT_TRUE(R.is_unit(a));
-    R.set(a, -1);
+    R.set_from_long(a, -1);
     EXPECT_TRUE(R.is_unit(a));
     for (int i : {-1000000, -2, 0, 2, 1000000})
       {
         SCOPED_TRACE(i);
-        R.set(a, i);
+        R.set_from_long(a, i);
         EXPECT_FALSE(R.is_unit(a));
       }
   }
@@ -92,15 +92,15 @@ TEST_F(ARingZZGMP, Comparisons)
     SCOPED_TRACE("is_zero");
     R.set_zero(a);
     EXPECT_TRUE(R.is_zero(a));
-    R.set(a, 1);
+    R.set_from_long(a, 1);
     EXPECT_FALSE(R.is_zero(a));
   }
 
   {
     // Use separately assigned equal values, without requiring distinct hashes.
     SCOPED_TRACE("computeHashValue: equal values hash equally");
-    R.set(a, 5);
-    R.set(b, 5);
+    R.set_from_long(a, 5);
+    R.set_from_long(b, 5);
     EXPECT_EQ(R.computeHashValue(a), R.computeHashValue(b));
   }
 }
@@ -118,7 +118,7 @@ TEST_F(ARingZZGMP, Conversions)
     mpz_t m;
     mpz_init(m);
     mpz_set_str(m, "123456789012345678901234567890", 10);
-    R.set(a, m);
+    R.set_from_mpz(a, m);
     EXPECT_EQ(textOut(a, true, false, false), "123456789012345678901234567890");
     mpz_clear(m);
   }
@@ -126,8 +126,8 @@ TEST_F(ARingZZGMP, Conversions)
   {
     // Both integer overloads must agree on a representable value.
     SCOPED_TRACE("set: from int and from long agree");
-    R.set(a, 17);
-    R.set(expected, 17L);
+    R.set_from_long(a, 17);
+    R.set_from_long(expected, 17L);
     EXPECT_TRUE(R.is_equal(a, expected));
   }
 
@@ -138,13 +138,13 @@ TEST_F(ARingZZGMP, Conversions)
     mpq_t q;
     mpq_init(q);
     mpq_set_si(q, 22, 1);
-    EXPECT_TRUE(R.set(a, q));
-    R.set(expected, 22);
+    EXPECT_TRUE(R.set_from_mpq(a, q));
+    R.set_from_long(expected, 22);
     EXPECT_TRUE(R.is_equal(a, expected));
 
     mpq_set_si(q, 22, 7);
     mpq_canonicalize(q);
-    EXPECT_FALSE(R.set(a, q));
+    EXPECT_FALSE(R.set_from_mpq(a, q));
     mpq_clear(q);
   }
 
@@ -154,7 +154,7 @@ TEST_F(ARingZZGMP, Conversions)
     mpfr_t x;
     mpfr_init2(x, 53);
     mpfr_set_d(x, 2.0, MPFR_RNDN);
-    EXPECT_FALSE(R.set(a, x));
+    EXPECT_FALSE(R.set_from_BigReal(a, x));
     mpfr_clear(x);
   }
 
@@ -165,7 +165,7 @@ TEST_F(ARingZZGMP, Conversions)
     for (long i : {-1000000L, -1L, 0L, 1L, 1000000L})
       {
         SCOPED_TRACE(i);
-        R.set(a, i);
+        R.set_from_long(a, i);
         EXPECT_TRUE(R.coerceToLongInteger(result, a));
         EXPECT_EQ(result, i);
       }
@@ -173,7 +173,7 @@ TEST_F(ARingZZGMP, Conversions)
     mpz_t big;
     mpz_init(big);
     mpz_ui_pow_ui(big, 2, 200);
-    R.set(a, big);
+    R.set_from_mpz(a, big);
     EXPECT_FALSE(R.coerceToLongInteger(result, a));
     mpz_clear(big);
   }
@@ -183,7 +183,7 @@ TEST_F(ARingZZGMP, Conversions)
     // coefficient.
     SCOPED_TRACE("promote and lift: ARingZZGMP supports neither");
     ring_elem f;
-    R.set(a, 3);
+    R.set_from_long(a, 3);
     R.to_ring_elem(f, a);
     EXPECT_FALSE(R.promote(globalZZ, f, a));
     EXPECT_FALSE(R.lift(globalZZ, a, f));
@@ -199,16 +199,16 @@ TEST_F(ARingZZGMP, Arithmetic)
   {
     // Unit signs invert exactly; nonunits use the documented zero result.
     SCOPED_TRACE("invert: the identity on units, zero on everything else");
-    R.set(a, 1);
+    R.set_from_long(a, 1);
     R.invert(b, a);
     EXPECT_TRUE(R.is_equal(b, a));
-    R.set(a, -1);
+    R.set_from_long(a, -1);
     R.invert(b, a);
     EXPECT_TRUE(R.is_equal(b, a));
     for (int i : {-7, 0, 2, 13})
       {
         SCOPED_TRACE(i);
-        R.set(a, i);
+        R.set_from_long(a, i);
         R.invert(b, a);
         EXPECT_TRUE(R.is_zero(b));
       }
@@ -217,24 +217,24 @@ TEST_F(ARingZZGMP, Arithmetic)
   {
     // Both quotient signs have small independently known answers.
     SCOPED_TRACE("divide: exact, including a negative dividend");
-    R.set(a, 42);
-    R.set(b, 7);
+    R.set_from_long(a, 42);
+    R.set_from_long(b, 7);
     R.divide(c, a, b);
-    R.set(expected, 6);
+    R.set_from_long(expected, 6);
     EXPECT_TRUE(R.is_equal(c, expected));
 
-    R.set(a, -42);
-    R.set(b, 7);
+    R.set_from_long(a, -42);
+    R.set_from_long(b, 7);
     R.divide(c, a, b);
-    R.set(expected, -6);
+    R.set_from_long(expected, -6);
     EXPECT_TRUE(R.is_equal(c, expected));
   }
 
   {
     // The GMP backend rejects inexact division with an exception.
     SCOPED_TRACE("divide: inexact division throws instead of truncating");
-    R.set(a, 2);
-    R.set(b, 3);
+    R.set_from_long(a, 2);
+    R.set_from_long(b, 3);
     EXPECT_THROW(R.divide(c, a, b), exc::engine_error);
   }
 }
@@ -251,27 +251,27 @@ TEST_F(ARingZZGMP, Powers)
   {
     // Even and odd powers expose sign errors.
     SCOPED_TRACE("power: worked examples");
-    R.set(a, 2);
+    R.set_from_long(a, 2);
     R.power(b, a, 10);
-    R.set(expected, 1024);
+    R.set_from_long(expected, 1024);
     EXPECT_TRUE(R.is_equal(b, expected));
 
-    R.set(a, -3);
+    R.set_from_long(a, -3);
     R.power(b, a, 3);
-    R.set(expected, -27);
+    R.set_from_long(expected, -27);
     EXPECT_TRUE(R.is_equal(b, expected));
   }
 
   {
     // Exponent 100 is supported, but 2^100 needs multiple limbs.
     SCOPED_TRACE("power_mpz: result larger than a machine word");
-    R.set(a, 2);
+    R.set_from_long(a, 2);
     mpz_set_si(n, 100);
     R.power_mpz(b, a, n);
     mpz_t twoTo100;
     mpz_init(twoTo100);
     mpz_ui_pow_ui(twoTo100, 2, 100);
-    R.set(expected, twoTo100);
+    R.set_from_mpz(expected, twoTo100);
     EXPECT_TRUE(R.is_equal(b, expected));
     mpz_clear(twoTo100);
   }
@@ -279,7 +279,7 @@ TEST_F(ARingZZGMP, Powers)
   {
     // ZZ does not contain the reciprocal of the chosen base 2.
     SCOPED_TRACE("power_mpz: a negative exponent throws");
-    R.set(a, 2);
+    R.set_from_long(a, 2);
     mpz_set_si(n, -1);
     EXPECT_THROW(R.power_mpz(b, a, n), exc::engine_error);
   }
@@ -297,9 +297,9 @@ TEST_F(ARingZZGMP, Syzygy)
     // A zero numerator uses the simple cancelling pair with a nonzero divisor.
     SCOPED_TRACE("syzygy: a == 0 gives (1, 0)");
     R.set_zero(a);
-    R.set(b, 5);
+    R.set_from_long(b, 5);
     R.syzygy(a, b, x, y);
-    R.set(expected, 1);
+    R.set_from_long(expected, 1);
     EXPECT_TRUE(R.is_equal(x, expected));
     EXPECT_TRUE(R.is_zero(y));
   }
@@ -307,48 +307,48 @@ TEST_F(ARingZZGMP, Syzygy)
   {
     // A positive unit divisor needs no gcd reduction.
     SCOPED_TRACE("syzygy: b == 1 gives (1, -a)");
-    R.set(a, 7);
-    R.set(b, 1);
+    R.set_from_long(a, 7);
+    R.set_from_long(b, 1);
     R.syzygy(a, b, x, y);
-    R.set(expected, 1);
+    R.set_from_long(expected, 1);
     EXPECT_TRUE(R.is_equal(x, expected));
-    R.set(expected, -7);
+    R.set_from_long(expected, -7);
     EXPECT_TRUE(R.is_equal(y, expected));
   }
 
   {
     // A negative unit divisor reverses the second coefficient sign.
     SCOPED_TRACE("syzygy: b == -1 gives (1, a)");
-    R.set(a, 7);
-    R.set(b, -1);
+    R.set_from_long(a, 7);
+    R.set_from_long(b, -1);
     R.syzygy(a, b, x, y);
-    R.set(expected, 1);
+    R.set_from_long(expected, 1);
     EXPECT_TRUE(R.is_equal(x, expected));
-    R.set(expected, 7);
+    R.set_from_long(expected, 7);
     EXPECT_TRUE(R.is_equal(y, expected));
   }
 
   {
     // A common factor must be removed from the cancelling pair.
     SCOPED_TRACE("syzygy: general case, 4*3 + 6*(-2) == 0");
-    R.set(a, 4);
-    R.set(b, 6);
+    R.set_from_long(a, 4);
+    R.set_from_long(b, 6);
     R.syzygy(a, b, x, y);
-    R.set(expected, 3);
+    R.set_from_long(expected, 3);
     EXPECT_TRUE(R.is_equal(x, expected));
-    R.set(expected, -2);
+    R.set_from_long(expected, -2);
     EXPECT_TRUE(R.is_equal(y, expected));
   }
 
   {
     // Negating the divisor changes the sign of the second coefficient.
     SCOPED_TRACE("syzygy: general case with b negative, the other sign branch");
-    R.set(a, 4);
-    R.set(b, -6);
+    R.set_from_long(a, 4);
+    R.set_from_long(b, -6);
     R.syzygy(a, b, x, y);
-    R.set(expected, 3);
+    R.set_from_long(expected, 3);
     EXPECT_TRUE(R.is_equal(x, expected));
-    R.set(expected, 2);
+    R.set_from_long(expected, 2);
     EXPECT_TRUE(R.is_equal(y, expected));
   }
 }
@@ -384,7 +384,7 @@ TEST_F(ARingZZGMP, Formatting)
   for (auto& c : cases)
     {
       SCOPED_TRACE(c.name);
-      R.set(a, c.value);
+      R.set_from_long(a, c.value);
       EXPECT_EQ(textOut(a, c.p_one, c.p_plus, false), c.expected);
       EXPECT_EQ(textOut(a, c.p_one, c.p_plus, true), c.expected)
           << "p_parens changed the output";
@@ -403,7 +403,7 @@ TEST_F(ARingZZGMP, Evaluation)
     {
       SCOPED_TRACE(i);
       ring_elem result;
-      R.set(a, i);
+      R.set_from_long(a, i);
 
       R.eval(toZZ, a, 0, result);
       EXPECT_TRUE(globalZZ->is_equal(result, globalZZ->from_long(i)));

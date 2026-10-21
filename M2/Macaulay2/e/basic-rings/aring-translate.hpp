@@ -35,123 +35,129 @@ namespace detail {
 
 template <typename RT, typename = void>
 inline constexpr bool has_set_from_mpq = false;
+
 template <typename RT>
 inline constexpr bool has_set_from_mpq<
     RT,
-    std::void_t<decltype(std::declval<const RT&>().set(
+    std::void_t<decltype(std::declval<const RT&>().set_from_mpq(
         std::declval<typename RT::ElementType&>(),
         std::declval<mpq_srcptr>()))>> = true;
 
 template <typename RT, typename = void>
 inline constexpr bool has_set_from_double = false;
+
 template <typename RT>
 inline constexpr bool has_set_from_double<
     RT,
-    std::enable_if_t<std::is_same_v<
-        decltype(std::declval<const RT&>().set(
-            std::declval<typename RT::ElementType&>(), std::declval<double>())),
-        bool>>> = true;
+    std::void_t<decltype(std::declval<const RT&>().set_from_double(
+        std::declval<typename RT::ElementType&>(), std::declval<double>()))>> =
+    true;
 
 template <typename RT, typename = void>
 inline constexpr bool has_set_from_BigReal = false;
+
 template <typename RT>
 inline constexpr bool has_set_from_BigReal<
     RT,
-    std::void_t<decltype(std::declval<const RT&>().set(
+    std::void_t<decltype(std::declval<const RT&>().set_from_BigReal(
         std::declval<typename RT::ElementType&>(), std::declval<gmp_RR>()))>> =
     true;
 
 template <typename RT, typename = void>
 inline constexpr bool has_set_from_Interval = false;
+
 template <typename RT>
 inline constexpr bool has_set_from_Interval<
     RT,
-    std::void_t<decltype(std::declval<const RT&>().set(
+    std::void_t<decltype(std::declval<const RT&>().set_from_Interval(
         std::declval<typename RT::ElementType&>(), std::declval<gmp_RRi>()))>> =
     true;
 
 template <typename RT, typename = void>
-inline constexpr bool has_set_from_doubles = false;
+inline constexpr bool has_set_from_complex_double = false;
+
 template <typename RT>
-inline constexpr bool has_set_from_doubles<
+inline constexpr bool has_set_from_complex_double<
     RT,
-    std::void_t<decltype(std::declval<const RT&>().set(
+    std::void_t<decltype(std::declval<const RT&>().set_from_complex_double(
         std::declval<typename RT::ElementType&>(),
         std::declval<double>(),
         std::declval<double>()))>> = true;
 
 template <typename RT, typename = void>
 inline constexpr bool has_set_from_BigComplex = false;
+
 template <typename RT>
 inline constexpr bool has_set_from_BigComplex<
     RT,
-    std::void_t<decltype(std::declval<const RT&>().set(
+    std::void_t<decltype(std::declval<const RT&>().set_from_BigComplex(
         std::declval<typename RT::ElementType&>(), std::declval<gmp_CC>()))>> =
     true;
 
 template <typename RT, typename = void>
 inline constexpr bool has_set_from_ComplexInterval = false;
+
 template <typename RT>
 inline constexpr bool has_set_from_ComplexInterval<
     RT,
-    std::void_t<decltype(std::declval<const RT&>().set(
+    std::void_t<decltype(std::declval<const RT&>().set_from_ComplexInterval(
         std::declval<typename RT::ElementType&>(), std::declval<gmp_CCi>()))>> =
     true;
 }  // namespace detail
 
 template <typename RT>
-bool try_set(const RT& R, typename RT::ElementType& a, double b)
+bool get_from_double(const RT& R, typename RT::ElementType& a, double b)
 {
   if constexpr (detail::has_set_from_double<RT>)
-    return R.set(a, b);
+    return R.set_from_double(a, b);
   else
     return false;
 }
 
 template <typename RT>
-bool try_set(const RT& R, typename RT::ElementType& a, gmp_RR b)
+bool get_from_BigReal(const RT& R, typename RT::ElementType& a, gmp_RR b)
 {
   if constexpr (detail::has_set_from_BigReal<RT>)
-    return R.set(a, b);
+    return R.set_from_BigReal(a, b);
   else
     return false;
 }
 
 template <typename RT>
-bool try_set(const RT& R, typename RT::ElementType& a, gmp_RRi b)
+bool get_from_Interval(const RT& R, typename RT::ElementType& a, gmp_RRi b)
 {
   if constexpr (detail::has_set_from_Interval<RT>)
-    return R.set(a, b);
+    return R.set_from_Interval(a, b);
   else
     return false;
 }
 
 template <typename RT>
-bool try_set(const RT& R,
+bool get_from_complex_double(const RT& R,
                              typename RT::ElementType& a,
                              double re,
                              double im)
 {
-  if constexpr (detail::has_set_from_doubles<RT>)
-    { R.set(a, re, im); return true; }
+  if constexpr (detail::has_set_from_complex_double<RT>)
+    return R.set_from_complex_double(a, re, im);
   else
     return false;
 }
 
 template <typename RT>
-bool try_set(const RT& R, typename RT::ElementType& a, gmp_CC b)
+bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
 {
   if constexpr (detail::has_set_from_BigComplex<RT>)
-    return R.set(a, b);
+    return R.set_from_BigComplex(a, b);
   else
     return false;
 }
 
 template <typename RT>
-bool try_set(const RT& R, typename RT::ElementType & a, gmp_CCi b)
+bool get_from_ComplexInterval(const RT& R, typename RT::ElementType & a, gmp_CCi b)
 {
   if constexpr (detail::has_set_from_ComplexInterval<RT>)
-    return R.set(a, b);
+    return R.set_from_ComplexInterval(a, b);
   else
     return false;
 }
@@ -194,7 +200,7 @@ bool mypromote(const ARingQQ& R,
 {
   (void) R;
   if constexpr (detail::has_set_from_mpq<RingS>)
-    return S.set(fS, &fR);
+    return S.set_from_mpq(fS, &fR);
   else
     return false;
 }
@@ -216,7 +222,7 @@ inline bool mypromote(const ARingRR& R,
                       ARingRRR::ElementType& fS)
 {
   (void) R;
-  S.set(fS, fR);
+  S.set_from_double(fS, fR);
   return true;
 }
 inline bool mypromote(const ARingRR& R,
@@ -225,7 +231,7 @@ inline bool mypromote(const ARingRR& R,
                       ARingCC::ElementType& fS)
 {
   (void) R;
-  S.set(fS, fR, 0);
+  S.set_from_doubles(fS, fR, 0);
   return true;
 }
 inline bool mypromote(const ARingRR& R,
@@ -234,7 +240,7 @@ inline bool mypromote(const ARingRR& R,
                       ARingCCC::ElementType& fS)
 {
   (void) R;
-  S.set(fS, fR, 0);
+  S.set_from_doubles(fS, fR, 0);
   return true;
 }
 /////////////////////////////////////////////////////
@@ -245,7 +251,7 @@ inline bool mypromote(const ARingRRR& R,
 {
   (void) R;
   auto fR1 = const_cast<ARingRRR::ElementType&>(fR);
-  S.set(fS, &fR1);
+  S.set_from_BigReal(fS, &fR1);
   return true;
 }
 
@@ -265,7 +271,7 @@ inline bool mypromote(const ARingRRR& R,
 {
   (void) R;
   auto fR1 = const_cast<ARingRRR::ElementType&>(fR);
-  S.set(fS, &fR1);
+  S.set_from_BigReal(fS, &fR1);
   return true;
 }
 /////////////////////////////////////////////////////
@@ -275,7 +281,7 @@ inline bool mypromote(const ARingRR& R,
                       ARingRRi::ElementType& fS)
 {
   (void) R;
-  S.set(fS, fR);
+  S.set_from_double(fS, fR);
   return true;
 }
 inline bool mypromote(const ARingRRR& R,
@@ -284,7 +290,7 @@ inline bool mypromote(const ARingRRR& R,
                       ARingRRi::ElementType& fS)
 {
   (void) R;
-  S.set(fS, &fR);
+  S.set_from_BigReal(fS, &fR);
   return true;
 }
 /////////////////////////////////////////////////////
@@ -294,7 +300,7 @@ inline bool mypromote(const ARingCC& R,
                       ARingCCC::ElementType& fS)
 {
   (void) R;
-  S.set(fS, fR.re, fR.im);
+  S.set_from_complex_double(fS, fR.re, fR.im);
   return true;
 }
 /////////////////////////////////////////////////////
@@ -305,7 +311,7 @@ inline bool mypromote(const ARingCCC& R,
 {
   (void) R;
   auto fR1 = const_cast<ARingCCC::ElementType&>(fR);
-  S.set(fS, &fR1.re, &fR1.im);
+  S.set_from_BigReals(fS, &fR1.re, &fR1.im);
   return true;
 }
 /////////////////////////////////////////////////////
@@ -314,7 +320,7 @@ inline bool mypromote(const ARingRR& R,
                       const ARingRR::ElementType& fR,
                       ARingCCi::ElementType& fS)
 {
-  S.set(fS, fR);
+  S.set_from_double(fS, fR);
   return true;
 }
 
@@ -323,7 +329,7 @@ inline bool mypromote(const ARingRRi& R,
                       const ARingRRi::ElementType& fR,
                       ARingCCi::ElementType& fS)
 {
-  S.set(fS, &fR);
+  S.set_from_Interval(fS, &fR);
   return true;
 }
 
@@ -332,7 +338,7 @@ inline bool mypromote(const ARingRRR& R,
                       const ARingRRR::ElementType& fR,
                       ARingCCi::ElementType& fS)
 {
-  S.set(fS, &fR);
+  S.set_from_BigReal(fS, &fR);
   return true;
 }
 inline bool mypromote(const ARingCC& R,
@@ -340,7 +346,7 @@ inline bool mypromote(const ARingCC& R,
                       const ARingCC::ElementType& fR,
                       ARingCCi::ElementType& fS)
 {
-  S.set(fS, fR.re, fR.im);
+  S.set_from_complex_double(fS, fR.re, fR.im);
   return true;
 }
 inline bool mypromote(const ARingCCC& R,
@@ -348,7 +354,7 @@ inline bool mypromote(const ARingCCC& R,
                       const ARingCCC::ElementType& fR,
                       ARingCCi::ElementType& fS)
 {
-  S.set(fS, &fR);
+  S.set_from_BigComplex(fS, &fR);
   return true;
 }
 /////////////////////////////////////////////////////
@@ -359,7 +365,7 @@ inline bool mylift(const ARingRRR& R,
                    const ARingRR::ElementType& gS)
 {
   (void) S;
-  R.set(result_gR, gS);
+  R.set_from_double(result_gR, gS);
   return true;
 }
 inline bool mylift(const ARingRRR& R,
@@ -385,7 +391,7 @@ inline bool mylift(const ARingRRR& R,
                    const ARingCC::ElementType& gS)
 {
   (void) S;
-  R.set(result_gR, gS.re);
+  R.set_from_double(result_gR, gS.re);
   return gS.im == 0;
 }
 /////////////////////////////////////////////////////
@@ -395,7 +401,7 @@ inline bool mylift(const ARingRR& R,
                    const ARingRR::ElementType& gS)
 {
   (void) S;
-  R.set(result_gR, gS);
+  R.set_from_double(result_gR, gS);
   return true;
 }
 inline bool mylift(const ARingRR& R,
@@ -405,7 +411,7 @@ inline bool mylift(const ARingRR& R,
 {
   (void) S;
   auto gS1 = const_cast<ARingRRR::ElementType&>(gS);
-  R.set(result_gR, &gS1);
+  R.set_from_BigReal(result_gR, &gS1);
   return true;
 }
 inline bool mylift(const ARingRR& R,
@@ -414,7 +420,7 @@ inline bool mylift(const ARingRR& R,
                    const ARingCCC::ElementType& gS)
 {
   auto gS1 = const_cast<ARingRRR::ElementType&>(S.realPartReference(gS));
-  R.set(result_gR, &gS1);
+  R.set_from_BigReal(result_gR, &gS1);
   return (S.real_ring().is_zero(S.imaginaryPartReference(gS)));
 }
 inline bool mylift(const ARingRR& R,
@@ -423,7 +429,7 @@ inline bool mylift(const ARingRR& R,
                    const ARingCC::ElementType& gS)
 {
   (void) S;
-  R.set(result_gR, gS.re);
+  R.set_from_double(result_gR, gS.re);
   return gS.im == 0;
 }
 /////////////////////////////////////////////////////
@@ -442,7 +448,7 @@ inline bool mylift(const ARingCCC& R,
                    const ARingCC::ElementType& gS)
 {
   (void) S;
-  R.set(result_gR, gS.re, gS.im);
+  R.set_from_complex_double(result_gR, gS.re, gS.im);
   return true;
 }
 inline bool mylift(const ARingCC& R,
@@ -452,7 +458,7 @@ inline bool mylift(const ARingCC& R,
 {
   (void) S;
   auto gS1 = const_cast<ARingCCC::ElementType&>(gS);
-  R.set(result_gR, &gS1.re, &gS1.im);
+  R.set_from_BigReals(result_gR, &gS1.re, &gS1.im);
   return true;
 }
 inline bool mylift(const ARingCC& R,
@@ -488,7 +494,7 @@ inline bool mylift(const ARingQQ& R,
                    const ARingRR::ElementType& fS)
 {
   (void) S;
-  return R.set(fR, fS);
+  return R.set_from_double(fR, fS);
 }
 
 inline bool mylift(const ARingQQ& R,
@@ -497,7 +503,7 @@ inline bool mylift(const ARingQQ& R,
                    const ARingRRR::ElementType& fS)
 {
   (void) S;
-  return R.set(fR, &fS);
+  return R.set_from_BigReal(fR, &fS);
 }
 
 // ZZ/p --> ZZ/p. 9 versions NONE OF THESE.

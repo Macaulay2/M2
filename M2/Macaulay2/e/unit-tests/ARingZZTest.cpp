@@ -21,11 +21,11 @@ void getElement<M2::ARingZZ>(const M2::ARingZZ& R,
                              M2::ARingZZ::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
-      R.set(result, a);
+      R.set_from_mpz(result, a);
     }
 }
 
@@ -76,7 +76,7 @@ TEST_F(ARingZZ, is_unit)
     {
       SCOPED_TRACE(::testing::Message() << "is_unit: " << value);
       Ring::Element a(R);
-      R.set(a, value);
+      R.set_from_long(a, value);
 
       EXPECT_EQ(R.is_unit(a), value == 1 || value == -1);
     }
@@ -163,11 +163,11 @@ TEST_F(ARingZZ, set)
       M2::ARingQQGMP Q;
       M2::ARingQQGMP::Element numerator(Q), denominator(Q), rational(Q);
       Ring::Element a(R);
-      Q.set(numerator, 57);
-      Q.set(denominator, sample.denominator);
+      Q.set_from_long(numerator, 57);
+      Q.set_from_long(denominator, sample.denominator);
       Q.divide(rational, numerator, denominator);
 
-      EXPECT_EQ(R.set(a, &rational.value()), sample.converts);
+      EXPECT_EQ(R.set_from_mpq(a, &rational.value()), sample.converts);
       if (sample.converts) EXPECT_TRUE(hasValue(a, 57));
     }
 }
@@ -179,7 +179,7 @@ TEST_F(ARingZZ, set_var)
     {
       SCOPED_TRACE(::testing::Message() << "set_var: initial " << initial);
       Ring::Element a(R);
-      R.set(a, initial);
+      R.set_from_long(a, initial);
 
       R.set_var(a, initial == 0 ? 5 : 3);
 
@@ -194,7 +194,7 @@ TEST_F(ARingZZ, invert)
     {
       SCOPED_TRACE(::testing::Message() << "invert: " << value);
       Ring::Element a(R), result(R);
-      R.set(a, value);
+      R.set_from_long(a, value);
 
       R.invert(result, a);
 
@@ -219,8 +219,8 @@ TEST_F(ARingZZ, divide)
     {
       SCOPED_TRACE(sample.name);
       Ring::Element a(R), b(R), result(R);
-      R.set(a, sample.numerator);
-      R.set(b, sample.denominator);
+      R.set_from_long(a, sample.numerator);
+      R.set_from_long(b, sample.denominator);
 
       EXPECT_EQ(R.divide(result, a, b), sample.exact);
       if (sample.exact) EXPECT_TRUE(hasValue(result, sample.quotient));
@@ -231,7 +231,7 @@ TEST_F(ARingZZ, power)
 {
   // A small known power catches incorrect multiplication or exponent handling.
   Ring::Element a(R), result(R);
-  R.set(a, 2);
+  R.set_from_long(a, 2);
 
   R.power(result, a, 3);
 
@@ -248,8 +248,8 @@ TEST_F(ARingZZ, power_mpz)
     Ring::Element a(R), result(R);
     M2::ARingZZGMP Z;
     M2::ARingZZGMP::Element exponent(Z);
-    R.set(a, 2);
-    Z.set(exponent, 31);
+    R.set_from_long(a, 2);
+    Z.set_from_long(exponent, 31);
 
     R.power_mpz(result, a, &exponent.value());
 
@@ -271,7 +271,7 @@ TEST_F(ARingZZ, power_mpz)
       Ring::Element a(R), result(R);
       M2::ARingZZGMP Z;
       M2::ARingZZGMP::Element exponent(Z);
-      R.set(a, 2);
+      R.set_from_long(a, 2);
       ASSERT_EQ(mpz_set_str(&exponent.value(), sample.exponent, 10), 0);
 
       EXPECT_THROW(R.power_mpz(result, a, &exponent.value()),
@@ -283,8 +283,8 @@ TEST_F(ARingZZ, swap)
 {
   // Distinct values expose a swap that overwrites either input.
   Ring::Element a(R), b(R);
-  R.set(a, 57);
-  R.set(b, 2);
+  R.set_from_long(a, 57);
+  R.set_from_long(b, 2);
 
   R.swap(a, b);
 
@@ -338,7 +338,7 @@ TEST_F(ARingZZ, display)
     {
       SCOPED_TRACE(sample.name);
       Ring::Element a(R);
-      R.set(a, sample.value);
+      R.set_from_long(a, sample.value);
       buffer out;
 
       R.elem_text_out(out, a, sample.printOne, sample.printPlus, false);
@@ -366,8 +366,8 @@ TEST_F(ARingZZ, syzygy)
     {
       SCOPED_TRACE(sample.name);
       Ring::Element a(R), b(R), x(R), y(R), sum(R), term(R);
-      R.set(a, sample.a);
-      R.set(b, sample.b);
+      R.set_from_long(a, sample.a);
+      R.set_from_long(b, sample.b);
 
       R.syzygy(a, b, x, y);
 
@@ -384,8 +384,8 @@ TEST_F(ARingZZ, computeHashValue)
 {
   // Equal integers must hash equally; the hash itself is not a ring element.
   Ring::Element a(R), b(R);
-  R.set(a, 5);
-  R.set(b, 5);
+  R.set_from_long(a, 5);
+  R.set_from_long(b, 5);
 
   EXPECT_EQ(R.computeHashValue(a), R.computeHashValue(b));
 }
@@ -407,7 +407,7 @@ TEST_F(ARingZZ, coerceToLongInteger)
     // A modest exact integer checks the value as well as the success flag.
     SCOPED_TRACE("coerceToLongInteger: representable integer");
     Ring::Element a(R);
-    R.set(a, 1048576);
+    R.set_from_long(a, 1048576);
     long result = 0;
 
     ASSERT_TRUE(R.coerceToLongInteger(result, a));

@@ -93,13 +93,12 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
   }
 
   void set_zero(ElementType& result) const { mpq_set_si(&result, 0, 1); }
-  void set(ElementType& result, long a) const
+  void set_from_long(ElementType& result, long a) const
   {
     mpq_set_si(&result, a, 1);
   }
-  void set(ElementType& result, int a) const { set(result, (long)a); }
 
-  void set(ElementType& result, mpz_srcptr a) const
+  void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     mpz_set(mpq_numref(&result), a);
     mpz_set_ui(mpq_denref(&result), 1);
@@ -115,7 +114,7 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
     return false;
   }
 
-  bool set(ElementType& result, mpq_srcptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     mpq_set(&result, a);
     return true;
@@ -135,7 +134,7 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
   // negative, which means both n0 and d0 can come out with the same
   // negative sign.  We negate both before storing into the mpq_t,
   // which requires a positive denominator.
-  bool set(ElementType& result, double a) const
+  bool set_from_double(ElementType& result, double a) const
   {
     bool negative, success;
     double q, r;
@@ -207,7 +206,7 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
     return success;
   }
 
-  bool set(ElementType& result, gmp_RR a) const
+  bool set_from_BigReal(ElementType& result, gmp_RR a) const
   {
     bool negative, success;
     mpfr_prec_t prec;
@@ -446,7 +445,7 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
       // Rf = ZZ ---> QQ
       if (Rf->is_ZZ())
         {
-          set(result, f.get_mpz());
+          set_from_mpz(result, f.get_mpz());
           return true;
         }
       return false;

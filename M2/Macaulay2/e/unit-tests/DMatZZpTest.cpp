@@ -24,7 +24,7 @@ using Matrix = DMat<Ring>;
                                        long expected)
 {
   Ring::Element value {matrix.ring()};
-  matrix.ring().set(value, expected);
+  matrix.ring().set_from_long(value, expected);
   if (matrix.ring().is_equal(matrix.entry(row, column), value))
     return ::testing::AssertionSuccess();
   return ::testing::AssertionFailure()
@@ -40,7 +40,7 @@ TEST(DMatZZp, create)
   EXPECT_EQ(&matrix.ring(), &ring);
   EXPECT_EQ(matrix.numRows(), 5);
   EXPECT_EQ(matrix.numColumns(), 5);
-  ring.set(matrix.entry(0, 2), 7);
+  ring.set_from_long(matrix.entry(0, 2), 7);
   EXPECT_TRUE(entryEquals(matrix, 0, 2, 7));
   EXPECT_TRUE(entryEquals(matrix, 0, 0, 0));
 }
@@ -78,7 +78,7 @@ TEST(DMatZZp, scaleByCharacteristic)
   Ring R(characteristic);
   ARingMatrixGenerator<Matrix> matgen(R);
   Ring::Element a(R);
-  R.set(a, characteristic);
+  R.set_from_long(a, characteristic);
   Matrix M(R, 5, 5);
   matgen.nextMatrix(M, MatrixShape::Dense);
   EXPECT_FALSE(MatrixOps::isZero(M));
@@ -108,7 +108,7 @@ TEST(DMatZZp, negateInPlace)
   EXPECT_TRUE(MatrixOps::isEqual(N, M));
   MatrixOps::negateInPlace(N);
   Ring::Element minusOne(R);
-  R.set(minusOne, -1);
+  R.set_from_long(minusOne, -1);
   MatrixOps::scalarMultInPlace(M, minusOne);
   EXPECT_TRUE(MatrixOps::isEqual(M, N));
 }
@@ -123,7 +123,7 @@ TEST(DMatZZp, submatrix)
     // destination.
     SCOPED_TRACE("assign: separate one-entry views");
     Matrix matrix(ring, 5, 5);
-    ring.set(matrix.entry(0, 2), 7);
+    ring.set_from_long(matrix.entry(0, 2), 7);
     submatrix(matrix, 0, 0, 1, 1) = submatrix(matrix, 0, 2, 1, 1);
     EXPECT_TRUE(entryEquals(matrix, 0, 0, 7));
     EXPECT_TRUE(entryEquals(matrix, 0, 2, 7));
@@ -132,8 +132,8 @@ TEST(DMatZZp, submatrix)
     // Zeroing one view leaves entries outside it intact.
     SCOPED_TRACE("zero: partial view");
     Matrix matrix(ring, 5, 5);
-    ring.set(matrix.entry(0, 0), 3);
-    ring.set(matrix.entry(0, 2), 7);
+    ring.set_from_long(matrix.entry(0, 0), 3);
+    ring.set_from_long(matrix.entry(0, 2), 7);
     submatrix(matrix, 0, 0, 2, 2) = 0;
     EXPECT_TRUE(entryEquals(matrix, 0, 0, 0));
     EXPECT_TRUE(entryEquals(matrix, 0, 2, 7));
@@ -143,7 +143,7 @@ TEST(DMatZZp, submatrix)
     // A view covering the only nonzero entry clears the whole matrix.
     SCOPED_TRACE("zero: covering view");
     Matrix matrix(ring, 5, 5);
-    ring.set(matrix.entry(0, 2), 7);
+    ring.set_from_long(matrix.entry(0, 2), 7);
     submatrix(matrix, 0, 2, 2, 2) = 0;
     EXPECT_TRUE(MatrixOps::isZero(matrix));
   }
@@ -151,7 +151,7 @@ TEST(DMatZZp, submatrix)
     // The full view includes the final row and column.
     SCOPED_TRACE("zero: full view");
     Matrix matrix(ring, 5, 5);
-    ring.set(matrix.entry(4, 4), 7);
+    ring.set_from_long(matrix.entry(4, 4), 7);
     submatrix(matrix) = 0;
     EXPECT_TRUE(MatrixOps::isZero(matrix));
   }
@@ -160,10 +160,10 @@ TEST(DMatZZp, submatrix)
     // multiplication.
     SCOPED_TRACE("assign, add, and scale: shifted identity");
     Matrix matrix(ring, 5, 5), identity(ring, 2, 2);
-    ring.set(identity.entry(0, 0), 1);
-    ring.set(identity.entry(1, 1), 1);
+    ring.set_from_long(identity.entry(0, 0), 1);
+    ring.set_from_long(identity.entry(1, 1), 1);
     Ring::Element scalar {ring};
-    ring.set(scalar, 7);
+    ring.set_from_long(scalar, 7);
     submatrix(matrix, 0, 1, 2, 2) = submatrix(identity);
     submatrix(matrix, 0, 0, 2, 2) += submatrix(identity);
     submatrix(matrix, 0, 0, 2, 2) *= scalar;

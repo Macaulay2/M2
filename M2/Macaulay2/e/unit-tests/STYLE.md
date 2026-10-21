@@ -362,9 +362,11 @@ count, which looks like a result and is not.
 
 - Pair `init` with `clear`. Some element types are plain data; others own
   resources. Prefer objects that clean up after themselves.
-- `set(c, a)` is **not** a copy. Where `ElementType` is an integral type it binds
-  to the integer-coercion overload and reinterprets the element's value. Use
-  `init_set`; `copy()` is not available on every class.
+- `set(c, x)` only copies an element. Conversions are named for their source:
+  `set_from_long`, `set_from_mpz`, `set_from_mpq`, `set_from_double`,
+  `set_from_BigReal`, and so on. Where `ElementType` is a primitive type
+  (`int` in ZZ/p, `double` in RR), `set(c, n)` still compiles but copies `n`
+  as an element instead of converting it.
 - Do not hold a characteristic or cardinality in `long` or `int`. The types
   differ per class and the values reach 2^64.
 - Exponent types differ too (`int`, `int32_t`, `long`). Large exponents go
@@ -385,9 +387,9 @@ The guarded case in `ZZpRing.elementOperations` (`ARingZZpTest.cpp`):
 ```cpp
       if (!R.is_zero(a) && !R.is_zero(b))
         {
-          R.set(c, 7);
+          R.set_from_long(c, 7);
           R.subtract_multiple(c, a, b);
-          R.set(e, 7);
+          R.set_from_long(e, 7);
           R.mult(d, a, b);
           R.subtract(e, e, d);
           EXPECT_TRUE(R.is_equal(c, e));

@@ -39,11 +39,11 @@ void getElement<M2::ARingZZp>(const M2::ARingZZp& R,
                               M2::ARingZZp::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
-      R.set(result, a);
+      R.set_from_mpz(result, a);
     }
 }
 
@@ -53,11 +53,11 @@ void getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R,
                                     M2::ARingZZpFFPACK::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
-      R.set(result, a);
+      R.set_from_mpz(result, a);
     }
 }
 
@@ -67,11 +67,11 @@ void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R,
                                    M2::ARingZZpFlint::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
-      R.set(result, a);
+      R.set_from_mpz(result, a);
     }
 }
 
@@ -94,7 +94,7 @@ void testCoerceToLongInteger(const RT& R)
   for (ulong i = 0; i < top; i++)
     {
       SCOPED_TRACE(::testing::Message() << "lower residue " << i);
-      R.set(a, static_cast<long>(i));
+      R.set_from_long(a, static_cast<long>(i));
       long b = R.coerceToLongInteger(a);
       ulong c =
           (b < 0 ? static_cast<ulong>(b) + charac : static_cast<ulong>(b));
@@ -105,7 +105,7 @@ void testCoerceToLongInteger(const RT& R)
   for (ulong k = 1; k <= window && k <= charac; k++)
     {
       SCOPED_TRACE(::testing::Message() << "upper residue p-" << k);
-      R.set(a, -static_cast<long>(k));
+      R.set_from_long(a, -static_cast<long>(k));
       long b = R.coerceToLongInteger(a);
       ulong c =
           (b < 0 ? static_cast<ulong>(b) + charac : static_cast<ulong>(b));
@@ -182,11 +182,11 @@ TEST(ARingZZpFFPACK, create)
 
   M2::ARingZZpFFPACK::ElementType a;
   R.init(a);
-  R.set(a, 99);
+  R.set_from_long(a, 99);
   EXPECT_EQ(R.coerceToLongInteger(a), -2);  // 99 == -2 mod 101
-  R.set(a, 101);
+  R.set_from_long(a, 101);
   EXPECT_TRUE(R.is_zero(a));
-  R.set(a, 103);
+  R.set_from_long(a, 103);
   EXPECT_EQ(R.coerceToLongInteger(a), 2);
   R.clear(a);
 }
@@ -205,7 +205,7 @@ TEST(ARingZZp, read)
   R.init(b);
   R.init(c);
   reader.read(i, b);
-  R.set(c, 3);
+  R.set_from_long(c, 3);
 
   EXPECT_TRUE(R.is_equal(b, c));
   EXPECT_EQ(i.peek(), 'c');
@@ -228,11 +228,11 @@ TEST(ARingZZpFlint, create)
 
   M2::ARingZZpFlint::ElementType a;
   R.init(a);
-  R.set(a, 99);
+  R.set_from_long(a, 99);
   EXPECT_EQ(R.coerceToLongInteger(a), -2);
-  R.set(a, 101);
+  R.set_from_long(a, 101);
   EXPECT_TRUE(R.is_zero(a));
-  R.set(a, 103);
+  R.set_from_long(a, 103);
   EXPECT_EQ(R.coerceToLongInteger(a), 2);
   R.clear(a);
 }
@@ -455,7 +455,7 @@ TEST(ARingZZpFlint, generatorAndDiscreteLog)
   R.init(g);
   R.init(a);
   R.init(one);
-  R.set(one, 1);
+  R.set_from_long(one, 1);
   R.getGenerator(g);
 
   EXPECT_FALSE(R.is_zero(g));
@@ -556,9 +556,9 @@ TYPED_TEST(ZZpRing, elementOperations)
       if (!R.is_zero(a) && !R.is_zero(b))
         {
           SCOPED_TRACE("subtract_multiple: both factors nonzero");
-          R.set(c, 7);
+          R.set_from_long(c, 7);
           R.subtract_multiple(c, a, b);
-          R.set(e, 7);
+          R.set_from_long(e, 7);
           R.mult(d, a, b);
           R.subtract(e, e, d);
           EXPECT_TRUE(R.is_equal(c, e));
@@ -592,7 +592,7 @@ TEST(ARingZZp, ringElemRoundTrip)
   for (int i = 0; i < p; i++)
     {
       SCOPED_TRACE(::testing::Message() << "residue " << i);
-      R.set(a, i);
+      R.set_from_long(a, i);
       ring_elem r;
       R.to_ring_elem(r, a);
       R.from_ring_elem(b, r);
@@ -606,7 +606,7 @@ TEST(ARingZZp, ringElemRoundTrip)
   R.to_ring_elem(r, a);
   EXPECT_EQ(r.get_int(), p - 1);
 
-  R.set(a, 1);
+  R.set_from_long(a, 1);
   R.to_ring_elem(r, a);
   EXPECT_EQ(r.get_int(), 0);
 
@@ -625,7 +625,7 @@ TEST(ARingZZp, coerceToNonnegativeLongInteger)
   for (int i = 0; i < p; i++)
     {
       SCOPED_TRACE(::testing::Message() << "residue " << i);
-      R.set(a, i);
+      R.set_from_long(a, i);
       EXPECT_EQ(R.coerceToNonnegativeLongInteger(a), i);
     }
   R.clear(a);

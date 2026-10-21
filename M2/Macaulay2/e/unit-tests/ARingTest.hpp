@@ -69,9 +69,9 @@ void testSomeMore(const T& R)
 {
   SCOPED_TRACE("add: 27 + (-11) = 16");
   typename T::Element a(R), b(R), expected(R), actual(R);
-  R.set(a, 27);
-  R.set(b, -11);
-  R.set(expected, 16);
+  R.set_from_long(a, 27);
+  R.set_from_long(b, -11);
+  R.set_from_long(expected, 16);
 
   R.add(actual, a, b);
 
@@ -117,14 +117,14 @@ void testCoercions(const T& R)
 
   // A large integer plus a small offset must coerce additively.
   mpz_set_str(base, "2131236127486324783264782364", 10);
-  R.set(c, base);
+  R.set_from_mpz(c, base);
   for (int i = -1000; i < 1000; i++)
     {
       SCOPED_TRACE(::testing::Message() << "integer coercion: base + " << i);
       mpz_set_si(m, i);
       mpz_add(m, m, base);  // m = base + i
-      R.set(a, m);          // a = (base + i) mod charac
-      R.set(b, i);
+      R.set_from_mpz(a, m);           // a = (base + i) mod charac
+      R.set_from_long(b, i);
       R.add(b, c, b);                 // b = (base mod charac) + (i mod charac)
       EXPECT_TRUE(R.is_equal(a, b));  // a, b should be equal
     }
@@ -145,10 +145,10 @@ void testCoercions(const T& R)
         // check that (43999 mod charac)/(i mod charac) == n1 mod charac
         // if (i mod charac) is not zero.
         if ((i % R.characteristic()) == 0) continue;
-        bool ok = R.set(a, n1);
+        bool ok = R.set_from_mpq(a, n1);
         EXPECT_TRUE(ok);
-        R.set(b, 43999);
-        R.set(c, i);
+        R.set_from_long(b, 43999);
+        R.set_from_long(c, i);
         if (!R.is_zero(c))
           {
             R.divide(c, b, c);
@@ -223,7 +223,7 @@ void testAxioms(const T& R, int ntrials)
       EXPECT_TRUE(R.is_equal(d, a));
       R.mult(d, a, f);
       EXPECT_TRUE(R.is_zero(d));
-      R.set(f, 1);
+      R.set_from_long(f, 1);
       R.mult(d, a, f);
       EXPECT_TRUE(R.is_equal(d, a));
 
@@ -277,8 +277,8 @@ void testMultiply(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
   typename T::Element a(R), b(R), c(R), d(R), zero(R), one(R);
-  R.set(zero, 0);
-  R.set(one, 1);
+  R.set_from_long(zero, 0);
+  R.set_from_long(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
@@ -296,12 +296,12 @@ void testMultiply(const T& R, int ntrials)
 
       // multiplying by 2 and 3 agrees with repeated addition
       R.add(c, a, a);
-      R.set(d, 2);
+      R.set_from_long(d, 2);
       R.mult(d, a, d);
       EXPECT_TRUE(R.is_equal(c, d));
 
       R.add(c, c, a);
-      R.set(d, 3);
+      R.set_from_long(d, 3);
       R.mult(d, a, d);
       EXPECT_TRUE(R.is_equal(c, d));
 
@@ -319,7 +319,7 @@ void testDivide(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
   typename T::Element a(R), b(R), c(R), d(R), zero(R);
-  R.set(zero, 0);
+  R.set_from_long(zero, 0);
   for (int i = 0; i < ntrials; i++)
     {
       // c = a*b
@@ -341,7 +341,7 @@ void testReciprocal(const T& R, int ntrials)
 {
   ARingElementGenerator<T> gen(R);
   typename T::Element a(R), b(R), c(R), one(R);
-  R.set(one, 1);
+  R.set_from_long(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       // c = 1/a
@@ -372,7 +372,7 @@ void testPower(const T& R, int ntrials)
   const mpz_class q = finiteFieldCardinality(R);
   const mpz_class qminus1 = q - 1;
 
-  R.set(one, 1);
+  R.set_from_long(one, 1);
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
@@ -419,7 +419,7 @@ void testFieldDivideByZero(const T& R, int ntrials)
   ARingElementGenerator<T> gen(R);
   typename T::Element a(R), c(R), zero(R), one(R);
   R.set_zero(zero);
-  R.set(one, 1);
+  R.set_from_long(one, 1);
 
   EXPECT_THROW(R.invert(c, zero), exc::division_by_zero_error);
   EXPECT_FALSE(R.is_unit(zero));
@@ -461,8 +461,6 @@ void testFiniteField(const T& R, int ntrials)
 ////////////////////////////////////////////////////////////////////
 
 // set/copy/init_set are deep copies, set_zero zeroes, swap exchanges.
-// The only helper that copies with set(); the rest use copy(), since a
-// ring with an integral ElementType has no set(e, e) overload.
 template <typename T>
 void testStorage(const T& R, int ntrials)
 {
@@ -627,7 +625,7 @@ template <typename T>
 void testCoefficientRingSetVar(const T& R)
 {
   typename T::Element a(R), one(R);
-  R.set(one, 1);
+  R.set_from_long(one, 1);
   for (int v = 0; v < 5; v++)
     {
       SCOPED_TRACE(v);
@@ -643,7 +641,7 @@ void testPowerAgreement(const T& R, int ntrials, int maxExponent = 16)
 {
   ARingElementGenerator<T> gen(R);
   typename T::Element a(R), b(R), c(R), d(R), one(R);
-  R.set(one, 1);
+  R.set_from_long(one, 1);
   mpz_t n;
   mpz_init(n);
   for (int i = 0; i < ntrials; i++)
@@ -673,7 +671,7 @@ template <typename T>
 void testPowerMpzOutOfRange(const T& R)
 {
   typename T::Element a(R), b(R);
-  R.set(a, 2);
+  R.set_from_long(a, 2);
   mpz_t n;
   mpz_init(n);
 

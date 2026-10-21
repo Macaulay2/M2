@@ -26,7 +26,7 @@ void getElement<M2::ARingGFFlint>(const M2::ARingGFFlint& R,
                                   M2::ARingGFFlint::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     R.random(result);
 }
@@ -81,7 +81,7 @@ TEST(ARingGFFlint, create)
     {
       SCOPED_TRACE(sample.name);
       Ring::Element value(R);
-      R.set(value, sample.input);
+      R.set_from_long(value, sample.input);
       expectCoefficients(R, value, sample.expected);
     }
 

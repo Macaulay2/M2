@@ -142,7 +142,7 @@ TEST_F(ARingCCC, Storage)
     // Start with both parts nonzero. Clearing the value must clear both
     // parts.
     SCOPED_TRACE("set zero: nonzero value");
-    C.set(a, 2.0, 3.0);
+    C.set_from_doubles(a, 2.0, 3.0);
 
     C.set_zero(a);
 
@@ -154,7 +154,7 @@ TEST_F(ARingCCC, Storage)
     // Make a new value from an existing one, then clear the original. The
     // copy should still hold the old value.
     SCOPED_TRACE("init set: source changes");
-    C.set(a, 2.0, 3.0);
+    C.set_from_doubles(a, 2.0, 3.0);
     Ring::Element copy(C, a);
 
     C.set_zero(a);
@@ -166,7 +166,7 @@ TEST_F(ARingCCC, Storage)
     // Assign a value whose real and imaginary parts differ. This makes a
     // missing or swapped part easier to spot.
     SCOPED_TRACE("set: complex value");
-    C.set(a, 2.0, 3.0);
+    C.set_from_doubles(a, 2.0, 3.0);
     const auto& source = a.value();
 
     C.set(result, source);
@@ -178,7 +178,7 @@ TEST_F(ARingCCC, Storage)
     // Check the explicit copy operation. It must preserve both parts of the
     // number.
     SCOPED_TRACE("copy: complex value");
-    C.set(a, 2.0, 3.0);
+    C.set_from_doubles(a, 2.0, 3.0);
     const auto& source = a.value();
 
     C.copy(result, source);
@@ -189,8 +189,8 @@ TEST_F(ARingCCC, Storage)
   {
     // Exchange two different numbers. Both parts must move together.
     SCOPED_TRACE("swap: two complex values");
-    C.set(a, 2.0, 3.0);
-    C.set(b, 4.0, 5.0);
+    C.set_from_doubles(a, 2.0, 3.0);
+    C.set_from_doubles(b, 4.0, 5.0);
 
     C.swap(a, b);
 
@@ -202,8 +202,8 @@ TEST_F(ARingCCC, Storage)
     // Equal numbers must produce the same hash. Otherwise a lookup may miss
     // a value that is already present.
     SCOPED_TRACE("hash: equal values");
-    C.set(a, 2.0, 3.0);
-    C.set(b, 2.0, 3.0);
+    C.set_from_doubles(a, 2.0, 3.0);
+    C.set_from_doubles(b, 2.0, 3.0);
 
     EXPECT_EQ(C.computeHashValue(a), C.computeHashValue(b));
   }
@@ -227,7 +227,7 @@ TEST_F(ARingCCC, Conversions)
     // Save the value in the engine's general ring_elem form, then clear the
     // original. Reading it back must recover the saved number.
     SCOPED_TRACE("ring element round trip: source changes");
-    C.set(a, 2.0, 3.0);
+    C.set_from_doubles(a, 2.0, 3.0);
     ring_elem stored;
     C.to_ring_elem(stored, a);
     C.set_zero(a);
@@ -242,7 +242,7 @@ TEST_F(ARingCCC, Conversions)
     // Convert a single complex number to the high-precision form. Neither
     // part should change.
     SCOPED_TRACE("to big complex: point value");
-    C.set(a, 2.0, -3.0);
+    C.set_from_doubles(a, 2.0, -3.0);
 
     auto converted = C.toBigComplex(a);
 
@@ -256,12 +256,12 @@ TEST_F(ARingCCC, Conversions)
     SCOPED_TRACE("set: big complex");
     M2::ARingCCC sourceRing(100);
     M2::ARingCCC::Element source(sourceRing);
-    sourceRing.set(source, 2.0, -3.0);
+    sourceRing.set_from_doubles(source, 2.0, -3.0);
     gmp_CC_struct value;
     value.re = &source.value().re;
     value.im = &source.value().im;
 
-    ASSERT_TRUE(C.set(result, &value));
+    ASSERT_TRUE(C.set_from_BigComplex(result, &value));
 
     EXPECT_TRUE(hasValue(result, 2, -3));
   }
@@ -270,11 +270,11 @@ TEST_F(ARingCCC, Conversions)
     // Replace a complex value with an integer. The old imaginary part must
     // disappear.
     SCOPED_TRACE("set: integer");
-    C.set(a, 9.0, 8.0);
+    C.set_from_doubles(a, 9.0, 8.0);
     mpz_t integer;
     mpz_init_set_si(integer, -7);
 
-    C.set(a, integer);
+    C.set_from_mpz(a, integer);
     mpz_clear(integer);
 
     EXPECT_TRUE(hasValue(a, -7, 0));
@@ -284,12 +284,12 @@ TEST_F(ARingCCC, Conversions)
     // Use 3/2, which has the exact answer 1.5. This checks fraction
     // conversion without a rounding allowance.
     SCOPED_TRACE("set: rational");
-    C.set(a, 9.0, 8.0);
+    C.set_from_doubles(a, 9.0, 8.0);
     mpq_t rational;
     mpq_init(rational);
     mpq_set_si(rational, 3, 2);
 
-    bool converted = C.set(a, rational);
+    bool converted = C.set_from_mpq(a, rational);
     mpq_clear(rational);
 
     ASSERT_TRUE(converted);
@@ -302,10 +302,10 @@ TEST_F(ARingCCC, Conversions)
     SCOPED_TRACE("set: big real");
     M2::ARingRRR R(100);
     M2::ARingRRR::Element real(R);
-    R.set(real, 1.5);
-    C.set(a, 9.0, 8.0);
+    R.set_from_double(real, 1.5);
+    C.set_from_doubles(a, 9.0, 8.0);
 
-    ASSERT_TRUE(C.set(a, &real.value()));
+    ASSERT_TRUE(C.set_from_BigReal(a, &real.value()));
 
     EXPECT_TRUE(hasValue(a, 1.5, 0));
   }
@@ -314,9 +314,9 @@ TEST_F(ARingCCC, Conversions)
     // Replace a complex value with an ordinary real number. Check that the
     // old imaginary part is cleared.
     SCOPED_TRACE("set: double");
-    C.set(a, 9.0, 8.0);
+    C.set_from_doubles(a, 9.0, 8.0);
 
-    ASSERT_TRUE(C.set(a, 1.5));
+    ASSERT_TRUE(C.set_from_double(a, 1.5));
 
     EXPECT_TRUE(hasValue(a, 1.5, 0));
   }
@@ -327,10 +327,10 @@ TEST_F(ARingCCC, Conversions)
     SCOPED_TRACE("set: big real pair");
     M2::ARingRRR R(100);
     M2::ARingRRR::Element real(R), imaginary(R);
-    R.set(real, 1.5);
-    R.set(imaginary, -2);
+    R.set_from_double(real, 1.5);
+    R.set_from_long(imaginary, -2);
 
-    C.set(result, &real.value(), &imaginary.value());
+    C.set_from_BigReals(result, &real.value(), &imaginary.value());
 
     EXPECT_TRUE(hasValue(result, 1.5, -2));
   }
@@ -341,8 +341,8 @@ TEST_F(ARingCCC, Conversions)
     SCOPED_TRACE("set from rrr: real value");
     const auto& R = C.real_ring();
     M2::ARingRRR::Element source(R);
-    R.set(source, 2);
-    C.set(a, 9.0, 8.0);
+    R.set_from_long(source, 2);
+    C.set_from_doubles(a, 9.0, 8.0);
 
     ASSERT_TRUE(C.set_from_RRR(a, source));
 
@@ -354,8 +354,8 @@ TEST_F(ARingCCC, Conversions)
     SCOPED_TRACE("set real part: existing complex value");
     const auto& R = C.real_ring();
     M2::ARingRRR::Element real(R);
-    R.set(real, -3);
-    C.set(a, 1.0, 2.0);
+    R.set_from_long(real, -3);
+    C.set_from_doubles(a, 1.0, 2.0);
 
     C.set_real_part(a, real);
 
@@ -368,8 +368,8 @@ TEST_F(ARingCCC, Conversions)
     SCOPED_TRACE("set imaginary part: existing complex value");
     const auto& R = C.real_ring();
     M2::ARingRRR::Element imaginary(R);
-    R.set(imaginary, -3);
-    C.set(a, 1.0, 2.0);
+    R.set_from_long(imaginary, -3);
+    C.set_from_doubles(a, 1.0, 2.0);
 
     C.set_imaginary_part(a, imaginary);
 
@@ -388,7 +388,7 @@ TEST_F(ARingCCC, Comparisons)
     // A zero real part does not make the whole number zero. The imaginary
     // part must be checked too.
     SCOPED_TRACE("is zero: imaginary value");
-    C.set(a, 0.0, 1.0);
+    C.set_from_doubles(a, 0.0, 1.0);
 
     EXPECT_FALSE(C.is_zero(a));
   }
@@ -398,7 +398,7 @@ TEST_F(ARingCCC, Comparisons)
     // does. Check that the ring distinguishes them.
     SCOPED_TRACE("is unit: zero and nonzero points");
     C.set_zero(a);
-    C.set(b, 0.0, 1.0);
+    C.set_from_doubles(b, 0.0, 1.0);
 
     EXPECT_FALSE(C.is_unit(a));
     EXPECT_TRUE(C.is_unit(b));
@@ -408,13 +408,13 @@ TEST_F(ARingCCC, Comparisons)
     // Begin with equal values, then change one part at a time. Either
     // change must make the values unequal.
     SCOPED_TRACE("is equal: changed component");
-    C.set(a, 2.0, 3.0);
-    C.set(b, 2.0, 3.0);
+    C.set_from_doubles(a, 2.0, 3.0);
+    C.set_from_doubles(b, 2.0, 3.0);
     EXPECT_TRUE(C.is_equal(a, b));
 
-    C.set(b, 4.0, 3.0);
+    C.set_from_doubles(b, 4.0, 3.0);
     EXPECT_FALSE(C.is_equal(a, b)) << "different real components";
-    C.set(b, 2.0, 4.0);
+    C.set_from_doubles(b, 2.0, 4.0);
     EXPECT_FALSE(C.is_equal(a, b)) << "different imaginary components";
   }
 
@@ -422,8 +422,8 @@ TEST_F(ARingCCC, Comparisons)
     // The real parts should decide the order here. The larger imaginary
     // part must not override that result.
     SCOPED_TRACE("compare: real parts differ");
-    C.set(a, 1.0, 9.0);
-    C.set(b, 2.0, 0.0);
+    C.set_from_doubles(a, 1.0, 9.0);
+    C.set_from_doubles(b, 2.0, 0.0);
 
     EXPECT_EQ(C.compare_elems(a, b), -1);
     EXPECT_EQ(C.compare_elems(b, a), 1);
@@ -433,8 +433,8 @@ TEST_F(ARingCCC, Comparisons)
     // When the real parts match, compare the imaginary parts. Reversing the
     // inputs must reverse the order.
     SCOPED_TRACE("compare: real parts equal");
-    C.set(a, 2.0, 1.0);
-    C.set(b, 2.0, 3.0);
+    C.set_from_doubles(a, 2.0, 1.0);
+    C.set_from_doubles(b, 2.0, 3.0);
 
     EXPECT_EQ(C.compare_elems(a, b), -1);
     EXPECT_EQ(C.compare_elems(b, a), 1);
@@ -443,8 +443,8 @@ TEST_F(ARingCCC, Comparisons)
   {
     // Matching numbers should compare as equal. The result must be zero.
     SCOPED_TRACE("compare: equal values");
-    C.set(a, 2.0, 3.0);
-    C.set(b, 2.0, 3.0);
+    C.set_from_doubles(a, 2.0, 3.0);
+    C.set_from_doubles(b, 2.0, 3.0);
 
     EXPECT_EQ(C.compare_elems(a, b), 0);
   }
@@ -460,8 +460,8 @@ TEST_F(ARingCCC, Arithmetic)
     // Use a = 3 + 2i and b = 1 - 2i. Their answers are exact, so these checks
     // need no rounding allowance.
     SCOPED_TRACE("arithmetic: exact mixed points");
-    C.set(a, 3.0, 2.0);
-    C.set(b, 1.0, -2.0);
+    C.set_from_doubles(a, 3.0, 2.0);
+    C.set_from_doubles(b, 1.0, -2.0);
 
     C.negate(result, a);
     EXPECT_TRUE(hasValue(result, -3, -2)) << "negation";
@@ -480,12 +480,12 @@ TEST_F(ARingCCC, Arithmetic)
     // Start with 1 + i already saved in result. Adding and then removing a*b
     // should recover that starting value.
     SCOPED_TRACE("accumulate: mixed points");
-    C.set(a, 3.0, 2.0);
-    C.set(b, 1.0, -2.0);
-    C.set(result, 1.0, 1.0);
+    C.set_from_doubles(a, 3.0, 2.0);
+    C.set_from_doubles(b, 1.0, -2.0);
+    C.set_from_doubles(result, 1.0, 1.0);
     C.addMultipleTo(result, a, b);
     EXPECT_TRUE(hasValue(result, 8, -3)) << "add product to accumulator";
-    C.set(result, 8.0, -3.0);
+    C.set_from_doubles(result, 8.0, -3.0);
     C.subtract_multiple(result, a, b);
     EXPECT_TRUE(hasValue(result, 1, 1)) << "subtract product from accumulator";
   }
@@ -493,8 +493,8 @@ TEST_F(ARingCCC, Arithmetic)
   {
     // Reset both operands before storing the answer over an input.
     SCOPED_TRACE("arithmetic: output aliases left input");
-    C.set(a, 3.0, 2.0);
-    C.set(b, 1.0, -2.0);
+    C.set_from_doubles(a, 3.0, 2.0);
+    C.set_from_doubles(b, 1.0, -2.0);
     C.set(result, a);
 
     C.mult(result, result, b);
@@ -505,8 +505,8 @@ TEST_F(ARingCCC, Arithmetic)
   {
     // Reset both operands before storing the answer over an input.
     SCOPED_TRACE("arithmetic: output aliases right input");
-    C.set(a, 3.0, 2.0);
-    C.set(b, 1.0, -2.0);
+    C.set_from_doubles(a, 3.0, 2.0);
+    C.set_from_doubles(b, 1.0, -2.0);
     C.set(result, b);
 
     C.mult(result, a, result);
@@ -517,8 +517,8 @@ TEST_F(ARingCCC, Arithmetic)
   {
     // Reset both operands before storing the answer over an input.
     SCOPED_TRACE("arithmetic: output aliases both inputs");
-    C.set(a, 3.0, 2.0);
-    C.set(b, 1.0, -2.0);
+    C.set_from_doubles(a, 3.0, 2.0);
+    C.set_from_doubles(b, 1.0, -2.0);
     C.set(result, a);
 
     C.mult(result, result, result);
@@ -529,8 +529,8 @@ TEST_F(ARingCCC, Arithmetic)
   {
     // Reset both operands before storing the answer over an input.
     SCOPED_TRACE("arithmetic: output aliases accumulator input");
-    C.set(a, 3.0, 2.0);
-    C.set(b, 1.0, -2.0);
+    C.set_from_doubles(a, 3.0, 2.0);
+    C.set_from_doubles(b, 1.0, -2.0);
     C.set(result, a);
 
     C.addMultipleTo(result, result, b);
@@ -554,12 +554,12 @@ TEST_F(ARingCCC, Arithmetic)
   for (const auto& sample : reciprocals)
     {
       SCOPED_TRACE(::testing::Message() << "reciprocal: " << sample.name);
-      C.set(a, sample.real, sample.imaginary);
+      C.set_from_doubles(a, sample.real, sample.imaginary);
       C.invert(result, a);
       EXPECT_TRUE(
           hasValue(result, sample.inverseReal, sample.inverseImaginary));
 
-      C.set(a, sample.real, sample.imaginary);
+      C.set_from_doubles(a, sample.real, sample.imaginary);
       C.invert(a, a);
       EXPECT_TRUE(hasValue(a, sample.inverseReal, sample.inverseImaginary))
           << "output aliases input";
@@ -580,13 +580,13 @@ TEST_F(ARingCCC, Arithmetic)
   for (const auto& sample : divisors)
     {
       SCOPED_TRACE(sample.name);
-      C.set(a, 3.0, 2.0);
-      C.set(b, sample.real, sample.imaginary);
+      C.set_from_doubles(a, 3.0, 2.0);
+      C.set_from_doubles(b, sample.real, sample.imaginary);
       C.divide(result, a, b);
       EXPECT_TRUE(
           hasValue(result, sample.quotientReal, sample.quotientImaginary));
 
-      C.set(a, 3.0, 2.0);
+      C.set_from_doubles(a, 3.0, 2.0);
       C.divide(a, a, b);
       EXPECT_TRUE(hasValue(a, sample.quotientReal, sample.quotientImaginary))
           << "output aliases numerator";
@@ -598,14 +598,14 @@ TEST_F(ARingCCC, Arithmetic)
     SCOPED_TRACE("arithmetic: real scalar and mixed point");
     const auto& R = C.real_ring();
     Ring::RealRingType::Element scalar(R);
-    R.set(scalar, 2);
-    C.set(a, 3.0, 4.0);
+    R.set_from_long(scalar, 2);
+    C.set_from_doubles(a, 3.0, 4.0);
 
     C.mult(result, a, scalar);
     EXPECT_TRUE(hasValue(result, 6, 8)) << "scalar multiplication";
     C.divide(result, a, scalar);
     EXPECT_TRUE(hasValue(result, 1.5, 2)) << "scalar division";
-    C.set(result, 1.0, 1.0);
+    C.set_from_doubles(result, 1.0, 1.0);
     C.addMultipleTo(result, scalar, a);
     EXPECT_TRUE(hasValue(result, 7, 9)) << "scalar accumulation";
   }
@@ -635,7 +635,7 @@ TEST_F(ARingCCC, Powers)
   for (const auto& sample : cases)
     {
       SCOPED_TRACE(sample.name);
-      C.set(a, sample.baseReal, sample.baseImaginary);
+      C.set_from_doubles(a, sample.baseReal, sample.baseImaginary);
       mpz_t exponent;
       mpz_init_set_si(exponent, sample.exponent);
 
@@ -653,7 +653,7 @@ TEST_F(ARingCCC, Powers)
     {
       SCOPED_TRACE(::testing::Message()
                    << "power_mpz: oversized exponent, sign " << sign);
-      C.set(a, 0.0, 1.0);
+      C.set_from_doubles(a, 0.0, 1.0);
       mpz_t exponent;
       mpz_init_set_si(exponent, sign);
       mpz_mul_2exp(exponent, exponent, 100);
@@ -672,8 +672,8 @@ TEST_F(ARingCCC, Syzygy)
     // Choose nonzero inputs with a known cancelling pair. First check x and
     // y, then check that the two products add to zero.
     SCOPED_TRACE("syzygy: both operands nonzero");
-    C.set(a, 3.0, 2.0);
-    C.set(b, 0.0, 2.0);
+    C.set_from_doubles(a, 3.0, 2.0);
+    C.set_from_doubles(b, 0.0, 2.0);
     Ring::Element x(C), y(C);
 
     C.syzygy(a, b, x, y);
@@ -697,7 +697,7 @@ TEST_F(ARingCCC, Magnitude)
     SCOPED_TRACE("magnitude: exact mixed point");
     const auto& R = C.real_ring();
     Ring::RealRingType::Element magnitude(R);
-    C.set(a, 3.0, 4.0);
+    C.set_from_doubles(a, 3.0, 4.0);
     C.abs(magnitude, a);
     EXPECT_TRUE(realEquals(&magnitude.value(), 5));
     C.abs_squared(magnitude, a);
@@ -710,11 +710,11 @@ TEST_F(ARingCCC, Magnitude)
     SCOPED_TRACE("zeroize_tiny: below and at cutoff");
     M2::ARingRRR bigRealRing(100);
     M2::ARingRRR::Element epsilon(bigRealRing);
-    bigRealRing.set(epsilon, 0.5);
-    C.set(a, 0.25, 0.5);
+    bigRealRing.set_from_double(epsilon, 0.5);
+    C.set_from_doubles(a, 0.25, 0.5);
     C.zeroize_tiny(&epsilon.value(), a);
     EXPECT_TRUE(hasValue(a, 0, 0.5)) << "zeroize small real component";
-    C.set(a, 0.5, -0.25);
+    C.set_from_doubles(a, 0.5, -0.25);
     C.zeroize_tiny(&epsilon.value(), a);
     EXPECT_TRUE(hasValue(a, 0.5, 0)) << "zeroize small imaginary component";
   }
@@ -725,11 +725,11 @@ TEST_F(ARingCCC, Magnitude)
     SCOPED_TRACE("increase_norm: larger and smaller magnitudes");
     M2::ARingRRR bigRealRing(100);
     M2::ARingRRR::Element norm(bigRealRing);
-    C.set(a, 3.0, 4.0);
-    bigRealRing.set(norm, 0);
+    C.set_from_doubles(a, 3.0, 4.0);
+    bigRealRing.set_from_long(norm, 0);
     C.increase_norm(&norm.value(), a);
     EXPECT_TRUE(realEquals(&norm.value(), 5)) << "larger magnitude";
-    bigRealRing.set(norm, 10);
+    bigRealRing.set_from_long(norm, 10);
     C.increase_norm(&norm.value(), a);
     EXPECT_TRUE(realEquals(&norm.value(), 10)) << "smaller magnitude";
   }
@@ -763,7 +763,7 @@ TEST_F(ARingCCC, Formatting)
 
     for (const auto& sample : cases)
       {
-        C.set(a, sample.real, sample.imaginary);
+        C.set_from_doubles(a, sample.real, sample.imaginary);
         SCOPED_TRACE(sample.name);
         buffer out;
         C.elem_text_out(out, a, true, false, false);
@@ -794,7 +794,7 @@ TEST_F(ARingCCC, Formatting)
 
     for (const auto& sample : cases)
       {
-        C.set(a, sample.real, sample.imaginary);
+        C.set_from_doubles(a, sample.real, sample.imaginary);
         SCOPED_TRACE(sample.name);
         buffer out;
         C.elem_text_out(out, a, false, false, false);
@@ -823,7 +823,7 @@ TEST_F(ARingCCC, Formatting)
 
     for (const auto& sample : cases)
       {
-        C.set(a, sample.real, sample.imaginary);
+        C.set_from_doubles(a, sample.real, sample.imaginary);
         SCOPED_TRACE(sample.name);
         buffer out;
         C.elem_text_out(out, a, true, true, false);
@@ -852,7 +852,7 @@ TEST_F(ARingCCC, Formatting)
 
     for (const auto& sample : cases)
       {
-        C.set(a, sample.real, sample.imaginary);
+        C.set_from_doubles(a, sample.real, sample.imaginary);
         SCOPED_TRACE(sample.name);
         buffer out;
         C.elem_text_out(out, a, true, false, true);
@@ -870,7 +870,7 @@ TEST_F(ARingCCC, Evaluation)
     // Move the number to a ring that accepts complex values. Reading the
     // result back should give the same number.
     SCOPED_TRACE("eval: compatible target");
-    C.set(a, 2.0, -3.0);
+    C.set_from_doubles(a, 2.0, -3.0);
     auto target = M2::ConcreteRing<Ring>::create();
     auto map = coefficientMap(target);
     ASSERT_NE(map, nullptr);
@@ -887,7 +887,7 @@ TEST_F(ARingCCC, Evaluation)
     // Try to move a number with an imaginary part into the integers. Check
     // the failure result, then read and clear the error message.
     SCOPED_TRACE("eval: integer target");
-    C.set(a, 2.0, -3.0);
+    C.set_from_doubles(a, 2.0, -3.0);
     auto map = coefficientMap(globalZZ);
     ASSERT_NE(map, nullptr);
     ring_elem image;
@@ -976,8 +976,8 @@ TEST_F(ARingCCC, ApproximationTolerance)
     // Compare a value with itself and with a slightly different value. Only
     // the identical pair should pass this check.
     SCOPED_TRACE("near: distinct values");
-    C.set(a, 1.0, 2.0);
-    C.set(b, 1.0, 2.01);
+    C.set_from_doubles(a, 1.0, 2.0);
+    C.set_from_doubles(b, 1.0, 2.01);
 
     EXPECT_TRUE(near(a, a));
     EXPECT_FALSE(near(a, b));
@@ -988,8 +988,8 @@ TEST_F(ARingCCC, comparisonHelpersRejectNaN)
 {
   // MPFR's NaN comparison result must not make our value checks pass
   // accidentally.
-  C.set(a, 1.0, 2.0);
-  C.set(b, 1.0, 2.0);
+  C.set_from_doubles(a, 1.0, 2.0);
+  C.set_from_doubles(b, 1.0, 2.0);
   EXPECT_TRUE(hasValue(a, 1, 2));
   mpfr_set_nan(&a.value().re);
   EXPECT_FALSE(hasValue(a, 1, 2));

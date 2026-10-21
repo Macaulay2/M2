@@ -98,20 +98,19 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
   }
 
   void set_zero(ElementType& result) const { fmpq_zero(&result); }
-  void set(ElementType& result, long a) const
+  void set_from_long(ElementType& result, long a) const
   {
     fmpq_set_si(&result, a, 1);
   }
-  void set(ElementType& result, int a) const { fmpq_set_si(&result, a, 1); }
 
-  void set(ElementType& result, mpz_srcptr a) const
+  void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
-    // printf("ARingQQFlint::calling set\n");
+    // printf("ARingQQFlint::calling set_from_mpz\n");
     fmpz_set_mpz(fmpq_numref(&result), a);
     fmpz_one(fmpq_denref(&result));
   }
 
-  bool set(ElementType& result, mpq_srcptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     fmpq_set_mpq(&result, a);
     return true;
@@ -261,7 +260,7 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
     // Rf = ZZ ---> QQ
     if (Rf->is_ZZ())
       {
-        set(result, f.get_mpz());
+        set_from_mpz(result, f.get_mpz());
         return true;
       }
     return false;

@@ -16,7 +16,7 @@ void getElement<M2::ARingRRi>(const M2::ARingRRi& R,
                               M2::ARingRRi::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     R.random(result);
 }
@@ -145,9 +145,9 @@ TEST(ARingRRi, comparison)
     EXPECT_FALSE(R.is_equal(c,d));
     EXPECT_TRUE(R.is_equal(c,e));
 
-    R.set(f,2);
-    R.set(g,2);
-    R.set(h,3);
+    R.set_from_long(f,2);
+    R.set_from_long(g,2);
+    R.set_from_long(h,3);
 
     EXPECT_TRUE(R.is_equal(f,g));
     EXPECT_FALSE(R.is_equal(f,h));
@@ -170,8 +170,8 @@ TEST(ARingRRi, comparison)
     EXPECT_TRUE(R.is_member(2.3,e));
     EXPECT_FALSE(R.is_member(1.6,e));
 
-    S.set(m,2.4);
-    S.set(n,3.6);
+    S.set_from_double(m,2.4);
+    S.set_from_double(n,3.6);
 
     EXPECT_TRUE(R.is_member(m,e));
     EXPECT_FALSE(R.is_member(n,e));
@@ -208,18 +208,18 @@ TEST(ARingRRi, comparison)
     EXPECT_TRUE(R.is_member(q,a));
     EXPECT_FALSE(R.is_member(q,e));
 
-    R.set(a,p);
+    R.set_from_mpz(a,p);
     EXPECT_TRUE(R.is_member(p,a));
 
     mpq_init(q);
     mpq_set_si(q,7,5);
 
-    R.set(b,q);
+    R.set_from_mpq(b,q);
     EXPECT_TRUE(R.is_member(q,b));
 
     u = 5./3.;
 
-    R.set(c,u);
+    R.set_from_double(c,u);
     EXPECT_TRUE(R.is_member(u,c));
     v = R.coerceToDouble(c);
     EXPECT_EQ(u,v);
@@ -230,8 +230,8 @@ TEST(ARingRRi, comparison)
     mpfi_init(s);
     mpfi_set_si(s,2.3);
 
-    R.set(d,r);
-    R.set(e,s);
+    R.set_from_BigReal(d,r);
+    R.set_from_Interval(e,s);
 
     R.is_member(4.3,d);
     R.is_member(2.3,e);
@@ -272,14 +272,14 @@ TEST(ARingRRi, leftandright)
     S.init(n);
 
     R.set_from_doubles(a,1,3);
-    S.set(m,2.3);
+    S.set_from_double(m,2.3);
 
     R.set_left(a,m);
     R.left(n,a);
 
     EXPECT_TRUE(S.is_equal(n,m));
 
-    S.set(m,1);
+    S.set_from_long(m,1);
     R.set_right(a,m);
 
     EXPECT_TRUE(R.is_empty(a));
@@ -287,7 +287,7 @@ TEST(ARingRRi, leftandright)
     R.set_left(a,1.5);
     R.set_right(a,2.5);
 
-    S.set(n,1);
+    S.set_from_long(n,1);
     R.diameter(m,a);
 
     EXPECT_TRUE(S.is_equal(m,n));
@@ -375,7 +375,7 @@ TEST_F(ARingRRiFixture, arithmeticExamples)
     // Point intervals have the ordinary integer power values, including 0^0.
     SCOPED_TRACE("power: exact point values");
     Ring::Element a {R}, result {R};
-    R.set(a, -2);
+    R.set_from_long(a, -2);
     R.power(result, a, 3);
     EXPECT_TRUE(hasBounds(result, -8, -8));
     R.set_zero(a);
@@ -539,7 +539,7 @@ TEST_F(ARingRRiFixture, power_and_invert)
   SCOPED_TRACE("seed 0x525269");
   ARingElementGenerator<Ring> gen(R);
   Ring::Element a {R}, b {R}, c {R}, result {R}, one {R};
-  R.set(one, 1);
+  R.set_from_long(one, 1);
   mpz_t exponent;
   mpz_init(exponent);
   for (int trial = 0; trial < ntrials; ++trial)

@@ -13,7 +13,7 @@ void getElement<M2::ARingGFFlintBig>(const M2::ARingGFFlintBig& R,
                                      M2::ARingGFFlintBig::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     R.random(result);
 }

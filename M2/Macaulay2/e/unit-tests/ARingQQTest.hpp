@@ -41,7 +41,7 @@ class ARingQQ : public ::testing::Test
     mpq_init(q);
     mpq_set_si(q, num, den);
     mpq_canonicalize(q);
-    EXPECT_TRUE(mRing.set(result, q));
+    EXPECT_TRUE(mRing.set_from_mpq(result, q));
     mpq_clear(q);
   }
 };
@@ -83,7 +83,7 @@ TYPED_TEST_P(ARingQQ, Comparisons)
     for (int i : {-1000000, -1, 1, 1000000})
       {
         SCOPED_TRACE(i);
-        R.set(a, i);
+        R.set_from_long(a, i);
         EXPECT_FALSE(R.is_zero(a));
         EXPECT_TRUE(R.is_unit(a));
       }
@@ -98,14 +98,14 @@ TYPED_TEST_P(ARingQQ, Comparisons)
     const TypeParam& R = this->mRing;
     typename TypeParam::Element a(R);
 
-    R.set(a, 1);
+    R.set_from_long(a, 1);
     EXPECT_TRUE(R.is_pm_one(a));
-    R.set(a, -1);
+    R.set_from_long(a, -1);
     EXPECT_TRUE(R.is_pm_one(a));
 
     R.set_zero(a);
     EXPECT_FALSE(R.is_pm_one(a));
-    R.set(a, 2);
+    R.set_from_long(a, 2);
     EXPECT_FALSE(R.is_pm_one(a));
     this->setFraction(a, 1, 2);  // numerator 1, but denominator is not
     EXPECT_FALSE(R.is_pm_one(a));
@@ -139,8 +139,8 @@ TYPED_TEST_P(ARingQQ, Conversions)
     typename TypeParam::Element a(R), expected(R);
 
     // from an int and from a long
-    R.set(a, 17);
-    R.set(expected, 17L);
+    R.set_from_long(a, 17);
+    R.set_from_long(expected, 17L);
     EXPECT_TRUE(R.is_equal(a, expected));
     EXPECT_EQ(this->textOut(a, true, false, false), "17");
 
@@ -148,7 +148,7 @@ TYPED_TEST_P(ARingQQ, Conversions)
     mpz_t m;
     mpz_init(m);
     mpz_set_str(m, "123456789012345678901234567890", 10);
-    R.set(a, m);
+    R.set_from_mpz(a, m);
     EXPECT_EQ(this->textOut(a, true, false, false),
               "123456789012345678901234567890");
     mpz_clear(m);
@@ -158,13 +158,13 @@ TYPED_TEST_P(ARingQQ, Conversions)
     mpq_init(q);
     mpq_set_si(q, 22, 7);
     mpq_canonicalize(q);
-    EXPECT_TRUE(R.set(a, q));
+    EXPECT_TRUE(R.set_from_mpq(a, q));
     EXPECT_EQ(this->textOut(a, true, false, false), "22/7");
 
     // Supply a canonical fraction reduced from 4/6; callers own normalization.
     mpq_set_si(q, 4, 6);
     mpq_canonicalize(q);
-    EXPECT_TRUE(R.set(a, q));
+    EXPECT_TRUE(R.set_from_mpq(a, q));
     EXPECT_EQ(this->textOut(a, true, false, false), "2/3");
     mpq_clear(q);
   }
@@ -193,7 +193,7 @@ TYPED_TEST_P(ARingQQ, Arithmetic)
     EXPECT_TRUE(R.is_equal(b, expected));
 
     // inverting zero fails and zeroes the result
-    R.set(b, 17);
+    R.set_from_long(b, 17);
     R.set_zero(a);
     EXPECT_FALSE(R.invert(b, a));
     EXPECT_TRUE(R.is_zero(b));
@@ -214,13 +214,13 @@ TYPED_TEST_P(ARingQQ, Arithmetic)
     EXPECT_TRUE(R.is_equal(c, expected));
 
     // unlike ZZ, division need not be exact
-    R.set(a, 2);
-    R.set(b, 3);
+    R.set_from_long(a, 2);
+    R.set_from_long(b, 3);
     R.divide(c, a, b);
     this->setFraction(expected, 2, 3);
     EXPECT_TRUE(R.is_equal(c, expected));
 
-    R.set(a, 2);
+    R.set_from_long(a, 2);
     R.set_zero(b);
     EXPECT_THROW(R.divide(c, a, b), exc::division_by_zero_error);
   }
@@ -233,7 +233,7 @@ TYPED_TEST_P(ARingQQ, Powers)
 
   const TypeParam& R = this->mRing;
   typename TypeParam::Element a(R), b(R), c(R), one(R), expected(R);
-  R.set(one, 1);
+  R.set_from_long(one, 1);
 
   this->setFraction(a, 2, 3);
   R.power(b, a, 3);
@@ -279,7 +279,7 @@ TYPED_TEST_P(ARingQQ, Syzygy)
   this->setFraction(a, 2, 3);
   this->setFraction(b, 4, 5);
   R.syzygy(a, b, x, y);
-  R.set(expected, 1);
+  R.set_from_long(expected, 1);
   EXPECT_TRUE(R.is_equal(x, expected));
   this->setFraction(expected, -5, 6);
   EXPECT_TRUE(R.is_equal(y, expected));
@@ -288,7 +288,7 @@ TYPED_TEST_P(ARingQQ, Syzygy)
   this->setFraction(b, 4, 5);
   R.set_zero(a);
   R.syzygy(a, b, x, y);
-  R.set(expected, 1);
+  R.set_from_long(expected, 1);
   EXPECT_TRUE(R.is_equal(x, expected));
   EXPECT_TRUE(R.is_zero(y));
 }
@@ -355,7 +355,7 @@ TYPED_TEST_P(ARingQQ, Formatting)
     mpz_ui_pow_ui(mpq_numref(q), 10, 900);
     mpz_ui_pow_ui(mpq_denref(q), 7, 900);
     mpq_canonicalize(q);
-    EXPECT_TRUE(R.set(a, q));
+    EXPECT_TRUE(R.set_from_mpq(a, q));
 
     char* expected = mpq_get_str(nullptr, 10, q);
     EXPECT_EQ(this->textOut(a, true, false, false), std::string(expected));
@@ -386,7 +386,7 @@ TYPED_TEST_P(ARingQQ, Evaluation)
   mpq_clear(q);
 
   // an integer-valued rational maps into ZZ
-  R.set(a, 12);
+  R.set_from_long(a, 12);
   R.eval(toZZ, a, 0, result);
   EXPECT_TRUE(globalZZ->is_equal(result, globalZZ->from_long(12)));
 

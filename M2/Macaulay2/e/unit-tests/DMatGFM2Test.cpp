@@ -13,7 +13,7 @@ void getElement<M2::ARingGFM2>(const M2::ARingGFM2& R,
                                M2::ARingGFM2::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     R.random(result);
 }

@@ -20,7 +20,7 @@ void getElement<M2::ARingRR>(const M2::ARingRR& R,
                              M2::ARingRR::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     R.random(result);
 }
@@ -108,10 +108,10 @@ TEST(ARingRR, compare_elems)
   R.init(b);
   R.init(c);
   R.init(d);
-  R.set(a, 0.0);
-  R.set(b, -0.0);
-  R.set(c, -0.01);
-  R.set(d, 0.01);
+  R.set_from_double(a, 0.0);
+  R.set_from_double(b, -0.0);
+  R.set_from_double(c, -0.01);
+  R.set_from_double(d, 0.01);
   EXPECT_EQ(R.compare_elems(a, b), 0);
   EXPECT_EQ(R.compare_elems(c, d), -1);
   EXPECT_EQ(R.compare_elems(d, a), 1);
@@ -343,7 +343,7 @@ TEST(ARingRR, power_and_invert)
         {
           R.invert(c, a);
           R.mult(c, c, a);
-          R.set(d, 1);
+          R.set_from_long(d, 1);
           EXPECT_TRUE(almostEqual(R, R.get_precision() - 4, c, d));
         }
 
@@ -367,11 +367,11 @@ TEST(ARingRR, invert)
     {
       SCOPED_TRACE(::testing::Message() << "invert: nonzero input " << value);
       M2::ARingRR::Element a(R), result(R);
-      R.set(a, value);
+      R.set_from_double(a, value);
 
       R.invert(result, a);
       EXPECT_EQ(R.coerceToDouble(result), 1.0 / value);
-      R.set(a, value);
+      R.set_from_double(a, value);
       R.invert(a, a);
       EXPECT_EQ(R.coerceToDouble(a), 1.0 / value);
     }
@@ -398,7 +398,7 @@ TEST(ARingRR, zeroize_tiny)
     {
       SCOPED_TRACE(sample.name);
       M2::ARingRR::Element a(R);
-      R.set(a, sample.input);
+      R.set_from_double(a, sample.input);
       mpfr_t epsilon;
       mpfr_init2(epsilon, R.get_precision());
       mpfr_set_d(epsilon, 0.5, MPFR_RNDN);
@@ -443,12 +443,12 @@ TEST(ARingRR, set_coercions)
     // their value.
     SCOPED_TRACE("set(long)");
     M2::ARingRR::Element a(R);
-    R.set(a, 12345L);
+    R.set_from_long(a, 12345L);
     EXPECT_EQ(a.value(), 12345.0);
-    R.set(a, -7L);
+    R.set_from_long(a, -7L);
     EXPECT_EQ(a.value(), -7.0);
     long big = (1L << 53);
-    R.set(a, big);
+    R.set_from_long(a, big);
     EXPECT_EQ(a.value(), 9007199254740992.0);
   }
 
@@ -459,10 +459,10 @@ TEST(ARingRR, set_coercions)
     mpz_t z;
     mpz_init(z);
     mpz_set_si(z, -42);
-    R.set(a, z);
+    R.set_from_mpz(a, z);
     EXPECT_EQ(a.value(), -42.0);
     mpz_ui_pow_ui(z, 2, 100);
-    R.set(a, z);
+    R.set_from_mpz(a, z);
     EXPECT_EQ(a.value(), std::ldexp(1.0, 100));
     mpz_clear(z);
   }
@@ -474,10 +474,10 @@ TEST(ARingRR, set_coercions)
     mpq_t q;
     mpq_init(q);
     mpq_set_si(q, 1, 3);
-    EXPECT_TRUE(R.set(a, q));
+    EXPECT_TRUE(R.set_from_mpq(a, q));
     EXPECT_EQ(a.value(), 1.0 / 3.0);
     mpq_set_si(q, -7, 4);
-    EXPECT_TRUE(R.set(a, q));
+    EXPECT_TRUE(R.set_from_mpq(a, q));
     EXPECT_EQ(a.value(), -1.75);
     mpq_clear(q);
   }
@@ -489,12 +489,12 @@ TEST(ARingRR, set_coercions)
     mpfr_t f;
     mpfr_init2(f, 53);
     mpfr_set_d(f, 2.5, MPFR_RNDN);
-    EXPECT_TRUE(R.set(a, f));
+    EXPECT_TRUE(R.set_from_BigReal(a, f));
     EXPECT_EQ(a.value(), 2.5);
     mpfr_set_prec(f, 200);
     mpfr_set_si(f, 1, MPFR_RNDN);
     mpfr_div_si(f, f, 3, MPFR_RNDN);
-    EXPECT_TRUE(R.set(a, f));
+    EXPECT_TRUE(R.set_from_BigReal(a, f));
     EXPECT_EQ(a.value(), 1.0 / 3.0);
     mpfr_clear(f);
   }
@@ -503,7 +503,7 @@ TEST(ARingRR, set_coercions)
     // A negative binary fraction converts without rounding.
     SCOPED_TRACE("set(double)");
     M2::ARingRR::Element a(R);
-    EXPECT_TRUE(R.set(a, -0.125));
+    EXPECT_TRUE(R.set_from_double(a, -0.125));
     EXPECT_EQ(a.value(), -0.125);
   }
 
@@ -511,10 +511,10 @@ TEST(ARingRR, set_coercions)
     // A coefficient-ring variable placeholder replaces the old value with one.
     SCOPED_TRACE("set_var always gives 1");
     M2::ARingRR::Element a(R);
-    R.set(a, 7);
+    R.set_from_long(a, 7);
     R.set_var(a, 0);
     EXPECT_EQ(a.value(), 1.0);
-    R.set(a, -2);
+    R.set_from_long(a, -2);
     R.set_var(a, 3);
     EXPECT_EQ(a.value(), 1.0);
   }
@@ -523,7 +523,7 @@ TEST(ARingRR, set_coercions)
     // Clearing a nonzero value must produce zero.
     SCOPED_TRACE("set_zero");
     M2::ARingRR::Element a(R);
-    R.set(a, 3.5);
+    R.set_from_double(a, 3.5);
     R.set_zero(a);
     EXPECT_TRUE(R.is_zero(a));
   }
@@ -532,7 +532,7 @@ TEST(ARingRR, set_coercions)
     // Copy and initialization from a value must survive changes to the source.
     SCOPED_TRACE("copy, init_set");
     M2::ARingRR::Element a(R), b(R);
-    R.set(a, 6.25);
+    R.set_from_double(a, 6.25);
     R.copy(b, a);
     EXPECT_EQ(b.value(), 6.25);
     M2::ARingRR::Element copy(R, a);
@@ -575,7 +575,7 @@ TEST(ARingRR, negativeZeroRoundTrip)
   M2::ARingRR R;
   M2::ARingRR::Element a(R), b(R);
   ring_elem r;
-  R.set(a, -0.0);
+  R.set_from_double(a, -0.0);
   R.to_ring_elem(r, a);
   R.from_ring_elem(b, r);
   EXPECT_TRUE(std::signbit(b));
@@ -638,12 +638,12 @@ TEST(ARingRR, abs_and_abs_squared)
     {
       SCOPED_TRACE(sample.name);
       M2::ARingRR::Element a(R), result(R);
-      R.set(a, sample.input);
+      R.set_from_double(a, sample.input);
 
       R.abs(result, a);
       EXPECT_EQ(R.coerceToDouble(result), sample.expected);
       EXPECT_FALSE(std::signbit(R.coerceToDouble(result)));
-      R.set(a, sample.input);
+      R.set_from_double(a, sample.input);
       R.abs(a, a);
       EXPECT_EQ(R.coerceToDouble(a), sample.expected);
     }
@@ -652,7 +652,7 @@ TEST(ARingRR, abs_and_abs_squared)
     // A separate known square checks multiplication of two negative factors.
     SCOPED_TRACE("abs_squared: negative integer");
     M2::ARingRR::Element a(R), result(R);
-    R.set(a, -3);
+    R.set_from_long(a, -3);
 
     R.abs_squared(result, a);
 
@@ -698,7 +698,7 @@ TEST(ARingRR, power_edge_cases)
     {
       SCOPED_TRACE(sample.name);
       M2::ARingRR::Element a(R), result(R);
-      R.set(a, sample.base);
+      R.set_from_double(a, sample.base);
       mpz_t exponent;
       mpz_init_set_si(exponent, sample.exponent);
 
@@ -715,7 +715,7 @@ TEST(ARingRR, power_edge_cases)
       SCOPED_TRACE(::testing::Message()
                    << "power_mpz: oversized exponent, sign " << sign);
       M2::ARingRR::Element a(R), result(R);
-      R.set(a, 2);
+      R.set_from_long(a, 2);
       mpz_t exponent;
       mpz_init_set_si(exponent, sign);
       mpz_mul_2exp(exponent, exponent, 40);
@@ -831,7 +831,7 @@ TEST(ARingRR, increase_norm)
     {
       SCOPED_TRACE(sample.name);
       M2::ARingRR::Element a(R);
-      R.set(a, sample.value);
+      R.set_from_double(a, sample.value);
       mpfr_t norm;
       mpfr_init2(norm, R.get_precision());
       mpfr_set_d(norm, sample.initial, MPFR_RNDN);
@@ -886,8 +886,8 @@ TEST(ARingRR, computeHashValue_negative)
     {
       SCOPED_TRACE(::testing::Message() << "hash: equal inputs " << value);
       M2::ARingRR::Element a(R), b(R);
-      R.set(a, value);
-      R.set(b, value);
+      R.set_from_double(a, value);
+      R.set_from_double(b, value);
 
       EXPECT_EQ(R.computeHashValue(a), R.computeHashValue(b));
     }
@@ -942,7 +942,7 @@ TEST(ARingRR, addMultipleToKnownAnswer)
   M2::ARingRR R;
   M2::ARingRR::Element r(R);
 
-  R.set(r, 1.0);
+  R.set_from_double(r, 1.0);
   R.addMultipleTo(r, 2.0, 3.0);
   EXPECT_EQ(r, 7.0);
 }
@@ -980,7 +980,7 @@ TEST(ARingRR, negativePowerProperties)
   M2::ARingRR R;
   ARingElementGenerator<M2::ARingRR> gen(R);
   M2::ARingRR::Element a(R), b(R), c(R), one(R);
-  R.set(one, 1);
+  R.set_from_long(one, 1);
   const auto nbits = R.get_precision();
 
   for (int i = 0; i < ntrials; i++)

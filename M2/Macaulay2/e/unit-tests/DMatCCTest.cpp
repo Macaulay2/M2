@@ -14,7 +14,7 @@ void getElement<M2::ARingCC>(const M2::ARingCC& R,
                              M2::ARingCC::ElementType& result)
 {
   if (index < 50)
-    R.set(result, index - 25);
+    R.set_from_long(result, index - 25);
   else
     R.random(result);
 }
@@ -35,7 +35,7 @@ TEST(DMatCC, normSquared)
 
   const auto& R = C.real_ring();
   M2::ARingCC::RealRingType::Element result(R), expected(R);
-  R.set(expected, 5);
+  R.set_from_long(expected, 5);
   normSquared(submatrix(M), result);
   EXPECT_TRUE(R.is_equal(result, expected));
 }

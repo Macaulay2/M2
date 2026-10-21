@@ -162,7 +162,7 @@ class ARingMatrixGenerator
     for (const auto& e : entries)
       {
         assert(e.row < M.numRows() && e.col < M.numColumns());
-        mRing.set(a, static_cast<int>(e.coeff));
+        mRing.set_from_long(a, e.coeff);
         Setter::set(M, e.row, e.col, a);
       }
   }
@@ -176,7 +176,7 @@ class ARingMatrixGenerator
     size_t i = 0;
     for (long v : values)
       {
-        mRing.set(a, static_cast<int>(v));
+        mRing.set_from_long(a, v);
         Setter::set(M, i / M.numColumns(), i % M.numColumns(), a);
         i++;
       }
@@ -232,14 +232,14 @@ class ARingMatrixGenerator
         mElements.nextElement(a);
         if (!mRing.is_zero(a)) break;
       }
-    if (mRing.is_zero(a)) mRing.set(a, 1);
+    if (mRing.is_zero(a)) mRing.set_from_long(a, 1);
     Setter::set(M, r, c, a);
   }
 
   void fillIdentity(MatType& M)
   {
     Element one(mRing);
-    mRing.set(one, 1);
+    mRing.set_from_long(one, 1);
     for (size_t i = 0; i < M.numRows(); i++) Setter::set(M, i, i, one);
   }
 
@@ -293,13 +293,13 @@ class ARingMatrixGenerator
         for (size_t i = 0; i < nrows; i++)
           {
             if (i < k) mRing.set_zero(u[k * nrows + i]);
-            else if (i == k) mRing.set(u[k * nrows + i], 1);
+            else if (i == k) mRing.set_from_long(u[k * nrows + i], 1);
             else mElements.nextElement(u[k * nrows + i]);
           }
         for (size_t j = 0; j < ncols; j++)
           {
             if (j < k) mRing.set_zero(v[k * ncols + j]);
-            else if (j == k) mRing.set(v[k * ncols + j], 1);
+            else if (j == k) mRing.set_from_long(v[k * ncols + j], 1);
             else mElements.nextElement(v[k * ncols + j]);
           }
       }
