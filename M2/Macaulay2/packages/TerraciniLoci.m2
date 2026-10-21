@@ -1,7 +1,7 @@
 -- TerraciniLoci - Macaulay2 package for computing the Terracini locus
 -- of a projective variety
 
--- Copyright (c) 2023-2025 Francesco Galuppi, Pierpaola Santarsiero,
+-- Copyright (c) 2023-2026 Francesco Galuppi, Pierpaola Santarsiero,
 -- Doug Torrance, and Ettore Teixeira Turatti
 
 -- This program is free software; you can redistribute it and/or
@@ -29,8 +29,8 @@
 
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
-    Version => "0.6",
-    Date => "June 5, 2026",
+    Version => "0.7",
+    Date => "October 12, 2026",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
@@ -60,6 +60,10 @@ newPackage("TerraciniLoci",
 ---------------
 
 -*
+
+0.7 (2026-10-12, M2 1.26.11)
+* speed up removal of singular locus (w/ help of Claude)
+* ensure that r <= 2 for ideal method
 
 0.6 (2026-06-05, M2 1.26.06)
 * update author contact info
@@ -113,15 +117,16 @@ terraciniLocus(ZZ, Matrix, Ideal) := o -> (r, A, I) -> (
     Z := genericMatrix(Q, n + 1, r);
     duplicate := intersect apply(subsets(r, 2), ij ->
 	recursiveMinors(2, Z_ij, o));
-    result = saturate(result, duplicate);
-    blocksingular := recursiveMinors(rk, A, o);
-    singular := intersect apply(r, i -> sub(blocksingular, opts#i));
-    radical result : radical singular)
+    result = radical saturate(result, duplicate);
+    blocksingular := radical recursiveMinors(rk, A, o);
+    scan(r, i -> result = result : sub(blocksingular, opts#i));
+    result)
 
 terraciniLocus(ZZ, RingMap) := o -> (r, f) -> (
     terraciniLocus(r, jacobian matrix f, ideal 0_(target f), o))
 
 terraciniLocus(ZZ, Ideal) := o -> (r, I) -> (
+    if r > 2 then error "expected r <= 2";
     terraciniLocus(r, transpose jacobian I, I, o))
 
 beginDocumentation()
