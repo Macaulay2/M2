@@ -307,9 +307,11 @@ endforeach()
 
 ###############################################################################
 ## Check that found libraries can be linked to catch linking conflicts early.
-# When a conflict is detected, default to building all involved libraries.
+# A failed combined link check cannot identify which libraries need rebuilding.
 # TIP: cmake --debug-trycompile keeps the temporary sources and binaries
 option(CHECK_LIBRARY_COMPATIBILITY "Check for library incompatibilities" ON)
+option(REBUILD_LIBRARIES_ON_LINK_FAILURE
+  "Rebuild checked libraries instead of stopping on a failed compatibility check" OFF)
 
 set(CMAKE_REQUIRED_LIBRARIES "")
 set(CMAKE_REQUIRED_INCLUDES "")
@@ -332,19 +334,41 @@ if(CHECK_LIBRARY_COMPATIBILITY)
     endif()
   endforeach()
 
+  # Retry after paths or versions change, including after a failed configuration.
+  unset(LIBRARY_COMPATIBILITY CACHE)
   check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY
-    FAIL_REGEX "conflict")
+    FAIL_REGEX "conflict" OUTPUT_VARIABLE LIBRARY_COMPATIBILITY_OUTPUT)
 
   if(NOT LIBRARY_COMPATIBILITY)
-    message(CHECK_FAIL " Detected library incompatibilities; rerun the build-libraries target")
-    foreach(LIB IN LISTS CHECKED_LIBRARIES)
-      unset(${LIB}_FOUND)
-    endforeach()
+    message(CHECK_FAIL " Detected library incompatibilities")
+    if(REBUILD_LIBRARIES_ON_LINK_FAILURE)
+      message(WARNING
+        "Library compatibility check failed; rebuilding checked libraries "
+        "because REBUILD_LIBRARIES_ON_LINK_FAILURE=ON:\n"
+        "  ${CHECKED_LIBRARIES}\n\n${LIBRARY_COMPATIBILITY_OUTPUT}")
+      foreach(LIB IN LISTS CHECKED_LIBRARIES)
+        unset(${LIB}_FOUND)
+      endforeach()
+    else()
+      message(FATAL_ERROR
+        "The detected libraries could not be linked together:\n"
+        "  ${CHECKED_LIBRARIES}\n\n"
+        "Selected GMP headers: ${GMP_INCLUDE_DIRS}\n"
+        "Selected GMP libraries: ${GMP_LIBRARIES}\n"
+        "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}\n\n"
+        "Fix the library paths or versions (including GMP), then rerun CMake.\n"
+        "To rebuild selected dependencies, configure with "
+        "'-DBUILD_LIBRARIES=<LIB1>;<LIB2>'. "
+        "Use -DBUILD_LIBRARIES=ALL to explicitly rebuild all supported dependencies.\n\n"
+        "To restore automatic rebuilding after a failed link check, configure with "
+        "-DREBUILD_LIBRARIES_ON_LINK_FAILURE=ON.\n\n"
+        "Link check output:\n${LIBRARY_COMPATIBILITY_OUTPUT}")
+    endif()
   else()
     message(CHECK_PASS " Libraries are compatible!")
   endif()
 
-  unset(LIBRARY_COMPATIBILITY CACHE)
+  unset(LIBRARY_COMPATIBILITY_OUTPUT)
 endif()
 
 unset(CMAKE_REQUIRED_LIBRARIES)
