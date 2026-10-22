@@ -257,7 +257,9 @@ value JuliaObject := x -> (
 ---------------
 
 JuliaObject_Thing := jlGetindex
+JuliaObject_Sequence := jlGetindex @@ prepend
 JuliaObject_Thing = (x, i, e) -> jlSetindex(x, e, i)
+JuliaObject_Sequence = (x, i, e) -> jlSetindex((x, e) | i)
 delete(JuliaObject, Thing) := jlDelete
 
 JuliaObject@@Thing := (x, i) -> jlGetproperty(x, jlSymbol toString i)
@@ -800,10 +802,6 @@ check oo
 --    anything in another module; take a module argument, or split a
 --    qualified name like "Base.vect" on the dots
 --  * >>> (see above)
---  * x_(i, j) passes the subscript through as a single tuple, so both
---    multi-dimensional indexing and typed array construction fail:
---    A_(1, 2) and Int8_(1, 2, 3) need to splat a Sequence, the way
---    getindex(A, 1, 2) already does
 
 -- tests
 --  * iterators, getindex/setindex, getproperty/setproperty, delete,
