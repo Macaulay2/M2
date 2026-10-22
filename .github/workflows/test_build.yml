@@ -72,7 +72,7 @@ jobs:
           brew update
           brew trust macaulay2/tap
           brew tap macaulay2/tap
-          brew install automake bison boost libtool tbb ccache ctags llvm make yasm libffi msolve googletest fplll eigen jansson r palp
+          brew install automake bison boost libtool tbb ccache ctags llvm make yasm libffi msolve googletest fplll eigen jansson r palp numpy
           brew install texinfo || true # sometimes post-install step fails
           brew install --only-dependencies macaulay2/tap/M2
           brew link factory --force
@@ -94,6 +94,8 @@ jobs:
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
                   libnauty-dev nauty lrslib polymake pipx phcpack libtbb-dev qepcad \
                   msolve libfplll-dev libjansson-dev r-base palp
+          sudo apt-get install -y -q --no-install-recommends python3-numpy
+
 
 # ----------------------
 #   Install Bertini
