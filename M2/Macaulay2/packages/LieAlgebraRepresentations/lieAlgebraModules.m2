@@ -732,7 +732,13 @@ adams (ZZ,LieAlgebraModule) := (k,M) -> (
     if k==0 then new LieAlgebraModule from (g,{})
     else if k==1 then M
     else if k==-1 then starInvolution M
-    else LieAlgebraModuleFromWeights(applyKeys(weightDiagram M, w -> k*w),g) -- primitive but works
+    else (
+	wd:=applyKeys(weightDiagram M, w -> k*w);
+	A:=brauerKlimyk(g,wd,{(toList(rank g:0),1)});
+	R:=characterRing g;
+	A.cache#character = if #wd == 0 then 0_R else sum(pairs wd,(w,a) -> a*R_w);
+	A
+	)
 )
 
 symmetricPower(ZZ,LieAlgebraModule) := (n,M) -> M.cache#(symbol symmetricPower, n) ??= (
