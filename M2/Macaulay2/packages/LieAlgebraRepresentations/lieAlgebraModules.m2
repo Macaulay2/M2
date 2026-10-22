@@ -455,6 +455,10 @@ stdVars := memoize ( (type,m) -> (
     	else if type == "D" then apply(m-2, i -> vrs_i*(if i==0 then 1 else vrs_(i-1)^-1)) | {vrs_(m-2)*vrs_(m-1)*vrs_(m-3)^-1,vrs_(m-1)*vrs_(m-2)^-1}
     	))
 
+-- summing the terms one at a time is quadratic in the number of weights, so split in halves
+balancedSum = l -> if #l<=8 then sum l else ( k:=#l//2; balancedSum take(l,k) + balancedSum drop(l,k) )
+polynomialFromWeights = (R,L) -> if #L == 0 then 0_R else balancedSum apply(L, (w,a) -> a*R_w)
+
 characterAlgorithms := new MutableHashTable;
 -- Jacobi Trudi formulae
 elemSym = memoize((L,i) -> (
@@ -618,16 +622,18 @@ character (String,ZZ,List) := o -> (type,m,v) -> character1(type,m,v,o) -- trick
 character (Sequence,Sequence,List) := o -> (type,m,v) -> character2(type,m,v,o) -- tricky to memoize a method with options
 character (LieAlgebra,List) := o -> (g,v) -> if rank g == 0 then 1_(characterRing g) else character(g#"RootSystemType",g#"LieAlgebraRank",v,o) -- annoying special case, otherwise wrong ring
 character (LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
-character LieAlgebraModule := o -> (cacheValue character) ((M) ->
-    if #(M#"DecompositionIntoIrreducibles") == 0 then 0_(characterRing M#"LieAlgebra")
-    else sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o)))
+character LieAlgebraModule := o -> (cacheValue character) ((M) -> (
+    R:=characterRing M#"LieAlgebra";
+    if M.cache#?weightDiagram then polynomialFromWeights(R,pairs M.cache#weightDiagram)
+    else if #(M#"DecompositionIntoIrreducibles") == 0 then 0_R
+    else sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o))))
 
 weightDiagram = method(
     Options=>{Strategy=>null},
     TypicalValue=>VirtualTally
     )
 
-weightDiagram LieAlgebraModule := o -> (M) -> new VirtualTally from listForm character(M,o)
+weightDiagram LieAlgebraModule := o -> (M) -> M.cache#weightDiagram ??= new VirtualTally from listForm character(M,o)
 weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := o -> (g,v) -> new VirtualTally from listForm character(g,v,o)
 
 fac := memoize((type,m) -> ( -- possible denominator in Weyl product formula factors, ultimately coming from the choice of normalisation of the Killing form
@@ -684,30 +690,29 @@ qdim (LieAlgebraModule,ZZ) := (M,l) -> (
 LieAlgebraModuleFromWeights = method(
     TypicalValue => LieAlgebraModule
     )
-LieAlgebraModuleFromWeights(RingElement,LieAlgebra) := (c0,g) -> (
-    if ring c0 =!= characterRing g then error "wrong ring";
-    c:=c0;
-    --find and peel off irreducibles
-    decompositionData := while c!=0 list ( (v,mu) := first listForm leadTerm c ) do (
-	if any(v,a->a<0) then error "not a valid weight diagram";
-	c = c - mu*character(g,v);
-    	);
-    new LieAlgebraModule from {
-    	"LieAlgebra" => g,
-    	"DecompositionIntoIrreducibles" => new VirtualTally from decompositionData,
-    	cache => new CacheTable from { character => c0 }
-    	}
+-- the weights W are cached, and the character is computed from them only if needed
+-- if check is false, W is assumed to be invariant under the Weyl group
+moduleFromWeights = (W,g,check) -> (
+    W = new VirtualTally from select(W, a -> a != 0);
+    if check then (
+	sr:=simpleRoots g;
+	-- the weight diagram must be invariant under the Weyl group, i.e., under each simple reflection
+	scanPairs(W, (v,a) -> for i to #sr-1 do if W_(v-v#i*sr#i) != a then error "not a valid weight diagram"));
+    M:=brauerKlimyk(g,W,pairs (trivialModule g)#"DecompositionIntoIrreducibles");
+    M.cache#weightDiagram = W;
+    M
     )
--- another algorithm would be to apply the same Racah/Brauer/Klimyk algorithm as tensor product (with second weight = trivial one)
--- not clear which is faster
-
-LieAlgebraModuleFromWeights(VirtualTally,LieAlgebra) := (W,g) -> (
-    R := characterRing g;
-    LieAlgebraModuleFromWeights(sum(pairs W,(w,a) -> a*R_w),g)
+LieAlgebraModuleFromWeights(RingElement,LieAlgebra) := (c,g) -> (
+    if ring c =!= characterRing g then error "wrong ring";
+    M:=moduleFromWeights(new VirtualTally from listForm c,g,true);
+    M.cache#character = c;
+    M
     )
+LieAlgebraModuleFromWeights(VirtualTally,LieAlgebra) := (W,g) -> moduleFromWeights(W,g,true)
 
 -- Brauer-Klimyk: the module with character (sum of b*e^v over wd) * (sum of a*chi_w over hws),
 -- obtained by moving each v+w into the dominant chamber via the dot action of the Weyl group
+-- the multiplicities in wd and hws must be nonzero
 brauerKlimyk = (g,wd,hws) -> (
     sr:=simpleRoots g;
     rho:=toList(rank g:1);
@@ -732,7 +737,7 @@ adams (ZZ,LieAlgebraModule) := (k,M) -> (
     if k==0 then new LieAlgebraModule from (g,{})
     else if k==1 then M
     else if k==-1 then starInvolution M
-    else LieAlgebraModuleFromWeights(applyKeys(weightDiagram M, w -> k*w),g) -- primitive but works
+    else moduleFromWeights(applyKeys(weightDiagram M, w -> k*w),g,false)
 )
 
 symmetricPower(ZZ,LieAlgebraModule) := (n,M) -> M.cache#(symbol symmetricPower, n) ??= (
