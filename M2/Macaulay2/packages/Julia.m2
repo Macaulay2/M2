@@ -174,6 +174,7 @@ jlDelete = JuliaFunction "delete!"
 jlDict = JuliaFunction "Dict"
 jlGetindex = JuliaFunction "getindex"
 jlGetproperty = JuliaFunction "getproperty"
+jlHasproperty = JuliaFunction "hasproperty"
 jlInt = JuliaFunction "Int"
 jlIterate = JuliaFunction "iterate"
 jlPair = JuliaFunction "Pair"
@@ -261,6 +262,7 @@ delete(JuliaObject, Thing) := jlDelete
 
 JuliaObject@@Thing := (x, i) -> jlGetproperty(x, jlSymbol toString i)
 JuliaObject@@Thing = (x, i, e) -> jlSetproperty(x, e, jlSymbol toString i)
+JuliaObject@@?Thing := (x, i) -> value jlHasproperty(x, jlSymbol toString i)
 
 iterator JuliaObject := x -> Iterator (
     iter := jlIterate x;
