@@ -726,7 +726,7 @@ breadthFirstSearch (Digraph, Thing) := List => (G, v) -> (
 
 BFS = breadthFirstSearch
 
-center Graph := List => {} >> o -> G -> select(vertexSet G, i -> eccentricity(G, i) == radius G)
+center Graph := List => opts -> G -> select(vertexSet G, i -> eccentricity(G, i) == radius G)
 
 children = method()
 children (Digraph, Thing) := Set => (G, v) -> (
