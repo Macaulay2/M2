@@ -80,7 +80,7 @@ class DMatLinAlg<M2::ARingZZpFlint>
         // Fill in this column
         for (long r = 0; r < profile.size(); r++)
           {
-            mMatrix.ring().set(X.entry(profile[r], c), AB.entry(r, ncols + c));
+            mMatrix.ring().copy(X.entry(profile[r], c), AB.entry(r, ncols + c));
           }
       }
     return true;

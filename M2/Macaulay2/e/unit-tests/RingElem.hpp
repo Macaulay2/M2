@@ -1,8 +1,9 @@
 // Copyright 2026, The Macaulay2 Authors.
 //
-// RingElem: A lightweight value-semantics wrapper around (const Ring*, ring_elem).
-// Unlike RingElement (which is heap-allocated and returns pointers from operators),
-// RingElem lives on the stack and operators return values, making test code concise:
+// RingElem: A lightweight value-semantics wrapper around (const Ring*,
+// ring_elem). Unlike RingElement (which is heap-allocated and returns pointers
+// from operators), RingElem lives on the stack and operators return values,
+// making test code concise:
 //
 //   auto x = RingElem::var(W, 0);
 //   auto Dx = RingElem::var(W, 2);
@@ -45,11 +46,12 @@ class RingElem
   }
 
   // Factory: create a ring element from a string.
-  // For polynomial rings: parses "x^2+3*x*y-1" using variable names from the ring.
-  // For base rings (ZZ, ZZ/p): parses an integer.
-  // Throws parsing_error on failure.
-  // NOTE: fromString and toString are not yet inverses of each other.
-  // toString outputs e.g. "x3+2xyz" while fromString expects "x^3+2*x*y*z".
+  // For polynomial rings: parses "x^2+3*x*y-1" using variable names from the
+  // ring. For base rings (ZZ, ZZ/p): parses an integer. Polynomial syntax
+  // errors throw parsing_error; invalid base-ring integers throw
+  // std::invalid_argument. NOTE: fromString and toString are not yet inverses
+  // of each other. toString outputs e.g. "x3+2xyz" while fromString expects
+  // "x^3+2*x*y*z".
   // TODO: make these round-trip compatible.
   // TODO: fromDouble
   static RingElem fromString(const Ring *R, const std::string &s);
@@ -65,7 +67,8 @@ class RingElem
   // Comparison
   bool operator==(const RingElem &b) const
   {
-    assert(mRing == b.mRing && "RingElem comparison requires elements from the same ring");
+    assert(mRing == b.mRing &&
+           "RingElem comparison requires elements from the same ring");
     return mRing->is_equal(mValue, b.mValue);
   }
   bool operator!=(const RingElem &b) const { return !(*this == b); }
@@ -75,25 +78,29 @@ class RingElem
 
   RingElem operator+(const RingElem &b) const
   {
-    assert(mRing == b.mRing && "RingElem addition requires elements from the same ring");
+    assert(mRing == b.mRing &&
+           "RingElem addition requires elements from the same ring");
     return RingElem(mRing, mRing->add(mValue, b.mValue));
   }
 
   RingElem operator-(const RingElem &b) const
   {
-    assert(mRing == b.mRing && "RingElem subtraction requires elements from the same ring");
+    assert(mRing == b.mRing &&
+           "RingElem subtraction requires elements from the same ring");
     return RingElem(mRing, mRing->subtract(mValue, b.mValue));
   }
 
   RingElem operator*(const RingElem &b) const
   {
-    assert(mRing == b.mRing && "RingElem multiplication requires elements from the same ring");
+    assert(mRing == b.mRing &&
+           "RingElem multiplication requires elements from the same ring");
     return RingElem(mRing, mRing->mult(mValue, b.mValue));
   }
 
   RingElem operator/(const RingElem &b) const
   {
-    assert(mRing == b.mRing && "RingElem division requires elements from the same ring");
+    assert(mRing == b.mRing &&
+           "RingElem division requires elements from the same ring");
     return RingElem(mRing, mRing->divide(mValue, b.mValue));
   }
 
@@ -104,7 +111,10 @@ class RingElem
   }
   friend RingElem operator*(long n, const RingElem &f) { return f * n; }
 
-  RingElem power(int n) const { return RingElem(mRing, mRing->power(mValue, n)); }
+  RingElem power(int n) const
+  {
+    return RingElem(mRing, mRing->power(mValue, n));
+  }
 
   // String output (for gtest diagnostics)
   std::string toString() const

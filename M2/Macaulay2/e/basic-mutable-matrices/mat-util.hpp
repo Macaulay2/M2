@@ -64,10 +64,10 @@ static void concatenateMatrices(const Mat& A, const Mat& B, Mat& C)
   C.resize(A.numRows(), A.numColumns() + B.numColumns());
   for (long r = 0; r < A.numRows(); r++)
     for (long c = 0; c < A.numColumns(); c++)
-      A.ring().set(C.entry(r, c), A.entry(r, c));
+      A.ring().copy(C.entry(r, c), A.entry(r, c));
   for (long r = 0; r < A.numRows(); r++)
     for (long c = 0; c < B.numColumns(); c++)
-      A.ring().set(C.entry(r, c + A.numColumns()), B.entry(r, c));
+      A.ring().copy(C.entry(r, c + A.numColumns()), B.entry(r, c));
 }
 
 #endif

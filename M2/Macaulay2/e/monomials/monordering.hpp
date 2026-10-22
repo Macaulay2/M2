@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+struct MonomialOrdering;
+
 class MonomialOrderings {
 public:
   static std::string toString(const MonomialOrdering *mo);
@@ -24,8 +26,17 @@ public:
   static MonomialOrdering* Weights(const std::vector<int>& wts);
   static MonomialOrdering* GroupLex(int nvars);
   static MonomialOrdering* GroupRevLex(int nvars);
+  static MonomialOrdering* NCLex(int nvars);
   static MonomialOrdering* PositionUp();
   static MonomialOrdering* PositionDown();
+
+  static bool isLex(const MonomialOrdering* mo);
+  static bool isGRevLex(const MonomialOrdering* mo);
+  static int numberOfVariables(const MonomialOrdering* mo);
+  static int numberOfInvertibleVariables(const MonomialOrdering* mo);
+  static std::vector<int> firstWeightVector(const MonomialOrdering* mo);
+  static std::vector<int> nonTermOrderVariables(const MonomialOrdering* mo);
+  static unsigned int hash(const MonomialOrdering* mo);
 
   static MonomialOrdering* GRevLex(const std::vector<int>& wts, int packing);
 };

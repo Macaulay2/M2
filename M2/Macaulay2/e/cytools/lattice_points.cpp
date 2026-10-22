@@ -8,6 +8,11 @@
 // We do NOT #include "box_enum.h" here because that header is C99 (uses
 // `restrict` and VLAs in its declaration/body); it is compiled separately
 // as C via cytools/box_enum.c.
+
+// WARNING: this must match the value in box_enum.h
+// TODO: remove this double dependency!
+#define MAX_SUPPORTED_DIM 256
+
 extern "C" {
 int _box_enum_c(
     int32_t* out,
@@ -41,12 +46,17 @@ LatticePointsResult latticePoints(
       throw std::runtime_error(
           "latticePoints: every row of H must have length dim");
 
+  if (dim > MAX_SUPPORTED_DIM)
+    throw std::runtime_error(
+        "rawLatticePoints: dim > 256 not supported by box_enum");
+  
   // Flatten H row-major.
   std::vector<int> H_flat;
   H_flat.reserve(static_cast<size_t>(n_hyps) * static_cast<size_t>(dim));
   for (const auto& row : H)
     H_flat.insert(H_flat.end(), row.begin(), row.end());
 
+  
   std::vector<int> rhs_copy = rhs; // mutable buffer for non-const C pointer
   std::vector<std::int32_t> out(static_cast<size_t>(max_N_out)
                                 * static_cast<size_t>(dim));
