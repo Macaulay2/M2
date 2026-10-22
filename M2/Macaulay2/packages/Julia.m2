@@ -1,4 +1,13 @@
-newPackage "Julia"
+newPackage("Julia",
+    Version => "0.1",
+    Date => "October 2026",
+    Headline => "interface to Julia",
+    Authors => {{
+            Name => "Doug Torrance",
+            Email => "dtorrance9@gatech.edu",
+            HomePage => "https://d-torrance.github.io"}},
+    Keywords => {"Interfaces"},
+    AuxiliaryFiles => true)
 
 export {
     -- classes
@@ -38,7 +47,7 @@ jlExceptionClear = foreignFunction(libjulia, "jl_exception_clear", void, void)
 jlExceptionOccurred = foreignFunction(libjulia, "jl_exception_occurred", voidstar, void)
 jlGetGlobal = foreignFunction(libjulia, "jl_get_global", voidstar, {voidstar, voidstar})
 jlInit = foreignFunction(libjulia, "jl_init", void, void)
-jlIsa = foreignFunction(libjulia, "jl_isa", int, {voidstar, voidstar})
+jlLoad = foreignFunction(libjulia, "jl_load", voidstar, {voidstar, charstar})
 jlStringPtr = foreignFunction(libjulia, "jl_string_ptr", charstar, voidstar)
 jlSymbol = foreignFunction(libjulia, "jl_symbol", voidstar, charstar)
 jlUnboxBool = foreignFunction(libjulia, "jl_unbox_bool", int8, voidstar)
@@ -57,7 +66,6 @@ jlUnboxUint8 = foreignFunction(libjulia, "jl_unbox_uint8", uint8, voidstar)
 jlBaseModule = foreignSymbol(libjulia, "jl_base_module", voidstar)
 jlMainModule = foreignSymbol(libjulia, "jl_main_module", voidstar)
 jlNothing = foreignSymbol(libjulia, "jl_nothing", voidstar)
-jlTypeType = foreignSymbol(libjulia, "jl_type_type", voidstar)
 
 --------------------
 -- initialization --
@@ -88,12 +96,8 @@ JuliaObject.AfterPrint = x -> (JuliaObject, " of type ", jlTypeof x)
 
 -- keep a dict of known julia objects so they don't get garbage
 -- collected out from under us
-knownObjects = jlEvalString ///
-module M2Julia
-    const known_objects = Dict{Int64, Any}()
-end
-M2Julia.known_objects
-///
+jlM2JuliaModule = jlLoad(jlMainModule, currentFileDirectory | "Julia/M2Julia.jl")
+knownObjects = jlGetGlobal(jlM2JuliaModule, jlSymbol "known_objects")
 knownObjectCount = 0
 finalizer = key -> x -> jlCall2(jlDeleteGlobal, knownObjects, jlBoxInt64 key)
 new JuliaObject from voidstar := (T, x) -> (
@@ -209,17 +213,16 @@ new JuliaObject from Nothing := (T, x) -> jlNothing
 
 getJlBool = x -> value jlUnboxBool x == 1
 
+setValueKey = JuliaFunction JuliaObject jlGetGlobal(jlM2JuliaModule,
+    jlSymbol "set_value_key")
 juliaToM2Functions = new MutableList
 addJuliaToM2Function = method()
 addJuliaToM2Function(String, Function) := (typename, f) -> (
     type := JuliaObjectOrError jlEvalString typename;
-    if value jlIsa(type, jlTypeType) == 0
-    then error "expected argument 1 to be a Julia type";
     key := #juliaToM2Functions;
-    jlEvalString concatenate("@eval M2Julia value_key(x::", typename, ") = ", toString key);
+    setValueKey(type, key);
     juliaToM2Functions#key = f)
 
-jlEvalString "@eval M2Julia value_key(x) = -1"
 addJuliaToM2Function("Bool", getJlBool)
 addJuliaToM2Function("Int8", value @@ jlUnboxInt8)
 addJuliaToM2Function("Int16", value @@ jlUnboxInt16)
@@ -241,9 +244,9 @@ addJuliaToM2Function("Tuple", x -> value \ toSequence x)
 addJuliaToM2Function("AbstractDict", x -> hashTable apply(toList x, kv -> value \ (kv_1, kv_2)))
 addJuliaToM2Function("Nothing", x -> null)
 
-m2JuliaValueKey = jlEvalString "M2Julia.value_key"
+valueKey = jlGetGlobal(jlM2JuliaModule, jlSymbol "value_key")
 value JuliaObject := x -> (
-    key := value jlUnboxInt64 jlCall1(m2JuliaValueKey, x);
+    key := value jlUnboxInt64 jlCall1(valueKey, x);
     if key == -1 then error("no method found for applying 'value' to: ", newline,
                             "\t", x, " (of type ", jlTypeof x, ")")
     else juliaToM2Functions#key x)
@@ -686,14 +689,6 @@ check oo
 --  * new JuliaObject from ZZ boxes an Int64, so anything that doesn't
 --    fit is silently truncated -- JuliaObject 2^70 is 0.  QQ has the
 --    same bug, and RR rounds to a double.  See "bignums" below.
---  * addJuliaToM2Function resolves the type name twice in different
---    scopes: jl_eval_string runs in Main, but @eval M2Julia resolves it
---    inside M2Julia, which only has "using Base", so a third-party type
---    like Oscar.ZZRingElem isn't visible there.  Worse, that
---    jl_eval_string return isn't checked, so the UndefVarError is
---    discarded and the registration reports success.  Define the method
---    from Main, as @eval Main M2Julia.value_key(x::T) = k, and wrap the
---    call in JuliaObjectOrError.
 
 -- documentation
 --  * write the documentation; there are no doc nodes at all yet
