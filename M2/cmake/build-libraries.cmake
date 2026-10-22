@@ -108,6 +108,19 @@ ENDFUNCTION (_ADD_STEP_DEPENDENCY)
 # _found_condition: add dependency only if ${_found_condition} evaluates to false
 FUNCTION (_ADD_COMPONENT_DEPENDENCY _component _name _dependencies _found_condition)
   if(NOT ${_found_condition})
+    string(REGEX REPLACE "_FOUND$" "" _library "${_found_condition}")
+    if(_component STREQUAL "libraries" AND _library IN_LIST _m2_rebuild_libraries)
+      # A selected local library failed the compatibility check. Its existing
+      # stamps must not make the requested rebuild a no-op.
+      ExternalProject_Get_Property(build-${_name} STAMP_DIR)
+      foreach(_step configure build install test)
+        file(GLOB _stamps "${STAMP_DIR}/build-${_name}-${_step}"
+          "${STAMP_DIR}/*/build-${_name}-${_step}")
+        if(_stamps)
+          file(REMOVE ${_stamps})
+        endif()
+      endforeach()
+    endif()
     add_dependencies(build-${_component} build-${_name}-install)
     foreach(_dependency IN LISTS _dependencies)
       _ADD_STEP_DEPENDENCY(${_name} ${_dependency})

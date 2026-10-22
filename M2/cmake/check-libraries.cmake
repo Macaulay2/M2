@@ -316,28 +316,54 @@ option(REBUILD_LIBRARIES_ON_LINK_FAILURE
 set(CMAKE_REQUIRED_LIBRARIES "")
 set(CMAKE_REQUIRED_INCLUDES "")
 set(CHECKED_LIBRARIES "")
+set(_m2_rebuild_libraries "")
 
 if(CHECK_LIBRARY_COMPATIBILITY)
   message(CHECK_START " Checking library compatibility")
 
-  foreach(LIB IN LISTS LIBRARIES_LIST)
-    if(${LIB}_FOUND)
-      list(APPEND CMAKE_REQUIRED_LIBRARIES ${${LIB}_LIBRARIES})
-      list(APPEND CHECKED_LIBRARIES ${LIB})
-    endif()
-  endforeach()
+  foreach(_attempt RANGE 1 2)
+    set(CMAKE_REQUIRED_LIBRARIES "")
+    set(CHECKED_LIBRARIES "")
+    foreach(LIB IN LISTS LIBRARIES_LIST)
+      if(${LIB}_FOUND)
+        list(APPEND CMAKE_REQUIRED_LIBRARIES ${${LIB}_LIBRARIES})
+        list(APPEND CHECKED_LIBRARIES ${LIB})
+      endif()
+    endforeach()
 
-  foreach(LIB IN LISTS PKGLIB_LIST)
-    if(${LIB}_FOUND)
-      list(APPEND CMAKE_REQUIRED_LIBRARIES PkgConfig::${LIB})
-      list(APPEND CHECKED_LIBRARIES ${LIB})
-    endif()
-  endforeach()
+    foreach(LIB IN LISTS PKGLIB_LIST)
+      if(${LIB}_FOUND)
+        list(APPEND CMAKE_REQUIRED_LIBRARIES PkgConfig::${LIB})
+        list(APPEND CHECKED_LIBRARIES ${LIB})
+      endif()
+    endforeach()
 
-  # Retry after paths or versions change, including after a failed configuration.
-  unset(LIBRARY_COMPATIBILITY CACHE)
-  check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY
-    FAIL_REGEX "conflict" OUTPUT_VARIABLE LIBRARY_COMPATIBILITY_OUTPUT)
+    # Retry after paths or versions change, including after a failed configuration.
+    unset(LIBRARY_COMPATIBILITY CACHE)
+    check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY
+      FAIL_REGEX "conflict" OUTPUT_VARIABLE LIBRARY_COMPATIBILITY_OUTPUT)
+    if(LIBRARY_COMPATIBILITY OR _attempt EQUAL 2)
+      break()
+    endif()
+
+    # Keep compatible local installations even when BUILD_LIBRARIES is set, but
+    # allow explicitly selected ones to be repaired after a failed link check.
+    # Retest the remaining libraries before generating any rebuild targets.
+    foreach(_library IN LISTS INSTALLED_LIBRARIES)
+      string(TOUPPER "${_library}" _name)
+      if(_name IN_LIST CHECKED_LIBRARIES AND
+          (BUILD_LIBRARIES MATCHES "(ALL|ON)" OR _name IN_LIST BUILD_LIBRARIES))
+        unset(${_name}_FOUND CACHE)
+        unset(${_name}_FOUND)
+        list(APPEND _m2_rebuild_libraries ${_name})
+        list(REMOVE_ITEM INSTALLED_LIBRARIES ${_library})
+      endif()
+    endforeach()
+    if(NOT _m2_rebuild_libraries)
+      break()
+    endif()
+    message(STATUS "Retrying library compatibility without selected local libraries: ${_m2_rebuild_libraries}")
+  endforeach()
 
   if(NOT LIBRARY_COMPATIBILITY)
     message(CHECK_FAIL " Detected library incompatibilities")
