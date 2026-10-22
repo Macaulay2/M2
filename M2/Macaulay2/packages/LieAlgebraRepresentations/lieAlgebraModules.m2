@@ -259,16 +259,22 @@ quadraticFormMatrix (String,ZZ) := memoize((type, m) -> ( M:={};
     if type =="G" then return matrix {{2/3,1},{1,2}}
     ))
 
+quadraticFormEntries := memoize((type,m) -> entries quadraticFormMatrix(type,m))
+
 killingForm = method(
     TypicalValue => QQ
     )
 killingForm(Sequence,Sequence,List,List) :=
 killingForm(String,ZZ,List,List) := memoize((type, m, v,w) -> (
-    (matrix{v}*quadraticFormMatrix(type,m)*matrix transpose{w})_(0,0)
+    Q:=quadraticFormEntries(type,m);
+    sum(#v, i -> v#i * sum(#w, j -> Q#i#j * w#j))
 ))
 --killingForm(String,ZZ,Vector,Vector) := (type,m,v,w) -> (transpose matrix v *quadraticFormMatrix(type,m)*w)_0
-killingForm(LieAlgebra,List,List) := (g,v,w) -> (matrix{v}*quadraticFormMatrix g*matrix transpose{w})_(0,0)
-killingForm(LieAlgebra,Vector,Vector) := (g,v,w) -> (transpose matrix v *quadraticFormMatrix g*w)_0
+killingForm(LieAlgebra,List,List) := (g,v,w) -> (
+    Q:=quadraticFormEntries(g#"RootSystemType",g#"LieAlgebraRank");
+    sum(#v, i -> v#i * sum(#w, j -> Q#i#j * w#j))
+    )
+killingForm(LieAlgebra,Vector,Vector) := (g,v,w) -> killingForm(g,entries v,entries w)
 
 
 --This function returns the weights in the Weyl alcove
