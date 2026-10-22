@@ -563,7 +563,7 @@ annihilator(FGLieSubAlgebra):=opts->(S)->(
     quotient(zeroIdeal L,S)
     );
 
-center(LieAlgebra):= {} >> o -> L->(
+center(LieAlgebra):= opts -> L->(
     c:=annihilator(fullLieSubAlgebra L);
     new LieIdeal from c
     );
