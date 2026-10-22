@@ -706,6 +706,26 @@ LieAlgebraModuleFromWeights(VirtualTally,LieAlgebra) := (W,g) -> (
     LieAlgebraModuleFromWeights(sum(pairs W,(w,a) -> a*R_w),g)
     )
 
+-- Brauer-Klimyk: the module with character (sum of b*e^v over wd) * (sum of a*chi_w over hws),
+-- obtained by moving each v+w into the dominant chamber via the dot action of the Weyl group
+brauerKlimyk = (g,wd,hws) -> (
+    sr:=simpleRoots g;
+    rho:=toList(rank g:1);
+    ans := new MutableHashTable;
+    add := (w,a) -> if ans#?w then ( s := ans#w+a; if s!=0 then ans#w = s else remove(ans,w) ) else ans#w = a;
+    scan(hws, (w,a) -> -- loop over highest weights
+    	scanPairs(wd, (v,b) -> ( -- loop over all weights
+    		u:=v+w+rho;
+		t:=a*b; i:=-1;
+		while not any(u,zero) and ((i=position(u,j->j<0)) =!= null) do (
+		    u-=u#i*sr#i;
+		    t=-t;
+	    	    );
+		if i === null then add(u-rho,t);
+		)));
+    new LieAlgebraModule from (g,ans)
+    )
+
 adams = method( TypicalValue => LieAlgebraModule )
 adams (ZZ,LieAlgebraModule) := (k,M) -> (
     g:=M#"LieAlgebra";
@@ -779,24 +799,7 @@ LieAlgebraModule ** LieAlgebraModule := (V,W) -> ( -- cf Humpheys' intro to LA &
     g:=V#"LieAlgebra";
     if g != W#"LieAlgebra" then error "V and W must be modules over the same Lie algebra";
     if V =!= W and dim W < dim V then (V,W)=(W,V); -- maybe should first test if characters already computed?
-    wd:=weightDiagram V;
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    sr:=simpleRoots g;
-    rho:=toList(rank g:1);
-    ans := new MutableHashTable;
-    add := (w,a) -> if ans#?w then ( s := ans#w+a; if s!=0 then ans#w = s else remove(ans,w) ) else ans#w = a;
-    scanPairs(W#"DecompositionIntoIrreducibles", (w,a) -> -- loop over highest weights of W
-    	scanPairs(wd, (v,b) -> ( -- loop over all weights of V
-    		u:=v+w+rho;
-		t:=a*b; i:=-1;
-		while not any(u,zero) and ((i=position(u,j->j<0)) =!= null) do (
-		    u-=u#i*sr#i;
-		    t=-t;
-	    	    );
-		if i === null then add(u-rho,t);
-		)));
-    new LieAlgebraModule from (g,ans)
+    brauerKlimyk(g,weightDiagram V,pairs W#"DecompositionIntoIrreducibles")
     )
 
 tensorCoefficient = method(
