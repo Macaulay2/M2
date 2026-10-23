@@ -22,6 +22,7 @@ class FractionField : public Ring
 
   ring_elem set_non_unit_frac(ring_elem top) const;
   frac_elem *new_frac_elem() const;
+  bool simplify_unit_denominator(frac_elem *f) const;
   void simplify(frac_elem *f) const;
   frac_elem *make_elem(ring_elem a, ring_elem b) const;
 
