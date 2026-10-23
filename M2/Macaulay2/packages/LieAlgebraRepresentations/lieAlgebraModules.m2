@@ -597,9 +597,18 @@ character1 = memoize((type,m,v,o)->runHooks(symbol character,(type,m,v),o))
 character2 = memoize((type,m,v,o) -> (
 	v=split(v,m);
 	R:=characterRing(type,m);
-	product(#m,i->R#"maps"#i character1(type#i,m#i,v#i,o))
+	product(#m,i->R#"maps"#i character(type#i,m#i,v#i,o))
 	))
-character (String,ZZ,List) := o -> (type,m,v) -> character1(type,m,v,o) -- tricky to memoize a method with options
+character (String,ZZ,List) := o -> (type,m,v) -> (
+    if all(v, a -> a >= 0) then return character1(type,m,v,o); -- tricky to memoize a method with options
+    -- non-dominant weight: as in Weyl's character formula, the character is 0 if v+rho lies on a wall,
+    -- and otherwise +/- the character of the dominant weight given by the dot action
+    rho:=toList(m:1);
+    (u,s):=dominantConjugate(simpleRoots(type,m),v+rho,true);
+    if any(u,zero) then return 0_(characterRing(type,m));
+    c:=character1(type,m,u-rho,o);
+    if c =!= null then s*c -- null if the requested strategy does not apply
+    )
 character (Sequence,Sequence,List) := o -> (type,m,v) -> character2(type,m,v,o) -- tricky to memoize a method with options
 character (LieAlgebra,List) := o -> (g,v) -> if rank g == 0 then 1_(characterRing g) else character(g#"RootSystemType",g#"LieAlgebraRank",v,o) -- annoying special case, otherwise wrong ring
 character (LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
