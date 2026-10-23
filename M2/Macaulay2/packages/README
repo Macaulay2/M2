@@ -8,8 +8,10 @@ Then create an account on github.com and fork our repository
 https://github.com/Macaulay2/M2, clone your copy of M2, and add your package
 file to this "packages" directory, along with its directory of auxiliary files,
 if any.  Also add a line to the end of the file =distributed-packages
-containing the name of your package.  Add those changes, commit them, and push
-them to your repository.  Then on the github page for your copy of M2, push the
+containing the name of your package.  Check its declared dependencies for cycles
+and regenerate the CMake dependency manifest as described below.  Add those
+changes, commit them, and push them to your repository.  Then on the github
+page for your copy of M2, push the
 button called "Pull request".  That will notify us that you'd like your
 addition to become part of Macaulay2/M2.
 
@@ -22,6 +24,25 @@ resulting "M2".
 
 For changes to an existing package, always base your changes on the current
 version of your package in the repository.
+
+Package dependencies (commands run from the repository root):
+
+Declare loading dependencies in PackageImports or PackageExports in the
+newPackage header.  Check the source tree for circular dependencies with an
+installed M2:
+
+    M2 --script M2/Macaulay2/m2/check-package-dependencies.m2
+
+After changing imports or the distributed package list, regenerate and commit
+M2/cmake/package-dependencies.cmake alongside your source changes:
+
+    python3 M2/cmake/package-dependencies.py --m2 M2
+    python3 M2/cmake/package-dependencies.py --m2 M2 --check
+
+See ../../cmake/package-dependencies.md (M2/cmake/package-dependencies.md from
+the repository root) for dependency declarations, cycle reports, the distinction
+between loading and source-only dependencies, and CMake installation ordering.
+The checker reads this checkout's sources; M2 need not be built from this tree.
 
 =============================================================================
 

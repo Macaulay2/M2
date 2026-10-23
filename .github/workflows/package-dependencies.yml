@@ -1,0 +1,59 @@
+name: Package dependencies
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package-dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Macaulay2
+        run: |
+          sudo add-apt-repository -y -n ppa:macaulay2/macaulay2
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends macaulay2 ninja-build
+
+      - name: Test the graph checker
+        run: M2 --script M2/Macaulay2/m2/check-package-dependencies.m2 --self-test
+
+      - name: Test cycle and missing-header failures
+        shell: bash
+        run: |
+          fixtures=$(mktemp -d)
+          trap 'rm -rf "$fixtures"' EXIT
+          printf 'AuditA\nAuditB\n' > "$fixtures/=distributed-packages"
+          printf 'newPackage("AuditA", PackageImports => {"AuditB"})\n' > "$fixtures/AuditA.m2"
+          printf 'newPackage("AuditB", PackageExports => {"AuditA"})\n' > "$fixtures/AuditB.m2"
+          status=0
+          M2 --script M2/Macaulay2/m2/check-package-dependencies.m2 "$fixtures" > "$fixtures/report" 2>&1 || status=$?
+          cat "$fixtures/report"
+          test "$status" -eq 1
+          grep -F '{AuditA, AuditB}' "$fixtures/report"
+          rm "$fixtures/AuditB.m2"
+          status=0
+          M2 --script M2/Macaulay2/m2/check-package-dependencies.m2 "$fixtures" > "$fixtures/report" 2>&1 || status=$?
+          cat "$fixtures/report"
+          test "$status" -eq 2
+          grep -F 'missing package source:' "$fixtures/report"
+
+      - name: Check declared package dependencies
+        run: M2 --script M2/Macaulay2/m2/check-package-dependencies.m2
+
+      - name: Check the CMake dependency manifest
+        run: python3 M2/cmake/package-dependencies.py --m2 M2 --check
+
+      - name: Test dependency generation and incremental installation
+        run: |
+          python3 M2/cmake/tests/test_package_dependencies.py
+          python3 M2/cmake/tests/test_dependency_manifest.py
+          python3 M2/cmake/tests/test_incremental_packages.py
+          python3 M2/cmake/tests/test_package_build_graph.py
