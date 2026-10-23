@@ -1792,7 +1792,7 @@ doc ///
        C=res ideal vars S, C'=chainComplex(matrix{{x}},matrix{{y}}) 
        isChainComplex C, isChainComplex C'       
      Text
-       The buildin function @ TO dual @
+       The built-in function @ TO dual @
        for chainComplexes over the exterior algebra
        does not return a complex, because the dual of a left module is a right module. 
      Example
