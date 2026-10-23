@@ -750,8 +750,21 @@ doc ///
 	    Otherwise, {\tt "JacobiTrudi'"} is used in type A of rank $m$ for highest weights $(v_1,\dots,v_m)$
 	    whose coordinates sum to at most 2, or for which $\prod_i {m+1 \choose i}^{v_i} \leq 5000$,
 	    and {\tt "Freudenthal"} in all other cases.
+	    If the weight is not dominant, the result is the virtual character given by Weyl's character formula:
+	    $0$ if the weight plus $\rho$ is fixed by a reflection in the Weyl group, and otherwise
+	    plus or minus the character of the dominant weight obtained from it by the dot action of the Weyl group.
     SeeAlso
         weightDiagram
+///
+
+TEST ///
+    -- non-dominant weights
+    g=simpleLieAlgebra("A",1);
+    assert(character(g,{-3}) == -character(g,{1}))
+    assert(character(g,{-1}) == 0)
+    h=simpleLieAlgebra("B",3);
+    assert(character(h,{1,-2,3}) != 0)
+    assert(character(h,{1,-2,3},Strategy=>"Freudenthal") == character(h,{1,-2,3},Strategy=>"Weyl"))
 ///
 
 TEST ///
