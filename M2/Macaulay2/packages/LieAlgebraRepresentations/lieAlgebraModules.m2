@@ -406,12 +406,12 @@ unorderedPositiveRoots = (type,m) -> (
 )
 
 
-positiveRoots(String,ZZ):= (type,m) -> (
+positiveRoots(String,ZZ):= memoize((type,m) -> (
     M:=matrix apply(simpleRoots(type,m), a -> 1/1*a);
     Mtinv:=inverse transpose M;
     PhiPlus := sort apply(unorderedPositiveRoots(type,m), a -> {level(a,type,m),reverse flatten entries (Mtinv*(transpose matrix {a})),a});
     apply(PhiPlus, p -> p_2)
-)
+))
 
 
 positiveRoots(Sequence,Sequence):=memoize((type,m)->flatten toList apply(#m, i -> apply(positiveRoots(type#i,m#i),v->unsplit(v,m,i))))
@@ -518,90 +518,58 @@ characterAlgorithms#"Weyl" = (type,m,v) -> ( -- good for low rank algebras
     num//den
 )
 
---In the next two functions we implement Freudenthal's recursive algorithm for computing the weights in a Lie algebra module and their multiplicities
---The function Freud computes the set of weights in a Lie algebra module without their multiplicities
-Freud = memoize ((type,m,v) -> (
-    simpleroots:=simpleRoots(type,m);
-    if all(v, a -> a < 0) then return set{v};
-    answer:=set {v};
-    for i from 0 to #v-1 do
-        for j from 1 to v_i do
-            answer = answer + Freud(type,m,v-j*simpleroots_i);
-    answer
-))
-
--*
---the function weightsAboveMu computes the weights above mu=w in the weight diagram of lambda=v
-weightsAboveMu = memoize( (type,m,v,w) -> (
-    Omega:=Freud(type,m,v);
-    if w==v then return {};
-    simpleroots:=simpleRoots(type,m);
-    answer:={};
-    k:=0;
-    for i from 0 to #simpleroots-1 do (
-        k=0;
-        while isSubset(set {w+k*(simpleroots_i)},Omega) do (
-            if k>0 then answer = append(answer,w+k*(simpleroots_i));
-            k=k+1;
-    ));
-    answer=unique answer;
-    alllevels:={answer};
-    for i from 0 to #answer-1 do (
-        alllevels = append(alllevels,weightsAboveMu(type,m,v,answer_i))
-    );
-    unique flatten alllevels
-))
-
-
-multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
-    rho:=toList(m:1);
-    if v==w then return 1;
-    Omega:=Freud(type,m,v);
-    if not member(w,Omega) then return 0;
---    L:=weightsAboveMu(type,m,v,w);
-    posroots:=positiveRoots(type,m);
-    rhs:=0;
-    local w';
-    scan(posroots, a -> (
-        w'=w+a;
-        while member(w',Omega) do (
-	    rhs=rhs+killingForm(type,m,w',a)*multiplicityOfWeightInLieAlgebraModule(type,m,v,w');
-	    w'=w'+a;
-	    )));
-    lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
-    lift(2*rhs/lhs,ZZ)
-))
-
-
-characterAlgorithms#"Freudenthal" = (type,m,v) -> (
-    R := characterRing(type,m);
-    sum(toList Freud(type,m,v), w -> multiplicityOfWeightInLieAlgebraModule(type,m,v,w) * R_w)
-    )
-*-
-
--- this is a rewrite of commented out multiplicityOfWeightInLieAlgebraModule
+-- Freudenthal's formula, see Humphreys, Introduction to Lie Algebras and Representation Theory, Section 22.3.
+-- Multiplicities are constant on Weyl group orbits, so we only apply it to the dominant weights,
+-- then expand their orbits (cf. Moody-Patera)
 characterAlgorithms#"Freudenthal" = (type,m,v) -> (
     R:=characterRing(type,m);
     rho:=toList(m:1);
-    Omega:=Freud(type,m,v);
-    mults:=new MutableHashTable from Omega;
+    sr:=simpleRoots(type,m);
     posroots:=positiveRoots(type,m);
-    -- sort
-    Omega=apply(reverse sort apply(toList Omega,w->R_w),first @@ exponents);
-    s:=R_v;
-    for i from 1 to #Omega-1 do s+=(
-	w:=Omega#i;
+    Q:=quadraticFormMatrix(type,m);
+    dominantConjugates:=new MutableHashTable;
+    dominant:=w -> dominantConjugates#w ??= first dominantConjugate(sr,w,false);
+    -- dominant weights: any dominant weight below a dominant weight w is also below
+    -- some dominant w-a with a a positive root, see Stembridge, The partial order of
+    -- dominant weights, Adv. Math. 136 (1998)
+    seen:=new MutableHashTable;
+    layer:={v};
+    dom:=flatten while #layer>0 list layer do (
+	scan(layer, w -> seen#w=true);
+	layer=unique flatten apply(layer, w -> select(apply(posroots, a -> w-a), u -> all(u,j->j>=0) and not seen#?u));
+	);
+    -- sort by decreasing (w+rho,w+rho), so that the dominant conjugate of each w+k*a comes before w
+    -- (only the diagonal of Drho*Q*transpose Drho is needed)
+    Drho:=apply(dom, w -> w+rho);
+    norms:=apply(entries(matrix Drho * Q), Drho, (u,w) -> sum(u,w,times));
+    (norms,dom)=toSequence transpose rsort transpose {norms,dom};
+    G:=entries(matrix dom * Q * transpose matrix posroots); -- G#i#j = (dom#i,posroots#j)
+    aa:=apply(entries(matrix posroots * Q), posroots, (u,a) -> sum(u,a,times)); -- (a,a)
+    mults:=new MutableHashTable from {v=>1};
+    for i from 1 to #dom-1 do (
+	w:=dom#i;
 	rhs:=0;
-	scan(posroots, a -> (
+	scan(#posroots, j -> (
+		a:=posroots#j;
+		c:=G#i#j; -- kept equal to (w',a), using (w+k*a,a) = (w,a)+k*(a,a)
 		w':=w+a;
-		while mults#?w' do (
-		    rhs=rhs+killingForm(type,m,w',a)*mults#w';
+		while mults#?(u:=dominant w') do (
+		    c=c+aa#j;
+		    rhs=rhs+c*mults#u;
 		    w'=w'+a;
 		    )));
-	lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
-	mults#w = lift(2*rhs/lhs,ZZ)
-	)*R_w;
-    s
+	mults#w = lift(2*rhs/(norms#0-norms#i),ZZ)
+	);
+    -- expand the Weyl group orbit of each dominant weight
+    orbit:=w -> (
+	o:=new MutableHashTable from {w=>true};
+	layer:={w};
+	while #layer>0 do layer=flatten apply(layer, u ->
+	    for i to m-1 list if u#i>0 and not o#?(u':=u-u#i*sr#i) then (o#u'=true; u') else continue);
+	keys o);
+    -- summing the terms one at a time is quadratic in the number of weights, so split in halves
+    bsum:=l -> if #l<=8 then sum l else ( k:=#l//2; bsum take(l,k) + bsum drop(l,k) );
+    bsum flatten apply(pairs mults, (w,a) -> apply(orbit w, u -> a*R_u))
 )
 
 characterAlgorithms#"Picker" = (type,m,v) -> (
