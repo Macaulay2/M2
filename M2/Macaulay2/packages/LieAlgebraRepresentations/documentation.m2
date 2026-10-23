@@ -746,6 +746,10 @@ doc ///
 	    {\tt "Freudenthal"} for Freudenthal's recursive algorithm; see Humphreys, {\it Introduction to Lie Algebras and Representation Theory}, Section 22.3.
 	    {\tt "Weyl"} for Weyl's character formula (in classical types).
 	    {\tt "JacobiTrudi"} and {\tt "JacobiTrudi'"} for Jacobi-Trudi and dual Jacobi-Trudi formulae (in type A).
+	    By default, {\tt "Weyl"} is used in classical types of rank at most 2.
+	    Otherwise, {\tt "JacobiTrudi'"} is used in type A of rank $m$ for highest weights $(v_1,\dots,v_m)$
+	    whose coordinates sum to at most 2, or for which $\prod_i {m+1 \choose i}^{v_i} \leq 5000$,
+	    and {\tt "Freudenthal"} in all other cases.
     SeeAlso
         weightDiagram
 ///
