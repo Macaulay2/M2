@@ -543,6 +543,18 @@ target_include_directories(M2-engine PUBLIC
 
 # TODO: make engine independent of interpreter headers
 target_link_libraries(M2-engine PUBLIC memtailor mathic mathicgb)
+foreach(lib IN ITEMS memtailor mathic mathicgb)
+  if(_${lib}_external)
+    get_target_property(_includes ${_${lib}_target} INTERFACE_INCLUDE_DIRECTORIES)
+    if(_includes)
+      foreach(consumer IN ITEMS M2-engine M2-interpreter)
+        target_include_directories(${consumer} BEFORE PUBLIC
+          "$<BUILD_INTERFACE:${_includes}>")
+      endforeach()
+    endif()
+  endif()
+endforeach()
+
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
