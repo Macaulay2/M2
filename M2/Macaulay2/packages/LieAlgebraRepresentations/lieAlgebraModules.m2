@@ -472,6 +472,11 @@ elemSym = memoize((L,i) -> (
     ))
 characterAlgorithms#"JacobiTrudi'" = (type,m,v) -> ( -- good for high rank algebras, small weights
     if type != "A" then return;
+    -- the determinant is cheaper if the parts of conj are small, so if needed, use the
+    -- diagram automorphism (reversing v and the variables of the character ring)
+    if sum(m,i -> i*v#i) > sum(m,i -> (m-1-i)*v#i) then (
+	R:=characterRing(type,m);
+	return (map(R,R,reverse gens R)) characterAlgorithms#"JacobiTrudi'"(type,m,reverse v));
     z := stdVars(type,m);
     conj:=reverse splice apply(m,i -> v#i : i+1);
     if #conj == 0 then 1_(characterRing(type,m)) else det matrix table(#conj,#conj,(i,j)->elemSym(z,conj#i+j-i))
