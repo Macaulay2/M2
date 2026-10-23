@@ -1,21 +1,184 @@
 ###############################################################################
 ## This directory contains the rules for building M2-engine and M2-unit-tests
-## memtailor, mathic, and mathicgb are also imported as subdirectories here
-## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
+## Select system or bundled memtailor, mathic and mathicgb libraries here
+## - run unit tests:  ctest -R unit-tests (includes bundled library tests)
 
 set(with_tbb ${WITH_TBB}) # for mathicgb
 
-add_subdirectory(memtailor)
-add_subdirectory(mathic)
-add_subdirectory(mathicgb)
+# Metadata is required: bare libraries/headers do not describe the debug ABI.
+include(CMakePushCheckState)
+include(CheckCXXSourceCompiles)
 
-target_compile_options(mathicgb PRIVATE
-  -Wall -Wextra -Wno-unused-parameter -Wno-unused-value -Wno-unused-variable -Wno-sign-compare
-  -Wno-deprecated-declarations
-  )
+function(_m2_mathic_probe target header macro result)
+  cmake_push_check_state(RESET)
+  set(CMAKE_REQUIRED_LIBRARIES ${target})
+  set(CMAKE_REQUIRED_QUIET TRUE)
+  foreach(value IN ITEMS ON OFF)
+    if(value)
+      set(condition "ifndef")
+    else()
+      set(condition "ifdef")
+    endif()
+    unset(_m2_probe CACHE)
+    check_cxx_source_compiles("#include <${header}.h>
+#${condition} ${macro}
+#error unexpected ABI flag
+#endif
+int main() { ${_m2_mathic_expression_${header}}; }" _m2_probe)
+    if(_m2_probe)
+      set(${result} ${value} PARENT_SCOPE)
+      cmake_pop_check_state()
+      return()
+    endif()
+  endforeach()
+  set(${result} UNKNOWN PARENT_SCOPE)
+  cmake_pop_check_state()
+endfunction()
 
-if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
-  add_compile_definitions(MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+set(_m2_mathic_expression_memtailor "libmemtailorIsPresent()")
+set(_m2_mathic_expression_mathic "libmathicIsPresent()")
+set(_m2_mathic_expression_mathicgb "mgb::GroebnerConfiguration configuration(101, 2, 1)")
+set(_m2_mathic_version_memtailor 1.4)
+set(_m2_mathic_version_mathic 1.5)
+set(_m2_mathic_version_mathicgb 1.4)
+set(_m2_mathic_macro_memtailor MEMT_DEBUG)
+set(_m2_mathic_macro_mathic MATHIC_DEBUG)
+set(_m2_mathic_macro_mathicgb MATHICGB_DEBUG)
+
+foreach(lib IN ITEMS memtailor mathic mathicgb)
+  string(TOUPPER ${lib} upper)
+  set(${upper}_PROVIDER BUNDLED CACHE STRING "${lib} provider: BUNDLED, SYSTEM, or AUTO")
+  set_property(CACHE ${upper}_PROVIDER PROPERTY STRINGS AUTO SYSTEM BUNDLED)
+  if(NOT ${upper}_PROVIDER MATCHES "^(AUTO|SYSTEM|BUNDLED)$")
+    message(FATAL_ERROR "${upper}_PROVIDER must be AUTO, SYSTEM, or BUNDLED")
+  endif()
+  set(_${lib}_external FALSE)
+  set(_${lib}_reason "requested bundled library")
+  if(${upper}_PROVIDER STREQUAL "BUNDLED")
+    continue()
+  endif()
+  set(_${lib}_target "")
+  find_package(${lib} ${_m2_mathic_version_${lib}} CONFIG QUIET)
+  if(TARGET ${lib}::${lib})
+    set(_${lib}_target ${lib}::${lib})
+    set(_${lib}_origin "CMake: ${${lib}_DIR}")
+    set(_${lib}_version "${${lib}_VERSION}")
+  else()
+    find_package(PkgConfig QUIET)
+    if(PKG_CONFIG_FOUND)
+      unset(M2_${upper}_FOUND CACHE)
+      pkg_check_modules(M2_${upper} QUIET IMPORTED_TARGET ${lib}>=${_m2_mathic_version_${lib}})
+      if(TARGET PkgConfig::M2_${upper})
+        set(_${lib}_target PkgConfig::M2_${upper})
+        set(_${lib}_origin "pkg-config: ${M2_${upper}_PREFIX}")
+        set(_${lib}_version "${M2_${upper}_VERSION}")
+      endif()
+    endif()
+  endif()
+  set(_${lib}_reason "no ${lib} >= ${_m2_mathic_version_${lib}} CMake or pkg-config package found")
+  if(_${lib}_target)
+    _m2_mathic_probe(${_${lib}_target} ${lib} ${_m2_mathic_macro_${lib}} _${lib}_debug)
+    set(_${lib}_reason "installed ${lib} failed its compile/link check")
+    if(NOT _${lib}_debug STREQUAL "UNKNOWN")
+      set(_${lib}_external TRUE)
+      message(STATUS "${lib}: detected ${_${lib}_version} (${_${lib}_origin}; ${_m2_mathic_macro_${lib}}=${_${lib}_debug})")
+    endif()
+  endif()
+endforeach()
+
+# Compare transitive ABI flags as well as each library's own flags. Imported
+# usage requirements must describe the same dependencies M2 selected directly.
+foreach(lib IN ITEMS mathic mathicgb)
+  if(NOT _${lib}_external)
+    continue()
+  endif()
+  set(dependencies memtailor)
+  if(lib STREQUAL "mathicgb")
+    list(APPEND dependencies mathic)
+  endif()
+  foreach(dep IN LISTS dependencies)
+    if(NOT _${dep}_external)
+      continue()
+    endif()
+    _m2_mathic_probe(${_${lib}_target} ${dep} ${_m2_mathic_macro_${dep}} _dependency_debug)
+    if(NOT _dependency_debug STREQUAL _${dep}_debug)
+      set(_${lib}_external FALSE)
+      set(_${lib}_reason "its ${_m2_mathic_macro_${dep}} metadata disagrees with the selected ${dep}")
+    endif()
+  endforeach()
+endforeach()
+if(_mathicgb_external)
+  _m2_mathic_probe(${_mathicgb_target} mathicgb MATHICGB_NO_TBB _mathicgb_no_tbb)
+  if(_mathicgb_no_tbb STREQUAL "UNKNOWN" OR
+      (WITH_TBB AND _mathicgb_no_tbb) OR
+      (NOT WITH_TBB AND NOT _mathicgb_no_tbb))
+    set(_mathicgb_external FALSE)
+    set(_mathicgb_reason "installed MATHICGB_NO_TBB=${_mathicgb_no_tbb} disagrees with WITH_TBB=${WITH_TBB}")
+  endif()
+endif()
+
+# Never link an installed library with a second, bundled copy of its dependency.
+# A bundled Debug mathic/mathicgb also forces its dependencies' debug layouts.
+# Propagate fallbacks to a fixed point before creating any bundled targets.
+set(_selection_changed TRUE)
+while(_selection_changed)
+  set(_selection_changed FALSE)
+  if(_mathic_external AND NOT _memtailor_external)
+    set(_mathic_external FALSE)
+    set(_mathic_reason "system mathic requires system memtailor")
+    set(_selection_changed TRUE)
+  endif()
+  if(_mathicgb_external AND (NOT _mathic_external OR NOT _memtailor_external))
+    set(_mathicgb_external FALSE)
+    set(_mathicgb_reason "system mathicgb requires system mathic and memtailor")
+    set(_selection_changed TRUE)
+  endif()
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR "Debug" IN_LIST CMAKE_CONFIGURATION_TYPES)
+    if(_memtailor_external AND NOT _memtailor_debug AND
+        (NOT _mathic_external OR NOT _mathicgb_external))
+      set(_memtailor_external FALSE)
+      set(_memtailor_reason "bundled Debug mathic/mathicgb requires MEMT_DEBUG=ON")
+      set(_selection_changed TRUE)
+    endif()
+    if(_mathic_external AND NOT _mathic_debug AND NOT _mathicgb_external)
+      set(_mathic_external FALSE)
+      set(_mathic_reason "bundled Debug mathicgb requires MATHIC_DEBUG=ON")
+      set(_selection_changed TRUE)
+    endif()
+  endif()
+endwhile()
+
+set(_bundled_mathic_targets)
+foreach(lib IN ITEMS memtailor mathic mathicgb)
+  string(TOUPPER ${lib} upper)
+  if(_${lib}_external)
+    # Keep a custom prefix ahead of system include directories from other deps.
+    # IMPORTED_NO_SYSTEM also supports our CMake 3.24 minimum.
+    set_property(TARGET ${_${lib}_target} PROPERTY IMPORTED_NO_SYSTEM TRUE)
+    add_library(${lib} ALIAS ${_${lib}_target})
+    message(STATUS "${lib}: using system library (${_m2_mathic_macro_${lib}}=${_${lib}_debug})")
+  else()
+    if(${upper}_PROVIDER STREQUAL "SYSTEM")
+      message(FATAL_ERROR "Cannot use system ${lib}: ${_${lib}_reason}")
+    endif()
+    add_subdirectory(${lib})
+    # The pinned submodules set these privately. Propagate their actual layout
+    # to the engine and to bundled libraries consuming a debug dependency.
+    target_compile_definitions(${lib} PUBLIC $<$<CONFIG:Debug>:${_m2_mathic_macro_${lib}}>)
+    list(APPEND _bundled_mathic_targets ${lib})
+    message(STATUS "${lib}: bundled (${_${lib}_reason})")
+  endif()
+endforeach()
+set(_bundled_mathic_targets "${_bundled_mathic_targets}" PARENT_SCOPE)
+
+# version.dd needs the selected libraries' headers and ABI definitions.
+target_link_libraries(M2-interpreter PRIVATE memtailor mathic mathicgb)
+
+if(NOT _mathicgb_external)
+  target_compile_options(mathicgb PRIVATE
+    -Wall -Wextra -Wno-unused-parameter -Wno-unused-value -Wno-unused-variable -Wno-sign-compare
+    -Wno-deprecated-declarations
+    )
 endif()
 
 ###############################################################################
@@ -372,6 +535,18 @@ target_include_directories(M2-engine PUBLIC
 
 # TODO: make engine independent of interpreter headers
 target_link_libraries(M2-engine PUBLIC memtailor mathic mathicgb)
+foreach(lib IN ITEMS memtailor mathic mathicgb)
+  if(_${lib}_external)
+    get_target_property(_includes ${_${lib}_target} INTERFACE_INCLUDE_DIRECTORIES)
+    if(_includes)
+      foreach(consumer IN ITEMS M2-engine M2-interpreter)
+        target_include_directories(${consumer} BEFORE PUBLIC
+          "$<BUILD_INTERFACE:${_includes}>")
+      endforeach()
+    endif()
+  endif()
+endforeach()
+
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
@@ -420,7 +595,7 @@ target_compile_options(M2-engine PRIVATE
 ## Export the target
 
 # TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
-install(TARGETS M2-engine mathicgb mathic memtailor EXPORT Macaulay2
+install(TARGETS M2-engine ${_bundled_mathic_targets} EXPORT Macaulay2
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
   COMPONENT devel EXCLUDE_FROM_ALL
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
