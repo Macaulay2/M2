@@ -1291,7 +1291,7 @@ function exportTikz(event) {
 
   var timestamp = makeid();
 
-  // Branden: Actual tikz code; displayed in black and white. We could do colors, but I am afriad of shading issues when printing.
+  // Branden: Actual tikz code; displayed in black and white. We could do colors, but I am afraid of shading issues when printing.
   var tikzTex = "";
   tikzTex =
     "\\begin{tikzpicture}\n         \\newcommand*\\points" +
