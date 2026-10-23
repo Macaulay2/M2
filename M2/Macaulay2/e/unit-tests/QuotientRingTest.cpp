@@ -60,6 +60,41 @@ TEST(QuotientRing, sphere)
   EXPECT_EQ(lhs, rhs);
 }
 
+// makeTerm reduces the term modulo the quotient ideal.
+TEST(QuotientRing, makeTerm)
+{
+  const PolynomialRing* A = simplePolynomialRing(101, {"x", "y"});
+  const Ring* R = simpleQuotientRing(A, {"x^2-y"});
+  ASSERT_NE(R, nullptr);
+  const Ring* kk = R->cast_to_PolynomialRing()->getCoefficients();
+
+  // x^3*y reduces to x*y^2 modulo x^2-y
+  std::vector<int> vp = varpowerOf({{1, 1}, {0, 3}});
+  ring_elem t = R->makeTerm(kk, kk->from_long(1), vp.data());
+  EXPECT_TRUE(R->is_equal(t, monomialOf(R, {{0, 1}, {1, 2}})));
+}
+
+// A quotient of a skew commutative ring is a PolyRingQuotient rather than a
+// SkewPolynomialRing, but it still carries the skew information, so makeTerm
+// must zero out squares of skew variables there too.
+TEST(QuotientRing, makeTermSkew)
+{
+  const PolynomialRing* E =
+      simpleSkewPolynomialRing(101, {"e0", "e1", "e2"}, {0, 1, 2});
+  ASSERT_NE(E, nullptr);
+  const Ring* R = simpleQuotientRing(E, {"e0*e1"});
+  ASSERT_NE(R, nullptr);
+  const Ring* kk = R->cast_to_PolynomialRing()->getCoefficients();
+  ring_elem one = kk->from_long(1);
+
+  std::vector<int> square = varpowerOf({{2, 2}});
+  EXPECT_TRUE(R->is_zero(R->makeTerm(kk, one, square.data())));
+
+  // a variable not involved in the quotient ideal still behaves
+  std::vector<int> squarefree = varpowerOf({{2, 1}});
+  EXPECT_FALSE(R->is_zero(R->makeTerm(kk, one, squarefree.data())));
+}
+
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

@@ -811,6 +811,7 @@ document {
 	 TO "get a ring variable by index",
 	 TO "get a ring variable by name",
 	 TO "get a monomial by exponent vector",
+	 TO (symbol _, List, Ring),
 	 TO "graded and multigraded polynomial rings",
 	 TO "monomial orderings",
          }
@@ -1094,6 +1095,9 @@ document {
      a list of exponents in a monomial, and the second member is the corresponding
      coefficient.  Standard list operations can be used to manipulate the result.",
      EXAMPLE "S / print;",
+     "Such a list can be turned back into a polynomial by subscripting it with
+     the ring, see ", TO (symbol _, List, Ring), ".",
+     EXAMPLE "S_(ring g)",
      "The structure of a polynomial can also be provided in a form
      based on hash tables with ", TO "standardForm", ".",
      EXAMPLE {

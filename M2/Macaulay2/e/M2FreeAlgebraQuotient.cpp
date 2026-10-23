@@ -299,8 +299,12 @@ void M2FreeAlgebraQuotient::makeTerm(Poly& result, const ring_elem a, const_varp
   freeAlgebraQuotient().normalizeInPlace(result);
 }
 
-ring_elem M2FreeAlgebraQuotient::makeTerm(const ring_elem a, const_varpower monom) const
+ring_elem M2FreeAlgebraQuotient::makeTerm(const Ring *coeffR,
+                                          const ring_elem a,
+                                          const_varpower monom) const
 {
+  if (coefficientRing() != coeffR)
+    throw exc::engine_error("wrong coefficient ring");
   Poly* f = new Poly;
   makeTerm(*f, a, monom);
   return ring_elem(reinterpret_cast<void*>(f));

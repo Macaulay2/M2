@@ -281,6 +281,10 @@ class Ring : public MutableEngineObject
     throw exc::engine_error("cannot compute discrete logarithm in this ring");
   }
 
+  virtual ring_elem makeTerm(const Ring* coeffR,
+                             const ring_elem a,
+                             const_varpower monom) const;
+
   // Returns the element in the polynomial ring A corresponding to the element
   // a.
   // Returns NULL if not a GF field.

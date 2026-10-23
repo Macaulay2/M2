@@ -146,10 +146,16 @@ int SkewMultiplication::divide(const int *exp1,
 bool SkewMultiplication::exp_is_zero(const int *exp) const
 // Return whether any skew variable in the exponent vector has exponent >= 2
 {
+  return exp_is_zero(exp, _n_vars);
+}
+
+bool SkewMultiplication::exp_is_zero(const int *exp, int n) const
+// As above, but exp has only n entries, so larger skew indices are skipped
+{
   for (int i = 0; i < _n_skew; i++)
     {
       int v = _skew_list[i];
-      if (exp[v] >= 2) return true;
+      if (v < n && exp[v] >= 2) return true;
     }
   return false;
 }

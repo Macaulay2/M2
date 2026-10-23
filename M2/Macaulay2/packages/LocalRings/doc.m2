@@ -367,7 +367,7 @@ SeeAlso
 ///
 
 importFrom_Core { "headline" }
-scan({ baseRing, char, coefficientRing, degreeLength, degrees, dim, frac, generators, isCommutative, numgens },
+scan({ ambient, baseRing, char, coefficientRing, degreeLength, degrees, dim, frac, generators, isCommutative, numgens },
     m -> document { Key => (m, LocalRing), Headline => headline makeDocumentTag (m, Ring), PARA {"See ", TO (m, Ring)} })
 
 undocumented apply({describe, expression, precision, presentation}, m -> (m, LocalRing))

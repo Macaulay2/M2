@@ -20,8 +20,8 @@
 
 newPackage(
     "MRDI",
-    Version => "0.1",
-    Date => "April 25, 2026",
+    Version => "0.2",
+    Date => "September 5, 2026",
     Headline => "serializing algebraic data with .mrdi files",
     Authors => {
 	{
@@ -31,6 +31,23 @@ newPackage(
 	    }},
     PackageImports => {"JSON"},
     Keywords => {"System"})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2026-09-05, M2 1.26.11)
+* use new List_Ring method for deserializing polynomials
+* update documentation and tests (thanks Keller and the Atlanta workshop
+  participants!)
+* update my contact info
+
+0.1 (2026-04-25, M2 1.26.05)
+* initial release
+
+*-
 
 export {
     -- methods
@@ -293,9 +310,9 @@ mrdiToCoefficient QQ := R -> a -> value a#0 / value a#1
 
 mrdiToPolynomial = (R, f) -> (
     if #f == 0 then 0_R
-    else sum(f, term -> times(
-	    (mrdiToCoefficient coefficientRing R) term#1,
-	    R_(value \ toList term#0))))
+    else (apply(f, term -> (
+        value \ toList term#0,
+        (mrdiToCoefficient coefficientRing R) term#1)))_R)
 addLoadMethod("RingElement", (params, data) -> (
 	mrdiToPolynomial(params, data)))
 addLoadMethod("Ideal", (params, data) -> (
