@@ -108,6 +108,18 @@ ENDFUNCTION (_ADD_STEP_DEPENDENCY)
 # _found_condition: add dependency only if ${_found_condition} evaluates to false
 FUNCTION (_ADD_COMPONENT_DEPENDENCY _component _name _dependencies _found_condition)
   if(NOT ${_found_condition})
+    string(REGEX REPLACE "_FOUND$" "" _library "${_found_condition}")
+    if(_component STREQUAL "libraries" AND _library IN_LIST _m2_rebuild_libraries)
+      # A failed link probe must not leave a completed fallback build as a no-op.
+      ExternalProject_Get_Property(build-${_name} STAMP_DIR)
+      foreach(_step configure build install test)
+        file(GLOB _stamps "${STAMP_DIR}/build-${_name}-${_step}"
+          "${STAMP_DIR}/*/build-${_name}-${_step}")
+        if(_stamps)
+          file(REMOVE ${_stamps})
+        endif()
+      endforeach()
+    endif()
     add_dependencies(build-${_component} build-${_name}-install)
     foreach(_dependency IN LISTS _dependencies)
       _ADD_STEP_DEPENDENCY(${_name} ${_dependency})
@@ -440,6 +452,7 @@ ExternalProject_Add(build-frobby
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DGMP_ROOT=${GMP_ROOT}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
