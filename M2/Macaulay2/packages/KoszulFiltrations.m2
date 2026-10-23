@@ -23,40 +23,38 @@ export {"partialLinearFiltration",
        "sortIdealList",
        "isKoszulFiltration"}
 
-
-
 --******************************************--
 -- Functions    	       	    	    -- 
 --******************************************--
 
 partialLinearFiltration = method(TypicalValue=> List)
 partialLinearFiltration (Ring,List) := (R,L) -> (
-    if all(L,i->instance(i,R)) and all(L, i-> degree i == {1} and isHomogeneous(i))   then(
-    	linearIdeals := unique apply(subsets L, a->trim promote(ideal(a),R));
-    	F := {{promote(ideal(),R)}};
-    	newIdeals := {};
-    	colIdeal :={};
-    	toInclude :={};
-	m := trim ideal gens R;
-	e := numgens m;
-    	for i from 1 to e do (
-            newIdeals := {};
-            for I in F#(i-1) do ( 
-            	for a in L do (
-                    if isSubset(ideal(a), I) then continue;
-                    colIdeal = trim (I:a);
-                    if member(colIdeal,linearIdeals) then (
-                    	toInclude = trim(I+ideal(a));
-                    	newIdeals = unique append(newIdeals,toInclude);
-                    	);
+    if not all(L, i -> instance(i, R)) then error "expected all linear forms to be in the same ring";
+    if not all(L, i -> degree i == {1} and isHomogeneous(i)) then error "expected homogeneous linear forms";
+    linearIdeals := unique apply(subsets L, a->trim promote(ideal(a),R));
+    F := null;
+    Newideals := {};
+    toInclude :={};
+    m := trim ideal gens R;
+    e := numgens m;
+    F = new MutableList from apply(e, i -> 0);
+    F#0={promote(ideal(),R)};
+    for i from 1 to e do (
+        newIdeals := {};
+        for I in F#(i-1) do ( 
+            for a in L do (
+                if isSubset(ideal(a), I) then continue;
+                colIdeal:= trim (I:a);
+                if isMember(colIdeal,linearIdeals) then (
+                    toInclude = trim(I+ideal(a));
+                    newIdeals = unique append(newIdeals,toInclude);
                     );
-            	);
-            F = append(F,newIdeals);
+                );
             );
-    	return F;
-    	)
-    else(
-    	return error " expected second entry to be a list of linear forms");
+        F#i = newIdeals;
+        );
+    F= flatten toList F;
+    F
     );
           
 
@@ -65,161 +63,125 @@ partialLinearFiltration (Ring,List) := (R,L) -> (
 
 partialKoszulFiltration = method(TypicalValue=> List) 
 partialKoszulFiltration(Ring,List):= (R,L) -> (
-       LF:=sortIdealList flatten L;
-       if all(flatten LF, I ->
-    instance(I,Ideal) and
-    isHomogeneous(I) and
-    (
-        I == ideal(0_R) or
-        all(flatten entries gens trim I, f -> degree f == {1})
-    )
-) then (
-    
-	    F := {}; Fprev := {};
-	    for i from 0 to #LF-1 do (
-    		F = append(F,unique apply(LF#(i),I->trim I));
-    		);
-	    while F =!= Fprev do (
-    		Ftrim := {{promote(ideal(),R)}};
-    		for i from 1 to #F-1 do (
-		    FtrimLevel := {};
-		    for I1 in F#(i-1) do (
-	    		for I2 in F#(i) do (
-			    if isSubset(I1,I2) then (
-		    		colIdeal := trim (I1 : I2); 
-		    		n:=numgens colIdeal;
-		    		if colIdeal == ideal(0_R) or member(colIdeal,F#(n)) then (
-				    FtrimLevel = append(FtrimLevel, I2);
-				    );
-		    		);
-			    );
-	    		);	  
-		    FtrimLevel = unique FtrimLevel;
-		    Ftrim = append(Ftrim,FtrimLevel);
-		    );
-    		Fprev = F; F = Ftrim;
-    		);
-	    return unique F;
-	    )else(
-	    return error "expected entries in the lists within the second entry to be linear ideals"
-	    );
-	);
+    LF:=sortIdealList flatten L;
+    if not all(flatten LF, i -> instance(i, Ideal)) then error "expected entries in the lists within the second entry to be ideals";
+    if not all(flatten LF, i -> isHomogeneous(i) and (i == ideal(0_R) or all(flatten entries gens trim i, f -> degree f == {1}) )) then error "expected homogeneous linear forms";    
+    Fprev := {};
+    F :=  apply(LF,i-> unique apply(i,j-> trim j));
+    while F =!= Fprev do (
+        Ftrim := {{promote(ideal(),R)}};
+        for i from 1 to #F-1 do (
+            FtrimLevel := {};
+            for I1 in F#(i-1) do (
+                for I2 in F#(i) do (
+                    if isSubset(I1,I2) then (
+                        colIdeal := trim (I1 : I2); 
+                        n:=numgens colIdeal;
+                        if n <= #F-1 then(
+                            if (colIdeal == ideal(0_R) or isMember(colIdeal,F#(n))) then (
+                                FtrimLevel = append(FtrimLevel, I2);
+                                ); 
+                            );
+                        );
+                    );
+                );	  
+            FtrimLevel = unique FtrimLevel;
+            Ftrim = append(Ftrim,FtrimLevel);
+            );
+        Fprev = F; 
+        F = Ftrim;
+        );
+    F=unique F;
+    F
+    );
+
 
         	
         
 
 findKoszulFiltration = method(TypicalValue=>List)
 findKoszulFiltration (Ring, List) := (R, L) -> (
-
-LF:= partialLinearFiltration(R,L);
-KF:= partialKoszulFiltration(R,LF);
-KF= delete({},KF);
-m:= trim ideal gens R;
-e:= numgens m;
-if #KF== e+1 then (	
-    return flatten KF
-    )
-else (return error "no Koszul filtration exists within your list of generators");
-);
+    LF:= partialLinearFiltration(R,L);
+    KF:= partialKoszulFiltration(R,LF);
+    KF = delete({},KF);
+    m:= trim ideal gens R;
+    e:= numgens m;
+    if #KF== e+1 then (	
+        return flatten KF;
+        )
+    else (return error "no Koszul filtration exists within your list of generators");
+    );
 
 
 partialLinearFlags = method(TypicalValue=>List)
 partialLinearFlags (Ring,List,Ideal):= (R,L,I)  -> (
-    if(unique degrees trim I=={{1}}) and isHomogeneous(I) then(
-    	if all(L, i-> instance(i,R) and degree i =={1} and isHomogeneous(i)) then(
-	    linearIdeals := unique apply(subsets L, a->trim promote(ideal(a),R));
-	    Flags := {{I}}; i := numgens trim I;
-	    while  i > 0 and #Flags =!= 0 do (
-	    	Flagsnew := {}; i = i - 1;    
-	    	for F in Flags do (
-		    for a in linearIdeals do (
-		    	if numgens trim a == i and isSubset(a, F#-1) then (
-			    colIdeal := a:(F#-1);
-			    if isSubset(unique degrees trim colIdeal,{{},{1}}) then (
-			    	Fnew := append(F,a);
-			    	Flagsnew = append(Flagsnew,Fnew);
-			    	);
-			    ); 
-		     	);
-		    );
-	     	Flags = Flagsnew;
-	     	);
-	    return Flags
-	    ) else (
-	    return error " expected second entry to be a list of linear forms"
-	    );
-     	)else(
-     	return error " ideal must be linear");
+    if not all(L, i -> instance(i, R) and degree i =={1} and isHomogeneous(i)) then error "expected second entry to be a list of linear forms";
+    if not ((I == ideal(0_R) or all(flatten entries gens trim I, f -> degree f == {1})) and isHomogeneous(I)) then error "ideal must be homogeneous and linear";     
+    linearIdeals := unique apply(subsets L, a->trim promote(ideal(a),R));
+    Flags := {{I}}; i := numgens trim I;
+    while  i > 0 and #Flags =!= 0 do (
+        Flagsnew := {}; i = i - 1;    
+        for F in Flags do (
+            for a in linearIdeals do (
+                if numgens trim a == i and isSubset(a, F#-1) then (
+                    colIdeal := a:(F#-1);
+                    if isSubset(unique degrees trim colIdeal,{{},{1}}) then (
+                        Fnew := append(F,a);
+                        Flagsnew = append(Flagsnew,Fnew);
+                        );
+                    ); 
+                );
+            );
+        Flags = Flagsnew;
+        );
+    Flags
     );
      
      
      
 
-
 sortIdealList= method(TypicalValue=> List)
 sortIdealList List:= L->(
-    if all( L,l-> instance(l, Ideal)) then (    
-    	Lf:= flatten L;
-    	Lt:= apply(Lf,i-> trim i);
-    	nr:= unique apply(Lt,i-> numgens i);
-    	n:= max nr;
-    	F:= {};
-    	for i from 0 to n do (
-	    Li:= select(Lt,j-> numgens(j)==i);
-	    F= F|{Li};
-	    );        
-    	return F
-    	
-    	)else(
-    	return error "entries of the list must be ideals");
+    if not all( L,l-> instance(l, Ideal)) then error "entries of the list must be ideals";    
+    Lf:= flatten L;
+    Lt:= apply(Lf,i-> trim i);
+    nr:= unique apply(Lt,i-> numgens i);
+    n:= max nr;    
+    F := for i from 0 to n list select(Lt, j -> numgens(j) == i);    
+    F
     );
 
 isKoszulFiltration = method(TypicalValue=> Boolean)
 isKoszulFiltration (Ring,List):= (R, KF) -> (
     L:= flatten KF;
-    if not all(L, I -> instance(I,Ideal)) then (
-        return error "expected second entry to be a list of ideals" 
-    	);
-
-if not all(L, I -> isHomogeneous(I)) then (
-    return false;
-    );
-
-if not all(L, I -> (
-        I == ideal(0_R) or
-        all(flatten entries gens trim I, f -> degree f == {1})
-    	)) then (
-    return false;
-    );
-F := sortIdealList KF;
-F= apply(F,f-> apply(f, i-> promote(i,R)));
-F= delete({}, F);
-m:= trim ideal gens R;
-e:= numgens m;
-if #F != (e + 1) then (
-    return false;
-    ) else (     Ftrim := {{promote(ideal(),R)}};
+    if not all(L, I -> instance(I,Ideal)) then  error "expected second entry to be a list of ideals";
+    if not all(L, I -> isHomogeneous(I)) then return false;
+    if not all(L, I -> (I == ideal(0_R) or all(flatten entries gens trim I, f -> degree f == {1}))) then return false;
+    F := sortIdealList L;
+    F= apply(F,f-> apply(f, i-> promote(i,R)));
+    F= delete({}, F);
+    m:= trim ideal gens R;
+    e:= numgens m;
+    if #F != (e + 1) then return false;
+    Ftrim := {{promote(ideal(),R)}};
     for i from 1 to #F-1 do (
-	FtrimLevel := {};
-	for I1 in F#(i-1) do (
-	    for I2 in F#(i) do (   
-		if isSubset(I1,I2) then (
-		    colIdeal := trim (I1 : I2); 
-		    n:=numgens colIdeal;
-		    if colIdeal == ideal(0_R) or member(colIdeal,F#(n)) then (
-			FtrimLevel = append(FtrimLevel, I2);
-			);
-		    );
-		);
-	    );
-	FtrimLevel = unique FtrimLevel;
-	Ftrim = append(Ftrim,FtrimLevel);
-	);
-            
-    	 return (set flatten Ftrim === set flatten F);	
-    	    );
-        
-    	);
+        FtrimLevel := {};
+        for I1 in F#(i-1) do (
+            for I2 in F#(i) do (   
+                if isSubset(I1,I2) then (
+                    colIdeal := trim (I1 : I2); 
+                    n:=numgens colIdeal;
+                    if colIdeal == ideal(0_R) or (n < #F and isMember(colIdeal,F#(n))) then (
+                        FtrimLevel = append(FtrimLevel, I2);
+                        );
+                    );
+                );
+            );
+        FtrimLevel = unique FtrimLevel;
+        Ftrim = append(Ftrim,FtrimLevel);
+        );
+    set flatten Ftrim === set flatten F	
+    );
 
 
 --******************************************--
@@ -248,17 +210,17 @@ doc ///
       The package is largely based on algorithms from [BNTW26].
 
 
-      Recall that the definition of a Koszul filtration as first defined by [CTV01] requires the following conditions for your list KF of ideals (in a standard graded algebra over a field):
+      Recall that the definition of a Koszul filtration as first defined by [CTV01] requires the following conditions for your list @TT("KF")@ of ideals (in a standard graded algebra over a field):
     
-      * The zero ideal and the maximal ideal are in KF.
+      * The zero ideal and the maximal ideal are in @TT("KF")@.
       
-      * All ideals in KF are generated by linear forms.
+      * All ideals in @TT("KF")@ are generated by linear forms.
       
-      * For every nonzero ideal I in KF there exists an ideal J in KF such that I/J is cyclic and J:I is in KF. 
+      * For every nonzero ideal $I$ in @TT("KF")@ there exists an ideal $J$ in @TT("KF")@ such that $I/J$ is cyclic and $J:I$ is in @TT("KF")@. 
     
     
     Text
-      A linear filtration satisfies all the requirements of a Koszul filtration except that J:I is only required to be generated by linear forms.
+      A linear filtration satisfies all the requirements of a Koszul filtration except that $J:I$ is only required to be generated by linear forms.
       
       A partial Koszul filtration (respectively, partial linear filtration) fulfills all requirements of a Koszul filtration (respectively, linear filtration) except that the maximal ideal need not be included.
     
@@ -266,18 +228,19 @@ doc ///
 
       
     Text
-      {\bf References}:
-      
-      [BNTW26] Emily Berghofer, Lisa Nicklasson, Peder Thompson and Thomas Westerbäck, Constructing Koszul filtrations: existence and non-existence for G-quadratic algebras, arXiv:2602.06490.
-      
-      [CTV01] Aldo Conca, Ngô Viêt Trung and Giuseppe Valla, Koszul property for points in projective spaces. Mathematica Scandinavica, 89 (2001), no.2, 201–216.
-    Text
       Below is an example of how to use the main algorithm.
       
     Example
       R = QQ[x,y,z];
       L = {x,y,z};    
       findKoszulFiltration(R,L)
+
+  References
+      [BNTW26] Emily Berghofer, Lisa Nicklasson, Peder Thompson and Thomas Westerbäck, Constructing Koszul filtrations: existence and non-existence for G-quadratic algebras, arXiv:2602.06490.
+
+      [CTV01] Aldo Conca, Ngô Viêt Trung and Giuseppe Valla, Koszul property for points in projective spaces. Mathematica Scandinavica, 89 (2001), no.2, 201–216.
+      
+
 
       ///
 
@@ -300,14 +263,14 @@ doc ///
        A list of linear forms that you suspect could generate the ideals of a Koszul filtration.
   Outputs
     : List
-       A list whose entries are lists of ideals sorted according to the number of generators. The ideals form a partial linear filtration.
+       A list whose entries are ideals that form a partial linear filtration.
   Description
     Text 
-      The function takes as input a standard graded k-algebra R and a list L of the linear forms you suspect could generate the ideals of a Koszul filtration.
-      It returns a partial linear filtration with ideals generated by forms in L. 
+      The function takes as input a standard graded $k$-algebra $R$ and a list $L$ of the linear forms you suspect could generate the ideals of a Koszul filtration.
+      It returns a partial linear filtration with ideals generated by forms in $L$. 
       The output is a list of lists where each inner list contains ideals with the same number of generators.
       
-      Recall that a linear filtration satisfies all the requirements of a Koszul filtration except that J:I is only required to be generated by linear forms.
+      Recall that a linear filtration satisfies all the requirements of a Koszul filtration except that $J:I$ is only required to be generated by linear forms.
       
     Example 
       R = QQ[x,y,z];
@@ -341,9 +304,8 @@ doc ///
 	The ideals form a partial Koszul filtration.
     Description
       Text
-        Input your standard graded k-algebra R and a list LF of ideals generated by linear forms in which you suspect that a Koszul filtration might be present. 
-      Text  
-	This list must have the format of the output of partialLinearFiltration, i.e., a list of lists where the ideals are sorted by number of generators. You can use the function sortIdealList to format your list in this way.
+        Input your standard graded $k$-algebra $R$ and a list $LF$ of ideals generated by linear forms in which you suspect that a Koszul filtration might be present. 
+  
       Text
         The function returns a list of ideals. If the maximal ideal is not present in the list, then there does not exist a Koszul filtration with ideals generated by your chosen linear forms.
         If the maximal ideal is present in the list, then the output is a Koszul filtration.
@@ -376,27 +338,27 @@ doc ///
        A list of linear forms.
   Outputs
     : List
-      A list whose entries form a Koszul filtration. If no Koszul filtration exists with ideals whose generators lie in L, the output is an error message stating that.
+      A list whose entries form a Koszul filtration. If no Koszul filtration exists with ideals whose generators lie in @TT("L")@, the output is an error message stating that.
   Description
     Text
       The function calls partialLinearFiltration and partialKoszulFiltration to search for a Koszul filtration. 
-      If there exists a Koszul filtration consisting of ideals with generators in your provided list L, then the function returns it. 
+      If there exists a Koszul filtration consisting of ideals with generators in your provided list @TT("L")@, then the function returns it. 
       If no such filtration exists, it returns the error "no Koszul filtration exists within your list of generators".
       
-      The function returns the maximal Koszul filtration given the set of generators in L. This means that any other Koszul filtration consisting of ideals
-      with generators in L will be a subset of the output Koszul filtration.
+      The function returns the maximal Koszul filtration given the set of generators in @TT("L")@. This means that any other Koszul filtration consisting of ideals
+      with generators in @TT("L")@ will be a subset of the output Koszul filtration.
       
-      Note that if you are working over a finite field it is possible to input all linear forms in L and obtain a conclusive answer as to whether a Koszul filtration exists. 
+      Note that if you are working over a finite field it is possible to input all linear forms in @TT("L")@ and obtain a conclusive answer as to whether a Koszul filtration exists. 
       Be aware, however, that the function is slow for large lists.
       
      
-      Recall that the definition of a Koszul filtration requires the following conditions for your list KF of ideals (in a standard graded algebra over a field):
+      Recall that the definition of a Koszul filtration requires the following conditions for your list @TT("KF")@ of ideals (in a standard graded algebra over a field):
     
-      * The zero ideal and the maximal ideal are in KF.
+      * The zero ideal and the maximal ideal are in @TT("KF")@.
       
-      * All ideals in KF are generated by linear forms.
+      * All ideals in @TT("KF")@ are generated by linear forms.
       
-      * For every nonzero ideal I in KF there exists an ideal J in KF such that I/J is cyclic and J:I is in KF. 
+      * For every nonzero ideal $I$ in KF there exists an ideal $J$ in @TT("KF")@ such that $I/J$ is cyclic and $J:I$ is in @TT("KF")@. 
     
       
       
@@ -445,11 +407,11 @@ doc ///
       An ideal whose generators are linear.
   Outputs
     : List
-     A list whose entries are the linear flags from the ideal I to the zero ideal that consist of ideals which are generated by elements of L.
+     A list whose entries are the linear flags from the ideal $I$ to the zero ideal that consist of ideals which are generated by elements of @TT("L")@.
   Description
     Text
       A (partial) linear flag is a chain of ideals which is a (partial) linear filtration.  
-      The function finds all linear flags from I to the zero ideal where the ideals have generators in L and the quotient ideals are linear.
+      The function finds all linear flags from $I$ to the zero ideal where the ideals have generators in @TT("L")@ and the quotient ideals are linear.
     Example
       R = QQ[x,y,z];
       L = {x,y,z};    
@@ -470,7 +432,7 @@ doc ///
   Headline 
    Sorting a list of ideals according to the number of generators
   Usage
-   sortIdealList(L)
+   sortIdealList L
   Inputs
    L: List
      A list of ideals.
@@ -501,7 +463,7 @@ doc ///
     isKoszulFiltration
     (isKoszulFiltration, Ring, List)
   Headline
-    Is your family of ideals a Koszul filtration?
+    Checks whether a list of ideals is a Koszul filtration
   Usage
     isKoszulFiltration(R, L)
   Inputs
@@ -515,13 +477,13 @@ doc ///
   Description
     Text
       The function takes a list of ideals and returns true if they form a Koszul filtration and false if they do not.
-      Recall that a Koszul filtration requires the following from your list KF of ideals:
+      Recall that a Koszul filtration requires the following from your list @TT("KF")@ of ideals:
  
-      * The zero and the maximal ideal are in KF.
+      * The zero and the maximal ideal are in @TT("KF")@.
       
       * All ideals are generated by linear forms.
       
-      * For any ideal I in KF there exists an ideal J in KF such that I/J is cyclic and J:I is in KF. 
+      * For any ideal $I$ in @TT("KF")@ there exists an ideal $J$ in @TT("KF")@ such that $I/J$ is cyclic and $J:I$ is in @TT("KF")@. 
 
     Example 
       R = QQ[x,y,z];
@@ -647,8 +609,8 @@ I1= ideal(t_2^2, t_3^2, t_2*t_3, x_1*y_1, x_1*t_1, x_1*t_3, y_1*t_1, y_1*t_2, t_
 S1=R1/I1
 List1= {x_1,y_1,t_1,t_2,t_3}
 
-Koszulfiltration:=findKoszulFiltration(S1,List1);
-assert (isKoszulFiltration(S1,Koszulfiltration)== true)
+Koszulfiltration=findKoszulFiltration(S1,List1);
+assert (isKoszulFiltration(S1,Koszulfiltration))
 ///
 
 TEST///
@@ -724,5 +686,4 @@ KF2= {ideal(0_S2),ideal(x_2),ideal(y_2),ideal(y_2,t_21),ideal(x_2,t_22),ideal(x_
 
 assert(isKoszulFiltration(S2,KF2)== true)
 ///
-
 
