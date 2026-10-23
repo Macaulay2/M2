@@ -123,7 +123,7 @@ primitive Matrix := mat -> (
  matmod//m
 )
 
--- fold( Ls, (l1,l2) -> l1 ** l2 ) -- produces too many parantheses
+-- fold( Ls, (l1,l2) -> l1 ** l2 ) -- produces too many parentheses
 cartesianProduct = Ls -> (
         if #Ls<=1 then return Ls;
         if #Ls==2 then return flatten table(Ls#0,Ls#1, (l1,l2) -> {l1,l2});
