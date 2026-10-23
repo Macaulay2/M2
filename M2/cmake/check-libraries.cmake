@@ -326,6 +326,7 @@ option(CHECK_LIBRARY_COMPATIBILITY "Check for library incompatibilities" ON)
 set(CMAKE_REQUIRED_LIBRARIES "")
 set(CMAKE_REQUIRED_INCLUDES "")
 set(CHECKED_LIBRARIES "")
+set(_m2_rebuild_libraries "")
 
 if(CHECK_LIBRARY_COMPATIBILITY)
   message(CHECK_START " Checking library compatibility")
@@ -344,19 +345,31 @@ if(CHECK_LIBRARY_COMPATIBILITY)
     endif()
   endforeach()
 
+  # Retry even when a previous configuration stopped before clearing the cache.
+  unset(LIBRARY_COMPATIBILITY CACHE)
   check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY
-    FAIL_REGEX "conflict")
+    FAIL_REGEX "conflict" OUTPUT_VARIABLE LIBRARY_COMPATIBILITY_OUTPUT)
 
   if(NOT LIBRARY_COMPATIBILITY)
     message(CHECK_FAIL " Detected library incompatibilities; rerun the build-libraries target")
+    message(STATUS "Library compatibility check output:\n${LIBRARY_COMPATIBILITY_OUTPUT}")
+    set(_m2_rebuild_libraries ${CHECKED_LIBRARIES})
     foreach(LIB IN LISTS CHECKED_LIBRARIES)
-      unset(${LIB}_FOUND)
+      # pkg-config also caches *_FOUND; unset() would expose that cached success.
+      set(${LIB}_FOUND FALSE)
+    endforeach()
+    foreach(_library IN LISTS INSTALLED_LIBRARIES)
+      string(TOUPPER "${_library}" _name)
+      if(_name IN_LIST _m2_rebuild_libraries)
+        list(REMOVE_ITEM INSTALLED_LIBRARIES ${_library})
+      endif()
     endforeach()
   else()
     message(CHECK_PASS " Libraries are compatible!")
   endif()
 
   unset(LIBRARY_COMPATIBILITY CACHE)
+  unset(LIBRARY_COMPATIBILITY_OUTPUT)
 endif()
 
 unset(CMAKE_REQUIRED_LIBRARIES)
