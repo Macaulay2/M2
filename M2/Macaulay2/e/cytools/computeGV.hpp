@@ -1086,7 +1086,6 @@ void ComputeFThr(VecToPolyDict &F,
                  const VectorList &beta_pairs_vec,
                  std::mutex &task_mut, std::mutex &m, int min_mem) {
   mpfr::mpreal::set_default_prec(prec);
-  int h11 = alpha.size();
   Polynomial tmp_poly;
   MPFloat tmp_num;
   int a, b, p_ind;

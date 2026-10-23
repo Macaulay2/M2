@@ -1,17 +1,16 @@
 #############################################################################
 
-VERSION = 1.5.4
-SHA256SUM = 32e6ad529c97aa5ce03e28d01c921d1bce1a464fb4c57fbc248d7be21e652782
+VERSION = 1.5.5
+SHA256SUM = 47df389d0a529f98fec4c8d400c3f18e1d292c59efd91dd6fcab840da38cc5b9
 LICENSEFILES = README COPYING.LESSER
 TARFILE = $(LIBNAME)-$(VERSION).tar.gz
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 #############################################################################
 CONFIGOPTIONS += --disable-thread-safe
 #############################################################################
 
-# shut down Oct, 2021 -- URL = https://gforge.inria.fr/frs/download.php/file/37331
-URL = https://macaulay2.com/Downloads/OtherSourceCode
+URL = https://gitlab.inria.fr/mpfi/mpfi/-/archive/$(VERSION)
 
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
