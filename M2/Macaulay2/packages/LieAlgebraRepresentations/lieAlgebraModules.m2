@@ -578,8 +578,11 @@ characterAlgorithms#"Freudenthal" = (type,m,v) -> (
 )
 
 characterAlgorithms#"Picker" = (type,m,v) -> (
-    if type != "A" and m>4 then characterAlgorithms#"Freudenthal"(type,m,v) -- forces Freudenthal for high rank not A
-    else if type == "A" and m<=3 then characterAlgorithms#"Weyl"(type,m,v) -- forces Weyl for low rank A
+    if m<=2 and type != "G" then characterAlgorithms#"Weyl"(type,m,v) -- Weyl is fastest in rank at most 2
+    -- dual Jacobi-Trudi if the determinant is at most 2x2, or if the product of the numbers of terms
+    -- of the elementary symmetric polynomials on its diagonal is small
+    else if type == "A" and (sum v <= 2 or product(m, i -> (binomial(m+1,i+1))^(v#i)) <= 5000) then characterAlgorithms#"JacobiTrudi'"(type,m,v)
+    else characterAlgorithms#"Freudenthal"(type,m,v)
     )
 
 -- last strategy = first choice
