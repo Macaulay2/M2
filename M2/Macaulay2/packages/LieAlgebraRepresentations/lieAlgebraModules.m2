@@ -455,6 +455,15 @@ stdVars := memoize ( (type,m) -> (
     	else if type == "D" then apply(m-2, i -> vrs_i*(if i==0 then 1 else vrs_(i-1)^-1)) | {vrs_(m-2)*vrs_(m-1)*vrs_(m-3)^-1,vrs_(m-1)*vrs_(m-2)^-1}
     	))
 
+-- move w into the dominant chamber by simple reflections (simple roots sr)
+-- returns the dominant weight and the sign (-1)^(number of reflections)
+-- if stopAtWall is true, stop early once w has a zero coordinate, i.e., lies on a wall
+dominantConjugate = (sr,w,stopAtWall) -> (
+    s:=1;
+    while not (stopAtWall and any(w,zero)) and (i:=position(w,j->j<0)) =!= null do ( w-=w#i*sr#i; s=-s );
+    (w,s)
+    )
+
 characterAlgorithms := new MutableHashTable;
 -- Jacobi Trudi formulae
 elemSym = memoize((L,i) -> (
@@ -715,13 +724,8 @@ brauerKlimyk = (g,wd,hws) -> (
     add := (w,a) -> if ans#?w then ( s := ans#w+a; if s!=0 then ans#w = s else remove(ans,w) ) else ans#w = a;
     scan(hws, (w,a) -> -- loop over highest weights
     	scanPairs(wd, (v,b) -> ( -- loop over all weights
-    		u:=v+w+rho;
-		t:=a*b; i:=-1;
-		while not any(u,zero) and ((i=position(u,j->j<0)) =!= null) do (
-		    u-=u#i*sr#i;
-		    t=-t;
-	    	    );
-		if i === null then add(u-rho,t);
+		(u,t):=dominantConjugate(sr,v+w+rho,true);
+		if not any(u,zero) then add(u-rho,a*b*t);
 		)));
     new LieAlgebraModule from (g,ans)
     )
@@ -904,12 +908,8 @@ fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := (V,W,l) -> (
 		if cnt == #pr then (
 		    -- then end with usual algo
 		    -- except the any(u,zero) not needed, filtered already
-		    t:=1;
-		    while (i=position(u,j->j<0)) =!= null do (
-		    	u=u-u#i*sr#i;
-		    	t=-t;
-		    	);
-		    add(u-rho,a*b*t);
+		    (u',t):=dominantConjugate(sr,u,false);
+		    add(u'-rho,a*b*t);
 		    )
 		)));
     new LieAlgebraModule from (g,ans)
