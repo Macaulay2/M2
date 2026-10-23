@@ -152,6 +152,9 @@ set(_bundled_mathic_targets)
 foreach(lib IN ITEMS memtailor mathic mathicgb)
   string(TOUPPER ${lib} upper)
   if(_${lib}_external)
+    # Keep a custom prefix ahead of system include directories from other deps.
+    # IMPORTED_NO_SYSTEM also supports our CMake 3.24 minimum.
+    set_property(TARGET ${_${lib}_target} PROPERTY IMPORTED_NO_SYSTEM TRUE)
     add_library(${lib} ALIAS ${_${lib}_target})
     message(STATUS "${lib}: using system library (${_m2_mathic_macro_${lib}}=${_${lib}_debug})")
   else()
@@ -167,6 +170,9 @@ foreach(lib IN ITEMS memtailor mathic mathicgb)
   endif()
 endforeach()
 set(_bundled_mathic_targets "${_bundled_mathic_targets}" PARENT_SCOPE)
+
+# version.dd needs the selected libraries' headers and ABI definitions.
+target_link_libraries(M2-interpreter PRIVATE memtailor mathic mathicgb)
 
 if(NOT _mathicgb_external)
   target_compile_options(mathicgb PRIVATE
