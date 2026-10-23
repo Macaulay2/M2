@@ -130,7 +130,7 @@ ENDFUNCTION (_ADD_COMPONENT_DEPENDENCY)
 ###############################################################################
 ## Pre-build actions
 
-if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
+if(USE_SUBMODULES AND GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
   ## Update submodules as needed
   if(GIT_SUBMODULE)
     message(STATUS "Submodule update")
@@ -185,6 +185,7 @@ ExternalProject_Add(build-eigen
 _ADD_COMPONENT_DEPENDENCY(libraries eigen "" EIGEN3_FOUND)
 
 
+if(USE_SUBMODULES)
 # https://github.com/ivmai/bdwgc/
 # TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
@@ -220,6 +221,8 @@ ExternalProject_Add(build-bdwgc
   STEP_TARGETS      install test
   )
 _ADD_COMPONENT_DEPENDENCY(libraries bdwgc "" BDWGC_FOUND)
+
+endif()
 
 
 # https://www.mpfr.org/
@@ -353,6 +356,7 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries ntl gmp NTL_FOUND)
 
 
+if(USE_SUBMODULES)
 # https://github.com/Macaulay2/flint2
 ExternalProject_Add(build-flint
   PREFIX            libraries/flint
@@ -385,6 +389,8 @@ if(NOT FLINT_FOUND)
   set(FLINT_ROOT ${M2_HOST_PREFIX})
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries flint "gmp;mpfr;ntl" FLINT_FOUND)
+
+endif()
 
 
 # https://github.com/Singular/Sources/tree/spielwiese/factory
@@ -444,6 +450,7 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "gmp;ntl;flint" FACTORY_FOUND)
 
 
+if(USE_SUBMODULES)
 # https://github.com/Macaulay2/frobby (previously https://www.broune.com/frobby)
 ExternalProject_Add(build-frobby
   PREFIX            libraries/frobby
@@ -463,6 +470,8 @@ ExternalProject_Add(build-frobby
   STEP_TARGETS      install test
   )
 _ADD_COMPONENT_DEPENDENCY(libraries frobby gmp FROBBY_FOUND)
+
+endif()
 
 
 # https://github.com/cddlib/cddlib
@@ -580,6 +589,7 @@ ExternalProject_Add(build-mpsolve
 _ADD_COMPONENT_DEPENDENCY(libraries mpsolve "gmp;mpfr" MPSOLVE_FOUND)
 
 
+if(USE_SUBMODULES)
 # https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
 string(REGEX REPLACE
   "./configure$" "${CMAKE_SOURCE_DIR}/submodules/givaro/autogen.sh" givaro_AUTOGEN "${CONFIGURE}")
@@ -673,6 +683,8 @@ if(NOT FFLAS_FFPACK_FOUND AND (NOT GIVARO_FOUND OR GIVARO_VERSION VERSION_LESS 4
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack gmp FFLAS_FFPACK_FOUND)
 
+endif()
+
 
 # https://www.gnu.org/software/glpk/
 ExternalProject_Add(build-glpk
@@ -704,6 +716,7 @@ endif()
 _ADD_COMPONENT_DEPENDENCY(libraries glpk gmp GLPK_FOUND)
 
 
+if(USE_SUBMODULES)
 # https://github.com/google/googletest
 ExternalProject_Add(build-googletest
   PREFIX            libraries/googletest
@@ -787,8 +800,11 @@ endif()
 #_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
 
 
+endif()
+
 #############################################################################
 ## Instructions for building required programs
+
 
 # https://github.com/4ti2/4ti2
 # 4ti2 needs gmp and glpk and is used by the package FourTiTwo

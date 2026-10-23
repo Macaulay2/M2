@@ -8,6 +8,7 @@
 needsPackage "Style"
 
 -- Emacs: Write M2-symbols.el
+if getenv "M2_SKIP_EMACS" =!= "1" then
 generateGrammar("emacs/M2-symbols.el", x -> demark(" ", format \ x))
 
 -- Prism: Write macaulay2.js

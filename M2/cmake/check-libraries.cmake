@@ -256,6 +256,26 @@ set(PROGRAM_OPTIONS 4ti2 cohomCalg msolve Gfan lrslib CSDP NAUTY_EXECUTABLE NORM
 
 ###############################################################################
 ## List installed components and unset those that we wish to build ourselves
+if(NOT USE_SUBMODULES)
+  # These libraries have no source fallback in this mode. Engine providers are
+  # checked separately in Macaulay2/e, using their CMake/pkg-config metadata.
+  set(_external_libraries BDWGC FLINT FROBBY GIVARO FFLAS_FFPACK)
+  if(BUILD_TESTING)
+    list(APPEND _external_libraries GTEST)
+  endif()
+  foreach(_library IN LISTS _external_libraries)
+    if(NOT ${_library}_FOUND)
+      message(FATAL_ERROR "USE_SUBMODULES=OFF requires external ${_library}; install it and set CMAKE_PREFIX_PATH or PKG_CONFIG_PATH")
+    endif()
+  endforeach()
+  string(TOUPPER "${BUILD_LIBRARIES}" _requested_libraries)
+  foreach(_library IN ITEMS ALL ON BDWGC FLINT FROBBY GIVARO FFLAS_FFPACK GTEST GOOGLETEST MEMTAILOR MATHIC MATHICGB)
+    if(_library IN_LIST _requested_libraries)
+      message(FATAL_ERROR "BUILD_LIBRARIES=${BUILD_LIBRARIES} conflicts with USE_SUBMODULES=OFF")
+    endif()
+  endforeach()
+endif()
+
 set(INSTALLED_LIBRARIES "")
 set(INSTALLED_PROGRAMS "")
 
@@ -349,6 +369,9 @@ if(CHECK_LIBRARY_COMPATIBILITY)
     FAIL_REGEX "conflict" OUTPUT_VARIABLE LIBRARY_COMPATIBILITY_OUTPUT)
 
   if(NOT LIBRARY_COMPATIBILITY)
+    if(NOT USE_SUBMODULES)
+      message(FATAL_ERROR "External libraries could not be linked together. Fix their paths or versions; USE_SUBMODULES=OFF cannot rebuild submodule dependencies.\n${LIBRARY_COMPATIBILITY_OUTPUT}")
+    endif()
     message(CHECK_FAIL " Detected library incompatibilities; rerun the build-libraries target")
     message(STATUS "Library compatibility check output:\n${LIBRARY_COMPATIBILITY_OUTPUT}")
     set(_m2_rebuild_libraries ${CHECKED_LIBRARIES})

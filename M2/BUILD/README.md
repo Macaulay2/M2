@@ -2,6 +2,33 @@ See the [Macaulay2 wiki](https://github.com/Macaulay2/M2/wiki) for current
 build requirements and instructions, especially the "Building M2 from source"
 pages for the autotools and CMake workflows.
 
+For a CMake build using external submodule dependencies, configure a fresh build
+directory with `-DUSE_SUBMODULES=OFF`. This skips submodule updates and ignores
+populated submodules too, including the bundled Emacs package. Install that
+package separately from [M2-emacs](https://github.com/Macaulay2/M2-emacs).
+
+The libraries normally supplied by submodules must already be installed:
+BDWGC, FLINT, Frobby, Givaro, FFLAS-FFPACK, memtailor, mathic, and mathicgb, plus
+GoogleTest when `BUILD_TESTING=ON`. The three engine libraries need their installed
+CMake or pkg-config metadata; older packages without that metadata need updating.
+Use `CMAKE_PREFIX_PATH` and/or `PKG_CONFIG_PATH` for a custom installation prefix.
+For example, from the repository root:
+
+```sh
+cmake -S M2 -B build-external -G Ninja -DUSE_SUBMODULES=OFF \
+  -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/path/to/dependencies
+cmake --build build-external --target build-libraries build-programs
+cmake --build build-external --target M2-core
+```
+
+Missing or incompatible submodule libraries cause configuration errors in this
+mode. It also rejects requests to build those libraries with `BUILD_LIBRARIES`
+or select bundled engine providers. Other downloaded dependencies retain their
+usual build rules. Switching `USE_SUBMODULES` requires a fresh build directory to
+avoid reusing cached paths or libraries staged by a previous build.
+`GIT_SUBMODULE=OFF` continues to disable checkout updates only; it does not disable
+use of bundled sources.
+
 This directory may be used as a convenient location for the build directory
 trees.  For example, it may contain subdirectories `Linux-i686` and
 `Linux-x86_64`.  Those directories in turn may contain subdirectories, if

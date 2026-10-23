@@ -15,21 +15,25 @@ set(GRAMMAR_FILES
   pygments/macaulay2.py
 #  rouge/macaulay2.rb
   vim/syntax/m2.vim
-  vim/dict/m2.vim.dict
-  emacs/M2-symbols.el)
+  vim/dict/m2.vim.dict)
+if(USE_SUBMODULES)
+  list(APPEND GRAMMAR_FILES emacs/M2-symbols.el)
+endif()
 
 set(GRAMMAR_TEMPLATES ${GRAMMAR_FILES})
 list(TRANSFORM GRAMMAR_TEMPLATES APPEND ".in")
 add_custom_target(M2-editors DEPENDS ${GRAMMAR_FILES})
 add_custom_command(OUTPUT ${GRAMMAR_FILES}
   COMMENT "Generating M2 grammar files for editors"
-  COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-symbols.m2
+  COMMAND ${CMAKE_COMMAND} -E env M2_SKIP_EMACS=$<NOT:$<BOOL:${USE_SUBMODULES}>>
+    ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/make-M2-symbols.m2
   MAIN_DEPENDENCY make-M2-symbols.m2
   DEPENDS M2-core ${GRAMMAR_TEMPLATES})
 
 ###############################################################################
 ## Generating the M2-mode package for Emacs
 
+if(USE_SUBMODULES)
 if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2)
   message(WARNING "Macaulay2/editors/emacs submodule is missing; skipping M2-emacs target")
   return()
@@ -54,6 +58,7 @@ add_custom_command(OUTPUT ${EMACS_FILES}
   MAIN_DEPENDENCY emacs/make-M2-emacs-help.m2
   WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/emacs/M2-symbols.el make-M2-symbols.m2)
+endif()
 
 ################################################################################
 ## Generating prism.js/highlight.js for syntax highlighting in the html
