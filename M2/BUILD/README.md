@@ -4,8 +4,7 @@ pages for the autotools and CMake workflows.
 
 For a CMake build using external submodule dependencies, configure a fresh build
 directory with `-DUSE_SUBMODULES=OFF`. This skips submodule updates and ignores
-populated submodules too, including the bundled Emacs package. Install that
-package separately from [M2-emacs](https://github.com/Macaulay2/M2-emacs).
+populated submodules too. Install the Emacs interface separately from [M2-emacs](https://github.com/Macaulay2/M2-emacs).
 
 The libraries normally supplied by submodules must already be installed:
 BDWGC, FLINT, Frobby, Givaro, FFLAS-FFPACK, memtailor, mathic, and mathicgb, plus
