@@ -1,6 +1,9 @@
-See the [Macaulay2 wiki](https://github.com/Macaulay2/M2/wiki) for current
-build requirements and instructions, especially the "Building M2 from source"
-pages for the autotools and CMake workflows.
+See the [CMake build guide](https://github.com/Macaulay2/M2/wiki/Building-M2-from-source-using-CMake)
+and [Autotools build guide](https://github.com/Macaulay2/M2/wiki/Building-M2-from-source-using-Autotools)
+for build requirements and detailed instructions.
+
+For temporary external-dependency build instructions and release tracking, see
+[#4761](https://github.com/Macaulay2/M2/issues/4761).
 
 This directory may be used as a convenient location for the build directory
 trees.  For example, it may contain subdirectories `Linux-i686` and
