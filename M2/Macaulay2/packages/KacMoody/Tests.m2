@@ -253,16 +253,16 @@ for i from 0 to 3 do for j from 0 to 3 do (
 );
 
 ------------------------------------------------------------------------
--- Legacy adapters and malformed inputs
+-- Coordinate constructors and malformed inputs
 ------------------------------------------------------------------------
 
-assert(datumFromLegacyCartan A3 === D1);
-assert(toLegacyCartanMatrix RD1 == A3);
-assert(toLegacyList rootFromLegacy(A3,{1,2,3}) === {1,2,3});
-assert(toLegacyList corootFromLegacy(A3,{1,2,3}) === {1,2,3});
-assert(toLegacyList weightFromLegacy(A3,{1,2,3}) === {1,2,3});
-assert(toLegacyList coweightFromLegacy(A3,{1,2,3}) === {1,2,3});
-assert(parentDatum weightFromLegacy(A3,{1,2,3}) === RD1);
+assert(cartanDatum A3 === D1);
+assert(datumCartanMatrix RD1 == A3);
+assert(datumCoordinates kmRoot(A3,{1,2,3}) === {1,2,3});
+assert(datumCoordinates kmCoroot(A3,{1,2,3}) === {1,2,3});
+assert(datumCoordinates kmWeight(A3,{1,2,3}) === {1,2,3});
+assert(datumCoordinates kmCoweight(A3,{1,2,3}) === {1,2,3});
+assert(parentDatum kmWeight(A3,{1,2,3}) === RD1);
 
 assert(mustError(() -> cartanDatum matrix{{2,-1},{0,2}}));
 assert(mustError(() -> kmRoot(RD1,{1,0})));
@@ -627,7 +627,7 @@ assert(affineLevel(A21,transpose matrix{{5,2,7}}) == 14);
 
 -- The draft must not invent a derivation coordinate from Dynkin labels.
 assert(mustErrorAffineDraft(() -> affineDegree(A11,{1,0})));
-assert(mustErrorAffineDraft(() -> affineFullWeight(A11,{1,0})));
+assert(mustErrorAffineDraft(() -> weightFromRealizationCoordinates(A11,{1,0})));
 
 -- Domain checks: finite and decomposable affine aggregates are rejected.
 assert(mustErrorAffineDraft(() -> affineMarks(cartanA 3)));
@@ -724,7 +724,7 @@ assert(datumCoordinates delta21 === {1,1,1});
 assert(datumCoordinates central21 === {1,1,1});
 assert(affineMarks(cartanDatum A21) === {1,1,1});
 assert(affineComarks(realization RD21) === {1,1,1});
-assert(affineCentralCoefficients RD21 === {1,1,1});
+assert(affineComarks RD21 === {1,1,1});
 assert(affineNullRoot A21 === {1,1,1});
 
 -- Delta and c both have zero simple pairings but are nonzero in the full
@@ -757,7 +757,7 @@ assert(datumCoordinates d21 === {1,0,0});
 assert(pairing(delta21,d21) == 1);
 
 ambientWeightCoordinates := {2,-1,3,5};
-lambdaFull := affineFullWeight(RD21,ambientWeightCoordinates);
+lambdaFull := weightFromRealizationCoordinates(RD21,ambientWeightCoordinates);
 assert(instance(lambdaFull,KMWeight));
 assert(realizationCoordinates lambdaFull === ambientWeightCoordinates);
 degreeExpected := sum apply(ambientWeightCoordinates,
@@ -894,7 +894,7 @@ assert(typedClassical#"dynkinLabels" === {2,7});
 
 -- Restriction depends only on Dynkin labels, but a complete ambient affine
 -- weight is retained verbatim in the metadata, including its delta direction.
-namedFullWeight := affineFullWeight(RD21named,{2,-1,3,5});
+namedFullWeight := weightFromRealizationCoordinates(RD21named,{2,-1,3,5});
 typedFullClassical := affineClassicalPart(namedFullWeight,1);
 assert(datumCoordinates(typedFullClassical#"weight") ===
     apply(typedFullClassical#"nodes",
@@ -1004,7 +1004,7 @@ assert(affineErrorMessageDraft(() ->
     concatenate(
         "affineDegree: the weight is incomplete; Dynkin labels determine ",
         "only its class modulo the delta direction. Use ",
-        "affineWeightFromDynkinLabels or affineFullWeight to construct ",
+        "affineWeightFromDynkinLabels or weightFromRealizationCoordinates to construct ",
         "a complete KMWeight"));
 assert(mustErrorAffineDraft(() ->
     affineDegree(lifted21,kmCoweight(RD21named,{1,0,0}))));
@@ -1087,13 +1087,14 @@ assert(mustErrorAffineDraft(() -> affineTypeData cartanDatum finiteRD));
 assert(mustErrorAffineDraft(() -> affineFinitePart realization finiteRD));
 assert(mustErrorAffineDraft(() -> affineFinitePart finiteRD));
 assert(mustErrorAffineDraft(() -> affineLevel(kmWeight(finiteRD,{1,0}))));
-assert(mustErrorAffineDraft(() -> affineFullWeight(finiteRD,{1,0})));
+assert(realizationCoordinates weightFromRealizationCoordinates(finiteRD,{1,0}) === {1,0});
 mixedRD := rootDatum Amixed;
-assert(mustErrorAffineDraft(() -> affineFullWeight(
-    mixedRD,apply((realization mixedRD)#"dimension",i -> 0))));
+mixedZeroCoordinates := apply((realization mixedRD)#"dimension",i -> 0);
+assert(realizationCoordinates weightFromRealizationCoordinates(
+    mixedRD,mixedZeroCoordinates) === mixedZeroCoordinates);
 assert(mustErrorAffineDraft(() -> affineDegree(A21,{1,0,0})));
-assert(mustErrorAffineDraft(() -> affineFullWeight(A21,{1,0,0})));
-assert(mustErrorAffineDraft(() -> affineFullWeight(A21,matrix{{1,0,0}})));
+assert(mustErrorAffineDraft(() -> weightFromRealizationCoordinates(A21,{1,0,0})));
+assert(mustErrorAffineDraft(() -> weightFromRealizationCoordinates(A21,matrix{{1,0,0}})));
 
 print "AffineStructureTests: all fixtures passed";
 ///
@@ -1113,7 +1114,7 @@ e = identityWeylElement W;
 s1 = simpleWeylReflection(W,1);
 s2 = simpleWeylReflection(W,2);
 s3 = simpleWeylReflection(W,3);
-assert(weylLength e == 0 and weylWord e === {});
+assert(weylLength e == 0 and reducedWord e === {});
 assert(toString e === "1_W");
 assert(toString s1 === "s_1");
 assert(s1*s1 === e);
@@ -1187,7 +1188,7 @@ assert(simpleWeylReflection(Wnamed,"left") ==
     simpleWeylReflection(Wnamed,1));
 assert(weylElement(Wnamed,{"left","middle","left"}) ==
     weylElement(Wnamed,{1,2,1}));
-assert(weylWord weylElement(Wnamed,{"left","middle"}) === {1,2});
+assert(reducedWord weylElement(Wnamed,{"left","middle"}) === {1,2});
 assert(toString weylElement(Wnamed,{"left","middle","left"})
     === "s_left s_middle s_left");
 assert(coxeterMatrix(Xnamed,"left","middle") == 3);
@@ -1319,7 +1320,7 @@ assert(parabolicDegree(Pwhole,kmRoot(D,{1,2,3})) == 0);
 -- obtained from a Borel Levi remain closed under the public constructors.
 Wzero = weylGroup parabolicLevi PBorel;
 ezero = identityWeylElement Wzero;
-assert(weylWord ezero === {});
+assert(reducedWord ezero === {});
 assert(weylLength ezero == 0);
 assert(numrows weylElementMatrix ezero == 0);
 assert(coxeterMatrix Wzero === {});
@@ -1813,7 +1814,7 @@ assert(isMinusculeNode(DintegerCollision,integerMinuscule));
 assert(isCominusculeNode(DintegerCollision,integerCominuscule));
 assert(removedNodes standardParabolic(
     DintegerCollision,RemovedNodes=>{integerMinuscule}) === {3});
-assert(weylWord simpleWeylReflection(
+assert(reducedWord simpleWeylReflection(
     weylGroup DintegerCollision,integerMinuscule) === {3});
 
 -- In a product, minuscule factors can be chosen independently.
@@ -2220,8 +2221,8 @@ assert(all(characterSupport fullCharacterFC,mu ->
 assert(toString fullCharacterFC === concatenate(
     "e^(1, 7) + e^(-1, 7) [realization coordinates]"));
 
-vermaFullFC = vermaCharacter(vermaModule(DextraFC,fullLambdaFC),Depth=>1);
-integrableFullFC = integrableCharacter(
+vermaFullFC = moduleCharacter(vermaModule(DextraFC,fullLambdaFC),Depth=>1);
+integrableFullFC = moduleCharacter(
     integrableHighestWeightModule(DextraFC,fullLambdaFC),Depth=>1);
 assert(characterCoefficient(vermaFullFC,lowerFullFC) == 1);
 assert(characterTerms integrableFullFC == characterTerms fullCharacterFC);
@@ -3249,7 +3250,7 @@ assert(match("Through homological degree 2",toString Baff2));
 assert(match("differential maps not computed",toString Baff2));
 assert(match("M\\(-3, 4, -2\\)",toString Baff2));
 EulerAff2 = bggEulerCharacter(Baff2,Depth=>2);
-integrableAff2 = integrableCharacter(
+integrableAff2 = moduleCharacter(
     integrableHighestWeightModule(DaffBGG,Lambda0BGG),Depth=>2);
 assert(characterTerms EulerAff2 == characterTerms integrableAff2);
 assert(mustErrorO(() -> bggEulerCharacter(Baff2,Depth=>3)));
@@ -3263,7 +3264,7 @@ DindBGG = rootDatum rankTwoIndefiniteKL;
 lambdaIndBGG = kmWeight(DindBGG,{1,0});
 Bind2 = bggResolution(DindBGG,lambdaIndBGG,MaxDegree=>2);
 EulerInd2 = bggEulerCharacter(Bind2,Depth=>2);
-integrableInd2 = integrableCharacter(
+integrableInd2 = moduleCharacter(
     integrableHighestWeightModule(DindBGG,lambdaIndBGG),Depth=>2);
 assert(characterTerms EulerInd2 == characterTerms integrableInd2);
 
@@ -3436,7 +3437,7 @@ dummyAffine = affineTypeData cartanAffineA 2;
 W = weylGroup D;
 BCache = highestWeightCrystal(D,{1,0});
 dummyCrystal = crystalCharacter BCache;
-dummyVerma = vermaCharacter(vermaModule(D,{0,0}),Depth=>2);
+dummyVerma = moduleCharacter(vermaModule(D,{0,0}),Depth=>2);
 dummyDisplay = toString dummyVerma;
 assert(((infrastructureCacheInfo())#"weightNotation")#"latticeBases" > 0);
 dummyKL = kazhdanLusztigPolynomial(
@@ -5448,21 +5449,29 @@ TEST ///
     } do assert(member(publicName,exportedNames));
     privateOnlyNames := {
         "cartanLeviHighestWeights", "affineLeviHighestWeights",
-        "indefiniteLeviHighestWeights",
-        "typeAfundWeights", "typeBfundWeights", "typeCfundWeights",
-        "typeDfundWeights",
-        "cartanPositiveRootsA", "cartanPositiveRootsB",
-        "cartanPositiveRootsC", "cartanPositiveRootsD",
-        "cartanPositiveRootsE6", "cartanPositiveRootsE7",
-        "cartanPositiveRootsE8", "cartanPositiveRootsF4",
-        "cartanPositiveRootsG2",
-        "partitionToFundamentalA", "partitionToFundamentalB",
-        "partitionToFundamentalC", "partitionToFundamentalD",
+        "indefiniteLeviHighestWeights", "partitionToFundamentalA",
         "fundamentalToPartitionA", "fundamentalToPartitionB",
-        "fundamentalToPartitionC", "fundamentalToPartitionD"
+        "fundamentalToPartitionC", "fundamentalToPartitionD",
+        "vermaCharacter", "integrableCharacter"
     };
     assert(all(privateOnlyNames,n -> not member(n,exportedNames)));
     assert(all(privateOnlyNames,n -> PD#?n));
+    retiredPublicNames := {
+        "toLegacyList",
+        "toLegacyCartanMatrix",
+        "datumFromLegacyCartan",
+        "rootFromLegacy",
+        "corootFromLegacy",
+        "weightFromLegacy",
+        "coweightFromLegacy",
+        "affineCentralCoefficients",
+        "affineFullWeight",
+        "weylWord",
+        "vermaCharacter",
+        "integrableCharacter",
+        "affineStructuralCapabilities"
+    };
+    assert(all(retiredPublicNames,n -> not member(n,exportedNames)));
     assert(fundamentalToPartition(cartanB 3,{-1,0,0}) === {-1,0,0});
     assert(mustError(() ->
         fundamentalToPartition(cartanC 3,{1/2,0,0})));
@@ -6599,7 +6608,7 @@ assert(characterTerms demazureOperator(1,FDemazureCert) == characterTerms FDemaz
 assert(characterCoefficient(demazureCharacter(DA1DemazureCert,{4},{1}),
     kmWeight(DA1DemazureCert,{2})) == 1);
 assert(mustErrorTransportCert(() -> demazureOperator(1,
-    vermaCharacter(vermaModule(DA1DemazureCert,lDemazureCert),Depth=>1))));
+    moduleCharacter(vermaModule(DA1DemazureCert,lDemazureCert),Depth=>1))));
 
 ///
 
@@ -6611,7 +6620,7 @@ RmodeCert = realization(cartanDatum cartanA 2,
 DmodeCert = rootDatum RmodeCert;
 lmodeCert = weightFromRealizationCoordinates(DmodeCert,{1,7});
 classModeCert = kmWeight(DmodeCert,{1});
-VMmodeCert = vermaCharacter(vermaModule(DmodeCert,lmodeCert),Depth=>0);
+VMmodeCert = moduleCharacter(vermaModule(DmodeCert,lmodeCert),Depth=>0);
 IMmodeCert = moduleCharacter(integrableHighestWeightModule(DmodeCert,lmodeCert),Depth=>0);
 emptyModeCert = VMmodeCert-IMmodeCert;
 assert(#keys characterTerms emptyModeCert == 0);
@@ -6727,7 +6736,7 @@ assert(mustErrorAffineRangeCert(() -> bggEulerCharacter(BaffRangeCert,Depth=>3))
 
 DindefRangeCert = rootDatum matrix{{2,-3},{-3,2}};
 lindefRangeCert = kmWeight(DindefRangeCert,{1,1});
-VindefRangeCert = vermaCharacter(vermaModule(DindefRangeCert,lindefRangeCert),Depth=>2);
+VindefRangeCert = moduleCharacter(vermaModule(DindefRangeCert,lindefRangeCert),Depth=>2);
 assert(VindefRangeCert#"truncation"#"highestWeight" === lindefRangeCert);
 assert(characterCoefficient(VindefRangeCert,
     lindefRangeCert-toWeight kmRoot(DindefRangeCert,{1,1})) == 2);
@@ -7069,8 +7078,8 @@ for fixtureEfficiencyProduct in {
     lambda := if instance(fixtureEfficiencyProduct#1,KMWeight)
         then fixtureEfficiencyProduct#1 else kmWeight(D,fixtureEfficiencyProduct#1);
     M := vermaModule(D,lambda);
-    shallow := vermaCharacter(M,Depth=>2);
-    deep := vermaCharacter(M,Depth=>9);
+    shallow := moduleCharacter(M,Depth=>2);
+    deep := moduleCharacter(M,Depth=>9);
     product := shallow*deep;
     reversed := deep*shallow;
     signed := ((-2)*shallow)*(3*deep);
@@ -7109,7 +7118,7 @@ for fixtureEfficiencyProduct in {
     assert(characterCoefficient(exactZeroProduct,
         2*lambda-toWeight kmRoot(D,{3,0})) == 0);
 
-    depthZeroProduct := vermaCharacter(M,Depth=>0)*deep;
+    depthZeroProduct := moduleCharacter(M,Depth=>0)*deep;
     assert(characterTerms depthZeroProduct == new Tally from {(2*lambda)=>1});
     assert(depthZeroProduct#"truncation"#"completeThroughDepth" == 0);
 );
@@ -8018,7 +8027,7 @@ for k from 0 to #publishedWords-1 do (
     assert(kazhdanLusztigCoefficients(inverseWeylElement e,inverseWeylElement v) === expected);
     assert(kazhdanLusztigCoefficients(transpose A,{},word) === expected);
 );
-assert(#unique apply(publishedWords,word -> weylWord weylElement(W,apply(word,i -> 4-i))) == 48);
+assert(#unique apply(publishedWords,word -> reducedWord weylElement(W,apply(word,i -> 4-i))) == 48);
 assert(kazhdanLusztigCoefficients(cartanB 3,{}, {3,2,3,1,2,3}) === {1,0,1});
 assert(kazhdanLusztigCoefficients(cartanB 3,{}, {2,3,2,1,2,3,2}) === {1,1,1});
 
@@ -8054,7 +8063,7 @@ rankBruhat = (p,q) -> all(toList(1..4),a -> all(toList(1..4),b ->
     #(select(take(p,a),i -> i<=b)) >= #(select(take(q,a),i -> i<=b))));
 clearInfrastructureCaches();
 for u in weylEls do for v in weylEls do (
-    comparable := rankBruhat(wordPermutation weylWord u,wordPermutation weylWord v);
+    comparable := rankBruhat(wordPermutation reducedWord u,wordPermutation reducedWord v);
     assert(bruhatLessOrEqual(u,v) === comparable);
     coeffs := kazhdanLusztigCoefficients(u,v);
     assert(coeffs === kazhdanLusztigCoefficients(inverseWeylElement u,inverseWeylElement v));
@@ -8561,7 +8570,7 @@ TEST ///
     );
     DAuditPBW = rootDatum cartanAffineA 1;
     l0AuditPBW = weightFromRealizationCoordinates(DAuditPBW,{1,0,0});
-    VAuditPBW = vermaCharacter(vermaModule(DAuditPBW,l0AuditPBW),Depth=>HAuditPBW);
+    VAuditPBW = moduleCharacter(vermaModule(DAuditPBW,l0AuditPBW),Depth=>HAuditPBW);
     offsetsAuditPBW = H -> flatten apply(toList(0..H),h ->
         apply(toList(0..h),a -> {a,h-a}));
     for beta in offsetsAuditPBW HAuditPBW do assert(characterCoefficient(VAuditPBW,
@@ -8589,16 +8598,6 @@ TEST ///
 ///
 
 TEST ///
-    capabilitiesAuditAffine = affineStructuralCapabilities();
-    assert(instance(capabilitiesAuditAffine,HashTable));
-    assert(set keys capabilitiesAuditAffine === set {
-        "availableFromCartanMatrix","availableFromRootDatum","typedNodeMetadata",
-        "requiresExplicitCompleteWeightAndDerivation",
-        "notDeterminedByDynkinLabelsAlone","cacheControl"});
-    assert(member("affineDegree",capabilitiesAuditAffine#"notDeterminedByDynkinLabelsAlone"));
-    assert(member("affineDegree",capabilitiesAuditAffine#"requiresExplicitCompleteWeightAndDerivation"));
-    assert(all(keys capabilitiesAuditAffine,k -> instance(capabilitiesAuditAffine#k,List)
-        and all(capabilitiesAuditAffine#k,x -> instance(x,String))));
     SAuditMembership = indefiniteRootSnapshot(matrix{{2,-10},{-10,2}},10);
     assert(isRootInSnapshot(SAuditMembership,{4,6}));
     assert(not isRootInSnapshot(SAuditMembership,{10,0}));
@@ -9665,9 +9664,9 @@ sameLeviTermsArithmetic(CsLArith^2,
 assert(characterCoefficient(CsLArith^0,
     restrictWeight(LsLArith,liftLArith {0,0})) == 1);
 skewVermaALArith = restrictCharacter(LsLArith,
-    vermaCharacter(vermaModule(DsLArith,weightALArith),Depth=>3));
+    moduleCharacter(vermaModule(DsLArith,weightALArith),Depth=>3));
 skewVermaBLArith = restrictCharacter(LsLArith,
-    vermaCharacter(vermaModule(DsLArith,weightBLArith),Depth=>2));
+    moduleCharacter(vermaModule(DsLArith,weightBLArith),Depth=>2));
 for k from 0 to 2 do assert(characterCoefficient(
     skewVermaALArith*skewVermaBLArith,
     restrictWeight(LsLArith,weightSumLArith-toWeight kmRoot(DsLArith,{k}))) == k+1);
@@ -9796,10 +9795,10 @@ DvLArith = rootDatum "A1";
 LvLArith = reductiveLeviDatum(
     standardParabolic(DvLArith,LeviNodes=>{}),DvLArith);
 highestLArith = kmWeight(DvLArith,{2});
-verma3AmbientLArith = vermaCharacter(vermaModule(DvLArith,highestLArith),Depth=>3);
+verma3AmbientLArith = moduleCharacter(vermaModule(DvLArith,highestLArith),Depth=>3);
 verma3LArith = restrictCharacter(LvLArith,verma3AmbientLArith);
 verma5LArith = restrictCharacter(LvLArith,
-    vermaCharacter(vermaModule(DvLArith,highestLArith),Depth=>5));
+    moduleCharacter(vermaModule(DvLArith,highestLArith),Depth=>5));
 for k from 0 to 3 do (
     root := toWeight kmRoot(DvLArith,{k});
     assert(characterCoefficient(verma3LArith^2,
@@ -9831,7 +9830,7 @@ LaffLArith = reductiveLeviDatum(
     standardParabolic(DaffLArith,RemovedNodes=>{1}),DaffLArith);
 lambdaAffLArith = weightFromRealizationCoordinates(DaffLArith,{1,0,0});
 VaffLArith = restrictCharacter(LaffLArith,
-    vermaCharacter(vermaModule(DaffLArith,lambdaAffLArith),Depth=>2));
+    moduleCharacter(vermaModule(DaffLArith,lambdaAffLArith),Depth=>2));
 deltaAffLArith = toWeight kmRoot(DaffLArith,{1,1});
 assert(characterCoefficient(VaffLArith^2,
     restrictWeight(LaffLArith,2*lambdaAffLArith-deltaAffLArith)) == 6);
@@ -9854,7 +9853,7 @@ LhypLArith = reductiveLeviDatum(
     standardParabolic(DhypLArith,LeviNodes=>{1,2}),DhypLArith);
 lambdaHypLArith = kmWeight(DhypLArith,{1,0});
 VhypLArith = restrictCharacter(LhypLArith,
-    vermaCharacter(vermaModule(DhypLArith,lambdaHypLArith),Depth=>2));
+    moduleCharacter(vermaModule(DhypLArith,lambdaHypLArith),Depth=>2));
 mixedRootLArith = toWeight kmRoot(DhypLArith,{1,1});
 assert(characterCoefficient(VhypLArith,
     restrictWeight(LhypLArith,lambdaHypLArith-mixedRootLArith)) == 2);

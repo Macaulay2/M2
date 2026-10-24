@@ -1881,7 +1881,7 @@ Description
     @TO KMWeylGroup@, @TT "word"@ is a reduced word in the numbered
     simple reflections, @TT "length"@ is its Coxeter length, and
     @TT "rootActionEntries"@ gives its action on simple-root coordinates.
-    The commands @TO weylParent@, @TO weylWord@, @TO weylLength@, and
+    The commands @TO weylParent@, @TO reducedWord@, @TO weylLength@, and
     @TO weylElementMatrix@ return these quantities.  Multiplication and
     comparison take the Weyl group into account: the same sequence of
     simple reflections can represent different elements for different
@@ -1896,7 +1896,7 @@ Description
   Text
     The element itself prints as
     @TT "s_left s_middle s_left"@.  The identity prints as @TT "1_W"@.
-    This is a reduced expression for the element.  Use @TO weylWord@,
+    This is a reduced expression for the element.  Use @TO reducedWord@,
     @TO weylLength@, and @TO weylElementMatrix@ to obtain the word, length,
     and faithful action on the root lattice.
   Text
@@ -1904,7 +1904,7 @@ Description
     the root lattice.  It therefore recognizes different reduced words
     for the same element, as in the $A_2$ braid relation above, while
     elements belonging to different specified Weyl groups are unequal.
-    A reduced word can be entered using node labels; @TO weylWord@
+    A reduced word can be entered using node labels; @TO reducedWord@
     reports their numbered positions, starting at $1$.
   Text
     When given a Cartan matrix, @TO weylGroupElements@ returns elements
@@ -1921,7 +1921,7 @@ Description
 SeeAlso
   weylElement
   weylParent
-  weylWord
+  reducedWord
   weylGroupElements
   parabolicCosetReps
   weylElementMatrix
@@ -8180,6 +8180,8 @@ Inputs
     a generalized Cartan matrix
   w:List
     any (not necessarily reduced) word in 1-based simple-reflection indices
+  u:WeylElement
+    a Weyl element whose stored reduced word is requested
 Outputs
   v:List
     a reduced word representing the same Weyl-group element as @TT "w"@
@@ -8214,6 +8216,15 @@ Description
     w0 := longElement cartanB 3
     weylLength(cartanB 3, w0)            -- 9 = |Phi^+(B_3)|
     length reducedWord(cartanB 3, w0 | w0)  -- identity: empty
+  Text
+    Custom node labels are accepted when constructing a Weyl element, but
+    its reduced word is returned in node positions:
+  Example
+    C = cartanDatum("A2",NodeLabels=>{"left","right"});
+    w = weylElement(weylGroup C,{"left","right","left"})
+    reducedWord w
+  Text
+    The list $(1,2,1)$ means $s_{\mathrm{left}}s_{\mathrm{right}}s_{\mathrm{left}}$. The alternate reduced expression $(2,1,2)$ represents the same element by the $A_2$ braid relation.
 SeeAlso
   weylLength
   weylInversionData
@@ -9125,7 +9136,7 @@ Description
     Cartan pairing.
 SeeAlso
   "Roots, weights, and pairings"
-  affineFullWeight
+  weightFromRealizationCoordinates
   affineDerivation
   affineWeightFromDynkinLabels
   affineDegree
@@ -9186,13 +9197,6 @@ Usage
   isCorootLatticeCoweight eta
   integratesToGlobalForm lambda
   integratesCoweightToGlobalForm eta
-  toLegacyList lambda
-  toLegacyCartanMatrix D
-  datumFromLegacyCartan A
-  rootFromLegacy(D,a)
-  corootFromLegacy(D,b)
-  weightFromLegacy(D,l)
-  coweightFromLegacy(D,m)
 Inputs
   D:RootDatum
     the common root datum
@@ -9372,27 +9376,17 @@ Description
     Dad = rootDatum("A2",GlobalForm=>"Adjoint");
     mu = kmWeight(Dad,{1,1});
     (weightToRootCoordinates mu,isRootLatticeWeight mu,
-     toLegacyList(toRoot mu))
+     datumCoordinates(toRoot mu))
   Text
     The output identifies $\omega_1+\omega_2=\alpha_1+\alpha_2$; therefore
     the weight lies in the adjoint character lattice and converts to the
     simple-root coordinate list $(1,1)$.
   Text
-    The @TT "*FromLegacy"@ commands construct roots, coroots, weights, and
-    coweights from coordinate lists and a specified datum.
-    @TO toLegacyList@ returns the coordinate list, and
-    @TO toLegacyCartanMatrix@ returns the Cartan matrix.  These last two
-    outputs do not include the root datum or realization.
-    The four @TT "*FromLegacy"@ commands have the same list conventions
-    as @TO kmRoot@, @TO kmCoroot@, @TO kmWeight@, and @TO kmCoweight@;
-    their first argument can be a root datum, Cartan datum, or matrix.
-    @TO datumFromLegacyCartan@ constructs a Cartan datum from a matrix.
-    For a complete weight with extra realization directions,
-    @TO toLegacyList@ returns only its Dynkin labels, and for a complete
-    coweight it returns only its simple-root evaluations.  It is therefore
-    not a way to preserve a complete affine weight: use
-    @TO realizationCoordinates@ and the complete-vector constructor when
-    those additional coordinates matter.
+    @TO datumCoordinates@ returns Dynkin labels for a weight and simple-root
+    evaluations for a coweight. These lists omit any extra realization
+    directions. To retain a complete affine weight, use
+    @TO realizationCoordinates@ together with
+    @TO weightFromRealizationCoordinates@.
 SeeAlso
   "Cartan data, realizations, and global lattices"
   weylAction
@@ -9421,7 +9415,7 @@ Usage
   s = simpleWeylReflection(W,i)
   winv = inverseWeylElement w
   weylParent w
-  weylWord w
+  reducedWord w
   y = weylAction(w,x)
   P = standardParabolic(X,RemovedNodes=>J)
   P = standardParabolic(X,LeviNodes=>I)
@@ -9487,7 +9481,7 @@ Description
     sets.  An integer in @TT "1..rank"@ means a 1-based node position;
     any other value is looked up among the chosen labels.  Thus integer
     labels such as @TT "{10,20,30}"@ remain usable without making the
-    ordinary positional convention ambiguous.  @TO weylWord@,
+    ordinary positional convention ambiguous.  @TO reducedWord@,
     @TO removedNodes@, and @TO leviNodes@ return node positions, numbered
     starting at $1$.
     A position-label table returned by
@@ -9501,12 +9495,12 @@ Description
     u = weylElement(W,{"left","middle","left"});
     v = weylElement(W,{"middle","left","middle"})
     u
-    (weylWord u,weylLength u,u == v,
+    (reducedWord u,weylLength u,u == v,
         coxeterMatrix(W,"left","middle"))
   Text
     Both Weyl elements have the compact mathematical display
     @TT "s_left s_middle s_left"@.  @TO weylParent@ gives the Weyl group,
-    and @TO weylWord@ gives the reduced word.
+    and @TO reducedWord@ gives the reduced word.
     The tuple @TT "({1,2,1},3,true,3)"@ says that
     $u=s_{\rm left}s_{\rm middle}s_{\rm left}$ has length $3$,
     $m_{\rm left,middle}=3$, and hence
@@ -9960,7 +9954,6 @@ Headline
 Usage
   a = affineMarks A
   av = affineComarks A
-  affineCentralCoefficients A
   T = affineTypeData D
   delta = affineNullRoot D
   c = affineCentralElement D
@@ -9973,14 +9966,13 @@ Usage
   d = affineDerivation(D,node)
   L = affineWeightFromDynkinLabels(D,lambda,degree)
   L = affineWeightFromDynkinLabels(D,lambda,degree,d)
-  L = affineFullWeight(D,x)
+  L = weightFromRealizationCoordinates(D,x)
   q = affineDegree(L,d)
   affineCartanA2Twisted n
   affineCartanAOddTwisted n
   affineCartanDTwisted n
   affineCartanE6Twisted()
   affineCartanD4Twisted()
-  affineStructuralCapabilities()
 Inputs
   A:Matrix
     an indecomposable affine generalized Cartan matrix
@@ -10023,9 +10015,9 @@ Description
        c=\sum_i a_i^\vee\alpha_i^\vee.
     \]
     @TO affineMarks@ and @TO affineComarks@ return these coefficient lists.
-    Both commands, @TO affineCentralCoefficients@, @TO affineTypeData@,
+    Both commands, @TO affineTypeData@,
     and @TO affineFinitePart@ accept a matrix, Cartan datum, realization,
-    or root datum.  @TO affineCentralCoefficients@ is the coefficient-list
+    or root datum.  @TO affineComarks@ is the coefficient-list
     form of the central coroot.  @TO affineNullRoot@ returns its coefficient
     list for a matrix, Cartan datum, or realization.
     For a @TO RootDatum@, @TO affineNullRoot@ and
@@ -10250,11 +10242,10 @@ Description
     minimal affine realization
     of dimension @TT "nodeCount+1"@.  In a nonminimal realization, labels
     and one degree leave further annihilator directions undetermined.
-    Use @TO affineFullWeight@ with a complete realization-coordinate
+    Use @TO weightFromRealizationCoordinates@ with a complete realization-coordinate
     vector when those additional coordinates have been specified.
-    @TO affineFullWeight@ requires a root datum and accepts a list or a
-    one-row or one-column matrix with $\dim\mathfrak h$ entries; it is the
-    affine form of @TO weightFromRealizationCoordinates@.
+    @TO weightFromRealizationCoordinates@ requires a root datum and accepts a list or a
+    one-row or one-column matrix with $\dim\mathfrak h$ entries.
     @TO affineWeightFromDynkinLabels@ also accepts its Dynkin labels as a
     one-row or one-column matrix, with one entry per affine node.
     Neither full-weight construction is available from a Cartan matrix
@@ -10337,8 +10328,10 @@ Description
     its standard affine node in the first position.  The first three
     families have $n+1$ nodes; $E_6^{(2)}$ has five, and $D_4^{(3)}$
     has three.
-    @TO affineStructuralCapabilities@ lists which calculations require
-    only a Cartan matrix and which also require a realization.
+    Marks and level are determined by the Cartan matrix. A degree pairing
+    also requires a realization, a complete weight, and a derivation: weights
+    differing by a multiple of the null root have the same Dynkin labels
+    but can have different degrees.
 SeeAlso
   CartanDatum
   Realization
@@ -10549,8 +10542,6 @@ Usage
   M = integrableHighestWeightModule(D,lambda)
   M = vermaModule(D,lambda)
   C = moduleCharacter(M,Depth=>H)
-  C = vermaCharacter(M,Depth=>H)
-  C = integrableCharacter(M,Depth=>H)
   D = characterDatum C
   T = characterTerms C
   S = characterSupport C
@@ -10801,8 +10792,7 @@ Description
     $\beta=\sum_i b_i\alpha_i$, $b_i\geq0$, and $\sum_i b_i\le H$ has
     been computed.
     @TO moduleCharacter@ chooses the character appropriate to the module.
-    The two commands @TO vermaCharacter@ and @TO integrableCharacter@ take
-    that same module as their argument, not a pair consisting of a datum
+    This command takes the module as its argument, not a pair consisting of a datum
     and a highest weight.  @TT "Depth"@ is required for every Verma
     character and for every affine or indefinite integrable character.
     Supplying it in finite type asks for a root-depth expansion rather
@@ -10826,8 +10816,8 @@ Description
     have the same labels, although their characters have different grades.
   Text
     The same distinction is respected in a nonminimal finite realization.
-    If the highest weight is a complete @TO KMWeight@, @TO finiteCharacter@,
-    @TO vermaCharacter@, and @TO integrableCharacter@ retain every
+    If the highest weight is a complete @TO KMWeight@, @TO finiteCharacter@
+    and @TO moduleCharacter@ retain every
     Weyl-fixed central coordinate in each weight.  If the highest weight is
     supplied only as a Dynkin-label list, the output gives weight classes
     modulo those extra directions.  A single formal character cannot mix
@@ -11511,7 +11501,7 @@ SeeAlso
   bruhatLessOrEqual
   weylGroupElements
   vermaModule
-  vermaCharacter
+  moduleCharacter
   "Borel-Weil-Bott and Demazure operators"
 ///
 
@@ -12070,7 +12060,6 @@ undocumented {
 }
 
 
-
 -- Individual references for Euclidean root constructors.
 
 doc ///
@@ -12619,6 +12608,15 @@ Description
     (D#"rank",D#"corank",D#"nodeLabels",datumCartanMatrix D)
   Text
     The ranks are 2 and 0, the labels are left and right, and the matrix is $\begin{pmatrix}2&-1\\-1&2\end{pmatrix}$. Thus this datum describes type $A_2$ with the indicated order of its simple roots.
+  Text
+    When the input is a matrix and no labels are specified, its rows and
+    columns are labeled by their positions, starting at 1.
+  Example
+    D = cartanDatum cartanA 3;
+    (D#"nodeLabels",datumCartanMatrix D == cartanA 3)
+  Text
+    The labels are $(1,2)$, and the equality is true: the original $A_2$
+    matrix and its node order have been retained.
 SeeAlso
   rootDatum
   dynkinDiagram
@@ -12643,12 +12641,19 @@ Outputs
     the generalized Cartan matrix
 Description
   Text
-    This returns the matrix of simple-root and simple-coroot pairings without changing its row and column order. It accepts a Cartan datum, realization, or root datum.
+    This returns the matrix of simple-root and simple-coroot pairings without changing its row and column order. It accepts a Cartan datum, realization, or root datum. The matrix alone does not retain chosen node labels, a realization, or the character lattice.
   Example
     D = rootDatum "B2";
     datumCartanMatrix D
   Text
     The displayed matrix gives $\langle\alpha_j,\alpha_i^\vee\rangle$ in entry $(i,j)$. In particular, the two unequal off-diagonal entries distinguish the long and short simple roots; the command does not replace the matrix by its transpose.
+  Example
+    D = rootDatum "A2";
+    datumCartanMatrix D
+  Text
+    Here the matrix is $\begin{pmatrix}2&-1\\-1&2\end{pmatrix}$:
+    the two simple roots have the same length, and their Dynkin diagram
+    has a single edge.
 SeeAlso
   cartanDatum
   symmetrizer
@@ -13035,6 +13040,14 @@ Description
     (datumCoordinates lambda,realizationCoordinates lambda)
   Text
     The output $((1,0),(1,0,-1))$ gives Dynkin labels $(1,0)$ and the complete realization vector $(1,0,-1)$. This is the weight $\Lambda_0-\delta$, not $\Lambda_0$: the last coordinate distinguishes them.
+  Example
+    mu = weightFromRealizationCoordinates(D,{1,0,-2})
+    (datumCoordinates mu,realizationCoordinates mu)
+  Text
+    This is $\Lambda_0-2\delta$, with the same Dynkin labels $(1,0)$
+    as the preceding weight but a different complete vector. The constructor
+    also works in finite type and in nonminimal realizations. It constructs
+    a weight, without asserting that the weight is dominant or integrable.
 SeeAlso
   realizationCoordinates
   affineDegree
@@ -13131,6 +13144,14 @@ Description
     (datumCoordinates delta,datumCoordinates toWeight delta,realizationCoordinates toWeight delta)
   Text
     The root coefficients are $(1,1)$, while the converted weight has Dynkin labels $(0,0)$. Its complete realization vector is $(0,0,1)$, so the null root is nonzero despite having zero Dynkin labels.
+  Example
+    lambda = weightFromRealizationCoordinates(D,{1,0,-1})
+    (datumCoordinates lambda,realizationCoordinates lambda)
+  Text
+    These are $(1,0)$ and $(1,0,-1)$, respectively. The weight is
+    $\Lambda_0-\delta$; its Dynkin labels alone would not distinguish it
+    from $\Lambda_0$. Use realizationCoordinates when every direction
+    of a weight must be retained.
 SeeAlso
   coordinateBasis
   realizationCoordinates
@@ -13586,11 +13607,11 @@ Description
   Example
     W = weylGroup "A2";
     w = weylElement(W,{1,2,1,1});
-    (w,weylWord w,weylLength w)
+    (w,reducedWord w,weylLength w)
   Text
     The two adjacent $s_1$ factors cancel, so the output represents $s_1s_2$ with reduced word $(1,2)$ and length 2. This is a group element, not a formal list that treats different expressions as different elements.
 SeeAlso
-  weylWord
+  reducedWord
   weylAction
   "Weyl groups and standard parabolics"
 ///
@@ -13620,38 +13641,10 @@ Description
     The true says that $s_1s_2$ is still an element of the chosen $A_2$ Weyl group. Its word is interpreted using that group's simple-root order.
 SeeAlso
   weylGroup
-  weylWord
-  "Weyl groups and standard parabolics"
-///
-
-doc ///
-Key
-  weylWord
-  (weylWord,WeylElement)
-Headline
-  Return a reduced word in simple-reflection positions
-Usage
-  word = weylWord w
-Inputs
-  w:WeylElement
-    a Weyl element with its parent group
-Outputs
-  word:List
-    a reduced word using node positions numbered starting at 1
-Description
-  Text
-    The entries are positions, even when the Weyl group has custom node labels. This gives one reduced expression, not the set of every reduced expression for the element. The rightmost entry acts first.
-  Example
-    C = cartanDatum("A2",NodeLabels=>{"left","right"});
-    w = weylElement(weylGroup C,{"left","right","left"})
-    weylWord w
-  Text
-    The list $(1,2,1)$ means $s_{\mathrm{left}}s_{\mathrm{right}}s_{\mathrm{left}}$. The alternate reduced expression $(2,1,2)$ represents the same element by the $A_2$ braid relation.
-SeeAlso
-  weylElement
   reducedWord
   "Weyl groups and standard parabolics"
 ///
+
 
 doc ///
 Key
@@ -13674,7 +13667,7 @@ Description
     D = rootDatum "A2";
     e = identityWeylElement weylGroup D;
     lambda = kmWeight(D,{2,1})
-    (e,weylWord e,weylAction(e,lambda) == lambda)
+    (e,reducedWord e,weylAction(e,lambda) == lambda)
   Text
     The element is displayed as 1_W, its word is empty, and true confirms that it fixes the weight with Dynkin labels $(2,1)$. The identity still retains its Weyl group.
 SeeAlso
@@ -13737,11 +13730,11 @@ Description
     W = weylGroup "A2";
     w = weylElement(W,{1,2})
     v = inverseWeylElement w;
-    (v,weylWord v,w*v == identityWeylElement W)
+    (v,reducedWord v,w*v == identityWeylElement W)
   Text
     The inverse is $s_2s_1$, represented by $(2,1)$, and true confirms $(s_1s_2)(s_2s_1)=1$. The inverse belongs to the same labeled Weyl group.
 SeeAlso
-  weylWord
+  reducedWord
   identityWeylElement
   "Weyl groups and standard parabolics"
 ///
@@ -14837,37 +14830,6 @@ SeeAlso
   "Affine structural data"
 ///
 
-doc ///
-Key
-  affineCentralCoefficients
-  (affineCentralCoefficients,CartanDatum)
-  (affineCentralCoefficients,Matrix)
-  (affineCentralCoefficients,Realization)
-  (affineCentralCoefficients,RootDatum)
-Headline
-  Return the central coroot as a coefficient list
-Usage
-  a = affineCentralCoefficients D
-Inputs
-  D:Thing
-    an indecomposable affine Cartan matrix, Cartan datum, realization, or root datum
-Outputs
-  a:List
-    primitive positive integral central-coroot coefficients
-Description
-  Text
-    For an indecomposable affine matrix, the left kernel has a unique primitive positive integral generator. It satisfies $A^{\mathsf T}a^\vee=0$ and $c=\sum_i a_i^\vee\alpha_i^\vee$. The entries follow the input matrix order, including after a permutation of nodes. This is the same coefficient list as @TO affineComarks@.
-  Example
-    A = affineCartanA2Twisted 1
-    a = affineCentralCoefficients A;
-    (a,transpose A * transpose matrix{a})
-  Text
-    The list $(2,1)$ gives $c=2\alpha_0^\vee+\alpha_1^\vee$ in type $A_2^{(2)}$. The zero column verifies $A^{\mathsf T}a^\vee=0$. These comarks differ from the null-root coefficients $(1,2)$.
-SeeAlso
-  affineCentralElement
-  affineTypeData
-  "Affine structural data"
-///
 
 doc ///
 Key
@@ -14918,7 +14880,7 @@ Outputs
     the primitive positive central coroot
 Description
   Text
-    The element is $c=\sum_i a_i^\vee\alpha_i^\vee$, with primitive positive comarks satisfying $A^{\mathsf T}a^\vee=0$. A specified root datum is required so that the central element retains its realization. For a coefficient list alone, use @TO affineCentralCoefficients@.
+    The element is $c=\sum_i a_i^\vee\alpha_i^\vee$, with primitive positive comarks satisfying $A^{\mathsf T}a^\vee=0$. A specified root datum is required so that the central element retains its realization. For a coefficient list alone, use @TO affineComarks@.
   Example
     D = rootDatum affineCartanA2Twisted 1;
     c = affineCentralElement D;
@@ -15139,39 +15101,6 @@ SeeAlso
   "Affine structural data"
 ///
 
-doc ///
-Key
-  affineFullWeight
-  (affineFullWeight,Matrix,List)
-  (affineFullWeight,Matrix,Matrix)
-  (affineFullWeight,RootDatum,List)
-  (affineFullWeight,RootDatum,Matrix)
-Headline
-  Construct an affine weight from every realization coordinate
-Usage
-  lambda = affineFullWeight(D,x)
-Inputs
-  D:RootDatum
-    an indecomposable affine root datum with a specified realization
-  x:List
-    a rational complete realization vector, also accepted as a row or column matrix
-Outputs
-  lambda:KMWeight
-    the complete affine weight
-Description
-  Text
-    The input has one entry per Cartan-space dimension, not one per affine node. This is the affine form of @TO weightFromRealizationCoordinates@ and allows nonminimal realizations. The constructor does not assert dominance, lattice integrality, or integrability. A Cartan matrix alone is insufficient to interpret these coordinates.
-  Example
-    D = rootDatum cartanAffineA 1;
-    lambda = affineFullWeight(D,{1,0,-2});
-    (datumCoordinates lambda,realizationCoordinates lambda)
-  Text
-    The output gives labels $(1,0)$ and complete vector $(1,0,-2)$. Thus $\lambda=\Lambda_0-2\delta$: the last coordinate records the affine direction that the two labels alone would omit.
-SeeAlso
-  weightFromRealizationCoordinates
-  affineWeightFromDynkinLabels
-  "Affine structural data"
-///
 
 doc ///
 Key
@@ -15201,7 +15130,7 @@ Outputs
     the unique complete weight with these labels and degree
 Description
   Text
-    In a minimal affine realization, Dynkin labels leave exactly one weight direction undetermined. Prescribing its value on a normalized derivation with $\delta(d)=1$ determines that direction. Without an explicit derivation the command uses @TO affineDerivation@. Nonminimal realizations need further coordinates and must instead use @TO affineFullWeight@. No dominance or integrability is asserted.
+    In a minimal affine realization, Dynkin labels leave exactly one weight direction undetermined. Prescribing its value on a normalized derivation with $\delta(d)=1$ determines that direction. Without an explicit derivation the command uses @TO affineDerivation@. Nonminimal realizations need further coordinates and must instead use @TO weightFromRealizationCoordinates@. No dominance or integrability is asserted.
   Example
     D = rootDatum cartanAffineA 1;
     d = affineDerivation D;
@@ -15210,7 +15139,7 @@ Description
   Text
     The complete vector $(1,0,-2)$ has the prescribed degree $-2$ and level 1. It represents $\Lambda_0-2\delta$, which has the same Dynkin labels as $\Lambda_0$ but is a different weight.
 SeeAlso
-  affineFullWeight
+  weightFromRealizationCoordinates
   affineDegree
   affineDerivation
   "Affine structural data"
@@ -15350,30 +15279,6 @@ SeeAlso
   "Affine structural data"
 ///
 
-doc ///
-Key
-  affineStructuralCapabilities
-Headline
-  Describe the data needed for affine structural calculations
-Usage
-  T = affineStructuralCapabilities()
-Outputs
-  T:HashTable
-    lists of calculations determined by a Cartan matrix or by additional realization data
-Description
-  Text
-    This command takes no arguments. It separates facts determined by the affine Cartan matrix, such as marks and level, from quantities requiring a realization and complete vectors, such as a derivation and its degree pairing. It performs no root enumeration or representation calculation.
-  Example
-    T = affineStructuralCapabilities();
-    (T#"requiresExplicitCompleteWeightAndDerivation",T#"notDeterminedByDynkinLabelsAlone")
-  Text
-    The first list contains affineDegree. The second also includes translation by the null root: two weights with the same Dynkin labels can differ by a multiple of $\delta$, and hence have different degrees. These lists state what mathematical data must be supplied, rather than return weights or multiplicities.
-SeeAlso
-  affineDegree
-  affineFullWeight
-  affineTypeData
-  "Affine structural data"
-///
 
 doc ///
 Key
@@ -15431,233 +15336,6 @@ SeeAlso
   "Roots, weights, and pairings"
 ///
 
-doc ///
-Key
-  toLegacyList
-  (toLegacyList,KMCoroot)
-  (toLegacyList,KMCoweight)
-  (toLegacyList,KMRoot)
-  (toLegacyList,KMWeight)
-Headline
-  Return the coordinate list without its root datum
-Usage
-  a = toLegacyList x
-Inputs
-  x:Thing
-    a root, coroot, weight, or coweight
-Outputs
-  a:List
-    the coordinates given by datumCoordinates
-Description
-  Text
-    This returns simple-root coefficients for a root, simple-coroot
-    coefficients for a coroot, Dynkin labels for a weight, or simple-root
-    evaluations for a coweight. The list has no parent datum. For complete
-    weights or coweights it omits any supplementary realization directions
-    invisible to these evaluations, including in nonminimal finite
-    realizations as well as singular type. Use @TO realizationCoordinates@
-    when those directions matter.
-  Example
-    D = rootDatum cartanAffineA 1;
-    lambda = weightFromRealizationCoordinates(D,{1,0,-1})
-    (toLegacyList lambda,realizationCoordinates lambda)
-  Text
-    The legacy list is $(1,0)$, while the complete vector is $(1,0,-1)$. The shorter list does not distinguish $\Lambda_0-\delta$ from $\Lambda_0$ and therefore cannot preserve this affine weight by itself.
-SeeAlso
-  datumCoordinates
-  realizationCoordinates
-  "Roots, weights, and pairings"
-///
-
-doc ///
-Key
-  toLegacyCartanMatrix
-  (toLegacyCartanMatrix,CartanDatum)
-  (toLegacyCartanMatrix,Realization)
-  (toLegacyCartanMatrix,RootDatum)
-Headline
-  Return a datum as an ordinary Cartan matrix
-Usage
-  A = toLegacyCartanMatrix D
-Inputs
-  D:Thing
-    a Cartan datum, realization, or root datum
-Outputs
-  A:Matrix
-    the generalized Cartan matrix in its original node order
-Description
-  Text
-    This agrees with @TO datumCartanMatrix@. The output contains the Cartan pairing but does not include chosen node labels, a realization, or character lattices.
-  Example
-    D = rootDatum "A2";
-    toLegacyCartanMatrix D
-  Text
-    The matrix is $\begin{pmatrix}2&-1\\-1&2\end{pmatrix}$, the simple-root and coroot pairing matrix of $A_2$. The root datum is no longer part of this ordinary matrix output.
-SeeAlso
-  datumCartanMatrix
-  datumFromLegacyCartan
-  "Roots, weights, and pairings"
-///
-
-doc ///
-Key
-  datumFromLegacyCartan
-  (datumFromLegacyCartan,Matrix)
-Headline
-  Construct a Cartan datum from an ordinary matrix
-Usage
-  D = datumFromLegacyCartan A
-Inputs
-  A:Matrix
-    a symmetrizable generalized Cartan matrix
-Outputs
-  D:CartanDatum
-    its Cartan datum with the default node labels
-Description
-  Text
-    This is the matrix form of @TO cartanDatum@. The matrix order is retained, and the default node positions are used as labels.
-  Example
-    D = datumFromLegacyCartan cartanA 3;
-    (D#"nodeLabels",datumCartanMatrix D == cartanA 3)
-  Text
-    The labels $(1,2)$ name the two simple roots of $A_2$, and true confirms that the original Cartan pairing matrix was retained.
-SeeAlso
-  cartanDatum
-  rootDatum
-  "Roots, weights, and pairings"
-///
-
-doc ///
-Key
-  rootFromLegacy
-  (rootFromLegacy,CartanDatum,List)
-  (rootFromLegacy,Matrix,List)
-  (rootFromLegacy,RootDatum,List)
-Headline
-  Attach a datum to integral simple-root coefficients
-Usage
-  alpha = rootFromLegacy(D,a)
-Inputs
-  D:Thing
-    a root datum, Cartan datum, or Cartan matrix
-  a:List
-    integral simple-root coefficients in matrix order
-Outputs
-  alpha:KMRoot
-    the corresponding element with its root datum
-Description
-  Text
-    This has the same coordinate convention as @TO kmRoot@. Supplying an existing root datum retains its realization and lattice choices. Dynkin labels or simple-root evaluations alone do not specify extra Cartan directions.
-  Example
-    D = rootDatum "A2";
-    alpha = rootFromLegacy(D,{1,1});
-    (alpha,parentDatum alpha == D)
-  Text
-    The tuple $(1,1)$ represents $\alpha_1+\alpha_2$ in type $A_2$. The final true confirms that the coordinate list is now attached to the specified root datum.
-SeeAlso
-  kmRoot
-  toLegacyList
-  "Roots, weights, and pairings"
-///
-
-doc ///
-Key
-  corootFromLegacy
-  (corootFromLegacy,CartanDatum,List)
-  (corootFromLegacy,Matrix,List)
-  (corootFromLegacy,RootDatum,List)
-Headline
-  Attach a datum to integral simple-coroot coefficients
-Usage
-  h = corootFromLegacy(D,a)
-Inputs
-  D:Thing
-    a root datum, Cartan datum, or Cartan matrix
-  a:List
-    integral simple-coroot coefficients in matrix order
-Outputs
-  h:KMCoroot
-    the corresponding element with its root datum
-Description
-  Text
-    This has the same coordinate convention as @TO kmCoroot@. Supplying an existing root datum retains its realization and lattice choices. Dynkin labels or simple-root evaluations alone do not specify extra Cartan directions.
-  Example
-    D = rootDatum "A2";
-    h = corootFromLegacy(D,{1,0});
-    (h,parentDatum h == D)
-  Text
-    The tuple $(1,0)$ represents $\alpha_1^\vee$ in type $A_2$. The final true confirms that the coordinate list is now attached to the specified root datum.
-SeeAlso
-  kmCoroot
-  toLegacyList
-  "Roots, weights, and pairings"
-///
-
-doc ///
-Key
-  weightFromLegacy
-  (weightFromLegacy,CartanDatum,List)
-  (weightFromLegacy,Matrix,List)
-  (weightFromLegacy,RootDatum,List)
-Headline
-  Attach a datum to rational Dynkin labels
-Usage
-  lambda = weightFromLegacy(D,a)
-Inputs
-  D:Thing
-    a root datum, Cartan datum, or Cartan matrix
-  a:List
-    rational Dynkin labels in matrix order
-Outputs
-  lambda:KMWeight
-    the corresponding element with its root datum
-Description
-  Text
-    This has the same coordinate convention as @TO kmWeight@. Supplying an existing root datum retains its realization and lattice choices. Dynkin labels or simple-root evaluations alone do not specify extra Cartan directions.
-  Example
-    D = rootDatum "A2";
-    lambda = weightFromLegacy(D,{1,0});
-    (lambda,parentDatum lambda == D)
-  Text
-    The tuple $(1,0)$ represents $\omega_1$ in type $A_2$. The final true confirms that the coordinate list is now attached to the specified root datum.
-SeeAlso
-  kmWeight
-  toLegacyList
-  "Roots, weights, and pairings"
-///
-
-doc ///
-Key
-  coweightFromLegacy
-  (coweightFromLegacy,CartanDatum,List)
-  (coweightFromLegacy,Matrix,List)
-  (coweightFromLegacy,RootDatum,List)
-Headline
-  Attach a datum to rational simple-root evaluations
-Usage
-  eta = coweightFromLegacy(D,a)
-Inputs
-  D:Thing
-    a root datum, Cartan datum, or Cartan matrix
-  a:List
-    rational simple-root evaluations in matrix order
-Outputs
-  eta:KMCoweight
-    the corresponding element with its root datum
-Description
-  Text
-    This has the same coordinate convention as @TO kmCoweight@. Supplying an existing root datum retains its realization and lattice choices. Dynkin labels or simple-root evaluations alone do not specify extra Cartan directions.
-  Example
-    D = rootDatum "A2";
-    eta = coweightFromLegacy(D,{0,1});
-    (eta,parentDatum eta == D)
-  Text
-    The tuple $(0,1)$ represents $\omega_2^\vee$ in type $A_2$. The final true confirms that the coordinate list is now attached to the specified root datum.
-SeeAlso
-  kmCoweight
-  toLegacyList
-  "Roots, weights, and pairings"
-///
 
 doc ///
 Key
@@ -15948,7 +15626,7 @@ Description
     highest-weight calculation. A list specifies Dynkin labels. A complete
     weight in a nonminimal realization also specifies a central character,
     which is retained at every weight. Affine and indefinite highest-weight
-    expansions instead use integrableCharacter with a root-depth bound.
+    expansions instead use moduleCharacter with a root-depth bound.
   Example
     D = rootDatum "A2";
     C = finiteCharacter(D,{1,1});
@@ -16125,7 +15803,7 @@ Description
 SeeAlso
   "Formal and completed characters"
   moduleCharacter
-  integrableCharacter
+  vermaModule
 ///
 
 doc ///
@@ -16156,7 +15834,7 @@ Description
     D = rootDatum "A1";
     M = vermaModule(D,{2});
     M
-    vermaCharacter(M,Depth=>2)
+    moduleCharacter(M,Depth=>2)
   Text
     The display $M(2)$ is the Verma module of highest weight $(2)$. Its
     expansion starts $e^{(2)}+1+e^{(-2)}$ and continues at weights
@@ -16164,7 +15842,7 @@ Description
     the first three depths were requested.
 SeeAlso
   "Formal and completed characters"
-  vermaCharacter
+  moduleCharacter
   bggResolution
 ///
 
@@ -16201,41 +15879,15 @@ Description
     The triple $(true,3,true)$ means that the entire three-dimensional
     defining character has been computed and agrees with the character
     computed directly from its highest weight.
-SeeAlso
-  "Formal and completed characters"
-  integrableCharacter
-  vermaCharacter
-///
-
-doc ///
-Key
-  vermaCharacter
-  (vermaCharacter,KMRepresentation)
-  [vermaCharacter,Depth]
-Headline
-  Expand a Verma character through a root depth
-Usage
-  C = vermaCharacter(M,Depth=>H)
-Inputs
-  M:KMRepresentation
-    a Verma module
-  H:ZZ
-    the required nonnegative root-depth bound
-Outputs
-  C:FormalCharacter
-    a character certified through the specified root depth
-Description
   Text
-    The positive-root partition product gives the weight multiplicities of a
-    Verma module. This works in finite, affine, and indefinite symmetrizable
-    type, using root multiplicities where needed. The result contains all
-    coefficients at offsets of height at most H; it is not an exact finite
-    character. In nonfinite type the highest weight must have full realization
-    coordinates.
+    For a Verma module, multiplicities are obtained from the positive-root
+    partition product. Root multiplicities enter this product in affine and
+    indefinite type. In positive rank a Verma module has infinitely many
+    weights, even in finite type. A depth bound is required for this computation.
   Example
     D = rootDatum "A1";
     M = vermaModule(D,{2})
-    C = vermaCharacter(M,Depth=>2);
+    C = moduleCharacter(M,Depth=>2);
     C
     characterCoefficient(C,kmWeight(D,{-2}))
   Text
@@ -16243,41 +15895,15 @@ Description
     coefficient $1$ is the multiplicity at offset $2$ simple roots. An
     attempted coefficient query at $(-4)$ is outside this expansion and is not
     a known zero.
-SeeAlso
-  "Formal and completed characters"
-  vermaModule
-  characterCoefficient
-///
-
-doc ///
-Key
-  integrableCharacter
-  (integrableCharacter,KMRepresentation)
-  [integrableCharacter,Depth]
-Headline
-  Compute an integrable highest-weight character
-Usage
-  C = integrableCharacter(M,Depth=>H)
-Inputs
-  M:KMRepresentation
-    an integrable highest-weight module
-  H:ZZ
-    a nonnegative root-depth bound; optional in finite type
-Outputs
-  C:FormalCharacter
-    an exact finite character or a certified depth expansion
-Description
   Text
-    With no Depth in finite type, the entire character is computed. With
-    Depth, weight multiplicities are computed by the highest-weight recurrence
-    through that bound in any symmetrizable type. Positive-root multiplicities
-    enter the recurrence. Full realization coordinates are required in
-    nonfinite type to keep null-root shifts distinct.
+    For an integrable module, a depth bound instead gives the highest-weight
+    multiplicity recurrence through that bound. This works in any symmetrizable
+    type. In affine type the full weight distinguishes null-root shifts:
   Example
     D = rootDatum cartanAffineA 1;
     lambda = affineWeightFromDynkinLabels(D,{1,0},0)
     M = integrableHighestWeightModule(D,lambda)
-    C = integrableCharacter(M,Depth=>2);
+    C = moduleCharacter(M,Depth=>2);
     C
   Text
     There are three displayed weight spaces, each of dimension $1$, with
@@ -16288,9 +15914,13 @@ Description
     $2$.
 SeeAlso
   "Formal and completed characters"
+  finiteCharacter
+  vermaModule
+  integrableHighestWeightModule
   affineWeightFromDynkinLabels
-  moduleCharacter
+  characterCoefficient
 ///
+
 
 doc ///
 Key
@@ -19074,7 +18704,7 @@ Description
     depth through which all coefficients have been computed.
   Example
     D = rootDatum "A1";
-    C0 = vermaCharacter(vermaModule(D,{2}),Depth=>2)
+    C0 = moduleCharacter(vermaModule(D,{2}),Depth=>2)
     C = formalCharacter(D,characterTerms C0,
         CharacterStatus=>"Truncated",Truncation=>C0#"truncation");
     (C,isExactCharacter C)
@@ -19105,8 +18735,7 @@ Headline
   Bound the sum of simple-root coefficients below a highest weight
 Description
   Text
-    The @TO Depth@ option of @TO moduleCharacter@, @TO vermaCharacter@,
-    and @TO integrableCharacter@ gives a nonnegative integer $H$.
+    The @TO Depth@ option of @TO moduleCharacter@ gives a nonnegative integer $H$.
     It requests every coefficient at
     $\lambda-\sum_i b_i\alpha_i$ with $b_i\geq0$ and
     $\sum_i b_i\leq H$.  This is root depth, not homological degree,
@@ -19124,8 +18753,6 @@ Description
     @TT "Depth"@ computes them rather than interpreting them as zero.
 SeeAlso
   moduleCharacter
-  vermaCharacter
-  integrableCharacter
   MaxDegree
   affineDegree
 ///
@@ -19218,14 +18845,11 @@ Subnodes
   :Root coordinates and finite root systems
     allRoots
     coordinateBasis
-    corootFromLegacy
     coroots
     coweightBasis
-    coweightFromLegacy
     coweightFromRealizationCoordinates
     coweightToCorootCoordinates
     datumCoordinates
-    datumFromLegacyCartan
     dynkinDiagram
     dynkinDiagramData
     fromEpsilon
@@ -19251,7 +18875,6 @@ Subnodes
     positiveRootsF4
     positiveRootsG2
     realizationCoordinates
-    rootFromLegacy
     rootHeight
     rootInnerProduct
     rootNormSquared
@@ -19269,13 +18892,10 @@ Subnodes
     toCoweight
     toEpsilon
     toFundamental
-    toLegacyCartanMatrix
-    toLegacyList
     toRoot
     toSimple
     toWeight
     weightBasis
-    weightFromLegacy
     weightFromRealizationCoordinates
     weightToRootCoordinates
   :Weyl groups
@@ -19299,7 +18919,6 @@ Subnodes
     weylLength
     weylLengthGenerating
     weylParent
-    weylWord
   :Parabolics and Kostant cohomology
     cohomologyDimensions
     decompositionDimension
@@ -19372,7 +18991,6 @@ Subnodes
     finiteCharacter
     formalCharacter
     frobeniusSchurIndicator
-    integrableCharacter
     integrableHighestWeightModule
     irrepData
     irrepDimension
@@ -19385,7 +19003,6 @@ Subnodes
     symmetricPowerDecomposition
     tensorCoefficient
     tensorDecomposition
-    vermaCharacter
     vermaModule
     weightMultiplicity
     weightMultiplicityTable
@@ -19398,19 +19015,16 @@ Subnodes
     affineCartanD4Twisted
     affineCartanDTwisted
     affineCartanE6Twisted
-    affineCentralCoefficients
     affineCentralElement
     affineClassicalPart
     affineComarks
     affineDegree
     affineDerivation
     affineFinitePart
-    affineFullWeight
     affineLevel
     affineMarks
     affineNullRoot
     affineRootSnapshot
-    affineStructuralCapabilities
     affineTypeData
     affineWeightFromDynkinLabels
     indefiniteRootSnapshot
