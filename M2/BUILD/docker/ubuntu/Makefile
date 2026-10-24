@@ -16,7 +16,6 @@ git config --global user.name "Macaulay"
 cmake -GNinja -S M2/M2 -B M2/$(BUILD_DIR) $(BUILD_OPT)
 cmake --build M2/$(BUILD_DIR) --target build-libraries # build-programs
 cmake --build M2/$(BUILD_DIR) --target M2-core # install-packages
-cmake --build M2/$(BUILD_DIR) --target M2-emacs
 ## Changes to the docker container after it is created are ephemeral,
 ## but this is how one would install Macaulay2:
 # cmake --install M2/$(BUILD_DIR)
