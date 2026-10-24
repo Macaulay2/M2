@@ -176,7 +176,7 @@ jobs:
           # mathic: https://github.com/Macaulay2/mathic/pull/29 and /pull/30
           # mathicgb: https://github.com/Macaulay2/mathicgb/pull/84
           # Replace these pins with releases containing those changes when available.
-          # See M2/BUILD/README.md for the revisions and release status.
+          # Release follow-up: https://github.com/Macaulay2/M2/issues/4761
           for entry in \
             memtailor:0a2afc3fff096ed06bf98b7c1c224acfc8c97dc1 \
             mathic:a08a776c8973a4c25f44d7d769ba949766f3f13c \
