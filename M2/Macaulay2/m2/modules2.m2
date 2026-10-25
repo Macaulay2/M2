@@ -202,7 +202,6 @@ addHook((minimalPresentation, Module), Strategy => "PID", (opts, M) -> (
 	       isunit := r -> r != 0 and degree r === {0};
 	       piv := select(pivots g,ij -> isunit g_ij);
 	       rows := first \ piv;
-    	       rows = rows | toList(rank target f..<rank target g); -- temporary fix for #3017
 	       cols := last \ piv;
 	       (g,ch) = (submatrix'(g,rows,cols),submatrix'(ch,rows,));
 	       (g,ch) = (p' g,p' ch);
