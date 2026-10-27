@@ -192,7 +192,7 @@ cartanMatrix = method ( TypicalValue => Matrix )
 
 cartanMatrix LieAlgebra := g -> cartanMatrix (g#"RootSystemType",g#"LieAlgebraRank")
 
-cartanMatrix(Sequence,Sequence) := memoize((type,m) -> directSum apply(type,m,cartanMatrix))
+cartanMatrix(Sequence,Sequence) := memoize((type,m) -> if #m == 0 then map(ZZ^0,ZZ^0,0) else directSum apply(type,m,cartanMatrix))
 
 cartanMatrix (String,ZZ) := memoize((type, m) -> (
     if not isSimple(type,m) then error "not simple type";

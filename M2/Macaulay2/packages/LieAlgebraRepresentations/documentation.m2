@@ -3093,3 +3093,14 @@ TEST ///
     assert(dim adams(2,S) == dim S)
 ///
 
+--tests rank 0 Lie algebras
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    z = subLieAlgebra(g,{})
+    assert(cartanMatrix z == map(ZZ^0,ZZ^0,0))
+    T = trivialModule z
+    assert(T ** T === T)
+    assert(symmetricPower(2,T) === T)
+    assert(exteriorPower(2,T) == 0)
+///
+
