@@ -16,3 +16,14 @@ add_custom_command(OUTPUT ${_install_stamp} ${_install_marker} ${_install_info}
     ${_package_core_sources} ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/tvalues.m2
     ${_install_inputs} ${_install_rules_file} ${CMAKE_CURRENT_LIST_FILE}
   )
+
+if(package STREQUAL "LanguageServer")
+  get_filename_component(_package_source_dir "${_install_rules_file}" DIRECTORY)
+  set(LSP_MAN_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1)
+  add_custom_command(TARGET install-LanguageServer POST_BUILD
+    COMMENT "Creating man page for M2-language-server"
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${LSP_MAN_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${_package_source_dir}/LanguageServer/M2-language-server.1 ${LSP_MAN_DIR}
+    COMMAND gzip -nf9 ${LSP_MAN_DIR}/M2-language-server.1)
+endif()
