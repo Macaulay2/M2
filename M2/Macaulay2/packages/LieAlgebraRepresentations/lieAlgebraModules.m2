@@ -530,8 +530,10 @@ characterAlgorithms#"Weyl" = (type,m,v) -> ( -- good for low rank algebras
 -- Freudenthal's formula, see Humphreys, Introduction to Lie Algebras and Representation Theory, Section 22.3.
 -- Multiplicities are constant on Weyl group orbits, so we only apply it to the dominant weights,
 -- then expand their orbits (cf. Moody-Patera)
-characterAlgorithms#"Freudenthal" = (type,m,v) -> (
-    R:=characterRing(type,m);
+characterAlgorithms#"Freudenthal" = (type,m,v) ->
+    polynomialFromWeights(characterRing(type,m),weightsFromDominant(type,m,dominantMultiplicities(type,m,v)))
+
+dominantMultiplicities = memoize((type,m,v) -> (
     rho:=toList(m:1);
     sr:=simpleRoots(type,m);
     posroots:=positiveRoots(type,m);
@@ -569,22 +571,30 @@ characterAlgorithms#"Freudenthal" = (type,m,v) -> (
 		    )));
 	mults#w = lift(2*rhs/(norms#0-norms#i),ZZ)
 	);
-    -- expand the Weyl group orbit of each dominant weight
+    new HashTable from mults
+    ))
+
+-- all the weights, with their multiplicities, from those of the dominant weights,
+-- by expanding the Weyl group orbit of each dominant weight
+weightsFromDominant = (type,m,mults) -> (
+    sr:=simpleRoots(type,m);
     orbit:=w -> (
 	o:=new MutableHashTable from {w=>true};
 	layer:={w};
 	while #layer>0 do layer=flatten apply(layer, u ->
 	    for i to m-1 list if u#i>0 and not o#?(u':=u-u#i*sr#i) then (o#u'=true; u') else continue);
 	keys o);
-    polynomialFromWeights(R,flatten apply(pairs mults, (w,a) -> apply(orbit w, u -> (u,a))))
-)
+    flatten apply(pairs mults, (w,a) -> apply(orbit w, u -> (u,a)))
+    )
 
-characterAlgorithms#"Picker" = (type,m,v) -> (
-    if m<=2 and type != "G" then characterAlgorithms#"Weyl"(type,m,v) -- Weyl is fastest in rank at most 2
+characterAlgorithms#"Picker" = (type,m,v) -> characterAlgorithms#(pickStrategy(type,m,v))(type,m,v)
+-- the strategy used by default
+pickStrategy = (type,m,v) -> (
+    if m<=2 and type != "G" then "Weyl" -- Weyl is fastest in rank at most 2
     -- dual Jacobi-Trudi if the determinant is at most 2x2, or if the product of the numbers of terms
     -- of the elementary symmetric polynomials on its diagonal is small
-    else if type == "A" and (sum v <= 2 or product(m, i -> (binomial(m+1,i+1))^(v#i)) <= 5000) then characterAlgorithms#"JacobiTrudi'"(type,m,v)
-    else characterAlgorithms#"Freudenthal"(type,m,v)
+    else if type == "A" and (sum v <= 2 or product(m, i -> (binomial(m+1,i+1))^(v#i)) <= 5000) then "JacobiTrudi'"
+    else "Freudenthal"
     )
 
 -- last strategy = first choice
@@ -625,8 +635,23 @@ weightDiagram = method(
     TypicalValue=>VirtualTally
     )
 
-weightDiagram LieAlgebraModule := o -> (M) -> M.cache#weightDiagram ??= new VirtualTally from listForm character(M,o)
-weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := o -> (g,v) -> new VirtualTally from listForm character(g,v,o)
+-- the weights of the irreducible module with dominant highest weight v
+-- with Freudenthal's formula, we get them without computing the character
+weightDiagram1 = memoize((type,m,v,o) -> (
+    s:=o.Strategy;
+    if s === null or s === "Picker" then s = pickStrategy(type,m,v);
+    if s === "Freudenthal" then new VirtualTally from weightsFromDominant(type,m,dominantMultiplicities(type,m,v))
+    else new VirtualTally from listForm character1(type,m,v,o)
+    ))
+
+weightDiagram LieAlgebraModule := o -> (M) -> M.cache#weightDiagram ??= (
+    if M.cache#?character then new VirtualTally from listForm M.cache#character
+    else if #(M#"DecompositionIntoIrreducibles") == 0 then new VirtualTally
+    else balancedSum apply(pairs M#"DecompositionIntoIrreducibles", (v,a) -> if a == 1 then weightDiagram(M#"LieAlgebra",v,o) else applyValues(weightDiagram(M#"LieAlgebra",v,o), b -> a*b)))
+weightDiagram(LieAlgebra,List) := o -> (g,v) -> (
+    if instance(g#"RootSystemType",String) and all(v, a -> a >= 0) then weightDiagram1(g#"RootSystemType",g#"LieAlgebraRank",v,o)
+    else new VirtualTally from listForm character(g,v,o))
+weightDiagram(LieAlgebra,Vector) := o -> (g,v) -> weightDiagram(g,entries v,o)
 
 fac := memoize((type,m) -> ( -- possible denominator in Weyl product formula factors, ultimately coming from the choice of normalisation of the Killing form
     lcm append(apply(positiveCoroots(type,m), u -> numerator (killingForm(type,m,u,u)/2)),1) -- append is for g=0
