@@ -1,6 +1,6 @@
 HOMEPAGE = https://oneapi-src.github.io/oneTBB/
-VERSION = 2023.1.0
-SHA256SUM = 191288b52e1e6b17198000b64d77d194bb65e791be46ebc606e9b091781e2070
+VERSION = 2023.2.0
+SHA256SUM = 80cb62e62defeee67ea1885a6f72d97ac81404f8fde9cded62fb51524808a30c
 URL = https://github.com/uxlfoundation/oneTBB/archive/refs/tags
 TARDIR = oneTBB-$(VERSION)
 TARFILE = v$(VERSION).tar.gz
