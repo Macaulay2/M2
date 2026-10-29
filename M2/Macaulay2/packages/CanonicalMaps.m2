@@ -1,22 +1,29 @@
 newPackage(
     "CanonicalMaps",
-    Version => "0.1",
-    Date => "16 June 2025",
+    Version => "0.2",
+    Date => "1 October 2026",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
-            HomePage => "http://www.mast.queensu.ca/~ggsmith"
+            HomePage => "https://ggsmith.ca"
             },
         {   Name => "Mike Stillman", 
             Email => "mike@math.cornell.edu", 
-            HomePage => "http://www.math.cornell.edu/~mike"
+            HomePage => "https://mikestillman.github.io"
             }},
     Headline => "implements canonical and standard maps for modules",
     Keywords => {"Commutative Algebra"},
-    PackageImports => {"Complexes"},
     AuxiliaryFiles => false,
     DebuggingMode => true
     )
+
+-- TODO:
+--  0. DONE Tell Doug about this branch/package.
+--  1. DONE move the complexes code out of here, to Complexes/ComplexMapsCanonical.m2(or some better name).  Not moved yet.
+--      Use code in lazy-complexes version of CanonicalMaps.m2 to grab that Complexes code.
+--  2. DONE move tensorCommutativity to here (the module part)
+--  3. write documentation
+--  4. audit the tests, many are after the end--
 
 export {
     "kernelMap",
@@ -35,13 +42,13 @@ export {
     "pruneMap",
     "unitorMap",
     "counitorMap",
+    "tensorCommutativity",
     -- "tensorCommutativity" is exported by the Complexes package (Complexes.m2:120):
     --   identical (Module,Module) body there, plus a (Complex,Complex) version
     -- "tensorAssociativity" is currently in Core: modules2.m2, needs tests
     "swapMap",
     "adjunctionMap",
-    -- from Complexes/Modules.m2:
-    "injectModule",
+    -- from Complexes, perhaps?
     "randomMatrix",
     "coimageToImageInverse"
     }
@@ -103,6 +110,8 @@ coimageMap Matrix := Matrix => (f) -> cokernelMap kernelMap f
 
 imageMap = method()
 imageMap Matrix := Matrix => (f) -> kernelMap cokernelMap f
+
+-- TODO: do we want the universal properties for the above maps (coimageMap, imageMap)
 
 coimageImageMap = method()
 coimageImageMap Matrix := Matrix => (f) -> (
@@ -240,8 +249,33 @@ counitorMap Module := Matrix => opts -> M -> (
         id_M
     )
 
+
 -- tensorCommutativity(Module,Module) is not defined here: it is identical to the
 -- version exported by the Complexes package, which this package imports.
+
+tensorCommutativity = method()
+tensorCommutativity(Module, Module) := Matrix => (M,N) -> (
+    -- implement the isomorphism M ** N --> N ** M
+    MN := M ** N;
+    NM := N ** M;
+    m := numgens source gens M;
+    n := numgens source gens N;
+    perm := flatten for i from 0 to m - 1 list
+      for j from 0 to n - 1 list (
+          -- (i,j) (in M**N) to m*i + j
+          -- map to column (j,i) <--> n*j + i
+          m*j+i
+          );
+    FMN := source gens MN;
+    f := ((id)_FMN)_perm;
+    map(NM, MN, f)
+    )
+
+homTensorAdjoint = method()
+homTensorAdjoint(Module, Module, Module) := (L, M, N) -> (
+    -- returns the natural map: Hom(L ** M, N) --> Hom(L, Hom(M, N))
+    -- phi -> (ell |-> (m |-> phi(ell ** m)))
+    )
 
 
 
@@ -258,9 +292,10 @@ swapMap(Module, Module, Module) := Matrix => (A, B, C) -> (
     ABC := Hom(A, BC);
     BAC := Hom(B, AC);
     -- want ABC --> BAC
-    perm := tensorCommutativity(dual cover A, dual cover B) ** cover C;
-    permLift := (perm * gens ABC) //  gens BAC;
-    map(BAC, ABC, permLift)
+    error "need tensorCommutativity defined in this package";
+    -- perm := tensorCommutativity(dual cover A, dual cover B) ** cover C;
+    -- permLift := (perm * gens ABC) //  gens BAC;
+    -- map(BAC, ABC, permLift)
     )
 
 adjunctionMap = method()
@@ -296,7 +331,7 @@ checkSwapMap(Matrix, Module, Module) := Boolean => (sw, A, B) -> (
                 g4 := homomorphism g3;
                 g5 := A_{a}; -- so val2 is g4 * g5.
                 val2 := (homomorphism(homomorphism(sw * ABC_{abc}) * B_{b})) * A_{a};
-                val2 := ((homomorphism(sw * ABC_{abc}) * B_{b})) * A_{a};
+                --val2 := ((homomorphism(sw * ABC_{abc}) * B_{b})) * A_{a};
                 result := (val1 == val2);
                 if debugLevel > 0 and not result then (
                     << "swap map failed: abc=" << abc << " a=" << a << " b=" << b << endl;
@@ -307,169 +342,21 @@ checkSwapMap(Matrix, Module, Module) := Boolean => (sw, A, B) -> (
                 result
     )))))))
 
--*
-  restart
-  needsPackage "CanonicalMaps"
-*-
-
--------------------------------------------------------------------------
--- Complexes
---
--- From Complexes/Modules.m2 on branch fix-complexes-in-packages (2024-01).
--- Moved unchanged, except: coimageToImage is spelled coimageImageMap here,
--- and fiberProduct/fiberSum follow this package's convention (return the
--- object, stash the maps, retrieve them with fiberProductMap/fiberSumMap)
--- rather than returning a sequence.
--------------------------------------------------------------------------
-
--- need: how to take a matrix, and make it a complex map?
-injectModule = method()
-injectModule Module := Complex => M -> complex M
-injectModule Matrix := ComplexMap => f -> (
-    C := injectModule source f;
-    D := injectModule target f;
-    map(D, C, i -> if i === 0 then f else map(D_i, C_i, 0))
-    )
-
 -- this routine should use modules directly, not complexes
 randomMatrix = method()
 randomMatrix(Module, Module) := Matrix => (N, M) -> (
-    g := randomComplexMap(complex N, complex M);
-    g_0
-    )
-
-kernelMap ComplexMap := ComplexMap => (f) -> (
-    B := source f;
-    K := ker f;
-    (lo, hi) := concentration K;
-    maps := hashTable for i from lo to hi list i => 
-        map(B_i, K_i, (generators K_i) // (generators B_i));
-    map(B, K, maps)
-    )
-
-kernelMap(ComplexMap, ComplexMap) := ComplexMap => (g, f) -> (
-    -- f : B --> C
-    -- g : A --> B
-    -- kermap f: ker f --> B
-    -- result should be A --> ker f.
-    -- assume f*g = 0.
-    -- returns ghat : A -> ker f s.t. (kermap f)*ghat == g
-    if f*g != 0 then error "expected composite map to be zero";
-    map(ker f, source g, i -> kernelMap(g_i, f_i))
+    error "need to implement this directly for module";
+    --g := randomComplexMap(complex N, complex M);
+    --g_0
     )
 
 
-cokernelMap ComplexMap := ComplexMap => (f) -> (
-    C := target f;
-    Q := coker f;
-    (lo, hi) := concentration C;
-    maps := hashTable for i from lo to hi list i =>
-        map(Q_i, C_i, id_(C_i));
-    map(Q, C, maps)
-    )
-
-cokernelMap(ComplexMap, ComplexMap) := ComplexMap => (g, f) -> (
-    -- f : B --> C
-    -- g : C --> A
-    -- returns a lift of g, ghat : coker f --> A
-    --  s.t. g*f = 0
-    if target f =!= source g then error "expected target of second map to be the same as source of the first map";
-    if g*f != 0 then error "expected the composite map to be zero";
-    -- if p : C --> coker f is the cokernel map of f
-    -- result should be coker f --> A.
-    -- return the map ghat : coker f --> A s.t. ghat * p = g,
-    map(target g, coker f, i -> cokernelMap(g_i, f_i))
-    )
-
-coimageMap ComplexMap := (f) -> cokernelMap kernelMap f
-imageMap ComplexMap := (f) -> kernelMap cokernelMap f
-
-coimageImageMap ComplexMap := (f) -> (
-    eta := kernelMap f; -- eta: ker f --> B
-    p := cokernelMap f; -- p: C --> coker f
-    theta' := cokernelMap eta; -- theta' : B --> coker eta == coim f
-    theta := kernelMap(f, p); -- theta:  B --> ker p == im f
-    mu := cokernelMap(theta, eta); -- coim f --> im f
-    mu
-    )
-
-coimageToImageInverse ComplexMap :=
+coimageToImageInverse = method()
 coimageToImageInverse Matrix := (f) -> (
     g := coimageImageMap f;
-    g^(-1) -- todo: for complexes, does this work?
+    g^(-1)
     )
 
-kernel(ComplexMap, ComplexMap, ComplexMap, ComplexMap) := (a,b,c,d) -> (
-    -- TODO: what should this really do and return?
-    -- Given a : A --> B
-    --       b : A' --> B'
-    --       c : 
-    -- ker b --> ker a.
-    )
-
-cokernel(ComplexMap, ComplexMap, ComplexMap, ComplexMap) := (a,b,c,d) -> (
-    -- TODO.  What should this return?
-    -- ker b --> ker a.
-    )
-
-fiberProduct(ComplexMap, ComplexMap) := Complex => (phi, phi') -> (
-    -- Given: phi : B --> C
-    -- Given: phi' : B' --> C
-    -- return: (B x_C B', p, p'), and stash the kernel map and map B ++ B' --> C
-    C := target phi;
-    if C =!= target phi' then error "expected maps to have the same target";
-    direct := map(C, source phi ++ source phi', {{phi, -phi'}});
-    gmap := kernelMap direct;
-    ans := source gmap;
-    ans.cache#fiberProduct = (gmap, direct); -- note that phi == direct_[0], phi' == -direct_[1]
-    ans
-    )
-
-fiberProductMap(Complex, ComplexMap, ComplexMap) := ComplexMap => (E, alpha, alpha') -> (
-    -- if alpha, alpha' are maps A --> B, A --> B', and
-    -- E is the fiber product of (f,f') : B ++ B' --> C
-    -- and if phi*alpha = phi'*alpha', then this function returns the unique map
-    -- h:A --> E such that alpha = p*h, alpha' = p'*h.
-    if not E.cache#?fiberProduct then error "expected first argument to be a fiber product";
-    if source alpha != source alpha' then error "expected maps to have the same source";
-    (gmap, direct) := E.cache#fiberProduct;
-    phi := direct_[0];
-    phi' := -direct_[1];
-    if phi*alpha != phi'*alpha' then error "expected maps to commute";
-    h := map(source direct, source alpha, {{alpha}, {alpha'}});
-    kernelMap(h, direct)
-    ) 
-
-
-fiberSum(ComplexMap, ComplexMap) := Complex => (psi, psi') -> (
-    -- Given: psi : A --> B
-    -- Given: psi' : A --> B'
-    -- return B ++_A B', maps of B in this, and B' to this.
-    A := source psi;
-    if A =!= source psi' then error "expected maps to have the same source";
-    direct := map(target psi ++ target psi', A,  {{psi}, {-psi'}});
-    gmap := cokernelMap direct;
-    ans := target gmap;
-    ans.cache#fiberSum = (gmap, direct);
-    ans
-    )
-
-
-fiberSumMap(Complex, ComplexMap, ComplexMap) := ComplexMap => (E, phi, phi') -> (
-    -- if phi, phi' are maps B --> C, B' --> C, and
-    -- E is the fiber sum of (psi,psi'), coker of A --> B ++ B'
-    -- and if phi*psi = phi'*psi', then this function returns the unique map
-    -- h: E --> C such that phi = h*i, phi' = h*i'.
-    if not E.cache#?fiberSum then error "expected first argument to be a fiber sum";
-    if target phi != target phi' then error "expected maps to have the same target";
-    (gmap, direct) := E.cache#fiberSum;
-    psi := direct^[0];
-    psi' := -direct^[1];
-    if phi*psi != phi'*psi' then error "expected maps to commute";
-    h := map(target phi, target direct, {{phi, phi'}});
-    cokernelMap(h, direct)
-    ) 
-    
 
 TEST ///
   debug needsPackage "CanonicalMaps"
@@ -544,6 +431,66 @@ doc ///
         Text
     Caveat
     SeeAlso
+///
+
+doc ///
+    Key
+        kernelMap
+        (kernelMap, Matrix)
+        (kernelMap, Matrix, Matrix)
+    Headline
+        canonical map associated to a kernel object
+    Usage
+        g = kernelMap f
+        u = kernelMap(h, f)
+    Inputs
+        f:Matrix
+            representing a map $M \to N$ of $R$-modules
+        h:Matrix
+            representing a map $L \to M$ of $R$-modules such that
+            $h \circ f = 0$
+    Outputs
+        g:Matrix
+            the canonical monomorphism $g \colon \operatorname{Ker}(f) \to M$
+        u:Matrix
+            the unique map $u \colon L \to \operatorname{Ker}(f)$
+            arising from the universal property
+    Description
+        Text
+            The kernel of a map $f \colon M \to N$ of $R$-modules is an object
+            $K := \operatorname{Ker}(f)$, together with a map
+            $g \colon K \to M$ such that the following two properties
+            hold: (1) $f \circ g = 0$, and (2) for any
+            map $h \colon L \to M$ such that $h \circ f = 0$, there
+            exists a unique map $u \colon L \to K$ such that $g \circ u = h$.
+        Text
+            We illustrate the kernel map using a homomorphism
+            of Abelian groups.
+        Example
+            f = matrix{{2,0,1},{0,1,4}}
+            g = kernelMap f
+            assert(source g === kernel f and target g === source f)
+            assert(f * g == 0)
+            h = map(source f, ZZ^2, {{2,3},{16,24},{-4,-6}})
+            assert(f * h == 0)
+            u = kernelMap(h, f)
+            assert(h == g * u)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, matrix{{a,b},{c,d}})
+            assert(ker f != 0)
+            g = kernelMap f
+            assert(source g === kernel f and target g === source f)
+            assert(f * g == 0)
+            h = map(source f,, {{d*a^3},{-c*a^3}})
+            assert(f * h == 0)
+            u = kernelMap(h, f)
+            assert(h == g * u)
+    SeeAlso
+        (kernelMap, Matrix, Matrix)
 ///
 
 ///
