@@ -164,12 +164,17 @@ isModuleFinite RingMap := Boolean => (f) -> (
     true
 )
 
---------------
--- INTERNAL --
---------------
+-----------------
+-- pushFwdGens --
+-----------------
+-- when passed a module of the form M = pushFwd(f, N) returns a matrix of
+-- elements of N that correspond to generators of M over source f
 pushFwdGens = method()
 pushFwdGens(Module) := Matrix => (M) -> M.cache.pushFwdGens ??= pushforward' M_{0..numgens M - 1}
 
+--------------
+-- INTERNAL --
+--------------
 -- makeModule
 -- helper implementing the core pushforward computation
 -- input:
