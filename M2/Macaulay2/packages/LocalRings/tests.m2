@@ -872,6 +872,30 @@ TEST /// -- dim and char of a LocalRing reflect the underlying prime
   assert(degreeLength Rmax == 1)
 ///
 
+TEST ///
+  R = QQ[x,y]
+  I = ideal x
+  J = ideal(x-y)
+  RP = localRing(R, I)
+  assert Equation(RP_{1,2}, x*y^2)
+  assert Equation(RP_{2,0}, x^2)
+  assert Equation(RP_{}, 1)
+  assert Equation(RP_{1,-2}, x/y^2)                 -- y is a unit
+  assert Equation(RP_{0,-1}, 1/y)
+  assert Equation(RP_{2,-3}, x^2/y^3)
+  assert try RP_{-1,2} then false else true         -- x is not a unit
+  assert try RP_{-1,-1} then false else true
+  RP = localRing(R, J)                              -- here x and y are units
+  assert Equation(RP_{1,-1}, x/y)
+  assert Equation(RP_{-1,1}, y/x)
+  assert Equation(RP_{-1,-1}, 1/(x*y))
+  R = QQ[x,y,z]
+  RP = localRing(R, ideal(x,y))
+  assert Equation(RP_{0,0,-1}, 1/z)
+  assert Equation(RP_{1,1,-2}, x*y/z^2)
+  assert try RP_{-1,0,0} then false else true
+///
+
 end--
 
 --============================ Tests Under Development ===================================--

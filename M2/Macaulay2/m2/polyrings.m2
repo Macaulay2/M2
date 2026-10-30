@@ -31,9 +31,35 @@ isWeylAlgebra PolynomialRing := R -> isWeylAlgebra coefficientRing R or ( o := o
 isSkewCommutative PolynomialRing := R -> isSkewCommutative coefficientRing R or (
     R.?SkewCommutative and 0 < #R.SkewCommutative)
 
--- TODO: is the second one needed?
-Ring _ List :=
-PolynomialRing _ List := RingElement => (R, v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
+Ring _ List := RingElement => (R, v) -> (
+    if #v == 0 then return 1_R;
+    n := numgens R;
+    if #v > (m := R.numallvars ?? n)
+    then error("expected at most ", m, " exponent",
+               if m == 1 then "" else "s")
+    else (
+        kk := coefficientRing ambient R;
+        new R from (
+            if #v > n
+            then rawTerm(raw R,
+                         raw kk_(drop(v, n)),
+                         rawMakeMonomialFromExponents take(v, n))
+            else rawTerm(raw R,
+                         rawOne kk,
+                         rawMakeMonomialFromExponents v))))
+RingFamily _ List := RingElement => (R, v) -> (default R)_v
+
+List _ Ring := RingElement => (v, R) -> (
+    if #v == 0 then 0_R
+    else (
+        kk := coefficientRing ambient R;
+        new R from rawSum apply(toSequence v, mc -> (
+            if not instance(mc, Sequence)
+            then error "expected a list of sequences";
+            if #mc =!= 2
+            then error "expected a list of pairs";
+            rawTerm(raw R, raw mc#1_kk, rawMakeMonomialFromExponents mc#0)))))
+List _ RingFamily := RingElement => (v, R) -> v_(default R)
 
 coefficientRing PolynomialRing := R -> last R.baseRings
 ambient PolynomialRing := identity
@@ -48,7 +74,7 @@ generators PolynomialRing := opts -> R -> (
 
 char      PolynomialRing :=      char @@ coefficientRing
 precision PolynomialRing := precision @@ coefficientRing
-numgens   PolynomialRing := numgens @@ monoid
+numgens   PolynomialRing := R -> R.cache.numgens ??= numgens monoid R
 options   PolynomialRing := options @@ monoid
 dim       PolynomialRing := R -> dim coefficientRing R + #generators R - (
     if R.?SkewCommutative then #R.SkewCommutative else 0)

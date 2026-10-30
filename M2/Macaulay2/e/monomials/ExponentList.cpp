@@ -449,6 +449,38 @@ void varpower::radical(ConstExponents a, Vector& result)
     }
 }
 
+template <>
+void varpower::split_signs(ConstExponents a, Vector& num, Vector& den)
+{
+  Exponents num_vp, orig_num_vp, den_vp, orig_den_vp;
+  int newlen;
+
+  num.resize(length(a));
+  num_vp = num.data();
+  orig_num_vp = num_vp;
+  num_vp++;
+
+  den.resize(length(a));
+  den_vp = den.data();
+  orig_den_vp = den_vp;
+  den_vp++;
+
+  for (index_varpower i = a; i.valid(); ++i) {
+    if (i.exponent() > 0) {
+      *num_vp++ = i.var();
+      *num_vp++ = i.exponent();
+    } else if (i.exponent() < 0) {
+      *den_vp++ = i.var();
+      *den_vp++ = -i.exponent();
+    }
+  }
+
+  newlen = static_cast<int>(num_vp - orig_num_vp);
+  *orig_num_vp = newlen;
+  newlen = static_cast<int>(den_vp - orig_den_vp);
+  *orig_den_vp = newlen;
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

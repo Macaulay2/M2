@@ -66,3 +66,10 @@ rawGCD(x3-x,F)
 rawGCD(x4-x,F)
 rawGCD(x5-x,F)
 
+x = symbol x
+y = symbol y
+-- used to be reversed, e.g., x*y^2*z^3 -> x^3*y^2*z
+R = ZZ/101[x,y,z, Constants => true]
+S = ZZ/101[x,y,z]
+f = new R from rawTowerTranslatePoly(raw R, raw(x*y^2*z^3))
+assert Equation(f, R_0 * R_1^2 * R_2^3)

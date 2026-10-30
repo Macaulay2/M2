@@ -1,5 +1,7 @@
 // Copyright 2010 Michael E. Stillman
 
+#include <algorithm>
+
 #include "rings/tower.hpp"
 
 #include "monomials/ExponentList.hpp"
@@ -16,6 +18,9 @@ bool Tower::initialize(long charac0,
                        M2_ArrayString names0,
                        const VECTOR(ring_elem) & extensions)
 {
+  if (charac0 == 0)
+    throw exc::engine_error("expected coefficient ring with characteristic p > 0");
+
   initialize_ring(charac0);
   declare_field();
 
@@ -171,6 +176,35 @@ ring_elem Tower::copy(const ring_elem f) const
 void Tower::remove(ring_elem &) const
 {
   // nothing needed to remove?  Or should we remove it?
+}
+
+ring_elem Tower::makeTerm(const Ring* coeffR,
+                          const ring_elem a,
+                          const_varpower monom) const
+{
+  if (!coeffR->isFinitePrimeField() ||
+      coeffR->characteristic() != characteristic())
+    throw exc::engine_error("wrong coefficient ring");
+
+  for (index_varpower i = monom; i.valid(); ++i) {
+    if (i.exponent() < 0)
+      throw exc::engine_error("expected nonnegative exponents");
+    if (i.var() >= n_vars())
+      throw exc::engine_error("unknown variable");
+  }
+
+  auto [ok, n] = coeffR->coerceToLongInteger(a);
+  if (ok) {
+    exponents_t exp = new int[n_vars()];
+    varpower::to_expvector(n_vars(), monom, exp);
+    std::reverse(exp, exp + n_vars()); // variables are in reverse order
+    TowerPolynomial result = nullptr;
+    D->add_term(result, n, exp);
+    delete[] exp;
+    return TOWER_RINGELEM(result);
+  } else {
+    throw exc::engine_error("could not coerce coefficient to integer");
+  }
 }
 
 ring_elem Tower::negate(const ring_elem g) const
@@ -467,6 +501,7 @@ ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
   for (Nterm& t : fR)
     {
       M->to_expvector(t.monom, exp);
+      std::reverse(exp, exp + nvars); // variables are in reverse order
       std::pair<bool, long> res = K->coerceToLongInteger(t.coeff);
       assert(res.first);
       int c1 = static_cast<int>(res.second);
