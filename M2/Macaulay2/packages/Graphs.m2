@@ -1220,19 +1220,18 @@ stronglyConnectedComponents Digraph := List => D -> (
     lowLink := new MutableHashTable;
     onStack := new MutableHashTable;
     -- Each vertex is pushed once; s is the number of vertices on the stack.
-    S := new MutableList from toList(#vertexSet D:null);
+    S := new MutableList from #vertexSet D;
     s := 0;
     t := 0;
     C := new MutableHashTable;
-    local visit;
-    visit = v -> (
+    visit := v -> (
         discovery#v = t;
         lowLink#v = t;
         t = t + 1;
         S#s = v;
         s = s + 1;
         onStack#v = true;
-        scan(toList children(D, v), w -> (
+        scanKeys(children(D, v), w -> (
             if not discovery#?w then (
                 visit w;
                 lowLink#v = min(lowLink#v, lowLink#w)
