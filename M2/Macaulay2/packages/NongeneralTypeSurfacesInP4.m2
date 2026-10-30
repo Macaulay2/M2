@@ -18,7 +18,7 @@ elapsedTime installPackage("NongeneralTypeSurfacesInP4")
 newPackage(
     "NongeneralTypeSurfacesInP4",
     Version => "1.0",
-    Date => "August 28, 2026",
+    Date => "October 30, 2026",
     Headline => "Construction of smooth non-general type surfaces in P4",
     Authors => {
 	        { Name => "Hirotachi Abo",Email => "abo@uidaho.edu", HomePage => "https://sites.google.com/view/hirotachiabo/home"},
@@ -776,7 +776,7 @@ degree10pi9RanestadSurface=method()
 --    COMMENTS : See the paper (need to specify it) for motivation of this construction and compare with enriquesSurfaceOfDegree10
 --               using the Tate resolution simplifies the construction
 degree10pi9RanestadSurface(PolynomialRing,Ring) := (P4,E) -> (
-    -- In the next two lins, construct an 'E'-module homomorphism 'a2' from 'E'^{2:-2} ++ 'E'^{2:-3}' to 'E'^{2:0}, whose transpose corresponds to a map 2*Omega^3(3) -> 2*Omega^1(1) ++ 2O.  
+    -- In the next two lines, construct an 'E'-module homomorphism 'a2' from 'E'^{2:-2} ++ 'E'^{2:-3}' to 'E'^{2:0}, whose transpose corresponds to a map 2*Omega^3(3) -> 2*Omega^1(1) ++ 2O.  
     a1:=(syz matrix{{E_0,E_1}})*random(E^{3:-1},E^{2:-2});
     a2:=map(E^2,,random(E^2,E^{2:-3})|transpose a1);
     -- Compute the resolution of the cokernel of 'a2' up to length 4
@@ -2209,7 +2209,7 @@ aboRanestadSurfaceFromMatrix(Ring,Matrix) := opt -> (P4,m4x2) -> (
     if opt.Verbose then (<<"trials to get a smooth surface = "<<countSmooth <<endl);
     X)
 
-/// -* checks whether aboRanestadSurfaceFromMatrix and matrixFromAboRanestadSurface are basially inverses 
+/// -* checks whether aboRanestadSurfaceFromMatrix and matrixFromAboRanestadSurface are basically inverses 
 --    of each other, takes too long for an honest test *-
 kk=ZZ/19
 P4=kk[x_0..x_4]
@@ -2518,7 +2518,7 @@ P2=kk[z_0..z_2]
 E= kk[e_0..e_4,SkewCommutative=>true];
 
 h=2
---- Homs is 2-dimensional  (at least 5 rank two points of 3x5 matrix are rank one points of right 3x2 submatrix)
+--- The space "Homs" is 2-dimensional  (at least 5 rank two points of 3x5 matrix are rank one points of right 3x2 submatrix)
   setRandomSeed("get a 111234 surface in a minute");
 elapsedTime (X,m3x4,r)=abo112224Or111234Surface(P4,P3,h,Verbose=>true,Count=>true);
 minimalBetti X
@@ -7623,7 +7623,7 @@ SeeAlso
   Text
     So the rank 2 reflexive sheaf E depends on at most 36 parameters and
     taking into account h^0(E)=5
-    we have an atmost 34+4=40 dimensional family of surfaces. 
+    we have an at most 34+4=40 dimensional family of surfaces. 
     
     On the other hand X is the blowup of a polarized K3 surface in 6 points. So we
     get locqlly a family of dimension at least
@@ -7734,7 +7734,7 @@ Description
 
     o10 = true
   Text
-    So the rank 2 reflexive sheaf E depends on at most 36 parameters and taking into account h^0(E)=5 we have an atmost 34+4=40 dimensional family of surfaces.
+    So the rank 2 reflexive sheaf E depends on at most 36 parameters and taking into account h^0(E)=5 we have an at most 34+4=40 dimensional family of surfaces.
 
     On the other hand X is the blowup of a polarized K3 surface in 6 points. So we get locqlly a family of dimension at least
   CannedExample
@@ -7855,7 +7855,7 @@ elapsedTime netList for k from 0 to 8 list (
     o10 = true
   Text
     So the rank 2 reflexive sheaf E depends on at most 36 parameters
-    and taking into account h^0(E)=5 we have an atmost 34+4=40 dimensional family of surfaces.
+    and taking into account h^0(E)=5 we have an at most 34+4=40 dimensional family of surfaces.
     On the other hand X is the blowup of a polarized K3 surface in 6 points. So we get locally
     a family of dimension at least
   CannedExample
