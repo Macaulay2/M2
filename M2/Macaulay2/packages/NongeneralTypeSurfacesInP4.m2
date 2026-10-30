@@ -2518,7 +2518,7 @@ P2=kk[z_0..z_2]
 E= kk[e_0..e_4,SkewCommutative=>true];
 
 h=2
---- The space "Homs" is 2-dimensional  (at least 5 rank two points of 3x5 matrix are rank one points of right 3x2 submatrix)
+--- The space of homomorphism is 2-dimensional  (at least 5 rank two points of 3x5 matrix are rank one points of right 3x2 submatrix)
   setRandomSeed("get a 111234 surface in a minute");
 elapsedTime (X,m3x4,r)=abo112224Or111234Surface(P4,P3,h,Verbose=>true,Count=>true);
 minimalBetti X
