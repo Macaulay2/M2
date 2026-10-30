@@ -72,7 +72,6 @@ export {
     "abo111333Surface",
     "abo111117Surface",
     "abo111144Surface",
-    "symExtFunction",
     "sectionalGenus",
     "chiO",
     "irregularity",
@@ -122,7 +121,6 @@ export {
     "schreyerSurfaceWith2or3LinearSyzygies",
     "unirationalConstructionOfSchreyerSurface",
     "specialEnriquesSchreyerSurface",
-    "adjunctionProcessData",
     --"prepareAboRanestadSurfaces",
     "aboRanestadSurface",
     --"collectSmoothAboRanestadSurfaces",
@@ -4949,7 +4947,7 @@ Headline => "Construction of smooth non-general type surfaces in P4",
      SUBSECTION "Investigating embedded surfaces",
      UL{
 	TO featuredSurfaces,
-	TO adjunctionProcessData,
+	TO "AdjunctionForSurfaces::adjunctionProcess",
 	TO residualInQuintics,
 	TO canonicalDivisor,
 	TO selfIntersectionNumber,
@@ -4984,6 +4982,7 @@ Headline => "unirational families of rational surfaces",
      UL{
         TO cubicScroll,
 	TO delPezzoSurface,
+	TO veroneseSurface,
 	TO castelnuovoSurface,
 	TO bordigaSurface,        
         TO ionescuOkonekSurfaceD7,
@@ -5875,7 +5874,7 @@ Headline => "surfaces of Kodaira dimension 1 (15 families)",
 	TO selfIntersectionNumber,
 	},
 }
-
+-*
 document {
 Key => adjunctionProcessData,
 Headline => "explains the output of the function adjunctionProcess",
@@ -5890,6 +5889,7 @@ Headline => "symExt",
     "documentation of the symExt function from the BGG package",
 help symExt,                
 }
+*-
 
 -- numerical functions
 
@@ -8986,7 +8986,7 @@ SeeAlso
 References
   [Schreyer,1996] Schreyer, F.-O., Small fields in constructive algebraic geometry, in Moduli of Vector bundles, Sanda 1994, Lecture Notes in Pure and Appl. Math., 179, (1996), 221-228.
 
-  [Hulek,1987] Hulek, K., Geometry of the Horrocks-Mumford bundle, Algebraic geometry, Proc. Summer Res. Inst., Brunswick/Maine 1985, part 2, Proc. Symp. Pure Math. 46, No. 2, 69-85., 1987.
+  [Hulek,1987] Hulek, K., Geometry of the Horrocks-Mumford bundle, Algebraic geometry, Proc. Summer Res. Inst., Brunswick/Maine 1985, part 2,  Proc. Symp. Pure Math. 46, No. 2, 69-85., 1987.
 ///
 
 ///
@@ -9198,7 +9198,7 @@ Description
     Hence X lifts to a surface defined over some number field, yielding a surface over
     CC.
 SeeAlso
-   adjunctionProcessData
+   "AdjunctionForSurfaces::adjunctionProcess"
    LeBarzN6
    Ksquare
    tateResolutionOfSurface
@@ -9838,7 +9838,7 @@ Description
      in the plane V(x_3,x_4). We do not have a theoretical proof of the observation that the
      number degree pts +1 coincides with the number of (-1)-lines. 
 SeeAlso
-   adjunctionProcessData
+   "AdjunctionForSurfaces::adjunctionProcess"
    aboRanestadSurface
 ///
 -*
@@ -9900,7 +9900,7 @@ CannedExample
 *-
 
 SeeAlso
-   adjunctionProcessData
+   "AdjunctionForSurfaces::adjunctionProcess"
    aboRanestadSurface
 
 
@@ -10136,7 +10136,7 @@ Description
 
     o31 = true 
 SeeAlso
-   adjunctionProcessData
+   "AdjunctionForSurfaces::adjunctionProcess"
 ///
 -*  for CannedExample of matrixFromAboRanestadSurface
   Example
@@ -13613,7 +13613,7 @@ References
    Ranestad, K., On smooth surfaces of degree ten in the projective fourspace, Thesis, Univ. of Oslo, (1988)
 SeeAlso
    enriquesSurfaceOfDegree10
-   adjunctionProcessData
+   "AdjunctionForSurfaces::adjunctionProcess"
 ///
 
 -* possibly to add to degree10pi8RanestadSurface documentation.
@@ -13762,7 +13762,7 @@ References
    Decker, W., Ein, L., Schreyer, F.-O., Construction of surfaces in P4, J. Algebraic Geom., 2,  (1993), 185-237
 SeeAlso
     degree10pi8RanestadSurface
-    adjunctionProcessData
+    "AdjunctionForSurfaces::adjunctionProcess"
 ///
 
 /// -- experiments about the adjoint surface Y=X_1 of the Enriques surface.
@@ -14072,7 +14072,7 @@ References
 SeeAlso
     specialEnriquesSchreyerSurface
     specificSchreyerSurface
-    adjunctionProcessData
+    "AdjunctionForSurfaces::adjunctionProcess"
     tateResolutionOfSurface
     LeBarzN6
     Ksquare
@@ -15066,7 +15066,7 @@ References
    Decker, W., Ein, L., Schreyer, .F-O., Construction of surfaces in P4, J. Algebraic Geom. 2, (1993), 185–237
 SeeAlso
    nonspecialAlexanderSurface
-   adjunctionProcessData
+   "AdjunctionForSurfaces::adjunctionProcess"
 ///
 
 
@@ -15328,7 +15328,7 @@ Description
 References
    Popescu, S., Surfaces of degree $\ge 11$ in the Projective Fourspace, Dissertation, Universit\"at des Saarlandes, (1993)
 SeeAlso
-  adjunctionProcessData
+  "AdjunctionForSurfaces::adjunctionProcess"
   residualInQuintics
 
 ///
@@ -15497,7 +15497,7 @@ References
 
    Graf von Bothmer, H-C., Ranestad, K.,  Classification of rational surfaces of degree 11 and sectional genus 11 in P4, Math. Scand., 104, (2009), 60-94
 SeeAlso
-  adjunctionProcessData
+  "AdjunctionForSurfaces::adjunctionProcess"
 
 ///
 
@@ -16351,7 +16351,7 @@ References
    Popescu, S., Surfaces of degree $\ge 11$ in the Projective Fourspace, Dissertation, Universit\"at des Saarlandes, (1993) 
 SeeAlso
   horrocksMumfordSurface
-  adjunctionProcessData
+  "AdjunctionForSurfaces::adjunctionProcess"
   abelianSurfaceD15S21Popescu
 ///
 -*
