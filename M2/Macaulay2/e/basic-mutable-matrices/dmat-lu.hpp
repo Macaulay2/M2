@@ -537,8 +537,7 @@ bool DMatLinAlg<RingType>::inverse(Mat& X)
   for (size_t i = 0; i < LU.numRows(); i++)
     ring().set_from_long(id.entry(i, i), 1);
 
-  solve(id, X);
-  return true;
+  return solve(id, X);
 }
 
 template <class RingType>
