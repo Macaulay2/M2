@@ -479,6 +479,7 @@ if(BUILD_TESTING)
 
     unit-tests/DMatTest.hpp
     unit-tests/DMatZZpTest.cpp
+    unit-tests/SMatZZpTest.cpp
 
     unit-tests/ResTest.cpp
     unit-tests/PointArray.cpp
