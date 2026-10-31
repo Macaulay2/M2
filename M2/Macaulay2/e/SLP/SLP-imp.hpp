@@ -49,7 +49,7 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete
  const MutableMat<DMat<RT> >* empty
  ): mRing(empty->getMat().ring()), isCompiled(true), nInputs(nInputs), nOutputs(nOutputs), nParams(0), parametersAndInputs(nullptr)
 {
-  slp = NULL;
+  slp = nullptr;
   //const char* funname = "evaluate";
   const char* funnameRR = "_Z8evaluatePKdPd";
   const char* funnameCC = "_Z8evaluatePKSt7complexIdEPS0_";
@@ -57,11 +57,11 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete
   const char* lib_name = libName_std.c_str();
   printf("loading from %s\n", lib_name);
   void* handle = dlopen(lib_name, RTLD_LAZY | RTLD_GLOBAL);
-  if (handle == NULL) ERROR("can't load library %s", lib_name);
+  if (handle == nullptr) ERROR("can't load library %s", lib_name);
   compiled_fn = (void (*)(ElementType const*, ElementType*)) dlsym(handle, funnameRR);
-  if (compiled_fn == NULL)
+  if (compiled_fn == nullptr)
     compiled_fn = (void (*)(ElementType const*, ElementType*)) dlsym(handle, funnameCC);
-  if (compiled_fn == NULL) 
+  if (compiled_fn == nullptr) 
     std::cerr << "can't link function " << funnameRR << " or " << funnameCC << " from library " << lib_name << std::endl;
 }
   
@@ -97,7 +97,7 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete
  M2_arrayint cPos,
  M2_arrayint vPos,
  const MutableMat<DMat<RT> >* consts /* DMat<RT>& DMat_consts */
- ): mRing(consts->getMat().ring()), isCompiled(false), compiled_fn(NULL), nParams(0), parametersAndInputs(nullptr)
+ ): mRing(consts->getMat().ring()), isCompiled(false), compiled_fn(nullptr), nParams(0), parametersAndInputs(nullptr)
 {
   slp = SLP;
   // for(int i=0; i<cPos->len; i++)

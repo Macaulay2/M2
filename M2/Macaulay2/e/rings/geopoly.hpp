@@ -40,7 +40,7 @@ inline polyheap::polyheap(const PolynomialRing *FF)
 {
   // set K
   int i;
-  for (i = 0; i < GEOHEAP_SIZE; i++) heap[i] = NULL;
+  for (i = 0; i < GEOHEAP_SIZE; i++) heap[i] = nullptr;
 }
 
 inline polyheap::~polyheap()
@@ -62,7 +62,7 @@ inline void polyheap::add(Nterm *p)
   heap[i] = tmp1;
 
   len = F->n_terms(heap[i]);
-  p = NULL;
+  p = nullptr;
   while (len >= heap_size[i])
     {
       i++;
@@ -73,7 +73,7 @@ inline void polyheap::add(Nterm *p)
       heap[i] = tmp1;
 
       len = F->n_terms(heap[i]);
-      heap[i - 1] = NULL;
+      heap[i - 1] = nullptr;
     }
   if (i > top_of_heap) top_of_heap = i;
 }
@@ -83,7 +83,7 @@ inline Nterm *polyheap::remove_lead_term()
   int lead_so_far = -1;
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       if (lead_so_far < 0)
         {
           lead_so_far = i;
@@ -100,7 +100,7 @@ inline Nterm *polyheap::remove_lead_term()
       K->add_to(heap[lead_so_far]->coeff, heap[i]->coeff);
       Nterm *tmp = heap[i];
       heap[i] = tmp->next;
-      tmp->next = NULL;
+      tmp->next = nullptr;
       F->remove(reinterpret_cast<ring_elem &>(tmp));
 
       if (K->is_zero(heap[lead_so_far]->coeff))
@@ -108,30 +108,30 @@ inline Nterm *polyheap::remove_lead_term()
           // Remove, and start over
           tmp = heap[lead_so_far];
           heap[lead_so_far] = tmp->next;
-          tmp->next = NULL;
+          tmp->next = nullptr;
           F->remove(reinterpret_cast<ring_elem &>(tmp));
           lead_so_far = -1;
           i = -1;
         }
     }
-  if (lead_so_far < 0) return NULL;
+  if (lead_so_far < 0) return nullptr;
   Nterm *result = heap[lead_so_far];
   heap[lead_so_far] = result->next;
-  result->next = NULL;
+  result->next = nullptr;
   return result;
 }
 
 inline Nterm *polyheap::value()
 {
-  Nterm *result = NULL;
+  Nterm *result = nullptr;
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       ring_elem tmp1 = result;
       ring_elem tmp2 = heap[i];
       F->add_to(tmp1, tmp2);
       result = tmp1;
-      heap[i] = NULL;
+      heap[i] = nullptr;
     }
   top_of_heap = -1;
   return result;

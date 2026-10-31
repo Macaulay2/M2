@@ -23,7 +23,7 @@ static void* TS_Test1_Func(void* vtup)
     if(!finished[tup->x][j])
       abort();
   finished[tup->x][tup->y]=1;
-  return NULL;
+  return nullptr;
 }
 
 static int TS_Test1()
@@ -64,13 +64,13 @@ static void* TS_Test2_Func1(void* vtup)
      sleep(0);
      }
    canceled = true;
-   return NULL;
+   return nullptr;
 }
 
 static void* TS_Test2_Func2(void* vtup)
 {
   (void) vtup;
-  return NULL;
+  return nullptr;
 }
 
 static int TS_Test2()
@@ -79,8 +79,8 @@ static int TS_Test2()
      {
        canceled=false;
        started=false;
-       ThreadTask* task1 = createThreadTask("Task1",TS_Test2_Func1,NULL,0,0,0);
-       ThreadTask* task2 = createThreadTask("Task2",TS_Test2_Func2,NULL,0,0,0);
+       ThreadTask* task1 = createThreadTask("Task1",TS_Test2_Func1,nullptr,0,0,0);
+       ThreadTask* task2 = createThreadTask("Task2",TS_Test2_Func2,nullptr,0,0,0);
        addCancelTask(task2,task1);
        pushTask(task1);
        pushTask(task2);

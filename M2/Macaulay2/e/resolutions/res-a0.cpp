@@ -425,7 +425,7 @@ void res2_comp::initialize(const Matrix *mat,
 {
   set_status(COMP_COMPUTING);
   P = mat->get_ring()->cast_to_PolynomialRing();
-  assert(P != NULL);
+  assert(P != nullptr);
   R = new res2_poly(const_cast<PolynomialRing *>(P));
   M = P->getMonoid();
   K = P->getCoefficientRing();

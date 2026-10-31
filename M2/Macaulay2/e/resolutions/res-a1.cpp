@@ -16,7 +16,7 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
   int i;
 
   P = mat->get_ring()->cast_to_PolynomialRing();
-  assert(P != NULL);
+  assert(P != nullptr);
   R = new res_poly(const_cast<PolynomialRing *>(P));
   M = P->getMonoid();
   K = P->getCoefficientRing();

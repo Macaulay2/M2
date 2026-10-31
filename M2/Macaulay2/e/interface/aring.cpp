@@ -234,17 +234,17 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
       if (modPoly == 0)
         {
           ERROR("internal error: this should not happen");
-          return NULL;
+          return nullptr;
         }
       M2_arrayint primitiveElementPoly = a->getSmallIntegerCoefficients();
-      if (primitiveElementPoly == 0) return NULL;
+      if (primitiveElementPoly == 0) return nullptr;
 
       return M2::ConcreteRing<M2::ARingGFGivaro>::create(
           R->characteristic(), modPoly, primitiveElementPoly, *R);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 #endif

@@ -21,7 +21,7 @@ class DMatLinAlg<M2::ARingQQ>
     FlintQQMat A(mInputMatrix);
     fmpz_mat_t m1;
     fmpz_mat_init(m1, A.numRows(), A.numColumns());
-    fmpq_mat_get_fmpz_mat_rowwise(m1, NULL, A.value());
+    fmpq_mat_get_fmpz_mat_rowwise(m1, nullptr, A.value());
     size_t rk = fmpz_mat_rank(m1);
     fmpz_mat_clear(m1);
     return rk;
@@ -256,7 +256,7 @@ class DMatLinAlg<M2::ARingQQ>
     fmpz_mat_init(matZZ, A.numRows(), A.numColumns());
     fmpz_mat_init(kerZZ, A.numColumns(), A.numColumns());
 
-    fmpq_mat_get_fmpz_mat_rowwise(matZZ, NULL, A.value());
+    fmpq_mat_get_fmpz_mat_rowwise(matZZ, nullptr, A.value());
     long nullity = fmpz_mat_nullspace(kerZZ, matZZ);
     FlintQQMat kerQQ(A.numColumns(), nullity);
     for (long r = 0; r < A.numColumns(); r++)

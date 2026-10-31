@@ -571,7 +571,7 @@ class MutableMat : public MutableMatrix
   virtual bool is_equal(const MutableMatrix* B) const
   {
     const MutableMat* B1 = dynamic_cast<const MutableMat*>(B);
-    if (B1 == NULL || &B1->getMat().ring() != &getMat().ring()) return false;
+    if (B1 == nullptr || &B1->getMat().ring() != &getMat().ring()) return false;
     return MatrixOps::isEqual(getMat(), B1->getMat());
   }
 
@@ -579,20 +579,20 @@ class MutableMat : public MutableMatrix
   // return this + B.  return NULL if sizes or types do not match.
   {
     const Mat* B1 = B->coerce_const<Mat>();
-    if (B1 == NULL)
+    if (B1 == nullptr)
       {
         ERROR("expected matrices with the same ring and sparsity");
-        return NULL;
+        return nullptr;
       }
     if (B->get_ring() != get_ring())
       {
         ERROR("expected matrices with the same ring");
-        return NULL;
+        return nullptr;
       }
     if (B1->numRows() != n_rows() || B1->numColumns() != n_cols())
       {
         ERROR("expected matrices of the same shape");
-        return NULL;
+        return nullptr;
       }
 
     MutableMat* result = clone();
@@ -611,20 +611,20 @@ class MutableMat : public MutableMatrix
   // return this - B.  return NULL of sizes or types do not match.
   {
     const Mat* B1 = B->coerce_const<Mat>();
-    if (B1 == NULL)
+    if (B1 == nullptr)
       {
         ERROR("expected matrices with the same ring and sparsity");
-        return NULL;
+        return nullptr;
       }
     if (B->get_ring() != get_ring())
       {
         ERROR("expected matrices with the same ring");
-        return NULL;
+        return nullptr;
       }
     if (B1->numRows() != n_rows() || B1->numColumns() != n_cols())
       {
         ERROR("expected matrices of the same shape");
-        return NULL;
+        return nullptr;
       }
 
     MutableMat* result = clone();
