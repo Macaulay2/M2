@@ -39,7 +39,6 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
         );
 
         M'' := asDirectSum M;
-        translate := Hom(map(M'', M, id_M''), N);
 
         H := null;
         if #components M'' > 1 then (
@@ -55,6 +54,7 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
         ) else (
             H = makeHomModule(f, M', N', H');
             H = if opts.MinimalGenerators then trim H else H;
+            H.cache#(homomorphism, R) = H'.cache.homomorphism;
             H.cache.homomorphism = (h) -> (
                 h' := H.cache#(homomorphism, R) h;
                 map(N, M, pushforward'(h' * pushforward(M', M_{0..numgens M - 1})))
@@ -62,7 +62,6 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
         );
 
         H.cache.toambienthommodule = inducedMap(H', H);
-        H.cache#(homomorphism, R) = H'.cache.homomorphism;
         H.cache.formation = FunctionApplication { Hom, (f, M, N, opts) };
 
         remove(M.cache, (computing, Hom, RingMap, Module, Module));
