@@ -55,11 +55,11 @@ doc ///
             homomorphism H_2
             homomorphism H_3
         Text
-            Note that in this non-commutative case, one can get nonsensical results without pushing-forward.
+            Over a skew-commutative ring, @TO homomorphism@ requires a RingMap to push-forward along.
         Example
-            h = homomorphism' id_M
-            -- id_M should not correspond to the zero element
-            assert(h == 0)
+            (val, e) = trap homomorphism' id_M;
+            assert(toString e == "Hom out of non-free module over a skew-commutative ring requires Hom(RingMap, Module, Module)");
+            e
         Text
             While it's main utility is in computing Hom over a non-commutative
             ring such as an exterior algebra, this method can be used in the
