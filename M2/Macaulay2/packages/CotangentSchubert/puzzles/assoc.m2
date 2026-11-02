@@ -1,5 +1,47 @@
-puzzleDir := CotangentSchubert#"source directory"|"CotangentSchubert/puzzles/";
+DoublePuzzle = new SelfInitializingType of BasicList
+
+flp := s -> replace("X","\\\\",replace("\\\\","/",replace("/","X",s)))
+mir := p -> ( n:=p.Length; applyKeys(p, a -> if class a =!= Sequence then a else (a#1,a#0,if class a#2 === ZZ then (4-a#2)%3 else a#2)) )
+
+net DoublePuzzle := A -> (
+    (P1,P2) := toSequence A;
+    stack(unstack net P1 | apply(drop(reverse unstack net mir P2,1),flp))
+    )
+
+html DoublePuzzle := A -> html vg2 A
+
 puzzleSize := (options CotangentSchubert).Configuration#"PuzzleSize"
+
+vg2 = A -> (
+    n := (A#0).Length; assert( n == (A#1).Length);
+    B := apply(A,vg);
+    gList(B#0,B#1++{TransformMatrix=>rotation pi * translation {0,n*sqrt 3,0,0}},
+        Size => n*puzzleSize*2)
+    )
+
+
+puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Separation => null};
+
+doublePuzzle = puzzleOpts >> o -> (a,b,c,d) -> (
+    P := puzzle(a,b,o); -- Equivariant should be false!
+    flatten apply(P,p->apply(puzzle(c,d,reverse bottom p,o),q->DoublePuzzle(p,q)))
+    )
+
+fugacity DoublePuzzle := true >> o -> A -> (
+    A = toSequence A;
+    equiv := (A#0).Equivariant; assert( equiv === (A#1).Equivariant);
+    if #o>0 then A=apply(A, p -> p ++ o); -- change options
+    fug := apply(A,fugacity);
+    if equiv then (
+        R:=ring fug#1; m:=numgens R;
+        fug = (fug#0, (map(R,R,apply(numgens R,i->if i==0 then R_0 else R_(m-i)))) fug#1);
+        );
+    return times fug;
+    )
+
+puzzleDir := CotangentSchubert#"source directory"|"CotangentSchubert/puzzles/";
+getPuzzleJS := get (puzzleDir|"assoc.js");
+getPuzzleJS = replace("\n"," ",replace("//.*$","",getPuzzleJS))
 debug VectorGraphics
 -- move to appropriate files
 svgUse = new MarkUpType of HypertextParagraph
@@ -32,15 +74,13 @@ chS := hashTable { "0" => 3, "1" => 0, "10" => 1 } -- hcol S side
 cvN := hashTable { "0" => 2, "1" => 3, "10" => 1 } -- hcol S side
 cvS := hashTable { "0" => 0, "1" => 1, "10" => 3 } -- hcol S side
 --
-DoublePuzzle = new SelfInitializingType of BasicList
-html DoublePuzzle := html @@ hypertext
-getPuzzleJS := get (puzzleDir|"assoc.js");
-getPuzzleJS = replace("\n"," ",replace("//.*$","",getPuzzleJS))
 
-hypertext DoublePuzzle := A -> (
+associativity = method()
+
+associativity DoublePuzzle := A -> (
     (P1,P2) := toSequence A;
     n:=P1#Length;
-    if P2#Length != n or P1#Steps != 1 or P2#Steps !=1 then error "wrong puzzles";
+    if P2#Length != n or P1#Steps != 1 or P2#Steps !=1 then error "Associativity only implemented for d=1 puzzles";
     hcol := table(n+1,n,(i,j)->if i+j<n then chN#(P1#(i,j,0)) else chS#(P2#(n-i,n-1-j,0)));
     vcol := table(n,n+1,(i,j)->if i+j<n then cvN#(P1#(i,j,1)) else cvS#(P2#(n-1-i,n-j,1)));
     htyp:=table(n+1,n,(i,j)->if i+j<n then 0 else 2);
@@ -100,18 +140,3 @@ hypertext DoublePuzzle := A -> (
     	LABEL{"for"=>Sid|"toggle","Labels"}
     	}
     )
-
-flp := s -> replace("X","\\\\",replace("\\\\","/",replace("/","X",s)))
-mir := p -> ( n:=p.Length; applyKeys(p, a -> if class a =!= Sequence then a else (a#1,a#0,(4-a#2)%3)) )
-
-net DoublePuzzle := A -> (
-    (P1,P2) := toSequence A;
-    stack(unstack net P1 | apply(drop(reverse unstack net mir P2,1),flp))
-    )
-
-puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Separation => null};
-doublePuzzle = puzzleOpts >> o -> (a,b,c,d) -> (
-    P := puzzle(a,b,o); -- Equivariant should be false!
-    flatten apply(P,p->apply(puzzle(c,d,reverse bottom p,o),q->DoublePuzzle(p,q)))
-    )
-

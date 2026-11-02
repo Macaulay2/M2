@@ -16,10 +16,10 @@
 }
 
 text {
-    font-size: 0px;
+    font-size: var(--assoc-label-size, 0px);
     stroke: none;
 }
 
-.labels text {
-    font-size: 0.5px;
+.labels {
+    --assoc-label-size: 0.5px;
 }
