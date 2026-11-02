@@ -435,10 +435,23 @@ multidoc ///
    Text
     Given 4 strings, computes the number of pairs of puzzles glued together to form a rhombus with boundaries
     a,b,c,d in clockwise order.
-
-    In WebApp mode, the output is interactive and allows to test associativity of puzzles.
    Example
     doublePuzzle("0101","0101","0101","0101",Equivariant=>false)
+ Node
+  Key
+   associativity
+  Headline
+   Visual proof of associativity of puzzles
+  Usage
+   associativity A
+  Inputs
+   A : DoublePuzzle
+  Description
+   Text
+    In WebApp mode, the output is interactive and allows to test associativity of puzzles.
+   Example
+    A = first doublePuzzle("0101","0011","0101","1001",Equivariant=>false)
+    associativity A
   Caveat
    At the moment, the interactive part only works on nonequivariant puzzles.
 ///
@@ -556,6 +569,7 @@ TEST /// -- doublePuzzle produces a list of rhombus (double) puzzles
 DP = doublePuzzle("0101","0101","0101","0101",Equivariant=>false);
 assert(class DP === List)
 assert(#DP == 2)
+assert(sum(DP, fugacity) == 2)
 ///
 
 end
