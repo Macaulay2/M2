@@ -116,10 +116,15 @@ End(RingMap, Ring)   :=
 End(RingMap, Ideal)  := Module => o -> (f, X) -> Hom(f, module X, module X, o)
 End(RingMap, Module) := Module => o -> (f, M) -> Hom(f, M, M, o)
 
--- todo: why does Hom(M, N) sometimes over the exterior algebra without pushing forward?
--- is the computation ever correct?
--- does it have the right R-module structure?
--- answering these question might remove the need for the below methods for computing Ext via pushforward...
+-- todo: support dual via this approach
+-- dual(RingMap, Module)
+-- dual(RingMap, Matrix)
+
+-- todo: if M is a bimodule, then we should be able to construct Hom(M, N) as an
+-- R-module but some work is required to get macaulay2 to put the correct module
+-- structure in the non-commutative case. it is unclear if the above pushFwd
+-- shenanigans could be sidestepped in favor of a more direct construction in
+-- the bimodule case.
 
 --- Ext ---
 Ext(ZZ, RingMap, Ring, Ring)   :=
