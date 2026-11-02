@@ -26,7 +26,9 @@ Hom(Module, Ring)   :=
 Hom(Module, Ideal)  := Module => opts -> (M, N) -> Hom(module M, module N, opts)
 Hom(Module, Module) := Module => opts -> (M, N) -> (
     -- TODO: take advantage of cached results with higher e
-    if isSkewCommutative ring M then error "Hom for skew-commutative rings require Hom(RingMap, Module, Module)";
+    if isSkewCommutative ring M and not isFreeModule M then
+        error "Hom out of non-free module over a skew-commutative ring requires Hom(RingMap, Module, Module)";
+
     e := opts.DegreeLimit;
     if e === {} then e = null;
     if e === 0  then e = degree 0_M;
@@ -68,9 +70,10 @@ Hom(Matrix, Matrix) := Matrix => o -> (f, g) -> Hom(source f, g, o) * Hom(f, sou
 
 -- TODO: compare speed with Hom(M, R^1)
 dual Module := Module => {} >> o -> F -> F.cache.dual ??= (
-    if isSkewCommutative ring F then error "Hom for skew-commutative rings require Hom(RingMap, Module, Module)";
-    if not isFreeModule F then kernel transpose presentation F
-    else new Module from (ring F,rawDual raw F)
+    if isFreeModule F then return new Module from (ring F,rawDual raw F);
+    if isSkewCommutative ring F then
+        error "dual of non-free module over a skew-commutative ring requires Hom(RingMap, Module, Module)";
+    kernel transpose presentation F
 )
 
 dual Matrix := Matrix => options Hom >> o -> f -> Hom(f, module ring f, o)
