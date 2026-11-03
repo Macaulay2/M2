@@ -351,16 +351,15 @@ matchingFieldPolytopePoints GrMatchingField := opts -> MF -> (
         ) else (
         -- construct a matching field polytope P_L from
         -- L a matching field for Gr(k, n) Grassmannian
-        points := {};
-        for I in MF.tuples do (
-            -- construct the point corresponding to I
-            point := ();
-            for i in I do (
-                point = point | (i - 1 : 0) | (1 : (1)) | (MF.tupleMaxValue - i : 0);
-                );
-            point = point | (MF.tupleMaxValue * opts.ExtraZeroRows : 0);
-            point = toList point;
-            points = append(points, point);
+        points := apply(MF.tuples, I -> (
+                -- construct the point corresponding to I
+                point := ();
+                for i in I do (
+                    point = point | (i - 1 : 0) | (1 : (1)) | (MF.tupleMaxValue - i : 0);
+                    );
+                point = point | (MF.tupleMaxValue * opts.ExtraZeroRows : 0);
+                toList point
+                )
             );
         points = transpose matrix points;
         if opts.ExtraZeroRows == 0 then MF.cache.mfPolytopePoints = points;
