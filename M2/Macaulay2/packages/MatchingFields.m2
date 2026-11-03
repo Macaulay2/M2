@@ -1220,7 +1220,7 @@ amalgamation(ZZ, TopeField) := (i, TF) -> (
                     );
                 );
             );
-        fold((a,b) -> a | b, for j from 0 to #TF#"type"-1 list sort toList edges#j)
+        flatten for j from 0 to #TF#"type"-1 list sort toList edges#j
         );
     newMF := grMatchingField(MF.tupleMaxSize + 1, MF.tupleMaxValue, newTuples);
     newType := for j from 1 to #TF#"type" list if i == j then TF#"type"_(j-1)+1 else TF#"type"_(j-1);
