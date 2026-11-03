@@ -47,8 +47,6 @@ export {
     "weightMatrixCone",
     "isCoherent",
     "linearSpanTropCone",
-    -- TODO: add a TEST exercising linearSpanTropCone with
-    -- VerifyToricDegeneration => true on a small known degeneration.
     "VerifyToricDegeneration",
     "algebraicMatroid",
     "algebraicMatroidBases",
@@ -3345,6 +3343,24 @@ assert((entries M'')#1 == {2, 6, 4, 10, 8, 12});
 L''' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3, PowerValue => 10);
 M''' = getWeightMatrix L''';
 assert(last entries M''' == {10, 30, 20, 50, 40, 60});
+///
+
+TEST ///
+-- linearSpanTropCone
+MF = diagonalMatchingField(2, 4);
+W = linearSpanTropCone MF;
+V = vertices matchingFieldPolytope MF;
+W' = image transpose V;
+assert(W == W');
+///
+
+TEST ///
+-- linearSpanTropCone for non-toric cone
+MF = matchingFieldFromPermutation(3, 6, {6,1,5,2,3,4}, UsePrimePowers => true, ScalingCoefficient => 3);
+W = linearSpanTropCone(MF, VerifyToricDegeneration => false);
+V = vertices matchingFieldPolytope MF;
+W' = image transpose V;
+assert(W != W') -- because MF does not give a toric degeneration
 ///
 
 end --
