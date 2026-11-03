@@ -409,7 +409,7 @@ canonicalDivisor(Ideal) := X -> (
     B := betti tateResolutionOfSurface X;
     -- Compute the geometric genus of 'X'
     -- (Is it slower to calculate rank HH^2 OO_X?) 
-    pg:= B#(3,{0},0);
+    pg:= B#(3,{0},0) ?? 0;
     -- If 'pg' is zero, then return an error message
     if not pg >0 then error "expected a surface with geometric genus pg>0";
     P4 := ring X;
