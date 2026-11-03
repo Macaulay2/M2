@@ -1787,7 +1787,8 @@ doc ///
           Note that the weights are based on $-1 \times W$ where $W$ is the weight matrix
           that induces $L$, displayed using the function @TO "getWeightMatrix"@.
           The purpose of $-1$ is to transition between the minimum convention
-          of matching fields and the maximum convention of initial terms in @TO "Macaulay2Doc::Macaulay2"@.
+          of matching fields and the maximum convention of initial terms in
+          @TO "Macaulay2Doc::Macaulay2"@.
 
           The ring map for the Pluecker embedding of a partial flag variety is
           completely analogous.
