@@ -2,7 +2,7 @@
 
 newPackage(
     "MatchingFields",
-    Version => "1.3",
+    Version => "1.4",
     Date => "June 18, 2026",
     Authors => {
         {Name => "Oliver Clarke", Email => "oliver.clarke@durham.ac.uk", HomePage => "https://www.oliverclarkemath.com/"}
