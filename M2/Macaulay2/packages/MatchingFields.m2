@@ -144,8 +144,9 @@ matchingField(List, List, Matrix) := (K, S, M) -> (
     local subsetOrder;
     local subsetWeight;
     local weight;
-    L := {};
-    W := {};
+    L := new MutableList from #S;
+    W := new MutableList from #S;
+    listIndex := 0;
     for I in S do (
         if #I > Mn or #I > Mk then (
             error("subset too large for weight matrix");
@@ -158,17 +159,18 @@ matchingField(List, List, Matrix) := (K, S, M) -> (
                 subsetWeight = weight;
                 );
             );
-        L = append(L, subsetOrder);
-        W = append(W, subsetWeight);
+        L#listIndex = subsetOrder;
+        W#listIndex = subsetWeight;
+        listIndex += 1;
         );
     new MatchingField from {
         tupleMaxValue => Mn,
         tupleMaxSize => Mk,
         tupleSizeList => K,
-        tuples => L,
+        tuples => toList L,
         cache => new CacheTable from {
             weightMatrix => M,
-            weightPluecker => W
+            weightPluecker => toList W
             }
         }
     )
