@@ -37,9 +37,6 @@ export {
     "plueckerMap",
     "plueckerAlgebra",
     "matchingFieldFromPermutation",
-    -- TODO: add TESTs exercising the matchingFieldFromPermutation options
-    -- RowNum, UsePrimePowers, ScalingCoefficient, PowerValue with non-default
-    -- values and assert the resulting matching field changes accordingly.
     "RowNum",
     "UsePrimePowers",
     "ScalingCoefficient",
@@ -2244,7 +2241,7 @@ doc ///
         UsePrimePowers => Boolean
           use multiples of prime power used for the entries of the diagonal weight matrix
         PowerValue => ZZ
-          use multiples of powers this value in the diagonal weight matrix
+          use multiples of powers of this value in the diagonal weight matrix (overrides UsePrimePowers)
         ScalingCoefficient => ZZ
           the value by which to scale the permuted row of the diagonal weight matrix
       Outputs
@@ -3333,5 +3330,21 @@ assert(numrows vertices P1 == 12 and numcols vertices P1 == 6);
 assert(numrows vertices P2 == 16 and numcols vertices P2 == 6);
 ///
 
+TEST ///
+-- RowNum, UsePrimePowers, ScalingCoefficient, PowerValue
+-- for function matchingFieldFromPermutation
+L = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3);
+M = getWeightMatrix L;
+assert(last entries M == {6, 18, 12, 30, 24, 36});
+L' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3, UsePrimePowers => true);
+M' = getWeightMatrix L';
+assert(last entries M' == {7, 21, 14, 35, 28, 42});
+L'' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, UsePrimePowers => true, ScalingCoefficient => 2);
+M'' = getWeightMatrix L'';
+assert((entries M'')#1 == {2, 6, 4, 10, 8, 12});
+L''' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3, PowerValue => 10);
+M''' = getWeightMatrix L''';
+assert(last entries M''' == {10, 30, 20, 50, 40, 60});
+///
 
 end --
