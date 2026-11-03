@@ -409,20 +409,20 @@ matchingFieldPolytope(FlMatchingField) := opts -> MF -> (
 -- Corresponds to the Gelfand-Tsetlin Cone of the Flag Variety / Grassmannian
 diagonalMatchingField = method()
 diagonalMatchingField(ZZ, ZZ) := (Lk, Ln) -> (
-    M := matrix for i from 0 to Lk - 1 list for j from 0 to Ln - 1 list i*(Ln - j);
+    M := matrix table(Lk, Ln, (i, j) -> i*(Ln - j));
     grMatchingField(M)
     )
 
 -- partial flag variety
 diagonalMatchingField(List, ZZ) := (LkList, Ln) -> (
-    M := matrix for i from 0 to max LkList - 1 list for j from 0 to Ln - 1 list i*(Ln - j);
+    M := matrix table(max LkList, Ln, (i, j) -> i*(Ln - j));
     flMatchingField(LkList, M)
     )
 
 -- full-flag variety
 -- by convention this is a (n-1) by (n) matrix
 diagonalMatchingField(ZZ) := Ln -> (
-    M := matrix for i from 0 to Ln - 2 list for j from 0 to Ln - 1 list i*(Ln - j);
+    M := matrix table(Ln - 1, Ln, (i, j) -> i*(Ln - j));
     flMatchingField(M)
     )
 
