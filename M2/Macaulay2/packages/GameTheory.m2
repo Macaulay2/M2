@@ -2125,7 +2125,7 @@ doc ///
       
     Example  
       FF = ZZ/32003;
-      d = {2,3,2};
+      d = {2,2,2};
       X = randomGame(d, CoefficientRing => FF);
       PR = probabilityRing(d, CoefficientRing => FF);
       G1 = graph {{John,Matthew},{Matthew,Sarah}};

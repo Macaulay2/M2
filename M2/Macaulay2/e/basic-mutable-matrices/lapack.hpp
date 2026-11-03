@@ -18,6 +18,7 @@ typedef DMat<M2::ARingCC> DMatCC;
 /* MES, On my mac, 10.12.4, lapack include file is at
   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers/clapack.h
 */
+#ifndef _MKL_LAPACK_H_
 extern "C" {
 int dgesv_(int *n,      // number of rows in A
            int *nrhs,   // number of right hand sides
@@ -204,6 +205,7 @@ int zungqr_(int *m,      // #rows m >= 0
                            // nb, where nb is optimal block size.
             int *lwork,    // dimension of 'work'
             int *info);
+#endif /* _MKL_LAPACK_H_ */
 
 #if 0  
   int dormqr_(char *__side,
@@ -221,6 +223,7 @@ int zungqr_(int *m,      // #rows m >= 0
               __CLPK_integer *__info);
 #endif
 
+#ifndef __MKL_CBLAS_H__
 #ifndef __FFLASFFPACK_config_blas_H
 /* cblas routines */
 // computes "ax + y"
@@ -256,7 +259,9 @@ void cblas_dscal(const int n,      // length of vectors
                  const double a,   // scalar alpha
                  double *x,        // vector x
                  const int incx);  // increment of x
+#endif /* __MKL_CBLAS_H__ */
 
+#ifndef _MKL_LAPACK_H_
 int zgesv_(int *n,      // number of rows in A
            int *nrhs,   // number of right hand sides
            double *a,   // n by n matrix A, on exit L&U from A=PLU
@@ -357,7 +362,9 @@ int zgelss_(int *rows,      // rows
             int *lwork,     // size of workspace
             double *rwork,  // workspace
             int *info);     // error info
+#endif /* _MKL_LAPACK_ */
 
+#ifndef __MKL_CBLAS_H__
 #ifndef __FFLASFFPACK_config_blas_H
 /* cblas routines */
 // computes "ax + y"
@@ -395,6 +402,7 @@ void cblas_zgemm(
     const int ldc);     // rows of C
 };
 
+#endif /* __MKL_CBLAS_H__ */
 
 class Lapack
 {

@@ -3,6 +3,7 @@
 #define M2_MONOMIALS_EXPONENTLIST_HPP
 
 #include <cstdio>  // for FILE
+#include <iterator> // for std::back_inserter
 #include <vector>  // for vector
 
 #include "engine-includes.hpp"  // for M2_arrayint, M2_ArrayString
