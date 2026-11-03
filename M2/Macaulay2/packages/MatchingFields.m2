@@ -579,11 +579,8 @@ plueckerIdeal GrMatchingField := opts -> MF -> (
 plueckerIdeal FlMatchingField := opts -> MF -> (
     if not MF.cache.?mfPlueckerIdeal then (
         setupMatchingFieldRings(opts, MF);
-        local i;
-        local variableFromSubset;
-        local generatorList;
-        i = 0;
-        variableFromSubset = new HashTable from flatten (
+        i := 0;
+        variableFromSubset := new HashTable from flatten (
             varsMatrix := vars MF.cache.ringP;
             for grMF in getGrMatchingFields MF list (
                 for s in subsets(toList(1 .. grMF.tupleMaxValue), grMF.tupleMaxSize) list (
@@ -595,7 +592,7 @@ plueckerIdeal FlMatchingField := opts -> MF -> (
         --------------------------------
         -- Grassmannian relations
         --
-        generatorList = flatten for grMF in getGrMatchingFields MF list (
+        generatorList := flatten for grMF in getGrMatchingFields MF list (
             if grMF.tupleMaxSize >= 2 and grMF.tupleMaxValue - grMF.tupleMaxSize >= 2 then (
                 flatten for I in subsets(1 .. grMF.tupleMaxValue, grMF.tupleMaxSize - 1) list (
                     for J in subsets(1 .. grMF.tupleMaxValue, grMF.tupleMaxSize + 1) list (
