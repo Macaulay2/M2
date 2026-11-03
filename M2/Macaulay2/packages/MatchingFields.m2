@@ -29,8 +29,6 @@ export {
     "getWeightPluecker",
     "getGrMatchingFields",
     "matchingFieldPolytope",
-    -- TODO: add a TEST exercising ExtraZeroRows with a non-default value
-    -- (option to matchingFieldPolytope / matchingFieldPolytopePoints).
     "ExtraZeroRows",
     "diagonalMatchingField",
     "matchingFieldRingMap",
@@ -3323,5 +3321,17 @@ MS = matroidSubdivision MF;
 assert(instance(MS, List));
 assert(#MS > 0);
 ///
+
+TEST ///
+-- ExtraZeroRows
+MF = diagonalMatchingField(2, 4);
+P0 = matchingFieldPolytope(MF, ExtraZeroRows => 0);
+P1 = matchingFieldPolytope(MF, ExtraZeroRows => 1);
+P2 = matchingFieldPolytope(MF, ExtraZeroRows => 2);
+assert(numrows vertices P0 == 8  and numcols vertices P0 == 6);
+assert(numrows vertices P1 == 12 and numcols vertices P1 == 6);
+assert(numrows vertices P2 == 16 and numcols vertices P2 == 6);
+///
+
 
 end --
