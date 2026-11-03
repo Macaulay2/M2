@@ -560,6 +560,8 @@ Grassmannian GrMatchingField := opts -> MF -> (
     )
 
 
+-- Note that for the pluecker ideal, the user is expected to only set MonomialOrder => "none" as a
+-- last resort if the matching field is not coherent. Doing so removes most of the functionality of the package
 plueckerIdeal = method(
     Options => {
         MonomialOrder => "default" -- default or none; see setupMatchingFieldRings(.., MonomialOrder => [option])
