@@ -148,7 +148,7 @@ matchingField(List, List, Matrix) := (K, S, M) -> (
     W := {};
     for I in S do (
         if #I > Mn or #I > Mk then (
-            error("Subset too large for weight matrix");
+            error("subset too large for weight matrix");
             );
         subsetWeight = infinity;
         for ordering in permutations(I) do (
@@ -182,7 +182,7 @@ matchingField(List, ZZ, List) := (K, Ln, L) -> (
     -- 1) first compare the sizes
     -- 2) tuples of the same size are sorted by revlex order
     if #K == 0 then (
-        error("List of subset sizes cannot be empty");
+        error("list of subset sizes cannot be empty");
         );
     sortFunc := I -> {#I} | rsort I;
     LSorted := sort(L, sortFunc);
@@ -212,7 +212,7 @@ grMatchingField(Matrix) := M -> (
 grMatchingField(ZZ, ZZ, List) := (Lk , Ln, L) -> (
     -- check user input:
     if not allKSubsets(Lk, Ln, L) then (
-        error("Unexpected tuples.");
+        error("unexpected tuples.");
         );
     new GrMatchingField from matchingField({Lk}, Ln, L)
     )
@@ -249,7 +249,7 @@ flMatchingField(List, ZZ, List) := (LkList, Ln, L) -> (
     -- check user input:
     for Lk in LkList do (
         if not allKSubsets(Lk, Ln, select(L, I -> #I == Lk)) then (
-            error("Unexpected tuples.");
+            error("unexpected tuples.");
             );
         );
     new FlMatchingField from matchingField(LkList, Ln, L)
@@ -452,7 +452,7 @@ setupMatchingFieldRings MatchingField := opts -> MF -> (
             ) else if opts.MonomialOrder == "none" then (
             monomialOrder = GRevLex;
             ) else (
-            error("Unknown option: MonomialOrder => " | toString opts.MonomialOrder);
+            error("unknown option: MonomialOrder => " | toString opts.MonomialOrder);
             );
         MF.cache.ringP = QQ[variables, MonomialOrder => monomialOrder];
         );
@@ -469,7 +469,7 @@ setupMatchingFieldRings MatchingField := opts -> MF -> (
             ) else if opts.MonomialOrder == "none" then (
             monomialOrder = GRevLex;
             ) else (
-            error("Unknown option: MonomialOrder => " | toString opts.MonomialOrder);
+            error("unknown option: MonomialOrder => " | toString opts.MonomialOrder);
             );
         MF.cache.ringX = QQ[x_(1,1) .. x_(MF.tupleMaxSize, MF.tupleMaxValue), MonomialOrder => monomialOrder];
         );
@@ -532,7 +532,7 @@ matchingFieldIdeal MatchingField := opts -> MF -> (
                 ) else if opts.MonomialOrder == "none" then (
                 gensMatrix = gens toricGroebner(V, MF.cache.ringP);
                 ) else (
-                error("Unknown option: MonomialOrder => " | toString opts.MonomialOrder);
+                error("unknown option: MonomialOrder => " | toString opts.MonomialOrder);
                 );
             -- adjust the signs of the variables
             signChange := map(MF.cache.ringP, MF.cache.ringP, matrix {
@@ -925,7 +925,7 @@ NOBody FlMatchingField := MF -> (
 pointRegularSubdivision = method()
 pointRegularSubdivision(Matrix, Matrix) := (points, weight) -> (
     -- Checking for input errors
-    if numColumns weight != numColumns points or numRows weight != 1 then error("The weight must be a one row matrix with number of points many entries");
+    if numColumns weight != numColumns points or numRows weight != 1 then error("weight must be a one row matrix with number of points many entries");
     P := convexHull(points || weight, matrix (toList(numRows points : {0}) | {{1}} ));
     F := select(faces (1,P), f -> #(f#1) == 0);
     V := vertices P;
