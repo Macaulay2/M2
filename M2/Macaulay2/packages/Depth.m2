@@ -87,7 +87,7 @@ depth(Ideal,Module) := ZZ => (J,M) -> (
      AJ := S0^1/JJ;
      d := dim MM;
 
-     complete resolution(AJ,LengthLimit=>d);
+     freeResolution(AJ,LengthLimit=>d);
 
      s := scan(0..(d-1), i -> ( 
 --	    print i;
@@ -171,6 +171,7 @@ time depth(ideal vars S, S^1)
 depth(Module) := ZZ => M -> (
     --depth of a module with respect to the max ideal, via finite proj dim
     --gives error if the ultimate coefficient ring of R = ring M is not a field.
+    if dim M === 0 then return 0;
     R := ring M;
     if isHomogeneous M === false then print "-- Warning: This module is not homogeneous, computation may be incorrect.";
     if not isCommutative R then error"depth undefined for noncommutative rings";
@@ -183,7 +184,7 @@ depth(Module) := ZZ => M -> (
     m := sub(presentation M, S0);
     COK := prune coker(sub(m,S0) | (presentation S ** target m));
     
-    numgens S0 - length res COK    
+    numgens S0 - length freeResolution COK
 --    depth(ideal gens ring M,M) -- old method
      )
 
@@ -873,9 +874,8 @@ TEST///  --- test 15
 ///
 TEST///  --- test 16
      S = ZZ/101[a,b,c,d]
-     ---K = koszulComplex vars S
-     ---apply(numgens S, i-> depth coker K.dd_(i+1))
-
+     K = koszul vars S
+     apply(numgens S, i-> depth coker K.dd_(i+1))
      I = ideal"ab,bc,cd,da"
      assert(codim I == 2)
      setRandomSeed 0
@@ -904,6 +904,16 @@ S = QQ[a..f,x,y]
 I = ideal "ax-by,cx-dy,ex-fy"
 assert (codim I == 2)
 assert(systemOfParameters(I, Seed => ideal "ex-fy") === ideal "ex-fy,ax-by")
+///
+
+TEST///  --- test 20
+S = ZZ/101[x_1..x_(9)];
+J = ideal(x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8);
+T = S/J^3; -- The ring T has dimension 1, not 0 as in test 1.
+I = ideal vars T;
+assert( depth(I,T) === 1 )
+assert( depth(I,T^1) === 1 )
+assert( depth T === 1 )
 ///
 
 end--
