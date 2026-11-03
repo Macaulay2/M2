@@ -71,7 +71,7 @@ refineCones = L -> (
    F := ccRefinement M;
    -- Collect for each cone of the ccRef the intersection of all original cones, that contain
    -- the interior of that cone
-   fan apply(values getProperty(F, honestMaxObjects), 
+   fan apply(maxCones(F, Cone),
       C -> (
          v := interiorVector(C);
          intersection select(L, c -> contains(c,v))

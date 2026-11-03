@@ -948,11 +948,12 @@ document {
      }
 
 document {
-     Key => {linealitySpace, (linealitySpace, PolyhedralObject)},
+     Key => {linealitySpace, (linealitySpace, Cone), (linealitySpace, Polyhedron),
+	  (linealitySpace, Fan), (linealitySpace, PolyhedralComplex)},
      Headline => "computes a basis of the lineality space",
      Usage => " LS = linealitySpace C \nLS = linealitySpace F \nLS = linealitySpace P",
      Inputs => {
-	  "PO" => PolyhedralObject
+	  "PO" => Cone => {"or ", ofClass Polyhedron, ", ", ofClass Fan, ", or ", ofClass PolyhedralComplex}
 	  },
      Outputs => {
 	  "LS" => Matrix
@@ -978,11 +979,11 @@ document {
      }
 
 document {
-     Key => {(rays,PolyhedralObject)},
+     Key => {(rays,Cone), (rays,Polyhedron), (rays,Fan), (rays,PolyhedralComplex)},
      Headline => "displays all rays of a Cone, a Fan, or a Polyhedron",
      Usage => " R = rays F \nR = rays P",
      Inputs => {
-	  "PO" => PolyhedralObject
+	  "PO" => Cone => {"or ", ofClass Polyhedron, ", ", ofClass Fan, ", or ", ofClass PolyhedralComplex}
 	  },
      Outputs => {
 	  "R" => Matrix

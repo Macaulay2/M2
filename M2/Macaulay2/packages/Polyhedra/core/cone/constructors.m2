@@ -115,29 +115,9 @@ coneFromVData Matrix := R -> (
 
 --   INPUT : '(C1,C2)'  two cones
 coneFromVData(Cone,Cone) := (C1,C2) -> (
-   local iRays;
-   local linealityGens;
-   if hasProperties(C1, {rays, computedLinealityBasis}) then (
-      iRays = rays C1;
-      linealityGens = linealitySpace C1;
-   ) else if hasProperties(C1, {inputRays, inputLinealityGenerators}) then (
-      iRays = getProperty(C1, inputRays);
-      linealityGens = getProperty(C1, inputLinealityGenerators);
-   ) else (
-      iRays = rays C1;
-      linealityGens = linealitySpace C1;
-   );
-   if hasProperties(C2, {rays, computedLinealityBasis}) then (
-      iRays = iRays | rays C2;
-      linealityGens = linealityGens | linealitySpace C2;
-   ) else if hasProperties(C2, {inputRays, inputLinealityGenerators}) then (
-      iRays = iRays | getProperty(C2, inputRays);
-      linealityGens = linealityGens | getProperty(C2, inputLinealityGenerators);
-   ) else (
-      iRays = iRays | rays C2;
-      linealityGens = linealityGens | linealitySpace C2;
-   );
-   coneFromVData(iRays, linealityGens)
+   (iRays1, linealityGens1) := getVRepresentation C1;
+   (iRays2, linealityGens2) := getVRepresentation C2;
+   coneFromVData(iRays1 | iRays2, linealityGens1 | linealityGens2)
 )
 
 
