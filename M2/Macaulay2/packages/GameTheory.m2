@@ -10,7 +10,7 @@ newPackage(
          Email => "galgano@mpi-cbg.de",
          HomePage => "https://sites.google.com/view/vincenzogalgano"},
       {Name => "Zhuang He",
-         Email => "zhuang.he@unito.it",
+         Email => "he.zhu@northeastern.edu",
          HomePage => "https://sites.google.com/view/hezhuang/home"},
       {Name => "Lars Kastner",
          Email => "kastner@math.tu-berlin.de",
@@ -698,12 +698,8 @@ intersectWithCImodel = method(Options => {Verbose => false})
 intersectWithCImodel (Ideal, List, List) := o -> (V, Stmts, PlayerNames) -> (
     v := o.Verbose;
     R := ring V;
-    H := map (R,ZZ);
     I := ciIdeal (R, Stmts, PlayerNames);
-    if I + V == H(ideal(1)) then (
-	result := H(ideal(1));
-	result
-	);
+    if I + V == 1 then return I + V;
     for k from 0 to length(R_*)-1 do (
 	I = saturate(I,R_k,Strategy=>Bayer);
 	if v then print ("Completed step " | k+1 | " of saturating CI ideal");
@@ -720,8 +716,7 @@ intersectWithCImodel (Ideal, List, List) := o -> (V, Stmts, PlayerNames) -> (
 	if v then print ("Completed step "|k+1|" of saturating sum");
 	);
     J = saturate(J,sum(R_*),Strategy=>Bayer);
-    result = J;
-    result
+    J
     )
 intersectWithCImodel (Ideal, List) := o -> (V, Stmts) -> (
     v := o.Verbose;
