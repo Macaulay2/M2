@@ -253,9 +253,24 @@ foreach(package IN LISTS PACKAGES)
     )
 endforeach()
 
-file(COPY LanguageServer/M2-language-server
-     DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
+if(TARGET install-LanguageServer)
+  file(COPY LanguageServer/M2-language-server
+       DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR})
 
-install(PROGRAMS LanguageServer/M2-language-server
-        DESTINATION ${CMAKE_INSTALL_BINDIR}
-        COMPONENT ALL)
+  install(PROGRAMS LanguageServer/M2-language-server
+          DESTINATION ${CMAKE_INSTALL_BINDIR}
+          COMPONENT ALL)
+
+  set(LSP_MAN_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_MANDIR}/man1)
+  add_custom_command(TARGET install-LanguageServer POST_BUILD
+    COMMENT "Creating man page for M2-language-server"
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${LSP_MAN_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/LanguageServer/M2-language-server.1 ${LSP_MAN_DIR}
+    COMMAND gzip -nf9 ${LSP_MAN_DIR}/M2-language-server.1)
+
+  add_custom_command(TARGET uninstall-LanguageServer POST_BUILD
+    COMMAND rm -f
+      ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2-language-server
+      ${LSP_MAN_DIR}/M2-language-server.1.gz)
+endif()

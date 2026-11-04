@@ -411,7 +411,7 @@ doc ///
 
             In order to speed up computation, the list $S$ of points 
             can be precomputed (see @TO numericalImageSample@). 
-            This list of points can then be re-used in multiple 
+            This list of points can then be reused in multiple
             interpolation computations (which can yield a large 
             speedup over performing separate sampling instances, 
             if the ideal $I$ is not the zero ideal).

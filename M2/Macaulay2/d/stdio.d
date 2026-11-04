@@ -518,6 +518,7 @@ export closeListener(o:file):(errmsg or null) := (
      null());
 
 export closeIn(o:file):(errmsg or null) := (
+     if o == stdIO then return errmsg("can't close stdio");
      stat := 0;
      if o.infd == NOFD then return errmsg("close: file not open");
      if o == stdIO then return null();			    -- silently refuse to close stdIO
@@ -538,6 +539,8 @@ export closeIn(o:file):(errmsg or null) := (
      null());
 
 export closeOut(o:file):(errmsg or null) := (
+     if o == stdIO then return errmsg("can't close stdio");
+     if o == stdError then return errmsg("can't close stderr");
      stat := 0;
      if o.outfd == NOFD then return errmsg("close: file not open");
      haderror := false;
