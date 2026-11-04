@@ -139,6 +139,14 @@ assert Equation(f 2, toCCi 2)
 
 assert Equation(0.1 * matrix interval(1 + ii), matrix interval(0.1 + 0.1*ii))
 
+-- issue #4763 (used to crash M2)
+assert try RRi_0 then false else true
+assert try CCi_0 then false else true
+assert try RR_(2^63) then false else true
+assert try CC_(2^63) then false else true
+assert try RRi_(2^63) then false else true
+assert try CCi_(2^63) then false else true
+
 --- TO FIX: ---------------------------------------------
 
 -*

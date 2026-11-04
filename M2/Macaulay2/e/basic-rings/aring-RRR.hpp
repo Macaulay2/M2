@@ -3,11 +3,14 @@
 #ifndef M2_BASIC_RINGS_ARING_RRR_HPP_
 #define M2_BASIC_RINGS_ARING_RRR_HPP_
 
+#include <mpfr.h>
+
 #include "interface/gmp-util.h"  // for moveTo_gmpRR
 #include "interface/random.h"    // for randomMpfr
 
 #include "basic-rings/aring.hpp"
 #include "buffer.hpp"
+#include "exceptions.hpp"
 #include "rings/ringelem.hpp"
 #include "ringmap.hpp"
 
@@ -15,6 +18,13 @@ class RRR;
 class RingMap;
 
 namespace M2 {
+inline unsigned long checkPrecision(unsigned long precision)
+{
+  if (precision < MPFR_PREC_MIN || precision > MPFR_PREC_MAX)
+    throw exc::engine_error("precision out of range");
+  return precision;
+}
+
 /**
 \ingroup rings
 */
@@ -28,7 +38,7 @@ class ARingRRR : public SimpleARing<ARingRRR>
   typedef __mpfr_struct elem;
   typedef elem ElementType;
 
-  ARingRRR(unsigned long precision) : mPrecision(precision) {}
+  ARingRRR(unsigned long precision) : mPrecision(checkPrecision(precision)) {}
   // ring informational
   size_t characteristic() const { return 0; }
   unsigned long get_precision() const { return mPrecision; }
