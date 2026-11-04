@@ -111,13 +111,6 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
     return false;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const
-  {
-    (void) result;
-    (void) a;
-    return false;
-  }
-
   void set_var(ElementType& result, int v) const
   {
     (void) v;

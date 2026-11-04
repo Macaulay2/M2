@@ -102,6 +102,11 @@ template <class ARing>
 class SimpleARing : public RingInterface
 {
  public:
+  template <typename ET>
+  void copy(ET& result, const ET& a) const
+  {
+    static_cast<const ARing*>(this)->set(result, a);
+  }
   /**
    * \brief A wrapper class for ElementType
    */
@@ -244,12 +249,6 @@ class DummyRing : public SimpleARing<DummyRing>
       result = 0;
     }
   bool set_from_mpq(elem &result, mpq_srcptr a) const
-    {
-      (void) result;
-      (void) a;
-      return false;
-    }
-  bool set_from_BigReal(elem &result, gmp_RR a) const
     {
       (void) result;
       (void) a;

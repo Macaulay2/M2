@@ -5,8 +5,6 @@
 #include "rings/ring.hpp"
 #include <utility>
 
-class MatrixGenerator;
-
 /**
  * \ingroup matrices
  */
