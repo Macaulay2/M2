@@ -76,73 +76,86 @@ Load: 5,768 weighted lines.
 
 Load: 4,641 weighted lines.
 
-- [ ] **ARing conversion API core** — with Jingyi — 1,107 weighted (369 lines × 3)
-  - [ ] `e/basic-rings/aring-glue.hpp` +11/−11
-  - [ ] `e/basic-rings/aring-translate.hpp` +147/−322
-  - [ ] `e/basic-rings/aring.hpp` +7/−9
-  - [ ] `e/coeffrings.hpp` +6/−4
-- [ ] **ARing backends (other changes)** — with Aidan — 100 weighted (67 lines × 1.5)
+- [x] **ARing conversion API core** — with Jingyi — 1,107 weighted (369 lines × 3)
+  - [x] `e/basic-rings/aring-glue.hpp` +11/−11
+    - Review comment: [Large integer conversion crashes](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537779).
+  - [x] `e/basic-rings/aring-translate.hpp` +147/−322
+  - [x] `e/basic-rings/aring.hpp` +7/−9
+  - [x] `e/coeffrings.hpp` +6/−4
+    - Review comment: [Legacy finite-field constants use the wrong overload](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537794).
+- [x] **ARing backends (other changes)** — with Aidan — 100 weighted (67 lines × 1.5)
   Also check the small changes by Andrew (2 lines).
-  - [ ] `e/basic-rings/aring-CC.hpp` +13/−19
-  - [ ] `e/basic-rings/aring-CCC.hpp` +13/−25
-  - [ ] `e/basic-rings/aring-GF-flint-big.hpp` +9/−15
-  - [ ] `e/basic-rings/aring-GF-flint.cpp` +1/−1
-  - [ ] `e/basic-rings/aring-GF-flint.hpp` +9/−15
-  - [ ] `e/basic-rings/aring-QQ-flint.cpp` +1/−1
-  - [ ] `e/basic-rings/aring-QQ-flint.hpp` +6/−12
-  - [ ] `e/basic-rings/aring-QQ-gmp.cpp` +1/−1
-  - [ ] `e/basic-rings/aring-QQ-gmp.hpp` +7/−6
-  - [ ] `e/basic-rings/aring-RR.hpp` +6/−6
-  - [ ] `e/basic-rings/aring-RRR.hpp` +6/−5
-  - [ ] `e/basic-rings/aring-ZZ-flint.cpp` +3/−3
-  - [ ] `e/basic-rings/aring-ZZ-flint.hpp` +5/−15
-  - [ ] `e/basic-rings/aring-ZZ-gmp.cpp` +3/−3
-  - [ ] `e/basic-rings/aring-ZZ-gmp.hpp` +7/−6
-  - [ ] `e/basic-rings/aring-ZZp-ffpack.cpp` +9/−9
-  - [ ] `e/basic-rings/aring-ZZp-ffpack.hpp` +4/−10
-  - [ ] `e/basic-rings/aring-ZZp-flint.hpp` +9/−15
-  - [ ] `e/basic-rings/aring-ZZp.hpp` +7/−13
-  - [ ] `e/basic-rings/aring-m2-GF.cpp` +1/−1
-  - [ ] `e/basic-rings/aring-m2-GF.hpp` +6/−13
-  - [ ] `e/basic-rings/aring-tower.hpp` +7/−13
-  - [ ] `e/basic-rings/reader.cpp` +1/−1
-  - [ ] `e/basic-rings/vector-arithmetic.hpp` +7/−7
-- [ ] **Matrix code + misc engine (other changes)** — with Michael B. — 42 weighted (28 lines × 1.5)
+  - [x] `e/basic-rings/aring-CC.hpp` +13/−19
+  - [x] `e/basic-rings/aring-CCC.hpp` +13/−25
+  - [x] `e/basic-rings/aring-GF-flint-big.hpp` +9/−15
+  - [x] `e/basic-rings/aring-GF-flint.cpp` +1/−1
+  - [x] `e/basic-rings/aring-GF-flint.hpp` +9/−15
+  - [x] `e/basic-rings/aring-QQ-flint.cpp` +1/−1
+  - [x] `e/basic-rings/aring-QQ-flint.hpp` +6/−12
+  - [x] `e/basic-rings/aring-QQ-gmp.cpp` +1/−1
+  - [x] `e/basic-rings/aring-QQ-gmp.hpp` +7/−6
+  - [x] `e/basic-rings/aring-RR.hpp` +6/−6
+  - [x] `e/basic-rings/aring-RRR.hpp` +6/−5
+  - [x] `e/basic-rings/aring-ZZ-flint.cpp` +3/−3
+  - [x] `e/basic-rings/aring-ZZ-flint.hpp` +5/−15
+    - Review comment: [Large integer conversion crashes](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537779).
+  - [x] `e/basic-rings/aring-ZZ-gmp.cpp` +3/−3
+  - [x] `e/basic-rings/aring-ZZ-gmp.hpp` +7/−6
+  - [x] `e/basic-rings/aring-ZZp-ffpack.cpp` +9/−9
+  - [x] `e/basic-rings/aring-ZZp-ffpack.hpp` +4/−10
+  - [x] `e/basic-rings/aring-ZZp-flint.hpp` +9/−15
+  - [x] `e/basic-rings/aring-ZZp.hpp` +7/−13
+    - Review comment: [Remaining element-copy calls change field values](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537789).
+  - [x] `e/basic-rings/aring-m2-GF.cpp` +1/−1
+  - [x] `e/basic-rings/aring-m2-GF.hpp` +6/−13
+    - Review comment: [Remaining element-copy calls change field values](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537789).
+  - [x] `e/basic-rings/aring-tower.hpp` +7/−13
+  - [x] `e/basic-rings/reader.cpp` +1/−1
+  - [x] `e/basic-rings/vector-arithmetic.hpp` +7/−7
+    - Review comment: [Remaining element-copy calls change field values](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537789).
+    - Review comment: [Legacy finite-field constants use the wrong overload](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537794).
+- [x] **Matrix code + misc engine (other changes)** — with Michael B. — 42 weighted (28 lines × 1.5)
   Also check the small changes by Aidan (4 lines).
-  - [ ] `e/BasicPolyListParser.cpp` +4/−6
-  - [ ] `e/NAG/NAG.hpp` +1/−1
-  - [ ] `e/SLP/SLP-imp.hpp` +11/−11
-  - [ ] `e/basic-mutable-matrices/dmat-lu-inplace.hpp` +4/−4
-  - [ ] `e/basic-mutable-matrices/dmat-lu-qq.hpp` +4/−4
-  - [ ] `e/basic-mutable-matrices/dmat-lu-zzp-flint.hpp` +1/−1
-  - [ ] `e/basic-mutable-matrices/dmat-lu.hpp` +18/−18
-  - [ ] `e/basic-mutable-matrices/dmat.cpp` +4/−4
-  - [ ] `e/basic-mutable-matrices/lapack.cpp` +10/−10
-  - [ ] `e/basic-mutable-matrices/mat-arith.hpp` +3/−3
-  - [ ] `e/basic-mutable-matrices/mat-elem-ops.hpp` +15/−15
-  - [ ] `e/basic-mutable-matrices/mat-util.hpp` +2/−2
-  - [ ] `e/basic-mutable-matrices/smat.hpp` +2/−2
-  - [ ] `e/cytools/lattice_points.cpp` +10/−0
-  - [ ] `e/eigen.cpp` +2/−2
-  - [ ] `e/matrices/matrix-con.hpp` +0/−2
-  - [ ] `e/rings/dpoly.cpp` +2/−2
-  - [ ] `e/rings/dpoly.hpp` +3/−3
-  - [ ] `e/rings/tower.cpp` +3/−3
-  - [ ] `e/schreyer-resolutions/res-f4-m2-interface.cpp` +2/−2
-  - [ ] `tests/normal/subst7.m2` +3/−3
-- [ ] **Monomial-ordering move** — with Jingyi — 2,240 weighted (1,493 lines × 1.5)
+  - [x] `e/BasicPolyListParser.cpp` +4/−6
+  - [x] `e/NAG/NAG.hpp` +1/−1
+  - [x] `e/SLP/SLP-imp.hpp` +11/−11
+    - Review comment: [Remaining element-copy calls change field values](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537789).
+  - [x] `e/basic-mutable-matrices/dmat-lu-inplace.hpp` +4/−4
+  - [x] `e/basic-mutable-matrices/dmat-lu-qq.hpp` +4/−4
+  - [x] `e/basic-mutable-matrices/dmat-lu-zzp-flint.hpp` +1/−1
+  - [x] `e/basic-mutable-matrices/dmat-lu.hpp` +18/−18
+  - [x] `e/basic-mutable-matrices/dmat.cpp` +4/−4
+  - [x] `e/basic-mutable-matrices/lapack.cpp` +10/−10
+  - [x] `e/basic-mutable-matrices/mat-arith.hpp` +3/−3
+  - [x] `e/basic-mutable-matrices/mat-elem-ops.hpp` +15/−15
+  - [x] `e/basic-mutable-matrices/mat-util.hpp` +2/−2
+  - [x] `e/basic-mutable-matrices/smat.hpp` +2/−2
+  - [x] `e/cytools/lattice_points.cpp` +10/−0
+  - [x] `e/eigen.cpp` +2/−2
+  - [x] `e/matrices/matrix-con.hpp` +0/−2
+  - [x] `e/rings/dpoly.cpp` +2/−2
+  - [x] `e/rings/dpoly.hpp` +3/−3
+  - [x] `e/rings/tower.cpp` +3/−3
+  - [x] `e/schreyer-resolutions/res-f4-m2-interface.cpp` +2/−2
+  - [x] `tests/normal/subst7.m2` +3/−3
+- [x] **Monomial-ordering move** — with Jingyi — 2,240 weighted (1,493 lines × 1.5)
   Also check the small changes by Doug (9 lines).
-  - [ ] `e/interface/monomial-ordering.cpp` +51/−963
-  - [ ] `e/interface/monomial-ordering.h` +1/−1
-  - [ ] `e/monomials/monordering.cpp` +466/−0
-  - [ ] `e/monomials/monordering.hpp` +11/−0
-- [ ] **set_from_* → set rename (5 commits)** — with Mike S. — 1,152 weighted (768 lines × 1.5)
+  - [x] `e/interface/monomial-ordering.cpp` +51/−963
+  - [x] `e/interface/monomial-ordering.h` +1/−1
+  - [x] `e/monomials/monordering.cpp` +466/−0
+    - Follow-up: [Re-enable the fixed monomial-ordering regressions](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537799).
+  - [x] `e/monomials/monordering.hpp` +11/−0
+- [x] **set_from_* → set rename (5 commits)** — with Mike S. — 1,152 weighted (768 lines × 1.5)
   Review with `git show <commit>`; the other units skip these changes.
-  - [ ] `fcb62382b6` Rename set_from_* to set() across ARing classes (643 lines)
-  - [ ] `dfaf786bee` Rename get_from_* dispatch helpers to try_set (24 lines)
-  - [ ] `2d5678944a` Fix mutableMatrix, polynomial coefficients, and det over GFM2 (set vs copy) (82 lines)
-  - [ ] `253a427eb4` set() updates for ZZp (17 lines)
-  - [ ] `bfc0866d87` Fix broken CCi unit test (set_from_long -> set) (2 lines)
+  - [x] `fcb62382b6` Rename set_from_* to set() across ARing classes (643 lines)
+    - Review comment: [Large integer conversion crashes](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537779).
+    - Review comment: [Legacy finite-field constants use the wrong overload](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537794).
+  - [x] `dfaf786bee` Rename get_from_* dispatch helpers to try_set (24 lines)
+  - [x] `2d5678944a` Fix mutableMatrix, polynomial coefficients, and det over GFM2 (set vs copy) (82 lines)
+    - Review comment: [Remaining element-copy calls change field values](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537789).
+  - [x] `253a427eb4` set() updates for ZZp (17 lines)
+    - Review comment: [Remaining element-copy calls change field values](https://github.com/Macaulay2/M2/pull/4441#discussion_r4162537789).
+  - [x] `bfc0866d87` Fix broken CCi unit test (set_from_long -> set) (2 lines)
 
 ### Aidan
 
