@@ -310,7 +310,7 @@ bool SMat<CoeffRing>::vec_get_entry(const sparsevec *v,
       break;
     else if (p->row == r)
       {
-        ring().copy(result, p->coeff);
+        ring().set(result, p->coeff);
         return true;
       }
   return false;
@@ -347,7 +347,7 @@ void SMat<CoeffRing>::vec_set_entry(sparsevec *&v,
           vec_remove_node(tmp);
         }
       else
-        ring().copy(p->next->coeff, a);
+        ring().set(p->next->coeff, a);
     }
   v = head.next;
 }
