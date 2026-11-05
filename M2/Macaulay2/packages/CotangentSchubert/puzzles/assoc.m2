@@ -29,8 +29,8 @@ doublePuzzle = puzzleOpts >> o -> (a,b,c,d) -> (
 
 fugacity DoublePuzzle := true >> o -> A -> (
     A = toSequence A;
+    if #o>0 then A=apply(A, p -> new Puzzle from (p ++ o)); -- change options
     equiv := (A#0).Equivariant; assert( equiv === (A#1).Equivariant);
-    if #o>0 then A=apply(A, p -> p ++ o); -- change options
     fug := apply(A,fugacity);
     if equiv then (
         R:=ring fug#1; m:=numgens R;
