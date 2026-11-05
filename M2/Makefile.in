@@ -4,7 +4,7 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY: unconfigure-libs reconfigure configure-help report-M2-location help \
-	scripts dist doc-dist
+	scripts dist doc-dist M2-engine M2-binary M2-core
 all install:										\
 	check-make config.status configured check-for-undefined-configure-variables	\
 	srcdir protect-configs configured-files check-machine				\
@@ -15,6 +15,15 @@ M2:
 	rm -f M2
 	(echo '#! /bin/sh'; echo 'exec @pre_bindir@/M2 "$$@"') >M2
 	chmod a+x M2
+
+M2-engine:
+	$(MAKE) -C Macaulay2 all-in-e
+M2-binary:
+	$(MAKE) -C Macaulay2 all-in-bin
+M2-core: srcdir M2
+	$(MAKE) -C Macaulay2 all-in-m2
+	cp -r @top_srcdir@/Macaulay2/packages/Style* @pre_packagesdir@
+
 define package
 all install-$1: all-$1
 install: install-$1
