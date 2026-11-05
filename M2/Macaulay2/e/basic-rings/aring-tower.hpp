@@ -59,7 +59,7 @@ class ARingTower : public RingInterface
     Element() = delete;
     Element(Element &&other) : ElementImpl(other), R(other.R)
     {
-      other.mValue = NULL;
+      other.mValue = nullptr;
     }  // move constructor only,
     explicit Element(const ARingTower &_R)
         : ElementImpl(static_cast<ElementType>(nullptr)), R(_R)

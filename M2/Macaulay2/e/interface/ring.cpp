@@ -143,7 +143,7 @@ const Ring * /* or null */ rawDividedPowerRing(const Ring *K, const Monoid *M)
   }
   catch (const exc::engine_error& e) {
     ERROR(e.what());
-    return NULL;
+    return nullptr;
   }
 #endif
   ERROR("not yet implemented");

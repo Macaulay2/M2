@@ -73,7 +73,7 @@ struct our_new_delete
   {
     TRAPCHK_SIZE(size);
     void *p = getmem(size);
-    if (p == NULL) outofmem2(size);
+    if (p == nullptr) outofmem2(size);
     TRAPCHK(p);
     return p;
   }
@@ -81,7 +81,7 @@ struct our_new_delete
   {
     TRAPCHK_SIZE(size);
     void *p = getmem(size);
-    if (p == NULL) outofmem2(size);
+    if (p == nullptr) outofmem2(size);
     TRAPCHK(p);
     return p;
   }
@@ -89,12 +89,12 @@ struct our_new_delete
   static inline void operator delete(void *obj)
   {
     TRAPCHK(obj);
-    if (obj != NULL) freemem(obj);
+    if (obj != nullptr) freemem(obj);
   }
   static inline void operator delete[](void *obj)
   {
     TRAPCHK(obj);
-    if (obj != NULL) freemem(obj);
+    if (obj != nullptr) freemem(obj);
   }
 
   static inline void *operator new(size_t size, void *existing_memory)

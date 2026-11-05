@@ -91,7 +91,7 @@ MutableMatrix* MutableMat<T>::solveLinear(const MutableMatrix* B) const
   bool retval = MatrixOps::solveLinear(mat, *B1, solns->mat);
   if (retval) return solns;
   delete solns;
-  return NULL;
+  return nullptr;
 }
 
 template <typename T>
@@ -108,7 +108,7 @@ MutableMatrix* MutableMat<T>::solveInvertible(const MutableMatrix* B) const
   bool retval = MatrixOps::solveInvertible(mat, *B1, solns->mat);
   if (retval) return solns;
   delete solns;
-  return NULL;
+  return nullptr;
 }
 
 template <typename T>
