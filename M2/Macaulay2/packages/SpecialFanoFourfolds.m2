@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.8.1",
-    Date => "October 17, 2026",
+    Date => "November 5, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -34,7 +34,7 @@ newPackage(
 	}
 )
 
-requiredMultiprojectiveVarietiesVersion := "2.7.1";
+requiredMultiprojectiveVarietiesVersion := "2.7.2";
 if MultiprojectiveVarieties.Options.Version < requiredMultiprojectiveVarietiesVersion then (
     <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version "<<requiredMultiprojectiveVarietiesVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
