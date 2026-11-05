@@ -108,7 +108,7 @@ fugacityK0 = p -> (
 fugacity = method(Options=>true)
 
 fugacity Puzzle := true >> o -> p -> (
-    if #o>0 then p = p ++ o; -- change options
+    if #o>0 then p = new Puzzle from (p ++ o); -- change options
     -- TODO: the d>3 limitation thrown below is not mentioned user-facing.
     if p.Separation === null and p#Steps > 3 then error "fugacities not implemented yet for d>3";
     if not p.Equivariant and not p.Ktheory then return 1; -- ha
