@@ -108,7 +108,6 @@ congruenceOfCurves (HodgeSpecialFourfold,ZZ) := (X,e) -> (
 toString CongruenceOfCurves := net CongruenceOfCurves := f -> if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else "a congruence "|f#"string";
 texMath CongruenceOfCurves := texMath @@ net;
 
-CongruenceOfCurves#{WebApp,AfterPrint} = CongruenceOfCurves#{WebApp,AfterNoPrint} =
 CongruenceOfCurves#{Standard,AfterPrint} = CongruenceOfCurves#{Standard,AfterNoPrint} = f -> (
     S := surface f#"fourfold";
     Y := ambientFivefold f#"fourfold";
@@ -120,6 +119,18 @@ CongruenceOfCurves#{Standard,AfterPrint} = CongruenceOfCurves#{Standard,AfterNoP
     if S.cache#?("fanoMap",Y) and ((S.cache#("fanoMap",Y))#"map").cache#"multiplicityFanoMap" == e
     then << "; parameter space: " << Var target S.cache#("fanoMap",Y);
     << endl;
+);
+CongruenceOfCurves#{WebApp,AfterPrint} = CongruenceOfCurves#{WebApp,AfterNoPrint} = f -> (
+    S := surface f#"fourfold";
+    Y := ambientFivefold f#"fourfold";
+    e := f#"degree";
+    Sdescr := if hasAttribute(S,ReverseDictionary) then getAttribute(S,ReverseDictionary) else "surface";
+    Ydescr := if hasAttribute(Y,ReverseDictionary) then getAttribute(Y,ReverseDictionary) else (if codim Y > 0 then shortTeX("\\text{a fivefold in }\\mathbb{P}^{" | (texMath dim ambient Y) | "}") else shortTeX "\\mathbb{P}^{5}");
+    if S.cache#?("fanoMap",Y) and ((S.cache#("fanoMap",Y))#"map").cache#"multiplicityFanoMap" == e then (
+        customWebAppAfterPrint("Congruence ", f#"string", " to ", Sdescr, " in ", Ydescr, "; parameter space: ", Var target S.cache#("fanoMap",Y));
+    ) else (
+        customWebAppAfterPrint("Congruence ", f#"string", " to ", Sdescr, " in ", Ydescr);
+    );
 );
 
 CongruenceOfCurves EmbeddedProjectiveVariety := (f,p) -> f#"function" p;

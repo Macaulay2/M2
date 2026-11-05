@@ -16,12 +16,16 @@ net LatticePolarizationOnK3Surface := L -> (
 );
 texMath LatticePolarizationOnK3Surface := texMath @@ net;
 
-LatticePolarizationOnK3Surface#{WebApp,AfterPrint} =
-LatticePolarizationOnK3Surface#{WebApp,AfterNoPrint} =
 LatticePolarizationOnK3Surface#{Standard,AfterPrint} =
 LatticePolarizationOnK3Surface#{Standard,AfterNoPrint} = L -> (
     virtualK3 := if L#"isVirtual" then "Virtual lattice" else "Lattice";
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << virtualK3 << "-polarization on K3 surface associated to " << (shortDescriptionFourfold recoverFourfold L) << endl;
+);
+
+LatticePolarizationOnK3Surface#{WebApp,AfterPrint} =
+LatticePolarizationOnK3Surface#{WebApp,AfterNoPrint} = L -> (
+    virtualK3 := if L#"isVirtual" then "Virtual lattice" else "Lattice";
+    customWebAppAfterPrint(virtualK3, "-polarization on K3 surface associated to ", shortDescriptionFourfoldTeX recoverFourfold L);
 );
 
 latticeMatrix = method();

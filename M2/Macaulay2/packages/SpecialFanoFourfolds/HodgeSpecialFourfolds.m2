@@ -148,6 +148,33 @@ expression HodgeSpecialFourfold := X -> (
     expression E
 );
 
+texMath HodgeSpecialFourfold := X -> (
+    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
+    S := surface X;
+    if not X.cache#?(S,"LatticeIntersectionMatrix") then (
+        try discriminant X else return texMath shortDescriptionFourfoldTeX(X,false);
+    );
+    if not X.cache#?(S,"LatticeIntersectionMatrix") then return texMath shortDescriptionFourfoldTeX(X,false);
+    M := X.cache#(S,"LatticeIntersectionMatrix");
+    str := "\\begin{aligned}&" | (texMath shortDescriptionFourfoldTeX(X,false)) | "\\text{ of lattice discriminant}";
+    str = str | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath det M);
+    str | "\\end{aligned}"
+);
+
+shortTeX HodgeSpecialFourfold := X -> (
+    local E;
+    if dim ambient X == 4 then (
+        E = "\\text{a }";
+    ) else if degrees X == {({2},1),({3},1)} then (
+        E = "\\text{complete intersection of type }(2,3)\\text{ in }";
+    ) else if degrees X == {({4},1)} then (
+        E = "\\text{quartic hypersurface in }";
+    ) else (
+        E = "\\text{fourfold in }";
+    );
+    shortTeX(E | "\\mathbb{P}^{" | (texMath dim ambient X) | "}\\text{ containing a surface of degree }" | (texMath degree surface X) | "\\text{ and sectional genus }" | (texMath sectionalGenus surface X))
+);
+
 describe HodgeSpecialFourfold := X -> (
     descr := if dim ambient X == 4
              then "Four-dimensional projective space"
@@ -180,6 +207,13 @@ shortDescriptionFourfold (HodgeSpecialFourfold,Boolean) := (X,UseAttribute) -> (
     "Hodge-special fourfold"
 );
 shortDescriptionFourfold HodgeSpecialFourfold := X -> shortDescriptionFourfold(X,true);
+
+shortDescriptionFourfoldTeX = method(TypicalValue => ShortTeX);
+shortDescriptionFourfoldTeX (HodgeSpecialFourfold,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
+    shortTeX "\\text{Hodge-special fourfold}"
+);
+shortDescriptionFourfoldTeX HodgeSpecialFourfold := X -> shortDescriptionFourfoldTeX(X,true);
 
 ambientFivefold = method(TypicalValue => EmbeddedProjectiveVariety);
 
@@ -378,8 +412,8 @@ parameterCount HodgeSpecialFourfold := o -> X -> (
 
 CoherentSheafOnEmbeddedProjectiveVariety = new Type of CoherentSheaf;
 projectiveVariety CoherentSheafOnEmbeddedProjectiveVariety := o -> F -> F.variety.cache#"embedded projective variety";
-CoherentSheafOnEmbeddedProjectiveVariety#{WebApp,AfterPrint} = CoherentSheafOnEmbeddedProjectiveVariety#{WebApp,AfterNoPrint} =
 CoherentSheafOnEmbeddedProjectiveVariety#{Standard,AfterPrint} = CoherentSheafOnEmbeddedProjectiveVariety#{Standard,AfterNoPrint} = F -> (<< endl << concatenate(interpreterDepth:"o") << lineNumber << " : Coherent sheaf on " << projectiveVariety F << endl);
+CoherentSheafOnEmbeddedProjectiveVariety#{WebApp,AfterPrint} = CoherentSheafOnEmbeddedProjectiveVariety#{WebApp,AfterNoPrint} = F -> customWebAppAfterPrint("Coherent sheaf on ", projectiveVariety F);
 
 normalSheaf = method(TypicalValue => CoherentSheaf);
 normalSheaf MultiprojectiveVariety := normalSheaf EmbeddedProjectiveVariety := X -> (
