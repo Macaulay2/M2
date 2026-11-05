@@ -51,7 +51,7 @@ set(_m2_mathic_macro_mathic MATHIC_DEBUG)
 set(_m2_mathic_macro_mathicgb MATHICGB_DEBUG)
 
 # 1. Discover candidates and check each library's own debug flag and linkability.
-# Defer creating targets until the choices for all three libraries are settled.
+# Create bundled targets and aliases only after all three choices are settled.
 foreach(lib IN ITEMS memtailor mathic mathicgb)
   string(TOUPPER ${lib} upper)
   set(${upper}_PROVIDER BUNDLED CACHE STRING "${lib} provider: BUNDLED, SYSTEM, or AUTO")
