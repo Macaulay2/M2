@@ -6,7 +6,8 @@ document {
 	[netList, BaseRow],
 	[netList, HorizontalSpace],
 	[netList, VerticalSpace],
-	[netList, Alignment]},
+	[netList, Alignment],
+	[netList, Enumerate]},
     Headline => "a table of boxes",
     Usage => "netList v",
     Inputs => {
@@ -19,7 +20,8 @@ document {
 	HorizontalSpace => ZZ => {"the amount of space horizontally between entries or between entries and their enclosing boxes"},
 	VerticalSpace => ZZ => "the amount of space vertically between entries or between entries and their enclosing boxes",
 	Alignment => {TT "Center", ", ", TT "Left", ", ", TT "Right", ", or a list of those symbols indicating horizontal adjustment; if it's a list, the ", TT "i", "-th
-	    entry specifies the adjustment in the ", TT "i", "-th column; if not, the symbol applies to all columns."}
+	    entry specifies the adjustment in the ", TT "i", "-th column; if not, the symbol applies to all columns."},
+	Enumerate => Boolean => "When true, add an initial column containing row numbers",
 	},
     Outputs => {{"a net obtained by converting the elements of each list in the list of lists ", TT "v",
 	    " to nets and arranging them in a table, as specified by the options"}},
@@ -31,6 +33,7 @@ document {
 	  netList(f,Boxes=>true,Alignment=>Center)
 	  netList(f,Boxes=>true,BaseRow=>1)
 	  netList(f,Boxes=>{{1},{1}})
+	  netList(f,Enumerate=>true)
 	  netList apply(5,i->apply(i+1,j->(i,j)))
 	  netList(apply(5,i->apply(i+1,j->(i,j))),Boxes=>{true,false})
     ///,

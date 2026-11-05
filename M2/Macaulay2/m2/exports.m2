@@ -661,6 +661,7 @@ export {
 	"endPackage",
 	"endl",
 	"entries",
+        "Enumerate",
 	"environment",
 	"erase",
 	"erf",

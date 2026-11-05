@@ -205,12 +205,13 @@ net Type := X -> (
 -----------------------------------------------------------------------------
 
 netList = method(Options => {
-	  Boxes => true,
-	  BaseRow => 0,
-	  HorizontalSpace => 0,
-	  VerticalSpace => 0,
-	  Alignment => Left				    -- Center, Left, or Right or list of those
-	  })
+    Boxes => true,
+    BaseRow => 0,
+    HorizontalSpace => 0,
+    VerticalSpace => 0,
+    Alignment => Left,	-- Center, Left, or Right or list of those
+    Enumerate => false,
+})
 
 maxN := x -> if #x === 0 then 0 else max x
 
@@ -230,43 +231,51 @@ alignmentFunctions := new HashTable from {
      }
 
 netList VisibleList := o -> (x) -> (
-     x = apply(x, row -> if instance(row,List) then row else {row});
-     (br,hs,vs,bx,algn) := (o.BaseRow,o.HorizontalSpace,o.VerticalSpace,o.Boxes,splice o.Alignment);
-     if br < 0
-     or br >= #x+1					    -- this allows the base row to be absent
-     then error "netList: base row out of bounds";
-     x = apply(x, row->apply(row, netn));
-     n := maxN(length \ x);
-     if n == 0 then ( x={{net000}}; n=1; );
-     if not instance(bx,List) then bx={bx,bx};
-     bxrows := set if bx#0 === true then 0..#x else if bx#0 === false then {} else bx#0;
-     bxcols := set if bx#1 === true then 0..n else if bx#1 === false then {} else bx#1;
-     x = apply(x, row -> if #row == n then row else join(row, n-#row : stack()));
-     colwids := max \ transpose applyTable(x,width);
-     if not instance(algn,List) then algn = n : algn;
-     algn = apply(algn, key -> alignmentFunctions#key);
-     x = apply(x, row -> apply(n, i -> algn#i(colwids#i,row#i)));
-     x = apply(#x, i -> (
-	     h := max(height \ x#i);
-	     if isMember(i,bxrows) then h = h + vs;
-	     d := max(depth \ x#i);
-	     if isMember(i+1,bxrows) or i<#x-1 then d = d + vs;
-	     sep := "|"^(h,d);
-	     nosep := ""^(h,d);
-	     hsep := (spaces hs)^(h,d);
-	     (if isMember(0,bxcols) then sep | hsep else nosep)
-	     | (horizontalJoin mingle(x#i,apply(1..#colwids-1,j->if isMember(j,bxcols) then hsep|sep|hsep else hsep)))
-	     | (if isMember(#colwids,bxcols) then hsep | sep else nosep)
-	     ));
-     colwids = apply(#colwids, i -> colwids#i+hs*(if isMember(i,bxcols) then 2 else if i<#colwids-1 or isMember(#colwids,bxcols) then 1 else 0));
-     hbar := concatenate mingle(apply(#colwids+1,i->if isMember(i,bxcols) then "+" else ""),apply(colwids,wid -> wid:"-"));
-     x = mingle(apply(#x+1,i->if isMember(i,bxrows) then hbar else net000),x);
-     br = 2*br + 1;
-     (stack x)^(
-	  sum(0 .. br-1, i -> depth x#i)
-	  +
-	  sum(1 .. br, i -> try height x#i else 1)	    -- this allows the base row to be absent
-	  ))
+    br := o.BaseRow;
+    hs := o.HorizontalSpace;
+    vs := o.VerticalSpace;
+    bx := o.Boxes;
+    algn := splice o.Alignment;
+    enum := o.Enumerate;
+
+    x = if enum then
+        apply(toList(0..#x - 1), i -> if instance(x_i, List) then join({i}, x_i) else flatten({i, x_i}))
+    else
+        apply(x, row -> if instance(row, List) then row else {row});
+
+    if br < 0 or br >= #x+1 -- this allows the base row to be absent
+    then error "netList: base row out of bounds";
+    x = apply(x, row->apply(row, netn));
+    n := maxN(length \ x);
+    if n == 0 then ( x={{net000}}; n=1; );
+    if not instance(bx,List) then bx={bx,bx};
+    bxrows := set if bx#0 === true then 0..#x else if bx#0 === false then {} else bx#0;
+    bxcols := set if bx#1 === true then 0..n else if bx#1 === false then {} else bx#1;
+    x = apply(x, row -> if #row == n then row else join(row, n-#row : stack()));
+    colwids := max \ transpose applyTable(x,width);
+    if not instance(algn,List) then algn = n : algn;
+    algn = apply(algn, key -> alignmentFunctions#key);
+    x = apply(x, row -> apply(n, i -> algn#i(colwids#i,row#i)));
+    x = apply(#x, i -> (
+        h := max(height \ x#i);
+        if isMember(i,bxrows) then h = h + vs;
+        d := max(depth \ x#i);
+        if isMember(i+1,bxrows) or i<#x-1 then d = d + vs;
+        sep := "|"^(h,d);
+        nosep := ""^(h,d);
+        hsep := (spaces hs)^(h,d);
+        (if isMember(0,bxcols) then sep | hsep else nosep)
+        | (horizontalJoin mingle(x#i,apply(1..#colwids-1,j->if isMember(j,bxcols) then hsep|sep|hsep else hsep)))
+        | (if isMember(#colwids,bxcols) then hsep | sep else nosep)
+    ));
+    colwids = apply(#colwids, i -> colwids#i+hs*(if isMember(i,bxcols) then 2 else if i<#colwids-1 or isMember(#colwids,bxcols) then 1 else 0));
+    hbar := concatenate mingle(apply(#colwids+1,i->if isMember(i,bxcols) then "+" else ""),apply(colwids,wid -> wid:"-"));
+    x = mingle(apply(#x+1,i->if isMember(i,bxrows) then hbar else net000),x);
+    br = 2*br + 1;
+
+    stackexp := sum(0 .. br-1, i -> depth x#i) + sum(1 .. br, i -> try height x#i else 1); -- this allows the base row to be absent
+    (stack x)^stackexp
+)
 
 -- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)
