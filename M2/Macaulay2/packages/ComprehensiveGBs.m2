@@ -2,7 +2,7 @@ newPackage(
     "ComprehensiveGBs",
     Version => "1.0",
     Date => "",
-    Headline => "A package for computing Comprehensive Gröbner Bases (CGBs)",
+    Headline => "computing Comprehensive Gröbner Bases (CGBs)",
     Authors => {
         { Name => "Agustina Cagliero", Email => "mariaagustina.cagliero@kuleuven.be", HomePage => "https://sites.google.com/view/mariaagustinacagliero/"},
         { Name => "Oliver Clarke", Email => "oliver.clarke@durham.ac.uk", HomePage => "https://www.oliverclarkemath.com"},
@@ -631,7 +631,7 @@ doc ///
   Key
     ComprehensiveGBs
   Headline
-    a package for computing Comprehensive Gröbner Bases (CGBs).
+    computing Comprehensive Gröbner Bases (CGBs)
   Description
     Text
       This package provides the implementations of two different algorithms for computing a comprehensive Gröbner system and a
@@ -679,7 +679,7 @@ doc ///
     [comprehensiveGBMain, Depth]
     [comprehensiveGBMain, CheckAssumption]
   Headline
-    a method that computes a Comprehensive Gröbner System
+    compute a Comprehensive Gröbner System
   Usage
     comprehensiveGBMain(F,S)
     comprehensiveGBMain F
@@ -933,7 +933,7 @@ doc ///
     minimalDicksonBasis
     (minimalDicksonBasis, List)
   Headline
-    a method for computing a minimal Dickson basis
+    compute a minimal Dickson basis
   Usage
     minimalDicksonBasis G
   Inputs
@@ -988,7 +988,7 @@ doc ///
     [comprehensiveGB, ReduceStrata]
     [comprehensiveGB, Depth]
   Headline
-    a method that computes a Comprehensive Gröbner Basis
+    compute a Comprehensive Gröbner Basis
   Usage
     G = comprehensiveGB F
   Inputs
