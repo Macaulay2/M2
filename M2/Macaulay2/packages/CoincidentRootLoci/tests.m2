@@ -195,7 +195,7 @@ Y = dual X
 assert(dual X == Y and dual Y == X)
 assert(dim X == 6 and codim X == 13 and dim Y == 18 and codim Y == 1 and degree X == 30240 and degree Y == 10080)
 S = {coincidentRootLocus({7,5,3,2,2},K),coincidentRootLocus({7,6,6},K),coincidentRootLocus({9,3,3,2,2},K),coincidentRootLocus({10,3,2,2,2},K)}
-assert(singularLocus X == sort S)
+assert(sort apply(singularLocus X, partition) == sort apply(S, partition))
 apply(S,s -> assert isSubset(s,X))
 describe coincidentRootLocus({7,3,3,2,2,2},K)
 --
