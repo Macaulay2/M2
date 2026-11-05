@@ -37,7 +37,12 @@ endfunction()
 
 set(_m2_mathic_expression_memtailor "libmemtailorIsPresent()")
 set(_m2_mathic_expression_mathic "libmathicIsPresent()")
-set(_m2_mathic_expression_mathicgb "mgb::GroebnerConfiguration configuration(101, 2, 1)")
+set(_m2_mathic_expression_mathicgb "libmathicgbIsPresent()")
+# These floors match the post-release snapshots tested by #4758's external CI.
+# The corresponding releases lack the required installed ABI metadata; external
+# builds currently need those snapshots or packages with the metadata backported.
+# TODO: use the first releases containing Macaulay2/memtailor#23,
+# Macaulay2/mathic#29 and Macaulay2/mathicgb#84 once they are available.
 set(_m2_mathic_version_memtailor 1.4)
 set(_m2_mathic_version_mathic 1.5)
 set(_m2_mathic_version_mathicgb 1.4)
@@ -45,6 +50,8 @@ set(_m2_mathic_macro_memtailor MEMT_DEBUG)
 set(_m2_mathic_macro_mathic MATHIC_DEBUG)
 set(_m2_mathic_macro_mathicgb MATHICGB_DEBUG)
 
+# 1. Discover candidates and check each library's own debug flag and linkability.
+# Defer creating targets until the choices for all three libraries are settled.
 foreach(lib IN ITEMS memtailor mathic mathicgb)
   string(TOUPPER ${lib} upper)
   set(${upper}_PROVIDER BUNDLED CACHE STRING "${lib} provider: BUNDLED, SYSTEM, or AUTO")
@@ -86,8 +93,8 @@ foreach(lib IN ITEMS memtailor mathic mathicgb)
   endif()
 endforeach()
 
-# Compare transitive ABI flags as well as each library's own flags. Imported
-# usage requirements must describe the same dependencies M2 selected directly.
+# 2. Check transitive ABI flags and mathicgb's TBB setting. Each candidate must
+# describe the same dependencies M2 selected directly and the requested TBB mode.
 foreach(lib IN ITEMS mathic mathicgb)
   if(NOT _${lib}_external)
     continue()
@@ -117,9 +124,10 @@ if(_mathicgb_external)
   endif()
 endif()
 
+# 3. Settle compatible provider choices, then create their targets below.
 # Never link an installed library with a second, bundled copy of its dependency.
 # A bundled Debug mathic/mathicgb also forces its dependencies' debug layouts.
-# Propagate fallbacks to a fixed point before creating any bundled targets.
+# Repeat because rejecting a dependency can also disqualify its consumers.
 set(_selection_changed TRUE)
 while(_selection_changed)
   set(_selection_changed FALSE)
