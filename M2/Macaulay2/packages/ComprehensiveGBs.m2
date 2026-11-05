@@ -39,21 +39,7 @@ CGBData = new Type of HashTable
 
 ringOrder = method(); -- returns the monomial order of a polynomial ring
 ringOrder PolynomialRing := List => R -> (
-    order := select(toList (options R).MonomialOrder, orderEntry -> not member(first orderEntry, {MonomialSize, Position}));
-    n := numgens R;
-    apply(order, orderEntry -> (
-        if first orderEntry === Weights then (
-            -- For U = QQ[a]; R = U[x,y,z, MonomialOrder => {Lex => 1, GLex}];
-            -- {Lex => 1, GLex} unexpectedly expands to {Lex => 1, Weights => {1,1,1}, Lex => 2}.
-            -- The bug is confirmed and will be fixed in future versions of Macaulay2: https://github.com/Macaulay2/M2/pull/4673
-            -- Anyway, we ignore the unused weights as a hotfix for now.
-            -- Update: This has been fixed in the next version so we can remove the fix [do this just before pull request]
-            Weights => take(last orderEntry, min(n, #last orderEntry))
-        ) else (
-            n = n - if instance(last orderEntry, ZZ) then last orderEntry else #last orderEntry;
-            orderEntry
-        )
-    ))
+    select(toList (options R).MonomialOrder, orderEntry -> not member(first orderEntry, {MonomialSize, Position}))
 );
 
 cgbDataFromRings = method();
