@@ -908,7 +908,7 @@ doc ///
     G: List
       a list consisting of a list of vertices and a list of edges.
     d: ZZ
-      a postive integer
+      a positive integer
     CheckAssumption=>Boolean
        check that $V(S)\subseteq V(\langle F\rangle\cap k[U])$
     ReduceStrata=>Boolean
@@ -925,7 +925,7 @@ doc ///
   Description
     Text
       Let $G=(V,E)$ be graph and fix a positive integer $d$.
-      Consider the paramaterized polynomial systems
+      Consider the parameterized polynomial systems
       $F=\{f_e\}_{e\in E}\subseteq K[\lambda_e\:e\in E][x_{v,k}:v\in V,1\leq k \leq d]$,
       where $K\in \{\mathbb{C},\mathbb{R}\}$ and
       \[ f_{ij}=\sum_{k=1}^{d}(x_{i,k}-x_{j,k})^2  -\lambda_{ij} \].
