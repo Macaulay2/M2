@@ -11,6 +11,17 @@ IntersectionOfThreeQuadricsInP7.synonym = "complete intersection of three quadri
 
 expression IntersectionOfThreeQuadricsInP7 := X -> expression("complete intersection of three quadrics in PP^7 containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
 
+texMath IntersectionOfThreeQuadricsInP7 := X -> (
+    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
+    d := discriminant X;
+    A := X.cache#(surface X,"LatticeIntersectionMatrix");
+    str := "\\begin{aligned}&" | (texMath shortDescriptionFourfoldTeX(X,false)) | "\\text{ of lattice discriminant}";
+    str = str | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d);
+    str | "\\end{aligned}"
+);
+
+shortTeX IntersectionOfThreeQuadricsInP7 := X -> shortTeX("\\text{complete intersection of three quadrics in }\\mathbb{P}^{7}\\text{ containing a surface of degree }" | (texMath degree surface X) | "\\text{ and sectional genus }" | (texMath sectionalGenus surface X));
+
 describe IntersectionOfThreeQuadricsInP7 := X -> (
     descr := "Complete intersection of 3 quadrics in PP^7";
     disc := discriminant X;
@@ -33,6 +44,11 @@ describe IntersectionOfThreeQuadricsInP7 := X -> (
 shortDescriptionFourfold (IntersectionOfThreeQuadricsInP7,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
     "complete intersection of three quadrics in PP^7"
+);
+
+shortDescriptionFourfoldTeX (IntersectionOfThreeQuadricsInP7,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
+    shortTeX "\\text{complete intersection of three quadrics in }\\mathbb{P}^{7}"
 );
 
 recognize3QuadricsP7 = X -> (

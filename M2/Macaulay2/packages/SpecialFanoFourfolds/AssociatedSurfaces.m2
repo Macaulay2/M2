@@ -25,12 +25,31 @@ expression WeightedSurfaceAssociatedToRationalFourfold := expression SurfaceAsso
     expression(S|" associated to "|A)
 );
 
+shortTeX WeightedSurfaceAssociatedToRationalFourfold := shortTeX SurfaceAssociatedToRationalFourfold := U -> (
+    X := recoverFourfold U;
+    (S,F) := if instance(X,CubicFourfold)
+             then ("K3 surface","\\text{cubic fourfold}")
+             else if instance(X,GushelMukaiFourfold)
+             then ("K3 surface","\\text{GM fourfold}")
+             else if instance(X,IntersectionOfThreeQuadricsInP7)
+             then ("Castelnuovo surface","\\text{complete intersection of 3 quadrics in }\\mathbb{P}^{7}")
+             else ("surface","\\text{fourfold}");
+    if dim U == -1 then S = "not-fully-calculated " | S;
+    A := if hasAttribute(X,ReverseDictionary) then texMath getAttribute(X,ReverseDictionary) else F | "\\text{ of discriminant }" | (texMath discriminant X);
+    shortTeX("\\text{" | S | " associated to }" | A)
+);
+
 net WeightedSurfaceAssociatedToRationalFourfold := net SurfaceAssociatedToRationalFourfold := U -> (
     if hasAttribute(U,ReverseDictionary) then return toString getAttribute(U,ReverseDictionary);
     if dim U >= 0 then return ? U;
     "-* some calculations are missing *-"
 );
-texMath WeightedSurfaceAssociatedToRationalFourfold := texMath SurfaceAssociatedToRationalFourfold := texMath @@ net;
+
+texMath WeightedSurfaceAssociatedToRationalFourfold := texMath SurfaceAssociatedToRationalFourfold := U -> (
+    if hasAttribute(U,ReverseDictionary) then return texMath getAttribute(U,ReverseDictionary);
+    if dim U >= 0 then return texMath projectiveVariety(ring U,Saturate=>false);
+    "\\text{some calculations are missing}"
+);
 
 describe WeightedSurfaceAssociatedToRationalFourfold := describe SurfaceAssociatedToRationalFourfold := S -> (
     out := "Fourfold: ";

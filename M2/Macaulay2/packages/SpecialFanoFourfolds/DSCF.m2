@@ -119,6 +119,23 @@ expression DoublySpecialCubicFourfold := X -> (
     expression("cubic fourfold containing two surfaces of degrees " | (toString degree S) | " and " | (toString degree T) | ", sectional genera " | (toString sectionalGenus S) | " and " | (toString sectionalGenus T))
 );
 
+texMath DoublySpecialCubicFourfold := X -> (
+    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
+    A := latticeIntersectionMatrix3x3 X;
+    (q,r) := quotientRemainder(det A,8);
+    str := "\\begin{aligned}&" | (texMath shortDescriptionFourfoldTeX(X,false)) | "\\text{ of lattice discriminant}";
+    str = str | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath det A) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    str | "\\end{aligned}"
+);
+
+shortTeX DoublySpecialCubicFourfold := X -> (
+    (S,T) := surfaces X;
+    if isPlaneInP5 S and isPlaneInP5 T then return shortTeX("\\text{cubic fourfold in }\\mathcal{C}_{8}\\text{ containing two planes}");
+    if isPlaneInP5 S then return shortTeX("\\text{cubic fourfold in }\\mathcal{C}_{8}\\text{ containing a plane and a surface of degree }" | (texMath degree T) | "\\text{ and sectional genus }" | (texMath sectionalGenus T));
+    if isPlaneInP5 T then return shortTeX("\\text{cubic fourfold in }\\mathcal{C}_{8}\\text{ containing a surface of degree }" | (texMath degree S) | "\\text{ and sectional genus }" | (texMath sectionalGenus S) | "\\text{ and a plane}");
+    shortTeX("\\text{cubic fourfold containing two surfaces of degrees }" | (texMath degree S) | "\\text{ and }" | (texMath degree T) | "\\text{, sectional genera }" | (texMath sectionalGenus S) | "\\text{ and }" | (texMath sectionalGenus T))
+);
+
 describe DoublySpecialCubicFourfold := X -> (
     (S,T) := surfaces X;
     Y := X.cache#"parentCubicFourfold";
@@ -178,6 +195,16 @@ shortDescriptionFourfold (DoublySpecialCubicFourfold,Boolean) := (X,UseAttribute
     Cd1Cd2 := "C_"|(toString d1);
     if d1 != d2 then Cd1Cd2 = Cd1Cd2|" ∩ C_"|(toString d2);
     "cubic fourfold in "|Cd1Cd2
+);
+
+shortDescriptionFourfoldTeX (DoublySpecialCubicFourfold,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
+    Y := X.cache#"parentCubicFourfold";
+    d1 := discriminant X;
+    d2 := discriminant Y;
+    Cd1Cd2 := "\\mathcal{C}_{" | (texMath d1) | "}";
+    if d1 != d2 then Cd1Cd2 = Cd1Cd2 | "\\cap\\mathcal{C}_{" | (texMath d2) | "}";
+    shortTeX("\\text{cubic fourfold in }" | Cd1Cd2)
 );
 
 genRingIntMatr3x3 = memoize(() -> (
