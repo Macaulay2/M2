@@ -1,8 +1,8 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.8",
-    Date => "15 June 2026", -- "22 Mar 2021",
+    Version => "0.81",
+    Date => "2 November 2026", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -32,8 +32,8 @@ if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor"
 opts = new OptionTable from {Ktheory => false, Equivariant => true} -- common options
 export {"Ktheory", "Equivariant", "Separation", "LabelList" };
 
-load "CotangentSchubert/cotangent.m2";
-load "CotangentSchubert/puzzles.m2";
+load "./CotangentSchubert/cotangent.m2";
+load "./CotangentSchubert/puzzles.m2";
 
 beginDocumentation()
 multidoc ///
@@ -366,16 +366,20 @@ multidoc ///
  Node
   Key
    fugacity
+   (fugacity,Puzzle)
+   (fugacity,DoublePuzzle)
    fugacityVector
    fugacityTally
   Headline
    compute the fugacity of puzzles
   Usage
    fugacity P
+   fugacity D
    fugacityVector L
    fugacityTally L
   Inputs
    P : Puzzle
+   D : DoublePuzzle
    L : List
     a list of puzzles
   Description
@@ -387,6 +391,9 @@ multidoc ///
     Schubert classes @TO{schubertClass}@ if @TT"Generic=>false"@.
     The options @TT "Ktheory"@, @TT "Equivariant"@, @TT "Generic"@ are inherited from the @TO{puzzle}@ by default,
     but they can be overridden.
+
+    For a double puzzle, the fugacity is the product of the fugacities of its two puzzles,
+    with the equivariant parameters of the second puzzle reversed to account for its orientation.
 
     fugacityTally processes a list of puzzles, and returns a hash table where to each string appearing at the bottom
     of a puzzle is associated the sum of fugacities of the corresponding puzzles.
@@ -435,10 +442,23 @@ multidoc ///
    Text
     Given 4 strings, computes the number of pairs of puzzles glued together to form a rhombus with boundaries
     a,b,c,d in clockwise order.
-
-    In WebApp mode, the output is interactive and allows to test associativity of puzzles.
    Example
     doublePuzzle("0101","0101","0101","0101",Equivariant=>false)
+ Node
+  Key
+   associativity
+  Headline
+   Visual proof of associativity of puzzles
+  Usage
+   associativity A
+  Inputs
+   A : DoublePuzzle
+  Description
+   Text
+    In WebApp mode, the output is interactive and allows to test associativity of puzzles.
+   Example
+    A = first doublePuzzle("0101","0011","0101","1001",Equivariant=>false)
+    associativity A
   Caveat
    At the moment, the interactive part only works on nonequivariant puzzles.
 ///
@@ -556,6 +576,24 @@ TEST /// -- doublePuzzle produces a list of rhombus (double) puzzles
 DP = doublePuzzle("0101","0101","0101","0101",Equivariant=>false);
 assert(class DP === List)
 assert(#DP == 2)
+assert(sum(DP, fugacity) == 2)
+///
+
+TEST /// -- fugacity option overrides preserve puzzle types and orientation
+E = doublePuzzle("0101","0011","0101","1001");
+D = first E;
+P = D#0;
+assert(fugacity(P, Equivariant=>false) == 1)
+assert(fugacity(P, Generic=>false, Equivariant=>false, Ktheory=>true)
+    == (-1)^(inversion "0101" + inversion "0011" - inversion bottom P))
+assert(fugacity(D, Equivariant=>true) == fugacity D)
+assert(fugacity(D, Equivariant=>false) == 1)
+assert(fugacity(D, Ktheory=>true) == fugacity new class D from
+    apply(D, p -> new Puzzle from (p ++ {Ktheory=>true})))
+D0 = new class D from apply(D, p -> new Puzzle from (p ++ {Equivariant=>false}));
+assert(fugacity(D0, Equivariant=>true) == fugacity D)
+assert(P.Equivariant and all(D, p -> p.Equivariant))
+assert(all(D0, p -> not p.Equivariant))
 ///
 
 end
