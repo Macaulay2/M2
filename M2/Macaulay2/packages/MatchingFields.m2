@@ -2,8 +2,8 @@
 
 newPackage(
     "MatchingFields",
-    Version => "1.3",
-    Date => "February 2, 2026",
+    Version => "1.4",
+    Date => "June 18, 2026",
     Authors => {
         {Name => "Oliver Clarke", Email => "oliver.clarke@durham.ac.uk", HomePage => "https://www.oliverclarkemath.com/"}
         },
@@ -29,8 +29,6 @@ export {
     "getWeightPluecker",
     "getGrMatchingFields",
     "matchingFieldPolytope",
-    -- TODO: add a TEST exercising ExtraZeroRows with a non-default value
-    -- (option to matchingFieldPolytope / matchingFieldPolytopePoints).
     "ExtraZeroRows",
     "diagonalMatchingField",
     "matchingFieldRingMap",
@@ -39,9 +37,6 @@ export {
     "plueckerMap",
     "plueckerAlgebra",
     "matchingFieldFromPermutation",
-    -- TODO: add TESTs exercising the matchingFieldFromPermutation options
-    -- RowNum, UsePrimePowers, ScalingCoefficient, PowerValue with non-default
-    -- values and assert the resulting matching field changes accordingly.
     "RowNum",
     "UsePrimePowers",
     "ScalingCoefficient",
@@ -52,8 +47,6 @@ export {
     "weightMatrixCone",
     "isCoherent",
     "linearSpanTropCone",
-    -- TODO: add a TEST exercising linearSpanTropCone with
-    -- VerifyToricDegeneration => true on a small known degeneration.
     "VerifyToricDegeneration",
     "algebraicMatroid",
     "algebraicMatroidBases",
@@ -151,11 +144,12 @@ matchingField(List, List, Matrix) := (K, S, M) -> (
     local subsetOrder;
     local subsetWeight;
     local weight;
-    L := {};
-    W := {};
+    L := new MutableList from #S;
+    W := new MutableList from #S;
+    listIndex := 0;
     for I in S do (
         if #I > Mn or #I > Mk then (
-            error("Subset too large for weight matrix");
+            error("subset too large for weight matrix");
             );
         subsetWeight = infinity;
         for ordering in permutations(I) do (
@@ -165,17 +159,18 @@ matchingField(List, List, Matrix) := (K, S, M) -> (
                 subsetWeight = weight;
                 );
             );
-        L = append(L, subsetOrder);
-        W = append(W, subsetWeight);
+        L#listIndex = subsetOrder;
+        W#listIndex = subsetWeight;
+        listIndex += 1;
         );
     new MatchingField from {
         tupleMaxValue => Mn,
         tupleMaxSize => Mk,
         tupleSizeList => K,
-        tuples => L,
+        tuples => toList L,
         cache => new CacheTable from {
             weightMatrix => M,
-            weightPluecker => W
+            weightPluecker => toList W
             }
         }
     )
@@ -189,7 +184,7 @@ matchingField(List, ZZ, List) := (K, Ln, L) -> (
     -- 1) first compare the sizes
     -- 2) tuples of the same size are sorted by revlex order
     if #K == 0 then (
-        error("List of subset sizes cannot be empty");
+        error("list of subset sizes cannot be empty");
         );
     sortFunc := I -> {#I} | rsort I;
     LSorted := sort(L, sortFunc);
@@ -219,7 +214,7 @@ grMatchingField(Matrix) := M -> (
 grMatchingField(ZZ, ZZ, List) := (Lk , Ln, L) -> (
     -- check user input:
     if not allKSubsets(Lk, Ln, L) then (
-        error("Unexpected tuples.");
+        error("unexpected tuples.");
         );
     new GrMatchingField from matchingField({Lk}, Ln, L)
     )
@@ -256,7 +251,7 @@ flMatchingField(List, ZZ, List) := (LkList, Ln, L) -> (
     -- check user input:
     for Lk in LkList do (
         if not allKSubsets(Lk, Ln, select(L, I -> #I == Lk)) then (
-            error("Unexpected tuples.");
+            error("unexpected tuples.");
             );
         );
     new FlMatchingField from matchingField(LkList, Ln, L)
@@ -356,16 +351,15 @@ matchingFieldPolytopePoints GrMatchingField := opts -> MF -> (
         ) else (
         -- construct a matching field polytope P_L from
         -- L a matching field for Gr(k, n) Grassmannian
-        points := {};
-        for I in MF.tuples do (
-            -- construct the point corresponding to I
-            point := ();
-            for i in I do (
-                point = point | (i - 1 : 0) | (1 : (1)) | (MF.tupleMaxValue - i : 0);
-                );
-            point = point | (MF.tupleMaxValue * opts.ExtraZeroRows : 0);
-            point = toList point;
-            points = append(points, point);
+        points := apply(MF.tuples, I -> (
+                -- construct the point corresponding to I
+                point := ();
+                for i in I do (
+                    point = point | (i - 1 : 0) | (1 : (1)) | (MF.tupleMaxValue - i : 0);
+                    );
+                point = point | (MF.tupleMaxValue * opts.ExtraZeroRows : 0);
+                toList point
+                )
             );
         points = transpose matrix points;
         if opts.ExtraZeroRows == 0 then MF.cache.mfPolytopePoints = points;
@@ -415,20 +409,20 @@ matchingFieldPolytope(FlMatchingField) := opts -> MF -> (
 -- Corresponds to the Gelfand-Tsetlin Cone of the Flag Variety / Grassmannian
 diagonalMatchingField = method()
 diagonalMatchingField(ZZ, ZZ) := (Lk, Ln) -> (
-    M := matrix for i from 0 to Lk - 1 list for j from 0 to Ln - 1 list i*(Ln - j);
+    M := matrix table(Lk, Ln, (i, j) -> i*(Ln - j));
     grMatchingField(M)
     )
 
 -- partial flag variety
 diagonalMatchingField(List, ZZ) := (LkList, Ln) -> (
-    M := matrix for i from 0 to max LkList - 1 list for j from 0 to Ln - 1 list i*(Ln - j);
+    M := matrix table(max LkList, Ln, (i, j) -> i*(Ln - j));
     flMatchingField(LkList, M)
     )
 
 -- full-flag variety
 -- by convention this is a (n-1) by (n) matrix
 diagonalMatchingField(ZZ) := Ln -> (
-    M := matrix for i from 0 to Ln - 2 list for j from 0 to Ln - 1 list i*(Ln - j);
+    M := matrix table(Ln - 1, Ln, (i, j) -> i*(Ln - j));
     flMatchingField(M)
     )
 
@@ -459,7 +453,7 @@ setupMatchingFieldRings MatchingField := opts -> MF -> (
             ) else if opts.MonomialOrder == "none" then (
             monomialOrder = GRevLex;
             ) else (
-            error("Unknown option: MonomialOrder => " | toString opts.MonomialOrder);
+            error("unknown option: MonomialOrder => " | toString opts.MonomialOrder);
             );
         MF.cache.ringP = QQ[variables, MonomialOrder => monomialOrder];
         );
@@ -476,7 +470,7 @@ setupMatchingFieldRings MatchingField := opts -> MF -> (
             ) else if opts.MonomialOrder == "none" then (
             monomialOrder = GRevLex;
             ) else (
-            error("Unknown option: MonomialOrder => " | toString opts.MonomialOrder);
+            error("unknown option: MonomialOrder => " | toString opts.MonomialOrder);
             );
         MF.cache.ringX = QQ[x_(1,1) .. x_(MF.tupleMaxSize, MF.tupleMaxValue), MonomialOrder => monomialOrder];
         );
@@ -539,7 +533,7 @@ matchingFieldIdeal MatchingField := opts -> MF -> (
                 ) else if opts.MonomialOrder == "none" then (
                 gensMatrix = gens toricGroebner(V, MF.cache.ringP);
                 ) else (
-                error("Unknown option: MonomialOrder => " | toString opts.MonomialOrder);
+                error("unknown option: MonomialOrder => " | toString opts.MonomialOrder);
                 );
             -- adjust the signs of the variables
             signChange := map(MF.cache.ringP, MF.cache.ringP, matrix {
@@ -566,6 +560,8 @@ Grassmannian GrMatchingField := opts -> MF -> (
     )
 
 
+-- Note that for the pluecker ideal, the user is expected to only set MonomialOrder => "none" as a
+-- last resort if the matching field is not coherent. Doing so removes most of the functionality of the package
 plueckerIdeal = method(
     Options => {
         MonomialOrder => "default" -- default or none; see setupMatchingFieldRings(.., MonomialOrder => [option])
@@ -583,11 +579,8 @@ plueckerIdeal GrMatchingField := opts -> MF -> (
 plueckerIdeal FlMatchingField := opts -> MF -> (
     if not MF.cache.?mfPlueckerIdeal then (
         setupMatchingFieldRings(opts, MF);
-        local i;
-        local variableFromSubset;
-        local generatorList;
-        i = 0;
-        variableFromSubset = new HashTable from flatten (
+        i := 0;
+        variableFromSubset := new HashTable from flatten (
             varsMatrix := vars MF.cache.ringP;
             for grMF in getGrMatchingFields MF list (
                 for s in subsets(toList(1 .. grMF.tupleMaxValue), grMF.tupleMaxSize) list (
@@ -599,7 +592,7 @@ plueckerIdeal FlMatchingField := opts -> MF -> (
         --------------------------------
         -- Grassmannian relations
         --
-        generatorList = flatten for grMF in getGrMatchingFields MF list (
+        generatorList := flatten for grMF in getGrMatchingFields MF list (
             if grMF.tupleMaxSize >= 2 and grMF.tupleMaxValue - grMF.tupleMaxSize >= 2 then (
                 flatten for I in subsets(1 .. grMF.tupleMaxValue, grMF.tupleMaxSize - 1) list (
                     for J in subsets(1 .. grMF.tupleMaxValue, grMF.tupleMaxSize + 1) list (
@@ -932,7 +925,7 @@ NOBody FlMatchingField := MF -> (
 pointRegularSubdivision = method()
 pointRegularSubdivision(Matrix, Matrix) := (points, weight) -> (
     -- Checking for input errors
-    if numColumns weight != numColumns points or numRows weight != 1 then error("The weight must be a one row matrix with number of points many entries");
+    if numColumns weight != numColumns points or numRows weight != 1 then error("weight must be a one row matrix with number of points many entries");
     P := convexHull(points || weight, matrix (toList(numRows points : {0}) | {{1}} ));
     F := select(faces (1,P), f -> #(f#1) == 0);
     V := vertices P;
@@ -1227,7 +1220,7 @@ amalgamation(ZZ, TopeField) := (i, TF) -> (
                     );
                 );
             );
-        fold((a,b) -> a | b, for j from 0 to #TF#"type"-1 list sort toList edges#j)
+        flatten for j from 0 to #TF#"type"-1 list sort toList edges#j
         );
     newMF := grMatchingField(MF.tupleMaxSize + 1, MF.tupleMaxValue, newTuples);
     newType := for j from 1 to #TF#"type" list if i == j then TF#"type"_(j-1)+1 else TF#"type"_(j-1);
@@ -1794,7 +1787,8 @@ doc ///
           Note that the weights are based on $-1 \times W$ where $W$ is the weight matrix
           that induces $L$, displayed using the function @TO "getWeightMatrix"@.
           The purpose of $-1$ is to transition between the minimum convention
-          of matching fields and the maximum convention of initial terms in @TO "Macaulay2"@.
+          of matching fields and the maximum convention of initial terms in
+          @TO "Macaulay2Doc::Macaulay2"@.
 
           The ring map for the Pluecker embedding of a partial flag variety is
           completely analogous.
@@ -2246,7 +2240,7 @@ doc ///
         UsePrimePowers => Boolean
           use multiples of prime power used for the entries of the diagonal weight matrix
         PowerValue => ZZ
-          use multiples of powers this value in the diagonal weight matrix
+          use multiples of powers of this value in the diagonal weight matrix (overrides UsePrimePowers)
         ScalingCoefficient => ZZ
           the value by which to scale the permuted row of the diagonal weight matrix
       Outputs
@@ -3322,6 +3316,52 @@ assert(instance(linearSpanTropCone MF, Module));
 MS = matroidSubdivision MF;
 assert(instance(MS, List));
 assert(#MS > 0);
+///
+
+TEST ///
+-- ExtraZeroRows
+MF = diagonalMatchingField(2, 4);
+P0 = matchingFieldPolytope(MF, ExtraZeroRows => 0);
+P1 = matchingFieldPolytope(MF, ExtraZeroRows => 1);
+P2 = matchingFieldPolytope(MF, ExtraZeroRows => 2);
+assert(numrows vertices P0 == 8  and numcols vertices P0 == 6);
+assert(numrows vertices P1 == 12 and numcols vertices P1 == 6);
+assert(numrows vertices P2 == 16 and numcols vertices P2 == 6);
+///
+
+TEST ///
+-- RowNum, UsePrimePowers, ScalingCoefficient, PowerValue
+-- for function matchingFieldFromPermutation
+L = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3);
+M = getWeightMatrix L;
+assert(last entries M == {6, 18, 12, 30, 24, 36});
+L' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3, UsePrimePowers => true);
+M' = getWeightMatrix L';
+assert(last entries M' == {7, 21, 14, 35, 28, 42});
+L'' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, UsePrimePowers => true, ScalingCoefficient => 2);
+M'' = getWeightMatrix L'';
+assert((entries M'')#1 == {2, 6, 4, 10, 8, 12});
+L''' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3, PowerValue => 10);
+M''' = getWeightMatrix L''';
+assert(last entries M''' == {10, 30, 20, 50, 40, 60});
+///
+
+TEST ///
+-- linearSpanTropCone
+MF = diagonalMatchingField(2, 4);
+W = linearSpanTropCone MF;
+V = vertices matchingFieldPolytope MF;
+W' = image transpose V;
+assert(W == W');
+///
+
+TEST ///
+-- linearSpanTropCone for non-toric cone
+MF = matchingFieldFromPermutation(3, 6, {6,1,5,2,3,4}, UsePrimePowers => true, ScalingCoefficient => 3);
+W = linearSpanTropCone(MF, VerifyToricDegeneration => false);
+V = vertices matchingFieldPolytope MF;
+W' = image transpose V;
+assert(W != W') -- because MF does not give a toric degeneration
 ///
 
 end --
