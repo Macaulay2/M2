@@ -1249,7 +1249,7 @@ stronglyConnectedComponents Digraph := List => D -> (
                 );
         );
     scan(vertexSet D, v -> if not discovery#?v then visit v);
-    toList C
+    apply(#C, i -> C#i)
     )
 
 weaklyConnectedComponents = method()
