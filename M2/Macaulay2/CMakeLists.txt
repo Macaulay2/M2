@@ -126,7 +126,7 @@ install(DIRECTORY
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}
   ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}
   ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/doc
-  ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs
+  $<$<TARGET_EXISTS:M2-emacs>:${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}/emacs>
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
   DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
   USE_SOURCE_PERMISSIONS
@@ -143,5 +143,9 @@ install(EXPORT Macaulay2 NAMESPACE Macaulay2::
   COMPONENT devel EXCLUDE_FROM_ALL)
 export(TARGETS M2-binary M2-engine M2-interpreter M2-supervisor
   NAMESPACE Macaulay2:: FILE Macaulay2Config.cmake)
-export(TARGETS mathicgb mathic memtailor
-  NAMESPACE MathicGB:: FILE MathicGBConfig.cmake)
+if(_bundled_mathic_targets)
+  export(TARGETS ${_bundled_mathic_targets}
+    NAMESPACE MathicGB:: FILE MathicGBConfig.cmake)
+else()
+  file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/MathicGBConfig.cmake")
+endif()

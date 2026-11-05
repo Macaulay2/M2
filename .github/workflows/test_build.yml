@@ -54,6 +54,12 @@ jobs:
           - build-system: cmake
             os: macos-26
             compiler: brew-clang
+          - build-system: cmake
+            os: ubuntu-26.04
+            compiler: system-libraries
+          - build-system: cmake
+            os: ubuntu-26.04
+            compiler: custom-libraries
         exclude:
           - build-system: cmake
             os: macos-26
@@ -123,7 +129,7 @@ jobs:
       - name: Set up compiler
         run: |
           case "${{ matrix.compiler }}" in
-            default)
+            default|system-libraries|custom-libraries)
               echo "Using default compiler"
               ;;
             brew-clang)
@@ -157,11 +163,53 @@ jobs:
 #   Configure and build M2 using CMake
 # ----------------------
 
+      - name: Install external engine libraries
+        if: matrix.compiler == 'system-libraries' || matrix.compiler == 'custom-libraries'
+        run: |
+          prefix=/usr/local
+          if [[ "${{ matrix.compiler }}" == custom-libraries ]]; then
+            prefix="$RUNNER_TEMP/external"
+          fi
+          # Temporary post-release pins: the latest releases (memtailor 1.4,
+          # mathic 1.5, mathicgb 1.4) lack the installed metadata needed here.
+          # memtailor: https://github.com/Macaulay2/memtailor/pull/23
+          # mathic: https://github.com/Macaulay2/mathic/pull/29 and /pull/30
+          # mathicgb: https://github.com/Macaulay2/mathicgb/pull/84
+          # Replace these pins with releases containing those changes when available.
+          # Release follow-up: https://github.com/Macaulay2/M2/issues/4761
+          for entry in \
+            memtailor:0a2afc3fff096ed06bf98b7c1c224acfc8c97dc1 \
+            mathic:a08a776c8973a4c25f44d7d769ba949766f3f13c \
+            mathicgb:74e3708f52f989ac1bd698412d2ee67d6ef43b6d; do
+            lib=${entry%%:*}
+            git clone "https://github.com/Macaulay2/$lib" "$RUNNER_TEMP/$lib"
+            git -C "$RUNNER_TEMP/$lib" checkout "${entry#*:}"
+            cmake -S "$RUNNER_TEMP/$lib" -B "$RUNNER_TEMP/$lib-build" -GNinja \
+              -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON \
+              -DCMAKE_INSTALL_PREFIX="$prefix" -DCMAKE_PREFIX_PATH="$prefix" \
+              -DCMAKE_INSTALL_LIBDIR=lib -Dwith_tbb=ON
+            cmake --build "$RUNNER_TEMP/$lib-build" --parallel 4
+            sudo cmake --install "$RUNNER_TEMP/$lib-build"
+          done
+          echo "$prefix/lib" | sudo tee /etc/ld.so.conf.d/m2-external.conf
+          sudo ldconfig
+          if [[ "${{ matrix.compiler }}" == custom-libraries ]]; then
+            # Exercise pkg-config without CMake package metadata.
+            sudo rm -r "$prefix/lib/cmake"
+            echo "PKG_CONFIG_PATH=$prefix/lib/pkgconfig" >> "$GITHUB_ENV"
+            # Exercise deinit on populated checkouts; downloaded repositories remain cached.
+            git -C ../../.. submodule update --init -- \
+              M2/submodules/memtailor M2/submodules/mathic M2/submodules/mathicgb
+          fi
+          git -C ../../.. submodule deinit --all
+
       - name: Configure Macaulay2 using CMake
         if: matrix.build-system == 'cmake'
         run: |
+          update_submodules=ON
+          if [[ "${{ matrix.compiler }}" == *-libraries ]]; then update_submodules=OFF; fi
           cmake -S../.. -B. -GNinja \
-            -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
+            -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF -DGIT_SUBMODULE="$update_submodules" \
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
             --debug-trycompile
@@ -174,10 +222,20 @@ jobs:
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core M2-emacs
+          if [[ "${{ matrix.compiler }}" == *-libraries ]]; then
+            cmake --build . --target M2-core M2-editors M2-unit-tests --parallel 4
+            ninja -t targets all > targets.txt
+            if grep -E '^(build-(bdwgc|flint|frobby|givaro|fflas_ffpack|googletest|memtailor|mathic|mathicgb)|M2-emacs):' targets.txt; then exit 1; fi
+            ninja -t deps > headers.txt
+            if grep -E '/submodules/|/e/(memtailor|mathic|mathicgb)/|/editors/emacs/' headers.txt; then exit 1; fi
+            ./M2 -q --check 1
+            ctest -j1 --output-on-failure -R unit-tests
+          else
+            cmake --build . --target M2-core M2-emacs
+          fi
 
       - name: Install packages using Ninja
-        if: matrix.build-system == 'cmake' && env.SEED_CACHE_ONLY != 'true'
+        if: matrix.build-system == 'cmake' && !endsWith(matrix.compiler, '-libraries') && env.SEED_CACHE_ONLY != 'true'
         run: |
           cmake --build . --target install-packages
           if [[ "${{ runner.os }}" == "Linux" ]]; then
@@ -288,7 +346,7 @@ jobs:
              M2/BUILD/build/Macaulay2/tests/*/*.errors
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && success() && env.SEED_CACHE_ONLY != 'true'
+        if: matrix.build-system == 'cmake' && matrix.compiler == 'default' && runner.os == 'Linux' && success() && env.SEED_CACHE_ONLY != 'true'
         uses: actions/upload-artifact@v7
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
