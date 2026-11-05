@@ -50,7 +50,7 @@ SeeAlso => {(discriminant, CubicFourfold)}}
 
 undocumented{(expression, GushelMukaiFourfold), (describe, GushelMukaiFourfold)}
 
-document {Key => {Verbose, [cubicFourfold, Verbose], [gushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [polarizedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose], [example, Verbose]},
+document {Key => {Verbose, [cubicFourfold, Verbose], [gushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [polarizedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose], [example, Verbose], [texTables, Verbose]},
 Headline => "request verbose feedback"}
 
 document {Key => {gushelMukaiFourfold, (gushelMukaiFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (gushelMukaiFourfold, Ideal, Ideal), [gushelMukaiFourfold, InputCheck]},
@@ -416,7 +416,8 @@ Usage => "trisecantFlop i",
 Inputs => {"i" => ZZ => {"an integer between 0 and 17"}},
 Outputs => {{"the i-th example of birational map ",TEX///$X\dashrightarrow W$///," in accordance to the Table 1 in the paper ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"},"."}},
 PARA{"This function requires the package ",HREF{"https://github.com/giovannistagliano/TrisecantFlops","TrisecantFlops"},". If not present the user will be asked to automatically install the package."},
-SeeAlso => {(specialFourfold, String, ZZ), (example, String)}}
+SeeAlso => {(specialFourfold, String, ZZ), (example, String)},
+Caveat => {"This function may be deprecated in a future version. Consider importing examples with ", TO2{(store,String),"store"}, " and accessing them with ", TO example, " instead."}}
 undocumented {(trisecantFlop,ZZ)}
 
 document {Key => {(specialFourfold, String, ZZ)},
@@ -425,6 +426,7 @@ Usage => "specialFourfold(str,i)",
 Inputs => {"str" => String => {"such as \"",TT"prebuilt-example-in-P5","\" or \"",TT"prebuilt-example-in-P7","\"."}, "i" => ZZ},
 Outputs => {HodgeSpecialFourfold => {"the i-th example of fourfold in accordance with some classification (e.g., ",TT"specialFourfold(\"prebuilt-example-in-P5\",i)"," is the same as ",TO2{(source,MultirationalMap),"source"}," ",TO trisecantFlop,TT"(i)","."}},
 PARA{"This function requires the package ",HREF{"https://github.com/giovannistagliano/TrisecantFlops","TrisecantFlops"},". If not present the user will be asked to automatically install the package."},
+Caveat => {"This function may be deprecated in a future version. Consider importing examples with ", TO2{(store,String),"store"}, " and accessing them with ", TO example, " instead."},
 SeeAlso => {trisecantFlop, (example, String)}}
 
 undocumented {(random, HodgeSpecialFourfold), (symbol **, HodgeSpecialFourfold,Ring), (map, HodgeSpecialFourfold), (describe, HodgeSpecialFourfold)}
@@ -546,7 +548,7 @@ PARA {"The full lattice data is computed and stored within the object only upon 
 PARA {"The following methods can be used to access the construction data of ", TEX///$E$///, ":"},
 UL {{TT "building E", " -- returns the four construction objects as in ", TO (associatedK3surface, CubicFourfold), " (the Fano rational map ", TEX///$\mu$///, ", the non-minimal K3 surface ", TEX///$U$///, ", the exceptional curves on ", TEX///$U$///, " and the morphism ", TEX///$f: U \to E$///, " contracting them);"}, {TT "projectiveVariety E", " -- returns the underlying ", TO2{EmbeddedProjectiveVariety, "projective surface"}, ";"}, {TT "latticePolarization E", " -- returns the lattice data induced by the doubly special structure of ", TEX///$X$///, "."}},
 PARA {"Optional inputs:"},
-UL {{TO "Strategy", " -- provides instructions for each step. The first stage handles the construction of the non-minimal K3 surface ", TEX///$U$///, " by inverting the Fano map restricted to the cubic (via ", TT "\"Inverse\"", " or ", TT "\"Approximate\"", "), while the second computes the lattice data (common options include ", TT "\"MapFromW\"", ", ", TT "\"MapFromU\"", ", or ", TT "\"SpecialCurve\"", "). Both can be passed at once as a sequence, e.g., ", TT "Strategy => (\"Inverse\", \"MapFromW\")", ", or provided individually through nested calls."}, {TO "FanoMapType", " -- sets the Fano map to ", TT "\"Standard\"", " (default) or ", TT "\"P2xP2\"", ". Note that switching this type updates the global behavior of ", TEX///$X$///, " (e.g., affecting methods like ", TO mirrorFourfold, "), though previously computed data is preserved;"}, {TO "Verbose", " -- if set to ", TO true, ", provides feedback during the construction."}},
+UL {{TO "Strategy", " -- provides instructions for each step. The first stage handles the construction of the non-minimal K3 surface ", TEX///$U$///, " by inverting the Fano map restricted to the cubic (via ", TT "\"Inverse\"", " or ", TT "\"Approximate\"", "), while the second computes the lattice data (common options include ", TT "\"Genus2Curve\"", ", ", TT "\"MapFromU\"", ", or ", TT "\"SpecialCurve\"", "). Both can be passed at once as a sequence, e.g., ", TT "Strategy => (\"Inverse\", \"Genus2Curve\")", ", or provided individually through nested calls."}, {TO "FanoMapType", " -- sets the Fano map to ", TT "\"Standard\"", " (default) or ", TT "\"P2xP2\"", ". Note that switching this type updates the global behavior of ", TEX///$X$///, " (e.g., affecting methods like ", TO mirrorFourfold, "), though previously computed data is preserved;"}, {TO "Verbose", " -- if set to ", TO true, ", provides feedback during the construction."}},
 EXAMPLE {"S = random({3:{1}},0_(PP_(ZZ/65521)^5)); T = random S;", "X = specialFourfold(S & T);", "describe X", "polarizedK3surface(X, Verbose=>true)", "polarizedK3surface(X, Verbose=>true)", "describe X"},
 PARA{"Here is another example."},
 EXAMPLE {"X = specialFourfold surface((2,0,0),(1,0,0));", "describe X", "polarizedK3surface(X, Verbose=>true)", "polarizedK3surface(oo, Verbose=>true)", "latticePolarization oo", "describe X"},
@@ -577,25 +579,92 @@ Headline => "retrieve a stored fourfold example",
 Usage => "example name"|newline|"example(name,n)",
 Inputs => {"name" => String => {"the name assigned when the example was stored"}, "n" => ZZ => {"an optional integer indicating the type of fourfold"}},
 Outputs => {HodgeSpecialFourfold => {"a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},"."}},
-PARA {"This function retrieves a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},TT"(X,name)","."},
+PARA {"This function retrieves a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},TT"(X,name)",". The local archive of stored examples may be inspected and managed through ",TO localExamplesArchive,TT"()","."},
 PARA {"The optional argument ",TT"n"," is only needed when the same name is used by stored examples of different fourfold types. Its values correspond to the following fourfold types: doubly special cubic fourfolds (",TEX///$n=0$///,"), cubic fourfolds (",TEX///$n=1$///,"), Gushel-Mukai fourfolds (",TEX///$n=2$///,"), intersections of three quadrics in ",TEX///$\mathbb{P}^7$///," (",TEX///$n=3$///,"), and other Hodge-special fourfolds (",TEX///$n=4$///,")."},
 EXAMPLE {"X = specialFourfold \"DSCF-1\";","name = store X","X' = example name;","assert(describe X == describe X')"},
-SeeAlso => {(store,HodgeSpecialFourfold, String), (toExternalString, HodgeSpecialFourfold)}}
+PARA {"To suppress the informative messages displayed while loading an example, use the option ",TT"Verbose=>false","."},
+SeeAlso => {(store, HodgeSpecialFourfold, String), (toExternalString, HodgeSpecialFourfold), localExamplesArchive}}
 
 document {Key => {(store, HodgeSpecialFourfold, String), (store, HodgeSpecialFourfold, ZZ), (store, HodgeSpecialFourfold)},
 Headline => "store a fourfold example",
 Usage => "store(X,name)"|newline|"store X",
 Inputs => {"X" => HodgeSpecialFourfold,"name" => String => {"an optional name for the example"}},
 Outputs => {String => {"the name assigned to the stored example"}},
-PARA {"This function stores the fourfold ",TT"X"," so that it can later be retrieved with ",TO2{(example,String),"example"},TT"(name)",". When no name is specified, one is chosen automatically. Examples are created via ",TO2{(toExternalString,HodgeSpecialFourfold),"toExternalString"}," and stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"}, TT"SpecialFanoFourfoldsExamples/","', where they can also be managed manually. They persist across Macaulay2 sessions and preserve some previously computed internal data of the original fourfold."},
+PARA {"This function stores the fourfold ",TT"X"," so that it can later be retrieved with ",TO2{(example,String),"example"},TT"(name)",". When no name is specified, one is chosen automatically. Examples are created via ",TO2{(toExternalString,HodgeSpecialFourfold),"toExternalString"}," and stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"},TT"SpecialFanoFourfoldsExamples/","'. The local archive may be inspected and managed through ",TO localExamplesArchive,TT"()",". Stored examples persist across Macaulay2 sessions and preserve some previously computed internal data of the original fourfold."},
 EXAMPLE {"X = specialFourfold random({3:{1}},0_(PP_(ZZ/65521)^5));","name = store X;","X' = example name;","assert(describe X == describe X')"},
-SeeAlso => {(example, String), (store, String), (toExternalString, HodgeSpecialFourfold)}}
+SeeAlso => {(example, String), (store, String), (toExternalString, HodgeSpecialFourfold), localExamplesArchive}}
+
+document {Key => {localExamplesArchive},
+Headline => "access and manage the local examples archive",
+Usage => "localExamplesArchive()",
+Inputs => {}, Outputs => {},
+PARA {"This function returns an object representing the local archive of stored fourfold examples. Examples are typically added to the archive with ",TO2{(store,HodgeSpecialFourfold),"store"}," and retrieved with ",TO example,". Examples are stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"},TT"SpecialFanoFourfoldsExamples/","'. When displayed, the object provides an overview of the examples currently available and those already loaded in memory."},
+PARA {"The local examples archive may be cleared with ",TT"clean localExamplesArchive()",". All examples currently available in the local examples archive may be exported to a timestamped .tar.gz archive with ",TT"export localExamplesArchive()",". Such an archive may later be imported with ",TT"importFrom(archive,localExamplesArchive())","."},
+PARA {"If ",TT"archive"," is a URL, then ",TT"importFrom(archive,localExamplesArchive())"," first downloads the archive and then imports it. To import examples directly from the author's GitHub repository, use ",TT"importFrom(\"@\",localExamplesArchive())","."},
+PARA {"By default, importing an archive replaces the current contents of the local examples archive. To safely import an archive only if no existing example would be overwritten, use ",TT"importFrom(archive,localExamplesArchive(),KeepFiles=>true)","."},
+PARA {"Examples may be removed from the local archive with ",TT"delete(X,localExamplesArchive())",", ",TT"delete(name,n,localExamplesArchive())",", or ",TT"delete(n,localExamplesArchive())",". The latter deletes all examples of fourfold type ",TT"n","."},
+EXAMPLE {"A = localExamplesArchive()","clean A","X = cubicFourfold \"quartic scroll\";","scan(4,i -> store(X,i)) -- storing four copies of X with numeric names","A","(X1,X2,X3) = (example 1,example 2,example 3); -- loading some of the examples","A","store X2 -- updating a loaded example","name = store specialFourfold(surface((4,6,1),(1,2,0)));","A","Y = example(name,Verbose=>false); -- loading another example","A","archive = export A","delete(X2,A) -- deleting a loaded example","importFrom(archive,A)","clean A","importFrom(archive,A,KeepFiles=>true)"},
+SeeAlso => {(store, HodgeSpecialFourfold), (example, String), (store, String)}}
 
 document {Key => {(store, String)},
-Headline => "import stored examples from an archive",
-Usage => "store f",
-Inputs => {"f" => String => {"a .tar.gz archive containing stored fourfold examples"}},
+Headline => "import archives of examples",
+Usage => "store f"|newline|"importFrom(f,localExamplesArchive())"|newline|"importFrom(f,localExamplesArchive(),KeepFiles=>true)",
+Inputs => {"f" => String => {"a .tar.gz archive containing fourfold examples (or a URL pointing to such an archive)"}},
 Outputs => {},
-PARA {"Imports the stored examples contained in the archive ", TT"f",". To export the current examples into a timestamped archive, use ",TT"store \"@\"",". To remove all stored examples, use ",TT"store \"\"","."},
-EXAMPLE {"store specialFourfold \"quartic scroll\"", "store \"@\"", "store oo", "store \"\""},
-SeeAlso => {(store, HodgeSpecialFourfold), (example, String)}}
+PARA {"This function imports examples into the local archive represented by ",TO localExamplesArchive,TT"()",". The argument ",TT"f"," may be a local .tar.gz archive, a URL pointing to such an archive, or the special string ",TT"\"@\""," referring to the author's GitHub repository of examples."},
+PARA {"By default, the imported archive replaces the current contents of the local examples archive. To safely import an archive only if no existing example would be overwritten, use ",TT"importFrom(f,localExamplesArchive(),KeepFiles=>true)","."},
+SeeAlso => {localExamplesArchive, (store, HodgeSpecialFourfold), (example, String)}}
+
+document {Key => {texTables, (texTables, List), [texTables, KeepFiles], [texTables, FileName]},
+Headline => "generate summary tables for collections of fourfolds",
+Usage => "texTables L",
+Inputs => {"L" => List => {"of Hodge-special fourfolds"}},
+Outputs => {Sequence => {"a pair ", TEX///$(L',L'')$///, " where ", TEX///$L'$///, " is a reordering of the input list and ", TEX///$L''$///, " is the subsequence corresponding to the examples appearing in the K3 table; both are ordered according to the rows of the corresponding tables"}},
+PARA {"This function generates two PDF tables summarizing the data available for the fourfolds in ", TEX///$L$///, ". Each row corresponds to one example."},
+PARA {"The first table collects general information such as discriminants (hence the corresponding Noether-Lefschetz loci), parameter counts and construction data. Numerical invariants are not computed by this method; they are reported only when already available in the cache of the corresponding example."},
+PARA {"The second table is restricted to examples for which an associated K3 surface can be constructed. In addition to the fourfold data, the rows may include information on the associated K3 surfaces whenever such data has already been computed through methods such as ", TO associatedK3surface, " or ", TO polarizedK3surface, "."},
+PARA {"Optional inputs:"},
+UL {{TO "KeepFiles", " -- if set to ", TO true, ", preserves the intermediate ", TT ".tex", " files used to generate the PDF tables;"}, {TO "FileName", " -- specifies a common prefix for the generated files."}},
+PARA {"For advanced customization, see the internal method ", TT"texTableRaw", "."},
+SeeAlso => {(texTables, ZZ), associatedK3surface, polarizedK3surface}}
+
+document {Key => {(texTables, ZZ)},
+Headline => "generate summary tables from archived examples",
+Usage => "texTables n"|newline|"texTables(n,localExamplesArchive())",
+Inputs => {"n" => ZZ => {"an integer between 0 and 4 specifying a type of fourfold"}},
+Outputs => {Sequence => {"the output of ", TO texTables, " applied to all examples of the specified type currently available in the local examples archive"}},
+PARA {"This method retrieves all examples of the specified type currently available in the local examples archive managed through ",TO localExamplesArchive,TT"()"," and generates summary tables for them."},
+PARA {"The correspondence between values of ", TT"n", " and fourfold types is as follows: 0 for doubly special cubic fourfolds, 1 for cubic fourfolds, 2 for Gushel-Mukai fourfolds, 3 for intersections of three quadrics in ", TEX///$\mathbb P^7$///, ", and 4 for other Hodge-special fourfold examples."},
+if findProgram("pdflatex", RaiseError => false) =!= null
+then EXAMPLE {"X = cubicFourfold surface((2,0),(1,0));",
+"parameterCount X; polarizedK3surface polarizedK3surface X; -- compute and cache some data for X",
+"store X; -- store X in the local examples archive",
+"store X; -- store a second copy of X under a different name",
+"texTables(0,Verbose=>true,KeepFiles=>true,OpenPDF=>false,FileName=>\"myTable\"); -- generate tables from all stored DSCF examples",
+"get \"myTableK3.tex\""}
+else PRE ///
+i1 : X = cubicFourfold surface((2,0),(1,0));
+
+i2 : parameterCount X; polarizedK3surface polarizedK3surface X; -- compute and cache some data for X
+
+i3 : store X; -- store X in the local examples archive
+
+i4 : store X; -- store a second copy of X under a different name
+
+i5 : texTables(0,Verbose=>true,KeepFiles=>true,OpenPDF=>true,FileName=>"myTable"); -- generate tables from all stored DSCF examples
+///,
+SeeAlso => {texTables, (store, String), example, localExamplesArchive}}
+
+undocumented{(texTables, Nothing)}
+
+document {Key => {OpenPDF, [texTables, OpenPDF]},
+Headline => "whether to open the PDF tables",
+Usage => "OpenPDF => true or false",
+PARA{"If set to ", TO true, ", opens the PDF tables generated by ", TO texTables, "."},
+SeeAlso => {texTables}}
+
+document {Key => {updatePackage, (updatePackage, String), (updatePackage, String, String, List)},
+Headline => "update SpecialFanoFourfolds and related packages",
+Usage => "updatePackage dir",
+Inputs => {"dir" => String => {"directory where the package files will be downloaded; use ", TT "\"\"", " for the current directory"}}, Outputs => {},
+PARA {"This function downloads the latest development versions of the ", TT "SpecialFanoFourfolds", " package and related packages from the Macaulay2 source repository into the specified directory. Additional arguments may be used to specify a different source URL and the list of packages to be updated."}}

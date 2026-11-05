@@ -188,6 +188,19 @@ gushelMukaiFourfold String := o -> str -> gushelMukaiFourfold(str,ZZ/65521,Input
 
 expression GushelMukaiFourfold := X -> expression("GM fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X)|(if X.cache#?(surface X,"classSurfaceInG14") then (" with class "|toString(first cycleClass X)) else ""));
 
+texMath GushelMukaiFourfold := X -> (
+    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
+    descr := texMath shortDescriptionFourfoldTeX(X,false);
+    M := X.cache#(surface X,"LatticeIntersectionMatrix");
+    d := det M;
+    (q,r) := quotientRemainder(d,8);
+    str := "\\begin{aligned}&" | descr;
+    str = str | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    str | "\\end{aligned}"
+);
+
+shortTeX GushelMukaiFourfold := X -> shortTeX("\\text{GM fourfold containing a surface of degree }" | (texMath degree surface X) | "\\text{ and sectional genus }" | (texMath sectionalGenus surface X) | (if X.cache#?(surface X,"classSurfaceInG14") then "\\text{ with class }" | (replace("s_","\\\\sigma_",texMath first cycleClass X)) else ""));
+
 describe GushelMukaiFourfold := X -> (
     (cS,ab) := cycleClass X;
     (a,b) := ab;
@@ -217,12 +230,34 @@ describe GushelMukaiFourfold := X -> (
     if recognize X === "october2021-20" then descr = descr|newline|"(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)";
     if recognize X === "april2022-GM42''" then descr = descr|newline|"(strange example discovered in October 2021)";
     if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
+    if X.cache#?(surface X,"parameterCount") then (
+        (w,xyz) := X.cache#(surface X,"parameterCount");
+        (x,y,z) := xyz;
+        if w =!= 39 - (y+(x-1)-z) then error "internal error encountered";
+        descr = descr || ("Parameter count: " | toString w | " = 39 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+    );
+    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
     net expression descr
 );
 
 shortDescriptionFourfold (GushelMukaiFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
     "Gushel-Mukai fourfold of discriminant "|(discriminant X)
+);
+
+shortDescriptionFourfoldTeX (GushelMukaiFourfold,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
+    d := discriminant X;
+    discrStr := texMath d;
+    if d % 8 == 2 then (
+        (a,b) := last cycleClass X;
+        if even(a+b) and odd(b) then (
+            discrStr = discrStr | "(')";
+        ) else if odd(a+b) and even(b) then (
+            discrStr = discrStr | "('')";
+        ) else error "internal error encountered";
+    );
+    shortTeX("\\text{Gushel-Mukai fourfold of discriminant }" | discrStr)
 );
 
 discriminant GushelMukaiFourfold := o -> X -> (
@@ -235,6 +270,7 @@ discriminant GushelMukaiFourfold := o -> X -> (
     (a,b) := last cycleClass X;
     n := if S.cache#?"FiniteNumberOfNodes" or S.cache#?"singularLocus" or S.cache#?"nonSaturatedSingularLocus" or (S.cache#?"fitVariety" and (S.cache#"fitVariety").cache#?"nonSaturatedSingularLocus") then numberNodes S else 0;
     S2 := 3*a + 4*b + 2*KSHS + 2*KS2 - 12*chiOS + 2*n;
+    X.cache#(S,"LatticeIntersectionMatrix") = matrix {{2,0,b},{0,2,a-b},{b,a-b,S2}};
     d := 4*S2 - 2*(b^2+(a-b)^2);
     if S.cache#?"FiniteNumberOfNodes" then X.cache#(surface X,"discriminantFourfold") = (S2,d);
     d

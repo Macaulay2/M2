@@ -146,16 +146,40 @@ cubicFourfold String := o -> str -> cubicFourfold(str,ZZ/65521,NumNodes=>o.NumNo
 
 expression CubicFourfold := X -> expression("cubic fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
 
+texMath CubicFourfold := X -> (
+    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
+    d := discriminant X;
+    A := X.cache#(surface X,"LatticeIntersectionMatrix");
+    (q,r) := quotientRemainder(d,6);
+    str := "\\begin{aligned}&" | (texMath shortDescriptionFourfoldTeX(X,false)) | "\\text{ of lattice discriminant}";
+    str = str | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 6 + " | (texMath r);
+    str | "\\end{aligned}"
+);
+
+shortTeX CubicFourfold := X -> shortTeX("\\text{cubic fourfold containing a surface of degree }" | (texMath degree surface X) | "\\text{ and sectional genus }" | (texMath sectionalGenus surface X));
+
 describe CubicFourfold := X -> (
-    descr:="Special cubic fourfold of discriminant "|(toString discriminant X)|newline|"containing a "|surfaceDescription(0,surface X,true);
-    if recognize X === "LaiFarkasVerraC42" then descr = descr|newline|"(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra,"|newline|"this implementation is due to M. Hoff)";
-    if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
+    descr := "Special cubic fourfold of discriminant " | toString discriminant X | newline | "containing a " | surfaceDescription(0,surface X,true);
+    if recognize X === "LaiFarkasVerraC42" then descr = descr | newline | "(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra," | newline | "this implementation is due to M. Hoff)";
+    if computationStatus X >= 0 then descr = descr | newline | computationStatusLog X | newline | toString describeMirrorFourfoldAndK3 X;
+    if X.cache#?(surface X,"parameterCount") then (
+        (w,xyz) := X.cache#(surface X,"parameterCount");
+        (x,y,z) := xyz;
+        if w =!= 55 - (y+(x-1)-z) then error "internal error encountered";
+        descr = descr || ("Parameter count: " | toString w | " = 55 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+    );
+    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
     net expression descr
 );
 
 shortDescriptionFourfold (CubicFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
     "cubic fourfold in C_"|(toString discriminant X)
+);
+
+shortDescriptionFourfoldTeX (CubicFourfold,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
+    shortTeX("\\text{cubic fourfold in }\\mathcal{C}_{" | (texMath discriminant X) | "}")
 );
 
 -- discriminant CubicFourfold := o -> X -> (
