@@ -540,6 +540,7 @@ export {
 	"catch",
 	"ceiling",
 	"center",
+	"centerMap",
 	"centerString",
 	"changeBase",
 	"changeDirectory",
