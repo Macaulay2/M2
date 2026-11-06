@@ -117,6 +117,12 @@ jobs:
           fi
 
 # ----------------------
+#   Install Julia (used by Julia package)
+# ----------------------
+
+      - uses: julia-actions/setup-julia@v3
+
+# ----------------------
 #   Steps common to all build variants
 # ----------------------
 
