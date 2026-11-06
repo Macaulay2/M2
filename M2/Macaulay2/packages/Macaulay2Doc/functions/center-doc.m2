@@ -19,8 +19,8 @@ Usage
 Inputs
     R:Ring
 Outputs
-    z:RingMap
-        $Z \rightarrow R$ the inclusion of the center of $R$ into $R$
+    Z:Ring
+        The center of $R$.
 Description
     Text
         The center of a ring $R$ is the subring consisting of all the elements that commute with every element of $R$.
@@ -32,6 +32,11 @@ Description
         R = kk[a..d, SkewCommutative => true]
         Z = center R;
         netList (ideal Z)_*
+    Text
+        Use @TO centerMap @ instead to get the inclusion of $Z$ into $R$.
+    Example
+        inc = centerMap R
+        assert(Z === source inc);
     Text
         The variables in the center are doubly-indexed according to the pairs of
         variables in $R$ that they map to.
@@ -58,4 +63,5 @@ Caveat
 SeeAlso
     isCommutative
     isSkewAffineRing
+    centerMap
 ///
