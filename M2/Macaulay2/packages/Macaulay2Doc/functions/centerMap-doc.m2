@@ -48,6 +48,7 @@ Description
 Caveat
     Currently only implemented for commutative rings and skew affine rings.
 SeeAlso
+    center
     isCommutative
     isSkewAffineRing
 ///
