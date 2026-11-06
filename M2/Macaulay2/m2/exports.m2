@@ -753,6 +753,7 @@ export {
 	"graphIdeal",
 	"graphRing",
 	"groebnerBasis",
+        "groupby",
 	"groupID",
 	"hash",
 	"hashTable",
