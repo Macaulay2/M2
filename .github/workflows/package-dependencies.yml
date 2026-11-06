@@ -1,0 +1,34 @@
+name: Package dependencies
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package-dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Macaulay2
+        run: |
+          sudo add-apt-repository -y -n ppa:macaulay2/macaulay2
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends macaulay2 ninja-build
+
+      - name: Check the CMake dependency manifest
+        run: python3 M2/cmake/package-dependencies.py --m2 M2 --check
+
+      - name: Test dependency generation and incremental installation
+        run: |
+          python3 M2/cmake/tests/test_package_dependencies.py
+          python3 M2/cmake/tests/test_dependency_manifest.py
+          python3 M2/cmake/tests/test_cached_examples.py
+          python3 M2/cmake/tests/test_incremental_packages.py
+          python3 M2/cmake/tests/test_package_build_graph.py
