@@ -135,21 +135,39 @@ Hom(ZZdFactorization, ZZdFactorization) := ZZdFactorization => (X,Y) -> (
 
 ------tensorMF
 
+-- Keep the first factor's differential profile. Subtracting its output
+-- twist makes the unit strict and cancels the intermediate twists in an
+-- iterated tensor product.
+mfTensorGrading = (F,G) -> (
+    grading := mfDifferentialGrading(F,G);
+    if grading === null then return null;
+    (u,v,w) := toSequence grading;
+    p := period F;
+    apply(p, i -> apply(p, j -> (
+        k := (i-j)%p;
+        u#j + v#k - u#i + floor((j+k)/p)*w)))
+    )
+
 tensorMF = method()
 tensorMF(ZZdFactorization, ZZdFactorization) := ZZdFactorization => (F,G) -> (
     Y := youngest(F,G);
     if Y.cache#?(tensor,F,G) then return Y.cache#(tensor,F,G);
     N := F.period;
+    R := ring F;
+    shifts := mfTensorGrading(F,G);
     modules := hashTable for i to N-1 list i => (
 	directSum for j to N-1 list (
-	    {j,(i-j)%N} => F_j ** G_(i-j)
+	    {j,(i-j)%N} => (
+                h := F_j ** G_(i-j);
+                if shifts === null or shifts#i#j == degree 1_R then h
+                else h ** R^{shifts#i#j})
 	    )
 	);
     t := -1;
     dF := dd^F;
     dG := dd^G;
     M := for i from 1 to N list(
-	map(modules#((i-1)%N),
+	mfRegradeMatrix map(modules#((i-1)%N),
             modules#(i%N),
             matrix table(
                 indices modules#((i-1)%N),
@@ -213,15 +231,14 @@ tensorMF(ZZdFactorizationMap,ZZdFactorizationMap) := (f,g) -> (
                     -- so p == {j,i-j}, for various j
                     if p#0 == (q#0 - df)%per
                     then (
-                        sgn := 1; -- function of df, dg, i
-                        sgn = (-1)^(i * dg);
+                        sgn := (-1)^(dg * p#0);
                         sgn * (f_(p#0) **  g_(p#1))
                         )
                     else map(component(tar_(i+df+dg), q),
                         component(src_i, p),
                         0)
                     ));
-            map(tar_(i+df+dg), src_i, matrix m)
+            mfRegradeMatrix map(tar_(i+df+dg), src_i, matrix m)
             )
         );
     result := map(tar, src, maps, Degree=>df+dg);
@@ -406,15 +423,20 @@ dTensor(ZZdFactorization, ZZdFactorization,RingElement) := ZZdFactorization => o
     Y := youngest(F,G);
     if Y.cache#?(tensor,F,G) then return Y.cache#(tensor,F,G);
     N := F.period;
+    R := ring F;
+    shifts := mfTensorGrading(F,G);
     modules := hashTable for i to N-1 list i => (
 	directSum for j to N-1 list (
-	    {j,(i-j)%N} => F_j ** G_(i-j)
+	    {j,(i-j)%N} => (
+                h := F_j ** G_(i-j);
+                if shifts === null or shifts#i#j == degree 1_R then h
+                else h ** R^{shifts#i#j})
 	    )
 	);
     dF := dd^F;
     dG := dd^G;
     M := for i from 1 to N list(
-	map(modules#((i-1)%N),
+	mfRegradeMatrix map(modules#((i-1)%N),
             modules#(i%N),
             matrix table(
                 indices modules#((i-1)%N),
@@ -472,15 +494,14 @@ dTensor(ZZdFactorizationMap,ZZdFactorizationMap,RingElement) := ZZdFactorization
                     -- so p == {j,i-j}, for various j
                     if p#0 == (q#0 - df)%per
                     then (
-                        sgn := 1; -- function of df, dg, i
-                        sgn = (-1)^(i * dg);
+                        sgn := t^(-dg * p#0 - 2*df * p#1);
                         sgn * (f_(p#0) **  g_(p#1))
                         )
                     else map(component(tar_(i+df+dg), q),
                         component(src_i, p),
                         0)
                     ));
-            map(tar_(i+df+dg), src_i, matrix m)
+            mfRegradeMatrix map(tar_(i+df+dg), src_i, matrix m)
             )
         );
     result := map(tar, src, maps, Degree=>df+dg);
@@ -792,10 +813,13 @@ homology(ZZdFactorization) := ZZdFactorization => opts -> F -> (
 
 --different types of homology when the period is larger than 2
 homology(ZZ,ZZ,ZZdFactorization) := Module => opts -> (i,j,F) -> (p := period F;
-    if F.period==2 then error "expected factorization of period at least 3";
+    if p < 3 then error "expected factorization of period at least 3";
+    if j < 1 or j >= p then error "expected number of differentials between 1 and period minus 1";
     Dn1 := product reverse for l from 0 to j-1 list F.dd_(i-l);
     Dn2 := product for l from 0 to p-j-1 list F.dd_(i+l+1);
-    (ker Dn1)/(image Dn1)
+    -- Both submodules lie in F_i: the outgoing j-fold differential
+    -- defines cycles, and the incoming (p-j)-fold differential boundaries.
+    (ker Dn1)/(image Dn2)
     )
 
 hhh = method();

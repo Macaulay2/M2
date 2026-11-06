@@ -55,7 +55,8 @@ E = End(Kt)
 assert(isWellDefined E)
 assert(isZZdComplex E)
 H = prune HH E
-assert(H_0 == H_1)
+-- Normalizing the quadratic factorization twists odd Hom degree by one.
+assert(H_0 ** Q^{-1} == H_1)
 
 KF = Fold(K,4)
 assert(K == unfold(KF,3))
@@ -72,7 +73,8 @@ TEST ///
 --playing around with applying ring maps/tensoring with modules/rings
 Q=ZZ/101[x_1..x_3]
 S = ZZ/101[s,t]
-phi = map(S,Q,{s^2,s*t,t^2})
+phi = map(S,Q,{s^2,s*t,t^2}, DegreeMap => d -> 2*d)
+assert isHomogeneous phi
 f = x_1^2+x_2^2+x_3^2; 
 Kt = koszulMF({x_1,x_2,x_3},f)
 phiKt = phi(Kt)
@@ -934,6 +936,7 @@ TEST ///
             assert(degree p === 1)
 	    q = randomFactorizationMap(D, C, Boundary => true, InternalDegree => 2)
             assert all({0,1,2}, i -> degree q_i === {2})
+            assert isHomogeneous q
             assert isWellDefined q
             assert isCommutative q
             assert isFactorizationMorphism q
@@ -1097,6 +1100,60 @@ M = genericMatrix(Q,3,3);
 F = adjointFactorization M;
 assert((isdFactorization F)_0)
 assert(potential F == determinant M)
+///
+
+-- Boundary generators must carry their actual multidegrees, including when
+-- the two factorization differentials have different internal degrees.
+TEST ///
+S = ZZ/101[x,y, Degrees => {{1,0},{0,1}}];
+F0 = S^1;
+F1 = S^{{-1,0}};
+C = ZZdfactorization hashTable {
+    1 => map(F0,F1,{{x}}, Degree => {0,0}),
+    2 => map(F1,F0,{{y}}, Degree => {1,1})
+    };
+assert isWellDefined C
+assert all({1,2}, i -> isHomogeneous dd^C_i)
+setRandomSeed 0;
+q = randomFactorizationMap(C,C, Boundary => true, InternalDegree => {1,1});
+assert(q != 0)
+assert all({0,1}, i -> degree q_i === {1,1} and isHomogeneous q_i)
+assert isWellDefined q
+assert isCommutative q
+assert isFactorizationMorphism q
+assert(source q === C and target q === C)
+
+-- Zero maps have no unique internal degree; test their structure instead.
+Z = ZZdfactorization {S^1,S^1};
+z = randomFactorizationMap(Z,Z, Boundary => true, InternalDegree => {1,1});
+assert(z == 0)
+assert isHomogeneous z
+assert isWellDefined z
+assert isCommutative z
+assert isFactorizationMorphism z
+assert(source z === Z and target z === Z)
+///
+
+-- A scalar of positive degree is homogeneous, and a source twist absorbs
+-- that degree without changing the homological degree of the map.
+TEST ///
+S = ZZ/101[x,y];
+R = S/(x^3+y^3);
+C = tailMF ideal vars R;
+f = S_0 * id_C;
+assert isHomogeneous f
+assert all({0,1}, i -> degree f_i === {1})
+assert(degree f === 0)
+assert isWellDefined f
+assert isFactorizationMorphism f
+Ct = C ** S^{-1};
+g = map(C, Ct, f);
+assert isHomogeneous g
+assert all({0,1}, i -> degree g_i === {0})
+assert(degree g === 0)
+assert isWellDefined g
+assert isFactorizationMorphism g
+assert(source g === Ct and target g === C)
 ///
 
 
