@@ -212,6 +212,20 @@ rotate(ZZ,VisibleList) := (n,s) -> (
 	  n = n % #s;
 	  join(drop(s,n),take(s,n))))
 
+-- Build a hash table whose keys are the values of f on elements of xs and whose
+-- values are obtained by applying g to the corresponding x.
+groupby = method()
+groupby(BasicList, Function, Function) := (xs, f, g) -> (
+    result := new MutableHashTable from {};
+    for x in xs do (
+        k := f x;
+        result#k = append(result#k ?? {} , g x);
+    );
+    result
+)
+-- as above but with no mapping of values
+groupby(BasicList, Function) := (xs, f) -> groupby(xs, f, identity)
+
 -- sort should not accept sequences because sort is now a function with options!
 sort List :=  opts -> internalsort
 rsort List := opts -> internalrsort
