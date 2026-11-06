@@ -31,7 +31,7 @@ STOP = --stop
 ARGS = -q --silent $(STOP) -e errorDepth=0
 TVFILES := $(wildcard @srcdir@/../d/*.d)
 all: @pre_packagesdir@/Core/tvalues.m2
-@pre_packagesdir@/Core/tvalues.m2: $(TVFILES) @pre_packagesdir@/Core
+@pre_packagesdir@/Core/tvalues.m2: $(TVFILES) | @pre_packagesdir@/Core
 	rm -f $@ && @pre_exec_prefix@/bin/M2 $(ARGS) --no-preload -e 'exit 0'
 clean::;rm -f @pre_packagesdir@/Core/tvalues.m2
 #################################
@@ -85,8 +85,8 @@ clean::; rm -f .gdb-files
 profile: gmon.out; LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
 clean::; rm -f profile
 @pre_packagesdir@ :; @INSTALL@ -d $@
-@pre_packagesdir@/Core  : ; @INSTALL@ -d $@
-@pre_packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
+@pre_packagesdir@/Core  : | @pre_packagesdir@ ; @INSTALL@ -d $@
+@pre_packagesdir@/Core/% : % | @pre_packagesdir@/Core ; @INSTALL_DATA@ $< $@
 FILES_TO_COPY := $(DUMPEDM2FILES) loadsequence
 all:@pre_packagesdir@ @pre_packagesdir@/Core $(addprefix @pre_packagesdir@/Core/, $(FILES_TO_COPY))
 clean::; rm -rf cache *.obj *.exe runexample temp.data distfiles loads.m2 core gmon.out

@@ -276,7 +276,11 @@ foreach(package IN LISTS PACKAGES)
   ## File-based installation rule.  The stamp is removed before attempting an
   ## install and written only after every step succeeds, so failed builds retry.
   set(_install_stamp ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}/.cmake-installed)
-  set(_install_marker ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}/.installed)
+  # Ignored example errors can leave an installation without .installed.
+  set(_install_marker)
+  if(NOT IgnoreExampleErrors)
+    set(_install_marker ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/${package}/.installed)
+  endif()
   set(_install_info ${M2_DIST_PREFIX}/${M2_INSTALL_INFODIR}/${package}.info.gz)
   # Track option changes and added/removed sources even with Makefile generators.
   set(_install_inputs ${CMAKE_CURRENT_BINARY_DIR}/install-${package}-$<CONFIG>.inputs)
