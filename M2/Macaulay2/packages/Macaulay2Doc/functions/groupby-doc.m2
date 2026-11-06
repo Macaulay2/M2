@@ -1,8 +1,8 @@
 doc ///
 Key
     groupby
-    groupby(BasicList, Function)
-    groupby(BasicList, Function, Function)
+    (groupby, BasicList, Function)
+    (groupby, BasicList, Function, Function)
 Headline
     group elements in a list by their values under a function
 Usage
@@ -23,7 +23,8 @@ Description
         someprimes = for i from 1 to 20 list nextPrime(100 * i)
         netList pairs groupby(someprimes, p -> legendreSymbol(-1, p), p -> p %4)
     Text
-        If you have already assembled a table of data this pattern can be used to filter and focus in on particular columns. 
+        If you have already assembled a table of data this pattern can be
+        conveniently used to group by one column while focusing in on another.
     Example
         someprimes = for i from 1 to 20 list nextPrime(100 * i);
         data = apply(someprimes, p -> {p, legendreSymbol(-1, p), p % 4})
