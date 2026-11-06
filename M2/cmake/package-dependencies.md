@@ -74,6 +74,10 @@ completed packages are skipped. Existing installations without the new stamp
 are installed once. Selecting a package through `PACKAGES` also selects its
 declared imports and the documentation bootstrap packages.
 
+With `IgnoreExampleErrors=true`, an installation can finish without producing
+`.installed`. Its completion is still recorded by `.cmake-installed`, so ignored
+example errors do not cause repeated installations of unchanged packages.
+
 All installations depend on `M2-core` and track the M2 binary and Core sources,
 including source additions and removals. The generated Core directory is not
 watched; `tvalues.m2` is an explicit dependency, so its creation during the first
@@ -119,7 +123,7 @@ The [Package dependencies workflow](../../.github/workflows/package-dependencies
 installs an external M2, checks manifest freshness and runs dependency-generation
 and incremental-installation fixtures. It requires no full M2 source build.
 
-To run the tests locally, install M2, Python 3, CMake 3.30 or newer, Ninja, Make
+To run the tests locally, install M2, Python 3, CMake 3.24 or newer, Ninja, Make
 and a C compiler, then run:
 
 ```sh
@@ -132,8 +136,8 @@ python3 M2/cmake/tests/test_package_build_graph.py
 The generator tests cover dependency extraction, stale manifests, header errors
 and installation cycles. The incremental tests use a small fake installer with
 Ninja and Unix Makefiles to check restart, freshness, failures, missing outputs,
-package selection and cyclic source dependencies. They also check that combined
-`all-*` targets reuse installations and repeat checks.
+package selection, ignored example errors and cyclic source dependencies. They
+also check that combined `all-*` targets reuse installations and repeat checks.
 
 The full-package fixture configures every distributed package with a stub
 runtime under both generators and checks that the Ninja graph is acyclic.

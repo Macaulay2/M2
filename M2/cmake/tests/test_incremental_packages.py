@@ -26,7 +26,8 @@ for generator in ['Ninja','Unix Makefiles']:
 import sys,re
 from pathlib import Path
 root=Path(__file__).resolve().parents[2]
-for operation, pkg in re.findall(r'(installPackage|check)\\("([^\"]+)"', ' '.join(sys.argv)):
+args=' '.join(sys.argv)
+for operation, pkg in re.findall(r'(installPackage|check)\\("([^\"]+)"', args):
     if operation == 'check':
         assert (root/'dist/lib/Macaulay2'/pkg/'.cmake-installed').exists(), 'checked before installation completed'
         with (root/'checks').open('a') as f: f.write(pkg+'\\n')
@@ -36,14 +37,17 @@ for operation, pkg in re.findall(r'(installPackage|check)\\("([^\"]+)"', ' '.joi
     if (root/('fail-'+pkg)).exists(): sys.exit(1)
     marker=root/'dist/lib/Macaulay2'/pkg/'.installed'
     marker.parent.mkdir(parents=True,exist_ok=True)
-    marker.touch()
+    if (root/('example-error-'+pkg)).exists():
+        if not re.search(r'IgnoreExampleErrors\\s*=>\\s*true\\b', args): sys.exit(1)
+    else:
+        marker.touch()
     info=root/'dist/info'/ (pkg+'.info')
     info.parent.mkdir(parents=True,exist_ok=True)
     if not (root/('gzip-fail-'+pkg)).exists(): info.write_text(pkg)
 
 ''')
     (src/'fake-m2.py').chmod(0o755)
-    (src/'CMakeLists.txt').write_text('''cmake_minimum_required(VERSION 3.30)
+    (src/'CMakeLists.txt').write_text('''cmake_minimum_required(VERSION 3.24)
 project(IncrementalPackages C)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 set(M2_DIST_PREFIX "${CMAKE_BINARY_DIR}/dist")
@@ -122,6 +126,26 @@ add_subdirectory(packages)
     run([],target='all-Example',checks=['Example'])
     run([])
     print('PASS:',generator,'combined targets reuse completed installs, rerun checks, and handle install/check failures',flush=True)
+
+    # Ignored example errors allow installation to finish without .installed.
+    (build/'dist/lib/Macaulay2/Example/.installed').unlink()
+    (build/'example-error-Example').touch()
+    configure('-DIgnoreExampleErrors=true')
+    run(all_packages)
+    assert not (build/'dist/lib/Macaulay2/Example/.installed').exists()
+    assert (build/'dist/lib/Macaulay2/Example/.cmake-installed').exists()
+    run([])
+    configure(); run([])
+    run([],target='all-Example',checks=['Example'])
+    touch(packages/'Example.m2'); run(['Example']); run([])
+    # Returning to strict mode must fail, then retry once the example is fixed.
+    configure('-DIgnoreExampleErrors=false')
+    run(all_packages,True)
+    assert not (build/'dist/lib/Macaulay2/Example/.cmake-installed').exists()
+    (build/'example-error-Example').unlink()
+    run(['Example']); run([])
+    assert (build/'dist/lib/Macaulay2/Example/.installed').exists()
+    print('PASS:',generator,'ignored example errors, no-op rebuilds, and strict-mode failure/retry',flush=True)
 
     # A selected package must build its imports, even when omitted from PACKAGES.
     (packages/'Provider.m2').write_text('Provider')

@@ -1,9 +1,13 @@
 # Give each install command a single owner. File dependencies on commands in
 # other directories do not recursively copy their rules into every consumer.
 # Explicit target dependencies in _install_targets provide cross-directory order.
+set(_depends_explicit_only)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.27)
+  set(_depends_explicit_only DEPENDS_EXPLICIT_ONLY)
+endif()
 add_custom_target(install-${package} DEPENDS ${_install_stamp} ${_install_marker} ${_install_info})
 add_custom_command(OUTPUT ${_install_stamp} ${_install_marker} ${_install_info}
-  DEPENDS_EXPLICIT_ONLY
+  ${_depends_explicit_only}
   COMMENT "Installing package ${package}"
   COMMAND ${CMAKE_COMMAND} -E rm -f ${_install_stamp}
   COMMAND ${M2} ${M2_ARGS} -e ${M2_INSTALL_STRING} -e ${M2_INFO_STRING} -e "exit 0"
