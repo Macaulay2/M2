@@ -63,7 +63,7 @@ jobs:
         exclude:
           # Linux CMake reuses the development container in the job above.
           - build-system: cmake
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             compiler: default
           - build-system: cmake
             os: macos-26

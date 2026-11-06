@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import tarfile
 import tempfile
 import unittest
 
@@ -38,7 +39,16 @@ if name == 'cmake' and '-S' in args:
     build.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(__file__, build / 'M2')
     (build / 'M2').chmod(0o755)
+if name == 'cmake' and 'build-libraries' in args:
+    (state / 'build/fallback-library').write_text('built')
+if name == 'cmake' and 'build-programs' in args:
+    (state / 'build/fallback-program').write_text('built')
+if name == 'cmake' and 'M2-core' in args:
+    assert (state / 'build/fallback-library').exists(), 'library not built before M2'
+    assert (state / 'build/fallback-program').exists(), 'program not built before M2'
+    (state / 'build/runtime-built').touch()
 if name == 'cmake' and 'install-packages' in args:
+    assert (state / 'build/runtime-built').exists(), 'runtime not built before packages'
     (state / 'build/installed').write_text('completed')
 if name == 'cmake' and 'check-packages' in args:
     assert (state / 'build/installed').read_text() == 'completed'
@@ -54,19 +64,15 @@ if name == 'cpack':
                 (tools / name).symlink_to(mock)
             env = dict(os.environ, PATH=str(tools) + os.pathsep + os.environ['PATH'],
                        TEST_STATE=str(state), CMAKE_BUILD_PARALLEL_LEVEL='3')
-            subprocess.run(['bash', str(driver), 'dependencies'], env=env, check=True, capture_output=True)
-            self.assertTrue((state / 'build-cache.tar').exists())
-            self.assertFalse((state / 'build').exists())
-            calls = [json.loads(line) for line in (state / 'calls').read_text().splitlines()]
-            self.assertTrue(any('build-libraries' in args and 'build-programs' in args
-                                for name, args in calls))
-            self.assertFalse(any('M2-core' in args or 'install-packages' in args
-                                 or name in ['M2', 'ctest', 'cpack'] for name, args in calls))
-            (state / 'calls').write_text('')
+            # A fresh environment has no dependency checkpoint to restore.
+            self.assertFalse(state.exists())
             subprocess.run(['bash', str(driver), 'build'], env=env, check=True, capture_output=True)
             self.assertTrue((state / 'build-cache.tar').exists())
             self.assertFalse((state / 'build').exists())
             self.assertTrue((state / 'ccache/object').exists())
+            with tarfile.open(state / 'build-cache.tar') as archive:
+                for name in ('build/fallback-library', 'build/fallback-program', 'build/installed'):
+                    self.assertIn(name, archive.getnames())
             calls = [json.loads(line) for line in (state / 'calls').read_text().splitlines()]
             self.assertFalse(any(name in ['M2', 'ctest', 'cpack'] for name, args in calls))
             (state / 'calls').write_text('')

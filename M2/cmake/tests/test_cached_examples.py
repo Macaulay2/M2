@@ -21,7 +21,7 @@ with tempfile.TemporaryDirectory(prefix='m2-example-policy-') as tmp:
         (root / (name + '.m2')).write_text(
             f'newPackage("{name}", {options} Headline => "CI fixture")\nend\n')
         script = root / 'render.cmake'
-        script.write_text('''cmake_minimum_required(VERSION 3.30)
+        script.write_text('''cmake_minimum_required(VERSION 3.24)
 set(RespectCachedExampleOutput ON)
 set(CacheExampleOutput false)
 set(RerunExamples true)
