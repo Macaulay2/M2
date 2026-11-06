@@ -1,5 +1,5 @@
 doc ///
-    Key
+Key
     centerMap
     (centerMap, Ring)
 Headline
