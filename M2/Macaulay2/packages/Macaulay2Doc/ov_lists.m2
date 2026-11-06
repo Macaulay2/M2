@@ -531,6 +531,7 @@ doc///
     uniquePermutations
     permutations
     subsets
+    groupby
 ///
 
 document {
