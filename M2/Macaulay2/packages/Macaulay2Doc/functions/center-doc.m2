@@ -19,8 +19,8 @@ Usage
 Inputs
     R:Ring
 Outputs
-    z:RingMap
-        $Z \rightarrow R$ the inclusion of the center of $R$ into $R$
+    Z:Ring
+        The center of $R$.
 Description
     Text
         The center of a ring $R$ is the subring consisting of all the elements that commute with every element of $R$.
@@ -30,9 +30,13 @@ Description
     Example
         kk = ZZ/3
         R = kk[a..d, SkewCommutative => true]
-        inc = center R;
-        Z = source inc;
+        Z = center R;
         netList (ideal Z)_*
+    Text
+        Use @TO centerMap @ instead to get the inclusion of $Z$ into $R$.
+    Example
+        inc = centerMap R
+        assert(Z === source inc);
     Text
         The variables in the center are doubly-indexed according to the pairs of
         variables in $R$ that they map to.
@@ -44,20 +48,20 @@ Description
         kk = ZZ/3
         R = kk[a]
         S = R[x..z, SkewCommutative => true]
-        inc = center  S;
-        Z = source inc;
+        Z = center  S;
         netList (ideal Z)_*
     Text
-        When $R$ is commutative, this returns the identity map $R \rightarrow R$.
+        When $R$ is commutative, this returns $R$.
     Example
         kk = ZZ/5
-        assert(center kk === id_kk)
+        assert(center kk === kk)
 
         R = ZZ/5[a..c] / ideal {a^2 + b, b^2 + c^3, c^2 - a*b^2}
-        assert(center R === id_R)
+        assert(center R === R)
 Caveat
     Currently only implemented for commutative rings and skew affine rings.
 SeeAlso
     isCommutative
     isSkewAffineRing
+    centerMap
 ///
