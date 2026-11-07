@@ -39,3 +39,49 @@ document {
      	  ///,
      SeeAlso => {tally, partitions, sublists}
      }
+
+doc ///
+Key
+    (partition,Function,VisibleList,VisibleList,Function)
+    (partition,Function,VisibleList,Function)
+Headline
+    paritition elements by values of a function and apply a function
+Usage
+    partition(f, xs, ks, g)
+    partition(f, xs, g)
+Inputs
+    f:Function
+    xs:VisibleList
+    ks:VisibleList
+    g:Function
+Outputs
+    :HashTable
+Description
+    Text
+        Given a list of data, group by one function and apply another one.
+    Example
+        someprimes = for i from 1 to 10 list nextPrime(100 * i)
+        netList pairs partition(p -> legendreSymbol(-1, p), someprimes, p -> p %4)
+    Text
+        If you have already assembled a table of data this pattern can be
+        conveniently used to group by one column while focusing in on another.
+    Example
+        someprimes = for i from 1 to 10 list nextPrime(100 * i);
+        data = apply(someprimes, p -> {p, legendreSymbol(-1, p), p % 4});
+        netList data
+        netList pairs partition(row -> row_1, data, row -> row_2)
+    Text
+        Omit the second function and `identity` will be used implicitly.
+    Example
+        xs = {"apples", "bananas", "avocados", "grapes", "grapefruit"};
+        netList pairs partition(x -> x_0, xs)
+    Text
+        As in use of partition without applying a function to the values, you
+        can provide a VisibleList of key-values to ensure appear in the result -
+        possibly with an empty container of values.
+    Example
+        someprimes = for i from 1 to 10 list nextPrime(100 * i);
+        data = apply(someprimes, p -> {p, legendreSymbol(-1, p), p % 4});
+        netList data
+        netList pairs partition(row -> row_1, data, 0..3, row -> row_2)
+///
