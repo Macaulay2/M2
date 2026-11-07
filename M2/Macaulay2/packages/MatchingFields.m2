@@ -238,7 +238,6 @@ flMatchingField(List, Matrix) := (inputKList, inputWeightMatrix) -> (
         );
     Mn := numcols inputWeightMatrix;
     subsetList := flatten for Mk in inputKList list subsets(Mn, Mk);
-    grMatchingFields := for Mk in inputKList list grMatchingField(inputWeightMatrix^(toList(0 .. Mk - 1)));
     new FlMatchingField from matchingField(sort inputKList, subsetList, inputWeightMatrix)
     )
 
