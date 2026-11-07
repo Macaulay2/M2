@@ -186,20 +186,39 @@ gushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
 
 gushelMukaiFourfold String := o -> str -> gushelMukaiFourfold(str,ZZ/65521,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
-expression GushelMukaiFourfold := X -> expression("GM fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X)|(if X.cache#?(surface X,"classSurfaceInG14") then (" with class "|toString(first cycleClass X)) else ""));
-
-texMath GushelMukaiFourfold := X -> (
-    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
-    descr := texMath shortDescriptionFourfoldTeX(X,false);
-    M := X.cache#(surface X,"LatticeIntersectionMatrix");
-    d := det M;
+netTexDescription GushelMukaiFourfold := o -> X -> (
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
+        toString getAttribute(X,ReverseDictionary),
+        texMath getAttribute(X,ReverseDictionary)
+    );
+    if o#"Short" then return (
+        shortDescriptionFourfold(X,false),
+        texMath shortDescriptionFourfoldTeX(X,false)
+    );
+    S := surface X;
+    F := ambientFivefold X;
+    d := discriminant X;
+    (cS,ab) := cycleClass X;
+    M := X.cache#(S,"LatticeIntersectionMatrix");
     (q,r) := quotientRemainder(d,8);
-    str := "\\begin{aligned}&" | descr;
-    str = str | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
-    str | "\\end{aligned}"
+    (netX,texX) := netTexDescription projectiveVariety ring X;
+    (netF,texF) := netTexDescription F;
+    netS := surfaceDescription(9,S);
+    texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netStr := net("fourfold: " | netX);
+    netStr = netStr || net("ambient fivefold: " | netF);
+    netStr = netStr || net("surface: " | netS);
+    netStr = netStr || net("class in G(1,4): " | (toString cS));
+    netStr = netStr || net "lattice discriminant:";
+    netStr = netStr || ((net "det(") | (net M) | net(") = " | (toString d) | " = " | (toString q) | "*8 + " | (toString r)));
+    texStr := "\\begin{aligned}&\\text{fourfold: }" | texX;
+    texStr = texStr | newline | "\\\\&\\text{ambient fivefold: }" | texF;
+    texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
+    texStr = texStr | newline | "\\\\&\\text{class in }\\mathbb{G}(1,4)\\text{: }" | (replace("s_","\\\\sigma_",texMath cS));
+    texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+    texStr = texStr | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    (netStr,texStr | "\\end{aligned}")
 );
-
-shortTeX GushelMukaiFourfold := X -> shortTeX("\\text{GM fourfold containing a surface of degree }" | (texMath degree surface X) | "\\text{ and sectional genus }" | (texMath sectionalGenus surface X) | (if X.cache#?(surface X,"classSurfaceInG14") then "\\text{ with class }" | (replace("s_","\\\\sigma_",texMath first cycleClass X)) else ""));
 
 describe GushelMukaiFourfold := X -> (
     (cS,ab) := cycleClass X;
@@ -242,7 +261,17 @@ describe GushelMukaiFourfold := X -> (
 
 shortDescriptionFourfold (GushelMukaiFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
-    "Gushel-Mukai fourfold of discriminant "|(discriminant X)
+    d := discriminant X;
+    discrStr := toString d;
+    if d % 8 == 2 then (
+        (a,b) := last cycleClass X;
+        if even(a+b) and odd(b) then (
+            discrStr = discrStr | "(')";
+        ) else if odd(a+b) and even(b) then (
+            discrStr = discrStr | "('')";
+        ) else error "internal error encountered";
+    );
+    "Gushel-Mukai fourfold of discriminant " | discrStr
 );
 
 shortDescriptionFourfoldTeX (GushelMukaiFourfold,Boolean) := (X,UseAttribute) -> (
@@ -843,7 +872,7 @@ makeGMfromCurveOnSurfaceInP6 EmbeddedProjectiveVariety := o -> C -> (
     if numgens ideal H > o.Degrees#1_1 then error "request on the degrees is not satisfied";
     -- V := if char coefficientRing C <= 65521 then image(psi',"F4") else image psi';
     V := image psi';
-    if o.Verbose then <<"got surface in GG(1,4) ⊂ PP^9 with ideal generated in degrees "<<toStringDegreesVar V<<endl;
+    if o.Verbose then <<"got surface in GG(1,4) ⊂ PP^9 with ideal generated in degrees "<<generatorDegreesString V<<endl;
     degs := flatten degrees ideal V;
     if codim H == 1 and # select(degs,d -> d == 2) < 6 then error "the surface in G(1,4) is not contained in any GM fourfold";
     if # select(degs,d -> d > 3) > 0 or
@@ -991,7 +1020,7 @@ takeGMsfromSurfaceInP6 EmbeddedProjectiveVariety := o -> S -> (
     if not(S.cache#?"linear system on PP^2" and S.cache#?"takeCurve") then error "expected a surface constructed with the function \"surface\"";
     a := apply(toSequence S.cache#"linear system on PP^2",toString);
     if #a != 4 then error "not implemented yet: the surface must be of the form \"surface {a,i,j,k}\"";
-    S.cache#"nice description" = "S("|a_0|";"|a_1|","|a_2|","|a_3|",NumNodes=>"|(if S.cache#?"FiniteNumberOfNodes" then toString(S.cache#"FiniteNumberOfNodes") else "?")|") ⊂ PP^"|toString(dim linearSpan S)|(if codim linearSpan S > 0 then " ⊂ PP^"|toString(dim ambient S) else "")|" of degree: "|toString(degree S)|", genus: "|toString(sectionalGenus S)|", and degrees: "|(toStringDegreesVar S);
+    S.cache#"nice description" = "S("|a_0|";"|a_1|","|a_2|","|a_3|",NumNodes=>"|(if S.cache#?"FiniteNumberOfNodes" then toString(S.cache#"FiniteNumberOfNodes") else "?")|") ⊂ PP^"|toString(dim linearSpan S)|(if codim linearSpan S > 0 then " ⊂ PP^"|toString(dim ambient S) else "")|" of degree: "|toString(degree S)|", genus: "|toString(sectionalGenus S)|", and degrees: "|(generatorDegreesString S);
     if o.Verbose then <<"*******"<<endl<<"Surface: "<<S.cache#"nice description"<<" glued with a "<<o#"Gluing"<<endl;
     local W; local X; U := {};
     for d from 1 to 6 do for g to 1 do (

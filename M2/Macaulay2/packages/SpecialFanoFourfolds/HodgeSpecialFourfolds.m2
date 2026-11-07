@@ -136,43 +136,42 @@ specialFourfold String := o -> str -> specialFourfold(str,ZZ/65521,NumNodes=>o.N
 
 specialFourfold (String,ZZ) := o -> (str,i) -> (prebuiltExamplesOfRationalFourfolds()) (str,i);
 
-expression HodgeSpecialFourfold := X -> (
-    E := if dim ambient X == 4
-         then "a "
-         else if degrees X == {({2},1),({3},1)}
-         then "complete intersection of type (2,3) in "
-         else if degrees X == {({4},1)}
-         then "quartic hypersurface in "
-         else "fourfold in ";
-    E = E|"PP^"|toString(dim ambient X)|" containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X);
-    expression E
-);
-
-texMath HodgeSpecialFourfold := X -> (
-    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
+netTexDescription HodgeSpecialFourfold := o -> X -> (
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (toString getAttribute(X,ReverseDictionary),texMath getAttribute(X,ReverseDictionary));
     S := surface X;
-    if not X.cache#?(S,"LatticeIntersectionMatrix") then (
-        try discriminant X else return texMath shortDescriptionFourfoldTeX(X,false);
+    local netStr; local texStr; local M;
+    if o#"Short" then (
+        netStr = shortDescriptionFourfold(X,false);
+        texStr = texMath shortDescriptionFourfoldTeX(X,false);
+        if X.cache#?(S,"LatticeIntersectionMatrix") then (
+            M = X.cache#(S,"LatticeIntersectionMatrix");
+            netStr = netStr | " of lattice discriminant " | (toString det M);
+            texStr = texStr | "\\text{ of lattice discriminant }" | (texMath det M);
+        );
+        return (netStr,texStr);
     );
-    if not X.cache#?(S,"LatticeIntersectionMatrix") then return texMath shortDescriptionFourfoldTeX(X,false);
-    M := X.cache#(S,"LatticeIntersectionMatrix");
-    str := "\\begin{aligned}&" | (texMath shortDescriptionFourfoldTeX(X,false)) | "\\text{ of lattice discriminant}";
-    str = str | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath det M);
-    str | "\\end{aligned}"
-);
-
-shortTeX HodgeSpecialFourfold := X -> (
-    local E;
-    if dim ambient X == 4 then (
-        E = "\\text{a }";
-    ) else if degrees X == {({2},1),({3},1)} then (
-        E = "\\text{complete intersection of type }(2,3)\\text{ in }";
-    ) else if degrees X == {({4},1)} then (
-        E = "\\text{quartic hypersurface in }";
-    ) else (
-        E = "\\text{fourfold in }";
+    (netX,texX) := netTexDescription projectiveVariety ring X;
+    netS := surfaceDescription(9,S);
+    texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netStr = net("fourfold: " | netX);
+    texStr = "\\begin{aligned}&\\text{fourfold: }" | texX;
+    if X.cache#?"AmbientFivefold" and X.cache#"AmbientFivefold" != ambient X then (
+        F := X.cache#"AmbientFivefold";
+        (netF,texF) := netTexDescription F;
+        netStr = netStr || net("ambient fivefold: " | netF);
+        texStr = texStr | newline | "\\\\&\\text{ambient fivefold: }" | texF;
     );
-    shortTeX(E | "\\mathbb{P}^{" | (texMath dim ambient X) | "}\\text{ containing a surface of degree }" | (texMath degree surface X) | "\\text{ and sectional genus }" | (texMath sectionalGenus surface X))
+    netStr = netStr || net("surface: " | netS);
+    texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
+    if not X.cache#?(S,"LatticeIntersectionMatrix") then try discriminant X;
+    if X.cache#?(S,"LatticeIntersectionMatrix") then (
+        M = X.cache#(S,"LatticeIntersectionMatrix");
+        netStr = netStr || net "lattice discriminant:";
+        netStr = netStr || ((net "det(") | (net M) | net(") = " | (toString det M)));
+        texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+        texStr = texStr | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath det M);
+    );
+    (netStr,texStr | "\\end{aligned}")
 );
 
 describe HodgeSpecialFourfold := X -> (

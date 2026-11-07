@@ -111,29 +111,35 @@ specialFourfold RationalSurfaceWithAttachedPlaneInCubicFourfold := cubicFourfold
 surfaces = method();
 surfaces DoublySpecialCubicFourfold := X -> toSequence take(X#"SurfaceContainedInTheFourfold",2);
 
-expression DoublySpecialCubicFourfold := X -> (
+netTexDescription DoublySpecialCubicFourfold := o -> X -> (
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
+        toString getAttribute(X,ReverseDictionary),
+        texMath getAttribute(X,ReverseDictionary)
+    );
+    if o#"Short" then return (
+        shortDescriptionFourfold(X,false),
+        texMath shortDescriptionFourfoldTeX(X,false)
+    );
     (S,T) := surfaces X;
-    if isPlaneInP5 S and isPlaneInP5 T then return expression("cubic fourfold in C_8 containing two planes");
-    if isPlaneInP5 S then return expression("cubic fourfold in C_8 containing a plane and a surface of degree "|toString(degree T)|" and sectional genus "|toString(sectionalGenus T));
-    if isPlaneInP5 T then return expression("cubic fourfold in C_8 containing a surface of degree "|toString(degree S)|" and sectional genus "|toString(sectionalGenus S)|" and a plane");
-    expression("cubic fourfold containing two surfaces of degrees " | (toString degree S) | " and " | (toString degree T) | ", sectional genera " | (toString sectionalGenus S) | " and " | (toString sectionalGenus T))
-);
-
-texMath DoublySpecialCubicFourfold := X -> (
-    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
     A := latticeIntersectionMatrix3x3 X;
-    (q,r) := quotientRemainder(det A,8);
-    str := "\\begin{aligned}&" | (texMath shortDescriptionFourfoldTeX(X,false)) | "\\text{ of lattice discriminant}";
-    str = str | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath det A) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
-    str | "\\end{aligned}"
-);
-
-shortTeX DoublySpecialCubicFourfold := X -> (
-    (S,T) := surfaces X;
-    if isPlaneInP5 S and isPlaneInP5 T then return shortTeX("\\text{cubic fourfold in }\\mathcal{C}_{8}\\text{ containing two planes}");
-    if isPlaneInP5 S then return shortTeX("\\text{cubic fourfold in }\\mathcal{C}_{8}\\text{ containing a plane and a surface of degree }" | (texMath degree T) | "\\text{ and sectional genus }" | (texMath sectionalGenus T));
-    if isPlaneInP5 T then return shortTeX("\\text{cubic fourfold in }\\mathcal{C}_{8}\\text{ containing a surface of degree }" | (texMath degree S) | "\\text{ and sectional genus }" | (texMath sectionalGenus S) | "\\text{ and a plane}");
-    shortTeX("\\text{cubic fourfold containing two surfaces of degrees }" | (texMath degree S) | "\\text{ and }" | (texMath degree T) | "\\text{, sectional genera }" | (texMath sectionalGenus S) | "\\text{ and }" | (texMath sectionalGenus T))
+    d := det A;
+    (q,r) := quotientRemainder(d,8);
+    (netX,texX) := netTexDescription projectiveVariety ring X;
+    netS := surfaceDescription(11,S);
+    netT := surfaceDescription(11,T);
+    texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    texT := last netTexDescription(T,"Ambient"=>false,"NumericalInvariants"=>true);
+    netStr := net("fourfold: " | netX);
+    netStr = netStr || net("surface 1: " | netS);
+    netStr = netStr || net("surface 2: " | netT);
+    netStr = netStr || net "lattice discriminant:";
+    netStr = netStr || ((net(newline | "det(")) | (net A) | net(newline | ") = " | (toString d) | " = " | (toString q) | "*8 + " | (toString r)));
+    texStr := "\\begin{aligned}&\\text{fourfold: }" | texX;
+    texStr = texStr | newline | "\\\\&\\text{surface 1: }" | texS;
+    texStr = texStr | newline | "\\\\&\\text{surface 2: }" | texT;
+    texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+    texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    (netStr,texStr | "\\end{aligned}")
 );
 
 describe DoublySpecialCubicFourfold := X -> (

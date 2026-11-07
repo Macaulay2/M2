@@ -9,18 +9,35 @@ globalAssignment IntersectionOfThreeQuadricsInP7;
 
 IntersectionOfThreeQuadricsInP7.synonym = "complete intersection of three quadrics in PP^7";
 
-expression IntersectionOfThreeQuadricsInP7 := X -> expression("complete intersection of three quadrics in PP^7 containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
-
-texMath IntersectionOfThreeQuadricsInP7 := X -> (
-    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
+netTexDescription IntersectionOfThreeQuadricsInP7 := o -> X -> (
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
+        toString getAttribute(X,ReverseDictionary),
+        texMath getAttribute(X,ReverseDictionary)
+    );
+    if o#"Short" then return (
+        shortDescriptionFourfold(X,false),
+        texMath shortDescriptionFourfoldTeX(X,false)
+    );
+    S := surface X;
+    F := ambientFivefold X;
     d := discriminant X;
-    A := X.cache#(surface X,"LatticeIntersectionMatrix");
-    str := "\\begin{aligned}&" | (texMath shortDescriptionFourfoldTeX(X,false)) | "\\text{ of lattice discriminant}";
-    str = str | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d);
-    str | "\\end{aligned}"
+    A := X.cache#(S,"LatticeIntersectionMatrix");
+    (netX,texX) := netTexDescription projectiveVariety ring X;
+    (netF,texF) := netTexDescription F;
+    netS := surfaceDescription(9,S);
+    texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netStr := net("fourfold: " | netX);
+    netStr = netStr || net("ambient fivefold: " | netF);
+    netStr = netStr || net("surface: " | netS);
+    netStr = netStr || net "lattice discriminant:";
+    netStr = netStr || ((net "det(") | (net A) | net(") = " | (toString d)));
+    texStr := "\\begin{aligned}&\\text{fourfold: }" | texX;
+    texStr = texStr | newline | "\\\\&\\text{ambient fivefold: }" | texF;
+    texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
+    texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+    texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d);
+    (netStr,texStr | "\\end{aligned}")
 );
-
-shortTeX IntersectionOfThreeQuadricsInP7 := X -> shortTeX("\\text{complete intersection of three quadrics in }\\mathbb{P}^{7}\\text{ containing a surface of degree }" | (texMath degree surface X) | "\\text{ and sectional genus }" | (texMath sectionalGenus surface X));
 
 describe IntersectionOfThreeQuadricsInP7 := X -> (
     descr := "Complete intersection of 3 quadrics in PP^7";

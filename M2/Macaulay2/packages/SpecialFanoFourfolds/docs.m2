@@ -48,7 +48,7 @@ PARA{"This function applies a formula given in Section 7 of the paper ", HREF{"h
 EXAMPLE {"X = gushelMukaiFourfold \"tau-quadric\";", "discriminant X"},
 SeeAlso => {(discriminant, CubicFourfold)}}
 
-undocumented{(expression, GushelMukaiFourfold), (describe, GushelMukaiFourfold)}
+undocumented{(describe, GushelMukaiFourfold)}
 
 document {Key => {Verbose, [cubicFourfold, Verbose], [gushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [polarizedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose], [example, Verbose], [texTables, Verbose]},
 Headline => "request verbose feedback"}
@@ -225,7 +225,7 @@ PARA{"A cubic fourfold is a smooth cubic hypersurface in ", TEX///$\mathbb{P}^5$
 PARA{"An object of the class ", TO CubicFourfold, " is basically represented by a pair ", TEX///(S,X)///, ", where ", TEX///$X$///, " is a cubic fourfold and ", TEX///$S$///, " is a surface contained in ", TEX///$X$///, ". The surface ", TEX///$S$///, " is required to be smooth or with at most a finite number ", TEX///$n$///, " of non-normal nodes. This number ", TEX///$n$///, " (if known) can be specified manually using the option ", TT "NumNodes", ". The main constructor for the objects of the class is the function ", TO cubicFourfold,"."},
 SeeAlso => {(discriminant,CubicFourfold)}}
 
-undocumented{(expression, CubicFourfold), (describe, CubicFourfold)}
+undocumented{(describe, CubicFourfold)}
 
 undocumented{InputCheck, NumNodes}
 
@@ -356,7 +356,7 @@ Headline => "try to deform to a fourfold of Gushel type",
 Usage => "fromOrdinaryToGushel X",
 Inputs => {"X" => GushelMukaiFourfold => {"a fourfold of ordinary type"}},
 Outputs => {GushelMukaiFourfold => {"a fourfold of Gushel type, a deformation of ",TT"X"}},
-EXAMPLE {"X = gushelMukaiFourfold \"quintic del Pezzo surface\";", "singularLocus ambientFivefold X", "X' = fromOrdinaryToGushel X;", "support singularLocus ambientFivefold X'"}}
+EXAMPLE {"X = gushelMukaiFourfold \"quintic del Pezzo surface\";", "singularLocus ambientFivefold X", "X' = fromOrdinaryToGushel X,;", "support singularLocus ambientFivefold X'"}}
 
 document {Key => {associatedK3surface, [associatedK3surface, Strategy], building},
 Headline => "K3 surface associated to a rational fourfold",
@@ -488,8 +488,6 @@ PARA{"Besides the data needed to reconstruct ",TT"X",", the returned string also
 EXAMPLE {"describe (X = specialFourfold \"tau-quadric\")", "str = toExternalString X;", "describe (value str)"},
 SeeAlso => {(store, HodgeSpecialFourfold)}}
 
-undocumented {(expression, HodgeSpecialFourfold)}
-
 document {Key => {HodgeSpecialFourfold},
 Headline => "the class of all Hodge-special fourfolds",
 PARA{"An object of the class ", TO HodgeSpecialFourfold, " is basically represented by a pair ", TEX///(S,X)///, ", where ", TEX///$X$///, " is a fourfold and ", TEX///$S$///, " is a surface contained in ", TEX///$X$///,". Such objects are created by the function ",TO specialFourfold,"."},
@@ -507,8 +505,6 @@ document {Key => {IntersectionOfThreeQuadricsInP7},
 Headline => "the class of all special intersection of three quadrics in P^7",
 PARA {"This is a subtype of the ",TO HodgeSpecialFourfold," type."},
 SeeAlso => {specialFourfold}}
-
-undocumented {(expression, IntersectionOfThreeQuadricsInP7)}
 
 document {Key => {associatedCastelnuovoSurface, (associatedCastelnuovoSurface, IntersectionOfThreeQuadricsInP7), [associatedCastelnuovoSurface, Strategy]},
 Headline => "Castelnuovo surface associated to a rational complete intersection of three quadrics in P^7",
@@ -554,7 +550,7 @@ PARA{"Here is another example."},
 EXAMPLE {"X = specialFourfold surface((2,0,0),(1,0,0));", "describe X", "polarizedK3surface(X, Verbose=>true)", "polarizedK3surface(oo, Verbose=>true)", "latticePolarization oo", "describe X"},
 SeeAlso => {DoublySpecialCubicFourfold, (associatedK3surface, CubicFourfold)}}
 
-undocumented {(expression, DoublySpecialCubicFourfold), (describe, DoublySpecialCubicFourfold), (check, DoublySpecialCubicFourfold), (clean, DoublySpecialCubicFourfold), (random, DoublySpecialCubicFourfold), (mirrorFourfold, DoublySpecialCubicFourfold), (quadricFibration, DoublySpecialCubicFourfold), (associatedK3surface, DoublySpecialCubicFourfold)}
+undocumented {(describe, DoublySpecialCubicFourfold), (check, DoublySpecialCubicFourfold), (clean, DoublySpecialCubicFourfold), (random, DoublySpecialCubicFourfold), (mirrorFourfold, DoublySpecialCubicFourfold), (quadricFibration, DoublySpecialCubicFourfold), (associatedK3surface, DoublySpecialCubicFourfold)}
 
 undocumented {(surface, VisibleList, VisibleList, Ring, Option), (surface, VisibleList, VisibleList, Option), (surface, VisibleList, VisibleList, Ring), (surface, VisibleList, VisibleList)}
 

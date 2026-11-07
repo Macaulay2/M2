@@ -144,19 +144,26 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
 
 cubicFourfold String := o -> str -> cubicFourfold(str,ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
-expression CubicFourfold := X -> expression("cubic fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
-
-texMath CubicFourfold := X -> (
-    if hasAttribute(X,ReverseDictionary) then return texMath getAttribute(X,ReverseDictionary);
+netTexDescription CubicFourfold := o -> X -> (
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (toString getAttribute(X,ReverseDictionary),texMath getAttribute(X,ReverseDictionary));
+    if o#"Short" then return (shortDescriptionFourfold(X,false),texMath shortDescriptionFourfoldTeX(X,false));
+    S := surface X;
     d := discriminant X;
-    A := X.cache#(surface X,"LatticeIntersectionMatrix");
+    A := X.cache#(S,"LatticeIntersectionMatrix");
     (q,r) := quotientRemainder(d,6);
-    str := "\\begin{aligned}&" | (texMath shortDescriptionFourfoldTeX(X,false)) | "\\text{ of lattice discriminant}";
-    str = str | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 6 + " | (texMath r);
-    str | "\\end{aligned}"
+    (netX,texX) := netTexDescription projectiveVariety ring X;
+    netS := surfaceDescription(9,S);
+    texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netStr := net("fourfold: " | netX);
+    netStr = netStr || net("surface: " | netS);
+    netStr = netStr || net("lattice discriminant:");
+    netStr = netStr || ((net "det(") | (net A) | net(") = " | (toString d) | " = " | (toString q) | "*6 + " | (toString r)));
+    texStr := "\\begin{aligned}&\\text{fourfold: }" | texX;
+    texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
+    texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+    texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 6 + " | (texMath r);
+    (netStr,texStr | "\\end{aligned}")
 );
-
-shortTeX CubicFourfold := X -> shortTeX("\\text{cubic fourfold containing a surface of degree }" | (texMath degree surface X) | "\\text{ and sectional genus }" | (texMath sectionalGenus surface X));
 
 describe CubicFourfold := X -> (
     descr := "Special cubic fourfold of discriminant " | toString discriminant X | newline | "containing a " | surfaceDescription(0,surface X,true);
