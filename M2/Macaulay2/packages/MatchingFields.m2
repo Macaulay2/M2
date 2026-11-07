@@ -353,11 +353,8 @@ matchingFieldPolytopePoints GrMatchingField := opts -> MF -> (
         -- L a matching field for Gr(k, n) Grassmannian
         points := apply(MF.tuples, I -> (
                 -- construct the point corresponding to I
-                point := ();
-                for i in I do (
-                    point = point | (i - 1 : 0) | (1 : (1)) | (MF.tupleMaxValue - i : 0);
-                    );
-                point = point | (MF.tupleMaxValue * opts.ExtraZeroRows : 0);
+                point := new MutableList from (MF.tupleMaxValue * (MF.tupleMaxSize + opts.ExtraZeroRows) : 0);
+                scan(#I, ind -> point#(ind * MF.tupleMaxValue + I#ind - 1) = 1);
                 toList point
                 )
             );
