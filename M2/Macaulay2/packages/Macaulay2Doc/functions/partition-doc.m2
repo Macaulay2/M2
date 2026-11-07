@@ -45,7 +45,7 @@ Key
     (partition,Function,VisibleList,VisibleList,Function)
     (partition,Function,VisibleList,Function)
 Headline
-    paritition elements by values of a function and apply a function
+    partition elements by values of a function and apply a function
 Usage
     partition(f, xs, ks, g)
     partition(f, xs, g)
