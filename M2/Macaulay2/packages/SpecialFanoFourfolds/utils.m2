@@ -225,13 +225,13 @@ interpolateImage (MultirationalMap,List,ZZ) := o -> (Phi,D,j) -> (
     while select(flatten degrees ideal W,d -> d <= j) =!= D do (
         if doPrint(o.Verbose,cont) then <<"  -- image "<<cont<<", ";
         W = W + Phi point source Phi;
-        if doPrint(o.Verbose,cont) then (<<"degrees: "; <<toStringDegreesVar W<<endl);
+        if doPrint(o.Verbose,cont) then (<<"degrees: "; <<generatorDegreesString W<<endl);
         cont = cont + 1;
     );
     for i to 3 do (
         if o.Verbose then <<"  -- (verifying) image "<<cont<<", ";
         W = W + Phi point source Phi;
-        if o.Verbose then (<<"degrees: "; <<toStringDegreesVar W<<endl);
+        if o.Verbose then (<<"degrees: "; <<generatorDegreesString W<<endl);
         cont = cont + 1;
     );
     W = projectiveVariety(ideal select(flatten entries gens ideal W,w -> first degree w <= j),MinimalGenerators=>true,Saturate=>false);
@@ -263,7 +263,7 @@ interpolateTop (EmbeddedProjectiveVariety,List) := o -> (X,j) -> (
         if o.Verbose then <<"  -- top "<<cont<<", ";
         f = parametrize random({(dim X):{1}},0_X);
         W = W + f f^* X;
-        if o.Verbose then (<<"degrees: "; <<toStringDegreesVar W<<endl);
+        if o.Verbose then (<<"degrees: "; <<generatorDegreesString W<<endl);
         D = append(D,select(flatten degrees ideal W,d -> d <= j));
     );
     gW := select(flatten entries gens ideal W,w -> first degree w <= j);
@@ -386,53 +386,14 @@ isStandardK3surface EmbeddedProjectiveVariety := (cacheValue "is standard K3 sur
 
 isPlaneInP5 = P -> degrees P === {({1}, 3)} and codim P == 3 and dim P == 2;
 
-isPresumedRationalNormalCurve = method();
-isPresumedRationalNormalCurve EmbeddedProjectiveVariety := C -> (
-    degs := flatten degrees ideal C;
-    if max degs > 2 then return false;
-    d1 := number(degs, i -> i == 1);
-    d2 := number(degs, i -> i == 2);
-    n := (dim ambient C) - d1;
-    if d2 != binomial(n,2) then return false;
-    if dim C != 1 then return false;
-    if degree C != n then return false;
-    if sectionalGenus C != 0 then return false;
-    if n <= 3 then return isSmooth C;
-    true
-);
-
-commonNameRationalNormalCurve = method();
-commonNameRationalNormalCurve EmbeddedProjectiveVariety := C -> (
-    if not isPresumedRationalNormalCurve C then error "expected a rational normal curve";
-    d := degree C;
-    if d == 1 then return "a line";
-    if d == 2 then return "an irreducible conic curve";
-    if d == 3 then return "a twisted cubic curve";
-    "a rational normal curve of degree " | (toString d)
-);
-
 surfaceDescription = method();
 surfaceDescription (ZZ,EmbeddedProjectiveVariety,Boolean) := (m,S,withNodes) -> (
     if dim S != 2 then error "expected a surface";
-    degs := flatten degrees ideal S;
-    if degree S == 1 and unique degs === {1} then return "plane";
-    n := if withNodes or S.cache#?"FiniteNumberOfNodes" then numberNodes(S,Verbose=>false) else -1;
-    nodal := if n > 0 then (toString n)|"-nodal " else (if S.cache#?"singularLocus" and dim(singularLocus S) == -1 then "smooth " else "");
-    rational := if S.cache#?"rationalParametrization" then "rational " else "";
-    surfaceHeader := nodal | rational | "surface of degree " | (toString degree S) | " and sectional genus " | (toString sectionalGenus S);
-    cutOutLine := "cut out by "|(if same degs then (toString(#degs)|" hypersurfaces of degree "|(toString first degs)) else (toString(#degs)|" hypersurfaces of degrees "|toStringDegreesVar(S)));
-    sp := if m < 0 then " " else (newline|concatenate(m:" "));
-    surfaceHeader|sp|cutOutLine
+    if withNodes then numberNodes(S,Verbose=>false);
+    first netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>m)
 );
-surfaceDescription (ZZ,EmbeddedProjectiveVariety) := (m,S) -> surfaceDescription(m,S,S.cache#?"FiniteNumberOfNodes" or S.cache#?"singularLocus" or S.cache#?"nonSaturatedSingularLocus" or (S.cache#?"fitVariety" and (S.cache#"fitVariety").cache#?"nonSaturatedSingularLocus"));
+surfaceDescription (ZZ,EmbeddedProjectiveVariety) := (m,S) -> surfaceDescription(m,S,S.cache#?"singularLocus" or S.cache#?"nonSaturatedSingularLocus" or (S.cache#?"fitVariety" and (S.cache#"fitVariety").cache#?"nonSaturatedSingularLocus"));
 surfaceDescription EmbeddedProjectiveVariety := S -> surfaceDescription(-1,S);
-
-degreeOfDefiningForms = method();
-degreeOfDefiningForms MultirationalMap := f -> (
-    u := unique degrees ideal compress matrix f;
-    if #u != 1 then error "internal error encountered";
-    unsequence toSequence first u
-);
 
 humanReadableSeconds = t -> (
     assert(instance(t,ZZ) and t >= 0);
@@ -511,7 +472,7 @@ describeMirrorFourfoldAndK3 HodgeSpecialFourfold := X -> (
     U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>true);  -- already in cache
     cutOutLine := Y -> (
         degs := flatten degrees ideal Y;
-        " cut out by "|(if same degs then (toString(#degs)|" hypersurfaces of degree "|(toString first degs)) else (toString(#degs)|" hypersurfaces of degrees "|toStringDegreesVar(Y)))
+        " cut out by "|(if same degs then (toString(#degs)|" hypersurfaces of degree "|(toString first degs)) else (toString(#degs)|" hypersurfaces of degrees "|generatorDegreesString(Y)))
     );
     strW := if codim W == 0
             then "PP^4"

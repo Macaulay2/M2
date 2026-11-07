@@ -151,16 +151,13 @@ texTableRaw List := o -> L -> (
     L
 );
 
-degreesVarTex = method();
-degreesVarTex MultiprojectiveVariety := X -> concatenate for l in degrees X list ("{" | (toString unsequence toSequence first l) | "}^{" | (toString last l) | "}\\ ");
-
 tableRowFourfoldInfoTex = method();
 tableRowFourfoldInfoTex DoublySpecialCubicFourfold := X -> (
     (S,P) := surfaces X;
     C := S * P;
     if not S.cache#?"ConstructionParameters" then error "not implemented yet: texTables for doubly-special cubic fourfolds not constructed via specialFourfold(surface((...),(...)))";
     (ai1i2i3,dj1j2j3) := take(S.cache#"ConstructionParameters",2);
-    row := ///$\mathfrak{S}/// | (texMath matrix {toList ai1i2i3, toList dj1j2j3}) | /// $ & $\begin{array}{c} \deg(S)=/// | (toString degree S) | " , g(S)= " | (toString sectionalGenus S) | /// \\ \operatorname{gens\,id.}: /// | (degreesVarTex S) | /// \\ \deg(C)= /// | (toString degree C) | " , n(C)= " | (toString numberNodes S) | /// \end{array}$ ///;
+    row := ///$\mathfrak{S}/// | (texMath matrix {toList ai1i2i3, toList dj1j2j3}) | /// $ & $\begin{array}{c} \deg(S)=/// | (toString degree S) | " , g(S)= " | (toString sectionalGenus S) | /// \\ \operatorname{gens\,id.}: /// | (generatorDegreesTex S) | /// \\ \deg(C)= /// | (toString degree C) | " , n(C)= " | (toString numberNodes S) | /// \end{array}$ ///;
     A := latticeIntersectionMatrix3x3 X;
     q := quotientRemainder(det A,8);
     z := " = " | (toString first q) | /// \cdot 8 + /// | (toString last q) | " = ";
@@ -176,7 +173,7 @@ tableRowFourfoldInfoTex HodgeSpecialFourfold := X -> (
     ) else (
         row = ///$S \subset \mathbb{P}^{/// | (toString dim ambient S) | "} $ ";
     );
-    row = row | /// & $\begin{array}{c} \deg(S)=/// | (toString degree S) | " , g(S)= " | (toString sectionalGenus S) | /// \\ \operatorname{gens\,id.}: /// | (degreesVarTex S) | /// \\ n(S)= /// | (toString numberNodes S) | /// \end{array}$ ///;
+    row = row | /// & $\begin{array}{c} \deg(S)=/// | (toString degree S) | " , g(S)= " | (toString sectionalGenus S) | /// \\ \operatorname{gens\,id.}: /// | (generatorDegreesTex S) | /// \\ n(S)= /// | (toString numberNodes S) | /// \end{array}$ ///;
     disc := discriminant X;
     row = row | " & $" | toString(disc);
     if X.cache#?(S,"LatticeIntersectionMatrix") then (
@@ -245,10 +242,10 @@ associatedK3Tex HodgeSpecialFourfold := X -> (
     mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF X else multirationalMap fanoMap X;
     W := target mu;
     row := ///$ d_1(\mu) = /// | (toString degreeOfDefiningForms mu) | " $ & ";
-    row = row | (if codim W == 0 then /// $W=\mathbb{P}^4$ /// else (/// $\begin{array}{c} W\subset\mathbb{P}^{/// | (toString dim ambient W) | ///} \\ \deg(W)=/// | (toString degree W) | ", g(W)=" | (toString sectionalGenus W) | /// \\ \operatorname{gens\,id.}: /// | (degreesVarTex W) | /// \end{array} $ ///));
+    row = row | (if codim W == 0 then /// $W=\mathbb{P}^4$ /// else (/// $\begin{array}{c} W\subset\mathbb{P}^{/// | (toString dim ambient W) | ///} \\ \deg(W)=/// | (toString degree W) | ", g(W)=" | (toString sectionalGenus W) | /// \\ \operatorname{gens\,id.}: /// | (generatorDegreesTex W) | /// \end{array} $ ///));
     if computationStatus X <= 0 then return (row | " & - & - ");
     U := surfaceDeterminingInverseOfFanoMap X;
-    row = row | " & " | /// $\begin{array}{c} \deg(U)=/// | (toString degree U) | ///, g(U)=/// | (toString sectionalGenus U) | /// \\ \chi({\mathcal O}_U)= /// | (toString euler hilbertPolynomial U) | /// \\ \operatorname{gens\,id.}: /// | (degreesVarTex U) | /// \end{array} $ ///;
+    row = row | " & " | /// $\begin{array}{c} \deg(U)=/// | (toString degree U) | ///, g(U)=/// | (toString sectionalGenus U) | /// \\ \chi({\mathcal O}_U)= /// | (toString euler hilbertPolynomial U) | /// \\ \operatorname{gens\,id.}: /// | (generatorDegreesTex U) | /// \end{array} $ ///;
     if computationStatus X <= 1 then return (row | " & - ");
     (L,C) := exceptionalCurves X;
     row = row | " & " | /// $\begin{array}{ll} \operatorname{num\,lines}: & /// | (toString degree L) | /// \\ \deg\operatorname{others}: & /// | (toString degree C) | /// \end{array}$ ///;
