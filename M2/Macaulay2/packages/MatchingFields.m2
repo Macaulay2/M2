@@ -742,28 +742,20 @@ matchingFieldFromPermutationNoScaling(ZZ, ZZ, List) := opts -> (Lk, Ln, S) -> (
     local N;
     local M;
     local W;
-    L := {};
-    for I in subsets(Ln, Lk) do (
+    L := for I in subsets(Ln, Lk) list (
+        IOrdered = new MutableList from apply(I, i -> i + 1);
         if opts.RowNum <= Lk then (
-            -- find i in 0 .. rowNum-1 such that S_(I_i) is minimum
+            -- find smallest i in 0 .. RowNum-1 such that S_(I_i) is minimum
             minIndex = 0;
             for i from 1 to opts.RowNum - 1 do (
-                if S_(I_i) < S_(I_minIndex) then (
-                    minIndex = i;
-                    );
+                if S_(I_i) < S_(I_minIndex) then minIndex = i;
                 );
-            -- The elements I_0 .. I_(minIndex-1) are ordered in increasing order
-            IOrdered = for i from 0 to minIndex-1 list I_i + 1;
-            -- The next elements are I_(minIndex+1) .. I_(rowNum-1)
-            IOrdered = IOrdered | for i from minIndex+1 to opts.RowNum-1 list I_i + 1;
-            -- Then we get I_minIndex
-            IOrdered = append(IOrdered, I_minIndex + 1);
-            -- Then the rest of I in order
-            IOrdered = IOrdered | for i from opts.RowNum to Lk - 1 list I_i + 1;
-            L = append(L, IOrdered);
-            ) else (
-            L = append(L, apply(I, i -> i+1));
+            -- shift I_(minIndex+1) .. I_(RowNum-1) one place to the left
+            for p from minIndex to opts.RowNum - 2 do IOrdered#p = I_(p + 1) + 1;
+            -- put I_minIndex at position RowNum-1
+            IOrdered#(opts.RowNum - 1) = I_minIndex + 1;
             );
+        toList IOrdered
         );
     if opts.PowerValue > 0 then (
         N = opts.PowerValue;
