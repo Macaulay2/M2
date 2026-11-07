@@ -11,7 +11,7 @@
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>
 #endif
-#include "monomDRL.hpp"
+#include "bibasis/monomDRL.hpp"
 
 namespace BIBasis
 {

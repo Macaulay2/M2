@@ -427,9 +427,130 @@ doc ///
 
      TEST ///
      assert(point{1,2,3,4} * point{1,2,3,4}==point{1,4,9,16})
- 
+
      -- may have as many TEST sections as needed
      ///
+
+TEST /// -- point: List/Array constructors land in the Point type (Hadamard.m2:33-37,241-242)
+    p = point {1,2,3};
+    assert instance(p, Point);
+    assert(toList p == {1,2,3});
+    -- Array form, per the doc example
+    pa = point [1,4,6];
+    assert instance(pa, Point);
+    assert(toList pa == {1,4,6});
+///
+
+TEST /// -- point: invalid inputs error (Hadamard.m2:35-36)
+    -- all-zero coordinates: not a projective point
+    assert(try (point {0,0,0}; false) else true);
+    -- null entries are rejected
+    assert(try (point {1,null,3}; false) else true);
+///
+
+TEST /// -- (symbol *, Point, Point): doc example and error paths (Hadamard.m2:40-45,198-200)
+    p = point{1,2,3};
+    q = point{-1,2,5};
+    assert(p * q == point{-1,4,15});
+    -- product with all-zero result is rejected: {1,0} * {0,1} -> {0,0}
+    assert(try (point{1,0} * point{0,1}; false) else true);
+    -- mismatched ambient dimension is rejected
+    assert(try (point{1,2} * point{1,2,3}; false) else true);
+///
+
+TEST /// -- (symbol ==, Point, Point): projective equality is proportionality (Hadamard.m2:47-49,220-222)
+    -- doc example: {1,1} == {2,2}
+    assert(point{1,1} == point{2,2});
+    -- proportionality, not coordinate equality
+    assert(point{1,2,3} == point{2,4,6});
+    assert(point{1,2,3} == point{-3,-6,-9});
+    -- non-proportional points are not equal
+    assert(not (point{1,1} == point{1,2}));
+    assert(not (point{1,2,3} == point{1,2,4}));
+///
+
+TEST /// -- hadamardProduct(Ideal, Ideal): doc example with pinned generators (Hadamard.m2:281-284)
+    S = QQ[x,y,z,t];
+    IP = ideal(x-y, x-z, 2*x-t);
+    IQ = ideal(x+y, x+z, x+t);
+    H = hadamardProduct(IP, IQ);
+    assert(ring H === S);
+    assert isHomogeneous H;
+    -- the doc example yields these three linear generators
+    assert(H == ideal(2*z-t, 2*y-t, 2*x+t));
+///
+
+TEST /// -- hadamardProduct(List, List): doc example, output is in the same projective space (Hadamard.m2:341-343)
+    L = {point{0,1}, point{1,2}};
+    M = {point{1,0}, point{2,2}};
+    LM = hadamardProduct(L, M);
+    assert all(LM, p -> instance(p, Point));
+    -- {0,1}*{1,0} = {0,0} is dropped; the remaining three pairwise products are kept
+    assert(set LM === set {point{0,2}, point{1,0}, point{2,4}});
+///
+
+TEST /// -- hadamardProduct(List): list overload agrees with binary form on ideals (Hadamard.m2:136,312-316)
+    S = QQ[x,y,z,t];
+    IP = ideal(x-y, x-z, 2*x-t);
+    IQ = ideal(x+y, x+z, x+t);
+    HL = hadamardProduct{IP, IQ};
+    assert(ring HL === S);
+    assert(HL == hadamardProduct(IP, IQ));
+    -- non-uniform list (mixed ideal+point) is rejected
+    assert(try (hadamardProduct{IP, point{1,2}}; false) else true);
+    -- list of unsupported type is rejected (Hadamard.m2:128)
+    assert(try (hadamardProduct{1, 2}; false) else true);
+///
+
+TEST /// -- hadamardProduct(List): list overload on points (Hadamard.m2:317-318)
+    P = {point{1,2,3}, point{-1,1,1}, point{1,1/2,-1/3}};
+    HP = hadamardProduct P;
+    assert instance(HP, Point);
+    -- fold(point *) applied entrywise: (1*-1*1, 2*1*(1/2), 3*1*(-1/3)) = (-1, 1, -1)
+    assert(toList HP == {-1, 1, -1});
+///
+
+TEST /// -- hadamardPower(Ideal, ZZ): r=1 is the identity; r<1 is rejected (Hadamard.m2:104-108)
+    setRandomSeed 0;
+    S = QQ[x,y,z,w];
+    I = ideal(random(1,S), random(1,S), random(1,S));
+    assert(hadamardPower(I, 1) == I);
+    H2 = hadamardPower(I, 2);
+    assert(ring H2 === S);
+    assert isHomogeneous H2;
+    -- non-positive exponent errors
+    assert(try (hadamardPower(I, 0); false) else true);
+    assert(try (hadamardPower(I, -3); false) else true);
+///
+
+TEST /// -- hadamardPower(List, ZZ): output is deduplicated, r<1 is rejected (Hadamard.m2:112-116)
+    L = {point{1,1,1/2}, point{1,0,1}, point{1,2,4}};
+    -- r=1: returns the dedup'd input
+    assert(set hadamardPower(L, 1) === set L);
+    H2 = hadamardPower(L, 2);
+    assert all(H2, p -> instance(p, Point));
+    -- 3x3 = 9 ordered pairs, two collisions on symmetric pairs and one on (1,0,1)*(1,0,1) = (1,0,1):
+    -- distinct survivors = 6
+    assert(length H2 == 6);
+    assert(try (hadamardPower(L, 0); false) else true);
+///
+
+TEST /// -- idealOfProjectivePoints + promoted doc claim (Hadamard.m2:145-151,417-422)
+    S = QQ[x,y,z];
+    X = {point{1,1,0}, point{0,1,1}, point{1,2,-1}};
+    I = idealOfProjectivePoints(X, S);
+    assert(ring I === S);
+    assert isHomogeneous I;
+    -- 3 points in P^2: 1-dimensional affine cone, degree 3
+    assert(dim I == 1);
+    assert(degree I == 3);
+    -- doc text in prose form: I2 == idealOfProjectivePoints(X2,S); promoted to a real assertion
+    I2 = hadamardPower(I, 2);
+    X2 = hadamardPower(X, 2);
+    assert(I2 == idealOfProjectivePoints(X2, S));
+    -- non-uniform input is rejected (Hadamard.m2:147-148)
+    assert(try (idealOfProjectivePoints({ideal x, point{1,2}}, S); false) else true);
+///
 
 end
 

@@ -14,7 +14,6 @@
 --        3. turn strategies into hooks
 --        4. which symbols need to be exported
 --        5. Binomials package should add binomialMinimalPrimes as a strategy to minimalPrimes
---        6. add installMinprimes that gives a warning
 ---------------------------------------------------------------------------
 newPackage(
     "MinimalPrimes",
@@ -67,7 +66,7 @@ newPackage(
 -- .  Document minprimes, something about the strategies
 -- .  Export only the symbols we want
 
-export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment", "installMinprimes" }
+export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment"}
 
 importFrom_Core { "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
 importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "updateComputation", "cacheHit", "Context", "Computation" }
@@ -107,9 +106,6 @@ algorithms = new MutableHashTable from {}
 
 -- used for dynamic strategies here and in PrimaryDecomposition
 Hybrid = new SelfInitializingType of List
-
--- deprecate this soon
-installMinprimes = () -> printerr "warning: the installMinprimes routine is now deprecated and should be removed"
 
 --------------------------------------------------------------------
 -- Support routines

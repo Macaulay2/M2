@@ -2,7 +2,7 @@ eHOMEPAGE = https://github.com/broune/mathicgb
 URL = https://github.com/Macaulay2/mathicgb
 SUBMODULE = true
 VPATH = @srcdir@
-VERSION = 1.3
+VERSION = 1.4
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
 CONFIGOPTIONS = --disable-shared PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig

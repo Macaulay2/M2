@@ -6,7 +6,7 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "schreyer-resolution/res-moninfo.hpp"
+#include "schreyer-resolutions/res-moninfo.hpp"
 
 TEST(ResMonoidDense, create)
 {

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef M2_GB_F4_MONOMIALTYPES_HPP
+#define M2_GB_F4_MONOMIALTYPES_HPP
 
 #include <cstdint>
 
@@ -29,6 +30,7 @@ using MonomialMask = uint64_t;
 }// end namespace f4
 
 
+#endif
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

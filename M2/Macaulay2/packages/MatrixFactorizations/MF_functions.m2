@@ -502,7 +502,7 @@ tensor(ZZdFactorization,ZZdFactorization) := ZZdFactorization => {} >> opts -> (
     else error "Must adjoin dth root of unity when input has period d > 2";
     )
 
-tensor(ZZdFactorization,ZZdFactorization,RingElement) := ZZdFactorization => {Dispatch => {ZZdFactorization,ZZdFactorization,RingElement}} >> opts -> (F,G,t) -> (print("here we");
+tensor(ZZdFactorization,ZZdFactorization,RingElement) := ZZdFactorization => {Dispatch => {ZZdFactorization,ZZdFactorization,RingElement}} >> opts -> (F,G,t) -> (
     if not(F.period==G.period) then error "Expected factorizations with the same period";
     if F.period==2 then error "No need to specify root of unity for ZZ/2-graded factorization";
     dTensor(F,G,t,RootOfUnity=>false)
@@ -642,28 +642,6 @@ ZZdFactorizationMap Array := ZZdFactorizationMap => (f, L) -> (
     if isCommutativeCached f then result.cache.isCommutative = true;
     result
     )
-
-isCommutative ZZdFactorizationMap := Boolean => f -> (
-    if debugLevel == 0 and f.cache.?isCommutative then 
-       return f.cache.isCommutative;
-    C := source f;
-    D := target f;
-    deg := degree f;
-    p := C.period;
-    for i from 0 to p do (
-            if not (dd^D_(i+deg) * f_i == (-1)^deg * (f_(i-1) * dd^C_i))
-            then (
-                if debugLevel > 0 then (
-                    << "-- block " << (i,i-1) << " fails to commute" << endl;
-                    );
-                f.cache.isCommutative = false;
-                return false;
-                )
-        );
-    f.cache.isCommutative = true;
-    true
-    )
-
 
 ZZdFactorizationMap | ZZdFactorizationMap := ZZdFactorizationMap => (f,g) -> (
     if target f =!= target g then error "expected targets to be the same";

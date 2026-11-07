@@ -1,25 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>VisIdeal2D</title>
-        <style>
-           #svgMain {margin-left:auto; margin-right: auto; display:block}
-            .axis path,
-            .axis line {
-                fill: none;
-                stroke: black;
-                stroke-width: 2;
-                shape-rendering: crispEdges;
-            }
+  <head>
+    <meta charset="utf-8" />
+    <title>VisIdeal2D</title>
+    <style>
+      #svgMain {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: black;
+        stroke-width: 2;
+        shape-rendering: crispEdges;
+      }
 
-            .axis text {
-                font-family: sans-serif;
-                font-size: 11px;
-            }
-
-
-
+      .axis text {
+        font-family: sans-serif;
+        font-size: 11px;
+      }
 
       .noselect {
         -webkit-touch-callout: none;
@@ -30,13 +31,16 @@
         user-select: none;
       }
 
-      a { cursor: pointer; cursor: hand; }
+      a {
+        cursor: pointer;
+        cursor: hand;
+      }
 
       #canvasElement2d {
-        background-color: #FFF;
+        background-color: #fff;
         cursor: default;
-        display:inline;
-        z-index:2;
+        display: inline;
+        z-index: 2;
         padding-bottom: 10px;
       }
 
@@ -45,60 +49,60 @@
       }
 
       /* CSS for sliders */
-      #charge-slider{
-         margin: 10px;
-         display: inline-block;
-         height: 10px;
-         width: 120px;
+      #charge-slider {
+        margin: 10px;
+        display: inline-block;
+        height: 10px;
+        width: 120px;
       }
-    
-      #linkdist-slider{
-         margin: 10px;
-         display: inline-block;
-         height: 10px;
-         width: 120px;
+
+      #linkdist-slider {
+        margin: 10px;
+        display: inline-block;
+        height: 10px;
+        width: 120px;
       }
-    
+
       .noUi-horizontal .noUi-handle {
-         width: 24px;
-         height: 18px;
-         left: -17px;
-         top: -6px;
+        width: 24px;
+        height: 18px;
+        left: -17px;
+        top: -6px;
       }
-    
+
       .noUi-horizontal {
-         height: 14px;
+        height: 14px;
       }
 
       /* Vertical lines on the handles */
       .noUi-handle:before,
       .noUi-handle:after {
-         content: "";
-         display: block;
-         position: absolute;
-         height: 10px;
-         width: 1px;
-         background: #E8E7E6;
-         left: 10px;
-         top: 3px;
+        content: "";
+        display: block;
+        position: absolute;
+        height: 10px;
+        width: 1px;
+        background: #e8e7e6;
+        left: 10px;
+        top: 3px;
       }
       .noUi-handle:after {
-         left: 12px;
+        left: 12px;
       }
-        
+
       .noUi-horizontal.noUi-extended {
-         padding-right: 20px;
+        padding-right: 20px;
       }
       .noUi-horizontal.noUi-extended .noUi-handle {
-         left: -2px;
+        left: -2px;
       }
-      .noUi-horizontal.noUi-extended .noUi-origin  {
-         right: -32px;
+      .noUi-horizontal.noUi-extended .noUi-origin {
+        right: -32px;
       }
-        
+
       path.link {
         fill: none;
-        stroke: #B6B6B6;
+        stroke: #b6b6b6;
         stroke-width: 2px;
         cursor: default;
       }
@@ -108,13 +112,13 @@
       }
 
       path.link.selected {
-        stroke-dasharray: 10,2;
+        stroke-dasharray: 10, 2;
       }
-        
+
       path.link.highlighted {
         fill: none;
         /* stroke: #B6B6B6; */
-        stroke: #FF0000;
+        stroke: #ff0000;
         stroke-width: 4px;
         cursor: default;
       }
@@ -136,9 +140,9 @@
         stroke: #000 !important;
         stroke-width: 2.5px;
       }
-     
+
       circle.node.highlighted {
-        stroke: #000 !important;    
+        stroke: #000 !important;
         stroke-width: 2.5px;
       }
 
@@ -153,9 +157,9 @@
       }
 
       #canvasElement3d {
-        background-color: #FFF;
+        background-color: #fff;
         cursor: default;
-        display:none;
+        display: none;
         z-index: 0;
         padding-bottom: 10px;
       }
@@ -185,37 +189,35 @@
         z-index: 100;
         padding-bottom: 5px;
       }
-        </style>
-        <script>
+    </style>
+    <script>
       //global variables
       curConvex = true;
-      h = window.innerHeight-10;//600;
-      w = window.innerWidth-10;//900;
+      h = window.innerHeight - 10; //600;
+      w = window.innerWidth - 10; //900;
       dataset = visArray;
     </script>
-    </head>
-    <body>
-
-
+  </head>
+  <body>
     <div id="side">
-          <h2>&#8202;&#8202;Menu</h2>
-          <div class="list-group" id="menuList">
-            <a id="convexToggle" href="#" class="list-group-item">Convex Hull: off</a>
-            <a id="idealGens" href="#" class="list-group-item">Ideal Generators</a>
-            <!-- we can put these options in later
+      <h2>&#8202;&#8202;Menu</h2>
+      <div class="list-group" id="menuList">
+        <a id="convexToggle" href="#" class="list-group-item"
+          >Convex Hull: off</a
+        >
+        <a id="idealGens" href="#" class="list-group-item">Ideal Generators</a>
+        <!-- we can put these options in later
             <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
             <a id="endSession" href="#" class="list-group-item">End session</a>            
             -->
-          </div>
-        </div>
-  
+      </div>
+    </div>
 
     <div class="container">
-    <div id="canvasElement2d"></div>
-  </div>
+      <div id="canvasElement2d"></div>
+    </div>
 
-  <script src="js/visCommon.js"></script>
-  <script src="js/visIdeal2d.js"></script>
-
-</body>
+    <script src="js/visCommon.js"></script>
+    <script src="js/visIdeal2d.js"></script>
+  </body>
 </html>

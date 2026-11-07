@@ -1,6 +1,6 @@
-#include "PolynomialList.hpp"
-#include "matrix.hpp"
-#include "matrix-stream.hpp"
+#include "gb-f4/PolynomialList.hpp"
+#include "matrices/matrix.hpp"
+#include "matrices/matrix-stream.hpp"
 
 namespace newf4 {
 

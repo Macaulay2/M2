@@ -118,9 +118,23 @@ x = symbol x
 assert(lift(1_(ZZ[x]), ZZ) === 1)
 assert(lift(1_(QQ[x]), QQ) === 1/1)
 assert(lift(1_(RR[x]), RR) === 1.0)
+assert(lift(1_(RR[x]), QQ) === 1/1)
+assert(lift(1_(RR[x]), ZZ) === 1)
+assert(lift(1_(RR_100[x]), QQ) === 1/1)
+assert(lift(1_(RR_100[x]), ZZ) === 1)
 assert(lift(1_(RRi[x]), RRi) === toRRi 1)
+assert(lift(1_(RRi[x]), QQ) === 1/1)
+assert(lift(1_(RRi[x]), ZZ) === 1)
 assert(lift(1_(CC[x]), CC) === toCC 1)
+assert(lift(1_(CC[x]), QQ) === 1/1)
+assert(lift(1_(CC[x]), ZZ) === 1)
+assert(lift(1_(CC_100[x]), QQ) === 1/1)
+assert(lift(1_(CC_100[x]), ZZ) === 1)
 assert(lift(1_(CCi[x]), CCi) === toCCi 1)
+
+try lift(matrix(RR, 1), ZZ) -- #2509 (used to segfault)
+assert(lift(matrix(RR, 1), QQ) === matrix(QQ, 1))
+assert(lift(matrix(RR_100, 1), QQ) === matrix(QQ, 1))
 
 end
 -- Local Variables:

@@ -19,7 +19,7 @@ newPackage(
 
 
 export {"parametrize","mapToRNC","isomorphicProjectionOfRNC","rParametrizeRNC","rParametrizePlaneCurve","rationalPointOnConic",
-"rParametrizeConic","invertBirationalMap","modularSquareRoot","legendreSymbol","chineseRemainder","modularPower","modularInverse",
+"rParametrizeConic","invertBirationalMap","modularSquareRoot","chineseRemainder","modularPower","modularInverse",
 "testParametrization","parametrizeConic","vb"}
 
 -------------------------------------------------------------
@@ -792,21 +792,6 @@ m);
 --rootofsquarepart(-1234*5^2)
 
 
--- legendreSymbol(ZZ,ZZ)
--- compute the legendreSymbol
--- 1st argument a an integer
--- 2nd argument p an odd prime
-
-legendreSymbol=method()
-legendreSymbol(ZZ,ZZ):=(a,p)->(
-if denominator(a/p)==1 then return(0);
-l:=modularPower(a,sub((p-1)/2,ZZ),p);
-if l==p-1 then return(-1);
-l);
---legendreSymbol(4,7)
---legendreSymbol(5,7)
---legendreSymbol(14,7)
---legendreSymbol(626,1180943)
 
 
 -- modularPower(ZZ,ZZ,ZZ)
@@ -1380,36 +1365,6 @@ doc ///
 
 doc ///
   Key
-    legendreSymbol
-    (legendreSymbol,ZZ,ZZ)
-  Headline
-    Compute the Legendresymbol.
-  Usage
-    legendreSymbol(a,p)
-  Inputs
-    a:ZZ
-    p:ZZ
-        an odd prime.
-  Outputs
-    :ZZ
-        0 if a is divisible by p, 1 if a is a quadratic residue mod p and -1 if a is not a quadratic residue mod p.
-  Description
-   Text
-     Computes Legendre-symbol a over p.
-
-   Example
-     legendreSymbol(4,7)
-     legendreSymbol(5,7)
-     legendreSymbol(14,7)
-  SeeAlso
-     modularPower
-///
-
-
-
-
-doc ///
-  Key
     testParametrization
     (testParametrization,Ideal,Matrix)
   Headline
@@ -1440,8 +1395,6 @@ doc ///
      rParametrizeConic
      rParametrizePlaneCurve
 ///
-
-
 
 
 doc ///
@@ -1753,8 +1706,7 @@ doc ///
 
 
 
-
-
+--test for rParametrizePlaneCurve, rParametrizeRNC, invertBirationalMap, isomorphicProjectionOfRNC, parametrize
 TEST ///
 K=QQ;
 R=K[v,u,z];
@@ -1765,8 +1717,26 @@ par=rParametrizeRNC(I);
 S=(ring par#0)/par#1;
 pI=substitute(par#0,S);
 assert(testParametrization(I,pI)==true);
-///
 
+J = ideal(linsys)
+pI1=rParametrizePlaneCurve(I0,J,parametrizeConic=>true);
+assert(testParametrization(I0,pI1)==true);
+
+L=invertBirationalMap(I0,linsys);
+assert(degree L#1==6);
+
+Irnc = mapToRNC(I0,J);
+ls = isomorphicProjectionOfRNC(Irnc);
+assert(class ls === Matrix);
+assert(numcols ls == 3);
+R2 = QQ[y_0..y_2];
+Iconic = ideal(y_0*y_2 - y_1^2 + y_2^2); 
+ls2 = isomorphicProjectionOfRNC(Iconic);
+assert(ls2 == vars R2);
+
+pI3 = parametrize(I0, J);
+assert(testParametrization(I0,pI3)==true);
+///
 
 
 TEST ///
@@ -1775,13 +1745,6 @@ R=K[y_0..y_2];
 I=ideal(y_0*y_2-y_1^2+y_2^2);
 par=rParametrizeConic(I);
 assert(testParametrization(I,par)==true);
-///
-
-
-TEST ///
-assert(legendreSymbol(4,7)==1);
-assert(legendreSymbol(5,7)==-1);
-assert(legendreSymbol(14,7)==0);
 ///
 
 
@@ -1798,16 +1761,6 @@ TEST ///
 modularPower(8,10003,101)
 ///
 
-
-
-TEST ///
-K=QQ;
-R=K[v,u,z];
-I=ideal(v^8-u^3*(z+u)^5);
-J=ideal(u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6);
-pI=rParametrizePlaneCurve(I,J,parametrizeConic=>true);
-assert(testParametrization(I,pI)==true);
-///
 
 -- this test commented out because it requires the presence of maple
 -- TEST ///
@@ -1826,14 +1779,7 @@ assert(chineseRemainder({1,2,3},{3,5,7})==52);
 ///
 
 TEST ///
-K=QQ;
-R=K[v,u,z];
-I=ideal(v^8-u^3*(z+u)^5);
-linsys=matrix {{u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6}};
-L=invertBirationalMap(I,linsys);
-assert(degree L#1==6);
+assert(modularInverse(4,16)==false)
 ///
-
-
 end
 

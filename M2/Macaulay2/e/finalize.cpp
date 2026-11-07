@@ -5,11 +5,11 @@
 
 #include <atomic>
 
-#include "monideal.hpp"
-#include "comp-gb.hpp"
-#include "comp-res.hpp"
-#include "schorder.hpp"
-#include "mat.hpp"
+#include "monomials/monideal.hpp"
+#include "groebner-computations/comp-gb.hpp"
+#include "resolution/comp-res.hpp"
+#include "free-modules/schreyer-orders.hpp"
+#include "basic-mutable-matrices/mat.hpp"
 
 #include <M2/gc-include.h>
 
@@ -35,8 +35,8 @@ static volatile std::atomic<int> res_nremoved = 0;
 static volatile std::atomic<int> comp_nfinalized = 0;
 static volatile std::atomic<int> comp_nremoved = 0;
 
-static volatile std::atomic<int> schorder_nfinalized = 0;
-static volatile std::atomic<int> schorder_nremoved = 0;
+static volatile std::atomic<int> schreyer_order_nfinalized = 0;
+static volatile std::atomic<int> schreyer_order_nremoved = 0;
 
 //////////////////////////////////////////////////////
 extern "C" void remove_monideal(void *p, void *cd)
@@ -162,7 +162,7 @@ extern "C" void remove_SchreyerOrder(void *p, void *cd)
   p = M2_debug_to_inner(p);
 #endif
   SchreyerOrder *G = static_cast<SchreyerOrder *>(p);
-  std::atomic<int> nremoved = schorder_nremoved++;
+  std::atomic<int> nremoved = schreyer_order_nremoved++;
   if (M2_gbTrace >= 3)
     fprintf(stderr, "\n -- removing SchreyerOrder %d at %p\n", nremoved.load(),
             G);
@@ -175,7 +175,7 @@ void intern_SchreyerOrder(SchreyerOrder *G)
 #else
   GC_REGISTER_FINALIZER(                  G , remove_SchreyerOrder, nullptr, nullptr, nullptr);
 #endif
-  std::atomic<int> nfinalized = schorder_nfinalized++;
+  std::atomic<int> nfinalized = schreyer_order_nfinalized++;
   if (M2_gbTrace >= 3)
     fprintf(stderr,
             "\n   -- registering SchreyerOrder %d at %p\n",
@@ -260,9 +260,9 @@ M2_string engineMemory()
         << ") #left = " << (polyrings_nfinalized - polyrings_nremoved)
         << newline;
 
-      o << "# of schreyer orders  registered/finalized=(" << schorder_nfinalized
-        << "," << schorder_nremoved
-        << ") #left = " << (schorder_nfinalized - schorder_nremoved) << newline;
+      o << "# of schreyer orders  registered/finalized=(" << schreyer_order_nfinalized
+        << "," << schreyer_order_nremoved
+        << ") #left = " << (schreyer_order_nfinalized - schreyer_order_nremoved) << newline;
 
       return o.to_string();
   } catch (const exc::engine_error& e)

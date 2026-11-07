@@ -21,7 +21,7 @@ position        -- find a position of a point in the array (null = not there)
 points          -- returns a List of points
 
 Searching the array is likely to be O(log n), which is achieved via std::map. 
-(See M2/Macaulay2/e/NAG.hpp for implementation.)  
+(See M2/Macaulay2/e/NAG/NAG.hpp for implementation.)  
 *-
 
 debug Core

@@ -162,7 +162,7 @@ bool SVD_divide_conquer(const LMatrixRR *A,
   MatrixXmpRR AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
 
-  Eigen::BDCSVD<MatrixXmpRR> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  EIGEN_BDCSVD_SVD(MatrixXmpRR, AXmp);
   
   fill_from_MatrixXmp(svd.matrixU(), *U);
   fill_from_MatrixXmp(svd.matrixV().adjoint(), *VT);
@@ -180,7 +180,7 @@ bool SVD_divide_conquer(const LMatrixCC *A,
   MatrixXmpCC AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
 
-  Eigen::BDCSVD<MatrixXmpCC> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  EIGEN_BDCSVD_SVD(MatrixXmpCC, AXmp);
   
   fill_from_MatrixXmp(svd.matrixU(), *U);
   fill_from_MatrixXmp(svd.matrixV().adjoint(), *VT);
@@ -283,7 +283,7 @@ bool least_squares(const LMatrixRR *A,
   MatrixXmpRR BXmp(B->numRows(), B->numColumns());
   fill_to_MatrixXmp(*B, BXmp);
 
-  Eigen::BDCSVD<MatrixXmpRR> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  EIGEN_BDCSVD_SVD(MatrixXmpRR, AXmp);
   
   fill_from_MatrixXmp(svd.solve(BXmp), *X);
 
@@ -300,7 +300,7 @@ bool least_squares(const LMatrixCC *A,
   MatrixXmpCC BXmp(B->numRows(), B->numColumns());
   fill_to_MatrixXmp(*B, BXmp);
 
-  Eigen::BDCSVD<MatrixXmpCC> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  EIGEN_BDCSVD_SVD(MatrixXmpCC, AXmp);
   
   fill_from_MatrixXmp(svd.solve(BXmp), *X);
 
@@ -407,7 +407,7 @@ bool SVD_divide_conquer(const LMatrixRRR *A,
   MatrixXmpRRR AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
 
-  Eigen::BDCSVD<MatrixXmpRRR> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  EIGEN_BDCSVD_SVD(MatrixXmpRRR, AXmp);
   
   fill_from_MatrixXmp(svd.matrixU(), *U);
   fill_from_MatrixXmp(svd.matrixV().adjoint(), *VT);
@@ -429,7 +429,7 @@ bool SVD_divide_conquer(const LMatrixCCC *A,
   MatrixXmpCCC AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
 
-  Eigen::BDCSVD<MatrixXmpCCC> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  EIGEN_BDCSVD_SVD(MatrixXmpCCC, AXmp);
   
   fill_from_MatrixXmp(svd.matrixU(), *U);
   fill_from_MatrixXmp(svd.matrixV().adjoint(), *VT);
@@ -568,7 +568,7 @@ bool least_squares(const LMatrixRRR *A,
   MatrixXmpRRR BXmp(B->numRows(), B->numColumns());
   fill_to_MatrixXmp(*B, BXmp);
 
-  Eigen::BDCSVD<MatrixXmpRRR> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  EIGEN_BDCSVD_SVD(MatrixXmpRRR, AXmp);
   
   fill_from_MatrixXmp(svd.solve(BXmp), *X);
 
@@ -589,7 +589,7 @@ bool least_squares(const LMatrixCCC *A,
   MatrixXmpCCC BXmp(B->numRows(), B->numColumns());
   fill_to_MatrixXmp(*B, BXmp);
 
-  Eigen::BDCSVD<MatrixXmpCCC> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  EIGEN_BDCSVD_SVD(MatrixXmpCCC, AXmp);
   
   fill_from_MatrixXmp(svd.solve(BXmp), *X);
 

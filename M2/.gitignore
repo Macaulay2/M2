@@ -8,7 +8,6 @@
 /include/M2/config.h
 /srcdir
 /Makefile
-/check-configure/Makefile
 /include/config.Makefile
 /include/configuration
 /distributions/Makefile
@@ -103,7 +102,6 @@
 /.completed
 LOGFILE
 /Macaulay2/e/unit-tests/testMain
-/check-configure/tmp/
 /libraries/ntl/check-once
 /Macaulay2/tests/ComputationsBook/programming/foo
 /cmake-build-*

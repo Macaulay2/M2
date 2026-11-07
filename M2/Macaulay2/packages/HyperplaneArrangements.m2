@@ -3547,7 +3547,7 @@ indented = completed
 ** = need to begin
 
 arrangement(List, Ring)	 -- not clear what to do here
-arrangement(List, Matrix)				    
+arrangement(List, Matrix)
 arrangement String
 arrangement Flat
 arrangement(Flat, Validate=>true)
@@ -3620,12 +3620,15 @@ TEST ///
 R = ZZ[x,y,z];
 trivial = arrangement({},R);
 nontrivial = arrangement({x},R);
+assert(instance(trivial, Arrangement))
+assert(instance(nontrivial, CentralArrangement))
 assert(rank trivial == 0)
 assert(ring trivial === R)
 assert(0 == matrix trivial)
 assert(0 == coefficients trivial)
 assert(deletion(nontrivial,x) == trivial)
 assert(trivial++trivial != trivial)
+assert(instance(trivial++trivial, Arrangement))
 assert(trivial**QQ != trivial)
 ///
 
@@ -3643,6 +3646,7 @@ A3mat = arrangement(matrix {{1, 1, 1, 0, 0, 0},	    -- arrangement(List, Matrix)
 	             {-1, 0, 0, 1, 1, 0},
 		     {0, -1, 0, -1, 0, 1},
 		     {0, 0, -1, 0, -1, -1}}, R)
+assert(instance(A3, CentralArrangement))
 assert(A3 === A3poly)
 assert(A3 === A3mat) 
 assert(A3 === sub(A3ring, map(R, ring A3ring, R_*)))	    -- sub(Arrangement, RingMap)
@@ -3658,6 +3662,7 @@ assert(matroid (A3**QQ) === matroid coefficients (A3**QQ))  -- matroid CentralAr
 -----------------------------------------------------------
 TEST ///
 X3 = arrangement "X3"					    -- arrangement String
+assert(instance(X3, CentralArrangement))
 assert(isDecomposable X3)				    -- isDecomposable Arrangement
 assert(multiplierIdeal(2,X3) == multiplierIdeal(11/5,X3))		    -- multiplierIdeal(ZZ, CentralArrangement)
 time I1 = orlikTerao(X3);				    -- orlikTerao CentralArrangement
@@ -3717,6 +3722,7 @@ TEST ///
 A3 = typeA 3
 
 F = flat(A3, {0,1,3})
+assert(instance(F, Flat))
 assert(try(flat(A3, {0,1}); false) else true)	 -- `Validate=>true`
 assert(A3 === arrangement F)			 -- `arrangement Flat`
 assert(toList F === {0,1,3})			 -- `toList Flat`
@@ -3735,11 +3741,11 @@ assert(flats (0, empty) === {flat(empty, {})})
 R = QQ[x,y]
 affine = arrangement({x,x+1,y}, R)
 assert(flats(2, affine) === {flat(affine, {0,2}), flat(affine, {1,2})})
--- Test `closure` and comparison of Flats (moved to documentation)
---F' = closure(A3, ideal (hyperplanes A3)_{0,1})		    -- closure(Arrangement, Ideal)
---assert(F == F')
---F' = closure(A3, {0,1})					    -- closure(Arrangement, List)
---assert(F == F')
+-- Test `closure` and comparison of Flats
+F' = closure(A3, ideal (hyperplanes A3)_{0,1})		    -- closure(Arrangement, Ideal)
+assert(F == F')
+F' = closure(A3, {0,1})					    -- closure(Arrangement, List)
+assert(F == F')
 ///
 
 ---------------------------
@@ -3870,13 +3876,21 @@ assert(dual(coloop, R') === loop)			    -- dual of a coloop
 ---------------------------
 -- euler
 ---------------------------
--- In documentation
+TEST ///
+assert(euler typeA (5) === 24)
+assert(euler typeB (3) === 8)
+///
 
 ---------------------------
 -- eulerRestriction
 ---------------------------
-
--- in documentation
+TEST ///
+A = arrangement "bracelet"
+(B,m) = eulerRestriction(A,{1,1,1,1,1,1,1,1,1,1},0)
+assert(isFreeModule prune image der B)
+C = restriction(A,0)
+assert(not isFreeModule prune image der C)
+///
 
 ---------------------------
 -- genericArrangement

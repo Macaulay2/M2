@@ -1,5 +1,5 @@
-#ifndef _mutable_matrix_h_
-#  define _mutable_matrix_h_
+#ifndef M2_INTERFACE_MUTABLE_MATRIX_H_
+#define M2_INTERFACE_MUTABLE_MATRIX_H_
 
 #  include "engine-includes.hpp"
 

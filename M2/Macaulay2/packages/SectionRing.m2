@@ -66,6 +66,14 @@ globallyGenerated(Ideal) := (I) -> (
 	globallyGenerated(divisor(I))
 );
 
+-- FIXME: globallyGenerated(Module) can hang in an infinite loop.  It calls
+-- globallyGenerated(divisor M), and globallyGenerated(WeilDivisor) above
+-- assumes the divisor is ample -- its `while ... do (a = 2*a)` loop never
+-- terminates for a non-ample divisor, and divisor(module M) need not be ample.
+-- Example that hangs:
+--   R = QQ[x,y,z]/ideal(x^3+y^3-z^3); I = ideal(x,y-z);
+--   globallyGenerated(module I)
+-- whereas globallyGenerated(I) and globallyGenerated(divisor I) both return 2.
 globallyGenerated(Module) := (M) -> (
 	globallyGenerated(divisor(M))
 );
@@ -98,10 +106,9 @@ isMRegular(CoherentSheaf,ZZ) := (F,m) ->(
 --Outputs whether F is m-regular (rel O_X(1))
 	local V;
 	local G;
-	local mRegularParticular;	
 	V = variety(F);
 	G = OO_V(1);
-	mRegularParticular(F,G,m)
+	isMRegular(F,G,m)
 );
 
 -----------------------------------------------------------------------
@@ -512,6 +519,78 @@ S = sectionRing I;
 J = ideal(S);
 L = first entries gens J;
 assert((#L==1) and ((degree(L#0))#0 == 6))
+///
+
+-----------------------------------------------------------------------
+-- Added coverage for previously untested exports and stress tests.
+-----------------------------------------------------------------------
+
+TEST ///
+-- isMRegular: Castelnuovo-Mumford m-regularity. The two-argument form
+-- isMRegular(F,m) uses G = O_X(1) and must agree with the three-argument form.
+X2 = Proj(QQ[x,y,z]);
+F2 = OO_X2(2);
+G2 = OO_X2(1);
+assert(isMRegular(F2,G2,-2));
+assert(not isMRegular(F2,G2,-3));
+assert(isMRegular(F2,-2));
+assert(not isMRegular(F2,-3));
+assert(isMRegular(F2,-2) === isMRegular(F2,G2,-2));
+assert(isMRegular(F2,-3) === isMRegular(F2,G2,-3));
+///
+
+TEST ///
+-- isVectScalar tests whether every entry of a list is a scalar (degree zero);
+-- convertScalarVect maps such a list into a new ring.
+Rv = QQ[x,y];
+Sv = QQ[a,b,c];
+assert(isVectScalar {1_Rv,2_Rv,3_Rv});
+assert(not isVectScalar {1_Rv,x});
+cv = convertScalarVect(Sv, {1_Rv,2_Rv,5_Rv});
+assert(all(cv, z -> ring z === Sv));
+assert(isVectScalar cv);
+///
+
+TEST ///
+-- globallyGenerated on a WeilDivisor agrees with the Ideal form, and the
+-- two-argument mRegular(F,G) agrees with the one-argument mRegular(F).
+needsPackage "WeilDivisors";
+R = QQ[x,y,z]/ideal(x^3+y^3-z^3);
+I = ideal(x,y-z);
+assert(globallyGenerated(divisor I) == globallyGenerated I);
+assert(globallyGenerated(divisor I) == 2);
+X = Proj(QQ[x,y,z]);
+F = OO_X(2);
+assert(mRegular(F, OO_X(1)) == mRegular F);
+///
+
+TEST ///
+-- sectionRing on a WeilDivisor returns the section ring, a ring of the
+-- expected dimension.
+needsPackage "WeilDivisors";
+R = QQ[x,y,z]/ideal(x^3+y^3-z^3);
+I = ideal(x,y-z);
+S = sectionRing(divisor I);
+assert(instance(S, Ring));
+assert(dim S == 2);
+///
+
+TEST ///
+-- Stress test: on projective space P^n the line bundle O(d) has
+-- Castelnuovo-Mumford regularity -d, and is m-regular exactly for m >= -d.
+for n from 2 to 3 do (
+   Xn := Proj(QQ[vars(0..n)]);
+   H := OO_Xn(1);
+   for d from 1 to 3 do (
+      Fd := OO_Xn(d);
+      assert(mRegular(Fd) == -d);
+      assert(isMRegular(Fd, H, -d));
+      assert(not isMRegular(Fd, H, -d-1));
+      r := mRegular(Fd, H);
+      assert(isMRegular(Fd, H, r));
+      assert(not isMRegular(Fd, H, r-1));
+      );
+   );
 ///
 
 end

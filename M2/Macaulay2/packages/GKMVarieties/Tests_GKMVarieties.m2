@@ -291,4 +291,93 @@ ltsPts = {{1,1},{0,-1},{0,0},{0,1},{-1,-3},{-1,-2},{-1,-1},{-1,0},{-1,1}}
 assert (sum(ltsPts, i -> R_i) == euler TantiK)
 ///
 
+------------------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: direct coverage for
+-- previously-untested exports (projectiveSpace, bruhatOrder, cellOrder,
+-- generalizedSchubertVariety, lieType, diagonalMap, affineToricRing),
+-- plus an additive structural assertion for the Tutte specialization
+-- whose corresponding assertion in the existing block is commented out.
+------------------------------------------------------------------------
+
+-- projectiveSpace constructs P^n as a GKM variety acted on by (C^*)^{n+1};
+-- a supplied character ring is reused, otherwise a fresh one of the correct
+-- size is built.
+TEST ///
+PP4 = projectiveSpace 4
+assert(class PP4 === GKMVariety)
+assert(#PP4.points == 5)
+assert(set PP4.points === set apply(5, i -> set{i}))
+assert(#gens PP4.characterRing == 5)
+R = makeCharacterRing 3
+PP2 = projectiveSpace(2, R)
+assert(PP2.characterRing === R)
+assert(#PP2.points == 3)
+///
+
+-- bruhatOrder and cellOrder.  The complete A2 flag variety has Bruhat poset
+-- with 8 covering relations; after bruhatOrder is computed cellOrder returns
+-- the cached result.
+TEST ///
+Fl3 = generalizedFlagVariety("A",2,{1,2})
+P = bruhatOrder Fl3
+assert(#coveringRelations P == 8)
+assert(cellOrder Fl3 === P)
+///
+
+-- generalizedSchubertVariety produces a GKM variety whose torus-fixed points
+-- are a subset of those of the ambient flag variety, with cellOrder computed
+-- automatically.
+TEST ///
+Gr24 = generalizedFlagVariety("A",3,{2})
+Sch = generalizedSchubertVariety(Gr24, {set{0,2}})
+assert(class Sch === GKMVariety)
+assert(#Sch.points == 5)
+assert(isSubset(set Sch.points, set Gr24.points))
+poSch = cellOrder Sch
+assert(#coveringRelations poSch == 5)
+///
+
+-- lieType returns the Lie-type letter of a generalized flag variety; it
+-- errors on a GKM variety that does not come from a flag-variety
+-- constructor.
+TEST ///
+assert(lieType generalizedFlagVariety("A",3,{2}) === "A")
+assert(lieType generalizedFlagVariety("B",2,{1}) === "B")
+assert(lieType generalizedFlagVariety("C",2,{2}) === "C")
+assert(lieType generalizedFlagVariety("D",4,{4,4}) === "D")
+T = makeGKMVariety kleinschmidt(2, {2})
+assert(try (lieType T; false) else true)
+///
+
+-- diagonalMap constructs the diagonal X -> X x X as an EquivariantMap with
+-- the input as source and a GKMVariety (the product) as target.
+TEST ///
+X = generalizedFlagVariety("A",3,{2})
+f = diagonalMap X
+assert(class f === EquivariantMap)
+assert(f.source === X)
+assert(class f.target === GKMVariety)
+///
+
+-- affineToricRing computes the toric ring of a monomial map, given the
+-- exponents either as a matrix (columns are vectors) or as a list of lists.
+TEST ///
+A = affineToricRing matrix{{1,0,1},{0,1,1}}
+assert(class A === QuotientRing)
+assert(numgens A == 3)
+B = affineToricRing {{1,0,0},{0,1,0},{0,0,1},{1,1,1}}
+assert(class B === QuotientRing)
+assert(numgens B == 4)
+///
+
+-- a structural complement to the existing flagGeomTuttePolynomial test:
+-- the Tutte specialization at (x,y) = (1,1) for the uniform-matroid
+-- flag matroid {U(1,4), U(2,4)} evaluates to 16.  (The corresponding
+-- assertion in the existing test block is commented out.)
+TEST ///
+FM = flagMatroid {uniformMatroid(1,4), uniformMatroid(2,4)}
+g = flagGeomTuttePolynomial FM
+assert(16 == sub(g, {(ring g)_0 => 1, (ring g)_1 => 1}))
+///
+
 

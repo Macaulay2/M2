@@ -931,35 +931,98 @@ document {
 
 doc ///
     Key
-      evaluateHt
-      (evaluateHt,Homotopy,Matrix,Number)
-      (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number)
-      (evaluateHt,SpecializedParameterHomotopy,Matrix,Number)
-      (evaluateHt,GateHomotopy,Matrix,Number)
-    Headline
-      evaluates the derivative of the homotopy with respect to the continuation parameter
-///
-
-doc ///
-    Key
-      evaluateHx
-      (evaluateHx,Homotopy,Matrix,Number)
-      (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number)
-      (evaluateHx,SpecializedParameterHomotopy,Matrix,Number)
-      (evaluateHx,GateHomotopy,Matrix,Number)
-    Headline
-      evaluates the jacobian of the homotopy 
-///
-
-doc ///
-    Key
       evaluateH
+      evaluateHx
+      evaluateHt
+
       (evaluateH,Homotopy,Matrix,Number)
+      (evaluateHx,Homotopy,Matrix,Number)
+      (evaluateHt,Homotopy,Matrix,Number)
+
       (evaluateH,ParameterHomotopy,Matrix,Matrix,Number)
+      (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number)
+      (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number)
+
       (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
+      (evaluateHx,SpecializedParameterHomotopy,Matrix,Number)
+      (evaluateHt,SpecializedParameterHomotopy,Matrix,Number)
+
       (evaluateH,GateHomotopy,Matrix,Number)
+      (evaluateHx,GateHomotopy,Matrix,Number)
+      (evaluateHt,GateHomotopy,Matrix,Number)
+
     Headline
-      evaluates the homotopy 
+      evaluate a homotopy and its derivatives
+
+    Usage
+      evaluateH(H,x,t)
+      evaluateHx(H,x,t)
+      evaluateHt(H,x,t)
+
+      evaluateH(H,p,x,t)
+      evaluateHx(H,p,x,t)
+      evaluateHt(H,p,x,t)
+
+    Description
+      Text
+        These methods evaluate a homotopy and its derivatives at a given point.
+
+        @TO evaluateH@ evaluates the homotopy itself,
+        @TO evaluateHx@ evaluates its Jacobian with respect to the variables,
+        and @TO evaluateHt@ evaluates the derivative with respect to the
+        continuation parameter.
+
+        For a @TO ParameterHomotopy@, parameter values must also be supplied.
+
+      Example
+        variables = declareVariable \ {x,y}
+        T = inputGate symbol T
+
+        F = matrix{{x^2+y^2-1},{x*y}}
+        G = matrix{{x^2-y-1},{x+y-1}}
+
+        H = gateHomotopy((1-T)*F + T*G, matrix{{x,y}}, T)
+
+        X0 = matrix{{.2},{0}}
+
+        evaluateH(H,X0,0.5)
+        evaluateHx(H,X0,0.5)
+        evaluateHt(H,X0,0.5)
+      Text
+          For a @TO ParameterHomotopy@, parameter values must also be supplied.
+
+      Example
+        variables = declareVariable \ {x,y}
+        params = declareVariable \ {a,b}
+
+        F = gateSystem(
+              matrix{params},
+              matrix{variables},
+              matrix{{a*x*y-1},{x^3+y^2-b}}
+            )
+
+        PH = parametricSegmentHomotopy F
+
+        pStart = matrix{{1,2}}
+        pTarget = matrix{{2,1}}
+
+        pars = transpose(pStart | pTarget)
+
+        X0 = matrix{{.5},{1}}
+
+        evaluateH(PH,pars,X0,0.5)
+        evaluateHx(PH,pars,X0,0.5)
+        evaluateHt(PH,pars,X0,0.5)
+      Text
+          After the parameter homotopy is specialized using @TO specialize@,
+	For a @TO ParameterHomotopy@, parameter values must also be supplied.
+
+      Example
+        H01 = specialize(PH, pars)
+
+        evaluateH(H01,X0,0.5)
+        evaluateHx(H01,X0,0.5)
+        evaluateHt(H01,X0,0.5)
 ///
 
 document {
@@ -1065,23 +1128,62 @@ doc ///
 
 doc ///
     Key
+      specialize
       (specialize, GateSystem, AbstractPoint)
+      (specialize, ParameterHomotopy, Matrix)
     Headline
-      specialize parameters in a gate system
+      specialize parameters
     Usage
-      specialize(G,p)
+      F = specialize(G,p)
+      Hp = specialize(H,p)
+    Inputs
+      G:
+        a gate system with parameters
+      H:
+        a parameter homotopy
+      p:
+        values of the parameters
+    Outputs
+      F:
+        a gate system with parameters specialized
+      Hp:
+        a specialized homotopy
     Description
       Text
-        Returns a @TO GateSystem@ with parameters specialized to the given values.
+        This method specializes parameters by assigning them the values in {\tt p}.
+
+        If {\tt G} is a @TO GateSystem@ that is defined with parameters,
+	then the output is a @TO GateSystem@
+        in which the parameters of {\tt G} have been replaced by the values in
+        {\tt p}.
+
       Example
         variables = declareVariable \ {x,y}
-	params = declareVariable \ {a,b}  
-	Fab = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
-	F = specialize(Fab, point{{1,2}})
-	p0 = point{{0.1,0.2+ii}}
+        params = declareVariable \ {a,b}
+        Fab = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+        F = specialize(Fab, point{{1,2}})
+        p0 = point{{0.1,0.2+ii}}
         evaluate(F,p0)
-	evaluateJacobian(F,p0)	
-    ///
+        evaluateJacobian(F,p0)
+
+      Text
+        If {\tt H} is a @TO ParameterHomotopy@, then the output is a
+        @TO SpecializedParameterHomotopy@, which can be passed to
+        @TO trackHomotopy@.
+
+
+      Example
+        variables = declareVariable \ {x,y}
+        params = declareVariable \ {a,b}
+        F = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+        PH = parametricSegmentHomotopy F;
+        parameters PH
+        (a0,b0) = (1,2); startSolution = point{{1,1}};
+        (a1,b1) = (2,1);
+        H01 = specialize(PH, matrix{{a0,b0,a1,b1}});
+        targetSolution = first trackHomotopy(H01,{startSolution})
+        assert(norm evaluate(F,matrix{{a1,b1}},matrix targetSolution) < 0.0001)
+///
 
 doc ///
     Key
@@ -1312,6 +1414,21 @@ doc ///
      SpecializedParameterHomotopy
   Headline
     a homotopy obtained from a parameter homotopy by specializing parameters
+  Description
+      Text
+    	An object @TO GateParameterHomotopy@ with parameters can be specified to this type
+	by @TO specialize@
+	with given parameter values. This type can be passed to @TO trackHomotopy@.
+      Example
+        variables = declareVariable \ {x,y}
+	params = declareVariable \ {a,b} 
+	F = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+	PH = parametricSegmentHomotopy F
+	(a0,b0) = (1,2); startSolution = point{{1,1}};
+        (a1,b1) = (2,1);
+        H01 = specialize(PH, matrix{{a0,b0,a1,b1}});
+        targetSolution = first trackHomotopy(H01,{startSolution})
+        assert(norm evaluate(F,matrix{{a1,b1}},matrix targetSolution) < 0.0001)
 ///	    
 
 doc ///
@@ -1329,7 +1446,23 @@ doc ///
     Description
       Text
     	An object of this type specializes to a @TO Homotopy@ given values of the parameters. 
-	It is related to @TO GateHomotopy@. 
+	It is related to @TO GateHomotopy@.
+      Example
+        variables = declareVariable \ {x,y}
+	params = declareVariable \ {a,b} 
+	F = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+	PH = parametricSegmentHomotopy F
+      Text
+        From a specific parameter values, it can be specialized by @TO specialize@ to output a type
+        @TO SpecializedParameterHomotopy@, which can be passed to
+        @TO trackHomotopy@.
+      Example
+	(a0,b0) = (1,2); startSolution = point{{1,1}};
+        (a1,b1) = (2,1);
+        H01 = specialize(PH, matrix{{a0,b0,a1,b1}});
+        targetSolution = first trackHomotopy(H01,{startSolution})
+        assert(norm evaluate(F,matrix{{a1,b1}},matrix targetSolution) < 0.0001)
+
 ///
 
 doc ///
@@ -1364,24 +1497,7 @@ doc ///
     Headline
         the number of variables in the parameter homotopy
 ///
-
-doc ///
-  Key 
-    (specialize, ParameterHomotopy, Matrix)
-    specialize
-  Headline
-    specialize a parameter homotopy
-  Usage
-    Hp = specialize(H,p)
-  Inputs 
-    H: 
-      homotopy
-    p: 
-      values of parameters 
-  Outputs
-    Hp:SpecializedParameterHomotopy
-      specialized homotopy
-///	    
+	    
 
 doc ///
 Key
@@ -1400,57 +1516,57 @@ doc ///
 	(segmentHomotopy,List,List)    		
     Headline
         a segment homotopy
-    Usage 
-    	H = segmentHomotopy(S,T)
+    Usage
+        H = segmentHomotopy(S,T)
     Inputs
         S:System
-	  start system (could be GateSystem, PolySystem, or list of polynomials)
-	T:System
-	  target system  (could be GateSystem, PolySystem, or list of polynomials)
-    Outputs 
-    	H:GateHomotopy
+          start system (could be GateSystem, PolySystem, or list of polynomials)
+        T:System
+          target system  (could be GateSystem, PolySystem, or list of polynomials)
+    Outputs
+        H:GateHomotopy
     Description
-        Text 
-	  This method produces a @TO Homotopy@ @TEX "(1-t) S+ t \\gamma T, t\\in[0,1]"@.
-	Example
-	  R = QQ[x,y]
-	  T = {random(3,R)-1, random(2,R)-2}
-	  (S,solsS) = totalDegreeStartSystem T
-	  H = segmentHomotopy(S,T,gamma=>1+ii)
-	  evaluateH(H,transpose matrix first solsS,0)
-///	 
+        Text
+          This method produces a @TO Homotopy@ @TEX "(1-t) S+ t \\gamma T, t\\in[0,1]"@.
+        Example
+          R = QQ[x,y]
+          T = {random(3,R)-1, random(2,R)-2}
+          (S,solsS) = totalDegreeStartSystem T
+          H = segmentHomotopy(S,T,gamma=>1+ii)
+          evaluateH(H,transpose matrix first solsS,0)
+///
 
 doc ///
     Key
         parametricSegmentHomotopy
-	(parametricSegmentHomotopy,GateSystem)
-	(parametricSegmentHomotopy,PolySystem)    		
+        (parametricSegmentHomotopy,GateSystem)
+        (parametricSegmentHomotopy,PolySystem)
     Headline
         creates an ansatz for a segment homotopy
-    Usage 
-    	PH = parametricSegmentHomotopy F
+    Usage
+        PH = parametricSegmentHomotopy F
     Inputs
         F:System
-	  either a @TO GateSystem@ or a @TO PolySystem@
-    Outputs 
-    	PH:GateParameterHomotopy	
+          either a @TO GateSystem@ or a @TO PolySystem@
+    Outputs
+        PH:GateParameterHomotopy
     Description
-        Text 
-	  This method returns a homotopy that after specialization of parameters is akin 
-	  to the output of @TO segmentHomotopy@. There are {\bf 2 m} parameters in{\tt PH} 
-	  where {\bf m} is the number of parameters in {\tt F}. 
-	  The first {\bf m} parameters correspond to the starting point A in the parameter space.
-	  The last {\bf m} parameters correspond to the end point B in the parameter space.
-	Example
-	  variables = declareVariable \ {x,y}
-	  params = declareVariable \ {a,b} 
-	  F = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
-	  PH = parametricSegmentHomotopy F;
-	  parameters PH
-	  (a0,b0) = (1,2); startSolution = point{{1,1}};
-    	  (a1,b1) = (2,1);	  
-	  H01 = specialize(PH, matrix{{a0,b0,a1,b1}});
-	  targetSolution = first trackHomotopy(H01,{startSolution})
-	  assert(norm evaluate(F,matrix{{a1,b1}},matrix targetSolution) < 0.0001)    		  
-///	 
+        Text
+          This method returns a homotopy that after specialization of parameters is akin
+          to the output of @TO segmentHomotopy@. There are {\bf 2 m} parameters in{\tt PH}
+          where {\bf m} is the number of parameters in {\tt F}.
+          The first {\bf m} parameters correspond to the starting point A in the parameter space.
+          The last {\bf m} parameters correspond to the end point B in the parameter space.
+        Example
+          variables = declareVariable \ {x,y}
+          params = declareVariable \ {a,b}
+          F = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+          PH = parametricSegmentHomotopy F;
+          parameters PH
+          (a0,b0) = (1,2); startSolution = point{{1,1}};
+          (a1,b1) = (2,1);
+          H01 = specialize(PH, matrix{{a0,b0,a1,b1}});
+          targetSolution = first trackHomotopy(H01,{startSolution})
+          assert(norm evaluate(F,matrix{{a1,b1}},matrix targetSolution) < 0.0001)
+///
 

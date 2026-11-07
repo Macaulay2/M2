@@ -1,7 +1,7 @@
 // (c) 1994-2021  Michael E. Stillman
 
-#ifndef _f4monlookup_h_
-#define _f4monlookup_h_
+#ifndef M2_F4_F4MONLOOKUP_H_
+#define M2_F4_F4MONLOOKUP_H_
 
 #include "f4/moninfo.hpp"            // for MonomialInfo (ptr only), const_p...
 #include "f4/ntuple-monomial.hpp"    // for const_ntuple_monomial, ntuple_word

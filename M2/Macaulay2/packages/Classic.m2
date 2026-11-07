@@ -165,7 +165,11 @@ TEST ///
      assert (monomialIdeal "x2,yz2" == monomialIdeal (x^2, y*z^2))
      assert (matrix "x,11y,z;x2,y-1,z5" == matrix {{x,11*y,z},{x^2,y-1,z^5}})
 ///
-
+TEST ///
+	R=QQ[x,y,z]
+	assert (poly " "== 0)
+	assert (poly "3x+2()"==3*x)
+///
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Classic pre-install"
 -- End:

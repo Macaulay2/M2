@@ -290,8 +290,8 @@ debug SpecialFanoFourfolds;
 (B,V,C) = GMtables(1,ZZ/65521);
 assert(B * V == C and dim C == 1)
 X = specialFourfold(B & V);
-assert(surfaceIntersectionNumber X == 1)
-assert(latticeIntersectionMatrix3x3 X == matrix {{3, 3, 2}, {3, 7, 1}, {2, 1, 4}})
+t = genRingIntMatr3x3()
+assert(latticeIntersectionMatrix3x3 X == matrix {{3, 3, 2}, {3, 7, t}, {2, t, 4}})
 ///
 
 TEST /// -- test 21 DSCF
@@ -309,6 +309,7 @@ TEST /// -- test 22 DSCF
 debug SpecialFanoFourfolds;
 L = discoverCubicFourfoldsInC8({4,4,3,2,1},1,4,5,7,"test_file",true,300,{});
 assert(apply(L,discriminant) == {14, 20, 24, 32, 38})
+assert(apply(L, X -> det latticeIntersectionMatrix3x3 X) == {29, 37, 37, 45, 45})
 assert(fileExists "test_file.txt" and fileExists "test_file_commands.m2")
 removeFile "test_file.txt"
 removeFile "test_file_commands.m2"
@@ -398,11 +399,58 @@ T = polarizedK3surface polarizedK3surface X;
 assert(computationStatus T == 4)
 f = map(T,1,1);
 assert(source f === projectiveVariety T and dim ambient source f == 4 and dim ambient target f == 8)
-E = T(1,1);
-assert(E === image f and degree E == 14 and sectionalGenus E == 8)
-assert((latticePolarization T)(1,1) === E)
+E = image f;
+assert(dim E == 2 and degree E == 14 and sectionalGenus E == 8)
 T' = polarizedK3surface(T,Strategy=>"MapFromU-Virtual")
 assert(computationStatus T == 3)
 assert instance(T'(1,1),LatticePolarizationOnK3Surface)
-assert((polarizedK3surface(T,Strategy=>"SpecialCurve"))(1,1) === E)
+Y = toExternalString X;
+assert(#Y > 10000)
+Y = value Y;
+assert(recognizeDSCF Y === "DSCF-V1-6")
+assert(sanityCheckDSCF polarizedK3surface Y)
+///
+
+TEST /// -- test 29 isAdmissible
+-- The admissible discriminants of special cubic fourfolds in [0,150]
+-- match the known list (cf. Hassett's classification): 14, 26, 38, 42, 62,
+-- 74, 78, 86, 98, 114, 122, 134, 146.
+assert(select(150, isAdmissible) == {14, 26, 38, 42, 62, 74, 78, 86, 98, 114, 122, 134, 146});
+assert(isAdmissible 14);
+assert(not isAdmissible 6);    -- d must exceed 6
+assert(not isAdmissible 7);    -- d must be even
+assert(not isAdmissible 8);    -- d % 4 must be nonzero
+assert(not isAdmissible 18);   -- d % 9 must be nonzero
+///
+
+TEST /// -- test 30 isAdmissibleGM
+-- The admissible discriminants of Gushel-Mukai fourfolds in [0,150]
+-- match the known list.
+assert(select(150, isAdmissibleGM) == {10, 20, 26, 34, 50, 52, 58, 68, 74, 82, 100, 106, 116, 122, 130, 146, 148});
+assert(isAdmissibleGM 10);
+assert(isAdmissibleGM 20);
+assert(not isAdmissibleGM 8);   -- d must exceed 8
+assert(not isAdmissibleGM 12);  -- a small prime in d with the wrong residue mod 4
+assert(not isAdmissibleGM 16);  -- d % 8 must not be 0
+///
+
+TEST /// -- test 31 -- K3 surface of genus 2
+X = specialFourfold surface((2,0),(1,0));
+E = polarizedK3surface polarizedK3surface(X,Strategy=>"Genus2Curve")
+assert(genus E == 4 and degree E == 6 and degree surface E == 6)
+E' = E(1,0,Verbose=>true)
+assert(genus E' == 4 and degree E' == 6 and degree surface E' == 6)
+E'' = E'(0,1)
+assert(genus E'' == 2 and degree E'' == 2 and degree surface E'' == 6 and degrees ring ambient surface E'' === {{1},{1},{1},{3}})
+(f1,f2,f3) = last building E'';
+f = f1 * f2 * f3;
+assert(source f === (building E)_1 and target f === surface E'')
+(p,q) := (point source f,point target f)
+assert(p == f^* f p and q == f f^* q)
+assert(E'(2,Verbose=>false) === E'')
+L'' = latticePolarization E''
+h = map(L'',1,1)
+assert(instance(h,WeightedRationalMap) and dim target h == 12)
+g = quadricFibration map(L'',1,0);
+assert(dim target g == 2 and dim discriminant g == 1 and degree discriminant g == 6 and dim singularLocus discriminant g == -1)
 ///

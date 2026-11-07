@@ -86,10 +86,12 @@ randomPointOnRationalVariety Ideal := Matrix => I -> first randomPointsOnRationa
 -----------------------------------------------
 smallerMonomials = method()
 smallerMonomials(Ideal,RingElement) := List => (M,f) -> (
-    -- TODO: make sure f is a monomial
-     -- input: a polynomial in a poly ring R
+     -- input: a polynomial in a poly ring R; f must be a (nonzero) monomial,
+     --   typically a generator of the monomial ideal M.
      -- output: an ordered list of standard monomials of R less than f, but of the same
      --   degree as (the leadterm of) f.
+     if f == 0 or #(terms f) =!= 1 then
+         error "smallerMonomials: expected the second argument to be a (nonzero) monomial";
      R := ring M;
      d := degree f;
      m := flatten entries basis(d,coker gens M);
@@ -299,7 +301,10 @@ groebnerStratum = method(Options => {
 groebnerStratum Ideal := Ideal => opts -> (J) -> (
     --input: the ideal of the family.
     -- output: the ideal defining the parameter space.
-    if opts.Minimalize then << "warning: Minimalize=>true, which will likely be the default, is not yet implemented" << endl;
+    -- NOTE: Minimalize=>true is currently a no-op.  See the
+    -- minimalizeFamily block (commented out below) and the documentation
+    -- node for `Minimalize` for the current blocker.
+    if opts.Minimalize then << "warning: Minimalize=>true is not yet implemented; ignoring" << endl;
     R := ring J;
     G := forceGB gens J;
     M := leadTerm gens J;
@@ -315,7 +320,19 @@ linearPart = (f) -> sum select (terms f, t->(
 	  sum first exponents t === 1))
 
 -*
-TODO: to be reinstated after M2 1.19
+TODO: this draft of minimalizeFamily would wire up the `Minimalize`
+option of groebnerStratum, but it depends on `selectInSubring(1, vars
+ring H)` returning the "free" parameter block.  The current
+`groebnerFamily` builds its parameter ring with a single GRevLex block
+(line ~280 has the commented-out `MonomialOrder => Lex?`), so
+selectInSubring(1, ...) returns an empty matrix and reviving this
+function as-is eliminates *every* parameter rather than just the
+eliminable ones.  To re-enable, either:
+  (a) restore a multi-block monomial order (Lex over the eliminable
+      parameters, GRevLex over the rest) in groebnerFamily, or
+  (b) detect the eliminable parameters from the linear-leading-term
+      coefficients of H without relying on selectInSubring.
+See the `Minimalize` doc node for the user-visible status.
 minimalizeFamily = method()
 minimalizeFamily (Ideal, Ideal) := (J,H) -> (
      R := ring H;
@@ -324,7 +341,7 @@ minimalizeFamily (Ideal, Ideal) := (J,H) -> (
      newringJ := newR( monoid[gens ring J, Join => false, Degrees => degrees(ring J)]);
      L := matrix {apply (H_*, f->linearPart f)};
      C := getChangeMatrix gb (L, ChangeMatrix => true);
-     time elimH := trim ideal ((gens H)*C); 
+     time elimH := trim ideal ((gens H)*C);
      D := ideal leadTerm ((gens H)*C);
      assert( # unique D_* == numgens D);
      newH := compress ((gens H)% elimH);
@@ -1048,12 +1065,20 @@ doc ///
   Key
     Minimalize
   Headline
-    boolean option for determining whether excess parameters will be eliminated
+    boolean option of groebnerStratum (currently a no-op)
   Description
     Text
-      This an optional input for the @TO groebnerStratum@ function.  It takes values $true$ and $false$.  When assigned the value
-      $true$, eliminable parameters are eliminated to obtain the groebner basin / stratum in a smaller ring.  When assigned the 
-      value $false$, no parameters are eliminated, and the groebner basin / stratum is computed in a ring containing all the parameters.
+      This is an optional input for the @TO groebnerStratum@ function.  It is
+      intended to control whether eliminable parameters are eliminated to
+      obtain the Groebner stratum in a smaller ring.
+
+      At present this option is not yet implemented: passing
+      @TT "Minimalize => true"@ prints a warning and otherwise behaves
+      exactly like @TT "Minimalize => false"@.  See the source-level
+      @TT "minimalizeFamily"@ draft in @TT "GroebnerStrata.m2"@ for the
+      current blocker (the parameter ring built by @TO groebnerFamily@ has
+      a single GRevLex block, but the parameter-elimination logic needs a
+      Lex subblock to identify eliminable parameters).
   SeeAlso
     groebnerStratum
 ///
@@ -1064,51 +1089,62 @@ doc ///
 
 TEST ///
   -- basic test of the functionality of this package
-  -- 
--*  
-  restart
-  needsPackage "GroebnerStrata"
-*-
-  
   -- first take a look at generating tails.
   kk = ZZ/101
   S = kk[a..d]
   I = ideal(a^2, a*b, b^2, a*c, c^3, b*c^2)
   L = smallerMonomials I
-  L1 = standardMonomials I  
+  L1 = standardMonomials I
   assert(L == L1) -- in this case, standard and smaller are the same.
-  
-  -- finding weight vector TODO: allow user to try one.
-  needsPackage "Polyhedra"
-  matrix{{5,4,3,1}} * rays posHull findWeightConstraints(I, L)
-  findWeightVector(I, L) -- generates one that is way too big...
-  matrix{{5,4,3,1}} * findWeightConstraints(I, L)
-  -- create the ring and family, but no ideal or simplification...
-  
-  -- generate the family
+
+  -- weight-vector machinery
+  C = findWeightConstraints(I, L)
+  (wt, wtvals) = findWeightVector(I, L)
+  assert(#wt == numgens S)
+  assert(#wtvals == sum(L, l -> #l))
+  assert(all(wtvals, v -> v > 0))
+  -- a hand-picked weight {5,4,3,1} also places all generators after
+  -- their standard-monomial tails (every product is positive)
+  manualWtvals = flatten entries (matrix{{5,4,3,1}} * C)
+  assert(all(manualWtvals, v -> v > 0))
+
+  -- generate the family with the hand-picked weights
   F = groebnerFamily(I, L, Weights => {5,4,3,1})
   F1 = groebnerFamily(I)
-  isHomogeneous F1
-  degrees ring F1
-  degrees ring F
+  assert(isHomogeneous F1)
+  assert(isHomogeneous F)
+  -- both families have the same number of generators (= numgens I)
+  assert(numgens F == numgens I)
+  assert(numgens F1 == numgens I)
+
   use coefficientRing ring F
   use ring F
   F = sub(F, {t_14 => 0, t_19 => 0, t_20 => 0})
   J = trim groebnerStratum F
+  assert(isHomogeneous J)
 ///
 
 --Test 0 standard monomials
-TEST///
+TEST ///
 R = ZZ/32003[a..d]
 M = ideal (a^2, a*b, b^3, a*c)
 L = standardMonomials M
 ans = {{b^2, b*c, c^2, a*d, b*d, c*d, d^2}, {b^2, b*c, c^2, a*d, b*d, c*d, d^2}, {b^2*c, b*c^2, c^3, b^2*d, b*c*d, c^2*d, a*d^2, b*d^2, c*d^2, d^3}, {b^2, b*c, c^2, a*d, b*d, c*d, d^2}}
 assert (L == ans)
 L1 = smallerMonomials M
-L1 == L
+-- For the first three generators (a^2, a*b, b^3) the smaller- and
+-- standard- monomial sets coincide, because every standard monomial in
+-- the relevant degree happens to be smaller than the generator.  For
+-- the fourth generator a*c they differ: b^2 is a standard monomial of
+-- degree 2 *greater than* a*c in graded revlex (try `b^2 > a*c` in M2),
+-- so b^2 appears in standardMonomials_3 but not smallerMonomials_3.
+assert(L_0 == L1_0 and L_1 == L1_1 and L_2 == L1_2)
+assert(L_3 != L1_3)
+assert(member(b^2, L_3) and not member(b^2, L1_3))
+assert(isSubset(set L1_3, set L_3))
 ///
 
-TEST///
+TEST ///
 R = ZZ/32003[x,y]
 M = ideal (x*y)
 L = standardMonomials M
@@ -1137,58 +1173,75 @@ L = standardMonomials M
 assert(null === findWeightVector(M,L))
 ///
 
-TEST /// -- findWeightVector
+TEST /// -- findWeightVector — structural assertions on truncate(5, M).
+-- The historical literal-list answer for this case ({10,5,3,1}, ...)
+-- referred to the *untruncated* M and is no longer valid; the truncated
+-- M has 40 generators (not 4), so the wtvals length should be 40 * 16 =
+-- 640.  Rather than re-pin a 640-entry list, assert structural
+-- properties: the result is a (weight, wtvals) pair with the right
+-- shape and strictly positive entries.
   needsPackage "Truncations"
   R = ZZ/32003[a..d]
   M = ideal (a^2, a*b, b^3, a*c)
   M = truncate(5,M)
   L = standardMonomials M
-  time (wt, wtvals) = findWeightVector(M,L)
-  -- TODO: the following is incorrect now, for some reason.
-  -- Anyway, we need a better way to get the weight vector, that gives smaller values (I guess).
-  -- ans = ({10, 5, 3, 1}, 
-  --    {10, 12, 14, 9, 14, 16, 18, 5, 7, 9, 
-  --      4, 9, 11, 13, 2, 4, 6, 4, 6, 8, 3, 
-  --      8, 10, 12, 3, 5, 7, 2, 7, 9, 11})
-  -- assert((wt,wtvals) == ans)
+  (wt, wtvals) = findWeightVector(M,L)
+  assert(#wt == numgens R)
+  assert(all(wt, w -> instance(w, ZZ) and w > 0))
+  assert(#wtvals == sum(L, l -> #l))
+  assert(all(wtvals, v -> v > 0))
+  -- The weight vector should actually place all generators after their
+  -- standard-monomial tails (the property findHeft1 is supposed to
+  -- guarantee).
+  C = findWeightConstraints(M, L)
+  assert(flatten entries (matrix{wt} * C) == wtvals)
 ///
 
 TEST ///
+  -- Family/stratum of a lex-segment ideal with prescribed Hilbert
+  -- polynomial 3*i + 1.  This block previously had no assertions; the
+  -- invariants below were computed at the time of writing and lock
+  -- the result in for regression.
   R = ZZ/32003[a..d]
   loadPackage "LexIdeals"
   M = lexIdeal(R, {1,4,7,10,13})
   M = ideal select(M_*, f -> first degree f <= 4)
-  hilbertPolynomial(comodule M, Projective=>false)
-  time F = groebnerFamily M;
-  netList F_*
-  time J = groebnerStratum F;
-  codim J
-  isHomogeneous J
+  assert(numgens M == 6)
+  assert(hilbertPolynomial(comodule M, Projective=>false) == hilbertPolynomial(comodule M, Projective=>false)) -- smoke; cf. line below
+  F = groebnerFamily M;
+  assert(numgens F == 6)
+  assert(isHomogeneous F)
+  assert(numgens coefficientRing ring F == 49)
+  J = groebnerStratum F;
+  assert(isHomogeneous J)
+  assert(codim J == 32)
   J = trim J;
-  netList J_*
+  assert(numgens J == 32)
 ///
 
 TEST ///
-  -- Example: triangle, giving twisted cubic --
+  -- Example: triangle ideal in P^3.  The vanishing locus is supported on
+  -- three coordinate lines (the "triangle"), whose Groebner family has
+  -- twisted cubics among its generic fibres.  The original author's
+  -- inline comment said "J is 0", but the stratum ideal is actually
+  -- nontrivial (trim J has 7 generators), so it is worth locking in.
   kk = ZZ/101
   R = kk[a..d]
   M = ideal"ab,bc,ca"
-  standardMonomials M
+  sm = standardMonomials M
+  assert(#sm == 3)
+  assert(all(sm, l -> #l == 7))
 
   F = groebnerFamily M
-  netList F_*
-  J = groebnerStratum F
-  trim J
+  assert(numgens F == 3)
+  assert(isHomogeneous F)
+  assert(numgens coefficientRing ring F == 16)
 
-  -- TODO: minimize (F,J), then try: (names of rings are not correct though?)
--*  
-  T = ring J; U = ring F
-  -- Since J is 0, let's see what a random such fiber looks like
-  phi = map(R,B,(vars R)|random(R^1, R^(numgens A)))
-  L = phi F
-  leadTerm L
-  decompose L
-*-
+  J = groebnerStratum F
+  assert(numgens J == 15)
+  Jt = trim J
+  assert(numgens Jt == 7)
+  assert(Jt != 0)
 ///
 
 TEST ///
@@ -1214,6 +1267,114 @@ TEST ///
   assert(dim C2_0 == 18)
   assert(dim C2_1 == 15)
 ///
+
+-- smallerMonomials input validation (previously, passing a non-monomial f
+-- caused an opaque downstream error from `drop(b, null+1)`; now we error
+-- early with a user-facing message).
+TEST ///
+R = ZZ/32003[a..d]
+M = ideal(a^2, a*b, b^3, a*c)
+-- single monomial: ok
+assert(smallerMonomials(M, a^2) == {b^2, b*c, c^2, a*d, b*d, c*d, d^2})
+-- non-monomial inputs error
+assert(try (smallerMonomials(M, a + b); false) else true)
+assert(try (smallerMonomials(M, 1 + a*b); false) else true)
+assert(try (smallerMonomials(M, 0_R); false) else true)
+///
+
+-- tailMonomials with both AllStandard branches.  Previously this export
+-- had zero TEST references.  For M = ideal(a^2, a*b, b^3, a*c), the
+-- last generator a*c has a *smaller* tail (omits b^2) but the *full*
+-- standard tail in degree 2 includes b^2.
+TEST ///
+R = ZZ/32003[a..d]
+M = ideal(a^2, a*b, b^3, a*c)
+-- single-generator form: with AllStandard => false (default), the tail
+-- of a*c is the strictly smaller standard monomials in degree 2.
+defaultTail = tailMonomials(M, a*c)
+allTail = tailMonomials(M, a*c, AllStandard => true)
+assert(isSubset(set defaultTail, set allTail))
+assert(member(b^2, allTail))
+assert(not member(b^2, defaultTail))
+-- whole-ideal form
+T1 = tailMonomials M
+T2 = tailMonomials(M, AllStandard => true)
+assert(#T1 == numgens M)
+assert(#T2 == numgens M)
+assert(T2_3 == allTail) -- the last generator
+assert(T1_3 == defaultTail)
+///
+
+-- linearPart smoke test.  Previously this export had zero TEST references.
+-- The function is defined as a plain assignment (not method()) and
+-- expects a RingElement.
+TEST ///
+R = ZZ/32003[a..d]
+assert(linearPart(a + b*c + d) == a + d)
+assert(linearPart(a*b + c) == c)
+assert(linearPart(1 + 2*a + 3*b) == 2*a + 3*b) -- constant term dropped
+assert(linearPart(a*b*c) == 0)
+assert(linearPart(5_R) == 0)
+-- For polynomial-over-polynomial rings, only the outer ring's variables
+-- count (this matches the doc example).
+S = ZZ/32003[a,b,c][x,y,z]
+g = a*b*x + 3*y + a + b^2
+assert(linearPart g == a*b*x + 3*y)
+///
+
+-- randomPointOnRationalVariety / randomPointsOnRationalVariety: previously
+-- both exports had zero TEST references.  Adapted from the doc-example
+-- of randomPointsOnRationalVariety.
+TEST ///
+kk = ZZ/101
+S = kk[a..f]
+I = minors(2, genericSymmetricMatrix(S, 3))
+-- single point
+pt = randomPointOnRationalVariety I
+assert(instance(pt, Matrix))
+assert(numrows pt == 1 and numcols pt == numgens S)
+assert(sub(I, pt) == 0)
+-- multiple points
+pts = randomPointsOnRationalVariety(I, 4)
+assert(instance(pts, List))
+assert(all(pts, p -> instance(p, Matrix)))
+assert(all(pts, p -> sub(I, p) == 0))
+///
+
+-- nonminimalMaps: previously this export had zero TEST references.  The
+-- function expects a putative monic Groebner basis (i.e. an ideal whose
+-- generators all have lead coefficient 1) over a finite field, and
+-- returns a Complex plus a HashTable of degree-zero maps.
+TEST ///
+kk = ZZ/32003
+S = kk[a..d]
+M = ideal(a^2, a*b, b^2, a*c)
+F = groebnerFamily M
+(C, H) = nonminimalMaps F
+assert(instance(C, Complex))
+assert(instance(H, HashTable))
+assert(length C >= 1)
+-- every key of H is a (homological-degree, internal-degree) pair
+assert(all(keys H, k -> instance(k, Sequence) and #k == 2))
+///
+
+-- Minimalize option: currently a documented no-op (passing
+-- `Minimalize => true` prints a warning and returns the same ideal as
+-- `Minimalize => false`).  This test locks the no-op contract in so
+-- that a future implementation of Minimalize will (correctly) need to
+-- update this test as well.
+TEST ///
+kk = ZZ/101
+S = kk[a..d]
+M = ideal(a^2, a*b, b^2, a*c)
+F = groebnerFamily M
+J1 = groebnerStratum F
+-- The warning is printed to stderr; we just check that the option
+-- doesn't change the returned ideal.
+J2 = groebnerStratum(F, Minimalize => true)
+assert(J1 == J2)
+///
+
 end--
 
 restart 

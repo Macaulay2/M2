@@ -1,14 +1,50 @@
+-- Padic package for Macaulay2
+-- Copyright (C) 2026 Doug Torrance
+
+-- This program is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU General Public License
+-- as published by the Free Software Foundation; either version 2
+-- of the License, or (at your option) any later version.
+
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, see <https://www.gnu.org/licenses/>.
+
 newPackage("Padic",
     Headline => "p-adic numbers",
-    Version => "0.1",
-    Date => "April 28, 2026",
+    Version => "0.3",
+    Date => "July 19, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
 	    HomePage => "https://d-torrance.github.io"}},
+    HomePage => "https://github.com/d-torrance/macaulay2-padic",
     Keywords => {"Algebraic Number Theory"},
     PackageExports => {"Valuations"},
     PackageImports => {"ForeignFunctions"})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.3 (2026-07-19, M2 1.26.11)
+* add texMath and mathML methods
+
+0.2 (2026-06-05, M2 1.26.06)
+* update my contact info
+* add homepage field
+* add GPL header
+
+0.1 (2026-04-28, M2 1.26.05)
+* initial release
+
+*-
 
 endpkg = msg -> (
     document {Key => Padic,
@@ -20,7 +56,10 @@ endpkg = msg -> (
 if not ForeignFunctions#"private dictionary"#?"foreignFunction"
 then endpkg "foreign function interface is not available"
 
-flint = try openSharedLibrary "flint" else endpkg "flint is not available"
+flint = (
+    try openSharedLibrary "flint"
+    else try foreignFunction("fmpz_init", void, voidstar) then null
+    else endpkg "flint is not available")
 
 export {
     -- methods
@@ -183,6 +222,8 @@ PadicFieldFamily.synonym = "p-adic field family"
 expression PadicFieldFamily := kk -> Subscript(QQ, prime kk)
 net PadicFieldFamily := net @@ expression
 toString PadicFieldFamily := toString @@ expression
+texMath PadicFieldFamily := texMath @@ expression
+mathML PadicFieldFamily := mathML @@ expression
 
 PadicNumber = new Type of Number
 PadicNumber.synonym = "p-adic number"
@@ -209,6 +250,18 @@ toString PadicNumber := x -> (
     -- from src/padic/get_str.c
     n := (N - v) * (2 * numdigits p + numdigits max(abs v, abs N) + 5) + 1;
     value padicGetStr(concatenate(n:"\0"), x.number, x.context))
+expression PadicNumber := x -> (
+    s := toString x;
+    Sum apply(separate(" \\+ ", s), term -> (
+            factors := separate("\\*", term);
+            if #factors == 1 then value factors#0
+            else if #factors == 2
+            then Product(
+                value factors#0,
+                Power(value \ separate("\\^", factors#1))))))
+texMath PadicNumber := texMath @@ expression
+mathML PadicNumber := mathML @@ expression
+
 
 PadicNumber.AfterPrint = lookup(AfterPrint, InexactNumber)
 
@@ -464,7 +517,12 @@ undocumented {
     (expression, PadicFieldFamily),
     (net, PadicFieldFamily),
     (toString, PadicFieldFamily),
+    (texMath, PadicFieldFamily),
+    (mathML, PadicFieldFamily),
     (toString, PadicNumber),
+    (expression, PadicNumber),
+    (texMath, PadicNumber),
+    (mathML, PadicNumber),
     (peek', ZZ, PadicNumber),
     (describe, PadicNumber)}
 

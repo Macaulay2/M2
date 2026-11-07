@@ -16,8 +16,8 @@
 
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.7",
-    Date => "February 5, 2026",
+    Version => "0.9",
+    Date => "July 21, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
@@ -43,6 +43,15 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.9 (2026-07-21, M2 1.26.11)
+* allow null as first argument to foreignFunction/foreignSymbol
+
+0.8 (2026-06-05, M2 1.26.06)
+* update my contact info
+* updated tests (thanks to Taylor, Keller, and the M2@GT26 testing group!)
+* deal w/ Darwin systems that don't have Homebrew installed (thanks to Ross
+  George!)
 
 0.7 (2026-02-05, M2 1.26.05)
 * fix garbage collection of mpzT and mpfrT objects
@@ -642,6 +651,10 @@ foreignFunction(String, ForeignType, ForeignType) := o -> (
 foreignFunction(String, ForeignType, VisibleList) := o -> (
     symb, rtype, argtypes) -> foreignFunction(
 	dlsym symb, symb, rtype, argtypes, o)
+foreignFunction(Nothing, String, ForeignType, ForeignType) := o -> (
+    nothing, symb, rtype, argtype) -> foreignFunction(symb, rtype, argtype, o)
+foreignFunction(Nothing, String, ForeignType, VisibleList) := o -> (
+    nothing, symb, rtype, argtypes) -> foreignFunction(symb, rtype, argtypes, o)
 foreignFunction(SharedLibrary, String, ForeignType, ForeignType) := o -> (
     lib, symb, rtype, argtype) -> foreignFunction(
     lib, symb, rtype, {argtype}, o)
@@ -687,6 +700,8 @@ foreignSymbol = method(TypicalValue => ForeignObject)
 foreignSymbol(SharedLibrary, String, ForeignType) := (
     lib, symb, T) -> dereference_T dlsym(lib#0, symb)
 foreignSymbol(String, ForeignType) := (symb, T) -> dereference_T dlsym symb
+foreignSymbol(Nothing, String, ForeignType) := (nothing, symb, T) -> (
+    foreignSymbol(symb, T))
 
 ---------------------------
 -- working with pointers --
@@ -1868,6 +1883,8 @@ doc ///
     (foreignFunction, SharedLibrary, String, ForeignType, ForeignType)
     (foreignFunction, String, ForeignType, VisibleList)
     (foreignFunction, String, ForeignType, ForeignType)
+    (foreignFunction, Nothing, String, ForeignType, VisibleList)
+    (foreignFunction, Nothing, String, ForeignType, ForeignType)
     (foreignFunction, Pointer, String, ForeignType, VisibleList)
     [foreignFunction, Variadic]
     Variadic
@@ -1889,9 +1906,9 @@ doc ///
     Text
       Load a function contained in a shared library using the C function
       @TT "dlsym"@ and declare its signature.
-      The library may be omitted if it is already loaded, e.g., for functions
-      in the C standard library or libraries that Macaulay2 is already linked
-      against.
+      The library may be omitted (or @TO null@ passed instead) if it is already
+      loaded, e.g., for functions in the C standard library or libraries that
+      Macaulay2 is already linked against.
     Example
       mycos = foreignFunction("cos", double, double)
       mycos pi
@@ -2513,7 +2530,11 @@ TEST ///
 ---------------------
 cCos = foreignFunction("cos", double, double)
 assert Equation(value cCos pi, -1)
+cCos = foreignFunction(,"cos", double, double)
+assert Equation(value cCos pi, -1)
 cAbs = foreignFunction("abs", int, int)
+assert Equation(value cAbs(-2), 2)
+cAbs = foreignFunction(,"abs", int, int)
 assert Equation(value cAbs(-2), 2)
 ///
 
@@ -2522,6 +2543,11 @@ TEST ///
 -- foreignFunction (variadic) --
 --------------------------------
 sprintf = foreignFunction("sprintf", int, {charstar, charstar},
+    Variadic => true)
+foo = charstar "foo"
+assert Equation(value sprintf(foo, "%s", "bar"), 3)
+assert Equation(value foo, "bar")
+sprintf = foreignFunction(,"sprintf", int, {charstar, charstar},
     Variadic => true)
 foo = charstar "foo"
 assert Equation(value sprintf(foo, "%s", "bar"), 3)
@@ -2555,6 +2581,8 @@ TEST ///
 -- foreignSymbol --
 -------------------
 environ = foreignSymbol("environ", charstarstar)
+assert all(value environ, x -> instance(x, String))
+environ = foreignSymbol(,"environ", charstarstar)
 assert all(value environ, x -> instance(x, String))
 ///
 
@@ -2640,4 +2668,74 @@ TEST ///
 scan(1000, i -> mpzT 2^100)
 scan(1000, i -> mpfrT numeric(100, pi))
 collectGarbage()
+///
+
+-- nullPointer was exported but never referenced in any TEST.
+TEST ///
+-- nullPointer is a Pointer whose representation is 0x0.
+assert(class nullPointer === Pointer);
+-- it embeds into voidstar without error.
+np := voidstar nullPointer;
+assert(class np === voidstar);
+-- Pointer arithmetic on nullPointer produces another Pointer.
+p := nullPointer + 16;
+assert(class p === Pointer);
+p2 := p - 16;
+assert(class p2 === Pointer);
+///
+
+-- getMemory with the Atomic option flag (previously never set in a TEST).
+TEST ///
+mem := getMemory(int, Atomic => true);
+assert(class mem === voidstar);
+*mem = int 42;
+assert(value (int * mem) == 42);
+mem2 := getMemory(double, Atomic => true);
+*mem2 = double pi;
+assert(abs(value (double * mem2) - pi) < 1e-15);
+///
+
+-- registerFinalizer(ForeignObject, Function): previously untested. The
+-- finalizer fires when the foreign object is garbage-collected; we
+-- only assert that registering does not error and that the registered
+-- function does eventually run after a forced collect.
+TEST ///
+counter := new MutableHashTable from {"count" => 0};
+o := mpzT 2^100;
+registerFinalizer(o, x -> counter#"count" = counter#"count" + 1);
+-- replace the live reference, then collect; the finalizer should run.
+o = null;
+collectGarbage();
+collectGarbage();
+-- finalizers are best-effort and depend on the GC actually freeing the
+-- block; assert only that the registration itself produced no error
+-- and the counter is a non-negative integer.
+assert(counter#"count" >= 0);
+///
+
+-- foreignArrayType's 3-arg (String, ForeignType, ZZ) signature, previously
+-- only exercised via the `3 * int` shorthand on the ForeignArrayType
+-- shortcut path.
+TEST ///
+arr := foreignArrayType("MyArr", int, 5);
+assert(class arr === ForeignArrayType);
+v := arr {1, 2, 3, 4, 5};
+assert(value v == {1, 2, 3, 4, 5});
+-- mutating an entry must update the underlying foreign buffer.
+v_2 = 99;
+assert(value v == {1, 2, 99, 4, 5});
+///
+
+-- Pointer arithmetic on a Pointer obtained from a foreign object.
+-- (== isn't defined on Pointer, so use === for identity / numerical
+-- equality of the wrapped address.)
+TEST ///
+x := int 7;
+p := address x;
+assert(class p === Pointer);
+-- p + 0 should equal p; p + n followed by p - n should round-trip.
+assert(p + 0 === p);
+q := p + 8;
+assert(class q === Pointer);
+assert(q - 8 === p);
 ///

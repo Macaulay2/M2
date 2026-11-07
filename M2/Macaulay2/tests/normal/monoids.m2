@@ -23,6 +23,9 @@ monoid[Variables => 4, VariableBaseName => "e", SkewCommutative => 0..3]
 monoid[Variables => 4, VariableBaseName => "e", SkewCommutative => {0,1,2,3}]
 monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => {0,1,2,3}]
 monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => vars(0..3)]
+monoid[x_0..x_3, SkewCommutative => {x_0, x_1}]
+monoid[a..d, SkewCommutative => {-1, a}]
+monoid[x_0..x_3, a, b, c, SkewCommutative => {x_0..x_2, a, -1}]
 ---
 
 --- checking element access in towers

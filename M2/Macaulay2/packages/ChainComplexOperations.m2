@@ -97,7 +97,7 @@ eulerCharacteristic Complex := F -> (
     L := for i from min F to max F list(
 	len = length(HH_i F);
 	if len == infinity then error"length of homology not finite";
-	len);
+	(-1)^i * len);
     sum L)
 
 chi2 = method()
@@ -407,9 +407,10 @@ assert (reverseFactors(P,Q,s,t)*reverseFactors(Q,P,s,t) == id_(Q**P))
 ///
 
 TEST///
+-- error test: eulerCharacteristic rejects homology of infinite length
 S = ZZ/101[a,b,c]
 F = complex{map(S^1,S^1,0)}
-assert (try eulerCharacteristic F then "finite" else "undefined" == "undefined")
+assert(try (eulerCharacteristic F; false) else true)
 ///
 
 TEST///
@@ -425,6 +426,119 @@ assert all(apply(1+length(F**G), i->(
 )),i->i == true)
 --Does reverseFactors create an isomorphism?
 assert all(apply(length (F**G), i -> (rank phi_i) == rank ((F**G)_i)), i->i==true)
+///
+
+TEST///
+-- F**F splits termwise as sym2 F ++ wedge2 F over a field of characteristic =!= 2
+S = ZZ/101[a,b,c]
+M = S^1/ideal(a^2,b^2,c^2)
+F = res M
+G = F**F
+SF = sym2 F
+WF = wedge2 F
+assert isWellDefined SF
+assert isWellDefined WF
+assert all(min G .. max G, i -> rank G_i == rank SF_i + rank WF_i)
+-- the factor-swap tau is an involution; sym2/wedge2 are its image(1+-tau) = ker(1-+tau) parts
+tau = reverseFactors(F,F)
+idG = id_G
+assert(tau*tau == idG)
+assert(image(idG+tau) == ker(idG-tau))
+assert(image(idG-tau) == ker(idG+tau))
+///
+
+TEST///
+-- Walker's theorem: chi2(res M) = 2^(codim M) * (length M) for finite-length M.
+-- Regression: a prior eulerCharacteristic dropped the (-1)^i sign, making chi2 == 0.
+S = ZZ/101[a,b,c]
+M = S^1/ideal(a^2,b^2,c^2)
+F = res M
+assert(chi2 F == 2^(codim M)*(length M))
+-- eulerCharacteristic of a resolution reduces to length M (homology in degree 0 only)
+assert(eulerCharacteristic F == length M)
+-- a second module that is not a complete intersection
+N = S^1/((ideal vars S)^2)
+assert(chi2(res N) == 2^(codim N)*(length N))
+///
+
+TEST///
+-- eulerCharacteristic is the alternating sum: evenHomologyLength minus oddHomologyLength.
+-- Regression: a prior version summed homology lengths with no (-1)^i sign.
+S = ZZ/101[a,b,c]
+M = S^1/ideal(a^2,b^2,c^2)
+F = res M
+G = F**F
+assert(eulerCharacteristic G == evenHomologyLength G - oddHomologyLength G)
+assert(oddHomologyLength G == sum(select(min G .. max G, odd), i -> length(HH_i G)))
+assert(evenHomologyLength G == sum(select(min G .. max G, even), i -> length(HH_i G)))
+///
+
+TEST///
+-- excess: Module form agrees with the Complex form and matches its documented identities
+S = ZZ/101[a,b,c]
+M = S^1/((ideal vars S)^2)
+F = res M
+exc = excess M
+assert(exc === excess F)
+sumBetti = sum(min F .. max F, i -> rank F_i)
+sumTor = sum(min F .. max F, i -> length Tor_i(M,M))
+assert(exc#0 + exc#1 == sumTor - chi2 F)
+assert(exc#2 == sumBetti*(length M) - sumTor)
+assert all(toList exc, e -> e >= 0)
+-- for a complete intersection the Walker bound is sharp, so excess vanishes
+CI = S^1/ideal(a^2,b^2,c^2)
+assert(excess CI === (0,0,0))
+-- testWalker verifies Walker's identity, which holds for any finite-length module
+assert testWalker CI
+assert testWalker M
+///
+
+TEST///
+-- error tests: each function must reject homology of infinite length
+S = ZZ/101[a,b,c]
+Finf = complex{map(S^1,S^1,0)}
+assert(try (oddHomologyLength Finf; false) else true)
+assert(try (evenHomologyLength Finf; false) else true)
+assert(try (chi2 Finf; false) else true)
+assert(try (excess Finf; false) else true)
+-- testWalker rejects modules that are not of finite length
+assert(try (testWalker(S^1); false) else true)
+///
+
+TEST///
+-- boundary cases: the residue field and the zero module
+S = ZZ/101[a,b,c]
+-- residue field: chi2(res k) = 2^(dim S), the package's headline identity
+k = S^1/(ideal vars S)
+Fk = res k
+assert(chi2 Fk == 2^(dim S))
+assert(eulerCharacteristic Fk == length k)
+-- the zero module: every invariant is trivially zero
+Z = S^1/ideal(1_S)
+assert(Z == 0)
+FZ = res Z
+assert(eulerCharacteristic FZ == 0)
+assert(chi2 FZ == 0)
+assert(excess Z === (0,0,0))
+///
+
+TEST///
+-- type tests: each function returns the type stated in its documentation
+S = ZZ/101[a,b,c]
+M = S^1/ideal(a^2,b^2,c^2)
+F = res M
+P = S^{0,1}
+Q = S^{3,5}
+assert(instance(reverseFactors(P,Q,1,1), Matrix))
+assert(instance(reverseFactors(F,F), ComplexMap))
+assert(instance(sym2 F, Complex))
+assert(instance(wedge2 F, Complex))
+assert(instance(oddHomologyLength F, ZZ))
+assert(instance(evenHomologyLength F, ZZ))
+assert(instance(eulerCharacteristic F, ZZ))
+assert(instance(chi2 F, ZZ))
+assert(instance(excess M, Sequence))
+assert(instance(testWalker M, Boolean))
 ///
 
 end--

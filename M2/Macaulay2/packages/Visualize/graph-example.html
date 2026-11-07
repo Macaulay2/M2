@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Macaulay2: Graph Visualization</title>
-    <link href="css/common.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet" />
 
     <script>
       //global variables
@@ -11,9 +11,16 @@
       tikzGenerated = false;
       curEdit = false;
       curHighlight = false;
-  	  curView = "2d";
+      curView = "2d";
       menuOpen = true;
-      dataData = [[0, 1, 1, 1, 0, 0], [1, 0, 1, 0, 0, 0], [1, 1, 0, 0, 1, 0], [1, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
+      dataData = [
+        [0, 1, 1, 1, 0, 0],
+        [1, 0, 1, 0, 0, 0],
+        [1, 1, 0, 0, 1, 0],
+        [1, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+      ];
       labelData = ["0", "1", "3", "4", "2", "5"];
       portData = 8080; // initializes port from user
       forceOn = true;
@@ -24,66 +31,139 @@
   </head>
 
   <body>
-
-        <div id="side">
-          <h2>&#8202;&#8202;Menu</h2>
-          <div class="list-group" id="menuList">
-            <div class="list-group-item" id="sliderDiv"><div style="height:25px;">Force variables</div>
-            <span style="display:inline-block; width:60px;">&#8202; Charge:</span><div class="noUi-extended" id="charge-slider" style="vertical-align:middle;"></div><br>
-            <span style="display:inline-block; width:60px;">&#8202; Links:</span><div class="noUi-extended" id="linkdist-slider" style="vertical-align:middle;"></div>
-            </div>
-            <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
-            <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
-            <a id="highlightToggle" href="#" class="list-group-item">Highlight neighbors</a>
-            <a id="reset" href="#" class="list-group-item">Reset nodes</a>
-            <a id="forceToggle" href="#" class="list-group-item">Turn off force</a>
-            <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
-            
-            <a href="#collapse1" data-bs-toggle="collapse" class="list-group-item">Boolean tests &#9662;</a>
-                <div id="collapse1" class="panel-collapse collapse">
-                    <a id="hasEulerianTrail" href="#" class="list-group-item"> &nbsp;&nbsp; hasEulerianTrail</a>
-                    <a id="hasOddHole" href="#" class="list-group-item"> &nbsp;&nbsp; hasOddHole</a>
-                    <a id="isBipartite" href="#" class="list-group-item"> &nbsp;&nbsp; isBipartite</a>
-                    <a id="isChordal" href="#" class="list-group-item"> &nbsp;&nbsp; isChordal</a>
-                    <a id="isCM" href="#" class="list-group-item"> &nbsp;&nbsp; isCM</a>
-                    <a id="isComparabilityGraph" href="#" class="list-group-item"> &nbsp;&nbsp; isComparabilityGraph</a>
-                    <a id="isConnected" href="#" class="list-group-item"> &nbsp;&nbsp; isConnected</a>
-                    <a id="isCyclic" href="#" class="list-group-item"> &nbsp;&nbsp; isCyclic</a>
-                    <a id="isEulerian" href="#" class="list-group-item"> &nbsp;&nbsp; isEulerian</a>
-                    <a id="isForest" href="#" class="list-group-item"> &nbsp;&nbsp; isForest</a>
-                    <a id="isPerfect" href="#" class="list-group-item"> &nbsp;&nbsp; isPerfect</a>
-                    <a id="isRegular" href="#" class="list-group-item"> &nbsp;&nbsp; isRegular</a>
-                    <a id="isRigid" href="#" class="list-group-item"> &nbsp;&nbsp; isRigid</a>                    
-                    <a id="isSimple" href="#" class="list-group-item"> &nbsp;&nbsp; isSimple</a>
-                    <a id="isTree" href="#" class="list-group-item"> &nbsp;&nbsp; isTree</a>
-                </div>
-            <a href="#collapse2" data-bs-toggle="collapse" class="list-group-item">Numerical invariants &#9662;</a>
-                <div id="collapse2" class="panel-collapse collapse">
-                    <a id="chromaticNumber" href="#" class="list-group-item"> &nbsp;&nbsp; chromaticNumber</a>
-                    <a id="independenceNumber" href="#" class="list-group-item"> &nbsp;&nbsp; independenceNumber</a>
-                    <a id="cliqueNumber" href="#" class="list-group-item"> &nbsp;&nbsp; cliqueNumber</a>
-                    <a id="degeneracy" href="#" class="list-group-item"> &nbsp;&nbsp; degeneracy</a>
-                    <a id="density" href="#" class="list-group-item"> &nbsp;&nbsp; density</a>
-                    <a id="diameter" href="#" class="list-group-item"> &nbsp;&nbsp; diameter</a>
-                    <a id="edgeConnectivity" href="#" class="list-group-item"> &nbsp;&nbsp; edgeConnectivity</a>
-                    <a id="minimalDegree" href="#" class="list-group-item"> &nbsp;&nbsp; minimalDegree</a>
-                    <a id="numberOfComponents" href="#" class="list-group-item"> &nbsp;&nbsp; numberOfComponents</a>
-                    <a id="numberOfTriangles" href="#" class="list-group-item"> &nbsp;&nbsp; numberOfTriangles</a>
-                    <a id="radius" href="#" class="list-group-item"> &nbsp;&nbsp; radius</a>
-                    <a id="vertexConnectivity" href="#" class="list-group-item"> &nbsp;&nbsp; vertexConnectivity</a>
-                    <a id="vertexCoverNumber" href="#" class="list-group-item"> &nbsp;&nbsp; vertexCoverNumber</a>
-                </div>
-             <a id="endSession" href="#" class="list-group-item">End session</a>            
-          </div>
+    <div id="side">
+      <h2>&#8202;&#8202;Menu</h2>
+      <div class="list-group" id="menuList">
+        <div class="list-group-item" id="sliderDiv">
+          <div style="height: 25px">Force variables</div>
+          <span style="display: inline-block; width: 60px"
+            >&#8202; Charge:</span
+          >
+          <div
+            class="noUi-extended"
+            id="charge-slider"
+            style="vertical-align: middle"
+          ></div>
+          <br />
+          <span style="display: inline-block; width: 60px">&#8202; Links:</span>
+          <div
+            class="noUi-extended"
+            id="linkdist-slider"
+            style="vertical-align: middle"
+          ></div>
         </div>
-  
-  <div class="container">
-    <div id="canvasElement2d"></div>
-  </div>
+        <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
+        <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
+        <a id="highlightToggle" href="#" class="list-group-item"
+          >Highlight neighbors</a
+        >
+        <a id="reset" href="#" class="list-group-item">Reset nodes</a>
+        <a id="forceToggle" href="#" class="list-group-item">Turn off force</a>
+        <a id="exportTikz" href="#" class="list-group-item"
+          >Generate TikZ code</a
+        >
 
-  <script src="js/visCommon.js"></script>
-  <script src="js/visGraph2d.js"></script>
+        <a href="#collapse1" data-bs-toggle="collapse" class="list-group-item"
+          >Boolean tests &#9662;</a
+        >
+        <div id="collapse1" class="panel-collapse collapse">
+          <a id="hasEulerianTrail" href="#" class="list-group-item">
+            &nbsp;&nbsp; hasEulerianTrail</a
+          >
+          <a id="hasOddHole" href="#" class="list-group-item">
+            &nbsp;&nbsp; hasOddHole</a
+          >
+          <a id="isBipartite" href="#" class="list-group-item">
+            &nbsp;&nbsp; isBipartite</a
+          >
+          <a id="isChordal" href="#" class="list-group-item">
+            &nbsp;&nbsp; isChordal</a
+          >
+          <a id="isCM" href="#" class="list-group-item"> &nbsp;&nbsp; isCM</a>
+          <a id="isComparabilityGraph" href="#" class="list-group-item">
+            &nbsp;&nbsp; isComparabilityGraph</a
+          >
+          <a id="isConnected" href="#" class="list-group-item">
+            &nbsp;&nbsp; isConnected</a
+          >
+          <a id="isCyclic" href="#" class="list-group-item">
+            &nbsp;&nbsp; isCyclic</a
+          >
+          <a id="isEulerian" href="#" class="list-group-item">
+            &nbsp;&nbsp; isEulerian</a
+          >
+          <a id="isForest" href="#" class="list-group-item">
+            &nbsp;&nbsp; isForest</a
+          >
+          <a id="isPerfect" href="#" class="list-group-item">
+            &nbsp;&nbsp; isPerfect</a
+          >
+          <a id="isRegular" href="#" class="list-group-item">
+            &nbsp;&nbsp; isRegular</a
+          >
+          <a id="isRigid" href="#" class="list-group-item">
+            &nbsp;&nbsp; isRigid</a
+          >
+          <a id="isSimple" href="#" class="list-group-item">
+            &nbsp;&nbsp; isSimple</a
+          >
+          <a id="isTree" href="#" class="list-group-item">
+            &nbsp;&nbsp; isTree</a
+          >
+        </div>
+        <a href="#collapse2" data-bs-toggle="collapse" class="list-group-item"
+          >Numerical invariants &#9662;</a
+        >
+        <div id="collapse2" class="panel-collapse collapse">
+          <a id="chromaticNumber" href="#" class="list-group-item">
+            &nbsp;&nbsp; chromaticNumber</a
+          >
+          <a id="independenceNumber" href="#" class="list-group-item">
+            &nbsp;&nbsp; independenceNumber</a
+          >
+          <a id="cliqueNumber" href="#" class="list-group-item">
+            &nbsp;&nbsp; cliqueNumber</a
+          >
+          <a id="degeneracy" href="#" class="list-group-item">
+            &nbsp;&nbsp; degeneracy</a
+          >
+          <a id="density" href="#" class="list-group-item">
+            &nbsp;&nbsp; density</a
+          >
+          <a id="diameter" href="#" class="list-group-item">
+            &nbsp;&nbsp; diameter</a
+          >
+          <a id="edgeConnectivity" href="#" class="list-group-item">
+            &nbsp;&nbsp; edgeConnectivity</a
+          >
+          <a id="minimalDegree" href="#" class="list-group-item">
+            &nbsp;&nbsp; minimalDegree</a
+          >
+          <a id="numberOfComponents" href="#" class="list-group-item">
+            &nbsp;&nbsp; numberOfComponents</a
+          >
+          <a id="numberOfTriangles" href="#" class="list-group-item">
+            &nbsp;&nbsp; numberOfTriangles</a
+          >
+          <a id="radius" href="#" class="list-group-item">
+            &nbsp;&nbsp; radius</a
+          >
+          <a id="vertexConnectivity" href="#" class="list-group-item">
+            &nbsp;&nbsp; vertexConnectivity</a
+          >
+          <a id="vertexCoverNumber" href="#" class="list-group-item">
+            &nbsp;&nbsp; vertexCoverNumber</a
+          >
+        </div>
+        <a id="endSession" href="#" class="list-group-item">End session</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="canvasElement2d"></div>
+    </div>
+
+    <script src="js/visCommon.js"></script>
+    <script src="js/visGraph2d.js"></script>
   </body>
-
-
 </html>

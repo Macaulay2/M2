@@ -1185,11 +1185,13 @@ SolveMore = (binom,psol) -> (
      -- Since Lex is a global order the true monomial comes first.
      mon := (terms binom)#0; -- The monomial in the new variable.
      
-     -- we need the index of the variable that we will solve now
-     -- <incomprehensable hack>
-     ind := index (flatten entries gens radical monomialIdeal mon)#0;
-     var := (flatten entries gens radical monomialIdeal mon)#0;
-     -- </incomprehensable hack>
+     -- we need the index of the variable that we will solve now.
+     -- (Previously this used `index (flatten entries gens radical
+     -- monomialIdeal mon)#0` with a self-described "incomprehensable
+     -- hack" comment; the cleaner equivalent is `first support mon`,
+     -- which is the unique variable underlying the univariate monomial.)
+     var := first support mon;
+     ind := index var;
      
      rhs := (terms binom)#1; -- The right hand side which is a power
 			     -- of a root of unity
@@ -1986,6 +1988,247 @@ R = QQ[x,y]
 assert(binomialIsPrime ideal x^2 == false)
 assert(binomialIsPrime ideal (x^2-y^2) == false)
 assert(binomialIsPrime ideal (x-y) == true)
+///
+
+-- ----------------------------------------------------------------------------
+-- The following blocks were added to cover exports that previously had no
+-- direct TEST coverage.  Every existing test in the suite above intersects a
+-- decomposition result against I and asserts the intersection equals I; this
+-- is a necessary but not sufficient correctness check for a *primary*
+-- decomposition.  The blocks below also assert primality / cellularity of
+-- the individual components where applicable, plus they cover the cellular
+-- variants, predicates, options, helper functions, and the BCD wrapper.
+-- ----------------------------------------------------------------------------
+
+-- binomialCellularDecomposition + BCD wrapper consistency, plus the
+-- ReturnCellVars option which changes the return shape (list of ideals
+-- vs list of {ideal, cellVar-list} pairs).  Previously no TEST exercised
+-- this function directly; it was only invoked transitively via BPD.
+TEST ///
+R = QQ[a..d]
+I = ideal(a^2*b - c*d, a*b^2 - c^2)
+cdec = binomialCellularDecomposition I
+assert(intersect cdec == I)
+assert(all(cdec, J -> isCellular J))
+-- BCD is documented as a synonym
+assert(BCD I == cdec)
+-- ReturnCellVars => true changes return shape to {ideal, cellVar-list}
+dec2 = binomialCellularDecomposition(I, ReturnCellVars => true)
+assert(#dec2 == #cdec)
+assert(all(dec2, p -> instance(p, List) and #p == 2))
+assert(all(dec2, p -> instance(p#0, Ideal) and instance(p#1, List)))
+-- The ideals match
+assert(apply(dec2, p -> p#0) == cdec)
+///
+
+-- The four cellularBinomial* variants on a hand-built cellular ideal.
+-- For I = (x^2 - 1, y^2) in QQ[x,y]: x is the cell variable, y is the
+-- nilpotent variable.  Primary decomp: (x-1, y^2), (x+1, y^2).
+TEST ///
+R = QQ[x,y]
+I = ideal(x^2 - 1, y^2)
+assert(isCellular I)
+cv = isCellular(I, ReturnCellVars => true)
+assert(set cv === set {x})
+-- primary decomposition: two primary ideals, intersecting back to I
+cpd = cellularBinomialPrimaryDecomposition(I, CellVariables => cv)
+assert(#cpd == 2)
+assert(intersect cpd == I)
+-- associated primes: radical of each primary component
+cap = cellularBinomialAssociatedPrimes(I, CellVariables => cv)
+assert(#cap == 2)
+assert(all(cap, p -> isPrime p))
+-- radical: (x^2 - 1) + (y)
+crad = cellularBinomialRadical(I, CellVariables => cv)
+assert(crad == ideal(x^2 - 1, y))
+assert(crad == radical I) -- agrees with the standard radical
+-- unmixed decomposition: I is height 2 already, so it's its own unmixed
+cud = cellularBinomialUnmixedDecomposition(I, CellVariables => cv)
+assert(#cud == 1)
+assert(intersect cud == I)
+///
+
+-- Predicates: binomialIsPrimary, isCellular, isBinomial, isUnital.
+-- Previously only binomialIsPrime was tested.
+TEST ///
+R = QQ[x,y,z]
+-- binomialIsPrimary
+assert(binomialIsPrimary ideal(x - y))             -- prime is primary
+assert(binomialIsPrimary ideal(x^2, x*y, y^2))     -- (x, y)-primary monomial ideal
+assert(not binomialIsPrimary ideal(x^2 - y^2))     -- (x-y)(x+y), two components
+assert(not binomialIsPrimary ideal(x^2 - 1))       -- (x-1)(x+1)
+
+-- isCellular
+assert(isCellular ideal(x - y))           -- prime is cellular
+assert(isCellular ideal(x^2 - 1, y^2))    -- x cell, y nilpotent
+assert(not isCellular ideal(x*y - z*y))   -- y is a zero-divisor on (x-z)
+assert(not isCellular ideal(x*y))          -- monomial with two distinct vars
+
+-- isBinomial
+assert(isBinomial ideal(x*y - z, x^2 - z^2))
+assert(isBinomial ideal 0_R)
+assert(isBinomial ideal x)
+assert(not isBinomial ideal(x*y + z + 1))
+assert(not isBinomial ideal(x + y + z))   -- 3-term polynomial
+
+-- isUnital: generators have only +/- 1 coefficients
+assert(isUnital ideal(x*y - x*z))
+assert(isUnital ideal(x^2 - y^2))
+assert(isUnital ideal(x*y, y*z))           -- monomials are vacuously unital
+assert(not isUnital ideal(x*y - 2*x*z))
+assert(not isUnital ideal(x^2 + y^2))     -- coefficient pattern is (1,1), not (-1,1)
+assert(isUnital ideal 0_R)
+///
+
+-- partialCharacter / idealFromCharacter round-trip on a saturated lattice
+-- ideal, which is the canonical mathematical operation exercised internally
+-- but never asserted at the top level.
+TEST ///
+R = QQ[a,b,c]
+-- Build a lattice ideal directly from a partial character.
+pc = new PartialCharacter from {"J" => {a,b,c}, "L" => transpose matrix{{1,-1,0},{0,1,-1}}, "c" => {1_QQ, 1_QQ}}
+J = idealFromCharacter(R, pc)
+assert(J == ideal(a - b, a - c))
+-- Recovered partial character has the same cellVars and the same lattice image
+pc' = partialCharacter J
+assert(pc'#"J" == {a,b,c})
+assert(image pc'#"L" == image pc#"L")
+-- Round-trip: re-running idealFromCharacter on the recovered pc gives back J
+assert(idealFromCharacter(R, pc') == J)
+-- The PartialCharacter type and its three fields
+assert(instance(pc, PartialCharacter))
+assert(set keys pc === set {"J", "L", "c"})
+///
+
+-- partialCharacter accepts the CellVariables option to override the
+-- auto-detected cell variables.  Previously the option was documented but
+-- never exercised in any TEST.
+TEST ///
+R = QQ[a,b,c]
+J = ideal(a*b - c*b)
+-- Default: J has only 0 cell vars (it is not cellular)
+assert(not isCellular J)
+-- Forced: tell partialCharacter to treat {a, c} as cell vars
+pc = partialCharacter(J, CellVariables => {a, c})
+assert(pc#"J" == {a, c})
+///
+
+-- makeBinomial: build a binomial from exponent vector and coefficient.
+-- latticeBasisIdeal: build the lattice basis ideal from a lattice matrix.
+-- Both are exported and documented but previously untested.
+TEST ///
+R = QQ[x,y,z]
+-- makeBinomial: posMon - c * negMon
+assert(makeBinomial(R, {2, -3, 0}, 5) == x^2 - 5*y^3)
+assert(makeBinomial(R, {1, 1, 1}, 1) == x*y*z - 1)
+assert(makeBinomial(R, {-1, 0, 2}, 1) == z^2 - x)
+
+-- latticeBasisIdeal: the i-th column of L is the exponent vector of the
+-- i-th generator (with coefficient 1).
+L = transpose matrix{{1,-1,0}, {0,1,-1}}
+assert(latticeBasisIdeal(R, L) == ideal(x - y, y - z))
+-- Same lattice over ZZ
+L2 = matrix(ZZ, {{1,0},{-1,1},{0,-1}})
+assert(latticeBasisIdeal(R, L2) == ideal(x - y, y - z))
+-- Rank-0 lattice is the zero ideal
+assert(latticeBasisIdeal(R, 0 * L) == ideal 0_R)
+///
+
+-- binomialRadical: agrees with M2's standard radical on small examples.
+-- binomialAssociatedPrimes: returns the associated primes.
+TEST ///
+R = QQ[x,y]
+I1 = ideal(x^2 - 1, y^2)
+assert(isCellular I1)
+br = binomialRadical I1
+assert(br == ideal(x^2 - 1, y))
+assert(br == radical I1)
+///
+
+TEST ///
+-- binomialAssociatedPrimes on a cellular ideal (avoids the
+-- "Not yet implemented" branch the function prints for non-cellular
+-- input, which can interact awkwardly with check's stdout-capture).
+R = QQ[x,y]
+I2 = ideal(x^2 - 1, y^2)
+assert(isCellular I2)
+ap = binomialAssociatedPrimes I2
+assert(instance(ap, List))
+assert(length ap == 2)
+assert(all(ap, p -> isPrime p))
+-- The two associated primes are (y, x-1) and (y, x+1)
+assert(set ap === set {ideal(y, x-1), ideal(y, x+1)})
+///
+
+-- binomialSolve: find the common zeros of a zero-dimensional binomial
+-- ideal.  Cyclotomic coefficients appear when needed (ww_n is the
+-- primitive n-th root of unity in the Cyclotomic package output).
+-- Note: solutions are RingElements in a cyclotomic ring, not plain
+-- integers, so we cannot use strict `===` on `set sols`; we instead
+-- check the count and that each solution actually satisfies the system.
+TEST ///
+needsPackage "Cyclotomic"
+R = QQ[x]
+sols1 = binomialSolve ideal(x^2 - 1)
+assert(length sols1 == 2)
+assert(all(sols1, s -> sub(x^2 - 1, x => s#0) == 0))
+
+R = QQ[x]
+sols2 = binomialSolve ideal(x^3 - 1)
+assert(length sols2 == 3)
+assert(all(sols2, s -> sub(x^3 - 1, x => s#0) == 0))
+
+R = QQ[a,b,c]
+sols3 = binomialSolve ideal(a^2 - 1, b^2 - 1, c^2 - 1)
+assert(length sols3 == 8)
+assert(all(sols3, s -> sub(a^2 - 1, {a => s#0, b => s#1, c => s#2}) == 0 and
+                       sub(b^2 - 1, {a => s#0, b => s#1, c => s#2}) == 0 and
+                       sub(c^2 - 1, {a => s#0, b => s#1, c => s#2}) == 0))
+///
+
+-- ReturnPrimes / ReturnPChars options of cellularBinomialIsPrimary.  When
+-- the input is not primary, ReturnPrimes returns two distinct associated
+-- primes and ReturnPChars returns their partial characters as triples.
+-- Note: `cellVars` is an internal helper (commented out of the export
+-- list); use `isCellular(I, ReturnCellVars => true)` to obtain the cell
+-- variables through the public API.
+TEST ///
+R = QQ[x,y]
+-- Non-primary cellular ideal
+I = ideal(x^2 - 1, y^2)
+cv = isCellular(I, ReturnCellVars => true)
+-- Default returns false (not primary)
+assert(cellularBinomialIsPrimary(I, CellVariables => cv) === false)
+-- ReturnPrimes returns a 2-element list of associated primes
+rps = cellularBinomialIsPrimary(I, CellVariables => cv, ReturnPrimes => true)
+assert(instance(rps, List) and #rps == 2)
+assert(all(rps, p -> instance(p, Ideal)))
+-- ReturnPChars returns a 2-element list of (J, L, c) triples
+rpcs = cellularBinomialIsPrimary(I, CellVariables => cv, ReturnPChars => true)
+assert(instance(rpcs, List) and #rpcs == 2)
+assert(all(rpcs, t -> instance(t, List) and #t == 3))
+
+-- Primary cellular ideal: ReturnPrimes returns a 1-element list
+I2 = ideal(x - 1, y^2)
+cv2 = isCellular(I2, ReturnCellVars => true)
+assert(cellularBinomialIsPrimary(I2, CellVariables => cv2) === true)
+rps2 = cellularBinomialIsPrimary(I2, CellVariables => cv2, ReturnPrimes => true)
+assert(#rps2 == 1)
+///
+
+-- randomBinomialIdeal: smoke test that the output is a binomial ideal.
+-- The doc explicitly notes that the result may not be homogeneous or of
+-- the requested degree, so we only assert what is invariant.
+TEST ///
+R = QQ[a,b,c,d]
+setRandomSeed 42
+I = randomBinomialIdeal(R, 3, 2, 2, true)
+assert(instance(I, Ideal))
+assert(isBinomial I)
+-- non-homogeneous variant
+J = randomBinomialIdeal(R, 3, 2, 2, false)
+assert(instance(J, Ideal))
+assert(isBinomial J)
 ///
 
 end

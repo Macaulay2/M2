@@ -1,5 +1,5 @@
-#include "m2-types.h"
-#include "m2-mem.h"
+#include "interface/m2-types.h"
+#include "interface/m2-mem.h"
 #include <memory.h>
 #include <M2/gc-include.h>
 

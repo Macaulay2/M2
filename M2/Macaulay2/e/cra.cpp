@@ -4,12 +4,12 @@
 #include <stddef.h>
 
 #include "error.h"
-#include "freemod.hpp"
-#include "matrix-con.hpp"
-#include "matrix.hpp"
+#include "matrices/matrix-con.hpp"
+#include "free-modules/freemod.hpp"
+#include "matrices/matrix.hpp"
 #include "monoid.hpp"
-#include "poly.hpp"
-#include "ring.hpp"
+#include "rings/poly.hpp"
+#include "rings/ring.hpp"
 #include "style.hpp"
 
 void ChineseRemainder::CRA0(mpz_srcptr a,

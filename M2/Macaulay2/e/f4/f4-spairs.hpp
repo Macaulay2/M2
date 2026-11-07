@@ -1,6 +1,7 @@
 // Copyright 2004-2021 Michael E. Stillman
 
-#pragma once
+#ifndef M2_F4_F4_SPAIRS_HPP
+#define M2_F4_F4_SPAIRS_HPP
 
 #include <queue>                     // for std::priority_queue
 #include "MemoryBlock.hpp"           // for MemoryBlock
@@ -102,6 +103,7 @@ class F4SPairSet
 };
 
 
+#endif
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 //  indent-tabs-mode: nil

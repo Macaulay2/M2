@@ -99,7 +99,7 @@ extendFieldByDegree = method(TypicalValue => RingMap, Options => {});
 extendFieldByDegree(ZZ, Ring) := RingMap => opts -> (n1, R1) -> (
     kk := coefficientRing R1;
     p1 := char kk;
-    if (p1 === 0) then return "extendFieldByDegree:  expected a ring over a field of characteristic p";
+    if (p1 === 0) then error "extendFieldByDegree:  expected a ring over a field of characteristic p";
     getDeg := k -> (if (class k === GaloisField) then (degree (ideal ambient k)_0)#0 else 1);    
     d1 := getDeg kk;
     kk2 := GF(p1^(d1*n1));
@@ -252,13 +252,41 @@ assert(coefficientRing T === K)
 TEST ///
 K = GF(8);
 L = GF(64);
-R = K[x,y,z]/(x*y-z^2); 
+R = K[x,y,z]/(x*y-z^2);
 S = L[u,v]/(v^2);
 f = switchFieldMap(S, R, {u, 0, v});
 t = (coefficientRing R)_0;
 assert(f(t)^3+f(t)+1 == 0)
 ///
-   
+
+-- Direct cover for extendFieldByDegree (previously zero TEST coverage
+-- and no doc node). It returns a (Ring, RingMap) Sequence whose first
+-- entry is the polynomial ring over the degree-extended coefficient
+-- field. The character-0 input path was previously a `return "..."`
+-- that emitted a String instead of erroring; verify the new `error`
+-- behavior catches it.
+TEST ///
+R := (GF 4)[x, y, z];
+result := extendFieldByDegree(2, R);
+assert(class result === Sequence);
+assert(#result == 2);
+-- First component: polynomial ring over GF(4^2) = GF(16). Compare via
+-- string form because each `GF 16` call creates a fresh field object.
+S := result_0;
+assert(class S === PolynomialRing);
+kk := coefficientRing S;
+assert(class kk === GaloisField);
+assert(char kk == 2);
+assert(toString kk == "GF 16");
+-- Second component: the natural inclusion ring map R -> S.
+phi := result_1;
+assert(class phi === RingMap);
+assert(source phi === R);
+assert(target phi === S);
+-- Char-0 ring must error (previously returned a String).
+assert(try (extendFieldByDegree(2, QQ[x]); false) else true);
+///
+
 end
 
 -- Here place M2 code that you find useful while developing this

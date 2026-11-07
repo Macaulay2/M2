@@ -5313,8 +5313,8 @@ assert(HomWithComponents(M',N') == tensorWithComponents(dualWithComponents M', N
 assert(components HomWithComponents(M',N') == components tensorWithComponents(dualWithComponents M', N'))
 M = S^{1,2}/ideal(a^2)
 M' = S^{1}/ideal(a^2)++S^{2}/ideal(a^2)
-M == M'
-(T = M**N) == M'**N'
+assert(M == M')
+assert((T = M**N) == M'**N')
 assert(T == tensorWithComponents(M',N'))
 M= S^0
 M'=S^0++S^0
@@ -5342,6 +5342,9 @@ assert (expo(2,4) == {{4, 0}, {3, 1}, {2, 2}, {1, 3}, {0, 4}})
 expo(3,0)
 ///
 
+-- regularitySequence over a tower of complete intersections.  On a nonzero
+-- module the function only prints its findings and returns null, so the
+-- first call is a run test; the assert is a boundary test on the zero module.
 TEST///
 setRandomSeed 100
 c = 2
@@ -5349,8 +5352,15 @@ d = 2
 R = setupRings(c,d)
 (M,k,p) = setupModules(R,coker vars R_c);
 regularitySequence(R,coker vars R_c)
+assert(regularitySequence(R, (R_c)^0) === {-infinity, {}, -infinity, {}})
 ///
 
+-- DISABLED: layeredResolution(Matrix,Module,ZZ) is currently buggy.
+-- It returns a correct free resolution, but an incorrect augmentation map:
+-- aug fails (aug * L.dd_1 == 0) for codim >= 2, and at codim >= 3 the faulty
+-- augmentation recurses into the construction so the returned complex fails
+-- isWellDefined. The complex-building (cone/Shamash) itself is sound.
+-- Re-enable this block (change ///TEST to TEST///) once aug is corrected.
 ///TEST
 S1 = ZZ/101[a,b,c]
 len = 4
@@ -5404,7 +5414,10 @@ assert( (makeT(ff, F0, 2)) === {map((R)^{{-3},{-3}},(R)^{{-3},{-3},{-3},{-3},{-3
       -31}}),map((R)^{{-3},{-3}},(R)^{{-3},{-3},{-3},{-3},{-3}},{{8, 0, 0, -31, 0}, {0, 8, 0, 0, 31}})} );
 ///
 
-///TEST
+-- Shamash: the Shamash construction lifts a free resolution F over R to a
+-- free resolution over R/(ff).  Checks the result is acyclic in positive
+-- degrees (so it is a resolution), and that the Ring and Matrix forms agree.
+TEST///
 S = ZZ/101[x,y,z]
 R = S/ideal"x3,y3"
 M = R^1/ideal(x,y,z)
@@ -5492,7 +5505,7 @@ m = matrix"a,b;b,c"
 betti m
 M0 = coker m
 MF = matrixFactorization(ff,highSyzygy M0)
-BRanks MF=={{2,2}}
+assert(BRanks MF=={{2,2}})
 ///
 
 TEST///
@@ -5503,7 +5516,6 @@ ff = matrix"au,bv"
 R = S/ideal ff
 M0 = R^1/ideal"a,b"
 MF = matrixFactorization(ff,highSyzygy M0)
-toString MF == "{matrix {{0, u, v, 0}, {-a, b, 0, 0}, {0, 0, -a, b}}, matrix {{b, -u, 0, 0, 0}, {a, 0, 0, v, 0}, {0, 0, b, -u, 0}, {0, 0, a, 0, v}}}"
 assert(BRanks MF =={{2,2}, {1,2}})
 ///
 
@@ -5529,7 +5541,6 @@ R = S/ideal ff;
 M0= R^1/ideal"ab"
 use S
 MF = matrixFactorization (ff1, highSyzygy M0)
-BRanks MF
 assert(BRanks MF == {{2, 2}, {1, 2}})
 ///
 
@@ -5586,7 +5597,10 @@ TEST///
      assert(isStablyTrivial id_M == false)
      assert(isStablyTrivial(map(M, cover M, 1))==true)
 ///
-///TEST
+-- complexity of a module and of its matrix factorization, and
+-- makeFiniteResolution: the finite resolution built from the matrix
+-- factorization has the same Betti table as a direct free resolution.
+TEST///
   setRandomSeed 0
   S = ZZ/101[a,b,c,d]
   ff1 = matrix"a3,b3,c3,d3"
@@ -5596,14 +5610,18 @@ TEST///
   assert(complexity M==2)
   mf = matrixFactorization (ff, M)
   assert(complexity mf ==2)
-  BRanks mf
   assert(BRanks mf == {{2, 2}, {1, 2}})
   G = makeFiniteResolution(ff,mf);
   R1 = ring G
-  F = freeResolution prune pushForward(map(R,R1),M);
+  -- LengthLimit is required: a free resolution over a quotient ring need
+  -- not be finite, so freeResolution must be told where to stop.
+  F = freeResolution(prune pushForward(map(R,R1),M), LengthLimit => length G);
   assert(betti F ==  betti G)
 ///
-///TEST
+-- makeT: the CI operators t_1,...,t_c determined by ff, acting on the free
+-- resolution F.  Pins the three operator matrices exactly, catching any
+-- future change in makeT's output.
+TEST///
      S = ZZ/101[x,y,z];
      ff = matrix"x3,y3,z3";
      R = S/ideal ff;
@@ -5619,7 +5637,11 @@ assert( (makeT(ff,F,3)) === {map(R^{{-4},{-4},{-4}},R^{{-4},{-4},{-4},{-4},{-4},
       --------------------------------------------------------------------------------------------------------
       {-1, 0, 0, 1, 0, 0}, {0, 0, -1, 0, 0, -1}})} );     
 ///
-///TEST -- of ExtModule, evenExtModule, oddExtModule, ExtModuleData
+
+-- ExtModule, evenExtModule, oddExtModule, ExtModuleData over a complete
+-- intersection: ranks of the Ext modules.  ExtModule is the total Ext, and
+-- splits as evenExtModule ++ oddExtModule (here ranks 8 = 4 + 4).
+TEST///
   kk = ZZ/101
   S = kk[a,b,c]
   R = S/ideal"a2,b3,c4"
@@ -5737,7 +5759,9 @@ assert(isFreeModule E);
 assert(rank E==1);
 ///
 
-///TEST
+-- OutRing option: evenExtModule and oddExtModule return the Ext module over
+-- the user-supplied ring U, instead of over a default ring.
+TEST///
 R = ZZ/101[a,b,c]/ideal"a3,b3,c3"
 M = R^1/ideal"ab,ac,bc"
 U = ZZ/101[A,B,C]
@@ -5757,18 +5781,301 @@ M = pushForward(q,syzygyModule(3,M0));
 assert(betti (layeredResolution(ff,M))_0 == betti freeResolution(M, LengthLimit => 3))
 ///
 
+-- makeHomotopiesOnHomology returns a pair (H,h): H is the homology of the
+-- complex, h the induced 1-step homotopies.  Type test, plus a property
+-- check that H records the homology of the resolution F (H_0 is nonzero,
+-- and H_1, H_2 vanish since F is a resolution).
 TEST///
 S = ZZ/101[x,y,z]
 ff = matrix {apply(gens S, x->x^3)}
-F = freeResolution (ideal gens S)^2
 R = S/ideal ff
 F = freeResolution(coker vars R, LengthLimit => 3)
-makeHomotopiesOnHomology(vars R, F)
+(H,h) = makeHomotopiesOnHomology(vars R, F)
+assert(instance(H, HashTable) and instance(h, HashTable))
+assert(prune H#0 != 0)
+assert(prune H#1 == 0 and prune H#2 == 0)
 ///
 
 TEST///
 assert(expo(2,2) == {{2, 0}, {1, 1}, {0, 2}})
 assert(expo(2,{2,1}) == {{0, 0}, {1, 0}, {0, 1}, {2, 0}, {1, 1}})
+///
+
+-- The matrix-factorization accessors all read off a higher matrix
+-- factorization MF (Eisenbud-Peeva).  BRanks is tested above; this checks
+-- ARanks, bMaps, dMaps, psiMaps, mfBound, finiteBettiNumbers and
+-- infiniteBettiNumbers, against BRanks and against direct free resolutions.
+TEST///
+kk = ZZ/101
+S = kk[a,b]
+ff = matrix{{a^3,b^3}}
+R = S/ideal ff
+M0 = R^1/ideal"ab"
+M = highSyzygy M0
+MF = matrixFactorization(ff, M)
+B = BRanks MF
+assert(B == {{2,2},{1,2}})
+-- ARanks is the running partial sums of BRanks
+assert(ARanks MF == {{2,2},{3,4}})
+assert((ARanks MF)_0 == B_0)
+assert(all(1..#B-1, i -> (ARanks MF)_i == B_i + (ARanks MF)_(i-1)))
+-- bMaps and dMaps have one map per BRanks entry; psiMaps has one fewer
+assert(#bMaps MF == #B)
+assert(#dMaps MF == #B)
+assert(#psiMaps MF == #B - 1)
+-- bMaps_p is the p-th diagonal block of MF_0, with the ranks recorded in B_p
+assert(apply(#B, p -> {rank target (bMaps MF)_p, rank source (bMaps MF)_p}) == B)
+-- dMaps accumulates: its rank pairs are the ARanks, and the last dMap is
+-- the whole matrix-factorization map MF_0
+assert(apply(#B, p -> {rank target (dMaps MF)_p, rank source (dMaps MF)_p}) == ARanks MF)
+assert(last dMaps MF == MF_0)
+-- mfBound: the conjectural high-syzygy bound, a nonnegative integer
+assert(instance(mfBound M0, ZZ))
+assert(mfBound M0 == 3)
+-- finiteBettiNumbers MF: the Betti numbers of M over the regular ring S
+FS = freeResolution pushForward(map(R,S), M)
+assert(finiteBettiNumbers MF == {3,5,2})
+assert(finiteBettiNumbers MF == apply(1 + length FS, i -> rank FS_i))
+-- infiniteBettiNumbers(MF,len): the Betti numbers of M over the c.i. R
+FR = freeResolution(M, LengthLimit => 6)
+assert(infiniteBettiNumbers(MF,6) == apply(7, i -> rank FR_i))
+///
+
+-- EisenbudShamash builds the Eisenbud-Shamash complex of a resolution F
+-- over R as a complex over R/(ff).  When the entries of ff are a regular
+-- sequence the result is itself a resolution, hence acyclic above degree 0.
+TEST///
+S = ZZ/101[a,b,c]
+R = S/ideal"a3,b3"
+F = freeResolution(coker vars R, LengthLimit => 5)
+ff = matrix"c3"
+GG = EisenbudShamash(ff, F, 4)
+assert(isWellDefined GG)
+scan(length GG - 1, i -> assert(prune HH_(i+1) GG == 0))
+///
+
+-- TateResolution returns a finite window low..high of the doubly infinite
+-- (Tate) resolution of a module over an exterior algebra; it is exact in
+-- the interior of that window.
+TEST///
+E = ZZ/101[a,b,c, SkewCommutative => true]
+M = coker map(E^2, E^{-1}, matrix"ab;bc")
+low = -2
+high = 7
+T = TateResolution(M, low, high)
+assert(isWellDefined T)
+scan(toList(low+1 .. high-1), i -> assert(prune HH_i T == 0))
+///
+
+-- koszulExtension forms the Koszul-extension mapping cone used to build
+-- finite resolutions from a matrix factorization.  This mirrors the first
+-- step of makeFiniteResolution for a codim-2, complexity-2 factorization:
+-- the result is a well-defined complex, acyclic above degree 0.
+TEST///
+kk = ZZ/101
+S = kk[a,b]
+ff = matrix{{a^3,b^3}}
+R = S/ideal ff
+mf = matrixFactorization(ff, highSyzygy(R^1/ideal"ab"))
+assert(complexity mf == 2)
+B = bMaps mf
+psi = psiMaps mf
+A = koszulExtension(complex{B_0}, complex{B_1}, psi_0, ff_{0..0})
+assert(isWellDefined A)
+scan(length A - 1, i -> assert(prune HH_(i+1) A == 0))
+///
+
+-- makeFiniteResolutionCodim2 packages the maps of the finite resolution of
+-- a high-syzygy module from its codim-2 matrix factorization.  The
+-- "resolution" entry is a genuine free resolution: well-defined, acyclic,
+-- and with the Betti numbers of M over the regular ring S.
+TEST///
+kk = ZZ/101
+S = kk[a,b]
+ff = matrix"a4,b4"
+R = S/ideal ff
+M = highSyzygy coker vars R
+mf = matrixFactorization(ff, M)
+G = makeFiniteResolutionCodim2(ff, mf)
+assert(instance(G, HashTable))
+F = G#"resolution"
+assert(isWellDefined F)
+scan(length F - 1, i -> assert(prune HH_(i+1) F == 0))
+assert(betti F == betti freeResolution pushForward(map(R,S), M))
+///
+
+-- makeHomotopies builds a full system of higher homotopies for the entries
+-- of ff on a complex F.  The zero-th homotopies (exponent {0,...,0}) are
+-- exactly the differentials of F.
+TEST///
+S = ZZ/101[a,b]
+F = freeResolution coker vars S
+ff = matrix"a2"
+H = makeHomotopies(ff, F)
+assert(instance(H, HashTable))
+e0 = toList(numcols ff : 0)
+assert(H#{e0,1} == F.dd_1)
+assert(H#{e0,2} == F.dd_2)
+///
+
+-- makeHomotopies1 builds the system of first homotopies for the entries of
+-- ff on a complex F.  Each homotopy s satisfies the homotopy identity
+-- d*s + s*d = f, i.e. multiplication by the corresponding entry of ff.
+TEST///
+S = ZZ/101[a,b]
+F = freeResolution coker vars S
+ff = matrix"a2"
+H = makeHomotopies1(ff, F)
+assert(instance(H, HashTable))
+-- the homotopy identity for the homotopy from F_1 for the entry ff_0
+s1 = H#{0,1}
+s0 = H#{0,0}
+assert(F.dd_2 * s1 + s0 * (S^{-2} ** F.dd_1) == map(F_1, source s1, (S_0)^2 * id_(F_1)))
+///
+
+-- exteriorExtModule returns Ext_S(M,k) as a module over an exterior algebra
+-- with one generator per entry of ff.
+TEST///
+kk = ZZ/101
+S = kk[a,b,c]
+ff = matrix"a4,b4,c4"
+R = S/ideal ff
+p = map(R,S)
+M = coker map(R^2, R^{3:-1}, {{a,b,c},{b,c,a}})
+FF = freeResolution(M, LengthLimit => 6)
+MS = prune pushForward(p, coker FF.dd_6)
+E = exteriorExtModule(ff, MS)
+assert(isSkewCommutative ring E)
+assert(numgens ring E == numcols ff)
+assert(hf(-4..0, E) == {0, 9, 29, 33, 13})
+///
+
+-- freeExteriorSummand returns a map from a free module onto the largest
+-- free summand of a module over an exterior algebra.
+TEST///
+kk = ZZ/101
+E = kk[e,f,g, SkewCommutative => true]
+M = E^1 ++ module ideal vars E ++ E^{-1}
+phi = freeExteriorSummand M
+assert(instance(phi, Matrix))
+assert(target phi === M)
+-- M has exactly two free summands, E^1 and E^{-1}
+assert(rank source phi == 2)
+///
+
+-- BGGL is the left adjoint BGG functor: it sends a module over an exterior
+-- algebra to a linear complex over a polynomial ring S.
+TEST///
+kk = ZZ/101
+E = kk[a,b,c,d, SkewCommutative => true]
+P = E^1/ideal(a*b,c)
+S = kk[x,y,z,w]
+L = BGGL(P, S)
+assert(isWellDefined L)
+assert(betti L === new BettiTally from {(-1,{-1},-1) => 3, (-2,{-2},-2) => 2, (0,{0},0) => 1})
+///
+
+-- extVsCohomology returns the pair (Ext_S(M,k), Tor^S(M,k)) as modules over
+-- an exterior algebra (and prints comparison tables as a side effect).
+TEST///
+kk = ZZ/101
+S = kk[a,b,c]
+ff = matrix"a2,b2,c2"
+R = S/ideal ff
+N = highSyzygy(R^1/ideal(a*b,c))
+ET = extVsCohomology(ff, N)
+assert(instance(ET, Sequence) and #ET == 2)
+assert(instance(ET_0, Module) and instance(ET_1, Module))
+///
+
+-- twoMonomials and sumTwoMonomials are example generators: each tallies the
+-- BRanks sequences arising from pairs of monomials in a complete
+-- intersection.  Both print their findings and return null, so these are
+-- run tests; twoMonomials is also exercised with its Optimism option.
+TEST///
+setRandomSeed 0
+assert(twoMonomials(2,3) === null)
+setRandomSeed 0
+assert(twoMonomials(2,3, Optimism => -1) === null)
+setRandomSeed 0
+assert(sumTwoMonomials(2,3) === null)
+///
+
+-- isLinear: true exactly when every entry of the matrix has degree <= 1.
+TEST///
+S = ZZ/101[a,b,c]
+assert(isLinear vars S)
+assert(isLinear matrix"a,b;b,c")
+assert(not isLinear matrix"a2,b")
+///
+
+-- toArray converts a list (or an integer) to an Array.
+TEST///
+assert(toArray {1,2,3} === [1,2,3])
+assert(instance(toArray {1,2,3}, Array))
+assert(toArray 5 === [5])
+///
+
+-- cosyzygyRes(p,M) returns a (p+1)-step complex whose last differential
+-- presents M; M is the p-th cosyzygy of the module the complex resolves.
+TEST///
+S = ZZ/101[a,b,c]
+R = S/ideal"a3,b3,c3"
+M = module ideal vars R
+F = cosyzygyRes(3, M)
+assert(isWellDefined F)
+assert(length F == 4)
+assert(prune coker F.dd_(length F) == prune M)
+-- the one-argument form defaults to p = 2
+assert(length cosyzygyRes M == 3)
+///
+
+-- stableHom(M,N) is the projection from Hom(M,N) onto the stable Hom
+-- (Hom modulo the maps that factor through a free module).
+TEST///
+S = ZZ/101[a,b,c]
+M = S^1/ideal vars S
+N = S^1/ideal vars S
+p = stableHom(M, N)
+assert(instance(p, Matrix))
+assert(source p == Hom(M,N))
+assert(isSurjective p)
+-- a map out of a free module is stably trivial, so the stable Hom from a
+-- free module is zero
+assert(target stableHom(S^1, N) == 0)
+///
+
+-- isQuasiRegular tests whether the entries of ff form a quasi-regular
+-- sequence on the module E.  It accepts a Matrix, List or Sequence, and
+-- the three forms must agree.
+TEST///
+S = ZZ/101[a,b,c]
+E = S^1/ideal"ab" ++ S^1/ideal vars S
+assert(not isQuasiRegular(matrix"a", E))
+assert(isQuasiRegular(matrix"a+b,c", E))
+assert(isQuasiRegular(matrix"a+b", E))
+assert(not isQuasiRegular(matrix"a+b, a2+b", E))
+assert(isQuasiRegular({a+b,c}, E) == isQuasiRegular(matrix"a+b,c", E))
+assert(isQuasiRegular((a+b,c), E) == isQuasiRegular(matrix"a+b,c", E))
+///
+
+-- Option symbols.  Augmentation (of matrixFactorization): the default true
+-- appends the augmentation map gamma to the output {d,h,gamma}; false
+-- drops it.  Optimism (of highSyzygy): accepted, shifts the syzygy returned.
+-- Layered (of matrixFactorization): the default true is exercised here;
+-- Layered => false currently errors -- a separate, broken algorithm.
+TEST///
+kk = ZZ/101
+S = kk[a,b]
+ff = matrix{{a^3,b^3}}
+R = S/ideal ff
+M0 = R^1/ideal"ab"
+M = highSyzygy M0
+mf = matrixFactorization(ff, M)
+assert(#mf == 3)
+assert(#matrixFactorization(ff, M, Augmentation => false) == 2)
+assert(instance(matrixFactorization(ff, M, Layered => true), List))
+assert(instance(highSyzygy(M0, Optimism => -1), Module))
 ///
 
 ///

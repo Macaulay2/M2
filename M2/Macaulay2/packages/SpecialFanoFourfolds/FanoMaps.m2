@@ -213,6 +213,24 @@ fanoMapDSCFstandard (DoublySpecialCubicFourfold,ZZ,ZZ,ZZ) := o -> (X,d,a,b) -> (
     S.cache#("FanoMapDSCFstandard",T,d,a,b) = mu
 );
 
+startingDegreeFanoMapDSCFstandard = X -> (
+    if not X.cache#?"startingDegreeFanoMapDSCFstandard" then return 2;
+    X.cache#"startingDegreeFanoMapDSCFstandard"
+);
+
+configureStandardFanoMap = method(Options => {Verbose => true});
+configureStandardFanoMap (DoublySpecialCubicFourfold,ZZ) := o -> (X,d) -> (
+    if X.cache#?"startingDegreeFanoMapDSCFstandard" then error "standard Fano map has already been configured";
+    (S,T) := surfaces X;
+    if S.cache#?("FanoMapDSCFstandard",T) then error "cannot configure standard Fano map: the map has already been computed";
+    if d < 2 then error "configureStandardFanoMap: the degree must be at least 2";
+    if o.Verbose then << "-- warning: configureStandardFanoMap is intended for testing only" << endl;
+    if o.Verbose then << "-- marking fourfold as unrecognized to avoid incorrect assumptions" << endl;
+    X.cache#(S,T,"labelDSCF") = "NotRecognized";
+    X.cache#"startingDegreeFanoMapDSCFstandard" = d;
+    if o.Verbose then << "-- standard Fano map configured: starting degree for linear systems set to " << d << endl;
+);
+
 fanoMapDSCFstandard DoublySpecialCubicFourfold := o -> X -> (
     (S,T) := surfaces X;
     if S.cache#?("FanoMapDSCFstandard",T) then return S.cache#("FanoMapDSCFstandard",T);
@@ -226,7 +244,7 @@ fanoMapDSCFstandard DoublySpecialCubicFourfold := o -> X -> (
             <<"-- warning: fanoMap: possible infinite loop. " << X.cache#"quadricFibrationCubicFourfoldInC8"_2 << endl;
         );
         if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then (
-            for d from 2 do (
+            for d from startingDegreeFanoMapDSCFstandard X do (
                 if o.Verbose then << "-- fanoMap: attempting map μ with linear system of degree " << d << "..." << endl << flush;
                 try mu = fanoMapDSCFstandard(X,d,1,d-1,Verify=>true,Verbose=>o.Verbose);
                 if S.cache#("generic fiber verification fano map",T,d,1,d-1) then (

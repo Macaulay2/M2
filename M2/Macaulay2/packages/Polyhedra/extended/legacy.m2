@@ -148,6 +148,12 @@ sublatticeBasis Matrix := M -> (
 --     	     load F
 -- 	     It is not necessary to load Polyhedra before loading the saved session, because if not yet loaded it will
 --     	     load Polyhedra. Also if PPDivisor was loaded when the session has been saved it will also be loaded.
+-- FIXME: saveSession is broken.  The two `scan` calls below run
+-- `toExternalString` on every Matrix- and PolyhedralObject-valued user symbol,
+-- but Cone, Polyhedron and Fan have no `toExternalString` method, so saving a
+-- session that holds any polyhedral object fails with the error
+-- "anonymous convex polyhedron cannot be converted to external string" --
+-- which defeats the stated purpose of this function.
 saveSession = method()
 saveSession String := F -> (
      -- Creating and opening the output file

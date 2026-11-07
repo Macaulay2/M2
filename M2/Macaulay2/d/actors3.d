@@ -502,8 +502,8 @@ subsort(l:int,r:int):Expr := (
 	       sortlist.j = tmp;
 	       i = i+1;
 	       j = j-1));
-     if l+1 < j then subsort(l+1,j);
-     if j+1 < r then subsort(j+1,r);
+     if l+1 < j then when subsort(l+1,j) is e:Error do return Expr(e) else nothing;
+     if j+1 < r then when subsort(j+1,r) is e:Error do return Expr(e) else nothing;
      for k from l+1 to j do sortlist.(k-1) = sortlist.k;
      sortlist.j = pivot;
      nullE);

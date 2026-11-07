@@ -3006,6 +3006,54 @@ doc ///
 
 doc ///
 	Key
+		idealOrlikSolomonAlgebra
+		(idealOrlikSolomonAlgebra, Matroid)
+		[idealOrlikSolomonAlgebra, CoefficientRing]
+		[idealOrlikSolomonAlgebra, Variable]
+	Headline
+		the defining ideal of the Orlik-Solomon algebra
+	Usage
+		idealOrlikSolomonAlgebra M
+	Inputs
+		M:Matroid
+	Outputs
+		:Ideal
+			the defining ideal of the Orlik-Solomon algebra of M
+	Description
+		Text
+			The Orlik-Solomon algebra of a matroid M of rank r is the
+			skew-commutative quotient $A(M) = E/J(M)$, where $E$ is the
+			exterior algebra on generators $e_x$ for $x \in M$, and
+			$J(M)$ is the ideal generated, for each circuit
+			$C = \{x_0, \ldots, x_k\}$ of M, by
+			$\sum_{i=0}^k (-1)^i e_{x_0} \cdots \widehat{e_{x_i}} \cdots e_{x_k}$.
+			This method returns the ideal $J(M)$.
+
+			By the Orlik-Solomon theorem, the Hilbert series of $A(M)$
+			is $\sum_{i=0}^r |w_i(M)| T^i$, where $w_i(M)$ are the
+			(unsigned) Whitney numbers of the first kind of M — i.e.,
+			the absolute values of the coefficients of the
+			characteristic polynomial.
+		Example
+			M = matroid completeGraph 3
+			I = idealOrlikSolomonAlgebra M
+			A = (ring I)/I;
+			numerator hilbertSeries(A, Order => rank M + 1)
+			characteristicPolynomial M
+		Text
+			The coefficient ring of the ambient exterior algebra can be
+			set with the @TT "CoefficientRing"@ option, and the variable
+			name with the @TT "Variable"@ option.
+		Example
+			I = idealOrlikSolomonAlgebra(matroid completeGraph 4, CoefficientRing => ZZ/5, Variable => "f")
+			coefficientRing ring I
+	SeeAlso
+		idealChowRing
+		characteristicPolynomial
+///
+
+doc ///
+	Key
 		"Working with Chow rings of matroids"
 	Description
 		Text

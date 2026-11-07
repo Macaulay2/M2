@@ -1,9 +1,9 @@
-#include "FreeAlgebra.hpp"
+#include "NCAlgebras/FreeAlgebra.hpp"
 
 #include "NCAlgebras/FreeMonoid.hpp"  // for FreeMonoid
 #include "NCAlgebras/Word.hpp"        // for Word
 #include "Polynomial.hpp"             // for Poly, Polynomial<>::const_iterator
-#include "ZZ.hpp"                     // for RingZZ
+#include "rings/ZZ.hpp"                     // for RingZZ
 #include "buffer.hpp"                 // for buffer
 #include "error.h"                    // for ERROR
 #include "monoid.hpp"                 // for Monoid

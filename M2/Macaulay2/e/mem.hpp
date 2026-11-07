@@ -1,6 +1,6 @@
 // (c) 1995  Michael E. Stillman
-#ifndef _mem_hh_
-#define _mem_hh_
+#ifndef M2_MEM_HH_
+#define M2_MEM_HH_
 
 #include <cassert>
 #include "newdelete.hpp"

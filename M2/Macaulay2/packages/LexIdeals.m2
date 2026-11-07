@@ -66,7 +66,7 @@ isHF = method(TypicalValue=>Boolean)
 isHF List := (hilb) -> (
      result:=true;
      if not all(hilb,i->instance(i,ZZ)) then result=false else(
-	  if hilb#0 != 1 then result=false else (
+	  if #hilb == 0 or hilb#0 != 1 then result=false else (
 	       leng:=#hilb;
 	       degr:=1;
 	       while result==true and degr < leng-1 do (
@@ -129,6 +129,7 @@ lexIdeal = method(TypicalValue=>Ideal)
 lexIdeal(PolynomialRing,List) := (R,hilb) -> (
      leng:=#hilb;
      numvars:=dim R;
+     if leng == 0 then return null; --an empty list is not a Hilbert function
      hilb=append(hilb,0); --takes care of powers of maximal ideal
      --check that hilb is a valid HF
      if (hilb#1 > numvars) or not (isHF hilb) then return null;
@@ -1463,6 +1464,184 @@ assert(multBounds(ideal(a^3,b^3,c^5))==true)
 assert(multUpperBound(ideal(a^2,a*b))==true)
 assert(multLowerBound(ideal(a^2,a*b,b^2))==true)
 assert(multLowerBound(ideal(a^2,a*b))==false)
+///
+
+------------------------------------------------------------
+-- Tests added in the 2026 test-audit pass: boundary cases,
+-- stress tests, and mathematical consistency cross-checks for
+-- the exported functions, plus direct coverage of the
+-- previously untested PrintIdeals option.
+------------------------------------------------------------
+
+-- macaulayRep / macaulayBound / macaulayLowerOperator: structural properties.
+-- macaulayRep(a,d) writes a as a sum of binomials binomial(b_i,i) whose bottom
+-- indices i strictly decrease and never exceed d.  Macaulay's bound is sharp on
+-- a polynomial ring, whose Hilbert function grows exactly at the bound.
+TEST///
+for ad in {(1,1),(8,2),(100,4),(35,3),(210,5),(5,6),(1000,7)} do (
+    (a,d) := ad;
+    rep := macaulayRep(a,d);
+    assert(sum apply(rep, p -> binomial(p#0,p#1)) == a);
+    bots := apply(rep, p -> p#1);
+    assert(bots == rsort bots and #bots == #unique bots);
+    assert(all(bots, j -> j <= d));
+    );
+S=ZZ/101[w,x,y,z];
+for d from 1 to 6 do
+    assert(macaulayBound(hilbertFunction(d,S),d) == hilbertFunction(d+1,S));
+-- zero is the empty sum of binomials
+assert(macaulayRep(0,4) == {})
+assert(macaulayBound(0,4) == 0)
+assert(macaulayLowerOperator(0,4) == 0)
+///
+
+-- isHF: boundary behavior.  {1} is the Hilbert function of a field; the Hilbert
+-- function of a polynomial ring is an O-sequence; a list that is empty, does
+-- not begin with 1, or contains a non-integer, is not a Hilbert function.
+TEST///
+assert(isHF {} == false)
+assert(isHF {1} == true)
+assert(isHF {0} == false)
+assert(isHF {5} == false)
+assert(isHF {1,3,6,10,15,21} == true)
+assert(isHF {1,3/2,6} == false)
+assert(isHF {1,3,6} == true)   -- maximal growth is allowed
+assert(isHF {1,3,7} == false)  -- one more than maximal growth is not
+-- isHF accepts exactly the lists that occur as a Hilbert function
+S=ZZ/101[a..d];
+assert(isHF hilbertFunct ideal(a^3,b^4,c^2,a*b*d))
+assert(isHF hilbertFunct ideal(a*b,b*c,c*d))
+///
+
+-- hilbertFunct: a non-Artinian quotient is computed through degree 20 by
+-- default, MaxDegree overrides the cutoff, and the result is an O-sequence.
+TEST///
+S=ZZ/101[a..d];
+assert(# hilbertFunct ideal(0_S) == 21)
+assert(hilbertFunct(ideal(0_S),MaxDegree=>5) == {1,4,10,20,35,56})
+assert(hilbertFunct ideal(a^2,b^2,c^2,d^2) == {1,4,6,4,1})
+assert(hilbertFunct(ideal(a^2,b^2,c^2,d^2),MaxDegree=>2) == {1,4,6})
+assert(isHF hilbertFunct ideal(a^3,b^3,a*c,b*d))
+///
+
+-- isCM: complete intersections and Artinian quotients are Cohen-Macaulay, and
+-- the unit ideal is treated as Cohen-Macaulay; isCM requires a polynomial ring
+-- and signals an error for an ideal in a quotient ring.
+TEST///
+S=ZZ/101[a..d];
+assert(isCM ideal(a^2,b^3,c^4,d^5) == true)
+assert(isCM ideal(a^2,b^2,c^2,d^2,a*b*c*d) == true)
+assert(isCM ideal(1_S) == true)
+assert(isCM ideal(a*b,a*c) == false)
+Q=S/ideal(a^2);
+assert(try (isCM ideal(Q_0*Q_1); false) else true)
+///
+
+-- isPurePower: a pure power is a nonzero power of a single variable.  Neither
+-- 0 nor 1 is a pure power, and a difference of two monomials is not one.
+TEST///
+R=ZZ/101[a..c];
+assert(isPurePower(a^7) == true)
+assert(isPurePower(c) == true)
+assert(isPurePower(a*b^4) == false)
+assert(isPurePower(a^3-b^3) == false)
+assert(isPurePower(0_R) == false)
+assert(isPurePower(1_R) == false)
+///
+
+-- lexIdeal: for an O-sequence the lex ideal exists, has that Hilbert function,
+-- and is a lex ideal; lexIdeal(I) returns a lex ideal with the Hilbert function
+-- of I; an invalid O-sequence has no lex ideal.
+TEST///
+R=ZZ/32003[a..c];
+for h in {{1,3,5,3,1},{1,3,6,7,5,3},{1,3,4,3,1},{1,2,3,4,5}} do (
+    L := lexIdeal(R,h);
+    assert(L =!= null and hilbertFunct L == h and isLexIdeal L);
+    );
+for I in {ideal(a^2,b^2,c^2),ideal(a^3,b^3,c^3,a*b*c),ideal(a^2,a*b,b^3,c^4)} do (
+    L := lexIdeal I;
+    assert(isLexIdeal L and hilbertFunct L == hilbertFunct I);
+    );
+assert(lexIdeal(R,{}) === null)              -- an empty list is not a Hilbert function
+assert(lexIdeal(R,{1,3,7}) === null)         -- not an O-sequence
+assert(lexIdeal ideal(0_R) == ideal(0_R))
+assert(lexIdeal(R,{1}) == ideal vars R)
+///
+
+-- isLexIdeal: lex ideals are recognized regardless of the chosen generating
+-- set; powers of the maximal ideal are lex ideals; non-lex monomial ideals are
+-- rejected.
+TEST///
+R=ZZ/32003[a..c];
+assert(isLexIdeal lexIdeal(R,{1,3,6,4,2}) == true)
+assert(isLexIdeal (ideal vars R)^3 == true)
+assert(isLexIdeal ideal(0_R) == true)
+assert(isLexIdeal ideal(1_R) == true)
+assert(isLexIdeal ideal(b^2) == false)
+assert(isLexIdeal ideal(a^2,b^2) == false)
+-- a non-monomial generating set of a lex ideal is still recognized
+assert(isLexIdeal ideal(a^2,a*b,a^2+a*b) == true)
+///
+
+-- LPP / isLPP: LPP produces an LPP ideal with the requested Hilbert function
+-- and power sequence, and isLPP recognizes it.  isLPP rejects non-Artinian
+-- ideals and ideals whose pure-power exponents are not weakly increasing.
+TEST///
+R=ZZ/32003[a..c];
+for hp in {({1,3,6,5,3},{3,3,4}),({1,3,4,2,1},{2,3,5}),({1,3,5,4,2},{2,3,4})} do (
+    (h,p) := hp;
+    L := LPP(R,h,p);
+    assert(L =!= null and isLPP L and hilbertFunct L == h);
+    );
+assert(LPP(R,{1,3,4,2,1},{2,4,3}) === null)  -- powers not weakly increasing
+assert(LPP(R,{1,3,4,2,1},{2,3}) === null)    -- wrong number of powers
+assert(isLPP ideal(a^2,b^3,c^4) == true)     -- a complete intersection
+assert(isLPP ideal(a^3,b^4) == false)        -- not Artinian
+assert(isLPP ideal(a^3,b^4,c^3) == false)    -- powers not weakly increasing
+///
+
+-- generateLPPs: every ideal returned is an LPP ideal with the requested Hilbert
+-- function, and its power sequence is weakly increasing.  The PrintIdeals
+-- option adds only screen output and does not change the returned value.
+TEST///
+R=ZZ/101[a..c];
+for h in {{1,3,4,3,2},{1,3,6,7,3},{1,3,4,2}} do (
+    g := generateLPPs(R,h);
+    assert(all(g, pi -> isLPP pi#1));
+    assert(all(g, pi -> hilbertFunct(pi#1) == h));
+    assert(all(g, pi -> pi#0 == sort pi#0));
+    );
+assert(generateLPPs(R,{1,3,6,11}) == {})     -- no LPP ideal exists
+-- PrintIdeals => true changes only the screen output
+h={1,3,4,3,2};
+assert(generateLPPs(R,h,PrintIdeals=>true) == generateLPPs(R,h))
+assert(generateLPPs(R,h,PrintIdeals=>true) == generateLPPs(R,h,PrintIdeals=>false))
+///
+
+-- the multiplicity-conjecture routines.  The Herzog-Huneke-Srinivasan bounds
+-- are theorems: for a Cohen-Macaulay ideal the multiplicity lies between the
+-- lower and upper bounds, and the upper bound holds for every homogeneous
+-- ideal.  cancelAll returns one shift list per homological step.
+TEST///
+R=ZZ/101[a..c];
+for I in {ideal(a^2,b^3,c^4),ideal(a^3,b^3,c^3),ideal(a^2,b^2,c^2,a*b*c),
+          ideal(a^4,b^4,c^4,a^2*b^2)} do (
+    assert(isCM I);
+    assert(multUpperBound I);
+    assert(multLowerBound I);
+    assert(multBounds I);
+    );
+-- the upper bound holds with no Cohen-Macaulay hypothesis
+for I in {ideal(a^2,a*b),ideal(a^2*b,a*b^2),ideal(a*b,a*c,b*c)} do
+    assert(multUpperBound I);
+-- multUpperHF: a sufficient condition for the upper bound from a Hilbert function
+assert(multUpperHF(R,{1,3,3,1}) == true)
+assert(multUpperHF(R,{1,3,6,7,5,3}) == true)
+assert(multUpperHF(R,{1,3,4,4,3}) == false)
+-- cancelAll returns one list of shifts for each step of the resolution
+assert(# cancelAll ideal(a^2,b^3,c^4) == pdim coker gens ideal(a^2,b^3,c^4))
+S=ZZ/101[a..d];
+assert(multBounds ideal(a^2,b^3,c^4,d^5))
 ///
 
 end

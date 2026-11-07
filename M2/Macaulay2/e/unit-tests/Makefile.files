@@ -3,7 +3,8 @@ SHARED_UNITTEST_CCFILES := \
     M2-cpp-replacement \
     basics-test \
     fromStream \
-    util-polyring-creation
+    util-polyring-creation \
+    RingElem
 
 UNITTEST_CCFILES := \
     $(SHARED_UNITTEST_CCFILES) \
@@ -23,18 +24,23 @@ UNITTEST_CCFILES := \
     RingQQTest \
     RingTowerTest \
     DMatZZpTest \
+    SMatZZpTest \
     ResTest \
     SubsetTest \
     PolyRingTest \
     NewF4Test \
     MonoidTest \
     MatrixIOTest \
+    WeylAlgebraTest \
+    QuotientRingTest \
     RingRRRTest \
-    RingCCCTest
+    RingCCCTest \
+    OverflowTest \
+    BRP-test \
+    RingCCCTest \
+    LatticePointsTest
 
-#    WeylAlgebraTest \ # TODO: add in this file
-
-#    ARingGFTest
+#    ARingGFTest \
 
 UNITTEST_TARGET := testMain
 

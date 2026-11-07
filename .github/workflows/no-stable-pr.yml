@@ -1,0 +1,15 @@
+name: Block PRs targeting stable
+
+on:
+  pull_request:
+    branches: [ stable ]
+
+jobs:
+  block:
+    if: github.repository == 'Macaulay2/M2'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail
+        run: |
+          echo "::error::Pull requests targeting the 'stable' branch are not accepted. Please target 'development' instead."
+          exit 1

@@ -1,5 +1,9 @@
 name: Build distribution tarballs
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'release-*'
 
 jobs:
   make-dist:

@@ -19,7 +19,7 @@ document { Key => extend, Headline => "extend an object",    methodstr,
 
 document { Key => complete,     methodstr, SeeAlso => { "OldChainComplexes::complete(ChainComplex)" } }
 document { Key => minimize,     methodstr, SeeAlso => { "Complexes::minimize(Complex)" } }
-document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
+document { Key => decompose,    Headline => "decompose an object", methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
 document { Key => chi,          methodstr, SeeAlso => {
 	"Schubert2::chi(AbstractSheaf)", "NormalToricVarieties::chi(CoherentSheaf)" } }
@@ -29,11 +29,11 @@ document { Key => euler,        methodstr, SeeAlso => {
 	"Schubert2::euler(AbstractVariety)", "Varieties::Varieties" } }
 document { Key => eulers,       methodstr }
 document { Key => genera,       methodstr }
-document { Key => genus,        methodstr }
-document { Key => isExact,      methodstr, SeeAlso => {
+document { Key => genus,        Headline => "genus of an object", methodstr }
+document { Key => isExact,      Headline => "whether an object is exact", methodstr, SeeAlso => {
 	"ChainComplexExtras :: isExact(ChainComplex)",
 	"Complexes :: isExact(Complex)" } }
-document { Key => isSmooth,     methodstr, SeeAlso => {
+document { Key => isSmooth,     Headline => "whether an object is smooth", methodstr, SeeAlso => {
 	"WeilDivisors::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
 	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",
 	"Polyhedra::isSmooth(Cone)", "NormalToricVarieties::isSmooth(NormalToricVariety)",
@@ -42,12 +42,12 @@ document { Key => isVeryAmple,  methodstr, SeeAlso => {
 	"WeilDivisors::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
 	"PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)",
 	"NormalToricVarieties::isVeryAmple(ToricDivisor)" } }
-document { Key => isNormal,     methodstr, SeeAlso => {
+document { Key => isNormal,     Headline => "whether an object is normal", methodstr, SeeAlso => {
 	"Polyhedra::isNormal(Polyhedron)",
 	"IntegralClosure::isNormal(Ring)",
 	"AssociativeAlgebras::isNormal(RingElement)",
 	} }
-document { Key => normalCone,   methodstr, SeeAlso => {
+document { Key => normalCone,   Headline => "normal cone of an object", methodstr, SeeAlso => {
 	"Polyhedra::normalCone(Polyhedron,Polyhedron)",
 	"ReesAlgebra::normalCone(Ideal)",
     } }

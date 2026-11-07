@@ -7,13 +7,13 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_TRIPLE_HPP
-#define BIBASIS_TRIPLE_HPP
+#ifndef M2_BIBASIS_TRIPLE_HPP
+#define M2_BIBASIS_TRIPLE_HPP
 
 #include <set>
 #include <string>
-#include "allocator.hpp"
-#include "polynom.hpp"
+#include "bibasis/allocator.hpp"
+#include "bibasis/polynom.hpp"
 #include "error.h"
 
 namespace BIBasis

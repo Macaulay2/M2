@@ -767,7 +767,13 @@ E=QQ[e_1..e_4,SkewCommutative=>true]
 I=ideal {e_1*e_2,e_1*e_3,e_2*e_3}
 J=ideal(join(flatten entries gens I,{e_1*e_2*e_3}))
 assert(I==J)
-minimalBettiNumbers(I, LengthLimit => 5) == minimalBettiNumbers(J, LengthLimit => 5)
+assert(minimalBettiNumbers(I, LengthLimit => 5) == minimalBettiNumbers(J, LengthLimit => 5))
+-- additionally validate against hand-computed Betti ranks of E/I.
+bt = minimalBettiNumbers(I, LengthLimit => 3)
+assert(bt#(0,{0},0) == 1)
+assert(bt#(1,{2},2) == 3)
+assert(bt#(2,{3},3) == 8)
+assert(bt#(3,{4},4) == 15)
 ///
 
 ----------------------------
@@ -778,6 +784,49 @@ E=QQ[e_1..e_5,SkewCommutative=>true]
 I=ideal {e_1*e_2+e_3*e_4*e_5,e_1*e_3+e_4*e_5,e_2*e_3*e_4}
 J=ideal {e_1*e_2,e_1*e_3,e_1*e_4*e_5,e_2*e_3*e_4,e_2*e_4*e_5,e_3*e_4*e_5}
 assert(initialIdeal I==J)
+///
+
+----------------------------
+-- Test Shift option: round-trip and asymmetry
+----------------------------
+TEST ///
+-- The Shift option of macaulayExpansion produces a strictly different
+-- expansion (it raises each down-index by 1) on the same input;
+-- solveMacaulayExpansion inverts the unshifted expansion exactly.
+assert(macaulayExpansion(8,4,Shift=>true) =!= macaulayExpansion(8,4,Shift=>false))
+assert(solveMacaulayExpansion macaulayExpansion(8,4) == 8)
+assert(solveMacaulayExpansion macaulayExpansion(15,3) == 15)
+///
+
+----------------------------
+-- Test minimalBettiNumbers against the Cartan complex
+----------------------------
+TEST ///
+-- The minimal free resolution of the residue field over an exterior algebra
+-- on n variables is the Cartan complex, with Betti numbers
+-- beta_i = binomial(n+i-1, i).  For n = 2 these are 1, 2, 3, 4, 5, ...
+E = QQ[a,b, SkewCommutative=>true];
+bt = minimalBettiNumbers(ideal(a,b), LengthLimit=>4);
+assert(bt#(0,{0},0) == 1);
+assert(bt#(1,{1},1) == 2);
+assert(bt#(2,{2},2) == 3);
+assert(bt#(3,{3},3) == 4);
+assert(bt#(4,{4},4) == 5);
+///
+
+----------------------------
+-- Test closure-operator idempotence and the Hilbert-sequence round-trip
+----------------------------
+TEST ///
+-- lexIdeal, stableIdeal, stronglyStableIdeal are closure operators on the
+-- corresponding classes: their outputs satisfy the matching predicate.
+-- hilbertSequence of an ideal is itself an admissible Hilbert sequence.
+E = QQ[e_1..e_4, SkewCommutative=>true];
+I = ideal {e_1*e_2, e_2*e_3};
+assert(isLexIdeal lexIdeal I);
+assert(isStableIdeal stableIdeal I);
+assert(isStronglyStableIdeal stronglyStableIdeal I);
+assert(isHilbertSequence(hilbertSequence I, E));
 ///
 
 end

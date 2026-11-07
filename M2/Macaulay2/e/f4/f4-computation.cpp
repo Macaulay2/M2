@@ -8,16 +8,16 @@
 #include "f4/f4-types.hpp"         // for gb_array, gbelem
 #include "f4/f4.hpp"               // for F4GB
 #include "f4/moninfo.hpp"          // for MonomialInfo
-#include "matrix-con.hpp"          // for MatrixConstructor
-#include "matrix.hpp"              // for Matrix
+#include "matrices/matrix-con.hpp"          // for MatrixConstructor
+#include "matrices/matrix.hpp"              // for Matrix
 #include "mem.hpp"                 // for stash
 #include "monoid.hpp"              // for Monoid
-#include "polyring.hpp"            // for PolynomialRing
-#include "ring.hpp"                // for Ring
-#include "ringelem.hpp"            // for vec
+#include "rings/polyring.hpp"            // for PolynomialRing
+#include "rings/ring.hpp"                // for Ring
+#include "rings/ringelem.hpp"            // for vec
 #include "text-io.hpp"             // for emit
 #include "util.hpp"                // for M2_arrayint_to_stdvector
-#include "VectorArithmetic.hpp"    // for VectorArithmetic, ElementArray
+#include "basic-rings/vector-arithmetic.hpp"    // for VectorArithmetic, ElementArray
 
 class Computation;
 class RingElement;

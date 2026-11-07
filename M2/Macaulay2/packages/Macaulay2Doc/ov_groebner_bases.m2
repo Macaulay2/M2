@@ -5,6 +5,7 @@
 
 document {
      Key => "Gröbner bases",
+     Headline => "an overview of Gröbner basis computations",
      "A Gröbner basis is a specific generating set for an ideal or submodule, often
      used to compute other information, such as numerical invariants, operations such as
      intersections and ideal quotients, syzygies, etc.  In Macaulay2, Gröbner bases
@@ -13,6 +14,15 @@ document {
      PARA{},
      "See ", TO GroebnerBasis, " for additional common operations and a comprehensive list of all routines
      in Macaulay2 which either take Gröbner bases as arguments, or return one.",
+     PARA{},
+     "Common Gröbner-basis tasks are routed as follows.",
+     UL {
+	  {"To compute a Gröbner basis and extract its generators, use ", TO gb, " and ", TO generators, "."},
+	  {"To inspect leading terms or coefficients, use ", TO leadTerm, ", ", TO leadMonomial, ", and ", TO leadCoefficient, "."},
+	  {"To reduce modulo an ideal or test normal forms, see ", TO "normal forms", " and ", TO (symbol %, RingElement, Ideal), "."},
+	  {"To eliminate variables or find implicit equations, see ", TO "elimination of variables", ", ", TO "Elimination::eliminate", ", ", TO selectInSubring, ", and ", TO (kernel, RingMap), "."},
+	  {"To control a slow or partial computation, see ", TO "fine control of a Groebner basis computation", ", ", TO gbSnapshot, ", ", TO "gbTrace", ", and ", TO forceGB, "."}
+	  },
      PARA{},
      "In Macaulay2, Gröbner bases may be computed for ideals and submodules over the
      following rings:",
@@ -117,6 +127,12 @@ document {
 
 document {
      Key => "normal forms",
+     Headline => "compute normal forms with Gröbner bases",
+     "Use normal forms when you want to reduce an element modulo an ideal,
+     compare two expressions modulo an ideal, or test membership by checking
+     whether the remainder is zero.  In Macaulay2 the operator ", TO (symbol %, RingElement, Ideal),
+     " computes this remainder using a Gröbner basis.",
+     PARA{},
      TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field k,
 	and let $I \subset{} R$ be an ideal. Let $\{g_1, ..., g_t\}$ be a Gröbner
 	basis for $I$. For any $f \in{} R$, there is a unique `remainder' $r \in{} R$ such
@@ -141,6 +157,13 @@ document {
 -- needsPackage "Elimination"
 document {
      Key => "elimination of variables",
+     Headline => "eliminate variables with Gröbner bases",
+     "Use elimination when you want equations involving only selected variables,
+     for example to eliminate parameters from a parametrization.  The main
+     approaches are to use an elimination monomial order with ", TO selectInSubring,
+     ", call ", TO "Elimination::eliminate", ", or construct a ring map and
+     compute its ", TO (kernel, RingMap), ".",
+     PARA{},
      TEX "Let's consider the problem of finding the polynomial relation
      of the three polynomials $x = s^3+st+1$, $y = t^3+3t^2+t$, and $z = st^3$.
      The first method we use is to compute a Gröbner basis using an elimination
@@ -223,6 +246,10 @@ document {
 	will then describe Gröbner bases of submodules, and over more general
 	rings.",
 	PARA{},
+     "For computation, use ", TO gb, "; for the basis elements, use ", TO generators,
+     " on the resulting Gröbner basis.  Normal forms and elimination are common
+     applications of the same computation.",
+     PARA{},
      TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field $k$,
 	and let $I \subset R$ be an ideal.  A {\it monomial order}
 	on $R$ is a total order, $>$,  on the monomials of $R$, which satisfies two
@@ -266,8 +293,10 @@ document {
 
 document {
      Key => "computing Groebner bases",
-	"Gröbner bases are computed with the ", TT "gb", " command; see ",
-	TO "gb", ". It returns an object of class ", TT "GroebnerBasis", ".",
+	"Use this page when you want to run a Gröbner-basis computation directly,
+	extract the computed basis, or stop after a partial computation.  Gröbner
+	bases are computed with the ", TT "gb", " command; see ", TO "gb",
+	". It returns an object of class ", TT "GroebnerBasis", ".",
 	EXAMPLE {
 	  "R = ZZ/1277[x,y];",
     	  "I = ideal(x^3 - 2*x*y, x^2*y - 2*y^2 + x);",
@@ -464,8 +493,13 @@ document {
 
 document {
      Key => "fine control of a Groebner basis computation",
-     "Sometimes a Gröbner basis computation doesn't finish quickly enough.  If so
-     then this section might be of use. THIS PAGE IS UNDER CONSTRUCTION.",
+     "Use this page when a Gröbner basis computation is too slow, too large,
+     or needs to be inspected before it finishes.  The main controls are the
+     options ", TO "DegreeLimit", ", ", TO "PairLimit", ", ",
+     TO "BasisElementLimit", ", ", TO "CodimensionLimit", ", and ",
+     TO "SubringLimit", "; the inspection tools ", TO gbSnapshot, " and ",
+     TO "gbTrace", "; and ", TO forceGB, " for creating a Gröbner basis object
+     from data already known to be a basis.",
 
 	  SUBSECTION "Partially computed Gröbner bases",
 	       "Suppose that you have computed part of a Gröbner basis.  For

@@ -1,5 +1,5 @@
-#ifndef _monomial_ordering_h_
-#  define _monomial_ordering_h_
+#ifndef M2_INTERFACE_MONOMIAL_ORDERING_H_
+#define M2_INTERFACE_MONOMIAL_ORDERING_H_
 
 #  include "engine-includes.hpp"
 

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Macaulay2: Digraph Visualization</title>
-    <link href="css/common.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet" />
 
     <script>
       //global variables
@@ -11,7 +11,7 @@
       tikzGenerated = false;
       curEdit = false;
       curHighlight = false;
-  	  curView = "2d";
+      curView = "2d";
       menuOpen = true;
       dataData = visArray;
       labelData = visLabels;
@@ -24,41 +24,66 @@
   </head>
 
   <body>
-
-        <div id="side">
-          <h3>&#8202;&#8202;Menu</h3>
-          <div class="list-group" id="menuList">
-            <div class="list-group-item" id="sliderDiv"><div style="height:25px;">Force variables</div>
-            <span style="display:inline-block; width:60px;">&#8202; Charge:</span><div class="noUi-extended" id="charge-slider" style="vertical-align:middle;"></div><br>
-            <span style="display:inline-block; width:60px;">&#8202; Links:</span><div class="noUi-extended" id="linkdist-slider" style="vertical-align:middle;"></div>
-            </div>
-            <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
-            <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
-            <a id="highlightToggle" href="#" class="list-group-item">Highlight neighbors</a>
-            <a id="reset" href="#" class="list-group-item">Reset nodes</a>
-            <a id="forceToggle" href="#" class="list-group-item">Turn off force</a>
-            <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
-              
-              <!-- <div id="tikzHolder" class="list-group-item"><input id="tikzTextBox" value="" size="15" style="vertical-align:middle;" readonly><button id="copyButton" style="vertical-align:middle;" data-clipboard-target="#tikzTextBox" type="button"><img src="images/32px-Octicons-clippy.svg" alt="Copy to clipboard" style="width:19px;height:19px;"></button></div> -->
-            
-            <a href="#collapse1" data-bs-toggle="collapse" class="list-group-item">Boolean tests &#9662;</a>
-                <div id="collapse1" class="panel-collapse collapse">
-                    <a id="hasEulerianTrail" href="#" class="list-group-item"> &nbsp;&nbsp; hasEulerianTrail</a>
-                    <a id="isEulerian" href="#" class="list-group-item"> &nbsp;&nbsp; isEulerian</a>
-                    <a id="isStronglyConnected" href="#" class="list-group-item"> &nbsp;&nbsp; isStronglyConnected</a>
-                    <a id="isWeaklyConnected" href="#" class="list-group-item"> &nbsp;&nbsp; isWeaklyConnected</a>
-                </div>
-             <a id="endSession" href="#" class="list-group-item">End session</a>            
-          </div>
+    <div id="side">
+      <h3>&#8202;&#8202;Menu</h3>
+      <div class="list-group" id="menuList">
+        <div class="list-group-item" id="sliderDiv">
+          <div style="height: 25px">Force variables</div>
+          <span style="display: inline-block; width: 60px"
+            >&#8202; Charge:</span
+          >
+          <div
+            class="noUi-extended"
+            id="charge-slider"
+            style="vertical-align: middle"
+          ></div>
+          <br />
+          <span style="display: inline-block; width: 60px">&#8202; Links:</span>
+          <div
+            class="noUi-extended"
+            id="linkdist-slider"
+            style="vertical-align: middle"
+          ></div>
         </div>
-  
-  <div class="container">
-    <div id="canvasElement2d"></div>
-  </div>
+        <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
+        <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
+        <a id="highlightToggle" href="#" class="list-group-item"
+          >Highlight neighbors</a
+        >
+        <a id="reset" href="#" class="list-group-item">Reset nodes</a>
+        <a id="forceToggle" href="#" class="list-group-item">Turn off force</a>
+        <a id="exportTikz" href="#" class="list-group-item"
+          >Generate TikZ code</a
+        >
 
-  <script src="js/visCommon.js"></script>
-  <script src="js/visDigraph2d.js"></script>
+        <!-- <div id="tikzHolder" class="list-group-item"><input id="tikzTextBox" value="" size="15" style="vertical-align:middle;" readonly><button id="copyButton" style="vertical-align:middle;" data-clipboard-target="#tikzTextBox" type="button"><img src="images/32px-Octicons-clippy.svg" alt="Copy to clipboard" style="width:19px;height:19px;"></button></div> -->
+
+        <a href="#collapse1" data-bs-toggle="collapse" class="list-group-item"
+          >Boolean tests &#9662;</a
+        >
+        <div id="collapse1" class="panel-collapse collapse">
+          <a id="hasEulerianTrail" href="#" class="list-group-item">
+            &nbsp;&nbsp; hasEulerianTrail</a
+          >
+          <a id="isEulerian" href="#" class="list-group-item">
+            &nbsp;&nbsp; isEulerian</a
+          >
+          <a id="isStronglyConnected" href="#" class="list-group-item">
+            &nbsp;&nbsp; isStronglyConnected</a
+          >
+          <a id="isWeaklyConnected" href="#" class="list-group-item">
+            &nbsp;&nbsp; isWeaklyConnected</a
+          >
+        </div>
+        <a id="endSession" href="#" class="list-group-item">End session</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="canvasElement2d"></div>
+    </div>
+
+    <script src="js/visCommon.js"></script>
+    <script src="js/visDigraph2d.js"></script>
   </body>
-
-
 </html>

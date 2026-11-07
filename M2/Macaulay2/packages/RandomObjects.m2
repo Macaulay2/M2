@@ -318,6 +318,13 @@ doc ///
 --    :Boolean
 -- ///
 
+-- randomObjectTemplate
+TEST ///
+t = randomObjectTemplate("foo")
+assert instance(t, String);
+///
+
+
 end
 
 restart;

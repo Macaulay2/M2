@@ -74,3 +74,38 @@ assert Equation(toJSON HREF("foo.html", "foo"),
 -- control characters
 x = ascii(0..31) | "\\\""
 assert Equation(fromJSON toJSON x, x)
+
+-- json (alias for toJSON): the alias-by-assignment was exported but no
+-- test previously exercised it. Pin agreement on representative shapes.
+assert Equation(json 1, "1")
+assert Equation(json "Hello, world!", "\"Hello, world!\"")
+assert Equation(json {1, 2, 3}, "[1, 2, 3]")
+assert Equation(json true, "true")
+assert Equation(json null, "null")
+assert Equation(json(hashTable{"a" => 1, "b" => 2}, Sort => true),
+    "{\"a\": 1, \"b\": 2}")
+-- json and toJSON must agree on every input.
+assert all({1, 3.14, "foo", true, false, null, {1,2}, hashTable{"k" => 1}},
+    y -> json y === toJSON y)
+
+-- IndentLevel option (previously exported but never set in a test).
+-- It shifts the starting indent of the pretty-printed output. With
+-- Indent set, IndentLevel = 1 prefixes every line with the indent step.
+assert Equation(toJSON({1, 2, 3}, Indent => 2, IndentLevel => 1), ///[
+    1,
+    2,
+    3
+  ]///)
+-- Without Indent, IndentLevel has no observable effect.
+assert Equation(toJSON({1, 2, 3}, IndentLevel => 3), "[1, 2, 3]")
+
+-- Round-trip property: fromJSON . toJSON should be the identity on
+-- representable values. Previously only the control-chars case at
+-- line 76 above tested this.
+for v in {0, -1, 1, 42, 3.14, "string with spaces", true, false, null,
+          {1, 2, 3}, {}, {{1,2},{3,4}}} do
+    assert(fromJSON toJSON v === v)
+-- HashTables also round-trip (up to ordering -- compare via pairs sets).
+H = hashTable{"a" => 1, "b" => "two", "c" => {3, 4}}
+H' = fromJSON toJSON H
+assert(set pairs H' === set pairs H)

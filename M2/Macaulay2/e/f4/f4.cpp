@@ -1,8 +1,8 @@
 // Copyright 2005-2021 Michael E. Stillman
 
 #include "f4/f4.hpp"
-#include "freemod.hpp"                 // for FreeModule
-#include "mat.hpp"                     // for MutableMatrix
+#include "free-modules/freemod.hpp"                 // for FreeModule
+#include "basic-mutable-matrices/mat.hpp"                     // for MutableMatrix
 #include "text-io.hpp"                 // for emit
 #include "buffer.hpp"                  // for buffer
 #include "error.h"                     // for error
@@ -16,8 +16,8 @@
 #include "f4/varpower-monomial.hpp"    // for varpower_word, varpower_monomial
 #include "interface/mutable-matrix.h"  // for IM2_MutableMatrix_make
 #include "interrupted.hpp"             // for system_interrupted
-#include "ring.hpp"                    // for Ring
-#include "ringelem.hpp"                // for ring_elem, vec
+#include "rings/ring.hpp"                    // for Ring
+#include "rings/ringelem.hpp"                // for ring_elem, vec
 #include "style.hpp"                   // for INTSIZE
 
 #include <gc/gc_allocator.h>           // for gc_allocator
@@ -102,7 +102,7 @@ void F4GB::delete_gb_array(gb_array &g)
     {
       if (! g0->f.coeffs.isNull())
         mVectorArithmetic->deallocateElementArray(g0->f.coeffs);
-      // Note: monomials will be cleared en-mass and so don't need to be freed.
+      delete [] g0->f.monoms;
       delete g0;
     }
 }
@@ -677,7 +677,7 @@ void F4GB::gauss_reduce(bool diagonalize)
                          threadLocalDense_t::reference my_dense = threadLocalDense.local();
                          for (auto i = r.begin(); i != r.end(); ++i)
                          {
-                               bool newNonzeroReduction = gauss_reduce_row(spair_rows[i], my_dense);
+                               gauss_reduce_row(spair_rows[i], my_dense);
                          }
                        });
   });

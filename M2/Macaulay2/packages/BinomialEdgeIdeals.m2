@@ -126,7 +126,7 @@ isEffective (Graph,List) := Boolean => opts -> (G,S) -> (
 if not isDisconnector(G,S) then return false;
 if not opts.UseHypergraphs then (
     d:=disconnectors(G,EffectiveOnly=>true);
-    return member(set(d),apply(d,set));
+    return member(set(S),apply(d,set));
     );
 if opts.UseHypergraphs then (
    << "not implemented yet"; 
@@ -342,6 +342,63 @@ G={{1,2},{1,3},{2,4},{3,4},{4,5},{5,6},{6,7},{6,8},{7,9},{8,9}}
 I1=pbei(G,Field => ZZ/2);
 I2=pbei(G,Permanental=>true);
 assert(I1==sub(I2,ring I1));
+///
+
+TEST ///
+--binomialEdgeIdeal of the triangle: exact generators
+G = {{1,2},{2,3},{3,1}};
+I = binomialEdgeIdeal G;
+use ring I;
+assert(numgens I == 3);
+assert(I == ideal(x_1*y_2 - x_2*y_1, x_1*y_3 - x_3*y_1, x_2*y_3 - x_3*y_2));
+///
+
+TEST ///
+--parityBinomialEdgeIdeal of the triangle: exact generators
+G = {{1,2},{2,3},{3,1}};
+J = parityBinomialEdgeIdeal G;
+use ring J;
+assert(numgens J == 3);
+assert(J == ideal(x_1*x_2 - y_1*y_2, x_1*x_3 - y_1*y_3, x_2*x_3 - y_2*y_3));
+///
+
+TEST ///
+--bei is a synonym for binomialEdgeIdeal
+G = {{1,2},{2,3},{3,1}};
+K = bei G;
+assert(class K === Ideal);
+assert(numgens K == 3);
+assert(toString K == toString binomialEdgeIdeal G);
+///
+
+TEST ///
+--isEffective: regression test for the disconnector-membership check (the line 129 fix used set(S) in place of set(d), which made the result S-independent and always false)
+needsPackage "Graphs";
+G = graph({{1,2},{2,3},{3,1}});
+assert(isEffective(G,{}));
+assert(isEffective(G,{1}));
+assert(isEffective(G,{2}));
+assert(isEffective(G,{3}));
+assert(not isEffective(G,{1,2}));
+///
+
+TEST ///
+--TermOrder option of binomialEdgeIdeal threads through to the ring's MonomialOrder
+G = {{1,2},{2,3},{3,1}};
+ILex = binomialEdgeIdeal(G, TermOrder => Lex);
+IGRL = binomialEdgeIdeal(G, TermOrder => GRevLex);
+assert(numgens ILex == 3 and numgens IGRL == 3);
+assert(any((options ring ILex).MonomialOrder, p -> first p === Lex));
+assert(any((options ring IGRL).MonomialOrder, p -> first p === GRevLex));
+assert((options ring ILex).MonomialOrder =!= (options ring IGRL).MonomialOrder);
+///
+
+TEST ///
+--EffectiveOnly option of disconnectors: for the triangle, every disconnector is effective
+G = {{1,2},{2,3},{3,1}};
+dEff = disconnectors(G, EffectiveOnly => true);
+assert(set dEff === set{{},{1},{2},{3}});
+assert(set dEff === set disconnectors G);
 ///
 
 

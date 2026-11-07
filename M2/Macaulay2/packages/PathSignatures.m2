@@ -4,7 +4,19 @@ newPackage("PathSignatures",
          Headline => "working with algebraic path signatures",
          AuxiliaryFiles => true,
          Keywords => {"Applied Algebraic Geometry"},
-         PackageExports => {"NCAlgebra", "Permutations"}
+         PackageExports => {"NCAlgebra", "Permutations"},
+         Certification => {
+             "journal name" => "Journal of Software for Algebra and Geometry",
+             "journal URI" => "https://msp.org/jsag/",
+             "article title" => "Computing path signature varieties in Macaulay2",
+             "acceptance date" => "2026-02-10",
+             "published article URI" => "https://msp.org/jsag/2026/16-1/p04.xhtml",
+             "published article DOI" => "10.2140/jsag.2026.16.45",
+             "published code URI" => "https://msp.org/jsag/2026/16-1/jsag-v16-n1-x04-PathSignatures.m2",
+             "version at publication" => "1.0",
+             "volume number" => "16",
+             "volume URI" => "https://msp.org/jsag/2026/16-1/"
+             }
 );
 export {
     --types

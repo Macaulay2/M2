@@ -1,5 +1,5 @@
-#ifndef __range__
-#define __range__
+#ifndef M2_NCALGEBRAS__RANGE__HH
+#define M2_NCALGEBRAS__RANGE__HH
 
 #include "newdelete.hpp"
 #include <utility>

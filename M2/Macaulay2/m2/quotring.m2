@@ -81,7 +81,7 @@ ZZp Ideal := opts -> (I) -> (
          savedQuotients#(typ, n)
      else (
 	  if not isPrime n or n > 2^64
-	  then return ZZ[DegreeRank => 0]/n;
+	  then return savedQuotients#(typ, n) = ZZ[DegreeRank => 0]/n;
 	  S := new QuotientRing from 
       if typ === "Ffpack" then rawARingGaloisField(n,1)  
         else if typ === "Flint" then rawARingZZpFlint n
@@ -109,31 +109,7 @@ ZZp Ideal := opts -> (I) -> (
 	  S))
 
 initializeEngineLinearAlgebra = method()
-initializeEngineLinearAlgebra Ring := (R) -> (
-    R#"EngineLinearAlgebra" = true;
-    R.determinant = (f) -> (
-        -- The following information 
-        -- f is a Matrix in the ring R
-        -- f should be a square matrix, with free modules for both source and target
-         m := mutableMatrix(f, Dense=>true);
-         new R from rawLinAlgDeterminant raw m
-         );
-    R.inverse = (f) -> (
-        A := mutableMatrix(f, Dense=>true);
-        R := ring A;
-        if numRows A =!= numColumns A then error "expected square matrix";
-        matrix map(R,rawLinAlgInverse(raw A))
-        );
-    R#"solveLinear" = (f,g) -> (
-        -- solve f*X = g
-        if ring f =!= ring g then error "expected same base rings";
-        A := mutableMatrix(f, Dense=>true);
-        B := mutableMatrix(g, Dense=>true);
-        R := ring A;
-        result := map(R,rawLinAlgSolve(raw A,raw B));
-        matrix result
-        );
-    )
+initializeEngineLinearAlgebra Ring := (R) -> R#"EngineLinearAlgebra" = true
 
 isBasicMatrix Matrix := (f) -> isFreeModule source f and isFreeModule target f
 basicDet Matrix := (f) -> (

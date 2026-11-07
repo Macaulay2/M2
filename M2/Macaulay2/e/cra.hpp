@@ -1,11 +1,11 @@
 // Copyright 2011 Michael E. Stillman
 
-#ifndef _cra_hpp_
-#define _cra_hpp_
+#ifndef M2_CRA_HPP_
+#define M2_CRA_HPP_
 
 #include <M2/math-include.h>
 
-#include "ringelem.hpp"  // for ring_elem, vec
+#include "rings/ringelem.hpp"  // for ring_elem, vec
 
 class Matrix;
 class PolyRing;

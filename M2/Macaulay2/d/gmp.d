@@ -2464,13 +2464,6 @@ export abs(x:CC):RR := (
 --     Ccode( void, "mpfi_hypot(", z, ",", x.re, ",", x.im, ",MPFR_RNDN)" );
 --     moveToRRiandclear(z));
 
-header "#include <complex.h> ";
-
-export sqrt(x:CC):CC := (
-     z := newCCmutable(precision(x));
-     Ccode( void, "mpfc_sqrt(", z, ",", x, ")" );	    -- see ../e/complex.c
-     moveToCCandclear(z));
-
 -- real transcendental functions
 
 export pi(prec:ulong):RR := (
@@ -2834,23 +2827,6 @@ export log(b:CC,x:RR):CC := (
      else if precision(b) > precision(x) then b = toCC(b,precision(x));
      if x<0 then logc(x)/log(b) else log(x)/log(b));
 
-export agm(x:CC,y:CC):CC := (
-     if precision(y) < precision(x) then x = toCC(x,precision(y))
-     else if precision(y) > precision(x) then y = toCC(y,precision(x));
-     while true do (
-     	  if !isfinite0(x.re) || !isfinite0(x.im) then return x;
-     	  if !isfinite0(y.re) || !isfinite0(y.im) then return y;
-     	  if x === 0 then return x;
-     	  if y === 0 then return y;
-	  t := (x+y)/2;
-	  diff := x-y;
-	  prec := long(precision(x));			    -- in practice, max prec is 2^31 - 1, so fits in an int, too.
-	  if exponent(diff) + 3*(prec/4) < exponent(x) then return t;
-	  u := sqrt(x*y);
-	  x = t;
-	  y = u;
-	  ));
-
 itimes(z:CC):CC := toCC(-z.im, z.re);
 mitimes(z:CC):CC := toCC(z.im, -z.re);
 idiv(z:CC):CC := toCC(z.im, -z.re);
@@ -2892,10 +2868,6 @@ square(z:CCi):CCi := (
      else if isnan0(z.re) || isnan0(z.im) then nanCCi(precision0(z.re))
      else infinityCCi(precision0(z.re))
     );
-
-export acos(z:CC):CC := idiv(log(z+itimes(sqrt(1-square(z)))));
-
-export asin(z:CC):CC := idiv(log(sqrt(1-square(z))+itimes(z)));
 
 export abs2(z:CC):RR := z.re^long(2) + z.im^long(2);
 

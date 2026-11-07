@@ -2,11 +2,6 @@
 --- author(s): 
 --- notes: 
 
--*
--- TODO
-(map,GaloisField,GaloisField)
-*-
-
 undocumented {(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing),
     (map, RingFamily, Thing), (map, Thing, RingFamily)}
 
@@ -45,9 +40,10 @@ document {
 	  TO (map,Module,Nothing,Matrix), 
 	  "Creating a map with a different degree",
 	  TO (map,Matrix), 
-     	  "Creating a map between modules over different rings",
+	  "Creating a map between modules over different rings",
 	  TO (map,Module,Module,RingMap,Matrix),
 	  "Creating a map between rings",
+	  TO "ConwayPolynomials :: map(GaloisField,GaloisField)",
 	  TO (map,Ring,Ring),
 	  TO (map,Ring,Ring,List),
 	  TO (map,Ring,Ring,Matrix),

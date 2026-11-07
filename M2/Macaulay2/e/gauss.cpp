@@ -3,7 +3,7 @@
 #include "style.hpp"
 #include "gauss.hpp"
 #include "text-io.hpp"
-#include "matrix-con.hpp"
+#include "matrices/matrix-con.hpp"
 #include "newdelete.hpp"
 #include "interrupted.hpp"
 

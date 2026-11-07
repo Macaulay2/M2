@@ -17,10 +17,22 @@ rawKeyDB = "raw documentation database"
 
 -- warnings or errors to issue for deprecated packages
 -- TODO: also add package deprecation warnings for OldPolyhedra, etc?
+renamedPackage := (oldpkg, newpkg) -> (
+    oldpkg => () -> (
+        printerr("warning: the '", oldpkg, "' package has been renamed as '", newpkg, "'.");
+        newpkg))
+mergedPackage := (oldpkg, newpkg) -> (
+    oldpkg => () -> (
+        printerr("warning: the '", oldpkg, "' package has been merged into '", newpkg, "'.");
+        newpkg))
 deprecatedPackageWarnings = new HashTable from {
-    "Divisor"      => () -> ( printerr "warning: the 'Divisor' package has been renamed as 'WeilDivisors'."; "WeilDivisors" ),
-    "CodepthThree" => () -> ( printerr "warning: the 'CodepthThree' package has been renamed as 'TorAlgebra'."; "TorAlgebra" ),
-    "LieTypes"     => () -> ( printerr "warning: the 'LieTypes' package has been renamed as 'LieAlgebraRepresentations'."; "LieAlgebraRepresentations" ),
+    renamedPackage("Divisor", "WeilDivisors"),
+    renamedPackage("CodepthThree", "TorAlgebra"),
+    renamedPackage("LieTypes", "LieAlgebraRepresentations"),
+    mergedPackage("RandomCanonicalCurves", "RandomCurves"),
+    mergedPackage("RandomGenus14Curves", "RandomCurves"),
+    mergedPackage("RandomPlaneCurves", "RandomCurves"),
+    mergedPackage("RandomSpaceCurves", "RandomCurves"),
 }
 
 -----------------------------------------------------------------------------

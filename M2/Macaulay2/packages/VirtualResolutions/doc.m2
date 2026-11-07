@@ -185,6 +185,11 @@ doc ///
         Text
             If @TT "GeneralElements"@ is set to true, @TO "idealSheafGens"@ will replace all generators of {\tt I} of the same degree with
             a new generator of the that degree which is a general linear combination of those generators, then run @TT "idealSheafGens"@ on the new ideal.
+        Example
+            R = ZZ/101[x_0,x_1,x_2,x_3,x_4,Degrees=>{2:{1,0},3:{0,1}}];
+            B = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
+            I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
+            idealSheafGens(2,I,B,GeneralElements=>true);
     SeeAlso
         idealSheafGens
 ///
@@ -318,6 +323,10 @@ doc ///
             in $\PP^3$ intersects the base locus of the projections maps used in this function.
             If this option is set to true and the given curve does intersect the base locus,
             an error is returned.
+        Example
+            R = ZZ/101[z_0,z_1,z_2,z_3];
+            J = ideal(z_0*z_2-z_1^2, z_1*z_3-z_2^2, z_0*z_3-z_1*z_2);
+            dim curveFromP3toP1P2(J,PreserveDegree=>true)
     SeeAlso
         curveFromP3toP1P2
 ///
@@ -373,6 +382,8 @@ doc ///
            curve will intersect the base loci of the projections used to construct the curve in $\PP^1\times\PP^2$. If the curve
            does intersect the base locusi it will generate a new random curve in $\PP^3$. The option @TT "Attempt"@ limits the number
            of attempts to find a curve disjoint from the base loci before quitting. By default, Attempt is set to 1000.
+        Example
+            dim randomCurveP1P2(3,0,Attempt=>50)
     SeeAlso
         randomCurveP1P2
 ///
@@ -496,6 +507,16 @@ doc ///
         Text
           When the optional argument @TT "LengthLimit"@ is specified virtualOfPair will stop computing syzygies after the given
           length is reached, otherwise computation continues until the resolution terminates.
+        Example
+          X = toricProjectiveSpace(1) ** toricProjectiveSpace(1);
+          S = ring X; B = ideal X;
+          J = saturate(intersect(
+                ideal(x_1 - 1*x_0, x_3 - 4*x_2),
+                ideal(x_1 - 2*x_0, x_3 - 5*x_2),
+                ideal(x_1 - 3*x_0, x_3 - 6*x_2)),
+                B);
+          C = virtualOfPair(J, {{3,1}}, LengthLimit=>2);
+          isVirtual(B, C)
     SeeAlso
         virtualOfPair
 ///

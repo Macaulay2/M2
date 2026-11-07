@@ -355,6 +355,13 @@ export tan(z:CCi):CCi := (
     clear(w);
     moveToCCiandclear(r, precision(z)));
 
+export acos(z:CC):CC := (
+    w := toCCb(z);
+    r := newCCb();
+    Ccode(void, "acb_acos(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
+
 export acos(z:CCi):CCi := (
     w := toCCb(z);
     r := newCCb();
@@ -403,6 +410,13 @@ export coth(z:CCi):CCi := (
     Ccode(void, "acb_coth(", r, ", ", w, ", ", precision(z), ")");
     clear(w);
     moveToCCiandclear(r, precision(z)));
+
+export asin(z:CC):CC := (
+    w := toCCb(z);
+    r := newCCb();
+    Ccode(void, "acb_asin(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
 
 export asin(z:CCi):CCi := (
     w := toCCb(z);
@@ -727,6 +741,16 @@ export log(z:CCi, w:CCi):CCi := (
 
 export (z:CCi) ^ (w:CCi):CCi := exp(log(z)*w);
 
+export agm(z:CC, w:CC):CC := (
+    prec := min(precision(z), precision(w));
+    x := toCCb(z);
+    y := toCCb(w);
+    r := newCCb();
+    Ccode(void, "acb_agm(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToCCandclear(r, prec));
+
 export agm(z:CCi, w:CCi):CCi := (
     prec := min(precision(z), precision(w));
     x := toCCb(z);
@@ -736,6 +760,13 @@ export agm(z:CCi, w:CCi):CCi := (
     clear(x);
     clear(y);
     moveToCCiandclear(r, prec));
+
+export sqrt(z:CC):CC := (
+    w := toCCb(z);
+    r := newCCb();
+    Ccode(void, "acb_sqrt(", r, ", ", w, ", ", precision(z), ")");
+    clear(w);
+    moveToCCandclear(r, precision(z)));
 
 export sqrt(z:CCi):CCi := (
     w := toCCb(z);

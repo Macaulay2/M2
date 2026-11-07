@@ -1,15 +1,15 @@
 /* Copyright 2010-2021, Michael E. Stillman */
 
-#include "hilb-fcn.hpp"
+#include "f4/hilb-fcn.hpp"
 
 #include "error.h"            // for error
-#include "freemod.hpp"        // for FreeModule
+#include "free-modules/freemod.hpp"        // for FreeModule
 #include "hilb.hpp"           // for hilb_comp
-#include "matrix-con.hpp"     // for MatrixConstructor
+#include "matrices/matrix-con.hpp"     // for MatrixConstructor
 #include "monoid.hpp"         // for Monoid, monomial
-#include "polyring.hpp"       // for PolynomialRing
-#include "relem.hpp"          // for RingElement
-#include "ring.hpp"           // for Ring
+#include "rings/polyring.hpp"       // for PolynomialRing
+#include "ring-elements/ring-element.hpp"          // for RingElement
+#include "rings/ring.hpp"           // for Ring
 #include "style.hpp"          // for INTSIZE
 
 #include <cstdio>             // for fprintf, stderr

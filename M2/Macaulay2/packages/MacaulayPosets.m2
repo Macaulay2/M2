@@ -1945,4 +1945,137 @@ TEST ///
     assert not isAdditive poset({1,2,3,4,5,6}, {{1,2},{1,3},{2,4},{3,4},{3,5},{3,6}})
 ///
 
+-- TikZ option: orders are unchanged, no errors, AllOrders interplay
+TEST ///
+    KK = ZZ/2;
+    R = KK[x,y]
+    I = monomialIdeal(x^3, x^2*y^2, y^3)
+    P = standardMonomialPoset I
+    ordersNoTikz = macaulayOrders(P, TikZ=>false);
+    ordersTikz = macaulayOrders(P, TikZ=>true);
+    assert(set ordersNoTikz === set ordersTikz)
+    assert(#ordersNoTikz == #ordersTikz)
+    assert isMacaulay(P, TikZ=>true)
+    assert(#macaulayOrders(P, TikZ=>true, AllOrders=>false) == 1)
+///
+
+-- Visual=>false is equivalent to the default
+TEST ///
+    B = booleanLattice 2
+    assert(macaulayOrders B == macaulayOrders(B, Visual=>false))
+    assert(isMacaulay B == isMacaulay(B, Visual=>false))
+///
+
+-- ringFiberProduct multi-argument forms (Sequence and List)
+TEST ///
+    K = ZZ/2;
+    A = K[a]/ideal(a^2);
+    B = K[b]/ideal(b^2);
+    C = K[c]/ideal(c^2);
+    W3 = ringFiberProduct(A, B, C);
+    assert(class W3 === QuotientRing)
+    assert(numgens W3 == 3)
+    WL = ringFiberProduct {A, B};
+    assert(class WL === QuotientRing)
+    assert(numgens WL == 2)
+    assert areIsomorphic(getPoset W3, posetWedgeProduct {getPoset A, getPoset B, getPoset C})
+///
+
+-- ringConnectedSum multi-argument forms (Sequence and List)
+TEST ///
+    K = ZZ/2;
+    A = K[a]/ideal(a^2);
+    B = K[b]/ideal(b^2);
+    C = K[c]/ideal(c^2);
+    W3 = ringConnectedSum(A, B, C);
+    assert(class W3 === QuotientRing)
+    assert(numgens W3 == 3)
+    WL = ringConnectedSum {A, B};
+    assert(class WL === QuotientRing)
+    assert(numgens WL == 2)
+///
+
+-- getMons always returns a List on every supported input form
+TEST ///
+    R = QQ[x, y]
+    assert(instance(getMons(R, ideal(x^2, y^2)), List))
+    assert(instance(getMons(R, ideal(x^2 - y^2), MaxDegree=>5), List))
+    assert(instance(getMons R, List))
+    assert(instance(getMons(R/ideal(x^2, y^2)), List))
+    assert(instance(getMons ideal(x^2, y^2), List))
+///
+
+-- PosetMap operators: equality, composition, identity, multiple constructor forms
+TEST ///
+    PA = chain 3
+    QA = chain 5
+    f = map(QA, PA, {1=>1, 2=>2, 3=>3});
+    g = map(QA, PA, {1=>1, 2=>2, 3=>3});
+    h = map(QA, PA, {1=>1, 2=>2, 3=>4});
+    idP = map(PA, PA, {1=>1, 2=>2, 3=>3});
+    assert(f == g)
+    assert(f != h)
+    assert(f * idP == f)
+    fH = map(QA, PA, hashTable{1=>1, 2=>2, 3=>3});
+    assert(fH == f)
+    fV = map(QA, PA, {1, 2, 3});
+    assert(fV == f)
+    assert(image f == {1, 2, 3})
+    assert(image(f, {1, 2}) == {1, 2})
+    assert(image(f, {1, 99}) == {1})
+    assert(source f === PA)
+    assert(target f === QA)
+    assert(image(f, {}) == {})
+///
+
+-- PosetMap construction error guards
+TEST ///
+    PA = chain 3
+    QA = chain 2
+    caught = false; try map(QA, PA, {1=>2, 2=>1, 3=>2}) else caught = true; assert caught
+    caught = false; try map(QA, PA, {99=>1, 2=>1, 3=>2}) else caught = true; assert caught
+    caught = false; try map(QA, PA, {1=>1, 2=>1, 3=>99}) else caught = true; assert caught
+    caught = false; try map(QA, PA, {1=>1, 2, 3=>2}) else caught = true; assert caught
+    ff = map(QA, PA, {1=>1, 2=>1, 3=>2});
+    caught = false; try ff 99 else caught = true; assert caught
+///
+
+-- Poset operation error guards
+TEST ///
+    caught = false; try posetWedgeProduct {chain 2, poset({1,2,3}, {{1,3},{2,3}})} else caught = true; assert caught
+    caught = false; try posetClosedProduct {chain 2, poset({1,2,3,4}, {{1,2},{1,3},{2,4}})} else caught = true; assert caught
+    caught = false; try posetFiberProduct {} else caught = true; assert caught
+    P9a = chain 2; P9b = chain 3; Q9 = chain 5;
+    fL = map(Q9, P9a, {1=>1, 2=>2});
+    gR = map(Q9, P9b, {1=>1, 2=>2, 3=>3});
+    caught = false; try posetFiberProduct(fL, gR) else caught = true; assert caught
+    nfL = map(Q9, P9a, {1=>1, 2=>4});
+    caught = false; try posetFiberProduct(nfL, nfL) else caught = true; assert caught
+///
+
+-- Ring operation error guards: non-polynomial-ring and mixed coefficient fields
+TEST ///
+    caught = false; try ringFiberProduct(ideal(0_QQ), ideal(0_QQ)) else caught = true; assert caught
+    R1 = QQ[x];
+    R2 = (ZZ/2)[y];
+    caught = false; try ringFiberProduct(ideal(x^2), ideal(y^2)) else caught = true; assert caught
+///
+
+-- Option-type and shadow-subset guards
+TEST ///
+    caught = false; try macaulayOrders(chain 3, TikZ=>"yes") else caught = true; assert caught
+    caught = false; try macaulayOrders(chain 3, AllOrders=>"all") else caught = true; assert caught
+    caught = false; try upperShadow(chain 3, {99, 100}) else caught = true; assert caught
+    caught = false; try lowerShadow(chain 3, {99}) else caught = true; assert caught
+///
+
+-- macaulayOrders/isMacaulay Ideal dispatch agrees with QuotientRing form
+TEST ///
+    R = QQ[x,y]
+    I = monomialIdeal(x^3, y^3)
+    assert(set macaulayOrders(R/I) === set macaulayOrders I)
+    assert(isMacaulay I)
+    assert(isMacaulay I == isMacaulay(R/I))
+///
+
 end

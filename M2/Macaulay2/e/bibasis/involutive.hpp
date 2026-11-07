@@ -7,16 +7,16 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_INVOLUTIVE_HPP
-#define BIBASIS_INVOLUTIVE_HPP
+#ifndef M2_BIBASIS_INVOLUTIVE_HPP
+#define M2_BIBASIS_INVOLUTIVE_HPP
 
 #include <list>
 #include <algorithm>
-#include "pcomparator.hpp"
-#include "qset.hpp"
-#include "tset.hpp"
-#include "matrix.hpp"
-#include "matrix-con.hpp"
+#include "bibasis/pcomparator.hpp"
+#include "bibasis/qset.hpp"
+#include "bibasis/tset.hpp"
+#include "matrices/matrix.hpp"
+#include "matrices/matrix-con.hpp"
 
 namespace BIBasis
 {

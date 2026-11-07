@@ -1,22 +1,22 @@
 # Macaulay2 editors
 
-This directory contains template files used by the
-[generateGrammar](https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/Style/html/_generate__Grammar.html) function in the *Style* package to generate
-grammar files used by various editors for syntax highlighting and automatic
-completion of Macaulay2 code.
+This directory contains the editor and syntax-highlighting assets that ship
+with Macaulay2. The shared generator script is
+[`make-M2-symbols.m2`](make-M2-symbols.m2); when run from this directory, it
+rewrites the symbol files used by Emacs, Prism, Pygments, and Vim.
 
-Each subdirectory contains one or more template files for a particular
-application.
+Each subdirectory documents a particular integration:
 
-* [`emacs`](https://github.com/Macaulay2/M2-emacs): Symbols for GNU Emacs.
-* [`prism`](prism): Symbols for the Prism Javascript library.  These are used
-  for syntax highlighting the online Macaulay2 documentation.
-* [`pygments`](pygments): Symbols for Pygments, a syntax highlighter written
-  in Python.
-* [`vim`](vim): Symbols for the Vim editor.
+* [`emacs/README.md`](emacs/README.md): running and editing Macaulay2 in GNU
+  Emacs, including the bundled support files.
+* [`vim/README.md`](vim/README.md): running Macaulay2 inside Vim, including
+  the current setup notes for GNU/Linux and macOS.
+* [`prism/README.md`](prism/README.md): generating and using the Prism grammar
+  used for syntax highlighting the HTML documentation.
+* [`pygments/README.md`](pygments/README.md): generating and using the Pygments
+  lexer.
 
-Several template files that formerly were kept in this directory have since
-been moved to their own repositories:
+Several related integrations are maintained in standalone repositories:
 
 * highlight.js: https://github.com/d-torrance/highlightjs-macaulay2
 * Linguist: https://github.com/Macaulay2/language-macaulay2

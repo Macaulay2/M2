@@ -5,10 +5,10 @@
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
-#include "freemod.hpp"
+#include "free-modules/freemod.hpp"
 #include "monoid.hpp"
 #include "newdelete.hpp"
-#include "ring.hpp"
+#include "rings/ring.hpp"
 
 class Matrix;
 

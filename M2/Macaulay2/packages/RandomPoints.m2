@@ -69,8 +69,6 @@ export {
     }
 exportMutable {}
 
---installMinprimes();
-
 --this appears to need to be here, otherwise the options don't realize dimViaBezout is a function, it thinks its a symbol.
 dimViaBezout=method(Options => {
     Verbose => false, 

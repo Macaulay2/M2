@@ -225,24 +225,7 @@ internalRepresentation = z -> if z === 0. then 0/1 else if isFinite z then (
      (prec,sgn,expt,m,numbits) := partsRR z;
      sgn * m / 2^(numbits - expt)
      )
-lift(RR,QQ) := opts -> (r,QQ) -> (
-     if r == 0 then return 0/1;
-     r' := r;
-     p := precision r;
-     p2 := 2^p;
-     m := mutableIdentity(ZZ,2);
-     while true do (
-	  a := round r';
-	  columnSwap(m,0,1);
-	  columnAdd(m,0,a,1);
-	  r' = r' - a;
-	  n := m_(0,0);
-	  d := m_(1,0);
-	  q := n / d;
-	  if r === numeric(p,q) then return q;
-	  if r' == 0 or abs(n*d) > p2 then return internalRepresentation r;
-	  r' = 1/r' ;
-	  ))
+lift(RR,QQ) := opts -> (r, K) -> rawToRational rawFromNumber(raw K, r)
 lift(RR,ZZ) := opts -> (r,ZZ) -> (
      i := floor r; 
      if r == i then i 

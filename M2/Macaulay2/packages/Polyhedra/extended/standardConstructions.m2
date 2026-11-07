@@ -134,6 +134,9 @@ bipyramid Polyhedron := P -> (
    n := numColumns V;
    if n == 0 then error("P must not be empty");
    -- Computing the barycenter of P
+   -- FIXME: the two `<< "Compute barycenter..." <<` lines below are leftover
+   -- debug output; a public constructor should not print to stdout on every
+   -- call.  They should be removed.
    << "Compute barycenter." << endl;
    v := matrix toList(n:{1_QQ,1_QQ});
    v = (1/n)*V*v;

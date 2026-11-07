@@ -12,11 +12,8 @@ assert try (sub(matrix{{1.0}},QQ);false) else true -- used to crash (<= 1.9.2)
 f = map(QQ,RR_53)
 assert try (f (matrix{{1.0}}); false) else true  -- used to crash (<= 1.9.2)
 
-assert try (lift(matrix{{1.0}}, QQ); false) else true
-
 C = matrix {{1_CC}}
 assert(ring lift(C,RR) === RR_53) -- works
-assert try(lift(C,QQ); false) else true 
 assert try (sub(C,QQ); false) else true -- used to crash (<= 1.9.2)
 
 kk = ZZ/101

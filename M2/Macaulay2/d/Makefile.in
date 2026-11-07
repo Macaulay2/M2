@@ -157,6 +157,7 @@ endif
 M2INCLUDES += -I.
 M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I@srcdir@/../e
+M2INCLUDES += -I@srcdir@/../e/matrices
 M2INCLUDES += -I@srcdir@/../system
 M2INCLUDES += -I@srcdir@/../../include
 

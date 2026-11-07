@@ -977,6 +977,9 @@ doc ///
     Example
       time rationalCurve(4,{4,2}) - rationalCurve(2,{4,2})/8
       time rationalCurve(4,{3,3}) - rationalCurve(2,{3,3})/8
+  SeeAlso
+    multipleCover
+    linesHypersurface
 ///
 
 doc ///
@@ -996,9 +999,12 @@ doc ///
   Description
     Text
       Computes the contribution of multiple coverings of a smooth rational curve as a Gromov-Witten invariant.
-      
+
     Example
       for d from 1 to 6 list multipleCover(d)
+  SeeAlso
+    rationalCurve
+    linesHypersurface
 ///
 
 doc ///
@@ -1021,24 +1027,118 @@ doc ///
 
     Example
       time for n from 2 to 10 list linesHypersurface(n)
+  SeeAlso
+    rationalCurve
+    multipleCover
 ///
 
+-- The previous single monolithic TEST block has been split into four
+-- per-function TESTs for diagnosability (a single failure no longer
+-- masks the assertions after it).  The degree-5 assertion that was
+-- commented out has been re-enabled (the value matches Katz's
+-- published number 229305888887648; it was silenced for performance,
+-- not correctness — it takes about ~12s).
+
+-- rationalCurve(d) on the quintic threefold (D = {5}, the default).
+-- The reference values are published intersection numbers on
+-- moduli spaces of stable maps; see Kontsevich, "Enumeration of
+-- rational curves via torus actions" (1995), and the lambda-g
+-- conjecture lore.
 TEST ///
     assert(rationalCurve(1) == 2875)
     assert(rationalCurve(2) == 4876875/8)
     assert(rationalCurve(3) == 8564575000/27)
     assert(rationalCurve(4) == 15517926796875/64)
---    assert(rationalCurve(5) == 229305888887648)
+///
+
+-- Slower test: rationalCurve(5) takes ~12s on a current laptop, which
+-- is why it was originally commented out.  The value
+-- 229305888887648 is Katz's classical enumeration of degree-5
+-- rational curves on a general quintic threefold; without this
+-- assertion the degree-5 code path has zero direct coverage.
+TEST ///
+    assert(rationalCurve(5) == 229305888887648)
+///
+
+-- rationalCurve(1, D) for the five complete-intersection Calabi-Yau
+-- threefold types.  Previously only D = {5} was tested via
+-- rationalCurve(1).
+TEST ///
+    assert(rationalCurve(1, {5}) == 2875)
+    assert(rationalCurve(1, {4,2}) == 1280)
+    assert(rationalCurve(1, {3,3}) == 1053)
+    assert(rationalCurve(1, {3,2,2}) == 720)
+    assert(rationalCurve(1, {2,2,2,2}) == 512)
+///
+
+-- Aspinwall-Morrison / BCOV instanton numbers (= physical numbers of
+-- isolated rational curves), obtained from the Gromov-Witten
+-- invariants by subtracting multiple-cover contributions.  Previously
+-- only the monolithic GW invariants were asserted; these derived
+-- numbers exercise the rationalCurve / multipleCover interaction.
+TEST ///
+    -- conics: n_2 = N_2 - n_1 * mc(2) = N_2 - N_1 / 8 = 609250
+    assert(rationalCurve(2) - rationalCurve(1)/8 == 609250)
+    -- cubics: n_3 = N_3 - N_1 * mc(3) = N_3 - N_1 / 27 = 317206375
+    assert(rationalCurve(3) - rationalCurve(1)/27 == 317206375)
+///
+
+-- multipleCover(d) should equal 1/d^3 (the standard Aspinwall-Morrison
+-- contribution of a degree-d multiple cover of a rigid P^1).
+TEST ///
     assert(multipleCover(1) == 1)
     assert(multipleCover(2) == 1/8)
     assert(multipleCover(3) == 1/27)
     assert(multipleCover(4) == 1/64)
     assert(multipleCover(5) == 1/125)
     assert(multipleCover(6) == 1/216)
-    assert(linesHypersurface(3) == 27)
-    assert(linesHypersurface(4) == 2875)
+    -- Strict structural check: matches 1/d^3 for all d in 1..6.
+    assert(all(1..6, d -> multipleCover(d) == 1/d^3))
+///
+
+-- linesHypersurface(n) counts lines on a general hypersurface of
+-- degree 2n - 3 in P^n.  Includes the degenerate n=2 case (a line in
+-- the plane is the degree-1 hypersurface itself, trivially 1).
+TEST ///
+    assert(linesHypersurface(2) == 1)
+    assert(linesHypersurface(3) == 27)   -- 27 lines on a cubic surface
+    assert(linesHypersurface(4) == 2875) -- = rationalCurve(1) on the quintic
     assert(linesHypersurface(5) == 698005)
     assert(linesHypersurface(6) == 305093061)
+    -- linesHypersurface(4) agrees with rationalCurve(1,{5}) by definition:
+    -- both count lines on the quintic threefold.
+    assert(linesHypersurface(4) == rationalCurve(1, {5}))
+///
+
+-- Internal-helper sanity test: the package's substantive math
+-- lives in ~870 lines of graph-enumeration helpers
+-- (fixedPoints, torusList, contributionBundle, normalBundle, plus a
+-- cascade of graph1..graph611 builders).  Regressions in any of
+-- those helpers could silently miscount the higher invariants
+-- above.  This block pins a few small invariants that exercise the
+-- helpers directly without depending on the published-number lookup.
+TEST ///
+    debug EnumerationCurves
+    -- torusList just returns {1, 10, 100, ..., 10^r}
+    assert(torusList(0) == {1})
+    assert(torusList(3) == {1, 10, 100, 1000})
+    -- fixedPoints counts: for degree-1 (lines in P^r), there are
+    -- C(r+1, 2) fixed points (one per pair of coordinate axes).
+    assert(#fixedPoints(1, 1) == 1)
+    assert(#fixedPoints(3, 1) == 6)
+    assert(#fixedPoints(4, 1) == 10)
+    -- For multiple-cover (r = 1, varying d), the fixed-point count is
+    -- the d-th Catalan-like sequence beginning 1, 3, 7.
+    assert(#fixedPoints(1, 1) == 1)
+    assert(#fixedPoints(1, 2) == 3)
+    assert(#fixedPoints(1, 3) == 7)
+    -- linesHypersurface(n) is the sum of contributionBundle(n, G) /
+    -- normalBundle(n, G) over the fixed points G in fixedPoints(n, 1);
+    -- assert this directly for n = 3 (27 lines on a cubic surface).
+    F = fixedPoints(3, 1);
+    s = sum for f in F list (contributionBundle(3, f#0) / (f#1 * normalBundle(3, f#0)));
+    assert(s == 27)
+    assert(s == linesHypersurface 3)
 ///
 
 end

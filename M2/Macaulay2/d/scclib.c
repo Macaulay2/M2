@@ -343,9 +343,15 @@ M2_string system_realpath(M2_string filename) {
   char *fn = M2_tocharstar(filename);
   char buf[PATH_MAX+1];
   char *r = realpath(*fn ? fn : ".",buf);
+  if (r == NULL) {
+    int err = errno;
+    freemem(fn);
+    errno = err;
+    return NULL;
+  }
   if (isDirectory(r) && r[1] != 0) strcat(r,"/");
   freemem(fn);
-  return r == NULL ? NULL : M2_tostring(buf);
+  return M2_tostring(buf);
  #else
   return filename;
  #endif

@@ -7,12 +7,12 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_MONOM_HPP
-#define BIBASIS_MONOM_HPP
+#ifndef M2_BIBASIS_MONOM_HPP
+#define M2_BIBASIS_MONOM_HPP
 
 #include <set>
 #include <iostream>
-#include "allocator.hpp"
+#include "bibasis/allocator.hpp"
 
 namespace BIBasis
 {

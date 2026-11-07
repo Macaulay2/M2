@@ -593,6 +593,32 @@ c = {-11, -15};
 assert(toStandardForm(A, c) == (matrix{{4, 5, 1, 0}, {2, 3, 0, 1}}, {-11, -15, 0, 0}))
 ///
 
+-- Cover code paths previously not exercised by any TEST.
+TEST ///
+A := matrix{{4, 5, 1, 0}, {2, 3, 0, 1}};
+b := {37, 20};
+-- isFeasiblePoint should return false for a non-feasible point
+-- (4x + 5y + s = 37 isn't satisfied at the origin).
+assert(not isFeasiblePoint(A, b, {0, 0, 0, 0}));
+-- And the Matrix-typed (Matrix, Matrix, Matrix) overload of
+-- isFeasiblePoint (the List form is already tested above).
+assert(isFeasiblePoint(A, matrix{{37}, {20}}, matrix{{4}, {4}, {1}, {0}}));
+-- solveILP infeasible branch: 2x = 3 has no nonnegative integer
+-- solution, so the (else return false) branch at line 168 fires.
+assert(solveILP(matrix{{2}}, {3}, {1}) === false);
+-- toStandardForm's (Matrix, Matrix) overload (previously only the
+-- (Matrix, List) overload was tested).
+ts := toStandardForm(matrix{{4, 5}, {2, 3}}, matrix{{-11, -15}});
+assert(class ts === Sequence);
+assert(#ts == 2);
+assert(ts_0 == matrix{{4, 5, 1, 0}, {2, 3, 0, 1}});
+-- adaptedMonomialOrder direct test: the resulting polynomial ring
+-- has m + n variables for m constraints and n original variables.
+R := adaptedMonomialOrder(A, {-11, -15, 0, 0});
+assert(class R === PolynomialRing);
+assert(numgens R == numRows A + numColumns A);
+///
+
 
 end--
 

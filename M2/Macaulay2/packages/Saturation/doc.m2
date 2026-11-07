@@ -49,7 +49,6 @@ Node
       Ih = homogenize(I, d)
       saturate(Ih, d)
 
--- TODO
 Node
   Key
     "module quotients, saturation, and annihilator"
@@ -62,14 +61,17 @@ Node
       Similar to the case of ideals, the @TO2 {(quotient, Module, Module), "quotient"}@ of two $R$-modules
       $M, N$ contained in the same @TO ambient@ module is an ideal $M:N$ of elements $f\in R$ such that
       $f N \subset M$. This is equivalent to the @TO annihilator@ of the quotient module $(M+N)/M$.
--- TODO:
---    Example
+    Example
+      R = QQ[x,y,z];
+      M = image matrix{{x^2,x*y,0},{0,0,z}}
+      N = image matrix{{x,0},{0,z}}
+      M:N
     Text
--- TODO: what is the ambient module assumed to be?
       The @TO2 {(quotient, Module, Ideal), "quotient"}@ of an $R$-module $M\subset F$ with respect to
       an ideal $J\subset R$ is the module $M:_F J$ of elements $f\in F$ such that $J f\subset M$.
--- TODO:
---    Example
+      The ambient module $F$ is the ambient module of @TT "M"@.
+    Example
+      M : ideal x
     Text
       @SUBSECTION "Saturation of Modules"@
 

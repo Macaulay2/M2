@@ -175,6 +175,10 @@ document { Key => Parsing,
      PARA {
 	  "See the package ", TO "Classic::Classic", " for a good example of  the use of this framework."
 	  },
+     EXAMPLE lines ///
+	  (ZZParser : charAnalyzer) "-123"
+	  (constParser "abc" : nonspaceAnalyzer) " a b c "
+     ///,
      Subnodes => {
 	  TO Analyzer,
 	  TO Parser,
@@ -194,6 +198,13 @@ document { Key => Parser,
 	  "When the input stream is exhausted, we call ", TT "p", " one more time like this: ", TT "p null", ".  The return value is ", TO "null", "
 	  if the parser is not in a terminal state.  Otherwise the return value is the parsed (and possibly evaluated) result."
 	  },
+     EXAMPLE lines ///
+	  p = constParser "abc";
+	  instance(p, Parser)
+	  q = p "a";
+	  instance(q, Parser)
+	  (((q "b") "c") null)
+     ///,
      Subnodes => {
 	  "simple parsers",
 	  TO deadParser,
@@ -225,6 +236,13 @@ document { Key => Analyzer,
 	  Actually, the analyzer is to return a pair: ", TT "(pos,token)", ", where ", TT "pos", " is a string indicating the position where ", TT "token", " was found in the input.
 	  A position will be a sort of thing which can be converted to string with ", TO "toString", " (for printing error messages) and can be sorted."
 	  },
+     EXAMPLE lines ///
+	  instance(charAnalyzer, Analyzer)
+	  a = charAnalyzer "ab";
+	  a()
+	  a()
+	  a() === null
+     ///,
      Subnodes => {
 	  TO charAnalyzer,
 	  TO nonspaceAnalyzer
@@ -273,6 +291,10 @@ document { Key => nonspaceAnalyzer,
 
 document { Key => nil,
      Headline => "a symbol a parser may return to indicate acceptance of the empty string of tokens",
+     EXAMPLE lines ///
+	  (optP constParser "abc" : charAnalyzer) ""
+	  (optP constParser "abc" : charAnalyzer) "abc"
+     ///,
      SeeAlso => { nullParser }
      }
 
@@ -301,6 +323,11 @@ document { Key => terminalParser,
 document { Key => nullParser,
      Headline => "a terminal parser that returns the value nil",
      SourceCode => nullParser,
+     EXAMPLE lines ///
+	  nullParser null
+	  nullParser "x" === null
+	  nullParser null === nil
+     ///,
      SeeAlso => { nil }
      }
 

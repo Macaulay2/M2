@@ -1,6 +1,6 @@
 // Copyright 2004 Michael E. Stillman
-#ifndef __memblock_h_
-#define __memblock_h_
+#ifndef M2_F4__MEMBLOCK_H_
+#define M2_F4__MEMBLOCK_H_
 
 #include "newdelete.hpp"
 

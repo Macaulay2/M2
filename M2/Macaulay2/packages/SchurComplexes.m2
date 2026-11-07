@@ -668,6 +668,112 @@ TEST ///
     assert(S===Output)
 ///
 
+-- internal tableau utilities: lengthrow/lengthcolumn (row/column lengths), homologicalDegree
+-- and tableauInternalDegree (degree sums over a tableau's entries), and scalarMultiply
+TEST ///
+debug SchurComplexes
+T = new HashTable from {(1,1)=>1,(2,1)=>1,(3,1)=>1,(1,2)=>1,(2,2)=>1}
+assert(lengthrow(T,1) == 3)
+assert(lengthrow(T,2) == 2)
+assert(lengthcolumn(T,1) == 2)
+assert(lengthcolumn(T,3) == 1)
+T2 = new HashTable from {(1,1)=>1,(1,2)=>-1,(2,1)=>2}
+assert(homologicalDegree(T2,{(0,1),(4,1)},{(3,1)}) == 7)
+assert(tableauInternalDegree(T2,{10,20},{30}) == 60)
+assert(scalarMultiply(3, new HashTable from {1=>2,2=>5}) === new HashTable from {1=>6,2=>15})
+///
+
+-- sgn: the Z/2-graded sign of a permutation -- ordinary inversion sign, except a
+-- transposition of two odd (negative) entries contributes +1, not -1
+TEST ///
+debug SchurComplexes
+assert(sgn({1,2},{0,1}) == 1)
+assert(sgn({1,2},{1,0}) == -1)
+assert(sgn({-1,-2},{1,0}) == 1)
+assert(sgn({1,2,3},{2,1,0}) == -1)
+///
+
+-- columnStandardize sorts a tableau column with the Z/2 sign rule: an even-even swap
+-- flips the sign, a repeated positive entry forces sign 0, odd entries never flip the sign
+TEST ///
+debug SchurComplexes
+csA = columnStandardize(new HashTable from {(1,1)=>2,(1,2)=>1},1,2)
+assert(csA_1 == -1)
+assert((csA_0)#(1,1) == 1 and (csA_0)#(1,2) == 2)
+assert((columnStandardize(new HashTable from {(1,1)=>1,(1,2)=>1},1,2))_1 == 0)
+csC = columnStandardize(new HashTable from {(1,1)=>-1,(1,2)=>-2},1,2)
+assert(csC_1 == 1)
+assert((csC_0)#(1,1) == -2 and (csC_0)#(1,2) == -1)
+///
+
+-- standardZ2Tableaux generates the standard Z/2-graded tableaux indexing the Schur-complex
+-- basis: a single box gives m+n of them; in general their count equals the total rank of
+-- schurComplex, and each one is a fixed point of straightenTableau.
+TEST ///
+debug SchurComplexes
+assert(#standardZ2Tableaux(new Partition from {1},2,3) == 5)
+assert(#standardZ2Tableaux(new Partition from {1},3,4) == 7)
+R = QQ[x11,x21,x12,x22,x13,x23,x14,x24]
+F = complex {genericMatrix(R,x11,2,4)}
+G = schurComplex({3}, F)
+assert(#standardZ2Tableaux(new Partition from {3}, rank F_1, rank F_0) == sum for i from min G to max G list rank G_i)
+tabs = standardZ2Tableaux(new Partition from {2,1}, 2, 2)
+assert(#tabs == 20)
+assert(all(tabs, T -> straightenTableau(T, {2,1}) === new HashTable from {T => 1}))
+///
+
+-- tableauxDiff builds the Schur-complex differential; isWellDefined confirms d^2 = 0,
+-- a stronger check than the isHomogeneous assertions in the existing tests
+TEST ///
+R = ZZ[x,y]
+assert isWellDefined schurComplex({1,1}, freeResolution ideal(x,y))
+R = ZZ/7[x,y,z,w]
+assert isWellDefined schurComplex({2,1}, freeResolution ideal(x*z-y^2,x*w-y*z,y*w-z^2))
+///
+
+-- straightenTableau / recursiveStraighten is a projection onto the standard-tableau basis:
+-- a column with a repeated positive (even) entry straightens to zero, and the partition
+-- argument may be given as a List or a Partition with identical results
+TEST ///
+debug SchurComplexes
+assert(straightenTableau(new HashTable from {(1,1)=>1,(1,2)=>1}, {1,1}) === new HashTable from {})
+Tns = new HashTable from {(1,1)=>2,(2,1)=>1}
+s = straightenTableau(Tns,{2})
+assert(s === new HashTable from {new HashTable from {(1,1)=>1,(2,1)=>2} => 1})
+assert(s === straightenTableau(Tns, new Partition from {2}))
+///
+
+-- permutedTableau rewrites two adjacent tableau columns from a value list L via a pair of
+-- index subsets; entries of column col1 above the cutoff row1 are left untouched
+TEST ///
+debug SchurComplexes
+T = new HashTable from {(1,1)=>10,(1,2)=>11,(2,1)=>20,(2,2)=>21}
+assert(permutedTableau(T, ({0,2},{1,3}), 1, 2, 1, 2, {100,200,300,400}) === new HashTable from {(1,1)=>100,(1,2)=>300,(2,1)=>200,(2,2)=>400})
+assert(permutedTableau(T, ({0},{1,2}), 2, 2, 1, 2, {100,200,300,400}) === new HashTable from {(1,1)=>10,(1,2)=>100,(2,1)=>200,(2,2)=>300})
+///
+
+-- shuffle' performs one step of the straightening law at a column violation, returning the
+-- shuffling relation as a linear combination.  The exact output is pinned for a small case,
+-- and straightening the combination is checked to recover straightening the input tableau.
+TEST ///
+debug SchurComplexes
+straightenCombo = (H, lam) -> (
+    res := new MutableHashTable from {};
+    for k in keys H do (
+        s := straightenTableau(k, lam);
+        for sk in keys s do (
+            c := (H#k)*(s#sk);
+            if res#?sk then res#sk = res#sk + c else res#sk = c));
+    new HashTable from select(pairs res, p -> p#1 != 0));
+Ta = new HashTable from {(1,1)=>2,(2,1)=>1}
+sa = shuffle'(Ta, (1,1), 0, new Partition from {1,1})
+assert(sa === new HashTable from {Ta => 0, new HashTable from {(1,1)=>1,(2,1)=>2} => 1})
+assert(straightenCombo(sa, {2}) === straightenTableau(Ta, {2}))
+Tb = new HashTable from {(1,1)=>2,(1,2)=>4,(2,1)=>1,(2,2)=>3}
+sb = shuffle'(Tb, (1,1), 0, new Partition from {2,2})
+assert(straightenCombo(sb, {2,2}) === straightenTableau(Tb, {2,2}))
+///
+
 end;
 
 

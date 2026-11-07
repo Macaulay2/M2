@@ -1619,5 +1619,69 @@ L = ideal apply(5,i -> random(1,R))
 assert last (time p = plucker L,time L' = plucker p,time p' = plucker L',L' == L and p' == p)
 ///
 
+--Testing affineDiscriminant
+TEST ///
+R = ZZ[a,b,c][x]
+f = a*x^2+b*x+c
+assert(affineDiscriminant(f)==-b^2+4*a*c)
+///
+
+--Testing affineResultant
+TEST ///
+R = ZZ[t,u][y,z]
+f = {3*t*y*z-u*z^2+1, -y+t+3*u-1, u*z^4-t*y^3+t*y*z}
+r = affineResultant f
+assert(degree(r) == {13})
+assert(#terms(r)==66)
+assert(leadTerm(r)==-81*t^12*u)
+///
+
+--Testing macaulayFormula (which was previously being tested in the example)
+TEST ///
+F = {random(2,Grass(0,2)),random(2,Grass(0,2)),random(3,Grass(0,2))}
+(D,D') = macaulayFormula F
+assert(det(D) == (resultant F) * (det D'))
+///
+
+--Testing Hurwitz form. As mentioned in the docs,
+--hurwitzForm(I) == tangentialChowForm(I,1)
+TEST ///
+Q = ideal random(2,Grass(0,4))
+assert(hurwitzForm(Q)==tangentialChowForm(Q,1))
+///
+
+--Testing isCoisotropic
+TEST ///
+-- first tangential Chow form of a random quadric in P^3
+w = tangentialChowForm(ideal random(2,Grass(0,3)),1)
+assert(isCoisotropic w)
+-- random quadric in G(1,3)
+w' = random(2,Grass(1,3))
+assert(not(isCoisotropic w'))
+///
+
+TEST ///
+X = kernel veronese(1, 3);
+C = conormalVariety X;
+RC = ring C;
+primalVars = take(gens RC, 4);
+dualVars   = drop(gens RC, 4);
+isBiHom = f -> (
+        -- substitute dual vars = 1, check homogeneous in primal vars
+        f1 := sub(f, apply(dualVars, v -> v => 1_RC));
+        -- substitute primal vars = 1, check homogeneous in dual vars
+        f2 := sub(f, apply(primalVars, v -> v => 1_RC));
+        isHomogeneous ideal(f1) and isHomogeneous ideal(f2)
+    );
+assert all(flatten entries gens C, isBiHom);
+elim     = eliminate(primalVars, C);
+dualRing = QQ[y_0..y_3];
+toElimDual = map(dualRing, RC,
+    join(apply(primalVars, v -> 0_dualRing), gens dualRing));
+elimDual = toElimDual elim;
+Xdual    = dualVariety X;
+XdualInDR = sub(Xdual, matrix{gens dualRing});
+ assert(radical elimDual == radical XdualInDR);
+///
 end
 

@@ -1,7 +1,7 @@
 /* Copyright 2010, Michael E. Stillman */
 
 #include "interreduce.hpp"
-#include "freemod.hpp"
+#include "free-modules/freemod.hpp"
 #include "text-io.hpp"
 
 Interreducer::Interreducer(GBRing *R0,

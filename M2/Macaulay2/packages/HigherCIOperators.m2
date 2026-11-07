@@ -200,6 +200,52 @@ assert(
     )
 ///
 
+-- ciOperatorResolution: AL is a homogeneous (nonminimal) S-free resolution of the same
+-- module as the minimal resolution G.  AL comes from a length-truncated resolution, so
+-- it is exact only in degrees 1..length(AL)-1 -- the top homology is the truncation.
+TEST///
+needsPackage "CompleteIntersectionResolutions"
+S = ZZ/101[a,b,c];
+ff = matrix"a4,b4,c4";
+N = coker matrix"a,b,c;b,c,a";
+R = S/ideal ff;
+M = highSyzygy (R**N);
+AA = res(M, LengthLimit => 5);
+A = complex apply(length AA, i-> lift(AA.dd_(i+1), S));
+L = trueKoszul ff;
+AL = ciOperatorResolution(A,L);
+G = res pushForward(map(R,S),M);
+assert(isHomogeneous AL)
+assert(all(toList(1..length AL - 1), i -> HH_i AL == 0))
+assert(prune HH_0 AL == prune HH_0 G)
+///
+
+-- trueKoszul: produces the Koszul complex of ff (resolving S/ideal ff) with the same
+-- Betti table as koszulComplex but the exterior-algebra (lex) basis order
+TEST///
+S = ZZ/101[a,b,c,d]
+ff = matrix{{a,b,c,d}}
+TK = trueKoszul ff
+KC = koszulComplex ff
+assert(isHomogeneous TK)
+assert(all(toList(1..length TK), i -> HH_i TK == 0))
+assert(prune HH_0 TK == prune coker ff)
+assert(betti TK == betti KC)
+assert(TK.dd_2 != KC.dd_2)
+///
+
+-- exteriorMultiplication: the multiplication maps are associative --
+-- mu{p1+p2,p3} o (mu{p1,p2} ** mu{p3,0}) == mu{p1,p2+p3} o (mu{0,p1} ** mu{p2,p3}).
+-- This revives the package's checkAssociativity oracle as an assertion.
+TEST///
+n = 5
+mu = exteriorMultiplication n
+scan(toList(0..n), p1 ->
+  scan(toList(0..n-p1), p2 ->
+    scan(toList(0..n-p1-p2), p3 ->
+      assert(mu#{p1+p2,p3}*(mu#{p1,p2}**mu#{p3,0}) == mu#{p1,p2+p3}*(mu#{0,p1}**mu#{p2,p3})))))
+///
+
 
 -----------------------------
 --------Documentation-----------

@@ -566,13 +566,12 @@ TEST ///
     n = matrix{{a,b,d,e},{b,c,e,f}}
     assert(equalBettiTally(coker m,coker n));
 ///
-end
 
 -- Tests sumBetti
 TEST ///
    S = QQ[a..f];
    assert(sumBetti(coker matrix{{a,b,d,e},{b,c,e,f}}) === 12);
-   assert(sumBetti(coker matrix{{a,b},{c,d},{e,f}} === 5);
+   assert(sumBetti(coker matrix{{a,b},{c,d},{e,f}}) === 5);
    S = QQ[a,b,c];
    assert(sumBetti(coker matrix{{a},{b}}) == 3);
 ///
@@ -584,7 +583,7 @@ TEST ///
    D = simplicialComplex {a*b,c} 
    M = universalPresentation D;
    f = map(target generators M, source relations M, matrix{{0},{0},{c}})
-  c assert(relations M === f);
+   assert(relations M === f);
 ///
 
 
@@ -595,5 +594,54 @@ TEST ///
    M = colorfulPresentation D;
    f = map(target generators M, source relations M, matrix{{0},{0},{c}})
    assert(relations M === f);
+///
+
+-- Stress test: universalSOP structure and the system-of-parameters property
+TEST ///
+   -- universalSOP returns one parameter per dimension; the List and
+   -- SimplicialComplex inputs agree; and the parameters genuinely form a
+   -- system of parameters, so the Stanley-Reisner ring modulo them is
+   -- Artinian (has Krull dimension 0).
+   S = QQ[a..f];
+   F = {a*b*c,c*d,d*e*f};
+   D = simplicialComplex F;
+   assert(#universalSOP D == dim D + 1);
+   assert(universalSOP F === universalSOP D);
+   assert(dim((ring D)/(ideal D + ideal universalSOP D)) == 0);
+///
+
+-- Stress test: colorfulSOP returns one parameter per color
+TEST ///
+   -- The barycentric subdivision of a d-dimensional complex is balanced with
+   -- d+1 colors, so colorfulSOP returns dim D + 1 parameters.
+   S = QQ[a..e];
+   assert(#colorfulSOP simplicialComplex {a*b*c,c*d,e} == 3);
+   S = QQ[a..d];
+   assert(#colorfulSOP simplicialComplex {a*b*c,b*c*d} == 3);
+///
+
+-- Stress test: List and SimplicialComplex inputs agree for the presentations
+TEST ///
+   -- universalPresentation and colorfulPresentation accept either a list of
+   -- facets or a SimplicialComplex; the two forms must yield the same module.
+   S = QQ[a..e];
+   F = {a*b*c,c*d,e};
+   D = simplicialComplex F;
+   assert(betti universalPresentation D == betti universalPresentation F);
+   S = QQ[a,b,c];
+   F = {a*b,c};
+   D = simplicialComplex F;
+   assert(betti colorfulPresentation D == betti colorfulPresentation F);
+///
+
+-- Stress test: sumBetti totals and equalBettiTally reflexivity
+TEST ///
+   -- sumBetti is the total rank of a free resolution: the rank of a free
+   -- module, and 2^n for the residue field of an n-variable polynomial ring.
+   S = QQ[x,y,z];
+   assert(sumBetti(S^5) == 5);
+   assert(sumBetti(coker vars S) == 8);
+   M = coker matrix{{x,y,z}};
+   assert(equalBettiTally(M,M));
 ///
 

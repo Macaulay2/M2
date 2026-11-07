@@ -1,4 +1,4 @@
-#include "ringelem.hpp"
+#include "rings/ringelem.hpp"
 
 class Matrix;
 class RingElement;

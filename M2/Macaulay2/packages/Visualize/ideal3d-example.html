@@ -1,21 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <title>visIdeal</title> 
-     <style>
-      canvas { width: 100%; height: 100% }
+  <head>
+    <meta charset="utf-8" />
+    <title>visIdeal</title>
+    <style>
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
       #key {
         position: absolute;
         margin-left: 20px;
         width: 100px;
-        height:100px;
+        height: 100px;
         background-color: #eee;
       }
       #key .text {
         margin-top: 10px;
         clear: right;
-
       }
       #key .section {
         clear: both;
@@ -28,7 +30,7 @@
         margin-right: 10px;
         /* margin-top: 10px; */
         /* margin-bottom: 30px; */
-        float:left;
+        float: left;
         width: 20px;
         height: 20px;
       }
@@ -42,37 +44,95 @@
       #zkey {
         background-color: blue;
       }
-    </style> 
+    </style>
     <script>
       //global variables
       //for some reason [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [3, 1, 0], [3, 2, 0], [3, 3, 0], [3, 4, 0], [3, 4, 1], [3, 3, 1], [3, 2, 1], [3, 1, 1], [3, 0, 1], [3, 0, 2], [2, 1, 0], [2, 2, 0], [2, 3, 0], [2, 4, 0], [2, 4, 1], [2, 3, 1], [2, 2, 1], [2, 1, 1], [2, 0, 1], [2, 0, 2], [1, 1, 0], [1, 2, 0], [1, 3, 0], [1, 4, 0], [1, 4, 1], [1, 3, 1], [1, 2, 1], [1, 1, 1], [1, 0, 1], [1, 0, 2], [0, 1, 0], [0, 2, 0], [0, 3, 0], [0, 4, 0], [0, 4, 1], [0, 3, 1], [0, 2, 1], [0, 1, 1], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5]] is every monomial in R/I
-      data = [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [3, 1, 0], [3, 2, 0], [3, 3, 0], [3, 4, 0], [3, 4, 1], [3, 3, 1], [3, 2, 1], [3, 1, 1], [3, 0, 1], [3, 0, 2], [2, 1, 0], [2, 2, 0], [2, 3, 0], [2, 4, 0], [2, 4, 1], [2, 3, 1], [2, 2, 1], [2, 1, 1], [2, 0, 1], [2, 0, 2], [1, 1, 0], [1, 2, 0], [1, 3, 0], [1, 4, 0], [1, 4, 1], [1, 3, 1], [1, 2, 1], [1, 1, 1], [1, 0, 1], [1, 0, 2], [0, 1, 0], [0, 2, 0], [0, 3, 0], [0, 4, 0], [0, 4, 1], [0, 3, 1], [0, 2, 1], [0, 1, 1], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5]];
-      dataGenz = [[0, 1, 2], [1, 0, 3], [4, 0, 0], [0, 5, 0], [0, 0, 6]];
+      data = [
+        [0, 0, 0],
+        [1, 0, 0],
+        [2, 0, 0],
+        [3, 0, 0],
+        [3, 1, 0],
+        [3, 2, 0],
+        [3, 3, 0],
+        [3, 4, 0],
+        [3, 4, 1],
+        [3, 3, 1],
+        [3, 2, 1],
+        [3, 1, 1],
+        [3, 0, 1],
+        [3, 0, 2],
+        [2, 1, 0],
+        [2, 2, 0],
+        [2, 3, 0],
+        [2, 4, 0],
+        [2, 4, 1],
+        [2, 3, 1],
+        [2, 2, 1],
+        [2, 1, 1],
+        [2, 0, 1],
+        [2, 0, 2],
+        [1, 1, 0],
+        [1, 2, 0],
+        [1, 3, 0],
+        [1, 4, 0],
+        [1, 4, 1],
+        [1, 3, 1],
+        [1, 2, 1],
+        [1, 1, 1],
+        [1, 0, 1],
+        [1, 0, 2],
+        [0, 1, 0],
+        [0, 2, 0],
+        [0, 3, 0],
+        [0, 4, 0],
+        [0, 4, 1],
+        [0, 3, 1],
+        [0, 2, 1],
+        [0, 1, 1],
+        [0, 0, 1],
+        [0, 0, 2],
+        [0, 0, 3],
+        [0, 0, 4],
+        [0, 0, 5],
+      ];
+      dataGenz = [
+        [0, 1, 2],
+        [1, 0, 3],
+        [4, 0, 0],
+        [0, 5, 0],
+        [0, 0, 6],
+      ];
     </script>
-  </head> 
+  </head>
   <body>
-  <div id="side">
-          <h2>&#8202;&#8202;Menu</h2>
-          <div class="list-group" id="menuList">
-            </div>
-            <a id="idealGens" href="#" class="list-group-item">Ideal Generators</a>
-            <div id="key">
-      <div class="section"><div class="key" id="xkey"></div><div class='text'>x axis</div></div>
-      <div class="section"><div class="key" id="ykey"></div><div class='text'>y axis</div></div>
-      <div class="section"><div class="key" id="zkey"></div><div class='text'>z axis</div></div>
-    </div>
-  
-            <!-- we can put these options in later
+    <div id="side">
+      <h2>&#8202;&#8202;Menu</h2>
+      <div class="list-group" id="menuList"></div>
+      <a id="idealGens" href="#" class="list-group-item">Ideal Generators</a>
+      <div id="key">
+        <div class="section">
+          <div class="key" id="xkey"></div>
+          <div class="text">x axis</div>
+        </div>
+        <div class="section">
+          <div class="key" id="ykey"></div>
+          <div class="text">y axis</div>
+        </div>
+        <div class="section">
+          <div class="key" id="zkey"></div>
+          <div class="text">z axis</div>
+        </div>
+      </div>
+
+      <!-- we can put these options in later
             <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
             <a id="endSession" href="#" class="list-group-item">End session</a>            
             -->
-          </div>
+    </div>
 
-
-
-    
-  <script src="js/visCommon.js"></script>
-  <script src="js/visIdeal3d.js"></script>
-
-</body> 
+    <script src="js/visCommon.js"></script>
+    <script src="js/visIdeal3d.js"></script>
+  </body>
 </html>

@@ -1,5 +1,5 @@
-#ifndef _factory_h_
-#  define _factory_h_
+#ifndef M2_INTERFACE_FACTORY_H_
+#define M2_INTERFACE_FACTORY_H_
 
 #  include "engine-includes.hpp"
 

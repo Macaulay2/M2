@@ -1,6 +1,6 @@
 // (c) 1994 Michael E. Stillman
-#ifndef _text_io_hh_
-#define _text_io_hh_
+#ifndef M2_TEXT_IO_HH_
+#define M2_TEXT_IO_HH_
 
 #include "buffer.hpp"
 #include "engine-includes.hpp"
