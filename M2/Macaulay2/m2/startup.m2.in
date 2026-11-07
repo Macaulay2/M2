@@ -258,7 +258,6 @@ if firstTime then (
 	       "bin" => "@bindir@/",
 	       "data" => "@datadir@/",
 	       "docdir" => "@docdir@/",
-	       "emacs" => "@emacsdir@/",
 	       "factory gftables" =>  "@GFTABLESDIR@",
 	       "info" => "@infodir@/",
 	       "lib" => "@libdir@/",

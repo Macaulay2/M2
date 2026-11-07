@@ -12,7 +12,7 @@
 ##       export CMAKE_GENERATOR=Ninja
 ##       cmake -S . -B BUILD/cmake
 ##  2. cmake --build BUILD/cmake --target build-libraries build-programs
-##  3. cmake --build BUILD/cmake --target M2-engine M2-binary M2-core M2-emacs
+##  3. cmake --build BUILD/cmake --target M2-engine M2-binary M2-core
 ##  4. cmake --build BUILD/cmake --target install-packages check-packages
 ##  5. cmake --install BUILD/cmake
 ###############################################################################
