@@ -137,13 +137,14 @@ matchingField = method(
 matchingField(List, List, Matrix) := (K, S, M) -> (
     -- uses min convention
     -- returns matching field for weight matrix along with the weight for the Plucker variables
-    -- NB we assume the MF is well defined from the weight matrix
-    --    i.e. the minimum was uniquely attained for each plucker form
+    -- NB we do not assume the MF is well defined from the weight matrix
+    --    i.e. if the minimum is not uniquely attained for each plucker form then raise an error
     Mn := numcols M;
     Mk := numrows M;
     local subsetOrder;
     local subsetWeight;
     local weight;
+    local minWeightTie;
     L := new MutableList from #S;
     W := new MutableList from #S;
     listIndex := 0;
@@ -152,13 +153,19 @@ matchingField(List, List, Matrix) := (K, S, M) -> (
             error("subset too large for weight matrix");
             );
         subsetWeight = infinity;
+        minWeightTie = true;
         for ordering in permutations(I) do (
             weight = sum for i from 0 to #I-1 list M_(i, ordering_i);
-            if weight < subsetWeight then (
+            if weight == subsetWeight then (
+                minWeightTie = true;
+                )
+            else if weight < subsetWeight then (
                 subsetOrder = apply(ordering, i -> i + 1);
                 subsetWeight = weight;
+                minWeightTie = false;
                 );
             );
+        if minWeightTie then error("expected unique subset of minimum weight on columns " | toString I);
         L#listIndex = subsetOrder;
         W#listIndex = subsetWeight;
         listIndex += 1;
