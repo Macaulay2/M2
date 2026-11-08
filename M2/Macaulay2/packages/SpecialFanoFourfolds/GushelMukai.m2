@@ -167,7 +167,7 @@ gushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
         X.cache#(surface X,"label") = "mukai26''";
         return X;
     );
-    error(///not valid string, permitted strings are:
+    error(///input string not recognized; permitted strings are:
 "sigma-plane",
 "rho-plane",
 "tau-quadric",
@@ -184,7 +184,7 @@ gushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
 "triple projection of K3 surface of degree 26"///);
 );
 
-gushelMukaiFourfold String := o -> str -> gushelMukaiFourfold(str,if PP.?ring then PP.ring else ZZ/65521,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+gushelMukaiFourfold String := o -> str -> gushelMukaiFourfold(str,if PP.ring === null then ZZ/65521 else PP.ring,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 netTexDescription GushelMukaiFourfold := o -> X -> (
     if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
@@ -205,13 +205,13 @@ netTexDescription GushelMukaiFourfold := o -> X -> (
     (netF,texF) := netTexDescription F;
     netS := surfaceDescription(9,S);
     texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
-    netStr := net("fourfold: " | netX);
+    netStr := net("GM fourfold: " | netX);
     netStr = netStr || net("ambient fivefold: " | netF);
     netStr = netStr || net("surface: " | netS);
     netStr = netStr || net("class in G(1,4): " | (toString cS));
     netStr = netStr || net "lattice discriminant:";
     netStr = netStr || ((net "det(") | (net M) | net(") = " | (toString d) | " = " | (toString q) | "*8 + " | (toString r)));
-    texStr := "\\begin{aligned}&\\text{fourfold: }" | texX;
+    texStr := "\\begin{aligned}&\\text{GM fourfold: }" | texX;
     texStr = texStr | newline | "\\\\&\\text{ambient fivefold: }" | texF;
     texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
     texStr = texStr | newline | "\\\\&\\text{class in }\\mathbb{G}(1,4)\\text{: }" | (replace("s_","\\\\sigma_",texMath cS));
@@ -266,16 +266,16 @@ shortDescriptionFourfold (GushelMukaiFourfold,Boolean) := (X,UseAttribute) -> (
 shortDescriptionFourfoldTeX (GushelMukaiFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
     d := discriminant X;
-    discrStr := texMath d;
+    discrStr := "{" | (texMath d) | "}";
     if d % 8 == 2 then (
         (a,b) := last cycleClass X;
         if even(a+b) and odd(b) then (
-            discrStr = discrStr | "(')";
+            discrStr = discrStr | "^{'}";
         ) else if odd(a+b) and even(b) then (
-            discrStr = discrStr | "('')";
+            discrStr = discrStr | "^{''}";
         ) else error "internal error encountered";
     );
-    shortTeX("\\text{Gushel-Mukai fourfold of discriminant }" | discrStr)
+    shortTeX("\\text{Gushel-Mukai fourfold in }\\mathcal{GM}_" | discrStr)
 );
 
 discriminant GushelMukaiFourfold := o -> X -> (
