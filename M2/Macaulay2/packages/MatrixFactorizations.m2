@@ -108,11 +108,6 @@ load "./MatrixFactorizations/MatrixFactorizationsDOC.m2"
 ------------------------------------------------------------------------------
 
 load "./MatrixFactorizations/KellerTests.m2"
-load "./MatrixFactorizations/ConstructorGradingTests.m2"
-load "./MatrixFactorizations/HomGradingTests.m2"
-load "./MatrixFactorizations/TensorGradingTests.m2"
-load "./MatrixFactorizations/HigherPeriodMapTests.m2"
-load "./MatrixFactorizations/HigherPeriodHomologyTests.m2"
 
 
 end---------------------------------------------------------------------------     

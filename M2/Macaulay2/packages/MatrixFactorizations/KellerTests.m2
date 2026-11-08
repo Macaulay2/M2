@@ -1157,3 +1157,454 @@ assert(source g === Ct and target g === C)
 ///
 
 
+
+-- Constructors must infer degrees relative to the cyclic source and target,
+-- rather than retaining the degrees of a presentation with different modules.
+TEST ///
+S = QQ[x,y];
+C = ZZdfactorization {x,y^2};
+assert isHomogeneous dd^C
+assert(degree dd^C_1 === {1} and degree dd^C_2 === {2})
+assert(potential C == x*y^2)
+D = ZZdfactorization {matrix{{x}},matrix{{y^2}}};
+assert isHomogeneous dd^D
+assert(degree dd^D_1 === {2} and degree dd^D_2 === {1})
+assert isWellDefined D
+assert(potential D == x*y^2)
+assert isHomogeneous dd^(ZZdfactorization(D, Base => 1))
+assert isHomogeneous dd^(ZZdfactorization {0_S,x})
+assert not isHomogeneous dd^(ZZdfactorization {x+y^2,x})
+m = map(S^2,S^2,{{x,0},{0,y^2}});
+assert not isHomogeneous dd^(ZZdfactorization {m,m})
+///
+
+-- Preserve nonzero degrees through direct sums and block maps, including
+-- zero blocks, without claiming that mixed-degree sums are homogeneous.
+TEST ///
+S = QQ[x,y];
+C = tailMF ideal vars(S/(x^3+y^3));
+f = S_0 * id_C;
+U = C ++ C;
+assert isHomogeneous dd^U
+assert all({0,1}, i -> degree dd^U_i === degree dd^C_i)
+g = f ++ f;
+assert isHomogeneous g
+assert all({0,1}, i -> degree g_i === {1})
+assert(g == S_0 * id_U)
+assert isWellDefined g
+assert isFactorizationMorphism g
+assert(components g === {f,f})
+assert all({0,1}, i -> components g_i === {f_i,f_i})
+assert(g_[0]^[0] == f and g_[1]^[1] == f)
+h = map(U,U,{{f,0},{0,f}});
+assert(h == g)
+assert isHomogeneous h
+assert all({0,1}, i -> degree h_i === {1})
+assert isHomogeneous(f ++ 0*f)
+assert not isHomogeneous(f ++ S_0*f)
+assert not isHomogeneous map(U,U,{{f,0},{0,S_0*f}})
+labelled = directSum {"left" => f, "right" => f};
+assert isHomogeneous labelled
+assert(labelled_["left"]^["left"] == f)
+///
+
+-- Recasting a map between twists must adjust the internal degree relative
+-- to the new modules, including negative degrees and multidegrees.
+TEST ///
+S = QQ[x,y];
+C = tailMF ideal vars(S/(x^3+y^3));
+f = S_0 * id_C;
+Ct = C ** S^{-2};
+g = map(C,Ct,f);
+assert isHomogeneous g
+assert all({0,1}, i -> degree g_i === {-1})
+assert(source g === Ct and target g === C)
+Dt = C ** S^{-1};
+h = map(Dt,C,f);
+assert isHomogeneous h
+assert all({0,1}, i -> degree h_i === {2})
+assert(source h === C and target h === Dt)
+assert all({0,1}, i -> entries f_i == entries g_i and entries f_i == entries h_i)
+S = QQ[x,y, Degrees => {{1,0},{0,1}}];
+C = ZZdfactorization {x,y^2};
+assert isHomogeneous dd^C
+assert(degree dd^C_1 === {1,0} and degree dd^C_2 === {0,2})
+f = x * id_C;
+assert isHomogeneous(f ++ f)
+assert all({0,1}, i -> degree (f ++ f)_i === {1,0})
+Ct = C ** S^{{-2,-1}};
+g = map(C,Ct,f);
+assert isHomogeneous g
+assert all({0,1}, i -> degree g_i === {-1,-1})
+M = image matrix{{x,y}};
+Z = ZZdfactorization {M,M};
+f = x * id_Z;
+assert isHomogeneous(f ++ f)
+assert isWellDefined(f ++ f)
+assert all({0,1}, i -> degree (f ++ f)_i === {1,0})
+///
+
+-- The wraparound twist in odd Hom degree is the degree of the potential.
+-- InternalDegree is measured in the normalized periodic Hom module, so the
+-- two raw component degrees need not agree for an odd map.
+TEST ///
+S = ZZ/101[a,b];
+R = S/(a^3+b^3);
+C = tailMF ideal vars R;
+D = tailMF((ideal vars R)^2);
+E = Hom(C,D);
+assert isHomogeneous dd^E
+assert(degree dd^E_1 === {0} and degree dd^E_2 === {3})
+scan({-1,0,1,2}, d -> scan({false,true}, boundary -> (
+    setRandomSeed 0;
+    f = randomFactorizationMap(D,C, Degree => d, InternalDegree => 3,
+        Cycle => not boundary, Boundary => boundary);
+    assert(f != 0);
+    assert(degree f === d);
+    assert isWellDefined f;
+    assert isHomogeneous f;
+    assert isCommutative f;
+    assert(degree f_0 === {3});
+    assert(degree f_1 === if odd d then {0} else {3});
+    assert(homomorphism homomorphism' f == f);
+    )))
+///
+
+-- The same construction works with degree vectors and with zero differential
+-- components (whose internal degree is unconstrained).
+TEST ///
+S = ZZ/101[x,y, Degrees => {{1,0},{0,1}}];
+F0 = S^1;
+F1 = S^{{-1,0}};
+C = ZZdfactorization hashTable {
+    1 => map(F0,F1,{{x}}, Degree => {0,0}),
+    2 => map(F1,F0,{{y}}, Degree => {1,1})
+    };
+E = Hom(C,C);
+assert isHomogeneous dd^E
+scan({false,true}, boundary -> (
+    setRandomSeed 0;
+    f = randomFactorizationMap(C,C, Degree => 1, InternalDegree => {1,1},
+        Cycle => not boundary, Boundary => boundary);
+    assert(f != 0);
+    assert isWellDefined f;
+    assert isHomogeneous f;
+    assert isCommutative f;
+    assert(degree f_0 === {1,1} and degree f_1 === {0,0});
+    assert(homomorphism homomorphism' f == f);
+    ))
+Z = ZZdfactorization(S^1,2);
+assert isHomogeneous dd^(Hom(C,Z))
+assert isHomogeneous dd^(Hom(Z,C))
+///
+
+-- Different differential profiles normalize relative to module zero. Their
+-- Hom module therefore needs relative twists even in homological degree zero.
+TEST ///
+S = ZZ/101[x,y];
+F0 = S^1;
+F1 = S^{-1};
+G1 = S^{-2};
+C = ZZdfactorization hashTable {
+    1 => map(F0,F1,{{x}}, Degree => 0),
+    2 => map(F1,F0,{{x^2}}, Degree => 3)
+    };
+D = ZZdfactorization hashTable {
+    1 => map(F0,G1,{{x}}, Degree => -1),
+    2 => map(G1,F0,{{x^2}}, Degree => 4)
+    };
+assert isHomogeneous dd^(Hom(C,D))
+scan({0,1}, d -> (
+    setRandomSeed 0;
+    f = randomFactorizationMap(D,C, Degree => d, InternalDegree => 2,
+        Cycle => true);
+    assert(f != 0);
+    assert isHomogeneous f;
+    assert isWellDefined f;
+    assert isCommutative f;
+    assert(apply({0,1}, i -> degree f_i) ===
+        if d == 0 then {{2},{3}} else {{3},{-1}});
+    assert(homomorphism homomorphism' f == f);
+    ))
+h = Hom(x*id_C, x^2*id_D);
+assert isHomogeneous h
+assert all({0,1}, i -> degree h_i === {3})
+assert(h == x^3*id_(Hom(C,D)))
+///
+
+-- Hom preserves identities and the graded pre/postcomposition signs. Force
+-- commutativity checks to recompute, rather than accepting a cached answer.
+TEST ///
+S = ZZ/101[x,y];
+C = ZZdfactorization {x,y};
+E = Hom(C,C);
+assert(Hom(id_C,id_C) == id_E)
+setRandomSeed 0;
+f = randomFactorizationMap(C,C, Degree => 1, InternalDegree => 2, Cycle => true);
+g = randomFactorizationMap(C,C, Degree => 1, InternalDegree => 2, Cycle => true);
+assert(f != 0 and g != 0)
+h = Hom(f,id_C);
+debugLevel = 1;
+assert isCommutative h
+assert isHomogeneous h
+assert isWellDefined h
+assert(homomorphism(h * homomorphism' g) == g*f)
+debugLevel = 0;
+
+T = ZZ/7[u,v,w];
+T.rootOfUnity = 2_T;
+D = ZZdfactorization {u,v,w};
+H = Hom(D,D);
+assert(Hom(id_D,id_D) == id_H)
+assert isHomogeneous dd^H
+debugLevel = 1;
+scan({{0,0},{1,0},{0,1},{-1,1},{1,2},{2,2}}, pair -> (
+    setRandomSeed 0;
+    f = randomFactorizationMap(D,D, Degree => pair#0,
+        InternalDegree => 4, Cycle => true);
+    g = randomFactorizationMap(D,D, Degree => pair#1,
+        InternalDegree => 4, Cycle => true);
+    assert(f != 0 and g != 0);
+    h = Hom(f,g);
+    assert(degree h === sum pair);
+    assert isHomogeneous h;
+    assert isWellDefined h;
+    assert isCommutative h;
+    ))
+debugLevel = 0;
+///
+
+-- Ungraded Hom remains available when normalization is impossible, but an
+-- explicit InternalDegree must not silently promise a compatible grading.
+TEST ///
+S = ZZ/101[x];
+C = ZZdfactorization {x,x};
+D = ZZdfactorization {x,x^2};
+assert isHomogeneous dd^C
+assert isHomogeneous dd^D
+assert isWellDefined Hom(C,D)
+assert not isHomogeneous dd^(Hom(C,D))
+assert try (randomFactorizationMap(D,C, InternalDegree => 1); false) else true
+
+B = ZZdfactorization {x+x^2,x};
+assert not isHomogeneous dd^B
+assert isWellDefined Hom(B,B)
+assert try (randomFactorizationMap(B,B, InternalDegree => 1); false) else true
+///
+
+-- Tensoring homogeneous scalar factors of a cubic must keep their grading;
+-- otherwise the resulting Koszul factorization cannot support graded Hom.
+TEST ///
+S = ZZ/101[a,b,c];
+C = koszulMF({a,b,c}, a^3+b^3+c^3);
+assert isWellDefined C
+assert isHomogeneous dd^C
+assert(potential C == a^3+b^3+c^3)
+setRandomSeed 0;
+f = randomFactorizationMap(C,C, Cycle => true, InternalDegree => 1);
+assert(f != 0)
+assert isHomogeneous f
+assert all({0,1}, i -> degree f_i === {1})
+assert isWellDefined f
+assert isCommutative f
+
+-- Different weights require different shifts in the tensor summands.
+T = ZZ/101[x,y, Degrees => {2,3}];
+D = koszulMF({x,y}, x^3+y^2);
+assert isWellDefined D
+assert isHomogeneous dd^D
+assert(potential D == x^3+y^2)
+assert(degree dd^D_1 === {2} and degree dd^D_2 === {4})
+assert isHomogeneous dd^(Hom(D,D))
+///
+
+-- The tensor grading keeps the first factor's differential profile, so the
+-- unit remains strict and the associator has degree zero.
+TEST ///
+S = ZZ/101[a,b,c];
+A = ZZdfactorization {a,a^2};
+B = ZZdfactorization {b,b^2};
+C = ZZdfactorization {c,c^2};
+U = ZZdfactorization(S^1,2);
+assert(A**U == A and U**A == A)
+assert(id_A**id_B == id_(A**B))
+alpha = tensorAssociativity(A,B,C);
+sigma = tensorCommutativity(A,B);
+tau = tensorCommutativity(B,A);
+debugLevel = 1;
+assert isWellDefined alpha
+assert isHomogeneous alpha
+assert isCommutative alpha
+assert all({0,1}, i -> degree alpha_i === {0})
+assert isWellDefined sigma
+assert isHomogeneous sigma
+assert isCommutative sigma
+assert(tau*sigma == id_(A**B))
+debugLevel = 0;
+///
+
+-- Multigraded factors can have different differential profiles. Rebracketing
+-- and swapping retain the corresponding internal twists.
+TEST ///
+S = ZZ/101[x,y, Degrees => {{1,0},{0,1}}];
+A = ZZdfactorization {x,y};
+B = ZZdfactorization {y,x};
+AB = A**B;
+assert isWellDefined AB
+assert isHomogeneous dd^AB
+assert(degree dd^AB_1 === {1,0} and degree dd^AB_2 === {0,1})
+U = ZZdfactorization(S^1,2);
+assert(A**U == A and U**A == A)
+alpha = tensorAssociativity(A,B,A);
+sigma = tensorCommutativity(A,B);
+debugLevel = 1;
+assert isHomogeneous alpha
+assert isWellDefined alpha
+assert isCommutative alpha
+assert isHomogeneous sigma
+assert isWellDefined sigma
+assert isCommutative sigma
+debugLevel = 0;
+h = (x*id_A)**(y*id_B);
+assert(h == (x*y)*id_AB)
+assert isHomogeneous h
+assert all({0,1}, i -> degree h_i === {1,1})
+///
+
+-- Tensor signs use the source summand indices, including for roots of unity
+-- other than -1 and for negative homological degrees.
+TEST ///
+S = ZZ/7[x,y,z];
+S.rootOfUnity = 2_S;
+C = ZZdfactorization {x,y,z};
+T = C**C;
+assert isWellDefined T
+assert isHomogeneous dd^T
+assert(potential T == 2*potential C)
+assert(id_C**id_C == id_T)
+alpha = tensorAssociativity(C,C,C);
+assert isHomogeneous alpha
+assert isWellDefined alpha
+assert isCommutative alpha
+debugLevel = 1;
+scan({{0,0},{1,0},{0,1},{-1,1},{1,2},{2,2}}, pair -> (
+    setRandomSeed 0;
+    f = randomFactorizationMap(C,C, Degree => pair#0,
+        InternalDegree => 4, Cycle => true);
+    g = randomFactorizationMap(C,C, Degree => pair#1,
+        InternalDegree => 4, Cycle => true);
+    h = f**g;
+    assert(h != 0);
+    assert(degree h === sum pair);
+    assert isHomogeneous h;
+    assert isWellDefined h;
+    assert isCommutative h;
+    ))
+debugLevel = 0;
+///
+
+-- The image of delta alone need not consist of cycles in a p-complex.
+-- Boundaries and their homotopy witnesses use delta^(p-1).
+TEST ///
+scan({ZZ/7[x,y,z], ZZ/5[a,b,c,d]}, S -> (
+    S.rootOfUnity = 2_S;
+    C := ZZdfactorization flatten entries vars S;
+    p := period C;
+    E := Hom(C,C);
+    assert((dd^E)^p == 0);
+    assert((dd^E)^(p-1) != 0);
+    scan({-2,-1,0,1,2,3,4}, n -> (
+        setRandomSeed 0;
+        f := randomFactorizationMap(C,C,
+            Boundary => true, Degree => n, InternalDegree => 2*p);
+        assert(f != 0);
+        assert isHomogeneous f;
+        assert isCommutative f;
+        -- Recheck the cache using every cyclic square and the same root of unity.
+        assert isWellDefined f;
+        assert isNullHomotopic f;
+        h := nullHomotopy f;
+        assert(degree h === n+p-1);
+        assert isWellDefined h;
+        assert isNullHomotopyOf(h,f);
+        assert(homomorphism homomorphism' f == f);
+        ));
+    Z := ZZdfactorization toList(p:S^1);
+    assert not isNullHomotopic id_Z;
+    h := nullHomotopy id_Z;
+    assert isWellDefined h;
+    assert(degree h === p-1);
+    assert not isNullHomotopyOf(h,id_Z);
+    ));
+///
+
+-- The square across the end of the period must not be skipped.
+TEST ///
+S = QQ[x];
+C = ZZdfactorization hashTable {
+    1 => map(S^1,S^1,0),
+    2 => map(S^1,S^1,{{x}}, Degree => 1)
+    };
+f = map(C,C,hashTable {0 => id_(C_0)});
+assert not isCommutative f
+assert isWellDefined f
+f.cache.isCommutative = true;
+assert not isWellDefined f
+///
+
+-- Amplitude homology uses incoming and outgoing products with complementary
+-- lengths. Distinct ranks ensure their ambient modules cannot be confused.
+TEST ///
+K = QQ;
+F0 = K^1;
+F1 = K^2;
+F2 = K^3;
+F = ZZdfactorization hashTable {
+    1 => map(F0,F1,{{1,0}}),
+    2 => map(F1,F2,0),
+    3 => map(F2,F0,0)
+    };
+assert isWellDefined F
+assert((dd^F)^3 == 0)
+assert(apply(toList(0..2), i -> rank homology(i,1,F)) === {1,1,3})
+assert(apply(toList(0..2), i -> rank homology(i,2,F)) === {0,2,3})
+assert(rank homology(-3,1,F) == 1)
+assert(rank homology(4,2,F) == 2)
+H = HH_1 F;
+assert(period H == 3)
+assert(dd^H == 0)
+assert(apply(toList(0..2), i -> rank H_i) === {1,1,3})
+assert(try (homology(0,0,F); false) else true)
+assert(try (homology(0,3,F); false) else true)
+
+-- A length-three identity string has zero homology for either amplitude.
+G = ZZdfactorization {
+    map(K^1,K^1,1), map(K^1,K^1,1), map(K^1,K^1,0)
+    };
+assert((dd^G)^2 != 0 and (dd^G)^3 == 0)
+assert all({1,2}, j -> all(0..2, i -> homology(i,j,G) == 0))
+///
+
+-- The quotient must retain the grading of the middle module.
+TEST ///
+S = QQ[x,y, Degrees => {{1,0},{0,1}}];
+F0 = S^1;
+F1 = S^{{-1,0}};
+F2 = S^{{-1,-1}};
+F = ZZdfactorization hashTable {
+    1 => map(F0,F1,{{x}}, Degree => {0,0}),
+    2 => map(F1,F2,{{y}}, Degree => {0,0}),
+    3 => map(F2,F0,0)
+    };
+assert isWellDefined F
+assert((dd^F)^3 == 0)
+H1 = homology(0,1,F);
+H2 = homology(0,2,F);
+H3 = homology(1,2,F);
+assert(annihilator H1 == ideal(x*y))
+assert(annihilator H2 == ideal x)
+assert(annihilator H3 == ideal y)
+assert(degrees H1 === {{0,0}})
+assert(degrees H3 === {{1,0}})
+assert all({H1,H2,H3}, isHomogeneous)
+///
