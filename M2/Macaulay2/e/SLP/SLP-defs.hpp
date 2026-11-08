@@ -5,6 +5,8 @@
 #ifndef M2_SLP_SLP_DEFS_HPP_
 #define M2_SLP_SLP_DEFS_HPP_
 
+#include <tbb/enumerable_thread_specific.h>
+
 // SLP
 class SLProgram;
 
@@ -187,6 +189,10 @@ class SLEvaluatorConcrete : public SLEvaluator
   std::vector<ElementType> values; /* should be a vector of values
                                       starting with inputCounter many vars and consts and
                                       continuing with the values of other GATEs */
+  // Per-thread scratch copy of `values`: concurrent evaluate() calls (from the
+  // parallel path tracker) each work on their own buffer, and the buffer is
+  // allocated once per thread rather than on every call.
+  tbb::enumerable_thread_specific<std::vector<ElementType>> mThreadValues;
 
   // data used by compiled evaluation
   void (*compiled_fn)(ElementType const*, ElementType*);  //void (*compiled_fn)(double const*, double*);
