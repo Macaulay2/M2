@@ -184,7 +184,7 @@ gushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
 "triple projection of K3 surface of degree 26"///);
 );
 
-gushelMukaiFourfold String := o -> str -> gushelMukaiFourfold(str,ZZ/65521,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+gushelMukaiFourfold String := o -> str -> gushelMukaiFourfold(str,if PP.?ring then PP.ring else ZZ/65521,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 netTexDescription GushelMukaiFourfold := o -> X -> (
     if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
@@ -221,21 +221,10 @@ netTexDescription GushelMukaiFourfold := o -> X -> (
 );
 
 describe GushelMukaiFourfold := X -> (
-    (cS,ab) := cycleClass X;
-    (a,b) := ab;
     recognize X;
-    discrX := discriminant X;
-    descr:="Special Gushel-Mukai fourfold of discriminant "|toString(discrX);
-    if discrX % 8 == 2 then (
-        if even(a+b) and odd(b) then
-            descr = descr|"(')"
-        else
-            if odd(a+b) and even(b) then
-                descr = descr|"('')"
-            else error "internal error encountered"
-    );
-    descr = descr|newline|"containing a "|surfaceDescription(0,surface X);
-    descr = descr|newline|"and with class in G(1,4) given by "|toString(cS);
+    descr := "Special " | shortDescriptionFourfold(X,false);
+    descr = descr | newline | "containing a " | surfaceDescription(0,surface X);
+    descr = descr|newline|"and with class in G(1,4) given by "|toString(first cycleClass X);
     if dim singLocus ambientFivefold X >= 0 then descr = descr|newline|"Type: Gushel (not ordinary)" else descr = descr|newline|"Type: ordinary";
     if instance(recognize X,ZZ) then descr = descr|newline|"(case "|toString(recognize X)|" of Table 1 in arXiv:2002.07026)";
     if recognize X === "gushel26''" then (
@@ -364,7 +353,7 @@ random GushelMukaiFourfold := o -> X -> (
     X'
 );
 
-toGrass = method(TypicalValue => MultirationalMap)
+toGrass = method(TypicalValue => MultirationalMap);
 
 toGrass EmbeddedProjectiveVariety := (cacheValue "toGrass") (X -> (
     K := coefficientRing X;
@@ -425,7 +414,7 @@ parameterCount GushelMukaiFourfold := o -> X -> (
     S := surface X;
     if (not o.Verbose) and X.cache#?(S,"parameterCount") then return X.cache#(S,"parameterCount");
     Y := ambientFivefold X;
-    if o.Verbose then <<"S: "|toString(? ideal S)<<endl;
+    if o.Verbose then <<"S: "|toString(? S)<<endl;
     if o.Verbose then <<"X: GM fourfold containing S"<<endl;
     if o.Verbose then <<"Y: del Pezzo fivefold containing X"<<endl;
     N := normalSheaf(S,Y);
@@ -433,16 +422,16 @@ parameterCount GushelMukaiFourfold := o -> X -> (
     if o.Verbose then <<"h^1(N_{S,Y}) = "|toString(h1N)<<endl;
     if h1N != 0 then error("condition not satisfied: h^1(N_{S,Y}) = 0");
     h0N := rankHH(0,N);
-    if o.Verbose then <<"h^0(N_{S,Y}) = "|toString(h0N)<<endl;
+    if o.Verbose then <<"h^0(N_{S,Y}) = "|toString(h0N)<<endl<<flush;
     m := (# basisMem({2},S)) - 5;
     OS := OO_(variety S);
     h1OS2 := rank HH^1 (OS(2));
     if h1OS2 != 0 then error("condition not satisfied: h^1(O_S(2)) = 0");
     m' := 40 - ((hilbertPolynomial S) 2);
-    if m != m' then error("condition not satisfied: h^0(I_{S,Y}(2)) == h^0(O_Y(2)) - \\chi(O_S(2))");
+    if m != m' then error("condition not satisfied: h^0(I_{S,Y}(2)) == h^0(O_Y(2)) - χ(O_S(2))");
     if o.Verbose then (
         <<"h^1(O_S(2)) = 0, ";
-        <<"and h^0(I_{S,Y}(2)) = "|toString(m)|" = h^0(O_Y(2)) - \\chi(O_S(2));"|newline|"in particular, h^0(I_{S,Y}(2)) is minimal"<<endl;
+        <<"and h^0(I_{S,Y}(2)) = "|toString(m)|" = h^0(O_Y(2)) - χ(O_S(2));"|newline|"in particular, h^0(I_{S,Y}(2)) is minimal"<<endl;
     );
     if o.Verbose then <<"h^0(N_{S,Y}) + "|toString(m-1)|" = "|toString(h0N + m - 1)<<endl;
     NX := normalSheaf(S,X);

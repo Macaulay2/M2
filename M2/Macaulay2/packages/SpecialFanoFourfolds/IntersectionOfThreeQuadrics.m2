@@ -40,7 +40,7 @@ netTexDescription IntersectionOfThreeQuadricsInP7 := o -> X -> (
 );
 
 describe IntersectionOfThreeQuadricsInP7 := X -> (
-    descr := "Complete intersection of 3 quadrics in PP^7";
+    descr := "Complete intersection of three quadrics in PP^7";
     disc := discriminant X;
     A := X.cache#(surface X,"LatticeIntersectionMatrix");
     descr = descr|newline|toString("of discriminant "|(toString disc)|" = det"|(net A));

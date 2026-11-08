@@ -11,44 +11,29 @@ globalAssignment WeightedSurfaceAssociatedToRationalFourfold;
 
 WeightedSurfaceAssociatedToRationalFourfold.synonym = SurfaceAssociatedToRationalFourfold.synonym = "surface associated to rational fourfold";
 
-expression WeightedSurfaceAssociatedToRationalFourfold := expression SurfaceAssociatedToRationalFourfold := U -> (
-    X := recoverFourfold U;
-    (S,F) := if instance(X,CubicFourfold)
-             then ("K3 surface","cubic fourfold")
-             else if instance(X,GushelMukaiFourfold)
-             then ("K3 surface","GM fourfold")
+netTexDescription WeightedSurfaceAssociatedToRationalFourfold := netTexDescription SurfaceAssociatedToRationalFourfold := o -> U -> (
+    if o#"UseName" and hasAttribute(U,ReverseDictionary) then return (
+        toString getAttribute(U,ReverseDictionary),
+        texMath getAttribute(U,ReverseDictionary)
+    );
+    if o#"Short" then (
+        X := recoverFourfold U;
+        S := if instance(X,CubicFourfold) or instance(X,GushelMukaiFourfold)
+             then "K3 surface"
              else if instance(X,IntersectionOfThreeQuadricsInP7)
-             then ("Castelnuovo surface","complete intersection of 3 quadrics in PP^7")
-             else ("surface","fourfold");
-    if dim U == -1 then S = "not-fully-calculated "|S;
-    A := if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else (F|" of discriminant "|toString(discriminant X));
-    expression(S|" associated to "|A)
-);
-
-shortTeX WeightedSurfaceAssociatedToRationalFourfold := shortTeX SurfaceAssociatedToRationalFourfold := U -> (
-    X := recoverFourfold U;
-    (S,F) := if instance(X,CubicFourfold)
-             then ("K3 surface","\\text{cubic fourfold}")
-             else if instance(X,GushelMukaiFourfold)
-             then ("K3 surface","\\text{GM fourfold}")
-             else if instance(X,IntersectionOfThreeQuadricsInP7)
-             then ("Castelnuovo surface","\\text{complete intersection of 3 quadrics in }\\mathbb{P}^{7}")
-             else ("surface","\\text{fourfold}");
-    if dim U == -1 then S = "not-fully-calculated " | S;
-    A := if hasAttribute(X,ReverseDictionary) then texMath getAttribute(X,ReverseDictionary) else F | "\\text{ of discriminant }" | (texMath discriminant X);
-    shortTeX("\\text{" | S | " associated to }" | A)
-);
-
-net WeightedSurfaceAssociatedToRationalFourfold := net SurfaceAssociatedToRationalFourfold := U -> (
-    if hasAttribute(U,ReverseDictionary) then return toString getAttribute(U,ReverseDictionary);
-    if dim U >= 0 then return ? U;
-    "-* some calculations are missing *-"
-);
-
-texMath WeightedSurfaceAssociatedToRationalFourfold := texMath SurfaceAssociatedToRationalFourfold := U -> (
-    if hasAttribute(U,ReverseDictionary) then return texMath getAttribute(U,ReverseDictionary);
-    if dim U >= 0 then return texMath projectiveVariety(ring U,Saturate=>false);
-    "\\text{some calculations are missing}"
+             then "Castelnuovo surface"
+             else "surface";
+        if dim U == -1 then S = "not-fully-calculated " | S;
+        return (
+            S | " associated to " | shortDescriptionFourfold(X,true),
+            "\\text{" | S | " associated to }" | (texMath shortDescriptionFourfoldTeX(X,true))
+        );
+    );
+    if dim U >= 0 then return netTexDescription projectiveVariety(ring U,Saturate=>false);
+    (
+        "-* some calculations are missing *-",
+        "\\text{some calculations are missing}"
+    )
 );
 
 describe WeightedSurfaceAssociatedToRationalFourfold := describe SurfaceAssociatedToRationalFourfold := S -> (

@@ -106,33 +106,11 @@ MultirationalMap * VirtualInverseWeightedRationalMap := (Phi,Psi) -> virtualInve
 normalization = method(Options => {Verbose => true});
 normalization EmbeddedProjectiveVariety := o -> X -> (
     if X.cache#?"Normalization" then return X.cache#"Normalization";
-    if o.Verbose then <<"-- computing normalization of "|toString(? ideal X)<<endl;
+    if o.Verbose then <<"-- computing normalization of "|toString(? X)<<endl;
     f := rationalMap icMap ring X;
     if o.Verbose then <<"-- got: "|toString(expression f)<<endl;
     X.cache#"Normalization" = f
 );
-
--*
-experimentalNormalizationInv = method(Options => {Verbose => true});
-experimentalNormalizationInv EmbeddedProjectiveVariety := o -> X -> (
-    if X.cache#?"ExperimentalNormalizationInv" then return X.cache#"ExperimentalNormalizationInv";
-    if not (dim X == 2 and dim linearSpan X > 5) then error "expected a surface with linear span of dimension > 5";
-    if o.Verbose then <<"-- computing experimental normalization of "|toString(? ideal X)<<endl;
-    pts := apply(dim ambient X - 5,i -> point X);
-    pr := rationalMap((linearSpan pts)_X,Dominant=>true);
-    if degree target pr != degree X - (dim ambient X - 5) then error "something went wrong";
-    n := multirationalMap normalization(target pr,Verbose=>o.Verbose);
-    if o.Verbose then <<"-- inverting normalization"<<endl;
-    n' := inverse3 n;
-    if o.Verbose then <<"-- inverting projection"<<endl;
-    pr' := inverse3 pr;
-    if o.Verbose then <<"-- contracting exceptional line(s) on the normalization"<<endl;
-    h := mapDefinedByDivisor(source n,{(random(1,0_(source n)),1)}|apply(pts,p -> (n' pr'^* p,1)));
-    if dim ambient target h != dim ambient source h + (dim ambient X - 5) then error "something went wrong";
-    N := pr * n' * h;
-    X.cache#"ExperimentalNormalizationInv" = N
-);
-*-
 
 MinimumCodimensionForExperimentalNormalization = 7; -- 5;
 inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
@@ -171,7 +149,6 @@ inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
 );
 
 inverseNormalizationMapExperimentalRaw = (Y,strY,expEulOut,verb) -> (
-    -- A variant and improvement of experimentalNormalizationInv.
     if not (dim Y == 2 and dim linearSpan Y > 5) then error "experimental normalization requires a surface with linear span dimension > 5";
     if verb then << "-- computing experimental normalization of " << strY << "..." << endl;
     pts := apply(dim ambient Y - 5, i -> point Y);

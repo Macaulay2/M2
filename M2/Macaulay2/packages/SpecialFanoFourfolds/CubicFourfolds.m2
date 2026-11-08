@@ -142,7 +142,7 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
 "cubic 4-fold of discriminant 48"///);
 );
 
-cubicFourfold String := o -> str -> cubicFourfold(str,ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+cubicFourfold String := o -> str -> cubicFourfold(str,if PP.?ring then PP.ring else ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 netTexDescription CubicFourfold := o -> X -> (
     if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (toString getAttribute(X,ReverseDictionary),texMath getAttribute(X,ReverseDictionary));

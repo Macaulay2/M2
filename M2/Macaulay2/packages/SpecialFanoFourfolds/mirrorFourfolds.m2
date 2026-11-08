@@ -141,33 +141,6 @@ refineSurfaceU = (U,verb) -> (
     vU
 );
 
--*
--- old version 21/08/2026 --
-refineSurfaceU = (U,verb) -> (
-    if verb then << "-- projecting to PP^3 for surface decomposition" << endl;
-    pr := rationalMap for i to 3 list random(1,ring ambient U);
-    Z := projectiveVariety kernel(map toRationalMap(pr|U),SubringLimit=>1);
-    Z1 := {}; Z2 := {};
-    for D in decompose Z do if dim D == 2 and degree D <= 3 then Z1 = append(Z1,D) else Z2 = append(Z2,D);
-    if #Z2 != 1 then error("unsupported surface decomposition: found "| toString(#Z2) |" components of degree >= 4");
-    if #Z1 == 0 then (
-        if verb then << "  -- surface was already irreducible" << endl;
-        return U;
-    ) else (
-        if verb then << "  -- removing " << #Z1 << " components of degrees " << apply(Z1, degree) << endl;
-    );
-    W := apply(Z1, D -> support interpolateTop(U * (pr^* D), Verbose=>verbosityInterpolateTop(verb),cache=>true));
-    assert all(W, D -> dim D == 2 and degree D <= 3);
-    vU := U;
-    for D in W do vU = vU \\ D;
-    assert(dim vU == 2);
-    Curves := apply(select(apply(W, D -> vU * D), C -> dim C == 1), E -> support interpolateTop(E, Verbose=>verbosityInterpolateTop(verb),cache=>true));
-    Curves = apply(sort apply(Curves, C -> (degree C,C)), last);
-    if # Curves > 0 then vU.cache#"special curves on U" = Curves;
-    vU
-);
-*-
-
 isSurfaceUknownToNotNeedRefining = method();
 isSurfaceUknownToNotNeedRefining DoublySpecialCubicFourfold := X -> isFanoMapStandard(X) and member(recognizeDSCF X, {"DSCF-V1-1", "DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-7", "DSCF-V1-9", "DSCF-V1-12", "DSCF-V1-16", "DSCF-V1-17", "DSCF-V1-18", "DSCF-V1-21", "DSCF-V1-25", "DSCF-V1-26", "DSCF-V1-28", "DSCF-V1-29", "DSCF-V1-30", "DSCF-V1-32", "DSCF-V1-33", "DSCF-V1-35", "DSCF-V1-36", "DSCF-V1-37", "DSCF-V1-38", "DSCF-V1-39", "DSCF-V1-40"});
 isSurfaceUknownToNotNeedRefining IntersectionOfThreeQuadricsInP7 := X -> not member(recognize X, {"surf-7-1-9", "NotRecognized"});
