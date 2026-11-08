@@ -1181,8 +1181,8 @@ isLinkage GrMatchingField := MF -> (
 -- tope field amalgamation
 amalgamation = method()
 amalgamation(ZZ, TopeField) := (i, TF) -> (
-    assert(isLinkage TF);
-    assert(1 <= i and i <= TF#"matchingField".tupleMaxValue);
+    if not isLinkage TF then error("expected linkage tope field");
+    if i < 1 or i > #TF#"type" then error("amalgamation index out of range");
     MF := TF#"matchingField";
     subsetList := subsets(1 .. MF.tupleMaxValue, MF.tupleMaxSize);
     subsetIndex := new HashTable from for j from 0 to binomial(MF.tupleMaxValue, MF.tupleMaxSize)-1 list subsetList_j => j;
