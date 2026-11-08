@@ -128,7 +128,7 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
        (surface X).cache#"euler" = -44;
        return X;
    );
-   error(///not valid string, permitted strings are:
+   error(///input string not recognized; permitted strings are:
 "quintic del Pezzo surface",
 "quartic scroll",
 "3-nodal septic scroll",
@@ -142,7 +142,7 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
 "cubic 4-fold of discriminant 48"///);
 );
 
-cubicFourfold String := o -> str -> cubicFourfold(str,if PP.?ring then PP.ring else ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+cubicFourfold String := o -> str -> cubicFourfold(str,if PP.ring === null then ZZ/65521 else PP.ring,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 netTexDescription CubicFourfold := o -> X -> (
     if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (toString getAttribute(X,ReverseDictionary),texMath getAttribute(X,ReverseDictionary));
@@ -154,11 +154,11 @@ netTexDescription CubicFourfold := o -> X -> (
     (netX,texX) := netTexDescription projectiveVariety ring X;
     netS := surfaceDescription(9,S);
     texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
-    netStr := net("fourfold: " | netX);
+    netStr := net("cubic fourfold: " | netX);
     netStr = netStr || net("surface: " | netS);
     netStr = netStr || net("lattice discriminant:");
     netStr = netStr || ((net "det(") | (net A) | net(") = " | (toString d) | " = " | (toString q) | "*6 + " | (toString r)));
-    texStr := "\\begin{aligned}&\\text{fourfold: }" | texX;
+    texStr := "\\begin{aligned}&\\text{cubic fourfold: }" | texX;
     texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
     texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
     texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 6 + " | (texMath r);

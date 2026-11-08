@@ -132,7 +132,7 @@ specialFourfold (String,Ring) := o -> (str,K) -> (
 "DSCF-1","DSCF-2",...,"DSCF-40"///;
 );
 
-specialFourfold String := o -> str -> specialFourfold(str,if PP.?ring then PP.ring else ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+specialFourfold String := o -> str -> specialFourfold(str,if PP.ring === null then ZZ/65521 else PP.ring,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 specialFourfold (String,ZZ) := o -> (str,i) -> (prebuiltExamplesOfRationalFourfolds()) (str,i);
 
@@ -500,10 +500,10 @@ surface (VisibleList,Ring,Option) := (L,K,opt) -> (
     then return surface(L,K,opt,ambient=>null);
     error "NumNodes and ambient are the only available options for surface(VisibleList)";
 );
-surface(VisibleList,Option,Option) := (L,opt1,opt2) -> surface(L,if PP.?ring then PP.ring else ZZ/65521,opt1,opt2);
-surface(VisibleList,Option) := (L,opt) -> surface(L,if PP.?ring then PP.ring else ZZ/65521,opt);
+surface(VisibleList,Option,Option) := (L,opt1,opt2) -> surface(L,if PP.ring === null then ZZ/65521 else PP.ring,opt1,opt2);
+surface(VisibleList,Option) := (L,opt) -> surface(L,if PP.ring === null then ZZ/65521 else PP.ring,opt);
 surface (VisibleList,Ring) := (L,K) -> surface(L,K,NumNodes=>0,ambient=>null);
-surface List := L -> surface(L,if PP.?ring then PP.ring else ZZ/65521,NumNodes=>0,ambient=>null);
+surface List := L -> surface(L,if PP.ring === null then ZZ/65521 else PP.ring,NumNodes=>0,ambient=>null);
 
 clean HodgeSpecialFourfold := X -> (
     K := coefficientRing X;

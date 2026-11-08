@@ -129,12 +129,12 @@ netTexDescription DoublySpecialCubicFourfold := o -> X -> (
     netT := surfaceDescription(11,T);
     texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
     texT := last netTexDescription(T,"Ambient"=>false,"NumericalInvariants"=>true);
-    netStr := net("fourfold: " | netX);
+    netStr := net("cubic fourfold: " | netX);
     netStr = netStr || net("surface 1: " | netS);
     netStr = netStr || net("surface 2: " | netT);
     netStr = netStr || net "lattice discriminant:";
     netStr = netStr || ((net(newline | "det(")) | (net A) | net(newline | ") = " | (toString d) | " = " | (toString q) | "*8 + " | (toString r)));
-    texStr := "\\begin{aligned}&\\text{fourfold: }" | texX;
+    texStr := "\\begin{aligned}&\\text{cubic fourfold: }" | texX;
     texStr = texStr | newline | "\\\\&\\text{surface 1: }" | texS;
     texStr = texStr | newline | "\\\\&\\text{surface 2: }" | texT;
     texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
