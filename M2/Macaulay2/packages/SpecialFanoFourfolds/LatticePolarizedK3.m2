@@ -162,18 +162,12 @@ embeddedK3SurfaceFromDoublySpecialCubicFourfold (K3SurfaceFromDoublySpecialCubic
 
 net EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := describe EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> (
     X := recoverFourfold E;
-    (S,T) := surfaces X;
-    Y := X.cache#"parentCubicFourfold";
-    d1 := discriminant X;
-    d2 := discriminant Y;
     A := latticeIntersectionMatrix3x3 X;
     B := latticeMatrix E;
     g := genus E;
-    Cd1Cd2 := "C_"|(toString d1);
-    if d1 != d2 then Cd1Cd2 = Cd1Cd2|" ∩ C_"|(toString d2);
     F := ("Lattice-polarized K3 surface of genus "|(toString g)|" in ")|(net ambient underlyingK3 E);
     F = F||(("of lattice discriminant det(")|(net B)|") = "|(toString det B));
-    F = F||("associated to a cubic fourfold in "|Cd1Cd2|" of lattice discriminant");
+    F = F||("associated to a "|shortDescriptionFourfold(X,false)|" of lattice discriminant");
     F = F||((net(newline|"det("))|(net A)|(net(newline|") = "|(toString det A))));
     F
 );

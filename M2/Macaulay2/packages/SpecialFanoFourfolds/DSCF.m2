@@ -166,7 +166,7 @@ describe DoublySpecialCubicFourfold := X -> (
                 m := degree support singularLocus(S * T);
                 descr = descr||(net "Singular locus of the intersection: "|(if m == 0 then "∅" else (if m == 1 then "a single point" else (toString m)|" points")));
             ) else (
-                descr = descr||(net "Singular locus of the intersection: "|(? ideal support singularLocus(S * T)));
+                descr = descr||(net "Singular locus of the intersection: "|(? support singularLocus(S * T)));
             );
         );
     );
@@ -392,7 +392,7 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
             << "  -- (already in P^5, not obtained by projection)" << endl;
         );
         << "  -- P: " << surfaceDescription P << endl;
-        << "  -- C = S ∩ P: " << ? ideal((parametrize P)^^ C) << endl;
+        << "  -- C = S ∩ P: " << ? ((parametrize P)^^ C) << endl;
     );
     modCountPts := max(2*numPts - 8, 0);
     if o.Verbose then << endl << "-- moduli count for " << numPts << " points in ℙ²: " << modCountPts << endl;

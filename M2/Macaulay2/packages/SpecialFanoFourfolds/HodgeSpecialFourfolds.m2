@@ -98,7 +98,7 @@ specialFourfold (String,Ring) := o -> (str,K) -> (
         i := value substring(5,str);
         if instance(i,ZZ) then return exampleDSCFourfoldC8(i,K,Verbose=>o.Verbose);
     );
-    error ///string may not be valid, permitted strings are:
+    error ///input string not recognized; permitted strings are:
 *** Cubic fourfolds ***
 "quartic scroll",
 "3-nodal septic scroll",
@@ -132,7 +132,7 @@ specialFourfold (String,Ring) := o -> (str,K) -> (
 "DSCF-1","DSCF-2",...,"DSCF-40"///;
 );
 
-specialFourfold String := o -> str -> specialFourfold(str,ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+specialFourfold String := o -> str -> specialFourfold(str,if PP.?ring then PP.ring else ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 specialFourfold (String,ZZ) := o -> (str,i) -> (prebuiltExamplesOfRationalFourfolds()) (str,i);
 
@@ -178,7 +178,7 @@ describe HodgeSpecialFourfold := X -> (
     descr := if dim ambient X == 4
              then "Four-dimensional projective space"
              else if degrees X == {({2},3)}
-             then "Complete intersection of 3 quadrics in PP^7"
+             then "Complete intersection of three quadrics in PP^7"
              else if degrees X == {({2},1),({3},1)}
              then "Complete intersection of type (2,3) in PP^6"
              else if degrees X == {({4},1)}
@@ -319,8 +319,8 @@ parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,
     r := dim S;
     if (r <= 0) then error "the first argument must be a positive dimensional scheme";
     if not isSubset(S,X) then error "expected the first scheme to be a subscheme of the second one";
-    if o.Verbose then <<"S: "|toString(? ideal S)<<endl;
-    if o.Verbose then <<"X: "|toString(? ideal X)<<endl;
+    if o.Verbose then <<"S: "|toString(? S)<<endl;
+    if o.Verbose then <<"X: "|toString(? projectiveVariety ring X)<<endl;
     n := dim ambient S;
     N := normalSheaf(S,ambient S);
     if isSing then (
@@ -332,7 +332,7 @@ parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,
         if o.Verbose then <<"(assumption: h^1(N_{S,P^"|toString(n)|"}) = 0)"<<endl;
     );
     h0N := rankHH(0,N);
-    if o.Verbose then <<"h^0(N_{S,P^"|toString(n)|"}) = "|toString(h0N)<<endl;
+    if o.Verbose then <<"h^0(N_{S,P^"|toString(n)|"}) = "|toString(h0N)<<endl<<flush;
      ------------------------------
     -- If h^1(O_S(d)) == 0, h^3(O_S(d)) == 0,..., and h^0(I_S(d)) == h^0(O_(P^n)(d)) - \chi(O_S(d)) for a particular S,
     -- then we have h^0(I_S(d)) == h^0(O_(P^n)(d)) - \chi(O_S(d)) for the generic S.
@@ -351,10 +351,10 @@ parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,
     if unique h1OSd =!= {0} then error("condition not satisfied: h^(2j-1)(O_S("|toString(d)|")) = 0");
     m := # basisMem({d},S);
     m' := binomial(n+d,d) - ((hilbertPolynomial S) d);
-    if m != m' then error("condition not satisfied: h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) == h^0(O_(P^"|toString(n)|")("|toString(d)|")) - \\chi(O_S("|toString(d)|"))");
+    if m != m' then error("condition not satisfied: h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) == h^0(O_(P^"|toString(n)|")("|toString(d)|")) - χ(O_S("|toString(d)|"))");
     if o.Verbose then (
         for j from 1 to r list if odd j then  <<"h^"|toString(j)|"(O_S("|toString(d)|")) = 0, ";
-        <<"and h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) = "|toString(m)|" = h^0(O_(P^"|toString(n)|")("|toString(d)|")) - \\chi(O_S("|toString(d)|"));"|newline|"in particular, h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) is minimal"<<endl;
+        <<"and h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) = "|toString(m)|" = h^0(O_(P^"|toString(n)|")("|toString(d)|")) - χ(O_S("|toString(d)|"));"|newline|"in particular, h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) is minimal"<<endl;
     );
     M := c*(m-c); -- dim GG(c-1,m-1)
     if c > 1 and o.Verbose then <<"dim GG("|toString(c-1)|","|toString(m-1)|") = "|toString(M)<<endl;
@@ -375,26 +375,26 @@ parameterCount HodgeSpecialFourfold := o -> X -> (
     if (not o.Verbose) and X.cache#?(S,"parameterCount") then return X.cache#(S,"parameterCount");
     Y := ambientFivefold X;
     a := degreeHypersurface X;
-    if o.Verbose then <<"S: "|toString(? ideal S)<<endl;
-    if o.Verbose then <<"X: "|toString(? ideal X)<<endl;
-    if o.Verbose then <<"Y: "|toString(? ideal Y)<<endl;
-    if o.Verbose then <<"X is a fourfold containing S which is a hypersurface of degree "<<a<<" in Y"<<endl;
+    if o.Verbose then <<"S: "|toString(? S)<<endl;
+    if o.Verbose then <<"X: "|toString(? projectiveVariety ring X)<<endl;
+    if o.Verbose then <<"Y: "|toString(? Y)<<endl;
+    if o.Verbose then <<"X is a hypersurface of degree "<<a<<" in Y and contains S"<<endl;
     N := normalSheaf(S,Y);
     h1N := rankHH(1,N);
     if o.Verbose then <<"h^1(N_{S,Y}) = "|toString(h1N)<<endl;
     if h1N != 0 then error("condition not satisfied: h^1(N_{S,Y}) = 0");
     h0N := rankHH(0,N);
-    if o.Verbose then <<"h^0(N_{S,Y}) = "|toString(h0N)<<endl;
+    if o.Verbose then <<"h^0(N_{S,Y}) = "|toString(h0N)<<endl<<flush;
     m := numgens ambient target map X;
     OS := OO_(variety S);
     h1OSa := rank HH^1 (OS(a));
     if h1OSa != 0 then error("condition not satisfied: h^1(O_S("|(toString a)|")) = 0");
     Amb := rank HH^0 OO_(variety Y)(a);
     m' := Amb - ((hilbertPolynomial S) a);
-    if m != m' then error("condition not satisfied: h^0(I_{S,Y}("|(toString a)|")) == h^0(O_Y("|(toString a)|")) - \\chi(O_S("|(toString a)|"))");
+    if m != m' then error("condition not satisfied: h^0(I_{S,Y}("|(toString a)|")) == h^0(O_Y("|(toString a)|")) - χ(O_S("|(toString a)|"))");
     if o.Verbose then (
         <<"h^1(O_S("|(toString a)|")) = 0, ";
-        <<"and h^0(I_{S,Y}("|(toString a)|")) = "|toString(m)|" = h^0(O_Y("|(toString a)|")) - \\chi(O_S("|(toString a)|"));"|newline|"in particular, h^0(I_{S,Y}("|(toString a)|")) is minimal"<<endl;
+        <<"and h^0(I_{S,Y}("|(toString a)|")) = "|toString(m)|" = h^0(O_Y("|(toString a)|")) - χ(O_S("|(toString a)|"));"|newline|"in particular, h^0(I_{S,Y}("|(toString a)|")) is minimal"<<endl;
     );
     if o.Verbose then <<"h^0(N_{S,Y}) + "|toString(m-1)|" = "|toString(h0N + m - 1)<<endl;
     NX := normalSheaf(S,X);
@@ -500,10 +500,10 @@ surface (VisibleList,Ring,Option) := (L,K,opt) -> (
     then return surface(L,K,opt,ambient=>null);
     error "NumNodes and ambient are the only available options for surface(VisibleList)";
 );
-surface(VisibleList,Option,Option) := (L,opt1,opt2) -> surface(L,ZZ/65521,opt1,opt2);
-surface(VisibleList,Option) := (L,opt) -> surface(L,ZZ/65521,opt);
+surface(VisibleList,Option,Option) := (L,opt1,opt2) -> surface(L,if PP.?ring then PP.ring else ZZ/65521,opt1,opt2);
+surface(VisibleList,Option) := (L,opt) -> surface(L,if PP.?ring then PP.ring else ZZ/65521,opt);
 surface (VisibleList,Ring) := (L,K) -> surface(L,K,NumNodes=>0,ambient=>null);
-surface List := L -> surface(L,ZZ/65521,NumNodes=>0,ambient=>null);
+surface List := L -> surface(L,if PP.?ring then PP.ring else ZZ/65521,NumNodes=>0,ambient=>null);
 
 clean HodgeSpecialFourfold := X -> (
     K := coefficientRing X;
