@@ -134,6 +134,9 @@ matchingField = method(
 -- M : weight matrix
 -- S : list of subsets (subsets of column indices)
 -- K : list of subset sizes (for displaying GrMatchingField and FlMatchingField)
+--
+-- Note: for certain functions taking a GrMatchingField or FlMatchingField, we tacitly assume
+-- that the subsets in S are ordered in increasing size
 matchingField(List, List, Matrix) := (K, S, M) -> (
     -- uses min convention
     -- returns matching field for weight matrix along with the weight for the Plucker variables
@@ -173,7 +176,7 @@ matchingField(List, List, Matrix) := (K, S, M) -> (
     new MatchingField from {
         tupleMaxValue => Mn,
         tupleMaxSize => Mk,
-        tupleSizeList => K,
+        tupleSizeList => sort K,
         tuples => toList L,
         cache => new CacheTable from {
             weightMatrix => M,
@@ -197,7 +200,7 @@ matchingField(List, ZZ, List) := (K, Ln, L) -> (
     LSorted := sort(L, sortFunc);
     new MatchingField from {
         tupleMaxValue => Ln,
-        tupleSizeList => K,
+        tupleSizeList => sort K,
         tupleMaxSize => max K,
         tuples => LSorted,
         cache => new CacheTable from {}
@@ -244,8 +247,9 @@ flMatchingField(List, Matrix) := (inputKList, inputWeightMatrix) -> (
         error("expected a matrix with at least " | toString max inputKList | " rows");
         );
     Mn := numcols inputWeightMatrix;
-    subsetList := flatten for Mk in inputKList list subsets(Mn, Mk);
-    new FlMatchingField from matchingField(sort inputKList, subsetList, inputWeightMatrix)
+    MkList := sort inputKList;
+    subsetList := flatten for Mk in MkList list subsets(Mn, Mk);
+    new FlMatchingField from matchingField(MkList, subsetList, inputWeightMatrix)
     )
 
 flMatchingField(Matrix) := inputWeightMatrix -> (
@@ -3357,6 +3361,14 @@ W = linearSpanTropCone(MF, VerifyToricDegeneration => false);
 V = vertices matchingFieldPolytope MF;
 W' = image transpose V;
 assert(W != W') -- because MF does not give a toric degeneration
+///
+
+TEST ///
+-- order of tuple sizes does not affect the matching field
+A = flMatchingField({1,2}, matrix{{0,0,0,0},{4,3,2,1}});
+B = flMatchingField({2,1}, matrix{{0,0,0,0},{4,3,2,1}});
+assert(A == B);
+assert(A === B); -- all entries of the hashtable should be equal
 ///
 
 end --
