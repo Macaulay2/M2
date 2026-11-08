@@ -1372,7 +1372,10 @@ globalAssignment WeightedRationalMap;
 WeightedRationalMap.synonym = "weighted-rational map";
 
 netTexDescription MultirationalMap := o -> Phi -> (
-    if o#"UseName" and hasAttribute(Phi,ReverseDictionary) then return (toString getAttribute(Phi,ReverseDictionary),texMath getAttribute(Phi,ReverseDictionary));
+    if o#"UseName" and hasAttribute(Phi,ReverseDictionary) then return (
+        toString getAttribute(Phi,ReverseDictionary),
+        texMath getAttribute(Phi,ReverseDictionary)
+    );
     (netSource,texSource) := netTexDescription(source Phi,"UseName"=>o#"Short","Short"=>o#"Short");
     (netTarget,texTarget) := netTexDescription(target Phi,"UseName"=>o#"Short","Short"=>o#"Short");
     if o#"Short" then (
@@ -1409,35 +1412,35 @@ netTexDescription MultirationalMap := o -> Phi -> (
     if d =!= null then (
         n := #(factor Phi);
         if n == 1 then (
-            netStr = netStr | newline | "represented by a tuple of homogeneous polynomials of degree " | (toString d);
+            netStr = netStr || ("represented by a tuple of homogeneous polynomials of degree " | (toString d));
             texStr = texStr | newline | "\\\\&\\text{represented by a tuple of homogeneous polynomials of degree }" | (texMath d);
         ) else (
-            netStr = netStr | newline | "represented by " | (toString n) | " tuples of homogeneous polynomials of degrees " | (toString d);
+            netStr = netStr || ("represented by " | (toString n) | " tuples of homogeneous polynomials of degrees " | (toString d));
             texStr = texStr | newline | "\\\\&\\text{represented by }" | (texMath n) | "\\text{ tuples of homogeneous polynomials of degrees }" | (texMath d);
         );
     );
-    netStr = netStr | newline | "source variety: " | netSource | newline | "target variety: " | netTarget;
+    netStr = netStr || ("source variety: " | netSource) || ("target variety: " | netTarget);
     texStr = texStr | newline | "\\\\&\\text{source variety: }" | texSource | newline | "\\\\&\\text{target variety: }" | texTarget;
     if Phi#"baseLocus" =!= null then (
         (netBL,texBL) := netTexDescription baseLocus Phi;
-        netStr = netStr | newline | "base locus: " | netBL;
+        netStr = netStr || ("base locus: " | netBL);
         texStr = texStr | newline | "\\\\&\\text{base locus: }" | texBL;
     );
     if Phi#"isDominant" =!= null then (
-        netStr = netStr | newline | "dominance: " | (toString Phi#"isDominant");
+        netStr = netStr || ("dominance: " | (toString Phi#"isDominant"));
         texStr = texStr | newline | "\\\\&\\text{dominance: }" | (texMath Phi#"isDominant");
     );
     if Phi#"isDominant" =!= true and Phi#"image" =!= null then (
         (netImage,texImage) := netTexDescription image Phi;
-        netStr = netStr | newline | "image: " | netImage;
+        netStr = netStr || ("image: " | netImage);
         texStr = texStr | newline | "\\\\&\\text{image: }" | texImage;
     );
     if Phi#"multidegree" =!= null then (
-        netStr = netStr | newline | "multidegree: " | (toString multidegree Phi);
+        netStr = netStr || ("multidegree: " | (toString multidegree Phi));
         texStr = texStr | newline | "\\\\&\\text{multidegree: }" | (texMath multidegree Phi);
     );
     if (Phi#"multidegree" =!= null and Phi#"image" =!= null) or Phi#"isBirational" === true then (
-        netStr = netStr | newline | "degree: " | (toString degree Phi);
+        netStr = netStr || ("degree: " | (toString degree Phi));
         texStr = texStr | newline | "\\\\&\\text{degree: }" | (texMath degree Phi);
     );
     (netStr,texStr | "\\end{aligned}")
@@ -1457,10 +1460,9 @@ describe MultirationalMap := Phi -> (
     descr := first netTexDescription Phi;
     if not instance(Phi,WeightedRationalMap) then (
         n := # factor Phi;
-        for i to n-1 do descr = descr | newline | "degree sequence (map " | toString(i+1) | "/" | toString(n) | "): " | (toString degreeSequence (factor Phi)_i);
+        for i to n-1 do descr = descr || ("degree sequence (map " | toString(i+1) | "/" | toString(n) | "): " | (toString degreeSequence (factor Phi)_i));
     );
-    descr = descr | newline | "coefficient ring: " | (toString coefficientRing Phi);
-    net descr
+    descr || ("coefficient ring: " | (toString coefficientRing Phi))
 );
 
 expression MultirationalMap := Phi -> expression first netTexDescription(Phi,"Short"=>true); -- backward compatibility
@@ -2436,7 +2438,7 @@ GG (ZZ,EmbeddedProjectiveVariety) := (k,P) -> (
     P.cache#(k,GrassmannianVariety) = G
 );
 GG (Ring,ZZ,ZZ) := (K,k,n) -> GG(k,projectiveVariety Grass(0,n,K,Variable=>"x"));
-GG (ZZ,ZZ) := (k,n) -> GG(if PP.?ring then PP.ring else QQ,k,n);
+GG (ZZ,ZZ) := (k,n) -> GG(if PP.ring === null then QQ else PP.ring,k,n);
 GG EmbeddedProjectiveVariety := X -> (
     if instance(X,GrassmannianVariety) then return X;
     if not isGrass X then error "expected a Grassmannian variety";
