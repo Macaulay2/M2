@@ -535,6 +535,12 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   std::mutex        bar_mutex;
   const int         bar_width = 40;
 
+  // Allow the TBB worker threads to register themselves with the GC (see the
+  // lambda below). Without this, GC_register_my_thread aborts with "Threads
+  // explicit registering is not previously enabled" whenever no GC-wrapped
+  // pthread_create has happened yet, e.g. when M2 runs with --no-threads.
+  GC_allow_register_threads();
+
   arena.execute([&]{
   tbb::parallel_for(tbb::blocked_range<int>(0, (int)n_sols, grainSize),
   [&](tbb::blocked_range<int> r) {
