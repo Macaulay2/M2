@@ -9,8 +9,8 @@
 
 newPackage(
     "K3Surfaces",
-    Version => "1.1", 
-    Date => "August 13, 2022",
+    Version => "1.2", 
+    Date => "November 8, 2022",
     Authors => {{Name => "Michael Hoff", 
                  Email => "hahn@math.uni-sb.de"},
                 {Name => "Giovanni Staglianò", 
@@ -21,22 +21,24 @@ newPackage(
     DebuggingMode => false
 )
 
-if SpecialFanoFourfolds.Options.Version < "2.8" then (
-    <<endl<<"Your version of the SpecialFanoFourfolds package is outdated (required version 2.8 or newer);"<<endl;
+if SpecialFanoFourfolds.Options.Version < "2.8.1" then (
+    <<endl<<"Your version of the SpecialFanoFourfolds package is outdated (required version 2.8.1 or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
     <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of SpecialFanoFourfolds in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
     <<///run "curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2";///<<endl<<endl<<"***"<<endl;
-    error "required SpecialFanoFourfolds package version 2.8 or newer";
+    error "required SpecialFanoFourfolds package version 2.8.1 or newer";
 );
 
 export{"K3","LatticePolarizedK3surface","EmbeddedK3surface","project","mukaiModel",
        "trigonalK3","tetragonalK3","pentagonalK3"}
 
 debug SpecialFanoFourfolds;
+debug SparseResultants;
 needsPackage "Truncations";
 needsPackage "MinimalPrimes";
+importFrom(MultiprojectiveVarieties, {"netTexDescription"});
 
 LatticePolarizedK3surface = new Type of HashTable;
 
@@ -60,16 +62,27 @@ net LatticePolarizedK3surface := S -> (
 );
 texMath LatticePolarizedK3surface := texMath @@ net;
 
-? EmbeddedK3surface := S -> "K3 surface of genus "|toString(genus S)|" and degree "|toString(degree S)|" in PP^"|toString(dim ambient S);
+netTexDescription EmbeddedK3surface := o -> S -> (
+    if o#"UseName" and hasAttribute(S,ReverseDictionary) then return (
+        toString getAttribute(S,ReverseDictionary),
+        texMath getAttribute(S,ReverseDictionary)
+    );
+    g := genus S;
+    if o#"Short" then return (
+        "embedded K3 surface of genus " | (toString g),
+        "\\text{embedded K3 surface of genus }" | (texMath g)
+    );
+    d := degree S;
+    n := dim ambient S;
+    (
+        "K3 surface of genus " | (toString g) | " and degree " | (toString d) | " in PP^" | (toString n),
+        "\\text{K3 surface of genus }" | (texMath g) | "\\text{ and degree }" | (texMath d) | "\\text{ in }\\mathbb{P}^{" | (texMath n) | "}"
+    )
+);
 
 LatticePolarizedK3surface#{WebApp,AfterPrint} = LatticePolarizedK3surface#{WebApp,AfterNoPrint} = 
 LatticePolarizedK3surface#{Standard,AfterPrint} = LatticePolarizedK3surface#{Standard,AfterNoPrint} = S -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Lattice-polarized K3 surface" << endl;
-);
-
-EmbeddedK3surface#{WebApp,AfterPrint} = EmbeddedK3surface#{WebApp,AfterNoPrint} = 
-EmbeddedK3surface#{Standard,AfterPrint} = EmbeddedK3surface#{Standard,AfterNoPrint} = S -> (
-    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Embedded K3 surface of genus " << sectionalGenus S << endl;
 );
 
 map (LatticePolarizedK3surface,ZZ,ZZ) := o -> (S,a,b) -> (
@@ -972,7 +985,7 @@ Outputs => {{"the ",TO2{RationalMap,"birational morphism"}," defined by the comp
 EXAMPLE {"S = K3(3,1,-2)", "f = map(S,2,1);", "isMorphism f", "degree f", "assert(image f == S(2,1))"}, 
 SeeAlso => {(symbol SPACE,LatticePolarizedK3surface,Sequence)}} 
 
-undocumented {(texMath,LatticePolarizedK3surface),(net,LatticePolarizedK3surface),(symbol ?,EmbeddedK3surface),(map,EmbeddedK3surface),(genus,EmbeddedK3surface),(degree,EmbeddedK3surface)}
+undocumented {(texMath,LatticePolarizedK3surface),(net,LatticePolarizedK3surface),(map,EmbeddedK3surface),(genus,EmbeddedK3surface),(degree,EmbeddedK3surface)}
 
 document {Key => {trigonalK3,(trigonalK3,ZZ),[trigonalK3,CoefficientRing]}, 
 Headline => "trigonal K3 surface", 

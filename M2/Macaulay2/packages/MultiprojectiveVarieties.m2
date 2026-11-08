@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7.2",
-    Date => "November 7, 2026",
+    Date => "November 8, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -307,7 +307,7 @@ ring MultiprojectiveVariety := X -> (
     if X#"ringVariety" =!= null then return X#"ringVariety";
     I := ideal X;
     R := (ring I)/I;
-    try assert(isPolynomialRing R or I.cache.QuotientRing === R) else error "internal error encountered";
+    if not (isPolynomialRing R or I.cache.QuotientRing === R) then error "internal error encountered";
     X#"ringVariety" = R
 );
 
@@ -361,35 +361,29 @@ generatorDegreesTex = method();
 generatorDegreesTex MultiprojectiveVariety := X -> concatenate for l in degrees X list "{" | (texMath unsequence toSequence first l) | "}^{" | (texMath last l) | "}\\ ";
 
 describe MultiprojectiveVariety := X -> (
-    n := X#"dimAmbientSpaces";
-    amb := "empty space";
-    if # n >= 1 and min n >= 0 then (
-        amb = "PP^"|toString(n_0);
-        for i from 1 to #n-1 do amb = amb | " x PP^" | toString(n_i);
-    );
-    if instance(X,WeightedProjectiveVariety) then amb = "PP"|(toString toSequence flatten degrees ring ideal X);
-    s := "ambient:.............. "|toString(amb)|newline;
-    s = s|"dim:.................. "|toString(dim X);
+    n := shape X;
+    amb := first netTexDescription ambient X;
+    s := "ambient:.............. " | amb | newline;
+    s = s | "dim:.................. " | (toString dim X);
     if dim X == -1 then return s;
-    s = s|newline|"codim:................ "|toString(codim X);
+    s = s | newline | "codim:................ " | (toString codim X);
     if codim X == 0 then return s;
-    s = s|newline|"degree:............... "|toString(degree X);
-    if codim X == 0 then return s;
-    s = s|newline;
-    if # n > 1 then s = s|"multidegree:.......... "|toString(multidegree X)|newline;
-    s = s|"generators:........... "|generatorDegreesString(X)|newline;
+    s = s | newline | "degree:............... " | (toString degree X);
+    s = s | newline;
+    if # n > 1 then s = s | "multidegree:.......... " | (toString multidegree X) | newline;
+    s = s | "generators:........... " | generatorDegreesString(X) | newline;
     purity := X == top X;
-    s = s|"purity:............... "|toString(purity);
+    s = s | "purity:............... " | toString(purity);
     if purity then (
-        s = s|newline|"dim sing. l.:......... "|toString(dim singularLocus X);
-        if dim singularLocus X >= 0 then s = s|newline|"gens sing. l.:........ "|generatorDegreesString(singularLocus X);
+        s = s | newline | "dim sing. l.:......... " | toString(dim singularLocus X);
+        if dim singularLocus X >= 0 then s = s | newline | "gens sing. l.:........ " | generatorDegreesString(singularLocus X);
     );
-    if # n > 1 then (
-        s = s|newline|"Segre embedding:...... "|"map to PP^"|toString(numgens target segre X -1);
+    if #n > 1 then (
+        s = s | newline | "Segre embedding:...... " | "map to PP^" | toString(numgens target segre X -1);
         N := product apply(n, i -> i+1) -1;
-        if numgens target segre X -1 < N then s = s|" ⊂ PP^"|toString(N);
+        if numgens target segre X -1 < N then s = s | " ⊂ PP^" | (toString N);
     );
-    return s;
+    s
 );
 
 isPresumedRationalNormalCurve = method();
@@ -2422,7 +2416,7 @@ globalAssignment GrassmannianVariety;
 
 GrassmannianVariety.synonym = "Grassmannian variety";
 
-? GrassmannianVariety := G -> (first netTexDescription(G,"Short"=>true)) | (if codim G > 0 then " ⊂ " else " = ") | (first netTexDescription(ambient G,"Short"=>true));
+? GrassmannianVariety := G -> (first netTexDescription(G,"Short"=>true)) | (if codim G > 0 then " ⊂ PP^" else " = PP^") | (toString dim ambient G);
 
 GG = method();
 
