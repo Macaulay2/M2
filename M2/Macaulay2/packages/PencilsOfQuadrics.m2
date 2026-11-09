@@ -76,7 +76,7 @@ export {
 
 -- Removed: some assertions only need to test the methods
 -- Removed: some unused methods
--- Removed: unncessary tests and experiments
+-- Removed: unnecessary tests and experiments
 
 -- Moved: some local variables defined in the beginning of the package globally are now defined inside the methods using them
 
