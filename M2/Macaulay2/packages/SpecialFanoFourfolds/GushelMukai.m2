@@ -191,9 +191,14 @@ netTexDescription GushelMukaiFourfold := o -> X -> (
         toString getAttribute(X,ReverseDictionary),
         texMath getAttribute(X,ReverseDictionary)
     );
-    if o#"Short" then return (
-        shortDescriptionFourfold(X,false),
-        texMath shortDescriptionFourfoldTeX(X,false)
+    if o#"Short" then (
+        if compStatusLatticeDisc X > 1 then return (
+            shortDescriptionFourfold(X,false),
+            texMath shortDescriptionFourfoldTeX(X,false)
+        ) else return (
+            "Gushel-Mukai fourfold",
+            "\\text{Gushel-Mukai fourfold}"
+        );
     );
     S := surface X;
     F := ambientFivefold X;

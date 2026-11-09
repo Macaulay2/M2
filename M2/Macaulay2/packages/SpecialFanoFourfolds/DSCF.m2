@@ -101,7 +101,7 @@ surface (VisibleList,VisibleList,Ring,Option) := (ai1i2i3,dj1j2j3,K,opt) -> (
     if not(#o == 2 and first o === Verbose) then error "Verbose is the only available option for surface(VisibleList,VisibleList)";
     rationalSurfaceWithAttachedPlaneInCubicFourfold(ai1i2i3,dj1j2j3,K,"EulerCharacteristic"=>true,Verbose=>last o)
 );
-surface (VisibleList,VisibleList,Option) := (ai1i2i3,dj1j2j3,opt) -> surface(ai1i2i3,dj1j2j3,ZZ/65521,opt);
+surface (VisibleList,VisibleList,Option) := (ai1i2i3,dj1j2j3,opt) -> surface(ai1i2i3,dj1j2j3,if PP.ring === null then ZZ/65521 else PP.ring,opt);
 surface (VisibleList,VisibleList,Ring) := (ai1i2i3,dj1j2j3,K) -> surface(ai1i2i3,dj1j2j3,K,Verbose=>false);
 surface (VisibleList,VisibleList) := (ai1i2i3,dj1j2j3) -> surface(ai1i2i3,dj1j2j3,Verbose=>false);
 
@@ -116,9 +116,14 @@ netTexDescription DoublySpecialCubicFourfold := o -> X -> (
         toString getAttribute(X,ReverseDictionary),
         texMath getAttribute(X,ReverseDictionary)
     );
-    if o#"Short" then return (
-        shortDescriptionFourfold(X,false),
-        texMath shortDescriptionFourfoldTeX(X,false)
+    if o#"Short" then (
+        if compStatusLatticeDisc X > 0 then return (
+            shortDescriptionFourfold(X,false),
+            texMath shortDescriptionFourfoldTeX(X,false)
+        ) else return (
+            "cubic fourfold",
+            "\\text{cubic fourfold}"
+        );
     );
     (S,T) := surfaces X;
     A := latticeIntersectionMatrix3x3 X;
@@ -734,7 +739,7 @@ discoverCubicFourfoldsInC8 = (e,dmin,dmax,Nmin,Nmax,summaryFileName,rationalSect
     runTime := () -> humanReadableSeconds(currentTime() - startTime);
     for Z in NewCollectionFourfolds do (Z.cache#"instanceCount" = 0; Z.cache#"calculationTime" = humanReadableSeconds(0));
     instanceCount := 0;
-    K := ZZ/65521;
+    K := if PP.ring === null then ZZ/65521 else PP.ring;
     local X; local S; local T; local P; local C; local SummaryFile; local DataFile;
     for a from 1 to e_0 do
         for i1 to e_1 do
