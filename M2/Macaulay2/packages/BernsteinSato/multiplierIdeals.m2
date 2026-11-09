@@ -156,7 +156,7 @@ jumpingCoefficients (Ideal, QQ, QQ) := o -> (I,a,b) -> (
 
 -- log canonical threshold computation via b-function
 lct = method(Options => {Strategy=>GeneralBernsteinSato})
-lct Ideal := RingElement => o -> I -> (
+lct Ideal := QQ => o -> I -> (
 -- IN:  I,      ideal in QQ[x_1,...,x_n]
 -- OUT: lct(I), an element of QQ
      W := makeWeylAlgebra(ring I, SetVariables=>false);

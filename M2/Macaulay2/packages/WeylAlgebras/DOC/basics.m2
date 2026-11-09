@@ -17,7 +17,8 @@ doc ///
     w:List
       of weights
     Strategy=>Thing
-      if set to @TT "homogenize"@ the input is homogenized in the homogeneous Weyl algebra
+      if @TT "homogenize"@, use the homogeneous Weyl algebra; otherwise (default)
+      homogenize with respect to $w$. See @TO "setHomSwitch"@ to flip the default.
   Outputs
     gbI:Ideal
       with the generators forming a Gröbner basis of the ideal with respect to the weight vector
@@ -26,23 +27,23 @@ doc ///
       matrix with respect to the weight vector
   Description
     Text
-      This routine computes a Gröbner basis of a left ideal @EM "I"@ of the Weyl algebra with
-      respect to a weight vector @EM "w = (u,v)"@ where  @EM "u+v >= 0"@. In the case where
-      @EM "u_i+v_i > 0"@ for all @EM"i"@, the ordinary Buchberger algorithm works for any
-      term order refining the weight order. If there exists @EM "i"@ so that @EM "u_i+v_i = 0"@
-      the Buchberger algorithm needs to be adapted to  guarantee termination. There are two
-      strategies for doing this. One is to homogenize to an ideal of the homogeneous Weyl algebra.
+      This routine computes a Gröbner basis of a left ideal $I$ of the Weyl algebra with
+      respect to a weight vector $w = (u,v)$ where $u + v \geq 0$. In the case where
+      $u_i + v_i > 0$ for all $i$, the ordinary Buchberger algorithm works for any
+      term order refining the weight order. If there exists $i$ so that $u_i + v_i = 0$
+      the Buchberger algorithm needs to be adapted to guarantee termination. There are two
+      strategies for doing this. One is to homogenize the ideal into the homogeneous Weyl algebra.
     Example
       makeWA(QQ[x,y])
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       gbw(I, {-1,-3,1,3})
     Text
-      The other is to homogenize with respect to the weight vector @EM "w"@. More details can be found in
-      [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Sections 1.1 and 1.2].
+      The other is to homogenize with respect to the weight vector $w$. More details can be found in
+      [@TO2 ("Works Cited", "SST00")@, Sections 1.1 and 1.2].
     Example
       gbw(I, {1,3,3,-1})
   Caveat
-    The weight vector @EM "w = (u,v)"@ must have @EM "u+v>=0"@.
+    The weight vector must satisfy $u + v \geq 0$ coordinatewise (i.e. $u_i + v_i \geq 0$ for all $i$).
   SeeAlso
     inw
   Subnodes
@@ -69,44 +70,72 @@ doc ///
       of weights
   Outputs
     inF:RingElement
-      the initial form of @EM "F"@ with respect to the weight vector
+      the initial form of $F$ with respect to the weight vector
     inI:Ideal
-      the initial ideal of @EM "I"@ with respect to the weight vector
+      the initial ideal of $I$ with respect to the weight vector
     inM:Matrix
-      with the columns generating the initial module of the image of @EM "M"@ with respect to the weight vector
+      with the columns generating the initial module of the image of $M$ with respect to the weight vector
   Description
     Text
-      This routine computes the initial ideal of a left ideal @EM "I"@
-      of the Weyl algebra with respect to a weight vector @EM "w = (u,v)"@
-      where @EM "u+v >= 0"@.
-      In the case where @EM "u+v > 0"@, then the ideal lives in the
+      This routine computes the initial ideal of a left ideal $I$
+      of the Weyl algebra with respect to a weight vector $w = (u,v)$
+      where $u + v \geq 0$.
+      In the case where $u + v > 0$, then the ideal lives in the
       associated graded ring which is a commutative ring.
-      In the case where u+v = 0, then the ideal lives in the associated
+      In the case where $u + v = 0$, then the ideal lives in the associated
       graded ring which is again the Weyl algebra.
-      In the general case @EM "u+v >= 0"@ the associated graded ring is
-      somewhere between. There are two strategies to compute the initial
-      ideal. One is to homogenize to an ideal of the homogeneous Weyl algebra.
-      The other is to homogenize with respect to the weight vector @EM "w"@.
-       For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Sections 1.1 and 1.2].
+      In the general case $u + v \geq 0$ the associated graded ring lies
+      between these two extremes. There are two strategies to compute the initial
+      ideal. One is to homogenize the ideal into the homogeneous Weyl algebra.
+      The other is to homogenize with respect to the weight vector $w$.
+      For more details, see [@TO2 ("Works Cited", "SST00")@, Sections 1.1 and 1.2].
     Example
       makeWA(QQ[x,y])
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       inw(I, {1,3,3,-1})
       inw(I, {-1,-3,1,3})
   Caveat
-    The weight vector @EM "w = (u,v)"@ must have @EM "u+v>=0"@.
+    The weight vector must satisfy $u + v \geq 0$ coordinatewise (i.e. $u_i + v_i \geq 0$ for all $i$).
   SeeAlso
     gbw
     setHomSwitch
 ///
 
-document {
-    Key => {setHomSwitch, (setHomSwitch, Boolean), getHomSwitch},
-    Headline => "toggle the use of homogeneous Weyl algebra",
-    Usage => "setHomSwitch n\ngetHomSwitch()",
-    Inputs => { "n" => Boolean => { "new value" } },
-    Outputs => { Boolean => "old value" }
-    }
+--- old format (commented out) ---
+-- document {
+--     Key => {setHomSwitch, (setHomSwitch, Boolean), getHomSwitch},
+--     Headline => "toggle the use of homogeneous Weyl algebra",
+--     Usage => "setHomSwitch n\ngetHomSwitch()",
+--     Inputs => { "n" => Boolean => { "new value" } },
+--     Outputs => { Boolean => "old value" }
+--     }
+
+doc ///
+  Key
+    setHomSwitch
+    (setHomSwitch, Boolean)
+    getHomSwitch
+  Headline
+    toggle the use of homogeneous Weyl algebra
+  Usage
+    setHomSwitch n
+    getHomSwitch()
+  Inputs
+    n:Boolean
+      new value
+  Outputs
+    :Boolean
+      old value
+  Description
+    Text
+      Controls the global default for routines like @TO "gbw"@ and @TO "inw"@
+      when their @TT "Strategy"@ option is unset: if @TT "true"@, the homogeneous
+      Weyl algebra is used; if @TT "false"@ (the default), homogenization is done
+      with respect to the supplied weight vector.
+  SeeAlso
+    gbw
+    inw
+///
 
 doc ///
    Key
@@ -136,9 +165,10 @@ doc ///
    Description
     Text
       The Fourier transform is the automorphism of the Weyl algebra
-      that sends @EM {"x",SUB "i"}@ to @EM {"-D", SUB "i"}@
-      and @EM  {"D", SUB "i"}@ to @EM {"x",SUB "i"}@. In order to compute the Fourier transform of the finitely generated module M, we compute
-      the Fourier transform of the matrix A of which M is the cokernel.
+      that sends $x_i \mapsto -dx_i$ and $dx_i \mapsto x_i$. Its inverse
+      @TO FourierInverse@ sends $x_i \mapsto dx_i$ and $dx_i \mapsto -x_i$.
+      For a finitely generated module $M$ we compute the Fourier transform
+      of the matrix $A$ of which $M$ is the cokernel.
     Example
       makeWA(QQ[x,y])
       A = matrix{{2*x^2+1,y*dy},{9*x*dx, x*y*dx^2}}
@@ -154,31 +184,63 @@ doc ///
      WeylAlgebra
 ///
 
--- TODO: better doc needed
-document {
-     Key => {Dprune, (Dprune, Matrix), (Dprune, Module), [Dprune, MinimalGenerators]},
-     Headline => "prunes a D-module",
-     Usage => "Dprune M",
-     Inputs => {
-	  "M" => {ofClass Matrix, " or ", ofClass Module},
-	  MinimalGenerators => Boolean => {"indicates whether a Gröbner basis should be computed"}
-	  },
-     Outputs => {
-	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"}
-	  },
-     "Finds another (possibly smaller) representation of a D-module.
-     If given a matrix, prunes its cokernel; the result is a matrix whose cokernel is isomorphic.",
-     EXAMPLE lines ///
-	 W = makeWA(QQ[x,y])
-	 M = matrix{{x,dx},{1,1}}
-	 Dprune M
-	 Dprune coker M
-	 M = matrix{{x,dx},{x,y}}
-	 Dprune M
-	 ///,
-     -- Caveat => {},
---     SeeAlso => {"BerinsteinSato::pruneCechComplexCC"} -- FIXME
-     }
+--- old format (commented out) ---
+-- -- TODO: better doc needed
+-- document {
+--      Key => {Dprune, (Dprune, Matrix), (Dprune, Module), [Dprune, MinimalGenerators]},
+--      Headline => "prunes a D-module",
+--      Usage => "Dprune M",
+--      Inputs => {
+-- 	  "M" => {ofClass Matrix, " or ", ofClass Module},
+-- 	  MinimalGenerators => Boolean => {"indicates whether a Gröbner basis should be computed"}
+-- 	  },
+--      Outputs => {
+-- 	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"}
+-- 	  },
+--      "Finds another (possibly smaller) representation of a D-module.
+--      If given a matrix, prunes its cokernel; the result is a matrix whose cokernel is isomorphic.",
+--      EXAMPLE lines ///
+-- 	 W = makeWA(QQ[x,y])
+-- 	 M = matrix{{x,dx},{1,1}}
+-- 	 Dprune M
+-- 	 Dprune coker M
+-- 	 M = matrix{{x,dx},{x,y}}
+-- 	 Dprune M
+-- 	 ///,
+--      -- Caveat => {},
+-- --     SeeAlso => {"BerinsteinSato::pruneCechComplexCC"} -- FIXME
+--      }
+
+doc ///
+  Key
+    Dprune
+    (Dprune, Matrix)
+    (Dprune, Module)
+    [Dprune, MinimalGenerators]
+  Headline
+    prunes a $D$-module
+  Usage
+    Dprune M
+  Inputs
+    M:{Matrix, Module}
+    MinimalGenerators=>Boolean
+      if @TT "true"@ (default), return a minimal set of generators.
+  Outputs
+    :{Matrix, Module}
+      of the same type as @TT "M"@
+  Description
+    Text
+      Finds another (possibly smaller) representation of the $D$-module $M$.
+      If $M$ is a matrix, $\mathrm{Dprune}$ returns a matrix whose cokernel
+      is isomorphic to that of $M$.
+    Example
+      W = makeWA(QQ[x,y])
+      M = matrix{{x,dx},{1,1}}
+      Dprune M
+      Dprune coker M
+      M = matrix{{x,dx},{x,y}}
+      Dprune M
+///
 
 doc ///
    Key
@@ -192,27 +254,28 @@ doc ///
    Usage
      Dtransposition A
    Inputs
-     A:Matrix
-       a matrix (between free modules), function, ideal, or chain complex of free modules over the Weyl algebra
+     A:{Matrix, RingElement, Ideal, Complex}
+       over the Weyl algebra
    Outputs
-     :Matrix
-       the standard transpose of @TT "A"@ as a matrix, function, ideal, or chain complex over the Weyl algebra
+     :{Matrix, RingElement, Ideal, Complex}
+       the standard transpose of $A$
    Description
     Text
       The standard transposition is the involution of the Weyl algebra
-      which sends @EM {"x", SUP "a","d", SUP "b"}@ to @EM {"(-d)", SUP "b", "x", SUP "a"}@.
-      It provides the equivalence in the Weyl algebra between left and right D-modules.
+      which sends $x^a dx^b$ to $(-dx)^b x^a$.
+      It provides the equivalence in the Weyl algebra between left and right $D$-modules.
     Example
       makeWeylAlgebra(QQ[x,y])
       L = x^2*dy + y*dy^2 + 3*dx^5*dy
       Dtransposition L
    Caveat
-     The standard transposition of a left ideal should be a right ideal, however M2 currently doesn't support right modules.
-     Thus the output is left ideal generated by the transposition of the previous generators.
+     The standard transposition of a left ideal should be a right ideal;
+     however, M2 does not currently support right modules.
+     Instead, the output is the left ideal generated by the transpositions of the input generators.
    SeeAlso
      WeylAlgebra
 ///
--- TODO: add reference
+
 doc ///
    Key
      makeCyclic
@@ -220,26 +283,28 @@ doc ///
      Generator
      AnnG
    Headline
-     finds a cyclic generator of a D-module
+     finds a cyclic generator of a $D$-module
    Usage
      makeCyclic M
    Inputs
      M:Matrix
-       that specifies a map such that @TT "coker M"@ is a holonomic D-module
+       a presentation matrix whose cokernel is a holonomic $D$-module
    Outputs
      H:HashTable
        where @TT "H.Generator"@ is a cyclic generator and @TT "H.AnnG"@
        is the annihilator ideal of this generator
    Description
     Text
-      It is known that every holonomic module is cyclic and
-      there is an algorithm for computing a cyclic generator.
+      Every finitely-generated holonomic $D$-module is cyclic, and there is
+      an algorithm for computing a cyclic generator.
     Example
       makeWA(QQ[x])
       M = matrix {{dx,0,0},{0,dx,0},{0,0,dx}} -- coker M = QQ[x]^3
       h = makeCyclic M
+      h.Generator
+      h.AnnG
    Caveat
-     The module @EM "M"@ must be holonomic.
+     The module $M$ must be holonomic.
    SeeAlso
      isHolonomic
 ///
@@ -257,23 +322,24 @@ doc ///
        of the Weyl algebra
    Outputs
      :Ideal
-       with 2 generators (that has the same extension as I in $k(x)\langle dx\rangle)$
+       with 2 generators whose extension to $k(x)\langle dx \rangle$ equals that of $I$
    Description
     Text
-      A theorem of Stafford says that every ideal in the Weyl algebra
-      can be generated by 2 elements. This routine is the implementation of the
-      effective version of this theorem following the constructive proof in
-      @EM "A.Leykin, `Algorithmic proofs of two theorems of Stafford',
-      Journal of Symbolic Computation, 38(6):1535-1550, 2004"@.
-      @BR{}@
+      A theorem of Stafford says that every left ideal in the Weyl algebra
+      can be generated by 2 elements. This routine implements the effective
+      version of this theorem following the constructive proof in
+      [@TO2 ("Works Cited", "Ley04")@].
+
       The current implementation provides a weaker result: the 2 generators
-      produced are guaranteed to generate only the extension of the ideal @EM "I"@
-      in the Weyl algebra with rational-function coefficients.
+      produced are only guaranteed to generate the extension of $I$ to
+      $k(x)\langle dx \rangle$ (i.e. the Weyl algebra with rational-function coefficients).
     Example
       makeWA(QQ[x_1..x_4])
       stafford ideal (dx_1,dx_2,dx_3,dx_4)
    Caveat
-     The input should be generated by at least 2 generators. The output and input ideals are not equal necessarily.
+     The input ideal should have at least 2 generators. The output ideal
+     need not equal the input ideal — they agree only after extension to
+     $k(x)\langle dx \rangle$.
    SeeAlso
      makeCyclic
 ///
@@ -284,32 +350,27 @@ doc ///
     (isHolonomic, Module)
     (isHolonomic, Ideal)
   Headline
-    determines whether a D-module (or ideal in Weyl algebra) is holonomic
+    determines whether a $D$-module (or ideal in Weyl algebra) is holonomic
   Usage
     isHolonomic M
     isHolonomic I
   Inputs
     M:Module
-      over the Weyl algebra @EM "D"@
+      over the Weyl algebra $D$
     I:Ideal
-      which represents the module @EM "M = D/I"@
+      which represents the module $M = D/I$
   Outputs
     :Boolean
   Description
     Text
-      Let $D$ be the Weyl algebra
-      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$.
-      over a field.
-      A $D$-module is holonomic if it has dimension $n$.
-      For more details see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
+      Let $D$ be the Weyl algebra with generators $x_1,\dots,x_n$ and
+      $dx_1,\dots,dx_n$ over a field. A $D$-module is holonomic if it
+      has dimension $n$. For more details see [@TO2 ("Works Cited", "SST00")@, Section 1.4].
 
     Example
---      needsPackage "HolonomicSystems"
-      D = makeWA(QQ[x_1..x_3])
-      A = matrix{{1,1,1},{0,1,2}}
-      b = {3,4}
---      I = gkz(A,b,D)
---      isHolonomic I
+      D = makeWA(QQ[x])
+      isHolonomic ideal(x*dx - 3)
+      isHolonomic ideal(dx^2 - x)
   SeeAlso
     Ddim
     holonomicRank
@@ -321,29 +382,27 @@ doc ///
     (DsingularLocus,Module)
     (DsingularLocus,Ideal)
   Headline
-    singular locus of a D-module
+    singular locus of a $D$-module
   Usage
     DsingularLocus M
     DsingularLocus I
   Inputs
     M:Module
-      over the Weyl algebra @EM "D"@
+      over the Weyl algebra $D$
     I:Ideal
-      which represents the module @EM "M = D/I"@
+      which represents the module $M = D/I$
   Outputs
     :Ideal
-      the singular locus of @EM "M"@
+      the singular locus of $M$
   Description
     Text
-      The singular locus of the system of PDE's given by @EM "I"@
+      The singular locus of the system of PDEs given by $I$
       generalizes the notion of singular point of an ODE.
-      Geometrically, the singular locus of a D-module @EM "M"@
-      equals the projection
-      of the characteristic variety of @EM "M"@ minus the zero section
-      of the cotangent bundle to the base affine space @BOLD "C"@ @EM "^n"@.
-      @BR{}@
-      More details can be found in
-      [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
+      Geometrically, it is the image in $\mathbb{C}^n$ of the
+      characteristic variety of $M$ minus the zero section of
+      the cotangent bundle $T^*\mathbb{C}^n$.
+
+      More details can be found in [@TO2 ("Works Cited", "SST00")@, Section 1.4].
     Example
       makeWA(QQ[x,y])
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
@@ -360,39 +419,40 @@ doc ///
     (characteristicIdeal,Ideal)
     (characteristicIdeal,Module)
   Headline
-    characteristic ideal of a D-module
+    characteristic ideal of a $D$-module
   Usage
-    characteristicIdeal M, characteristicIdeal I
+    characteristicIdeal M
+    characteristicIdeal I
   Inputs
     M:Module
-      over the Weyl algebra @EM "D"@
+      over the Weyl algebra $D$
     I:Ideal
-      which represents the module @EM "M = D/I"@
+      which represents the module $M = D/I$
   Outputs
     :Ideal
-      the characteristic ideal of @EM "M"@
+      the characteristic ideal of $M$
   Description
     Text
 
-      The characteristic ideal of @EM "M"@ is the annihilator of
-      @EM "gr(M)"@ under a good filtration with respect to the order
+      The characteristic ideal of $M$ is the annihilator of
+      $\mathrm{gr}(M)$ under a good filtration with respect to the order
       filtration.
-      If $D$ is the Weyl algebra over $\CC$
-      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$,
+      If $D$ is the Weyl algebra over $\QQ$
+      with generators $x_1,\dots,x_n$ and $dx_1,\dots,dx_n$,
       then the order filtration corresponds to the weight vector $(0,...,0,1,...,1)$.
       The characteristic ideal lives in the associated graded ring of $D$ with respect to
       the order filtration, and this is a commutative polynomial ring
-      $\CC[x_1,\dots,x_n,\xi_1,\dots,\xi_n]$.
-      Here the $\xi_i$ is the principal symbol of $\partial_i$, that is, the image of $\partial_i$
+      $\QQ[x_1,\dots,x_n,\xi_1,\dots,\xi_n]$.
+      Here the $\xi_i$ is the principal symbol of $dx_i$, that is, the image of $dx_i$
       in the associated graded ring.
       The zero locus of the characteristic ideal is equal to the {\em characteristic variety}
-      of @EM "D/I"@ which is an invariant of a D-module.
+      of $D/I$ which is an invariant of a $D$-module.
    Text
       The algorithm to compute the characteristic ideal consists of computing
-      the initial ideal of I with respect to the weight vector
-      $(0,...,0,1...,1)$.
+      the initial ideal of $I$ with respect to the weight vector
+      $(0,\dots,0,1,\dots,1)$.
       More details can be found in
-      [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
+      [@TO2 ("Works Cited", "SST00")@, Section 1.4].
 
    Example
       makeWA(QQ[x,y])
@@ -410,39 +470,38 @@ doc ///
     (holonomicRank,Module)
     (holonomicRank,Ideal)
   Headline
-    holonomic rank of a D-module
+    holonomic rank of a $D$-module
   Usage
     holonomicRank M
     holonomicRank I
   Inputs
     M:Module
-      over the Weyl algebra @EM "D"@
+      over the Weyl algebra $D$
     I:Ideal
-      which represents the module @EM "M = D/I"@
+      which represents the module $M = D/I$
   Outputs
     :ZZ
-      the rank of @EM "M"@
-  Consequences
-    Item
-      if the system has finite holonomic rank, a basis for differential operators modulo the system
-      is cached under @TT "M.cache#\"standard monomials\""@ or @TT "(comodule I).cache#\"standard monomials\""@.
+      the rank of $M$
   Description
     Text
-      The {\em holonomic rank} of a D-module @EM "M = D^r/N"@ provides analytic information
-      about the system of PDE's given by @EM "N"@. By the Cauchy-Kovalevskii-Kashiwara Theorem,
-      the dimension of the space of germs of holomorphic solutions to @EM "N"@ in a
-      neighborhood of a nonsingular point is equal to the holonomic rank of @EM "M"@.
+      The {\em holonomic rank} of a $D$-module $M = D^r/N$ provides analytic information
+      about the system of PDEs given by $N$. By the Cauchy-Kovalevskii-Kashiwara Theorem,
+      the dimension of the space of germs of holomorphic solutions to $N$ in a
+      neighborhood of a nonsingular point is equal to the holonomic rank of $M$.
 
     Text
-      The holonomic rank of a D-module is defined algebraically as follows.
+      The holonomic rank of a $D$-module is defined algebraically as follows.
       Let $D$ be the Weyl algebra
-      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over $\CC$.
+      with generators $x_1,\dots,x_n$ and $dx_1,\dots,dx_n$ over $\QQ$,
       and let $R$ denote the ring of differential operators
-      $\CC(x_1,\dots,x_n)\langle\partial_1,\dots,\partial_n\rangle$
+      $\QQ(x_1,\dots,x_n)\langle dx_1,\dots,dx_n\rangle$
       with rational function coefficients.
       Then the holonomic rank of $M = D^r/N$ is equal to the dimension of
       $R^r/RN$ as a vector space over
-      $\CC[x_1,\dots,x_n]$.
+      $\QQ(x_1,\dots,x_n)$.
+      More details can be found in
+      [@TO2 ("Works Cited", "SST00")@, Section 1.4].
+
     Example
       makeWA(QQ[x,y])
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
@@ -467,7 +526,7 @@ doc ///
     (Ddim,Ideal)
     (Ddim,Module)
   Headline
-    dimension of a D-module
+    dimension of a $D$-module
   Usage
     Ddim M
     Ddim I
@@ -475,18 +534,18 @@ doc ///
     M:Module
       over the Weyl algebra $D$
     I:Ideal
-      which represents the module $M=D/I$
+      which represents the module $M = D/I$
   Outputs
     :ZZ
       the dimension of $M$
   Description
     Text
-      The dimension of $M$ is equal to the dimension of
-      the associated graded module with respect to the Bernstein
-      filtration.
-      If $D$ is the Weyl algebra over $\CC$
-      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$,
-      then the Bernstein filtration corresponds to the weight vector $(1,...,1,1,...,1)$.
+      The dimension of $M$ (as a $D$-module) is defined as the Krull
+      dimension of the associated graded module $\mathrm{gr}_F(M)$ with
+      respect to the Bernstein filtration $F$.
+      If $D$ is the Weyl algebra over $\QQ$
+      with generators $x_1,\dots,x_n$ and $dx_1,\dots,dx_n$,
+      then the Bernstein filtration corresponds to the weight vector $(1,\dots,1,1,\dots,1)$.
     Example
       makeWA(QQ[x,y])
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
