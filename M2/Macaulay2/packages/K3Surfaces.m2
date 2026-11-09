@@ -10,7 +10,7 @@
 newPackage(
     "K3Surfaces",
     Version => "1.2", 
-    Date => "November 8, 2022",
+    Date => "November 9, 2026",
     Authors => {{Name => "Michael Hoff", 
                  Email => "hahn@math.uni-sb.de"},
                 {Name => "Giovanni Staglianò", 
@@ -954,8 +954,8 @@ project({i,j,k,...},S(a,b))",
 Inputs => {VisibleList => {"a list ",TEX///$\{i,j,k,\ldots\}$///," of nonnegative integers"},
            LatticePolarizedK3surface => "S" => {"a lattice-polarized K3 surface with rank 2 lattice spanned by ",TEX///$H,C$///},
            ZZ => "a",
-           ZZ => "b"}, 
-Outputs => {EmbeddedProjectiveVariety => {"the projection of ", TEX///$S$///," embedded by the complete linear system ",TEX///$|a H + b C|$///," from ",TEX///$i$///," random points of multiplicity 1, ",TEX///$j$///," random points of multiplicity 2, ",TEX///$k$///," random points of multiplicity 3, and so on until the last integer in the given list."}}, 
+           ZZ => "b"},
+Outputs => {EmbeddedProjectiveVariety => {"the projection of ", TEX///$S$///," embedded by the complete linear system ",TEX///$|a H + b C|$///," from one random point of multiplicity ",TEX///$i$///,", one random point of multiplicity ",TEX///$j$///,", one random point of multiplicity ",TEX///$k$///,", and so on."}}, 
 EXAMPLE {"S = K3(8,2,-2)", "project({5,3,1},S,2,1); -- (5th + 3rd + simple)-projection of S(2,1)"}, 
 SeeAlso => {(symbol SPACE,LatticePolarizedK3surface,Sequence)}} 
 
