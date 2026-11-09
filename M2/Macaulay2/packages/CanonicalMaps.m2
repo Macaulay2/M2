@@ -23,8 +23,13 @@ newPackage(
 --      Use code in lazy-complexes version of CanonicalMaps.m2 to grab that Complexes code.
 --  2. DONE move tensorCommutativity to here (the module part)
 --  3. write documentation (DONE: kernelMap, cokernelMap, imageMap).
---     In the middle of working on coimageMap (universal property isn't quite right yet).
---  4. audit the tests, many are after the end--
+--     In the middle of working on coimageMap (Need to check: the isomorphism j, is it always the identity map?)
+--  Currently (9 Nov 2026) the tests before end-- all work.
+--  Question: if M = ker f, should kernelMap M give M --> source f.  i.e. should the fact that M is a kernel of f be stashed?
+--    Same question for coker, image, coimage
+--  4. audit the tests, many are after the end
+--  5. fiber sum, product maps, universal maps.
+-- 
 
 export {
     "kernelMap",
@@ -39,7 +44,7 @@ export {
     "superMap",
     "cosuper",
     "cosuperMap",
-    "trimMap",
+    -- "trimMap",
     "pruneMap",
     "unitorMap",
     "counitorMap",
@@ -47,11 +52,10 @@ export {
     -- "tensorCommutativity" is exported by the Complexes package (Complexes.m2:120):
     --   identical (Module,Module) body there, plus a (Complex,Complex) version
     -- "tensorAssociativity" is currently in Core: modules2.m2, needs tests
-    "swapMap",
-    "adjunctionMap",
+    -- "swapMap",
+    -- "adjunctionMap",
     -- from Complexes, perhaps?
-    "randomMatrix",
-    "coimageToImageInverse"
+    -- "randomMatrix"
     }
 
 -- TODO:
@@ -129,20 +133,27 @@ coimageMap Matrix := Sequence => (f) -> (
 
 coimageMap(Matrix, Matrix, Matrix) := Matrix => (i, h, f) -> (
     (g,e) := coimageMap f;
-    map(target e, target h, e \\ h)
+    map(source g, source i, i // g)
     )
 
 -- TODO: do we want the universal properties for the above maps (coimageMap, imageMap)
 
 coimageImageMap = method()
+-- coimageImageMap Matrix := Matrix => (f) -> (
+--     -- f: B --> C
+--     eta := kernelMap f; -- eta: ker f --> B
+--     p := cokernelMap f; -- p: C --> coker f
+--     theta' := cokernelMap eta; -- theta' : B --> coker eta == coim f
+--     theta := kernelMap(f, p); -- theta:  B --> ker p == im f
+--     mu := cokernelMap(theta, eta); -- coim f --> im f
+--     mu
+--     )
+
 coimageImageMap Matrix := Matrix => (f) -> (
-    -- f: B --> C
-    eta := kernelMap f; -- eta: ker f --> B
-    p := cokernelMap f; -- p: C --> coker f
-    theta' := cokernelMap eta; -- theta' : B --> coker eta == coim f
-    theta := kernelMap(f, p); -- theta:  B --> ker p == im f
-    mu := cokernelMap(theta, eta); -- coim f --> im f
-    mu
+    -- f: M --> N
+    (g,e) := imageMap f; -- e: M --> I, g:I --> N
+    (h,i) := coimageMap f; -- i:M --> C, h:C --> N
+    map(source g, source h, h // g)
     )
 
 -- axiom of an Abelian category: coimageToImage f is an isomorphism
@@ -186,6 +197,8 @@ fiberSum = method()
 fiberSum(Matrix, Matrix) := Module => (phi, phi') -> (
     -- Given: phi : B --> C
     -- Given: phi' : B --> C'
+    -- DESIRED RETURN: C ++_B C'.
+    -- get at the maps via (q, q') = fiberSumMap(phi, phi')
     -- return: (C ++_B C', q, q'), and stash the cokernel map and map B --> C ++ C'
     B := source phi;
     if B =!= source phi' then error "expected maps to have the same source";
@@ -379,7 +392,8 @@ coimageToImageInverse Matrix := (f) -> (
     )
 
 
-TEST ///
+"TEST" -- this one is not yet working
+///
   debug needsPackage "CanonicalMaps"
   C = ZZ^3 ++ ZZ^1/ideal(32)
   B = ZZ^2 ++ ZZ^1/ideal(16)
@@ -641,28 +655,9 @@ doc ///
             assert(source u === image f)
             assert(target u === source i)
         Text
-            Possibly a more interesting example (Mike added this on Friday, Oct 30).
-        Example
-            f = matrix{{6},{0}}
-            (g,e) = imageMap f
-            assert(isWellDefined g and isWellDefined e and f === g * e)
-            assert(ker g == 0)
-            assert(source g === image f)
-            assert(target g === target f)
-            assert(f // g === e)
-        Example
-            L = ZZ^2 -- really 2ZZ ++ 3ZZ
-            h = map(L, source f, {{3},{0}})
-            i = map(target f, L, {{2,0},{0,3}})
-            assert(f === i * h and kernel i == 0)
-            u = imageMap(i, h, f)
-            assert(g === i * u and h === u * e)
-            assert(source u === image f)
-            assert(target u === source i)
-        Text
             The image of $f$ is isomorphic to the kernel of the cokernel map of $f$, but the
             isomorphism is typically non-trivial, as the generators of a kernel are not canonically defined.
-            Moreover, the monomorphism $g$ arises from the universal property of the kernel
+            Moreover, the morphism $e$ arises from the universal property of the kernel
             applied to the cokernel map of $f$.
         Example
             assert(image f == kernel cokernelMap f)
@@ -671,6 +666,7 @@ doc ///
             j = map(source g, target v, ((generators target v) // (generators source g)))
             assert(kernel j == 0 and coker j == 0)
             assert(g * j * v === f)
+            assert(j * v === e)
         Text
             The non-trivial isomorphism between the kernel of the cokernel map and the image is given
             here by $j$.
@@ -710,8 +706,6 @@ doc ///
         coimageMap
 ///
 
-
--- XXX
 doc ///
     Key
         coimageMap
@@ -754,7 +748,7 @@ doc ///
             We illustrate the coimage map using a homomorphism
             of Abelian groups.
         Example
-            f = matrix {{2, 0}, {0, 1}, {1, 4}}
+            f = matrix {{2, 0}, {0, 3}, {1, 4}}
             (g,e) = coimageMap f
             assert(isWellDefined g and isWellDefined e and f === g * e)
             assert(coker e == 0)
@@ -762,27 +756,27 @@ doc ///
             assert(target e === coimage f)
         Example
             h = matrix {{0, 1}, {1, 4}}
-            i = matrix {{-8, 2}, {1, 0}, {0, 1}}
+            i = matrix {{-8, 2}, {3, 0}, {0, 1}}
             assert(f === i * h and cokernel h == 0)
             u = coimageMap(i, h, f)
             assert(e === u * h and i === g * u)
-            assert(source u === image f)
-            assert(target u === source i)
+            assert(source u === target h)
+            assert(target u === target e)
         Text
-            The image of $f$ is isomorphic to the kernel of the cokernel map of $f$, but the
+            The coimage of $f$ is isomorphic to the cokernel of the kernel map of $f$, but the
             isomorphism is typically non-trivial, as the generators of a kernel are not canonically defined.
-            Moreover, the monomorphism $g$ arises from the universal property of the kernel
-            applied to the cokernel map of $f$.
+            Moreover, the epimorphism $e$ arises from the universal property of the cokernel
+            applied to the kernel map of $f$.
         Example
-            assert(image f == kernel cokernelMap f)
-            v = kernelMap(f, cokernelMap f)
-            assert(target v === kernel cokernelMap f)
-            j = map(source g, target v, ((generators target v) // (generators source g)))
+            assert(coimage f == cokernel kernelMap f)
+            v = cokernelMap(f, kernelMap f)
+            assert(source v === cokernel kernelMap f)
+            j = map(source v, target e, ((generators target e) // (generators source v)))
             assert(kernel j == 0 and coker j == 0)
-            assert(g * j * v === f)
+            assert(v * j * e === f)
         Text
-            The non-trivial isomorphism between the kernel of the cokernel map and the image is given
-            here by $j$.
+            In this example, the isomorphism $j$ between the cokernel of the kernel map and the coimage
+            is the identity.
         Text
             For a second example,
             we work over a quotient of a polynomial ring.
@@ -795,25 +789,80 @@ doc ///
             assert(source e === source f)
             assert(target e === coimage f)
         Example
-            h = matrix {{7*a-3*c, 7*b-3*d}, {-2*a+c, -2*b+d}}
-            i = matrix {{1_R, 3}, {2, 7}}
-            assert(f === i * h and kernel i == 0)
-            u = imageMap(i, h, f)
-            assert(g === i * u)
-            assert(source u === image f)
-            assert(target u === source i)
+            h = R^{{-1}} ** matrix {{1_R, 3}, {2, 7}}
+            source h === source f
+            i = matrix {{7*a-2*b, -3*a+b}, {7*c-2*d, -3*c+d}}
+            assert(f === i * h and cokernel h == 0)
+            u = coimageMap(i, h, f)
+            assert(e === u * h and i === g * u)
+            assert(source u === target h)
+            assert(target u === target e)
+        Text
+            In this example, the isomorphism $j$ between the cokernel of the kernel map and the coimage
+            is the identity.
         Example
-            assert(image f == kernel cokernelMap f)
-            v = kernelMap(f, cokernelMap f)
-            assert(target v === kernel cokernelMap f)
-            j = map(source g, target v, ((generators target v) // (generators source g)))
+            assert(coimage f == cokernel kernelMap f)
+            v = cokernelMap(f, kernelMap f)
+            assert(source v === cokernel kernelMap f)
+            j = map(source v, target e, ((generators target e) // (generators source v)))
             assert(kernel j == 0 and coker j == 0)
-            assert(g * j * v === f)
+            assert(v * j * e === f)
     SeeAlso
         kernelMap
         cokernelMap
 ///
 
+doc ///
+    Key
+        coimageImageMap
+        (coimageImageMap, Matrix)
+    Headline
+        canonical map associated to an image object
+    Usage
+        g = coimageImageMap f
+    Inputs
+        f:Matrix
+            representing a map $M \to N$ of $R$-modules
+    Outputs
+        g:Matrix
+            the canonical isomorphism $g \colon \operatorname{Coimage}(f) \to \operatorname{Image}(f)$
+    Description
+        Text
+            As $R$-modules form an Abelian category,
+            the canonical map $g \colon \operatorname{Coimage}(f) \to \operatorname{Image}(f)$,
+            is an isomorphism.
+        Text
+            As a first example, we consider a map between
+            free Abelian groups.  In this case, the canonical map
+            from the coimage to the image is obviously the identity map.
+        Example
+            f = matrix {{2, 0}, {0, 3}, {1, 4}}
+            g = coimageImageMap f
+            assert(source g === coimage f and target g == image f)
+            assert(ker g == 0 and coker g == 0)
+        Text
+            Working over a quotient of a polynomial ring, we show that
+            the canonical map from the coimage to the image is not
+            obviously the identity map.  In fact, because of the way the
+            generators for the image and coimage are chosen in Macaulay2,
+            this will induced by the identity map.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            M = module ideal(a*d, -b*c) ++ module ideal(a^2, b^2)
+            N = prune M
+            f = map(N, M, matrix {{-1_R, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}})
+            assert isWellDefined f
+            g = coimageImageMap f
+            assert(source g === coimage f and target g == image f)
+            assert(coker g == 0 and ker g == 0)
+            assert(matrix g != 1)
+            g === map(image f, coimage f, 1)
+    SeeAlso
+        image
+        coimage
+        imageMap
+        coimageMap
+///
 
 ///
     Key
@@ -919,47 +968,47 @@ TEST ///
   needsPackage "CanonicalMaps"
 *-
 TEST ///
-  -- testing ker and coker universal maps, for complexes
+  -- testing ker and coker universal maps
   S = ZZ/11[x,y,z];
   f = random(S^2, S^{-1,-1,-1})
 
-  (imf,e) = imageMap f
-  assert(isWellDefined imf and isWellDefined e and f === imf * e)
-  assert(ker imf == 0)
-  assert(source imf === image f)
-  assert(target imf === target f)
-  assert(f // imf === e)
+  (g,e) = imageMap f
+  assert(isWellDefined g and isWellDefined e and f === g * e)
+  assert(ker g == 0)
+  assert(source g === image f)
+  assert(target g === target f)
+  assert(f // g === e)
   kcf = kernelMap(f, cokernelMap f)
-  iota = map(source imf, target kcf, ((generators target kcf) // (generators source imf)))
-  assert(imf * iota * kcf === f)
+  iota = map(source g, target kcf, ((generators target kcf) // (generators source g)))
+  assert(g * iota * kcf === f)
 
-  cof = coimageMap f
-  assert isWellDefined cof
-  assert(coker cof == 0)
-  assert(source cof === source f)
-  assert(target cof == coimage f)
-  assert((cof \\ f) * cof === f) -- f factors through the coimage
-  assert(cokernelMap(f, kernelMap f) * cof === f) -- f factors through the coimage  
+  (h,i) = coimageMap f
+  assert isWellDefined h
+  assert isWellDefined i
+  assert(coker i == 0 and f === h*i)
+  assert(source i === source f and target i === coimage f)
+  assert(source h === coimage f and target h === target f)
+
+  assert(cokernelMap(f, kernelMap f) === h)
 
   -- two ways to construct coimage f --> image f.
   eta = kernelMap f
   p = cokernelMap f
   choice1 = cokernelMap(kernelMap(f, p), eta)
-  assert(source choice1 === target coimageMap f)
-  assert(target choice1 === source imageMap f)
+  assert(source choice1 === target i)
+  assert(target choice1 == image f)
   -- 
   choice2 = kernelMap(cokernelMap(f, eta), p)
   assert(choice1 === choice2)
   assert(kernel choice1 == 0)
   assert(cokernel choice1 == 0)
 
-  g = coimageImageMap f
-  assert(choice1 === g)
-  h = g^-1
-  assert isWellDefined g
-  assert isWellDefined h
-  assert(h * g == 1)
-  assert(g * h == 1)
+  u = coimageImageMap f
+  assert(choice1 == u)
+  assert(target choice1 =!= target u) -- not true, as they have different sets of generators
+  assert(target choice1 == target u) -- true, as they are the same submodule
+  assert(source choice1 === source u) -- true on the nose
+  assert(u == 1) -- u is induced by the identity map on generators.
 ///
 
 -*
@@ -1273,6 +1322,7 @@ TEST ///
   needsPackage "CanonicalMaps"
 *-
 TEST ///
+  debug needsPackage "CanonicalMaps"
   a = matrix{{6,0,0},{0,3,0},{0,0,0},{0,0,0}}
   b = matrix{{12,0,0},{0,3,0},{0,0,2},{0,0,0}}
   M = subquotient(a,b)
@@ -1400,7 +1450,9 @@ TEST /// -- unitor
   assert(coker g == 0)
 ///
 
-TEST ///
+"TEST"
+///
+  -- this test is trying to find `trimMap`, but there is a M2 bug we need to make an issue on
   -- BUG, git issue #
   R = ZZ/101[x,y,z]
   M = subquotient(matrix{{x^2, x^2-y^2, y^2}}, matrix{{x^3-y^3, y^3 - x^3}})
@@ -1431,7 +1483,7 @@ end--
 
 -* Development section *-
 restart
-debug needsPackage "CanonicalMaps"
+needsPackage "CanonicalMaps"
 check "CanonicalMaps"
 
 uninstallPackage "CanonicalMaps"
