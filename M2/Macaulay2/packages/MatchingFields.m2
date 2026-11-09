@@ -1339,7 +1339,7 @@ doc ///
         Lgr: GrMatchingField
         Lfl: FlMatchingField
         MonomialOrder => String
-          either "default" or "none" (supply "none" only if $L$ is not coherent)
+          either "default" or "none" (supply "none" only if $L$ is not coherent, see explanation below)
       Outputs
         I: Ideal
           The Pluecker ideal associated to the corresponding Grassmannian or partial flag variety
@@ -1383,8 +1383,19 @@ doc ///
           The resulting ideal is constructed in a polynomial ring with the @TO "GRevLex"@ order.
         Example
           I = plueckerIdeal(L, MonomialOrder => "none")
+        Text
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
       SeeAlso
         matchingFieldIdeal
+        isToricDegeneration
       Subnodes
 ///
 
@@ -1608,7 +1619,7 @@ doc ///
         Strategy => String
           either "M2" or "4ti2" the strategy for computing the generators
         MonomialOrder => String
-          either "default" or "none" (supply "none" only if $L$ is not coherent)
+          either "default" or "none" (supply "none" only if $L$ is not coherent, see below)
       Outputs
         I: Ideal
           toric ideal of the matching field
@@ -1655,6 +1666,17 @@ doc ///
           I = matchingFieldIdeal(L, MonomialOrder => "none")
           (options ring I).MonomialOrder
         Text
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
+
+
           The option @TO "Strategy"@ determines how the matching field ideal is computed. The default uses the package @TO "FourTiTwo"@. This strategy works
           by passing in the matrix of the toric ideal to @TO "toricGroebner"@ with the correct weight vector. In the case of Grassmannian matching fields,
           the columns of the matrix of the toric ideal are exactly the vertices of the matching field polytope. For a flag matching field $\Lambda$,
@@ -1759,7 +1781,7 @@ doc ///
       Inputs
         L: {MatchingField, GrMatchingField, FlMatchingField}
         MonomialOrder => String
-          either "default" or "none" (supply "none" only if $L$ is not coherent)
+          either "default" or "none" (supply "none" only if $L$ is not coherent, see below)
       Outputs
         m: RingMap
           the ring map of the Pluecker embedding
@@ -1806,6 +1828,20 @@ doc ///
           is the map that sends each
           Pluecker variable $P_J \mapsto \rm{in}(\det(X_J))$ to the lead term of the
           maximal minor $\det(X_J)$.
+
+          If the matching field is not coherent, then the rings and map
+          can be constructed by setting the option MonomialOrder to "none".
+          Doing this sets the monomial order of the ambient polynomial rings
+          to @TO "GRevLex"@.
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
       SeeAlso
         MatchingField
         GrMatchingField
@@ -2551,7 +2587,7 @@ doc ///
       Inputs
         L: {MatchingField, GrMatchingField, FlMatchingField}
         MonomialOrder => String
-          either "default" or "none" (supply "none" only when $L$ is not coherent)
+          either "default" or "none" (supply "none" only when $L$ is not coherent, see below)
       Outputs
         m: RingMap
           monomial ring map whose kernel is the matching field ideal
@@ -2576,6 +2612,21 @@ doc ///
           have the default GRevLex monomial order. If no weight matrix was supplied in the construction of
           the matching field, then one will be computed, see @TO "getWeightMatrix"@.
           To check that a matching field is coherent use the function @TO "isCoherent"@.
+
+          If the matching field is not coherent, then the rings and map
+          can be constructed by setting the option MonomialOrder to "none".
+          Doing this sets the monomial order of the ambient polynomial rings
+          to @TO "GRevLex"@.
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
+
       SeeAlso
         getTuples
         plueckerMap
@@ -2957,7 +3008,7 @@ doc ///
       Inputs
         L: {MatchingField, GrMatchingField, FlMatchingField}
         MonomialOrder => String
-          either "default" or "none" (supply "none" only if $L$ is not coherent)
+          either "default" or "none" (supply "none" only if $L$ is not coherent, see below)
       Outputs
         S: Subring
           generated by minors of a generic matrix of variables
@@ -2969,10 +3020,28 @@ doc ///
           of variables.
 
           A matching field specifies a weight order on the ambient ring containing the Pluecker algebra.
+
+          If the matching field is not coherent, then the matching field ideal
+          can be constructed by setting the option MonomialOrder to "none".
+          Doing this sets the monomial order of the ambient polynomial rings
+          to @TO "GRevLex"@.
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
+
         Example
           L = diagonalMatchingField(2, 4)
           S = plueckerAlgebra L
           transpose gens S
+        Text
+
+
       SeeAlso
         GrMatchingField
         FlMatchingField
