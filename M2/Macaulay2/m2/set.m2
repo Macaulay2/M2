@@ -176,7 +176,7 @@ partition(VirtualTally,Function,VisibleList) := HashTable => (t,f,ks) -> (
 )
 partition(VirtualTally,Function) := HashTable => (t, f) -> partition(t, f, {})
 
--- partition function first interfaces supported
+-- partition-function-first interface supported
 partition(Function,VirtualTally) := HashTable => (f,t) -> partition(t,f,{})
 partition(Function,VirtualTally,VisibleList) := HashTable => (f,t,ks) -> partition(t, f, ks)
 
@@ -195,7 +195,7 @@ partition(VisibleList, Function) := HashTable => (xs, f) -> partition(xs, f, {},
 partition(VisibleList, Function, Function) := HashTable => (xs, f, g) -> partition(xs, f, {}, g)
 partition(VisibleList, Function, VisibleList) := HashTable => (xs, f, ks) -> partition(xs, f, ks, identity)
 
--- partition function first interfaces supported
+-- partition-function-first interface supported
 partition(Function, VisibleList, VisibleList, Function) := HashTable => (f, xs, ks, g) -> partition(xs, f, ks, g)
 partition(Function, VisibleList) := HashTable => (f, xs) -> partition(xs, f, {}, identity)
 partition(Function, VisibleList, Function) := HashTable => (f, xs, g) -> partition(xs, f, {}, g)
