@@ -531,9 +531,14 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
   const int num_successes_before_increase = 3;
 
+  // Progress bar: append-only (no \r), so it also works in front ends such as
+  // the WebApp clients that don't treat \r as a return to the start of a line.
   std::atomic<int> bar_done{0};
   std::mutex        bar_mutex;
   const int         bar_width = 40;
+  const bool        show_bar = M2_numericalAlgebraicGeometryTrace > 0 && n_sols > 0;
+  if (show_bar)
+    std::cerr << "-- " << n_sols << " paths [" << std::flush;
 
   // Allow the TBB worker threads to register themselves with the GC (see the
   // lambda below). Without this, GC_register_my_thread aborts with "Threads
@@ -886,17 +891,15 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       if (status == PROCESSING) status = REGULAR;
       oe.ring().set_from_long(oe.entry(0, s), status);
       oe.ring().set_from_long(oe.entry(1, s), count);
-      // Update progress bar (at most bar_width redraws per call).
-      if (M2_numericalAlgebraicGeometryTrace > 0 && n_sols > 0) {
+      // Update progress bar: append the marks earned by this path (bar_width
+      // marks in total; a path may earn more than one when n_sols < bar_width).
+      if (show_bar) {
         int done = ++bar_done;
-        if (done * bar_width / (int)n_sols !=
-            (done - 1) * bar_width / (int)n_sols) {
+        int marks = done * bar_width / (int)n_sols
+                    - (done - 1) * bar_width / (int)n_sols;
+        if (marks > 0) {
           std::lock_guard<std::mutex> lk(bar_mutex);
-          int filled = done * bar_width / (int)n_sols;
-          std::cerr << "\r["
-                    << std::string(filled, '#')
-                    << std::string(bar_width - filled, '-')
-                    << "] " << done << "/" << n_sols << std::flush;
+          std::cerr << std::string(marks, '#') << std::flush;
         }
       }
     }
@@ -904,8 +907,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       GC_unregister_my_thread();
   }, tbb::simple_partitioner{}); //(end) tbb::parallel_for
   }); //(end) arena.execute
-  if (M2_numericalAlgebraicGeometryTrace > 0 && n_sols > 0)
-    std::cerr << std::endl;  // finish progress bar line
+  if (show_bar) std::cerr << "]" << std::endl;  // finish progress bar line
   
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   if (M2_numericalAlgebraicGeometryTrace > 1)
