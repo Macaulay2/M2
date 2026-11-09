@@ -457,7 +457,7 @@ surface HodgeSpecialFourfold := X -> first X#"SurfaceContainedInTheFourfold";
 surface (VisibleList,Ring,Option,Option) := (L,K,oN,oA) -> (
     oN = toList oN; oA = toList oA;
     if first oN === ambient and first oA === NumNodes then (oN,oA) = (oA,oN);
-    if first oN =!= NumNodes and first oA =!= ambient then error "NumNodes and ambient are the only available options for surface(VisibleList)";
+    if first oN =!= NumNodes or first oA =!= ambient then error "NumNodes and ambient are the only available options for surface(VisibleList)";
     if not (#L>0 and all(L,i->instance(i,ZZ) and i>=0)) then error "expected a list of nonnegative integers";
     P := for i from 1 to #L-1 list for j from 1 to L_i list (i,point PP_K^2);
     B := if #L==1 or all(take(L,-(#L-1)),i->i==0) then 0_(PP_K^2) else ⋃ apply(flatten P,p -> p_0 * p_1);

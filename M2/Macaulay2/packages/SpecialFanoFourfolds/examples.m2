@@ -426,9 +426,10 @@ store HodgeSpecialFourfold := X -> (
 ---------------------- Prime Fano fourfolds ----------------------------
 ------------------------------------------------------------------------
 
-fanoFourfold = method(TypicalValue => EmbeddedProjectiveVariety, Options => {CoefficientRing => ZZ/65521});
+fanoFourfold = method(TypicalValue => EmbeddedProjectiveVariety, Options => {CoefficientRing => null});
 fanoFourfold (ZZ,ZZ) := o -> (d,g) -> (
     K := o.CoefficientRing;
+    if K === null then K = if PP.ring === null then ZZ/65521 else PP.ring;
     if not (instance(K,Ring) and isField K) then error "CoefficientRing option expects a field";
     local Y; local j; local S; local psi;
     local X;

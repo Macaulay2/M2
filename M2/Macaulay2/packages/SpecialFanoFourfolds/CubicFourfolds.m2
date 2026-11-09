@@ -145,8 +145,19 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
 cubicFourfold String := o -> str -> cubicFourfold(str,if PP.ring === null then ZZ/65521 else PP.ring,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 netTexDescription CubicFourfold := o -> X -> (
-    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (toString getAttribute(X,ReverseDictionary),texMath getAttribute(X,ReverseDictionary));
-    if o#"Short" then return (shortDescriptionFourfold(X,false),texMath shortDescriptionFourfoldTeX(X,false));
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
+        toString getAttribute(X,ReverseDictionary),
+        texMath getAttribute(X,ReverseDictionary)
+    );
+    if o#"Short" then (
+        if compStatusLatticeDisc X > 0 then return (
+            shortDescriptionFourfold(X,false),
+            texMath shortDescriptionFourfoldTeX(X,false)
+        ) else return (
+            "cubic fourfold",
+            "\\text{cubic fourfold}"
+        );
+    );
     S := surface X;
     d := discriminant X;
     A := X.cache#(S,"LatticeIntersectionMatrix");

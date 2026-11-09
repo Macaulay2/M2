@@ -88,7 +88,7 @@ Headline => "Gushel morphism from a GM fourfold to GG(1,4)",
 Usage => "toGrass X",
 Inputs => {"X" => GushelMukaiFourfold},
 Outputs => {MultirationalMap => {"a linear morphism from ", TEX///$X$///, " into the ",TO2{GrassmannianVariety,"Grassmannian"}," ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded, which is an embedding when ",TEX///$X$///," is of ordinary type"}},
-EXAMPLE {"x := gens ring PP_(ZZ/33331)^8;", "X = gushelMukaiFourfold(ideal(x_6-x_7, x_5, x_3-x_4, x_1, x_0-x_4, x_2*x_7-x_4*x_8), ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8, x_0^2+x_0*x_1+x_1^2+x_0*x_2+2*x_0*x_3+x_1*x_3+x_2*x_3+x_3^2-x_0*x_4-x_1*x_4-2*x_2*x_4-x_3*x_4-2*x_4^2+x_0*x_5+x_2*x_5+x_5^2+2*x_0*x_6+x_1*x_6+2*x_2*x_6+x_3*x_6+x_5*x_6+x_6^2-3*x_4*x_7+2*x_5*x_7-x_7^2+x_1*x_8+x_3*x_8-3*x_4*x_8+2*x_5*x_8+x_6*x_8-x_7*x_8));", "time toGrass X", "show oo"},
+EXAMPLE {"x := gens ring PP_(ZZ/33331)^8;", "X = gushelMukaiFourfold(ideal(x_6-x_7, x_5, x_3-x_4, x_1, x_0-x_4, x_2*x_7-x_4*x_8), ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8, x_0^2+x_0*x_1+x_1^2+x_0*x_2+2*x_0*x_3+x_1*x_3+x_2*x_3+x_3^2-x_0*x_4-x_1*x_4-2*x_2*x_4-x_3*x_4-2*x_4^2+x_0*x_5+x_2*x_5+x_5^2+2*x_0*x_6+x_1*x_6+2*x_2*x_6+x_3*x_6+x_5*x_6+x_6^2-3*x_4*x_7+2*x_5*x_7-x_7^2+x_1*x_8+x_3*x_8-3*x_4*x_8+2*x_5*x_8+x_6*x_8-x_7*x_8));", "toGrass X", "show oo"},
 SeeAlso => {(toGrass, EmbeddedProjectiveVariety), (symbol ===>, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)}}
 
 document {Key => {(toGrass, EmbeddedProjectiveVariety)},
@@ -96,7 +96,7 @@ Headline => "embedding of an ordinary Gushel-Mukai fourfold or a del Pezzo varie
 Usage => "toGrass X",
 Inputs => {"X" => EmbeddedProjectiveVariety => {"an ordinary Gushel-Mukai fourfold, or a del Pezzo variety of dimension at least 4 (e.g., a sixfold projectively equivalent to ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///,")"}},
 Outputs => {MultirationalMap => {"an embedding of ", TEX///$X$///, " into the ",TO2{GrassmannianVariety,"Grassmannian"}," ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded"}},
-EXAMPLE {"x = gens ring PP_(ZZ/33331)^8;", "X = projectiveVariety ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8);", "time toGrass X", "show oo"},
+EXAMPLE {"x = gens ring PP_(ZZ/33331)^8;", "X = projectiveVariety ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8);", "toGrass X", "show oo"},
 SeeAlso => {(toGrass,GushelMukaiFourfold), (symbol ===>, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)}}
 
 undocumented{(cycleClass, GushelMukaiFourfold)}
@@ -121,18 +121,18 @@ Usage => "parameterCount(S,X)",
 Inputs => {"S" => EmbeddedProjectiveVariety, "X" => EmbeddedProjectiveVariety => {"such that ", TEX///$S\subseteq X$///}},
 Outputs => {{"a count of parameters to estimate the dimensions of the corresponding Hilbert schemes"}},
 PARA{"See ",TO (parameterCount, CubicFourfold)," and ", TO (parameterCount, GushelMukaiFourfold)," for more precise applications of this function."},
-PARA{"The following calculation shows that the family of complete intersections of 3 quadrics in ",TEX///$\mathbb{P}^5$///," containing a rational normal quintic curve has codimension 1 in the space of all such complete intersections."},
-EXAMPLE {"K = ZZ/33331; S = PP_K^(1,5);", "X = random({{2},{2},{2}},S);", "time parameterCount(S,X,Verbose=>true)"},
+PARA{"The following calculation shows that the family of complete intersections of three quadrics in ",TEX///$\mathbb{P}^5$///," containing a rational normal quintic curve has codimension 1 in the space of all such complete intersections."},
+EXAMPLE {"K = ZZ/33331; S = PP_K^(1,5);", "X = random({{2},{2},{2}},S);", "parameterCount(S,X,Verbose=>true)"},
 SeeAlso => {(parameterCount, CubicFourfold), (parameterCount, GushelMukaiFourfold), normalSheaf}}
 
 document {Key => {(parameterCount, CubicFourfold)},
-Headline => "count of parameters in the moduli space of GM fourfolds",
+Headline => "count of parameters in the moduli space of cubic fourfolds",
 Usage => "parameterCount X",
 Inputs => {"X" => CubicFourfold => {"a special cubic fourfold containing a surface ", TEX///$S$///}},
 Outputs => {ZZ => {"an upper bound for the codimension in the moduli space of cubic fourfolds of the locus of cubic fourfolds that contain a surface belonging to the same irreducible component of the Hilbert scheme containing ", TEX///$[S]$///}, Sequence => {"the triple of integers: ", TEX///$(h^0(I_{S/P^5}(3)), h^0(N_{S/P^5}), h^0(N_{S/X}))$///}},
 PARA{"This function implements a parameter count explained in the paper ", HREF{"https://arxiv.org/abs/1503.05256", "Unirationality of moduli spaces of special cubic fourfolds and K3 surfaces"}, ", by H. Nuer."},
 PARA{"Below, we show that the closure of the locus of cubic fourfolds containing a Veronese surface has codimension at most one (hence exactly one) in the moduli space of cubic fourfolds. Then, by the computation of the discriminant, we deduce that the cubic fourfolds containing a Veronese surface describe the Hassett's divisor ", TEX///$\mathcal{C}_{20}$///},
-EXAMPLE {"K = ZZ/33331; V = PP_K^(2,2);", "X = cubicFourfold V;", "time parameterCount(X,Verbose=>true)", "discriminant X"},
+EXAMPLE {"K = ZZ/33331; V = PP_K^(2,2);", "X = cubicFourfold V;", "parameterCount(X,Verbose=>true)", "discriminant X"},
 SeeAlso => {(parameterCount, GushelMukaiFourfold), normalSheaf}}
 
 document {Key => {(parameterCount, GushelMukaiFourfold)},
@@ -142,7 +142,7 @@ Inputs => {"X" => GushelMukaiFourfold => {"a special GM fourfold containing a su
 Outputs => {ZZ => {"an upper bound for the codimension in the moduli space of GM fourfolds of the locus of GM fourfolds that contain a surface belonging to the same irreducible component of the Hilbert scheme of ", TEX///$Y$///, " that contains ", TEX///$[S]$///}, Sequence => {"the triple of integers: ", TEX///$(h^0(I_{S/Y}(2)), h^0(N_{S/Y}), h^0(N_{S/X}))$///}},
 PARA{"This function implements a parameter count explained in the paper ", HREF{"https://arxiv.org/abs/2002.07026", "On some families of Gushel-Mukai fourfolds"}, "."},
 PARA{"Below, we show that the closure of the locus of GM fourfolds containing a cubic scroll has codimension at most one (hence exactly one) in the moduli space of GM fourfolds."},
-EXAMPLE {"G = GG(ZZ/33331,1,4);", "S = (schubertCycle({2,0},G) * random({{1},{1}},0_G))%G", "X = gushelMukaiFourfold S;", "time parameterCount(X,Verbose=>true)", "discriminant X"},
+EXAMPLE {"G = GG(ZZ/33331,1,4);", "S = (schubertCycle({2,0},G) * random({{1},{1}},0_G))%G", "X = gushelMukaiFourfold S;", "parameterCount(X,Verbose=>true)", "discriminant X"},
 SeeAlso => {(parameterCount, CubicFourfold), normalSheaf}}
 
 document {Key => {normalSheaf, (normalSheaf, EmbeddedProjectiveVariety), (normalSheaf, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)},
@@ -158,7 +158,7 @@ document {Key => {isAdmissible, (isAdmissible, ZZ), (isAdmissible, CubicFourfold
 Headline => "whether an integer is admissible (in the sense of the theory of cubic fourfolds)",
 Usage => "isAdmissible d",
 Inputs => {"d" => ZZ},
-Outputs => {Boolean => {"whether ", TT"d", " is admissible, i.e., it is an even integer ", TT"d>6", " which is not divisible by 4, 9 or any odd prime congruent to 2 modulo 3"}},
+Outputs => {Boolean => {"whether ", TEX///$d$///, " is admissible, i.e., it is an even integer ", TEX///$d>6$///, " which is not divisible by 4, 9 or any odd prime congruent to 2 modulo 3"}},
 EXAMPLE{"select(150,isAdmissible)"},
 SeeAlso => {isAdmissibleGM}}
 
@@ -166,7 +166,7 @@ document {Key => {isAdmissibleGM, (isAdmissibleGM, ZZ), (isAdmissibleGM, GushelM
 Headline => "whether an integer is admissible (in the sense of the theory of GM fourfolds)",
 Usage => "isAdmissibleGM d",
 Inputs => {"d" => ZZ},
-Outputs => {Boolean => {"whether ",TEX///$d$///," is an integer ",TEX///$>$///," 8 and ",TEX///$\equiv$///," 2 or 4 (mod 8) such that the only odd primes that divide ",TEX///$d$///," are ",TEX///$\equiv$///," 1 (mod 4). In other words, whether a GM fourfold of discriminant ", TT"d", " has an associated K3 surface."}},
+Outputs => {Boolean => {"whether ", TEX///$d$///, " is admissible, i.e., it is an integer ", TEX///$d>8$///, " congruent to 2 or 4 modulo 8 such that every odd prime dividing ", TEX///$d$///, " is congruent to 1 modulo 4. In other words, whether a GM fourfold of discriminant ", TT"d", " has an associated K3 surface."}},
 EXAMPLE{"select(140,isAdmissibleGM)"},
 SeeAlso => {isAdmissible}}
 
@@ -208,15 +208,15 @@ Headline => "detect and return a congruence of (3e-1)-secant curves of degree e"
 Usage => "detectCongruence X"|newline|"detectCongruence(X,e)",
 Inputs => {"X" => CubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}},
 Outputs => {CongruenceOfCurves => {"that is a function which takes a general point ", TEX///$p\in\mathbb{P}^5$///, " (that is, outside a certain proper Zariski closed subset of ",TEX///$\mathbb{P}^5$///,") and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(3e-1)$///, "-secant to ", TEX///$S$///, ", and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}},
-EXAMPLE {"-- A general cubic fourfold of discriminant 26"|newline|"X = cubicFourfold(\"3-nodal septic scroll\",ZZ/33331);", "describe X", "time f = detectCongruence(X,Verbose=>true);", "p := point ambient X -- random point on P^5", "time C = f p; -- 5-secant conic to the surface", "assert(dim C == 1 and degree C == 2 and dim(C * surface X) == 0 and degree(C * surface X) == 5 and isSubset(p, C))"},
+EXAMPLE {"-- A general cubic fourfold of discriminant 26"|newline|"X = cubicFourfold(\"3-nodal septic scroll\",ZZ/33331);", "describe X", "f = detectCongruence(X,Verbose=>true);", "p := point ambient X -- random point on P^5", "C = f p; -- 5-secant conic to the surface", "assert(dim C == 1 and degree C == 2 and dim(C * surface X) == 0 and degree(C * surface X) == 5 and isSubset(p, C))"},
 SeeAlso => {(detectCongruence, GushelMukaiFourfold, ZZ), coneOfLines}}
 
 document {Key => {(detectCongruence, GushelMukaiFourfold, ZZ), (detectCongruence, GushelMukaiFourfold)},
 Headline => "detect and return a congruence of (2e-1)-secant curves of degree e inside a del Pezzo fivefold",
 Usage => "detectCongruence X"|newline|"detectCongruence(X,e)",
 Inputs => {"X" => GushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///,", where ",TEX///$Y$///," denotes the unique del Pezzo fivefold containing the fourfold ",TEX///$X$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}},
-Outputs => {CongruenceOfCurves => {"that is a function which takes a general point ", TEX///$p\in Y$///, "(that is, a point on ",TEX///$Y$///," outside a certain proper Zariski closed subset) and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(2e-1)$///, "-secant to ", TEX///$S$///, ", contained in ",TEX///$Y$///," and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}},
-EXAMPLE{"-- A GM fourfold of discriminant 20"|newline|"X = gushelMukaiFourfold(\"17\",ZZ/33331);", "describe X", "time f = detectCongruence(X,Verbose=>true);", "Y = ambientFivefold X; -- del Pezzo fivefold containing X", "p := point Y -- random point on Y", "time C = f p; -- 3-secant conic to the surface", "S = surface X;", "assert(dim C == 1 and degree C == 2 and dim(C*S) == 0 and degree(C*S) == 3 and isSubset(p,C) and isSubset(C,Y))"},
+Outputs => {CongruenceOfCurves => {"that is a function which takes a general point ", TEX///$p\in Y$///, " (that is, a point on ",TEX///$Y$///," outside a certain proper Zariski closed subset) and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(2e-1)$///, "-secant to ", TEX///$S$///, ", contained in ",TEX///$Y$///," and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}},
+EXAMPLE{"-- A GM fourfold of discriminant 20"|newline|"X = gushelMukaiFourfold(\"17\",ZZ/33331);", "describe X", "f = detectCongruence(X,Verbose=>true);", "Y = ambientFivefold X; -- del Pezzo fivefold containing X", "p := point Y -- random point on Y", "C = f p; -- 3-secant conic to the surface", "S = surface X;", "assert(dim C == 1 and degree C == 2 and dim(C*S) == 0 and degree(C*S) == 3 and isSubset(p,C) and isSubset(C,Y))"},
 SeeAlso => {(detectCongruence, CubicFourfold, ZZ), coneOfLines}}
 
 document {Key => {CubicFourfold},
@@ -290,7 +290,7 @@ EXAMPLE {"X = specialFourfold \"quintic del Pezzo surface\";", "V = ambientFivef
 SeeAlso => {(surface,List)}}
 
 document {
-Key => {(surface, List), (surface, VisibleList, Ring), (surface, VisibleList, Option), (surface, VisibleList, Option), (surface, VisibleList, Ring, Option), (surface, VisibleList, Option, Option), (surface, VisibleList, Ring, Option, Option)},
+Key => {(surface, List), (surface, VisibleList, Ring), (surface, VisibleList, Option), (surface, VisibleList, Ring, Option), (surface, VisibleList, Option, Option), (surface, VisibleList, Ring, Option, Option)},
 Headline => "get a rational surface",
 Usage => "surface {a,i,j,k,...}
 surface({a,i,j,k,...),K)
@@ -313,7 +313,7 @@ document {Key => {(surface, MultiprojectiveVariety, MultiprojectiveVariety)},
 Headline => "make a Hodge-special surface",
 Usage => "surface(C,S)",
 Inputs => {"C" => MultiprojectiveVariety => {"an irreducible curve"}, "S" => MultiprojectiveVariety => {"a smooth surface ", TEX///$S$///, " containing the curve ", TEX///$C$///}},
-Outputs => {{"the Hodge special surface corresponding to the pair ", TEX///$(C,S)$///}},
+Outputs => {{"the Hodge-special surface corresponding to the pair ", TEX///$(C,S)$///}},
 PARA{"The curve ",TEX///$C$///," can be recovered using the function ",TT "curve","."},
 EXAMPLE lines ///K = ZZ/65521;
 C = random PP_K^(1,3); -- random twisted cubic in P^3
@@ -337,7 +337,7 @@ Usage => "unirationalParametrization X",
 Inputs => {"X" => CubicFourfold => {"or ", ofClass GushelMukaiFourfold}},
 Outputs => {MultirationalMap => {"a rational map of degree 2 from ",TEX///$\mathbb{P}^4$///," to ",TEX///$X$///}},
 PARA{"The degree of the forms defining the returned map is 10 in the case of cubic fourfolds, and 26 in the case of GM fourfolds."},
-EXAMPLE {"K = ZZ/10000019; S = PP_K^(2,2); -- Veronese surface;", "X = cubicFourfold S;", "time f = unirationalParametrization X;", "degreeSequence f", "degree(f,Strategy=>\"random point\")"},
+EXAMPLE {"K = ZZ/10000019; S = PP_K^(2,2); -- Veronese surface;", "X = cubicFourfold S;", "f = unirationalParametrization X;", "degreeSequence f", "degree(f,Strategy=>\"random point\")"},
 SeeAlso => {(parametrize, HodgeSpecialFourfold), (parametrize, MultiprojectiveVariety)}}
 
 document {Key => {(parametrize, HodgeSpecialFourfold)},
@@ -356,7 +356,7 @@ Headline => "try to deform to a fourfold of Gushel type",
 Usage => "fromOrdinaryToGushel X",
 Inputs => {"X" => GushelMukaiFourfold => {"a fourfold of ordinary type"}},
 Outputs => {GushelMukaiFourfold => {"a fourfold of Gushel type, a deformation of ",TT"X"}},
-EXAMPLE {"X = gushelMukaiFourfold \"quintic del Pezzo surface\";", "singularLocus ambientFivefold X", "X' = fromOrdinaryToGushel X,;", "support singularLocus ambientFivefold X'"}}
+EXAMPLE {"X = gushelMukaiFourfold \"quintic del Pezzo surface\";", "singularLocus ambientFivefold X", "X' = fromOrdinaryToGushel X;", "support singularLocus ambientFivefold X'"}}
 
 document {Key => {associatedK3surface, [associatedK3surface, Strategy], building},
 Headline => "K3 surface associated to a rational fourfold",
@@ -389,7 +389,7 @@ parametrizeFanoFourfold(X,Strategy=>...)",
 Inputs => {"X" => EmbeddedProjectiveVariety => {"a prime Fano fourfold ",TEX///$X$///," of coindex at most 3 having degree ",TEX///$d$///," and genus ",TEX///$g$///," with ",TEX///$(d,g)\in\{(2,0),(4,1),(5,1),(12,7),(14,8),(16,9),(18,10)\}$///}},
 Outputs => {MultirationalMap => {"a birational map from ",TEX///$\mathbb{P}^4$///," to ", TEX///$X$///}},
 PARA{"This function is mainly based on results contained in the classical paper ",HREF{"https://link.springer.com/article/10.1007/BF02413916","Algebraic varieties with canonical curve sections"},", by L. Roth. In some examples, more strategies are available. For instance, if ",TEX///$X\subset\mathbb{P}^7$///," is a 4-dimensional linear section of ",TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///,", then by passing ",TT"Strategy=>1"," (which is the default choice) we get the inverse of the projection from the plane spanned by a conic contained in ",TEX///$X$///,"; while with ",TT"Strategy=>2"," we get the projection from the unique ",TEX///$\sigma_{2,2}$///,"-plane contained in ",TEX///$X$///," (Todd's result)."},
-EXAMPLE {"K = ZZ/65521; X = GG_K(1,4) * random({{1},{1}},0_(GG_K(1,4)));","? X", "time parametrizeFanoFourfold X"},
+EXAMPLE {"K = ZZ/65521; X = GG_K(1,4) * random({{1},{1}},0_(GG_K(1,4)));","? X", "parametrizeFanoFourfold X"},
 SeeAlso => {fanoFourfold,(parametrize,HodgeSpecialFourfold),unirationalParametrization,(parametrize,MultiprojectiveVariety)}}
 
 document {Key => {fanoFourfold, (fanoFourfold,ZZ,ZZ), [fanoFourfold,CoefficientRing]},
@@ -502,7 +502,7 @@ Outputs => {CongruenceOfCurves => {"the same object passed as input, but an erro
 undocumented {(symbol ?, HodgeSpecialFourfold, HodgeSpecialFourfold)}
 
 document {Key => {IntersectionOfThreeQuadricsInP7},
-Headline => "the class of all special intersection of three quadrics in P^7",
+Headline => "the class of all special intersections of three quadrics in P^7",
 PARA {"This is a subtype of the ",TO HodgeSpecialFourfold," type."},
 SeeAlso => {specialFourfold}}
 
@@ -617,7 +617,7 @@ Usage => "texTables L",
 Inputs => {"L" => List => {"of Hodge-special fourfolds"}},
 Outputs => {Sequence => {"a pair ", TEX///$(L',L'')$///, " where ", TEX///$L'$///, " is a reordering of the input list and ", TEX///$L''$///, " is the subsequence corresponding to the examples appearing in the K3 table; both are ordered according to the rows of the corresponding tables"}},
 PARA {"This function generates two PDF tables summarizing the data available for the fourfolds in ", TEX///$L$///, ". Each row corresponds to one example."},
-PARA {"The first table collects general information such as discriminants (hence the corresponding Noether-Lefschetz loci), parameter counts and construction data. Numerical invariants are not computed by this method; they are reported only when already available in the cache of the corresponding example."},
+PARA {"The first table collects general information such as discriminants, Noether-Lefschetz loci, parameter counts and construction data. Some data may be computed during table generation, while more advanced information is included only when already available in the cache of the corresponding example."},
 PARA {"The second table is restricted to examples for which an associated K3 surface can be constructed. In addition to the fourfold data, the rows may include information on the associated K3 surfaces whenever such data has already been computed through methods such as ", TO associatedK3surface, " or ", TO polarizedK3surface, "."},
 PARA {"Optional inputs:"},
 UL {{TO "KeepFiles", " -- if set to ", TO true, ", preserves the intermediate ", TT ".tex", " files used to generate the PDF tables;"}, {TO "FileName", " -- specifies a common prefix for the generated files."}},
