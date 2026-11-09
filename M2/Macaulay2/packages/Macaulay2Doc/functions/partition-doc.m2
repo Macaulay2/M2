@@ -66,8 +66,8 @@ Usage
     partition(f, xs, ks, g)
     partition(f, xs, g)
 Inputs
-    f:Function
     xs:VisibleList
+    f:Function
     ks:VisibleList
     g:Function
 Outputs
