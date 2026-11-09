@@ -516,8 +516,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   int numThreads = (M2_numTBBThreads == 0) ? arena.max_concurrency()
                                             : M2_numTBBThreads;
   int grainSize  = (int)std::max<size_t>(1, n_sols / (10 * numThreads));
-  std::cout << "-- numThreads = " << numThreads
-            << ", grainSize = " << grainSize << std::endl;
 
   // Loop-invariant scalars: computed once, read-only inside the parallel_for.
   RealElement t_step(R), min_step2(R), epsilon2(R), infinity_threshold2(R);
@@ -912,6 +910,8 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   if (M2_numericalAlgebraicGeometryTrace > 1)
     {
+      std::cout << "-- numThreads = " << numThreads
+                << ", grainSize = " << grainSize << std::endl;
       std::cout << "-- track took "
                 << std::chrono::duration_cast<std::chrono::milliseconds>(end -
                                                                          start)
