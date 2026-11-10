@@ -5,21 +5,29 @@
 doc ///
 Key
     partition
+    (partition,VisibleList,Function,VisibleList,Function)
     (partition,VisibleList,Function)
     (partition,VisibleList,Function,VisibleList)
     (partition,VirtualTally,Function)
     (partition,VirtualTally,Function,VisibleList)
+    (partition,VisibleList,Function,Function)
+    (partition,Function,VisibleList,VisibleList,Function)
     (partition,Function,VisibleList)
     (partition,Function,VisibleList,VisibleList)
     (partition,Function,VirtualTally)
     (partition,Function,VirtualTally,VisibleList)
+    (partition,Function,VisibleList,Function)
 Headline
     partition a set or list by values of a function
 Usage
     partition(f,L)
     partition(f,L,I)
+    partition(f,L,I,g)
+    partition(f,L,g)
     partition(L,f)
     partition(L,f,I)
+    partition(L,f,g)
+    partition(L,f,I,g)
 Inputs
     f:Function
     L:VisibleList
@@ -54,36 +62,8 @@ Description
         R = QQ[a..f]
         I = ideal"ab,ade,ac3,d4,b3,adf,f4,e10"
         partition(flatten entries gens I, f -> first degree f)
-SeeAlso
-    tally
-    partitions
-    sublists
-    (partition,VisibleList,Function,VisibleList,Function)
-///
-
-doc ///
-Key
-    (partition,VisibleList,Function,VisibleList,Function)
-    (partition,VisibleList,Function,Function)
-    (partition,Function,VisibleList,VisibleList,Function)
-    (partition,Function,VisibleList,Function)
-Headline
-    partition elements by values of a function while applying another function
-Usage
-    partition(L, f, I, g)
-    partition(L, f, g)
-    partition(f, L, I, g)
-    partition(f, L, g)
-Inputs
-    L:VisibleList
-    f:Function
-    I:VisibleList
-    g:Function
-Outputs
-    :HashTable
-Description
     Text
-        Given a list of data, group by one function and apply another one.
+        Supplying a second function to map values by can be used to create flexible manipulation of data structures.
     Example
         someprimes = for i from 1 to 10 list nextPrime(100 * i)
         netList pairs partition(someprimes, p -> legendreSymbol(-1, p), p -> p %4)
@@ -96,17 +76,16 @@ Description
         netList data
         netList pairs partition(data, row -> row_1, row -> row_2)
     Text
-        Omit the second function and `identity` will be used implicitly.
-    Example
-        L = {"apples", "bananas", "avocados", "grapes", "grapefruit"};
-        netList pairs partition(L, x -> x_0)
-    Text
         As in use of partition without applying a function to the values, you
-        can provide a VisibleList of key-values to ensure appear in the result -
+        can provide a List of key-values to ensure appear in the result -
         possibly with an empty container of values.
     Example
         someprimes = for i from 1 to 10 list nextPrime(100 * i);
         data = apply(someprimes, p -> {p, legendreSymbol(-1, p), p % 4});
         netList data
         netList pairs partition(data, row -> row_2, {0, 1, 2, 3}, row -> row_1)
+SeeAlso
+    tally
+    partitions
+    sublists
 ///
