@@ -63,40 +63,60 @@ succ(Symbol,Symbol) := (x,y) -> (
      isUserSymbol(s,x) and isUserSymbol(t,y) and succS#?s and succS#s === t)
 succ(Subscript,Subscript) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
 succ(Thing,Thing) := x -> false
-runLengthEncode = method(Dispatch => Thing)
-runLengthEncode VisibleList := x -> (
-    local xx;
-    while (xx=runLengthEncode0 x; #x =!= #xx) do x=xx;
-    xx
-    )
-runLengthEncode0 = x -> (
-     if #x === 0 then return x;
-     dupout := true;
-     while first(dupout,dupout = false) do x = new class x from (
-	  i0 := null;
-	  lastout := oi := symbol oi;
-	  m := 0;
-	  dupin := null;
-	  for i in append(x,symbol x) list 
-	  (o -> (if lastout === o then dupout = true else lastout = o; o))(
-	       if i === oi and dupin =!= false then (dupin = true; m = m+1; continue)
-	       else if succ(oi,i) and dupin =!= true then (
-		    if dupin === null then i0 = oi;
-		    dupin = false; 
-		    oi = i;
-		    m = m+1; 
-		    continue)
-	       else first(
-		    if oi === symbol oi then (oi = i; m = 1 ; continue) else
-		    if m === 1 then hold oi else if dupin === true then hold m : expression oi else (if instance(i0,BinaryOperation) then i0#1 else expression i0) .. (if instance(oi,BinaryOperation) then oi#2 else expression oi),
-		    (dupin = null; oi = i; m = 1))));
-     x)
 
-rle = method(Dispatch => Thing)
-rle VisibleList := x -> apply(runLengthEncode x, rle)
-rle Holder := x -> rle x#0
-rle Option := x -> x#0 => rle x#1
-rle Thing := identity
+-- Blocks contain an encoded item, its number of original entries, and the
+-- original items if it is a provisional two-entry range.
+runLengthEncodeDuplicates = blocks -> (
+    i := 0;
+    while i < #blocks list (
+	j := i + 1;
+	weight := blocks#i#1;
+	while j < #blocks and blocks#j#0 === blocks#i#0 do (
+	    weight += blocks#j#1;
+	    j += 1);
+	count := j - i;
+	block := if count === 1 then blocks#i else
+	    (hold count : expression blocks#i#0, weight, null);
+	i = j;
+	block))
+
+runLengthRangeStart = x -> if instance(x, BinaryOperation) then x#1 else expression x
+runLengthRangeEnd   = x -> if instance(x, BinaryOperation) then x#2 else expression x
+
+runLengthEncodeSuccessors = blocks -> (
+    i := 0;
+    while i < #blocks list (
+	j := i + 1;
+	weight := blocks#i#1;
+	while j < #blocks and succ(blocks#(j-1)#0, blocks#j#0) do (
+	    weight += blocks#j#1;
+	    j += 1);
+	block := if j - i > 1 then (
+		runLengthRangeStart(blocks#i#0) .. runLengthRangeEnd(blocks#(j-1)#0),
+		weight,
+		if weight === 2 then apply(i..j-1, k -> hold blocks#k#0))
+	    else blocks#i;
+	i = j;
+	block))
+
+runLengthEncodeOutput = blocks -> splice apply(blocks,
+    block -> if block#2 === null then hold block#0 else block#2)
+
+runLengthEncode1 = x -> (
+    blocks := apply(x, item -> (item, 1, null));
+    done := false;
+    while not done do (
+	next := runLengthEncodeSuccessors runLengthEncodeDuplicates blocks;
+	done = #next === #blocks;
+	blocks = next);
+    new class x from runLengthEncodeOutput blocks)
+
+runLengthEncode = method(Dispatch => Thing)
+runLengthEncode VisibleList := x -> apply(runLengthEncode1 x, runLengthEncode)
+runLengthEncode Holder := x -> hold unsequence runLengthEncode x#0
+runLengthEncode Option := x -> x#0 => runLengthEncode x#1
+runLengthEncode VerticalList :=
+runLengthEncode Thing := identity
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

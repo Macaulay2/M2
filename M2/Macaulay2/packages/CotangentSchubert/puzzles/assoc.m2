@@ -34,6 +34,9 @@ cvS := hashTable { "0" => 0, "1" => 1, "10" => 3 } -- hcol S side
 --
 DoublePuzzle = new SelfInitializingType of BasicList
 html DoublePuzzle := html @@ hypertext
+getPuzzleJS := get (puzzleDir|"assoc.js");
+getPuzzleJS = replace("\n"," ",replace("//.*$","",getPuzzleJS))
+
 hypertext DoublePuzzle := A -> (
     (P1,P2) := toSequence A;
     n:=P1#Length;
@@ -92,9 +95,9 @@ hypertext DoublePuzzle := A -> (
     	    "style"=>"width:"|sz|";height:"|sz|";stroke:black;stroke-width:0.01",
     	    "viewBox"=>toString(-n-1)|" -1 "|toString(2*n+1)|" "|toString(2*n+1),
     	    lst1,lst2,defs,
-    	    "onclick"=>get (puzzleDir|"assoc.js")}, -- , "class" => "labels"
-    	INPUT{"type"=>"checkbox","id"=>"labels","onclick"=>Sid|".classList.toggle('labels')"},
-    	LABEL{"for"=>"labels","Labels"}
+    	    "onclick"=>getPuzzleJS}, -- , "class" => "labels"
+    	INPUT{"type"=>"checkbox","id"=>Sid|"toggle","onclick"=>Sid|".classList.toggle('labels')"},
+    	LABEL{"for"=>Sid|"toggle","Labels"}
     	}
     )
 
@@ -112,4 +115,3 @@ doublePuzzle = puzzleOpts >> o -> (a,b,c,d) -> (
     flatten apply(P,p->apply(puzzle(c,d,reverse bottom p,o),q->DoublePuzzle(p,q)))
     )
 
--- if topLevelMode === WebApp then print STYLE get (puzzleDir|"assoc.css")

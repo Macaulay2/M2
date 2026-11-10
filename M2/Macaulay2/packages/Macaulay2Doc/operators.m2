@@ -101,6 +101,31 @@ doc ///
 
 doc ///
   Key
+    legendreSymbol
+    (legendreSymbol,ZZ,ZZ)
+  Headline
+    Legendre symbol
+  Usage
+    legendreSymbol(a,p)
+  Inputs
+    a:ZZ
+    p:ZZ
+        a prime
+  Outputs
+    :ZZ
+        0 if a is divisible by p, 1 if a is a quadratic residue mod p and -1 if a is not a quadratic residue mod p.
+  Description
+   Text
+     Computes the Legendre symbol of $a$ modulo $p$.
+
+   Example
+     legendreSymbol(4,7)
+     legendreSymbol(5,7)
+     legendreSymbol(14,7)
+///
+
+doc ///
+  Key
     log
     (log,InexactNumber)
     (log,InexactNumber,InexactNumber)

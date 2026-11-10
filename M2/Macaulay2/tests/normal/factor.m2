@@ -111,3 +111,14 @@ assert(#factor(x^2+y^2)==2);
 F=frac(QQ[a]);
 R=F[x,y];
 assert(#factor(x^2-a^-2*y^2)==3);
+
+-- issue #4445
+F=frac(QQ[x]); R=F[y]/(y^6); factor(x^2-y^2)
+
+-- roots in multivariable ring
+R=QQ[x,y]
+assert(#(roots(x^2-1))==2)
+assert(try(roots(x+y)) else true)
+R=QQ[x][y]
+assert(#(roots(x^2-1))==2)
+assert(#(roots(y^2-1))==2)

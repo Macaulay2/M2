@@ -1,6 +1,3 @@
-#define BOOST_STACKTRACE_USE_ADDR2LINE /* show source file and line number */
-// #define BOOST_STACKTRACE_USE_NOOP /* disable stacktrace */
-
 #include <M2/gc-include.h>
 
 #include "interp-exports.h"
@@ -52,10 +49,10 @@ bool interrupts_interruptShield;
 void* interpFunc(ArgCell* vargs);
 void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
-void  M2_flint_abort(void);
+FLINT_NORETURN void  M2_flint_abort(void);
 
 static void * GC_start_performance_measurement_0(void *) {
-#ifdef GC_start_performance_measurement /* added in bdwgc 8 */
+#if GC_VERSION_MAJOR >= 8 /* GC_start_performance_measurement added in bdwgc 8 */
   GC_start_performance_measurement();
 #endif
   return NULL;
@@ -130,7 +127,7 @@ void profiler_stacktrace(std::ostream &stream, int traceDepth) {
   }
 }
 
-void M2_flint_abort(void) {
+FLINT_NORETURN void M2_flint_abort(void) {
   profiler_stacktrace(std::cerr, 0);
   abort();
 }

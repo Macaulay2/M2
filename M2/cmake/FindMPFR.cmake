@@ -9,6 +9,7 @@
 #
 #  MPFR_FOUND - system has MPFR lib with correct version
 #  MPFR_INCLUDE_DIRS - the MPFR include directory
+#  MPFR_LIBRARY_DIRS - the directory containing the MPFR library
 #  MPFR_LIBRARIES - the MPFR library
 #  MPFR_VERSION - MPFR version
 
@@ -90,8 +91,12 @@ if(NOT MPFR_VERSION_OK)
 
   string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" MPFR_ROOT "${MPFR_INCLUDE_DIRS}")
 
+  if(MPFR_LIBRARIES)
+    get_filename_component(MPFR_LIBRARY_DIRS "${MPFR_LIBRARIES}" DIRECTORY)
+  endif()
+
   include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(MPFR DEFAULT_MSG MPFR_ROOT MPFR_INCLUDE_DIRS MPFR_LIBRARIES MPFR_VERSION_OK)
+  find_package_handle_standard_args(MPFR DEFAULT_MSG MPFR_ROOT MPFR_INCLUDE_DIRS MPFR_LIBRARY_DIRS MPFR_LIBRARIES MPFR_VERSION_OK)
 
   mark_as_advanced(MPFR_ROOT MPFR_INCLUDE_DIRS MPFR_LIBRARIES)
 

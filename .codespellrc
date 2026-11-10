@@ -1,0 +1,3 @@
+[codespell]
+ignore-words = .codespell_ignore
+skip = *.min.js
