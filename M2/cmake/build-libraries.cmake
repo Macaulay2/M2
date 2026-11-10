@@ -49,6 +49,13 @@ set(CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${BUILD_TYPE}}")
 # Linker flags
 string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
 
+# SDK flags (CMake passes -isysroot to its own targets, but not to these)
+if(CMAKE_OSX_SYSROOT)
+  set(CFLAGS   "${CFLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+  set(CXXFLAGS "${CXXFLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+  set(LDFLAGS  "${LDFLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+endif()
+
 # Linear algebra library flags
 if(APPLE)
   set(LA_LIBRARIES "-framework Accelerate")
