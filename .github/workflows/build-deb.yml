@@ -66,11 +66,11 @@ jobs:
 
             # don't need javascript on bullseye (just use the vendored copies)
             if test ${{ matrix.release }} != "bullseye"; then
-              apt-get install -y node-fortawesome-fontawesome-free       \
-                fonts-katex libjs-bootsidemenu libjs-bootstrap5 libjs-d3 \
-                libjs-jquery libjs-katex libjs-nouislider libjs-three    \
-                node-clipboard node-css-loader node-import-local         \
-                node-interpret node-prismjs node-prismjs-bibtex          \
+              apt-get install -y node-fortawesome-fontawesome-free                  \
+                fonts-katex node-macaulay2-boot-side-menu node-bootstrap node-d3    \
+                node-jquery libjs-katex node-nouislider libjs-three                 \
+                node-clipboard node-css-loader node-expose-loader node-import-local \
+                node-interpret node-prismjs node-prismjs-bibtex                     \
                 node-rechoir node-style-loader npm pkg-js-tools webpack
             fi
           fi

@@ -4,9 +4,14 @@
   },
   "dependencies": {
     "copy-files-from-to": "^4.0.0",
-    "katex": "^0.16.10"
+    "katex": "^0.16.10",
+    "lunr": "^2.3.9"
   },
   "copyFiles": [
+    {
+      "from": "node_modules/lunr/lunr.min.js",
+      "to": "./"
+    },
     {
       "from": "node_modules/katex/dist/contrib/auto-render.min.js",
       "to": "katex/contrib/"

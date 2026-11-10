@@ -188,8 +188,7 @@ document {
      "The monomial order keys ", TO "Lex", " and ", TO "GRevLex", " allow packing.  The ",
      TT "MonomialSize => n", " option allows one to set the minimum packing size, in number of bits.
      Monomials are stored as signed exponent vectors, so maximum exponents of 2^(n-1)-1 are possible
-     for packed variables.  Useful values include 8, 16, 32, and (on 64-bit machines) 64.  The default
-     monomial size is 32.",
+     for packed variables.  Useful values include 8, 16, and 32.  The default monomial size is 32.",
      EXAMPLE lines ///
      	  A = QQ[a..d,MonomialSize=>8]
      	  B = QQ[x,y,z,w,MonomialSize=>16,MonomialOrder=>Lex]	  
@@ -682,7 +681,7 @@ document {
 	  (TO "RevLex", " => n"),
      	  (TO "GroupLex", " => n"),
 	  (TO "GroupRevLex", " => n"),
-	  (TO "MonomialSize", " => n, n being 8,16,32, or 64.  Set the packing size for exponents for further variables")
+	  (TO "MonomialSize", " => n, n being 8,16, or 32.  Set the packing size for exponents for further variables")
           },
      PARA{},
      "Some examples of monomial orders.  Note that if only one item is in the list, 

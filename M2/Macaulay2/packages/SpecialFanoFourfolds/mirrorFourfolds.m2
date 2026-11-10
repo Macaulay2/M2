@@ -109,6 +109,42 @@ surfaceDeterminingInverseOfFanoMap DoublySpecialCubicFourfold := o -> X -> (
 
 refineSurfaceU = (U,verb) -> (
     if verb then << "-- projecting to PP^3 for surface decomposition" << endl;
+    pr := rationalMap for i to 3 list random(1, ring ambient U);
+    Z := projectiveVariety kernel(map toRationalMap(pr|U), SubringLimit=>1);
+    assert(dim Z == 2 and codim Z == 1);
+    if verb and degree U != degree Z then << "  -- surface degree (before, after): " << (degree U, degree Z) << endl;
+    decZ := decompose Z;
+    if #decZ == 1 then (
+        if verb then << "  -- surface was already irreducible" << endl;
+        return U;
+    );
+    d := ceiling((degree U)/2)-1;
+    Z1 := select(decZ, D -> dim D == 2 and degree D <= d);
+    if #Z1 == 0 then error("unsupported surface decomposition; component degrees: "|(toString apply(decZ, degree)));
+    if verb then << "  -- removing " << #Z1 << " components of degrees " << apply(Z1, degree) << endl;
+    A := apply(Z1, D -> pr^* D);
+    assert(apply(A,degree) == apply(Z1,degree));
+    vU := U;
+    for D in A do vU = vU \\ D;
+    assert(dim vU == 2);
+    B := select(A, D -> degree D <= 3);
+    if #B == 0 then return vU;
+    if verb then << "  -- tracking curves on the surface" << (if #A != #B then " (some curves ignored)..." else "...") << endl;
+    W := apply(B, D -> support interpolateTop(U * D, Verbose=>verbosityInterpolateTop(verb), cache=>true));
+    W = apply(select(apply(W, D -> vU * D), E -> dim E == 1), F -> support interpolateTop(F, Verbose=>verbosityInterpolateTop(verb), cache=>true));
+    W = apply(sort apply(W, C -> (degree C, C)), last);
+    assert all(W, C -> dim C == 1 and isSubset(C,vU));
+    if #W > 0 then (
+        vU.cache#"special curves on U" = W;
+        if verb then << "  -- collected curves of degrees: " << apply(W, degree) << endl;
+    );
+    vU
+);
+
+-*
+-- old version 21/08/2026 --
+refineSurfaceU = (U,verb) -> (
+    if verb then << "-- projecting to PP^3 for surface decomposition" << endl;
     pr := rationalMap for i to 3 list random(1,ring ambient U);
     Z := projectiveVariety kernel(map toRationalMap(pr|U),SubringLimit=>1);
     Z1 := {}; Z2 := {};
@@ -130,9 +166,10 @@ refineSurfaceU = (U,verb) -> (
     if # Curves > 0 then vU.cache#"special curves on U" = Curves;
     vU
 );
+*-
 
 isSurfaceUknownToNotNeedRefining = method();
-isSurfaceUknownToNotNeedRefining DoublySpecialCubicFourfold := X -> isFanoMapStandard(X) and member(recognizeDSCF X, {"DSCF-V1-1", "DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-7", "DSCF-V1-9", "DSCF-V1-12", "DSCF-V1-16", "DSCF-V1-17", "DSCF-V1-18", "DSCF-V1-20", "DSCF-V1-21", "DSCF-V1-25", "DSCF-V1-26", "DSCF-V1-28", "DSCF-V1-29", "DSCF-V1-30", "DSCF-V1-32", "DSCF-V1-33", "DSCF-V1-35", "DSCF-V1-36", "DSCF-V1-37", "DSCF-V1-38", "DSCF-V1-39", "DSCF-V1-40"});
+isSurfaceUknownToNotNeedRefining DoublySpecialCubicFourfold := X -> isFanoMapStandard(X) and member(recognizeDSCF X, {"DSCF-V1-1", "DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-7", "DSCF-V1-9", "DSCF-V1-12", "DSCF-V1-16", "DSCF-V1-17", "DSCF-V1-18", "DSCF-V1-21", "DSCF-V1-25", "DSCF-V1-26", "DSCF-V1-28", "DSCF-V1-29", "DSCF-V1-30", "DSCF-V1-32", "DSCF-V1-33", "DSCF-V1-35", "DSCF-V1-36", "DSCF-V1-37", "DSCF-V1-38", "DSCF-V1-39", "DSCF-V1-40"});
 isSurfaceUknownToNotNeedRefining IntersectionOfThreeQuadricsInP7 := X -> not member(recognize X, {"surf-7-1-9", "NotRecognized"});
 isSurfaceUknownToNotNeedRefining GushelMukaiFourfold := isSurfaceUknownToNotNeedRefining CubicFourfold := X -> true;
 isSurfaceUknownToNotNeedRefining HodgeSpecialFourfold := X -> false;

@@ -21,6 +21,6 @@ document {
 	  "isAffineRing (ZZ/2[x,y,z]/(x^2-y*z))",
 	  "isAffineRing (QQ[x,dx, WeylAlgebra => {x => dx}])"
 	  },
-     SeeAlso => {coefficientRing, isField, ambient}
+     SeeAlso => {coefficientRing, isField, ambient, isSkewAffineRing}
      }
 
