@@ -109,7 +109,7 @@ findKoszulFiltration (Ring, List) := (R, L) -> (
     if #KF== e+1 then (	
         return flatten KF;
         )
-    else (return error "no Koszul filtration exists within your list of generators");
+    else (error "no Koszul filtration exists within your list of generators");
     );
 
 
