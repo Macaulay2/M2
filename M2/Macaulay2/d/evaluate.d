@@ -1098,37 +1098,41 @@ export applyEEEE(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 
 -----------------------------------------------------------------------------
 
+export MissingMethod(method:string, x:Expr):Expr := (
+    msg := "no method found for applying " + quoteit(method);
+    if !SuppressErrors then msg = msg + " to:\n" + robustPrintNetWithTab(x);
+    buildErrorPacket(msg));
+export MissingMethodPair(method:string, x:Expr, y:Expr):Expr := (
+    msg := "no method found for applying " + quoteit(method);
+    if !SuppressErrors then msg = (
+        msg + " to:\n" +
+        robustPrintNetWithTab(x) + "\n" +
+        robustPrintNetWithTab(y));
+    buildErrorPacket(msg));
+
+export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
+    method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
+    if method == nullE
+    then MissingMethod(methodkey.symbol.word.name, right)
+    else applyEE(method,right));
 export unarymethod(rhs:Code,methodkey:SymbolClosure):Expr := (
-     right := eval(rhs);
-     when right is Error do right
-     else (
-	  method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
-	  if method == nullE then MissingMethod(methodkey)
-	  else applyEE(method,right)));
-export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
-     left := eval(lhs);
-     when left is Error do left
-     else (
-	  right := eval(rhs);
-	  when right is Error do right
-	  else (
-	       method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
-		    methodkey.symbol.hash);
-	       if method == nullE then MissingMethodPair(methodkey,left,right)
-	       else applyEEE(method,left,right))));
+    right := eval(rhs);
+    when right is Error do right
+    else unarymethod(right, methodkey));
+export binarymethod(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
+    method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
+        methodkey.symbol.hash);
+    if method == nullE
+    then MissingMethodPair(methodkey.symbol.word.name, left, right)
+    else applyEEE(method, left, right));
 export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
      right := eval(rhs);
      when right is Error do right
-     else (
-	  method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
-	       methodkey.symbol.hash);
-	  if method == nullE then (
-	       if methodkey == AdjacentS
-	       then when left is f:SymbolClosure do buildErrorPacket("symbol '" + f.symbol.word.name + "' has not been defined as a function")
-	       else MissingMethodPair(methodkey,left,right)
-	       else MissingMethodPair(methodkey,left,right)
-	       )
-	  else applyEEE(method,left,right)));
+     else binarymethod(left, right, methodkey));
+export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
+    left := eval(lhs);
+    when left is Error do left
+    else binarymethod(left, rhs, methodkey));
 
 -----------------------------------------------------------------------------
 
@@ -2275,21 +2279,6 @@ combine(e:Expr):Expr := (
      else WrongNumArgs(5,6)
      else WrongNumArgs(5,6));
 setupfun("combine",combine);
-
-export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
-     method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
-     if method == nullE then MissingMethod(methodkey)
-     else applyEE(method,right));
-
-export binarymethod(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
-     method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),methodkey.symbol.hash);
-     if method == nullE then MissingMethodPair(methodkey,left,right)
-     else applyEEE(method,left,right));
-
-export binarymethod(left:Expr,right:Expr,methodkey:Expr,methodkeyname:string):Expr := (
-     method := lookupBinaryMethod(Class(left),Class(right),methodkey,hash(methodkey));
-     if method == nullE then MissingMethodPair(methodkeyname,left,right)
-     else applyEEE(method,left,right));
 
 AssignElemFun = assignelemfun;
 setup(EqualS,AssignElemFun);

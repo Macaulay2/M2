@@ -334,6 +334,12 @@ export robustPrintNet(e:Expr):Net := (
     when applyEEpointer(see, e)
     is n:Net do n else dummyNet);
 
+export robustPrintNetWithTab(e:Expr):string := (
+    n := robustPrintNet(e);
+    if n != dummyNet
+    then toString(HorizontalJoin(array(Net)(toNet("\t"), n)))
+    else "\t<<unknown>>");
+
 export robustPrintString(e:Expr):string := (
     see := lookup(Class(e), RobustPrintStringE);
     if see != notfoundE then
@@ -343,11 +349,7 @@ export robustPrintString(e:Expr):string := (
 KeyNotFound(object:string, key:Expr):Expr := (
     -- TODO: implement a similar trick to call synonym(object)
     msg := "key not found in " + object;
-    if !SuppressErrors then (
-	n := robustPrintNet(key);
-	if n != dummyNet then (
-	    info := toString(HorizontalJoin(array(Net)(toNet("\t"), n)));
-	    msg = msg + ":\n" + info));
+    if !SuppressErrors then msg = msg + ":\n" + robustPrintNetWithTab(key);
     buildErrorPacket(msg));
 
 export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
