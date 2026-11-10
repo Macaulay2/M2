@@ -38,7 +38,6 @@ class Ring;
 class SolvableAlgebra;
 class WeylAlgebra;
 class gbvectorHeap;
-class stash;
 
 struct gbvector
 {
@@ -81,7 +80,6 @@ class GBRing : public our_new_delete
   CoefficientRingZZp *zzp;  // Only set to non-null if coeff ring is ZZ/p
 
   size_t gbvector_size;
-  stash *mem;
 
   int _nvars;
 
@@ -170,7 +168,6 @@ class GBRing : public our_new_delete
   const Monoid *get_flattened_monoid() const { return M; }
   const Ring *get_flattened_coefficients() const { return K; }
   int n_vars() const { return _nvars; }
-  void memstats();
 
   //////////////////////
   // Ring information //

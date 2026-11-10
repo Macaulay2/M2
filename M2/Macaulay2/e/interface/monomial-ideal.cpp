@@ -115,7 +115,6 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(
   }
 }
 
-#include "debug.hpp"
 
 const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(
     const MonomialIdeal *I,
@@ -146,7 +145,6 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(
         }
       MonomialIdeal *result = I->quotient(*J);
       intern_monideal(result);
-      if (M2_gbTrace >= 1) dstash();
       return result;
 
   } catch (const exc::engine_error& e)

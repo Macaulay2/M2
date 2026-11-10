@@ -48,8 +48,7 @@ int gbA::get_resolved_gb_index(int i) const
 
 exponents_t gbA::exponents_make()
 {
-  exponents_t result = reinterpret_cast<exponents_t>(lcm_stash->new_elem());
-  return result;
+  return reinterpret_cast<exponents_t>(newarray_clear(char, exp_size));
 }
 
 gbA *gbA::create(const Matrix *m,
@@ -133,10 +132,7 @@ void gbA::initialize(const Matrix *m,
 
   is_local_gb = (origR->getMonoid()->numNonTermOrderVariables() > 0);
 
-  spair_stash = new stash("gbA spairs", sizeof(spair));
-  gbelem_stash = new stash("gbA elems", sizeof(gbelem));
   exp_size = EXPONENT_BYTE_SIZE(R->n_vars() + 2);
-  lcm_stash = new stash("gbA lead monoms", exp_size);
 
   if (nsyz < 0 || nsyz > m->n_cols()) nsyz = m->n_cols();
   n_rows_per_syz = nsyz;
@@ -268,8 +264,8 @@ void gbA::remove_gb()
   for (int i = 0; i < gb.size(); i++)
     if (gb[i])
       {
-        lcm_stash->delete_elem(gb[i]->lead);
-        gbelem_stash->delete_elem(gb[i]);
+        freemem(gb[i]->lead);
+        freemem(gb[i]);
         gb[i] = nullptr;
       }
   delete minimal_gb;  // will free its own gbvector's.
@@ -280,9 +276,6 @@ void gbA::remove_gb()
     }
   delete lookup;
   delete lookupZZ;
-  delete spair_stash;
-  delete gbelem_stash;
-  delete lcm_stash;
   // Also remove the SPAirSet...
 }
 
@@ -347,7 +340,7 @@ static bool exponents_less_than(int nvars, exponents_t a, exponents_t b)
 gbA::gbelem *gbA::gbelem_ring_make(gbvector *f)
 {
   int f_leadweight;
-  gbelem *g = reinterpret_cast<gbelem *>(gbelem_stash->new_elem());
+  gbelem *g = newarray_clear(gbelem, 1);
   g->g.f = f;
   g->g.fsyz = nullptr;
   g->lead = exponents_make();
@@ -365,7 +358,7 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,     // grabs f
                               int deg)
 {
   int f_leadweight;
-  gbelem *g = reinterpret_cast<gbelem *>(gbelem_stash->new_elem());
+  gbelem *g = newarray_clear(gbelem, 1);
   g->g.f = f;
   g->g.fsyz = fsyz;
   g->lead = exponents_make();
@@ -385,7 +378,7 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,     // grabs f
 
 gbA::gbelem *gbA::gbelem_copy(gbelem *g)
 {
-  gbelem *gnew = reinterpret_cast<gbelem *>(gbelem_stash->new_elem());
+  gbelem *gnew = newarray_clear(gbelem, 1);
 
   gnew->g.f = R->gbvector_copy(g->g.f);
   gnew->g.fsyz = R->gbvector_copy(g->g.fsyz);
@@ -427,7 +420,7 @@ void gbA::gbelem_text_out(buffer &o, int i, int nterms) const
 
 gbA::spair *gbA::spair_node()
 {
-  spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
+  spair *result = newarray_clear(spair, 1);
   result->next = nullptr;
   result->lead_of_spoly = nullptr;
   return result;
@@ -442,8 +435,8 @@ void gbA::spair_delete(spair *&p)
       R->gbvector_remove(p->x.f.fsyz);
     }
   R->gbvector_remove(p->lead_of_spoly);
-  lcm_stash->delete_elem(p->lcm);
-  spair_stash->delete_elem(p);
+  freemem(p->lcm);
+  freemem(p);
 }
 
 gbA::spair *gbA::spair_make(int i, int j)

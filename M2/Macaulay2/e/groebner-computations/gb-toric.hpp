@@ -67,8 +67,6 @@ class binomial_ring : public our_new_delete
   int *weights;  // (Negative of) Weight function, if any
   bool revlex;   // true means break ties by degrevlex, false by deglex
 
-  stash *monstash;
-
   monomial0 new_monomial() const;
   void set_weights(monomial0 m) const;
 

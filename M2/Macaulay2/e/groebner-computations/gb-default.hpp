@@ -115,12 +115,7 @@ class gbA : public GBComputation
   };
 
  private:
-  // Stashes
-  stash *spair_stash;
-  stash *gbelem_stash;
-
   size_t exp_size;  // in bytes
-  stash *lcm_stash;
 
   // Data
   const PolynomialRing *originalR;
