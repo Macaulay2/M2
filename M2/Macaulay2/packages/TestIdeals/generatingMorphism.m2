@@ -17,7 +17,7 @@ generatingMorphism= (i,I) ->(
     	R:=ring(I);
 	p:=char(R);
 	f:=inducedMap(coker gens I, coker gens frobeniusPower(p,I));
-	resf:=res f;
+	resf:=freeResolution f;
 	G:=Hom(resf, R^1);
 	E:=prune (HH^i G);
 	if (E==0) then
@@ -40,7 +40,7 @@ generatingMorphism= (I) ->(
     	R:=ring(I);
 	p:=char(R);
 	f:=inducedMap(coker gens I, coker gens frobeniusPower(p,I));
-	resf:=res f;
+	resf:=freeResolution f;
 	G:=Hom(resf, R^1);
 	for i from 0 to length source resf do
 	{ 
