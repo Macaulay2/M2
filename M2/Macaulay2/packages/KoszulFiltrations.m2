@@ -33,24 +33,19 @@ partialLinearFiltration (Ring,List) := (R,L) -> (
     if not all(L, i -> degree i == {1} and isHomogeneous(i)) then error "expected homogeneous linear forms";
     linearIdeals := unique apply(subsets L, a->trim promote(ideal(a),R));
     F := null;
-    Newideals := {};
-    toInclude :={};
     m := trim ideal gens R;
     e := numgens m;
     F = new MutableList from apply(e, i -> 0);
     F#0={promote(ideal(),R)};
     for i from 1 to e do (
-        newIdeals := {};
-        for I in F#(i-1) do ( 
-            for a in L do (
-                if isSubset(ideal(a), I) then continue;
-                colIdeal:= trim (I:a);
-                if isMember(colIdeal,linearIdeals) then (
-                    toInclude = trim(I+ideal(a));
-                    newIdeals = unique append(newIdeals,toInclude);
-                    );
-                );
-            );
+	  newIdeals := unique flatten for I in F#(i-1) list (
+         for a in L list (
+             if isSubset(ideal(a), I) then continue;
+             colIdeal:= trim (I:a);
+             if not isMember(colIdeal,linearIdeals) then continue;
+             trim(I+ideal(a))
+             )
+          );
         F#i = newIdeals;
         );
     F= flatten toList F;
@@ -69,25 +64,20 @@ partialKoszulFiltration(Ring,List):= (R,L) -> (
     Fprev := {};
     F :=  apply(LF,i-> unique apply(i,j-> trim j));
     while F =!= Fprev do (
-        Ftrim := {{promote(ideal(),R)}};
-        for i from 1 to #F-1 do (
-            FtrimLevel := {};
-            for I1 in F#(i-1) do (
-                for I2 in F#(i) do (
-                    if isSubset(I1,I2) then (
-                        colIdeal := trim (I1 : I2); 
-                        n:=numgens colIdeal;
-                        if n <= #F-1 then(
-                            if (colIdeal == ideal(0_R) or isMember(colIdeal,F#(n))) then (
-                                FtrimLevel = append(FtrimLevel, I2);
-                                ); 
-                            );
-                        );
-                    );
-                );	  
-            FtrimLevel = unique FtrimLevel;
-            Ftrim = append(Ftrim,FtrimLevel);
-            );
+    Ftrim := prepend({promote(ideal(),R)},
+        for i from 1 to #F-1 list (
+            unique flatten for I1 in F#(i-1) list (
+                for I2 in F#(i) list (
+                    if not isSubset(I1,I2) then continue;
+                    colIdeal := trim (I1 : I2);
+                    n:=numgens colIdeal;
+                    if n > #F-1 then continue;
+                    if not (colIdeal == ideal(0_R) or
+                            isMember(colIdeal,F#(n))) then continue;
+                    I2
+                    )
+                )
+            ));
         Fprev = F; 
         F = Ftrim;
         );
@@ -120,18 +110,15 @@ partialLinearFlags (Ring,List,Ideal):= (R,L,I)  -> (
     linearIdeals := unique apply(subsets L, a->trim promote(ideal(a),R));
     Flags := {{I}}; i := numgens trim I;
     while  i > 0 and #Flags =!= 0 do (
-        Flagsnew := {}; i = i - 1;    
-        for F in Flags do (
-            for a in linearIdeals do (
-                if numgens trim a == i and isSubset(a, F#-1) then (
-                    colIdeal := a:(F#-1);
-                    if isSubset(unique degrees trim colIdeal,{{},{1}}) then (
-                        Fnew := append(F,a);
-                        Flagsnew = append(Flagsnew,Fnew);
-                        );
-                    ); 
-                );
-            );
+		 i = i - 1;
+		 Flagsnew := flatten for F in Flags list (
+ 	 	 for a in linearIdeals list (
+			  if not (numgens trim a == i and isSubset(a, F#-1)) then continue;
+ 		 	  colIdeal := a:(F#-1);
+			  if not isSubset(unique degrees trim colIdeal,{{},{1}}) then continue;	 
+              append(F,a)
+ 		      )
+    	  );
         Flags = Flagsnew;
         );
     Flags
@@ -163,23 +150,19 @@ isKoszulFiltration (Ring,List):= (R, KF) -> (
     m:= trim ideal gens R;
     e:= numgens m;
     if #F != (e + 1) then return false;
-    Ftrim := {{promote(ideal(),R)}};
-    for i from 1 to #F-1 do (
-        FtrimLevel := {};
-        for I1 in F#(i-1) do (
-            for I2 in F#(i) do (   
-                if isSubset(I1,I2) then (
-                    colIdeal := trim (I1 : I2); 
+    Ftrim := prepend({promote(ideal(),R)},
+        for i from 1 to #F-1 list (
+            unique flatten for I1 in F#(i-1) list (
+                for I2 in F#(i) list (
+                    if not isSubset(I1,I2) then continue;
+                    colIdeal := trim (I1 : I2);
                     n:=numgens colIdeal;
-                    if colIdeal == ideal(0_R) or (n < #F and isMember(colIdeal,F#(n))) then (
-                        FtrimLevel = append(FtrimLevel, I2);
-                        );
-                    );
-                );
-            );
-        FtrimLevel = unique FtrimLevel;
-        Ftrim = append(Ftrim,FtrimLevel);
-        );
+                    if not (colIdeal == ideal(0_R) or
+                            (n < #F and isMember(colIdeal,F#(n)))) then continue;
+                    I2
+                    )
+                )
+            )); 
     set flatten Ftrim === set flatten F	
     );
 
