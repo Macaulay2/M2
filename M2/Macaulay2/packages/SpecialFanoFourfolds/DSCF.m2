@@ -126,9 +126,6 @@ netTexDescription DoublySpecialCubicFourfold := o -> X -> (
         );
     );
     (S,T) := surfaces X;
-    A := latticeIntersectionMatrix3x3 X;
-    d := det A;
-    (q,r) := quotientRemainder(d,8);
     (netX,texX) := netTexDescription projectiveVariety ring X;
     netS := surfaceDescription(11,S);
     netT := surfaceDescription(11,T);
@@ -137,13 +134,18 @@ netTexDescription DoublySpecialCubicFourfold := o -> X -> (
     netStr := net("cubic fourfold: " | netX);
     netStr = netStr || net("surface 1: " | netS);
     netStr = netStr || net("surface 2: " | netT);
-    netStr = netStr || net "lattice discriminant:";
-    netStr = netStr || ((net(newline | "det(")) | (net A) | net(newline | ") = " | (toString d) | " = " | (toString q) | "*8 + " | (toString r)));
     texStr := "\\begin{aligned}&\\text{cubic fourfold: }" | texX;
     texStr = texStr | newline | "\\\\&\\text{surface 1: }" | texS;
     texStr = texStr | newline | "\\\\&\\text{surface 2: }" | texT;
-    texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
-    texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    if compStatusLatticeDisc X > 0 then (
+        A := latticeIntersectionMatrix3x3 X;
+        d := det A;
+        (q,r) := quotientRemainder(d,8);
+        netStr = netStr || net "lattice discriminant:";
+        netStr = netStr || ((net(newline | "det(")) | (net A) | net(newline | ") = " | (toString d) | " = " | (toString q) | "*8 + " | (toString r)));
+        texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+        texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    );
     (netStr,texStr | "\\end{aligned}")
 );
 

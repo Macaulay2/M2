@@ -159,20 +159,22 @@ netTexDescription CubicFourfold := o -> X -> (
         );
     );
     S := surface X;
-    d := discriminant X;
-    A := X.cache#(S,"LatticeIntersectionMatrix");
-    (q,r) := quotientRemainder(d,6);
     (netX,texX) := netTexDescription projectiveVariety ring X;
     netS := surfaceDescription(9,S);
     texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
     netStr := net("cubic fourfold: " | netX);
     netStr = netStr || net("surface: " | netS);
-    netStr = netStr || net("lattice discriminant:");
-    netStr = netStr || ((net "det(") | (net A) | net(") = " | (toString d) | " = " | (toString q) | "*6 + " | (toString r)));
     texStr := "\\begin{aligned}&\\text{cubic fourfold: }" | texX;
     texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
-    texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
-    texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 6 + " | (texMath r);
+    if compStatusLatticeDisc X > 0 then (
+        d := discriminant X;
+        A := X.cache#(S,"LatticeIntersectionMatrix");
+        (q,r) := quotientRemainder(d,6);
+        netStr = netStr || net("lattice discriminant:");
+        netStr = netStr || ((net "det(") | (net A) | net(") = " | (toString d) | " = " | (toString q) | "*6 + " | (toString r)));
+        texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+        texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 6 + " | (texMath r);
+    );
     (netStr,texStr | "\\end{aligned}")
 );
 

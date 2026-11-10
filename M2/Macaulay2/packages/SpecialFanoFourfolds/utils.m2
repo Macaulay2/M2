@@ -400,23 +400,23 @@ compStatusLatticeDisc DoublySpecialCubicFourfold := X -> (
     (S,T) := surfaces X;
     if X.cache#?(S,"discriminantFourfold") and X.cache#?(T,"discriminantFourfold") and (X.cache#?(S,T,"LatticeIntersectionMatrix3x3") or X.cache#?(S,T,"intersection of surface cycles in cubic fourfold")) then return 3;
     if X.cache#?(S,"discriminantFourfold") and X.cache#?(T,"discriminantFourfold") then return 2;
-    if ((S.cache#?"euler" and S.cache#?"FiniteNumberOfNodes") or isPlaneInP5 S) and ((T.cache#?"euler" and T.cache#?"FiniteNumberOfNodes") or isPlaneInP5 T) then return 1;
+    if (S.cache#?"euler" or isPlaneInP5 S) and (T.cache#?"euler" or isPlaneInP5 T) then return 1;
     0
 );
 compStatusLatticeDisc HodgeSpecialFourfold := X -> (
     S := surface X;
-    if X.cache#?(S,"discriminantFourfold") then return 3;
+    if X.cache#?(S,"discriminantFourfold") and X.cache#?(S,"LatticeIntersectionMatrix") then return 3;
     isPlaneS := # degrees S == 1 and first first degrees S === {1};
-    if (S.cache#?"euler" and S.cache#?"FiniteNumberOfNodes") or isPlaneS then return 2;
+    if X.cache#?(S,"LatticeIntersectionMatrix") and (S.cache#?"euler" or isPlaneS) then return 2;
     if S.cache#?"euler" or isPlaneS then return 1;
     0
 );
 compStatusLatticeDisc GushelMukaiFourfold := X -> (
     S := surface X;
-    if X.cache#?(S,"discriminantFourfold") and X.cache#?(S,"classSurfaceInG14") then return 3;
+    if X.cache#?(S,"discriminantFourfold") and X.cache#?(S,"LatticeIntersectionMatrix") and X.cache#?(S,"classSurfaceInG14") then return 3;
     isPlaneS := # degrees S == 1 and first first degrees S === {1};
-    if (X.cache#?(S,"discriminantFourfold") or S.cache#?"euler" or isPlaneS) and (X.cache#?(S,"classSurfaceInG14") or X.cache#?"toGrass") then return 2;
-    if X.cache#?(S,"discriminantFourfold") or S.cache#?"euler" or isPlaneS then return 1;
+    if (S.cache#?"euler" or isPlaneS) and (X.cache#?(S,"classSurfaceInG14") or X.cache#?"toGrass") then return 2;
+    if S.cache#?"euler" or isPlaneS then return 1;
     0
 );
 
