@@ -558,11 +558,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       GC_get_stack_base(&sb);
       GC_register_my_thread(&sb);
     }
-    if (M2_numericalAlgebraicGeometryTrace > 9) {
-      // `r` seems to be if length one in all experiments so far
-      std::cout << "r = [" << r.begin() << "," << r.end() << ")\n";
-    }
-
     RealElement t0(R), dt(R), one_minus_t0(R), dx_norm2(R), x_norm2(R), abs2dc(R);
 
     // constants
