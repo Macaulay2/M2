@@ -20,8 +20,6 @@ netTexDescription IntersectionOfThreeQuadricsInP7 := o -> X -> (
     );
     S := surface X;
     F := ambientFivefold X;
-    d := discriminant X;
-    A := X.cache#(S,"LatticeIntersectionMatrix");
     (netX,texX) := netTexDescription projectiveVariety ring X;
     (netF,texF) := netTexDescription F;
     netS := surfaceDescription(9,S);
@@ -29,13 +27,17 @@ netTexDescription IntersectionOfThreeQuadricsInP7 := o -> X -> (
     netStr := net("fourfold: " | netX);
     netStr = netStr || net("ambient fivefold: " | netF);
     netStr = netStr || net("surface: " | netS);
-    netStr = netStr || net "lattice discriminant:";
-    netStr = netStr || ((net "det(") | (net A) | net(") = " | (toString d)));
     texStr := "\\begin{aligned}&\\text{fourfold: }" | texX;
     texStr = texStr | newline | "\\\\&\\text{ambient fivefold: }" | texF;
     texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
-    texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
-    texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d);
+    if compStatusLatticeDisc X > 0 then (
+        d := discriminant X;
+        A := X.cache#(S,"LatticeIntersectionMatrix");
+        netStr = netStr || net "lattice discriminant:";
+        netStr = netStr || ((net "det(") | (net A) | net(") = " | (toString d)));
+        texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+        texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d);
+    );
     (netStr,texStr | "\\end{aligned}")
 );
 

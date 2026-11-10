@@ -192,7 +192,7 @@ netTexDescription GushelMukaiFourfold := o -> X -> (
         texMath getAttribute(X,ReverseDictionary)
     );
     if o#"Short" then (
-        if compStatusLatticeDisc X > 1 then return (
+        if compStatusLatticeDisc X >= 2 then return (
             shortDescriptionFourfold(X,false),
             texMath shortDescriptionFourfoldTeX(X,false)
         ) else return (
@@ -202,10 +202,6 @@ netTexDescription GushelMukaiFourfold := o -> X -> (
     );
     S := surface X;
     F := ambientFivefold X;
-    d := discriminant X;
-    (cS,ab) := cycleClass X;
-    M := X.cache#(S,"LatticeIntersectionMatrix");
-    (q,r) := quotientRemainder(d,8);
     (netX,texX) := netTexDescription projectiveVariety ring X;
     (netF,texF) := netTexDescription F;
     netS := surfaceDescription(9,S);
@@ -213,15 +209,21 @@ netTexDescription GushelMukaiFourfold := o -> X -> (
     netStr := net("GM fourfold: " | netX);
     netStr = netStr || net("ambient fivefold: " | netF);
     netStr = netStr || net("surface: " | netS);
-    netStr = netStr || net("class in G(1,4): " | (toString cS));
-    netStr = netStr || net "lattice discriminant:";
-    netStr = netStr || ((net "det(") | (net M) | net(") = " | (toString d) | " = " | (toString q) | "*8 + " | (toString r)));
     texStr := "\\begin{aligned}&\\text{GM fourfold: }" | texX;
     texStr = texStr | newline | "\\\\&\\text{ambient fivefold: }" | texF;
     texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
-    texStr = texStr | newline | "\\\\&\\text{class in }\\mathbb{G}(1,4)\\text{: }" | (replace("s_","\\\\sigma_",texMath cS));
-    texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
-    texStr = texStr | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    if compStatusLatticeDisc X >= 2 then (
+        d := discriminant X;
+        cS := first cycleClass X;
+        M := X.cache#(S,"LatticeIntersectionMatrix");
+        (q,r) := quotientRemainder(d,8);
+        netStr = netStr || net("class in G(1,4): " | (toString cS));
+        netStr = netStr || net "lattice discriminant:";
+        netStr = netStr || ((net "det(") | (net M) | net(") = " | (toString d) | " = " | (toString q) | "*8 + " | (toString r)));
+        texStr = texStr | newline | "\\\\&\\text{class in }\\mathbb{G}(1,4)\\text{: }" | (replace("s_","\\\\sigma_",texMath cS));
+        texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+        texStr = texStr | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath d) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    );
     (netStr,texStr | "\\end{aligned}")
 );
 

@@ -137,13 +137,16 @@ specialFourfold String := o -> str -> specialFourfold(str,if PP.ring === null th
 specialFourfold (String,ZZ) := o -> (str,i) -> (prebuiltExamplesOfRationalFourfolds()) (str,i);
 
 netTexDescription HodgeSpecialFourfold := o -> X -> (
-    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (toString getAttribute(X,ReverseDictionary),texMath getAttribute(X,ReverseDictionary));
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
+        toString getAttribute(X,ReverseDictionary),
+        texMath getAttribute(X,ReverseDictionary)
+    );
     S := surface X;
     local netStr; local texStr; local M;
     if o#"Short" then (
         netStr = shortDescriptionFourfold(X,false);
         texStr = texMath shortDescriptionFourfoldTeX(X,false);
-        if X.cache#?(S,"LatticeIntersectionMatrix") then (
+        if compStatusLatticeDisc X >= 2 then (
             M = X.cache#(S,"LatticeIntersectionMatrix");
             netStr = netStr | " of lattice discriminant " | (toString det M);
             texStr = texStr | "\\text{ of lattice discriminant }" | (texMath det M);
@@ -163,8 +166,7 @@ netTexDescription HodgeSpecialFourfold := o -> X -> (
     );
     netStr = netStr || net("surface: " | netS);
     texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
-    if not X.cache#?(S,"LatticeIntersectionMatrix") then try discriminant X;
-    if X.cache#?(S,"LatticeIntersectionMatrix") then (
+    if compStatusLatticeDisc X >= 2 then (
         M = X.cache#(S,"LatticeIntersectionMatrix");
         netStr = netStr || net "lattice discriminant:";
         netStr = netStr || ((net "det(") | (net M) | net(") = " | (toString det M)));
@@ -549,6 +551,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         s := "";
         if S.cache#?"euler" then s = s | surfaceName | ///.cache#"euler" = /// | toString euler S | ";" | newline;
         if S.cache#?"FiniteNumberOfNodes" then s = s | surfaceName | ///.cache#"FiniteNumberOfNodes" = /// | toString numberNodes S | ";" | newline;
+        if S.cache#?"singularLocus" and (S.cache#"singularLocus")#"dimVariety" === -1 then s = s | surfaceName | ///.cache#"singularLocus" = 0_/// | surfaceName | ";" | newline;
         if S.cache#?"linear system on PP^2" then s = s | surfaceName | ///.cache#"linear system on PP^2" = /// | toString S.cache#"linear system on PP^2" | ";" | newline;
         if S.cache#?"ConstructionParameters" then s = s | surfaceName | ///.cache#"ConstructionParameters" = /// | toString S.cache#"ConstructionParameters" | ";" | newline;
         if S.cache#?"rationalParametrization" then (
@@ -600,6 +603,7 @@ toExternalString HodgeSpecialFourfold := X -> (
             s = s | ///X.cache#"toGrass" = (Hom(X,GG(K,1,4))) /// | toRingAmbientX mapToG14 | ";" | newline;
         );
     );
+    if X.cache#?"singularLocus" and (X.cache#"singularLocus")#"dimVariety" === -1 then s = s | ///X.cache#"singularLocus" = 0_X;/// | newline;
     if X.cache#?"CustomData" then s = s | ///X.cache#"CustomData" = /// | "///" | toString X.cache#"CustomData" | "///;" | newline;
     if X.cache#?"CustomData2" then s = s | ///X.cache#"CustomData2" = /// | "///" | toString X.cache#"CustomData2" | "///;" | newline;
     if X.cache#?(S,T,"labelDSCF") then s = s | ///X.cache#(S,T,"labelDSCF") = "/// | toString X.cache#(S,T,"labelDSCF") | "\";" | newline;
