@@ -58,6 +58,7 @@ SeeAlso
     tally
     partitions
     sublists
+    (partition,VisibleList,Function,VisibleList,Function)
 ///
 
 doc ///
@@ -67,7 +68,7 @@ Key
     (partition,Function,VisibleList,VisibleList,Function)
     (partition,Function,VisibleList,Function)
 Headline
-    partition elements by values of a function and apply a function
+    partition elements by values of a function while applying another function
 Usage
     partition(L, f, I, g)
     partition(L, f, g)
