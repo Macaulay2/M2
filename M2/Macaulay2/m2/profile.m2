@@ -7,9 +7,9 @@
 
 needs "methods.m2"
 
-head := () -> ("#run", "%time", "position")
-form := (ttime, t, n, loc) -> (n, format(4,2,2,2,"e", 100 * t / ttime), loc)
-tail := (ttime, tticks) -> (tticks, format(4,4,4,4,"e",ttime) | "s", "elapsed total")
+head := () -> ("#run", "cost", "code", "position")
+form := (ttime, t, n, key) -> splice(n, format(4,2,2,2,"e", 100 * t / ttime), key#0)
+tail := (ttime, tticks) -> (tticks, format(4,4,4,4,"e",ttime) | "s", "total time (cpu)")
 
 -- prints the statistics logged by the profiler in a readable table
 profileSummary = method(Dispatch => Thing)
@@ -26,6 +26,8 @@ profileSummary String := filename -> (
     body := apply(rows, i -> form_ttime splice high#i);
     TABLE join({head()}, body, {tail(ttime, tticks)}))
 profileSummary = new Command from profileSummary
+
+resetProfileTable = new Command from resetProfileTable
 
 -- prints a list of lines which have been seen by the profiler so far
 -- TODO: also highlight missing lines or sections within a line
