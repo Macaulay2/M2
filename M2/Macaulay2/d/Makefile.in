@@ -179,9 +179,6 @@ endif
 
 CXXFLAGS += $(M2_CXXFLAGS)
 
-CFLAGS   += $(GCOV_CFLAGS)
-CXXFLAGS += $(GCOV_CXXFLAGS)
-
 CFLAGS   += -Wreturn-type
 CXXFLAGS += -Wreturn-type
 

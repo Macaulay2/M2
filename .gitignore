@@ -16,8 +16,3 @@
 .DS_Store
 .#*
 .*.swp
-
-# coverage artifacts from --enable-gcov
-*.gcov
-*.gcda
-*.gcno
