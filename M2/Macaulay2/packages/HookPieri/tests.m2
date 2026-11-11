@@ -93,31 +93,84 @@ assert(hpFieldCache(C, K) === hpFieldCache(C, K));
 ///
 
 TEST ///
--- Error tests that name the message rather than merely the exit.  The idiom
--- used elsewhere in this suite, assert(try (EXPR; false) else true), is
--- satisfied by any exception at all, including Macaulay2's own "no method
--- found" raised when the call never reached the package: f QQ[x] parses as
--- (f QQ)[x], so it tests dispatch on QQ and not the package's guard.  capture
--- runs the code in a subinterpreter and hands back its output, so the message
--- itself can be checked.  The code argument must be a double-quoted string,
--- since a triple-slash string would close this block.
-errorNames = (code, fragment) -> (
-    (errored, out) := capture code;
-    assert errored;
-    assert(match(fragment, out)));
+-- Temporary state is restored without replacing the original error.
+debug needsPackage "HookPieri";
+oldField = hpField(); oldProgress = hpState#"progress";
+K = ZZ/7;
+hpSetCoefficientRing K;
+hpState#"progress" = 11;
+assertWrapperError = (f, message) -> (
+    (result, err) := trap f();
+    assert(result === null and instance(err, Error));
+    assert(toString err == message);
+    assert(hpField() === K and hpState#"progress" == 11));
+assert(hpWithField(QQ, () -> hpWithProgress("test", 3,
+    () -> {hpField(), hpState#"progress"})) === {QQ, 3});
+assert(hpField() === K and hpState#"progress" == 11);
+assert(hpWithField(QQ, () -> null) === null);
+assert(hpWithProgress("test", 3, () -> null) === null);
+assert(hpField() === K and hpState#"progress" == 11);
+assertWrapperError(() -> hpWithField(QQ, () -> error "plain field error"),
+    "plain field error");
+assertWrapperError(() -> hpWithProgress("test", 3, () -> error "plain progress error"),
+    "plain progress error");
+assertWrapperError(() -> hpWithField(QQ, () -> 1/0), "division by zero");
+assertWrapperError(() -> hpWithProgress("test", 3, () -> 1/0), "division by zero");
+assertWrapperError(() -> hpWithField(QQ,
+    () -> hpWithProgress("test", 3, () -> 1/0)), "division by zero");
+-- A caught package error must not replace a later, unrelated exception.
+assertWrapperError(() -> hpWithField(QQ, () -> (
+    try hpFail "earlier error" else null;
+    1/0)), "division by zero");
+assertWrapperError(() -> hpWithProgress("test", 3, () -> (
+    try hpFail "earlier error" else null;
+    1/0)), "division by zero");
+assertWrapperError(() -> hpWithField(QQ,
+    () -> hpWithProgress("test", 3, () -> hpFail "package error")), "package error");
+hpSetCoefficientRing oldField;
+hpState#"progress" = oldProgress;
+///
+
+TEST ///
+-- The coefficient mismatch from PR #4747 reports the original promotion
+-- error; explicitly choosing characteristic two reports the singular system.
+debug needsPackage "HookPieri";
+oldField = hpField(); oldProgress = hpState#"progress";
+K = ZZ/2;
+hpSetCoefficientRing K;
+hpState#"progress" = 11;
+H = hashTable {{{1,2,6},{4,3,5}} => 1_K};
+for progress in {0,100} do (
+    (result, err) := trap hookStraighten(H, Progress => progress);
+    assert(result === null and instance(err, Error));
+    assert(match("can't promote number to ring", toString err));
+    assert(hpField() === K and hpState#"progress" == 11);
+    (result, err) = trap hookStraighten(H, CoefficientRing => K, Progress => progress);
+    assert(result === null and instance(err, Error));
+    assert(match("singular in characteristic 2", toString err));
+    assert(hpField() === K and hpState#"progress" == 11));
+hpSetCoefficientRing oldField;
+hpState#"progress" = oldProgress;
+///
+
+TEST ///
+-- Check the intended error message, not merely that an error occurred.
+errorNames = (f, fragment) -> (
+    (result, err) := trap f();
+    assert(instance(err, Error));
+    assert(match(fragment, toString err)));
 -- the guard on a ring that is not a hook ring, reached only when the argument
 -- is parenthesized
-errorNames("hookBasis(QQ[x])", "expected a hook ring");
-errorNames("hookTypes(QQ[x])", "expected a hook ring");
-errorNames("hookAlgebra(QQ[x])", "expected a hook ring");
-errorNames("straighteningIdeal(QQ[x])", "expected a hook ring");
--- the three validation messages that a plain error() inside hpWithField used
--- to replace with the generic "an error that the package did not record"
-errorNames("hookStraighten({{1,3,4},{2,2,5},{3}}, Progress => -1)",
+errorNames(() -> hookBasis(QQ[x]), "expected a hook ring");
+errorNames(() -> hookTypes(QQ[x]), "expected a hook ring");
+errorNames(() -> hookAlgebra(QQ[x]), "expected a hook ring");
+errorNames(() -> straighteningIdeal(QQ[x]), "expected a hook ring");
+-- validation messages from inside the state-restoring wrappers
+errorNames(() -> hookStraighten({{1,3,4},{2,2,5},{3}}, Progress => -1),
     "Progress must be a nonnegative integer");
-errorNames("straighteningStep({{1,3,4},{2,2,5},{3}}, Obstruction => \"row\")",
+errorNames(() -> straighteningStep({{1,3,4},{2,2,5},{3}}, Obstruction => "row"),
     "no row obstruction");
-errorNames("straighteningStep({{1,1,2,3},{3,2,3,4},{4,3}}, Obstruction => \"column\")",
+errorNames(() -> straighteningStep({{1,1,2,3},{3,2,3,4},{4,3}}, Obstruction => "column"),
     "no column obstruction");
 ///
 
@@ -1532,6 +1585,68 @@ assert(try (hookRing(2, {{0,0},{1,1}}, Weight => {1,1,1}); false) else true);
 assert(try (hookRing(2, {{0,0},{1,1}}, MonomialOrder => "Lex"); false) else true);
 assert(try (hookRing(3, {{0,0},{1,1},{2,2}}, VariableLimit => 10); false) else true);
 assert(numgens hookRing(3, {{0,0},{1,1},{2,2}}, VariableLimit => 10, Force => true) == 17);
+///
+
+TEST ///
+-- Count bounded hook bases without enumeration, including zero and
+-- asymmetric bounds, rows, columns, and hooks with a full column.
+debug needsPackage "HookPieri";
+for n from 1 to 4 do (
+    radix := if n < 4 then 3 else 2;
+    bounds := for j from 0 to radix^n-1 list
+        apply(n, i -> (j // radix^i) % radix);
+    if n == 4 then bounds = bounds | {{0,1,2,3},{3,1,0,2},{2,0,3,1}};
+    for a from 0 to 2 do for b from 0 to n-1 do for w in bounds do
+        assert(hpFHRHookCountBounded(n, {a,b}, w) ==
+            #hpFHRHookBasisBounded(n, {a,b}, w));
+    for a from 0 to 3 do for b from 0 to n-1 do
+        assert(hpFHRHookCountBounded(n, {a,b}, toList(n:(a+b+1))) ==
+            hpFHRHookDimension(n, {a,b}));
+);
+assert(hpFHRHookDimension(10, {5,4}) == 378378);
+assert(hpFHRHookCountBounded(10, {5,4}, toList(10:1)) == 126);
+///
+
+TEST ///
+-- VariableLimit counts the actual generators; equality and Force are
+-- allowed, including when a weight bound removes most of a Schur basis.
+assert(numgens hookRing(3, {{0,0},{1,1},{2,2}}, VariableLimit => 17) == 17);
+assert(numgens hookRing(3, {{0,0},{1,1},{2,2}},
+    VariableLimit => 10, Force => true) == 17);
+R = hookRing(10, {{5,4}}, Weight => toList(10:1), VariableLimit => 126);
+assert(numgens R == 126);
+assert(R.cache#"hookContext"#"numberOfVariables" == 126);
+(result, err) = trap hookRing(10, {{5,4}},
+    Weight => toList(10:1), VariableLimit => 125);
+assert(result === null and instance(err, Error));
+assert(match("126 variables exceed VariableLimit=125", toString err));
+assert(numgens hookRing(3, {{0,0},{1,1}}, Weight => {1,1,1},
+    VariableLimit => 4, Force => true) == 5);
+assert(numgens hookRing(3, {{0,0}}, Weight => {0,0,0},
+    VariableLimit => 0, MonomialOrder => "GRevLex") == 0);
+///
+
+TEST ///
+-- An oversized request must fail before either basis enumerator is called.
+debug needsPackage "HookPieri";
+savedBasis = hpFHRHookBasis;
+savedBoundedBasis = hpFHRHookBasisBounded;
+calls = new MutableHashTable from {"full" => 0, "bounded" => 0};
+symbol hpFHRHookBasis <- ((n,h) -> (
+    calls#"full" = calls#"full" + 1;
+    error "unexpected full basis enumeration"));
+symbol hpFHRHookBasisBounded <- ((n,h,w) -> (
+    calls#"bounded" = calls#"bounded" + 1;
+    error "unexpected bounded basis enumeration"));
+fullResult = trap hookRing(10, {{5,4}});
+boundedResult = trap hookRing(10, {{5,4}},
+    Weight => toList(10:1), VariableLimit => 125);
+symbol hpFHRHookBasis <- savedBasis;
+symbol hpFHRHookBasisBounded <- savedBoundedBasis;
+assert(instance(fullResult#1, Error) and instance(boundedResult#1, Error));
+assert(match("378378 variables exceed VariableLimit=500", toString fullResult#1));
+assert(match("126 variables exceed VariableLimit=125", toString boundedResult#1));
+assert(calls#"full" == 0 and calls#"bounded" == 0);
 ///
 
 TEST ///

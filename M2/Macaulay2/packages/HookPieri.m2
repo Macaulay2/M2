@@ -186,20 +186,16 @@ hpValidateCoefficientRing = (caller, K) -> (
     K
 );
 -- run f() with the field temporarily set to K, restoring it afterwards
--- (also on failure, re-raising the package's own message)
+-- (also on failure, preserving the original error)
 hpWithField = (K, f) -> (
     if not hpIsAllowedField K then
         error "HookPieri: expected QQ or a field of positive characteristic";
     old := hpField();
     hpState#"field" = K;
     hpLastError = null;
-    result := try f() else (
+    result := try f() except err do (
         hpState#"field" = old;
-        error(if hpLastError =!= null then hpLastError
-            else "HookPieri: the computation over " | toString K |
-                " failed with an error that the package did not record;" |
-                " after debug HookPieri, set the field with hpSetCoefficientRing K" |
-                " and rerun to see the original message");
+        error err
     );
     hpState#"field" = old;
     result
@@ -864,8 +860,7 @@ nhCounterexampleRecord = (T, T1, T2, straightening, actual, expected) -> hashTab
 -- records of those T whose projected lift is not cScalar times the
 -- straightening of T, in enumeration order, each paired with T
 nhGarnirCounterexamples = (a, b, c, d, nVal, cScalar, allTabs) -> (
-    ces := {};
-    for T in allTabs do (
+    for T in allTabs list (
         (T1, T2) := nhDecomposeNestColumns(T, a, b, c, d);
         actual := nhTermsToTable nhApplyNestedHookComp(T1, T2, a, b, c, d, nVal);
         straightening := nhStraightenColumns T;
@@ -873,9 +868,9 @@ nhGarnirCounterexamples = (a, b, c, d, nVal, cScalar, allTabs) -> (
         allKeys := unique(keys expected | keys actual);
         if any(allKeys, k -> (if actual#?k then actual#k else 0_QQ) !=
                 (if expected#?k then expected#k else 0_QQ)) then
-            ces = append(ces, {T, nhCounterexampleRecord(T, T1, T2, straightening, actual, expected)});
-    );
-    ces
+            {T, nhCounterexampleRecord(T, T1, T2, straightening, actual, expected)}
+        else continue
+    )
 );
 
 -- a clean column two violation: column 2 has a repeated entry, every
@@ -892,9 +887,8 @@ nhIsCleanCol2Violation = T -> (
     );
     nrows := max for col in T list #col;
     for r from 0 to nrows - 1 do (
-        row := {};
-        for j from 0 to #T - 1 do
-            if #(T#j) > r then row = append(row, (T#j)#r);
+        row := for j from 0 to #T - 1 list
+            if #(T#j) > r then (T#j)#r else continue;
         for i from 0 to #row - 2 do
             if row#i > row#(i+1) then return false;
     );
@@ -1165,13 +1159,13 @@ net EquivariantBettiTally := B -> (
     ncols := #(rows#0) - 1;
     full := panel(0, ncols);
     if width full <= printWidth then return full;
-    panels := {};
     j := 0;
-    while j < ncols do (
+    panels := while j < ncols list (
         k := j + 1;
         while k < ncols and width panel(j, k + 1) <= printWidth do k = k + 1;
-        panels = append(panels, panel(j, k));
-        j = k);
+        p := panel(j, k);
+        j = k;
+        p);
     stack between("", panels)
 );
 -- a table of characters and a table of integers compare entry by entry
@@ -1220,16 +1214,14 @@ nhpQDeltaParts = (delta, maxLen) -> (
     minA := max(0, delta);
     maxA1 := maxLen + delta - 1;
     if maxA1 < minA then return {{}};
-    result := {{}};
-    for d from 1 to maxLen do (
+    prepend({}, flatten for d from 1 to maxLen list (
         sets := subsets(toList(minA..maxA1), d);
-        for s in sets do (
+        for s in sets list (
             aList := reverse sort toList s;
             bList := for v in aList list v - delta;
-            result = append(result, nhpFrobToPart(aList, bList));
-        );
-    );
-    result
+            nhpFrobToPart(aList, bList)
+        )
+    ))
 );
 
 ------------------------------------------------------------------------
@@ -1261,21 +1253,21 @@ genericDetPoincare(ZZ, ZZ, ZZ) := (n, m, r) -> (
     den := 0_Rxy;
     denTerms := {};
     if n >= r and m >= r then (
-        for lam in nhpAllInBox(n-r+1, m-r+1) do (
+        denTerms = for lam in nhpAllInBox(n-r+1, m-r+1) list (
             rk := hpFrobeniusRank lam;
             sz := sum lam;
             muX := nhpLamPowerR(lam, r-1);
             muY := nhpLamPowerR(hpConjugatePartition lam, r-1);
-            if #muX <= n and #muY <= m then (
-                sign := (-1)^rk;
-                piece := Rxy_muX * promote(Ry_muY, Rxy);
-                term := sign * (sV * tV)^(sz + rk) * sV^((r-2)*rk) * piece;
-                den = den + term;
-                if lam != {} then denTerms = append(denTerms, new HashTable from {
-                        "lambda" => lam, "mu" => {muX, muY}, "i" => sz, "d" => rk,
-                        "j" => sz + (r-1)*rk, "sign" => sign, "character" => piece,
-                        "term" => term});
-            );
+            if #muX > n or #muY > m then continue;
+            sign := (-1)^rk;
+            piece := Rxy_muX * promote(Ry_muY, Rxy);
+            term := sign * (sV * tV)^(sz + rk) * sV^((r-2)*rk) * piece;
+            den = den + term;
+            if lam == {} then continue;
+            new HashTable from {
+                "lambda" => lam, "mu" => {muX, muY}, "i" => sz, "d" => rk,
+                "j" => sz + (r-1)*rk, "sign" => sign, "character" => piece,
+                "term" => term}
         );
     ) else (
         den = 1_Rxy;
@@ -1307,8 +1299,7 @@ symDetPoincare(ZZ, ZZ) := (n, r) -> (
     );
 
     den := 0_Rx;
-    denTerms := {};
-    for lam in nhpQDeltaParts(0, n) do (
+    denTerms := for lam in nhpQDeltaParts(0, n) list (
         rk := hpFrobeniusRank lam;
         if not even rk then continue;
         mu := nhpLamPowerR(lam, r-2);
@@ -1317,10 +1308,11 @@ symDetPoincare(ZZ, ZZ) := (n, r) -> (
         sign := (-1)^(rk // 2);
         term := sign * (sV * tV)^(sz // 2) * sV^((r-2)*rk // 2) * Rx_mu;
         den = den + term;
-        if lam != {} then denTerms = append(denTerms, new HashTable from {
+        if lam == {} then continue;
+        new HashTable from {
               "lambda" => lam, "mu" => mu, "i" => sz // 2 - rk // 2, "d" => rk // 2,
               "j" => sz // 2 + (r-2)*rk // 2, "sign" => sign, "character" => Rx_mu,
-              "term" => term});
+              "term" => term}
     );
     nhpPoincareSeries(key, num, den, Rx, "symmetric", (n, r), r, denTerms)
 );
@@ -1352,7 +1344,7 @@ symDetCoverPoincare(ZZ, ZZ) := (n, r) -> (
     ) else (
         for lam in nhpQDeltaParts(1, n) do
             num = num + (sV^2 * tV)^((sum lam) // 2) * Rx_lam;
-        for lam in nhpQDeltaParts(0, n) do (
+        denTerms = for lam in nhpQDeltaParts(0, n) list (
             rk := hpFrobeniusRank lam;
             mu := nhpLamPowerR(lam, r-2);
             if #mu > n then continue;
@@ -1360,10 +1352,11 @@ symDetCoverPoincare(ZZ, ZZ) := (n, r) -> (
             sign := (-1)^rk;
             term := sign * (sV^2 * tV)^((sz + rk) // 2) * sV^((r-3)*rk) * Rx_mu;
             den = den + term;
-            if lam != {} then denTerms = append(denTerms, new HashTable from {
+            if lam == {} then continue;
+            new HashTable from {
                    "lambda" => lam, "mu" => mu, "i" => (sz - rk) // 2, "d" => rk,
                    "j" => sz + (r-2)*rk, "sign" => sign, "character" => Rx_mu,
-                   "term" => term});
+                   "term" => term}
         );
     );
     nhpPoincareSeries(key, num, den, Rx, "symmetricCover", (n, r), 2, denTerms)
@@ -1394,8 +1387,7 @@ pfaffianPoincare(ZZ, ZZ) := (n, r) -> (
     );
 
     den := 0_Rx;
-    denTerms := {};
-    for lam in nhpQDeltaParts(-1, n) do (
+    denTerms := for lam in nhpQDeltaParts(-1, n) list (
         rk := hpFrobeniusRank lam;
         mu := nhpLamPowerR(lam, 2*r-2);
         if #mu > n then continue;
@@ -1403,10 +1395,11 @@ pfaffianPoincare(ZZ, ZZ) := (n, r) -> (
         sign := (-1)^rk;
         term := sign * (sV * tV)^(sz // 2 + rk) * sV^((r-2)*rk) * Rx_mu;
         den = den + term;
-        if lam != {} then denTerms = append(denTerms, new HashTable from {
+        if lam == {} then continue;
+        new HashTable from {
               "lambda" => lam, "mu" => mu, "i" => sz // 2, "d" => rk,
               "j" => sz // 2 + (r-1)*rk, "sign" => sign, "character" => Rx_mu,
-              "term" => term});
+              "term" => term}
     );
     nhpPoincareSeries(key, num, den, Rx, "pfaffian", (n, r), r, denTerms)
 );
@@ -3289,10 +3282,7 @@ hpRank2LocalObstructionData = (T,kind) -> (
     --------------------------------------------------------
     rObs := hpFirstRowObstructionRank2 T;
     cObs := hpFirstColObstructionRank2 T;
-    -- hpFail, not error: these two are user-facing validation messages, and a
-    -- straightening runs inside hpWithField, which can only re-raise a message
-    -- the package recorded; a plain error here reaches the user as the generic
-    -- "an error that the package did not record" fallback instead
+    -- Report an unavailable requested obstruction.
     if kind === "row" and rObs === null then
         hpFail "straighteningStep: this tabloid has no row obstruction (Obstruction => \"row\")";
     if kind === "column" and cObs === null then
@@ -5112,19 +5102,18 @@ hpHookStraightenFromAnyHooks = (caller,T) -> (
     (new HashTable from done, iters)
 );
 
--- run f() printing a progress line every `progress` rewrites
+-- run f() printing a progress line every `progress` rewrites, restoring
+-- the previous setting on success or failure and preserving errors
 hpWithProgress = (caller, progress, f) -> (
-    -- hpFail so that the message survives an enclosing hpWithField
     if not instance(progress,ZZ) or progress < 0 then
         hpFail(caller | ": Progress must be a nonnegative integer");
     if progress == 0 then return f();
     old := hpState#"progress";
     hpState#"progress" = progress;
     hpLastError = null;
-    result := try f() else (
+    result := try f() except err do (
         hpState#"progress" = old;
-        error(if hpLastError =!= null then hpLastError
-            else caller | ": the straightening failed; rerun without Progress to see the message");
+        error err
     );
     hpState#"progress" = old;
     result
@@ -5419,8 +5408,8 @@ hpVerifyTriangularity = (lambda, tabloids, restriction, value, N, kind, engine) 
     t0 := cpuTime();
     steps := 0; maxTerms := 0; termsChecked := 0; zeroSteps := 0;
     semistandard := 0; incomparableTerms := 0; contentViolations := 0;
-    violations := {}; firstViolation := null;
-    for T in tabloids do (
+    firstViolation := null;
+    violations := flatten for T in tabloids list (
         if hpIsHookSemistandardRows T then (semistandard = semistandard + 1; continue);
         H := hpStraighteningStepRows("verifyTriangularity", T, kind, engine);
         steps = steps + 1;
@@ -5428,7 +5417,7 @@ hpVerifyTriangularity = (lambda, tabloids, restriction, value, N, kind, engine) 
         if #H == 0 then zeroSteps = zeroSteps + 1;
         vT := hpRunningVectorsFast(T, N);
         contentT := hpTabloidContent(T, N);
-        for U in keys H do (
+        for U in keys H list (
             if U == T then continue;
             termsChecked = termsChecked + 1;
             code := hpRunningCompareVectors(hpRunningVectorsFast(U, N), vT);
@@ -5436,15 +5425,15 @@ hpVerifyTriangularity = (lambda, tabloids, restriction, value, N, kind, engine) 
             if code =!= -1 or not contentOK then (
                 if code === null then incomparableTerms = incomparableTerms + 1;
                 if not contentOK then contentViolations = contentViolations + 1;
-                violations = append(violations, {new HookTabloid from T, new HookTabloid from U});
                 if firstViolation === null then firstViolation = {
                     new HookTabloid from T, new HookTabloid from U,
                     if not contentOK then "the term has a different content"
                     else if code === null then "the running vectors are incomparable at their last disagreement"
                     else if code === 0 then "the running vectors agree"
                     else "the term is larger in the running order"};
-            );
-        );
+                {new HookTabloid from T, new HookTabloid from U}
+            ) else continue
+        )
     );
     passed := #violations == 0;
     hpVerificationReport("Triangularity", {
@@ -5597,7 +5586,7 @@ hpCokernelData = (lambda, w) -> (
     r := frobeniusRank lambda;
     types := hpHookTypesOfShape lambda;
     seen := new MutableHashTable;
-    relations := {};
+    relations := new MutableHashTable;
     for X in class do (
         hooksX := apply(r, l -> toList hpHookOfTabloid(X, lambda, l));
         for i from 0 to r-2 do for j from i+1 to r-1 do (
@@ -5617,7 +5606,7 @@ hpCokernelData = (lambda, w) -> (
                     if not idx#?U then hpFail "hookStraighten: a Pieri image left the weight space";
                     vec#(idx#U) = col#q;
                 );
-                if #vec > 0 then relations = append(relations, new HashTable from vec);
+                if #vec > 0 then relations#(#relations) = new HashTable from vec;
             );
         );
     );
@@ -5686,20 +5675,19 @@ hpCokernelNormalFormRows = (caller, T) -> (
 -- compare the algorithm with the cokernel on whole weight spaces
 hpVerifyAgainstCokernel = (lambda, contents, restriction, value) -> (
     t0 := cpuTime();
-    tabloids := 0; agreements := 0; disagreements := {}; relations := 0;
-    for w in contents do (
+    tabloids := 0; agreements := 0; relations := 0;
+    disagreements := flatten for w in contents list (
         D := hpCokernelData(lambda, w);
         relations = relations + D#"numberOfRelations";
         class := D#"class";
-        for t from 0 to #class-1 do (
+        for t from 0 to #class-1 list (
             tabloids = tabloids + 1;
             nfC := hpCokernelReduce(D, t);
             nfA := first hpHookStraightenFromAnyHooks("verifyStraighteningAgainstCokernel", class#t);
             if #nfC == #nfA and all(keys nfC, U -> nfA#?U and nfA#U == nfC#U) then
-                agreements = agreements + 1
-            else disagreements = append(disagreements,
-                {new HookTabloid from class#t, hpTabloidTable nfA, hpTabloidTable nfC});
-        );
+                (agreements = agreements + 1; continue)
+            else {new HookTabloid from class#t, hpTabloidTable nfA, hpTabloidTable nfC}
+        )
     );
     passed := #disagreements == 0;
     hpVerificationReport("Cokernel", {
@@ -5983,6 +5971,43 @@ hpFHRHookDimension = (n,h) -> (
     binomial(n+a,a+b+1)*binomial(a+b,b)
 );
 
+-- Count bounded hook tableaux without constructing them.  After each label,
+-- counts#(s*width+r) records r arm entries and s entries below the corner.
+hpFHRHookCountBounded = (n,h,w) -> (
+    if not hpFHRValidType(n,h) then
+        error "hpFHRHookCountBounded: invalid hook type";
+    if not hpWeightValid(n,w) then
+        error "hpFHRHookCountBounded: invalid weight bound";
+    a := h#0; b := h#1;
+    bounds := select(w, c -> c > 0);
+    if a+b+1 > sum bounds or #bounds <= b then return 0;
+    if all(bounds, c -> c >= a+1) then
+        return hpFHRHookDimension(#bounds,h);
+    width := a+1;
+    size := width*(b+1);
+    counts := new MutableList from toList(size:0);
+    for cap in bounds do (
+        next := new MutableList from toList(size:0);
+        for s from 0 to b do (
+            rowSum := 0; columnSum := 0;
+            for r from 0 to a do (
+                rowSum = rowSum + counts#(s*width+r);
+                if r > cap then rowSum = rowSum - counts#(s*width+r-cap-1);
+                if s > 0 then (
+                    columnSum = columnSum + counts#((s-1)*width+r);
+                    if r >= cap then
+                        columnSum = columnSum - counts#((s-1)*width+r-cap);
+                );
+                -- Use this label in the arm, also in the column, or as a new corner.
+                next#(s*width+r) = rowSum + columnSum +
+                    (if s == 0 and r < cap then 1 else 0);
+            );
+        );
+        counts = next;
+    );
+    counts#(b*width+a)
+);
+
 -- The row tail omits the corner, while colFull contains it, so their
 -- concatenation records every box of the hook exactly once.
 hpFHRHookContent = (n,hook) ->
@@ -6139,22 +6164,21 @@ hpHookRingBuild = (caller, n, types, K, weight, order, variableLimit, force) -> 
         error(caller | ": MonomialOrder must be \"Paper\" or \"GRevLex\"");
 
     orderedTypes := hpFHRTypeOrder types;
-    basisByType := if weight === null then (
-        fullBasisByType := new HashTable from apply(orderedTypes,
-            h -> h => hpFHRHookBasis(n,h));
-        for h in orderedTypes do
-            if #(fullBasisByType#h) != hpFHRHookDimension(n,h) then
-                error(caller | ": the hook basis enumeration failed its dimension check");
-        fullBasisByType
-    ) else new HashTable from apply(orderedTypes,h -> h =>
-        hpFHRHookBasisBounded(n,h,weight));
-    basis := {};
-    for h in orderedTypes do basis = basis | basisByType#h;
-    N := #basis;
+    countsByType := new HashTable from apply(orderedTypes, h -> h =>
+        if weight === null then hpFHRHookDimension(n,h)
+        else hpFHRHookCountBounded(n,h,weight));
+    N := sum(orderedTypes, h -> countsByType#h);
     if N > variableLimit and not force then
         error(caller | ": " | toString N |
             " variables exceed VariableLimit=" | toString variableLimit |
             "; rerun with VariableLimit => N or Force => true after inspecting the size");
+    basisByType := new HashTable from apply(orderedTypes, h -> (
+        basisOfType := if weight === null then hpFHRHookBasis(n,h)
+            else hpFHRHookBasisBounded(n,h,weight);
+        if #basisOfType != countsByType#h then
+            error(caller | ": the hook basis enumeration failed its dimension check");
+        h => basisOfType));
+    basis := flatten apply(orderedTypes, h -> basisByType#h);
 
     labeledRows := if order == "Paper" then
         hpFHRPaperOrderLabeledRows(n,orderedTypes,basis) else {};
