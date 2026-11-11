@@ -28,6 +28,7 @@ UNITTEST_CCFILES := \
     RingTowerTest \
     DMatZZpTest \
     SMatTest \
+    SMatZZpTest \
     DMatZZpFFPACKTest \
     DMatZZpFlintTest \
     DMatZZTest \
