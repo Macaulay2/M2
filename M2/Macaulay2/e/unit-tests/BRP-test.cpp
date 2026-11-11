@@ -6,14 +6,12 @@
 
 #include "computations/BRP.hpp"
 
-namespace
-{
+namespace {
 
 BRP makeBRP(std::initializer_list<brMonomial> terms)
 {
   monomials result;
-  for (brMonomial term : terms)
-    result.push_back(term);
+  for (brMonomial term : terms) result.push_back(term);
   return BRP(result);
 }
 
@@ -21,6 +19,7 @@ BRP makeBRP(std::initializer_list<brMonomial> terms)
 
 TEST(BRP, ZeroEquality)
 {
+  // The empty term list represents zero, not one.
   BRP zero;
 
   EXPECT_EQ(zero, 0);
@@ -31,6 +30,7 @@ TEST(BRP, ZeroEquality)
 
 TEST(BRP, OneEquality)
 {
+  // The zero exponent bitmask represents the constant one.
   BRP one = makeBRP({0});
 
   EXPECT_EQ(one, 1);
@@ -41,6 +41,7 @@ TEST(BRP, OneEquality)
 
 TEST(BRP, PolynomialEquality)
 {
+  // Equal ordered term lists compare equal; changing one term breaks equality.
   BRP polynomial = makeBRP({8, 3, 0});
 
   EXPECT_EQ(polynomial, polynomial);
@@ -50,20 +51,27 @@ TEST(BRP, PolynomialEquality)
 
 TEST(BRP, AdditionCancelsCommonTerms)
 {
-  BRP sum = makeBRP({3, 2, 1});
-  sum + makeBRP({5, 4, 3});
+  // Boolean addition cancels common monomials while retaining other terms.
+  {
+    SCOPED_TRACE("addition: one shared middle term");
+    BRP sum = makeBRP({3, 2, 1});
+    sum + makeBRP({5, 4, 3});
 
-  EXPECT_EQ(sum, makeBRP({5, 4, 2, 1}));
+    EXPECT_EQ(sum, makeBRP({5, 4, 2, 1}));
+  }
+  {
+    SCOPED_TRACE("addition: interleaved term lists");
+    BRP a = makeBRP({16, 15, 5, 2});
+    BRP b = makeBRP({13, 12, 6, 4, 2, 1});
+    a + b;
 
-  BRP a = makeBRP({16, 15, 5, 2});
-  BRP b = makeBRP({13, 12, 6, 4, 2, 1});
-  a + b;
-
-  EXPECT_EQ(a, makeBRP({16, 15, 13, 12, 6, 5, 4, 1}));
+    EXPECT_EQ(a, makeBRP({16, 15, 13, 12, 6, 5, 4, 1}));
+  }
 }
 
 TEST(BRP, AdditionPreservesLexOrder)
 {
+  // Inserting terms in either order produces a decreasing term list.
   BRP decreasing = BRP(9);
   decreasing + BRP(7);
 
@@ -76,6 +84,8 @@ TEST(BRP, AdditionPreservesLexOrder)
 
 TEST(BRP, AdditionWithLargerLeadingTerms)
 {
+  // Merging a larger leading monomial preserves the order of the remaining
+  // terms.
   BRP a = makeBRP({35, 16, 15, 5, 2});
   BRP b = makeBRP({38, 13, 12, 6, 4, 2, 1});
   a + b;
@@ -85,6 +95,7 @@ TEST(BRP, AdditionWithLargerLeadingTerms)
 
 TEST(BRP, AdditionRetainsConstantTerm)
 {
+  // A constant present in only one summand survives addition.
   BRP a = makeBRP({35, 16, 15, 5, 2, 0});
   BRP b = makeBRP({38, 13, 12, 6, 4, 2, 1});
   a + b;
@@ -94,6 +105,7 @@ TEST(BRP, AdditionRetainsConstantTerm)
 
 TEST(BRP, AdditionCancelsLeadingTerm)
 {
+  // Matching leading monomials cancel in characteristic two.
   BRP a = makeBRP({35, 16, 15, 5, 2, 0});
   BRP b = makeBRP({35, 13, 12, 6, 4, 2, 1});
   a + b;
@@ -103,31 +115,46 @@ TEST(BRP, AdditionCancelsLeadingTerm)
 
 TEST(BRP, Multiplication)
 {
-  EXPECT_EQ(makeBRP({14, 1}) * BRP(8), makeBRP({14, 9}));
+  // Boolean products unite variable supports and cancel repeated resulting
+  // monomials.
+  {
+    SCOPED_TRACE("multiply: distinct resulting terms");
+    EXPECT_EQ(makeBRP({14, 1}) * BRP(8), makeBRP({14, 9}));
+  }
 
-  BRP a = makeBRP({13, 12, 6, 4, 2, 1});
+  {
+    SCOPED_TRACE("multiply: all resulting terms cancel");
+    BRP a = makeBRP({13, 12, 6, 4, 2, 1});
 
-  EXPECT_EQ(a * BRP(13), BRP());
-  EXPECT_EQ(a * static_cast<brMonomial>(13), BRP());
+    EXPECT_EQ(a * BRP(13), BRP());
+    EXPECT_EQ(a * static_cast<brMonomial>(13), BRP());
+  }
+  {
+    SCOPED_TRACE("multiply: one term survives cancellation");
+    BRP a = makeBRP({16, 13, 12, 6, 4, 2, 1});
 
-  a = makeBRP({16, 13, 12, 6, 4, 2, 1});
-
-  EXPECT_EQ(a * BRP(13), BRP(29));
-  EXPECT_EQ(a * static_cast<brMonomial>(13), BRP(29));
-
-  EXPECT_EQ(makeBRP({16, 13, 12, 6, 4}) * static_cast<brMonomial>(220),
-            makeBRP({222, 221, 220}));
+    EXPECT_EQ(a * BRP(13), BRP(29));
+    EXPECT_EQ(a * static_cast<brMonomial>(13), BRP(29));
+  }
+  {
+    SCOPED_TRACE("multiply: overlapping variable supports");
+    EXPECT_EQ(makeBRP({16, 13, 12, 6, 4}) * static_cast<brMonomial>(220),
+              makeBRP({222, 221, 220}));
+  }
 }
 
 TEST(BRP, Divisibility)
 {
+  // A divisor must use only variables present in the dividend; one divides
+  // every term.
   EXPECT_FALSE(BRP::isDivisibleBy(14, 1));
   EXPECT_TRUE(BRP::isDivisibleBy(1, 0));
-  EXPECT_EQ(14 ^ 8, 6);
+  EXPECT_TRUE(BRP::isDivisibleBy(14, 8));
 }
 
 TEST(BRP, LeadingTerm)
 {
+  // The first ordered term is leading, including the constant polynomial.
   BRP polynomial = makeBRP({8, 3});
 
   EXPECT_EQ(polynomial.LT(), 8u);
@@ -140,6 +167,7 @@ TEST(BRP, LeadingTerm)
 
 TEST(BRP, LeadingReducibleBy)
 {
+  // Leading reduction requires a divisor of the leading monomial.
   BRP f = BRP(2) * BRP(8);
   f + BRP(7);
 
@@ -150,6 +178,7 @@ TEST(BRP, LeadingReducibleBy)
 
 TEST(BRP, Remainder)
 {
+  // Reduction removes a divisible leading term and retains the other term.
   BRP f = BRP(2) * BRP(8);
   f + BRP(7);
 
@@ -160,6 +189,8 @@ TEST(BRP, Remainder)
 
 TEST(BRP, RelativelyPrimeLeadingTerms)
 {
+  // Leading monomials are relatively prime exactly when their variable supports
+  // are disjoint.
   BRP f = BRP(2) * BRP(8);
   f + BRP(7);
 
