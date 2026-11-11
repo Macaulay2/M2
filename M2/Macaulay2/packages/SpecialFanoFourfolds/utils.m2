@@ -468,30 +468,29 @@ computationStatusLog K3SurfaceFromDoublySpecialCubicFourfold := S -> computation
 describeMirrorFourfoldAndK3 = method();
 describeMirrorFourfoldAndK3 HodgeSpecialFourfold := X -> (
     s := computationStatus X;
-    if s <= 0 then return "";
-    mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF(X,Verbose=>true) else multirationalMap fanoMap(X,Verbose=>true);  -- already in cache
+    if s <= 0 then return ("","");
+    mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF(X,Verbose=>true) else multirationalMap fanoMap(X,Verbose=>true); -- already in cache
     W := target mu;
-    U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>true);  -- already in cache
-    cutOutLine := Y -> (
-        degs := flatten degrees ideal Y;
-        " cut out by "|(if same degs then (toString(#degs)|" hypersurfaces of degree "|(toString first degs)) else (toString(#degs)|" hypersurfaces of degrees "|generatorDegreesString(Y)))
+    U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>true); -- already in cache
+    (netW,texW) := if isDeformationP2P2 W then (
+        ("≋ ℙ² × ℙ² ⊂ ℙ⁸","\\simeq\\mathbb{P}^{2}\\times\\mathbb{P}^{2}\\subset\\mathbb{P}^{8}")
+    ) else if isDeformationDP5 W then (
+        ("≋ 𝔾(1,4) ∩ ℙ⁷ ⊂ ℙ⁷","\\simeq\\mathbb{G}(1,4)\\cap\\mathbb{P}^{7}\\subset\\mathbb{P}^{7}")
+    ) else (
+        netTexDescription(W,"NumericalInvariants"=>true)
     );
-    strW := if codim W == 0
-            then "PP^4"
-            else if codim W == 1
-            then ("hypersurface in PP^5 of degree " | (toString degree W))
-            else if codim W == numgens ideal W and degree W == product flatten degrees ideal W
-            then ("complete intersection of type " | (toString toSequence flatten degrees ideal W) | " in PP^" | (toString dim ambient W))
-            else if isDeformationP2P2 W
-            then "≋ ℙ² × ℙ² ⊂ ℙ⁸"
-            else if isDeformationDP5 W
-            then "≋ 𝔾(1,4) ∩ ℙ⁷ ⊂ ℙ⁷"
-            else (("fourfold of degree " | (toString degree W) | " and sectional genus " | (toString sectionalGenus W) | " in PP^" | (toString dim ambient W)) | (cutOutLine W));
-    descr := "Mirror fourfold: " | strW | newline | "Surface U of degree " | (toString degree U) | ", sectional genus " | (toString sectionalGenus U) | ", χ(O_U) = " | (toString euler hilbertPolynomial U) | "," | (cutOutLine U);
-    if s <= 1 then return descr;
-    (L,C) := exceptionalCurves(X,Verbose=>false);  -- already in cache
-    descr = descr | newline | printInfoOnExceptionalCurves(L,C);
-    if s <= 2 then return descr;
+    (netU,texU) := netTexDescription(U,"Ambient"=>false,"NumericalInvariants"=>true);
+    netU = replace(" +$","",netU);
+    texU = replace("(\\\\ )+$","",texU);
+    chiOU := euler hilbertPolynomial U;
+    netDescr := ("Mirror fourfold: " | netW) || ("Surface U: " | netU | ", χ(O_U) = " | (toString chiOU));
+    texDescr := "&\\text{Mirror fourfold: }" | texW | newline | "\\\\&\\text{Surface }U\\text{: }" | texU | "\\text{, }\\chi(\\mathcal{O}_U) = " | (texMath chiOU);
+    if s <= 1 then return (netDescr,texDescr);
+    (L,C) := exceptionalCurves(X,Verbose=>false); -- already in cache
+    exceptionalCurvesInfo := printInfoOnExceptionalCurves(L,C);
+    netDescr = netDescr || exceptionalCurvesInfo;
+    texDescr = texDescr | newline | "\\\\&\\text{" | exceptionalCurvesInfo | "}";
+    if s <= 2 then return (netDescr,texDescr);
     local Utilde;
     if instance(X,DoublySpecialCubicFourfold) then (
         Utilde = mu.cache#("AssociatedUnderlyingK3",X);
@@ -499,17 +498,20 @@ describeMirrorFourfoldAndK3 HodgeSpecialFourfold := X -> (
         Utilde = X.cache#"AssociatedSurfaceCompleteData";
     ) else error "unsupported fourfold type";
     strSurf := if instance(X,IntersectionOfThreeQuadricsInP7) then "Castelnuovo" else "K3";
-    descr = descr | newline | "Minimal " | strSurf | " surface Ũ: ";
-    if instance(Utilde,EmbeddedProjectiveVariety) then (
-        descr = descr | "degree " | (toString degree Utilde) | " and sectional genus " | (toString sectionalGenus Utilde) | " in " | toString(? ambient Utilde) | (cutOutLine Utilde);
-    ) else (
-       descr = descr | toString(? Utilde);
-    );
-    if s <= 3 then return descr;
-    pUtilde := polarizedK3surface(X,Verbose=>true);  -- already in cache
+    (netUtilde,texUtilde) := netTexDescription(Utilde,"NumericalInvariants"=>true);
+    netDescr = netDescr || ("Minimal " | strSurf | " surface Ũ: " | netUtilde);
+    texDescr = texDescr | newline | "\\\\&\\text{Minimal " | strSurf | " surface }\\widetilde{U}\\text{: }" | texUtilde;
+    if s <= 3 then return (netDescr,texDescr);
+    pUtilde := polarizedK3surface(X,Verbose=>true); -- already in cache
     M := latticeMatrix pUtilde;
-    isDetAsExpected := () -> (A := latticeIntersectionMatrix3x3 X; if ring A =!= ZZ then return false; (det A) + (det M) == 0);
-    descr || ((net "Lattice intersection matrix on Ũ: ") | (net M) | net(if isDetAsExpected() then " (det = "|(toString det M)|") ✓" else ""))
+    isDetAsExpected := () -> (
+        A := latticeIntersectionMatrix3x3 X;
+        if ring A =!= ZZ then return false;
+        (det A) + (det M) == 0
+    );
+    netDescr = netDescr || ((net "Lattice intersection matrix on Ũ: ") | (net M) | net(if isDetAsExpected() then " (det = " | (toString det M) | ") ✓" else ""));
+    texDescr = texDescr | newline | "\\\\&\\text{Lattice intersection matrix on }\\widetilde{U}\\text{: }" | (texMath M) | (if isDetAsExpected() then "\\text{ (det = }" | (texMath det M) | "\\text{) }\\checkmark" else "");
+    (netDescr,texDescr)
 );
 
 isDeformationP2P2 = X -> (

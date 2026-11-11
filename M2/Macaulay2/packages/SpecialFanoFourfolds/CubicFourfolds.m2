@@ -178,20 +178,6 @@ netTexDescription CubicFourfold := o -> X -> (
     (netStr,texStr | "\\end{aligned}")
 );
 
-describe CubicFourfold := X -> (
-    descr := "Special cubic fourfold of discriminant " | toString discriminant X | newline | "containing a " | surfaceDescription(0,surface X,true);
-    if recognize X === "LaiFarkasVerraC42" then descr = descr | newline | "(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra," | newline | "this implementation is due to M. Hoff)";
-    if computationStatus X >= 0 then descr = descr | newline | computationStatusLog X | newline | toString describeMirrorFourfoldAndK3 X;
-    if X.cache#?(surface X,"parameterCount") then (
-        (w,xyz) := X.cache#(surface X,"parameterCount");
-        (x,y,z) := xyz;
-        if w =!= 55 - (y+(x-1)-z) then error "internal error encountered";
-        descr = descr || ("Parameter count: " | toString w | " = 55 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
-    );
-    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
-    net expression descr
-);
-
 shortDescriptionFourfold (CubicFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
     "cubic fourfold in C_"|(toString discriminant X)
@@ -200,6 +186,35 @@ shortDescriptionFourfold (CubicFourfold,Boolean) := (X,UseAttribute) -> (
 shortDescriptionFourfoldTeX (CubicFourfold,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
     shortTeX("\\text{cubic fourfold in }\\mathcal{C}_{" | (texMath discriminant X) | "}")
+);
+
+describe CubicFourfold := X -> (
+    S := surface X;
+    d := discriminant X;
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>0);
+    netDescr := ("Special cubic fourfold of discriminant " | toString d) || ("containing a " | netS);
+    texDescr := "\\begin{aligned}&\\text{Special cubic fourfold of discriminant }" | (texMath d) | newline | "\\\\&\\text{containing a }" | texS;
+    if recognize X === "LaiFarkasVerraC42" then (
+        netDescr = netDescr || "(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra,";
+        netDescr = netDescr || "this implementation is due to M. Hoff)";
+        texDescr = texDescr | newline | "\\\\&\\text{(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra,}";
+        texDescr = texDescr | newline | "\\\\&\\text{this implementation is due to M. Hoff)}";
+    );
+    if computationStatus X >= 0 then (
+        (netMirror,texMirror) := describeMirrorFourfoldAndK3 X;
+        netDescr = netDescr || computationStatusLog X || netMirror;
+        texDescr = texDescr | newline | "\\\\&\\text{" | computationStatusLog X | "}";
+        texDescr = texDescr | newline | "\\\\" | texMirror;
+    );
+    if X.cache#?(S,"parameterCount") then (
+        (w,xyz) := X.cache#(S,"parameterCount");
+        (x,y,z) := xyz;
+        if w =!= 55 - (y+(x-1)-z) then error "internal error encountered";
+        netDescr = netDescr || ("Parameter count: " | toString w | " = 55 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+        texDescr = texDescr | newline | "\\\\&\\text{Parameter count: }" | (texMath w) | " = 55 - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
+    );
+    if X.cache#?"CustomData" then netDescr = netDescr || (toString X.cache#"CustomData");
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 -- discriminant CubicFourfold := o -> X -> (

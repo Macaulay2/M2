@@ -30,11 +30,11 @@ cut out by 5 hypersurfaces of degrees 2^1 3^4
 X = apply(strIn,cubicFourfold);
 -- X = apply(strIn,x -> cubicFourfold(x,InputCheck=>10,Verbose=>true));
 assert all(X,x -> x.cache#?(surface x,"label"));
-assert(concatenate apply(X,x -> toString describe x | newline) == strOut);
+assert(concatenate apply(X,x -> toString net describe x | newline) == strOut);
 Y = apply(X,x -> cubicFourfold surface x);
 assert all(Y,y -> not y.cache#?(surface y,"label"));
 assert(apply(Y,discriminant) == {14,14,26,26,38,42,48});
-assert(concatenate apply(Y,y -> toString describe y | newline) == strOut);
+assert(concatenate apply(Y,y -> toString net describe y | newline) == strOut);
 assert(parameterCount(Y_0,Verbose=>true) == (1, (25, 35, 5)) and parameterCount(Y_1,Verbose=>true) == (1, (28, 29, 2)));
 ///
 
@@ -42,18 +42,17 @@ TEST /// -- Test 1 (1/2) -- GM fourfolds from strings: describe, discriminant, p
 strIn := {"sigma-plane", "rho-plane", "tau-quadric"};
 strOut := "Special Gushel-Mukai fourfold of discriminant 10('')
 containing a plane
-and with class in G(1,4) given by s_(3,1)
+whose class in G(1,4) is s_(3,1)
 Type: ordinary
 (case 6 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 12
 containing a plane
-and with class in G(1,4) given by s_(2,2)
+whose class in G(1,4) is s_(2,2)
 Type: ordinary
 (case 9 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 10(')
-containing a surface of degree 2 and sectional genus 0
-cut out by 6 hypersurfaces of degrees 1^5 2^1 
-and with class in G(1,4) given by s_(3,1)+s_(2,2)
+containing a surface of degree 2 and sectional genus 0 cut out by 6 hypersurfaces of degrees 1^5 2^1 
+whose class in G(1,4) is s_(3,1)+s_(2,2)
 Type: ordinary
 (case 1 of Table 1 in arXiv:2002.07026)
 ";
@@ -70,21 +69,18 @@ assert(parameterCount(Y_0,Verbose=>true) == (2, (34, 4, 0)) and parameterCount(Y
 TEST /// -- Test 2 (2/2) -- GM fourfolds from strings: describe, discriminant, parameterCount, toGrass
 strIn := {"cubic scroll", "quintic del Pezzo surface", "general GM 4-fold of discriminant 20"};
 strOut := "Special Gushel-Mukai fourfold of discriminant 12
-containing a surface of degree 3 and sectional genus 0
-cut out by 7 hypersurfaces of degrees 1^4 2^3 
-and with class in G(1,4) given by 2*s_(3,1)+s_(2,2)
+containing a surface of degree 3 and sectional genus 0 cut out by 7 hypersurfaces of degrees 1^4 2^3 
+whose class in G(1,4) is 2*s_(3,1)+s_(2,2)
 Type: ordinary
 (case 7 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 10('')
-containing a surface of degree 5 and sectional genus 1
-cut out by 8 hypersurfaces of degrees 1^3 2^5 
-and with class in G(1,4) given by 3*s_(3,1)+2*s_(2,2)
+containing a surface of degree 5 and sectional genus 1 cut out by 8 hypersurfaces of degrees 1^3 2^5 
+whose class in G(1,4) is 3*s_(3,1)+2*s_(2,2)
 Type: ordinary
 (case 4 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 20
-containing a surface of degree 9 and sectional genus 2
-cut out by 19 hypersurfaces of degree 2
-and with class in G(1,4) given by 6*s_(3,1)+3*s_(2,2)
+containing a surface of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2
+whose class in G(1,4) is 6*s_(3,1)+3*s_(2,2)
 Type: ordinary
 (case 17 of Table 1 in arXiv:2002.07026)
 ";
@@ -209,7 +205,7 @@ for a in {(1,0),(2,0),(3,0),(4,0),(5,0),(5,1)} do (
     E := curvesOnSurface(S,d,g);
     assert(#E>0);
     for C in E do (
-        <<"(d,g) = "<<(d,g)<<", curve: "<<? ideal C<<endl;
+        <<"(d,g) = "<<(d,g)<<", curve: "<< (? C) <<endl;
         assert(degree C == d and sectionalGenus C == g);
         B := glueScroll C;
         assert(dim B == 3 and degree B == 3 and degrees B == {({1},1),({2},3)} and isSubset(C,S*B));
@@ -242,18 +238,18 @@ s1 = "Special cubic fourfold of discriminant 14
 containing a rational surface of degree 4 and sectional genus 0
 cut out by 6 hypersurfaces of degree 2
 K3 status: [▓▓▓░░ / ▓▓▓▓▓]
-Mirror fourfold: hypersurface in PP^5 of degree 2
-Surface U of degree 10, sectional genus 7, χ(O_U) = 2, cut out by 7 hypersurfaces of degrees 2^1 3^6 ";
+Mirror fourfold: quadric hypersurface in PP^5
+Surface U: surface of degree 10 and sectional genus 7 cut out by 7 hypersurfaces of degrees 2^1 3^6, χ(O_U) = 2";
 assert(toString describe X === s1)
 associatedK3surface X
 s2 = "Special cubic fourfold of discriminant 14
 containing a rational surface of degree 4 and sectional genus 0
 cut out by 6 hypersurfaces of degree 2
 K3 status: [▓▓▓▓▓ / ▓▓▓▓▓]
-Mirror fourfold: hypersurface in PP^5 of degree 2
-Surface U of degree 10, sectional genus 7, χ(O_U) = 2, cut out by 7 hypersurfaces of degrees 2^1 3^6 
+Mirror fourfold: quadric hypersurface in PP^5
+Surface U: surface of degree 10 and sectional genus 7 cut out by 7 hypersurfaces of degrees 2^1 3^6, χ(O_U) = 2
 Exceptional curves: an irreducible conic curve
-Minimal K3 surface Ũ: degree 14 and sectional genus 8 in PP^8 cut out by 15 hypersurfaces of degree 2";
+Minimal K3 surface Ũ: surface in PP^8 of degree 14 and sectional genus 8 cut out by 15 hypersurfaces of degree 2";
 assert(toString describe X === s2)
 ///
 
