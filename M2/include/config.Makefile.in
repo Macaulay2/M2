@@ -38,6 +38,10 @@ FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
 OPENMP_CXXFLAGS = @OPENMP_CXXFLAGS@
 
+GCOV_CFLAGS = @GCOV_CFLAGS@
+GCOV_CXXFLAGS = @GCOV_CXXFLAGS@
+GCOV_LDFLAGS = @GCOV_LDFLAGS@
+
 # here we set the variables that "configure" uses
 # this is the only way to add libraries to the linking done by "gdbm", since it doesn't use LDLIBS or LOADLIBES
 LIBS = @LIBS@
