@@ -460,7 +460,7 @@ void testFiniteField(const T& R, int ntrials)
 // specialization.  Call these rather than restating them.
 ////////////////////////////////////////////////////////////////////
 
-// set/copy/init_set are deep copies, set_zero zeroes, swap exchanges.
+// set/init_set are deep copies, set_zero zeroes, swap exchanges.
 template <typename T>
 void testStorage(const T& R, int ntrials)
 {
@@ -479,12 +479,6 @@ void testStorage(const T& R, int ntrials)
       R.set_zero(a);
       EXPECT_TRUE(R.is_zero(a));
       EXPECT_TRUE(R.is_equal(b, saved)) << "set: shares storage with source";
-
-      R.set(a, saved);
-      R.copy(b, a);
-      EXPECT_TRUE(R.is_equal(b, saved));
-      R.set_zero(a);
-      EXPECT_TRUE(R.is_equal(b, saved)) << "copy: shares storage with source";
 
       // init_set, via Element(R, a)
       R.set(a, saved);
@@ -516,7 +510,7 @@ void testComparisons(const T& R, int ntrials)
       SCOPED_TRACE(::testing::Message()
                    << "trial " << i << ", a=" << describeElement(R, a)
                    << ", b=" << describeElement(R, b));
-      R.copy(c, a);
+      R.set(c, a);
 
       EXPECT_TRUE(R.is_equal(a, a));
       EXPECT_EQ(R.compare_elems(a, a), 0);
@@ -548,36 +542,36 @@ void testAliasing(const T& R, int ntrials)
                    << ", b=" << describeElement(R, b));
 
       R.add(expected, a, b);
-      R.copy(result, a);
+      R.set(result, a);
       R.add(result, result, b);
       EXPECT_TRUE(R.is_equal(result, expected)) << "add: result aliases a";
-      R.copy(result, b);
+      R.set(result, b);
       R.add(result, a, result);
       EXPECT_TRUE(R.is_equal(result, expected)) << "add: result aliases b";
 
       R.subtract(expected, a, b);
-      R.copy(result, a);
+      R.set(result, a);
       R.subtract(result, result, b);
       EXPECT_TRUE(R.is_equal(result, expected)) << "subtract: result aliases a";
-      R.copy(result, b);
+      R.set(result, b);
       R.subtract(result, a, result);
       EXPECT_TRUE(R.is_equal(result, expected)) << "subtract: result aliases b";
 
       R.mult(expected, a, b);
-      R.copy(result, a);
+      R.set(result, a);
       R.mult(result, result, b);
       EXPECT_TRUE(R.is_equal(result, expected)) << "mult: result aliases a";
-      R.copy(result, b);
+      R.set(result, b);
       R.mult(result, a, result);
       EXPECT_TRUE(R.is_equal(result, expected)) << "mult: result aliases b";
 
       R.mult(expected, a, a);
-      R.copy(result, a);
+      R.set(result, a);
       R.mult(result, result, result);
       EXPECT_TRUE(R.is_equal(result, expected)) << "mult: all three alias";
 
       R.negate(expected, a);
-      R.copy(result, a);
+      R.set(result, a);
       R.negate(result, result);
       EXPECT_TRUE(R.is_equal(result, expected)) << "negate: result aliases a";
 
@@ -585,7 +579,7 @@ void testAliasing(const T& R, int ntrials)
       R.mult(expected, a, b);
       R.negate(expected, expected);
       R.add(expected, a, expected);
-      R.copy(result, a);
+      R.set(result, a);
       R.subtract_multiple(result, a, b);
       EXPECT_TRUE(R.is_equal(result, expected)) << "subtract_multiple: a - a*b";
     }
@@ -608,12 +602,12 @@ void testSubtractMultiple(const T& R, int ntrials)
 
       R.mult(expected, a, b);
       R.subtract(expected, c, expected);
-      R.copy(result, c);
+      R.set(result, c);
       R.subtract_multiple(result, a, b);
       EXPECT_TRUE(R.is_equal(result, expected));
 
       // subtracting a zero multiple is a no-op
-      R.copy(result, c);
+      R.set(result, c);
       R.set_zero(a);
       R.subtract_multiple(result, a, b);
       EXPECT_TRUE(R.is_equal(result, c));
@@ -649,7 +643,7 @@ void testPowerAgreement(const T& R, int ntrials, int maxExponent = 16)
       gen.nextElement(a);
       SCOPED_TRACE(::testing::Message()
                    << "trial " << i << ", a=" << describeElement(R, a));
-      R.copy(d, one);
+      R.set(d, one);
       for (int e = 0; e <= maxExponent; e++)
         {
           SCOPED_TRACE(e);

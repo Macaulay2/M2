@@ -45,7 +45,7 @@ struct MatrixEntrySetter<DMat<ACoeffRing>>
                   size_t c,
                   const ElementType& a)
   {
-    M.ring().copy(M.entry(r, c), a);
+    M.ring().set(M.entry(r, c), a);
   }
 
   // 'result' must already be init'ed by the caller.
@@ -54,7 +54,7 @@ struct MatrixEntrySetter<DMat<ACoeffRing>>
                   size_t c,
                   ElementType& result)
   {
-    M.ring().copy(result, M.entry(r, c));
+    M.ring().set(result, M.entry(r, c));
   }
 
   static bool isZeroEntry(const DMat<ACoeffRing>& M, size_t r, size_t c)
