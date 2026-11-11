@@ -1,7 +1,7 @@
 #ifndef M2_INTERFACE_MONOMIAL_ORDERING_H_
 #define M2_INTERFACE_MONOMIAL_ORDERING_H_
 
-#  include "engine-includes.hpp"
+#include "engine-includes.hpp"
 
 typedef struct MonomialOrdering MonomialOrdering;
 

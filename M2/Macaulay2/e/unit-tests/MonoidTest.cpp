@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "monomials/ExponentVector.hpp"
+#include "monomials/monordering.hpp"
 #include "monoid.hpp"
 
 /** Monoid tests */
@@ -51,4 +52,35 @@ TEST(ExponentVector, All)
   exponents::syz(n, a, b, c, d);
   EXPECT_TRUE(c0[0] == 6 && c0[1] == 3 && c0[2] == 0);
   EXPECT_TRUE(d0[0] == 0 && d0[1] == 0 && d0[2] == 0);
+}
+
+/** MonomialOrdering tests */
+
+// Extra entries must be ignored, not written past the end of the buffer.
+TEST(MonomialOrdering, overlongWeightVector)
+{
+  auto* mo = MonomialOrderings::join(
+      {MonomialOrderings::Weights({0, 0, 0, 0, 0, 1, 2, 3}),
+       MonomialOrderings::Lex(4)});
+  ASSERT_EQ(MonomialOrderings::numberOfVariables(mo), 4);
+  EXPECT_EQ(MonomialOrderings::firstWeightVector(mo),
+            (std::vector<int> {0, 0, 0, 0}));
+  EXPECT_TRUE(MonomialOrderings::nonTermOrderVariables(mo).empty());
+
+  auto* negative = MonomialOrderings::join(
+      {MonomialOrderings::Weights({0, -1, 0, 0, 5, 6}),
+       MonomialOrderings::Lex(4)});
+  EXPECT_EQ(MonomialOrderings::firstWeightVector(negative),
+            (std::vector<int> {0, -1, 0, 0}));
+  EXPECT_EQ(MonomialOrderings::nonTermOrderVariables(negative),
+            (std::vector<int> {1}));
+}
+
+// A weight vector shorter than the number of variables is zero-padded.
+TEST(MonomialOrdering, shortWeightVector)
+{
+  auto* mo = MonomialOrderings::join(
+      {MonomialOrderings::Weights({1, 1}), MonomialOrderings::Lex(4)});
+  EXPECT_EQ(MonomialOrderings::firstWeightVector(mo),
+            (std::vector<int> {1, 1, 0, 0}));
 }
