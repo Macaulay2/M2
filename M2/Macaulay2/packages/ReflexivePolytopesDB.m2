@@ -132,7 +132,7 @@ ksResultBody = str -> (
 
 -- hodgePairs()#h11 is the sorted list of h12 values such that (h11, h12) occurs
 -- in the Kreuzer-Skarke database.  Read from a data file on first use.
-hodgePairsCache := null;
+hodgePairsCache = null;
 hodgePairs = () -> (
     if hodgePairsCache === null then
         hodgePairsCache = hashTable for s in lines get(offlineDirectory | "ks-hodge-pairs.txt")
@@ -214,9 +214,8 @@ kreuzerSkarke ZZ := List => opts -> h11 -> (
     if debugLevel > 0 then
         << "-- incomplete server response; querying each h12 value separately" << endl;
     lim := optsA.Limit;
-    bodies := {};
     count := 0;
-    for h12 in (hodgePairs())#h11 ?? {} do (
+    bodies := for h12 in (hodgePairs())#h11 ?? {} list (
         if count >= lim then break;
         u := kreuzerSkarkeURL(h11, optsA, H12 => h12, Limit => lim - count);
         s := retrieve(u, Access=>opts.Access);
@@ -224,7 +223,7 @@ kreuzerSkarke ZZ := List => opts -> h11 -> (
             error("incomplete response from the Kreuzer-Skarke server for " | u#0);
         b := ksResultBody s;
         count = count + #parseKSRawString b;
-        bodies = append(bodies, b);
+        b
         );
     parseKSRawString concatenate between("\n", bodies)
     )
