@@ -232,7 +232,7 @@ describe GushelMukaiFourfold := X -> (
     S := surface X;
     cS := first cycleClass X;
     isGushel := dim singLocus ambientFivefold X >= 0;
-    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>0);
     netDescr := "Special " | shortDescriptionFourfold(X,false);
     netDescr = netDescr || ("containing a " | netS);
     netDescr = netDescr || ("whose class in G(1,4) is " | toString cS);
