@@ -759,7 +759,7 @@ isBirationalOntoImageSimis(RationalMapping) := o-> (phi1) -> (
     J:=sub(di1,tR)+ideal apply(1..rs,j->(gens tR)_(n+j)-myt*F_(0,(j-1)));
 
     flag := false;   --this boolean checks whether it is birational
-    giveUp := false;  --this checks whether we give up checkin birationality or not yet
+    giveUp := false;  --this checks whether we give up checking birationality or not yet
     secdeg:=1;        --the second degree of Rees equations
     jj := 1;
     M := null;
