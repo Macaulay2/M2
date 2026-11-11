@@ -4555,7 +4555,6 @@ undocumented {
 (inverse2,MultirationalMap,Option),
 (multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety,Boolean), -- Intended for internal use only
 (symbol ?,MultiprojectiveVariety,MultiprojectiveVariety),
-(symbol ?,GrassmannianVariety),
 (Fano,EmbeddedProjectiveVariety,Option),
 (Fano,ZZ,EmbeddedProjectiveVariety,Option),
 (image,MultirationalMap,ZZ),(image,ZZ,MultirationalMap), -- This is dangerous because the defining ideal may not be saturated
