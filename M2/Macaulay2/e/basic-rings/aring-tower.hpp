@@ -142,7 +142,11 @@ class ARingTower : public RingInterface
     (void) a;
   }
 
-  void set(elem &result, elem a) const { copy(result, a); }
+  void set(elem &result, elem a) const // TODO: write this
+  {
+    (void) result;
+    (void) a;
+  }
 
   /////////////////////////////////
   // ElementType informational ////
@@ -222,6 +226,13 @@ class ARingTower : public RingInterface
     assert(false);
     return false;
   }  // TODO: write this
+
+  bool set_from_BigReal(elem &result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
 
   // arithmetic
   void negate(elem &result, elem a) const

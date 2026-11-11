@@ -52,7 +52,6 @@ class ARingZZp : public SimpleARing<ARingZZp>
   /////////////////////////////////////////////////////////
   unsigned int computeHashValue(const elem &a) const { return a; }
   void init_set(elem &result, elem a) const { result = a; }
-  void copy(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
   /////////////////////////////////
   // ElementType informational ////
@@ -140,6 +139,13 @@ class ARingZZp : public SimpleARing<ARingZZp>
     if (is_zero(d)) return false;
     divide(result, n, d);
     return true;
+  }
+
+  bool set_from_BigReal(elem &result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
   }
 
   // arithmetic
