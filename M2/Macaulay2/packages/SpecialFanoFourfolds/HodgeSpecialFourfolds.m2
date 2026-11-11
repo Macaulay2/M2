@@ -177,29 +177,39 @@ netTexDescription HodgeSpecialFourfold := o -> X -> (
 );
 
 describe HodgeSpecialFourfold := X -> (
-    descr := if dim ambient X == 4
-             then "Four-dimensional projective space"
-             else if degrees X == {({2},3)}
-             then "Complete intersection of three quadrics in PP^7"
-             else if degrees X == {({2},1),({3},1)}
-             then "Complete intersection of type (2,3) in PP^6"
-             else if degrees X == {({4},1)}
-             then "Quartic hypersurface in PP^5"
-             else "Hodge-special fourfold in PP^"|toString(dim ambient X);
-    a := flatten degrees ideal X; r := codim X;
+    S := surface X;
+    (netHead,texHead) := if dim ambient X == 4 then (
+        ("Four-dimensional projective space","\\text{Four-dimensional projective space}")
+    ) else if degrees X == {({2},3)} then (
+        ("Complete intersection of three quadrics in PP^7","\\text{Complete intersection of three quadrics in }\\mathbb{P}^{7}")
+    ) else if degrees X == {({2},1),({3},1)} then (
+        ("Complete intersection of type (2,3) in PP^6","\\text{Complete intersection of type }(2,3)\\text{ in }\\mathbb{P}^{6}")
+    ) else if degrees X == {({4},1)} then (
+        ("Quartic hypersurface in PP^5","\\text{Quartic hypersurface in }\\mathbb{P}^{5}")
+    ) else (
+        ("Hodge-special fourfold in PP^" | (toString dim ambient X),"\\text{Hodge-special fourfold in }\\mathbb{P}^{" | (texMath dim ambient X) | "}")
+    );
+    netDescr := netHead;
+    texDescr := "\\begin{aligned}&" | texHead;
+    a := flatten degrees ideal X;
+    r := codim X;
     if r > 0 and #a == r then (
         disc := discriminant X;
-        A := X.cache#(surface X,"LatticeIntersectionMatrix");
-        descr = descr|newline|toString("of discriminant "|(toString disc)|" = det"|(net A));
+        A := X.cache#(S,"LatticeIntersectionMatrix");
+        netDescr = netDescr || ((net("of discriminant " | (toString disc) | " = det(")) | (net A) | (net ")"));
+        texDescr = texDescr | newline | "\\\\&\\text{of discriminant }" | (texMath disc) | " = \\det" | (texMath A);
     );
-    descr = descr|newline|"containing a "|surfaceDescription(0,surface X);
-    if X.cache#?(surface X,"parameterCount") then (
-        (w,xyz) := X.cache#(surface X,"parameterCount");
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netDescr = netDescr || ("containing a " | netS);
+    texDescr = texDescr | newline | "\\\\&\\text{containing a }" | texS;
+    if X.cache#?(S,"parameterCount") then (
+        (w,xyz) := X.cache#(S,"parameterCount");
         (x,y,z) := xyz;
-        descr = descr || ("Parameter count: " | toString w | " = " | toString(w + y + (x-1) - z) | " - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+        netDescr = netDescr || ("Parameter count: " | (toString w) | " = " | (toString(w+y+(x-1)-z)) | " - (" | (toString y) | " + " | (toString(x-1)) | " - " | (toString z) | ")");
+        texDescr = texDescr | newline | "\\\\&\\text{Parameter count: }" | (texMath w) | " = " | (texMath(w+y+(x-1)-z)) | " - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
     );
-    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
-    net expression descr
+    if X.cache#?"CustomData" then netDescr = netDescr || (toString X.cache#"CustomData");
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 shortDescriptionFourfold = method();
@@ -315,26 +325,26 @@ parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,
         );
     );
     if ring ambient S =!= ring ambient X then error "expected varieties in the same ambient space";
-    d := first first degrees ideal X;
     c := codim X;
-    if not ({{d}} === unique degrees ideal X and c == # degrees ideal X) then error "the second argument must be a complete intersection of hypersurfaces of the same degree";
+    if not (# degrees X == 1 and last first degrees X == c) then error "the second argument must be a complete intersection of hypersurfaces of the same degree";
+    d := first first first degrees X;
     r := dim S;
-    if (r <= 0) then error "the first argument must be a positive dimensional scheme";
+    if r <= 0 then error "the first argument must be a positive dimensional scheme";
     if not isSubset(S,X) then error "expected the first scheme to be a subscheme of the second one";
-    if o.Verbose then <<"S: "|toString(? S)<<endl;
-    if o.Verbose then <<"X: "|toString(? projectiveVariety ring X)<<endl;
+    if o.Verbose then << "-- S: " << net(? S) << endl;
+    if o.Verbose then << "-- X: " << net(? projectiveVariety ring X) << endl;
     n := dim ambient S;
     N := normalSheaf(S,ambient S);
     if isSing then (
-        if o.Verbose then <<"(assumption: dim Ext^1(I_{S,P^"|toString(n)|"},O_S) = 0)"<<endl;
+        if o.Verbose then << "-- (assumption: dim Ext^1(I_{S,P^" << n << "},O_S) = 0)" << endl;
     ) else (
     --   h1N := rankHH(1,N);
     --   if o.Verbose then <<"h^1(N_{S,P^"|toString(n)|"}) = "|toString(h1N)<<endl;
     --   if h1N != 0 then <<"--warning: condition not satisfied: h^1(N_{S,P^"|toString(n)|"}) = 0"<<endl;
-        if o.Verbose then <<"(assumption: h^1(N_{S,P^"|toString(n)|"}) = 0)"<<endl;
+        if o.Verbose then << "-- (assumption: h^1(N_{S,P^" << n << "}) = 0)" << endl;
     );
     h0N := rankHH(0,N);
-    if o.Verbose then <<"h^0(N_{S,P^"|toString(n)|"}) = "|toString(h0N)<<endl<<flush;
+    if o.Verbose then << "-- h^0(N_{S,P^" << n << "}) = " << h0N << endl << flush;
      ------------------------------
     -- If h^1(O_S(d)) == 0, h^3(O_S(d)) == 0,..., and h^0(I_S(d)) == h^0(O_(P^n)(d)) - \chi(O_S(d)) for a particular S,
     -- then we have h^0(I_S(d)) == h^0(O_(P^n)(d)) - \chi(O_S(d)) for the generic S.
@@ -350,24 +360,26 @@ parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,
     ------------------------------
     OS := OO_(variety S);
     h1OSd := for j from 1 to r list if odd j then rank HH^j (OS(d)) else continue;
-    if unique h1OSd =!= {0} then error("condition not satisfied: h^(2j-1)(O_S("|toString(d)|")) = 0");
+    if unique h1OSd =!= {0} then error("condition not satisfied: h^(2j-1)(O_S(" | (toString d) | ")) = 0");
     m := # basisMem({d},S);
     m' := binomial(n+d,d) - ((hilbertPolynomial S) d);
-    if m != m' then error("condition not satisfied: h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) == h^0(O_(P^"|toString(n)|")("|toString(d)|")) - χ(O_S("|toString(d)|"))");
+    if m != m' then error("condition not satisfied: h^0(I_{S,P^" | (toString n) | "}(" | (toString d) | ")) == h^0(O_(P^" | (toString n) | ")(" | (toString d)|")) - χ(O_S(" | (toString d) | "))");
     if o.Verbose then (
-        for j from 1 to r list if odd j then  <<"h^"|toString(j)|"(O_S("|toString(d)|")) = 0, ";
-        <<"and h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) = "|toString(m)|" = h^0(O_(P^"|toString(n)|")("|toString(d)|")) - χ(O_S("|toString(d)|"));"|newline|"in particular, h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) is minimal"<<endl;
+        << "-- ";
+        for j from 1 to r do if odd j then << "h^" << j << "(O_S(" << d << ")) = 0, ";
+        << "and h^0(I_{S,P^" << n << "}(" << d << ")) = " << m << " = h^0(O_(P^" << n << ")(" << d << ")) - χ(O_S(" << d << "));" << endl;
+        << "-- in particular, h^0(I_{S,P^" << n << "}(" << d << ")) is minimal" << endl;
     );
     M := c*(m-c); -- dim GG(c-1,m-1)
-    if c > 1 and o.Verbose then <<"dim GG("|toString(c-1)|","|toString(m-1)|") = "|toString(M)<<endl;
-    if o.Verbose then <<"h^0(N_{S,P^"|toString(n)|"}) + "|(if c > 1 then "dim GG("|toString(c-1)|","|toString(m-1)|")" else toString(m-1))|" = "|toString(h0N + M)<<endl;
+    if c > 1 and o.Verbose then << "-- dim GG(" << (c-1) << "," << (m-1) << ") = " << M << endl;
+    if o.Verbose then << "-- h^0(N_{S,P^" << n << "}) + " << (if c > 1 then "dim GG(" | toString(c-1) | "," | toString(m-1) | ")" else toString(m-1)) << " = " << (h0N + M) << endl;
     NX := normalSheaf(S,X);
     h0NX := rankHH(0,NX);
-    if o.Verbose then <<"h^0(N_{S,X}) = "|toString(h0NX)<<endl;
-    if o.Verbose then <<"dim{[X] : S ⊂ X} >= "|toString(h0N + M - h0NX)<<endl;
-    if o.Verbose then <<(if c > 1 then "dim GG("|toString(c-1)|",P(H^0(O_(P^"|toString(n)|")("|toString(d)|")))) = " else "dim P(H^0(O_(P^"|toString(n)|")("|toString(d)|"))) = ")|toString(c * (binomial(n+d,d) - c))<<endl;
-    w := c*(binomial(n+d,d)-c) - (h0N+M-h0NX);
-    if o.Verbose then <<"codim{[X] : S ⊂ X} <= "|toString(w)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,X}) = " << h0NX << endl;
+    if o.Verbose then << "-- dim{[X] : S ⊂ X} >= " << (h0N + M - h0NX) << endl;
+    if o.Verbose then << (if c > 1 then "-- dim GG(" | toString(c-1) | ",P(H^0(O_(P^" | toString(n) | ")(" | toString(d) | ")))) = " else "-- dim P(H^0(O_(P^" | toString(n) | ")(" | toString(d) |"))) = ") << (c * (binomial(n+d,d) - c)) << endl;
+    w := c * (binomial(n+d,d) - c) - (h0N + M - h0NX);
+    if o.Verbose then << "-- codim{[X] : S ⊂ X} <= " << w << endl;
     if X.cache#?(S,"parameterCount") and X.cache#(S,"parameterCount") =!= (w,(m,h0N,h0NX)) then error "internal error encountered in parameterCount: cached and computed values differ";
     X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX))
 );
@@ -377,35 +389,36 @@ parameterCount HodgeSpecialFourfold := o -> X -> (
     if (not o.Verbose) and X.cache#?(S,"parameterCount") then return X.cache#(S,"parameterCount");
     Y := ambientFivefold X;
     a := degreeHypersurface X;
-    if o.Verbose then <<"S: "|toString(? S)<<endl;
-    if o.Verbose then <<"X: "|toString(? projectiveVariety ring X)<<endl;
-    if o.Verbose then <<"Y: "|toString(? Y)<<endl;
-    if o.Verbose then <<"X is a hypersurface of degree "<<a<<" in Y and contains S"<<endl;
+    if o.Verbose then << "-- S: " << net(? S) << endl;
+    if o.Verbose then << "-- X: " << net(? projectiveVariety ring X) << endl;
+    if o.Verbose then << "-- Y: " << net(? Y) << endl;
+    if o.Verbose then << "-- X is a hypersurface of degree " << a << " in Y and contains S" << endl;
     N := normalSheaf(S,Y);
     h1N := rankHH(1,N);
-    if o.Verbose then <<"h^1(N_{S,Y}) = "|toString(h1N)<<endl;
-    if h1N != 0 then error("condition not satisfied: h^1(N_{S,Y}) = 0");
+    if o.Verbose then << "-- h^1(N_{S,Y}) = " << h1N << endl;
+    if h1N != 0 then error "condition not satisfied: h^1(N_{S,Y}) = 0";
     h0N := rankHH(0,N);
-    if o.Verbose then <<"h^0(N_{S,Y}) = "|toString(h0N)<<endl<<flush;
+    if o.Verbose then << "-- h^0(N_{S,Y}) = " << h0N << endl << flush;
     m := numgens ambient target map X;
     OS := OO_(variety S);
     h1OSa := rank HH^1 (OS(a));
-    if h1OSa != 0 then error("condition not satisfied: h^1(O_S("|(toString a)|")) = 0");
+    if h1OSa != 0 then error("condition not satisfied: h^1(O_S(" | (toString a) | ")) = 0");
     Amb := rank HH^0 OO_(variety Y)(a);
     m' := Amb - ((hilbertPolynomial S) a);
-    if m != m' then error("condition not satisfied: h^0(I_{S,Y}("|(toString a)|")) == h^0(O_Y("|(toString a)|")) - χ(O_S("|(toString a)|"))");
+    if m != m' then error("condition not satisfied: h^0(I_{S,Y}(" | (toString a) | ")) == h^0(O_Y(" | (toString a) | ")) - χ(O_S(" | (toString a) | "))");
     if o.Verbose then (
-        <<"h^1(O_S("|(toString a)|")) = 0, ";
-        <<"and h^0(I_{S,Y}("|(toString a)|")) = "|toString(m)|" = h^0(O_Y("|(toString a)|")) - χ(O_S("|(toString a)|"));"|newline|"in particular, h^0(I_{S,Y}("|(toString a)|")) is minimal"<<endl;
+        << "-- h^1(O_S(" << a << ")) = 0, ";
+        << "and h^0(I_{S,Y}(" << a << ")) = " << m << " = h^0(O_Y(" << a << ")) - χ(O_S(" << a << "));" << endl;
+        << "-- in particular, h^0(I_{S,Y}(" << a << ")) is minimal" << endl;
     );
-    if o.Verbose then <<"h^0(N_{S,Y}) + "|toString(m-1)|" = "|toString(h0N + m - 1)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,Y}) + " << (m-1) << " = " << (h0N + m - 1) << endl;
     NX := normalSheaf(S,X);
     h0NX := rankHH(0,NX);
-    if o.Verbose then <<"h^0(N_{S,X}) = "|toString(h0NX)<<endl;
-    if o.Verbose then <<"dim{[X] : S ⊂ X ⊂ Y} >= "|toString(h0N + m-1 - h0NX)<<endl;
-    if o.Verbose then <<"dim P(H^0(O_Y("|(toString a)|"))) = "|toString(Amb-1)<<endl;
-    w := Amb-1 - (h0N + m-1 - h0NX);
-    if o.Verbose then <<"codim{[X] : S ⊂ X ⊂ Y} <= "|toString(w)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,X}) = " << h0NX << endl;
+    if o.Verbose then << "-- dim{[X] : S ⊂ X ⊂ Y} >= " << (h0N + m - 1 - h0NX) << endl;
+    if o.Verbose then << "-- dim P(H^0(O_Y(" << a << "))) = " << (Amb - 1) << endl;
+    w := Amb - 1 - (h0N + m - 1 - h0NX);
+    if o.Verbose then << "-- codim{[X] : S ⊂ X ⊂ Y} <= " << w << endl;
     if o.Verbose and instance(X,IntersectionOfThreeQuadricsInP7) then infoAboutParameterCountInAmbientP7(w,(m,h0N,h0NX));
     if X.cache#?(S,"parameterCount") and X.cache#(S,"parameterCount") =!= (w,(m,h0N,h0NX)) then error "internal error encountered in parameterCount: cached and computed values differ";
     X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX))
@@ -552,6 +565,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         if S.cache#?"euler" then s = s | surfaceName | ///.cache#"euler" = /// | toString euler S | ";" | newline;
         if S.cache#?"FiniteNumberOfNodes" then s = s | surfaceName | ///.cache#"FiniteNumberOfNodes" = /// | toString numberNodes S | ";" | newline;
         if S.cache#?"singularLocus" and (S.cache#"singularLocus")#"dimVariety" === -1 then s = s | surfaceName | ///.cache#"singularLocus" = 0_/// | surfaceName | ";" | newline;
+        if S.cache#?"top" and S.cache#"top" === S then s = s | surfaceName | ///.cache#"top" = /// | surfaceName | ";" | newline;
         if S.cache#?"linear system on PP^2" then s = s | surfaceName | ///.cache#"linear system on PP^2" = /// | toString S.cache#"linear system on PP^2" | ";" | newline;
         if S.cache#?"ConstructionParameters" then s = s | surfaceName | ///.cache#"ConstructionParameters" = /// | toString S.cache#"ConstructionParameters" | ";" | newline;
         if S.cache#?"rationalParametrization" then (
@@ -588,6 +602,7 @@ toExternalString HodgeSpecialFourfold := X -> (
     ) else (
         s = s | "V := " | toRingAmbientX V | ";" | newline;
     );
+    if V.cache#?"singularLocus" and (V.cache#"singularLocus")#"dimVariety" === -1 then s = s | ///V.cache#"singularLocus" = 0_V;/// | newline;
     if instance(X,DoublySpecialCubicFourfold) then (
         s = s | "X = specialFourfold(S & T,X,NumNodes=>" | toString apply(surfaces X,numberNodes) | ",InputCheck=>0);" | newline;
     ) else if instance(X,CubicFourfold) then (

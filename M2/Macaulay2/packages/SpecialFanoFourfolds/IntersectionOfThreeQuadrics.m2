@@ -42,22 +42,40 @@ netTexDescription IntersectionOfThreeQuadricsInP7 := o -> X -> (
 );
 
 describe IntersectionOfThreeQuadricsInP7 := X -> (
-    descr := "Complete intersection of three quadrics in PP^7";
+    recognize X;
+    S := surface X;
     disc := discriminant X;
-    A := X.cache#(surface X,"LatticeIntersectionMatrix");
-    descr = descr|newline|toString("of discriminant "|(toString disc)|" = det"|(net A));
-    descr = descr|newline|"containing a "|surfaceDescription(0,surface X);
-    if member(recognize X,{"surf-5-7-0-1","surf-5-10-1","internal-projection-K3-genus-8","surf-4-3-1-external","surf-5-6-2-nodal","surf-7-1-9"}) then descr = descr|newline|"(This is a rational fourfold discovered in August 2022)";
-    if recognize X === "planeInPP7" then descr = descr|newline|"(This is a classical example of rational fourfold)";
-    if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
-    if X.cache#?(surface X,"parameterCount") then (
-        (w,xyz) := X.cache#(surface X,"parameterCount");
+    A := X.cache#(S,"LatticeIntersectionMatrix");
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netDescr := "Complete intersection of three quadrics in PP^7";
+    netDescr = netDescr || ((net("of discriminant " | (toString disc) | " = det(")) | (net A) | (net ")"));
+    netDescr = netDescr || ("containing a " | netS);
+    texDescr := "\\begin{aligned}&\\text{Complete intersection of three quadrics in }\\mathbb{P}^{7}";
+    texDescr = texDescr | newline | "\\\\&\\text{of discriminant }" | (texMath disc) | " = \\det" | (texMath A);
+    texDescr = texDescr | newline | "\\\\&\\text{containing a }" | texS;
+    if member(recognize X,{"surf-5-7-0-1","surf-5-10-1","internal-projection-K3-genus-8","surf-4-3-1-external","surf-5-6-2-nodal","surf-7-1-9"}) then (
+        netDescr = netDescr || "(This is a rational fourfold discovered in August 2022)";
+        texDescr = texDescr | newline | "\\\\&\\text{(This is a rational fourfold discovered in August 2022)}";
+    );
+    if recognize X === "planeInPP7" then (
+        netDescr = netDescr || "(This is a classical example of rational fourfold)";
+        texDescr = texDescr | newline | "\\\\&\\text{(This is a classical example of rational fourfold)}";
+    );
+    if computationStatus X >= 0 then (
+        (netMirror,texMirror) := describeMirrorFourfoldAndK3 X;
+        netDescr = netDescr || (computationStatusLog X) || netMirror;
+        texDescr = texDescr | newline | "\\\\&\\text{" | computationStatusLog X | "}";
+        texDescr = texDescr | newline | "\\\\" | texMirror;
+    );
+    if X.cache#?(S,"parameterCount") then (
+        (w,xyz) := X.cache#(S,"parameterCount");
         (x,y,z) := xyz;
         if w =!= 33 - (y+(x-1)-z) then error "internal error encountered";
-        descr = descr || ("Parameter count: " | toString w | " = 33 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+        netDescr = netDescr || ("Parameter count: " | (toString w) | " = 33 - (" | (toString y) | " + " | (toString(x-1)) | " - " | (toString z) | ")");
+        texDescr = texDescr | newline | "\\\\&\\text{Parameter count: }" | (texMath w) | " = 33 - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
     );
-    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
-    net expression descr
+    if X.cache#?"CustomData" then netDescr = netDescr || (toString X.cache#"CustomData");
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 shortDescriptionFourfold (IntersectionOfThreeQuadricsInP7,Boolean) := (X,UseAttribute) -> (
@@ -107,8 +125,8 @@ infoAboutParameterCountInAmbientP7 = (x,y) -> (
         -- Therefore parameterCount(X) ----> (34-a-b+c, (b+2, 68 + a - 2b , c))
     --------------------------------------------------
     (b,a,c) := y;
-    if 34-a-b+c != x then <<"--warning: something went wrong"<<endl;
-    <<"[parameterCount in the ambient PP^7: "<<(34-a-b+c, (b+2, 68 + a - 2*b , c))<<"]"<<endl;
+    if 34-a-b+c != x then << "-- warning: something went wrong" << endl;
+    << "-- [parameterCount in the ambient PP^7: " << (34-a-b+c, (b+2, 68 + a - 2*b, c)) << "]" << endl;
 );
 
 beauvilleMap = method();

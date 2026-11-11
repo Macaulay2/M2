@@ -229,30 +229,66 @@ netTexDescription GushelMukaiFourfold := o -> X -> (
 
 describe GushelMukaiFourfold := X -> (
     recognize X;
-    descr := "Special " | shortDescriptionFourfold(X,false);
-    descr = descr | newline | "containing a " | surfaceDescription(0,surface X);
-    descr = descr|newline|"and with class in G(1,4) given by "|toString(first cycleClass X);
-    if dim singLocus ambientFivefold X >= 0 then descr = descr|newline|"Type: Gushel (not ordinary)" else descr = descr|newline|"Type: ordinary";
-    if instance(recognize X,ZZ) then descr = descr|newline|"(case "|toString(recognize X)|" of Table 1 in arXiv:2002.07026)";
-    if recognize X === "gushel26''" then (
-        if dim singLocus ambientFivefold X >= 0
-        then descr = descr|newline|"(case considered in Section 1 of arXiv:2003.07809)"
-        else descr = descr|newline|"(case discovered in November 2021; see also Section 1 of arXiv:2003.07809)";
+    S := surface X;
+    cS := first cycleClass X;
+    isGushel := dim singLocus ambientFivefold X >= 0;
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netDescr := "Special " | shortDescriptionFourfold(X,false);
+    netDescr = netDescr || ("containing a " | netS);
+    netDescr = netDescr || ("whose class in G(1,4) is " | toString cS);
+    netDescr = netDescr || (if isGushel then "Type: Gushel (not ordinary)" else "Type: ordinary");
+    texDescr := "\\begin{aligned}&\\text{Special }" | (texMath shortDescriptionFourfoldTeX(X,false));
+    texDescr = texDescr | newline | "\\\\&\\text{containing a }" | texS;
+    texDescr = texDescr | newline | "\\\\&\\text{whose class in }\\mathbb{G}(1,4)\\text{ is }" | replace("s_","\\\\sigma_",texMath cS);
+    texDescr = texDescr | newline | "\\\\&\\text{" | (if isGushel then "Type: Gushel (not ordinary)" else "Type: ordinary") | "}";
+    if instance(recognize X,ZZ) then (
+        netDescr = netDescr || ("(case " | (toString recognize X) | " of Table 1 in arXiv:2002.07026)");
+        texDescr = texDescr | newline | "\\\\&\\text{(case }" | (texMath recognize X) | "\\text{ of Table 1 in arXiv:2002.07026)}";
     );
-    if recognize X === "mukai26''" and dim singLocus ambientFivefold X >= 0 then descr = descr|newline|"(case considered in Section 2 of arXiv:2003.07809)";
-    if recognize X === "mukai26''" and dim singLocus ambientFivefold X == -1 then descr = descr|newline|"(case considered in Section 3 of arXiv:2003.07809)";
-    if recognize X === "october2021-26''" or recognize X === "october2021-28" or recognize X === "october2021-28-2" or recognize X === "october2021-34'" then descr = descr|newline|"(case discovered in October 2021)";
-    if recognize X === "october2021-20" then descr = descr|newline|"(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)";
-    if recognize X === "april2022-GM42''" then descr = descr|newline|"(strange example discovered in October 2021)";
-    if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
-    if X.cache#?(surface X,"parameterCount") then (
-        (w,xyz) := X.cache#(surface X,"parameterCount");
+    if recognize X === "gushel26''" then (
+        if isGushel then (
+            netDescr = netDescr || "(case considered in Section 1 of arXiv:2003.07809)";
+            texDescr = texDescr | newline | "\\\\&\\text{(case considered in Section 1 of arXiv:2003.07809)}";
+        ) else (
+            netDescr = netDescr || "(case discovered in November 2021; see also Section 1 of arXiv:2003.07809)";
+            texDescr = texDescr | newline | "\\\\&\\text{(case discovered in November 2021; see also Section 1 of arXiv:2003.07809)}";
+        );
+    );
+    if recognize X === "mukai26''" and isGushel then (
+        netDescr = netDescr || "(case considered in Section 2 of arXiv:2003.07809)";
+        texDescr = texDescr | newline | "\\\\&\\text{(case considered in Section 2 of arXiv:2003.07809)}";
+    );
+    if recognize X === "mukai26''" and not isGushel then (
+        netDescr = netDescr || "(case considered in Section 3 of arXiv:2003.07809)";
+        texDescr = texDescr | newline | "\\\\&\\text{(case considered in Section 3 of arXiv:2003.07809)}";
+    );
+    if member(recognize X,{"october2021-26''","october2021-28","october2021-28-2","october2021-34'"}) then (
+        netDescr = netDescr || "(case discovered in October 2021)";
+        texDescr = texDescr | newline | "\\\\&\\text{(case discovered in October 2021)}";
+    );
+    if recognize X === "october2021-20" then (
+        netDescr = netDescr || "(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)";
+        texDescr = texDescr | newline | "\\\\&\\text{(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)}";
+    );
+    if recognize X === "april2022-GM42''" then (
+        netDescr = netDescr || "(strange example discovered in October 2021)";
+        texDescr = texDescr | newline | "\\\\&\\text{(strange example discovered in October 2021)}";
+    );
+    if computationStatus X >= 0 then (
+        (netMirror,texMirror) := describeMirrorFourfoldAndK3 X;
+        netDescr = netDescr || (computationStatusLog X) || netMirror;
+        texDescr = texDescr | newline | "\\\\&\\text{" | computationStatusLog X | "}";
+        texDescr = texDescr | newline | "\\\\" | texMirror;
+    );
+    if X.cache#?(S,"parameterCount") then (
+        (w,xyz) := X.cache#(S,"parameterCount");
         (x,y,z) := xyz;
         if w =!= 39 - (y+(x-1)-z) then error "internal error encountered";
-        descr = descr || ("Parameter count: " | toString w | " = 39 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+        netDescr = netDescr || ("Parameter count: " | toString w | " = 39 - (" | toString y | " + " | toString(x-1) | " - " | toString z | ")");
+        texDescr = texDescr | newline | "\\\\&\\text{Parameter count: }" | (texMath w) | " = 39 - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
     );
-    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
-    net expression descr
+    if X.cache#?"CustomData" then netDescr = netDescr || (toString X.cache#"CustomData");
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 shortDescriptionFourfold (GushelMukaiFourfold,Boolean) := (X,UseAttribute) -> (
@@ -421,33 +457,34 @@ parameterCount GushelMukaiFourfold := o -> X -> (
     S := surface X;
     if (not o.Verbose) and X.cache#?(S,"parameterCount") then return X.cache#(S,"parameterCount");
     Y := ambientFivefold X;
-    if o.Verbose then <<"S: "|toString(? S)<<endl;
-    if o.Verbose then <<"X: GM fourfold containing S"<<endl;
-    if o.Verbose then <<"Y: del Pezzo fivefold containing X"<<endl;
+    if o.Verbose then << "-- S: " << net(? S) << endl;
+    if o.Verbose then << "-- X: GM fourfold containing S" << endl;
+    if o.Verbose then << "-- Y: del Pezzo fivefold containing X" << endl;
     N := normalSheaf(S,Y);
     h1N := rankHH(1,N);
-    if o.Verbose then <<"h^1(N_{S,Y}) = "|toString(h1N)<<endl;
-    if h1N != 0 then error("condition not satisfied: h^1(N_{S,Y}) = 0");
+    if o.Verbose then << "-- h^1(N_{S,Y}) = " << h1N << endl;
+    if h1N != 0 then error "condition not satisfied: h^1(N_{S,Y}) = 0";
     h0N := rankHH(0,N);
-    if o.Verbose then <<"h^0(N_{S,Y}) = "|toString(h0N)<<endl<<flush;
+    if o.Verbose then << "-- h^0(N_{S,Y}) = " << h0N << endl << flush;
     m := (# basisMem({2},S)) - 5;
     OS := OO_(variety S);
     h1OS2 := rank HH^1 (OS(2));
-    if h1OS2 != 0 then error("condition not satisfied: h^1(O_S(2)) = 0");
+    if h1OS2 != 0 then error "condition not satisfied: h^1(O_S(2)) = 0";
     m' := 40 - ((hilbertPolynomial S) 2);
-    if m != m' then error("condition not satisfied: h^0(I_{S,Y}(2)) == h^0(O_Y(2)) - χ(O_S(2))");
+    if m != m' then error "condition not satisfied: h^0(I_{S,Y}(2)) == h^0(O_Y(2)) - χ(O_S(2))";
     if o.Verbose then (
-        <<"h^1(O_S(2)) = 0, ";
-        <<"and h^0(I_{S,Y}(2)) = "|toString(m)|" = h^0(O_Y(2)) - χ(O_S(2));"|newline|"in particular, h^0(I_{S,Y}(2)) is minimal"<<endl;
+        << "-- h^1(O_S(2)) = 0, ";
+        << "and h^0(I_{S,Y}(2)) = " << m << " = h^0(O_Y(2)) - χ(O_S(2));" << endl;
+        << "-- in particular, h^0(I_{S,Y}(2)) is minimal" << endl;
     );
-    if o.Verbose then <<"h^0(N_{S,Y}) + "|toString(m-1)|" = "|toString(h0N + m - 1)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,Y}) + " << (m-1) << " = " << (h0N + m - 1) << endl;
     NX := normalSheaf(S,X);
     h0NX := rankHH(0,NX);
-    if o.Verbose then <<"h^0(N_{S,X}) = "|toString(h0NX)<<endl;
-    if o.Verbose then <<"dim{[X] : S ⊂ X ⊂ Y} >= "|toString(h0N + m-1 - h0NX)<<endl;
-    if o.Verbose then <<"dim P(H^0(O_Y(2))) = 39"<<endl;
-    w := 39 - (h0N + m-1 - h0NX);
-    if o.Verbose then <<"codim{[X] : S ⊂ X ⊂ Y} <= "|toString(w)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,X}) = " << h0NX << endl;
+    if o.Verbose then << "-- dim{[X] : S ⊂ X ⊂ Y} >= " << (h0N + m - 1 - h0NX) << endl;
+    if o.Verbose then << "-- dim P(H^0(O_Y(2))) = 39" << endl;
+    w := 39 - (h0N + m - 1 - h0NX);
+    if o.Verbose then << "-- codim{[X] : S ⊂ X ⊂ Y} <= " << w << endl;
     if X.cache#?(S,"parameterCount") and X.cache#(S,"parameterCount") =!= (w,(m,h0N,h0NX)) then error "internal error encountered in parameterCount: cached and computed values differ";
     X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX))
 );

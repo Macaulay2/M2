@@ -156,48 +156,64 @@ describe DoublySpecialCubicFourfold := X -> (
     d2 := discriminant Y;
     A := latticeIntersectionMatrix3x3 X;
     (q,r) := quotientRemainder(det A,8);
-    Cd1Cd2 := "C_"|(toString d1);
-    if d1 != d2 then Cd1Cd2 = Cd1Cd2|" ∩ C_"|(toString d2);
-    descr := "Cubic fourfold in "|Cd1Cd2|" over "|toString(coefficientRing X)|" of lattice discriminant";
-    descr = descr||((net(newline|"det("))|(net A)|(net(newline|") = "|(toString det A)|" = "|(toString q)|"*8 + "|(toString r))));
-    descr = descr||net "containing two surfaces:";
-    descr = descr||net(" - " | surfaceDescription(3,S,true));
-    descr = descr||net(" - " | surfaceDescription(3,T,true));
-    if dim(S * T) >= 0 and top(S * T) != S * T then (
-        descr = descr||("Intersection of the surfaces: non-equidimensional scheme of dimension "|(toString dim(S * T)));
-    ) else (
-        if dim(S * T) == 1 then descr = descr||("Intersection of the surfaces: curve of degree "|toString degree(S * T)|" and arithmetic genus "|toString sectionalGenus(S * T));
-        if dim(S * T) <= 0 then descr = descr||("Intersection of the surfaces: "|(toString degree(S * T))|" points");
-        if dim(S * T) >= 1 and degree(S * T) >= 2 then (
-            if dim singularLocus(S * T) <= 0 then (
-                m := degree support singularLocus(S * T);
-                descr = descr||(net "Singular locus of the intersection: "|(if m == 0 then "∅" else (if m == 1 then "a single point" else (toString m)|" points")));
-            ) else (
-                descr = descr||(net "Singular locus of the intersection: "|(? support singularLocus(S * T)));
-            );
-        );
+    Cd1Cd2 := "C_" | (toString d1);
+    texCd1Cd2 := "\\mathcal{C}_{" | (texMath d1) | "}";
+    if d1 != d2 then (
+        Cd1Cd2 = Cd1Cd2 | " ∩ C_" | (toString d2);
+        texCd1Cd2 = texCd1Cd2 | "\\cap\\mathcal{C}_{" | (texMath d2) | "}";
     );
+    netDescr := "Cubic fourfold in " | Cd1Cd2 | " over " | toString(coefficientRing X) | " of lattice discriminant";
+    netDescr = netDescr || ((net(newline | "det(")) | (net A) | (net(newline | ") = " | (toString det A) | " = " | (toString q) | "*8 + " | (toString r))));
+    texDescr := "\\begin{aligned}&\\text{Cubic fourfold in }" | texCd1Cd2 | "\\text{ over }" | (texMath coefficientRing X) | "\\text{ of lattice discriminant}";
+    texDescr = texDescr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath det A) | " = " | (texMath q) | "\\cdot 8 + " | (texMath r);
+    numberNodes(S,Verbose=>false);
+    numberNodes(T,Verbose=>false);
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>3);
+    (netT,texT) := netTexDescription(T,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>3);
+    netDescr = netDescr || net "containing two surfaces:";
+    netDescr = netDescr || net(" - " | netS);
+    netDescr = netDescr || net(" - " | netT);
+    texDescr = texDescr | newline | "\\\\&\\text{containing two surfaces:}";
+    texDescr = texDescr | newline | "\\\\&\\quad\\text{- }" | texS;
+    texDescr = texDescr | newline | "\\\\&\\quad\\text{- }" | texT;
+    I := S * T;
+    if dim I == 1 then numberNodes(I,Verbose=>false);
+    if dim I <= 0 then I = support support I; -- useful for cache
+    (netI,texI) := netTexDescription(I,"Ambient"=>false,"NumericalInvariants"=>true,"GeneratorDegrees"=>false);
+    netDescr = netDescr || ("Intersection of the surfaces: " | netI);
+    texDescr = texDescr | newline | "\\\\&\\text{Intersection of the surfaces: }" | texI;
     if isPlaneInP5 T or isPlaneInP5 S then (
-        idX := if substring(0,8,recognizeDSCF X) === "DSCF-V1-" then "   {ID: "|substring(8,recognizeDSCF X)|"}" else "";
-        symb := if hasRationalSection X then "★ " else "☆ ";
-        descr = descr||(symb|(genericQuadricFiberDescription X));
-        if hasRationalSection X then descr = descr||((computationStatusLog X)|idX);
-        if computationStatus X >= 1 then descr = descr || (describeMirrorFourfoldAndK3 X);
+        idX := if substring(0,8,recognizeDSCF X) === "DSCF-V1-" then "   {ID: " | substring(8,recognizeDSCF X) | "}" else "";
+        (symb,texSymb) := if hasRationalSection X then ("★ ","\\star\\ ") else ("☆ ","\\mathord{\\☆}\\ ");
+        quadricFiberDescription := genericQuadricFiberDescription X;
+        netDescr = netDescr || (symb | quadricFiberDescription);
+        texDescr = texDescr | newline | "\\\\&" | texSymb | "\\text{" | quadricFiberDescription | "}";
+        if hasRationalSection X then (
+            netDescr = netDescr || ((computationStatusLog X) | idX);
+            texDescr = texDescr | newline | "\\\\&\\text{" | computationStatusLog X | idX | "}";
+        );
+        if computationStatus X >= 1 then (
+            (netMirror,texMirror) := describeMirrorFourfoldAndK3 X;
+            netDescr = netDescr || netMirror;
+            texDescr = texDescr | newline | "\\\\" | texMirror;
+        );
     );
     if X.cache#?(append(surfaces X,"parameterCount")) then (
         (w,xyz) := X.cache#(append(surfaces X,"parameterCount"));
         (x,y,z) := xyz;
         if w =!= 54 - (y+(x-1)-z) then error "internal error encountered";
-        descr = descr || ("Parameter count: "|(toString w)|" = 54 - ("|(toString y)|" + "|toString(x-1)|" - "|(toString z)|")");
-        if X.cache#?(surface X,"parameterCount") then (
-            (w,xyz) = X.cache#(surface X,"parameterCount");
+        netDescr = netDescr || ("Parameter count: " | (toString w) | " = 54 - (" | (toString y) | " + " | toString(x-1) | " - " | (toString z) | ")");
+        texDescr = texDescr | newline | "\\\\&\\text{Parameter count: }" | (texMath w) | " = 54 - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
+        if X.cache#?(S,"parameterCount") then (
+            (w,xyz) = X.cache#(S,"parameterCount");
             (x,y,z) = xyz;
             if w =!= 55 - (y+(x-1)-z) then error "internal error encountered";
-            descr = descr || ("                 "|(toString w)|" = 55 - ("|(toString y)|" + "|toString(x-1)|" - "|(toString z)|")");
+            netDescr = netDescr || ("                 " | (toString w) | " = 55 - (" | (toString y) | " + " | toString(x-1) | " - " | (toString z) | ")");
+            texDescr = texDescr | newline | "\\\\&\\phantom{\\text{Parameter count: }}" | (texMath w) | " = 55 - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
         );
     );
-    if X.cache#?"CustomData" then descr = descr || (toString X.cache#"CustomData");
-    net expression descr
+    if X.cache#?"CustomData" then netDescr = netDescr || (toString X.cache#"CustomData");
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 shortDescriptionFourfold (DoublySpecialCubicFourfold,Boolean) := (X,UseAttribute) -> (

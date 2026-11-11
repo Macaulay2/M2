@@ -29,17 +29,17 @@ netTexDescription WeightedSurfaceAssociatedToRationalFourfold := netTexDescripti
             "\\text{" | S | " associated to }" | (texMath shortDescriptionFourfoldTeX(X,true))
         );
     );
-    if dim U >= 0 then return netTexDescription projectiveVariety(ring U,Saturate=>false);
+    if dim U >= 0 then return netTexDescription(projectiveVariety(ring U,Saturate=>false),"Ambient"=>o#"Ambient","GeneratorDegrees"=>o#"GeneratorDegrees","NumericalInvariants"=>o#"NumericalInvariants","Indent"=>o#"Indent");
     (
         "-* some calculations are missing *-",
         "\\text{some calculations are missing}"
     )
 );
 
-describe WeightedSurfaceAssociatedToRationalFourfold := describe SurfaceAssociatedToRationalFourfold := S -> (
-    out := "Fourfold: ";
-    if hasAttribute(recoverFourfold S,ReverseDictionary) then out = out|(toString getAttribute(recoverFourfold S,ReverseDictionary))|", ";
-    (out|shortDescriptionFourfold(recoverFourfold S,false))||(describeMirrorFourfoldAndK3 recoverFourfold S)
+describe WeightedSurfaceAssociatedToRationalFourfold := describe SurfaceAssociatedToRationalFourfold := U -> (
+    (nU,tU) := netTexDescription(U,"UseName"=>false,"Short"=>true);
+    (nD,tD) := describeMirrorFourfoldAndK3 recoverFourfold U;
+    netTexMath(nU || nD, "\\begin{aligned}&" | tU | "\\\\" | newline | tD | "\\end{aligned}")
 );
 
 makeSurfaceAssociated = (X,mu,U,C,f) -> (
