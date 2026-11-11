@@ -486,7 +486,12 @@ setup = method()
 mungeEmacs = () -> (
      dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir,templ) -> fix(var,dir,"",templ)), dotemacsFix0);
      supplantStringFile(dotemacsFix,"~/"|M2emacs,false);
-     mungeFile("~/"|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
+     -- Emacs reads only the first of these that exists, so creating ~/.emacs would hide the others;
+     -- ~/.config/emacs is ignored if ~/.emacs.d exists
+     initFiles := {".emacs.el", ".emacs", ".emacs.d/init.el"};
+     if not fileExists "~/.emacs.d" then initFiles = append(initFiles, ".config/emacs/init.el");
+     initFile := "~/" | first(select(initFiles, f -> fileExists("~/" | f)) | {".emacs"});
+     mungeFile(initFile, ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
      )
 prelim := () -> (
      promptUser = true;
