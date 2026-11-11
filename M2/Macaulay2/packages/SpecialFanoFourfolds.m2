@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.8.1",
-    Date => "September 26, 2026",
+    Date => "November 11, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -34,7 +34,7 @@ newPackage(
 	}
 )
 
-requiredMultiprojectiveVarietiesVersion := "2.7.1";
+requiredMultiprojectiveVarietiesVersion := "2.7.2";
 if MultiprojectiveVarieties.Options.Version < requiredMultiprojectiveVarietiesVersion then (
     <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version "<<requiredMultiprojectiveVarietiesVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
@@ -82,7 +82,11 @@ export{
     "polarizedK3surface",
     "latticePolarization",
     "swap",
-    "example"
+    "example",
+    "texTables",
+    "OpenPDF",
+    "localExamplesArchive",
+    "updatePackage"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
@@ -119,6 +123,8 @@ load "./SpecialFanoFourfolds/LatticePolarizedK3.m2";
 load "./SpecialFanoFourfolds/examples.m2";
 
 load "./SpecialFanoFourfolds/utils.m2";
+
+load "./SpecialFanoFourfolds/LatexTables.m2";
 
 load "./SpecialFanoFourfolds/HodgeSpecialSurfaces.m2";
 

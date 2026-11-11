@@ -106,33 +106,11 @@ MultirationalMap * VirtualInverseWeightedRationalMap := (Phi,Psi) -> virtualInve
 normalization = method(Options => {Verbose => true});
 normalization EmbeddedProjectiveVariety := o -> X -> (
     if X.cache#?"Normalization" then return X.cache#"Normalization";
-    if o.Verbose then <<"-- computing normalization of "|toString(? ideal X)<<endl;
+    if o.Verbose then <<"-- computing normalization of "|toString(? X)<<endl;
     f := rationalMap icMap ring X;
     if o.Verbose then <<"-- got: "|toString(expression f)<<endl;
     X.cache#"Normalization" = f
 );
-
--*
-experimentalNormalizationInv = method(Options => {Verbose => true});
-experimentalNormalizationInv EmbeddedProjectiveVariety := o -> X -> (
-    if X.cache#?"ExperimentalNormalizationInv" then return X.cache#"ExperimentalNormalizationInv";
-    if not (dim X == 2 and dim linearSpan X > 5) then error "expected a surface with linear span of dimension > 5";
-    if o.Verbose then <<"-- computing experimental normalization of "|toString(? ideal X)<<endl;
-    pts := apply(dim ambient X - 5,i -> point X);
-    pr := rationalMap((linearSpan pts)_X,Dominant=>true);
-    if degree target pr != degree X - (dim ambient X - 5) then error "something went wrong";
-    n := multirationalMap normalization(target pr,Verbose=>o.Verbose);
-    if o.Verbose then <<"-- inverting normalization"<<endl;
-    n' := inverse3 n;
-    if o.Verbose then <<"-- inverting projection"<<endl;
-    pr' := inverse3 pr;
-    if o.Verbose then <<"-- contracting exceptional line(s) on the normalization"<<endl;
-    h := mapDefinedByDivisor(source n,{(random(1,0_(source n)),1)}|apply(pts,p -> (n' pr'^* p,1)));
-    if dim ambient target h != dim ambient source h + (dim ambient X - 5) then error "something went wrong";
-    N := pr * n' * h;
-    X.cache#"ExperimentalNormalizationInv" = N
-);
-*-
 
 MinimumCodimensionForExperimentalNormalization = 7; -- 5;
 inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
@@ -171,7 +149,6 @@ inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
 );
 
 inverseNormalizationMapExperimentalRaw = (Y,strY,expEulOut,verb) -> (
-    -- A variant and improvement of experimentalNormalizationInv.
     if not (dim Y == 2 and dim linearSpan Y > 5) then error "experimental normalization requires a surface with linear span dimension > 5";
     if verb then << "-- computing experimental normalization of " << strY << "..." << endl;
     pts := apply(dim ambient Y - 5, i -> point Y);
@@ -225,13 +202,13 @@ interpolateImage (MultirationalMap,List,ZZ) := o -> (Phi,D,j) -> (
     while select(flatten degrees ideal W,d -> d <= j) =!= D do (
         if doPrint(o.Verbose,cont) then <<"  -- image "<<cont<<", ";
         W = W + Phi point source Phi;
-        if doPrint(o.Verbose,cont) then (<<"degrees: "; <<toStringDegreesVar W<<endl);
+        if doPrint(o.Verbose,cont) then (<<"degrees: "; <<generatorDegreesString W<<endl);
         cont = cont + 1;
     );
     for i to 3 do (
         if o.Verbose then <<"  -- (verifying) image "<<cont<<", ";
         W = W + Phi point source Phi;
-        if o.Verbose then (<<"degrees: "; <<toStringDegreesVar W<<endl);
+        if o.Verbose then (<<"degrees: "; <<generatorDegreesString W<<endl);
         cont = cont + 1;
     );
     W = projectiveVariety(ideal select(flatten entries gens ideal W,w -> first degree w <= j),MinimalGenerators=>true,Saturate=>false);
@@ -263,7 +240,7 @@ interpolateTop (EmbeddedProjectiveVariety,List) := o -> (X,j) -> (
         if o.Verbose then <<"  -- top "<<cont<<", ";
         f = parametrize random({(dim X):{1}},0_X);
         W = W + f f^* X;
-        if o.Verbose then (<<"degrees: "; <<toStringDegreesVar W<<endl);
+        if o.Verbose then (<<"degrees: "; <<generatorDegreesString W<<endl);
         D = append(D,select(flatten degrees ideal W,d -> d <= j));
     );
     gW := select(flatten entries gens ideal W,w -> first degree w <= j);
@@ -386,53 +363,14 @@ isStandardK3surface EmbeddedProjectiveVariety := (cacheValue "is standard K3 sur
 
 isPlaneInP5 = P -> degrees P === {({1}, 3)} and codim P == 3 and dim P == 2;
 
-isPresumedRationalNormalCurve = method();
-isPresumedRationalNormalCurve EmbeddedProjectiveVariety := C -> (
-    degs := flatten degrees ideal C;
-    if max degs > 2 then return false;
-    d1 := number(degs, i -> i == 1);
-    d2 := number(degs, i -> i == 2);
-    n := (dim ambient C) - d1;
-    if d2 != binomial(n,2) then return false;
-    if dim C != 1 then return false;
-    if degree C != n then return false;
-    if sectionalGenus C != 0 then return false;
-    if n <= 3 then return isSmooth C;
-    true
-);
-
-commonNameRationalNormalCurve = method();
-commonNameRationalNormalCurve EmbeddedProjectiveVariety := C -> (
-    if not isPresumedRationalNormalCurve C then error "expected a rational normal curve";
-    d := degree C;
-    if d == 1 then return "a line";
-    if d == 2 then return "an irreducible conic curve";
-    if d == 3 then return "a twisted cubic curve";
-    "a rational normal curve of degree " | (toString d)
-);
-
 surfaceDescription = method();
 surfaceDescription (ZZ,EmbeddedProjectiveVariety,Boolean) := (m,S,withNodes) -> (
     if dim S != 2 then error "expected a surface";
-    degs := flatten degrees ideal S;
-    if degree S == 1 and unique degs === {1} then return "plane";
-    n := if withNodes or S.cache#?"FiniteNumberOfNodes" then numberNodes(S,Verbose=>false) else -1;
-    nodal := if n > 0 then (toString n)|"-nodal " else (if S.cache#?"singularLocus" and dim(singularLocus S) == -1 then "smooth " else "");
-    rational := if S.cache#?"rationalParametrization" then "rational " else "";
-    surfaceHeader := nodal | rational | "surface of degree " | (toString degree S) | " and sectional genus " | (toString sectionalGenus S);
-    cutOutLine := "cut out by "|(if same degs then (toString(#degs)|" hypersurfaces of degree "|(toString first degs)) else (toString(#degs)|" hypersurfaces of degrees "|toStringDegreesVar(S)));
-    sp := if m < 0 then " " else (newline|concatenate(m:" "));
-    surfaceHeader|sp|cutOutLine
+    if withNodes then numberNodes(S,Verbose=>false);
+    first netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>m)
 );
-surfaceDescription (ZZ,EmbeddedProjectiveVariety) := (m,S) -> surfaceDescription(m,S,S.cache#?"FiniteNumberOfNodes" or S.cache#?"singularLocus" or S.cache#?"nonSaturatedSingularLocus" or (S.cache#?"fitVariety" and (S.cache#"fitVariety").cache#?"nonSaturatedSingularLocus"));
+surfaceDescription (ZZ,EmbeddedProjectiveVariety) := (m,S) -> surfaceDescription(m,S,S.cache#?"singularLocus" or S.cache#?"nonSaturatedSingularLocus" or (S.cache#?"fitVariety" and (S.cache#"fitVariety").cache#?"nonSaturatedSingularLocus"));
 surfaceDescription EmbeddedProjectiveVariety := S -> surfaceDescription(-1,S);
-
-degreeOfDefiningForms = method();
-degreeOfDefiningForms MultirationalMap := f -> (
-    u := unique degrees ideal compress matrix f;
-    if #u != 1 then error "internal error encountered";
-    unsequence toSequence first u
-);
 
 humanReadableSeconds = t -> (
     assert(instance(t,ZZ) and t >= 0);
@@ -455,6 +393,31 @@ humanReadableSeconds = t -> (
         for i from 1 to n-2 do out = out | ", " | units#i;
         out | ", and " | units#(n-1)
     )
+);
+
+compStatusLatticeDisc = method();
+compStatusLatticeDisc DoublySpecialCubicFourfold := X -> (
+    (S,T) := surfaces X;
+    if X.cache#?(S,"discriminantFourfold") and X.cache#?(T,"discriminantFourfold") and (X.cache#?(S,T,"LatticeIntersectionMatrix3x3") or X.cache#?(S,T,"intersection of surface cycles in cubic fourfold")) then return 3;
+    if X.cache#?(S,"discriminantFourfold") and X.cache#?(T,"discriminantFourfold") then return 2;
+    if (S.cache#?"euler" or isPlaneInP5 S) and (T.cache#?"euler" or isPlaneInP5 T) then return 1;
+    0
+);
+compStatusLatticeDisc HodgeSpecialFourfold := X -> (
+    S := surface X;
+    if X.cache#?(S,"discriminantFourfold") and X.cache#?(S,"LatticeIntersectionMatrix") then return 3;
+    isPlaneS := # degrees S == 1 and first first degrees S === {1};
+    if X.cache#?(S,"LatticeIntersectionMatrix") and (S.cache#?"euler" or isPlaneS) then return 2;
+    if S.cache#?"euler" or isPlaneS then return 1;
+    0
+);
+compStatusLatticeDisc GushelMukaiFourfold := X -> (
+    S := surface X;
+    if X.cache#?(S,"discriminantFourfold") and X.cache#?(S,"LatticeIntersectionMatrix") and X.cache#?(S,"classSurfaceInG14") then return 3;
+    isPlaneS := # degrees S == 1 and first first degrees S === {1};
+    if (S.cache#?"euler" or isPlaneS) and (X.cache#?(S,"classSurfaceInG14") or X.cache#?"toGrass") then return 2;
+    if S.cache#?"euler" or isPlaneS then return 1;
+    0
 );
 
 computationStatus = method();
@@ -505,30 +468,29 @@ computationStatusLog K3SurfaceFromDoublySpecialCubicFourfold := S -> computation
 describeMirrorFourfoldAndK3 = method();
 describeMirrorFourfoldAndK3 HodgeSpecialFourfold := X -> (
     s := computationStatus X;
-    if s <= 0 then return "";
-    mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF(X,Verbose=>true) else multirationalMap fanoMap(X,Verbose=>true);  -- already in cache
+    if s <= 0 then return ("","");
+    mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF(X,Verbose=>true) else multirationalMap fanoMap(X,Verbose=>true); -- already in cache
     W := target mu;
-    U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>true);  -- already in cache
-    cutOutLine := Y -> (
-        degs := flatten degrees ideal Y;
-        " cut out by "|(if same degs then (toString(#degs)|" hypersurfaces of degree "|(toString first degs)) else (toString(#degs)|" hypersurfaces of degrees "|toStringDegreesVar(Y)))
+    U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>true); -- already in cache
+    (netW,texW) := if isDeformationP2P2 W then (
+        ("≋ ℙ² × ℙ² ⊂ ℙ⁸","\\simeq\\mathbb{P}^{2}\\times\\mathbb{P}^{2}\\subset\\mathbb{P}^{8}")
+    ) else if isDeformationDP5 W then (
+        ("≋ 𝔾(1,4) ∩ ℙ⁷ ⊂ ℙ⁷","\\simeq\\mathbb{G}(1,4)\\cap\\mathbb{P}^{7}\\subset\\mathbb{P}^{7}")
+    ) else (
+        netTexDescription(W,"NumericalInvariants"=>true)
     );
-    strW := if codim W == 0
-            then "PP^4"
-            else if codim W == 1
-            then ("hypersurface in PP^5 of degree " | (toString degree W))
-            else if codim W == numgens ideal W and degree W == product flatten degrees ideal W
-            then ("complete intersection of type " | (toString toSequence flatten degrees ideal W) | " in PP^" | (toString dim ambient W))
-            else if isDeformationP2P2 W
-            then "≋ ℙ² × ℙ² ⊂ ℙ⁸"
-            else if isDeformationDP5 W
-            then "≋ 𝔾(1,4) ∩ ℙ⁷ ⊂ ℙ⁷"
-            else (("fourfold of degree " | (toString degree W) | " and sectional genus " | (toString sectionalGenus W) | " in PP^" | (toString dim ambient W)) | (cutOutLine W));
-    descr := "Mirror fourfold: " | strW | newline | "Surface U of degree " | (toString degree U) | ", sectional genus " | (toString sectionalGenus U) | ", χ(O_U) = " | (toString euler hilbertPolynomial U) | "," | (cutOutLine U);
-    if s <= 1 then return descr;
-    (L,C) := exceptionalCurves(X,Verbose=>false);  -- already in cache
-    descr = descr | newline | printInfoOnExceptionalCurves(L,C);
-    if s <= 2 then return descr;
+    (netU,texU) := netTexDescription(U,"Ambient"=>false,"NumericalInvariants"=>true);
+    netU = replace(" +$","",netU);
+    texU = replace("(\\\\ )+$","",texU);
+    chiOU := euler hilbertPolynomial U;
+    netDescr := ("Mirror fourfold: " | netW) || ("Surface U: " | netU | ", χ(O_U) = " | (toString chiOU));
+    texDescr := "&\\text{Mirror fourfold: }" | texW | newline | "\\\\&\\text{Surface }U\\text{: }" | texU | "\\text{, }\\chi(\\mathcal{O}_U) = " | (texMath chiOU);
+    if s <= 1 then return (netDescr,texDescr);
+    (L,C) := exceptionalCurves(X,Verbose=>false); -- already in cache
+    exceptionalCurvesInfo := printInfoOnExceptionalCurves(L,C);
+    netDescr = netDescr || exceptionalCurvesInfo;
+    texDescr = texDescr | newline | "\\\\&\\text{" | exceptionalCurvesInfo | "}";
+    if s <= 2 then return (netDescr,texDescr);
     local Utilde;
     if instance(X,DoublySpecialCubicFourfold) then (
         Utilde = mu.cache#("AssociatedUnderlyingK3",X);
@@ -536,17 +498,20 @@ describeMirrorFourfoldAndK3 HodgeSpecialFourfold := X -> (
         Utilde = X.cache#"AssociatedSurfaceCompleteData";
     ) else error "unsupported fourfold type";
     strSurf := if instance(X,IntersectionOfThreeQuadricsInP7) then "Castelnuovo" else "K3";
-    descr = descr | newline | "Minimal " | strSurf | " surface Ũ: ";
-    if instance(Utilde,EmbeddedProjectiveVariety) then (
-        descr = descr | "degree " | (toString degree Utilde) | " and sectional genus " | (toString sectionalGenus Utilde) | " in " | toString(? ambient Utilde) | (cutOutLine Utilde);
-    ) else (
-       descr = descr | toString(? Utilde);
-    );
-    if s <= 3 then return descr;
-    pUtilde := polarizedK3surface(X,Verbose=>true);  -- already in cache
+    (netUtilde,texUtilde) := netTexDescription(Utilde,"NumericalInvariants"=>true);
+    netDescr = netDescr || ("Minimal " | strSurf | " surface Ũ: " | netUtilde);
+    texDescr = texDescr | newline | "\\\\&\\text{Minimal " | strSurf | " surface }\\widetilde{U}\\text{: }" | texUtilde;
+    if s <= 3 then return (netDescr,texDescr);
+    pUtilde := polarizedK3surface(X,Verbose=>true); -- already in cache
     M := latticeMatrix pUtilde;
-    isDetAsExpected := () -> (A := latticeIntersectionMatrix3x3 X; if ring A =!= ZZ then return false; (det A) + (det M) == 0);
-    descr || ((net "Lattice intersection matrix on Ũ: ") | (net M) | net(if isDetAsExpected() then " (det = "|(toString det M)|") ✓" else ""))
+    isDetAsExpected := () -> (
+        A := latticeIntersectionMatrix3x3 X;
+        if ring A =!= ZZ then return false;
+        (det A) + (det M) == 0
+    );
+    netDescr = netDescr || ((net "Lattice intersection matrix on Ũ: ") | (net M) | net(if isDetAsExpected() then " (det = " | (toString det M) | ") ✓" else ""));
+    texDescr = texDescr | newline | "\\\\&\\text{Lattice intersection matrix on }\\widetilde{U}\\text{: }" | (texMath M) | (if isDetAsExpected() then "\\text{ (det = }" | (texMath det M) | "\\text{) }\\checkmark" else "");
+    (netDescr,texDescr)
 );
 
 isDeformationP2P2 = X -> (
@@ -605,21 +570,65 @@ unverifiedExpectedGenusOfK3FromExceptionalCurves = (X,U,L,C) -> (
 );
 
 sanityCheckDSCF = method();
-sanityCheckDSCF K3SurfaceFromDoublySpecialCubicFourfold := E -> (
-    X := recoverFourfold E;
-    (mu,U,LC,f) := building E;
+sanityCheckDSCF DoublySpecialCubicFourfold := X -> (
+    if computationStatus X < 2 then return;
+    mu := (first surfaces X).cache#("FanoMapDSCF",last surfaces X);
     if mu.cache#?("InternalConsistencyChecked",X) then return mu.cache#("InternalConsistencyChecked",X);
     if not isFanoMapStandard X then return mu.cache#("InternalConsistencyChecked",X) = false;
-    (L,C) := toSequence LC;
     W := target mu;
+    U := mu.cache#("surfaceDeterminingInverseOfFanoMap",X);
+    (L,C) := U.cache#"exceptionalCurves";
     for i from 1 to 40 do (
         if recognizeDSCF X === "DSCF-V1-"|(toString i) then (
             if knownDataForRecognizedDSCF i == (degreeOfDefiningForms mu, dim W, degree W, sectionalGenus W, degrees W, dim U, degree U, sectionalGenus U, euler hilbertPolynomial U, degrees U, dim L, degree L, dim C, degree C) then (
+                -- << "-- consistency check passed for recognized DSCF example " << i << endl;
                 return mu.cache#("InternalConsistencyChecked",X) = true;
             ) else (
-                error("data inconsistency detected for recognized DSCF example n. "|(toString i));
+                error("data inconsistency detected for recognized DSCF example "|(toString i));
             );
         );
     );
     mu.cache#("InternalConsistencyChecked",X) = false
 );
+sanityCheckDSCF K3SurfaceFromDoublySpecialCubicFourfold := E -> sanityCheckDSCF recoverFourfold E;
+
+updatePackage = method();
+updatePackage (String,String,List) := (dir,baseURL,singleFilePkgs) -> (
+    if not (# singleFilePkgs > 0 and all(singleFilePkgs, F -> instance(F, String))) then error "expected a list of package names";
+    if dir === "" then dir = currentDirectory();
+    if not isDirectory dir then error "expected a directory";
+    if baseURL === "" then baseURL = "https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/";
+    if baseURL === "@" then baseURL = "https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/";
+    if substring(baseURL,0,4) =!= "http" then error "expected a url";
+    curl := findProgram("curl", "curl -h");
+    dir' := replace(" ","\\\\ ",dir);
+    if dir =!= dir' then << "-- warning: the specified directory contains spaces; consider moving it before updating." << endl;
+    ans := "";
+    while not member(ans, {"y", "yes", "Y", "Yes"}) do (
+        ans = read("Download the latest versions of " | first singleFilePkgs | " and other packages to " | dir | "? (y/n) ");
+        if member(ans, {"n", "no", "N", "No"}) then (
+            << "-- update cancelled." << endl;
+            return;
+        );
+    );
+    << "-- updating packages..." << endl;
+    downloadSingleFile := (D,F) -> (
+        runProgram(curl, "-fLs -o " | D | F | ".m2 " | baseURL | D | F | ".m2", RunDirectory=>dir', RaiseError=>true, Verbose=>false);
+        if not fileExists(dir | D | F | ".m2") then error("missing file: " | F | ".m2");
+    );
+    for F in singleFilePkgs do downloadSingleFile("",F);
+    if member("SpecialFanoFourfolds", singleFilePkgs) then (
+        makeDirectory(dir | "SpecialFanoFourfolds");
+        AuxF := {"AssociatedSurfaces", "CubicFourfolds", "DSCF", "FanoMaps", "HodgeSpecialFourfolds", "IntersectionOfThreeQuadrics", "tests", "Congruences", "docs", "examples", "GushelMukai", "HodgeSpecialSurfaces", "mirrorFourfolds", "contractionMaps", "LatticePolarizations", "LatticePolarizedK3", "utils", "LatexTables"};
+        assert(#AuxF == 18);
+        for F in AuxF do downloadSingleFile("SpecialFanoFourfolds/",F);
+    );
+    if member("Cremona", singleFilePkgs) then (
+        makeDirectory(dir | "Cremona");
+        for F in {"examples", "documentation", "tests"} do downloadSingleFile("Cremona/",F);
+    );
+    << "-- update completed; relaunch M2 to load the new package versions." << endl;
+    sleep 2;
+    exit 0;
+);
+updatePackage String := dir -> updatePackage(dir,"",{"SpecialFanoFourfolds", "MultiprojectiveVarieties"});

@@ -98,7 +98,7 @@ specialFourfold (String,Ring) := o -> (str,K) -> (
         i := value substring(5,str);
         if instance(i,ZZ) then return exampleDSCFourfoldC8(i,K,Verbose=>o.Verbose);
     );
-    error ///string may not be valid, permitted strings are:
+    error ///input string not recognized; permitted strings are:
 *** Cubic fourfolds ***
 "quartic scroll",
 "3-nodal septic scroll",
@@ -132,40 +132,84 @@ specialFourfold (String,Ring) := o -> (str,K) -> (
 "DSCF-1","DSCF-2",...,"DSCF-40"///;
 );
 
-specialFourfold String := o -> str -> specialFourfold(str,ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+specialFourfold String := o -> str -> specialFourfold(str,if PP.ring === null then ZZ/65521 else PP.ring,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 specialFourfold (String,ZZ) := o -> (str,i) -> (prebuiltExamplesOfRationalFourfolds()) (str,i);
 
-expression HodgeSpecialFourfold := X -> (
-    E := if dim ambient X == 4
-         then "a "
-         else if degrees X == {({2},1),({3},1)}
-         then "complete intersection of type (2,3) in "
-         else if degrees X == {({4},1)}
-         then "quartic hypersurface in "
-         else "fourfold in ";
-    E = E|"PP^"|toString(dim ambient X)|" containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X);
-    expression E
+netTexDescription HodgeSpecialFourfold := o -> X -> (
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
+        toString getAttribute(X,ReverseDictionary),
+        texMath getAttribute(X,ReverseDictionary)
+    );
+    S := surface X;
+    local netStr; local texStr; local M;
+    if o#"Short" then (
+        netStr = shortDescriptionFourfold(X,false);
+        texStr = texMath shortDescriptionFourfoldTeX(X,false);
+        if compStatusLatticeDisc X >= 2 then (
+            M = X.cache#(S,"LatticeIntersectionMatrix");
+            netStr = netStr | " of lattice discriminant " | (toString det M);
+            texStr = texStr | "\\text{ of lattice discriminant }" | (texMath det M);
+        );
+        return (netStr,texStr);
+    );
+    (netX,texX) := netTexDescription projectiveVariety ring X;
+    netS := surfaceDescription(9,S);
+    texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netStr = net("fourfold: " | netX);
+    texStr = "\\begin{aligned}&\\text{fourfold: }" | texX;
+    if X.cache#?"AmbientFivefold" and X.cache#"AmbientFivefold" != ambient X then (
+        F := X.cache#"AmbientFivefold";
+        (netF,texF) := netTexDescription F;
+        netStr = netStr || net("ambient fivefold: " | netF);
+        texStr = texStr | newline | "\\\\&\\text{ambient fivefold: }" | texF;
+    );
+    netStr = netStr || net("surface: " | netS);
+    texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
+    if compStatusLatticeDisc X >= 2 then (
+        M = X.cache#(S,"LatticeIntersectionMatrix");
+        netStr = netStr || net "lattice discriminant:";
+        netStr = netStr || ((net "det(") | (net M) | net(") = " | (toString det M)));
+        texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+        texStr = texStr | newline | "\\\\&\\det" | (texMath M) | " = " | (texMath det M);
+    );
+    (netStr,texStr | "\\end{aligned}")
 );
 
 describe HodgeSpecialFourfold := X -> (
-    descr := if dim ambient X == 4
-             then "Four-dimensional projective space"
-             else if degrees X == {({2},3)}
-             then "Complete intersection of 3 quadrics in PP^7"
-             else if degrees X == {({2},1),({3},1)}
-             then "Complete intersection of type (2,3) in PP^6"
-             else if degrees X == {({4},1)}
-             then "Quartic hypersurface in PP^5"
-             else "Hodge-special fourfold in PP^"|toString(dim ambient X);
-    a := flatten degrees ideal X; r := codim X;
+    S := surface X;
+    (netHead,texHead) := if dim ambient X == 4 then (
+        ("Four-dimensional projective space","\\text{Four-dimensional projective space}")
+    ) else if degrees X == {({2},3)} then (
+        ("Complete intersection of three quadrics in PP^7","\\text{Complete intersection of three quadrics in }\\mathbb{P}^{7}")
+    ) else if degrees X == {({2},1),({3},1)} then (
+        ("Complete intersection of type (2,3) in PP^6","\\text{Complete intersection of type }(2,3)\\text{ in }\\mathbb{P}^{6}")
+    ) else if degrees X == {({4},1)} then (
+        ("Quartic hypersurface in PP^5","\\text{Quartic hypersurface in }\\mathbb{P}^{5}")
+    ) else (
+        ("Hodge-special fourfold in PP^" | (toString dim ambient X),"\\text{Hodge-special fourfold in }\\mathbb{P}^{" | (texMath dim ambient X) | "}")
+    );
+    netDescr := netHead;
+    texDescr := "\\begin{aligned}&" | texHead;
+    a := flatten degrees ideal X;
+    r := codim X;
     if r > 0 and #a == r then (
         disc := discriminant X;
-        A := X.cache#(surface X,"LatticeIntersectionMatrix");
-        descr = descr|newline|toString("of discriminant "|(toString disc)|" = det"|(net A));
+        A := X.cache#(S,"LatticeIntersectionMatrix");
+        netDescr = netDescr || ((net("of discriminant " | (toString disc) | " = det(")) | (net A) | (net ")"));
+        texDescr = texDescr | newline | "\\\\&\\text{of discriminant }" | (texMath disc) | " = \\det" | (texMath A);
     );
-    descr = descr|newline|"containing a "|surfaceDescription(0,surface X);
-    net expression descr
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>0);
+    netDescr = netDescr || ("containing a " | netS);
+    texDescr = texDescr | newline | "\\\\&\\text{containing a }" | texS;
+    if X.cache#?(S,"parameterCount") then (
+        (w,xyz) := X.cache#(S,"parameterCount");
+        (x,y,z) := xyz;
+        netDescr = netDescr || ("Parameter count: " | (toString w) | " = " | (toString(w+y+(x-1)-z)) | " - (" | (toString y) | " + " | (toString(x-1)) | " - " | (toString z) | ")");
+        texDescr = texDescr | newline | "\\\\&\\text{Parameter count: }" | (texMath w) | " = " | (texMath(w+y+(x-1)-z)) | " - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
+    );
+    if X.cache#?"CustomData" then netDescr = netDescr || (toString X.cache#"CustomData");
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 shortDescriptionFourfold = method();
@@ -174,6 +218,13 @@ shortDescriptionFourfold (HodgeSpecialFourfold,Boolean) := (X,UseAttribute) -> (
     "Hodge-special fourfold"
 );
 shortDescriptionFourfold HodgeSpecialFourfold := X -> shortDescriptionFourfold(X,true);
+
+shortDescriptionFourfoldTeX = method(TypicalValue => ShortTeX);
+shortDescriptionFourfoldTeX (HodgeSpecialFourfold,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
+    shortTeX "\\text{Hodge-special fourfold}"
+);
+shortDescriptionFourfoldTeX HodgeSpecialFourfold := X -> shortDescriptionFourfoldTeX(X,true);
 
 ambientFivefold = method(TypicalValue => EmbeddedProjectiveVariety);
 
@@ -259,7 +310,7 @@ HodgeSpecialFourfold ? HodgeSpecialFourfold := (X,Y) -> (
         if (surface X).cache#"linear system on PP^2" < (surface Y).cache#"linear system on PP^2" then return symbol <;
         if (surface X).cache#"linear system on PP^2" > (surface Y).cache#"linear system on PP^2" then return symbol >;
     );
-    if ideal X == ideal Y and surface X == surface Y then return symbol ==;
+    if ring ambient X === ring ambient Y and ideal X == ideal Y and surface X == surface Y then return symbol ==;
     incomparable
 );
 
@@ -274,26 +325,26 @@ parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,
         );
     );
     if ring ambient S =!= ring ambient X then error "expected varieties in the same ambient space";
-    d := first first degrees ideal X;
     c := codim X;
-    if not ({{d}} === unique degrees ideal X and c == # degrees ideal X) then error "the second argument must be a complete intersection of hypersurfaces of the same degree";
+    if not (# degrees X == 1 and last first degrees X == c) then error "the second argument must be a complete intersection of hypersurfaces of the same degree";
+    d := first first first degrees X;
     r := dim S;
-    if (r <= 0) then error "the first argument must be a positive dimensional scheme";
+    if r <= 0 then error "the first argument must be a positive dimensional scheme";
     if not isSubset(S,X) then error "expected the first scheme to be a subscheme of the second one";
-    if o.Verbose then <<"S: "|toString(? ideal S)<<endl;
-    if o.Verbose then <<"X: "|toString(? ideal X)<<endl;
+    if o.Verbose then << "-- S: " << net(? S) << endl;
+    if o.Verbose then << "-- X: " << net(? projectiveVariety ring X) << endl;
     n := dim ambient S;
     N := normalSheaf(S,ambient S);
     if isSing then (
-        if o.Verbose then <<"(assumption: dim Ext^1(I_{S,P^"|toString(n)|"},O_S) = 0)"<<endl;
+        if o.Verbose then << "-- (assumption: dim Ext^1(I_{S,P^" << n << "},O_S) = 0)" << endl;
     ) else (
     --   h1N := rankHH(1,N);
     --   if o.Verbose then <<"h^1(N_{S,P^"|toString(n)|"}) = "|toString(h1N)<<endl;
     --   if h1N != 0 then <<"--warning: condition not satisfied: h^1(N_{S,P^"|toString(n)|"}) = 0"<<endl;
-        if o.Verbose then <<"(assumption: h^1(N_{S,P^"|toString(n)|"}) = 0)"<<endl;
+        if o.Verbose then << "-- (assumption: h^1(N_{S,P^" << n << "}) = 0)" << endl;
     );
     h0N := rankHH(0,N);
-    if o.Verbose then <<"h^0(N_{S,P^"|toString(n)|"}) = "|toString(h0N)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,P^" << n << "}) = " << h0N << endl << flush;
      ------------------------------
     -- If h^1(O_S(d)) == 0, h^3(O_S(d)) == 0,..., and h^0(I_S(d)) == h^0(O_(P^n)(d)) - \chi(O_S(d)) for a particular S,
     -- then we have h^0(I_S(d)) == h^0(O_(P^n)(d)) - \chi(O_S(d)) for the generic S.
@@ -309,24 +360,26 @@ parameterCount (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,
     ------------------------------
     OS := OO_(variety S);
     h1OSd := for j from 1 to r list if odd j then rank HH^j (OS(d)) else continue;
-    if unique h1OSd =!= {0} then error("condition not satisfied: h^(2j-1)(O_S("|toString(d)|")) = 0");
+    if unique h1OSd =!= {0} then error("condition not satisfied: h^(2j-1)(O_S(" | (toString d) | ")) = 0");
     m := # basisMem({d},S);
     m' := binomial(n+d,d) - ((hilbertPolynomial S) d);
-    if m != m' then error("condition not satisfied: h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) == h^0(O_(P^"|toString(n)|")("|toString(d)|")) - \\chi(O_S("|toString(d)|"))");
+    if m != m' then error("condition not satisfied: h^0(I_{S,P^" | (toString n) | "}(" | (toString d) | ")) == h^0(O_(P^" | (toString n) | ")(" | (toString d)|")) - χ(O_S(" | (toString d) | "))");
     if o.Verbose then (
-        for j from 1 to r list if odd j then  <<"h^"|toString(j)|"(O_S("|toString(d)|")) = 0, ";
-        <<"and h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) = "|toString(m)|" = h^0(O_(P^"|toString(n)|")("|toString(d)|")) - \\chi(O_S("|toString(d)|"));"|newline|"in particular, h^0(I_{S,P^"|toString(n)|"}("|toString(d)|")) is minimal"<<endl;
+        << "-- ";
+        for j from 1 to r do if odd j then << "h^" << j << "(O_S(" << d << ")) = 0, ";
+        << "and h^0(I_{S,P^" << n << "}(" << d << ")) = " << m << " = h^0(O_(P^" << n << ")(" << d << ")) - χ(O_S(" << d << "));" << endl;
+        << "-- in particular, h^0(I_{S,P^" << n << "}(" << d << ")) is minimal" << endl;
     );
     M := c*(m-c); -- dim GG(c-1,m-1)
-    if c > 1 and o.Verbose then <<"dim GG("|toString(c-1)|","|toString(m-1)|") = "|toString(M)<<endl;
-    if o.Verbose then <<"h^0(N_{S,P^"|toString(n)|"}) + "|(if c > 1 then "dim GG("|toString(c-1)|","|toString(m-1)|")" else toString(m-1))|" = "|toString(h0N + M)<<endl;
+    if c > 1 and o.Verbose then << "-- dim GG(" << (c-1) << "," << (m-1) << ") = " << M << endl;
+    if o.Verbose then << "-- h^0(N_{S,P^" << n << "}) + " << (if c > 1 then "dim GG(" | toString(c-1) | "," | toString(m-1) | ")" else toString(m-1)) << " = " << (h0N + M) << endl;
     NX := normalSheaf(S,X);
     h0NX := rankHH(0,NX);
-    if o.Verbose then <<"h^0(N_{S,X}) = "|toString(h0NX)<<endl;
-    if o.Verbose then <<"dim{[X] : S ⊂ X} >= "|toString(h0N + M - h0NX)<<endl;
-    if o.Verbose then <<(if c > 1 then "dim GG("|toString(c-1)|",P(H^0(O_(P^"|toString(n)|")("|toString(d)|")))) = " else "dim P(H^0(O_(P^"|toString(n)|")("|toString(d)|"))) = ")|toString(c * (binomial(n+d,d) - c))<<endl;
-    w := c*(binomial(n+d,d)-c) - (h0N+M-h0NX);
-    if o.Verbose then <<"codim{[X] : S ⊂ X} <= "|toString(w)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,X}) = " << h0NX << endl;
+    if o.Verbose then << "-- dim{[X] : S ⊂ X} >= " << (h0N + M - h0NX) << endl;
+    if o.Verbose then << (if c > 1 then "-- dim GG(" | toString(c-1) | ",P(H^0(O_(P^" | toString(n) | ")(" | toString(d) | ")))) = " else "-- dim P(H^0(O_(P^" | toString(n) | ")(" | toString(d) |"))) = ") << (c * (binomial(n+d,d) - c)) << endl;
+    w := c * (binomial(n+d,d) - c) - (h0N + M - h0NX);
+    if o.Verbose then << "-- codim{[X] : S ⊂ X} <= " << w << endl;
     if X.cache#?(S,"parameterCount") and X.cache#(S,"parameterCount") =!= (w,(m,h0N,h0NX)) then error "internal error encountered in parameterCount: cached and computed values differ";
     X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX))
 );
@@ -336,35 +389,36 @@ parameterCount HodgeSpecialFourfold := o -> X -> (
     if (not o.Verbose) and X.cache#?(S,"parameterCount") then return X.cache#(S,"parameterCount");
     Y := ambientFivefold X;
     a := degreeHypersurface X;
-    if o.Verbose then <<"S: "|toString(? ideal S)<<endl;
-    if o.Verbose then <<"X: "|toString(? ideal X)<<endl;
-    if o.Verbose then <<"Y: "|toString(? ideal Y)<<endl;
-    if o.Verbose then <<"X is a fourfold containing S which is a hypersurface of degree "<<a<<" in Y"<<endl;
+    if o.Verbose then << "-- S: " << net(? S) << endl;
+    if o.Verbose then << "-- X: " << net(? projectiveVariety ring X) << endl;
+    if o.Verbose then << "-- Y: " << net(? Y) << endl;
+    if o.Verbose then << "-- X is a hypersurface of degree " << a << " in Y and contains S" << endl;
     N := normalSheaf(S,Y);
     h1N := rankHH(1,N);
-    if o.Verbose then <<"h^1(N_{S,Y}) = "|toString(h1N)<<endl;
-    if h1N != 0 then error("condition not satisfied: h^1(N_{S,Y}) = 0");
+    if o.Verbose then << "-- h^1(N_{S,Y}) = " << h1N << endl;
+    if h1N != 0 then error "condition not satisfied: h^1(N_{S,Y}) = 0";
     h0N := rankHH(0,N);
-    if o.Verbose then <<"h^0(N_{S,Y}) = "|toString(h0N)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,Y}) = " << h0N << endl << flush;
     m := numgens ambient target map X;
     OS := OO_(variety S);
     h1OSa := rank HH^1 (OS(a));
-    if h1OSa != 0 then error("condition not satisfied: h^1(O_S("|(toString a)|")) = 0");
+    if h1OSa != 0 then error("condition not satisfied: h^1(O_S(" | (toString a) | ")) = 0");
     Amb := rank HH^0 OO_(variety Y)(a);
     m' := Amb - ((hilbertPolynomial S) a);
-    if m != m' then error("condition not satisfied: h^0(I_{S,Y}("|(toString a)|")) == h^0(O_Y("|(toString a)|")) - \\chi(O_S("|(toString a)|"))");
+    if m != m' then error("condition not satisfied: h^0(I_{S,Y}(" | (toString a) | ")) == h^0(O_Y(" | (toString a) | ")) - χ(O_S(" | (toString a) | "))");
     if o.Verbose then (
-        <<"h^1(O_S("|(toString a)|")) = 0, ";
-        <<"and h^0(I_{S,Y}("|(toString a)|")) = "|toString(m)|" = h^0(O_Y("|(toString a)|")) - \\chi(O_S("|(toString a)|"));"|newline|"in particular, h^0(I_{S,Y}("|(toString a)|")) is minimal"<<endl;
+        << "-- h^1(O_S(" << a << ")) = 0, ";
+        << "and h^0(I_{S,Y}(" << a << ")) = " << m << " = h^0(O_Y(" << a << ")) - χ(O_S(" << a << "));" << endl;
+        << "-- in particular, h^0(I_{S,Y}(" << a << ")) is minimal" << endl;
     );
-    if o.Verbose then <<"h^0(N_{S,Y}) + "|toString(m-1)|" = "|toString(h0N + m - 1)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,Y}) + " << (m-1) << " = " << (h0N + m - 1) << endl;
     NX := normalSheaf(S,X);
     h0NX := rankHH(0,NX);
-    if o.Verbose then <<"h^0(N_{S,X}) = "|toString(h0NX)<<endl;
-    if o.Verbose then <<"dim{[X] : S ⊂ X ⊂ Y} >= "|toString(h0N + m-1 - h0NX)<<endl;
-    if o.Verbose then <<"dim P(H^0(O_Y("|(toString a)|"))) = "|toString(Amb-1)<<endl;
-    w := Amb-1 - (h0N + m-1 - h0NX);
-    if o.Verbose then <<"codim{[X] : S ⊂ X ⊂ Y} <= "|toString(w)<<endl;
+    if o.Verbose then << "-- h^0(N_{S,X}) = " << h0NX << endl;
+    if o.Verbose then << "-- dim{[X] : S ⊂ X ⊂ Y} >= " << (h0N + m - 1 - h0NX) << endl;
+    if o.Verbose then << "-- dim P(H^0(O_Y(" << a << "))) = " << (Amb - 1) << endl;
+    w := Amb - 1 - (h0N + m - 1 - h0NX);
+    if o.Verbose then << "-- codim{[X] : S ⊂ X ⊂ Y} <= " << w << endl;
     if o.Verbose and instance(X,IntersectionOfThreeQuadricsInP7) then infoAboutParameterCountInAmbientP7(w,(m,h0N,h0NX));
     if X.cache#?(S,"parameterCount") and X.cache#(S,"parameterCount") =!= (w,(m,h0N,h0NX)) then error "internal error encountered in parameterCount: cached and computed values differ";
     X.cache#(S,"parameterCount") = (w,(m,h0N,h0NX))
@@ -372,8 +426,8 @@ parameterCount HodgeSpecialFourfold := o -> X -> (
 
 CoherentSheafOnEmbeddedProjectiveVariety = new Type of CoherentSheaf;
 projectiveVariety CoherentSheafOnEmbeddedProjectiveVariety := o -> F -> F.variety.cache#"embedded projective variety";
-CoherentSheafOnEmbeddedProjectiveVariety#{WebApp,AfterPrint} = CoherentSheafOnEmbeddedProjectiveVariety#{WebApp,AfterNoPrint} =
 CoherentSheafOnEmbeddedProjectiveVariety#{Standard,AfterPrint} = CoherentSheafOnEmbeddedProjectiveVariety#{Standard,AfterNoPrint} = F -> (<< endl << concatenate(interpreterDepth:"o") << lineNumber << " : Coherent sheaf on " << projectiveVariety F << endl);
+CoherentSheafOnEmbeddedProjectiveVariety#{WebApp,AfterPrint} = CoherentSheafOnEmbeddedProjectiveVariety#{WebApp,AfterNoPrint} = F -> customWebAppAfterPrint("Coherent sheaf on ", projectiveVariety F);
 
 normalSheaf = method(TypicalValue => CoherentSheaf);
 normalSheaf MultiprojectiveVariety := normalSheaf EmbeddedProjectiveVariety := X -> (
@@ -418,7 +472,7 @@ surface HodgeSpecialFourfold := X -> first X#"SurfaceContainedInTheFourfold";
 surface (VisibleList,Ring,Option,Option) := (L,K,oN,oA) -> (
     oN = toList oN; oA = toList oA;
     if first oN === ambient and first oA === NumNodes then (oN,oA) = (oA,oN);
-    if first oN =!= NumNodes and first oA =!= ambient then error "NumNodes and ambient are the only available options for surface(VisibleList)";
+    if first oN =!= NumNodes or first oA =!= ambient then error "NumNodes and ambient are the only available options for surface(VisibleList)";
     if not (#L>0 and all(L,i->instance(i,ZZ) and i>=0)) then error "expected a list of nonnegative integers";
     P := for i from 1 to #L-1 list for j from 1 to L_i list (i,point PP_K^2);
     B := if #L==1 or all(take(L,-(#L-1)),i->i==0) then 0_(PP_K^2) else ⋃ apply(flatten P,p -> p_0 * p_1);
@@ -461,10 +515,10 @@ surface (VisibleList,Ring,Option) := (L,K,opt) -> (
     then return surface(L,K,opt,ambient=>null);
     error "NumNodes and ambient are the only available options for surface(VisibleList)";
 );
-surface(VisibleList,Option,Option) := (L,opt1,opt2) -> surface(L,ZZ/65521,opt1,opt2);
-surface(VisibleList,Option) := (L,opt) -> surface(L,ZZ/65521,opt);
+surface(VisibleList,Option,Option) := (L,opt1,opt2) -> surface(L,if PP.ring === null then ZZ/65521 else PP.ring,opt1,opt2);
+surface(VisibleList,Option) := (L,opt) -> surface(L,if PP.ring === null then ZZ/65521 else PP.ring,opt);
 surface (VisibleList,Ring) := (L,K) -> surface(L,K,NumNodes=>0,ambient=>null);
-surface List := L -> surface(L,ZZ/65521,NumNodes=>0,ambient=>null);
+surface List := L -> surface(L,if PP.ring === null then ZZ/65521 else PP.ring,NumNodes=>0,ambient=>null);
 
 clean HodgeSpecialFourfold := X -> (
     K := coefficientRing X;
@@ -495,81 +549,172 @@ random HodgeSpecialFourfold := o -> X -> (
 );
 
 toExternalString HodgeSpecialFourfold := X -> (
-    x := local x;
+    ringStringData := (n,K,var,ringName) -> (
+        strR := ringName | " := Grass(0," | toString n | ",K,Variable=>\"" | var | "\"); " | var | " := gens " | ringName | ";";
+        R := Grass(0,n,K,Variable=>var);
+        toRing := method();
+        toRing Ideal := I -> toString sub(I,vars R);
+        toRing EmbeddedProjectiveVariety := S -> "projectiveVariety(" | toRing ideal S | ",MinimalGenerators=>false,Saturate=>false)";
+        toRing MultirationalMap := Psi -> toString entries sub(matrix Psi,vars R);
+        toRing RationalMap := psi -> toString flatten entries sub(matrix psi,vars R);
+        (strR,toRing)
+    );
+    ringP2AlreadyExported := false;
+    toStringCacheSurface := (S,surfaceName) -> (
+        s := "";
+        if S.cache#?"euler" then s = s | surfaceName | ///.cache#"euler" = /// | toString euler S | ";" | newline;
+        if S.cache#?"FiniteNumberOfNodes" then s = s | surfaceName | ///.cache#"FiniteNumberOfNodes" = /// | toString numberNodes S | ";" | newline;
+        if S.cache#?"singularLocus" and (S.cache#"singularLocus")#"dimVariety" === -1 then s = s | surfaceName | ///.cache#"singularLocus" = 0_/// | surfaceName | ";" | newline;
+        if S.cache#?"top" and S.cache#"top" === S then s = s | surfaceName | ///.cache#"top" = /// | surfaceName | ";" | newline;
+        if S.cache#?"linear system on PP^2" then s = s | surfaceName | ///.cache#"linear system on PP^2" = /// | toString S.cache#"linear system on PP^2" | ";" | newline;
+        if S.cache#?"ConstructionParameters" then s = s | surfaceName | ///.cache#"ConstructionParameters" = /// | toString S.cache#"ConstructionParameters" | ";" | newline;
+        if S.cache#?"rationalParametrization" then (
+            (strRingP2,toRingP2) := ringStringData(2,coefficientRing S,"t","ringP2");
+            if not ringP2AlreadyExported then (
+                s = s | strRingP2 | newline;
+                ringP2AlreadyExported = true;
+            );
+            s = s | surfaceName | ///.cache#"rationalParametrization" = (Hom(projectiveVariety ringP2,/// | surfaceName | ")) " | toRingP2 parametrize S | ";" | newline;
+        );
+        s
+    );
     K := coefficientRing X;
-    n := dim ambient X;
-    R := K[x_0..x_n];
+    S := surface X;
+    T := if instance(X,DoublySpecialCubicFourfold) then last surfaces X else null;
     headerDate := "";
-    try headerDate = " on "|(get "!date");
-    s := ///-- Fourfold object exported by toExternalString///|headerDate;
-    s = s|///-- needsPackage "SpecialFanoFourfolds";///|newline;
-    s = s|"(i -> (K := "|toExternalString(K)|";"|newline;
-    s = s|"x := local x; R := K[x_0..x_"|toString(n)|"];"|newline;
-    s = s|"S := projectiveVariety "|toString sub(ideal surface X,vars R)|";"|newline;
-    try ambientFivefold X else error "not implemented yet: toExternalString for a HodgeSpecialFourfold without an ambient fivefold";
-    if codim ambientFivefold X == 0 then s = s|"V := ambient S;"|newline else s = s|"V := projectiveVariety "|toString sub(ideal ambientFivefold X,vars R)|";"|newline;
-    s = s|"X := projectiveVariety "|toString sub(ideal X,vars R)|";"|newline;
-    if instance(X,CubicFourfold)
-    then s = s|"X = specialFourfold(S,X,NumNodes=>"|toString(numberNodes surface X)|",InputCheck=>0);"|newline else
-    if instance(X,GushelMukaiFourfold)
-    then s = s|"X = specialFourfold(S,X,InputCheck=>0);"|newline|///X.cache#"AmbientFivefold" = V;///|newline else
-    s = s|"X = specialFourfold(S,X,V,InputCheck=>0);"|newline;
-    if X.cache#?"CustomData" then s = s|///X.cache#"CustomData" = ///|(toString X.cache#"CustomData")|";"|newline;
-    if (surface X).cache#?"euler" then s = s|///(surface X).cache#"euler" = ///|toString(euler surface X)|";"|newline;
-    if (surface X).cache#?"FiniteNumberOfNodes" then s = s|///(surface X).cache#"FiniteNumberOfNodes" = ///|toString(numberNodes surface X)|";"|newline;
-    if (surface X).cache#?"rationalParametrization" then (
-        t := local t; ringP2 := K[t_0..t_2];
-        s = s|"t := local t; ringP2 := K[t_0..t_2];"|newline;
-        s = s|///(surface X).cache#"rationalParametrization" = (Hom(projectiveVariety ringP2,surface X)) ///|toString entries sub(matrix parametrize surface X,vars ringP2)|";"|newline;
+    try headerDate = " on " | first lines get "!date +%Y-%m-%d_%H-%M";
+    s := "-- Fourfold object exported by toExternalString" | headerDate | newline;
+    s = s | ///-- needsPackage "SpecialFanoFourfolds";/// | newline;
+    s = s | "(o -> (K := " | toExternalString K | ";" | newline;
+    (ringAmbientX,toRingAmbientX) := ringStringData(dim ambient X,K,"x","ringAmbientX");
+    s = s | ringAmbientX | newline;
+    s = s | "S := " | toRingAmbientX S | ";" | newline;
+    s = s | toStringCacheSurface(S,"S");
+    if instance(X,DoublySpecialCubicFourfold) then (
+        s = s | "T := " | toRingAmbientX T | ";" | newline;
+        s = s | toStringCacheSurface(T,"T");
     );
-    if X.cache#?(surface X,"parameterCount") then s = s|///X.cache#(surface X,"parameterCount") = ///|(toString X.cache#(surface X,"parameterCount"))|";"|newline;
-    N := numgens target map X -1;
-    if N >= 6 and (map X)#"idealImage" =!= null then (
-        z := local z; Z := K[z_0..z_N];
-        phi := sub(map X,R,Z);
-        s = s|"z := local z; Z := K[z_0..z_"|toString(N)|"];"|newline;
-        s = s|///(surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X) = rationalMap(ring V,Z,///|(toString entries phi)|");"|newline;
-        s = s|"forceImage(map X,"|(toString image phi)|");"|newline;
+    s = s | "X := " | toRingAmbientX X | ";" | newline;
+    try ambientFivefold X else return s | "X = specialFourfold(S,X,InputCheck=>0);" | newline | "X))()";
+    V := ambientFivefold X;
+    if codim V == 0 then (
+        s = s | "V := ambient X;" | newline;
+    ) else (
+        s = s | "V := " | toRingAmbientX V | ";" | newline;
     );
-    if (surface X).cache#?("fanoMap",ambientFivefold X) then (
-        mu := fanoMap X;
-        m := numgens ambient target mu -1;
-        y := local y;
-        T := K[y_0..y_m];
-        mu = sub(mu,R,T);
-        s = s|"y := local y; T := K[y_0..y_"|toString(m)|"];"|newline;
-        if m > 4 then s = s|"T = T/"|toString ideal target mu|";"|newline;
-        s = s|"mu := rationalMap map(ring V,T,"|toString entries mu|");"|newline;
-        s = s|"forceImage(mu,ideal(0_(target mu)));"|newline;
-        s = s|///(mu#"map").cache#"multiplicityFanoMap" = ///|toString(((fanoMap X)#"map").cache#"multiplicityFanoMap")|";"|newline;
-        s = s|///(surface X).cache#("fanoMap",ambientFivefold X) = mu;///|newline;
-        if (surface X).cache#?("surfaceDeterminingInverseOfFanoMap",ideal X) then (
-            U := surfaceDeterminingInverseOfFanoMap X;
-            s = s|"U := projectiveVariety("|toString sub(ideal U,vars T)|",Saturate=>false);"|newline;
-            s = s|///(surface X).cache#("surfaceDeterminingInverseOfFanoMap",ideal X) = U;///|newline;
-            if U.cache#?"exceptionalCurves" then (
-                (L,C) := exceptionalCurves X;
-                s = s|"L := "|(if dim L >= 0 then "projectiveVariety("|toString sub(ideal L,vars T)|",Saturate=>false)" else "0_U")|";"|newline;
-                s = s|"C := "|(if dim C >= 0 then "projectiveVariety("|toString sub(ideal C,vars T)|",Saturate=>false)" else "0_U")|";"|newline;
-                s = s|///U.cache#"exceptionalCurves" = (L%U,C%U);///|newline;
-            );
-            if U.cache#?"Normalization" then (
-                normU := multirationalMap normalization U;
-                w := local w;
-                dimAmbNormU := dim ambient source normU;
-                ringAmbNormU := K[w_0..w_dimAmbNormU,Degrees=>degrees ring ambient source normU];
-                s = s|"w := local w; ringAmbNormU := K[w_0..w_"|(toString dimAmbNormU)|",Degrees=>"|(toString degrees ringAmbNormU)|"];"|newline;
-                s = s|"NormU := projectiveVariety("|(toString sub(ideal source normU,vars ringAmbNormU))|",Saturate=>false);"|newline;
-                s = s|///U.cache#"Normalization" = toRationalMap((Hom(NormU,U)) ///|(toString entries sub(matrix normU,vars ringAmbNormU))|");"|newline;
-            );
-            if U.cache#?"MapToMinimalK3Surface" and (not instance(U.cache#"MapToMinimalK3Surface",WeightedRationalMap)) and instance(target U.cache#"MapToMinimalK3Surface",EmbeddedProjectiveVariety) and (U.cache#"MapToMinimalK3Surface")#"image" =!= null then (
-                Psi := U.cache#"MapToMinimalK3Surface";
-                v := local v; ringAmbUtilde := K[v_0..v_(dim target Psi)];
-                s = s|"v := local v; ringAmbUtilde := K[v_0..v_"|(toString dim target Psi)|"];"|newline;
-                s = s|///U.cache#"MapToMinimalK3Surface" = (Hom(U,projectiveVariety ringAmbUtilde)) ///|(toString entries sub(matrix Psi,vars T))|";"|newline;
-                s = s|///forceImage(U.cache#"MapToMinimalK3Surface",projectiveVariety(///|(toString sub(ideal image Psi,vars ringAmbUtilde))|",Saturate=>false));"|newline;
-            );
+    if V.cache#?"singularLocus" and (V.cache#"singularLocus")#"dimVariety" === -1 then s = s | ///V.cache#"singularLocus" = 0_V;/// | newline;
+    if instance(X,DoublySpecialCubicFourfold) then (
+        s = s | "X = specialFourfold(S & T,X,NumNodes=>" | toString apply(surfaces X,numberNodes) | ",InputCheck=>0);" | newline;
+    ) else if instance(X,CubicFourfold) then (
+        s = s | "X = specialFourfold(S,X,NumNodes=>" | toString numberNodes S | ",InputCheck=>0);" | newline;
+    ) else if instance(X,GushelMukaiFourfold) then (
+        s = s | "X = specialFourfold(S,X,InputCheck=>0);" | newline | ///X.cache#"AmbientFivefold" = V;/// | newline;
+    ) else (
+        s = s | "X = specialFourfold(S,X,V,InputCheck=>0);" | newline;
+    );
+    if instance(X,GushelMukaiFourfold) and X.cache#?"toGrass" then (
+        mapToG14 := toGrass X;
+        if target mapToG14 === GG(K,1,4) then (
+            s = s | ///X.cache#"toGrass" = (Hom(X,GG(K,1,4))) /// | toRingAmbientX mapToG14 | ";" | newline;
         );
     );
-    s = s|"X))()"
+    if X.cache#?"singularLocus" and (X.cache#"singularLocus")#"dimVariety" === -1 then s = s | ///X.cache#"singularLocus" = 0_X;/// | newline;
+    if X.cache#?"CustomData" then s = s | ///X.cache#"CustomData" = /// | "///" | toString X.cache#"CustomData" | "///;" | newline;
+    if X.cache#?"CustomData2" then s = s | ///X.cache#"CustomData2" = /// | "///" | toString X.cache#"CustomData2" | "///;" | newline;
+    if X.cache#?(S,T,"labelDSCF") then s = s | ///X.cache#(S,T,"labelDSCF") = "/// | toString X.cache#(S,T,"labelDSCF") | "\";" | newline;
+    if X.cache#?(S,"label") then (
+        lab := X.cache#(S,"label");
+        s = s | ///X.cache#(S,"label") = ///;
+        s = s | if instance(lab,String) then "\"" | toString lab | "\"" else toString lab;
+        s = s | ";" | newline;
+    );
+    if X.cache#?(S,"parameterCount") then s = s | ///X.cache#(S,"parameterCount") = /// | toString X.cache#(S,"parameterCount") | ";" | newline;
+    if X.cache#?(S,"CustomParameterCount") then s = s | ///X.cache#(S,"CustomParameterCount") = /// | toString X.cache#(S,"CustomParameterCount") | ";" | newline;
+    if X.cache#?(S,T,"parameterCount") then s = s | ///X.cache#(S,T,"parameterCount") = /// | toString X.cache#(S,T,"parameterCount") | ";" | newline;
+    if S.cache#?("AssociatedMapFromFivefold",V) then (
+        mapFromFivefold := map X;
+        N := numgens target mapFromFivefold -1;
+        if N >= 6 and mapFromFivefold#"idealImage" =!= null then (
+            (ringTargetMapFromFivefold,toRingTargetMapFromFivefold) := ringStringData(N,K,"u","ringTargetMapFromFivefold");
+            s = s | ringTargetMapFromFivefold | newline;
+            s = s | ///S.cache#("AssociatedMapFromFivefold",V) = rationalMap(ring V,ringTargetMapFromFivefold,/// | toRingAmbientX mapFromFivefold | ");" | newline;
+            s = s | "forceImage(map X," | toRingTargetMapFromFivefold image mapFromFivefold | ");" | newline;
+        );
+    );
+    if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold") then s = s | ///X.cache#(S,T,"intersection of surface cycles in cubic fourfold") = /// | toString X.cache#(S,T,"intersection of surface cycles in cubic fourfold") | ";" | newline;
+    if X.cache#?(S,T,"numberOfResidualPointsInGenericQuadricFiber") then s = s | ///X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber") = /// | toString X.cache#(S,T,"numberOfResidualPointsInGenericQuadricFiber") | ";" | newline;
+    local mu;
+    if instance(X,DoublySpecialCubicFourfold) then (
+        if not (S.cache#?("FanoMapDSCF",T) and isFanoMapStandard X) then return s | "X))()";
+        mu = fanoMapDSCF X;
+    ) else (
+        if not S.cache#?("fanoMap",V) then return s | "X))()";
+        mu = fanoMap X;
+        strFanoMapMult := toString (mu#"map").cache#"multiplicityFanoMap";
+        mu = multirationalMap mu;
+    );
+    m := dim ambient target mu;
+    (ringAmbientW,toRingAmbientW) := ringStringData(m,K,"y","ringAmbientW");
+    s = s | ringAmbientW | newline;
+    s = s | "mu := (Hom(V,projectiveVariety ringAmbientW)) " | toRingAmbientX mu | ";" | newline;
+    if m > 4 then (
+        s = s | "forceImage(mu," | toRingAmbientW target mu | ");" | newline;
+    ) else (
+        s = s | "forceImage(mu,target mu);" | newline;
+    );
+    s = s | "mu = rationalMap(mu,Dominant=>true);" | newline;
+    if instance(X,DoublySpecialCubicFourfold) then (
+        s = s | ///mu.cache#"FanoMapType" = "Standard";/// | newline;
+        s = s | ///X.cache#"FanoMapType" = "Standard";/// | newline;
+        s = s | ///S.cache#("FanoMapDSCF",T) = mu;/// | newline;
+        if not mu.cache#?("surfaceDeterminingInverseOfFanoMap",X) then return s | "X))()";
+    ) else (
+        s = s | "mu = toRationalMap mu;" | newline;
+        s = s | ///(mu#"map").cache#"multiplicityFanoMap" = /// | strFanoMapMult | ";" | newline;
+        s = s | ///S.cache#("fanoMap",V) = mu;/// | newline;
+        if not S.cache#?("surfaceDeterminingInverseOfFanoMap",ideal X) then return s | "X))()";
+    );
+    U := surfaceDeterminingInverseOfFanoMap X;
+    s = s | "U := " | toRingAmbientW U | ";" | newline;
+    s = s | toStringCacheSurface(U,"U");
+    if instance(X,DoublySpecialCubicFourfold) then (
+        s = s | ///mu.cache#("surfaceDeterminingInverseOfFanoMap",X) = U;/// | newline;
+    ) else (
+        s = s | ///S.cache#("surfaceDeterminingInverseOfFanoMap",ideal X) = U;/// | newline;
+    );
+    if U.cache#?"exceptionalCurves" then (
+        (L,C) := exceptionalCurves X;
+        s = s | "L := " | (if dim L >= 0 then toRingAmbientW L else "0_U") | ";" | newline;
+        s = s | "C := " | (if dim C >= 0 then toRingAmbientW C else "0_U") | ";" | newline;
+        s = s | ///U.cache#"exceptionalCurves" = (L%U,C%U);/// | newline;
+    );
+    if U.cache#?"special curves on U" and #(U.cache#"special curves on U") > 0 then (
+        s = s | ///U.cache#"special curves on U" = /// | toString apply(U.cache#"special curves on U", D -> "(" | toRingAmbientW D | ")%U") | ";" | newline;
+    );
+    if U.cache#?"Genus2CurveOnSurfaceU" then s = s | ///U.cache#"Genus2CurveOnSurfaceU" = (/// | toRingAmbientW U.cache#"Genus2CurveOnSurfaceU" | ")%U;" | newline;
+    if U.cache#?"strategy for surface U" then s = s | ///U.cache#"strategy for surface U" = "/// | toString U.cache#"strategy for surface U" | "\";" | newline;
+    if U.cache#?"birational maps from X to W and from W to X" then (
+        eta := last U.cache#"birational maps from X to W and from W to X";
+        s = s | "mu' := mu|X;" | newline;
+        s = s | "eta := (Hom(target mu',source mu')) " | toRingAmbientW eta | ";" | newline;
+        s = s | ///mu'#"inverse" = eta; eta#"inverse" = mu';/// | newline;
+        s = s | ///U.cache#"birational maps from X to W and from W to X" = (mu',eta);/// | newline;
+    );
+    if U.cache#?"Normalization" then (
+        normU := multirationalMap normalization U;
+        z := local z;
+        dimAmbNormU := dim ambient source normU;
+        ringAmbNormU := K[z_0..z_dimAmbNormU,Degrees=>degrees ring ambient source normU];
+        s = s | "z := local z; ringAmbNormU := K[z_0..z_" | toString dimAmbNormU | ",Degrees=>" | toString degrees ringAmbNormU | "];" | newline;
+        s = s | "NormU := projectiveVariety(" | toString sub(ideal source normU,vars ringAmbNormU) | ",Saturate=>false);" | newline;
+        s = s | ///U.cache#"Normalization" = toRationalMap((Hom(NormU,U)) /// | toString entries sub(matrix normU,vars ringAmbNormU) | ");" | newline;
+    );
+    if U.cache#?"MapToMinimalK3Surface" and (not instance(U.cache#"MapToMinimalK3Surface",WeightedRationalMap)) and instance(target U.cache#"MapToMinimalK3Surface",EmbeddedProjectiveVariety) and (U.cache#"MapToMinimalK3Surface")#"image" =!= null then (
+        Psi := U.cache#"MapToMinimalK3Surface";
+        (ringAmbientUtilde,toRingAmbientUtilde) := ringStringData(dim ambient target Psi,K,"v","ringAmbientUtilde");
+        s = s | ringAmbientUtilde | newline;
+        s = s | ///U.cache#"MapToMinimalK3Surface" = (Hom(U,projectiveVariety ringAmbientUtilde)) /// | toRingAmbientW Psi | ";" | newline;
+        s = s | ///forceImage(U.cache#"MapToMinimalK3Surface",/// | toRingAmbientUtilde image Psi | ");" | newline;
+    );
+    s | "X))()"
 );

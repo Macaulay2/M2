@@ -7,24 +7,48 @@ K3SurfaceFromDoublySpecialCubicFourfold = new Type of MutableHashTable;
 globalAssignment K3SurfaceFromDoublySpecialCubicFourfold;
 K3SurfaceFromDoublySpecialCubicFourfold.synonym = "K3 surface";
 
-net K3SurfaceFromDoublySpecialCubicFourfold := describe K3SurfaceFromDoublySpecialCubicFourfold := S -> (
-    out := describe underlyingK3 S;
+describe K3SurfaceFromDoublySpecialCubicFourfold := S -> (
+    U := underlyingK3 S;
+    D := describe U;
+    netOut := net D;
+    texOut := replace(///\\end\{aligned\}$///,"",texMath D);
     sanityCheckDSCF S;
-    if S#"LatticePolarization" === null then return (out|| "Lattice polarization: not yet computed; rerun 'polarizedK3surface'");
+    if S#"LatticePolarization" === null then return netTexMath(
+        netOut || "Lattice polarization: not yet computed; rerun 'polarizedK3surface'",
+        texOut | newline | "\\\\&\\text{Lattice polarization: not yet computed; rerun }\\texttt{polarizedK3surface}\\end{aligned}"
+    );
     M := latticeMatrix S;
-    isDetAsExpected := () -> (A := latticeIntersectionMatrix3x3 recoverFourfold S; if ring A =!= ZZ then return false; (det A) + (det M) == 0);
-    if isVirtualLatticeK3 S and computationStatus S <= 3 then out = out||("Lattice intersection matrix (virtual, computed from U): "|(net M)|net(if isDetAsExpected() then " (det = "|(toString det M)|") ✓" else ""));
-    if computationStatus S >= 4 and isDetAsExpected() then out = out || "[ use: oo(a,b) or oo(g) for polarized K3 models; call latticePolarization(oo) ]";
-    out
+    isDetAsExpected := () -> (
+        A := latticeIntersectionMatrix3x3 recoverFourfold S;
+        if ring A =!= ZZ then return false;
+        (det A) + (det M) == 0
+    );
+    if isVirtualLatticeK3 S and computationStatus S <= 3 then (
+        netOut = netOut || ("Lattice intersection matrix (virtual, computed from U): " | (net M) | net(if isDetAsExpected() then " (det = " | (toString det M) | ") ✓" else ""));
+        texOut = texOut | newline | "\\\\&\\text{Lattice intersection matrix (virtual, computed from }U\\text{): }" | (texMath M) | (if isDetAsExpected() then "\\text{ (det = }" | (texMath det M) | "\\text{) }\\checkmark" else "");
+    );
+    if computationStatus S >= 4 and isDetAsExpected() then (
+        netOut = netOut || "[ use oo(a,b) or oo(g) for polarized K3 models ]";
+        netOut = netOut || "[ call latticePolarization(oo) for the lattice polarization ]";
+        texOut = texOut | newline | "\\\\&[\\text{use }\\texttt{oo(a,b)}\\text{ or }\\texttt{oo(g)}\\text{ for polarized K3 models}]";
+        texOut = texOut | newline | "\\\\&[\\text{call }\\texttt{latticePolarization(oo)}\\text{ for the lattice polarization}]";
+    );
+    netTexMath(netOut,texOut | "\\end{aligned}")
 );
-texMath K3SurfaceFromDoublySpecialCubicFourfold := texMath @@ net;
 
-K3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterPrint} =
-K3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterNoPrint} =
+net K3SurfaceFromDoublySpecialCubicFourfold := S -> net describe S;
+texMath K3SurfaceFromDoublySpecialCubicFourfold := S -> texMath describe S;
+
 K3SurfaceFromDoublySpecialCubicFourfold#{Standard,AfterPrint} =
 K3SurfaceFromDoublySpecialCubicFourfold#{Standard,AfterNoPrint} = S -> (
     sanityCheckDSCF S;
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Lattice-polarized K3 surface associated to " << (shortDescriptionFourfold recoverFourfold S) << " — " << computationStatusLog(S) << endl;
+);
+
+K3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterPrint} =
+K3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterNoPrint} = S -> (
+    sanityCheckDSCF S;
+    customWebAppAfterPrint("Lattice-polarized K3 surface associated to ", shortDescriptionFourfoldTeX recoverFourfold S, " — ", computationStatusLog(S));
 );
 
 underlyingK3 = method();
@@ -145,30 +169,33 @@ embeddedK3SurfaceFromDoublySpecialCubicFourfold (K3SurfaceFromDoublySpecialCubic
     }
 );
 
-net EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := describe EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> (
+describe EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> (
     X := recoverFourfold E;
-    (S,T) := surfaces X;
-    Y := X.cache#"parentCubicFourfold";
-    d1 := discriminant X;
-    d2 := discriminant Y;
     A := latticeIntersectionMatrix3x3 X;
     B := latticeMatrix E;
     g := genus E;
-    Cd1Cd2 := "C_"|(toString d1);
-    if d1 != d2 then Cd1Cd2 = Cd1Cd2|" ∩ C_"|(toString d2);
-    F := ("Lattice-polarized K3 surface of genus "|(toString g)|" in ")|(net ambient underlyingK3 E);
-    F = F||(("of lattice discriminant det(")|(net B)|") = "|(toString det B));
-    F = F||("associated to a cubic fourfold in "|Cd1Cd2|" of lattice discriminant");
-    F = F||((net(newline|"det("))|(net A)|(net(newline|") = "|(toString det A))));
-    F
+    netOut := "Lattice-polarized K3 surface of genus " | (toString g) | " in " | (net ambient underlyingK3 E);
+    netOut = netOut || (("of lattice discriminant det(") | (net B) | ") = " | (toString det B));
+    netOut = netOut || ("associated to a " | shortDescriptionFourfold(X,false) | " of lattice discriminant");
+    netOut = netOut || ((net(newline | "det(")) | (net A) | (net(newline | ") = " | (toString det A))));
+    texOut := "\\begin{aligned}&\\text{Lattice-polarized K3 surface of genus }" | (texMath g) | "\\text{ in }" | (texMath ambient underlyingK3 E);
+    texOut = texOut | newline | "\\\\&\\text{of lattice discriminant }\\det" | (texMath B) | " = " | (texMath det B);
+    texOut = texOut | newline | "\\\\&\\text{associated to a }" | (texMath shortDescriptionFourfoldTeX(X,false)) | "\\text{ of lattice discriminant}";
+    texOut = texOut | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath det A);
+    netTexMath(netOut,texOut | "\\end{aligned}")
 );
-texMath EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := texMath @@ net;
 
-EmbeddedK3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterPrint} =
-EmbeddedK3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterNoPrint} =
+net EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> net describe E;
+texMath EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> texMath describe E;
+
 EmbeddedK3SurfaceFromDoublySpecialCubicFourfold#{Standard,AfterPrint} =
 EmbeddedK3SurfaceFromDoublySpecialCubicFourfold#{Standard,AfterNoPrint} = E -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Lattice-polarized K3 surface associated to " << (shortDescriptionFourfold recoverFourfold E) << endl;
+);
+
+EmbeddedK3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterPrint} =
+EmbeddedK3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterNoPrint} = E -> (
+    customWebAppAfterPrint("Lattice-polarized K3 surface associated to ", shortDescriptionFourfoldTeX recoverFourfold E);
 );
 
 building EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> (
