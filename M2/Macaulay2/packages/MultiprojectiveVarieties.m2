@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7.2",
-    Date => "November 9, 2026",
+    Date => "November 11, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -152,7 +152,8 @@ projectiveVariety (ZZ,Ring) := o -> (l,K) -> projectiveVariety({l},K);
 
 projectiveVariety (List,List,Ring) := o -> (n,d,K) -> (
     if #n != #d then error "expected two lists of the same length";
-    if not all(n|d,i->instance(i,ZZ) and i >= 0) then error "expected two lists of nonnegative integers";
+    if not all(n,i -> instance(i,ZZ) and i >= 0) then error "Segre-Veronese variety: expected a list of nonnegative dimensions";
+    if not all(d,i -> instance(i,ZZ) and i > 0) then error "Segre-Veronese variety: expected a list of positive degrees";
     if K#?(n,d,"SegreVeroneseVariety") then return K#(n,d,"SegreVeroneseVariety");
     P := projectiveVariety(n,K);
     f := multirationalMap apply(#d, i -> rationalMap gens image basis(toList(i : 0) | {d_i} | toList(#d - i - 1 : 0),ring P));
@@ -267,9 +268,8 @@ isGrass = (cacheValue "isGrass") (X -> (
 
 expression MultiprojectiveVariety := X -> expression first netTexDescription(X,"Short"=>true); -- retained for backward compatibility with code using expression
 
-net MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else ?X;
-
-texMath MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then texMath getAttribute(X,ReverseDictionary) else last netTexDescription X;
+net MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else net(? X);
+texMath MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then texMath getAttribute(X,ReverseDictionary) else texMath(? X);
 
 ShortTeX = new Type of HashTable;
 texMath ShortTeX := x -> x#"tex";
@@ -362,28 +362,44 @@ generatorDegreesTex MultiprojectiveVariety := X -> concatenate for l in degrees 
 
 describe MultiprojectiveVariety := X -> (
     n := shape X;
-    amb := first netTexDescription ambient X;
+    (amb,texAmb) := netTexDescription ambient X;
     s := "ambient:.............. " | amb | newline;
     s = s | "dim:.................. " | (toString dim X);
-    if dim X == -1 then return s;
+    t := "\\begin{array}{ll}\\text{ambient:} & " | texAmb;
+    t = t | "\\\\" | newline | "\\text{dim:} & " | (texMath dim X);
+    if dim X == -1 then return netTexMath(net s,t | "\\end{array}");
     s = s | newline | "codim:................ " | (toString codim X);
-    if codim X == 0 then return s;
-    s = s | newline | "degree:............... " | (toString degree X);
-    s = s | newline;
-    if # n > 1 then s = s | "multidegree:.......... " | (toString multidegree X) | newline;
+    t = t | "\\\\" | newline | "\\text{codim:} & " | (texMath codim X);
+    if codim X == 0 then return netTexMath(net s,t | "\\end{array}");
+    s = s | newline | "degree:............... " | (toString degree X) | newline;
+    t = t | "\\\\" | newline | "\\text{degree:} & " | (texMath degree X);
+    if #n > 1 then (
+        s = s | "multidegree:.......... " | (toString multidegree X) | newline;
+        t = t | "\\\\" | newline | "\\text{multidegree:} & " | (texMath multidegree X);
+    );
     s = s | "generators:........... " | generatorDegreesString(X) | newline;
+    t = t | "\\\\" | newline | "\\text{generators:} & " | generatorDegreesTex(X);
     purity := X == top X;
     s = s | "purity:............... " | toString(purity);
+    t = t | "\\\\" | newline | "\\text{purity:} & \\text{" | toString(purity) | "}";
     if purity then (
         s = s | newline | "dim sing. l.:......... " | toString(dim singularLocus X);
-        if dim singularLocus X >= 0 then s = s | newline | "gens sing. l.:........ " | generatorDegreesString(singularLocus X);
+        t = t | "\\\\" | newline | "\\text{dim sing. l.:} & " | (texMath dim singularLocus X);
+        if dim singularLocus X >= 0 then (
+            s = s | newline | "gens sing. l.:........ " | generatorDegreesString(singularLocus X);
+            t = t | "\\\\" | newline | "\\text{gens sing. l.:} & " | generatorDegreesTex(singularLocus X);
+        );
     );
     if #n > 1 then (
         s = s | newline | "Segre embedding:...... " | "map to PP^" | toString(numgens target segre X -1);
+        t = t | "\\\\" | newline | "\\text{Segre embedding:} & \\text{map to }\\mathbb{P}^{" | (texMath(numgens target segre X -1)) | "}";
         N := product apply(n, i -> i+1) -1;
-        if numgens target segre X -1 < N then s = s | " ⊂ PP^" | (toString N);
+        if numgens target segre X -1 < N then (
+            s = s | " ⊂ PP^" | (toString N);
+            t = t | "\\subset\\mathbb{P}^{" | (texMath N) | "}";
+        );
     );
-    s
+    netTexMath(net s,t | "\\end{array}")
 );
 
 isPresumedRationalNormalCurve = method();
@@ -434,6 +450,11 @@ netTexDescription MultiprojectiveVariety := o -> X -> (
     if instance(X,GrassmannianVariety) then (
         netStr = "GG(" | (toString X#"dimLinearSpaces") | "," | (toString dim X#"ProjectiveSpace") | ")";
         texStr = "\\mathbb{G}(" | (texMath X#"dimLinearSpaces") | "," | (texMath X#"ProjectiveSpace") | ")";
+        if o#"Ambient" and (not o#"Short") and codim X > 0 then (
+            (netAmbG,texAmbG) := netTexDescription ambient X;
+            netStr = netStr | " ⊂ " | netAmbG;
+            texStr = texStr | "\\subset " | texAmbG;
+        );
         return (netStr,texStr);
     );
     if codim X == 0 then (
@@ -487,6 +508,11 @@ netTexDescription MultiprojectiveVariety := o -> X -> (
         );
         return (netStr,texStr);
     );
+    if dim X == 0 and X.cache#?"Support" and X.cache#"Support" === X then (
+        netStr = (toString degree X) | " points" | netAmb("in");
+        texStr = (texMath degree X) | "\\text{ points}" | texAmb("in");
+        return (netStr,texStr);
+    );
     if # degrees X == 1 and first first degrees X === {1} and last first degrees X == codim X then (
         if dim X == 1 then (
             netStr = "line" | netAmb("in");
@@ -521,27 +547,27 @@ netTexDescription MultiprojectiveVariety := o -> X -> (
         if degrees X === {({4},1)} then (varHeader = varHeader | "quartic "; withGeneratorDegrees = false);
         if degrees X === {({5},1)} then (varHeader = varHeader | "quintic "; withGeneratorDegrees = false);
     );
-    withNumericalInvariants := if o#"NumericalInvariants" =!= null then o#"NumericalInvariants" else instance(X,EmbeddedProjectiveVariety) and codim X >= 2 and X.cache#?"top" and X === top X;
+    withNumericalInvariants := if o#"NumericalInvariants" =!= null then o#"NumericalInvariants" else instance(X,EmbeddedProjectiveVariety) and (dim X == 1 or dim X == 2) and codim X >= 2 and X.cache#?"top" and X === top X;
     withNumericalInvariants = withNumericalInvariants and (not o#"Short");
+    dimensionalDescription := () -> (
+        s := {"curve","surface","threefold","fourfold","fivefold","sixfold"}_(dim X - 1);
+        netStr = varHeader | s | netAmb("in");
+        texStr = "\\text{" | varHeader | s | "}" | texAmb("in");
+        if withNumericalInvariants then (
+            genStr := if dim X == 1 then " and arithmetic genus " else " and sectional genus ";
+            netStr = netStr | " of degree " | (toString degree X) | genStr | (toString sectionalGenus X);
+            texStr = texStr | "\\text{ of degree }" | (texMath degree X) | "\\text{" | genStr | "}" | (texMath sectionalGenus X);
+        );
+    );
     if dim X == 1 then (
         if (not o#"Short") and instance(X,EmbeddedProjectiveVariety) and isPresumedRationalNormalCurve X then (
             netStr = commonNameRationalNormalCurve(X,false) | netAmb("in");
             texStr = "\\text{" | commonNameRationalNormalCurve(X,false) | "}" | texAmb("in");
             return (netStr,texStr);
         );
-        netStr = varHeader | "curve" | netAmb("in");
-        texStr = "\\text{" | varHeader | "curve}" | texAmb("in");
-        if withNumericalInvariants then (
-            netStr = netStr | " of degree " | (toString degree X) | " and genus " | (toString sectionalGenus X);
-            texStr = texStr | "\\text{ of degree }" | (texMath degree X) | "\\text{ and genus }" | (texMath sectionalGenus X);
-        );
+        dimensionalDescription();
     ) else if dim X == 2 then (
-        netStr = varHeader | "surface" | netAmb("in");
-        texStr = "\\text{" | varHeader | "surface}" | texAmb("in");
-        if withNumericalInvariants then (
-            netStr = netStr | " of degree " | (toString degree X) | " and sectional genus " | (toString sectionalGenus X);
-            texStr = texStr | "\\text{ of degree }" | (texMath degree X) | "\\text{ and sectional genus }" | (texMath sectionalGenus X);
-        );
+        dimensionalDescription();
     ) else if codim X == 1 then (
         netStr = varHeader | "hypersurface" | netAmb("in");
         texStr = "\\text{" | varHeader | "hypersurface}" | texAmb("in");
@@ -549,15 +575,8 @@ netTexDescription MultiprojectiveVariety := o -> X -> (
         netStr = varHeader | "complete intersection" | netAmb("in") | (if withGeneratorDegrees then " of type " | (generatorDegreesString X) else "");
         texStr = "\\text{" | varHeader | "complete intersection}" | texAmb("in") | (if withGeneratorDegrees then "\\text{ of type }" | (generatorDegreesTex X) else "");
         return (netStr,texStr);
-    ) else if dim X == 3 then (
-        netStr = varHeader | "threefold" | netAmb("in");
-        texStr = "\\text{" | varHeader | "threefold}" | texAmb("in");
-    ) else if dim X == 4 then (
-        netStr = varHeader | "fourfold" | netAmb("in");
-        texStr = "\\text{" | varHeader | "fourfold}" | texAmb("in");
-    ) else if dim X == 5 then (
-        netStr = varHeader | "fivefold" | netAmb("in");
-        texStr = "\\text{" | varHeader | "fivefold}" | texAmb("in");
+    ) else if member(dim X,{3,4,5,6}) then (
+        dimensionalDescription();
     ) else (
         netStr = varHeader | (toString dim X) | "-dimensional subvariety" | netAmb("of");
         texStr = (if varHeader === "" then "" else "\\text{" | varHeader | "}") | (texMath dim X) | "\\text{-dimensional subvariety}" | texAmb("of");
@@ -583,7 +602,10 @@ netTexDescription MultiprojectiveVariety := o -> X -> (
     (netStr,texStr)
 );
 
-? MultiprojectiveVariety := X -> net first netTexDescription X;
+? MultiprojectiveVariety := X -> (
+    (n,t) := netTexDescription X;
+    netTexMath(net n,t)
+);
 
 degrees MultiprojectiveVariety := (cacheValue "degreesGensIdeal") (X -> sort pairs tally degrees ideal X);
 
@@ -1446,9 +1468,13 @@ netTexDescription MultirationalMap := o -> Phi -> (
     (netStr,texStr | "\\end{aligned}")
 );
 
-? MultirationalMap := Phi -> net first netTexDescription Phi;
-net MultirationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then toString getAttribute(Phi,ReverseDictionary) else ?Phi;
-texMath MultirationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then texMath getAttribute(Phi,ReverseDictionary) else last netTexDescription Phi;
+? MultirationalMap := Phi -> (
+    (n,t) := netTexDescription Phi;
+    netTexMath(net n,t)
+);
+
+net MultirationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then toString getAttribute(Phi,ReverseDictionary) else net(? Phi);
+texMath MultirationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then texMath getAttribute(Phi,ReverseDictionary) else texMath(? Phi);
 
 describe MultirationalMap := Phi -> (
     baseLocus Phi;
@@ -1457,12 +1483,20 @@ describe MultirationalMap := Phi -> (
         multidegree Phi;
         degree Phi;
     );
-    descr := first netTexDescription Phi;
+    (n,t) := netTexDescription Phi;
+    netDescr := net n;
+    texDescr := replace(///\\end\{aligned\}$///,"",t);
     if not instance(Phi,WeightedRationalMap) then (
-        n := # factor Phi;
-        for i to n-1 do descr = descr || ("degree sequence (map " | toString(i+1) | "/" | toString(n) | "): " | (toString degreeSequence (factor Phi)_i));
+        N := # factor Phi;
+        for i to N-1 do (
+            ds := degreeSequence (factor Phi)_i;
+            netDescr = netDescr || ("degree sequence (map " | toString(i+1) | "/" | toString(N) | "): " | (toString ds));
+            texDescr = texDescr | newline | "\\\\&\\text{degree sequence (map " | toString(i+1) | "/" | toString(N) | "): }" | (texMath ds);
+        );
     );
-    descr || ("coefficient ring: " | (toString coefficientRing Phi))
+    netDescr = netDescr || ("coefficient ring: " | (toString coefficientRing Phi));
+    texDescr = texDescr | newline | "\\\\&\\text{coefficient ring: }" | (texMath coefficientRing Phi);
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 expression MultirationalMap := Phi -> expression first netTexDescription(Phi,"Short"=>true); -- backward compatibility
@@ -2364,12 +2398,18 @@ showMapTex = Phi -> (
     fp := texPoint entries Phi;
     "\\begin{aligned}" | f | X | " &\\dashrightarrow " | Y | "\\\\" | newline | p | " &\\longmapsto " | fp | "\\end{aligned}"
 );
+
 NetTexMath = new Type of HashTable;
 netTexMath = (n,t) -> new NetTexMath from {"net" => n, "tex" => t};
 net NetTexMath := x -> x#"net";
 texMath NetTexMath := x -> x#"tex";
 NetTexMath#{Standard,AfterPrint} = NetTexMath#{Standard,AfterNoPrint} =
 NetTexMath#{WebApp,AfterPrint} = NetTexMath#{WebApp,AfterNoPrint} = x -> null;
+toString NetTexMath := x -> toString net x;
+NetTexMath == NetTexMath := (x,y) -> toString x == toString y;
+NetTexMath == String := (x,s) -> toString x == s;
+String == NetTexMath := (s,x) -> s == toString x;
+
 show MultirationalMap := Phi -> netTexMath(showMapNet Phi,showMapTex Phi);
 show RationalMap := Phi -> show multirationalMap {Phi};
 show MultihomogeneousRationalMap := Phi -> show multirationalMap {Phi};
@@ -2435,8 +2475,6 @@ globalAssignment GrassmannianVariety;
 
 GrassmannianVariety.synonym = "Grassmannian variety";
 
-? GrassmannianVariety := G -> (first netTexDescription(G,"Short"=>true)) | (if codim G > 0 then " ⊂ PP^" else " = PP^") | (toString dim ambient G);
-
 GG = method();
 
 GG (ZZ,EmbeddedProjectiveVariety) := (k,P) -> (
@@ -2451,7 +2489,7 @@ GG (ZZ,EmbeddedProjectiveVariety) := (k,P) -> (
     G.cache#"singularLocus" = 0_G;
     G#"ProjectiveSpace" = P;
     G#"dimLinearSpaces" = k;
-    G.cache#"displayExpression" = netTexDescription(G,"UseName"=>false);
+    G.cache#"displayExpression" = netTexDescription(G,"UseName"=>false,"Short"=>true);
     P.cache#(k,GrassmannianVariety) = G
 );
 GG (Ring,ZZ,ZZ) := (K,k,n) -> GG(k,projectiveVariety Grass(0,n,K,Variable=>"x"));
@@ -4568,8 +4606,8 @@ h = first graph p2
 assert((degree source h, degree target h) == (771, 141));
 ///
 
-TEST ///
-strForTest := "rational map between projective varieties
+TEST (///
+netForTest = net("rational map between projective varieties
 represented by 2 tuples of homogeneous polynomials of degrees ((0,1,0),(0,0,1))
 source variety: threefold in PP^3 x PP^2 x PP^4 cut out by 12 hypersurfaces of multi-degrees (0,0,2)^1 (0,1,1)^2 (1,0,1)^7 (1,1,0)^2 
 target variety: complete intersection in PP^2 x PP^4 of type (0,2)^1 (1,1)^2 
@@ -4579,7 +4617,18 @@ multidegree: {66, 46, 31, 20}
 degree: 1
 degree sequence (map 1/2): [(0,1,0), (0,0,2), (1,0,1), (2,0,0)]
 degree sequence (map 2/2): [(0,0,1), (2,0,0)]
-coefficient ring: ZZ/300007";
+coefficient ring: ZZ/300007");
+texForTest = /// | "///" | ///\begin{aligned}&\text{rational map between projective varieties}
+\\&\text{represented by }2\text{ tuples of homogeneous polynomials of degrees }\left(\left(0,\,1,\,0\right),\,\left(0,\,0,\,1\right)\right)
+\\&\text{source variety: }\text{threefold}\text{ in }\mathbb{P}^{3}\times\mathbb{P}^{2}\times\mathbb{P}^{4}\text{ cut out by }12\text{ hypersurfaces of multi-degrees }{\left(0,\,0,\,2\right)}^{1}\ {\left(0,\,1,\,1\right)}^{2}\ {\left(1,\,0,\,1\right)}^{7}\ {\left(1,\,1,\,0\right)}^{2}\ 
+\\&\text{target variety: }\text{complete intersection}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{4}\text{ of type }{\left(0,\,2\right)}^{1}\ {\left(1,\,1\right)}^{2}\ 
+\\&\text{base locus: }\emptyset \subseteq \mathbb{P}^{3}\times\mathbb{P}^{2}\times\mathbb{P}^{4}
+\\&\text{dominance: }\texttt{true}
+\\&\text{multidegree: }\left\{66,\:46,\:31,\:20\right\}
+\\&\text{degree: }1
+\\&\text{degree sequence (map 1/2): }\left[\left(0,\,1,\,0\right),\,\left(0,\,0,\,2\right),\,\left(1,\,0,\,1\right),\,\left(2,\,0,\,0\right)\right]
+\\&\text{degree sequence (map 2/2): }\left[\left(0,\,0,\,1\right),\,\left(2,\,0,\,0\right)\right]
+\\&\text{coefficient ring: }\frac{{\mathbb Z}}{300\,007}\end{aligned}/// | "///" | ///;
 R = ZZ/300007[x_0..x_3];
 C3 = ideal(x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2);
 C2 = ideal(x_1^2-x_0*x_2,x_3);
@@ -4590,8 +4639,9 @@ assert(multidegree(3,Phi) == 66 and multidegree(2,Phi) == 46);
 assert(multidegree Phi == {66, 46, 31, 20})
 assert(degree(Phi,Strategy=>"random point") == 1 and degree Phi == 1)
 assert(Phi * inverse Phi == 1 and Phi^-1 * Phi == 1)
-assert(toString describe Phi == toString strForTest);
-///
+assert(net describe Phi == netForTest);
+assert(texMath describe Phi == texForTest);
+///)
 
 TEST ///
 R = ZZ/300007[x_0..x_3];
@@ -4647,11 +4697,13 @@ TEST///
 Phi = last graph rationalMap projectiveVariety({1},{4},ZZ/300007);
 assert(multidegree(,Phi) == multidegree Phi)
 assert(projectiveDegrees Phi == multidegree Phi)
-degree(Phi,Strategy=>"random point")
+assert(degree(Phi,Strategy=>"random point") == 1)
 R = ZZ/33331[x_0..x_4];
 Phi = (last graph multirationalMap rationalMap transpose jacobian(-x_2^3+2*x_1*x_2*x_3-x_0*x_3^2-x_1^2*x_4+x_0*x_2*x_4))||projectiveVariety ideal(random(2,R));
-assert(? source Phi == "threefold in PP^4 x PP^4 cut out by 13 hypersurfaces of multi-degrees (0,2)^1 (1,1)^3 (2,1)^8 (4,0)^1 ")
-assert(? target Phi == "quadric hypersurface in PP^4")
+assert(net(? source Phi) == "threefold in PP^4 x PP^4 cut out by 13 hypersurfaces of multi-degrees (0,2)^1 (1,1)^3 (2,1)^8 (4,0)^1 ")
+assert(texMath(? source Phi) == "\\text{threefold}\\text{ in }\\mathbb{P}^{4}\\times\\mathbb{P}^{4}\\text{ cut out by }13\\text{ hypersurfaces of multi-degrees }{\\left(0,\\,2\\right)}^{1}\\ {\\left(1,\\,1\\right)}^{3}\\ {\\left(2,\\,1\\right)}^{8}\\ {\\left(4,\\,0\\right)}^{1}\\ ")
+assert(net(? target Phi) == "quadric hypersurface in PP^4")
+assert(texMath(? target Phi) == "\\text{quadric hypersurface}\\text{ in }\\mathbb{P}^{4}")
 assert(degree(Phi,Strategy=>"random point") == 2)
 assert(degree(Phi,Strategy=>"0-th projective degree") == 2)
 assert(degree Phi == 2)
@@ -4931,8 +4983,10 @@ p = point X;
 assert(dim p == 0 and degree p == 1 and instance(|- p,Array))
 Y = random(4,0_X);
 assert(dim Y == 1 and degree Y == 4 and degree image segreEmbedding Y == 2)
-assert(? Y == "quartic curve in PP(2,3,4)")
-assert(? image segreEmbedding Y == "irreducible conic curve in PP^2")
+assert(net(? Y) == "quartic curve in PP(2,3,4)")
+assert(texMath(? Y) == "\\text{quartic curve}\\text{ in }\\mathbb{P}\\left(2,\\,3,\\,4\\right)")
+assert(net(? image segreEmbedding Y) == "irreducible conic curve in PP^2")
+assert(texMath(? image segreEmbedding Y) == "\\text{irreducible conic curve}\\text{ in }\\mathbb{P}^{2}")
 psi = rationalMap((gens ideal (2 * point X))|(gens ideal point X));
 Psi = multirationalMap psi;
 debug Cremona
@@ -5090,7 +5144,8 @@ f := super parametrize C
 image f;
 f
 g = parametrize (p ** C)
-describe g; describe inverse g;
+describe g
+describe inverse g
 g
 inverse g
 Hom(C,p)
@@ -5164,7 +5219,31 @@ i13 : g = parametrize (p ** C)
 o13 = $g$
 
 o13 : <samp class="token class-name">MultirationalMap</samp><samp class="token string"> (</samp>$\text{rational map from }\mathbb{P}^{1}\text{ to }\text{curve}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{2}$<samp class="token string">)</samp>
-i14 : describe g; describe inverse g;
+i14 : describe g
+
+o14 = $\begin{aligned}&amp;\text{rational map between projective varieties}
+\\&amp;\text{represented by }2\text{ tuples of homogeneous polynomials of degrees }\left(0,\,2\right)
+\\&amp;\text{source variety: }\mathbb{P}^{1}
+\\&amp;\text{target variety: }\text{rational curve}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{2}\text{ cut out by }3\text{ hypersurfaces of multi-degrees }{\left(0,\,2\right)}^{1}\ {\left(1,\,0\right)}^{2}\ 
+\\&amp;\text{base locus: }\emptyset \subseteq \mathbb{P}^{1}
+\\&amp;\text{dominance: }\texttt{true}
+\\&amp;\text{multidegree: }\left\{1,\:2\right\}
+\\&amp;\text{degree: }1
+\\&amp;\text{degree sequence (map 1/2): }\left[0\right]
+\\&amp;\text{degree sequence (map 2/2): }\left[2\right]
+\\&amp;\text{coefficient ring: }K\end{aligned}$
+i15 : describe inverse g
+
+o15 = $\begin{aligned}&amp;\text{rational map between projective varieties}
+\\&amp;\text{represented by a tuple of homogeneous polynomials of degree }\left(0,\,1\right)
+\\&amp;\text{source variety: }\text{rational curve}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{2}\text{ cut out by }3\text{ hypersurfaces of multi-degrees }{\left(0,\,2\right)}^{1}\ {\left(1,\,0\right)}^{2}\ 
+\\&amp;\text{target variety: }\mathbb{P}^{1}
+\\&amp;\text{base locus: }\emptyset \subseteq \mathbb{P}^{2}\times\mathbb{P}^{2}
+\\&amp;\text{dominance: }\texttt{true}
+\\&amp;\text{multidegree: }\left\{2,\:1\right\}
+\\&amp;\text{degree: }1
+\\&amp;\text{degree sequence (map 1/1): }\left[\left(0,\,1\right),\,\left(0,\,1\right)\right]
+\\&amp;\text{coefficient ring: }K\end{aligned}$
 i16 : g
 
 o16 = $g$

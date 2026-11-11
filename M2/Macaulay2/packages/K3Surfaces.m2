@@ -10,7 +10,7 @@
 newPackage(
     "K3Surfaces",
     Version => "1.2", 
-    Date => "November 9, 2026",
+    Date => "November 11, 2026",
     Authors => {{Name => "Michael Hoff", 
                  Email => "hahn@math.uni-sb.de"},
                 {Name => "Giovanni Staglianò", 
@@ -692,7 +692,7 @@ pointLineAndConicOnMukaiThreefoldOfGenus12 = (K,withLine,withConic) -> (
     X := psi#"idealImage";
     assert(X =!= null);
     p = psi p;
-    if ? p != "one-point scheme in PP^13" then error "something went wrong";
+    if not(dim Var p == 0 and degree Var p == 1) then error "something went wrong";
     if withConic then (
         psi = rationalMap(psi,Dominant=>true);
         -- B is the base locus of psi^-1, B-Supp(B) is a conic.
