@@ -7,15 +7,15 @@
 
 newPackage(
         "ReflexivePolytopesDB",
-        Version => "1.0", 
-        Date => "22 May 2019",
+        Version => "1.1",
+        Date => "10 November 2026",
         Authors => {{
                 Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage=>"http://www.math.cornell.edu/~mike"
+                Email => "mikestillman1@gmail.com", 
+                HomePage=>"https://mikestillman.github.io"
                 }},
         Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4",
-	Keywords => {"Convex Geometry"},
+        Keywords => {"Convex Geometry"},
         AuxiliaryFiles => true
         )
 
@@ -77,7 +77,7 @@ kreuzerSkarkeURL ZZ := URL => opts -> (h11) -> (
     valF := getopt("F", Facets, opts);
     valH21 := getopt("h12", H12, opts);
     valL := getopt("L", Limit, opts);
-    str := "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11="|toString h11;
+    str := "https://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11="|toString h11;
     ksopts := {valV, valM, valN, valF, valH21, valL};
     ksopts = select(ksopts, x -> x =!= "");
     URL concatenate between("&", prepend(str,ksopts))
@@ -114,6 +114,33 @@ parseKSRawString String := List => (str) -> (
     for i from 0 to #starts-2 list (
         KSEntry(cys_(starts#i) | " id:" | i | "\n" |  demark("\n", cys_{starts#i+1 .. starts#(i+1)-1}))
         )
+    )
+
+-- A complete server response ends with "#NF: n" or "Exceeded limit of n".
+-- If neither is present, the server-side search died partway through.
+isCompleteKSResponse = str -> match("#NF|Exceeded", str)
+
+-- the text of the polytope entries in a server response
+ksResultBody = str -> (
+    locA := regex("<b>Result:</b>\n", str);
+    locB := regex("#NF", str);
+    if locB === null then locB = regex("Exceeded", str);
+    firstloc := if locA === null then 0 else locA#0#0 + locA#0#1;
+    lastloc := if locB === null then #str else locB#0#0;
+    substring(firstloc, lastloc-firstloc, str)
+    )
+
+-- hodgePairs()#h11 is the sorted list of h12 values such that (h11, h12) occurs
+-- in the Kreuzer-Skarke database.  Read from a data file on first use.
+hodgePairsCache := null;
+hodgePairs = () -> (
+    if hodgePairsCache === null then
+        hodgePairsCache = hashTable for s in lines get(offlineDirectory | "ks-hodge-pairs.txt")
+            list (
+                if #s == 0 or match("^--", s) then continue;
+                L := separate(" ", s) / value;
+                L#0 => drop(L, 1));
+    hodgePairsCache
     )
 
 offlines = hashTable {
@@ -169,12 +196,37 @@ findOffline ZZ := opts -> (h11) -> (
 
 kreuzerSkarke = method(Options => join(pairs options kreuzerSkarkeURL, {Access=>null}))
 kreuzerSkarke ZZ := List => opts -> h11 -> (
+    -- some queries match tens of millions of polytopes, so always require a limit
+    if not instance(opts.Limit, ZZ) or opts.Limit <= 0 then
+        error "kreuzerSkarke: Limit must be a positive integer (the default is 1000)";
     optsA := new OptionTable from select(pairs opts, k -> k#0 =!= Access);
     offlineResult := findOffline(h11, optsA);
     if offlineResult =!= null then return offlineResult;
     url := kreuzerSkarkeURL(h11, optsA);
     rawstr := retrieve(url, Access=>opts.Access);
-    parseKSRawString rawstr
+    if isCompleteKSResponse rawstr then return parseKSRawString rawstr;
+    if optsA.H12 =!= null then
+        error("incomplete response from the Kreuzer-Skarke server for " | url#0);
+    -- As of Nov 2026, the server's search dies partway through for queries
+    -- with large h11 (roughly h11 > 250) and no h12, returning a truncated
+    -- result, although queries giving h12 still work.  Work around this by
+    -- querying each h12 that occurs with this h11.
+    if debugLevel > 0 then
+        << "-- incomplete server response; querying each h12 value separately" << endl;
+    lim := optsA.Limit;
+    bodies := {};
+    count := 0;
+    for h12 in (hodgePairs())#h11 ?? {} do (
+        if count >= lim then break;
+        u := kreuzerSkarkeURL(h11, optsA, H12 => h12, Limit => lim - count);
+        s := retrieve(u, Access=>opts.Access);
+        if not isCompleteKSResponse s then
+            error("incomplete response from the Kreuzer-Skarke server for " | u#0);
+        b := ksResultBody s;
+        count = count + #parseKSRawString b;
+        bodies = append(bodies, b);
+        );
+    parseKSRawString concatenate between("\n", bodies)
     )
 
 kreuzerSkarke(ZZ, ZZ) := List => opts -> (h11, h12) -> kreuzerSkarke(h11, opts, H12 => h12)
@@ -280,7 +332,7 @@ generateOffline ZZ := opts -> (h11) -> (
   generateOffline(5, 53)
   generateOffline 491
   generateOffline(11, 24, Expected=>200)
-  urlPrefix = "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?"
+  urlPrefix = "https://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?"
 
   generateOffline(9, 21)
 ///
@@ -547,6 +599,13 @@ Key
   DualLatticePoints
   H12
   Access
+  [kreuzerSkarke, Limit]
+  [kreuzerSkarke, Vertices]
+  [kreuzerSkarke, Facets]
+  [kreuzerSkarke, LatticePoints]
+  [kreuzerSkarke, DualLatticePoints]
+  [kreuzerSkarke, H12]
+  [kreuzerSkarke, Access]
 Headline
   access Kreuzer-Skarke dimension 4 reflexive polytopes database
 Usage
@@ -559,7 +618,9 @@ Inputs
   h12:ZZ
     (optional) the desired $h^{1,2}$ of the Calabi-Yau hypersurface
   Limit => ZZ
-    The maximum number of examples to retrieve
+    The maximum number of examples to retrieve.  This must be a positive integer
+    (the default is 1000): some queries match tens of millions of polytopes,
+    so an unlimited query is not allowed
   str:String
     parses the given string into a list of KSEntry's
   Vertices => ZZ
@@ -923,6 +984,10 @@ Key
   (generateOffline,ZZ)
   (generateOffline,ZZ,ZZ)
   Expected
+  [generateOffline, Expected]
+  [generateOffline, Limit]
+  [generateOffline, Prefix]
+  [generateOffline, FileName]
 Headline
   generate tables of reflexive 4d polytopes from the Kreuzer-Skarke list
 Usage

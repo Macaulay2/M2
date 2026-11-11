@@ -50,7 +50,7 @@ arm64-appleclang : always
 		-I`brew --prefix factory`/include   \
 		-I`brew --prefix libomp`/include    \
 		-I`brew --prefix readline`/include" \
-	F77="gfortran-15" \
+	F77="gfortran-16" \
 	PKG_CONFIG_PATH="`brew --prefix factory`/lib/pkgconfig"
 
 
