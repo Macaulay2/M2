@@ -26,9 +26,9 @@ Node
       online Emacs manual that can be read with @KBD "info"@ mode; you may enter or re-enter that mode with
       the keystrokes @KBD "C-h i"@.
     Text
-      The Macaulay2 Emacs interface consists of several files in the directory
-      @TT "share/emacs/site-lisp/Macaulay2/"@ in the Macaulay2 distribution tree.
-      In order to teach Emacs how to find these files, you have two options:
+      The Macaulay2 Emacs interface is the Emacs package @CODE "M2"@, which is available from the
+      Macaulay2 package archive at @HREF "https://macaulay2.com/Repositories/Emacs/"@.
+      In order to install it, you have two options:
 
     Text
       @HEADER3 {"Method 1: using ", TO setupEmacs}@
@@ -42,17 +42,28 @@ Node
       creating the file if necessary, and save the file.
     Pre
       ;; .emacs file in your home directory
-      (load \"M2-init\")
+      (require 'package)
+      (add-to-list 'package-archives
+                   '("M2" . "https://macaulay2.com/Repositories/Emacs/") t)
+      (package-initialize)
 
-      ; f12 starts M2 in Emacs
-      ; comment out the following line with an initial semicolon
-      ; if you want to use your f12 key for something else
-      ; or change f12 to (for example) f8
-      (global-set-key [ f12 ] 'M2)
-
-      ; f11 sends commands to M2
-      ; use C-u f11 to temporarily edit the M2 executable
-      (global-set-key [ f11 ] 'M2-send-to-program)
+      (use-package M2
+        :ensure t
+        :bind (; f12 starts M2 in Emacs
+               ; comment out the following line with an initial semicolon
+               ; if you want to use your f12 key for something else
+               ; or change f12 to (for example) f8
+               ("<f12>" . M2)
+               ; f11 sends commands to M2
+               ; use C-u f11 to temporarily edit the M2 executable
+               ("<f11>" . M2-send-to-program)))
+    Text
+      The @CODE "use-package"@ macro is part of Emacs 29 and later.  With older versions of Emacs,
+      replace the @CODE "use-package"@ form above with the following lines, and then install the package
+      with the keystrokes @KBD "M-x package-refresh-contents"@ followed by @KBD "M-x package-install RET M2 RET"@.
+    Pre
+      (global-set-key (kbd "<f12>") 'M2)
+      (global-set-key (kbd "<f11>") 'M2-send-to-program)
     Text
       Now, try restarting Emacs and starting Macaulay2 by pressing the @KBD "F12"@ function key.
       If Macaulay2 doesn't start up (in a buffer named @TT "*M2*"@), check your @TT ".emacs"@ file
