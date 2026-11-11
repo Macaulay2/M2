@@ -119,13 +119,6 @@ class ARingZZpFlint : public SimpleARing<ARingZZpFlint>
     return true;
   }
 
-  bool set_from_BigReal(ElementType &result, gmp_RR a) const
-  {
-    (void) result;
-    (void) a;
-    return false;
-  }
-
   // arithmetic
   void negate(ElementType &result, ElementType a) const
   {
