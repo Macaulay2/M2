@@ -51,7 +51,8 @@ whose class in G(1,4) is s_(2,2)
 Type: ordinary
 (case 9 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 10(')
-containing a surface of degree 2 and sectional genus 0 cut out by 6 hypersurfaces of degrees 1^5 2^1 
+containing a surface of degree 2 and sectional genus 0
+cut out by 6 hypersurfaces of degrees 1^5 2^1 
 whose class in G(1,4) is s_(3,1)+s_(2,2)
 Type: ordinary
 (case 1 of Table 1 in arXiv:2002.07026)
@@ -69,17 +70,20 @@ assert(parameterCount(Y_0,Verbose=>true) == (2, (34, 4, 0)) and parameterCount(Y
 TEST /// -- Test 2 (2/2) -- GM fourfolds from strings: describe, discriminant, parameterCount, toGrass
 strIn := {"cubic scroll", "quintic del Pezzo surface", "general GM 4-fold of discriminant 20"};
 strOut := "Special Gushel-Mukai fourfold of discriminant 12
-containing a surface of degree 3 and sectional genus 0 cut out by 7 hypersurfaces of degrees 1^4 2^3 
+containing a surface of degree 3 and sectional genus 0
+cut out by 7 hypersurfaces of degrees 1^4 2^3 
 whose class in G(1,4) is 2*s_(3,1)+s_(2,2)
 Type: ordinary
 (case 7 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 10('')
-containing a surface of degree 5 and sectional genus 1 cut out by 8 hypersurfaces of degrees 1^3 2^5 
+containing a surface of degree 5 and sectional genus 1
+cut out by 8 hypersurfaces of degrees 1^3 2^5 
 whose class in G(1,4) is 3*s_(3,1)+2*s_(2,2)
 Type: ordinary
 (case 4 of Table 1 in arXiv:2002.07026)
 Special Gushel-Mukai fourfold of discriminant 20
-containing a surface of degree 9 and sectional genus 2 cut out by 19 hypersurfaces of degree 2
+containing a surface of degree 9 and sectional genus 2
+cut out by 19 hypersurfaces of degree 2
 whose class in G(1,4) is 6*s_(3,1)+3*s_(2,2)
 Type: ordinary
 (case 17 of Table 1 in arXiv:2002.07026)

@@ -46,7 +46,7 @@ describe IntersectionOfThreeQuadricsInP7 := X -> (
     S := surface X;
     disc := discriminant X;
     A := X.cache#(S,"LatticeIntersectionMatrix");
-    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>0);
     netDescr := "Complete intersection of three quadrics in PP^7";
     netDescr = netDescr || ((net("of discriminant " | (toString disc) | " = det(")) | (net A) | (net ")"));
     netDescr = netDescr || ("containing a " | netS);

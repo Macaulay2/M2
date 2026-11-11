@@ -199,7 +199,7 @@ describe HodgeSpecialFourfold := X -> (
         netDescr = netDescr || ((net("of discriminant " | (toString disc) | " = det(")) | (net A) | (net ")"));
         texDescr = texDescr | newline | "\\\\&\\text{of discriminant }" | (texMath disc) | " = \\det" | (texMath A);
     );
-    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>0);
     netDescr = netDescr || ("containing a " | netS);
     texDescr = texDescr | newline | "\\\\&\\text{containing a }" | texS;
     if X.cache#?(S,"parameterCount") then (
