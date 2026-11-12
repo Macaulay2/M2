@@ -602,7 +602,7 @@ flattenDegreeMap(RingMap) := (f) -> (
     -- f: RingMap S -> R
     -- returns f': RingMap T -> R
     -- where T is a ring that is abstractly isomorphic to S but which has the
-    -- same degree group as S.
+    -- same degree group as R.
     -- f' is homogeneous and is "the same" as f but with DegreeMap == identity.
     if not isHomogeneous f then error "flattenDegreeMap: non-homogeneous input is invalid";
     (S, phiS) := flattenRing source f;
