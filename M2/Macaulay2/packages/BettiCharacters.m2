@@ -1606,7 +1606,7 @@ Node
 		(BOLD "2.3: ", "New option for the action of a semidirect
 		    product of a finite group acting on a torus.
 		    Improved caching and removed calls to deprecated functions."),
-		(BOLD "2.4: ", "Introduces significant optizimations to the core
+		(BOLD "2.4: ", "Introduces significant optimizations to the core
 		    algorithm for computing Betti characters. Removed the ",
 		    TT "inverseRingActors", " method since it is not used anymore."),
 		(BOLD "2.5: ", "Overhauls the internal representation of characters

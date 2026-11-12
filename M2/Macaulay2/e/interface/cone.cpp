@@ -13,7 +13,7 @@
 #include "matrices/matrix-con.hpp"
 #include "matrices/matrix.hpp"
 #include "interface/mutable-matrix.h"
-#include "mutable-matrices/mutablemat.hpp"
+#include "basic-mutable-matrices/mat.hpp"
 #include "util.hpp"
 
 #include "cytools/lattice_points.hpp"

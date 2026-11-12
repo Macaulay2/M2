@@ -23,7 +23,6 @@ INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = test
 
 # gcc 8.3 needs more memory
-MLIMIT = 500000
 VLIMIT = 500000
 
 include ../Makefile.library

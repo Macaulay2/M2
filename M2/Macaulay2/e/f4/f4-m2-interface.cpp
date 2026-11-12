@@ -35,7 +35,7 @@ void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
 
   result.len = n;
   std::vector<ring_elem> relem_array;
-  result.monoms = newarray_atomic(monomial_word, n * MI->max_monomial_size());
+  result.monoms = new monomial_word[n * MI->max_monomial_size()];
   n = 0;
   monomial_word *nextmonom = result.monoms;
   for (gbvector *t = f; t != nullptr; t = t->next)

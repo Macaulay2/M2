@@ -808,7 +808,7 @@ pierip(List, List, PolynomialRing) := (mu, boxes, P) -> (
      d := numgens(P);
      R := QQ[X];
      f := pierizero(mu, boxes, R);
-     mon := apply(compositions(d, #boxes), i-> (output := 1; for j from 0 to #i-1 do output = output * X_j^(i#j); output));
+     mon := apply(compositions(d, #boxes), i-> product(#i, j -> R_j^(i#j)));
      denom := 1;
      result := for i from 0 to (rank source f) - 1 list (
 	  row := flatten entries f_{i};
@@ -824,7 +824,7 @@ pierip(List, List, PolynomialRing) := (mu, boxes, P) -> (
      intmat := map(ZZ^((rank target f) * #mon), ZZ^(rank source f), transpose(result2));
      (D, S, T) := smithNormalForm(intmat);
      S' := (S^(-1))_{0..(rank source D)-1};
-     ((id_(P^((rank target S') // #mon))) ** matrix {mon}) * (P ** S')
+     ((id_(P^((rank target S') // #mon))) ** sub(matrix {mon}, P)) * (P ** S')
      )
 
 -- Input:
