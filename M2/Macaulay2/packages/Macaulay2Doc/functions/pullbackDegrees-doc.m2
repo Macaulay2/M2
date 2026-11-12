@@ -1,11 +1,11 @@
 doc ///
 Key
-    flattenDegreeMap
-    (flattenDegreeMap, RingMap)
+    pullbackDegrees
+    (pullbackDegrees, RingMap)
 Headline
     replace DegreeMap with identity
 Usage
-    f' = flattenDegreeMap f
+    f' = pullbackDegrees f
 Inputs
     f: RingMap
         $S \rightarrow R$
@@ -20,7 +20,7 @@ Description
         S = kk[a];
         R = S[t];
         f = map(R, S);
-        f' = flattenDegreeMap f
+        f' = pullbackDegrees f
         assert(target f' === target f)
         S' = source f';
         describe S

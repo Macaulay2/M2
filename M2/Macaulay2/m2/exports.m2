@@ -705,7 +705,7 @@ export {
 	"flagLookup",
 	"flatten",
 	"flattenRing",
-	"flattenDegreeMap",
+	"pullbackDegrees",
 	"flip",
 	"floor",
 	"flush",

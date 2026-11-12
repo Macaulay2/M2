@@ -116,19 +116,19 @@ Description
     Text
         In order for the resulting module to be graded the same as the
         input module, the degree map of $f$ must be the identity map. See @TO
-        flattenDegreeMap@ for assistance producing such RingMaps.
+        pullbackDegrees@ for assistance producing such RingMaps.
     Example
         kk = ZZ/3
         R = kk[a..d, SkewCommutative => true]
         f = map(R, kk)
         pushFwd(f, R^1) -- no grading
 
-        f' = flattenDegreeMap map(R, kk)
+        f' = pullbackDegrees map(R, kk)
         M = pushFwd(f', R^1)
         apply(values partition(degree, M_*), length) -- graded like R^1 is
 SeeAlso
     (pushFwd, Matrix)
-    flattenDegreeMap
+    pullbackDegrees
     pushFwdGens
     pushforward
     pushforward'
@@ -651,7 +651,7 @@ Description
     Example
         kk = ZZ/3
         R = kk[a..b]
-        f = flattenDegreeMap map(R, kk)
+        f = pullbackDegrees map(R, kk)
         N = R^1 / ideal {a^2, b^3}
         M = pushFwd(f, N)
         gs = pushFwdGens M

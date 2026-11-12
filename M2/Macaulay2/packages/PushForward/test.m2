@@ -1065,7 +1065,7 @@ TEST ///
 -- is graded the same as the input module
 kk = ZZ/101
 R = kk[a..d, SkewCommutative => true]
-f = flattenDegreeMap map(R, kk)
+f = pullbackDegrees map(R, kk)
 M = pushFwd(f, R^1)
 assert(apply(values partition(degree, M_*), length) == {1, 4, 6, 4, 1})
 ///
@@ -1076,7 +1076,7 @@ TEST ///
 kk = ZZ/3
 R = kk[x, y, Degrees => {{3}, {2}}] / ideal {x^2 - y^3}
 S = kk[t];
-f = flattenDegreeMap map(R, S, {x*y}, DegreeMap => d -> 5 * d);
+f = pullbackDegrees map(R, S, {x*y}, DegreeMap => d -> 5 * d);
 I = ideal vars R;
 H = Hom(f, R^3, I/I^2)
 H' = Hom(R^3, I/I^2)
@@ -1092,7 +1092,7 @@ TEST ///
 -- skew-commutative
 kk = ZZ/3
 R = kk[a..d, SkewCommutative => true]
-f = flattenDegreeMap(map(R, kk))
+f = pullbackDegrees(map(R, kk))
 I = ideal vars R;
 H = Hom(f, R^3, I/I^2)
 imgs = for i from 0 to numgens H - 1 list homomorphism'(f, homomorphism H_{i})

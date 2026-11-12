@@ -85,7 +85,7 @@ document {
         TO (target, RingMap),
         TO (symbol ^, RingMap, ZZ),
 	TO newCoordinateSystem,
-        TO flattenDegreeMap
+        TO pullbackDegrees
     }
 }
 
