@@ -30,7 +30,9 @@ Usage
     partition(L,f,I,g)
 Inputs
     f:Function
-    L:VisibleList
+    L:{VisibleList,VirtualTally}
+    I:VisibleList
+    g:Function
 Outputs
     :HashTable
 Description
