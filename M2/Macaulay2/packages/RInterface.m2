@@ -106,10 +106,12 @@ if not ZZ#?"Rinitialized" then (
     initializeR := foreignFunction(Rlib, "Rf_initialize_R", int,
 	{int, charstarstar});
     RCStackLimit := foreignSymbol(Rlib, "R_CStackLimit", uint);
+    RSignalHandlers := foreignSymbol(Rlib, "R_SignalHandlers", int);
     setupRmainloop := foreignFunction(Rlib, "setup_Rmainloop", void, void);
     putenv concatenate("R_HOME=", RHOME);
     initializeR(3, {"M2::RInterface", "--silent", "--vanilla"});
     *address RCStackLimit = -1;
+    *address RSignalHandlers = 0;
     setupRmainloop();
     ZZ#"Rinitialized" = true)
 
