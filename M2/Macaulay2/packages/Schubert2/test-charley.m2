@@ -386,7 +386,7 @@ A = intersectionRing Y
 B = S[h, Join => false]/h^3 -- A^*(P2), but using 2 times a line as the generating class:
 integral B := (b) -> (4 * coefficient((B_0)^2, b))
 c = 1 + (9/2)*h + (15/2)*h^2 -- verified by hand
-f = map(B,A,{-h, h, h^2, h^3, h^4, h^5})
+f = map(B,A,{-h})
 i = inclusion(f,
      NormalClass => c,
      Codimension => 3)
@@ -429,7 +429,7 @@ K = -(3*h - e_1 - e_2 - e_3 - e_4)
 tX = 1 - K + 7*h^2
 
 A = intersectionRing Y
-f = map(B, A, {K, -K, K^2, -K^3, K^4, -K^5})
+f = map(B, A, {K})
 i = inclusion(f,
      SubTangent => tX,
      SubDimension => 2,

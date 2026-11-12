@@ -730,8 +730,13 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	  else (
 	       if n' == 0 then 1_C else product(0 ..< n', i -> (ctop bundles#-i)^(rk2 - sum(i .. n'-1, j -> rank bundles#-j)))
 	       )^2 * product gens C);
-     pushforward C := r -> coefficient(sectionClass,r);
-     pushforward ZZ := pushforward QQ := r -> coefficient(sectionClass,promote(r,C));
+     -- when the Chern classes of one of the tautological bundles have been eliminated, the section class need not be a monomial,
+     -- so we push forward using its lead term
+     sectionClassMonomial := leadMonomial sectionClass;
+     sectionClassCoefficient := lift(leadCoefficient sectionClass,QQ);
+     sectionClassCoefficientReciprocal := 1 / sectionClassCoefficient;
+     pushforward C := r -> sectionClassCoefficientReciprocal * coefficient(sectionClassMonomial,r);
+     pushforward ZZ := pushforward QQ := r -> sectionClassCoefficientReciprocal * coefficient(sectionClassMonomial,promote(r,C));
      pTangentBundle := (
 	  if opts.Isotropic then (
 	       null					    -- not implemented
@@ -755,23 +760,35 @@ use AbstractVariety := AbstractVariety => X -> (
 
 installMethod(symbol SPACE, OO, RingElement, AbstractSheaf => (OO,h) -> OO_(variety ring h) (h))
 
+-- The intersection ring of a projective bundle is generated over that of the base by the first Chern class of the
+-- tautological line bundle, so we ask flagBundle for that bundle alone, omitting the variables for the other one.
+-- For compatibility, we still accept a list of two names, one for each tautological bundle, and we give the
+-- variable the name it had when both bundles had variables: i is the position of the line bundle.
+lineBundleVariableNames := (varNames,i) -> (
+     varNames = fixvar varNames;
+     if instance(varNames,List) and #varNames == 2 then varNames = {varNames#i};
+     if varNames === null then varNames = getSymbol "H";
+     if instance(varNames,List) and #varNames == 1 and varNames#0 === null then varNames = getSymbol "H";
+     if instance(varNames,Symbol) then {{new IndexedVariable from {varNames,(i+offset,1)}}}
+     else varNames)
+
 projectiveBundle' = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
-projectiveBundle' ZZ := opts -> n -> flagBundle({n,1},opts)
-projectiveBundle'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,opts)
-projectiveBundle' AbstractSheaf := opts -> E -> flagBundle({rank E - 1, 1},E,opts)
+projectiveBundle' ZZ := opts -> n -> projectiveBundle'(OO_point^(n+1),opts)
+projectiveBundle'(ZZ,AbstractVariety) := opts -> (n,X) -> projectiveBundle'(OO_X^(n+1),opts)
+projectiveBundle' AbstractSheaf := opts -> E -> flagBundle({1},E,VariableNames => lineBundleVariableNames(opts.VariableNames,1))
 
 projectiveBundle = method(Options => { VariableNames => null }, TypicalValue => FlagBundle)
-projectiveBundle ZZ := opts -> n -> flagBundle({1,n},opts)
-projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,opts)
-projectiveBundle AbstractSheaf := opts -> E -> flagBundle({1, rank E - 1},E,opts)
+projectiveBundle ZZ := opts -> n -> projectiveBundle(OO_point^(n+1),opts)
+projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> projectiveBundle(OO_X^(n+1),opts)
+projectiveBundle AbstractSheaf := opts -> E -> flagBundle({1},E,VariableNames => lineBundleVariableNames(opts.VariableNames,0),QuotientBundles => false)
 
 abstractProjectiveSpace' = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
-abstractProjectiveSpace' ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{fixvar opts.VariableName}})
-abstractProjectiveSpace'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{fixvar opts.VariableName}})
+abstractProjectiveSpace' ZZ := opts -> n -> flagBundle({1},n+1,VariableNames => {{fixvar opts.VariableName}})
+abstractProjectiveSpace'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1},OO_X^(n+1),VariableNames => {{fixvar opts.VariableName}})
 
 abstractProjectiveSpace = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
-abstractProjectiveSpace ZZ := opts -> n -> flagBundle({1,n},VariableNames => {{fixvar opts.VariableName},})
-abstractProjectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,VariableNames => {{fixvar opts.VariableName},})
+abstractProjectiveSpace ZZ := opts -> n -> flagBundle({1},n+1,VariableNames => {{fixvar opts.VariableName}},QuotientBundles => false)
+abstractProjectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1},OO_X^(n+1),VariableNames => {{fixvar opts.VariableName}},QuotientBundles => false)
 
 bundles = method()
 bundles FlagBundle := X -> X.Bundles
@@ -827,7 +844,9 @@ map(FlagBundle,AbstractVariety,AbstractSheaf) := opts -> (P,X,L) -> (
 	 sum for i from 0 to n list (H^(n-i))*(p^*(aclasses#i)));
      pushforward := method();
      pushforward RX := a -> pfmap a;
-     M := if fulton then (matrix {{-cL} | for i from 1 to n list (
+     -- the intersection ring of P may or may not have variables for the Chern classes of the bundle of rank n
+     M := if numgens RP == 1 then matrix {{if fulton then -cL else cL}}
+     else if fulton then (matrix {{-cL} | for i from 1 to n list (
           chern(i, (f^* E) - dual L))})
      else (matrix {(for i from 1 to n list (
 	  chern(i, (f^* E) - L))) | {cL}});
