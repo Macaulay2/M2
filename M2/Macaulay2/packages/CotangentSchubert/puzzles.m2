@@ -280,7 +280,7 @@ nwside = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,0,1))
 neside = p -> new LabelList from apply(p.Length,i->p#(0,i,0))
 
 
-export { "puzzle", "bottom", "fugacity", "fugacityTally", "fugacityVector", "Puzzle", "doublePuzzle", "associativity" }
+export { "puzzle", "bottom", "fugacity", "fugacityTally", "fugacityVector", "Puzzle", "DoublePuzzle", "doublePuzzle", "associativity" }
 end
 
 -- ex of use
