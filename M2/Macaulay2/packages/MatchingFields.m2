@@ -2,8 +2,8 @@
 
 newPackage(
     "MatchingFields",
-    Version => "1.3",
-    Date => "February 2, 2026",
+    Version => "1.4",
+    Date => "June 18, 2026",
     Authors => {
         {Name => "Oliver Clarke", Email => "oliver.clarke@durham.ac.uk", HomePage => "https://www.oliverclarkemath.com/"}
         },
@@ -29,8 +29,6 @@ export {
     "getWeightPluecker",
     "getGrMatchingFields",
     "matchingFieldPolytope",
-    -- TODO: add a TEST exercising ExtraZeroRows with a non-default value
-    -- (option to matchingFieldPolytope / matchingFieldPolytopePoints).
     "ExtraZeroRows",
     "diagonalMatchingField",
     "matchingFieldRingMap",
@@ -39,9 +37,6 @@ export {
     "plueckerMap",
     "plueckerAlgebra",
     "matchingFieldFromPermutation",
-    -- TODO: add TESTs exercising the matchingFieldFromPermutation options
-    -- RowNum, UsePrimePowers, ScalingCoefficient, PowerValue with non-default
-    -- values and assert the resulting matching field changes accordingly.
     "RowNum",
     "UsePrimePowers",
     "ScalingCoefficient",
@@ -52,8 +47,6 @@ export {
     "weightMatrixCone",
     "isCoherent",
     "linearSpanTropCone",
-    -- TODO: add a TEST exercising linearSpanTropCone with
-    -- VerifyToricDegeneration => true on a small known degeneration.
     "VerifyToricDegeneration",
     "algebraicMatroid",
     "algebraicMatroidBases",
@@ -141,41 +134,53 @@ matchingField = method(
 -- M : weight matrix
 -- S : list of subsets (subsets of column indices)
 -- K : list of subset sizes (for displaying GrMatchingField and FlMatchingField)
+--
+-- Note: for certain functions taking a GrMatchingField or FlMatchingField, we tacitly assume
+-- that the subsets in S are ordered in increasing size
 matchingField(List, List, Matrix) := (K, S, M) -> (
     -- uses min convention
     -- returns matching field for weight matrix along with the weight for the Plucker variables
-    -- NB we assume the MF is well defined from the weight matrix
-    --    i.e. the minimum was uniquely attained for each plucker form
+    -- NB we do not assume the MF is well defined from the weight matrix
+    --    i.e. if the minimum is not uniquely attained for each plucker form then raise an error
     Mn := numcols M;
     Mk := numrows M;
     local subsetOrder;
     local subsetWeight;
     local weight;
-    L := {};
-    W := {};
+    local minWeightTie;
+    L := new MutableList from #S;
+    W := new MutableList from #S;
+    listIndex := 0;
     for I in S do (
         if #I > Mn or #I > Mk then (
-            error("Subset too large for weight matrix");
+            error("subset too large for weight matrix");
             );
         subsetWeight = infinity;
+        minWeightTie = true;
         for ordering in permutations(I) do (
             weight = sum for i from 0 to #I-1 list M_(i, ordering_i);
-            if weight < subsetWeight then (
+            if weight == subsetWeight then (
+                minWeightTie = true;
+                )
+            else if weight < subsetWeight then (
                 subsetOrder = apply(ordering, i -> i + 1);
                 subsetWeight = weight;
+                minWeightTie = false;
                 );
             );
-        L = append(L, subsetOrder);
-        W = append(W, subsetWeight);
+        if minWeightTie then error("expected unique subset of minimum weight on columns " | toString I);
+        L#listIndex = subsetOrder;
+        W#listIndex = subsetWeight;
+        listIndex += 1;
         );
     new MatchingField from {
         tupleMaxValue => Mn,
         tupleMaxSize => Mk,
-        tupleSizeList => K,
-        tuples => L,
+        tupleSizeList => sort K,
+        tuples => toList L,
         cache => new CacheTable from {
             weightMatrix => M,
-            weightPluecker => W
+            weightPluecker => toList W
             }
         }
     )
@@ -189,13 +194,13 @@ matchingField(List, ZZ, List) := (K, Ln, L) -> (
     -- 1) first compare the sizes
     -- 2) tuples of the same size are sorted by revlex order
     if #K == 0 then (
-        error("List of subset sizes cannot be empty");
+        error("list of subset sizes cannot be empty");
         );
     sortFunc := I -> {#I} | rsort I;
     LSorted := sort(L, sortFunc);
     new MatchingField from {
         tupleMaxValue => Ln,
-        tupleSizeList => K,
+        tupleSizeList => sort K,
         tupleMaxSize => max K,
         tuples => LSorted,
         cache => new CacheTable from {}
@@ -219,7 +224,7 @@ grMatchingField(Matrix) := M -> (
 grMatchingField(ZZ, ZZ, List) := (Lk , Ln, L) -> (
     -- check user input:
     if not allKSubsets(Lk, Ln, L) then (
-        error("Unexpected tuples.");
+        error("unexpected tuples.");
         );
     new GrMatchingField from matchingField({Lk}, Ln, L)
     )
@@ -242,9 +247,9 @@ flMatchingField(List, Matrix) := (inputKList, inputWeightMatrix) -> (
         error("expected a matrix with at least " | toString max inputKList | " rows");
         );
     Mn := numcols inputWeightMatrix;
-    subsetList := flatten for Mk in inputKList list subsets(Mn, Mk);
-    grMatchingFields := for Mk in inputKList list grMatchingField(inputWeightMatrix^(toList(0 .. Mk - 1)));
-    new FlMatchingField from matchingField(sort inputKList, subsetList, inputWeightMatrix)
+    MkList := sort inputKList;
+    subsetList := flatten for Mk in MkList list subsets(Mn, Mk);
+    new FlMatchingField from matchingField(MkList, subsetList, inputWeightMatrix)
     )
 
 flMatchingField(Matrix) := inputWeightMatrix -> (
@@ -256,7 +261,7 @@ flMatchingField(List, ZZ, List) := (LkList, Ln, L) -> (
     -- check user input:
     for Lk in LkList do (
         if not allKSubsets(Lk, Ln, select(L, I -> #I == Lk)) then (
-            error("Unexpected tuples.");
+            error("unexpected tuples.");
             );
         );
     new FlMatchingField from matchingField(LkList, Ln, L)
@@ -356,16 +361,12 @@ matchingFieldPolytopePoints GrMatchingField := opts -> MF -> (
         ) else (
         -- construct a matching field polytope P_L from
         -- L a matching field for Gr(k, n) Grassmannian
-        points := {};
-        for I in MF.tuples do (
-            -- construct the point corresponding to I
-            point := ();
-            for i in I do (
-                point = point | (i - 1 : 0) | (1 : (1)) | (MF.tupleMaxValue - i : 0);
-                );
-            point = point | (MF.tupleMaxValue * opts.ExtraZeroRows : 0);
-            point = toList point;
-            points = append(points, point);
+        points := apply(MF.tuples, I -> (
+                -- construct the point corresponding to I
+                point := new MutableList from (MF.tupleMaxValue * (MF.tupleMaxSize + opts.ExtraZeroRows) : 0);
+                scan(#I, ind -> point#(ind * MF.tupleMaxValue + I#ind - 1) = 1);
+                toList point
+                )
             );
         points = transpose matrix points;
         if opts.ExtraZeroRows == 0 then MF.cache.mfPolytopePoints = points;
@@ -415,20 +416,20 @@ matchingFieldPolytope(FlMatchingField) := opts -> MF -> (
 -- Corresponds to the Gelfand-Tsetlin Cone of the Flag Variety / Grassmannian
 diagonalMatchingField = method()
 diagonalMatchingField(ZZ, ZZ) := (Lk, Ln) -> (
-    M := matrix for i from 0 to Lk - 1 list for j from 0 to Ln - 1 list i*(Ln - j);
+    M := matrix table(Lk, Ln, (i, j) -> i*(Ln - j));
     grMatchingField(M)
     )
 
 -- partial flag variety
 diagonalMatchingField(List, ZZ) := (LkList, Ln) -> (
-    M := matrix for i from 0 to max LkList - 1 list for j from 0 to Ln - 1 list i*(Ln - j);
+    M := matrix table(max LkList, Ln, (i, j) -> i*(Ln - j));
     flMatchingField(LkList, M)
     )
 
 -- full-flag variety
 -- by convention this is a (n-1) by (n) matrix
 diagonalMatchingField(ZZ) := Ln -> (
-    M := matrix for i from 0 to Ln - 2 list for j from 0 to Ln - 1 list i*(Ln - j);
+    M := matrix table(Ln - 1, Ln, (i, j) -> i*(Ln - j));
     flMatchingField(M)
     )
 
@@ -459,7 +460,7 @@ setupMatchingFieldRings MatchingField := opts -> MF -> (
             ) else if opts.MonomialOrder == "none" then (
             monomialOrder = GRevLex;
             ) else (
-            error("Unknown option: MonomialOrder => " | toString opts.MonomialOrder);
+            error("unknown option: MonomialOrder => " | toString opts.MonomialOrder);
             );
         MF.cache.ringP = QQ[variables, MonomialOrder => monomialOrder];
         );
@@ -476,7 +477,7 @@ setupMatchingFieldRings MatchingField := opts -> MF -> (
             ) else if opts.MonomialOrder == "none" then (
             monomialOrder = GRevLex;
             ) else (
-            error("Unknown option: MonomialOrder => " | toString opts.MonomialOrder);
+            error("unknown option: MonomialOrder => " | toString opts.MonomialOrder);
             );
         MF.cache.ringX = QQ[x_(1,1) .. x_(MF.tupleMaxSize, MF.tupleMaxValue), MonomialOrder => monomialOrder];
         );
@@ -539,7 +540,7 @@ matchingFieldIdeal MatchingField := opts -> MF -> (
                 ) else if opts.MonomialOrder == "none" then (
                 gensMatrix = gens toricGroebner(V, MF.cache.ringP);
                 ) else (
-                error("Unknown option: MonomialOrder => " | toString opts.MonomialOrder);
+                error("unknown option: MonomialOrder => " | toString opts.MonomialOrder);
                 );
             -- adjust the signs of the variables
             signChange := map(MF.cache.ringP, MF.cache.ringP, matrix {
@@ -566,6 +567,8 @@ Grassmannian GrMatchingField := opts -> MF -> (
     )
 
 
+-- Note that for the pluecker ideal, the user is expected to only set MonomialOrder => "none" as a
+-- last resort if the matching field is not coherent. Doing so removes most of the functionality of the package
 plueckerIdeal = method(
     Options => {
         MonomialOrder => "default" -- default or none; see setupMatchingFieldRings(.., MonomialOrder => [option])
@@ -583,11 +586,8 @@ plueckerIdeal GrMatchingField := opts -> MF -> (
 plueckerIdeal FlMatchingField := opts -> MF -> (
     if not MF.cache.?mfPlueckerIdeal then (
         setupMatchingFieldRings(opts, MF);
-        local i;
-        local variableFromSubset;
-        local generatorList;
-        i = 0;
-        variableFromSubset = new HashTable from flatten (
+        i := 0;
+        variableFromSubset := new HashTable from flatten (
             varsMatrix := vars MF.cache.ringP;
             for grMF in getGrMatchingFields MF list (
                 for s in subsets(toList(1 .. grMF.tupleMaxValue), grMF.tupleMaxSize) list (
@@ -599,7 +599,7 @@ plueckerIdeal FlMatchingField := opts -> MF -> (
         --------------------------------
         -- Grassmannian relations
         --
-        generatorList = flatten for grMF in getGrMatchingFields MF list (
+        generatorList := flatten for grMF in getGrMatchingFields MF list (
             if grMF.tupleMaxSize >= 2 and grMF.tupleMaxValue - grMF.tupleMaxSize >= 2 then (
                 flatten for I in subsets(1 .. grMF.tupleMaxValue, grMF.tupleMaxSize - 1) list (
                     for J in subsets(1 .. grMF.tupleMaxValue, grMF.tupleMaxSize + 1) list (
@@ -752,28 +752,20 @@ matchingFieldFromPermutationNoScaling(ZZ, ZZ, List) := opts -> (Lk, Ln, S) -> (
     local N;
     local M;
     local W;
-    L := {};
-    for I in subsets(Ln, Lk) do (
+    L := for I in subsets(Ln, Lk) list (
+        IOrdered = new MutableList from apply(I, i -> i + 1);
         if opts.RowNum <= Lk then (
-            -- find i in 0 .. rowNum-1 such that S_(I_i) is minimum
+            -- find smallest i in 0 .. RowNum-1 such that S_(I_i) is minimum
             minIndex = 0;
             for i from 1 to opts.RowNum - 1 do (
-                if S_(I_i) < S_(I_minIndex) then (
-                    minIndex = i;
-                    );
+                if S_(I_i) < S_(I_minIndex) then minIndex = i;
                 );
-            -- The elements I_0 .. I_(minIndex-1) are ordered in increasing order
-            IOrdered = for i from 0 to minIndex-1 list I_i + 1;
-            -- The next elements are I_(minIndex+1) .. I_(rowNum-1)
-            IOrdered = IOrdered | for i from minIndex+1 to opts.RowNum-1 list I_i + 1;
-            -- Then we get I_minIndex
-            IOrdered = append(IOrdered, I_minIndex + 1);
-            -- Then the rest of I in order
-            IOrdered = IOrdered | for i from opts.RowNum to Lk - 1 list I_i + 1;
-            L = append(L, IOrdered);
-            ) else (
-            L = append(L, apply(I, i -> i+1));
+            -- shift I_(minIndex+1) .. I_(RowNum-1) one place to the left
+            for p from minIndex to opts.RowNum - 2 do IOrdered#p = I_(p + 1) + 1;
+            -- put I_minIndex at position RowNum-1
+            IOrdered#(opts.RowNum - 1) = I_minIndex + 1;
             );
+        toList IOrdered
         );
     if opts.PowerValue > 0 then (
         N = opts.PowerValue;
@@ -932,7 +924,7 @@ NOBody FlMatchingField := MF -> (
 pointRegularSubdivision = method()
 pointRegularSubdivision(Matrix, Matrix) := (points, weight) -> (
     -- Checking for input errors
-    if numColumns weight != numColumns points or numRows weight != 1 then error("The weight must be a one row matrix with number of points many entries");
+    if numColumns weight != numColumns points or numRows weight != 1 then error("weight must be a one row matrix with number of points many entries");
     P := convexHull(points || weight, matrix (toList(numRows points : {0}) | {{1}} ));
     F := select(faces (1,P), f -> #(f#1) == 0);
     V := vertices P;
@@ -1189,8 +1181,8 @@ isLinkage GrMatchingField := MF -> (
 -- tope field amalgamation
 amalgamation = method()
 amalgamation(ZZ, TopeField) := (i, TF) -> (
-    assert(isLinkage TF);
-    assert(1 <= i and i <= TF#"matchingField".tupleMaxValue);
+    if not isLinkage TF then error("expected linkage tope field");
+    if i < 1 or i > #TF#"type" then error("amalgamation index out of range");
     MF := TF#"matchingField";
     subsetList := subsets(1 .. MF.tupleMaxValue, MF.tupleMaxSize);
     subsetIndex := new HashTable from for j from 0 to binomial(MF.tupleMaxValue, MF.tupleMaxSize)-1 list subsetList_j => j;
@@ -1227,7 +1219,7 @@ amalgamation(ZZ, TopeField) := (i, TF) -> (
                     );
                 );
             );
-        fold((a,b) -> a | b, for j from 0 to #TF#"type"-1 list sort toList edges#j)
+        flatten for j from 0 to #TF#"type"-1 list sort toList edges#j
         );
     newMF := grMatchingField(MF.tupleMaxSize + 1, MF.tupleMaxValue, newTuples);
     newType := for j from 1 to #TF#"type" list if i == j then TF#"type"_(j-1)+1 else TF#"type"_(j-1);
@@ -1347,7 +1339,7 @@ doc ///
         Lgr: GrMatchingField
         Lfl: FlMatchingField
         MonomialOrder => String
-          either "default" or "none" (supply "none" only if $L$ is not coherent)
+          either "default" or "none" (supply "none" only if $L$ is not coherent, see explanation below)
       Outputs
         I: Ideal
           The Pluecker ideal associated to the corresponding Grassmannian or partial flag variety
@@ -1391,8 +1383,19 @@ doc ///
           The resulting ideal is constructed in a polynomial ring with the @TO "GRevLex"@ order.
         Example
           I = plueckerIdeal(L, MonomialOrder => "none")
+        Text
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
       SeeAlso
         matchingFieldIdeal
+        isToricDegeneration
       Subnodes
 ///
 
@@ -1616,7 +1619,7 @@ doc ///
         Strategy => String
           either "M2" or "4ti2" the strategy for computing the generators
         MonomialOrder => String
-          either "default" or "none" (supply "none" only if $L$ is not coherent)
+          either "default" or "none" (supply "none" only if $L$ is not coherent, see below)
       Outputs
         I: Ideal
           toric ideal of the matching field
@@ -1663,6 +1666,17 @@ doc ///
           I = matchingFieldIdeal(L, MonomialOrder => "none")
           (options ring I).MonomialOrder
         Text
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
+
+
           The option @TO "Strategy"@ determines how the matching field ideal is computed. The default uses the package @TO "FourTiTwo"@. This strategy works
           by passing in the matrix of the toric ideal to @TO "toricGroebner"@ with the correct weight vector. In the case of Grassmannian matching fields,
           the columns of the matrix of the toric ideal are exactly the vertices of the matching field polytope. For a flag matching field $\Lambda$,
@@ -1767,7 +1781,7 @@ doc ///
       Inputs
         L: {MatchingField, GrMatchingField, FlMatchingField}
         MonomialOrder => String
-          either "default" or "none" (supply "none" only if $L$ is not coherent)
+          either "default" or "none" (supply "none" only if $L$ is not coherent, see below)
       Outputs
         m: RingMap
           the ring map of the Pluecker embedding
@@ -1794,7 +1808,8 @@ doc ///
           Note that the weights are based on $-1 \times W$ where $W$ is the weight matrix
           that induces $L$, displayed using the function @TO "getWeightMatrix"@.
           The purpose of $-1$ is to transition between the minimum convention
-          of matching fields and the maximum convention of initial terms in @TO "Macaulay2"@.
+          of matching fields and the maximum convention of initial terms in
+          @TO "Macaulay2Doc::Macaulay2"@.
 
           The ring map for the Pluecker embedding of a partial flag variety is
           completely analogous.
@@ -1813,6 +1828,20 @@ doc ///
           is the map that sends each
           Pluecker variable $P_J \mapsto \rm{in}(\det(X_J))$ to the lead term of the
           maximal minor $\det(X_J)$.
+
+          If the matching field is not coherent, then the rings and map
+          can be constructed by setting the option MonomialOrder to "none".
+          Doing this sets the monomial order of the ambient polynomial rings
+          to @TO "GRevLex"@.
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
       SeeAlso
         MatchingField
         GrMatchingField
@@ -2246,7 +2275,7 @@ doc ///
         UsePrimePowers => Boolean
           use multiples of prime power used for the entries of the diagonal weight matrix
         PowerValue => ZZ
-          use multiples of powers this value in the diagonal weight matrix
+          use multiples of powers of this value in the diagonal weight matrix (overrides UsePrimePowers)
         ScalingCoefficient => ZZ
           the value by which to scale the permuted row of the diagonal weight matrix
       Outputs
@@ -2558,7 +2587,7 @@ doc ///
       Inputs
         L: {MatchingField, GrMatchingField, FlMatchingField}
         MonomialOrder => String
-          either "default" or "none" (supply "none" only when $L$ is not coherent)
+          either "default" or "none" (supply "none" only when $L$ is not coherent, see below)
       Outputs
         m: RingMap
           monomial ring map whose kernel is the matching field ideal
@@ -2583,6 +2612,21 @@ doc ///
           have the default GRevLex monomial order. If no weight matrix was supplied in the construction of
           the matching field, then one will be computed, see @TO "getWeightMatrix"@.
           To check that a matching field is coherent use the function @TO "isCoherent"@.
+
+          If the matching field is not coherent, then the rings and map
+          can be constructed by setting the option MonomialOrder to "none".
+          Doing this sets the monomial order of the ambient polynomial rings
+          to @TO "GRevLex"@.
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
+
       SeeAlso
         getTuples
         plueckerMap
@@ -2964,7 +3008,7 @@ doc ///
       Inputs
         L: {MatchingField, GrMatchingField, FlMatchingField}
         MonomialOrder => String
-          either "default" or "none" (supply "none" only if $L$ is not coherent)
+          either "default" or "none" (supply "none" only if $L$ is not coherent, see below)
       Outputs
         S: Subring
           generated by minors of a generic matrix of variables
@@ -2976,10 +3020,28 @@ doc ///
           of variables.
 
           A matching field specifies a weight order on the ambient ring containing the Pluecker algebra.
+
+          If the matching field is not coherent, then the matching field ideal
+          can be constructed by setting the option MonomialOrder to "none".
+          Doing this sets the monomial order of the ambient polynomial rings
+          to @TO "GRevLex"@.
+          It is highly encouraged to leave the option MonomialOrder as its
+          default value as setting it to "none" will cause other functionality
+          in the package to unusable. For instance, the output of
+          @TO "isToricDegeneration"@ will nolonger be accurate. The purpose of
+          this option is as a last resort or fallback in case the matching field
+          is not coherent. Note that if MonomialOrder is set to "none" once, then
+          all internally used polynomial rings will be setup with this option.
+          If the rings have already been setup, then the option MonomialOrder has
+          no effect.
+
         Example
           L = diagonalMatchingField(2, 4)
           S = plueckerAlgebra L
           transpose gens S
+        Text
+
+
       SeeAlso
         GrMatchingField
         FlMatchingField
@@ -3322,6 +3384,60 @@ assert(instance(linearSpanTropCone MF, Module));
 MS = matroidSubdivision MF;
 assert(instance(MS, List));
 assert(#MS > 0);
+///
+
+TEST ///
+-- ExtraZeroRows
+MF = diagonalMatchingField(2, 4);
+P0 = matchingFieldPolytope(MF, ExtraZeroRows => 0);
+P1 = matchingFieldPolytope(MF, ExtraZeroRows => 1);
+P2 = matchingFieldPolytope(MF, ExtraZeroRows => 2);
+assert(numrows vertices P0 == 8  and numcols vertices P0 == 6);
+assert(numrows vertices P1 == 12 and numcols vertices P1 == 6);
+assert(numrows vertices P2 == 16 and numcols vertices P2 == 6);
+///
+
+TEST ///
+-- RowNum, UsePrimePowers, ScalingCoefficient, PowerValue
+-- for function matchingFieldFromPermutation
+L = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3);
+M = getWeightMatrix L;
+assert(last entries M == {6, 18, 12, 30, 24, 36});
+L' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3, UsePrimePowers => true);
+M' = getWeightMatrix L';
+assert(last entries M' == {7, 21, 14, 35, 28, 42});
+L'' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, UsePrimePowers => true, ScalingCoefficient => 2);
+M'' = getWeightMatrix L'';
+assert((entries M'')#1 == {2, 6, 4, 10, 8, 12});
+L''' = matchingFieldFromPermutation(3, 6, {1,3,2,5,4,6}, RowNum => 3, PowerValue => 10);
+M''' = getWeightMatrix L''';
+assert(last entries M''' == {10, 30, 20, 50, 40, 60});
+///
+
+TEST ///
+-- linearSpanTropCone
+MF = diagonalMatchingField(2, 4);
+W = linearSpanTropCone MF;
+V = vertices matchingFieldPolytope MF;
+W' = image transpose V;
+assert(W == W');
+///
+
+TEST ///
+-- linearSpanTropCone for non-toric cone
+MF = matchingFieldFromPermutation(3, 6, {6,1,5,2,3,4}, UsePrimePowers => true, ScalingCoefficient => 3);
+W = linearSpanTropCone(MF, VerifyToricDegeneration => false);
+V = vertices matchingFieldPolytope MF;
+W' = image transpose V;
+assert(W != W') -- because MF does not give a toric degeneration
+///
+
+TEST ///
+-- order of tuple sizes does not affect the matching field
+A = flMatchingField({1,2}, matrix{{0,0,0,0},{4,3,2,1}});
+B = flMatchingField({2,1}, matrix{{0,0,0,0},{4,3,2,1}});
+assert(A == B);
+assert(A === B); -- all entries of the hashtable should be equal
 ///
 
 end --
