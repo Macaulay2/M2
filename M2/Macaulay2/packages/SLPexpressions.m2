@@ -8,7 +8,7 @@ newPackage(
      Version => "1.21",
      Date => "Nov 2022",
      Headline => "straight line programs and algebraic circuits",
-     HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
+     HomePage => "https://antonleykin.math.gatech.edu/NAG4M2/",
      AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", 

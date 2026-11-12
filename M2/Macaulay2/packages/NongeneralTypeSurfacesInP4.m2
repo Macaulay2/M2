@@ -28,7 +28,6 @@ newPackage(
     DebuggingMode => false,
     PackageExports => {"BGG","AdjunctionForSurfaces","PrimaryDecomposition","Varieties","FastMinors"},
     Keywords => {"Algebraic Geometry", "Projective Algebraic Geometry"},
-    HomePage =>  "https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages",
     )
 
 export {

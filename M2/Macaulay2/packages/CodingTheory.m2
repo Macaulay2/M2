@@ -34,7 +34,6 @@ newPackage(
 	     {Name => "German Vera", Email => "gveram1100@alumno.ipn.mx"},
 	     {Name => "Gwyn Whieldon", Email => "gwyn.whieldon@gmail.com"}
 	     },
-    	HomePage => "https://academic.csuohio.edu/h_lopez/",
     	Headline => "tools for coding theory",
 	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files,
 	Configuration => {},
