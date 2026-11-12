@@ -61,7 +61,7 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
             );
         );
 
-        H.cache.toambienthommodule = inducedMap(H', H);
+        H.cache.toambienthommodule = map(H', H, gens H);
         H.cache.formation = FunctionApplication { Hom, (f, M, N, opts) };
 
         remove(M.cache, (computing, Hom, RingMap, Module, Module));
