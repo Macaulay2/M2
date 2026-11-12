@@ -170,7 +170,7 @@ uniquePermutations ZZ := permutations
 
 partition = method()
 partition(VirtualTally,Function,VisibleList) := HashTable => (t,f,ks) -> (
-    p := new MutableHashTable from apply(ks,k->(k,new MutableHashTable));
+    p := new MutableHashTable from for k in ks list (k, new MutableHashTable);
     scanPairs(t, (x,n) -> ( y := f x; if p#?y then if p#y#?x then p#y#x = p#y#x + n else p#y#x = n else (p#y = new MutableHashTable)#x = n; ));
     applyValues(new HashTable from p, px -> new class t from px)
 )
@@ -185,7 +185,7 @@ partition(Function,VirtualTally,VisibleList) := HashTable => (f,t,ks) -> partiti
 --  apply g to each value in the resulting partition
 partition(VisibleList, Function, VisibleList, Function) := HashTable => (xs, f, ks, g) -> (
     -- initialize with ks to guarantee that these keys appear
-    p := new MutableHashTable from apply(ks, k -> (k, new MutableHashTable));
+    p := new MutableHashTable from for k in ks list (k, new MutableHashTable);
     -- scan over xs and update p as we go
     scan(xs, x -> (y := f x; vs := p#y ??= new MutableHashTable; vs#(#vs) = g x));
     -- repack everything into the same type of data structure as the input
