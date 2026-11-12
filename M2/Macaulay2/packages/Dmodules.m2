@@ -3,7 +3,7 @@ newPackage("Dmodules",
     Version => "1.4.1.1",
     Date => "February 2023",
     Headline => "D-modules",
-    HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
+    HomePage => "https://antonleykin.math.gatech.edu/Dmodules/",
     Authors => {
 	{ Name => "Anton Leykin", Email => "leykin@math.gatech.edu" },
 	{ Name => "Harrison Tsai" }

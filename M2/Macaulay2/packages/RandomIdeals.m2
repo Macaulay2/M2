@@ -14,7 +14,6 @@ newPackage(
 	    {Name => "Jay Yang",
 		Email => "jkelleyy@gmail.com"}
 	    },
-    	HomePage => "http://www.msri.org/~de",
     	Headline => "creating random ideals of various sorts",
 	Keywords => {"Examples and Random Objects"},
 	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files,

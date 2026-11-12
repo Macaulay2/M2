@@ -6,7 +6,6 @@ newPackage(
     	Authors => {
 	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu"}
 	     },
-    	HomePage => "http://www.math.uiuc.edu/~dan/",
 	Keywords => {"Group Theory"},
     	Headline => "a database of Conway polynomials"
     	)

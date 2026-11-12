@@ -11,7 +11,7 @@ newPackage(
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	     {Name => "Jeff Sommars", Email => "sommars1@uic.edu"}
 	     },
-    	HomePage => "http://www.math.gatech.edu/~leykin",
+    	HomePage => "https://antonleykin.math.gatech.edu/MonodromySolver/",
     	Headline => "solving polynomial systems via monodromy",
 	Keywords => {"Numerical Algebraic Geometry"},
 	PackageImports => {"gfanInterface","NAGtypes"},
