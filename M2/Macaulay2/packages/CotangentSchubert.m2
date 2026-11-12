@@ -447,6 +447,7 @@ multidoc ///
  Node
   Key
    associativity
+   (associativity, DoublePuzzle)
   Headline
    Visual proof of associativity of puzzles
   Usage
