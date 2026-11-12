@@ -611,7 +611,7 @@ flattenDegreeMap(RingMap) := (f) -> (
     -- find right coefficients for the new ring
     coeffs := try(coefficientRing S);
     kk := if coeffs =!= null then coeffs else
-        if numgens S == 0 then S else error "flatttenDegreeMap: cannot find coefficientRing for source";
+        if numgens S == 0 then S else error "flattenDegreeMap: cannot find coefficientRing for source";
 
     T' := kk[
         generators S,
