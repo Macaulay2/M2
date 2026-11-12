@@ -16,8 +16,8 @@
 
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
-    Version => "0.3",
-    Date => "June 5, 2026",
+    Version => "0.4",
+    Date => "November 12, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
@@ -32,6 +32,9 @@ newPackage("RInterface",
 ---------------
 
 -*
+
+0.4 (2026-11-12, M2 1.26.11)
+* turn off R's signal handlers
 
 0.3 (2026-06-05, M2 1.26.05)
 * update my contact info
