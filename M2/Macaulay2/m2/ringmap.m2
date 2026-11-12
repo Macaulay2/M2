@@ -605,21 +605,13 @@ flattenDegreeMap(RingMap) := (f) -> (
     -- same degree group as R.
     -- f' is homogeneous and is "the same" as f but with DegreeMap == identity.
     if not isHomogeneous f then error "flattenDegreeMap: non-homogeneous input is invalid";
-    (S, phiS) := flattenRing source f;
-    R := target f;
-
-    -- find right coefficients for the new ring
-    coeffs := try(coefficientRing S);
-    kk := if coeffs =!= null then coeffs else
-        if numgens S == 0 then S else error "flattenDegreeMap: cannot find coefficientRing for source";
-
-    T' := kk[
-        generators S,
+    (S, R) := (source f, target f);
+    T := newRing(
+        if isPolynomialRing ambient S then S else S[],
         DegreeGroup => degreeGroup R,
         Degrees => for i from 0 to numgens S-1 list f.cache.DegreeMap degree S_i
-    ];
-    T := T'/substitute(ideal S, T');
-    map(R, T, f * phiS^-1 * map(S, T), DegreeMap => identity)
+    );
+    map(R, T, f * map(S, T), DegreeMap => identity)
 )
 
 --
