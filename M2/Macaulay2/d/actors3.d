@@ -475,10 +475,7 @@ setup(QuestionS,unaryQuestionFun,compareop);
 threadLocal whichway := GreaterS;
 threadLocal sortlist := emptySequence;
 subsort(l:int,r:int):Expr := (
-     b := r+1-l;
-     a := randomint() % b;
-     if a < 0 then a = a+b;
-     p := l + a;
+     p := l + (r-l)/2;
      pivot := sortlist.p;
      sortlist.p = sortlist.l;
      sortlist.l = pivot;

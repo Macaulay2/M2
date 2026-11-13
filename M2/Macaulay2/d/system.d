@@ -127,7 +127,6 @@ import cpuTime():double;
 import threadTime():double;
 import strcmp(s:string,t:string):int;
 import strnumcmp(s:string,t:string):int;
-import randomint():int;
 export wait(pid:int):int := Ccode(returns, "
      #ifdef HAVE_WAITPID
       int status;

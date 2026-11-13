@@ -16,7 +16,6 @@ header "// required for toString routines
 #include <interface/monoid.h>               // for rawMonoidToString
 #include <interface/monomial-ordering.h>    // for IM2_MonomialOrdering_to_s...
 #include <interface/mutable-matrix.h>       // for IM2_MutableMatrix_to_string
-#include <interface/random.h>               // for system_randomint
 #include <interface/ring.h>                 // for IM2_Ring_to_string
 #include <interface/ringelement.h>          // for IM2_RingElement_to_string
 #include <interface/ringmap.h>              // for IM2_RingMap_to_string
@@ -514,19 +513,6 @@ utf8check(y:Expr):Expr := (
      	  nullE)
      else buildErrorPacket("expects a string"));
 setupfun("utf8check",utf8check);
-
-export checknoargs(e:Expr):Expr := (
-     when e
-     is v:Sequence do (
-	  if length(v) == 0 then e else WrongNumArgs(0)
-	  )
-     else WrongNumArgs(0)
-     );
-
-randomint(e:Expr):Expr := (
-     when checknoargs(e) is f:Error do return Expr(f) else nothing;
-     toExpr(randomint()));
-setupfun("randomint",randomint);
 
 outseq(x:file,y:Sequence):Expr := (
      foreach z in y do (
