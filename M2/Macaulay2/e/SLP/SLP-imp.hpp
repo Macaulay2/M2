@@ -5,10 +5,18 @@
 #ifndef M2_SLP_SLP_IMP_HPP_
 #define M2_SLP_SLP_IMP_HPP_
 
+//#include "m2tbb.hpp"
 #include <cstdlib>
 #include <algorithm>
 #include <dlfcn.h>
+#include <gc/gc.h>
 #include "timing.hpp"
+//#include <tbb/tbb.h>
+#include <tbb/parallel_for.h>
+#include <tbb/task_arena.h>
+#include <atomic>
+#include <mutex>
+#include <string>
 
 // SLEvaluator
 template <typename RT>
@@ -88,7 +96,11 @@ SLEvaluatorConcrete<RT>::~SLEvaluatorConcrete()
   // std::cout << "~SLEvaluatorConcrete: " << this << std::endl
   if (isCompiled) {// dlclose???
     if (parametersAndInputs!=nullptr) delete[] parametersAndInputs;
-  } else for (auto& v : values) ring().clear(v);
+  } else {
+    for (auto& v : values) ring().clear(v);
+    for (auto& vals : mThreadValues)
+      for (auto& v : vals) ring().clear(v);
+  }
 }
 
 template <typename RT>
@@ -153,7 +165,11 @@ SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
 }
 
 template <typename RT>
-void SLEvaluatorConcrete<RT>::computeNextNode()
+void SLEvaluatorConcrete<RT>::computeNextNode(
+    std::vector<SLProgram::GATE_TYPE>::iterator& nIt,
+    std::vector<SLProgram::GATE_SIZE>::iterator& numInputsIt,
+    std::vector<SLProgram::GATE_POSITION>::iterator& inputPositionsIt,
+    typename std::vector<ElementType>::iterator& vIt)
 {
   ElementType& v = *vIt;
   switch (*nIt++)
@@ -249,16 +265,24 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs,
       (*compiled_fn)(parametersAndInputs, outputs.unsafeArray());
     }
     return true;
-  } else {                           
+  } else {
+    // thread-local working copy, deep-copied from `this->values` on first use
+    auto& values = mThreadValues.local();
+    if (values.size() != this->values.size()) {
+      values.resize(this->values.size());
+      auto i = values.begin();
+      auto j = this->values.begin();
+      for (; i != values.end(); ++i, ++j) ring().init_set(*i, *j);
+    }
     size_t i = 0;
     for (size_t r = 0; r < inputs.numRows(); r++)
       for (size_t c = 0; c < inputs.numColumns(); c++)
         ring().set(values[varsPos[i++]], inputs.entry(r, c));
-    nIt = slp->mNodes.begin();
-    numInputsIt = slp->mNumInputs.begin();
-    inputPositionsIt = slp->mInputPositions.begin();
-    for (vIt = values.begin() + slp->inputCounter; vIt != values.end(); ++vIt)
-      computeNextNode();
+    auto nIt = slp->mNodes.begin();
+    auto numInputsIt = slp->mNumInputs.begin();
+    auto inputPositionsIt = slp->mInputPositions.begin();
+    for (auto vIt = values.begin() + slp->inputCounter; vIt != values.end(); ++vIt)
+      computeNextNode(nIt, numInputsIt, inputPositionsIt, vIt);
     i = 0;
     for (size_t r = 0; r < outputs.numRows(); r++)
       for (size_t c = 0; c < outputs.numColumns(); c++)
@@ -346,6 +370,75 @@ class ARingElement
 
 // ****************************** XXX
 // **************************************************
+
+// Solve A x = b for a square n x n matrix A and an n x 1 vector b by partial
+// pivot LU, using only the caller-provided workspace: LU (n x n), perm (size
+// n), and three scratch elements. Rows are addressed through perm, so nothing
+// is swapped physically. This exists because the per-step solves run inside
+// the parallel path tracker, where MatrixOps::solveLinear's temporary DMat
+// copies all go through the GC allocator and serialize on its global lock.
+// Returns false if a zero pivot is met.
+template <typename RT>
+static bool solveSquareNoAlloc(const RT& C,
+                               const DMat<RT>& A,
+                               const DMat<RT>& b,
+                               DMat<RT>& x,
+                               DMat<RT>& LU,
+                               std::vector<size_t>& perm,
+                               typename RT::RealRingType::Element& absP,
+                               typename RT::RealRingType::Element& absMax)
+{
+  const auto& R = C.real_ring();
+  const size_t n = A.numRows();
+  for (size_t i = 0; i < n; i++)
+    {
+      perm[i] = i;
+      for (size_t j = 0; j < n; j++) C.set(LU.entry(i, j), A.entry(i, j));
+    }
+  for (size_t k = 0; k < n; k++)
+    {
+      // pivot: row with largest |entry| in column k among rows k..n-1
+      size_t p = k;
+      C.abs_squared(absMax, LU.entry(perm[k], k));
+      for (size_t i = k + 1; i < n; i++)
+        {
+          C.abs_squared(absP, LU.entry(perm[i], k));
+          if (R.compare_elems(absP, absMax) > 0)
+            {
+              R.set(absMax, absP);
+              p = i;
+            }
+        }
+      if (R.is_zero(absMax)) return false;
+      std::swap(perm[k], perm[p]);
+      const size_t pr = perm[k];
+      for (size_t i = k + 1; i < n; i++)
+        {
+          const size_t r = perm[i];
+          typename RT::ElementType& l = LU.entry(r, k);
+          C.divide(l, l, LU.entry(pr, k));  // multiplier l_{ik}
+          for (size_t j = k + 1; j < n; j++)
+            C.subtract_multiple(LU.entry(r, j), l, LU.entry(pr, j));
+        }
+    }
+  // x = P b; forward substitution with unit lower L; back substitution with U
+  for (size_t i = 0; i < n; i++)
+    {
+      typename RT::ElementType& xi = x.entry(i, 0);
+      C.set(xi, b.entry(perm[i], 0));
+      for (size_t j = 0; j < i; j++)
+        C.subtract_multiple(xi, LU.entry(perm[i], j), x.entry(j, 0));
+    }
+  for (size_t i = n; i-- > 0;)
+    {
+      typename RT::ElementType& xi = x.entry(i, 0);
+      for (size_t j = i + 1; j < n; j++)
+        C.subtract_multiple(xi, LU.entry(perm[i], j), x.entry(j, 0));
+      C.divide(xi, xi, LU.entry(perm[i], i));
+    }
+  return true;
+}
+
 template <typename RT>
 bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
     const MutableMatrix* inputs,
@@ -361,7 +454,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   std::chrono::steady_clock::time_point start =
       std::chrono::steady_clock::now();
   size_t solveLinearTime = 0, solveLinearCount = 0, evaluateTime = 0;
-
   // std::cout << "inside
   // HomotopyConcrete<RT,FixedPrecisionHomotopyAlgorithm>::track" << std::endl;
   // double the_smallest_number = 1e-13;
@@ -417,6 +509,15 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   typedef typename RT::RealRingType::ElementType RealElementType;
   typedef MatElementaryOps<DMat<RT> > MatOps;
 
+  tbb::task_arena arena(M2_numTBBThreads == 0
+                        ? tbb::task_arena::automatic
+                        : M2_numTBBThreads);
+  // Batch paths into ~3·numThreads chunks to amortize per-lambda DMat setup cost.
+  int numThreads = (M2_numTBBThreads == 0) ? arena.max_concurrency()
+                                            : M2_numTBBThreads;
+  int grainSize  = (int)std::max<size_t>(1, n_sols / (10 * numThreads));
+
+  // Loop-invariant scalars: computed once, read-only inside the parallel_for.
   RealElement t_step(R), min_step2(R), epsilon2(R), infinity_threshold2(R);
   R.set_from_BigReal(t_step, init_dt);  // initial step
   R.set_from_BigReal(min_step2, min_dt);
@@ -426,50 +527,83 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   R.mult(epsilon2, epsilon2, epsilon2);  // epsilon^2
   R.set_from_BigReal(infinity_threshold2, infinity_threshold);
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
-  int num_successes_before_increase = 3;
+  const int num_successes_before_increase = 3;
 
-  RealElement t0(R), dt(R), one_minus_t0(R), dx_norm2(R), x_norm2(R), abs2dc(R);
+  // Progress bar: append-only (no \r), so it also works in front ends such as
+  // the WebApp clients that don't treat \r as a return to the start of a line.
+  std::atomic<int> bar_done{0};
+  std::mutex        bar_mutex;
+  const int         bar_width = 40;
+  const bool        show_bar = M2_numericalAlgebraicGeometryTrace > 0 && n_sols > 0;
+  if (show_bar)
+    std::cerr << "-- " << n_sols << " paths [" << std::flush;
 
-  // constants
-  RealElement one(R), two(R), four(R), six(R), one_half(R), one_sixth(R);
-  RealElementType& dt_factor = one_half;
-  R.set_from_long(one, 1);
-  R.set_from_long(two, 2);
-  R.set_from_long(four, 4);
-  R.set_from_long(six, 6);
-  R.divide(one_half, one, two);
-  R.divide(one_sixth, one, six);
+  // Allow the TBB worker threads to register themselves with the GC (see the
+  // lambda below). Without this, GC_register_my_thread aborts with "Threads
+  // explicit registering is not previously enabled" whenever no GC-wrapped
+  // pthread_create has happened yet, e.g. when M2 runs with --no-threads.
+  GC_allow_register_threads();
 
-  Element c_init(C), c_end(C), dc(C), one_half_dc(C);
+  arena.execute([&]{
+  tbb::parallel_for(tbb::blocked_range<int>(0, (int)n_sols, grainSize),
+  [&](tbb::blocked_range<int> r) {
+    // Register this TBB worker with the Boehm GC. TBB workers are created
+    // inside the prebuilt libtbb dylib, which never sees bdwgc's pthread_create
+    // redirect macro, so the workers are unknown to the GC by default; without
+    // this, a collection triggered from inside the loop aborts with
+    // "Collecting from unknown thread".
+    bool gc_was_registered = GC_thread_is_registered();
+    if (!gc_was_registered) {
+      struct GC_stack_base sb;
+      GC_get_stack_base(&sb);
+      GC_register_my_thread(&sb);
+    }
+    RealElement t0(R), dt(R), one_minus_t0(R), dx_norm2(R), x_norm2(R), abs2dc(R);
 
-  // think: x_0..x_(n-1), c
-  // c = the homotopy continuation parameter "t" upstair, varies on a (staight
-  // line) segment of complex plane (from c_init to c_end)
-  // t = a real running in the interval [0,1]
+    // constants
+    RealElement one(R), two(R), four(R), six(R), one_half(R), one_sixth(R);
+    RealElementType& dt_factor = one_half;
+    R.set_from_long(one, 1);
+    R.set_from_long(two, 2);
+    R.set_from_long(four, 4);
+    R.set_from_long(six, 6);
+    R.divide(one_half, one, two);
+    R.divide(one_sixth, one, six);
 
-  DMat<RT> x0c0(C, n + 1, 1);
-  DMat<RT> x1c1(C, n + 1, 1);
-  DMat<RT> xc(C, n + 1, 1);
-  DMat<RT> HxH(C, n, n + 1);
-  DMat<RT>& Hxt = HxH;  // the matrix has the same shape: reuse memory
-  DMat<RT> LHSmat(C, n, n);
-  auto LHS = submatrix(LHSmat);
-  DMat<RT> RHSmat(C, n, 1);
-  auto RHS = submatrix(RHSmat);
-  DMat<RT> dx(C, n, 1);
-  DMat<RT> dx1(C, n, 1);
-  DMat<RT> dx2(C, n, 1);
-  DMat<RT> dx3(C, n, 1);
-  DMat<RT> dx4(C, n, 1);
-  DMat<RT> Jinv_times_random(C, n, 1);
+    Element c_init(C), c_end(C), dc(C), one_half_dc(C);
 
-  ElementType& c0 = x0c0.entry(n, 0);
-  ElementType& c1 = x1c1.entry(n, 0);
-  ElementType& c = xc.entry(n, 0);
-  RealElementType& tol2 = epsilon2;  // current tolerance squared
-  bool linearSolve_success;
-  for (size_t s = 0; s < n_sols; s++)
-    {
+    // think: x_0..x_(n-1), c
+    // c = the homotopy continuation parameter "t" upstair, varies on a (staight
+    // line) segment of complex plane (from c_init to c_end)
+    // t = a real running in the interval [0,1]
+
+    DMat<RT> x0c0(C, n + 1, 1);
+    DMat<RT> x1c1(C, n + 1, 1);
+    DMat<RT> xc(C, n + 1, 1);
+    DMat<RT> HxH(C, n, n + 1);
+    DMat<RT>& Hxt = HxH;  // the matrix has the same shape: reuse memory
+    DMat<RT> LHSmat(C, n, n);
+    auto LHS = submatrix(LHSmat);
+    DMat<RT> RHSmat(C, n, 1);
+    auto RHS = submatrix(RHSmat);
+    DMat<RT> dx(C, n, 1);
+    DMat<RT> dx1(C, n, 1);
+    DMat<RT> dx2(C, n, 1);
+    DMat<RT> dx3(C, n, 1);
+    DMat<RT> dx4(C, n, 1);
+    DMat<RT> Jinv_times_random(C, n, 1);
+    // allocation-free linear-solve workspace (see solveSquareNoAlloc)
+    DMat<RT> LUws(C, n, n);
+    std::vector<size_t> permws(n);
+    RealElement absP(R), absMax(R);
+
+    ElementType& c0 = x0c0.entry(n, 0);
+    ElementType& c1 = x1c1.entry(n, 0);
+    ElementType& c = xc.entry(n, 0);
+    RealElementType& tol2 = epsilon2;  // current tolerance squared
+    bool linearSolve_success;
+    //end// initial vars setup
+    for (size_t s = r.begin(); s < r.end(); ++s) {
       SolutionStatus status = PROCESSING;
       // set initial solution and initial value of the continuation parameter
       // for(size_t i=0; i<=n; i++)
@@ -542,7 +676,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
 
           TIME(solveLinearTime,
                linearSolve_success =
-                   MatrixOps::solveLinear(LHSmat, RHSmat, dx1));
+                   solveSquareNoAlloc(C, LHSmat, RHSmat, dx1, LUws, permws, absP, absMax));
           solveLinearCount++;
 
           // dx2
@@ -560,7 +694,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
 
               TIME(solveLinearTime,
                    linearSolve_success =
-                       MatrixOps::solveLinear(LHSmat, RHSmat, dx2);)
+                       solveSquareNoAlloc(C, LHSmat, RHSmat, dx2, LUws, permws, absP, absMax);)
               solveLinearCount++;
             }
 
@@ -581,7 +715,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
 
               TIME(solveLinearTime,
                    linearSolve_success =
-                       MatrixOps::solveLinear(LHSmat, RHSmat, dx3););
+                       solveSquareNoAlloc(C, LHSmat, RHSmat, dx3, LUws, permws, absP, absMax););
               solveLinearCount++;
             }
 
@@ -602,7 +736,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
 
               TIME(solveLinearTime,
                    linearSolve_success =
-                       MatrixOps::solveLinear(LHSmat, RHSmat, dx4););
+                       solveSquareNoAlloc(C, LHSmat, RHSmat, dx4, LUws, permws, absP, absMax););
               solveLinearCount++;
             }
 
@@ -645,7 +779,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
 
                   TIME(solveLinearTime,
                        linearSolve_success =
-                           MatrixOps::solveLinear(LHSmat, RHSmat, dx););
+                           solveSquareNoAlloc(C, LHSmat, RHSmat, dx, LUws, permws, absP, absMax););
                   solveLinearCount++;
 
                   // x1 += dx
@@ -697,8 +831,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
               for (int i = 0; i < n; i++) C.random(RHSmat.entry(i, 0));
 
               TIME(solveLinearTime,
-                   linearSolve_success = MatrixOps::solveLinear(
-                       LHSmat, RHSmat, Jinv_times_random););
+                   linearSolve_success = solveSquareNoAlloc(C, LHSmat, RHSmat, Jinv_times_random, LUws, permws, absP, absMax););
               solveLinearCount++;
 
               norm2(Jinv_times_random,
@@ -751,11 +884,29 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       if (status == PROCESSING) status = REGULAR;
       oe.ring().set_from_long(oe.entry(0, s), status);
       oe.ring().set_from_long(oe.entry(1, s), count);
+      // Update progress bar: append the marks earned by this path (bar_width
+      // marks in total; a path may earn more than one when n_sols < bar_width).
+      if (show_bar) {
+        int done = ++bar_done;
+        int marks = done * bar_width / (int)n_sols
+                    - (done - 1) * bar_width / (int)n_sols;
+        if (marks > 0) {
+          std::lock_guard<std::mutex> lk(bar_mutex);
+          std::cerr << std::string(marks, '#') << std::flush;
+        }
+      }
     }
-
+    if (!gc_was_registered)
+      GC_unregister_my_thread();
+  }, tbb::simple_partitioner{}); //(end) tbb::parallel_for
+  }); //(end) arena.execute
+  if (show_bar) std::cerr << "]" << std::endl;  // finish progress bar line
+  
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   if (M2_numericalAlgebraicGeometryTrace > 1)
     {
+      std::cout << "-- numThreads = " << numThreads
+                << ", grainSize = " << grainSize << std::endl;
       std::cout << "-- track took "
                 << std::chrono::duration_cast<std::chrono::milliseconds>(end -
                                                                          start)

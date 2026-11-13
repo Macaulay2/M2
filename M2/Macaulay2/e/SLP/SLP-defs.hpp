@@ -5,6 +5,8 @@
 #ifndef M2_SLP_SLP_DEFS_HPP_
 #define M2_SLP_SLP_DEFS_HPP_
 
+#include <tbb/enumerable_thread_specific.h>
+
 // SLP
 class SLProgram;
 
@@ -130,9 +132,6 @@ class SLEvaluator
 
   SLProgram* slp; //!!! can we make it a reference???
   std::vector<SLProgram::GATE_POSITION> varsPos;  // the rest of inputs with neg rel position
-  std::vector<SLProgram::GATE_TYPE>::iterator nIt;  // slp nodes
-  std::vector<SLProgram::GATE_SIZE>::iterator numInputsIt;
-  std::vector<SLProgram::GATE_POSITION>::iterator inputPositionsIt;
 };
 
 template <typename RT>
@@ -173,9 +172,12 @@ class SLEvaluatorConcrete : public SLEvaluator
   Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH);
 
  private:
-  void computeNextNode();  // !!! should this and vIt be here???
   using ElementType = typename RT::ElementType;
-  typename std::vector<ElementType>::iterator vIt;  // values
+  void computeNextNode(
+      std::vector<SLProgram::GATE_TYPE>::iterator& nIt,
+      std::vector<SLProgram::GATE_SIZE>::iterator& numInputsIt,
+      std::vector<SLProgram::GATE_POSITION>::iterator& inputPositionsIt,
+      typename std::vector<ElementType>::iterator& vIt);
 
   // common data
   const RT& mRing;
@@ -183,9 +185,14 @@ class SLEvaluatorConcrete : public SLEvaluator
   int nInputs, nOutputs;
   
   // data used by interpreted evaluation
+  // !!! this "vector" works only for non-garbage-collected types --- (at the moment) need Vector???
   std::vector<ElementType> values; /* should be a vector of values
                                       starting with inputCounter many vars and consts and
                                       continuing with the values of other GATEs */
+  // Per-thread scratch copy of `values`: concurrent evaluate() calls (from the
+  // parallel path tracker) each work on their own buffer, and the buffer is
+  // allocated once per thread rather than on every call.
+  tbb::enumerable_thread_specific<std::vector<ElementType>> mThreadValues;
 
   // data used by compiled evaluation
   void (*compiled_fn)(ElementType const*, ElementType*);  //void (*compiled_fn)(double const*, double*);
