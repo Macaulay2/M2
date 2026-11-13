@@ -52,7 +52,12 @@ Hom(Module, Module) := Module => opts -> (M, N) -> (
     )
 )
 
-basicHom = (M, N) -> kernel(transpose presentation M ** N)
+basicHom = (M, N) -> (
+    -- force new presentation in the free case to avoid producing identical
+    -- modules which share a cache
+    if isFreeModule M and M.cache.?presentation then remove(M.cache, symbol presentation);
+    kernel(transpose presentation M ** N)
+)
 addHook((Hom, Module, Module), Strategy => Default,  (opts, M, N) -> basicHom(M, N))
 addHook((Hom, Module, Module), Strategy => Syzygies, (opts, M, N) -> (
     -- This algorithm accepts DegreeLimit, but is slower in some cases
