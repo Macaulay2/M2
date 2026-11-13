@@ -154,3 +154,16 @@ f = g * h
 assert all({f, g, h}, isWellDefined)
 q = quotient(f, g, Strategy => "Reflexive")
 assert(isWellDefined q and f == g * q)
+
+-- ensure that quotient strategy over finite fields produces correct source and target
+-- not just isomorphic ones
+kk = ZZ/7
+A = kk^2; A.cache.name = "A"
+B = kk^2; B.cache.name = "B"
+C = kk^2; C.cache.name = "C"
+
+F = random(B, A)
+G = random(B, C)
+F' = F // G
+assert((target F').cache.name == "C")
+assert((source F').cache.name == "A")

@@ -446,7 +446,7 @@ addHook((quotient, Matrix, Matrix), Strategy => InexactField, (opts, f, g) ->
         and numRows g === numColumns g
         and isFreeModule source g
         and isFreeModule source f
-    ) then map(source g, source f, solve(g, f))
+    ) then if (quot := solve(g, f)) =!= null then map(source g, source f, quot)
 )
 
 addHook((quotient, Matrix, Matrix), Strategy => ZZ, (opts, f, g) ->
@@ -454,7 +454,7 @@ addHook((quotient, Matrix, Matrix), Strategy => ZZ, (opts, f, g) ->
         isQuotientOf(ZZ, ring target f)
         and isFreeModule source g
         and isFreeModule source f
-    ) then map(source g, source f, solve(g, f))
+    ) then if (quot := solve(g, f)) =!= null then map(source g, source f, quot)
 )
 
 quotient'(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
