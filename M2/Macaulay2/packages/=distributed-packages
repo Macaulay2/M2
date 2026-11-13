@@ -286,6 +286,8 @@ JSONRPC
 SimplicialModules
 MatrixFactorizations
 PathSignatures
+RationalPolytopes
+EquivariantEhrhart
 MacaulayPosets
 MRDI
 EliminationTemplates
