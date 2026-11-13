@@ -859,24 +859,6 @@ doc ///
     comprehensiveGBMain
 ///
 
-doc ///
-  Key
-    Verbose
-  Headline
-    record comprehensiveGBMain iterations
-  Description
-    Text
-      Setting Verbose to @TT "true"@ will print whatever $F$ and $S$ that
-      comprehensiveGBMainRec is currently working on, as in the following example.
-    Example
-      R1 = QQ[a,b][x,y];
-      F1 = {a*x+b*y};
-      S1 = {};
-      comprehensiveGBMain(F1,S1,Verbose=>true)
-  SeeAlso
-    comprehensiveGBMain
-///
-
 
 doc ///
   Key
