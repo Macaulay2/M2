@@ -440,18 +440,22 @@ addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> (
 	  )))
 
 addHook((quotient, Matrix, Matrix), Strategy => InexactField, (opts, f, g) ->
-    if instance(ring target f, InexactField)
-    -- TODO: c.f. https://github.com/Macaulay2/M2/issues/3252
-    and numRows g === numColumns g
-    and isFreeModule source g
-    and isFreeModule source f
-    then solve(g, f))
+    if (
+        instance(ring target f, InexactField)
+        -- TODO: c.f. https://github.com/Macaulay2/M2/issues/3252
+        and numRows g === numColumns g
+        and isFreeModule source g
+        and isFreeModule source f
+    ) then map(source g, source f, solve(g, f))
+)
 
 addHook((quotient, Matrix, Matrix), Strategy => ZZ, (opts, f, g) ->
-    if isQuotientOf(ZZ, ring target f)
-    and isFreeModule source g
-    and isFreeModule source f
-    then solve(g, f))
+    if (
+        isQuotientOf(ZZ, ring target f)
+        and isFreeModule source g
+        and isFreeModule source f
+    ) then map(source g, source f, solve(g, f))
+)
 
 quotient'(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
     -- given f: A-->C and g: A-->B, then finds (g\\f): B-->C such that (g\\f) o g + r = f

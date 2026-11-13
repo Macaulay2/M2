@@ -1183,3 +1183,13 @@ phi = map(C,B)
 f = map(C^1, B^3, phi, {{x,s*y,z}})
 assert(ker f == 0)
 ///
+
+TEST ///
+-- very small examples like this where variosu hom constructions coincide are
+-- useful for catching bugs
+R = ZZ/101[x]/x^2
+g = map(R, ZZ/101)
+L = coker vars R
+h = homomorphism'(g, id_L)
+assert(homomorphism h == id_L)
+///
