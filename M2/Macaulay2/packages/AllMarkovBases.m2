@@ -1,7 +1,7 @@
 newPackage(
     "AllMarkovBases",
     Version => "1.0",
-    Date => "May 08, 2025",
+    Date => "November 13, 2026",
     Headline => "computing all minimal Markov bases of a configuration matrix",
     Authors => {
         {Name => "Alexander Milner",
