@@ -120,7 +120,9 @@ findGalois(ZZ,ZZ) := RingElement => opts -> (p,n) -> (
      else error (opts.Strategy | " is not a valid argument for' Strategy' option")
      )
 
-GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
+savedGaloisFields = new MutableHashTable
+
+GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> savedGaloisFields#(p, n, opts) ??= (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
      if n == 1 and isMember(opts.Strategy, {"Old", "Aring"})
