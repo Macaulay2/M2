@@ -14,7 +14,7 @@ export hashTable := (
      len 7313			-- just a convenient prime number
      do provide null()
      );
-export makeUniqueWord(s:string,p:parseinfo):Word := (
+export makeUniqueWord(s:string,p:parseinfo,typecode:int):Word := (
      h := hash(s);
      hashCode := h%length(hashTable);
      hashList := hashTable.hashCode;
@@ -26,9 +26,10 @@ export makeUniqueWord(s:string,p:parseinfo):Word := (
 	  then return hashCell.word;
 	  hashList = hashCell.next;
 	  );
-     newWord := Word(s,TCid,h,p);
+     newWord := Word(s,typecode,h,p);
      hashTable.hashCode = WordListCell(newWord,hashTable.hashCode);
      newWord);
+export makeUniqueWord(s:string,p:parseinfo):Word := makeUniqueWord(s, p, TCid);
 
 export NewlineW := Word("-*dummy word for newline*-",TCnone,hash_t(0),newParseinfo());	    	  -- filled in by keywords.d
 export equal(t:ParseTree,w:Word):bool := (

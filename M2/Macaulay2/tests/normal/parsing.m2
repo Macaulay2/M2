@@ -35,3 +35,9 @@ assertParseError ";"
 assertParseError ";;"
 assertParseError ";1"
 assertParseError "1;;"
+
+-- #4520
+assertParseError "symbol"
+assertParseError "global"
+assertParseError "threadLocal"
+assertParseError "local"
