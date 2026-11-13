@@ -1348,7 +1348,7 @@ TEST /// -* Testing minimalDicksonBasis on {a*x^2 - y, a*y^2 - 1, a*x - 1, (a + 
 U = U = QQ[a, MonomialOrder => Lex];
 R = U[x, y, MonomialOrder => Lex];
 G = {a*x^2 - y, a*y^2 - 1, a*x - 1, (a + 1)*x - y, (a + 1)*y - a}
-minimalDicksonBasis G
+assert(minimalDicksonBasis G == {(a + 1)*x - y, (a + 1)*y - a})
 ///
 
 -----------------------------------------------
