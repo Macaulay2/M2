@@ -382,6 +382,11 @@ BREW_ADD_FLAGS
 
 export PKG_CONFIG_PATH
 
+AC_PROG_FC
+AC_FC_LIBRARY_LDFLAGS
+AC_PROG_F77
+AC_F77_LIBRARY_LDFLAGS
+
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h elf.h execinfo.h syscall.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
@@ -826,8 +831,6 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-AC_PROG_FC
-AC_FC_LIBRARY_LDFLAGS
 AS_IF([test $BUILD_lapack = no],
     [AX_BLAS
      AX_LAPACK
