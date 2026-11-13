@@ -286,7 +286,15 @@ ring_elem Ring::makeTerm(const Ring *coeffR,
                          const ring_elem a,
                          const_varpower monom) const
 {
-  if (isGaloisField()) {
+  if (is_basic_ring()) {
+    if (coeffR != this)
+      throw exc::engine_error("wrong coefficient ring");
+
+    if (varpower::npairs(monom) != 0)
+      throw exc::engine_error("too many variables in monomial");
+
+    return a;
+  } else if (isGaloisField()) {
     const RingElement *gen;
     ring_elem c;
 
