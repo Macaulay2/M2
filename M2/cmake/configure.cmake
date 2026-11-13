@@ -227,22 +227,6 @@ elseif(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
   # INIT: -O2 -g
 endif()
 
-# Flags based on compiler
-if(CMAKE_C_COMPILER_ID STREQUAL GNU)
-  add_compile_options(-g3)
-  add_link_options(-g3)
-elseif(CMAKE_C_COMPILER_ID STREQUAL AppleClang)
-  add_compile_options(-g)
-  add_link_options(-g)
-  if(CMAKE_OSX_SYSROOT)
-    add_compile_options(--sysroot=${CMAKE_OSX_SYSROOT})
-    add_link_options(--sysroot=${CMAKE_OSX_SYSROOT})
-  endif()
-else()
-  add_compile_options(-g)
-  add_link_options(-g)
-endif()
-
 # TODO: look into compiler features:
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 

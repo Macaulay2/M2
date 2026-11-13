@@ -17,6 +17,7 @@ m4_include(m4/ax_boost_base.m4)
 m4_include(m4/ax_boost_regex.m4)
 m4_include(m4/ax_blas.m4)
 m4_include(m4/ax_lapack.m4)
+m4_include(m4/ax_cxx_compile_stdcxx.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -266,15 +267,15 @@ AC_SUBST(M2_CPPFLAGS)
 AC_SUBST(M2_CFLAGS)
 AC_SUBST(M2_CXXFLAGS)
 
-dnl Fix standards, apply everywhere
-CXXFLAGS="-std=gnu++17 $CXXFLAGS"
-CFLAGS="-std=gnu11 $CFLAGS"
-
-AC_PROG_CC() 			# set CFLAGS before this
+AC_PROG_CC()
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
 
-AC_PROG_CXX()			# set CXXFLAGS before this
+dnl Fix standards, apply everywhere
+CFLAGS="-std=gnu11 $CFLAGS"
+
+AC_PROG_CXX()
 AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX([17], [], [mandatory])
 
 AC_PROG_YACC()
 AS_IF([test "$YACC" != "bison -y"], [AC_MSG_ERROR([bison is required])])
@@ -290,16 +291,6 @@ AS_IF([test "$LEX" != "flex"], [AC_MSG_ERROR([flex is required])])
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
-
-dnl always compile with "-g", so we can debug even optimized versions
-if test "$GCC" = yes
-then CFLAGS="$CFLAGS -g3"
-     CXXFLAGS="$CXXFLAGS -g3"
-     LDFLAGS="$LDFLAGS -g3"
-else CFLAGS="$CFLAGS -g"
-     CXXFLAGS="$CXXFLAGS -g"
-     LDFLAGS="$LDFLAGS -g"
-fi
 
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 if test "$DEBUG" = yes
