@@ -1,6 +1,6 @@
 newPackage(
     "EquivariantEhrhart",
-    Version => "0.1",
+    Version => "1.0",
     Date => "June 30, 2025",
     Headline => "compute equivariant Ehrhart series of lattice polytopes",
     Authors => {
