@@ -1202,8 +1202,7 @@ expected2 = aTest^2*xTest + aTest*bTest*yTest;
 result = comprehensiveGB {fTest};
 
 assert(#result == 2);
-assert(result#0 == expected1 or result#1 == expected1);
-assert(result#0 == expected1 or result#1 == expected2);
+assert(set result == set {expected1, expected2});
 ///
 
 
@@ -1288,8 +1287,7 @@ expected2 = aTest^2*xTest + aTest*bTest*yTest;
 result = comprehensiveGB({fTest}, Verbose=> true);
 
 assert(#result == 2);
-assert(result#0 == expected1 or result#1 == expected1);
-assert(result#0 == expected1 or result#1 == expected2);
+assert(set result == set {expected1, expected2});
 
 ///
 
@@ -1339,8 +1337,7 @@ expected2 = aTest^2*xTest + aTest*bTest*yTest;
 result = comprehensiveGB({fTest}, ReduceStrata=> true);
 
 assert(#result == 2);
-assert(result#0 == expected1 or result#1 == expected1);
-assert(result#0 == expected2 or result#1 == expected2);
+assert(set result == set {expected1, expected2});
 
 ///
 
