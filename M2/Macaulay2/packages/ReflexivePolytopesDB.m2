@@ -99,8 +99,10 @@ retrieve URL := String => opts -> url -> (
     )
 
 parseKSRawString = method()
-parseKSRawString String := List => (str) -> (
+parseKSRawString String := List => (str) -> parseKSRawString(str, 0)
+parseKSRawString(String, ZZ) := List => (str, startID) -> (
     -- result is a List of KSEntry's: each has first line as a description, rest of the lines a matrix,
+    -- with ids startID, startID+1, ...
     locA := regex("<b>Result:</b>\n", str);
     locB := regex("#NF", str);
     if locB === null then locB = regex("Exceeded", str);
@@ -112,23 +114,13 @@ parseKSRawString String := List => (str) -> (
     starts := positions(cys, s -> s#0 != " ");
     starts = append(starts, #cys);
     for i from 0 to #starts-2 list (
-        KSEntry(cys_(starts#i) | " id:" | i | "\n" |  demark("\n", cys_{starts#i+1 .. starts#(i+1)-1}))
+        KSEntry(cys_(starts#i) | " id:" | startID+i | "\n" |  demark("\n", cys_{starts#i+1 .. starts#(i+1)-1}))
         )
     )
 
 -- A complete server response ends with "#NF: n" or "Exceeded limit of n".
 -- If neither is present, the server-side search died partway through.
 isCompleteKSResponse = str -> match("#NF|Exceeded", str)
-
--- the text of the polytope entries in a server response
-ksResultBody = str -> (
-    locA := regex("<b>Result:</b>\n", str);
-    locB := regex("#NF", str);
-    if locB === null then locB = regex("Exceeded", str);
-    firstloc := if locA === null then 0 else locA#0#0 + locA#0#1;
-    lastloc := if locB === null then #str else locB#0#0;
-    substring(firstloc, lastloc-firstloc, str)
-    )
 
 -- hodgePairs()#h11 is the sorted list of h12 values such that (h11, h12) occurs
 -- in the Kreuzer-Skarke database.  Read from a data file on first use.
@@ -215,17 +207,16 @@ kreuzerSkarke ZZ := List => opts -> h11 -> (
         << "-- incomplete server response; querying each h12 value separately" << endl;
     lim := optsA.Limit;
     count := 0;
-    bodies := for h12 in (hodgePairs())#h11 ?? {} list (
+    flatten for h12 in (hodgePairs())#h11 ?? {} list (
         if count >= lim then break;
         u := kreuzerSkarkeURL(h11, optsA, H12 => h12, Limit => lim - count);
         s := retrieve(u, Access=>opts.Access);
         if not isCompleteKSResponse s then
             error("incomplete response from the Kreuzer-Skarke server for " | u#0);
-        b := ksResultBody s;
-        count = count + #parseKSRawString b;
-        b
-        );
-    parseKSRawString concatenate between("\n", bodies)
+        L := parseKSRawString(s, count);
+        count = count + #L;
+        L
+        )
     )
 
 kreuzerSkarke(ZZ, ZZ) := List => opts -> (h11, h12) -> kreuzerSkarke(h11, opts, H12 => h12)
@@ -294,6 +285,8 @@ generateOffline = method(Options=>{Expected=>null, Limit=>1000, Prefix=>"./", Fi
 generateOffline(ZZ,ZZ) := opts -> (h11, h12) -> (
     url := kreuzerSkarkeURL(h11, h12, Limit => opts.Limit);
     contents := retrieve url;
+    if not isCompleteKSResponse contents then
+        error("incomplete response from the Kreuzer-Skarke server for " | url#0);
     L := parseKSRawString contents;
     nexpected := opts.Expected;
     if instance(nexpected,ZZ) and  #L =!= nexpected then 
@@ -307,6 +300,8 @@ generateOffline(ZZ,ZZ) := opts -> (h11, h12) -> (
 generateOffline ZZ := opts -> (h11) -> (
     url := kreuzerSkarkeURL(h11, Limit => opts.Limit);
     contents := retrieve url;
+    if not isCompleteKSResponse contents then
+        error("incomplete response from the Kreuzer-Skarke server for " | url#0);
     L := parseKSRawString contents;
     nexpected := opts.Expected;
     if instance(nexpected,ZZ) and  #L =!= nexpected then 
