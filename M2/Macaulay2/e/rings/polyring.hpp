@@ -115,10 +115,6 @@ class PolynomialRing : public Ring
   Matrix *getPresentation() const;
 
   unsigned long get_precision() const { return K_->get_precision(); }
-  bool is_basic_ring() const
-  {
-    return false;
-  }  // The default is to be a basic ring.
 
   bool is_poly_ring() const { return true; }
   // Returns true if this is a polynomial ring, possibly with fractions

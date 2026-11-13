@@ -128,8 +128,8 @@ class Ring : public MutableEngineObject
   virtual M2::RingID ringID() const { return M2::ring_old; }
   virtual bool is_basic_ring() const
   {
-    return true;
-  }  // The default is to be a basic ring.
+    return false;
+  }  // A basic ring has no generators, e.g., ZZ, QQ, ZZ/p, RR, CC.
   virtual bool isFinitePrimeField() const { return false; }
   virtual bool isGaloisField() const { return false; }
   virtual bool is_ZZ() const { return false; }

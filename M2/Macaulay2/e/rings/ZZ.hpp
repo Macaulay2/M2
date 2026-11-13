@@ -57,6 +57,7 @@ class RingZZ : public Ring
                                            bool dense) const;
 
   // The following are all the routines required by 'ring'
+  virtual bool is_basic_ring() const { return true; }
   virtual bool is_ZZ() const { return true; }
   virtual CoefficientType coefficient_type() const { return COEFF_ZZ; }
   virtual void text_out(buffer &o) const;
