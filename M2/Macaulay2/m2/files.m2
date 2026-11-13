@@ -389,16 +389,25 @@ emacsenvtempl := ///
 ///
 
 dotemacsFix0 = ///
-;; this version will give an error if M2-init.el is not found:
-(load "M2-init")
+;; install the Macaulay2 Emacs package from the Macaulay2 package archive
+(require 'package)
+(add-to-list 'package-archives
+	     '("M2" . "https://macaulay2.com/Repositories/Emacs/") t)
+(unless (bound-and-true-p package--initialized) (package-initialize))
 
-;; this version will not give an error if M2-init.el is not found:
-;; (load "M2-init" t)
-
-;; You may comment out the following line with an initial semicolon if you 
-;; want to use your f12 key for something else.  However, this action
-;; will be undone the next time you run setup() or setupEmacs().
-(global-set-key [ f12 ] 'M2)
+;; You may change "<f12>" below if you want to use your f12 key for
+;; something else.  However, this action will be undone the next time
+;; you run setup() or setupEmacs().
+(if (require 'use-package nil t)
+    (use-package M2
+      :ensure t
+      :bind ("<f12>" . M2))
+  (unless (package-installed-p 'M2)
+    (condition-case err
+	(progn (package-refresh-contents) (package-install 'M2))
+      (error (message "Unable to install the M2 package: %s"
+		      (error-message-string err)))))
+  (global-set-key (kbd "<f12>") 'M2))
 
 ;; Prevent Emacs from inserting a superfluous "See" or "see" in front
 ;; of the hyperlinks when reading documentation in Info mode.
@@ -443,7 +452,6 @@ shellfixes := {
      ("INFOPATH", currentLayout#"info",":"),
      ("LD_LIBRARY_PATH", currentLayout#"lib","")}
 emacsfixes := {
-     ("load-path", currentLayout#"emacs", emacstempl),
      -- the exec-path fix is not needed, because we exec the shell and ask it to find M2
      -- ("exec-path", currentLayout#"bin", emacstempl),
      ("Info-default-directory-list", currentLayout#"info", emacstempl),
@@ -478,7 +486,12 @@ setup = method()
 mungeEmacs = () -> (
      dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir,templ) -> fix(var,dir,"",templ)), dotemacsFix0);
      supplantStringFile(dotemacsFix,"~/"|M2emacs,false);
-     mungeFile("~/"|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
+     -- Emacs reads only the first of these that exists, so creating ~/.emacs would hide the others;
+     -- ~/.config/emacs is ignored if ~/.emacs.d exists
+     initFiles := {".emacs.el", ".emacs", ".emacs.d/init.el"};
+     if not fileExists "~/.emacs.d" then initFiles = append(initFiles, ".config/emacs/init.el");
+     initFile := "~/" | first(select(initFiles, f -> fileExists("~/" | f)) | {".emacs"});
+     mungeFile(initFile, ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
      )
 prelim := () -> (
      promptUser = true;

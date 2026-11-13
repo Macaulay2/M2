@@ -52,14 +52,22 @@ Node
     setupEmacs()
   Consequences
     Item
-      The initialization file for Emacs (@TT ".emacs"@ in your home directory) will have lines
-      added to allow the Macaulay2 Emacs mode to operate. The user is prompted before the file
-      is modified and offered the opportunity to review or reject the change.
+      The initialization file for Emacs will have lines added to install the Emacs package
+      @CODE "M2"@ from the Macaulay2 package archive at @HREF "https://macaulay2.com/Repositories/Emacs/"@,
+      using @CODE "use-package"@ if it is available (it is part of Emacs 29 and later) and
+      @CODE "package.el"@ otherwise. If the package is not already installed, it is downloaded
+      the next time Emacs starts.
+      The user is prompted before the file is modified and offered the opportunity to review or reject the change.
   Description
     Text
       A backup files is made carefully, and if a mangled initialization file is detected,
       it will not be modified. The lines added are bracketed by comment lines containing
       the phrases @TT "Macaulay 2 start"@ and @TT "Macaulay 2 end"@.
+
+      The initialization file modified is the first of @CODE "~/.emacs.el"@, @CODE "~/.emacs"@,
+      @CODE "~/.emacs.d/init.el"@, and (if @CODE "~/.emacs.d"@ does not exist)
+      @CODE "~/.config/emacs/init.el"@ that exists,
+      or @CODE "~/.emacs"@ if there are none.
 
       The function @TO setup@ does all this and more.
   SeeAlso
