@@ -98,7 +98,7 @@ squareFreePart RingElement := h -> (
     if zero h then return h;
     R := ring h;
     f := product listOfFactors h;
-    return f_R
+    f_R
 );
 
 
@@ -230,10 +230,10 @@ comprehensiveGBMainRec (List, List, List, CGBData) := o -> (F, S, memo, cgbData)
                     )
                 )
             );
-        return memo
+        memo
     ) else (
-        return {branch} | if o.Depth == 0 then {} else flatten apply(H, hi -> comprehensiveGBMainRec(F, append(S, hi), memo, cgbData, o ++ {Depth => o.Depth -1}))
-    );
+        {branch} | if o.Depth == 0 then {} else flatten apply(H, hi -> comprehensiveGBMainRec(F, append(S, hi), memo, cgbData, o ++ {Depth => o.Depth -1}))
+    )
 );
 
 
@@ -442,7 +442,7 @@ parametricGBMain (List, List, List) := o -> (E, N, F) -> (
                 )
             );
         );
-    return PGB
+    PGB
     );
 
 parametricGBMain List := o -> F -> parametricGBMain({}, {}, F, o)
@@ -503,7 +503,7 @@ cCheck (List, RingElement) := (E, f) -> (
     if zero dim ideal GspE and zeroDimCheck(GspE, fAlpha) then (
         return true; -- certifies consistency
     );
-    return false -- unknown consistency (i.e., it could still be consistent)
+    false -- unknown consistency (i.e., it could still be consistent)
 );
 
 
@@ -547,7 +547,7 @@ iCheck (List, RingElement) := o -> (E, f) -> (
         );
     );
 
-    return false; -- unknown consistency
+    false -- unknown consistency
 );
 
 ----------------------------------------
@@ -599,7 +599,7 @@ consistencyCheckAllTogether (List, RingElement) := o -> (E, f) -> (
     if debugLevel > 0 then (
        print "General check was used";
        );
-    return null;
+    null
 );
 
 -- Note that we cannot have ideal E = (0) or ideal F = (0)
@@ -619,7 +619,7 @@ consistencyCheckAllTogether (List, List) := o -> (E, N) -> (
     if undecided then (
         return isConsistentRabinowitsch(E, N)
     );
-    return false
+    false
 );
 
 
