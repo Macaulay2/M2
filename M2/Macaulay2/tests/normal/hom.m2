@@ -303,6 +303,24 @@ isHomogeneous phi
 M = coker phi
 Ext^1(M,M)   -- mismatch here, because trimming of result is ignored
 
+
+ X = QQ^2; X.cache.name = "X"
+ Y = QQ^2; Y.cache.name = "Y"
+ H = Hom(X, Y);
+
+-- works as expected
+ h = H_0
+ hmap = homomorphism h
+ assert((source hmap).cache.name == "X")
+ assert((target hmap).cache.name == "Y")
+
+ -- the second call to Hom produces the identical basicHom module and overwrites
+ -- formation and homomorphism data in H.cache
+ Hom(X, X);
+ hmap' = homomorphism h
+ assert((source hmap').cache.name == "X")
+ assert((target hmap').cache.name == "Y") -- fails
+
 -----------------------------------------------------------------------------
 -- tests for giving DegreeLimit
 
