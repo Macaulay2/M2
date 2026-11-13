@@ -289,7 +289,7 @@ addPyToM2Function(
     pythonLongAsLong,
     "numbers.Integral -> ZZ")
 addPyToM2Function(
-    {builtins@@"bool", "numpy.bool_"},
+    {builtins@@"bool", "numpy.bool_", "numpy.bool"},
     pythonObjectIsTrue,
     "bool -> Boolean")
 value PythonObject := x -> runHooks((value, PythonObject), x)
@@ -958,8 +958,9 @@ v = toPython vector {1, 2, 3}
 w = toPython vector {4, 5, 6}
 assert Equation(v @ w, 32)
 
--- scalar types
-checkNumPyIntDtype = T -> assert BinaryOperation(symbol ===, value np@@T 1, 1)
+-- scalar types (skip if not available on system)
+checkNumPyIntDtype = T -> if np@@?T then assert BinaryOperation(symbol ===,
+    value np@@T 1, 1)
 checkNumPyIntDtype "int8"
 checkNumPyIntDtype "uint8"
 checkNumPyIntDtype "int16"
@@ -976,17 +977,19 @@ checkNumPyIntDtype "intc"
 checkNumPyIntDtype "uintc"
 checkNumPyIntDtype "int_"
 checkNumPyIntDtype "uint"
+checkNumPyIntDtype "long"
+checkNumPyIntDtype "ulong"
 checkNumPyIntDtype "longlong"
 checkNumPyIntDtype "ulonglong"
 checkNumPyIntDtype "intp"
 checkNumPyIntDtype "uintp"
 
-checkNumPyRealDtype = T -> assert BinaryOperation(symbol ===,
+checkNumPyRealDtype = T -> if np@@?T then assert BinaryOperation(symbol ===,
     value np@@T 1, 1.0)
 checkNumPyRealDtype "float16"
 checkNumPyRealDtype "float32"
 checkNumPyRealDtype "float64"
--- checkNumPyRealDtype "float96"
+checkNumPyRealDtype "float96"
 checkNumPyRealDtype "float128"
 checkNumPyRealDtype "float_"
 checkNumPyRealDtype "half"
@@ -994,14 +997,17 @@ checkNumPyRealDtype "single"
 checkNumPyRealDtype "double"
 checkNumPyRealDtype "longdouble"
 
-assert BinaryOperation(symbol ===, value np@@"bool_" true, true)
-assert BinaryOperation(symbol ===, value np@@"bool8" true, true)
+checkNumPyBoolDtype = T -> if np@@?T then assert BinaryOperation(symbol ===,
+    value np@@T true, true)
+checkNumPyBoolDtype "bool"
+checkNumPyBoolDtype "bool_"
+checkNumPyBoolDtype "bool8"
 
-checkNumPyComplexDtype = T -> assert BinaryOperation(symbol ===, value np@@T 1,
-    toCC(1.0, 0.0))
+checkNumPyComplexDtype = T -> if np@@?T then assert BinaryOperation(symbol ===,
+    value np@@T 1, toCC(1.0, 0.0))
 checkNumPyComplexDtype "complex64"
 checkNumPyComplexDtype "complex128"
--- checkNumPyComplexDtype "complex192"
+checkNumPyComplexDtype "complex192"
 checkNumPyComplexDtype "complex256"
 checkNumPyComplexDtype "complex_"
 checkNumPyComplexDtype "csingle"
