@@ -116,3 +116,16 @@ TEST /// -*check that generateGroup errors correctly*-
     assert(E_0 === null)
     assert(toString(E_1) == "time exceeded MaxComputeTime")
 ///
+
+TEST /// -*check options for equivariantEhrhartSeries*-
+    P = convexHull transpose matrix "1,0,0;0,1,0;0,0,1";
+    ES = equivariantEhrhartSeries P;
+    assert(class class ES_0 === PolynomialRing);
+    assert(class ES_1 === Matrix);
+    assert(class ES_2 === List);
+    ES' = equivariantEhrhartSeries(P,
+        ReturnTable     => false,
+        ReturnClassReps => false,
+        ReturnHStarList => false);
+    assert(#ES' == 1);
+///
