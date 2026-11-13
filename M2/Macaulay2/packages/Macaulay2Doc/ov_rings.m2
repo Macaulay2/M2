@@ -1313,6 +1313,7 @@ doc ///
         "isSkewCommutative"
         "antipode"
         center
+        centerMap
 ///
 
 document {

@@ -1,20 +1,20 @@
+-* computes the center of a ring R *-
+center = method(Options => {Strategy => null})
+center(Ring) := Ring => opts -> (R) -> source centerMap(R, opts);
+
+
 -*
 computes the center of a ring R and returns the map from center(R) -> R
-
-maybe this should just be called "center" but the term is ubiquitous across
-mathematics and appears in several different. trying to merge them all into a
-single method runs into the awkwardness of method options leaking out to all
-the different overrides.
 *-
 
-center = method(Options => {Strategy => null})
-center(Ring) := RingMap => opts -> (R) -> R.cache.center ??= (
-    z := runHooks((center, Ring), (opts, R), Strategy => opts.Strategy);
-    if z =!= null then z else error "center: no strategy for computing center of the given ring"
+centerMap = method(Options => {Strategy => null})
+centerMap(Ring) := RingMap => opts -> (R) -> R.cache.centerMap ??= (
+    z := runHooks((centerMap, Ring), (opts, R), Strategy => opts.Strategy);
+    if z =!= null then z else error "centerMap: no strategy for computing centerMap of the given ring"
 )
 
-addHook((center, Ring), Strategy => "isCommutative", (opts, R) -> if isCommutative R then map(R, R) else null)
-addHook((center, Ring), Strategy => "isSkewAffineRing", (opts, R) -> (
+addHook((centerMap, Ring), Strategy => "isCommutative", (opts, R) -> if isCommutative R then map(R, R) else null)
+addHook((centerMap, Ring), Strategy => "isSkewAffineRing", (opts, R) -> (
     -- David Eisenbud observed this strategy for computing the center of a skew polynomial ring
     if not isPolynomialRing R then return null;
     if not isSkewAffineRing R then return null;
