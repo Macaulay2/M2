@@ -55,14 +55,14 @@ static void * GC_start_performance_measurement_0(void *) {
 #if GC_VERSION_MAJOR >= 8 /* GC_start_performance_measurement added in bdwgc 8 */
   GC_start_performance_measurement();
 #endif
-  return NULL;
+  return nullptr;
 }
 
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
   /* find the number of environment variables defined */
   int envc = -1;
-  while (env[++envc] != NULL) { /* iterate over environ until you hit NULL */ }
+  while (env[++envc] != nullptr) { /* iterate over environ until you hit NULL */ }
 
   GC_INIT();
   size_t heap_size = GC_get_heap_size(),
@@ -70,7 +70,7 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 		// each thread is currently started with 8 MB of stack space
   if (heap_size < min_heap_size)
     GC_expand_hp(min_heap_size - heap_size);
-  GC_call_with_alloc_lock(GC_start_performance_measurement_0, NULL);
+  GC_call_with_alloc_lock(GC_start_performance_measurement_0, nullptr);
     // record total time of (full) gcs for GCstats()
 
   IM2_initialize();
@@ -144,14 +144,14 @@ void* profFunc(ArgCell* p)
     std::this_thread::sleep_for(997ms);
     tryGlobalTrace();
   }
-  return NULL;
+  return nullptr;
 }
 
 void* testFunc(ArgCell* p)
 {
   // TODO: do some math here?
   printf("testfunc %p\n",p);
-  return NULL;
+  return nullptr;
 }
 
 extern "C" void interp_setupargv(), interp_process();
@@ -195,7 +195,7 @@ void* interpFunc(ArgCell* vargs)
 #endif
 
   exit(0);
-  return NULL;
+  return nullptr;
 }
 
 /* ######################################################################### */
@@ -207,7 +207,7 @@ extern "C" void oursignal(int sig, void (*handler)(int)) {
   act.sa_handler = handler;
   sigemptyset(&act.sa_mask);
   sigfillset(&act.sa_mask);
-  sigaction(sig,&act,NULL);
+  sigaction(sig,&act,nullptr);
  #else
   signal(sig,handler);
  #endif
@@ -256,7 +256,7 @@ void interrupt_handler(int sig) {
 #ifndef NDEBUG
 	  trap();
 #endif
-	  if (NULL == fgets(buf,sizeof(buf),stdin)) {
+	  if (nullptr == fgets(buf,sizeof(buf),stdin)) {
 	    fprintf(stderr,"exiting\n");
 	    exit(11);
 	  }

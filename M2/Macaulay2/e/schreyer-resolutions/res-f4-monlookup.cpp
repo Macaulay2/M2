@@ -403,8 +403,8 @@ void ResF4MonomialLookupTableT<Key>::do_node(mi_node *p,
 {
   buffer o;
   int i;
-  assert(p->left != NULL);
-  assert(p->right != NULL);
+  assert(p->left != nullptr);
+  assert(p->right != nullptr);
   assert(p->left->right == p);
   assert(p->right->left == p);
   if (disp)
@@ -453,7 +453,7 @@ void ResF4MonomialLookupTableT<Key>::debug_out(int disp) const
   for (typename VECTOR(mi_node *)::const_iterator i = mis.begin();
        i != mis.end();
        i++)
-    if (*i != NULL) do_tree(*i, 0, 0, disp);
+    if (*i != nullptr) do_tree(*i, 0, 0, disp);
   buffer o;
   o << "list nodes     = " << nlists << newline;
   o << "internal nodes = " << nnodes << newline;
@@ -473,21 +473,21 @@ int ResF4MonomialLookupTableT<Key>::debug_check(mi_node *const p,
 {
   mi_node *q;
   // First check the node 'p' itself
-  assert(p != NULL);
+  assert(p != nullptr);
   assert(p->var >= 0);
   if (up != nullptr) assert(p->var < up->var);
   assert(p->header == p);
   assert(p->tag == mi_node::node);
   assert(p->down() == up);
-  assert(p->left != NULL);
-  assert(p->right != NULL);
+  assert(p->left != nullptr);
+  assert(p->right != nullptr);
 
   // Now loop through each element in left/right chain, checking that
   // v, e, left, right values are consistent.
   for (q = p->left; q != p; q = q->left)
     {
-      assert(q->left != NULL);
-      assert(q->right != NULL);
+      assert(q->left != nullptr);
+      assert(q->right != nullptr);
       assert(q->header == p);
       assert(q->right->left == q);
       assert(q->left->right == q);
@@ -514,7 +514,7 @@ void ResF4MonomialLookupTableT<Key>::debug_check() const
        i != mis.end();
        i++)
     {
-      if (*i != NULL) nfound += debug_check(*i, nullptr);
+      if (*i != nullptr) nfound += debug_check(*i, nullptr);
     }
   assert(count / 2 == nfound);
 }

@@ -11,8 +11,8 @@
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
-#define dlopen(x, y) NULL
-#define dlsym(x, y) NULL
+#define dlopen(x, y) nullptr
+#define dlsym(x, y) nullptr
 #define dlclose(x) (-1)
 #endif
 
