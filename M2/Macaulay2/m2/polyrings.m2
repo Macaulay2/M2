@@ -52,7 +52,7 @@ RingFamily _ List := RingElement => (R, v) -> (default R)_v
 List _ Ring := RingElement => (v, R) -> (
     if #v == 0 then 0_R
     else (
-        kk := coefficientRing ambient R;
+        kk := coefficientRing ambient R ?? R;
         new R from rawSum apply(toSequence v, mc -> (
             if not instance(mc, Sequence)
             then error "expected a list of sequences";
