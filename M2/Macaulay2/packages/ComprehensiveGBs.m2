@@ -1015,7 +1015,7 @@ doc ///
       R2 = QQ[a,b][x,y,z];
       F2 = {x^2-a,y^3-b,x+y-z};
     Text
-      Setting Verbose to True will print whatever $F$ and $S$ that comprehensiveGBMainRec is
+      Setting Verbose to true will print whatever $F$ and $S$ that comprehensiveGBMainRec is
       currently working on, as in the following example.
     Example
       comprehensiveGB(F1,Verbose=>true)
