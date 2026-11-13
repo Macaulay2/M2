@@ -7,12 +7,12 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_QSET_HPP
-#define BIBASIS_QSET_HPP
+#ifndef M2_BIBASIS_QSET_HPP
+#define M2_BIBASIS_QSET_HPP
 
 #include <list>
 #include <algorithm>
-#include "triple.hpp"
+#include "bibasis/triple.hpp"
 
 namespace BIBasis
 {

@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "NCAlgebras/FreeAlgebra.hpp"
-#include "matrix.hpp"
-#include "ring.hpp"
+#include "matrices/matrix.hpp"
+#include "rings/ring.hpp"
 
 ConstPolyList copyMatrixToVector(const M2FreeAlgebra& F,
                              const Matrix* input)
@@ -57,6 +57,7 @@ void M2FreeAlgebraQuotient::text_out(buffer &o) const
 
 unsigned int M2FreeAlgebraQuotient::computeHashValue(const ring_elem a) const
 {
+  (void) a;
   return 0; // TODO: change this to a more reasonable hash code.
 }
 
@@ -192,7 +193,7 @@ ring_elem M2FreeAlgebraQuotient::copy(const ring_elem f) const
 
 void M2FreeAlgebraQuotient::remove(ring_elem &f) const
 {
-  // do nothing
+  (void) f;
 }
 
 ring_elem M2FreeAlgebraQuotient::negate(const ring_elem f1) const
@@ -259,6 +260,10 @@ ring_elem M2FreeAlgebraQuotient::divide(const ring_elem f, const ring_elem g) co
 void M2FreeAlgebraQuotient::syzygy(const ring_elem a, const ring_elem b,
                       ring_elem &x, ring_elem &y) const
 {
+  (void) a;
+  (void) b;
+  (void) x;
+  (void) y;
   // TODO: In the commutative case, this function is to find x and y (as simple as possible)
   //       such that ax + by = 0.  No such x and y may exist in the noncommutative case, however.
   //       In this case, the function should return x = y = 0.

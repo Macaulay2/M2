@@ -70,11 +70,11 @@ Ddual Module := M -> (
      outputList := {};
      
      C := Dresolution(M, LengthLimit => n+1);
-     m0 := transpose Dtransposition C.dd#n;
-     m1 := transpose Dtransposition C.dd#(n+1);  
+     m0 := transpose Dtransposition C.dd_n;
+     m1 := transpose Dtransposition C.dd_(n+1);  
      
-     F0 := map(C#n, C#(n-1), m0);
-     F1 := map(C#(n+1), C#n, m1);
+     F0 := map(C_n, C_(n-1), m0);
+     F1 := map(C_(n+1), C_n, m1);
      
      pres := presentation homology(F1,F0);
      cokernel zeroize Dprune pres)
@@ -191,9 +191,9 @@ polynomialSolutions(Module, List) := options -> (M, w) -> (
 	       C := Dtransposition dual B);
      	  pInfo (2, "\t\t\t time = " | tInfo | " seconds");
 	  
-     	  Ker := zeroize gens kernel C.dd#-n;
+     	  Ker := zeroize gens kernel C.dd_(-n);
      	  Rels := presentation image Ker;
-     	  Im := zeroize C.dd#-(n-1);
+     	  Im := zeroize C.dd_(-(n-1));
      	  if (Im%Ker) != 0 then error "expected reduction to 0";
      	  Syz := Im//Ker;
      	  NewDual := Rels | Syz;
@@ -205,39 +205,40 @@ polynomialSolutions(Module, List) := options -> (M, w) -> (
 
      	  if integrateTable#n == 0 then answer = matrix{{0_K}}
      	  else (
-     	       chainMap := new MutableHashTable;
-     	       chainMap.source = F;
-	       chainMap.target = C;
-	       chainMap.degree = -n;
-	       chainMap#0 = map(C#-n, F#0, Ker);
+     	       -- chainMap := new MutableHashTable;
+     	       -- chainMap.source = F;
+	       -- chainMap.target = C;
+	       -- chainMap.degree = -n;
+	       -- chainMap#0 = map(C#-n, F#0, Ker);
 	       pInfo(1, "computing chain map 1 ...");
 	       tInfo = toString first timing (
-	       bottomCompose := (Ker)*F.dd#1;
-	       if (zeroize bottomCompose)%(zeroize C.dd#-(n-1)) != 0 then 
-	       error "expected reduction to 0 -- possible lack of gb problem?";
-	       nextLiftMap := (zeroize bottomCompose)//(zeroize C.dd#-(n-1));
-	       chainMap#1 = map(C#-(n-1), F#1, nextLiftMap); );
-	       pInfo (2, "\t\t\t time = " | tInfo | " seconds");
-	       i = 2;
+                   bottomCompose := (Ker)*F.dd_1;
+                   if (zeroize bottomCompose)%(zeroize C.dd_-(n-1)) != 0 then 
+                   error "expected reduction to 0 -- possible lack of gb problem?";
+                   nextLiftMap := (zeroize bottomCompose)//(zeroize C.dd_-(n-1));
+                   -- chainMap#1 = map(C#-(n-1), F#1, nextLiftMap);
+                   );
+               pInfo (2, "\t\t\t time = " | tInfo | " seconds");
+               i = 2;
 	       while i <= n do (
 	       	    pInfo(1, "computing chain map " | i | " ...");
 		    tInfo = toString first timing (
-	       	    	 bottomCompose = nextLiftMap*F.dd#i;
-	       	    	 if ((zeroize bottomCompose)%(zeroize C.dd#-(n-i)) != 0) then 
+	       	    	 bottomCompose = nextLiftMap*F.dd_i;
+	       	    	 if ((zeroize bottomCompose)%(zeroize C.dd_-(n-i)) != 0) then 
 	       	    	 error "expected reduction to 0 -- 
 			 possible lack of gb problem?";
-	       	    	 nextLiftMap = (zeroize bottomCompose)//(zeroize C.dd#-(n-i));
-	       	    	 chainMap#i = map(C#-(n-i), F#i, nextLiftMap);
+	       	    	 nextLiftMap = (zeroize bottomCompose)//(zeroize C.dd_-(n-i));
+	       	    	 -- chainMap#i = map(C#-(n-i), F#i, nextLiftMap);
      	       	    	 i = i+1; 
 		    	 );
 	       	    pInfo (2, "\t\t\t time = " | tInfo | " seconds");
 	       	    );
 	       answer = nextLiftMap*(integrateTable#n);
 	       answer = substitute(Dtransposition(answer), diffSub);
-     	       chainMap = new ChainComplexMap from chainMap;
+     	       -- chainMap = new ChainComplexMap from chainMap;
 	       );
-     	  answer = (entries answer)#0;
-     	  )
+           answer = (entries answer)#0;
+           )
 
      else error "expected Alg 'GD' or 'Duality'";
      
@@ -585,9 +586,9 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      FMN = FMN[-n]; 
      C := WW.twistMap FMN;
      
-     Ker := zeroize gens kernel C.dd#0;
+     Ker := zeroize gens kernel C.dd_0;
      Rels := presentation image Ker;
-     Im := zeroize C.dd#1;
+     Im := zeroize C.dd_1;
 
      if Im%Ker != 0 then error "expected reduction to 0";
      Syz := Im//Ker;
@@ -603,36 +604,36 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
 
      if restrictTable#n == 0 then answer = 0_K
      else (
-     	  chainMap := new MutableHashTable;
-     	  chainMap.source = F;
-	  chainMap.target = C;
-	  chainMap.degree = 0;
-	  chainMap#0 = map(C#0, F#0, Ker);
+     	  -- chainMap := new MutableHashTable;
+     	  -- chainMap.source = F;
+	  -- chainMap.target = C;
+	  -- chainMap.degree = 0;
+	  -- chainMap#0 = map(C#0, F#0, Ker);
      	  pInfo(1, "computing chain map 1 ... ");
 	  tInfo = toString first timing (
-	  bottomCompose := (Ker)*F.dd#1;
-	  if (zeroize bottomCompose)%(zeroize C.dd#1) != 0 then 
+	  bottomCompose := (Ker)*F.dd_1;
+	  if (zeroize bottomCompose)%(zeroize C.dd_1) != 0 then 
 	  error "expected reduction to 0 -- possible lack of gb problem?";
-	  nextLiftMap := (zeroize bottomCompose)//(zeroize C.dd#1);
-	  chainMap#1 = map(C#1, F#1, nextLiftMap);
+	  nextLiftMap := (zeroize bottomCompose)//(zeroize C.dd_1);
+	  -- chainMap#1 = map(C#1, F#1, nextLiftMap);
 	  );
           pInfo (2, "\t\t\t time = " | tInfo | " seconds");
 	  i := 2;
 	  while i <= n do (
 	       pInfo(1, "computing chain map " | i | " ..." );
 	       tInfo = toString first timing (
-	       bottomCompose = nextLiftMap*F.dd#i;
-	       if (zeroize bottomCompose)%(zeroize C.dd#i) != 0 then 
+	       bottomCompose = nextLiftMap*F.dd_i;
+	       if (zeroize bottomCompose)%(zeroize C.dd_i) != 0 then 
 	       error "expected reduction to 0 -- possible lack of gb problem?";
-	       nextLiftMap = (zeroize bottomCompose)//(zeroize C.dd#i);
-	       chainMap#i = map(C#i, F#i, nextLiftMap);
+	       nextLiftMap = (zeroize bottomCompose)//(zeroize C.dd_i);
+	       -- chainMap#i = map(C#i, F#i, nextLiftMap);
      	       i = i+1;
 	       );
                pInfo (2, "\t\t\t time = " | tInfo | " seconds");
 	       );
 	  answer = WW.twistInvMap(nextLiftMap*restrictTable#n);
 	  temp := answer;
-     	  chainMap = new ChainComplexMap from chainMap;
+     	  -- chainMap = new ChainComplexMap from chainMap;
 	  );
      
      if answer == 0 then basisList := matrix{{0_K}}
@@ -793,7 +794,7 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
      incM**incN    
      )
 
-ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
+ExternalProduct(Complex, Complex) := options -> (F, G) -> (
 
      pInfo(1, "ENTERING ExternalProduct ...");
 
@@ -924,9 +925,9 @@ TEST ///
 --    DExt (Module, Module, List)
 
 --    ExternalProduct (Module, Module)
---    ExternalProduct (ChainComplex, ChainComplex)
+--    ExternalProduct (Complex, Complex)
 --    ExternalProduct (Module, Module) .... with TwistMap => true
---    ExternalProduct (ChainComplex, ChainComplex) .... with TwistMap => true
+--    ExternalProduct (Complex, Complex) .... with TwistMap => true
 
 
 

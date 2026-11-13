@@ -606,11 +606,11 @@ document {
 	  arcs
 	  },
      Headline => "prints node labels for the desingularization tree",
-     Usage => "(prevlist,levellist,clist,blist,nlist,elist,philist,leaflist,Philist) = arcs(b0,n0e0,fout)",
+     Usage => "(prevlist,levellist,clist,blist,nlist,elist,philist,leaflist,Philist) = arcs(polyb,eq,ineq,fout)",
      Inputs => {
 	  "polyb" => "irreducible polynomial for the domain A_k",
-	  "ineq"  => "list of inequality constraints for the part",
  	  "eq"    => "ideal of equality constraints for the part",
+	  "ineq"  => "list of inequality constraints for the part",
           "fout"  => "output file to which results are written"
 	  },
      Outputs => {
@@ -625,7 +625,7 @@ document {
 	  "Philist"   => List => "birational change of variables maps between node and root node"
        	  },
      EXAMPLE lines ///
-      fout = openOut "curve_example0";
+      fout = openOut temporaryFileName();
          F = QQ;
          d = 1;
         P0 = F[a_{0,0}..a_{0,d}];
@@ -651,7 +651,7 @@ document {
      }	   
 
 TEST ///
-   fout = openOut "/dev/null";
+   fout = openOut temporaryFileName();
          F = QQ;
          d = 1;
         P0 = F[a_{0,0}..a_{0,d}];
@@ -664,12 +664,19 @@ TEST ///
         b1 = x_{0,0}^3+x_{0,0}^2*x_{0,1}^4+x_{0,1}^5;
         n1 = {};
         e1 = ideal(a_{0,0},a_{0,1});
-      tree = arcs(b1,e1,n1,fout);     
+      tree = arcs(b1,e1,n1,fout);
       fout << close;
-      -- assert(globalpars==0);
+      -- structural invariants on the 9-tuple return value
+      assert(#tree == 9);
+      assert(all(tree, c -> #c == #tree#0));
+      assert(tree#0#0 == -1 and tree#1#0 == 0 and tree#7#0 == "root");
+      assert(all(1..#tree#0-1, i -> tree#0#i >= 0 and tree#0#i < i and tree#1#(tree#0#i) + 1 == tree#1#i));
+      assert(all(tree#5, e -> instance(e, Ideal)));
+      assert(all(tree#6, m -> instance(m, RingMap)));
+      assert(all(tree#8, m -> instance(m, RingMap)));
 ///
 TEST ///
-      fout := openOut "/dev/null" 
+      fout := openOut temporaryFileName()
          F := ZZ/2
          d := 1
         P0 := F[a_{0,0}..a_{0,d}];
@@ -689,12 +696,22 @@ time tree1 := arcs(b0,e0,n0,fout);
         n1 := {};
         e1 := ideal(a_{0,0},
 	            a_{0,1});
-time tree2 := arcs(b1,e1,n1,fout);     
-      fout << close
-      -- assert(globalpars==0);
-///      
+time tree2 := arcs(b1,e1,n1,fout);
+      fout << close;
+      -- structural invariants on both return values
+      assert(#tree1 == 9 and #tree2 == 9);
+      assert(all(tree1, c -> #c == #tree1#0));
+      assert(all(tree2, c -> #c == #tree2#0));
+      assert(tree1#0#0 == -1 and tree1#1#0 == 0 and tree1#7#0 == "root");
+      assert(tree2#0#0 == -1 and tree2#1#0 == 0 and tree2#7#0 == "root");
+      assert(all(1..#tree1#0-1, i -> tree1#0#i >= 0 and tree1#0#i < i and tree1#1#(tree1#0#i) + 1 == tree1#1#i));
+      assert(all(tree1#5, e -> instance(e, Ideal)));
+      assert(all(tree1#6, m -> instance(m, RingMap)));
+      assert(all(tree1#8, m -> instance(m, RingMap)));
+///
+
 TEST ///
-     fout := openOut "/dev/null";
+     fout := openOut temporaryFileName();
         F := QQ
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];
@@ -708,11 +725,19 @@ TEST ///
 	           (a_{0,1}^2-a_{0,2}^6)^2+
 	            a_{0,2}^21));
 time tree := arcs(b0,e0,n0,fout);
-     fout << close
-     assert(#tree#0==5)
-///     
+     fout << close;
+     assert(#tree#0==5);
+     -- structural invariants on the 9-tuple return value
+     assert(#tree == 9);
+     assert(all(tree, c -> #c == #tree#0));
+     assert(tree#0#0 == -1 and tree#1#0 == 0 and tree#7#0 == "root");
+     assert(all(1..#tree#0-1, i -> tree#0#i >= 0 and tree#0#i < i and tree#1#(tree#0#i) + 1 == tree#1#i));
+     assert(all(tree#5, e -> instance(e, Ideal)));
+     assert(all(tree#6, m -> instance(m, RingMap)));
+     assert(all(tree#8, m -> instance(m, RingMap)));
+///
 TEST ///
-     fout := openOut "/dev/null";
+     fout := openOut temporaryFileName();
         F := QQ
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];
@@ -726,11 +751,20 @@ TEST ///
 	           (a_{0,1}^2-a_{0,2}^3)^2+
 	            a_{0,2}^8));
 time tree := arcs(b0,e0,n0,fout);
-     fout << close
-     assert(#tree#0==4)
-///     
+     fout << close;
+     assert(#tree#0==4);
+     -- structural invariants on the 9-tuple return value
+     assert(#tree == 9);
+     assert(all(tree, c -> #c == #tree#0));
+     assert(tree#0#0 == -1 and tree#1#0 == 0 and tree#7#0 == "root");
+     assert(all(1..#tree#0-1, i -> tree#0#i >= 0 and tree#0#i < i and tree#1#(tree#0#i) + 1 == tree#1#i));
+     assert(all(tree#5, e -> instance(e, Ideal)));
+     assert(all(tree#6, m -> instance(m, RingMap)));
+     assert(all(tree#8, m -> instance(m, RingMap)));
+///
+
 TEST ///
-     fout := openOut "/dev/null"
+     fout := openOut temporaryFileName()
         F := QQ
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];
@@ -746,11 +780,19 @@ TEST ///
 	           a_{0,0}*a_{0,1}^9*a_{0,2}+
 		   a_{0,1}^5*a_{0,2}^5);
 time tree := arcs(b0,e0,n0,fout);
-     fout << close
-     assert(#tree#0==8)
+     fout << close;
+     assert(#tree#0==8);
+     -- structural invariants on the 9-tuple return value
+     assert(#tree == 9);
+     assert(all(tree, c -> #c == #tree#0));
+     assert(tree#0#0 == -1 and tree#1#0 == 0 and tree#7#0 == "root");
+     assert(all(1..#tree#0-1, i -> tree#0#i >= 0 and tree#0#i < i and tree#1#(tree#0#i) + 1 == tree#1#i));
+     assert(all(tree#5, e -> instance(e, Ideal)));
+     assert(all(tree#6, m -> instance(m, RingMap)));
+     assert(all(tree#8, m -> instance(m, RingMap)));
 ///
 TEST ///
-     fout := openOut "/dev/null"
+     fout := openOut temporaryFileName()
         F := ZZ/2
         d := 3
        P0 := F[a_{0,0}..a_{0,d}];
@@ -780,11 +822,21 @@ time tree := arcs(b0,e0,n0,fout);
 		   a_{0, 1}*a_{0, 2}+
 		   a_{0, 2}^2);
 time Tree := arcs(B0,E0,N0,fout);
-     fout << close
-     assert(#tree#0==2)
+     fout << close;
+     assert(#tree#0==2);
+     -- structural invariants on both return values
+     assert(#tree == 9 and #Tree == 9);
+     assert(all(tree, c -> #c == #tree#0));
+     assert(all(Tree, c -> #c == #Tree#0));
+     assert(tree#0#0 == -1 and tree#1#0 == 0 and tree#7#0 == "root");
+     assert(Tree#0#0 == -1 and Tree#1#0 == 0 and Tree#7#0 == "root");
+     assert(all(1..#tree#0-1, i -> tree#0#i >= 0 and tree#0#i < i and tree#1#(tree#0#i) + 1 == tree#1#i));
+     assert(all(tree#5, e -> instance(e, Ideal)));
+     assert(all(tree#6, m -> instance(m, RingMap)));
+     assert(all(tree#8, m -> instance(m, RingMap)));
 ///
 TEST ///
-     fout := openOut "/dev/null"
+     fout := openOut temporaryFileName()
         F := ZZ/2
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];
@@ -814,11 +866,21 @@ time tree := arcs(b0,e0,n0,fout);
 		   a_{0, 0}^2*a_{0, 1}+
 		   a_{0, 1}^2);
 time Tree := arcs(B0,E0,N0,fout);
-     fout << close
-     assert(#tree#0==2)
+     fout << close;
+     assert(#tree#0==2);
+     -- structural invariants on both return values
+     assert(#tree == 9 and #Tree == 9);
+     assert(all(tree, c -> #c == #tree#0));
+     assert(all(Tree, c -> #c == #Tree#0));
+     assert(tree#0#0 == -1 and tree#1#0 == 0 and tree#7#0 == "root");
+     assert(Tree#0#0 == -1 and Tree#1#0 == 0 and Tree#7#0 == "root");
+     assert(all(1..#tree#0-1, i -> tree#0#i >= 0 and tree#0#i < i and tree#1#(tree#0#i) + 1 == tree#1#i));
+     assert(all(tree#5, e -> instance(e, Ideal)));
+     assert(all(tree#6, m -> instance(m, RingMap)));
+     assert(all(tree#8, m -> instance(m, RingMap)));
 ///
 TEST ///
-     fout := openOut "/dev/null"
+     fout := openOut temporaryFileName()
         F := ZZ/2
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];
@@ -834,8 +896,27 @@ TEST ///
 		   a_{0,2}^3+
 		   a_{0,0}^2*a_{0,1}*a_{0,2});
 time tree := arcs(b0,e0,n0,fout);
-     fout << close
-     assert(#tree#0==1)
+     fout << close;
+     assert(#tree#0==1);
+     -- structural invariants on the 9-tuple return value (single-node tree)
+     assert(#tree == 9);
+     assert(all(tree, c -> #c == 1));
+     assert(tree#0#0 == -1 and tree#1#0 == 0 and tree#7#0 == "root");
+     assert(all(tree#5, e -> instance(e, Ideal)));
+     assert(all(tree#6, m -> instance(m, RingMap)));
+     assert(all(tree#8, m -> instance(m, RingMap)));
+///
+
+TEST ///
+-- negLexMatrix(d) returns a (d+1)x(d+1) matrix with -1 on the anti-diagonal
+-- and 0 elsewhere; this is the weight matrix used to set up a negative-lex
+-- monomial order on a polynomial ring of d+1 variables.
+assert(negLexMatrix 0 == matrix{{-1}});
+assert(negLexMatrix 1 == matrix{{0,-1},{-1,0}});
+assert(negLexMatrix 2 == matrix{{0,0,-1},{0,-1,0},{-1,0,0}});
+M = negLexMatrix 3;
+assert(numRows M == 4 and numColumns M == 4);
+assert(all(0..3, i -> all(0..3, j -> M_(i,j) == (if j == 3-i then -1 else 0))));
 ///
 
 end

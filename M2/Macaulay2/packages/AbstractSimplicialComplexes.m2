@@ -988,53 +988,50 @@ doc ///
 
 
 -* Test section *-
-TEST /// -* [insert short title for this test] *-
-
 needsPackage"Complexes"  -- in order for some tests to run properly the Complexes package needs to be imported 
 
+TEST ///
 -- a test for the exported function/methods
 -- abstractSimplicialComplex
 -- ambientAbstractSimplicialComplex
 -- reducedSimplicialChainComplex
 -- inducedReducedSimplicialChainComplexMap
 
-assert(K = abstractSimplicialComplex({{1,2},{3}});
-     J = ambientAbstractSimplicialComplex(K);
-     isWellDefined inducedReducedSimplicialChainComplexMap(J,K))
+K = abstractSimplicialComplex({{1,2}, {3}});
+J = ambientAbstractSimplicialComplex(K)
+L = abstractSimplicialComplex({{}});
+M = abstractSimplicialComplex({{1}});
+
+assert(isWellDefined inducedReducedSimplicialChainComplexMap(J,K))
 
 -- a test for the exported function/methods
--- abstractSimplicialComplex
--- ambientAbstractSimplicialComplex
--- simplicialChainComplex
 -- inducedSimplicialChainComplexMap
 
-assert(K = abstractSimplicialComplex({{1,2},{3}});
-     J = ambientAbstractSimplicialComplex(K);
-     isWellDefined inducedSimplicialChainComplexMap(J,K))
+assert(isWellDefined inducedSimplicialChainComplexMap(J,K))
+
+-- another important test for the exportd function/methods
+-- inducedReducedSimplicialChainComplexMap
+
+assert(isWellDefined inducedReducedSimplicialChainComplexMap(L,L))
 
 -- another important test for the exportd function/methods
 -- abstractSimplicialComplex
 -- inducedReducedSimplicialChainComplexMap
 
-assert(L = abstractSimplicialComplex({{}});
-     isWellDefined inducedReducedSimplicialChainComplexMap(L,L))
+assert(isWellDefined inducedReducedSimplicialChainComplexMap(M,L))
+///
 
--- another important test for the exportd function/methods
--- abstractSimplicialComplex
--- inducedReducedSimplicialChainComplexMap
-
-assert(M = abstractSimplicialComplex {{1}};
-     L = abstractSimplicialComplex {{}};
-     isWellDefined inducedReducedSimplicialChainComplexMap(M,L))
-
+TEST ///
 -- a test for randomAbstractSimplicialComplex
 -- reducedSimplicialChainComplexes
 -- and inducedReducedSimplicialChainComplexMap
 
-assert(K = randomAbstractSimplicialComplex(6);
-     J = randomSubSimplicialComplex(K);
-     isWellDefined inducedReducedSimplicialChainComplexMap(K,J))
+K = randomAbstractSimplicialComplex(6);
+J = randomSubSimplicialComplex(K);
+assert(isWellDefined inducedReducedSimplicialChainComplexMap(K,J))
+///
 
+TEST ///
 -- a test for randomSubSimplicialComplex
 -- simplicialChainComplexes
 -- and reducedSimplicialChainComplexMap
@@ -1048,7 +1045,9 @@ assert(K = randomAbstractSimplicialComplex(6);
 assert(abstractSimplicialComplex(0) == abstractSimplicialComplex({{}}))
 assert(abstractSimplicialComplex(1) == abstractSimplicialComplex({{1}}))
 assert(abstractSimplicialComplex(3) == abstractSimplicialComplex({{1},{2},{3},{1,2},{1,3},{2,3},{1,2,3}}))
- 
+///
+
+TEST ///
 -- a couple of tests for simplicialChainComplex
 
 assert(K = abstractSimplicialComplex({{}});

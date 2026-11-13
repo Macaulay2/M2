@@ -41,7 +41,7 @@ Node
     including cpu caches; it is like running Macaulay2 on a computer that is running other big
     programs at the same time. We can see this using @ TO "elapsedTime" @.
   Example
-       L = random toList (1..10000);
+       L = shuffle toList (1..10000);
        elapsedTime         apply(1..100, n -> sort L);
        elapsedTime parallelApply(1..100, n -> sort L);
   Text
@@ -147,6 +147,10 @@ Node
     result has the same class as @VAR "L"@.   Normally the default strategy
     (@M2CODE "Strategy => null"@) is more efficient.
 
+    The order of the elements of the output is preserved.
+  Example
+    parallelApply(0..10, x -> x^2)
+  Text
     See @ TO "parallel programming with threads and tasks" @ for more information and an
     important warning about thread safety.
 Node

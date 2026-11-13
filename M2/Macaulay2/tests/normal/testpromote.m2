@@ -65,6 +65,7 @@ assert( rawLift(raw C, f) == raw C_0 )
 
 -- more sophisticated, m2 level, promotes
 R=QQ[x]; S=R[y];
+assert(1/y + 1/x == 1/x + 1/y)
 a=promote(1/x,frac S)
 assert(lift(a,frac R) == 1/x)
 assert(1/x + 1/y == a + 1/y)
@@ -74,6 +75,14 @@ T=R**QQ[z];
 assert(promote(x_R,T) == x_T)
 assert(lift(x_T,R) == x_R)
 assert(lift(z,R,Verify=>false) === null)
+
+-- lift from fraction field to base/coefficient rings (issue #3896)
+F=frac R
+assert(lift(1/123_F, R) == 1/123)
+assert(lift(1/123_F, QQ) == 1/123)
+assert(lift((x/123)_F, R) == x/123)
+assert(lift((x/123)_F, QQ, Verify=>false) === null)
+assert(lift(1/x_F, R, Verify=>false) === null)
 
 R=QQ[x_1,x_2]
 R'=QQ[e_1,e_2,Degrees=>{1,2}]

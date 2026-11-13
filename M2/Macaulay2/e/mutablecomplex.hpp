@@ -1,13 +1,13 @@
 /* Copyright 2017 Mahrud Sayrafi and Michael E. Stillman
    Mahrud Sayrafi's code in this file is in the public domain. */
 
-#ifndef _mutablecomplex_hpp_
-#define _mutablecomplex_hpp_
+#ifndef M2_MUTABLECOMPLEX_HPP_
+#define M2_MUTABLECOMPLEX_HPP_
 
-#include "localring.hpp"
+#include "rings/localring.hpp"
 #include "style.hpp"
 #include "hash.hpp"
-#include "mat.hpp"
+#include "basic-mutable-matrices/mat.hpp"
 #include "debug.hpp"
 #include <iostream>
 

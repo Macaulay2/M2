@@ -1044,7 +1044,7 @@ doc ///
       An easy way to construct complexes from factorizations is to use the End command, which computes
       the endomorphisms of the factorization. In general, if $F$ is a factorization of some polynomial
       $f$ and $G$ is a factorization of some polynomial $g$, then $\operatorname{Hom} (F,G)$ is a factorization
-      of $g-f$. 
+      of $f-g$.
     Example
       Q = ZZ/11[x,y];
       F = randomLinearMF(2,Q)
@@ -1088,11 +1088,16 @@ doc ///
       in order to make sense of the homology of a d-fold factorization for d > 2, one should specify both
       the spot to take homology in, and also how many compositions of the differentials to use (since there
       are multiple ways to compose the differentials for a longer factorization)
+      For period $p>2$, @TT "homology(i,j,C)"@ means
+      $\ker(d_{i-j+1}\cdots d_i)/\operatorname{im}(d_{i+1}\cdots d_{i+p-j})$,
+      with $1\leq j<p$. The single-index notation @TT "HH_j C"@ in this
+      higher-period case returns the factorization with zero differential
+      whose components are these homology modules for every spot $i$.
       
       An easy way to construct complexes from factorizations is to compute
       the endomorphisms of the factorization. In general, if $F$ is a factorization of some polynomial
       $f$ and $G$ is a factorization of some polynomial $g$, then $\operatorname{Hom} (F,G)$ is a factorization
-      of $g-f$. 
+      of $f-g$.
     Example
       Q = ZZ/11[x,y];
       F = randomLinearMF(2,Q)
@@ -1333,6 +1338,14 @@ doc ///
       In general, if $C1$ is a factorizations of $f$ and $C2$ is a factorization of $g$, then the tensor product
       $C1 \otimes C2$ is a factorization of the sum $f + g$. As the next example illustrates, this allows one
       to always construct matrix factorizations by taking the tensor product of "trivial" factorizations.
+    Text
+      For compatible homogeneous differential profiles, the summands carry
+      internal twists and the tensor product retains the first factor's
+      differential profile. With the notation $u_C,u_D,w$ from
+      @TO (Hom, ZZdFactorization, ZZdFactorization)@, the summand
+      $C_j\otimes D_k$ in spot $i=(j+k)\bmod p$ has twist
+      $u_C(j)+u_D(k)-u_C(i)+\lfloor(j+k)/p\rfloor w$.
+      This convention preserves the grading under tensor units and associativity.
     Example
       S = ZZ/101[a..c]
       Ca = ZZdfactorization {a,a}
@@ -1425,13 +1438,13 @@ doc ///
     Text
       The factorization of homomorphisms is a ZZ/d-graded factorization $D$ whose $i$th component is
       the direct sum of $Hom(C1_j, C2_{k})$ over all $k-j = i \mod d$.
-      The differential on $Hom(C1_j, C2_{k})$ is the differential 
-      $Hom(id_{C1}, dd^{C2}) + t^j Hom(dd^{C1}, id_{C2})$ where $t$ is a primitive $d$th root of unity.
+      On an element $h$ of homological degree $i$, the differential is
+      $\delta(h)=h\,dd^{C1}-t^i dd^{C2}h$, where $t$ is a primitive $d$th root of unity.
 
       The use of a primitive $d$th root of unity adds some subtlety to this construction,
       since for $d > 2$ the user may need to adjoin a root of unity using the \texttt{adjoinRoot} command.
       In general, if $C1$ is a factorizations of $f$ and $C2$ is a factorization of $g$, then the Hom factorization
-      $\operatorname{Hom} (C1,C2)$ is a factorization of the difference $g-f$.
+      $\operatorname{Hom} (C1,C2)$ is a factorization of the difference $f-g$.
     Example
       S = ZZ/101[a..c];
       f = a^3 + b^3 + c^3
@@ -1477,6 +1490,27 @@ doc ///
       components D_-1
       indices D_-2
       components D_-2
+    Text
+      Internal degrees use normalized differential profiles. For a period $p$
+      factorization $C$, put $u_C(0)=0$ and
+      $u_C(j)=-\sum_{r=1}^j \deg(dd^C_r)$ for $0<j<p$.
+      When the two profiles have the same total degree $w$, the summand indexed
+      by $(j,k)$ in $Hom(C,D)_i$, with $k=(j+i)\bmod p$ and $0\leq i<p$,
+      is $Hom(C_j,D_k)$ twisted by
+      $u_D(k)-u_C(j)-\lfloor(j+i)/p\rfloor w$.
+      These twists make the Hom differential homogeneous, with degree zero
+      away from the end of the period and degree $w$ across it.
+    Text
+      In particular, for period-two factorizations with differential degrees
+      $\deg(dd_1)=0$ and $\deg(dd_0)=w$, the even Hom module is unchanged,
+      while the odd module is
+      $Hom(C_0,D_1)\oplus Hom(C_1,D_0)(-w)$.
+      An odd element of internal degree $a$ therefore corresponds to component
+      maps of internal degrees $a$ and $a-w$. The conversion methods
+      @TO homomorphism@ and @TO homomorphism'@ account for these twists.
+      If the differential profiles are inhomogeneous or incompatible, Hom
+      retains its ungraded construction and an explicit @TO InternalDegree@
+      request to @TO randomFactorizationMap@ is rejected.
    SeeAlso
      (homomorphism, ComplexMap)
      (homomorphism', ComplexMap)
@@ -1510,13 +1544,13 @@ doc ///
     Text
       The factorization of homomorphisms is a ZZ/d-graded factorization $D$ whose $i$th component is
       the direct sum of $Hom(C1_j, C2_{k})$ over all $k-j = i \mod d$.
-      The differential on $Hom(C1_j, C2_{k})$ is the differential 
-      $Hom(id_{C1}, dd^{C2}) + t^j Hom(dd^{C1}, id_{C2})$ where $t$ is a primitive $d$th root of unity.
+      On an element $h$ of homological degree $i$, the differential is
+      $\delta(h)=h\,dd^{C1}-t^i dd^{C2}h$, where $t$ is a primitive $d$th root of unity.
 
       The use of a primitive $d$th root of unity adds some subtlety to this construction,
       since for $d > 2$ the user may need to adjoin a root of unity using the \texttt{adjoinRoot} command.
       In general, if $C1$ is a factorizations of $f$ and $C2$ is a factorization of $g$, then the Hom factorization
-      $\operatorname{Hom} (C1,C2)$ is a factorization of the difference $g-f$.
+      $\operatorname{Hom} (C1,C2)$ is a factorization of the difference $f-g$.
 
       If one of the inputs is a complex, the method will automatically @TO Fold@ the complex and take
       the d-periodic Hom.
@@ -1561,13 +1595,13 @@ doc ///
     Text
       The factorization of homomorphisms is a ZZ/d-graded factorization $D$ whose $i$th component is
       the direct sum of $Hom(C1_j, C2_{k})$ over all $k-j = i \mod d$.
-      The differential on $Hom(C1_j, C2_{k})$ is the differential 
-      $Hom(id_{C1}, dd^{C2}) + t^j Hom(dd^{C1}, id_{C2})$ where $t$ is a primitive $d$th root of unity.
+      On an element $h$ of homological degree $i$, the differential is
+      $\delta(h)=h\,dd^{C1}-t^i dd^{C2}h$, where $t$ is a primitive $d$th root of unity.
 
       The use of a primitive $d$th root of unity adds some subtlety to this construction,
       since for $d > 2$ the user may need to adjoin a root of unity using the \texttt{adjoinRoot} command.
       In general, if $C1$ is a factorizations of $f$ and $C2$ is a factorization of $g$, then the Hom factorization
-      $\operatorname{Hom} (C1,C2)$ is a factorization of the difference $g-f$.
+      $\operatorname{Hom} (C1,C2)$ is a factorization of the difference $f-g$.
     Example
       S = ZZ/101[a..c];
       f = a^3 + b^3 + c^3
@@ -2928,10 +2962,13 @@ doc ///
              that is true when $f_i$ is homogeneous, for all $i$
     Description
         Text
-            A map of factorizations $f \colon C \to D$ is homogeneous
-            (graded) if its underlying ring is graded, and all the
-            component maps $f_i \colon C_i \to D_{d+i}$ are graded of
-            degree zero, where $f$ has degree $d$.
+            This method tests whether each component map
+            $f_i \colon C_i \to D_{d+i}$ is homogeneous with its recorded
+            internal degree, where $d$ is the homological degree of $f$.
+            The internal degrees need not be zero or agree between components.
+            To test for a specified internal degree, also inspect @TO degree@
+            on each nonzero component matrix. The degree of $f$ itself is
+            its homological degree, not an internal degree.
         Example
 	    S = ZZ/101[a,b,c];
             R = S/(a^2+b^2+c^2);
@@ -2942,6 +2979,16 @@ doc ///
             f = randomFactorizationMap(C, C, Degree => -1)
             f = randomFactorizationMap(C, C, InternalDegree => 2)
         Text
+            Multiplication by a homogeneous ring element can have nonzero
+            internal degree. Twisting the source makes it a degree-zero map.
+        Example
+            f = S_0 * id_C
+            assert isHomogeneous f
+            assert all({0,1}, i -> degree f_i === {1})
+            g = map(C, C ** S^{-1}, f)
+            assert isHomogeneous g
+            assert all({0,1}, i -> degree g_i === {0})
+        Text
             The image of a homogeneous factorization under a nonhomogeneous
 	    ring map may fail to be homogeneous.
         Example
@@ -2950,7 +2997,8 @@ doc ///
             D = phi C
             dd^D
             assert not isHomogeneous dd^D
-            g = randomFactorizationMap(D, D, InternalDegree => 1)
+            -- An explicit InternalDegree is unavailable for incompatible
+            -- inhomogeneous differential profiles.
     SeeAlso
         "Basic invariants and properties"
         isHomogeneous
@@ -3226,9 +3274,11 @@ doc ///
       that is true when $f$ commutes with the differentials
   Description
     Text
-      For a ZZ/d-graded factorization map $f : C \to D$ of degree $d$, this method
+      For a ZZ/p-graded factorization map $f : C \to D$ of degree $d$, this method
       checks whether, for all $i$, we have
-      $dd^D_{i+d} * f_i =  (f_{i-1} * dd^C_i)$.
+      $dd^D_{i+d} f_i = t^{-d} f_{i-1} dd^C_i$,
+      where $t=-1$ in period two and $t$ is the distinguished primitive
+      $p$th root of unity for higher periods. Every index is read cyclically.
     Text
       We first construct a random factorization map which commutes with the differential.
     Example
@@ -3289,7 +3339,11 @@ doc ///
     Description
         Text
             The maps $f : C \to D$ and $g : E \to F$ of ZZ/d-graded factorizations induces the map
-            $h = Hom(f,g) : Hom(D,E) \to Hom(C,F)$ defined by $\phi \mapsto g \phi f$.
+            $h = Hom(f,g) : Hom(D,E) \to Hom(C,F)$.
+            On a Hom element $\phi$ of homological degree $i$, it acts by
+            $\phi\mapsto t^{-(2\deg(f)+\deg(g))i}g\phi f$, where $t=-1$
+            in period two and is the distinguished root of unity otherwise.
+            In particular, degree-zero maps act by ordinary pre- and postcomposition.
         Example
             S = ZZ/101[a,b];
             R = S/(a^3+b^3);
@@ -3315,8 +3369,6 @@ doc ///
         Example
             assert(Hom(f, C) == Hom(f, id_C))
             assert(Hom(C, f) == Hom(id_C, f))
-        Text
-            XXX write this text after writing doc for homomorphism and homomorphism'.
         Example
             e = randomFactorizationMap(source h, ZZdfactorization(S^1, 2, Base => 1))
             phi = homomorphism e
@@ -3406,7 +3458,8 @@ doc ///
     Description
         Text
             The maps $f : C \to D$ and $g : E \to F$ of ZZ/d-graded factorizations induces the map
-            $h = Hom(f,g) : Hom(D,E) \to Hom(C,F)$ defined by $\phi \mapsto g \phi f$. When the period
+            $h = Hom(f,g) : Hom(D,E) \to Hom(C,F)$ by the graded pre- and
+            postcomposition described in @TO (Hom, ZZdFactorizationMap, ZZdFactorizationMap)@. When the period
 	    of a factorization is greater than $2$, one should adjoin a root of unity in order
 	    for the Hom factorization to be defined.
         Example
@@ -3828,7 +3881,11 @@ doc ///
     Description
         Text
             The maps $f : C \to D$ and $g : E \to F$ of ZZ/d-graded factorizations induce the map
-            $h = f \otimes g : C \otimes E \to D \otimes F$ defined by $c \otimes e \mapsto f(c) \otimes g(e)$.
+            $h = f \otimes g : C \otimes E \to D \otimes F$.
+            On the source summand $C_j\otimes E_k$, its component is
+            $t^{-\deg(g)j-2\deg(f)k}(f_j\otimes g_k)$.
+            In period two this is the usual sign $(-1)^{\deg(g)j}$;
+            degree-zero maps have no sign factor.
         Example
             S = ZZ/101[a,b];
             R = S/(a^3+b^3);
@@ -4573,7 +4630,7 @@ doc ///
         C:ZZdFactorization
         D:ZZdFactorization
         Boundary => Boolean
-            whether the constructed {\tt f} is a null homotopy
+            whether the constructed {\tt f} is null-homotopic
         Cycle => Boolean
             whether the constructed {\tt f} commutes with the differentials
         Degree => ZZ
@@ -4609,9 +4666,10 @@ doc ///
         Text
             Assume that $C$ and $D$ are factorizations of the same potential. Then the factorization
 	    $Hom(C,D)$ is actually a ZZ/d-graded complex.
-	    When the random element in the factorization $Hom(C,D)$ lies in the image
-            of the differential, the associated map of complexes is a null
-            homotopy.
+            In period $p$, boundaries are sampled from the image of the
+            $(p-1)$st power of the Hom differential. They are cycles and give
+            null-homotopic maps. In period two this is the image of a single
+            differential.
         Example
             h = randomFactorizationMap(D,C, Boundary => true)
             assert isWellDefined h
@@ -4631,16 +4689,34 @@ doc ///
         Text
             By default, the random element is constructed as a random linear combination of
             the basis elements in the appropriate degree of $Hom(C,D)$.  Given an internal
-            degree, the random element is constructed as maps of modules with this degree.
+            degree, the random element is selected in that degree of the normalized
+            Hom module. For even maps between period-two factorizations whose
+            differential degrees are $0,w$, this is also the internal degree
+            of every nonzero component matrix.
         Example
             q = randomFactorizationMap(D, C, Boundary => true, InternalDegree => 2)
             assert all({0,1,2}, i -> degree q_i === {2})
+            assert isHomogeneous q
             assert isWellDefined q
             assert isCommutative q
             assert isFactorizationMorphism q
             source q === C
             target q === D
             --assert isNullHomotopic q
+        Text
+            Odd maps between those factorizations have component degrees $a$
+            and $a-w$ when @TO InternalDegree@ is $a$. Thus homogeneity does not
+            require the component degrees to agree. For other homogeneous
+            differential profiles, the degrees are determined by the twists
+            described in @TO (Hom, ZZdFactorization, ZZdFactorization)@.
+            An explicit internal degree requires compatible homogeneous
+            differential profiles; otherwise this method reports an error.
+        Example
+            r = randomFactorizationMap(D, C, Cycle => true, Degree => 1, InternalDegree => 3)
+            assert isHomogeneous r
+            assert isCommutative r
+            assert all({0,1}, i -> r_i == 0 or degree r_i === if i == 0 then {3} else {0})
+            assert(homomorphism homomorphism' r == r)
     SeeAlso
         (homomorphism, ZZdFactorizationMap)
         (homomorphism', ZZdFactorizationMap)
@@ -4942,11 +5018,11 @@ doc ///
         Text
             A map of ZZ/d-graded factorizations $f \colon C \to D$ is
             null-homotopic if there exists a map of factorizations
-	    $h : C \to D$ of degree $\deg(f)+1$,
-            such that we have the equality 
-            \[ f = \operatorname{dd}^D h 
-              + (-1)^{\deg(f)} h \operatorname{dd}^C.
-            \]
+	    $h : C \to D$ of degree $\deg(f)+p-1$, where $p$ is the period,
+            such that $f=\delta^{p-1}(h)$ in $Hom(C,D)$, with
+            $\delta(h)=h\,dd^C-t^{\deg(h)}dd^D h$.
+            For period two this becomes
+            $f=h\,dd^C+(-1)^{\deg(f)}dd^D h$.
         Text
             As a first example, we verify that the identity
 	    map on the "trivial" factorization is nullhomotopic.
@@ -5005,11 +5081,11 @@ doc ///
         Text
             A map of ZZ/d-graded factorizations $f \colon C \to D$ is
             null-homotopic if there exists a map of factorizations
-            $h : C \to D$ of degree $\deg(f)+1$,
-            such that we have the equality 
-            \[ f = \operatorname{dd}^D h 
-              + (-1)^{\deg(f)} h \operatorname{dd}^C.
-            \]
+            $h : C \to D$ of degree $\deg(f)+p-1$, where $p$ is the period,
+            such that $f=\delta^{p-1}(h)$ in $Hom(C,D)$, with
+            $\delta(h)=h\,dd^C-t^{\deg(h)}dd^D h$.
+            For period two this becomes
+            $f=h\,dd^C+(-1)^{\deg(f)}dd^D h$.
         Text
             As a first example, we verify that the identity
 	    map on the "trivial" factorization is nullhomotopic.
@@ -5065,11 +5141,11 @@ doc ///
         Text
             A map of ZZ/d-graded factorizations $f \colon C \to D$ is
             null-homotopic if there exists a map of factorizations
-            $h : C \to D$ of degree $\deg(f)+1$,
-            such that we have the equality 
-            \[ f = \operatorname{dd}^D h 
-              + (-1)^{\deg(f)} h \operatorname{dd}^C.
-            \]
+            $h : C \to D$ of degree $\deg(f)+p-1$, where $p$ is the period,
+            such that $f=\delta^{p-1}(h)$ in $Hom(C,D)$, with
+            $\delta(h)=h\,dd^C-t^{\deg(h)}dd^D h$.
+            For period two this becomes
+            $f=h\,dd^C+(-1)^{\deg(f)}dd^D h$.
         Text
             As a first example, we verify that the identity
 	    map on the "trivial" factorization is nullhomotopic.
@@ -5104,6 +5180,19 @@ doc ///
             assert isWellDefined h'
             assert(degree h' === degree g + 1)
             assert not isNullHomotopyOf(h', g)
+        Text
+            In period $p>2$, the witness has homological degree
+            $\deg(f)+p-1$ and is checked using the $(p-1)$st power of the
+            Hom differential.
+        Example
+            T = ZZ/7[x,y,z];
+            T.rootOfUnity = 2_T;
+            C = ZZdfactorization {x,y,z};
+            f = randomFactorizationMap(C,C, Boundary => true, Degree => 1, InternalDegree => 6);
+            assert isCommutative f
+            h = nullHomotopy f;
+            assert(degree h === 3)
+            assert isNullHomotopyOf(h,f)
     Caveat
         The output is only a null homotopy when one exists.
     SeeAlso
@@ -5194,7 +5283,7 @@ doc ///
         Text
             The function tailMF takes a module $M$ over a hypersurface ring $R = S/(f)$ and generates a ZZdFactorization.
 	    This involves computing a resolution of $M$ over the hypersurface $R$, taking a high truncation
-	    of this resolution, lifting it to the ambient ring $S$, then finding a nullhomotopy for multiplication by $f$.
+	    of this resolution, lifting it to the ambient ring $S$, then finding a null homotopy for multiplication by $f$.
         Example
             S = ZZ/101[a,b,c];
 	    R = S/(a^3+b^3+c^3);
@@ -5527,43 +5616,6 @@ doc ///
             isdFactorization K'
 ///
 
--*
-doc ///
-    Key
-        eulerChi
-        (eulerChi, ZZdFactorization)
-    Headline
-        Calculates the Euler characteristic of a ZZdFactorization
-    Usage
-        eulerChi(ZZdFactorization)
-    Inputs
-        ZZdFactorization:ZZdFactorization
-            A ZZdFactorization object representing a complex
-    Outputs
-        :ZZ
-    Description
-         Text
-            Calculates the Euler characteristic of a ZZdFactorization. To be well-defined, the input should be a complex.
-            This method calculates the Euler characteristic by computing
-	    $$\ell_R (H_0 (C)) - \ell_R (H_1 (C))$$
-	    where $C$ is some ZZ/2-graded complex. An easy way to construct such complexes is to take
-	    the endomorphisms of a matrix factorization arising from an isolated singularity.
-         Example
-            S = ZZ/101[a..c]
-	    C = koszulMF(a^3+b^3+c^3)
-	    E = Hom(C,C)
-	    prune HH E
-	    eulerChi E
-	    Q = ZZ/101[a,b,c,d]
-	    D = koszulMF(a*b - c*d)
-	    F = Hom(D,D)
-	    eulerChi(F)
-    Caveat
-        In order to be well-defined, the input should be a complex (ie, the differential should square to 0).
-    SeeAlso
-        "Making ZZdFactorizations"
-///
-*-
 
 doc ///
     Key
@@ -5870,7 +5922,7 @@ doc ///
         :ZZdFactorizationMap
     Description
         Text
-            This method constructs the injectice cover of a d-fold matrix factorization. The output
+            This method constructs the injective cover of a d-fold matrix factorization. The output
 	    is a ZZdFactorizationMap, which is the canonical injection from the original factorization into the
 	    injective cover.
         Example
@@ -6218,7 +6270,7 @@ doc ///
         mooreMF(p)
     Inputs
         p: ZZ
-            The characteristing of the underlying field (p = 0 for rational coefficients)
+            The characteristic of the underlying field (p = 0 for rational coefficients)
     Outputs
         : ZZdFactorization
             The Moore matrix factorization
@@ -6278,42 +6330,6 @@ doc ///
 	"Preprogrammed examples and operations"
 ///
 
--*
-doc ///
-    Key
-        rk1MCM3gen
-        (rk1MCM3gen, ZZ, ZZ)
-	(rk1MCM3gen, ZZ)
-    Headline
-        Constructs a rank 1, 3-generated maximal Cohen-Macaulay module
-    Usage
-        rk1MCM2gen(p, d)
-    Inputs
-        p: List
-            Specifies characteristic of base field (assumes QQ if d is not specified)
-        d: ZZ
-            an integer, determining the type of factorization
-    Outputs
-        : ZZdFactorization
-            The constructed factorization that determines a rank 1, 3-generated maximal Cohen-Macaulay module
-    Description
-        Text
-            This method constructs a rank 1, 3-generated maximal Cohen-Macaulay module based on the input parameters specified by a list.
-            The integer d specifies the characteristic of the base field (default is 0, representing QQ).
-            It generates the module based on the input parameters and returns the corresponding factorization.
-        Example
-            F = rk1MCM2gen({2,2,2},0)
-	    diffs = F.dd
-	    diffs^2
-	    F' = rk1MCM2gen({1,2,4},0)
-	    isdFactorization(F')
-    SeeAlso
-        mooreMF
-	rk1MCM2gen
-	classicalAdjoint
-	"Preprogrammed examples and operations"
-///
-*-
 
 
 

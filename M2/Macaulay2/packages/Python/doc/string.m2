@@ -1,7 +1,6 @@
 doc ///
   Key
     (toString, PythonObject)
-    (expression, PythonObject)
     (net, PythonObject)
     (texMath, PythonObject)
   Headline

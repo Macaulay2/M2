@@ -294,7 +294,7 @@ getLocalUnstableA1Degree (RingElement, RingElement, RingElement) := (UnstableGro
     -- If the base field is a finite field, allow the root to be integer, rational, or from the same finite field
     if instance(kk, GaloisField) and not (ring r === QQ or ring r === ZZ or (instance(ring r, GaloisField) and kk.order == (ring r).order)) then error "root not from the base field of the polynomial";
 
-    -- If we are here, then we have already verified that the base field of f,g is a fintie field and that r is an element of the same finite field, so we can use the two-input method
+    -- If we are here, then we have already verified that the base field of f,g is a finite field and that r is an element of the same finite field, so we can use the two-input method
     getLocalUnstableA1Degree(f/g, r)
 )
 

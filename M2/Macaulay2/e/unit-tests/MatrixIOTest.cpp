@@ -2,13 +2,13 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "util-polyring-creation.hpp"
-#include "matrix.hpp"
+#include "unit-tests/util-polyring-creation.hpp"
+#include "matrices/matrix.hpp"
 #include "BasicPolyList.hpp"
 #include "BasicPolyListParser.hpp"
 #include "gb-f4/PolynomialList.hpp"
 #include "gb-f4/GBF4Interface.hpp"
-#include "VectorArithmetic.hpp"
+#include "basic-rings/vector-arithmetic.hpp"
 // These are more benchmark examples, and the files to be read are quite large
 // So we can't run these by default.
 

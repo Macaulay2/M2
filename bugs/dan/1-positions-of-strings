@@ -1,7 +1,0 @@
-It would be nice if strings formed with quotations marks knew their position
-(filename, line number, column number).  Same for strings returned by "get".  And
-"lines" and "substring" should preserve the positions.  That would make the code
-in SimpleDoc much simpler, and it would mean that error messages from "value"
-would generally be much more informative.
-
-This could be implemented by a new Type of String called LocatedString.

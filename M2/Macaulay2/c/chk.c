@@ -242,6 +242,7 @@ static node arraylength(node arr){
      }
 
 static node cast(node t, node e, scope v) {
+     (void) v;
      node u;
      if (e == bad__K) return bad__K;
      u = type(e);
@@ -2016,6 +2017,7 @@ static node chkfunctiontype(node e, scope v, node fun){
      }
 
 static node chkchked(node e, scope v){
+     (void) v;
      return cadr(e);
      }
 
@@ -2400,8 +2402,10 @@ node chk(node e, scope v){
 	       node sym = lookupword(e);
 	       if (sym == NULL)
 		    sym = newsymbol(e,deferred__T,v,intern_F);
-	       else if (sym->body.symbol.flags & macro_variable_F) {
-		    sym = chk(sym->body.symbol.body,v);
+	       else {
+		    sym->body.symbol.flags |= used_F; /* track usage for unused parameter detection */
+		    if (sym->body.symbol.flags & macro_variable_F)
+			 sym = chk(sym->body.symbol.body,v);
 		    }
 	       return repos(e,sym);
 	       }
@@ -2441,6 +2445,7 @@ node chk(node e, scope v){
 
 node headerstrings;
 static node chkheader(node e, scope v) {
+     (void) v;
      headerstrings = cons(cadr(e),headerstrings);
      return NULL;
      }
@@ -2471,6 +2476,8 @@ node prefixOperator(node e) {
      }
 
 static node chkoperator(node e, scope v) {
+     (void) e;
+     (void) v;
      /*
        operator definitions in a signature file would happen too late, because the parser parses the
        entire source file before "checking" it.
@@ -2488,6 +2495,7 @@ static node chkdeclarations(node e, scope v) {
      }
 
 static node chkrawtype(node e, scope v) {
+     (void) v;
      node name = unpos(cadr(e));
      node t = newtype(NULL,NULL,FALSE);
      assert(isstrconst(name));
@@ -2499,6 +2507,7 @@ static node chkrawtype(node e, scope v) {
      }
 
 static node chkatomicrawtype(node e, scope v) {
+     (void) v;
      node name = unpos(cadr(e));
      node t = newtype(NULL,NULL,TRUE);
      assert(isstrconst(name));
@@ -2510,6 +2519,7 @@ static node chkatomicrawtype(node e, scope v) {
      }
 
 static node chkarithmetictype(node e, scope v) {
+     (void) v;
      node name = unpos(cadr(e));
      node t = newtype(NULL,NULL,TRUE);
      assert(isstrconst(name));
@@ -2521,6 +2531,7 @@ static node chkarithmetictype(node e, scope v) {
      }
 
 static node chkintegertype(node e, scope v) {
+     (void) v;
      node name = unpos(cadr(e));
      node t = newtype(NULL,NULL,TRUE);
      assert(isstrconst(name));
@@ -2532,6 +2543,7 @@ static node chkintegertype(node e, scope v) {
      }
 
 static node chkpointer(node e, scope v) {
+     (void) v;
      node name = unpos(cadr(e));
      node t = newtype(NULL,NULL,FALSE);
      assert(isstrconst(name));
@@ -2543,6 +2555,7 @@ static node chkpointer(node e, scope v) {
      }
 
 static node chkatomicpointer(node e, scope v) {
+     (void) v;
      node name = unpos(cadr(e));
      node t = newtype(NULL,NULL,FALSE);
      assert(isstrconst(name));

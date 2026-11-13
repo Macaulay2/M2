@@ -17,6 +17,7 @@
 
 # VERSION = 2.9.7
 VERSION = 2.9.8
+SHA256SUM = # TODO: current link is broken
 TAROPTIONS = --bzip2
 TARFILE = polymake-$(VERSION).tar.bz2
 URL = http://www.opt.tu-darmstadt.de/polymake/lib/exe/fetch.php/download

@@ -184,11 +184,11 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
             for j from 0 to (c1-1) do (
                 fij = Minor10_(i, j);
                 if fij == 0 then count3 = count3 
-                else if (parity(fij, R1, a) == -1) then (cout33 := count33+1)
+                else if (parity(fij, R1, a) == -1) then (count33 = count33+1)
                 else if (parity(fij, R1, a) == 1)then count3 = count3+1
                 else if (parity(fij, R1, a) == 0) then count3 = count3
             );
-        if count33=!=0 then (return-1) 
+        if count33=!=0 then (return-1)
         else if count3 == 0 then m3=0 
         else m3=1;
         count4 := 0;
@@ -197,11 +197,11 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
             for j from 0 to (c2-1) do (
                 fij = Minor11_(i, j);
                 if fij == 0 then count4 = count4 
-                else if (parity(fij, R1, a) == -1) then (cout44 := count44+1) 
+                else if (parity(fij, R1, a) == -1) then (count44 = count44+1)
                 else if (parity(fij, R1, a) == 1)then count4 = count4+1
                 else if (parity(fij, R1, a) == 0) then count4 = count4
             );
-        if count44=!=0 then (return-1) 
+        if count44=!=0 then (return-1)
         else if count4 == 0 then m4=0 
         else m4=1;
         R2 := coefficientRing R1;
@@ -256,8 +256,42 @@ G = superMatrixGenerator(E1, E2, E3, E4);
 assert(superMatrixParity(G, T, {e_0, e_1, e_2, e_3}) == -1)
 ///
 
+TEST ///
+-- Regression for the cout33 typo: superMatrixParity must return -1 when M3 (lower-left block) has a non-homogeneous entry
+R1 = QQ[x_0..x_3];
+R2 = QQ[z_0..z_2];
+R = superRing(R1, R2);
+T1 = R[n_0..n_3];
+T2 = R[e_0..e_3];
+T = superRing(T1, T2);
+M1 = matrix{{n_0, n_1}, {n_2, n_3}};
+M2 = matrix{{e_0, e_1}, {n_0*e_0, n_1*e_1}};
+M3 = matrix{{e_3*n_3 + n_3, e_1}, {e_0, e_2*n_2}};
+M4 = matrix{{n_1, n_3}, {n_0, n_2+n_3}};
+SM = superMatrixGenerator(M1, M2, M3, M4);
+assert(parity(e_3*n_3 + n_3, T, {e_0, e_1, e_2, e_3}) == -1);
+assert(superMatrixParity(SM, T, {e_0, e_1, e_2, e_3}) == -1)
+///
+
+TEST ///
+-- Regression for the cout44 typo: superMatrixParity must return -1 when M4 (lower-right block) has a non-homogeneous entry
+R1 = QQ[x_0..x_3];
+R2 = QQ[z_0..z_2];
+R = superRing(R1, R2);
+T1 = R[n_0..n_3];
+T2 = R[e_0..e_3];
+T = superRing(T1, T2);
+M1 = matrix{{n_0, n_1}, {n_2, n_3}};
+M2 = matrix{{e_0, e_1}, {n_0*e_0, n_1*e_1}};
+M3 = matrix{{e_3*n_3, e_1}, {e_0, e_2*n_2}};
+M4 = matrix{{n_1 + e_0, n_3}, {n_0, n_2+n_3}};
+SM = superMatrixGenerator(M1, M2, M3, M4);
+assert(parity(n_1 + e_0, T, {e_0, e_1, e_2, e_3}) == -1);
+assert(superMatrixParity(SM, T, {e_0, e_1, e_2, e_3}) == -1)
+///
+
 --------------------
--- Supertrace           
+-- Supertrace
 -------------------- 
  
 superTrace = method ();

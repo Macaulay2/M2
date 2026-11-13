@@ -281,7 +281,7 @@ neside = p -> new LabelList from apply(p.Length,i->p#(0,i,0))
 -- computation of (d<=3) equivariant fugacities
 myload "fugacity.m2"
 
-export { "puzzle", "bottom", "fugacity", "fugacityTally", "fugacityVector", "Puzzle", "assoc", "doublePuzzle" }
+export { "puzzle", "bottom", "fugacity", "fugacityTally", "fugacityVector", "Puzzle", "doublePuzzle" }
 end
 
 -- ex of use

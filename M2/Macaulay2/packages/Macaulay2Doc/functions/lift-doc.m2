@@ -38,6 +38,10 @@ document {
 	  (lift,Matrix,CC_*,QQ),
 	  (lift,Matrix,CC_*,RR_*),
 	  (lift,Matrix,CC_*,ZZ),
+	  (lift,Matrix,CCi_*,CC_*),
+	  (lift,Matrix,CCi_*,QQ),
+	  (lift,Matrix,CCi_*,RR_*),
+	  (lift,Matrix,CCi_*,ZZ),
 	  (lift,Matrix,Number),
 	  (lift,Matrix,QQ,QQ),
 	  (lift,Matrix,QQ,ZZ),
@@ -49,11 +53,25 @@ document {
 	  (lift, RR, QQ),
 	  (lift, RR, ZZ),
 	  (lift, ZZ, ZZ),
-      (lift, RRi, QQ),
-      (lift, RRi, RR_*),
-      (lift, RRi, ZZ),
+	  (lift, RRi, QQ),
+	  (lift, RRi, RR_*),
+	  (lift, RRi, ZZ),
+	  (lift, RR, RR'),
+	  (lift, CCi, RR'),
+	  (lift, CC, CC'),
+	  (lift, CCi, CC'),
+	  (lift, RRi, RRi'),
+	  (lift, CC, RRi'),
+	  (lift, CCi, RRi'),
+	  (lift, CCi, CCi'),
+	  (lift, CCi, QQ),
+	  (lift, CCi, ZZ),
+	  (lift, Constant, Number),
+	  (lift, Constant, InexactNumber),
 	  (symbol ^, Number, Ring),
 	  (symbol ^, Number, RingFamily),
+	  (symbol ^, RingElement, Ring),
+	  (symbol ^, RingElement, RingFamily),
       (lift,Matrix,RRi',QQ),
       (lift,Matrix,RRi',RR'),
       (lift,Matrix,RRi',ZZ)
@@ -118,19 +136,16 @@ document {
      lift(3.0,QQ)
      ///,
      PARA{
-	  "A continued fraction method is used to lift a real number to a rational number, whereas
-	  ", TO "promote", " uses the internal binary representation.",
+	  "A continued fraction method is used to lift a real number to a rational number."
 	  },
      EXAMPLE lines ///
      lift(123/2341.,QQ)
-     promote(123/2341.,QQ)
      factor oo
      ///,
      PARA { "For numbers and ring elements, an alternate syntax with ", TO "^", " is available,
 	  analogous to the use of ", TO "_", " for ", TO "promote", "." },
      EXAMPLE lines ///
      .0001^QQ
-     .0001_QQ
      ///,
      SeeAlso => { baseRings, promote },
      Subnodes => {

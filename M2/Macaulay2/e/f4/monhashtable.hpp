@@ -1,12 +1,12 @@
 // Copyright 2005-2021  Michael E. Stillman
 
-#ifndef _monhashtable_h_
-#define _monhashtable_h_
+#ifndef M2_F4_MONHASHTABLE_H_
+#define M2_F4_MONHASHTABLE_H_
 
 #include <memory>                                      // for unique_ptr
 #include "f4/moninfo.hpp"                              // for MonomialInfo
-#include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
-#include "schreyer-resolution/res-monomial-types.hpp"  // for res_packed_mon...
+#include "schreyer-resolutions/res-moninfo.hpp"         // for ResMonoid
+#include "schreyer-resolutions/res-monomial-types.hpp"  // for res_packed_mon...
 
 class MonomialsWithComponent
 {

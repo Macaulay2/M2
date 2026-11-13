@@ -28,6 +28,7 @@ Hom(Module, Module) := Module => opts -> (M, N) -> (
     e := opts.DegreeLimit;
     if e === {} then e = null;
     if e === 0  then e = degree 0_M;
+    opts = opts ++ { DegreeLimit => e };
     -- M.cache is a hashless (hence ageless) CacheTable, but
     -- M.cache.cache is a MutableHashTable, hence has an age.
     Y := youngest(M.cache.cache, N.cache.cache);

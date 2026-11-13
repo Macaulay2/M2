@@ -1,0 +1,23 @@
+-- -*- M2-comint -*- hash: 6775569773143953516
+
+i1 : R = QQ[x,y];
+
+i2 : F = G = {x^2+y^2-1};
+
+i3 : (U,W) = ({.12, .23}, {.15, .331});
+
+i4 : UED = numericUnitEDDegree(F, G)
+
+o4 = 2
+
+i5 : GED = numericGenericEDDegree(F, G)
+-- warning: experimental computation over inexact field begun
+--          results not reliable (one warning given per session)
+
+o5 = 4
+
+i6 : GED = numericWeightEDDegree(F, G, U, W)
+
+o6 = 4
+
+i7 : 

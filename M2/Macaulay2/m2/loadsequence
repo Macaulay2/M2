@@ -6,6 +6,7 @@ shared.m2
 autoload.m2
 system.m2
 regex.m2
+threads.m2
 
 profile.m2
 debugging.m2
@@ -79,6 +80,7 @@ monomcurve.m2
 fano.m2
 schubert.m2
 local.m2
+center.m2
 
 packages.m2
 document.m2

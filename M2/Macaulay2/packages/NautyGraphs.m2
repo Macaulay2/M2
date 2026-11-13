@@ -233,7 +233,9 @@ generateRandomGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, num, p) -> (
     rndSeed := if instance(opts.RandomSeed, ZZ) then " -S" | toString(opts.RandomSeed % 2^30) else "";
     callNauty("genrang -qg -P" | toString p | " "  | toString n | " " | toString num | rndSeed, {})
 )
-generateRandomGraphs (ZZ, ZZ, QQ) := List => opts -> (n, num, p) -> (
+
+generateRandomGraphs (ZZ, ZZ, QQ) :=
+generateRandomGraphs (ZZ, ZZ, RR) := List => opts -> (n, num, p) -> (
     if n < 1 then error("generateRandomGraphs: nauty does not like graphs with non-positive numbers of vertices.");
     if num < 1 then return {};
     if p <= 0 or p > 1 then error("generateRandomGraphs: Probability must be between 0 and 1.");
@@ -243,7 +245,6 @@ generateRandomGraphs (ZZ, ZZ, QQ) := List => opts -> (n, num, p) -> (
     q := round(100000000 * p) / 100000000;
     callNauty("genrang -qg -P" | toString q | " "  | toString n | " " | toString num | rndSeed, {})
 )
-generateRandomGraphs (ZZ, ZZ, RR) := List => opts -> (n, num, p) -> generateRandomGraphs(n, num, promote(p, QQ), opts)
 generateRandomGraphs (ZZ, ZZ) := List => opts -> (n, num) -> (
     if n < 1 then error("generateRandomGraphs: nauty does not like graphs with non-positive numbers of vertices.");
     if not instance(opts.RandomSeed, Nothing) and not instance(opts.RandomSeed, ZZ) then error("generateRandomGraphs: Option [RandomSeed] is not a valid type, i.e., ZZ or Nothing.");

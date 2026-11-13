@@ -121,7 +121,7 @@ createCommAlgebra PolynomialRing := W -> (
 
 -- These routines compute the Fourier transform which is the automorphism
 -- of the Weyl algebra sending x -> -dx, dx -> x.
--- Input: RingElement f, Matrix m, Ideal I, ChainComplex C, or Module M
+-- Input: RingElement f, Matrix m, Ideal I, Complex C, or Module M
 -- Output: Fourier transform of f, m, I, C, or M
 Fourier = method()
 FourierLocal := M -> (
@@ -147,7 +147,7 @@ FourierLocal := M -> (
 Fourier RingElement := M -> (FourierLocal M)
 Fourier Ideal := M -> (FourierLocal M)
 Fourier Matrix := M -> (FourierLocal M)
-Fourier ChainComplex := M -> (FourierLocal M)
+Fourier Complex := M -> (FourierLocal M)
 Fourier Module := M -> (cokernel FourierLocal relations prune M)
 
 FourierInverse = method()
@@ -174,7 +174,7 @@ FourierInverseLocal := M -> (
 FourierInverse RingElement := M -> (FourierInverseLocal M)
 FourierInverse Ideal := M -> (FourierInverseLocal M)
 FourierInverse Matrix := M -> (FourierInverseLocal M)
-FourierInverse ChainComplex := M -> (FourierInverseLocal M)
+FourierInverse Complex := M -> (FourierInverseLocal M)
 FourierInverse Module := M -> (cokernel FourierInverseLocal relations prune M)
 
 -- These routines compute the transposition automorphism, which is used
@@ -205,20 +205,21 @@ Dtransposition Matrix := m -> (
      error "expected an element of a Weyl algebra";
      createDpairs W;
      
-     if not isFreeModule source m or not isFreeModule target m then (
-	 error "expected a matrix between free modules";);
-     
-     if numgens source m == 0 or numgens target m == 0 then mtrans := m
-     else mtrans = matrix apply( entries m, i -> 
-	  (apply (i, j -> Dtransposition j)) );
-     mtrans
+     if not isFreeModule source m or not isFreeModule target m then
+	 error "expected a matrix between free modules";
+
+     -- MES GGS Bug????  Degrees are off here.  Is this correct?
+     if numgens source m == 0 or numgens target m == 0 then m
+       else map(target m,
+               source m,
+               matrix apply(entries m, i -> apply(i, j -> Dtransposition j)))
      )
 
 Dtransposition Ideal := I -> (
      ideal Dtransposition gens I
      )
 
-Dtransposition ChainComplex := C -> (
+Dtransposition Complex := C -> (
      W := ring C;
      if W.monoid.Options.WeylAlgebra === {} then
      error "expected an element of a Weyl algebra";
@@ -228,10 +229,12 @@ Dtransposition ChainComplex := C -> (
      -- 	 error "expected a chain complex of free modules";
      -- 	 );
      
-     
-     apply( keys C.dd, i -> if (class C.dd#i === Matrix) then
-	       	    C.dd#i = Dtransposition C.dd#i);
-     C
+     (loC, hiC) := concentration C;
+     if loC == hiC then return C;
+     transC := for i from loC+1 to hiC list Dtransposition C.dd_i;
+     -- apply( keys C.dd, i -> if (class C.dd#i === Matrix) then
+	 --       	    C.dd#i = Dtransposition C.dd#i);
+     complex(transC, Base => loC)
      )
 
 -- This routine computes the dimension of a D-module
@@ -294,12 +297,8 @@ isHolonomic Module := M -> (
      )
 
 -- This routine computes the rank of a D-module
--- QUESTION: this changes the current ring?
 holonomicRank = method()
-holonomicRank Ideal := I -> (
-     holonomicRank ((ring I)^1/I)
-     )
-
+holonomicRank Ideal  := I -> holonomicRank comodule I
 holonomicRank Module := M -> (
      W := ring M;
      createDpairs W;
@@ -308,8 +307,7 @@ holonomicRank Module := M -> (
      presM := presentation M;
      -- get weight vectors for the order filtration refined 
      -- by lex on the derivatives
-     weightList := { apply ( toList(0..m-1), i -> if member(i, W.dpairInds#1) 
-	  then 1 else 0 ) };
+     weightList := { apply(m, i -> if member(i, W.dpairInds#1) then 1 else 0 ) };
      -- ring equipped with the new order
      tempW := (coefficientRing W)(monoid [W_*,
 	  WeylAlgebra => W.monoid.Options.WeylAlgebra,
@@ -317,20 +315,20 @@ holonomicRank Module := M -> (
      WtotempW := map (tempW, W, vars tempW);
      -- commutative ring of derivative variables
      Rvars := symbol Rvars;
-     R := (coefficientRing W)(monoid [apply(toList(0..n-1), i -> Rvars_i)]);
+     R := (coefficientRing W)(monoid [Rvars_0..Rvars_(n-1)]);
      newInds := inversePermutation join(W.dpairInds#1, W.dpairInds#0);
-     matList := apply( toList(0..m-1), i -> if newInds#i < n
-	  then R_(newInds#i) else 1_R );
+     matList := apply(m, i -> if newInds#i < n then R_(newInds#i) else 1_R );
      tempWtoR := map (R, tempW, matrix{ matList });
      -- computing GB with respect to new order
      ltM := leadTerm gens gb WtotempW presM;
      -- compute the rank
      redI := cokernel tempWtoR ltM;
-     if dim redI > 0 then holRank := infinity
-     else if redI == 0 then holRank = 0
-     else holRank = numgens source basis redI;
-     holRank
-     )
+     -- the standard monomials {\partial^\alpha} form a basis for differential operators modulo the system,
+     -- and their number, if finite, determines the holonomic rank by Lemma 1.4.11 and Algorithm 1.4.17 in SST
+     B := try M.cache#"standard monomials" = sub(cover basis(redI, Variables => gens R), matrix {W.dpairVars#1});
+     if 0 == redI  then 0 else
+     if B === null then infinity
+     else numgens source B)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

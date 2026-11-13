@@ -4,6 +4,12 @@
  * unsigned long int. */
 /* The implementation uses table.{h,c}, which was written by David R. Hanson */
 
+#include "interface/m2-mem.h"
+
+/*these next lines added by MES, July 2002, to use our gc routines..*/
+#define  NEW(p) ((p) = (void *) getmem((long)sizeof *(p)))
+#define FREE(ptr) ((void)(freemem((ptr)), (ptr) = 0))
+
 struct exponent_table
 {
   int nvars;

@@ -33,7 +33,7 @@ document {
 	  "gens gb f"
 	  },
      PARA {
-	  "If an autoreduced Gröbner basis is desired, replace ", TT "f", " by ", TT "gens forceGB f", " first."
+	  "If an autoreduced Gröbner basis (not just the Groebner basis object) is desired, replace ", TT "forceGB f", " by ", TT "gens forceGB f", "."
 	  },
      Caveat => {"If the columns do not form a Gröbner basis, nonsensical answers may result"},
      SeeAlso => {"Gröbner bases"},

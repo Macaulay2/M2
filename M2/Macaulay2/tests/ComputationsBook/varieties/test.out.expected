@@ -320,11 +320,11 @@ o45 : S
 i46 : C = res M
 
        1      16      27      12
-o46 = R  <-- R   <-- R   <-- R   <-- 0
+o46 = R  <-- R   <-- R   <-- R  
                                       
-      0      1       2       3       4
+      0      1       2       3  
 
-o46 : ChainComplex
+o46 : Complex
 
 i47 : C.dd_1
 

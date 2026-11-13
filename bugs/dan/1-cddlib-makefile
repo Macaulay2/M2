@@ -1,1 +1,0 @@
-if cddlib is found in /usr then when gfan is compiled, it insists on finding it still in our build directory

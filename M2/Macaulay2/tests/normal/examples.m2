@@ -4,7 +4,7 @@ assert( ex#-2 == "a" )
 assert( ex#-1 == "b" )
 
 -- if changing this, make sure that for instance
--- BeginningMacaulay2 still looks okay.
+-- Tutorial: Beginning Macaulay2 still looks okay.
 debug Core
 expected = "<table class=\"examples\">
   <tr>

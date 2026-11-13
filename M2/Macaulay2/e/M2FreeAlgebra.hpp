@@ -1,5 +1,5 @@
-#ifndef _m2_free_algebra_hpp_
-#define _m2_free_algebra_hpp_
+#ifndef M2_M2_FREE_ALGEBRA_HPP_
+#define M2_M2_FREE_ALGEBRA_HPP_
 
 #include <M2/math-include.h>
 #include "engine-includes.hpp"
@@ -11,8 +11,8 @@
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/FreeMonoid.hpp"
 #include "Polynomial.hpp"
-#include "ring.hpp"
-#include "ringelem.hpp"
+#include "rings/ring.hpp"
+#include "rings/ringelem.hpp"
 
 class PolynomialRing;
 class RingMap;

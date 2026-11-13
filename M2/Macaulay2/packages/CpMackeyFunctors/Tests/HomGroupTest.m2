@@ -11,6 +11,8 @@ assert(isFreeModule prune z and rank z == 1)
 
 A := makeBurnsideMackeyFunctor(5)
 f := complexLinearizationMap(5)
-Hom(A,f)
+-- Hom(A,f) is the induced map between Hom groups; it should be a
+-- Matrix (since the Hom groups are free abelian modules).
+assert(instance(Hom(A,f), Matrix))
 
 ///

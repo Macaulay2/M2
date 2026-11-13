@@ -172,8 +172,12 @@ node type(node e){		/* assume e is checked previously */
      	  case char_const_tag: return char_T;
      	  case int_const_tag: return int_T;
      	  case double_const_tag: return double_T;
-     	  case string_tag: assert(FALSE); 
-     	  case unique_string_tag: assert(FALSE); /* was return bad_or_undefined_T; */
+     	  case string_tag:
+	       assert(FALSE);
+	       return NULL;
+     	  case unique_string_tag:
+	       assert(FALSE);
+	       return NULL; /* was return bad_or_undefined_T; */
 	  case cons_tag: {
 	       node h, ht;
      	       h = unpos(CAR(e));

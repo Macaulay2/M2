@@ -98,7 +98,7 @@ algorithms#(intersect, Module, Module) = new MutableHashTable from {
 	or not same apply(L, N -> N.?relations and (N.relations == M.relations or image N.relations == image M.relations))
 	then error "intersect: all modules must be submodules of the same module";
 	--
-	relns := directSum apply(L, N -> if N.?relations then generators N | N.relations else generators N);
+	relns := directSum apply(L, fullgens);
 	g := map(R^(#L), R^1, table(#L, 1, x -> 1)) ** id_(ambient M);
 	h := modulo(g, relns);
 	--

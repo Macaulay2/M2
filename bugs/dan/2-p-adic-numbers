@@ -1,3 +1,0 @@
-implement a new low level class for p-adic numbers to a certain precision
-
-this should parallel real numbers, so we don't create the ring unless it's asked for

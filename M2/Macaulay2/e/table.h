@@ -2,15 +2,8 @@
 /* This is from Hanson's code, from his book: C interfaces and implementations.
    I have added c++ ifdef's to be able to use it from C++, MES, July 2002 */
 
-#ifndef TABLE_INCLUDED
-#define TABLE_INCLUDED
-
-/******************************************************/
-/*these next lines added by MES, July 2002, to use our gc routines..*/
-#include "engine-includes.hpp"
-#define  NEW(p) ((p) = (void *) getmem((long)sizeof *(p)))
-#define FREE(ptr) ((void)(freemem((ptr)), (ptr) = 0))
-/******************************************************/
+#ifndef M2_TABLE_H_
+#define M2_TABLE_H_
 
 #define T Table_T
 struct T;

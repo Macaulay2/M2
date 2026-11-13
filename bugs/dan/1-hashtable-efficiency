@@ -1,7 +1,0 @@
-read Brent's article for an idea for speeding up hash tables:
-
-Reducing the retrieval time of scatter storage techniques
-
-http://wwwmaths.anu.edu.au/~brent/pd/rpb013.pdf&ei=aELFS7vZCIn6NaTJ4McO&usg=AFQjCNHMnrlfz5F0cHLMUqf7sRX13Y1bRQ&sig2=6btrCuiHjfIpRBwo43lQKA
-
-This idea is used by the language "lua", see lua.org .

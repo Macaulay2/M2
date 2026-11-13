@@ -31,9 +31,21 @@ linearlyReductiveAction (Ideal, Matrix, QuotientRing) := LinearlyReductiveAction
 
 -------------------------------------------
 
+-- net output for LinearlyReductiveAction object
 net LinearlyReductiveAction := V -> (
     stack {(net V.ring)|" <- "|(net ring V.groupIdeal)|"/"|(net V.groupIdeal)|" via ",
 	"", net V.actionMatrix}
+    )
+
+-- tex output for LinearlyReductiveAction object
+texMath LinearlyReductiveAction := V -> (
+    I := V.groupIdeal;
+    l := apply(I_*,texMath);
+    -- recreate action matrix to avoid printing degrees
+    m := matrix entries V.actionMatrix;
+    texMath(V.ring) | " \\curvearrowleft " | (texMath ring I) | "/" | "\\left(" |
+    concatenate mingle(l,toList(#l-1:", ")) | "\\right)" | " \\text{ via } " |
+    (texMath m)
     )
 
 actionMatrix = method()

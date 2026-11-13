@@ -430,11 +430,15 @@ kustinMillerComplex(Complex,Complex,PolynomialRing):=opt->(cI0,cJ0,T0)->(
 
 
 TEST ///
-R = QQ[x_1..x_4,z_1..z_4, T]
-I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
-J = ideal (z_1..z_4)
-cc=kustinMillerComplex(I,J,QQ[t]);
-assert(isExactRes cc)
+     -- kustinMillerComplex(Ideal,Ideal,PolynomialRing) resolves the unprojected
+     -- ideal directly from the ideals; here I subset J is the Tom example.
+     R = QQ[x_1..x_4,z_1..z_4, T]
+     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
+     J = ideal (z_1..z_4)
+     cc=kustinMillerComplex(I,J,QQ[t]);
+     assert(rank cc_1 == 9)
+     assert(rank cc_2 == 16)
+     assert(isExactRes cc)
 ///
 
 
@@ -1138,26 +1142,39 @@ doc ///
 -- Tests
 
 -- test unprojectionHomomorphism
-///TEST
+TEST ///
+     -- unprojectionHomomorphism(I,J) returns the deformation phi : J' --> (R/I)^1
+     -- associated to the unprojection of I in J, represented as a Matrix.
      R = QQ[x_1..x_4,z_1..z_4, T];
-     I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
+     I = ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
      J = ideal (z_1..z_4);
-     phi=unprojectionHomomorphism(I,J);
-assert(phi==map(coker gens I,image gens J,matrix {{x_1*x_3, x_1*x_4, x_2*x_3, x_2*x_4}}));
+     phi = unprojectionHomomorphism(I,J);
+     assert(class phi === Matrix);
+     assert(isWellDefined phi);
+     -- the target is (R/I)^1 and the source is J pushed forward into R/I
+     Q = ring target phi;
+     assert(ideal Q == I);
+     assert(target phi == Q^1);
+     assert(source phi == image gens sub(J,Q));
+     -- phi sends the generators of J to the products x_a*x_b cutting out the unprojection locus
+     assert(ideal flatten entries phi == sub(ideal(x_1*x_3,x_1*x_4,x_2*x_3,x_2*x_4),Q));
 ///
 
 
 -- test cyclic polytope command
-///TEST
+TEST ///
+     -- delta(d,R) is the boundary complex of the cyclic d-polytope on the variables of R
      K=QQ;
      R=K[x_0..x_6];
      C=delta(4,R);
-     fVector C;
+     assert(class C === SimplicialComplex);
+     assert(dim C == 3);
+     assert(fVector C == {1, 7, 21, 28, 14});
 assert(ideal C==ideal(x_0*x_2*x_4,x_0*x_2*x_5,x_0*x_3*x_5,x_1*x_3*x_5,x_1*x_3*x_6,x_1*x_4*x_6,x_2*x_4*x_6))
 ///
 
 -- test Buchsbaum-Eisenbud resolution command
-///TEST
+TEST ///
       R=QQ[x_1..x_4,z_1..z_4];
       A=matrix {{0,x_1,x_2,x_3,x_4},{-x_1,0,0,z_1,z_2},{-x_2,0,0,z_3,z_4},{-x_3,-z_1,-z_3,0,0},{-x_4,-z_2,-z_4,0,0}};
       cc=resBE A;
@@ -1167,7 +1184,7 @@ assert(pfaffians(4,A)==ideal cc.dd_1);
 
 
 -- test isExactRes
-///TEST
+TEST ///
      R = QQ[x_1..x_4,z_1..z_4];
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3);
      cc= freeResolution I;
@@ -1234,10 +1251,8 @@ TEST ///
      R = QQ[x_1..x_4,z_1..z_4]
      I =  ideal(z_2*z_3-z_1*z_4,x_4*z_3-x_3*z_4,x_2*z_2-x_1*z_4,x_4*z_1-x_3*z_2,x_2*z_1-x_1*z_3)
      cI=freeResolution I
-     betti cI
      J = ideal (z_1..z_4)
      cJ=freeResolution J
-     betti cJ
      cc=kustinMillerComplex(cI,cJ,QQ[T]);
 assert(rank(cc_1)==9);
 assert(rank(cc_2)==16);

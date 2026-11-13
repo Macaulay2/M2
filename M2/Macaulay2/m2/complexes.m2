@@ -4,7 +4,7 @@ needs "matrix1.m2" -- for Ideal
 needs "modules.m2" -- for Module
 
 -- whether to use Complexes or OldChainComplexes
-HomologicalAlgebraPackage = "OldChainComplexes"
+HomologicalAlgebraPackage = "Complexes"
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -79,11 +79,11 @@ Ext(ZZ, Module, Module) := Module => o -> (i, M, N) -> missingPackage "either Co
 
 Ext(ZZ, Ring,   Matrix) :=
 Ext(ZZ, Ideal,  Matrix) := Matrix => o -> (i, M, g) -> Ext^i(module M, g, o)
-Ext(ZZ, Module, Matrix) := Matrix => o -> (i, M, g) -> missingPackage "OldChainComplexes"
+Ext(ZZ, Module, Matrix) := Matrix => o -> (i, M, g) -> missingPackage "either Complexes or OldChainComplexes"
 
 Ext(ZZ, Matrix, Ring)   :=
 Ext(ZZ, Matrix, Ideal)  := Matrix => o -> (i, f, N) -> Ext^i(f, module N, o)
-Ext(ZZ, Matrix, Module) := Matrix => o -> (i, f, N) -> missingPackage "OldChainComplexes"
+Ext(ZZ, Matrix, Module) := Matrix => o -> (i, f, N) -> missingPackage "either Complexes or OldChainComplexes"
 
 -- TODO: Ext(R,S) should work as well, e.g. via pushForward
 Ext(Ring,   Ring)   := Ext(Ring,  Ideal) := Ext(Ring,  Module) :=

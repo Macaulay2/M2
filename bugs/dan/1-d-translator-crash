@@ -1,2 +1,0 @@
-
-naming a file string.d causes the d compiler to segfault.

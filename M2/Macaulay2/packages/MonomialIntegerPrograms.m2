@@ -29,7 +29,7 @@ newPackage (
       },
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
-  PackageImports => {"OldChainComplexes", "LexIdeals","MinimalPrimes"},
+  PackageImports => {"Complexes","LexIdeals","MinimalPrimes"},
   OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
   DebuggingMode => false,
   Keywords => {"Commutative Algebra"}

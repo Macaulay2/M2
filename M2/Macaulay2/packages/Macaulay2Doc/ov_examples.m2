@@ -11,6 +11,7 @@ Node
     power
     powermod
     (sqrt, ZZ, ZZ)
+    legendreSymbol
     lcm
     gcd
     gcdCoefficients
@@ -69,6 +70,7 @@ Node
     isBorel
     isCommutative
     isAffineRing
+    isSkewAffineRing
 
 Node
   Key
@@ -121,6 +123,7 @@ Node
     inversePermutation
     partitions
     random
+    shuffle
     Set
     rays
     cone

@@ -3,18 +3,18 @@
 #include "f4/f4-m2-interface.hpp"
 #include "f4/moninfo.hpp"              // for monomial_word, MonomialInfo
 #include "f4/ntuple-monomial.hpp"      // for ntuple_word
-#include "freemod.hpp"                 // for FreeModule
-#include "gbring.hpp"                  // for gbvector, GBRing
+#include "free-modules/freemod.hpp"                 // for FreeModule
+#include "groebner-computations/gbring.hpp"                  // for gbvector, GBRing
 #include "interface/mutable-matrix.h"  // for IM2_MutableMatrix_make
-#include "mat.hpp"                     // for MutableMatrix
-#include "matrix-con.hpp"              // for MatrixConstructor
-#include "matrix.hpp"                  // for Matrix
+#include "basic-mutable-matrices/mat.hpp"                     // for MutableMatrix
+#include "matrices/matrix-con.hpp"              // for MatrixConstructor
+#include "matrices/matrix.hpp"                  // for Matrix
 #include "monoid.hpp"                  // for Monoid
 #include "newdelete.hpp"               // for newarray, newarray_atomic, del...
-#include "polyring.hpp"                // for PolynomialRing
-#include "ring.hpp"                    // for Ring
+#include "rings/polyring.hpp"                // for PolynomialRing
+#include "rings/ring.hpp"                    // for Ring
 #include "style.hpp"                   // for INTSIZE
-#include "VectorArithmetic.hpp"
+#include "basic-rings/vector-arithmetic.hpp"
 
 void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
                                   const MonomialInfo *MI,
@@ -35,7 +35,7 @@ void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
 
   result.len = n;
   std::vector<ring_elem> relem_array;
-  result.monoms = newarray_atomic(monomial_word, n * MI->max_monomial_size());
+  result.monoms = new monomial_word[n * MI->max_monomial_size()];
   n = 0;
   monomial_word *nextmonom = result.monoms;
   for (gbvector *t = f; t != nullptr; t = t->next)

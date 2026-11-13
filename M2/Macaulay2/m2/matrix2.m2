@@ -202,10 +202,10 @@ mingens Module := Matrix => opts -> M -> M.cache.mingens ??= if isFreeModule M t
 	  if M.?generators then (
 	       if M.?relations then (
 		    if opts.Strategy === Complement and isHomogeneous M and isAffineRing ring M then (
-			 c := mingens mingb (M.generators|M.relations);
+			 c := mingens mingb fullgens M;
 			 c * complement(M.relations // c))
 		    else (
-	  	    	 tot := mingb(M.generators|M.relations);
+			 tot := mingb fullgens M;
 		    	 rel := mingb(M.relations);
 		    	 mingens mingb (mingens tot % rel)))
 	       else mingens mingb M.generators)
@@ -243,7 +243,7 @@ trim Module := Module => opts -> M -> M.cache#(symbol trim => opts) ??= if isFre
 			 if gns === M.generators and rlns === M.relations then M
 			 else subquotient(F, gns, zr rlns))
 		    else if opts.Strategy === Inhomogeneous then (
-	  	    	 tot := mingb(M.generators|M.relations);
+			 tot := mingb fullgens M;
 		    	 rel := mingb(M.relations);
 			 if tot === M.generators and rel === M.relations 
 			 then M

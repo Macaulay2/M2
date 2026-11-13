@@ -115,9 +115,9 @@ doc ///
      (Fourier,RingElement)
      (Fourier,Ideal)
      (Fourier,Module)
-     (Fourier,ChainComplex)
+     (Fourier,Complex)
       FourierInverse
-     (FourierInverse, ChainComplex)
+     (FourierInverse, Complex)
      (FourierInverse, Ideal)
      (FourierInverse, Matrix)
      (FourierInverse, Module)
@@ -128,10 +128,10 @@ doc ///
     Fourier A
     FourierInverse A
    Inputs
-     A:{Matrix, RingElement, Ideal, ChainComplex}
+     A:{Matrix, RingElement, Ideal, Complex}
        over the Weyl algebra
    Outputs
-     :{Matrix, RingElement, Ideal, ChainComplex}
+     :{Matrix, RingElement, Ideal, Complex}
        the Fourier transform of @TT "A"@ as a matrix, function, ideal, or chain complex over the Weyl algebra
    Description
     Text
@@ -147,9 +147,9 @@ doc ///
       Fourier L
       I = ideal(8*x*y*dy^3+y^5, dx^7+5)
       Fourier I
-      C = chainComplex{matrix{{x*dx, y^2+dx}},matrix{{dx*dy},{y^2*dy^3}}}
-      FC = Fourier C
-      FC.dd
+      --C = chainComplex{matrix{{x*dx, y^2+dx}},matrix{{dx*dy},{y^2*dy^3}}}
+      --FC = Fourier C
+      --FC.dd
    SeeAlso
      WeylAlgebra
 ///
@@ -185,7 +185,7 @@ doc ///
      Dtransposition
      (Dtransposition,Matrix)
      (Dtransposition,Ideal)
-     (Dtransposition,ChainComplex)
+     (Dtransposition,Complex)
      (Dtransposition,RingElement)
    Headline
      standard transposition for Weyl algebra
@@ -257,7 +257,7 @@ doc ///
        of the Weyl algebra
    Outputs
      :Ideal
-       with 2 generators (that has the same extension as I in k(x)<dx>)
+       with 2 generators (that has the same extension as I in $k(x)\langle dx\rangle)$
    Description
     Text
       A theorem of Stafford says that every ideal in the Weyl algebra
@@ -377,12 +377,12 @@ doc ///
       The characteristic ideal of @EM "M"@ is the annihilator of
       @EM "gr(M)"@ under a good filtration with respect to the order
       filtration.
-      If $D$ is the Weyl algebra over &#x2102;
+      If $D$ is the Weyl algebra over $\CC$
       with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$,
       then the order filtration corresponds to the weight vector $(0,...,0,1,...,1)$.
       The characteristic ideal lives in the associated graded ring of $D$ with respect to
       the order filtration, and this is a commutative polynomial ring
-      &#x2102;$[x_1,\dots,x_n,\xi_1,\dots,\xi_n]$.
+      $\CC[x_1,\dots,x_n,\xi_1,\dots,\xi_n]$.
       Here the $\xi_i$ is the principal symbol of $\partial_i$, that is, the image of $\partial_i$
       in the associated graded ring.
       The zero locus of the characteristic ideal is equal to the {\em characteristic variety}
@@ -422,6 +422,10 @@ doc ///
   Outputs
     :ZZ
       the rank of @EM "M"@
+  Consequences
+    Item
+      if the system has finite holonomic rank, a basis for differential operators modulo the system
+      is cached under @TT "M.cache#\"standard monomials\""@ or @TT "(comodule I).cache#\"standard monomials\""@.
   Description
     Text
       The {\em holonomic rank} of a D-module @EM "M = D^r/N"@ provides analytic information
@@ -432,26 +436,25 @@ doc ///
     Text
       The holonomic rank of a D-module is defined algebraically as follows.
       Let $D$ be the Weyl algebra
-      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over &#x2102;.
+      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over $\CC$.
       and let $R$ denote the ring of differential operators
-      &#x2102;$(x_1,\dots,x_n)<\partial_1,\dots,\partial_n>$
---      @BOLD "C"@ @TT "("@ @EM "x_1,...,x_n"@ @TT ")"@ @TT "<"@ @EM "d_1,...,d_n"@ @TT ">"@
+      $\CC(x_1,\dots,x_n)\langle\partial_1,\dots,\partial_n\rangle$
       with rational function coefficients.
       Then the holonomic rank of $M = D^r/N$ is equal to the dimension of
       $R^r/RN$ as a vector space over
-      &#x2102;$[x_1,\dots,x_n]$.
-      More details can be found in
-      [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
---
---       @BOLD "C"@ ( @EM "x_1,...,x_n"@ ).
---      @BR{}@
---      See the book 'Groebner deformations of hypergeometric differential equations' by
---      Saito-Sturmfels-Takayama (1999) for more details of the algorithm.
-
+      $\CC[x_1,\dots,x_n]$.
     Example
       makeWA(QQ[x,y])
       I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       holonomicRank I
+    Text
+      The holonomic rank is also determined by the number of standard monomials $\{\partial^\alpha\}$
+      with respect to a Gröbner basis of $I$ for any term order on $R$. For convenience, these
+      standard monomials, which form a basis for differential operators modulo the system, are cached.
+    Example
+      (comodule I).cache#"standard monomials"
+  References
+    See [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Algorithm 1.4.17] for more details.
   SeeAlso
     characteristicIdeal
     DsingularLocus
@@ -481,7 +484,7 @@ doc ///
       The dimension of $M$ is equal to the dimension of
       the associated graded module with respect to the Bernstein
       filtration.
-      If $D$ is the Weyl algebra over &#x2102;
+      If $D$ is the Weyl algebra over $\CC$
       with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$,
       then the Bernstein filtration corresponds to the weight vector $(1,...,1,1,...,1)$.
     Example

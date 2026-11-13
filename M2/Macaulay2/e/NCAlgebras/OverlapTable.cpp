@@ -1,5 +1,5 @@
 #include "NCAlgebras/OverlapTable.hpp"
-#include "engine-exports.h"  // for M2_gbTrace
+#include "interface/m2-types.h"  // for M2_gbTrace
 #include <iostream>          // for cout
 
 // will call find to see if degree exists, and if not will call

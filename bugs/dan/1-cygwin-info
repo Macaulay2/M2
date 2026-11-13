@@ -1,3 +1,0 @@
-it seems that /usr/share/info/dir is not getting updated under cygwin
-
-check that install-info is in a prerequisite package, too.

@@ -49,7 +49,7 @@ cohenMacaulayASMsList ZZ := List => (n) -> (
 ------------------------------
 nonCohenMacaulayASMsList = method()
 nonCohenMacaulayASMsList ZZ := List => (n) -> (
-    if (n < 1 or n > 6) then error("expected an integery between 1 and 6");
+    if (n < 1 or n > 6) then error("expected an integer between 1 and 6");
     if (n <= 3) then return {};
     filename := concatenate(
 	MatrixSchubert#"source directory",

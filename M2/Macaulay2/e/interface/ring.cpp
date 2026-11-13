@@ -3,37 +3,38 @@
 #include "interface/ring.h"
 
 #include "monoid.hpp"
-#include "monomial.hpp"
-#include "relem.hpp"
-#include "ZZp.hpp"
-#include "ZZ.hpp"
-#include "GF.hpp"
-#include "polyring.hpp"
-#include "schur.hpp"
-#include "schur2.hpp"
-#include "schurSn.hpp"
-#include "frac.hpp"
-#include "localring.hpp"
-#include "weylalg.hpp"
-#include "skewpoly.hpp"
-#include "solvable.hpp"
-#include "matrix.hpp"
+#include "monomials/monomial.hpp"
+#include "ring-elements/ring-element.hpp"
+#include "rings/ZZp.hpp"
+#include "rings/ZZ.hpp"
+#include "rings/GF.hpp"
+#include "rings/polyring.hpp"
+#include "schur-rings/schur.hpp"
+#include "schur-rings/schur2.hpp"
+#include "schur-rings/schurSn.hpp"
+#include "rings/frac.hpp"
+#include "rings/localring.hpp"
+#include "rings/weylalg.hpp"
+#include "rings/skewpoly.hpp"
+#include "rings/solvable.hpp"
+#include "matrices/matrix.hpp"
 #include "exceptions.hpp"
 #include "finalize.hpp"
-#include "tower.hpp"
+#include "rings/tower.hpp"
 
 #include "Polynomial.hpp"
 #include "M2FreeAlgebra.hpp"
 #include "M2FreeAlgebraQuotient.hpp"
-#include "polyquotient.hpp"
+#include "rings/polyquotient.hpp"
 
-#include "aring.hpp"
-#include "aring-glue.hpp"
-#include "aring-RRi.hpp"
-#include "aring-RR.hpp"
-#include "aring-CC.hpp"
-#include "aring-RRR.hpp"
-#include "aring-CCC.hpp"
+#include "basic-rings/aring.hpp"
+#include "basic-rings/aring-glue.hpp"
+#include "basic-rings/aring-RRi.hpp"
+#include "basic-rings/aring-CCi.hpp"
+#include "basic-rings/aring-RR.hpp"
+#include "basic-rings/aring-CC.hpp"
+#include "basic-rings/aring-RRR.hpp"
+#include "basic-rings/aring-CCC.hpp"
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
@@ -93,6 +94,11 @@ const Ring /* or null */ *IM2_Ring_RRi(unsigned long prec)
   return M2::ConcreteRing<M2::ARingRRi>::create(prec);
 }
 
+const Ring /* or null */ *IM2_Ring_CCi(unsigned long prec)
+{
+  return M2::ConcreteRing<M2::ARingCCi>::create(prec);
+}
+
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)
 {
   if (prec <= 53) return M2::ConcreteRing<M2::ARingRR>::create();
@@ -126,6 +132,8 @@ const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 
 const Ring * /* or null */ rawDividedPowerRing(const Ring *K, const Monoid *M)
 {
+  (void) K;
+  (void) M;
 #if 0
   //TODO: MES, this function has not yet been implemented, or even placed in ring.h
   try {

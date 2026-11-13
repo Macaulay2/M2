@@ -1,5 +1,0 @@
-Do we really want all those example files in two places in the tar file???
-
-rhodium% tar tzf Macaulay2-0.9.95-i686-Linux.tar.gz | grep _betti_lp__Matrix_rp.m2
-Macaulay2-0.9.95/share/doc/Macaulay2/Macaulay2/examples/_betti_lp__Matrix_rp.m2
-Macaulay2-0.9.95/share/Macaulay2/Macaulay2/examples/_betti_lp__Matrix_rp.m2

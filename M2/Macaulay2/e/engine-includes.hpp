@@ -2,15 +2,16 @@
 // file to be included by all cpp files in the engine
 // what about c files?
 
-#ifndef __engine_includes_hpp__
-#define __engine_includes_hpp__
+#ifndef M2__ENGINE_INCLUDES_HPP__
+#define M2__ENGINE_INCLUDES_HPP__
 
 // IWYU pragma: begin_exports
 
 #include <M2/config.h>
 
 #if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
+//#include <engine-exports.h>
+#include "interface/m2-types.h"
 #endif
 
 #if HAVE_STDINT_H
@@ -26,8 +27,8 @@
 
 #ifndef __cplusplus /* These are coming from newdelete.hpp, in C++ */
 #include <M2/gc-include.h>
-#include "../d/M2mem.h"
-#include "../d/debug.h"
+//#include "../d/M2mem.h"
+//#include "../d/debug.h"
 #endif
 
 // IWYU pragma: end_exports

@@ -7,8 +7,8 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#include "launcher.hpp"
-#include "matrix.hpp"
+#include "bibasis/launcher.hpp"
+#include "matrices/matrix.hpp"
 
 extern "C" const Matrix* rawBIBasis(const Matrix* matrix, int toGroebner)
 {

@@ -42,7 +42,7 @@ doc ///
         Text
             By the Witt Decomposition Theorem, any non-degenerate form decomposes uniquely as $\beta \cong n \mathbb{H} \oplus \beta_a$ where the form $\beta_a$ is anisotropic. The rank of $\beta_a$ is called the anisotropic dimension of $\beta$.
 	        
-            The anisotropic dimension of a form defined over the rational numbers is the maximum of the @TO2(getAnisotropicDimensionQQp, "getAnisotropicDimensionQQp")@ anistropic dimension at each of the completions of $\mathbb{Q}$ at the @TO2(getRelevantPrimes, "relevant primes")@.
+            The anisotropic dimension of a form defined over the rational numbers is the maximum of the @TO2(getAnisotropicDimensionQQp, "getAnisotropicDimensionQQp")@ anisotropic dimension at each of the completions of $\mathbb{Q}$ at the @TO2(getRelevantPrimes, "relevant primes")@.
     References
         [KC18] P. Koprowski, A. Czogala, "Computing with quadratic forms over number fields," @ITALIC("Journal of Symbolic Computation")@, 2018.
     SeeAlso

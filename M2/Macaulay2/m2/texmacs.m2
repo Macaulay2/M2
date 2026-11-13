@@ -20,6 +20,7 @@ Thing#{TeXmacs,Print} = send := v -> (
      << tmhtml fixn mathMode mtable {{po(), red "<mo>=</mo>",fmt v}})
 Nothing#{TeXmacs,Print} = identity
 InexactNumber#{TeXmacs,Print} = v -> withFullPrecision ( () -> send v )
+Hypertext#{TeXmacs, Print} = v -> ( << tmhtml fixn html v )
 
 tmAfterPrint = x -> (
     << endl

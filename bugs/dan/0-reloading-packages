@@ -1,3 +1,0 @@
-check and installPackage will reload a package on occasion
-perhaps they should reload with the same configuration options as the previous time
-figure that out

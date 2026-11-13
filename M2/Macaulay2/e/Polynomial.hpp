@@ -1,8 +1,8 @@
-#ifndef _polynomial_hpp_
-#define _polynomial_hpp_
+#ifndef M2_POLYNOMIAL_HPP_
+#define M2_POLYNOMIAL_HPP_
 
 #include "newdelete.hpp"  // for our_new_delete
-#include "ringelem.hpp"   // for ring_elem
+#include "rings/ringelem.hpp"   // for ring_elem
 #include "style.hpp"      // for GT, LT, EQ
 
 #include <cassert>        // for assert
@@ -137,6 +137,7 @@ inline ModuleMonom monomToModuleMonom(const Monom& a, int comp, std::pair<int*, 
 template<typename T>
 void appendModuleMonomToMonom(const ModuleMonom& a, int& comp, T& inserter)
 {
+  (void) comp;
   inserter.push_back(a.size()-3);
   for (int i=4; i<a.size(); ++i)
     inserter.push_back(a[i]);
@@ -185,6 +186,7 @@ public:
 
     self_type operator++(int junk)
     {
+      (void) junk;
       // postfix ++ operator
       self_type i = *this;
       stepIterators();

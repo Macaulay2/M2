@@ -314,7 +314,7 @@ Description
 	  A great deal of subtle information about a module is visible using
 	  free resolutions. For an example, we begin
 	  by turning $R/I$ into a module. Here the code @ TT "R^1" @ produces the free module of
-	  rank 1 over $R$, and @ TO2 {"OldChainComplexes :: resolution(Module)", "res"} @ computes a free resolution:
+	  rank 1 over $R$, and @ TO2 {"Complexes :: resolution(Module)", "res"} @ computes a free resolution:
      Example
 	  M=R^1/I
 	  Mres = res M
@@ -615,10 +615,10 @@ Description
      Example
 	  (ker phi1)/(image phi2)
      Text
-	  We could also use the data type @TO "OldChainComplexes :: ChainComplex"@ 
+	  We could also use the data type @TO "Complexes :: Complex"@ 
 	  and use a built-in facility to take homology (in our case $H_1$):
      Example
-	  FF = chainComplex(phi1,phi2)
+	  FF = complex{phi1,phi2}
 	  FF.dd
 	  homology FF
 	  presentation (homology FF)_1
@@ -629,12 +629,12 @@ Description
      	  There are other ways to construct Koszul complexes.  One way is as the tensor product of
 	  chain complexes of length 1:
      Example
-     	  FF = chainComplex matrix {{x^2}} ** chainComplex matrix {{x*y^2}}
+     	  FF = complex matrix {{x^2}} ** complex matrix {{x*y^2}}
 	  FF.dd
      Text
      	  Another way is by using the function @ TO koszul @, designed for that purpose:
      Example
-     	  FF = koszul matrix {{x^2, x*y^2}}
+     	  FF = koszulComplex matrix {{x^2, x*y^2}}
 	  FF.dd
      Text
 

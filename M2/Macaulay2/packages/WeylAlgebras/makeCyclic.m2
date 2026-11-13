@@ -140,7 +140,7 @@ makeCyclic Matrix := HashTable => M -> (
      n := numgens F;
      R := ring F;
      
-     E := apply(toList(0..(n-1)), i ->
+     E := apply(n, i ->
 	  new HashTable from {
 	       tempV => (t := matrix( (toList(i : {0_R})) 
 			 | {{1_R}} | (toList((n-i-1):{0_R})) )), --(0,...,1,...,0)

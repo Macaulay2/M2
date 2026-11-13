@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 317641762447771653
+-- -*- M2-comint -*- hash: 11766660079572042236
 
 i1 : SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)
 
@@ -52,88 +52,88 @@ o3 : List
 
 i4 : assert all(S,s->checkIncidenceSolution(s,SchPblm))
 
-i5 : setVerboseLevel 1;
+i5 : setVerboseLevel 1; 
 
 i6 : S = solveSchubertProblem(SchPblm,2,4)
 -- playCheckers
--- cpu time = .0154201
+-- cpu time = .0109853
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .0120184
+-- cpu time = .00400091
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = 0
+-- cpu time = .00100066
 resolveNode reached node of no remaining conditions
--- time to make equations: .163919
+-- time to make equations: .00499959
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0126281 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
--- time of performing one checker move: .188607
--- time of performing one checker move: .00292733
--- time of performing one checker move: .00401444
--- time to make equations: .0116789
+ -- trackHomotopy time = .00570243 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .0159995
+-- time of performing one checker move: .000999811
+-- time of performing one checker move: .000999681
+-- time to make equations: .00499988
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0396773 sec. for [{1, 2, 3, 0}, {1, infinity, infinity, 2}]
--- time of performing one checker move: .0387082
--- time to make equations: .0112116
+ -- trackHomotopy time = .0295184 sec. for [{1, 2, 3, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .196997
+-- time to make equations: .00500053
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0147794 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 2}]
--- time of performing one checker move: .177902
--- time to make equations: .0158854
+ -- trackHomotopy time = .00602776 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .0160007
+-- time to make equations: .00600012
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .015358 sec. for [{2, 3, 1, 0}, {2, infinity, infinity, 1}]
--- time of performing one checker move: .0397252
--- time to make equations: .0278454
+ -- trackHomotopy time = .00595454 sec. for [{2, 3, 1, 0}, {2, infinity, infinity, 1}]
+-- time of performing one checker move: .0159997
+-- time to make equations: .170913
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0173996 sec. for [{0, 1, 2, 3}, {infinity, 1, 2, infinity}]
--- time of performing one checker move: .194614
--- time to make equations: .0254151
+ -- trackHomotopy time = .00692619 sec. for [{0, 1, 2, 3}, {infinity, 1, 2, infinity}]
+-- time of performing one checker move: .183914
+-- time to make equations: .0119998
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .100483 sec. for [{0, 1, 3, 2}, {infinity, 1, infinity, 2}]
--- time of performing one checker move: .203755
--- time of performing one checker move: .00400148
--- time of performing one checker move: .00393395
--- time to make equations: .0239996
+ -- trackHomotopy time = .00723693 sec. for [{0, 1, 3, 2}, {infinity, 1, infinity, 2}]
+-- time of performing one checker move: .182283
+-- time of performing one checker move: .00099989
+-- time of performing one checker move: .000999771
+-- time to make equations: .0109995
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0188128 sec. for [{1, 3, 2, 0}, {infinity, 3, infinity, 1}]
--- time of performing one checker move: .0558564
+ -- trackHomotopy time = .00692467 sec. for [{1, 3, 2, 0}, {infinity, 3, infinity, 1}]
+-- time of performing one checker move: .0230001
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .0079901
+-- cpu time = .00498282
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = 0
+-- cpu time = .000999721
 resolveNode reached node of no remaining conditions
--- time to make equations: .0118377
+-- time to make equations: .167022
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0176744 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
--- time of performing one checker move: .0408146
--- time of performing one checker move: .142637
--- time to make equations: .0120001
+ -- trackHomotopy time = .00594482 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .178023
+-- time of performing one checker move: .000999351
+-- time to make equations: .00499974
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0144319 sec. for [{0, 2, 3, 1}, {0, infinity, infinity, 2}]
--- time of performing one checker move: .0357794
--- time of performing one checker move: .00400301
--- time of performing one checker move: 0
--- time of performing one checker move: 0
--- time of performing one checker move: .00470073
--- time of performing one checker move: .0031443
--- time of performing one checker move: .00400018
--- time of performing one checker move: .158215
--- time to make equations: .0237389
+ -- trackHomotopy time = .00596614 sec. for [{0, 2, 3, 1}, {0, infinity, infinity, 2}]
+-- time of performing one checker move: .0160006
+-- time of performing one checker move: .00199911
+-- time of performing one checker move: .00100014
+-- time of performing one checker move: .0010001
+-- time of performing one checker move: .00200083
+-- time of performing one checker move: .000999761
+-- time of performing one checker move: .155392
+-- time of performing one checker move: .00200002
+-- time to make equations: .0109989
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .024264 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 3}]
--- time of performing one checker move: .0592573
--- time of performing one checker move: .00625287
+ -- trackHomotopy time = .00714963 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 3}]
+-- time of performing one checker move: .0239992
+-- time of performing one checker move: .00300012
 
 o6 = {| -1.65573-.600637ii .0201935+.0437095ii   |, | -.154703+.175591ii 
       | -1.23037-1.66989ii -.0308057-.00120618ii |  | -.801221-.0354303ii

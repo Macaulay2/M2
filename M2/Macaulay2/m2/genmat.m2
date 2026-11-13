@@ -120,8 +120,6 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
      R := ring F;
      if R =!= ring G then error "modules over different rings";
      if opts.MaximalRank then return (randomMR opts)(F,G);
-     p := char R;
-     if p === 0 then p = opts.Height;
      degreesTable := table(degrees F, degrees G, 
 	  (i,j) -> toList apply(j,i,difference));
      degreesTally := tally flatten degreesTable;
@@ -144,7 +142,7 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 	       deg -> (
 		    numused := 0;
 		    if deg === 0 then (
-			 n := apply(degreesTally#deg, x -> random p);
+			 n := apply(degreesTally#deg, x -> random(R.BaseRing, opts));
 			 () -> (
 			      r := n#numused;
 			      numused = numused + 1;
@@ -158,7 +156,7 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 			      n = first entries (
 				   m * matrix (R, table(
 					     k, degreesTally#deg, 
-					     (i,j)->random p)));
+					     (i,j)->random(R.BaseRing, opts))));
 			      () -> (
 				   r := n#numused;
 				   numused = numused + 1;

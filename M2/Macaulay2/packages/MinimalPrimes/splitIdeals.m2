@@ -521,7 +521,7 @@ splitFunction#IndependentSet = (I,opts) -> (
     J := I.Ideal;
     if J == 1 then error "Internal error: Input should not be unit ideal.";
     R := ring J;
-    hf := if isHomogeneous J then poincare J else null;
+    hf := if canUseHilbertHint J then poincare J else null;
     indeps := independentSets(J, Limit=>1);
     basevars := support first indeps;
     if opts.Verbosity >= 3 then
@@ -540,7 +540,7 @@ splitFunction#IndependentSet = (I,opts) -> (
     -- otherwise compute over the fraction field.
     -- in the next test, I am pretty sure that whenever J is homogeneous, so is J (and hf is then defined).
     -- But I'm keeping the test here anyway
-    if isHomogeneous JS and hf =!= null then gb(JS, Hilbert=>hf) else gb JS;
+    if hf =!= null and canUseHilbertHint JS then gb(JS, Hilbert=>hf) else gb JS;
     (JSF, coeffs) := minimalizeOverFrac(JS, SF);
     if coeffs == {} then (
         I.IndependentSet = (basevars,S,SF);

@@ -49,7 +49,7 @@ sheafCohomology = (m,E,loDeg,hiDeg)->(
      k := length T;
      d := k-hiDeg+loDeg;
      if d > 0 then 
-        chainComplex apply(d+1 .. k, i->T.dd_(i))
+        complex apply(toList(d+1 .. k), i->T.dd_(i))
      else T);
 S=ZZ/32003[x_0..x_3];
 E=ZZ/32003[e_0..e_3,SkewCommutative=>true];

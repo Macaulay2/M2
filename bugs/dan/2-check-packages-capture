@@ -1,7 +1,0 @@
-make package/Makefile run check P for each package P
-
-new option for checking and running examples: whether to use capture or whether to run them in another process
-
-use "capture" to run examples and check P, time the output, set an alarm, limit our own memory, too, with ulimit system call (can we reverse that?)
-
-get rid of all of those cached example output and input files!

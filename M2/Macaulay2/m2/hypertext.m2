@@ -31,7 +31,7 @@ toExternalString Hypertext := s -> concatenate(toString class s, toExternalStrin
 
 new Hypertext from VisibleList := (M,x) -> x -- needed because otherwise next line takes over
 new Hypertext from Thing  := (M,x) -> {x}
-new Hypertext from Net    := (M,x) -> {toString x}
+new Hypertext from Net    := (M,x) -> between(BR(),unstack x)
 
 Hypertext#AfterPrint = x -> null
 
@@ -45,19 +45,22 @@ new URL from String := (URL, str) -> { str }
 -- relative URLs and filenames
 isAbsoluteURL = url -> match( "^(#|mailto:|[a-z]+://)", url )
 
-fileExists' = pth -> (
-    if match("#",pth) then pth = substring(0,lastMatch#0#0,pth);
-    fileExists pth
-)
+splitURLFragment = pth -> (
+    if match("#", pth) then (
+	i := lastMatch#0#0;
+	(substring(0, i, pth), substring(i, pth)))
+    else (pth, ""))
 
 -- TODO: phase this one out eventually
 toURL = method()
 toURL String := pth -> (
-     urlEncode if isAbsolutePath pth then concatenate(rootURI,
-	  if fileExists' pth then realpath pth
-	  else (
-	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
-	       pth))
+     urlEncode if isAbsolutePath pth then (
+	  (filename, fragment) := splitURLFragment pth;
+	  concatenate(rootURI,
+	       if fileExists filename then realpath filename | fragment
+	       else (
+		    stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
+		    pth)))
      else if isAbsoluteURL pth then pth
      else (
 	  r := if htmlDirectory === null then pth else relativizeFilename(htmlDirectory, pth);
@@ -262,6 +265,7 @@ new TOH  from Thing     := (TO, x) -> new TO from {x}
 new TO   from List      := (TO, x) -> if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 new TO2  from List      :=
 new TO2  from Sequence  := (TO2, x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
+new TO2  from TO        := (TO2, x) -> TO2 {x#0, format x#0 | (x#1 ?? "")}
 new TOH  from List      := (TOH, x) -> { makeDocumentTag x#0 }
 new HREF from List      := (HREF, x) -> (
     url := if x#?0 and (instance(x#0, String) or instance(x#0, Sequence) and #x#0 === 2 and all(x#0, y -> instance(y, String)))

@@ -255,6 +255,38 @@ double randomDouble()
   return result;
 }
 
+void rawSetRandomRRi(mpfi_ptr result)
+{
+  mpfr_t val;
+
+  mpfr_init2(val, mpfi_get_prec(result));
+  randomMpfr(val);
+  mpfi_set_fr(result,val);
+  randomMpfr(val);
+  mpfi_put_fr(result,val);
+  mpfr_clear(val);
+}
+
+gmp_RRi rawRandomRRi(unsigned long precision)
+{
+  mpfi_ptr result;
+
+  result = getmemstructtype(mpfi_ptr);
+  mpfi_init2(result, precision);
+  rawSetRandomRRi(result);
+
+  return moveTo_gmpRRi(result);
+}
+
+gmp_CCi rawRandomCCi(unsigned long precision)
+{
+  gmp_CCimutable result = getmemstructtype(gmp_CCimutable);
+  result->re = const_cast<gmp_RRimutable>(rawRandomRRi(precision));
+  result->im = const_cast<gmp_RRimutable>(rawRandomRRi(precision));
+  return reinterpret_cast<gmp_CCi>(result);
+}
+
+
 int system_randomint()
 {
 #if 0

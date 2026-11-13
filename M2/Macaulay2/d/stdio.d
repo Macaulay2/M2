@@ -5,6 +5,7 @@ use errio;
 use gmp;
 use expr;
 use stdio0;
+use varstrin;
 
 header "#include \"../system/m2fileinterface.h\"
 	#include <assert.h>";
@@ -106,7 +107,21 @@ export clearFileError(o:file):void := (
      );
 export fileErrorMessage(o:file):string := o.errorMessage;
 export noprompt():string := "";
-newbuffer():string := new string len bufsize do provide ' ';
+-- When newbuffer() is inlined, GCC cannot tell that GC_MALLOC_ATOMIC allocated
+-- bufsize bytes for the flexible array, so it spuriously warns that the
+-- memset writing bufsize bytes overflows a region of size 0.
+newbuffer():string := (
+    Ccode(void, "
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored \"-Warray-bounds\"
+#pragma GCC diagnostic ignored \"-Wstringop-overflow\"
+(void)0");
+    result := new string len bufsize do provide ' ';
+    Ccode(void, "
+#pragma GCC diagnostic pop
+(void)0");
+    result
+    );
 export stdError := newFile(
      -- contrast with stderr, defined in errio.d
      -- intended just for top level use where nets might be printed
@@ -129,12 +144,36 @@ export stdIO  := newFile("stdio",  0,
 
 export interpreterDepth := 0;
 export lineNumber := 0;
+stdioSource := newvarstring(bufsize);
+export getStdioSource():string := tostring(stdioSource);
 texmacsprompt():string := (
      s := "";
      for i from 1 to interpreterDepth do s = s + "i";
      "\2prompt#" + s + tostring(lineNumber) + " : \5\5"
      );
 texmacsreward():string := "\2verbatim:";
+
+export errmsg := {+ message:string };
+export FileCell := {file:file,next:(null or FileCell)};
+export openfiles := (null or FileCell)(NULL);
+addfile(o:file):file := (
+     openfiles = FileCell(o,openfiles);
+     o);
+rmfile(o:file):void := (
+     prevcell := (null or FileCell)(NULL);
+     x := openfiles;
+     while true do (
+	  when x is null do break
+	  is thiscell:FileCell do (
+	       if thiscell.file == o then (
+	       	    when prevcell is null do openfiles = thiscell.next
+	       	    is prevcell:FileCell do prevcell.next = thiscell.next
+		    )
+	       else prevcell = x;
+	       x = thiscell.next;
+	       )));
+addfile(stdIO);
+addfile(stdError);
 
 init():void := (
      stdIO.readline = stdIO.infd == STDIN && stdIO.inisatty ;
@@ -165,12 +204,14 @@ init():void := (
 	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
 	       stdIO.outisatty = true; -- not so important?
 	       STDERR = 1;
+	       rmfile(stdError);
 	       stdError = newFile(
 	         "stderr", 0,
      	         false, "",
      	         false,NOFD,NOFD,0,
      	         false,NOFD  ,false,          "",        0,0,false,false,noprompt,noprompt,false,true,false,0,
      	         true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1,false,1);
+	       addfile(stdError);
 	  )
 	  else
 	  if arg === "--read-only-files" then (
@@ -182,27 +223,6 @@ init():void := (
 
 everytime(init);
 
-export errmsg := {+ message:string };
-export FileCell := {file:file,next:(null or FileCell)};
-export openfiles := (null or FileCell)(NULL);
-addfile(o:file):file := (
-     openfiles = FileCell(o,openfiles);
-     o);
-rmfile(o:file):void := (
-     prevcell := (null or FileCell)(NULL);
-     x := openfiles;
-     while true do (
-	  when x is null do break
-	  is thiscell:FileCell do (
-	       if thiscell.file == o then (
-	       	    when prevcell is null do openfiles = thiscell.next
-	       	    is prevcell:FileCell do prevcell.next = thiscell.next
-		    )
-	       else prevcell = x;
-	       x = thiscell.next;
-	       )));
-addfile(stdIO);
-addfile(stdError);
 opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg) := (
      if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening a socket not permitted"));
      host0 := substr(filename,1);
@@ -501,6 +521,7 @@ export closeListener(o:file):(errmsg or null) := (
      null());
 
 export closeIn(o:file):(errmsg or null) := (
+     if o == stdIO then return errmsg("can't close stdio");
      stat := 0;
      if o.infd == NOFD then return errmsg("close: file not open");
      if o == stdIO then return null();			    -- silently refuse to close stdIO
@@ -521,6 +542,8 @@ export closeIn(o:file):(errmsg or null) := (
      null());
 
 export closeOut(o:file):(errmsg or null) := (
+     if o == stdIO then return errmsg("can't close stdio");
+     if o == stdError then return errmsg("can't close stderr");
      stat := 0;
      if o.outfd == NOFD then return errmsg("close: file not open");
      haderror := false;
@@ -694,6 +717,8 @@ export present(x:string):string := (
 		    provide c)))
      else x);
 
+export format(s:string):string := "\"" + present(s) + "\"";
+
 export filbuf(o:file):int := (
 --      if o.fulllines then (
 -- 	  stdIO << flush;
@@ -738,11 +763,7 @@ export filbuf(o:file):int := (
 	       r = (
 		    if o.infd == NOFD 
 		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
-		    else (
-			ret := read(o.infd,o.inbuffer,n,o.insize);
-			if ret > 0 && o == stdIO
-			then addHistory(tocharstarn(o.inbuffer, ret - 1));
-			ret)));
+		    else read(o.infd,o.inbuffer,n,o.insize)));
 	  if r == ERROR then (
 	       fileErrorMessage(o,"read");
 	       return r;
@@ -835,6 +856,7 @@ export getc(o:file):int := (
      else if o.bol && !o.readline then maybeprompt(o);
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
+     if o == stdIO then stdioSource << c;
      if o.echo && o.echoindex < o.inindex then (
 	  while o.echoindex < o.insize && (
 	       e := o.inbuffer.(o.echoindex);

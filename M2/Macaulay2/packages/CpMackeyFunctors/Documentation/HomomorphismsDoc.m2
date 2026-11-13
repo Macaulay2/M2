@@ -35,7 +35,7 @@ doc ///
         Example
             id_(M)
         Text
-            The only $0$-ary operation implemented for Mackey functor homomorphisms is:
+            The only unary (@TO("Boolean")@-valued) function implemented for Mackey functor homomorphisms is:
 
             @UL{
                 (TO2((isIsomorphism,MackeyFunctorHomomorphism),"isIsomorphism"), " checking if a morphism is an isomorphism")

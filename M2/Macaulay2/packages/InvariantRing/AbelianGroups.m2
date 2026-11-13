@@ -7,70 +7,91 @@
    the License, or any later version.
 *-
 
-
-DiagonalAction = new Type of GroupAction
-
--------------------------------------------
---- DiagonalAction methods -------------------
 -------------------------------------------
 
-diagonalAction = method()
+DiagonalAction = new Type of GroupAction    -- the DiagonalAction object
 
+diagonalAction = method()                   -- Constructor for DiagonalAction object
+
+-------------------------------------------
+--- DiagonalAction Constructors -----------
+-------------------------------------------
+
+-------------------------------
+---- diagonalAction constructor
+-->-    W1 & W2 - Weight matrices
+-->-    g       - Order of the group
+-->-    R       - Ring
 diagonalAction (Matrix, Matrix, List, PolynomialRing) := DiagonalAction => (W1, W2, d, R) -> (
+    --!-- Ensures inputs are valid --!--
     if not isField coefficientRing R then (
-	error "diagonalAction: Expected the last argument to be a polynomial ring over a field."
+	    error "diagonalAction: Expected the last argument to be a polynomial ring over a field."
 	);
     if ring W1 =!= ZZ or ring W2 =!= ZZ then (
-	error "diagonalAction: Expected the first and second arguments to be matrices of integer weights."
+	    error "diagonalAction: Expected the first and second arguments to be matrices of integer weights."
 	);
     if numColumns W1 =!= dim R or numColumns W2 =!= dim R then (
-	error "diagonalAction: Expected the number of columns of each matrix to equal the dimension of the polynomial ring."
+	    error "diagonalAction: Expected the number of columns of each matrix to equal the dimension of the polynomial ring."
 	);
     if numRows W2 =!= #d then (
-	error "diagonalAction: Expected the number of rows of the second argument to equal the size of the list."
+	    error "diagonalAction: Expected the number of rows of the second argument to equal the size of the list."
 	);
     if any(d, j -> not instance(j, ZZ) or j <= 0) then (
-	error "diagonalAction: Expected the second argument to be a list of positive integers."
+	    error "diagonalAction: Expected the second argument to be a list of positive integers."
 	);
     p := char R;
     if p > 0 and any(d, j -> j%p == 0) then (
-	error "diagonalAction: Diagonal action is not defined when the characteristic divides the order of one of the cyclic factors."
-	);    
+	    error "diagonalAction: Diagonal action is not defined when the characteristic divides the order of one of the cyclic factors."
+	); 
+    --!-- ---------------------- --!--
+    ----- - Creates the object - --!--
     r := numRows W1;
     g := numRows W2;
-    z := getSymbol "z";
-    C := ZZ[Variables=> r + g,VariableBaseName=>z,
-	MonomialOrder=> {GroupLex => r,GroupLex => g},
-	Inverses=>true];
+    diagVariable := getSymbol "ζ";
+    C := ZZ[Variables           => r + g,
+            VariableBaseName    => diagVariable,
+	        MonomialOrder       => {GroupLex => r,GroupLex => g},
+	        Inverses            => true];
     new DiagonalAction from {
-	cache => new CacheTable,
-	(symbol cyclicFactors) => d,
-	(symbol degreesRing) => C monoid degreesRing R,
-	(symbol numgens) => g, 
-	(symbol ring) => R, 
-	(symbol rank) => r,
-	(symbol weights) => (W1, W2)
+        cache => new MutableHashTable,
+        (symbol cyclicFactors) => d,
+        (symbol degreesRing) => C monoid degreesRing R,
+        (symbol numgens) => g, 
+        (symbol ring) => R, 
+        (symbol rank) => r,
+        (symbol weights) => (W1, W2)
 	}
-    )
+)
 
+-------------------------------
+---- diagonalAction constructor
+-->-    W       - Weight matrices
+-->-    g       - Order of the group
+-->-    R       - Ring
 diagonalAction (Matrix, List, PolynomialRing) := DiagonalAction => (W, d, R) -> (
     if ring W =!= ZZ then (
-	error "diagonalAction: Expected the first argument to be a matrix of integer weights."
+	    error "diagonalAction: Expected the first argument to be a matrix of integer weights."
 	);
     r := numRows W - #d;
     if r < 0 then (
-	error "diagonalAction: The number of rows of the matrix cannot be smaller than the size of the list."
+	    error "diagonalAction: The number of rows of the matrix cannot be smaller than the size of the list."
 	); 
     W1 := W^(apply(r, i -> i));
     W2 := W^(apply(#d, i -> r + i));
     diagonalAction(W1, W2, d, R)
-    )
+)
 
-diagonalAction (Matrix, PolynomialRing) := DiagonalAction => (W, R) -> diagonalAction(W, {}, R)
-
+---- Additional constructors when parameters have special properties
+diagonalAction (Matrix, PolynomialRing)     := DiagonalAction => (W, R)     -> diagonalAction(W, {}, R)
+diagonalAction (Matrix, ZZ, PolynomialRing) := DiagonalAction => (W, z, R)  -> diagonalAction(W, apply(numRows W, i -> z), R)
 
 -------------------------------------------
+--- DiagonalAction Methods ----------------
+-------------------------------------------
 
+-------------------------------
+---- net DiagonalAction
+-->-    Used to print out a diagonalAction object
 net DiagonalAction := D -> (
     torus := "";
     cyclicGroups := "";
@@ -78,55 +99,96 @@ net DiagonalAction := D -> (
     g := D.numgens;
     local weightMatrix;
     if r > 0 then (
-	torus = (expression coefficientRing D.ring)^(expression "*");
-	if r > 1 then torus = (expression ("("|net torus|")"))^(expression r)
-	);
+        torus = (expression coefficientRing D.ring)^(expression "*");
+	    if r > 1 then (
+            torus = (expression ("("|net torus|")"))^(expression r)
+        );
+    );
     if g > 0 then (
-	cyclicGroups = cyclicGroups|horizontalJoin apply(g, i -> (
-		if i == g - 1 then (net ZZ|"/"|net D.cyclicFactors#i)
-		else (net ZZ|"/"|net D.cyclicFactors#i|" x ")
-		)
+	    cyclicGroups = cyclicGroups|horizontalJoin apply(g, i -> 
+            (   if i == g - 1 then (net ZZ|"/"|net D.cyclicFactors#i)
+                else (net ZZ|"/"|net D.cyclicFactors#i|" x ")
+		    )
 	    );
-	if r > 0 then (
-	    torus = net torus|" x ";
-	    weightMatrix = D.weights
-	    )
-	else weightMatrix = last D.weights
+        if r > 0 then (
+            torus = net torus|" x ";
+            weightMatrix = D.weights
+        )
+        else weightMatrix = last D.weights;
 	)
     else weightMatrix = first D.weights;
     stack {(net D.ring)|" <- "|net torus|net cyclicGroups|" via ","", net weightMatrix}
-    )
+)
 
+---- tex DiagonalAction
+-->-    Used to output tex for a diagonalAction object
+texMath DiagonalAction := D -> (
+    torus := "";
+    cyclicGroups := "";
+    r := D.rank;
+    g := D.numgens;
+    local weightMatrix;
+    if r > 0 then (
+        torus = (texMath coefficientRing D.ring) | "^*";
+	    if r > 1 then (
+            torus = ("\\left("| torus |"\\right)") | "^" | (texMath r);
+        );
+    );
+    if g > 0 then (
+	cyclicGroups = demark(" \\times ",
+	    apply(D.cyclicFactors, i -> texMath(ZZ) | "/" | toString(i))
+	    );
+        if r > 0 then (
+            torus = torus|" \\times ";
+            weightMatrix = D.weights
+        )
+        else weightMatrix = last D.weights;
+	)
+    else weightMatrix = first D.weights;
+    (texMath D.ring) | "\\curvearrowleft" | torus | cyclicGroups | "\\text{ via }" | (texMath weightMatrix)
+)
+
+
+---- cyclicFactors
+-->- Method to access the cyclicFactors of a DiagonalAction
 cyclicFactors = method()
-
 cyclicFactors DiagonalAction := List => D -> D.cyclicFactors
 
+
+-->- Override of "degreesRing" function for DiagonalAction
 degreesRing DiagonalAction := Ring => D -> D.degreesRing
 
+-->- Override for "numgens" function for DiagonalAction
 numgens DiagonalAction := ZZ => D -> D.numgens
 
+-->- Override for "rank" function for DiagonalAction
 rank DiagonalAction := ZZ => D -> D.rank
 
+---- weights
+-->- Method to access the cyclicFactors of a DiagonalAction
 weights = method()
-
 weights DiagonalAction := Matrix => D -> D.weights
 
 
+-------------------------------------------
+--- Equivariant Hilbert Series Methods ----
+-------------------------------------------
 
 equivariantHilbertSeries = method(Options => {Order => infinity}, TypicalValue => Divide)
 
 equivariantHilbertSeries DiagonalAction := op -> T -> (
-    if unique degrees ring T =!= {{1}} then
-    error "Only implemented for standard graded polynomial rings";
+    if unique degrees ring T =!= {{1}} then error "Only implemented for standard graded polynomial rings";
     ord := op.Order;
     if ord === infinity then (
-	equivariantHilbertRational(T)
+	    equivariantHilbertRational(T)
 	)
     else (
-	equivariantHilbertPartial(T,ord-1)
+	    equivariantHilbertPartial(T,ord-1)
 	)
-    )
+)
 
+-- computes equivariant hilbert series as rational function
+-- INPUT: T, DiagonalAction
 equivariantHilbertRational = T -> (
     n := dim T;
     W1 := first weights T;
@@ -134,7 +196,7 @@ equivariantHilbertRational = T -> (
     d := cyclicFactors T;
     if not zero W2 then (
     	W2 = matrix apply(entries W2,d,(row,m)->apply(row,i->i%m));
-    	);
+    );
     W := W1 || W2;
     R := degreesRing T;
     C := coefficientRing R;
@@ -143,42 +205,44 @@ equivariantHilbertRational = T -> (
     Divide{1,den}
 )
 
+-- computes equivariant hilbert series up to a given degree
+-- INPUT: T, DiagonalAction
 equivariantHilbertPartial = (T, d) -> (
     if not T.cache.?equivariantHilbert then (
-	T.cache.equivariantHilbert = 1_(degreesRing T);
+	    T.cache.equivariantHilbert = 1_(degreesRing T);
 	);
     currentDeg := first degree T.cache.equivariantHilbert;
     (M,C) := coefficients T.cache.equivariantHilbert;
     if (d > currentDeg) then (
-	R := degreesRing T;
-	r := rank T;
-	g := numgens T;
-	cf := cyclicFactors T;
-    	den := value denominator equivariantHilbertSeries T;
-    	denDeg := first degree den;
-	B := last coefficients den;
-	if cf =!= {} then (
-	    CR := coefficientRing R;
-	    phi := map(CR,R);
-	    CRab := ZZ[Variables=>g];
-	    CRab = CRab / ideal apply(g,i -> CRab_i^(cf_i)-1);
-	    psi := map(CRab,CR,toList(r:1)|(gens CRab));
-	    psi' := map(CR,CRab,apply(g, i-> CR_(r+i)));
-      	    (m,c) := coefficients(phi B,Variables=>apply(g, i-> CR_(r+i)));
-	    m = psi' psi m;
-	    B = m*c;
-	    );
-	for i from currentDeg+1 to d do (
-	    p := -sum(1..min(i,denDeg),k -> C_(i-k,0)*B_(k,0) );
-	    if cf =!= {} then (
-	    	(m,c) = coefficients(phi p,Variables=>apply(g, i-> CR_(r+i)));
-	    	m = psi' psi m;
-	    	p = (m*c)_(0,0);
-	    	);
-	    M = M | matrix{{R_0^i}};
-	    C = C || matrix{{p}};
-	    );
+        R := degreesRing T;
+        r := rank T;
+        g := numgens T;
+        cf := cyclicFactors T;
+            den := value denominator equivariantHilbertSeries T;
+            denDeg := first degree den;
+        B := last coefficients den;
+        if cf =!= {} then (
+            CR := coefficientRing R;
+            phi := map(CR,R);
+            CRab := ZZ[Variables=>g];
+            CRab = CRab / ideal apply(g,i -> CRab_i^(cf_i)-1);
+            psi := map(CRab,CR,toList(r:1)|(gens CRab));
+            psi' := map(CR,CRab,apply(g, i-> CR_(r+i)));
+            (m,c) := coefficients(phi B,Variables=>apply(g, i-> CR_(r+i)));
+            m = psi' psi m;
+            B = m*c;
+        );
+        for i from currentDeg+1 to d do (
+            p := -sum(1..min(i,denDeg),k -> C_(i-k,0)*B_(k,0) );
+            if cf =!= {} then (
+                (m,c) = coefficients(phi p,Variables=>apply(g, i-> CR_(r+i)));
+                m = psi' psi m;
+                p = (m*c)_(0,0);
+            );
+            M = M | matrix{{R_0^i}};
+            C = C || matrix{{p}};
+        );
 	);
     q := first flatten entries (M_{0..d}*C^{0..d});
     T.cache.equivariantHilbert = q
-    )
+)

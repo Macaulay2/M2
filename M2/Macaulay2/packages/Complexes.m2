@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
-    Version => "0.999995",
-    Date => "1 May 2023",
+    Version => "1.0",
+    Date => "May 9, 2026",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -36,6 +36,7 @@ export {
     "connectingTorMap",
     "constantStrand",
     "cylinder",
+    "eagonNorthcottComplex",
     "epicResolutionMap",
     "freeResolution",
     "homotopyMap",
@@ -71,16 +72,38 @@ export {
     "OverZZ",
     "Homogenization",
     "Nonminimal",
+    "NonminimalWithGB",
     "Concentration",
     "Cycle",
     "Boundary",
     "InternalDegree",
-    "UseTarget"
+    "UseTarget",
+
+    -- From pruneComplex code
+    "toMutableComplex",
+    "toChainComplex",
+    "pruneComplex",
+    "pruneUnit",
+    "pruneDiff",
+    "isScalar",
+    "Direction", "PruningMap", "UnitTest"
     }
 
 importFrom_Core {
     "isPackageLoaded",
-}
+    "liftModule", "liftMorphism",
+
+    -- Used in pruneComplex code
+    "LocalRing",
+    "raw",
+    "rawDeleteColumns",
+    "rawDeleteRows",
+    "rawMutableComplex",
+    "rawPruneBetti",
+    "rawPruneComplex",
+    "rawPruningMorphism",
+    }
+
 
 -- keys into the type `Complex`
 protect modules
@@ -122,16 +145,46 @@ homTensorAdjoint(Module, Module, Module) := (L, M, N) -> (
 -- package code ----------------------------------------------------
 --------------------------------------------------------------------
 load "./Complexes/ChainComplex.m2"
-load "./Complexes/FreeResolutions.m2"
+load "./Complexes/FreeResolution.m2"
 load "./Complexes/ChainComplexMap.m2"
 load "./Complexes/Tor.m2"
 load "./Complexes/Ext.m2"
+load "./Complexes/PruneComplex.m2"
 
 --------------------------------------------------------------------
 -- interface code to legacy types ----------------------------------
 --------------------------------------------------------------------
 if isPackageLoaded "OldChainComplexes" then
   load "./OldChainComplexes/conversion.m2"
+
+koszul Matrix := Complex => m -> koszulComplex m
+eagonNorthcott Matrix := Complex => m -> eagonNorthcottComplex m
+
+-- TODO: talk to Greg about what to do with this code...
+  -----------------------------------------------------------------------------
+  -- constructing a chain complex with prescribed Betti table
+  -----------------------------------------------------------------------------
+
+  Ring ^ BettiTally := Complex => (R,B) -> (
+    -- donated by Hans-Christian von Bothmer
+    -- given a betti Table B and a Ring R make a chainComplex
+    -- with zero maps over R  that has betti diagram B.
+    -- negative entries are ignored
+    -- rational entries produce an error
+    -- multigraded R's work only if the betti Tally contains degrees of the correct degree length
+    p := sort pairs B;  -- list of (homological degree, multidegree, weight)
+    toplev := p/((k,n) -> first k)//max; -- largest homological degree
+    F := new MutableHashTable;
+    H := partition(x -> x#0#0, p); -- by homological degree.
+    directSum for i in keys H list (
+        degs := flatten for x in H#i list (
+            (i, deg, wt) := x#0;
+            n := x#1;
+            toList(n : -deg)
+            );
+        complex(R^degs, Base => i)
+        )
+    )
 
 --------------------------------------------------------------------
 -- package documentation -------------------------------------------
@@ -150,6 +203,7 @@ undocumented{
 
 load "./Complexes/ChainComplexDoc.m2"
 load "./Complexes/ChainComplexMapDoc.m2"
+load "./Complexes/PruneComplexDoc.m2"
 
 --------------------------------------------------------------------
 -- documentation for legacy type conversion ------------------------
@@ -162,7 +216,7 @@ if isPackageLoaded "OldChainComplexes" then
 --------------------------------------------------------------------
 load "./Complexes/ChainComplexTests.m2"
 load "./Complexes/FreeResolutionTests.m2"
-
+load "./Complexes/PruneComplexTests.m2"
 end------------------------------------------------------------
 
 restart

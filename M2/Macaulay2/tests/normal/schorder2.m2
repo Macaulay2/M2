@@ -52,12 +52,12 @@ assert(exteriorPower(5,F) == 0)
 
 ----- test of equality of free modules with or without schreyer order
 R = QQ[x,y,z]/(x^2+y^2+z^2)
-M = ambient coker(res coker vars R).dd_2
+M = ambient coker(res(coker vars R, LengthLimit => 4)).dd_2
 assert(M === R^{3:-1})
 
 -- c.f. https://github.com/Macaulay2/M2/issues/2373
 R = QQ[x]/x^2
-C = res coker vars R
+C = res(coker vars R, LengthLimit => 2)
 m = map(R^{-1}, , {{x}})
 assert(m === C.dd_2)
 assert(m === schreyerOrder m)

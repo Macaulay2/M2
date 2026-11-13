@@ -7,10 +7,10 @@
 #include "NCAlgebras/Word.hpp"          // for Word
 #include "NCAlgebras/WordTable.hpp"     // for Overlap, WordTable
 #include "buffer.hpp"                   // for buffer
-#include "engine-exports.h"             // for M2_gbTrace, newline
+#include "interface/m2-types.h"         // for M2_gbTrace, newline
 #include "myalloc.hpp"                  // for operator<<, AllocLogger
-#include "ring.hpp"                     // for Ring
-#include "ringelem.hpp"                 // for ring_elem
+#include "rings/ring.hpp"                     // for Ring
+#include "rings/ringelem.hpp"                 // for ring_elem
 #include "text-io.hpp"                  // for emit_line, emit
 
 #include <deque>                        // for deque

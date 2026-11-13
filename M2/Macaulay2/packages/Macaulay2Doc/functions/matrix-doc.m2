@@ -192,13 +192,33 @@ document {
      SeeAlso => {mutableMatrix, mutableIdentity, MutableMatrix}
      }
 
-document {
-     Key => {(matrix, RingElement),(matrix, Number)},
-     Headline => "make a matrix from a ring element",
-     Usage => "matrix r",
-     Inputs => { "r" },
-     Outputs => { Matrix => {"the one by one matrix with ", TT "r", " as its single entry"} },
-     EXAMPLE lines ///
-     matrix 48
-     ///
-     }
+doc ///
+  Key
+    (matrix, Ring, RingElement)
+    (matrix, Ring, Number)
+    (matrix, Number)
+    (matrix, RingElement)
+    (matrix, RingFamily, RingElement)
+    (matrix, RingFamily, Number)
+  Headline
+    make a matrix from a ring element
+  Usage
+    matrix(R, f)
+    matrix f
+  Outputs
+    :Matrix -- the one by one matrix with @VAR "f"@ as its single entry
+  Inputs
+    R:{Ring, RingFamily}
+    f:{RingElement, Number}
+  Description
+    Example
+      matrix 48
+      R = QQ[x,y]
+      matrix(x^2 - y^2)
+    Text
+      Specify a ring @VAR "R"@ to get a matrix over @VAR "R"@ instead of the
+      ring of @VAR "f"@.
+    Example
+      matrix(QQ, 48)
+      matrix(R, 48)
+///

@@ -527,6 +527,7 @@ static void cprintdefun(node g) {
      node args = CDAR(g);
      node funtype = type(fun);
      node rettype = functionrettype(funtype);
+     node parm;
      assert(issym(fun));
      locn(g);
      /* printpos(); */
@@ -548,6 +549,15 @@ static void cprintdefun(node g) {
      put(")");
      put("{");
      put("\n");
+     /* suppress unused parameter warnings for parameters not referenced in scc source */
+     for (parm = CDAR(g); parm != NULL; parm = CDR(parm)) {
+	  node w = CAR(parm);
+	  if (issym(w) && !(w->body.symbol.flags & used_F)) {
+	       put("(void)");
+	       cprint(w);
+	       put(";\n");
+	       }
+	  }
      cprintsemi(CDDR(g));
      printpos();
      put("}");

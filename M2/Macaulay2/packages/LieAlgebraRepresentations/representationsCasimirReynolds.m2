@@ -18,6 +18,14 @@ lieAlgebraRepresentation(LieAlgebraModule,LieAlgebraBasis,List):=(V,LAB,L) -> (
 );
 
 
+dual LieAlgebraRepresentation := {} >> o -> rho -> (
+    new LieAlgebraRepresentation from {
+        "Module"=>starInvolution(rho#"Module"),
+        "Basis"=>rho#"Basis",
+	"RepresentationMatrices"=>apply(rho#"RepresentationMatrices", M -> -transpose(M))
+    }   
+);
+
 
 trivialRepresentation = method(
     TypicalValue => LieAlgebraRepresentation

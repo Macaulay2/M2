@@ -1,14 +1,14 @@
 // Copyright 2005-2021  Michael E. Stillman
 
-#ifndef _moninfo_hpp_
-#define _moninfo_hpp_
+#ifndef M2_F4_MONINFO_HPP_
+#define M2_F4_MONINFO_HPP_
 
-#include "engine-exports.h"               // for M2_arrayint, M2_arrayint_st...
+#include "interface/m2-types.h"           // for M2_arrayint, M2_arrayint_st...
 #include "f4/ntuple-monomial.hpp"         // for ntuple_word, const_ntuple_m...
 #include "f4/varpower-monomial.hpp"       // for varpower_word, index_varpow...
 #include "interface/monomial-ordering.h"  // for MonomialOrdering
 #include "newdelete.hpp"                  // for our_new_delete
-#include "skew.hpp"                       // for SkewMultiplication
+#include "rings/skew.hpp"                       // for SkewMultiplication
 
 #include <iostream>
 
@@ -96,7 +96,12 @@ class MonomialInfo : public our_new_delete
 
   int n_vars() const { return nvars; }
   int max_monomial_size() const { return nslots; }
-  int monomial_size(const_packed_monomial m) const { return nslots; }
+  int monomial_size(const_packed_monomial m) const
+  {
+    (void) m;
+    return nslots;
+  }
+
   void show() const;
 
   int componentLocation() const { return mComponentLoc; }

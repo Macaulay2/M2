@@ -1,5 +1,5 @@
-#ifndef __timing_hpp_
-#define __timing_hpp_
+#ifndef M2__TIMING_HPP_
+#define M2__TIMING_HPP_
 #include <chrono>
 
 inline std::chrono::steady_clock::time_point timer()

@@ -996,10 +996,10 @@ debug Core
 peek M.cache.resolutionNonminimal.Resolution
 minimalBetti M -- BUG: recomputes resolution!  -- why?
 F = res(M, FastNonminimal => true, StopBeforeComputation => true) -- this seems to work
-minimalBetti M -- this recompputes
+minimalBetti M -- this recomputes
 res(M, FastNonminimal => true)
 F = res(M, FastNonminimal => true) -- this seems to work
-minimalBetti M -- this recompputes
+minimalBetti M -- this recomputes
 
   -- 
 

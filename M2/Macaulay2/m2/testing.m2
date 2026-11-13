@@ -83,7 +83,10 @@ loadTestDir := pkg -> (
 
 tests = method()
 tests Package := pkg -> (
-    if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
+    if pkg#?"documentation not loaded"
+    then pkg = loadPackage(pkg,
+	FileName => pkg#"source file",
+	LoadDocumentation => true);
     if not pkg#?"test directory loaded" then loadTestDir pkg;
     previousMethodsFound = new NumberedVerticalList from pkg#"test inputs"
     )

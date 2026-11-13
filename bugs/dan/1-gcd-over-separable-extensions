@@ -1,2 +1,0 @@
-Implement gcd over separable extensions of fields.  The idea would be that
-every scalar, is, up to a unit, an idempotent.

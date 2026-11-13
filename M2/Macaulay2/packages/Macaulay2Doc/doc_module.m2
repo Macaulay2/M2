@@ -156,7 +156,7 @@ document {
     },
      }
 
-document { Key => (module, Ring),
+document { Key => {(module, Ring), (module, RingFamily)},
      Usage => "module R",
      Inputs => {"R"},
      Outputs => {{"the free module of rank 1 over the ring R"}},

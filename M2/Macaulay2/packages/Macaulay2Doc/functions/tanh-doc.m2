@@ -3,7 +3,7 @@
 --- notes: include example?
 
 document { 
-     Key => {tanh, (tanh,CC),(tanh,RR),(tanh, RRi)},
+     Key => {tanh, (tanh,InexactNumber)},
      Headline => "compute the hyperbolic tangent",
      Usage => "tanh x\ntanh I",
      Inputs => { 

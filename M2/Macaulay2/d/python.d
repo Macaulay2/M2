@@ -206,7 +206,7 @@ setupfun("pythonObjectIsTrue", PyObjectIsTrue);
 -- ints --
 ----------
 
-import LongAsZZ(z:ZZmutable, x:pythonObject):void;
+import LongAsZZ(z:ZZmutable, x:pythonObject):int;
 PyLongAsLong(e:Expr):Expr :=
     when e
     is x:pythonObjectCell do (
@@ -217,8 +217,8 @@ PyLongAsLong(e:Expr):Expr :=
 	else if overflow == 0 then toExpr(y)
 	else (
 	    z := newZZmutable();
-	    LongAsZZ(z, x.v);
-	    toExpr(moveToZZandclear(z))))
+	    if LongAsZZ(z, x.v) == -1 then buildPythonErrorPacket()
+	    else toExpr(moveToZZandclear(z))))
     is s:SpecialExpr do PyLongAsLong(s.e)
     else WrongArgPythonObject();
 setupfun("pythonLongAsLong",PyLongAsLong);

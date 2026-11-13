@@ -13,7 +13,19 @@ newPackage(
         }
     },
     PackageImports => {"Graphs", "Polyhedra", "LatticePolytopes"},
-    Keywords => {"Toric Geometry"}
+    Keywords => {"Toric Geometry"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "Quivers and moduli of their thin sincere representations in Macaulay2",
+	"acceptance date" => "2025-08-20",
+	"published article URI" => "https://msp.org/jsag/2025/15-1/p08.xhtml",
+	"published article DOI" => "10.2140/jsag.2025.15.93",
+	"published code URI" => "https://msp.org/jsag/2025/15-1/jsag-v15-n1-x08-ThinSincereQuivers.m2",
+	"version at publication" => "0.1",
+	"volume number" => "15",
+	"volume URI" => "https://msp.org/jsag/2025/15-1/"
+	}
 )
 export {
 -- Methods/Functions
@@ -3250,7 +3262,7 @@ multidoc ///
                 This is an optional argument that can be positive integer values, which and which is 
                 used in quiver constructor methods when the optional argument for flow is set to 
                 random {\tt Flow => "Random"}. The {\tt Height} argument sets the maximum value for 
-                the integer-valued random numhber generator so that values in the flow are chosen 
+                the integer-valued random number generator so that values in the flow are chosen 
                 from the interval {\tt [0, Height)}.
             Example
                 -- create a toric quiver from a matrix with random flow with values in the interval [0, 10)

@@ -1,1 +1,0 @@
-use sigaltstack to catch SIGSEGV on an alternate stack

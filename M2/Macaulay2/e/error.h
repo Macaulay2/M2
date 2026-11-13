@@ -1,7 +1,7 @@
 // (c) 1997 Michael E. Stillman
 
-#ifndef _error_h_
-#define _error_h_
+#ifndef M2_ERROR_H_
+#define M2_ERROR_H_
 
 #if defined(__cplusplus)
 extern "C" {

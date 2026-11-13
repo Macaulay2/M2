@@ -1,3 +1,0 @@
-tex isn't getting formatted for display in an emacs buffer, info node, or shell: we need a method for net(TEX), or ??
-
-can we restrict the use of ^ and _ to math mode?

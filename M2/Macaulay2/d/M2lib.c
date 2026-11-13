@@ -4,7 +4,7 @@
 
 #include "M2mem.h"
 #include "types.h"
-#include "debug.h"
+#include <interface/m2-mem.h>
 #include "supervisorinterface.h"
 
 #include <readline/readline.h>
@@ -124,6 +124,7 @@ static char *M2_completion_generator(const char *text, int state) {
 }
 
 static char **M2_completion(const char *text, int start, int end) {
+  (void)start; (void)end;
   rl_attempted_completion_over = TRUE;
   /* if (start > 0 && rl_line_buffer[start-1] == '"') ... filename completion ... */
   return rl_completion_matches(text, M2_completion_generator);
@@ -133,14 +134,6 @@ int system_readHistory(char *filename) { return read_history(filename); }
 int system_appendHistory(int n, char *filename)
 {
   return append_history(n, filename);
-}
-
-void system_addHistory(char *buf) { add_history(buf); }
-char *system_getHistory(const int n)
-{
-  HIST_ENTRY *entry = history_get(n);
-  if (entry != NULL) return entry->line;
-  return NULL;
 }
 
 int system_historyLength() { return history_length; }

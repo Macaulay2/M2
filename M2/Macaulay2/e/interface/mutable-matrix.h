@@ -1,5 +1,5 @@
-#ifndef _mutable_matrix_h_
-#  define _mutable_matrix_h_
+#ifndef M2_INTERFACE_MUTABLE_MATRIX_H_
+#define M2_INTERFACE_MUTABLE_MATRIX_H_
 
 #  include "engine-includes.hpp"
 
@@ -87,6 +87,9 @@ MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return,
 const RingElement /* or null */ *
 IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c);
 /* drg: connected rawMatrixEntry, OK*/
+
+engine_RawRingElementArrayArrayOrNull
+IM2_MutableMatrix_get_entries(const MutableMatrix *M);
 
 /* Each of these routines returns false if there was an error. */
 

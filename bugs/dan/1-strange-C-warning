@@ -1,6 +1,0 @@
-this gives a warning for some reason:
-    char **e;
-    void tostrings(const char **p) {}
-    void f() { tostrings(e); }
-
-in M2lib.c I put in many casts involving environ and others to avoid it

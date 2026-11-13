@@ -1,8 +1,0 @@
-installPackage should create and update "dir", too
-
-  /Users/dan/Library/Application Support/Macaulay2/local/share/info:
-  total used in directory 8 available 128477364
-  drwxr-xr-x  3 dan  staff   102 Jul 16 15:12 .
-  drwxr-xr-x  5 dan  staff   170 Jul 16 14:48 ..
-  -rw-r--r--  1 dan  staff  3919 Jul 16 15:12 OpenMath.info
-

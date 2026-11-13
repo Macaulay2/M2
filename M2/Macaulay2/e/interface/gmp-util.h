@@ -1,5 +1,5 @@
-#ifndef _gmp_util_h_
-#  define _gmp_util_h_
+#ifndef M2_INTERFACE_GMP_UTIL_H_
+#define M2_INTERFACE_GMP_UTIL_H_
 
 #  include "engine-includes.hpp"
 
@@ -63,6 +63,19 @@ inline void mpfi_reallocate_limbs (mpfi_ptr _z)
   //  typedef CCmutable_struct* gmp_CCmutable;
   //  typedef CC_struct* gmp_CC;
 
+typedef struct {
+  mpfi_srcptr re;
+  mpfi_srcptr im;
+} CCi_struct;
+
+typedef struct {
+  mpfi_ptr re;
+  mpfi_ptr im;
+} CCimutable_struct;
+
+//  typedef CCimutable_struct* gmp_CCimutable;
+//  typedef CCi_struct* gmp_CCi;
+
   inline mpfr_srcptr moveTo_gmpRR (mpfr_ptr _z)
   {
     mpfr_reallocate_limbs(_z);
@@ -83,6 +96,16 @@ inline void mpfi_reallocate_limbs (mpfi_ptr _z)
     mpfr_reallocate_limbs(a->im);
     return (gmp_CC) a;
   }
+
+inline gmp_CCi moveTo_gmpCCi (gmp_CCimutable _z)
+{
+  CCimutable_struct* a = (CCimutable_struct*) _z;
+  mpfr_reallocate_limbs(&(a->re->left));
+  mpfr_reallocate_limbs(&(a->re->right));
+  mpfr_reallocate_limbs(&(a->im->left));
+  mpfr_reallocate_limbs(&(a->im->right));
+  return (gmp_CCi) a;
+}
 
 #  if defined(__cplusplus)
   }

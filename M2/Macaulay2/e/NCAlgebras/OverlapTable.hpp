@@ -1,5 +1,5 @@
-#ifndef _OverlapTable_hpp_
-#define _OverlapTable_hpp_
+#ifndef M2_NCALGEBRAS_OVERLAPTABLE_HPP_
+#define M2_NCALGEBRAS_OVERLAPTABLE_HPP_
 
 #include "Polynomial.hpp"  // for ConstPolyList
 

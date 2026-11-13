@@ -1,23 +1,24 @@
--* 
+-*
 this does not work unless M2 is compiled --with-python
 *-
 
 newPackage("Python",
-    Version => "1.0",
-    Date => "November 8, 2025",
+    Version => "1.1",
+    Date => "June 5, 2026",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
 	    Email => "danielrichardgrayson@gmail.com",
 	    HomePage => "https://faculty.math.illinois.edu/~dan/"},
 	{Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"}},
     Configuration => {"executable" => null},
     Keywords => {"Interfaces"},
     PackageImports => {"Text"},
     AuxiliaryFiles => true,
-    OptionalComponentsPresent => Core#"private dictionary"#?"pythonTrue"
+    OptionalComponentsPresent => Core#"private dictionary"#?"pythonTrue",
+    UseCachedExampleOutput => true,
     )
 
 ---------------
@@ -25,6 +26,9 @@ newPackage("Python",
 ---------------
 
 -*
+
+1.1 (2026-06-05, M2 1.26.06)
+* update my contact info
 
 1.0 (2025-11-08, M2 1.25.11)
 * New PythonContext class replacing undocumented Context class
@@ -146,13 +150,14 @@ pythonInitialize(ZZ#"Python executable" = executable)
 
 pythonHelp = Command (() -> builtins@@help())
 
-expression PythonObject := expression @@ pythonUnicodeAsUTF8 @@ pythonObjectStr
-toString PythonObject := toString @@ expression
-net PythonObject := net @@ expression
-texMath PythonObject := texMath @@ expression
+toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
+net PythonObject := net @@ toString
+texMath PythonObject := texMath @@ toString
+hypertext PythonObject := x -> SAMP { toString x, "class" => "language-python" }
+html PythonObject := html @@ hypertext
 
 describe PythonObject := x -> Describe FunctionApplication(pythonValue,
-    expression x@@"__repr__"())
+    toString x@@"__repr__"())
 toExternalString PythonObject := toExternalFormat @@ describe
 
 typename = x -> (
@@ -609,6 +614,14 @@ installNumPyMethods = () -> (
 
 load "Python/doc.m2"
 
+-- if in WebAppp mode, let's also import matplotlib and change the backend
+if topLevelMode === WebApp then try (
+    sys@@"path"@@append Python#"auxiliary files";
+    mpl := pythonImportImportModule "matplotlib";
+    mpl@@use "module://m2web_backend";
+)
+
+
 TEST ///
 -----------
 -- value --
@@ -756,7 +769,7 @@ assert Equation(0 xor y, 2)
 ----------------------
 assert Equation(-x, -5)
 assert Equation(+x, 5)
-assert Equation(x~, -6)
+assert Equation(~x, -6)
 assert Equation(not x, false)
 ///
 

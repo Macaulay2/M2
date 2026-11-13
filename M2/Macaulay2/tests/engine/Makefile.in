@@ -12,4 +12,3 @@ Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/engine/Mak
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests/engine check "
 # End:
-.NOTPARALLEL:

@@ -179,22 +179,7 @@ bracket(DGAlgebra, ZZ, ZZ) := HashTable => (A,d1,d2) -> (
     g1 := allgens(A, d1-1);
     g2 := allgens(A, d2-1);
     g3 := allgens(A, d1+d2-1);        
-    print(#g1, #g2, #g3);
-    print g3;
-    hashTable flatten flatten apply(g1, 
-	u -> apply(g2, 
-	    v -> apply(g3, 
-		T ->( ({u,v},T) => bracket(A,{u,v},T))
-		)))
-    )
-
-bracket(DGAlgebra, ZZ, ZZ) := HashTable => (A,d1,d2) -> (
-    g1 := allgens(A, d1-1);
-    g2 := allgens(A, d2-1);
-    g3 := allgens(A, d1+d2-1);        
     g3diff := apply(g3, T-> diff(A,T));
-    print(#g1, #g2, #g3);
-    print g3;
     hashTable flatten flatten apply(g1, 
 	u -> apply(g2, 
 	    v -> apply(g3diff, 
@@ -510,9 +495,8 @@ SeeAlso
  bracketMatrix
 ///
 
--*
 -* Test section *-
-TEST/// --graded skew symmetry:
+TEST /// --graded skew symmetry:
 kk = ZZ/101
 S = kk[x,y]
 R = S/ideal(x^2,y^2,x*y)
@@ -535,8 +519,8 @@ loadPackage "HomotopyLieAlgebra"
 check HomotopyLieAlgebra
 ///
 
-TEST/// 
---gradedJacobi identity: 
+TEST ///
+--gradedJacobi identity:
 --[U,[V,W]] = [[U,V],W] + (-1)^(1+homdeg U)*(1+homdeg V))* [V,[U,W]]
 
 kk = ZZ/101
@@ -564,6 +548,82 @@ assert (all(L1, ell ->ell));
 
 
 
+
+-- allgens: lists the generators, partitioned by homological degree
+TEST ///
+kk = ZZ/101
+S = kk[x,y]
+R = S/ideal(x^2,y^2,x*y)
+A = acyclicClosure(koszulComplexDGA ideal R, EndDegree => 4)
+assert instance(allgens A, List)
+assert instance(allgens(A,2), List)
+-- allgens(A,d) lists exactly the homological-degree-d generators...
+assert all(allgens(A,2), T -> first degree T == 2)
+-- ...and is a sublist of allgens A
+assert isSubset(allgens(A,2), allgens A)
+-- a degree with no generators yields the empty list (boundary)
+assert(allgens(A,999) === {})
+///
+
+-- bracketMatrix: a concrete value, pinning the sign logic
+TEST ///
+kk = ZZ/101
+S = kk[x,y]
+R = S/ideal(x^2,y^2,x*y)
+A = acyclicClosure(koszulComplexDGA ideal R, EndDegree => 4)
+b = bracketMatrix(A,1,1)
+assert instance(b, Matrix)
+p1 = allgens(A,1)
+assert(b == matrix{{2*p1_0, p1_2}, {p1_2, 2*p1_1}})
+///
+
+-- bracket (list form): value, type, the zero-input boundary, and a malformed-input error
+TEST ///
+kk = ZZ/101
+S = kk[x,y]
+R = S/ideal(x^2,y^2,x*y)
+A = acyclicClosure(koszulComplexDGA ideal R, EndDegree => 4)
+p0 = allgens(A,0)
+b = bracket(A, {p0_0, p0_1})
+assert instance(b, RingElement)
+-- [x,y] is the third degree-1 generator
+assert(b == (allgens(A,1))_2)
+-- a zero argument is handled gracefully (boundary)
+assert(bracket(A, {0_(A.natural), 0_(A.natural)}) == 0)
+-- a malformed (one-element) list must error
+assert(try (bracket(A, {p0_0}); false) else true)
+///
+
+-- bracket: the (A,d,e) HashTable form has the right type and shape; the action form runs
+TEST ///
+kk = ZZ/101
+S = kk[x,y]
+R = S/ideal(x^2,y^2,x*y)
+A = acyclicClosure(koszulComplexDGA ideal R, EndDegree => 4)
+p0 = allgens(A,0)
+p1 = allgens(A,1)
+H = bracket(A,1,1)
+assert instance(H, HashTable)
+-- one entry per (u,v,T) triple over degrees d-1, e-1, d+e-1
+assert(#H == (#p0) * (#p0) * (#p1))
+-- run test: the (A,List,RingElement) action form evaluates without error
+bracket(A, {p0_0, p0_1}, p1_0)
+///
+
+-- ad: the adjoint-action matrix, and the documented bracketMatrix row-sum identity
+TEST ///
+kk = ZZ/101
+S = kk[x,y]
+R = S/ideal(x^2,y^2,x*y)
+A = acyclicClosure(koszulComplexDGA ideal R, EndDegree => 4)
+U = sum allgens(A,0)
+adU = ad(A,U,1)
+assert instance(adU, Matrix)
+-- concrete value
+assert(adU - matrix{{2,0},{0,2},{1,1}} == 0)
+-- documented identity: re-attaching the generators recovers the bracketMatrix column sums
+assert(matrix{allgens(A,1)} * adU == matrix{{1,1}} * bracketMatrix(A,1,1))
+///
 
 end--
 

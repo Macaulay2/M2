@@ -1,7 +1,0 @@
-A = engineTowerRing N
-A = engineTowerRing (N,{z,a,b,c})
-R = A / (f(a,b,c), g(b,c), h(c))   -- we pass 0 as the relation for z
-R = A / ideal (f(a,b,c), g(b,c), h(c))
-R = A / {f(a,b,c), g(b,c), h(c)}
-class EngineTowerRing
-promote and lift should work

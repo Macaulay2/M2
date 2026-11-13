@@ -1,7 +1,0 @@
-     -- we should get a package's documentation from its database!!!
-
-fetchRawDocumentation(String,String) := (pkgtitle,fkey) -> (
-     needsPackage pkgtitle;				    -- maybe later we should dismiss this package if it wasn't already open!
-     if PackageDictionary#?pkgtitle and instance(pkg := value PackageDictionary#pkgtitle, Package) then fetchRawDocumentation(pkg,fkey)
-     else (stderr << "--warning: no package named " << pkgtitle << endl;)
-     )

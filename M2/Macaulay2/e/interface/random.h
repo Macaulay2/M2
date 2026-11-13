@@ -1,7 +1,7 @@
 // Copyright 2008 by Michael Stillman
 
-#ifndef _rand_h_
-#  define _rand_h_
+#ifndef M2_INTERFACE_RAND_H_
+#define M2_INTERFACE_RAND_H_
 
 #  include "engine-includes.hpp"
 
@@ -57,6 +57,16 @@ gmp_RR rawRandomRRNormal(unsigned long prec);
 gmp_CC rawRandomCC(unsigned long prec);
 
 void randomMpfr(mpfr_t result);
+
+gmp_RRi rawRandomRRi(unsigned long prec);
+void rawSetRandomRRi(mpfi_ptr result);
+/* returns an interval with the given precision containing two random
+ * variates from the uniform distribution on [0, 1] */
+
+gmp_CCi rawRandomCCi(unsigned long prec);
+/* returns a complex interval with the given precision whose real and imaginary
+ * parts each contain two random variates from the uniform distribution on
+ * [0, 1] */
 
 double randomDouble();
 

@@ -157,27 +157,27 @@ ifeq "$(NORULES)" ""
 
 .SUFFIXES : .sig.tmp .sig .dep .d .dd -exports.h.tmp -exports.h -tmp.c -tmp.cc
 
-%.sig: ;	test -e $*.sig && @CMP@ -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
-%-exports.h: ;	test -e $*-exports.h && @CMP@ -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
+%.sig: ;	$(HIDE)test -e $*.sig && @CMP@ -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
+%-exports.h: ;	$(HIDE)test -e $*-exports.h && @CMP@ -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 
 %.sig.tmp %.dep: %.d
 	$(SHOW)SCC1 -dep $*.d
 	$(HIDE)$(SCC1) -dep $(SCCFLAGS) $<
-	mv $*.dep.tmp $*.dep
-	test -e $*.sig && @CMP@ -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
+	$(HIDE)mv $*.dep.tmp $*.dep
+	$(HIDE)test -e $*.sig && @CMP@ -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
 %.sig.tmp %.dep: %.dd
 	$(SHOW)SCC1 -dep $*.dd
 	$(HIDE)$(SCC1) -dep $(SCCFLAGS) $<
-	mv $*.dep.tmp $*.dep
-	test -e $*.sig && @CMP@ -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
+	$(HIDE)mv $*.dep.tmp $*.dep
+	$(HIDE)test -e $*.sig && @CMP@ -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
 %-tmp.c	 %-exports.h.tmp: %.d
 	$(SHOW)SCC1 $*.d
 	$(HIDE)$(SCC1) $(SCCFLAGS) $<
-	test -e $*-exports.h && @CMP@ -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
+	$(HIDE)test -e $*-exports.h && @CMP@ -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 %-tmp.cc %-exports.h.tmp: %.dd
 	$(SHOW)SCC1 $*.dd
 	$(HIDE)$(SCC1) $(SCCFLAGS) $<
-	test -e $*-exports.h && @CMP@ -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
+	$(HIDE)test -e $*-exports.h && @CMP@ -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 %.o: %-tmp.c  %-exports.h
 	$(SHOW)CC $*-tmp.c
 	$(HIDE)$(COMPILE.c) $(DCFLAGS) $< $(OUTPUT_OPTION)
@@ -199,6 +199,34 @@ endif
 
 # libgc
 export GC_LARGE_ALLOC_WARN_INTERVAL=1
+
+# Resource limits for running our tests and the libraries' self-checks.
+
+# M2 reserves a stack per thread, so the memory it needs before running any
+# code grows with the number of processors; without a count, impose no limit
+M2_NPROC := $(shell getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null)
+M2_VLIMIT := $(if $(M2_NPROC),$(shell expr 600000 + 140000 '*' $(M2_NPROC) + 2000000))
+
+# cpu time, in seconds
+ifeq "@DEBUG@" "no"
+TLIMIT ?= 90
+else
+# give the debug version more time
+TLIMIT ?= 140
+endif
+# virtual memory, in kilobytes
+VLIMIT ?= $(M2_VLIMIT)
+# stack size in kilobytes, always the same as it would be under MacOS
+SLIMIT ?= 8192
+GC_MAXIMUM_HEAP_SIZE ?= 400M
+
+# libgc warns about an empty value rather than ignoring it
+GCLIMIT = $(if $(GC_MAXIMUM_HEAP_SIZE),GC_MAXIMUM_HEAP_SIZE=$(GC_MAXIMUM_HEAP_SIZE),env -u GC_MAXIMUM_HEAP_SIZE)
+
+# not :=, since the values may be set later
+LIMIT = $(if $(filter yes,@ULIMIT_T@),$(if $(TLIMIT),ulimit -t $(TLIMIT) ;))	\
+	$(if $(filter yes,@ULIMIT_V@),$(if $(VLIMIT),ulimit -v $(VLIMIT) ;))	\
+	$(if $(filter yes,@ULIMIT_S@),$(if $(SLIMIT),ulimit -s $(SLIMIT) ;))
 
 # status info
 WHY = @ (if [ -f $@ ] ;						\
@@ -225,6 +253,10 @@ HIDE := $(if $(VERBOSE),,@)
 
 %.o: %.cc
 	$(SHOW)CXX $*.cc
+	$(HIDE)$(COMPILE.cc) $< $(OUTPUT_OPTION)
+
+%.o: %.cpp
+	$(SHOW)CXX $*.cpp
 	$(HIDE)$(COMPILE.cc) $< $(OUTPUT_OPTION)
 
 # Local Variables:

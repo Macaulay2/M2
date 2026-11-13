@@ -30,6 +30,7 @@ export SpinLock := atomicType "struct spinlockStructure";
 export init(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_init(&(",lvalue(x),"),NULL)");
 export destroy(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_destroy(&(",lvalue(x),"))");
 export lock(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_lock(&(",lvalue(x),"))");
+export trylock(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_trylock(&(",lvalue(x),"))");
 export unlock(x:ThreadMutex) ::= Ccode(int, "pthread_mutex_unlock(&(",lvalue(x),"))");
 export getthreadself() ::= Ccode(Thread, "pthread_self()");
 

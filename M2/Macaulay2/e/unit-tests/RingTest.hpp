@@ -1,7 +1,7 @@
 // Copyright 2013 Michael E. Stillman
 
-#ifndef __ring_test_hpp__
-#define __ring_test_hpp__
+#ifndef M2_UNITTESTS__RING_TEST_HPP__
+#define M2_UNITTESTS__RING_TEST_HPP__
 
 #include <cstdio>
 #include <string>
@@ -12,7 +12,7 @@
 //#include <mpfr.h>
 
 #include "interface/random.h"
-#include "ZZ.hpp"
+#include "rings/ZZ.hpp"
 #include "exceptions.hpp"
 
 const int ntrials = 100;  // 5000

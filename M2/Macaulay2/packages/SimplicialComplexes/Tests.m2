@@ -497,34 +497,6 @@ D = simplicialComplex monomialIdeal(x_0*x_1,x_2*x_3*x_4)
 
 
 ------------------------------------------------------------------------------
-///
-R = QQ[x_0..x_4]
-F = face (x_0*x_1)
-G = face (x_0*x_1*x_2)
-assert(isSubface(F,G))
-assert(dim(F)==1);
-assert(dim(G)==2);
-assert(ring(F)===R)
-///
-
-
-------------------------------------------------------------------------------
-///
-R = QQ[x_0..x_4]
-F = face (x_0*x_1)
-assert(set vertices(F) === set {x_0,x_1})
-///
-
-
-------------------------------------------------------------------------------
-///
-R = QQ[x_0..x_4]
-F = face (x_0*x_1)
-assert(set vertices(F) === set {x_0,x_1})
-///
-
-
-------------------------------------------------------------------------------
 TEST ///
 R = QQ[a..e]
 D = simplicialComplex monomialIdeal(a*b*c*d*e)
@@ -708,20 +680,138 @@ assert (numgens ring D' == 3)
 -- Testing Connected Components
 
 -- For the void and empty complex, we should return that complex
+TEST ///
 R = QQ[x_0 .. x_11]
 void = simplicialComplex monomialIdeal(1_R)
 assert(#(connectedComponents void) == 1)
 assert((connectedComponents void)#0 === void)
-
-
 empty = simplicialComplex {1_R}
 assert(#(connectedComponents empty) == 1)
 assert((connectedComponents empty)#0 === empty)
-
 D = simplicialComplex {x_0*x_1, x_1*x_2, x_3*x_4, x_4*x_5*x_6, x_6*x_7, x_8*x_9*x_10, x_9*x_10*x_11}
 assert(#(connectedComponents D) == 3)
 P = positions(connectedComponents D, D -> D === simplicialComplex{x_6*x_7, x_4*x_5*x_6, x_3*x_4})
 assert(#P == 1)
+///
+
+
+------------------------------------------------------------------------------
+-- Named sphere, ball, and manifold constructors
+TEST ///
+-- The Hachimori-library complexes: classic triangulated spheres and balls.
+-- For each, check the dimension, the f-vector, and the reduced rational homology.
+checkComplex = (D, d, fv, h) -> (
+    assert(dim D == d);
+    assert(fVector D == fv);
+    H := prune homology D;
+    assert(apply(toList(-1..d), i -> rank H_i) == h);
+    );
+-- Barnette's 8-vertex non-polytopal triangulation of the 3-sphere
+checkComplex(bartnetteSphereComplex(QQ[x_0..x_7]), 3, {1,8,27,38,19}, {0,0,0,0,1});
+-- the Poincare homology 3-sphere has the rational homology of the 3-sphere
+checkComplex(poincareSphereComplex(QQ[x_0..x_15]), 3, {1,16,106,180,90}, {0,0,0,0,1});
+-- a non-piecewise-linear triangulation of the 5-sphere
+checkComplex(nonPiecewiseLinearSphereComplex(QQ[x_0..x_17]), 5,
+    {1,18,141,515,930,807,269}, {0,0,0,0,0,0,1});
+-- Rudin's, Grunbaum's, and Ziegler's balls are contractible 3-balls
+checkComplex(rudinBallComplex(QQ[x_0..x_13]), 3, {1,14,66,94,41}, {0,0,0,0,0});
+checkComplex(grunbaumBallComplex(QQ[x_0..x_13]), 3, {1,14,54,70,29}, {0,0,0,0,0});
+checkComplex(zieglerBallComplex(QQ[x_0..x_9]), 3, {1,10,38,50,21}, {0,0,0,0,0});
+-- the dunce hat is contractible (though not collapsible)
+checkComplex(dunceHatComplex(QQ[x_0..x_7]), 2, {1,8,24,17}, {0,0,0,0});
+-- Bjorner's complex
+checkComplex(bjornerComplex(QQ[x_0..x_5]), 2, {1,6,15,11}, {0,0,0,1});
+-- each constructor rejects a ring without enough variables
+assert(try (bartnetteSphereComplex(QQ[x_0..x_3]); false) else true);
+assert(try (bjornerComplex(QQ[x_0..x_3]); false) else true);
+///
+
+TEST ///
+-- kleinBottleComplex, realProjectiveSpaceComplex, and smallManifold produce
+-- triangulated manifolds.  We check the dimension, f-vector, and homology,
+-- using a field of characteristic two to expose the torsion.
+-- Klein bottle: rational H_1 has rank 1; over F_2, H_1 = (F_2)^2 and H_2 = F_2.
+K = kleinBottleComplex(QQ[x_0..x_7]);
+assert(dim K == 2 and fVector K == {1,8,24,16});
+assert(apply(toList(-1..2), i -> rank (prune homology K)_i) == {0,0,1,0});
+HK2 = prune homology kleinBottleComplex(ZZ/2[x_0..x_7]);
+assert(apply(toList(-1..2), i -> rank HK2_i) == {0,0,2,1});
+-- the real projective plane: rationally acyclic, with F_2-homology in degrees 1, 2
+P2 = realProjectiveSpaceComplex(2, QQ[x_0..x_5]);
+assert(dim P2 == 2 and fVector P2 == {1,6,15,10});
+assert(apply(toList(-1..2), i -> rank (prune homology P2)_i) == {0,0,0,0});
+HP2 = prune homology realProjectiveSpaceComplex(2, ZZ/2[x_0..x_5]);
+assert(apply(toList(-1..2), i -> rank HP2_i) == {0,0,1,1});
+-- RP^3 is an orientable 3-manifold, so rationally H_3 = QQ
+P3 = realProjectiveSpaceComplex(3, QQ[x_0..x_10]);
+assert(dim P3 == 3 and fVector P3 == {1,11,51,80,40});
+assert(apply(toList(-1..3), i -> rank (prune homology P3)_i) == {0,0,0,0,1});
+-- low-dimensional real projective spaces
+assert(facets realProjectiveSpaceComplex(0, QQ[x_0]) == {x_0});
+assert(dim realProjectiveSpaceComplex(1, QQ[x_0..x_2]) == 1);
+-- smallManifold looks up Frank Lutz's enumeration of small manifolds
+M = smallManifold(2,6,0,QQ[x_0..x_5]);                -- a 2-sphere on six vertices
+assert(dim M == 2 and fVector M == {1,6,12,8});
+assert(apply(toList(-1..2), i -> rank (prune homology M)_i) == {0,0,0,1});
+M' = smallManifold(3,5,0,QQ[x_0..x_4]);               -- boundary of the 4-simplex
+assert(dim M' == 3 and fVector M' == {1,5,10,10,5});
+assert(apply(toList(-1..3), i -> rank (prune homology M')_i) == {0,0,0,0,1});
+-- smallManifold reports an out-of-range index
+assert(try (smallManifold(2,6,3,QQ[x_0..x_5]); false) else true);
+///
+
+
+------------------------------------------------------------------------------
+-- buchbergerResolution and inducedSubcomplex
+TEST ///
+-- buchbergerResolution resolves a monomial ideal by homogenizing its
+-- Buchberger simplicial complex.
+R = ZZ/101[x_0..x_4];
+L = {x_1^2, x_2^2, x_3^2, x_1*x_3, x_2*x_4};
+M = monomialIdeal L;
+BR = buchbergerResolution L;
+assert(class BR === Complex);
+assert(BR.dd^2 == 0);
+-- it is a free resolution of the quotient by the monomial ideal
+assert((prune HH BR)_0 == coker gens M);
+assert all(1..length BR, i -> (prune HH BR)_i == 0);
+-- its ranks are the f-vector of the Buchberger simplicial complex
+assert((for i to length BR list rank BR_i) == fVector buchbergerSimplicialComplex(L,R));
+-- it agrees with homogenizing the Buchberger complex directly
+assert(BR == complex(buchbergerSimplicialComplex(L,R), Labels => L));
+-- for this ideal the resolution is minimal, hence equals the Scarf complex
+assert(BR == scarfChainComplex L);
+-- the MonomialIdeal signature also resolves the quotient
+assert((prune HH buchbergerResolution M)_0 == coker gens M);
+-- degenerate case: the zero ideal
+assert((buchbergerResolution monomialIdeal(0_R))_0 == R^1);
+///
+
+TEST ///
+-- inducedSubcomplex(D, V) is the full subcomplex of D on the vertex subset V.
+S = ZZ[x_0..x_3];
+D = simplicialComplex {x_0*x_1*x_2, x_2*x_3, x_1*x_3};
+G = inducedSubcomplex(D, {x_1, x_2, x_3});
+assert(isWellDefined G);
+assert(set vertices G === set {x_1, x_2, x_3});
+assert(ring G === ring D);
+assert(dim G == 1);
+-- every facet of the induced subcomplex is a face of the original complex
+assert all(facets G, F -> member(F, faces(# support F - 1, D)));
+-- restricting to the full vertex set recovers the complex
+assert(inducedSubcomplex(D, vertices D) === D);
+-- a larger example
+T = QQ[a..f];
+E = simplicialComplex {a*b*c, b*c*d, d*e*f, a*f};
+assert(set facets inducedSubcomplex(E, {a,b,c,d}) === set {a*b*c, b*c*d});
+-- the void and irrelevant complexes are their own induced subcomplexes
+void = simplicialComplex monomialIdeal(1_S);
+assert(inducedSubcomplex(void, {}) === void);
+irrelevant = simplicialComplex {1_S};
+assert(inducedSubcomplex(irrelevant, {}) === irrelevant);
+-- a non-vertex argument is rejected
+assert(try (inducedSubcomplex(D, {x_0, 1_S}); false) else true);
+///
 
 
 -*

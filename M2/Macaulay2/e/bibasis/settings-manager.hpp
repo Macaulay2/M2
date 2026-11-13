@@ -7,10 +7,10 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_SETTINGS_MANAGER_HPP
-#define BIBASIS_SETTINGS_MANAGER_HPP
+#ifndef M2_BIBASIS_SETTINGS_MANAGER_HPP
+#define M2_BIBASIS_SETTINGS_MANAGER_HPP
 
-#include "monom.hpp"
+#include "bibasis/monom.hpp"
 
 namespace BIBasis
 {

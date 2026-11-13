@@ -846,7 +846,7 @@ document {
 	  },
      Outputs => {
 	  Symbol => {"a global symbol whose name is provided by the string ", TT "s", "
-	       in the private dictionary for the package ", TO "User", "."
+	       in the private dictionary for the package ", TO "Macaulay2Doc::User", "."
 	       }
 	  },
      EXAMPLE lines ///

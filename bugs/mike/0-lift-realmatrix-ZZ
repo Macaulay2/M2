@@ -1,4 +1,0 @@
-This seems to be a bug:
-
-i30 : lift(matrix{{1.}},ZZ)
-stdio:30:1:(3):[0]: error: cannot lift given matrix

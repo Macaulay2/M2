@@ -68,6 +68,7 @@ ZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true
 RRi.isCommutative = true
+CCi.isCommutative = true
 
 isRing = method(TypicalValue => Boolean)
 isRing Thing := R -> false
@@ -102,12 +103,15 @@ isConstant = method(TypicalValue => Boolean)
 isConstant RingElement := r -> liftable(r, coefficientRing ring r)
 
 lift = method(Dispatch => {Thing, Type, Type}, Options => {Verify => true})
-Number ^ Ring := lift
+Number ^ Ring := RingElement ^ Ring := lift
 
 promote = method(Dispatch => {Thing, Type, Type})
 Number _ Ring := promote
 
-isPromotable = (R,S) -> lookup(promote,R,S) =!= null
+isPromotable = method(TypicalValue => Boolean)
+isPromotable(RingFamily,RingFamily) :=
+isPromotable(RingFamily,Ring) :=
+isPromotable(Ring,Ring) := (R,S) -> lookup(promote,R,S) =!= null
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

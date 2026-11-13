@@ -4,11 +4,11 @@ Prism.languages.m2 =
 Prism.languages.macaulay2 = {
     'comment': [
 	{
-	    pattern: /(^|[^\\])\-\*[\s\S]*?(?:\*\-|$)/,
+	    pattern: /(^|[^\\<|])\-\*[\s\S]*?(?:\*\-|$)/,
 	    lookbehind: true
 	},
 	{
-	    pattern: /(^|[^\\:])\-\-.*/,
+	    pattern: /(^|[^\\<|])\-\-.*/,
 	    lookbehind: true,
 	    greedy: true
 	}

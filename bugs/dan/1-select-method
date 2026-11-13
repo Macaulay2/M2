@@ -1,1 +1,0 @@
-Change "select" to a method function so users can add methods to it.

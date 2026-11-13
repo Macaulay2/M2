@@ -1,4 +1,0 @@
---warning: 'operator new' or 'operator delete' referred to in the following files:
-   ntl-interface.o:         U operator delete(void*)
-   ntl-internal.o:         U operator delete(void*)
-   ntl-internal.o:         U operator new(unsigned int)

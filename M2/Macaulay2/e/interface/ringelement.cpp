@@ -7,30 +7,34 @@
 #include <utility>
 #include <vector>
 
-#include "ExponentList.hpp"
+#include "monomials/ExponentList.hpp"
 #include "M2FreeAlgebra.hpp"
 #include "M2FreeAlgebraQuotient.hpp"
 
-#include "aring-CC.hpp"
-#include "aring-CCC.hpp"
-#include "aring-glue.hpp"
-#include "aring.hpp"
+#include "basic-rings/aring-CC.hpp"
+#include "basic-rings/aring-CCC.hpp"
+#include "basic-rings/aring-RR.hpp"
+#include "basic-rings/aring-RRR.hpp"
+#include "basic-rings/aring-RRi.hpp"
+#include "basic-rings/aring-CCi.hpp"
+#include "basic-rings/aring-glue.hpp"
+#include "basic-rings/aring.hpp"
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
 #include "interface/monoid.h"
 #include "monoid.hpp"
-#include "monomial.hpp"
+#include "monomials/monomial.hpp"
 #include "newdelete.hpp"
-#include "poly.hpp"
-#include "polyring.hpp"
-#include "relem.hpp"
-#include "ring.hpp"
-#include "ringelem.hpp"
-#include "schur.hpp"
-#include "schur2.hpp"
-#include "schurSn.hpp"
-#include "tower.hpp"
+#include "rings/poly.hpp"
+#include "rings/polyring.hpp"
+#include "ring-elements/ring-element.hpp"
+#include "rings/ring.hpp"
+#include "rings/ringelem.hpp"
+#include "schur-rings/schur.hpp"
+#include "schur-rings/schur2.hpp"
+#include "schur-rings/schurSn.hpp"
+#include "rings/tower.hpp"
 #include "util.hpp"
 
 namespace M2 { class ARingRRR; }
@@ -85,6 +89,14 @@ const RingElement *IM2_RingElement_from_Interval(const Ring *R, gmp_RRi z)
    return nullptr;
 }
 
+const RingElement *IM2_RingElement_from_ComplexInterval(const Ring *R, gmp_CCi z)
+{
+   ring_elem f;
+   if (R->from_ComplexInterval(z, f)) return RingElement::make_raw(R, f);
+   ERROR("cannot create element of this ring from an element of CCi");
+   return nullptr;
+}
+
 gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
 /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
    Otherwise, NULL is returned, and an error is given */
@@ -136,7 +148,7 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
         return moveTo_gmpRR(result);
       case M2::ring_RRR:
         R1 =
-            dynamic_cast<const M2::ConcreteRing<M2::ARingRRR> *>(a->get_ring());
+            dynamic_cast<const M2::ConcreteRing<M2::ARingRRR> *>(R);
         result = getmemstructtype(gmp_RRmutable);
         mpfr_init2(result, R1->get_precision());
         mpfr_set(result, a->get_value().get_mpfr(), MPFR_RNDN);
@@ -160,9 +172,16 @@ gmp_RRiorNull IM2_RingElement_to_Interval(const RingElement *a)
           mpfi_init2(result, 53);
           mpfi_set_d(result, a->get_value().get_double());
           return moveTo_gmpRRi(result);
+       case M2::ring_RRR:
+          R1 =
+            dynamic_cast<const M2::ConcreteRing<M2::ARingRRi> *>(R);
+          result = getmemstructtype(gmp_RRimutable);
+          mpfi_init2(result, R1->get_precision());
+          mpfi_set_fr(result, a->get_value().get_mpfr());
+          return moveTo_gmpRRi(result);
        case M2::ring_RRi:
           R1 =
-          dynamic_cast<const M2::ConcreteRing<M2::ARingRRi> *>(a->get_ring());
+          dynamic_cast<const M2::ConcreteRing<M2::ARingRRi> *>(R);
           result = getmemstructtype(gmp_RRimutable);
           mpfi_init2(result, R1->get_precision());
           mpfi_set(result, a->get_value().get_mpfi());
@@ -194,6 +213,73 @@ gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
     }
   ERROR("expected an element of CCC");
   return nullptr;
+}
+
+gmp_CCiorNull IM2_RingElement_to_ComplexInterval(const RingElement *a)
+{
+    const Ring *R = a->get_ring();
+    gmp_CCimutable result;
+    const M2::ConcreteRing<M2::ARingCCi> *R1;
+
+    switch (R->ringID())
+    {
+       case M2::ring_RR:
+          result = getmemstructtype(gmp_CCimutable);
+            result->re = getmemstructtype(gmp_RRimutable);
+            result->im = getmemstructtype(gmp_RRimutable);
+          mpfi_init2(result->re, 53);
+          mpfi_init2(result->im, 53);
+          mpfi_set_d(result->re, a->get_value().get_double());
+          mpfi_set_d(result->im, 0);
+          return moveTo_gmpCCi(result);
+       case M2::ring_RRR:
+            R1 =
+              dynamic_cast<const M2::ConcreteRing<M2::ARingCCi> *>(R);
+           result = getmemstructtype(gmp_CCimutable);
+            result->re = getmemstructtype(gmp_RRimutable);
+            result->im = getmemstructtype(gmp_RRimutable);
+           mpfi_init2(result->re, R1->get_precision());
+           mpfi_init2(result->im, R1->get_precision());
+           mpfi_set_fr(result->re, a->get_value().get_mpfr());
+           mpfi_set_d(result->im, 0);
+           return moveTo_gmpCCi(result);
+       case M2::ring_RRi:
+          R1 =
+          dynamic_cast<const M2::ConcreteRing<M2::ARingCCi> *>(R);
+          result = getmemstructtype(gmp_CCimutable);
+            result->re = getmemstructtype(gmp_RRimutable);
+            result->im = getmemstructtype(gmp_RRimutable);
+          mpfi_init2(result->re, R1->get_precision());
+          mpfi_init2(result->im, R1->get_precision());
+          mpfi_set(result->re, a->get_value().get_mpfi());
+          mpfi_set_d(result->im,0);
+          return moveTo_gmpCCi(result);
+        case M2::ring_CCC:
+            R1 =
+               dynamic_cast<const M2::ConcreteRing<M2::ARingCCi> *>(R);
+            result = getmemstructtype(gmp_CCimutable);
+            result->re = getmemstructtype(gmp_RRimutable);
+            result->im = getmemstructtype(gmp_RRimutable);
+            mpfi_init2(result->re, R1->get_precision());
+            mpfi_init2(result->im, R1->get_precision());
+            mpfi_set_fr(result->re, &a->get_value().get_cc()->re);
+            mpfi_set_fr(result->im, &a->get_value().get_cc()->im);
+            return moveTo_gmpCCi(result);
+       case M2::ring_CCi:
+           R1 =
+           dynamic_cast<const M2::ConcreteRing<M2::ARingCCi> *>(R);
+           result = getmemstructtype(gmp_CCimutable);
+            result->re = getmemstructtype(gmp_RRimutable);
+            result->im = getmemstructtype(gmp_RRimutable);
+           mpfi_init2(result->re, R1->get_precision());
+           mpfi_init2(result->im, R1->get_precision());
+           mpfi_set(result->re, &a->get_value().get_cci()->re);
+           mpfi_set(result->im, &a->get_value().get_cci()->im);
+           return moveTo_gmpCCi(result);
+       default:
+          ERROR("expected an element of CCi");
+          return nullptr;
+    }
 }
 
 #if 0

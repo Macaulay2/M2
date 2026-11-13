@@ -20,9 +20,6 @@ newPackage("EliminationMatrices",
    )
 
 export {
---	"matrixToListByColumns",
---	"matrixToListByRows",
---	"rankNum",
 	"maxCol",
 	"maxMinor",
 -- MAIN FUNCTIONS
@@ -31,17 +28,11 @@ export {
 	"detComplex",
 	"mapsComplex",
 	"minorsComplex",
---	"degMap",
---	"macRes",
 	"macaulayFormula",
 	"bezoutianMatrix",
---	"ciRes",
 	"ciResDeg",
 	"ciResDegGH",
---	"cm2Res",
---	"detRes",
 	"detResDeg",
---	"rankNE",
 	"Numeric",
 	"Exact",
 	"Sylvester",
@@ -53,6 +44,9 @@ export {
 	"eliminationMatrix",
 	"regularityVar"
 }
+-- Internal helpers defined but intentionally not exported:
+--   matrixToListByColumns, matrixToListByRows, rankNE, rankNum, degMap,
+--   macRes, ciRes, cm2Res, detRes  (used by the dispatchers above)
 
 
 --######################################################################
@@ -1798,14 +1792,25 @@ assert(detC1 == -detC3)
 -- Checking the function ciRes
 TEST ///
 
-R=QQ[a_0,a_1,a_2,a_3,a_4,b_0,b_1,b_2,b_3,b_4,c_0,c_1,c_2,c_3,c_4,x,y,z]; 
-G=matrix{{z,x^2+y^2}}; 
-H=matrix{{a_0*z+a_1*x+a_2*y,b_0*z+b_1*x+b_2*y,c_0*z+c_1*x+c_2*y},{a_3,b_3,c_3}}; 
+R=QQ[a_0,a_1,a_2,a_3,a_4,b_0,b_1,b_2,b_3,b_4,c_0,c_1,c_2,c_3,c_4,x,y,z];
+G=matrix{{z,x^2+y^2}};
+H=matrix{{a_0*z+a_1*x+a_2*y,b_0*z+b_1*x+b_2*y,c_0*z+c_1*x+c_2*y},{a_3,b_3,c_3}};
 L=eliminationMatrix({x,y,z},G,H, Strategy => ciResidual)
-maxCol L
+-- maxCol must return a maximal-rank column subset of L (rank L == 6 for this generic input)
+mc = maxCol L
+assert(numColumns mc#0 == rank L and rank mc#0 == rank L)
 
-
-assert(toString L == "matrix {{a_3, b_3, c_3, -a_3*b_1+a_1*b_3, 0, 0, -a_3*c_1+a_1*c_3, 0, 0, -b_3*c_1+b_1*c_3, 0, 0}, {0, 0, 0, -a_3*b_2+a_2*b_3, -a_3*b_1+a_1*b_3, 0, -a_3*c_2+a_2*c_3, -a_3*c_1+a_1*c_3, 0, -b_3*c_2+b_2*c_3, -b_3*c_1+b_1*c_3, 0}, {a_1, b_1, c_1, -a_3*b_0+a_0*b_3, 0, -a_3*b_1+a_1*b_3, -a_3*c_0+a_0*c_3, 0, -a_3*c_1+a_1*c_3, -b_3*c_0+b_0*c_3, 0, -b_3*c_1+b_1*c_3}, {a_3, b_3, c_3, 0, -a_3*b_2+a_2*b_3, 0, 0, -a_3*c_2+a_2*c_3, 0, 0, -b_3*c_2+b_2*c_3, 0}, {a_2, b_2, c_2, 0, -a_3*b_0+a_0*b_3, -a_3*b_2+a_2*b_3, 0, -a_3*c_0+a_0*c_3, -a_3*c_2+a_2*c_3, 0, -b_3*c_0+b_0*c_3, -b_3*c_2+b_2*c_3}, {a_0, b_0, c_0, 0, 0, -a_3*b_0+a_0*b_3, 0, 0, -a_3*c_0+a_0*c_3, 0, 0, -b_3*c_0+b_0*c_3}}")
+-- pin the ciResidual matrix entry-by-entry (avoids brittle toString comparison)
+assert(numRows L == 6 and numColumns L == 12)
+assert(ring L === R)
+assert(entries L == {
+    {a_3, b_3, c_3, -a_3*b_1+a_1*b_3, 0, 0, -a_3*c_1+a_1*c_3, 0, 0, -b_3*c_1+b_1*c_3, 0, 0},
+    {0, 0, 0, -a_3*b_2+a_2*b_3, -a_3*b_1+a_1*b_3, 0, -a_3*c_2+a_2*c_3, -a_3*c_1+a_1*c_3, 0, -b_3*c_2+b_2*c_3, -b_3*c_1+b_1*c_3, 0},
+    {a_1, b_1, c_1, -a_3*b_0+a_0*b_3, 0, -a_3*b_1+a_1*b_3, -a_3*c_0+a_0*c_3, 0, -a_3*c_1+a_1*c_3, -b_3*c_0+b_0*c_3, 0, -b_3*c_1+b_1*c_3},
+    {a_3, b_3, c_3, 0, -a_3*b_2+a_2*b_3, 0, 0, -a_3*c_2+a_2*c_3, 0, 0, -b_3*c_2+b_2*c_3, 0},
+    {a_2, b_2, c_2, 0, -a_3*b_0+a_0*b_3, -a_3*b_2+a_2*b_3, 0, -a_3*c_0+a_0*c_3, -a_3*c_2+a_2*c_3, 0, -b_3*c_0+b_0*c_3, -b_3*c_2+b_2*c_3},
+    {a_0, b_0, c_0, 0, 0, -a_3*b_0+a_0*b_3, 0, 0, -a_3*c_0+a_0*c_3, 0, 0, -b_3*c_0+b_0*c_3}
+    })
 ///
 
 
@@ -1816,7 +1821,14 @@ TEST ///
 R=ZZ[d_0..d_3,k_1,k_2]
 L=ciResDeg({d_0,d_1,d_2,d_3},{k_1,k_2})
 
-assert(toString L == "{d_0+d_1+d_2+d_3-3*k_2-3, {d_1*d_2*d_3-d_1*k_1*k_2-d_2*k_1*k_2-d_3*k_1*k_2+k_1^2*k_2+k_1*k_2^2, d_0*d_2*d_3-d_0*k_1*k_2-d_2*k_1*k_2-d_3*k_1*k_2+k_1^2*k_2+k_1*k_2^2, d_0*d_1*d_3-d_0*k_1*k_2-d_1*k_1*k_2-d_3*k_1*k_2+k_1^2*k_2+k_1*k_2^2, d_0*d_1*d_2-d_0*k_1*k_2-d_1*k_1*k_2-d_2*k_1*k_2+k_1^2*k_2+k_1*k_2^2}}")
+-- ciResDeg returns {regularity, partial-degree list}: pin via polynomial equality, not toString
+assert(L#0 == d_0+d_1+d_2+d_3 - 3*k_2 - 3)
+assert(L#1 == {
+    d_1*d_2*d_3 - d_1*k_1*k_2 - d_2*k_1*k_2 - d_3*k_1*k_2 + k_1^2*k_2 + k_1*k_2^2,
+    d_0*d_2*d_3 - d_0*k_1*k_2 - d_2*k_1*k_2 - d_3*k_1*k_2 + k_1^2*k_2 + k_1*k_2^2,
+    d_0*d_1*d_3 - d_0*k_1*k_2 - d_1*k_1*k_2 - d_3*k_1*k_2 + k_1^2*k_2 + k_1*k_2^2,
+    d_0*d_1*d_2 - d_0*k_1*k_2 - d_1*k_1*k_2 - d_2*k_1*k_2 + k_1^2*k_2 + k_1*k_2^2
+    })
 
 ///
 
@@ -1838,7 +1850,21 @@ Mat= (mapsComplex(regularity I -1, l, freeResolution I))_0
 fittI = minors(10,Mat)
 fittCmR = minors(10,CmR)
 
-assert(toString CmR == "matrix {{0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -X, 1, 0, -Y+1, 0, 0}, {0, 0, -Y, 0, 0, 0, -Z, 0, 1, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, -X, 0, 0, -Y+1, 0}, {0, 0, X, -Y, 0, 0, 0, -Z, -X, -Z, 0, -Y+1}, {0, 0, 0, 0, -Y, -1, 0, 0, -Z, 0, 0, 0}, {X, Y-1, 0, 0, 0, Z, 0, 0, 0, 0, 0, 0}, {0, 0, 0, X, 0, 0, 0, 0, 0, 0, -Z, 0}, {0, 0, 0, 0, X, 0, 0, 0, 0, 0, 0, -Z}, {X, Y, 0, 0, 0, Z, 0, 0, 0, 0, 0, 0}}")
+-- pin the CM2Residual matrix entry-by-entry (avoids brittle toString comparison)
+assert(numRows CmR == 10 and numColumns CmR == 12)
+assert(ring CmR === R)
+assert(entries CmR == {
+    {0, 0,  0,  0,  0,  0,  1,  0,  0,  0,    0,    0  },
+    {0, 0,  0,  0,  0,  0, -X,  1,  0, -Y+1,  0,    0  },
+    {0, 0, -Y,  0,  0,  0, -Z,  0,  1,  0,    0,    0  },
+    {-1,0,  0,  0,  0,  0,  0, -X,  0,  0,   -Y+1,  0  },
+    {0, 0,  X, -Y,  0,  0,  0, -Z, -X, -Z,   0,   -Y+1 },
+    {0, 0,  0,  0, -Y, -1,  0,  0, -Z,  0,    0,    0  },
+    {X, Y-1,0,  0,  0,  Z,  0,  0,  0,  0,    0,    0  },
+    {0, 0,  0,  X,  0,  0,  0,  0,  0,  0,   -Z,    0  },
+    {0, 0,  0,  0,  X,  0,  0,  0,  0,  0,    0,   -Z  },
+    {X, Y,  0,  0,  0,  Z,  0,  0,  0,  0,    0,    0  }
+    })
 
 assert(fittI == fittCmR)
 
@@ -1851,7 +1877,9 @@ TEST ///
 R = ZZ[d1,d2,d3,k1,k2]
 DRD = detResDeg(1, {d1,d2,d3},{k1,k2},R)
 
-assert(toString DRD == "{d1+d2+d3-k1-2*k2-1, {d2+d3-k1-k2, d1+d3-k1-k2, d1+d2-k1-k2}}")
+-- detResDeg returns {regularity, partial-degree list}: pin via polynomial equality, not toString
+assert(DRD#0 == d1+d2+d3 - k1 - 2*k2 - 1)
+assert(DRD#1 == {d2+d3-k1-k2, d1+d3-k1-k2, d1+d2-k1-k2})
 ///
 
 
@@ -1864,7 +1892,14 @@ R = QQ[a_0..a_5,b_0..b_5,x,y]
 M = matrix{{a_0*x+a_1*y,a_2*x+a_3*y,a_4*x+a_5*y},{b_0*x+b_1*y,b_2*x+b_3*y,b_4*x+b_5*y}}
 Res = eliminationMatrix(1,{x,y},M, Strategy => determinantal)
 
-assert(toString Res == "matrix {{-a_2*b_0+a_0*b_2, -a_4*b_0+a_0*b_4, -a_4*b_2+a_2*b_4}, {-a_3*b_0-a_2*b_1+a_1*b_2+a_0*b_3, -a_5*b_0-a_4*b_1+a_1*b_4+a_0*b_5, -a_5*b_2-a_4*b_3+a_3*b_4+a_2*b_5}, {-a_3*b_1+a_1*b_3, -a_5*b_1+a_1*b_5, -a_5*b_3+a_3*b_5}}")
+-- pin the determinantal matrix entry-by-entry (avoids brittle toString comparison)
+assert(numRows Res == 3 and numColumns Res == 3)
+assert(ring Res === R)
+assert(entries Res == {
+    {-a_2*b_0+a_0*b_2,                  -a_4*b_0+a_0*b_4,                  -a_4*b_2+a_2*b_4                },
+    {-a_3*b_0-a_2*b_1+a_1*b_2+a_0*b_3,  -a_5*b_0-a_4*b_1+a_1*b_4+a_0*b_5,  -a_5*b_2-a_4*b_3+a_3*b_4+a_2*b_5},
+    {-a_3*b_1+a_1*b_3,                  -a_5*b_1+a_1*b_5,                  -a_5*b_3+a_3*b_5                }
+    })
 
 ///
 
@@ -1881,4 +1916,169 @@ l = {x,y,z}
 
 assert(regularityVar (l,I)==1)
 
+///
+
+-- Test 12
+-- Checking maxCol output directly (EliminationMatrices.m2:202-214)
+TEST ///
+R = QQ[x,y,z]
+-- maxCol returns {N, c} where N = M_c is a maximal-rank column subset and c is the index list
+mc = maxCol id_(R^3)
+assert(mc#0 == id_(R^3))
+assert(mc#1 == {0,1,2})
+
+-- rank-deficient case: the second column is redundant
+M = matrix{{1_R, 2_R, 0_R}, {0_R, 0_R, 1_R}}
+assert(rank M == 2)
+mc2 = maxCol M
+assert(numColumns mc2#0 == 2 and rank mc2#0 == 2)
+assert(mc2#1 == {0,2})
+
+-- zero matrix: no maximal-rank columns
+mc3 = maxCol matrix{{0_R, 0_R}, {0_R, 0_R}}
+assert(numColumns mc3#0 == 0 and mc3#1 == {})
+///
+
+-- Test 13
+-- Checking maxMinor output directly (EliminationMatrices.m2:223-228)
+TEST ///
+R = QQ[x,y,z]
+-- maxMinor returns a square r x r full-rank submatrix where r = rank M
+M = matrix{{1_R, 0_R, 1_R, 1_R}, {0_R, 1_R, 1_R, 0_R}, {0_R, 0_R, 0_R, 1_R}}
+assert(rank M == 3)
+mm = maxMinor M
+assert(numRows mm == 3 and numColumns mm == 3)
+assert(rank mm == 3)
+
+-- on a square full-rank matrix, maxMinor is the matrix itself
+assert(maxMinor id_(R^3) == id_(R^3))
+///
+
+-- Test 14
+-- Checking Numeric and Exact Strategy values for maxCol (EliminationMatrices.m2:157-167)
+TEST ///
+setRandomSeed 0
+R = QQ[a,b,c]
+M = matrix{{a, b, c, a+b}, {b, c, a, b+c}, {a, a, b, a}}
+r = rank M
+-- both strategies must produce a maximal full-rank column subset
+mcE = maxCol(M, Strategy => Exact)
+mcN = maxCol(M, Strategy => Numeric)
+assert(numColumns mcE#0 == r and rank mcE#0 == r)
+assert(numColumns mcN#0 == r and rank mcN#0 == r)
+-- unknown Strategy must be rejected (EliminationMatrices.m2:164)
+assert(try (maxCol(M, Strategy => Foo); false) else true)
+///
+
+-- Test 15
+-- Checking listDetComplex / detComplex agreement (EliminationMatrices.m2:357-391)
+TEST ///
+R=QQ[a,b,c,x,y]
+f1 = a*x^2+b*x*y+c*y^2
+f2 = 2*a*x+b*y
+M = matrix{{f1,f2}}
+l = {x,y}
+
+ldc = listDetComplex(2, l, koszulComplex M)
+dc  = detComplex(2, l, koszulComplex M)
+-- detComplex is documented as the alternating product of listDetComplex entries
+manual = ldc#0
+for i from 1 to (length ldc) - 1 do (
+    if even i then manual = manual * (ldc#i)
+    else            manual = manual / (ldc#i);
+)
+assert(manual == dc)
+
+-- both Numeric and Exact strategies should land on the same alternate-product invariant
+ldcN = listDetComplex(2, l, koszulComplex M, Strategy => Numeric)
+dcN  = detComplex(2, l, koszulComplex M, Strategy => Numeric)
+manualN = ldcN#0
+for i from 1 to (length ldcN) - 1 do (
+    if even i then manualN = manualN * (ldcN#i)
+    else            manualN = manualN / (ldcN#i);
+)
+assert(manualN == dcN)
+///
+
+-- Test 16
+-- Checking macaulayFormula structure (EliminationMatrices.m2:423-445)
+TEST ///
+R = QQ[a,b,c,x,y]
+M = matrix{{a*x^2+b*x*y+c*y^2, 2*a*x+b*y}}
+mf = macaulayFormula({x,y}, M)
+-- macaulayFormula returns a Sequence (C, D) such that det(C)/det(D) is the Macaulay resultant
+assert(class mf === Sequence and length mf == 2)
+-- For this complete intersection in 2 vars, the "missing principal minor" submatrix is empty
+assert(numRows mf#1 == 0 and numColumns mf#1 == 0)
+-- C agrees in entries with the Macaulay elimination matrix
+em = eliminationMatrix({x,y}, M)
+assert(entries mf#0 == entries em)
+-- and they have the same determinant
+assert(det mf#0 == det em)
+///
+
+-- Test 17
+-- Checking bezoutianMatrix structure (EliminationMatrices.m2:458-502)
+TEST ///
+R = QQ[a,b,c,x]
+-- bezoutianMatrix needs n+1 affine polys in n variables; here n=1, two polys of degrees 1,2
+p = matrix{{a*x+b, c*x^2+a*x+1}}
+bm = bezoutianMatrix({x}, p)
+-- result is a square matrix in the original ring R
+assert(ring bm === R)
+assert(numRows bm == numColumns bm)
+-- size matches the max input degree (= 2 here)
+assert(numRows bm == 2)
+-- pin entries: bezoutian of (ax+b, cx^2+ax+1) wrt x
+-- (compare on entries; the source/target degree decoration may differ from a fresh matrix{...})
+assert(entries bm == {{a*c, b*c}, {b*c, a*b - a}})
+///
+
+-- Test 18
+-- Checking ciResDegGH agrees with the first entry of ciResDeg for the same degree data
+-- (EliminationMatrices.m2:534-543, 551-560)
+TEST ///
+R = QQ[a_0..a_3, b_0..b_3, c_0..c_3, x,y,z]
+G = matrix{{z, x^2+y^2}}
+H = matrix{{a_0*z+a_1*x+a_2*y, b_0*z+b_1*x+b_2*y, c_0*z+c_1*x+c_2*y},
+           {a_3,               b_3,               c_3              }}
+d = ciResDegGH({x,y,z}, G, H)
+assert(class d === ZZ)
+-- ciResDegGH uses partial degrees in {x,y,z}; here pdeg(G,var) = {1,2} and pdeg(G*H,var) = {2,2,2}
+-- and ciResDeg's first entry uses exactly the same formula on the integer lists.
+assert(d == (ciResDeg({2,2,2}, {1,2}))#0)
+///
+
+-- Test 19
+-- Checking the byResolution strategy on a complete intersection
+-- (EliminationMatrices.m2:756-759, 771-774)
+TEST ///
+R = QQ[a,b,c,x,y]
+M = matrix{{a*x^2 + b*x*y + c*y^2, 2*a*x + b*y}}
+-- byResolution computes (mapsComplex(regularityVar(var,I), var, freeResolution I))_0
+-- where I = minors(r+1, g) for the (ZZ, List, Matrix) overload
+er = eliminationMatrix(0, {x,y}, M, Strategy => byResolution)
+assert(class er === Matrix)
+assert(ring er === R)
+I = minors(1, M)
+expected = (mapsComplex(regularityVar({x,y}, I), {x,y}, freeResolution I))#0
+assert(er == expected)
+-- An unknown Strategy is rejected (EliminationMatrices.m2:733, getFamilyStrategy error branch)
+assert(try (eliminationMatrix(0, {x,y}, M, Strategy => Foo); false) else true)
+///
+
+-- Test 20
+-- Checking the 2-poly / 1-var dispatch routes to the Sylvester matrix
+-- (EliminationMatrices.m2:747)
+TEST ///
+R = QQ[s,t,u,v][z]
+g1 = z^2 + s*z + t
+g2 = z + u*z + v
+Mz = matrix{{g1, g2}}
+em = eliminationMatrix({z}, Mz)
+sm = sylvesterMatrix(g1, g2, z)
+-- The 2-poly / 1-var auto-dispatch in eliminationMatrix(List, Matrix) goes through
+-- sylvesterMatrix from the Elimination package; pin that they agree.
+assert(em == sm)
+assert(numRows em == 3 and numColumns em == 3)
 ///

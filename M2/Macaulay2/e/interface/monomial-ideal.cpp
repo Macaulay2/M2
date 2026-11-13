@@ -4,25 +4,25 @@
 
 #include <frobby.h> // TODO: move Frobby routines elsewhere?
 
-#include "ExponentList.hpp"
-#include "assprime.hpp"
+#include "monomials/ExponentList.hpp"
+#include "computations/assprime.hpp"
 #include "buffer.hpp"
 #include "error.h"
 #include "exceptions.hpp"
 #include "finalize.hpp"
 #include "hilb.hpp"
 #include "int-bag.hpp"
-#include "matrix.hpp"
-#include "monideal-minprimes.hpp"
-#include "monideal.hpp"
-#include "monomial.hpp"
+#include "matrices/matrix.hpp"
+#include "monomials/monideal-minprimes.hpp"
+#include "monomials/monideal.hpp"
+#include "monomials/monomial.hpp"
 #include "newdelete.hpp"
 #include "text-io.hpp"
 
 class PolynomialRing;
 class RingElement;
 
-engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
+const MonomialIdeal* /* or null */ IM2_MonomialIdeal_make(const Matrix *m, int n)
 {
   try
     {
@@ -49,7 +49,7 @@ const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
   }
 }
 
-M2_string MonomialIdeal_to_string(const MonomialIdeal *I)
+M2_string IM2_MonomialIdeal_to_string(const MonomialIdeal *I)
 {
   buffer o;
   try

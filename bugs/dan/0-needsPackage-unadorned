@@ -1,6 +1,0 @@
--- -*- M2 -*-
-
--- needsPackage and loadPackage need an optional argument, such as Using=>true.  When true, behavior is as now.
--- When false, a different global dictionary is put on the dictionaryPath that has just the synonym symbols (containing
--- "$") in it.
-

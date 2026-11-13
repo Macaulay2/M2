@@ -1,3 +1,0 @@
-orP doesn't work as advertised because there is no backtracking!
-
-((( * (orP("&amp;", "&", "a"))) "&") "a") null

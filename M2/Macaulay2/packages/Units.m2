@@ -305,3 +305,30 @@ Node
   Text
    This package converts various units of measure to others.
 ///
+
+-- Smoke regression for the Units arithmetic. The package previously
+-- had zero TESTs (check reported "warning: Units has no tests").
+-- Use toString-of-factor comparisons because no `==` method is
+-- defined on Measurement, but `factor` canonicalizes equivalent
+-- measurements to the same representation.
+TEST ///
+-- The fundamental units have the expected classes.
+assert(class meter === UnitMonomial);
+assert(class inch  === Measurement);
+assert(class second === UnitMonomial);
+-- Derived units agree with their definitions:
+-- 1 joule == 1 newton * 1 meter (work-energy identity).
+assert(toString factor (newton * meter) == toString factor joule);
+-- 60 minutes equals 1 hour.
+assert(toString factor (60 * minute) == toString factor hour);
+-- Ratio of equivalent units is dimensionless 1.
+assert(toString factor (newton * meter / joule) == "1/(1)");
+assert(toString factor (60 * minute / hour) == "1/(1)");
+-- SI prefix: kilo * meter / meter = 1000 (dimensionless).
+assert(toString factor (kilo * meter / meter) == "2^3*5^3");
+-- meter / inch reduces to a pure rational conversion factor (5000/127):
+-- both sides are lengths so the result is dimensionless.
+mInch := meter / inch;
+assert(class mInch === QQ);
+assert(mInch == 5000/127);
+///

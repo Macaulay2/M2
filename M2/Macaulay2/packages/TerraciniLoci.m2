@@ -29,22 +29,25 @@
 
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
-    Version => "0.4",
-    Date => "November 10, 2025",
+    Version => "0.6",
+    Date => "June 5, 2026",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
-	    Email => "galuppi@mimuw.edu.pl"},
+	    Email => "f.galuppi@uw.edu.pl",
+	    HomePage => "https://www.mimuw.edu.pl/~galuppi/"},
 	{
 	    Name => "Pierpaola Santarsiero",
-	    Email => "pierpaola.santarsiero@unibo.it"},
+	    Email => "p.santarsiero@uw.edu.pl",
+	    HomePage => "https://pierpaolasantarsiero.wixsite.com/pierpaola"},
 	{
 	    Name => "Doug Torrance",
-	    Email => "dtorrance@piedmont.edu",
-	    HomePage => "https://webwork.piedmont.edu/~dtorrance"},
+	    Email => "dtorrance9@gatech.edu",
+	    HomePage => "https://d-torrance.github.io"},
 	{
 	    Name => "Ettore Teixeira Turatti",
-	    Email => "ettore.t.turatti@uit.no"}},
+	    Email => "e.teixeira-turatti@uw.edu.pl",
+	    HomePage => "https://turattiettore.wixsite.com/ettoreturatti"}},
     HomePage => "https://github.com/d-torrance/terracini-loci",
     Keywords => {"Projective Algebraic Geometry"},
     PackageImports => {
@@ -57,6 +60,15 @@ newPackage("TerraciniLoci",
 ---------------
 
 -*
+
+0.6 (2026-06-05, M2 1.26.06)
+* update author contact info
+* updated tests (thanks to Taylor, Keller, and the M2@GT26 testing group!)
+
+0.5 (2026-12-10, M2 1.26.05)
+* update citation information
+* add author webpages
+* update author email addresses
 
 0.4 (2025-11-10, M2 1.25.11)
 * update GPL 2 text (FSF no longer has a physical address)
@@ -134,17 +146,30 @@ doc ///
 
       This package exports one method, @TO terraciniLocus@, for computing the
       ideals of these varieties.
+    Example
+      R = QQ[s,t]
+      S = QQ[x_0..x_3]
+      f = map(R, S, {s^3, s^2*t, s*t^2, t^3})
+      terraciniLocus(2, f)
+  SeeAlso
+    terraciniLocus
   Citation
-    @article{Galuppi_2025,
-      title={Geometry of First Nonempty Terracini Loci},
-      ISSN={1793-6683},
-      url={http://dx.doi.org/10.1142/S0219199725500531},
-      DOI={10.1142/s0219199725500531},
-      journal={Communications in Contemporary Mathematics},
-      publisher={World Scientific Pub Co Pte Ltd},
-      author={Galuppi, Francesco and Santarsiero, Pierpaola and Torrance, Douglas A. and Turatti, Ettore Teixeira},
-      year={2025},
-      month=apr }
+      @article {MR5026390,
+          AUTHOR = {Galuppi, Francesco and Santarsiero, Pierpaola and Torrance,
+                    Douglas A. and Turatti, Ettore Teixeira},
+           TITLE = {Geometry of first nonempty {T}erracini loci},
+         JOURNAL = {Commun. Contemp. Math.},
+        FJOURNAL = {Communications in Contemporary Mathematics},
+          VOLUME = {28},
+            YEAR = {2026},
+          NUMBER = {4},
+           PAGES = {Paper No. 2550053},
+            ISSN = {0219-1997,1793-6683},
+         MRCLASS = {14J45 (14Q15 15A69)},
+        MRNUMBER = {5026390},
+             DOI = {10.1142/S0219199725500531},
+             URL = {https://doi.org/10.1142/S0219199725500531},
+      }
 ///
 
 doc ///
@@ -280,4 +305,33 @@ assert Equation(
     apply(
 	primaryDecomposition terraciniLocus(2, segreVeronese({1, 1}, {1, 2})),
 	I -> dim I - 4), {3, 3})
+///
+
+-- Direct cover for the (ZZ, Matrix, Ideal) overload. Previous TESTs
+-- all went through (ZZ, RingMap) or (ZZ, Ideal), which delegate to
+-- this overload after computing a Jacobian; exercise it on a simple
+-- rational normal curve of degree 4 (with empty ideal in P^4).
+TEST ///
+R := QQ[x_0..x_4];
+-- The rational normal curve nu_4: P^1 -> P^4 has parametrization
+-- [s:t] -> [s^4, s^3 t, s^2 t^2, s t^3, t^4]. Its Jacobian wrt
+-- s, t can be encoded as a 2-by-5 matrix in QQ[s,t] -> R indirectly,
+-- but for a Matrix-level test we just use any rank-2 Jacobian.
+S := QQ[s, t];
+nu := matrix {{s^4, s^3*t, s^2*t^2, s*t^3, t^4}};
+A := jacobian nu;
+J := terraciniLocus(2, A, ideal 0_S);
+assert(class J === Ideal);
+-- The 1-Terracini locus is always the unit ideal (returns ideal 1_Q
+-- at line 104).
+J1 := terraciniLocus(1, A, ideal 0_S);
+assert(J1 == ideal 1_(ring J1));
+///
+
+-- Error path: r < 1 must raise (line 94 of TerraciniLoci.m2).
+TEST ///
+R := QQ[x, y];
+A := jacobian matrix {{x^2, x*y, y^2}};
+assert(try (terraciniLocus(0, A, ideal 0_R); false) else true);
+assert(try (terraciniLocus(-1, A, ideal 0_R); false) else true);
 ///

@@ -14,9 +14,9 @@
 RingOfInvariants = new Type of HashTable   
 
 invariantRing = method(Options => {
-	Strategy => UseNormaliz,
-	UseLinearAlgebra => false,
+	Strategy => "Default",
 	UseCoefficientRing => false,
+	UsePolyhedra => false,
 	DegreeBound => infinity
 	})
 
@@ -53,6 +53,21 @@ net RingOfInvariants := S -> (
 	n = horizontalJoin(n," / ",net ideal ambient S);
 	);
     return n;
+    )
+
+texMath RingOfInvariants := S -> (
+    G := gens S;
+    texString := (texMath coefficientRing ambient S);
+    if #G != 0 then (
+	texString |= "\\left[" |
+	concatenate mingle(apply(G, g -> texMath g),toList(#G-1:", ")) | "\\right]";
+	);
+    if not zero ideal ambient S then (
+	L := (ideal ambient S)_*;
+	texString |= " / \\left(" |
+	concatenate mingle(apply(L, l -> texMath l),toList(#L-1:", ")) | "\\right)";
+	);
+    texString
     )
 
 action = method()
@@ -112,120 +127,301 @@ reynoldsOperator (RingElement, DiagonalAction) := RingElement => (f, D) -> sum s
 
 -------------------------------------------
 
+-------------------------------------------
+--- NEW April 20th, 2026 ------------------
+--- Elementary Invariants Methods ---------
+-------------------------------------------
+
+-*
+-->-- Function: seedMinimal --<--
+-- auxiliary unexported function for elementaryInvariants
+-- Checks if a given candidate is minimal given the list of seeds, starting at the index, "startIndex"
+--> INPUT:   
+--    Seeds      : List[List[ZZ]] › A list of current seeds that are invariant
+--    Candidate  : List[ZZ]       › A seed that may be added to the Seeds list
+--    startIndex : ZZ             › The index in the Seeds list that you want to start minimizing from
+--> OUTPUT: 
+--    Returns ({-1} | candidate) if our candidate is minimal.
+--    Returns {-2} if our candidate is not minimal.
+--    Returns ({-3, index}) if a seed is not minimal, with the index of the seed. 
+--    Returns ({-4, index} | newSeed) if our candidate helps reduce a seed. 
+seedMinimal := (Seeds, candidate, startIndex) -> (
+	i := startIndex;
+	numSeeds := #Seeds;
+	while i < numSeeds do (	-- Iterate through all seeds
+		candMinimal := true;	-- We start by assuming our candidate & seed are divisible by each other
+		seedIsMinimal := true;
+
+		for k from 0 to #candidate - 1 do (
+			if (candidate#k > Seeds#i#k) then (
+				candMinimal = false; -- If our candidate ever has a greater power than the seed, its not minimal
+			)
+			else if (Seeds#i#k > candidate#k) then (
+				seedIsMinimal = false; -- If our seed ever has a greater power than the candidate, our candidate is safe (for now)
+			);
+		);
+		if seedIsMinimal then (		-- If our seed is exclusively less than our candidate, we:
+			newCandidate := candidate - Seeds#i; -- Reduce our candidate by our seed, as that will still be invariant
+			if (newCandidate === candidate) then (
+				i = i + 1;				-- No change: move forward to avoid infinite loop
+			)
+			else (
+				candidate = newCandidate;
+				if (all (candidate, i -> i == 0)) then return {-2, 0}; -- If the candidate fully reduces, we return -2.
+				i = startIndex;		-- Reduce our index by restarting so we can test candidate again. 
+			);
+		)
+		else if candMinimal then (	-- If our candidate is minimal, we may need to discard our seed instead.
+			removalSeed := Seeds#i;
+			while (all(removalSeed - candidate, i -> i >= 0) and removalSeed =!= removalSeed - candidate) do (
+				removalSeed = removalSeed - candidate;
+			);
+			if (all (removalSeed, i -> i == 0)) then return {-3, i}; -- If the seed fully reduces, we return -3
+			return {-4, i} | removalSeed;						  -- Otherwise, we return -3, the index of the seed, and the updated seed.
+		)
+		else (
+			i = i + 1;	-- Normal case: move forward
+		);
+	);
+	return {-1, 0} | candidate ;
+)
+*-
+
+-->--elementaryInvariants function--<--
+-- unexported, called with invariants(D,Strategy=>"Elementary");
+--> INPUT:  D (a diagonalAction)
+--> OUTPUT: L (a list of invariants)
+elementaryInvariants := D -> (
+    ---------------------
+    -- Seed Generation --
+    ---------------------
+
+    -->- Grab our variables W, R, Z from D -<--
+    W := D.weights_1;
+    R := ring D;
+    Z := (D.cyclicFactors)#0;
+
+    -->- Find our m and n from the weight matrix -<--
+    n := numColumns W; m := numRows W;
+
+    -->- STEP 1 -<--
+    -->- Now, we find a n x n submatrix of W with maximal rank --<-
+    -- compute RREF of weight matrix
+    rref := reducedRowEchelonForm promote(W,QQ);
+    -- find columns containing pivots, remove nulls from zero rows
+    pivs := delete(null, apply(entries rref, r -> position(r, i -> i == 1)) );
+    nonZeroSM := submatrix(W,pivs); -- the submatrix
+    colList := toList( set(0..n-1) - set(pivs) ); -- columns without pivots
+
+    -->- STEP 2 -<--
+    -- Creates a list for the seed invariants in exponent vec form
+    -- Iterates through all columns we didn't use for nonZeroSM
+    seedList := for v in colList list (
+	-- Matrix we extract the seed invariant from (where W_v is our additional vector)
+	seedMatrix      := nonZeroSM | matrix(W_v);
+	colsInSM        := pivs | {v};
+	-- Current seed invariant we are calculating
+	-- This loops lets us remove one of the columns from the matrix to calculate the plücker
+	seedInvariant := for i from 0 to m list (
+	    pluckerMatrix   := submatrix'(seedMatrix, {i});  -- Find plucker matrix
+	    colInW          := colsInSM#i;                   -- W-column corresponding to this seedMatrix col
+	    e               := for j from 0 to n-1 list (if j == colInW then 1 else 0);        
+	    (-1)^i * determinant(pluckerMatrix) * e
+	    );
+	sum seedInvariant -- Adds the summed seed invariant vec to our list
+	);
+    -- Now, seedList contains our list of seed Invariants, so we move onto expansion.
+
+    --------------------
+    -- Seed Expansion --
+    --------------------
+    ringVars := gens R;
+
+    -- our seeds are a Z basis 
+    seedList = for l in seedList list apply(l, x -> ((x % Z) + Z) % Z); --mod p
+    p := Z;                              
+    t := #seedList;                      
+    olsonBound := m * (p - 1) + 1;       
+    divides := (b, a) -> all(#a, j -> b#j <= a#j);
+
+    --> enumerate (c_1,...,c_t) in \ZZ/p\ZZ --
+    -- I use flatten to remove the {} entries because the vec are stored in {} too so it prunes it
+    candidates := flatten for i from 1 to p^t - 1 list (
+	-- Turn the integer into a vector 
+	c := for j from 0 to t - 1 list ((i // p^j) % p);
+	cand := for k from 0 to n - 1 list (
+	    -- sum over seeds component-wise with weights in c then mod p
+	    (sum for j from 0 to t - 1 list (c#j) * (seedList#j#k)) % p
+	    );
+	deg := sum cand;
+	-- check Olson's bound
+	if deg > 0 and deg <= olsonBound then {cand} else {}
+	);
+
+    -- seeds might be above Olson's bound
+    candidates = candidates | seedList;
+
+    --> Then we add the pure powers to the list, checking if they are minimal via our purePowers list.
+    candidates = candidates | for i from 0 to #ringVars - 1 list (
+	for j from 0 to #ringVars - 1 list (if i == j then p else 0)
+	);
+    
+    -- make minimal
+    -- remove duplicates
+    candidates = unique candidates;
+
+    -- makes {2, 1, 4} into {7, {2, 1, 4}} so we can sort by degree sum
+    candidates = apply(candidates, a -> {sum a, a});
+
+    -- sorts it by degree sum
+    candidates = sort candidates;
+
+    -- {7, {2, 1, 4}} back into {2, 1, 4}
+    candidates = apply(candidates, q -> q#1);
+
+    -- Now we sorted by degree sum, we check if they divide (divides function checks an inequality)
+    -- seed list is grown seeds
+    seedList = new MutableList from {};
+    for a in candidates do (
+	-- if no seeds in the list divide our candidate then its a valid seed so we add it
+	if not any(#seedList, i -> divides(seedList#i, a)) then seedList#(#seedList) = a;
+	);
+
+    -->-- Now, we turn each of the exponent vectors into their polynomials in the ring. --<--
+    polyList := for i in toList seedList list (
+	n := 1;
+	for j to #i - 1 do (n = n * (((ringVars)#j)^(i#j)));
+	n
+	);
+    
+    return polyList; -- Return our list
+)
+
+-------------------------------------------
+--- invariants for DiagonalAction ---------
+-------------------------------------------
+
 invariants = method(Options => {
-	Strategy => UseNormaliz,
-	UseLinearAlgebra => false,
+	Strategy => "Default",
 	UseCoefficientRing => false,
+	UsePolyhedra => false,
 	DegreeBound => infinity,
 	DegreeLimit => {},
 	SubringLimit => infinity
-	})
+	}
+)
 
 invariants DiagonalAction := List => o -> D -> (
+    d := cyclicFactors D;
     (W1, W2) := weights D;
+    -- As of May 2026, the elementary generation method is default, as long as:
+    -- i) there is no torus action: zero(W1)
+    -- ii) there are cyclic factors: d =!= {}
+    -- iii) all cyclic factors have the same order: all(d, i -> d#0 == i)
+    -- iv) the weight matrix has maximal rank: rank W2 == min(numRows W2,numColumns W2)
+    -- the old strategy can be used with the option Strategy=>"DerksenGandini"
+    if (o.Strategy =!= "DerksenGandini") and
+    zero(W1) and d =!= {} and isPrime d#0 and all(d, i -> d#0 == i)
+    and rank W2 == min(numRows W2,numColumns W2)
+    then (
+	return elementaryInvariants D;
+	);
+    --*-* Otherwise, continue with Derksen-Gandini algorithm *-*--
     R := ring D;
     kk := coefficientRing R;
     p := char kk;
-    d := cyclicFactors D;
     r := rank D;
     if p > 0 and o.UseCoefficientRing then (
-	q := kk#order;
-	if any(d, j -> q%j =!= 1) then (
-	    print "-- Diagonal action is not defined over the given coefficient ring. \n-- Returning invariants over an infinite extension field over which the action is defined."
-	    )
-	else (
-	    D' := diagonalAction(W1||W2, apply(r, i -> q - 1)|d, R);
-	    return invariants D'
-	    )
-    	);
-    R = kk[R_*, MonomialOrder => GLex];
+        q := kk#order;
+        if any(d, j -> q%j =!= 1) then (
+            print "-- Diagonal action is not defined over the given coefficient ring. \n-- Returning invariants over an infinite extension field over which the action is defined.";
+        )
+        else (
+            D' := diagonalAction(W1||W2, apply(r, i -> q - 1)|d, R);
+            return invariants D';
+        )
+    );
     g := numgens D;
     n := dim D;
     mons := R_*;
     local C, local S, local U;
     local v, local m, local v', local u;
-    
     if g > 0 then (
-	t := product d;
-	
-	reduceWeight := w -> vector apply(g, i -> w_i%d#i);
-	
-	C = apply(n, i -> reduceWeight W2_i);
-	
-	S = new MutableHashTable from apply(C, w -> w => {});
-	scan(#mons, i -> S#(reduceWeight W2_i) = S#(reduceWeight W2_i)|{mons#i});
-	U = R_*;
-	
-	while  #U > 0 do(
-	    m = min U; 
-	    v = first exponents m;
-	    k := max positions(v, i -> i > 0);
-	    v = reduceWeight(W2*(vector v));
-	    
-	    while k < n do(
-	    	u = m*R_k;
-	    	v' = reduceWeight(v + W2_k);
-	    	if (not S#?v') then S#v' = {};
-	    	if all(S#v', m' -> u%m' =!= 0_R) then (
-		    S#v' = S#v'|{u};
-		    if first degree u < t then U = U | {u}
-		    );
-	    	k = k + 1;
-	    	);
-	    U = delete(m, U);
-	    );
-    	if S#?(0_(ZZ^g)) then mons = S#(0_(ZZ^g)) else mons = {}
-    	);
+        t := product d;
+        reduceWeight := w -> vector apply(g, i -> w_i%d#i);
+        C = apply(n, i -> reduceWeight W2_i);
+        S = new MutableHashTable from apply(C, w -> w => {});
+        scan(#mons, i -> S#(reduceWeight W2_i) = S#(reduceWeight W2_i)|{mons#i});
+        U = R_*;
+        while  #U > 0 do(
+            m = min U; 
+            v = first exponents m;
+            k := max positions(v, i -> i > 0);
+            v = reduceWeight(W2*(vector v));
+            while k < n do(
+                u = m*R_k;
+                v' = reduceWeight(v + W2_k);
+                if (not S#?v') then S#v' = {};
+                if all(S#v', m' -> u%m' =!= 0_R) then (
+                    S#v' = S#v'|{u};
+                    if first degree u < t then U = U | {u}
+                );
+                k = k + 1;
+            );
+            U = delete(m, U);
+        );
+        if S#?(0_(ZZ^g)) then mons = S#(0_(ZZ^g)) else mons = {}
+    );
     if r == 0 then return apply(mons, m -> sub(m, ring D) );
-    
     W1 = W1*(transpose matrix (mons/exponents/first));
-    if o.Strategy == UsePolyhedra then (
-	if r == 1 then C = convexHull W1 else C = convexHull( 2*r*W1|(-2*r*W1) );
-	C = (latticePoints C)/vector;
-	)
-    else if o.Strategy == UseNormaliz then (
-	if r == 1 then C = (normaliz(transpose W1, "polytope"))#"gen" 
-	else C = (normaliz(transpose (2*r*W1|(-2*r*W1)), "polytope"))#"gen";
-	C = transpose C_(apply(r, i -> i));
-	C = apply(numColumns C, j -> C_j)
-	);
-    
+    if o.UsePolyhedra then (
+        if r == 1 then C = convexHull W1 else C = convexHull( 2*r*W1|(-2*r*W1) );
+        C = (latticePoints C)/vector;
+    )
+    else (
+        if r == 1 then C = (normaliz(transpose W1, "polytope"))#"gen" 
+        else C = (normaliz(transpose (2*r*W1|(-2*r*W1)), "polytope"))#"gen";
+        C = transpose C_(apply(r, i -> i));
+        C = apply(numColumns C, j -> C_j)
+    );
+    -- sort elements of convex hull to ensure consistency across sources
+    -- vectors are turned to lists for sorting, then back to vectors
+    C = apply(sort apply(C,entries), vector);
+    -- begin Derksen's algorithm for tori
     S = new MutableHashTable from apply(C, w -> w => {});
     scan(#mons, i -> S#(W1_i) = S#(W1_i)|{mons#i});
     U = new MutableHashTable from S;
+    while any(values U, u -> #u > 0) do(
+	-- Derksen does not specify which key vector to pick
+	-- for consistency, pick first available from convex hull
+	v = first select(1,C, w -> #(U#w) > 0);
+	-- Derksen does not specify which monomial to pick
+	-- min seems to be the right one for minimal invariants
+	m = min (U#v);
     
-    nonemptyU := select(keys U, w -> #(U#w) > 0);
-    while  #nonemptyU > 0 do(
-	v = first nonemptyU;
-	m = first (U#v);
-	
 	scan(#mons, i -> (
 		u := m*mons#i;
-        	v' := v + W1_i;
-        	if ((U#?v') and all(S#v', m' -> (
+		v' := v + W1_i;
+		if ((U#?v') and all(S#v', m' -> (
 			    if u%m' =!= 0_R then true
 			    else if g > 0 then (
 				m'' := u//m';
-			    	v'' := reduceWeight(W2*(vector first exponents m''));
-			    	v'' =!= 0_(ZZ^g)
+				v'' := reduceWeight(W2*(vector first exponents m''));
+				v'' =!= 0_(ZZ^g)
 				)
 			    else false
-			    )
-			)
-		    ) 
-		then( 
-                    S#v' = S#v'|{u};
-                    U#v' = U#v'|{u};
+			    ))) then ( 
+		    S#v' = S#v'|{u};
+		    U#v' = U#v'|{u};
 		    )
-	    	)
-	    );
+		));
 	U#v = delete(m, U#v);
-	nonemptyU = select(keys U, w -> #(U#w) > 0)
 	);
     
     if S#?(0_(ZZ^r)) then mons = S#(0_(ZZ^r)) else mons = {};
     return apply(mons, m -> sub(m, ring D) )
-    )
+
+)
 
 
 -------------------------------------------
@@ -246,7 +442,7 @@ manualTrim (List) := List => L -> (
 -------------------------------------------
 -- Computes an *additive* basis for the degree d part of the
 -- invariant ring following Algorithm 4.5.1 of Derksen-Kemper.
-invariants (LinearlyReductiveAction, List) := List => o -> (V,d) -> (
+invariants (LinearlyReductiveAction, List) := List => o -> (V, d) -> (
     M := actionMatrix V;
     Q := ring V;
     A := groupIdeal V;
@@ -323,12 +519,13 @@ invariants FiniteGroupAction := List => o -> G -> (
     error "Only implemented for standard graded polynomial rings";
     if o.DegreeBound < b then b = o.DegreeBound;
     local M;
-    for d from 1 to b do (
+    for d from 1 to b+1 do (
     	Gb := gb(promote(ideal S,R),DegreeLimit=>d);
 	I := monomialIdeal leadTerm Gb;
 	M = reverse select(flatten entries (basis(d,R)%I),m->not zero m);
+	if d == b+1 then break;
 	if M === {} then break else (
-	    if o.UseLinearAlgebra then (
+	    if o.Strategy == "LinearAlgebra" then (
 		for f in invariants(G,d) do (
 	    	    g := f % Gb;
 	    	    if not zero g then (
@@ -336,7 +533,8 @@ invariants FiniteGroupAction := List => o -> G -> (
 		    	Gb = forceGB ( (gens Gb) | matrix{{g}} );
 	    	    	);
 		    );
-	    	) else (
+	    	) 
+	    else (
 	    	for m in M do (
 	    	    f := reynoldsOperator(m,G);
 	    	    g := f % Gb;
@@ -348,7 +546,7 @@ invariants FiniteGroupAction := List => o -> G -> (
 	    	);
     	    );
 	);
-    if M =!= {} then print"
+    if (M =!= {} and b < #(group G)) then print"
 Warning: stopping condition not met!
 Output may not generate the entire ring of invariants.
 Increase value of DegreeBound.
@@ -382,7 +580,11 @@ invariants(FiniteGroupAction, ZZ) := List => o -> (G,d) -> (
 
 isInvariant = method()
 
-isInvariant (RingElement, FiniteGroupAction) := Boolean => (f, G) -> reynoldsOperator(f, G) == f
+--checking invariants with reynolds operator can be slow for large groups
+--isInvariant (RingElement, FiniteGroupAction) := Boolean => (f, G) -> reynoldsOperator(f, G) == f
+--instead it is enough to check invariance under group generators
+isInvariant (RingElement, FiniteGroupAction) := Boolean => (f, G) ->
+    all(gens G, g -> sub(f, (vars ring G)*(transpose g) ) == f ) 
 
 isInvariant (RingElement, DiagonalAction) := Boolean => (f, D) -> (
     if not instance(f, ring D) then (

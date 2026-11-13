@@ -11,7 +11,6 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
 m4_include(m4/ax_compare_version.m4)
-m4_include(m4/ax_recursive_eval.m4)
 m4_include(m4/openmp.m4)
 m4_include(m4/search-libraries.m4)
 m4_include(m4/ax_boost_base.m4)
@@ -231,6 +230,8 @@ then DOCUMENTATION="html info"
 elif test "$DOCUMENTATION" = download
 then DOCUMENTATION=""
      BUILDLIST="$BUILDLIST Macaulay2-docs"
+     AC_CHECK_PROGS(GETCONF,getconf,false)
+     AS_IF([test $GETCONF = false], AC_MSG_ERROR([getconf is required]))
 else for DOCTYPE in $DOCUMENTATION
     do case $DOCTYPE in
             html|pdf)
@@ -356,6 +357,31 @@ AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
 AC_CHECK_SIZEOF([long])
 AC_SUBST(SIZEOF_LONG,$ac_cv_sizeof_long)
 
+dnl Check for Homebrew packages
+
+AC_CHECK_PROGS([BREW], [brew], [false])
+
+dnl BREW_ADD_FLAG([FORMULA], [DIR], [FLAG], [PREFIX], [SEPARATOR])
+dnl adds PREFIX$(brew --prefix FORMULA)/DIR (if it exists) to FLAG,
+dnl separated by SEPARATOR
+AC_DEFUN([BREW_ADD_FLAG],
+    [AS_IF([test "x$BREW" = xbrew -a -d $($BREW --prefix $1)/$2],
+         [$3="${$3+$$3$5}$4$($BREW --prefix $1)/$2"])])
+
+dnl BREW_ADD_FLAGS([FORMULA])
+dnl adds:
+dnl -L$(brew --prefix FORMULA)/lib to LDFLAGS,
+dnl -I$(brew --prefix FORMULA)/include to CPPFLAGS, and
+dnl $(brew --prefix)/lib/pkgconfig to PKG_CONFIG_PATH
+AC_DEFUN([BREW_ADD_FLAGS],
+    [BREW_ADD_FLAG([$1], [lib],           [LDFLAGS],         [-L], [ ])
+     BREW_ADD_FLAG([$1], [include],       [CPPFLAGS],        [-I], [ ])
+     BREW_ADD_FLAG([$1], [lib/pkgconfig], [PKG_CONFIG_PATH], [],   [:])])
+
+BREW_ADD_FLAGS
+
+export PKG_CONFIG_PATH
+
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h elf.h execinfo.h syscall.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
@@ -397,7 +423,6 @@ test "$DEBUG" = "yes" && ENABLE_STRIP=no
 # note: we build many programs for inclusion in the distribution -- stripping them saves 9MB of 70
 
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
-AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
 AC_SUBST(CC_THREAD_SUPPORT)
 AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
@@ -444,14 +469,6 @@ test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether expe
 AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare binary and source packages as compressed tar files), M2TARFILE=$enableval)
 AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS=$enableval)
 AC_SUBST(SHARED,yes)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--disable-shared,disable building of shared libraries), SHARED=$enableval)
-
-dnl Under Mac OS X 10.15 the Gatekeeper makes it impossible for us to distribute shared libraries with our program to end users in disk image (*.dmg) format:
-dnl ... but we've given up on trying to satisfy the gatekeeper.  There is a strange error message when we try to link with libgmp.a:
-dnl     ld: illegal text-relocation to '___gmp_binvert_limb_table' in /Users/runner/runners/2.263.0/work/M2/M2/M2/BUILD/cicd/usr-host/lib/libgmp.a(mp_minv_tab.o) from '___gmpn_divexact_1' in /Users/runner/runners/2.263.0/work/M2/M2/M2/BUILD/cicd/usr-host/lib/libgmp.a(dive_1.o) for architecture x86_64
-dnl if test "$ISSUE_FLAVOR" = "MacOS"
-dnl then SHARED=no
-dnl      AC_MSG_NOTICE([disabling the building of shared libraries under Mac OS X])
-dnl fi
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" ENABLE_STRIP=no
@@ -523,21 +540,6 @@ then if test "$OPTIMIZE" = no
      fi
 fi
 
-AC_SUBST(DMG,no)
-AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS)), DMG=$enableval)
-if test "$DMG" = yes 
-then if test "$OPTIMIZE" = no
-     then AC_MSG_ERROR([--disable-optimize and --enable-dmg both specified])
-     fi
-     if test "$DEBUG" = yes
-     then AC_MSG_ERROR([--enable-debug and --enable-dmg both specified])
-     fi
-     if test $SHARED = yes
-     then SHARED=no
-          AC_MSG_WARN([--enable-dmg specified, so disabling the building of shared libraries])
-     fi
-fi
-
 AC_SUBST(M2SUFFIX)
 test "$program_suffix" != NONE && M2SUFFIX=$program_suffix
 AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to executable name M2))
@@ -570,7 +572,8 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 dnl Check for openmp and fail if it cannot be found.
 dnl This is required for building the library csdp and good for building the library normaliz
 AC_LANG(C++)
-AC_OPENMP
+BREW_ADD_FLAGS([libomp]) # keg-only
+M2_OPENMP
 if test "$ac_cv_prog_cxx_openmp" = unsupported
    then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
 fi
@@ -611,7 +614,7 @@ AC_SUBST(BUILTLIBS)
 AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest tbb memtailor mathic mathicgb eigen ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
-AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty cddplus lrslib topcom cohomcalg msolve")
+AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty lrslib topcom cohomcalg msolve palp")
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
@@ -674,7 +677,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib msolve)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty lrslib msolve palp)]),
     [for i in $enableval
      do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
@@ -838,6 +841,21 @@ AS_IF([test $BUILD_lapack = yes],
      LAPACK_LIBS=-llapack])
 AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
 
+dnl This must come after the Fortran/BLAS/LAPACK detection above: gfortran
+dnl expands --coverage to -lgcov, which would then be baked into FCLIBS and
+dnl BLAS_LIBS and clash with the compiler's own coverage runtime at link time.
+AC_SUBST([GCOV],[no])
+AC_ARG_ENABLE([gcov],
+  [AS_HELP_STRING([--enable-gcov],
+     [enable gcc/gcov code coverage (implies -O0 and disables stripping)])],
+  [GCOV=$enableval])
+AS_IF([test "$GCOV" = yes],
+  [CFLAGS="$CFLAGS --coverage -O0"
+   CXXFLAGS="$CXXFLAGS --coverage -O0"
+   LDFLAGS="$LDFLAGS --coverage"
+   ENABLE_STRIP=no
+   OPTIMIZE=no])
+
 AS_IF([test $BUILD_givaro = no],
     [AC_LANG([C++])
      AC_CHECK_HEADER([givaro/givinteger.h],
@@ -988,16 +1006,8 @@ PATH=$SAVE
 
 AC_MSG_CHECKING(whether the package cohomcalg is installed)
 if command -v cohomcalg > /dev/null
-then if test "$OS" = Darwin -a "$DMG" = yes
-     then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
-          # the user just copies a directory tree to /Applications.  Change this when
-	  # porting to homebrew.
-     	  # Also, the package CohomCalg looks only in the directory where Macaulay2's binaries are
-	  AC_MSG_RESULT([yes, will build anyway])
-          BUILD_cohomcalg=yes
-     else AC_MSG_RESULT([yes])
-          FILE_PREREQS="$FILE_PREREQS `command -v cohomcalg`"
-     fi
+then AC_MSG_RESULT([yes])
+     FILE_PREREQS="$FILE_PREREQS `command -v cohomcalg`"
 else AC_MSG_RESULT([no, will build])
      BUILD_cohomcalg=yes
 fi
@@ -1005,10 +1015,10 @@ fi
 AC_MSG_CHECKING(whether the package gfan is installed)
 if command -v gfan > /dev/null
 then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
-     AX_COMPARE_VERSION([$gfan_version], [ge], [0.6],
+     AX_COMPARE_VERSION([$gfan_version], [ge], [0.8],
           [AC_MSG_RESULT([yes])
            FILE_PREREQS="$FILE_PREREQS `command -v gfan`"],
-          [AC_MSG_RESULT([yes, but < 0.6, will build])
+          [AC_MSG_RESULT([yes, but < 0.8, will build])
            BUILD_gfan=yes])
 else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
@@ -1018,15 +1028,7 @@ fi
 
 AC_MSG_CHECKING(whether the package lrs is installed)
 if command -v lrs > /dev/null
-then if test "$OS" = Darwin -a "$DMG" = yes
-     then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
-          # the user just copies a directory tree to /Applications.  Change this when
-	  # porting to homebrew.
-	  AC_MSG_RESULT([yes, will build anyway])
-          BUILD_lrslib=yes
-     else AC_MSG_RESULT(yes)
-          FILE_PREREQS="$FILE_PREREQS `command -v lrs`"
-     fi
+then AC_MSG_RESULT(yes)
 else AC_MSG_RESULT([no, will build])
      BUILD_lrslib=yes
 fi
@@ -1056,7 +1058,7 @@ AS_IF([test $BUILD_normaliz = no],
     [AC_MSG_CHECKING(whether the package normaliz is installed)
      AS_IF([command -v normaliz > /dev/null],
 	 [normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
-	  AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
+	  AX_COMPARE_VERSION([$normaliz_version], [ge], [3.6.3],
 	      [AC_MSG_RESULT([yes])
 	       AC_MSG_CHECKING([for libnormaliz])
 	       AC_LANG(C++)
@@ -1075,7 +1077,7 @@ AS_IF([test $BUILD_normaliz = no],
 		   [AC_MSG_RESULT([no, will build])
 		    BUILD_normaliz=yes
 		    LIBS=$SAVELIBS])],
-	      [AC_MSG_RESULT([yes, but < 2.11, will build])
+	      [AC_MSG_RESULT([yes, but < 3.6.3, will build])
 	       BUILD_normaliz=yes])],
         [AC_MSG_RESULT([no, will build])
          BUILD_normaliz=yes])])
@@ -1152,6 +1154,15 @@ found and $msolve_min_version is required; will build])
               BUILD_msolve=yes])],
          [AC_MSG_RESULT([no, will build])
           BUILD_msolve=yes])])
+
+dnl TODO: uncomment whne we require palp
+dnl AS_IF([test $BUILD_palp = no],
+dnl [AC_MSG_CHECKING([whether palp is installed])
+dnl  AS_IF([command -v poly.x > /dev/null],
+dnl      [AC_MSG_RESULT([yes])
+dnl       FILE_PREREQS="$FILE_PREREQS `command -v poly.x`"],
+dnl      [AC_MSG_RESULT([no, will build])
+dnl       BUILD_palp=yes])])
 
 AC_LANG([C++])
 AS_IF([test $BUILD_eigen = no],
@@ -1246,7 +1257,8 @@ fi
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,curses tinfo ncurses,,AC_MSG_ERROR([[not found: library containing symbol tgoto; tried libcurses, libncurses, and libtinfo)]]))
 if test $BUILD_readline = no
-then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
+then BREW_ADD_FLAGS([readline]) # keg-only
+     AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
 fi
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(rl_set_prompt,readline,,BUILD_readline=yes)
@@ -1439,28 +1451,27 @@ AX_BOOST_BASE([1.65],,
 CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
 LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
 
-AC_MSG_CHECKING([whether the Boost::Stacktrace library is available])
 AC_LANG(C++)
+dnl the addr2line backend execs this, and boost's default of /usr/bin/addr2line is absent on macOS
+AC_PATH_PROGS([ADDR2LINE], [addr2line llvm-addr2line])
+dnl the backtrace backend needs libbacktrace, which the boost library may not carry itself
+AC_CHECK_LIB([backtrace], [backtrace_create_state])
+
+AC_MSG_CHECKING([which Boost::Stacktrace backend is usable])
 SAVECPPFLAGS=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS -DBOOST_STACKTRACE_LINK"
 SAVELIBS=$LIBS
-FOUND_stacktrace_library=no
-for stacktrace_library in backtrace addr2line
-do
-    LIBS="$SAVELIBS -lboost_stacktrace_${stacktrace_library}"
-    AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM([#include <boost/stacktrace.hpp>
-         ], [boost::stacktrace::stacktrace();])],
-        [AC_MSG_RESULT([yes, boost_stacktrace_${stacktrace_library}])
-         FOUND_stacktrace_library=yes
-         break],)
-done
-if test $FOUND_stacktrace_library = no
-then
-    AC_MSG_RESULT([no, will use header-only library])
-    CPPFLAGS=$SAVECPPFLAGS
-    LIBS=$SAVELIBS
-fi
+CPPFLAGS="$CPPFLAGS -DBOOST_STACKTRACE_LINK"
+LIBS="$LIBS -lboost_stacktrace_backtrace"
+AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([#include <boost/stacktrace.hpp>
+     ], [boost::stacktrace::stacktrace();])],
+    [AC_MSG_RESULT([boost_stacktrace_backtrace])],
+    dnl only header-only mode reads BOOST_STACKTRACE_USE_* and lets us set the addr2line path
+    [AC_MSG_RESULT([header-only${ADDR2LINE:+ with $ADDR2LINE}])
+     CPPFLAGS=$SAVECPPFLAGS
+     LIBS=$SAVELIBS
+     AS_IF([test -n "$ADDR2LINE"],
+         [CPPFLAGS="$CPPFLAGS -DBOOST_STACKTRACE_USE_ADDR2LINE -DBOOST_STACKTRACE_ADDR2LINE_LOCATION=$ADDR2LINE"])])
 
 AX_BOOST_REGEX
 LIBS="$LIBS $BOOST_REGEX_LIB"
@@ -1470,14 +1481,18 @@ AC_CHECK_HEADERS([boost/math/special_functions.hpp],
     [AC_MSG_ERROR([Boost Math Toolkit not available])])
 AC_SEARCH_LIBS([ldexpq], [quadmath])
 
-AC_SUBST(ULIMIT_T,yes)
-AC_SUBST(ULIMIT_M,yes)
-AC_SUBST(ULIMIT_V,yes)
-AC_SUBST(ULIMIT_S,yes)
-( ulimit -t 2000 2>/dev/null) || ULIMIT_T=no
-( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
-( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
-( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
+dnl Whether the shell can set the limits we use when testing; see
+dnl include/config.Makefile.in.  Probe the largest values used, since a
+dnl smaller probe could succeed where the limit itself fails.
+AC_ARG_VAR([ULIMIT_T], [set to "no" for no cpu time limit when testing])
+AC_ARG_VAR([ULIMIT_V], [set to "no" for no memory limit when testing])
+AC_ARG_VAR([ULIMIT_S], [set to "no" for no stack size limit when testing])
+AS_IF([test -z "$ULIMIT_T"],
+      [ULIMIT_T=yes; (ulimit -t 1200 2>/dev/null) || ULIMIT_T=no])
+AS_IF([test -z "$ULIMIT_V"],
+      [ULIMIT_V=yes; (ulimit -v 3200000 2>/dev/null) || ULIMIT_V=no])
+AS_IF([test -z "$ULIMIT_S"],
+      [ULIMIT_S=yes; (ulimit -s 8192 2>/dev/null) || ULIMIT_S=no])
 
 AC_SUBST(ENABLE_LINBOX,no)
 AC_ARG_ENABLE(linbox,
@@ -1523,6 +1538,7 @@ AS_IF([test "x$with_fplll" = "xyes"],
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
+    BREW_ADD_FLAGS([factory]) # keg-only
     AC_MSG_CHECKING([whether factory library is installed])
     FACTORY_MINVERSION=4.2.0
     if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
@@ -1566,10 +1582,21 @@ else
 	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/singular/factory/"
 	fi
     fi
-    AX_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
-    AC_CHECK_FILE([${GFTABLESDIR}gftables/961],,
-	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
-    FILE_PREREQS="$FILE_PREREQS ${GFTABLESDIR}gftables/961"
+    # An absolute path (which is what pkg-config gives us) is baked into
+    # startup.m2 verbatim, so we use the system tables where they are, as
+    # distribution packages want.  A caller may instead pass something like
+    # GFTABLESDIR='${datadir}/Macaulay2/Core/factory/' and stage a copy of the
+    # tables there; the normalization loop below then turns it into a
+    # ${prefix}-relative layout entry, which is what a relocatable binary
+    # distribution such as the macOS dmg needs.  We can only check for the
+    # tables in the former case, as the latter is not populated until "make
+    # install".
+    case $GFTABLESDIR in
+	/*) AC_CHECK_FILE([${GFTABLESDIR}gftables/961],,
+		[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
+	    FILE_PREREQS="$FILE_PREREQS ${GFTABLESDIR}gftables/961" ;;
+	*)  AC_MSG_NOTICE([gftables expected at $GFTABLESDIR, relative to the prefix]) ;;
+    esac
 fi
 
 if test $BUILD_factory = no
@@ -1668,6 +1695,18 @@ AS_IF([test x$with_libffi != xno ],
     [FFI_VERSION="not present"])
 AC_SUBST([LIBFFI], [$with_libffi])
 AC_DEFINE_UNQUOTED([FFI_VERSION], ["$FFI_VERSION"], [libffi version])
+
+AC_ARG_WITH([jansson],
+    [AS_HELP_STRING([--without-jansson],
+        [don't link with the jansson for json parsing])],,
+    [with_jansson=yes])
+AS_IF([test "x$with_jansson" = xyes],
+    [AC_CHECK_HEADERS([jansson.h],, [AC_MSG_ERROR([jansson.h not found])])
+     AC_SEARCH_LIBS([json_loadb], [jansson], [],
+         [AC_MSG_ERROR([libjansson not found])])
+     AC_DEFINE([WITH_JANSSON], [1],
+         [whether we are linking with the jansson library])])
+AC_SUBST([JANSSON], [$with_jansson])
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
@@ -1908,6 +1947,7 @@ AC_MSG_NOTICE([with  OS REL            = $OS $REL])
 AC_MSG_NOTICE([with  ARCH              = $ARCH])
 AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
+AC_MSG_NOTICE([with  GCOV              = $GCOV])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 AC_MSG_NOTICE([with  GIT_BRANCH        = $GIT_BRANCH])
 AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])
@@ -1930,7 +1970,7 @@ complement() {
     for i in $1
     do 	case "$y" in
 	    *" $i "*) ;;
-	    *) /bin/echo -n "$i " ;;
+	    *) env echo -n "$i " ;;
 	esac
     done
     echo
@@ -2011,13 +2051,6 @@ done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
 
-if test $BUILD_factory = no
-then PRE_GFTABLESDIR="$GFTABLESDIR"
-else
-PRE_GFTABLESDIR="$pre_datadir/Macaulay2/Core/factory/"
-fi
-AC_SUBST(PRE_GFTABLESDIR)
-
 AC_SUBST(pre_bindir) dnl In Macaulay2/bin/M2.in we assume that $pre_bindir/.. is $pre_exec_prefix, which follows from pre_bindir=${pre_exec_prefix}/bin.
 AC_SUBST(pre_datadir)
 AC_SUBST(pre_includedir)
@@ -2097,7 +2130,6 @@ AC_MSG_NOTICE([staging area for common files: $pre_prefix])
 AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 # Here we define the Macaulay2 layout, once and for all.
-# There is a hidden dependency: see M2/distributions/dmg/Makefile.in and adjust the number "../"s if the basic layout here is changed.
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)

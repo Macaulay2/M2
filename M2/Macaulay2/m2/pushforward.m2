@@ -111,53 +111,90 @@ ordertab := new HashTable from {
     Eliminate    => (nR, nS) -> Eliminate nR,
     ProductOrder => (nR, nS) -> ProductOrder{nR, nS},
     Lex          => (nR, nS) -> Lex,
-    }
+}
 
-pushNonLinear := (opts, f, M) -> (
+monomialOrderFromOpts = (opts) -> (
+    monorder := opts.MonomialOrder;
+    monorder = if ordertab#?monorder then ordertab#monorder
+    else error("pushForward: MonomialOrder option expected one of ", demark_", " \\ toString \ keys ordertab)
+)
+
+-- a splitting of f.cache.DegreeMap to use as a DegreeMap when constructing the
+-- projection from graphRing f to source f.
+makeSectionForDegreeMap = (f) -> (
+    -- if there are no degrees on the source then giving everything the empty degree is a section
+    if degreeLength source f === 0 then return d -> {};
+
+    G := degreeGroup source f;
+    -- the linear map that f induces on DegreeGroups as a matrix
+    M := transpose matrix apply(entries G_{0..numgens G - 1}, f.cache.DegreeMap);
+
+    -- if M is not injective then we cannot produce a section
+    if (kernel M != 0) then return null;
+
+    D := image M;
+    (d) -> (
+        -- d' is the element of degreeGroup target f corresponding to d
+        d' := matrix transpose {d};
+        -- get coefficients for d' against generators for G \isom D.
+        -- this produces mild nonsense if d' is not in D but that doesn't matter
+        -- since we only apply the resulting projecting to image f.
+        flatten entries(d' // inducedMap(ambient D, D) // coverMap D)
+    )
+)
+
+pushNonLinear := (opts, f0, M) -> (
     -- given f: R --> S, and M an S-module, finite over R,
     -- returns R-presentation matrix for the pushforward of M
     -- written by Mike Stillman and David Eisenbud
-    (R, S) := (target f, source f);
-    deglen := degreeLength S;
-    n1 := numgens R; -- TODO: what if R is a tower?
 
-    monorder := opts.MonomialOrder;
-    monorder  = if ordertab#?monorder then (ordertab#monorder)(numgens R, numgens S)
-    else error("pushForward: MonomialOrder option expected one of ",
-	demark_", " \\ toString \ keys ordertab);
+    -- first flatten source and target of f so that this computation works for towers.
+    -- note this forces us to unflatten the return value when we are done.
+    (R, phiR) := flattenRing target f0;
+    (S, phiS) := flattenRing source f0;
+    m := phiR presentation M;
+    f := phiR * f0 * phiS^-1;
+
+    -- making sure that homogeneity isn't broken
+    if isHomogeneous M  then assert isHomogeneous m;
+    if isHomogeneous f0 then assert isHomogeneous f;
+
+    ishgs := all({f, m}, isHomogeneous);
+
+    s := numgens S;
+    r := numgens R;
+    monorder := (monomialOrderFromOpts opts)(r, s);
 
     J := graphIdeal(f, MonomialOrder => monorder, VariableBaseName => local X);
     G := ring J;
-    m := presentation M;
-    xvars := map(G, R, submatrix(vars G, toList(0..n1-1)));
+    xvars := map(G, R, submatrix(vars G, toList(0..r - 1)));
     m1 := presentation (cokernel xvars m  **  cokernel generators J);
 
-    if opts.UseHilbertFunction and all({f, m}, isHomogeneous) then (
+    if opts.UseHilbertFunction and ishgs then (
 	-- compare with kernel RingMap
 	hf := poincare cokernel m;
 	T := degreesRing G;
 	hf = hf * product(degrees source generators J, d -> 1 - T_d);
 	-- cache poincare
-	poincare cokernel m1 = hf);
-
-    mapbackdeg := d -> take(d, -deglen);
-    -- that choice of degree map was chosen to make the symmetricPower functor homogeneous, but it doesn't have much
-    -- else to recommend it.
-    -- we should really be *lifting* the result to S along the natural map S ---> G
-    mapback := map(S, G, map(S^1, S^n1, 0) | vars S, DegreeMap => mapbackdeg );
-
-    -- let's at least check it splits f's degree map:
-    for i from 0 to deglen-1 do (
-	e := for j from 0 to deglen-1 list if i === j then 1 else 0;
-	if mapbackdeg f.cache.DegreeMap e =!= e
-	then error "not implemented yet: unexpected degree map of ring map");
+	poincare cokernel m1 = hf
+    );
 
     g := gb(m1,
 	StopBeforeComputation => opts.StopBeforeComputation,
 	DegreeLimit           => opts.DegreeLimit,
-	PairLimit             => opts.PairLimit);
-    -- MES: check if the monomial order restricts to S.  If so, then do `` forceGB result ''
-    mapback selectInSubring(if numgens target f > 0 then 1 else 0, generators g))
+	PairLimit             => opts.PairLimit
+    );
+
+    mapback := if (mapbackdeg := makeSectionForDegreeMap(f)) =!= null then
+        -- use good degree map on the projection if possible
+        map(S, G, map(S^1, S^r, 0) | vars S, DegreeMap => mapbackdeg)
+    else
+        map(S, G, map(S^1, S^r, 0) | vars S);
+
+    result := phiS^-1 mapback selectInSubring(if r > 0 then 1 else 0, generators g);
+    -- MES: check if the monomial order restricts to R.  If so, then do `` forceGB result ''
+    result
+)
 
 -*
 pushLinear := opts -> (f,M) -> (
@@ -234,6 +271,25 @@ addHook((kernel, Matrix), Strategy => "PushForward",
 	f := m.RingMap;
 	M := coimage map(target m, f ** source m, raw m);
 	image pushNonLinear(options pushForward, f, M)))
+
+-----------------------------------------------------------------------------
+
+-- pushforward the module to PP^n via S/I <-- S
+-- this is used for instance before computing pdim
+-- or regularity of a module over a quotient ring.
+-- cf. https://github.com/Macaulay2/M2/issues/3321
+-- and https://github.com/Macaulay2/M2/issues/3656
+-- TODO: can we lift generators and relations and avoid presentation?
+liftModule   = M -> (
+    if instance(ring M, PolynomialRing) then M
+    else cokernel liftMorphism presentation M)
+liftMorphism = f -> f.cache#"liftMorphism" ??= (
+    if instance(ring f, PolynomialRing) then return f;
+    g := presentation ring f;
+    S := ring g;
+    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
+    -- TODO: why doesn't lift(f, ring g) do this automatically?
+    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

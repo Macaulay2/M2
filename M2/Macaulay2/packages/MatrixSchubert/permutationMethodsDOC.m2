@@ -444,7 +444,7 @@ doc ///
 	    algorithm "PipeDream" also available
     Description
         Text
-            Given a permutation in 1-line notation, finds its Grothenieck polynomial.  Two algorithms are impliemented: DividedDifference (which is the default) and PipeDream.
+            Given a permutation in 1-line notation, finds its Grothendieck polynomial.  Two algorithms are implemented: DividedDifference (which is the default) and PipeDream.
 	    
 	Example
 	    w = {2,1,4,3}
@@ -468,7 +468,7 @@ doc ///
 	    algorithm "Transition" also available
     Description
         Text
-            Given a permutation in 1-line notation, finds its (single) Schubert polynomial.  Two algorithms are impliemented: DividedDifference (which is the default) and Transition
+            Given a permutation in 1-line notation, finds its (single) Schubert polynomial.  Two algorithms are implemented: DividedDifference (which is the default) and Transition
 	    (which makes use of the transition equations for Schubert polynomials).
 	    
         Example 

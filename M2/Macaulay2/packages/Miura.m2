@@ -23,13 +23,13 @@ exportMutable {"PR", "QR"}
 -- specify its polynomial ring
 setPolynomialRing=method()
 setPolynomialRing(GaloisField, List, List):=(kk, v, w)->(
-if gcd w !=1 then error "-- the weights has gcm>1" ;
+if gcd w !=1 then error "-- the weights have gcd>1" ;
 if min w <1 then error "-- some weights are not positive" ;
 if #v != #w then error "-- the numbers of variables and weights are different" ;
 PR=kk[v,MonomialOrder=>{Weights => w, Weights=>toList(1 ..#w) }]
 )
 setPolynomialRing(List, List):=(v, w)->(
-if gcd w !=1 then error "-- the weights has gcm>1" ;
+if gcd w !=1 then error "-- the weights have gcd>1" ;
 if min w <1 then error "-- some weights are not positive" ;
 if #v != #w then error "-- the numbers of variables and weights are different" ;
 PR=QQ[v,MonomialOrder=>{Weights=>w, Weights=>toList(1 ..#w) }]
@@ -158,7 +158,7 @@ document{
     PARA {"The function reduced computes the reduced ideal given an integral ideal by executing inverse twice.
 	The reduced ideal is the ideal that minimizes the pole order among the ideals in the same class"},   
 	EXAMPLE {"setPolynomialRing({x,y},{2,3})","setQuotientRing(y^2-x^3-7*x)", "J=ideal(x,y); reduced(J)"},
-	SeeAlso => {"inverse"}
+	SeeAlso => {"add", "double", "scalarMultiplication"}
 }
 
 document{
@@ -192,7 +192,7 @@ document{
     Usage => "K=scalarMultiplication(J,m)",
     Outputs => {ofClass Ideal},
     Headline => "Add Reduced Ideal Multiple Times",
-    PARA {"The function scalarMultiplication computes the reduced ideal of an integral ideal scalarMultiplicationplied by a nonnegative integer"},    
+    PARA {"The function scalarMultiplication computes the reduced ideal of an integral ideal multiplied by a nonnegative integer"},
 	EXAMPLE {"setPolynomialRing(GF 13,{x,y},{2,3}); setQuotientRing(y^2-x^3-7*x)","J=ideal(x,y)","scalarMultiplication(J,5)",
 	"setPolynomialRing({x,y}, {2,3})", "setQuotientRing(y^2-x^3-7*x)", "J=ideal(x,y)", "K=ideal(x-2,y-3)", "add(J,K)", "scalarMultiplication(K,5)"},
 	SeeAlso => {"add", "double"}
@@ -251,5 +251,21 @@ A:=add(J,K);
 A2:=double(A);
 A5:=scalarMultiplication(A,5);
 assert(scalarMultiplication(A2,5)==double(A5));
+///
+
+-- Error paths for setPolynomialRing: bad weights / variable-count
+-- mismatches should error rather than silently accept invalid input.
+TEST ///
+-- gcd of weights > 1
+assert(try (setPolynomialRing(GF 5, {x, y}, {2, 4}); false) else true);
+-- non-positive weight
+assert(try (setPolynomialRing(GF 5, {x, y}, {2, 0}); false) else true);
+assert(try (setPolynomialRing(GF 5, {x, y}, {2, -1}); false) else true);
+-- variable count != weight count
+assert(try (setPolynomialRing(GF 5, {x, y, z}, {2, 3}); false) else true);
+-- same three error paths on the QQ overload
+assert(try (setPolynomialRing({x, y}, {2, 4}); false) else true);
+assert(try (setPolynomialRing({x, y}, {2, 0}); false) else true);
+assert(try (setPolynomialRing({x, y, z}, {2, 3}); false) else true);
 ///
 

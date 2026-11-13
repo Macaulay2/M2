@@ -142,7 +142,7 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
      t := symbol t;
      Rt := K(monoid[gens R, t]); 
      t = last gens Rt; 
-     (nS,nT) := if shouldNormalize -- make Bomboeri-Weyl norm of the systems equal 1
+     (nS,nT) := if shouldNormalize -- make Bombieri-Weyl norm of the systems equal 1
      then (XXXapply(S, f->f/sqrt(S.NumberOfPolys * BombieriWeylNormSquared f)), 
 	 XXXapply(T, f->f/sqrt(T.NumberOfPolys * BombieriWeylNormSquared f)))
      else (S,T);

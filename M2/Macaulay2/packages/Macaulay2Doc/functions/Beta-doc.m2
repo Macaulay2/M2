@@ -1,13 +1,7 @@
 doc ///
   Key
     Beta
-   (Beta,CC,CC)
-   (Beta,CC,RR)
-   (Beta,RR,CC)
-   (Beta,RR,RR)
-   (Beta,RR,RRi)
-   (Beta,RRi,RR)
-   (Beta,RRi,RRi)
+   (Beta,InexactNumber,InexactNumber)
   Headline
     Beta function
   Usage
@@ -31,21 +25,7 @@ doc ///
 doc ///
   Key
     regularizedBeta
-   (regularizedBeta,CC,CC,CC)
-   (regularizedBeta,CC,CC,RR)
-   (regularizedBeta,CC,RR,CC)
-   (regularizedBeta,CC,RR,RR)
-   (regularizedBeta,RR,CC,CC)
-   (regularizedBeta,RR,CC,RR)
-   (regularizedBeta,RR,RR,CC)
-   (regularizedBeta,RR,RR,RR)
-   (regularizedBeta,RR,RR,RRi)
-   (regularizedBeta,RR,RRi,RR)
-   (regularizedBeta,RR,RRi,RRi)
-   (regularizedBeta,RRi,RR,RR)
-   (regularizedBeta,RRi,RR,RRi)
-   (regularizedBeta,RRi,RRi,RR)
-   (regularizedBeta,RRi,RRi,RRi)
+   (regularizedBeta,InexactNumber,InexactNumber,InexactNumber)
   Headline
     regularized beta function
   Usage
@@ -71,7 +51,7 @@ doc ///
 doc ///
   Key
     inverseRegularizedBeta
-   (inverseRegularizedBeta,RR,RR,RR)
+   (inverseRegularizedBeta,InexactNumber,InexactNumber,InexactNumber)
   Headline
     inverse of the regularized beta function
   Usage

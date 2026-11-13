@@ -1,0 +1,24 @@
+-- -*- M2-comint -*- hash: 10893047696075686640
+
+i1 : R = QQ[x,y];
+
+i2 : F = {x^2 + y^2 - 1};
+
+i3 : (U,W) = ({.12, .23}, {.15, .331});
+
+i4 : UED = leftKernelUnitEDDegree F
+Warning: The HomVariableGroup is written first and then the AffVariableGroup is written second.
+
+o4 = 2
+
+i5 : GED = leftKernelGenericEDDegree F
+Warning: The HomVariableGroup is written first and then the AffVariableGroup is written second.
+
+o5 = 4
+
+i6 : GED = leftKernelWeightEDDegree(F, U, W)
+Warning: The HomVariableGroup is written first and then the AffVariableGroup is written second.
+
+o6 = 4
+
+i7 : 

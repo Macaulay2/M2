@@ -197,7 +197,7 @@ document {
     "Macaulay2 provides for fraction fields of integral domains.",
     PARA{},
     "In some cases, normal forms of fractions makes sense, but in general
-    for fraction fieldss of quotient rings, there is no notion of
+    for fraction fields of quotient rings, there is no notion of
     normal form for a fraction.
     In other words, fractions
     may be equal without displaying the same numerator and denominator.",
@@ -448,11 +448,6 @@ document { Key => InexactFieldFamily,
 document { Key => RealField,
      Headline => "the class of all real fields",
      PARA { "A real number ring is a ring whose elements are real numbers of variable precision." }
-     }
-
-undocumented {
-     (NewOfFromMethod,ComplexField,Nothing,ZZ),
-     (NewOfFromMethod,RealField,Nothing,ZZ)
      }
 
 document { Key => ComplexField,

@@ -392,7 +392,7 @@ star (SimplicialComplex, RingElement) := (S, f) -> (simplicialComplex(monomialId
 SimplicialComplex * SimplicialComplex := (D, D') -> (
      S := ring D ** ring D';
      fromD := map(S, ring D);
-     fromD' := map(S, ring D');
+     fromD' := if ring D === ring D' then map(S, ring D, (gens S)_{#gens ring D..#gens S - 1}) else map(S, ring D');
      simplicialComplex monomialIdeal(fromD ideal D + fromD' ideal D')
      )
 

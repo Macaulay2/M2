@@ -8,14 +8,15 @@
 #undef register
 #include <stdlib.h>
 
-#include "aring-CCC.hpp"
-#include "aring.hpp"
+#include "basic-rings/aring-CCC.hpp"
+#include "basic-rings/aring.hpp"
 #include "error.h"
 #include "monoid.hpp"
-#include "polyring.hpp"
-#include "relem.hpp"
-#include "ring.hpp"
-#include "ringelem.hpp"
+#include "rings/frac.hpp"
+#include "rings/polyring.hpp"
+#include "ring-elements/ring-element.hpp"
+#include "rings/ring.hpp"
+#include "rings/ringelem.hpp"
 
 #define abs(x) (((x) < 0) ? -(x) : (x))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
@@ -24,13 +25,18 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
                                           long prec,
                                           int unique)
 {
+  (void) unique;
   const Ring *R = p->get_ring();
+  if (const FractionField *frac = R->cast_to_FractionField()) {
+    R = frac->get_ring();
+    p = RingElement::make_raw(R, frac->numerator(p->get_value()));
+  }
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  const Monoid *M = P->getMonoid();
   if (P == nullptr) {
     ERROR("expected a polynomial ring");
     return nullptr;
   }
+  const Monoid *M = P->getMonoid();
   if (P->n_vars() != 1) {
     ERROR("expected a univariate polynomial ring");
     return nullptr;

@@ -62,7 +62,7 @@ doc ///
             makeRandomCpMackeyFunctor(7,{2,2,3,3})
 
         Text
-            If we don't want to specify this data, $n$ and $m$ will be chosen randomly between 1 and 10. To randomly choose between 1 and a higher number, we can use the @TT("GenBound")@ option.
+            If we don't want to specify this data, $n$ and $m$ will be chosen randomly between 1 and the value of the @TT("GenBound")@ option (default 5). To randomly choose between 1 and a higher number, set @TT("GenBound")@ to that value.
 
         Example
             makeRandomCpMackeyFunctor(3)
@@ -219,7 +219,7 @@ doc ///
             the complex representation Mackey functor for the group $C_p$.
     Description
         Text
-            The {\em complex representation} Mackey functor of a group $G$ is defined by sending $G/H$ to the Grothendieck group of complex $G$-representations. The transfer and restriction come from induction and restriction of $G$-representations. When $G$ is a cyclic group of prime order, this admits a nice form. The underlying module is given by $\ZZ$ with trivial conjugation action, while the fixed module is $\mathbb{Z}\{\lambda_{0},\lambda_1,\dots,\lambda_{p-1}\}$. The element $\lambda_i$ represents the one dimensional complex representation given by multiplication by $e^{2\pi i/p}$. Restriction is defined as",
+            The {\em complex representation} Mackey functor of a group $G$ is defined by sending $G/H$ to the Grothendieck group of complex $H$-representations. The transfer and restriction come from induction and restriction of representations. When $G$ is a cyclic group of prime order, this admits a nice form. The underlying module is given by $\ZZ$ with trivial conjugation action, while the fixed module is $\mathbb{Z}\{\lambda_{0},\lambda_1,\dots,\lambda_{p-1}\}$. The element $\lambda_i$ represents the one dimensional complex representation given by multiplication by $e^{2\pi i/p}$. Restriction is defined as",
             \[\text{res}_e^{C_p} \colon \mathbb{Z}\{\lambda_{0},\lambda_1,\dots,\lambda_{p-1}\} \to \mathbb{Z}\]
             by sending $\lambda_i\mapsto 1$. The transfer
             \[\text{tr}_e^{C_p} \colon \mathbb{Z} \to \mathbb{Z}\{\lambda_{0},\lambda_1,\dots,\lambda_{p-1}\}\]
@@ -248,7 +248,7 @@ doc ///
 
     Description
         Text
-            The {\em real representation} Mackey functor of a group $G$ is defined by sending $G/H$ to the Grothendieck group of real orthogonal $G$-representations. The transfer and restriction come from induction and restriction of $G$-representations. When $G$ is a cyclic group of prime order p, with p odd, this admits a nice form. The underlying module is given by $\ZZ$ with trivial conjugation action, while the fixed module is $\mathbb{Z}\{\lambda_{0},\lambda_1,\dots,\lambda_{(p-1)/2}\}$. The element $\lambda_i$ for $i>0$ represents the two dimensional real representation given by rotation by $(2\pi i)/p$ radians. The element $\lambda_0$ represents the trivial one dimensional representation.  Restriction is defined as
+            The {\em real representation} Mackey functor of a group $G$ is defined by sending $G/H$ to the Grothendieck group of real orthogonal $H$-representations. The transfer and restriction come from induction and restriction of representations. When $G$ is a cyclic group of prime order p, with p odd, this admits a nice form. The underlying module is given by $\ZZ$ with trivial conjugation action, while the fixed module is $\mathbb{Z}\{\lambda_{0},\lambda_1,\dots,\lambda_{(p-1)/2}\}$. The element $\lambda_i$ for $i>0$ represents the two dimensional real representation given by rotation by $(2\pi i)/p$ radians. The element $\lambda_0$ represents the trivial one dimensional representation.  Restriction is defined as
             \[\text{res}_e^{C_p} \colon \mathbb{Z}\{\lambda_{0},\lambda_1,\dots,\lambda_{(p-1)/2}\} \to \mathbb{Z}\]
             by sending
             \[\lambda_i\mapsto \begin{cases} 2 & i>0 \\ 1 & i=0. \end{cases} \]

@@ -297,6 +297,35 @@ Node
   serialize
 ///
 
+-- Basic regression for the two exports. Previously the package had
+-- zero TEST blocks, so a check pass produced "warning: Serialization
+-- has no tests".
+TEST ///
+-- serialize returns a String for every supported input type.
+R := QQ[x, y, z];
+I := ideal(x^2 - y, y^2 - z);
+assert(class serialize R === String);
+assert(class serialize I === String);
+assert(class serialize (x + y) === String);
+assert(class serialize {1, 2, 3} === String);
+assert(class serialize (new MutableHashTable) === String);
+-- Cyclic mutable structures should not loop forever.
+g := new MutableHashTable;
+h := new MutableHashTable;
+g#0 = h;
+h#0 = g;
+assert(class serialize g === String);
+assert(length serialize g > 0);
+-- userSymbols round-trip: serialize the current symbol set; the
+-- result must be a non-trivial String.
+save := serialize userSymbols();
+assert(class save === String);
+assert(length save > 0);
+-- mark() updates the internal watermark; it should run without error.
+mark();
+assert true;
+///
+
 end
 reload
 restart

@@ -719,7 +719,15 @@ document {
      the compatibility conditions for degree and homology triplets, respectively.
      
      The routine ", TO toHomology, " converts from a degree triplet to a homology triplet, and
-     the routine ", TO toDegree, " converts from a homology triplet to a degree triplet."
+     the routine ", TO toDegree, " converts from a homology triplet to a degree triplet.",
+     EXAMPLE lines ///
+          T = triplet({1,2,3}, {0,2}, {0,2,3})
+          instance(T, Triplet)
+          isDegreeTriplet T
+          Th = toHomology T
+          instance(Th, Triplet)
+          isHomologyTriplet Th
+          ///
      
      }
      

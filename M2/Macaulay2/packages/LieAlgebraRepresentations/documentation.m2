@@ -1364,7 +1364,7 @@ doc ///
 	Text
 	        1. the Lusztig canonical basis, as detailed in Geck and Lang, "Canonical structure constants for simple Lie algebras", arXiv:2404.07652v1. This basis is available for any simple Lie algebra.
 	Text
-	        2. natural bases of the matrix Lie algebras $sl_n$, $sp(2n), $so(m)$, as described by Fulton and Harris in {\it Representation Theory: A First Course}, Sections 15.1, 16.1, and 18.1, respectively.
+	        2. natural bases of the matrix Lie algebras $sl_n$, $sp(2n)$, $so(m)$, as described by Fulton and Harris in {\it Representation Theory: A First Course}, Sections 15.1, 16.1, and 18.1, respectively.
 	Text
 	        3. the basis of $g_2$ described by Fulton and Harris in {\it Representation Theory: A First Course}, Section 22.1.
 	Text
@@ -1400,7 +1400,7 @@ doc ///
         Text
 	    See @TO "LieAlgebraBasis"@ for more details and references.
 	Text
-            The optional argument "Method" may be set to "Lusztig" for the Lusztig canonical basis, or "FH" for the basis described in Fulton-Harris, {\it Representation Theory: A First Course. The default is "FH" for types A, B, C, D, and G.
+            The optional argument "Method" may be set to "Lusztig" for the Lusztig canonical basis, or "FH" for the basis described in Fulton-Harris, {\it Representation Theory: A First Course}. The default is "FH" for types A, B, C, D, and G.
 	Text	
 	    The optional argument "Check" (default: true) runs a suite of tests on the basis constructed. See the unexported function "checkLieAlgebraBasis" in the package code for more details. 
 	Text
@@ -1411,8 +1411,10 @@ doc ///
 	    sl3=simpleLieAlgebra("A",2);
 	    lieAlgebraBasis(sl3)===LAB
 	Text
+            Here is the Lusztig canonical basis as described by Geck and Lang. 
+	Example
 	    LAB#"BasisElements"
-	    LABLusztig = lieAlgebraBasis("A",2,"Method"=>Lusztig);
+	    LABLusztig = lieAlgebraBasis("A",2,"Method"=>"Lusztig");
 	    LABLusztig#"BasisElements"
 ///
 
@@ -1588,6 +1590,49 @@ doc ///
             L = GTrepresentationMatrices(V)
             lieAlgebraRepresentation(V,LAB,L)
 ///
+
+
+
+doc ///
+    Key
+	(dual,LieAlgebraRepresentation)
+    Headline
+        creates the dual representation of a Lie algebra representation
+    Usage
+        dual rho
+    Inputs 
+        rho:LieAlgebraRepresentation
+    Outputs
+        rhostar:LieAlgebraRepresentation
+    Description
+
+        Text
+	    The dual representation (with respect to the dual basis) is the negative transpose.
+
+	Example
+	    sl6 = simpleLieAlgebra("A",5)
+	    Std = standardRepresentation(sl6);
+	    rho1 = exteriorPower(2,Std);
+	    rho2 = dual rho1;
+	    peek(rho1#"Module")
+	    peek(rho2#"Module")
+	    M1 = (rho1#"RepresentationMatrices")_6
+	    M2 = (rho2#"RepresentationMatrices")_6
+	    M2==-transpose(M1)
+	    rho3 = exteriorPower(4,Std);
+	    isomorphismOfRepresentations(rho2, rho3)
+///
+
+TEST ///
+    sl6 = simpleLieAlgebra("A",5)
+    Std = standardRepresentation(sl6);
+    rho1 = exteriorPower(2,Std);
+    rho2 = dual rho1;
+    assert((rho1#"Module")#"DecompositionIntoIrreducibles"==new VirtualTally from {{0, 1, 0, 0, 0} => 1})
+    assert((rho2#"Module")#"DecompositionIntoIrreducibles"==new VirtualTally from {{0, 0, 0, 1, 0} => 1})
+    assert(all(dim sl6, i -> (rho2#"RepresentationMatrices")_i==-transpose((rho1#"RepresentationMatrices")_i)))
+///
+
 
 
 
@@ -2419,7 +2464,7 @@ doc ///
             Let $\rho: SL_n \rightarrow GL(V)$ be a representation where $V$ is irreducible of highest weight $\lambda$.  Then $\dim (V \otimes V^{*})^{SL_n} = 1$. 
 	    
         Text
-	    We have a conjectural combinatorial formula for this invariant polynomial in the Gelfand-Tsetlin basis of $V$.  See https://faculty.fordham.edu/dswinarski/InvariantPolynomialsAndMukaiModels/InvariantPolynomialConjecture.pdf.  
+	    We have a combinatorial formula for this invariant polynomial in the Gelfand-Tsetlin basis of $V$.  See https://faculty.fordham.edu/dswinarski/InvariantPolynomialsAndMukaiModels/InvariantPolynomialFormula.pdf.  
 
 
         Text
@@ -2635,8 +2680,7 @@ doc ///
 
 
 TEST ///
-    assert(spinRepresentationMatrices(3)==
-{matrix {{-1/2, 0, 0, 0, 0, 0, 0, 0}, {0, 1/2, 0, 0, 0, 0, 0, 0}, {0, 0, 1/2, 0, 0, 0, 0, 0}, {0, 0, 0, -1/2, 0, 0, 0, 0}, {0, 0, 0, 0, 1/2, 0, 0, 0}, {0, 0, 0, 0, 0, -1/2, 0, 0}, {0, 0, 0, 0, 0, 0, -1/2, 0}, {0, 0, 0, 0, 0, 0, 0, 1/2}}, matrix {{-1/2, 0, 0, 0, 0, 0, 0, 0}, {0, 1/2, 0, 0, 0, 0, 0, 0}, {0, 0, -1/2, 0, 0, 0, 0, 0}, {0, 0, 0, 1/2, 0, 0, 0, 0}, {0, 0, 0, 0, -1/2, 0, 0, 0}, {0, 0, 0, 0, 0, 1/2, 0, 0}, {0, 0, 0, 0, 0, 0, -1/2, 0}, {0, 0, 0, 0, 0, 0, 0, 1/2}}, matrix {{-1/2, 0, 0, 0, 0, 0, 0, 0}, {0, -1/2, 0, 0, 0, 0, 0, 0}, {0, 0, 1/2, 0, 0, 0, 0, 0}, {0, 0, 0, 1/2, 0, 0, 0, 0}, {0, 0, 0, 0, -1/2, 0, 0, 0}, {0, 0, 0, 0, 0, -1/2, 0, 0}, {0, 0, 0, 0, 0, 0, 1/2, 0}, {0, 0, 0, 0, 0, 0, 0, 1/2}}, matrix {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0/1}}, matrix {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0/1}}, matrix {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0/1}}, matrix {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0/1}}, matrix {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0/1}}, matrix {{0, 0, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0/1}}, matrix {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0/1}}, matrix {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0/1}}, matrix {{0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0/1}}, matrix {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0/1}}, matrix {{0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0/1}}, matrix {{0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 0/1}}})
+    assert(spinRepresentationMatrices(3)=={map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{-1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}),map(QQ^8,QQ^8,{{0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 0}})})
 ///
 
 
@@ -2672,8 +2716,8 @@ doc ///
 
 
 TEST ///
-    assert(halfspinRepresentationMatrices(3,0)=={map(QQ^4,QQ^4,{{-1/2, 0, 0, 0}, {0, 1/2, 0, 0}, {0, 0, 1/2, 0}, {0, 0, 0, -1/2}}),map(QQ^4,QQ^4,{{-1/2, 0, 0, 0}, {0, 1/2, 0, 0}, {0, 0, -1/2, 0}, {0, 0, 0, 1/2}}),map(QQ^4,QQ^4,{{-1/2, 0, 0, 0}, {0, -1/2, 0, 0}, {0, 0, 1/2, 0}, {0, 0, 0, 1/2}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 1, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, -1, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}})})
-    assert(halfspinRepresentationMatrices(3,1)=={map(QQ^4,QQ^4,{{1/2, 0, 0, 0}, {0, -1/2, 0, 0}, {0, 0, -1/2, 0}, {0, 0, 0, 1/2}}),map(QQ^4,QQ^4,{{-1/2, 0, 0, 0}, {0, 1/2, 0, 0}, {0, 0, -1/2, 0}, {0, 0, 0, 1/2}}),map(QQ^4,QQ^4,{{-1/2, 0, 0, 0}, {0, -1/2, 0, 0}, {0, 0, 1/2, 0}, {0, 0, 0, 1/2}}),map(QQ^4,QQ^4,{{0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, -1, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 1, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}, {0, 0, 0, 0}})})
+    assert(halfspinRepresentationMatrices(3,0)=={map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, -1}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{-1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 1, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, -1, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}})})
+    assert(halfspinRepresentationMatrices(3,1)=={map(QQ^4,QQ^4,{{1, 0, 0, 0}, {0, -1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{-1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}}),map(QQ^4,QQ^4,{{0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, -1, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 1, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}}),map(QQ^4,QQ^4,{{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}, {0, 0, 0, 0}})})
 ///
 
 
@@ -2991,4 +3035,61 @@ undocumented ( {
     (casimirScalar,String,ZZ,List),(casimirScalar,Sequence,Sequence,List),
      (highestRoot,String,ZZ),(highestRoot,Sequence,Sequence)
     })
+
+--tests the fraktur shorthand for simple Lie algebras and the omega shorthand for fundamental weights
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    assert(𝔞_2 === g)
+    assert(𝔟_2 === simpleLieAlgebra("B",2))
+    assert(𝔠_3 === simpleLieAlgebra("C",3))
+    assert(𝔡_4 === simpleLieAlgebra("D",4))
+    assert(𝔢_6 === simpleLieAlgebra("E",6))
+    assert(𝔣_4 === simpleLieAlgebra("F",4))
+    assert(𝔤_2 === simpleLieAlgebra("G",2))
+    --ω_i is the i-th fundamental weight, so LL_(ω_i)(g) is the corresponding irreducible module
+    assert(LL_(ω_1)(g) === irreducibleLieAlgebraModule(g,{1,0}))
+    assert(LL_(ω_2)(g) === irreducibleLieAlgebraModule(g,{0,1}))
+    assert(LL_(ω_1+ω_2)(g) === irreducibleLieAlgebraModule(g,{1,1}))
+///
+
+--tests characterRing
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    R = characterRing g
+    assert instance(R, Ring)
+    --the character ring has one variable per node of the Dynkin diagram
+    assert(numgens R == rank g)
+    --characterRing is memoized: repeated calls return the identical ring
+    assert(characterRing g === R)
+    --the character of a module is an element of the character ring
+    V = irreducibleLieAlgebraModule(g,{1,1})
+    assert(ring character V === R)
+///
+
+--tests LieAlgebraModuleFromWeights
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    V = irreducibleLieAlgebraModule(g,{1,1})
+    M = V ** V
+    --LieAlgebraModuleFromWeights recovers a module from its weight diagram
+    assert(LieAlgebraModuleFromWeights(weightDiagram M, g) === M)
+    --and equivalently from its character
+    assert(LieAlgebraModuleFromWeights(character M, g) === M)
+    --a character from a different Lie algebra's ring is rejected
+    assert(try (LieAlgebraModuleFromWeights(character M, simpleLieAlgebra("B",2)); false) else true)
+///
+
+--tests adams (Adams operations on Lie algebra modules)
+TEST ///
+    g = simpleLieAlgebra("A",2)
+    V = irreducibleLieAlgebraModule(g,{1,1})
+    S = standardModule g
+    --the 1st Adams operation is the identity; the 0th gives the zero module
+    assert(adams(1,V) === V)
+    assert(adams(0,V) === zeroModule g)
+    --the (-1)st Adams operation is the dual: the dual of the sl_3 standard module {1,0} is {0,1}
+    assert(adams(-1,S) === irreducibleLieAlgebraModule(g,{0,1}))
+    --Adams operations permute the weight diagram, so they preserve dimension
+    assert(dim adams(2,S) == dim S)
+///
 

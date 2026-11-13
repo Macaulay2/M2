@@ -154,11 +154,11 @@ deRhamAll RingElement := options -> f -> (
 	       pInfo(2, "\t Degree " | i | "...");
 	       tInfo := toString first timing (
 	       	    while j < n-i do (
-	            	 vertMap := zeroize dbl#(n-i-1)^[(j,-j+n-i-1)]*
-	            	 (dbl.dd#(n-i))*(dbl#(n-i)_[(j,-j+n-i)]);
+	            	 vertMap := zeroize dbl_(n-i-1)^[{j,-j+n-i-1}]*
+	            	 (dbl.dd_(n-i))*(dbl_(n-i)_[{j,-j+n-i}]);
 	            	 push := vertMap*pull;
-	            	 horMap := zeroize dbl#(n-i-1)^[(j,-j+n-i-1)]*
-	            	 (dbl.dd#(n-i))*(dbl#(n-i)_[(j+1,-j+n-i-1)]);
+	            	 horMap := zeroize dbl_(n-i-1)^[{j,-j+n-i-1}]*
+	            	 (dbl.dd_(n-i))*(dbl_(n-i)_[{j+1,-j+n-i-1}]);
 	            	 if ((Dtransposition push) % (Dtransposition horMap) != 0)
 	            	 then error "syzygy should be produced but wasn't!";
 	            	 pull = (Dtransposition push) // (Dtransposition horMap);
@@ -167,7 +167,7 @@ deRhamAll RingElement := options -> f -> (
 	            	 );
 	       	    );
 	       pInfo(2, "\t\t\t time = " | tInfo | " seconds" );
-	       transfers = append(transfers, i => pull);
+	       transfers = append(transfers, i => matrix entries pull);
 	       i = i+1;
 	       );
      	  outputList = outputList | {TransferCycles => 
@@ -238,11 +238,11 @@ iAllt Module:= options -> I -> (
            pInfo(2, "\t Degree " | i | "...");
            tInfo := toString first timing (
                 while j < n-i do (
-                     vertMap := zeroize dbl#(n-i-1)^[(j,-j+n-i-1)]*
-                     (dbl.dd#(n-i))*(dbl#(n-i)_[(j,-j+n-i)]);
+                     vertMap := zeroize dbl_(n-i-1)^[{j,-j+n-i-1}]*
+                     (dbl.dd_(n-i))*(dbl_(n-i)_[{j,-j+n-i}]);
                      push := vertMap*pull;
-                     horMap := zeroize dbl#(n-i-1)^[(j,-j+n-i-1)]*
-                     (dbl.dd#(n-i))*(dbl#(n-i)_[(j+1,-j+n-i-1)]);
+                     horMap := zeroize dbl_(n-i-1)^[{j,-j+n-i-1}]*
+                     (dbl.dd_(n-i))*(dbl_(n-i)_[{j+1,-j+n-i-1}]);
                      if ((Dtransposition push) % (Dtransposition horMap) != 0)
                      then error "syzygy should be produced but wasn't!";
                      pull = (Dtransposition push) // (Dtransposition horMap);
@@ -353,7 +353,7 @@ getReducedTransfer (HashTable,ZZ) := (cohom,k) -> (
   WtotempW := map (tempW, W, vars tempW);
   -- map to the lex ring.
   tktemp := apply(tk,i->apply(i,j->WtotempW(j)));
-  iii := WtotempW( ((cohom#VResolution).dd)#1 );
+  iii := WtotempW( (cohom#VResolution).dd_1 );
   ggg := gb iii;
   tkreduced := apply(tktemp,i->apply(i,j-> (j % ggg)))
 )

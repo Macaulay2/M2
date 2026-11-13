@@ -1,13 +1,11 @@
-#define BOOST_STACKTRACE_USE_ADDR2LINE /* show source file and line number */
-// #define BOOST_STACKTRACE_USE_NOOP /* disable stacktrace */
-
 #include <M2/gc-include.h>
 
 #include "interp-exports.h"
+#include "interrupts-exports.h"
+#include <interface/m2-types.h>
 
 #include "M2mem.h"
 #include "types.h"
-#include "debug.h"
 
 #include <engine.h> /* to get IM2_initialize() : */
 #include "supervisorinterface.h"
@@ -38,10 +36,6 @@ static bool gotArg(const char* arg, char* const * argv) {
   return false;
 }
 
-extern "C" void interrupts_clearInterruptFlag();
-extern "C" void interrupts_clearAlarmedFlag();
-extern "C" void interrupts_determineExceptionFlag();
-
 extern int have_arg_no_int;
 
 extern int tokens_stopIfError_id;
@@ -55,10 +49,10 @@ bool interrupts_interruptShield;
 void* interpFunc(ArgCell* vargs);
 void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
-void  M2_flint_abort(void);
+FLINT_NORETURN void  M2_flint_abort(void);
 
 static void * GC_start_performance_measurement_0(void *) {
-#ifdef GC_start_performance_measurement /* added in bdwgc 8 */
+#if GC_VERSION_MAJOR >= 8 /* GC_start_performance_measurement added in bdwgc 8 */
   GC_start_performance_measurement();
 #endif
   return NULL;
@@ -133,13 +127,14 @@ void profiler_stacktrace(std::ostream &stream, int traceDepth) {
   }
 }
 
-void M2_flint_abort(void) {
+FLINT_NORETURN void M2_flint_abort(void) {
   profiler_stacktrace(std::cerr, 0);
   abort();
 }
 
 void* profFunc(ArgCell* p)
 {
+  (void) p;
   using namespace std::chrono_literals;
   std::string filename("profile-" + std::to_string(getpid())+ ".raw");
   std::cerr << "-- Storing profiling data in " << filename << std::endl;
@@ -219,12 +214,14 @@ extern "C" void oursignal(int sig, void (*handler)(int)) {
 }
 
 void trace_handler(int sig) {
+  (void) sig;
   if (tryGlobalTrace() == 0)
     profiler_stacktrace(std::cerr, 1);
   oursignal(SIGUSR1,trace_handler);
 }
 
 void alarm_handler(int sig) {
+  (void) sig;
   if (tryGlobalAlarm() == 0)
     interrupts_setAlarmedFlag();
   oursignal(SIGALRM,alarm_handler);
@@ -232,6 +229,7 @@ void alarm_handler(int sig) {
 
 void segv_handler(int sig) {
   static int level;
+  (void) sig;
   fprintf(stderr, "-- SIGSEGV\n");
   level ++;
   if (level > 1) {
@@ -244,6 +242,7 @@ void segv_handler(int sig) {
 }
 
 void interrupt_handler(int sig) {
+  (void) sig;
   if (tryGlobalInterrupt() == 0) {
     if (test_Field(THREADLOCAL(interrupts_interruptedFlag, struct atomic_field)) ||
                    THREADLOCAL(interrupts_interruptPending, bool)) {
@@ -266,6 +265,7 @@ void interrupt_handler(int sig) {
 	      fprintf(stderr,"returning to top level\n");
 	      fflush(stderr);
 
+	      interp_setInterpreterDepth(0);
 	      interrupts_clearAlarmedFlag();
 	      interrupts_clearInterruptFlag();
 

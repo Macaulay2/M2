@@ -1,13 +1,13 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.71",
-    Date => "25 Jul 2023", -- "22 Mar 2021",
+    Version => "0.8",
+    Date => "15 June 2026", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
     Headline => "Cotangent Schubert calculus",
-    Keywords => {"Intersection Theory"},
+    Keywords => {"Intersection Theory", "Flag Varieties", "Equivariant Cohomology"},
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
@@ -51,11 +51,23 @@ multidoc ///
 
     References: @BR{}@
     [1] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability I: invariant trilinear forms,
+    Communications of the American Mathematical Society 6:1-67,
     @HREF{"http://arxiv.org/abs/1706.10019","arXiv:1706.10019"}@. @BR{}@
     [2] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability II: multiplying motivic Segre classes,
+    Communications of the American Mathematical Society 6:68–152,
     @HREF{"http://arxiv.org/abs/2102.00563","arXiv:2102.00563"}@. @BR{}@
     [3] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability III: separated descents,
     @HREF{"http://arxiv.org/abs/2306.13855","arXiv:2306.13855"}@.
+ Node
+  Key
+   LabelList
+  Headline
+   A list encoding a fixed point or puzzle label
+  Description
+   Text
+    @TT "LabelList"@ is a subtype of @TO{List}@ used to encode fixed points of flag
+    varieties and the corresponding labels of puzzles. The label list returned by
+    @TO{setupCotangent}@ consists of objects of this type.
  Node
   Key
    setupCotangent
@@ -96,6 +108,31 @@ multidoc ///
    Text
     the first output is a "diagonal algebra", i.e., a vector space over @TT "FF"@ with componentwise product. The last two outputs
     are the same as above.
+ Node
+  Key
+   Partial
+  Headline
+   Choose the partial or full flag variety ring
+  Description
+   Text
+    This boolean option applies to class computations after using @TO{setupCotangent}@ with
+    @TT "Presentation=>Borel"@. Setting @TT "Partial=>true"@ returns a class in the
+    cohomology or K-theory ring @TT "A"@ of the specified partial flag variety, while
+    @TT "Partial=>false"@ returns the corresponding class in the ring @TT "B"@ of the
+    full flag variety.
+
+    The option is accepted by @TO{tautoClass}@, @TO{zeroSection}@,
+    @TO{dualZeroSection}@, @TO{canonicalClass}@, and the class families
+    @TO{sClass}@, @TO{stableClass}@, @TO{segreClass}@, @TO{chernClass}@,
+    @TO{schubertClass}@ and their primed variants.
+
+    When the ring @TT "A"@ is supplied explicitly, the default is @TT "Partial=>true"@.
+    When @TT "B"@ is supplied, or when the ring argument is omitted, the default is
+    @TT "Partial=>false"@.
+   Example
+    (A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Equivariant=>false);
+    schubertClass("0101",Partial=>true)
+    schubertClass("0101",Partial=>false)
  Node
   Key
    chernClass
@@ -194,16 +231,18 @@ multidoc ///
   Headline
    Compute the class of a tautological bundle
   Usage
-   tautoClass (i,j)
-   tautoClass (i,j,A)
+   tautoClass (j,i)
+   tautoClass (j,i,A)
   Inputs
-   i : ZZ
    j : ZZ
+   i : ZZ
    A : Ring
   Description
    Text
-    This function computes the i-th Chern class of the j-th tautological bundle of the flag variety whose K-theory (or cohomology)
+    This function computes the j-th Chern class of the i-th tautological bundle of the flag variety whose K-theory (or cohomology)
     ring is given by @TT "A"@. If @TT "A"@ is not specified, then the ring that was defined last is used.
+   Example
+    (A,B,FF,I) = setupCotangent(2,3,Presentation=>Borel); {tautoClass(1,1,A),tautoClass(2,1,A),tautoClass(1,2,A)}
  Node
   Key
    pushforwardToPoint
@@ -267,9 +306,10 @@ multidoc ///
    Class of the canonical bundle of a flag variety
   Description
    Text
-    This function returns the class of the canonical bundle of the flag variety
-    in the cohomology ring given as argument (or the last ring defined with @TO {setupCotangent}@
-    if no argument is given).
+    This function returns the K-theory class of the canonical bundle of the flag variety
+    when @TT "Ktheory=>true"@, and its first Chern class when @TT "Ktheory=>false"@.
+    The ring is given as argument, or is the last ring defined with @TO {setupCotangent}@
+    if no argument is given.
  Node
   Key
    puzzle
@@ -279,6 +319,7 @@ multidoc ///
    [puzzle, Equivariant]
    [puzzle, Labels]
    [puzzle, Paths]
+   [puzzle, Separation]
    [puzzle, Steps]
    Puzzle
   Headline
@@ -313,9 +354,15 @@ multidoc ///
     this will not occur in normal puzzle computations). The special symbol "#" stands for any single digit,
     whereas "*" stands for any puzzle label.
 
+    Note that only puzzles up to d=3 are implemented.
+
+    One more symbol in boundary strings is allowed, namely "_"; this will trigger the option @TT "Separation"@ which allows the computation
+    of separated or almost separated descent puzzles, see paper [3] for details.
+
     @TT "Labels"@ and @TT "Paths"@ are drawing options which only affect HTML and TeX output of puzzles.
    Example
     puzzle ("0101","1001",Equivariant=>false)
+    puzzle("1_20__","4_32_4",Generic=>false,Equivariant=>false)
  Node
   Key
    fugacity
@@ -396,7 +443,7 @@ multidoc ///
    At the moment, the interactive part only works on nonequivariant puzzles.
 ///
 undocumented {
-    Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
+    Presentation, Ktheory, Equivariant, Borel, EquivLoc,
     Paths, Labels, Length, Steps, Ktheory', Separation,
     (restrict,Matrix),(restrict,Matrix,RingElement),
     (inversion,String),
@@ -428,8 +475,93 @@ b=segreCls*(fugacityVector P);
 assert(a==b)
 ///
 
+TEST /// -- sum-rule identities for the primed/dual class families
+(A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
+-- segreClass' satisfies the same sum rule as segreClass
+assert(sum apply(I, segreClass') == 1)
+-- the primed families produce the same totals as the unprimed ones
+assert(sum apply(I, chernClass) == sum apply(I, chernClass'))
+assert(sum apply(I, sClass) == sum apply(I, sClass'))
+assert(sum apply(I, schubertClass) == sum apply(I, schubertClass'))
+-- stableClass and stableClass' both return elements of the cotangent ring B
+assert(class stableClass "0101" === B and class stableClass' "0101" === B)
+///
+
+TEST /// -- tautoClass, zeroSection, dualZeroSection, and pushforwardToPointFromCotangent
+(A,B,FF,I)=setupCotangent(1,2,3,Presentation=>Borel)
+-- on a full flag, first Chern classes are just variables
+assert(all(1..3,i->tautoClass(1,i)==x_i))
+(A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
+-- the 0-th Chern class of any tautological bundle is the identity
+assert(tautoClass(0,1) == 1)
+-- zeroSection and dualZeroSection live in A; on the even-dimensional Gr(2,4)
+-- with Equivariant=>false they coincide
+assert(class zeroSection A === A and class dualZeroSection A === A)
+assert(zeroSection A == dualZeroSection A)
+-- pushforwardToPoint of the unit is 0 (only the top class integrates to nonzero)
+assert(pushforwardToPoint 1_A == 0)
+-- pushforwardToPointFromCotangent of zeroSection * dualZeroSection equals
+-- the number of T-fixed points #I
+assert(pushforwardToPointFromCotangent(zeroSection A * dualZeroSection A) == #I)
+///
+
+TEST /// -- canonicalClass in cohomology and K-theory
+-- on P^1, the first Chern class is the difference of the two Chern roots
+(A,B,FF,I) = setupCotangent(1,2,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
+assert(canonicalClass A == tautoClass(1,2,A) - tautoClass(1,1,A))
+assert(canonicalClass() == canonicalClass B)
+-- the Borel and localization presentations agree after restriction
+(A,B,FF,I) = setupCotangent(1,2,Presentation=>Borel,Ktheory=>false,Equivariant=>true);
+r = restrict canonicalClass A;
+(D,FF,I) = setupCotangent(1,2,Presentation=>EquivLoc,Ktheory=>false,Equivariant=>true);
+assert(r == canonicalClass D)
+assert(canonicalClass() == canonicalClass D)
+-- retain the existing multiplicative K-theory behavior
+(D,FF,I) = setupCotangent(1,2,Presentation=>EquivLoc,Ktheory=>true,Equivariant=>true);
+assert(canonicalClass() == canonicalClass D)
+///
+
+TEST /// -- inversion counts the inversions of a label string
+assert(inversion "01" == 0)
+assert(inversion "10" == 1)
+assert(inversion "210" == 3)
+assert(inversion "0011" == 0)
+assert(inversion "0101" == 1)
+assert(inversion "1010" == 3)
+///
+
+TEST /// -- puzzle bottom labels, fugacity, and fugacityTally
+(D,FF,I) = setupCotangent(2,4,Ktheory=>true);
+P = puzzle("0101","0110");
+assert(#P == 12)
+-- bottom reads off the bottom boundary; each entry is a LabelList
+assert(all(P, p -> class bottom p === LabelList))
+-- fugacity of a single puzzle is an element of the base field
+assert(class fugacity P_0 === FF)
+-- fugacityTally is a VirtualTally indexed by the distinct bottom strings of P
+fT = fugacityTally P;
+assert(class fT === VirtualTally)
+assert(sort keys fT === sort unique apply(P, bottom))
+///
+
+TEST /// -- restrict computes the value of a Borel class at each T-fixed point
+(A,B,FF,I) = setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>true);
+-- restrict requires Equivariant=>true; output is a vector with one entry per fixed point
+r = restrict schubertClass("0101", A);
+assert(#entries r == #I)
+///
+
+TEST /// -- doublePuzzle produces a list of rhombus (double) puzzles
+(D,FF,I) = setupCotangent(2,4,Ktheory=>false);
+DP = doublePuzzle("0101","0101","0101","0101",Equivariant=>false);
+assert(class DP === List)
+assert(#DP == 2)
+///
+
 end
 
+-- TODO: ~50 lines of worked examples follow `end` and are dead code.  Several
+-- of them have natural `==` assertions and could be promoted to TEST blocks.
 (A,FF,I)=setupCotangent(1,2,Ktheory=>true)
 segreCls=sClass I
 segreInv=segreCls^(-1);

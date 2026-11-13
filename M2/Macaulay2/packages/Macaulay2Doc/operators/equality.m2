@@ -120,11 +120,13 @@ document {
       	  "image matrix {{2,a},{0,5}} == R^2"
 	  },
      HEADER3 "Intervals",
-        PARA { "If either side of the equality is an ", TO "RRi", ", the equality is an equality of sets." },
+        PARA { "If either side of the equality is an ", TO "RRi", " or a ", TO "CCi", ", the equality is an equality of sets." },
     EXAMPLE {
         "interval(1,3) == interval(1,3)",
         "interval(1/2) == 1/2",
-        "interval(1/3) == 1/3"
+        "interval(1/3) == 1/3",
+        "interval(1+2*ii,3+4*ii) == span(1+4*ii,3+2*ii)",
+        "interval(1/2+ii/3) == (1/2+ii/3)"
     },
      PARA{
 	  "It may happen that for certain types of objects, there is no method installed (yet)

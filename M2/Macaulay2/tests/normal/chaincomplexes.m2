@@ -40,15 +40,13 @@ assert(isHomogeneous cpx)
 --- The following occur in github issue #1208
 -- and were bugs before 25 June 2020.
 
--- Not fixed yet.
--*
+-- These are at least fixed in May 2026
 R = QQ[x]
 X = R^1 / x^9
 Ext^0(id_X,X)
 Ext^0(X,id_X)
 Tor_0(id_X,X) -- not implemented !?
 Tor_0(X,id_X) -- not implemented !?
-*-
 
 -- Fixed.
 R = QQ[x]
@@ -57,8 +55,7 @@ assert instance(f, Matrix)
 assert(f == map(R^0, R^0, {})) -- returns a module??
 assert(Ext^(1)(id_(R^1),R^1) == map(R^0, R^0, {}))
 
--- Not fixed yet
--*
+-- Fixed, May 2026.
 R = QQ[x]
 C = res(R^1)
 assert(Hom(C,R^1) != 0) -- zero!?  This is the original bug found
@@ -66,7 +63,6 @@ assert(C ** R^1 != 0)
 assert(Hom(R^1,C) != 0)
 assert(R^1 ** C != 0)
 assert(C ** C != 0) -- this one passes!
-*-
 
 -- Fixed.
 -- LengthLimit
