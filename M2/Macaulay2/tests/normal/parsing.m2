@@ -27,3 +27,11 @@ assert( (parse "for x from y to z when w list a do b") === {{"For",{"Token","x"}
 assert( (parse "new x of y from z") === {{"New",{"Token","x"},{"Token","y"},{"Token","z"}}} );
 assert( (parse "") === {} );
 assert( (parse "x;y\nz") === {{"Token","x"},{"Token","y"},{"Token","z"}} );
+
+-- #4516
+assertParseError = s -> assert match("parse error",
+    try parse s then "" except err do toString err)
+assertParseError ";"
+assertParseError ";;"
+assertParseError ";1"
+assertParseError "1;;"
