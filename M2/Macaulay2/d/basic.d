@@ -84,15 +84,7 @@ export hash(x:List):hash_t := (
      foreach y in x.v do h = h * 1299833 + hash(y);
      h);
 export sethash(x:List):List := (
-     if x.Mutable
-     then (
-	  x.Mutable = true;
-	  x.hash = nextHash();
-	  )
-     else (
-	  x.Mutable = false;
-	  x.hash = hash(x);
-	  );
+     x.hash = if x.Mutable then nextHash() else hash(x);
      x);
 export copy(v:Sequence):Sequence := (
      new Sequence len length(v) do foreach i in v do provide i);
