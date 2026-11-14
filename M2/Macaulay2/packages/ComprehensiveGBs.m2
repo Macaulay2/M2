@@ -679,6 +679,12 @@ doc ///
       @LABEL("[1]","id" => "ref1")@ Deepak Kapur, Yao Sun, and Dingkang Wang. 2013. An efficient algorithm for computing a comprehensive Gröbner system of a parametric polynomial system. In Journal of Symbolic Computation, 49, 27-44.
 
       @LABEL("[2]","id" => "ref2")@ Akira Suzuki and Yosuke Sato. 2006. A simple algorithm to compute comprehensive Gröbner bases using Gröbner bases. In Proceedings of the 2006 International Symposium on Symbolic and Algebraic Computation (ISSAC '06), 326–331.
+  Subnodes
+    comprehensiveGB
+    comprehensiveGBMain
+    parametricGBMain
+    comprehensiveGBOnGraph
+    minimalDicksonBasis
 ///
 
 
@@ -750,7 +756,7 @@ doc ///
     Example
       comprehensiveGBMain(F1,S1,Verbose=>true)
     Text
-      The option @TO "Depth"@ sets a bound for the recursion depth of the
+      The option @TO "ComprehensiveGBs :: Depth"@ sets a bound for the recursion depth of the
       algorithm. For instance, setting it to zero will return one of the
       generic stratum.
     Example
@@ -784,7 +790,11 @@ doc ///
     comprehensiveGB
     ReduceStrata
     Verbose
-    Depth
+    "ComprehensiveGBs :: Depth"
+    CheckAssumption
+  Subnodes
+    ReduceStrata
+    "ComprehensiveGBs :: Depth"
     CheckAssumption
   ///
 
@@ -1048,7 +1058,7 @@ doc ///
     comprehensiveGBMain
     ReduceStrata
     Verbose
-    Depth
+    "ComprehensiveGBs :: Depth"
 ///
 
 doc ///
@@ -1128,6 +1138,8 @@ doc ///
   SeeAlso
     comprehensiveGBMain
     minimalDicksonBasis
+  Subnodes
+    ICheckLoops
 ///
 
 
