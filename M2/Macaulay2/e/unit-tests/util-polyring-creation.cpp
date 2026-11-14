@@ -227,6 +227,7 @@ const Ring* simpleQuotientRing(const PolynomialRing* R,
 std::vector<int> varpowerOf(const std::vector<std::pair<int, int>>& pairs)
 {
   std::vector<int> vp;
+  vp.reserve(2 * pairs.size() + 1);
   vp.push_back(static_cast<int>(2 * pairs.size() + 1));
   for (const auto& p : pairs)
     {
