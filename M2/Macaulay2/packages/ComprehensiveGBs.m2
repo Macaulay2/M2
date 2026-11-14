@@ -1342,19 +1342,17 @@ assert isSubset(result, unreduced);
 ///
 
 TEST ///
--* Testing  comprehensiveGBMain on a*x+b*y  with ReduceStrata => true option *-
-PTest = QQ[aTest,bTest];
-RTest = PTest[xTest,yTest, MonomialOrder => Lex];
+-* Testing  comprehensiveGB on a*x^2 + b*y, x*y - a, b*x - y^3  with ReduceStrata => true option *-
+R = QQ[a,b][x,y];
+F = {a*x^2 + b*y, x*y - a, b*x - y^3};
 
-fTest = aTest*xTest + bTest*yTest;
+result = comprehensiveGB(F, ReduceStrata => true);
+assert(#result == 21);
+assert isSubset({promote(a^10 - a*b^7, R), a*x^2 + b*y, x*y - a, y^3 - b*x}, result);
 
-expected1 = aTest*xTest + bTest*yTest;
-expected2 = aTest^2*xTest + aTest*bTest*yTest;
-
-result = comprehensiveGB({fTest}, ReduceStrata=> true);
-
-assert(#result == 2);
-assert(set result == set {expected1, expected2});
+unreduced = comprehensiveGB(F, ReduceStrata => false);
+assert(#unreduced == 32);
+assert isSubset(result, unreduced);
 
 ///
 
