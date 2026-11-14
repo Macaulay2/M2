@@ -442,11 +442,13 @@ E' = E(1,0,Verbose=>true)
 assert(genus E' == 4 and degree E' == 6 and degree surface E' == 6)
 E'' = E'(0,1)
 assert(genus E'' == 2 and degree E'' == 2 and degree surface E'' == 6 and degrees ring ambient surface E'' === {{1},{1},{1},{3}})
-(f1,f2,f3) = last building E'';
-f = f1 * f2 * f3;
+f = last building E'';
+(f1,f2,f3) = toSequence f.cache#"CompositionFactors";
+vf = value f;
+assert(vf == f1 * f2 * f3)
 assert(source f === (building E)_1 and target f === surface E'')
 (p,q) := (point source f,point target f)
-assert(p == f^* f p and q == f f^* q)
+assert(p == vf^* f p and q == f vf^* q)
 assert(E'(2,Verbose=>false) === E'')
 L'' = latticePolarization E''
 h = map(L'',1,1)

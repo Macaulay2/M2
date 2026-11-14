@@ -200,7 +200,7 @@ EmbeddedK3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterNoPrint} = E -> (
 
 building EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> (
     (mu,U,LC,f) := building E#"ParentK3Surface";
-    (mu,U,LC,toSequence prepend(f,E#"MapFromParentK3Surface"))
+    (mu,U,LC,virtualCompose prepend(f,E#"MapFromParentK3Surface"))
 );
 recoverFourfold EmbeddedK3SurfaceFromDoublySpecialCubicFourfold := E -> recoverFourfold E#"ParentK3Surface";
 

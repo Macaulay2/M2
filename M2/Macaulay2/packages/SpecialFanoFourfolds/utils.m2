@@ -42,67 +42,6 @@ inverse3 MultirationalMap := Psi -> (
 inverse3 (RationalMap,Option) := (psi,opt) -> inverse3 psi;
 inverse3 (MultirationalMap,Option) := (Psi,opt) -> inverse3 Psi;
 
-VirtualInverseWeightedRationalMap = new Type of WeightedRationalMap;
-virtualInverseWeightedRationalMap = method();
-virtualInverseWeightedRationalMap WeightedRationalMap := Phi -> (
-    new VirtualInverseWeightedRationalMap from {
-        symbol cache => new CacheTable,
-        "maps" => {},
-        "target" => source Phi,
-        "source" => target Phi,
-        "image" => source Phi,
-        "isDominant" => true,
-        "isBirational" => true,
-        "graph" => null,
-        "multidegree" => null,
-        "baseLocus" => null,
-        "inverse" => Phi
-    }
-);
-inverse3 VirtualInverseWeightedRationalMap := inverse VirtualInverseWeightedRationalMap := Phi -> Phi#"inverse";
-super VirtualInverseWeightedRationalMap := Phi -> (
-    Psi := virtualInverseWeightedRationalMap inverse Phi;
-    Psi#"target" = ambient target Psi;
-    Psi#"isDominant" = null;
-    Psi#"isBirational" = null;
-    return Psi;
-);
-VirtualInverseWeightedRationalMap EmbeddedProjectiveVariety := (Phi,Z) -> (
-    -- Provisional implementation: thought specifically for computing images of curves
-    -- under the inverse normalization of a surface.
-    if Phi#"inverse" === null and Phi.cache#?"Composition of VirtualInverseWeightedRationalMap and WeightedRationalMap" then (
-        (f,g) := Phi.cache#"Composition of VirtualInverseWeightedRationalMap and WeightedRationalMap";
-        return g (f Z);
-    );
-    h := inverse Phi;
-    decZ := if Z.cache#?"Decomposition" then decompose Z else {Z};
-    W := for L in decZ list h^* L;
-    return sum W;
-);
-VirtualInverseWeightedRationalMap * MultirationalMap := (Phi,Psi) -> (
-    if Psi#"image" === null then (
-        << "-- virtual maps used; computing image (using \"F4\") and composition..." << endl;
-        -- image Psi; -- too slow
-        image(Psi,"F4");
-    );
-    Eta := new VirtualInverseWeightedRationalMap from {
-        symbol cache => new CacheTable,
-        "maps" => {},
-        "target" => target Psi,
-        "source" => source Phi,
-        "image" => image Psi,
-        "isDominant" => null,
-        "isBirational" => null,
-        "graph" => null,
-        "multidegree" => null,
-        "baseLocus" => null,
-        "inverse" => null
-    };
-    Eta.cache#"Composition of VirtualInverseWeightedRationalMap and WeightedRationalMap" = (Phi,Psi);
-    return Eta;
-);
-MultirationalMap * VirtualInverseWeightedRationalMap := (Phi,Psi) -> virtualInverseWeightedRationalMap((inverse Psi) * (inverse3 Phi));
-
 normalization = method(Options => {Verbose => true});
 normalization EmbeddedProjectiveVariety := o -> X -> (
     if X.cache#?"Normalization" then return X.cache#"Normalization";
@@ -125,7 +64,7 @@ inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
     if instance(normU,WeightedRationalMap) then (
         if verb then << "-- warning: normalization of " << strY << " has unsupported type: " << class X << endl;
         if verb then << "--          trying to use a virtual map to bypass this limitation."<<endl;
-        Psi := super virtualInverseWeightedRationalMap normU;
+        Psi := super virtualInverse normU;
         if verb then <<"-- result: virtual map from " << strY << " to " << ? image Psi << endl << flush;
         return Psi;
     );
@@ -161,7 +100,7 @@ inverseNormalizationMapExperimentalRaw = (Y,strY,expEulOut,verb) -> (
     if instance(n,WeightedRationalMap) then (
         if verb then << "  -- warning: normalization of the surface has unsupported type: " << class source n << endl;
         if verb then << "  --          trying to use a virtual map to bypass this limitation."<<endl;
-        n' = super virtualInverseWeightedRationalMap n;
+        n' = super virtualInverse n;
         if verb then <<"  -- result: virtual map to " << ? image n' << endl << flush;
     ) else (
         n' = inverse3 n;
