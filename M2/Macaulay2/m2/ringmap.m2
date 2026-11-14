@@ -597,6 +597,23 @@ map(Module,Module,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,r
 map(Module,Nothing,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,,f),o)
 map(Module,RingMap) := Matrix => o -> (M,p) -> map(M,,p,map(M,cover M,1),o)
 
+pullbackDegrees = method()
+pullbackDegrees(RingMap) := (f) -> (
+    -- f: RingMap S -> R
+    -- returns f': RingMap T -> R
+    -- where T is a ring that is abstractly isomorphic to S but which has the
+    -- same degree group as R.
+    -- f' is homogeneous and is "the same" as f but with DegreeMap == identity.
+    if not isHomogeneous f then error "pullbackDegrees: non-homogeneous input is invalid";
+    (S, R) := (source f, target f);
+    T := newRing(
+        if isPolynomialRing ambient S then S else S[],
+        DegreeGroup => degreeGroup R,
+        Degrees => for i from 0 to numgens S-1 list f.cache.DegreeMap degree S_i
+    );
+    map(R, T, f * map(S, T), DegreeMap => identity)
+)
+
 --
 setupPromote (RingMap,Ring,Ring,Function) := lookup(setupPromote,Function,Ring,Ring,Function)
 setupPromote (RingMap,Ring,Ring) := (f,R,S) -> setupPromote(f,R,S,f.cache.DegreeMap)

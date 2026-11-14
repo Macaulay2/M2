@@ -7,12 +7,13 @@ needs "modules.m2"
 needs "matrix1.m2"
 
 Hom = method(Options => {
-	DegreeLimit       => null,
-	MinimalGenerators => true,
-	Strategy          => null,
-	})
+    DegreeLimit         => null,
+    MinimalGenerators   => true,
+    Strategy            => null,
+    })
 
-End = options Hom >> o -> M -> Hom(M, M, o)
+End = method(Options => options Hom)
+End(Thing) := Thing => o -> X -> Hom(X, X, o)
 
 -- TODO: Hom(R, S) should work as well
 Hom(Ring, Ring)   :=
@@ -25,6 +26,14 @@ Hom(Module, Ring)   :=
 Hom(Module, Ideal)  := Module => opts -> (M, N) -> Hom(module M, module N, opts)
 Hom(Module, Module) := Module => opts -> (M, N) -> (
     -- TODO: take advantage of cached results with higher e
+
+    -- todo: enable the following two lines that guard against using this method in cases where the computation is incorrect
+    -- currently at least COmpleteIntersectionResolusions package relies on
+    -- calling this even though the module produced is not a well-formed module
+    -- of homomorphisms
+    -- if isSkewCommutative ring M and not isFreeModule M then
+    --   error "Hom out of non-free module over a skew-commutative ring requires Hom(RingMap, Module, Module)";
+
     e := opts.DegreeLimit;
     if e === {} then e = null;
     if e === 0  then e = degree 0_M;
@@ -32,17 +41,23 @@ Hom(Module, Module) := Module => opts -> (M, N) -> (
     -- M.cache is a hashless (hence ageless) CacheTable, but
     -- M.cache.cache is a MutableHashTable, hence has an age.
     Y := youngest(M.cache.cache, N.cache.cache);
-    if Y#?(Hom, M, N, e) then return Y#(Hom, M, N, e);
-    H := runHooks((Hom, Module, Module), (opts, M, N), Strategy => opts.Strategy);
-    if H === null then error "Hom: no strategy found for the given input";
-    trim' := if opts.MinimalGenerators then trim else identity;
-    -- a hack: we really want to type "Hom(M, N) = ..."
-    H = Y#(Hom, M, N, e) = if opts.MinimalGenerators then trim H else H;
-    H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f + degree f);
-    H.cache.formation = FunctionApplication { Hom, (M, N, DegreeLimit => e) };
-    H)
+    Y#(Hom, M, N, opts) ??= (
+        H := runHooks((Hom, Module, Module), (opts, M, N), Strategy => opts.Strategy);
+        if H === null then error "Hom: no strategy found for the given input";
+        -- a hack: we really want to type "Hom(M, N) = ..."
+        H = if opts.MinimalGenerators then trim H else H;
+        H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f + degree f);
+        H.cache.formation = FunctionApplication { Hom, (M, N, opts) };
+        H
+    )
+)
 
-basicHom = (M, N) -> kernel(transpose presentation M ** N)
+basicHom = (M, N) -> (
+    -- force new presentation in the free case to avoid producing identical
+    -- modules which share a cache
+    if isFreeModule M and M.cache.?presentation then remove(M.cache, symbol presentation);
+    kernel(transpose presentation M ** N)
+)
 addHook((Hom, Module, Module), Strategy => Default,  (opts, M, N) -> basicHom(M, N))
 addHook((Hom, Module, Module), Strategy => Syzygies, (opts, M, N) -> (
     -- This algorithm accepts DegreeLimit, but is slower in some cases
@@ -65,8 +80,15 @@ Hom(Matrix, Matrix) := Matrix => o -> (f, g) -> Hom(source f, g, o) * Hom(f, sou
 
 -- TODO: compare speed with Hom(M, R^1)
 dual Module := Module => {} >> o -> F -> F.cache.dual ??= (
-     if not isFreeModule F then kernel transpose presentation F
-     else new Module from (ring F,rawDual raw F))
+    if isFreeModule F then return new Module from (ring F,rawDual raw F);
+    -- todo: enable the following two lines that guard against using this method in cases where the computation is incorrect
+    -- currently at least COmpleteIntersectionResolusions package relies on
+    -- calling this even though the module produced is not a well-formed module
+    -- of homomorphisms
+    -- if isSkewCommutative ring F then
+    --    error "dual of non-free module over a skew-commutative ring requires Hom(RingMap, Module, Module)";
+    kernel transpose presentation F
+)
 
 dual Matrix := Matrix => options Hom >> o -> f -> Hom(f, module ring f, o)
 
