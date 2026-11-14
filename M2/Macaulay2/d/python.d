@@ -33,6 +33,13 @@ toExpr(r:pythonObjectOrNull):Expr := (
 	x.hash = h;
 	Expr(x)));
 
+incref(r:pythonObjectOrNull):pythonObjectOrNull := (
+    Ccode(void, "Py_XINCREF(", r, ")");
+    r);
+incref(r:pythonObject):pythonObject := (
+    Ccode(void, "Py_INCREF(", r, ")");
+    r);
+
 import Initialize(exec:charstar):constcharstarOrNull;
 PyInitialize(e:Expr):Expr := (
     when e
@@ -302,7 +309,7 @@ setupfun("pythonUnicodeFromString",PyUnicodeFromString);
 PyTupleSetItem(t:pythonObject, i:int, y:Expr):int := (
     when y
     is x:pythonObjectCell do Ccode(int,
-	"PyTuple_SetItem(", t, ", ", i, ", ", x.v, ")")
+	"PyTuple_SetItem(", t, ", ", i, ", ", incref(x.v), ")")
     is x:SpecialExpr do PyTupleSetItem(t, i, x.e)
     else -2);
 
@@ -340,7 +347,7 @@ PyListSetItem(e1:Expr,e2:Expr,e3:Expr):Expr :=
 	    when e3
 	    is z:pythonObjectCell do (
 		if Ccode(int, "PyList_SetItem(",
-		    x.v, ", ", toInt(y), ", ", z.v, ")") == -1
+		    x.v, ", ", toInt(y), ", ", incref(z.v), ")") == -1
 		then buildPythonErrorPacket()
 		else nullE)
 	    is s:SpecialExpr do PyListSetItem(e1, e2, s.e)
@@ -430,13 +437,13 @@ wrappedM2Function(self:pythonObject, args:pythonObject):pythonObjectOrNull := (
     ptr := Ccode(voidPointer, "PyCapsule_GetPointer(", self, ", NULL)");
     if ptr == nullPointer() then return pythonObjectOrNull(null());
     f := Ccode(FunctionClosure, "(", FunctionClosure, ")", ptr);
-    r := applyEE(Expr(f), toExpr(pythonObjectOrNull(args)));
+    r := applyEE(Expr(f), toExpr(incref(pythonObjectOrNull(args))));
     when r
     is e:Error do (
 	Ccode(void, "PyErr_SetString(PyExc_RuntimeError, ",
 	    tocharstar(e.message), ")");
 	pythonObjectOrNull(null()))
-    is o:pythonObjectCell do pythonObjectOrNull(o.v)
+    is o:pythonObjectCell do pythonObjectOrNull(incref(o.v))
     else (
 	Ccode(void, "PyErr_SetString(PyExc_TypeError, ",
 	    "\"expected return value to be a python object\")");
