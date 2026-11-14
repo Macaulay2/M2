@@ -169,17 +169,46 @@ uniquePermutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else (
 uniquePermutations ZZ := permutations
 
 partition = method()
-partition(Function,VirtualTally) := HashTable => (f,s) -> partition(f,s,{})
-partition(Function,VirtualTally,VisibleList) := HashTable => (f,s,i) -> (
-     p := new MutableHashTable from apply(i,e->(e,new MutableHashTable));
-     scanPairs(s, (x,n) -> ( y := f x; if p#?y then if p#y#?x then p#y#x = p#y#x + n else p#y#x = n else (p#y = new MutableHashTable)#x = n; ));
-     applyValues(new HashTable from p, px -> new class s from px))
-partition(Function,VisibleList) := HashTable => (f,s) -> partition(f,s,{})
-partition(Function,VisibleList,VisibleList) := HashTable => (f,s,i) -> (
-     p := new MutableHashTable from apply(i,e->(e,new MutableHashTable));
-     scan(s, x -> ( y := f x; if p#?y then (p#y)#(#p#y) = x else p#y = new MutableHashTable from {(0,x)}));
-     p = pairs p;
-     new HashTable from apply(p, (k,v) -> (k,new class s from values v)))
+partition(VirtualTally,Function,VisibleList, Function) := HashTable => (t,f,ks, g) -> (
+    p := new MutableHashTable from for k in ks list (k, new MutableHashTable);
+    scanPairs(t, (x, n) -> (
+        y := f x;
+        v := g x;
+        (p#y ??= new MutableHashTable)#v ??= 0;
+        p#y#v += n;
+    ));
+    applyValues(new HashTable from p, px -> new class t from px)
+)
+partition(VirtualTally,Function,VisibleList) := HashTable => (t,f,ks) -> partition(t, f, ks, identity)
+partition(VirtualTally,Function) := HashTable => (t, f) -> partition(t, f, {}, identity)
+partition(VirtualTally, Function, Function) := HashTable => (t, f, g) -> partition(t, f, {}, g)
+
+-- partition-function-first interface supported
+partition(Function,VirtualTally) := HashTable => (f,t) -> partition(t,f,{}, identity)
+partition(Function,VirtualTally,Function) := HashTable => (f,t,g) -> partition(t,f,{}, g)
+partition(Function,VirtualTally,VisibleList) := HashTable => (f,t,ks) -> partition(t, f, ks, identity)
+partition(Function, VirtualTally,VisibleList, Function) := HashTable => (f,t,ks, g) -> partition(t, f, ks, g)
+
+-- partition values of xs according to their values under f
+--  ensure that all of the elements of ks also appear as keys in the result
+--  apply g to each value in the resulting partition
+partition(VisibleList, Function, VisibleList, Function) := HashTable => (xs, f, ks, g) -> (
+    -- initialize with ks to guarantee that these keys appear
+    p := new MutableHashTable from for k in ks list (k, new MutableHashTable);
+    -- scan over xs and update p as we go
+    scan(xs, x -> (y := f x; vs := p#y ??= new MutableHashTable; vs#(#vs) = g x));
+    -- repack everything into the same type of data structure as the input
+    new HashTable from apply(pairs p, (k, v) -> (k, new class xs from values v))
+)
+partition(VisibleList, Function) := HashTable => (xs, f) -> partition(xs, f, {}, identity)
+partition(VisibleList, Function, Function) := HashTable => (xs, f, g) -> partition(xs, f, {}, g)
+partition(VisibleList, Function, VisibleList) := HashTable => (xs, f, ks) -> partition(xs, f, ks, identity)
+
+-- partition-function-first interface supported
+partition(Function, VisibleList, VisibleList, Function) := HashTable => (f, xs, ks, g) -> partition(xs, f, ks, g)
+partition(Function, VisibleList) := HashTable => (f, xs) -> partition(xs, f, {}, identity)
+partition(Function, VisibleList, Function) := HashTable => (f, xs, g) -> partition(xs, f, {}, g)
+partition(Function, VisibleList, VisibleList) := HashTable => (f, xs, ks) -> partition(xs, f, ks, identity)
 -----------------------------------------------------------------------------
 -- a first use of sets:
 
