@@ -69,6 +69,17 @@ changesHelper List := opt -> pkgnames -> (
 	    << endl)))
 
 document {
+    Key => "changes, 1.26.11",
+    UL {
+        LI { "improved packages:" ,
+            UL {
+                LI { TO "InvariantRing::InvariantRing", " has been updated to version 2.6, which introduces the new type ", TT "PermutationAction", " with the faster orbit sum method for computing invariants. This version also simplifies inputs for ", TT "permutationMatrix", " a minor breaking change." },
+                },
+            },
+        }
+    }
+
+document {
     Key => "changes, 1.26.06",
     UL {
         LI { "new packages:",
