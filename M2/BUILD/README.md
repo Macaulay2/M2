@@ -36,3 +36,27 @@ such as `x86_64-Linux-Ubuntu-8.10`.  (Actually, this is being changed...)
 
 Alternatively, see the [Docker guide](docker/README.md) for instructions on
 using Docker to build Linux container images running Macaulay2.
+
+### Optional Maple diagnostics (CMake)
+
+With `WITH_MAPLE=ON` (the default), CMake checks whether command-line Maple can
+run an arithmetic calculation and whether its `convex` library loads. An absent
+or unusable Maple does not fail configuration. Use `-DWITH_MAPLE=OFF` to skip
+probing. Cross-compilation also skips execution.
+
+Set `MAPLE_EXECUTABLE` to select a command-line Maple outside `PATH`, and
+`MAPLE_CONVEX_DIR` if convex needs an additional Maple library directory, e.g.:
+
+```sh
+cmake -S M2 -B build -DMAPLE_EXECUTABLE=/opt/maple/bin/maple \
+  -DMAPLE_CONVEX_DIR=/opt/convex/lib
+```
+
+`MAPLE_PROBE_TIMEOUT` defaults to 10 seconds per probe. Results are
+`Maple_FOUND` and `Maple_Convex_FOUND`; execution logs are under
+`CMakeFiles/Maple` in the build directory. Each configuration reruns the probes;
+rerunning package tests alone does not recheck availability.
+
+These diagnostics do not change package installation, example-cache policy or
+test selection. Runtime configuration remains separate: use `MapleCommand` in
+MapleInterface and `ConvexPath` in ConvexInterface for custom runtime paths.
