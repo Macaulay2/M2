@@ -2,7 +2,7 @@ newPackage(
     "ComprehensiveGBs",
     Version => "1.0",
     Date => "",
-    Headline => "computing Comprehensive Gröbner Bases (CGBs)",
+    Headline => "computing comprehensive Gröbner bases (CGBs)",
     Authors => {
         { Name => "Agustina Cagliero", Email => "mariaagustina.cagliero@kuleuven.be", HomePage => "https://sites.google.com/view/mariaagustinacagliero/"},
         { Name => "Oliver Clarke", Email => "oliver.clarke@durham.ac.uk", HomePage => "https://www.oliverclarkemath.com"},
@@ -631,7 +631,7 @@ doc ///
   Key
     ComprehensiveGBs
   Headline
-    computing Comprehensive Gröbner Bases (CGBs)
+    computing comprehensive Gröbner bases (CGBs)
   Description
     Text
       This package provides the implementations of two different algorithms for computing a comprehensive Gröbner system and a
@@ -679,7 +679,7 @@ doc ///
     [comprehensiveGBMain, Depth]
     [comprehensiveGBMain, CheckAssumption]
   Headline
-    compute a Comprehensive Gröbner System
+    compute a comprehensive Gröbner system
   Usage
     comprehensiveGBMain(F,S)
     comprehensiveGBMain F
@@ -974,7 +974,7 @@ doc ///
     [comprehensiveGB, ReduceStrata]
     [comprehensiveGB, Depth]
   Headline
-    compute a Comprehensive Gröbner Basis
+    compute a comprehensive Gröbner basis
   Usage
     G = comprehensiveGB F
   Inputs
@@ -1047,7 +1047,7 @@ doc ///
     [parametricGBMain, Depth]
     [parametricGBMain, ICheckLoops]
   Headline
-    compute a Comprehensive Gröbner System using Kapur-Sun-Wang algorithm
+    compute a comprehensive Gröbner system using Kapur-Sun-Wang algorithm
   Usage
     parametricGBMain F
     parametricGBMain(E, F)
