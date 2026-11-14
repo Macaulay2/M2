@@ -290,15 +290,16 @@ comprehensiveGBOnGraph = method(
 comprehensiveGBOnGraph (List, ZZ) := opts -> (G, d) -> (
     V := sort G_0;
     E := G_1;
+    H := hashTable apply(#V, i -> V_i => i);
     x := getSymbol "x";
     w := getSymbol "w";
     SMonoid := monoid [apply(E, l -> w_(toSequence l))];
     S := QQ SMonoid;
-    RMonoid := monoid [x_(V_0, 1)..x_(V_(#V-1), d)];
+    RMonoid := monoid [flatten apply(V, v -> apply(1..d, k -> x_(v,k)))];
     R := S RMonoid;
     F := for i in E list (
         sum(1..d, k -> (
-                R_(d*(i_0-V_0)+k-1)-R_(d*(i_1-V_0)+k-1)
+                R_(d*H#(i_0)+k-1)-R_(d*H#(i_1)+k-1)
                 )^2
             ) - S_(position(E, j -> j === i)
             )
