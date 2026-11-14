@@ -2114,7 +2114,7 @@ map(e:Expr,f:Expr):Expr := (
 --	  if obj.Mutable then return WrongArg("an immutable hash table");
 --	  if ancestor(obj.Class,VirtualTally) then mapkeys(f,obj) else mapvalues(f,obj))
      is b:List do (
-	  c := map(b.v,f);
+	  c := map(elements(b),f);
 	  when c is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c
 	  is v:Sequence do list(b.Class,v,b.Mutable)
 	  else nullE			  -- will not happen
@@ -2625,7 +2625,7 @@ scan(e1:Expr,e2:Expr,f:Expr):Expr := (
 scan(e:Expr,f:Expr):Expr := (
      when e
      is a:Sequence do scan(a,f)
-     is b:List do scan(b.v,f)
+     is b:List do scan(elements(b),f)
      is i:ZZcell do (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)

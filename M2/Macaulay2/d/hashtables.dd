@@ -274,7 +274,7 @@ toHashTable(e:Expr):Expr := (
 		  when s.1
 		  -- # typical value: hashTable, Function, BasicList, HashTable
 		  is w:Sequence do toHashTableWithCollisionHandler(w, s.0)
-		  is w:List do toHashTableWithCollisionHandler(w.v, s.0)
+		  is w:List do toHashTableWithCollisionHandler(elements(w), s.0)
 		  else WrongArg(2, "a list or sequence"))
 	      else toHashTable(s))
 	  else toHashTable(s))

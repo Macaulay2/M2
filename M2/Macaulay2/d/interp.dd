@@ -292,7 +292,7 @@ readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      haderror := when ret is Error do True else False;
      lastexiterror := dummyError;
      hook := getGlobalVariable(fileExitHooks);
-     when hook is x:List do foreach f in x.v do (
+     when hook is x:List do foreach f in elements(x) do (
 	  r := applyEE(f,haderror);
 	  when r is err:Error do (
 	       if lastexiterror != dummyError && !lastexiterror.printed then printErrorMessage(lastexiterror); -- or else it gets bumped
