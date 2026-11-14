@@ -38,6 +38,7 @@ class Z_mod : public Ring
  public:
   static Z_mod *create(int p);
 
+  bool is_basic_ring() const { return true; }
   bool isFinitePrimeField() const { return true; }
   Z_mod *cast_to_Z_mod() { return this; }
   const Z_mod *cast_to_Z_mod() const { return this; }

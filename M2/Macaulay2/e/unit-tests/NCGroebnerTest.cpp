@@ -16,6 +16,10 @@
 #include "NCAlgebras/NCReduction.hpp"
 #include "monomials/monordering.hpp"
 #include "monoid.hpp"
+#include "M2FreeAlgebra.hpp"
+#include "M2FreeAlgebraQuotient.hpp"
+#include "matrices/matrix-con.hpp"
+#include "exceptions.hpp"
 
 #include "unit-tests/util-polyring-creation.hpp"
 
@@ -394,6 +398,34 @@ TEST(FreeAlgebra, comparisons)
   EXPECT_TRUE(A->compare_elems(*x,*y) == GT);
   EXPECT_TRUE(A->compare_elems(*y,*x) == LT);
   EXPECT_TRUE(A->compare_elems(*x,*x) == EQ);
+}
+
+// makeTerm builds a*monom directly.
+static void testFreeAlgebraMakeTerm(const Ring* R)
+{
+  ring_elem one = globalQQ->from_long(1);
+
+  std::vector<int> vp = varpowerOf({{1, 2}, {0, 1}});
+  EXPECT_TRUE(R->is_equal(R->makeTerm(globalQQ, one, vp.data()),
+                          monomialOf(R, {{0, 1}, {1, 2}})));
+
+  std::vector<int> negative = varpowerOf({{1, 1}, {0, -1}});
+  EXPECT_THROW(R->makeTerm(globalQQ, one, negative.data()), exc::engine_error);
+}
+
+TEST(M2FreeAlgebra, makeTerm)
+{
+  const M2FreeAlgebra* A = M2FreeAlgebra::create(
+      globalQQ, {"a", "b"}, degreeRing(1), {1, 1}, {}, {1});
+  testFreeAlgebraMakeTerm(A);
+}
+
+TEST(M2FreeAlgebraQuotient, makeTerm)
+{
+  const M2FreeAlgebra* A = M2FreeAlgebra::create(
+      globalQQ, {"a", "b"}, degreeRing(1), {1, 1}, {}, {1});
+  MatrixConstructor gb(A->make_FreeModule(1), 0);
+  testFreeAlgebraMakeTerm(M2FreeAlgebraQuotient::create(*A, gb.to_matrix(), -1));
 }
 
 TEST(FreeAlgebra, spairs)

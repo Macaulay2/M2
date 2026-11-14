@@ -128,8 +128,8 @@ class Ring : public MutableEngineObject
   virtual M2::RingID ringID() const { return M2::ring_old; }
   virtual bool is_basic_ring() const
   {
-    return true;
-  }  // The default is to be a basic ring.
+    return false;
+  }  // A basic ring has no generators, e.g., ZZ, QQ, ZZ/p, RR, CC.
   virtual bool isFinitePrimeField() const { return false; }
   virtual bool isGaloisField() const { return false; }
   virtual bool is_ZZ() const { return false; }
@@ -280,6 +280,10 @@ class Ring : public MutableEngineObject
     (void) a;
     throw exc::engine_error("cannot compute discrete logarithm in this ring");
   }
+
+  virtual ring_elem makeTerm(const Ring* coeffR,
+                             const ring_elem a,
+                             const_varpower monom) const;
 
   // Returns the element in the polynomial ring A corresponding to the element
   // a.

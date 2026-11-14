@@ -115,10 +115,6 @@ class PolynomialRing : public Ring
   Matrix *getPresentation() const;
 
   unsigned long get_precision() const { return K_->get_precision(); }
-  bool is_basic_ring() const
-  {
-    return false;
-  }  // The default is to be a basic ring.
 
   bool is_poly_ring() const { return true; }
   // Returns true if this is a polynomial ring, possibly with fractions
@@ -303,6 +299,9 @@ class PolynomialRing : public Ring
   int n_terms(const ring_elem f) const { return n_flat_terms(f); }
   // This is here mainly because geopoly requires n_terms.
 
+  ring_elem makeTerm(const Ring *coeffR,
+                     const ring_elem a,
+                     const_varpower monom) const override;
   virtual ring_elem make_flat_term(const ring_elem a, const_monomial m) const = 0;
   virtual ring_elem make_logical_term(const Ring *coeffR,
                                       const ring_elem a,

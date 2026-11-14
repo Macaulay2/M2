@@ -16,6 +16,7 @@ header "// TODO: break apart this file so each piece includes only one:
 #include <interface/freemodule.h>
 #include <interface/groebner.h>
 #include <interface/matrix.h>
+#include <interface/monomial.h>
 #include <interface/monomial-ideal.h>
 #include <interface/mutable-matrix.h>
 #include <interface/random.h>
@@ -150,15 +151,6 @@ export rawSparseListFormMonomial(e:Expr):Expr := (
      );
 setupfun("rawSparseListFormMonomial",rawSparseListFormMonomial);
 
--- rawMakeMonomial(m:array(int)):RawMonomialOrNull := Ccode(returns,"
---      try { return EngineMonomial::make(m); }
---      catch (const exc::engine_error& e) { ERROR(e.what()); return NULL; }
---      "
---      -- /* Takes an array of the form [n, v1, e1, v2, e2, ..., vn, en]
---      --    and returns the monomial v1^e1*v2^e2*...vn^en.
---      --    ASSUMPTION: v1 > v2 > ... > vn >= 0, each en is not 0. */
---      );
-
 export rawMakeMonomial(e:Expr):Expr := (
      -- accepts a list of pairs : {(2, 1), (3, 7), (5, 4)}
      -- we reverse the list before giving it to the engine
@@ -166,14 +158,25 @@ export rawMakeMonomial(e:Expr):Expr := (
      is l:List do (
 	  when isSequenceOfPairsOfSmallIntegers(l.v) 
 	  is s:string do WrongArg(s) 
-	  else (
-	       ret := RawMonomialOrNull(null());
-	       Ccode(void, "
-		    try { ",ret," = EngineMonomial::make(",getReverseSequenceOfPairsOfSmallIntegers(l.v),"); }
-     		    catch (const exc::engine_error& e) { ERROR(e.what()); }");
-	       toExpr(ret)))
+	  else toExpr(Ccode(RawMonomialOrNull,
+                            "rawMakeMonomial(",
+                            getReverseSequenceOfPairsOfSmallIntegers(l.v),
+                            ")")))
      else WrongArg("a list of pairs of integers"));
 setupfun("rawMakeMonomial",rawMakeMonomial);
+
+export rawMakeMonomialFromExponents(e:Expr):Expr := (
+    -- accepts a list of exponents, e.g., {3,4,5} for x^3*y^4*z^5
+    when e
+    is l:List do (
+        if isSequenceOfSmallIntegers(l.v)
+        then toExpr(Ccode(RawMonomialOrNull,
+                          "rawMakeMonomialFromExponents(",
+                          getSequenceOfSmallIntegers(l.v),
+                          ")"))
+        else WrongArg("a list of small integers"))
+    else WrongArg("a list of small integers"));
+setupfun("rawMakeMonomialFromExponents", rawMakeMonomialFromExponents);
 
 export rawMonomialIsOne(e:Expr):Expr := (
      when e is s:Sequence 
@@ -1470,6 +1473,15 @@ export rawFraction(e:Expr):Expr := (
      else WrongNumArgs(3)
      else WrongNumArgs(3));
 setupfun("rawFraction",rawFraction);
+
+export rawSum(e:Expr):Expr := (
+    if isSequenceOfRingElements(e)
+    then toExpr(Ccode(RawRingElementOrNull,
+                      "rawSum(",
+                      getSequenceOfRingElements(e),
+                      ")"))
+    else WrongArg("a sequence of ring elements"));
+setupfun("rawSum", rawSum);
 
 export rawFactor(e:Expr):Expr := (
      when e

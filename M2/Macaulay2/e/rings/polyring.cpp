@@ -182,6 +182,43 @@ Matrix *PolynomialRing::getPresentation() const
   return mat.to_matrix();
 }
 
+ring_elem PolynomialRing::makeTerm(const Ring *coeffR,
+                                   const ring_elem a,
+                                   const_varpower monom) const
+{
+  if (is_quotient_ring()) {
+    varpower::Vector num, den;
+    varpower::split_signs(monom, num, den);
+    if (!varpower::is_one(den.data())) {
+      ring_elem inv = invert(makeTerm(coeffR, coeffR->one(), den.data()));
+      // invert returns 0 on failure, but 0 is the inverse in the zero ring
+      if (is_zero(inv) && !is_zero(one()))
+        throw exc::engine_error("negative power of noninvertible element");
+      return mult(makeTerm(coeffR, a, num.data()), inv);
+    }
+  }
+
+  int nvars0 = n_vars();
+  for (index_varpower i = monom; i.valid(); ++i) {
+    if (i.exponent() < 0 && !getMonoid()->isLaurentVariable(i.var()))
+      throw exc::engine_error("expected a nonnegative exponent");
+  }
+
+  const PolynomialRing *K = coeffR->cast_to_PolynomialRing();
+  if (K != nullptr && K != getCoefficients()) nvars0 -= K->n_vars();
+
+  if (!varpower::is_one(monom) && varpower::topvar(monom) >= nvars0)
+    throw exc::engine_error("too many variables in monomial");
+
+  exponents_t exp = newarray_atomic(int, nvars0);
+  varpower::to_expvector(nvars0, monom, exp);
+
+  if (is_skew_commutative() && getSkewInfo().exp_is_zero(exp, nvars0))
+    return from_long(0);
+
+  return make_logical_term(coeffR, a, exp);
+}
+
 class SumCollectorPolyHeap : public SumCollector
 {
   polyheap H;

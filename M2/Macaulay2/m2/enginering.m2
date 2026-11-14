@@ -305,6 +305,7 @@ frac Ring := R -> (
      )
 
            frac FractionField := identity
+        ambient FractionField := F -> last F.baseRings
 coefficientRing FractionField := F -> coefficientRing last F.baseRings
    degreeLength FractionField := F -> degreeLength last F.baseRings
         degrees FractionField := F -> degrees last F.baseRings

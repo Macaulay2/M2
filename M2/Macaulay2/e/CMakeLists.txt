@@ -134,6 +134,8 @@ set(CPPONLYFILES
   interface/matrix.h
   interface/monoid.cpp
   interface/monoid.h
+  interface/monomial.cpp
+  interface/monomial.h
   interface/monomial-ideal.cpp
   interface/monomial-ideal.h
   interface/monomial-ordering.cpp

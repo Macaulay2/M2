@@ -67,6 +67,11 @@ class ConcreteRing : public Ring
            ringID() == ring_GFFlintBig or ringID() == ring_GFFlintZech;
   }
 
+  bool is_basic_ring() const
+  {
+    return ringID() != ring_tower_ZZp and not isGaloisField();
+  }
+
   /////////////////////////////////////////
   // Special functions for Galois Fields //
   /////////////////////////////////////////

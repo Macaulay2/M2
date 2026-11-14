@@ -80,7 +80,7 @@ document {
      SeeAlso => {mingens, trim, generators}
      }
 document { 
-     Key => {(numgens,Ring),(numgens, EngineRing),(numgens, FractionField),(numgens, MonomialIdeal),(numgens, PolynomialRing),(numgens, QuotientRing)},
+     Key => {(numgens,Ring),(numgens, EngineRing),(numgens, FractionField),(numgens, MonomialIdeal),(numgens, PolynomialRing),(numgens, QuotientRing),(numgens, RingFamily)},
      Headline => "number of generators of a polynomial ring",
      Usage => "numgens R",
      Inputs => {
