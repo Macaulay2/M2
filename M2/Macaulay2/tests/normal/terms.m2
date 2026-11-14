@@ -251,3 +251,16 @@ assert Equation({({2,3}, 1), ({1,0}, 5)}_R, x^2*y^3 + 5*x)
 -- List _ RingFamily
 assert Equation({}_RR, 0)
 assert(ring {}_RR === RR_53)
+assert Equation({({}, 1)}_RR, 1_RR)
+assert(ring {({}, 1)}_RR === RR_53)
+assert Equation({({}, 1), ({}, 2)}_CC, 3_CC)
+assert(ring {({}, 1), ({}, 2)}_CC === CC_53)
+
+-- rings without generators
+scan({ZZ, QQ, ZZ/101, RR_100, CC_100, RRi_53, CCi_53}, R -> (
+	assert Equation({({}, 3)}_R, 3_R);
+	assert Equation({({}, 1), ({}, 2)}_R, 3_R);
+	assert try {({5}, 3)}_R then false else true;
+	assert Equation({({0}, 3)}_R, 3_R)))
+assert Equation({({}, 1/2)}_QQ, 1/2)
+assert Equation({({}, 1/2)}_RR, 0.5)
