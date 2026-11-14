@@ -18,6 +18,12 @@ assert Equation(toList x, {2, 3, 4})
 assert Equation(remove(x, 2), 4)
 x#3 = 5
 assert Equation(toList x, {2, 3, null, 5}) -- 4 should be gone
+-- ... including when removing shrinks the underlying sequence
+for k from 1 to 40 do (
+    x = new MutableList from 0..99;
+    while #x > k do remove(x, 0);
+    x#(k + 1) = 0;
+    assert(x#k === null))
 
 -- growing a list must not affect sequences made from it, even when
 -- there is spare capacity to grow in place
