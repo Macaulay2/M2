@@ -33,3 +33,23 @@ s = new Sequence from x
 x##x = 5
 x#0 = 100
 assert Equation(s, (0, 1, 2, 3, 4))
+
+-- functions that call f on a mutable list work on a snapshot of it, even
+-- when f grows or shrinks the list
+visits = (change, loop) -> (
+    x = grow();
+    seen = {};
+    loop(e -> (change x; seen = append(seen, e)));
+    seen)
+for change in {y -> (y##y = 5), y -> remove(y, 0)} do (
+    assert Equation(visits(change, f -> select(x, e -> (f e; true))), toList(0..4));
+    assert Equation(visits(change, f -> select(10, x, e -> (f e; true))), toList(0..4));
+    assert Equation(visits(change, f -> any(x, e -> (f e; false))), toList(0..4));
+    assert Equation(visits(change, f -> any(x, toList(0..4), (e, d) -> (f e; false))), toList(0..4));
+    assert Equation(visits(change, f -> any(toList(0..4), x, (d, e) -> (f e; false))), toList(0..4));
+    assert Equation(visits(change, f -> scan(x, f)), toList(0..4));
+    assert Equation(visits(change, f -> apply(x, f)), toList(0..4));
+    assert Equation(visits(change, f -> for e in x do f e), toList(0..4));
+    z = new MutableList;
+    scan({(0, 1), (0, 2), (1, 3)}, p -> (z##z = p));
+    assert BinaryOperation(symbol ===, hashTable((a, b) -> (change z; a + b), z), hashTable {0 => 3, 1 => 3}))
