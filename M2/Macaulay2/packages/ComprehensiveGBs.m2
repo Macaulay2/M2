@@ -730,6 +730,7 @@ doc ///
       R2 = QQ[a,b][x,y,z];
       F2 = {x^2-a,y^3-b,x+y-z};
       S2 = {};
+      comprehensiveGBMain(F2,S2,ReduceStrata=>true)
     Text
       Setting @TO "Verbose"@ to @TT "true"@ will display the current
       polynomial lists $F$ and $S$ in the internal computation.
@@ -788,6 +789,7 @@ doc ///
       R2 = QQ[a,b][x,y,z];
       F2 = {x^2-a,y^3-b,x+y-z};
       S2 = {};
+      comprehensiveGBMain(F2,S2,ReduceStrata=>true)
   SeeAlso
     comprehensiveGBMain
 ///
@@ -1014,6 +1016,7 @@ doc ///
     Example
       R2 = QQ[a,b][x,y,z];
       F2 = {x^2-a,y^3-b,x+y-z};
+      comprehensiveGB(F2,ReduceStrata=>true)
     Text
       Setting Verbose to true will print whatever $F$ and $S$ that the algorithm is
       currently working on, as in the following example.
