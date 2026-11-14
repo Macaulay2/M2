@@ -191,7 +191,6 @@ pushFwdGens(Module) := Matrix => (M) -> M.cache.pushFwdGens ??= pushforward' M_{
 --     S^k --> auxN (over R)
 --   and its kernel are the S-relations of the elements auxN
 -- lift a basis for the a pushforward module M to the module it was pushed from
-protect pushFwdAuxMaps;
 makeModule = method()
 makeModule(RingMap, Module) := (f, N) -> (
     (R, S) := (target f, source f);
