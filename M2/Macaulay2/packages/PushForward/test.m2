@@ -1185,7 +1185,7 @@ assert(ker f == 0)
 ///
 
 TEST ///
--- very small examples like this where variosu hom constructions coincide are
+-- very small examples like this where various hom constructions coincide are
 -- useful for catching bugs
 R = ZZ/101[x]/x^2
 g = map(R, ZZ/101)
