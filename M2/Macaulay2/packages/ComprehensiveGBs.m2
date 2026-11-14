@@ -736,7 +736,7 @@ doc ///
     Example
       F1 = {a*x+b*y}
       S1 = {}
-      comprehensiveGBMain(F1,S1)
+      comprehensiveGBMain(F1, S1)
     Text
       The function comprehensiveGBMain has several options: ReduceStrata, Verbose, Depth, and CheckAssumption.
 
@@ -747,20 +747,20 @@ doc ///
       parsable results.
     Example
       R2 = QQ[a,b][x,y,z];
-      F2 = {x^2-a,y^3-b,x+y-z};
+      F2 = {x^2-a, y^3-b, x+y-z};
       S2 = {};
-      comprehensiveGBMain(F2,S2,ReduceStrata=>true)
+      comprehensiveGBMain(F2, S2, ReduceStrata => true)
     Text
       Setting Verbose to @TT "true"@ will display the current
       polynomial lists $F$ and $S$ in the internal computation.
     Example
-      comprehensiveGBMain(F1,S1,Verbose=>true)
+      comprehensiveGBMain(F1, S1, Verbose => true)
     Text
       The option @TO "ComprehensiveGBs :: Depth"@ sets a bound for the recursion depth of the
       algorithm. For instance, setting it to zero will return one of the
       generic stratum.
     Example
-      for i from 0 to 3 do print (i, netList comprehensiveGBMain(F1, S1, Depth => i))
+      for i from 0 to 3 do print(i, netList comprehensiveGBMain(F1, S1, Depth => i))
     Text
       When the function is about to recurse, the
       value of the depth option is checked.  If the value is zero then
@@ -812,9 +812,9 @@ doc ///
       parseable results.
     Example
       R2 = QQ[a,b][x,y,z];
-      F2 = {x^2-a,y^3-b,x+y-z};
+      F2 = {x^2-a, y^3-b, x+y-z};
       S2 = {};
-      comprehensiveGBMain(F2,S2,ReduceStrata=>true)
+      comprehensiveGBMain(F2, S2, ReduceStrata => true)
   SeeAlso
     comprehensiveGBMain
 ///
@@ -926,7 +926,7 @@ doc ///
       \[ f_{ij}=\sum_{k=1}^{d}(x_{i,k}-x_{j,k})^2  -\lambda_{ij} \].
       The function comprehensiveGBOnGraph returns the polynomial systems $F$ and a comprehensive Gröbner system of $F$.
     Example
-      (F,GG)=comprehensiveGBOnGraph({{1,2,3},{(1,2),(2,3),(3,1)}},1, ReduceStrata => true);
+      (F, GG) = comprehensiveGBOnGraph({{1,2,3}, {(1,2),(2,3),(3,1)}}, 1, ReduceStrata => true);
       netList F
       GG_0
   Caveat
@@ -1040,20 +1040,20 @@ doc ///
       also give more easily parseable results.
     Example
       R2 = QQ[a,b][x,y,z];
-      F2 = {x^2-a,y^3-b,x+y-z};
-      comprehensiveGB(F2,ReduceStrata=>true)
+      F2 = {x^2-a, y^3-b, x+y-z};
+      comprehensiveGB(F2, ReduceStrata => true)
     Text
       Setting Verbose to true will print whatever $F$ and $S$ that the algorithm is
       currently working on, as in the following example.
     Example
-      comprehensiveGB(F1,Verbose=>true)
+      comprehensiveGB(F1, Verbose => true)
     Text
       The option Depth sets a bound on the recursion depth of the algorithm.
       With a non-negative value, the output may only be
       a comprehensive Gröbner basis on part of the parameter space,
       as in the following example.
     Example
-      comprehensiveGB(F1,Depth=>0)
+      comprehensiveGB(F1, Depth => 0)
   SeeAlso
     comprehensiveGBMain
     ReduceStrata
@@ -1116,7 +1116,7 @@ doc ///
       The default Depth is -1, which never reaches zero, so the full comprehensive Gröbner system is
       computed.
     Example
-      for i from 0 to 2 do print (i, netList parametricGBMain(F, Depth => i))
+      for i from 0 to 2 do print(i, netList parametricGBMain(F, Depth => i))
     Text
       Note. If Depth is not negative, then the output is a comprehensive Gröbner system on only
       part of the parameter space.
