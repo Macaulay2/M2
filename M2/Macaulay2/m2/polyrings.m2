@@ -55,9 +55,7 @@ List _ Ring := RingElement => (v, R) -> (
         kk := coefficientRing ambient R ?? R;
         promote(
             rawSum apply(toSequence v, mc -> (
-                    if not instance(mc, Sequence)
-                    then error "expected a list of sequences";
-                    if #mc =!= 2
+                    if not instance(mc, Sequence) or #mc =!= 2
                     then error "expected a list of pairs";
                     rawTerm(raw R, raw mc#1_kk,
                         rawMakeMonomialFromExponents mc#0))),
