@@ -334,7 +334,7 @@ evalForCode(c:forCode):Expr := (
 	  invalue := eval(c.inClause);
 	  when invalue is Error do return invalue
 	  is ww:Sequence do w = ww
-	  is vv:List do w = vv.v
+	  is vv:List do w = elements(vv)
 	  else (
 	      iter = getIterator(invalue);
 	      if iter != nullE
