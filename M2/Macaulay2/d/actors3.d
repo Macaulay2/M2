@@ -1608,11 +1608,7 @@ setupfun("sqrt",sqrt).Protected=false;
 export toSequence(e:Expr):Expr := (
      when e
      is Sequence do e
-     is b:List do (
-	  if b.Mutable
-	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
-	  else Expr(b.v)
-	  )
+     is b:List do Expr(elements(b))
      is s:stringCell do Expr(strtoseq(s))
      else (
 	 iter := getIterator(e);

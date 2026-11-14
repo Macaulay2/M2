@@ -58,7 +58,7 @@ toList(e:Expr):Expr := (
      is a:Sequence do list(a)
      is b:List do (
 	  if b.Class == listClass then e
-	  else list(if b.Mutable then copy(b.v) else b.v))
+	  else list(elements(b)))
      is s:stringCell do list(strtoseq(s))
      is c:PseudocodeClosure do toList(c.code)
      is c:Pseudocode do toList(c.code)
