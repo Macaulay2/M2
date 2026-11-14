@@ -1,7 +1,7 @@
 newPackage(
     "RationalPolytopes",
     Version => "1.0",
-    Date => "",
+    Date => "November 13, 2026",
     Headline => "A package for Ehrhart theory of rational polytopes",
     Authors => {
         {Name => "Oliver Clarke", Email => "oliver.clarke@ed.ac.uk", HomePage => "https://www.oliverclarkemath.com/"},
@@ -9,8 +9,9 @@ newPackage(
         {Name => "Vincenzo Reda", Email => "redav@tcd.ie", HomePage => "https://sites.google.com/tcd.ie/vincenzo-reda/home-page"},
         {Name => "Mike Cummings", Email => "mike.cummings@uwaterloo.ca", HomePage => "https://mikecummings.ca"}
         },
+    Keywords => {"Convex Geometry"},
     AuxiliaryFiles => false,
-    DebuggingMode => true,
+    DebuggingMode => false,
     PackageExports => {"Polyhedra", "Normaliz"},
     HomePage => "https://github.com/Macaulay2/Workshop-2025-Madison/tree/EhrhartTheory/Durham_2024" -- Temporary Homepage
     )

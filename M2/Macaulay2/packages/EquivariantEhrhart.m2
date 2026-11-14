@@ -1,7 +1,7 @@
 newPackage(
     "EquivariantEhrhart",
     Version => "1.0",
-    Date => "June 30, 2025",
+    Date => "November 13, 2026",
     Headline => "compute equivariant Ehrhart series of lattice polytopes",
     Authors => {
         {
@@ -20,11 +20,11 @@ newPackage(
             HomePage => "https://seangrate.com"
         }
     },
-    Keywords => {"Combinatorics", "Convex Geometry"},
+    Keywords => {"Convex Geometry"},
     PackageExports => {"BettiCharacters", "Permutations", "RationalPolytopes", "Cyclotomic"},
     AuxiliaryFiles => true,
-    DebuggingMode => true,
-    HomePage => "https://github.com/Macaulay2/Workshop-2025-Madison/tree/EhrhartTheory" -- Temporary Homepage
+    DebuggingMode => false,
+    HomePage => "https://github.com/ollieclarke8787/M2/tree/EhrhartTheory" -- previously at "https://github.com/Macaulay2/Workshop-2025-Madison/tree/EhrhartTheory"
 
 )
 
