@@ -675,6 +675,17 @@ doc ///
 
       The function @TO "comprehensiveGBMain"@ is the implementation of Algorithm CGBMain of @HREF("#ref2","[2]")@. The function @TO "parametricGBMain"@
       corresponds to the Algorithm PGBMain of @HREF("#ref1","[1]")@.
+
+      As an illustrative example, consider the following system.
+      Let $f = y+ux+v$ and $g = uy+x+v$ be polynomials in $\QQ[u,v][y,x]$, where $u$ and $v$ are parameters.
+      For generic values of $u$ and $v$, the specialized system has a unique solution,
+      but for some values of $u$ and $v$ it has no solutions or infinitely many solutions.
+      A Gröbner basis computed over the fraction field $\QQ(u,v)$ only sees the generic case,
+      whereas a comprehensive Gröbner system detects all of them.
+    Example
+      R = QQ[u,v][y,x, MonomialOrder => Lex];
+      F = {y + u*x + v, u*y + x + v};
+      netList parametricGBMain F
   References
       @LABEL("[1]","id" => "ref1")@ Deepak Kapur, Yao Sun, and Dingkang Wang. 2013. An efficient algorithm for computing a comprehensive Gröbner system of a parametric polynomial system. In Journal of Symbolic Computation, 49, 27-44.
 
