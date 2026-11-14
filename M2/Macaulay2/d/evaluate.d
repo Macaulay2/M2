@@ -110,8 +110,12 @@ export storeInDictionary(dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
 
 export changeLength(x:List, newlen:int):void := (
     newcapacity := max(4, x.capacity);
-    while newcapacity < newlen do newcapacity = 2 * newcapacity;
-    while newcapacity > max(4, 4 * newlen) do newcapacity = newcapacity / 2;
+    while newcapacity < newlen do newcapacity = (
+        -- don't overflow
+        if newcapacity < 1073741824 then 2 * newcapacity
+        else 2147483647);
+    while newcapacity >= 8 && newcapacity / 4 > newlen
+    do newcapacity = newcapacity / 2;
     if newcapacity != x.capacity then (
 	x.v = new Sequence len newcapacity do (
 	    for i from 0 to min(newlen, length(x.v)) - 1 do provide x.v.i;
