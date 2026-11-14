@@ -1,6 +1,7 @@
 // Copyright 2010 Michael E. Stillman
 
 #include <algorithm>
+#include <vector>
 
 #include "rings/tower.hpp"
 
@@ -195,12 +196,11 @@ ring_elem Tower::makeTerm(const Ring* coeffR,
 
   auto [ok, n] = coeffR->coerceToLongInteger(a);
   if (ok) {
-    exponents_t exp = new int[n_vars()];
-    varpower::to_expvector(n_vars(), monom, exp);
-    std::reverse(exp, exp + n_vars()); // variables are in reverse order
+    std::vector<int> exp(n_vars());
+    varpower::to_expvector(n_vars(), monom, exp.data());
+    std::reverse(exp.begin(), exp.end()); // variables are in reverse order
     TowerPolynomial result = nullptr;
-    D->add_term(result, n, exp);
-    delete[] exp;
+    D->add_term(result, n, exp.data());
     return TOWER_RINGELEM(result);
   } else {
     throw exc::engine_error("could not coerce coefficient to integer");
