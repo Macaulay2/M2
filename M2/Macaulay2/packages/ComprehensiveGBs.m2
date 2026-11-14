@@ -1213,34 +1213,12 @@ assert(set result == set {a*x + b*y, a^2*x + a*b*y});
 TEST ///
 -* Testing comprehensiveGBOnGraph  on  E = {(1,2)}, V = {1,2} *-
 
-E = {(1,2)};
-V = {1,2};
-G = {V,E};
+(F, GG) = comprehensiveGBOnGraph({{1,2}, {(1,2)}}, 2);
+R = ring first F;
+use coefficientRing R; use R;
 
-(F,GG) = comprehensiveGBOnGraph(G,2);
-
-
-
-Rtest = ring first F;
-
-
-Stest = coefficientRing Rtest;
-
-x11 = Rtest_0;
-x12 = Rtest_1;
-x21 = Rtest_2;
-x22 = Rtest_3;
-
-w12 = promote(Stest_0,Rtest);
-
-expectedF = {x11^2 - 2*x11*x21 + x21^2 + x12^2 - 2*x12*x22 + x22^2 - w12 };
-expectedGG = {
-    ({0_Stest}, {1_Stest}, expectedF)
-};
-
-assert(F == expectedF);
-assert(GG == expectedGG);
-
+assert(F == {(x_(1,1) - x_(2,1))^2 + (x_(1,2) - x_(2,2))^2 - w_(1,2)});
+assert(GG == {({0}, {1}, F)});
 ///
 
 
