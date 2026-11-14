@@ -732,7 +732,7 @@ doc ///
       S2 = {};
       comprehensiveGBMain(F2,S2,ReduceStrata=>true)
     Text
-      Setting @TO "Verbose"@ to @TT "true"@ will display the current
+      Setting Verbose to @TT "true"@ will display the current
       polynomial lists $F$ and $S$ in the internal computation.
     Example
       comprehensiveGBMain(F1,S1,Verbose=>true)
