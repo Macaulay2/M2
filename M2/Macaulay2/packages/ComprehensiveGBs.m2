@@ -719,7 +719,7 @@ doc ///
       S1 = {}
       comprehensiveGBMain(F1,S1)
     Text
-      The function comprehensiveGBMain has several options: ReduceStrata, Verbose, and Depth.
+      The function comprehensiveGBMain has several options: ReduceStrata, Verbose, Depth, and CheckAssumption.
 
       The symbol ReduceStrata is an option to ignore computations on strata which
       have already been considered. This value is set to false by default.
@@ -771,6 +771,8 @@ doc ///
     comprehensiveGB
     ReduceStrata
     Verbose
+    Depth
+    CheckAssumption
   ///
 
 doc ///
@@ -1008,7 +1010,7 @@ doc ///
       F1 = {a*x+b*y}
       comprehensiveGB F1
     Text
-      The function comprehensiveGB has several options: ReduceStrata and Verbose. The symbol ReduceStrata is an option
+      The function comprehensiveGB has several options: ReduceStrata, Verbose, and Depth. The symbol ReduceStrata is an option
       to ignore computations on strata which have already been considered. This
       value is set to false by default. For smaller examples, changing this to
       true can reduce computation times, as for the following example. It will
@@ -1022,10 +1024,18 @@ doc ///
       currently working on, as in the following example.
     Example
       comprehensiveGB(F1,Verbose=>true)
+    Text
+      The option Depth sets a bound on the recursion depth of the algorithm.
+      With a non-negative value, the output may only be
+      a comprehensive Gröbner basis on part of the parameter space,
+      as in the following example.
+    Example
+      comprehensiveGB(F1,Depth=>0)
   SeeAlso
     comprehensiveGBMain
     ReduceStrata
     Verbose
+    Depth
 ///
 
 doc ///
