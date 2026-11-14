@@ -12,7 +12,7 @@ if version#"VERSION" < "1.21" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7.2",
-    Date => "November 11, 2026",
+    Date => "November 14, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -2809,6 +2809,162 @@ Hom (MultiprojectiveVariety, Symbol) := Hom (Nothing, Symbol) := opts -> (X, s) 
 DomRAT Thing := (H,T) -> rationalMap(H.parent T,Dominant=>true);
 member (MultirationalMap,DomRAT) := (f,H) -> member(f,H.parent) and image f == target f;
 
+-- Virtual rational maps
+VirtualRationalMap = new Type of MultirationalMap;
+globalAssignment VirtualRationalMap;
+VirtualRationalMap.synonym = "virtual rational map";
+
+virtualRationalMap = method(TypicalValue => VirtualRationalMap);
+virtualRationalMap (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
+    H := Hom(X,Y);
+    z := 0_(ring X);
+    Phi := new VirtualRationalMap from H apply(shape Y, i -> toList((i+1):z));
+    Phi.cache#"isMaterializable" = false;
+    Phi.cache#"CompositionFactors" = {Phi};
+    Phi
+);
+
+compositionFactors = method();
+compositionFactors VirtualRationalMap := Phi -> Phi.cache#"CompositionFactors";
+
+factor VirtualRationalMap := o -> Phi -> error "operation requires a concrete representation, but the rational map is virtual";
+
+virtualCompose = method(TypicalValue => VirtualRationalMap);
+virtualCompose List := L -> (
+    if #L == 0 then error "expected a nonempty list of multi-rational maps";
+    if not all(L, f -> instance(f,MultirationalMap)) then error "expected a list of multi-rational maps";
+    L = flatten apply(L, f -> if instance(f,VirtualRationalMap) then compositionFactors f else f);
+    if #L == 1 then return first L;
+    -- for i to #L-2 do if target L_i =!= source L_(i+1) then error "maps are not composable: incompatible source and target";
+    for i to #L-2 do if ring ambient target L_i =!= ring ambient source L_(i+1) then error "maps are not composable: incompatible source and target";
+    Phi := virtualRationalMap(source first L,target last L);
+    Phi.cache#"isMaterializable" = all(L, f -> (not instance(f,VirtualRationalMap)) or f.cache#"isMaterializable");
+    Phi.cache#"CompositionFactors" = L;
+    Phi
+);
+
+VirtualRationalMap * VirtualRationalMap :=
+VirtualRationalMap * MultirationalMap :=
+MultirationalMap * VirtualRationalMap := (Phi,Psi) -> virtualCompose {Phi,Psi};
+MultirationalMap @@ MultirationalMap := (Phi,Psi) -> virtualCompose {Phi,Psi};
+
+MultirationalMap @@ ZZ := (Phi,n) -> (
+    if n =!= 1 then error "encountered integer other than 1 in virtualizing a multi-rational map";
+    if instance(Phi,VirtualRationalMap) then return Phi;
+    Psi := virtualRationalMap(source Phi,target Phi);
+    Psi.cache#"isMaterializable" = true;
+    Psi.cache#"MaterializedVirtualRationalMap" = Phi;
+    Psi#"image" = Phi#"image";
+    Psi#"isDominant" = Phi#"isDominant";
+    Psi#"isBirational" = Phi#"isBirational";
+    Psi#"inverse" = Phi#"inverse";
+    Psi
+);
+
+super VirtualRationalMap := Phi -> (
+    if target Phi === ambient target Phi then return Phi;
+    i := rationalMap(target Phi,ambient target Phi);
+    i#"image" = target Phi;
+    Psi := virtualCompose {Phi,i};
+    Psi#"image" = Phi#"image";
+    if Psi#"image" === null and Phi#"isDominant" === true then Psi#"image" = target Phi;
+    Psi
+);
+
+virtualInverse = method();
+virtualInverse MultirationalMap := Phi -> (
+    if Phi#"inverse" =!= null then return Phi#"inverse";
+    if Phi#"isBirational" === false or Phi#"isDominant" === false or dim source Phi != dim target Phi then error "expected a (virtual) birational map";
+    if not instance(Phi,VirtualRationalMap) then (
+        Psi := virtualRationalMap(target Phi,source Phi);
+        forceInverseMap(Phi,Psi);
+        return Psi;
+    );
+    if #(compositionFactors Phi) == 1 then return virtualRationalMap(target Phi,source Phi);
+    virtualCompose reverse apply(compositionFactors Phi,virtualInverse)
+);
+inverse VirtualRationalMap := Phi -> virtualInverse Phi;
+
+netTexDescription VirtualRationalMap := o -> Phi -> (
+    L := compositionFactors Phi;
+    local netStr; local texStr;
+    if #L >= 2 then (
+        netStr = (if Phi.cache#"isMaterializable" then "composition" else "virtual composition") | " of " | toString(#L) | " rational maps";
+        texStr = "\\text{" | (if Phi.cache#"isMaterializable" then "composition" else "virtual composition") | " of }" | texMath(#L) | "\\text{ rational maps}";
+        if o#"Short" then return (netStr,texStr);
+        netStr = netStr | ":";
+        texStr = "\\begin{aligned}&" | texStr | "\\text{:}";
+        local netF; local texF;
+        for i to #L-1 do (
+            (netF,texF) = netTexDescription(L_i,"UseName"=>true,"Short"=>true);
+            netStr = netStr || ("map " | toString(i+1) | ": " | netF);
+            texStr = texStr | newline | "\\\\&\\text{map " | toString(i+1) | ": }" | texF;
+        );
+        if Phi.cache#"isMaterializable" then (
+            netStr = netStr || "[ use value(oo) to materialize the composition ]";
+            texStr = texStr | newline | "\\\\&[\\text{use }\\texttt{value(oo)}\\text{ to materialize the composition}]";
+        );
+        return (netStr,texStr | "\\end{aligned}");
+    );
+    (netX,texX) := netTexDescription(source Phi,"UseName"=>o#"Short","Short"=>o#"Short");
+    (netY,texY) := netTexDescription(target Phi,"UseName"=>o#"Short","Short"=>o#"Short");
+    if o#"Short" then (
+        if Phi#"inverse" =!= null and (not instance(Phi#"inverse",VirtualRationalMap)) then (
+            (netInv,texInv) := netTexDescription(Phi#"inverse","UseName"=>true,"Short"=>true);
+            return (
+                "virtual inverse of " | netInv,
+                "\\text{virtual inverse of }" | texInv
+            );
+        );
+        return (
+            "virtual map from " | netX | " to " | netY,
+            "\\text{virtual map from }" | texX | "\\text{ to }" | texY
+        );
+    );
+    netStr = "virtual rational map:" || ("source variety: " | netX) || ("target variety: " | netY);
+    texStr = "\\begin{aligned}&\\text{virtual rational map:}";
+    texStr = texStr | newline | "\\\\&\\text{source variety: }" | texX;
+    texStr = texStr | newline | "\\\\&\\text{target variety: }" | texY;
+    (netStr,texStr | "\\end{aligned}")
+);
+
+forceImage (VirtualRationalMap,MultiprojectiveVariety) := (Phi,X) -> (
+    if ambient X =!= ambient target Phi then error "expected a subvariety of the target of the map";
+    if Phi#"image" =!= null then error "not permitted to reassign image of (virtual) rational map";
+    Phi#"image" = X;
+);
+
+image (VirtualRationalMap,Thing) := (Phi,alg) -> (
+    if Phi#"image" =!= null then return Phi#"image";
+    if Phi#"isDominant" === true then return target Phi;
+    L := compositionFactors Phi;
+    errLog := "implementation limitation: unable to compute the image of the virtual rational map; try Phi(source Phi)";
+    if #L == 1 then error errLog;
+    if not all(#L-1, i -> ((L_i)#"image" =!= null and (L_i)#"image" == source L_(i+1)) or ((L_i)#"isDominant" === true and target L_i == source L_(i+1))) then error errLog;
+    Phi#"image" = if alg === null then image last L else image(last L,alg)
+);
+image VirtualRationalMap := Phi -> image(Phi,null);
+
+VirtualRationalMap MultiprojectiveVariety := (Phi,Z) -> (
+    L := compositionFactors Phi;
+    if #L >= 2 then (
+        for f in L do Z = f Z;
+        return Z;
+    );
+    -- Provisional implementation: thought specifically for computing images of curves
+    -- under the inverse normalization of a surface.
+    if Phi#"inverse" === null then error "cannot compute the direct image under a virtual rational map without a known inverse";
+    Psi := inverse Phi;
+    decZ := if Z.cache#?"Decomposition" then decompose Z else {Z};
+    ⋃ for W in decZ list Psi^* W
+);
+
+value VirtualRationalMap := (cacheValue "MaterializedVirtualRationalMap") (Phi -> (
+    if not Phi.cache#"isMaterializable" then error "virtual rational map cannot be materialized";
+    product apply(compositionFactors Phi, f -> if instance(f,VirtualRationalMap) then value f else f)
+));
+
+
 beginDocumentation()
 
 document {Key => {MultiprojectiveVarieties},
@@ -4522,6 +4678,27 @@ EXAMPLE {"s = segreEmbedding PP_(ZZ/13)^{1,2};",
 "member(s,Hom(,))",
 "assert(o3 and (not o4) and o5 and o6)"},
 SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety)}}
+
+document {Key => {(symbol @@,MultirationalMap,MultirationalMap)},
+Headline => "virtual composition of multi-rational maps",
+Usage => "Phi @@ Psi",
+Inputs => {
+MultirationalMap => "Phi" => {TEX///$X \dashrightarrow Y$///},
+MultirationalMap => "Psi" => {TEX///$Y \dashrightarrow Z$///}},
+Outputs => {
+MultirationalMap => {TEX///$X \dashrightarrow Z$///, ", the virtual composition of ",TT"Phi"," and ",TT"Psi"}},
+PARA{TT"Phi @@ Psi"," represents the composition of ",TT"Phi"," and ",TT"Psi"," without computing its defining polynomials. Some operations can be performed directly on the resulting virtual composition; for example, if ",TT"W"," is a subvariety of its source, then ",TT"(Phi @@ Psi) W"," computes the direct image of ",TT"W",". One may attempt to materialize the composition using ",TT"value(Phi @@ Psi)","."},
+PARA{"An ordinary multi-rational map can be virtualized by virtually composing it with the identity, as in ",TT"Phi @@ 1",". This makes it possible to construct a virtual inverse using ",TT"inverse(Phi @@ 1)"," (when no concrete inverse is already known)."},
+EXAMPLE {
+"S = PP_(ZZ/65521)^(2,2);",
+"f = parametrize S;",
+"g = rationalMap((point S)%S);",
+"f @@ g",
+"image(f @@ g)",
+"assert(image value(f @@ g) == oo)",
+"f @@ 1",
+"inverse(f @@ 1)"},
+SeeAlso => {(symbol *,MultirationalMap,MultirationalMap)}}
 
 undocumented {
 (expression,MultiprojectiveVariety),
