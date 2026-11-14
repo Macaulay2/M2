@@ -152,7 +152,7 @@ select(e:Expr,f:Expr):Expr := (
      when e
      is a:Sequence do Expr(select(a,f))
      is b:List do (
-	  c := select(b.v,f);
+	  c := select(elements(b),f);
 	  when c
 	  is Error do c
 	  is v:Sequence do list(b.Class,v,b.Mutable)
@@ -196,7 +196,7 @@ select(n:Expr,e:Expr,f:Expr,g:Expr,h:Expr):Expr := (
      when e
      is a:Sequence do Expr(select(toInt(n),a,f))
      is b:List do (
-	  c := select(toInt(n),b.v,f);
+	  c := select(toInt(n),elements(b),f);
 	  when c
 	  is Error do c
 	  is v:Sequence do list(b.Class,v,b.Mutable)
@@ -312,7 +312,7 @@ any(f:Expr,a:Sequence):Expr := (
 any(f:Expr,e:Expr):Expr := (
      when e
      is a:Sequence do Expr(any(f,a))
-     is b:List do Expr(any(f,b.v))
+     is b:List do Expr(any(f,elements(b)))
      is i:ZZcell do if isInt(i) then Expr(any(f,toInt(i))) else WrongArgSmallInteger(1)
      is c:HashTable do
      if c.Mutable then WrongArgImmutableHashTable(1) else
@@ -330,12 +330,12 @@ any(f:Expr,a:Sequence,b:Sequence):Expr := (
 any(f:Expr,a:Sequence,y:Expr):Expr := (
      when y
      is c:Sequence do Expr(any(f,a,c))
-     is d:List do Expr(any(f,a,d.v))
+     is d:List do Expr(any(f,a,elements(d)))
      else WrongArg("a basic list or sequence"));
 any(f:Expr,x:Expr,y:Expr):Expr := (
      when x
      is a:Sequence do Expr(any(f,a,y))
-     is b:List do Expr(any(f,b.v,y))
+     is b:List do Expr(any(f,elements(b),y))
      else WrongArg("a basic list or sequence"));
 any(e:Expr):Expr := (
      when e is a:Sequence do (
@@ -1181,7 +1181,7 @@ join(e:Expr):Expr := (
 	  is Sequence do join(a)
 	  is List do join(a)
 	  else applyEE(getGlobalVariable(joinIteratorsS), e))
-     is c:List do if c.Mutable then Expr(copy(c)) else e
+     is c:List do if c.Mutable then copy(Expr(c)) else e
      else WrongArg("lists or sequences"));
 setupfun("join",join);
 
