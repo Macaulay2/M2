@@ -133,10 +133,10 @@ isCoveredPrime (Ideal, List) := (P, memo) -> (
 
 checkParametricInput = method(); -- checks whether F is a non-empty list of parametric polynomials in the same ring
 checkParametricInput List := F -> (
-    if #F == 0 or not all(F, f -> instance(f, RingElement)) then
+    if #F == 0 or not all(F, f -> instance(f, RingElement) or instance(f, Number)) then
     error "F must be a non-empty list of parametric polynomials";
-    R := ring first F;
-    if not (all(F, f -> ring f === R) and instance(R, PolynomialRing) and instance(coefficientRing R, PolynomialRing)) then
+    R := commonRing F;
+    if not (instance(R, PolynomialRing) and instance(coefficientRing R, PolynomialRing)) then
     error "F must consist of polynomials in a common ring k[U][X]";
 );
 
@@ -151,7 +151,7 @@ comprehensiveGBMain = method(
 
 comprehensiveGBMain List := o -> F -> (
     checkParametricInput F;
-    R := ring first F;
+    R := commonRing F;
     KU := coefficientRing R;
     S := first entries eliminateVariables(F, cgbDataFromRings R);
     cgs := comprehensiveGBMain(F, S, o ++ {CheckAssumption => false});
@@ -160,7 +160,7 @@ comprehensiveGBMain List := o -> F -> (
     )
 comprehensiveGBMain (List, List) := o -> (F, S) -> (
     checkParametricInput F;
-    R := ring first F;
+    R := commonRing F;
     KU := coefficientRing R;
     S' := apply(S, s -> (
             s' := sub(s, R);
@@ -253,7 +253,7 @@ comprehensiveGB = method( Options => {
 })
 comprehensiveGB List := o -> F -> (
     checkParametricInput F;
-    R := ring first F;
+    R := commonRing F;
     s := first entries eliminateVariables(F, cgbDataFromRings R);
     G := comprehensiveGBMain(F, s,
         ReduceStrata => o.ReduceStrata,
@@ -369,7 +369,7 @@ parametricGBMain = method(
     );
 parametricGBMain (List, List, List) := o -> (E, N, F) -> (
     checkParametricInput F;
-    R := ring first F;
+    R := commonRing F;
     cgbData := cgbDataFromRings R;
     RFlat := cgbData#"RFlat";
     KU := cgbData#"KU";
