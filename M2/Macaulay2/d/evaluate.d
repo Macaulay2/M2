@@ -114,7 +114,7 @@ export changeLength(x:List, newlen:int):void := (
     while newcapacity > max(4, 4 * newlen) do newcapacity = newcapacity / 2;
     if newcapacity != x.capacity then (
 	x.v = new Sequence len newcapacity do (
-	    foreach y in x.v do provide y;
+	    for i from 0 to min(newlen, length(x.v)) - 1 do provide x.v.i;
 	    while true do provide nullE);
 	x.capacity = newcapacity)
     else for i from newlen to length(x.v) - 1 do x.v.i = nullE;
