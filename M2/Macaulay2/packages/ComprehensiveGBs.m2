@@ -1186,52 +1186,27 @@ assert(ringOrder RRevLex === {RevLex => 4});
 
 TEST ///
 -* Testing  comprehensiveGBMain on a*x+b*y *-
+R = QQ[a,b][x,y, MonomialOrder => Lex];
 
-Ptest = QQ[a,b];
-Rtest = Ptest[x,y, MonomialOrder => Lex];
+result = comprehensiveGBMain({a*x + b*y}, {});
 
-params = gens Ptest;
-variables = gens Rtest
+expected1 = ({0_(coefficientRing R)}, {a}, {a*x + b*y});
+expected2 = ({a}, {b}, {a^2*x + a*b*y, a*x + b*y});
+expected3 = ({b, a}, {1_(coefficientRing R)}, {a*x + b*y});
 
-aP = params#0;
-bP = params#1;
-
-aR = promote (aP , Rtest);
-bR = promote (bP , Rtest);
-
-xR = variables#0;
-yR = variables#1;
-
-
-resultTest = comprehensiveGBMain({aR*xR + bR*yR}, {});
-
-expected1 = ({0_Ptest}, {aP}, {aR*xR + bR*yR});
-expected2 = ({aP}, {bP}, {aR^2*xR + aR*bR*yR, aR*xR + bR*yR});
-expected3 = ({bP, aP}, {1_Ptest}, {aR*xR + bR*yR});
-
-assert(#resultTest == 3);
-
-assert member(expected1, resultTest);
-assert member(expected2, resultTest);
-assert member(expected3, resultTest);
-
+assert(#result == 3);
+assert(set result == set {expected1, expected2, expected3});
 ///
 
 
 TEST ///
 -* Testing  comprehensiveGB on a*x+b*y  *-
-PTest = QQ[aTest,bTest];
-RTest = PTest[xTest,yTest, MonomialOrder => Lex];
+R = QQ[a,b][x,y, MonomialOrder => Lex];
 
-fTest = aTest*xTest + bTest*yTest;
-
-expected1 = aTest*xTest + bTest*yTest;
-expected2 = aTest^2*xTest + aTest*bTest*yTest;
-
-result = comprehensiveGB {fTest};
+result = comprehensiveGB {a*x + b*y};
 
 assert(#result == 2);
-assert(set result == set {expected1, expected2});
+assert(set result == set {a*x + b*y, a^2*x + a*b*y});
 ///
 
 
@@ -1271,53 +1246,27 @@ assert(GG == expectedGG);
 
 TEST ///
 -* Testing  comprehensiveGBMain on a*x+b*y  with Verbose option *-
-Ptest = QQ[a,b];
-Rtest = Ptest[x,y, MonomialOrder => Lex];
+R = QQ[a,b][x,y, MonomialOrder => Lex];
 
-params = gens Ptest;
-variables = gens Rtest
+result = comprehensiveGBMain({a*x + b*y}, {}, Verbose => true);
 
-aP = params#0;
-bP = params#1;
+expected1 = ({0_(coefficientRing R)}, {a}, {a*x + b*y});
+expected2 = ({a}, {b}, {a^2*x + a*b*y, a*x + b*y});
+expected3 = ({b, a}, {1_(coefficientRing R)}, {a*x + b*y});
 
-aR = promote (aP , Rtest);
-bR = promote (bP , Rtest);
-
-xR = variables#0;
-yR = variables#1;
-
-
-resultTest = comprehensiveGBMain({aR*xR + bR*yR}, {}, Verbose => true);
-
-expected1 = ({0_Ptest}, {aP}, {aR*xR + bR*yR});
-expected2 = ({aP}, {bP}, {aR^2*xR + aR*bR*yR, aR*xR + bR*yR});
-expected3 = ({bP, aP}, {1_Ptest}, {aR*xR + bR*yR});
-
-assert(#resultTest == 3);
-
-assert member(expected1, resultTest);
-assert member(expected2, resultTest);
-assert member(expected3, resultTest);
-
-
+assert(#result == 3);
+assert(set result == set {expected1, expected2, expected3});
 ///
 
 
 TEST ///
 -* Testing  comprehensiveGB on a*x+b*y  with Verbose option  *-
-PTest = QQ[aTest,bTest];
-RTest = PTest[xTest,yTest, MonomialOrder => Lex];
+R = QQ[a,b][x,y, MonomialOrder => Lex];
 
-fTest = aTest*xTest + bTest*yTest;
-
-expected1 = aTest*xTest + bTest*yTest;
-expected2 = aTest^2*xTest + aTest*bTest*yTest;
-
-result = comprehensiveGB({fTest}, Verbose=> true);
+result = comprehensiveGB({a*x + b*y}, Verbose => true);
 
 assert(#result == 2);
-assert(set result == set {expected1, expected2});
-
+assert(set result == set {a*x + b*y, a^2*x + a*b*y});
 ///
 
 
