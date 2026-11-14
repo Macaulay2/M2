@@ -368,8 +368,12 @@ parametricGBMain (List, List, List) := o -> (E, N, F) -> (
     RFlattoR := cgbData#"RFlattoR";
     RtoRFlat := cgbData#"RtoRFlat";
     RFlattoKU := cgbData#"RFlattoKU";
-    toKU := p -> try promote(p, KU) else
-    error("E and N must consist of polynomials in the parameters; found " | toString p);
+    toKU := p -> (
+            p' := sub(p, R);
+            if not liftable(p', KU) then
+            error("E and N must consist of polynomials in the parameters; found " | toString p);
+            lift(p', KU)
+            );
     E = if zero length E then {0_KU} else toKU \ E;
     N = if zero length N then {1_KU} else toKU \ N;
     if not consistencyCheckAllTogether(E, N, ICheckLoops => o.ICheckLoops) then (
