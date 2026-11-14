@@ -90,6 +90,11 @@ void python_initspam() {
   PyModule_AddObject(m, "error", SpamError);
 }
 
+PyObject *python_GetBuiltins(void)
+{
+  return PyEval_GetFrameBuiltins();
+}
+
 /********
  * ints *
  ********/

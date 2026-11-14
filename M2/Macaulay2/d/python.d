@@ -60,11 +60,11 @@ PyRunSimpleString(e:Expr):Expr := (
      else WrongArgString());
 setupfun("runSimpleString",PyRunSimpleString);
 
+import GetBuiltins():pythonObjectOrNull;
 PyEvalGetBuiltins(e:Expr):Expr := (
     when e
     is a:Sequence do (
-	if length(a) == 0 then toExpr(Ccode(pythonObjectOrNull,
-		"PyEval_GetBuiltins()"))
+	if length(a) == 0 then toExpr(GetBuiltins())
 	else WrongNumArgs(0))
     else WrongNumArgs(0));
 setupfun("pythonEvalGetBuiltins", PyEvalGetBuiltins);
