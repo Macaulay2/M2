@@ -53,12 +53,15 @@ List _ Ring := RingElement => (v, R) -> (
     if #v == 0 then 0_R
     else (
         kk := coefficientRing ambient R ?? R;
-        new R from rawSum apply(toSequence v, mc -> (
-            if not instance(mc, Sequence)
-            then error "expected a list of sequences";
-            if #mc =!= 2
-            then error "expected a list of pairs";
-            rawTerm(raw R, raw mc#1_kk, rawMakeMonomialFromExponents mc#0)))))
+        promote(
+            rawSum apply(toSequence v, mc -> (
+                    if not instance(mc, Sequence)
+                    then error "expected a list of sequences";
+                    if #mc =!= 2
+                    then error "expected a list of pairs";
+                    rawTerm(raw R, raw mc#1_kk,
+                        rawMakeMonomialFromExponents mc#0))),
+            R)))
 List _ RingFamily := RingElement => (v, R) -> v_(default R)
 
 coefficientRing PolynomialRing := R -> last R.baseRings
