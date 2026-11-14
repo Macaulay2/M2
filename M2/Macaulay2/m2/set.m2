@@ -187,7 +187,7 @@ partition(VirtualTally, Function, Function) := HashTable => (t, f, g) -> partiti
 partition(Function,VirtualTally) := HashTable => (f,t) -> partition(t,f,{}, identity)
 partition(Function,VirtualTally,Function) := HashTable => (f,t,g) -> partition(t,f,{}, g)
 partition(Function,VirtualTally,VisibleList) := HashTable => (f,t,ks) -> partition(t, f, ks, identity)
-partition(Function,VirtualTally,VisibleList, Function) := HashTable => (f,t,ks, g) -> partition(t, f, ks, g)
+partition(Function, VirtualTally,VisibleList, Function) := HashTable => (f,t,ks, g) -> partition(t, f, ks, g)
 
 -- partition values of xs according to their values under f
 --  ensure that all of the elements of ks also appear as keys in the result
