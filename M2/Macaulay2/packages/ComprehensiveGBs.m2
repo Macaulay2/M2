@@ -1300,34 +1300,22 @@ assert(set result == set {expected1, expected2});
 
 
 TEST ///
--* Testing  comprehensiveGBMain on a*x+b*y  with ReduceStrata => true option *-
-Ptest = QQ[a,b];
-Rtest = Ptest[x,y, MonomialOrder => Lex];
+-* Testing  comprehensiveGBMain on a*x^2 + b*y, x*y - a, b*x - y^3  with ReduceStrata => true option *-
+R = QQ[a,b][x,y];
+F = {a*x^2 + b*y, x*y - a, b*x - y^3};
 
-params = gens Ptest;
-variables = gens Rtest
+result = comprehensiveGBMain(F, ReduceStrata => true);
+assert(#result == 4);
 
-aP = params#0;
-bP = params#1;
+expected1 = ({0_(coefficientRing R)}, {a^10 - a*b^7});
+expected2 = ({a^10 - a*b^7}, {a^4*b^5});
+expected3 = ({b, a}, {1_(coefficientRing R)});
+expected4 = ({a}, {b^2});
+assert(set apply(result, t -> (t#0, t#1)) == set {expected1, expected2, expected3, expected4});
 
-aR = promote (aP , Rtest);
-bR = promote (bP , Rtest);
-
-xR = variables#0;
-yR = variables#1;
-
-
-resultTest = comprehensiveGBMain({aR*xR + bR*yR}, {},  ReduceStrata => true);
-
-expected1 = ({0_Ptest}, {aP}, {aR*xR + bR*yR});
-expected2 = ({aP}, {bP}, {aR^2*xR + aR*bR*yR, aR*xR + bR*yR});
-expected3 = ({bP, aP}, {1_Ptest}, {aR*xR + bR*yR});
-
-assert(#resultTest == 3);
-
-assert member(expected1, resultTest);
-assert member(expected2, resultTest);
-assert member(expected3, resultTest);
+unreduced = comprehensiveGBMain(F, ReduceStrata => false);
+assert(#unreduced == 6);
+assert isSubset(result, unreduced);
 
 ///
 
