@@ -659,18 +659,16 @@ doc ///
       For $E\subseteq R=k[U]$, the variety defined by $E$ in $L^m$, denoted by $V(E)$, is
       $V(E)=\{a\in L^m :\sigma_a(f)=0 \text{ for all } f \in E \}.$
 
-      A set $A\subseteq L^m$ is called constructible if there exists a pair of finite sets of polynomials $(E,N)$ such that
-      $A=V(E)\setminus V(N)$, where $E,N\subseteq k[U]$.
-
       Let $F$ be a subset of $R[X]$, let $E_1,N_1,\ldots, E_t,N_t$ be subsets of $R=k[U]$, let $G_1,\ldots,G_t$ be subsets of $R[X]$,
-      and let S be a subset of $L^m$ such that $S\subseteq (V(E_1)\setminus V(N_1) \cup \ldots \cup V(E_t)\setminus V(N_t)$. A finite set
+      and let $S$ be a subset of $L^m$ such that $S\subseteq (V(E_1)\setminus V(N_1)) \cup \ldots \cup (V(E_t)\setminus V(N_t))$. A finite set
       $\mathcal{G} = \{(E_1,N_1,G_1),\ldots,(E_t,N_t,G_t)\}$ is called a comprehensive Gröbner system on $S$ for $F$ if
-      $\sigma_a(G_i)$ is a Gröbner basis of the ideal $(\sigma_a(F))\subseteq L[X]$ for $a \in V(E_i) \setminus V(N_i)$ and
-      $i=1,\ldots,t$. Each $(E_i,N_i,G_i)$ is called a branch of $\mathcal{G}$. In particular, if $S=L^m$, then $\mathcal{G}$ is
-      called a comprehensive Gröbner system for F.
+      for all $i=1,\ldots,t$ and for all $a \in V(E_i) \setminus V(N_i)$,
+      $\sigma_a(G_i)$ is a Gröbner basis of the ideal $(\sigma_a(F))\subseteq L[X]$.
+      Each $(E_i,N_i,G_i)$ is called a branch of $\mathcal{G}$. In particular, if $S=L^m$, then $\mathcal{G}$ is
+      called a comprehensive Gröbner system for $F$.
 
-      Given a basis $S$ of the elimination ideal of $(F)\cap k[U]$, a comprehensive Gröbner basis $\mathcal{B}$ for $F\subseteq R[X]$
-      is the union of all the sets $G_i$ in a comprehensive Gröbner system $\mathcal{G}$ for F on $S$. Notice that $(\sigma_a(F))=(1)$
+      Given a basis $S$ of the elimination ideal $(F)\cap k[U]$, a comprehensive Gröbner basis $\mathcal{B}$ for $F\subseteq R[X]$
+      is the union of all the sets $G_i$ in a comprehensive Gröbner system $\mathcal{G}$ for $F$ on $S$. Notice that $(\sigma_a(F))=(1)$
       for any $a \in L^m \setminus V(S)$. Therefore, the set $\mathcal{G} \cup \{(\emptyset,S,S)\}$ is a comprehensive Gröbner system for $F$.
 
       The function @TO "comprehensiveGBMain"@ is the implementation of Algorithm CGBMain of @HREF("#ref2","[2]")@. The function @TO "parametricGBMain"@
@@ -681,7 +679,7 @@ doc ///
       For generic values of $u$ and $v$, the specialized system has a unique solution,
       but for some values of $u$ and $v$ it has no solutions or infinitely many solutions.
       A Gröbner basis computed over the fraction field $\QQ(u,v)$ only sees the generic case,
-      whereas a comprehensive Gröbner system detects all of them.
+      whereas a comprehensive Gröbner system detects every case.
     Example
       R = QQ[u,v][y,x, MonomialOrder => Lex];
       F = {y + u*x + v, u*y + x + v};
