@@ -8,26 +8,30 @@ Key
     (partition,VisibleList,Function,VisibleList,Function)
     (partition,VisibleList,Function)
     (partition,VisibleList,Function,VisibleList)
-    (partition,VirtualTally,Function)
-    (partition,VirtualTally,Function,VisibleList)
     (partition,VisibleList,Function,Function)
     (partition,Function,VisibleList,VisibleList,Function)
     (partition,Function,VisibleList)
     (partition,Function,VisibleList,VisibleList)
+    (partition,Function,VisibleList,Function)
+    (partition,VirtualTally,Function,VisibleList,Function)
+    (partition,VirtualTally,Function)
+    (partition,VirtualTally,Function,VisibleList)
+    (partition,VirtualTally,Function,Function)
+    (partition,Function,VirtualTally,VisibleList,Function)
     (partition,Function,VirtualTally)
     (partition,Function,VirtualTally,VisibleList)
-    (partition,Function,VisibleList,Function)
+    (partition,Function,VirtualTally,Function)
 Headline
     partition a set or list by values of a function
 Usage
-    partition(f,L)
-    partition(f,L,I)
-    partition(f,L,I,g)
-    partition(f,L,g)
+    partition(L,f,I,g)
     partition(L,f)
     partition(L,f,I)
     partition(L,f,g)
-    partition(L,f,I,g)
+    partition(f,L,I,g)
+    partition(f,L)
+    partition(f,L,I)
+    partition(f,L,g)
 Inputs
     f:Function
     L:{VisibleList,VirtualTally}
@@ -65,8 +69,15 @@ Description
         I = ideal"ab,ade,ac3,d4,b3,adf,f4,e10"
         partition(flatten entries gens I, f -> first degree f)
     Text
-        Supplying a second function to map values by can be used to create flexible manipulation of data structures.
+        When the second function argument is provided, it will be applied to the
+        grouped values after the partition is made.
     Example
+        partition(0..10, odd, x -> x^2)
+    Text
+        This example demonstrates the fact that $x^2 + 1 \equiv 0 \pmod{p}$ is
+        solvable iff $p \equiv 1 \pmod{4}$.
+    Example
+        -- -1 is a square mod p iff p % 4 == 1
         someprimes = for i from 1 to 10 list nextPrime(100 * i)
         netList pairs partition(someprimes, p -> legendreSymbol(-1, p), p -> p %4)
     Text
@@ -86,6 +97,15 @@ Description
         data = apply(someprimes, p -> {p, legendreSymbol(-1, p), p % 4});
         netList data
         netList pairs partition(data, row -> row_2, {0, 1, 2, 3}, row -> row_1)
+    Text
+        When applying a function to map the values of the partition of a
+        VirtualTally, the function is applied to the keys of the partitioned
+        tallies and any key collisions are combined.
+    Example
+        t = tally {"apple", "apricot", "apple", "avocado", "beet", "banana", "berry"}
+        partition(t, x -> x_0)
+        partition(t, x -> x_0, x -> x_{0..1})
+        partition(t, x -> x_{0..1}, x -> x_0) -- tallies from different groups are not combined
 SeeAlso
     tally
     partitions

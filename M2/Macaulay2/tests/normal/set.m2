@@ -78,6 +78,7 @@ assert(result#"b" == {4})
 assert(result#"c" == {})
 assert(result#"d" == {9})
 result' = partition(row -> row#0, data, {"a", "b", "c", "d"}, x -> x#1^2)
+assert(result === result')
 
 -- partition(VirtualTally,Function,VisibleList, Function)
 -- https://oeis.org/A005150 for fun
@@ -98,5 +99,3 @@ assert(#result#2 == 1)
 assert(#result#3 == 3)
 assert(#result#4 == 3)
 assert(#result#10 == 1)
-
-
