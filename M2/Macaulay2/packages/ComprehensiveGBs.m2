@@ -15,7 +15,7 @@ newPackage(
     },
     Keywords => {"Groebner Basis Algorithms"},
     AuxiliaryFiles => false,
-    PackageImports => {"MinimalPrimes", "RealRoots"},
+    PackageImports => {"Graphs", "MinimalPrimes", "RealRoots"},
     DebuggingMode => false,
     HomePage => "https://github.com/Macaulay2/Workshop-2026-Warwick/tree/CGBs"
     )
@@ -305,6 +305,9 @@ comprehensiveGBOnGraph (List, ZZ) := opts -> (G, d) -> (
             )
         );
     (F, comprehensiveGBMain(F, opts))
+)
+comprehensiveGBOnGraph (Graph, ZZ) := opts -> (G, d) -> (
+    comprehensiveGBOnGraph({vertexSet G, apply(edges G, e -> sort toList e)}, d, opts)
 )
 
 -- Given two lists A and B return the list
@@ -899,7 +902,8 @@ doc ///
 doc ///
   Key
     comprehensiveGBOnGraph
-    (comprehensiveGBOnGraph,List,ZZ)
+    (comprehensiveGBOnGraph, List, ZZ)
+    (comprehensiveGBOnGraph, Graph, ZZ)
     [comprehensiveGBOnGraph, Verbose]
     [comprehensiveGBOnGraph, ReduceStrata]
     [comprehensiveGBOnGraph, Depth]
@@ -909,8 +913,8 @@ doc ///
   Usage
     (F, GG) = comprehensiveGBOnGraph(G,d)
   Inputs
-    G: List
-      a list consisting of a list of vertices and a list of edges.
+    G:
+      a list consisting of a list of vertices and a list of edges, or a graph object
     d: ZZ
       a positive integer
     CheckAssumption=>Boolean
@@ -932,14 +936,18 @@ doc ///
       Consider the parameterized polynomial systems
       $F=\{f_e\}_{e\in E}\subseteq K[\lambda_e\:e\in E][x_{v,k}:v\in V,1\leq k \leq d]$,
       where $K\in \{\mathbb{C},\mathbb{R}\}$ and
-      \[ f_{ij}=\sum_{k=1}^{d}(x_{i,k}-x_{j,k})^2  -\lambda_{ij} \].
+      \[ f_{ij}=\sum_{k=1}^{d}(x_{i,k}-x_{j,k})^2  -\lambda_{ij}. \]
       The function comprehensiveGBOnGraph returns the polynomial systems $F$ and a comprehensive Gröbner system of $F$.
     Example
       (F, GG) = comprehensiveGBOnGraph({{1,2,3}, {(1,2),(2,3),(3,1)}}, 1, ReduceStrata => true);
       netList F
       GG_0
-  Caveat
-    This function is not set up to take in Type Graph. The user should convert it to a list.
+    Text
+      The graph may also be given as a graph object.
+    Example
+      needsPackage "Graphs";
+      (F, GG) = comprehensiveGBOnGraph(completeGraph 3, 1, ReduceStrata => true);
+      netList F
   SeeAlso
     ComprehensiveGBs
 
@@ -1219,6 +1227,18 @@ use coefficientRing R; use R;
 
 assert(F == {(x_(1,1) - x_(2,1))^2 + (x_(1,2) - x_(2,2))^2 - w_(1,2)});
 assert(GG == {({0}, {1}, F)});
+///
+
+
+TEST ///
+-* Testing comprehensiveGBOnGraph on a graph object *-
+
+needsPackage "Graphs";
+(F, GG) = comprehensiveGBOnGraph(completeGraph 3, 1);
+(F', GG') = comprehensiveGBOnGraph({{0,1,2}, {(0,1), (0,2), (1,2)}}, 1);
+
+assert(toString F == toString F');
+assert(toString GG == toString GG');
 ///
 
 
