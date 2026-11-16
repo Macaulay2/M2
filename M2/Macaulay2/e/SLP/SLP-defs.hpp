@@ -167,7 +167,10 @@ class SLEvaluatorConcrete : public SLEvaluator
   const RT& ring() const { return mRing; }
   bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs);
   bool evaluate(const DMat<RT>& inputs, DMat<RT>& outputs);
-  // TODO: bool evaluate(DMat<RT>& inputs, DMat<RT>& outputs);
+  // bound[i] = first-order bound on the rounding error of output i of the last
+  // evaluate() on this thread, in units of 2^-precision (see SLP-imp.hpp);
+  // false if compiled or nothing evaluated yet. Not virtual: RR/CC only.
+  bool evaluationErrorBound(std::vector<double>& bound);
   void text_out(buffer& o) const;
   Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH);
 
