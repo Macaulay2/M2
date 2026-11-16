@@ -4679,7 +4679,7 @@ EXAMPLE {"s = segreEmbedding PP_(ZZ/13)^{1,2};",
 "assert(o3 and (not o4) and o5 and o6)"},
 SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
-document {Key => {(symbol @@,MultirationalMap,MultirationalMap)},
+document {Key => {(symbol @@,MultirationalMap,MultirationalMap),(symbol @@,MultirationalMap,ZZ)},
 Headline => "virtual composition of multi-rational maps",
 Usage => "Phi @@ Psi",
 Inputs => {
