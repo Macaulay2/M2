@@ -164,7 +164,7 @@ toLis MonomialIdeal := List => I -> if I == 0 then {{}} else
 toMonLis = (S,e) -> product(#e, i-> S_i^(e_i))
 
 fromLis = method()
-fromLis (Ring, List) := MonomialIdeal => (S,L) -> if L === {} then monomialIdeal 0_S else 
+fromLis (Ring, List) := MonomialIdeal => (S,L) -> if L === {} or L === {{}} then monomialIdeal 0_S else 
                                                               monomialIdeal apply(L,e-> toMonLis (S,e))
 
 notIn = method()
@@ -706,6 +706,132 @@ assert(ans1 == ans3)
 assert(#orbitRepresentatives (S, monomialIdeal x, mm, -1) == 1)
 assert(#orbitRepresentatives (S, ze, mm, -1) == 1)
 ///
+
+-- Tests added in the 2026 test-audit pass: regression test for the empty-degs
+-- boundary (previously crashed in fromLis on the {{}} zero-ideal-as-list
+-- convention from L154-155); explicit cardinality assertions for
+-- orbitRepresentatives (the existing block at L669 only checked reflexivity
+-- ans1==ans2 with identical RHS, so it silently passes regardless of result);
+-- Sequence/List dispatch agreement; MonomialType output validation;
+-- hilbertRepresentatives error paths; the (Ring,Ideal,Ideal,ZZ) numelts=0
+-- identity; structural properties; and normalForms with identity-only G.
+
+TEST///
+  -- regression test for the empty-degs crash.  Before the fix,
+  -- orbitRepresentatives(S, {}) crashed in fromLis because toLis returns
+  -- {{}} for the zero ideal but fromLis only handled L === {}.
+  S = ZZ/101[x,y,z];
+  ze = monomialIdeal 0_S;
+  assert(orbitRepresentatives(S, {}) == {ze})
+  assert(orbitRepresentatives(S, ze, {}) == {ze})
+  -- the (Ring, Ideal, Ideal, ZZ) overload with numelts = 0 already worked;
+  -- pin that down too
+  assert(orbitRepresentatives(S, monomialIdeal x, monomialIdeal gens S, 0) == {monomialIdeal x})
+  assert(orbitRepresentatives(S, ze, monomialIdeal gens S, 0) == {ze})
+///
+
+TEST///
+  -- cardinality assertions on orbitRepresentatives.  The block at L669 set
+  -- ans1 = orbitRepresentatives(...) and ans2 = orbitRepresentatives(...)
+  -- with identical RHS, so assert(ans1 == ans2) was trivially reflexive and
+  -- proved nothing about the actual orbit counts.
+  S = ZZ/101[x,y,z];
+  ze = monomialIdeal 0_S;
+  -- 3 orbits of degree-3 monomials in 3 vars: {x^3 type, x^2 y type, xyz}
+  assert(#orbitRepresentatives(S, ze, {3}) == 3)
+  -- 4 orbits when adding two degree-2 generators
+  assert(#orbitRepresentatives(S, ze, {2,2}) == 4)
+  -- 5 orbits with a fixed cube as base
+  assert(#orbitRepresentatives(S, monomialIdeal(x^3), {3}) == 5)
+  assert(#orbitRepresentatives(S, monomialIdeal(z^3), {3}) == 5)
+  -- 10 orbits with two degree-3 generators
+  assert(#orbitRepresentatives(S, ze, {3,3}) == 10)
+  -- mixed-degree case
+  assert(#orbitRepresentatives(S, ze, {2,3,4}) == 47)
+///
+
+TEST///
+  -- the (Ring, VisibleList) overload should agree with (Ring, Ideal, VisibleList)
+  -- when the Ideal is the zero monomial ideal.  Also verify Sequence/List dispatch.
+  S = ZZ/101[x,y,z];
+  ze = monomialIdeal 0_S;
+  assert(orbitRepresentatives(S, {3}) == orbitRepresentatives(S, ze, {3}))
+  assert(orbitRepresentatives(S, (2,3)) == orbitRepresentatives(S, {2,3}))
+  assert(orbitRepresentatives(S, ze, (2,3)) == orbitRepresentatives(S, ze, {2,3}))
+  -- and the doc-example value
+  T = ZZ/101[a..d];
+  assert(#orbitRepresentatives(T, (2,2,2)) == 11)
+///
+
+TEST///
+  -- MonomialType => "SquareFree" really restricts to squarefree generators.
+  S = ZZ/101[a..f];
+  sf = orbitRepresentatives(S, {4,5}, MonomialType => "SquareFree");
+  assert(all(sf, J -> all(J_*, m -> max first exponents m <= 1)))
+  -- toggling between All and SquareFree only shrinks the orbit set
+  assert(#orbitRepresentatives(S, {4,5}) >= #sf)
+  -- on (Ring, Ideal, VisibleList), the option still flows through
+  T = ZZ/101[a,b,c];
+  I = monomialIdeal(a*b);
+  assert(all(orbitRepresentatives(T, I, {2}, MonomialType => "SquareFree"),
+        J -> all(J_*, m -> max first exponents m <= 1)))
+///
+
+TEST///
+  -- hilbertRepresentatives error and empty-result paths.
+  R = ZZ/101[a,b];
+  -- h_0 > numgens R is rejected with an error
+  assert(try (hilbertRepresentatives(R, {3}); false) else true)
+  -- a Hilbert sequence with no realisations yields the empty list
+  assert(hilbertRepresentatives(R, {1,4}) == {})
+  -- a SquareFree request with h_i < numgens R also yields the empty list
+  R3 = ZZ/101[a,b,c];
+  assert(hilbertRepresentatives(R3, {2,2}, MonomialType => "SquareFree") == {})
+  -- every returned ideal actually realises the requested Hilbert function
+  R4 = ZZ/101[a..d];
+  hr = hilbertRepresentatives(R4, {4,7,10});
+  assert(all(hr, J -> hilbertFunction(1, R4^1/J) == 4))
+  assert(all(hr, J -> hilbertFunction(2, R4^1/J) == 7))
+  assert(all(hr, J -> hilbertFunction(3, R4^1/J) == 10))
+  assert(all(hr, J -> class J === MonomialIdeal))
+///
+
+TEST///
+  -- non-monomial starting ideal must error explicitly
+  T = QQ[a,b,c];
+  assert(try (orbitRepresentatives(T, ideal(a + b), {2}); false) else true)
+  assert(try (orbitRepresentatives(T, monomialIdeal 0_T, ideal(a + b), 1); false) else true)
+///
+
+TEST///
+  -- structural properties of orbitRepresentatives output.
+  S = ZZ/101[x,y,z];
+  ze = monomialIdeal 0_S;
+  -- every element is a MonomialIdeal living in the supplied ring
+  L = orbitRepresentatives(S, ze, {2,2,2});
+  assert(all(L, J -> class J === MonomialIdeal))
+  assert(all(L, J -> ring J === S))
+  -- with degs = {d,d,d} every output has exactly 3 generators of degree d
+  assert(all(L, J -> numgens J == 3))
+  assert(all(L, J -> all(J_*, m -> first degree m == 2)))
+  -- determinism: the same call produces an identical answer
+  assert(orbitRepresentatives(S, ze, {2,3}) === orbitRepresentatives(S, ze, {2,3}))
+///
+
+TEST///
+  -- normalForms behaves correctly under the trivial group: every input is
+  -- already a representative, so the length is preserved.
+  S = ZZ/101[x,y,z];
+  idmap = map(S, S, vars S);
+  F = {monomialIdeal(x^2, y^2), monomialIdeal(x*y, x*z)};
+  assert(#normalForms(F, {idmap}) == 2)
+  -- and under the full S_3 action on a hand-picked input, only one orbit
+  -- representative survives.
+  G = apply(permutations 3, g -> map(S, S, (vars S)_g));
+  F2 = {monomialIdeal(x^2, y^2), monomialIdeal(y^2, z^2), monomialIdeal(x^2, z^2)};
+  assert(#normalForms(F2, G) == 1)
+///
+
 
 end-----------------------------------
 

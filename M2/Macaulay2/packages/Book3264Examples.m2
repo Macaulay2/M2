@@ -818,3 +818,25 @@ doc ///
       sigma_1 = chern(1,G13.Bundles#1)
       1 + sum(1..4, i -> coefficient(chern(i,P5.Bundles#1),TG) * ((sigma_1)^i))
 ///
+
+
+--test exported functions work
+TEST ///
+    -- grassmannian
+    G = grassmannian(1, 3)
+    assert(instance(G, FlagBundle))
+
+    -- diagram
+    d = diagrams(1,1)
+    assert(instance(d, List))
+
+    -- placeholderSchubertCycle
+    s = placeholderSchubertCycle({1}, G)
+    assert(instance(s, RingElement))
+
+    -- placeholderToSchubertBasis
+    R = intersectionRing G
+    f = R_0   -- grab any ring element to convert
+    b = placeholderToSchubertBasis(f, G)
+    assert(instance(b, RingElement))
+///

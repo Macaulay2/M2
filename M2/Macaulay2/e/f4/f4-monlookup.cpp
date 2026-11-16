@@ -2,7 +2,7 @@
 
 #include "f4/f4-monlookup.hpp"
 #include "buffer.hpp"                // for buffer
-#include "engine-exports.h"          // for newline
+#include "interface/m2-types.h"      // for newline
 #include "f4/varpower-monomial.hpp"  // for varpower_word, const_varpower_mo...
 #include "text-io.hpp"               // for emit, emit_line
 
@@ -493,7 +493,7 @@ int F4MonomialLookupTableT<Key>::debug_check(mi_node *const p,
 template <typename Key>
 void F4MonomialLookupTableT<Key>::debug_check() const
 {
-  int nfound = 0;
+  [[maybe_unused]] int nfound = 0;
   for (auto& i : mis)
     {
       if (i != nullptr) nfound += debug_check(i, nullptr);

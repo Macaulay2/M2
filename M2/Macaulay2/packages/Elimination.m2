@@ -305,6 +305,31 @@ TEST ///
   scan({W1, W2, W3, W4}, checkWeylAlgebra)
 ///
 
+--trivial test, duplicate variables, variable not in ring
+TEST ///
+R = QQ[x,y]
+I = ideal(x^2+y)
+
+assert(eliminate({},I) == I)
+
+assert(eliminate({x},I)==eliminate({x,x},I))
+
+S = QQ[z]
+assert try eliminate(z,I) then false else true
+
+///
+
+--homogeneity, commutativity of elimination
+TEST ///
+R = QQ[x,y,z]
+I = ideal(x*y-z^2, x^2-y*z)
+
+J = eliminate(x,I)
+
+assert(isHomogeneous J)
+
+assert(eliminate(x,eliminate(y,I)) == eliminate(y,eliminate(x,I)))
+///
 end
 loadPackage "Elimination"
 installPackage Elimination

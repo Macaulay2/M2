@@ -1,10 +1,11 @@
 /* Copyright 2005-2023, The Macaulay2 group */
 
-#pragma once
+#ifndef M2_GB_F4_MONOMIALHASHTABLE_HPP
+#define M2_GB_F4_MONOMIALHASHTABLE_HPP
 
-#include "MonomialTypes.hpp"
-#include "../MemoryBlock.hpp"
-#include "MonomialView.hpp"
+#include "gb-f4/MonomialTypes.hpp"
+#include "MemoryBlock.hpp"
+#include "gb-f4/MonomialView.hpp"
 #include <vector>
 
 namespace newf4 {
@@ -173,6 +174,7 @@ namespace newf4 {
 
 }; // end namespace newf4
 
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

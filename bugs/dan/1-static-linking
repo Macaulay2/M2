@@ -1,3 +1,0 @@
-fix configure.ac so it checks directly whether gcc's linker accepts the flags we're using for static linking
-
-then fix d/Makefile.in -- and move that stuff to config.Makefile or configure.ac

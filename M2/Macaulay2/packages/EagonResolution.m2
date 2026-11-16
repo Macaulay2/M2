@@ -1559,6 +1559,117 @@ f = degreeZeroSurjection(B1,A)
 assert(f===null)
 ///
 
+TEST/// -- picture, with its Verbose, Transpose, Display, and DisplayBlocks options
+debug needsPackage "EagonResolution"
+S = ZZ/101[a,b,c]
+R = S/(ideal"ab,ac")^2 -- a Golod ring, so the Eagon resolution is minimal
+E = eagon(R,4)
+assert instance(E, EagonData) -- eagon produces an EagonData
+F = eagonResolution E
+D = F.dd_3
+-- picture returns a Net for a Matrix (including a one-block matrix),
+-- a Complex, and an EagonData
+pF = picture F
+pE = picture E
+pD = picture D
+assert instance(pD, Net)
+assert instance(pF, Net)
+assert instance(pE, Net)
+assert instance(picture F.dd_1, Net)
+-- picture of an EagonData is picture of its resolution (the spellings agree)
+assert(pE == pF)
+assert(pE == picture resolution E)
+-- minimality: for a Golod ring picture marks every block of every
+-- differential as either zero (".") or in the maximal ideal ("*")
+marks = M -> flatten apply(drop(pictureList M, 1), row -> drop(row, 1))
+assert all(length F, n -> isSubset(set marks F.dd_(n+1), set {".", "*"}))
+-- Verbose => true adds the block dimensions, changing the Net
+assert instance(picture(D, Verbose => true), Net)
+assert(picture(D, Verbose => true) != pD)
+-- Transpose => true flips the rows and columns of the block table
+assert instance(picture(D, Transpose => true), Net)
+P = pictureList D
+Pt = pictureList(D, Transpose => true)
+assert(#Pt == #(P_0) and #(Pt_0) == #P)
+-- Display => "DisplayBlocks" prints the blocks themselves; it agrees with
+-- displayBlocks and differs from the default picture
+pdb = picture(D, Display => "DisplayBlocks")
+assert instance(pdb, Net)
+assert(pdb == displayBlocks D)
+assert(pdb != pD)
+///
+
+TEST/// -- eagonBeta, its Display and Verbose options, and the Golod characterization
+-- Gulliksen-Levin (see the eagonBeta documentation): R is Golod if and only if
+-- every eagonBeta matrix has all of its entries in the maximal ideal.
+S = ZZ/101[a,b,c]
+RGol = S/(ideal"ab,ac")^2 -- a Golod ring
+mGol = ideal vars RGol
+E = eagon(RGol,5)
+betas = apply(toList(2..5), n -> eagonBeta(E, n, Display => ""))
+assert all(betas, M -> instance(M, Matrix))
+assert all(betas, M -> M % mGol == 0)
+-- a codimension 2 complete intersection is not Golod, so some eagonBeta
+-- matrix has an entry outside the maximal ideal
+Rci = ZZ/101[a,b]/ideal(a^2,b^2)
+mci = ideal vars Rci
+Eci = eagon(Rci,5)
+betasCI = apply(toList(2..5), n -> eagonBeta(Eci, n, Display => ""))
+assert not all(betasCI, M -> M % mci == 0)
+-- the Display option selects the output form; Verbose keeps a Net
+assert instance(eagonBeta(E,3), Net) -- default Display => "picture"
+assert instance(eagonBeta(E,3, Display => "DisplayBlocks"), Net)
+assert instance(eagonBeta(E,3, Display => ""), Matrix)
+assert instance(eagonBeta(E,3, Verbose => true), Net)
+assert instance(eagonBeta E, Net)
+-- eagonBeta is undefined below index 2, so eagonBeta(E,1) must signal an error
+assert(try (eagonBeta(E,1); false) else true)
+///
+
+TEST/// -- mapComponent extracts the labeled blocks of an Eagon map
+debug needsPackage "EagonResolution"
+S = ZZ/101[a,b,c]
+R = S/(ideal"ab,ac")^2
+E = eagon(R,4)
+F = eagonResolution E
+-- F.dd_1 is a single labeled block, target (0,{}) and source (1,{})
+assert(matrix mapComponent(F.dd_1, (0,{}), (1,{})) == matrix F.dd_1)
+-- enumerate every block of a multi-component map, computing each once
+M = F.dd_3
+M1 = flattenBlocks M
+tar = indices target M1
+src = indices source M1
+P = pictureList M
+blocks = apply(#tar, t -> apply(#src, s -> mapComponent(M, tar#t, src#s)))
+-- a block is zero exactly when picture marks it with "."
+assert all(#tar, t -> all(#src, s ->
+    (blocks#t#s == 0) === (P#(t+1)#(s+1) == ".")))
+-- the blocks reassemble into the whole map
+assert(M1 == sum(#tar, t -> sum(#src, s ->
+    (target M1)_[tar#t] * blocks#t#s * (source M1)^[src#s])))
+-- a nonexistent block label must signal an error
+assert(try (mapComponent(M, (100,{}), (100,{})); false) else true)
+///
+
+TEST/// -- horizontalStrand
+S = ZZ/101[x,y,z]
+R = S/((ideal(x,y))^2 + ideal(z^3))
+E = eagon(R,5)
+H = apply(4, i -> horizontalStrand(E,i))
+-- each horizontal strand is a homogeneous complex
+assert all(H, C -> (C.dd)^2 == 0)
+assert all(H, C -> isHomogeneous C)
+-- the i-th horizontal strand resolves the i-th Koszul boundary module,
+-- hence is exact in positive homological degrees
+assert all(H, C -> all(length C - 1, j -> prune HH_(j+1) C == 0))
+-- the 0-th horizontal strand is the 0-th row, the Eagon resolution itself
+C0 = H#0
+F = eagonResolution E
+assert all(length C0, j -> C0.dd_(j+1) == F.dd_(j+1))
+-- horizontalStrand errors on a strand index that was not computed
+assert(try (horizontalStrand(E,100); false) else true)
+///
+
 end--
 ------------------------------------
 restart

@@ -1,2 +1,0 @@
-eliminate use of randomHeight in Core, which corresponds to rawSetRandomMax() in the engine, which
-sets maxHeight

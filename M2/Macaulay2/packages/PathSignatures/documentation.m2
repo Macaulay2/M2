@@ -452,20 +452,18 @@ Node
         @LABEL("[1]","id" => "ref1")@ @HREF {"https://doi.org/10.1007/s13366-020-00493-9","Signatures of paths transformed by polynomial maps (doi.org/10.1007/s13366-020-00493-9)"} @
 Node
     Key
-        shuffle
+        (shuffle, NCRingElement, NCRingElement)
         (symbol **, NCRingElement, NCRingElement)
         (symbol ⧢, NCRingElement, NCRingElement)
-        (shuffle, NCRingElement, NCRingElement)
     Headline
         shuffle product of two words
     Inputs
         w1: NCRingElement 
         w2: NCRingElement
-        R: NCPolynomialRing --The non-commutative polynomial where the operation ought to be carried out
     Outputs
         v: NCRingElement --The shuffle product of w1 and w2
     Usage
-        v = shuffle(w1, w2, R)
+        v = shuffle(w1, w2)
     Description
         Text
             We start with the mathematical definition of this operation, based on @HREF("#ref1","[1]")@. 
@@ -1231,11 +1229,35 @@ R = QQ[a_(1,1)..a_(d,m)];
 Ma = transpose genericMatrix(R,m,d);
 A2 = wordAlgebra(m, CoefficientRing => R);
 CMon = CAxisTensor(k, A2);
-DMon = Ma * CMon; 
+DMon = Ma * CMon;
 parMon = tensorParametrization(DMon,CoefficientRing => QQ); --Parametrization of P_{2,4,2}
 I = ker parMon;
 assert (dim I == 4)
 assert (degree I == 24) --Variety has affine dimension 4 and degree 24
+///
+
+-- tensorLog (audit-flagged: no direct TEST, only a doc EXAMPLE).
+-- For x = 1 + Lt_1 + 1/2 Lt_{1,1} + 1/6 Lt_{1,1,1} (which is the truncated
+-- tensor exponential of Lt_1), the truncated log should recover Lt_1
+-- in degree 1 and vanish in degrees 0, 2, 3.
+TEST ///
+A2 := wordAlgebra(2);
+x := 1 + [1]_A2 + 1/2 * [1,1]_A2 + 1/6 * [1,1,1]_A2;
+assert(tensorLog(x, 0) == 0);
+assert(tensorLog(x, 1) == [1]_A2);
+assert(tensorLog(x, 2) == 0);
+assert(tensorLog(x, 3) == 0);
+///
+
+-- getCoefficientRing on a Path (audit-flagged: never asserted on
+-- directly, only documented).
+TEST ///
+P := linPath({0, 1});
+assert(class P === Path);
+assert(getCoefficientRing P === QQ);
+-- coefficientRing has been installed as an alias for getCoefficientRing
+-- on Path; both should agree.
+assert(coefficientRing P === getCoefficientRing P);
 ///
 
 

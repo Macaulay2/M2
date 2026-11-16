@@ -20,7 +20,7 @@ newPackage(
 	       HomePage=>"http://www.msri.org/~de"}},
      Headline => "make a 3-generator ideal with an \"any\" resolution",
      Keywords => {"Commutative Algebra"},
-     PackageImports => {"OldChainComplexes"},
+     PackageImports => {"Complexes"},
      DebuggingMode => false
      )
 
@@ -159,7 +159,7 @@ evansGriffith(Matrix, ZZ) := (f,n)->(
 
 
 --------------------------------------------------------------
--- isSyzgy
+-- isSyzygy
 -- checks if a module is a d-th syzygy
 --------------------------------------------------------------
 

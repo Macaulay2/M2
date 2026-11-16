@@ -1,7 +1,7 @@
 // Copyright 2009 Michael E. Stillman
 
-#ifndef __imonorder_h_
-#define __imonorder_h_
+#ifndef M2__IMONORDER_H_
+#define M2__IMONORDER_H_
 
 /* This is the internal form of the monomial ordering */
 /* Used in monomial encoding/decoding/comparison */
@@ -10,7 +10,7 @@
 
 #include "interface/monomial-ordering.h"
 
-#include "ExponentVector.hpp"
+#include "monomials/ExponentVector.hpp"
 
 typedef int *monomial;
 

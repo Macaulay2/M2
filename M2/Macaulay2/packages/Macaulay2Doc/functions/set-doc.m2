@@ -105,8 +105,8 @@ document {
 
 document {
      Key => {(symbol -, Set, Set),
-	  (symbol -, Set, List),
-	  (symbol -, List, Set)},
+	  (symbol -, Set, VisibleList),
+	  (symbol -, VisibleList, Set)},
      Headline => "set difference",
      Usage => "x - y",
      Inputs => {

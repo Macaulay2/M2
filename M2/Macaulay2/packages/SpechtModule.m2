@@ -3462,5 +3462,395 @@ testInvariance(listGens,secondaryInvariants(listGens,R));
 
 
 ///
+
+-----------------------------------------------------------------------------
+-- Tests added for coverage of the remaining exported functions.
+-----------------------------------------------------------------------------
+
+TEST ///
+-- youngTableau construction, accessors, and conversion to and from lists.
+p = new Partition from {3,2};
+y = youngTableau(p, {1,0,2,3,4});
+assert(class y === YoungTableau);
+assert(entries y == {1,0,2,3,4});
+assert(numrows y == 2);
+assert(numcols y == 3);
+assert(size y == 5);
+-- cell, row and column accessors
+assert(y_(0,0) == 1);
+assert(y_(1,1) == 4);
+assert(y^0 == {1,0,2});                 -- row 0
+assert(y^1 == {3,4});                   -- row 1
+assert(y_0 == {1,3});                   -- column 0
+assert(y_2 == {2});                     -- a ragged column
+-- tableauToList and listToTableau are mutually inverse
+assert(tableauToList y == {{1,0,2},{3,4}});
+assert(listToTableau {{1,0,2},{3,4}} == y);
+-- youngTableau YoungTableau makes an equal but independent copy
+yc = youngTableau y;
+assert(yc == y);
+assert(not (yc === y));
+yc_(0,0) = 99;
+assert(y_(0,0) == 1);                   -- mutating the copy leaves y intact
+-- equality is sensitive to both the shape and the filling
+assert(youngTableau(p,{1,0,2,3,4}) == y);
+assert(not (youngTableau(p,{0,1,2,3,4}) == y));
+assert(not (youngTableau(new Partition from {2,2,1},{1,0,2,3,4}) == y));
+-- a filling whose length does not match the partition is rejected
+assert(try (youngTableau(p,{1,2,3}); false) else true);
+///
+
+TEST ///
+-- TableauList: build an empty list, append tableaux, retrieve them.
+p = new Partition from {2,1};
+t = tableauList p;
+assert(class t === TableauList);
+assert(t#length == 0);
+y1 = youngTableau(p,{0,1,2});
+addTableau(t,y1);
+addTableau(t,{1,2,0});                  -- the List signature of addTableau
+assert(t#length == 2);
+assert(t_0 == y1);                      -- _ retrieves the i-th tableau
+assert(entries t_1 == {1,2,0});
+lst = toListOfTableaux t;
+assert(#lst == 2);
+assert(all(lst, tab -> class tab === YoungTableau));
+assert(lst#0 == y1);
+-- the optional capacity argument
+t2 = tableauList(p,5);
+addTableau(t2,youngTableau(p,{0,2,1}));
+assert(t2#length == 1);
+///
+
+TEST ///
+-- hookLengthFormula p = dim of the Specht module S^p = number of standard
+-- tableaux of shape p.
+assert(hookLengthFormula(new Partition from {3,2}) == 5);
+assert(hookLengthFormula(new Partition from {2,1}) == 2);
+assert(hookLengthFormula(new Partition from {2,2}) == 2);
+assert(hookLengthFormula(new Partition from {3,1}) == 3);
+assert(hookLengthFormula(new Partition from {5}) == 1);            -- trivial rep
+assert(hookLengthFormula(new Partition from {1,1,1,1,1}) == 1);    -- sign rep
+-- it really counts standard tableaux
+scan({{3,2},{2,2,1},{4,1},{3,1,1}}, q -> (
+     pp := new Partition from q;
+     assert((standardTableaux pp)#length == hookLengthFormula pp)));
+-- sum of squares of the irreducible dimensions equals n!
+scan(3..6, n -> assert(sum(partitions n, q -> (hookLengthFormula q)^2) == n!));
+///
+
+TEST ///
+-- multinomial(k_1,...,k_r) = (sum k_i)!/prod(k_i!); the three input forms agree.
+assert(multinomial {3,2} == 10);
+assert(multinomial {2,2} == 6);
+assert(multinomial {1,1,1,1} == 24);
+assert(multinomial (new Partition from {3,2}) == 10);
+assert(multinomial (tally {3,2}) == 10);
+-- the number of tabloids of shape p is multinomial p
+scan({{3,2},{2,2},{4,1},{2,1,1}}, q -> (
+     pp := new Partition from q;
+     assert((tabloids pp)#length == multinomial pp)));
+-- each tabloid representative has strictly increasing rows
+tb = tabloids new Partition from {3,2};
+assert(all(tb#length, i ->
+     all(tableauToList tb_i, r -> all(#r-1, j -> r#j < r#(j+1)))));
+///
+
+TEST ///
+-- standardTableaux p: rows and columns strictly increasing, entries 0..n-1.
+isStandard = t -> (
+     L := tableauToList t;
+     all(L, r -> all(#r-1, i -> r#i < r#(i+1)))
+     and all(numcols t, c -> (col := t_c; all(#col-1, i -> col#i < col#(i+1)))));
+scan({{3,2},{2,2,1},{3,1,1},{4,2}}, q -> (
+     st := standardTableaux new Partition from q;
+     assert(all(st#length, i -> isStandard st_i));
+     -- standard tableaux have no row descent
+     assert(all(st#length, i -> firstRowDescent st_i === (-1,-1)));
+     -- the fillings are pairwise distinct
+     assert(#unique apply(st#length, i -> entries st_i) == st#length)));
+-- semistandardTableaux(p,n): weakly increasing rows, strictly increasing
+-- columns, entries in 0..n-1.
+isSemistandard = (t,n) -> (
+     L := tableauToList t;
+     all(L, r -> all(#r-1, i -> r#i <= r#(i+1)))
+     and all(numcols t, c -> (col := t_c; all(#col-1, i -> col#i < col#(i+1))))
+     and all(entries t, e -> 0 <= e and e < n));
+sst = semistandardTableaux(new Partition from {3,2}, 4);
+assert(all(sst#length, i -> isSemistandard(sst_i, 4)));
+assert((semistandardTableaux(new Partition from {2,1},3))#length == 8);
+///
+
+TEST ///
+-- cycleDecomposition of a permutation given in one-line (0-indexed) form.
+assert(cycleDecomposition {0,1,2,3,4} == {{0},{1},{2},{3},{4}});   -- identity
+assert(cycleDecomposition {1,3,2,0,4} == {{0,1,3},{2},{4}});
+-- conjugacyClass is the cycle type as a partition
+assert(toList conjugacyClass {1,3,2,0,4} == {3,1,1});
+assert(toList conjugacyClass {0,1,2,3,4} == {1,1,1,1,1});
+assert(toList conjugacyClass {1,0,2,3,4} == {2,1,1,1});            -- a transposition
+-- cardinalityOfConjugacyClass: size of the S_n class indexed by a partition
+assert(cardinalityOfConjugacyClass(new Partition from {1,1,1,1,1}) == 1);  -- identity
+assert(cardinalityOfConjugacyClass(new Partition from {2,1,1,1}) == 10);   -- transpositions
+assert(cardinalityOfConjugacyClass(new Partition from {5}) == 24);         -- 5-cycles
+-- the class sizes partition the group, so they sum to n!
+scan(3..6, n -> assert(sum(partitions n, q -> cardinalityOfConjugacyClass q) == n!));
+///
+
+TEST ///
+-- permutationSign of a one-line permutation and of a cycle type.
+assert(permutationSign {0,1,2,3,4} == 1);          -- identity
+assert(permutationSign {1,0,2,3,4} == -1);         -- a single transposition
+assert(permutationSign {2,1,4,3,0} == 1);          -- a 3-cycle is even
+-- the List and Partition (cycle type) forms agree
+assert(permutationSign {1,3,2,0,4} == permutationSign conjugacyClass {1,3,2,0,4});
+-- the sign of a permutation equals the determinant of its permutation matrix
+scan({{0,1,2,3,4},{1,0,2,3,4},{2,1,4,3,0},{1,2,3,4,0},{3,0,4,1,2}}, perm ->
+     assert(det permutationMatrix perm == permutationSign perm));
+-- permutationMatrix produces an orthogonal 0/1 matrix
+M = permutationMatrix {1,2,0};
+assert(entries M == {{0,1,0},{0,0,1},{1,0,0}});
+assert(entries(M * transpose M) == {{1,0,0},{0,1,0},{0,0,1}});
+assert(entries permutationMatrix {0,1,2,3} ==
+     {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}});
+///
+
+TEST ///
+-- generatePermutationGroup: the closure of a set of generating permutations.
+-- A transposition together with an n-cycle generates all of S_n.
+assert(#generatePermutationGroup {{1,0,2,3},{1,2,3,0}} == 24);     -- S_4
+-- a single n-cycle generates a cyclic group of order n
+assert(#generatePermutationGroup {{1,2,3,0}} == 4);
+-- the dihedral group of order 8 inside S_4
+assert(#generatePermutationGroup {{0,3,2,1},{1,2,3,0}} == 8);
+-- the trivial group
+assert(#generatePermutationGroup {{0,1,2,3}} == 1);
+-- the generated set contains the identity and is closed under composition
+G = generatePermutationGroup {{0,3,2,1},{1,2,3,0}};
+n = #(G#0);
+assert(member(toList(0..n-1), G));
+assert(all(G, g -> all(G, h -> member(g_h, G))));
+///
+
+TEST ///
+-- readingWord reads each column bottom-to-top, the columns left-to-right.
+y = youngTableau(new Partition from {3,2}, {0,2,3,1,4});
+assert(readingWord y == {1,0,4,2,3});
+-- the reading word is a permutation of 0..size-1
+assert(sort readingWord y == toList(0..size y - 1));
+-- indexTableau keeps the shape of its argument
+ind = indexTableau y;
+assert(toList ind#partition == toList y#partition);
+assert(entries indexTableau youngTableau(new Partition from {2,2,1},{0,2,1,3,4})
+     == {0,1,1,2,3});
+-- rowPermutationTableaux: the row permutations with no repeated column entry
+rpt = rowPermutationTableaux indexTableau youngTableau(new Partition from {3,2},{0,2,1,3,4});
+assert(#rpt == 3);
+assert(all(rpt, t -> class t === YoungTableau));
+///
+
+TEST ///
+-- firstRowDescent (a,b): the first cell with T_(a,b) > T_(a,b+1), scanning
+-- columns left-to-right then rows top-to-bottom; (-1,-1) if rows are increasing.
+assert(firstRowDescent youngTableau(new Partition from {3,2,1},{1,2,3,5,4,6}) === (1,0));
+assert(firstRowDescent youngTableau(new Partition from {3,2,1},{1,2,4,3,5,6}) === (-1,-1));
+-- sortColumnsTableau sorts each column in place and returns the sorting sign.
+y = youngTableau(new Partition from {2,2,1},{0,1,4,3,2});
+assert(sortColumnsTableau y == -1);
+assert(entries y == {0,1,2,3,4});                  -- columns are now sorted
+-- sorting an already-sorted tableau has sign 1 and changes nothing
+y2 = youngTableau(new Partition from {2,2,1},{0,1,2,3,4});
+assert(sortColumnsTableau y2 == 1);
+assert(entries y2 == {0,1,2,3,4});
+-- the YoungTableau order ranks a tableau with a row descent after a standard one
+ya = youngTableau(new Partition from {2,1},{1,0,2});
+yb = youngTableau(new Partition from {2,1},{0,2,1});
+assert((ya ? yb) === symbol >);
+///
+
+TEST ///
+-- rowStabilizer / columnStabilizer: the subgroups of S_n fixing the rows
+-- (resp. columns) of a tableau setwise.
+y = youngTableau(new Partition from {2,2,1},{0,3,1,4,2});
+rs = rowStabilizer y;
+cs = columnStabilizer y;
+-- their orders are the products of the factorials of the row/column lengths
+assert(#rs == 2*2*1);                   -- rows {0,3}, {1,4}, {2}
+assert(#cs == 6*2);                     -- columns {0,1,2}, {3,4}
+-- every element is a genuine permutation of 0..n-1
+assert(all(rs, g -> sort g == {0,1,2,3,4}));
+assert(all(cs, g -> sort g == {0,1,2,3,4}));
+-- a row-stabilizer permutation fixes each row of the tableau setwise
+assert(all(rs, g -> all(tableauToList y, r -> set apply(r, e -> g#e) === set r)));
+-- the identity belongs to both stabilizers
+assert(member({0,1,2,3,4}, rs) and member({0,1,2,3,4}, cs));
+///
+
+TEST ///
+-- A Garnir element is a relation in the Specht module: under the map sending a
+-- polytabloid e_T to its Specht polynomial it must vanish.
+R = QQ[z_0..z_5];
+y = youngTableau(new Partition from {3,2,1},{0,1,2,4,3,5});
+g = garnirElement y;
+assert(class g === SpechtModuleElement);
+assert(sum(terms g, t -> t#1 * spechtPolynomial(t#0,R)) == 0);
+-- the explicit (coefficient,row,column) signature gives the same kind of relation
+g2 = garnirElement(y,1,1,0);
+assert(sum(terms g2, t -> t#1 * spechtPolynomial(t#0,R)) == 0);
+-- straighteningAlgorithm rewrites a polytabloid in the standard basis: every
+-- resulting tableau is standard, and the Specht polynomial is preserved.
+e = straighteningAlgorithm y;
+assert(all(terms e, t -> firstRowDescent t#0 === (-1,-1)));
+assert(sum(terms e, t -> t#1 * spechtPolynomial(t#0,R)) == spechtPolynomial(y,R));
+-- straightening a standard tableau returns that tableau with coefficient 1
+st = (standardTableaux new Partition from {3,2})_0;
+es = straighteningAlgorithm st;
+assert(#terms es == 1 and (terms es)#0#0 == st and (terms es)#0#1 == 1);
+///
+
+TEST ///
+-- SpechtModuleElement: formal Q-linear combinations of polytabloids.
+p = new Partition from {3,2,1};
+y = youngTableau(p,{2,0,3,4,5,1});
+e = spechtModuleElement(y,-2);
+assert(class e === SpechtModuleElement);
+assert((new HashTable from e#values)#(entries y) == -2);
+-- the default coefficient is 1, and terms recovers the (tableau,coef) pairs
+e1 = spechtModuleElement y;
+assert(#terms e1 == 1);
+assert((terms e1)#0#1 == 1);
+-- addition merges coefficients; subtracting equals cancels to the empty element
+assert((new HashTable from (e1+e1)#values) === (new HashTable from (2*e1)#values));
+assert(#((e1 - e1)#values) == 0);
+-- scalar multiplication by an integer and by a rational
+assert((new HashTable from (3*e1)#values)#(entries y) == 3);
+assert((new HashTable from ((1/2)*spechtModuleElement(y,4))#values)#(entries y) == 2);
+-- the identity permutation acts trivially, and a transposition is an involution
+assert((new HashTable from ({0,1,2,3,4,5} e1)#values) === (new HashTable from e1#values));
+tw = {1,0,2,3,4,5};
+assert((new HashTable from (tw (tw e1))#values) === (new HashTable from e1#values));
+///
+
+TEST ///
+-- vandermondeDeterminant: the product of (x_j - x_i) over i<j on the indexed
+-- variables; it equals the determinant of the corresponding Vandermonde matrix.
+R = QQ[z_0..z_4];
+assert(vandermondeDeterminant({0,1},R) == z_1 - z_0);
+assert(vandermondeDeterminant({0,1,2},R) == (z_1-z_0)*(z_2-z_0)*(z_2-z_1));
+assert(vandermondeDeterminant({0,1,2},R) ==
+     det generalizedVandermondeMatrix({0,1,2},{0,1,2},R));
+-- AsExpression returns a Product whose value is the polynomial
+assert(value vandermondeDeterminant({0,2,3},R,AsExpression=>true) ==
+     vandermondeDeterminant({0,2,3},R));
+-- generalizedVandermondeMatrix is a bialternant: dividing its determinant by the
+-- Vandermonde determinant yields a Schur polynomial (Jacobi's formula).
+M = generalizedVandermondeMatrix({0,2,3},{1,3,5},R);
+assert(numRows M == 3 and numColumns M == 3);
+assert((det M)//vandermondeDeterminant({0,2,3},R) ==
+     schurPolynomial({0,2,3},new Partition from {3,2,1},R));
+-- a Schur polynomial of a single box is the sum of the variables; of the empty
+-- partition it is 1
+assert(schurPolynomial({0,1,2},new Partition from {1},R) == z_0+z_1+z_2);
+assert(schurPolynomial({0,1,2},new Partition from {},R) == 1);
+-- mismatched index/exponent lengths are rejected
+assert(try (generalizedVandermondeMatrix({0,1},{0,1,2},R); false) else true);
+///
+
+TEST ///
+-- spechtPolynomial of a tableau is the product of the column Vandermonde
+-- determinants.
+R = QQ[z_0..z_4];
+y = youngTableau(new Partition from {2,2,1},{0,3,1,4,2});
+assert(spechtPolynomial(y,R) ==
+     vandermondeDeterminant({0,1,2},R) * vandermondeDeterminant({3,4},R));
+-- it is alternating in each column: swapping two entries of a column negates it
+assert(permutePolynomial({1,0,2,3,4}, spechtPolynomial(y,R)) == -spechtPolynomial(y,R));
+-- spechtPolynomials(p,R): one polynomial per standard tableau of shape p
+sp = spechtPolynomials(new Partition from {2,2,1},R);
+assert(class sp === HashTable);
+assert(#sp == hookLengthFormula new Partition from {2,2,1});
+-- indexMonomial(S,T,R): the variables of T raised to the exponents of i(S)
+S = youngTableau(new Partition from {2,2,1},{0,2,1,3,4});
+T = youngTableau(new Partition from {2,2,1},{0,1,2,3,4});
+assert(indexMonomial(S,T,R) == z_1*z_2*z_3^2*z_4^3);
+-- indexMonomial rejects tableaux of different shape
+assert(try (indexMonomial(youngTableau(new Partition from {2,1},{0,1,2}),
+     youngTableau(new Partition from {3},{0,1,2}),R); false) else true);
+///
+
+TEST ///
+-- higherSpechtPolynomial(S,T,R): the Robust => true and Robust => false
+-- algorithms must produce the same polynomial.
+R = QQ[z_0..z_3];
+p = new Partition from {2,2};
+S = youngTableau(p,{0,2,1,3});
+T = youngTableau(p,{0,1,2,3});
+assert(higherSpechtPolynomial(S,T,R,Robust=>true) ==
+     higherSpechtPolynomial(S,T,R,Robust=>false));
+-- AsExpression wraps the same polynomial as an Expression
+assert(value higherSpechtPolynomial(S,T,R,Robust=>false,AsExpression=>true) ==
+     higherSpechtPolynomial(S,T,R,Robust=>false));
+-- higherSpechtPolynomials(S,R): one polynomial per standard tableau of the shape
+hsp = higherSpechtPolynomials(S,R);
+assert(class hsp === HashTable);
+assert(#hsp == hookLengthFormula p);
+-- a shape mismatch between S and T is rejected
+assert(try (higherSpechtPolynomial(
+     youngTableau(new Partition from {3,1},{0,1,2,3}),T,R); false) else true);
+///
+
+TEST ///
+-- elementary and power-sum symmetric polynomials of a polynomial ring.
+R = QQ[w_1..w_3];
+e = elementarySymmetricPolynomials R;
+ps = powerSumSymmetricPolynomials R;
+assert(e == {w_1+w_2+w_3, w_1*w_2+w_1*w_3+w_2*w_3, w_1*w_2*w_3});
+assert(ps == {w_1+w_2+w_3, w_1^2+w_2^2+w_3^2, w_1^3+w_2^3+w_3^3});
+assert(#e == numgens R and #ps == numgens R);
+-- Newton's identities relate the two families:
+--   p_1 = e_1,  p_2 = e_1 p_1 - 2 e_2,  p_3 = e_1 p_2 - e_2 p_1 + 3 e_3.
+assert(ps#0 == e#0);
+assert(ps#1 == e#0*ps#0 - 2*e#1);
+assert(ps#2 == e#0*ps#1 - e#1*ps#0 + 3*e#2);
+///
+
+TEST ///
+-- matrixRepresentation(perm,p): the matrix of a permutation acting on the
+-- Specht module S^p in the basis of standard polytabloids.
+p = new Partition from {2,1};
+assert(entries matrixRepresentation({0,2,1},p) == {{0,1},{1,0}});
+-- the identity permutation gives the identity matrix of size dim S^p
+assert(hookLengthFormula p == 2);
+assert(entries matrixRepresentation({0,1,2},p) == {{1,0},{0,1}});
+assert(numRows matrixRepresentation({0,1,2,3,4},new Partition from {3,2}) == 5);
+-- matrixRepresentation is a group homomorphism: M(g.h) = M(g) M(h)
+g = {1,0,2}; k = {2,1,0};
+assert(entries matrixRepresentation(g_k,p) ==
+     entries(matrixRepresentation(g,p) * matrixRepresentation(k,p)));
+-- the no-permutation form tabulates every element of S_n
+assert(#matrixRepresentation(p) == 6);
+-- the TableauList and Partition signatures agree
+assert(entries matrixRepresentation({0,2,1},standardTableaux p) ==
+     entries matrixRepresentation({0,2,1},p));
+///
+
+TEST ///
+-- characterTable n: the irreducible character table of the symmetric group S_n,
+-- with rows and columns indexed by partitions of n.
+ct = characterTable 5;
+assert(class ct === CharacterTable);
+-- the row indexed by {n} is the trivial character (identically 1)
+assert(all(partitions 5, q -> ct_(new Partition from {5}, q) == 1));
+-- the row indexed by {1,...,1} is the sign character
+assert(all(partitions 5, q ->
+     ct_(new Partition from {1,1,1,1,1}, q) == permutationSign q));
+-- the column indexed by the identity class {1,...,1} records the irreducible
+-- dimensions, which the hook length formula also computes
+assert(all(partitions 5, q ->
+     ct_(q, new Partition from {1,1,1,1,1}) == hookLengthFormula q));
+-- entries are addressable by partition or by integer index
+assert(ct_(0,0) == ct_(new Partition from {5}, new Partition from {5}));
+///
+
 end
 

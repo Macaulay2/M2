@@ -101,9 +101,11 @@ linearSeries(List, List, Ring) := Matrix => o -> (D0List, DinfList, C) ->(
     linearSeries(D0, Dinf))
 
 linearSeries(List, Ring) := Matrix => o -> (D0List, C) ->(
-    D0 := fromCoordinates(D0,C);
+    D0 := fromCoordinates(D0List,C);
     linearSeries D0)
 
+-- TODO: the ///...///  block below is inert dev-scratch (no `TEST` prefix);
+-- migrate the useful content to a real TEST or delete the block.
 ///--case of a nodal cubic over a finite field
 restart
 loadPackage("PlaneCurveLinearSeries", Reload => true)
@@ -127,6 +129,8 @@ needsPackage "RandomPoints"
 
 
 
+-- TODO: the ///...///  block below is inert dev-scratch; the `--here--`
+-- bookmark and the restart/loadPackage driver inside are not test material.
 ///
 --here--
 restart
@@ -262,7 +266,7 @@ projectiveImage(List, List, Ring) := Matrix => o -> (D0List, DinfList, C) ->(
     projectiveImage (D0, Dinf))
 
 projectiveImage(List, Ring) := Matrix => o -> (D0List, C) ->(
-    D0 := fromCoordinates(D0,C);
+    D0 := fromCoordinates(D0List,C);
     projectiveImage D0)
 
 
@@ -980,31 +984,19 @@ assert(L_2==o)
 ///
 
 TEST///
---a random point over QQ; shows growth of height
-restart
-loadPackage("PlaneCurveLinearSeries", Reload => true)
-needsPackage "RandomPoints"
-   setRandomSeed 0
-   kk = QQ
-   S = kk[x,y,z]
-   (o,p) = ({1,1,1}, {-1,1,0})
-   oS = fromCoordinates(o, S);    
-   pS = fromCoordinates(p, S);
-    
-   points = intersect(oS,pS)
-   I = ideal random(3,points)
-   E = S/I
-   oE = fromCoordinates(o, E);    
-   pE = fromCoordinates(p, E);
-
-   q' := o;
-   netList for i from 0 to 6 list(
-   q' = addition(o,p,q',E)
-    )
+-- the group law on a genus-1 curve: the origin o is the identity for addition
+setRandomSeed 0
+kk = QQ
+S = kk[x,y,z]
+(o,p) = ({1,1,1}, {-1,1,0})
+oS = fromCoordinates(o, S)
+pS = fromCoordinates(p, S)
+I = ideal random(3, intersect(oS,pS))
+E = S/I
+assert(addition(o,p,o,E) == p)
+assert(addition(o,o,p,E) == p)
 ///
 TEST///--a cycle of length 15 over a finite field
-restart
-loadPackage("PlaneCurveLinearSeries", Reload => true)
 needsPackage "RandomPoints"
 setRandomSeed 0
    kk = ZZ/19
@@ -1020,6 +1012,11 @@ L = apply(16,i->(
 assert(L_0 == L_15)
 ///
 
+-- TODO: the ///...///  block below is the "nodal cubic" graveyard; it
+-- includes "assert numgens ideal ls == 1" (commented out) with author note
+-- "this assertion fails! Why??".  The value is in fact 2 (a degree-1 divisor
+-- on a rational curve has h^0 = 2), so the author's expectation was wrong.
+-- Promote a corrected version or delete the block.
 ///--case of a nodal cubic over a finite field
 restart
 loadPackage("PlaneCurveLinearSeries", Reload => true)
@@ -1124,18 +1121,22 @@ canonicalSeries(S/C3)
 canonicalSeries(C4)
 canonicalSeries(C5)
 
-canonicalSeries C1 == 0
-canonicalSeries C2 == 0
-canonicalSeries C3 == vars ((ring C3)/C3)
+assert(canonicalSeries C1 == 0)
+assert(canonicalSeries C2 == 0)
+assert(canonicalSeries C3 == vars ((ring C3)/C3))
 
-geometricGenus C1 == 0
-geometricGenus C2 == 0
-geometricGenus C3 == 3
-geometricGenus C4 == 3
+assert(geometricGenus C1 == 0)
+assert(geometricGenus C2 == 0)
+assert(geometricGenus C3 == 3)
+assert(geometricGenus C4 == 3)
 ///
 
 TEST///
 --hyperelliptic curves. Note that with g>=6, the conductor computation fails.
+-- TODO: this caveat about the upstream `conductor` failing for hyperelliptic
+-- curves of genus >= 6 should also appear in the doc for `linearSeries` and
+-- `geometricGenus`, so users encounter the Conductor => option before the
+-- failure.
 S = ZZ/101[a,b,c]
 q' = ideal(a,b)
 p' = ideal(b,c)
@@ -1167,6 +1168,37 @@ TEST///
    (ls, B) = linearSeries(p^6, p^3, ShowBase => true)
    assert(saturate B == ideal(b^2-2*b*c+c^2, a*b-a*c))
 ///
+
+TEST/// -- linearSeries and projectiveImage accept a point given as a coordinate List
+S = ZZ/101[x,y,z]
+C = S/ideal"x3+y3+z3"
+-- {1,-1,0} is a point of the Fermat cubic; the (List,Ring) methods must agree
+-- with passing the point ideal built by fromCoordinates directly
+assert(linearSeries({1,-1,0}, C) == linearSeries fromCoordinates({1,-1,0}, C))
+P1 = projectiveImage({1,-1,0}, C)
+P2 = projectiveImage fromCoordinates({1,-1,0}, C)
+assert(numgens P1 == numgens P2 and dim P1 == dim P2)
+///
+
+TEST/// -- output shape of linearSeries, and the ShowBase and Conductor options
+S = ZZ/101[x,y,z]
+C = S/ideal"x3+y3+z3"
+p = fromCoordinates({1,-1,0}, C)
+-- linearSeries returns a one-row matrix; on a genus-1 curve dim |d*p| = d
+assert(class linearSeries p === Matrix)
+assert(numrows linearSeries p == 1)
+assert(apply(1..5, d -> numcols linearSeries(p^d)) === (1,2,3,4,5))
+-- ShowBase => true returns the series paired with its base locus
+lsB = linearSeries(p^3, ShowBase => true)
+assert(class lsB === Sequence and #lsB == 2)
+assert(lsB#0 == linearSeries(p^3, ShowBase => false))
+-- on a singular curve an explicit Conductor matches the computed one
+Cnod = QQ[x,y,z]/(y^3 - x^2*(x-z))
+assert(dim singularLocus Cnod > 0)
+assert(geometricGenus(Cnod, Conductor => conductor Cnod) == geometricGenus Cnod)
+assert(canonicalSeries(Cnod, Conductor => conductor Cnod) == canonicalSeries Cnod)
+///
+
 end--
 
 ///

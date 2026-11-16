@@ -1,8 +1,0 @@
-What if the documentation is found in the applicationDirectory and not in the prefixDirectory?  Then viewHelp won't find it.
-
-viewHelp = key -> (
-     checkLoadDocumentation();
-     if prefixDirectory === null then error "can't run viewHelp from build tree";
-     show new URL from { fix if key === () then applicationDirectory() | "index.html" else prefixDirectory | htmlFilename key }
-     )
-viewHelp = new Command from viewHelp

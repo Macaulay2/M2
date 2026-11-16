@@ -379,7 +379,7 @@ Description
   Method: To represent finitely generated S-submodule of $D'$ 
   as an S-module we use the map of modules
   S/(x_1^d,\dots, x_n^d) -> D' sending $x^a$ to 
-  contract(x^a, product(n, j-> x_i^{d-1})), and its inverse,
+  contract(x^a, product(1 .. n, i -> x_i^(d-1))), and its inverse,
   which is of course defined only on divided monomials of 
   small degree.  
 Caveat
@@ -470,14 +470,14 @@ Usage
  M1 = inverseSystem I
 Inputs
  M:Matrix
-  if r rows, then represents a submodule of D'^r
+  if $r$ rows, then represents a submodule of $D'^r$
  M:RingElement
  I:Ideal
 Outputs
  I1:Ideal
-  if r=1
+  if $r=1$
  I1:Module
-  submodule of S^r
+  submodule of $S^r$
  M1:Matrix
 Description
  Text
@@ -485,27 +485,27 @@ Description
   ideals and modules. For that application
   see @TO Gorenstein@.
  
-  Let S = k[x_1..x_n] be a standard graded polynomial ring,
-  and let D be its dual, the divided power algebra,
-  regarded as an S-module.  Let M be an rxm matrix of polynomials,
-  and let I be an ideal of S. 
+  Let $S = k[x_1,\ldots,x_n]$ be a standard graded polynomial ring,
+  and let $D$ be its dual, the divided power algebra,
+  regarded as an $S$-module.  Let $M$ be an $r \times m$ matrix of polynomials,
+  and let $I$ be an ideal of $S$. 
   
-  From a submodule of D^r to a submodule of S^r (or to an ideal, if r=1):
+  From a submodule of $D^r$ to a submodule of $S^r$ (or to an ideal, if $r=1$):
   
-  We think of the columns of M as generators of an  S-submodule MM of D^r,
+  We think of the columns of M as generators of an  $S$-submodule MM of $D^r$,
   and 
-  inverseSystem M returns the annihilator of MM in S^r = Hom_{graded}(D^r,k).
+  inverseSystem M returns the annihilator of MM in $S^r = \mathrm{Hom}_{\text{graded}}(D^r,k)$.
   In the default behavior
   a monomial $x^a$ in an entry of the matrix M is taken to represent
-  $a!x^(a) \in D'$, where,
-  $a = (a_1,\dots,a_n)$ then $a! = a_1!*\dots*a_n!$. Use
+  $a!x^{(a)} \in D'$, where,
+  $a = (a_1,\dots,a_n)$ then $a! = a_1!\times\dots\times a_n!$. Use
   
   inverseSystem(M, DividedPowers => false)
   
-  to make the monomials of entries of M represent the dual basis of the monomial basis of S,
-  that is, the divided powers of the generators of D as an algebra.
+  to make the monomials of entries of M represent the dual basis of the monomial basis of $S$,
+  that is, the divided powers of the generators of $D$ as an algebra.
   
-  From an ideal of S to a submodule of D:
+  From an ideal of $S$ to a submodule of $D$:
   
   If $I$ is an ideal of $S$, homogeneous or not,
   we regard $I$ as an ideal of the localization $S'$ of $S$ at $(x_1,\dots,x_n)$. If $S'/I$ is of
@@ -517,22 +517,22 @@ Description
   
   M1 = inverseSystem(I, DividedPowers => false)
   
-  each return a 1 x m matrix whose entries are
+  each return a $1 \times m$ matrix whose entries are
   the minimal generators of
   the annihilator of $I$ in $D$. In the matrix $M$
   a term $x^a$
   is to be interpreted as 
-  $a! x^(a)$, while in the matrix $M'$ it is interpreted
-  as $x^(a)$. Of course the first computation is only
+  $a! x^{(a)}$, while in the matrix $M'$ it is interpreted
+  as $x^{(a)}$. Of course the first computation is only
   valid if all the powers of variables appearing in the generators
   of $I$ are < char k.
   
   To make these computations it is necessary to represent some sufficiently
-  large finitely generated S-submodule of $D$ (this will automatically be
+  large finitely generated $S$-submodule of $D$ (this will automatically be
   an $S'$-submodule. To do this we use the map of modules
-  D-> S/(x_1^d,\dots, x_n^d) sending $x^{(a)}$ to 
-  contract(x^a, product(n, j-> x_i^{d-1})), defined only when the variables
-  in $x^{(a)}$ appear only with powers < d.
+  $D\to S/(x_1^d,\dots, x_n^d)$ sending $x^{(a)}$ to 
+  contract(x^a, product(1 .. n, i -> x_i^(d-1))), defined only when the variables
+  in $x^{(a)}$ appear only with powers < $d$.
   
  Example
   setRandomSeed 0
@@ -565,10 +565,10 @@ Caveat
  it should not be used in the default mode
  unless the characteristic is greater than the highest
  degree to which a variable appears. 
- To make $x^a$ represent $x^(a)$,
+ To make $x^a$ represent $x^{(a)}$,
  for example in small characteristics use
   
- inverseSystem(Matrix, DividedPowers=>false)
+ inverseSystem(Matrix, DividedPowers=>true)
   
  (which was the default behavior of the old script
  "fromDual"). 
@@ -717,13 +717,16 @@ doc ///
      ideal fromDual(f2, DividedPowers => false)
      ideal fromDual(f2, DividedPowers => true)
    Caveat
-    The Base ring of the input must be a standard graded polynomial ring over a field.
+    The base ring of the input must be a polynomial ring over a field.  The function
+    also works correctly on inhomogeneous inputs (producing a correspondingly
+    inhomogeneous artinian Gorenstein ideal) and on rings with non-standard gradings
+    such as those with negative-degree variables.
 
     Logically, the output of fromDual should be an ideal, not a matrix, but the original
     function was converted from the classic Macaulay, where this distinction was not made.
    SeeAlso
     InverseSystems
-    inverseSystem    
+    inverseSystem
     fromDual
 ///
 doc ///
@@ -744,58 +747,57 @@ doc ///
 
 --check that the bounds are right
 TEST///
-S= QQ[a,b,c]
-d= 3
-f = product(3,i->S_i^(d-1))
-I = ideal apply(3, i->S_i^d)
+-- inverseSystem of a monomial; and the degree bound for the round trip
+S = QQ[a,b,c]
+d = 3
+f = product(3, i -> S_i^(d-1))
+I = ideal apply(3, i -> S_i^d)
 assert(I == inverseSystem f)
-assert (I == inverseSystem inverseSystem(3, I))
+assert(instance(inverseSystem f, Ideal))            -- output is an ideal when r = 1
+assert(I == inverseSystem inverseSystem(3, I))
 ///
 
 TEST///
+-- isStandardGradedPolynomialRing: field coefficients, every variable in degree 1
 R = ZZ/101[a,b]
 assert(isStandardGradedPolynomialRing R)
-assert(not isStandardGradedPolynomialRing (R[x]))
-assert(not isStandardGradedPolynomialRing (ZZ[x]))
-assert(not isStandardGradedPolynomialRing (R[x, Degrees =>{{1,1}}]))
+assert(instance(isStandardGradedPolynomialRing R, Boolean))      -- output type
+assert(not isStandardGradedPolynomialRing (R[x]))                -- coefficient ring not a field
+assert(not isStandardGradedPolynomialRing (ZZ[x]))               -- ZZ is not a field
+assert(not isStandardGradedPolynomialRing (R[x, Degrees =>{{1,1}}]))   -- variable not in degree {1}
+assert(not isStandardGradedPolynomialRing (QQ[x, Degrees =>{2}]))      -- variable in degree 2
 ///       
 
 --fromDividedPowers and toDividedPowers are inverse to one another
 TEST///
+-- toDividedPowers / fromDividedPowers are mutually inverse change-of-basis maps
 setRandomSeed 0
-kk = QQ
-n = 3
-S = kk[a,b,c]
+S = QQ[a,b,c]
 p = (a+b)^2
 q = toDividedPowers p
-assert(q == 2*a^2+2*a*b+2*b^2)
-assert(p ==fromDividedPowers q)
+assert(q == 2*a^2+2*a*b+2*b^2)             -- (a+b)^2 in the divided-power basis
+assert(p == fromDividedPowers q)
 
-P = (random(S^{0,1},S^{-2,-3}))
-Q = fromDividedPowers toDividedPowers P
-R = toDividedPowers fromDividedPowers P
-assert(P==Q)
-assert(P == R)
+-- round trip on a matrix of polynomials
+P = random(S^{0,1}, S^{-2,-3})
+assert(P == fromDividedPowers toDividedPowers P)
+assert(P == toDividedPowers fromDividedPowers P)
 
-setRandomSeed 0
-kk = QQ
-n = 3
-S = kk[a,b,c]
+-- round trip on a random square matrix (these two were bare booleans -- never asserted)
 g = random(S^3, S^3)
-testmap = map(S,S,(vars S)*g)
-g == fromDividedPowers toDividedPowers g
-g == toDividedPowers fromDividedPowers g
+assert(g == fromDividedPowers toDividedPowers g)
+assert(g == toDividedPowers fromDividedPowers g)
 ///
 
 --with or without divided powers,
 --applying inverseSystem twice should be 
 --the identity on ideals AND on submodules of the dual, represented as matrices.
 TEST///
+-- applying inverseSystem twice is the identity, on ideals and on matrices
 setRandomSeed 0
 S = QQ[a,b]
 G = random(S^2,S^2)
 GG = map(S,S,(vars S)*G)
-GG' = map(S,S,(vars S)*transpose G^-1)
 f = a^2
 g = b^3
 h = GG matrix{{f,g}}
@@ -823,17 +825,14 @@ assert(
 
 --inverseSystem is equivariant on matrices
 TEST///
+-- inverseSystem on the zero matrix, and GL-equivariance on matrices
 setRandomSeed 0
-kk = QQ
-n = 3
-S = kk[a,b,c]
+S = QQ[a,b,c]
 assert(inverseSystem matrix{{0_S}} == ideal(1_S))
 
 g = random(S^3, S^3)
 testmap = map(S,S,(vars S)*g)
 testmap' = map(S,S,(vars S)*(dual g)^-1)
-
-f = matrix{{a,b^3}}
 
 f = random(S^1, S^{-2,-2,-3});
 assert(inverseSystem testmap' inverseSystem(5,f) == 
@@ -846,10 +845,9 @@ assert(inverseSystem testmap' inverseSystem(5,f) ==
 --inverseSystem is equivariant on 0-dimensional ideals 
 --(and, up to the given degree, on arbitrary ideals)
 TEST///
+-- inverseSystem is GL-equivariant on 0-dimensional ideals (and, up to degree, on arbitrary ideals)
 setRandomSeed 0
-kk = QQ
-n = 3
-S = kk[a,b,c]
+S = QQ[a,b,c]
 g = random(S^3, S^3)
 testmap = map(S,S,(vars S)*g)
 testmap' = map(S,S,(vars S)*(dual g)^-1)
@@ -865,7 +863,6 @@ assert( inverseSystem testmap'  inverseSystem (4,f) ==
 		)
 
 mm=ideal vars S
-f = ideal(a,b^3)
 f = ideal random(S^1, S^{-2,-3});
 assert(mm^5+inverseSystem testmap'  inverseSystem (4,f) == 
        mm^5+inverseSystem inverseSystem (4, testmap f)
@@ -892,32 +889,50 @@ M'' = inverseSystem(7,I,DividedPowers => true)
 assert(I ==inverseSystem (M'',DividedPowers => true))
 
 assert(M'!= M'')
----
-S = QQ[x,y]
-I = ideal"x3,xy+y4+y5"+(ideal vars S)^7
-
-M' = inverseSystem(7, I)
-assert(I ==inverseSystem M')
-
-M'' = inverseSystem(7,I, DividedPowers => true)
-assert(I ==inverseSystem (M'',DividedPowers => true))
-
-assert(M'!= M'')
 ///
 TEST///
-kk = ZZ/32003
-S = kk[a,b,c]
+-- fromDual is stable under a toDual round trip; output is a matrix
+S = ZZ/32003[a,b,c]
 f = matrix"a3+b3+c3"
-assert(fromDual f == fromDual toDual(10,fromDual f))
-f = f++f
-assert(fromDual f == fromDual toDual(10,fromDual f))
-f = random(S^{1,2,3},S^{0,-1,-2})
-assert(fromDual f == fromDual toDual(10,fromDual f))
+assert(instance(fromDual f, Matrix))
+assert(fromDual f == fromDual toDual(10, fromDual f))
+f = f ++ f
+assert(fromDual f == fromDual toDual(10, fromDual f))
+f = random(S^{1,2,3}, S^{0,-1,-2})
+assert(fromDual f == fromDual toDual(10, fromDual f))
 ///
 
+TEST///
+-- fromDual on an inhomogeneous input produces a 0-dimensional Gorenstein ideal
+-- whose generators all annihilate the input under contraction.  This pins the
+-- behavior described in Macaulay2/M2#71, where it was once reported (without a
+-- preserved example) that fromDual gave "meaningless answers" on inhomogeneous
+-- inputs.  The current output is mathematically correct: Ann(f) under
+-- contraction is well-defined for any nonzero f, just inhomogeneous when f is.
+R = QQ[x,y]
+f = matrix{{x + y^2}}
+g = fromDual f
+-- pin the output (catches regression in normalization)
+assert(g == matrix{{y^2 - x, x*y, x^2, y^3}})
+-- every generator annihilates f under contraction
+assert(zero contract(g, transpose f))
+-- and (ideal g) is artinian Gorenstein with R/(ideal g) of length 3
+I = ideal g
+assert(dim I == 0)
+assert(degree I == 3)
+///
 
-     
+TEST///
+-- fromDual works on rings with non-standard gradings (here a negative-degree
+-- variable).  This pins behavior raised in Macaulay2/M2#71 comment by mats-boij:
+-- a 2014 build errored with "division is not defined in this ring", but the
+-- current code returns the correct annihilator (x^2).
+S = QQ[x, Degrees => {-1}]
+assert(fromDual matrix{{x}} == matrix{{x^2}})
+///
+
 TEST ///
+-- fromDual of a random quartic: a Gorenstein artinian ideal, self-dual resolution 1,7,7,1
 setRandomSeed 0
           R = ZZ/32003[x_1..x_3];
 	  g = random(R^1, R^{-4})
@@ -926,16 +941,15 @@ setRandomSeed 0
 	  assert(apply(4, i->rank F_i) == {1,7,7,1})
           ///
 TEST ///
-    R = ZZ/101[a..d]
-    f = matrix{{a^3 + b^3 + c^3 + d^3 + (a+b+c)^3}}
-    fdual = fromDual f
-    assert(f == toDual(4, fdual))
+-- f is recovered by toDual(d, fromDual f) once d is large enough
+R = ZZ/101[a..d]
+f = matrix{{a^3 + b^3 + c^3 + d^3 + (a+b+c)^3}}
+assert(f == toDual(4, fromDual f))
 ///
 
 TEST///
      	  R = ZZ/32003[a..e];
 	  f = matrix{{a^2, b^2, c^2, d^2, e^3, a*d-e^2}}
-	  betti res coker f
 	  g = toDual(1,f)
 	  assert((ideal fromDual g == ideal f) ==false)
 	  g = toDual(2,f)
@@ -945,10 +959,11 @@ TEST///
 	  ///
 
 TEST ///
---a case where the ideal is not 0-dimensional
- R = QQ[a,b,c]
- f= matrix"a-b,c"
-toDual(2,f) == matrix {{a^2+a*b+b^2}}
+-- toDual still works when the input ideal is not 0-dimensional
+R = QQ[a,b,c]
+f = matrix"a-b,c"
+assert(instance(toDual(2,f), Matrix))
+assert(toDual(2,f) == matrix {{a^2+a*b+b^2}})
 ///
 
 end--

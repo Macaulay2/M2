@@ -1,0 +1,16 @@
+assert BinaryOperation(symbol ===, value RObject null, null)
+assert Equation(value RObject (1, 2, 3), (1, 2, 3))
+assert BinaryOperation(symbol ===,
+    value RObject ("foo" => 1, "bar" => 2), ("foo" => 1, "bar" => 2))
+assert Equation(value RObject true, true)
+assert Equation(value RObject false, false)
+assert Equation(value RObject 5, 5)
+assert Equation(value RObject 0.2, 0.2)
+assert Equation(value RObject(1/2), 0.5)
+assert Equation(value RObject pi, numeric pi)
+assert Equation(value RObject(2 + 3*ii), 2 + 3*ii)
+assert Equation(value RObject "foo", "foo")
+assert Equation(value RObject foo, "foo")
+assert Equation(value RObject {1, 2, 3}, {1, 2, 3})
+assert BinaryOperation(symbol ===,
+    value RObject {"foo" => 1, "bar" => 2}, {"foo" => 1, "bar" => 2})

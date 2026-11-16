@@ -8,11 +8,11 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "reader.hpp"
-#include "ZZp.hpp"
-#include "aring-zzp-ffpack.hpp"
-#include "aring-zzp.hpp"
-#include "ARingTest.hpp"
+#include "basic-rings/reader.hpp"
+#include "rings/ZZp.hpp"
+#include "basic-rings/aring-ZZp-ffpack.hpp"
+#include "basic-rings/aring-ZZp.hpp"
+#include "unit-tests/ARingTest.hpp"
 
 static bool maxH_initialized = false;
 static mpz_t maxH;
@@ -276,7 +276,7 @@ TEST(ARingZZp, read)
 ////////////////////////////
 // Flint ZZ/p arithmetic ///
 ////////////////////////////
-#include "../aring-zzp-flint.hpp"
+#include "basic-rings/aring-ZZp-flint.hpp"
 template <>
 void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R,
                                    int index,

@@ -1061,6 +1061,41 @@ TEST ///
   for k in sort keys H list k => minimalBetti doubling(8, pts4#k)
 ///
 
+TEST ///
+-- randomHomomorphism: a random module homomorphism of the given degree
+  S = ZZ/101[a..d]
+  I = monomialCurveIdeal(S, {2,5,9})
+  g = randomHomomorphism({4}, module I, S^1)
+  assert(instance(g, Matrix))
+  assert(isWellDefined g)
+  assert(isHomogeneous g)
+  assert(target g === module I)
+  assert(isSubset(ideal image g, I))
+  gZ = randomHomomorphism(4, module I, S^1)
+  assert(isWellDefined gZ and target gZ === module I)
+///
+
+TEST ///
+-- Count: option of doubling bounding the number of random tries (Count => 0 gives up immediately)
+  setRandomSeed 0
+  S = ZZ/101[a..e]
+  M = randomBlockMatrix({S^2, S^3}, {S^4, S^5}, {{random, 0}, {random, random}})
+  I = pointsIdeal M
+  assert(doubling(10, I, Count => 0) === null)
+  assert(doubling(10, I) =!= null)
+///
+
+TEST ///
+-- Normalize: option of randomPoints making the first m+1 columns the coordinate points and the all-ones point
+  kk = ZZ/101
+  assert(randomPoints(kk, 4, 4, Normalize => true) == id_(kk^4))
+  assert(randomPoints(kk, 4, 5, Normalize => true) == (id_(kk^4) | matrix{{1},{1},{1},{1}}))
+  M = randomPoints(kk, 5, 10, Normalize => true)
+  assert(numrows M == 5 and numcols M == 10)
+  assert(M_{0..5} == (id_(kk^5) | matrix{{1},{1},{1},{1},{1}}))
+  assert(numcols randomPoints(kk, 4, 7, Normalize => false) == 7)
+///
+
 end--
 
 -* Development section *-

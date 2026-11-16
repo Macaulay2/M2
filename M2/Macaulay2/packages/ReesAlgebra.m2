@@ -113,6 +113,13 @@ fixupw = w -> if instance(w,String) then getSymbol w else w
 reesIdeal = method(
     Options => {
 	  Jacobian =>false,
+	  -- FIXME: DegreeLimit, BasisElementLimit, PairLimit, MinimalGenerators, and
+	  -- Strategy are declared here (and each has its own documentation node) but
+	  -- have no effect -- reesIdeal computes through symmetricKernel and saturate
+	  -- and never threads these options into that computation.  They are
+	  -- leftovers from an earlier implementation; only Jacobian, Variable, and
+	  -- Trim actually do anything.  These dead options should either be wired
+	  -- through or deprecated and removed (together with their doc nodes).
 	  DegreeLimit => {},
 	  BasisElementLimit => infinity,
 	  PairLimit => infinity,
@@ -512,7 +519,7 @@ minimalReduction Ideal := Ideal => o -> i -> (
 	  Strategy => o.Strategy
 	  )
       then  return J);
-     <<o.Tries <<" iterations were not enough to randomly find a minimal reduction"; endl;
+     <<o.Tries <<" iterations were not enough to randomly find a minimal reduction"<< endl;
      error("not random enough")
           )
 
@@ -543,7 +550,7 @@ whichGm Ideal := i -> (
      --
      f:=presentation module i;
      S:=ring f;
-     if f==0 then "infinity" else(
+     if f==0 then infinity else(
      q:=rank target f;
      maxSource := (max degrees source f)_0;
      minTarget := (min degrees target f)_0;
@@ -557,7 +564,7 @@ whichGm Ideal := i -> (
           while m<d+1 and codim j > m do (
 	       m=m+1;
 	       j=j+randomMinor(f, q-m));
-     if m<=d then m else "infinity"))
+     if m<=d then m else infinity))
  
 ------------------------------------------------------------------
  
@@ -852,21 +859,6 @@ doc ///
    expectedReesIdeal
 ///
 
-///
-  Description
-    Text
-      When searching for a minimal reduction of an ideal over a field with
-      a small number of elements, random choices of generators are often
-      not good enough. This option controls how many times the routine
-      will try new random choices before giving up and reporting an error.
-    Example
-      setRandomSeed(314159268)
-      kk=ZZ/2
-      S = kk[a,b,c,d];
-      I = monomialCurveIdeal(S, {1,3,4});
-      minimalReduction(I, Tries=>30);
-///
-      
 doc ///
   Key
     [minimalReduction, Tries]
@@ -1745,7 +1737,7 @@ doc ///
     I:Ideal
   Outputs
     :ZZ
-      what it does
+      the largest $m$ such that $I$ satisfies the condition $G_m$, or @TO infinity@
   Description
     Text
       An ideal $I$ in a ring $S$ is said to satisfy the condition $G_m$ if, for every prime ideal $P$ of
@@ -2400,13 +2392,13 @@ doc ///
      So this single blowup is already nonsingular.
  ///
 
-///
+-*
   uninstallPackage "ReesAlgebra"
   restart
   installPackage "ReesAlgebra"
   check "ReesAlgebra"
   viewHelp ReesAlgebra
-///
+*-
 
 -----TESTS-----
 TEST///
@@ -2430,10 +2422,6 @@ setRandomSeed 0
      psi1 = jacobianDual(phi1, X, Ts)
      f = map(ST, ring psi, vars ST)
      assert(f psi - psi1 == 0)
-     m = matrix {{-15*T_1-8*T_2, T_0*x_0^3+14*T_0*x_0*x_1^2-24*T_0*x_1^3+18*T_2},
-      {T_0*x_0^3-16*T_0*x_0^2*x_1+2*T_0*x_0*x_1^2+32*T_0*x_1^3+45*T_1+40*T_2,
-      -11*T_0*x_1^3-11*T_1+43*T_2}}
-     f psi - m
 ///
 
 TEST///
@@ -2450,12 +2438,12 @@ TEST///
      assert(betti rrI == betti rI)     
 ///
 
-///
+-*
 restart
 uninstallPackage "ReesAlgebra"
 installPackage "ReesAlgebra"
 check "ReesAlgebra"
-///
+*-
 
 TEST///
 --TEST for versalEmbedding
@@ -2530,12 +2518,12 @@ M1 = substitute(M1, ring M2);
 assert(M2 == M1)
 ///
 
-///
+-*
 restart
 loadPackage ("ReesAlgebra", Reload =>true)
 S=ZZ/101[x_0..x_4]
 i=monomialCurveIdeal(S,{5,8,9,11})
-time M1 = gens gb reesIdeal i; 
+time M1 = gens gb reesIdeal i;
 time M2 = gens gb reesIdeal(i,i_0);
 time M3 = gens gb reesIdeal(i,i_0, Strategy => Bayer);
 time M4 = gens gb reesIdeal(i, Strategy => Bayer);
@@ -2544,7 +2532,7 @@ M4 = substitute(M4, ring M2);
 assert(M2 == M1)
 assert(M2 == M4)
 
-///
+*-
 
 
 --- Testing analyticSpread
@@ -2596,6 +2584,8 @@ S=kk[a..c];
 m=ideal vars S
 i=(ideal"a,b")*m+ideal"c3"
 assert(whichGm i==3)
+-- a principal ideal satisfies G_m for every m, so whichGm returns infinity
+assert(whichGm ideal a === infinity)
 ///
 
 TEST///
@@ -2647,6 +2637,71 @@ J = symmetricAlgebraIdeal I
 S = ring J
 m = promote(vars R,S)||vars S
 assert(J == minors(2,m))
+///
+
+---Testing specialFiber
+TEST///
+-- specialFiber returns the special fiber ring k[w_0..w_m]/J of a blowup; its
+-- Krull dimension is the analytic spread, and it has one variable per generator.
+R = QQ[a..h]
+I = minors(2, matrix{{a,b,c,d},{e,f,g,h}})
+F = specialFiber I
+assert(class F === QuotientRing)
+assert(dim F == analyticSpread I)
+assert(numgens F == numgens I)
+S = ZZ/101[x,y,z]
+J = ideal(x^2, x*y, y^2, x*z, y*z, z^2)
+G = specialFiber J
+assert(class G === QuotientRing)
+assert(dim G == analyticSpread J)
+///
+
+---Testing symmetricKernel
+TEST///
+-- symmetricKernel computes the kernel of the induced map of symmetric algebras.
+-- For the matrix of minimal generators of an ideal it equals the Rees ideal.
+R = QQ[a,b,c,d]
+J = monomialCurveIdeal(R, {1,2,3})
+assert(symmetricKernel(mingens J) == reesIdeal J)
+assert(betti symmetricKernel(mingens J) == betti reesIdeal J)
+-- the symmetric kernel of a matrix with no columns is the zero ideal
+S = QQ[x,y]
+assert(symmetricKernel(map(S^1, S^0, 0)) == ideal(0_S))
+///
+
+---Testing minimalReduction, isReduction, reductionNumber on larger examples
+TEST///
+setRandomSeed 0
+R = ZZ/101[x,y,z]
+mm = ideal vars R
+-- every ideal is a reduction of itself, with reduction number 0
+assert(isReduction(mm, mm))
+assert(reductionNumber(mm, mm) == 0)
+assert(reductionNumber(mm^2, mm^2) == 0)
+-- isReduction is false when the second ideal is not contained in the first
+assert(not isReduction(ideal(x^2,y^2), ideal z))
+-- a minimal reduction has analyticSpread-many generators and is a reduction
+I = mm^2
+assert(analyticSpread I == 3)
+L = minimalReduction I
+assert(numgens L == 3)
+assert(isReduction(I, L))
+assert(reductionNumber(I, L) == 1)
+///
+
+---Testing the Trim and Jacobian options of reesIdeal
+TEST///
+-- Trim => false keeps every supplied generator; here x, y, x+y are not minimal,
+-- so the Rees ring built with Trim => false has one more variable than with
+-- the default Trim => true.
+R = QQ[x,y]
+I = ideal(x, y, x+y)
+assert(numgens ring reesIdeal(I, Trim => true) == 2)
+assert(numgens ring reesIdeal(I, Trim => false) == 3)
+-- Jacobian => true routes reesIdeal(I, a) through expectedReesIdeal
+S = QQ[a,b,c]
+J = monomialCurveIdeal(S, {2,3})
+assert(reesIdeal(J, J_0, Jacobian => true) == expectedReesIdeal J)
 ///
 
 end--

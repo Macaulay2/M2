@@ -1,5 +1,5 @@
-#ifndef _ringmap_h_
-#  define _ringmap_h_
+#ifndef M2_INTERFACE_RINGMAP_H_
+#define M2_INTERFACE_RINGMAP_H_
 
 #  include "engine-includes.hpp"
 

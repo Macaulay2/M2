@@ -130,28 +130,6 @@ doc ///
     installNumPyMethods
 ///
 
--* code for canned example
-
-pycode = get(Python#"auxiliary files" | "doc/matplotlib-example.py")
-pythonRunScript pycode
-
-matplotlib = PythonContext "import matplotlib.pyplot as plt"
-matplotlib "import numpy as np"
-matplotlib "fig = plt.figure()"
-matplotlib "ax = fig.add_subplot(projection='3d')"
-matplotlib "t = np.linspace(-10, 10, 100)"
-matplotlib "ax.plot(t, t**2, t**3)"
-matplotlib "plt.show()"
-
-plt = import "matplotlib.pyplot"
-np = import "numpy"
-fig = plt@@figure()
-ax = fig@@"add_subplot"(projection => "3d")
-t = np@@linspace(-10, 10, 100);
-ax@@plot(t, t^2, t^3)
-plt@@show()
-
-*-
 
 doc ///
   Key
@@ -173,51 +151,22 @@ doc ///
       way is with the @TO pythonRunScript@ method.
 
       For this example, we have our code saved as a .py file.
-    CannedExample
-      i1 : pycode = get(Python#"auxiliary files" | "doc/matplotlib-example.py")
-
-      o1 = import matplotlib.pyplot as plt
-           import numpy as np
-
-           fig = plt.figure()
-           ax = fig.add_subplot(projection='3d')
-           t = np.linspace(-10, 10, 100)
-           ax.plot(t, t**2, t**3)
-           plt.show()
-
-
-      i2 : pythonRunScript pycode
+    Example
+     pycode = get(Python#"auxiliary files" | "doc/matplotlib-example.py")
+     pythonRunScript pycode
     Text
       @HEADER2 "Using a PythonContext"@
 
       @TO PythonContext@ objects allow us to run Python code one line at a
       time, just like working in the Python REPL.
-    CannedExample
-      i3 : matplotlib = PythonContext "import matplotlib.pyplot as plt"
-
-      o3 = matplotlib
-
-      o3 : PythonContext
-
-      i4 : matplotlib "import numpy as np"
-
-      i5 : matplotlib "fig = plt.figure()"
-
-      i6 : matplotlib "ax = fig.add_subplot(projection='3d')"
-
-      i7 : matplotlib "t = np.linspace(-10, 10, 100)"
-
-      i8 : matplotlib "ax.plot(t, t**2, t**3)"
-
-      o8 = [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x7b8243b7e5f0>]
-
-      o8 : PythonObject of class list
-
-      i9 : matplotlib "plt.show()"
-
-      o9 = None
-
-      o9 : PythonObject of class NoneType
+    Example
+     matplotlib = PythonContext "import matplotlib.pyplot as plt"
+     matplotlib "import numpy as np"
+     matplotlib "fig = plt.figure()"
+     matplotlib "ax = fig.add_subplot(projection='3d')"
+     matplotlib "t = np.linspace(-10, 10, 100)"
+     matplotlib "ax.plot(t, t**2, t**3)"
+     matplotlib "plt.show()"
     Text
       @HEADER2 "Using PythonObjects directly"@
 
@@ -227,19 +176,9 @@ doc ///
       First, we import the necessary modules using @TO import@.  Note that
       we can essentially replace the Python @CODE "import foo as bar"@ with
       @CODE "bar = import \"foo\""@.
-    CannedExample
-      i10 : plt = import "matplotlib.pyplot"
-
-      o10 = <module 'matplotlib.pyplot' from
-            '/usr/lib/python3/dist-packages/matplotlib/pyplot.py'>
-
-      o10 : PythonObject of class module
-
-      i11 : np = import "numpy"
-
-      o11 = <module 'numpy' from '/usr/lib/python3/dist-packages/numpy/__init__.py'>
-
-      o11 : PythonObject of class module
+    Example
+     plt = import "matplotlib.pyplot"
+     np = import "numpy"
     Text
       Next, we begin to create the various Python objects needed for our
       plot.
@@ -249,34 +188,20 @@ doc ///
       (see @TO (symbol \@\@, PythonObject, Thing)@).
       We need to be careful for attributes that include underscores.
       They must given as strings, i.e., delimited using quotes.
-    CannedExample
-      i12 : fig = plt@@figure()
-
-      o12 = Figure(640x480)
-
-      o12 : PythonObject of class matplotlib.figure.Figure
-
-      i13 : ax = fig@@"add_subplot"(projection => "3d")
-
-      o13 = Axes3DSubplot(0.125,0.11;0.775x0.77)
-
-      o13 : PythonObject of class matplotlib.axes._subplots.Axes3DSubplot
-
-      i14 : t = np@@linspace(-10, 10, 100);
+    Example
+      fig = plt@@figure()
+      ax = fig@@"add_subplot"(projection => "3d")
+      t = np@@linspace(-10, 10, 100);
     Text
       Now we construct the twisted cubic.  Note that even though Python itself
       uses @CODE "**"@ for exponentiation, we may use @TO symbol ^@ for
       consistency with the rest of Macaulay2.
-    CannedExample
-      i15 : ax@@plot(t, t^2, t^3)
-
-      o15 = [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x73a51970eb00>]
-
-      o15 : PythonObject of class list
+    Example
+      ax@@plot(t, t^2, t^3)
     Text
       Finally, we show our plot.
-    CannedExample
-      i16 : plt@@show()
+    Example
+      plt@@show()
     Text
       All three of the above methods should have resulted in a window
       appearing containing the following image.

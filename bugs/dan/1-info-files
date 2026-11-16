@@ -1,7 +1,0 @@
-defer this:
-
-This kind of menu item goes to a line number in a node:
-
-  * c-mode-hook:                           Program Modes.       (line  45)
-
-Maybe we can use it.

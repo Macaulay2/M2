@@ -1,5 +1,5 @@
-#ifndef _word_table_hpp_
-#define _word_table_hpp_
+#ifndef M2_NCALGEBRAS_WORD_TABLE_HPP_
+#define M2_NCALGEBRAS_WORD_TABLE_HPP_
 
 #include <cstddef>
 #include <ostream>

@@ -1,4 +1,0 @@
--*- M2 -*-
-
-i1 : source() := print
-stdio:1:10:(2): expected 1, 2, 3, or 4 parameter types

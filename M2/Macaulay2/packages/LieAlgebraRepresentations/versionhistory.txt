@@ -153,3 +153,13 @@ UInVtensorW)
   cubics. See the documentation for VInSymdW
 
 
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, LieAlgebraRepresentations Version 1.01, March 2026
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+
+* Fixed bug in spinRepresentations (it was using a different basis of
+  the Cartan subalgebra of so(2n) than is used by LieAlgebraBasis)
+* Added dual LieAlgebraRepresentation
+* Updated GT invariant polynomial conjecture to theorem

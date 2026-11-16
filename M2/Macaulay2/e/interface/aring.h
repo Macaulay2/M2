@@ -1,5 +1,5 @@
-#ifndef _aring_h_
-#  define _aring_h_
+#ifndef M2_INTERFACE_ARING_H_
+#define M2_INTERFACE_ARING_H_
 
 #  include "engine-includes.hpp"
 

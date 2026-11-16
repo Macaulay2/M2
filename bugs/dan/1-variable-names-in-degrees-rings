@@ -1,9 +1,0 @@
-Add an option in some future version of Macaulay2 that would allow the degrees
-ring to be given variable names by the user.  The lines to look at in ofcm.m2
-are these:
-
-    	  M.degreesRing = (
-	       if opts.Heft =!= null
-	       then degreesRing opts.Heft
-	       else degreesRing degrk {* shouldn't really be needed *}
-	       );

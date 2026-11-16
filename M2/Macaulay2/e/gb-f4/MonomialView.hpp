@@ -1,7 +1,8 @@
-#pragma once
+#ifndef M2_GB_F4_MONOMIALVIEW_HPP
+#define M2_GB_F4_MONOMIALVIEW_HPP
 
-#include "../MemoryBlock.hpp"
-#include "MonomialTypes.hpp"
+#include "MemoryBlock.hpp"
+#include "gb-f4/MonomialTypes.hpp"
 #include <vector>
 #include <functional>
 #include <cstring> // For std::memcmp
@@ -194,6 +195,7 @@ class MonomialView
 
 } // end namespace newf4
 
+#endif
 // Local Variables:
 // indent-tabs-mode: nil
 // End:

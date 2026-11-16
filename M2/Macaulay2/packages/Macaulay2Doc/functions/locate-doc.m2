@@ -16,6 +16,7 @@ Node
    (locate, Package)
    (locate, List)
    (locate, ZZ)
+   (locate, Error)
   Headline
     locate source code
   Usage

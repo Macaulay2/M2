@@ -1,9 +1,0 @@
-cddplus doesn't compile under debian.  The problem is that g++ 4.3.2 will not compile this prototypical example:
-
-    struct T { friend void g(T&) {} };
-    template <typename Y> void c(T &a) { g(a); }
-    void foo(int t, T &v){
-     c<int>(v);
-     }
-
-but g++ 4.3.4 will!

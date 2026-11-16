@@ -24,6 +24,7 @@ setupconst("InexactFieldFamily",Expr(inexactNumberTypeClass));
 setupconst("RRi",Expr(RRiClass));
 setupconst("RR",Expr(RRClass));
 setupconst("CC",Expr(CCClass));
+setupconst("CCi",Expr(CCiClass));
 setupconst("RingElement",Expr(ringElementClass));
 setupconst("Number",Expr(numberClass));
 setupconst("InexactNumber",Expr(inexactNumberClass));
@@ -82,6 +83,8 @@ setupconst("Task",Expr(taskClass));
 setupconst("FileOutputSyncState",Expr(fileOutputSyncStateClass));
 setupconst("Pointer",Expr(pointerClass));
 setupconst("AtomicInt",Expr(atomicIntClass));
+setupconst("Error",Expr(errorClass));
+setupconst("Mutex",Expr(mutexClass));
 
 export ancestor(o:HashTable,p:HashTable):bool := (
      while true do (
@@ -116,6 +119,13 @@ export Parent(e:Expr):HashTable := (
 export parentfun(e:Expr):Expr := Expr(Parent(e));
 setupfun("parent",parentfun);
 
+export Class(err:Error):HashTable := (
+    when err.value
+    is x:HashTable do (
+	if ancestor(x, errorClass) then x
+	else errorClass)
+    else errorClass);
+
 export Class(e:Expr):HashTable := (
      when e
      is obj:HashTable do obj.Class
@@ -139,7 +149,7 @@ export Class(e:Expr):HashTable := (
      is FunctionClosure do functionClosureClass
      is Net do netClass
      is NetFile do netFileClass
-     is Error do errorClass
+     is err:Error do Class(err)
      is Sequence do sequenceClass
      is CompiledFunction do compiledFunctionClass
      is CompiledFunctionClosure do compiledFunctionClosureClass
@@ -148,6 +158,7 @@ export Class(e:Expr):HashTable := (
      is RRicell do RRiClass
      is RRcell do RRClass
      is CCcell do CCClass
+     is CCicell do CCiClass
      is RawComputationCell do rawComputationClass
      is Nothing do nothingClass
      is Database do dbClass
@@ -175,6 +186,7 @@ export Class(e:Expr):HashTable := (
      is fileOutputSyncState do fileOutputSyncStateClass
      is pointerCell do pointerClass
      is atomicIntCell do atomicIntClass
+     is mutexCell do mutexClass
      );
 classfun(e:Expr):Expr := Expr(Class(e));
 -- # typical value: class, Thing, Type

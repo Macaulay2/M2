@@ -47,14 +47,14 @@ assert(Drestriction(0, I, {1,3,5}) == QQ^0);
 Dr = Drestriction(I, {1,3,5});
 assert(all(toList(0..3), i -> (Dr#i == QQ^0)));
 Dc = DrestrictionComplex(I, {1,3,5});
-assert(all(toList(0..3), i -> (Dc.dd#i == map QQ^0)) );
+assert(all(toList(0..3), i -> (Dc.dd_i == map QQ^0)) );
 
 assert(DintegrationIdeal(I, {1,3,5}) == ideal 1_QQ);
 assert(Dintegration(0, I, {1,3,5}) == QQ^0);
 Dr = Dintegration(I, {1,3,5});
 assert(all(toList(0..3), i -> (Dr#i == QQ^0)));
 Dc = DintegrationComplex(I, {1,3,5});
-assert(all(toList(0..3), i -> (Dc.dd#i == map QQ^0)) );
+assert(all(toList(0..3), i -> (Dc.dd_i == map QQ^0)) );
 ///
 
 TEST ///
@@ -91,10 +91,10 @@ F = DintegrationAll(I, {1,3,5});
 FV = F#VResolution;
 FC = F#GenCycles;
 assert all(toList(0..3), i -> (
-	  apps = Dtransposition ((FV.dd#i)*(FC#i));
+	  apps = Dtransposition ((FV.dd_i)*(FC#i));
 	  if (apps == 0) then true
-	  else (apps % directSum apply(toList(1..rank target apps), 
-		    j -> matrix{W.dpairVars#1}) == 0) ));
+	  else (apps % map(target apps, , directSum apply(toList(1..rank target apps), 
+		    j -> matrix{W.dpairVars#1})) == 0) ));
 ///
 
 TEST ///

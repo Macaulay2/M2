@@ -7,11 +7,11 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_LAUNCHER_HPP
-#define BIBASIS_LAUNCHER_HPP
+#ifndef M2_BIBASIS_LAUNCHER_HPP
+#define M2_BIBASIS_LAUNCHER_HPP
 
-#include "involutive.hpp"
-#include "matrix.hpp"
+#include "bibasis/involutive.hpp"
+#include "matrices/matrix.hpp"
 
 namespace BIBasis
 {

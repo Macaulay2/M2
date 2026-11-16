@@ -2,7 +2,8 @@
 LICENSEFILES = doc/copying.txt
 # @configure_input@
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-VERSION = 11.5.1
+VERSION = 11.6.0
+SHA256SUM = bc0ef9aceb075a6a0673ac8d8f47d5f8458c72fe806e4468fbd5d3daff056182
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz

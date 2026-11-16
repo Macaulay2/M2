@@ -45,8 +45,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __MPREAL_H__
-#define __MPREAL_H__
+#ifndef M2__MPREAL_H__
+#define M2__MPREAL_H__
 
 #include <string>
 #include <iostream>

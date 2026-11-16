@@ -425,20 +425,25 @@ export setStdIO   (f:file):void := ( stdIO    = f; setGlobalVariable(stdioS,  Ex
 export setStdError(f:file):void := ( stdError = f; setGlobalVariable(stderrS, Expr(stdError)));
 
 openfilesfun(e:Expr):Expr := (
-     n := 0;
-     ff := openfiles;
-     while true do (
-	  when ff
-	  is null do break
-	  is f:FileCell do (n=n+1; ff=f.next;));
-     v := new Sequence len n do (
-	  ff = openfiles;
-	  while true do (
-	       when ff
-	       is null do break
-	       is f:FileCell do (provide f.file; ff=f.next;));
-	  );
-     list(v));
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then (
+	    n := 0;
+	    ff := openfiles;
+	    while true do (
+		when ff
+		is null do break
+		is f:FileCell do (n=n+1; ff=f.next;));
+	    v := new Sequence len n do (
+		ff = openfiles;
+		while true do (
+		    when ff
+		    is null do break
+		    is f:FileCell do (provide f.file; ff=f.next;));
+		);
+	    list(v))
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
 setupfun("openFiles",openfilesfun);
 openIn(filename:Expr):Expr := (
      when filename
@@ -704,6 +709,7 @@ exponent(e:Expr):Expr := (
      is x:RRcell do toExpr(exponent(x.v))	      -- # typical value: size2, RR, ZZ
      is x:RRicell do toExpr(exponent(x.v))	      -- # typical value: size2, RRi, ZZ
      is z:CCcell do toExpr(exponent(z.v))	      -- # typical value: size2, CC, ZZ
+     is z:CCicell do toExpr(exponent(z.v))            -- # typical value: size2, CCi, ZZ
      else WrongArg("a number"));
 setupfun("size2",exponent);
 
@@ -713,6 +719,7 @@ realPart(e:Expr):Expr := (
      is RRcell do e
      is RRicell do e
      is z:CCcell do toExpr(realPart(z.v))
+     is z:CCicell do toExpr(realPart(z.v))
      is QQcell do e
      else WrongArg("a number"));
 setupfun("realPart0",realPart);
@@ -723,6 +730,7 @@ imaginaryPart(e:Expr):Expr := (
      is RRcell do zeroE
      is RRicell do zeroE
      is z:CCcell do toExpr(imaginaryPart(z.v))
+     is z:CCicell do toExpr(imaginaryPart(z.v))
      is QQcell do zeroE
      else WrongArg("a number"));
 setupfun("imaginaryPart0",imaginaryPart);
@@ -730,6 +738,7 @@ setupfun("imaginaryPart0",imaginaryPart);
 Foo := { foo:void };					    -- make a new type of pointer that's innocuous and unusable
 numfinalizer := 0;
 finalizer(x:Foo,msg:string):void := (
+     Ccode(void, "(void)", x);
      numfinalizer = numfinalizer + 1;
      stderr << "--finalization: (" << tostring(numfinalizer) << ")" << msg << endl ;
      );

@@ -1,7 +1,7 @@
 // Copyright 2013 Michael E. Stillman
 
-#include "RingTest.hpp"
-#include "ZZp.hpp"
+#include "unit-tests/RingTest.hpp"
+#include "rings/ZZp.hpp"
 
 template <>
 ring_elem getElement<Z_mod>(const Z_mod& R, int index)

@@ -2,10 +2,6 @@
 --- author(s):
 --- notes:
 
--- TODO:
--- (tensor, Matrix, Matrix)
--- (tensor, Module, Module)
-
 L := {
     (tensor, QuotientRing,   QuotientRing),
     (tensor, PolynomialRing, PolynomialRing),
@@ -93,7 +89,7 @@ Node
       tensor product of the monoids or rings
   Description
     Text
-      This is the same as {\tt A ** B} except that options are allowed,
+      @TT "tensor(A, B)"@ is the same as {\tt A ** B} except that options are allowed,
       see @TO (symbol **, Monoid, Monoid)@ and @TO (symbol **, Ring, Ring)@.
       This method allows many of the options available for monoids, see @TO monoid@ for details.
       This method essentially combines the variables of {\tt A} and {\tt B} into one monoid or ring.
@@ -117,6 +113,14 @@ Node
       describe (C = tensor(A, B, DegreeRank => 1, Degrees => {5:1}))
       degreeLength C
       degreesRing C
+    Text
+      You can take tensor powers of a single ring or module. Iterated tensor
+      products are associated from the right so @TT "R^**3"@ is a synonym for @TT "R ** ( R ** R)"@.
+    Example
+      kk = ZZ/101
+      R = kk[a, b]
+      R^**3
+      R ** (R ** R)
     Text
       Packing monomials into smaller space is more efficient, but less flexible.
       The default is 32 bits, so if you want to pack them into 8 bit exponents, use:
@@ -442,15 +446,35 @@ document {
 	 ///
     }
 
-document {
-    Key => {
-	 tensorAssociativity,
-	(tensorAssociativity, Module, Module, Module),
-    },
-    Headline => "associativity isomorphisms for tensor products",
-    TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
-    A**(B**C) to (A**B)**C.",
-    PARA{},
-    "Currently implemented for modules and chain complexes.",
-    SeeAlso => {"OldChainComplexes :: ChainComplex", "Module"}
-}
+doc ///
+  Key
+    tensorAssociativity
+    (tensorAssociativity, Module, Module, Module)
+  Headline
+    associativity isomorphisms for tensor products
+  Usage
+    tensorAssociativity(A, B, C)
+  Inputs
+    A:Module
+    B:Module
+    C:Module
+  Outputs
+    :Module
+      A map $A \otimes (B \otimes C) \rightarrow (A \otimes B) \otimes C$.
+  Description
+    Text
+      Produce the isomorphism that exhibits associativity of the tensor product
+      construction.
+    Example
+      kk = ZZ/101
+      R = kk[a, b, c]
+      I = ideal (a, b); A = I/I^2
+      J = ideal (b, c); B = J/J^2
+      K = ideal (a, c); C = K/K^2
+      T =  A_0 ** (B_0 ** C_0)
+      T' = (A_0 ** B_0) ** C_0
+      assert(tensorAssociativity(A, B, C) * T == T')
+  SeeAlso
+    "OldChainComplexes :: ChainComplex"
+    Module
+///

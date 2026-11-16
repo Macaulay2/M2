@@ -617,6 +617,50 @@ TEST ///
     {0,0,0,0,81,324,594,648,459,216,66,12,1}}
     assert(liftingMatrix(2,5,13) === N)
 ///
+
+TEST ///
+-- liftingFunction edge cases: returns 0 when k < j or k > (s+1)*j,
+-- returns (s+1)^j when k == j, returns 1 when k == (s+1)*j, and rejects
+-- negative arguments.  liftingMatrix entries match liftingFunction values.
+assert(liftingFunction(1, 2, 2) == 4);    -- k == j: (s+1)^j = 2^2
+assert(liftingFunction(1, 2, 4) == 1);    -- k == (s+1)*j: top entry
+assert(liftingFunction(2, 1, 1) == 3);    -- k == j: (s+1)^j = 3^1
+assert(liftingFunction(2, 1, 3) == 1);    -- k == (s+1)*j
+assert(liftingFunction(0, 5, 3) == 0);    -- k < j
+assert(liftingFunction(1, 1, 3) == 0);    -- k > (s+1)*j
+assert(try (liftingFunction(-1,1,1); false) else true);
+LM = liftingMatrix(1, 3, 3);
+assert(LM_(0,0) == liftingFunction(1,0,0));
+assert(LM_(1,1) == liftingFunction(1,1,1));
+assert(LM_(2,2) == liftingFunction(1,2,2));
+///
+
+TEST ///
+-- JJ scripted functor: JJ_n R agrees with jets(n, R) on rings and ideals.
+R = QQ[x,y];
+assert(JJ_2 R === jets(2, R));
+I = ideal(x^2 - y);
+assert(JJ_2 I === jets(2, I));
+///
+
+TEST ///
+-- jetsInfo / jetsBase / jetsMaxOrder cache keys, and the Projective option's
+-- separate "projet" cache.  After jets(2, S) the original ring S records
+-- jetsMaxOrder = 2 in its "jet" subtable, and jets(_, S)#jetsInfo#jetsBase
+-- points back to S.  With Projective=>true the cache key is "projet" instead.
+S = QQ[a,b];
+J = jets(2, S);
+assert(J#?jetsInfo);
+assert(J#jetsInfo#jetsBase === S);
+assert(S#?jet);
+assert(S#jet#jetsMaxOrder == 2);
+P = QQ[u,v,w];
+JP = jets(2, P, Projective => true);
+assert(P#?projet);
+assert(not P#?jet);
+assert(P#projet#jetsMaxOrder == 2);
+///
+
 ----------------------------------------------------------------------
 -- Documentation
 ----------------------------------------------------------------------

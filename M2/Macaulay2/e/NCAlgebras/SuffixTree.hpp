@@ -1,5 +1,5 @@
-#ifndef _suffix_tree_hpp_
-#define _suffix_tree_hpp_
+#ifndef M2_NCALGEBRAS_SUFFIX_TREE_HPP_
+#define M2_NCALGEBRAS_SUFFIX_TREE_HPP_
 
 #include "NCAlgebras/Word.hpp"  // for Word
 

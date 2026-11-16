@@ -1,2 +1,0 @@
-What's needed is a version of "value" that accepts a dictionary path to use for
-looking up symbols in.

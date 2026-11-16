@@ -1,0 +1,944 @@
+
+------------------------------------------------------------------------
+--------------------- Doubly special cubic fourfolds -------------------
+------------------------------------------------------------------------
+
+PairOfSurfaces = new Type of List;
+globalAssignment PairOfSurfaces;
+EmbeddedProjectiveVariety & EmbeddedProjectiveVariety := (S,T) -> (
+    if dim S != 2 or dim T != 2 then error "expected two surfaces";
+    if ring ideal S =!= ring ideal T then error "expected surfaces in the same ambient projective space";
+    new PairOfSurfaces from {S,T}
+);
+ambient PairOfSurfaces := SandT -> ambient first SandT;
+random (ZZ,PairOfSurfaces) := random (List,PairOfSurfaces) := o -> (l,SandT) -> random(l,sum SandT);
+
+DoublySpecialCubicFourfold = new Type of CubicFourfold;
+globalAssignment DoublySpecialCubicFourfold;
+DoublySpecialCubicFourfold.synonym = "doubly special cubic fourfold";
+
+specialFourfold (PairOfSurfaces,EmbeddedProjectiveVariety) := cubicFourfold (PairOfSurfaces,EmbeddedProjectiveVariety) := o -> (SandT,X) -> (
+    (S,T) := toSequence SandT;
+    (nS,nT) := if instance(o.NumNodes,VisibleList) and # o.NumNodes == 2 then toSequence o.NumNodes else (o.NumNodes,o.NumNodes);
+    Y := cubicFourfold(T,X,NumNodes=>nT,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    Z := new DoublySpecialCubicFourfold from cubicFourfold(S,Y,NumNodes=>nS,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    Z.cache#"parentCubicFourfold" = Y;
+    assert(surface Z === S and surface Y === T and take(Z#"SurfaceContainedInTheFourfold",2) === {S,T});
+    if dim(S * T) == 2 then error "intersection of the two surfaces has dimension 2 (unsupported)";
+    Z
+);
+
+specialFourfold PairOfSurfaces := cubicFourfold PairOfSurfaces := o -> SandT -> (
+    if dim ambient SandT != 5 then error "expected two surfaces in P^5";
+    cubicFourfold(SandT,random(3,SandT),NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose)
+);
+
+------------------------------------------------------------------------
+RationalSurfaceWithAttachedPlaneInCubicFourfold = new Type of EmbeddedProjectiveVariety;
+globalAssignment RationalSurfaceWithAttachedPlaneInCubicFourfold;
+rationalSurfaceWithAttachedPlaneInCubicFourfold = method(TypicalValue => RationalSurfaceWithAttachedPlaneInCubicFourfold, Options => {"EulerCharacteristic" => true, Verbose => true});
+rationalSurfaceWithAttachedPlaneInCubicFourfold (EmbeddedProjectiveVariety,VisibleList) := o -> (S,dj1j2j3) -> (
+    -- Input: 1) a rational surface S = surface(a,i1,i2,...), or its defining parameters (a,i1,i2,...).
+    --        2) the parameters for a curve C on S, defined as the image of a plane curve of degree d and multiplicities (j1,j2,...).
+    -- Output: if no errors occur, the projection of S into PP^5 from a center contained in the span <C>.
+    ai1i2i3 := S.cache#"linear system on PP^2";
+    expEul := 3 + sum toList drop(ai1i2i3,1);
+    if not o#"EulerCharacteristic" then (
+        S.cache#"euler" = expEul;
+        if o.Verbose then << "-- set the Euler characteristic of the surface in PP^" << dim ambient S << " to the expected value " << S.cache#"euler" << endl;
+    );
+    C := S.cache#"takeCurve" (first dj1j2j3, toList drop(dj1j2j3,1));
+    if dim linearSpan S < dim ambient S then error "the surface is degenerate";
+    if dim ambient S - 5 != dim linearSpan C - 2 then error("dim ambient S = "|toString(dim ambient S)|", dim linearSpan C = "|toString(dim linearSpan C)|", dim ambient S - 5 != dim linearSpan C - 2");
+    if o.Verbose and dim linearSpan S > 5 then (
+        << "-- computing the projection to PP^5 of" << endl;
+        << "  -- " << ? S << endl;
+        << "-- from points on the linear span of" << endl;
+        << "  -- " << ? C << endl;
+    );
+    piLin := if dim linearSpan S > 5 then rationalMap linearSpan apply(dim linearSpan S - 5, i -> point linearSpan C) else rationalMap(ambient S,ambient S);
+    if dim target piLin != 5 then error "linear projection failed, target dimension is not 5";
+    f := (super parametrize S) * piLin;
+    S' := new RationalSurfaceWithAttachedPlaneInCubicFourfold from image f;
+    if min apply(degrees S',i -> first first i) > 3 then error "surface in PP^5 is not contained in any cubic hypersurfaces";
+    C' := piLin C;
+    planeC' := linearSpan C';
+    if dim planeC' != 2 then error "dim linearSpan C' != 2";
+    if not(dim C' == 1 and degree C' == degree C) then error "not: dim C' == 1 and degree C' == degree C";
+    S'.cache#"rationalParametrization" = rationalMap(f,Dominant=>true);
+    if sectionalGenus C' < 0 or sectionalGenus C < 0 then error "reducible curve";
+    S'.cache#"FiniteNumberOfNodes" = (sectionalGenus C') - (sectionalGenus C);
+    planeC'.cache#"FiniteNumberOfNodes" = 0;
+    cubicS' := random(3, S' + planeC');
+    if not isSmooth cubicS' then error "obtained a singular cubic fourfold";
+    if o#"EulerCharacteristic" then (
+        if not S.cache#?"euler" then (
+            if o.Verbose then << "-- computing Euler characteristic of the surface in PP^" << dim ambient S << ", expected value: " << expEul << endl;
+            eulerCharacteristic S;
+            assert(S.cache#?"euler");
+            if o.Verbose then << "-- Euler characteristic computation done, obtained value: " << S.cache#"euler" << endl;
+        ) else (
+            if o.Verbose then << "-- Euler characteristic of the surface in PP^" << dim ambient S << " found in cache, skipping computation" << endl;
+        );
+    );
+    S'.cache#"euler" = (eulerCharacteristic S) - 6*(numberNodes S');
+    S'.cache#"ConstructionParameters" = (toSequence ai1i2i3,toSequence dj1j2j3,dim ambient S,dim linearSpan C);
+    if o.Verbose then << "-- constructing a cubic fourfold containing the surface and the plane" << endl;
+    X := cubicFourfold(S' & planeC',cubicS',Verbose=>o.Verbose);
+    X.cache#"Construction" = "X = specialFourfold surface"|(toString take(S'.cache#"ConstructionParameters",2))|";";
+    X.cache#"DataConstruction" = (S,C,piLin);
+    -- X.cache#(append(surfaces X,"intersection of surface cycles in cubic fourfold")) = -(first dj1j2j3)^2 + sum toList drop(dj1j2j3,1);
+    if o.Verbose then << endl << describe X << endl;
+    S'.cache#"pickedCubicFourfold" = X;
+    S'
+);
+rationalSurfaceWithAttachedPlaneInCubicFourfold (VisibleList,VisibleList,Ring) := o -> (ai1i2i3,dj1j2j3,K) -> (
+    if # ai1i2i3 != # dj1j2j3 then error "expected two lists of the same length";
+    rationalSurfaceWithAttachedPlaneInCubicFourfold(surface(toList ai1i2i3,K),dj1j2j3,"EulerCharacteristic"=>o#"EulerCharacteristic",Verbose=>o.Verbose)
+);
+
+surface (VisibleList,VisibleList,Ring,Option) := (ai1i2i3,dj1j2j3,K,opt) -> (
+    o := toList opt;
+    if not(#o == 2 and first o === Verbose) then error "Verbose is the only available option for surface(VisibleList,VisibleList)";
+    rationalSurfaceWithAttachedPlaneInCubicFourfold(ai1i2i3,dj1j2j3,K,"EulerCharacteristic"=>true,Verbose=>last o)
+);
+surface (VisibleList,VisibleList,Option) := (ai1i2i3,dj1j2j3,opt) -> surface(ai1i2i3,dj1j2j3,ZZ/65521,opt);
+surface (VisibleList,VisibleList,Ring) := (ai1i2i3,dj1j2j3,K) -> surface(ai1i2i3,dj1j2j3,K,Verbose=>false);
+surface (VisibleList,VisibleList) := (ai1i2i3,dj1j2j3) -> surface(ai1i2i3,dj1j2j3,Verbose=>false);
+
+specialFourfold RationalSurfaceWithAttachedPlaneInCubicFourfold := cubicFourfold RationalSurfaceWithAttachedPlaneInCubicFourfold := o -> S -> S.cache#"pickedCubicFourfold";
+------------------------------------------------------------------------
+
+surfaces = method();
+surfaces DoublySpecialCubicFourfold := X -> toSequence take(X#"SurfaceContainedInTheFourfold",2);
+
+expression DoublySpecialCubicFourfold := X -> (
+    (S,T) := surfaces X;
+    if isPlaneInP5 S and isPlaneInP5 T then return expression("cubic fourfold in C_8 containing two planes");
+    if isPlaneInP5 S then return expression("cubic fourfold in C_8 containing a plane and a surface of degree "|toString(degree T)|" and sectional genus "|toString(sectionalGenus T));
+    if isPlaneInP5 T then return expression("cubic fourfold in C_8 containing a surface of degree "|toString(degree S)|" and sectional genus "|toString(sectionalGenus S)|" and a plane");
+    expression("cubic fourfold containing two surfaces of degrees " | (toString degree S) | " and " | (toString degree T) | ", sectional genera " | (toString sectionalGenus S) | " and " | (toString sectionalGenus T))
+);
+
+describe DoublySpecialCubicFourfold := X -> (
+    (S,T) := surfaces X;
+    Y := X.cache#"parentCubicFourfold";
+    d1 := discriminant X;
+    d2 := discriminant Y;
+    A := latticeIntersectionMatrix3x3 X;
+    Cd1Cd2 := "C_"|(toString d1);
+    if d1 != d2 then Cd1Cd2 = Cd1Cd2|" ∩ C_"|(toString d2);
+    descr := "Cubic fourfold in "|Cd1Cd2|" over "|toString(coefficientRing X)|" of lattice discriminant";
+    descr = descr||((net(newline|"det("))|(net A)|(net(newline|") = "|(toString det A))));
+    descr = descr||net "containing two surfaces:";
+    descr = descr||net(" - " | surfaceDescription(3,S,true));
+    descr = descr||net(" - " | surfaceDescription(3,T,true));
+    if dim(S * T) >= 0 and top(S * T) != S * T then (
+        descr = descr||("Intersection of the surfaces: non-equidimensional scheme of dimension "|(toString dim(S * T)));
+    ) else (
+        if dim(S * T) == 1 then descr = descr||("Intersection of the surfaces: curve of degree "|toString degree(S * T)|" and arithmetic genus "|toString sectionalGenus(S * T));
+        if dim(S * T) <= 0 then descr = descr||("Intersection of the surfaces: "|(toString degree(S * T))|" points");
+        if dim(S * T) >= 1 and degree(S * T) >= 2 then (
+            if dim singularLocus(S * T) <= 0 then (
+                m := degree support singularLocus(S * T);
+                descr = descr||(net "Singular locus of the intersection: "|(if m == 0 then "∅" else (if m == 1 then "a single point" else (toString m)|" points")));
+            ) else (
+                descr = descr||(net "Singular locus of the intersection: "|(? ideal support singularLocus(S * T)));
+            );
+        );
+    );
+    if isPlaneInP5 T or isPlaneInP5 S then (
+        idX := if substring(0,8,recognizeDSCF X) === "DSCF-V1-" then "   {ID: "|substring(8,recognizeDSCF X)|"}" else "";
+        h := quadricFibration X;
+        symb := if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then "★ " else "☆ ";
+        descr = descr||(symb|X.cache#"quadricFibrationCubicFourfoldInC8"_2);
+        if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then descr = descr||((computationStatusLog X)|idX);
+        if computationStatus X >= 1 then descr = descr || (describeMirrorFourfoldAndK3 X);
+    );
+    net expression descr
+);
+
+shortDescriptionFourfold (DoublySpecialCubicFourfold,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+    Y := X.cache#"parentCubicFourfold";
+    d1 := discriminant X;
+    d2 := discriminant Y;
+    Cd1Cd2 := "C_"|(toString d1);
+    if d1 != d2 then Cd1Cd2 = Cd1Cd2|" ∩ C_"|(toString d2);
+    "cubic fourfold in "|Cd1Cd2
+);
+
+genRingIntMatr3x3 = memoize(() -> (
+    □ := local □;
+    K := ZZ[□];
+    first gens K
+));
+
+intersectionOfSurfaceCyclesInCubicFourfold = method();
+intersectionOfSurfaceCyclesInCubicFourfold DoublySpecialCubicFourfold := X -> (
+    (S,P) := surfaces X;
+    if X.cache#?(S,P,"intersection of surface cycles in cubic fourfold") then return X.cache#(S,P,"intersection of surface cycles in cubic fourfold");
+    if isPlaneInP5 P then (
+        h := quadricFibration X;
+        Q := h^* point target h;
+        QS := Q * S;
+        degQS := if dim QS == -1 then 0 else (if dim QS == 0 then degree QS else null);
+        if degQS === null or dim Q != 2 or degree Q != 2 then return X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = genRingIntMatr3x3();
+        return X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = degree(S) - degQS;
+    ) else (
+        if dim(S * P) == -1 then return X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = 0;
+        if dim(S * P) == 0 then return X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = degree(S * P);
+    );
+    X.cache#(S,P,"intersection of surface cycles in cubic fourfold") = genRingIntMatr3x3()
+);
+
+latticeIntersectionMatrix3x3 = method();
+latticeIntersectionMatrix3x3 DoublySpecialCubicFourfold := X -> (
+    (S,T) := surfaces X;
+    if X.cache#?(S,T,"LatticeIntersectionMatrix3x3") then return X.cache#(S,T,"LatticeIntersectionMatrix3x3");
+    d1 := discriminant X;
+    MS := X.cache#(S,"LatticeIntersectionMatrix");
+    Y := X.cache#"parentCubicFourfold";
+    d2 := discriminant Y;
+    MT := Y.cache#(T,"LatticeIntersectionMatrix");
+    h2sq := MS_(0,0);   -- (H^2)^2 = deg X (= 3)
+    h2S  := MS_(0,1);   -- H^2 * S = deg S
+    S2   := MS_(1,1);   -- S^2
+    h2T  := MT_(0,1);   -- H^2 * T = deg T
+    T2   := MT_(1,1);   -- T^2
+    ST := intersectionOfSurfaceCyclesInCubicFourfold X;
+    A := matrix {
+        {h2sq, h2S,  h2T},
+        {h2S,  S2,   ST },
+        {h2T,  ST,   T2 }
+    };
+    if ring A === ZZ then X.cache#(S,T,"LatticeIntersectionMatrix3x3") = A;
+    A
+);
+
+random DoublySpecialCubicFourfold := o -> X -> (
+    (S,T) := surfaces X;
+    Y := cubicFourfold(S & T,InputCheck=>-1);
+    if X.cache#?(S,T,"labelDSCF") and (not Y.cache#?(S,T,"labelDSCF")) then Y.cache#(S,T,"labelDSCF") = X.cache#(S,T,"labelDSCF");
+    if isFanoMapStandard X then setFanoMapToBeStandard Y;
+    if isFanoMapToP2xP2 X then setFanoMapToBeMapFromP5toP2xP2 Y;
+    Y
+);
+
+clean DoublySpecialCubicFourfold := X -> (
+    (S,T) := surfaces X;
+    K := coefficientRing X;
+    x := local x;
+    R := K[x_0..x_5];
+    S' := Var sub(sub(ideal S,vars R),vars ring ambient X);
+    if S.cache#?"euler" then S'.cache#"euler" = S.cache#"euler";
+    if S.cache#?"ConstructionParameters" then S'.cache#"ConstructionParameters" = S.cache#"ConstructionParameters";
+    T' := Var sub(sub(ideal T,vars R),vars ring ambient X);
+    if T.cache#?"euler" then T'.cache#"euler" = T.cache#"euler";
+    if T.cache#?"ConstructionParameters" then T'.cache#"ConstructionParameters" = T.cache#"ConstructionParameters";
+    X' := Var sub(sub(ideal X,vars R),vars ring ambient X);
+    nS := if S.cache#?"FiniteNumberOfNodes" then S.cache#"FiniteNumberOfNodes" else null;
+    nT := if T.cache#?"FiniteNumberOfNodes" then T.cache#"FiniteNumberOfNodes" else null;
+    X' = cubicFourfold(S' & T',X',InputCheck=>0,NumNodes=>(nS,nT));
+    if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold") then X'.cache#(S',T',"intersection of surface cycles in cubic fourfold") = X.cache#(S,T,"intersection of surface cycles in cubic fourfold");
+    X'
+);
+
+swap = method();
+swap DoublySpecialCubicFourfold := X -> (
+    if X.cache#?"swappedSurfaces" then return X.cache#"swappedSurfaces";
+    (S,T) := surfaces X;
+    K := coefficientRing X;
+    x := local x;
+    R := K[x_0..x_5];
+    idX := sub(sub(ideal X,vars R),vars ring ambient X);
+    nS := if S.cache#?"FiniteNumberOfNodes" then S.cache#"FiniteNumberOfNodes" else null;
+    nT := if T.cache#?"FiniteNumberOfNodes" then T.cache#"FiniteNumberOfNodes" else null;
+    Y := cubicFourfold(T & S,Var idX,InputCheck=>0,NumNodes=>(nT,nS),Verbose=>false);
+    if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold") then Y.cache#(T,S,"intersection of surface cycles in cubic fourfold") = X.cache#(S,T,"intersection of surface cycles in cubic fourfold");
+    X.cache#"swappedSurfaces" = Y;
+    Y.cache#"swappedSurfaces" = X;
+    Y
+);
+
+fuse = method();
+fuse DoublySpecialCubicFourfold := X -> (
+    if X.cache#?"fusedVersion" then return X.cache#"fusedVersion";
+    (S,T) := surfaces X;
+    K := coefficientRing X;
+    x := local x;
+    R := K[x_0..x_5];
+    idX := sub(sub(ideal X,vars R),vars ring ambient X);
+    Y := cubicFourfold(S+T,Var idX,InputCheck=>0,NumNodes=>0,Verbose=>false);
+    X.cache#"fusedVersion" = Y;
+    Y.cache#"fusedOrigin" = X;
+    Y
+);
+
+unfuse = method();
+unfuse CubicFourfold := X -> (
+    if X.cache#?"fusedOrigin" then return X.cache#"fusedOrigin";
+    ST := surface X;
+    decST := decompose ST;
+    if # decST != 2 then error("unfuse: expected a surface with exactly 2 components, but found " | toString(#decST));
+    K := coefficientRing X;
+    x := local x;
+    R := K[x_0..x_5];
+    idX := sub(sub(ideal X,vars R),vars ring ambient X);
+    Z := cubicFourfold(decST_0 & decST_1,Var idX,InputCheck=>1,Verbose=>false);
+    Z.cache#"fusedVersion" = X;
+    X.cache#"fusedOrigin" = Z;
+    Z
+);
+
+quadricFibration DoublySpecialCubicFourfold := o -> X -> (
+    if X.cache#?"quadricFibrationCubicFourfoldInC8" then return first X.cache#"quadricFibrationCubicFourfoldInC8";
+    (T,P) := surfaces X;
+    if not isPlaneInP5 P then (P,T) = (T,P);
+    if not isPlaneInP5 P then error "one of the two surfaces is required to be a plane";
+    h := quadricFibration(rationalMap(P_X),Verify=>false);
+    if not(codim target h == 0 and dim target h == 2) then error "something went wrong in the construction of the quadric fibration, target != PP^2";
+    F := h^* point target h;
+    if not(dim F == 2 and degree F == 2) then error "something went wrong in the construction of the quadric fibration, the generic fiber is not a quadric surface";
+    Z := (F * T)\\P;
+    assert(dim Z <= 1);
+    resFib := "";
+    if dim Z == 1 then resFib = "The generic quadric fiber meets the other surface residually along a curve";
+    if dim Z == 0 and degree Z != 1 then resFib = "The generic quadric fiber meets the other surface residually in "|(toString degree Z)|" points";
+    if dim Z == 0 and degree Z == 1 then resFib = "The generic quadric fiber meets the other surface residually in a single point";
+    if dim Z == -1 then resFib = "The generic quadric fiber meets the other surface residually in the empty set";
+    X.cache#"quadricFibrationCubicFourfoldInC8" = (h, dim Z == 0 and degree Z == 1, resFib);
+    X.cache#"numberOfResidualPointsInGenericQuadricFiber" = if dim Z == 1 then infinity else (if dim Z == -1 then 0 else degree Z);
+    first X.cache#"quadricFibrationCubicFourfoldInC8"
+);
+
+parameterCount DoublySpecialCubicFourfold := o -> X -> (
+    (S,P) := surfaces X;
+    if (not o.Verbose) and X.cache#?(S,P,"parameterCount") then return X.cache#(S,P,"parameterCount");
+    if not(isPlaneInP5 S or isPlaneInP5 P) then error "not implemented yet: parameterCount for a DoublySpecialCubicFourfold not containing a plane";
+    if not isPlaneInP5 P then (
+        if o.Verbose then << "-- (swapping surfaces)" << endl;
+        return parameterCount(swap X,Verbose=>o.Verbose);
+    );
+    if not S.cache#?"ConstructionParameters" then error "not implemented yet: parameterCount for a DoublySpecialCubicFourfold not constructed via specialFourfold(surface((...),(...)))";
+    (ai1i2i3,dj1j2j3,n,r) := S.cache#"ConstructionParameters";
+    C := S * P;
+    if o.Verbose then (
+        << "-- starting parameterCount computation" << endl;
+        << "-- input: cubic fourfold X containing two surfaces:" << endl;
+        << "  -- S = surface" << toString(ai1i2i3,dj1j2j3) << ": " << surfaceDescription S << endl;
+        if n > 5 then (
+            << "  -- (projected from PP^" << n << " with center a PP^" << n-6 << " ⊂ PP^" << r << " (⊂ PP^" << n << "))" << endl;
+        ) else (
+            << "  -- (already in P^5, not obtained by projection)" << endl;
+        );
+        << "  -- P: " << surfaceDescription P << endl;
+        << "  -- C = S ∩ P: " << ? ideal((parametrize P)^^ C) << endl;
+    );
+    numPts := sum toList drop(ai1i2i3,1);
+    modCountPts := max(2*numPts - 8, 0);
+    if o.Verbose then << endl << "-- moduli count for " << numPts << " points in ℙ²: " << modCountPts << endl;
+    dimGrass := (n-5)*(r-n+6); -- dim GG(n-6,PP^r)
+    numPts2 := sum toList drop(dj1j2j3,1);
+    m := dim target multirationalMap rationalMap(ring(PP_(coefficientRing X)^2), {first dj1j2j3, numPts2});
+    if o.Verbose then << "-- dimension of the space of plane curves of degree " << first dj1j2j3 << " passing through " << numPts2 << " general points: " << m << endl;
+    if n > 5 and o.Verbose then << "-- dim GG(" << n-6 << "," << r << ") = " << dimGrass << endl;
+    dimAutS := 0;
+    if n > 5 or numPts > 4 then (
+        if o.Verbose then << "-- assuming dim Aut(S,ℙ⁵) = " << dimAutS << endl;
+    ) else (
+        if o.Verbose then << "-- computing h^0(T_S)..." << endl;
+        dimAutS = rank HH^0 tangentSheaf variety S;
+        if o.Verbose then << "-- h^0(T_S) = " << dimAutS << endl;
+    );
+    dimFamReducSurf := modCountPts + m + dimGrass + (35 - dimAutS);
+    if o.Verbose then << "-- dimension of the family of reducible surfaces S ∪ P in ℙ⁵: " << modCountPts << " + " << m << " + " << (if n > 5 then dimGrass|" + (" else "(") << 35 << " - " << dimAutS << ") = " << dimFamReducSurf << endl;
+    b := dim target rationalMap(S+P,3);
+    if o.Verbose then << "-- h^0(I_{S ∪ P, ℙ⁵}(3)) = " << b+1 << endl;
+    if o.Verbose then << "-- dimension of the incidence variety {(S,P,X) : S ∪ P ⊂ X}: " << dimFamReducSurf << " + " << b << " = " << dimFamReducSurf + b << endl;
+    if o.Verbose then << endl << "-- computing the normal sheaf of S in X..." << endl << flush;
+    NSX := normalSheaf(S,X);
+    if o.Verbose then << "-- normal sheaf computed; computing h^0(N_{S,X})..." << endl << flush;
+    h0NSX := rankHH(0,NSX);
+    if o.Verbose then << "-- h^0(N_{S,X}) = " << h0NSX << endl << flush;
+    if o.Verbose then << "-- computing the normal sheaf of P in X..." << endl << flush;
+    NPX := normalSheaf(P,X);
+    if o.Verbose then << "-- normal sheaf computed; computing h^0(N_{P,X})..." << endl << flush;
+    h0NPX := rankHH(0,NPX);
+    if o.Verbose then << "-- h^0(N_{P,X}) = " << h0NPX << endl << flush;
+    if h0NPX != 0 then error "expected to obtain h^0(N_{P,X}) = 0";
+    dimFamReducSurfInX := h0NSX + h0NPX;
+    if o.Verbose then << "-- upper bound for the dimension of the family of reducible surfaces S ∪ P in X: " << dimFamReducSurfInX << endl;
+    z := 54 - (dimFamReducSurf + b - dimFamReducSurfInX);
+    if z <= 0 then (
+        if o.Verbose then << endl << "-- ⚠ invalid codimension estimate in C_8: 54 - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << endl << "-- recomputing dimension of incidence variety using normal sheaves" << endl;
+        if o.Verbose then << endl << "-- computing the normal sheaf of S in ℙ⁵..." << endl << flush;
+        N := normalSheaf S;
+        if o.Verbose then << "-- normal sheaf computed; computing h^0(N_{S,ℙ⁵})..." << endl << flush;
+        h0N := rankHH(0,N);
+        if o.Verbose then << "-- h^0(N_{S,ℙ⁵}) = " << h0N << endl << flush;
+        if o.Verbose then << "-- computing h^0(N_{C,S})..." << endl;
+        h0NCS := rank HH^0 normalSheaf(C,S);
+        if o.Verbose then << "-- h^0(N_{C,S}) = " << h0NCS << endl;
+        dimFamReducSurf' := h0N + h0NCS;
+        if o.Verbose then (
+            << "-- dimension of the family of reducible surfaces S ∪ P in ℙ⁵: h^0(N_{S,ℙ⁵}) + h^0(N_{C,S}) = " << dimFamReducSurf';
+            if dimFamReducSurf' == dimFamReducSurf then << " (same as before)" else << " (≠ " << dimFamReducSurf << ")";
+            << endl;
+            << "-- dimension of the incidence variety {(S,P,X) : S ∪ P ⊂ X}: " << dimFamReducSurf' << " + " << b << " = " << dimFamReducSurf' + b << endl;
+        );
+        dimFamReducSurf = dimFamReducSurf';
+        z = 54 - (dimFamReducSurf + b - dimFamReducSurfInX);
+    );
+    if o.Verbose then << "-- codim. in C_8 of {[X] : S ∪ P ⊂ X} ≤ " << 54 << " - (" << dimFamReducSurf + b << " - " << dimFamReducSurfInX << ") = " << z << (if z <= 0 then " ⚠" else (if z == 1 then " ✅" else "")) << endl;
+    if X.cache#?(S,P,"parameterCount") and X.cache#(S,P,"parameterCount") =!= (z, (b+1, dimFamReducSurf, dimFamReducSurfInX)) then error "internal error encountered in parameterCount: cached and computed values differ";
+    X.cache#(S,P,"parameterCount") = (z, (b+1, dimFamReducSurf, dimFamReducSurfInX))
+);
+
+toExternalString DoublySpecialCubicFourfold := X -> (
+    x := local x;
+    K := coefficientRing X;
+    ringP5 := K[x_0..x_5];
+    (S,T) := surfaces X;
+    headerDate := "";
+    try headerDate = " on "|(get "!date");
+    s := ///-- DSCF object exported by toExternalString/// | headerDate;
+    s = s | ///-- needsPackage "SpecialFanoFourfolds";/// | newline;
+    s = s | "(i -> (K := " | toExternalString K | ";" | newline;
+    s = s | "x := local x; ringP5 := K[x_0..x_5];" | newline;
+    s = s | "S := projectiveVariety(" | toString sub(ideal S,vars ringP5) | ",Saturate=>false);" | newline;
+    s = s | "T := projectiveVariety(" | toString sub(ideal T,vars ringP5) | ",Saturate=>false);" | newline;
+    s = s | "X := projectiveVariety(" | toString sub(ideal X,vars ringP5) | ",Saturate=>false);" | newline;
+    s = s | "X = specialFourfold(S & T,X,NumNodes=>" | toString apply(surfaces X,numberNodes) | ",InputCheck=>0);" | newline;
+    if X.cache#?"CustomData" then s = s | ///X.cache#"CustomData" = /// | toString X.cache#"CustomData" | ";" | newline;
+    if X.cache#?(S,T,"labelDSCF") then s = s | ///X.cache#(S,T,"labelDSCF") = "/// | toString X.cache#(S,T,"labelDSCF") | ///";/// | newline;
+    if S.cache#?"ConstructionParameters" then s = s | ///S.cache#"ConstructionParameters" = /// | toString S.cache#"ConstructionParameters" | ";" | newline;
+    if T.cache#?"ConstructionParameters" then s = s | ///T.cache#"ConstructionParameters" = /// | toString T.cache#"ConstructionParameters" | ";" | newline;
+    if S.cache#?"euler" then s = s | ///S.cache#"euler" = /// | toString euler S | ";" | newline;
+    if T.cache#?"euler" then s = s | ///T.cache#"euler" = /// | toString euler T | ";" | newline;
+    if S.cache#?"FiniteNumberOfNodes" then s = s | ///S.cache#"FiniteNumberOfNodes" = /// | toString numberNodes S | ";" | newline;
+    if T.cache#?"FiniteNumberOfNodes" then s = s | ///T.cache#"FiniteNumberOfNodes" = /// | toString numberNodes T | ";" | newline;
+    if S.cache#?"rationalParametrization" or T.cache#?"rationalParametrization" then (
+        t := local t; ringP2 := K[t_0..t_2];
+        s = s | "t := local t; ringP2 := K[t_0..t_2];" | newline;
+        if S.cache#?"rationalParametrization" then s = s | ///S.cache#"rationalParametrization" = (Hom(projectiveVariety ringP2,S)) /// | toString entries sub(matrix parametrize S,vars ringP2) | ";" | newline;
+        if T.cache#?"rationalParametrization" then s = s | ///T.cache#"rationalParametrization" = (Hom(projectiveVariety ringP2,T)) /// | toString entries sub(matrix parametrize T,vars ringP2) | ";" | newline;
+    );
+    if X.cache#?(S,T,"intersection of surface cycles in cubic fourfold") then s = s | ///X.cache#(S,T,"intersection of surface cycles in cubic fourfold") = /// | toString X.cache#(S,T,"intersection of surface cycles in cubic fourfold") | ";" | newline;
+    if X.cache#?(S,T,"parameterCount") then s = s | ///X.cache#(S,T,"parameterCount") = /// | toString X.cache#(S,T,"parameterCount") | ";" | newline;
+    if X.cache#?(S,"parameterCount") then s = s|///X.cache#(S,"parameterCount") = ///|(toString X.cache#(S,"parameterCount"))|";"|newline;
+    if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" then s = s|///X.cache#"numberOfResidualPointsInGenericQuadricFiber" = ///|(toString X.cache#"numberOfResidualPointsInGenericQuadricFiber")|";"|newline;
+    if S.cache#?("FanoMapDSCF",T) and isFanoMapStandard X then (
+        mu := fanoMapDSCF X;
+        m := dim ambient target mu;
+        y := local y;
+        ringAmbientW := K[y_0..y_m];
+        s = s | "y := local y; ringAmbientW := K[y_0..y_" | toString m | "];" | newline;
+        s = s | "mu := (Hom(projectiveVariety ringP5,projectiveVariety ringAmbientW)) " | toString entries sub(matrix mu,vars ringP5) | ";" | newline;
+        if m > 4 then (
+            s = s | "forceImage(mu,projectiveVariety(" | toString sub(ideal target mu,vars ringAmbientW) | ",Saturate=>false));" | newline;
+        ) else (
+            s = s | "forceImage(mu,target mu);" | newline;
+        );
+        s = s | "mu = rationalMap(mu,Dominant=>true);" | newline;
+        s = s | ///mu.cache#"FanoMapType" = "Standard";/// | newline;
+        s = s | ///X.cache#"FanoMapType" = "Standard";/// | newline;
+        s = s | ///S.cache#("FanoMapDSCF",T) = mu;/// | newline;
+        if mu.cache#?("surfaceDeterminingInverseOfFanoMap",X) then (
+            U := surfaceDeterminingInverseOfFanoMap X;
+            s = s | "U := projectiveVariety(" | toString sub(ideal U,vars ringAmbientW) | ",Saturate=>false);" | newline;
+            s = s | ///mu.cache#("surfaceDeterminingInverseOfFanoMap",X) = U;/// | newline;
+            if U.cache#?"exceptionalCurves" then (
+                (L,C) := exceptionalCurves X;
+                s = s | "L := " | (if dim L >= 0 then "projectiveVariety(" | toString sub(ideal L,vars ringAmbientW) | ",Saturate=>false)" else "0_U") | ";" | newline;
+                s = s | "C := " | (if dim C >= 0 then "projectiveVariety(" | toString sub(ideal C,vars ringAmbientW) | ",Saturate=>false)" else "0_U") | ";" | newline;
+                s = s | ///U.cache#"exceptionalCurves" = (L%U,C%U);/// | newline;
+            );
+            if U.cache#?"special curves on U" and #(U.cache#"special curves on U") > 0 then s = s | ///U.cache#"special curves on U" = apply(/// | toString apply(U.cache#"special curves on U", D -> sub(ideal D,vars ringAmbientW)) | ", D -> (projectiveVariety(D,Saturate=>false))%U);" | newline;
+            if U.cache#?"Genus2CurveOnSurfaceU" then s = s | ///U.cache#"Genus2CurveOnSurfaceU" = (projectiveVariety( /// | toString sub(ideal U.cache#"Genus2CurveOnSurfaceU",vars ringAmbientW) | ",Saturate=>false))%U;" | newline;
+            if U.cache#?"strategy for surface U" then s = s | ///U.cache#"strategy for surface U" = "/// | toString U.cache#"strategy for surface U" | ///";/// | newline;
+            if U.cache#?"birational maps from X to W and from W to X" then (
+                eta := last U.cache#"birational maps from X to W and from W to X";
+                s = s | "mu' := mu|X;" | newline;
+                s = s | "eta := (Hom(target mu',source mu')) " | toString entries sub(matrix eta,vars ringAmbientW) | ";" | newline;
+                s = s | ///mu'#"inverse" = eta; eta#"inverse" = mu';/// | newline;
+                s = s | ///U.cache#"birational maps from X to W and from W to X" = (mu',eta);/// | newline;
+            );
+            if U.cache#?"Normalization" then (
+                normU := multirationalMap normalization U;
+                z := local z;
+                r := dim ambient source normU;
+                ringAmbNormU := K[z_0..z_r,Degrees=>degrees ring ambient source normU];
+                s = s | "z := local z; ringAmbNormU := K[z_0..z_" | toString r | ",Degrees=>" | toString degrees ringAmbNormU | "];" | newline;
+                s = s | "NormU := projectiveVariety(" | toString sub(ideal source normU,vars ringAmbNormU) | ",Saturate=>false);" | newline;
+                s = s | ///U.cache#"Normalization" = toRationalMap((Hom(NormU,U)) /// | toString entries sub(matrix normU,vars ringAmbNormU) | ");" | newline;
+            );
+            if U.cache#?"MapToMinimalK3Surface" and (not instance(U.cache#"MapToMinimalK3Surface",WeightedRationalMap)) and instance(target U.cache#"MapToMinimalK3Surface",EmbeddedProjectiveVariety) and (U.cache#"MapToMinimalK3Surface")#"image" =!= null then (
+                Psi := U.cache#"MapToMinimalK3Surface";
+                v := local v; ringAmbUtilde := K[v_0..v_(dim target Psi)];
+                s = s | "v := local v; ringAmbUtilde := K[v_0..v_" | (toString dim target Psi) | "];" | newline;
+                s = s | ///U.cache#"MapToMinimalK3Surface" = (Hom(U,projectiveVariety ringAmbUtilde)) /// | (toString entries sub(matrix Psi,vars ringAmbientW)) | ";" | newline;
+                s = s | ///forceImage(U.cache#"MapToMinimalK3Surface",projectiveVariety(/// | (toString sub(ideal image Psi,vars ringAmbUtilde)) | ",Saturate=>false));" | newline;
+            );
+        );
+    );
+    s | "X))()"
+);
+
+DoublySpecialCubicFourfold ? DoublySpecialCubicFourfold := (X,Y) -> (
+    MX := latticeIntersectionMatrix3x3 X;
+    MY := latticeIntersectionMatrix3x3 Y;
+    if ring MX === ZZ and ring MY =!= ZZ then return symbol <;
+    if ring MX =!= ZZ and ring MY === ZZ then return symbol >;
+    if ring MX === ZZ and ring MY === ZZ then (
+        if det MX < det MY then return symbol <;
+        if det MX > det MY then return symbol >;
+    );
+    (S,T) := surfaces X;
+    (U,V) := surfaces Y;
+    if X.cache#?(S,T,"parameterCount") and (not Y.cache#?(U,V,"parameterCount")) then return symbol <;
+    if (not X.cache#?(S,T,"parameterCount")) and Y.cache#?(U,V,"parameterCount") then return symbol >;
+    if X.cache#?(S,T,"parameterCount") and Y.cache#?(U,V,"parameterCount") then (
+        if first X.cache#(S,T,"parameterCount") < first Y.cache#(U,V,"parameterCount") then return symbol <;
+        if first X.cache#(S,T,"parameterCount") > first Y.cache#(U,V,"parameterCount") then return symbol >;
+    );
+    if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" and (not Y.cache#?"numberOfResidualPointsInGenericQuadricFiber") then return symbol <;
+    if (not X.cache#?"numberOfResidualPointsInGenericQuadricFiber") and Y.cache#?"numberOfResidualPointsInGenericQuadricFiber" then return symbol >;
+    if X.cache#?"numberOfResidualPointsInGenericQuadricFiber" and Y.cache#?"numberOfResidualPointsInGenericQuadricFiber" then (
+        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" === 1 and Y.cache#"numberOfResidualPointsInGenericQuadricFiber" =!= 1 then return symbol <;
+        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" =!= 1 and Y.cache#"numberOfResidualPointsInGenericQuadricFiber" === 1 then return symbol >;
+        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" < Y.cache#"numberOfResidualPointsInGenericQuadricFiber" then return symbol <;
+        if X.cache#"numberOfResidualPointsInGenericQuadricFiber" > Y.cache#"numberOfResidualPointsInGenericQuadricFiber" then return symbol >;
+    );
+    (dX,dY) := (discriminant X,discriminant Y);
+    if dX < dY then return symbol <;
+    if dX > dY then return symbol >;
+    if degree S < degree U then return symbol <;
+    if degree S > degree U then return symbol >;
+    if degree T < degree V then return symbol <;
+    if degree T > degree V then return symbol >;
+    if sectionalGenus S < sectionalGenus U then return symbol <;
+    if sectionalGenus S > sectionalGenus U then return symbol >;
+    if sectionalGenus T < sectionalGenus V then return symbol <;
+    if sectionalGenus T > sectionalGenus V then return symbol >;
+    if S.cache#?"ConstructionParameters" and U.cache#?"ConstructionParameters" then (
+        cS := splice S.cache#"ConstructionParameters";
+        cU := splice U.cache#"ConstructionParameters";
+        if cS < cU then return symbol <;
+        if cS > cU then return symbol >;
+    );
+    if T.cache#?"ConstructionParameters" and V.cache#?"ConstructionParameters" then (
+        cT := splice T.cache#"ConstructionParameters";
+        cV := splice V.cache#"ConstructionParameters";
+        if cT < cV then return symbol <;
+        if cT > cV then return symbol >;
+    );
+    if ideal X == ideal Y and S == U and T == V then return symbol ==;
+    incomparable
+);
+
+------------------------------------------------------------------------
+----------- Recognition and auxiliary utilities for D. S. C. F. --------
+------------------------------------------------------------------------
+
+recognizeDSCF = X -> (
+    (S,T) := surfaces X;
+    if X.cache#?(S,T,"labelDSCF") then return X.cache#(S,T,"labelDSCF");
+    C := S * T;
+    STinX := (latticeIntersectionMatrix3x3 X)_(1,2);
+    fib := null;
+    if isPlaneInP5 T then (
+        if not X.cache#?"numberOfResidualPointsInGenericQuadricFiber" then quadricFibration X;
+        fib = X.cache#"numberOfResidualPointsInGenericQuadricFiber";
+    );
+    invX := (degrees S,degree S,sectionalGenus S,euler hilbertPolynomial S,eulerCharacteristic S,numberNodes S,
+             degrees T,degree T,sectionalGenus T,euler hilbertPolynomial T,eulerCharacteristic T,numberNodes T,
+             degrees C,degree C,degrees(S + T),
+             STinX,fib);
+    if invX === ({({2},4)},6,2,1,10,0,{({1},3)},1,0,1,3,0,{({1},3), ({2},1)},2,{({2},3), ({3},1)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-1";
+    if invX === ({({2},5)},5,1,1,7,0,{({1},3)},1,0,1,3,0,{({1},3), ({2},1)},2,{({2},4)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-2";
+    if invX === ({({2},3), ({3},1)},7,3,1,12,0,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},3)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-3";
+    if invX === ({({2},1), ({3},8)},8,3,0,6,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},1), ({3},7)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-4";
+    if invX === ({({3},7), ({4},4)},10,4,-2,-4,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},7), ({4},3)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-5";
+    if invX === ({({2},6)},4,0,1,3,0,{({1},3)},1,0,1,3,0,{({1},3), ({2},1)},2,{({2},5)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-6";
+    if invX === ({({2},2), ({3},5)},7,2,0,3,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},2), ({3},4)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-7";
+    if invX === ({({2},1), ({3},8)},8,3,0,5,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},1), ({3},7)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-8";
+    if invX === ({({2},3), ({3},2)},6,1,0,0,1,{({1},3)},1,0,1,3,0,{({1},3), ({3},1)},3,{({2},3), ({3},1)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-9";
+    if invX === ({({3},10), ({4},1)},9,3,-2,-7,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},10)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-10";
+    if invX === ({({2},1), ({3},6), ({4},1)},9,4,-1,1,2,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},1), ({3},6)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-11";
+    if invX === ({({2},2), ({3},3), ({4},1)},8,3,-1,-1,2,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},2), ({3},3)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-12";
+    if invX === ({({3},7), ({4},2)},10,4,-2,-6,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},7), ({4},1)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-13";
+    if invX === ({({3},4), ({4},9), ({5},1)},11,4,-5,-23,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},4), ({4},9)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-14";
+    if invX === ({({3},10), ({4},1)},9,3,-2,-8,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},10)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-15";
+    if invX === ({({3},1), ({4},21), ({5},1)},12,5,-5,-23,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},1), ({4},21)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-16";
+    if invX === ({({2},1), ({3},7), ({4},1)},8,2,-2,-10,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},1), ({3},7)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-17";
+    if invX === ({({3},7), ({4},2)},10,4,-2,-7,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({3},7), ({4},1)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-18";
+    if invX === ({({3},6), ({4},2), ({5},1)},11,5,-4,-16,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},6), ({4},2)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-19";
+    if invX === ({({3},1), ({4},21), ({5},1)},12,5,-5,-24,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},1), ({4},21)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-20";
+    if invX === ({({2},2), ({3},4), ({4},1)},7,1,-2,-13,3,{({1},3)},1,0,1,3,0,{({1},3), ({4},1)},4,{({2},2), ({3},4)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-21";
+    if invX === ({({3},7), ({4},1), ({5},1)},10,3,-5,-26,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},7), ({4},1)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-22";
+    if invX === ({({3},9), ({5},1)},10,4,-4,-18,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},9)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-23";
+    if invX === ({({3},4), ({4},9), ({5},1)},11,4,-5,-25,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},4), ({4},9)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-24";
+    if invX === ({({3},6), ({4},2), ({5},1)},11,5,-4,-17,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},6), ({4},2)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-25";
+    if invX === ({({2},1), ({3},6), ({5},1)},9,3,-4,-20,5,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({2},1), ({3},6)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-26";
+    if invX === ({({3},1), ({4},21), ({5},1)},12,5,-5,-25,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},1), ({4},21)}, 1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-27";
+    if invX === ({({3},7), ({4},1), ({5},1)},10,3,-5,-27,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},7), ({4},1)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-28";
+    if invX === ({({3},4), ({4},9), ({5},1)},11,4,-5,-26,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},4), ({4},9)}, 0, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-29";
+    if invX === ({({3},10), ({5},1)},9,2,-5,-29,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({3},10)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-30";
+    if invX === ({({3},3), ({4},12), ({6},1)},12,5,-8,-41,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},3), ({4},12)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-31";
+    if invX === ({({3},3), ({4},12), ({6},1)},12,5,-8,-42,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},3), ({4},12)}, -1, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-32";
+    if invX === ({({2},1), ({3},7), ({5},1)},8,1,-5,-32,6,{({1},3)},1,0,1,3,0,{({1},3), ({5},1)},5,{({2},1), ({3},7)}, -3, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-33";
+    if invX === ({({3},4), ({4},9), ({6},1)},11,3,-9,-51,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},4), ({4},9)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-34";
+    if invX === ({({3},6), ({4},2), ({6},1)},11,4,-8,-43,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},6), ({4},2)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-35";
+    if invX === ({({3},9), ({6},1)},10,3,-8,-45,9,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},9)}, -3, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-36";
+    if invX === ({({3},4), ({4},9), ({6},1)},11,3,-9,-52,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},4), ({4},9)}, -2, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-37";
+    if invX === ({({3},7), ({4},2), ({6},1)},10,2,-9,-54,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},7), ({4},2)}, -3, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-38";
+    if invX === ({({3},10), ({6},1)},9,1,-9,-57,10,{({1},3)},1,0,1,3,0,{({1},3), ({6},1)},6,{({3},10)}, -4, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-39";
+    if invX === ({({3},6), ({4},3), ({7},1)},11,3,-13,-76,14,{({1},3)},1,0,1,3,0,{({1},3), ({7},1)},7,{({3},6), ({4},3)}, -4, 1) then return X.cache#(S,T,"labelDSCF") = "DSCF-V1-40";
+    if invX === ({({2}, 6)}, 4, 0, 1, 3, 0, {({1}, 3)}, 1, 0, 1, 3, 0, {({1}, 3), ({2}, 3)}, 3, {({2}, 3), ({3}, 3)}, 3, 1) then return X.cache#(S,T,"labelDSCF") = "Tregub1";
+    X.cache#(S,T,"labelDSCF") = "NotRecognized"
+);
+
+isSurfaceUknownToBeAlreadyEquidimensional = (X,mu) -> (
+    if mu.cache#?"surface U is already equidimensional" then return mu.cache#"surface U is already equidimensional";
+    if isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-13", "DSCF-V1-15", "DSCF-V1-18", "DSCF-V1-20", "DSCF-V1-25", "DSCF-V1-27", "DSCF-V1-36"}) then (
+        return mu.cache#"surface U is already equidimensional" = false;
+    );
+    if isFanoMapStandard(X) and member(recognizeDSCF X, {"DSCF-V1-1", "DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-4", "DSCF-V1-5", "DSCF-V1-6", "DSCF-V1-7", "DSCF-V1-8", "DSCF-V1-9", "DSCF-V1-10", "DSCF-V1-11", "DSCF-V1-12", "DSCF-V1-14", "DSCF-V1-16", "DSCF-V1-17", "DSCF-V1-19", "DSCF-V1-21", "DSCF-V1-22", "DSCF-V1-23", "DSCF-V1-24", "DSCF-V1-26", "DSCF-V1-28", "DSCF-V1-29", "DSCF-V1-30", "DSCF-V1-31", "DSCF-V1-32", "DSCF-V1-33", "DSCF-V1-34", "DSCF-V1-35", "DSCF-V1-37", "DSCF-V1-38", "DSCF-V1-39", "DSCF-V1-40"}) then (
+        return mu.cache#"surface U is already equidimensional" = true;
+    );
+    return false;
+);
+
+isNormalizationKnownToTerminateQuickly = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-4", "DSCF-V1-17", "DSCF-V1-27", "DSCF-V1-30"});
+
+isSelfIntersectionVerificationKnownToBeSuperfluous = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-34", "DSCF-V1-40"});
+
+someExceptionalCurvesKnownToAppearWithMultiplicity = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-5", "DSCF-V1-14"});
+
+setStrategyDSCFtoK3 = (X,Str) -> (
+    if Str =!= null then return Str;
+    if isFanoMapStandard X then (
+        if member(recognizeDSCF X,{"DSCF-V1-13","DSCF-V1-18","DSCF-V1-24","DSCF-V1-25","DSCF-V1-27","DSCF-V1-31","DSCF-V1-40"}) then return "Approximate";
+        return "Inverse";
+    );
+    if isFanoMapToP2xP2 X then (
+        -- cases 6, 21, 33, 39 are faster
+        if member(recognizeDSCF X,{"DSCF-V1-2", "DSCF-V1-3", "DSCF-V1-6", "DSCF-V1-8", "DSCF-V1-9", "DSCF-V1-12", "DSCF-V1-21", "DSCF-V1-26", "DSCF-V1-30", "DSCF-V1-33", "DSCF-V1-36", "DSCF-V1-39"}) then return "Inverse";
+        return "Approximate";
+    );
+    return "Inverse";
+);
+
+setStrategyDSCFtoPolarize = (Utilde,Str) -> (
+    if Str =!= null then return Str;
+    X := recoverFourfold Utilde;
+    (mu,U,LC,f) := building Utilde;
+    if isFanoMapStandard X then (
+        if U.cache#?"special curves on U" then (
+            if member(recognizeDSCF X, {"DSCF-V1-6", "DSCF-V1-31", "DSCF-V1-32", "DSCF-V1-34", "DSCF-V1-37", "DSCF-V1-40"}) or (not U.cache#?"birational maps from X to W and from W to X") then (
+                if f =!= null or isNormalizationKnownToTerminateQuickly X then return "SpecialCurve" else return "SpecialCurve-Virtual";
+            );
+        );
+        if f =!= null or isNormalizationKnownToTerminateQuickly X then return "Genus2Curve" else return "Genus2Curve-Virtual";
+    );
+    if isFanoMapToP2xP2 X then (
+        if f =!= null or isNormalizationKnownToTerminateQuickly X then return "MapFromU" else return "MapFromU-Virtual";
+    );
+    return "MapFromU";
+);
+
+knownDataForRecognizedDSCF = i -> (
+    -- X := specialFourfold("DSCF-"|(toString i));
+    -- (mu,U,(L,C),f) := building polarizedK3surface X; W := target mu;
+    -- return (degreeOfDefiningForms mu, dim W, degree W, sectionalGenus W, degrees W, dim U, degree U, sectionalGenus U, euler hilbertPolynomial U, degrees U, dim L, degree L, dim C, degree C);
+    if i < 1 or i > 40 then error "expected an integer between 1 and 40";
+    if i == 1 then return (3,4,6,1,{({2},9)},2,20,14,1,{({2},10), ({3},9)},1,6,-1,0);
+    if i == 2 then return (3,4,10,3,{({2},18)},2,22,14,2,{({2},24)},1,4,-1,0);
+    if i == 3 then return (3,4,6,1,{({2},9)},2,21,16,2,{({2},10), ({3},8)},1,9,-1,0);
+    if i == 4 then return (3,4,2,0,{({2},1)},2,14,13,1,{({2},1), ({3},1), ({4},6), ({5},1)},1,8,1,2);
+    if i == 5 then return (4,4,10,3,{({2},18)},2,31,25,2,{({2},19), ({3},13)},1,11,-1,0);
+    if i == 6 then return (2,4,1,0,{},2,6,4,2,{({2},1), ({3},1)},-1,0,-1,0);
+    if i == 7 then return (3,4,5,1,{({2},5)},2,17,12,1,{({2},6), ({3},7)},1,5,-1,0);
+    if i == 8 then return (3,4,2,0,{({2},1)},2,13,10,-2,{({2},1), ({3},1), ({4},7)},1,5,-1,0);
+    if i == 9 then return (3,4,9,3,{({2},12)},2,19,12,2,{({2},18)},1,3,-1,0);
+    if i == 10 then return (3,4,1,0,{},2,11,11,-1,{({4},1), ({5},7)},1,7,1,2);
+    if i == 11 then return (3,4,2,0,{({2},1)},2,14,12,-2,{({2},1), ({3},1), ({4},5), ({5},1)},1,8,-1,0);
+    if i == 12 then return (3,4,5,1,{({2},5)},2,18,14,2,{({2},6), ({3},6)},1,8,-1,0);
+    if i == 13 then return (4,4,9,3,{({2},12)},2,25,17,-1,{({2},13), ({3},14)},1,5,1,2);
+    if i == 14 then return (4,4,9,3,{({2},12)},2,28,23,2,{({2},13), ({3},11)},1,10,-1,0);
+    if i == 15 then return (3,4,1,0,{},2,10,8,-4,{({4},2), ({5},5)},1,4,-1,0);
+    if i == 16 then return (4,4,3,1,{({3},1)},2,19,18,-2,{({3},1), ({4},3), ({5},18)},1,6,-1,0);
+    if i == 17 then return (3,4,4,1,{({2},2)},2,14,10,1,{({2},3), ({3},5)},1,4,-1,0);
+    if i == 18 then return (4,4,9,3,{({2},12)},2,24,14,-4,{({2},13), ({3},14)},1,2,-1,0);
+    if i == 19 then return (4,4,9,3,{({2},12)},2,26,19,0,{({2},13), ({3},13)},1,8,1,2);
+    if i == 20 then return (4,4,3,1,{({3},1)},2,15,12,-2,{({3},1), ({4},16)},1,3,1,4);
+    if i == 21 then return (3,4,8,3,{({2},7)},2,16,10,2,{({2},13)},1,2,-1,0);
+    if i == 22 then return (4,4,14,6,{({2},22)},2,28,19,2,{({2},28), ({3},2)},1,6,1,2);
+    if i == 23 then return (3,4,1,0,{},2,11,10,-5,{({4},1), ({5},6)},1,7,-1,0);
+    if i == 24 then return (4,4,8,3,{({2},7)},2,22,15,-1,{({2},8), ({3},12)},1,4,1,2);
+    if i == 25 then return (4,4,9,3,{({2},12)},2,25,16,-3,{({2},13), ({3},13)},1,5,-1,0);
+    if i == 26 then return (3,4,4,1,{({2},2)},2,15,12,2,{({2},3), ({3},4)},1,7,-1,0);
+    if i == 27 then return (4,4,3,1,{({3},1)},2,14,9,-5,{({3},1), ({4},17)},-1,0,1,2);
+    if i == 28 then return (4,4,14,6,{({2},22)},2,27,16,-1,{({2},28)},1,3,-1,0);
+    if i == 29 then return (4,4,8,3,{({2},7)},2,21,12,-4,{({2},8), ({3},12)},1,1,-1,0);
+    if i == 30 then return (3,4,3,1,{({3},1)},2,11,8,1,{({2},1), ({3},4)},1,3,-1,0);
+    if i == 31 then return (4,4,8,3,{({2},7)},2,23,17,0,{({2},8), ({3},11)},1,7,1,2);
+    if i == 32 then return (4,4,8,3,{({2},7)},2,22,14,-3,{({2},8), ({3},11)},1,4,-1,0);
+    if i == 33 then return (3,4,7,3,{({2},3), ({3},1)},2,13,8,2,{({2},9)},1,1,-1,0);
+    if i == 34 then return (4,4,13,6,{({2},15)},2,25,17,2,{({2},21), ({3},2)},1,5,1,2);
+    if i == 35 then return (4,4,14,6,{({2},22)},2,28,18,0,{({2},28)},1,6,-1,0);
+    if i == 36 then return (3,4,3,1,{({3},1)},2,12,10,2,{({2},1), ({3},3)},1,6,-1,0);
+    if i == 37 then return (4,4,13,6,{({2},15)},2,24,14,-1,{({2},21)},1,2,-1,0);
+    if i == 38 then return (4,4,20,10,{({2},35)},2,28,16,1,{({2},50)},1,2,-1,0);
+    if i == 39 then return (3,4,6,3,{({3},4)},2,10,6,2,{({2},6)},-1,0,-1,0);
+    if i == 40 then return (4,4,20,10,{({2},35)},2,29,18,2,{({2},50)},1,5,-1,0);
+);
+
+------------------------------------------------------------------------
+---------------------- Construction of DSCF examples  ------------------
+------------------------------------------------------------------------
+
+exampleDSCFourfoldC8 = method(TypicalValue => DoublySpecialCubicFourfold, Options => {Verbose => true});
+exampleDSCFourfoldC8 (ZZ,Ring) := o -> (i,K) -> (
+    if not (1 <= i and i <= 40) then error "DSCF example out of range: expected an integer between 1 and 40";
+    L := {null,
+((4,6,1,0,0),(1,2,0,0,0)),
+((3,4,0,0,0),(1,1,0,0,0)),
+((4,9,0,0,0),(3,9,0,0,0)),
+((5,8,0,1,0),(1,2,0,0,0)),
+((6,10,0,0,1),(1,2,0,0,0)),
+((2,0,0,0,0),(1,0,0,0,0)),
+((4,5,1,0,0),(1,1,0,0,0)),
+((4,8,0,0,0),(2,5,0,0,0)),
+((3,3,0,0,0),(1,0,0,0,0)),
+((5,7,0,1,0),(1,1,0,0,0)),
+((5,8,2,0,0),(3,7,2,0,0)),
+((4,8,0,0,0),(3,8,0,0,0)),
+((5,7,2,0,0),(2,4,1,0,0)),
+((6,9,0,0,1),(1,1,0,0,0)),
+((4,7,0,0,0),(2,4,0,0,0)),
+((6,7,2,1,0),(2,4,0,1,0)),
+((4,4,1,0,0),(1,0,0,0,0)),
+((6,2,6,0,0),(1,2,0,0,0)),
+((5,10,1,0,0),(3,8,1,0,0)),
+((6,4,5,0,0),(2,3,2,0,0)),
+((3,2,0,0,0),(2,2,0,0,0)),
+((5,6,0,1,0),(1,0,0,0,0)),
+((5,7,2,0,0),(3,6,2,0,0)),
+((5,6,2,0,0),(2,3,1,0,0)),
+((6,5,5,0,0),(3,5,4,0,0)),
+((4,7,0,0,0),(3,7,0,0,0)),
+((8,0,4,4,0),(2,0,4,1,0)),
+((4,6,0,0,0),(2,3,0,0,0)),
+((6,1,6,0,0),(1,1,0,0,0)),
+((4,3,1,0,0),(2,1,1,0,0)),
+((5,9,1,0,0),(3,7,1,0,0)),
+((6,4,5,0,0),(3,4,4,0,0)),
+((3,1,0,0,0),(2,1,0,0,0)),
+((5,5,0,1,0),(2,1,0,1,0)),
+((5,6,2,0,0),(3,5,2,0,0)),
+((4,6,0,0,0),(3,6,0,0,0)),
+((4,5,0,0,0),(2,2,0,0,0)),
+((4,2,1,0,0),(2,0,1,0,0)),
+((3,0,0,0,0),(2,0,0,0,0)),
+((4,5,0,0,0),(3,5,0,0,0))};
+    if o.Verbose then << "-- constructing example n. " << i << ", specialFourfold surface" << toString(L_i) << endl;
+    cubicFourfold rationalSurfaceWithAttachedPlaneInCubicFourfold(splice(L_i,K),Verbose=>o.Verbose)
+);
+
+check DoublySpecialCubicFourfold := o -> X -> (
+    if X.cache#?"CheckDSCFResult" then return X;
+    error2 := str -> (X.cache#"CheckDSCFResult" = str; error str);
+    if ring latticeIntersectionMatrix3x3 X === ZZ and det latticeIntersectionMatrix3x3 X <= 0 then error2("invalid lattice rank 3 discriminant: "|(toString det latticeIntersectionMatrix3x3 X));
+    if discriminant X <= 0 then error2 "invalid discriminant of cubic fourfold";
+    (S,P) := surfaces X;
+    C := S * P;
+    if not(isPlaneInP5 P and dim C == 1 and S.cache#?"ConstructionParameters") then (
+        if o.Verbose then << "-- check skipped: expected a cubic fourfold constructed via specialFourfold(surface((...),(...)))" << endl;
+        X.cache#"CheckDSCFResult" = null;
+        return X;
+    );
+    if X.cache#?"DataConstruction" then (
+        (S',C',pr) := X.cache#"DataConstruction";
+        C'' := pr C';
+        if not isSubset(C'',C) then error2 "projection of curve is not contained in surface-plane intersection";
+        if dim(C \\ C'') != -1 then error2 "surface-plane intersection contains extra components";
+    );
+    SingC := support singularLocus C;
+    n := S.cache#"FiniteNumberOfNodes";
+    if (dim SingC == 0 and degree SingC == n) or (dim SingC == -1 and n == 0) then (
+        if o.Verbose then << "-- verified: surface-plane intersection has correct number of nodes (" << n << ")" << endl;
+    ) else (
+        error2 "incorrect number of nodes in surface-plane intersection";
+    );
+    SingS := support singularLocus S;
+    if not isSubset(SingC, SingS) then error2 "singular locus of intersection curve is not contained in the singular locus of the surface";
+    resSing := SingS \\ SingC;
+    if dim resSing == -1 then (
+        if o.Verbose then << "-- verified: surface is smooth outside the singular locus of the curve" << endl;
+    ) else (
+        errLog := if dim resSing == 0 then (toString degree resSing) | " points" else "singular locus is not 0-dimensional";
+        error2("surface has singular points outside the singular locus of the curve: " | errLog);
+    );
+    X.cache#"CheckDSCFResult" = true;
+    X
+);
+
+discoverCubicFourfoldsInC8 = (e,dmin,dmax,Nmin,Nmax,summaryFileName,rationalSectionOnly,maxTime,NewCollectionFourfolds) -> (
+    -- usage: discoverCubicFourfoldsInC8({10,10,10,10,10},1,4,5,13,"examples_v1",true,300,{});
+    startTime := currentTime();
+    runTime := () -> humanReadableSeconds(currentTime() - startTime);
+    for Z in NewCollectionFourfolds do (Z.cache#"instanceCount" = 0; Z.cache#"calculationTime" = humanReadableSeconds(0));
+    instanceCount := 0;
+    K := ZZ/65521;
+    local X; local S; local T; local P; local C; local SummaryFile; local DataFile;
+    for a from 1 to e_0 do
+        for i1 to e_1 do
+            for i2 to e_2 do
+                for i3 to e_3 do
+                    for i4 to e_4 do (
+                        if binomial(a+2,2) - i1 - 3*i2 - 6*i3 - 10*i4 - 1 > Nmax or binomial(a+2,2) - i1 - 3*i2 - 6*i3 - 10*i4 - 1 < Nmin then continue;
+                        try (
+                            alarm maxTime;
+                            <<"-- constructing surface S"<<(a,i1,i2,i3,i4)<<"..."<<endl;
+                            S = surface({a,i1,i2,i3,i4},K);
+                            alarm 0;
+                        ) else (
+                            alarm 0;
+                            <<"-- something went wrong when calling S"<<(a,i1,i2,i3,i4)<<", possible alarm triggered: "<<humanReadableSeconds(maxTime)<<endl;
+                            continue;
+                        );
+                        <<"-- obtained surface in PP^"<<dim ambient S<<endl;
+                        -- if dim ambient S > Nmax or dim ambient S < Nmin then continue;
+                        if dim ambient S < Nmin then continue;
+                        for d from dmin to dmax do
+                            for u1 to i1 do
+                                for u2 to i2 do
+                                    for u3 to i3 do
+                                        for u4 to i4 do (
+                                            <<"-- surface: "<<toString{a,i1,i2,i3,i4}<<", curve: "<<toString (d,{u1,u2,u3,u4})<<endl;
+                                            if rationalSectionOnly and 1 != (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) then (
+                                                <<"-- formula not satisfied: 1 != (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) = " << (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) << endl;
+                                                continue;
+                                            );
+                                            try (
+                                                X = cubicFourfold rationalSurfaceWithAttachedPlaneInCubicFourfold(S,(d,u1,u2,u3,u4),Verbose=>true);
+                                            ) else (
+                                                <<"-- something went wrong when calling 'surface((...),(...))'"<<endl;
+                                                continue;
+                                            );
+                                            if ring latticeIntersectionMatrix3x3 X === ZZ and det latticeIntersectionMatrix3x3 X <= 0 then (
+                                                <<"-- invalid lattice rank 3 discriminant: "<<(det latticeIntersectionMatrix3x3 X)<<endl;
+                                                continue;
+                                            );
+                                            if discriminant X <= 0 then (
+                                                <<"-- invalid discriminant: "<<(discriminant X)<<endl;
+                                                continue;
+                                            );
+                                            quadricFibration X;
+                                            if rationalSectionOnly and (not X.cache#"quadricFibrationCubicFourfoldInC8"_1) then (
+                                                <<"-- fourfold not allowed: "<<X.cache#"quadricFibrationCubicFourfoldInC8"_2<<endl;
+                                                continue;
+                                            );
+                                            if (not rationalSectionOnly) and X.cache#"quadricFibrationCubicFourfoldInC8"_1 and 1 != (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) then (
+                                                <<"-- exception: "<<(a,i1,i2,i3,i4)<<","<<(d,u1,u2,u3,u4)<<" -> surface is a section but formula not satisfied: 1 != (a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4) = "<<((a-d)^2 - (i1-u1+u2) - 4*(i2-u2+u3) - 9*(i3-u3+u4) - 16*(i4-u4))<<endl;
+                                            );
+                                            (T,P) = surfaces X;
+                                            assert(degree P == 1);
+                                            C = T * P;
+                                            if not member((entries latticeIntersectionMatrix3x3 X,X.cache#"quadricFibrationCubicFourfoldInC8"_2,degrees T,betti res ideal T,degree T,sectionalGenus T,euler hilbertPolynomial T,eulerCharacteristic T,numberNodes T,dim C,degree C,degrees(T + P)), apply(NewCollectionFourfolds, Y -> (entries latticeIntersectionMatrix3x3 Y,Y.cache#"quadricFibrationCubicFourfoldInC8"_2, degrees surface Y,betti res ideal surface Y,degree surface Y,sectionalGenus surface Y,euler hilbertPolynomial surface Y,eulerCharacteristic surface Y,numberNodes surface Y,dim((first surfaces Y)*(last surfaces Y)),degree((first surfaces Y)*(last surfaces Y)),degrees((first surfaces Y)+(last surfaces Y))))) then (
+                                                try (
+                                                    alarm(3*maxTime);
+                                                    <<"-- checking fourfold..."<<endl;
+                                                    check(X,Verbose=>true);
+                                                    alarm 0;
+                                                ) else (
+                                                    alarm 0;
+                                                    if X.cache#?"CheckDSCFResult" and instance(X.cache#"CheckDSCFResult",String) then (
+                                                        <<"-- check not passed: "<<X.cache#"CheckDSCFResult"<<endl;
+                                                        continue;
+                                                    );
+                                                    <<"-- possible alarm triggered: "<<humanReadableSeconds(3*maxTime)<<endl;
+                                                );
+                                                if not X.cache#?"CheckDSCFResult" then X.cache#"CheckDSCFResult" = false;
+                                                instanceCount = instanceCount + 1;
+                                                X.cache#"instanceCount" = instanceCount;
+                                                X.cache#"calculationTime" = runTime();
+                                                NewCollectionFourfolds = sort append(NewCollectionFourfolds,X);
+                                                <<endl;
+                                                <<"--## NEW EXAMPLE FOUND ##-- "<<endl;
+                                                <<"-- number of distinct fourfolds found: "<<#NewCollectionFourfolds<<endl;
+                                                <<"-- elapsed time: "<<runTime()<<endl;
+                                                SummaryFile = openOut (summaryFileName|".txt");
+                                                DataFile = openOut (summaryFileName|"_commands.m2");
+                                                SummaryFile<<"-- File automatically generated by the function 'discoverCubicFourfoldsInC8()' in SpecialFanoFourfolds.m2, date: "<<get "!date"<<endl;
+                                                SummaryFile<<"Time to reach last fourfold in list: "<<runTime()<<endl;
+                                                SummaryFile<<"Number of distinct fourfolds found: "<<#NewCollectionFourfolds<<endl<<endl<<"Summary:"<<endl;
+                                                for Y in NewCollectionFourfolds do (
+                                                    SummaryFile<<position(NewCollectionFourfolds,i->i===Y)+1<<") obtained after "<<Y.cache#"calculationTime"<<", instance: "<<Y.cache#"instanceCount"<<endl<<Y.cache#"Construction"<<" check: "<<Y.cache#"CheckDSCFResult"<<endl;
+                                                    DataFile<<Y.cache#"Construction"<<endl;
+                                                    SummaryFile<<describe Y<<endl;
+                                                    SummaryFile<<endl;
+                                                );
+                                                close SummaryFile;
+                                                close DataFile;
+                                            ) else (
+                                                <<"-- fourfold not allowed: already in collection --"<<endl;
+                                            );
+                                        );
+                    );
+    <<"-- SEARCH FINISHED with "<<#NewCollectionFourfolds<<" distinct examples"<<endl;
+    NewCollectionFourfolds
+);
+
+------------------------------------------------------------------------
+------------------------- Tests for D. S. C. F.  -----------------------
+------------------------------------------------------------------------
+
+generateInputsForRunExampleTest = i -> (
+    X := specialFourfold("DSCF-"|(toString i),Verbose=>false);
+    (S,P) := surfaces X;
+    E := polarizedK3surface polarizedK3surface X;
+    (mu,U,LC,f) := building E;
+    W := target mu;
+    (i, nextPrime random(33331,65521), degree S, sectionalGenus S, discriminant X, degree U, sectionalGenus U, euler hilbertPolynomial U, dim ambient W, degree W, sectionalGenus W, degree first LC, degree last LC, dim target f, latticeMatrix latticePolarization E)
+);
+
+runExampleTest = (i,charK,degS,gS,dX,degU,gU,chiOU,ambW,degW,gW,degL,degC,gK3,M) -> (
+    X := specialFourfold("DSCF-"|(toString i),ZZ/charK,Verbose=>true);
+    assert(charK === char coefficientRing X);
+    (S,P) := surfaces X;
+    describe X;
+    assert(X.cache#(S,P,"labelDSCF") === "DSCF-V1-"|toString(i));
+    assert(degree P == 1 and degree S == degS and sectionalGenus S == gS);
+    assert(discriminant X == dX and discriminant X.cache#"parentCubicFourfold" == 8);
+    assert(computationStatus X == -1);
+    E := polarizedK3surface(X,Verbose=>true);
+    assert sanityCheckDSCF E;
+    assert instance(E, K3SurfaceFromDoublySpecialCubicFourfold);
+    assert(computationStatus X == 3);
+    (mu,U,LC,f) := building E; (L,C) := toSequence LC;
+    assert(U === surface mirrorFourfold X);
+    assert(degree U == degU and sectionalGenus U == gU and euler hilbertPolynomial U == chiOU);
+    W := target mu;
+    assert(W == mirrorFourfold X);
+    assert(dim ambient W == ambW and degree W == degW and sectionalGenus W == gW);
+    assert(degree L == degL and degree C == degC);
+    assert(dim target f == gK3 and f#"image" =!= null and sectionalGenus image f == gK3);
+    assert(ideal projectiveVariety E === ideal image f);
+    assert instance(projectiveVariety E, SurfaceAssociatedToRationalFourfold);
+    assert(isFanoMapStandard X and fanoMapDSCF X === mu);
+    assert(E#"LatticePolarization" === null);
+    polarizedK3surface(X,Verbose=>true);
+    assert(E#"LatticePolarization" =!= null);
+    assert(computationStatus X == 4);
+    assert instance(latticePolarization E, LatticePolarizationOnK3Surface);
+    assert(latticeMatrix latticePolarization E == M);
+    assert(recoverFourfold E === X and recoverFourfold projectiveVariety E === X);
+    assert(setStrategyDSCFtoK3(X,null) === U.cache#"strategy for surface U");
+    if setStrategyDSCFtoK3(X,null) === "Approximate" then return;
+    (mu',eta) := U.cache#"birational maps from X to W and from W to X";
+    assert(eta === getInverseFanoMap X and eta === getInverseFanoMap E);
+    assert(source eta  === target mu and target eta == X and eta#"inverse" === mu');
+);

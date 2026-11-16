@@ -1,3 +1,0 @@
-It would be good if writers of a package could install methods for symbols and
-classes defined in other packages and still be able to document them.
-

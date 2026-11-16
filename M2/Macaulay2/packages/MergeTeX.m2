@@ -198,3 +198,8 @@ multidoc ///
     whereas @TT "mergeTeXFile"@ takes as arguments the names of the source LaTeX file and of the target LaTeX file (the two can be identical;
     @TT "mergeTeXFile"@ acts idempotently).
 ///
+
+
+TEST ///
+mergeTeXFile(MergeTeX # "auxiliary files" | "ex.tex","ex-parsed1.tex")
+///

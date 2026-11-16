@@ -1,5 +1,5 @@
-#ifndef M2TBB_HPP
-#define M2TBB_HPP
+#ifndef M2_M2TBB_HPP
+#define M2_M2TBB_HPP
 
 // The plan: All uses of TBB go through the following interface.
 

@@ -8,16 +8,16 @@
 #include "f4/f4-types.hpp"         // for gb_array, gbelem
 #include "f4/f4.hpp"               // for F4GB
 #include "f4/moninfo.hpp"          // for MonomialInfo
-#include "matrix-con.hpp"          // for MatrixConstructor
-#include "matrix.hpp"              // for Matrix
+#include "matrices/matrix-con.hpp"          // for MatrixConstructor
+#include "matrices/matrix.hpp"              // for Matrix
 #include "mem.hpp"                 // for stash
 #include "monoid.hpp"              // for Monoid
-#include "polyring.hpp"            // for PolynomialRing
-#include "ring.hpp"                // for Ring
-#include "ringelem.hpp"            // for vec
+#include "rings/polyring.hpp"            // for PolynomialRing
+#include "rings/ring.hpp"                // for Ring
+#include "rings/ringelem.hpp"            // for vec
 #include "text-io.hpp"             // for emit
 #include "util.hpp"                // for M2_arrayint_to_stdvector
-#include "VectorArithmetic.hpp"    // for VectorArithmetic, ElementArray
+#include "basic-rings/vector-arithmetic.hpp"    // for VectorArithmetic, ElementArray
 
 class Computation;
 class RingElement;
@@ -183,12 +183,14 @@ const Matrix /* or null */ *F4Computation::get_syzygies()
 
 const Matrix /* or null */ *F4Computation::get_initial(int nparts)
 {
+  (void) nparts;
   ERROR("Lead terms for `Algorithm => LinearAlgebra`: use `leadTerm gens gb` instead of `leadTerm gb`");
   return nullptr;
 }
 
 const Matrix /* or null */ *F4Computation::matrix_remainder(const Matrix *m)
 {
+  (void) m;
   ERROR("No special algorithm for computing matrix remainder for `Algorithm => LinearAlgebra");
   return nullptr;
 }
@@ -198,6 +200,7 @@ M2_bool F4Computation::matrix_lift(
     const Matrix /* or null */ **result_remainder,
     const Matrix /* or null */ **result_quotient)
 {
+  (void) m;
   *result_remainder = nullptr;
   *result_quotient = nullptr;
   ERROR("No special algorithm for computing matrix remainder and lift for `Algorithm => LinearAlgebra");  
@@ -209,6 +212,7 @@ int F4Computation::contains(const Matrix *m)
 // Otherwise return the index of the first column that
 // does not reduce to zero.
 {
+  (void) m;
   ERROR("No special algorithm for computing containment for `Algorithm => LinearAlgebra");  
   return 0;
 }
@@ -224,6 +228,7 @@ void F4Computation::text_out(buffer &o) const
 /* This displays statistical information, and depends on the
    M2_gbTrace value */
 {
+  (void) o;
   // TODO: what to display?
 }
 

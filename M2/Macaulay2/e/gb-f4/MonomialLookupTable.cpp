@@ -2,7 +2,7 @@
 // Created by Frank Moore on 7/5/23.
 //
 
-#include "MonomialLookupTable.hpp"
+#include "gb-f4/MonomialLookupTable.hpp"
 
 namespace newf4 {
 

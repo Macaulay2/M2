@@ -1734,6 +1734,103 @@ subsetsProductsIdeal = (kk,n,k) -> (
     return ideal (subsets(gens R, k) / (S -> product(S)));
 )
 
+
+
+-- verifies if for any outgoing arc there is an incoming arc
+inconsistentArc = N -> (
+    tree := N.elimTree;
+    nods := select(tree.nodes, i -> tree.parents#i=!=null);
+    for i in nods do (
+        p:= tree.parents#i;
+        for Ni in nodes(N,i) do (
+            for Np in Ni.parents do
+                if not member(Ni,Np.children) then return (Ni,Np);
+            for Nc in Ni.children do
+                if not member(Ni,Nc.parents) then return (Nc,Ni);
+            );
+    );
+    return false;
+)
+
+-- monomial ideal in 8 variables
+exampleNet8 = (topDim) -> (
+    getElimTree:= X -> (
+        parnt := hashTable {X_0=>X_5, X_1=>X_2, X_2=>X_5, 
+            X_3=>X_4, X_4=>X_5, X_5=>X_6, X_6=>X_7, X_7=>null};
+        clique := applyPairs(parnt, (i,p) ->
+            if p=!=null then (i,{i,p}) else (i,{i}) );
+        return elimTree(X,parnt,clique);
+    );
+    getDigraph:= (topDim) -> (
+        V:={"x_0_0", "x_0_1", "x_1_0", "x_1_1", "x_2_0", "x_2_1", 
+            "x_3_0", "x_3_1", "x_4_0", "x_4_1", "x_5_1", "x_5_2", 
+            "x_5_4", "x_6_0", "x_6_1", "x_7_0", "x_7_1"};
+        E:={{"x_0_0", "x_5_1"}, {"x_0_1", "x_5_2"}, {"x_0_1", "x_5_4"},
+            {"x_1_0", "x_2_1"}, {"x_1_1", "x_2_0"}, {"x_2_0", "x_5_1"},
+            {"x_2_0", "x_5_2"}, {"x_2_0", "x_5_4"}, {"x_2_1", "x_5_2"},
+            {"x_2_1", "x_5_4"}, {"x_3_0", "x_4_1"}, {"x_3_1", "x_4_0"},
+            {"x_4_0", "x_5_1"}, {"x_4_0", "x_5_2"}, {"x_4_1", "x_5_4"},
+            {"x_5_1", "x_6_0"}, {"x_5_2", "x_6_0"}, {"x_5_2", "x_6_1"},
+            {"x_5_4", "x_6_0"}, {"x_5_4", "x_6_1"}, {"x_6_0", "x_7_0"},
+            {"x_6_1", "x_7_1"} };
+        E':={{"x_1_0","x_2_0"}, {"x_3_0","x_4_0"}};
+        if not topDim then E = E | E';
+        return digraph(V,E);
+    );
+    kk := ZZ/10007; 
+    
+    local x; x= getSymbol "x";
+    R := kk[x_0..x_7, MonomialOrder=>Lex];
+    X := gens R;
+    tree := getElimTree(X);
+    DG := getDigraph(topDim);
+    ranks := hashTable for v in vertices DG list
+        v => value substring(0,3,v);
+    eqs:=hashTable{ "x_0_0" => {X_0}, "x_0_1" => {}, "x_1_0" => {X_1},
+        "x_1_1" => {}, "x_2_0" => {X_2}, "x_2_1" => {}, "x_3_0" => {X_3},
+        "x_3_1" => {}, "x_4_0" => {X_4}, "x_4_1" => {}, "x_5_0" => {X_5},
+        "x_5_1" => {}, "x_5_2" => {X_5}, "x_5_3" => {X_5}, "x_5_4" => {X_5},
+        "x_6_0" => {X_6}, "x_6_1" => {}, "x_7_0" => {}, "x_7_1" => {X_7} };
+    eqs = applyPairs( eqs, (v,F) -> (v,(F,{})) );
+    N := chordalNet(eqs,ranks,tree,DG);
+    N.isTriangular = true;
+    return N;
+)
+
+-- nextChain
+
+numChains = N -> (
+    nC := 0;
+    C := nextChain N;
+    while C=!=null do (
+        C=nextChain(C,N); 
+        nC=nC+1;
+    );
+    return nC;
+)
+numChainsCdim = (N,cdim) -> (
+    nC := 0;
+    (C,data) := nextChain(cdim,N);
+    while C=!=null do (
+        if codim C != cdim then error("wrong codimension");
+        C=nextChain(C,data,cdim,N); 
+        nC=nC+1;
+    );
+    return nC;
+)
+
+-- prem 
+
+cyclicMinors = (kk,n) -> (
+    I := adjacentMinorsIdeal(kk,2,n);
+    X := gens ring I;
+    J := I + (X_0 * X_(-1) - X_1*X_(-2));
+    f := sum gbList J;
+    N := chordalNet J;
+    chordalTria N;
+    return (f,N);
+)
+
 --##########################################################################--
 -- Documentation and Tests
 --##########################################################################--
@@ -1742,7 +1839,6 @@ beginDocumentation()
 
 load "./Chordal/ChordalDoc.m2";
 
-TEST ///
+
 load (Chordal#"source directory" | "./Chordal/test_chordal.m2")
-///
 

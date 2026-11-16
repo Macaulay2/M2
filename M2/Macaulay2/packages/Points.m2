@@ -12,7 +12,7 @@ newPackage(
 	     },
     	Headline => "sets of points",
 	Keywords => {"Examples and Random Objects"},
-        PackageImports => {"OldChainComplexes"},
+        PackageImports => {"Complexes"},
         PackageExports => {"LexIdeals"},
     	DebuggingMode => false
     	)
@@ -726,6 +726,15 @@ doc ///
      In version 3.0, F. Galetto and J.W. Skelton added code to
      compute ideals of fat points and projective points using
      the Buchberger-Moeller algorithm.
+    Example
+     R = QQ[x,y,z]
+     M = matrix {{1,0,0,1}, {0,1,0,1}, {0,0,1,1}}
+     (inG,G) = projectivePoints(M,R)
+     monomialIdeal G == inG
+   SeeAlso
+    randomPointsMat
+    projectivePoints
+    projectiveFatPoints
 ///
 
 --documentation for the code for points in projective space
@@ -904,6 +913,10 @@ doc ///
     Text
      Default is false, in which case the first (up to) r+1 points
      returned are the standard simplex; if true, all the points are random.
+    Example
+     S = ZZ/11[vars(0..2)]
+     setRandomSeed 0
+     randomPointsMat(S,3, AllRandom=>true)
    SeeAlso
     randomPointsMat
 ///
@@ -1155,6 +1168,13 @@ doc ///
    Description
     Text
      Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+    Example
+     R = QQ[x,y,z]
+     Mbad = matrix {{1,2,0,1}, {0,0,0,1}, {0,0,0,1}}
+     Mclean = matrix {{1,1}, {0,1}, {0,1}}
+     (inG1,G1) = projectivePoints(Mbad,R)
+     (inG2,G2) = projectivePoints(Mclean,R)
+     (inG1 == inG2, G1 == G2)
    SeeAlso
     projectivePoints
 ///
@@ -1167,6 +1187,13 @@ doc ///
    Description
     Text
      Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+    Example
+     R = QQ[x,y,z]
+     Mbad = matrix {{1,2,0,1}, {0,0,0,1}, {0,0,0,1}}
+     Mclean = matrix {{1,1}, {0,1}, {0,1}}
+     (inG1,G1) = projectivePoints(Mbad,R)
+     (inG2,G2) = projectivePoints(Mclean,R)
+     (inG1 == inG2, G1 == G2)
    SeeAlso
     projectivePoints
 ///
@@ -1180,6 +1207,15 @@ doc ///
     Text
      Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
      For duplicate points, a single instance is retained with the largest multiplicity.
+    Example
+     R = QQ[x,y,z]
+     Mbad = matrix {{1,2,0,1}, {0,0,0,1}, {0,0,0,1}}
+     Mclean = matrix {{1,1}, {0,1}, {0,1}}
+     mults = {1,3,5,2}
+     multsClean = {3,2}
+     (inF1,GF1) = projectiveFatPoints(Mbad,mults,R)
+     (inF2,GF2) = projectiveFatPoints(Mclean,multsClean,R)
+     (inF1 == inF2, GF1 == GF2)
    SeeAlso
     projectiveFatPoints
 ///
@@ -1422,6 +1458,33 @@ TEST///
       z^4-3*x*y^2*z^5+4*y^3*z^5,
       y^7*z^2-4*y^6*z^3+6*y^5*z^4-4*y^4*z^5+y^3*z^6})
      assert(G == projectiveFatPointsByIntersection(M,mults,R))
+///
+
+TEST ///
+-- points: build the ideal of a set of projective points by intersecting per-point ideals
+R = ZZ/101[a,b,c];
+pmat = matrix(R, {{1,0,0},{0,1,0},{0,0,1}});
+assert(points pmat == ideal(a*b, a*c, b*c));
+///
+
+TEST ///
+-- minMaxResolution prints the predicted and lex Betti tables and returns null
+assert(minMaxResolution(3,5) === null);
+///
+
+TEST ///
+-- VerifyPoints option: default and VerifyPoints=>false agree on a clean projective-points matrix;
+-- the default also tolerates duplicate columns by cleaning them up; projectiveFatPoints accepts the option too.
+M = matrix {{1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}};
+R = QQ[x,y,z];
+(inG1, G1) = projectivePoints(M, R);
+(inG2, G2) = projectivePoints(M, R, VerifyPoints => false);
+assert(G1 == G2);
+Mdup = M | matrix{{1},{0},{0}};
+(inGd, Gd) = projectivePoints(Mdup, R);
+assert(Gd == G1);
+(inGf, Gf) = projectiveFatPoints(M, {1,1,1,1}, R, VerifyPoints => false);
+assert(instance(Gf, List));
 ///
 
 end

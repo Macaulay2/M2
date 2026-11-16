@@ -24,7 +24,7 @@ export {
     "CompleteIntersectionInToric",
         "Ambient",
         "CI",
-    "liftPicToCDiv", -- these might now be in NormalNoricVarieties?
+    "liftPicToCDiv", -- these might now be in NormalToricVarieties?
     "liftClToWDiv"
     }
 

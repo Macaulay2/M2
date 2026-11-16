@@ -7,7 +7,13 @@ undocumented {(liftable, Number, Number), (liftable, Number, RingElement),
      (liftable, QQ, ZZ),
      (liftable, CC, RR_*),
      (liftable, Number, InexactNumber),
-     (liftable, RRi, QQ),(liftable, RRi, RR),(liftable, RRi, ZZ)}
+     (liftable, RRi, QQ),
+     (liftable, CC, RRi'),
+     (liftable, CCi, RRi'),
+     (liftable, RRi, RR'),
+     (liftable, CCi, CC'),
+     (liftable, CCi, RR'),
+     (liftable, CCi, QQ)}
 
 document { 
      Key => {liftable},

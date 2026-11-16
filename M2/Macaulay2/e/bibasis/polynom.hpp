@@ -7,11 +7,11 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#ifndef BIBASIS_POLYNOM_HPP
-#define BIBASIS_POLYNOM_HPP
+#ifndef M2_BIBASIS_POLYNOM_HPP
+#define M2_BIBASIS_POLYNOM_HPP
 
 #include <iostream>
-#include "allocator.hpp"
+#include "bibasis/allocator.hpp"
 
 namespace BIBasis
 {

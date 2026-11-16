@@ -16,6 +16,9 @@ typeBVin = (i,n) -> ( Eijm(n+i,2*n,2*n+1) - Eijm(2*n,i,2*n+1));
 
 ------------------------------------------------
 
+-- The next five functions about weights are for getting the basis elements
+-- into lex level order
+-- They aren't used for computing weights in representationWeights
 
 DtoLMatrixTypeB = memoize((n) -> (
     M:=apply(n, i -> apply(n, j -> if j<i then 0 else if j<n-1 then 1 else 1/2));    
@@ -115,7 +118,7 @@ so2n1DualBasis = (n) -> (
 
 so2n1BasisLabels = (n) -> (
     -- Create the labels
-    Hbasis := apply(n, i -> "H_a_"|toString(i));
+    Hbasis := apply(n, i -> "Ha_"|toString(i));
     Xbasis := flatten apply(n, i -> delete(null,apply(n, j -> if j!=i then "X_"|toString(i+1,j+1) )));   
     Ybasis := flatten apply(n, i -> delete(null,apply(n, j -> if i<j then "Y_"|toString(i+1,j+1) ))); 
     Zbasis := flatten apply(n, i -> delete(null,apply(n, j -> if i<j then "Z_"|toString(j+1,i+1) ))); 

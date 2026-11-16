@@ -115,7 +115,7 @@ these files depends on overflow.hpp
     comp-res.o
     debug.o
     frac.o
-    freemod.o
+    free-modules/freemod.o
     gb-default.o
     gb-homog2.o
     gb-sugarless.o
@@ -138,7 +138,7 @@ these files depends on overflow.hpp
     reducedgb.o
     res-a2-gb.o
     res-a2.o
-    schorder.o
+    free-modules/schreyer-orders.o
     skewpoly.o
     solvable.o
     spair.o

@@ -77,6 +77,8 @@ TEST ///
      	  assert( oo === ideal (z^2,x*z,y^3*z,y^6))
 	  tangentCone ideal "x3+x2z2,x2y+xz3+z5"
      	  assert( oo === ideal (x^2*y,x^3,x^2*z^3,2*x*y*z^5-x*z^6,x*z^7,y*z^9))
+	  S = QQ[a..f,x,y]
+	  assert( tangentCone(ideal "ax-by,cx-dy,ex-fy"  ,Strategy => Local) === tangentCone(ideal "ax-by,cx-dy,ex-fy"  ,Strategy => Global) )
 ///
 
 -- Local Variables:

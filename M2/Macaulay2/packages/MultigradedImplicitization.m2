@@ -365,6 +365,64 @@ G = interpolateComponent(samplePoints, sub(basis({0, 1, 1, 0, 1}, dom), R))
 assert(G == {x_6*x_8-x_5*x_9})
 ///
 
+------------------------------------------------------------
+-- Coverage tests for previously untested options.
+------------------------------------------------------------
+
+TEST ///
+-- maxGrading(F, ReturnTargetGrading => true) returns the full grading matrix
+-- including the columns indexing the target ring's generators; the default
+-- form returns only the source-ring columns.  Verify the column counts and
+-- that the source-ring columns of the full form agree with the default form.
+A = matrix {{1,1,1,0,0,0,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,0,0,0,1,1,1}, {1,0,0,1,0,0,1,0,0}, {0,1,0,0,1,0,0,1,0}};
+R = QQ[x_1..x_(numcols A)];
+S = QQ[t_1..t_(numrows A)];
+F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
+Mdef = maxGrading F;
+Mfull = maxGrading(F, ReturnTargetGrading => true);
+assert(numColumns Mfull == numColumns Mdef + numgens S);
+assert(submatrix(Mfull, toList(0..(numgens R - 1))) == Mdef);
+///
+
+TEST ///
+-- componentsOfKernel(d, F, UseMatroid => false) skips the matroid-based
+-- shortcut but yields the same ideal of relations.
+A = matrix {{1,1,1,0,0,0,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,0,0,0,1,1,1}, {1,0,0,1,0,0,1,0,0}, {0,1,0,0,1,0,0,1,0}};
+R = QQ[x_1..x_(numcols A)];
+S = QQ[t_1..t_(numrows A)];
+F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
+gdef = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false));
+gnm = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false, UseMatroid => false));
+assert(ideal gnm == ideal gdef);
+///
+
+TEST ///
+-- componentsOfKernel(d, F, UseInterpolation => true) uses interpolation
+-- (rather than symbolic evaluation) and, on a homogeneous input over QQ,
+-- recovers the same ideal as the default symbolic path.
+A = matrix {{1,1,1,0,0,0,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,0,0,0,1,1,1}, {1,0,0,1,0,0,1,0,0}, {0,1,0,0,1,0,0,1,0}};
+R = QQ[x_1..x_(numcols A)];
+S = QQ[t_1..t_(numrows A)];
+F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
+gdef = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false));
+gip = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false, UseInterpolation => true, CoefficientRing => QQ));
+assert(ideal gip == ideal gdef);
+///
+
+TEST ///
+-- componentsOfKernel(d, F, Grading => G) accepts a user-supplied multigrading;
+-- passing the default maxGrading-derived matrix yields the same ideal as
+-- letting the routine compute it.
+A = matrix {{1,1,1,0,0,0,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,0,0,0,1,1,1}, {1,0,0,1,0,0,1,0,0}, {0,1,0,0,1,0,0,1,0}};
+R = QQ[x_1..x_(numcols A)];
+S = QQ[t_1..t_(numrows A)];
+F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
+M = maxGrading F;
+gdef = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false));
+ggr = delete(null, flatten values new HashTable from componentsOfKernel(2, F, Verbose => false, Grading => M));
+assert(ideal ggr == ideal gdef);
+///
+
 -----------------------------
 ----- Documentation ---------
 -----------------------------

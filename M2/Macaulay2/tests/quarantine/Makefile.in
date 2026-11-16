@@ -7,17 +7,6 @@ DOTS = ../..
 include $(DOTS)/../include/config.Makefile
 VPATH = @srcdir@
 
-ifeq "@DEBUG@" "no"
-MLIMIT = 400000
-VLIMIT = 400000
-TLIMIT = 450
-else
-# give the debug version more time and space
-MLIMIT = 600000
-VLIMIT = 600000
-TLIMIT = 600
-endif
-
 SRCDIR = @srcdir@
 include ../Makefile.test
 
@@ -26,4 +15,3 @@ Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/quarantine
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests/quarantine check "
 # End:
-.NOTPARALLEL:

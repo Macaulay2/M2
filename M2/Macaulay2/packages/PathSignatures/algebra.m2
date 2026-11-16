@@ -102,7 +102,6 @@ shuffleHelper(NCRingElement, NCRingElement) := (f,g) -> (
 
 -- Exposed versions of shuffle
 
-shuffle = method();
 shuffle (NCRingElement, NCRingElement) := (a, b) -> shuffleHelper(a,b); 
 
 NCRingElement ** NCRingElement := shuffle

@@ -1314,6 +1314,11 @@ TEST ///
      (l,ch,ph) = rationalUnivariateRepresentation(I);
      use ring ch;
      assert((l,ch,ph) == (x + y, Z^2 - 3/2*Z - 9, {(-3*Z + 15)/(4*Z - 3), (6*Z + 21)/(4*Z - 3)}));
+     ///
+
+TEST ///
+     R = QQ[x,y];
+     assert(degree(univariateEliminant(y,ideal(x^2-1,x*y+y^2+1)))=={4});
      ///	 
     
 end

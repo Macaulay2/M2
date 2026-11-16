@@ -1,6 +1,6 @@
 // (c) 1994  Michael E. Stillman
-#ifndef _int_bag_hh_
-#define _int_bag_hh_
+#ifndef M2_INT_BAG_HH_
+#define M2_INT_BAG_HH_
 
 #include "newdelete.hpp"
 

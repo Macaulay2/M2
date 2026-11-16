@@ -82,3 +82,7 @@ assert(truncateSeries(5, {1,1}, Divide{1_R,Product{Power{1-x,1}}}) == x^4+x^3+x^
 assert(truncateSeries(5, {1,1}, Divide{1_R,Product{Power{1+x,1}}}) == x^4-x^3+x^2-x+1)
 assert(truncateSeries(5, {1,1}, Divide{1_R,Product{Power{1+x,1},Power{1-x,1}}}) == x^4+x^2+1)
 assert(truncateSeries(3, {1,1}, Divide{1_R,Product{Power{1+x,1},Power{1-y,1}}}) == x^2-x*y+y^2-x+y+1)
+
+-- used to crash M2 (#4100)
+R = QQ[]
+assert(zero poincare ideal 1_R)

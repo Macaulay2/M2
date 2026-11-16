@@ -20,6 +20,7 @@ option(LINTING		"Enable linting source files"		OFF)
 option(MEMDEBUG		"Enable memory allocation debugging"	OFF)
 option(PROFILING	"Enable profiling build flags"		OFF)
 option(COVERAGE		"Enable Clang code coverage test"	OFF)
+option(GCOV		"Enable gcc/gcov code coverage"		OFF)
 option(GIT_SUBMODULE	"Update submodules during build"	ON)
 option(BUILD_NATIVE	"Use native SIMD instructions"		ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
@@ -32,6 +33,8 @@ option(WITH_FFI		"Link with the FFI library"		ON)
 option(WITH_XML		"Link with the libxml2 library"		ON)
 option(WITH_PYTHON	"Link with the Python library"		ON)
 option(WITH_MYSQL	"Link with the MySQL library"		OFF)
+option(WITH_JANSSON	"Link with the Jansson library"		ON)
+option(STATIC_BOOST     "Use the static version of Boost" ON)
 
 set(BUILD_PROGRAMS  "" CACHE STRING "Build programs, even if found")
 set(BUILD_LIBRARIES "" CACHE STRING "Build libraries, even if found")
@@ -104,6 +107,7 @@ message("## Configure Macaulay2
      BUILD_TESTING     = ${BUILD_TESTING}
      BUILD_DOCS        = ${BUILD_DOCS}\n
      COVERAGE          = ${COVERAGE}
+     GCOV              = ${GCOV}
      MEMDEBUG          = ${MEMDEBUG}
      PROFILING         = ${PROFILING}\n
      DEVELOPMENT       = ${DEVELOPMENT}
@@ -198,6 +202,11 @@ if(PROFILING)
   add_compile_options(-pg)
   add_link_options(-pg)
 endif()
+if(GCOV)
+  # -O0 keeps the line attribution in the coverage data meaningful
+  add_compile_options(--coverage -O0)
+  add_link_options(--coverage)
+endif()
 
 # Flags based on build type
 # Note: certain flags are initialized by CMake based on the compiler and build type.
@@ -223,8 +232,12 @@ if(CMAKE_C_COMPILER_ID STREQUAL GNU)
   add_compile_options(-g3)
   add_link_options(-g3)
 elseif(CMAKE_C_COMPILER_ID STREQUAL AppleClang)
-  add_compile_options(-g --sysroot=${CMAKE_OSX_SYSROOT})
-  add_link_options(-g --sysroot=${CMAKE_OSX_SYSROOT})
+  add_compile_options(-g)
+  add_link_options(-g)
+  if(CMAKE_OSX_SYSROOT)
+    add_compile_options(--sysroot=${CMAKE_OSX_SYSROOT})
+    add_link_options(--sysroot=${CMAKE_OSX_SYSROOT})
+  endif()
 else()
   add_compile_options(-g)
   add_link_options(-g)
@@ -236,8 +249,8 @@ endif()
 # Common flags
 # TODO: reduce these if possible
 add_link_options(-L${M2_HOST_PREFIX}/lib)
+include_directories(BEFORE SYSTEM ${M2_HOST_PREFIX}/include)
 add_compile_options(
-  -I${M2_HOST_PREFIX}/include
   -I${CMAKE_SOURCE_DIR}/include
   -I${CMAKE_BINARY_DIR}/include
   )

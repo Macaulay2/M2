@@ -250,7 +250,7 @@ doc ///
       #oo
     Text
       The angles of these solutions (in degrees, not radians, and the 3 refers to the
-      numbner of oscillators).
+      number of oscillators).
     Example
       netList getAngles(3, findRealSolutions I, Radians=>false)
   SeeAlso

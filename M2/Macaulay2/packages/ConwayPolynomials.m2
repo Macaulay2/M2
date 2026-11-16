@@ -68,6 +68,47 @@ document { Key => ConwayPolynomials,
      isWellDefined oo
      ///
      }
+document {
+     Key => (map, GaloisField, GaloisField),
+     Headline => "maps of Conway Galois fields",
+     Usage => "phi = map(F,G)",
+     Inputs => {
+	  "F" => GaloisField,
+	  "G" => GaloisField
+	  },
+     Outputs => {
+	  RingMap => {"the canonical inclusion of ", TT "G", " into a compatible subfield of ", TT "F"}
+	  },
+     "When ", TT "ConwayPolynomials", " is loaded, ", TT "map(F,G)", " constructs the canonical map between compatible Conway-presented finite fields.",
+     "In this implementation, ", TT "GF(p^n)", " contains ", TT "GF(p^m)", " only when ", TT "m", " divides ", TT "n", ", and both fields must be represented using Conway polynomials.",
+     EXAMPLE {
+	  "F2 = GF 2",
+	  "F4 = GF(2^2)",
+	  "F8 = GF(2^3)",
+	  "F16 = GF(2^4)",
+	  "map(F16, F2)",
+	  "map(F16, F4)"
+	  },
+     "If no compatible subfield exists, then Macaulay2 signals an error:",
+     EXAMPLE {
+	  "try map(F16, F8) else \"this map does not exist\""
+	  },
+     "It is also possible to invoke the generic ring-map constructor with an explicit image for a generator of the source field:",
+     EXAMPLE {
+	  "map(F16, F4, {1})"
+	  },
+     "Such a map need not be well-defined:",
+     EXAMPLE {
+	  "phi = map(F16, F4, {1})",
+	  "isWellDefined phi"
+	  },
+     SeeAlso => {
+	  ConwayPolynomials,
+	  GF,
+	  isWellDefined,
+	  (map, Ring, Ring, List)
+	  }
+     }
 document { 
      Key => {conwayPolynomial, (conwayPolynomial,ZZ,ZZ), (conwayPolynomial,ZZ)},
      Headline => "provide a Conway polynomial",
@@ -109,6 +150,14 @@ f1 = map(middleK,K,{middleK_0});
 f3 = map(L,middleL,{L_0});
 f2 = map(middleL,middleK);
 assert(f3 * f2 * f1 === map(L, K));
+///
+
+TEST /// --check conwayPolynomial(q), conwayPolynomial(p,n)
+q = 9
+assert(degree(conwayPolynomial(q)) == {2})
+p = 5
+n = 12
+assert(degree(conwayPolynomial(p,n))=={12})
 ///
 
 -- Local Variables:

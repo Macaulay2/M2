@@ -10,7 +10,7 @@ assert(rank R.Fixed == rank (A**R).Fixed)
 assert(rank R.Fixed == rank (R**A).Fixed)
 
 -- Verify that fixed modules of A and A ** R are isomorphic
-isIsomorphic(R.Fixed, (A ** R).Fixed)
+assert(isIsomorphic(R.Fixed, (A ** R).Fixed))
 
 -- Verifying that induced maps on box products are well-defined
 L = complexLinearizationMap(7)
@@ -27,8 +27,8 @@ assert (class (inverse f) ===MackeyFunctorHomomorphism)
 
 -- Test induced map on box products
 for i to 5 do (
-    p = (random {2,3,5,7})#0;
-    n = (random toList (0..20))#0;
+    p = randomElement {2,3,5,7};
+    n = random 21;
     M = makeRandomCpMackeyFunctor(p);
     A = makeBurnsideMackeyFunctor(p);
     timesn = map(A,A,n);

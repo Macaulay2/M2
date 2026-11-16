@@ -1620,6 +1620,53 @@ M = exponentMatrix(x_1^2*y_2)
 assert(M == matrix{{0,2,0},{0,0,1}})
 ///
 
+TEST ///
+R = buildERing({symbol x}, {1}, QQ, 2);
+S = buildERing({symbol y}, {2}, QQ, 2);
+m = buildEMonomialMap(R, S, {x_0 * x_1});
+G = egbToric(m, OutFile=>stdio)
+assert instance(G, List);
+assert(#G == 7);
+assert all(G, f -> #terms f == 2);
+assert all(G, f -> isHomogeneous f);
+///
+
+TEST ///
+R = buildERing({symbol x}, {1}, QQ, 3);
+assert(toString reduce(x_0^2 + x_0*x_2, {x_1})=="x_0^2")
+///
+
+TEST ///
+R = buildERing({symbol x}, {1}, QQ, 2);
+O = incOrbit(x_0^2, 4);
+assert instance(O, List);
+assert(#O == 4);
+assert all(O, f -> #terms f == 1 and first degree f == 2);
+R4 = buildERing(R, 4);  -- ring wide enough to hold x_3
+    assert(set(O / (f -> sub(f, R4))) ===
+           set {sub(x_0^2, R4), sub(x_1^2, R4),
+                sub(x_2^2, R4), sub(x_3^2, R4)});
+
+P3 = incOrbit(x_0 + x_1^2, 3, Symmetrize => true);
+assert instance(P3, List);
+assert(#P3 == 6);
+assert all(P3, f -> #terms f == 2);
+Q3 = incOrbit(x_0 + x_1^2, 3);
+    assert(#Q3 == 3);
+///
+
+TEST ///
+Q = priorityQueue {1,5,2,-3,0};
+assert (min Q==-3)
+///
+
+TEST ///
+Q = priorityQueue {2,4,6};
+R = priorityQueue {1,3,5};
+mergePQ(Q,R);
+assert (pop Q==1)
+assert (pop Q==2)
+///
 
 end
 

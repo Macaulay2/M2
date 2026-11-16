@@ -7,14 +7,14 @@
  *   version 2 of the License, or any later version.                         *
  *****************************************************************************/
 
-#include "launcher.hpp"
-#include "involutive.hpp"
-#include "monom.hpp"
-#include "monomDL.hpp"
-#include "monomDRL.hpp"
-#include "monomLex.hpp"
-#include "settings-manager.hpp"
-#include "matrix.hpp"
+#include "bibasis/launcher.hpp"
+#include "bibasis/involutive.hpp"
+#include "bibasis/monom.hpp"
+#include "bibasis/monomDL.hpp"
+#include "bibasis/monomDRL.hpp"
+#include "bibasis/monomLex.hpp"
+#include "bibasis/settings-manager.hpp"
+#include "matrices/matrix.hpp"
 
 namespace BIBasis
 {

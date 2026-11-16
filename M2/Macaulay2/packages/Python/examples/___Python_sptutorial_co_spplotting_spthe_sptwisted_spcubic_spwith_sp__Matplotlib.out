@@ -1,0 +1,139 @@
+-- -*- M2-comint -*- hash: 9426046357703022608
+
+i1 : pycode = get(Python#"auxiliary files" | "doc/matplotlib-example.py")
+
+o1 = import matplotlib.pyplot as plt
+     import numpy as np
+
+     fig = plt.figure()
+     ax = fig.add_subplot(projection='3d')
+     t = np.linspace(-10, 10, 100)
+     ax.plot(t, t**2, t**3)
+     plt.show()
+
+
+i2 : pythonRunScript pycode
+
+o2 = {'plt': <module 'matplotlib.pyplot'
+             -9.19191919,  -8.98989899, 
+             -8.38383838,  -8.18181818, 
+             -7.57575758,  -7.37373737, 
+             -6.76767677,  -6.56565657, 
+             -5.95959596,  -5.75757576, 
+             -5.15151515,  -4.94949495, 
+             -4.34343434,  -4.14141414, 
+             -3.53535354,  -3.33333333, 
+             -2.72727273,  -2.52525253, 
+             -1.91919192,  -1.71717172, 
+             -1.11111111,  -0.90909091, 
+             -0.3030303 ,  -0.1010101 , 
+              0.50505051,   0.70707071, 
+              1.31313131,   1.51515152, 
+              2.12121212,   2.32323232, 
+              2.92929293,   3.13131313, 
+              3.73737374,   3.93939394, 
+              4.54545455,   4.74747475, 
+              5.35353535,   5.55555556, 
+              6.16161616,   6.36363636, 
+              6.96969697,   7.17171717, 
+              7.77777778,   7.97979798, 
+              8.58585859,   8.78787879, 
+              9.39393939,   9.5959596 , 
+     from '/usr/lib/python3/dist-packages/matplotlib/pyplot.py'>, 'np':
+     -8.78787879,  -8.58585859,
+     -7.97979798,  -7.77777778,
+     -7.17171717,  -6.96969697,
+     -6.36363636,  -6.16161616,
+     -5.55555556,  -5.35353535,
+     -4.74747475,  -4.54545455,
+     -3.93939394,  -3.73737374,
+     -3.13131313,  -2.92929293,
+     -2.32323232,  -2.12121212,
+     -1.51515152,  -1.31313131,
+     -0.70707071,  -0.50505051,
+      0.1010101 ,   0.3030303 ,
+      0.90909091,   1.11111111,
+      1.71717172,   1.91919192,
+      2.52525253,   2.72727273,
+      3.33333333,   3.53535354,
+      4.14141414,   4.34343434,
+      4.94949495,   5.15151515,
+      5.75757576,   5.95959596,
+      6.56565657,   6.76767677,
+      7.37373737,   7.57575758,
+      8.18181818,   8.38383838,
+      8.98989899,   9.19191919,
+      9.7979798 ,  10.        ])}
+     <module 'numpy' from '/usr/lib/python3/dist-packages/numpy/__init__.py'
+     >, 'fig': <Figure size 640x480 with 1 Axes>, 'ax': <Axes3DSubplot: >,
+     't': array([-10.        ,  -9.7979798 ,  -9.5959596 ,  -9.39393939,
+
+o2 : PythonObject of class dict
+
+i3 : matplotlib = PythonContext "import matplotlib.pyplot as plt"
+
+o3 = matplotlib
+
+o3 : PythonContext
+
+i4 : matplotlib "import numpy as np"
+
+i5 : matplotlib "fig = plt.figure()"
+
+i6 : matplotlib "ax = fig.add_subplot(projection='3d')"
+
+i7 : matplotlib "t = np.linspace(-10, 10, 100)"
+
+i8 : matplotlib "ax.plot(t, t**2, t**3)"
+
+o8 = [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x7187d20db740>]
+
+o8 : PythonObject of class list
+
+i9 : matplotlib "plt.show()"
+
+o9 = None
+
+o9 : PythonObject of class NoneType
+
+i10 : plt = import "matplotlib.pyplot"
+
+o10 = <module 'matplotlib.pyplot' from
+      '/usr/lib/python3/dist-packages/matplotlib/pyplot.py'>
+
+o10 : PythonObject of class module
+
+i11 : np = import "numpy"
+
+o11 = <module 'numpy' from '/usr/lib/python3/dist-packages/numpy/__init__.py'
+      >
+
+o11 : PythonObject of class module
+
+i12 : fig = plt@@figure()
+
+o12 = Figure(640x480)
+
+o12 : PythonObject of class matplotlib.figure.Figure
+
+i13 : ax = fig@@"add_subplot"(projection => "3d")
+
+o13 = Axes3DSubplot(0.125,0.11;0.775x0.77)
+
+o13 : PythonObject of class matplotlib.axes._subplots.Axes3DSubplot
+
+i14 : t = np@@linspace(-10, 10, 100);
+
+i15 : ax@@plot(t, t^2, t^3)
+
+o15 = [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x7187d1971b50>]
+
+o15 : PythonObject of class list
+
+i16 : plt@@show()
+
+o16 = None
+
+o16 : PythonObject of class NoneType
+
+i17 : 

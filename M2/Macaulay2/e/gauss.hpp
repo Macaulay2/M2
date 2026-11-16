@@ -1,11 +1,11 @@
 // Copyright 1996-2005  Michael E. Stillman
-#ifndef _gauss_hh_
-#define _gauss_hh_
+#ifndef M2_GAUSS_HH_
+#define M2_GAUSS_HH_
 
-#include "relem.hpp"
-#include "matrix.hpp"
-#include "polyring.hpp"
-#include "comp-gb.hpp"
+#include "ring-elements/ring-element.hpp"
+#include "matrices/matrix.hpp"
+#include "rings/polyring.hpp"
+#include "groebner-computations/comp-gb.hpp"
 
 struct gm_elem : public our_new_delete
 {

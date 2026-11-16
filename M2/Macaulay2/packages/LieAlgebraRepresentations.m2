@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieAlgebraRepresentations",
-    Version => "1.0",
-    Date => "Nov 8, 2025",
+    Version => "1.01",
+    Date => "May 1, 2026",
     AuxiliaryFiles=>true,
     Headline => "Lie algebra representations and characters",
     Authors => {

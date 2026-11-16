@@ -542,3 +542,16 @@ TEST ///
     J = oscJacobian(G,R);
     I = P + trig R; -- appears to have dim 0, degree 232 (these are OK in char 32003).
 ///
+
+--test getExoticSolutions and showExoticSolutions
+TEST ///
+G = graph {{0,1},{1,2},{2,3},{3,4},{4,2},{4,0}}
+assert(#showExoticSolutions(G) == 1)
+assert(#getExoticSolutions(G) == 1)
+///
+
+-- test vertexSpanningPolynomial
+TEST ///
+G = graph({0,1,2,3}, {{0,1},{1,2},{2,3},{0,3}});
+vertexSpanningPolynomial(G);
+///

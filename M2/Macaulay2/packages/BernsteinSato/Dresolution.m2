@@ -79,24 +79,28 @@ Dresolution Module := options -> M -> (
      pInfo (2, "\t\t\t Rank = " | rank source N | "\t time = " |
 	  tInfo | " seconds");
 
-     M.cache.resolution = new ChainComplex;
-     M.cache.resolution.ring = W;
-     M.cache.resolution#0 = target m;
-     M.cache.resolution#1 = source m;
-     M.cache.resolution.dd#0 = map(W^0, target m, 0);
-     M.cache.resolution.dd#1 = m;
+     M.cache#"resolutionMaps" = {m};
+     
+     -- M.cache.resolution = new ChainComplex;
+     -- M.cache.resolution.ring = W;
+     -- M.cache.resolution#0 = target m;
+     -- M.cache.resolution#1 = source m;
+     -- M.cache.resolution.dd#0 = map(W^0, target m, 0);
+     -- M.cache.resolution.dd#1 = m;
 
      i := 2;
      while source m != 0 and i <= options.LengthLimit do (
 	  pInfo (2, "\t Degree " | i | "...");
 	  tInfo = toString first timing (m = kerGB m);
-     	  M.cache.resolution#i = source m;
-     	  M.cache.resolution.dd#i = m;
+          M.cache#"resolutionMaps" = append(M.cache#"resolutionMaps", m);
+     	  -- M.cache.resolution#i = source m;
+     	  -- M.cache.resolution.dd#i = m;
 	  pInfo(2, "\t\t\t Rank = " | rank source m | "\t time = " |
 	       tInfo | " seconds");
 	  i = i+1;
 	  );
-     M.cache.resolution.length = i-1;
+     M.cache.resolution = complex M.cache#"resolutionMaps";
+     -- M.cache.resolution.length = i-1;
      M.cache.resolution
      )
 
@@ -178,13 +182,14 @@ Dresolution (Module, List) := options -> (M, w) -> (
      -- get the degree shifts right (need to check this against OT paper)
      if not M.cache.?resolution 
      then M.cache.resolution = new MutableHashTable;
-     M.cache.resolution#w = new ChainComplex;
-     M.cache.resolution#w.ring = W;
+     --M.cache.resolution#w = new ChainComplex;
+     --M.cache.resolution#w.ring = W;
      s := rank source N;
      t := rank target N;
-     M.cache.resolution#w#0 = target N;
-     M.cache.resolution#w.dd#0 = map(W^0, M.cache.resolution#w#0, 0);
+     --M.cache.resolution#w#0 = target N;
+     --M.cache.resolution#w.dd#0 = map(W^0, M.cache.resolution#w#0, 0);
 
+     
      -- MAKE THE FIRST STEP OF THE RESOLUTION
      shiftvec := apply(degrees target N, i -> i#0); 
      tempMap := map(HW^(-shiftvec), HW^(rank source N), WtoHW N);
@@ -200,9 +205,10 @@ Dresolution (Module, List) := options -> (M, w) -> (
 		    VWwt, shiftvec);
 	       )
 	  else shiftvec = shifts(Jgb, Vwt, shiftvec);
-	  M.cache.resolution#w#1 = W^(-shiftvec);
-	  M.cache.resolution#w.dd#1 = map(M.cache.resolution#w#0, 
-	       M.cache.resolution#w#1, HWtoW Jgb); 
+	  --M.cache.resolution#w#1 = W^(-shiftvec);
+	  -- M.cache.resolution#w.dd#1 = map(M.cache.resolution#w#0, 
+	  --      M.cache.resolution#w#1, HWtoW Jgb);
+	  resolutionMaps := {map(target N, W^(-shiftvec), HWtoW Jgb)};
 	  );	
      pInfo(2, "\t\t\t Rank = " | #shiftvec | "\t time = " |
 	  tInfo | " seconds");
@@ -228,14 +234,16 @@ Dresolution (Module, List) := options -> (M, w) -> (
 		       	 VWwt, shiftvec);
 	       	    )
 	       else shiftvec = shifts(Jgb, Vwt, shiftvec);
-	       M.cache.resolution#w#i = W^(-shiftvec);
-	       M.cache.resolution#w.dd#i = map(M.cache.resolution#w#(i-1),
-	       	    M.cache.resolution#w#i, HWtoW Jgb);
+	       --M.cache.resolution#w#i = W^(-shiftvec);
+	       -- M.cache.resolution#w.dd#i = map(M.cache.resolution#w#(i-1),
+	       -- 	    M.cache.resolution#w#i, HWtoW Jgb);
+               resolutionMaps = append(resolutionMaps, map(source last resolutionMaps, W^(-shiftvec), HWtoW Jgb));
 	       );
 	  pInfo(2, "\t\t\t Rank = " | #shiftvec | "\t time = " |
 	       tInfo | " seconds");
 	  i = i+1;
      	  );
+     M.cache.resolution#w = complex resolutionMaps;
      M.cache.resolution#w
      )
 
@@ -264,12 +272,12 @@ b = {3,2};
 I = gkz(A,b);
 F1 = Dres(I, {-1,-2,-21,1,2,21});
 F2 = Dres(I, {-1,-2,-20,1,2,20});
-assert all(toList(0..length F1), i -> F1.dd#i - F2.dd#i == 0);
+assert all(toList(0..length F1), i -> F1.dd_i - F2.dd_i == 0);
 
 F3 = Dres(I, {-1,-2,-21,1,2,21}, Strategy => Vhomogenize);
 F4a = Dres(I, {-1,-2,-20,1,2,20}, Strategy => Vhomogenize);
-assert all(toList(0..length F3), i -> F3.dd#i - F4a.dd#i == 0);
+assert all(toList(0..length F3), i -> F3.dd_i - F4a.dd_i == 0);
 
 F5 = Dres(I, {-3,-1,-3,3,1,3});
-assert(F5.dd#1 - gbw(gens I, {-3,-1,-3,3,1,3}) == 0);
+assert(F5.dd_1 - gbw(gens I, {-3,-1,-3,3,1,3}) == 0);
 ///

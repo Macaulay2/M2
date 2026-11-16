@@ -1,8 +1,8 @@
 --A1BrouwerDegrees.m2
 newPackage (
     "A1BrouwerDegrees",
-    Version => "2.0",
-    Date => "October 13, 2025",
+    Version => "2.1",
+    Date => "July 2, 2026",
     Authors => {
         {Name=> "Stephanie Atherton",
     Email => "satherton@student.otis.edu"},
@@ -213,13 +213,14 @@ Node
         a package for working with A1-Brouwer degree computations and quadratic forms
     Description
         Text
-            This package is intended to allow the computation of local and global A1-Brouer degrees in both the stable and unstable settings, and for manipulations of unstable Grothendieck-Witt classes and symmetric bilinear forms including their invariants and decompositions. 
+            This package is intended to allow the computation of local and global A1-Brouwer degrees in both the stable and unstable settings, and for manipulations of unstable Grothendieck-Witt classes and symmetric bilinear forms including their invariants and decompositions. 
 
             Version history: 
             
             @UL{
 				(BOLD("V 1.1: "), "this version was developed by N. Borisov, T. Brazelton, F. Espino, T. Hagedorn, Z. Han, J. Lopez Garcia, J. Louwsma, G. Ong, and A. Tawfeek. This version implements computations of local and global A1-Brouwer degrees, as well as Grothendieck-Witt classes and their invariants. "),
-				(BOLD("V 2.0: "), "this version was developed by S. Atherton, S. Dutta, J. Lopez Garcia, J. Louwsma, Y. Luo, G. Ong, and R. Sagayaraj. This version implements the computation of unstable local and global A1-Brouwer degrees, manipulations of the unstable Grothendieck-Witt group, and generalizes several methods in V 1.1 for Grothendieck-Witt class manipulations over fields to the setting of finite étale algebras over fields.")
+				(BOLD("V 2.0: "), "this version was developed by S. Atherton, S. Dutta, J. Lopez Garcia, J. Louwsma, Y. Luo, G. Ong, and R. Sagayaraj. This version implements the computation of unstable local and global A1-Brouwer degrees, manipulations of the unstable Grothendieck-Witt group, and generalizes several methods in V 1.1 for Grothendieck-Witt class manipulations over fields to the setting of finite étale algebras over fields."),
+				(BOLD("V 2.1: "), "this version fixes a bug in the computation of anisotropic parts of forms over the rational numbers and computes square classes modulo primes of arbitrary size via modular exponentiation.")
 			}@
 
             The $\mathbb{A}^{1}$-Brouwer degree and its unstable counterpart are valued in the Grothendieck-Witt ring and unstable Grothendieck-Group of a field $\text{GW}(k)$ and $\text{GW}^{u}(k)$, respectively. These can be computed as follows: 
@@ -256,6 +257,21 @@ Node
             getSumDecomposition beta
             gamma = makeGWuClass(matrix(QQ, {{11, 0},{0,22}}), 8)
             isIsomorphicForm(beta, gamma)
+    Citation
+	@article{zbMATH08005952,
+	 author = {Borisov, Nikita and Brazelton, Thomas and Espino, Frenly and Hagedorn, Thomas and Han, Zhaobo and Lopez Garcia, Jordy and Louwsma, Joel and Ong, Wern Juin Gabriel and Tawfeek, Andrew R.},
+	 title = {{{\(\mathbb{A}^1\)}}-Brouwer degrees in {Macaulay2}},
+	 fjournal = {The Journal of Software for Algebra and Geometry},
+	 journal = {J. Softw. Algebra Geom.},
+	 issn = {1948-7916},
+	 volume = {14},
+	 pages = {175--187},
+	 year = {2024},
+	 language = {English},
+	 doi = {10.2140/jsag.2024.14.175},
+	 keywords = {14F42,55M25,68W30,11E04,14N10},
+	 zbMATH = {8005952}
+	}
 ///
 
 load "./A1BrouwerDegrees/Documentation/ArithmeticMethodsDoc.m2"
@@ -842,4 +858,106 @@ beta = makeGWuClass matrix(GF(27), {{0,1},{1,0}});
 H = makeHyperbolicUnstableForm GF(27);
 assert(isIsomorphicForm(alpha, H));
 assert(isIsomorphicForm(beta, H));
+///
+
+--The following tests were added during M2-GT 2026
+-- Test 44. getRank test
+
+TEST ///
+-- Rank equals the matrix size, regardless of the entries.
+alpha = makeGWClass matrix(QQ, {{1/1, 0, 0}, {0, -2, 0}, {0, 0, 5}});
+assert(getRank alpha == 3);
+
+beta = makeGWClass matrix(RR, {{1.0, 0}, {0, -1.0}});
+assert(getRank beta == 2);
+
+gamma = makeGWClass matrix(CC, {{1*ii, 0, 0, 0}, {0, -2, 0, 0}, {0, 0, 3, 0}, {0, 0, 0, 5}});
+assert(getRank gamma == 4);
+
+delta = makeGWClass matrix(GF(7), {{1, 0}, {0, 3}});
+assert(getRank delta == 2);
+
+-- getRank on a form built by makeDiagonalForm
+epsilon = makeDiagonalForm(QQ, (2, -3, 5, -7));
+assert(getRank epsilon == 4);
+
+-- getRank on the hyperbolic plane
+H = makeHyperbolicForm QQ;
+assert(getRank H == 2);
+///
+
+--Test 45. getAnisotropicDimension over QQ
+TEST ///
+-- Hyperbolic plane: anisotropic dimension 0
+H = makeHyperbolicForm QQ;
+assert(getAnisotropicDimension H == 0);
+
+-- <1,1> is anisotropic over QQ (no rational solution to x^2 + y^2 = 0)
+twoPos = makeDiagonalForm(QQ, (1, 1));
+assert(getAnisotropicDimension twoPos == 2);
+
+-- <1,-1> is isomorphic to H, so anisotropic dimension 0
+hyp = makeDiagonalForm(QQ, (1, -1));
+assert(getAnisotropicDimension hyp == 0);
+
+-- <1,1,1,1> over QQ: by the four-square theorem this is not hyperbolic in GW(QQ)
+-- Its Witt index is 0 (no isotropic vector over QQ for the positive-definite form)
+fourPos = makeDiagonalForm(QQ, (1, 1, 1, 1));
+assert(getAnisotropicDimension fourPos == 4);
+
+-- Consistency: anisotropic dimension + 2 * Witt index == rank
+M = makeGWClass matrix(QQ, {{1/1, 0, 0}, {0, -2, 0}, {0, 0, 3}});
+assert(getAnisotropicDimension M + 2 * getWittIndex M == getRank M);
+///
+
+-- Test 46 getAnisotropicDimensionQQp
+TEST ///
+-- <1,1> at p=2: 1+1=2 is not a norm from QQ_2*, so the form is anisotropic
+twoPos = makeDiagonalForm(QQ, (1, 1));
+assert(getAnisotropicDimensionQQp(twoPos, 2) == 2);
+
+-- <1,-1> is the hyperbolic plane, always isotropic: anisotropic part is trivial
+hyp = makeDiagonalForm(QQ, (1, -1));
+assert(getAnisotropicDimensionQQp(hyp, 3) == 0);
+///
+
+
+-- Test 47 getAnisotropicPart
+TEST ///
+-- Anisotropic part of the hyperbolic plane is the zero form (empty diagonal).
+H = makeHyperbolicForm QQ;
+aH = getAnisotropicPart H;
+assert(getRank aH == 0);
+
+-- Anisotropic part of <1,1> over QQ is <1,1> itself (the form is anisotropic).
+twoPos = makeDiagonalForm(QQ, (1, 1));
+aTwo = getAnisotropicPart twoPos;
+assert(isIsomorphicForm(aTwo, twoPos));
+
+-- Anisotropic part of 2H = <1,-1,1,-1> is the zero form.
+twoH = makeDiagonalForm(QQ, (1, -1, 1, -1));
+aTwoH = getAnisotropicPart twoH;
+assert(getRank aTwoH == 0);
+///
+
+-- Test 48 getAnisotropicPart for a form whose anisotropy is driven by the real place
+TEST ///
+beta = makeDiagonalForm(QQ, (-1, -1, -1, -1, -1, 1));
+a = getAnisotropicPart beta;
+assert(getRank a == getAnisotropicDimension beta);
+assert(isAnisotropic a);
+assert(isIsomorphicForm(a, makeDiagonalForm(QQ, (-1, -1, -1, -1))));
+assert(isIsomorphicForm(beta, addGW(a, makeHyperbolicForm(QQ, 2*getWittIndex beta))));
+///
+
+-- Test 49 getAnisotropicPart satisfies the Witt decomposition identity for either sign of the signature
+TEST ///
+for D in {(-1, -1, -1, -1, 1), (-2, -3, -5, -7, -11, 1),
+	(2, 3, 5, 7, 11, -1), (-1, -1, 2, 3, -5, 30)} do (
+    diagForm = makeDiagonalForm(QQ, D);
+    anisoPart = getAnisotropicPart diagForm;
+    assert(getRank anisoPart == getAnisotropicDimension diagForm);
+    assert(isAnisotropic anisoPart);
+    assert(isIsomorphicForm(diagForm, addGW(anisoPart, makeHyperbolicForm(QQ, 2*getWittIndex diagForm))));
+    );
 ///

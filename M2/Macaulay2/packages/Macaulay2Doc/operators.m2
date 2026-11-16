@@ -36,24 +36,31 @@ document {
      ///
      }
 
-document {
-     Key => {abs,(abs, RR),(abs, CC),(abs, ZZ),(abs, QQ),(abs, RRi),(abs, Constant)},
-     Headline => "absolute value function",
-	Usage => "abs x\nabs I",
-	Inputs => {
-		"x" => "a number",
-        "I" => RRi
-		},
-	Outputs => {
-		{"the absolute value of ", TT "x"},
-    RRi => {"an interval containing the absolute values of all the point of ", TT "I"}
-		},
-     TT "abs x", " computes the absolute value of ", TT "x", ".",
-	EXAMPLE {
-		"abs(-pi)",
-		"abs(1+ii)"
-		},
-     }
+doc ///
+  Key
+    abs
+    (abs, Number)
+    (abs, Constant)
+  Headline
+    absolute value function
+  Usage
+    abs x
+    abs I
+  Inputs
+    x:{RR,CC}
+    I:{RRi,CCi}
+  Outputs
+    :RR
+      the absolute value of @TT "x"@
+    :RRi
+      an interval containing the absolute values of all the points of @TT "I"@
+  Description
+    Example
+      abs(-pi)
+      abs(1+ii)
+      abs(interval(1,2))
+      abs(interval(1+2*ii,3+4*ii))
+///
 
 document {
      Key => (exp,RingElement),
@@ -67,45 +74,121 @@ document {
      ///
      }
 
-document {
-     Key => {exp,(exp,RR),(exp,CC),(exp,RRi)},
-     Headline => "exponential function",
-     Usage => "exp x\nexp I",
-     Inputs => { "x" => RR ,"I"=>RRi},
-    Outputs => { { "the exponential of ", TT "x" },
-        RRi=>{"an interval containing the exponentials of points of ", TT "I"} } ,
-     EXAMPLE lines ///
-     exp 1p300
-     exp(pi*ii)
-     ///
-     }
+doc ///
+  Key
+    exp
+    (exp, InexactNumber)
+  Headline
+    exponential function
+  Usage
+    exp x
+    exp I
+  Inputs
+    x:{RR,CC}
+    I:{RRi,CCi}
+  Outputs
+    :{RR,CC}
+      the exponential of @TT "x"@
+    :{RRi,CCi}
+      an interval containing the exponentials of all the points of @TT "I"@
+  Description
+    Example
+      exp 1p300
+      exp(pi*ii)
+      exp(interval(1,2))
+      exp(interval(1+2*ii,3+4*ii))
+///
 
-document {
-     Key => {log,(log, RR),(log,CC),(log, RRi),(log, RR, RR),(log, RRi, RRi),
-	 (log,RR,CC),(log,RR,RRi),(log,RRi,RR)},
-     Headline => "logarithm function",
-     Usage => "log x\nlog(b,x)\nlog_b x\nlog I\nlog(b,I)\nlog_b I\nlog(J,x)\nlog_J x\nlog(J,I)\nlog_J I",
-Inputs => { "x" => RR, "b" => RR => {"the base for the logarithm"}, "I" => RRi, "J" => RRi => {"an interval of bases for the logarithm"} },
-Outputs => { { "the logarithm of ", TT "x"}, RRi => {"an interval containing the logarithms of points of ", TT "I"}, RRi => {"an interval containing the logarithms for bases in ", TT "J"} },
-     EXAMPLE lines ///
-	  log 10
-	  log_2 10
-	  log_10 2p100
-     ///
-     }
-document {
-     Key => {sqrt,(sqrt, CC),(sqrt, RR), (sqrt, RRi)},
-     Headline => "square root function",
-Usage => "sqrt x\nsqrt I",
-     Inputs => { "x" => RR, "I" => RRi },
-     Outputs => { { "the square root of ", TT "x"},
-RRi => { "an interval containing the square roots of the points of ", TT "I" }
-},
-     EXAMPLE lines ///
-     sqrt 2p200
-     sqrt (+ii)
-     ///
-     }
+doc ///
+  Key
+    legendreSymbol
+    (legendreSymbol,ZZ,ZZ)
+  Headline
+    Legendre symbol
+  Usage
+    legendreSymbol(a,p)
+  Inputs
+    a:ZZ
+    p:ZZ
+        a prime
+  Outputs
+    :ZZ
+        0 if a is divisible by p, 1 if a is a quadratic residue mod p and -1 if a is not a quadratic residue mod p.
+  Description
+   Text
+     Computes the Legendre symbol of $a$ modulo $p$.
+
+   Example
+     legendreSymbol(4,7)
+     legendreSymbol(5,7)
+     legendreSymbol(14,7)
+///
+
+doc ///
+  Key
+    log
+    (log,InexactNumber)
+    (log,InexactNumber,InexactNumber)
+  Headline
+    logarithm function
+  Usage
+    log x
+    log(b,x)
+    log_b x
+    log I
+    log(b,I)
+    log_b I
+    log(J,x)
+    log_J x
+    log(J,I)
+    log_J I
+  Inputs
+    x:{RR,CC}
+    b:RR
+      the base for the logarithm
+    I:{RRi,CCi}
+    J:RRi
+      an interval of bases for the logarithm
+  Outputs
+    :{RR,CC}
+      the logarithm of @TT "x"@
+    :{RRi,CCi}
+      an interval containing the logarithms of all the points of @TT "I"@
+    :{RR,CC,RRi,CCi}
+      an interval containing the logarithms for bases in @TT "J"@
+  Description
+    Example
+      log 10
+      log_2 10
+      log_10 2p100
+      log interval(2,3)
+      log interval(1+2*ii,3+4*ii)
+///
+
+doc ///
+  Key
+    sqrt
+    (sqrt, InexactNumber)
+  Headline
+    square root function
+  Usage
+    sqrt x
+    sqrt I
+  Inputs
+    x:{RR,CC}
+    I:{RRi,CCi}
+  Outputs
+    :{RR,CC}
+      the square root of @TT "x"@
+    :{RRi,CCi}
+      an interval containing the square roots of all the points of @TT "I"@
+  Description
+    Example
+      sqrt 2p200
+      sqrt(+ii)
+      sqrt(interval(2,3))
+      sqrt(interval(1+2*ii,3+4*ii))
+///
 
 doc ///
   Key
@@ -456,20 +539,14 @@ doc ///
   Headline
     logical not
   Usage
-    n~
+    ~n
   Inputs
     n:ZZ
   Outputs
     :ZZ -- the bitwise complement of @TT "n"@
   Description
     Example
-      7~
-    Text
-      Note that @TT "~"@ has @TO2 {"precedence of operators",
-      "higher precedence"}@ than @TT "-"@, so enclose negative integers in
-      parentheses.
-    Example
-      (-12)~
+      ~7
   SeeAlso
     (symbol &, ZZ, ZZ)
     (symbol |, ZZ, ZZ)
@@ -488,8 +565,9 @@ document {
 
 document {
      Key => symbol ~,
-     Headline => "a unary postfix operator",
+     Headline => "a unary or binary operator, often used for bitwise negation",
     Subnodes => { TO (symbol ~, ZZ) },
+    SeeAlso => { "Python::~ PythonObject", "RInterface::~ RObject"}
      }
 
 document {

@@ -4885,6 +4885,95 @@ assert (ideal(E) == ideal(z));
 assert (ideal(E) == ideal(z));--checking the cache
 ///
 
+-- Coverage tests for previously untested types, options, and cache key
+
+TEST /// --check #72 type-membership of BasicDivisor / WeilDivisor / QWeilDivisor / RWeilDivisor and the "ideals" cache key
+   -- divisor produces a WeilDivisor, which sits inside the full type chain
+   -- WeilDivisor < QWeilDivisor < RWeilDivisor < BasicDivisor.  toQWeilDivisor
+   -- and toRWeilDivisor return strictly QWeilDivisor and RWeilDivisor objects
+   -- (not WeilDivisor).  Every divisor's cache carries an "ideals" hashtable.
+   R = QQ[x,y,z];
+   D = divisor(x);
+   assert(instance(D, WeilDivisor));
+   assert(instance(D, QWeilDivisor));
+   assert(instance(D, RWeilDivisor));
+   assert(instance(D, BasicDivisor));
+   assert(instance(D, HashTable));
+   DQ = toQWeilDivisor D;
+   assert(instance(DQ, QWeilDivisor));
+   assert(not instance(DQ, WeilDivisor));
+   assert(instance(DQ, RWeilDivisor));
+   DR = toRWeilDivisor D;
+   assert(instance(DR, RWeilDivisor));
+   assert(not instance(DR, QWeilDivisor));
+   assert(instance(DR, BasicDivisor));
+   assert(instance(D#cache#(symbol ideals), HashTable));
+///
+
+TEST /// --check #73 clearCache strips computed cache entries, keeping only "ideals"
+   R = QQ[x,y,z]/ideal(x*y-z^2);
+   D = divisor(ideal(x,z));
+   isCartier D;  -- force a cached computation
+   assert(#keys(D#cache) > 1);
+   D2 = clearCache D;
+   assert(instance(D2, BasicDivisor));
+   assert(class D2 === class D);
+   assert(set keys(D2#cache) === set {symbol ideals});
+///
+
+TEST /// --check #74 Safe option for applyToCoefficients
+   -- on valid coefficient transformations the two modes agree.  With
+   -- CoefficientType=>ZZ a non-integer coefficient yields a non-WeilDivisor:
+   -- Safe=>true raises an error, Safe=>false silently returns the bad object.
+   R = QQ[x,y];
+   D = divisor(x*y);
+   assert(applyToCoefficients(D, c -> 2*c, Safe=>true) == applyToCoefficients(D, c -> 2*c, Safe=>false));
+   assert(try (applyToCoefficients(D, c -> c + 1/2, CoefficientType=>ZZ, Safe=>true); false) else true);
+   assert(try (applyToCoefficients(D, c -> c + 1/2, CoefficientType=>ZZ, Safe=>false); true) else false);
+///
+
+TEST /// --check #75 Strategy options (NoStrategy, ModuleStrategy, IdealStrategy) for dualize and reflexify
+   R = QQ[x,y,z]/ideal(x*y-z^2);
+   I = ideal(x,z);
+   assert(dualize(I, Strategy=>NoStrategy) == dualize(I, Strategy=>ModuleStrategy));
+   assert(dualize(I, Strategy=>NoStrategy) == dualize(I, Strategy=>IdealStrategy));
+   assert(reflexify(I, Strategy=>NoStrategy) == reflexify(I, Strategy=>ModuleStrategy));
+   assert(reflexify(I, Strategy=>NoStrategy) == reflexify(I, Strategy=>IdealStrategy));
+///
+
+TEST /// --check #76 KnownDomain (dualize, reflexify) and KnownCartier (mapToProjectiveSpace) options
+   -- both option values produce equal output on a valid input; setting them to
+   -- "true" skips safety checks but does not change the mathematical answer.
+   R = QQ[x,y,z]/ideal(x*y-z^2);
+   I = ideal(x,z);
+   assert(dualize(I, KnownDomain=>true) == dualize(I, KnownDomain=>false));
+   assert(reflexify(I, KnownDomain=>true) == reflexify(I, KnownDomain=>false));
+   T = QQ[a,b,c];
+   D = divisor(a);
+   assert(instance(mapToProjectiveSpace(D, KnownCartier=>true), RingMap));
+   assert(instance(mapToProjectiveSpace(D, KnownCartier=>false), RingMap));
+///
+
+TEST /// --check #77 ReturnMap, AmbientRing, and Section options
+   -- ReturnMap=>true changes the return type of reflexify on a module from
+   -- Module to Matrix, and of embedAsIdeal on a module to a length-2 list.
+   R = QQ[x,y,z]/ideal(x*y-z^2);
+   M = module ideal(x,z);
+   assert(instance(reflexify M, Module));
+   assert(instance(reflexify(M, ReturnMap=>true), Matrix));
+   S = QQ[u,v];
+   r = embedAsIdeal(S^1, ReturnMap=>true);
+   assert(instance(r, List) and #r == 2);
+   -- explicitly passing the AmbientRing inferred by default does not change the divisor
+   V = ZZ/7[xx,yy,uu,vv]/ideal(xx*yy-uu*vv);
+   D1 = divisor({1,2}, {ideal(xx,uu), ideal(yy,uu)});
+   D2 = divisor({1,2}, {ideal(xx,uu), ideal(yy,uu)}, AmbientRing=>V);
+   assert(D1 == D2);
+   -- Section=>null is the default; passing it explicitly is a no-op
+   D3 = divisor({1,2}, {ideal(xx,uu), ideal(yy,uu)}, Section=>null);
+   assert(D1 == D3);
+///
+
 end
 
 ---***************************

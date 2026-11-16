@@ -81,7 +81,7 @@ ZZp Ideal := opts -> (I) -> (
          savedQuotients#(typ, n)
      else (
 	  if not isPrime n or n > 2^64
-	  then return ZZ[DegreeRank => 0]/n;
+	  then return savedQuotients#(typ, n) = ZZ[DegreeRank => 0]/n;
 	  S := new QuotientRing from 
       if typ === "Ffpack" then rawARingGaloisField(n,1)  
         else if typ === "Flint" then rawARingZZpFlint n
@@ -109,31 +109,7 @@ ZZp Ideal := opts -> (I) -> (
 	  S))
 
 initializeEngineLinearAlgebra = method()
-initializeEngineLinearAlgebra Ring := (R) -> (
-    R#"EngineLinearAlgebra" = true;
-    R.determinant = (f) -> (
-        -- The following information 
-        -- f is a Matrix in the ring R
-        -- f should be a square matrix, with free modules for both source and target
-         m := mutableMatrix(f, Dense=>true);
-         new R from rawLinAlgDeterminant raw m
-         );
-    R.inverse = (f) -> (
-        A := mutableMatrix(f, Dense=>true);
-        R := ring A;
-        if numRows A =!= numColumns A then error "expected square matrix";
-        matrix map(R,rawLinAlgInverse(raw A))
-        );
-    R#"solveLinear" = (f,g) -> (
-        -- solve f*X = g
-        if ring f =!= ring g then error "expected same base rings";
-        A := mutableMatrix(f, Dense=>true);
-        B := mutableMatrix(g, Dense=>true);
-        R := ring A;
-        result := map(R,rawLinAlgSolve(raw A,raw B));
-        matrix result
-        );
-    )
+initializeEngineLinearAlgebra Ring := (R) -> R#"EngineLinearAlgebra" = true
 
 isBasicMatrix Matrix := (f) -> isFreeModule source f and isFreeModule target f
 basicDet Matrix := (f) -> (
@@ -232,8 +208,15 @@ Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / promote(ideal f, 
 
 -----------------------------------------------------------------------------
 
-presentation PolynomialRing := Matrix => R -> map(R^1, R^0, 0)
-presentation QuotientRing   := Matrix => R -> R.presentation ??= (
+ZZ.presentation =
+QQ.presentation = R -> presentation module R
+presentation Ring := Matrix => R -> (
+    if R.?presentation then R.presentation R
+    else notImplemented "presentation for this ring")
+presentation InexactFieldFamily := Matrix => R -> presentation default R
+presentation PolynomialRing :=
+presentation InexactField   := Matrix => R -> presentation module R
+presentation QuotientRing   := Matrix => R -> R.cache.presentation ??= (
 	  S := ambient R;
 	  f := generators ideal R;
 	  while class S === QuotientRing do (		    -- untested code
@@ -276,7 +259,7 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
      if isPrime p or isMember(QQ,S.baseRings) then return if S == 0 then 1 else p;
      relns := presentation S;
      if relns == 0 then return char ring relns;
-     if coefficientRing S =!= ZZ then notImplemented();
+     if ultimate(coefficientRing, S) =!= ZZ then notImplemented();
      g := generators gb relns;
      if g == 0 then return char ring g;
      m := g_(0,0);
@@ -352,6 +335,11 @@ getPrimeWithRootOfUnity(ZZ,ZZ) := opt-> (n,r1) -> (
          );
      (p,r2)
      );
+
+-- the "midpoint" of a polynomial in a quotient ring isn't well-defined
+-- what if it's R/I, but I has generators with intervals as coefficients?
+midpoint QuotientRing := R -> (
+    if isFinitePrimeField R then R else error "not well-defined")
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -22,6 +22,7 @@ extern void err_error(struct M2_string_struct*);
 
 use nets;
 use gmp;
+use ballarith;
 use xml;
 use engine;
 use varnets;
@@ -74,7 +75,6 @@ export Symbol := {		    -- symbol table entry for a symbol
      hash:hash_t,		    --   based on the hash code of word, unchanging
      position:Position,	    	    --   the position where the definition was made
      unary:unop,
-     postfix:unop,
      binary:binop,
      frameID:int,		    -- seqno of frame for dictionary containing it
 				    -- 0 for the globalFrame
@@ -122,18 +122,20 @@ export Adjacent := {+lhs:ParseTree, rhs:ParseTree};
 export For := {+ forToken:Token, variable:ParseTree, inClause:ParseTree, fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree, 
      dictionary:Dictionary 					    -- filled in later
      };
-export WhileDo := {+ whileToken:Token, predicate:ParseTree, dotoken:Token, doClause:ParseTree};
-export WhileList := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree};
-export WhileListDo := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree, dotoken:Token, doClause:ParseTree };
-export TryThenElse := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, elseToken:Token, alternate:ParseTree};
-export TryThen     := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree};
-export TryElse     := {+ tryToken:Token, primary:ParseTree,                                    elseToken:Token, alternate:ParseTree};
-export Try         := {+ tryToken:Token, primary:ParseTree};
+export WhileDo     := {+ whileToken:Token, predicate:ParseTree,                       doClause:ParseTree };
+export WhileList   := {+ whileToken:Token, predicate:ParseTree, listClause:ParseTree                     };
+export WhileListDo := {+ whileToken:Token, predicate:ParseTree, listClause:ParseTree, doClause:ParseTree };
+export TryDo       := {+ tryToken:Token, primary:ParseTree,                   variable:ParseTree, doClause:ParseTree, dictionary:Dictionary};
+export TryThenDo   := {+ tryToken:Token, primary:ParseTree, sequel:ParseTree, variable:ParseTree, doClause:ParseTree, dictionary:Dictionary};
+export TryThenElse := {+ tryToken:Token, primary:ParseTree, sequel:ParseTree, alternate:ParseTree };
+export TryThen     := {+ tryToken:Token, primary:ParseTree, sequel:ParseTree                      };
+export TryElse     := {+ tryToken:Token, primary:ParseTree,                   alternate:ParseTree };
+export Try         := {+ tryToken:Token, primary:ParseTree                                        };
 export Catch := {+ catchToken:Token, primary:ParseTree};
 export IfThen := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree };
 export IfThenElse := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree, elseClause:ParseTree};
 export New := {+ newToken:Token, newClass:ParseTree, newParent:ParseTree, newInitializer:ParseTree };
-export Arrow := {+lhs:ParseTree, Operator:Token, rhs:ParseTree, desc:functionDescription};
+export Arrow := {+lhs:ParseTree, rhs:ParseTree, desc:functionDescription};
 export Quote := {+Operator:Token, rhs:Token};
 export GlobalQuote := {+Operator:Token, rhs:Token, global:void};
 export ThreadQuote := {+Operator:Token, rhs:Token, thread:void};
@@ -149,7 +151,7 @@ export ParseTree := (
     Token or Parentheses or EmptyParentheses or Adjacent or Arrow
     or Quote or GlobalQuote or ThreadQuote or LocalQuote
     or Unary or Binary or Postfix or IfThen or IfThenElse
-    or Try or TryThen or TryThenElse or TryElse or Catch
+    or Try or TryThen or TryThenElse or TryElse or TryThenDo or TryDo or Catch
     or WhileDo or WhileListDo or WhileList or For
     or New
     or dummy );
@@ -176,11 +178,11 @@ export localMemoryReferenceCode := {+
      position:Position
      };
 export globalMemoryReferenceCode := {+
-     frameindex:int,
+     var:Symbol,
      position:Position
      };
 export threadMemoryReferenceCode := {+
-     frameindex:int,
+     var:Symbol,
      position:Position,
      x:void						    -- just to distinguish it
      };
@@ -196,14 +198,20 @@ export globalAssignmentCode := {+
      position:Position
      };
 export ifCode := {+ predicate:Code, thenClause:Code, elseClause:Code, position:Position };
-export tryCode := {+ code:Code, thenClause:Code, elseClause:Code, position:Position };
+export tryCode := {+
+    code:Code,
+    thenClause:Code,
+    elseClause:Code,
+    doClause:Code,
+    frameID:int,
+    framesize:int,
+    position:Position };
 export catchCode := {+ code:Code, position:Position };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {+
-     nestingDepth:array(int), -- spots corresponding to global and thread variables are filled with -1
-     frameindex:array(int),
-     lhs:SymbolSequence, -- spots corresponding to local variables are filled with dummySymbol
+     colon:bool, -- := or =
+     lhs:CodeSequence,
      rhs:Code,
      position:Position};
 
@@ -211,7 +219,6 @@ export augmentedAssignmentCode := {+
     oper:Symbol,
     lhs:Code,
     rhs:Code,
-    info:Symbol, -- variable name or operator
     position:Position};
 
 -- code that's already been evaluated; needed for augmented assignment
@@ -221,8 +228,8 @@ export nullCode := {+};
 export realCode := {+x:RR,position:Position};
 export integerCode := {+x:ZZ,position:Position};
 export stringCode := {+x:string,position:Position};
-export unaryCode := {+f:unop,rhs:Code,position:Position};
-export binaryCode := {+f:binop,lhs:Code,rhs:Code,position:Position};
+export unaryCode := {+oper:Symbol,rhs:Code,position:Position};
+export binaryCode := {+oper:Symbol,lhs:Code,rhs:Code,position:Position};
 export adjacentCode := {+lhs:Code,rhs:Code,position:Position};
 export whileDoCode := {+predicate:Code,doClause:Code,position:Position};
 export whileListCode := {+predicate:Code,listClause:Code,position:Position};
@@ -357,9 +364,11 @@ export TaskCell := {+ body:TaskCellBody };
 export pointerCell := {+ v:voidPointer };
 
 export atomicIntCell := {+ v:atomicField, hash:hash_t };
+export mutexCell := {+ v:ThreadMutex, hash:hash_t };
 
 export Expr := (
      CCcell or
+     CCicell or
      RRcell or
      RRicell or
      Boolean or
@@ -414,7 +423,8 @@ export Expr := (
      TaskCell or 
      fileOutputSyncState or
      pointerCell or
-     atomicIntCell
+     atomicIntCell or
+     mutexCell
      );
 
 --Unique True expression

@@ -40,10 +40,10 @@ getMinorsStrategy := (R, m, strat) -> RawMinorsStrategyCodes#strat ?? (
 
 koszul = method()
 koszul(ZZ, Matrix) := Matrix => (i, m) -> map(ring m, rawKoszul(i, raw m))
-koszul Matrix := -* ChainComplex => *- m -> missingPackage "OldChainComplexes"
+koszul Matrix := -* ChainComplex => *- m -> missingPackage "either Complexes or OldChainComplexes"
 
 eagonNorthcott = method()
-eagonNorthcott Matrix := -* ChainComplex => *- m -> missingPackage "OldChainComplexes"
+eagonNorthcott Matrix := -* ChainComplex => *- m -> missingPackage "either Complexes or OldChainComplexes"
 
 -----------------------------------------------------------------------------
 -- symmetricAlgebra
@@ -153,8 +153,8 @@ minors(ZZ, Matrix) := Ideal => opts -> (j, m) -> (
 	       if f =!= null then f#0, 
 	       if f =!= null then f#1)))
 
-pfaffians = method(TypicalValue => Ideal)
-pfaffians(ZZ, Matrix) := (j, m) -> (
+pfaffians = method()
+pfaffians(ZZ, Matrix) := Ideal => (j, m) -> (
      ideal(map(ring m, rawPfaffians(j,raw m))))
 
 pfaffian = method()

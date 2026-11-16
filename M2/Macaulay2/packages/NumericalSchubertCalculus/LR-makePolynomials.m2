@@ -315,9 +315,9 @@ TEST ///
 -- moves solutions wrt flags A
 -- to solutions wrt flags B
 --
-restart
 needsPackage "NumericalAlgebraicGeometry"
 debug needsPackage "NumericalSchubertCalculus"
+setRandomSeed 0
 FFF = CC_53
 Rng = FFF[x_{1,1}, x_{1,2}];
 MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
@@ -330,7 +330,7 @@ sols = solveSystem (
 Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
 solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
 assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
-solsT = changeFlags'OneHomotopy(MX, sols, (conds, Flags1, Flags2))
+solsT = changeFlags'OneHomotopy(MX, sols/coordinates, (conds, Flags1, Flags2))
 assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
 
 /// --end of TEST

@@ -19,7 +19,6 @@ export{
     "mapStratify", 
     "isProper",
     "nonProperSet",
-    "coordProj",
     "StratsToFind",
     "AssocPrimes",
     "polarSequence",
@@ -1205,7 +1204,7 @@ fiberContAssocPrimes=(IY,ConX)->(
     -- if we want to use Msolve here 
     --can replace I with monomialIdeal leadTerm(I), and use Msolve for leadTerm
     mis:= independentSets(IY);
-    u:=support(last random mis);
+    u:=support(randomElement mis);
     xMinusU:=rsort toList(set(gens R) - set(u));
     els:=(#xMinusU)+numgens(R);
     S1:=kk[xMinusU, (gens S)_(toList(numgens(R)..numgens(S)-1)),u,MonomialOrder => {els,numgens(S)-els}];
@@ -1229,7 +1228,7 @@ Node
      	  Text
 	      This package computes Whitney stratifications of real and complex algebraic varieties using the algorithms described in [1, 2, 4]. For varieties considered over the complex numbers the output is indexed by the strata dimension. When wishing to treat the variety over the reals, the same output may be used, but the dimensions of the strata may differ (and some strata may be empty), see [2] for more details. This post processing in the real case is currently left to the user.    
 	      
-	      A method is also provided to stratify polynomial maps $f:X\to Y$ between algebraic varieties, the output is a Whitney stratification of both $X$ and $Y$, such that for each (open, connected) strata $M$ of $X$ there is an (open, connected) strata $N$ of $Y$ such that $f(M) \subset N$ and such that the restriction of $f$ to $M$ is a submersion. This in particular is sufficient to guarantee that Thom's (first) isotopy lemma holds; namely that the stratified homeomorpism type of $f^{-1}(q)$ is fixed for all $q$ in a given strata of the codomain.   
+	      A method is also provided to stratify polynomial maps $f:X\to Y$ between algebraic varieties, the output is a Whitney stratification of both $X$ and $Y$, such that for each (open, connected) strata $M$ of $X$ there is an (open, connected) strata $N$ of $Y$ such that $f(M) \subset N$ and such that the restriction of $f$ to $M$ is a submersion. This in particular is sufficient to guarantee that Thom's (first) isotopy lemma holds; namely that the stratified homeomorphism type of $f^{-1}(q)$ is fixed for all $q$ in a given strata of the codomain.
 	      
 	      Using the methods of [1] or [4] computing the Conormal variety of a variety is an important step in these algorithms, so a method for this is also provided. An alternative method based on [2] is also provided, this requires the computation of polar varieties, hence a method for this is provided as well.
 
@@ -1333,7 +1332,7 @@ Node
 	    WS=new MutableHashTable from for k in keys WS1 list k=>toList((set(WS1)#k)*(set(WS2)#k))
 	    peek WS
 	Text 
-	    There are also several different options to perform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar variteies, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 
+	    There are also several different options to perform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar varieties, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 
 	Example 
 	    WS3=whitneyStratifyPol(I,Algorithm=>"msolve")
 	    peek WS3
@@ -1529,7 +1528,7 @@ Node
 	(polarSequence, Ideal, Ideal)
 	(polarSequence, Ideal, Ideal,List)
     Headline
-    	Computes the list of multiplcities of a subvareity in the polar varieties of another vareity. 
+    	Computes the list of multiplicities of a subvariety in the polar varieties of another variety.
     Usage
     	polarSequence(I)
     Inputs
@@ -1708,5 +1707,156 @@ assert(#(WS#0)==1);
 CCmults=multCC WS;
 m=for s in last CCmults list first s;
 assert(m=={1,1,1});
-///	      
+///
+
+-- conormal / conormalRing structural invariants
+TEST ///
+    R = QQ[x,y,z]
+    I = ideal(y^2*z - x^2)
+    SR = conormalRing R;
+    SI = conormalRing I;
+    assert(class SR === PolynomialRing)
+    assert(class SI === PolynomialRing)
+    assert(numgens SR == 2 * numgens R)
+    assert(numgens SI == 2 * numgens R)
+    C = conormal I;
+    assert(class C === Ideal)
+    assert(coefficientRing ring C === QQ)
+    assert(numgens ring C == 2 * numgens R)
+///
+
+-- polarVars structure and polarSequence: 2-arg vs 3-arg form parity
+TEST ///
+    R = QQ[x,y,z]
+    IZ = ideal(y^2*z - x^2)
+    IX = ideal(x,y,z)
+    pv = polarVars IZ;
+    assert(class pv === List)
+    assert(all(pv, p -> class p === Ideal))
+    assert(pv_(-1) == IZ)
+    ps = polarSequence(IX, IZ);
+    ps3 = polarSequence(IX, IZ, pv);
+    assert(ps == ps3)
+    assert(ps == {0, 1, 2})
+    assert(polarSequence(ideal(x,y), IZ) == {0, 0, 2})
+///
+
+-- polarVars Algorithm option (M2F4 over finite field)
+TEST ///
+    R = ZZ/32749[x,y,z]
+    I = ideal(y^2*z - x^2)
+    pvM2F4 = polarVars(I, Algorithm=>"M2F4");
+    assert(class pvM2F4 === List)
+    assert(#pvM2F4 == #(polarVars I))
+    assert(pvM2F4_(-1) == I)
+///
+
+-- eulerObsMatrix on Whitney cusp: structural invariants
+-- (specific off-diagonal entries depend on random polar choices, so only check stable shape)
+TEST ///
+    R = QQ[x,y,z]
+    Y = ideal(y^2 + x^3 - x^2*z^2)
+    V = whitneyStratify Y;
+    EuL = eulerObsMatrix V;
+    Eu = first EuL;
+    strataList = last EuL;
+    assert(class Eu === Matrix)
+    assert(numRows Eu == 3 and numColumns Eu == 3)
+    assert(Eu_(0,0) == 1 and Eu_(1,1) == 1 and Eu_(2,2) == 1)
+    assert(class strataList === List)
+    assert(all(strataList, s -> #s == 2 and instance(first s, ZZ) and class last s === Ideal))
+///
+
+-- minCoarsenWS reduces or preserves; output of whitneyStratifyPol coarsens to whitneyStratify
+TEST ///
+    R = QQ[x,y,z]
+    I = ideal(y^2*z - x^2)
+    WSc = whitneyStratify I;
+    mWSc = minCoarsenWS WSc;
+    assert(class mWSc === MutableHashTable)
+    assert(keys mWSc === keys WSc)
+    for k in keys mWSc do assert(#(mWSc#k) <= #(WSc#k))
+    WSpol = whitneyStratifyPol I;
+    mWSpol = minCoarsenWS WSpol;
+    assert(class mWSpol === MutableHashTable)
+    for k in keys mWSc do assert(#(mWSpol#k) == #(mWSc#k))
+///
+
+-- AssocPrimes=>false branch produces a stratification whose top-stratum match the default
+TEST ///
+    R = QQ[x,y,z]
+    I = ideal(y^2 + x^3 - x^2*z^2)
+    WSA = whitneyStratify(I, AssocPrimes=>false);
+    WSB = whitneyStratify I;
+    assert(keys WSA === keys WSB)
+    assert(set toList WSA#0 === set toList WSB#0)
+    assert((first WSA#0) == ideal(gens R))
+///
+
+-- whitneyStratify Projective=>true on the projective Whitney umbrella
+TEST ///
+    S = QQ[x,y,z,w]
+    I = ideal(y^2*z - x^2*w)
+    WSp = whitneyStratify(I, Projective=>true);
+    assert(class WSp === MutableHashTable)
+    assert(member(2, keys WSp))
+    assert(#(WSp#0) >= 1)
+///
+
+-- StratsToFind option dispatch: all three values return a 2-element list of MutableHashTables
+TEST ///
+    R = QQ[a,b,c,x]
+    I = ideal(a*x^2 + b*x + c)
+    S2 = QQ[a,b,c]
+    F = {R_0, R_1, R_2}
+    msAll = mapStratify(F, I, ideal(0_S2), isProper=>false);
+    msSO  = mapStratify(F, I, ideal(0_S2), isProper=>false, StratsToFind=>"singularOnly");
+    msMo  = mapStratify(F, I, ideal(0_S2), isProper=>false, StratsToFind=>"most");
+    for ms in {msAll, msSO, msMo} do (
+        assert(class ms === List);
+        assert(#ms == 2);
+        assert(class first ms === MutableHashTable);
+        assert(class last ms === MutableHashTable);
+        );
+///
+
+-- mapStratifyPol on the quadratic root-counting example: structural invariants only
+-- (specific strata are probabilistic; see whitneyStratifyPol caveat)
+TEST ///
+    R = QQ[a,b,c,x]
+    I = ideal(a*x^2 + b*x + c)
+    S2 = QQ[(gens R)_{0..2}]
+    F = {R_0, R_1, R_2}
+    ms1 = mapStratifyPol(F, I, ideal(0_S2), isProper=>false);
+    assert(class ms1 === List)
+    assert(#ms1 == 2)
+    assert(class first ms1 === MutableHashTable)
+    assert(class last ms1 === MutableHashTable)
+///
+
+-- nonProperSet for the quadratic projection: the non-properness locus is V(a)
+TEST ///
+    R = QQ[a,b,c,x]
+    I = ideal(a*x^2 + b*x + c)
+    S2 = QQ[(gens R)_{0..2}]
+    F = {R_0, R_1, R_2}
+    np = nonProperSet(F, I, ideal(0_S2));
+    assert(class np === Ideal)
+    assert(np == ideal S2_0)
+///
+
+-- multCC on Whitney umbrella: three strata each with multiplicity 1
+TEST ///
+    R = QQ[x,y,z]
+    I = ideal(y^2*z - x^2)
+    V = whitneyStratify I;
+    cc = multCC V;
+    assert(class first cc === Matrix)
+    assert(class last cc === List)
+    mults = for s in last cc list first s;
+    assert(#mults == 3)
+    assert(all(mults, m -> m == 1))
+///
+
+end--
 

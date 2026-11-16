@@ -13,7 +13,7 @@ runBertini(storeBM2Files)
 makeWitnessSetFiles(storeBM2Files,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components. 
 --When we import the SliceFile, we get a list.
 ----The first element of the list is a list of pairs of coefficient names and their value.
-----The second element of the list is a list of pairs of names of linear functions and the lieanr function. 
+----The second element of the list is a list of pairs of names of linear functions and the linear function. 
 L=importSliceFile(storeBM2Files) 
 assert(#L==2)
 assert (#L_0==8)

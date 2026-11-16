@@ -1,5 +1,5 @@
-#ifndef __exptable_h_
-#define __exptable_h_
+#ifndef M2__EXPTABLE_H_
+#define M2__EXPTABLE_H_
 /* Implementation of a hashtable [exponent vectors, of fixed length] --> unsigned long int. */
 /* The implementation uses table.{h,c}, which was written by David R. Hanson */
 

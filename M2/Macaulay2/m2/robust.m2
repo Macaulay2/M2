@@ -4,8 +4,6 @@ needs "lists.m2"
 needs "max.m2"
 needs "nets.m2"
 
-simpleToString := toString
-
 timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
 
 printingTimeLimit = 20
@@ -37,8 +35,6 @@ String.Format = format
 silentRobustNet = (wid,ht,sec,y) -> (
      truncNet(wid,ht,
 	  try timelimit (sec, () -> checkNet if lookup(symbol Format,class y) =!= null then (lookup(symbol Format,class y)) y else net y)
-	  else 
-	  try timelimit (sec, () -> checkString toExternalString y)
 	  else (
 	       alarm 0;
 	       simpleToString y)
@@ -58,9 +54,12 @@ silentRobustStringWithClass = (wid,sec,y) -> (
      part1 :=                            silentRobustString(wid - width part2,sec,      y);
      concatenate(part1, part2));
 
+
+-- mainly called by processErrorArgs0 in debugging.dd to print errors
+Thing.RobustPrintStringMethod = obj -> try silentRobustString(40, 3, obj)
+
 -- mainly called by KeyNotFound in hashtables.dd to print missing key errors
-Thing.RobustPrintMethod = (msg, obj) -> try toString stack { msg | ":",
-    horizontalJoin("\t", silentRobustNetWithClass(60, 5, 3, obj)) } else msg
+Thing.RobustPrintNetMethod = obj -> try silentRobustNetWithClass(60, 5, 3, obj)
 
 hush := false
 scan(flexibleBinaryOperators, op -> (

@@ -11,7 +11,7 @@
 #include <cmath>
 #include <string>
 
-#include "allocator.hpp"
+#include "bibasis/allocator.hpp"
 #include "error.h"
 
 #define int_divide_ceil(x,y) (((x)+(y)-1)/(y))

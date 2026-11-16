@@ -2,7 +2,7 @@
 
 #include "types.h"
 #include "M2mem.h"
-#include "debug.h"
+#include <interface/m2-mem.h>
 
 #ifdef MEMDEBUG
 #include <memdebug.h>
@@ -34,97 +34,6 @@ void outofmem(void) {
      exit(1);
 }
 
-void outofmem2(size_t new) {
-     const char *msg = "\n\n *** out of memory trying to allocate %ld bytes, exiting ***\n";
-     static char buf[sizeof(msg) + 100];
-     sprintf(buf,msg,(long)new);
-     int r = write(STDERR,buf,strlen(buf));
-     if (r == ERROR) exit(1);
-     exit(1);
-}
-
-char *getmem(size_t n)
-{
-  char *p;
-  TRAPCHK_SIZE(n);
-  enter_getmem();
-#ifdef MEMDEBUG
-  p = M2_debug_malloc(n);
-#else
-  p = GC_MALLOC(n);		/* GC_MALLOC clears its memory; we preserve that */
-#endif
-  if (p == NULL) outofmem2(n);
-#ifndef NDEBUG
-  memset(p,0xbe,n);		/* fill with 0xbebebebe ... */
-  trapchk(p);
-#endif
-  exit_getmem();
-  return p;
-}
-
-void freememlen(void *s, size_t old) {
-#    ifndef NDEBUG
-     trapchk(s);
-#    endif
-#ifdef MEMDEBUG
-     M2_debug_free(s);
-#else     
-     /* GC_FREE(s); */
-#endif
-}
-
-void freemem(void *s) {
-#    ifndef NDEBUG
-     trapchk(s);
-#    endif
-#ifdef MEMDEBUG
-     M2_debug_free(s);
-#else     
-     /* GC_FREE(s); */
-#endif
-}
-
-char *getmem_clear(size_t n)
-{
-  char *p;
-  enter_getmem();
-#ifdef MEMDEBUG
-  p = M2_debug_malloc(n);
-#else
-  p = GC_MALLOC(n);
-#endif
-  if (p == NULL) outofmem2(n);
-#ifdef MEMDEBUG
-  memset(p,0,n);
-#else
-  /* note: GC_MALLOC clears memory before returning.
-     If you switch to another memory allocator, you must clear it explicitly here */
-#endif
-  #ifndef NDEBUG
-  trapchk(p);
-  #endif
-  exit_getmem();
-  return p;
-}
-
-char *getmem_atomic(size_t n)
-{
-  char *p;
-  enter_getmem();
-#ifdef MEMDEBUG
-  p = M2_debug_malloc_atomic(n);
-#else  
-  p = GC_MALLOC_ATOMIC(n);
-#endif
-  if (p == NULL) outofmem2(n);
-#ifndef NDEBUG
-  memset(p,0xac,n);		/* fill with 0xacacacac ... */
-  trapchk(p);
-#endif
-  exit_getmem();
-  return p;
-}
-
 char *getmem_malloc(size_t n)
 {
   char *p;
@@ -139,26 +48,9 @@ char *getmem_malloc(size_t n)
   return p;
 }
 
-char *getmem_atomic_clear(size_t n)
-{
-  char *p;
-  enter_getmem();
-#ifdef MEMDEBUG
-  p = M2_debug_malloc_atomic(n);
-#else  
-  p = GC_MALLOC_ATOMIC(n);
-#endif
-  if (p == NULL) outofmem2(n);
-  memset(p,0,n);		/* GC_MALLOC_ATOMIC does not clear memory */
-#ifndef NDEBUG
-  trapchk(p);
-#endif
-  exit_getmem();
-  return p;
-}
-
 char *getmoremem (char *s, size_t old, size_t new) {
      void *p;
+     (void)old;
      enter_getmem();
      p = GC_REALLOC(s,new);
      if (p == NULL) outofmem2(new);
@@ -203,56 +95,6 @@ char *getmoremem_atomic (char *s, size_t old, size_t new) {
      exit_getmem();
      return p;
      }
-
-/* Valgrind helper functions */
-#ifndef NVALGRIND
-
-void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc)(size_t s){
-    long result;
-    OrigFn fn;
-    VALGRIND_GET_ORIG_FN(fn);
-    CALL_FN_W_W(result,fn,s);
-    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
-    return (void*)result;
-}
-
-void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc_atomic)(size_t s){
-    long result;
-    OrigFn fn;
-    VALGRIND_GET_ORIG_FN(fn);
-    CALL_FN_W_W(result,fn,s);
-    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
-    return (void*)result;
-}
-
-void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc_ignore_off_page)(size_t s){
-    long result;
-    OrigFn fn;
-    VALGRIND_GET_ORIG_FN(fn);
-    CALL_FN_W_W(result,fn,s);
-    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
-    return (void*)result;
-}
-
-void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_malloc_atomic_ignore_off_page)(size_t s){
-    long result;
-    OrigFn fn;
-    VALGRIND_GET_ORIG_FN(fn);
-    CALL_FN_W_W(result,fn,s);
-    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
-    return (void*)result;
-}
-
-void *I_WRAP_SONAME_FNNAME_ZU(libgcZdsoZd1,GC_realloc)(void *p, size_t s){
-    long result;
-    OrigFn fn;
-    VALGRIND_GET_ORIG_FN(fn);
-    CALL_FN_W_WW(result,fn,(long)p,s);
-    VALGRIND_MAKE_MEM_DEFINED(&result,sizeof(result));
-    return (void*)result;
-}
-
-#endif /* NVALGRIND */
 
 /*
  Local Variables:

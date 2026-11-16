@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {tan,(tan,CC),(tan,RR), (tan,RRi)},
+     Key => {tan,(tan,InexactNumber)},
      Headline => "compute the tangent",
 Usage => "tan x\ntan I",
      Inputs => { 

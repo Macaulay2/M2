@@ -18,7 +18,6 @@ set(CLIST
   M2types.c M2lib.c M2mem.c types.h
   scclib.c ../c/scc-core.h
   memdebug.c memdebug.h
-  debug.c debug.h
   getpagesize.h M2mem.h
   gmp_aux.c gmp_aux.h
   gdbm_interface.c
@@ -93,6 +92,7 @@ set(DLIST
   texmacs.d
   boostmath.dd
   atomic2.d
+  json.d
   ffi.d		# removed unless WITH_FFI
   interp.dd	# this one is last, because it contains the top level interpreter
   version.dd
@@ -112,6 +112,9 @@ if(NOT WITH_PYTHON)
 endif()
 if(NOT WITH_FFI)
   list(REMOVE_ITEM DLIST ffi.d)
+endif()
+if(NOT WITH_JANSSON)
+  list(REMOVE_ITEM DLIST json.d)
 endif()
 
 ###############################################################################
@@ -169,7 +172,6 @@ target_include_directories(M2-interpreter
     # for libraries that the interpreter needs
     $<BUILD_INTERFACE:${READLINE_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
-    $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include/Macaulay2>
     $<$<BOOL:${WITH_PYTHON}>:$<BUILD_INTERFACE:${Python3_INCLUDE_DIRS}>>
   PRIVATE
@@ -194,6 +196,10 @@ foreach(LIB IN LISTS LIBRARIES_LIST)
   endif()
 endforeach()
 
+if(TARGET Eigen3::Eigen)
+  target_include_directories(M2-interpreter PUBLIC $<BUILD_INTERFACE:$<TARGET_PROPERTY:Eigen3::Eigen,INTERFACE_INCLUDE_DIRECTORIES>>)
+endif()
+
 foreach(LIB IN LISTS LIBRARY_LIST)
   if(${LIB}_FOUND)
     target_link_libraries(M2-interpreter PUBLIC ${${LIB}_LIBRARY})
@@ -208,8 +214,6 @@ target_compile_options(M2-interpreter PRIVATE
   -Wno-sign-compare
   -Wno-uninitialized
   -Wno-unused
-  -Wno-array-bounds   # FIXME: caused by scc1's implementation of arrays
-
   # FIXME: mismatched-tags and parentheses-equality errors are caused by scc1
   $<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang>:-Wno-parentheses-equality>
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags -Wno-parentheses-equality>

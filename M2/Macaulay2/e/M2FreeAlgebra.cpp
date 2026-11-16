@@ -8,8 +8,8 @@
 
 #include "exceptions.hpp"
 #include "monoid.hpp"
-#include "monomial.hpp"
-#include "relem.hpp"
+#include "monomials/monomial.hpp"
+#include "ring-elements/ring-element.hpp"
 
 PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
                         const PolyList& polys)
@@ -77,6 +77,7 @@ void M2FreeAlgebra::text_out(buffer &o) const
 
 unsigned int M2FreeAlgebra::computeHashValue(const ring_elem a) const
 {
+  (void) a;
   return 0; // TODO: change this to a more reasonable hash code.
 }
 
@@ -202,7 +203,7 @@ ring_elem M2FreeAlgebra::copy(const ring_elem f) const
 
 void M2FreeAlgebra::remove(ring_elem &f) const
 {
-  // do nothing
+  (void) f;
 }
 
 ring_elem M2FreeAlgebra::negate(const ring_elem f1) const
@@ -277,6 +278,10 @@ ring_elem M2FreeAlgebra::divide(const ring_elem f, const ring_elem g) const
 void M2FreeAlgebra::syzygy(const ring_elem a, const ring_elem b,
                       ring_elem &x, ring_elem &y) const
 {
+  (void) a;
+  (void) b;
+  (void) x;
+  (void) y;
   throw exc::internal_error("M2FreeAlgebra::syzygy is not yet written!");
 
   // TODO: In the commutative case, this function is to find x and y (as simple as possible)

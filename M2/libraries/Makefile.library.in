@@ -1,5 +1,7 @@
 # -*- Makefile -*-
 LIBRARY_MODE = yes
+TLIMIT ?= 100
+VLIMIT ?= 400000
 include ../../include/config.Makefile
 TARFILE_DIR = @abs_top_srcdir@/BUILD/tarfiles
 export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
@@ -8,7 +10,6 @@ export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
 # between compile time and install time is to prepend a string
 PREFIX = $(BUILTLIBPATH)
-.NOTPARALLEL:
 ifneq ($(PARALLEL),yes)
 NOTPARALLEL = -j1
 endif
@@ -123,10 +124,9 @@ PACKAGE-DISTCLEAN-TARGET := distclean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
 fetch: download-enabled
 ifeq ($(SUBMODULE),true)
-fetch: .submodule-updated
-.submodule-updated:
+fetch: @abs_top_srcdir@/submodules/$(LIBNAME)/.git
+@abs_top_srcdir@/submodules/$(LIBNAME)/.git:
 	$(MAKE) update-submodule
-	touch $@
 update-submodule:
 	if git rev-parse 2> /dev/null;                          \
 	then                                                    \
@@ -141,7 +141,6 @@ update-submodule:
 	fi
 
 clean::
-	rm -f .submodule-updated
 	if git rev-parse 2> /dev/null;                                         \
 	then                                                                   \
 		@GIT@ submodule deinit @abs_top_srcdir@/submodules/$(LIBNAME); \
@@ -264,6 +263,17 @@ CHECKFETCHED = case "$(URL)" in									\
 	esac
 $(TARFILE_DIR)/$(TARFILE) :
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
+ifneq ($(SHA256SUM), true)
+	@cd $(TARFILE_DIR) && \
+		actual=$$(sha256sum $(TARFILE) | awk '{print $$1}'); \
+		if test "x$(SHA256SUM)" != "x$$actual"; \
+		then echo "error: *** SHA256 hash of $(TARFILE) does not match the expected value"; \
+		echo "  expected: $(SHA256SUM)"; \
+		echo "    actual: $$actual"; \
+		exit 1; \
+		else echo " \033[32m✓\033[0m SHA256 ok ($(SHA256SUM))"; \
+		fi
+endif
 distclean: package-distclean
 clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(UNTARDIR) $(OLDUNTARDIR)
 distclean: clean ; rm -rf Makefile
@@ -277,42 +287,13 @@ ifneq (@DOWNLOAD@,yes)
 	@ false
 endif
 
-SLIMIT ?= 8192
-TLIMIT ?= 100
-MLIMIT ?= 400000
-VLIMIT ?= 400000
-LIMIT := :
-ifeq (@ULIMIT_T@,yes)
-LIMIT += ; ulimit -t $(TLIMIT)
-endif
-ifeq (@ULIMIT_M@,yes)
-LIMIT += ; ulimit -m $(MLIMIT)
-endif
-ifeq (@ULIMIT_V@,yes)
-LIMIT += ; ulimit -v $(VLIMIT)
-endif
-ifeq (@ULIMIT_S@,yes)
-LIMIT += ; ulimit -s $(SLIMIT)
-endif
-ifeq (@ULIMIT_T@,yes)
-LIMIT += ; ulimit -t
-endif
-ifeq (@ULIMIT_M@,yes)
-LIMIT += ; ulimit -m
-endif
-ifeq (@ULIMIT_V@,yes)
-LIMIT += ; ulimit -v
-endif
-ifeq (@ULIMIT_S@,yes)
-LIMIT += ; ulimit -s
-endif
 recheck:
 	rm -f .checked-$(VERSION)
 	$(MAKE) check
 check: .checked-$(VERSION)
 .checked-$(VERSION) : .compiled-$(VERSION)
 	$(WHY)
-	+ set -x; $(LIMIT); $(CDBUILDDIR) && $(CHECKCMD)
+	+ set -x; $(LIMIT) $(CDBUILDDIR) && $(CHECKCMD)
 	touch $@
 
 ls:; ls -la . tarfiles
@@ -336,6 +317,12 @@ help:;
 	@ echo "  check                       check whether library compiled correctly"
 	@ echo "  recheck                     check, even if we've checked before"
 	@ echo "  update-submodule            update git submodule for library (if applicable)"
+	@ echo ""
+	@ echo "options, for running the library's own tests:"
+	@ echo ""
+	@ echo "  TLIMIT=$(TLIMIT)                  cpu time limit, in seconds"
+	@ echo "  VLIMIT=$(VLIMIT)               virtual memory limit, in kilobytes"
+	@ echo "  SLIMIT=$(SLIMIT)                 stack size limit, in kilobytes"
 	@ echo ""
 autotool-versions:
 	whereis autoconf

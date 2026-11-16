@@ -1,6 +1,6 @@
-#include "GBF4Interface.hpp"
-#include "GBF4Computation.hpp"
-#include "../matrix-stream.hpp"
+#include "gb-f4/GBF4Interface.hpp"
+#include "gb-f4/GBF4Computation.hpp"
+#include "matrices/matrix-stream.hpp"
 #include <iostream>
 
 namespace newf4 {
@@ -21,6 +21,7 @@ GBF4Computation::GBF4Computation(
       mMacaulayMatrix(),
       mVariableWeights(variableWeights)
 {
+  (void) strategy;
 }
 
 void GBF4Computation::initializeWithMatrix(const Matrix* M)

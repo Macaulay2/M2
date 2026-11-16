@@ -204,3 +204,21 @@ TEST ///
   assert(#(quotient(ideal I_*, B, Strategy => Iterate))_* == 1)
   -- assert(#(quotient(ideal I_*, B, Strategy => Quotient))_* == 1) -- FIXME
 ///
+
+-- Tests added in the 2026 test-audit pass: quotient boundary cases and
+-- the self-quotient identity.  These exercise the unit-element and
+-- unit-ideal divisors, the zero-ideal dividend, and the I:I = R identity.
+TEST ///
+  R = QQ[x,y,z]
+  I = ideal(x^2*y, y^2*z)
+  -- quotient by 1 leaves the ideal unchanged
+  assert(quotient(I, 1_R) == I)
+  assert(quotient(I, ideal 1_R) == I)
+  -- quotient of the zero ideal is the zero ideal
+  assert(quotient(ideal 0_R, x) == ideal 0_R)
+  -- self-quotient of an ideal is the unit ideal
+  assert(quotient(I, I) == ideal 1_R)
+  -- the original ideal sits inside the quotient
+  assert(isSubset(I, quotient(I, x)))
+  assert(isSubset(I, quotient(I, ideal vars R)))
+///

@@ -1,5 +1,5 @@
-#ifndef __nc_f4_hpp__
-#define __nc_f4_hpp__
+#ifndef M2_NCALGEBRAS__NC_F4_HPP__
+#define M2_NCALGEBRAS__NC_F4_HPP__
 
 #include "m2tbb.hpp"                      // for tbb interface
 
@@ -11,7 +11,7 @@
 #include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
 #include "NCAlgebras/FreeAlgebra.hpp"     // for FreeAlgebra
-#include "VectorArithmetic.hpp"           // for VectorArithmetic, ElementArray, etc
+#include "basic-rings/vector-arithmetic.hpp"           // for VectorArithmetic, ElementArray, etc
 #include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"                  // for VECTOR, our_new_delete
 

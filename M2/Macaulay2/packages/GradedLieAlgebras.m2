@@ -34,7 +34,6 @@ newPackage(
   
 export {
     "boundaries",
-    "center",
     "computedDegree",
     "cycles",
     "differential",
@@ -151,10 +150,6 @@ export {
 -- Also, the elements of Q#diff belong to ambient(Q)=F.
 -- The ambient of Q=L/I where class I=LieIdeal is L, The elements of Q#diff belong to ambient(Q)=L.
 -- The ideal Q#ideal=I is an ideal of L.
- 
-
-recursionLimit=10000;
-
 
 ----------------------------------------
 --
@@ -568,8 +563,7 @@ annihilator(FGLieSubAlgebra):=opts->(S)->(
     quotient(zeroIdeal L,S)
     );
 
-center=method()
-center(LieAlgebra):=L->(
+center(LieAlgebra):= opts -> L->(
     c:=annihilator(fullLieSubAlgebra L);
     new LieIdeal from c
     );

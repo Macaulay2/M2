@@ -1,2 +1,0 @@
-fix the error message line number reporting so that if a errorDepth is too
-high, it still reports something reasonable.  (Is it possible??)

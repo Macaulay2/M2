@@ -1,7 +1,7 @@
 newPackage(
    "GameTheory",
-   Version => "1.0",
-   Date => "May, 2025",
+   Version => "1.1",
+   Date => "October, 2026",
    Authors => {
       {Name => "Erin Connelly",
          Email => "erin.connelly@uni-osnabrueck.de",
@@ -10,7 +10,7 @@ newPackage(
          Email => "galgano@mpi-cbg.de",
          HomePage => "https://sites.google.com/view/vincenzogalgano"},
       {Name => "Zhuang He",
-         Email => "zhuang.he@unito.it",
+         Email => "he.zhu@northeastern.edu",
          HomePage => "https://sites.google.com/view/hezhuang/home"},
       {Name => "Lars Kastner",
          Email => "kastner@math.tu-berlin.de",
@@ -33,8 +33,7 @@ newPackage(
    },
    Headline => "computing equilibria in game theory",
    Keywords => {"Game Theory"},
-   PackageExports => {"Polyhedra","GraphicalModels"},
-   PackageImports => {"Polyhedra"}
+   PackageExports => {"Polyhedra","GraphicalModels"}
    )
 
 export {
@@ -68,8 +67,7 @@ export {
    "intersectWithCImodel",
    "spohnCI"
 }
-
-
+ 
 --***************************************--
 --   METHODS FOR CORRELATED EQUILIBRIA   --
 --***************************************--
@@ -94,11 +92,7 @@ enumerateTensorIndices List := s -> (
       start := enumerateTensorIndices s#0;
       ri := toList (1..(length(s)-1));
       rest := enumerateTensorIndices s_ri;
-      result := {};
-      for s in start do
-         for r in rest do
-            result = append(result, join(s,r));
-      result
+      flatten for sVal in start list for rVal in rest list join(sVal,rVal)
       )
 
 ---------------------------------------------------------
@@ -179,12 +173,8 @@ slice = method()
 slice (Tensor, List, List) := (T, Lstart, Lend) -> (
    dims := format T;
    iteratingPosition := length Lstart;
-   result := {};
-   for i from 0 to dims#iteratingPosition -1 do (
-      mindex := join(Lstart, {i}, Lend);
-      result = append(result, T#mindex);
-   );
-   result
+   for i from 0 to dims#iteratingPosition - 1 list
+      T#(join(Lstart, {i}, Lend))
    )
 
 ---------------------------------------------------
@@ -197,6 +187,10 @@ slice (Tensor, List, List) := (T, Lstart, Lend) -> (
 getVariableToIndexset = method()
 getVariableToIndexset(Ring, List) := (R, ki) -> (
    p := position(apply(gens R, i -> last baseName i), i -> i == ki);
+   if p === null then
+      error("Index " | toString(ki) | " not found in the polynomial ring. "
+            | "Expected one of the following variables: "
+            | toString(apply(gens R, g -> last baseName g)));
    R_p
    )
 
@@ -209,7 +203,7 @@ getVariableToIndexset(Ring, List) := (R, ki) -> (
 --
 -- Inputs:
 --   - PR: Polynomial ring containing variables p_{...}
---   - Xi: Tensor of strategy probabilities
+--   - Xi: Payoff tensor of player i
 --   - ikl: A list {i, k, l} where:
 --        i = player index
 --        k = current strategy
@@ -244,15 +238,10 @@ assemblePolynomial(Ring, Tensor, List) := (PR, Xi, ikl) -> (
 
 assemblePlayeriPolynomials = method()
 assemblePlayeriPolynomials(Ring, Tensor, ZZ) := (PR, Xi, i) -> (
-   result := {};
    di := (format Xi)#i;
-   for k from 0 to di-1 do (
-      for l from 0 to di-1 do (
-         poly := assemblePolynomial(PR, Xi, {i,k,l});
-         result = append(result, poly);
-      );
-   );
-   result
+   flatten for k from 0 to di-1 list
+     for l from 0 to di-1 list
+        assemblePolynomial(PR, Xi, {i,k,l})
    )
 
 -------------------------------------------------------------
@@ -267,6 +256,11 @@ assemblePlayeriPolynomials(Ring, Tensor, ZZ) := (PR, Xi, i) -> (
 
 correlatedEquilibria = method()
 correlatedEquilibria List := X -> (
+   if #X == 0 then 
+      error "correlatedEquilibria: expected a nonempty list of payoff tensors";
+   if not all(X, t -> class t === Tensor) then 
+      error "correlatedEquilibria: expected a list of Tensors";
+   
    F := coefficientRing (X#0);
    FBi := indexset (X#0);
    p := getSymbol "p";
@@ -352,7 +346,7 @@ monomialFromIndex (List, ZZ, Ring):= (L, i, R) ->(
 -- for 0<=k<=n-1, k!=u, obtaining a list of d_u - 1 monomials.
 
 -- The function returns the sum of all these lists of d_u - 1 monomials, as a list 
--- of d_u - 1 polynomoials, which are the polynomials of equilibrium conditions 
+-- of d_u - 1 polynomials, which are the polynomials of equilibrium conditions 
 -- from the payoff tensor T of player u.
 
 -- Note: accumulatedHash is not implemented with 'zeroTensor' to avoid pre-filling 
@@ -422,22 +416,6 @@ nashEquilibriumIdeal (Ring, List) := (R, L) -> (
     ideal fullGeneratingSet
     )
 
----------------------------------------------------------------
--- directProductList (List)
---
--- Given a list of polytopes, it computes their direct product.
----------------------------------------------------------------
-
-directProductList = method()
-directProductList List := L -> (
-    if #L == 0 then error "Empty list of polytopes";
-    P := L#0;
-    for i from 1 to (#L - 1) do (
-        P = directProduct(P, L#i);
-	);
-    P
-    )
-
 ------------------------------------------------------------------
 -- deltaList (Ring, List)
 --
@@ -456,8 +434,7 @@ directProductList List := L -> (
 deltaList = method()
 deltaList List := d -> (
     n := #d;
-    result := {};
-    for i from 0 to (n - 1) do (
+    flatten apply(toList(0..(n-1)), i -> (
         polyFactors := for j from 0 to (n - 1) list (
             if j == i then (
                 convexHull(matrix(apply(d#i - 1, k -> {0})))
@@ -465,12 +442,9 @@ deltaList List := d -> (
                 simplex(d#j - 1)
             )
         );
-        P := directProductList(polyFactors);
-        for rep from 1 to (d#i - 1) do (
-            result = append(result, P)
-	    );
-	);
-    result
+        P := if #polyFactors == 1 then polyFactors#0 else directProduct \\ polyFactors;
+        apply(toList(1..(d#i - 1)), rep -> P)
+        ))
     )
 
 --------------------------------------------------------------------------
@@ -494,11 +468,8 @@ blockDerangements List := D -> (
     PP := permutations flatten F;                    
     partsPP := toList set apply(PP, p -> 
         apply(#D, i -> set apply(D#i - 1, j -> p#(j + sum(i, k -> D#k - 1)))));
-    BD := {};                                         
-    for p in partsPP do 
-        if toList set flatten apply(#D, i -> apply(toList(p#i), j -> j#0 != i)) == {true} 
-        then BD = append(BD, p);                     
-    return BD
+    select(partsPP, p -> 
+        toList set flatten apply(#D, i -> apply(toList(p#i), j -> j#0 != i)) == {true})
     )
 
 --------------------------------------------------------------------------------
@@ -563,7 +534,7 @@ probabilityRing List := Ring => opts -> Di -> (
 probabilitySumIdeal = method()
 probabilitySumIdeal Ring := Ideal => R -> (
     vars := gens R;
-    summing := sum(vars, x->x);
+    summing := sum vars;
     return ideal(summing - 1);
     )
 
@@ -633,13 +604,11 @@ konstanzMatrix (Ring, List) := Matrix => opts -> (PR, X) -> (
     LinearForms := apply(n, i -> (M_i * matrix{{(k_i)_konstanzRing}, {-1}})
 	);
     P := vector(apply(J, j -> p#j));
-    fold((M0, M1) -> M0 || M1, 
-         apply(n, i -> transpose matrix apply(Di_i,
-                                              j -> diff(P, (LinearForms_i)_(j, 0))
-					      )
-					  )
-				      )
-				  )
+    matrix apply(n, i -> {transpose matrix apply(Di_i,
+                                             j -> diff(P, (LinearForms_i)_(j, 0))
+                                             )
+                      })
+    )
 
 
 
@@ -729,12 +698,8 @@ intersectWithCImodel = method(Options => {Verbose => false})
 intersectWithCImodel (Ideal, List, List) := o -> (V, Stmts, PlayerNames) -> (
     v := o.Verbose;
     R := ring V;
-    H := map (R,ZZ);
     I := ciIdeal (R, Stmts, PlayerNames);
-    if I + V == H(ideal(1)) then (
-	result := H(ideal(1));
-	result
-	);
+    if I + V == 1 then return I + V;
     for k from 0 to length(R_*)-1 do (
 	I = saturate(I,R_k,Strategy=>Bayer);
 	if v then print ("Completed step " | k+1 | " of saturating CI ideal");
@@ -751,8 +716,7 @@ intersectWithCImodel (Ideal, List, List) := o -> (V, Stmts, PlayerNames) -> (
 	if v then print ("Completed step "|k+1|" of saturating sum");
 	);
     J = saturate(J,sum(R_*),Strategy=>Bayer);
-    result = J;
-    result
+    J
     )
 intersectWithCImodel (Ideal, List) := o -> (V, Stmts) -> (
     v := o.Verbose;
@@ -817,7 +781,7 @@ doc ///
     Text
      {\bf Game Theory} is a package for several equilibrium concepts in game theory. It constructs the algebro-geometric and
      combinatorial models for Nash, correlated, dependency, and conditional independence equilibria. The latter three notions of
-     equilibria are all generalizations of Nash equilibria. An $n$-player game in normal form is defined by $n$-tensors of format
+     equilibria are all generalizations of Nash equilibria. The accompanying paper for this package is [@HREF("https://arxiv.org/abs/2507.16755","The GameTheory package for Macaulay2")@]. An $n$-player game in normal form is defined by $n$-tensors of format
      $d_1 \times d_2 \times \cdots \times d_n$, where $d_i$ is the number of pure strategies of player $i$.
      The entry $\{j_1, j_2, \cdots, j_n\}$ of the $i$-th (payoff) tensor for player $i$ is the payoff when player $1$ chooses
      strategy $j_1$, player $2$ chooses strategy $j_2$, and so on. One can define a specific game or a random game, e.g.,
@@ -851,7 +815,7 @@ doc ///
      numberTMNE {2,2,2}
     Text
      The set of correlated equilibria of a game forms a convex polytope inside the (probability) simplex which is the standard simplex of dimension $d_1 \cdots d_n -1$.
-     Thus, the variables are taken from @TO probabilityRing@. In particular, the map from @TO nashEquilibriumRing@ to @TO probabilityRing@ is the Segre embedding.
+     Thus, the variables are taken from @TO probabilityRing@. The Segre embedding maps independent mixed strategies into the space of joint probability distributions. Equivalently, it corresponds to the ring map from @TO probabilityRing@ to @TO nashEquilibriumRing@.
     Example
      -- A full dimensional polytope which is a triangular bipyramid
      CE1 = correlatedEquilibria {A, B}
@@ -883,7 +847,7 @@ doc ///
       -- For generic games, the ideal J1 models totally mixed Nash equilibria.
       J = probabilitySumIdeal(PR)
       J1 = I1 + J;
-      J2 = I1 + J;
+      J2 = I2 + J;
   References
     This package is based on the following papers:
          
@@ -910,6 +874,40 @@ doc ///
     Throughout the package, we followed Macaulay2's convention of zero-based indexing. This can be seen e.g., in the methods of @TO nashEquilibriumRing@
     and @TO probabilityRing@. In particular, for an $n$-player game, the players are labeled $0, \ldots, n-1$, and if player $i$ has $d_i$ pure strategies,
     they are labeled $0, \ldots, d_i-1$.
+    Methods related to Nash and correlated equilibria (such as @TO correlatedEquilibria@, @TO nashEquilibriumRing@ and @TO nashEquilibriumIdeal@) create probability variables using the symbol $p$; if $p$ already holds a value in the current session, it is cleared with a warning. The variable name can be customized in @TO probabilityRing@ and @TO konstanzMatrix@ via the options @TO ProbabilityVariableName@ and @TO KonstanzVariableName@.
+  Subnodes
+    :methods for payoff tensors
+      Tensor
+      enumerateTensorIndices
+      zeroTensor
+      randomTensor
+      randomGame
+      indexset
+      slice
+      getVariableToIndexset
+    :correlated equilibria
+      correlatedEquilibria
+      assemblePolynomial
+      assemblePlayeriPolynomials
+    :Nash equilibria
+      nashEquilibriumRing
+      nashEquilibriumIdeal
+      numberTMNE
+      deltaList
+      blockDerangements
+    :dependency equilibria
+      probabilityRing
+      probabilitySumIdeal
+      spohnMatrices
+      spohnIdeal
+      konstanzMatrix
+    :conditional independence equilibria
+      toMarkovRing
+      mapToMarkovRing
+      mapToProbabilityRing
+      ciIdeal
+      intersectWithCImodel
+      spohnCI
 ///
 
 ------------------------------------------
@@ -958,6 +956,8 @@ doc ///
 doc ///
   Key
     Tensor
+    (format, Tensor)
+    (coefficientRing, Tensor)
   Headline
     a mutable hash table representing a tensor
   Usage
@@ -1192,7 +1192,7 @@ doc ///
     PR: Ring
       Polynomial ring of strategy probabilities.
     Xi: Tensor
-      Tensor of strategy probabilities.
+      Payoff tensor of player i.
     {i, k, l}: List
       A triple where:
         - $i$ is the player index,
@@ -1231,7 +1231,7 @@ doc ///
     PR: Ring
       Polynomial ring of probabilities.
     Xi: Tensor
-      Tensor of strategy probabilities.
+      Payoff tensor of player i.
     i: ZZ
       The player index.
   Outputs
@@ -1315,9 +1315,9 @@ doc ///
      a polynomial ring generated by mixed strategies
   Description
    Text
-    Let $p_{i,j}$ be the probability of $i$-th player choosing the $j$-th strategy, where $j \in \{0, \cdots, d_j-1\}$.
+    Let $p_{i,j}$ be the probability of $i$-th player choosing the $j$-th strategy, where $j \in \{0, \cdots, d_i-1\}$.
     The ideal of the totally mixed Nash equilibria of the game is defined in the polynomial ring over a field $k$
-    with generators $\{p_{i,j} \ | \ 0\leq i\leq n-1, 0\leq j\leq d_j-1\}$. The ring generators are ordered lexicographically.
+    with generators $\{p_{i,j} \ | \ 0\leq i\leq n-1, 0\leq j\leq d_i-1\}$. The ring generators are ordered lexicographically.
    Example
     tensors = randomGame {2,4,3};
     R = nashEquilibriumRing tensors;
@@ -1500,6 +1500,7 @@ doc ///
   Key
       probabilityRing
       (probabilityRing, List)
+      ProbabilityVariableName
   Headline
       ring of probability distributions of a game indexed by ordered multi-indices
   Usage
@@ -1565,7 +1566,6 @@ doc ///
   Description
       Text
           Constructs the ideal expressing normalization of a joint probability distribution.
-          If given a list, it first calls @TO probabilityRing@ with default options.
       Example
           R = probabilityRing {2,3,4};
           probabilitySumIdeal R
@@ -1581,7 +1581,8 @@ doc ///
 
 doc ///
   Key
-    randomGame 
+    randomGame
+    (randomGame, List)
   Headline
     construct a game of a given format with arbitrary payoffs
   Usage
@@ -1624,7 +1625,8 @@ doc ///
 
 doc ///
   Key
-    spohnMatrices   
+    spohnMatrices
+    (spohnMatrices, Ring, List)
   Headline
     compute the list of Spohn matrices of a given game
   Usage
@@ -1663,6 +1665,7 @@ doc ///
 doc ///
   Key
     spohnIdeal
+    (spohnIdeal, Ring, List)
   Headline
     compute the ideal of the Spohn variety of a given game
   Usage
@@ -1700,6 +1703,8 @@ doc ///
 doc ///
   Key
     konstanzMatrix
+    (konstanzMatrix, Ring, List)
+    KonstanzVariableName
   Headline
     construct the Konstanz matrix of a given game
   Usage
@@ -1850,7 +1855,7 @@ doc ///
 
   SeeAlso
    toMarkovRing
-   mapToProbabilityRing
+   mapToMarkovRing
 ///
 
 ---------------------------
@@ -1890,8 +1895,8 @@ doc ///
     {\tt ciIdeal} computes the ideal of a list of conditional independence statements.
     The input can be the list of conditional independence statements itself,
     or a graph modelling the conditional dependencies between players.
-    This method is the same as @TO conditionalIndependenceIdeal@ from GameTheory.m2,
-    included here for convenience and compatibility with this package.   
+    This method is the same as @TO conditionalIndependenceIdeal@ from the
+    @TO "GraphicalModels"@ package, included here for convenience and compatibility with this package.
 
     A single conditional independence statement is a list consisting of three disjoint
     lists of indices for random variables, e.g. $\{ \{1,2\},\{4\}, \{3\} \}$
@@ -1938,10 +1943,10 @@ doc ///
        I1 == I2
  
   SeeAlso
-     conditionalIndependenceIdeal 
+     conditionalIndependenceIdeal
      mapToProbabilityRing
      toMarkovRing
-     ciIdeal
+     intersectWithCImodel
      globalMarkov
 ///
 
@@ -2125,7 +2130,7 @@ doc ///
       
     Example  
       FF = ZZ/32003;
-      d = {2,3,2};
+      d = {2,2,2};
       X = randomGame(d, CoefficientRing => FF);
       PR = probabilityRing(d, CoefficientRing => FF);
       G1 = graph {{John,Matthew},{Matthew,Sarah}};
@@ -2401,28 +2406,6 @@ TargetGens = {p_{1,1} * p_{2,0}, -2 * p_{0,0} * p_{2,0} - p_{0,1} * p_{2,0} + 2 
 assert(ComputedGens == TargetGens)
 ///
 
-------------------------------
---- TEST directProductList ---
-------------------------------
-TEST ///
-debug needsPackage "GameTheory"
-P1 = simplex 1;   -- dim=1
-P2 = simplex 2;   -- dim=2
-P = directProductList {P1,P2};
-assert(dim P == 3);
-
-v1 = entries transpose vertices P1;
-v2 = entries transpose vertices P2;
-expectedVerts = flatten apply(v1, u -> apply(v2, w -> u | w));
-assert(sort entries transpose vertices P == sort expectedVerts)
-///
-
-TEST ///
-debug needsPackage "GameTheory"
-Q = simplex 3;  -- a tetrahedron should just return that unchanged
-assert(directProductList {Q} === Q)
-///
-
 ----------------------
 --- TEST deltaList ---
 ----------------------
@@ -2696,6 +2679,41 @@ V = spohnIdeal(PR, X);
 I = spohnCI(PR, X, G);
 assert(V==I)
 ///
+
+-- KonstanzVariableName option: previously the only place it appeared
+-- was inside the konstanzMatrix doc example. Drive it via a TEST.
+TEST ///
+setRandomSeed 0;
+R := probabilityRing {2, 2};
+G := randomGame {2, 2};
+-- default option: the new ring built by konstanzMatrix uses k_i.
+km := konstanzMatrix(R, G);
+ringVars := toString vars ring km;
+assert(match("k_0", ringVars));
+-- explicit option: rename the konstanz variables.
+km2 := konstanzMatrix(R, G, KonstanzVariableName => "myZ");
+ringVars2 := toString vars ring km2;
+assert(match("myZ_0", ringVars2));
+-- and the default for the option is "k" (not, say, a Symbol).
+assert((options konstanzMatrix)#KonstanzVariableName === "k");
+///
+
+-- Input-guard error paths: spohnMatrices, konstanzMatrix, and
+-- toMarkovRing all depend on a probabilityRing's bookkeeping keys
+-- ("gameFormat", "probabilityVariable"). Passing a plain QQ[...] must
+-- error rather than silently misbehave.
+TEST ///
+setRandomSeed 0;
+P := QQ[a, b];
+G := randomGame {2, 2};
+assert(try (spohnMatrices(P, G); false) else true);
+assert(try (konstanzMatrix(P, G); false) else true);
+-- toMarkovRing has an explicit guard `if not R#?"gameFormat" then error`,
+-- so it should error with the dedicated message rather than crashing on
+-- a missing-key lookup.
+assert(try (toMarkovRing P; false) else true);
+///
+
 end
 
 --******************************************--

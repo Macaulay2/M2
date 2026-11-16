@@ -519,22 +519,25 @@ topComponents Ideal       := Ideal  =>  I     -> (
     R := ring I;
     c := codim I;
     annihilator Ext^c(cokernel generators I, R))
+
 topComponents Module      := Module =>  M     -> (
-    R := ring M;
-    if not isPolynomialRing R or not isAffineRing R then error "expected a polynomial ring";
-    c := codim M;
-    p := pdim M;  -- will compute a resolution if needed...
-    while p > c do (
-	E := minimalPresentation Ext^p(M,R);
-	if E != 0 and codim E === p then (
-	    -- improve M
-	    J := annihilator E;
-	    I := saturate(M, J);
-	    -- alternate strategy: modify M as well:
-	    -- this next line could be commented out
-	    M = (ambient I)/I);
-	p = if pdim M < p then pdim M else p-1);
-    M)
+	  N := 0*M;
+	  R := ring M;
+ if not isPolynomialRing R or not isAffineRing R then error "expected a polynomial ring";
+          c := codim M;
+          p := pdim M;  -- will compute a resolution if needed...
+          while p > c do (
+              E := minimalPresentation Ext^p(M,R^1);
+              if E != 0 and codim E === p then (
+                  -- improve M
+                  J := annihilator E;
+                  N = saturate(N, J));
+                  -- alternate strategy: modify M as well:
+                  -- this next line could be commented out
+      --            M = (ambient I)/I);
+              p = p-1);
+          M/N)
+
 topComponents(Module, ZZ) := Module => (M, e) -> (
     S := ring M;
     N := 0 * M;
@@ -545,20 +548,9 @@ topComponents(Module, ZZ) := Module => (M, e) -> (
 	    if debugLevel > 0 then printerr("Getting annihilator of Ext...");
 	    I := annihilator E;
 	    if debugLevel > 0 then printerr("Removing components of codim " | toString(f));
-	    N = N : I);
+	    N = saturate(N, I));
 	f = f-1);
-    N)
-
--- This used to be commented out in modules2.m2
--- if it isn't useful anymore, delete it
---topComponents Module := M -> (
---     R := ring M;
---     c := codim M;
---     annihilator minimalPresentation Ext^c(M, R))
---document { topComponents,
---     TT "topComponents M", "produce the annihilator of Ext^c(M, R), where c
---     is the codimension of the support of the module M."
---     }
+    M/N)
 
 ---------------------------
 -- removeLowestDimension --
@@ -569,15 +561,14 @@ topComponents(Module, ZZ) := Module => (M, e) -> (
 --removeLowestDimension = method()
 removeLowestDimension Module := Module => M -> (
     -- only works for polynomial rings...
-    local E;
     R := ring M;
     c := codim M;
     p := pdim M;
     -- now loop (starting at p) trying to find the largest
     -- d such that codim Ext^d(M,R) == d
-    while p > c and codim (E = Ext^p(M, R)) > p do p = p-1;
-    if p == c then ambient M -- M is C.M. and unmixed, so return (1)
+    if p == c then return coker matrix{{1_R}} --M is pure-dimensional.
     else ( -- use the annihilator of Ext to improve M
+	E := Ext^p(M,R);
         J := annihilator E;
         cokernel generators saturate(image presentation M, J))
     )

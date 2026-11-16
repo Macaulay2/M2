@@ -30,7 +30,7 @@ doc ///
 
             {\bf Constructing new Mackey functors:} See @TO("constructing examples of Mackey functors")@.
 
-            {\bf Operations with Mackey functor types:} One of the first operations to know about is @TO2((prune,CpMackeyFunctor),"pruning")@ a $C_p$-Mackey functor. This basically takes the data of a Mackey functor and attempts to simplify it and make it more reader-friendly. Pruning is the only unary operation on $C_p$-Mackey functors that we consider. The $0$-ary (@TO("Boolean")@-valued) operations are
+            {\bf Operations with Mackey functor types:} One of the first operations to know about is @TO2((prune,CpMackeyFunctor),"pruning")@ a $C_p$-Mackey functor. This basically takes the data of a Mackey functor and attempts to simplify it and make it more reader-friendly. Pruning is the only unary operation on $C_p$-Mackey functors that we consider. The unary (@TO("Boolean")@-valued) operations are
 
             @UL{
                 (TO("isTrivialMackeyFunctor")," checks if a Mackey functor is trivial"),
@@ -65,11 +65,11 @@ doc ///
         p : ZZ
             a prime number
         R : Matrix
-            a restriction homomorphim
+            a restriction homomorphism
         T : Matrix
-            a transfer homomorphim
+            a transfer homomorphism
         C : Matrix
-            a conjugation homomorphim
+            a conjugation homomorphism
     Outputs
         : CpMackeyFunctor
     Description

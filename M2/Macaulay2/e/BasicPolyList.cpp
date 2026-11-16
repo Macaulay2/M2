@@ -1,6 +1,6 @@
 #include "BasicPolyList.hpp"
-#include "matrix.hpp"
-#include "matrix-stream.hpp"
+#include "matrices/matrix.hpp"
+#include "matrices/matrix-stream.hpp"
 #include <sstream>
 const Matrix* toMatrix(const FreeModule *target, const BasicPolyList& Fs)
 {

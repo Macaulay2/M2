@@ -1,12 +1,13 @@
 // Copyright 2014-2016  Michael E. Stillman
-#pragma once
+#ifndef M2_UTIL_HPP
+#define M2_UTIL_HPP
 
 #include <string>   // for string, basic_string
 #include <vector>   // for vector
 #include <iostream> // for ostream
 
-#include "M2mem.h"              // for getmemarraytype
-#include "engine-includes.hpp"  // for M2_* types
+#include "interface/m2-mem.h"              // for getmemarraytype
+#include "interface/m2-types.h"  // for M2_* types
 
 /**
  * Utilities for converting between M2 types and standard C++ types
@@ -85,6 +86,7 @@ inline std::ostream& operator<<(std::ostream& o, const std::vector<T>& ts)
   return o;
 }
 
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

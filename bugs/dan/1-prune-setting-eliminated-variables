@@ -1,7 +1,0 @@
--*- text -*-
-
-important suggestion:
-
-prune should (optionally) set up the pruned ring so that the symbols
-corresponding to eliminated variables still get appropriate values assigned
-when the ring is passed to "use".

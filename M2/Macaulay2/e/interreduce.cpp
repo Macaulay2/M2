@@ -1,13 +1,16 @@
 /* Copyright 2010, Michael E. Stillman */
 
 #include "interreduce.hpp"
-#include "freemod.hpp"
+#include "free-modules/freemod.hpp"
 #include "text-io.hpp"
 
 Interreducer::Interreducer(GBRing *R0,
                            FreeModule *F0,
                            VECTOR(gbvector *) & elems0)
 {
+  (void) R0;
+  (void) F0;
+  (void) elems0;
 }
 
 void Interreducer::showElem(int i, int nterms)

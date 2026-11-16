@@ -47,7 +47,7 @@ document {
 	    },
 	
 	EXAMPLE {
-		"P = permutationMatrix toString 231",
+		"P = permutationMatrix [2, 3, 1]",
 		"C3 = finiteAction(P, R)",
 		},    
 	    }
@@ -72,7 +72,8 @@ document {
 	}
 
 document {
-	Key => {(generators, FiniteGroupAction)},
+	Key => {(generators, FiniteGroupAction),
+	    [generators, CoefficientRing]},
 	Headline => "generators of a finite group",
 	Usage => "generators G",
 	Inputs => {
@@ -297,21 +298,22 @@ document {
 	
 	
 document {
-	Key => {permutationMatrix, 
-	    (permutationMatrix, String),
+	Key => {permutationMatrix,
+	    (permutationMatrix, Array), 
 	    (permutationMatrix, ZZ, Array),
 	    (permutationMatrix, ZZ, List),
-	    (permutationMatrix, Array),
-	    (permutationMatrix, List)
+	    (permutationMatrix, List),
+	    [permutationMatrix, EntryMode]	    
 	    },
 	
 	Headline => "convert a one-line notation or cyclic notation of a permutation to a matrix representation",
 	
-	Usage => "permutationMatrix s, permutationMatrix(n , c)",
+	Usage => "permutationMatrix c, \n permutationMatrix(n , c), \n permutationMatrix(n, p), \n permutationMatrix p",
 	Inputs => {
-	    	"s" => String =>  {"an array or a list of arrays giving a one-line notation or cyclic notation of a permutation"},
-		"n" => ZZ => {"giving the number of integers getting permuted"},
-		"c" => List => {"of arrays giving a cyclic notation of a permutation"}
+		"c" => Array => {"of positive integers representing a permutation in one-line notation or 
+		    representing a cyclic permutation"},
+	    	"p" => List =>  {"of arrays representing a permutation as a product of cycles"},
+		"n" => ZZ => {"giving the number of integers being permuted"},
 		},
 	Outputs => {
 		Matrix => {"the matrix representation of the permutation"}
@@ -324,25 +326,34 @@ document {
 	    },
 	
 	EXAMPLE {
-		"M = permutationMatrix toString 213",
+		"M = permutationMatrix [2, 1, 3]",
 		},
 	
 	PARA {
-	    "The following example converts the cyclic notation of the same transposition into a matrix representation. Without ",TT "n"," the function assumes ",TT "n"," is the largest integer that appears in your array or list of arrays."
+	    "The following example converts the cyclic notation of the same transposition into a matrix representation."
 	    },
 	
 	EXAMPLE {
 		"M = permutationMatrix(3,[1,2])",
-		"M = permutationMatrix [1,2]",
 		},
+	    
+	PARA {
+	    "If ",TT "n"," is the largest integer that appears in your array, the value of ", TT "n", " can be omitted by 
+	    using the option ", TT "EntryMode => \"cycle\"", "."
+	    },
+		
+	EXAMPLE {
+		"M = permutationMatrix([1,2], EntryMode => \"cycle\")",
+		},
+	    
 	PARA {
 	    "The following example converts the cyclic notation of a permutation of 4 into a matrix representation."
 	    },    
 	EXAMPLE {
 	    	"M = permutationMatrix(4,{[1,2],[3,4]})",
-		"M = permutationMatrix {[1,2],[3,4]}",
 	    },
 	    }
+	
 document {
 	Key => {(relations, FiniteGroupAction)},
 	Headline => "relations of a finite group",
@@ -357,7 +368,7 @@ document {
 	"This function is provided by the package ", TO InvariantRing,". ",
 
     	PARA {
-	    "Use this function to get the relations among elements of a group. Each element is represented by a word of minimal length in the Coxeter generators. And each relation is represented by a list of two words that equates the group element represented by those two words."
+	    "Use this function to get the relations among elements of a group. Each element is represented by a word of minimal length in the Coxter generators. And each relation is represented by a list of two words that equates the group element represented by those two words."
 	},
     
     	PARA { "The following example defines the permutation action

@@ -1,6 +1,6 @@
 // Copyright 2002-2016  Michael E. Stillman
-#ifndef _hash_hh_
-#define _hash_hh_
+#ifndef M2_HASH_HH_
+#define M2_HASH_HH_
 
 #include "newdelete.hpp"
 #include <cassert>

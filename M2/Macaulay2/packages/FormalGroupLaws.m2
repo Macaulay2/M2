@@ -395,14 +395,16 @@ doc ///
 			t == r
 ///
 
+-- tests for series constructor, truncate
 TEST ///
-	R=ZZ[x,y];
-	s = series(x^2+x+y,2);
-	t = series(x+y,2);
-	assert((s == t)==false);
-	r = truncate(s,1);
-	u = truncate(t,1);
-	assert(u == r)
+     R = ZZ[x,y]
+     s = series(x^2+y^2+x*y+x^4*y^6, 2)
+     t = series(x^2+y^2+x*y, 2)
+     assert(instance(s, FormalSeries))
+     assert(s == t) -- check that truncation happens automatically
+     r = truncate(s,1)
+     u = truncate(t,1)
+     assert(u == r)
 ///
 
 doc ///
@@ -427,10 +429,12 @@ doc ///
 			valuation(0_R)
 ///
 
+-- tests for valuation
 TEST ///
-	R= ZZ[x,y];
-	assert(valuation(x^2+y)==1);
-	assert(valuation(0_R)==infinity)
+	R = ZZ[x,y]
+	assert(valuation(x^2+y) == 1)
+	assert(valuation(1_R) == 0)
+	assert(valuation(0_R) == infinity)
 ///
 
 doc ///
@@ -557,11 +561,12 @@ doc ///
 			(a^2+a) * s
 ///
 
+-- tests for series arithmetic
 TEST ///
 	R=ZZ[a];
 	S=R[x,y];
 	s = series(x^2+x+y,2);
-	assert((a^2+a) * s ==series((a^2+a)*x^2+(a^2+a)*x+(a^2+a)*y,2))
+	assert((a^2+a) * s == series((a^2+a)*x^2+(a^2+a)*x+(a^2+a)*y,2))
 ///
 
 doc ///
@@ -586,15 +591,34 @@ doc ///
 		If {\tt n} is 0, the formal series returned is 1 with the same precision as {\tt s}. If {\tt n} is negative, then {\tt s} needs to have its constant part equal to either +1 or -1, otherwise an error occurs.
 ///
 
+-- tests for series arithmetic and inverse
 TEST ///
-	R=ZZ[x,y];
-	s = series(x^2+x+y,2);
-	t = series(x+y+1,2);
-	assert(s + t==series(x^2+2*x+2*y+1,2));
-	assert(-s==series(-x^2-x-y,2));
-	assert(t-s == series(-x^2+1,2));
-	assert(-2*t == series(-2*x-2*y-2,2));
-	assert(s^2 == series(x^2+y^2+2*x*y,2))
+	R=ZZ[x,y]
+	s = series(x^2+x+y,2)
+	t = series(x+y+1,2)
+	zeroseries = series(0_R, 2)
+	add = s + t
+	negate = -s
+	subtract = t - s
+	scale = -2*t
+	pow = s^2
+	assert(instance(add, FormalSeries))
+	assert(instance(negate, FormalSeries))
+	assert(instance(subtract, FormalSeries))
+	assert(instance(scale, FormalSeries))
+	assert(instance(pow, FormalSeries))
+	assert(add == series(x^2+2*x+2*y+1,2))
+	assert(negate == series(-x^2-x-y,2))
+	assert(subtract == series(-x^2+1,2))
+	assert(scale == series(-2*x-2*y-2,2))
+	assert(pow == series(x^2+y^2+2*x*y,2))
+	assert(s + zeroseries == s) -- zero is additive identity
+	assert(1_ZZ*s == s)
+	assert(s - s == zeroseries)
+	assert(s + (-s) == zeroseries)
+	assert(0_ZZ*s == zeroseries)
+	assert(s^0 == series(1_R, 2))
+	assert(try s^(-1) else true) -- series without constant term +1 or -1 should fail to invert
 ///
 
 doc ///
@@ -618,10 +642,13 @@ doc ///
 			truncate(s,4)
 ///
 
+-- tests for truncate
 TEST ///
 	R=ZZ[x,y];
 	s = series(x^7+x^2+x+y,7);
-	assert(truncate(s,4)==series(x^2+x+y,4))
+	truncated = truncate(s, 4)
+	assert(instance(truncated, FormalSeries))
+	assert(truncated == series(x^2+x+y,4))
 ///
 
 doc ///
@@ -645,10 +672,13 @@ doc ///
 		If the constant coefficient of {\tt s} is not +1 or -1, {\tt inverse} returns an error.
 ///
 
+-- tests for inverse
 TEST ///
 	R=ZZ[x,y];
 	s = series(2*x^2*y+x*y+x^2+x+y+1,3);
+	assert(instance(inverse(s), FormalSeries))
 	assert(inverse(s) == series(x^3-x^2*y-x*y^2-y^3+x*y+y^2-x-y+1,3))
+	assert(s^(-1) == inverse(s))
 ///
 
 doc ///
@@ -672,10 +702,13 @@ doc ///
 			substitute(s,{s,s})
 ///
 
+-- tests for substitute
 TEST ///
 	R=ZZ[x,y];
 	s = series(x^2+x+y,2);
-	assert(substitute(s,{s,s})==series(3*x^2+2*x*y+y^2+2*x+2*y,2))
+	t = substitute(s,{s, s})
+	assert(instance(t, FormalSeries))
+	assert(t == series(3*x^2+2*x*y+y^2+2*x+2*y,2))
 ///
 
 doc ///
@@ -707,12 +740,14 @@ doc ///
 			substitute(t,{s})
 ///
 
+-- tests for compositionInverse
 TEST ///
 	ZZ[x];
 	s = series(x+x^2+2*x^3-5*x^4,4);
 	t = compositionInverse(s);
-	assert(substitute(s,{t})==series(x,4));
-	assert(substitute(t,{s})==series(x,4))
+	assert(instance(t, FormalSeries))
+	assert(substitute(s,{t}) == series(x,4));
+	assert(substitute(t,{s}) == series(x,4))
 ///
 
 doc ///
@@ -874,16 +909,19 @@ doc ///
 			3*s
 ///
 
+-- formalGroupPoint tests
 TEST ///
 	ZZ[x,y];
 	f = FGL(series(x+y+x*y,10));
 	ZZ[u];
 	s = formalGroupPoint(f,series(u^2+u,5));
 	t = formalGroupPoint(f,series(u^3,5));
-	assert(s+t===formalGroupPoint(f,series(u^5+u^4+u^3+u^2+u,5)));
-	assert(s-t===formalGroupPoint(f,series(-u^5-u^4-u^3+u^2+u,5)));
-	assert(-s===formalGroupPoint(f,series(-u^4+u^3-u,5)));
-	assert((-3)*s===formalGroupPoint(f,series(9*u^5-9*u^4+2*u^3+3*u^2-3*u,5)))
+	assert(instance(s, FormalGroupPoint))
+	assert(instance(t, FormalGroupPoint))
+	assert(s+t === formalGroupPoint(f,series(u^5+u^4+u^3+u^2+u,5)));
+	assert(s-t === formalGroupPoint(f,series(-u^5-u^4-u^3+u^2+u,5)));
+	assert(-s === formalGroupPoint(f,series(-u^4+u^3-u,5)));
+	assert((-3)*s === formalGroupPoint(f,series(9*u^5-9*u^4+2*u^3+3*u^2-3*u,5)))
 ///
 
 doc ///
@@ -922,8 +960,14 @@ doc ///
 		Variables with names equal to the strings (like x, y or a, here) should not have been assigned values (like 3) beforehand otherwise an error will occur.
 ///
 
+-- tests for universalFGL, FGL
 TEST ///
-	assert(universalFGL(3,"a","x","y")==FGL(series(a_2 *x^2*y+a_2 *x*y^2+ a_1 *x*y +x+y,3)))
+     s = universalFGL(3,"a","x","y")
+     t = FGL(series(a_2 *x^2*y+a_2 *x*y^2+ a_1 *x*y +x+y,3))
+     assert(instance(s, FormalGroupLaw))
+     assert(instance(t, FormalGroupLaw))
+     assert(s == t)
+     assert(try FGL(series(x^2+y^2+x*y, 2)) else true) -- check that failing neutrality errors
 ///
 
 doc ///
@@ -961,8 +1005,9 @@ doc ///
 		Variables with names equal to the strings (like x, y or b, here) should not have been assigned values (like 3) beforehand otherwise an error will occur.
 ///
 
+-- tests for universalFGLQ
 TEST ///
-	assert(universalFGLQ(3,"b","x","y")==FGL(series((4*b_1^2  - 3*b_2 )*x^2*y + (4*b_1^2  - 3*b_2 )*x*y^2  - 2*b_1 *x*y + x + y, 3)))
+	assert(universalFGLQ(3,"b","x","y") == FGL(series((4*b_1^2  - 3*b_2 )*x^2*y + (4*b_1^2  - 3*b_2 )*x*y^2  - 2*b_1 *x*y + x + y, 3)))
 ///
 
 --document {

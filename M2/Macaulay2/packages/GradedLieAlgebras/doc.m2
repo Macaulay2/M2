@@ -2009,7 +2009,7 @@ Usage
    y = a x
 Inputs
    a: RingElement
-      $a$ is an element in {\tt L#Field}, where $L$ is of type {\tt Lielgebra}
+      $a$ is an element in {\tt L#Field}, where $L$ is of type {\tt LieAlgebra}
    x: LieElement
       $x$ is of type $L$  
 Outputs

@@ -1,7 +1,7 @@
 // Copyright 2019, The Macaulay2 team.
 
-#ifndef __myalloc_hpp_
-#define __myalloc_hpp_
+#ifndef M2__MYALLOC_HPP_
+#define M2__MYALLOC_HPP_
 
 #include <iostream>
 
