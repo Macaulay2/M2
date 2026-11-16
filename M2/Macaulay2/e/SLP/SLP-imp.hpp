@@ -559,8 +559,7 @@ static bool solveSquareNoAlloc(const RT& C,
 // Adaptive precision (Precision => infinity): see the precision check in track() below.
 #define PRECISION_SAFETY_BITS 4        // ~1 decimal digit (default): ||J^-1|| estimate is a lower bound; complex-arithmetic constants
 #define PRECISION_HYSTERESIS_BITS 4    // spare bits the next lower precision must still have
-#define PRECISION_LOW_NEED_STEPS 5     // ... for this many consecutive steps before decreasing
-#define PRECISION_FAIL_STEPS 3         // consecutive corrector failures with insufficient precision before increasing
+#define PRECISION_LOW_NEED_STEPS 5     // ... for this many consecutive accepted steps before decreasing
 
 template <typename RT>
 bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
@@ -715,10 +714,26 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
     DMat<RT> LUws(C, n, n);
     std::vector<size_t> permws(n);
     RealElement absP(R), absMax(R);
-    // adaptive precision: ||H(x)||^2 and the largest ||dx||^2/||H(x)||^2 seen
-    // in the current step's corrector iterations (a lower bound for ||J^{-1}||^2)
-    RealElement h_norm2(R), jinv2(R), ratio2(R);
-    std::vector<double> evalErr;  // per-output rounding-error bounds of HxH
+    // adaptive precision: ||H_t||^2 and ||dx1||^2 at the current point give
+    // the lower bound ||dx1||/||H_t|| <= ||J^{-1}|| (dx1 = -J^{-1} H_t)
+    RealElement ht_norm2(R), dx1_norm2(R);
+    std::vector<double> evalErr;  // per-output rounding-error bounds
+    // max rounding-error bounds (units of u = 2^-prec) of the Jacobian block
+    // and of the last column of an n x (n+1) evaluation (H or H_t)
+    auto errorBounds = [&evalErr, n](EType& ev, double& jmax, double& lastmax) -> bool {
+      if (not ev.evaluationErrorBound(evalErr)) return false;
+      jmax = lastmax = 0;
+      for (size_t i = 0; i < n; i++)
+        {
+          for (size_t jj = 0; jj < n; jj++)
+            jmax = std::max(jmax, evalErr[i * (n + 1) + jj]);
+          lastmax = std::max(lastmax, evalErr[i * (n + 1) + n]);
+        }
+      return true;
+    };
+    double psiH_x0 = 0;        // rounding-error bound of H at the current point
+    bool have_psiH = false;    // ... is known (from the corrector that accepted it)
+    int precision_needed = 0;  // verdict at the current point, for the decrease rule
 
     ElementType& c0 = x0c0.entry(n, 0);
     ElementType& c1 = x1c1.entry(n, 0);
@@ -745,12 +760,28 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       C.subtract(dc, c_end, c_init);
       C.abs(abs2dc, dc);  // don't want to create new temporary elts: reusing dc
                           // and abs2dc
-      R.divide(dt, dt, abs2dc);
+      if (R.is_zero(abs2dc))
+        t0equals1 = true;  // already at the end of the segment
+      else
+        R.divide(dt, dt, abs2dc);
 
       int predictor_successes = 0;
       int count = 0;  // number of steps
-      int low_need_streak = 0;  // adaptive precision: steps in a row with spare bits
-      int fail_streak = 0;      // adaptive precision: failed steps in a row that asked for more bits
+      int low_need_streak = 0;  // adaptive precision: accepted steps in a row with spare bits
+      have_psiH = false;
+      precision_needed = (int)R.get_precision();
+      if (checkPrecision)
+        {
+          // rounding-error bound of H at the start point (later ones come
+          // from the corrector that accepted each point)
+          double jmax, hmax;
+          TIME(evaluateTime, mHxH.evaluate(x0c0, HxH));
+          if (errorBounds(mHxH, jmax, hmax))
+            {
+              psiH_x0 = std::sqrt((double)n) * hmax;
+              have_psiH = true;
+            }
+        }
       // track the real segment (1-t)*c0 + t*c1, a\in [0,1]
       while (status == PROCESSING and not t0equals1)
         {
@@ -764,7 +795,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
               std::cout << ", c0 = " << o.str() << std::endl;
             }
           R.subtract(one_minus_t0, one, t0);
-          if (R.compare_elems(dt, one_minus_t0) > 0)
+          if (R.compare_elems(dt, one_minus_t0) >= 0)
             {
               R.set(dt, one_minus_t0);
               t0equals1 = true;
@@ -799,10 +830,67 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
           RHS = submatrix(Hxt, 0, n, n, 1);
           MatrixOps::negateInPlace(RHSmat);
 
+          if (checkPrecision) normSquared(submatrix(RHSmat), ht_norm2);  // ||H_t||^2
           TIME(solveLinearTime,
                linearSolve_success =
                    solveSquareNoAlloc(C, LHSmat, RHSmat, dx1, LUws, permws, absP, absMax));
           solveLinearCount++;
+
+          if (checkPrecision and linearSolve_success and not R.is_zero(ht_norm2))
+            {
+              // Precision check at the current point (x0,t0), after
+              // Bates-Hauenstein-Sommese-Wampler (adaptive multiprecision
+              // path tracking), with u = 2^-prec. The predictor's first solve
+              // gives a free lower bound jinv = ||dx1||/||H_t|| <= ||J^{-1}||,
+              // and the evaluators give the bounds psiH, psiJ on the rounding
+              // error (in units of u) of H and of the Jacobian here.
+              //  Rule C: the error u*(jinv*psiH + ||x||) of a Newton step
+              //          must stay below the (relative) tolerance tol*||x||,
+              //          i.e. prec > log2(1/tol) + log2(jinv*psiH/||x|| + 1).
+              //  Rule A: the rounded Jacobian must stay nonsingular,
+              //          u*jinv*psiJ < 1, i.e. prec > log2(jinv*psiJ).
+              // The safety margin covers the lower-bound nature of jinv and
+              // the constants of complex arithmetic not in the error model.
+              // Judging the current point, rather than the predictor's, keeps
+              // a step that is merely too long from raising the precision.
+              double tol2d = R.coerceToDouble(tol2);
+              int tolerance_bits = (tol2d > 0 and tol2d < 1)
+                                       ? (int)std::ceil(-0.5 * std::log2(tol2d))
+                                       : 0;
+              normSquared(submatrix(dx1), dx1_norm2);
+              double jinv = std::sqrt(R.coerceToDouble(dx1_norm2) / R.coerceToDouble(ht_norm2));
+              normSquared(submatrix(x0c0, 0, 0, n, 1), x_norm2);
+              double xnorm = std::sqrt(R.coerceToDouble(x_norm2));
+              double psiH = have_psiH ? psiH_x0 : xnorm;  // fallback: H evaluated to ~u relative
+              double psiJ = 0, jmax, htmax;
+              if (errorBounds(mHxt, jmax, htmax)) psiJ = (double)n * jmax;  // Hxt: J then H_t
+              // bits needed to resolve an amplification factor; an infinite
+              // or NaN bound (overflow in the error model) asks for more than
+              // any precision on the ladder
+              auto bitsFor = [](double amp) -> int {
+                if (std::isnan(amp) or amp > 1e300) return 1 << 20;
+                return (amp > 1) ? (int)std::ceil(std::log2(amp)) : 0;
+              };
+              double ampC = (xnorm > 0) ? jinv * psiH / xnorm + 1 : jinv * psiH;
+              int condition_bits = bitsFor(ampC);
+              int jacobian_bits = bitsFor(jinv * psiJ);
+              precision_needed =
+                  PRECISION_SAFETY_BITS +
+                  std::max(tolerance_bits + condition_bits, jacobian_bits);
+              int prec = (int)R.get_precision();
+              if (prec < precision_needed) status = INCREASE_PRECISION;
+              if (M2_numericalAlgebraicGeometryTrace > 3)
+                std::cout << "precision needed = " << precision_needed << " = "
+                          << PRECISION_SAFETY_BITS << "(safety) + max("
+                          << tolerance_bits << "(tolerance) + "
+                          << condition_bits << "(condition), "
+                          << jacobian_bits << "(jacobian)), current = " << prec
+                          << "; |J^-1| >= " << jinv << ", psiH = " << psiH
+                          << ", psiJ = " << psiJ << ", |x| = " << xnorm
+                          << ", low-need streak = " << low_need_streak
+                          << ", status = " << status << std::endl;
+              if (status != PROCESSING) break;  // resume here at a higher precision
+            }
 
           // dx2
           if (linearSolve_success)
@@ -890,7 +978,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
           // CORRECTOR
           bool is_successful;
           int n_corr_steps = 0;
-          R.set_zero(jinv2);
           if (linearSolve_success)
             {
               do
@@ -902,7 +989,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
                   LHS = submatrix(HxH, 0, 0, n, n);
                   RHS = submatrix(HxH, 0, n, n, 1);
                   MatrixOps::negateInPlace(RHSmat);
-                  if (checkPrecision) normSquared(submatrix(RHSmat), h_norm2);
 
                   TIME(solveLinearTime,
                        linearSolve_success =
@@ -913,12 +999,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
                   submatrix(x1c1, 0, 0, n, 1) += dx;
 
                   normSquared(submatrix(dx), dx_norm2);
-                  if (checkPrecision and not R.is_zero(h_norm2))
-                    {
-                      // dx = -J^{-1} H(x1), so ||dx||/||H(x1)|| <= ||J^{-1}||
-                      R.divide(ratio2, dx_norm2, h_norm2);
-                      if (R.compare_elems(ratio2, jinv2) > 0) R.set(jinv2, ratio2);
-                    }
                   normSquared(submatrix(x1c1, 0, 0, n, 1), x_norm2);
 
                   R.mult(x_norm2, x_norm2, tol2);
@@ -926,7 +1006,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
                   if (M2_numericalAlgebraicGeometryTrace > 4)
                     std::cout << "  corrector " << n_corr_steps
                               << ": dt = " << R.coerceToDouble(dt)
-                              << ", |H|^2 = " << R.coerceToDouble(h_norm2)
                               << ", |dx|^2 = " << R.coerceToDouble(dx_norm2)
                               << ", tol^2 |x|^2 = " << R.coerceToDouble(x_norm2)
                               << (is_successful ? " ok" : " no") << std::endl;
@@ -956,6 +1035,17 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
                   predictor_successes = 0;
                   R.divide(dt, dt, dt_factor);
                 }
+              if (checkPrecision)
+                {
+                  // the corrector's last evaluation was within tolerance of
+                  // the accepted point: its bound on H serves the next check
+                  double jmax, hmax;
+                  if (errorBounds(mHxH, jmax, hmax))
+                    {
+                      psiH_x0 = std::sqrt((double)n) * hmax;
+                      have_psiH = true;
+                    }
+                }
             }
 
           normSquared(submatrix(x0c0, 0, 0, n, 1),
@@ -981,101 +1071,22 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
                 }
             }
 
-          if (status == PROCESSING and checkPrecision and not t0equals1 and
-              not R.is_zero(jinv2))
+          if (status == PROCESSING and checkPrecision and linearSolve_success and
+              is_successful)
             {
-              // Precision check, after Bates-Hauenstein-Sommese-Wampler
-              // (adaptive multiprecision path tracking), with u = 2^-prec.
-              // The corrector's Newton step gives a free lower bound
-              // jinv = ||dx||/||H(x)|| <= ||J^{-1}||, and the evaluator gives
-              // the bounds psiH, psiJ on the rounding error (in units of u) of
-              // H and of the Jacobian at the current point.
-              //  Rule C: the error u*(jinv*psiH + ||x||) of a Newton step
-              //          must stay below the (relative) tolerance tol*||x||,
-              //          i.e. prec > log2(1/tol) + log2(jinv*psiH/||x|| + 1).
-              //  Rule A: the rounded Jacobian must stay nonsingular,
-              //          u*jinv*psiJ < 1, i.e. prec > log2(jinv*psiJ).
-              // The safety margin covers the lower-bound nature of jinv and
-              // the constants of complex arithmetic not in the error model.
-              double tol2d = R.coerceToDouble(tol2);
-              int tolerance_bits = (tol2d > 0 and tol2d < 1)
-                                       ? (int)std::ceil(-0.5 * std::log2(tol2d))
-                                       : 0;
-              double jinv = std::sqrt(R.coerceToDouble(jinv2));
-              double xnorm = std::sqrt(R.coerceToDouble(x_norm2));
-              double psiH = xnorm, psiJ = 0;  // fallback: H evaluated to ~u relative
-              if (mHxH.evaluationErrorBound(evalErr))
-                {
-                  // HxH outputs are row-major n x (n+1): J then the column H.
-                  // Max-norm bounds times the dimension factor (no squaring:
-                  // the bounds can exceed 1e154 at a wild predictor point).
-                  double hmax = 0, jmax = 0;
-                  for (size_t i = 0; i < n; i++)
-                    {
-                      for (size_t jj = 0; jj < n; jj++)
-                        jmax = std::max(jmax, evalErr[i * (n + 1) + jj]);
-                      hmax = std::max(hmax, evalErr[i * (n + 1) + n]);
-                    }
-                  psiH = std::sqrt((double)n) * hmax;
-                  psiJ = (double)n * jmax;
-                }
-              // bits needed to resolve an amplification factor; an infinite
-              // or NaN bound (overflow in the error model) asks for more than
-              // any precision on the ladder
-              auto bitsFor = [](double amp) -> int {
-                if (std::isnan(amp) or amp > 1e300) return 1 << 20;
-                return (amp > 1) ? (int)std::ceil(std::log2(amp)) : 0;
-              };
-              double ampC = (xnorm > 0) ? jinv * psiH / xnorm + 1 : jinv * psiH;
-              int condition_bits = bitsFor(ampC);
-              int jacobian_bits = bitsFor(jinv * psiJ);
-              int precision_needed =
-                  PRECISION_SAFETY_BITS +
-                  std::max(tolerance_bits + condition_bits, jacobian_bits);
+              // Decrease rule: the next lower precision (ladder 53, 128, 256,
+              // ...) had spare bits at the point just left; decrease only once
+              // this has held for several consecutive accepted steps.
               int prec = (int)R.get_precision();
-              // the front end's precision ladder is 53, 128, 256, 512, ...
               int lower_prec = (prec <= 128) ? 53 : prec / 2;
-              if (prec < precision_needed)
+              if (prec > 53 and
+                  lower_prec >= precision_needed + PRECISION_HYSTERESIS_BITS)
                 {
-                  // On an accepted step the verdict is trustworthy. On a
-                  // failed step it was formed at the predictor's point, which
-                  // may be wild if the step was too long, so cut the step
-                  // (done above) and only escalate once several consecutive
-                  // failures agree.
-                  if (is_successful or ++fail_streak >= PRECISION_FAIL_STEPS)
-                    status = INCREASE_PRECISION;
-                  low_need_streak = 0;
-                }
-              else if (not is_successful)
-                {
-                  low_need_streak = 0;  // only accepted steps count toward a decrease
-                  fail_streak = 0;
-                }
-              else if (prec > 53 and
-                       lower_prec >= precision_needed + PRECISION_HYSTERESIS_BITS)
-                {
-                  // the next lower precision has spare bits; decrease only
-                  // once this has held for several consecutive accepted steps
                   if (++low_need_streak >= PRECISION_LOW_NEED_STEPS)
                     status = DECREASE_PRECISION;
-                  fail_streak = 0;
                 }
               else
-                {
-                  low_need_streak = 0;
-                  fail_streak = 0;
-                }
-              if (M2_numericalAlgebraicGeometryTrace > 3)
-                std::cout << "precision needed = " << precision_needed << " = "
-                          << PRECISION_SAFETY_BITS << "(safety) + max("
-                          << tolerance_bits << "(tolerance) + "
-                          << condition_bits << "(condition), "
-                          << jacobian_bits << "(jacobian)), current = " << prec
-                          << "; |J^-1| >= " << jinv << ", psiH = " << psiH
-                          << ", psiJ = " << psiJ << ", |x| = " << xnorm
-                          << ", low-need streak = " << low_need_streak
-                          << ", fail streak = " << fail_streak
-                          << ", status = " << status << std::endl;
+                low_need_streak = 0;
             }
 
         }

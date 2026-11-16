@@ -898,8 +898,6 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 		     ); -- while ... 
 		     s.cache#"MaxPrecision" = maxPrec;
 		     s.cache#"PrecisionHistory" = history;
-		     if status s =!= Regular then -- change status to Regular if at t=1 
-		     if abs(realPart s.cache.LastT) < theSmallestNumber then s.cache.SolutionStatus = Regular;   
 		 ) -- for nS ...
 	     );
 	 if DBG > 0 then << "-- " << demark(", ",

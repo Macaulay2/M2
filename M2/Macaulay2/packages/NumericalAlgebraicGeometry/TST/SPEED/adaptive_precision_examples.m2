@@ -6,9 +6,10 @@
 --
 -- Usage: M2 --script adaptive_precision_examples.m2 NAME
 -- Outcome (default EndZoneFactor): no path changes precision; same endpoints,
--- statuses and time as fixed double, except a few diverging paths end with
+-- statuses and time as fixed double, except diverging paths that end with
 -- IncreasePrecision where fixed double ends with MinStepFailure a step later
--- (cyclic5: 5 of 50, proddeco: 169 of 188, reimer5: 204 of 555).
+-- (proddeco: 169 of 188, reimer5: 256 of 555; one reimer5 path that fixed
+-- double finishes asks for more bits past t = 0.95 and stops there).
 -- With EndZoneFactor => 0 every MinStepFailure path is resumed at 128 bits
 -- (some at 256): diverging paths then end as Infinity and singular endpoints
 -- are reached, at 30-1000 times the double-precision time.
