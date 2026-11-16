@@ -5233,6 +5233,11 @@ TEST ///
     T0Aff := leviHighestWeights(matrix{{2,-2},{-2,2}},0,{1});
     assert(T0Aff#(new Irrep from {{2}}) === 1);
     assert(T0Aff#(new Irrep from {{0}}) === 2);
+    -- In affine A_2 the null root is the only root of height three.
+    -- Its two-dimensional root space restricts to two trivial modules
+    -- for the rank-zero derived Levi of the Borel.
+    T3AffBorel := leviHighestWeights(cartanAffineA 2,3,{1,2,3});
+    assert(tallySignature T3AffBorel === set {{{},2}});
 
     TD4Part := leviHighestWeights(cartanD 4,1,{1},
         WeightFormat=>"Partition");
@@ -9285,6 +9290,10 @@ assert(wordsCheckedGeometry == 364);
 -- Cancellation, nonreduced words, empty rank, and invalid public node
 -- positions must all retain their actual meanings.
 assert((weylInversionData(A,{1,1,2,2,3,3}))#"inversions" === {});
+-- Removing an inversion and later restoring it must put it at the end,
+-- while leaving the insertion order of the other inversions unchanged.
+assert((weylInversionData(A,{1,1,2,1,1,1}))#"inversions" ===
+    {{0,1,0},{1,1,0}});
 assert((weylInversionData(matrix(ZZ,{}),{}))#"length" == 0);
 mustErrorGeometry = f -> (try (f();false) else true);
 for badWord in {{0},{4},{1/2},{"1"},{-1}} do
