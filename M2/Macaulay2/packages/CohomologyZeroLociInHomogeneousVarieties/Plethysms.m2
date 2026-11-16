@@ -1155,19 +1155,19 @@ repDual (DynkinType,Weight) := (D,l) -> (
     l = entries l;
     newl := for dyn in D list (
         n := dyn#1;
-        currentl := take(l,n);
+        currentPart := take(l,n);
         l = drop(l,n);
         if dyn#0 == "A" then (
-            reverse currentl
+            reverse currentPart
             )
         else if dyn#0 == "D" and n % 2 == 1 then (
-             entries (vector currentl)^(flatten {toList(0..n-3),n-1,n-2})
+             entries (vector currentPart)^(flatten {toList(0..n-3),n-1,n-2})
             )
         else if dyn#0 == "E" and n == 6 then (
-            entries (vector currentl)^{5,1,4,3,2,0}
+            entries (vector currentPart)^{5,1,4,3,2,0}
             )
         else (
-            currentl
+            currentPart
             )
         );
     return weight(rootSystem D,flatten newl);

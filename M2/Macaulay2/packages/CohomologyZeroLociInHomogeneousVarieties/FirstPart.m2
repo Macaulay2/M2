@@ -1,4 +1,4 @@
--------------------------------- Weights arithmetics ----------------------------------------------------------------
+-------------------------------- Weights arithmetic ----------------------------------------------------------------
 
 -- rootSystem(...) returns a new object, with nothing computed in it yet, on
 -- every call. P and X are shared by all the bundles on a variety, so these

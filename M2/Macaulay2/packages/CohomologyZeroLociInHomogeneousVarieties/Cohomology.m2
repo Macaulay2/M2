@@ -677,7 +677,7 @@ hodgeNumbers HomogeneousVariety := o -> X -> (
     );
 
 
--- aux method for the otpion Verbose in hodgeNumbers
+-- aux method for the option Verbose in hodgeNumbers
 timedIf = method();
 timedIf (Boolean, Function) := (v, f) -> if v then elapsedTime f() else f();
 
