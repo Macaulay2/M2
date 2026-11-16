@@ -452,9 +452,8 @@ coimageToImageInverse Matrix := (f) -> (
   ker phi == 0
   coker phi == 0
   isHomogeneous phi
-
-  
   /// 
+
 beginDocumentation()
 
 doc ///
@@ -1086,6 +1085,107 @@ doc ///
         fiberSumMap
         fiberProduct
         fiberProductMap
+        (symbol||, Matrix, Matrix)
+///
+
+doc ///
+    Key
+        fiberSumMap
+        (fiberSumMap, Module)
+        (fiberSumMap, Module, Matrix, Matrix)
+    Headline
+        the canonical maps associated to the pushout or fiber sum
+    Usage
+        (p,q) = fiberSumMap P
+        u = fiberSumMap(P, p', q')
+    Inputs
+        P:Module
+            constructed as a fiber sum $L \oplus_N M$ of two maps
+        p':Matrix
+            representing a map $M \to P'$ of $R$-modules
+        q':Matrix
+            representing a map $N \to P'$ of $R$-modules
+    Outputs
+        p:Matrix
+            representing a map $M \to P$ of $R$-modules
+        q:Matrix
+            representing a map $N \to P$ of $R$-modules
+        u:Matrix
+            representing a map $P \to P'$ of $R$-modules
+    Description
+        Text
+            The fiber sum of the maps $f \colon L \to M$ and $g \colon L \to N$ is the cokernel $P = M \oplus_L N$ of the induced map
+            $\begin{bmatrix} f \\ -g \end{bmatrix} \colon L \to M \oplus N$.  It has two canonical maps
+            $p \colon M \to P$ and $q \colon M \to P$ such that $q \circ g = p \circ f$.
+            These canonical maps are composites of the inclusions into the direct sum $M \oplus N$ followed by the cokernel map.
+        Text
+            Moreover, the triple $(P, p, q)$ satisfies the following universal property.
+            For any triple $(P', p', q')$, where $p' \colon M \to P'$ and $q' \colon N \to P'$
+            with $q' \circ g = p' \circ f$, there exists a unique $u \colon P \to P'$ such that
+            $u \circ p = p'$ and $u \circ q = q'$.
+            The map $u$ arises from the universal property of the cokernel. 
+        Text
+            We illustrate the fiber sum maps using abelian groups.
+        Example
+            f = matrix {{2, 0}, {0, 1}, {1, 4}}
+            g = matrix{{3,4},{1,7}}
+            P = fiberSum(f,g)
+            (p,q) = fiberSumMap P
+            assert(q * g === p * f)
+        Example
+            p' = matrix{{17, 17, 0}}
+            q' = matrix{{13, -5}}
+            assert(q' * g === p' * f)
+            u = fiberSumMap(P, p', q')
+            assert(p' === u * p and q' === u * q)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = transpose map(R^2,, {{a,b},{c,d}})
+            g = transpose map(R^2,, {{a,c,d},{b,d,c}})
+            f = map(R^{1,1}, R^2, {{a, c}, {b, d}})
+            g = map(R^{1,1,1}, R^2, {{a, b}, {c, d}, {d, c}})
+            P = fiberSum(f,g)
+            (p,q) = fiberSumMap P
+            assert(q * g === p * f)
+        Example
+            p' = map(R^{2}, target f, {{-c,d}})
+            q' = map(R^{2}, target g, {{-c,d,b-c}})
+            assert(q' * g === p' * f)
+            u = fiberSumMap(P, p', q')
+            assert(p' === u * p and q' === u * q)
+        Text
+            The universal property implies that given
+            maps $f \colon K \to L$, $g \colon K \to M$, and
+            $h \colon M \to N$, there is a canonical isomorphism
+            $u \colon L \oplus_K N \to (L \oplus_K M) \oplus_M N$.
+        Example
+            K = source f
+            L = target f
+            M = target g
+            assert(K === source g)
+            assert(source p === L and source q === M)
+            h = map(R^{2,3,1,2}, M, {{a, b, c},
+                             {a^2,b^2, c^2},
+                             {3, 4, -5},
+                             {a+d, b+c, 0}})
+            N = target h
+            Q' = fiberSum(q,h);
+            (p',q') = fiberSumMap Q';
+            assert(p' * q === q' * h)
+            Q = fiberSum(f, h*g);
+            assert(p'*p*f === q'*h*g)
+            u = fiberSumMap(Q, p'*p, q');
+            assert(ker u == 0 and coker u == 0)
+            assert(source u === Q and target u === Q')
+            assert(Q' != Q)
+    SeeAlso
+        fiberSum
+        fiberProduct
+        fiberProductMap
+        cokernelMap
         (symbol||, Matrix, Matrix)
 ///
 
