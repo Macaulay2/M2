@@ -98,7 +98,7 @@ TEST /// -*check that a cyclic group is generated in order*-
 TEST /// -*check that symmetric group character table is in the right order*-
     R = QQ[x_1 .. x_5];
     T = symmetricGroupTable(R);
-    result = matrix(R, {
+    result = matrix(QQ, {
         {1,  1,  1,  1,  1,  1, 1},
         {-1, 0, -1,  1,  0,  2, 4},
         {0, -1,  1, -1,  1,  1, 5},
