@@ -23,7 +23,7 @@ newPackage(
 --      Use code in lazy-complexes version of CanonicalMaps.m2 to grab that Complexes code.
 --  2. DONE move tensorCommutativity to here (the module part)
 --  3. write documentation (DONE: kernelMap, cokernelMap, imageMap).
---     In the middle of working on coimageMap (Need to check: the isomorphism j, is it always the identity map?)
+--     In the middle of working on coimageMap (Need to check: the isomorphism j, is it always the identity map?) Otherwise DONE
 --  Currently (9 Nov 2026) the tests before end-- all work.
 --  Question: if M = ker f, should kernelMap M give M --> source f.  i.e. should the fact that M is a kernel of f be stashed?
 --    Same question for coker, image, coimage
@@ -156,7 +156,7 @@ coimageImageMap Matrix := Matrix => (f) -> (
     map(source g, source h, h // g)
     )
 
--- axiom of an Abelian category: coimageToImage f is an isomorphism
+-- axiom of an abelian category: coimageToImage f is an isomorphism
 
 fiberProduct = method()
 fiberProduct(Matrix, Matrix) := Module => (phi, phi') -> (
@@ -500,7 +500,7 @@ doc ///
             exists a unique map $u \colon L \to K$ such that $g \circ u = h$.
         Text
             We illustrate the kernel map using a homomorphism
-            of Abelian groups.
+            of abelian groups.
         Example
             f = matrix{{2,0,1},{0,1,4}}
             g = kernelMap f
@@ -564,7 +564,7 @@ doc ///
             exists a unique map $u \colon Q \to L$ such that $u \circ g = h$.
         Text
             We illustrate the cokernel map using a homomorphism
-            of Abelian groups.
+            of abelian groups.
         Example
             f = matrix {{2, 0}, {0, 1}, {1, 4}}
             g = cokernelMap f
@@ -637,7 +637,7 @@ doc ///
             $h = u \circ e$.
         Text
             We illustrate the image map using a homomorphism
-            of Abelian groups.
+            of abelian groups.
         Example
             f = matrix {{2, 0}, {0, 1}, {1, 4}}
             (g,e) = imageMap f
@@ -746,7 +746,7 @@ doc ///
             $i = g \circ u$.
         Text
             We illustrate the coimage map using a homomorphism
-            of Abelian groups.
+            of abelian groups.
         Example
             f = matrix {{2, 0}, {0, 3}, {1, 4}}
             (g,e) = coimageMap f
@@ -828,12 +828,12 @@ doc ///
             the canonical isomorphism $g \colon \operatorname{Coimage}(f) \to \operatorname{Image}(f)$
     Description
         Text
-            As $R$-modules form an Abelian category,
+            As $R$-modules form an abelian category,
             the canonical map $g \colon \operatorname{Coimage}(f) \to \operatorname{Image}(f)$,
             is an isomorphism.
         Text
             As a first example, we consider a map between
-            free Abelian groups.  In this case, the canonical map
+            free abelian groups.  In this case, the canonical map
             from the coimage to the image is obviously the identity map.
         Example
             f = matrix {{2, 0}, {0, 3}, {1, 4}}
@@ -862,6 +862,231 @@ doc ///
         coimage
         imageMap
         coimageMap
+///
+
+doc ///
+    Key
+        fiberProduct
+        (fiberProduct, Matrix, Matrix)
+    Headline
+        the pullback or fiber product associated to two maps
+    Usage
+        P = fiberProduct(f,g)
+    Inputs
+        f:Matrix
+            representing a map $L \to N$ of $R$-modules
+        g:Matrix
+            representing a map $M \to N$ of $R$-modules
+    Outputs
+        P:Module
+            the fiber product of $f$ and $g$
+    Description
+        Text
+            The fiber product of $f$ and $g$ is the kernel $P = L \times_N M$ of the induced map
+            $\begin{bmatrix} f & -g \end{bmatrix} \colon L \oplus M \to N$.  It has two canonical maps
+            $p \colon P \to L$ and $q \colon P \to M$ such that $g \circ q = f \circ p$.
+        Text
+            Moreover, the triple $(P, p, q)$ satisfies the following universal property.
+            For any triple $(P', p', q')$, where $p' \colon P' \to L$ and $q' \colon P' \to M$
+            with $g \circ q' = f \circ p'$, there exists a unique $u \colon P' \to P$ such that
+            $p \circ u = p'$ and $q \circ u = q'$.
+        Text
+            We illustrate the fiber product using abelian groups.
+        Example
+            f = matrix{{2,0,1},{0,1,4}}
+            g = matrix{{3,4},{1,7}}
+            P = fiberProduct(f,g)
+            (p,q) = fiberProductMap P
+            assert(g * q === f * p)
+        Example
+            p' = matrix {{0}, {11}, {-3}}
+            q' = matrix {{-1}, {0}}
+            assert(g * q' === f * p')
+            u = fiberProductMap(P, p', q')
+            assert(p' === p * u and q' === q * u)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, {{a,b},{c,d}})
+            g = map(R^2,, {{a,c,d},{b,d,c}})
+            P = fiberProduct(f,g)
+            (p,q) = fiberProductMap P
+            assert(g * q === f * p)
+        Example
+            p' = map(source f,, {{-c}, {d}})
+            q' = map(source g,, {{-c}, {d}, {b-c}})
+            assert(g * q' === f * p')
+            u = fiberProductMap(P, p', q')
+            assert(p' === p * u and q' === q * u)
+    SeeAlso
+        fiberProductMap
+        fiberSum
+        fiberSumMap
+        (symbol|, Matrix, Matrix)
+///
+
+doc ///
+    Key
+        fiberProductMap
+        (fiberProductMap, Module)
+        (fiberProductMap, Module, Matrix, Matrix)
+    Headline
+        the canonical maps associated to the pullback or fiber product
+    Usage
+        (p,q) = fiberProductMap P
+        u = fiberProductMap(P, p', q')
+    Inputs
+        P:Module
+            constructed as a fiber product $L \times_N M$ of two maps
+        p':Matrix
+            representing a map $P' \to L$ of $R$-modules
+        q':Matrix
+            representing a map $P' \to M$ of $R$-modules
+    Outputs
+        p:Matrix
+            representing a map $P \to L$ of $R$-modules
+        q:Matrix
+            representing a map $P \to M$ of $R$-modules
+        u:Matrix
+            representing a map $P' \to P$ of $R$-modules
+    Description
+        Text
+            The fiber product of the maps $f \colon L \to N$ and $g \colon M \to N$ is the kernel $P = L \times_N M$ of the induced map
+            $\begin{bmatrix} f & -g \end{bmatrix} \colon L \oplus M \to N$.  It has two canonical maps
+            $p \colon P \to L$ and $q \colon P \to M$ such that $g \circ q = f \circ p$.
+            These canonical maps are composites of the kernel map and projections from the direct sum $L \oplus M$.
+        Text
+            Moreover, the triple $(P, p, q)$ satisfies the following universal property.
+            For any triple $(P', p', q')$, where $p' \colon P' \to L$ and $q' \colon P' \to M$
+            with $g \circ q' = f \circ p'$, there exists a unique $u \colon P' \to P$ such that
+            $p \circ u = p'$ and $q \circ u = q'$.
+            The map $u$ arises from the universal property of the kernel. 
+        Text
+            We illustrate the fiber product maps using abelian groups.
+        Example
+            f = matrix{{2,0,1},{0,1,4}}
+            g = matrix{{3,4},{1,7}}
+            P = fiberProduct(f,g)
+            (p,q) = fiberProductMap P
+            assert(g * q === f * p)
+        Example
+            p' = matrix {{0}, {11}, {-3}}
+            q' = matrix {{-1}, {0}}
+            assert(g * q' === f * p')
+            u = fiberProductMap(P, p', q')
+            assert(p' === p * u and q' === q * u)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, {{a,b},{c,d}})
+            g = map(R^2,, {{a,c,d},{b,d,c}})
+            P = fiberProduct(f,g)
+            (p,q) = fiberProductMap P
+            assert(g * q === f * p)
+        Example
+            p' = map(source f,, {{-c}, {d}})
+            q' = map(source g,, {{-c}, {d}, {b-c}})
+            assert(g * q' === f * p')
+            u = fiberProductMap(P, p', q')
+            assert(p' === p * u and q' === q * u)
+        Text
+            The universal property implies that given
+            maps $f \colon K \to M$, $g \colon L \to M$, and
+            $h \colon N \to L$, there is a canonical isomorphism
+            $u \colon (K \times_M L) \times_L N \to 
+            K \times_M N$.
+        Example
+            K = source f
+            L = source g
+            M = target f
+            assert(M === target g)
+            assert(target q === L and source q === P)
+            h = map(L,, {{a^2,a*b,a*c,b^2,b*d},
+                         {a,b,c,0,d},
+                         {1,3,-2,0,1}})
+            N = source h
+            Q' = fiberProduct(q,h);
+            (p',q') = fiberProductMap Q';
+            assert(q * p' === h * q')
+            Q = fiberProduct(f, g*h);
+            assert(f*p*p' === g*h*q')
+            u = fiberProductMap(Q, p*p', q');
+            assert(ker u == 0 and coker u == 0)
+            assert(source u === Q' and target u === Q)
+            assert(Q' != Q)
+    SeeAlso
+        fiberProduct
+        fiberSum
+        fiberSumMap
+        kernelMap
+        (symbol|, Matrix, Matrix)
+///
+
+doc ///
+    Key
+        fiberSum
+        (fiberSum, Matrix, Matrix)
+    Headline
+        the pushout or fiber sum associated to two maps
+    Usage
+        P = fiberSum(f,g)
+    Inputs
+        f:Matrix
+            representing a map $L \to M$ of $R$-modules
+        g:Matrix
+            representing a map $L \to N$ of $R$-modules
+    Outputs
+        P:Module
+            the fiber sum of $f$ and $g$
+    Description
+        Text
+            The fiber sum of $f$ and $g$ is the cokernel $P = M \oplus_L N$ of the induced map
+            $\begin{bmatrix} f \\ -g \end{bmatrix} \colon L \to M \oplus N$.  It has two canonical maps
+            $p \colon M \to P$ and $q \colon N \to P$ such that $q \circ g = p \circ f$.
+        Text
+            Moreover, the triple $(P, p, q)$ satisfies the following universal property.
+            For any triple $(P', p', q')$, where $p' \colon M \to P'$ and $q' \colon N \to P'$
+            with $q' \circ g = p' \circ f$, there exists a unique $u \colon P \to P'$ such that
+            $u \circ p = p'$ and $u \circ q = q'$.
+        Text
+            We illustrate the fiber sum using abelian groups.
+        Example
+            f = matrix{{3,4}}
+            g = matrix {{2, 0}, {0, 13}, {1, 4}}
+            P = fiberSum(f,g)
+            (p,q) = fiberSumMap P
+            assert(q * g === p * f)
+        Example
+            p' = matrix{{26}}
+            q' = matrix{{39,8,0}}
+            assert(q' * g === p' * f)
+            u = fiberSumMap(P, p', q')
+            assert(p' === u * p and q' === u * q)
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = transpose map(R^2,, {{a,b},{c,d}})
+            g = transpose map(R^2,, {{a,b,d},{b,d,c}})
+            P = fiberSum(f,g)
+            (p,q) = fiberSumMap P
+            assert(q * g === p * f)
+        Example
+            p' = map(R^1, target f, {{b, 0}})
+            q' = map(R^1, target g, {{0, a, 0}})
+            assert(q' * g === p' * f)
+            u = fiberSumMap(P, p', q')
+            assert(p' === u * p and q' === u * q)
+    SeeAlso
+        fiberSumMap
+        fiberProduct
+        fiberProductMap
+        (symbol||, Matrix, Matrix)
 ///
 
 ///
