@@ -538,6 +538,7 @@ updatePackage (String,String,List) := (dir,baseURL,singleFilePkgs) -> (
     if not isDirectory dir then error "expected a directory";
     if baseURL === "" then baseURL = "https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/";
     if baseURL === "@" then baseURL = "https://raw.githubusercontent.com/giovannistagliano/M2/development/M2/Macaulay2/packages/";
+    if dir_(-1) =!= "/" then dir = dir | "/";
     if substring(baseURL,0,4) =!= "http" then error "expected a url";
     curl := findProgram("curl", "curl -h");
     dir' := replace(" ","\\\\ ",dir);
