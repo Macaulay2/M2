@@ -86,9 +86,6 @@ export {
 	"gfanVersion",
 	"toPolymakeFormat",
 	"multiplicitiesReorder",
-	 "gfanConvertToNewRing",
-        "gfanIdealToString",
-        "runGfanCommand",
         "gfanGroebnerComplex",
         "gfanPadicInitialIdeal"
 }
@@ -4601,6 +4598,7 @@ doc///
 --  Need to test ==
 -- TEST gfanIdealToString
     TEST ///
+    debug needsPackage "gfanInterface"
     QQ[x,y,z];
     I = ideal(x^2 + y, x*z);
     S = gfanIdealToString I;
