@@ -1193,3 +1193,15 @@ L = coker vars R
 h = homomorphism'(g, id_L)
 assert(homomorphism h == id_L)
 ///
+
+TEST ///
+-- pushforward' from pushFwd of a Hom module lands back in Hom
+kk = ZZ/7
+T = kk[t]
+S = kk[s]
+f = map(T, S, {t^2})
+I = ideal {t}
+H = Hom(I, I)
+fH = pushFwd(f, H)
+assert((pushforward'(fH_0)).cache.?homomorphism)
+///
