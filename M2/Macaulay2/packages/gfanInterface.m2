@@ -4586,6 +4586,96 @@ doc///
 
 
 
+doc ///
+	Key
+		gfanGroebnerComplex
+		(gfanGroebnerComplex, Ideal)
+		[gfanGroebnerComplex, "p"]
+		[gfanGroebnerComplex, "groebnerComplex"]
+	Headline
+		the p-adic Groebner complex of a homogeneous ideal
+	Usage
+		F = gfanGroebnerComplex I
+	Inputs
+		I:Ideal
+			a homogeneous ideal in a polynomial ring over {\tt QQ}
+		"p" => ZZ
+			the prime defining the p-adic valuation (default {\tt 2})
+		"groebnerComplex" => Boolean
+			corresponding to the {\tt --groebnerComplex} flag of {\tt gfan _padic}; always {\tt true}
+	Outputs
+		F:Fan
+			the fan over the p-adic Groebner complex of {\tt I}
+	Description
+		Text
+			This method computes the Groebner complex of a homogeneous ideal over
+			{\tt QQ} with respect to the p-adic valuation, as defined by Maclagan and
+			Sturmfels. Since {\tt gfan} only handles fans, the output is the fan over
+			the complex: the first coordinate of each ray is the homogenizing
+			coordinate for the valuation. Note that {\tt gfan _padic} uses the
+			tropical minimum convention.
+		Example
+			QQ[x,y,z];
+			I = ideal(2*x + y - 2*z, x^2 - 4*y*z);
+			F = gfanGroebnerComplex(I, "p" => 2);
+			rays F
+			maxCones F
+		Text
+			@STRONG "gfan Documentation"@
+
+			@gfanHelp "gfan _padic"@
+	SeeAlso
+		gfanPadicInitialIdeal
+		gfanGroebnerCone
+///
+
+doc ///
+	Key
+		gfanPadicInitialIdeal
+		(gfanPadicInitialIdeal, Ideal, List)
+		[gfanPadicInitialIdeal, "p"]
+		[gfanPadicInitialIdeal, "initialIdeal"]
+	Headline
+		the p-adic initial ideal of a homogeneous ideal with respect to a weight vector
+	Usage
+		L = gfanPadicInitialIdeal(I, w)
+	Inputs
+		I:Ideal
+			a homogeneous ideal in a polynomial ring over {\tt QQ}
+		w:List
+			a weight vector with one more entry than the number of variables; the
+			first entry is the homogenizing coordinate for the valuation
+		"p" => ZZ
+			the prime defining the p-adic valuation (default {\tt 2})
+		"initialIdeal" => Boolean
+			corresponding to the {\tt --initialIdeal} flag of {\tt gfan _padic}; always {\tt true}
+	Outputs
+		L:List
+			generators of the p-adic initial ideal of {\tt I} with respect to {\tt w}
+	Description
+		Text
+			This method computes the initial ideal of a homogeneous ideal over
+			{\tt QQ} with respect to a weight vector, where the weight of a term also
+			takes into account the p-adic valuation of its coefficient. The weight
+			vector must be given in homogeneous form, with an extra first entry
+			(see the {\tt gfan} documentation below). Note that {\tt gfan _padic}
+			uses the tropical minimum convention. The generators are returned in
+			the polynomial ring used by {\tt gfan}, whose variables are named
+			{\tt x1, x2, ...}.
+		Example
+			QQ[x,y,z];
+			I = ideal(2*x + y - 2*z, x^2 - 4*y*z);
+			gfanPadicInitialIdeal(I, {1,0,0,0}, "p" => 2)
+			gfanPadicInitialIdeal(I, {1,0,0,0}, "p" => 3)
+		Text
+			@STRONG "gfan Documentation"@
+
+			@gfanHelp "gfan _padic"@
+	SeeAlso
+		gfanGroebnerComplex
+		gfanInitialForms
+///
+
 ---------------------------------------
 -- Tests
 ---------------------------------------
@@ -4962,6 +5052,27 @@ doc///
         assert(S#"Number of reduced Groebner bases" === 2)
         assert(S#"Number of variables" === 3)
 ///
+
+
+-- TEST gfanGroebnerComplex
+	TEST ///
+	QQ[x,y,z];
+	I = ideal(2*x + y - 2*z, x^2 - 4*y*z);
+	F = gfanGroebnerComplex(I, "p" => 2);
+	assert(instance(F, Fan))
+	assert(ambDim F === 4)
+	assert(dim F === 4)
+	///
+-- TEST gfanPadicInitialIdeal
+	TEST ///
+	QQ[x,y,z];
+	I = ideal(2*x + y - 2*z, x^2 - 4*y*z);
+	L = gfanPadicInitialIdeal(I, {1,0,0,0}, "p" => 2);
+	S = ring first L;
+	assert(set L === set {S_1, S_0^2})
+	L = gfanPadicInitialIdeal(I, {1,0,0,0}, "p" => 3);
+	assert(#L === 2)
+	///
 
 
 end--
