@@ -105,19 +105,19 @@ TEST ///
 R = rootSystemA(4);
 X = homogeneousVariety(R,set{1,3,4});
 l = weight(R,{0,0,1,0});
-F = homogeneousVectorBundle({l},{3},X);
+F = homogeneousVectorBundle({l},{1},X);
 Y = embeddedVariety F;
 dim Y
 R = rootSystemB(3);
 X = homogeneousVariety(R,set{2,3});
 l = weight(R,{0,1,0});
-F = homogeneousVectorBundle({l},{2},X);
+F = homogeneousVectorBundle({l},{1},X);
 Y = embeddedVariety F;
 dim Y
 R = rootSystemD(5);
 X = homogeneousVariety(R,set{2,3,4,5});
 l = weight(R,{0,0,0,0,1});
-F = homogeneousVectorBundle({l},{2},X);
+F = homogeneousVectorBundle({l},{1},X);
 Y = embeddedVariety F;
 dim Y
 ///
@@ -326,12 +326,12 @@ Y = embeddedVariety F;
 chiCotangent(1,Y)
 R = rootSystemC(3);
 X = homogeneousVariety(R,set{2,3});
-F = homogeneousVectorBundle({weight(R,{0,1,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,1,0})},{1},X);
 Y = embeddedVariety F;
 chiCotangent(1,Y)
 R = rootSystemD(4);
 X = homogeneousVariety(R,set{2,3,4});
-F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{2},X);
+F = homogeneousVectorBundle({weight(R,{0,0,0,1})},{1},X);
 Y = embeddedVariety F;
 chiCotangent(2,Y)
 ///
@@ -406,7 +406,7 @@ Y = embeddedVariety F;
 eulerCharacteristicStructure Y
 R = rootSystemE(6);
 X = homogeneousVariety(R,set{2,3,4,5,6});
-F = homogeneousVectorBundle({weight(R,{0,1,0,0,0,0})},{2},X);
+F = homogeneousVectorBundle({weight(R,{1,0,0,0,0,0})},{2},X);
 Y = embeddedVariety F;
 eulerCharacteristicStructure Y
 ///
