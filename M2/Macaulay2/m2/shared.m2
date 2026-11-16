@@ -4,7 +4,6 @@ needs "methods.m2"
 
 -- methods
 
-center = method(Options => true)
 chi = method()
 euler  = method()
 eulers = method()

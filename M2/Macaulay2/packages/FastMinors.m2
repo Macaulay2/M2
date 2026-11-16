@@ -1614,7 +1614,7 @@ doc ///
         Text
             {\bf Proving a singularity is not regular.}
         Text
-            Sometimes you think that a variety is not regular in codimension n.  In that case, you can use the option {\tt VerifyNonRegular=>true}.  Below we have an example of a nodal elliptic curve cross P^1 expressed as a Segre prodcut, it is not even regular in codimension 1.
+            Sometimes you think that a variety is not regular in codimension n.  In that case, you can use the option {\tt VerifyNonRegular=>true}.  Below we have an example of a nodal elliptic curve cross P^1 expressed as a Segre product, it is not even regular in codimension 1.
         Example
             B = ZZ/103[a,b,c,d,e,f]/ideal(d*e-c*f,b*e-a*f,b*c-a*d,b^3-b^2*f-d^2*f,a*b^2-a*b*f-c*d*f,a^2*b-a^2*f-c^2*f,a^3-a^2*e-c^2*e)
             regularInCodimension(1, B, VerifyNonRegular=>true)

@@ -151,11 +151,9 @@ needs = filename -> (loadPath(path, filename, simpleNeeds, notify);)
 -- Setup persistent history
 -----------------------------------------------------------------------------
 historyFilename = "history.m2"
-historyOffset = 0;
 
 if not noinitfile and not gotarg "--no-readline" then (
     readHistory(applicationDirectory() | historyFilename);
-    historyOffset = historyLength();
     -- TODO: find a better alternative to addEndFunction, because
     -- exiting with Ctrl+D duplicates the last line of history file,
     -- but if we use lineNumber-1, then exit and restart miss the first

@@ -335,7 +335,7 @@ netComplex = (Rn,c) -> (
     l
     )
 
--- test belows fails when this method inherits from 'merge', not sure why
+-- test below fails when this method inherits from 'merge', not sure why
 glue = method()
 glue (ReactionNetwork,ReactionNetwork) := (N1, N2) -> (
     assert(N1.NullSymbol == N2.NullSymbol);
