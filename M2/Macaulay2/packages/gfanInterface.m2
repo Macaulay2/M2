@@ -4936,7 +4936,7 @@ doc///
 --To do - do both this test and the one afterwards with a repeated ray.
 --The math of this needs to be checked (the asserts are from previous authors)
 -- The issue is checking that the rays are what we expect in these cases, as gfan
---choose rays in the othogonal space to the lineality space
+--choose rays in the orthogonal space to the lineality space
 --	  F = gfanSecondaryFan {{1,0},{1,1}, {1,2}, {1,3}}
 --       	  assert(fVector(F) === {1, 4, 4})
 --FIXME
