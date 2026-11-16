@@ -1195,13 +1195,13 @@ assert(homomorphism h == id_L)
 ///
 
 TEST ///
--- pushforward' from pushFwd of a Hom module lands back in Hom
+-- pushforward' from pushFwd of a Hom module lands back in a module that knows it is a Hom
 kk = ZZ/7
 T = kk[t]
 S = kk[s]
 f = map(T, S, {t^2})
 I = ideal {t}
-H = Hom(I, I)
+H = Hom(module T, module T)
 fH = pushFwd(f, H)
-assert((pushforward'(fH_0)).cache.?homomorphism)
+assert(pushforward(f, homomorphism' homomorphism pushforward' fH_0) == fH_0)
 ///

@@ -59,17 +59,25 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??=
     N' := asDirectSum N;
     Cs := components N';
 
+
+    auxpfN := null; auxpf' := null; auxpf := null;
     (pfN, pf', pf) := if #Cs > 1 then (
         pfCs := apply(Cs, C -> pushFwd(f, C));
-        auxpfN := directSum pfCs;
-        auxpf' := (m) -> (
+        auxpfN = directSum pfCs;
+        auxpf' = (m) -> (
             map(N, N', id_N) * sum for i from 0 to #Cs - 1 list N'_[i] * pushforward'(map(pfCs#i, , auxpfN^[i] * m))
         );
-        auxpf := (n) -> (
+        auxpf = (n) -> (
             sum for i from 0 to #Cs - 1 list auxpfN_[i] * pushforward(pfCs#i, map(Cs#i, , N'^[i] * map(N', N, id_N') * n))
         );
         (auxpfN, auxpf', auxpf)
-    ) else makeModule(f, N);
+    ) else (
+        -- replace any R^1 with module R so we benefit from caching
+        -- but ensure below that pf' sends elements of the pushforward back to the right place
+        auxN := if N === module target f then module target f else N;
+        {auxpfN, auxpf', auxpf} = makeModule(f, auxN);
+        (auxpfN, (m) -> (n := auxpf' m; map(N, source n, n)), auxpf)
+    );
 
     result := if o.MinimalGenerators then (
         -- prune and then push our pf / pf' maps through the pruningMap
@@ -194,10 +202,6 @@ pushFwdGens(Module) := Matrix => (M) -> M.cache.pushFwdGens ??= pushforward' M_{
 makeModule = method()
 makeModule(RingMap, Module) := (f, N) -> (
     (R, S) := (target f, source f);
-
-    -- replace R^1 with module R so we benefit from caching
-    if N === module R then N = module R;
-
     if isRankOneFree N and not inComputation N then (
         -- this reduces to computing cached pushFwd of module R
         return makeModuleRankOneFree(f, N)
