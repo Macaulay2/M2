@@ -1,7 +1,7 @@
 newPackage(
     "CanonicalMaps",
-    Version => "0.2",
-    Date => "1 October 2026",
+    Version => "0.3",
+    Date => "16 November 2026",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -14,22 +14,15 @@ newPackage(
     Headline => "implements canonical and standard maps for modules",
     Keywords => {"Commutative Algebra"},
     AuxiliaryFiles => false,
-    DebuggingMode => true
+    DebuggingMode => false
     )
 
 -- TODO:
---  0. DONE Tell Doug about this branch/package.
---  1. DONE move the complexes code out of here, to Complexes/ComplexMapsCanonical.m2(or some better name).  Not moved yet.
---      Use code in lazy-complexes version of CanonicalMaps.m2 to grab that Complexes code.
---  2. DONE move tensorCommutativity to here (the module part)
---  3. write documentation (DONE: kernelMap, cokernelMap, imageMap).
---     In the middle of working on coimageMap (Need to check: the isomorphism j, is it always the identity map?) Otherwise DONE
---  Currently (9 Nov 2026) the tests before end-- all work.
---  Question: if M = ker f, should kernelMap M give M --> source f.  i.e. should the fact that M is a kernel of f be stashed?
---    Same question for coker, image, coimage
---  4. audit the tests, many are after the end
---  5. fiber sum, product maps, universal maps.
--- 
+--  1. move method declaration of tensorCommutativity to here (the module part)
+--  2. debug and reinstate: pruneMap, trimMap
+--  3. reinstate: superMap, cosuperMap, unitorMap, counitorMap
+--  4. implement swapMap, adjunctionMap (rounding out the "6 standard canonical maps")
+--  5. audit the tests, many are after the end--
 
 export {
     "kernelMap",
@@ -41,14 +34,14 @@ export {
     "fiberProductMap",
     "fiberSum",
     "fiberSumMap",
-    "superMap",
-    "cosuper",
-    "cosuperMap",
+    -- "superMap",
+    -- "cosuper",
+    -- "cosuperMap",
     -- "trimMap",
-    "pruneMap",
-    "unitorMap",
-    "counitorMap",
-    "tensorCommutativity",
+    -- "pruneMap",
+    -- "unitorMap",
+    -- "counitorMap",
+    -- "tensorCommutativity",
     -- "tensorCommutativity" is exported by the Complexes package (Complexes.m2:120):
     --   identical (Module,Module) body there, plus a (Complex,Complex) version
     -- "tensorAssociativity" is currently in Core: modules2.m2, needs tests
@@ -243,9 +236,9 @@ pruneMap = method(Options => options prune)
 -- pruneMap M : M --> prune M (opposite of the current pruningMap)
 --  (pruneMap M)^-1 : prune M --> M
 pruneMap Module := opts -> M -> (
-    M' := prune(M, opts);
-    f := M'.cache.pruningMap;
-    map(M', M, f^(-1))
+    N := prune(M, opts);
+    g := N.cache.pruningMap;
+    map(N, M, g^-1)
     )
 
 -- trimMap M : M --> trim M (basically the identity on generators)
@@ -463,8 +456,15 @@ doc ///
         implements canonical and standard maps for modules
     Description
         Text
-    Caveat
+            A canonical map is a morphism between mathematical objects
+            that arises from their definitions or constructions without
+            requiring arbitrary choices.  It typically preserves as
+            much of the underlying structure as possible.
+        Text
+            This package implements many of the basic canonical maps
+            for modules.
     SeeAlso
+        "Complexes :: Complexes"
 ///
 
 doc ///
@@ -1189,6 +1189,58 @@ doc ///
         (symbol||, Matrix, Matrix)
 ///
 
+"doc" -- TODO: reinstate pruneMap
+///
+    Key
+        pruneMap
+        (pruneMap, Module)
+    Headline
+        isomorphism associated to a minimal presentation
+    Usage
+        f = pruneMap N
+    Inputs
+        N:Module
+            a module constructed as a minimal
+            presentation of a module $M$
+    Outputs
+        f:Matrix
+            the isomorphism $f \colon M \to N$
+    Description
+        Text
+            By construction, a minimal presentation is isomorphic
+            to the original module.  This method returns this
+            isomorphism.
+        Text
+            We illustrate the prune map over the rationals.
+        Example
+            M = image transpose matrix(QQ, {{2,0,1},{0,1,4}, {2,-5,-19}})
+            N = prune M
+            f = pruneMap N -- TODO: fix this bug!
+            source f === M
+            target f === N
+        Text
+            For a second example,
+            we work over a quotient of a polynomial ring.
+        Example
+            R = QQ[a,b,c,d]/(a*d-b*c);
+            f = map(R^2,, matrix{{a,b},{c,d}})
+            assert(ker f != 0)
+            g = kernelMap f
+            assert(source g === kernel f and target g === source f)
+            assert(f * g == 0)
+            h = map(source f,, {{d*a^3},{-c*a^3}})
+            assert(f * h == 0)
+            u = kernelMap(h, f)
+            assert(h == g * u)
+        Text
+            Cokernels are dual to kernels in category theory.
+    SeeAlso
+        kernel
+        cokernelMap
+        imageMap
+///
+
+
 ///
     Key
     Headline
@@ -1474,7 +1526,8 @@ TEST ///
   restart
   needsPackage "CanonicalMaps"
 *-
-TEST ///
+"TEST" -- TODO: reinstate these functions, doc, and tests.
+///
   -- super, superMap, cosuper, cosuperMap, cover, coverMap
   a = matrix{{6,0,0},{0,3,0},{0,0,0},{0,0,0}}
   b = matrix{{12,0,0},{0,3,0},{0,0,2},{0,0,0}}
@@ -1572,7 +1625,8 @@ TEST ///
   assert(coverMap M * cover j === j)
 ///
 
-TEST ///
+"TEST" -- TODO: reinstate this test.
+///
   R = ZZ/101[x,y,z]
   a = matrix{{x^3, x*z, y^2, y*z^2}}
   b = matrix{{x^3, y^3}}
@@ -1707,7 +1761,8 @@ TEST ///
   restart
   needsPackage "CanonicalMaps"
 *-
-TEST /// -- unitor
+"TEST" -- TODO: reinstate unitor, counitor
+/// -- unitor
   M = coker matrix{{3,0,0},{2,1,0},{0,0,0}}
   f = unitorMap M
   assert isWellDefined f
@@ -1817,7 +1872,7 @@ installPackage "CanonicalMaps"
 viewHelp "CanonicalMaps"
 
 -------------------------------------------------------------------------
--- Tests from Complexes/Modules.m2, unchanged.
+-- Tests from Complexes/Modules.m2, unchanged.  Needs work.
 -------------------------------------------------------------------------
 TEST ///
   restart
@@ -2168,3 +2223,43 @@ TEST ///
   
   -- Next, we need to exhibit a natural map (which is an isomorphism) from image phi to E.
 ///
+
+
+Some goals for CanonicalMaps (for Modules, and also Complexes)
+
+List of desired canonical maps
+  - kernelMap f : ker f --> source f
+  - cokernelMap f : target f --> cokernel f
+  - imageMap f : image f --> target f
+  - coimageMap f : source f --> coimage f
+  - coverMap M : cover M --> M
+  - superMap M : M --> super M
+  - fiberProductMap
+  - fiberSumMap
+  - pruneMap
+  - trimMap
+  - unitorMap: R ** M --> M
+  - counitorMap: M --> Hom(R, M)
+
+  -- need tests for the following (for free, coker, image, subquotients)
+  - tensorCommutativity: M ** N --> N ** M
+  - tensorAssociativity: A ** (B ** C) --> (A ** B) ** C (this one is in Core, any tests? doc is bad)
+  
+- standard maps first for modules, then for complexes
+  - doubleDualMap M : M --> M**
+  - swap map Hom_R(A, Hom_S(B, C)) --> Hom_S(B, Hom_R(A, C)) (C is an R-S bimodule).
+    (even case R == S is interesting)
+  - adjunction: Hom_R(A **_S B, C) --> Hom_S(B, Hom_R(A, C))  (A is an R-S bimodule).
+    (even case R == S is interesting)
+  - biduality (not isom): M --> Hom_S(Hom_R(M, N), N), where N is an R-S bimodule.
+  - tensor eval: Hom_R(A, B) **_S C --> Hom_R(A, B **_S C) (B is R-S bimodule)
+  - hom eval: A **_S Hom_R(B, C) --> Hom_R(Hom_S(A, B), C)
+
+  -- f : S --> R ring map
+  -- Hom_S(B, C) is an S-module
+  -- Hom_S(B, C) ** f is an R-module.
+  - ones related to cycles and homology.
+    Z(C) --> C --> B(C)[1]
+    B(C) --> Z(C) --> H(C)
+    H(C) --> C/B(C) --> B(C)[1]
+    H(C) -> C/B(C) -> Z(C)[1] -> H(C)[1]
