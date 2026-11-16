@@ -440,6 +440,19 @@ slp = makeInterpretedSLProgram(getVarGates R,{gf})
 assert(evaluate(slp,vars R)==f)
 ///	
 
+TEST /// -- constants stay exact and are rounded to the precision of each evaluator
+needsPackage "SLPexpressions"
+R = QQ[x]
+f = x^3 - (1/3)*x - 1/7
+slp = makeInterpretedSLProgram(getVarGates R, {gatePolynomial f})
+z = promote(1/5, CC_512) + promote(ii, CC_512)/9
+exact = sub(f, {x => z})
+for prec in {53, 128, 256} do (
+    v := (evaluate(slp, matrix{{promote(z, CC_prec)}}))_(0,0);
+    assert(abs(promote(v, CC_512) - exact) < 10 * 2^(-prec))
+    )
+///
+
 --------------------------------------------------
 -- (Raw)SLProgram routines
 --------------------------------------------------
@@ -490,7 +503,10 @@ makeInterpretedSLProgram (List,List) := (inL,outL) -> (
     rawSLPsetOutputPositions(s,out);
     consts := constants outL;
     constantPositions := appendToSLProgram(s,consts,t);
-    constantValues := matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
+    constantValues := consts/(c->c.Name); -- a list, not a matrix: a matrix would coerce
+    -- everything to a common ring (CC_53 as soon as one constant is a double), while
+    -- the constants should stay exact (e.g. in QQ) so that rawSLEvaluatorK can round
+    -- them to each working precision separately
     new InterpretedSLProgram from {
 				RawSLProgram => s, 
 				"number of inputs" => #inL,
@@ -777,7 +793,7 @@ slp.cache#K else slp.cache#K = rawSLEvaluator(
     slp#RawSLProgram, 
     slp#"constant positions", 
     slp#"variable positions",
-    raw mutableMatrix promote(slp#"constants",K)
+    raw mutableMatrix(if #slp#"constants" == 0 then map(K^1,K^0,0) else matrix{apply(slp#"constants", c -> promote(c,K))})
     )
   
 evaluate(InterpretedSLProgram, MutableMatrix, MutableMatrix) := (slp,I,O) -> (
