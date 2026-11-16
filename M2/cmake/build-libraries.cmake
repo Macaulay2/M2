@@ -254,8 +254,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpfr gmp MPFR_FOUND)
 
 # http://perso.ens-lyon.fr/nathalie.revol/software.html
 ExternalProject_Add(build-mpfi
-  URL               ${M2_SOURCE_URL}/mpfi-1.5.4.tar.gz
-  URL_HASH          SHA256=32e6ad529c97aa5ce03e28d01c921d1bce1a464fb4c57fbc248d7be21e652782
+  URL               https://gitlab.inria.fr/mpfi/mpfi/-/archive/1.5.5/mpfi-1.5.5.tar.gz
+  URL_HASH          SHA256=47df389d0a529f98fec4c8d400c3f18e1d292c59efd91dd6fcab840da38cc5b9
   PREFIX            libraries/mpfi
   SOURCE_DIR        libraries/mpfi/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -494,8 +494,8 @@ endif()
 
 # https://github.com/algebraic-solving/msolve
 ExternalProject_Add(build-msolve
-  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.10.1.tar.gz
-  URL_HASH          SHA256=ce0743cc33d1dc8484193268d9220e8624ed015e521903b9228b3b38a5981291
+  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.11.0.tar.gz
+  URL_HASH          SHA256=0f4e8276cacc26eb6abef47982dcb39a6d98d17c5a20b34488d6fd8676d4822d
   PREFIX            libraries/msolve
   SOURCE_DIR        libraries/msolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -951,7 +951,7 @@ set(nauty_BINARIES
   genspecialg gentourng gentreeg hamheuristic labelg linegraphg listg multig newedgeg pickg
   planarg ranlabg shortg showg subdivideg twohamg vcolg watercluster2)
 ExternalProject_Add(build-nauty
-  URL               https://pallini.di.uniroma1.it/nauty2_9_3.tar.gz
+  URL               https://macaulay2.com/Downloads/OtherSourceCode/nauty2_9_3.tar.gz
   URL_HASH          SHA256=9fc4edae04f88a0f5883985be3b39cf7f898fd6cc96e96b9ee25452743cc1b5b
   PREFIX            libraries/nauty
   SOURCE_DIR        libraries/nauty/build

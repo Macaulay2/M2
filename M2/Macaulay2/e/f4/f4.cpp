@@ -102,7 +102,7 @@ void F4GB::delete_gb_array(gb_array &g)
     {
       if (! g0->f.coeffs.isNull())
         mVectorArithmetic->deallocateElementArray(g0->f.coeffs);
-      // Note: monomials will be cleared en-mass and so don't need to be freed.
+      delete [] g0->f.monoms;
       delete g0;
     }
 }
