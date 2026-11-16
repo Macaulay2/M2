@@ -44,8 +44,8 @@ document {
 	"displayHN Y"
 	},
     PARA {"Most of the representation-theoretic core (such as tensor products, ",
-	"symmetric and exterior powers of representations) is delegated to a set of auxiliary Python routines, ",
-	"called through the package ", TT "Python."},
+	"symmetric and exterior powers of representations) is computed with the package ",
+	TT "LieAlgebraRepresentations", "."},
     PARA {EM "Acknowledgement: ", "the basic Lie-theoretic constructions of this package are built on top of the ",
 	"package ", TT "WeylGroups", " by Baptiste Calmès and Viktor Petrov. Moreover, we gained inspirations for many representation-theoretic functions ",
         "from the program ", TT "LiE", " and from the the package ", TT "HighestWeights", " by Federico Galetto."
@@ -58,9 +58,6 @@ document {
         {"W. A. de Graaf, ", EM "Lie algebras: theory and algorithms", ", Amsterdam: North-Holland (2000; Zbl 1122.17300)."},
 	{"M. A. A. van Leeuwen, A. M. Cohen, B. Lisser, ", EM "LiE, a package for Lie group computations", ", CAN, 1992."}
 	},
-    PARA {EM "Caveat: ", "the package requires a working Python interpreter, reachable through the ",
-	"package ", TT "Python", ", and the auxiliary Python files shipped in the subdirectory ",
-	TT "pythonFiles", "."},
     Subnodes => {
 	"Parabolic subgroups and homogeneous varieties",
 	TO ParabolicGroup,
@@ -101,7 +98,6 @@ document {
 	TO isSingular,
 	TO dominantConjugate,
 	TO weylFormula,
-	TO adjointRepresentation,
 	"Zero loci of homogeneous bundles",
 	TO EmbeddedVariety,
 	TO embeddedVariety,
@@ -962,23 +958,6 @@ document {
 	"weylFormula(weight(R,{1,0}),R)"
 	},
     SeeAlso => {(rank, HomogeneousVectorBundle)}
-    }
-
-document {
-    Key => {adjointRepresentation, (adjointRepresentation, RootSystem)},
-    Headline => "the highest weight of the adjoint representation",
-    Usage => "adjointRepresentation R",
-    Inputs => {"R" => RootSystem},
-    Outputs => {
-	Weight => {"the highest root of ", TEX///$R$///,
-	    ", that is, the highest weight of the adjoint representation"}
-	},
-    EXAMPLE {
-	"R = rootSystemA(3);",
-	"adjointRepresentation R",
-	"R = rootSystemF4;",
-	"adjointRepresentation R"
-	}
     }
 
 --------------------------------------------------------------------------------

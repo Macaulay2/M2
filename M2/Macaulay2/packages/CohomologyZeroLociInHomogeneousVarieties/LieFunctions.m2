@@ -1,87 +1,163 @@
 
+-------------------- conversion to LieAlgebraRepresentations --------------------
 
-dominantCharacterHighestWeight = method();
-dominantCharacterHighestWeight (RootSystem,Weight) := (R,l) -> (
-    posRoots := elements positiveRoots(R);
-    rho := entries halfSumOfRoots(R);
-    M := R#((keys R)#0);
-    rootNorms := R#((keys R)#1);
-    sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
-    l' := entries l;
-    myPoincare := new MutableHashTable;
-    if not R#?"poincare1" then (
-        x := local x;
-        ZZ[x];
-        for t in subsets toList(1..rank(R)) do (
-            myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
+-- The representations computed in this file are those of the semisimple part
+-- of a Levi subgroup. Its RootSystem (from WeylGroups) keeps the nodes of the
+-- ambient Dynkin diagram, in increasing order, while LieAlgebraRepresentations
+-- numbers the nodes of each simple type in its own standard way, and
+-- dynkinType sorts the components and renames the small types (D3 -> A3,
+-- C2 -> B2, ...). So the LieAlgebra is identified directly from the Cartan
+-- matrix, together with a node permutation: node i of R is node perm#i of the
+-- LieAlgebra. When several permutations exist they differ by a diagram
+-- automorphism, and any of them gives the same results once converted back.
+
+-- simple types of rank k, as named in LieAlgebraRepresentations
+-- (C2 is found as B2 and D3 as A3)
+simpleTypesOfRank = k -> select({("A",k),("B",k),("C",k),("D",k),("E",k),("F",k),("G",k)}, t ->
+    (t#0 == "A" and k >= 1) or (t#0 == "B" and k >= 2) or (t#0 == "C" and k >= 3)
+    or (t#0 == "D" and k >= 4) or (t#0 == "E" and k >= 6 and k <= 8)
+    or (t#0 == "F" and k == 4) or (t#0 == "G" and k == 2))
+
+-- a permutation p with A#i#j == B#(p#i)#(p#j) for all i, j, or null if there
+-- is none. A and B are the Cartan matrices (lists of rows) of two connected
+-- Dynkin diagrams: these are trees, so the nodes of A are matched one at a
+-- time along its edges, and each node has only a few possible images.
+cartanIsomorphism = (A,B) -> (
+    n := #A;
+    if #B != n then return null;
+    -- order the nodes of A so that each one after the first is adjacent to an
+    -- earlier one, its parent
+    order := {0};
+    parent := new MutableList from n:null;
+    seen := new MutableList from n:false;
+    seen#0 = true;
+    k := 0;
+    while k < #order do (
+        u := order#k;
+        for v from 0 to n-1 do if not seen#v and A#u#v != 0 then (
+            seen#v = true;
+            parent#v = u;
+            order = append(order, v);
             );
-        R#"poincare1" = new HashTable from myPoincare;
+        k = k + 1;
         );
-    myPoincare = R#"poincare1";
-    -- start the translation into python;
-    fractions := import "fractions";
-    Fraction := (fractions)@@("Fraction");
-    posRoots = toPython (posRoots/(r -> entries r));
-    rho = toPython rho;
-    lam := toPython l';
-    simpleRoots := toPython (sRoots/(r -> entries r));
-    M = entries M/(r -> r/(p -> (Fraction numerator p) / (Fraction denominator p)));
-    M = toPython M;
-    rootNorms = toPython rootNorms;
-    poinc := toPython myPoincare;
-    dominant := import "dominantCharacterHighestWeight";
-    result := dominant@@("dominantCharacterHighestWeight")(posRoots,lam, rho, simpleRoots, rootNorms, M, poinc);
-    character := value pythonValue stripNumpyRepr toString result;
-    character = new Tally from character;
-    character = character/(v -> weight(R,toList v));
-    return character;
+    p := new MutableList from n:null;
+    used := new MutableList from n:false;
+    -- match order#i, ..., order#(n-1), given the images of the earlier nodes
+    matchFrom := i -> (
+        if i == n then return true;
+        v := order#i;
+        candidates := if i == 0 then toList(0..n-1)
+            else select(toList(0..n-1), j -> B#(p#(parent#v))#j != 0);
+        for j in candidates do (
+            if not used#j and all(take(order, i), u -> A#v#u == B#j#(p#u) and A#u#v == B#(p#u)#j) then (
+                p#v = j;
+                used#j = true;
+                if matchFrom(i+1) then return true;
+                used#j = false;
+                );
+            );
+        false
+        );
+    if matchFrom 0 then toList p else null
     )
+
+-- LieAlgebra, node permutation and cache of irreducible modules of a root
+-- system. Keyed by rootSystemKey (see FirstPart.m2) rather than stored on R,
+-- since equal Levi root systems are rebuilt as new objects per bundle.
+-- For rank 0 (complete flags) there is no LieAlgebra: callers handle that
+-- case before getting here.
+rootSystemLARCache = new MutableHashTable;
+
+rootSystemLARData = method();
+rootSystemLARData RootSystem := R -> (
+    key := rootSystemKey R;
+    if not rootSystemLARCache#?key then (
+        C := entries WeylGroups$cartanMatrix R;
+        n := #C;
+        -- connected components of the Dynkin diagram, as increasing lists of nodes
+        comps := {};
+        seen := new MutableList from n:false;
+        for i from 0 to n-1 do if not seen#i then (
+            comp := {i};
+            seen#i = true;
+            k := 0;
+            while k < #comp do (
+                u := comp#k;
+                for v from 0 to n-1 do if not seen#v and C#u#v != 0 then (
+                    seen#v = true;
+                    comp = append(comp, v);
+                    );
+                k = k + 1;
+                );
+            comps = append(comps, sort comp);
+            );
+        perm := new MutableList from n:null;
+        algebras := {};
+        offset := 0;
+        for comp in comps do (
+            A := apply(comp, i -> apply(comp, j -> C#i#j));
+            found := null;
+            for t in simpleTypesOfRank(#comp) do (
+                p := cartanIsomorphism(A, entries LieAlgebraRepresentations$cartanMatrix t);
+                if p =!= null then (found = (t, p); break);
+                );
+            if found === null then error "rootSystemLARData: unrecognized Dynkin diagram";
+            scan(#comp, i -> perm#(comp#i) = offset + (found#1)#i);
+            algebras = append(algebras, simpleLieAlgebra found#0);
+            offset = offset + #comp;
+            );
+        rootSystemLARCache#key = new HashTable from {
+            "lieAlgebra" => if n == 0 then null else fold(algebras, (g,h) -> g ++ h),
+            "permutation" => toList perm,
+            "modules" => new MutableHashTable
+            };
+        );
+    rootSystemLARCache#key
+    )
+
+-- weight of R -> Dynkin labels for the LieAlgebra of R
+toLARWeight = (l,R) -> (
+    perm := (rootSystemLARData R)#"permutation";
+    v := new MutableList from #perm:0;
+    scan(#perm, i -> v#(perm#i) = (entries l)#i);
+    toList v
+    )
+
+-- Dynkin labels for the LieAlgebra of R -> weight of R
+fromLARWeight = (v,R) -> weight(R, apply((rootSystemLARData R)#"permutation", j -> v#j))
+
+-- irreducible module of highest weight l, built once per weight, so that the
+-- powers LieAlgebraRepresentations caches in it are reused by later calls
+larModule = (l,R) -> (
+    data := rootSystemLARData R;
+    v := toLARWeight(l,R);
+    data#"modules"#v ??= irreducibleLieAlgebraModule(data#"lieAlgebra", v)
+    )
+
+-- decomposition of a LieAlgebraModule, as a Tally Weight => multiplicity
+fromLARModule = (M,R) -> new Tally from apply(pairs M#"DecompositionIntoIrreducibles",
+    (v,m) -> (fromLARWeight(v,R), m))
+
 
 --------------- --------- tensor product -------------------------------------
 
 -- tensor product of two irreducible representations
 tensorProduct = method();
-tensorProduct (Weight,Weight,RootSystem,HashTable) := (l1,l2,R,W) -> (
-    l1' := entries l1;
-    l2' := entries l2;
-    rho := entries halfSumOfRoots(R);
-    tau := reducedDecomposition longestWeylGroupElement(R);
-    sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
-    -- start the translation into python
-    rho = toPython rho;
-    lam1 := toPython l1';
-    lam2 := toPython l2';
-    tau = toPython tau;
-    simpleRoots := toPython (sRoots/(r -> entries r));
-    W =  toPython (W/(w -> toSequence entries w));
-    tensorP := import "tensorProduct";
-    result := tensorP@@("tensorProduct")(lam1, lam2, simpleRoots, rho, W, tau);
-    output := value pythonValue stripNumpyRepr toString result;
-    output = new Tally from output;
-    output = output/(v -> weight(R,toList v));
-    return new HashTable from output;
+tensorProduct (Weight,Weight,RootSystem) := (l1,l2,R) -> (
+    new HashTable from fromLARModule(larModule(l1,R) ** larModule(l2,R), R)
     )
 
 
 -- tensor product of two completely reducible representations
 tensorProduct (HashTable,HashTable,RootSystem) := (L1,L2,R) -> (
     T := new MutableHashTable;
-    Ttemp := new MutableHashTable;
-    for i from 0 to #(keys L1)-1 do (
-        l1 := (keys L1)#i;
-        for j from 0 to #(keys L2)-1 do (
-            l2 := (keys L2)#j;
-            if weylFormula(l1,R) <= weylFormula(l2,R) then (
-                W := dominantCharacterHighestWeight(R,l1); -- space for improvements?
-                Ttemp = tensorProduct(l1,l2,R,W);
-                )
-            else (
-                W = dominantCharacterHighestWeight(R,l2);
-                Ttemp = tensorProduct(l2,l1,R,W);
-                );
+    for l1 in keys L1 do (
+        for l2 in keys L2 do (
+            Ttemp := tensorProduct(l1,l2,R);
             for l in keys Ttemp do (
-                if T#?l then T#l = T#l + Ttemp#l * (values L1)#i * (values L2)#j
-                else T#l = Ttemp#l * (values L1)#i * (values L2)#j;
+                if T#?l then T#l = T#l + Ttemp#l * L1#l1 * L2#l2
+                else T#l = Ttemp#l * L1#l1 * L2#l2;
                 );
             );
         );
@@ -97,92 +173,18 @@ symmetricPower (ZZ, Weight,RootSystem) := (n,l,R) -> (
     if n < 0 then error "the power must be a non-negative integer"
     else if n == 0 then return new HashTable from {weight(R,toList(rank(R):0)) => 1}
     else if n == 1 then return new HashTable from {l => 1}
-    else (
-        posRoots := elements positiveRoots(R);
-        rho := entries halfSumOfRoots(R);
-        tau := reducedDecomposition longestWeylGroupElement(R);
-        M := R#((keys R)#0);
-        rootNorms := R#((keys R)#1);
-        sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
-        l' := entries l;
-        myPoincare := new MutableHashTable;
-        if not R#?"poincare1" then (
-            x := local x;
-            ZZ[x];
-            for t in subsets toList(1..rank(R)) do (
-                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
-                );
-            R#"poincare1" = new HashTable from myPoincare;
-            );
-        myPoincare = R#"poincare1";
-        -- start the translation into python;
-        fractions := import "fractions";
-        Fraction := (fractions)@@("Fraction");
-        posRoots = toPython (posRoots/(r -> entries r));
-        rho = toPython rho;
-        lam := toPython l';
-        simpleRoots := toPython (sRoots/(r -> entries r));
-        M = entries M/(r -> r/(p -> (Fraction numerator p) / (Fraction denominator p)));
-        M = toPython M;
-        n = toPython n;
-        tau = toPython tau;
-        rootNorms = toPython rootNorms;
-        poinc := toPython myPoincare;
-        sym := import "symmetricPower";
-        result := sym@@("symmetricPower")(n, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau);
-        decomp := value pythonValue stripNumpyRepr toString result;
-        decomp = new Tally from decomp;
-        decomp = decomp/(v -> weight(R,toList v));
-        return new HashTable from decomp;
-        );
+    else new HashTable from fromLARModule(symmetricPower(n, larModule(l,R)), R)
     )
 
--- returns the list of symmetric powers of an irreducible representation from 0 to k, computed inductively for efficiency
--- improvements: I could make it so I can optionally pass memoryAdams, so that if I have already computed it for the weights of the bundle then I don't recompute it
+-- returns the list of symmetric powers of an irreducible representation from 0 to k;
+-- LieAlgebraRepresentations keeps the powers already computed in the module,
+-- which larModule builds only once per weight
 multipleSymmetricPowerLie = method();
 multipleSymmetricPowerLie(ZZ, Weight, RootSystem) := (k, l, R) -> (
     if k < 0 then error "the power must be a non-negative integer"
     else if k == 0 then return new HashTable from {weight(R,toList(rank(R):0)) => 1}
     else if k == 1 then return new HashTable from {l => 1}
-    else (
-        posRoots := elements positiveRoots(R);
-        rho := entries halfSumOfRoots(R);
-        tau := reducedDecomposition longestWeylGroupElement(R);
-        M := R#((keys R)#0);
-        rootNorms := R#((keys R)#1);
-        sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
-        l' := entries l;
-        myPoincare := new MutableHashTable;
-        if not R#?"poincare1" then (
-            x := local x;
-            ZZ[x];
-            for t in subsets toList(1..rank(R)) do (
-                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
-                );
-            R#"poincare1" = new HashTable from myPoincare;
-            );
-        myPoincare = R#"poincare1";
-        -- start the translation into python;
-        fractions := import "fractions";
-        Fraction := (fractions)@@("Fraction");
-        posRoots = toPython (posRoots/(r -> entries r));
-        rho = toPython rho;
-        lam := toPython l';
-        irr := toPython true;
-        simpleRoots := toPython (sRoots/(r -> entries r));
-        M = entries M/(r -> r/(p -> (Fraction numerator p) / (Fraction denominator p)));
-        M = toPython M;
-        k = toPython k;
-        tau = toPython tau;
-        rootNorms = toPython rootNorms;
-        poinc := toPython myPoincare;
-        sym := import "multipleSymmetricPower";
-        result := sym@@("multipleSymmetricPower")(k, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
-        decomp := value pythonValue stripNumpyRepr toString result;
-        decomp = decomp/(d -> new Tally from d);
-        decomp = decomp/(tal -> new HashTable from tal/(v -> weight(R,toList v)));
-        return decomp;
-        );
+    else apply(k+1, i -> symmetricPower(i,l,R))
     )
 
 -- given a hash table whose keys are the weights and whose values are the multiplicities, i.e. a completely reducible representation,
@@ -193,53 +195,7 @@ multipleSymmetricPowerLie (ZZ, HashTable, RootSystem) := (k, L, R) -> (
     if k < 0 then error "the power must be a non-negative integer"
     else if k == 0 then return new HashTable from {weight(R,toList(rank(R):0)) => 1}
     else if k == 1 then return L
-    else (
-        posRoots := elements positiveRoots(R);
-        rho := entries halfSumOfRoots(R);
-        tau := reducedDecomposition longestWeylGroupElement(R);
-        M := R#((keys R)#0);
-        rootNorms := R#((keys R)#1);
-        sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
-        L' := new Tally from L;
-        L' = L'/(l -> toSequence entries l);
-        L' = new HashTable from L';
-        L' = for l in keys L' list (
-            (l,L'#l)
-            );
-        myPoincare := new MutableHashTable;
-        if not R#?"poincare1" then (
-            x := local x;
-            ZZ[x];
-            for t in subsets toList(1..rank(R)) do (
-                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
-                );
-            R#"poincare1" = new HashTable from myPoincare;
-            );
-        myPoincare = R#"poincare1";
-        -- start the translation into python;
-        fractions := import "fractions";
-        Fraction := (fractions)@@("Fraction");
-        posRoots = toPython (posRoots/(r -> entries r));
-        rho = toPython rho;
-        L' = toPython L';
-        irr := toPython false;
-        simpleRoots := toPython (sRoots/(r -> entries r));
-        M = entries M/(r -> r/(p -> (Fraction numerator p) / (Fraction denominator p)));
-        M = toPython M;
-        k = toPython k;
-        tau = toPython tau;
-        rootNorms = toPython rootNorms;
-        poinc := toPython myPoincare;
-        sym := import "multipleSymmetricPower";
-        result := sym@@("multipleSymmetricPower")(k, L', posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
-        decomp := value pythonValue stripNumpyRepr toString result;
-        output := new MutableHashTable;
-        for w in keys decomp do (
-            dec := decomp#w/(d -> new Tally from d);
-            output#(weight(R,toList w)) = dec/(tal -> new HashTable from tal/(v -> weight(R,toList v)));
-            );
-        return new HashTable from output;
-        );
+    else new HashTable from apply(keys L, l -> (l, multipleSymmetricPowerLie(k,l,R)))
     )
 
 
@@ -252,149 +208,28 @@ exteriorPower (ZZ, Weight, RootSystem) := o -> (n,l,R) -> (
     else if n == 0 or n == d then return new HashTable from {weight(R,toList(rank(R):0)) => 1}
     else if n == 1 then return new HashTable from {l => 1}
     else if n > d then return new HashTable from {}
-    else (
-        posRoots := elements positiveRoots(R);
-        rho := entries halfSumOfRoots(R);
-        tau := reducedDecomposition longestWeylGroupElement(R);
-        M := R#((keys R)#0);
-        rootNorms := R#((keys R)#1);
-        sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
-        l' := entries l;
-        myPoincare := new MutableHashTable;
-        if not R#?"poincare1" then (
-            x := local x;
-            ZZ[x];
-            for t in subsets toList(1..rank(R)) do (
-                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
-                );
-            R#"poincare1" = new HashTable from myPoincare;
-            );
-        myPoincare = R#"poincare1";
-        -- start the translation into python;
-        fractions := import "fractions";
-        Fraction := (fractions)@@("Fraction");
-        posRoots = toPython (posRoots/(r -> entries r));
-        rho = toPython rho;
-        lam := toPython l';
-        simpleRoots := toPython (sRoots/(r -> entries r));
-        M = entries M/(r -> r/(p -> (Fraction numerator p) / (Fraction denominator p)));
-        M = toPython M;
-        n = toPython n;
-        tau = toPython tau;
-        rootNorms = toPython rootNorms;
-        poinc := toPython myPoincare;
-        alt := import "exteriorPower";
-        result := alt@@("exteriorPower")(n, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau);
-        decomp := value pythonValue stripNumpyRepr toString result;
-        decomp = new Tally from decomp;
-        decomp = decomp/(v -> weight(R,toList v));
-        return new HashTable from decomp;
-        );
+    else new HashTable from fromLARModule(exteriorPower(n, larModule(l,R)), R)
     )
 
 
--- returns the list of exterior powers of an irreducible representation from 0 to k, computed inductively
--- improvement: I could make it so I can optionally pass memoryAdams, so that if I have already computed it for the weights of the bundle then I don't recompute it
+-- returns the list of exterior powers of an irreducible representation from 0 to k
+-- (the ones above the dimension are empty); as for symmetric powers, the
+-- powers already computed are kept in the module
 multipleExteriorPowerLie = method();
 multipleExteriorPowerLie(ZZ, Weight, RootSystem) := (k, l, R) -> (
     if k < 0 then error "the power must be a non-negative integer"
     else if k == 0 then return new HashTable from {weight(R,toList(rank(R):0)) => 1}
     else if k == 1 then return new HashTable from {l => 1}
-    else (
-        posRoots := elements positiveRoots(R);
-        rho := entries halfSumOfRoots(R);
-        tau := reducedDecomposition longestWeylGroupElement(R);
-        M := R#((keys R)#0);
-        rootNorms := R#((keys R)#1);
-        sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
-        l' := entries l;
-        myPoincare := new MutableHashTable;
-        if not R#?"poincare1" then (
-            x := local x;
-            ZZ[x];
-            for t in subsets toList(1..rank(R)) do (
-                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
-                );
-            R#"poincare1" = new HashTable from myPoincare;
-            );
-        myPoincare = R#"poincare1";
-        -- start the translation into python;
-        fractions := import "fractions";
-        Fraction := (fractions)@@("Fraction");
-        posRoots = toPython (posRoots/(r -> entries r));
-        rho = toPython rho;
-        lam := toPython l';
-        irr := toPython true;
-        simpleRoots := toPython (sRoots/(r -> entries r));
-        M = entries M/(r -> r/(p -> (Fraction numerator p) / (Fraction denominator p)));
-        M = toPython M;
-        k = toPython k;
-        tau = toPython tau;
-        rootNorms = toPython rootNorms;
-        poinc := toPython myPoincare;
-        ext := import "multipleExteriorPower";
-        result := ext@@("multipleExteriorPower")(k, lam, posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
-        decomp := value pythonValue stripNumpyRepr toString result;
-        decomp = decomp/(d -> new Tally from d);
-        decomp = decomp/(tal -> new HashTable from tal/(v -> weight(R,toList v)));
-        return decomp;
-        );
+    else apply(k+1, i -> exteriorPower(i,l,R))
     )
 
 -- given a hash table whose keys are the weights and whose values are the multiplicities, i.e. a completely reducible representation
--- returns a hash table whose keys are the same weights and whose values are the symmetric powers of these weights
+-- returns a hash table whose keys are the same weights and whose values are the exterior powers of these weights
 -- the multiplicities are therefore useless in the current version
 -- the idea is to do kunneth directly on the vector bundles
 multipleExteriorPowerLie (ZZ, HashTable, RootSystem) := (k, L, R) -> (
     if k < 0 then error "the power must be a non-negative integer"
     else if k == 0 then return new HashTable from {weight(R,toList(rank(R):0)) => 1}
     else if k == 1 then return L
-    else (
-        posRoots := elements positiveRoots(R);
-        rho := entries halfSumOfRoots(R);
-        tau := reducedDecomposition longestWeylGroupElement(R);
-        M := R#((keys R)#0);
-        rootNorms := R#((keys R)#1);
-        sRoots := toList (1..rank(R))/(i -> simpleRoot(R,i));
-        L' := new Tally from L;
-        L' = L'/(l -> toSequence entries l);
-        L' = new HashTable from L';
-        L' = for l in keys L' list (
-            (l,L'#l)
-            );
-        myPoincare := new MutableHashTable;
-        if not R#?"poincare1" then (
-            x := local x;
-            ZZ[x];
-            for t in subsets toList(1..rank(R)) do (
-                myPoincare#(toSequence t) = sub(poincareSeries(R,parabolic(R,set t),x), x=>1);
-                );
-            R#"poincare1" = new HashTable from myPoincare;
-            );
-        myPoincare = R#"poincare1";
-        -- start the translation into python;
-        fractions := import "fractions";
-        Fraction := (fractions)@@("Fraction");
-        posRoots = toPython (posRoots/(r -> entries r));
-        rho = toPython rho;
-        L' = toPython L';
-        irr := toPython false;
-        simpleRoots := toPython (sRoots/(r -> entries r));
-        M = entries M/(r -> r/(p -> (Fraction numerator p) / (Fraction denominator p)));
-        M = toPython M;
-        k = toPython k;
-        tau = toPython tau;
-        rootNorms = toPython rootNorms;
-        poinc := toPython myPoincare;
-        ext := import "multipleExteriorPower";
-        result := ext@@("multipleExteriorPower")(k, L', posRoots, rho, simpleRoots, rootNorms, M, poinc, tau,irr);
-        decomp := value pythonValue stripNumpyRepr toString result;
-        output := new MutableHashTable;
-        for w in keys decomp do (
-            dec := decomp#w/(d -> new Tally from d);
-            output#(weight(R,toList w)) = dec/(tal -> new HashTable from tal/(v -> weight(R,toList v)));
-            );
-        return new HashTable from output;
-        );
+    else new HashTable from apply(keys L, l -> (l, multipleExteriorPowerLie(k,l,R)))
     )
-

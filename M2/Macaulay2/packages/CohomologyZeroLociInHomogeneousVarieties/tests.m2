@@ -270,15 +270,6 @@ isGloballyGenerated(E,X)
 ///
 
 TEST ///
-R = rootSystemA(3);
-adjointRepresentation R
-R = rootSystemD(5);
-adjointRepresentation R
-R = rootSystemF4;
-adjointRepresentation R
-///
-
-TEST ///
 R = rootSystemA(4);
 l = weight(R,{1,0,0,0});
 weylFormula(l,R)

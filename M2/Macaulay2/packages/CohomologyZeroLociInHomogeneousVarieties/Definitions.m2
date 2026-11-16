@@ -15,9 +15,7 @@ globalAssignment EmbeddedVariety;
 
 
 
--- NumPy 2.x changed the repr() of scalar types (e.g. np.int64(4) instead of just 4)
-stripNumpyRepr = method() 
-stripNumpyRepr String := s -> replace("np\\.[a-zA-Z0-9_]+\\(([^()]*)\\)", "\\1", s)
+
 
 newParabolic = method(TypicalValue => ParabolicGroup);
 newParabolic (RootSystem,Set) := (R,S) -> (
@@ -27,11 +25,39 @@ newParabolic (RootSystem,Set) := (R,S) -> (
         "dynkinType" => dynkinType(dynkinDiagram(R)),
         "parabolic" => parabolic(R,S)
         }
-    );
+    )
 
 homogeneousVariety = method(TypicalValue => HomogeneousVariety);
 homogeneousVariety (RootSystem,ParabolicGroup) := (R,P) -> (
-    X := new HomogeneousVariety from {
+    if #(dynkinType R) == 1 then ( -- case R is simple
+        return X := new HomogeneousVariety from {
+            symbol cache => new CacheTable,
+            "dynkinType" => P#"dynkinType",
+            "rootSystem" => R,
+            "parabolicSubgroup" => P,
+            "positiveRoots" => positiveRoots(R) - positiveRoots(R,P#"parabolic"),
+            "picardRank" => rank(R) - #(P#"parabolic"),
+            "dimVariety" => null,        
+            "dimAmbientSpaces" => null,
+            "firstChernClass" => null,
+            "cotangent" => null,
+            "cohomology" => null,
+            "isSimple" => true,
+            "factors" => null
+            };
+        );
+    F := {}; -- list of simple factors
+    dyn := dynkinType R;
+    Psorted := sort toList P#"parabolic";
+    for i from 0 to #dyn-1 do (
+        Ri := rootSystem dynkinType {dyn#i};
+        ni := rank Ri;
+        Pi := set select(Psorted, j -> ni >= j);
+        Psorted = toList(set Psorted - Pi)/(j -> j - ni);
+        Pi = newParabolic(Ri,Pi);
+        F = F | {homogeneousVariety(Ri,Pi)};
+        );
+    X = new HomogeneousVariety from {
         symbol cache => new CacheTable,
         "dynkinType" => P#"dynkinType",
         "rootSystem" => R,
@@ -43,31 +69,19 @@ homogeneousVariety (RootSystem,ParabolicGroup) := (R,P) -> (
         "firstChernClass" => null,
         "cotangent" => null,
         "cohomology" => null,
-        "expression" => null
+        "isSimple" => false,
+        "factors" => F
         }
-    );
+    )
 
 homogeneousVariety (RootSystem,Set) := (R,S) -> (
     P := newParabolic(R,parabolic(R,S));
-    X := new HomogeneousVariety from {
-        symbol cache => new CacheTable,
-        "dynkinType" => P#"dynkinType",
-        "rootSystem" => R,
-        "parabolicSubgroup" => P,
-        "positiveRoots" => positiveRoots(R) - positiveRoots(R,P#"parabolic"),
-        "picardRank" => rank(R) - #(P#"parabolic"),
-        "dimVariety" => null,        
-        "dimAmbientSpaces" => null,
-        "firstChernClass" => null,
-        "cotangent" => null,
-        "cohomology" => null,
-        "expression" => null
-        }
-    );
+    homogeneousVariety(R,P)
+    )
 
 Gr = method(TypicalValue => HomogeneousVariety);
 Gr List := p -> (
-    if #p =!= 2 then error "expected a list of length two";
+    if #p =!= 2 then error "expected a list of lenght two";
     k := p#0;
     n := p#1;
     R := rootSystemA(n-1);
@@ -86,7 +100,7 @@ Fl List := p -> (
 
 OGr = method(TypicalValue => HomogeneousVariety);
 OGr List := p -> (
-    if #p =!= 2 then error "expected a list of length two";
+    if #p =!= 2 then error "expected a list of lenght two";
     k := p#0;
     m := p#1;
     if (even m) then (
@@ -105,7 +119,7 @@ OGr List := p -> (
 
 SGr = method(TypicalValue => HomogeneousVariety);
 SGr List := p -> (
-    if #p =!= 2 then error "expected a list of length two";
+    if #p =!= 2 then error "expected a list of lenght two";
     k := p#0;
     m := p#1;
     if (odd m) then error "expected an even dimensional vector space";
@@ -115,16 +129,31 @@ SGr List := p -> (
     homogeneousVariety (R,P)
     )
 
+HomogeneousVariety ** HomogeneousVariety := (X1, X2) -> (
+    R1 := X1#"rootSystem";
+    R2 := X2#"rootSystem";
+    R := R1 ++ R2;
+    P1 := (X1#"parabolicSubgroup")#"parabolic";
+    P2 := (X2#"parabolicSubgroup")#"parabolic";
+    n := rank R1;
+    P2 = set apply(toList P2, i -> i+n);
+    P := newParabolic(R,P1 + P2);
+    homogeneousVariety(R,P)
+    )
+    
+
+
 
 homogeneousVectorBundle = method(TypicalValue => HomogeneousVectorBundle);
 homogeneousVectorBundle (List,List,HomogeneousVariety) := (S,m,X) -> (
     if #S =!= #m then error "the number of weights must be equal to the number of multiplicities";
     P := X#"parabolicSubgroup";
     R := X#"rootSystem";
-    RP := rootSystem(R,P#"parabolic");
+    RP := leviRootSystem X;
     L := pack(2,mingle(S,m));
     L = new HashTable from tally flatten for c in L list toList(c#1:c#0);
     S = keys L;
+    if S =!= {} and class first S === List then S = S/(s -> weight(R,s));
     m = values L;
     T := toParabolicWeights(S,P);
     if not all(T, l -> isDominant(l,RP)) then error "expected dominant weights for the parabolic subgroup";
@@ -137,7 +166,7 @@ homogeneousVectorBundle (List,List,HomogeneousVariety) := (S,m,X) -> (
 	"weights" => S,
 	"multiplicities" => m,
 	"parabolicWeights" => T,
-	"irreducible" => #S == 1 and m#0 == 1,
+	"irreducible" => (#S == 1 and m#0 == 1),
 	"totally reducible" => true,
 	"rank" => null,
 	"totalChernClass" => null,
@@ -145,6 +174,8 @@ homogeneousVectorBundle (List,List,HomogeneousVariety) := (S,m,X) -> (
 	"cohomology" => null
 	}
     );
+
+
 
 
 -*
@@ -160,7 +191,7 @@ filtrationBundle = method(TypicalValue => FiltrationBundle);
 filtrationBundle (List,HomogeneousVariety) := (S,X) -> (
     R := X#"rootSystem";
     P := X#"parabolicSubgroup";  
-    RP := rootSystem(R,P#"parabolic");
+    RP := leviRootSystem X;
     if class S#0 === HomogeneousVectorBundle then (
 	L := {};
 	for e in S do (
@@ -216,7 +247,7 @@ bundles HomogeneousVariety := X -> (
     R := X#"rootSystem";
     P := X#"parabolicSubgroup";
     l := sort toList set toList(1..rank(R)) -  P#"parabolic"; -- lista dei nodi colorati
-    if ((dynkinType R)#0)#0 == "A" then (
+    if all(dynkinType R, dyn -> (dyn)#0 == "A") and X#"isSimple" then (
 	v := new MutableList from rank R:0;
 	if l#0 == 1 then v#(l#0-1) = -1;
 	if l#0 =!= 1 then v#(l#0-2) = 1, v#(l#0-1) = -1;
@@ -238,10 +269,15 @@ bundles HomogeneousVariety := X -> (
 info HomogeneousVariety := X -> (
     R := X#"rootSystem";
     P := X#"parabolicSubgroup";
-    D := " a homogeneous variety of dimension " | dim X | "\n";
+    isSimple := if X#"isSimple" then " an irreducible" else " a reducible";
+    D := isSimple | " homogeneous variety of dimension " | dim X | "\n";
     D = D | " first Chern class is " | toString entries chern(1,X) | "\n";
     D = D | " with Picard rank " | rank(R) - #(P#"parabolic") | "\n\n";
-    D = D | " with respect to the diagram " | toString (X#"dynkinType")#0 | " with marked nodes " | toString sort toList (set toList( 1..rank X#"rootSystem") - (X#"parabolicSubgroup")#"parabolic");
+    D = D | " with respect to the diagram ";
+    for dyn from 0 to #(X#"dynkinType")-2 do {
+        D = D | toString (X#"dynkinType")#dyn | " times ";
+        };
+    D = D | toString last X#"dynkinType" | " with marked nodes " | toString sort toList (set toList( 1..rank X#"rootSystem") - (X#"parabolicSubgroup")#"parabolic");
     return D;
     )
 
@@ -292,7 +328,11 @@ info FiltrationBundle := F -> (
 	    i = i + 1;
 	    );
 	);
-    D = D | " with respect to the diagram " | toString (X#"dynkinType")#0 | " with marked nodes " | toString sort toList (set toList( 1..rank X#"rootSystem") - (X#"parabolicSubgroup")#"parabolic");
+    D = D | " with respect to the diagram ";
+    for dyn from 0 to #(X#"dynkinType")-2 do {
+        D = D | toString (X#"dynkinType")#dyn | " times ";
+        };
+    D = D | toString last X#"dynkinType" | " with marked nodes " | toString sort toList (set toList( 1..rank X#"rootSystem") - (X#"parabolicSubgroup")#"parabolic");
     return D;
     )
 
@@ -310,8 +350,7 @@ embeddedVariety HomogeneousVectorBundle := F -> (
 	"ambientSpace" => X,
 	"firstChernClass" => null,
 	"cohomology" => null,
-	"normalBundle" => F,
-	"expression" => null
+	"normalBundle" => F
 	}
     )
 
@@ -345,7 +384,9 @@ summands HomogeneousVectorBundle := F -> (
     return flatten output;
     )
 
+factors = method();
+factors HomogeneousVariety := X -> (
+    if X#"isSimple" then return {X};
+    return X#"factors";
+    )
 
--- aux method for the option Verbose in hodgeNumbers
-timedIf = method();
-timedIf (Boolean, Function) := (v, f) -> if v then elapsedTime f() else f();

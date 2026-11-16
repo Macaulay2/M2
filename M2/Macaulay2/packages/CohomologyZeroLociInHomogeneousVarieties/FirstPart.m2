@@ -1,11 +1,40 @@
--------------------------------- Weights arithmetic ----------------------------------------------------------------
+-------------------------------- Weights arithmetics ----------------------------------------------------------------
+
+-- rootSystem(...) returns a new object, with nothing computed in it yet, on
+-- every call. P and X are shared by all the bundles on a variety, so these
+-- root systems are built once and kept in their caches.
+globalRootSystem = P -> (
+    if not P.cache#?"globalRootSystem" then P.cache#"globalRootSystem" = rootSystem(P#"dynkinType");
+    P.cache#"globalRootSystem"
+    )
+
+parabolicRootSystem = P -> (
+    if not P.cache#?"parabolicRootSystem" then P.cache#"parabolicRootSystem" = rootSystem(globalRootSystem P, P#"parabolic");
+    P.cache#"parabolicRootSystem"
+    )
+
+-- Levi root system built from X#"rootSystem" (which, for products of
+-- varieties, need not have the same node order as globalRootSystem P)
+leviRootSystem = X -> (
+    if not X.cache#?"leviRootSystem" then X.cache#"leviRootSystem" = rootSystem(X#"rootSystem", (X#"parabolicSubgroup")#"parabolic");
+    X.cache#"leviRootSystem"
+    )
+
+-- root system of the sub-diagram on the nodes L of X#"rootSystem"
+subRootSystem = (X,L) -> (
+    key := ("subRootSystem", sort toList L);
+    if not X.cache#?key then (
+        R := X#"rootSystem";
+        X.cache#key = rootSystem(R, parabolic(R, set L));
+        );
+    X.cache#key
+    )
 
 -- project the weights to the sublattice of the semisimple part of the parabolic subgroup
 toParabolicWeights = method();
 toParabolicWeights (List, ParabolicGroup) := (S,P) -> (
     P0 := P#"parabolic";
-    R := rootSystem(P#"dynkinType");
-    RP := rootSystem(R, P0);
+    RP := parabolicRootSystem P;
     T := toList(P0);
     T = apply(T, t -> t-1);
     T = sort T;
@@ -41,7 +70,7 @@ mixWeights (Weight,List,List) := (l,s,LX) -> (
 toGlobalWeights = method();
 toGlobalWeights (List, ParabolicGroup) := (S,P) -> (
     P0 := P#"parabolic";
-    R := rootSystem(P#"dynkinType");
+    R := globalRootSystem P;
     Ic := set toList(1..rank(R)) - P0;
     T := {};
     for l in S do (
@@ -57,7 +86,7 @@ toGlobalWeights (List, ParabolicGroup) := (S,P) -> (
 projection = method();
 projection (Weight, ParabolicGroup) := (l,P) -> (
     P0 := P#"parabolic";
-    R := rootSystem(P#"dynkinType");
+    R := globalRootSystem P;
     I := toList(P0);
     I = apply(I, t -> t-1);
     I = sort I;
@@ -122,12 +151,27 @@ toPartitions Weight := v -> (
 
 ---------------------- rank and dimension ------------------------------
 
+-- Equal root systems can still be distinct objects (different varieties,
+-- sub-diagrams, user-built ones), so caches are keyed on content: Cartan
+-- matrix + root norms (the RootNorms entry read positionally elsewhere).
+rootSystemKey = R -> (entries cartanMatrix R, R#((keys R)#1));
+
+-- coefficients of each positive coroot on the simple coroots, and the
+-- Weyl denominator prod <rho, alpha^vee>, per root system
+weylFormulaCache = new MutableHashTable;
+
 weylFormula = method(TypicalValue => ZZ);
 weylFormula (Weight, RootSystem) := (l,R) -> (
-    ro := halfSumOfRoots(R);
-    num := apply(toList(positiveRoots(R)), s -> eval(R,l+ro,s));
-    den := apply(toList(positiveRoots(R)), s -> eval(R,ro,s));
-    lift(product(num)/product(den),ZZ)
+    key := rootSystemKey R;
+    if not weylFormulaCache#?key then (
+        n := rank R;
+        fund := apply(n, i -> weight(R, apply(n, j -> if i == j then 1 else 0)));
+        C := apply(toList positiveRoots(R), r -> apply(fund, w -> eval(R,w,r)));
+        weylFormulaCache#key = (C, product(C, c -> sum c));
+        );
+    (coroots, den) := weylFormulaCache#key;
+    lPlusRho := apply(entries l, x -> x + 1);
+    lift(product(coroots, c -> sum(c, lPlusRho, times)) / den, ZZ)
     );
 
 dim HomogeneousVariety := X -> (
@@ -173,7 +217,7 @@ chern(ZZ, HomogeneousVariety) := (p,X) -> (
     if p =!= 1 then error "at the moment we compute only the first chern class";
     if X#"firstChernClass" =!= null then return X#"firstChernClass";
     P := X#"parabolicSubgroup";
-    T := set (1..rank(rootSystem(P#"dynkinType"))) -  P#"parabolic";
+    T := set (1..rank(globalRootSystem P)) -  P#"parabolic";
     T = sort apply(toList T, s -> s-1);
     X#"firstChernClass" = (sum(X#"positiveRoots"))^T
     );
@@ -193,7 +237,7 @@ chern(ZZ, HomogeneousVectorBundle) := (p,E) -> (
     if E#"totalChernClass" =!= null then return E#"totalChernClass";
     X := E#"underlyingVariety";
     P := X#"parabolicSubgroup";
-    T := set (1..rank(rootSystem(P#"dynkinType"))) -  P#"parabolic";
+    T := set (1..rank(globalRootSystem P)) -  P#"parabolic";
     T = sort apply(toList T, s -> s-1);
     E#"totalChernClass" = (((determinant E)#"weights")#0)^T
     );
@@ -253,8 +297,6 @@ sortLayer = (R,S) -> (
     apply(Y,i->S_(last i))
     )
 
-adjointRepresentation = method();
-adjointRepresentation RootSystem := R -> first sortLayer (R,toList positiveRoots R)
 
 leqComponentwise = method();
 leqComponentwise (Vector,Vector) := (u, v) -> (
@@ -327,41 +369,81 @@ homogeneousCotangentBundle HomogeneousVariety := X -> (
     if X#"cotangent" =!= null then return X#"cotangent";
     R := X#"rootSystem";
     P := X#"parabolicSubgroup";
-    l := sort toList set toList(1..rank(R)) -  P#"parabolic"; 
-    if ((dynkinType R)#0)#0 == "A" then (
-	bundleR := bundles X;
-	F := {};
-	if #l == 1 then return X#"cotangent" = tensorProduct(bundleR#0, dual bundleR#1);
-	for i from 1 to #bundleR -1 do (
-	    for j from 0 to i-1 do (
-		F = F | {tensorProduct(bundleR#(i-1-j), dual bundleR#i)};
-		);
-	    );
-	return X#"cotangent" = filtrationBundle(F,X);
-	)
-    else if ((dynkinType(R))#0)#0 == "B" and l == {1} then (
-	return X#"cotangent" = dual homogeneousTangentBundle X;
-	)
-    else if ((dynkinType(R))#0)#0 == "C" and l == {rank R} then (
-	return X#"cotangent" = homogeneousVectorBundle({weight(R,flatten {toList((rank R -2) :0),2,-2})},{1},X);
-	)
-    else if ((dynkinType(R))#0)#0 == "D" and l == {1} then (
-	return X#"cotangent" = homogeneousVectorBundle({weight(R,flatten {-2,1,toList((rank R -2) :0)})},{1},X);
-	) 
-    else if ((dynkinType(R))#0)#0 == "D" and l == {rank R} then (
-	return X#"cotangent" = homogeneousVectorBundle({weight(R,flatten {toList((rank R -3) :0),1,0,-2})},{1},X);
-	)
-     else if ((dynkinType(R))#0)#0 == "E" and ((dynkinType(R))#0)#1 == 6 and l == {1} then (
-	return X#"cotangent" = homogeneousVectorBundle({weight(R,{-2,0,1,0,0,0})},{1},X);
-	)
-    else if ((dynkinType(R))#0)#0 == "E" and ((dynkinType(R))#0)#1 == 7 and l == {7} then (
-	return X#"cotangent" = homogeneousVectorBundle({weight(R,{0,0,0,0,0,1,-2})},{1},X);
-	) 
-    else (
-	return X#"cotangent" = dual homogeneousTangentBundle X;
-	);
+    l := sort toList set toList(1..rank(R)) -  P#"parabolic";
+    if X#"isSimple" then (
+        if ((dynkinType R)#0)#0 == "A" then (
+            bundleR := bundles X;
+            F := {};
+            if #l == 1 then return X#"cotangent" = tensorProduct(bundleR#0, dual bundleR#1);
+            for i from 1 to #bundleR -1 do (
+                for j from 0 to i-1 do (
+                    F = F | {tensorProduct(bundleR#(i-1-j), dual bundleR#i)};
+                    );
+                );
+            return X#"cotangent" = filtrationBundle(F,X);
+            )
+        else if ((dynkinType(R))#0)#0 == "B" and l == {1} then (
+            return X#"cotangent" = dual homogeneousTangentBundle X;
+            )
+        else if ((dynkinType(R))#0)#0 == "C" and l == {rank R} then (
+            return X#"cotangent" = homogeneousVectorBundle({weight(R,flatten {toList((rank R -2) :0),2,-2})},{1},X);
+            )
+        else if ((dynkinType(R))#0)#0 == "D" and l == {1} then (
+            return X#"cotangent" = homogeneousVectorBundle({weight(R,flatten {-2,1,toList((rank R -2) :0)})},{1},X);
+            ) 
+        else if ((dynkinType(R))#0)#0 == "D" and l == {rank R} then (
+            return X#"cotangent" = homogeneousVectorBundle({weight(R,flatten {toList((rank R -3) :0),1,0,-2})},{1},X);
+            )
+        else if ((dynkinType(R))#0)#0 == "E" and ((dynkinType(R))#0)#1 == 6 and l == {1} then (
+            return X#"cotangent" = homogeneousVectorBundle({weight(R,{-2,0,1,0,0,0})},{1},X);
+            )
+        else if ((dynkinType(R))#0)#0 == "E" and ((dynkinType(R))#0)#1 == 7 and l == {7} then (
+            return X#"cotangent" = homogeneousVectorBundle({weight(R,{0,0,0,0,0,1,-2})},{1},X);
+            ) 
+        else (
+            return X#"cotangent" = dual homogeneousTangentBundle X;
+            );
+        );
+    cotSum := apply(X#"factors", Xi -> homogeneousCotangentBundle Xi);
+    cotSum = for i from 0 to #cotSum-1 list (
+        pullBack(X,{i+1},cotSum#i)
+        );
+    sum cotSum
     )
 
+-- pull-back a vector bundle to a product of homogeneous varieties
+-- X = X_1 x ... x X_k is the big variety
+-- l is the list of {i_1,...,i_m} identifying the ambient variety of E
+pullBack = method();
+pullBack(HomogeneousVariety,List,FiltrationBundle) := (X,l,F) -> (
+    R := X#"rootSystem";
+    P := X#"parabolicSubgroup";
+    lM2 := l/(i -> i-1); 
+    dyn := dynkinType R;
+    oldWeights := F#"weights"/(v -> entries v);
+    newWeights := oldWeights/(v -> {});
+    for i from 0 to #dyn-1 do (
+        rankRi := last dyn#i;
+        if member(i,lM2) then (
+            newWeights = for j from 0 to #oldWeights-1 list (
+                newWeights#j | take(oldWeights#j,rankRi)
+                );
+            oldWeights = oldWeights/(v -> drop(v,rankRi));
+            )
+        else (
+            newWeights = newWeights/(v -> v | toList (rankRi:0));
+            );
+        );
+    if F#"irreducible" then (
+        return homogeneousVectorBundle(newWeights/(v -> weight(R,v)),F#"multiplicities",X);
+        );
+    filtrationBundle(newWeights/(v -> weight(R,v)),X)
+    )
+    
+
+        
+            
+        
 
 structureSheaf = method();
 structureSheaf HomogeneousVariety := X -> (
