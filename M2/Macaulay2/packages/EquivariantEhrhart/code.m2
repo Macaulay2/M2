@@ -28,62 +28,32 @@ isSymmetric(Polyhedron, List) := Boolean => (P, L) -> (
 -- in the case that the list is a singleton, we generate the elements as {g^0, g^1, ...}
 generateGroup = method(
     Options => {
-        Verbose => false,
-        MaxComputeTime => 60, -- raises an exception if computation takes more than 60s
+        Verbose => false
         }
     )
 generateGroup List := List => opts -> L -> (
-    local g;
-    local h;
-    local gh;
-    local g';
-    local groupElementsList;
-    alarm(opts.MaxComputeTime);
-    try ( -- try to compute the group within time limit
-        if #L == 1 then (
-            g = L_0 ;
-            gIdentity := id_(target g) ;
-            g' = g ;
-            groupElementsList = {gIdentity};
-            while not (g' == gIdentity) do (
-                groupElementsList = append(groupElementsList, g') ;
-                g' = g'*g ;
-                )
-            )
-        else(
-            -- construct a Cayley table of the group
-            countMults := 0;
-            groupElements := new MutableHashTable from for M in L list M => true;
-            multsToCheck := new MutableList from flatten for i from 0 to #L-1 list for j from 0 to i list (L_i, L_j);
-            while #multsToCheck > 0 do (
-                -- pop one mult
-                (g, h) = remove(multsToCheck, -1);
-                gh = g * h;
-                countMults = countMults +1;
-                if not groupElements#?gh then (
-                    groupElements#gh = true;
-                    for f in keys groupElements do multsToCheck##multsToCheck = (gh, f);
-                    -- note that gh*gh is not necessary to add because we will get to it eventually by gh*g*h
-                    if opts.Verbose then (
-                        print("found element: " | net gh | " (total elements: " | toString(#groupElements) | ")");
-                        );
-                    );
-                if opts.Verbose then (
-                    print("-- remains to check " | toString (#multsToCheck) | " multiplicaions");
-                    );
-                );
-            if opts.Verbose then (
-                print("-- completed in " | toString countMults | " multiplications");
-                );
-            groupElementsList = keys groupElements ;
-            ) ;
-        alarm(0);
-        groupElementsList  -- returns list of matrices
+    if #L == 0 then (
+        error("expected non-empty list of generators");
         )
-    else ( -- ran out of time
-        error "time exceeded MaxComputeTime";
+    else if #L == 1 then (
+        g := L_0;
+        gIdentity := id_(target g) ;
+        g' := gIdentity;
+        {gIdentity} |  while true list (
+            g'' := g' * g;
+            if g'' == gIdentity then break;
+            g' = g''
+            )
+        )
+    else ( -- #L >= 2 : use InvariantRing package to compute group elements
+        n := numColumns first L;
+        RMonoid := monoid[Variables => n];
+        R := QQ RMonoid;
+        GAction := finiteAction(L, R);
+        group GAction
         )
     )
+
 
 -- takes a partition L of n and returns a permutation
 -- with cycle type L

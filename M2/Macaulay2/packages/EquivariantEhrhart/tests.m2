@@ -110,12 +110,6 @@ TEST /// -*check that symmetric group character table is in the right order*-
     assert(T.table == result);
 ///
 
-TEST /// -*check that generateGroup errors correctly*-
-    g = matrix "1,1;0,1"; -- generates an infinite group
-    E = trap generateGroup({g}, MaxComputeTime => 1)
-    assert(E_0 === null)
-    assert(toString(E_1) == "time exceeded MaxComputeTime")
-///
 
 TEST /// -*check options for equivariantEhrhartSeries*-
     P = convexHull transpose matrix "1,0,0;0,1,0;0,0,1";

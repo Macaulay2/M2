@@ -21,7 +21,7 @@ newPackage(
         }
     },
     Keywords => {"Convex Geometry"},
-    PackageExports => {"BettiCharacters", "Permutations", "RationalPolytopes", "Cyclotomic"},
+    PackageExports => {"BettiCharacters", "Permutations", "RationalPolytopes", "Cyclotomic", "InvariantRing"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
     HomePage => "https://github.com/ollieclarke8787/M2/tree/EhrhartTheory" -- previously at "https://github.com/Macaulay2/Workshop-2025-Madison/tree/EhrhartTheory"
