@@ -1,7 +1,7 @@
 newPackage(
     "PALPInterface",
-    Version => "0.2",
-    Date => "20 September 2026",
+    Version => "0.3",
+    Date => "16 November 2026",
     Headline => "an interface to the PALP package for lattice polytopes",
     Authors => {
         {Name => "Mike Stillman",
@@ -11,7 +11,7 @@ newPackage(
     Keywords => {"Interfaces", "Toric Geometry"},
     HomePage => "https://github.com/mikestillman/stringtorics",
     AuxiliaryFiles => false,
-    DebuggingMode => true,
+    DebuggingMode => false,
     -- Polyhedra is exported, so that vertices (of a NefPartition, for instance)
     -- and the Polyhedron returned by weightSystemPolytope can be used at once
     PackageExports => {"Polyhedra"},
