@@ -2,7 +2,7 @@ newPackage(
     "PALPInterface",
     Version => "0.3",
     Date => "16 November 2026",
-    Headline => "an interface to the PALP package for lattice polytopes",
+    Headline => "an interface to the PALP software for lattice polytopes",
     Authors => {
         {Name => "Mike Stillman",
             Email => "mike@math.cornell.edu",
@@ -1045,7 +1045,7 @@ doc ///
 Key
   PALPInterface
 Headline
-  an interface to PALP, a package for analyzing lattice polytopes
+  an interface to PALP, software for analyzing lattice polytopes
 Description
   Text
     PALP, a Package for Analyzing Lattice Polytopes, was written by Maximilian
