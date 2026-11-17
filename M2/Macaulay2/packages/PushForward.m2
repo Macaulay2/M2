@@ -53,7 +53,7 @@ pushFwd Module := Module => o -> M -> pushFwd(map(ring M, coefficientRing ring M
 pushFwd Matrix := Matrix => o -> F -> pushFwd(map(ring F, coefficientRing ring F), F, o)
 
 protect computing
-pushFwd(RingMap, Ideal) := Module => o -> (f, I) -> pushFwd(f, module I)
+pushFwd(RingMap, Ideal) := Module => o -> (f, I) -> pushFwd(f, module I, o)
 pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??= (
     N.cache#(computing, pushFwd) = true;
     N' := asDirectSum N;
