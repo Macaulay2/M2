@@ -1033,116 +1033,106 @@ doc ///
 Key
   PALPInterface
 Headline
-  an interface to the PALP package for lattice polytopes
+  an interface to PALP, a package for analyzing lattice polytopes
 Description
   Text
     PALP, a Package for Analyzing Lattice Polytopes, was written by Maximilian
-    Kreuzer and Harald Skarke in order to classify reflexive polytopes, and in
-    particular to produce the list of the 473800776 reflexive polytopes of
-    dimension four.  Along the way it acquired a good deal of functionality that
-    is useful on its own: normal forms of lattice polytopes, the lattice points
-    of a polytope and of its dual, the enumeration of weight systems, and nef
-    partitions.  This package makes some of that functionality available inside
-    Macaulay2.  If you wish more functionality added, please contact the author of
-    this package.
+    Kreuzer and Harald Skarke to classify reflexive polytopes, and in particular
+    to produce the list of the 473800776 reflexive polytopes of dimension four.
+    It also computes normal forms of lattice polytopes, the lattice points of a
+    polytope and of its dual, weight systems, and nef partitions together with
+    the Hodge numbers of the corresponding Calabi-Yau complete intersections.
+    This package makes that functionality available in Macaulay2.
   Text
-    The program, its source and its documentation are at
-    @HREF "https://hep.itp.tuwien.ac.at/~kreuzer/CY/CYpalp.html"@; the reference
-    documentation is reached from there, under "Former PALP wiki" and "Last
-    version of the PALP online documentation".  PALP is described in
+    New users should start with @TO "Lattice polytopes in PALP"@, which explains
+    how polytopes are given to these functions, and the M and N lattices.
+  Text
+    PALP is a separate program, which must be installed; on macOS, for instance,
+    with @TT "brew install macaulay2/tap/palp"@.  The package loads without it,
+    and looks for the PALP executables only when a function first needs one; see
+    @TO palpProgram@.  PALP's source and documentation are at
+    @HREF "https://hep.itp.tuwien.ac.at/~kreuzer/CY/CYpalp.html"@, and it is
+    described in
   Pre
     M. Kreuzer and H. Skarke, PALP: A Package for Analyzing Lattice Polytopes
     with Applications to Toric Geometry, Comput. Phys. Commun. 157 (2004)
     87-106, arXiv:math/0204356.
-  -- Text
-  --   PALP is a separate program, and must be installed before any of these
-  --   functions will run.  On a machine already set up for Macaulay2, use
-  -- Pre
-  --   brew install macaulay2/tap/palp
-  -- Text
-  --   The package itself loads whether or not PALP is present; the executables are
-  --   looked for only when a function needs one.  If they are installed somewhere
-  --   that is not on your path, add that directory to @TO "programPaths"@.
   Text
-    @SUBSECTION "Polytope functions"@
+    A first computation: the polytope of a weight system, its dual, and the
+    Hodge numbers of the Calabi-Yau threefolds of a related weight system in
+    codimension two.
+  Example
+    ws = {10, 1, 2, 3, 4};
+    palpMVertices ws
+    palpNVertices ws
+    palpIsReflexive ws
+    L = palpNefPartitions({10, 1, 1, 2, 2, 2, 2}, 2);
+    apply(L, hodgeNumbers)
   Text
-        @UL {
+    @SUBSECTION "Polytopes"@
+  Text
+    @UL {
+        TO "Lattice polytopes in PALP",
         TO palpMVertices,
+        TO palpNVertices,
+        TO palpNormalForm,
         TO palpInfo,
-        TO palpIsReflexive,
         TO palpIsIP,
-        TO palpIsCanonical
+        TO palpIsCanonical,
+        TO palpIsReflexive
         }@
   Text
-    @SUBSECTION "Weight Systems"@
-  Text
-    Polytopes in PALP are given either by a matrix whose columns are its vertices, or by a weight system,
-    (or combined weight system).  Reflexive polytopes of dimension at most 4 can be obtained
-    using @TO "ReflexivePolytopesDB::ReflexivePolytopesDB"@.  There are too many reflexive polytopes of dimension at least five
-    to enumerate.  Instead, weight systems are a good way to generate reflexive polytopes
-    (and they can be used to in principle generate all reflexive polytopes in higher dimensions).
+    @SUBSECTION "Weight systems"@
   Text
     @UL {
         TO WeightSystem,
-        TO (weightSystems, ZZ),
-        TO (weightSystem, List),
-        TO (isWellDefined, WeightSystem),
-        TO palpMVertices
+        TO weightSystems,
+        TO weightSystemVertices,
+        TO weightSystemPolytope
         }@
   Text
     @SUBSECTION "Nef partitions"@
   Text
     @UL {
-        TO NefPartition,
         TO palpNefPartitions,
-        TO isProjection,
-        TO isDirectProduct,
+        TO NefPartition,
+        TO palpHodgeNumbers,
         TO cayleyPolytopeVertices,
+        TO isProjection,
         TO naiveNefPartitions,
-        TO nefPartitionDivisors,
-        TO palpHodgeNumbers
+        TO nefPartitionDivisors
         }@
   Text
-    @SUBSECTION "Normal forms of polytopes"@
+    @SUBSECTION "Running PALP directly"@
+  Text
+    For PALP options that have no function of their own.
   Text
     @UL {
-        TO palpNormalForm
+        TO palpRun,
+        TO toPalp,
+        TO fromPalpMatrix,
+        TO palpProgram,
+        TO "palpVerbosity",
+        TO "palpDmax"
         }@
   Text
-    A first computation: the polytope of a weight system, its vertices, and its
-    normal form.
-  Example
-    ws = {10, 1, 2, 3, 4}
-    V = weightSystemVertices ws
-    palpNormalForm V
-    P = convexHull V
-    isReflexive P
+    @SUBSECTION "The PALP commands behind each function"@
   Text
-    The columns of the matrix are the vertices.  PALP itself prints a point set
-    sometimes as rows and sometimes as columns, depending on the example, but
-    every function here returns one point per column.
-  Text
-    PALP is compiled with a fixed bound on the dimensions it can handle, and
-    ships as several executables with different bounds.  See @TO "palpDmax"@,
-    which matters mainly for @TO palpNefPartitions@.
-  Text
-    PALP assumes its input is a full dimensional polytope and does not check, so
-    the functions here check before calling it.  A set of points spanning
-    something of lower dimension makes PALP give a wrong answer under some
-    options and crash under others, and a weight system of dimension one makes
-    it abort; rather than pass any of that on, these are refused with an error.
-    The file @TT "PALP-upstream-notes.md"@ in this package's repository has the
-    details.
-  Example
-    M = matrix{{1,-1,-1,1},{1,1,-1,-1},{0,0,0,0}};   -- a square in a plane in ZZ^3
-    assert(try (palpMVertices M; false) else true)
+    @UL {
+        {TO palpMVertices, ", ", TO palpMPoints, ": ", TT "poly.x -v", ", ", TT "-p"},
+        {TO palpNVertices, ", ", TO palpNPoints, ": ", TT "poly.x -e", ", ", TT "-d"},
+        {TO palpNormalForm, ": ", TT "poly.x -N"},
+        {TO palpInfo, ": ", TT "poly.x -g"},
+        {TO palpIsIP, ": ", TT "poly.x -I"},
+        {TO weightSystems, ": ", TT "cws.x -w"},
+        {TO palpNefPartitions, ": ", TT "nef.x", ", with the options listed on its page"},
+        {TO palpHodgeNumbers, ": ", TT "nef.x -G"}
+        }@
 SeeAlso
-  palpNormalForm
-  weightSystems
-  palpNefPartitions
-  NefPartition
-  "palpDmax"
+  "Lattice polytopes in PALP"
   "ReflexivePolytopesDB::ReflexivePolytopesDB"
+  "NormalToricVarieties::NormalToricVarieties"
+  "Polyhedra::Polyhedra"
 ///
 
 doc ///
@@ -1405,6 +1395,118 @@ SeeAlso
 
 doc ///
 Key
+  "Lattice polytopes in PALP"
+Headline
+  how polytopes are given to PALP, and the M and N lattices
+Description
+  Text
+    @SUBSECTION "Giving a polytope"@
+  Text
+    The functions of this package take a polytope in one of two forms.
+  Text
+    @UL {
+        {"a matrix over the integers, whose columns span the polytope: they must
+         include its vertices, but may include other points, and may repeat;"},
+        {"a weight system, or a combined weight system, as a list of integers or a ",
+         TO WeightSystem, ", which stands for its polytope ", TEX "$\\Delta(q)$", "."}
+        }@
+  Text
+    The polytope must be full dimensional: for a matrix, its columns must
+    affinely span the whole space, so there should be more columns than rows.
+    Otherwise these functions give an error.  Every set of points they return is encoded as 
+    an integer matrix with one point per column.
+  Text
+    PALP works with any lattice polytope, but most of what it computes concerns
+    polytopes containing the origin in their interior (IP polytopes), and especially
+    reflexive polytopes.  Reflexive polytopes of dimension at most four can be
+    obtained from @TO "ReflexivePolytopesDB::ReflexivePolytopesDB"@; in higher
+    dimensions, weight systems are the usual way of producing them (see
+    @TO weightSystems@).
+  Text
+    @SUBSECTION "The M and N lattices"@
+  Text
+    $M$ and $N$ are two lattices of the same rank $d$, dual to each other, with
+    the pairing $\langle m, n \rangle$; both are $\mathbb{Z}^d$ in coordinates.
+    The (polar) dual of a polytope $P$ in $M_{\mathbb{R}}$ is
+    $$P^* = \{ n \in N_{\mathbb{R}} : \langle m, n \rangle \ge -1 \text{ for all } m \in P \}.$$
+    $P$ is reflexive when $P^*$ is again a lattice polytope; then $P^{**} = P$,
+    so $P$ and $P^*$ determine each other, and either can be input for the
+    methods @TO "palpMVertices"@, @TO palpNVertices@, and other palp functions.
+  Text
+    In toric geometry, a polytope $\Delta$ in $M_{\mathbb{R}}$ describes a
+    projective toric variety $V$ and an ample divisor on it: its lattice points
+    are the monomials, the sections of the divisor.  The fan of $V$ lives in
+    $N_{\mathbb{R}}$.  When $\Delta$ is reflexive, the divisor is the
+    anticanonical divisor, and the rays of the fan are the vertices of $\Delta^*$.
+  Example
+    needsPackage "NormalToricVarieties"
+    ws = {10, 1, 2, 3, 4};
+    X = normalToricVariety convexHull palpMVertices ws;
+    set rays X === set entries transpose palpNVertices ws
+  Text
+    @SUBSECTION "M and N in this package"@
+  Text
+    In the names @TO palpMVertices@, @TO palpMPoints@, @TO palpNVertices@ and
+    @TO palpNPoints@, "M" means return the vertices or the lattice points of the input polytope
+    and "N" refers to the dual of the input polytope (if it is reflexive).
+    A weight system gives the polytope $\Delta(q)$ in $M$.  A matrix is
+    read as a polytope in $M$ by these functions, but as the polytope
+    $\Delta^*$ in $N$ by @TO palpNefPartitions@, since a nef partition is a
+    partition of the rays of the fan.
+  Text
+    So, given the vertices of a reflexive polytope in $N$, its dual in $M$ is
+    found with @TO palpNVertices@: the dual of the dual is the polytope one
+    started with.
+  Example
+    A = palpNVertices ws;
+    set entries transpose palpNVertices A === set entries transpose palpMVertices ws
+  Text
+    The duals of polytopes that are not reflexive are not lattice polytopes,
+    and the functions requiring the dual return @TO null@ in this case.
+  Example
+    palpNVertices matrix{{1,0,0,-1},{0,1,0,-1},{0,0,1,-2}} === null
+SeeAlso
+  palpMVertices
+  palpNVertices
+  palpNormalForm
+  WeightSystem
+  palpNefPartitions
+  "Polyhedra::polar"
+///
+
+///
+-- example to use?
+
+  Text
+    The following example was constructed as follows:
+  Pre
+    needsPackage "ReflexivePolytopesDB"
+    tope = first kreuzerSkarke(350, Limit => 10)
+    A = matrix tope
+  Example
+    A = matrix {
+        {1, 0, 0, 0, -29, -2, -5},
+        {0, 1, 0, 0, -19, -2, -4},
+        {0, 0, 1, 0, -8, -1, -2},
+        {0, 0, 0, 1, -1, 2, 2}}
+    palpMVertices A
+    numColumns palpMPoints A == 36
+    palpNVertices A
+    numColumns palpNPoints A == 485
+    P = convexHull A
+    isReflexive P
+    palpNormalForm A
+    palpNormalForm palpNVertices A
+    palpInfo A
+    palpIsIP A
+    palpIsCanonical A
+    palpIsReflexive A
+
+///
+
+doc ///
+Key
+  "palpMVertces, palpMPoints, palpNVertices, palpNPoints"
   palpMVertices
   (palpMVertices, Matrix)
   (palpMVertices, List)
@@ -1429,12 +1531,12 @@ Usage
   palpNVertices A
   palpNPoints A
 Inputs
-  A:Matrix
+  A:{Matrix, List, WeightSystem}
     over the integers, whose columns span the polytope, or a (combined) weight
     system, as a @TO List@ or a @TO WeightSystem@
 Outputs
   :Matrix
-    over the integers, one point per column
+    over the integers, one point per column, or null
 Description
   Text
     For a polytope $P$ in the lattice $M$, with dual $P^*$ in $N$, these give
@@ -1446,14 +1548,14 @@ Description
     polyhedron from @TO "Polyhedra::Polyhedra"@, is accepted as well.
     It must be full dimensional, so $A$ has more columns than rows.  Otherwise
     the columns are arbitrary: they need not be vertices, and they may include
-    interior points and repeat.  @TO palpMVertices@ and @TO palpMPoints@ need
-    no interior lattice point.  The dual
+    interior points and repeat.  @TO palpMVertices@ and @TO palpMPoints@ do not need
+    to have interior lattice points.  The dual
     $P^* = \{y : \langle x, y \rangle \ge -1 \text{ for all } x \in P\}$
     is taken with respect to the origin, and is a lattice polytope exactly when
     $P$ is reflexive; @TO palpNVertices@ and @TO palpNPoints@ give an answer
     only then.  A reflexive polytope has the origin as its only interior lattice
-    point, so a polytope with other interior lattice points, or a translate of a
-    reflexive polytope, gets @TO null@.  For the dual as a rational polytope, use
+    point, so this function returns {\tt null} for a polytope with other interior lattice points, or a translate of a
+    reflexive polytope. For the dual as a rational polytope, use
     @TO "Polyhedra::polar"@.
   Example
     ws = {10, 1, 2, 3, 4}
@@ -1464,7 +1566,7 @@ Description
   Text
     These agree with @TO "Polyhedra::Polyhedra"@.
   Example
-      P = convexHull palpMVertices ws;
+    P = convexHull palpMVertices ws;
     assert(numColumns palpMPoints ws == #latticePoints P)
     assert(set entries transpose palpNVertices ws
         === set entries transpose lift(vertices polar P, ZZ))
@@ -1599,8 +1701,14 @@ Description
     A polytope that is canonical but not reflexive, so that PALP reports
     @TT "F"@ and no @TT "N"@:
   Example
-    palpInfo matrix{{1,0,0,-1},{0,1,0,-1},{0,0,1,-2}}
+    A = matrix{{1,0,0,-1},{0,1,0,-1},{0,0,1,-2}}
+    palpInfo A
+    palpIsIP A
+    palpIsCanonical A
+    palpIsReflexive A
 SeeAlso
+  palpIsIP
+  palpIsCanonical
   palpIsReflexive
   palpMVertices
   palpRun
@@ -3568,7 +3676,7 @@ TEST ///
 
 
 TEST ///
-  -- palpIsIP and palpIsCanonical, against Polyhedra
+  -- palpIsIP and palpIsCanonical, comparing with Polyhedra
   needsPackage "Polyhedra"
   refl  = matrix{{1,0,0,-1},{0,1,0,-1},{0,0,1,-1}}      -- reflexive
   ipnr  = matrix{{2,0,0,-1},{0,1,0,-1},{0,0,1,-1}}      -- IP, (1,0,0) also interior
