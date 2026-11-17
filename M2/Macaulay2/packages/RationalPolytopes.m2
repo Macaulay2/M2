@@ -35,10 +35,7 @@ export {
 -- define the denominator of polyhedron to be the lcm of all denominators of
 -- coordinates of its vertices
 denominator Polyhedron := ZZ => P -> (
-    if not P.cache#?"denominator" then (
-        P.cache#"denominator" = lcm for j in flatten entries vertices P list denominator promote(j,QQ);
-        );
-    P.cache#"denominator"
+    P.cache#"denominator" ??= lcm for j in flatten entries vertices P list denominator promote(j,QQ)
     )
 
 
@@ -279,7 +276,7 @@ ehrhartQuasiPolynomial = method(
     )
 
 ehrhartQuasiPolynomial Polyhedron := QuasiPolynomial => opts -> P -> (
-    if not P#cache#?"ehrhartQP" then (
+    P.cache#"ehrhartQP" ??= (
         QP := if opts.Strategy == "Normaliz" then (
             ehrhartQPNormaliz P
             )
@@ -288,9 +285,8 @@ ehrhartQuasiPolynomial Polyhedron := QuasiPolynomial => opts -> P -> (
             )
         else error("unknown Strategy option: " | toString opts.Strategy | "; allowable options are Normaliz (default), M2");
         QP#cache#"OriginalPolyhedron" = P;
-        P#cache#"ehrhartQP" = QP;
-        );
-    P#cache#"ehrhartQP"
+        QP
+        )
     )
 
 ehrhartQPM2 = method()
@@ -366,7 +362,7 @@ hStarPolynomial Polyhedron := RingElement => opts -> P -> (
     else (
         R:=QQ[getSymbol "T"]; -- potentially redundant if hStarPolynomial has already been computed
         hStarPolynomial(P, R, opts)
-    )
+        )
     )
 
 ------------------------------------------------
@@ -441,11 +437,10 @@ ehrhartSeries = method(
     )
 
 ehrhartSeries(Polyhedron, Ring) := opts -> (P, R) -> (
-    if not P#cache#?"ehrhartSeries" then (
+    P.cache#"ehrhartSeries" ??= (
         (h, d) := hStarPolynomial(P, R, ReturnDenominator => true, Strategy => opts.Strategy);
-        P#cache#"ehrhartSeries" = h/d;
-        );
-    P#cache#"ehrhartSeries"
+        h/d
+        )
     )
 
 ehrhartSeries Polyhedron := opts -> P -> (
