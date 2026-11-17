@@ -69,6 +69,18 @@ PyInitialize(e:Expr):Expr := (
     else WrongArgString());
 setupfun("pythonInitialize", PyInitialize);
 
+import DefaultExecutable():constcharstarOrNull;
+PyDefaultExecutable(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then (
+	    when DefaultExecutable()
+	    is s:constcharstar do toExpr(tostring(s))
+	    is null do nullE)
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("pythonDefaultExecutable", PyDefaultExecutable);
+
 PyRunSimpleString(e:Expr):Expr := (
      when e is s:stringCell do (
 	 if Ccode(int, "PyRun_SimpleString(", tocharstar(s.v), ")") == 0

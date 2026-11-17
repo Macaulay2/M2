@@ -8,9 +8,14 @@
 #include "pythoncapi_compat.h"
 #pragma GCC diagnostic pop
 
+#include <dlfcn.h>
 #include <gmp.h>
+#include <libgen.h>
+#include <limits.h>
 #include <pthread.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 const char * python_Initialize(char *executable)
 {
@@ -38,6 +43,39 @@ exception:
   Py_Initialize();
   return NULL;
 #endif
+}
+
+/* Look for the Python executable belonging to the same installation as the
+ * library we're linked against, relative to the directory containing the
+ * library.  We check, in order:
+ *   bin       (macOS frameworks, e.g., .../Versions/3.x/Python)
+ *   ../bin    (most installations, e.g., PREFIX/lib/libpython3.x.so)
+ *   ../../bin (Debian multiarch, e.g., /usr/lib/<triplet>/libpython3.x.so)
+ * Returns NULL if we can't find it, e.g., if libpython is linked statically. */
+const char *python_DefaultExecutable(void)
+{
+  static const char *subdirs[] = {"bin", "../bin", "../../bin"};
+  static char executable[PATH_MAX];
+  char libpath[PATH_MAX];
+  const char *libdir;
+  Dl_info info;
+  size_t i;
+
+  if (dladdr((void *)Py_Initialize, &info) == 0 || info.dli_fname == NULL)
+    return NULL;
+
+  /* dirname may modify its argument */
+  snprintf(libpath, sizeof(libpath), "%s", info.dli_fname);
+  libdir = dirname(libpath);
+
+  for (i = 0; i < sizeof(subdirs) / sizeof(subdirs[0]); i++) {
+    snprintf(executable, sizeof(executable), "%s/%s/python%d.%d", libdir,
+             subdirs[i], PY_MAJOR_VERSION, PY_MINOR_VERSION);
+    if (access(executable, X_OK) == 0)
+      return executable;
+  }
+
+  return NULL;
 }
 
 /**************

@@ -92,6 +92,7 @@ exportFrom_Core {
 
 importFrom_Core {
     "pythonComplexFromDoubles",
+    "pythonDefaultExecutable",
     "pythonDictNew",
     "pythonDictSetItem",
     "pythonEvalGetBuiltins",
@@ -140,7 +141,7 @@ export {
 }
 
 executable = ((options currentPackage).Configuration#"executable" ??
-    get "!command -v python3 | tr -d '\n'")
+    pythonDefaultExecutable() ?? get "!command -v python3 | tr -d '\n'")
 
 -- raise an error if we try initializing with a new Python executable
 -- store the information in ZZ since it will persist when reloading
