@@ -814,7 +814,7 @@ doc ///
     Strategy => String
       either "Normaliz" or "M2", selects the method for computing the Ehrhart series
   Outputs
-    ES : RingElement
+    ES : Expression
       Ehrhart series in the ring R, or in frac(QQ[t]) if R not specified
   Description
     Text
