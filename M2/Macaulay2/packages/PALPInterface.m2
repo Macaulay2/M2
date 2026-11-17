@@ -95,7 +95,8 @@ NefPartition = new Type of HashTable
 -- PALP is compiled with a fixed upper bound POLY_Dmax on the dimensions it can
 -- handle, and `make all-dims` builds one executable per bound.  A program named
 -- e.g. "poly" is therefore available as poly-4d.x, poly-5d.x, poly-6d.x,
--- poly-11d.x, and poly.x (which is the same build as poly-6d.x).
+-- poly-11d.x, and poly.x (which there, and in the Homebrew and Ubuntu packages,
+-- is the same build as poly-6d.x; a hand-compiled poly.x can have any bound).
 --
 -- The requirement is  POLY_Dmax >= dim N + codim - 1,  so codim 1 computations
 -- (poly.x, cws.x) are fine with the default build up to dimension 6, while nef
@@ -167,9 +168,20 @@ runPALP(Program, String, String) := String => opts -> (P, args, input) -> (
     if #lim > 0 then error(
         P#"name" | " ran out of " | demark(", ", lim) | " on this input:" | newline |
         out |
-        (if member("POLY_Dmax", lim)
-         then "Set palpDmax to a larger value, or install that variant of PALP."
-         else "This is a compile-time bound; PALP must be rebuilt with a larger value."));
+        (if member("POLY_Dmax", lim) then (
+            big := replace("\\.x$", "-11d.x", P#"name");
+            if palpDmax < 11 then "Set palpDmax = 11 to use the largest build of PALP, or see "
+                | "help \"Compiling PALP with larger limits\"."
+            else if not match("-11d\\.x$", P#"name") then (
+                big | " was not found, so " | P#"name" | " was used.  The Homebrew and "
+                | "Ubuntu packages of PALP" | newline
+                | "provide " | big | " for larger dimensions; a PALP of your own must be"
+                | newline | "recompiled with a larger POLY_Dmax; see "
+                | "help \"Compiling PALP with larger limits\".")
+            else "PALP must be recompiled with a larger POLY_Dmax; see "
+                | "help \"Compiling PALP with larger limits\".")
+         else "This is a compile-time bound; PALP must be recompiled with a larger value; see "
+             | "help \"Compiling PALP with larger limits\"."));
     if palpVerbosity > 1 then printerr out;
     out
     )
@@ -1113,7 +1125,8 @@ Description
         TO fromPalpMatrix,
         TO palpProgram,
         TO "palpVerbosity",
-        TO "palpDmax"
+        TO "palpDmax",
+        TO "Compiling PALP with larger limits"
         }@
   Text
     @SUBSECTION "The PALP commands behind each function"@
@@ -1145,7 +1158,8 @@ Description
     PALP is compiled with a fixed upper bound @TT "POLY_Dmax"@ on the dimensions
     it can handle, and its @TT "make all-dims"@ target builds one executable per
     bound: @TT "poly-4d.x"@, @TT "poly-5d.x"@, @TT "poly-6d.x"@,
-    @TT "poly-11d.x"@, and @TT "poly.x"@, which is the same build as the 6d one.
+    @TT "poly-11d.x"@, and @TT "poly.x"@, which there is the same build as the
+    6d one.  The Homebrew and Ubuntu packages of PALP install them this way.
     This variable says which of them to prefer, and may be set to 4, 5, 6 or 11.
   Example
     palpDmax
@@ -1162,10 +1176,12 @@ Description
     ws = {10, 1, 1, 2, 2, 2, 2};
     #palpNefPartitions(ws, 3, HodgeNumbers => false)
   Text
-    Asking for a build that is not installed falls back on the default one.  If
-    the result is a PALP that cannot handle the input, that is reported as an
-    error rather than being silently mistaken for an empty answer, since PALP
-    says so on its standard output and still exits successfully.
+    If the build asked for is not installed, the plain @TT "poly.x"@ (and so on)
+    is used instead.  In the Homebrew and Ubuntu packages that is the 6d build;
+    a PALP compiled by hand has whatever bound it was compiled with.  If the
+    executable used cannot handle the input, PALP says so on its standard
+    output while still exiting successfully; this is reported as an error,
+    with PALP's message, the name of the executable used, and what to do.
 Caveat
   Changing this value selects a different executable, so any program already
   located is looked up again.
@@ -1173,6 +1189,123 @@ SeeAlso
   palpProgram
   palpNefPartitions
   "palpVerbosity"
+  "Compiling PALP with larger limits"
+///
+
+doc ///
+Key
+  "Compiling PALP with larger limits"
+Headline
+  how to build PALP yourself when a computation exceeds its limits
+Description
+  Text
+    PALP sizes its arrays with constants fixed when it is compiled, so a large
+    enough input runs out of one of them, and the only remedy is to compile
+    PALP again with larger values.  The packaged builds (Homebrew, Ubuntu, and
+    the one Macaulay2 can build) leave these at PALP's defaults, apart from
+    the dimension bound, which the 11d build raises to 11; see
+    @TO "palpDmax"@.  The simplest case is a polytope of dimension 12, such as
+    the 12-simplex: even its vertices need @TT "POLY_Dmax"@ at least 12.  Nef
+    partitions in codimension four are another, and there other limits are met
+    too.  Each of these fails with the 11d build, for a different reason:
+  Text
+    @UL {
+        {"the 8-simplex, the polytope of ", TEX "$\\mathbb{P}^8$", ", in codimension four, with ",
+         TT "Need SYM_Nmax > 46083", ": its symmetry group has 9! elements;"},
+        {"the 9-simplex in codimension four, which needs ", TT "POLY_Dmax", " at least ",
+         TEX "$9 + 4 - 1 = 12$", ";"},
+        {"the 6-cube, the polytope of ", TEX "$(\\mathbb{P}^1)^6$", ", in codimension four, on which ",
+         TT "nef.x", " aborts with ", TT "Assertion failed: (_PTL->n < Nef_Max)", "."}
+        }@
+  Text
+    The error from these functions shows PALP's own message, which names the
+    constant to increase.  Larger arrays use more memory, so increase only what
+    the message asks for.  Raising a limit removes the error, but does not make
+    the computation fast: with the values below, neither the first nor the
+    third of these examples finished within ten minutes, even without Hodge
+    numbers.
+  Text
+    @SUBSECTION "Getting the source"@
+  Text
+    Macaulay2 uses PALP 2.21, from
+    @HREF "https://hep.itp.tuwien.ac.at/~kreuzer/CY/CYpalp.html"@.
+  Pre
+    curl -O https://hep.itp.tuwien.ac.at/~kreuzer/CY/palp/palp-2.21.tar.gz
+    tar xzf palp-2.21.tar.gz
+    cd palp-2.21
+  Text
+    @SUBSECTION "What to change"@
+  Text
+    The constants are @TT "#define"@ lines in two header files.
+  Text
+    @UL {
+        {TT "Global.h", ": ", TT "POLY_Dmax", ", the largest dimension, near the top.  Below it, the
+         branch for ", TT "POLY_Dmax", " greater than 4 sets ", TT "POINT_Nmax", " (lattice points), ",
+         TT "VERT_Nmax", " (vertices; PALP recommends a multiple of 32), ", TT "FACE_Nmax",
+         " (faces), ", TT "SYM_Nmax", " (symmetries) and ", TT "EQUA_Nmax", " (facets)."},
+        {TT "Nef.h", ": ", TT "Nef_Max", " and ", TT "NP_Max", ", which bound the number of nef
+         partitions ", TT "nef.x", " handles, on its first two lines."}
+        }@
+  Text
+    For instance, to allow dimension 12 and raise the other two limits met
+    above (the 9-simplex would also need @TT "SYM_Nmax"@ above $10! = 3628800$):
+  Pre
+    Global.h:  #define POLY_Dmax 12              (was 6)
+               #define SYM_Nmax  400000          (was 46080)
+    Nef.h:     #define Nef_Max   2000000         (was 500000)
+  Text
+    @SUBSECTION "Compiling"@
+  Text
+    In the @TT "palp-2.21"@ directory, run GNU make.  This needs GNU make 4 or
+    later; on macOS the system @TT "make"@ is older, and fails with
+    @TT "No rule to make target `poly-d.x'"@, so use @TT "gmake"@ from
+    Homebrew (@TT "brew install make"@).
+  Pre
+    gmake
+  Text
+    This takes a few seconds, and leaves @TT "poly.x"@, @TT "cws.x"@,
+    @TT "nef.x"@, @TT "class.x"@ and @TT "mori.x"@ in the directory.  These
+    are the programs that use the values in @TT "Global.h"@.  The target
+    @TT "all-dims"@ also builds @TT "poly-4d.x"@ up to @TT "poly-11d.x"@, and so
+    on, whose dimension bounds are fixed whatever @TT "Global.h"@ says.
+  Text
+    @SUBSECTION "Using it from Macaulay2"@
+  Text
+    Tell Macaulay2 where the programs are with @TO "programPaths"@, and set
+    @TO "palpDmax"@ to 6, so that the plain names @TT "poly.x"@, @TT "nef.x"@,
+    and so on are the ones looked up, rather than @TT "poly-11d.x"@, which may be
+    installed elsewhere.  Do this before the first PALP computation of the
+    session at that value of @TO "palpDmax"@, since each program is looked up
+    only once for each value.  Replace the directory here by your own.
+  Pre
+    needsPackage "PALPInterface"
+    scan({"poly.x", "cws.x", "nef.x", "class.x"},
+        p -> programPaths#p = "/home/me/palp-2.21/")
+    palpDmax = 6
+  Text
+    To check which executable is used:
+  Pre
+    (palpProgram "nef")#"path"
+  Text
+    Everything then runs as before, with the new limits.  For the 12-simplex,
+    which with @TT "poly-11d.x"@ gives the error
+    @TT "Please increase POLY_Dmax to at least 12"@, PALP compiled with
+    @TT "POLY_Dmax"@ 12 as above gives:
+  Pre
+    A = id_(ZZ^12) | matrix toList(12 : {-1});
+    palpMVertices A   -- its 13 vertices, at once
+  Text
+    Given as the weight system @TT "{13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}"@
+    instead, the same polytope took more than five minutes, because PALP
+    starts from all the lattice points of $\Delta(q)$, here about five million.
+Caveat
+  The setting of @TO "palpDmax"@ to 6 is needed because the package looks for
+  @TT "nef-11d.x"@ first.  This may change in a later version.
+SeeAlso
+  "palpDmax"
+  palpProgram
+  palpNefPartitions
+  "programPaths"
 ///
 
 doc ///
