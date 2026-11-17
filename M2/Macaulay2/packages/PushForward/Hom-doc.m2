@@ -103,7 +103,6 @@ doc ///
     Key
         (Hom, RingMap, Matrix, Matrix)
         (Hom, RingMap, Matrix, Module)
-        (Hom, RingMap, Matrix, Module)
     Headline
         induced map on Hom
     Usage
