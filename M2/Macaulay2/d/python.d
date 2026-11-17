@@ -20,12 +20,22 @@ buildPythonErrorPacket():Expr := (
     else if e == -1 then StopIterationE
     else nullE);
 
+import DecRef(o:pythonObject):void;
+import ProcessPendingDecRefs():void;
+pythonObjectFinalizer(obj:voidPointer, po:voidPointer):void := (
+    Ccode(void, "(void)", obj);
+    DecRef(Ccode(pythonObject, "(PyObject *)", po)));
+
+-- steals a reference to r
 pythonObjectOrNull := pythonObject or null;
 toExpr(r:pythonObjectOrNull):Expr := (
+    ProcessPendingDecRefs();
     when r
     is null do buildPythonErrorPacket()
     is po:pythonObject do (
 	x := pythonObjectCell(po, hash_t(0));
+	Ccode(void, "GC_REGISTER_FINALIZER(", x, ", ",
+	    pythonObjectFinalizer, ", ", po, ", 0, 0)");
 	h := Ccode(hash_t, "PyObject_Hash(", po, ")");
 	if h == hash_t(-1) then ( -- unhashable object (e.g., a list)
 	    Ccode(void, "PyErr_Clear()");

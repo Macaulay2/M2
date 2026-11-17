@@ -1021,4 +1021,34 @@ assert Equation(gcd toPython 200, 200)
 assert Equation(lcm(toPython 200, toPython 300), 600)
 ///
 
+TEST ///
+-- wrapped python objects are released when garbage collected (#4600)
+-- (the gc is conservative, so don't insist that every one of them is)
+x = toPython {}
+y = toPython {x}
+main = import "__main__"
+main@@sys = import "sys"
+main@@keep = x
+main@@counts = toPython {}
+-- creating a wrapper releases any queued objects, so we measure using
+-- runSimpleString, which doesn't create any
+rc = () -> runSimpleString "counts.append(sys.getrefcount(keep))"
+rc()
+scan(100, i -> y_0) -- each y_0 is a new wrapper of x
+collectGarbage()
+rc()
+-- when the gc runs in a thread that doesn't hold the GIL, the objects are
+-- queued up and released the next time we create a wrapper
+scan(100, i -> y_0)
+t = schedule collectGarbage
+while not isReady t do nothing
+rc()
+toPython 1
+rc()
+c = value main@@counts
+assert(c#1 - c#0 < 50)
+assert(c#2 - c#0 > 50) -- still queued
+assert(c#3 - c#0 < 50)
+///
+
 end --------------------------------------------------------
