@@ -15,6 +15,14 @@ Hom = method(Options => {
 End = method(Options => options Hom)
 End(Thing) := Thing => o -> X -> Hom(X, X, o)
 
+makeHomCacheKey = (M, N, opts) -> (
+    (
+        Hom, M, N, opts,
+        if M.cache.?formation then M.cache.formation,
+        if N.cache.?formation then N.cache.formation
+    )
+)
+
 -- TODO: Hom(R, S) should work as well
 Hom(Ring, Ring)   :=
 Hom(Ring, Ideal)  :=
@@ -41,7 +49,8 @@ Hom(Module, Module) := Module => opts -> (M, N) -> (
     -- M.cache is a hashless (hence ageless) CacheTable, but
     -- M.cache.cache is a MutableHashTable, hence has an age.
     Y := youngest(M.cache.cache, N.cache.cache);
-    Y#(Hom, M, N, opts) ??= (
+    cachekey := makeHomCacheKey(M, N, opts);
+    Y#cachekey ??= (
         H := runHooks((Hom, Module, Module), (opts, M, N), Strategy => opts.Strategy);
         if H === null then error "Hom: no strategy found for the given input";
         -- a hack: we really want to type "Hom(M, N) = ..."
