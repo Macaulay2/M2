@@ -780,7 +780,7 @@ doc ///
     i : ZZ
       the degree of the monomials of QP of which we want to know the coefficients
   Outputs
-    L : List
+    L : Matrix
       the coefficients of the monomials of degree i appearing in QP
   Description
     Text
