@@ -1,7 +1,7 @@
 newPackage(
     "PencilsOfQuadrics",
     Version => "1.1",
-    Date => "October 23, 2026",
+    Date => "November 17, 2026",
     Authors => {{Name => "Frank-Olaf Schreyer",
             Email => "schreyer@math.uni-sb.de",
             HomePage => "https://www.math.uni-sb.de/ag/schreyer/index.php/"},
@@ -148,7 +148,7 @@ LabBookProtocol(ZZ) := (g) -> (
         Mor = vectorBundleOnE M.evenCenter;
         Mor1= vectorBundleOnE M.oddCenter;
         f = M.hyperellipticBranchEquation;
-        assert(dim ideal jacobian ideal f ==0);
+        assert(dim (ideal f + ideal jacobian ideal f) == 0);
         elapsedTime while (
             m1=randomLineBundle(g+(g%2),f);
             m2=randomLineBundle(g%2,f);
@@ -183,7 +183,7 @@ LabBookProtocol(ZZ) := (g) -> (
         Mor = vectorBundleOnE M.evenCenter;
         Mor1= vectorBundleOnE M.oddCenter;
         f = M.hyperellipticBranchEquation;
-        assert(dim ideal jacobian ideal f ==0);
+        assert(dim (ideal f + ideal jacobian ideal f) == 0);
         elapsedTime while (
             m1=randomLineBundle(g+(g%2),f);
             m2=randomLineBundle(g%2,f);
@@ -219,7 +219,7 @@ LabBookProtocol(ZZ) := (g) -> (
         Mor = vectorBundleOnE M.evenCenter;
         Mor1= vectorBundleOnE M.oddCenter;
         f = M.hyperellipticBranchEquation;
-        assert(dim ideal jacobian ideal f ==0);
+        assert(dim (ideal f + ideal jacobian ideal f) == 0);
         elapsedTime while (
             m1=randomLineBundle(g+(g%2),f);
             m2=randomLineBundle(g%2,f);
@@ -261,7 +261,7 @@ LabBookProtocol(ZZ,ZZ) := (g,r) -> (
         Mor = vectorBundleOnE M.evenCenter;
         Mor1= vectorBundleOnE M.oddCenter;
         f = M.hyperellipticBranchEquation;
-        assert(dim ideal jacobian ideal f ==0);
+        assert(dim (ideal f + ideal jacobian ideal f) == 0);
         degSeq={0,1,2}
         elapsedTime while (
             -- build a vector bundle V as extensions of line bundles of degrees in degSeq
@@ -302,7 +302,7 @@ LabBookProtocol(ZZ,ZZ) := (g,r) -> (
         Mor = vectorBundleOnE M.evenCenter;
         Mor1= vectorBundleOnE M.oddCenter;
         f = M.hyperellipticBranchEquation;
-        assert(dim ideal jacobian ideal f ==0);
+        assert(dim (ideal f + ideal jacobian ideal f) == 0);
         degSeq={1,2,3,4}
         elapsedTime while (
             -- build a vector bundle V as extensions of line bundles of degrees in degSeq
@@ -344,7 +344,7 @@ LabBookProtocol(ZZ,ZZ) := (g,r) -> (
         Mor = vectorBundleOnE M.evenCenter;
         Mor1= vectorBundleOnE M.oddCenter;
         f = M.hyperellipticBranchEquation;
-        assert(dim ideal jacobian ideal f ==0);
+        assert(dim (ideal f + ideal jacobian ideal f) == 0);
         degSeq={0,2,4}
         elapsedTime while (
             -- build a vector bundle V as extensions of line bundles of degrees in degSeq
@@ -668,7 +668,7 @@ randomLineBundle(ZZ, RingElement) := (d,f) -> (
     -- Output : a (much more balanced) random line bundle of degree d on the corresponding hyperelliptic curve.
     if ((# gens ring f) != 2 or ((degree f)_0)%2 !=0) then error "f should be a binary form of degree 2g+2";
     if (char ring f)==0 then error "define f over a finite field";
-    if dim ideal jacobian ideal f >0 then error "f should have no multiple roots";
+    if dim (ideal f + ideal jacobian ideal f) >0 then error "f should have no multiple roots";
 
     g:=(degree f)_0 // 2 - 1;
     Ld:=tensor prepend(preRandomLineBundle (d,f), apply(g-1,i->preRandomLineBundle(0,f)))
@@ -838,7 +838,7 @@ searchUlrich(CliffordModule,Ring,ZZ) := (M,S,r) ->(
     g:=degree ideal f//2-1;
     if (numgens S != 2*g+4) then error "S should be a polynomial ring in (2g+4) variables";
     if (rank source M.evenCenter != 2^(g+1)) then error "M should be a Clifford module associated to a maximal isotropic subspace";
-    if (dim ideal jacobian ideal f > 0) then error "f should have no multiple roots";
+    if (dim (ideal f + ideal jacobian ideal f) > 0) then error "f should have no multiple roots";
 
     if (r <= 1) then error "r should be at least 2";
     if ((r*g)%2 != 0) then error "either r or g should be even";
@@ -2754,7 +2754,7 @@ doc ///
               Mor = vectorBundleOnE M.evenCenter;
               Mor1= vectorBundleOnE M.oddCenter;
               f = M.hyperellipticBranchEquation;
-              assert(dim ideal jacobian ideal f ==0);
+              assert(dim (ideal f + ideal jacobian ideal f) == 0);
               elapsedTime while (
                   m1=randomLineBundle(g+(g%2),f);
                   m2=randomLineBundle(g%2,f);
@@ -2792,7 +2792,7 @@ doc ///
 	    i8 : Mor = vectorBundleOnE M.evenCenter;
 	    i9 : Mor1= vectorBundleOnE M.oddCenter;
 	    i10 : f = M.hyperellipticBranchEquation;
-	    i11 : assert(dim ideal jacobian ideal f ==0);
+	    i11 : assert(dim (ideal f + ideal jacobian ideal f) == 0);
 	    i12 : elapsedTime while (
 		m1=randomLineBundle(g+(g%2),f);
 		m2=randomLineBundle(g%2,f);
@@ -2854,7 +2854,7 @@ doc ///
 		  Mor = vectorBundleOnE M.evenCenter;
 		  Mor1= vectorBundleOnE M.oddCenter;
 		  f = M.hyperellipticBranchEquation;
-		  assert(dim ideal jacobian ideal f ==0);
+		  assert(dim (ideal f + ideal jacobian ideal f) == 0);
 		  degSeq={1,2,3,4}
 		  elapsedTime while (
 		      -- build a vector bundle V as extensions of line bundles of degrees in degSeq
@@ -2988,7 +2988,7 @@ kk = ZZ/nextPrime(10^3)
 R = kk[ s,t]
 g = 1
 f = random(2*g+2, R)
-assert(dim ideal(jacobian ideal f)== 0)
+assert(dim (ideal f + ideal jacobian ideal f) == 0)
 -- preRandomLineBundle(d,f) is a degree-d line bundle on the curve y^2-(-1)^g*f
 L2 = preRandomLineBundle(2,f)
 assert(class L2 === VectorBundleOnE)
@@ -3106,7 +3106,7 @@ kk = ZZ/101
 R = kk[s,t]
 g = 1
 f = random(2*g+2, R)
-assert(dim ideal(jacobian ideal f)== 0)
+assert(dim (ideal f + ideal jacobian ideal f) == 0)
 L1=randomLineBundle(1,f)
 assert(degOnE L1 == 1)
 L2=randomLineBundle(2,f)
