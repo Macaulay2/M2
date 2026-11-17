@@ -39,6 +39,13 @@ incref(r:pythonObjectOrNull):pythonObjectOrNull := (
 incref(r:pythonObject):pythonObject := (
     Ccode(void, "Py_INCREF(", r, ")");
     r);
+-- the returned pointer may be dangling, so only use it for null checks
+decref(r:pythonObjectOrNull):pythonObjectOrNull := (
+    Ccode(void, "Py_XDECREF(", r, ")");
+    r);
+decref(r:pythonObject):pythonObject := (
+    Ccode(void, "Py_DECREF(", r, ")");
+    r);
 
 import Initialize(exec:charstar):constcharstarOrNull;
 PyInitialize(e:Expr):Expr := (
@@ -94,11 +101,10 @@ PyRunStringFile(e:Expr):Expr := (
 	    is s:stringCell do (
 		when a.1
 		is o:pythonObjectCell do (
-		    r := Ccode(pythonObjectOrNull,
-			"PyRun_String(", tocharstar(s.v), ", Py_file_input, ",
-			o.v, ", NULL)");
-		    when r
-		    is null do return buildPythonErrorPacket()
+		    when decref(Ccode(pythonObjectOrNull,
+			    "PyRun_String(", tocharstar(s.v),
+			    ", Py_file_input, ", o.v, ", NULL)"))
+		    is null do buildPythonErrorPacket()
 		    else Expr(o))
 		else WrongArgPythonObject(2))
 	    else WrongArgString(1))
@@ -322,8 +328,13 @@ PyTupleNew(e:Expr):Expr := (
 	is null do return buildPythonErrorPacket()
 	is t:pythonObject do foreach y at i in a do (
 	    r := PyTupleSetItem(t, i, y);
-	    if r == -1 then return buildPythonErrorPacket()
-	    else if r == -2 then return WrongArgPythonObject(i + 1));
+	    if r == -1 then (
+		errorPacket := buildPythonErrorPacket();
+		decref(t);
+		return errorPacket)
+	    else if r == -2 then (
+		decref(t);
+		return WrongArgPythonObject(i + 1)));
 	toExpr(x))
     else WrongArg("a sequence"));
 setupfun("pythonTupleNew", PyTupleNew);
@@ -467,10 +478,12 @@ PyWrapM2Function(e:Expr):Expr := (
 		capsule := Ccode(pythonObjectOrNull,
 		    "PyCapsule_New(", f, ", NULL, NULL)");
 		when capsule
-		is null do return buildPythonErrorPacket()
-		else toExpr(Ccode(pythonObjectOrNull,
-			"(PyObject *)PyCFunction_New(", ml,
-			", (PyObject *)", capsule, ")")))
+		is null do buildPythonErrorPacket()
+		is c:pythonObject do (
+		    r := Ccode(pythonObjectOrNull,
+			"(PyObject *)PyCFunction_New(", ml, ", ", c, ")");
+		    decref(c);
+		    toExpr(r)))
 	    else WrongArg(2, "a function closure")
 	    else WrongArgString(1))
 	else WrongNumArgs(2))

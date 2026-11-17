@@ -88,6 +88,7 @@ void python_initspam() {
   SpamError = PyErr_NewException(name, NULL, NULL);
   Py_INCREF(SpamError);
   PyModule_AddObject(m, "error", SpamError);
+  Py_DECREF(m);
 }
 
 PyObject *python_GetBuiltins(void)
