@@ -454,8 +454,9 @@ PyObjectCall(e:Expr):Expr :=
     else WrongNumArgs(3);
 setupfun("pythonObjectCall",PyObjectCall);
 
-wrappedM2Function(self:pythonObject, args:pythonObject):pythonObjectOrNull := (
-    ptr := Ccode(voidPointer, "PyCapsule_GetPointer(", self, ", NULL)");
+import WrappedM2FunctionClosure(self:pythonObject):voidPointer;
+export wrappedM2Function(self:pythonObject, args:pythonObject):pythonObjectOrNull := (
+    ptr := WrappedM2FunctionClosure(self);
     if ptr == nullPointer() then return pythonObjectOrNull(null());
     f := Ccode(FunctionClosure, "(", FunctionClosure, ")", ptr);
     r := applyEE(Expr(f), toExpr(incref(pythonObjectOrNull(args))));
@@ -470,30 +471,14 @@ wrappedM2Function(self:pythonObject, args:pythonObject):pythonObjectOrNull := (
 	    "\"expected return value to be a python object\")");
 	pythonObjectOrNull(null())));
 
+import WrapM2Function(name:charstar, f:FunctionClosure):pythonObjectOrNull;
 PyWrapM2Function(e:Expr):Expr := (
     when e
     is a:Sequence do (
 	if length(a) == 2 then (
 	    when a.0 is name:stringCell do
-	    when a.1 is f:FunctionClosure do (
-		ml := Ccode(voidPointer, "PyMem_Malloc(sizeof(PyMethodDef))");
-		Ccode(void, "((PyMethodDef *)", ml, ")->ml_name = ",
-		    tocharstar(name.v));
-		Ccode(void, "((PyMethodDef *)", ml,
-		    ")->ml_meth = (PyCFunction)", wrappedM2Function);
-		Ccode(void, "((PyMethodDef *)", ml,
-		    ")->ml_flags = METH_VARARGS");
-		Ccode(void, "((PyMethodDef *)", ml,
-		    ")->ml_doc = \"wrapped Macaulay2 function\"");
-		capsule := Ccode(pythonObjectOrNull,
-		    "PyCapsule_New(", f, ", NULL, NULL)");
-		when capsule
-		is null do buildPythonErrorPacket()
-		is c:pythonObject do (
-		    r := Ccode(pythonObjectOrNull,
-			"(PyObject *)PyCFunction_New(", ml, ", ", c, ")");
-		    decref(c);
-		    toExpr(r)))
+	    when a.1 is f:FunctionClosure do toExpr(
+		WrapM2Function(tocharstar(name.v), f))
 	    else WrongArg(2, "a function closure")
 	    else WrongArgString(1))
 	else WrongNumArgs(2))

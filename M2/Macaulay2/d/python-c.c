@@ -150,6 +150,58 @@ void python_DecRef(PyObject *obj)
   pthread_mutex_unlock(&pending_decrefs_mutex);
 }
 
+/*******************************
+ * wrapped Macaulay2 functions *
+ *******************************/
+
+/* Python's memory isn't scanned by the garbage collector, so we keep the
+ * method definition (which points to the name) and the function closure in
+ * uncollectable memory, which is scanned but never freed by the collector.
+ * We free it ourselves when Python releases the capsule. */
+
+struct wrapped_m2_function {
+  PyMethodDef def;
+  parse_FunctionClosure f;
+};
+
+static void wrapped_m2_function_destructor(PyObject *capsule)
+{
+  GC_FREE(PyCapsule_GetPointer(capsule, NULL));
+}
+
+PyObject *python_WrapM2Function(char *name, parse_FunctionClosure f)
+{
+  struct wrapped_m2_function *w;
+  PyObject *capsule, *r;
+
+  w = GC_MALLOC_UNCOLLECTABLE(sizeof(struct wrapped_m2_function));
+  if (w == NULL)
+    return PyErr_NoMemory();
+  w->def.ml_name = name;
+  w->def.ml_meth = (PyCFunction)python_wrappedM2Function;
+  w->def.ml_flags = METH_VARARGS;
+  w->def.ml_doc = "wrapped Macaulay2 function";
+  w->f = f;
+
+  capsule = PyCapsule_New(w, NULL, wrapped_m2_function_destructor);
+  if (capsule == NULL) {
+    GC_FREE(w);
+    return NULL;
+  }
+
+  /* PyCFunction_New takes its own reference to the capsule, so we release
+   * ours (which also frees w if PyCFunction_New failed) */
+  r = PyCFunction_New(&w->def, capsule);
+  Py_DECREF(capsule);
+  return r;
+}
+
+void *python_WrappedM2FunctionClosure(PyObject *self)
+{
+  struct wrapped_m2_function *w = PyCapsule_GetPointer(self, NULL);
+  return w == NULL ? NULL : w->f;
+}
+
 PyObject *python_GetBuiltins(void)
 {
   return PyEval_GetFrameBuiltins();

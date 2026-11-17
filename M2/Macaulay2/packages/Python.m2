@@ -1051,4 +1051,11 @@ assert(c#2 - c#0 > 50) -- still queued
 assert(c#3 - c#0 < 50)
 ///
 
+TEST ///
+-- wrapped Macaulay2 functions aren't garbage collected while python has them
+fns = toPython apply(100, i -> x -> x + i)
+collectGarbage()
+assert all(100, i -> value (fns_i)(1) == i + 1)
+///
+
 end --------------------------------------------------------
