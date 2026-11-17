@@ -114,7 +114,7 @@ doc ///
         H:Matrix
     Outputs
         Phi:Matrix
-            $\textrm{Hom}(\textrm{target} F, \textrm{source} G) \rightarrow \textrm{Hom}(\textrm{source} F, \textrm{target} G)$
+            $\textrm{Hom}(\textrm{target} f, \textrm{source} G) \rightarrow \textrm{Hom}(\textrm{source} f, \textrm{target} G)$
     Description
         Text
             Compute the induced map on pushed-forward Hom modules. See @TO (Hom, RingMap, Module, Module)@.
