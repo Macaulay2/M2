@@ -2,7 +2,7 @@ newPackage(
     "RationalPolytopes",
     Version => "1.0",
     Date => "November 13, 2026",
-    Headline => "A package for Ehrhart theory of rational polytopes",
+    Headline => "Ehrhart theory of rational polytopes",
     Authors => {
         {Name => "Oliver Clarke", Email => "oliver.clarke@ed.ac.uk", HomePage => "https://www.oliverclarkemath.com/"},
         {Name => "Victoria Schleis", Email => "victoria.m.schleis@durham.ac.uk", HomePage => "https://victoriaschleis.github.io/"},
