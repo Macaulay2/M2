@@ -51,7 +51,7 @@ isPeriod(Matrix, ZZ) := Boolean => (M, q) -> (
         result := for j from 0 to numRows M // q - 1 do (
             if M^{0 .. q-1} != M^{j*q .. (j+1)*q-1} then break false;
             );
-				if result === null then true else false
+				result === null
         )
     )
 
