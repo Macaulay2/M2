@@ -3,8 +3,8 @@ this does not work unless M2 is compiled --with-python
 *-
 
 newPackage("Python",
-    Version => "1.1",
-    Date => "June 5, 2026",
+    Version => "1.2",
+    Date => "November 17, 2026",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -26,6 +26,18 @@ newPackage("Python",
 ---------------
 
 -*
+
+1.2 (2026-11-17, M2 1.26.11)
+* release Python objects when they are garbage collected, fixing a memory
+  leak (#4600)
+* fix crashes when calling Macaulay2 functions from Python after garbage
+  collection
+* default to the Python executable belonging to the same installation as the
+  linked Python library rather than the first python3 in the PATH (fixes
+  "No module named 'math'" errors, e.g., with Homebrew on Ubuntu 26.04)
+* convert numpy.bool (NumPy 2) to Boolean
+* skip NumPy tests for scalar types that aren't available
+* stop using PyEval_GetBuiltins, which was deprecated in Python 3.13
 
 1.1 (2026-06-05, M2 1.26.06)
 * update my contact info
