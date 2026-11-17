@@ -255,7 +255,7 @@ ehrhartConstituents(Polyhedron, ZZ):=(P, i) -> (
     R:=QQ[getSymbol "x"];
     x:=R_"x";
     S:=for j from 0 to n list i+j*k;
-    if n==0 and (not isEmpty P) then return 1+0*x;
+    if n==0 and (not isEmpty P) then return (if i % k == 0 then 1 else 0) + 0*x;
     if isEmpty P then return 0+0*x;
     v:=matrix apply(S,h->(
             if h == 0 then {0}
@@ -300,26 +300,25 @@ ehrhartQPM2 Polyhedron := P -> (
 
 ehrhartQPNormaliz = method()
 ehrhartQPNormaliz Polyhedron := P -> (
+    R' := QQ[getSymbol "x"];
+    x := R'_0;
+    if isEmpty P then return quasiPolynomial({0+0*x});
     ES := value ehrhartSeries(P, Strategy => "Normaliz");
     R := ring ES;
     t := R_0;
     n := dim P;
     k := denominator P;
-    latticePointCounts := for i from 0 to (n+1)*k -1 list (
-        numberOfLatticePoints := sub(ES,t=>0);
+    latticePointCounts := for i from 0 to (n+1)*k - 1 list (
+        numberOfLatticePoints := sub(ES, t=>0);
         ES = (ES - numberOfLatticePoints)/t;
         numberOfLatticePoints
         );
-    R' := QQ[getSymbol "x"];
-    x := R'_0;
     QuasiPolyList := for i from 0 to k-1 list (
-        S:=for j from 0 to n list i+j*k;
-        if n==0 and (not isEmpty P) then return 1+0*x;
-        if isEmpty P then return 0+0*x;
-        v := matrix(QQ, apply(S,h -> {-1+latticePointCounts_h}));
-        M := matrix(QQ, apply(S,a -> reverse apply(n+1,j ->  a^j )));
+        S := for j from 0 to n list i+j*k;
+        v := matrix(QQ, apply(S, h -> {-1+latticePointCounts_h}));
+        M := matrix(QQ, apply(S, a -> reverse apply(n+1, j -> a^j)));
         M = flatten entries((inverse M)*v);
-        1 + sum apply(n+1 , a -> M_a*x^(n-a))
+        1 + sum apply(n+1, a -> M_a*x^(n-a))
         );
     quasiPolynomial(QuasiPolyList)
     )
@@ -427,7 +426,7 @@ hStarVector(Polyhedron) := List => opts -> P -> (
     h := if P#cache#?"ehrhartSeriesNumerator" then P#cache#"ehrhartSeriesNumerator" else hStarPolynomial(P, Strategy=>opts.Strategy);
     if #(support h) > 1 then error("expected single-variable polynomial");
     x := first support h;
-    reverse apply(terms h, m -> sub(m, x => 1))
+    reverse apply(first degree h + 1, i -> coefficient(x^i, h))
 )
 
 ehrhartSeries = method(
@@ -946,6 +945,27 @@ QP = ehrhartQuasiPolynomial P;
 assert(1==QP 2)
 assert(3==QP 7)
 assert(3==QP 9)
+///
+
+TEST /// -- hStar vector considers all terms (not just non-zero ones)
+P = convexHull transpose matrix {{0,0,0},{1,0,0},{0,1,0},{1,1,2}};
+h = hStarPolynomial P;
+R = ring h;
+assert(h == R_0^2 + 1);
+v = hStarVector P;
+assert(v == {1,0,1});
+///
+
+TEST /// -- quasi polynomial of zero-dim polytopes
+P = convexHull matrix{{1/2},{1/3}}
+EP = ehrhartQuasiPolynomial(P, Strategy => "M2")
+assert(coefficients EP == transpose matrix(QQ, {{1,0,0,0,0,0}}))
+///
+
+TEST /// -- quasi polynomial of zero-dim polytopes
+P = convexHull matrix{{1},{1}}
+EP = ehrhartQuasiPolynomial P
+assert(coefficients EP == transpose matrix(QQ, {{1}}))
 ///
 
 end
