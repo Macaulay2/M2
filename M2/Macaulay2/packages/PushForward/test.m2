@@ -1200,8 +1200,17 @@ kk = ZZ/7
 T = kk[t]
 S = kk[s]
 f = map(T, S, {t^2})
-I = ideal {t}
 H = Hom(module T, module T)
+fH = pushFwd(f, H)
+assert(pushforward(f, homomorphism' homomorphism pushforward' fH_0) == fH_0)
+///
+
+TEST ///
+-- pushforward' from pushFwd of a Hom module lands back in a module that knows it is a Hom
+kk = ZZ/7
+R = kk[a..d, SkewCommutative => true]
+f = map(R, kk)
+H = Hom(module R, module R)
 fH = pushFwd(f, H)
 assert(pushforward(f, homomorphism' homomorphism pushforward' fH_0) == fH_0)
 ///
