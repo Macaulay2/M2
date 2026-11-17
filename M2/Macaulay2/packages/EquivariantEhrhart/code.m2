@@ -165,10 +165,10 @@ equivariantEhrhartSeries (Polyhedron, List) := opts -> (userP, userGList) -> (
         );
     -- check that P is symmetric with respect to gList
     for g in gList do (
-        if not isSymmetric(P, g) then error("Polytope is not invariant under matrix");
+        if not isSymmetric(P, g) then error("polytope is not invariant under matrix");
         );
     if not #gList == 1 then (
-        error("Expected one generator (only cyclic groups are supported now)");
+        error("expected one generator (only cyclic groups are supported now)");
         );
     groupElements := generateGroup gList;
     -- The order of the elements is {g^0, g^1, ..., g^s}
