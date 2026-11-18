@@ -830,6 +830,17 @@ doc ///
       elapsedTime scan(1000, i -> s#i = i^2) -- quadratic, since we grow s at each step
       t = new MutableList from 1000
       elapsedTime scan(1000, i -> t#i = i^2) -- linear
+    Text
+      Functions that iterate over a mutable list, such as @TO apply@,
+      @TO scan@, @TO select@, @TO any@, and @TO symbol for@ loops, work with a
+      snapshot of its entries taken when the iteration begins.  So if the list
+      is modified during the iteration, e.g., by growing or shrinking it, the
+      iteration still visits exactly the original entries, while the
+      modifications take effect in the list itself.
+    Example
+      u = new MutableList from {1, 2, 3};
+      for i in u list (u##u = 10 * i; i)
+      peek u
   SeeAlso
     BasicList
   Subnodes
