@@ -2043,6 +2043,17 @@ assert(toString net C1 ===
 assert(characterDimension C1 == 3);
 assert(characterCoefficient(C1,omega1) == 1);
 assert(characterCoefficient(C1,kmWeight(D,{0,0})) == 0);
+-- Coefficient tables are elements of the free abelian group on weights.
+-- In particular native table subtraction, not just character subtraction,
+-- must preserve negative coefficients and omit terms that cancel.
+T1 = characterTerms C1;
+T2 = characterTerms C2;
+assert(class T1 === VirtualTally);
+assert(T1-2*T1 === characterTerms(-C1));
+assert((T1-T2)#omega2 == -1);
+assert(T1-T2 === characterTerms(C1-C2));
+assert(T1+(-T1) === new VirtualTally from {});
+assert(characterTerms formalCharacter(D,T1-T2) === T1-T2);
 assert(characterDimension(C1*C2) == 9);
 assert(dualCharacter C1 === C2);
 assert(weylAction(weylElement(weylGroup D,{1,2}),C1) === C1);
@@ -2113,6 +2124,432 @@ assert(characterCoefficient(VC2,omega1-toWeight(kmRoot(D,{1,1}))) == 2);
 assert(match("through root depth 2",toString VC2));
 assert(match("^e\\^[(]1, 0[)] [+]",toString VC2));
 
+-- Partial-character equality compares coefficients and their certified
+-- region, not the history of addition, scalar multiplication, or transport.
+assert(VC2+VC2 == 2*VC2);
+repeatedSumEqualityFC = VC2;
+for j from 1 to 12 do repeatedSumEqualityFC = repeatedSumEqualityFC+repeatedSumEqualityFC;
+assert(repeatedSumEqualityFC == (2^12)*VC2);
+assert(VC2+(-VC2) == 2*VC2-2*VC2);
+assert(VC0 == IC0);
+assert(VC2+VC0 == VC0+VC2);
+assert(not(VC2+VC2 == 3*VC2));
+assert(not(VC2-VC2 == 0*VC2));
+zeroModuleEqualityFC = integrableHighestWeightModule(D,{0,0});
+zeroDepth0EqualityFC = moduleCharacter(zeroModuleEqualityFC,Depth=>0);
+zeroDepth2EqualityFC = moduleCharacter(zeroModuleEqualityFC,Depth=>2);
+assert(characterTerms zeroDepth0EqualityFC === characterTerms zeroDepth2EqualityFC);
+assert(not(zeroDepth0EqualityFC == zeroDepth2EqualityFC));
+otherParentEqualityFC = rootDatum("A2",GlobalForm=>"Adjoint");
+assert(not(0*VC2 == formalCharacter(otherParentEqualityFC,new HashTable)));
+
+wordEqualityFC = weylElement(weylGroup D,{1,2});
+assert(dualCharacter dualCharacter VC2 == VC2);
+assert(weylAction(inverseWeylElement wordEqualityFC,
+    weylAction(wordEqualityFC,VC2)) == VC2);
+assert(dualCharacter(VC2+VC2) == 2*dualCharacter VC2);
+assert(weylAction(wordEqualityFC,VC2+VC2) == 2*weylAction(wordEqualityFC,VC2));
+assert(not(VC2-VC2 == dualCharacter(VC2-VC2)));
+assert(not(VC2-VC2 == weylAction(wordEqualityFC,VC2-VC2)));
+unitEqualityFC = formalCharacter(D,new HashTable from {0*omega1=>1});
+finiteEqualityFC = formalCharacter(D,new HashTable from {0*omega1=>2,omega2=>1});
+assert(unitEqualityFC*VC2 == VC2);
+assert(finiteEqualityFC*(VC2+VC2) == 2*(finiteEqualityFC*VC2));
+
+-- Descriptive metadata does not certify unlisted zero coefficients.  A sum
+-- with a native expansion knows only the intersection of their known sets.
+deepEqualityFC = omega1-toWeight kmRoot(D,{3,0});
+opaqueEqualityFC = formalCharacter(D,new HashTable from {
+    omega1=>1,deepEqualityFC=>5},CharacterStatus=>"Truncated",
+    Truncation=>new HashTable from {"description"=>"two known coefficients"});
+opaqueRenamedEqualityFC = formalCharacter(D,characterTerms opaqueEqualityFC,
+    CharacterStatus=>"Truncated",Truncation=>new HashTable from {"depth"=>99});
+assert(opaqueEqualityFC == opaqueRenamedEqualityFC);
+assert(opaqueEqualityFC+opaqueEqualityFC == 2*opaqueEqualityFC);
+intersectionEqualityFC = formalCharacter(D,new HashTable from {omega1=>2},
+    CharacterStatus=>"Truncated",Truncation=>"one known coefficient");
+assert(VC2+opaqueEqualityFC == intersectionEqualityFC);
+emptyOpaqueEqualityFC = formalCharacter(D,new HashTable,
+    CharacterStatus=>"Truncated",Truncation=>"no known coefficients");
+assert(not(opaqueEqualityFC-opaqueEqualityFC == emptyOpaqueEqualityFC));
+assert(not(VC0 == formalCharacter(D,characterTerms VC0,
+    CharacterStatus=>"Truncated",Truncation=>"highest coefficient only")));
+
+-- Reusing a computed truncation must preserve the entire character, not
+-- give a different sparse table access to the original coefficient queries.
+rewrapFC = (datum,terms,range) -> formalCharacter(datum,terms,
+    CharacterStatus=>"Truncated",Truncation=>range);
+thinTermsEqualityFC = new HashTable from {omega1=>2};
+assert(mustErrorFC(() -> rewrapFC(D,thinTermsEqualityFC,new HashTable from {
+        "coefficientCertificate"=>true,"kind"=>"root-depth",
+        "support"=>"highest-weight cone","highestWeight"=>omega1,
+        "completeThroughDepth"=>2})));
+assert(mustErrorFC(() -> rewrapFC(D,thinTermsEqualityFC,(2*VC2)#"truncation")));
+assert(mustErrorFC(() -> rewrapFC(D,characterTerms(-VC2),VC2#"truncation")));
+assert(mustErrorFC(() -> rewrapFC(D,new Tally from {omega2=>1},VC0#"truncation")));
+zeroCertifiedFC = VC2-VC2;
+assert(mustErrorFC(() -> rewrapFC(otherParentEqualityFC,new Tally,zeroCertifiedFC#"truncation")));
+for F in {VC2,2*VC2,VC0+VC2,VC2*VC2,finiteEqualityFC*VC2,dualCharacter VC2,
+    weylAction(wordEqualityFC,VC2),zeroCertifiedFC} do (
+    assert(class(F#"truncation") === HashTable);
+    reconstructed := rewrapFC(D,new HashTable from reverse pairs characterTerms F,
+        new HashTable from reverse pairs F#"truncation");
+    assert(reconstructed == F);
+    assert(characterTerms reconstructed === characterTerms F);
+    for mu in characterSupport F do
+        assert(characterCoefficient(reconstructed,mu) == (characterTerms F)#mu);
+);
+alteredFC = new HashTable from join(pairs VC2#"truncation",{"completeThroughDepth"=>200});
+assert(mustErrorFC(() -> rewrapFC(D,characterTerms VC2,alteredFC)));
+alteredScaleFC = new class((2*VC2)#"truncation") from join(
+    pairs (2*VC2)#"truncation",{"scalar"=>3});
+assert(mustErrorFC(() -> rewrapFC(D,characterTerms(2*VC2),alteredScaleFC)));
+clearInfrastructureCaches();
+assert(rewrapFC(D,characterTerms VC2,VC2#"truncation") == VC2);
+-- A description supplied by the user cannot be turned into a proof later
+-- by mutating the original hash table.
+descriptionFC = new MutableHashTable from {"note"=>"partial"};
+describedFC = rewrapFC(D,thinTermsEqualityFC,descriptionFC);
+descriptionFC#"coefficientCertificate"=true;
+descriptionFC#"operation"="scale"; descriptionFC#"scalar"=2; descriptionFC#"source"=VC2;
+assert(mustErrorFC(() -> characterCoefficient(describedFC,omega1-toWeight kmRoot(D,{1,0}))));
+
+-- Neither invisible affine directions nor nonminimal finite central
+-- coordinates may disappear when certificates are compared.
+affineDatumEqualityFC = rootDatum cartanAffineA 1;
+affineTopEqualityFC = affineWeightFromDynkinLabels(affineDatumEqualityFC,{1,0},0);
+affineShiftEqualityFC = affineTopEqualityFC+toWeight affineNullRoot affineDatumEqualityFC;
+affineCharacterEqualityFC = moduleCharacter(vermaModule(
+    affineDatumEqualityFC,affineTopEqualityFC),Depth=>2);
+affineShiftedEqualityFC = moduleCharacter(vermaModule(
+    affineDatumEqualityFC,affineShiftEqualityFC),Depth=>2);
+assert(affineCharacterEqualityFC+affineCharacterEqualityFC == 2*affineCharacterEqualityFC);
+assert(not(affineCharacterEqualityFC-affineCharacterEqualityFC ==
+    affineShiftedEqualityFC-affineShiftedEqualityFC));
+extraRealizationEqualityFC = realization(cartanDatum cartanA 2,
+    matrix(QQ,{{2,0}}),matrix(QQ,{{1,0}}));
+extraDatumEqualityFC = rootDatum extraRealizationEqualityFC;
+extraCompleteEqualityFC = moduleCharacter(vermaModule(extraDatumEqualityFC,
+    weightFromRealizationCoordinates(extraDatumEqualityFC,{1,5})),Depth=>2);
+extraShiftedEqualityFC = moduleCharacter(vermaModule(extraDatumEqualityFC,
+    weightFromRealizationCoordinates(extraDatumEqualityFC,{1,7})),Depth=>2);
+extraLabelsEqualityFC = moduleCharacter(vermaModule(extraDatumEqualityFC,{1}),Depth=>2);
+assert(extraCompleteEqualityFC+extraCompleteEqualityFC == 2*extraCompleteEqualityFC);
+assert(not(extraCompleteEqualityFC-extraCompleteEqualityFC ==
+    extraShiftedEqualityFC-extraShiftedEqualityFC));
+assert(not(extraCompleteEqualityFC-extraCompleteEqualityFC ==
+    extraLabelsEqualityFC-extraLabelsEqualityFC));
+rankOneEqualityFC = rootDatum "A1";
+rankOneZeroPrefixEqualityFC = moduleCharacter(
+    vermaModule(rankOneEqualityFC,{0}),Depth=>0);
+rankOneTwoPrefixEqualityFC = moduleCharacter(
+    vermaModule(rankOneEqualityFC,{2}),Depth=>1);
+rankOneShortPrefixEqualityFC = moduleCharacter(
+    vermaModule(rankOneEqualityFC,{2}),Depth=>0);
+rankOneZeroEqualityFC = rankOneZeroPrefixEqualityFC-rankOneZeroPrefixEqualityFC;
+rankOneTwoEqualityFC = rankOneTwoPrefixEqualityFC-rankOneTwoPrefixEqualityFC;
+rankOneShortEqualityFC = rankOneShortPrefixEqualityFC-rankOneShortPrefixEqualityFC;
+assert(rankOneZeroEqualityFC == rankOneTwoEqualityFC);
+assert(rankOneZeroEqualityFC+rankOneShortEqualityFC == rankOneShortEqualityFC);
+assert(dualCharacter rankOneTwoEqualityFC == dualCharacter rankOneZeroEqualityFC);
+-- The two unions give the same set of unknown weights: all even labels.
+-- Removing zero leaves an actual distinguishing coefficient.
+evenRayUnionFC = rankOneShortEqualityFC+dualCharacter rankOneZeroEqualityFC;
+otherEvenRayUnionFC = rankOneZeroEqualityFC+dualCharacter rankOneShortEqualityFC;
+puncturedEvenRayUnionFC = rankOneZeroEqualityFC+dualCharacter rankOneZeroEqualityFC;
+assert(evenRayUnionFC == otherEvenRayUnionFC);
+assert(not(evenRayUnionFC == puncturedEvenRayUnionFC));
+assert(mustErrorFC(() -> characterCoefficient(evenRayUnionFC,kmWeight(rankOneEqualityFC,{0}))));
+assert(characterCoefficient(puncturedEvenRayUnionFC,kmWeight(rankOneEqualityFC,{0})) == 0);
+rankOneFactorEqualityFC = formalCharacter(rankOneEqualityFC,new HashTable from {
+    kmWeight(rankOneEqualityFC,{2})=>1,kmWeight(rankOneEqualityFC,{-2})=>-1});
+assert(rankOneFactorEqualityFC*rankOneZeroPrefixEqualityFC == rankOneShortPrefixEqualityFC);
+
+-- Higher-rank equality must identify the known coefficient region, not a
+-- particular list of cones describing its unknown complement. These
+-- examples use only public constructors and small coefficient queries.
+knownEqualityHigherFC = (C,mu) ->
+    try {true,characterCoefficient(C,mu)} else {false,null};
+sameOracleEqualityHigherFC = (C,F,queries) -> all(queries,mu ->
+    knownEqualityHigherFC(C,mu) === knownEqualityHigherFC(F,mu));
+for typeEqualityHigherFC in {"A2","B2","B3","C3","G2"} do (
+    DHigher := rootDatum typeEqualityHigherFC;
+    rHigher := (cartanDatum DHigher)#"rank";
+    alphaHigher := apply(rHigher,i -> toWeight kmRoot(DHigher,
+        apply(rHigher,j -> if i == j then 1 else 0)));
+    zeroHigher := kmWeight(DHigher,toList(rHigher:0));
+    thetaHigher := toWeight kmRoot(DHigher,toList(rHigher:1));
+    VzeroHigher := moduleCharacter(vermaModule(DHigher,zeroHigher),Depth=>0);
+    VthetaHigher := moduleCharacter(vermaModule(DHigher,thetaHigher),Depth=>0);
+    ZzeroHigher := VzeroHigher-VzeroHigher;
+    ZthetaHigher := VthetaHigher-VthetaHigher;
+    rootGridHigher := {{}};
+    for j from 1 to rHigher do rootGridHigher = flatten apply(rootGridHigher,
+        row -> apply({-1,0,1,2},a -> append(row,a)));
+    queriesHigher := apply(rootGridHigher,beta -> toWeight kmRoot(DHigher,beta)) |
+        {kmWeight(DHigher,prepend(1,toList((rHigher-1):0))),
+         kmWeight(DHigher,prepend(1/2,toList((rHigher-1):0)))};
+
+    -- theta=sum alpha_i lies above zero in every simple-root direction.
+    -- Hence the unknown tail below zero is contained in that below theta.
+    -- Both sides are known zero on the complement of the larger tail.
+    assert(characterTerms(ZzeroHigher+ZthetaHigher) === characterTerms ZthetaHigher);
+    assert(sameOracleEqualityHigherFC(ZzeroHigher+ZthetaHigher,ZthetaHigher,queriesHigher));
+    assert(ZzeroHigher+ZthetaHigher == ZthetaHigher);
+    assert(ZthetaHigher+ZzeroHigher == ZthetaHigher);
+    assert(2*ZzeroHigher+ZthetaHigher == ZthetaHigher);
+
+    -- The same redundancy occurs without empty weight tables. Outside the
+    -- unknown theta-tail, (e^theta-1)Vzero has just its leading e^theta.
+    finiteHigher := formalCharacter(DHigher,new HashTable from {
+        thetaHigher=>1,zeroHigher=>-1});
+    productHigher := finiteHigher*VzeroHigher;
+    assert(characterTerms productHigher === characterTerms VthetaHigher);
+    assert(sameOracleEqualityHigherFC(productHigher,VthetaHigher,queriesHigher));
+    assert(productHigher == VthetaHigher);
+
+    -- A depth-one unknown tail is the union of the depth-zero tails
+    -- anchored at -alpha_i: every nonnegative offset of height >=2 has
+    -- a positive coordinate that can be decreased by one. None of these
+    -- shifted tails alone covers the whole union when the rank exceeds 1.
+    VoneHigher := moduleCharacter(vermaModule(DHigher,zeroHigher),Depth=>1);
+    ZoneHigher := VoneHigher-VoneHigher;
+    lowerZerosHigher := apply(alphaHigher,alpha -> (
+        V := moduleCharacter(vermaModule(DHigher,-alpha),Depth=>0);
+        V-V));
+    unionHigher := first lowerZerosHigher;
+    for j from 1 to rHigher-1 do unionHigher = unionHigher+lowerZerosHigher#j;
+    assert(sameOracleEqualityHigherFC(unionHigher,ZoneHigher,queriesHigher));
+    assert(unionHigher == ZoneHigher);
+    assert(dualCharacter unionHigher == dualCharacter ZoneHigher);
+    wHigher := weylElement(weylGroup DHigher,{1,2});
+    assert(weylAction(wHigher,unionHigher) == weylAction(wHigher,ZoneHigher));
+
+    -- Equal sparse tables do not make incomparable domains equal. At
+    -- alpha_1-alpha_2 the first expansion is unknown and the second is
+    -- known zero; the reversed difference witnesses the reverse failure.
+    VfirstHigher := moduleCharacter(vermaModule(DHigher,alphaHigher#0),Depth=>0);
+    VsecondHigher := moduleCharacter(vermaModule(DHigher,alphaHigher#1),Depth=>0);
+    ZfirstHigher := VfirstHigher-VfirstHigher;
+    ZsecondHigher := VsecondHigher-VsecondHigher;
+    firstWitnessHigher := alphaHigher#0-alphaHigher#1;
+    secondWitnessHigher := -firstWitnessHigher;
+    assert(characterTerms ZfirstHigher === characterTerms ZsecondHigher);
+    assert(knownEqualityHigherFC(ZfirstHigher,firstWitnessHigher) === {false,null});
+    assert(knownEqualityHigherFC(ZsecondHigher,firstWitnessHigher) === {true,0});
+    assert(knownEqualityHigherFC(ZfirstHigher,secondWitnessHigher) === {true,0});
+    assert(knownEqualityHigherFC(ZsecondHigher,secondWitnessHigher) === {false,null});
+    assert(not(ZfirstHigher == ZsecondHigher));
+    assert(not(ZfirstHigher+ZsecondHigher == ZfirstHigher));
+    assert(not(ZfirstHigher+ZsecondHigher == ZsecondHigher));
+    assert(ZfirstHigher+ZsecondHigher == ZsecondHigher+ZfirstHigher);
+
+    -- An anchor above zero is not enough for containment when the depth
+    -- changes. These explicit witnesses lie on opposite known boundaries.
+    VdeepHigher := moduleCharacter(vermaModule(DHigher,thetaHigher),Depth=>rHigher+1);
+    ZdeepHigher := VdeepHigher-VdeepHigher;
+    outsideHigher := thetaHigher-(rHigher+2)*alphaHigher#0;
+    assert(knownEqualityHigherFC(ZzeroHigher,-alphaHigher#0) === {false,null});
+    assert(knownEqualityHigherFC(ZdeepHigher,-alphaHigher#0) === {true,0});
+    assert(knownEqualityHigherFC(ZzeroHigher,outsideHigher) === {true,0});
+    assert(knownEqualityHigherFC(ZdeepHigher,outsideHigher) === {false,null});
+    assert(not(ZzeroHigher == ZdeepHigher));
+    assert(not(ZzeroHigher+ZdeepHigher == ZzeroHigher));
+    assert(not(ZzeroHigher+ZdeepHigher == ZdeepHigher));
+
+    if typeEqualityHigherFC === "A2" then (
+        LHigher := reductiveLeviDatum(
+            standardParabolic(DHigher,LeviNodes=>{1}),DHigher);
+        assert(restrictCharacter(LHigher,unionHigher) ==
+            restrictCharacter(LHigher,ZoneHigher));
+        assert(not(restrictCharacter(LHigher,ZfirstHigher) ==
+            restrictCharacter(LHigher,ZsecondHigher)));
+    );
+);
+
+-- Mixed A2 orientations require an integer union proof, not only deleting
+-- contained cones or comparing bounds in a common simple-root orientation.
+DMixedEqualityFC = rootDatum "A2";
+WMixedEqualityFC = weylGroup DMixedEqualityFC;
+rootWeightMixedEqualityFC = beta -> kmWeight(DMixedEqualityFC,
+    {2*beta#0-beta#1,-beta#0+2*beta#1});
+VzeroMixedEqualityFC = moduleCharacter(vermaModule(DMixedEqualityFC,{0,0}),Depth=>0);
+ZzeroMixedEqualityFC = VzeroMixedEqualityFC-VzeroMixedEqualityFC;
+ZfirstMixedEqualityFC = weylAction(
+    simpleWeylReflection(WMixedEqualityFC,1),ZzeroMixedEqualityFC);
+ZsecondMixedEqualityFC = weylAction(
+    simpleWeylReflection(WMixedEqualityFC,2),ZzeroMixedEqualityFC);
+integerPairMixedEqualityFC = beta -> all(beta,x -> denominator(x+0_QQ) == 1);
+nativeUnknownMixedEqualityFC = beta -> integerPairMixedEqualityFC beta and
+    beta#0 <= 0 and beta#1 <= 0 and beta#0+beta#1 < 0;
+firstUnknownMixedEqualityFC = beta -> integerPairMixedEqualityFC beta and
+    beta#1 <= 0 and beta#1 <= beta#0 and beta#0-2*beta#1 >= 1;
+secondUnknownMixedEqualityFC = beta -> integerPairMixedEqualityFC beta and
+    beta#0 <= 0 and beta#0 <= beta#1 and beta#1-2*beta#0 >= 1;
+expectedZeroMixedEqualityFC = unknown -> if unknown then {false,null} else {true,0};
+gridMixedEqualityFC = flatten apply({-2,-1,-1/2,0,1/2,1,2},x ->
+    apply({-2,-1,-1/2,0,1/2,1,2},y -> {x,y}));
+for labelsMixedEqualityFC in {{0,0},{1,1},{1,0},{1/2,1/3}} do (
+    anchorMixed := kmWeight(DMixedEqualityFC,labelsMixedEqualityFC);
+    monomialMixed := formalCharacter(DMixedEqualityFC,new HashTable from {anchorMixed=>1});
+    nativeMixed := monomialMixed*ZzeroMixedEqualityFC;
+    firstMixed := monomialMixed*ZfirstMixedEqualityFC;
+    secondMixed := monomialMixed*ZsecondMixedEqualityFC;
+    coverMixed := firstMixed+secondMixed;
+
+    -- In relative root coordinates (x,y), the three unknown regions are
+    -- exactly the predicates above. For x,y<=0 and x+y<0, either y<=x
+    -- or x<=y. Integrality then makes the corresponding reflected depth
+    -- at least one. Thus U is covered by s1(U) union s2(U), even though
+    -- neither reflected tail contains U on its own.
+    for betaMixed in gridMixedEqualityFC do (
+        muMixed := anchorMixed+rootWeightMixedEqualityFC betaMixed;
+        nativeUnknownMixed := nativeUnknownMixedEqualityFC betaMixed;
+        firstUnknownMixed := firstUnknownMixedEqualityFC betaMixed;
+        secondUnknownMixed := secondUnknownMixedEqualityFC betaMixed;
+        assert(knownEqualityHigherFC(nativeMixed,muMixed) ===
+            expectedZeroMixedEqualityFC nativeUnknownMixed);
+        assert(knownEqualityHigherFC(firstMixed,muMixed) ===
+            expectedZeroMixedEqualityFC firstUnknownMixed);
+        assert(knownEqualityHigherFC(secondMixed,muMixed) ===
+            expectedZeroMixedEqualityFC secondUnknownMixed);
+        assert(knownEqualityHigherFC(coverMixed,muMixed) ===
+            expectedZeroMixedEqualityFC(firstUnknownMixed or secondUnknownMixed));
+        assert(knownEqualityHigherFC(nativeMixed+coverMixed,muMixed) ===
+            knownEqualityHigherFC(coverMixed,muMixed));
+    );
+    assert(characterTerms(nativeMixed+coverMixed) === characterTerms coverMixed);
+    assert(nativeMixed+coverMixed == coverMixed);
+    assert(coverMixed+nativeMixed == coverMixed);
+    assert(monomialMixed+nativeMixed+coverMixed == monomialMixed+coverMixed);
+    assert(characterCoefficient(monomialMixed+coverMixed,anchorMixed) == 1);
+
+    -- A real relaxation would incorrectly use (-1/2,-1/2) as a witness
+    -- against coverage: its native depth is 1, but both reflected depths
+    -- are 1/2. It is not a root-lattice offset, so all three actual
+    -- coefficient oracles correctly know zero there.
+    fractionalMixed := anchorMixed+rootWeightMixedEqualityFC {-1/2,-1/2};
+    assert(knownEqualityHigherFC(nativeMixed,fractionalMixed) === {true,0});
+    assert(knownEqualityHigherFC(coverMixed,fractionalMixed) === {true,0});
+
+    -- Omitting either reflected piece leaves a genuine integral witness.
+    firstWitnessMixed := anchorMixed-rootWeightMixedEqualityFC {1,0};
+    secondWitnessMixed := anchorMixed-rootWeightMixedEqualityFC {0,1};
+    assert(knownEqualityHigherFC(firstMixed,firstWitnessMixed) === {true,0});
+    assert(knownEqualityHigherFC(nativeMixed+firstMixed,firstWitnessMixed) === {false,null});
+    assert(knownEqualityHigherFC(secondMixed,secondWitnessMixed) === {true,0});
+    assert(knownEqualityHigherFC(nativeMixed+secondMixed,secondWitnessMixed) === {false,null});
+    assert(not(nativeMixed+firstMixed == firstMixed));
+    assert(not(nativeMixed+secondMixed == secondMixed));
+
+    -- Rationally translated but disjoint lattice cosets cannot be merged
+    -- merely because the real cones and all sparse zero tables agree.
+    shiftedAnchorMixed := anchorMixed+rootWeightMixedEqualityFC {1/2,0};
+    shiftedMonomialMixed := formalCharacter(DMixedEqualityFC,
+        new HashTable from {shiftedAnchorMixed=>1});
+    shiftedCoverMixed := shiftedMonomialMixed*(ZfirstMixedEqualityFC+ZsecondMixedEqualityFC);
+    assert(knownEqualityHigherFC(coverMixed,firstWitnessMixed) === {false,null});
+    assert(knownEqualityHigherFC(shiftedCoverMixed,firstWitnessMixed) === {true,0});
+    shiftedWitnessMixed := shiftedAnchorMixed-rootWeightMixedEqualityFC {1,0};
+    assert(knownEqualityHigherFC(coverMixed,shiftedWitnessMixed) === {true,0});
+    assert(knownEqualityHigherFC(shiftedCoverMixed,shiftedWitnessMixed) === {false,null});
+    assert(not(coverMixed == shiftedCoverMixed));
+);
+
+-- The three rotational A2 root cones and the three reflected ones each
+-- cover every nonzero root-lattice point. They have different real holes
+-- near zero, so this is another genuinely integer, mixed-orientation union.
+-- In root coordinates the rotational cones have sectors x,y<=0;
+-- x>=0,y<=x; and y>=0,x<=y. Their nonzero integral points have positive
+-- integral depth in the indicated simple-root bases. The reflected fan
+-- is their image under the lattice automorphism s1.
+rotationMixedEqualityFC = weylElement(WMixedEqualityFC,{1,2});
+rotationFanMixedEqualityFC = ZzeroMixedEqualityFC+
+    weylAction(rotationMixedEqualityFC,ZzeroMixedEqualityFC)+
+    weylAction(rotationMixedEqualityFC*rotationMixedEqualityFC,ZzeroMixedEqualityFC);
+reflectionFanMixedEqualityFC = ZfirstMixedEqualityFC+ZsecondMixedEqualityFC+
+    weylAction(weylElement(WMixedEqualityFC,{1,2,1}),ZzeroMixedEqualityFC);
+for betaMixed in gridMixedEqualityFC do (
+    muMixed := rootWeightMixedEqualityFC betaMixed;
+    expectedMixed := expectedZeroMixedEqualityFC(
+        integerPairMixedEqualityFC betaMixed and any(betaMixed,x -> x != 0));
+    assert(knownEqualityHigherFC(rotationFanMixedEqualityFC,muMixed) === expectedMixed);
+    assert(knownEqualityHigherFC(reflectionFanMixedEqualityFC,muMixed) === expectedMixed);
+);
+assert(rotationFanMixedEqualityFC == reflectionFanMixedEqualityFC);
+assert(not(rotationFanMixedEqualityFC == ZfirstMixedEqualityFC+ZsecondMixedEqualityFC));
+assert(knownEqualityHigherFC(rotationFanMixedEqualityFC,
+    rootWeightMixedEqualityFC {1,1}) === {false,null});
+assert(knownEqualityHigherFC(ZfirstMixedEqualityFC+ZsecondMixedEqualityFC,
+    rootWeightMixedEqualityFC {1,1}) === {true,0});
+
+-- Exact integer feasibility also handles cases that testing the vertices
+-- and their roundings cannot settle: here (1,1) is strictly between the
+-- two fractional endpoints. The unbounded slice 2x=1 has no lattice point.
+integerFeasibleFC = value((package "KacMoody")#"private dictionary")#"draftCharacterIntegerFeasible";
+assert(integerFeasibleFC(matrix(QQ,{{1,1},{-1,-1},{-1,0},{1,0}}),
+    transpose matrix(QQ,{{2,-2,-1/5,9/5}})));
+assert(not integerFeasibleFC(matrix{{2,0},{-2,0}},matrix{{1},{-1}}));
+
+torusEqualityFC = rootDatum realization(cartanDatum matrix mutableMatrix(ZZ,0,0),
+    matrix mutableMatrix(QQ,0,1),matrix mutableMatrix(QQ,0,1));
+-- A native pure-torus certificate and an exact sum have different status
+-- even if every complete coefficient happens to be determined.
+torusCompleteEqualityFC = weightFromRealizationCoordinates(torusEqualityFC,{0});
+torusNativeEqualityFC = moduleCharacter(
+    vermaModule(torusEqualityFC,torusCompleteEqualityFC),Depth=>0);
+torusOnePointEqualityFC = rewrapFC(torusEqualityFC,characterTerms torusNativeEqualityFC,
+    "only the coefficient at central coordinate zero");
+assert(not(torusOnePointEqualityFC == torusNativeEqualityFC));
+centralOneEqualityFC = weightFromRealizationCoordinates(torusEqualityFC,{1});
+assert(characterCoefficient(torusNativeEqualityFC,centralOneEqualityFC) == 0);
+assert(mustErrorFC(() -> characterCoefficient(torusOnePointEqualityFC,centralOneEqualityFC)));
+-- With no central directions either, the empty tuple is the sole weight.
+pointDatumFC = rootDatum matrix mutableMatrix(ZZ,0,0);
+pointWeightFC = kmWeight(pointDatumFC,{});
+pointNativeFC = moduleCharacter(vermaModule(pointDatumFC,pointWeightFC),Depth=>0);
+pointKnownFC = rewrapFC(pointDatumFC,characterTerms pointNativeFC,"the unique weight");
+pointUnknownFC = rewrapFC(pointDatumFC,new HashTable,"no known coefficients");
+assert(pointKnownFC == pointNativeFC);
+assert(pointKnownFC-pointKnownFC == pointNativeFC-pointNativeFC);
+assert(not(pointUnknownFC == pointKnownFC-pointKnownFC));
+assert(characterCoefficient(pointKnownFC-pointKnownFC,pointWeightFC) == 0);
+assert(mustErrorFC(() -> characterCoefficient(pointUnknownFC,pointWeightFC)));
+assert(not(torusNativeEqualityFC == formalCharacter(torusEqualityFC,
+    characterTerms torusNativeEqualityFC)));
+torusUnknownEqualityFC = formalCharacter(torusEqualityFC,new HashTable,
+    CharacterStatus=>"Truncated",Truncation=>"no complete-weight coefficients");
+assert(not(torusNativeEqualityFC-torusNativeEqualityFC == torusUnknownEqualityFC));
+-- In affine type a Dynkin-label class does not determine root depth:
+-- adding delta leaves the labels unchanged. Even an empty table must
+-- not be allowed to certify zero at the first lower weight.
+singularLabelsEqualityFC = kmWeight(affineDatumEqualityFC,{1,0});
+singularMetadataEqualityFC = new HashTable from {
+    "coefficientCertificate"=>true,"kind"=>"root-depth",
+    "support"=>"highest-weight cone","highestWeight"=>singularLabelsEqualityFC,
+    "completeThroughDepth"=>0};
+assert(mustErrorFC(() -> rewrapFC(affineDatumEqualityFC,new Tally,singularMetadataEqualityFC)));
+affineVFC = vermaModule(affineDatumEqualityFC,affineTopEqualityFC);
+affineIFC = integrableHighestWeightModule(affineDatumEqualityFC,affineTopEqualityFC);
+affineDifferenceFC = h -> moduleCharacter(affineVFC,Depth=>h)-moduleCharacter(affineIFC,Depth=>h);
+affineLowerFC = affineTopEqualityFC-toWeight kmRoot(affineDatumEqualityFC,{0,1});
+assert(datumCoordinates affineLowerFC === {3,-2});
+assert(#characterTerms affineDifferenceFC(0) == 0);
+assert(mustErrorFC(() -> characterCoefficient(affineDifferenceFC(0),affineLowerFC)));
+assert(characterCoefficient(affineDifferenceFC(1),affineLowerFC) == 1);
+leviDatumEqualityFC = reductiveLeviDatum(standardParabolic(D,RemovedNodes=>{1}),D);
+leviCharacterEqualityFC = restrictCharacter(leviDatumEqualityFC,VC2);
+assert(leviCharacterEqualityFC+leviCharacterEqualityFC == 2*leviCharacterEqualityFC);
+assert(restrictCharacter(leviDatumEqualityFC,dualCharacter dualCharacter VC2) ==
+    leviCharacterEqualityFC);
+assert(not(restrictCharacter(leviDatumEqualityFC,zeroDepth0EqualityFC) ==
+    restrictCharacter(leviDatumEqualityFC,zeroDepth2EqualityFC)));
+leviExtraEqualityFC = reductiveLeviDatum(
+    standardParabolic(extraDatumEqualityFC,LeviNodes=>{}),extraDatumEqualityFC);
+assert(not(restrictCharacter(leviExtraEqualityFC,
+    extraCompleteEqualityFC-extraCompleteEqualityFC) ==
+    restrictCharacter(leviExtraEqualityFC,extraShiftedEqualityFC-extraShiftedEqualityFC)));
+
 -- Truncated finite Freudenthal agrees term-by-term with the complete finite
 -- character in the certified range.
 I21 = integrableHighestWeightModule(D,{2,1});
@@ -2161,7 +2598,13 @@ assert(toString truncatedRC === concatenate(
     "e^(0, 2) + ... [coordinates: 1 Levi Dynkin, then 1 central; ",
     "through root depth 0]"));
 assert(sum values characterTerms RC == 3);
+TRC = characterTerms RC;
+assert(class TRC === VirtualTally);
+assert(TRC-2*TRC === characterTerms restrictCharacter(L,-C1));
+assert(-TRC === characterTerms(-RC));
+assert(#(TRC-TRC) == 0);
 LD = decomposeLeviCharacter RC;
+assert(class LD === Tally and class decomposeCharacter C1 === Tally);
 assert(sum values LD == 2);
 assert(#keys LD == 2);
 
@@ -2705,6 +3148,17 @@ assert(kostantPartitionFunction(A2,{1,1}) == 2);
 assert(kostantPartitionFunction(A2,{2,2}) == 3);
 assert(kostantPartitionFunction(A2,{-1,2}) == 0);
 
+-- E8's Weyl group is too large for weylGroupElements.  Computing the
+-- multiplicity of the highest weight must not require enumerating it.
+E8top = cartanE 8;
+labelsE8top = {1,0,0,0,0,0,0,0};
+assert(kostantWeightMultiplicity(E8top,labelsE8top,labelsE8top) == 1);
+DE8top = rootDatum E8top;
+weightE8top = kmWeight(DE8top,labelsE8top);
+assert(kostantWeightMultiplicity(DE8top,weightE8top,weightE8top) == 1);
+-- Equality of the inputs does not make an invalid highest weight dominant.
+assert(try (kostantWeightMultiplicity(A2,{-1,0},{-1,0}); false) else true);
+
 -- Exhaustive cross-checks use the independent Freudenthal recurrence.
 for fixture in {{A2,{3,2}},{B2,{2,1}},{G2,{1,1}}} do (
     A := fixture#0;
@@ -3196,7 +3650,7 @@ assert(match("C_6",toString BlargeDisplay));
 -- its depth-zero Verma truncation rather than requesting a height-zero root
 -- snapshot.
 Euler0 = bggEulerCharacter(B,Depth=>0);
-assert(characterTerms Euler0 === new HashTable from {lambda=>1});
+assert(characterTerms Euler0 === new VirtualTally from {lambda=>1});
 
 -- The alternating sum of truncated Verma characters equals the irreducible
 -- character through the same absolute root depth.
@@ -3593,6 +4047,100 @@ TEST ///
     assert(dynkinDiagram emptyDatum === "");
     assert((dynkinDiagramData emptyDatum)#"nodes" === {});
     assert((dynkinDiagramData(rootDatum emptyDatum))#"edges" === {});
+///
+
+-- Test 0b: cyclic attachments must not be mistaken for D/E-shaped trees.
+TEST ///
+    cyclicAttachmentsDiagram := {
+        matrix{{2,-1,-1,0},{-1,2,-1,0},{-1,-1,2,-1},{0,0,-1,2}},
+        matrix{{2,-1,0,-1,0},{-1,2,-1,0,-1},{0,-1,2,-1,0},
+            {-1,0,-1,2,0},{0,-1,0,0,2}}
+    };
+    -- Each graph has just one vertex of degree 3. Its other two arms
+    -- reconnect, so traversing them as disjoint tree branches is incorrect.
+    assert(dynkinDiagram(cyclicAttachmentsDiagram#0) ===
+        "1--2, 1--3, 2--3, 3--4");
+    assert(dynkinDiagram(cyclicAttachmentsDiagram#1) ===
+        "1--2, 1--4, 2--3, 2--5, 3--4");
+    for A in cyclicAttachmentsDiagram do (
+        r := numrows A;
+        labels := apply(r,i -> "node" | toString(i+1));
+        -- Check every relabeling, rather than relying on the branch vertex
+        -- occurring in a particular position or on a particular DFS order.
+        for permutation in permutations toList(0..r-1) do (
+            B := submatrix(A,permutation,permutation);
+            edges := (dynkinDiagramData B)#"edges";
+            expected := concatenate between(", ",apply(edges,e ->
+                toString(e#0) | "--" | toString(e#1)));
+            assert(dynkinDiagram B === expected);
+            D := cartanDatum(B,NodeLabels=>apply(permutation,i -> labels#i));
+            data := dynkinDiagramData D;
+            assert(data#"positionEdges" === edges);
+            assert(data#"labeledEdges" === apply(edges,e ->
+                {labels#(permutation#(e#0-1)),labels#(permutation#(e#1-1)),e#2,e#3}));
+            expectedRecords := concatenate between(", ",apply(edges,e ->
+                toString(e#0) | "[" | labels#(permutation#(e#0-1)) | "]--" |
+                toString(e#1) | "[" | labels#(permutation#(e#1-1)) | "]"));
+            assert(dynkinDiagram D === expectedRecords);
+            assert(dynkinDiagram(D,NodeFormat=>"Labels") ===
+                concatenate between(", ",apply(data#"labeledEdges",e -> e#0 | "--" | e#1)));
+        );
+    );
+
+    -- A double bond on an attached leaf retains its arrow in the fallback.
+    weightedCycleDiagram := matrix{{2,-1,-1,0},{-1,2,-1,0},
+        {-1,-1,2,-1},{0,0,-2,2}};
+    assert(symmetrizer weightedCycleDiagram =!= null);
+    assert(dynkinDiagram weightedCycleDiagram === "1--2, 1--3, 2--3, 3=>4");
+    assert(dynkinDiagram transpose weightedCycleDiagram === "1--2, 1--3, 2--3, 3<=4");
+    disconnectedCycleDiagram := (cyclicAttachmentsDiagram#0) ++ cartanA 3;
+    assert(dynkinDiagram disconnectedCycleDiagram ===
+        "1--2, 1--3, 2--3, 3--4" | newline | newline | "5 --- 6");
+
+    -- Independently reconstruct every edge from genuine D/E drawings.
+    -- The vertical bar must meet the branch vertex, not merely a nearby
+    -- label or another edge in the main line.
+    for A in {cartanD 4,cartanD 5,cartanD 8,cartanE 6,cartanE 7,cartanE 8} do (
+        positions := toList(0..numrows A-1);
+        for permutation in {positions,reverse positions,drop(positions,1) | take(positions,1)} do (
+            B := submatrix(A,permutation,permutation);
+            drawing := lines dynkinDiagram B;
+            assert(#drawing == 3);
+            mainNodes := apply(separate(" --- ",drawing#0),value);
+            sideNode := value(drawing#2);
+            branchColumn := position(ascii(drawing#1),c -> c == 124);
+            column := 0;
+            branchNode := null;
+            for node in mainNodes do (
+                if column == branchColumn then branchNode = node;
+                column = column + #(toString node) + 5;
+            );
+            assert(branchNode =!= null);
+            assert(sort(mainNodes | {sideNode}) === toList(1..numrows B));
+            drawnEdges := apply(toList(0..#mainNodes-2),i ->
+                sort{mainNodes#i,mainNodes#(i+1)}) | {sort{branchNode,sideNode}};
+            expectedEdges := apply((dynkinDiagramData B)#"edges",e -> take(e,2));
+            assert(#drawnEdges == #expectedEdges);
+            assert(set drawnEdges === set expectedEdges);
+        );
+    );
+    -- A genuine cycle still displays its closing edge exactly once.
+    for n from 2 to 4 do (
+        A := cartanAffineA n;
+        r := numrows A;
+        for permutation in permutations toList(0..r-1) do (
+            B := submatrix(A,permutation,permutation);
+            drawing := dynkinDiagram B;
+            assert(match("  \\(cycle\\)$",drawing));
+            cycleLine := substring(0,#drawing-#("  (cycle)"),drawing);
+            cycleNodes := apply(separate(" --- ",cycleLine),value);
+            assert(#cycleNodes == r+1 and first cycleNodes == last cycleNodes);
+            assert(sort drop(cycleNodes,-1) === toList(1..r));
+            drawnEdges := apply(toList(0..r-1),i -> sort{cycleNodes#i,cycleNodes#(i+1)});
+            expectedEdges := apply((dynkinDiagramData B)#"edges",e -> take(e,2));
+            assert(#drawnEdges == #expectedEdges and set drawnEdges === set expectedEdges);
+        );
+    );
 ///
 
 -- Test 1: cartanType classifies finite/affine/indefinite
@@ -4324,7 +4872,7 @@ TEST ///
 
 -- Test 31: bridges to LieAlgebraRepresentations / WeylGroups
 TEST ///
-    -- rejects non-finite / non-GCM inputs (runs without companion packages)
+    -- Reject non-finite / non-GCM inputs before constructing an object.
     Aaff := matrix{{2,-2},{-2,2}};       -- affine sl_2 (corank 1)
     assert(cartanType Aaff =!= "finite");
     assert(try (toLieAlgebra Aaff; false) else true);
@@ -4332,15 +4880,44 @@ TEST ///
     NotCM := matrix{{2,1},{-1,2}};       -- not a GCM (wrong sign)
     assert(try (toLieAlgebra NotCM; false) else true);
     assert(try (toRootSystem  NotCM; false) else true);
-    -- positive cases: the bridges lazy-load their companion packages
-    needsPackage "LieAlgebraRepresentations";
-    needsPackage "WeylGroups";
-    LA := value (value "LieAlgebraRepresentations")#"private dictionary"#"LieAlgebra";
-    RS := value (value "WeylGroups")#"private dictionary"#"RootSystem";
+    -- Conversions must not change the active package dictionaries or
+    -- replace KacMoody's commands by their companion-package namesakes.
+    savedBridgePath := dictionaryPath;
+    bridgePackage := value "KacMoody";
+    assert(set values bridgePackage.Dictionary === set(bridgePackage#"exported symbols"));
+    assert(not bridgePackage.Dictionary#?"draftAdd");
+    assert(not bridgePackage.Dictionary#?"optionalPackageFunction");
+    sharedBridgeNames := {"simpleRoots", "positiveRoots", "highestRoot",
+        "dynkinDiagram", "dualCoxeterNumber", "tensorCoefficient"};
+    savedBridgeBindings := apply(sharedBridgeNames,n -> value n);
+    LA := value LieAlgebraRepresentations.Dictionary#"LieAlgebra";
+    RS := value WeylGroups.Dictionary#"RootSystem";
     assert(class toLieAlgebra cartanA 4 === LA);
     assert(class toLieAlgebra cartanB 3 === LA);
     assert(class toRootSystem cartanA 4 === RS);
     assert(class toRootSystem cartanG2() === RS);
+    assert(dictionaryPath === savedBridgePath);
+    assert(all(sharedBridgeNames,savedBridgeBindings,(n,f) -> value n === f));
+
+    -- The two packages use opposite Cartan-matrix conventions. Checking
+    -- only the output class misses the distinction between B and C.
+    externalCartan := value LieAlgebraRepresentations.Dictionary#"cartanMatrix";
+    externalIrreducible := value LieAlgebraRepresentations.Dictionary#"irreducibleLieAlgebraModule";
+    for spec in {{cartanB 3,"B"},{cartanC 3,"C"},
+        {cartanF4(),"F"},{cartanG2(),"G"}} do (
+        A := spec#0;
+        g := toLieAlgebra A;
+        assert(g#"RootSystemType" === spec#1);
+        assert(externalCartan g == transpose A);
+        for i from 0 to numrows A-1 do (
+            lambda := apply(numrows A,j -> if i == j then 1 else 0);
+            assert(dim externalIrreducible(g,lambda) === weylDimension(A,lambda));
+        );
+    );
+    assert(dim externalIrreducible(toLieAlgebra(cartanB 3),{1,0,0}) === 7);
+    assert(dim externalIrreducible(toLieAlgebra(cartanC 3),{1,0,0}) === 6);
+    assert(dictionaryPath === savedBridgePath);
+    assert(all(sharedBridgeNames,savedBridgeBindings,(n,f) -> value n === f));
 ///
 
 -- Test 32: tripod (cartanT) Coxeter classification and well-known
@@ -5408,33 +5985,31 @@ TEST ///
 -- Test 72: companion-package bridges accept integral QQ matrices,
 -- arbitrary node permutations, and reducible finite root systems.
 TEST ///
-    WG := try needsPackage "WeylGroups" else null;
-    if WG === null then print "SKIP: WeylGroups typed-bridge tests (package could not be loaded)";
-    if WG =!= null then (
-        WGdict := (value "WeylGroups")#"private dictionary";
-        RootSystemType := value WGdict#"RootSystem";
-        numberPositive := value WGdict#"numberOfPositiveRoots";
-        Bwg := cartanB 3;
-        Pwg := submatrix(Bwg,{2,0,1},{2,0,1});
-        Rwg := matrix(QQ,{{2,0,0},{0,2,-1},{0,-2,2}});
-        for spec in {{Bwg ** QQ,9},{Pwg,9},{Rwg,5}} do (
-            X := toRootSystem(spec#0);
-            assert(instance(X,RootSystemType));
-            assert(numberPositive X === spec#1);
-        );
+    savedTypedBridgePath := dictionaryPath;
+    RootSystemType := value WeylGroups.Dictionary#"RootSystem";
+    numberPositive := value WeylGroups.Dictionary#"numberOfPositiveRoots";
+    externalDynkinType := value WeylGroups.Dictionary#"dynkinType";
+    Bwg := cartanB 3;
+    Pwg := submatrix(Bwg,{2,0,1},{2,0,1});
+    Rwg := matrix(QQ,{{2,0,0},{0,2,-1},{0,-2,2}});
+    for spec in {{Bwg ** QQ,9,{{"B",3}}},{Pwg,9,{{"B",3}}},
+        {cartanC 3,9,{{"C",3}}},{Rwg,5,{{"A",1},{"B",2}}}} do (
+        X := toRootSystem(spec#0);
+        assert(instance(X,RootSystemType));
+        assert(numberPositive X === spec#1);
+        assert(toList externalDynkinType X === spec#2);
     );
 
-    LAR := try needsPackage "LieAlgebraRepresentations" else null;
-    if LAR === null then print "SKIP: LieAlgebraRepresentations typed-bridge tests (package could not be loaded)";
-    if LAR =!= null then (
-        LAdict := (value "LieAlgebraRepresentations")#"private dictionary";
-        LieAlgebraType := value LAdict#"LieAlgebra";
-        Blar := cartanB 3;
-        Plar := submatrix(Blar,{2,0,1},{2,0,1});
-        Rlar := matrix(QQ,{{2,0,0},{0,2,-1},{0,-2,2}});
-        for C in {Blar ** QQ,Plar,Rlar} do
-            assert(instance(toLieAlgebra C,LieAlgebraType));
-    );
+    LieAlgebraType := value LieAlgebraRepresentations.Dictionary#"LieAlgebra";
+    for C in {Bwg ** QQ,Pwg,Rwg} do
+        assert(instance(toLieAlgebra C,LieAlgebraType));
+    for C in {Bwg ** QQ,Pwg} do
+        assert((toLieAlgebra C)#"RootSystemType" === "B");
+    zeroCartan := map(ZZ^0,ZZ^0,0);
+    assert(instance(toLieAlgebra zeroCartan,LieAlgebraType));
+    assert(instance(toRootSystem zeroCartan,RootSystemType));
+    assert(numberPositive toRootSystem zeroCartan === 0);
+    assert(dictionaryPath === savedTypedBridgePath);
 ///
 
 -- Test 73: unified root and parabolic entry points infer Cartan type,
@@ -9682,11 +10257,8 @@ for k from 0 to 2 do assert(characterCoefficient(
 assert(mustErrorLeviArithmetic(() -> characterCoefficient(
     skewVermaALArith*skewVermaBLArith,
     restrictWeight(LsLArith,weightSumLArith-toWeight kmRoot(DsLArith,{3})))));
-incompleteNativeLArith = formalCharacter(DsLArith,new Tally,
-    CharacterStatus=>"Truncated",Truncation=>new HashTable from {
-        "coefficientCertificate"=>true,"kind"=>"root-depth",
-        "support"=>"highest-weight cone","highestWeight"=>kmWeight(DsLArith,{2}),
-        "depth"=>0,"completeThroughDepth"=>0});
+labelPrefixLArith = moduleCharacter(vermaModule(DsLArith,{2}),Depth=>0);
+incompleteNativeLArith = labelPrefixLArith-labelPrefixLArith;
 assert(mustErrorLeviArithmetic(() -> restrictCharacter(LsLArith,incompleteNativeLArith)));
 
 -- The rank-zero boundary is an actual torus group algebra, not just the

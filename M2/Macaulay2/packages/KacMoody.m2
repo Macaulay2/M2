@@ -10,10 +10,22 @@ newPackage("KacMoody",
     Headline => "Computations with symmetrizable Kac-Moody algebras and their representations",
     Keywords => {"Lie Groups and Lie Algebras", "Representation Theory"},
     PackageExports => {},
-    PackageImports => {},
+    PackageImports => {"Polyhedra", "LieAlgebraRepresentations", "WeylGroups"},
     AuxiliaryFiles => true,
     DebuggingMode => false
 )
+
+-- Retain the public companion constructors without keeping their
+-- overlapping command dictionaries active while defining this package.
+larLieAlgebra := LieAlgebraRepresentations$LieAlgebra;
+wgRootSystem := WeylGroups$rootSystem;
+wgDynkinType := WeylGroups$dynkinType;
+kmConeFromInequalities := Polyhedra$coneFromInequalities;
+kmConeHilbertBasis := Polyhedra$hilbertBasis;
+kmConeRays := rays;
+dismiss LieAlgebraRepresentations;
+dismiss WeylGroups;
+dismiss Polyhedra;
 
 --------------------------------------------------------------------
 -- KacMoody: symmetrizable Kac-Moody algebras in Macaulay2
@@ -400,7 +412,7 @@ optionalPackageFunction = (packageName, functionName) -> (
     try needsPackage packageName else
         error("KacMoody: could not load optional package " | packageName);
     packageObject := value packageName;
-    dictionary := packageObject#"private dictionary";
+    dictionary := packageObject.Dictionary;
     if not dictionary#?functionName then error concatenate(
         "KacMoody: optional package ", packageName,
         " does not provide ", functionName);
@@ -3375,11 +3387,10 @@ dynkinDiagramData Matrix := opts -> A -> (
 --   triple bond (i long):  i #=>=# j
 --   triple bond (j long):  i #=<=# j
 --
--- Nodes are labeled 1..r. For recognized shapes (path, or path with
--- a single branch of degree 3 as in D/E types), a linear/branched
--- layout is produced. For unusual shapes (cycles, higher-valence
--- vertices, affine types with the extra node), a compact edge-list
--- layout is produced instead.
+-- Nodes are labeled 1..r. Paths and D/E-shaped trees use linear/branched
+-- layouts. A cycle repeats its starting node to show the closing bond.
+-- More complicated components, including cycles with attached branches,
+-- use a compact edge list instead.
 
 dynkinDiagram = method(Options => {NodeFormat => null});
 
@@ -3495,10 +3506,11 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
             return singletonPad | "o" | newline | singletonText;
         );
         compSet := set comp;
+        componentEdges := select(edgeList,e -> member(e#0,compSet));
         -- Complete, lossless fallback used whenever a planar ASCII layout
         -- would omit part of an arm or hide a multiple-bond arrow.
         renderEdgeList := () -> concatenate between(", ", apply(
-            select(edgeList, e -> member(e#0, compSet)),
+            componentEdges,
             e -> (
                 g := if e#2 == 1 then "--"
                      else if e#2 == 2 then (if e#3 == 1 then "=>" else if e#3 == -1 then "<=" else "==")
@@ -3555,8 +3567,12 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
             );
             pathText prepend(startN,tail)
         )
-        else if #highDeg == 1 and (deg highDeg#0) == 3 and #select(comp, i -> deg(i) > 3) == 0 then (
-            -- D/E-type: one branch node of degree 3
+        else if #componentEdges == #comp-1 and #highDeg == 1
+            and (deg highDeg#0) == 3 then (
+            -- D/E-shaped tree: one branch node of degree 3. The edge
+            -- count proves acyclicity because the component is connected;
+            -- a cycle with an attached leaf has the same degree pattern
+            -- but its two cyclic arms are not disjoint branches.
             branchN := highDeg#0;
             -- The branch node has 3 neighbors. Pick two "main" branches
             -- (the two longer ones) and one "side" branch.
@@ -9733,8 +9749,8 @@ ReductiveLeviDatum = new Type of HashTable
 LeviWeight = new Type of HashTable
 LeviHighestWeight = new Type of HashTable
 
-FormalCharacter == FormalCharacter := (C,D) -> C === D
-LeviFormalCharacter == LeviFormalCharacter := (C,D) -> C === D
+FormalCharacter == FormalCharacter := (C,D) -> draftCharactersEqual(C,D)
+LeviFormalCharacter == LeviFormalCharacter := (C,D) -> draftCharactersEqual(C,D)
 KMRepresentation == KMRepresentation := (M,N) -> M === N
 ReductiveLeviDatum == ReductiveLeviDatum := (L,K) -> L === K
 LeviWeight == LeviWeight := (x,y) -> x === y
@@ -9762,8 +9778,8 @@ draftCharacterCoefficient = (c,who) -> (
 )
 
 draftCanonicalTerms = (parent,T,weightType,who) -> (
-    if not instance(T,HashTable) and not instance(T,Tally) then
-        error(who | ": terms must be a Tally or HashTable");
+    if not instance(T,HashTable) then
+        error(who | ": terms must be a hash table of weights and integer coefficients");
     accum := new MutableHashTable;
     coordinateMode := null;
     for p in pairs T do (
@@ -9786,7 +9802,7 @@ draftCanonicalTerms = (parent,T,weightType,who) -> (
             if accum#?wt then accum#wt = accum#wt + c else accum#wt = c;
         );
     );
-    new Tally from for wt in keys accum list if accum#wt != 0 then wt => accum#wt else continue
+    new VirtualTally from for wt in keys accum list if accum#wt != 0 then wt => accum#wt else continue
 )
 
 formalCharacter = method(Options => {
@@ -9794,16 +9810,42 @@ formalCharacter = method(Options => {
     Truncation => null
 })
 
-draftFormalCharacter = (D,T,status,truncation) -> (
+-- A computed range belongs to one datum and one sparse expansion. Keep
+-- references to those immutable objects with the original description;
+-- copying a character needs neither a global registry nor a second run of
+-- its multiplicity algorithm.
+draftTruncationWitness = new Type of Bag
+draftFormalCharacter = (D,T,status,truncation,computed) -> (
     if status =!= "Exact" and status =!= "Truncated" then
         error "formalCharacter: CharacterStatus must be \"Exact\" or \"Truncated\"";
     if status === "Exact" and truncation =!= null then
         error "formalCharacter: an exact character cannot carry truncation metadata";
     if status === "Truncated" and truncation === null then
         error "formalCharacter: a truncated character must describe its Truncation";
+    terms := draftCanonicalTerms(D,T,KMWeight,"formalCharacter");
+    if instance(truncation,MutableHashTable) then
+        truncation = new HashTable from pairs truncation;
+    if instance(truncation,HashTable) and truncation#?"coefficientCertificate" and
+        truncation#"coefficientCertificate" === true then (
+        if computed then (
+            original := truncation;
+            truncation = new HashTable from join(pairs original,
+                {"certified data"=>new draftTruncationWitness from {D,terms,original}});
+        ) else (
+            if not truncation#?"certified data" or
+                class(truncation#"certified data") =!= draftTruncationWitness then
+                error "formalCharacter: use the truncation of a computed character, or supply a description without a coefficient certificate";
+            saved := truncation#"certified data";
+            description := saved#2;
+            if D =!= saved#0 or terms =!= saved#1 or
+                #truncation != #description+1 or not all(keys description,k ->
+                    truncation#?k and truncation#k === description#k) then
+                error "formalCharacter: the truncation does not match the supplied datum, coefficients, or original range";
+        );
+    );
     C := new FormalCharacter from {
         "parent" => D,
-        "terms" => draftCanonicalTerms(D,T,KMWeight,"formalCharacter"),
+        "terms" => terms,
         "status" => status,
         "truncation" => truncation
     };
@@ -9813,6 +9855,8 @@ draftFormalCharacter = (D,T,status,truncation) -> (
         truncation#"kind" === "root-depth" and data === null then
         error "formalCharacter: invalid highest-weight root-depth certificate";
     if data =!= null then (
+        if (data#0)#"realizationCoordinates" === null and det datumCartanMatrix D == 0 then
+            error "formalCharacter: root depth for a singular Cartan matrix requires a highest weight with complete realization coordinates";
         draftCheckCharacterQueryMode(C,data#0);
         for mu in keys characterTerms C do (
             beta := draftCharacterRootOffset(data#0,mu);
@@ -9825,9 +9869,12 @@ draftFormalCharacter = (D,T,status,truncation) -> (
 )
 
 formalCharacter (RootDatum,HashTable) := opts -> (D,T) ->
-    draftFormalCharacter(D,T,opts.CharacterStatus,opts.Truncation)
+    draftFormalCharacter(D,T,opts.CharacterStatus,opts.Truncation,false)
 formalCharacter (RootDatum,Tally) := opts -> (D,T) ->
-    draftFormalCharacter(D,T,opts.CharacterStatus,opts.Truncation)
+    draftFormalCharacter(D,T,opts.CharacterStatus,opts.Truncation,false)
+
+draftComputedCharacter = (D,T,range) ->
+    draftFormalCharacter(D,T,if range === null then "Exact" else "Truncated",range,true)
 
 -- Print in the group-ring notation e^mu.  A bounded preview still shows
 -- actual monomials, and mathematical truncation is labeled separately.
@@ -10150,7 +10197,8 @@ draftKnownCharacterCoefficient = (C,mu) -> (
         );
         if op === "sum" then (
             left := draftKnownCharacterCoefficient(T#"left",mu);
-            right := draftKnownCharacterCoefficient(T#"right",mu);
+            right := if T#"left" === T#"right" then left
+                else draftKnownCharacterCoefficient(T#"right",mu);
             return if left === null or right === null then null else left+right;
         );
         if op === "finite product" then (
@@ -10167,6 +10215,8 @@ draftKnownCharacterCoefficient = (C,mu) -> (
     );
     data := draftRootDepthCharacterData C;
     if data =!= null then (
+        if (data#0)#"realizationCoordinates" === null and
+            det datumCartanMatrix(parentDatum(data#0)) == 0 then return null;
         beta := draftCharacterRootOffset(data#0,mu);
         if beta === null or any(beta,b -> denominator(b+0_QQ) != 1 or b < 0) then return 0;
         if sum beta > data#1 then return null;
@@ -10175,6 +10225,365 @@ draftKnownCharacterCoefficient = (C,mu) -> (
     -- With unstructured, user-supplied truncation information, only the
     -- explicitly provided coefficients are known; an absent one is unknown.
     if (characterTerms C)#?mu then (characterTerms C)#mu else null
+)
+
+-- Equality concerns coefficients and their known region, not how a
+-- certificate was obtained.  A native root-depth certificate is unknown
+-- precisely on its highest-weight cone beyond the bound.  Affine changes
+-- of coordinates transport its anchor and simple-root generators together.
+-- Sums and finite products intersect known regions.  A descriptive,
+-- user-supplied truncation knows only its explicitly stored coefficients.
+draftCharacterDomainContains = (domain,point) -> (
+    if domain#0 === "all" then return true;
+    if domain#0 === "finite" then return member(point,domain#1);
+    if domain#0 === "rays" then return all(pairs(domain#1),p -> (
+        generator := p#0#1;
+        difference := draftAdd(point,draftScale(-1,p#0#0));
+        j := position(generator,x -> x != 0);
+        offset := difference#j/generator#j;
+        denominator(offset+0_QQ) != 1 or
+            difference =!= draftScale(offset,generator) or offset > p#1
+    ));
+    all(pairs(domain#1),p -> (
+        generators := matrix(QQ,p#0#1);
+        difference := matrix(QQ,{draftAdd(p#0#0,draftScale(-1,point))});
+        coordinates := difference * transpose generators *
+            inverse(generators * transpose generators);
+        offsets := flatten entries coordinates;
+        entries(coordinates*generators) =!= entries difference or
+            any(offsets,x -> denominator(x+0_QQ) != 1 or x < 0) or
+            sum offsets <= p#1
+    ))
+)
+
+-- For x = a - n*G in the first tail, return the second tail's
+-- coordinates c+n*M.  An incompatible lattice coset or affine span
+-- precludes containment. All tests use exact rational arithmetic.
+draftCharacterTailAffineCoordinates = (small,large) -> (
+    generators := matrix(QQ,large#0#1);
+    if #(small#0#1) != numrows generators then
+        error "KacMoody: certificate cones have incompatible root ranks";
+    rows := matrix(QQ,prepend(draftAdd(large#0#0,
+        draftScale(-1,small#0#0)),small#0#1));
+    coordinates := rows * transpose generators *
+        inverse(generators * transpose generators);
+    reconstructed := entries(coordinates*generators);
+    if drop(reconstructed,1) =!= drop(entries rows,1) then
+        error "KacMoody: certificate cones have incompatible root spans";
+    if first reconstructed =!= first entries rows then return null;
+    if any(flatten drop(entries coordinates,1),x -> denominator(x+0_QQ) != 1) then
+        error "KacMoody: certificate cones have incompatible root lattices";
+    entries coordinates
+)
+
+draftCharacterTailCoordinates = (small,large) -> (
+    coordinates := draftCharacterTailAffineCoordinates(small,large);
+    if coordinates === null or
+        any(flatten coordinates,x -> denominator(x+0_QQ) != 1) then
+        return null;
+    apply(coordinates,row -> apply(row,x -> numerator(x+0_QQ)))
+)
+
+-- Decide A*n <= b for a nonnegative integer vector n.  Homogenization
+-- gives a pointed cone in (n,t)>=0.  An integer point of height one
+-- exists exactly when its Hilbert basis contains an element of height one.
+-- Rational vertices and checked rounded vertices usually supply a witness
+-- before a Hilbert basis is needed.
+draftCharacterIntegerFeasible = (A,b) -> (
+    r := numcols A;
+    if numrows b != numrows A or numcols b != 1 then
+        error "KacMoody: invalid integer-feasibility bounds";
+    if r == 0 then return all(flatten entries b,x -> x >= 0);
+    if numrows A == 0 then return true;
+    inequalities := matrix(ZZ,apply(entries(((-A)**QQ)|(b**QQ)),row -> (
+        denominatorMultiple := lcm apply(row,x -> denominator(x+0_QQ));
+        apply(row,x -> numerator(denominatorMultiple*(x+0_QQ)))
+    ))) || id_(ZZ^(r+1));
+    cone := kmConeFromInequalities inequalities;
+    rays := kmConeRays cone;
+    vertices := for j from 0 to numcols rays-1 list (
+        height := rays_(r,j);
+        if height <= 0 then continue;
+        for i from 0 to r-1 list rays_(i,j)/height
+    );
+    if #vertices == 0 then return false;
+    witness := point -> all(point,x -> denominator(x+0_QQ) == 1 and x >= 0) and
+        all(toList(0..numrows A-1),i ->
+            sum(for j from 0 to r-1 list A_(i,j)*point#j) <= b_(i,0));
+    if any(vertices,p -> any({p,apply(p,floor),apply(p,ceiling)},witness)) then
+        return true;
+    any(kmConeHilbertBasis cone,v -> v_(r,0) == 1)
+)
+
+-- Fast proofs of coverage by a finite union of unknown tails.
+-- First try exact containment in one tail.  Since n ranges over all
+-- nonnegative integers of sum >= H+1, negative entries of M preclude
+-- containment; otherwise every defining inequality has an explicit
+-- minimum on that simplex.
+draftCharacterTailCoveredFast = (small,others,budget) -> (
+    depth := small#1+1;
+    rank := #(small#0#1);
+    mixed := false;
+    covers := for large in others list (
+        if budget#0 <= 0 then return null;
+        budget#0 = budget#0-1;
+        coordinates := draftCharacterTailCoordinates(small,large);
+        if coordinates === null then continue;
+        c := first coordinates;
+        M := drop(coordinates,1);
+        if all(flatten M,x -> x >= 0) and
+            all(toList(0..#c-1),j ->
+                c#j+depth*min apply(M,row -> row#j) >= 0) and
+            sum c+depth*min apply(M,sum) > large#1 then return true;
+        if small#0#1 =!= large#0#1 then (mixed = true; continue);
+        {apply(c,x -> -x),large#1+1-sum c}
+    );
+    if #others <= 1 then return false;
+    if #covers == 0 then return if mixed then null else false;
+
+    -- In a common simple-root basis, each covering tail is given by
+    -- n_j >= d_j and sum n_j >= q.  Cut each coordinate at the finitely
+    -- many d_j values.  On each resulting integer box the coordinate
+    -- conditions are constant, and its possible sums form an interval.
+    -- This tests equivalent unions without enumerating depth simplices;
+    -- an exhausted work budget passes to the exact feasibility test.
+    cuts := for j from 0 to rank-1 list
+        sort unique prepend(0,apply(covers,p -> max(0,p#0#j)));
+    cells := 1;
+    for cut in cuts do (
+        cells = cells*#cut;
+        if cells > budget#0 then return null;
+    );
+    lower := new MutableList from toList(rank:0);
+    upper := new MutableList from toList(rank:null);
+    covered := null;
+    covered = j -> (
+        if j < rank then return all(toList(0..#(cuts#j)-1),i -> (
+            lower#j = cuts#j#i;
+            upper#j = if i+1 < #(cuts#j) then cuts#j#(i+1)-1 else null;
+            covered(j+1)
+        ));
+        budget#0 = budget#0-1;
+        minimum := max(depth,sum toList lower);
+        if all(toList upper,x -> x =!= null) and sum toList upper < minimum then
+            return true;
+        active := select(covers,p -> all(toList(0..rank-1),k -> lower#k >= p#0#k));
+        #active > 0 and minimum >= min apply(active,p -> p#1)
+    );
+    if covered 0 then true else if mixed then null else false
+)
+
+-- Outside each target tail, at least one integer inequality must fail.
+-- Search these finitely many alternatives, pruning inconsistent prefixes.
+-- Integer feasibility, not a search cutoff, decides the final answer.
+draftCharacterTailCoveredExact = (small,others) -> (
+    depth := small#1+1;
+    r := #(small#0#1);
+    systems := for large in others list (
+        coordinates := draftCharacterTailCoordinates(small,large);
+        if coordinates === null then continue;
+        c := first coordinates;
+        M := drop(coordinates,1);
+        alternatives := (for j from 0 to #c-1 list {
+            apply(M,row -> row#j),-1-c#j}) |
+            {{apply(M,sum),large#1-sum c}};
+        clauses := new MutableHashTable;
+        alwaysOutside := false;
+        for alternative in alternatives do (
+            row := alternative#0;
+            bound := alternative#1;
+            if all(row,x -> x >= 0) and depth*min row > bound then continue;
+            if all(row,x -> x <= 0) and depth*max row <= bound then (
+                alwaysOutside = true;
+                break;
+            );
+            clauses#row = if clauses#?row then max(clauses#row,bound) else bound;
+        );
+        if alwaysOutside then continue;
+        if #clauses == 0 then return true;
+        sort apply(pairs clauses,p -> {p#0,p#1})
+    );
+    if #systems == 0 then return false;
+    systems = apply(sort apply(unique systems,L -> {#L,L}),last);
+    -- Axis points on the initial simplex often exhibit noncontainment.
+    if any(toList(0..r-1),i -> all(systems,clauses ->
+        any(clauses,p -> depth*p#0#i <= p#1))) then return false;
+    chosen := new MutableList from toList((#systems+1):null);
+    chosen#0 = {toList(r:-1),-depth};
+    feasibility := new MutableHashTable;
+    outside := null;
+    outside = k -> (
+        bounds := new MutableHashTable;
+        for j from 0 to k do (
+            p := chosen#j;
+            bounds#(p#0) = if bounds#?(p#0) then min(bounds#(p#0),p#1) else p#1;
+        );
+        key := sort apply(pairs bounds,p -> {p#0,p#1});
+        if not feasibility#?key then feasibility#key =
+            draftCharacterIntegerFeasible(matrix(ZZ,apply(key,p -> p#0)),
+                transpose matrix(ZZ,{apply(key,p -> p#1)}));
+        if not feasibility#key then return false;
+        if k == #systems then return true;
+        any(systems#k,p -> (
+            chosen#(k+1) = p;
+            outside(k+1)
+        ))
+    );
+    not outside 0
+)
+
+draftCharacterTailCovered = (small,others,budget) -> (
+    answer := draftCharacterTailCoveredFast(small,others,budget);
+    if answer =!= null then answer else draftCharacterTailCoveredExact(small,others)
+)
+
+draftCharacterDomainTails = domain -> (
+    if domain#0 === "tails" then pairs(domain#1)
+    else apply(pairs(domain#1),p -> (
+        base := p#0#0;
+        generator := p#0#1;
+        ({draftAdd(base,draftScale(p#1+1,generator)),{generator}},0)
+    ))
+)
+
+draftCharacterDomainsEqual = (left,right) -> (
+    if left === right then return true;
+    if left#0 =!= right#0 or not member(left#0,{"tails","rays"}) then return false;
+    budget := new MutableList from {4096};
+    leftTails := draftCharacterDomainTails left;
+    rightTails := draftCharacterDomainTails right;
+    all(leftTails,p -> draftCharacterTailCovered(p,rightTails,budget)) and
+        all(rightTails,p -> draftCharacterTailCovered(p,leftTails,budget))
+)
+
+draftIntersectCharacterDomains = (left,right) -> (
+    if left#0 === "all" then return right;
+    if right#0 === "all" then return left;
+    if left#0 === "finite" then return {
+        "finite",set select(toList(left#1),p -> draftCharacterDomainContains(right,p))};
+    if right#0 === "finite" then return draftIntersectCharacterDomains(right,left);
+    if left#0 =!= right#0 then error "KacMoody: incomparable certificate domains";
+    tails := new MutableHashTable from pairs(left#1);
+    for p in pairs(right#1) do
+        tails#(p#0) = if not tails#?(p#0) then p#1
+            else if left#0 === "rays" then max(tails#(p#0),p#1)
+            else min(tails#(p#0),p#1);
+    {left#0,new HashTable from pairs tails}
+)
+
+-- Return a domain description and all weights where its coefficient oracle
+-- could be nonzero.  The latter lets equality reject inconsistent source
+-- metadata instead of trusting a copied highest-weight/depth description.
+draftCharacterEqualityData = (C,transform) -> (
+    terms := characterTerms C;
+    candidates := set apply(keys terms,transform);
+    if isExactCharacter C then return {{"all"},candidates};
+    T := C#"truncation";
+    if instance(T,HashTable) and T#?"coefficientCertificate" and
+        T#"coefficientCertificate" === true and T#?"operation" then (
+        op := T#"operation";
+        if op === "scale" then (
+            data := draftCharacterEqualityData(T#"source",transform);
+            return {data#0,if T#"scalar" == 0 then set {} else data#1};
+        );
+        if op === "sum" then (
+            left := draftCharacterEqualityData(T#"left",transform);
+            if T#"left" === T#"right" then return left;
+            right := draftCharacterEqualityData(T#"right",transform);
+            return {draftIntersectCharacterDomains(left#0,right#0),
+                union(left#1,right#1)};
+        );
+        if op === "dual" then return draftCharacterEqualityData(
+            T#"source",mu -> transform(-mu));
+        if op === "weyl" then (
+            w := inverseWeylElement(T#"inverseWeylElement");
+            return draftCharacterEqualityData(T#"source",
+                mu -> transform(weylAction(w,mu)));
+        );
+        if op === "restriction" then return draftCharacterEqualityData(
+            T#"source",mu -> transform(restrictWeight(characterDatum C,mu)));
+        if op === "Levi lift" then return draftCharacterEqualityData(
+            T#"source",mu -> transform(draftLiftLeviWeight mu));
+        if op === "finite product" then (
+            domain := {"all"};
+            possible := set {};
+            for p in pairs characterTerms(T#"finite") do (
+                data := draftCharacterEqualityData(T#"other",
+                    mu -> transform(mu+p#0));
+                domain = draftIntersectCharacterDomains(domain,data#0);
+                possible = union(possible,data#1);
+            );
+            return {domain,possible};
+        );
+    );
+    native := draftRootDepthCharacterData C;
+    if native =!= null then (
+        lambda := native#0;
+        D := parentDatum lambda;
+        r := (cartanDatum D)#"rank";
+        if lambda#"realizationCoordinates" === null and det datumCartanMatrix D == 0 then
+            error "KacMoody: equality requires a complete singular root-depth certificate";
+        if r == 0 then return {{"all"},candidates};
+        origin := draftCharacterNumericalCoordinates transform(0*lambda);
+        generators := sort for i from 0 to r-1 list (
+            alpha := toWeight kmRoot(D,for j from 0 to r-1 list if i == j then 1 else 0);
+            if lambda#"realizationCoordinates" === null then
+                alpha = kmWeight(D,datumCoordinates alpha);
+            draftAdd(draftCharacterNumericalCoordinates transform alpha,
+                draftScale(-1,origin))
+        );
+        anchor := draftCharacterNumericalCoordinates transform lambda;
+        -- In rank one, different anchors and depths can give the same
+        -- unknown ray.  Fix its lattice coset and keep its last unknown
+        -- integer coordinate; intersecting known regions takes the maximum.
+        if r == 1 then (
+            generator := first generators;
+            j := position(generator,x -> x != 0);
+            n := floor(anchor#j/generator#j);
+            base := draftAdd(anchor,draftScale(-n,generator));
+            return {{"rays",new HashTable from {{base,generator}=>n-native#1-1}},candidates};
+        );
+        return {{"tails",new HashTable from {{anchor,generators}=>native#1}},candidates};
+    );
+    known := set apply(toList candidates,draftCharacterNumericalCoordinates);
+    -- The empty coordinate tuple is the only point in dimension zero.
+    -- Knowing its coefficient is not the same as knowing no coefficients.
+    {if known === set {{}} then {"all"} else {"finite",known},candidates}
+)
+
+draftCharactersEqual = (C,D) -> (
+    if C === D then return true;
+    if C#"status" =!= D#"status" or characterDatum C =!= characterDatum D or
+        characterTerms C != characterTerms D then return false;
+    if instance(C,FormalCharacter) then (
+        leftMode := draftCharacterCoordinateMode C;
+        rightMode := draftCharacterCoordinateMode D;
+        if leftMode =!= rightMode then return false;
+    );
+    if isExactCharacter C and isExactCharacter D then return true;
+    -- Every transformation used here is an invertible coordinate change.
+    -- Compare a Levi character in ambient coordinates so central directions
+    -- remain visible and restriction has the same domain as its source.
+    transform := if instance(C,LeviFormalCharacter) then draftLiftLeviWeight else identity;
+    data := try {draftCharacterEqualityData(C,transform),
+        draftCharacterEqualityData(D,transform)} else return false;
+    left := data#0;
+    right := data#1;
+    if not draftCharacterDomainsEqual(left#0,right#0) then return false;
+    try (
+        consistent := (F,data) -> (
+            stored := characterTerms F;
+            possible := union(data#1,set apply(keys stored,transform));
+            all(toList possible,mu -> (
+                wt := if instance(F,LeviFormalCharacter) then
+                    restrictWeight(characterDatum F,mu) else mu;
+                value := draftKnownCharacterCoefficient(F,wt);
+                if value === null then not stored#?wt
+                else value == (if stored#?wt then stored#wt else 0)
+            ))
+        );
+        consistent(C,left) and consistent(D,right)
+    ) else false
 )
 
 draftCertifiedCharacterTerms = C -> new HashTable from
@@ -10200,10 +10609,8 @@ FormalCharacter + FormalCharacter := (C,D) -> (
         new HashTable from join(pairs draftRootDepthTruncation(
             left#0,min(left#1,right#1),"sum"),{"left"=>C,"right"=>D})
     else workingMetadata;
-    result := formalCharacter(characterDatum C,new HashTable from pairs S,
-        CharacterStatus=>"Truncated",Truncation=>workingMetadata);
-    formalCharacter(characterDatum C,draftCertifiedCharacterTerms result,
-        CharacterStatus=>"Truncated",Truncation=>metadata)
+    result := draftComputedCharacter(characterDatum C,new HashTable from pairs S,workingMetadata);
+    draftComputedCharacter(characterDatum C,draftCertifiedCharacterTerms result,metadata)
 )
 
 - FormalCharacter := C -> (-1)*C
@@ -10211,11 +10618,12 @@ FormalCharacter + FormalCharacter := (C,D) -> (
 ZZ * FormalCharacter := (a,C) -> (
     if a == 0 then return formalCharacter(characterDatum C,new Tally);
     metadata := if isExactCharacter C then null else new HashTable from join(
-        if draftRootDepthCharacterData C =!= null then pairs C#"truncation" else {},
+        if draftRootDepthCharacterData C === null then {} else
+            select(pairs C#"truncation",p -> p#0 =!= "certified data"),
         {"coefficientCertificate"=>true,"operation"=>"scale","source"=>C,"scalar"=>a});
-    formalCharacter(characterDatum C,
+    draftComputedCharacter(characterDatum C,
         new HashTable from apply(pairs characterTerms C,p -> p#0 => a*p#1),
-        CharacterStatus=>C#"status",Truncation=>metadata)
+        metadata)
 )
 FormalCharacter * ZZ := (C,a) -> a*C
 FormalCharacter - FormalCharacter := (C,D) -> C + (-D)
@@ -10260,11 +10668,9 @@ FormalCharacter * FormalCharacter := (C,D) -> (
         "operation"=>"finite product",
         "finite"=>if isExactCharacter C then C else D,
         "other"=>if isExactCharacter C then D else C};
-    result := formalCharacter(characterDatum C,new HashTable from pairs S,
-        CharacterStatus=>"Truncated",Truncation=>metadata);
+    result := draftComputedCharacter(characterDatum C,new HashTable from pairs S,metadata);
     if bounded then return result;
-    formalCharacter(characterDatum C,draftCertifiedCharacterTerms result,
-        CharacterStatus=>"Truncated",Truncation=>metadata)
+    draftComputedCharacter(characterDatum C,draftCertifiedCharacterTerms result,metadata)
 )
 
 -- Ordinary powers are repeated tensor products, not symmetric powers.
@@ -10288,19 +10694,19 @@ FormalCharacter ^ ZZ := (C,k) -> (
 )
 
 dualCharacter = method()
-dualCharacter FormalCharacter := C -> formalCharacter(
+dualCharacter FormalCharacter := C -> draftComputedCharacter(
     characterDatum C,
     new HashTable from apply(pairs characterTerms C,p -> (-p#0) => p#1),
-    CharacterStatus=>C#"status",Truncation=>if isExactCharacter C then null
+    if isExactCharacter C then null
         else new HashTable from {"coefficientCertificate"=>true,"operation"=>"dual","source"=>C})
 
 weylAction (WeylElement,FormalCharacter) := (w,C) -> (
     if (weylParent w)#"cartanDatum" =!= cartanDatum characterDatum C then
         error "weylAction: Weyl element and character have different Cartan data";
-    formalCharacter(characterDatum C,
+    draftComputedCharacter(characterDatum C,
         new HashTable from apply(pairs characterTerms C,p ->
             weylAction(w,p#0) => p#1),
-        CharacterStatus=>C#"status",Truncation=>if isExactCharacter C then null
+        if isExactCharacter C then null
             else new HashTable from {"coefficientCertificate"=>true,"operation"=>"weyl","source"=>C,
                 "inverseWeylElement"=>inverseWeylElement w})
 )
@@ -10542,9 +10948,8 @@ vermaCharacter KMRepresentation := opts -> M -> (
         mu := draftWeightMinusRoot(lambda,betaRoot);
         terms#mu = p#1;
     );
-    formalCharacter(D,new HashTable from pairs terms,
-        CharacterStatus=>"Truncated",
-        Truncation=>new HashTable from {
+    draftComputedCharacter(D,new HashTable from pairs terms,
+        new HashTable from {
             "kind"=>"root-depth",
             "depth"=>H,
             "completeThroughDepth"=>H,
@@ -10619,9 +11024,8 @@ integrableCharacter KMRepresentation := opts -> M -> (
         mu := draftWeightMinusRoot(lambda,kmRoot(D,p#0));
         terms#mu = p#1;
     );
-    formalCharacter(D,new HashTable from pairs terms,
-        CharacterStatus=>"Truncated",
-        Truncation=>new HashTable from {
+    draftComputedCharacter(D,new HashTable from pairs terms,
+        new HashTable from {
             "kind"=>"root-depth",
             "depth"=>H,
             "completeThroughDepth"=>H,
@@ -10782,11 +11186,10 @@ draftLiftLeviCharacter = C -> (
             error "LeviFormalCharacter arithmetic: restriction certificate does not agree with the weight table";
         return source;
     );
-    liftedTerms := new Tally from apply(pairs terms,p ->
+    liftedTerms := new VirtualTally from apply(pairs terms,p ->
         draftLiftLeviWeight(p#0) => p#1);
     if status === "Exact" then return formalCharacter(D,liftedTerms);
-    formalCharacter(D,liftedTerms,CharacterStatus=>"Truncated",
-        Truncation=>new HashTable from {
+    draftComputedCharacter(D,liftedTerms,new HashTable from {
             "coefficientCertificate"=>true,"operation"=>"Levi lift",
             "leviDatum"=>L,"source"=>C})
 )
@@ -11737,6 +12140,8 @@ kostantWeightMultiplicity (Matrix,List,List) := (A,lambda,mu) -> (
     validateFiniteCartanForRepresentations(A,"kostantWeightMultiplicity");
     lambda = normalizeIntegralDynkinWeight(A,lambda,"kostantWeightMultiplicity",true);
     mu = normalizeIntegralDynkinWeight(A,mu,"kostantWeightMultiplicity",false);
+    -- The highest-weight line has dimension one in every irreducible module.
+    if lambda == mu then return 1;
     difference := toSimple(A,draftAdd(lambda,draftScale(-1,mu)));
     if any(difference,x -> denominator(x+0_QQ) != 1 or x < 0) then return 0;
 
@@ -12512,9 +12917,8 @@ bggEulerCharacter BGGResolution := opts -> B -> (
             );
         );
     );
-    formalCharacter(D,new HashTable from pairs totals,
-        CharacterStatus=>"Truncated",
-        Truncation=>new HashTable from {
+    draftComputedCharacter(D,new HashTable from pairs totals,
+        new HashTable from {
             "kind"=>"root-depth",
             "depth"=>H,
             "completeThroughDepth"=>H,
@@ -12832,22 +13236,16 @@ dynkinDiagram RootDatum := opts -> D ->
 -- toLieAlgebra(C) : convert a Cartan matrix from this package into a
 -- LieAlgebra object of the LieAlgebraRepresentations package, so the
 -- user gets access to character, fusionProduct, branchingRule, etc.
--- The dependency is lazy: we only load the package on first call.
--- Note: LieAlgebraRepresentations and WeylGroups are NOT auto-loaded
--- because their exports (simpleRoots, positiveRoots, highestRoot,
--- rootSystem, dynkinDiagram, dynkinType, cartanMatrix,
--- dualCoxeterNumber, allRoots) collide with our own.  We lazy-load
--- them on demand and reach into their private dictionaries to fetch
--- the needed symbols.
+-- PackageImports makes the companion constructors available here without
+-- changing the user's active dictionaries when a conversion is called.
+-- LieAlgebraRepresentations uses Cartan rows as simple-root Dynkin
+-- coordinates; KacMoody uses columns, so the conversion transposes C.
 toLieAlgebra = method()
 toLieAlgebra Matrix := C -> (
     C = integralCartanMatrix(C, "toLieAlgebra");
     if cartanType C =!= "finite" then
         error "toLieAlgebra: LieAlgebraRepresentations only supports finite-type Cartan matrices";
-    try needsPackage "LieAlgebraRepresentations" else
-        error "toLieAlgebra: could not load package LieAlgebraRepresentations";
-    LA := value (value "LieAlgebraRepresentations")#"private dictionary"#"LieAlgebra";
-    new LA from C
+    new larLieAlgebra from transpose C
 );
 toLieAlgebra CartanDatum := D -> toLieAlgebra datumCartanMatrix D
 toLieAlgebra Realization := R -> toLieAlgebra datumCartanMatrix R
@@ -12871,12 +13269,7 @@ toRootSystem Matrix := C -> (
             toString apply(comp, i -> i+1));
         {info#0, info#1}
     );
-    try needsPackage "WeylGroups" else
-        error "toRootSystem: could not load package WeylGroups";
-    WGdict    := (value "WeylGroups")#"private dictionary";
-    dynTypeFn := value WGdict#"dynkinType";
-    rootSysFn := value WGdict#"rootSystem";
-    rootSysFn dynTypeFn tags
+    wgRootSystem(wgDynkinType tags)
 );
 toRootSystem CartanDatum := D -> toRootSystem datumCartanMatrix D
 toRootSystem Realization := R -> toRootSystem datumCartanMatrix R

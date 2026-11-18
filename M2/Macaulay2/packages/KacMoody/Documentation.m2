@@ -223,12 +223,17 @@ Description
     }@
   Text
     These conversions retain the finite Cartan type, but not every
-    choice of realization or coordinates.  @TO toLieAlgebra@ passes
-    the finite Cartan matrix to @TT "LieAlgebraRepresentations"@.
+    choice of realization or coordinates.  @TO toLieAlgebra@ accounts
+    for the opposite row and column conventions for simple roots in
+    @TT "LieAlgebraRepresentations"@.
     @TO toRootSystem@ determines the Dynkin type of each connected
     component, accepting reducible matrices and simultaneous row and
     column permutations.  Its result uses the node labeling chosen by
     @TT "WeylGroups"@.
+    Both companion packages are loaded with KacMoody, without replacing
+    KacMoody's commands by similarly named commands from those packages.
+    To use the companion's named commands directly, load it explicitly
+    with @TT "needsPackage"@.
 SeeAlso
   toLieAlgebra
   toRootSystem
@@ -5195,12 +5200,16 @@ Description
     names.  Single, double,
     and triple bonds appear as @TT "---"@, @TT "==="@,
     and @TT "###"@ respectively; non-simply-laced bonds carry an arrow
-    pointing from the long root to the short root.  Branch nodes of
-    degree $3$ (types $D$ and $E$) are drawn with a one-node side
-    branch underneath the main path.  Disconnected Dynkin diagrams are
+    pointing from the long root to the short root.  A tree with a single
+    degree-$3$ branch node (as in types $D$ and $E$) is drawn with a
+    one-node side branch underneath the main path when possible.
+    A cycle repeats its starting node at the end, followed by
+    @TT "(cycle)"@, to show the closing bond.  Disconnected Dynkin diagrams are
     displayed component by component.  If a branch is too complicated
     for the compact layout (for example, a multiple bond on a side
     branch), the diagram is described by a list of all its bonds.
+    The same applies to a cycle with attached branches: each bond is
+    listed once, rather than treating its cyclic arms as separate paths.
 
     The function can also be called with a type-and-rank specification:
     a single string like @TT "\"A4\""@ or @TT "\"E6\""@, or a
@@ -8762,9 +8771,17 @@ Description
     A @TO CartanDatum@, @TO Realization@, or @TO RootDatum@ is also
     accepted; the conversion uses its Cartan matrix, not its chosen
     realization or global character lattice.
+    The result uses the standard node numbering of
+    LieAlgebraRepresentations, not an arbitrary ordering of the input
+    matrix. When transferring highest-weight Dynkin labels as well, account
+    for this renumbering; the conversion does not carry those labels along.
   Text
-    The companion package is loaded when this function is first called.
-    The resulting object can be used in that package:
+    LieAlgebraRepresentations uses rows of its Cartan matrix for the
+    simple-root Dynkin coordinates, whereas KacMoody uses columns.
+    The conversion accounts for this difference, preserving the Lie type
+    and the distinction between $B_n$ and $C_n$.
+    The companion package is loaded with KacMoody, but this conversion
+    does not change which package's commands are active.
   Example
     C = cartanA 4;               -- sl_4 = A_3
     L = toLieAlgebra C
@@ -8774,6 +8791,14 @@ Description
     $\mathfrak{sl}_4$ in LieAlgebraRepresentations.  It has the same
     abstract root system as the original Cartan matrix, although the
     companion package supplies its own representation objects.
+  Example
+    B = cartanB 3;
+    toLieAlgebra B
+  Text
+    This is $\mathfrak{so}_7$, of type $B_3$, not its Langlands dual
+    $\mathfrak{sp}_6$ of type $C_3$. To continue with the named commands
+    of LieAlgebraRepresentations, load that package explicitly with
+    @TT "needsPackage \"LieAlgebraRepresentations\""@.
 Caveat
   Only finite-type Cartan matrices are accepted; affine and indefinite
   types will raise an error because
@@ -8816,8 +8841,9 @@ Description
     A @TO CartanDatum@, @TO Realization@, or @TO RootDatum@ is also
     accepted, with the same Cartan-matrix conversion and labeling convention.
   Text
-    The companion package is loaded when this function is first called.
-    The resulting object can be used in that package:
+    WeylGroups is loaded with KacMoody, but this conversion does not
+    change which package's commands are active. To use WeylGroups commands
+    by name, load it explicitly with @TT "needsPackage \"WeylGroups\""@.
   Example
     C = cartanB 3;
     R = toRootSystem C
@@ -10734,6 +10760,46 @@ Description
     $k\lambda$; the bound does not become $kH$.  Powers above one of an
     arbitrary partial expansion obey the same restrictions as its product.
   Text
+    Equality compares the root datum, the meaning of the weight coordinates,
+    the exact or partial status, and the coefficients. For partial
+    characters it also compares the range of known coefficients, including
+    known zeros. The steps used to obtain an answer do not by themselves
+    make two characters different.
+  Example
+    V = moduleCharacter(vermaModule(D,{1,0}),Depth=>2)
+    (V+V == 2*V,dualCharacter dualCharacter V == V)
+  Text
+    Both answers are true. Adding this partial character to itself agrees
+    with multiplying its coefficients by $2$, and passing to the dual
+    twice recovers both its coefficients and their known range.
+  Example
+    Mzero = integrableHighestWeightModule(D,{0,0});
+    Vzero0 = moduleCharacter(Mzero,Depth=>0)
+    Vzero2 = moduleCharacter(Mzero,Depth=>2)
+    (characterTerms Vzero0 == characterTerms Vzero2,Vzero0 == Vzero2)
+  Text
+    The outputs are $(true,false)$. Both stored sums are $1$, but the second
+    calculation has determined additional zero coefficients through root
+    depth $2$. Standard root-depth ranges, their Weyl and dual images,
+    and their restrictions are compared in the same coordinates. In rank
+    one, shifting the highest weight and depth can describe the very same
+    unknown ray. In higher rank one unknown region can also be contained
+    in another.
+  Example
+    Z = lambda -> (v := moduleCharacter(vermaModule(D,lambda),Depth=>0); v-v);
+    Z({0,0}) + Z({1,1}) == Z({1,1})
+  Text
+    The answer is true. Each difference is zero wherever its coefficient
+    is known. In type $A_2$, $(1,1)=\alpha_1+\alpha_2$, so every weight
+    strictly below $(0,0)$ in the root order is already strictly below
+    $(1,1)$. Adding the first difference therefore loses no information
+    from the second. A region can also be covered by several cones
+    together. When containment is not evident, the comparison tests
+    whether there is a weight in one unknown region but not the other.
+    This can take longer for unions of cones pointing in different
+    directions. Unequal partial characters need not come from different
+    modules: one computation may simply determine more coefficients.
+  Text
     A character is written as a sum of exponentials of weights.  Thus
     @TT "2*e^(1, -1)"@ in finite type means that the weight space of
     $\omega_1-\omega_2$ has dimension $2$, and a constant term $2$
@@ -10763,8 +10829,8 @@ Description
     constructed finite tally.  A truncated character must instead use
     @TT "CharacterStatus=>\"Truncated\""@ and supply a
     @TT "Truncation"@ table describing the partial expansion.
-    For a directly entered table, only the coefficients explicitly
-    supplied are taken as known.  Writing a depth in this table does not
+    For a directly entered table with a description of your own, only the
+    listed nonzero coefficients are taken as known. Writing a depth does not
     establish that missing coefficients vanish; the highest-weight
     character commands compute their own complete depth ranges.
     A character is exact only when the computed expansion is complete;
@@ -10996,7 +11062,11 @@ Description
     character and rejects a truncated Levi character.
     Equality of Levi weights includes the Levi datum and the central
     character.  Equality of Levi characters also includes their terms
-    and exact or truncated status.
+    and exact or truncated status. For partial characters, their known
+    coefficient ranges are compared in the ambient weight coordinates,
+    as in @TO "Formal and completed characters"@; the history of a
+    restriction or an arithmetic operation does not distinguish equal
+    answers.
   Text
     Restricted characters admit the usual character arithmetic:
     @TT "CL+DL"@, @TT "CL-DL"@, @TT "-CL"@, integer multiples,
@@ -11119,9 +11189,9 @@ Description
     $$m_\lambda(\mu)=
       \sum_{w\in W}(-1)^{\ell(w)}
       P\bigl(w(\lambda+\rho)-(\mu+\rho)\bigr).$$
-    The partition numbers must be computed for every argument appearing in
-    this sum.  Some arguments can have simple-root coordinates larger than
-    those of $\lambda-\mu$, even when their contributions eventually cancel.
+    If $\mu=\lambda$, the highest-weight space has dimension one and no sum
+    is needed. Otherwise only arguments that are nonnegative integral sums
+    of simple roots contribute.
   Example
     (kostantWeightMultiplicity(A,{1,1},{0,0}),
      weightMultiplicity(A,{1,1},{0,0},Strategy=>"Freudenthal"),
@@ -15428,8 +15498,8 @@ Inputs
   C:Thing
     a FormalCharacter or LeviFormalCharacter
 Outputs
-  T:HashTable
-    weight keys with their integral coefficients
+  T:VirtualTally
+    weights with their nonzero integer coefficients
 Description
   Text
     This table records the displayed terms of the character. An exact
@@ -15445,6 +15515,13 @@ Description
     The three keys $(1,0)$, $(-1,1)$, and $(0,-1)$ each have coefficient $1$.
     Thus the character is $e^{(1,0)}+e^{(-1,1)}+e^{(0,-1)}$, where the tuples
     are Dynkin labels.
+  Example
+    T = characterTerms C;
+    T - 2*T
+  Text
+    Each weight now has coefficient $-1$: subtracting two copies of the
+    character from one gives $-C$. The same signed arithmetic works with the
+    weight coefficients of a reductive Levi.
 SeeAlso
   "Formal and completed characters"
   characterCoefficient
@@ -16248,7 +16325,9 @@ Outputs
 Description
   Text
     Kostant's formula alternates positive-root partition numbers over the Weyl
-    group, evaluated at $w(\lambda+\rho)-(\mu+\rho)$. Complete weights are
+    group, evaluated at $w(\lambda+\rho)-(\mu+\rho)$. For $\mu=\lambda$ the
+    answer is $1$, the dimension of the highest-weight line; no Weyl group
+    enumeration is needed. Complete weights are
     compared in the full realization: a different central character gives
     multiplicity zero even if Dynkin labels agree. In a nonminimal
     realization, complete weights and Dynkin-label classes cannot be mixed.
@@ -18713,14 +18792,21 @@ Description
     The reconstructed expansion is
     $e^{(2)}+e^{(0)}+e^{(-2)}+\cdots$, complete through root depth $2$.
     It is not an exact finite character, and the coefficient at $(0)$
-    is $1$.  Reusing the description is appropriate here because the
-    supplied terms are exactly the same checked table; it must not be
-    used to assert completeness for an unrelated or incomplete table.
+    is $1$. The computed range can be reused with the same root datum and
+    the same coefficients, even if the terms are entered in a different
+    order. Changing a coefficient, dropping a term, or editing the
+    computed range is rejected; the original computation does not certify
+    the altered expansion.
   Text
     When entering a partial character by hand, a general description can
     be supplied without asserting a coefficient certificate.  Such a
-    description does not make absent weights known.  Usually it is simpler
-    to compute a larger portion with @TO moduleCharacter@ and @TO Depth@.
+    description does not make absent weights known. In particular, a
+    hand-written table cannot certify a depth bound by setting
+    @TT "\"coefficientCertificate\" => true"@. For a singular Cartan matrix,
+    Dynkin labels alone do not determine depth: in affine type a weight
+    and its translate by the null root have identical labels. Use a
+    highest weight with full realization coordinates and compute the
+    desired range with @TO moduleCharacter@ and @TO Depth@.
 SeeAlso
   formalCharacter
   CharacterStatus
