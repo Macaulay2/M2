@@ -43,12 +43,11 @@ unsigned int MonomialIdeal::computeHashValue() const
 void MonomialIdeal::remove_MonomialIdeal()
 {
   delete_mi_node(mi);
-  if ((count % 2) == 1) delete mi_stash;
 }
 
 Nmi_node *MonomialIdeal::new_internal_mi_node(int v, int e, Nmi_node *d)
 {
-  Nmi_node *p = reinterpret_cast<Nmi_node *>(mi_stash->new_elem());
+  Nmi_node *p = newarray_clear(Nmi_node, 1);
   p->var = v;
   p->exp = e;
   p->left = nullptr;
@@ -61,7 +60,7 @@ Nmi_node *MonomialIdeal::new_internal_mi_node(int v, int e, Nmi_node *d)
 
 Nmi_node *MonomialIdeal::new_leaf_mi_node(int v, int e, Bag *b)
 {
-  Nmi_node *p = reinterpret_cast<Nmi_node *>(mi_stash->new_elem());
+  Nmi_node *p = newarray_clear(Nmi_node, 1);
   p->var = v;
   p->exp = e;
   p->left = nullptr;
@@ -85,31 +84,20 @@ void MonomialIdeal::delete_mi_node(Nmi_node *p)
     }
   else
     delete p->baggage();
-  mi_stash->delete_elem(p);
+  freemem(p);
 }
 
-MonomialIdeal::MonomialIdeal(const PolynomialRing *RR, stash *mi_stash0)
-    : R(RR), mi(nullptr), count(0), mi_stash(mi_stash0)
+MonomialIdeal::MonomialIdeal(const PolynomialRing *RR)
+    : R(RR), mi(nullptr), count(0)
 {
-  if (mi_stash == nullptr)
-    {
-      count = 1;
-      mi_stash = new stash("mi_node", sizeof(Nmi_node));
-    }
 }
 
 
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
                              VECTOR(Bag *) &elems, // we now own these elements
-                             VECTOR(Bag *) &rejects, // except for the ones we place into here
-                             stash *mi_stash0)
-    : R(R0), mi(nullptr), count(0), mi_stash(mi_stash0)
+                             VECTOR(Bag *) &rejects) // except for the ones we place into here
+    : R(R0), mi(nullptr), count(0)
 {
-  if (mi_stash == nullptr)
-    {
-      count = 1;
-      mi_stash = new stash("mi_node", sizeof(Nmi_node));
-    }
 
   // create a vector of <simple degree, index> for each element of 'elems'.
   // sort them in increasing simple degree.
@@ -138,15 +126,9 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
 }
 
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
-                             VECTOR(Bag *) &elems, // we now own these elements
-                             stash *mi_stash0)
-    : R(R0), mi(nullptr), count(0), mi_stash(mi_stash0)
+                             VECTOR(Bag *) &elems) // we now own these elements
+    : R(R0), mi(nullptr), count(0)
 {
-  if (mi_stash == nullptr)
-    {
-      count = 1;
-      mi_stash = new stash("mi_node", sizeof(Nmi_node));
-    }
 
   // create a vector of <simple degree, index> for each element of 'elems'.
   // sort them in increasing simple degree.
@@ -566,7 +548,7 @@ int MonomialIdeal::debug_check(Nmi_node *const p,
 
 void MonomialIdeal::debug_check() const
 {
-  if (count <= 1)
+  if (count == 0)
     {
       assert(mi == nullptr);
       return;

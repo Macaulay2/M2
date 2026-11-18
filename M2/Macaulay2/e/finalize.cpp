@@ -223,7 +223,6 @@ M2_string engineMemory()
   buffer o;
   try
     {
-      stash::stats(o);
       o << newline;
 
       o << "Finalizations of new resolutions:" << newline;
