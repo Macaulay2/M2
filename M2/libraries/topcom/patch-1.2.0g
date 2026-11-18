@@ -1,0 +1,36 @@
+From 40b542e0bcfbbaaadba880e8f75c62f798827013 Mon Sep 17 00:00:00 2001
+From: Doug Torrance <dtorrance9@gatech.edu>
+Date: Thu, 16 Jul 2026 09:46:55 -0400
+Subject: [PATCH] Don't try to run ebb when not building html docs
+
+---
+ doc/Makefile.am | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/doc/Makefile.am b/doc/Makefile.am
+index 0e96fbc..7ec426b 100644
+--- a/doc/Makefile.am
++++ topcom-1.2.0g/doc/Makefile.am
+@@ -17,8 +17,10 @@ CSS_MASTER    = $(builddir)/$(MASTER).css
+ 
+ if USE_MAKE4HT
+   MAKE4HT = make4ht -f html5+dvisvgm_hashes -c $(SRC_CFG)
++  EBB     = ebb
+ else
+   MAKE4HT = @echo "skipping html-doc: missing make4ht - html cannot be build by make4ht"
++  EBB     = true
+ endif
+ 
+ RM      = rm -f
+@@ -37,7 +39,7 @@ $(HTML_MASTER): $(SRC_MASTER) $(SRC_FIGURES) $(XBB_FIGURES) $(SRC_CFG)
+ 	$(MAKE4HT) $(SRC_MASTER) "mathml,mathjax"
+ 
+ $(XBB_FIGURES): $(SRC_FIGURES)
+-	ebb -x $< -O > $@
++	$(EBB) -x $< -O > $@
+ 
+ $(PDF_MASTER): $(SRC_MASTER) $(SRC_FIGURES)
+ 	$(PDFLATEX) $(SRC_MASTER)
+-- 
+2.43.0
+
