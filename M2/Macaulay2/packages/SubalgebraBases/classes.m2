@@ -8,6 +8,12 @@
 -- It also contains in its cache a SAGBIBasis
 -- object which is the 'furthest-advanced'
 -- computation data
+
+-*
+-------------------------------
+-- Moved to Subrings package --
+-------------------------------
+
 Subring = new Type of HashTable
 
 -- Subring constructor
@@ -56,6 +62,8 @@ net Subring := S -> (
     A := presentationRing S;
     toString(A) | ", subring of " | toString(R)
 )
+
+*-
 
 -- SAGBIBasis computation object data-type that inherits from a HashTable
 -- A SAGBIBasis represents a partial or complete SAGBI computation.
