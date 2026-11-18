@@ -356,7 +356,7 @@ Description
 SeeAlso
     "Working with Ext"
     yonedaMap',
-    (Ext, RingMap, Module, Module)
+    (Ext, ZZ, RingMap, Module, Module)
     (yonedaMap, Matrix)
     (yonedaExtension, Matrix)
     (yonedaExtension', RingMap, Complex)
