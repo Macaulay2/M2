@@ -343,7 +343,7 @@ hStarPolynomial = method(
 
 hStarPolynomial(Polyhedron, Ring) := RingElement => opts -> (P, R) -> (
     if numgens R < 1 then error("ring must have at least one generator");
-    if not P#cache#?"ehrhartSeriesNumerator" then (
+    if not P#cache#?"ehrhartSeriesNumerator" or not P#cache#"ring" === R then (
         if opts.Strategy == "M2" then (
             hStarPolynomialM2(P, R);
             )
@@ -402,6 +402,7 @@ hStarPolynomialM2(Polyhedron, Ring) := (P, R) -> (
     f := (p*r) % t^((n+1)*dnom);
     P#cache#"ehrhartSeriesNumerator" = f;
     P#cache#"ehrhartSeriesDenominator" = rhold;
+    P#cache#"ring" = R;
     (f, rhold)
     )
 
@@ -423,6 +424,7 @@ hStarPolynomialNormaliz(Polyhedron, Ring) := (P, R) -> (
     h := (d // r) * f;
     P#cache#"ehrhartSeriesNumerator" = h;
     P#cache#"ehrhartSeriesDenominator" = D;
+    P#cache#"ring" = R;
     (h, D)
     )
 
