@@ -62,12 +62,16 @@ isPeriod(Matrix, ZZ) := Boolean => (M, q) -> (
 -- same quasi-polynomial as M
 collapseMatrix = method()
 collapseMatrix Matrix := Matrix => M -> (
-    q := for p from 1 to (numRows M)//2 do (
-        if isPeriod(M, p) then break p;
-        );
-		if q =!= null then (
-        M^{0 .. q-1}
-        ) else M
+    if M_{0} == 0 and numColumns M > 1 then collapseMatrix M_{1 .. numColumns M - 1}
+    else (
+        q := for p from 1 to (numRows M)//2 do (
+            if isPeriod(M, p) then break p;
+            );
+        if q =!= null then (
+            M^{0 .. q-1}
+            )
+        else M
+        )
     )
 
 
@@ -165,18 +169,24 @@ display(QuasiPolynomial) := opts -> QP -> (
     if opts.Truncate === null or QP#period - 2 <= opts.Truncate or QP#period < 3 then (
         if QP#period == 1 then (
             sum for d in 0 .. (numColumns QP#coefficients)-1 list (
-                (QP#coefficients)_(0,d) expression if d < (numColumns QP#coefficients)-1 then (
-                    t^(numColumns (QP#coefficients)-d-1)
+                if (QP#coefficients)_(0,d) != 0 then (
+                    (QP#coefficients)_(0,d) expression if d < (numColumns QP#coefficients)-1 then (
+                        t^(numColumns (QP#coefficients)-d-1)
+                        )
+                    else ""
                     )
-                else ""
+                else continue
                 )
             )
         else (
             sum for d in 0 .. (numColumns QP#coefficients)-1 list (
-                (QP#coefficients)_{d} expression if d < (numColumns QP#coefficients)-1 then (
-                    t^(numColumns (QP#coefficients)-d-1)
+                if (QP#coefficients)_{d} != 0 then (
+                    (QP#coefficients)_{d} expression if d < (numColumns QP#coefficients)-1 then (
+                        t^(numColumns (QP#coefficients)-d-1)
+                        )
+                    else ""
                     )
-                else ""
+                else continue
                 )
             )
         )
