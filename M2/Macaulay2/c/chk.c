@@ -292,7 +292,9 @@ static void opendb() {
     if (maxn < n) maxn = n;
     free(value.dptr);
     numkeys++;
-    key = gdbm_nextkey(db,key);
+    datum nextkey = gdbm_nextkey(db,key);
+    free(key.dptr);
+    key = nextkey;
   }
   assert( numkeys == maxn );
 }
@@ -304,7 +306,9 @@ void printtypecodes() {
   while (key.dptr != NULL) {
     datum value = gdbm_fetch(db,key);
     printf("#define %s_typecode %s\n",datumtostring(key),datumtostring(value));
-    key = gdbm_nextkey(db,key);
+    datum nextkey = gdbm_nextkey(db,key);
+    free(key.dptr);
+    key = nextkey;
   }
 }
 
