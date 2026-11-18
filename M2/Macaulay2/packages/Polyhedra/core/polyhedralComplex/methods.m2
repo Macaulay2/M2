@@ -15,12 +15,28 @@ polyhedra(ZZ,PolyhedralComplex) := (k,PC) -> (
 
 -- PURPOSE : Giving the generating Polyhedra of the PolyhedralComplex
 --   INPUT : 'PC'  a PolyhedralComplex
---  OUTPUT : a List of Cones
-maxPolyhedra = method(TypicalValue => List)
-maxPolyhedra PolyhedralComplex := PC -> getProperty(PC, generatingObjects)
+--  OUTPUT : a List of Polyhedra (or, via maxPolyhedra(PC, List), of their
+--           (vertex,ray) index list pairs)
+-- See maxCones in core/fan/methods.m2 for why Dispatch is {Thing, Type}.
+maxPolyhedra = method(TypicalValue => List, Dispatch => {Thing, Type})
+maxPolyhedra PolyhedralComplex := PC -> maxPolyhedra(PC, List)
+maxPolyhedra(PolyhedralComplex, List) := (PC, List) -> getProperty(PC, generatingObjects)
+-- Materialized Polyhedron objects, parallel-indexed to maxPolyhedra(PC, List).
+-- See maxCones(Fan, Cone) in core/fan/methods.m2 for the same idea.
+maxPolyhedra(PolyhedralComplex, Polyhedron) := (PC, Polyhedron) -> (
+   accessor := (cacheValue (symbol maxPolyhedra => Polyhedron)) (
+      PC -> (
+         vertPC := vertices PC;
+         raysPC := rays PC;
+         linPC := linealitySpace PC;
+         apply(maxPolyhedra PC, m -> convexHull(vertPC_(m#0), raysPC_(m#1), linPC))
+      )
+   );
+   accessor PC
+)
 
 
-vertices PolyhedralComplex := PC -> getProperty(PC, computedVertices)
+-- vertices PolyhedralComplex is installed in core/polyhedralComplex/properties.m2
 
 
 skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
@@ -41,11 +57,11 @@ maxObjects PolyhedralComplex := PC -> getProperty(PC, generatingObjects)
 objectsOfDim(ZZ, PolyhedralComplex) := (k,PC) -> (
 	-- Checking for input errors
 	if k < 0 or dim PC < k then error("k must be between 0 and the dimension of the polyhedral object family.");
-	L := select(getProperty(PC, honestMaxObjects), C -> dim C >= k);
+	L := select(maxPolyhedra(PC, Polyhedron), C -> dim C >= k);
 	-- Collecting the 'k'-dim faces of all generating cones of dimension greater than 'k'
 	unique flatten apply(L, C -> faces(dim(C)-k,C)))
 
 
 isWellDefined PolyhedralComplex := PC -> getProperty(PC, isWellDefined)
 
-fan (PolyhedralComplex) := PC -> getProperty(PC, underlyingFan)
+fan (PolyhedralComplex) := PC -> getUnderlyingFan PC

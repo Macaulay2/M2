@@ -111,7 +111,7 @@ doc ///
       facets
       hyperplanes
       linealitySpace
-      (rays, PolyhedralObject)
+      rays
       vertices
 
 
