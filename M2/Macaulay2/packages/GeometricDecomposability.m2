@@ -84,7 +84,7 @@ findLexCompatiblyGVDOrders = method(
         )
 findLexCompatiblyGVDOrders(Ideal) := List => opts -> I -> (
 
-        -- if opts.MaxNumTerms < infinity and not opts.OnlyPrefix then error "incompatible inputs: cannot choose both MaxNumTerms < infinity and OnlyPrefix=>false";
+        if I == 0 then return {{}};
 
         if isGVDBaseCase I then (
                 if opts.OnlyPrefix then return apply(support I, x -> {x}) else return permutations gens ring I
@@ -95,7 +95,6 @@ findLexCompatiblyGVDOrders(Ideal) := List => opts -> I -> (
 	-- compute the valid "prefixes" (that is, any linear extension gives a gvd-compatible lex ordering)
 	orderPrefixes := delete({}, removeNesting findLexGVDOrders({I}, supp, opts.MaxNumTerms, {}, 
 		CheckUnmixed => opts.CheckUnmixed, 
-                OnlyPrefix => opts.OnlyPrefix,
                 UniversalGB => opts.UniversalGB,
                 Verbose => opts.Verbose
                 ));
@@ -107,7 +106,7 @@ findLexCompatiblyGVDOrders(Ideal) := List => opts -> I -> (
         if opts.MaxNumTerms == infinity then (
 	        flatten apply(orderPrefixes, L -> apply(permutations(supp - set L), join_L))
                 ) else (
-                flatten apply(orderPrefixes, L -> apply(subsets(supp - set L, opts.MaxNumTerms - #L), join_L))
+                flatten apply(orderPrefixes, L -> apply(flatten apply(subsets(supp - set L, opts.MaxNumTerms - #L), permutations), join_L))
                 -- should always have opts.MaxNumTerms >= #L from the check in findLexGVDOrders
                 )
         )
@@ -116,7 +115,6 @@ findLexCompatiblyGVDOrders(Ideal) := List => opts -> I -> (
 findLexGVDOrders = method(
         Options => {
 		CheckUnmixed => true, 
-                OnlyPrefix => true,
                 UniversalGB => false,
                 Verbose => false
 		}
@@ -130,7 +128,7 @@ findLexGVDOrders(List, List, Number, List) := List => opts -> (ideals, givenSupp
 
         if #termOrder >= maxNumTerms then return termOrder;
 
-	if #ideals == 0 then print("error -- was passed an empty list");
+	if #ideals == 0 then error "empty list given as input";
 
 	if all(ideals, I -> isGVDBaseCase I) then return termOrder;
         nontrivialIdeals := select(ideals, I -> not isGVDBaseCase I);
@@ -138,11 +136,13 @@ findLexGVDOrders(List, List, Number, List) := List => opts -> (ideals, givenSupp
         variablesToCheck := givenSupport - set termOrder;
         oneSteps := new HashTable from apply(variablesToCheck, y -> 
                 {y, apply(nontrivialIdeals, I -> (
-                        if not isMember(y, support I) then (true, I) else oneStepGVD(I, y,
+                        oneStep := if not isMember(y, support I) then (true, I) else oneStepGVD(I, y,
                                 CheckUnmixed => opts.CheckUnmixed,
                                 UniversalGB => opts.UniversalGB,
                                 Verbose => opts.Verbose
-                                )
+                                );
+                        if not first oneStep then break {oneStep};
+                        oneStep
                         ))}
                 );
 
@@ -158,7 +158,6 @@ findLexGVDOrders(List, List, Number, List) := List => opts -> (ideals, givenSupp
                         maxNumTerms,
                         join(termOrder, {y}),
                         CheckUnmixed => opts.CheckUnmixed, 
-                        OnlyPrefix => opts.OnlyPrefix,
                         UniversalGB => opts.UniversalGB,
                         Verbose => opts.Verbose
                         )
@@ -711,15 +710,12 @@ isIdealSquarefreeInY(Ideal, RingElement) := Boolean => (I, y) -> (
 inTruncatedList = method()
 inTruncatedList(List, List) := Boolean => (L, LL) -> (
         -- LL is a list of lists
-        -- return True if: for some list l of length n in LL, the first n terms of L are exactly l
-        for l in LL do (
-                n := #l ;
-                for i from 0 to n-1 do (
-                        if L_i != l_i then break;
-                        return true;
-                        );
+        -- return true when some nonempty list in LL is a prefix of L
+        return any(LL, l -> 
+                #l > 0
+                and #l <= #L
+                and all(#l, i -> L_i == l_i)
                 );
-        return false;
         )
 
 
@@ -798,17 +794,33 @@ printIf(Boolean, String) := (bool, str) -> (
 
 
 removeNesting = L -> (
-        if not instance(L, List) then {L}
-        else if #L == 0 then {}
-        else (
-                first := L#0;
-                rest := drop(L, 1);
-                if instance(first, List) and #first > 0 and instance(first#0, List) then
-                removeNesting(join(toList first, rest))
-                else
-                prepend(first, removeNesting(rest))
+        if not instance(L, List) then return {L};
+
+        iteratorStack := new MutableList from {iterator L};
+        depth := 0;
+
+        while depth >= 0 list (
+                entry := next iteratorStack#depth;
+
+                -- case: no further nesting
+                if entry === StopIteration then (
+                        depth = depth - 1;
+                        continue;
+                        );
+
+                -- case: another layer of nesting 
+                if (instance(entry, List)
+                        and #entry > 0
+                        and instance(entry#0, List)) then (
+                        depth = depth + 1;
+                        iteratorStack#depth = iterator entry;
+                        continue;
+                        );
+
+                -- now return 
+                entry
+                )
         )
-)
 
 
 
@@ -2048,7 +2060,7 @@ doc///
                         Text
                                 Whether to return only the sufficient prefix of lex orderings of variables to compatibly geometrically 
                                 vertex decompose the given ideal.
-                                If one sets {\tt OnlyPrefix=>true}, then all extensions of these prefixes are also returned.
+                                If one sets {\tt OnlyPrefix=>false}, then all extensions of these prefixes are also returned.
                         Example
                                 R = QQ[x, y];
                                 I = ideal(x, y);
@@ -2418,6 +2430,96 @@ TEST///  -- [KR, Example 4.10]
 R = QQ[x..z,w,r,s];
 I = ideal( y*(z*s - x^2), y*w*r, w*r*(x^2 + s^2 + z^2 + w*r) );
 assert( sub(oneStepGVDNyI(I, y), R) == ideal(x^2*w*r+w*r*s^2+z^2*w*r+w^2*r^2) )
+///
+
+
+--------------------------------------------------------------------------------
+-- Regression: inTruncatedList checks the full prefix, not just the first
+-- element.  An earlier version of the function had the `return true` inside
+-- the inner loop and so returned true whenever the first elements matched.
+--------------------------------------------------------------------------------
+TEST///
+debug GeometricDecomposability
+assert(not inTruncatedList({1,2,3}, {}))
+assert(inTruncatedList({1,2,3}, {{1,2,3}}))
+assert(inTruncatedList({1,2,3}, {{1,2}}))
+-- first elements match but later do not -- the buggy version returned true
+assert(not inTruncatedList({1,2,3}, {{1,5}}))
+assert(inTruncatedList({1,2,3}, {{5,5},{1,2}}))
+assert(not inTruncatedList({1,2,3}, {{2}}))
+///
+
+
+--------------------------------------------------------------------------------
+-- Test the deletion and link aliases
+--------------------------------------------------------------------------------
+TEST///
+-- the exported names deletion and link are aliases for oneStepGVDNyI and
+-- oneStepGVDCyI respectively
+assert(deletion === oneStepGVDNyI)
+assert(link === oneStepGVDCyI)
+R = QQ[a,b,c,d];
+J = ideal(a*b - c*d, a*c - b*d);
+assert(deletion(J, a) == oneStepGVDNyI(J, a))
+assert(link(J, a) == oneStepGVDCyI(J, a))
+///
+
+
+--------------------------------------------------------------------------------
+-- Test findOneStepGVD option overrides (OnlySquarefree, OnlyDegenerate,
+-- OnlyNondegenerate)
+--------------------------------------------------------------------------------
+TEST///
+S = QQ[a,b,c,d];
+J = ideal(a*b - c*d, a*c - b^2);
+assert(findOneStepGVD J == {a, c, d})
+-- OnlySquarefree takes the fast path and accepts the same indeterminates here
+assert(findOneStepGVD(J, OnlySquarefree => true) == {a, c, d})
+-- OnlyNondegenerate keeps all the nondegenerate one-step indeterminates
+assert(findOneStepGVD(J, OnlyNondegenerate => true) == {a, c, d})
+-- OnlyDegenerate is empty for this ideal
+assert(findOneStepGVD(J, OnlyDegenerate => true) == {})
+-- using both options simultaneously is an error
+assert(try (findOneStepGVD(J, OnlyDegenerate => true, OnlyNondegenerate => true); false) else true)
+///
+
+
+--------------------------------------------------------------------------------
+-- Test isGVD option overrides (CheckCM values, IsIdealHomogeneous,
+-- IsIdealUnmixed, CheckUnmixed, UniversalGB)
+--------------------------------------------------------------------------------
+TEST///
+R = QQ[x..z,w,r,s];
+I = ideal(y*(z*s - x^2), y*w*r, w*r*(z^2 + z*x + w*r + s^2));
+-- I is GVD ([KR, Example 2.16])
+gvd = isGVD I;
+assert(gvd)
+-- The three CheckCM values "always", "once", "never" all agree on this ideal
+assert(isGVD(I, CheckCM => "always") == gvd)
+assert(isGVD(I, CheckCM => "once") == gvd)
+assert(isGVD(I, CheckCM => "never") == gvd)
+-- An unrecognized CheckCM value is an error
+assert(try (isGVD(I, CheckCM => "bogus"); false) else true)
+-- IsIdealHomogeneous and IsIdealUnmixed bypass internal checks; same answer
+assert(isGVD(I, IsIdealHomogeneous => true) == gvd)
+assert(isGVD(I, IsIdealUnmixed => true) == gvd)
+-- CheckUnmixed => false skips the unmixed check
+assert(isGVD(I, CheckUnmixed => false) == gvd)
+-- UniversalGB => true on a monomial ideal, whose generators are a UGB
+J = ideal(x*y, x*z);
+assert(isGVD(J, UniversalGB => true) == isGVD J)
+///
+
+
+--------------------------------------------------------------------------------
+-- The chain isLexCompatiblyGVD => isGVD => isWeaklyGVD on a concrete ideal
+--------------------------------------------------------------------------------
+TEST///
+R = QQ[x..z];
+I = ideal(x-y, x-z);
+assert(isLexCompatiblyGVD(I, {x,y,z}))
+assert(isGVD I)
+assert(isWeaklyGVD I)
 ///
 
 
