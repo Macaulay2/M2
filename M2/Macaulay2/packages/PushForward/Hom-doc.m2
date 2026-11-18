@@ -324,7 +324,7 @@ Outputs
         which represents the corresponding element in the Ext module
 Description
     Text
-        This is analogous to @TO yonedaMap'@ wihtout passing the raing map $f$.
+        This is analogous to @TO yonedaMap'@ without passing the raing map $f$.
         The difference is that the Ext class produced is in the $S$-module @TT
         "Ext^d(f, M, N)"@. Indeed, the comparison map produced below shows that
         these modules are isomorphic over $S$ in a way which is consistent with
