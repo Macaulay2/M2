@@ -355,7 +355,7 @@ Description
         assert(phi == id_E)
 SeeAlso
     "Working with Ext"
-    yonedaMap',
+    (yonedaMap', ComplexMap)
     (Ext, ZZ, RingMap, Module, Module)
     (yonedaMap, Matrix)
     (yonedaExtension, Matrix)
