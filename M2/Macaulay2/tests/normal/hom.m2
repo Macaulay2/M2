@@ -319,7 +319,7 @@ Ext^1(M,M)   -- mismatch here, because trimming of result is ignored
  Hom(X, X);
  hmap' = homomorphism h
  assert((source hmap').cache.name == "X")
- assert((target hmap').cache.name == "Y") -- fails
+ assert((target hmap').cache.name == "Y")
 
 -----------------------------------------------------------------------------
 -- tests for giving DegreeLimit

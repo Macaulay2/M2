@@ -807,6 +807,11 @@ assert(phi * phi^-1 == id_E')
 assert(phi^-1 * phi == id_E)
 ///
 
+-*
+todo - fix this
+This test does not work because the free modules you need to Hom out of in the
+computation of Ext are not finitely generated over S and so cannot be pushed
+forward.
 TEST ///
 -- Compute Ext over commutative ring non-finite map but finite modules
 -- compare pushFwd(f, Ext^i(M, N)) with Ext^i(f, M, N)
@@ -817,13 +822,17 @@ f = map(R, S, {s^2})
 I = ideal vars R
 M = R^1/I
 N = I / I^3
-
--- this does not work yet need to deal with modeling fg Hom module even in cases where the source is not fg (but target is)
+E := Ext^1(f, M, N);
+E' := pushFwd(f, Ext^1(M, N));
+imgs = matrix {for i from 0 to numgens E - 1 list pushforward(E', yonedaExtension' yonedaExtension E_i)}
+phi = map(E', E, imgs)
+assert(phi * phi^-1 == id_E')
+assert(phi^-1 * phi == id_E)
 ///
+*-
 
 TEST ///
 -- yonedaMap'(RingMap, ComplexMap)
--- over noncommutative rings
 kk = ZZ/11
 R = kk[s, t]/ ideal {s^2, t^3}
 f = map(R, kk)
@@ -840,6 +849,27 @@ imgs = matrix {for i from 0 to numgens E - 1 list yonedaMap'(f, yonedaMap(E_{i},
 phi = map(E, E, imgs)
 assert(phi == id_E)
 ///
+
+TEST ///
+-- yonedaMap'(RingMap, ComplexMap)
+-- over skew-commutative ring
+kk = ZZ/11
+R = kk[s, t, SkewCommutative => true]
+f = map(R, kk)
+I = ideal vars R
+M = R^1/I
+N = I / I^3
+E = Ext^1(f, M, N)
+imgs = matrix {for i from 0 to numgens E - 1 list yonedaMap'(f, yonedaMap(E_{i}, LengthLimit => 2))}
+phi = map(E, E, imgs)
+assert(phi == id_E)
+
+E = Ext^2(f, M, N)
+imgs = matrix {for i from 0 to numgens E - 1 list yonedaMap'(f, yonedaMap(E_{i}, LengthLimit => 2))}
+phi = map(E, E, imgs)
+assert(phi == id_E)
+///
+
 
 TEST ///
 -- Compute Ext over skew-symmetric algebra
