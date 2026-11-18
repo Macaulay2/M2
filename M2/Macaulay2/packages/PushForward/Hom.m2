@@ -34,7 +34,7 @@ Hom(RingMap, Module, Module) := Module => opts -> (f, M, N) -> (
         -- early return in this degenerate case. cache contracts are fulfilled
         -- by H' using the usual Hom construction without f.
         if M == 0 or N == 0 then (
-            remove(Y, (computing, Hom, RingMap, Module, Module));
+            remove(M.cache, (computing, Hom, RingMap, Module, Module));
             return H';
         );
 
