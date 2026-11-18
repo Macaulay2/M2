@@ -143,6 +143,7 @@ Description
     Text
         Compute the the abelian group of endomorphisms of $M$ as an $S$-module.
     Example
+        kk = ZZ/101
         R = kk[a, b] / b^2
         S = kk[t]
         f = map(R, S, {a^2})
