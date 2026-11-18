@@ -4049,7 +4049,7 @@ TEST ///
     assert((dynkinDiagramData(rootDatum emptyDatum))#"edges" === {});
 ///
 
--- Test 0b: cyclic attachments must not be mistaken for D/E-shaped trees.
+-- Test 0b: draw triangles with a leaf without mistaking a cycle for a tree.
 TEST ///
     cyclicAttachmentsDiagram := {
         matrix{{2,-1,-1,0},{-1,2,-1,0},{-1,-1,2,-1},{0,0,-1,2}},
@@ -4058,13 +4058,49 @@ TEST ///
     };
     -- Each graph has just one vertex of degree 3. Its other two arms
     -- reconnect, so traversing them as disjoint tree branches is incorrect.
+    triangleString := (upper,lower) -> concatenate {
+        upper,newline,"       ",ascii{92},"   /",newline,
+        "        ",ascii{92}," /",newline,"         ",lower};
+    dougsDiagram := matrix{{2,-1,-1,-1},{-1,2,-1,0},{-1,-1,2,0},{-1,0,0,2}};
+    assert(dynkinDiagram dougsDiagram === triangleString("4 --- 1 --- 2","3"));
     assert(dynkinDiagram(cyclicAttachmentsDiagram#0) ===
-        "1--2, 1--3, 2--3, 3--4");
+        triangleString("4 --- 3 --- 1","2"));
     assert(dynkinDiagram(cyclicAttachmentsDiagram#1) ===
         "1--2, 1--4, 2--3, 2--5, 3--4");
+    -- Read the endpoints from the diagram itself. The two diagonals
+    -- must start under the correct upper nodes, converge one column at
+    -- a time and meet at the center of the lower label.
+    triangleWords := s -> select(separate(" ",s),w -> w =!= "");
+    checkTriangle := (s,names,expectedEdges) -> (
+        rows := lines s;
+        assert(#rows >= 3);
+        upper := triangleWords first rows;
+        lower := triangleWords last rows;
+        assert(#upper == 5 and #lower == 1);
+        assert(upper#1 === "---" and upper#3 === "---");
+        vs := apply({upper#0,upper#2,upper#4,lower#0},w ->
+            1+position(names,n -> n === w));
+        assert(sort vs === {1,2,3,4});
+        drawn := apply({{0,1},{1,2},{1,3},{2,3}},ij ->
+            sort{vs#(ij#0),vs#(ij#1)});
+        assert(sort drawn === sort apply(expectedEdges,e -> take(e,2)));
+        center := (row,w) -> (#w-1)//2 +
+            position(toList(0..#row-#w),j -> substring(j,#w,row) === w);
+        left := center(first rows,upper#2);
+        right := center(first rows,upper#4);
+        for j from 1 to #rows-2 do (
+            chars := ascii(rows#j);
+            assert(select(chars,c -> c != 32) === {92,47});
+            assert(position(chars,c -> c == 92) == left+j);
+            assert(position(chars,c -> c == 47) == right-j);
+        );
+        bottom := center(last rows,lower#0);
+        assert(bottom-left == #rows-1 and right-bottom == #rows-1);
+    );
     for A in cyclicAttachmentsDiagram do (
         r := numrows A;
-        labels := apply(r,i -> "node" | toString(i+1));
+        labels := if r == 4 then {"x","lowerVertexWithAnUnusuallyLongDisplayedName","hub","leaf"}
+            else apply(r,i -> "node" | toString(i+1));
         -- Check every relabeling, rather than relying on the branch vertex
         -- occurring in a particular position or on a particular DFS order.
         for permutation in permutations toList(0..r-1) do (
@@ -4072,30 +4108,43 @@ TEST ///
             edges := (dynkinDiagramData B)#"edges";
             expected := concatenate between(", ",apply(edges,e ->
                 toString(e#0) | "--" | toString(e#1)));
-            assert(dynkinDiagram B === expected);
             D := cartanDatum(B,NodeLabels=>apply(permutation,i -> labels#i));
             data := dynkinDiagramData D;
             assert(data#"positionEdges" === edges);
             assert(data#"labeledEdges" === apply(edges,e ->
                 {labels#(permutation#(e#0-1)),labels#(permutation#(e#1-1)),e#2,e#3}));
-            expectedRecords := concatenate between(", ",apply(edges,e ->
-                toString(e#0) | "[" | labels#(permutation#(e#0-1)) | "]--" |
-                toString(e#1) | "[" | labels#(permutation#(e#1-1)) | "]"));
-            assert(dynkinDiagram D === expectedRecords);
-            assert(dynkinDiagram(D,NodeFormat=>"Labels") ===
-                concatenate between(", ",apply(data#"labeledEdges",e -> e#0 | "--" | e#1)));
+            nodeLabels := apply(permutation,i -> labels#i);
+            records := apply(r,i -> toString(i+1) | "[" | nodeLabels#i | "]");
+            if r == 4 then (
+                checkTriangle(dynkinDiagram B,apply(r,i -> toString(i+1)),edges);
+                assert(dynkinDiagram(D,NodeFormat=>"Positions") === dynkinDiagram B);
+                checkTriangle(dynkinDiagram D,records,edges);
+                checkTriangle(dynkinDiagram(D,NodeFormat=>"Labels"),nodeLabels,edges);
+            ) else (
+                assert(dynkinDiagram B === expected);
+                assert(dynkinDiagram D === concatenate between(", ",apply(edges,e ->
+                    records#(e#0-1) | "--" | records#(e#1-1))));
+                assert(dynkinDiagram(D,NodeFormat=>"Labels") ===
+                    concatenate between(", ",apply(data#"labeledEdges",e -> e#0 | "--" | e#1)));
+            );
         );
     );
 
-    -- A double bond on an attached leaf retains its arrow in the fallback.
+    -- The double bond to a leaf points in opposite directions in dual data.
     weightedCycleDiagram := matrix{{2,-1,-1,0},{-1,2,-1,0},
         {-1,-1,2,-1},{0,0,-2,2}};
     assert(symmetrizer weightedCycleDiagram =!= null);
-    assert(dynkinDiagram weightedCycleDiagram === "1--2, 1--3, 2--3, 3=>4");
-    assert(dynkinDiagram transpose weightedCycleDiagram === "1--2, 1--3, 2--3, 3<=4");
+    assert(dynkinDiagram weightedCycleDiagram === triangleString("4 =<= 3 --- 1","2"));
+    assert(dynkinDiagram transpose weightedCycleDiagram === triangleString("4 =>= 3 --- 1","2"));
+    -- A multiple bond on the triangle itself is drawn horizontally if
+    -- possible. Never show a multiple bond as an ordinary diagonal.
+    weightedUpperDiagram := matrix{{2,-1,-2,-1},{-1,2,-1,0},{-2,-1,2,0},{-1,0,0,2}};
+    assert(dynkinDiagram weightedUpperDiagram === triangleString("4 --- 1 === 3","2"));
+    weightedDiagonalDiagram := matrix{{2,-1,-1,-1},{-1,2,-2,0},{-1,-2,2,0},{-1,0,0,2}};
+    assert(dynkinDiagram weightedDiagonalDiagram === "1--2, 1--3, 1--4, 2==3");
     disconnectedCycleDiagram := (cyclicAttachmentsDiagram#0) ++ cartanA 3;
     assert(dynkinDiagram disconnectedCycleDiagram ===
-        "1--2, 1--3, 2--3, 3--4" | newline | newline | "5 --- 6");
+        triangleString("4 --- 3 --- 1","2") | newline | newline | "5 --- 6");
 
     -- Independently reconstruct every edge from genuine D/E drawings.
     -- The vertical bar must meet the branch vertex, not merely a nearby
@@ -4141,6 +4190,105 @@ TEST ///
             assert(#drawnEdges == #expectedEdges and set drawnEdges === set expectedEdges);
         );
     );
+///
+
+-- Test 0c: ordered Cartan entries on unusual bonds and the affine D4 cross.
+TEST ///
+    -- Every Cartan pair must be recoverable from its printed bond. The
+    -- familiar glyphs are unchanged, including the symmetric affine A1 pair.
+    standardBonds := new HashTable from {
+        {1,1}=>"---",{2,2}=>"===",{1,2}=>"=>=",{2,1}=>"=<=",
+        {1,3}=>"#>=",{3,1}=>"#<="};
+    exactBond := (a,b) -> "--(" | toString(-a) | "," | toString(-b) | ")--";
+    forms := for a from 1 to 6 list for b from 1 to 6 list (
+        pair := {a,b};
+        glyph := if standardBonds#?pair then standardBonds#pair else exactBond(a,b);
+        A := cartanRank2(a,b);
+        drawing := dynkinDiagram A;
+        assert(drawing === "1 " | glyph | " 2");
+        assert((dynkinDiagramData A)#"edges" === {{1,2,-a,-b}});
+        drawing
+    );
+    assert(#unique flatten forms == 36);
+    -- Traversing the edge from 3 to 2 reverses the ordered pair.
+    reordered := matrix{{2,0,-1},{0,2,-12},{-1,-2,2}};
+    assert(dynkinDiagram reordered === "1 --- 3 --(-2,-12)-- 2");
+    assert(dynkinDiagram transpose reordered === "1 --- 3 --(-12,-2)-- 2");
+
+    -- A long bond can precede or span a triangle. Read the diagonal
+    -- columns independently so a hard-coded five-column bond fails.
+    words := line -> select(separate(" ",line),s -> s =!= "");
+    centerColumn := (line,w) -> (#w-1)//2 +
+        position(toList(0..#line-#w),j -> substring(j,#w,line) === w);
+    triangleWithPair := matrix{{2,-1,-1,-12},{-1,2,-1,0},{-1,-1,2,0},{-4,0,0,2}};
+    triangleAcrossPair := matrix{{2,-11,-1,-1},{-11,2,-1,0},{-1,-1,2,0},{-1,0,0,2}};
+    for spec in {{triangleWithPair,{"4","--(-4,-12)--","1","---","2"}},
+        {triangleAcrossPair,{"4","---","1","--(-11,-11)--","2"}}} do (
+        rows := lines dynkinDiagram spec#0;
+        assert(words(first rows) === spec#1 and words(last rows) === {"3"});
+        left := centerColumn(first rows," 1 ");
+        right := #first rows-1;
+        apex := centerColumn(last rows,"3");
+        assert(apex-left == #rows-1 and right-apex == #rows-1);
+        for j from 1 to #rows-2 do (
+            chars := ascii(rows#j);
+            assert(select(chars,c -> c != 32) === {92,47});
+            assert(position(chars,c -> c == 92) == left+j);
+            assert(position(chars,c -> c == 47) == right-j)
+        )
+    );
+    -- No simple vertical line may stand for a multiply laced diagonal or
+    -- branch. The fallback lists both actual entries in position order.
+    trianglePairDiagonal := matrix{{2,-1,-1,-1},{-1,2,-3,0},{-1,-3,2,0},{-1,0,0,2}};
+    assert(dynkinDiagram trianglePairDiagonal === "1--2, 1--3, 1--4, 2--(-3,-3)--3");
+    allWeightedFork := matrix{{2,-5,0,0},{-2,2,-3,-1},{0,-4,2,0},{0,-5,0,2}};
+    assert(dynkinDiagram allWeightedFork === "1--(-5,-2)--2, 2--(-3,-4)--3, 2--(-1,-5)--4");
+    assert(dynkinDiagram cartanD 4 === "4 --- 2 --- 3" | newline | "      |" | newline | "      1");
+    longFork := mutableMatrix cartanD 4;
+    longFork_(3,1) = -12;
+    longFork_(1,3) = -2;
+    leftOfHub := "4 --(-12,-2)-- ";
+    underHub := concatenate toList((#leftOfHub):" ");
+    assert(lines dynkinDiagram matrix longFork ===
+        {leftOfHub | "2 --- 3",underHub | "|",underHub | "1"});
+
+    star := cartanAffineD 4;
+    assert(dynkinDiagram star === concatenate between(newline,
+        {"      4","      |","1 --- 3 --- 2","      |","      5"}));
+    -- Locate the center and the leaves by reading the drawing. Check
+    -- all four bonds against the entries of the original matrix and
+    -- measure where each vertical line meets its three labels.
+    checkStar := (s,A,names) -> (
+        rows := lines s;
+        assert(#rows == 5);
+        middle := words(rows#2);
+        assert(#middle == 5 and middle#1 === "---" and middle#3 === "---");
+        upper := words first rows;
+        lower := words last rows;
+        assert(#upper == 1 and #lower == 1);
+        vs := apply({middle#2,middle#0,middle#4,upper#0,lower#0},
+            w -> position(names,n -> n === w));
+        assert(sort vs === toList(0..4));
+        for i from 0 to 4 do for j from 0 to 4 do
+            assert(A_(vs#i,vs#j) == (if i == j then 2 else if i == 0 or j == 0 then -1 else 0));
+        col := centerColumn(rows#2,middle#2);
+        assert(centerColumn(first rows,upper#0) == col and centerColumn(last rows,lower#0) == col);
+        assert(rows#1 === rows#3 and select(ascii(rows#1),c -> c != 32) === {124});
+        assert(position(ascii(rows#1),c -> c == 124) == col);
+    );
+    starLabels := {"L","rr","Hub","uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu","dddddddddddddddddddddd"};
+    for perm in permutations toList(0..4) do (
+        A := submatrix(star,perm,perm);
+        labels := apply(perm,i -> starLabels#i);
+        D := cartanDatum(A,NodeLabels=>labels);
+        checkStar(dynkinDiagram A,A,apply(5,i -> toString(i+1)));
+        assert(dynkinDiagram(D,NodeFormat=>"Positions") === dynkinDiagram A);
+        checkStar(dynkinDiagram(D,NodeFormat=>"Labels"),A,labels);
+        checkStar(dynkinDiagram D,A,apply(5,i -> toString(i+1) | "[" | labels#i | "]"));
+    );
+    weightedStar := mutableMatrix star;
+    weightedStar_(0,2) = -4;
+    assert(dynkinDiagram matrix weightedStar === "1--(-4,-1)--3, 2--3, 3--4, 3--5");
 ///
 
 -- Test 1: cartanType classifies finite/affine/indefinite

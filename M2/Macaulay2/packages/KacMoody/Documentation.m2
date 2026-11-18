@@ -3636,14 +3636,15 @@ Description
   Text
     For $n = 4$ the diagram is the symmetric $4$-armed star with all
     arms of edge-length $1$ (lengths $\{2,2,2,2\}$ when counting
-    the center).  This is the four-armed star diagram of $D_4^{(1)}$:
+    the center). Compare the drawing with the four-arm star constructor:
   Example
+    print dynkinDiagram cartanAffineD 4
     cartanAffineD 4 == cartanStar {2,2,2,2}
   Text
-    The comparison is false because the two matrices use different node orders. They
-    describe isomorphic four-arm diagrams: the central node occupies position $3$ in @TT
-    "cartanAffineD 4"@ and position $1$ in @TT "cartanStar {2,2,2,2}"@. Equality of the
-    matrices would require the same simultaneous row-and-column ordering.
+    In the cross, node $3$ is joined to each of $1,2,4,5$; no two of
+    these four outer nodes are joined. The comparison is false because
+    @TT "cartanStar {2,2,2,2}"@ puts the central node in position $1$.
+    The diagrams are isomorphic, but the node orders in the matrices differ.
   Text
     The null root of $D_n^{(1)}$ has coefficients $(1,1,2,2,\ldots,2,1,1)$:
     both pairs of fork-leaves get coefficient $1$, interior chain
@@ -5138,9 +5139,9 @@ Description
     $(1,2,3)$ and their names left, middle, short; its edge list still uses matrix
     positions.
 
-    For branched types like $D$ and $E$, the branch node appears as
-    an endpoint of three edges, making the graph structure of the
-    diagram directly readable from the list:
+    In finite types $D$ and $E$, the branch node appears as an endpoint
+    of three edges. In affine $D_4^{(1)}$ the center occurs four times.
+    Thus one can read the branching directly from the list:
   Example
     dynkinDiagramData cartanD 5
     dynkinDiagramData cartanE 6
@@ -5197,19 +5198,20 @@ Description
     labels displays both pieces of information by default, in the form
     @TT "position[label]"@.  Thus the diagram remains directly usable in
     commands that take node numbers while also showing the chosen root
-    names.  Single, double,
-    and triple bonds appear as @TT "---"@, @TT "==="@,
-    and @TT "###"@ respectively; non-simply-laced bonds carry an arrow
-    pointing from the long root to the short root.  A tree with a single
+    names. Single bonds appear as @TT "---"@. In the usual double and
+    triple bonds, the arrow points from the long root to the short root.
+    The symmetric pair $(-2,-2)$ has no arrow and appears as @TT "==="@.
+    For other bonds the drawing gives the two Cartan entries when the
+    usual symbols would leave their values ambiguous. A tree with a single
     degree-$3$ branch node (as in types $D$ and $E$) is drawn with a
-    one-node side branch underneath the main path when possible.
-    A cycle repeats its starting node at the end, followed by
-    @TT "(cycle)"@, to show the closing bond.  Disconnected Dynkin diagrams are
-    displayed component by component.  If a branch is too complicated
-    for the compact layout (for example, a multiple bond on a side
-    branch), the diagram is described by a list of all its bonds.
-    The same applies to a cycle with attached branches: each bond is
-    listed once, rather than treating its cyclic arms as separate paths.
+    one-node side branch underneath the main path when possible. The
+    four arms of $D_4^{(1)}$ form a cross; see @TO cartanAffineD@.
+    A component consisting only of a cycle repeats its starting node at the
+    end, followed by @TT "(cycle)"@, to show the closing bond. The example
+    below shows a different case: a triangle of single bonds with a fourth
+    node attached at one corner. Disconnected diagrams are displayed
+    component by component. When a component has no compact drawing, its
+    bonds are listed instead, each with its two endpoints.
 
     The function can also be called with a type-and-rank specification:
     a single string like @TT "\"A4\""@ or @TT "\"E6\""@, or a
@@ -5228,6 +5230,23 @@ Description
     drawing has a double bond pointing from long node $3$ to short node $4$, while the
     $G_2$ triple bond points from node $2$ to short node $1$. These are the node
     positions to use in Weyl and parabolic commands.
+  Example
+    for m from 3 to 5 do print dynkinDiagram matrix{{2,-m},{-1,2}}
+  Text
+    The first diagram is $G_2$. The next two have the same nodes but
+    different Cartan entries: the label $(-4,-1)$ between $1$ and $2$
+    means $A_{12}=-4$ and $A_{21}=-1$, whereas $(-5,-1)$ means
+    $A_{12}=-5$. The distinction matters: the former matrix is affine
+    and the latter indefinite. In general, read a pair from left to
+    right: between nodes $i$ and $j$ it gives $(A_{ij},A_{ji})$ in that
+    order, whether in a drawing or a list of bonds.
+  Example
+    A = matrix{{2,-1,-1,-1},{-1,2,-1,0},{-1,-1,2,0},{-1,0,0,2}}
+    print dynkinDiagram A
+  Text
+    Nodes $1$, $2$, and $3$ form a triangle: each pair is joined by a single
+    bond. Node $4$ is joined only to node $1$, as the last row of the matrix
+    shows.
 
     The @TO NodeFormat@ option accepts @TT "\"Positions\""@,
     @TT "\"Labels\""@, or @TT "\"Records\""@ for a Cartan datum or

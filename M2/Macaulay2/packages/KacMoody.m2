@@ -3374,23 +3374,21 @@ dynkinDiagramData Matrix := opts -> A -> (
 
 
 -- dynkinDiagram(A)
--- Produce an ASCII (with unicode arrows) rendering of the Dynkin diagram
+-- Produce a text rendering of the Dynkin diagram
 -- for the Cartan matrix A. Works for any Cartan matrix (simply-laced,
 -- non-simply-laced, possibly disconnected, including affine/Kac-Moody).
 --
 -- Returns a String suitable for "print" or << output.
 --
 -- Conventions:
---   single bond:           i ----- j
---   double bond (i long):  i ==>== j    (arrow from long to short)
---   double bond (j long):  i ==<== j
---   triple bond (i long):  i #=>=# j
---   triple bond (j long):  i #=<=# j
+--   single: i --- j; double: i =>= j or i =<= j; triple: i #>= j or i #<= j.
+--   The arrow points from long to short. The symmetric pair (-2,-2) uses ===.
+--   For all other pairs use i --(a_ij,a_ji)-- j, in the order drawn.
 --
 -- Nodes are labeled 1..r. Paths and D/E-shaped trees use linear/branched
 -- layouts. A cycle repeats its starting node to show the closing bond.
--- More complicated components, including cycles with attached branches,
--- use a compact edge list instead.
+-- A triangle with one attached leaf can be drawn with two diagonal
+-- single bonds. Components without a suitable layout use an edge list.
 
 dynkinDiagram = method(Options => {NodeFormat => null});
 
@@ -3408,65 +3406,37 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
     nodeText := i -> nodeStrings#i;
     if r == 0 then return "";
 
-    -- Collect edges (undirected), with bond count and arrow direction.
-    -- Convention: our matrix A satisfies A_(i,j) = 2(alpha_j, alpha_i)/(alpha_i, alpha_i),
-    -- so |A_(i,j)| / |A_(j,i)| = (alpha_j, alpha_j) / (alpha_i, alpha_i).
-    -- Therefore |A_(i,j)| > |A_(j,i)|  <=>  alpha_j is longer  <=>  arrow j -> i.
-    -- arrow = 0 : no arrow (equal lengths)
-    -- arrow = 1 : arrow from i to j (alpha_i is longer)
-    -- arrow = -1: arrow from j to i (alpha_j is longer)
+    -- Collect unordered edges for the layout. Read Cartan entries in the
+    -- actual traversal order when labeling a bond, not from sorted endpoints.
     edgeList := flatten for i from 0 to r-1 list
-        for j from i+1 to r-1 list (
-            aij := A_(i,j);
-            aji := A_(j,i);
-            if aij != 0 or aji != 0 then (
-                absIj := if aij < 0 then -aij else aij;
-                absJi := if aji < 0 then -aji else aji;
-                bondCount := if absIj > absJi then absIj else absJi;
-                dir := if absIj == absJi then 0
-                       else if absIj > absJi then -1
-                       else 1;
-                {i,j,bondCount,dir}
-            ) else continue
-        );
+        for j from i+1 to r-1 list
+            if A_(i,j) != 0 or A_(j,i) != 0 then {i,j} else continue;
 
     -- Build adjacency list (0-indexed)
     neighbors := apply(r,i -> new MutableHashTable);
-    edgeLookup := new MutableHashTable;
     for e in edgeList do (
         ii := e#0; jj := e#1;
         leftNeighbors := neighbors#ii;
         rightNeighbors := neighbors#jj;
         leftNeighbors#(#leftNeighbors) = jj;
         rightNeighbors#(#rightNeighbors) = ii;
-        edgeLookup#(ii, jj) = e;
-        edgeLookup#(jj, ii) = e;
     );
     adj := apply(neighbors,numberedTableEntries);
 
-    -- Given an edge record {i, j, bondCount, dir} and the direction of
-    -- travel (from fromNode to toNode), return a 5-character bond glyph.
-    bondGlyph := (fromNode, toNode) -> (
-        e := edgeLookup#(fromNode, toNode);
-        bc := e#2;
-        d := e#3;
-        -- Does the arrow point in the direction of travel?
-        arrowInTravelDir := if d == 0 then 0
-            else if (d == 1 and e#0 == fromNode) or (d == -1 and e#1 == fromNode) then 1
-            else -1;
-        if bc == 1 then " --- "
-        else if bc == 2 then (
-            if arrowInTravelDir == 0 then " === "
-            else if arrowInTravelDir == 1 then " =>= "
-            else " =<= "
-        )
-        else (
-            -- triple (bc >= 3)
-            if arrowInTravelDir == 0 then " ### "
-            else if arrowInTravelDir == 1 then " #>= "
-            else " #<= "
-        )
+    singleBond := (i,j) -> A_(i,j) == -1 and A_(j,i) == -1;
+    -- For a symmetrizer d, d_i a_ij = d_j a_ji, so a_ij = -1,
+    -- a_ji = -2 (or -3) gives an arrow from i to j.
+    bondText := (i,j,compact) -> (
+        a := A_(i,j); b := A_(j,i);
+        if a == -1 and b == -1 then (if compact then "--" else "---")
+        else if a == -1 and b == -2 then (if compact then "=>" else "=>=")
+        else if a == -2 and b == -1 then (if compact then "<=" else "=<=")
+        else if a == -2 and b == -2 then (if compact then "==" else "===")
+        else if a == -1 and b == -3 then (if compact then "#>" else "#>=")
+        else if a == -3 and b == -1 then (if compact then "<#" else "#<=")
+        else "--(" | toString a | "," | toString b | ")--"
     );
+    bondGlyph := (i,j) -> " " | bondText(i,j,false) | " ";
 
     -- Compute degree of each node
     deg := i -> #(adj#i);
@@ -3495,6 +3465,9 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
         nodeText(order#k) |
         (if k < #order-1 then bondGlyph(order#k,order#(k+1)) else "");
 
+    spaces := n -> concatenate toList(n:" ");
+    labelCenter := i -> ((width net(nodeText i))-1)//2;
+
     -- Render a single connected component.
     renderComp := comp -> (
         if #comp == 1 then (
@@ -3511,12 +3484,7 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
         -- would omit part of an arm or hide a multiple-bond arrow.
         renderEdgeList := () -> concatenate between(", ", apply(
             componentEdges,
-            e -> (
-                g := if e#2 == 1 then "--"
-                     else if e#2 == 2 then (if e#3 == 1 then "=>" else if e#3 == -1 then "<=" else "==")
-                     else (if e#3 == 1 then "#>" else if e#3 == -1 then "<#" else "##");
-                nodeText(e#0) | g | nodeText(e#1)
-            )
+            e -> nodeText(e#0) | bondText(e#0,e#1,true) | nodeText(e#1)
         ));
         -- Determine shape: path, path-with-branch (D/E), or other
         degrees := apply(comp, i -> deg i);
@@ -3567,6 +3535,53 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
             );
             pathText prepend(startN,tail)
         )
+        else if #comp == 4 and #componentEdges == 4 and #leaves == 1 then (
+            -- The unique leaf meets one corner of a triangle. Put its bond
+            -- on the top row so the two sloping sides close the triangle.
+            leaf := first leaves;
+            corner := first(adj#leaf);
+            corners := sort select(adj#corner,i -> i != leaf);
+            upper := first corners;
+            lower := last corners;
+            -- Only horizontal bonds can display multiplicity and direction.
+            if not singleBond(corner,lower) then (
+                upper = last corners; lower = first corners;
+            );
+            if not singleBond(corner,lower) or
+                not singleBond(upper,lower) then return renderEdgeList();
+
+            prefix := nodeText leaf | bondGlyph(leaf,corner);
+            leftCol := (width net prefix)+labelCenter corner;
+            topRow := prefix | nodeText corner | bondGlyph(corner,upper);
+            span := (width net topRow)+(labelCenter upper)-leftCol;
+            -- An even span places the bottom label exactly halfway between
+            -- the upper label centers. Leave room on the left for wide labels.
+            extraSpace := span % 2;
+            half := (span+extraSpace)//2;
+            offset := max(0,(labelCenter lower)-leftCol-half);
+            leftCol = leftCol+offset;
+            topRow = spaces offset | topRow | spaces extraSpace | nodeText upper;
+            diagonals := for j from 1 to half-1 list
+                spaces(leftCol+j) | "\\" | spaces(2*(half-j)-1) | "/";
+            bottomRow := spaces(leftCol+half-labelCenter lower) | nodeText lower;
+            concatenate between(newline,join({topRow},diagonals,{bottomRow}))
+        )
+        else if #comp == 5 and #leaves == 4 and
+            all(componentEdges,e -> singleBond(e#0,e#1)) then (
+            -- Four single bonds and four leaves give the affine D4 cross.
+            hub := first highDeg;
+            arms := sort leaves;
+            axis := width net(nodeText(arms#0) | bondGlyph(arms#0,hub));
+            axis = axis+labelCenter hub;
+            -- Shift the middle row too if a long vertical label needs room.
+            stem := max{axis,labelCenter(arms#2),labelCenter(arms#3)};
+            vertical := spaces stem | "|";
+            onStem := i -> spaces(stem-labelCenter i) | nodeText i;
+            concatenate between(newline, {
+                onStem(arms#2), vertical,
+                spaces(stem-axis) | pathText {arms#0,hub,arms#1},
+                vertical, onStem(arms#3)})
+        )
         else if #componentEdges == #comp-1 and #highDeg == 1
             and (deg highDeg#0) == 3 then (
             -- D/E-shaped tree: one branch node of degree 3. The edge
@@ -3611,8 +3626,7 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
             -- single-bond side leaf.  Anything more complicated is rendered
             -- as an edge list so that every node and bond remains visible.
             sideSize := sorted#0#0;
-            sideEdge := edgeLookup#(branchN, sideN);
-            if sideSize != 1 or sideEdge#2 != 1 then return renderEdgeList();
+            if sideSize != 1 or not singleBond(branchN,sideN) then return renderEdgeList();
 
             -- Walk from left leaf through the branch node to right leaf
             walkToLeaf := (start, forbid) -> (
@@ -3639,21 +3653,21 @@ dynkinDraftDiagram = (A,nodeStrings,centerLabels) -> (
             -- Main line
             mainLine := pathText mainOrder;
             -- Find the column index of branchN in mainLine.
-            -- Each displayed node takes its rendered width, and each bond
-            -- takes five columns.
+            -- An explicitly labeled bond may span more than five columns.
             col := 0;
             for k from 0 to #mainOrder-1 do (
                 if mainOrder#k == branchN then break;
-                col = col + #(nodeText(mainOrder#k)) + 5;
+                col = col + width net(nodeText(mainOrder#k) |
+                    bondGlyph(mainOrder#k,mainOrder#(k+1)));
             );
             if centerLabels then
-                col = col + (#(nodeText branchN) - 1)//2;
+                col = col + ((width net(nodeText branchN)) - 1)//2;
             -- Vertical bond (single) to side branch leaf
             pad := concatenate for kk from 1 to col list " ";
             -- For display, just use "|" for vertical bond (only single bonds have branches)
             vertLine := pad | "|";
             sideCol := if centerLabels then
-                max(0,col - (#(nodeText sideN) - 1)//2)
+                max(0,col - ((width net(nodeText sideN)) - 1)//2)
                 else col;
             sidePad := concatenate for kk from 1 to sideCol list " ";
             sideLine := sidePad | nodeText(sideN);
