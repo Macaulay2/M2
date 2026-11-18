@@ -80,10 +80,10 @@ NefPartition = new Type of HashTable
   -- palpNefPartitions below.  The Properties, as PALP's source (palp-2.21)
   -- defines them:
   --   projection: some part is a single vertex v of Delta^*, so nabla_j = conv(0, v)
-  --     has just 2 lattice points (Remove_Proj in E_Poly.c).  nef.x prints these
+  --     has just 2 lattice points.  nef.x prints these
   --     only with -P, and gives them no label.
   --   direct product: the ranks of the sets {0} \cup E_j add up to dim Delta^*, so
-  --     Delta^* is a free sum (Dir_Product in Nefpart.c).  Printed only with -D,
+  --     Delta^* is a free sum.  Printed only with -D,
   --     marked " D".
   --   nef.x also marks a partition "DP" when its dual nef partition is a projection.
   --   The "P:k" field in nef.x output is just a counter, not the type.
@@ -314,7 +314,7 @@ weightSystem List := WeightSystem => opts -> q -> (
         if #q === 0 or not all(q, a -> instance(a, ZZ)) then return fail(
             "expected a weight system, a non-empty list of integers or a list of rows, got "
             | toString q);
-        -- split q into rows the way PALP does (ReadCwsPp in Coord.c): a row is a
+        -- split q into rows the way PALP does: a row is a
         -- degree followed by weights adding up to it; zeros that come next still
         -- belong to the row, and the next positive number starts a new row
         blocks := {};
@@ -700,7 +700,7 @@ palpParseHodge = toks -> (
 --   H:  the Hodge numbers, read by palpParseHodge
 --   D   PALP found a direct product;  DP  the dual nef partition is a projection
 -- PALP does not label projections; one is a partition with a part consisting of
--- a single vertex (Remove_Proj in E_Poly.c).
+-- a single vertex.
 -- nv is the number of vertices, c the codimension, V the matrix of vertices,
 -- and relabel#i the index in V of PALP's vertex number i.
 palpNefPartitionFromLine = (ell, nv, c, V, relabel) -> (
@@ -909,8 +909,8 @@ nefPartitionDeltas = (parts, V) -> (
 
 -- The vertices of the Cayley polytope of a nef partition, one per column, in
 -- Z^(c-1) x M (Lattice => "M") or Z^(c-1) x N (Lattice => "N").  The first c-1
--- coordinates are 0 for part 0 and e_i for part i, as in PALP's Make_Gore_Poly
--- (E_Poly.c); the rest run over the vertices of
+-- coordinates are 0 for part 0 and e_i for part i;
+-- the rest run over the vertices of
 --   Delta_i (see nefPartitionDeltas)    (M side)
 --   nabla_i = conv(0, E_i)              (N side)
 -- These are the Gorenstein polytopes of the nef partition and of its dual.  On
@@ -932,7 +932,7 @@ cayleyPolytopeVertices NefPartition := Matrix => opts -> n ->
 
 -- The Hodge numbers of one nef partition, from nef.x -G, which reads its input
 -- as the support polytope of a reflexive Gorenstein cone of index c and computes
--- its stringy Hodge numbers (AnalyseGorensteinCone in E_Poly.c).  We give it the
+-- its stringy Hodge numbers.  We give it the
 -- N side Cayley polytope with -N.  The M side one, without -N, gives the same
 -- answer, but more slowly: on {12,1,1,2,2,2,2,2} in codimension 3, 42 seconds
 -- rather than 26 for one partition, which is also what nef.x -c3 itself takes.
@@ -3702,117 +3702,6 @@ TEST ///
   assert palpFullDimensional matrix{{1,0,-1},{0,1,-1}}
   assert(numColumns palpMVertices {10,1,2,3,4} == 7)
 ///
-
-"TEST"
-/// -- checking nef partitions, codim = 3 or higher...
-  -- Start with a weight system in dim 6.
-  needsPackage "NormalToricVarieties"
-  wsorig = (weightSystems(6, Degrees => {20,20}))_5; -- the _5 was chosen at random
-  ws = {20, 1, 1, 2, 2, 2, 2, 10}
-  ws = {20, 1, 1, 1, 1, 1, 6, 9}
-  assert(ws === wsorig)
-  verts = weightSystemVertices ws
-  P = convexHull verts
-  isReflexive P
-  P' = polar P
-  isReflexive P'
-  V = normalToricVariety P
-  V' = normalToricVariety P'
-  assert isSimplicial V
-  assert not isSimplicial V'
-  rays V'
-  Ds = for i from 0 to # rays V' - 1 list V'_i
-  ds = select(drop(drop(subsets(#rays V), 1), -1), s -> s#0 == 0)
-  Dlist = for d in ds list sum(d, i -> V_i)
-  select(Dlist, d -> not isNef d)
-  Ds/isNef
-
-
-  Ds = for i from 0 to # rays V' - 1 list V'_i
-  ds = select(drop(drop(subsets(#rays V'), 1), -1), s -> s#0 == 0);
-  Dlist = for d in ds list sum(d, i -> V'_i);
-  elapsedTime select(Dlist, d -> isNef d) -- slow?
-  -- IN PROGRESS?? select(drop(subsets Ds, -1), d ->
-
-  elapsedTime palpNefPartitions(ws, 2) -- very slow...!
-  weightSystemVertices ws
-  P'' = weightSystemPolytope ws -- very slow...!
-  vertices P'' -- ouch!
-
-  wsorig = weightSystems(6, Degrees => {20,20}); -- the _5 was chosen at random
-  for i from 0 to 33 list wsorig#i => palpNefPartitions(wsorig#i, 3)
-  for ws in wsorig list ws => palpNefPartitions(ws, 3)
-  ws = last wsorig  
-  verts = weightSystemVertices ws
-  P = convexHull verts
-  isReflexive P
-  P' = polar P
-  isReflexive P'
-  vertices P'
-  weightSystemPolytope ws
-  V = normalToricVariety P
-  V' = normalToricVariety P'
-  assert isSimplicial V
-  assert not isSimplicial V'
-
-  Ds = for i from 0 to # rays V - 1 list V_i
-  ds = select(drop(drop(subsets(#rays V), 1), -1), s -> s#0 == 0)
-  ds = drop(drop(subsets(#rays V), 1), -1)
-  Dlist = for d in ds list sum(d, i -> V_i)
-  select(Dlist, d -> isNef d)
-  select(oo, d -> isNef(-toricDivisor V - d))
-  Ds/isNef
-  palpNefPartitions(ws, 3)
-  palpNefPartitions(ws, 2)
-
-  palpNefPartitions(verts, 2)
-  
-///
-
-
-"TEST"
-/// -- checking nef partitions, codim = 3 in dim 5 (gives a surface, not 3-fold).
--- XXX
-  needsPackage "NormalToricVarieties"
-  wss = weightSystems(5, Degrees => {20,20}) -- 61 different ws's
-  wssr = for ws in wss list (
-      verts := weightSystemVertices ws;
-      P := convexHull verts;
-      if not isReflexive P then continue else ws) -- 41 of them give reflexive
-  for ws in wssr list elapsedTime palpNefPartitions(ws, 2)  
-  
-  ws = {20, 1, 2, 2, 2, 3, 10}
-  assert(ws == wsorig)
-
-  verts = weightSystemVertices ws
-  P = convexHull verts
-  isReflexive P
-  P' = polar P
-  isReflexive P'
-  V = normalToricVariety P
-  V' = normalToricVariety P'
-  assert isSimplicial V
-  assert not isSimplicial V'
-  rays V'
-  Ds = for i from 0 to # rays V' - 1 list V'_i
-  ds = select(drop(drop(subsets(#rays V), 1), -1), s -> s#0 == 0)
-  Dlist = for d in ds list sum(d, i -> V_i)
-  select(Dlist, d -> not isNef d)
-  Ds/isNef
-
-
-  Ds = for i from 0 to # rays V' - 1 list V'_i
-  ds = select(drop(drop(subsets(#rays V'), 1), -1), s -> s#0 == 0);
-  Dlist = for d in ds list sum(d, i -> V'_i);
-  elapsedTime select(Dlist, d -> isNef d) -- slow?
-  -- IN PROGRESS?? select(drop(subsets Ds, -1), d ->
-
-  elapsedTime palpNefPartitions(ws, 2) -- very slow...!
-  weightSystemVertices ws
-  P'' = weightSystemPolytope ws -- very slow...!
-  vertices P'' -- ouch!
-///
-
 
 TEST ///
   -- palpIsIP and palpIsCanonical, comparing with Polyhedra
