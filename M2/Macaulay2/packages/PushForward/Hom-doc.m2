@@ -160,6 +160,14 @@ Description
     Example
         -- look closely this is different from End(f, I) above!
         End(f, R)
+    Text
+        Can compute End over skew-commutative rings.
+    Example
+        kk = ZZ/101
+        R = kk[a..d, SkewCommutative => true]
+        f = pullbackDegrees map(R, kk)
+        M = module ideal {a*b, c + d}
+        prune End(f, M)
 SeeAlso
     Hom
     pushFwd
