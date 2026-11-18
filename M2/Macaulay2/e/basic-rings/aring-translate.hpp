@@ -205,17 +205,6 @@ bool mypromote(const ARingQQ& R,
     return false;
 }
 /////////////////////////////////////////////////////
-template <typename Ring>
-bool mypromote(const Ring& R,
-               const Ring& S,
-               const typename Ring::ElementType& fR,
-               typename Ring::ElementType& fS)
-{
-  (void) R;
-  S.set(fS, fR);
-  return true;
-}
-/////////////////////////////////////////////////////
 inline bool mypromote(const ARingRR& R,
                       const ARingRRR& S,
                       const ARingRR::ElementType& fR,

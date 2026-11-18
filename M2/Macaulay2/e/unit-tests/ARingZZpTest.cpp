@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
+#include "basic-rings/aring-glue.hpp"
 #include "basic-rings/reader.hpp"
 #include "rings/ZZp.hpp"
 #include "basic-rings/aring-ZZp-ffpack.hpp"
@@ -255,6 +256,18 @@ TEST(ARingZZpFFPACK, arithmetic33500479)
   testReciprocal(R, ntrials);
   testPower(R, ntrials);
   testAxioms(R, ntrials);
+}
+
+TEST(ARingZZpFFPACK, promoteDifferentCharacteristic)
+{
+  using RingZZpFFPACK = M2::ConcreteRing<M2::ARingZZpFFPACK>;
+  RingZZpFFPACK *R5 =
+      RingZZpFFPACK::create(std::make_unique<M2::ARingZZpFFPACK>(5));
+  RingZZpFFPACK *R7 =
+      RingZZpFFPACK::create(std::make_unique<M2::ARingZZpFFPACK>(7));
+  ring_elem a = R5->from_long(4);
+  ring_elem b;
+  EXPECT_FALSE(R7->promote(R5, a, b));
 }
 
 TEST(ARingZZp, read)
