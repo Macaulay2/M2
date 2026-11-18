@@ -93,7 +93,7 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   const monomial_word *w = f.monoms;
   for (int i = 0; i < f.len; i++)
     {
-      long comp;
+      monomial_word comp;
       MI->to_expvector(w, lexp, comp);
       w = w + MI->monomial_size(w);
       for (int a = 0; a < M->n_vars(); a++) exp[a] = static_cast<int>(lexp[a]);

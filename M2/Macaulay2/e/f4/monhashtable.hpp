@@ -12,7 +12,7 @@ class MonomialsWithComponent
 {
  public:
   typedef packed_monomial value;
-  long hash_value(value m) const { return m[0] + m[1]; }
+  uint64_t hash_value(value m) const { return static_cast<uint64_t>(m[0] + m[1]); }
   bool is_equal(value m, value n) const { return mMonoid.is_equal(m, n); }
   void show(value m) const { mMonoid.show(m); }
   MonomialsWithComponent(const MonomialInfo& MI) : mMonoid(MI) {}
@@ -24,7 +24,7 @@ class MonomialsIgnoringComponent
 {
  public:
   typedef packed_monomial value;
-  long hash_value(value m) const { return m[0]; }
+  uint64_t hash_value(value m) const { return static_cast<uint64_t>(m[0]); }
   bool is_equal(value m, value n) const
   {
     return mMonoid.monomial_part_is_equal(m, n);
@@ -68,7 +68,7 @@ class ResMonomialsIgnoringComponent
 // ValueType must implement the following:
 // values should have computed hash values stored with them
 //  typename ValueType::value
-//  long ValueType::hash_value(value m)
+//  uint64_t ValueType::hash_value(value m)
 //  bool ValueType::is_equal(value m, value n)
 //  void ValueType::show(value m) -- prints to stderr
 
