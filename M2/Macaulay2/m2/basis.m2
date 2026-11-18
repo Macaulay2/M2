@@ -320,7 +320,7 @@ algorithms#(basis, List, List, Module) = new MutableHashTable from {
 	G := degreeGroup(R := ring M);
 	if G == 0 or isFreeModule G then return null;
 	(S, phi, psi, p, f) := permuteDegreeGroup R;
-	B := psi map_S basisDefaultStrategy(opts, f lo, f hi, phi M);
+	B := psi map_S basisDefaultStrategy(opts, f lo, f hi, phi ** M);
 	L := positions(degrees source B, deg -> lo <= deg and deg <= hi);
 	raw submatrix(B, , L)),
     -- TODO: add separate strategies for skew commutative rings, vector spaces, and ZZ-modules
