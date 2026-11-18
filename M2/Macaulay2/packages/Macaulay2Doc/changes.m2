@@ -77,7 +77,12 @@ document {
                 LI { TO "InvariantRing::InvariantRing", " has been updated to version 2.6, which introduces the new type ", TT "PermutationAction", " with the faster orbit sum method for computing invariants. This version also simplifies inputs for ", TT "permutationMatrix", " a minor breaking change." },
                 },
             },
-        }
+	LI { "functionality changed in a way that could break code:",
+	    UL {
+		LI { "Functions that iterate over a ", TO MutableList, ", such as ", TO apply, ", ", TO scan, ", and ", TO symbol for, " loops, now work with a snapshot of its entries, so modifying the list during the iteration no longer affects which entries are visited." }
+		}
+	    }
+	}
     }
 
 document {
