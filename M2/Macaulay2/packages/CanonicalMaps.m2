@@ -112,6 +112,7 @@ imageMap Matrix := Sequence => (f) -> (
     )
 
 imageMap(Matrix, Matrix, Matrix) := Matrix => (i, h, f) -> (
+    if f != i*h then error "expected first two maps to be a factorization of the third";
     (g,e) := imageMap f;
     map(source i, source g, g // i)
     )
@@ -125,31 +126,18 @@ coimageMap Matrix := Sequence => (f) -> (
     )
 
 coimageMap(Matrix, Matrix, Matrix) := Matrix => (i, h, f) -> (
+    if f != i*h then error "expected first two maps to be a factorization of the third";
     (g,e) := coimageMap f;
     map(source g, source i, i // g)
     )
 
--- TODO: do we want the universal properties for the above maps (coimageMap, imageMap)
-
 coimageImageMap = method()
--- coimageImageMap Matrix := Matrix => (f) -> (
---     -- f: B --> C
---     eta := kernelMap f; -- eta: ker f --> B
---     p := cokernelMap f; -- p: C --> coker f
---     theta' := cokernelMap eta; -- theta' : B --> coker eta == coim f
---     theta := kernelMap(f, p); -- theta:  B --> ker p == im f
---     mu := cokernelMap(theta, eta); -- coim f --> im f
---     mu
---     )
-
 coimageImageMap Matrix := Matrix => (f) -> (
     -- f: M --> N
     (g,e) := imageMap f; -- e: M --> I, g:I --> N
     (h,i) := coimageMap f; -- i:M --> C, h:C --> N
     map(source g, source h, h // g)
     )
-
--- axiom of an abelian category: coimageToImage f is an isomorphism
 
 fiberProduct = method()
 fiberProduct(Matrix, Matrix) := Module => (phi, phi') -> (
@@ -276,9 +264,8 @@ counitorMap Module := Matrix => opts -> M -> (
         id_M
     )
 
-
--- tensorCommutativity(Module,Module) is not defined here: it is identical to the
--- version exported by the Complexes package, which this package imports.
+-- TODO: once this is exported, make sure Complexes package is updated
+-- to use the method defined below, rather than making its own method.
 
 tensorCommutativity = method()
 tensorCommutativity(Module, Module) := Matrix => (M,N) -> (
@@ -385,68 +372,6 @@ coimageToImageInverse Matrix := (f) -> (
     )
 
 
-"TEST" -- this one is not yet working
-///
-  debug needsPackage "CanonicalMaps"
-  C = ZZ^3 ++ ZZ^1/ideal(32)
-  B = ZZ^2 ++ ZZ^1/ideal(16)
-  A = ZZ^1/ideal(8) ++ ZZ^1/ideal(4) ++ ZZ^2
-  debugLevel = 1
-  sw = swapMap(A, B, C)
-  assert isWellDefined sw
-  assert isHomogeneous sw
-  assert(ker sw == 0)
-  assert(coker sw == 0)
-  -- note: this doesn't show that we have the correct map yet!
-  assert checkSwapMap(sw, A, B)
-
-  R = ZZ/101[a..d]
-  A = R^{0,1,2,3}
-  B = R^{0,10,20}
-  C = R^{0,100,200,300,400}
-  sw = swapMap(A, B, C)
-  assert isWellDefined sw
-  assert isHomogeneous sw
-  assert(ker sw == 0)
-  assert(coker sw == 0)
-  -- note: this doesn't show that we have the correct map yet!
-  debugLevel = 1
-  assert checkSwapMap(sw, A, B)
-
-  BC = Hom(B, C)
-  AC = Hom(A, C)
-  ABC = Hom(A, BC)
-  BAC = Hom(B, AC)
-  gens ABC
-  gens BAC
-
-  phi1 = map(BAC, ABC, 1)
-  isWellDefined phi1
-  isHomogeneous phi1 -- false
-  ker phi1 == 0
-  coker phi1 == 0
-  
-  perm = tensorCommutativity(dual cover A, dual cover B) ** cover C
-  permLift = (perm * gens ABC) //  gens BAC
-  phi = map(BAC, ABC, permLift)
-  isHomogeneous phi
-
-
-  target gens ABC
-  target gens BAC
-  permAB = tensorCommutativity(dual cover A, dual cover B)
-  permABC = (permAB) ** (cover C)
-  netList{degrees source permABC, degrees target gens ABC}
-  degrees source permABC === degrees target gens ABC -- true
-  source permABC === target gens ABC
-  target permABC === target gens BAC
-  phi = map(BAC, ABC, permABC)
-  isWellDefined phi
-  ker phi == 0
-  coker phi == 0
-  isHomogeneous phi
-  /// 
-
 beginDocumentation()
 
 doc ///
@@ -482,7 +407,7 @@ doc ///
             representing a map $M \to N$ of $R$-modules
         h:Matrix
             representing a map $L \to M$ of $R$-modules such that
-            $h \circ f = 0$
+            $f \circ h = 0$
     Outputs
         g:Matrix
             the canonical monomorphism $g \colon \operatorname{Ker}(f) \to M$
@@ -495,7 +420,7 @@ doc ///
             $K := \operatorname{Ker}(f)$, together with a map
             $g \colon K \to M$ such that the following two properties
             hold: (1) $f \circ g = 0$, and (2) for any
-            map $h \colon L \to M$ such that $h \circ f = 0$, there
+            map $h \colon L \to M$ such that $f \circ h = 0$, there
             exists a unique map $u \colon L \to K$ such that $g \circ u = h$.
         Text
             We illustrate the kernel map using a homomorphism
@@ -546,7 +471,7 @@ doc ///
             representing a map $M \to N$ of $R$-modules
         h:Matrix
             representing a map $N \to L$ of $R$-modules such that
-            $f \circ h = 0$
+            $h \circ f = 0$
     Outputs
         g:Matrix
             the canonical epimorphism $g \colon N \to \operatorname{Coker}(f)$
@@ -559,7 +484,7 @@ doc ///
             $Q := \operatorname{Coker}(f)$, together with a map
             $g \colon N \to Q$ such that the following two properties
             hold: (1) $g \circ f = 0$, and (2) for any
-            map $h \colon N \to L$ such that $f \circ h = 0$, there
+            map $h \colon N \to L$ such that $h \circ f = 0$, there
             exists a unique map $u \colon Q \to L$ such that $u \circ g = h$.
         Text
             We illustrate the cokernel map using a homomorphism
@@ -789,7 +714,7 @@ doc ///
             assert(target e === coimage f)
         Example
             h = R^{{-1}} ** matrix {{1_R, 3}, {2, 7}}
-            source h === source f
+            assert(source h === source f)
             i = matrix {{7*a-2*b, -3*a+b}, {7*c-2*d, -3*c+d}}
             assert(f === i * h and cokernel h == 0)
             u = coimageMap(i, h, f)
@@ -816,7 +741,7 @@ doc ///
         coimageImageMap
         (coimageImageMap, Matrix)
     Headline
-        canonical map associated to an image object
+        canonical isomorphism from coimage to image
     Usage
         g = coimageImageMap f
     Inputs
@@ -844,7 +769,7 @@ doc ///
             the canonical map from the coimage to the image is not
             obviously the identity map.  In fact, because of the way the
             generators for the image and coimage are chosen in Macaulay2,
-            this will induced by the identity map.
+            this will be induced by the identity map.
         Example
             R = QQ[a,b,c,d]/(a*d-b*c);
             M = module ideal(a*d, -b*c) ++ module ideal(a^2, b^2)
@@ -855,7 +780,7 @@ doc ///
             assert(source g === coimage f and target g == image f)
             assert(coker g == 0 and ker g == 0)
             assert(matrix g != 1)
-            g === map(image f, coimage f, 1)
+            assert(g === map(image f, coimage f, 1))
     SeeAlso
         image
         coimage
@@ -1100,7 +1025,7 @@ doc ///
         u = fiberSumMap(P, p', q')
     Inputs
         P:Module
-            constructed as a fiber sum $L \oplus_N M$ of two maps
+            constructed as a fiber sum $M \oplus_L N$ of two maps
         p':Matrix
             representing a map $M \to P'$ of $R$-modules
         q':Matrix
@@ -1116,7 +1041,7 @@ doc ///
         Text
             The fiber sum of the maps $f \colon L \to M$ and $g \colon L \to N$ is the cokernel $P = M \oplus_L N$ of the induced map
             $\begin{bmatrix} f \\ -g \end{bmatrix} \colon L \to M \oplus N$.  It has two canonical maps
-            $p \colon M \to P$ and $q \colon M \to P$ such that $q \circ g = p \circ f$.
+            $p \colon M \to P$ and $q \colon N \to P$ such that $q \circ g = p \circ f$.
             These canonical maps are composites of the inclusions into the direct sum $M \oplus N$ followed by the cokernel map.
         Text
             Moreover, the triple $(P, p, q)$ satisfies the following universal property.
@@ -1143,8 +1068,6 @@ doc ///
             we work over a quotient of a polynomial ring.
         Example
             R = QQ[a,b,c,d]/(a*d-b*c);
-            f = transpose map(R^2,, {{a,b},{c,d}})
-            g = transpose map(R^2,, {{a,c,d},{b,d,c}})
             f = map(R^{1,1}, R^2, {{a, c}, {b, d}})
             g = map(R^{1,1,1}, R^2, {{a, b}, {c, d}, {d, c}})
             P = fiberSum(f,g)
@@ -1858,6 +1781,68 @@ TEST ///
   assert(g'^(-1) == g) -- ok 
   
   ///
+
+"TEST" -- this one is not yet working
+///
+  debug needsPackage "CanonicalMaps"
+  C = ZZ^3 ++ ZZ^1/ideal(32)
+  B = ZZ^2 ++ ZZ^1/ideal(16)
+  A = ZZ^1/ideal(8) ++ ZZ^1/ideal(4) ++ ZZ^2
+  debugLevel = 1
+  sw = swapMap(A, B, C)
+  assert isWellDefined sw
+  assert isHomogeneous sw
+  assert(ker sw == 0)
+  assert(coker sw == 0)
+  -- note: this doesn't show that we have the correct map yet!
+  assert checkSwapMap(sw, A, B)
+
+  R = ZZ/101[a..d]
+  A = R^{0,1,2,3}
+  B = R^{0,10,20}
+  C = R^{0,100,200,300,400}
+  sw = swapMap(A, B, C)
+  assert isWellDefined sw
+  assert isHomogeneous sw
+  assert(ker sw == 0)
+  assert(coker sw == 0)
+  -- note: this doesn't show that we have the correct map yet!
+  debugLevel = 1
+  assert checkSwapMap(sw, A, B)
+
+  BC = Hom(B, C)
+  AC = Hom(A, C)
+  ABC = Hom(A, BC)
+  BAC = Hom(B, AC)
+  gens ABC
+  gens BAC
+
+  phi1 = map(BAC, ABC, 1)
+  isWellDefined phi1
+  isHomogeneous phi1 -- false
+  ker phi1 == 0
+  coker phi1 == 0
+  
+  perm = tensorCommutativity(dual cover A, dual cover B) ** cover C
+  permLift = (perm * gens ABC) //  gens BAC
+  phi = map(BAC, ABC, permLift)
+  isHomogeneous phi
+
+
+  target gens ABC
+  target gens BAC
+  permAB = tensorCommutativity(dual cover A, dual cover B)
+  permABC = (permAB) ** (cover C)
+  netList{degrees source permABC, degrees target gens ABC}
+  degrees source permABC === degrees target gens ABC -- true
+  source permABC === target gens ABC
+  target permABC === target gens BAC
+  phi = map(BAC, ABC, permABC)
+  isWellDefined phi
+  ker phi == 0
+  coker phi == 0
+  isHomogeneous phi
+  /// 
 
 end--
 
