@@ -57,7 +57,7 @@ jobs:
             libmemtailor-dev libmpfi-dev libmpfr-dev libmps-dev libnauty-dev \
             libnormaliz-dev libntl-dev libreadline-dev \
             libsingular4-dev libtbb-dev libxml2-dev lrslib \
-            lsb-release msolve nauty normaliz pkgconf python3-dev \
+            lsb-release msolve nauty normaliz palp pkgconf python3-dev \
             r-base singular-data time topcom git devscripts dh-elpa
 
           # arch-independent dependencies (amd64 build only)

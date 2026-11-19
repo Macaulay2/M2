@@ -92,6 +92,8 @@ BuildRequires: nauty
 Requires:      nauty
 BuildRequires: normaliz
 Requires:      normaliz
+BuildRequires: palp
+Requires:      palp
 %endif
 
 Obsoletes: Macaulay2-common < %{version}-%{release}

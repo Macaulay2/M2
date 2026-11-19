@@ -118,7 +118,7 @@ install: build
 
 programs: install
 	mkdir -p $(PROGRAMS_DIR)
-	for formula in 4ti2 cohomcalg csdp gfan lrs msolve nauty normaliz topcom; do
+	for formula in 4ti2 cohomcalg csdp gfan lrs msolve nauty normaliz palp topcom; do
 	    prefix=$$(brew --prefix "$$formula" 2>/dev/null) || continue
 	    for bin in "$$prefix/bin/"*; do
 	        dst="$(PROGRAMS_DIR)/$$(basename "$$bin")"
