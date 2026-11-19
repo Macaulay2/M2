@@ -1262,15 +1262,20 @@ tensorAssociativity(Complex, Complex, Complex) := ComplexMap => (A,B,C) -> (
 -- quasi-isomorphisms ----------------------------------------------
 --------------------------------------------------------------------
 isQuasiIsomorphism = method(Options => {Concentration => (-infinity,infinity)})
--- TODO: check this function for correctness, in the case when Concentration is given
 isQuasiIsomorphism ComplexMap := Boolean => opts -> f -> (
-    (loSrc,hiSrc) := concentration source f;
-    (loTar,hiTar) := concentration target f;
-    (lof,hif) := (min(loTar, loSrc), max(hiTar, hiSrc));
-    (loO,hiO) := opts.Concentration;
-    all(max(lof,loO)..min(hif,hiO),
-        i -> HH_(i+1) cone f == 0
-        )
+    C := source f;
+    D := target f;
+    (lo,hi) := opts.Concentration;
+    lo = max(lo, min(min C, min D));
+    hi = min(hi, max(max C, max D));
+    if lo > hi then return true;
+    K := cone f;
+    -- H_i(K) is an extension of ker H_(i-1)(f) by coker H_i(f).
+    all(lo+1..hi, i -> HH_i K == 0)
+    -- Surjectivity at lo: every target cycle (0,z) bounds in the cone.
+    and (HH_lo K == 0 or isSubset((0*C_(lo-1)) ++ kernel dd^D_lo, image dd^K_(lo+1)))
+    -- Injectivity at hi: the source component of each cone cycle is a boundary.
+    and (HH_(hi+1) K == 0 or isSubset(kernel dd^K_(hi+1), (image dd^C_(hi+1)) ++ D_(hi+1)))
     )
 
 liftMapAlongQuasiIsomorphism = method()
