@@ -142,11 +142,7 @@ class ARingTower : public RingInterface
     (void) a;
   }
 
-  void set(elem &result, elem a) const // TODO: write this
-  {
-    (void) result;
-    (void) a;
-  }
+  void set(elem &result, elem a) const { copy(result, a); }
 
   /////////////////////////////////
   // ElementType informational ////
