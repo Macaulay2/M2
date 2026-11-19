@@ -67,7 +67,7 @@ jobs:
               memtailor mathic mathicgb
           brew link macaulay2/tap/factory --force
           # External programs bundled into the DMG
-          brew install 4ti2 cohomcalg csdp gfan lrs msolve nauty normaliz topcom
+          brew install 4ti2 cohomcalg csdp gfan lrs msolve nauty normaliz palp topcom
 
 # ----------------------
 #   Set up build environment
