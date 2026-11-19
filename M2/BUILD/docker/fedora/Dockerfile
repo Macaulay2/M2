@@ -25,7 +25,7 @@ RUN microdnf install -y eigen3-devel glpk-devel gmp-devel mpfr-devel ntl-devel \
 # Programs we can build
 # TODO: Polymake requires firefox???
 RUN microdnf install -y cddlib-devel 4ti2 gfan normaliz csdp-tools nauty \
-    lrslib-utils cohomCalg msolve TOPCOM
+    lrslib-utils cohomCalg msolve palp TOPCOM
 
 # Optional packages
 RUN microdnf install -y plocate bash-completion R
