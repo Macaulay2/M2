@@ -2780,7 +2780,13 @@ isMinimalSemifreeResolution DGModule := M -> (
     -- (1) Augmentation-ideal check.
     killT := map(R, A.natural,
         matrix{apply(numgens A.natural, i -> 0_R)});
-    mR := if numgens R > 0 then ideal vars R else ideal 0_R;
+    -- The augmentation kills the variables at every level of a polynomial tower.
+    mR := ideal 0_R;
+    C := R;
+    while (instance(C, PolynomialRing) or instance(C, QuotientRing)) and not isField C do (
+        mR = mR + sub(ideal vars C, R);
+        C = coefficientRing C;
+    );
     augIsZero := f -> (
         if f == 0 then true
         else (killT f) % mR == 0
@@ -2837,12 +2843,12 @@ minimizeDGModule DGModule := M -> (
     A := M.dgAlgebra;
     R := A.ring;
     kk := coefficientRing R;
-    -- Test if an A.natural element lifts to a nonzero scalar in kk.
+    -- The coefficient ring of a polynomial tower can itself have nonunits.
     asScalarUnit := u -> (
         if u == 0 then return null;
         v := null;
         try (v = lift(u, kk)) else return null;
-        if v == 0 then null else v
+        if isUnit v then v else null
     );
     -- Find the first (i, j, u) where M.diff#j has scalar unit u on row i.
     findPair := M0 -> (

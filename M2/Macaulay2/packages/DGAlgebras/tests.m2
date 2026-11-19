@@ -1200,6 +1200,23 @@ assert(all(0..3, n -> (
 -- non-acyclic complex that happened to have aug-ideal entries.
 -- ============================================================
 
+-- Over QQ[x][y], multiplication by x survives minimization.
+TEST ///
+B = QQ[x]
+S = B[y, Join => false]
+A = koszulComplexDGA ideal(y^2)
+F = freeDGModule(A, {{0,0},{1,1}})
+setDiff(F, {0, promote(x,A.natural) * F.natural_0})
+assert(isWellDefined F and isMinimalSemifreeResolution F)
+Fmin = minimizeDGModule F
+assert(numgens Fmin == 2)
+assert(ann homology(0,Fmin) == ideal(promote(x,S),y^2))
+G = freeDGModule(A, {{0,0},{1,0}})
+setDiff(G, {0, 2 * G.natural_0})
+assert(not isMinimalSemifreeResolution G)
+assert(numgens minimizeDGModule G == 0)
+///
+
 -- Test: on a complete intersection, minimal A-semifree resolution
 -- per-degree ranks match Tor^S(M_S, k) by uniqueness of minimal res.
 TEST ///
