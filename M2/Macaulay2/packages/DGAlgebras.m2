@@ -294,9 +294,10 @@ freeDGAlgebra (Ring,List) := opts -> (R,degList) -> (
             | "Pass Variable => \"<fresh base name>\" (or an explicit list of symbols) to freeDGAlgebra / koszulComplexDGA to avoid the clash.");
    );
    A#(symbol diff) = {};
-   -- Handle empty degree list: build a trivial polynomial ring over R with no T-generators.
+   -- With no generators, specify the grading explicitly: the base lies in homological degree zero.
    if #degList == 0 then (
-      A#(symbol natural) = R[varsList, Join => false];
+      A#(symbol natural) = R[varsList, Join => false, DegreeRank => 1 + degreeLength R,
+         DegreeMap => (d -> prepend(0,d))];
    )
    else if isHomogeneous R then (
       -- make sure the degree list has the right form.
@@ -309,7 +310,7 @@ freeDGAlgebra (Ring,List) := opts -> (R,degList) -> (
    A#(symbol isHomogeneous) = false;
    A.natural.cache = new CacheTable;
    if #degList == 0 then
-      A.natural.cache#(symbol basisAlgebra) = (A.ring)[varsList, Join => false, DegreeMap => (d -> {0}), MonomialOrder => GRevLex]
+      A.natural.cache#(symbol basisAlgebra) = (A.ring)[varsList, Join => false, DegreeRank => 1, DegreeMap => (d -> {0}), MonomialOrder => GRevLex]
    else
       A.natural.cache#(symbol basisAlgebra) = (A.ring)[varsList, Join => false, DegreeMap => (d -> {0}), MonomialOrder => GRevLex, Degrees => apply(degList, i -> {first i}), SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
    use A.natural;

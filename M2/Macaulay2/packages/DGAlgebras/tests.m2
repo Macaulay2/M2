@@ -44,6 +44,19 @@ Add = toComplex(A)
 assert(apply(maxDegree(A)+1, i -> prune HH_i(Add)) == {coker vars R,0,0,coker vars R,0,0,0})
 ///
 
+-- With no adjoined generators, the base keeps its internal grading and has homological degree zero.
+TEST ///
+S = QQ[z, Degrees => {2}]
+A = freeDGAlgebra(S,{})
+setDiff(A,{})
+assert(degree promote(S_0,A.natural) == {0,2})
+assert(zerothHomology A === S)
+S = QQ[x,y, Degrees => {{1,0},{0,1}}]
+A = freeDGAlgebra(S,{})
+assert(apply(gens S, t -> degree promote(t,A.natural)) == {{0,1,0},{0,0,1}})
+assert(flatten entries getBasis(0,A) == {1_(A.natural)} and numcols getBasis(1,A) == 0)
+///
+
 TEST ///
 -- test 1 : differential tests
 R = ZZ/101[x,y,z, Degrees => {2,2,3}]
