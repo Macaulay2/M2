@@ -26,12 +26,14 @@ export {"partialLinearFiltration",
 --******************************************--
 -- Functions    	       	    	    -- 
 --******************************************--
+isLinearSubsetIdeal = (J, L) -> (
+    J == 0 or all(first entries gens J, f -> first degree f == 1)
+        and J == ideal(select(L, a -> isSubset(ideal a, J)) | {0_(ring J)}))
 
 partialLinearFiltration = method(TypicalValue=> List)
 partialLinearFiltration (Ring,List) := (R,L) -> (
     if not all(L, i -> instance(i, R)) then error "expected all linear forms to be in the same ring";
     if not all(L, i -> degree i == {1} and isHomogeneous(i)) then error "expected homogeneous linear forms";
-    linearIdeals := unique apply(subsets L, a->trim promote(ideal(a),R));
     F := null;
     m := trim ideal gens R;
     e := numgens m;
@@ -42,7 +44,7 @@ partialLinearFiltration (Ring,List) := (R,L) -> (
          for a in L list (
              if isSubset(ideal(a), I) then continue;
              colIdeal:= trim (I:a);
-             if not isMember(colIdeal,linearIdeals) then continue;
+             if not isLinearSubsetIdeal(colIdeal,L) then continue;
              trim(I+ideal(a))
              )
           );
@@ -107,10 +109,11 @@ partialLinearFlags = method(TypicalValue=>List)
 partialLinearFlags (Ring,List,Ideal):= (R,L,I)  -> (
     if not all(L, i -> instance(i, R) and degree i =={1} and isHomogeneous(i)) then error "expected second entry to be a list of linear forms";
     if not ((I == ideal(0_R) or all(flatten entries gens trim I, f -> degree f == {1})) and isHomogeneous(I)) then error "ideal must be homogeneous and linear";     
-    linearIdeals := unique apply(subsets L, a->trim promote(ideal(a),R));
-    Flags := {{I}}; i := numgens trim I;
+    Flags := {{I}}; 
+	i := numgens trim I;
     while  i > 0 and #Flags =!= 0 do (
 		 i = i - 1;
+		 linearIdeals:= unique apply (subsets(L,i), a-> trim promote(ideal(a),R));
 		 Flagsnew := flatten for F in Flags list (
  	 	 for a in linearIdeals list (
 			  if not (numgens trim a == i and isSubset(a, F#-1)) then continue;
