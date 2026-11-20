@@ -287,6 +287,7 @@ ehrhartQuasiPolynomial = method(
 
 ehrhartQuasiPolynomial Polyhedron := QuasiPolynomial => opts -> P -> (
     P.cache#"ehrhartQP" ??= (
+        if not isCompact P then error("polyhedron is not compact");
         QP := if opts.Strategy == "Normaliz" then (
             ehrhartQPNormaliz P
             )
@@ -343,6 +344,7 @@ hStarPolynomial = method(
 
 hStarPolynomial(Polyhedron, Ring) := RingElement => opts -> (P, R) -> (
     if numgens R < 1 then error("ring must have at least one generator");
+    if not isCompact P then error("polyhedron is not compact");
     if not P#cache#?"ehrhartSeriesNumerator" or not P#cache#"ring" === R then (
         if opts.Strategy == "M2" then (
             hStarPolynomialM2(P, R);
@@ -435,6 +437,7 @@ hStarVector = method(
     })
 
 hStarVector(Polyhedron) := List => opts -> P -> (
+    if not isCompact P then error("polyhedron is not compact");
     h := if P#cache#?"ehrhartSeriesNumerator" then P#cache#"ehrhartSeriesNumerator" else hStarPolynomial(P, Strategy=>opts.Strategy);
     if #(support h) > 1 then error("expected single-variable polynomial");
     x := first support h;
@@ -540,6 +543,7 @@ doc ///
       a @TO "QuasiPolynomial"@ object representing it. We can treat the quasi-polynomial
       as a function and evaluate it at integers, which gives the number of lattice points in
       the $n$th dilate of the polytope.
+      If P is not compact, this function returns an error message.
     Example
       QP = ehrhartQuasiPolynomial(convexHull transpose matrix "0,0;1/2,0;0,1/2")
       QP 5
@@ -597,8 +601,9 @@ doc ///
       the $h^*$-polynomial (in the ring R) of $P$
   Description
     Text
-      If $P$ is a lattice polytope then this function returns the
-      $h^*$-polynomial of $P$. Result is cached in P.
+      If $P$ is a rational polytope then this function returns the
+      $h^*$-polynomial of $P$. Result is cached in P. If P is not
+      compact, this function returns an error message.
     Example
       hStarPolynomial convexHull transpose matrix "-1,0; 0,-1; 1,0; 0,1"
       hStarPolynomial convexHull transpose matrix {{0,0,0},{1,0,0},{0,1,0},{1,1,3}}
@@ -636,10 +641,11 @@ doc ///
       the $h^*$-vector of $P$
   Description
     Text
-      If $P$ is a lattice polytope then this function returns the
+      If $P$ is a rational polytope then this function returns the
       $h^*$-vector of $P$.
       The $i$-th entry in the $h^*$-vector is the coefficient
       of the $x^{i-1}$ term of the $h^*$-polynomial.
+      If P is not compact, this function returns an error message.
     Example
       hStarVector convexHull transpose matrix "-1,0; 0,-1; 1,0; 0,1"
       P = convexHull transpose matrix {{0,0,0},{1,0,0},{0,1,0},{1,1,3}};
@@ -830,6 +836,7 @@ doc ///
   Description
     Text
       Computes the Ehrhart series of the (rational) polyhedron P. Result is cached in P.
+      If P is not compact, this function returns an error message.
     Example
       P = convexHull transpose matrix {{-1,0},{0,1/2},{0,-1/2},{1,0}}
       ehrhartSeries P
