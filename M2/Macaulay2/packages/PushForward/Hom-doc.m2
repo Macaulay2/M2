@@ -329,7 +329,7 @@ Inputs
         resolution of $N$
 Outputs
     e:Matrix
-        over a $S$, from $S^1$ to $\operatorname{Ext}^d_R(f, M, N)$,
+        over $S$, from $S^1$ to $\operatorname{Ext}^d_R(f, M, N)$,
         which represents the corresponding element in the Ext module
 Description
     Text
