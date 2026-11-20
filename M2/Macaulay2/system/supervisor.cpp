@@ -29,7 +29,7 @@ extern "C" {
   // TODO: replace with STL linked list traversal
   extern void reverse_run(struct FUNCTION_CELL *list)
   {
-    if(list != NULL) {
+    if(list != nullptr) {
       reverse_run(list->next);
       (*list->func)();
     }
@@ -72,7 +72,7 @@ extern "C" {
   struct ThreadSupervisor* threadSupervisor = 0 ;
   void initializeThreadSupervisor()
   {
-    if(NULL==threadSupervisor)
+    if(nullptr==threadSupervisor)
       threadSupervisor = new (GC) ThreadSupervisor(maxNumThreads);
     assert(threadSupervisor);
     threadSupervisor->m_TargetNumThreads=maxNumThreads;
@@ -184,7 +184,7 @@ extern "C" {
   void TS_Add_ThreadLocal(int* refno, const char* name)
   {
     (void) name;
-    if(NULL == threadSupervisor)
+    if(nullptr == threadSupervisor)
       threadSupervisor = new (GC) ThreadSupervisor(maxNumThreads);
     assert(threadSupervisor);
     lock_guard<pthreadMutex> supLock(threadSupervisor->m_Mutex);
@@ -211,9 +211,9 @@ extern "C" {
 };
 
 ThreadTask::ThreadTask(const char* name, ThreadTaskFunctionPtr func, void* userData, bool timeLimit, time_t timeLimitSeconds, bool isM2Task):
-  m_Name(name),m_Func(func),m_UserData(userData),m_Result(NULL),m_IsM2Task(isM2Task),m_Done(false),m_Started(false),m_KeepRunning(true),m_ReadyToRun(false),m_Running(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_CurrentThread(NULL)
+  m_Name(name),m_Func(func),m_UserData(userData),m_Result(nullptr),m_IsM2Task(isM2Task),m_Done(false),m_Started(false),m_KeepRunning(true),m_ReadyToRun(false),m_Running(false),m_TimeLimit(timeLimit),m_Seconds(timeLimitSeconds),m_CurrentThread(nullptr)
 {
-   if(pthread_cond_init(&m_FinishCondition,NULL))
+   if(pthread_cond_init(&m_FinishCondition,nullptr))
     abort();
 }
 ThreadTask::~ThreadTask() {}
@@ -245,7 +245,7 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   //if using get specific, create the thread specific key for the thread local memory block
   #ifdef GETSPECIFICTHREADLOCAL
   //create key, abort on error
-  if(pthread_key_create(&m_ThreadSpecificKey,NULL))
+  if(pthread_key_create(&m_ThreadSpecificKey,nullptr))
     abort();
   //create new thread local memory block
   m_LocalThreadMemory = new (GC) void*[ThreadSupervisor::s_MaxThreadLocalIdCounter];
@@ -258,7 +258,7 @@ ThreadSupervisor::ThreadSupervisor(int targetNumThreads):
   #endif
   //if not using get specific no initialization is necessary
   //initialize task waiting condition
-  if(pthread_cond_init(&m_TaskReadyToRunCondition,NULL))
+  if(pthread_cond_init(&m_TaskReadyToRunCondition,nullptr))
     abort();
   //force everything to get done just in case there is some weird GC issue.
   std::atomic_signal_fence(std::memory_order_seq_cst);
@@ -376,7 +376,7 @@ void ThreadTask::run(SupervisorThread* thread)
   if(!m_KeepRunning)
       return;
   m_Done = true;
-  m_CurrentThread=NULL;
+  m_CurrentThread=nullptr;
   //cancel stuff_
   for(gc_set(ThreadTask*)::iterator it = m_CancelTasks.begin(); it!=m_CancelTasks.end(); ++it)
     threadSupervisor->_i_cancelTask(*it);

@@ -295,7 +295,7 @@ typename SMat<CoeffRing>::sparsevec *SMat<CoeffRing>::vec_copy(
 template <typename CoeffRing>
 bool SMat<CoeffRing>::vec_equals(const sparsevec *v, const sparsevec *w) const
 {
-  for (; v != NULL && w != NULL; v = v->next, w = w->next)
+  for (; v != nullptr && w != nullptr; v = v->next, w = w->next)
     if (!ring().is_equal(v->coeff, w->coeff)) return false;
   return true;
 }
@@ -1105,7 +1105,7 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A,
                                        M2_arrayint cols)
 {
   coeffR = A.coeffR;
-  initialize(rows->len, cols->len, NULL);
+  initialize(rows->len, cols->len, nullptr);
   typename CoeffRing::Element f(*coeffR);
   for (size_t r = 0; r < rows->len; r++)
     for (size_t c = 0; c < cols->len; c++)
@@ -1120,7 +1120,7 @@ template <typename CoeffRing>
 void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint cols)
 {
   coeffR = A.coeffR;
-  initialize(A.numRows(), cols->len, NULL);
+  initialize(A.numRows(), cols->len, nullptr);
   typename CoeffRing::Element f(*coeffR);
   for (size_t r = 0; r < nrows_; r++)
     for (size_t c = 0; c < cols->len; c++)
@@ -1168,7 +1168,7 @@ void SMat<CoeffRing>::negateInPlace()
 // this = -this
 {
   for (size_t c = 0; c < numColumns(); c++)
-    for (sparsevec *p = columns_[c]; p != NULL; p = p->next)
+    for (sparsevec *p = columns_[c]; p != nullptr; p = p->next)
       ring().negate(p->coeff, p->coeff);
 }
 

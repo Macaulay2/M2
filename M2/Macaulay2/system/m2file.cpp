@@ -153,7 +153,7 @@ extern "C"
 	lock_guard<pthreadMutex> lock(file->m_MapMutex);
 	//try to find thread id in thread states map
 	gc_map(pthread_t, struct M2FileThreadState*)::iterator it = file->threadStates.find(localId);
-	stdio0_fileOutputSyncState foss = NULL;
+	stdio0_fileOutputSyncState foss = nullptr;
 	if(it!=file->threadStates.end())
 	  {
 	    //case: thread id found in map, so just return associated thread state

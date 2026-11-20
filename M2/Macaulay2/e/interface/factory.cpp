@@ -245,7 +245,7 @@ static const RingElement *convertToM2(const PolynomialRing *R, CanonicalForm h)
         return RingElement::make_raw(R, R->from_long(h.intval()));
       else if (h.inExtension())
         {
-          assert(algebraicElement_M2 != NULL);
+          assert(algebraicElement_M2 != nullptr);
           ring_elem result = R->from_long(0);
           for (int j = h.taildegree(); j <= h.degree(); j++)
             {
@@ -399,7 +399,7 @@ static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use 
   const Monoid *M = A->getMonoid();
   const Ring *Zn = k->originalR()->getCoefficientRing();
   CanonicalForm f = 0;
-  for (Nterm *t = g->get_value(); t != NULL; t = t->next) {
+  for (Nterm *t = g->get_value(); t != nullptr; t = t->next) {
     M->to_varpower(t->monom, vp);
 
     std::pair<bool,long> res = Zn->coerceToLongInteger(t->coeff);

@@ -15,7 +15,7 @@ bool fp_LLL(MutableMatrix *M, MutableMatrix *U, int strategy)
   ERROR("fplll is not available (configure M2 with fplll!)");
   return 0;
 #else
-  assert(U == NULL);
+  assert(U == nullptr);
   double delta = 0.99;
   double eta = 0.51;
   fplll::LLLMethod method = fplll::LM_WRAPPER;

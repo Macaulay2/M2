@@ -81,7 +81,7 @@ char *getmem(size_t n)
 #else
   p = reinterpret_cast<char*>(GC_MALLOC(n));		/* GC_MALLOC clears its memory; we preserve that */
 #endif
-  if (p == NULL) outofmem2(n);
+  if (p == nullptr) outofmem2(n);
 #ifndef NDEBUG
   memset(p,0xbe,n);		/* fill with 0xbebebebe ... */
   trapchk(p);
@@ -118,7 +118,7 @@ char *getmem_clear(size_t n)
 #else
   p = reinterpret_cast<char*>(GC_MALLOC(n));
 #endif
-  if (p == NULL) outofmem2(n);
+  if (p == nullptr) outofmem2(n);
 #ifdef MEMDEBUG
   memset(p,0,n);
 #else
@@ -141,7 +141,7 @@ char *getmem_atomic(size_t n)
 #else  
   p = reinterpret_cast<char*>(GC_MALLOC_ATOMIC(n));
 #endif
-  if (p == NULL) outofmem2(n);
+  if (p == nullptr) outofmem2(n);
 #ifndef NDEBUG
   memset(p,0xac,n);		/* fill with 0xacacacac ... */
   trapchk(p);
@@ -173,7 +173,7 @@ char *getmem_atomic_clear(size_t n)
 #else  
   p = reinterpret_cast<char*>(GC_MALLOC_ATOMIC(n));
 #endif
-  if (p == NULL) outofmem2(n);
+  if (p == nullptr) outofmem2(n);
   memset(p,0,n);		/* GC_MALLOC_ATOMIC does not clear memory */
 #ifndef NDEBUG
   trapchk(p);
@@ -403,7 +403,7 @@ int delay_chain_index;
 
 size_t M2_debug_size(void *p) {
      struct FRONT *f;
-     if (p == NULL) return 0;
+     if (p == nullptr) return 0;
      f = (struct FRONT *)(p - sizeof(struct FRONT));
      return f->size;
 }
@@ -415,7 +415,7 @@ void *M2_debug_malloc(size_t size) {
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
      f = (struct FRONT *)GC_MALLOC( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
-     if (f == NULL) outofmem2(size);
+     if (f == nullptr) outofmem2(size);
      p = (char *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -436,7 +436,7 @@ void* M2_debug_malloc_uncollectable(size_t size) {
      f = (struct FRONT *)GC_MALLOC_UNCOLLECTABLE(
 	  sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR)
 	  );
-     if (f == NULL) outofmem2(size);
+     if (f == nullptr) outofmem2(size);
      p = (char *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -455,7 +455,7 @@ void* M2_debug_malloc_atomic(size_t size) {
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
      f = (struct FRONT *)GC_MALLOC_ATOMIC( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
-     if (f == NULL) outofmem2(size);
+     if (f == nullptr) outofmem2(size);
      p = (void *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -474,7 +474,7 @@ void* M2_debug_malloc_atomic_uncollectable(size_t size) {
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
      f = (struct FRONT *)GC_MALLOC_ATOMIC_UNCOLLECTABLE( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
-     if (f == NULL) outofmem2(size);
+     if (f == nullptr) outofmem2(size);
      p = (void *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -515,7 +515,7 @@ void M2_debug_info(void *p) {
      struct REAR *r;
      int INTS_BODY, i, smashed = 0;
      size_t size;
-     if (p == NULL) return;
+     if (p == nullptr) return;
      f = p - sizeof(struct FRONT);
      size = f->size;
      INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
@@ -530,7 +530,7 @@ void M2_debug_free(void *p) {
      struct REAR *r;
      int INTS_BODY, i, _trapcount;
      size_t size;
-     if (p == NULL) return;
+     if (p == nullptr) return;
      f = (struct FRONT *)(p - sizeof(struct FRONT));
      size = f->size;
      INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
@@ -545,7 +545,7 @@ void M2_debug_free(void *p) {
      for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART_GONE;
      for (i=0; i<FENCE_INTS; i++) r->fence[i] = REAR_FENCE_GONE;
 #if FREE_DELAY != 0
-     if (delay_chain[delay_chain_index] != NULL) {
+     if (delay_chain[delay_chain_index] != nullptr) {
 	  GC_FREE(delay_chain[delay_chain_index]);
 	  }
      delay_chain[delay_chain_index] = (void *)f;
@@ -559,7 +559,7 @@ void M2_debug_free(void *p) {
 void* M2_debug_realloc(void *old, size_t size) {
      void *newsize = M2_debug_malloc(size);
      size_t oldsize = M2_debug_size(old);
-     if (newsize == NULL) outofmem2(size);
+     if (newsize == nullptr) outofmem2(size);
      memcpy(newsize,old,size < oldsize ? size : oldsize);
      return newsize;
      }

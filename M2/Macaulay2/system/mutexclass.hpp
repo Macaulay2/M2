@@ -9,7 +9,7 @@ class pthreadMutex
 public:
   pthreadMutex()
   {
-    if(pthread_mutex_init(&m_Mutex,NULL))
+    if(pthread_mutex_init(&m_Mutex,nullptr))
       abort();
   }
   void lock()

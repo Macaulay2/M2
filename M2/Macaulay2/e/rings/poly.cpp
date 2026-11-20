@@ -1748,7 +1748,7 @@ void PolyRing::lead_logical_exponents(int nvars0,
                                       exponents_t result_exp) const
 {
   Nterm *g = f;
-  assert(g != NULL);
+  assert(g != nullptr);
   exponents_t exp = newarray_atomic(int, n_vars());
   M_->to_expvector(g->monom, exp);
   exponents::copy(nvars0, exp, result_exp);
@@ -1820,8 +1820,8 @@ engine_RawArrayPairOrNull PolyRing::list_form(const Ring *coeffR,
       coeffs->array[next] = RingElement::make_raw(coeffR, c);
       resultvp.resize(0);
 
-      assert(monoms->array[next] != NULL);
-      assert(coeffs->array[next] != NULL);
+      assert(monoms->array[next] != nullptr);
+      assert(coeffs->array[next] != nullptr);
     }
   freemem(exp);
   return result;
@@ -1982,7 +1982,7 @@ ring_elem PolyRing::lead_flat_coeff(const ring_elem f) const
 const_monomial PolyRing::lead_flat_monomial(const ring_elem f) const
 {
   Nterm *t = f;
-  assert(t != NULL);
+  assert(t != nullptr);
   return t->monom;
 }
 
