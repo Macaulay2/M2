@@ -5,7 +5,7 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  -- TO "changes made for the next release",
+	  TO "changes made for the next release",
 	  TO "changes, 1.26.06",
 	  TO "changes, 1.26.05",
 	  TO "changes, 1.25.11",
@@ -67,6 +67,17 @@ changesHelper List := opt -> pkgnames -> (
 	    << (if opt.Certification then "published" else "added")
 	    << ".\" },"
 	    << endl)))
+
+document {
+    Key => "changes made for the next release",
+    UL {
+	LI { "functionality changed in a way that could break code:",
+	    UL {
+		LI { "Functions that iterate over a ", TO MutableList, ", such as ", TO apply, ", ", TO scan, ", and ", TO symbol for, " loops, now work with a snapshot of its entries, so modifying the list during the iteration no longer affects which entries are visited." }
+		}
+	    }
+	}
+    }
 
 document {
     Key => "changes, 1.26.06",
