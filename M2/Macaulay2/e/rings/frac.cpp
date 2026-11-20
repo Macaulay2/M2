@@ -397,6 +397,26 @@ ring_elem FractionField::copy(const ring_elem a) const
   return FRAC_RINGELEM(g);
 }
 
+ring_elem FractionField::makeTerm(const Ring* coeffR,
+                                  const ring_elem a,
+                                  const_varpower monom) const
+{
+  varpower::Vector num, den;
+  ring_elem num_elem, den_elem, result;
+
+  varpower::split_signs(monom, num, den);
+
+  num_elem = R_->makeTerm(coeffR, a, num.data());
+  den_elem = R_->makeTerm(coeffR, coeffR->one(), den.data());
+
+  if (varpower::is_one(den.data()))
+    promote(R_, num_elem, result);
+  else
+    result = fraction(num_elem, den_elem);
+
+  return result;
+}
+
 void FractionField::remove(ring_elem &a) const { (void) a; }
 void FractionField::internal_negate_to(ring_elem &a) const
 {
