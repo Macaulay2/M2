@@ -900,7 +900,7 @@ TEST ///
 kk = ZZ/3
 R = kk[a..d, SkewCommutative => true]
 f = map(R, kk)
-g = center R
+g = centerMap R
 C = source g
 h = map(C, kk)
 M = module ideal {a*b, b + c}
@@ -920,7 +920,7 @@ TEST ///
 kk = ZZ/3
 R = kk[a..d, SkewCommutative => true]
 f = map(R, kk)
-g = center R
+g = centerMap R
 C = source g
 h = map(C, kk)
 
@@ -941,7 +941,7 @@ TEST ///
 kk = ZZ/3
 R = kk[a..d, SkewCommutative => true]
 f = map(R, kk)
-g = center R
+g = centerMap R
 C = source g
 h = map(C, kk)
 M = module ideal {a*b + c}
@@ -992,7 +992,7 @@ TEST ///
 kk = ZZ/3
 R = kk[a..d, SkewCommutative => true]
 f = map(R, kk)
-g = center R
+g = centerMap R
 C = source g
 h = map(C, kk)
 M = R^1 / ideal {a*b + c}
