@@ -120,7 +120,9 @@ findGalois(ZZ,ZZ) := RingElement => opts -> (p,n) -> (
      else error (opts.Strategy | " is not a valid argument for' Strategy' option")
      )
 
-GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
+savedGaloisFields = new MutableHashTable
+
+GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> savedGaloisFields#(p, n, opts) ??= (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
      if n == 1 and isMember(opts.Strategy, {"Old", "Aring"})
@@ -243,8 +245,16 @@ isField Ring := Boolean => R -> R.?isField and R.isField
 
 isAffineRing = method(TypicalValue => Boolean)
 isAffineRing Ring := isField
-isAffineRing PolynomialRing := R -> isCommutative R and not (options R).Inverses and isAffineRing coefficientRing R
-isAffineRing QuotientRing := R -> isField R or isAffineRing ambient R
+isAffineRing PolynomialRing := R -> R.cache.isAffineRing ??= isCommutative R and not (options R).Inverses and isAffineRing coefficientRing R
+isAffineRing QuotientRing := R -> R.cache.isAffineRing ??= isField R or isAffineRing ambient R
+
+isSkewAffineRing = method(TypicalValue => Boolean)
+isSkewAffineRing Ring := (R) -> false
+isSkewAffineRing PolynomialRing := R -> R.cache.isSkewAffineRing ??= (
+    coeffs := coefficientRing R;
+    isSkewCommutative R and (isSkewAffineRing coeffs or isAffineRing coeffs)
+)
+isSkewAffineRing QuotientRing := R -> R.cache.isSkewAffineRing ??= isSkewAffineRing ambient R
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -19,7 +19,7 @@ newPackage(
 
 
 export {"parametrize","mapToRNC","isomorphicProjectionOfRNC","rParametrizeRNC","rParametrizePlaneCurve","rationalPointOnConic",
-"rParametrizeConic","invertBirationalMap","modularSquareRoot","legendreSymbol","chineseRemainder","modularPower","modularInverse",
+"rParametrizeConic","invertBirationalMap","modularSquareRoot","chineseRemainder","modularPower","modularInverse",
 "testParametrization","parametrizeConic","vb"}
 
 -------------------------------------------------------------
@@ -792,21 +792,6 @@ m);
 --rootofsquarepart(-1234*5^2)
 
 
--- legendreSymbol(ZZ,ZZ)
--- compute the legendreSymbol
--- 1st argument a an integer
--- 2nd argument p an odd prime
-
-legendreSymbol=method()
-legendreSymbol(ZZ,ZZ):=(a,p)->(
-if denominator(a/p)==1 then return(0);
-l:=modularPower(a,sub((p-1)/2,ZZ),p);
-if l==p-1 then return(-1);
-l);
---legendreSymbol(4,7)
---legendreSymbol(5,7)
---legendreSymbol(14,7)
---legendreSymbol(626,1180943)
 
 
 -- modularPower(ZZ,ZZ,ZZ)
@@ -1380,36 +1365,6 @@ doc ///
 
 doc ///
   Key
-    legendreSymbol
-    (legendreSymbol,ZZ,ZZ)
-  Headline
-    Compute the Legendresymbol.
-  Usage
-    legendreSymbol(a,p)
-  Inputs
-    a:ZZ
-    p:ZZ
-        an odd prime.
-  Outputs
-    :ZZ
-        0 if a is divisible by p, 1 if a is a quadratic residue mod p and -1 if a is not a quadratic residue mod p.
-  Description
-   Text
-     Computes Legendre-symbol a over p.
-
-   Example
-     legendreSymbol(4,7)
-     legendreSymbol(5,7)
-     legendreSymbol(14,7)
-  SeeAlso
-     modularPower
-///
-
-
-
-
-doc ///
-  Key
     testParametrization
     (testParametrization,Ideal,Matrix)
   Headline
@@ -1440,8 +1395,6 @@ doc ///
      rParametrizeConic
      rParametrizePlaneCurve
 ///
-
-
 
 
 doc ///
@@ -1792,12 +1745,6 @@ R=K[y_0..y_2];
 I=ideal(y_0*y_2-y_1^2+y_2^2);
 par=rParametrizeConic(I);
 assert(testParametrization(I,par)==true);
-///
-
-TEST ///
-assert(legendreSymbol(4,7)==1);
-assert(legendreSymbol(5,7)==-1);
-assert(legendreSymbol(14,7)==0);
 ///
 
 

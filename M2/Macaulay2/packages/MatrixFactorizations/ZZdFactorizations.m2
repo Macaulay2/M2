@@ -37,6 +37,28 @@ period ZZdFactorization := ZZ => C -> C.period
 
 period ZZdFactorizationMap := ZZ => f -> (source f).period
 
+-- Remaking or concatenating matrices can discard their internal degree.
+-- Keep the source and target fixed and recover a common degree only when
+-- the entries really define a homogeneous map of those graded modules.
+mfRegradeMatrix = f -> (
+    if f == 0 or isHomogeneous f then return f;
+    -- One nonzero column determines the only possible common degree. Checking
+    -- the resulting whole matrix below also rejects mixed-degree columns,
+    -- without extracting every column of a large sparse matrix.
+    firstColumn := for j from 0 to numgens source f-1 do (
+        column := f_{j};
+        if column != 0 then break {j,column}
+        );
+    inferred := map(target f,,firstColumn#1);
+    offset := first degrees source inferred
+        - (degrees source f)#(firstColumn#0) + degree inferred;
+    g := map(target f, source f, f, Degree => offset);
+    if not isHomogeneous g then return f;
+    scan({symbol components, symbol indices, symbol indexComponents},
+        key -> if f.cache#?key then g.cache#key = f.cache#key);
+    g
+    )
+
 
 ZZdfactorization = method(Options => {Base=>0})
 ZZdfactorization HashTable := ZZdFactorization => opts -> maps -> (
@@ -74,14 +96,14 @@ ZZdfactorization List := ZZdFactorization => opts -> L -> (
     if all(L, ell -> instance(ell,Matrix)) then (
         --trg := target L#0;
 	mapHash := hashTable for i from 0 to #L-1 list
-	         (if (opts.Base+i+1)%(#L) == 0 then #L else (opts.Base+i+1)%(#L)) => map(source(L#((i-1)%d)),source(L#(i%d)) , L#i);
+	         (if (opts.Base+i+1)%(#L) == 0 then #L else (opts.Base+i+1)%(#L)) => mfRegradeMatrix map(source(L#((i-1)%d)),source(L#(i%d)) , L#i);
         return ZZdfactorization(mapHash, opts)
         );
     --
     if all(L, ell -> instance(ell,RingElement)) then (
         trg2 := (ring(L#0))^1;
 	mapHash2 := hashTable for i from 0 to #L-1 list
-	            (if (opts.Base+i+1)%(#L) == 0 then #L else (opts.Base+i+1)%(#L))  => map(trg2, trg2, matrix{{L#i}});
+	            (if (opts.Base+i+1)%(#L) == 0 then #L else (opts.Base+i+1)%(#L))  => mfRegradeMatrix map(trg2, trg2, matrix{{L#i}});
         return ZZdfactorization(mapHash2, opts)
         );
     --
@@ -231,7 +253,7 @@ map(ZZdFactorization, ZZdFactorization, List) := ZZdFactorizationMap => opts -> 
     -- At this point, we need to create (block) matrices for each component of the complex.
     mapHash = hashTable for i from lo to hi list i => (
         newmaps := applyTable(maps, f -> if instance(f,ZZdFactorizationMap) then f_i else f);
-        h := map(tar_(i+deg), src_i, matrix newmaps);
+        h := mfRegradeMatrix map(tar_(i+deg), src_i, matrix newmaps);
         if h == 0 then continue else h
         );
     map(tar,src,mapHash,opts, Degree=>deg)
@@ -267,7 +289,7 @@ map(ZZdFactorization, ZZdFactorization, ZZ) := ZZdFactorizationMap => opts -> (D
 map(ZZdFactorization, ZZdFactorization, ZZdFactorizationMap) := ZZdFactorizationMap => opts -> (tar, src, f) -> (
     p := period f;
     deg := if opts.Degree === null then degree f else opts.Degree;
-    H := hashTable for k in keys f.map list k => map(tar_(deg+k), src_k, f_k);
+    H := hashTable for k in keys f.map list k => mfRegradeMatrix map(tar_(deg+k), src_k, f_k);
     map(tar,src,H, Degree=>deg)
     )
 
@@ -567,6 +589,15 @@ isWellDefined ZZdFactorization := Boolean => C -> (
     true
     )
 
+-- With the Hom differential h*d_C - t^(degree h)*d_D*h, a cycle of
+-- degree n satisfies d_D*h = t^(-n)*h*d_C.
+factorizationCommutationFactor = (C,n) -> (
+    if n % period C === 0 then 1_(ring C)
+    else if period C === 2 then (-1)^(n%2)
+    else if (ring C).?rootOfUnity then (ring C).rootOfUnity^((-n)%period C)
+    else error "expected a root of unity for a map of nonzero homological degree"
+    )
+
 isWellDefined ZZdFactorizationMap := f -> (
     k := keys f;
     expectedKeys := set {
@@ -634,9 +665,9 @@ isWellDefined ZZdFactorizationMap := f -> (
 	    return false;
 	    );
         iscommutative := true;
-        for i from loC to hiC do (
-            if i+deg-1 >= loD and i+deg-1 <= hiD then (
-                if not (dd^D_(i+deg) * f_i == (-1)^deg * (f_(i-1) * dd^C_i))
+        scalar := factorizationCommutationFactor(C,deg);
+        for i from loC to hiC-1 do (
+                if not (dd^D_(i+deg) * f_i == scalar * (f_(i-1) * dd^C_i))
                 then (
                     iscommutative = false;
                     if f.cache.isCommutative then (
@@ -646,7 +677,7 @@ isWellDefined ZZdFactorizationMap := f -> (
                             );
                         return false;
                         );
-                    )));
+                    ));
         if iscommutative and not f.cache.isCommutative then (
             if debugLevel > 0 then (
                 << "-- the cache table incorrectly asserts that the maps do not commute with the differentials " << endl;
@@ -714,7 +745,7 @@ ZZdFactorization.directSum = args -> (
         )
     else (
         maps := hashTable for i from lo+1 to hi list i => (
-            directSum for C in args list dd^C_i
+            mfRegradeMatrix directSum for C in args list dd^C_i
             );
         ZZdfactorization maps
         );
@@ -872,7 +903,7 @@ ZZdFactorizationMap.directSum = args -> (
     tar := ZZdFactorization.directSum (args/target);
     -- only keep matrices in the homomorphism that are non-zero
     spots := unique flatten(args/(f -> keys f.map));
-    maps := hashTable for i in spots list i => directSum(args/(f -> f_i));
+    maps := hashTable for i in spots list i => mfRegradeMatrix directSum(args/(f -> f_i));
     result := map(tar,src,maps,Degree=>deg);
     result.cache.components = toList args;
     if all(args, isCommutativeCached) then 
@@ -892,13 +923,9 @@ isCommutative ZZdFactorizationMap := Boolean => f -> (
     deg := degree f;
     (loC,hiC) := (0,C.period);
     (loD,hiD) := (0,D.period);
-    t := getSymbol "t";
-    if period C == 2 then t = -1;
-    if deg == 0 and not(period C==2) then t = 1;
-    if not(deg==0) and not(period C==2) and (ring C).?rootOfUnity then t = (ring C).rootOfUnity;
+    scalar := factorizationCommutationFactor(C,deg);
     for i from loC to hiC-1 do (
-        if i+deg-1 >= loD and i+deg-1 <= hiD then (
-            if not (dd^D_(i+deg) * f_i == t^deg * (f_(i-1) * dd^C_i))
+            if not (dd^D_(i+deg) * f_i == scalar * (f_(i-1) * dd^C_i))
             then (
                 if debugLevel > 0 then (
                     << "-- block " << (i,i-1) << " fails to commute" << endl;
@@ -906,7 +933,6 @@ isCommutative ZZdFactorizationMap := Boolean => f -> (
                 f.cache.isCommutative = false;
                 return false;
                 )
-            )
         );
     f.cache.isCommutative = true;
     true
@@ -956,6 +982,47 @@ gradedModule(ZZdFactorization) := ZZdFactorization => F -> (
     ZZdfactorization for i from 0 to F.period-1 list F_i
     )
 
+-- Normalize a homogeneous differential profile by keeping module 0 fixed and
+-- moving all internal degree to the wraparound differential. Zero maps impose
+-- no degree constraint. Return null when there is no compatible grading.
+mfDifferentialGrading = (C,D) -> (
+    p := period C;
+    z := degree 1_(ring C);
+    mapsC := apply(p, i -> mfRegradeMatrix dd^C_i);
+    mapsD := apply(p, i -> mfRegradeMatrix dd^D_i);
+    if not all(join(mapsC,mapsD), isHomogeneous) then return null;
+    cz := positions(mapsC, f -> f == 0);
+    dz := positions(mapsD, f -> f == 0);
+    c := apply(p, i -> if mapsC#i != 0 then degree mapsC#i
+                      else if mapsD#i != 0 then degree mapsD#i else z);
+    d := apply(p, i -> if mapsD#i != 0 then degree mapsD#i else c#i);
+    if sum c != sum d then (
+        if #cz > 0 then (
+            k := first cz;
+            difference := sum d - sum c;
+            c = apply(p, i -> c#i + if i == k then difference else z)
+            )
+        else if #dz > 0 then (
+            k = first dz;
+            difference = sum c - sum d;
+            d = apply(p, i -> d#i + if i == k then difference else z)
+            )
+        else return null
+        );
+    w := sum c;
+    u := apply(p, j -> if j == 0 then z else -sum apply(toList(1..j), k -> c#k));
+    v := apply(p, j -> if j == 0 then z else -sum apply(toList(1..j), k -> d#k));
+    {u,v,w}
+    )
+
+mfHomGrading = (C,D) -> (
+    grading := mfDifferentialGrading(C,D);
+    if grading === null then return null;
+    (u,v,w) := toSequence grading;
+    p := period C;
+    apply(p, i -> apply(p, j -> v#((j+i)%p) - u#j - floor((j+i)/p)*w))
+    )
+
 Hom(ZZdFactorization,ZZdFactorization) := ZZdFactorization => opts -> (C,D) -> (
     if not(C.period == D.period) then error "Expected factorizations with the same period";
     t := if (ring C).?rootOfUnity then (ring C).rootOfUnity else -1;
@@ -967,11 +1034,16 @@ Hom(ZZdFactorization,ZZdFactorization) := ZZdFactorization => opts -> (C,D) -> (
     R := ring C;
     p := C.period;
     if ring D =!= R then error "expected factorizations over the same ring";
+    shifts := mfHomGrading(C,D);
+    originalModules := apply(p, i -> apply(p, j -> Hom(C_j,D_(j+i),opts)));
     modules := hashTable for i from 0 to p-1 list i => (
-        directSum for j from 0 to p-1 list {j,(j+i)%p} => Hom(C_j, D_(j+i), opts)
+        directSum for j from 0 to p-1 list {j,(j+i)%p} => (
+            h := originalModules#i#j;
+            if shifts === null or shifts#i#j == degree 1_R then h
+            else h ** R^{shifts#i#j})
         );
     maps := hashTable for i from 1 to p list i => (
-        map(modules#((i-1)%p),
+        mfRegradeMatrix map(modules#((i-1)%p),
             modules#(i%p),
             matrix table(
                 indices modules#((i-1)%p),
@@ -986,6 +1058,8 @@ Hom(ZZdFactorization,ZZdFactorization) := ZZdFactorization => opts -> (C,D) -> (
                     ))));
     result := ZZdfactorization maps;
     result.cache.homomorphism = (C,D); -- source first, then target
+    result.cache#"homomorphismModules" = originalModules;
+    result.cache#"homGrading" = shifts;
     Y.cache#(Hom,C,D) = result;
     result
     )
@@ -1022,15 +1096,16 @@ Hom(ZZdFactorizationMap,ZZdFactorizationMap) := ZZdFactorizationMap => opts -> (
                    -- so p == {j,j+i}, for various j
                    if (p#0 - df)%per == q#0 
                    then (
-                       sgn := 1; -- function of df, dg, i
-                       sgn = -(t)^(df * (i + dg));
+                       -- For delta(h) = h*d_C - t^i*d_D*h, this sign
+                       -- makes pre/postcomposition a map of degree df+dg.
+                       sgn := (t)^(-(2*df+dg)*i);
                        sgn * Hom(f_(q#0), g_(p#1), opts)
                        )
                    else map(component(tar_(i+df+dg), q),
                             component(src_i, p),
                             0)
                    ));
-        map(tar_(i+df+dg),
+        mfRegradeMatrix map(tar_(i+df+dg),
             src_i,
             matrix m
             )
@@ -1156,9 +1231,6 @@ homomorphism(ZZ, Matrix, ZZdFactorization) := ZZdFactorizationMap => (i, f, E) -
     -- f: R^1 --> E_i (R is the ring of E and phi)
     -- E: is a Complex, the output of Hom(C,D), C,D complexes.
     -- return the complex homomorphism g : C --> D of degree i.
-    -- The following local function is a bit of a hack: finds the right components buried in
-    -- a cache table.
-    fixme := (g) -> map(((target g).cache).components#0, source g, g);
     if not E.cache.?homomorphism then error "expected target of map to be of the form 'Hom(C,D)'";
     if not isFreeModule source f
     or not rank source f == 1 then error "expected source of map to be free of rank 1";
@@ -1173,8 +1245,13 @@ homomorphism(ZZ, Matrix, ZZdFactorization) := ZZdFactorizationMap => (i, f, E) -
         );
     (C,D) := E.cache.homomorphism;
     p := period C;
-    H := hashTable for j from 1 to p list j => 
-      homomorphism fixme f^[{j%p,(j+i)%p}];
+    H := hashTable for j from 1 to p list j => (
+        part := f^[{j%p,(j+i)%p}];
+        -- Remove the internal twist before applying the ordinary Hom
+        -- correspondence. The resulting component may have nonzero degree.
+        original := E.cache#"homomorphismModules"#(i%p)#(j%p);
+        homomorphism mfRegradeMatrix map(original, source part, part)
+        );
     map(D,C,H, Degree=>i)
     )
 
@@ -1295,6 +1372,14 @@ homomorphism' ZZdFactorizationMap := ZZdFactorizationMap => opts -> (f) -> (
     )
 
 
+-- Boundaries in a p-complex are images of the (p-1)st differential power.
+-- The returned matrix lands in E_i, including when i lies outside one period.
+factorizationBoundaryMatrix = (E,i) -> (
+    b := id_(E_i);
+    for j from 1 to period E-1 do b = b * dd^E_(i+j);
+    b
+    )
+
 -- possible todo: allow to choose the homological degree of the map, and the internal degree of the map?
 randomFactorizationMap = method(Options=>{
         Degree => 0,
@@ -1306,9 +1391,17 @@ randomFactorizationMap(ZZdFactorization,ZZdFactorization) := ZZdFactorizationMap
     if not(potential C == potential D) and o.Boundary then error "factorizations should have the same potential";
     deg := o.Degree;
     E := Hom(C,D);
+    if o.InternalDegree =!= null and E.cache#"homGrading" === null then
+        error "InternalDegree requires compatible homogeneous differential degrees";
     S := ring E;
     ideg := if o.InternalDegree === null then degree 1_S else o.InternalDegree;
-    G := if o.Boundary then image dd^E_(deg+1)
+    G := if o.Boundary then (
+             d := factorizationBoundaryMatrix(E,deg);
+             -- The Hom differential need not have a common internal degree.
+             -- Regrade its source so homogeneous columns give correctly graded
+             -- image generators before selecting the requested component.
+             image map(target d,,d)
+         )
          else if o.Cycle then ker dd^E_deg
          else E_deg;
     B := basis(ideg, G);
@@ -1345,7 +1438,7 @@ tensorCommutativity(ZZdFactorization, ZZdFactorization) := ZZdFactorizationMap =
                   CD_i.cache.components#(CD_i.cache.indexComponents#ab),
                   0)
         );
-        matrix mats
+        mfRegradeMatrix map(DC_i, CD_i, matrix mats)
         );
     map(DC,CD,maps)
     )
@@ -1358,7 +1451,7 @@ tensorAssociativity(ZZdFactorization, ZZdFactorization, ZZdFactorization) := ZZd
     F := AB ** C; -- target
     p := period A;
     maps := new HashTable from for i from 1 to p list i => (
-        map(F_i, E_i, 
+        mfRegradeMatrix map(F_i, E_i,
         -- want the map E_i --> F_i
         matrix for ab'c in indices F_i list
                 for a'bc in indices E_i list (
@@ -1368,9 +1461,10 @@ tensorAssociativity(ZZdFactorization, ZZdFactorization, ZZdFactorization) := ZZd
                     bc := a'bc#1;
                     ab := ab'c#0;
                     if A_a != 0 and B_b != 0 and C_c != 0 then (
-                        ((AB_ab)_[{a,b%p}] ** C_c)
-                        * tensorAssociativity(A_a, B_b, C_c)
-                        * (A_a ** (BC_bc)^[{b%p,c}])
+                        left := (AB_ab)_[{a,b%p}] ** C_c;
+                        right := A_a ** (BC_bc)^[{b%p,c}];
+                        left * map(source left, target right,
+                            tensorAssociativity(A_a, B_b, C_c)) * right
                         )
                     else (
                          map(F_i.cache.components#(F_i.cache.indexComponents#{ab,c}),
@@ -1592,22 +1686,15 @@ isNullHomotopyOf(ZZdFactorizationMap, ZZdFactorizationMap) := (h, f) -> (
         if debugLevel > 0 then << "expected sources to be the same" << endl;
         return false;
         );
-    if degh - degf =!= 1 then (
-        if debugLevel > 0 then << "expected degree of first map to be one more than degree of the second" << endl;
+    if degh - degf =!= period f - 1 then (
+        if debugLevel > 0 then << "expected homotopy degree to differ by period minus one" << endl;
         return false;
         );
-    if debugLevel == 0 then h * dd^C + (-1)^degf * dd^D * h == f
-    else (
-        result := true;
-        (lo,hi) := (0,period source h);
-        for i from lo to hi do (
-            if h_(i-1) * dd^C_i + (-1)^degf * dd^D_(degh+i) * h_i != f_i then (
-                << "fails to be a null homotopy at location " << i << endl;
-                result = false;
-                );
-            );
-        result
-        )
+    g := homomorphism' h;
+    H := target g;
+    result := homomorphism(degf, factorizationBoundaryMatrix(H,degf) * g_0, H) == f;
+    if not result and debugLevel > 0 then << "fails to be a null homotopy" << endl;
+    result
     )
 
 
@@ -1639,8 +1726,9 @@ isNullHomotopic ZZdFactorizationMap := Boolean => f -> (
     g := homomorphism' f;
     H := target g; 
     d := degree f;
-    g1 := g_0 // dd^H_(d+1); 
-    g_0 == dd^H_(d+1) * g1
+    b := factorizationBoundaryMatrix(H,d);
+    g1 := g_0 // b;
+    g_0 == b * g1
     )
 
 
@@ -1648,13 +1736,13 @@ isNullHomotopic ZZdFactorizationMap := Boolean => f -> (
 nullHomotopy ZZdFactorizationMap := ZZdFactorizationMap => {}  >> opts -> f -> (
     -- we check that the source is free, as that can be much faster
     -- TODO: nullHomotopy should perhaps be hook-ified.
-    result := if isFree source f then nullHomotopyFreeSource f;
-    if result =!= null then return result;
+    result := if period f === 2 and isFree source f then nullHomotopyFreeSource f;
+    if result =!= null and isNullHomotopyOf(result,f) then return result;
     g := homomorphism' f;
     H := target g; 
     d := degree f;
-    g1 := g_0 // dd^H_(d+1);
-    homomorphism(d+1,g1,H)
+    g1 := g_0 // factorizationBoundaryMatrix(H,d);
+    homomorphism(d + period f - 1,g1,H)
     )
 
 isFree ZZdFactorization := Boolean => C -> (

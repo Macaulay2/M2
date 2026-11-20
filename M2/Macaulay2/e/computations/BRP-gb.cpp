@@ -377,7 +377,6 @@ void interreduction(IntermediateBasis &F)
 {
   bool changesHappened = true;
   IntermediateBasis::iterator end = F.end();
-  unsigned long numChanged = 0;
   while (changesHappened)
     {
       changesHappened = false;
@@ -386,7 +385,6 @@ void interreduction(IntermediateBasis &F)
           if (reduce(it->second, F, it))
             {
               // we changed it
-              numChanged++;
               if (it->second.isZero())
                 {  // reduced an element to 0, remove it from F
                   F.erase(it++);

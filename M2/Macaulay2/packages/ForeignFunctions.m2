@@ -16,8 +16,8 @@
 
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.8",
-    Date => "June 5, 2026",
+    Version => "0.9",
+    Date => "July 21, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
@@ -43,6 +43,9 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.9 (2026-07-21, M2 1.26.11)
+* allow null as first argument to foreignFunction/foreignSymbol
 
 0.8 (2026-06-05, M2 1.26.06)
 * update my contact info
@@ -648,6 +651,10 @@ foreignFunction(String, ForeignType, ForeignType) := o -> (
 foreignFunction(String, ForeignType, VisibleList) := o -> (
     symb, rtype, argtypes) -> foreignFunction(
 	dlsym symb, symb, rtype, argtypes, o)
+foreignFunction(Nothing, String, ForeignType, ForeignType) := o -> (
+    nothing, symb, rtype, argtype) -> foreignFunction(symb, rtype, argtype, o)
+foreignFunction(Nothing, String, ForeignType, VisibleList) := o -> (
+    nothing, symb, rtype, argtypes) -> foreignFunction(symb, rtype, argtypes, o)
 foreignFunction(SharedLibrary, String, ForeignType, ForeignType) := o -> (
     lib, symb, rtype, argtype) -> foreignFunction(
     lib, symb, rtype, {argtype}, o)
@@ -693,6 +700,8 @@ foreignSymbol = method(TypicalValue => ForeignObject)
 foreignSymbol(SharedLibrary, String, ForeignType) := (
     lib, symb, T) -> dereference_T dlsym(lib#0, symb)
 foreignSymbol(String, ForeignType) := (symb, T) -> dereference_T dlsym symb
+foreignSymbol(Nothing, String, ForeignType) := (nothing, symb, T) -> (
+    foreignSymbol(symb, T))
 
 ---------------------------
 -- working with pointers --
@@ -1874,6 +1883,8 @@ doc ///
     (foreignFunction, SharedLibrary, String, ForeignType, ForeignType)
     (foreignFunction, String, ForeignType, VisibleList)
     (foreignFunction, String, ForeignType, ForeignType)
+    (foreignFunction, Nothing, String, ForeignType, VisibleList)
+    (foreignFunction, Nothing, String, ForeignType, ForeignType)
     (foreignFunction, Pointer, String, ForeignType, VisibleList)
     [foreignFunction, Variadic]
     Variadic
@@ -1895,9 +1906,9 @@ doc ///
     Text
       Load a function contained in a shared library using the C function
       @TT "dlsym"@ and declare its signature.
-      The library may be omitted if it is already loaded, e.g., for functions
-      in the C standard library or libraries that Macaulay2 is already linked
-      against.
+      The library may be omitted (or @TO null@ passed instead) if it is already
+      loaded, e.g., for functions in the C standard library or libraries that
+      Macaulay2 is already linked against.
     Example
       mycos = foreignFunction("cos", double, double)
       mycos pi
@@ -2519,7 +2530,11 @@ TEST ///
 ---------------------
 cCos = foreignFunction("cos", double, double)
 assert Equation(value cCos pi, -1)
+cCos = foreignFunction(,"cos", double, double)
+assert Equation(value cCos pi, -1)
 cAbs = foreignFunction("abs", int, int)
+assert Equation(value cAbs(-2), 2)
+cAbs = foreignFunction(,"abs", int, int)
 assert Equation(value cAbs(-2), 2)
 ///
 
@@ -2528,6 +2543,11 @@ TEST ///
 -- foreignFunction (variadic) --
 --------------------------------
 sprintf = foreignFunction("sprintf", int, {charstar, charstar},
+    Variadic => true)
+foo = charstar "foo"
+assert Equation(value sprintf(foo, "%s", "bar"), 3)
+assert Equation(value foo, "bar")
+sprintf = foreignFunction(,"sprintf", int, {charstar, charstar},
     Variadic => true)
 foo = charstar "foo"
 assert Equation(value sprintf(foo, "%s", "bar"), 3)
@@ -2561,6 +2581,8 @@ TEST ///
 -- foreignSymbol --
 -------------------
 environ = foreignSymbol("environ", charstarstar)
+assert all(value environ, x -> instance(x, String))
+environ = foreignSymbol(,"environ", charstarstar)
 assert all(value environ, x -> instance(x, String))
 ///
 

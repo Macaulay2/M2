@@ -458,7 +458,7 @@ void SMat<CoeffRing>::vec_scale(sparsevec *&v, const elem &a) const
 template <typename CoeffRing>
 void SMat<CoeffRing>::vec_negate(sparsevec *&v) const
 {
-  for (sparsevec *p = v; p->next != NULL; p = p->next)
+  for (sparsevec *p = v; p != nullptr; p = p->next)
     ring().negate(p->coeff, p->coeff);
 }
 

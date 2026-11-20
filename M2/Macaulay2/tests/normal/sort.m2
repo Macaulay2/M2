@@ -87,6 +87,13 @@ assert( L === sort(L, identity) )
 L = {0,0,0,1,2,3}
 assert( L === sort(L, identity) )
 
+-- 49 and 50 are adjacent, so they are always compared, whatever the pivots
+T = new Type of List
+T ? T := (a, b) -> if set {a#0, b#0} === set {49, 50} then error "incomparable" else a#0 ? b#0
+L = apply(100, i -> new T from {i})
+assert try (sort L; false) else true
+assert try (rsort L; false) else true
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test sort.out"
