@@ -251,8 +251,9 @@ makeModule(RingMap, Module) := (f, N) -> (
     (M, pf', pf)
 )
 
--- this is to reduce computing the pushFwd of a free module to the computation
--- of pushFwd of a rank one free module.
+-- the pushfwd of any rank one free module can be obtained from the pushfwd of the canonical `module R` by twisting 
+-- this method makes a recursive call to compute the pushforward of `module R` which will then be cached for any future such computations
+-- the callsite of this method has the guard against infinite recursion - we dont do this reduction step in case we are already computing with `module R`.
 makeModuleRankOneFree = (f, N) -> (
     (R, S) := (target f, source f);
     if not isRankOneFree N then error "expected rank one free module";

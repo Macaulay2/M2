@@ -605,9 +605,11 @@ pullbackDegrees(RingMap) := (f) -> (
     -- same degree group as R.
     -- f' is homogeneous and is "the same" as f but with DegreeMap == identity.
     if not isHomogeneous f then error "pullbackDegrees: non-homogeneous input is invalid";
+
     (S, R) := (source f, target f);
     T := newRing(
-        if isPolynomialRing ambient S then S else S[],
+        -- mimics the check in newRing that the ambient ring of S is a polynomial ring
+        if isPolynomialRing ring presentation S then S else S[],
         DegreeGroup => degreeGroup R,
         Degrees => for i from 0 to numgens S-1 list f.cache.DegreeMap degree S_i
     );

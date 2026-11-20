@@ -92,6 +92,14 @@ Description
         N = module ideal {a*b + c};
         H = Hom(pushFwd(f, M), pushFwd(f, N));
         inducedMap(H, Hom(f, M, N))
+    Text
+        This method can be used to produce random homomorphisms between modules over skew-rings.
+    Example
+        kk = ZZ/101;
+        R = kk[a..d, SkewCommutative => true];
+        f = map(R, kk);
+        M = R^1/ ideal {a*b, c+d}
+        homomorphism random Hom(f, R^1, M)
 SeeAlso
     Hom
     pushFwd
@@ -103,21 +111,46 @@ doc ///
 Key
     (Hom, RingMap, Matrix, Matrix)
     (Hom, RingMap, Matrix, Module)
+    (Hom, RingMap, Module, Matrix)
 Headline
     induced map on Hom
 Usage
-    Phi = Hom(f, G, H)
+    Phi = Hom(f, F, G)
 Inputs
     f:RingMap
         $S \rightarrow R$
+    F:Matrix
     G:Matrix
-    H:Matrix
 Outputs
     Phi:Matrix
-        $\textrm{Hom}(\textrm{target} f, \textrm{source} G) \rightarrow \textrm{Hom}(\textrm{source} f, \textrm{target} G)$
+        $\textrm{Hom}(f, \textrm{target} F, \textrm{source} G) \rightarrow \textrm{Hom}(f, \textrm{source} F, \textrm{target} G)$
 Description
     Text
         Compute the induced map on pushed-forward Hom modules. See @TO (Hom, RingMap, Module, Module)@.
+    Example
+        kk = ZZ/101
+        R = kk[a..d, SkewCommutative => true]
+        f = map(R, kk)
+        M = module ideal {a*b, c+d}
+        N = R^1 /ideal {a+b, c*d}
+
+        -- pick some random homomorphisms using the pushFwd hom construction
+        F = homomorphism random Hom(f, R^1, M)
+        G = homomorphism random Hom(f, R^1, N)
+
+        HomFG = Hom(f, F, G)
+        assert(source HomFG == Hom(f, target F, source G))
+        assert(target HomFG == Hom(f, source F, target G))
+    Text
+        If a module $M$ is provided as an argument, then the identity map on $M$ is used.
+    Example
+        HFG' = Hom(f, F, R^1)
+        assert(source HFG' == Hom(f, target F, R^1))
+        assert(target HFG' == Hom(f, source F, R^1))
+
+        HFG'' = Hom(f, R^1, G)
+        assert(source HFG'' == Hom(f, R^1, source G))
+        assert(target HFG'' == Hom(f, R^1, target G))
 SeeAlso
     Hom
     pushFwd
@@ -333,7 +366,7 @@ Outputs
         which represents the corresponding element in the Ext module
 Description
     Text
-        This is analogous to @TO yonedaMap'@ without passing the raing map $f$.
+        This is analogous to @TO yonedaMap'@ without passing the ring map $f$.
         The difference is that the Ext class produced is in the $S$-module @TT
         "Ext^d(f, M, N)"@. Indeed, the comparison map produced below shows that
         these modules are isomorphic over $S$ in a way which is consistent with
