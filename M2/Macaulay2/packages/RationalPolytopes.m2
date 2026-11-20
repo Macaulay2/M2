@@ -47,11 +47,19 @@ denominator Polyhedron := ZZ => P -> (
 isPeriod = method()
 isPeriod(Matrix, ZZ) := Boolean => (M, q) -> (
     if numRows M % q != 0 then false
-		else (
-        result := for j from 0 to numRows M // q - 1 do (
-            if M^{0 .. q-1} != M^{j*q .. (j+1)*q-1} then break false;
-            );
-				result === null
+    else (
+        if q != numRows M then (
+            result1 := for j from 0 to numRows M // q - 1 do (
+                if M^{0 .. q-1} != M^{j*q .. (j+1)*q-1} then break false;
+                );
+            result1 === null
+            )
+        else (
+            result2 := for j from 0 to q - 1 do (
+                if isPeriod(M, j) then break false;
+                );
+            result2 === null
+            )
         )
     )
 
@@ -676,12 +684,13 @@ doc ///
     q : ZZ
   Outputs
     result : Boolean
-      result is true if q is the period and false otherwise
+      result is true if q is the minimal period and false otherwise
   Description
     Text
-      It returns true if q is the period and false otherwise
+      It returns true if q is the minimal period and false otherwise
     Example
       isPeriod(matrix "1,1;2,2;1,1;2,2",2)
+      isPeriod(matrix "1,1;2,2;1,1;2,2",4)
       isPeriod(matrix "1,1;2,2;1,1;3,2",2)
       isPeriod(matrix "1,2,5;2,4,3;1,2,5;3,4,5;1,2,5;2,4,3;1,2,5;3,4,5",3)
   SeeAlso
