@@ -39,8 +39,8 @@ makeQQ := f -> (
      );
 
 -- trivial intersection strategy (internal)
-bfIntRing := method()
-bfIntRing(Ideal, List) :=  (I, w) -> (
+bfIntRing = method()
+bfIntRing(Ideal, List) := RingElement => (I, w) -> (
      local tInfo;
      -- prep work
      if not (ring I).?IntRing then
@@ -208,41 +208,36 @@ bFunction(Ideal, List) := RingElement => o -> (I, w) -> (
 -- factors a b-function
 factorBFunction = method()
 factorBFunction(RingElement) := Product => f -> (
-     R := ring f;
-     
-     -- sanity check
-     if numgens R != 1 then
-     error "polynomial ring of one variable expected";
-     if coefficientRing R =!= QQ then
-     error "expected polynomial over QQ";
-     
-     l := listForm f;
-     d := product(l, u -> denominator(u#1));
-     l = l / (u -> (u#0, lift(u#1*d, ZZ)));
-     R' := ZZ(monoid [R_0]);
-     f = sum (l, u -> u#1*R'_(u#0));
-     f = factor f;
-     f = select(f, u-> first degree u#0 > 0);
-     
-     result := apply(f, u->(
-	       if first degree u#0 != 1 then error "internal error: incorrect b-function";
-	       coeff := listForm u#0 / (v->v#1);
-	       Power(R_0 + (if #coeff> 1 then (coeff#1/coeff#0) else 0), u#1)
-	       ));
-     if #result==0 then 1_R' else result
-     );-- end factorBFunction
+    if numgens ring f != 1 then error "expected univariate polynomial";
+    new Product from apply(
+        select(toList factor f, pw -> first degree pw#0 > 0),
+        pw -> Power(pw#0 / leadCoefficient pw#0, pw#1)
+    )
+)
+
 
 bFunctionRoots = method()
 bFunctionRoots RingElement := List => f -> (
      if f==1 then {} else apply(toList factorBFunction f, 
 	 u -> - leadCoefficient substitute(u#0, {(ring u#0)_0 => 0_(ring u#0)}) )
      );
+ 
 getIntRoots = method()
+
+getIntRoots ZZ := 
 getIntRoots RingElement := List => f -> (
-     roots := bFunctionRoots f;
-     roots = select(roots, u -> denominator u == 1);
-     apply(roots, u -> numerator u)    
-     );-- end getIntRoots
+    R := ring f;
+    if f== 1_R then return {};
+    if numgens R != 1 then error "expected univariate polynomial";
+    unique flatten apply(toList factor f, pw -> (
+        g := pw#0;
+        if first degree g != 1 then {} else (
+            coeffs := listForm g / (v -> v#1);
+            r := -(if #coeffs > 1 then coeffs#1 else 0_QQ) / coeffs#0;
+            if denominator r == 1 then { lift(r, ZZ) } else {}
+        )
+    ))
+)
 
  
 TEST /// -- testing globalBFunction...

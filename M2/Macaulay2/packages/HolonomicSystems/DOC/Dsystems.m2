@@ -16,8 +16,8 @@ doc ///
     Text 
       A $d \times n$ integer matrix $A$ determines a GKZ hypergeometric system of PDEs 
       in the Weyl algebra $D_n$ over $\mathbb{C}$.  The matrix $A$ is associated to the toric ideal 
-      $I_A$ in the polynomial subring $\mathbb{C}[\partial_1,...,\partial_n]$ of $D$.  A field of characteristic zero may be used instead of  $\mathbb{C}$.
-      For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapters 3 and 4].
+      $I_A$ in the polynomial subring $\mathbb{C}[dx_1,...,dx_n]$ of $D$.  A field of characteristic zero may be used instead of  $\mathbb{C}$.
+      For more details, see [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Chapters 3 and 4].
     Example 
       A = matrix{{1,2,0},{-1,1,3}}
       D = makeWA(QQ[x_1..x_3])
@@ -44,15 +44,15 @@ doc ///
       the GKZ hypergeometric system associated to the matrix $A$ and the parameter vector $b$ in the Weyl algebra $D$
   Description
     Text
-      The GKZ hypergeometric system of PDE's associated to a $d \times n$
+      The GKZ hypergeometric system of PDEs associated to a $d \times n$
       integer matrix A is an ideal in the Weyl algebra $D_n$ over $\mathbb{C}$
-      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$.
+      with generators $x_1,\dots,x_n$ and $dx_1,\dots,dx_n$.
       It consists of the toric ideal $I_A$ in the polynomial
-      subring  $\mathbb{C}[\partial_1,...,\partial_n]$ and Euler relations given by the entries
+      subring  $\mathbb{C}[dx_1,...,dx_n]$ and Euler relations given by the entries
       of the vector (A $\theta$ - b), where $\theta$ is the vector
-      $(\theta_1,...,\theta_n)^t$, and $\theta_i = x_i \partial_i$. 
+      $(\theta_1,...,\theta_n)^t$, and $\theta_i = x_i dx_i$. 
       A field of characteristic zero may be used instead of  $\mathbb{C}$.
-      For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapters 3 and 4].
+      For more details, see [@TO2 ("WeylAlgebras :: Works Cited", "SST00")@, Chapters 3 and 4].
     Example
       A = matrix{{1,1,1},{0,1,2}}
       b = {3,4}
@@ -82,14 +82,15 @@ doc ///
     [AppellF1,Vars]
     Vars
   Headline
-    Appell F1 system of PDE's
+    Appell F1 system of PDEs
   Usage
     AppellF1 {a0,a1,a2,a3}
   Inputs
     :List
+      of 4 parameters $\{a_0, a_1, a_2, a_3\}$
   Outputs
     :Ideal
-      which represents @HREF("https://en.wikipedia.org/wiki/Appell_series#Derivatives_and_differential_equations", "Appell F1")@ system of PDE's associated to the parameters a0, a1, a2, and a3.
+      which represents @HREF("https://en.wikipedia.org/wiki/Appell_series#Derivatives_and_differential_equations", "Appell F1")@ system of PDEs associated to the parameters $a_0, a_1, a_2, a_3$.
   Description
     Example
       w = {1,4/5,-2,3/2}
@@ -119,14 +120,14 @@ doc ///
     :List
       of Euler operators
   Description
-      Text
-       Given a $d \times n$ integer matrix $A = (a_{ij})$ and a Weyl algebra in $n$ variables, produce the $d$ corresponding Euler operators $E_i = \sum_{j=1}^n a_{ij}x_jdj$.
-       An optional list $b$ imposes a multigrading so that one can look for solutions to the Euler operators of multidegree $b$.
+    Text
+      Given a $d \times n$ integer matrix $A = (a_{ij})$ and a Weyl algebra in $n$ variables, produce the $d$ corresponding Euler operators $E_i = \sum_{j=1}^n a_{ij} x_j dx_j$.
+      An optional list $b$ imposes a multigrading so that one can look for solutions to the Euler operators of multidegree $b$.
     Example
       D = makeWeylAlgebra(QQ[x,y,z])
       A = matrix{{2,-7,5},{14,8,-1}}
       L = eulerOperators(A,D)
-      Example
+    Example
       D = makeWeylAlgebra(QQ[x,y,z])
       A = matrix{{2,-7,5},{14,8,-1}}
       b = {2,-3}
