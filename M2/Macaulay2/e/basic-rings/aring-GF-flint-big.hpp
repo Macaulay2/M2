@@ -226,13 +226,6 @@ class ARingGFFlintBig : public RingInterface
     return true;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const
-  {
-    (void) result;
-    (void) a;
-    return false;
-  }
-
   void negate(ElementType& result, const ElementType& a) const
   {
     fq_nmod_neg(&result, &a, mContext);

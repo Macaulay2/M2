@@ -99,3 +99,9 @@ assert checkPowersOfZero(30, frac(QQ[a..d]/(a^2-b^3)))
 assert checkPowersOfZero(30, frac(QQ[a]))
 assert checkPowersOfZero(30, frac(QQ[a,b,c]/(a^2+b^3+c^4)))
 
+-- 0 has no inverse, so negative powers of it are errors
+for R in {ZZ[x], QQ[x], ZZ/5[x], RR[x]} do (
+    assert(try 0_R^-1 then false else true);
+    assert(try 0_R^-2 then false else true);
+    assert(try 0_R^(-2^70) then false else true))
+assert(try promote(5, ZZ/5[x])^-1 then false else true)

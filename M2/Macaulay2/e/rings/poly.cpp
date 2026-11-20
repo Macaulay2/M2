@@ -831,7 +831,11 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_srcptr n) const
   ring_elem ff, result;
 
   if (mpz_sgn(n) == 0) return from_long(1);
-  if (is_zero(f0)) return ZERO_RINGELEM;
+  if (is_zero(f0))
+    {
+      if (mpz_sgn(n) < 0) ERROR("cannot divide by zero");
+      return ZERO_RINGELEM;
+    }
 
   mpz_t abs_n;
   mpz_init(abs_n);

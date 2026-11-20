@@ -420,6 +420,22 @@ document {
 	  "k = map(S,S,matrix {{c,b}})",
 	  "k(a^7 + b^3 + c)"
 	  },
+     "The coefficient rings of ", TT "S", " and ", TT "R", " needn't be the same.  If there
+     is a ring homomorphism between them, it's used, even if it's defined on only a subring
+     of the coefficient ring of ", TT "S", ".  For example, the map from ", TT "QQ", " to ",
+     TT "ZZ/5", " is defined on the rational numbers whose denominators aren't divisible by 5,
+     and applying it to any other rational number is an error.",
+     EXAMPLE lines ///
+     f = map(ZZ/5, QQ)
+     f(1/2)
+     ///,
+     "Otherwise, e.g., from ", TT "ZZ/5", " to ", TT "ZZ", ", the coefficients are lifted to
+     integers, as with ", TO lift, ", so the result isn't a ring homomorphism.",
+     EXAMPLE lines ///
+     g = map(ZZ, ZZ/5)
+     g 4
+     g 2 + g 2 == g 4
+     ///,
      "Specifying a degree map is a useful way to preserve homogeneity, which can speed computation.",
      EXAMPLE lines ///
      R = QQ[x,y,z];

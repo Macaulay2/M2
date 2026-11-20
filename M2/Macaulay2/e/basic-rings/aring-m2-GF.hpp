@@ -94,6 +94,7 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
   ARingGFM2(const PolynomialRing &R, const ring_elem a);
 
   GFElement characteristic() const { return mGF.characteristic(); }
+  GFElement dimension() const { return mGF.dimension(); }
   void text_out(buffer &o) const;
 
   const PolynomialRing &originalRing() const { return mGF.ring(); }
@@ -184,13 +185,6 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
     if (is_zero(d)) return false;
     divide(result, n, d);
     return true;
-  }
-
-  bool set_from_BigReal(elem &result, gmp_RR a) const
-  {
-    (void) result;
-    (void) a;
-    return false;
   }
 
   void negate(elem &result, elem a) const
