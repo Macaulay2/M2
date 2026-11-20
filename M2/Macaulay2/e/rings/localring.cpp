@@ -62,6 +62,10 @@ local_elem *LocalRing::new_local_elem() const { return newitem(local_elem); }
 
 bool LocalRing::simplify_unit_denominator(local_elem *f) const
 {
+  // If the denominator of f is a unit of mRing (as far as mRing->invert can tell),
+  // rewrite f in place as numer * denom^-1 / 1; otherwise leave f unchanged.
+  // Returns true exactly when the denominator of f is 1 on exit.
+
   if (mRing->is_equal(f->denom, mRing->one())) return true;
   if (!mRing->is_unit(f->denom)) return false;
 

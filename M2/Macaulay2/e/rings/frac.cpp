@@ -101,6 +101,10 @@ ring_elem FractionField::set_non_unit_frac(ring_elem top) const
 
 bool FractionField::simplify_unit_denominator(frac_elem *f) const
 {
+  // If the denominator of f is a unit of R_ (as far as R_->invert can tell),
+  // rewrite f in place as numer * denom^-1 / 1; otherwise leave f unchanged.
+  // Returns true exactly when the denominator of f is 1 on exit.
+
   if (R_->is_equal(f->denom, R_->one())) return true;
 
   ring_elem denom_inverse;
