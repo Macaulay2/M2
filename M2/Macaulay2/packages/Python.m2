@@ -3,8 +3,8 @@ this does not work unless M2 is compiled --with-python
 *-
 
 newPackage("Python",
-    Version => "1.1",
-    Date => "June 5, 2026",
+    Version => "1.2",
+    Date => "August 23, 2026",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -27,8 +27,16 @@ newPackage("Python",
 
 -*
 
+1.2 (2026-08-23, M2 1.26.11)
+* add support for using with ... do ... statements w/ python objects
+
 1.1 (2026-06-05, M2 1.26.06)
 * update my contact info
+* update to use ~ as a prefix unary operator instead of postfix
+* switch to using cached rather than canned example for matplotlib tutorial
+  (contribution by Paul Zinn-Justin)
+* improved webapp support, in particular for displaying matploblib graphics
+  in the webapp REPL (contribution by Paul Zinn-Justin)
 
 1.0 (2025-11-08, M2 1.25.11)
 * New PythonContext class replacing undocumented Context class
@@ -483,6 +491,9 @@ if math@@?remainder then (
     remainder(Thing,        PythonObject) := (x, y) -> x - y * round(x/y))
 
 help#0 PythonObject := x -> toString x@@"__doc__"
+
+PythonObject.EnterMethod = x -> (x@@"__enter__"(); x)
+PythonObject.ExitMethod = x -> x@@"__exit__"()
 
 -------------------
 -- PythonContext --
@@ -1013,6 +1024,13 @@ TEST ///
 -- Python < 3.9 compatibility
 assert Equation(gcd toPython 200, 200)
 assert Equation(lcm(toPython 200, toPython 300), 600)
+///
+
+TEST ///
+-- context management
+open = pythonValue "open"
+with f = open(temporaryFileName(), "w") do ()
+assert value f@@"closed"
 ///
 
 end --------------------------------------------------------

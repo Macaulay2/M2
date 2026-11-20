@@ -42,6 +42,7 @@ doc ///
   SeeAlso
     "parallel programming with threads and tasks"
     AtomicInt
+    symbol with
   Subnodes
     (NewMethod, Mutex)
     (lock, Mutex)
