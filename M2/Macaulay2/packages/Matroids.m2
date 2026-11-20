@@ -1351,7 +1351,7 @@ allMatroids (ZZ, ZZ) := List => (n, r) -> (
 	if r == 0 then return {uniformMatroid(0, n)};
 	if r == 1 then return {uniformMatroid(1, n)} | apply(n-1, i -> matroid(E, take(subsets(n, 1), i+1), EntryMode => "nonbases"));
 	if n > 9 then error "allMatroids: Can only return all matroids on <= 9 elements";
-	PE := reverse sort subsets(set E, r);
+	PE := subsets(set E, r);
 	dir := first select(path, p -> fileExists(p | "Matroids/SmallMatroids.txt"));
 	db := if (n, r) =!= (9, 4) then (
 		numMatroids := {7,13,23,38,37,108,58,325,940,87,1275}; -- cf. Table 1 in https://arxiv.org/pdf/math/0702316.pdf
