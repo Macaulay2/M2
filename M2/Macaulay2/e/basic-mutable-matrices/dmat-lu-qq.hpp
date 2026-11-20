@@ -186,7 +186,7 @@ class DMatLinAlg<M2::ARingQQ>
     FlintQQMat AB(AB1);
     fmpq_mat_rref(AB.value(), AB.value());
     findColumnRankProfileFromLU(AB.value(), profile);
-    if (profile[profile.size() - 1] >= ncols)
+    if (not profile.empty() and profile.back() >= ncols)
       return false;  // system is inconsistent
     // At this point, we know the solutions.  Should we go through FlintQQMat,
     // or go directly to Mat?
