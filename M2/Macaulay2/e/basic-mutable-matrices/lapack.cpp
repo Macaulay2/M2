@@ -131,8 +131,6 @@ void fill_lower_and_upper(const std::vector<double>& lapack_numbers,  // column-
 // result: lower: size: nrows x min(nrows, ncols)
 // result: upper: size min x ncols
 {
-  int nrows = static_cast<int>(lower.numRows());
-  int ncols = static_cast<int>(upper.numColumns());
   int min = static_cast<int>(lower.numColumns());
   assert(min == static_cast<int>(upper.numRows()));
          
@@ -160,8 +158,6 @@ void fill_lower_and_upper(const std::vector<double>& lapack_numbers,  // column-
 // result: upper: size min x ncols
 {
   auto& ring = lower.ring();
-  int nrows = static_cast<int>(lower.numRows());
-  int ncols = static_cast<int>(upper.numColumns());
   int min = static_cast<int>(lower.numColumns());
   assert(min == static_cast<int>(upper.numRows()));
          

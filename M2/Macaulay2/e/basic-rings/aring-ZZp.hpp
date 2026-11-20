@@ -52,6 +52,7 @@ class ARingZZp : public SimpleARing<ARingZZp>
   /////////////////////////////////////////////////////////
   unsigned int computeHashValue(const elem &a) const { return a; }
   void init_set(elem &result, elem a) const { result = a; }
+  void copy(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
   /////////////////////////////////
   // ElementType informational ////

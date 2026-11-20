@@ -48,23 +48,25 @@ if(STATIC_BOOST)
   message(STATUS "Using static Boost, if Boost is installed but not found, try setting STATIC_BOOST to OFF")
 endif()
 set(Boost_USE_STATIC_LIBS ${STATIC_BOOST})
-if(UNIX)
-  cmake_policy(SET CMP0167 OLD) # load CMake's FindBoost module
-  find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_addr2line)
-else()
-  find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_backtrace)
+find_package(Boost	REQUIRED QUIET COMPONENTS regex
+  OPTIONAL_COMPONENTS stacktrace_backtrace)
+
+# Finding a component only proves the Boost library exists, not that its backend can work.
+check_library_exists(backtrace backtrace_create_state "" LIBBACKTRACE)
+find_program(ADDR2LINE	NAMES	addr2line llvm-addr2line)
+
+if(Boost_STACKTRACE_BACKTRACE_FOUND AND LIBBACKTRACE)
+  set(Boost_stacktrace_lib Boost::stacktrace_backtrace backtrace)
+  set(Boost_stacktrace_definitions BOOST_STACKTRACE_LINK)
+elseif(ADDR2LINE)
+  # only header-only mode reads BOOST_STACKTRACE_USE_* and lets us set the addr2line path
+  set(Boost_stacktrace_definitions BOOST_STACKTRACE_USE_ADDR2LINE
+    BOOST_STACKTRACE_ADDR2LINE_LOCATION=${ADDR2LINE})
 endif()
-if(Boost_STACKTRACE_BACKTRACE_FOUND)
-  set(Boost_stacktrace_lib "Boost::stacktrace_backtrace")
-elseif(Boost_STACKTRACE_ADDR2LINE_FOUND)
-  set(Boost_stacktrace_lib "Boost::stacktrace_addr2line")
-else()
-  #fallback to header only mode
-  set(Boost_stacktrace_header_only YES)
-endif()
-set(CMAKE_REQUIRED_INCLUDES "${Boost_INCLUDE_DIR}")
+
+set(CMAKE_REQUIRED_INCLUDES "${Boost_INCLUDE_DIRS}")
 check_include_files(boost/math/tools/atomic.hpp
-  HAVE_BOOST_MATH_TOOLS_ATOMIC_HPP)
+  HAVE_BOOST_MATH_TOOLS_ATOMIC_HPP LANGUAGE CXX) # C++ only header
 
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
@@ -142,6 +144,20 @@ find_package(GMP	6.0.0 REQUIRED)
 #   givaro	prime field and algebraic computations	(needs gmp)
 #  fflas_ffpack	Finite Field Linear Algebra Routines	(needs gmp, givaro + LAPACK)
 
+set(LIBRARY_OPTIONS
+  Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
+  GTest GLPK Givaro FFLAS_FFPACK Normaliz)
+
+# A cached <Package>_DIR outranks CMAKE_PREFIX_PATH, so drop it for anything we
+# intend to build ourselves before searching for it below.
+string(TOUPPER "${BUILD_LIBRARIES}" BUILD_LIBRARIES)
+foreach(_library IN LISTS LIBRARY_OPTIONS)
+  string(TOUPPER "${_library}" _name)
+  if(BUILD_LIBRARIES MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_LIBRARIES)
+    unset(${_library}_DIR CACHE)
+  endif()
+endforeach()
+
 # Prior to 3.4.1, find_package for Eigen3 doesn't support version ranges
 # but Ubuntu only has 3.4.0 right now, so we should support it
 # For Eigen 5.0 and later, the way the version checking is setup, specifying
@@ -179,10 +195,6 @@ find_package(GLPK      4.59.0)
 pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.4.3)
 pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 # TODO: add FindModules for these two as well
-
-set(LIBRARY_OPTIONS
-  Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
-  GTest GLPK Givaro FFLAS_FFPACK Normaliz)
 
 ###############################################################################
 ## Optional libraries:
@@ -223,6 +235,7 @@ endif()
 #   Nauty	automorphism groups of graphs and digraphs
 #   Normaliz	affine monoids, lattice polytopes, and rational cones		(needs gmp, nauty, OpenMB)
 #   TOPCOM	triangulations of point configurations and oriented matroids	(needs cddlib)
+#   PALP	lattice polytopes, weight systems, and nef partitions
 
 find_program(4TI2	NAMES	circuits 4ti2-circuits 4ti2_circuits)
 find_program(COHOMCALG	NAMES	cohomcalg)
@@ -234,6 +247,7 @@ find_program(LRSLIB	NAMES	lrs)
 # TODO: check for alternatives as well: sdpa or mosek
 find_program(CSDP	NAMES	csdp)
 find_program(TOPCOM	NAMES	checkregularity topcom-checkregularity)
+find_program(PALP	NAMES	poly.x)
 # NOTE: we don't build the following by default, but some packages use them, so
 # we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)
@@ -242,7 +256,7 @@ find_program(PHCPACK	NAMES	phc)
 find_program(HOM4PS2	NAMES	hom4ps2) # TODO: http://www.math.nsysu.edu.tw/~leetsung/works/HOM4PS_soft.htm
 # TODO: Maple and package convex
 
-set(PROGRAM_OPTIONS 4ti2 cohomCalg msolve Gfan lrslib CSDP NAUTY_EXECUTABLE NORMALIZ_EXECUTABLE TOPCOM)
+set(PROGRAM_OPTIONS 4ti2 cohomCalg msolve Gfan lrslib CSDP NAUTY_EXECUTABLE NORMALIZ_EXECUTABLE TOPCOM PALP)
 
 ###############################################################################
 ## List installed components and unset those that we wish to build ourselves
