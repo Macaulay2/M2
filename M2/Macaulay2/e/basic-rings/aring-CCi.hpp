@@ -33,7 +33,7 @@ class ARingCCi : public SimpleARing<ARingCCi>
   typedef cci_struct elem;
   typedef elem ElementType;
 
-  ARingCCi(unsigned long precision) : mPrecision(precision) {}
+  ARingCCi(unsigned long precision = 53) : mPrecision(precision) {}
   // ring informational
   size_t characteristic() const { return 0; }
   unsigned long get_precision() const { return mPrecision; }
@@ -76,12 +76,12 @@ class ARingCCi : public SimpleARing<ARingCCi>
 
     bool is_empty(const ElementType &f) const { return mpfi_is_empty(&f.re)>0 || mpfi_is_empty(&f.im)>0; }
     bool is_member(const ARingCCC::ElementType &a, const ElementType &f) const { return mpfi_cmp_fr(&f.re,&a.re) == 0 && mpfi_cmp_fr(&f.im,&a.im) == 0; }
-    bool is_member(const ARingRRi::ElementType &a, const ElementType &f) const { return mpfi_cmp(&f.re,&a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(const ARingRRR::ElementType &a, const ElementType &f) const { return mpfi_cmp_fr(&f.re,&a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(mpq_srcptr a, const ElementType &f) const { return mpfi_cmp_q(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(mpz_srcptr a, const ElementType &f) const { return mpfi_cmp_z(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(long a, const ElementType &f) const { return mpfi_cmp_si(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0); }
-    bool is_member(double a, const ElementType &f) const { return mpfi_cmp_d(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0); }
+    bool is_member(const ARingRRi::ElementType &a, const ElementType &f) const { return mpfi_cmp(&f.re,&a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(const ARingRRR::ElementType &a, const ElementType &f) const { return mpfi_cmp_fr(&f.re,&a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(mpq_srcptr a, const ElementType &f) const { return mpfi_cmp_q(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(mpz_srcptr a, const ElementType &f) const { return mpfi_cmp_z(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(long a, const ElementType &f) const { return mpfi_cmp_si(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
+    bool is_member(double a, const ElementType &f) const { return mpfi_cmp_d(&f.re,a) == 0 && mpfi_cmp_si(&f.im,0) == 0; }
     
     bool is_subset(const ElementType &g, const ElementType &f) const { return mpfi_cmp_fr(&f.re,&(g.re.left)) == 0 and mpfi_cmp_fr(&f.re,&(g.re.right)) == 0 and mpfi_cmp_fr(&f.im,&(g.im.left)) == 0 and mpfi_cmp_fr(&f.im,&(g.im.right)) == 0; }
 
@@ -163,7 +163,8 @@ class ARingCCi : public SimpleARing<ARingCCi>
 
   void set_var(ElementType &result, int v) const
   {
-    mpfi_set_si(&result.re, v);
+    (void) v;
+    mpfi_set_si(&result.re, 1);
     mpfi_set_si(&result.im, 0);
   }
 
@@ -256,6 +257,14 @@ class ARingCCi : public SimpleARing<ARingCCi>
     {
       return a.im;
     }
+  void set_real_part_from_doubles(ElementType& c, double left, double right) const
+  {
+    mpfi_interv_d(&c.re, left, right);
+  }
+  void set_imaginary_part_from_doubles(ElementType& c, double left, double right) const
+  {
+    mpfi_interv_d(&c.im, left, right);
+  }
   void set_real_part(ElementType& c, ARingRRi::ElementType& a) const
     {
       mpfi_set(&c.re, &a);
@@ -533,6 +542,7 @@ class ARingCCi : public SimpleARing<ARingCCi>
   void abs(ElementType &result, const ElementType &a) const
   {
       mpfi_t temp;
+      mpfi_init2(temp, get_precision());
       mpfi_set(&result.re,&a.re);
       mpfi_sqr(&result.re,&result.re);
       mpfi_set(temp,&a.im);
@@ -540,6 +550,7 @@ class ARingCCi : public SimpleARing<ARingCCi>
       mpfi_add(&result.re,&result.re,temp);
       mpfi_sqrt(&result.re,&result.re);
       mpfi_set_si(&result.im,0);
+      mpfi_clear(temp);
   }
 
   void abs_squared(ElementType &result, const ElementType &a) const

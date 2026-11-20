@@ -1,77 +1,36 @@
 // Copyright 2013 Michael E. Stillman
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <memory>
+#include "rings/tower.hpp"
+
 #include <gtest/gtest.h>
-#include <mpfr.h>
+
+#include <string>
+#include <vector>
 
 #include "unit-tests/RingTest.hpp"
-#include "rings/tower.hpp"
 #include "util.hpp"
 
-// First: we need a routine to read a polynomial from a string.
-// Format:  variables are a..zA..Z, and then [1], [2], ...
-// Need both input and output routines for reading/writing polynomials in this
-// format.
-// coefficients: (+ or - or nothing) (number) (optional: . or /, followed by
-// another (number)
-// for GF, do we mix the a^r in?
-
-template <>
-ring_elem getElement<Tower>(const Tower& R, int index)
-{
-  return R.random();
-}
-
-//////////////////////////////////////////////////
 TEST(RingTower, create)
 {
-  std::vector<std::string> vars = {"a", "b"};
-  M2_ArrayString varnames = stdvector_to_M2_ArrayString(vars);
-  const Tower* R = Tower::create(101, varnames);
-  EXPECT_TRUE(R != nullptr);
+  // Construction retains both variable names and the prime coefficient field.
+  const Tower* R = Tower::create(101, stdvector_to_M2_ArrayString({"a", "b"}));
+  ASSERT_NE(R, nullptr);
   EXPECT_EQ(ringName(*R), "Tower[ZZ/101[a,b]]");
   EXPECT_EQ(R->n_vars(), 2);
-  for (int i = 1; i < 1; i++)
-    {
-      ring_elem f = R->random();
-      buffer o;
-      o << "f = ";
-      R->elem_text_out(o, f);
-      std::cout << o.str() << std::endl;
-    }
+  EXPECT_EQ(R->characteristic(), 101);
 }
 
 TEST(RingTower, elems)
 {
-  std::vector<std::string> vars = {"a", "b"};
-  M2_ArrayString varnames = stdvector_to_M2_ArrayString(vars);
-  const Tower* R = Tower::create(101, varnames);
+  // Expand (a+b+2)^2 with independently specified coefficients in
+  // characteristic 101.
+  const Tower* R = Tower::create(101, stdvector_to_M2_ArrayString({"a", "b"}));
+  ASSERT_NE(R, nullptr);
+  const auto a = RingElem::var(R, 0);
+  const auto b = RingElem::var(R, 1);
+  const auto two = RingElem::fromInt(R, 2);
+  const auto four = RingElem::fromInt(R, 4);
 
-  ring_elem a = R->var(0);
-  ring_elem b = R->var(1);
-
-  buffer o;
-  o << "a=";
-  R->elem_text_out(o, a);
-  o << " b=";
-  R->elem_text_out(o, b);
-  ring_elem c = R->add(a, R->from_long(2));
-  c = R->add(c, b);
-  o << " c=";
-  R->elem_text_out(o, c);
-  ring_elem d = R->power(c, 2);
-  o << " d=";
-  R->elem_text_out(o, d);
-  o << newline;
-
-  std::cout << o.str();
+  EXPECT_EQ((a + b + two).power(2),
+            a.power(2) + b.power(2) + 2 * (a * b) + 4 * a + 4 * b + four);
 }
-
-// Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
-// indent-tabs-mode: nil
-// End:

@@ -1,21 +1,21 @@
 // Copyright 2013 Michael E. Stillman
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <memory>
 #include <gtest/gtest.h>
+
+#include <algorithm>
 
 #include "comb.hpp"
 
 TEST(Subsets, encode1)
 {
+  // All ten two-element subsets of five round-trip through their indices.
   Subsets C(5, 2);
 
   Subset a(2, 0);
 
   for (int i = 0; i < 10; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "index " << i);
       C.decode(i, a);
       EXPECT_TRUE(C.isValid(a));
       size_t j = C.encode(a);
@@ -25,12 +25,14 @@ TEST(Subsets, encode1)
 
 TEST(Subsets, encode2)
 {
+  // All six-element subsets of twelve round-trip through their indices.
   Subsets C(12, 6);
 
   Subset a(6, 0);
 
   for (int i = 0; i < 924; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "index " << i);
       C.decode(i, a);
       EXPECT_TRUE(C.isValid(a));
       size_t j = C.encode(a);
@@ -40,12 +42,14 @@ TEST(Subsets, encode2)
 
 TEST(Subsets, encode3)
 {
+  // The empty subset has exactly one encoding.
   Subsets C(12, 0);
 
   Subset a(0, 0);
 
   for (int i = 0; i < 1; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "index " << i);
       C.decode(i, a);
       EXPECT_TRUE(C.isValid(a));
       size_t j = C.encode(a);
@@ -55,12 +59,14 @@ TEST(Subsets, encode3)
 
 TEST(Subsets, encode4)
 {
+  // A larger binomial table preserves all seven-element subset encodings.
   Subsets C(21, 7);
 
   Subset a(7, 0);
 
   for (int i = 0; i < 116280; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "index " << i);
       C.decode(i, a);
       EXPECT_TRUE(C.isValid(a));
       size_t j = C.encode(a);
@@ -70,12 +76,14 @@ TEST(Subsets, encode4)
 
 TEST(Subsets, encode5)
 {
+  // The full set has exactly one encoding.
   Subsets C(21, 21);
 
   Subset a(21, 0);
 
   for (int i = 0; i < 1; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "index " << i);
       C.decode(i, a);
       EXPECT_TRUE(C.isValid(a));
       size_t j = C.encode(a);
@@ -83,17 +91,9 @@ TEST(Subsets, encode5)
     }
 }
 
-bool sameSubset(const Subset &a, const Subset &b)
-{
-  if (a.size() != b.size()) return false;
-  for (size_t i = 0; i < a.size(); i++)
-    if (a[i] != b[i]) return false;
-  return true;
-}
-
 TEST(Subsets, encode6)
 {
-  // test the increment and decrement functions too
+  // Decoding each index agrees with incrementing the preceding subset.
   const int n = 21;
   const int p = 7;
   const int n_choose_p = 116280;
@@ -106,8 +106,9 @@ TEST(Subsets, encode6)
 
   for (size_t i = 0; i < n_choose_p; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "index " << i);
       C.decode(i, a);
-      EXPECT_TRUE(sameSubset(a, b));
+      EXPECT_EQ(a, b);
       EXPECT_TRUE(C.isValid(a));
       size_t j = C.encode(a);
       EXPECT_EQ(i, j);
@@ -118,6 +119,8 @@ TEST(Subsets, encode6)
 
 TEST(Subsets, concatenateSubsets)
 {
+  // Disjoint subsets merge with the alternating sign; intersections return
+  // zero.
   const int n = 7;
   const int p = 3;
   const int q = 2;
@@ -136,10 +139,12 @@ TEST(Subsets, concatenateSubsets)
     sign = 1;
   for (size_t i = 0; i < n_choose_p; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "index " << i);
       C.decode(i, a);
       EXPECT_TRUE(C.isValid(a));
-      for (size_t j = 0; j < n_choose_p; j++)
+      for (size_t j = 0; j < 21; j++)  // C(7, 2) subsets of size q
         {
+          SCOPED_TRACE(::testing::Message() << "second index " << j);
           C.decode(j, b);
           EXPECT_TRUE(C.isValid(b));
           int ret1 = Subsets::concatenateSubsets(a, b, c);
@@ -147,16 +152,17 @@ TEST(Subsets, concatenateSubsets)
           if (ret1 == 0 || ret2 == 0)
             {
               EXPECT_EQ(ret1, ret2);
-              break;
+              continue;
             }
           EXPECT_EQ(ret1, sign * ret2);
-          EXPECT_TRUE(sameSubset(c, d));
+          EXPECT_EQ(c, d);
         }
     }
 }
 
 TEST(Subsets, outOfRange)
 {
+  // A table sized for triples also decodes every two-element subset.
   const int n = 7;
   const int p = 3;
   const int q = 2;
@@ -166,16 +172,15 @@ TEST(Subsets, outOfRange)
 
   for (size_t i = 0; i < 21; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "index " << i);
       C.decode(i, b);
-      std::cout << "i=" << i << " set=";
-      Subsets::show(std::cout, b);
-      std::cout << std::endl;
       EXPECT_TRUE(C.isValid(b));
     }
 }
 
 TEST(Subsets, encodeBoundary)
 {
+  // Each boundary encoding removes the specified element from the subset.
   const int n = 7;
   const int p = 3;
   const int n_choose_p = 35;
@@ -186,18 +191,17 @@ TEST(Subsets, encodeBoundary)
 
   for (size_t i = 0; i < n_choose_p; i++)
     {
+      SCOPED_TRACE(::testing::Message() << "index " << i);
       C.decode(i, a);
-      std::cout << "i=" << i << "set=";
-      Subsets::show(std::cout, a);
-      std::cout << " bds= ";
       for (size_t j = 0; j < p; j++)
         {
+          SCOPED_TRACE(::testing::Message() << "removed position " << j);
           size_t x = C.encodeBoundary(j, a);
           C.decode(x, b);
-          Subsets::show(std::cout, b);
-          std::cout << " ";
+          Subset expected = a;
+          expected.erase(expected.begin() + j);
+          EXPECT_EQ(b, expected);
         }
-      std::cout << std::endl;
     }
 }
 

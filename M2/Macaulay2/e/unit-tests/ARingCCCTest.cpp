@@ -1,264 +1,151 @@
 // Copyright 2012-2013 Michael E. Stillman
 
-#include <cstdio>
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <memory>
+#include "basic-rings/aring-CCC.hpp"
+
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "basic-rings/aring-RRR.hpp"
-#include "basic-rings/aring-CCC.hpp"
-#include "unit-tests/ARingTest.hpp"
+#include <string>
 
-bool almostEqual(const M2::ARingCCC& C,
-                 int nbits,
-                 const M2::ARingCCC::ElementType& a,
-                 const M2::ARingCCC::ElementType& b)
-{
-  mpfr_t epsilon;
-  mpfr_init2(epsilon, C.get_precision());
-  mpfr_set_ui_2exp(epsilon, 1, -nbits, MPFR_RNDN);  // should there be exp() ???
+#include "unit-tests/ARingComplexTest.hpp"
 
-  M2::ARingCCC::ElementType c;
-  C.init(c);
-  C.subtract(c, a, b);
-
-  bool ret = mpfr_cmpabs(&c.re, epsilon) < 0 && mpfr_cmpabs(&c.im, epsilon) < 0;
-
-  C.clear(c);
-  mpfr_clear(epsilon);
-  return ret;
-}
+namespace {
 
 template <>
-void getElement<M2::ARingCCC>(const M2::ARingCCC& C,
-                              int index,
-                              M2::ARingCCC::ElementType& result)
+struct ComplexTraits<M2::ARingCCC>
 {
-  if (index < 50)
-    C.set_from_long(result, index - 25);
-  else
-    C.random(result);
+  static bool supportsPrecision(unsigned long) { return true; }
+  static const char* precisionLimit() { return "none"; }
+  // The fixture ring uses 100 bits.
+  static M2::ARingCCC make(unsigned long precision = 100)
+  {
+    return M2::ARingCCC(precision);
+  }
+  static const char* ringNamePrefix() { return "ACCC_"; }
+
+  static bool isPoint(const M2::ARingCCC::ElementType& value,
+                      double real,
+                      double imaginary)
+  {
+    return mpfr_number_p(&value.re) && mpfr_number_p(&value.im) &&
+           mpfr_cmp_d(&value.re, real) == 0 &&
+           mpfr_cmp_d(&value.im, imaginary) == 0;
+  }
+
+  // Print enough digits to see small differences in a failure message.
+  static std::string describe(const M2::ARingCCC::ElementType& value)
+  {
+    char out[256];
+    mpfr_snprintf(out, sizeof(out), "(%.65Rg, %.65Rg)", &value.re, &value.im);
+    return out;
+  }
+
+  // Allow a few rounding steps when comparing calculated answers. The
+  // allowance gets smaller as the ring precision increases.
+  static ::testing::AssertionResult near(
+      const M2::ARingCCC& C,
+      const M2::ARingCCC::ElementType& actual,
+      const M2::ARingCCC::ElementType& expected)
+  {
+    const auto& R = C.real_ring();
+    M2::ARingCCC::RealRingType::Element tolerance(R), difference(R);
+    mpfr_set_ui_2exp(&tolerance.value(),
+                     1,
+                     6 - static_cast<int>(C.get_precision()),
+                     MPFR_RNDN);
+    mpfr_sub(&difference.value(), &actual.re, &expected.re, MPFR_RNDN);
+    bool realMatches =
+        mpfr_number_p(&difference.value()) &&
+        mpfr_cmpabs(&difference.value(), &tolerance.value()) <= 0;
+    mpfr_sub(&difference.value(), &actual.im, &expected.im, MPFR_RNDN);
+    bool imaginaryMatches =
+        mpfr_number_p(&difference.value()) &&
+        mpfr_cmpabs(&difference.value(), &tolerance.value()) <= 0;
+    if (realMatches && imaginaryMatches) return ::testing::AssertionSuccess();
+    char imaginaryError[128];
+    mpfr_snprintf(
+        imaginaryError, sizeof(imaginaryError), "%.65Rg", &difference.value());
+    mpfr_sub(&difference.value(), &actual.re, &expected.re, MPFR_RNDN);
+    char realError[128];
+    mpfr_snprintf(realError, sizeof(realError), "%.65Rg", &difference.value());
+    return ::testing::AssertionFailure()
+           << "expected " << describe(expected) << ", got " << describe(actual)
+           << "; signed component errors (" << realError << ", "
+           << imaginaryError << ")"
+           << "; component tolerance is 2^(6 - " << C.get_precision() << ")";
+  }
+};
+
+}  // namespace
+
+INSTANTIATE_TYPED_TEST_SUITE_P(ARingCCC,
+                               ComplexRing,
+                               ::testing::Types<M2::ARingCCC>);
+INSTANTIATE_TYPED_TEST_SUITE_P(ARingCCC,
+                               ComplexPointRing,
+                               ::testing::Types<M2::ARingCCC>);
+
+namespace {
+
+// Cases specific to CCC.  Everything shared with CC and CCi is in the typed
+// suites above.
+class ARingCCC : public ComplexRing<M2::ARingCCC>
+{
+ protected:
+  Ring::Element a {C};
+};
+
+TEST_F(ARingCCC, Conversions)
+{
+  // CCC also converts directly from its real ring and can replace one part
+  // of a value while keeping the other.
+
+  {
+    // Use the direct conversion from the high-precision real ring. An old
+    // imaginary part must not survive.
+    SCOPED_TRACE("set from rrr: real value");
+    const auto& R = C.real_ring();
+    M2::ARingRRR::Element source(R);
+    R.set_from_long(source, 2);
+    C.set_from_doubles(a, 9.0, 8.0);
+
+    ASSERT_TRUE(C.set_from_RRR(a, source));
+
+    EXPECT_TRUE(hasValue(a, 2, 0));
+  }
+
+  {
+    // Change only the real part. The imaginary part should stay as it was.
+    SCOPED_TRACE("set real part: existing complex value");
+    const auto& R = C.real_ring();
+    M2::ARingRRR::Element real(R);
+    R.set_from_long(real, -3);
+    C.set_from_doubles(a, 1.0, 2.0);
+
+    C.set_real_part(a, real);
+
+    EXPECT_TRUE(hasValue(a, -3, 2));
+    EXPECT_TRUE(R.is_equal(C.realPartReference(a), real));
+  }
+
+  {
+    // Change only the imaginary part. The real part should stay as it was.
+    SCOPED_TRACE("set imaginary part: existing complex value");
+    const auto& R = C.real_ring();
+    M2::ARingRRR::Element imaginary(R);
+    R.set_from_long(imaginary, -3);
+    C.set_from_doubles(a, 1.0, 2.0);
+
+    C.set_imaginary_part(a, imaginary);
+
+    EXPECT_TRUE(hasValue(a, 1, -3));
+    EXPECT_TRUE(R.is_equal(C.imaginaryPartReference(a), imaginary));
+  }
 }
 
-TEST(ARingCCC, create)
-{
-  M2::ARingCCC C(100);
-  EXPECT_EQ(ringName(C), "ACCC_100");
-  EXPECT_EQ(C.characteristic(), 0);
-}
-
-void testRingNegateCCC(const M2::ARingCCC& C, int ntrials)
-{
-  ARingElementGenerator<M2::ARingCCC> gen(C);
-  M2::ARingCCC::ElementType a, b, c;
-  C.init(a);
-  C.init(b);
-  C.init(c);
-  for (int i = 0; i < ntrials; i++)
-    {
-      // test: (-a) + (a) == 0
-      gen.nextElement(a);
-      C.negate(b, a);
-      C.add(c, a, b);
-      EXPECT_TRUE(C.is_zero(c));
-    }
-  C.clear(c);
-  C.clear(b);
-  C.clear(a);
-}
-
-TEST(ARingCCC, negate)
-{
-  M2::ARingCCC C(100);
-  testRingNegateCCC(C, ntrials);
-}
-
-TEST(ARingCCC, add)
-{
-  M2::ARingCCC C(100);
-  ARingElementGenerator<M2::ARingCCC> gen(C);
-  M2::ARingCCC::ElementType a, b, c, d, e;
-  C.init(a);
-  C.init(b);
-  C.init(c);
-  C.init(d);
-  C.init(e);
-  for (int i = 0; i < ntrials; i++)
-    {
-      // test: (a+b) + (-b) == a
-      gen.nextElement(a);
-      gen.nextElement(b);
-      C.add(c, a, b);
-      C.negate(d, b);
-      C.add(e, c, d);  // should be a
-      EXPECT_TRUE(almostEqual(C, 98, a, e));
-    }
-  C.clear(e);
-  C.clear(d);
-  C.clear(c);
-  C.clear(b);
-  C.clear(a);
-}
-
-TEST(ARingCCC, subtract)
-{
-  M2::ARingCCC C(100);
-  ARingElementGenerator<M2::ARingCCC> gen(C);
-  M2::ARingCCC::ElementType a, b, c, e;
-  C.init(a);
-  C.init(b);
-  C.init(c);
-  C.init(e);
-  for (int i = 0; i < ntrials; i++)
-    {
-      // test: (a-b) + (b) == a
-      gen.nextElement(a);
-      gen.nextElement(b);
-      C.subtract(c, a, b);
-      C.add(e, c, b);  // should be a
-      EXPECT_TRUE(almostEqual(C, 98, a, e));
-      C.mult(e, a, b);
-      C.subtract_multiple(e, a, b);
-      EXPECT_TRUE(C.is_zero(e));
-    }
-  C.clear(e);
-  C.clear(c);
-  C.clear(b);
-  C.clear(a);
-}
-
-TEST(ARingCCC, multDivide)
-{
-  M2::ARingCCC C(100);
-  ARingElementGenerator<M2::ARingCCC> gen(C);
-  M2::ARingCCC::ElementType a, b, c, d;
-  C.init(a);
-  C.init(b);
-  C.init(c);
-  C.init(d);
-  for (int i = 0; i < ntrials; i++)
-    {
-      // test: (a*b) // b == a
-      gen.nextElement(a);
-      gen.nextElement(b);
-      C.mult(c, a, b);
-      if (C.is_zero(b))
-        EXPECT_TRUE(C.is_zero(c));
-      else
-        {
-          C.divide(d, c, b);
-          EXPECT_TRUE(almostEqual(C, 94, d, a));
-        }
-    }
-  C.clear(d);
-  C.clear(c);
-  C.clear(b);
-  C.clear(a);
-}
-
-TEST(ARingCCC, axioms)
-{
-  M2::ARingCCC C(100);
-  ARingElementGenerator<M2::ARingCCC> gen(C);
-  M2::ARingCCC::ElementType a, b, c, d, e;
-  C.init(a);
-  C.init(b);
-  C.init(c);
-  C.init(d);
-  C.init(e);
-  for (int i = 0; i < ntrials; i++)
-    {
-      gen.nextElement(a);
-      gen.nextElement(b);
-      gen.nextElement(c);
-      // Test commutativity
-      // test: a*b = b*a
-      // test: a+b == b+a
-      C.add(d, a, b);
-      C.add(e, b, a);
-      EXPECT_TRUE(almostEqual(C, 98, d, e));
-      C.mult(d, a, b);
-      C.mult(e, b, a);
-      EXPECT_TRUE(almostEqual(C, 98, d, e));
-
-      // Test associativity
-      // test: a+(b+c) == (a+b)+c
-      // test: a*(b*c) == (a*b)*c
-      C.add(e, b, c);
-      C.add(d, a, e);  // a+(b+c)
-      C.add(e, a, b);
-      C.add(e, e, c);  // (a+b)+c
-      EXPECT_TRUE(almostEqual(C, 94, d, e));
-      C.mult(e, b, c);
-      C.mult(d, a, e);  // a*(b*c)
-      C.mult(e, a, b);
-      C.mult(e, e, c);  // (a*b)*c
-      EXPECT_TRUE(almostEqual(
-          C, 93, d, e));  // MES: I'm not sure how equal these should be.
-
-      // Test distributivity
-      // test: a*(b+c) == a*b + a*c
-      C.add(e, b, c);
-      C.mult(d, a, e);  // a*(b+c)
-      C.mult(b, a, b);
-      C.mult(c, a, c);
-      C.add(e, b, c);  // a*b + a*c
-      EXPECT_TRUE(almostEqual(C, 93, d, e));
-    }
-  C.clear(e);
-  C.clear(d);
-  C.clear(c);
-  C.clear(b);
-  C.clear(a);
-}
-
-TEST(ARingCCC, power_and_invert)
-{
-  M2::ARingCCC C(100);
-  ARingElementGenerator<M2::ARingCCC> gen(C);
-  M2::ARingCCC::ElementType a, b, c, d;
-  C.init(a);
-  C.init(b);
-  C.init(c);
-  C.init(d);
-  mpz_t gmp1;
-  mpz_init(gmp1);
-  for (int i = 0; i < ntrials; i++)
-    {
-      gen.nextElement(a);
-      // TODO: what should the answer here be?
-      // EXPECT_TRUE(R->is_equal(R->power(a, 0), R->one())); // 0^0 == 1 too?
-      C.power(b, a, 1);
-      EXPECT_TRUE(C.is_equal(b, a));
-
-      int e1 = rawRandomInt(10) + 1;
-      int e2 = rawRandomInt(10) + 1;
-      C.power(b, a, e1);
-      C.power(c, a, e2);
-      C.power(d, a, e1 + e2);
-      C.mult(c, b, c);
-      EXPECT_TRUE(almostEqual(C, 90, c, d)); /* exponentiation gives
-                                                relatively small number
-                                                of correct digits */
-
-      // Make sure that powers via mpz work (at least for small exponents)
-      mpz_set_si(gmp1, e1);
-      C.power_mpz(d, a, gmp1);
-      EXPECT_TRUE(C.is_equal(d, b));
-    }
-  mpz_clear(gmp1);
-  C.clear(d);
-  C.clear(c);
-  C.clear(b);
-  C.clear(a);
-}
-
-// TODO: syzygy?
+}  // namespace
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check"
 // indent-tabs-mode: nil
 // End:

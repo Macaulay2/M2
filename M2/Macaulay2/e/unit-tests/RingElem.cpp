@@ -1,13 +1,20 @@
 // Copyright 2026, The Macaulay2 Authors.
 
 #include "unit-tests/RingElem.hpp"
+
+#include <gmpxx.h>
+
+#include <algorithm>
+#include <string>
+#include <vector>
 #include "BasicPoly.hpp"
 #include "rings/polyring.hpp"
 #include "monoid.hpp"
 
 // Convert a BasicPoly (parsed polynomial with mpz_class coefficients and
 // varpower monomials) into a ring_elem in the given PolynomialRing.
-static ring_elem basicPolyToRingElem(const PolynomialRing *P, const BasicPoly &bp)
+static ring_elem basicPolyToRingElem(const PolynomialRing *P,
+                                     const BasicPoly &bp)
 {
   const Ring *K = P->getCoefficients();
   const Monoid *M = P->getMonoid();
@@ -23,15 +30,15 @@ static ring_elem basicPolyToRingElem(const PolynomialRing *P, const BasicPoly &b
       // Convert coefficient: mpz_class -> ring_elem in coefficient ring
       ring_elem coeff = K->from_int(bp.mCoefficients[i].get_mpz_t());
 
-      // Convert monomial: varpower format -> exponent vector -> encoded monomial
+      // Convert monomial: varpower format -> exponent vector -> encoded
+      // monomial
       int monomLen = bp.mMonomials[monomStart];
       std::fill(exp.begin(), exp.end(), 0);
       for (int j = monomStart + 1; j < monomStart + monomLen; j += 2)
         {
           int var = bp.mMonomials[j];
           int e = bp.mMonomials[j + 1];
-          if (var >= 0 && var < nvars)
-            exp[var] = e;
+          if (var >= 0 && var < nvars) exp[var] = e;
         }
       M->from_expvector(exp.data(), monom);
 
