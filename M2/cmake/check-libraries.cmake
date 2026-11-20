@@ -235,6 +235,7 @@ endif()
 #   Nauty	automorphism groups of graphs and digraphs
 #   Normaliz	affine monoids, lattice polytopes, and rational cones		(needs gmp, nauty, OpenMB)
 #   TOPCOM	triangulations of point configurations and oriented matroids	(needs cddlib)
+#   PALP	lattice polytopes, weight systems, and nef partitions
 
 find_program(4TI2	NAMES	circuits 4ti2-circuits 4ti2_circuits)
 find_program(COHOMCALG	NAMES	cohomcalg)
@@ -246,6 +247,7 @@ find_program(LRSLIB	NAMES	lrs)
 # TODO: check for alternatives as well: sdpa or mosek
 find_program(CSDP	NAMES	csdp)
 find_program(TOPCOM	NAMES	checkregularity topcom-checkregularity)
+find_program(PALP	NAMES	poly.x)
 # NOTE: we don't build the following by default, but some packages use them, so
 # we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)
@@ -254,7 +256,7 @@ find_program(PHCPACK	NAMES	phc)
 find_program(HOM4PS2	NAMES	hom4ps2) # TODO: http://www.math.nsysu.edu.tw/~leetsung/works/HOM4PS_soft.htm
 # TODO: Maple and package convex
 
-set(PROGRAM_OPTIONS 4ti2 cohomCalg msolve Gfan lrslib CSDP NAUTY_EXECUTABLE NORMALIZ_EXECUTABLE TOPCOM)
+set(PROGRAM_OPTIONS 4ti2 cohomCalg msolve Gfan lrslib CSDP NAUTY_EXECUTABLE NORMALIZ_EXECUTABLE TOPCOM PALP)
 
 ###############################################################################
 ## List installed components and unset those that we wish to build ourselves

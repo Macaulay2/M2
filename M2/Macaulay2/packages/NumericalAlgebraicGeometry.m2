@@ -6,7 +6,7 @@ newPackage(
      Version => "1.24",
      Date => "May 2024",
      Headline => "numerical algebraic geometry",
-     HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
+     HomePage => "https://antonleykin.math.gatech.edu/NAG4M2/",
      AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu", HomePage => "https://people.math.gatech.edu/~aleykin3"},

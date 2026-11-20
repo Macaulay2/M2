@@ -1189,6 +1189,10 @@ set(palp_PROGRAMS
   class-5d.x   cws-4d.x   mori-11d.x  mori.x     nef-6d.x  poly-5d.x
   class-6d.x   cws-5d.x   mori-4d.x   nef-11d.x  nef.x     poly-6d.x)
 list(TRANSFORM palp_PROGRAMS PREPEND ${CMAKE_BINARY_DIR}/libraries/palp/build/ OUTPUT_VARIABLE palp_PROGRAMS)
+# PALP does real work inside assert(), so it must not be compiled with NDEBUG,
+# which both CFLAGS (release build types) and CPPFLAGS (M2's own definitions)
+# may contain.  GNU make puts CPPFLAGS after CFLAGS, so -UNDEBUG there wins.
+set(palp_CPPFLAGS "${CPPFLAGS} -UNDEBUG")
 ExternalProject_Add(build-palp
   URL               https://hep.itp.tuwien.ac.at/~kreuzer/CY/palp/palp-2.21.tar.gz
   URL_HASH          SHA256=7e4a7bf219998a844c0bcce0a176e49d0743cb4b505a0e195329bf2ec196ddd7
@@ -1199,7 +1203,7 @@ ExternalProject_Add(build-palp
   CONFIGURE_COMMAND ${CMAKE_COMMAND} -E true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} all-dims
                       CC=${CMAKE_C_COMPILER}
-                      CPPFLAGS=${CPPFLAGS}
+                      CPPFLAGS=${palp_CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       LDFLAGS=${LDFLAGS}
   INSTALL_COMMAND   ${CMAKE_COMMAND} -E true
@@ -1211,6 +1215,7 @@ ExternalProject_Add(build-palp
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+_ADD_COMPONENT_DEPENDENCY(programs palp "" PALP)
 
 
 ###############################################################################
