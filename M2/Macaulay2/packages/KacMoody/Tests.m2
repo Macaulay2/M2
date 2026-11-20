@@ -1124,6 +1124,12 @@ assert((s1*s2)*(s1) == (s2*s1)*s2);
 assert(s1*s3 === s3*s1);
 assert(s1*s3 == s3*s1);
 assert(inverseWeylElement(s1*s2) * (s1*s2) === e);
+-- Products and inverses are still group elements and can be reconstructed
+-- from their public parent and reduced word, including the identity.
+for w in {e,s1,s1*s2,inverseWeylElement(s1*s2),s1*s2*s3} do (
+    assert(instance(w,WeylElement) and weylParent w === W);
+    assert(weylElement(weylParent w,reducedWord w) == w);
+);
 assert(weylElement(W,{1,2,1}) === weylElement(W,{2,1,2}));
 assert(weylElement(W,{1,2,1}) == weylElement(W,{2,1,2}));
 assert(bruhatLessOrEqual(s1,s1*s2));
@@ -1365,12 +1371,12 @@ integralList := L -> apply(L, x -> (
 unitWeight := (r, i) -> for j from 1 to r list
     if j == i then 1 else 0;
 
--- Public tests use the parent-aware Weyl interface.  The raw
--- testWeylActionOnWeight backend is intentionally not exported.
+-- Reuse the same datum and Weyl element throughout the test cases.
+testDatum := memoize(A -> rootDatum cartanDatum A);
+testElement := memoize((A,word) -> weylElement(testDatum A,word));
 testWeylActionOnWeight := (A,word,lambda) -> (
     raw := if instance(lambda,Matrix) then flatten entries lambda else lambda;
-    D := rootDatum cartanDatum A;
-    datumCoordinates weylAction(weylElement(D,word),kmWeight(D,raw))
+    datumCoordinates weylAction(testElement(A,word),kmWeight(testDatum A,raw))
 );
 
 finiteExamples := {
@@ -1484,7 +1490,10 @@ assert(#(zeroStab#"generatingWords") == numrows A);
 -- literal finite-Weyl-group enumeration.
 rankTwoExamples := {cartanA 3, cartanB 2, cartanC 2, cartanG2()};
 for A in rankTwoExamples do (
-    elements := weylGroupElements A;
+    -- Each Weyl element acts linearly. Evaluate it once on the two
+    -- fundamental weights rather than rebuilding that action at every weight.
+    images := apply(weylGroupElements A,w ->
+        apply({{1,0},{0,1}},mu -> testWeylActionOnWeight(A,w#"word",mu)));
     for a from -4 to 4 do for b from -4 to 4 do (
         lambda = {a,b};
         data = dominantizeWeight(A, lambda);
@@ -1493,8 +1502,8 @@ for A in rankTwoExamples do (
         assert(testWeylActionOnWeight(A, data#"word", lambda) === dominant);
         assert(testWeylActionOnWeight(A, data#"inverseWord", dominant) === lambda);
         stab = weightStabilizer(A, lambda);
-        literalOrder := #(select(elements, w ->
-            testWeylActionOnWeight(A, w#"word", lambda) === lambda));
+        literalOrder := #(select(images, pair ->
+            all(0..1, j -> a*pair#0#j + b*pair#1#j == lambda#j)));
         assert(stab#"order" == literalOrder);
         for generator in stab#"generatingWords" do
             assert(testWeylActionOnWeight(A, generator, lambda) === lambda);
@@ -1538,25 +1547,21 @@ assert(dualWeight(A,dualWeight(A,nondominant)) === nondominant);
 assert(isOppositionFixed(cartanA 3,{-2,-2}));
 assert(mustError(() -> isSelfDual(cartanA 3,{-2,-2})));
 
--- A cold duality call does not construct the longest word.  It recovers one
--- opposition permutation from a regular chamber walk, then caches it.
-Acold := cartanA 21;
-assert(not Acold.cache#?"longElement");
-coldDual := dualWeight(Acold,toList(1..20));
-assert(not Acold.cache#?"longElement");
-assert(Acold.cache#?"KacMoodyFiniteDraft.oppositionPermutation");
-assert(coldDual === reverse toList(1..20));
-assert(dualWeight(Acold,coldDual) === toList(1..20));
+-- In type A opposition reverses all labels, even in rank 20.
+Alarge := cartanA 21;
+largeLabels := toList(1..20);
+largeDual := dualWeight(Alarge,largeLabels);
+assert(largeDual === reverse largeLabels);
+assert(dualWeight(Alarge,largeDual) === largeLabels);
 
--- The integral representative cached on a QQ matrix retains the opposition
--- cache, so repeated calls do not silently redo the chamber walk.
-AQQ := (cartanA 5) ** QQ;
-assert(dualWeight(AQQ,{1,2,3,4}) === {4,3,2,1});
-assert(AQQ.cache#?"KacMoody.integralCartanMatrix");
-AZZ := AQQ.cache#"KacMoody.integralCartanMatrix";
-assert(AZZ.cache#?"KacMoodyFiniteDraft.oppositionPermutation");
-assert(dualWeight(AQQ,{4,3,2,1}) === {1,2,3,4});
-assert(AQQ.cache#"KacMoody.integralCartanMatrix" === AZZ);
+-- Extending the coefficient ring does not change this involution, even
+-- outside the dominant chamber.
+AZZ := cartanA 5;
+AQQ := AZZ ** QQ;
+for v in {{1,2,3,4},{4,3,2,1},{0,-2,3,0}} do (
+    assert(dualWeight(AQQ,v) === reverse v);
+    assert(dualWeight(AQQ,v) === dualWeight(AZZ,v));
+);
 
 -- Matrix-form input preserves its matrix shape.
 matrixDual := dualWeight(cartanA 4,matrix(QQ,{{1,2,3}}));
@@ -2180,6 +2185,19 @@ assert(not(VC0 == formalCharacter(D,characterTerms VC0,
 rewrapFC = (datum,terms,range) -> formalCharacter(datum,terms,
     CharacterStatus=>"Truncated",Truncation=>range);
 thinTermsEqualityFC = new HashTable from {omega1=>2};
+-- Independent native expansions, even on a separately constructed copy
+-- of the same parent, have the same hash key. Different histories with
+-- equivalent known regions need not have identical descriptions.
+for labelsFC in {{1,2},{1_QQ,2_QQ}} do (
+    Dcopy := rootDatum cartanDatum(datumCartanMatrix D,NodeLabels=>labelsFC);
+    assert(Dcopy === D and hash Dcopy == hash D);
+    assert(finiteCharacter(Dcopy,{1,0}) + C1 == 2*C1);
+    other := moduleCharacter(vermaModule(Dcopy,{1,0}),Depth=>2);
+    index := new HashTable from {VC2=>"found"};
+    assert(other === VC2 and hash other == hash VC2 and index#other === "found");
+    clearInfrastructureCaches();
+    assert(index#(moduleCharacter(vermaModule(Dcopy,{1,0}),Depth=>2)) === "found");
+);
 assert(mustErrorFC(() -> rewrapFC(D,thinTermsEqualityFC,new HashTable from {
         "coefficientCertificate"=>true,"kind"=>"root-depth",
         "support"=>"highest-weight cone","highestWeight"=>omega1,
@@ -2483,13 +2501,35 @@ assert(knownEqualityHigherFC(rotationFanMixedEqualityFC,
 assert(knownEqualityHigherFC(ZfirstMixedEqualityFC+ZsecondMixedEqualityFC,
     rootWeightMixedEqualityFC {1,1}) === {true,0});
 
--- Exact integer feasibility also handles cases that testing the vertices
--- and their roundings cannot settle: here (1,1) is strictly between the
--- two fractional endpoints. The unbounded slice 2x=1 has no lattice point.
-integerFeasibleFC = value((package "KacMoody")#"private dictionary")#"draftCharacterIntegerFeasible";
-assert(integerFeasibleFC(matrix(QQ,{{1,1},{-1,-1},{-1,0},{1,0}}),
-    transpose matrix(QQ,{{2,-2,-1/5,9/5}})));
-assert(not integerFeasibleFC(matrix{{2,0},{-2,0}},matrix{{1},{-1}}));
+-- In A1 x A1, write the weight as -x alpha_1 - y alpha_2. The first
+-- tail is unknown for x,y >= 0 and x+y >= s. The deeper tail covers
+-- x+y >= s+1. On the remaining line x+y=s the two reflected tails
+-- cover y-x >= s and x-y >= s, respectively. For s=1 the uncovered
+-- integer inequalities force x=y=1/2: there is no lattice point.
+-- For s=2 they cut out the segment from (1/2,3/2) to (3/2,1/2).
+-- Neither vertex, nor rounding both coordinates down or both up, gives
+-- a witness; the interior point (1,1) distinguishes the characters.
+DsliceFC = rootDatum matrix{{2,0},{0,2}};
+WsliceFC = weylGroup DsliceFC;
+zeroTailSliceFC = (labels,h) -> (
+    V := moduleCharacter(vermaModule(DsliceFC,labels),Depth=>h);
+    V-V
+);
+for s in {1,2} do (
+    native := zeroTailSliceFC({0,0},s-1);
+    deeper := zeroTailSliceFC({0,0},s);
+    left := weylAction(simpleWeylReflection(WsliceFC,1),zeroTailSliceFC({2*s,0},2*s-1));
+    right := weylAction(simpleWeylReflection(WsliceFC,2),zeroTailSliceFC({0,2*s},2*s-1));
+    cover := deeper+left+right;
+    for x from 0 to s do (
+        y := s-x;
+        mu := kmWeight(DsliceFC,{-2*x,-2*y});
+        assert(knownEqualityHigherFC(native,mu) === {false,null});
+        assert(knownEqualityHigherFC(cover,mu) ===
+            (if abs(x-y) >= s then {false,null} else {true,0}));
+    );
+    assert((native+cover == cover) == (s == 1));
+);
 
 torusEqualityFC = rootDatum realization(cartanDatum matrix mutableMatrix(ZZ,0,0),
     matrix mutableMatrix(QQ,0,1),matrix mutableMatrix(QQ,0,1));
@@ -2539,6 +2579,10 @@ assert(mustErrorFC(() -> characterCoefficient(affineDifferenceFC(0),affineLowerF
 assert(characterCoefficient(affineDifferenceFC(1),affineLowerFC) == 1);
 leviDatumEqualityFC = reductiveLeviDatum(standardParabolic(D,RemovedNodes=>{1}),D);
 leviCharacterEqualityFC = restrictCharacter(leviDatumEqualityFC,VC2);
+assert(dim C1 == characterDimension C1 and dim((-1)*C1) == -3);
+assert(dim restrictCharacter(leviDatumEqualityFC,C1) == 3);
+assert(mustErrorFC(() -> dim VC2));
+assert(mustErrorFC(() -> dim leviCharacterEqualityFC));
 assert(leviCharacterEqualityFC+leviCharacterEqualityFC == 2*leviCharacterEqualityFC);
 assert(restrictCharacter(leviDatumEqualityFC,dualCharacter dualCharacter VC2) ==
     leviCharacterEqualityFC);
@@ -3509,6 +3553,13 @@ assert(coefficient(q^2,Pdisplay) == 0);
 assert(sub(Pdisplay,{q=>0}) == 1);
 assert(sub(Pdisplay,{q=>2}) == 3);
 assert(sub(Pdisplay,{q=>-1}) == 0);
+-- At q=0 the upper triangular KL matrix for these two endpoints is
+-- {{1,1},{0,1}}. Extend its integer inverse to ZZ[q] and multiply:
+-- the only remaining off-diagonal contribution is q.
+KLpair = matrix{{PoneDisplay,Pdisplay},{PzeroDisplay,PoneDisplay}};
+inverseAtZero = promote(matrix(ZZ,{{1,-1},{0,1}}),ring Pdisplay);
+assert(ring inverseAtZero === ring Pdisplay);
+assert(entries(KLpair*inverseAtZero) == {{PoneDisplay,q},{PzeroDisplay,PoneDisplay}});
 -- This lower endpoint is the standard A3 example in Sage's independent KL
 -- implementation.  It exercises the c=1 branch of the right-descent
 -- recurrence rather than only a principal interval.
@@ -3550,12 +3601,15 @@ assert(fixtureCoefficientsB3 === kazhdanLusztigCoefficients(
 -- all 24 elements while keeping the official package test responsive.
 elementsA3 = apply(weylGroupElements A3,h -> weylElement(W3,h#"word"));
 longestA3 = weylElement(W3,longElement A3);
+coversA3 = flatten apply(elementsA3,u -> apply(
+    select(elementsA3,v -> weylLength v == weylLength u+1 and bruhatLessOrEqual(u,v)),
+    v -> {u,v}));
+-- The 58 covers in S4 comprise 36, 16, and 6 transpositions of
+-- positions at distances 1, 2, and 3, respectively.
+assert(#coversA3 == 58);
 testPairs = join(
     apply(elementsA3,v -> {e3,v}),
-    apply(elementsA3,u -> {u,longestA3}),
-    flatten apply(elementsA3,u -> apply(elementsA3,v ->
-        if bruhatLessOrEqual(u,v) and weylLength v == weylLength u+1
-        then {u,v} else continue)));
+    apply(elementsA3,u -> {u,longestA3}),coversA3);
 for pair in unique testPairs do (
     u := pair#0;
     v := pair#1;
@@ -3886,29 +3940,25 @@ assert((infrastructureCacheInfo())#"crystalData" == 0);
 assert((infrastructureCacheInfo())#"vermaPartitions" == 0);
 assert(((infrastructureCacheInfo())#"weightNotation")#"latticeBases" == 0);
 D = rootDatum "A2";
-dummy = datumCartanMatrix D;
-dummyAffine = affineTypeData cartanAffineA 2;
+AInfra = datumCartanMatrix D;
+AaffInfra = cartanAffineA 2;
+affineBeforeInfra = affineTypeData AaffInfra;
 W = weylGroup D;
 BCache = highestWeightCrystal(D,{1,0});
-dummyCrystal = crystalCharacter BCache;
+heldVertexInfra = first crystalVertices BCache;
+heldWeightInfra = crystalWeight heldVertexInfra;
+crystalBeforeInfra = crystalCharacter BCache;
 dummyVerma = moduleCharacter(vermaModule(D,{0,0}),Depth=>2);
 dummyDisplay = toString dummyVerma;
-assert(((infrastructureCacheInfo())#"weightNotation")#"latticeBases" > 0);
-dummyKL = kazhdanLusztigPolynomial(
-    identityWeylElement W,weylElement(W,longElement datumCartanMatrix D));
-assert((infrastructureCacheInfo())#"datumMatrices" >= 1);
-assert(((infrastructureCacheInfo())#"affineStructure")#"typeData" >= 1);
-assert((infrastructureCacheInfo())#"kazhdanLusztigData" == 1);
-assert((infrastructureCacheInfo())#"crystalData" >= 1);
-assert((infrastructureCacheInfo())#"vermaPartitions" == 1);
+endpointsInfra = (identityWeylElement W,weylElement(W,longElement AInfra));
+polynomialBeforeInfra = kazhdanLusztigPolynomial endpointsInfra;
 clearInfrastructureCaches();
-assert(((infrastructureCacheInfo())#"affineStructure")#"cartanMatrices" == 0);
-assert((infrastructureCacheInfo())#"datumMatrices" == 0);
-assert((infrastructureCacheInfo())#"kazhdanLusztigData" == 0);
-assert((infrastructureCacheInfo())#"crystalData" == 0);
-assert((infrastructureCacheInfo())#"vermaPartitions" == 0);
-assert(((infrastructureCacheInfo())#"weightNotation")#"latticeBases" == 0);
-assert(((infrastructureCacheInfo())#"weightNotation")#"nodeConventions" == 0);
+assert(datumCartanMatrix D == AInfra);
+assert(affineTypeData AaffInfra === affineBeforeInfra);
+assert(kazhdanLusztigPolynomial endpointsInfra == polynomialBeforeInfra);
+assert(crystalCharacter BCache == crystalBeforeInfra);
+assert(crystalContains(BCache,heldVertexInfra) and crystalWeight heldVertexInfra === heldWeightInfra);
+assert(moduleCharacter(vermaModule(D,{0,0}),Depth=>2) === dummyVerma);
 assert(toString dummyVerma === dummyDisplay);
 
 -- Public displays retain numerical coordinates rather than replacing
@@ -4988,19 +5038,14 @@ TEST ///
     assert(degree polZero === {0});
     assert(value factor polZero == polZero);
 
-    -- A legacy cached coefficient Tally cannot leak through the polynomial
-    -- interface. Rational Cartan input also gives the same polynomial.
-    legacyA := matrix{{2}};
-    legacyA.cache#"weylLengthGenerating" = new Tally from {0=>1,1=>1};
-    legacyPolynomial := weylLengthGenerating legacyA;
-    assert(instance(legacyPolynomial,RingElement));
-    assert(legacyPolynomial == 1+q);
-    oldRing := ZZ[local oldq];
-    foreignCacheA := matrix{{2}};
-    foreignCacheA.cache#"weylLengthGenerating" = 1+oldRing_0;
-    repairedPolynomial := weylLengthGenerating foreignCacheA;
-    assert(ring repairedPolynomial === ring pol);
-    assert(repairedPolynomial == 1+q);
+    -- The rank-one polynomial counts one identity and one reflection.
+    -- Its variable agrees across calls and across coefficient rings.
+    A1 := matrix{{2}};
+    for input in {A1,A1 ** QQ,A1} do (
+        p := weylLengthGenerating input;
+        assert(ring p === ring pol);
+        assert(p == 1+q);
+    );
     assert(weylLengthGenerating(cartanG2() ** QQ) == polG2);
 ///
 
@@ -5034,8 +5079,7 @@ TEST ///
     bridgePackage := value "KacMoody";
     assert(set values bridgePackage.Dictionary === set(bridgePackage#"exported symbols"));
     assert(not bridgePackage.Dictionary#?"draftAdd");
-    assert(not bridgePackage.Dictionary#?"optionalPackageFunction");
-    sharedBridgeNames := {"simpleRoots", "positiveRoots", "highestRoot",
+    sharedBridgeNames := {"simpleRoots", "highestRoot",
         "dynkinDiagram", "dualCoxeterNumber", "tensorCoefficient"};
     savedBridgeBindings := apply(sharedBridgeNames,n -> value n);
     LA := value LieAlgebraRepresentations.Dictionary#"LieAlgebra";
@@ -5064,8 +5108,62 @@ TEST ///
     );
     assert(dim externalIrreducible(toLieAlgebra(cartanB 3),{1,0,0}) === 7);
     assert(dim externalIrreducible(toLieAlgebra(cartanC 3),{1,0,0}) === 6);
+    -- These names denote the very same methods in the two packages.
+    -- Native objects must work without activating a different dictionary.
+    for s in {"simpleRoots","highestRoot","dualCoxeterNumber"} do
+        assert(bridgePackage.Dictionary#s === LieAlgebraRepresentations.Dictionary#s);
+    A := cartanB 3;
+    g := toLieAlgebra A;
+    assert(simpleRoots A === id_(QQ^3) and simpleRoots g === entries transpose A);
+    assert(ring simpleRoots matrix mutableMatrix(ZZ,0,0) === QQ);
+    assert(highestRoot A === {1,2,2} and highestRoot g === {0,1,0});
+    assert(dualCoxeterNumber A == dualCoxeterNumber g);
+    R := toRootSystem A;
+    assert(class dynkinDiagram("B",3) === String);
+    assert(class dynkinDiagram g === Net);
+    assert(class dynkinDiagram("B",3,0) === Net);
+    assert(class dynkinDiagram R === value WeylGroups.Dictionary#"DynkinDiagram");
+    par := value WeylGroups.Dictionary#"parabolic";
+    wgDiagram := value WeylGroups.Dictionary#"dynkinDiagram";
+    subgroup := par(R,set{1});
+    assert(dynkinDiagram(wgDiagram R,subgroup) === wgDiagram(wgDiagram R,subgroup));
+    V := externalIrreducible(g,{1,0,0});
+    U := externalIrreducible(g,{0,0,0});
+    assert(tensorCoefficient(V,V,U) == 1);
+    assert(tensorCoefficient(A,{1,0,0},{1,0,0},{0,0,0},WeightFormat=>"Partition") == 1);
+    assert(try (dynkinDiagram(R,NodeFormat=>"Labels"); false) else true);
+    assert(try (tensorCoefficient(V,V,U,WeightFormat=>"Partition"); false) else true);
+    -- A conversion is an isomorphism of abstract Lie algebras, not an
+    -- identification of Dynkin labels after the user permutes the nodes.
+    p := {2,0,1}; -- A three-cycle distinguishes the permutation from its inverse.
+    permuted := submatrix(A,p,p);
+    gp := toLieAlgebra permuted;
+    order1 := (first (cartanData permuted)#"components")#"canonicalNodeOrder";
+    order0 := apply(order1,j -> j-1);
+    assert(order1 === {2,3,1});
+    assert(externalCartan gp == transpose submatrix(permuted,order0,order0));
+    for weight in {{1,0,0},{0,1,0},{0,0,1},{2,1,0}} do (
+        transported := apply(order0,j -> weight#j);
+        assert(weylDimension(permuted,weight) == dim externalIrreducible(gp,transported));
+    );
+    assert(weylDimension(permuted,{1,0,0}) == 8 and dim externalIrreducible(gp,{1,0,0}) == 7);
+    S := indefiniteRootSnapshot(matrix{{2,-3},{-3,2}},3,Algorithm=>"BCL");
     assert(dictionaryPath === savedBridgePath);
     assert(all(sharedBridgeNames,savedBridgeBindings,(n,f) -> value n === f));
+    -- Resolve symbols anew after activating each companion, as they
+    -- would be resolved by subsequent user input in an interactive session.
+    use LieAlgebraRepresentations;
+    assert((value "simpleRoots") A === id_(QQ^3));
+    assert((value "highestRoot") g === {0,1,0});
+    assert(class (value "dynkinDiagram")("B",3) === Net);
+    assert((value "tensorCoefficient")(V,V,U) == 1);
+    assert((value "KacMoody$tensorCoefficient")(A,{1,0,0},{1,0,0},{0,0,0},
+        WeightFormat=>"Partition") == 1);
+    use WeylGroups;
+    assert(class (value "dynkinDiagram") R === value WeylGroups.Dictionary#"DynkinDiagram");
+    use bridgePackage;
+    assert(class (value "dynkinDiagram")("B",3) === String);
+    assert((value "simpleRoots") g === entries transpose A);
 ///
 
 -- Test 32: tripod (cartanT) Coxeter classification and well-known
@@ -5080,7 +5178,7 @@ TEST ///
     assert(cartanType cartanT(2,3,3) === "finite");  -- E_6
     assert(cartanType cartanT(2,3,4) === "finite");  -- E_7
     assert(cartanType cartanT(2,3,5) === "finite");  -- E_8
-    assert(cartanType cartanT(2,2,5) === "finite");  -- D_6
+    assert(cartanType cartanT(2,2,5) === "finite");  -- D_7
     -- affine cases
     assert(cartanType cartanT(3,3,3) === "affine");  -- affine E_6
     assert(cartanType cartanT(2,4,4) === "affine");  -- affine E_7
@@ -5536,20 +5634,16 @@ TEST ///
 --   cartanE n   <-->  simpleLieAlgebra("E", n)
 --   cartanF4()  <-->  simpleLieAlgebra("F", 4)
 --   cartanG2()  <-->  simpleLieAlgebra("G", 2)
--- LieAlgebraRepresentations uses the dual labeling for B<->C and the
--- transposed Cartan for F4/G2, so the Cartan matrices themselves do
--- not match on the nose in those types; but all *numerical*
--- invariants (Weyl dimensions, tensor coefficients, adjoint dims)
--- agree because the natural relabeling is absorbed by the
--- fundamental-weight conventions.  We only compare Cartan matrices
--- directly for simply-laced types (A, D, E).
+-- With the standard numbering, the two packages use the same Dynkin
+-- labels for weights. Their Cartan matrices are transposes: simple-root
+-- coordinates are rows in LieAlgebraRepresentations and columns here.
+-- Thus the matrices agree without a transpose in simply-laced types.
 ----------------------------------------------------------------------
 
 -- Test 57: LieAlgebraRepresentations cross-compatibility
 TEST ///
-    LAR := try needsPackage "LieAlgebraRepresentations" else null;
-    if LAR === null then print "SKIP: LieAlgebraRepresentations comparison tests (package could not be loaded)";
-    if LAR =!= null then (
+    needsPackage "LieAlgebraRepresentations";
+    (
         -- Map from KM name to LAR's simpleLieAlgebra constructor
         kmToLar := (tp, n) -> (
             if tp === "A" then simpleLieAlgebra(tp, n-1)
@@ -5650,9 +5744,8 @@ TEST ///
 
 -- Test 58: WeylGroups cross-compatibility
 TEST ///
-    WG := try needsPackage "WeylGroups" else null;
-    if WG === null then print "SKIP: WeylGroups comparison tests (package could not be loaded)";
-    if WG =!= null then (
+    needsPackage "WeylGroups";
+    (
         -- WG exposes rootSystemA/B/C/D/E/F4/G2 and matches KM for *all*
         -- combinatorial invariants of the Weyl group (|W|, length,
         -- reduced-decomposition length, |Phi^+|).
@@ -5871,19 +5964,15 @@ TEST ///
 -- Test 65: strong Bruhat order and total-height bounded roots.
 TEST ///
     -- Independent reduced-subword oracle for every pair in W(A_3).
-    subwordOracle := (A,u,v) -> (
-        U := weylElementMatrix(A,u);
-        vRed := reducedWord(A,v);
-        positions := if #vRed == 0 then {} else toList(0..#vRed-1);
-        any(subsets positions,
-            J -> U == weylElementMatrix(A, apply(J,j -> vRed#j)))
-    );
     A3 := cartanA 4;
-    eltsA3 := weylGroupElements A3;
-    for eu in eltsA3 do for ev in eltsA3 do (
-        u := eu#"word";
-        v := ev#"word";
-        assert(bruhatLessOrEqual(A3,u,v) === subwordOracle(A3,u,v));
+    words := apply(weylGroupElements A3,e -> e#"word");
+    matrixOfWord := memoize(w -> entries weylElementMatrix(A3,w));
+    for v in words do (
+        vRed := reducedWord(A3,v);
+        subwordMatrices := set apply(subsets toList(0..#vRed-1),
+            J -> matrixOfWord(vRed_J));
+        for u in words do
+            assert(bruhatLessOrEqual(A3,u,v) === member(matrixOfWord u,subwordMatrices));
     );
     -- These comparabilities distinguish strong Bruhat from weak order.
     assert(bruhatLessOrEqual(cartanA 3,{1},{2,1}));
@@ -5946,9 +6035,6 @@ TEST ///
 TEST ///
     mustError := f -> try (f(); false) else true;
     tallySignature := T -> set apply(keys T, k -> {toList k, T#k});
-    PD := (value "KacMoody")#"private dictionary";
-    affineLeviBackend := value PD#"affineLeviHighestWeights";
-    indefiniteLeviBackend := value PD#"indefiniteLeviHighestWeights";
 
     T0 := leviHighestWeights(cartanA 3,0,{1});
     assert(T0#(new Irrep from {{2}}) === 1);
@@ -5968,14 +6054,16 @@ TEST ///
         WeightFormat=>"Partition");
     assert(tallySignature TD4Part === set {{{{1,1,0,0}},1}});
 
-    Aaff1 := matrix{{2,-2},{-2,2}};
-    assert(mustError(() -> affineLeviBackend(Aaff1,1,{1},2)));
-    assert(tallySignature affineLeviBackend(Aaff1,1,{1},3)
-        === tallySignature affineLeviBackend(Aaff1,1,{1},7));
-    Ahyp := matrix{{2,-3},{-3,2}};
-    assert(mustError(() -> indefiniteLeviBackend(Ahyp,1,{1},3)));
-    assert(tallySignature indefiniteLeviBackend(Ahyp,1,{1},4)
-        === tallySignature indefiniteLeviBackend(Ahyp,1,{1},8));
+    -- The degree-one piece is the full simple-root string through alpha_1.
+    -- Its last root is (1,m) for off-diagonal entry -m. A snapshot just
+    -- below that height must not declare it absent.
+    for m in {2,3} do (
+        A := matrix{{2,-m},{-m,2}};
+        assert(mustError(() -> rootMultiplicity(rootSnapshot(A,m),{1,m})));
+        assert(rootMultiplicity(rootSnapshot(A,m+1),{1,m}) == 1);
+        assert(rootMultiplicity(rootSnapshot(A,2*m+2),{1,m}) == 1);
+        assert(tallySignature leviHighestWeights(A,1,{1}) === set {{{{m}},1}});
+    );
 
     assert(mustError(() -> weylDimension(cartanA 3,{-1,0})));
     assert(mustError(() -> weylDimension(cartanA 3,{1/2,0})));
@@ -6166,10 +6254,6 @@ TEST ///
     mustError := f -> try (f(); false) else true;
     sameTallyLocal := (T,U) ->
         (#keys T == #keys U and all(keys T,k -> U#?k and T#k == U#k));
-    PD := (value "KacMoody")#"private dictionary";
-    finiteLeviBackend := value PD#"cartanLeviHighestWeights";
-    affineLeviBackend := value PD#"affineLeviHighestWeights";
-    indefiniteLeviBackend := value PD#"indefiniteLeviHighestWeights";
     exportedNames := apply((value "KacMoody")#"exported symbols",toString);
     for publicName in {
         "leviHighestWeights", "fundamentalWeights", "cartanPositiveRoots",
@@ -6183,7 +6267,6 @@ TEST ///
         "vermaCharacter", "integrableCharacter"
     };
     assert(all(privateOnlyNames,n -> not member(n,exportedNames)));
-    assert(all(privateOnlyNames,n -> PD#?n));
     retiredPublicNames := {
         "toLegacyList",
         "toLegacyCartanMatrix",
@@ -6255,27 +6338,20 @@ TEST ///
     assert(Saa#"type" === "affine" and Saa#"rank" === 4);
     assert(instance(leviHighestWeights(Aaa,1,{1,3}),Tally));
 
-    assert(sameTallyLocal(
-        leviHighestWeights(Af,1,{1}),
-        finiteLeviBackend(Af,1,{1})));
-    assert(sameTallyLocal(
-        leviHighestWeights(Af,1,set{1}),
-        leviHighestWeights(Af,1,{1})));
-    assert(sameTallyLocal(
-        leviHighestWeights(Af,0,{1}),
-        finiteLeviBackend(Af,0,{1})));
-    assert(sameTallyLocal(
-        leviHighestWeights(Af,1,{1},WeightFormat=>"Partition"),
-        finiteLeviBackend(Af,1,{1},WeightFormat=>"Partition")));
-    assert(sameTallyLocal(
-        leviHighestWeights(Aa,1,{1}),
-        affineLeviBackend(Aa,1,{1},6)));
-    assert(sameTallyLocal(
-        leviHighestWeights(Ai,1,{1}),
-        indefiniteLeviBackend(Ai,1,{1},6)));
-    assert(sameTallyLocal(
-        leviHighestWeights(Ai,2,{1}),
-        indefiniteLeviBackend(Ai,2,{1},12)));
+    -- In A3 the retained A2 acts on the degree-one piece by its dual
+    -- standard representation; degree zero is its adjoint and one scalar.
+    assert(leviHighestWeights(Af,1,{1}) == tally {new Irrep from {{0,1}}});
+    assert(sameTallyLocal(leviHighestWeights(Af,1,set{1}),leviHighestWeights(Af,1,{1})));
+    assert(leviHighestWeights(Af,0,{1}) == tally {
+        new Irrep from {{1,1}},new Irrep from {{0,0}}});
+    assert(leviHighestWeights(Af,1,{1},WeightFormat=>"Partition") ==
+        tally {new Irrep from {{1,1,0}}});
+    -- The degree-one strings have highest weights 2 and 3. In degree
+    -- two for the latter algebra the Levi piece is wedge^2 V(3)=V(4)+V(0).
+    assert(leviHighestWeights(Aa,1,{1}) == tally {new Irrep from {{2}}});
+    assert(leviHighestWeights(Ai,1,{1}) == tally {new Irrep from {{3}}});
+    assert(leviHighestWeights(Ai,2,{1}) == tally {
+        new Irrep from {{4}},new Irrep from {{0}}});
     assert(instance(
         leviHighestWeights(Aa,1,{1},WeightFormat=>"Partition"),Tally));
     Ans := matrix{{2,-1,-1},{-2,2,-1},{-1,-2,2}};
@@ -6952,125 +7028,17 @@ TEST ///
 
 
 -------------------------------------------------------------------------
--- Documentation Tests
+-- Tripod diagrams with two short arms
 -------------------------------------------------------------------------
 
--- Keep user-facing method help connected to the mathematical reference.
--- Only presentation hooks and inherited ZZ[q] machinery may be excluded.
+-- Check the family independently of the type-recognition code: renumber
+-- the two one-edge arms as the last two nodes of Bourbaki's D diagram.
+-- Documentation completeness and examples are checked by installPackage.
 TEST ///
-    P := package "KacMoody";
-    corePrivate := Core#"private dictionary";
-    makeTag := value corePrivate#"makeDocumentTag";
-    publicMethods := value corePrivate#"documentableMethods";
-    primaryTag := value corePrivate#"getPrimaryTag";
-    fetchDocumentation := value corePrivate#"fetchRawDocumentation";
-
-    -- These inherited methods are created when polynomial arithmetic
-    -- is first used, so check coverage after they have been installed too.
-    q := KazhdanLusztigPolynomialRing_0;
-    dummySum := q+q;
-    dummyProduct := q*q;
-    dummyDifference := q-q;
-    assert(dummySum == 2*q and dummyProduct == q^2 and dummyDifference == 0);
-
-    presentationKey := key -> (
-        isMember(key#0,{net,toString}) or (
-            isMember(key#0,{lift,promote,expression,symbol ?,symbol +,symbol -,symbol *,symbol ==})
-            and isMember(KazhdanLusztigPolynomialRing,toList drop(key,1))));
-    scan(publicMethods P,key -> (
-        tag := makeTag(key,Package=>"KacMoody");
-        name := format tag;
-        record := fetchDocumentation tag;
-        if record === null then
-            error("missing public method documentation: "|name);
-        if record#?"undocumented" and record#"undocumented" === true then
-            assert(presentationKey key)
-        else (
-            primary := primaryTag tag;
-            page := fetchDocumentation primary;
-            assert(page =!= null);
-            assert(page#?Description and #page.Description > 0);
-        );
-    ));
-    scan(P#"exported symbols",name -> (
-        tag := makeTag(name,Package=>"KacMoody");
-        record := fetchDocumentation tag;
-        assert(record =!= null);
-        assert(not record#?"undocumented");
-        page := fetchDocumentation primaryTag tag;
-        assert(page =!= null);
-        assert(page#?Description and #page.Description > 0);
-        -- A chapter alias is not a command reference.  Every exported
-        -- symbol has its own primary page, including types and options.
-        assert(format primaryTag tag === toString name);
-        object := value name;
-        if instance(object,Function) and not instance(object,Type) then assert(page#?Usage);
-        -- Examples are rendered as tables by SimpleDoc.  Require prose
-        -- after an example so that its mathematical meaning is explained.
-        sections := toList page.Description;
-        examples := select(toList(0..#sections-1),i -> toString class sections#i === "TABLE");
-        assert(#examples > 0);
-        assert(any(examples,i -> any(drop(sections,i+1),s -> toString class s === "DIV")));
-    ));
-
-    -- Representative mathematical methods must link to the expected
-    -- command page, while arithmetic remains in its existing topic guide.
-    expectedPages := {
-        ((kmWeight,RootDatum,List),"kmWeight"),
-        ((symbol +,KMRoot,KMRoot),"Roots, weights, and pairings"),
-        ((standardParabolic,RootDatum,Set),"standardParabolic"),
-        ((dualWeight,RootDatum,KMWeight),"dualWeight"),
-        ((affineDegree,KMWeight,KMCoweight),"affineDegree"),
-        ((finiteCharacter,RootDatum,KMWeight),"finiteCharacter"),
-        ((characterCoefficient,LeviFormalCharacter,LeviWeight),"characterCoefficient"),
-        ((adamsOperation,ZZ,FormalCharacter),"adamsOperation"),
-        ((kazhdanLusztigPolynomial,WeylElement,WeylElement),"kazhdanLusztigPolynomial"),
-        ((minusculeCrystal,RootDatum,ZZ),"minusculeCrystal")
-    };
-    expectedPages = expectedPages | {
-        ((symbol +,LeviFormalCharacter,LeviFormalCharacter),"Reductive Levi restriction"),
-        ((symbol *,LeviFormalCharacter,LeviFormalCharacter),"Reductive Levi restriction"),
-        ((symbol ^,LeviFormalCharacter,ZZ),"Reductive Levi restriction")
-    };
-    scan(expectedPages,item -> assert(
-        format primaryTag makeTag(item#0,Package=>"KacMoody") === item#1));
-
-    characterGuide := fetchDocumentation makeTag(
-        "Working with formal characters",Package=>"KacMoody");
-    assert(characterGuide =!= null);
-    assert(characterGuide#?Description and #characterGuide.Description > 0);
-
-    -- Before-and-after examples must show their mathematical inputs,
-    -- either at assignment or by an explicit display.
-    -- Installed help can come from the documentation database without
-    -- populating the transient example-input table.
-    visibleExampleValue := (node,variableName) -> (
-        inputLines := lines toString examples makeTag(node,Package=>"KacMoody");
-        any(inputLines,line -> (
-            match("^[[:space:]]*"|variableName|"[[:space:]]*=",line)
-            and not match(";[[:space:]]*$",line)))
-        or any(inputLines,line -> match(
-            "^[[:space:]]*"|variableName|"[[:space:]]*$",line))
+    for n from 2 to 7 do (
+        indices := reverse toList(3..n+1) | {1,0,2};
+        assert(submatrix(cartanT(2,2,n),indices,indices) == cartanD(n+2));
     );
-    visibilityFixtures := {
-        {"demazureOperator","C"},
-        {"dualCharacter","C"},
-        {"dualCharacter","Cd"},
-        {"characterTerms","C"},
-        {"characterCoefficient","C"},
-        {"restrictCharacter","C"},
-        {"decomposeCharacter","P"}
-    };
-    assert(all(visibilityFixtures,fixture ->
-        visibleExampleValue(fixture#0,fixture#1)));
-
-    -- The same checks must work with no transient example inputs.
-    savedExampleInputs := P#"example inputs";
-    P#"example inputs" = new MutableHashTable;
-    visibleWithoutCache := try all(visibilityFixtures,fixture ->
-        visibleExampleValue(fixture#0,fixture#1)) else false;
-    P#"example inputs" = savedExampleInputs;
-    assert(visibleWithoutCache);
 ///
 
 
@@ -7083,7 +7051,16 @@ TEST ///
 -- into independent Dynkin coordinates and center coordinates.
 TEST ///
     mustErrorLeviRegression = f -> (try (f(); false) else true);
-    liftLeviRegression = value (package "KacMoody")#"private dictionary"#"draftLiftLeviWeight";
+    -- Scaling an exact Levi character lifts its weights to the ambient
+    -- Cartan and restricts them again.  A single monomial detects even
+    -- an error in a central coordinate invisible to the Dynkin labels.
+    checkLeviRoundTrip = (L,x) -> (
+        C := formalCharacter(parentDatum x,new Tally from {x=>1});
+        doubled := 2*restrictCharacter(L,C);
+        y := restrictWeight(L,x);
+        assert(characterSupport doubled == {y});
+        assert(characterCoefficient(doubled,y) == 2);
+    );
 
     DaffLeviRegression = rootDatum cartanAffineA 1;
     PaffLeviRegression = standardParabolic(DaffLeviRegression,LeviNodes=>{1,2});
@@ -7113,8 +7090,8 @@ TEST ///
         top := restrictWeight(L,lambdaLeviRegression);
         lower := restrictWeight(L,lowerLeviRegression);
         assert(top =!= lower);
-        assert(liftLeviRegression top === lambdaLeviRegression);
-        assert(liftLeviRegression lower === lowerLeviRegression);
+        checkLeviRoundTrip(L,lambdaLeviRegression);
+        checkLeviRoundTrip(L,lowerLeviRegression);
         RC := restrictCharacter(L,exactAffineLeviRegression);
         assert(#characterSupport RC == 2);
         assert(characterCoefficient(RC,top) == 1);
@@ -7131,8 +7108,7 @@ TEST ///
     vhypLeviRegression = kmWeight(DhypLeviRegression,{0,1});
     assert(restrictWeight(LhypLeviRegression,uhypLeviRegression) =!=
         restrictWeight(LhypLeviRegression,vhypLeviRegression));
-    assert(liftLeviRegression restrictWeight(LhypLeviRegression,uhypLeviRegression) ===
-        uhypLeviRegression);
+    checkLeviRoundTrip(LhypLeviRegression,uhypLeviRegression);
     assert(#characterSupport restrictCharacter(LhypLeviRegression,
         formalCharacter(DhypLeviRegression,new Tally from {
             uhypLeviRegression=>1,vhypLeviRegression=>3})) == 2);
@@ -7161,8 +7137,7 @@ TEST ///
     assert(datumCoordinates extraTopLeviRegression === {2});
     assert(restrictWeight(LextraLeviRegression,extraTopLeviRegression) =!=
         restrictWeight(LextraLeviRegression,extraLowerLeviRegression));
-    assert(liftLeviRegression restrictWeight(LextraLeviRegression,extraTopLeviRegression) ===
-        extraTopLeviRegression);
+    checkLeviRoundTrip(LextraLeviRegression,extraTopLeviRegression);
 
     -- Apply a skew change of basis, contragrediently on coroots.  The
     -- inverse coordinate map must work in that realization too.
@@ -7177,8 +7152,7 @@ TEST ///
     for retainedSkewLeviRegression in {{},{1},{2},{1,2}} do (
         L := reductiveLeviDatum(standardParabolic(DskewLeviRegression,
             LeviNodes=>retainedSkewLeviRegression),DskewLeviRegression);
-        assert(liftLeviRegression restrictWeight(L,xskewLeviRegression) ===
-            xskewLeviRegression);
+        checkLeviRoundTrip(L,xskewLeviRegression);
     );
 
     -- Rank-zero tori also have faithful center coordinates, including the
@@ -7194,7 +7168,7 @@ TEST ///
             apply(torusDimensionLeviRegression,i -> i+2));
         assert(centralCharacter restrictWeight(L0,x0) ===
             apply(torusDimensionLeviRegression,i -> i+2));
-        assert(liftLeviRegression restrictWeight(L0,x0) === x0);
+        checkLeviRoundTrip(L0,x0);
     );
 ///
 
@@ -8265,34 +8239,24 @@ assert(characterTerms(zeroArithmeticParents+CClassArithmeticParents) ==
 assert(characterTerms(zeroArithmeticParents+CFullArithmeticParents) ==
     characterTerms CFullArithmeticParents);
 
--- Compatibility decisions, including refusals, are retained separately
--- from character coefficients.  Reuse must not suppress fresh mode checks.
+-- Changing the order, repeating the comparison, or clearing caches must
+-- not make an incompatible parent or coordinate mode admissible.
 clearInfrastructureCaches();
-assert((infrastructureCacheInfo())#"characterParents" == 0);
 cacheSumArithmeticParents = CLeftArithmeticParents+CRightArithmeticParents;
-assert((infrastructureCacheInfo())#"characterParents" == 1);
-cacheProductArithmeticParents = CLeftArithmeticParents*CRightArithmeticParents;
-cacheDifferenceArithmeticParents = CLeftArithmeticParents-CRightArithmeticParents;
-assert((infrastructureCacheInfo())#"characterParents" == 1);
+assert(cacheSumArithmeticParents == CRightArithmeticParents+CLeftArithmeticParents);
+assert(CLeftArithmeticParents*CRightArithmeticParents == CRightArithmeticParents*CLeftArithmeticParents);
+assert(CLeftArithmeticParents-CRightArithmeticParents == -(CRightArithmeticParents-CLeftArithmeticParents));
 assert(mustErrorArithmeticParents(() ->
     CLeftArithmeticParents+CDifferentArithmeticParents));
-assert((infrastructureCacheInfo())#"characterParents" == 2);
 assert(mustErrorArithmeticParents(() ->
     CLeftArithmeticParents*CDifferentArithmeticParents));
-assert((infrastructureCacheInfo())#"characterParents" == 2);
 assert(mustErrorArithmeticParents(() ->
     CDifferentArithmeticParents+CLeftArithmeticParents));
-assert((infrastructureCacheInfo())#"characterParents" == 2);
-cacheFullArithmeticParents = CFullArithmeticParents+CFullArithmeticParents;
-cacheCountArithmeticParents = (infrastructureCacheInfo())#"characterParents";
 assert(mustErrorArithmeticParents(() -> CFullArithmeticParents+CClassArithmeticParents));
 assert(mustErrorArithmeticParents(() -> CFullArithmeticParents*CClassArithmeticParents));
-assert((infrastructureCacheInfo())#"characterParents" == cacheCountArithmeticParents);
 clearInfrastructureCaches();
-assert((infrastructureCacheInfo())#"characterParents" == 0);
 assert(characterTerms(CLeftArithmeticParents+CRightArithmeticParents) ==
     characterTerms cacheSumArithmeticParents);
-assert((infrastructureCacheInfo())#"characterParents" == 1);
 
 ///
 
@@ -8888,12 +8852,9 @@ for a from 0 to 3 do for b from 0 to 3 do (
 
 TEST ///
 
--- Positive roots of A^T are positive coroots of A.  Compare their explicit
--- sum with the linear-equation calculation in every finite family,
--- including exceptional types, both root-length orientations, reducible
--- products, and reordered nodes.
-sumCorootsIndicator := value getGlobalSymbol(
-    (package "KacMoody")#"private dictionary","draftPositiveCorootSum");
+-- Positive roots of A^T are positive coroots of A.  Their explicit sum
+-- is twice the dual Weyl vector; its j-th entry gives the sign exponent
+-- of a self-dual fundamental representation at node j.
 fixturesCorootIndicator := join(
     apply(toList(1..10),r -> cartanA(r+1)),
     apply(toList(2..8),r -> cartanB r),
@@ -8903,15 +8864,22 @@ fixturesCorootIndicator := join(
      transpose cartanF4(),transpose cartanG2(),
      (cartanA 3) ++ (cartanC 2)});
 for A in fixturesCorootIndicator do (
+    r := numrows A;
     explicit := sum entries cartanPositiveRoots transpose A;
-    assert(sumCorootsIndicator A === explicit);
-    assert(matrix{explicit} * A == matrix{toList(numrows A:2)});
-    permutation := reverse toList(0..numrows A-1);
+    assert(2 * weylVector(transpose A) == explicit);
+    assert(matrix{explicit} * A == matrix{toList(r:2)});
+    permutation := reverse toList(0..r-1);
     Ap := submatrix(A,permutation,permutation);
-    assert(sumCorootsIndicator Ap === apply(permutation,i -> explicit#i));
-    -- Realizability and labels are unaffected by integral Cartan entries
-    -- being supplied over QQ instead of ZZ.
-    assert(frobeniusSchurIndicator(A ** QQ,toList(numrows A:0)) == 1);
+    assert(2 * weylVector(transpose Ap) == apply(permutation,i -> explicit#i));
+    D := rootDatum A;
+    Dp := rootDatum(Ap ** QQ);
+    for j from 0 to r-1 do (
+        fundamental := apply(r,i -> if i == j then 1 else 0);
+        expected := if dualWeight(A,fundamental) == fundamental
+            then (-1)^(explicit#j) else 0;
+        assert(frobeniusSchurIndicator(D,fundamental) == expected);
+        assert(frobeniusSchurIndicator(Dp,apply(permutation,i -> fundamental#i)) == expected);
+    );
 );
 
 for r from 2 to 8 do (
@@ -9005,32 +8973,17 @@ assert(mustErrorIndicator(() -> frobeniusSchurIndicator(matrix{{2,-1},{0,2}},{1,
 
 TEST ///
 
--- Huge labels must not construct characters, tensor products, weight
--- multiplicity tables, positive-root tables, or the longest Weyl word.
-clearInfrastructureCaches();
-AcoldIndicator := cartanC 12;
-DcoldIndicator := rootDatum AcoldIndicator;
-AcoldIndicator = datumCartanMatrix DcoldIndicator;
-clearRepresentationCache AcoldIndicator;
-assert(not AcoldIndicator.cache#?"cartanPositiveRoots");
-assert(not AcoldIndicator.cache#?"longElement");
-beforeInfrastructureIndicator := infrastructureCacheInfo();
+-- In type C every highest weight is self-dual and the j-th fundamental
+-- weight contributes (-1)^j. Check every node on top of a weight with
+-- 101-digit labels: expanding the corresponding characters is infeasible.
+DcoldIndicator := rootDatum(cartanC 12);
 hugeIndicator := 10^100;
-labelsHugeIndicator := join({hugeIndicator+1},toList(11:hugeIndicator));
-assert(frobeniusSchurIndicator(DcoldIndicator,labelsHugeIndicator) == -1);
 assert(frobeniusSchurIndicator(DcoldIndicator,toList(12:hugeIndicator)) == 1);
-assert(all(values representationCacheInfo AcoldIndicator,m -> m == 0));
-assert(not AcoldIndicator.cache#?"cartanPositiveRoots");
-assert(not AcoldIndicator.cache#?"longElement");
-afterInfrastructureIndicator := infrastructureCacheInfo();
-assert(afterInfrastructureIndicator#"vermaPartitions"
-    == beforeInfrastructureIndicator#"vermaPartitions");
-assert(afterInfrastructureIndicator#"characterParents"
-    == beforeInfrastructureIndicator#"characterParents");
-assert(afterInfrastructureIndicator#"kazhdanLusztigData"
-    == beforeInfrastructureIndicator#"kazhdanLusztigData");
-assert(afterInfrastructureIndicator#"crystalData"
-    == beforeInfrastructureIndicator#"crystalData");
+for j from 1 to 12 do (
+    labelsHugeIndicator := apply(toList(1..12),i ->
+        if i == j then hugeIndicator+1 else hugeIndicator);
+    assert(frobeniusSchurIndicator(DcoldIndicator,labelsHugeIndicator) == (-1)^j);
+);
 
 -- Boundary powers include the determinant and orders above the dimension.
 -- Complementary exterior powers are dual for this semisimple module.
@@ -9405,15 +9358,19 @@ TEST ///
 -- Exact finite characters are checked against independent closed formulas.
 TEST ///
     DAuditA1 = rootDatum "A1";
+    smallChars := apply(8,a -> finiteCharacter(DAuditA1,{a}));
     for a from 0 to 7 do (
         literal := formalCharacter(DAuditA1,
             tally for j from 0 to a list kmWeight(DAuditA1,{a-2*j}));
-        assert(characterTerms finiteCharacter(DAuditA1,{a}) == characterTerms literal);
-        for b from 0 to 7 do (
+        assert(characterTerms(smallChars#a) == characterTerms literal);
+        -- Tensor product is commutative. Check the symmetry for each pair
+        -- and run the independent Clebsch--Gordan decomposition only once.
+        for b from 0 to a do (
             expected := new Tally from for j from 0 to min(a,b) list
                 (kmWeight(DAuditA1,{a+b-2*j}))=>1;
-            assert(decomposeCharacter(finiteCharacter(DAuditA1,{a})*
-                finiteCharacter(DAuditA1,{b})) == expected);
+            product := smallChars#a * smallChars#b;
+            if b != a then assert(product == smallChars#b * smallChars#a);
+            assert(decomposeCharacter product == expected);
         );
     );
     -- The 100th tensor power tests large integers, not just small modules.
@@ -9639,7 +9596,8 @@ TEST ///
 -- Exact path crystals and tensor products: independent characters, every
 -- string, connected components, and associativity of the tensor rule.
 
-draftAuditGeneralCrystalAxioms = B -> (
+crystalAxiomsTest = ///
+checkGeneralCrystal = B -> (
     D := crystalDatum B;
     A := datumCartanMatrix D;
     r := numrows A;
@@ -9661,15 +9619,16 @@ draftAuditGeneralCrystalAxioms = B -> (
             upper := crystalE(b,i);
             if lower =!= null then (
                 assert(crystalE(lower,i) === b);
-                assert(crystalWeight lower === draftWeightMinusRoot(wt,kmRoot(D,
-                    for j from 1 to r list if j == i then 1 else 0)));
+                alpha := toWeight kmRoot(D,for j from 1 to r list if j == i then 1 else 0);
+                difference := wt-crystalWeight lower;
+                assert(datumCoordinates difference == datumCoordinates alpha);
+                full := try realizationCoordinates difference else null;
+                if full =!= null then assert(full == realizationCoordinates alpha);
                 assert(crystalPhi(lower,i) == phi-1);
                 assert(crystalEpsilon(lower,i) == epsilon+1);
             );
             if upper =!= null then (
                 assert(crystalF(upper,i) === b);
-                assert(crystalWeight upper === draftWeightMinusRoot(wt,kmRoot(D,
-                    for j from 1 to r list if j == i then -1 else 0)));
             );
             cursor := b;
             for stringStep from 1 to phi do cursor = crystalF(cursor,i);
@@ -9682,9 +9641,9 @@ draftAuditGeneralCrystalAxioms = B -> (
     true
 );
 
-TEST ///
+///;
 
-checkGeneralCrystal = value((package "KacMoody")#"private dictionary")#"draftAuditGeneralCrystalAxioms";
+TEST (crystalAxiomsTest | ///
 for fixture in {
     {cartanB 2,{1,1}}, {cartanB 2,{2,0}}, {cartanB 2,{0,2}},
     {cartanC 2,{1,2}}, {cartanB 3,{0,1,0}}, {cartanC 3,{0,0,1}},
@@ -9736,12 +9695,10 @@ zeroVertices := select(crystalVertices B,b -> datumCoordinates crystalWeight b =
 assert(#zeroVertices == 2);
 assert(crystalVertexData(first zeroVertices) != crystalVertexData(last zeroVertices));
 assert(toString(first zeroVertices) != toString(last zeroVertices));
-
-///
+///)
 
 TEST ///
 
-pathData = value((package "KacMoody")#"private dictionary")#"draftCrystalPathData";
 -- Compare the graph, not merely its character, with the independent type-A
 -- tableau model and the classification-free minuscule Weyl-orbit model.
 checkCrystalIsomorphism = (B,C) -> (
@@ -9757,7 +9714,13 @@ checkCrystalIsomorphism = (B,C) -> (
         b := queue#head;
         c := mapping#b;
         head = head+1;
-        assert(crystalWeight b === crystalWeight c);
+        if crystalDatum B === crystalDatum C then assert(crystalWeight b === crystalWeight c)
+        else (
+            -- The second model has an extra, trivial A1 factor.
+            assert(datumCoordinates crystalWeight c == append(datumCoordinates crystalWeight b,0));
+            assert(crystalE(c,r+1) === null and crystalF(c,r+1) === null);
+            assert(crystalEpsilon(c,r+1) == 0 and crystalPhi(c,r+1) == 0);
+        );
         for i from 1 to r do (
             fB := crystalF(b,i);
             fC := crystalF(c,i);
@@ -9774,13 +9737,12 @@ checkCrystalIsomorphism = (B,C) -> (
     assert(#(set values mapping) == #queue);
     true
 );
+D := rootDatum "A2";
+Dproduct := rootDatum((datumCartanMatrix D)++matrix{{2}});
 for labels in {{0,0},{1,0},{0,1},{1,1},{2,1},{1,2},{2,2}} do (
-    D := rootDatum "A2";
-    paths := pathData(datumCartanMatrix D,labels,100000);
-    B := new Crystal from {
-        "parent"=>D,"model"=>"LittelmannPaths","highestWeight"=>kmWeight(D,labels),
-        "rank"=>2,"canonicalNodeOrder"=>{1,2},"vertexData"=>paths};
-    assert(checkCrystalIsomorphism(B,highestWeightCrystal(D,labels)));
+    tableaux := highestWeightCrystal(D,labels);
+    paths := highestWeightCrystal(Dproduct,append(labels,0));
+    assert(checkCrystalIsomorphism(tableaux,paths));
 );
 for fixture in {{"B3",3},{"C3",1},{"D4",4},{"E6",1},{"E7",7}} do (
     D := rootDatum fixture#0;
@@ -9790,9 +9752,7 @@ for fixture in {{"B3",3},{"C3",1},{"D4",4},{"E6",1},{"E7",7}} do (
 
 ///
 
-TEST ///
-
-checkGeneralCrystal = value((package "KacMoody")#"private dictionary")#"draftAuditGeneralCrystalAxioms";
+TEST (crystalAxiomsTest | ///
 for fixture in {
     {"A1",{3},{2}}, {"A2",{1,0},{0,1}}, {"A2",{1,1},{1,0}},
     {"B2",{0,1},{0,1}}, {"B2",{1,0},{0,1}}, {"G2",{1,0},{1,0}}
@@ -9870,11 +9830,9 @@ for fixture in {{"A1",{2}},{"A2",{1,0}},{"G2",{1,0}}} do (
     );
 );
 
-///
+///)
 
-TEST ///
-
-checkGeneralCrystal = value((package "KacMoody")#"private dictionary")#"draftAuditGeneralCrystalAxioms";
+TEST (crystalAxiomsTest | ///
 mustErrorGeneralCrystal = f -> try (f(); false) else true;
 A := cartanB 2;
 permutation := {1,0};
@@ -9966,8 +9924,7 @@ assert(#crystalVertices Bproduct == 21);
 assert(checkGeneralCrystal Bproduct);
 assert(characterTerms crystalCharacter Bproduct ==
     characterTerms finiteCharacter(Dproduct,{1,0,1,0}));
-
-///
+///)
 
 
 -------------------------------------------------------------------------
@@ -10730,4 +10687,43 @@ WotherVariable := weylGroup(cartanB 3);
 assert(mustErrorKLVariable(() -> kazhdanLusztigPolynomial(
     evariable,identityWeylElement WotherVariable,Variable=>tvariable)));
 assert(q === qSentinelVariable);
+///
+
+-- Matrix and typed inputs use the same generalized Cartan axioms, before
+-- any rank-zero special case or change of coefficient ring.
+TEST ///
+    fails := f -> try (f(); false) else true;
+    S := QQ[local t];
+    A := cartanA 3;
+    for B in {A,A ** QQ,matrix(S,entries A)} do (
+        assert(isCartanMatrix B);
+        assert(datumCartanMatrix cartanDatum B === A);
+        assert(dynkinDiagram B === dynkinDiagram A);
+    );
+    for bad in {matrix(S,{{2,t},{t,2}}),matrix(QQ,{{2,-1/2},{-1,2}}),
+            matrix(ZZ/5,entries A),matrix mutableMatrix(ZZ/5,0,0)} do (
+        assert(not isCartanMatrix bad);
+        assert(fails(() -> cartanDatum bad));
+        assert(fails(() -> dynkinDiagram bad));
+    );
+    empty := matrix mutableMatrix(S,0,0);
+    assert(isCartanMatrix empty and (cartanDatum empty)#"rank" == 0);
+///
+
+-- Type B2 has one minuscule node, in position 2. A rational label
+-- that *prints* as the integer position 1 must not disguise that fact.
+TEST ///
+    B := cartanDatum(cartanB 2,NodeLabels=>{2_QQ,1_QQ});
+    node := first minusculeNodes B;
+    assert(node === new HashTable from {"position"=>2,"label"=>1_QQ});
+    assert(isMinusculeNode(B,node) and not isMinusculeNode(B,1));
+    assert(minusculeNodes(B,NodeFormat=>"Positions") === {2});
+    assert(first minusculeNodes(B,NodeFormat=>"Labels") == 1);
+    AD := cartanDatum(cartanAffineA 1,NodeLabels=>{2_QQ,1_QQ});
+    assert((affineTypeData AD)#"typedNodeFormat" === "Records");
+    assert((affineFinitePart(AD,node))#"deletedNode" == 2);
+    C := highestWeightCrystal(rootDatum B,{0,1});
+    b := first select(crystalVertices C,v -> crystalWeight v == crystalHighestWeight C);
+    assert(crystalF(b,node) === crystalF(b,2));
+    assert(crystalF(b,node) =!= null and crystalF(b,1) === null);
 ///

@@ -10,22 +10,27 @@ newPackage("KacMoody",
     Headline => "Computations with symmetrizable Kac-Moody algebras and their representations",
     Keywords => {"Lie Groups and Lie Algebras", "Representation Theory"},
     PackageExports => {},
-    PackageImports => {"Polyhedra", "LieAlgebraRepresentations", "WeylGroups"},
+    PackageImports => {"Normaliz", "Polyhedra", "LieAlgebraRepresentations", "WeylGroups"},
     AuxiliaryFiles => true,
     DebuggingMode => false
 )
 
--- Retain the public companion constructors without keeping their
--- overlapping command dictionaries active while defining this package.
+-- Use the existing method functions for disjoint input types. Only these
+-- three companion names become public when the user loads KacMoody alone.
+exportFrom(LieAlgebraRepresentations, {"simpleRoots", "highestRoot", "dualCoxeterNumber"});
 larLieAlgebra := LieAlgebraRepresentations$LieAlgebra;
+larModule := LieAlgebraRepresentations$LieAlgebraModule;
+larDiagram := LieAlgebraRepresentations$dynkinDiagram;
+larTensorCoefficient := LieAlgebraRepresentations$tensorCoefficient;
+wgDiagram := WeylGroups$dynkinDiagram;
+wgRootSystemType := WeylGroups$RootSystem;
+wgDiagramType := WeylGroups$DynkinDiagram;
+wgParabolicType := WeylGroups$Parabolic;
 wgRootSystem := WeylGroups$rootSystem;
 wgDynkinType := WeylGroups$dynkinType;
 kmConeFromInequalities := Polyhedra$coneFromInequalities;
 kmConeHilbertBasis := Polyhedra$hilbertBasis;
 kmConeRays := rays;
-dismiss LieAlgebraRepresentations;
-dismiss WeylGroups;
-dismiss Polyhedra;
 
 --------------------------------------------------------------------
 -- KacMoody: symmetrizable Kac-Moody algebras in Macaulay2
@@ -222,7 +227,6 @@ export {
     "cocharacterLatticeBasis",
     "integratesToGlobalForm",
     "integratesCoweightToGlobalForm",
-    "simpleRoots",
     "coroots",
     "fundamentalWeights",
     "toFundamental",
@@ -235,12 +239,10 @@ export {
     -- Root system data
     "negativeRoots",
     "allRoots",
-    "highestRoot",
     "highestShortRoot",
     "weylVector",
     "isDominant",
     "coxeterNumber",
-    "dualCoxeterNumber",
     "dynkinDiagramData",
     "dynkinDiagram",
     "dualCartanMatrix",
@@ -396,30 +398,10 @@ export {
     "clearInfrastructureCaches"
 }
 
+
 ------------------------------------------------------------
 -- Internal helpers (not exported)
 ------------------------------------------------------------
-
--- Optional heavy dependencies are loaded only by the features that need
--- them.  Most Cartan, root, Weyl, and representation computations therefore
--- do not pay Normaliz startup costs.
-kacMoodyOptionalFunctions := new MutableHashTable;
-
-optionalPackageFunction = (packageName, functionName) -> (
-    key := (packageName, functionName);
-    if kacMoodyOptionalFunctions#?key then
-        return kacMoodyOptionalFunctions#key;
-    try needsPackage packageName else
-        error("KacMoody: could not load optional package " | packageName);
-    packageObject := value packageName;
-    dictionary := packageObject.Dictionary;
-    if not dictionary#?functionName then error concatenate(
-        "KacMoody: optional package ", packageName,
-        " does not provide ", functionName);
-    f := value dictionary#functionName;
-    kacMoodyOptionalFunctions#key = f;
-    f
-);
 
 isPositiveVector = v -> (
     all(v, c -> c >= 0) and any(v, c -> c > 0)
@@ -434,14 +416,11 @@ isNegativeVector = v -> (
 numberedTableEntries = T -> for i from 0 to #T-1 list T#i;
 
 cartanCompositions = (h, r) -> (
-    if h < 0 then error "cartanCompositions: h must be >= 0";
-    if r < 1 then error "cartanCompositions: r must be >= 1";
-    if r == 1 then (
-        {{h}}
-    ) else (
-        flatten for i from 0 to h list
-            for t in cartanCompositions(h-i,r-1) list prepend(i,t)
-    )
+    -- Core lists the last coordinate first; preserve lexicographic order.
+    -- The unique weight of height zero in rank zero is the empty tuple.
+    if r == 0 then (if h == 0 then {{}} else {})
+    else if r == 1 then {{h}}
+    else apply(compositions(r,h),reverse)
 );
 
 
@@ -720,7 +699,7 @@ cartanG2 = () -> (
 -- classification when p,q,r are all at least 2,
 --   1/p + 1/q + 1/r > 1  finite    (spherical)
 --   1/p + 1/q + 1/r = 1  affine    (Euclidean)
---   1/p + 1/q + 1/r < 1  hyperbolic/Lorentzian (indefinite)
+--   1/p + 1/q + 1/r < 1  Lorentzian indefinite (not always hyperbolic)
 -- which cartanType will detect automatically.
 --
 -- Node ordering: the leaf of the first arm is node 1, the center is
@@ -761,7 +740,8 @@ cartanT = (p, q, r) -> (
 -- and arm i occupies nodes of matrix-index contributing (p_i - 1)
 -- positions after the center.  For k=3 this coincides with cartanT up
 -- to a permutation of indices; for k<=2 this gives a chain (type A);
--- for k>=4 the diagrams are always indefinite.
+-- Length-one arms add no nodes. With four nontrivial arms only the
+-- four single-edge arms give affine type; with more arms the type is indefinite.
 
 cartanStar = armLens -> (
     if not instance(armLens, List) then
@@ -972,26 +952,12 @@ cartanAffineG2 = () -> (
 ------------------------------------------------------------
 -- Over- and very-extended Kac-Moody Cartan matrices.
 --
--- cartanOverExtended(A) takes a finite-type Cartan A, affinises it
--- via cartanExtendUntwisted to get A^+ (= A^(1)), and then appends a
+-- cartanOverExtended(A) takes a finite-type Cartan A to its untwisted
+-- affine extension A^+ (= A^(1)), and then prepends a
 -- further simple root attached by a single bond to alpha_0 (the
--- affine node).  The result A^{++} is a hyperbolic/Lorentzian
--- Kac-Moody matrix whenever such an extension makes sense.  When A
--- is of type E_n, the iterated extensions give the algebras
+-- affine node).  For type E_8 the iterated extensions give the algebras
 -- E_9 = E_8^+, E_{10} = E_8^{++}, E_{11} = E_8^{+++}.
 ------------------------------------------------------------
-
-cartanOverExtended = A -> (
-    Aaff := cartanExtendUntwisted A;
-    r := numrows Aaff;
-    M := mutableMatrix(ZZ, r+1, r+1);
-    for i from 0 to r-1 do for j from 0 to r-1 do M_(i+1, j+1) = Aaff_(i,j);
-    M_(0, 0) = 2;
-    -- attach new node at index 0 to affine node (now at index 1) by
-    -- a single bond (both long, all simply laced in the extension)
-    M_(0, 1) = -1; M_(1, 0) = -1;
-    matrix M
-)
 
 -- Helper: single over-extension step that works on any GCM (not just
 -- finite-type).  Used by cartanVeryExtended so the result prepends a
@@ -1005,6 +971,7 @@ cartanOverExtendStep = A -> (
     matrix M
 )
 
+cartanOverExtended = A -> cartanOverExtendStep cartanExtendUntwisted A
 -- Very-extended: over-extend once, then prepend one more node.
 cartanVeryExtended = A -> cartanOverExtendStep cartanOverExtended A
 
@@ -3017,10 +2984,10 @@ requireConnectedFiniteCartanType = (name, A) -> (
 
 
 -- Abstract simple roots (identity matrix in simple-root basis)
-simpleRoots = A -> (
+simpleRoots Matrix := Matrix => A -> (
     A = integralCartanMatrix(A, "simpleRoots");
     r := numrows A;
-    matrix table(r, r, (i,j) -> if i == j then 1_QQ else 0_QQ)
+    id_(QQ^r)
 );
 
 -- Simple coroots as functionals on the root lattice
@@ -3244,7 +3211,7 @@ isDominant (Matrix, Matrix) := opts -> (A, lambdaMat) -> (
 -- Returns the highest root (= longest root in partial order) in simple-root coords.
 -- For finite type: the unique root with maximal height.
 
-highestRoot = A -> (
+highestRoot Matrix := A -> (
     A = integralCartanMatrix(A, "highestRoot");
     requireConnectedFiniteCartanType("highestRoot", A);
     r := numrows A;
@@ -3326,7 +3293,7 @@ coxeterNumber = A -> (
 -- highest short root in fundamental weight basis of the dual.
 -- For simply-laced: h^v = h.
 
-dualCoxeterNumber = A -> (
+dualCoxeterNumber Matrix := A -> (
     -- The dual Coxeter number is (rho, theta^v) + 1 where theta^v
     -- is the highest coroot.  Equivalently, it equals the height
     -- of the highest short root of A^T plus 1.
@@ -3390,7 +3357,22 @@ dynkinDiagramData Matrix := opts -> A -> (
 -- A triangle with one attached leaf can be drawn with two diagonal
 -- single bonds. Components without a suitable layout use an edge list.
 
-dynkinDiagram = method(Options => {NodeFormat => null});
+dynkinDiagram := KacMoody$dynkinDiagram = method(Options => {NodeFormat => null});
+-- The companions have distinct generics with this name. In particular,
+-- LAR returns a Net for (String,ZZ), whereas our text drawing is a String.
+-- Retain both conventions, delegating on the companions' own input types.
+dynkinDiagram larLieAlgebra := opts -> g -> (
+    if opts.NodeFormat =!= null then error "dynkinDiagram: NodeFormat applies only to KacMoody input";
+    larDiagram g)
+dynkinDiagram (String,ZZ,ZZ) := opts -> (s,n,k) -> (
+    if opts.NodeFormat =!= null then error "dynkinDiagram: NodeFormat applies only to KacMoody input";
+    larDiagram(s,n,k))
+dynkinDiagram wgRootSystemType := opts -> R -> (
+    if opts.NodeFormat =!= null then error "dynkinDiagram: NodeFormat applies only to KacMoody input";
+    wgDiagram R)
+dynkinDiagram (wgDiagramType,wgParabolicType) := opts -> (G,P) -> (
+    if opts.NodeFormat =!= null then error "dynkinDiagram: NodeFormat applies only to KacMoody input";
+    wgDiagram(G,P))
 
 -- The graph layout is independent of the objects used to name its nodes.
 -- Keeping the label strings as an explicit argument lets typed overloads
@@ -4605,7 +4587,7 @@ tensorDecomposition (Matrix, List, List) := opts -> (A, lambda, mu) -> (
 
 -- tensorCoefficient(A, lambda, mu, nu)
 -- Return the multiplicity c^nu_{lambda, mu} of V(nu) in V(lambda) ⊗ V(mu)
--- without computing the full decomposition.
+-- by looking up nu in the tensor-product multiplicity table.
 --
 -- Uses the Racah-Speiser formula:
 --   V(lambda) ⊗ V(mu) = ⊕_{eta wt of V(mu)} m_mu(eta) · [V(lambda + eta)]*
@@ -4614,7 +4596,10 @@ tensorDecomposition (Matrix, List, List) := opts -> (A, lambda, mu) -> (
 -- chamber), and 0 otherwise.
 -- Iterating over weights of whichever of V(lambda), V(mu) is smaller.
 
-tensorCoefficient = method(Options => {WeightFormat => "Dynkin"})
+tensorCoefficient := KacMoody$tensorCoefficient = method(Options => {WeightFormat => "Dynkin"})
+tensorCoefficient (larModule,larModule,larModule) := opts -> (V,W,U) -> (
+    if opts.WeightFormat =!= "Dynkin" then error "tensorCoefficient: WeightFormat applies only to weight lists";
+    larTensorCoefficient(V,W,U))
 tensorCoefficient (Matrix, List, List, List) := opts -> (A, lambda, mu, nu) -> (
     A = integralCartanMatrix(A, "tensorCoefficient");
     r := validateFiniteCartanForRepresentations(A, "tensorCoefficient");
@@ -5636,11 +5621,6 @@ indefiniteVectorGCD = v -> (
     if g < 0 then -g else g
 );
 
-indefiniteRootsToMatrix = (L, r) -> (
-    if #L == 0 then matrix mutableMatrix(ZZ, 0, r)
-    else matrix L
-);
-
 indefiniteConnectedSupport = (A, v) -> (
     r := #v;
     supp := select(toList(0..r-1), i -> v#i > 0);
@@ -5785,8 +5765,8 @@ indefiniteRootSnapshotSparsePeterson = (A, H) -> (
     );
 
     new HashTable from {
-        "real" => indefiniteRootsToMatrix(numberedTableEntries realRoots,r),
-        "imag" => indefiniteRootsToMatrix(numberedTableEntries imagRoots,r),
+        "real" => rootsToIntegralMatrix(numberedTableEntries realRoots,r),
+        "imag" => rootsToIntegralMatrix(numberedTableEntries imagRoots,r),
         "mult" => new HashTable from for beta in keys multTable list beta => multTable#beta
     }
 );
@@ -5901,8 +5881,7 @@ indefiniteRootSnapshotBCLConnected = (A, H) -> (
     coneIneq := (-AZZ) || id_(ZZ^r);
     zeroCol := map(ZZ^(2*r), ZZ^1, 0);
     heightBound := matrix {toList(r:-1) | {H}};
-    normalizFunction := optionalPackageFunction("Normaliz", "normaliz");
-    chamberRows := (normalizFunction((coneIneq | zeroCol) || heightBound,
+    chamberRows := (Normaliz$normaliz((coneIneq | zeroCol) || heightBound,
             "inhom_inequalities"))#"gen";
     chamberByHeight := for h from 0 to H list new MutableHashTable;
     for row from 0 to numrows chamberRows - 1 do (
@@ -5981,8 +5960,8 @@ indefiniteRootSnapshotBCLConnected = (A, H) -> (
     realRoots := flatten apply(realByHeight,numberedTableEntries);
     imagRoots := flatten apply(imagByHeight,numberedTableEntries);
     new HashTable from {
-        "real" => indefiniteRootsToMatrix(realRoots,r),
-        "imag" => indefiniteRootsToMatrix(imagRoots,r),
+        "real" => rootsToIntegralMatrix(realRoots,r),
+        "imag" => rootsToIntegralMatrix(imagRoots,r),
         "mult" => new HashTable from for beta in keys rootMult list beta => rootMult#beta
     }
 );
@@ -6019,8 +5998,8 @@ indefiniteRootSnapshotBCL = (A, H) -> (
         );
     );
     new HashTable from {
-        "real" => indefiniteRootsToMatrix(numberedTableEntries realRoots,r),
-        "imag" => indefiniteRootsToMatrix(numberedTableEntries imagRoots,r),
+        "real" => rootsToIntegralMatrix(numberedTableEntries realRoots,r),
+        "imag" => rootsToIntegralMatrix(numberedTableEntries imagRoots,r),
         "mult" => new HashTable from for beta in keys multTable list beta => multTable#beta
     }
 );
@@ -6256,6 +6235,24 @@ KMCoroot = new Type of HashTable
 KMWeight = new Type of HashTable
 KMCoweight = new Type of HashTable
 
+-- Derived data live on their mathematical owner, never in a table keyed
+-- by all the owners used in a session. A generation invalidates these
+-- values without retaining references to the matrices, data or crystals.
+kmCacheGeneration := 0
+kmCacheFills := new MutableHashTable
+kmOwnerResults = O -> (
+    store := O.cache;
+    slot := symbol kmOwnerResults;
+    saved := store#slot ?? null;
+    if saved === null or saved#"generation" != kmCacheGeneration then (
+        saved = new MutableHashTable from {"generation"=>kmCacheGeneration};
+        store#slot = saved;
+    );
+    saved
+)
+kmFillCount = key -> kmCacheFills#key ?? 0
+kmRecordFill = key -> kmCacheFills#key = (kmFillCount key)+1
+
 -- Explicit == methods document the intended mathematical equality.  Strong
 -- equality (===), which Macaulay2 hash tables use for keys, is already
 -- content equality for these immutable HashTable descendants.
@@ -6304,18 +6301,6 @@ draftIntegralVector = (v,n,who) -> (
     if not all(q,x -> instance(x,ZZ)) then
         error(who | ": kmRoot-lattice coordinates must be integers");
     q
-)
-
-draftIntegralCartan = (A,who) -> (
-    if not instance(A,Matrix) then error(who | ": expected a matrix");
-    if numrows A != numcols A then error(who | ": Cartan matrix must be square");
-    qrows := apply(entries(A ** QQ), row -> apply(row,draftQQ));
-    if not all(flatten qrows,x -> instance(x,ZZ)) then
-        error(who | ": Cartan matrix entries must be integers");
-    AZZ := matrix(ZZ,qrows);
-    if not isCartanMatrix AZZ then
-        error(who | ": matrix is not a generalized Cartan matrix");
-    AZZ
 )
 
 draftDot = (u,v) -> (
@@ -6368,12 +6353,14 @@ draftComponentRecord = (C,nodeLabels) -> new HashTable from {
 cartanDatum = method(Options => {NodeLabels => null})
 
 cartanDatum Matrix := opts -> A -> (
+    A = integralCartanMatrix(A,"cartanDatum");
     -- The empty generalized Cartan matrix is the rank-zero finite datum.
     -- It occurs naturally as the derived Levi of a Borel parabolic.
-    if instance(A,Matrix) and numrows A == 0 and numcols A == 0 then (
+    if numrows A == 0 then (
         if opts.NodeLabels =!= null and opts.NodeLabels =!= {} then
             error "cartanDatum: a rank-zero datum requires NodeLabels => {}";
         return new CartanDatum from {
+            symbol cache => new CacheTable,
             "cartanEntries" => {},
             "rank" => 0,
             "matrixRank" => 0,
@@ -6386,7 +6373,6 @@ cartanDatum Matrix := opts -> A -> (
             "nodeConvention" => "1-based"
         };
     );
-    A = draftIntegralCartan(A,"cartanDatum");
     r := numrows A;
     labels := if opts.NodeLabels === null then toList(1..r)
         else (
@@ -6399,9 +6385,14 @@ cartanDatum Matrix := opts -> A -> (
                         "under mathematical equality");
             opts.NodeLabels
         );
+    -- Explicitly selecting the ordinary positions gives the same datum as
+    -- omitting NodeLabels, including a list of the same integers over QQ.
+    if all(r,i -> (instance(labels#i,ZZ) or instance(labels#i,QQ))
+        and labels#i == i+1) then labels = toList(1..r);
     info := cartanData A;
     D := symmetrizer A;
     new CartanDatum from {
+        symbol cache => new CacheTable,
         "cartanEntries" => entries A,
         "rank" => r,
         "matrixRank" => rank(A ** QQ),
@@ -6412,7 +6403,7 @@ cartanDatum Matrix := opts -> A -> (
             else apply(numrows A,i -> draftQQ D_(i,i)),
         "components" => apply(info#"components",C -> draftComponentRecord(C,labels)),
         "nodeLabels" => labels,
-        "nodeConvention" => if opts.NodeLabels === null then "1-based" else "user-supplied"
+        "nodeConvention" => if labels === toList(1..r) then "1-based" else "user-supplied"
     }
 )
 
@@ -6448,14 +6439,11 @@ cartanDatum String := opts -> s -> cartanDatum(
     draftFiniteCartanFromTypeString s,NodeLabels=>opts.NodeLabels)
 
 datumCartanMatrix = method()
-datumMatrixCache := new MutableHashTable
-datumInfrastructureCacheSize = () -> #keys datumMatrixCache
-clearDatumInfrastructureCache = () -> (datumMatrixCache = new MutableHashTable; null)
 datumCartanMatrix CartanDatum := D -> (
-    if datumMatrixCache#?D then return datumMatrixCache#D;
-    A := matrix(ZZ,D#"cartanEntries");
-    datumMatrixCache#D = A;
-    A
+    (kmOwnerResults D)#(symbol datumCartanMatrix) ??= (
+        kmRecordFill "datumMatrices";
+        matrix(ZZ,D#"cartanEntries")
+    )
 )
 datumCartanMatrix Realization := R -> datumCartanMatrix(R#"cartanDatum")
 datumCartanMatrix RootDatum := D -> datumCartanMatrix(D#"cartanDatum")
@@ -6665,6 +6653,7 @@ rootDatum Realization := opts -> R -> (
         "validated" => true
     };
     new RootDatum from {
+        symbol cache => new CacheTable,
         "cartanDatum" => D,
         "realization" => R,
         "globalForm" => form,
@@ -6818,23 +6807,16 @@ coordinateBasis KMCoweight := x -> x#"basis"
 
 -- Bases of the ambient weight and coweight spaces.  The auxiliary choices
 -- live in a cache, not in immutable equality-bearing lattice elements.
-draftNotationNodeCache := new MutableHashTable;
-draftNotationBasisCache := new MutableHashTable;
-
 draftNotationCacheInfo = () -> new HashTable from {
-    "nodeConventions" => #keys draftNotationNodeCache,
-    "latticeBases" => #keys draftNotationBasisCache
+    "nodeConventions" => kmFillCount "nodeConventions",
+    "latticeBases" => kmFillCount "latticeBases"
 }
-
-draftClearNotationCache = () -> (
-    draftNotationNodeCache = new MutableHashTable;
-    draftNotationBasisCache = new MutableHashTable;
-    null
-)
 
 draftNotationNodeInfo = D -> (
     CD := D#"cartanDatum";
-    if draftNotationNodeCache#?CD then return draftNotationNodeCache#CD;
+    saved := kmOwnerResults CD;
+    key := symbol draftNotationNodeInfo;
+    if saved#?key then return saved#key;
     indecomposableAffine := CD#"type" === "affine" and #(CD#"components") == 1;
     data := if indecomposableAffine then affineTypeData(datumCartanMatrix CD) else null;
     affineNode := if data =!= null and data#"recognized"
@@ -6843,13 +6825,14 @@ draftNotationNodeInfo = D -> (
         "isAffine" => indecomposableAffine,
         "affineNode" => affineNode
     };
-    draftNotationNodeCache#CD = info;
-    info
+    kmRecordFill "nodeConventions";
+    saved#key = info
 )
 
 draftNotationBasisInfo = (D,dual) -> (
-    key := {D,dual};
-    if draftNotationBasisCache#?key then return draftNotationBasisCache#key;
+    saved := kmOwnerResults D;
+    key := (symbol draftNotationBasisInfo,dual);
+    if saved#?key then return saved#key;
     Rz := D#"realization";
     r := (D#"cartanDatum")#"rank";
     d := Rz#"dimension";
@@ -6870,8 +6853,8 @@ draftNotationBasisInfo = (D,dual) -> (
     ) else draftExtendRowsToBasis(evaluations,"mathematical lattice notation");
     basis := transpose inverse equations;
     info := new HashTable from {"basisRows" => entries basis};
-    draftNotationBasisCache#key = info;
-    info
+    kmRecordFill "latticeBases";
+    saved#key = info
 )
 
 -- Internal basis descriptions.  Rows are in the realization's given
@@ -7740,42 +7723,37 @@ affineStructureNodeRecords = (D,nodes) ->
 affineStructureNodeLabels = (D,nodes) ->
     apply(nodes,node -> D#"nodeLabels"#(node-1));
 
-affineStructureNodePosition = (D,x,who) -> (
-    r := D#"rank";
+-- In-range ZZ arguments are positions. Other arguments name nodes by
+-- mathematical equality. A position/label record disambiguates the two.
+draftNodePosition = (D,x,who) -> (
+    labels := D#"nodeLabels";
     if instance(x,HashTable) and x#?"position" and x#?"label" then (
         i := x#"position";
-        if not instance(i,ZZ) or i < 1 or i > r then
+        if not instance(i,ZZ) or i < 1 or i > #labels then
             error(who | ": node record has an invalid position");
-        if not draftSameNodeLabel(D#"nodeLabels"#(i-1),x#"label") then
+        if not draftSameNodeLabel(labels#(i-1),x#"label") then
             error(who | ": node record label does not match its position");
         return i;
     );
-    if instance(x,ZZ) and x >= 1 and x <= r then return x;
-    labels := D#"nodeLabels";
-    matches := select(toList(0..#labels-1),i ->
-        draftSameNodeLabel(labels#i,x));
-    if #matches == 0 then error concatenate(
-        who,": unknown node label ",toString x,
+    if instance(x,ZZ) and x >= 1 and x <= #labels then return x;
+    p := position(labels,l -> draftSameNodeLabel(l,x));
+    if p === null then error concatenate(who,": unknown node label ",toString x,
         "; available labels are ",toString labels);
-    first(matches)+1
+    p+1
 );
 
--- Match the package-wide NodeFormat convention.  Bare custom integer labels
--- which collide with another public position are unsafe as round-trippable
--- output, so typed companion fields use records in exactly that case.
-affineStructureTypedNodeFormat = D -> (
+-- When a label equals another node's position (including, e.g., 1_QQ),
+-- returning that label alone is ambiguous when its output is retyped.
+typedNodeOutputFormat = D -> (
     labels := D#"nodeLabels";
-    r := #labels;
-    if any(toList(0..r-1),i ->
-        instance(labels#i,ZZ)
-        and labels#i >= 1 and labels#i <= r
-        and labels#i != i+1)
-    then "Records"
-    else "Labels"
+    if labels === toList(1..#labels) then return "Labels";
+    if any(#labels,i -> any(#labels,j ->
+        i != j and draftSameNodeLabel(labels#i,j+1)))
+    then "Records" else "Labels"
 );
 
 affineStructureTypedNodes = (D,nodes) -> (
-    if ((affineStructureTypedNodeFormat D) === "Records")
+    if ((typedNodeOutputFormat D) === "Records")
     then affineStructureNodeRecords(D,nodes)
     else affineStructureNodeLabels(D,nodes)
 );
@@ -7800,7 +7778,7 @@ affineStructureTypedNodeFields = (D,data) -> (
         });
     typedSingle := record -> (
         if record === null then null
-        else if ((affineStructureTypedNodeFormat D) === "Records") then record
+        else if ((typedNodeOutputFormat D) === "Records") then record
         else record#"label"
     );
     nodeListFields := (positionStem,companionStem,nodes) -> {
@@ -7823,7 +7801,7 @@ affineStructureTypedNodeFields = (D,data) -> (
             "nodeLabels" => D#"nodeLabels",
             "nodeRecords" => affineStructureNodeRecords(
                 D,toList(1..data#"nodeCount")),
-            "typedNodeFormat" => affineStructureTypedNodeFormat D,
+            "typedNodeFormat" => typedNodeOutputFormat D,
             "standardAffineNodeLabel" => if standardRecord === null
                 then null else standardRecord#"label",
             "standardAffineNodeRecord" => standardRecord,
@@ -7906,11 +7884,11 @@ affineFinitePart CartanDatum := D -> (
 );
 affineFinitePart (CartanDatum,ZZ) := (D,node) ->
     affineStructureFinitePartDatumRecord(D,
-        affineStructureNodePosition(D,node,"affineFinitePart"),
+        draftNodePosition(D,node,"affineFinitePart"),
         "affineFinitePart");
 affineFinitePart (CartanDatum,Thing) := (D,node) ->
     affineStructureFinitePartDatumRecord(D,
-        affineStructureNodePosition(D,node,"affineFinitePart"),
+        draftNodePosition(D,node,"affineFinitePart"),
         "affineFinitePart");
 affineStructureFiniteRealizationRecord = (R,part) -> (
     finiteRealization := standardRealization part#"cartanDatum";
@@ -8097,7 +8075,7 @@ affineClassicalPart KMWeight := lambda -> (
 );
 affineClassicalPart (KMWeight,ZZ) := (lambda,node) -> (
     D := parentDatum lambda;
-    node = affineStructureNodePosition(
+    node = draftNodePosition(
         cartanDatum D,node,"affineClassicalPart");
     finiteDatumPart := affineStructureFinitePartDatumRecord(
         cartanDatum D,node,"affineClassicalPart");
@@ -8106,7 +8084,7 @@ affineClassicalPart (KMWeight,ZZ) := (lambda,node) -> (
 );
 affineClassicalPart (KMWeight,Thing) := (lambda,node) -> (
     D := parentDatum lambda;
-    node = affineStructureNodePosition(
+    node = draftNodePosition(
         cartanDatum D,node,"affineClassicalPart");
     finiteDatumPart := affineStructureFinitePartDatumRecord(
         cartanDatum D,node,"affineClassicalPart");
@@ -8152,7 +8130,7 @@ affineDerivation (RootDatum,Thing) := (D,nodeSpecifier) -> (
         D,"affineDerivation");
     A := validated#0;
     R := validated#1;
-    node := affineStructureNodePosition(
+    node := draftNodePosition(
         cartanDatum D,nodeSpecifier,"affineDerivation");
     marks := affineStructurePrimitivePositiveKernelValidated(
         A,false,"affineDerivation");
@@ -8299,33 +8277,6 @@ WeylElement == WeylElement := Boolean => (u,v) -> (
 KMWeylGroup == KMWeylGroup := (W,V) -> W === V
 StandardParabolic == StandardParabolic := (P,Q) -> P === Q
 
--- Resolve a public node specifier against a Cartan datum.  Integers in
--- 1..rank retain the package-wide positional convention; every other value
--- is matched against the datum's pairwise-distinct NodeLabels.  This agrees
--- with the typed crystal API and still permits labels such as 10,20,30.
-draftNodePosition = (D,x,who) -> (
-    r := D#"rank";
-    -- A position/label record is the unambiguous form used by APIs such as
-    -- minusculeNodes(...,NodeFormat=>"Records").  Accepting it here makes
-    -- those outputs composable with every labeled Weyl and parabolic
-    -- command, including when custom integer labels collide with positions.
-    if instance(x,HashTable) and x#?"position" and x#?"label" then (
-        i := x#"position";
-        if not instance(i,ZZ) or i < 1 or i > r then
-            error(who | ": node record has an invalid position");
-        if not draftSameNodeLabel(D#"nodeLabels"#(i-1),x#"label") then
-            error(who | ": node record label does not match its position");
-        return i;
-    );
-    if instance(x,ZZ) and x >= 1 and x <= r then return x;
-    labels := D#"nodeLabels";
-    matches := select(toList(0..#labels-1),i ->
-        draftSameNodeLabel(labels#i,x));
-    if #matches == 0 then error concatenate(
-        who,": unknown node label ",toString x,
-        "; available labels are ",toString labels);
-    first(matches)+1
-)
 
 draftResolveNodeSet = (D,nodes,who) -> (
     if not instance(nodes,List) and not instance(nodes,Set) then
@@ -9486,21 +9437,6 @@ finiteDraftSpecialNodeOutput = (D,nodes,format,defaultFormat,who) -> (
         ": NodeFormat must be \"Positions\", \"Labels\", or \"Records\"")
 );
 
--- An integer in 1..rank is interpreted positionally throughout the package.
--- If custom integer labels permute that range, returning bare labels would
--- therefore not round-trip.  In precisely that case the safe typed default
--- is a position/label record rather than an ambiguous integer.
-finiteDraftTypedNodeFormat = D -> (
-    labels := (cartanDatum D)#"nodeLabels";
-    r := #labels;
-    if r == 0 then return "Labels";
-    if any(toList(0..r-1),i ->
-        instance(labels#i,ZZ)
-        and labels#i >= 1 and labels#i <= r
-        and labels#i != i+1)
-    then "Records"
-    else "Labels"
-);
 
 finiteDraftNodePositionOrRecord = (D,x,who) -> (
     draftNodePosition(cartanDatum D,x,who)
@@ -9522,7 +9458,7 @@ minusculeNodes Matrix := opts -> A -> (
 
 minusculeNodes CartanDatum := opts -> D -> finiteDraftSpecialNodeOutput(
     D,minusculeNodes(datumCartanMatrix D,NodeFormat=>"Positions"),
-    opts.NodeFormat,finiteDraftTypedNodeFormat D,"minusculeNodes");
+    opts.NodeFormat,typedNodeOutputFormat(cartanDatum D),"minusculeNodes");
 minusculeNodes Realization := opts -> R ->
     minusculeNodes(cartanDatum R,NodeFormat=>opts.NodeFormat);
 minusculeNodes RootDatum := opts -> D ->
@@ -9548,7 +9484,7 @@ cominusculeNodes Matrix := opts -> A -> (
 
 cominusculeNodes CartanDatum := opts -> D -> finiteDraftSpecialNodeOutput(
     D,cominusculeNodes(datumCartanMatrix D,NodeFormat=>"Positions"),
-    opts.NodeFormat,finiteDraftTypedNodeFormat D,"cominusculeNodes");
+    opts.NodeFormat,typedNodeOutputFormat(cartanDatum D),"cominusculeNodes");
 cominusculeNodes Realization := opts -> R ->
     cominusculeNodes(cartanDatum R,NodeFormat=>opts.NodeFormat);
 cominusculeNodes RootDatum := opts -> D ->
@@ -9770,21 +9706,6 @@ ReductiveLeviDatum == ReductiveLeviDatum := (L,K) -> L === K
 LeviWeight == LeviWeight := (x,y) -> x === y
 LeviHighestWeight == LeviHighestWeight := (x,y) -> x === y
 
--- Completed Verma denominators recur throughout BGG and character
--- calculations.  Cache immutable partition tables by Cartan entries and
--- depth; package-wide cache controls below expose their lifecycle.
-draftVermaPartitionCache := new MutableHashTable
-draftCharacterOrderCache := new MutableHashTable
-draftCharacterParentCache := new MutableHashTable
-formalCharacterInfrastructureCacheSize = () -> #keys draftVermaPartitionCache
-draftCharacterParentCacheSize = () -> #keys draftCharacterParentCache
-clearFormalCharacterInfrastructureCache = () -> (
-    draftVermaPartitionCache = new MutableHashTable;
-    draftCharacterOrderCache = new MutableHashTable;
-    draftCharacterParentCache = new MutableHashTable;
-    null
-)
-
 draftCharacterCoefficient = (c,who) -> (
     q := try (c + 0_QQ) else error(who | ": coefficients must be integers");
     if denominator q != 1 then error(who | ": coefficients must be integers");
@@ -9794,29 +9715,26 @@ draftCharacterCoefficient = (c,who) -> (
 draftCanonicalTerms = (parent,T,weightType,who) -> (
     if not instance(T,HashTable) then
         error(who | ": terms must be a hash table of weights and integer coefficients");
-    accum := new MutableHashTable;
     coordinateMode := null;
-    for p in pairs T do (
+    new VirtualTally from for p in pairs T list (
         wt := p#0;
         c := draftCharacterCoefficient(p#1,who);
         if not instance(wt,weightType) then
             error(who | ": every key has the wrong weight type");
         actualParent := if weightType === KMWeight then parentDatum wt else wt#"parent";
         if actualParent =!= parent then error(who | ": a weight belongs to a different parent");
-        if c != 0 then (
-            if weightType === KMWeight and
-               (parent#"realization")#"dimension" > (cartanDatum parent)#"rank" then (
-                currentMode := if wt#"realizationCoordinates" === null then
-                    "DynkinLabelClass" else "CompleteRealization";
-                if coordinateMode === null then coordinateMode = currentMode
-                else if coordinateMode =!= currentMode then error concatenate(
-                    who, ": cannot mix complete realization weights with ",
-                    "Dynkin-label classes in one formal character");
-            );
-            if accum#?wt then accum#wt = accum#wt + c else accum#wt = c;
+        if c == 0 then continue;
+        if weightType === KMWeight and
+           (parent#"realization")#"dimension" > (cartanDatum parent)#"rank" then (
+            currentMode := if wt#"realizationCoordinates" === null then
+                "DynkinLabelClass" else "CompleteRealization";
+            if coordinateMode === null then coordinateMode = currentMode
+            else if coordinateMode =!= currentMode then error concatenate(
+                who, ": cannot mix complete realization weights with ",
+                "Dynkin-label classes in one formal character");
         );
-    );
-    new VirtualTally from for wt in keys accum list if accum#wt != 0 then wt => accum#wt else continue
+        wt => c
+    )
 )
 
 formalCharacter = method(Options => {
@@ -9828,7 +9746,8 @@ formalCharacter = method(Options => {
 -- references to those immutable objects with the original description;
 -- copying a character needs neither a global registry nor a second run of
 -- its multiplicity algorithm.
-draftTruncationWitness = new Type of Bag
+draftTruncationWitness = new Type of BasicList
+net draftTruncationWitness := w -> net "checked expansion"
 draftFormalCharacter = (D,T,status,truncation,computed) -> (
     if status =!= "Exact" and status =!= "Truncated" then
         error "formalCharacter: CharacterStatus must be \"Exact\" or \"Truncated\"";
@@ -9896,7 +9815,9 @@ draftCharacterDisplayLimit := 16
 draftCharacterLineWidth := 78
 
 draftCharacterOrderData = D -> (
-    if draftCharacterOrderCache#?D then return draftCharacterOrderCache#D;
+    saved := kmOwnerResults D;
+    key := symbol draftCharacterOrderData;
+    if saved#?key then return saved#key;
     R := draftSimpleRootMatrix(D#"realization");
     r := numrows R;
     d := numcols R;
@@ -9907,8 +9828,7 @@ draftCharacterOrderData = D -> (
     finiteDirection := if cartanType datumCartanMatrix D === "finite" then
         apply(entries fundamentalWeights datumCartanMatrix D,sum) else null;
     answer := {direction,apply(basis,row -> draftDot(row,direction)),finiteDirection};
-    draftCharacterOrderCache#D = answer;
-    answer
+    saved#key = answer
 )
 
 -- This linear functional increases by one on each simple root.  Thus
@@ -10131,20 +10051,10 @@ draftCheckCharacterModes = (C,D,who) -> (
     null
 )
 
--- RootDatum equality is structural, so independently constructed identical
--- data are already compatible.  Remember both successful and unsuccessful
--- comparisons, without identifying different lattices, central directions,
--- or coordinate conventions merely because their Cartan matrices agree.
+-- Strong equality compares all the immutable defining data. A global
+-- table of parent pairs would retain even incompatible, otherwise dead data.
 draftCheckCharacterParents = (C,D,who) -> (
-    left := characterDatum C;
-    right := characterDatum D;
-    key := {left,right};
-    if not draftCharacterParentCache#?key then (
-        reverseKey := {right,left};
-        if draftCharacterParentCache#?reverseKey then key = reverseKey
-        else draftCharacterParentCache#key = left === right;
-    );
-    if not draftCharacterParentCache#key then error(who | ": parents differ");
+    if characterDatum C =!= characterDatum D then error(who | ": parents differ");
     -- The same root datum can support both complete weights and label
     -- classes.  Parent compatibility never licenses mixing these modes.
     draftCheckCharacterModes(C,D,who)
@@ -10609,12 +10519,9 @@ draftCertifiedCharacterTerms = C -> new HashTable from
 
 FormalCharacter + FormalCharacter := (C,D) -> (
     draftCheckCharacterParents(C,D,"FormalCharacter + FormalCharacter");
-    S := new MutableHashTable;
-    for p in pairs characterTerms C do S#(p#0) = p#1;
-    for p in pairs characterTerms D do
-        if S#?(p#0) then S#(p#0) = S#(p#0)+p#1 else S#(p#0)=p#1;
+    S := characterTerms C + characterTerms D;
     if isExactCharacter C and isExactCharacter D then
-        return formalCharacter(characterDatum C,new HashTable from pairs S);
+        return formalCharacter(characterDatum C,S);
     left := draftRootDepthCharacterData C;
     right := draftRootDepthCharacterData D;
     workingMetadata := new HashTable from {
@@ -10623,7 +10530,7 @@ FormalCharacter + FormalCharacter := (C,D) -> (
         new HashTable from join(pairs draftRootDepthTruncation(
             left#0,min(left#1,right#1),"sum"),{"left"=>C,"right"=>D})
     else workingMetadata;
-    result := draftComputedCharacter(characterDatum C,new HashTable from pairs S,workingMetadata);
+    result := draftComputedCharacter(characterDatum C,S,workingMetadata);
     draftComputedCharacter(characterDatum C,draftCertifiedCharacterTerms result,metadata)
 )
 
@@ -10635,9 +10542,7 @@ ZZ * FormalCharacter := (a,C) -> (
         if draftRootDepthCharacterData C === null then {} else
             select(pairs C#"truncation",p -> p#0 =!= "certified data"),
         {"coefficientCertificate"=>true,"operation"=>"scale","source"=>C,"scalar"=>a});
-    draftComputedCharacter(characterDatum C,
-        new HashTable from apply(pairs characterTerms C,p -> p#0 => a*p#1),
-        metadata)
+    draftComputedCharacter(characterDatum C,a*characterTerms C,metadata)
 )
 FormalCharacter * ZZ := (C,a) -> a*C
 FormalCharacter - FormalCharacter := (C,D) -> C + (-D)
@@ -10736,6 +10641,8 @@ characterDimension LeviFormalCharacter := C -> (
         error "characterDimension: a partial Levi character has no certified finite dimension";
     sum values characterTerms C
 )
+dim FormalCharacter := C -> characterDimension C
+dim LeviFormalCharacter := C -> characterDimension C
 
 -- Subtract a root without conflating two legitimate kinds of weight object.
 -- A complete weight retains every realization coordinate (including a
@@ -10884,13 +10791,6 @@ toString KMRepresentation := M -> concatenate(
     draftWeightNotation M#"highestWeight")
 net KMRepresentation := M -> net toString M
 
-draftCompositions = (h,r) -> (
-    if r == 0 then (if h == 0 then {{}} else {})
-    else if r == 1 then {{h}}
-    else flatten for x from 0 to h list
-        apply(draftCompositions(h-x,r-1),tail -> {x}|tail)
-)
-
 draftPositiveRootMultiplicityData = (A,H) -> (
     -- Height zero contains no positive roots.  Handling it here is both the
     -- mathematically correct empty product and essential for depth-zero
@@ -10910,9 +10810,9 @@ draftAddToTable = (T,key,value) -> (
 -- total simple-root height H.  For multiplicity m, the k-th coefficient
 -- of (1-x)^(-m) is binomial(m+k-1,k).
 draftVermaPartitionTable = (A,H) -> (
-    cacheKey := {entries A,H};
-    if draftVermaPartitionCache#?cacheKey then
-        return draftVermaPartitionCache#cacheKey;
+    saved := kmOwnerResults A;
+    key := (symbol draftVermaPartitionTable,H);
+    if saved#?key then return saved#key;
     r := numrows A;
     zero := toList(r:0);
     T := new MutableHashTable;
@@ -10920,9 +10820,8 @@ draftVermaPartitionTable = (A,H) -> (
     for rootData in draftPositiveRootMultiplicityData(A,H) do (
         alpha := rootData#0;
         m := rootData#1;
-        old := new HashTable from pairs T;
         next := new MutableHashTable;
-        for p in pairs old do (
+        for p in pairs T do (
             beta := p#0;
             maxK := (H-rootHeight beta) // rootHeight alpha;
             for k from 0 to maxK do (
@@ -10934,8 +10833,8 @@ draftVermaPartitionTable = (A,H) -> (
         T = next;
     );
     answer := new HashTable from pairs T;
-    draftVermaPartitionCache#cacheKey=answer;
-    answer
+    kmRecordFill "vermaPartitions";
+    saved#key = answer
 )
 
 draftRequireCompletedHighestWeight = (M,H,who) -> (
@@ -10997,7 +10896,7 @@ integrableCharacter KMRepresentation := opts -> M -> (
     multiplicities := new MutableHashTable;
     zero := toList(r:0);
     multiplicities#zero = 1;
-    for h from 1 to H do for beta in draftCompositions(h,r) do (
+    for h from 1 to H do for beta in cartanCompositions(h,r) do (
         denominatorValue := 2*draftWeightRootInner(A,
             apply(lambdaLabels,x -> x+1),beta) - rootInnerProduct(A,beta,beta);
         numeratorValue := 0_QQ;
@@ -11322,10 +11221,8 @@ CrystalVertex = new Type of HashTable
 Crystal == Crystal := (B,C) -> B === C
 CrystalVertex == CrystalVertex := (b,c) -> b === c
 
--- Canonical vertices and their data index are shared by all accessors and
--- Kashiwara operators.  Declare these before any closure refers to them.
-draftCrystalVerticesCache := new MutableHashTable
-draftCrystalVertexIndexCache := new MutableHashTable
+-- The crystal owns the index: dropping a crystal also releases its graph.
+draftCrystalIndex = B -> (kmOwnerResults B)#(symbol crystalVertex)
 
 -------------------------------------------------------------------------
 -- Validation and canonical node coordinates
@@ -11359,19 +11256,7 @@ draftCrystalDominantWeight = (D,lambda,who) -> (
     labels
 )
 
--- Node arguments may be their 1-based positions or user-supplied labels.
--- Integers in 1..rank mean positions; otherwise label lookup is attempted,
--- allowing deliberately numeric labels such as 10 and 20.
-draftCrystalNode = (B,node,who) -> (
-    r := B#"rank";
-    -- Ordinary 1-based positions take precedence.  An integer outside that
-    -- range may still be a user-supplied node label (for example 10 or 20).
-    if instance(node,ZZ) and node >= 1 and node <= r then return node;
-    labels := (cartanDatum(B#"parent"))#"nodeLabels";
-    p := position(labels,x -> x === node or x == node);
-    if p === null then error(who | ": node is neither a valid position nor a label of this Cartan datum");
-    p+1
-)
+draftCrystalNode = (B,node,who) -> draftNodePosition(cartanDatum(B#"parent"),node,who)
 
 draftCrystalCanonicalPosition = (B,node) -> (
     p := position(B#"canonicalNodeOrder",j -> j == node);
@@ -11383,7 +11268,7 @@ draftCrystalCheckParent = (B,b,who) -> (
     if not instance(b,CrystalVertex) then error(who | ": expected a CrystalVertex");
     if b#"parent" =!= B then error(who | ": the vertex belongs to a different crystal");
     vertices := crystalVertices B;
-    if not (draftCrystalVertexIndexCache#B)#?(b#"data") then
+    if not (draftCrystalIndex B)#?(b#"data") then
         error(who | ": the vertex data do not occur in this crystal");
     b
 )
@@ -11643,6 +11528,7 @@ highestWeightCrystal (RootDatum,KMWeight) := opts -> (D,lambda) -> (
         if #paths != expectedCardinality then
             error "KacMoody: internal path enumeration failed the Weyl-dimension check";
         return new Crystal from {
+            symbol cache=>new CacheTable,
             "parent"=>D,
             "model"=>"LittelmannPaths",
             "highestWeight"=>lambda,
@@ -11659,6 +11545,7 @@ highestWeightCrystal (RootDatum,KMWeight) := opts -> (D,lambda) -> (
     if #tableaux != expectedCardinality then
         error "KacMoody: internal tableau enumeration failed the Weyl-dimension check";
     new Crystal from {
+        symbol cache=>new CacheTable,
         "parent"=>D,
         "model"=>"SemistandardTableaux",
         "highestWeight"=>lambda,
@@ -11698,6 +11585,7 @@ tensorProductCrystal (Crystal,Crystal) := opts -> (B,C) -> (
             toString cardinality," vertices, exceeding MaxElements => ",
             toString maxElements);
     new Crystal from {
+        symbol cache=>new CacheTable,
         "parent"=>crystalDatum B,
         "model"=>"TensorProduct",
         "highestWeight"=>highest,
@@ -11753,6 +11641,7 @@ minusculeCrystal (RootDatum,KMWeight) := opts -> (D,lambda) -> (
     if #weights != expectedCardinality then
         error "KacMoody: internal minuscule-orbit enumeration failed the Weyl-dimension check";
     new Crystal from {
+        symbol cache=>new CacheTable,
         "parent"=>D,
         "model"=>"MinusculeOrbit",
         "highestWeight"=>lambda,
@@ -11827,7 +11716,7 @@ crystalVertex (Crystal,List) := (B,data) -> (
     -- Build the canonical index lazily.  This turns every Kashiwara step
     -- from a linear scan of all vertices into a hash lookup.
     vertices := crystalVertices B;
-    index := draftCrystalVertexIndexCache#B;
+    index := draftCrystalIndex B;
     if not index#?data then
         error "crystalVertex: the supplied data do not label a vertex of this crystal";
     index#data
@@ -11835,23 +11724,25 @@ crystalVertex (Crystal,List) := (B,data) -> (
 
 crystalVertices = method()
 crystalVertices Crystal := B -> (
-    if draftCrystalVerticesCache#?B then return draftCrystalVerticesCache#B;
+    saved := kmOwnerResults B;
+    key := symbol crystalVertices;
+    if saved#?key then return saved#key;
     index := new MutableHashTable;
     vertices := apply(B#"vertexData",data -> (
         vertex := new CrystalVertex from {"parent"=>B,"data"=>data};
         index#data=vertex;
         vertex
     ));
-    draftCrystalVerticesCache#B=vertices;
-    draftCrystalVertexIndexCache#B=index;
-    vertices
+    saved#(symbol crystalVertex) = index;
+    kmRecordFill "crystalData";
+    saved#key = vertices
 )
 
 crystalContains = method()
 crystalContains (Crystal,CrystalVertex) := (B,b) -> (
     if crystalParent b =!= B then return false;
     vertices := crystalVertices B;
-    (draftCrystalVertexIndexCache#B)#?(crystalVertexData b)
+    (draftCrystalIndex B)#?(crystalVertexData b)
 )
 
 crystalTableau = method()
@@ -11864,11 +11755,12 @@ crystalTableau CrystalVertex := b -> (
 )
 
 crystalWeight = method()
-draftCrystalWeightCache := new MutableHashTable
 crystalWeight CrystalVertex := b -> (
     draftCrystalCheckParent(crystalParent b,b,"crystalWeight");
-    if draftCrystalWeightCache#?b then return draftCrystalWeightCache#b;
     B := crystalParent b;
+    saved := kmOwnerResults B;
+    key := (symbol crystalWeight,crystalVertexData b);
+    if saved#?key then return saved#key;
     answer := if B#"model" === "SemistandardTableaux" then
         draftCrystalTableauWeight(B,crystalVertexData b)
     else if B#"model" === "LittelmannPaths" then
@@ -11879,8 +11771,8 @@ crystalWeight CrystalVertex := b -> (
             crystalWeight crystalVertex(B#"factors"#1,data#1)
     )
     else draftCrystalLiftWeight(B,crystalVertexData b);
-    draftCrystalWeightCache#b=answer;
-    answer
+    kmRecordFill "crystalData";
+    saved#key = answer
 )
 crystalWeight (Crystal,CrystalVertex) := (B,b) -> (
     draftCrystalCheckParent(B,b,"crystalWeight");
@@ -12027,34 +11919,18 @@ crystalEdges Crystal := B -> flatten for b in crystalVertices B list
     )
 
 crystalCharacter = method()
-draftCrystalCharacterCache := new MutableHashTable
 crystalCharacter Crystal := B -> (
-    if draftCrystalCharacterCache#?B then return draftCrystalCharacterCache#B;
+    saved := kmOwnerResults B;
+    key := symbol crystalCharacter;
+    if saved#?key then return saved#key;
     terms := new MutableHashTable;
     for b in crystalVertices B do (
         mu := crystalWeight b;
         if terms#?mu then terms#mu=terms#mu+1 else terms#mu=1;
     );
     answer := formalCharacter(B#"parent",new Tally from pairs terms);
-    draftCrystalCharacterCache#B=answer;
-    answer
-)
-
--- These hooks are intentionally private.  The package-wide infrastructure
--- layer can report and clear the process-local memoization without exposing
--- mutable cache tables as part of the mathematical API.
-crystalInfrastructureCacheSize = () ->
-    #keys draftCrystalVerticesCache+
-    #keys draftCrystalVertexIndexCache+
-    #keys draftCrystalWeightCache+
-    #keys draftCrystalCharacterCache
-
-clearCrystalInfrastructureCache = () -> (
-    draftCrystalVerticesCache = new MutableHashTable;
-    draftCrystalVertexIndexCache = new MutableHashTable;
-    draftCrystalWeightCache = new MutableHashTable;
-    draftCrystalCharacterCache = new MutableHashTable;
-    null
+    kmRecordFill "crystalData";
+    saved#key = answer
 )
 
 toString Crystal := B -> concatenate(
@@ -12116,9 +11992,8 @@ draftKostantPartitionTable = (A,bound) -> (
     table := new MutableHashTable;
     table#zero = 1;
     for alpha in roots do (
-        old := new HashTable from pairs table;
-        next := new MutableHashTable from pairs old;
-        for p in pairs old do (
+        next := new MutableHashTable from pairs table;
+        for p in pairs table do (
             gamma := p#0;
             while true do (
                 gamma = draftAdd(gamma,alpha);
@@ -12382,10 +12257,6 @@ draftKLCoefficient = (p,d) -> if d < 0 or d >= #p then 0 else p#d
 draftKLMultiply = (p,q) -> draftKLTrim apply(#p+#q-1,d ->
     sum apply(toList(0..d),i -> draftKLCoefficient(p,i)*draftKLCoefficient(q,d-i)))
 
-draftKLGlobalCache := new MutableHashTable
-categoryOInfrastructureCacheSize = () -> #keys draftKLGlobalCache
-clearCategoryOInfrastructureCache = () -> (draftKLGlobalCache = new MutableHashTable; null)
-
 -- A reduced expression y=s_1...s_m contains a reduced expression for every
 -- z<=y as a subword.  For connected support, grow products of subwords from
 -- left to right and identify equal products after each step.  Disconnected
@@ -12394,7 +12265,9 @@ clearCategoryOInfrastructureCache = () -> (draftKLGlobalCache = new MutableHashT
 -- group; MaxElements bounds its full cardinality, not just stored factors.
 draftKLState = W -> (
     D := W#"cartanDatum";
-    if draftKLGlobalCache#?D then return draftKLGlobalCache#D;
+    saved := kmOwnerResults D;
+    key := symbol draftKLState;
+    if saved#?key then return saved#key;
     state := new MutableHashTable from {
         "weylGroup"=>W,
         "intervals"=>new MutableHashTable,
@@ -12408,8 +12281,8 @@ draftKLState = W -> (
         "correctionCandidates"=>new MutableHashTable,
         "supportComponents"=>new MutableHashTable
     };
-    draftKLGlobalCache#D = state;
-    state
+    kmRecordFill "kazhdanLusztigData";
+    saved#key = state
 )
 
 -- The Cartan parent and reduced words have already been validated by the
@@ -13108,23 +12981,20 @@ representationDynkinIndex (RootDatum,KMWeight) := (D,lambda) -> (
 
 infrastructureCacheInfo = () -> new HashTable from {
     "affineStructure" => affineStructureCacheInfo(),
-    "datumMatrices" => datumInfrastructureCacheSize(),
+    "datumMatrices" => kmFillCount "datumMatrices",
     "weightNotation" => draftNotationCacheInfo(),
-    "kazhdanLusztigData" => categoryOInfrastructureCacheSize(),
-    "crystalData" => crystalInfrastructureCacheSize(),
-    "vermaPartitions" => formalCharacterInfrastructureCacheSize(),
-    "characterParents" => draftCharacterParentCacheSize(),
-    "scope" => "process-local caches keyed by immutable Cartan data",
-    "note" => "matrix-level root and representation caches are reported by rootSnapshotCacheInfo and representationCacheInfo"
+    "kazhdanLusztigData" => kmFillCount "kazhdanLusztigData",
+    "crystalData" => kmFillCount "crystalData",
+    "vermaPartitions" => kmFillCount "vermaPartitions",
+    "characterParents" => 0,
+    "scope" => "affine entries currently retained; owner-local results computed since the last clear",
+    "note" => "parent comparisons are not stored; separate matrix tables have rootSnapshotCacheInfo and representationCacheInfo"
 }
 
 clearInfrastructureCaches = () -> (
     clearAffineStructureCache();
-    clearDatumInfrastructureCache();
-    draftClearNotationCache();
-    clearCategoryOInfrastructureCache();
-    clearCrystalInfrastructureCache();
-    clearFormalCharacterInfrastructureCache();
+    kmCacheGeneration = kmCacheGeneration+1;
+    kmCacheFills = new MutableHashTable;
     null
 )
 
@@ -13294,7 +13164,10 @@ toRootSystem RootDatum := D -> toRootSystem datumCartanMatrix D
 
 -- Documentation and tests are kept separate from the implementation.
 beginDocumentation()
-load (currentFileDirectory | "KacMoody/Documentation.m2")
 load (currentFileDirectory | "KacMoody/Tests.m2")
+-- Resolve names in the help and examples just as they are resolved for
+-- someone using KacMoody (in particular, the option-aware dynkinDiagram).
+use KacMoody;
+load (currentFileDirectory | "KacMoody/Documentation.m2")
 
 end
