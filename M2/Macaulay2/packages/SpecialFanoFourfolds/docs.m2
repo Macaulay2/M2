@@ -48,9 +48,9 @@ PARA{"This function applies a formula given in Section 7 of the paper ", HREF{"h
 EXAMPLE {"X = gushelMukaiFourfold \"tau-quadric\";", "discriminant X"},
 SeeAlso => {(discriminant, CubicFourfold)}}
 
-undocumented{(expression, GushelMukaiFourfold), (describe, GushelMukaiFourfold)}
+undocumented{(describe, GushelMukaiFourfold)}
 
-document {Key => {Verbose, [cubicFourfold, Verbose], [gushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [polarizedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose], [example, Verbose]},
+document {Key => {Verbose, [cubicFourfold, Verbose], [gushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [associatedCastelnuovoSurface, Verbose], [polarizedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose], [example, Verbose], [texTables, Verbose]},
 Headline => "request verbose feedback"}
 
 document {Key => {gushelMukaiFourfold, (gushelMukaiFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (gushelMukaiFourfold, Ideal, Ideal), [gushelMukaiFourfold, InputCheck]},
@@ -88,7 +88,7 @@ Headline => "Gushel morphism from a GM fourfold to GG(1,4)",
 Usage => "toGrass X",
 Inputs => {"X" => GushelMukaiFourfold},
 Outputs => {MultirationalMap => {"a linear morphism from ", TEX///$X$///, " into the ",TO2{GrassmannianVariety,"Grassmannian"}," ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded, which is an embedding when ",TEX///$X$///," is of ordinary type"}},
-EXAMPLE {"x := gens ring PP_(ZZ/33331)^8;", "X = gushelMukaiFourfold(ideal(x_6-x_7, x_5, x_3-x_4, x_1, x_0-x_4, x_2*x_7-x_4*x_8), ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8, x_0^2+x_0*x_1+x_1^2+x_0*x_2+2*x_0*x_3+x_1*x_3+x_2*x_3+x_3^2-x_0*x_4-x_1*x_4-2*x_2*x_4-x_3*x_4-2*x_4^2+x_0*x_5+x_2*x_5+x_5^2+2*x_0*x_6+x_1*x_6+2*x_2*x_6+x_3*x_6+x_5*x_6+x_6^2-3*x_4*x_7+2*x_5*x_7-x_7^2+x_1*x_8+x_3*x_8-3*x_4*x_8+2*x_5*x_8+x_6*x_8-x_7*x_8));", "time toGrass X", "show oo"},
+EXAMPLE {"x := gens ring PP_(ZZ/33331)^8;", "X = gushelMukaiFourfold(ideal(x_6-x_7, x_5, x_3-x_4, x_1, x_0-x_4, x_2*x_7-x_4*x_8), ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8, x_0^2+x_0*x_1+x_1^2+x_0*x_2+2*x_0*x_3+x_1*x_3+x_2*x_3+x_3^2-x_0*x_4-x_1*x_4-2*x_2*x_4-x_3*x_4-2*x_4^2+x_0*x_5+x_2*x_5+x_5^2+2*x_0*x_6+x_1*x_6+2*x_2*x_6+x_3*x_6+x_5*x_6+x_6^2-3*x_4*x_7+2*x_5*x_7-x_7^2+x_1*x_8+x_3*x_8-3*x_4*x_8+2*x_5*x_8+x_6*x_8-x_7*x_8));", "toGrass X", "show oo"},
 SeeAlso => {(toGrass, EmbeddedProjectiveVariety), (symbol ===>, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)}}
 
 document {Key => {(toGrass, EmbeddedProjectiveVariety)},
@@ -96,7 +96,7 @@ Headline => "embedding of an ordinary Gushel-Mukai fourfold or a del Pezzo varie
 Usage => "toGrass X",
 Inputs => {"X" => EmbeddedProjectiveVariety => {"an ordinary Gushel-Mukai fourfold, or a del Pezzo variety of dimension at least 4 (e.g., a sixfold projectively equivalent to ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///,")"}},
 Outputs => {MultirationalMap => {"an embedding of ", TEX///$X$///, " into the ",TO2{GrassmannianVariety,"Grassmannian"}," ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded"}},
-EXAMPLE {"x = gens ring PP_(ZZ/33331)^8;", "X = projectiveVariety ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8);", "time toGrass X", "show oo"},
+EXAMPLE {"x = gens ring PP_(ZZ/33331)^8;", "X = projectiveVariety ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8);", "toGrass X", "show oo"},
 SeeAlso => {(toGrass,GushelMukaiFourfold), (symbol ===>, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)}}
 
 undocumented{(cycleClass, GushelMukaiFourfold)}
@@ -121,18 +121,18 @@ Usage => "parameterCount(S,X)",
 Inputs => {"S" => EmbeddedProjectiveVariety, "X" => EmbeddedProjectiveVariety => {"such that ", TEX///$S\subseteq X$///}},
 Outputs => {{"a count of parameters to estimate the dimensions of the corresponding Hilbert schemes"}},
 PARA{"See ",TO (parameterCount, CubicFourfold)," and ", TO (parameterCount, GushelMukaiFourfold)," for more precise applications of this function."},
-PARA{"The following calculation shows that the family of complete intersections of 3 quadrics in ",TEX///$\mathbb{P}^5$///," containing a rational normal quintic curve has codimension 1 in the space of all such complete intersections."},
-EXAMPLE {"K = ZZ/33331; S = PP_K^(1,5);", "X = random({{2},{2},{2}},S);", "time parameterCount(S,X,Verbose=>true)"},
+PARA{"The following calculation shows that the family of complete intersections of three quadrics in ",TEX///$\mathbb{P}^5$///," containing a rational normal quintic curve has codimension 1 in the space of all such complete intersections."},
+EXAMPLE {"K = ZZ/33331; S = PP_K^(1,5);", "X = random({{2},{2},{2}},S);", "parameterCount(S,X,Verbose=>true)"},
 SeeAlso => {(parameterCount, CubicFourfold), (parameterCount, GushelMukaiFourfold), normalSheaf}}
 
 document {Key => {(parameterCount, CubicFourfold)},
-Headline => "count of parameters in the moduli space of GM fourfolds",
+Headline => "count of parameters in the moduli space of cubic fourfolds",
 Usage => "parameterCount X",
 Inputs => {"X" => CubicFourfold => {"a special cubic fourfold containing a surface ", TEX///$S$///}},
 Outputs => {ZZ => {"an upper bound for the codimension in the moduli space of cubic fourfolds of the locus of cubic fourfolds that contain a surface belonging to the same irreducible component of the Hilbert scheme containing ", TEX///$[S]$///}, Sequence => {"the triple of integers: ", TEX///$(h^0(I_{S/P^5}(3)), h^0(N_{S/P^5}), h^0(N_{S/X}))$///}},
 PARA{"This function implements a parameter count explained in the paper ", HREF{"https://arxiv.org/abs/1503.05256", "Unirationality of moduli spaces of special cubic fourfolds and K3 surfaces"}, ", by H. Nuer."},
 PARA{"Below, we show that the closure of the locus of cubic fourfolds containing a Veronese surface has codimension at most one (hence exactly one) in the moduli space of cubic fourfolds. Then, by the computation of the discriminant, we deduce that the cubic fourfolds containing a Veronese surface describe the Hassett's divisor ", TEX///$\mathcal{C}_{20}$///},
-EXAMPLE {"K = ZZ/33331; V = PP_K^(2,2);", "X = cubicFourfold V;", "time parameterCount(X,Verbose=>true)", "discriminant X"},
+EXAMPLE {"K = ZZ/33331; V = PP_K^(2,2);", "X = cubicFourfold V;", "parameterCount(X,Verbose=>true)", "discriminant X"},
 SeeAlso => {(parameterCount, GushelMukaiFourfold), normalSheaf}}
 
 document {Key => {(parameterCount, GushelMukaiFourfold)},
@@ -142,7 +142,7 @@ Inputs => {"X" => GushelMukaiFourfold => {"a special GM fourfold containing a su
 Outputs => {ZZ => {"an upper bound for the codimension in the moduli space of GM fourfolds of the locus of GM fourfolds that contain a surface belonging to the same irreducible component of the Hilbert scheme of ", TEX///$Y$///, " that contains ", TEX///$[S]$///}, Sequence => {"the triple of integers: ", TEX///$(h^0(I_{S/Y}(2)), h^0(N_{S/Y}), h^0(N_{S/X}))$///}},
 PARA{"This function implements a parameter count explained in the paper ", HREF{"https://arxiv.org/abs/2002.07026", "On some families of Gushel-Mukai fourfolds"}, "."},
 PARA{"Below, we show that the closure of the locus of GM fourfolds containing a cubic scroll has codimension at most one (hence exactly one) in the moduli space of GM fourfolds."},
-EXAMPLE {"G = GG(ZZ/33331,1,4);", "S = (schubertCycle({2,0},G) * random({{1},{1}},0_G))%G", "X = gushelMukaiFourfold S;", "time parameterCount(X,Verbose=>true)", "discriminant X"},
+EXAMPLE {"G = GG(ZZ/33331,1,4);", "S = (schubertCycle({2,0},G) * random({{1},{1}},0_G))%G", "X = gushelMukaiFourfold S;", "parameterCount(X,Verbose=>true)", "discriminant X"},
 SeeAlso => {(parameterCount, CubicFourfold), normalSheaf}}
 
 document {Key => {normalSheaf, (normalSheaf, EmbeddedProjectiveVariety), (normalSheaf, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)},
@@ -158,7 +158,7 @@ document {Key => {isAdmissible, (isAdmissible, ZZ), (isAdmissible, CubicFourfold
 Headline => "whether an integer is admissible (in the sense of the theory of cubic fourfolds)",
 Usage => "isAdmissible d",
 Inputs => {"d" => ZZ},
-Outputs => {Boolean => {"whether ", TT"d", " is admissible, i.e., it is an even integer ", TT"d>6", " which is not divisible by 4, 9 or any odd prime congruent to 2 modulo 3"}},
+Outputs => {Boolean => {"whether ", TEX///$d$///, " is admissible, i.e., it is an even integer ", TEX///$d>6$///, " which is not divisible by 4, 9 or any odd prime congruent to 2 modulo 3"}},
 EXAMPLE{"select(150,isAdmissible)"},
 SeeAlso => {isAdmissibleGM}}
 
@@ -166,7 +166,7 @@ document {Key => {isAdmissibleGM, (isAdmissibleGM, ZZ), (isAdmissibleGM, GushelM
 Headline => "whether an integer is admissible (in the sense of the theory of GM fourfolds)",
 Usage => "isAdmissibleGM d",
 Inputs => {"d" => ZZ},
-Outputs => {Boolean => {"whether ",TEX///$d$///," is an integer ",TEX///$>$///," 8 and ",TEX///$\equiv$///," 2 or 4 (mod 8) such that the only odd primes that divide ",TEX///$d$///," are ",TEX///$\equiv$///," 1 (mod 4). In other words, whether a GM fourfold of discriminant ", TT"d", " has an associated K3 surface."}},
+Outputs => {Boolean => {"whether ", TEX///$d$///, " is admissible, i.e., it is an integer ", TEX///$d>8$///, " congruent to 2 or 4 modulo 8 such that every odd prime dividing ", TEX///$d$///, " is congruent to 1 modulo 4. In other words, whether a GM fourfold of discriminant ", TT"d", " has an associated K3 surface."}},
 EXAMPLE{"select(140,isAdmissibleGM)"},
 SeeAlso => {isAdmissible}}
 
@@ -208,15 +208,15 @@ Headline => "detect and return a congruence of (3e-1)-secant curves of degree e"
 Usage => "detectCongruence X"|newline|"detectCongruence(X,e)",
 Inputs => {"X" => CubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}},
 Outputs => {CongruenceOfCurves => {"that is a function which takes a general point ", TEX///$p\in\mathbb{P}^5$///, " (that is, outside a certain proper Zariski closed subset of ",TEX///$\mathbb{P}^5$///,") and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(3e-1)$///, "-secant to ", TEX///$S$///, ", and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}},
-EXAMPLE {"-- A general cubic fourfold of discriminant 26"|newline|"X = cubicFourfold(\"3-nodal septic scroll\",ZZ/33331);", "describe X", "time f = detectCongruence(X,Verbose=>true);", "p := point ambient X -- random point on P^5", "time C = f p; -- 5-secant conic to the surface", "assert(dim C == 1 and degree C == 2 and dim(C * surface X) == 0 and degree(C * surface X) == 5 and isSubset(p, C))"},
+EXAMPLE {"-- A general cubic fourfold of discriminant 26"|newline|"X = cubicFourfold(\"3-nodal septic scroll\",ZZ/33331);", "describe X", "f = detectCongruence(X,Verbose=>true);", "p := point ambient X -- random point on P^5", "C = f p; -- 5-secant conic to the surface", "assert(dim C == 1 and degree C == 2 and dim(C * surface X) == 0 and degree(C * surface X) == 5 and isSubset(p, C))"},
 SeeAlso => {(detectCongruence, GushelMukaiFourfold, ZZ), coneOfLines}}
 
 document {Key => {(detectCongruence, GushelMukaiFourfold, ZZ), (detectCongruence, GushelMukaiFourfold)},
 Headline => "detect and return a congruence of (2e-1)-secant curves of degree e inside a del Pezzo fivefold",
 Usage => "detectCongruence X"|newline|"detectCongruence(X,e)",
 Inputs => {"X" => GushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///,", where ",TEX///$Y$///," denotes the unique del Pezzo fivefold containing the fourfold ",TEX///$X$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}},
-Outputs => {CongruenceOfCurves => {"that is a function which takes a general point ", TEX///$p\in Y$///, "(that is, a point on ",TEX///$Y$///," outside a certain proper Zariski closed subset) and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(2e-1)$///, "-secant to ", TEX///$S$///, ", contained in ",TEX///$Y$///," and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}},
-EXAMPLE{"-- A GM fourfold of discriminant 20"|newline|"X = gushelMukaiFourfold(\"17\",ZZ/33331);", "describe X", "time f = detectCongruence(X,Verbose=>true);", "Y = ambientFivefold X; -- del Pezzo fivefold containing X", "p := point Y -- random point on Y", "time C = f p; -- 3-secant conic to the surface", "S = surface X;", "assert(dim C == 1 and degree C == 2 and dim(C*S) == 0 and degree(C*S) == 3 and isSubset(p,C) and isSubset(C,Y))"},
+Outputs => {CongruenceOfCurves => {"that is a function which takes a general point ", TEX///$p\in Y$///, " (that is, a point on ",TEX///$Y$///," outside a certain proper Zariski closed subset) and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(2e-1)$///, "-secant to ", TEX///$S$///, ", contained in ",TEX///$Y$///," and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}},
+EXAMPLE{"-- A GM fourfold of discriminant 20"|newline|"X = gushelMukaiFourfold(\"17\",ZZ/33331);", "describe X", "f = detectCongruence(X,Verbose=>true);", "Y = ambientFivefold X; -- del Pezzo fivefold containing X", "p := point Y -- random point on Y", "C = f p; -- 3-secant conic to the surface", "S = surface X;", "assert(dim C == 1 and degree C == 2 and dim(C*S) == 0 and degree(C*S) == 3 and isSubset(p,C) and isSubset(C,Y))"},
 SeeAlso => {(detectCongruence, CubicFourfold, ZZ), coneOfLines}}
 
 document {Key => {CubicFourfold},
@@ -225,7 +225,7 @@ PARA{"A cubic fourfold is a smooth cubic hypersurface in ", TEX///$\mathbb{P}^5$
 PARA{"An object of the class ", TO CubicFourfold, " is basically represented by a pair ", TEX///(S,X)///, ", where ", TEX///$X$///, " is a cubic fourfold and ", TEX///$S$///, " is a surface contained in ", TEX///$X$///, ". The surface ", TEX///$S$///, " is required to be smooth or with at most a finite number ", TEX///$n$///, " of non-normal nodes. This number ", TEX///$n$///, " (if known) can be specified manually using the option ", TT "NumNodes", ". The main constructor for the objects of the class is the function ", TO cubicFourfold,"."},
 SeeAlso => {(discriminant,CubicFourfold)}}
 
-undocumented{(expression, CubicFourfold), (describe, CubicFourfold)}
+undocumented{(describe, CubicFourfold)}
 
 undocumented{InputCheck, NumNodes}
 
@@ -290,7 +290,7 @@ EXAMPLE {"X = specialFourfold \"quintic del Pezzo surface\";", "V = ambientFivef
 SeeAlso => {(surface,List)}}
 
 document {
-Key => {(surface, List), (surface, VisibleList, Ring), (surface, VisibleList, Option), (surface, VisibleList, Option), (surface, VisibleList, Ring, Option), (surface, VisibleList, Option, Option), (surface, VisibleList, Ring, Option, Option)},
+Key => {(surface, List), (surface, VisibleList, Ring), (surface, VisibleList, Option), (surface, VisibleList, Ring, Option), (surface, VisibleList, Option, Option), (surface, VisibleList, Ring, Option, Option)},
 Headline => "get a rational surface",
 Usage => "surface {a,i,j,k,...}
 surface({a,i,j,k,...),K)
@@ -313,7 +313,7 @@ document {Key => {(surface, MultiprojectiveVariety, MultiprojectiveVariety)},
 Headline => "make a Hodge-special surface",
 Usage => "surface(C,S)",
 Inputs => {"C" => MultiprojectiveVariety => {"an irreducible curve"}, "S" => MultiprojectiveVariety => {"a smooth surface ", TEX///$S$///, " containing the curve ", TEX///$C$///}},
-Outputs => {{"the Hodge special surface corresponding to the pair ", TEX///$(C,S)$///}},
+Outputs => {{"the Hodge-special surface corresponding to the pair ", TEX///$(C,S)$///}},
 PARA{"The curve ",TEX///$C$///," can be recovered using the function ",TT "curve","."},
 EXAMPLE lines ///K = ZZ/65521;
 C = random PP_K^(1,3); -- random twisted cubic in P^3
@@ -337,7 +337,7 @@ Usage => "unirationalParametrization X",
 Inputs => {"X" => CubicFourfold => {"or ", ofClass GushelMukaiFourfold}},
 Outputs => {MultirationalMap => {"a rational map of degree 2 from ",TEX///$\mathbb{P}^4$///," to ",TEX///$X$///}},
 PARA{"The degree of the forms defining the returned map is 10 in the case of cubic fourfolds, and 26 in the case of GM fourfolds."},
-EXAMPLE {"K = ZZ/10000019; S = PP_K^(2,2); -- Veronese surface;", "X = cubicFourfold S;", "time f = unirationalParametrization X;", "degreeSequence f", "degree(f,Strategy=>\"random point\")"},
+EXAMPLE {"K = ZZ/10000019; S = PP_K^(2,2); -- Veronese surface;", "X = cubicFourfold S;", "f = unirationalParametrization X;", "degreeSequence f", "degree(f,Strategy=>\"random point\")"},
 SeeAlso => {(parametrize, HodgeSpecialFourfold), (parametrize, MultiprojectiveVariety)}}
 
 document {Key => {(parametrize, HodgeSpecialFourfold)},
@@ -389,7 +389,7 @@ parametrizeFanoFourfold(X,Strategy=>...)",
 Inputs => {"X" => EmbeddedProjectiveVariety => {"a prime Fano fourfold ",TEX///$X$///," of coindex at most 3 having degree ",TEX///$d$///," and genus ",TEX///$g$///," with ",TEX///$(d,g)\in\{(2,0),(4,1),(5,1),(12,7),(14,8),(16,9),(18,10)\}$///}},
 Outputs => {MultirationalMap => {"a birational map from ",TEX///$\mathbb{P}^4$///," to ", TEX///$X$///}},
 PARA{"This function is mainly based on results contained in the classical paper ",HREF{"https://link.springer.com/article/10.1007/BF02413916","Algebraic varieties with canonical curve sections"},", by L. Roth. In some examples, more strategies are available. For instance, if ",TEX///$X\subset\mathbb{P}^7$///," is a 4-dimensional linear section of ",TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///,", then by passing ",TT"Strategy=>1"," (which is the default choice) we get the inverse of the projection from the plane spanned by a conic contained in ",TEX///$X$///,"; while with ",TT"Strategy=>2"," we get the projection from the unique ",TEX///$\sigma_{2,2}$///,"-plane contained in ",TEX///$X$///," (Todd's result)."},
-EXAMPLE {"K = ZZ/65521; X = GG_K(1,4) * random({{1},{1}},0_(GG_K(1,4)));","? X", "time parametrizeFanoFourfold X"},
+EXAMPLE {"K = ZZ/65521; X = GG_K(1,4) * random({{1},{1}},0_(GG_K(1,4)));","? X", "parametrizeFanoFourfold X"},
 SeeAlso => {fanoFourfold,(parametrize,HodgeSpecialFourfold),unirationalParametrization,(parametrize,MultiprojectiveVariety)}}
 
 document {Key => {fanoFourfold, (fanoFourfold,ZZ,ZZ), [fanoFourfold,CoefficientRing]},
@@ -416,7 +416,8 @@ Usage => "trisecantFlop i",
 Inputs => {"i" => ZZ => {"an integer between 0 and 17"}},
 Outputs => {{"the i-th example of birational map ",TEX///$X\dashrightarrow W$///," in accordance to the Table 1 in the paper ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"},"."}},
 PARA{"This function requires the package ",HREF{"https://github.com/giovannistagliano/TrisecantFlops","TrisecantFlops"},". If not present the user will be asked to automatically install the package."},
-SeeAlso => {(specialFourfold, String, ZZ), (example, String)}}
+SeeAlso => {(specialFourfold, String, ZZ), (example, String)},
+Caveat => {"This function may be deprecated in a future version. Consider importing examples with ", TO2{(store,String),"store"}, " and accessing them with ", TO example, " instead."}}
 undocumented {(trisecantFlop,ZZ)}
 
 document {Key => {(specialFourfold, String, ZZ)},
@@ -425,6 +426,7 @@ Usage => "specialFourfold(str,i)",
 Inputs => {"str" => String => {"such as \"",TT"prebuilt-example-in-P5","\" or \"",TT"prebuilt-example-in-P7","\"."}, "i" => ZZ},
 Outputs => {HodgeSpecialFourfold => {"the i-th example of fourfold in accordance with some classification (e.g., ",TT"specialFourfold(\"prebuilt-example-in-P5\",i)"," is the same as ",TO2{(source,MultirationalMap),"source"}," ",TO trisecantFlop,TT"(i)","."}},
 PARA{"This function requires the package ",HREF{"https://github.com/giovannistagliano/TrisecantFlops","TrisecantFlops"},". If not present the user will be asked to automatically install the package."},
+Caveat => {"This function may be deprecated in a future version. Consider importing examples with ", TO2{(store,String),"store"}, " and accessing them with ", TO example, " instead."},
 SeeAlso => {trisecantFlop, (example, String)}}
 
 undocumented {(random, HodgeSpecialFourfold), (symbol **, HodgeSpecialFourfold,Ring), (map, HodgeSpecialFourfold), (describe, HodgeSpecialFourfold)}
@@ -486,8 +488,6 @@ PARA{"Besides the data needed to reconstruct ",TT"X",", the returned string also
 EXAMPLE {"describe (X = specialFourfold \"tau-quadric\")", "str = toExternalString X;", "describe (value str)"},
 SeeAlso => {(store, HodgeSpecialFourfold)}}
 
-undocumented {(expression, HodgeSpecialFourfold)}
-
 document {Key => {HodgeSpecialFourfold},
 Headline => "the class of all Hodge-special fourfolds",
 PARA{"An object of the class ", TO HodgeSpecialFourfold, " is basically represented by a pair ", TEX///(S,X)///, ", where ", TEX///$X$///, " is a fourfold and ", TEX///$S$///, " is a surface contained in ", TEX///$X$///,". Such objects are created by the function ",TO specialFourfold,"."},
@@ -502,11 +502,9 @@ Outputs => {CongruenceOfCurves => {"the same object passed as input, but an erro
 undocumented {(symbol ?, HodgeSpecialFourfold, HodgeSpecialFourfold)}
 
 document {Key => {IntersectionOfThreeQuadricsInP7},
-Headline => "the class of all special intersection of three quadrics in P^7",
+Headline => "the class of all special intersections of three quadrics in P^7",
 PARA {"This is a subtype of the ",TO HodgeSpecialFourfold," type."},
 SeeAlso => {specialFourfold}}
-
-undocumented {(expression, IntersectionOfThreeQuadricsInP7)}
 
 document {Key => {associatedCastelnuovoSurface, (associatedCastelnuovoSurface, IntersectionOfThreeQuadricsInP7), [associatedCastelnuovoSurface, Strategy]},
 Headline => "Castelnuovo surface associated to a rational complete intersection of three quadrics in P^7",
@@ -546,13 +544,13 @@ PARA {"The full lattice data is computed and stored within the object only upon 
 PARA {"The following methods can be used to access the construction data of ", TEX///$E$///, ":"},
 UL {{TT "building E", " -- returns the four construction objects as in ", TO (associatedK3surface, CubicFourfold), " (the Fano rational map ", TEX///$\mu$///, ", the non-minimal K3 surface ", TEX///$U$///, ", the exceptional curves on ", TEX///$U$///, " and the morphism ", TEX///$f: U \to E$///, " contracting them);"}, {TT "projectiveVariety E", " -- returns the underlying ", TO2{EmbeddedProjectiveVariety, "projective surface"}, ";"}, {TT "latticePolarization E", " -- returns the lattice data induced by the doubly special structure of ", TEX///$X$///, "."}},
 PARA {"Optional inputs:"},
-UL {{TO "Strategy", " -- provides instructions for each step. The first stage handles the construction of the non-minimal K3 surface ", TEX///$U$///, " by inverting the Fano map restricted to the cubic (via ", TT "\"Inverse\"", " or ", TT "\"Approximate\"", "), while the second computes the lattice data (common options include ", TT "\"MapFromW\"", ", ", TT "\"MapFromU\"", ", or ", TT "\"SpecialCurve\"", "). Both can be passed at once as a sequence, e.g., ", TT "Strategy => (\"Inverse\", \"MapFromW\")", ", or provided individually through nested calls."}, {TO "FanoMapType", " -- sets the Fano map to ", TT "\"Standard\"", " (default) or ", TT "\"P2xP2\"", ". Note that switching this type updates the global behavior of ", TEX///$X$///, " (e.g., affecting methods like ", TO mirrorFourfold, "), though previously computed data is preserved;"}, {TO "Verbose", " -- if set to ", TO true, ", provides feedback during the construction."}},
+UL {{TO "Strategy", " -- provides instructions for each step. The first stage handles the construction of the non-minimal K3 surface ", TEX///$U$///, " by inverting the Fano map restricted to the cubic (via ", TT "\"Inverse\"", " or ", TT "\"Approximate\"", "), while the second computes the lattice data (common options include ", TT "\"Genus2Curve\"", ", ", TT "\"MapFromU\"", ", or ", TT "\"SpecialCurve\"", "). Both can be passed at once as a sequence, e.g., ", TT "Strategy => (\"Inverse\", \"Genus2Curve\")", ", or provided individually through nested calls."}, {TO "FanoMapType", " -- sets the Fano map to ", TT "\"Standard\"", " (default) or ", TT "\"P2xP2\"", ". Note that switching this type updates the global behavior of ", TEX///$X$///, " (e.g., affecting methods like ", TO mirrorFourfold, "), though previously computed data is preserved;"}, {TO "Verbose", " -- if set to ", TO true, ", provides feedback during the construction."}},
 EXAMPLE {"S = random({3:{1}},0_(PP_(ZZ/65521)^5)); T = random S;", "X = specialFourfold(S & T);", "describe X", "polarizedK3surface(X, Verbose=>true)", "polarizedK3surface(X, Verbose=>true)", "describe X"},
 PARA{"Here is another example."},
 EXAMPLE {"X = specialFourfold surface((2,0,0),(1,0,0));", "describe X", "polarizedK3surface(X, Verbose=>true)", "polarizedK3surface(oo, Verbose=>true)", "latticePolarization oo", "describe X"},
 SeeAlso => {DoublySpecialCubicFourfold, (associatedK3surface, CubicFourfold)}}
 
-undocumented {(expression, DoublySpecialCubicFourfold), (describe, DoublySpecialCubicFourfold), (check, DoublySpecialCubicFourfold), (clean, DoublySpecialCubicFourfold), (random, DoublySpecialCubicFourfold), (mirrorFourfold, DoublySpecialCubicFourfold), (quadricFibration, DoublySpecialCubicFourfold), (associatedK3surface, DoublySpecialCubicFourfold)}
+undocumented {(describe, DoublySpecialCubicFourfold), (check, DoublySpecialCubicFourfold), (clean, DoublySpecialCubicFourfold), (random, DoublySpecialCubicFourfold), (mirrorFourfold, DoublySpecialCubicFourfold), (quadricFibration, DoublySpecialCubicFourfold), (associatedK3surface, DoublySpecialCubicFourfold)}
 
 undocumented {(surface, VisibleList, VisibleList, Ring, Option), (surface, VisibleList, VisibleList, Option), (surface, VisibleList, VisibleList, Ring), (surface, VisibleList, VisibleList)}
 
@@ -577,25 +575,92 @@ Headline => "retrieve a stored fourfold example",
 Usage => "example name"|newline|"example(name,n)",
 Inputs => {"name" => String => {"the name assigned when the example was stored"}, "n" => ZZ => {"an optional integer indicating the type of fourfold"}},
 Outputs => {HodgeSpecialFourfold => {"a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},"."}},
-PARA {"This function retrieves a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},TT"(X,name)","."},
+PARA {"This function retrieves a fourfold previously stored with ",TO2{(store,HodgeSpecialFourfold,String),"store"},TT"(X,name)",". The local archive of stored examples may be inspected and managed through ",TO localExamplesArchive,TT"()","."},
 PARA {"The optional argument ",TT"n"," is only needed when the same name is used by stored examples of different fourfold types. Its values correspond to the following fourfold types: doubly special cubic fourfolds (",TEX///$n=0$///,"), cubic fourfolds (",TEX///$n=1$///,"), Gushel-Mukai fourfolds (",TEX///$n=2$///,"), intersections of three quadrics in ",TEX///$\mathbb{P}^7$///," (",TEX///$n=3$///,"), and other Hodge-special fourfolds (",TEX///$n=4$///,")."},
 EXAMPLE {"X = specialFourfold \"DSCF-1\";","name = store X","X' = example name;","assert(describe X == describe X')"},
-SeeAlso => {(store,HodgeSpecialFourfold, String), (toExternalString, HodgeSpecialFourfold)}}
+PARA {"To suppress the informative messages displayed while loading an example, use the option ",TT"Verbose=>false","."},
+SeeAlso => {(store, HodgeSpecialFourfold, String), (toExternalString, HodgeSpecialFourfold), localExamplesArchive}}
 
 document {Key => {(store, HodgeSpecialFourfold, String), (store, HodgeSpecialFourfold, ZZ), (store, HodgeSpecialFourfold)},
 Headline => "store a fourfold example",
 Usage => "store(X,name)"|newline|"store X",
 Inputs => {"X" => HodgeSpecialFourfold,"name" => String => {"an optional name for the example"}},
 Outputs => {String => {"the name assigned to the stored example"}},
-PARA {"This function stores the fourfold ",TT"X"," so that it can later be retrieved with ",TO2{(example,String),"example"},TT"(name)",". When no name is specified, one is chosen automatically. Examples are created via ",TO2{(toExternalString,HodgeSpecialFourfold),"toExternalString"}," and stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"}, TT"SpecialFanoFourfoldsExamples/","', where they can also be managed manually. They persist across Macaulay2 sessions and preserve some previously computed internal data of the original fourfold."},
+PARA {"This function stores the fourfold ",TT"X"," so that it can later be retrieved with ",TO2{(example,String),"example"},TT"(name)",". When no name is specified, one is chosen automatically. Examples are created via ",TO2{(toExternalString,HodgeSpecialFourfold),"toExternalString"}," and stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"},TT"SpecialFanoFourfoldsExamples/","'. The local archive may be inspected and managed through ",TO localExamplesArchive,TT"()",". Stored examples persist across Macaulay2 sessions and preserve some previously computed internal data of the original fourfold."},
 EXAMPLE {"X = specialFourfold random({3:{1}},0_(PP_(ZZ/65521)^5));","name = store X;","X' = example name;","assert(describe X == describe X')"},
-SeeAlso => {(example, String), (store, String), (toExternalString, HodgeSpecialFourfold)}}
+SeeAlso => {(example, String), (store, String), (toExternalString, HodgeSpecialFourfold), localExamplesArchive}}
+
+document {Key => {localExamplesArchive},
+Headline => "access and manage the local examples archive",
+Usage => "localExamplesArchive()",
+Inputs => {}, Outputs => {},
+PARA {"This function returns an object representing the local archive of stored fourfold examples. Examples are typically added to the archive with ",TO2{(store,HodgeSpecialFourfold),"store"}," and retrieved with ",TO example,". Examples are stored in the directory '",TO2{applicationDirectory,TT"applicationDirectory/"},TT"SpecialFanoFourfoldsExamples/","'. When displayed, the object provides an overview of the examples currently available and those already loaded in memory."},
+PARA {"The local examples archive may be cleared with ",TT"clean localExamplesArchive()",". All examples currently available in the local examples archive may be exported to a timestamped .tar.gz archive with ",TT"export localExamplesArchive()",". Such an archive may later be imported with ",TT"importFrom(archive,localExamplesArchive())","."},
+PARA {"If ",TT"archive"," is a URL, then ",TT"importFrom(archive,localExamplesArchive())"," first downloads the archive and then imports it. To import examples directly from the author's GitHub repository, use ",TT"importFrom(\"@\",localExamplesArchive())","."},
+PARA {"By default, importing an archive replaces the current contents of the local examples archive. To safely import an archive only if no existing example would be overwritten, use ",TT"importFrom(archive,localExamplesArchive(),KeepFiles=>true)","."},
+PARA {"Examples may be removed from the local archive with ",TT"delete(X,localExamplesArchive())",", ",TT"delete(name,n,localExamplesArchive())",", or ",TT"delete(n,localExamplesArchive())",". The latter deletes all examples of fourfold type ",TT"n","."},
+EXAMPLE {"A = localExamplesArchive()","clean A","X = cubicFourfold \"quartic scroll\";","scan(4,i -> store(X,i)) -- storing four copies of X with numeric names","A","(X1,X2,X3) = (example 1,example 2,example 3); -- loading some of the examples","A","store X2 -- updating a loaded example","name = store specialFourfold(surface((4,6,1),(1,2,0)));","A","Y = example(name,Verbose=>false); -- loading another example","A","archive = export A","delete(X2,A) -- deleting a loaded example","importFrom(archive,A)","clean A","importFrom(archive,A,KeepFiles=>true)"},
+SeeAlso => {(store, HodgeSpecialFourfold), (example, String), (store, String)}}
 
 document {Key => {(store, String)},
-Headline => "import stored examples from an archive",
-Usage => "store f",
-Inputs => {"f" => String => {"a .tar.gz archive containing stored fourfold examples"}},
+Headline => "import archives of examples",
+Usage => "store f"|newline|"importFrom(f,localExamplesArchive())"|newline|"importFrom(f,localExamplesArchive(),KeepFiles=>true)",
+Inputs => {"f" => String => {"a .tar.gz archive containing fourfold examples (or a URL pointing to such an archive)"}},
 Outputs => {},
-PARA {"Imports the stored examples contained in the archive ", TT"f",". To export the current examples into a timestamped archive, use ",TT"store \"@\"",". To remove all stored examples, use ",TT"store \"\"","."},
-EXAMPLE {"store specialFourfold \"quartic scroll\"", "store \"@\"", "store oo", "store \"\""},
-SeeAlso => {(store, HodgeSpecialFourfold), (example, String)}}
+PARA {"This function imports examples into the local archive represented by ",TO localExamplesArchive,TT"()",". The argument ",TT"f"," may be a local .tar.gz archive, a URL pointing to such an archive, or the special string ",TT"\"@\""," referring to the author's GitHub repository of examples."},
+PARA {"By default, the imported archive replaces the current contents of the local examples archive. To safely import an archive only if no existing example would be overwritten, use ",TT"importFrom(f,localExamplesArchive(),KeepFiles=>true)","."},
+SeeAlso => {localExamplesArchive, (store, HodgeSpecialFourfold), (example, String)}}
+
+document {Key => {texTables, (texTables, List), [texTables, KeepFiles], [texTables, FileName]},
+Headline => "generate summary tables for collections of fourfolds",
+Usage => "texTables L",
+Inputs => {"L" => List => {"of Hodge-special fourfolds"}},
+Outputs => {Sequence => {"a pair ", TEX///$(L',L'')$///, " where ", TEX///$L'$///, " is a reordering of the input list and ", TEX///$L''$///, " is the subsequence corresponding to the examples appearing in the K3 table; both are ordered according to the rows of the corresponding tables"}},
+PARA {"This function generates two PDF tables summarizing the data available for the fourfolds in ", TEX///$L$///, ". Each row corresponds to one example."},
+PARA {"The first table collects general information such as discriminants, Noether-Lefschetz loci, parameter counts and construction data. Some data may be computed during table generation, while more advanced information is included only when already available in the cache of the corresponding example."},
+PARA {"The second table is restricted to examples for which an associated K3 surface can be constructed. In addition to the fourfold data, the rows may include information on the associated K3 surfaces whenever such data has already been computed through methods such as ", TO associatedK3surface, " or ", TO polarizedK3surface, "."},
+PARA {"Optional inputs:"},
+UL {{TO "KeepFiles", " -- if set to ", TO true, ", preserves the intermediate ", TT ".tex", " files used to generate the PDF tables;"}, {TO "FileName", " -- specifies a common prefix for the generated files."}},
+PARA {"For advanced customization, see the internal method ", TT"texTableRaw", "."},
+SeeAlso => {(texTables, ZZ), associatedK3surface, polarizedK3surface}}
+
+document {Key => {(texTables, ZZ)},
+Headline => "generate summary tables from archived examples",
+Usage => "texTables n"|newline|"texTables(n,localExamplesArchive())",
+Inputs => {"n" => ZZ => {"an integer between 0 and 4 specifying a type of fourfold"}},
+Outputs => {Sequence => {"the output of ", TO texTables, " applied to all examples of the specified type currently available in the local examples archive"}},
+PARA {"This method retrieves all examples of the specified type currently available in the local examples archive managed through ",TO localExamplesArchive,TT"()"," and generates summary tables for them."},
+PARA {"The correspondence between values of ", TT"n", " and fourfold types is as follows: 0 for doubly special cubic fourfolds, 1 for cubic fourfolds, 2 for Gushel-Mukai fourfolds, 3 for intersections of three quadrics in ", TEX///$\mathbb P^7$///, ", and 4 for other Hodge-special fourfold examples."},
+if findProgram("pdflatex", RaiseError => false) =!= null
+then EXAMPLE {"X = cubicFourfold surface((2,0),(1,0));",
+"parameterCount X; polarizedK3surface polarizedK3surface X; -- compute and cache some data for X",
+"store X; -- store X in the local examples archive",
+"store X; -- store a second copy of X under a different name",
+"texTables(0,Verbose=>true,KeepFiles=>true,OpenPDF=>false,FileName=>\"myTable\"); -- generate tables from all stored DSCF examples",
+"get \"myTableK3.tex\""}
+else PRE ///
+i1 : X = cubicFourfold surface((2,0),(1,0));
+
+i2 : parameterCount X; polarizedK3surface polarizedK3surface X; -- compute and cache some data for X
+
+i3 : store X; -- store X in the local examples archive
+
+i4 : store X; -- store a second copy of X under a different name
+
+i5 : texTables(0,Verbose=>true,KeepFiles=>true,OpenPDF=>true,FileName=>"myTable"); -- generate tables from all stored DSCF examples
+///,
+SeeAlso => {texTables, (store, String), example, localExamplesArchive}}
+
+undocumented{(texTables, Nothing)}
+
+document {Key => {OpenPDF, [texTables, OpenPDF]},
+Headline => "whether to open the PDF tables",
+Usage => "OpenPDF => true or false",
+PARA{"If set to ", TO true, ", opens the PDF tables generated by ", TO texTables, "."},
+SeeAlso => {texTables}}
+
+document {Key => {updatePackage, (updatePackage, String), (updatePackage, String, String, List)},
+Headline => "update SpecialFanoFourfolds and related packages",
+Usage => "updatePackage dir",
+Inputs => {"dir" => String => {"directory where the package files will be downloaded; use ", TT "\"\"", " for the current directory"}}, Outputs => {},
+PARA {"This function downloads the latest development versions of the ", TT "SpecialFanoFourfolds", " package and related packages from the Macaulay2 source repository into the specified directory. Additional arguments may be used to specify a different source URL and the list of packages to be updated."}}

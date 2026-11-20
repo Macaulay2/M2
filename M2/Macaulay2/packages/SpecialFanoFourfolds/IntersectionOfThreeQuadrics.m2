@@ -9,23 +9,83 @@ globalAssignment IntersectionOfThreeQuadricsInP7;
 
 IntersectionOfThreeQuadricsInP7.synonym = "complete intersection of three quadrics in PP^7";
 
-expression IntersectionOfThreeQuadricsInP7 := X -> expression("complete intersection of three quadrics in PP^7 containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
+netTexDescription IntersectionOfThreeQuadricsInP7 := o -> X -> (
+    if o#"UseName" and hasAttribute(X,ReverseDictionary) then return (
+        toString getAttribute(X,ReverseDictionary),
+        texMath getAttribute(X,ReverseDictionary)
+    );
+    if o#"Short" then return (
+        shortDescriptionFourfold(X,false),
+        texMath shortDescriptionFourfoldTeX(X,false)
+    );
+    S := surface X;
+    F := ambientFivefold X;
+    (netX,texX) := netTexDescription projectiveVariety ring X;
+    (netF,texF) := netTexDescription F;
+    netS := surfaceDescription(9,S);
+    texS := last netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true);
+    netStr := net("fourfold: " | netX);
+    netStr = netStr || net("ambient fivefold: " | netF);
+    netStr = netStr || net("surface: " | netS);
+    texStr := "\\begin{aligned}&\\text{fourfold: }" | texX;
+    texStr = texStr | newline | "\\\\&\\text{ambient fivefold: }" | texF;
+    texStr = texStr | newline | "\\\\&\\text{surface: }" | texS;
+    if compStatusLatticeDisc X > 0 then (
+        d := discriminant X;
+        A := X.cache#(S,"LatticeIntersectionMatrix");
+        netStr = netStr || net "lattice discriminant:";
+        netStr = netStr || ((net "det(") | (net A) | net(") = " | (toString d)));
+        texStr = texStr | newline | "\\\\&\\text{lattice discriminant:}";
+        texStr = texStr | newline | "\\\\&\\det" | (texMath A) | " = " | (texMath d);
+    );
+    (netStr,texStr | "\\end{aligned}")
+);
 
 describe IntersectionOfThreeQuadricsInP7 := X -> (
-    descr := "Complete intersection of 3 quadrics in PP^7";
+    recognize X;
+    S := surface X;
     disc := discriminant X;
-    A := X.cache#(surface X,"LatticeIntersectionMatrix");
-    descr = descr|newline|toString("of discriminant "|(toString disc)|" = det"|(net A));
-    descr = descr|newline|"containing a "|surfaceDescription(0,surface X);
-    if member(recognize X,{"surf-5-7-0-1","surf-5-10-1","internal-projection-K3-genus-8","surf-4-3-1-external","surf-5-6-2-nodal","surf-7-1-9"}) then descr = descr|newline|"(This is a rational fourfold discovered in August 2022)";
-    if recognize X === "planeInPP7" then descr = descr|newline|"(This is a classical example of rational fourfold)";
-    if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
-    net expression descr
+    A := X.cache#(S,"LatticeIntersectionMatrix");
+    (netS,texS) := netTexDescription(S,"Ambient"=>false,"NumericalInvariants"=>true,"Indent"=>0);
+    netDescr := "Complete intersection of three quadrics in PP^7";
+    netDescr = netDescr || ((net("of discriminant " | (toString disc) | " = det(")) | (net A) | (net ")"));
+    netDescr = netDescr || ("containing a " | netS);
+    texDescr := "\\begin{aligned}&\\text{Complete intersection of three quadrics in }\\mathbb{P}^{7}";
+    texDescr = texDescr | newline | "\\\\&\\text{of discriminant }" | (texMath disc) | " = \\det" | (texMath A);
+    texDescr = texDescr | newline | "\\\\&\\text{containing a }" | texS;
+    if member(recognize X,{"surf-5-7-0-1","surf-5-10-1","internal-projection-K3-genus-8","surf-4-3-1-external","surf-5-6-2-nodal","surf-7-1-9"}) then (
+        netDescr = netDescr || "(This is a rational fourfold discovered in August 2022)";
+        texDescr = texDescr | newline | "\\\\&\\text{(This is a rational fourfold discovered in August 2022)}";
+    );
+    if recognize X === "planeInPP7" then (
+        netDescr = netDescr || "(This is a classical example of rational fourfold)";
+        texDescr = texDescr | newline | "\\\\&\\text{(This is a classical example of rational fourfold)}";
+    );
+    if computationStatus X >= 0 then (
+        (netMirror,texMirror) := describeMirrorFourfoldAndK3 X;
+        netDescr = netDescr || (computationStatusLog X) || netMirror;
+        texDescr = texDescr | newline | "\\\\&\\text{" | computationStatusLog X | "}";
+        texDescr = texDescr | newline | "\\\\" | texMirror;
+    );
+    if X.cache#?(S,"parameterCount") then (
+        (w,xyz) := X.cache#(S,"parameterCount");
+        (x,y,z) := xyz;
+        if w =!= 33 - (y+(x-1)-z) then error "internal error encountered";
+        netDescr = netDescr || ("Parameter count: " | (toString w) | " = 33 - (" | (toString y) | " + " | (toString(x-1)) | " - " | (toString z) | ")");
+        texDescr = texDescr | newline | "\\\\&\\text{Parameter count: }" | (texMath w) | " = 33 - (" | (texMath y) | " + " | (texMath(x-1)) | " - " | (texMath z) | ")";
+    );
+    if X.cache#?"CustomData" then netDescr = netDescr || (toString X.cache#"CustomData");
+    netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
 shortDescriptionFourfold (IntersectionOfThreeQuadricsInP7,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
     "complete intersection of three quadrics in PP^7"
+);
+
+shortDescriptionFourfoldTeX (IntersectionOfThreeQuadricsInP7,Boolean) := (X,UseAttribute) -> (
+    if UseAttribute and hasAttribute(X,ReverseDictionary) then return shortTeX texMath getAttribute(X,ReverseDictionary);
+    shortTeX "\\text{complete intersection of three quadrics in }\\mathbb{P}^{7}"
 );
 
 recognize3QuadricsP7 = X -> (
@@ -65,8 +125,8 @@ infoAboutParameterCountInAmbientP7 = (x,y) -> (
         -- Therefore parameterCount(X) ----> (34-a-b+c, (b+2, 68 + a - 2b , c))
     --------------------------------------------------
     (b,a,c) := y;
-    if 34-a-b+c != x then <<"--warning: something went wrong"<<endl;
-    <<"[parameterCount in the ambient PP^7: "<<(34-a-b+c, (b+2, 68 + a - 2*b , c))<<"]"<<endl;
+    if 34-a-b+c != x then << "-- warning: something went wrong" << endl;
+    << "-- [parameterCount in the ambient PP^7: " << (34-a-b+c, (b+2, 68 + a - 2*b, c)) << "]" << endl;
 );
 
 beauvilleMap = method();
