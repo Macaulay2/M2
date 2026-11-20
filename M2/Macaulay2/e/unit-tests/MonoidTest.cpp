@@ -84,3 +84,20 @@ TEST(MonomialOrdering, shortWeightVector)
   EXPECT_EQ(MonomialOrderings::firstWeightVector(mo),
             (std::vector<int> {1, 1, 0, 0}));
 }
+
+// In a product, the Weights part of a later factor is shifted past the
+// variables of the earlier factors (zero-padded on the left).
+TEST(MonomialOrdering, productShiftsWeights)
+{
+  auto* mo = MonomialOrderings::product(
+      {MonomialOrderings::Lex(2),
+       MonomialOrderings::join({MonomialOrderings::Weights({3, 4}),
+                                MonomialOrderings::Lex(2)})});
+  ASSERT_EQ(MonomialOrderings::numberOfVariables(mo), 4);
+  EXPECT_EQ(MonomialOrderings::toString(mo),
+            "MonomialOrder => {\n"
+            "    Lex => 2,\n"
+            "    Weights => {0,0,3,4},\n"
+            "    Lex => 2\n"
+            "    }");
+}
