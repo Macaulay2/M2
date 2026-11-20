@@ -104,10 +104,16 @@ quasiPolynomial List := L -> (
         L1:=for p in L list ((for i in 0..D-length p -1 list 0)|p);
         quasiPolynomial(matrix(L1))
         )
-    else if not isMember(false, for l in L list instance(class l,PolynomialRing)) then(
-        if not isMember(false, for l in L list numgens class l==1) then (
-            D1:=max for p in L list (degree p)#0;
-            lM:=for p in L list sub( (coefficients(p, Monomials=>for d in 0..D1 list ((generators class p)#0)^(D1-d)))#1, QQ);
+    else if not isMember(false, for l in L list instance(class l, PolynomialRing) or class l === QQ or class l === ZZ) then(
+        if not isMember(false, for l in L list numgens class l == 1 or numgens class l == 0) then (
+            D1:=max for p in L list (
+                if instance(class p, PolynomialRing) then (degree p)#0
+                else 0
+                );
+            lM:=for p in L list (
+                if instance(class p, PolynomialRing) then sub( (coefficients(p, Monomials=>for d in 0..D1 list ((generators class p)#0)^(D1-d)))#1, QQ)
+                else transpose matrix({toList(D1:0)|{p}})
+                );
             M:=transpose fold((a,b) -> a|b, lM);
             quasiPolynomial(M)
             )
@@ -688,7 +694,7 @@ doc ///
     QuasiPolynomial
     (symbol SPACE, QuasiPolynomial, ZZ)
   Headline
-    Ehrhart quasi-polynomial of a rational polytope
+    quasi-polynomial from coefficient matrix or constituent polynomials
   Usage
     QP = quasiPolynomial(M)
     QP = quasiPolynomial(L)
