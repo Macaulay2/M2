@@ -244,6 +244,7 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
        (symbol isCommutative) => false,
        (symbol isHomogeneous) => true,
        (symbol CoefficientRing) => A,
+       (symbol char) => char A,
        (symbol cache) => new CacheTable from {},
        (symbol baseRings) => append(A.baseRings,A)
        };
