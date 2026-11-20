@@ -1,7 +1,7 @@
 ###############################################################################
 # See https://clang.llvm.org/docs/SourceBasedCodeCoverage.html
 find_program(LLVM_PROFDATA	NAMES llvm-profdata)
-find_program(LLVM_COV		NAMES clang-format)
+find_program(LLVM_COV		NAMES llvm-cov)
 
 set(_coverage_dir ${CMAKE_BINARY_DIR}/coverage)
 

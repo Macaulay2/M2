@@ -2927,7 +2927,10 @@ setupfun("rawMutableMatrixFillRandom",rawMutableMatrixFillRandom);
 export rawLinAlgRank(e:Expr):Expr := (
      when e
      is m:RawMutableMatrixCell
-     do toExpr(Ccode(long, "rawLinAlgRank(", m.p, ")" ))
+     do (
+         r := Ccode(long, "rawLinAlgRank(", m.p, ")" );
+         if r == long(-1) then engineErrorMessage()
+         else toExpr(r))
      else WrongArgMutableMatrix());
 setupfun("rawLinAlgRank",rawLinAlgRank);
 

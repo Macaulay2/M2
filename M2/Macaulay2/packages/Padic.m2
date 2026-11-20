@@ -16,8 +16,8 @@
 
 newPackage("Padic",
     Headline => "p-adic numbers",
-    Version => "0.2",
-    Date => "June 5, 2026",
+    Version => "0.3",
+    Date => "July 19, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance9@gatech.edu",
@@ -32,6 +32,9 @@ newPackage("Padic",
 ---------------
 
 -*
+
+0.3 (2026-07-19, M2 1.26.11)
+* add texMath and mathML methods
 
 0.2 (2026-06-05, M2 1.26.06)
 * update my contact info
@@ -53,7 +56,10 @@ endpkg = msg -> (
 if not ForeignFunctions#"private dictionary"#?"foreignFunction"
 then endpkg "foreign function interface is not available"
 
-flint = try openSharedLibrary "flint" else endpkg "flint is not available"
+flint = (
+    try openSharedLibrary "flint"
+    else try foreignFunction("fmpz_init", void, voidstar) then null
+    else endpkg "flint is not available")
 
 export {
     -- methods
@@ -216,6 +222,8 @@ PadicFieldFamily.synonym = "p-adic field family"
 expression PadicFieldFamily := kk -> Subscript(QQ, prime kk)
 net PadicFieldFamily := net @@ expression
 toString PadicFieldFamily := toString @@ expression
+texMath PadicFieldFamily := texMath @@ expression
+mathML PadicFieldFamily := mathML @@ expression
 
 PadicNumber = new Type of Number
 PadicNumber.synonym = "p-adic number"
@@ -242,6 +250,18 @@ toString PadicNumber := x -> (
     -- from src/padic/get_str.c
     n := (N - v) * (2 * numdigits p + numdigits max(abs v, abs N) + 5) + 1;
     value padicGetStr(concatenate(n:"\0"), x.number, x.context))
+expression PadicNumber := x -> (
+    s := toString x;
+    Sum apply(separate(" \\+ ", s), term -> (
+            factors := separate("\\*", term);
+            if #factors == 1 then value factors#0
+            else if #factors == 2
+            then Product(
+                value factors#0,
+                Power(value \ separate("\\^", factors#1))))))
+texMath PadicNumber := texMath @@ expression
+mathML PadicNumber := mathML @@ expression
+
 
 PadicNumber.AfterPrint = lookup(AfterPrint, InexactNumber)
 
@@ -497,7 +517,12 @@ undocumented {
     (expression, PadicFieldFamily),
     (net, PadicFieldFamily),
     (toString, PadicFieldFamily),
+    (texMath, PadicFieldFamily),
+    (mathML, PadicFieldFamily),
     (toString, PadicNumber),
+    (expression, PadicNumber),
+    (texMath, PadicNumber),
+    (mathML, PadicNumber),
     (peek', ZZ, PadicNumber),
     (describe, PadicNumber)}
 

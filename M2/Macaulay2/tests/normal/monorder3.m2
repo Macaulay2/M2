@@ -30,5 +30,13 @@ S = ZZ/101[a..d, MonomialOrder=> {Position=>Up, Lex=>2, MonomialSize=>8, Lex => 
 raw monoid S
 *-
 
+-- https://github.com/Macaulay2/M2/issues/4672
+S = QQ[x,y,z, MonomialOrder => {Lex => 1, GLex}]
+assert(toList (options S).MonomialOrder === {MonomialSize => 32, Lex => 1, Weights => {1, 1}, Lex => 2, Position => Up})
+S' = QQ[x,y,z, MonomialOrder => {Lex => 1, GLex => 2}]
+assert((options S').MonomialOrder === (options S).MonomialOrder)
 
-
+U = QQ[u]
+T = U[x,y,z, MonomialOrder => {Lex => 1, GLex}]
+assert(leadTerm(u^3 + y*z) == y*z)
+assert(leadMonomial(u^3 + y*z) == y*z)

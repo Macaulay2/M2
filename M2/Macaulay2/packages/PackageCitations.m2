@@ -150,7 +150,6 @@ iCite Package := P -> (
     T := P#"pkgname"; -- package title
     V := concatenate("Version~", P#Options#Version); -- package version
     isInternalPackage := member(T, separate (" ", version#"packages"));
-    isInternalSource := P#"source directory" === prefixDirectory | currentLayout#"packages";
     certificationInfo := if P#Options#Certification =!= null then hashTable P#Options#Certification else null;
     -- bibtex author content
     if not P#Options#?Authors
@@ -183,23 +182,20 @@ iCite Package := P -> (
         then concatenate ("{", T, ": ", headlineToTex P, ". ", V, "}")
         else concatenate ("{", T, ": A \\emph{Macaulay2} package. ", V, "}");
     -- bibtex howpublished content
-    bibPackageSource :=
-        if isInternalPackage and isInternalSource
-            then "\\url{https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages}"
-        else if isInternalPackage and not isInternalSource
-            then if P#Options#HomePage =!= null
-                then concatenate("\"", toString (P#Options#HomePage), "\"")
-            else "\\url{https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages}"
-        else if P#Options#HomePage === null
-            then printerr("Warning: the ", format T, " package provides insufficient citation data: howpublished.")
-        else concatenate("\\url{" ,toString (P#Options#HomePage), "}");
+    bibPackageSource := (
+        url := P.Options.HomePage ?? (
+            if isInternalPackage
+            then "https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages");
+        if url =!= null then concatenate("\\url{", url, "}"));
     bibtexString :=
         concatenate (
             "@misc{", T, "Source,\n",
-                concatenate ("  title = {", bibPackageTitle, "},\n"),
-                concatenate ("  author = {", bibPackageAuthors, "},\n"),
-                concatenate (///  howpublished = {A \emph{Macaulay2} package available at///, newline, 4, bibPackageSource, "}\n"),
-            "}\n",
+            "  author = {", bibPackageAuthors, "},\n",
+            "  title = {", bibPackageTitle, "},\n",
+            "  howpublished = {A \\emph{Macaulay2} package",
+            if bibPackageSource =!= null
+            then (" available at", newline, 4, bibPackageSource),
+            "}\n}\n",
             bibtexCert);
     bibtexString
     )
