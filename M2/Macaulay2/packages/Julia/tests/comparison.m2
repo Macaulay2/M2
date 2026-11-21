@@ -1,0 +1,45 @@
+assert BinaryOperation(symbol <, JuliaObject 2, JuliaObject 3)
+assert BinaryOperation(symbol <, JuliaObject 2, 3)
+assert BinaryOperation(symbol <, 2, JuliaObject 3)
+assert BinaryOperation(symbol <=, JuliaObject 2, JuliaObject 3)
+assert BinaryOperation(symbol <=, JuliaObject 2, 3)
+assert BinaryOperation(symbol <=, 2, JuliaObject 3)
+assert BinaryOperation(symbol <=, JuliaObject 2, JuliaObject 2)
+assert BinaryOperation(symbol <=, JuliaObject 2, 2)
+assert BinaryOperation(symbol <=, 2, JuliaObject 2)
+assert BinaryOperation(symbol >, JuliaObject 4, JuliaObject 3)
+assert BinaryOperation(symbol >, JuliaObject 4, 3)
+assert BinaryOperation(symbol >, 4, JuliaObject 3)
+assert BinaryOperation(symbol >=, JuliaObject 4, JuliaObject 3)
+assert BinaryOperation(symbol >=, JuliaObject 4, 3)
+assert BinaryOperation(symbol >=, 4, JuliaObject 3)
+assert BinaryOperation(symbol >=, JuliaObject 2, JuliaObject 2)
+assert BinaryOperation(symbol >=, JuliaObject 2, 2)
+assert BinaryOperation(symbol >=, 2, JuliaObject 2)
+
+-- equality
+assert(JuliaObject 2 == JuliaObject 2)
+assert(JuliaObject 2 == 2)
+assert(2 == JuliaObject 2)
+assert(JuliaObject 2 == JuliaObject 2.0)
+assert(JuliaObject 2 != JuliaObject 3)
+assert(JuliaObject 2 != 3)
+assert(2 != JuliaObject 3)
+assert(JuliaObject "foo" == "foo")
+assert(JuliaObject {1, 2} == {1, 2})
+assert(JuliaObject(2/3) == 2/3)
+
+-- results are M2 booleans
+assert instance(JuliaObject 2 == JuliaObject 2, Boolean)
+
+-- ?
+assert Equation(JuliaObject 2 ? JuliaObject 3, symbol <)
+assert Equation(JuliaObject 3 ? 2, symbol >)
+assert Equation(2 ? JuliaObject 2, symbol ==)
+assert Equation(JuliaObject(0/0.) ? JuliaObject 1, incomparable)
+assert Equation(JuliaObject "a" ? JuliaObject "b", symbol <)
+
+-- sorting
+assert Equation(value \ sort {JuliaObject 3, JuliaObject 1, JuliaObject 2}, {1, 2, 3})
+assert Equation(max(JuliaObject 3, JuliaObject 5), JuliaObject 5)
+assert Equation(min(JuliaObject 3, JuliaObject 5), JuliaObject 3)
