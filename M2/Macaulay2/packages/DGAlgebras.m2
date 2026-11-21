@@ -294,9 +294,10 @@ freeDGAlgebra (Ring,List) := opts -> (R,degList) -> (
             | "Pass Variable => \"<fresh base name>\" (or an explicit list of symbols) to freeDGAlgebra / koszulComplexDGA to avoid the clash.");
    );
    A#(symbol diff) = {};
-   -- Handle empty degree list: build a trivial polynomial ring over R with no T-generators.
+   -- With no generators, specify the grading explicitly: the base lies in homological degree zero.
    if #degList == 0 then (
-      A#(symbol natural) = R[varsList, Join => false];
+      A#(symbol natural) = R[varsList, Join => false, DegreeRank => 1 + degreeLength R,
+         DegreeMap => (d -> prepend(0,d))];
    )
    else if isHomogeneous R then (
       -- make sure the degree list has the right form.
@@ -309,7 +310,7 @@ freeDGAlgebra (Ring,List) := opts -> (R,degList) -> (
    A#(symbol isHomogeneous) = false;
    A.natural.cache = new CacheTable;
    if #degList == 0 then
-      A.natural.cache#(symbol basisAlgebra) = (A.ring)[varsList, Join => false, DegreeMap => (d -> {0}), MonomialOrder => GRevLex]
+      A.natural.cache#(symbol basisAlgebra) = (A.ring)[varsList, Join => false, DegreeRank => 1, DegreeMap => (d -> {0}), MonomialOrder => GRevLex]
    else
       A.natural.cache#(symbol basisAlgebra) = (A.ring)[varsList, Join => false, DegreeMap => (d -> {0}), MonomialOrder => GRevLex, Degrees => apply(degList, i -> {first i}), SkewCommutative => select(toList(0..(#degList-1)), i -> odd first degList#i)];
    use A.natural;
@@ -741,25 +742,28 @@ expandGeomSeries (List,ZZ) := (fList,n) -> (
    homVar := first gens A;
    B := A/ideal (homVar^(n+1));
    phi := map(B,A);
-   substitute(product apply(fList, f -> sum apply(n,i -> phi(f)^i)),A)
+   substitute(product apply(fList, f -> sum apply(n+1,i -> phi(f)^i)),A)
 )
 
 deviationsToPoincare = method(Options=>{DegreeLimit=>0})
 deviationsToPoincare HashTable := opts -> devHash -> (
    S := getSymbol("S");
    T := getSymbol("T");
-   pairsDevHash := pairs devHash;
-   if instance(first first pairsDevHash, Sequence) then pairsDevHash = apply(pairsDevHash, p -> (p#0#0,p#0#1,p#1));
-   numTVars := #(first pairsDevHash) - 3;
-   tVars := toList (T_0..T_numTVars);
-   n := opts.DegreeLimit;
-   n = max(n,max apply(pairsDevHash, p -> first p));
-   A := ZZ[S,tVars];
-   B := A/ideal (first gens A)^(n+1);
-   tVars = drop(gens B,1);
-   powerFunc := p -> if numTVars == -1 then 1_B else product apply(#(p#1), i -> (tVars#i)^(p#1#i));
-   product apply(pairsDevHash, p -> if even first p then (expandGeomSeries((first gens B)^(first p)*(powerFunc p),n))^(last p)
-                                                    else (1+((first gens B)^(first p)*(powerFunc p)))^(last p))
+   -- Each entry records the homological degree, internal degrees and multiplicity.
+   data := apply(pairs devHash, (key,m) ->
+       if instance(key,Sequence) then (key#0,key#1,m) else (key,{},m));
+   numInternal := if #data == 0 then 0 else #(data#0#1);
+   n := max(prepend(opts.DegreeLimit,apply(data,first)));
+   A := ZZ[S,apply(numInternal,i -> T_i)];
+   B := A/ideal (A_0^(n+1));
+   series := 1_B;
+   for entry in data do (
+       (h,internal,multiplicity) := entry;
+       mon := B_0^h * product(#internal,i -> B_(i+1)^(internal#i));
+       factor := if even h then expandGeomSeries(mon,n) else 1_B+mon;
+       series = series * factor^multiplicity;
+   );
+   series
 )
 
 torAlgebra = method(TypicalValue=>Ring, Options=>{GenDegreeLimit=>infinity,RelDegreeLimit=>infinity})
@@ -2780,7 +2784,13 @@ isMinimalSemifreeResolution DGModule := M -> (
     -- (1) Augmentation-ideal check.
     killT := map(R, A.natural,
         matrix{apply(numgens A.natural, i -> 0_R)});
-    mR := if numgens R > 0 then ideal vars R else ideal 0_R;
+    -- The augmentation kills the variables at every level of a polynomial tower.
+    mR := ideal 0_R;
+    C := R;
+    while (instance(C, PolynomialRing) or instance(C, QuotientRing)) and not isField C do (
+        mR = mR + sub(ideal vars C, R);
+        C = coefficientRing C;
+    );
     augIsZero := f -> (
         if f == 0 then true
         else (killT f) % mR == 0
@@ -2837,12 +2847,12 @@ minimizeDGModule DGModule := M -> (
     A := M.dgAlgebra;
     R := A.ring;
     kk := coefficientRing R;
-    -- Test if an A.natural element lifts to a nonzero scalar in kk.
+    -- The coefficient ring of a polynomial tower can itself have nonunits.
     asScalarUnit := u -> (
         if u == 0 then return null;
         v := null;
         try (v = lift(u, kk)) else return null;
-        if v == 0 then null else v
+        if isUnit v then v else null
     );
     -- Find the first (i, j, u) where M.diff#j has scalar unit u on row i.
     findPair := M0 -> (
