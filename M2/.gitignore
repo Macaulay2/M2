@@ -59,6 +59,8 @@
 /Macaulay2/e/Makefile.common
 /Macaulay2/e/f4/Makefile
 /Macaulay2/e/unit-tests/Makefile
+/Macaulay2/e/benchmarks/Makefile
+/Macaulay2/e/benchmarks/M2-benchmarks
 /Macaulay2/d/distributed-packages.h
 /Macaulay2/editors/Makefile
 /Macaulay2/html-check-links/Makefile
