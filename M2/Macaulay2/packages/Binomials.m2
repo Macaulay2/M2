@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 --  Binomials.m2
 --
---  Copyright (C) 2009-2014 Thomas Kahle <thomas.kahle@jpberlin.de>
+--  Copyright (C) 2009-2026 Thomas Kahle <thomas.kahle@jpberlin.de>
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --
@@ -19,1903 +19,2797 @@
 --  with this program; if not, see <https://www.gnu.org/licenses/>.
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+--  Version 2.0 is a rewrite of version 1.2.1 with the same interface.  It
+--  was made in the M2Renew project (Thomas Kahle, Samuel Lundqvist) with
+--  coding agents; the workbook of that rewrite documents every change.
 
 newPackage(
-	"Binomials",
-	Version => "1.2.1",
-	Date => "January 2018",
-	Authors => {{
-		  Name => "Thomas Kahle",
-		  Email => "thomas.kahle@jpberlin.de",
-		  HomePage => "http://www.thomas-kahle.de"}},
-    	Headline => "specialized routines for binomial ideals",
-	Keywords => {"Commutative Algebra"},
-	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "MinimalPrimes", "Elimination", "Classic"},
-	Certification => {
-	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	     "journal URI" => "https://msp.org/jsag/",
-	     "article title" => "Decompositions of binomial ideals",
-	     "acceptance date" => "2012-02-06",
-	     "published article URI" => "https://msp.org/jsag/2012/4-1/p01.xhtml",
-	     "published article DOI" => "10.2140/jsag.2012.4.1",
-	     "published code URI" => "https://msp.org/jsag/2012/4-1/jsag-v4-n1-x01-code.zip",
-	     "release at publication" => "6c927c4f11724e29840c889e5ac7a426b17685ab",
-	     "version at publication" => "1.0",
-	     "volume number" => "4",
-	     "volume URI" => "https://msp.org/jsag/2012/4-1/"
-	     }
-    	)
-   
-export {
-     -- 'Official' functions
-     "binomialPrimaryDecomposition",
-     "binomialCellularDecomposition",
-     "binomialUnmixedDecomposition",
-     "binomialRadical",
-     "binomialMinimalPrimes",
-     "binomialAssociatedPrimes",
-     "binomialSolve",
-     -- tests
-     "binomialIsPrime",
-     "binomialIsPrimary",
-     "cellularBinomialIsPrimary",
-     "isCellular",
-     "isBinomial",
-     "isUnital",
-     -- input related
-     "makeBinomial",
-     "latticeBasisIdeal",
-     -- cellular stuff:
-     "cellularBinomialAssociatedPrimes",
-     "cellularBinomialUnmixedDecomposition",
-     -- "cellularAssociatedLattices",
-     "cellularBinomialPrimaryDecomposition",
-     "cellularBinomialRadical",
-     -- simple wrappers:
-     "BPD",
-     "BCD",
-     "BUD",
-     -- auxiliary functions:
-     "partialCharacter",
-     "idealFromCharacter",  -- should be renamed to ideal once M2 supports this
-     "randomBinomialIdeal",
-     "extractInclusionMinimalIdeals",
-     -- Not in the interface:
---     "axisSaturate",
---     "cellVars",
---     "cellularEmbeddedLatticeWitnesses",
---     "Lsat",
---     "saturatePChar",
---     "satIdeals",
---     "nonCellstdm",
---     "maxNonCellstdm",
---     "minimalPrimaryComponent",
---     "binomialFrobeniusPower",
-
-     -- Options
-     "CellVariables", -- for partialCharacter
-     "ReturnPrimes", -- for cellularBinomialIsPrimary 
-     "ReturnPChars", -- for cellularBinomialIsPrimary
-     "ReturnCellVars", -- for binomialCellularDecomposition
-     
-     --Types
-     "PartialCharacter"--HashTable
-     }
-
-axisSaturate = (I,i) -> (
--- By Ignacio Ojeda and Mike Stillman
--- For computing saturations w.r.t. a single variable:
-    R := ring I;
-    I1 := ideal(1_R);
-    s := 0;
-    f := R_i;
-    while not(I1 == I) do (
-	s = s + 1;
-	I1 = I;
-	I = ideal syz gb(matrix{{f}}|gens I,
-            SyzygyRows=>1,Syzygies=>true););
-    {s-1, I}
+    "Binomials",
+    Version => "2.0",
+    Date => "October 2026",
+    Authors => {{
+            Name => "Thomas Kahle",
+            Email => "thomas.kahle@jpberlin.de",
+            HomePage => "http://www.thomas-kahle.de"}},
+    Headline => "specialized routines for binomial ideals",
+    Keywords => {"Commutative Algebra"},
+    PackageImports => {"Cyclotomic", "LLLBases", "Elimination", "FourTiTwo"},
+    AuxiliaryFiles => true,
+    Certification => {
+        "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+        "journal URI" => "https://msp.org/jsag/",
+        "article title" => "Decompositions of binomial ideals",
+        "acceptance date" => "2012-02-06",
+        "published article URI" => "https://msp.org/jsag/2012/4-1/p01.xhtml",
+        "published article DOI" => "10.2140/jsag.2012.4.1",
+        "published code URI" => "https://msp.org/jsag/2012/4-1/jsag-v4-n1-x01-code.zip",
+        "release at publication" => "6c927c4f11724e29840c889e5ac7a426b17685ab",
+        "version at publication" => "1.0",
+        "volume number" => "4",
+        "volume URI" => "https://msp.org/jsag/2012/4-1/"
+        }
     )
 
--- Cellular decomposition of binomial ideals:
-binomialCellularDecomposition = method (Options => {ReturnCellVars => false, Verbose=>false})
-binomialCellularDecomposition Ideal := Ideal => o -> I -> (
--- based on code by Ignacio Ojeda and Mike Stillman     
-     R := ring I;
-     if I == ideal (1_R) then return {};
-     n := numgens R;
-     Answer := {};
-     L := null;
-     IntersectAnswer := ideal(1_R);
-     ToDo := {{{1_R},toList(0..n-1),I}};
-     -- Each entry of the ToDoList is a triple:
-     -- #0 contains list of variables with respect to which is already saturated
-     -- #1 contains variables to be considered for cell variables
-     -- #2 is the ideal to decompose
-     compo := 0;
-     next := () -> (
-	 if #ToDo === 0 then false
-	 else (
-	      L = ToDo#0;
-	      ToDo = drop(ToDo,1);
-	      if gens IntersectAnswer % L#2 == 0 then (
-		   if o#Verbose then (
-			<< "redundant component" << endl;
-			)
-		   )
-	      -- if its not redundant:
-	      else if #(L#1) === 0 then ( -- #(L#1) counts 'remaining variables to check'
-		   -- no variables remain to check :
-		   -- We have an answer
-                   compo = compo + 1; 
-		   newone := trim L#2;
-		   if o#Verbose then (
-			<< "cellular components found: " << compo << endl;);
-		   if o#ReturnCellVars then Answer = append(Answer,{newone, delete(1_R,L#0)})
-		   else Answer = append (Answer,newone);
-		   IntersectAnswer = intersect(IntersectAnswer,newone);
-		   -- if we have enough, stop after this iteration
-		   if IntersectAnswer == I then ToDo = {})
-	      else ( -- So, there are remaining variables #(L#1) is not zero
-	           i := L#1#0; -- i is a variable under consideration
-		   newL1 := drop(L#1,1); -- gets removed from the list
-	           result := axisSaturate(L#2, i); -- compute saturation wrt i
-		   J := result#1; -- Ideal
-		   k := result#0; -- Saturation Exponent
-		   if k > 0 then ( -- If a division was needed:
-     	       	    	-- We add the monomial i^k to ideal under consideration		      	   	
-			J2 := L#2 + ideal(R_i^k); 
-     	       	    	-- And remove L#0 components from variables that we already
-			-- considered before
-			J2 = saturate(J2, product L#0);
-			if J2 != ideal(1_R) then
-			    -- If something is left after removing we have more to decompose J2
-			    ToDo = prepend({L#0, newL1, J2},ToDo));
-		       -- Continue with the next variable and add i to L#0
-		   if J != ideal(1_R) then ToDo = prepend({L#0|{R_i}, newL1, J},ToDo);
-		   );
-	      true));
-     while next() do ();
-     Answer	      
-     )
+export {
+    -- decompositions and primes
+    "binomialPrimaryDecomposition",
+    "binomialCellularDecomposition",
+    "binomialUnmixedDecomposition",
+    "binomialRadical",
+    "binomialMinimalPrimes",
+    "binomialAssociatedPrimes",
+    "binomialSolve",
+    -- tests
+    "binomialIsPrime",
+    "binomialIsPrimary",
+    "cellularBinomialIsPrimary",
+    "isCellular",
+    "isBinomial",
+    "isUnital",
+    "binomialBasis",
+    "GroebnerFree",
+    -- input
+    "makeBinomial",
+    "latticeBasisIdeal",
+    -- cellular ideals
+    "cellularBinomialAssociatedPrimes",
+    "cellularBinomialUnmixedDecomposition",
+    "cellularBinomialPrimaryDecomposition",
+    "cellularBinomialRadical",
+    -- synonyms
+    "BPD",
+    "BCD",
+    "BUD",
+    -- auxiliary functions
+    "partialCharacter",
+    "idealFromCharacter",
+    "randomBinomialIdeal",
+    "extractInclusionMinimalIdeals",
+    -- options
+    "CellVariables",
+    "ReturnPrimes",
+    "ReturnPChars",
+    "ReturnCellVars",
+    -- types
+    "PartialCharacter"
+    }
 
--- This function saturates an integer lattice. It expects 
--- the matrix A, whose image is the lattice. 
-Lsat = A -> LLL syz transpose LLL syz transpose A;
+------------------------------------------------------------------------------
+-- Conventions
+--
+-- Throughout, a binomial is a polynomial with at most two terms, and a
+-- binomial ideal is an ideal generated by binomials.  An ideal I of
+-- R = k[x_0..x_(n-1)] is cellular if modulo I every variable is either a
+-- nonzerodivisor (a cell variable) or nilpotent.
+--
+-- Internally variables are referred to by their index in the ring, never by
+-- name or by value.  This keeps everything correct when the coefficient field
+-- has to be extended, because the extended ring has the same variables at the
+-- same positions.
+--
+-- A partial character is a pair (L, c): the columns of the integer matrix L
+-- are a basis of a lattice in ZZ^E, where E is the set of cell variables, and
+-- c lists the values of the character on these columns.  It stands for the
+-- lattice ideal generated by all x^u - c(u-v) x^v with u - v in the lattice.
+------------------------------------------------------------------------------
 
-isCellular = method (Options => {ReturnCellVars => false})
-isCellular Ideal := Ideal => o -> I -> (
-     -- This function checks if a binomial ideal is cellular
-     -- In the affirmative case it can return the cellular (regular) variables.
-     R := ring I;
-     cv := cellVars I;
-     if cv == {} then prod := 1_R else prod = product cv;
-     if I == saturate (I, prod) then (
-	  -- I is cellular 
-	  if o#ReturnCellVars then return cv
-	  else return true;
-	  )
-     else false)
+------------------------------------------------------------------------------
+-- Small tools
+------------------------------------------------------------------------------
 
-cellVars = method (Options => {CellVariables => null})
-cellVars Ideal := Ideal => o -> I -> (
-     -- This function computes the cell variables for a cellular ideal if necessary.
-     if o#CellVariables === null then (
-	  cv := {};
-	  for i in gens ring I do if saturate (I,i) != substitute(ideal(1), ring I) then cv=cv|{i};
-	  return cv;
-	  )
-     else o#CellVariables)
+unitIdeal = R -> ideal 1_R
 
---  Setting up the PartialCharacter Type
-PartialCharacter = new Type of HashTable;
+-- the product of the variables with the given indices
+varProduct = (R, idx) -> if #idx == 0 then 1_R else product(idx, i -> R_i)
 
-partialCharacter = method (Options => {CellVariables => null})
-partialCharacter Ideal := Ideal => o -> I -> (
-     -- Will compute the partial character associated to a cellular binomial ideal.
-     -- If the cell variables are known they can be given as an optional argument.
-     
-     vs := {}; -- This will hold the lattice generators
-     vsmat := matrix "0"; -- Holds the matrix whose image is L 
-     cl := {}; -- This will hold the coefficients
-     R := ring I;
-     CoeffR := coefficientRing R; -- needed to form terms below
-     II := ideal;
-     
-     -- The input should be a cellular ideal 
-     cv := cellVars(I, CellVariables=>o#CellVariables);
-     ncv := toList (set gens R - cv);
-     
-     -- If there are no cellular variables, 
-     -- the ideal is monomial and the partial character is zero:
-     if cv == {} then (
-	  return new PartialCharacter from {"J"=>{}, "L"=>matrix "0", "c"=>{1}};
-	  );
-     
-     -- We need to construct this ring to properly extract coefficients below
-     S := CoeffR(monoid [cv]);
-     
-     -- intersect I with the ring k[cv] and map to S
-     if #ncv != 0 then (
-     	  II = sub(eliminate (ncv, I),S);
-	  )
-     else (
-	  -- S = R, stick with original def!
-	  II = I;
-	  );
+-- Turn the value of the option CellVariables into a list of indices.
+-- The variables may belong to another ring with the same variables.
+indicesOfVariables = cv -> apply(cv, v -> (
+        i := try index v else null;
+        if i === null then error "CellVariables: expected a list of variables";
+        i))
 
-     -- The partial character of the zero ideal is on the zero lattice.
-     if ( II == 0 ) then (
-	  for i in cv do vs = vs | { 0_ZZ };
-	  cl = {1_ZZ};
-	  return new PartialCharacter from {"J"=>cv, "L"=>transpose matrix {vs}, "c"=>cl};
-	  );
-     
-     -- So, II is not zero:
-     -- Let ts be the list of minimal generators, this uses that II\subset S !
-     ts := entries mingens II;
-     -- for each term, find the exponent vector
-     oldmat := matrix "0";
-     oldvs := {};
-     for t in ts#0 do (
-	  -- Want to check if we already have this generator included
-	  
-	  -- Save the old values
-	  oldmat = vsmat;
-	  oldvs = vs;
-	  	  
-	  -- compute new ones
-	  vs = vs | {((exponents t)#0 - (exponents t)#1)};
-	  vsmat = transpose matrix vs;
-	  
-	  -- Do we need the new generator ?
-	  if image oldmat == image vsmat then (
-	       -- Undo changes:
-	       vsmat = oldmat;
-	       vs = oldvs;
-	       )
-	  else (
-	       -- So we have a new generator : update coefficient list
-	       coeffs := entries ((coefficients(t))#1);
-	       F := coefficientRing ring coeffs#1#0;
-	       coe := for c in coeffs list lift(c#0,F);
-               cl = cl | { sub ( -coe#1 / coe#0, CoeffR) };
-	       );
-	  );
-     
-     return (new PartialCharacter from {"J"=>cv, "L"=> transpose matrix vs , "c"=>cl});
-     )
+-- The decompositions work in polynomial rings over a field with a global
+-- monomial order.  Other rings used to be accepted and gave wrong answers.
+checkRing = I -> (
+    R := ring I;
+    if not (isPolynomialRing R and isCommutative R and isField coefficientRing R) then
+        error "expected an ideal of a polynomial ring over a field";
+    if not (options monoid R).Global then
+        error "expected a polynomial ring with a global monomial order";
+    -- Macaulay2's saturate fails over a fraction field whose parameters have
+    -- positive degree (decided by Thomas on 2026-11-02: a clear error)
+    K := coefficientRing R;
+    if instance(K, FractionField) and any(degrees last K.baseRings, d -> any(d, e -> e != 0)) then
+        error "the coefficient field is a fraction field whose parameters have positive degree, over which Macaulay2's saturate does not work: make its polynomial ring with Degrees => {0, ..., 0}, as in frac(QQ[a,b, Degrees => {0,0}])")
 
-randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (	 
-     -- Generate 'random' ideals for testing purposes. The distribution is completely heuristic and designed to serve
-     -- internal purposes 
-     -- Inputs: a ring R, the number of generators numgen, the maximal degree of each variable maxdeg,
-     -- the maximal number of variables appearing in binomial, whether the output should be homogeneous
-     
-     -- Caveat: The result might simply be not homogeneous or of the given degree 
-     -- due to deps between the random generators     
-     
-     -- Output: a 'random' binomial ideal.
-     
-     Rge := gens R;
-     ng := #Rge;
-     ge := {};
-     ra := 0; split := 0;
-     va := {}; m := {};
-     z := for i in 0..ng-maxwidth-1 list 0;
-     if homog then (
-	  if odd maxwidth then maxwidth = maxwidth + 1;
-	  for i in 0..numge do (
-	       -- m will be a list of nonzero random exponents
-     	       m = for j in 0..(maxwidth//2)-1 list (
-	       	    ra = (random (2*maxdeg)) +1 ;
-	       	    if ra > maxdeg then ra = -ra // 2;
-	       	    ra
-	       	    );
-	       m = m | for j in 0..(maxwidth//2)-1 list (
-		    ra = (random (2*maxdeg)) +1 ;
-	       	    if ra > maxdeg then ra = -ra // 2;
-	       	    -ra
-		    );
-     	       -- filling with zeros
-	       m = shuffle (m |z);
-     	       ge = ge | {makeBinomial (R,m,1)};
-  	       );  
-	  )
-     else (
-     	  for i in 0..numge do (
-	       -- m will be a list of nonzero random exponents
-     	       m = for j in 0..maxwidth-1 list (
-	       	    ra = (random (2*maxdeg)) +1 ;
-	       	    if ra > maxdeg then ra = -ra // 2;
-	       	    ra
-	       	    );
-     	       -- filling with zeros
-	       m = shuffle (m |z);
-     	       ge = ge | {makeBinomial (R,m,1)};
-  	       );
-	  );
-     ideal (mingens ideal(ge)))
+-- The least power of the variable R_i among the generators of I, or 0.
+-- The table of all pure powers is made once per ideal.
+purePower = (I, i) -> (
+    if not I.cache#?(symbol purePower) then (
+        table := new MutableHashTable;
+        scan(I_*, g -> if size g == 1 then (
+                s := support g;
+                if #s == 1 then (
+                    j := index first s;
+                    d := degree(first s, g);
+                    if not table#?j or table#j > d then table#j = d)));
+        I.cache#(symbol purePower) = table);
+    table' := I.cache#(symbol purePower);
+    if table'#?i then table'#i else 0)
 
-isBinomial = I -> (
-     -- Checking binomiality with a reduced gb.
-     ge := flatten entries gens gb I;
-     for g in ge do (
-          if #(terms g) > 2 then return false;
-	  );
-     true)
+-- Indices of the variables that are not nilpotent modulo I.  A variable that
+-- does not occur in the generators of a proper ideal is not nilpotent, and a
+-- variable with a pure power among the generators is; only the remaining
+-- variables need a saturation.
+cellIndices = I -> (
+    R := ring I;
+    if not I.cache#?(symbol cellIndices) then I.cache#(symbol cellIndices) = (
+        if I == 1 then {}
+        else (
+            occurring := set apply(support I, index);
+            select(numgens R, i -> not occurring#?i or (purePower(I, i) == 0 and saturate(I, R_i) != 1))));
+    I.cache#(symbol cellIndices))
 
-isUnital = I -> (
-     -- A unital ideal is generated by unital binomials and monomials.
-     ge := flatten entries gens gb I;
-     for g in ge do (
-	  coeffs := sort flatten entries (coefficients g)#1;
-	  if coeffs == {1} then continue;
-	  if coeffs == { -1} then continue;
-	  if coeffs == { -1 , 1} then continue;
-	  return false;
-	  );
-     true)
+-- cell variable indices, from the option if given, computed otherwise
+cellIndicesFromOption = (I, cv) -> if cv === null then cellIndices I else indicesOfVariables cv
 
-     
-nonCellstdm = {CellVariables=>null} >> o -> I -> (
-     -- extracts the (finite) set of nilpotent monomials 
-     -- modulo a cellular binomial ideal.
-     R := ring I;
+-- the complement of a list of indices
+otherIndices = (R, idx) -> select(numgens R, i -> not member(i, idx))
 
-     cv := set cellVars(I, CellVariables=>o#CellVariables);
-     -- Extracting  the monomials in the non-Cell variables.
-     -- Problem: They may not live in R because R was extended on the way.
-     -- This use of baseName is intended to fix a problem where the variables in cv 
-     -- are actual variables of a ring over a field extension.
-     ncv := value \ toList (set (baseName \ (gens R)) - baseName \ cv);
-     
-     -- We map I to the subring: kk[ncv]
-     CoeffR := coefficientRing R;
-     S := CoeffR(monoid [ncv]);
-     J := kernel map (R/I,S); 
-     basis (S/J))
+-- the ideal generated by the variables with the given indices
+varIdeal = (R, idx) -> if #idx == 0 then ideal 0_R else ideal(R_* _ idx)
 
-maxNonCellstdm = {CellVariables=>null} >> o -> I -> (
-     -- Computes the maximal monomials in the nilpotent variables
+-- The minimal generators of the monomial ideal generated by a nonempty list
+-- of monomials, in the order of mingens ideal L: ascending by degree, then
+-- by the monomial order.  The monomial ideal code of the engine does this
+-- much faster than a Groebner basis: 0.6 s instead of 73 s for the 401467
+-- monomials of a cellular component of adjminors-4x5 (same 10378 generators).
+minimalMonomials = L -> first entries sort(gens monomialIdeal L, DegreeOrder => Ascending, MonomialOrder => Ascending)
 
-     cv := cellVars(I, CellVariables=>o#CellVariables);
-     nm := flatten entries nonCellstdm (I,CellVariables=>cv);
-     -- The following code extracts the maximal elements in a list of monomials 
-     result := {};
-     maxel := 0;
-     while nm != {} do (
-     	  maxel = max nm;
-          -- Add maxel to the result
-      	  result = result | {maxel};
-          -- Delete everyone who is dividing maxel     
-     	  nm = for m in nm list (if maxel // m != 0 then continue; m);
-     );
-     result)
+-- J plus the variables with the given indices; only the variables that are
+-- not generators of J already are added, and J itself is returned if there
+-- are none (1.2.1 added zeros and duplicates)
+plusVariables = (J, idx) -> (
+    R := ring J;
+    gensJ := set J_*;
+    missing := select(idx, i -> not gensJ#?(R_i));
+    if #missing == 0 then J else J + ideal(R_* _ missing))
 
-makeBinomial = (R,m,c) -> (
-     -- constructs the binomial associated to 
-     -- exponent vector m and coefficient c in R
-     var := gens R;
-     posmon :=1_R;
-     negmon :=1_R;
-     for i in 0..#m-1 do (
-     	  if m#i > 0 then (
-		    posmon = posmon * var#i^(m#i)
-		    )
-	       else (
-		    negmon = negmon * var#i^(-m#i)
-		    );
-	       );
-     posmon - c*negmon)
+------------------------------------------------------------------------------
+-- Binomials and lattices: input and output
+------------------------------------------------------------------------------
 
-idealFromCharacter = method();
+makeBinomial = (R, m, c) -> (
+    -- the binomial x^(m+) - c*x^(m-) for an exponent vector m
+    if #m > numgens R then error "makeBinomial: more exponents than variables";
+    posmon := product(#m, i -> if m#i > 0 then R_i^(m#i) else 1_R);
+    negmon := product(#m, i -> if m#i < 0 then R_i^(-m#i) else 1_R);
+    posmon - c * negmon)
+
+latticeBasisIdeal = (R, L) -> (
+    -- the ideal generated by the binomials x^(u+) - x^(u-) for the columns u of L
+    if L == 0 then return ideal 0_R;
+    ideal apply(entries transpose L, m -> makeBinomial(R, m, 1)))
+
+-- Is the ideal binomial?  By default by its reduced Groebner basis.  With
+-- GroebnerFree => true by the algorithm of Conradi and Kahle (Detecting
+-- binomiality, Adv. in Appl. Math. 71 (2015), Algorithm 3.3 and Recipe 4.5),
+-- as in the unreleased version 1.3 of 2018 (Ruilong Zhuang, Alexandru Iosif),
+-- with the zero ideal fixed and step 1 of the recipe added (2026).
+isBinomial = method(Options => {GroebnerFree => false})
+isBinomial Ideal := Boolean => o -> I -> (
+    if not o.GroebnerFree or not isStandardGraded ring I then return isBinomialGroebner I;
+    isB := first isBinomialGroebnerFree I;
+    -- true is final; false is final for homogeneous input, otherwise the
+    -- Groebner basis decides ([CK15] Proposition 4.2)
+    if isB or isHomogeneous I then isB else isBinomialGroebner I)
+
+isBinomialGroebner = I -> all(flatten entries gens gb I, g -> #terms g <= 2)
+
+isStandardGraded = R -> unique degrees R == {{1}}
+
+-- A matrix of binomials that generate I, or null if I is not binomial: by
+-- the algorithm of Conradi and Kahle in a standard graded ring, otherwise
+-- (or if it cannot decide an inhomogeneous ideal) the reduced Groebner basis.
+binomialBasis = method()
+binomialBasis Ideal := Matrix => I -> (
+    if isStandardGraded ring I then (
+        (isB, bins) := isBinomialGroebnerFree I;
+        if isB then return bins;
+        if isHomogeneous I then return null);
+    if isBinomialGroebner I then gens gb I else null)
+
+-- the reduced row echelon form of a matrix over a field, by a Groebner basis
+-- of the linear forms of its rows in a lexicographic order (version 1.3)
+reducedRowEchelon = C -> (
+    if C == 0 then return C;
+    c := numColumns C;
+    K := ring C;
+    v := local v;
+    S := K[v_1 .. v_c, MonomialOrder => Lex];
+    C = sub(transpose (coefficients(matrix {flatten entries gens gb ideal flatten entries (sub(C, S) * transpose vars S)},
+                Monomials => flatten entries vars S))_1, K);
+    matrix reverse entries C)
+
+-- the elements of minimal degree of a list of polynomials in a standard
+-- graded ring (zero is discarded)
+minDegreeElements = L -> (
+    L = select(L, l -> l != 0);
+    d := min apply(L, l -> first degree l);
+    select(L, l -> first degree l == d))
+
+-- does every row of the matrix have at most two nonzero entries?
+isSupportOfRowsAtMostTwo = C -> all(numRows C, r -> #select(numColumns C, j -> C_(r,j) != 0) <= 2)
+
+-- The generators of I after row reduction of their coefficient matrix
+-- ([CK15] Recipe 4.5, step 1: linear algebra on the given generators can
+-- make an inhomogeneous generating set homogeneous, as in Example 2.8).
+rowReducedGenerators = I -> (
+    gs := select(I_*, g -> g != 0);
+    if #gs == 0 then return {};
+    mons := rsort unique flatten apply(gs, g -> flatten entries monomials g);
+    (M, C) := coefficients(matrix {gs}, Monomials => mons);
+    A := reducedRowEchelon transpose C;
+    select(flatten entries (A * transpose M), g -> g != 0))
+
+-- (isB, bins): the algorithm of Conradi and Kahle on the generators of I
+-- after row reduction, homogenized by a new variable if they are not
+-- homogeneous.  isB = true means that I is binomial and bins (a matrix of
+-- binomials) generates it; false is final only for homogeneous input.
+isBinomialGroebnerFree = I -> (
+    R := ring I;
+    gs := rowReducedGenerators I;
+    if #gs == 0 then return (true, map(R^1, R^0, 0));
+    if all(gs, g -> isHomogeneous g) then (
+        (isB, bins) := CKbasisRecursion(set gs, R);
+        return (isB, bins));
+    -- homogenize with a new last variable, and dehomogenize at it = 1
+    Rh := (coefficientRing R)(monoid [Variables => numgens R + 1, MonomialOrder => GRevLex]);
+    toRh := map(Rh, R, take(gens Rh, numgens R));
+    back := map(R, Rh, gens R | {1_R});
+    hgs := flatten entries homogenize(matrix {apply(gs, g -> toRh g)}, last gens Rh);
+    (isBh, binsh) := CKbasisRecursion(set hgs, Rh);
+    if not isBh then return (false, null);
+    (true, matrix {select(flatten entries back binsh, g -> g != 0)}))
+
+-- [CK15] Algorithm 3.3 for a set F of homogeneous polynomials in R, which
+-- may contain zero: (true, matrix of binomials generating the ideal of F)
+-- or (false, null).  In each round the elements of minimal degree are
+-- row reduced; a row with more than two terms means "not binomial";
+-- otherwise the rest is reduced modulo the binomials found.
+CKbasisRecursion = (F, Rorig) -> (
+    F = F - set {0_Rorig};
+    if F === set {} then return (true, map(Rorig^1, Rorig^0, 0));
+    R := Rorig;
+    B := {};
+    while true do (
+        Fmin := minDegreeElements toList F;
+        (M, A) := coefficients(matrix {Fmin}, Monomials => toList set flatten entries monomials matrix {toList F});
+        A = reducedRowEchelon transpose A;
+        M = transpose M;
+        if not isSupportOfRowsAtMostTwo A then return (false, null);
+        B = B | select(flatten entries sub(A * M, Rorig), g -> g != 0);
+        F = F - set Fmin;
+        if F === set {} then return (true, matrix {B});
+        R = R / ideal(A * M);
+        F = (set flatten entries gens sub(ideal toList F, R)) - set {0_R};
+        if F === set {} then return (true, matrix {B})))
+
+-- An error for ideals that are not binomial.  The functions for cellular
+-- ideals used to return wrong answers for them.  If all generators are
+-- binomials, no Groebner basis is needed.
+checkBinomial = I -> if not all(I_*, g -> #terms g <= 2) and not isBinomial I then error "the ideal is not binomial"
+
+-- (The coefficients are compared without sorting: elements of a Galois
+-- field do not sort by value.)
+isUnital = I -> all(flatten entries gens gb I, g -> (
+        cs := flatten entries last coefficients g;
+        (#cs == 1 or #cs == 2 and cs#1 == -cs#0) and (cs#0 == 1 or cs#0 == -1)))
+
+randomBinomialIdeal = (R, numge, maxdeg, maxwidth, homog) -> (
+    -- A 'random' binomial ideal for testing: numge binomials x^(m+) - x^(m-).
+    -- Each exponent vector m has maxwidth nonzero entries, drawn uniformly
+    -- from the nonzero integers of absolute value at most maxdeg.  With homog
+    -- half of the entries are positive and half are negative, and an odd
+    -- maxwidth is increased by one (decreased if there are not enough
+    -- variables).  Minimal generators are returned, so there can be fewer
+    -- than numge and they need not be of this form.
+    ng := numgens R;
+    if maxwidth > ng then error "randomBinomialIdeal: the width exceeds the number of variables";
+    if homog and odd maxwidth then maxwidth = if maxwidth < ng then maxwidth + 1 else maxwidth - 1;
+    z := toList(ng - maxwidth : 0);
+    ge := for i from 1 to numge list (
+        m := if homog then (
+            apply(maxwidth // 2, j -> random(1, maxdeg)) | apply(maxwidth // 2, j -> -random(1, maxdeg)))
+        else apply(maxwidth, j -> (random(1, maxdeg)) * (2 * random 2 - 1));
+        makeBinomial(R, shuffle(m | z), 1));
+    ideal mingens ideal ge)
+
+------------------------------------------------------------------------------
+-- Cellular ideals and the cellular decomposition
+------------------------------------------------------------------------------
+
+isCellular = method(Options => {ReturnCellVars => false})
+isCellular Ideal := o -> I -> (
+    -- I is cellular if it is saturated with respect to the product of the
+    -- variables that are not nilpotent modulo I.
+    checkRing I;
+    R := ring I;
+    cellIdx := cellIndices I;
+    if I : varProduct(R, cellIdx) == I then (
+        if o.ReturnCellVars then R_* _ cellIdx else true)
+    else false)
+
+-- The quotient I : f, as the first row of the syzygies of (f, generators of
+-- I).  On the ideals of the cellular decomposition this was measured to be
+-- faster than the general quotient and saturate functions.  The generators
+-- that come back are far from minimal.
+syzygyQuotient = (I, f) -> ideal syz gb(matrix {{f}} | gens I, SyzygyRows => 1, Syzygies => true)
+
+-- For homogeneous ideals: a ring with the same variables in graded reverse
+-- lexicographic order, the variable with index i last, and the two
+-- isomorphisms.  The rings are made once per ring and variable.
+grevlexRing = (R, i) -> (
+    if not R#?(symbol grevlexRing) then R#(symbol grevlexRing) = new MutableHashTable;
+    if not R#(symbol grevlexRing)#?i then (
+        n := numgens R;
+        perm := select(n, j -> j != i) | {i};
+        S := (coefficientRing R)(monoid [Variables => n, MonomialOrder => GRevLex]);
+        R#(symbol grevlexRing)#i = (
+            map(S, R, apply(n, j -> S_(position(perm, q -> q == j)))),
+            map(R, S, apply(n, p -> R_(perm#p)))));
+    R#(symbol grevlexRing)#i)
+
+-- homogeneous with respect to the total degree, whatever the grading of the ring
+isTotalDegreeHomogeneous = I -> (
+    R := ring I;
+    if all(degrees R, d -> d == {1}) then isHomogeneous I
+    else all(I_*, g -> #unique apply(exponents g, sum) <= 1))
+
+-- I : x^infinity for the variable x = R_i, together with the least k such
+-- that I : x^k = I : x^infinity.  If I is homogeneous, one Groebner basis in
+-- a graded reverse lexicographic order with x last suffices: dividing its
+-- elements by the powers of x they contain gives the saturation (Bayer and
+-- Stillman).  Otherwise the quotient by x is repeated (Ojeda and Stillman).
+saturateByVariable = (I, i) -> (
+    R := ring I;
+    if isTotalDegreeHomogeneous I then (
+        (toS, toR) := grevlexRing(R, i);
+        (G, e) := divideByVariable(gens gb toS I, (target toS)_(numgens R - 1));
+        return (e, if e == 0 then I else toR ideal G));
+    k := 0;
+    J := syzygyQuotient(I, R_i);
+    while J != I do (k = k + 1; I = J; J = syzygyQuotient(I, R_i));
+    (k, I))
+
+-- I : m^infinity for the product m of the variables with indices idx.
+-- Returns I itself (the same object) if I is saturated already.
+--
+-- A homogeneous ideal is saturated by one variable after the other, with one
+-- Groebner basis each.  The repeated quotient by m is much slower on large
+-- examples: it returns thousands of generators (68 became 58069 in a case
+-- from the birth-death ideal on a 1x5 grid, 6 s against 0.02 s).  For ideals
+-- that are not homogeneous the repeated quotient is used, and the result is
+-- trimmed.
+saturateByCells = (I, idx) -> (
+    R := ring I;
+    if #idx == 0 then return I;
+    if isTotalDegreeHomogeneous I then (
+        scan(idx, i -> if member(R_i, support I) then I = last saturateByVariable(I, i));
+        return I);
+    m := varProduct(R, idx);
+    J := syzygyQuotient(I, m);
+    if isSubset(J, I) then return I;
+    while (I = J; J = syzygyQuotient(I, m); not isSubset(J, I)) do null;
+    trim I)
+
+-- The tree search behind the cellular decomposition (after Ojeda and
+-- Stillman).  The variables are decided one after the other: a node carries
+-- the indices already known to be cell variables, the undecided indices and
+-- an ideal.  At a node with ideal J and variable x one has
+--     J = (J : x^infinity)  intersect  (J + x^k)
+-- for the least k with J : x^k = J : x^infinity.  In the first branch x is a
+-- cell variable, in the second it is nilpotent, and there the saturation
+-- with respect to the cell variables found so far has to be restored.  A
+-- node whose ideal contains the intersection of the components found so far
+-- is redundant.
+--
+-- With radicalMode the second branch uses x instead of x^k; the leaves are
+-- then radical and intersect to the radical of I.
+--
+-- What keeps this fast:
+--   * A variable that does not occur in the generators is a nonzerodivisor,
+--     and a variable with a pure power among the generators is nilpotent.
+--     Both cases need no computation.
+--   * The saturation of the nilpotent branch is postponed until the branch
+--     is taken up.  By then more components are known, and a branch that is
+--     redundant before the saturation is redundant after it.
+--   * The running intersection is not trimmed for homogeneous ideals; the
+--     generators that the syzygy computation returns are minimal already.
+--
+-- Returns (list of pairs (ideal, cell indices), intersection of the ideals).
+cellularTree = (I, radicalMode, verbose) -> (
+    R := ring I;
+    answer := {};
+    intersection := unitIdeal R;
+    trimIntersection := not isTotalDegreeHomogeneous I;
+    -- a node is (cell indices, undecided indices, ideal, pending); pending
+    -- says that the ideal still has to be saturated by the cell variables
+    todo := {({}, toList(0 ..< numgens R), I, false)};
+    while #todo > 0 do (
+        (cells, undecided, J, pending) := todo#0;
+        todo = drop(todo, 1);
+        if isSubset(intersection, J) then (
+            if verbose then << "redundant component" << endl;
+            continue);
+        if pending then (
+            Jsaturated := saturateByCells(J, cells);
+            if Jsaturated == 1 then continue;
+            if Jsaturated =!= J then (
+                J = Jsaturated;
+                if isSubset(intersection, J) then (
+                    if verbose then << "redundant component" << endl;
+                    continue)));
+        -- decide variables for as long as the ideal stays the same
+        split := false;
+        while #undecided > 0 and not split do (
+            i := first undecided;
+            undecided = drop(undecided, 1);
+            if not member(R_i, support J) then (cells = append(cells, i); continue);
+            power := purePower(J, i);
+            if power == 1 or (power > 1 and not radicalMode) then continue;
+            -- with a pure power of x_i in J there is no branch in which x_i
+            -- is a cell variable
+            (k, Jsat) := if power > 1 then (power, unitIdeal R) else saturateByVariable(J, i);
+            if k == 0 then (cells = append(cells, i); continue);
+            split = true;
+            -- the branch in which x_i is nilpotent
+            Jnil := J + ideal(if radicalMode then R_i else R_i^k);
+            if #cells > 0 then todo = prepend((cells, undecided, Jnil, true), todo)
+            else if Jnil != 1 then todo = prepend((cells, undecided, Jnil, false), todo);
+            -- the branch in which x_i is a cell variable comes first
+            if power == 0 and Jsat != 1 then todo = prepend((append(cells, i), undecided, Jsat, false), todo));
+        if split then continue;
+        J = trim J;
+        answer = append(answer, (J, cells));
+        if verbose then << "cellular components found: " << #answer << endl;
+        -- the Default strategy was measured to be twice as fast here as
+        -- the elimination that intersect would choose
+        intersection = intersect(intersection, J, Strategy => Default, MinimalGenerators => trimIntersection);
+        if intersection == I then break);
+    (answer, intersection))
+
+binomialCellularDecomposition = method(Options => {ReturnCellVars => false, Verbose => false})
+binomialCellularDecomposition Ideal := o -> I -> (
+    checkRing I;
+    R := ring I;
+    if I == 1 then return {};
+    cd := first cellularTree(I, false, o.Verbose);
+    if o.ReturnCellVars then apply(cd, p -> {p#0, R_* _ (p#1)})
+    else apply(cd, first))
+
+BCD = I -> binomialCellularDecomposition I
+
+------------------------------------------------------------------------------
+-- Lattices
+--
+-- A lattice in ZZ^n is given by a matrix whose columns generate it.  The
+-- functions below return bases, i.e. matrices with independent columns
+-- (possibly with zero columns).
+------------------------------------------------------------------------------
+
+-- the Hermite normal form basis; a canonical form of the lattice
+hermiteBasis = A -> gens gb image A
+
+-- a basis of the saturation (QQ L) intersect ZZ^n of the lattice L spanned by A
+latticeSaturation = A -> (
+    if numcols A == 0 or A == 0 then return map(target A, ZZ^0, 0);
+    B := syz transpose syz transpose A;
+    if numcols B <= 1 then B else LLL B)
+
+-- the index of the lattice spanned by the basis A in its saturation
+latticeIndex = A -> (
+    if numcols A == 0 then return 1;
+    S := latticeSaturation A;
+    abs det (A // S))
+
+------------------------------------------------------------------------------
+-- Roots of unity
+--
+-- Saturating a partial character needs roots of its values.  This is only
+-- possible inside cyclotomic fields if the values involved are roots of
+-- unity.  A root of unity is written as e(q) = exp(2 pi i q) with q in QQ.
+-- The package Cyclotomic computes with them (cyclotomicRoot, rootOfUnityExponent,
+-- rootOfUnityGenerator, discreteLog, cyclotomicExtension,
+-- cyclotomicInclusion); its top page has the conventions: ww_n = e(1/n), and
+-- in characteristic p, for a finite field with p^n elements, e(k/(p^n - 1))
+-- is gamma^k for gamma a root of the Conway polynomial of degree n.  Every
+-- nonzero element c of a finite field is such a root of unity, c = e(q) with
+-- q (p^n - 1) its discrete logarithm.
+--
+-- A field of characteristic p that is not finite, such as frac(ZZ/p[t]), is
+-- not perfect: the primes of a binomial ideal over it can need inseparable
+-- extensions (x^p - t y^p is prime over ZZ/p(t) and a p-th power over the
+-- algebraic closure).  Such fields are refused wherever a root is needed.
+------------------------------------------------------------------------------
+
+notFiniteFieldMessage = "in positive characteristic the coefficient field must be finite, that is ZZ/p, a Galois field made by GF, or toField(ZZ/p[c]/(f)): other fields of characteristic p are not perfect, and the answer could need inseparable field extensions"
+
+-- (p, n, gamma) for a finite field F = ZZ/p or GF(p^n): the characteristic,
+-- the degree over ZZ/p and the generator gamma of the multiplicative group
+-- (rootOfUnityGenerator of the package Cyclotomic); null for any other field
+-- (also for a field toField(ZZ/p[c]/(f)), which Cyclotomic handles like the
+-- Galois field of the same presentation)
+finiteFieldDataCache = new MutableHashTable
+finiteFieldData = F -> (
+    if char F == 0 then return null;
+    if finiteFieldDataCache#?F then return finiteFieldDataCache#F;
+    g := try rootOfUnityGenerator F else null;
+    finiteFieldDataCache#F = if g === null then null else (
+        p := char F;
+        w := rootOfUnityOrder g;   -- p^n - 1
+        (n, q) := (1, p);
+        while q - 1 < w do (q = q * p; n = n + 1);
+        (p, n, g)))
+
+-- The unique p^a-th root of an element c of a finite field of characteristic
+-- p, given pa = p^a: the Frobenius x -> x^p is an automorphism of order n of
+-- GF(p^n), so the root is c^(p^(-a mod n)).  For 1 and -1 it is c itself.
+pPowerRoot = (c, pa) -> (
+    if pa == 1 or c == 1 or c == -1 then return c;
+    data := finiteFieldData ring c;
+    if data === null then error("cannot take the " | toString pa | "-th root of " | toString c | ": " | notFiniteFieldMessage);
+    (p, n, gamma) := data;
+    a := 0;
+    while pa > 1 do (pa = pa // p; a = a + 1);
+    c^(p^((-a) % n)))
+
+-- the largest divisor of d that is prime to p (d itself if p = 0)
+primeToPart = (d, p) -> (if p > 0 then while d % p == 0 do d = d // p; d)
+
+-- The order n > 2 of the generator ww_n of a cyclotomic field F = QQ[w]/Phi_n,
+-- 1 for QQ, null for any other field of characteristic zero.
+cyclotomicOrder = F -> (
+    if F === QQ then return 1;
+    if char F > 0 then return null;
+    n := try rootOfUnityOrder rootOfUnityGenerator F else null;
+    if n === null then return null;
+    -- the group of roots of unity has order n for n even, 2n for n odd
+    n = rootOfUnityOrder F_0;
+    if n === null or n <= 2 then null else n)
+
+-- q with c = e(q), or null if c is not a root of unity that we recognise.  In
+-- characteristic zero the exponent is written as in version 2.0 before the
+-- switch to Cyclotomic: e/n for c = w^e, e/n + 1/2 for c = -w^e, with the
+-- least such e (w = ww_n); the order of the roots that are taken from it,
+-- and so the order of the results, depends on this representation.
+rootExponent = c -> (
+    F := ring c;
+    if c == 1 then return 0/1;
+    if c == -1 then return 1/2;
+    if char F > 0 then return (if finiteFieldData F === null then null else rootOfUnityExponent c);
+    n := cyclotomicOrder F;
+    if n === null or n == 1 then return null;
+    q := rootOfUnityExponent c;
+    if q === null then return null;
+    e1 := if denominator(q * n) == 1 then numerator(q * n) % n;
+    e2 := if denominator((q - 1/2) * n) == 1 then numerator((q - 1/2) * n) % n;
+    if e2 =!= null and (e1 === null or e2 < e1) then e2/n + 1/2 else e1/n)
+
+-- the smallest N such that e(q) lies in the cyclotomic field of order N
+-- (as constructed by the package Cyclotomic) for all q in the list.  For odd
+-- n the fields of order n and 2n are the same; the odd order is taken, so
+-- that one field is always made as one ring.
+orderForExponents = qs -> (
+    N := lcm(apply(qs, q -> denominator(q/1)) | {1});
+    if N % 4 == 2 then N // 2 else N)
+
+-- e(q) as an element of the field F: 1 and -1 in any field, other roots of
+-- unity in the fields that the package Cyclotomic handles
+rootValue = (F, q) -> (
+    q = q - floor q;
+    if q == 0 then 1_F
+    else if q == 1/2 then -1_F
+    else if char F > 0 and finiteFieldData F === null then error("cyclotomicRoot: " | notFiniteFieldMessage)
+    else cyclotomicRoot(F, q))
+
+-- the exact d-th root of a nonnegative rational number, or null
+rationalRoot = (m, d) -> (
+    -- integer Newton iteration, exact for any size (floating point is not
+    -- beyond 2^53); it decreases from a start above the root to its floor
+    integerRoot := n -> (
+        if n < 2 then return n;
+        b := 1;
+        while 2^b <= n do b = 2 * b;
+        r := 2^(b // d + 1);
+        while (s := ((d - 1) * r + n // r^(d - 1)) // d; s < r) do r = s;
+        if r^d == n then r else null);
+    a := integerRoot numerator(m / 1);
+    b := integerRoot denominator(m / 1);
+    if a === null or b === null then null else a / b)
+
+-- One d-th root of the field element c in the form (a, q), meaning a * e(q)
+-- with a in the field of c, or null if we cannot find one.  All d-th roots
+-- are then a * e(q + t/d) for t = 0, .., d - 1.
+rootOfElement = (c, d) -> (
+    F := ring c;
+    q := rootExponent c;
+    if q =!= null then return (1_F, q / d);
+    m := try lift(c, QQ) else null;
+    if m === null then return null;
+    a := rationalRoot(abs m, d);
+    if a === null then null
+    else (a_F, if m > 0 then 0/1 else 1 / (2 * d)))
+
+------------------------------------------------------------------------------
+-- The congruence classes of a cellular binomial ideal
+--
+-- Let I be cellular with cell variables E and nilpotent variables N, and let
+-- A = k[ZZ^E] be the Laurent polynomial ring in the cell variables.  After
+-- inverting the cell variables, R/I becomes an A-module generated by the
+-- monomials in the nilpotent variables that are not in I.  Every binomial
+--     x^a n - c x^b n'      (a, b exponents of cell variables; n, n' monomials
+--                            in the nilpotent variables)
+-- of I, multiplied by a monomial t in the nilpotent variables, says that the
+-- generators t*n and t*n' are proportional: x^(a-b) e(tn) = c e(tn').  These
+-- relations make the monomials the vertices of a graph whose edges carry a
+-- label (a - b, c).  On each connected component the module is cyclic, and
+-- its annihilator is the lattice ideal of the partial character given by the
+-- labels of the closed walks: a closed walk with label (d, c) contributes the
+-- binomial x^(d+) - c x^(d-).  Consequently
+--   * all monomials m in a component have the same partial character
+--     (I : m) intersect k[E], and
+--   * the associated primes of I are the primes of the saturations of these
+--     characters (Eisenbud-Sturmfels, Theorem 8.1; Kahle-Miller).
+-- A union-find structure that keeps track of the labels computes all
+-- components in one pass, without any Groebner basis besides that of I.
+------------------------------------------------------------------------------
+
+allZero = v -> all(v, z -> z == 0)
+
+-- Check that the variables with indices nilIdx are nilpotent modulo I.  The
+-- search below would not terminate otherwise.  Powers are tested by doubling.
+checkNilpotent = (I, nilIdx) -> (
+    R := ring I;
+    G := gb I;
+    scan(nilIdx, i -> (
+            e := 1;
+            while (matrix {{R_i^e}}) % G != 0 do (
+                e = 2 * e;
+                if e > 2^20 then error("the variable " | toString R_i | " is neither a given cell variable nor nilpotent modulo the ideal")))));
+
+-- all monomials in the variables with indices nilIdx that are not in I,
+-- found degree by degree with normal forms.  The monomials not in I form an
+-- order ideal, so every one of degree d + 1 arises from one of degree d by
+-- multiplying with its largest variable.  Each candidate is therefore made
+-- only from that parent: m * x_i with x_i no smaller than the largest
+-- variable of m.  This makes every candidate once and gives each degree in
+-- descending lexicographic order of the exponents.  Returns the monomials
+-- and their exponent vectors restricted to nilIdx; a child's vector is its
+-- parent's plus a unit vector, which is much cheaper than calling exponents
+-- (36 s for the 450149 monomials of adjminors-4x5).
+nonNilMonomialsWithExponents = (I, nilIdx) -> (
+    R := ring I;
+    G := gb I;
+    checkNilpotent(I, nilIdx);
+    n := #nilIdx;
+    units := apply(n, i -> apply(n, j -> if i == j then 1 else 0));
+    level := {1_R};
+    levelExpo := {toList(n : 0)};
+    maxp := {0};      -- maxp#p: position in nilIdx of the largest variable of level#p
+    result := level;
+    resultExpo := levelExpo;
+    while #level > 0 and n > 0 do (
+        candidates := flatten for p from 0 to #level - 1 list (
+            m := level#p;
+            apply(toList(maxp#p ..< n), i -> (m * R_(nilIdx#i), i, p)));
+        normalForms := flatten entries (matrix {apply(candidates, first)} % G);
+        kept := candidates_(positions(normalForms, f -> f != 0));
+        levelExpo = apply(kept, c -> levelExpo#(c#2) + units#(c#1));
+        level = apply(kept, first);
+        maxp = apply(kept, c -> c#1);
+        result = result | level;
+        resultExpo = resultExpo | levelExpo);
+    (result, resultExpo))
+
+nonNilMonomials = (I, nilIdx) -> first nonNilMonomialsWithExponents(I, nilIdx)
+
+-- The generators of I as binomial data: for a binomial c1*x^e1 + c2*x^e2 the
+-- tuple (nilpotent part of e1, nilpotent part of e2, cell part of e1 - e2, -c2/c1),
+-- which encodes x^e1 = (-c2/c1) x^e2 modulo I.  Monomials are dropped.
+binomialData = (I, cellIdx, nilIdx) -> (
+    gensI := if all(I_*, g -> #terms g <= 2) then I_* else flatten entries gens gb I;
+    for g in gensI list (
+        lf := listForm g;
+        if #lf > 2 then error "the ideal is not binomial";
+        if #lf != 2 then continue;
+        (e1, c1) := lf#0;
+        (e2, c2) := lf#1;
+        (e1_nilIdx, e2_nilIdx, e1_cellIdx - e2_cellIdx, -c2/c1)))
+
+-- Lattice basis and character from a list of labels (d, c) of closed walks:
+-- returns (H, values) with H the Hermite basis of the lattice spanned by the
+-- d's and values the character on the columns of H.
+characterFromLabels = (labels, rank, K) -> (
+    if #labels == 0 then return (map(ZZ^rank, ZZ^0, 0), {});
+    M := transpose matrix apply(labels, first);
+    H := hermiteBasis M;
+    X := H // M;
+    cs := apply(labels, last);
+    (H, apply(numcols H, j -> product(#cs, i -> (cs#i)^(X_(i,j))))))
+
+-- The congruence classes of the cellular ideal I with cell variable indices
+-- cellIdx.  Returns a list of tuples (H, values, monomials, count), one for
+-- each partial character that occurs: the character on the Hermite basis H,
+-- the monomials in the nilpotent variables that have this character, and the
+-- number of connected components they form.  The first tuple belongs to the
+-- monomial 1, i.e. to I intersect k[E].
+congruenceClasses = (I, cellIdx) -> (
+    key := (symbol congruenceClasses, cellIdx);
+    if I.cache#?key then return I.cache#key;
+    R := ring I;
+    K := coefficientRing R;
+    nilIdx := otherIndices(R, cellIdx);
+    (V, expo) := nonNilMonomialsWithExponents(I, nilIdx);
+    nV := #V;
+    position' := hashTable apply(nV, j -> expo#j => j);
+    zero := toList(#cellIdx : 0);
+    -- union-find with labels: vertex j satisfies x^(shift#j) e(j) = coef#j e(parent#j)
+    parent := new MutableList from apply(nV, identity);   -- not 0 ..< nV: Macaulay2 refuses ranges of more than 100000 elements
+    shift := new MutableList from toList(nV : zero);
+    coef := new MutableList from toList(nV : 1_K);
+    loops := new MutableHashTable;   -- root => set of labels of closed walks
+    find := j -> (
+        path := {};
+        while parent#j != j do (path = append(path, j); j = parent#j);
+        s := zero; c := 1_K;
+        scan(reverse path, v -> (
+                s = s + shift#v; c = c * coef#v;
+                parent#v = j; shift#v = s; coef#v = c));
+        j);
+    addLoop := (r, label) -> loops#r = (if loops#?r then loops#r else set {}) + set {label};
+    everywhere := {};                -- labels that hold at every vertex
+    scan(binomialData(I, cellIdx, nilIdx), b -> (
+            (n1, n2, d, c) := b;
+            if allZero n1 and allZero n2 then (
+                everywhere = append(everywhere, (d, c));
+                return);
+            supp := positions(n1, e -> e > 0);   -- only these coordinates can be too small
+            scan(nV, j -> (
+                    u := expo#j;
+                    if any(supp, i -> u#i < n1#i) then return;
+                    k := position'#(u - n1 + n2);
+                    -- the relation x^d e(j) = c e(k)
+                    rj := find j; rk := find k;
+                    dd := d + shift#k - shift#j;
+                    cc := c * coef#k / coef#j;
+                    if rj != rk then (
+                        parent#rj = rk; shift#rj = dd; coef#rj = cc;
+                        if loops#?rj then (
+                            scan(toList loops#rj, l -> addLoop(rk, l));
+                            remove(loops, rj)))
+                    else if not (allZero dd and cc == 1) then addLoop(rk, (dd, cc))))));
+    rootOf := apply(nV, j -> find j);
+    members := partition(j -> rootOf#j, apply(nV, identity));
+    -- Group the components by their character and keep the order of first
+    -- appearance.  Most components have the same closed walks (often none),
+    -- so they are grouped by their sets of loop labels first, and the
+    -- character is computed once per set.
+    -- (Appending to a MutableList is slow; partition is not.)
+    noLoops := set {};
+    rootsOfLoops := partition(r -> if loops#?r then loops#r else noLoops, unique rootOf);
+    loopSets := sort(keys rootsOfLoops, l -> first members#(first rootsOfLoops#l));
+    order := new MutableList;
+    rootsOf := new MutableHashTable;       -- (entries H, values) => lists of roots
+    scan(loopSets, loopSet -> (
+            (H, values) := characterFromLabels(unique(everywhere | toList loopSet), #cellIdx, K);
+            ck := (entries H, values);
+            if not rootsOf#?ck then (rootsOf#ck = {}; order#(#order) = (H, values, ck));
+            rootsOf#ck = append(rootsOf#ck, rootsOfLoops#loopSet)));
+    I.cache#key = apply(toList order, (H, values, ck) -> (
+            -- roots in the order of their first members, as they appeared
+            rs := if #rootsOf#ck == 1 then first rootsOf#ck else sort(flatten rootsOf#ck, r -> first members#r);
+            (H, values, V_(flatten apply(rs, r -> members#r)), #rs))))
+
+------------------------------------------------------------------------------
+-- Saturations of partial characters
+--
+-- Let (L, c) be a partial character and S a basis of the saturation of L,
+-- so L = S*K with a square integer matrix K.  The characters on the
+-- saturation that extend c are the solutions y of the binomial system
+-- y^K = c.  With the Smith normal form D = P*K*Q and y = z^P the system
+-- becomes z_l^(d_l) = c'_l, where c' = c^Q.  If d_l = 1 the solution is c'_l
+-- itself.  Otherwise we need one d_l-th root w of c'_l, and the solutions
+-- are w * e(t/d_l) for t = 0, .., d_l - 1.  A root is found if c'_l is a
+-- root of unity, or plus or minus a d_l-th power of a rational number.
+--
+-- A value of a saturated character is therefore stored as a pair (a, q)
+-- standing for a * e(q), with a in the coefficient field and q in QQ.
+--
+-- In characteristic p > 0 ([ES96] Corollary 2.2, [EM16] Theorem 2.1) write
+-- d_l = p^(a_l) g_l with p not dividing g_l.  The p^(a_l)-th root of a root
+-- of unity e(q) is unique, e(q p^(-a_l)) with the inverse taken modulo the
+-- denominator of q, and then there are g_l distinct g_l-th roots.  So there
+-- are g = prod g_l characters chi_i on Sat(L) extending c; their restrictions
+-- rho_i to Sat'_p(L), the largest lattice between L and Sat(L) with index
+-- prime to p, are the characters of the primary components of the lattice
+-- ideal of c.  Every nonzero value in a finite field is a root of unity
+-- e(k/(p^n - 1)), with k its discrete logarithm, so a root is always found;
+-- a value that needs no root (d_l = 1) is kept as the pair (c'_l, 0).
+------------------------------------------------------------------------------
+
+-- One root of the value c in characteristic p, written as e(q): the unique
+-- pa-th root followed by one g-th root (pa a power of p, g prime to p); null
+-- if c is not in a finite field.
+pRoot = (c, pa, g) -> (
+    q := rootExponent c;
+    if q === null then return null;
+    den := denominator q;
+    if den > 1 then (q = q * (gcdCoefficients(pa, den))#1; q = q - floor q);
+    (1_(ring c), q / g))
+
+-- The extensions of the partial character (L, c) that belong to the primary
+-- components of its lattice ideal.  Returns (S, S', list) with S a basis of
+-- Sat(L), S' a basis of Sat'_p(L) (S' = S in characteristic zero) and one
+-- pair (values on S', values on S) per extension, the values as pairs (a, q).
+-- If L is saturated, S and S' are L itself (the same object).
+characterExtensions = (L, c) -> (
+    r := numcols L;
+    if r == 0 then return (L, L, {({}, {})});
+    F := ring first c;
+    S := latticeSaturation L;
+    K := L // S;
+    if abs det K == 1 then (v := apply(c, a -> (a, 0/1)); return (L, L, {(v, v)}));
+    p := char F;
+    (D, P, Q) := smithNormalForm K;
+    P = lift(P, ZZ); Q = lift(Q, ZZ);
+    d := apply(r, l -> abs D_(l,l));
+    g := if p == 0 then d else apply(d, dl -> primeToPart(dl, p));
+    -- c' = c^Q, and one d_l-th root (a_l, q_l) of each c'_l
+    c' := apply(r, l -> product(r, j -> (c#j)^(Q_(j,l))));
+    z := apply(r, l -> if d#l == 1 then (c'#l, 0/1) else (
+            w := if p == 0 then rootOfElement(c'#l, d#l) else pRoot(c'#l, d#l // g#l, g#l);
+            if w === null then error(
+                if p == 0 then ("cannot solve x^" | toString d#l | " = " | toString c'#l
+                    | ": the package only takes roots of roots of unity and of plus or minus powers of rational numbers")
+                else ("cannot solve x^" | toString d#l | " = " | toString c'#l | ": " | notFiniteFieldMessage));
+            w));
+    -- all choices of t_l in 0 .. g_l - 1
+    choices := fold((acc, l) -> flatten apply(acc, t -> apply(g#l, s -> append(t, s))), {{}}, toList(0 ..< r));
+    -- the values on the columns of S: with S' = S P^(-1) one has L Q = S' D,
+    -- the l-th extension takes the value z_l e(t_l / g_l) on s'_l, and
+    -- s_i = sum_k P_(k,i) s'_k
+    valuesOnS := t -> apply(r, i -> (
+            a := product(r, k -> (z#k#0)^(P_(k,i)));
+            q := sum(r, k -> P_(k,i) * (z#k#1 + t#k / g#k));
+            (a, q - floor q)));
+    if p == 0 then return (S, S, apply(choices, t -> (v := valuesOnS t; (v, v))));
+    -- Sat'_p(L) has the basis p^(a_l) s'_l = (L Q)_l / g_l, on which the
+    -- extension takes the value (z_l e(t_l / g_l))^(p^(a_l))
+    LQ := L * Q;
+    Sprime := matrix apply(numrows L, i -> apply(r, l -> LQ_(i,l) // g#l));
+    valuesOnSprime := t -> apply(r, l -> (
+            e := d#l // g#l;
+            q := e * (z#l#1 + t#l / g#l);
+            ((z#l#0)^e, q - floor q)));
+    (S, Sprime, apply(choices, t -> (valuesOnSprime t, valuesOnS t))))
+
+-- Returns (S, list of value lists).  Each value list gives one saturation
+-- as pairs (a, q) for the columns of S.  In characteristic p these are the
+-- g characters chi_i on Sat(L).
+characterSaturations = (L, c) -> (
+    (S, Sprime, ext) := characterExtensions(L, c);
+    (S, apply(ext, last)))
+
+-- The unique extension of the partial character (L, c) to Sat_p(L), the
+-- largest lattice between L and Sat(L) with index a power of p = char > 0
+-- ([ES96] Corollary 2.2: the lattice ideal of this extension is the radical
+-- of the lattice ideal of c).  Returns (basis, values) with the values in the
+-- field of c; (L, c) itself if Sat_p(L) = L.
+pSaturation = (L, c) -> (
+    r := numcols L;
+    if r == 0 then return (L, c);
+    F := ring first c;
+    p := char F;
+    S := latticeSaturation L;
+    K := L // S;
+    if abs det K == 1 then return (L, c);
+    (D, P, Q) := smithNormalForm K;
+    Q = lift(Q, ZZ);
+    d := apply(r, l -> abs D_(l,l));
+    pa := apply(d, dl -> dl // primeToPart(dl, p));
+    if all(pa, e -> e == 1) then return (L, c);
+    -- L Q = S' D with S' a basis of Sat(L); Sat_p(L) has the basis
+    -- g_l s'_l = (L Q)_l / p^(a_l), and the value there is the unique
+    -- p^(a_l)-th root of c'_l = c^Q_l, taken by the inverse Frobenius in
+    -- the field of c (no discrete logarithm and no extension is needed)
+    LQ := L * Q;
+    Lp := matrix apply(numrows L, i -> apply(r, l -> LQ_(i,l) // pa#l));
+    c' := apply(r, l -> product(r, j -> (c#j)^(Q_(j,l))));
+    (Lp, apply(r, l -> pPowerRoot(c'#l, pa#l))))
+
+-------------------------------------------------------------------------------
+-- Rings over cyclotomic extension fields
+--
+-- All ideals that need the cyclotomic field of order N are created in one
+-- polynomial ring over that field per base ring.  The ring has the same
+-- monoid (variables, degrees, monomial order) as the base ring.
+------------------------------------------------------------------------------
+
+-- Returns (T, phi): the ring over the field with the N-th roots of unity and
+-- the inclusion of R.  T is R itself if R already contains these roots.  The
+-- ring is cyclotomicExtension of the package Cyclotomic: one ring per base
+-- ring and field, with the monoid of R.
+extensionRing = (R, N) -> (
+    if N <= 2 then return (R, identity);
+    F := coefficientRing R;
+    if char F > 0 and finiteFieldData F === null then error notFiniteFieldMessage;
+    if char F == 0 and cyclotomicOrder F === null then
+        error "the coefficient field cannot be extended by roots of unity; use QQ or a cyclotomic field";
+    T := cyclotomicExtension(R, N);
+    if T === R then (R, identity) else (T, cyclotomicInclusion(R, T)))
+
+-- The ring over GF(p^m) with the monoid of R and the inclusion of R, for a
+-- polynomial ring R over ZZ/p or GF(p^n) and n | m (used by the tests).
+galoisRing = (R, m) -> (
+    data := finiteFieldData coefficientRing R;
+    if data === null then error notFiniteFieldMessage;
+    (p, n, gamma) := data;
+    if m % n != 0 then error "galoisRing: the degree is not a multiple of the degree of the coefficient field";
+    extensionRing(R, p^m - 1))
+
+-- Move a list of ideals, living in extension rings of R, into one common ring:
+-- the extension of R by all roots of unity of their coefficient fields.
+joinExtensions = (R, ideals) -> (
+    if #ideals == 0 then return ideals;
+    rings := unique apply(ideals, ring);
+    if #rings == 1 then return ideals;
+    N := lcm apply(rings, T -> rootOfUnityOrder rootOfUnityGenerator coefficientRing T);
+    (T, phi) := extensionRing(R, N);
+    apply(ideals, J -> if ring J === T then J else (cyclotomicInclusion(ring J, T)) J))
+
+------------------------------------------------------------------------------
+-- Lattice ideals and partial characters
+------------------------------------------------------------------------------
+
+-- A Markov basis of the lattice spanned by the columns of L: vectors u such
+-- that the binomials x^(u+) - x^(u-) generate the lattice ideal.  It is
+-- computed once per lattice, over QQ, whatever the character is.
+--   rank 1: L = ZZ u, the lattice ideal is (x^(u+) - x^(u-)) itself (u+ and u-
+--     have disjoint supports, so no variable divides the binomial).
+--   at most 16 variables involved: saturation of the lattice basis ideal.  On
+--     all such lattices measured (those of the benchmark examples, toric
+--     ideals of small statistical models and curves) it takes at most 17 ms,
+--     less than starting 4ti2.
+--   more variables: 4ti2 (project-and-lift), with arbitrary precision since
+--     4ti2 cannot detect overflow on every architecture.  Every call costs
+--     25 to 45 ms for files and the process, but saturation takes 35 s where
+--     4ti2 takes 0.04 s (3x3x3 tables, no three-way interaction, 27
+--     variables).  If 4ti2 is missing or fails, saturation.
+markovBasisCache = new MutableHashTable
+fourTiTwoWorks = true
+markovBasisBySaturation = L -> (
+    Q := QQ(monoid [Variables => numrows L]);
+    J := saturate(latticeBasisIdeal(Q, L), product gens Q);
+    apply(J_*, g -> (
+            e := exponents g;
+            if #e != 2 then error "markovBasis: expected a binomial";
+            e#0 - e#1)))
+markovBasis = L -> (
+    n := numrows L;
+    r := numcols L;
+    if r == 0 then return {};
+    key := entries L;
+    if not markovBasisCache#?key then markovBasisCache#key = (
+        if r == n and abs det L == 1 then entries id_(ZZ^n)
+        else if r == 1 then entries transpose L
+        else (
+            -- a reduced basis keeps the entries and the degrees of the binomials small
+            B := LLL L;
+            involved := #select(entries B, row -> any(row, e -> e != 0));
+            M := if involved > 16 and fourTiTwoWorks then (
+                try toricMarkov(transpose B, InputType => "lattice", Precision => "arbitrary")
+                else (fourTiTwoWorks = false; null));
+            if M === null then markovBasisBySaturation B
+            else select(entries M, u -> any(u, e -> e != 0))));
+    markovBasisCache#key)
+
+-- The lattice ideal of the partial character (L, values) in the ring T.  The
+-- rows of the basis L belong to the variables of T with indices idx, and the
+-- values lie in the coefficient field of T.  If the binomials x^(u+) - x^(u-)
+-- for u in a Markov basis generate the lattice ideal of the trivial
+-- character, then the binomials x^(u+) - chi(u) x^(u-) generate the lattice
+-- ideal of chi: the two ideals differ by rescaling the variables.
+latticeIdeal = (T, idx, L, values) -> (
+    if numcols L == 0 then return ideal 0_T;
+    n := numgens T;
+    ideal apply(markovBasis L, u -> (
+            y := flatten entries (transpose matrix {u} // L);
+            chi := product(#values, j -> (values#j)^(y#j));
+            full := new MutableList from toList(n : 0);
+            scan(#idx, j -> full#(idx#j) = u#j);
+            makeBinomial(T, toList full, chi))))
+
+PartialCharacter = new Type of HashTable
+
+partialCharacter = method(Options => {CellVariables => null})
+partialCharacter Ideal := o -> I -> (
+    -- The partial character of the cellular binomial ideal I: the lattice and
+    -- the character of the lattice ideal I intersect k[cell variables].
+    checkRing I;
+    checkBinomial I;
+    R := ring I;
+    K := coefficientRing R;
+    cellIdx := cellIndicesFromOption(I, o.CellVariables);
+    cv := R_* _ cellIdx;
+    if #cellIdx == 0 then return new PartialCharacter from {"J" => {}, "L" => matrix {{0}}, "c" => {1}};
+    nilIdx := otherIndices(R, cellIdx);
+    S := K(monoid [cv]);
+    toS := map(S, R, apply(numgens R, i -> (p := position(cellIdx, j -> j == i); if p === null then 0_S else S_p)));
+    II := toS(if #nilIdx == 0 then I else eliminate(R_* _ nilIdx, I));
+    if II == 0 then return new PartialCharacter from {"J" => cv, "L" => map(ZZ^(#cv), ZZ^1, 0), "c" => {1}};
+    -- every minimal generator x^u - c x^v contributes u - v with value c,
+    -- unless u - v already lies in the lattice found so far
+    vs := {};
+    cl := {};
+    scan(flatten entries mingens II, t -> (
+            lf := listForm t;
+            if #lf != 2 then error "partialCharacter: the ideal is not cellular with respect to the given cell variables";
+            v := lf#0#0 - lf#1#0;
+            if #vs > 0 and image transpose matrix vs == image transpose matrix append(vs, v) then return;
+            vs = append(vs, v);
+            cl = append(cl, -lf#1#1 / lf#0#1)));
+    new PartialCharacter from {"J" => cv, "L" => transpose matrix vs, "c" => cl})
+
+idealFromCharacter = method()
 idealFromCharacter (Ring, PartialCharacter) := Ideal => (R, pc) -> (
-     -- Constructs the lattice Ideal I_+(c) in R
-     -- R is a ring in which the ideal is returned
-     -- The columns of A should contain exponent vectors of generators
-     -- The vector c contains the corresponding coefficients which must lie
-     -- in the coefficient ring of R.
-     
-     var := gens R;
-     if pc#"L" == 0 then return ideal 0_R;
-     cols := null;
-     binomials := null;
-     c := null;
-     k := ring pc#"c"#0;
-     
-     idmat := matrix mutableIdentity(ZZ,#var);
-     if pc#"L" == idmat then (
-	  -- If A is the unit matrix we are lucky,
-	  -- no saturation is needed.
+    -- The lattice ideal of the partial character pc in the ring R.  The
+    -- variables pc#"J" are matched with the variables of R by name.
+    if pc#"L" == 0 then return ideal 0_R;
+    names := apply(gens R, baseName);
+    idx := apply(pc#"J", v -> (
+            p := position(names, s -> s === baseName v);
+            if p === null then error("idealFromCharacter: " | toString v | " is not a variable of the ring");
+            p));
+    K := coefficientRing R;
+    c := apply(pc#"c", a -> if instance(a, K) then a else sub(a, K));
+    (H, values) := characterFromLabels(apply(numcols pc#"L", j -> (flatten entries (pc#"L")_{j}, c#j)), #idx, K);
+    latticeIdeal(R, idx, H, values))
 
-	  -- We coerce the coefficients to R:
-	  c = apply (pc#"c", a -> (sub (a,R)));
-     	  cols = entries transpose pc#"L";
-     	  binomials = for i in 0..numcols(pc#"L")-1 list makeBinomial (R,cols#i, c#i);	  
-	  return ideal binomials
-	  )
-     else if set pc#"c" === set {1_k} then (
-	  -- all coefficients are one, we can use 4ti2.
-	  return toricMarkov (transpose pc#"L", R, InputType => "lattice");
-	  )
-     else (
-     	  -- The general case, fall back to saturation in M2:
-	  c = apply (pc#"c", a -> (sub (a,R)));
-     	  cols = entries transpose pc#"L";    
-     	  binomials = for i in 0..numcols(pc#"L")-1 list makeBinomial (R,cols#i, c#i);
-     	  return saturate (ideal binomials, product var);
-	  );
-     )
+------------------------------------------------------------------------------
+-- Cellular binomial ideals: radical, associated primes, primary and unmixed
+-- decomposition
+------------------------------------------------------------------------------
 
-latticeBasisIdeal = (R,L) -> (
-     -- Constructs the lattice basis ideal (whose saturation is the lattice ideal)
-     -- Convention is that L's columns generate the lattice.
-     var := gens R;
-     if L == 0 then return ideal 0_R;
-     cols := null;
-     binomials :=null;
-     cols = entries transpose L;
-     binomials = for i in 0..numcols L-1 list makeBinomial (R,cols#i, 1);
-     ideal binomials)
+-- The partial character of I intersect k[E] as (basis, values): the first
+-- congruence class.  (partialCharacter would do without the standard
+-- monomials, but its mingens fails over graded fraction fields such as
+-- frac(ZZ/3[t]), where the radical worked before.)
+bottomCharacter = (I, cellIdx) -> (
+    bottom := first congruenceClasses(I, cellIdx);
+    (bottom#0, bottom#1))
 
-saturatePChar = (pc) -> (
-     -- This function saturates a partial character and returns the result
-     -- as a list, even if the input was saturated.
-          
-     -- If the lattice is saturated, the character is saturated
-     -- Note that this shortcircuits all problems with c being non-constant.
-     if image Lsat pc#"L" == image pc#"L" then (
-	  return {pc};
-	  );
-     
-     -- The saturated lattice
-     S := Lsat(pc#"L");
-     -- The coefficient matrix :
-     K := pc#"L" // S;
-     
-     -- print K;
-     -- Now we find the (binomial) equations for the saturated character:
-     numvars := numrows K;
-     varlist := for i in 0..numvars-1 list value ("m"|i);
-     Q := QQ(monoid [varlist]);
-     eqs := idealFromCharacter (Q, (new PartialCharacter from {"J"=>gens Q, "L"=>K, "c"=>pc#"c"}));
-     
-     result := binomialSolve eqs;
-     r := #result;
-     i := 0;
-     
-     return(for i from 0 to r-1 list(
-	  new PartialCharacter from {"J" => pc#"J", "L" => S, "c" => result#i}));
-     )
-
-satIdeals = (pc) -> (
-     -- Computes all the ideals belonging to saturations of  
-     -- a given partial character.
-     satpc := saturatePChar(pc);
-     -- The following is the smallest ring containing all new
-     -- coefficients but not smaller than QQ
-     F := ring satpc#0#"c"#0;
-     if F === ZZ then F = QQ;
-     Q := F(monoid [satpc#0#"J"]);
-     for s in satpc list idealFromCharacter (Q, s))
-
-binomialRadical = I -> (
-     cv := isCellular (I, ReturnCellVars=>true);
-     if not cv === false then (
-	  return cellularBinomialRadical (I,CellVariables=>cv)
-	  );
-     -- In the general case
-     print "Input not cellular, computing minimal primes ...";
-     mp := binomialMinimalPrimes I;
-     ideal mingens intersect mp)
-
-cellularBinomialRadical = method (Options => {CellVariables => null}) 
+cellularBinomialRadical = method(Options => {CellVariables => null})
 cellularBinomialRadical Ideal := Ideal => o -> I -> (
-     -- Computes the radical of a cellular binomial ideal
-     R := ring I;
-     cv := cellVars(I, CellVariables=>o#CellVariables);
-     -- Get the non-cellular variables
-     noncellvars := toList(set (gens R) - cv);
-     M := sub (ideal (noncellvars),R);
-     I + M)
+    -- A cellular binomial ideal with cell variables E and nilpotent variables
+    -- N has I + (N) = I(rho) + (N), where rho is the partial character of
+    -- I intersect k[E].  In characteristic zero the lattice ideal I(rho) is
+    -- radical, so the radical of I is obtained by adding the nilpotent
+    -- variables.  In characteristic p the radical of I(rho) is the lattice
+    -- ideal of the extension of rho to Sat_p(L) ([ES96] Corollary 2.2), which
+    -- is added as well; no field extension is needed.
+    checkRing I;
+    checkBinomial I;
+    R := ring I;
+    cellIdx := cellIndicesFromOption(I, o.CellVariables);
+    nilIdx := otherIndices(R, cellIdx);
+    if char R > 0 and I != 1 then (
+        (L, c) := bottomCharacter(I, cellIdx);
+        (Lp, values) := pSaturation(L, c);
+        if Lp =!= L then return ideal mingens (plusVariables(I, nilIdx) + latticeIdeal(R, cellIdx, Lp, values)));
+    plusVariables(I, nilIdx))
+
+-- The saturated characters that belong to the associated primes of the
+-- cellular ideal I, in an extension ring T of the ring of I that contains
+-- all their values.  Returns (T, phi, kappa, characters): the inclusions
+-- phi of rings and kappa of coefficient fields, and the list of characters
+-- (H, values) with H a Hermite basis and the values in the coefficient
+-- field of T.  The list has no repetitions.  A third entry of a character
+-- says whether it is the character of I intersect k[E] itself, in which case
+-- its lattice ideal is contained in I and need not be computed.
+associatedCharacters = (I, cellIdx) -> (
+    R := ring I;
+    K := coefficientRing R;
+    classes := congruenceClasses(I, cellIdx);
+    saturated := apply(classes, cl -> characterSaturations(cl#0, cl#1));
+    N := orderForExponents flatten flatten apply(saturated, s -> apply(s#1, vals -> apply(vals, last)));
+    (T, phi) := extensionRing(R, N);
+    F := coefficientRing T;
+    kappa := if T === R then identity else (a -> lift(phi promote(a, R), F));
+    seen := new MutableHashTable;
+    characters := flatten apply(#saturated, k -> (
+            s := saturated#k;
+            H := hermiteBasis s#0;
+            X := H // s#0;
+            for vals in s#1 list (
+                fieldValues := apply(vals, v -> kappa(v#0) * rootValue(F, v#1));
+                values := apply(numcols H, j -> product(#vals, i -> (fieldValues#i)^(X_(i,j))));
+                key := (entries H, values);
+                if seen#?key then continue;
+                seen#key = true;
+                -- the character of I intersect k[E] itself, if its lattice is
+                -- saturated (characterSaturations returns L itself then; in
+                -- characteristic p a single saturation does not mean that)
+                (H, values, k == 0 and s#0 === classes#0#0))));
+    (T, phi, kappa, characters))
+
+-- The prime ideal of a saturated character: its lattice ideal plus the
+-- nilpotent variables.  IT is the cellular ideal in the ring T; if the
+-- character is that of IT itself, the prime is IT plus the nilpotent
+-- variables.
+primeOfCharacter = (IT, cellIdx, character) -> (
+    T := ring IT;
+    nilIdx := otherIndices(T, cellIdx);
+    if character#2 then plusVariables(IT, nilIdx)
+    else if numcols character#0 == 0 then varIdeal(T, nilIdx)
+    else plusVariables(latticeIdeal(T, cellIdx, character#0, character#1), nilIdx))
+
+cellularBinomialAssociatedPrimes = method(Options => {CellVariables => null, Verbose => false})
+cellularBinomialAssociatedPrimes Ideal := List => o -> I -> (
+    -- The associated primes of a cellular binomial ideal, in a polynomial
+    -- ring over a cyclotomic extension of the coefficient field if needed.
+    checkRing I;
+    checkBinomial I;
+    if I == 1 then return {};
+    cellIdx := cellIndicesFromOption(I, o.CellVariables);
+    if o.Verbose then << #flatten apply(congruenceClasses(I, cellIdx), cl -> cl#2) << " monomials in "
+        << sum(congruenceClasses(I, cellIdx), cl -> cl#3) << " congruence classes" << endl;
+    (T, phi, kappa, characters) := associatedCharacters(I, cellIdx);
+    IT := if T === ring I then I else phi I;
+    apply(characters, ch -> ideal mingens primeOfCharacter(IT, cellIdx, ch)))
+
+-- Does the character (H, values) of a congruence class restrict from the
+-- saturated character sigma = (S, svalues)?  That is: is the lattice of H
+-- contained in the lattice of S, with the same values?
+restrictsFrom = (H, values, S, svalues) -> (
+    if numcols H == 0 then return true;
+    if numcols H > numcols S then return false;
+    Y := H // S;
+    S * Y == H and all(numcols H, j -> product(numcols S, i -> (svalues#i)^(Y_(i,j))) == values#j))
+
+cellularBinomialPrimaryDecomposition = method(Options => {CellVariables => null, Verbose => false})
+cellularBinomialPrimaryDecomposition Ideal := List => o -> I -> (
+    -- A primary decomposition of a cellular binomial ideal with one
+    -- component for every associated prime (Eisenbud-Sturmfels, Section 9;
+    -- Eser-Matusevich, Theorem 2.10).  After inverting the cell variables,
+    -- R/I is a direct sum of modules A/I(rho), one for every congruence
+    -- class.  The component of the prime of a saturated character sigma keeps
+    -- exactly the classes whose character is a restriction of sigma: it is
+    -- the saturation of  I + I(sigma) + (monomials of all other classes).
+    checkRing I;
+    checkBinomial I;
+    if I == 1 then return {};
+    cellIdx := cellIndicesFromOption(I, o.CellVariables);
+    R := ring I;
+    if char R > 0 then return cellularPrimaryDecompositionEM(I, cellIdx, o.Verbose);
+    (T, phi, kappa, characters) := associatedCharacters(I, cellIdx);
+    IT := if T === R then I else phi I;
+    if o.Verbose then << #characters << (if #characters == 1 then " associated prime" else " associated primes") << endl;
+    if #cellIdx == numgens R then return apply(characters, ch -> primeOfCharacter(IT, cellIdx, ch));
+    classes := apply(congruenceClasses(I, cellIdx), cl -> (cl#0, apply(cl#1, kappa), cl#2));
+    apply(characters, ch -> (
+            other := flatten for cl in classes list if restrictsFrom(cl#0, cl#1, ch#0, ch#1) then continue else cl#2;
+            J := if ch#2 then IT else IT + latticeIdeal(T, cellIdx, ch#0, ch#1);
+            if #other == 0 and ch#2 then return IT;
+            if #other > 0 then J = J + ideal apply(minimalMonomials other, m -> if T === R then m else phi m);
+            saturateByCells(J, cellIdx))))
+
+-- A primary decomposition of the cellular ideal I by Theorem 2.11 of [EM16]
+-- (the formula holds in every characteristic; it is used in characteristic
+-- p, and in characteristic zero only as a cross-check of the formula above).
+-- With E the cell variables and M_emb(J) the ideal of the monomials in the
+-- nilpotent variables whose congruence class has a lattice of larger rank
+-- than J intersect k[E] (the embedded associated lattices),
+--
+--   I = intersection over m in M_emb(I) union {1} and l = 1..g(m) of
+--       ((I + I(rho(m)_l)) : x_E^infinity) + M_emb((I + I(rho(m))) : x_E^infinity)
+--
+-- where rho(m) is the character of (I : m) intersect k[E], that is, of the
+-- congruence class of m, and rho(m)_1..rho(m)_g(m) are its extensions to
+-- Sat'_p.  Each component is primary for the prime of the extension chi of
+-- rho(m)_l to Sat(L).  The decomposition need not be minimal; components
+-- with the same prime are merged by intersecting them (an intersection of
+-- P-primary ideals is P-primary); redundant components may remain, as in
+-- characteristic zero.
+cellularPrimaryDecompositionEM = (I, cellIdx, verbose) -> (
+    R := ring I;
+    classes := congruenceClasses(I, cellIdx);
+    bottom := first classes;
+    -- the monomials of the embedded classes of a list of classes
+    embeddedMonomials := cls -> (
+        r := numcols (first cls)#0;
+        flatten for cl in cls list if numcols cl#0 > r then cl#2 else continue);
+    sources := select(classes, cl -> cl === bottom or numcols cl#0 > numcols bottom#0);
+    extensions := apply(sources, cl -> characterExtensions(cl#0, cl#1));
+    N := orderForExponents flatten apply(extensions, e -> flatten apply(e#2, pair -> apply(pair#1, last)));
+    (T, phi) := extensionRing(R, N);
+    F := coefficientRing T;
+    kappa := if T === R then identity else (a -> lift(phi promote(a, R), F));
+    toT := if T === R then identity else phi;
+    fieldValues := vals -> apply(vals, v -> kappa(v#0) * rootValue(F, v#1));
+    IT := toT I;
+    if verbose then << #sources - 1 << " embedded associated lattices" << endl;
+    components := flatten apply(#sources, k -> (
+            cl := sources#k;
+            (S, Sprime, ext) := extensions#k;
+            memb := if cl === bottom then embeddedMonomials classes else (
+                Kc := saturateByCells(I + latticeIdeal(R, cellIdx, cl#0, cl#1), cellIdx);
+                embeddedMonomials congruenceClasses(Kc, cellIdx));
+            M := if #memb == 0 then null else toT ideal minimalMonomials memb;
+            H := hermiteBasis S;
+            X := H // S;
+            apply(ext, pair -> (
+                    (valuesOnSprime, valuesOnS) := pair;
+                    J := if numcols Sprime == 0 then IT
+                        else saturateByCells(IT + latticeIdeal(T, cellIdx, Sprime, fieldValues valuesOnSprime), cellIdx);
+                    if M =!= null then J = J + M;
+                    -- the prime of J is that of the extension to Sat(L)
+                    values := fieldValues valuesOnS;
+                    key := (entries H, apply(numcols H, j -> product(#values, i -> (values#i)^(X_(i,j)))));
+                    (key, J)))));
+    keyOrder := new MutableList;
+    groups := new MutableHashTable;
+    scan(components, c -> (
+            if not groups#?(c#0) then (groups#(c#0) = {}; keyOrder#(#keyOrder) = c#0);
+            groups#(c#0) = append(groups#(c#0), c#1)));
+    if verbose then << #components << " components for " << #keyOrder << " associated primes" << endl;
+    -- one component per associated prime, in the order of the primes of
+    -- associatedCharacters (the same classes, extensions and keys)
+    apply(toList keyOrder, key -> (
+            g := groups#key;
+            if #g == 1 then first g else ideal mingens intersect g)))
+
+-- Are the characters (H1, v1) and (H2, v2) restrictions of one character on
+-- the sum of their lattices?
+compatibleCharacters = (H1, v1, H2, v2) -> (
+    Z := syz(H1 | H2);
+    vs := v1 | v2;
+    all(numcols Z, j -> product(#vs, i -> (vs#i)^(Z_(i,j))) == 1))
+
+cellularBinomialUnmixedDecomposition = method(Options => {CellVariables => null, Verbose => false})
+cellularBinomialUnmixedDecomposition Ideal := List => o -> I -> (
+    -- An unmixed decomposition of a cellular binomial ideal over its own
+    -- coefficient field (Eser-Matusevich, Theorem 2.11).  The component of a
+    -- partial character rho keeps the congruence classes whose character is
+    -- compatible with rho and whose lattice has the same rank after adding
+    -- the lattice of rho.  All associated primes of a component then have
+    -- the same dimension.
+    checkRing I;
+    checkBinomial I;
+    if I == 1 then return {};
+    cellIdx := cellIndicesFromOption(I, o.CellVariables);
+    R := ring I;
+    classes := congruenceClasses(I, cellIdx);
+    -- A class is covered by a chosen class with a smaller lattice of the
+    -- same rank and a compatible character.  Choose greedily, small ranks
+    -- and small lattices first.
+    order := sort(apply(#classes, identity), i -> (numcols classes#i#0, - latticeIndex classes#i#0));
+    chosen := {};
+    scan(order, i -> (
+            (H, v) := (classes#i#0, classes#i#1);
+            if any(chosen, j -> (
+                    (H', v') := (classes#j#0, classes#j#1);
+                    numcols H' == numcols H and isSubset(image H', image H) and compatibleCharacters(H', v', H, v)))
+            then return;
+            chosen = append(chosen, i)));
+    if #chosen == 1 then return {I};
+    apply(chosen, i -> (
+            (H, v) := (classes#i#0, classes#i#1);
+            other := flatten for cl in classes list (
+                if rank(H | cl#0) == numcols H and compatibleCharacters(H, v, cl#0, cl#1) then continue else cl#2);
+            J := if numcols H > 0 then I + latticeIdeal(R, cellIdx, H, v) else I;
+            if #other > 0 then J = J + ideal minimalMonomials other;
+            saturateByCells(J, cellIdx))))
+
+cellularBinomialIsPrimary = method(Options => {ReturnPrimes => false, ReturnPChars => false, CellVariables => null})
+cellularBinomialIsPrimary Ideal := o -> I -> (
+    -- A cellular binomial ideal is primary if and only if the lattice of
+    -- I intersect k[cell variables] is saturated and all congruence classes
+    -- have this lattice (Eisenbud-Sturmfels, Algorithm 9.4).  If I is not
+    -- primary, two distinct associated primes or their characters can be
+    -- returned.
+    checkRing I;
+    checkBinomial I;
+    R := ring I;
+    if I == 1 then return false;
+    cellIdx := cellIndicesFromOption(I, o.CellVariables);
+    cv := R_* _ cellIdx;
+    classes := congruenceClasses(I, cellIdx);
+    bottom := first classes;
+    -- In characteristic p the lattice ideal of the bottom character is
+    -- primary if and only if the index of its lattice is a power of p
+    -- ([EM16] Theorem 2.1 and Lemma 6.1): the character has a single
+    -- extension to Sat'_p then.
+    -- The first class whose character has more than one extension, or
+    -- failing that, a class with a lattice bigger than the bottom lattice.
+    witness := if primeToPart(latticeIndex bottom#0, char R) > 1 then bottom
+        else (w := select(1, classes, cl -> numcols cl#0 > numcols bottom#0); if #w > 0 then first w);
+    if witness === null then (
+        if o.ReturnPChars then return {partialCharacter(I, CellVariables => cv)};
+        if o.ReturnPrimes then return {cellularBinomialRadical(I, CellVariables => cv)};
+        return true);
+    if not (o.ReturnPChars or o.ReturnPrimes) then return false;
+    -- two distinct associated primes: either two saturations of the bottom
+    -- character, or the radical and an embedded prime
+    two := if witness === bottom then {witness, witness} else {bottom, witness};
+    saturated := apply(two, cl -> characterSaturations(cl#0, cl#1));
+    picks := if witness === bottom then {saturated#0#1#0, saturated#0#1#1} else {saturated#0#1#0, saturated#1#1#0};
+    N := orderForExponents flatten apply(picks, vals -> apply(vals, last));
+    (T, phi) := extensionRing(R, N);
+    F := coefficientRing T;
+    kappa := if T === R then identity else (a -> lift(phi promote(a, R), F));
+    values := apply(picks, vals -> apply(vals, v -> kappa(v#0) * rootValue(F, v#1)));
+    if o.ReturnPChars then (
+        -- always objects of type PartialCharacter (decided by Thomas,
+        -- 2026-11-02; version 1.2.1 returned plain lists {J, L, c} here)
+        pc := (L, c) -> new PartialCharacter from {"J" => cv, "L" => L, "c" => c};
+        if witness === bottom then return apply(2, k -> pc(saturated#0#0, values#k));
+        return {partialCharacter(I, CellVariables => cv), pc(saturated#1#0, values#1)});
+    IT := if T === R then I else phi I;
+    apply(2, k -> ideal mingens primeOfCharacter(IT, cellIdx, (saturated#k#0, values#k, false))))
 
 binomialIsPrimary = I -> (
-     -- Check if an arbitrary binomial ideal is primary
-     -- first check for cellularity, then run the specialized check if the ideal is cellular.
-     cv := isCellular (I, ReturnCellVars=>true);
-     -- Can't check with logical comparison because the return value could be a list
-     if cv === false then return false
-     else cellularBinomialIsPrimary (I, CellVariables=>cv))
+    cv := isCellular(I, ReturnCellVars => true);
+    if cv === false then false else cellularBinomialIsPrimary(I, CellVariables => cv))
 
-cellularBinomialIsPrimary = method (Options => {ReturnPrimes => false , ReturnPChars => false, CellVariables=> null})
-cellularBinomialIsPrimary Ideal := Ideal => o -> I -> (
-     -- Implements Alg. 9.4 in [ES96]
-     -- I must be a cellular ideal, CellVariables can be given for speedup
-     -- Returns the radical of I and whether I is primary
-     -- if the option ReturnPrimes is true, then it will return 
-     -- the radical in the affirmative case and two distinct associated primes
-     -- otherwise
-     -- if the option ReturnPChars is true then it will return partial Characters 
-     -- of the primes instead. 
-     -- If both are true then it will return characters.
-     
-     R := ring I;
-     -- Only proper ideals are considered primary
-     if I == ideal(1_R) then return false;      
-     
-     -- Handling of cell variables
-     cv := cellVars(I, CellVariables=>o#CellVariables);
+binomialIsPrime = method(Options => {CellVariables => null})
+binomialIsPrime Ideal := Boolean => o -> I -> (
+    -- A binomial ideal is prime (over the algebraic closure, in
+    -- characteristic zero) if and only if it is cellular, contains its
+    -- nilpotent variables and its lattice is saturated
+    -- (Eisenbud-Sturmfels, Corollary 2.6).
+    checkRing I;
+    checkBinomial I;
+    R := ring I;
+    if I == 1 then return false;
+    cellIdx := if o.CellVariables =!= null then indicesOfVariables o.CellVariables else (
+        cv := isCellular(I, ReturnCellVars => true);
+        if cv === false then return false;
+        apply(cv, index));
+    if not isSubset(varIdeal(R, otherIndices(R, cellIdx)), I) then return false;
+    latticeIndex (first congruenceClasses(I, cellIdx))#0 == 1)
 
-     -- Get the partial character of I
-     pc := partialCharacter(I, CellVariables=>cv);
-     noncellvars := toList(set gens R - cv);
-     
-     M := sub (ideal (noncellvars),R);
-     -- the radical:
-     rad := I + M;
-     
-     -- If the partial character is not saturated, the radical is not prime
-     if image Lsat pc#"L" != image pc#"L" then (
-	  print "The radical is not prime, as the character is not saturated";
-	  satpc := saturatePChar pc;
-	  if o#ReturnPChars then (
-	       -- This one is the fastest, so check it first
-	       return {{satpc#0#"J",satpc#0#"L",satpc#0#"c"}, {satpc#0#"J",satpc#0#"L",satpc#1#"c"}}
-	       );
-	  if o#ReturnPrimes then (
-     	       F := ring satpc#0#"c"#0;
-     	       S := F(monoid [satpc#0#"J"]);
-	       M = sub(M,S);
-	       ap1 := idealFromCharacter (S,satpc#0) + M;
-	       ap2 := idealFromCharacter (S,satpc#1) + M;
-	       -- Return two distinct associated primes:
-	       return {ap1,ap2};
-     	       )	   	       
-	  else return false;
-	  );
-     
-     -- If the radical is prime, then there still might be embedded
-     -- primes that properly contain the radical. The remaining part
-     -- finds such primes by examining quotients w.r.t (maximal)
-     -- standard monomials. 
-     
-     -- The list of maximally standard monomials:
-     maxlist := maxNonCellstdm (I,CellVariables=>cv);
-     -- need to map to R to do colons with I
-     f := map (R, ring maxlist#0);
-     maxstdmon := maxlist / f;
-     
-     for m in maxstdmon do (
-	  q := I:m;
-	  -- Mapping down to k[E]:
---	  q2 := eliminate (noncellvars,q);
-     	  q2 := q + M;
-     	  -- I_+(sigma) was called prerad above:
-	  if not isSubset(q2, rad) then (
-	       -- creating some local names:
-	       satqchar := saturatePChar partialCharacter (q,CellVariables=>cv);
-	       if o#ReturnPChars then(
-		    return {pc, {satqchar#0#"J",satqchar#0#"L",satqchar#0#"c"}}
-		    );
-	       if o#ReturnPrimes then (
-		    F := ring satqchar#0#"c"#0;
-     	       	    S := F(monoid [satqchar#0#"J"]);
-	       	    M = sub(M,S);
-		    ap2 := idealFromCharacter (S, satqchar);
-		    return {rad, ap2 + M};
-     	       	    )
-	       else return false;
-	       );
-	  );
-     if o#ReturnPChars then return {pc};
-     if o#ReturnPrimes then return {rad};
-     true)
+------------------------------------------------------------------------------
+-- Arbitrary binomial ideals
+------------------------------------------------------------------------------
 
-binomialIsPrime = method (Options => {CellVariables=>null})
-binomialIsPrime Ideal := Ideal => o -> I -> ( 
-     -- A binomial ideal is prime if it is cellular and all its
-     -- monomial generators have power one and the associated partial
-     -- character is saturated.  (Corollary 2.6 in ES96 )
+-- The inclusion minimal ideals of a list, in their original order and without
+-- repetitions.  If nil is not null, nil#i is a list of indices of variables
+-- that are nilpotent modulo l#i and whose complement consists of
+-- nonzerodivisors (as for cellular ideals).  Then l#i can only be contained
+-- in l#j if the nilpotent variables of l#i are among those of l#j, which
+-- saves most of the containment tests.
+inclusionMinimal = (l, nil, verbose) -> (
+    keep := new MutableList from toList(#l : true);
+    nilSets := if nil =!= null then apply(nil, set);
+    scan(#l, i -> if keep#i then scan(#l, j ->
+            if j != i and keep#j and (nil === null or isSubset(nilSets#i, nilSets#j)) and isSubset(l#i, l#j)
+            then keep#j = false));
+    result := for i from 0 to #l - 1 list if keep#i then l#i else continue;
+    if verbose then << #l - #result << " redundant ideals removed" << endl;
+    apply(result, J -> ideal mingens J))
 
-     -- Input: A Binomial Ideal and the cell variables if the ideal is cellular.
-     -- Output: true if the ideal is a prime ideal, false otherwise
-     
-     -- test for cellularity:
-     -- if cellular variables are given then we believe that I is cellular
-     cv := null;
-     if o#CellVariables === null then (
-	  cv = isCellular (I, ReturnCellVars=>true);
-     	  if cv === false  then return false)
-     else cv = o#CellVariables;
-     
-     -- Check if non-cellular variables are all contained:
-     R := ring I;
-     ncv := toList(set (gens R) - cv); -- nilpotent variables x \notin E
-     if not isSubset(promote(ideal ncv, R), I) then return false;
+extractInclusionMinimalIdeals = method(Options => {Verbose => false})
+extractInclusionMinimalIdeals List := List => o -> l -> (
+    -- This does not make an intersection irredundant: it would not reduce
+    -- <x-y> \cap <x,y^2> \cap <x^2,y>, where each of the last two components
+    -- is redundant given the other two.
+    inclusionMinimal(l, null, o.Verbose))
 
-     -- Test if the partial character saturated:
-     pc := partialCharacter (I, CellVariables=>cv);
-     if image Lsat pc#"L" != image pc#"L" then return false;
-     true)
+binomialPrimaryDecomposition = method(Options => {Verbose => false})
+binomialPrimaryDecomposition Ideal := List => o -> I -> (
+    -- cellular decomposition, then primary decomposition of every cellular
+    -- component
+    checkRing I;
+    if not isBinomial I then error "Input was not binomial !";
+    R := ring I;
+    if I == 1 then return {};
+    if o.Verbose then << "Running cellular decomposition:" << endl;
+    cd := first cellularTree(I, false, o.Verbose);
+    if o.Verbose then << "Decomposing cellular components:" << endl;
+    nil := {};
+    bpd := flatten apply(#cd, j -> (
+            if o.Verbose then << "Decomposing cellular component: " << j + 1 << " of " << #cd << endl;
+            pd := cellularBinomialPrimaryDecomposition(cd#j#0, CellVariables => R_* _ (cd#j#1), Verbose => o.Verbose);
+            nil = nil | toList(#pd : otherIndices(R, cd#j#1));
+            pd));
+    if o.Verbose then << "Removing some redundant components..." << endl;
+    inclusionMinimal(joinExtensions(R, bpd), nil, o.Verbose))
 
-binomialMinimalPrimes = method (Options => {Verbose=>false})
-binomialMinimalPrimes Ideal := Ideal => o -> I -> (
-     -- Algorithm from "Decompositions of Binomial Ideals" (AISM), 
-     -- based on computing a cellular decomposition of the radical of I.
-     if not isBinomial I then error "Input was not binomial";
-     R := ring I;
-     if I == ideal (1_R) then return {};
-     ge := gens R;
-     n := numgens R;
-     Answer := {};
-     L := null;
-     IntersectAnswer := ideal(1_R);
-     ToDo := {{{1_R},toList(0..n-1),I}};
-     compo := 0;
-     next := () -> (
-	 if #ToDo === 0 then false
-	 else (
-	      L = ToDo#0;
-	      ToDo = drop(ToDo,1);
-	      if gens IntersectAnswer % L#2 == 0 then (
-		   if o#Verbose then (
-			<< "redundant component" << endl;
-			);
-		   )
-	      else if #(L#1) === 0 then ( -- #(L#1) counts 'remaining variables to check'
-                   compo = compo + 1; 		
-		   newone := trim L#2;
-		   if o#Verbose then (
-			<< "components found so far: " << compo << endl;);
-		   Answer = append(Answer,{newone, delete(1_R,L#0)});
-		   IntersectAnswer = intersect(IntersectAnswer,newone);
-		   if IntersectAnswer == I then ToDo = {})
-	      else ( -- So, there are remaining variables #(L#1) is not zero
-	           i := L#1#0; -- i is a variable under consideration
-		   newL1 := drop(L#1,1); -- gets removed from the list
-	           result := axisSaturate(L#2, i); -- compute saturation wrt i
-		   J := result#1; -- Ideal
-		   k := result#0; -- Saturation Exponent
-		   if k > 0 then ( -- If a division was needed:
-			J2 := L#2 + ideal(R_i); 
-			J2 = saturate(J2, product L#0);
-			if J2 != ideal(1_R) then
-			    ToDo = prepend({L#0, newL1, J2},ToDo));
-		   if J != ideal(1_R) then (
-			ToDo = prepend({L#0|{R_i}, newL1, J},ToDo);
-			);
-		   );
-	      true));
-     while next() do ();
-     -- print Answer;
-     
-     if o#Verbose then print "Decomposition done.";
-          
-     ncv := {};
-     i := 0;
-     j := #Answer;
-     ME :=ideal; -* pc = {}; *- si := ideal; mp := {}; F := null; S:= null;
-     for a in Answer do (
-	  i = i+1;
-	  if o#Verbose  then (
-	       print ("Finding minimal primes of cellular component: " | toString i | " of " | toString j));
-	  ME := ideal(toList(set (gens R) - a#1));
-	  pc := partialCharacter (a#0, CellVariables=>a#1);
-	  -- Check whether we have a radical ideal already:
-	  if image Lsat pc#"L" == image pc#"L" then (
-	       si = {a#0};
-	       )
-	  else (
-	       si = satIdeals pc
-	       );
-	  F = coefficientRing ring si#0;
-	  if F === QQ then S = R else S = F(monoid [ge]);
-	  ME = sub (ME, S);
-	  si = for i in si list sub(i,S);
-	  si = si / (i -> trim (i + ME)); -- Adding monomials;
-	  mp = mp | si;
-	  );
+binomialUnmixedDecomposition = method(Options => {Verbose => false})
+binomialUnmixedDecomposition Ideal := List => o -> I -> (
+    checkRing I;
+    if not isBinomial I then error "Input was not binomial !";
+    R := ring I;
+    if I == 1 then return {};
+    if o.Verbose then << "Running cellular decomposition:" << endl;
+    cd := first cellularTree(I, false, o.Verbose);
+    if o.Verbose then << "Decomposing cellular components:" << endl;
+    nil := {};
+    bud := flatten apply(#cd, j -> (
+            if o.Verbose then << "Decomposing cellular component: " << j + 1 << " of " << #cd << endl;
+            ud := cellularBinomialUnmixedDecomposition(cd#j#0, CellVariables => R_* _ (cd#j#1), Verbose => o.Verbose);
+            nil = nil | toList(#ud : otherIndices(R, cd#j#1));
+            ud));
+    if o.Verbose then << "Removing some redundant components..." << endl;
+    inclusionMinimal(bud, nil, o.Verbose))
 
-     extractInclusionMinimalIdeals (joinCyclotomic mp, Verbose=>o#Verbose))
-
-isBetween = (a,b,c) -> (
-     -- Checks if a lies between b and c in divisibility order.
-     -- b and c need not be comparable, or sorted.
-     if (b%c == 0) then (
-	  -- c divides b
-	  if ( (a%c==0) and (b%a==0)) then return true;
-	  )
-     else if (c%b == 0) then (
-	  if ( (a%b==0) and (c%a==0)) then return true;
-	  );
-     -- b and c are not comparable
-     false)
-
-cellularBinomialAssociatedPrimes = method (Options => {CellVariables => null, Verbose=>false}) 
-cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> ( 
-     -- Computes the associated primes of cellular binomial ideal
-     -- It returns them in a polynomial ring with the same variables as ring I,
-     -- but potentially extended coefficient ring.
-
-     R := ring I;
-     
-     cv := cellVars(I, CellVariables=>o#CellVariables);
-          
-     primes := {}; -- This will hold the list of primes
-     ncv := toList(set (gens R) - cv); -- nilpotent variables x \notin E
-     stdm := nonCellstdm(I,CellVariables=>cv); -- List of std monomials in ncv
-     -- mapping to R:
-     f := map (R, ring stdm);
-     ml := flatten entries f stdm;
-     
-     if o#Verbose then(
-	  if #ml == 1 then << "1 monomial to consider for this cellular component " << endl
-     	  else <<  #ml << " monomials to consider for this cellular component" << endl;
-	  );
-     
-     -- For a given partialCharacter, this hash table saves a witness monomial,
-     -- and the corresponding lattice ideal.  The ideal is saved to potentially
-     -- skip the ideal saturation further down.
-     seenpc := new MutableHashTable;
-
-     -- A dummy ideal and partial Characters:
-     Im := ideal;
-     pC := {}; sat := {};
-     -- save 1 as the bottom witness
-     seenpc#(partialCharacter (I, CellVariables=>cv))=({1_R}, I);
-     todolist := delete(1_R, ml);
-     -- While we have monomials to check
-     while #todolist > 0 do (
---	  print ("On todolist: " | toString (#todolist));
-	  -- sample a random monomial:
-	  i := random(0, #todolist-1);
-	  m := todolist#i;
-	  Im = I:m;
-	  pC = partialCharacter(Im, CellVariables=>cv);
-	  if seenpc#?pC then (
-	       -- We have seen this lattice: Time to prune the todolist
---	       print ("Todolist items before: " | toString (#todolist));
-	       for n in seenpc#pC#0 do (
-		    todolist = select (todolist , (mm -> not isBetween (mm, n, m))
-		    ));
---	       print ("Todolist items after: " | toString (#todolist));
-	       -- add m to the pruning list
-	       todolist = delete(m, todolist);
-	       addmon := true;
-	       for mmm in seenpc#pC#0 do if m%mmm==0 then (addmon = false; break);
-	       if addmon then seenpc#pC = (seenpc#pC#0 | {m}, seenpc#pC#1);
---	       print (#(seenpc#pC));
-	       )   
-	  else (
-	       -- a new associated lattice
-	       seenpc#pC = ({m} , Im);
-	       todolist = delete(m, todolist);
-	       )
-	  );
---     print ("Todolist items: " | toString (#todolist));
-     for pc in keys seenpc do (
-	  -- If the lattice of pc is saturated, then we can skip the saturation (which would compute
-	  -- a Markov basis (slow))
-	  if image pc#"L" == image Lsat pc#"L" then (
-	       primes = primes | {cellularBinomialRadical (seenpc#pc#1, CellVariables=>pc#"J")}
-	       )
-	  else (
-	       -- need to actually saturate and potentially extend coefficients
-	       sat = satIdeals pc;
-	       -- If the coefficientRing is QQ, we map back to R
-	       F := coefficientRing ring sat#0;
-	       if F === QQ then (
-	       	    f = map (R, ring sat#0);
-	       	    sat = sat / f ;
-	       	    )
-	       else (
-	       	    -- otherwise to the extended ring
-	       	    -- this is necessary since satIdeals does not know about the nilpotent variables
-	       	    S := F monoid R;
-	       	    f = map (S, ring sat#0);
-	       	    sat = sat / f;
-	       	    );
-	       primes = primes | sat;
-	       )
-	  );
-     -- We need to remove duplicate elements and join all associated primes in an appropriate new ring that contains all
-     -- their coefficients.
-     primes = joinCyclotomic primes;
-     M := sub (ideal ncv, ring primes#0);
-     primes = primes / (I -> I + M);
-
-     -- Computation of mingens is necessary as unique or toList + set combi won't do without
-     unique (ideal \ mingens \ primes))
-
-binomialAssociatedPrimes = I -> (
-     if not isBinomial I then error "Input not binomial";
-     cv := isCellular (I,ReturnCellVars=>true);
-     if cv === false then (
-	  print "Not yet implemented";
-	  print "I will compute a primary decomposition and take radicals!";
-	  bpd := BPD I;
-	  print "Primary Decomposition found, taking radicals now:";
-	  return binomialRadical \ bpd;
-	  )
-     else cellularBinomialAssociatedPrimes (I, CellVariables=>cv))
-
-cellularAssociatedLattices = method (Options => {CellVariables => null})
-cellularAssociatedLattices Ideal := Ideal => o -> I -> (
-     -- Computes the associated lattices of a cellular binomial ideal
-     -- WARNING: The definition might differ from the final definition in [KM11]
-     
-     R := ring I;
-     cv := cellVars(I, CellVariables=>o#CellVariables);
-     lats := {}; -- This will hold the list of lattices
-     coeffs := {}; -- This will hold the values of the characters
-     ncv := toList(set (gens R) - cv); -- nilpotent variables x \notin E
-     -- print "Noncellvars"; print ncv;
-     ml := flatten entries nonCellstdm(I,CellVariables=>cv); -- List of std monomials in ncv
-     -- Coercing to R:
-     f := map (R, ring ml#0);
-     ml = ml/f;
-     -- A dummy ideal and partial Characters:
-     Im := ideal;
-     pc := {};
-     redundant := true;
-     -- For each monomial, check if I:m shows an unseen lattice.
-     for m in ml do (
-	  -- print m;
-	  Im = I:m;
-	  -- We already know the cell variables in the following computation
-	  pc = partialCharacter(Im, CellVariables=>cv);
-	  if #lats == 0 then (
-	       lats = {pc#"L"};
-	       coeffs = {pc#"c"};
-	       continue;
-	       )
-	  else (
-	       redundant = false;
-	       scan (lats, (l -> (if image l == image pc#"L" then redundant = true)))
-     	       );
-	  if redundant then continue
-	  else (
-	       lats = lats | {pc#"L"};
-	       coeffs = coeffs | {pc#"c"};
-	       );
-      	  ); -- for m in ml	    
-     {cv, lats, coeffs}) -- CellularAssociatedLattices
-
-cellularEmbeddedLatticeWitnesses = method (Options => {CellVariables => null})
-cellularEmbeddedLatticeWitnesses Ideal := Ideal => o -> I -> (
-     -- Given a cellular binomial ideal whose radical is prime this
-     -- function will produce witness monomials for embedded
-     -- lattices.  Throw in these monomials to get rid of
-     -- additional associated primes, i.e. compute Hull.
-
-     R := ring I;
-     cv := cellVars(I, CellVariables=>o#CellVariables);
-     witnesses := {};
-     lats := {}; -- This will hold the list of lattices
-     ncv := toList(set (gens R) - cv); -- nilpotent variables x \notin E
-     ml := flatten entries nonCellstdm(I,CellVariables=>cv); -- List of std monomials in ncv
-     -- Coercing to R:
-     f := map (R, ring ml#0);
-     ml = ml / f;
-     -- A dummy ideal and partial Characters:
-     Im := ideal;
-     pc := {};
-     redundant := true;
-     bottomlattice := partialCharacter (I, CellVariables=>cv);
-     -- For each monomial, check if I:m has a different lattice:
-     todolist := ml;
---     print ("Number of monomials to consider : " | toString (#todolist));
-     while (#todolist > 0) do (
-	  i := random(0, #todolist-1); -- a random monomial
-	  m := todolist#i;
-	  -- Now two possibilities:
-	  -- if m witnesses an embedded lattice: Remove everything that is above m;
-	  Im = I:m;
-	  pc = partialCharacter(Im, CellVariables=>cv);
-	  if (image pc#"L" == image bottomlattice#"L") then (
-	       -- m is the same like 1. Remove everything between them
-	       todolist = select (todolist, (mm) -> not isBetween(mm, 1,m))
-	       )
-	  else (
-	       -- found a witness
-	       witnesses = witnesses | {m};
-	       todolist = for t in todolist list if t%m==0 then continue else t
-	       );
---	  print ("Number of monomials to consider : " | toString (#todolist));
-	  ); -- while
-     witnesses) -- cellularEmbeddedLatticeWitnesses
-
-
-minimalPrimaryComponent = method (Options => {CellVariables => null})
-minimalPrimaryComponent Ideal := Ideal => o -> I -> (
-     -- Input a cellular binomial ideal whose radical is prime.
-     -- Output, generators for Hull(I)
-
-     cv := cellVars(I, CellVariables=>o#CellVariables);
-     if cv === false then error "Input to minimalPrimaryComponent was not cellular!";
-
-     I + ideal (cellularEmbeddedLatticeWitnesses (I, CellVariables=>cv)))
-
-
-binomialFrobeniusPower = (b,e) -> (
-     -- returns the e-th Frobenius power of the binomial b
-     -- i.e. (b_1)^e - (b_2)^e
-     ((terms b)#0)^e - (- (terms b)#1)^e)
-
-BCD = I -> binomialCellularDecomposition I 
 BPD = I -> binomialPrimaryDecomposition I
 BUD = I -> binomialUnmixedDecomposition I
 
-binomialUnmixedDecomposition = method (Options => {Verbose=>false})
-binomialUnmixedDecomposition Ideal := Ideal => o -> I -> (
-     if not isBinomial I then error "Input was not binomial !";
-     vbopt := o#Verbose;
+binomialMinimalPrimes = method(Options => {Verbose => false})
+binomialMinimalPrimes Ideal := List => o -> I -> (
+    -- The leaves of the cellular decomposition of the radical are radical
+    -- cellular ideals; their minimal primes are the primes of the
+    -- saturations of their characters.
+    checkRing I;
+    if not isBinomial I then error "Input was not binomial";
+    R := ring I;
+    if I == 1 then return {};
+    cd := first cellularTree(I, true, o.Verbose);
+    if o.Verbose then << "Decomposition done." << endl;
+    nil := {};
+    mp := flatten apply(#cd, j -> (
+            if o.Verbose then << "Finding minimal primes of cellular component: " << j + 1 << " of " << #cd << endl;
+            cellIdx := cd#j#1;
+            (T, phi, kappa, characters) := associatedCharacters(cd#j#0, cellIdx);
+            IT := if T === R then cd#j#0 else phi cd#j#0;
+            nil = nil | toList(#characters : otherIndices(R, cellIdx));
+            apply(characters, ch -> primeOfCharacter(IT, cellIdx, ch))));
+    inclusionMinimal(joinExtensions(R, mp), nil, o.Verbose))
 
-     if vbopt then print "Running cellular decomposition:";
-     cd := binomialCellularDecomposition (I, ReturnCellVars => true, Verbose=>vbopt);
-     counter := 1;
-     cdc := #cd;
-     bud := {};
-     if vbopt then print "Decomposing cellular components:";
-     scan (cd , ( (i) -> (
-		    if vbopt then (
-	   	    	 print ("Decomposing cellular component: " | toString counter | " of " | toString cdc);
-		    	 counter = counter +1;);
-		    bud = bud | cellularBinomialUnmixedDecomposition (i#0, CellVariables => i#1,Verbose=>vbopt);
-		    if vbopt then (
-			 print "done";
-			 );
-		    ) -- right hand side of lambda term
-	       ) -- lambda term
-    	  ); -- scan
-     if vbopt then print "Removing some redundant components...";
-     -- In principle this does not make the intersection irredundant,
-     -- but we don't want to run an exponential algorithm at this
-     -- point.
-     extractInclusionMinimalIdeals (bud, Verbose=>vbopt))
+binomialRadical = I -> (
+    -- The radical of a cellular binomial ideal is found by adding the
+    -- nilpotent variables (and, in characteristic p, the lattice ideal of
+    -- the p-saturation of its character).  In general the radical is the
+    -- intersection of the radicals of the cellular components; no field
+    -- extension is needed.  The cellular tree in radical mode has leaves
+    -- that are radical in characteristic zero and intersect to the radical;
+    -- in characteristic p the radicals of the leaves are intersected.
+    checkRing I;
+    if not isBinomial I then error "Input was not binomial";
+    R := ring I;
+    cv := isCellular(I, ReturnCellVars => true);
+    if cv =!= false then return cellularBinomialRadical(I, CellVariables => cv);
+    (leaves, intersection) := cellularTree(I, true, false);
+    if char R == 0 then return ideal mingens intersection;
+    radicals := apply(leaves, leaf -> cellularBinomialRadical(leaf#0, CellVariables => R_* _ (leaf#1)));
+    ideal mingens intersect radicals)
 
-binomialPrimaryDecomposition = method (Options => {Verbose=>false})
-binomialPrimaryDecomposition Ideal := Ideal => o -> I -> (
-     -- The full binomial primary decomposition 
-     -- starting from a not necessarily cellular binomial ideal
-     
-     if not isBinomial I then error "Input was not binomial !";
-     if I == ideal (1_(ring I)) then return {};
+binomialAssociatedPrimes = I -> (
+    -- For a cellular ideal the associated primes come from the congruence
+    -- classes.  In general every associated prime of I is associated to a
+    -- cellular component, but not conversely.  A candidate P is associated
+    -- to I if and only if the intersection of the primary components whose
+    -- primes are strictly contained in P is not contained in the
+    -- intersection of the components with prime P.
+    checkRing I;
+    if not isBinomial I then error "Input not binomial";
+    R := ring I;
+    if I == 1 then return {};
+    cv := isCellular(I, ReturnCellVars => true);
+    if cv =!= false then return cellularBinomialAssociatedPrimes(I, CellVariables => cv);
+    cd := first cellularTree(I, false, false);
+    primes := flatten apply(cd, p -> cellularBinomialAssociatedPrimes(p#0, CellVariables => R_* _ (p#1)));
+    components := flatten apply(cd, p -> cellularBinomialPrimaryDecomposition(p#0, CellVariables => R_* _ (p#1)));
+    -- both lists are in the same order; now group the components by prime
+    if #primes != #components then error "binomialAssociatedPrimes: internal error, one component per prime expected";
+    joined := joinExtensions(R, primes | components);
+    (primes, components) = (take(joined, #primes), drop(joined, #primes));
+    T := ring first primes;
+    distinct := {};
+    groups := new MutableHashTable;
+    scan(#primes, i -> (
+            k := position(distinct, P -> P == primes#i);
+            if k === null then (distinct = append(distinct, primes#i); k = #distinct - 1; groups#k = {});
+            groups#k = append(groups#k, components#i)));
+    for k from 0 to #distinct - 1 list (
+        P := distinct#k;
+        below := flatten for j from 0 to #distinct - 1 list (
+            if j != k and isSubset(distinct#j, P) then groups#j else continue);
+        if #below == 0 or not isSubset(intersect below, intersect groups#k) then ideal mingens P else continue))
 
-     vbopt := o#Verbose;
-     if vbopt then print "Running cellular decomposition:";
-     cd := binomialCellularDecomposition (I, ReturnCellVars => true, Verbose=>vbopt);
-     counter := 1;
-     cdc := #cd;
-     bpd := {};
-     if vbopt then print "Decomposing cellular components:";
-     scan (cd , ( (i) -> (
-		    if vbopt then (
-	   	    	 print ("Decomposing cellular component: " | toString counter | " of " | toString cdc);
-		    	 counter = counter +1;);
-		    bpd = bpd | cellularBinomialPrimaryDecomposition (i#0, CellVariables => i#1,Verbose=>vbopt);
-		    if vbopt then (
-			 print "done";
-			 );
-		    ) -- right hand side of lambda term
-	       ) -- lambda term
-    	  ); -- scan
-      
-     bpd = joinCyclotomic bpd;
-     if vbopt then print "Removing some redundant components...";
-     -- In principle this does not make the intersection irredundant,
-     -- but we don't want to run an exponential algorithm at this
-     -- point.
-     extractInclusionMinimalIdeals (bpd, Verbose=>vbopt))
-
-cellularBinomialUnmixedDecomposition = method (Options => {CellVariables => null, Verbose=>false}) 
-cellularBinomialUnmixedDecomposition Ideal := Ideal => o -> I -> ( 
-     -- computes the unmixed decomposition of a cellular ideal
-     -- as defined in Ojeda/Sanchez
-     vbopt := o#Verbose;
-     cv := cellVars(I, CellVariables=>o#CellVariables);
-     ncv := toList (set gens ring I - cv);
-     
-     -- Get the associated lattices (or better characters)
-     aldata := cellularAssociatedLattices (I, CellVariables=>cv);
-
-     -- We generate a list of pairs representing characters for the lattices:
-     al := for i in 0..#(aldata#1)-1 list (aldata#1#i, aldata#2#i);
-     
-     -- if there is only one lattice, then I was unmixed
-     if #al == 1 then return {I};
-
-     R := ring I;
-     CoeffR := coefficientRing R;
-          
-     -- Now find a chain among the associated lattices
-     -- but finite index containment is not sufficient.
-     -- We only need to check pairwise containments.
-     pair := null;
-     for l1 in al do (
-	  -- break out if the inner loop assigned a pair:
-	  if pair === null then break;
-	  for l2 in delete(l1,al) do (
-     	       if (isSubset (image l1#0, image l2#0)) and (rank image l1#0 < rank image l2#0) then (
-		    -- found a comparable pair and thus embedded primes:
-		    pair = (l1,l2);
-		    -- break the inner loop.
-		    break)));
-     -- If no pair was found, then I is unmixed an we are done
-     if pair === null then return {I};
-     
-     l1 := pair#0;
-     l2 := pair#1;
-     -- Identify a lattice vector in l2, but not l1
-     L2cols := entries transpose l2#0;
-     i := 0; -- Counter to identify a generator
-     for col in L2cols do (
-	  imc := image transpose matrix {col};
-	  if rank intersect {imc, image l1#0} < 1 then (
-	       -- found a vector
-	       break;
-	       );
-	  -- Else keep going.
-	  i = i+1;
-	  );
-     -- now i contains a suitable index
-     b := sub(makeBinomial(CoeffR(monoid [cv]), L2cols#i, l2#1#i), R);
-     
-     -- We can't follow Section 4.1 of Ojeda/Sanchez because there is no 
-     -- effective criterion to decide that mb^[e] will never lie in I, no
-     -- matter how divisible e is.
-    
-     -- We take the approach of computing e_b by actually coloning.
-     -- Stop condition: Find a binomial b^[e] such that I:b^[e] = I:b^[e]^\infty
-     -- and this ideal is binomial.
-     e :=1;
-     Itest := I:b;
-     while not ((isBinomial Itest) and ( Itest: binomialFrobeniusPower(b,e) == Itest)) do(
-	  e = e + 1;
-	  Itest = I:binomialFrobeniusPower (b,e);
-	  );
-     
-     -- Now we have the right quotient and the right Frobenius power.
-     -- So we start the recursion:
-     flatten { 
-	  cellularBinomialUnmixedDecomposition (Itest, CellVariables=>cv),
-	  cellularBinomialUnmixedDecomposition (I + ideal binomialFrobeniusPower (b,e), CellVariables=>cv)
-	  })
-
-cellularBinomialPrimaryDecomposition = method (Options => {CellVariables => null, Verbose=>false}) 
-cellularBinomialPrimaryDecomposition Ideal := Ideal => o -> I -> ( 
-     -- computes the binomial primary decomposition of a cellular ideal
-     -- I needs to be cellular. Cell variables can be given to speed up
-     -- Implements algorithm 9.7 in ES96, respectively A5 in OS97
-     vbopt := o#Verbose;
-     cv := cellVars(I, CellVariables=>o#CellVariables);
-     ncv := toList (set gens ring I - cv);
-     ap := cellularBinomialAssociatedPrimes (I, CellVariables => cv,Verbose=>vbopt);
-     -- If cv coincides with gens R, then the associated primes are their own minimal primary
-     -- components (since in characteristic zero lattice ideals are radical):
-     if #ncv == 0 then return ap
-     else (
-     	  -- Remove monomials from associated primes to get the lattice ideals
-     	  f := map (ring ap#0, ring ncv#0);
-     	  proj := (II) -> eliminate (f \ ncv,II);
-     	  ap = ap / proj
-	  );
-     R := ring ap#0; -- All associated primes live in a common ring
-     J := sub (I,R); -- get I over there to compute sums
-     -- Here, contrary to what is stated in ES'96, we can not assume that J+ap#i is cellular.
-     -- However, since Hull only wants the minimal primary component we can cellularize.
-
-     -- Saturate product cv or saturate variable by variable?
-     -- It seems to depend on the example which one is faster :(
---      cvsaturate := (p) -> (
--- 	  todo := cv;
--- 	  resu := p;
--- 	  while #todo > 0 do (
--- 	       resu = saturate (resu, sub(todo#0, R));
--- 	       todo = drop(todo,1)
--- 	       );
--- 	  resu);
-     cvsaturate := (p) -> saturate (p, sub (product cv, R));
-     ap / ( (P) -> minimalPrimaryComponent ( cvsaturate (P + J), CellVariables=>cv)))
-
-extractInclusionMinimalIdeals = method (Options => {Verbose=>false})
-extractInclusionMinimalIdeals List := List => o -> l -> (
-    -- Computes the inclusion minimal elements in a list of ideals
-    -- (like the minimal primes) Algorithm: For each ideal in the
-    -- list, remove all ideals above it.  Note: This does not make an
-    -- arbitrary intersection of ideals irredundant.  For example it
-    -- would not reduce <x-y> \cap <x,y^2> \cap <x^2,y> where each of
-    -- the last two components is redundant given the other two.
-
-     if #l == 0 then return {};
-     
-     -- List to store the result, the flag marks elements that have been treated.
-     result := for i in l list (i,false);
-
-     -- While we have previously unconsidered elements:
-     unconsidered := #l;
-     while unconsidered > 0 do (
-	 if o#Verbose then << unconsidered << " Ideals to check" << endl;
-     	 p := (select(1, result, p -> p#1==false))#0 ; -- select returns list
-	 result = for f in result list (
-	     -- Check if p is contained in f which makes f redundant
-	     if isSubset (p#0,f#0) then continue
-	     else f);
-         -- insert p again (flagged true) since it was removed before.
-	 result = append (result,(p#0,true));
-	 unconsidered = #(select (result, pp -> pp#1==false)));
-     if o#Verbose then << #l-#result << " redundant ideals removed. Computing mingens of result.";
-     for i in result list ideal mingens i#0)
-
--- The remaining code implements the solver for zero-dimensional unital
--- binomial ideals . We solve unital binomial equations using
--- modulo 1 arithmetic. The basic task is to solve a^n = 1^{k/m},
--- whose solutions are the equivalence classes of: k/nm, 1/n +
--- k/m, 2/n + k/nm,... , (n-1)/n + k/nm
-          
--- The following function implements this:
-Rooter = (n,q) -> (
-     -- INPUT:
-     -- n an integer
-     -- q a rational number between zero and one representing k/m
-     -- OUTPUT:
-     -- The list of root-exponents:
-     -- k/nm, 1/n + k/m, 2/n + k/nm,... , (n-1)/n + k/nm
-     k := 0/1;
-     m := 1;
-     if q != 0 then (
-	  m = denominator sub(q,QQ);
-	  k = numerator sub(q,QQ);
-	  );
-     val := 0;
-     roots := for i in 0..n-1 list (
-	  val = i/n + k/(n*m);
-	  if val > 1 then val = val - floor val;
-	  val
-	  );
-     roots)
-
-SolveMore = (binom,psol) -> (
-     -- This function extends a partial solution further
-     -- INPUT: A partial solution and a binomial which after plugging
-     -- in the partial solutions is univariate
-     -- OUTPUT: An extended partial solution
-
-     -- Since Lex is a global order the true monomial comes first.
-     mon := (terms binom)#0; -- The monomial in the new variable.
-     
-     -- we need the index of the variable that we will solve now.
-     -- (Previously this used `index (flatten entries gens radical
-     -- monomialIdeal mon)#0` with a self-described "incomprehensable
-     -- hack" comment; the cleaner equivalent is `first support mon`,
-     -- which is the unique variable underlying the univariate monomial.)
-     var := first support mon;
-     ind := index var;
-     
-     rhs := (terms binom)#1; -- The right hand side which is a power
-			     -- of a root of unity
-			     
-     erhs := flatten exponents rhs;
-     
-     newsols := {}; -- A list accumulating extended solutions
-      
-     -- If the binomial contains a common variable in both of its
-     -- monomials then zero is a solution for this variable We are
-     -- looking at erhs at position ind to determine this case
-     
-     roots := {};
-     
-     rhsvarpow := erhs#ind;
-     
-     if rhsvarpow > 0 then (
-	  -- zero is a solution for variable ind
-	  -- We fork of a new solution with entry "n" and divide by 
-	  -- the offending variable
-	  roots = {"n"};
-     	  mon = lift(mon / var^rhsvarpow, ring mon);
-	  rhs = lift(rhs / var^rhsvarpow, ring rhs);
-	  erhs = flatten exponents rhs;
-      	  );
-
-     emon := flatten exponents mon;
-     -- one element list containing the exponent
-     n := (toList (set emon - set {0}))#0; 
-
-      -- This needs to be done for each entry in psol:
-      for onesol in psol do (
-	   roots = {};
-	   -- now determine the right hand side exponent from the
-	   -- partial solutions.
-	   zeroflag := false;    
-       	   q := for v in 0..#erhs-1 list (
-		-- First case: variable does not appear -> exponent 0
-		if (erhs#v == 0) then 0
-		else if onesol#v === "n" then (
-		     -- if erhs > 0 and onesol has a "n", then the rhs is zero!
-     	       	     zeroflag = true;
-		     break 
-		     )
-		-- otherwise exponent times old exponent
-		else erhs#v * onesol#v
-		);
-	   
-	   if zeroflag and #roots == 0 then (
-		roots = roots | {"n"};
-		)
-	   else (
-		if not zeroflag then q = sum q;
-		);
-
-       	   -- now everything is set for the Rooter:
-       	   roots = roots | Rooter (n,q);
-       	   extensions := for r in roots list (
-	    	for i in 0..#onesol-1 list if i==ind then r else onesol#i
-	    	);
-       	   newsols = newsols | extensions;
-       	   );
-      newsols)
+------------------------------------------------------------------------------
+-- Solving zero-dimensional unital binomial ideals
+------------------------------------------------------------------------------
 
 binomialSolve = I -> (
-     -- solver for zero-dim'l unital difference Binomial
-     -- Ideals INPUT: I, the ideal    
-     -- OUTPUT: The list of solutions in QQ(some root of unity)
-     -- Note: Solutions will be returned with multiplicities.
-     if not isUnital I then (
-	  error "Sorry, only implemented for unital binomial ideals";
-	  );
-	  
-     R := ring I;
-     cd := binomialCellularDecomposition (I,ReturnCellVars=>true,Verbose=>false);
-     exponentsols := flatten for c in cd list cellularBinomialExponentSolve (c#0,c#1);
-
-     -- determine the least common denominator, ignoring nulls
-     denoms := for i in flatten exponentsols list if i =!= null then denominator i else continue;
-     -- If there are no denominators, the ideal was monomial
-     -- and we return only (0,0,...,0) many times:
-     if denoms === {} then (
-	  zerosol:={for i in gens R list 0_R};
-	  return for i in 1..#exponentsols list zerosol;
-	  );
-     lcd := lcm denoms;
-
-     -- This is our standard. Coefficients are rational?
-     C := QQ;     
-     if lcd > 2 then (
-	  -- print "Adjoining roots of unity is needed";
-     	  C = cyclotomicField lcd;
-	  );
-     
-     expo := q -> (
-     -- This auxiliary function maps a quotient from QQ to its
-     -- element in S
-     if q === null then return 0_C;
-     if q == 0 or q == 1 then return 1_C;
-     if q == (1/2) then return -1_C;
-     k := numerator sub(q,QQ);
-     m := denominator sub(q,QQ);
-     if m != lcd then k = k * sub(lcd / m,ZZ);
-     return sub((C_0)^k,C);
-     );
-     
-     sols := flatten exponentsols;
-     sols = expo \ sols;
-     pack (#(gens ring I),sols))
-
-cellularBinomialExponentSolve = (I,cv) -> (
-     -- Solves a zero dimensional cellular unital binomial ideal
-     -- by constructing the appropriate cyclotomic field
-     
-     -- Input: a unital zero-dim'l binomial ideal and its list of
-     -- cell variables
-     
-     -- Output: A list of solutions of the ideal 
-     	  
-     R := ring I;
-     varlist := flatten entries vars R;
-     RLex := newRing(R,MonomialOrder => Lex);
-     if not dim I == 0 then error "Ideal to solve is not zero dimensional";
-     
-     -- First we need a Lex Groebner Basis of our ideal.     
-     groeb := flatten entries gens gb sub(I,RLex);
-     
-     -- The data structure for a partial solution is as follows: It is
-     -- a list of n-tuples where n is the number of variables. These
-     -- tuples contain either rational numbers at already solved
-     -- positions or the symbol '*' indicating that this position is
-     -- unsolved and the special symbol null indicating that the
-     -- solution(not exponent) is zero
-
-     -- For each variable we check if it is a nilpotent variable, i.e.
-     -- each solution of the ideal has coordinate zero there
-     -- We also check how often we have to duplicate each solution in the
-     -- end to account for monomials of higher order 
-     dupnum := 1;     
-     psols := {};
-     for v in varlist do(
-	  if isSubset (set {v},set cv) then(
-	       -- Put side effects here:
-	       -- Filling the list
-	       psols = psols | {"*"};
-	       )
-	  else (
-	       -- Put side effects here:
-	       resu := axisSaturate(I, index v);
-	       dupnum = dupnum * resu#0;
-	       -- Filling the list
-	       psols = psols | {null};
-	       );
-	  );
-     
-     -- If there are no cell variables: We are done
-     if delete(null,psols) === {} then return for i in 0..(degree I)-1 list psols;
-          
-     -- The old solution for reference:
---     print "The following should coincide if no double sols";
---     print for v in varlist list if saturate(I,v) != I then null else "*"; 
---     print psols;
-     
-     -- make it a proper list of solutions
-     psols = {psols};
-     
-     -- We solve on a log-scale for the exponents
-     while #groeb > 0 do (
-	  -- check if the current term is a binomial
-	  if #(exponents groeb#0) > 1 then (
-	       psols = SolveMore(groeb#0, psols);
-	       );
-     	  groeb = drop(groeb, 1);
-	  );
-     
-     -- Now we duplicate:
-     if dupnum > 1 then psols = for i in 1..dupnum list psols;
-     flatten psols)
+    -- The points of the variety of a zero-dimensional unital binomial ideal,
+    -- each as often as its multiplicity.  The points with a given set E of
+    -- nonzero coordinates are the zeros of a cellular ideal with cell
+    -- variables E.  They correspond to the characters on ZZ^E that extend the
+    -- character of some congruence class, and the multiplicity of a point is
+    -- the number of connected components of the congruence whose character it
+    -- extends.
+    checkRing I;
+    R := ring I;
+    p := char R;
+    -- in positive characteristic every nonzero coefficient is a root of
+    -- unity, so every binomial ideal is as good as a unital one
+    if p == 0 and not isUnital I then error "Sorry, only implemented for unital binomial ideals";
+    checkBinomial I;
+    n := numgens R;
+    if I == 1 then return {};
+    if dim I != 0 then error "Ideal to solve is not zero dimensional";
+    -- the leaves of the tree have distinct sets of cell variables
+    components := sort(first cellularTree(I, false, false), last);
+    -- solutions as lists of exponents q, meaning e(q), with null for zero.
+    -- In characteristic p a class with a lattice of index p^a g, p not
+    -- dividing g, gives g points, each with multiplicity p^a per connected
+    -- component ([ES96] Corollary 2.2: the geometric multiplicity of a
+    -- primary component of a lattice ideal is the order of Sat_p(L)/L).
+    -- All values are roots of unity and are handled as exponents: a value
+    -- a e(q) of a saturated character is e(q + exponent of a), and a value c
+    -- of a congruence class is e(exponent of c).  For unital ideals in
+    -- characteristic zero all a and c are 1; in positive characteristic the
+    -- exponent of a field element is its discrete logarithm.
+    exponent := a -> if a == 1 then 0/1 else (
+        q := rootExponent a;
+        if q === null then error("binomialSolve: the coefficient " | toString a | " is not a root of unity");
+        q);
+    solutions := flatten apply(components, (J, cellIdx) -> (
+            classes := congruenceClasses(J, cellIdx);
+            pPart := cl -> if p == 0 then 1 else (d := latticeIndex cl#0; d // primeToPart(d, p));
+            saturated := apply(classes, cl -> characterSaturations(cl#0, cl#1));
+            -- a saturated character lives on all of ZZ^E; its values on the
+            -- unit vectors are the coordinates of the point
+            points := unique flatten apply(saturated, s -> (
+                    X := id_(ZZ^(#cellIdx)) // s#0;
+                    apply(s#1, vals -> (
+                            qs := apply(vals, v -> v#1 + exponent v#0);
+                            apply(#cellIdx, j -> (
+                                    q := sum(#vals, i -> X_(i,j) * qs#i);
+                                    q - floor q))))));
+            classExponents := apply(classes, cl -> apply(cl#1, exponent));
+            flatten apply(points, pt -> (
+                    -- its multiplicity: the classes whose character the point extends
+                    mult := sum(#classes, k -> (
+                            cl := classes#k;
+                            H := cl#0;
+                            if all(numcols H, j -> (
+                                    q := sum(#cellIdx, i -> H_(i,j) * pt#i) - classExponents#k#j;
+                                    q == floor q))
+                            then cl#3 * pPart cl else 0));
+                    full := new MutableList from toList(n : null);
+                    scan(#cellIdx, j -> full#(cellIdx#j) = pt#j);
+                    toList(mult : toList full)))));
+    N := orderForExponents select(flatten solutions, q -> q =!= null);
+    -- in positive characteristic the points lie in a Galois field
+    F := if p > 0 then coefficientRing first extensionRing(R, N) else if N > 2 then cyclotomicField(N, QQ) else QQ;
+    -- (0_F lies in the ambient ring of a Galois field F, promote(0, F) in F)
+    zero := if p > 0 then promote(0, F) else 0_F;
+    apply(solutions, s -> apply(s, q -> if q === null then zero else rootValue(F, q))))
 
 -- End of source code ---
 
 beginDocumentation()
 
-document {
-        Key => Binomials,
-        Headline => "a package for binomial ideals",
+doc ///
+    Key
+        Binomials
+    Headline
+        specialized routines for binomial ideals
+    Description
+        Text
+            A {\em binomial} is a polynomial with at most two terms, and a {\em binomial ideal} is an ideal
+            generated by binomials.  This package computes decompositions of binomial ideals: cellular
+            decompositions, primary decompositions into binomial ideals, minimal and associated primes,
+            radicals and unmixed decompositions.  The algorithms use the combinatorics of binomial ideals
+            and are usually much faster than the general algorithms.  There is no special type for binomial
+            ideals; one uses ordinary @TO2 {Ideal, "ideals"}@.
+        Example
+            R = QQ[x,y,z];
+            I = ideal(x*y - z, x*z - y^2);
+            bpd = binomialPrimaryDecomposition I
+            intersect bpd == I
+            binomialAssociatedPrimes I
+        Text
+            {\bf Field extensions.}  The primary components of a binomial ideal over $\mathbb{Q}$ are binomial
+            only after adjoining roots of unity.  The package constructs the cyclotomic field with the
+            package @TO "Cyclotomic::Cyclotomic"@ (a Galois field in positive characteristic, see below) and
+            returns ideals in a polynomial ring over that field,
+            with the same variables, degrees and monomial order as the ring of the input.
+        Example
+            L = binomialPrimaryDecomposition ideal(x^3 - y^3, z^2)
+            S = ring first L
+            intersect L == sub(ideal(x^3 - y^3, z^2), S)
+        Text
+            All ideals of one answer live in the same ring, and answers of different functions for ideals of
+            the same ring that need the same roots of unity live in the same ring, too.  If no root of unity
+            is needed, the answer is in the ring of the input.  An ideal with rational coefficients is moved
+            to the ring of an answer with @TO2 {(substitute, Ideal, Ring), "sub"}@, as above.
 
-        EM "Binomials", " is a package for binomial ideals with a particular
-        focus on intersection decompositions and associated primes.  For
-        instance, if the input is a unital binomial ideal (that is generated
-        by monomials and differences of monomials) then the function",
-        TO binomialPrimaryDecomposition, "computes a primary decomposition into
-        binomial ideals. To this end a cyclotomic field extension of the
-        coefficient field may be necessary which is automatically constructed
-        using the package ",TO Cyclotomic, ".", EM " Binomials", " also
-        implements the data type ", TO partialCharacter, " (see [ES96]) and
-        several convenience functions to transform binomials into exponent
-        vectors and vice versa.  Those may be useful for manual inspection of
-        binomial ideals.", "There is no special datatype for binomial ideals
-        implemented, one just uses ", TO ideal, "s.",
-	
-	BR{},BR{},
-	BOLD "Literature \n",
-	UL {
-	  LI {"[ES96] ", EM "Binomial ideals ", "(D. Eisenbud, B.Sturmfels, 1996).\n"},
-	  LI {"[DMM10] ", EM "Combinatorics of binomial primary decomposition ", "(A. Dickenstein, L. Matusevich, E.Miller, 2010)\n"},
-	  LI {"[OS00] ", EM "Cellular Binomial Ideals. Primary Decomposition of Binomial Ideals ", "(I. Ojeda, R. Piedra-Sanchez, 2000)\n"},
-	  LI {"[Alt00] ", EM "The chain property for the associated primes of A-graded ideals ", "(K. Altmann, 2000)\n"},
-	  LI {"[KM11] ", EM "Decompositions of commutative monoid congruences and binomial ideals ", "(T. Kahle, E. Miller, 2011)"}}}
-   
-document {
-     Key => {binomialPrimaryDecomposition,
-	  (binomialPrimaryDecomposition, Ideal)},
-     Headline => "Binomial Primary Decomposition",
-     Usage => "binomialPrimaryDecomposition I",
-     Inputs => {
-          "I" => { "a binomial ideal"} },
-     Outputs => {
-          {"a list of binomial primary components of I"} },
-     "This routine returns a primary decomposition of I into binomial ideals.",
-     EXAMPLE {
-          "R = QQ[x,y,z]",
-          "I = ideal (x*y-z, x*z-y^2)",
-          "bpd = binomialPrimaryDecomposition I",
-	  "intersect bpd == I"
-          },
-     "A synonym for this function is ", TO BPD, ".",
-     Caveat => {"Currently it can not be guaranteed that the decomposition is irredundant, although serious attempts are made to reduce redundancy."},
-     SeeAlso => BPD}
+            {\bf Prime and primary} always mean prime and primary over the algebraic closure of the
+            coefficient field.  For example $x^2+1$ generates a prime ideal of $\mathbb{Q}[x]$, but
+            @TO binomialIsPrime@ returns false for it, and its primary decomposition has the two components
+            $(x-i)$ and $(x+i)$.
 
-document {
-     Key => {binomialUnmixedDecomposition,
-	  (binomialUnmixedDecomposition, Ideal)},
-     Headline => "Binomial Unmixed Decomposition",
-     Usage => "binomialUnmixedDecomposition I",
-     Inputs => {
-          "I" => { "a binomial ideal"} },
-     Outputs => {
-          {"a list of unmixed components of I"} },
-     "This routine returns an unmixed decomposition of a binomial ideal into binomial ideals. 
-     The implemented algorithm is a variant of Algorithm 4 in [OS00].",
-     EXAMPLE {
-          "R = QQ[x,y,z]",
-          "I = ideal (x^2, x*y, y^2, x*(z^3-1), y*(z^2-1))",
-          "bud = binomialUnmixedDecomposition I",
-	  "intersect bud == I"
-          },
-     "A synonym for this function is ", TO BUD, ".",
-     Caveat=> "Apart from unmixedness, properties of the output decomposition are 
-     defined only by the course of the algorithm, in particular it 
-     is not mesoprimary decomposition of [KM11].",
-     SeeAlso => BUD}
+            {\bf Cellular ideals and partial characters.}  An ideal is {\em cellular} if modulo the ideal every
+            variable is a nonzerodivisor or nilpotent.  The nonzerodivisors are its {\em cell variables}.  A
+            cellular binomial ideal $I$ with cell variables $E$ determines a lattice $L$ in $\mathbb{Z}^E$ and
+            a homomorphism $\rho$ from $L$ to the nonzero elements of the field, its @TO2 {PartialCharacter,
+            "partial character"}@, such that $I \cap k[E]$ is generated by all $x^u - \rho(u-v) x^v$ with
+            $u - v \in L$.  The associated primes of $I$ correspond to the {\em saturations} of the partial
+            characters of the ideals $I : m$ for monomials $m$ in the nilpotent variables, that is, to their
+            extensions to the lattice of all integer points in the rational span of $L$.  See [ES96] and [KM14].
 
-document {
-     Key => BPD,
-     Headline => "Binomial Primary Decomposition",
-     "BPD is a synonym for ", TO binomialPrimaryDecomposition, "."}
+            {\bf Which ideals are supported.}  The ring must be a polynomial ring with a global monomial
+            order over a field.
+        Text
+            @UL {
+                {"Over ", TEX "$\\mathbb{Q}$", " and over cyclotomic fields made by ", TO "Cyclotomic::cyclotomicField",
+                 ", everything works for ", EM "unital", " binomial ideals, that is, ideals generated by monomials and
+                 differences of monomials, see ", TO isUnital, "."},
+                {"For other coefficients the decomposition may need roots of the coefficients.  They are found if
+                 the number whose root is needed is a root of unity or plus or minus a power of a rational number.
+                 So ", TEX "$x^2+y^2$", " and ", TEX "$x^2-4y^2$", " can be decomposed, but for ", TEX "$x^2-2y^2$",
+                 " an error is raised: ", TEX "$\\sqrt 2$", " lies in the cyclotomic field of order 8, but the package
+                 does not look for roots of this kind.
+                 The cellular decomposition, the radical and the unmixed decomposition never need roots."},
+                {"In positive characteristic ", TEX "$p$", " everything works for all binomial ideals over
+                 ", TEX "$\\mathbb{Z}/p$", ", over Galois fields made by ", TO "GF", " and over fields ", TT "toField(ZZ/p[c]/(f))",
+                 ", with any coefficients:
+                 every nonzero element of a finite field is a root of unity.  Results that need roots live in a
+                 ring over a Galois field ", TEX "$GF(p^m)$", ", see below.  Fields of characteristic ", TEX "$p$",
+                 " that are not finite, such as ", TT "frac(ZZ/p[t])", ", are not perfect, and the primes of a
+                 binomial ideal over them may need inseparable extensions; they are refused where a root or a
+                 field extension would be needed."},
+                {"Over a fraction field such as ", TT "frac(QQ[a,b])", " the parameters must have degree 0, as in ",
+                 TT "frac(QQ[a,b, Degrees => {0,0}])", ": with positive degrees Macaulay2's ", TO "Saturation::saturate", " does
+                 not work over it, and the functions raise an error saying so."}
+            }@
+        Text
+            {\bf Positive characteristic.}  Over a field of characteristic $p > 0$ a lattice ideal need not be
+            radical: $x^2 - y^2 = (x-y)^2$ in characteristic 2.  The primary components of a binomial ideal are
+            then the lattice ideals of the extensions of its partial characters to the largest sublattice of the
+            saturation whose index is prime to $p$, and the radical is the lattice ideal of the unique extension to the
+            largest sublattice whose index is a power of $p$ ([ES96] Corollary 2.2, [EM16]).  The primary decomposition
+            of a cellular ideal is computed by Theorem 2.11 of [EM16].  Every nonzero coefficient $c$ of a finite
+            field is a root of unity, $c = \gamma^k$ for a generator $\gamma$ of the multiplicative group, and
+            the package finds the exponent $k$ (a discrete logarithm, by the Pohlig-Hellman algorithm with
+            baby-step giant-step; a prime factor of $p^n-1$ above $2^{38}$ is out of its reach and gives an
+            error) to take roots of $c$; so all binomial ideals are supported, not only unital ones.  The roots
+            live in a Galois
+            field $GF(p^m)$ made with @TO "GF"@ and its Conway polynomial, with generator {\tt ww_(p^m-1)}; as in
+            characteristic zero, the answer then lives in a polynomial ring over that field with the same
+            variables, and one ring is made per input ring and field.  The input ring may itself be over a Galois
+            field made by @TO "GF"@.  If that field was made by {\tt GF(p, n)}, it is embedded into $GF(p^m)$ by
+            the Conway rule $a \mapsto {\tt ww}^{(p^m-1)/(p^n-1)}$, which is the map that @TO "GF"@ and
+            @TO substitute@ use; a Galois field given by another irreducible polynomial is embedded by sending its
+            generator to a root of that polynomial in $GF(p^m)$.  A field {\tt toField(ZZ/p[c]/(f))} is handled
+            like the Galois field {\tt GF(ZZ/p[c]/(f))} of the same presentation.  The inclusion of the input
+            ring into a result ring is @TO "Cyclotomic::cyclotomicInclusion"@.
+        Example
+            P = ZZ/2[x,y];
+            binomialPrimaryDecomposition ideal(x^2 - y^2)
+            binomialRadical ideal(x^2 - y^2)
+            P3 = ZZ/3[x,y];
+            binomialPrimaryDecomposition ideal(x^4 - y^4)
+            binomialSolve ideal(x^6 - 1, y^2 - 1)
+            P5 = ZZ/5[x,y];
+            binomialPrimaryDecomposition ideal(x^10 - 2*y^10)
+            binomialRadical ideal(x^10 - 2*y^10)
+        Text
+            {\bf The unit ideal} has no components, no primes and no points: the decompositions return the
+            empty list for it.  It is neither prime nor primary, but @TO isCellular@ returns true for it.
 
-document {
-     Key => BUD,
-     Headline => "Binomial Unmixed Decomposition",
-     "BUD is a synonym for ", TO binomialUnmixedDecomposition, "."}
+            {\bf Version 2.0} is a rewrite of version 1.2.1 with the same interface.  It computes the associated
+            primes of a cellular ideal from the congruence that the ideal induces on the monomials in the
+            nilpotent variables, in one pass, instead of one ideal quotient per monomial.  Several functions
+            that returned wrong answers in special cases were corrected: primary components that were not
+            primary when a field extension met nilpotent variables, unmixed decompositions that were not
+            unmixed, associated primes of ideals that are not cellular, and the multiplicities of
+            @TO binomialSolve@.  Positive characteristic is new in version 2.0; version 1.2.1 assumed
+            characteristic zero there and gave wrong answers.
 
-document {
-     Key => {binomialCellularDecomposition,
-          (binomialCellularDecomposition,Ideal),
-	  [binomialCellularDecomposition,ReturnCellVars]},
-     Headline => "Binomial Cellular Decomposition",
-     Usage => "binomialCellularDecomposition I",
-     Inputs => {
-          "I" => { "a binomial ideal"} },
-     Outputs => {
-          {"a list of cellular ideals whose intersection is I or 
-	    a list of pairs of these ideals and their cellular variables 
-	    if the option ReturnCellVars => true is used"} },
-     "A binomial ideal I is called cellular if modulo I every variable in 
-     the polynomial ring is either a non-zerodivisor or nilpotent. 
-     This routine returns a minimal cellular decomposition of a 
-     binomial ideal.",
-     EXAMPLE {
-          "R = QQ[x,y,z]",
-          "I = ideal (x*y-z, x*z-y^2)",
-          "bcd = binomialCellularDecomposition I",
-	  "intersect bcd == I",
-     	  "binomialCellularDecomposition (I, ReturnCellVars=>true, Verbose=>false)"
-          },
-     "A synonym for this function is ", TO BCD, ".",
-     "If the option ", TO Verbose, " is set (default), then output about the 
-     number of components found so far will be generated.",
-     SeeAlso => BCD}
+            {\bf Literature}
+        Text
+            @UL {
+                {"[ES96] D. Eisenbud, B. Sturmfels, ", EM "Binomial ideals", ", 1996."},
+                {"[OS00] I. Ojeda, R. Piedra-Sánchez, ", EM "Cellular binomial ideals. Primary decomposition of binomial ideals", ", 2000."},
+                {"[DMM10] A. Dickenstein, L. Matusevich, E. Miller, ", EM "Combinatorics of binomial primary decomposition", ", 2010."},
+                {"[K12] T. Kahle, ", EM "Decompositions of binomial ideals", ", J. Softw. Algebra Geom. 4 (2012)."},
+                {"[KM14] T. Kahle, E. Miller, ", EM "Decompositions of commutative monoid congruences and binomial ideals", ", Algebra Number Theory 8 (2014)."},
+                {"[EM16] Z. S. Eser, L. Matusevich, ", EM "Decompositions of cellular binomial ideals", ", J. London Math. Soc. 94 (2016), with a corrigendum in volume 100 (2019)."}
+            }@
+///
 
-document {
-     Key => BCD,
-     Headline => "Binomial Cellular Decomposition",
-     "BCD is a synonym for ", TO binomialCellularDecomposition ,"."}
+doc ///
+    Key
+        binomialPrimaryDecomposition
+        (binomialPrimaryDecomposition, Ideal)
+        [binomialPrimaryDecomposition, Verbose]
+    Headline
+        primary decomposition of a binomial ideal into binomial ideals
+    Usage
+        binomialPrimaryDecomposition I
+    Inputs
+        I:Ideal
+            a binomial ideal
+        Verbose => Boolean
+            whether to report progress
+    Outputs
+        :List
+            of primary binomial ideals whose intersection is $I$
+    Description
+        Text
+            The ideal is first decomposed into cellular ideals with @TO binomialCellularDecomposition@.  Every
+            cellular component is then decomposed with @TO cellularBinomialPrimaryDecomposition@, and finally
+            components that contain another component are removed.
+        Example
+            R = QQ[x,y,z];
+            I = ideal(x*y - z, x*z - y^2);
+            bpd = binomialPrimaryDecomposition I
+            intersect bpd == I
+        Text
+            The components are binomial ideals.  This may need roots of unity; the answer then lives in a ring
+            over a cyclotomic field, see @TO Binomials@.
+        Example
+            J = ideal(x^2, x*(y^3 - 1), z - 1);
+            L = binomialPrimaryDecomposition J
+            S = ring first L
+            intersect L == sub(J, S)
+        Text
+            A synonym for this function is @TO BPD@.
+    Caveat
+        The decomposition need not be irredundant: a component can contain the intersection of the others, and
+        the radical of such a component need not be an associated prime.  Use @TO binomialAssociatedPrimes@ for
+        the associated primes.  An error is raised if the ideal is not binomial.
+    SeeAlso
+        BPD
+        binomialCellularDecomposition
+        cellularBinomialPrimaryDecomposition
+        binomialAssociatedPrimes
+///
 
-document {
-     Key => {binomialRadical},
-     Headline => "Radical of a binomial ideal",
-     Usage => "binomialRadical I",
-     Inputs => {
-          "I" => { "a binomial ideal"} },
-     Outputs => {
-	  {"the radical of I"}},
-     "If the input is a cellular binomial ideal then a very fast algorithm is used. 
-     If one knows this and also the cellular variables then ", 
-     TO cellularBinomialRadical, " should be used.",
-     EXAMPLE {
-          "R = QQ[x,y]",
-	  "I = ideal (y^2, x*y-y, x^2-1)",
-	  "binomialRadical I"
-          },
-     SeeAlso => cellularBinomialRadical}
+doc ///
+    Key
+        BPD
+    Headline
+        synonym for binomialPrimaryDecomposition
+    Usage
+        BPD I
+    Description
+        Text
+            {\tt BPD} is a synonym for @TO binomialPrimaryDecomposition@ and accepts the same options.
+        Example
+            R = QQ[x,y];
+            BPD ideal(x^2 - y^2)
+            BPD (ideal(x^2 - y^2), Verbose => false)
+///
 
-document {
-     Key => {cellularBinomialRadical,
-	  (cellularBinomialRadical,Ideal)},
-     Headline => "Radical of a cellular binomial ideal",
-     Usage => "cellularBinomialRadical I",
-     Inputs => {
-          "I" => {"a cellular binomial ideal"} },
-     Outputs => {
-          {"the radical of I"} },
-     "The radical of a cellular binomial ideal can be determined very quickly. If the 
-     cellular variables are known they can be given as a list via the option ", TO CellVariables, ".",
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-	  "I = ideal(y^3,y^2*z^2-x^3,x*y^2*z,x^3*z-x*y)",
-	  "cv = isCellular (I,ReturnCellVars=>true)",
-	  "cellularBinomialRadical (I,CellVariables=>cv)"
-          },
-     SeeAlso => binomialRadical}
+doc ///
+    Key
+        binomialCellularDecomposition
+        (binomialCellularDecomposition, Ideal)
+        [binomialCellularDecomposition, ReturnCellVars]
+        [binomialCellularDecomposition, Verbose]
+    Headline
+        decomposition of a binomial ideal into cellular ideals
+    Usage
+        binomialCellularDecomposition I
+    Inputs
+        I:Ideal
+            a binomial ideal
+        ReturnCellVars => Boolean
+            whether to return the cell variables of every component as well
+        Verbose => Boolean
+            whether to report progress
+    Outputs
+        :List
+            of cellular ideals whose intersection is $I$; with {\tt ReturnCellVars => true} a list of pairs
+            consisting of an ideal and the list of its cell variables
+    Description
+        Text
+            An ideal is cellular if modulo the ideal every variable is a nonzerodivisor (a cell variable) or
+            nilpotent.  Every binomial ideal is an intersection of cellular binomial ideals, over the same field.
+        Example
+            R = QQ[x,y,z];
+            I = ideal(x*y - z, x*z - y^2);
+            bcd = binomialCellularDecomposition I
+            intersect bcd == I
+            binomialCellularDecomposition(I, ReturnCellVars => true)
+        Text
+            The variables are treated one after the other.  For a variable $x$ and the least $k$ with
+            $J : x^k = J : x^\infty$ one has $J = (J : x^\infty) \cap (J + (x^k))$; in the first ideal $x$ is a
+            nonzerodivisor, in the second it is nilpotent.  Branches that contain the intersection of the
+            components already found are discarded, so no component of the answer contains the intersection
+            of the components found before it.  The algorithm is due to Ojeda and Stillman.
 
-document {
-     Key => {binomialMinimalPrimes,
-	  (binomialMinimalPrimes,Ideal)},
-     Headline => "minimal primes of a binomial Ideal",
-     Usage => "binomialMinimalPrimes I",
-     Inputs => {
-          "I" => {"a binomial ideal"}},
-     Outputs => {
-          {"the list of minimal primes of I"} },
-     "The binomial minimal primes of a binomial ideal over QQ exist only in extension fields.",
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-	  "I = ideal(y^3,y^2*z^2-x^3,x*y^2*z,x^3*z-x*y)",
-	  "binomialMinimalPrimes I",
-          },
-     "If the option ", TO Verbose, " is set (default), then output about the 
-     number of components found so far will be generated.",
-     SeeAlso => binomialRadical}
+            This function works in any characteristic, and it does not need a binomial ideal.  A synonym is
+            @TO BCD@.
+    SeeAlso
+        BCD
+        isCellular
+        binomialPrimaryDecomposition
+///
 
-document {
-     Key => {binomialAssociatedPrimes},
-     Headline => "Associated primes of a binomial ideal",
-     Usage => "binomialAssociatedPrimes I",
-     Inputs => {
-          "I" => {"a binomial ideal"} },
-     Outputs => {
-          {"the list of associated primes of I"} },
-     "First a cellular decomposition is run, then the associated primes of each cellular component are determined.",
-     EXAMPLE {
-	  "R = QQ[x,y]",
-	  "I = ideal(x^2-y,y^2-x)",
-	  "binomialAssociatedPrimes I",
-          },
-     SeeAlso => {binomialMinimalPrimes,cellularBinomialAssociatedPrimes}}
+doc ///
+    Key
+        BCD
+    Headline
+        synonym for binomialCellularDecomposition
+    Usage
+        BCD I
+    Description
+        Text
+            {\tt BCD} is a synonym for @TO binomialCellularDecomposition@ and accepts the same options.
+        Example
+            R = QQ[x,y];
+            BCD ideal(x^2*y - x*y^2)
+            BCD (ideal(x^2*y - x*y^2), ReturnCellVars => true)
+///
 
-document {
-     Key => {binomialIsPrime,
-	  (binomialIsPrime,Ideal)},
-     Headline => "test for primeness of a binomial ideal",
-     Usage => "binomialIsPrime I",
-     Inputs => {
-          "I" => {"a binomial ideal"} },
-     Outputs => {
-          {"true or false, depending on whether I is a binomial prime ideal"} },
-     "A binomial ideal is prime only if it is cellular. If the cellular variables ",
-     "are known they can be given via the ", TO CellVariables, " option.",
-     EXAMPLE {
-	  "R = QQ[x,y]",
-	  "I = ideal(x^2-y,y^2-x)",
-	  "binomialIsPrime I",
-          },
-     SeeAlso => {cellularBinomialIsPrimary, CellVariables}}
+doc ///
+    Key
+        binomialUnmixedDecomposition
+        (binomialUnmixedDecomposition, Ideal)
+        [binomialUnmixedDecomposition, Verbose]
+    Headline
+        decomposition of a binomial ideal into unmixed binomial ideals
+    Usage
+        binomialUnmixedDecomposition I
+    Inputs
+        I:Ideal
+            a binomial ideal
+        Verbose => Boolean
+            whether to report progress
+    Outputs
+        :List
+            of unmixed binomial ideals whose intersection is $I$
+    Description
+        Text
+            An ideal is {\em unmixed} if all its associated primes have the same dimension.  The components are
+            binomial ideals in the ring of $I$: in contrast to a primary decomposition, no field extension is
+            needed.
+        Example
+            R = QQ[x,y,z];
+            I = ideal(x^2, x*y, y^2, x*(z^3 - 1), y*(z^2 - 1));
+            bud = binomialUnmixedDecomposition I
+            intersect bud == I
+            apply(bud, J -> apply(associatedPrimes J, dim))
+        Text
+            The ideal is decomposed into cellular ideals, and these with
+            @TO cellularBinomialUnmixedDecomposition@.  A synonym is @TO BUD@.
+    Caveat
+        The decomposition is neither irredundant nor canonical; in particular it is not the mesoprimary
+        decomposition of [KM14].  An error is raised if the ideal is not binomial.
+    SeeAlso
+        BUD
+        cellularBinomialUnmixedDecomposition
+///
 
-document {
-     Key => binomialIsPrimary,
-     Headline => "test for primary binomial ideals",
-     Usage => "binomialIsPrime I",
-     Inputs => {
-          "I" => {"a binomial ideal"}},
-     Outputs => {
-          {"true or false, depending on whether I is a primary binomial ideal"} },
-     "A binomial ideal is prime only if it is cellular. If the cellular variables ",
-     "are known, the function ", TO cellularBinomialIsPrimary, " should be used.",
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-	  "I = ideal(x-y,z^3)",
-	  "binomialIsPrimary I",
-          },
-     SeeAlso => {cellularBinomialIsPrimary, CellVariables}}
+doc ///
+    Key
+        BUD
+    Headline
+        synonym for binomialUnmixedDecomposition
+    Usage
+        BUD I
+    Description
+        Text
+            {\tt BUD} is a synonym for @TO binomialUnmixedDecomposition@ and accepts the same options.
+        Example
+            R = QQ[x,y];
+            BUD ideal(x^2, x*(y^2 - 1))
+///
 
-document {
-     Key => {cellularBinomialIsPrimary,
-	  (cellularBinomialIsPrimary,Ideal)},
-     Headline => "test for primaryness of a binomial ideal",
-     Usage => "cellularBinomialIsPrimary I",
-     Inputs => {
-          "I" => { "a binomial ideal"} },
-     Outputs => {
-          {"true or false, depending on whether I is a binomial primary ideal"} },
-     "A binomial ideal is primary only if it is cellular. If the cellular variables ",
-     "are known they can be given via the ", TO CellVariables, " option. ", "If the ideal is not primary, ",
-     "either 'false' or two distinct associated primes can be returned. The behaviour can be changed using the options ",
-     TO ReturnPrimes, " and ", TO ReturnPChars, ".",
-     EXAMPLE {
-	  "R = QQ[x,y]",
-	  "I = ideal(x^2-1)",
-	  "cellularBinomialIsPrimary (I,ReturnPrimes=>true)",
-          },
-     SeeAlso => {cellularBinomialIsPrimary, CellVariables, ReturnPrimes, ReturnPChars}}
+doc ///
+    Key
+        binomialRadical
+    Headline
+        radical of a binomial ideal
+    Usage
+        binomialRadical I
+    Inputs
+        I:Ideal
+            a binomial ideal
+    Outputs
+        :Ideal
+            the radical of $I$, in the ring of $I$
+    Description
+        Text
+            The radical of a cellular binomial ideal is obtained by adding its nilpotent variables and, in
+            positive characteristic, the lattice ideal of the $p$-saturation of its partial character, see
+            @TO cellularBinomialRadical@.  In general the radical is the intersection of the radicals of cellular
+            components.  No field extension is needed, and the answer is again binomial.
+        Example
+            R = QQ[x,y];
+            I = ideal(y^2, x*y - y, x^2 - 1);
+            binomialRadical I
+            J = ideal(x^3*y - x*y^3);
+            binomialRadical J
+            binomialRadical J == radical J
+            P = ZZ/3[x,y];
+            binomialRadical ideal(x^3*y - x*y^3, y^9 - y^3)
+    Caveat
+        In positive characteristic the coefficient field must be finite (see @TO Binomials@) whenever the
+        characteristic divides the index of a lattice.
+    SeeAlso
+        cellularBinomialRadical
+        binomialMinimalPrimes
+///
 
-document {
-     Key => {binomialSolve},
-     Headline => "solving zero-dimensional binomial Ideals",
-     Usage => "binomialSolve I",
-     Inputs => {
-          "I" => {"a unital binomial ideal"}},
-     Outputs => {
-          {"the list of points in the zero locus of I in QQ[ww]"} },
-     "The solutions of a set of unital binomial equations exist in a cyclotomic field. This function
-     will compute the variety of a unital binomial ideal and construct an appropriate cyclotomic 
-     field containing the entire variety (as a subset of the algebraic closure of QQ).",
-     EXAMPLE {
-	  "R = QQ[x,y,z,w]",
-	  "I = ideal (x-y,y-z,z*w-1*w,w^2-x)",
-	  "dim I",
-	  "binomialSolve I",
-	  "J = ideal (x^3-1,y-x,z-1,w-1)",
-	  "binomialSolve J"
-          },
-     Caveat => {"The current implementation can only handle unital binomial ideals."},
-     SeeAlso => Cyclotomic}
+doc ///
+    Key
+        cellularBinomialRadical
+        (cellularBinomialRadical, Ideal)
+    Headline
+        radical of a cellular binomial ideal
+    Usage
+        cellularBinomialRadical I
+    Inputs
+        I:Ideal
+            a cellular binomial ideal
+    Outputs
+        :Ideal
+            the radical of $I$
+    Description
+        Text
+            In characteristic zero the radical of a cellular binomial ideal is generated by the ideal and its
+            nilpotent variables.  If the cell variables are known, they can be given with the option
+            @TO CellVariables@; in characteristic zero nothing has to be computed then.  In characteristic
+            $p > 0$ the lattice ideal $I \cap k[E]$ of the cell variables $E$ need not be radical; its radical is
+            the lattice ideal of the unique extension of the partial character to the largest lattice between
+            the lattice and its saturation whose index is a power of $p$ ([ES96], Corollary 2.2), and this
+            lattice ideal is added as well.  No field extension is needed for this.
+        Example
+            R = QQ[x,y,z];
+            I = ideal(y^3, y^2*z^2 - x^3, x*y^2*z, x^3*z - x*y);
+            cv = isCellular(I, ReturnCellVars => true)
+            cellularBinomialRadical(I, CellVariables => cv)
+    Caveat
+        The generators of the answer are not minimal.  The input is not checked to be cellular.
+    SeeAlso
+        binomialRadical
+        isCellular
+///
 
-document {
-     Key => {isCellular,
-	  (isCellular,Ideal)},
-     Headline => "testing for cellular binomial ideals",
-     Usage => "isCellular I",
-     Inputs => {
-          "I" => {"a binomial ideal"}},
-     Outputs => {
-          {"true, or the list of cell variables if I is cellular, false otherwise."} },
-     "This function is the standard way to compute the cellular variables.",
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-	  "I = ideal (x-z^2,y^4)",
-	  "isCellular I",
-	  "isCellular (I, ReturnCellVars=>true)"
-          },
-     SeeAlso => {cellularBinomialAssociatedPrimes,binomialCellularDecomposition}}
+doc ///
+    Key
+        binomialMinimalPrimes
+        (binomialMinimalPrimes, Ideal)
+        [binomialMinimalPrimes, Verbose]
+    Headline
+        minimal primes of a binomial ideal
+    Usage
+        binomialMinimalPrimes I
+    Inputs
+        I:Ideal
+            a binomial ideal
+        Verbose => Boolean
+            whether to report progress
+    Outputs
+        :List
+            of the minimal primes of $I$ over the algebraic closure of the coefficient field
+    Description
+        Text
+            The minimal primes of a binomial ideal are binomial ideals after a suitable field extension, see
+            @TO Binomials@.
+        Example
+            R = QQ[x,y,z];
+            I = ideal(y^3, y^2*z^2 - x^3, x*y^2*z, x^3*z - x*y);
+            binomialMinimalPrimes I
+            J = ideal(x^3 - y^3, x*z);
+            mp = binomialMinimalPrimes J
+            intersect mp == sub(binomialRadical J, ring first mp)
+        Text
+            The function computes a cellular decomposition of the radical and the primes of the saturations of
+            the partial characters of its components.
+    Caveat
+        An error is raised if the ideal is not binomial.
+    SeeAlso
+        binomialRadical
+        binomialAssociatedPrimes
+///
 
-document {
-     Key => {isBinomial,
-	     isUnital},
-     Headline => "testing for unital binomial ideals",
-     Usage => "isBinomial I; isUnital I",
-     Inputs => {
-          "I" => {"an ideal"}},
-     Outputs => {
-          {"true if I is binomial, or unital respectively."} },
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-	  "isBinomial ideal(x^2)",
-	  "isBinomial ideal(x-y+z,z)",
-	  "isBinomial ideal(x^3-x)",
-	  "isUnital ideal (x-z,z-y)",
-	  "isUnital ideal (x+z)",
-	  "isUnital ideal (x^2)"
-          },
-     SeeAlso => {isCellular}}
+doc ///
+    Key
+        binomialAssociatedPrimes
+    Headline
+        associated primes of a binomial ideal
+    Usage
+        binomialAssociatedPrimes I
+    Inputs
+        I:Ideal
+            a binomial ideal
+    Outputs
+        :List
+            of the associated primes of $I$ over the algebraic closure of the coefficient field
+    Description
+        Text
+            For a cellular ideal this is @TO cellularBinomialAssociatedPrimes@.  In general the associated primes
+            are among the associated primes of the cellular components.  A candidate is associated if and only
+            if the intersection of the primary components whose primes are strictly contained in it is not
+            contained in the intersection of the primary components that belong to it; this is tested.
+        Example
+            R = QQ[x,y];
+            I = ideal(x^2 - y, y^2 - x);
+            binomialAssociatedPrimes I
+            J = ideal(x^2*y, x*y^2 - x*y);
+            binomialAssociatedPrimes J
+            #associatedPrimes J
+    Caveat
+        For ideals that are not cellular this function computes a primary decomposition and several
+        intersections, and it is slower than @TO binomialPrimaryDecomposition@.  An error is raised if the
+        ideal is not binomial.
+    SeeAlso
+        binomialMinimalPrimes
+        cellularBinomialAssociatedPrimes
+///
 
--- input related functions
-document {
-     Key => {makeBinomial},
-     Headline => "make a binomial from an exponent vector and a coefficient",
-     Usage => "makeBinomial (R,m,c)",
-     Inputs => {
-          "R" => {"a ring"},
-	  "m" => {"a vector of exponents, one for each generator of R"},
-	  "c" => {"an element of the coefficient ring of R"}},
-     Outputs => {
-          {"The binomial defined by the input data, as an element of R."} },
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-	  "makeBinomial (R, [1,-1,-2], 10)"}}
+doc ///
+    Key
+        binomialIsPrime
+        (binomialIsPrime, Ideal)
+    Headline
+        test whether a binomial ideal is prime
+    Usage
+        binomialIsPrime I
+    Inputs
+        I:Ideal
+            a binomial ideal
+    Outputs
+        :Boolean
+            whether $I$ is a prime ideal over the algebraic closure of the coefficient field
+    Description
+        Text
+            A binomial ideal is prime if and only if it is cellular, contains its nilpotent variables and the
+            lattice of its partial character is saturated ([ES96], Corollary 2.6).  If the ideal is known to be
+            cellular, its cell variables can be given with the option @TO CellVariables@; cellularity is not
+            checked then.
+        Example
+            R = QQ[x,y];
+            binomialIsPrime ideal(x^2 - y, y^2 - x)
+            binomialIsPrime ideal(x^2 - y^3)
+        Text
+            Primality is tested over the algebraic closure:
+        Example
+            binomialIsPrime ideal(x^2 + 1)
+            isPrime ideal(x^2 + 1)
+    SeeAlso
+        binomialIsPrimary
+        isCellular
+        CellVariables
+///
 
-document {
-     Key => {latticeBasisIdeal},
-     Headline => "construct the ideal whose generators correspond to generators of an integer lattice",
-     Usage => "latticeBasisIdeal (R,L)",
-     Inputs => {
-          "R" => {"a ring"},
-	  "L" => {"an integer matrix whose columns span the lattice."}},
-     Outputs => {
-          {"The unital lattice basis ideal in R, defined by L"} },
-     "This function is only a very simple wrapper around ", TO makeBinomial,
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-	  "L = matrix {{1,1},{-3,0},{0,1}}",
-	  "latticeBasisIdeal (R, L)"}}
+doc ///
+    Key
+        binomialIsPrimary
+    Headline
+        test whether a binomial ideal is primary
+    Usage
+        binomialIsPrimary I
+    Inputs
+        I:Ideal
+            a binomial ideal
+    Outputs
+        :Boolean
+            whether $I$ is a primary ideal over the algebraic closure of the coefficient field
+    Description
+        Text
+            A binomial ideal is primary only if it is cellular.  This function tests cellularity and then calls
+            @TO cellularBinomialIsPrimary@.  If the cell variables are known, that function should be used
+            directly.
+        Example
+            R = QQ[x,y,z];
+            binomialIsPrimary ideal(x - y, z^3)
+            binomialIsPrimary ideal(x^2 - y^2, z^3)
+            binomialIsPrimary ideal(x*y)
+    SeeAlso
+        cellularBinomialIsPrimary
+        binomialIsPrime
+///
 
--- cellular stuff:
-document {
-     Key => {cellularBinomialAssociatedPrimes,
-	  (cellularBinomialAssociatedPrimes,Ideal)},
-     Headline => "Associated primes of a cellular binomial ideal",
-     Usage => "cellularBinomialAssociatedPrimes I",
-     Inputs => {
-          "I" => {"a cellular binomial ideal"} },
-     Outputs => {
-          {"the list of associated primes of I"} },
-     "If the cell variables are known, they can be given via the option ", 
-     TO CellVariables, " otherwise they are computed.",
-     EXAMPLE {
-	  "R = QQ[x,y]",
-	  "I = ideal(x^2-1,y-x)",
-	  "cv = isCellular (I,ReturnCellVars=>true)",
-	  "cellularBinomialAssociatedPrimes (I,CellVariables=>cv)"
-          },
-     SeeAlso => binomialAssociatedPrimes}    
+doc ///
+    Key
+        cellularBinomialIsPrimary
+        (cellularBinomialIsPrimary, Ideal)
+    Headline
+        test whether a cellular binomial ideal is primary
+    Usage
+        cellularBinomialIsPrimary I
+    Inputs
+        I:Ideal
+            a cellular binomial ideal
+    Outputs
+        :Boolean
+            whether $I$ is primary over the algebraic closure of the coefficient field; with the options
+            @TO ReturnPrimes@ or @TO ReturnPChars@ a list instead
+    Description
+        Text
+            A cellular binomial ideal is primary if and only if the lattice of its partial character is saturated
+            and all ideals $I : m$, for monomials $m$ in the nilpotent variables that are not in $I$, have the
+            same lattice ([ES96], Algorithm 9.4).  In characteristic $p > 0$ the lattice may have an index that
+            is a power of $p$ instead of being saturated ([EM16], Lemma 6.1).  If the cell variables are known
+            they can be given with the option @TO CellVariables@.
+        Example
+            R = QQ[x,y];
+            cellularBinomialIsPrimary ideal(x^2 - 1)
+            cellularBinomialIsPrimary ideal(y^2, x - 1)
+        Text
+            With @TO ReturnPrimes@ the function returns associated primes instead of a Boolean value: two
+            distinct ones if the ideal is not primary, and the list containing only the radical if it is
+            primary.  With @TO ReturnPChars@ it returns characters of these primes.
+        Example
+            cellularBinomialIsPrimary(ideal(x^2 - 1), ReturnPrimes => true)
+            cellularBinomialIsPrimary(ideal(y^2, y*(x - 1)), ReturnPrimes => true)
+            cellularBinomialIsPrimary(ideal(y^2, x - 1), ReturnPrimes => true)
+    Caveat
+        The input is not checked to be cellular.
+    SeeAlso
+        binomialIsPrimary
+        CellVariables
+        ReturnPrimes
+        ReturnPChars
+///
 
-document {
-     Key => {cellularBinomialPrimaryDecomposition,
-	  (cellularBinomialPrimaryDecomposition,Ideal)},
-     Headline => "Primary decomposition of a cellular binomial ideal",
-     Usage => "cellularBinomialPrimaryDecomposition I",
-     Inputs => {
-          "I" => {"a cellular binomial ideal"}},
-     Outputs => {
-          {"a binomial primary decomposition of I"}},
-     "If the cell variables are known, they can be given via the option ", 
-     TO CellVariables, " otherwise they are computed.",
-     EXAMPLE {
-	  "R = QQ[x,y]",
-	  "I = ideal(x^3-1,y-x)",
-	  "cv = isCellular (I,ReturnCellVars=>true)",
-	  "pd = cellularBinomialPrimaryDecomposition (I,CellVariables=>cv)",
-	  "mingens \\ pd"
-          },
-     Caveat => {"This function will not return minimal generators for performance reasons."},
-     SeeAlso => binomialAssociatedPrimes}
+doc ///
+    Key
+        isCellular
+        (isCellular, Ideal)
+    Headline
+        test whether an ideal is cellular
+    Usage
+        isCellular I
+    Inputs
+        I:Ideal
+    Outputs
+        :Boolean
+            whether $I$ is cellular; with {\tt ReturnCellVars => true} the list of cell variables if $I$ is
+            cellular, and false otherwise
+    Description
+        Text
+            An ideal is cellular if modulo the ideal every variable is a nonzerodivisor or nilpotent.  The
+            nonzerodivisors are the cell variables.  This function is the standard way to find them.
+        Example
+            R = QQ[x,y,z];
+            I = ideal(x - z^2, y^4);
+            isCellular I
+            isCellular(I, ReturnCellVars => true)
+            isCellular ideal(x*y - x*z)
+    Caveat
+        The unit ideal counts as cellular, with no cell variables.
+    SeeAlso
+        ReturnCellVars
+        binomialCellularDecomposition
+        cellularBinomialAssociatedPrimes
+///
 
-document {
-     Key => {cellularBinomialUnmixedDecomposition,
-	  (cellularBinomialUnmixedDecomposition,Ideal)},
-     Headline => "Unmixed decomposition of a cellular binomial ideal",
-     Usage => "cellularBinomialUnmixedDecomposition I",
-     Inputs => {
-          "I" => {"a cellular binomial ideal"}},
-     Outputs => {
-          {"an unmixed decomposition of I"}},
-     "If the cell variables are known, they can be given via the option ", 
-     TO CellVariables, " otherwise they are computed.",
-     EXAMPLE {
-	  "R = QQ[x,y]",
-	  "I = ideal(x*(y^3-1),x^2)",
-	  "cv = isCellular (I,ReturnCellVars=>true)",
-	  "ud = cellularBinomialUnmixedDecomposition (I,CellVariables=>cv)"
-          },
-     SeeAlso => binomialUnmixedDecomposition}
+doc ///
+    Key
+        isBinomial
+        (isBinomial, Ideal)
+        [isBinomial, GroebnerFree]
+        GroebnerFree
+        isUnital
+    Headline
+        test whether an ideal is binomial, or unital
+    Usage
+        isBinomial I
+        isBinomial(I, GroebnerFree => true)
+        isUnital I
+    Inputs
+        I:Ideal
+        GroebnerFree => Boolean
+            whether to use the algorithm of Conradi and Kahle instead of the reduced Gröbner basis
+    Outputs
+        :Boolean
+    Description
+        Text
+            An ideal is binomial if it can be generated by polynomials with at most two terms.  This is the
+            case if and only if its reduced Gröbner basis consists of such polynomials, which is what
+            {\tt isBinomial} tests.  A binomial ideal is {\em unital} if it can be generated by monomials and
+            differences of two monomials; {\tt isUnital} tests whether the reduced Gröbner basis is of this form.
+        Text
+            With {\tt GroebnerFree => true} (the default is false) {\tt isBinomial} uses the algorithm of
+            C. Conradi and T. Kahle, {\em Detecting binomiality}, Adv. in Appl. Math. 71 (2015), Algorithm 3.3
+            and Recipe 4.5: linear algebra on the generators, degree by degree, reducing the rest modulo the
+            binomials found.  For a homogeneous ideal in a standard graded ring it decides; an inhomogeneous
+            ideal is homogenized, and if that does not show it binomial, or the grading is not standard, the
+            reduced Gröbner basis decides.  It computes Gröbner bases of the binomials found, so it is not free
+            of Gröbner bases.  It pays off for homogeneous ideals with generators that are not binomials and
+            whose Gröbner basis is hard, and it can be much slower otherwise (measurements in the package's
+            notes: 200 to 1300 times faster on the first kind, up to thousands of times slower on
+            inhomogeneous input).  The code is that of the unreleased version 1.3 of 2018 by Ruilong Zhuang
+            and Alexandru Iosif, tested anew, with a fix for the zero ideal and step 1 of Recipe 4.5 added.
+        Example
+            R = QQ[x,y,z];
+            isBinomial ideal(x^2)
+            isBinomial ideal(x - y + z, z)
+            isBinomial ideal(x + y + z)
+            isUnital ideal(x - z, z - y)
+            isUnital ideal(x + z)
+            isUnital ideal(x^2)
+            isBinomial(ideal(x - y + x^2 + y^2 + z^2, x^2 + y^2 + z^2), GroebnerFree => true)
+    SeeAlso
+        isCellular
+        binomialBasis
+///
 
-document {
-     Key => {partialCharacter,
-	  (partialCharacter,Ideal)},
-     Headline => "Computing the partial character of a cellular binomial ideal",
-     Usage => "partialCharacter I",
-     Inputs => {
-          "I" => {"a cellular binomial ideal"}},
-     Outputs => {
-          {"the ", TO PartialCharacter}},
-     "If the cell variables are known, they can be given via the option ", 
-     TO CellVariables, " otherwise they are computed.",
-     EXAMPLE {
-	  "R = QQ[x,y]",
-	  "I = ideal(x^3-1,y-x)",
-	  "cv = isCellular (I,ReturnCellVars=>true)",
-	  "pc = partialCharacter (I,CellVariables=>cv)",
-          },
-     Caveat => {"If the input is not cellular the behaviour is undefined. Cellularity is not checked."}}
+doc ///
+    Key
+        binomialBasis
+        (binomialBasis, Ideal)
+    Headline
+        a generating set of binomials
+    Usage
+        B = binomialBasis I
+    Inputs
+        I:Ideal
+    Outputs
+        B:Matrix
+            a matrix with one row of binomials that generate $I$, or @TO null@ if $I$ is not binomial
+    Description
+        Text
+            In a standard graded ring the binomials come from the algorithm of Conradi and Kahle (see
+            @TO isBinomial@ with the option {\tt GroebnerFree}) and need not be a Gröbner basis or minimal;
+            otherwise, or if that algorithm cannot decide an inhomogeneous ideal, the reduced Gröbner basis
+            is returned if it consists of binomials.  The function comes from the unreleased version 1.3 of
+            2018 (Ruilong Zhuang, Alexandru Iosif), tested anew.
+        Example
+            R = QQ[x,y,z];
+            binomialBasis ideal(x - y + x^2 + y^2 + z^2, x^2 + y^2 + z^2)
+            binomialBasis ideal(x^2 - y^2 + x*y - z^2, x*y - z^2)
+            binomialBasis ideal(x + y + z)
+    SeeAlso
+        isBinomial
+///
 
-document {
-     Key => {idealFromCharacter,
-	   (idealFromCharacter,Ring,PartialCharacter)},
-     Headline => "Generate a lattice ideal from a character.",
-     Usage => "idealFromCharacter (R, rho)",
-     Inputs => {
-	  "R" => {"a ring to contain the output ideal"},
-	  "rho" => {"a ", TO partialCharacter } },
-     Outputs => {
-	  {"the lattice ideal corresponding to rho"}
-	  },
-     Caveat => {"The variables occurring in rho#\"J\" must be variables of R."},
-     EXAMPLE {
-	  "R = QQ[x,y]",
-	  "I = ideal(x^3-1,y-x)",
-	  "cv = isCellular (I,ReturnCellVars=>true)",
-	  "pc = partialCharacter (I,CellVariables=>cv)",
-	  "idealFromCharacter (R,pc) == I"}}
+doc ///
+    Key
+        makeBinomial
+    Headline
+        the binomial of an exponent vector and a coefficient
+    Usage
+        makeBinomial(R, m, c)
+    Inputs
+        R:Ring
+            a polynomial ring
+        m:List
+            or @TO Array@, of integers, one for each variable of {\tt R} or fewer
+        c:RingElement
+            or a number, an element of the coefficient ring of {\tt R}
+    Outputs
+        :RingElement
+            the binomial $x^{m^+} - c x^{m^-}$ of {\tt R}, where $m^+$ and $m^-$ are the positive and the
+            negative part of $m$
+    Description
+        Example
+            R = QQ[x,y,z];
+            makeBinomial(R, {1, -1, -2}, 10)
+            makeBinomial(R, [2, 0, -3], 1)
+    SeeAlso
+        latticeBasisIdeal
+        idealFromCharacter
+///
 
-document {
-     Key => {randomBinomialIdeal},
-     Headline => "Random Binomial Ideals",
-     Usage => "randomBinomialIdeal (R,n,d,w,h)",
-     Inputs => {
-          "I" => {"a ring for the output"},
-	  "n" => {"number of generators of the output "},
-	  "d" => {"maximum degree of each variable" },
-	  "w" => {"number of variables in each generator "},
-	  "h" => {"should the generators be 'as homogeneous as possible'"} },
-     Outputs => {
-           {"a random ideal"} },
-     "The exponents are drawn at random from {-d,...,d}. All coefficients are set to 1.",
-     EXAMPLE {
-	  "R = QQ[a..x]",
-	  "randomBinomialIdeal (R,6,2,4,true)",
-     	  "randomBinomialIdeal (R,3,4,10,false)"
-          },
-     "This function is mostly for internal testing purposes. Don't expect anything from it.",
-     Caveat => "Minimal generators are produced. These can be less than n and of 
-     higher degree. They also need not be homogeneous."}
+doc ///
+    Key
+        latticeBasisIdeal
+    Headline
+        the ideal generated by the binomials of the columns of an integer matrix
+    Usage
+        latticeBasisIdeal(R, L)
+    Inputs
+        R:Ring
+            a polynomial ring
+        L:Matrix
+            over the integers, with one row for each variable of {\tt R}
+    Outputs
+        :Ideal
+            generated by the binomials $x^{u^+} - x^{u^-}$ for the columns $u$ of {\tt L}
+    Description
+        Text
+            The saturation of this ideal with respect to the product of the variables is the lattice ideal of
+            the lattice spanned by the columns.
+        Example
+            R = QQ[x,y,z];
+            L = matrix {{1, 1}, {-3, 0}, {0, 1}};
+            latticeBasisIdeal(R, L)
+    SeeAlso
+        makeBinomial
+        idealFromCharacter
+///
 
-document {
-     Key => {extractInclusionMinimalIdeals,
-	  (extractInclusionMinimalIdeals,List)},
-     Headline => "Extract inclusion minimal ideals from a list of ideals",
-     Usage => "extractInclusionMinimalIdeals L",
-     Inputs => {
-          "L" => {"a list of ideals"} },
-     Outputs => {
-          {"the list with some redundant ideals removed"}},
-     EXAMPLE {
-	  "R = QQ[a,b]",
-	  "L = {ideal(a^4),ideal(a^3),ideal(a^5),ideal(b^2*a) }",
-	  "extractInclusionMinimalIdeals L",
-          },
-     "This function is mostly for internal purposes.",
-     Caveat => "The resulting list may be not irredundant, because I_1 
-     \\subset I_2 \\cap I_3 is not checked."}
+doc ///
+    Key
+        cellularBinomialAssociatedPrimes
+        (cellularBinomialAssociatedPrimes, Ideal)
+        [cellularBinomialAssociatedPrimes, Verbose]
+    Headline
+        associated primes of a cellular binomial ideal
+    Usage
+        cellularBinomialAssociatedPrimes I
+    Inputs
+        I:Ideal
+            a cellular binomial ideal
+        Verbose => Boolean
+            whether to report the number of monomials and congruence classes
+    Outputs
+        :List
+            of the associated primes of $I$ over the algebraic closure of the coefficient field
+    Description
+        Text
+            If the cell variables are known they can be given with the option @TO CellVariables@, otherwise
+            they are computed.
+        Example
+            R = QQ[x,y];
+            I = ideal(x^2, x*(y^3 - 1));
+            cv = isCellular(I, ReturnCellVars => true)
+            cellularBinomialAssociatedPrimes(I, CellVariables => cv)
+        Text
+            The associated primes are the primes $I(\sigma) + (x_i : i \notin E)$, where $E$ is the set of cell
+            variables and $\sigma$ runs over the saturations of the partial characters of the ideals
+            $(I : m) \cap k[E]$ for monomials $m$ in the nilpotent variables that are not in $I$ ([ES96],
+            Theorem 8.1).  These characters are computed for all $m$ at once.  After inverting the cell
+            variables, the monomials in the nilpotent variables generate $R/I$ as a module over the Laurent
+            polynomial ring in the cell variables, and every binomial $x^a m - c x^b m'$ of $I$ says that the
+            generators $m$ and $m'$ are proportional.  The connected components of the resulting graph on the
+            monomials are the classes of the congruence of [KM14]; the module is a direct sum of cyclic modules,
+            one for each component, and the partial character of a component is read off from the closed walks.
+    Caveat
+        The input is not checked to be cellular.  If a variable that is not among the given cell variables is
+        not nilpotent, an error is raised.
+    SeeAlso
+        binomialAssociatedPrimes
+        cellularBinomialPrimaryDecomposition
+        CellVariables
+///
 
-document { Key => {CellVariables, [partialCharacter,CellVariables],
-     [cellularBinomialRadical,CellVariables], [binomialIsPrime,CellVariables],
-     [cellularBinomialIsPrimary,CellVariables], [cellularBinomialAssociatedPrimes,CellVariables],
-     [cellularBinomialPrimaryDecomposition,CellVariables],
-     [cellularBinomialUnmixedDecomposition,CellVariables]},
-     Headline => "cellular variables",
-     "The cellular variables of a binomial ideal are the variables which are non-zerodivisors modulo
-     that ideal. With this option these variables, if known in advance, can be handed over to
-     specialized functions for cellular ideals. ",
-     SeeAlso => {cellularBinomialPrimaryDecomposition,cellularBinomialAssociatedPrimes}}
+doc ///
+    Key
+        cellularBinomialPrimaryDecomposition
+        (cellularBinomialPrimaryDecomposition, Ideal)
+        [cellularBinomialPrimaryDecomposition, Verbose]
+    Headline
+        primary decomposition of a cellular binomial ideal
+    Usage
+        cellularBinomialPrimaryDecomposition I
+    Inputs
+        I:Ideal
+            a cellular binomial ideal
+        Verbose => Boolean
+            whether to report the number of associated primes
+    Outputs
+        :List
+            of primary binomial ideals whose intersection is $I$, one for each associated prime of $I$, in the
+            order of @TO cellularBinomialAssociatedPrimes@
+    Description
+        Text
+            If the cell variables are known they can be given with the option @TO CellVariables@, otherwise
+            they are computed.
+        Example
+            R = QQ[x,y];
+            I = ideal(x^2, x*(y^3 - 1));
+            cv = isCellular(I, ReturnCellVars => true)
+            pd = cellularBinomialPrimaryDecomposition(I, CellVariables => cv)
+            intersect pd == sub(I, ring first pd)
+        Text
+            The component of the associated prime $P = I(\sigma) + (x_i : i \notin E)$ is the smallest
+            $P$-primary ideal containing $I + I(\sigma)$ ([ES96], Section 9; [EM16], Theorem 2.10).  It is the
+            saturation, with respect to the cell variables, of $I + I(\sigma)$ plus all monomials in the
+            nilpotent variables whose partial character is not a restriction of $\sigma$.
+    Caveat
+        The generators of the components are not minimal.  The input is not checked to be cellular.
+    SeeAlso
+        binomialPrimaryDecomposition
+        cellularBinomialAssociatedPrimes
+        CellVariables
+///
 
-document {
-     Key => {ReturnCellVars,
-	  [isCellular,ReturnCellVars]},
-     Headline => "return the cellular variables",
-     "The cellular variables of a binomial ideal are the variables which are non-zerodivisors 
-     module that ideal. If this option is set to 'true' then binomialCellularDecomposition will
-     return the set of variables for each of its outputs",
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-          "I = ideal (x*y-z, x*z-y^2)",
-          "bcd = binomialCellularDecomposition (I,ReturnCellVars=>true)"}}
+doc ///
+    Key
+        cellularBinomialUnmixedDecomposition
+        (cellularBinomialUnmixedDecomposition, Ideal)
+        [cellularBinomialUnmixedDecomposition, Verbose]
+    Headline
+        unmixed decomposition of a cellular binomial ideal
+    Usage
+        cellularBinomialUnmixedDecomposition I
+    Inputs
+        I:Ideal
+            a cellular binomial ideal
+        Verbose => Boolean
+            has no effect at present
+    Outputs
+        :List
+            of unmixed cellular binomial ideals in the ring of $I$ whose intersection is $I$
+    Description
+        Text
+            An ideal is unmixed if all its associated primes have the same dimension.  If the cell variables are
+            known they can be given with the option @TO CellVariables@.
+        Example
+            R = QQ[x,y];
+            I = ideal(x*(y^3 - 1), x^2);
+            cv = isCellular(I, ReturnCellVars => true)
+            ud = cellularBinomialUnmixedDecomposition(I, CellVariables => cv)
+            intersect ud == I
+            apply(ud, J -> apply(associatedPrimes J, dim))
+        Text
+            The decomposition follows [EM16], Theorem 2.11.  The monomials $m$ in the nilpotent variables
+            that are not in $I$ fall into classes with the same partial character of $I : m$.  Some of these
+            characters are chosen, greedily, starting with the lattices of smallest rank and, among these, the
+            smallest lattices: a character is skipped if a chosen character with a lattice of the same rank
+            contained in its lattice is compatible with it.  There is one component for each chosen character
+            $\rho$: the saturation, with respect to the cell variables, of $I + I(\rho)$ plus all monomials
+            whose partial character is incompatible with $\rho$ or has a lattice of larger rank after adding
+            the lattice of $\rho$.  If only one character is chosen, the list containing $I$ is returned.
+    Caveat
+        The input is not checked to be cellular.  Version 1.2.1 of this package returned its input unchanged.
+    SeeAlso
+        binomialUnmixedDecomposition
+        CellVariables
+///
 
-document {
-     Key => {ReturnPrimes,
-     	  [cellularBinomialIsPrimary,ReturnPrimes]},
-     Headline => "return two associated primes",
-     "If cellularBinomialIsPrimary does not return true it can either return 'false' or two associated primes.
-     If this option is set then two associated primes are returned. If ReturnPChars is set too, then partial
-     characters will be returned.",
-     EXAMPLE {
-	  "R = QQ[x,y,z]",
-          "I = ideal (x^2-1)",
-          "cellularBinomialIsPrimary (I,ReturnPrimes=>true)",
-          },
-     SeeAlso => {ReturnPChars, cellularBinomialIsPrimary}}
+doc ///
+    Key
+        partialCharacter
+        (partialCharacter, Ideal)
+    Headline
+        the partial character of a cellular binomial ideal
+    Usage
+        partialCharacter I
+    Inputs
+        I:Ideal
+            a cellular binomial ideal
+    Outputs
+        :PartialCharacter
+            the partial character of $I \cap k[E]$, where $E$ is the set of cell variables
+    Description
+        Text
+            If the cell variables are known they can be given with the option @TO CellVariables@, otherwise
+            they are computed.  The rows of the matrix {\tt L} of the answer correspond to the cell variables
+            in the given order.
+        Example
+            R = QQ[x,y];
+            I = ideal(x^3 - 1, y - x);
+            cv = isCellular(I, ReturnCellVars => true)
+            pc = partialCharacter(I, CellVariables => cv)
+            idealFromCharacter(R, pc) == I
+        Text
+            The nilpotent variables are eliminated first:
+        Example
+            S = QQ[x,y,z];
+            partialCharacter ideal(x^2, y^2 - 2*z^3)
+    Caveat
+        If the input is not cellular the behaviour is undefined.  Cellularity is not checked.
+    SeeAlso
+        PartialCharacter
+        idealFromCharacter
+///
 
-document {
-     Key => {ReturnPChars,
-	  [cellularBinomialIsPrimary,ReturnPChars]},
-     Headline => "return two partial characters",
-     "If cellularBinomialIsPrimary does not return true it can either return 'false' or two associated primes.
-     If this option is set then two partial characters of distinct associated primes are returned. 
-     If ReturnPrimes is set too, then partial characters will be returned.",
-     EXAMPLE {
-	  "R = QQ[x]",
-          "I = ideal (x^2-1)",
-          "cellularBinomialIsPrimary (I,ReturnPChars=>true)",
-          },
-     SeeAlso => {ReturnPrimes, cellularBinomialIsPrimary}}
+doc ///
+    Key
+        idealFromCharacter
+        (idealFromCharacter, Ring, PartialCharacter)
+    Headline
+        the lattice ideal of a partial character
+    Usage
+        idealFromCharacter(R, rho)
+    Inputs
+        R:Ring
+            a polynomial ring that contains the variables of {\tt rho}
+        rho:PartialCharacter
+    Outputs
+        :Ideal
+            of {\tt R}, generated by all binomials $x^u - \rho(u - v) x^v$ with $u - v$ in the lattice of
+            {\tt rho}
+    Description
+        Text
+            The variables in {\tt rho#"J"} are matched with the variables of {\tt R} by name, so {\tt R} may
+            have more variables, or the same variables over another field.
+        Example
+            R = QQ[x,y,z];
+            I = ideal(x^2, y^2 - 2*z^3);
+            pc = partialCharacter I
+            idealFromCharacter(R, pc)
+            rho = new PartialCharacter from {"J" => {x, y, z}, "L" => matrix {{1, 0}, {-1, 1}, {0, -1}}, "c" => {1, 1}};
+            idealFromCharacter(R, rho)
+        Text
+            The ideal is computed from a Markov basis of the lattice, which is found over the rational numbers
+            (by 4ti2 for lattices in more than 16 variables, if it is available), and the values of the character
+            on its elements.
+    SeeAlso
+        PartialCharacter
+        partialCharacter
+        latticeBasisIdeal
+///
 
-document {
-     Key => {[binomialPrimaryDecomposition, Verbose],
-	  [binomialUnmixedDecomposition, Verbose],
-	  [binomialCellularDecomposition,Verbose],
-	  [binomialMinimalPrimes,Verbose],
-	  [cellularBinomialAssociatedPrimes,Verbose],
-	  [cellularBinomialPrimaryDecomposition,Verbose],
-	  [extractInclusionMinimalIdeals,Verbose],
-	  [cellularBinomialUnmixedDecomposition,Verbose]},
-     Headline => "generate informative output",
-     "If this option is set, functions will generate additional output. Defaults to false"}
+doc ///
+    Key
+        PartialCharacter
+    Headline
+        the class of all partial characters
+    Description
+        Text
+            A partial character is a homomorphism from a lattice in $\mathbb{Z}^E$ to the nonzero elements of a
+            field, where $E$ is a set of variables.  It is represented by a hash table with three keys, which
+            are strings:
+        Text
+            @UL {
+                {TT "\"J\"", " -- the list of variables"},
+                {TT "\"L\"", " -- an integer matrix with one row for each variable, whose columns generate the lattice"},
+                {TT "\"c\"", " -- the list of values of the character on the columns of the matrix"}
+            }@
+        Text
+            The partial character stands for the lattice ideal generated by the binomials
+            $x^{u^+} - c\, x^{u^-}$, where $u$ runs over the lattice and $c$ is the value of the character on
+            $u$.  The zero lattice is represented by a matrix with one zero column and the value 1.  An ideal
+            without cell variables has the empty list of variables and, as in version 1.2.1, the
+            $1 \times 1$ zero matrix.
+        Example
+            R = QQ[x,y];
+            pc = partialCharacter ideal(x^2 - 3*y^2)
+            pc#"J", pc#"L", pc#"c"
+            idealFromCharacter(R, pc)
+    SeeAlso
+        partialCharacter
+        idealFromCharacter
+///
 
-document {
-     Key => PartialCharacter,
-     Headline => "the class of all partial characters",
-     "In ", TO Binomials , " the partial character of a cellular binomial ideal is represented 
-     as an object of class ", TO PartialCharacter,".  It contains the following three data:",
-     UL { {"J -- the cellular variables"},
-	  {"L -- a matrix whose columns are generators for the lattice"},
-	  {"c -- the list of values the character takes on the generators"}}}
+doc ///
+    Key
+        binomialSolve
+    Headline
+        the points of a zero-dimensional unital binomial ideal
+    Usage
+        binomialSolve I
+    Inputs
+        I:Ideal
+            a zero-dimensional unital binomial ideal; in positive characteristic any zero-dimensional binomial ideal
+    Outputs
+        :List
+            of the points of the variety of $I$, each as often as its multiplicity
+    Description
+        Text
+            The coordinates of the solutions of unital binomial equations are zero or roots of unity.  This
+            function constructs a cyclotomic field that contains all of them, with the package
+            @TO "Cyclotomic::Cyclotomic"@, and returns the points as lists of elements of this field, or of the
+            rational numbers if they suffice.  In positive characteristic every nonzero coefficient is a root
+            of unity, so the ideal need not be unital; the points lie in a Galois field made with @TO "GF"@, or
+            in the coefficient field if it suffices.
+        Example
+            R = QQ[x,y,z,w];
+            I = ideal(x - y, y - z, z*w - w, w^2 - x);
+            dim I
+            binomialSolve I
+            J = ideal(x^3 - 1, y - x, z - 1, w - 1);
+            binomialSolve J
+        Text
+            A point is listed as often as its multiplicity, the length of the local ring of the quotient at the
+            point.  The length of the list is therefore the degree of the ideal.  This is the intent stated in
+            T. Kahle, {\em Decompositions of binomial ideals}, Ann. Inst. Statist. Math. 62 (2010), Example 3
+            ("outputs the solutions with the correct multiplicities"); version 1.2.1 repeated the points by
+            another number.
+        Example
+            K = ideal(x^2, x*y, y^2, z - 1, w^2 - 1);
+            binomialSolve K
+            degree K
+        Text
+            In positive characteristic the multiplicities are those over the algebraic closure, and the
+            coefficients may be any elements of the field.
+        Example
+            P = ZZ/5[x,y];
+            binomialSolve ideal(x^5 - 2, y^2 - 2)
+    Caveat
+        An error is raised if the ideal is not zero-dimensional, or not unital in characteristic zero.
+    SeeAlso
+        isUnital
+        "Cyclotomic::cyclotomicField"
+///
+
+doc ///
+    Key
+        randomBinomialIdeal
+    Headline
+        a random binomial ideal
+    Usage
+        randomBinomialIdeal(R, n, d, w, h)
+    Inputs
+        R:Ring
+            a polynomial ring
+        n:ZZ
+            the number of binomials
+        d:ZZ
+            the largest exponent
+        w:ZZ
+            the number of variables in each binomial
+        h:Boolean
+            whether the two monomials of each binomial should have equally many variables
+    Outputs
+        :Ideal
+            generated by {\tt n} random differences of monomials
+    Description
+        Text
+            Each binomial is $x^{m^+} - x^{m^-}$ for a random integer vector $m$ with {\tt w} nonzero entries,
+            which are drawn uniformly from the nonzero integers between $-d$ and $d$.  If {\tt h} is true, half
+            of the entries are positive and half are negative; an odd {\tt w} is then replaced by {\tt w + 1},
+            or by {\tt w - 1} if there are not enough variables.
+        Example
+            R = QQ[a..x];
+            setRandomSeed 1;
+            randomBinomialIdeal(R, 6, 2, 4, true)
+            randomBinomialIdeal(R, 3, 4, 10, false)
+        Text
+            This function is meant for testing.
+    Caveat
+        Minimal generators of the ideal are returned.  There can be fewer than {\tt n} of them, and they need
+        not be the binomials that were drawn.
+///
+
+doc ///
+    Key
+        extractInclusionMinimalIdeals
+        (extractInclusionMinimalIdeals, List)
+        [extractInclusionMinimalIdeals, Verbose]
+    Headline
+        the inclusion minimal ideals of a list
+    Usage
+        extractInclusionMinimalIdeals L
+    Inputs
+        L:List
+            of ideals of one ring
+        Verbose => Boolean
+            whether to report how many ideals were removed
+    Outputs
+        :List
+            of the ideals of {\tt L} that do not properly contain another ideal of {\tt L}, in their original
+            order, without repetitions and with minimal generators
+    Description
+        Example
+            R = QQ[a,b];
+            L = {ideal(a^4), ideal(a^3), ideal(a^5), ideal(b^2*a)}
+            extractInclusionMinimalIdeals L
+        Text
+            In an intersection, an ideal that contains another one is redundant, so this removes some
+            redundant components of a decomposition.
+    Caveat
+        The remaining list need not be an irredundant decomposition of its intersection, because an ideal that
+        contains the intersection of several others is not detected.
+///
+
+doc ///
+    Key
+        CellVariables
+        [partialCharacter, CellVariables]
+        [cellularBinomialRadical, CellVariables]
+        [binomialIsPrime, CellVariables]
+        [cellularBinomialIsPrimary, CellVariables]
+        [cellularBinomialAssociatedPrimes, CellVariables]
+        [cellularBinomialPrimaryDecomposition, CellVariables]
+        [cellularBinomialUnmixedDecomposition, CellVariables]
+    Headline
+        the cell variables of a cellular ideal, if known
+    Description
+        Text
+            The cell variables of a cellular ideal are the variables that are nonzerodivisors modulo the ideal.
+            Finding them takes one saturation for each variable.  If they are known, for example from
+            @TO isCellular@ or @TO binomialCellularDecomposition@ with the option @TO ReturnCellVars@, they can
+            be passed to the functions for cellular ideals as a list of variables, which saves this work.  The
+            default value is {\tt null}, which means that the cell variables are computed.
+        Example
+            R = QQ[x,y,z];
+            I = ideal(x^2, x*(y^3 - 1), z - y);
+            cv = isCellular(I, ReturnCellVars => true)
+            cellularBinomialAssociatedPrimes(I, CellVariables => cv)
+    Caveat
+        The functions trust the given list.  With wrong cell variables the answers are wrong.
+    SeeAlso
+        isCellular
+        ReturnCellVars
+///
+
+doc ///
+    Key
+        ReturnCellVars
+        [isCellular, ReturnCellVars]
+    Headline
+        return the cell variables as well
+    Description
+        Text
+            With {\tt ReturnCellVars => true} the function @TO isCellular@ returns the list of cell variables
+            of a cellular ideal instead of true, and @TO binomialCellularDecomposition@ returns every
+            component together with its cell variables.  The default is false.
+        Example
+            R = QQ[x,y,z];
+            isCellular(ideal(x - z^2, y^4), ReturnCellVars => true)
+            binomialCellularDecomposition(ideal(x*y - z, x*z - y^2), ReturnCellVars => true)
+    SeeAlso
+        CellVariables
+        isCellular
+        binomialCellularDecomposition
+///
+
+doc ///
+    Key
+        ReturnPrimes
+        [cellularBinomialIsPrimary, ReturnPrimes]
+    Headline
+        return associated primes instead of a truth value
+    Description
+        Text
+            With {\tt ReturnPrimes => true} the function @TO cellularBinomialIsPrimary@ returns a list of
+            associated primes of its argument: two distinct ones if the ideal is not primary, and only the
+            radical if it is primary.  The primes are ideals of the ring of the input, or of its extension by
+            roots of unity if that is needed, see @TO Binomials@.  The default is false.  If
+            @TO ReturnPChars@ is set as well, characters are returned.
+        Example
+            R = QQ[x,y,z];
+            cellularBinomialIsPrimary(ideal(x^2 - 1, y^2, z), ReturnPrimes => true)
+            cellularBinomialIsPrimary(ideal(x - 1, y^2, z), ReturnPrimes => true)
+    SeeAlso
+        ReturnPChars
+        cellularBinomialIsPrimary
+///
+
+doc ///
+    Key
+        ReturnPChars
+        [cellularBinomialIsPrimary, ReturnPChars]
+    Headline
+        return characters of associated primes instead of a truth value
+    Description
+        Text
+            With {\tt ReturnPChars => true} the function @TO cellularBinomialIsPrimary@ returns characters of
+            associated primes of its argument instead of a Boolean value.  The default is false.  The answer is
+            a list of objects of type @TO PartialCharacter@:
+        Text
+            @UL {
+                {"If the ideal is primary, the list contains its partial character."},
+                {"If the partial character of the ideal has more than one saturation (its lattice is not saturated;
+                 in characteristic ", TEX "$p$", ", its index is not a power of ", TEX "$p$", "), the list contains two
+                 different saturations: characters on the saturated lattice."},
+                {"Otherwise it contains the partial character of the ideal and a character of an embedded prime."}
+            }@
+        Text
+            Version 1.2.1 returned plain lists {\tt \{J, L, c\}} in place of some of these objects.
+        Example
+            R = QQ[x,y];
+            cellularBinomialIsPrimary(ideal(x - 1, y^2), ReturnPChars => true)
+            cellularBinomialIsPrimary(ideal(x^2 - 1, y^2), ReturnPChars => true)
+            cellularBinomialIsPrimary(ideal(y^2, y*(x - 1)), ReturnPChars => true)
+    SeeAlso
+        ReturnPrimes
+        cellularBinomialIsPrimary
+        PartialCharacter
+///
 
 ----- TESTS -----
+-- The tests of version 1.2.1 follow, unchanged.  Many more tests are in the
+-- folder Binomials/tests; check "Binomials" runs every file there.
 TEST ///
 R = QQ[a..f]
 I = ideal(b*c-d*e,b*e*f-a*c,a*d*f-d*e,a*b*f-c*d,d^2*e-e,a*d*e-d*e,a*c*e-d*f) 
@@ -2188,7 +3082,7 @@ assert(all(sols3, s -> sub(a^2 - 1, {a => s#0, b => s#1, c => s#2}) == 0 and
 
 -- ReturnPrimes / ReturnPChars options of cellularBinomialIsPrimary.  When
 -- the input is not primary, ReturnPrimes returns two distinct associated
--- primes and ReturnPChars returns their partial characters as triples.
+-- primes and ReturnPChars returns their partial characters.
 -- Note: `cellVars` is an internal helper (commented out of the export
 -- list); use `isCellular(I, ReturnCellVars => true)` to obtain the cell
 -- variables through the public API.
@@ -2203,10 +3097,11 @@ assert(cellularBinomialIsPrimary(I, CellVariables => cv) === false)
 rps = cellularBinomialIsPrimary(I, CellVariables => cv, ReturnPrimes => true)
 assert(instance(rps, List) and #rps == 2)
 assert(all(rps, p -> instance(p, Ideal)))
--- ReturnPChars returns a 2-element list of (J, L, c) triples
+-- ReturnPChars returns a 2-element list of partial characters (in 1.2.1:
+-- plain lists {J, L, c}; changed in 2.0 by Thomas's decision)
 rpcs = cellularBinomialIsPrimary(I, CellVariables => cv, ReturnPChars => true)
 assert(instance(rpcs, List) and #rpcs == 2)
-assert(all(rpcs, t -> instance(t, List) and #t == 3))
+assert(all(rpcs, t -> instance(t, PartialCharacter)))
 
 -- Primary cellular ideal: ReturnPrimes returns a 1-element list
 I2 = ideal(x - 1, y^2)
@@ -2232,26 +3127,3 @@ assert(isBinomial J)
 ///
 
 end
-------------------------------------------------------------
-restart
-uninstallPackage "Binomials"
-installPackage "Binomials"
-check "Binomials"
-
-restart
-needsPackage "Binomials";
-S = QQ[x,y];
-b = makeBinomial (S, [2,-3], 5)
-isBinomial ideal b
-I = ideal(x^2-x*y, x*y-y^2);
-isCellular I
-binomialIsPrimary I
-binomialRadical I
-binomialPrimaryDecomposition I
-
-L = binomialPrimaryDecomposition ideal(x^3-1)
-L#0
-
-P = binomialPrimaryDecomposition ideal (x^10000 * (y-1), x^10001)
-radical P#0
-P#1
