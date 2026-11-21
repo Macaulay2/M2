@@ -80,7 +80,7 @@ gateSystem (List, Thing) := (X, F) -> gateSystem({}, X, F)
 
 -- routines for mixed volume computation (via gfan)
 computeMixedVolume = method()
-computeMixedVolume List := polys -> value gfanMixedVolume(
+computeMixedVolume List := polys -> gfanMixedVolume(
     polynomialsWithSameSupportsAndRationalCoefficients polys
     )
 computeMixedVolume System := sys -> (
