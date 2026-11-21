@@ -73,7 +73,7 @@ exceptionalCurves HodgeSpecialFourfold := o -> X -> (
     if degree((U*U')\L) != degree (U*U') - degree L then error "decomposition failed: multiplicity detected in exceptional lines (not currently supported)";
     if o.Verbose then << "-- computing the top components of (U ∩ U')\\{exceptional lines} via interpolation" << endl;
     local C;
-    if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", "C38Coble", "C42", 17, "october2021-26''", "october2021-34'", "6NodalOcticSrollC38", 18, " mukai26''"})
+    if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", "C38Coble", "C42", 17, "october2021-26''", "october2021-34'", "6NodalOcticSrollC38", 18, "mukai26''"})
     then C = interpolateTop((U*U')\L,{2},Verbose=>o.Verbose,"Deep"=>2)
     else C = interpolateTop(2,(U*U')\L,Verbose=>o.Verbose,"Deep"=>3);
     U.cache#"exceptionalCurves" = (L%U,C%U)

@@ -448,7 +448,8 @@ vf = value f;
 assert(vf == f1 * f2 * f3)
 assert(source f === (building E)_1 and target f === surface E'')
 (p,q) := (point source f,point target f)
-assert(p == vf^* f p and q == f vf^* q)
+assert(p == f^* f p and q == f f^* q)
+assert(p == vf^* vf p and q == vf vf^* q)
 assert(E'(2,Verbose=>false) === E'')
 L'' = latticePolarization E''
 h = map(L'',1,1)

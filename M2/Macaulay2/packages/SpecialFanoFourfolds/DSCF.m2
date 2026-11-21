@@ -337,7 +337,9 @@ fuse DoublySpecialCubicFourfold := X -> (
     x := local x;
     R := K[x_0..x_5];
     idX := sub(sub(ideal X,vars R),vars ring ambient X);
-    Y := cubicFourfold(S+T,Var idX,InputCheck=>0,NumNodes=>0,Verbose=>false);
+    n := 0;
+    if dim(S*T) <= 0 then n = (numberNodes S) + (numberNodes T) + (if dim(S*T) == 0 then degree(S*T) else 0);
+    Y := cubicFourfold(S+T,Var idX,InputCheck=>0,NumNodes=>n,Verbose=>false);
     X.cache#"fusedVersion" = Y;
     Y.cache#"fusedOrigin" = X;
     Y
