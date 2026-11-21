@@ -6,6 +6,7 @@ f making M and N into finite source f modules.
 In particular this allows the computation of Hom_S(M, N) when S is a non-commutative ring
 in cases where M, N are finite over center S.
 *-
+protect computing
 protect toambienthommodule -- cache key for the inclusion of Hom(f, X, Y) into Hom(fX, fY)
 Hom(RingMap, Ring, Ring)   :=
 Hom(RingMap, Ring, Ideal)  :=

@@ -6,7 +6,7 @@
 
 newPackage(
     "PushForward",
-    Version => "0.6",
+    Version => "0.7",
     Date => "May 14, 2021",
     Authors => {
         {Name => "Claudiu Raicu",
@@ -52,31 +52,23 @@ pushFwd Ring := Module => o -> R -> pushFwd(map(R, coefficientRing R), module R,
 pushFwd Module := Module => o -> M -> pushFwd(map(ring M, coefficientRing ring M), M, o)
 pushFwd Matrix := Matrix => o -> F -> pushFwd(map(ring F, coefficientRing ring F), F, o)
 
-protect computing
 pushFwd(RingMap, Ideal) := Module => o -> (f, I) -> pushFwd(f, module I, o)
 pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??= (
-    N.cache#(computing, pushFwd) = true;
     N' := asDirectSum N;
     Cs := components N';
 
-
-    auxpfN := null; auxpf' := null; auxpf := null;
     (pfN, pf', pf) := if #Cs > 1 then (
         pfCs := apply(Cs, C -> pushFwd(f, C));
-        auxpfN = directSum pfCs;
-        auxpf' = (m) -> (
+        auxpfN := directSum pfCs;
+        auxpf' := (m) -> (
             map(N, N', id_N) * sum for i from 0 to #Cs - 1 list N'_[i] * pushforward'(map(pfCs#i, , auxpfN^[i] * m))
         );
-        auxpf = (n) -> (
+        auxpf := (n) -> (
             sum for i from 0 to #Cs - 1 list auxpfN_[i] * pushforward(pfCs#i, map(Cs#i, , N'^[i] * map(N', N, id_N') * n))
         );
         (auxpfN, auxpf', auxpf)
     ) else (
-        -- replace any R^1 with module R so we benefit from caching
-        -- but ensure below that pf' sends elements of the pushforward back to the right place
-        auxN := if N === module target f then module target f else N;
-        {auxpfN, auxpf', auxpf} = makeModule(f, auxN);
-        (auxpfN, (m) -> (n := auxpf' m; map(N, source n, n)), auxpf)
+        makeModule(f, N)
     );
 
     result := if o.MinimalGenerators then (
@@ -96,7 +88,6 @@ pushFwd(RingMap, Module) := Module => o -> (f, N) -> N.cache#(pushFwd, f, o) ??=
         N.cache#(pushFwd, f, o) = pfN
     );
 
-    remove(N.cache, (computing, pushFwd));
     result
 )
 
@@ -202,10 +193,7 @@ pushFwdGens(Module) := Matrix => (M) -> M.cache.pushFwdGens ??= pushforward' M_{
 makeModule = method()
 makeModule(RingMap, Module) := (f, N) -> (
     (R, S) := (target f, source f);
-    if isRankOneFree N and not inComputation N then (
-        -- this reduces to computing cached pushFwd of module R
-        return makeModuleRankOneFree(f, N)
-    );
+    if isRankOneFree N and not isBaseCase N then return makeModuleRankOneFree(f, N);
 
     (matR, ringpf) := pushAuxHgs(f, ann N);
 
@@ -258,23 +246,24 @@ makeModuleRankOneFree = (f, N) -> (
     (R, S) := (target f, source f);
     if not isRankOneFree N then error "expected rank one free module";
     X := pushFwd(f, module R);
-    auxpfN := if degreeGroup R == degreeGroup S then X ** S^(degrees N) else X;
-    if X != auxpfN then (
-        return (
+    if degreeGroup R == degreeGroup S then (
+        auxpfN := X ** S^(degrees N);
+        (
             auxpfN,
-            (m) -> pushforward'(map(X, auxpfN, gens X) * m),
-            (n) -> map(auxpfN, X, gens auxpfN) * pushforward(X, n)
-        );
+            (m) -> map(N, module R, gens N) * X.cache#pushforward'(map(X, auxpfN, gens X) * m),
+            (n) -> map(auxpfN, X, gens auxpfN) * (module R).cache#(pushforward, X) n
+        )
     ) else (
-        return (
-            X,
-            X.cache#pushforward',
-            N.cache#(pushforward, X)
-        );
-    );
-)
+        (
 
-inComputation = (M) -> M.cache#?(computing, pushFwd)
+            X,
+            -- the following stange pattern is because this cache value is about to be overwritten.
+            -- we must preserve it by storing it in local context before we return the function using it.
+            (pf' := X.cache#pushforward'; (m) -> map(N, module R, gens N) * pf' m),
+            (module R).cache#(pushforward, X)
+        )
+    )
+)
 
 asDirectSum = (N) -> (
     if (N == 0 or not isFreeModule N or #components N == numgens N) then N
@@ -399,6 +388,7 @@ isInclusionOfCoefficientRing RingMap := Boolean => inc -> (
 
 
 isRankOneFree = (M) -> isFreeModule M and rank M == 1
+isBaseCase = (M) -> M.cache.?formation and M.cache.formation === (module ring M).cache.formation
 
 -- various convenience methods to unpack formation data from a pushFwd module
 isPushFwd = (M) -> M.cache.?formation and M.cache.formation#0 === pushFwd
