@@ -7,12 +7,12 @@
    the License, or any later version.
 *-
 
-if version#"VERSION" < "1.21" then error "this package requires Macaulay2 version 1.21 or newer";
+if version#"VERSION" < "1.26.06" then error "this package requires Macaulay2 version 1.26.06 or newer";
 
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.7.2",
-    Date => "November 14, 2026",
+    Date => "November 22, 2026",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -176,7 +176,7 @@ higherSecantVarietyToRationalNormalScroll (Array,ZZ,Ring) := (d,k,K) -> (
     d = toList d;
     N := sum d + #d -1;
     if k <= 0 or min d < 0 then return 0_(projectiveVariety(N,K));
-    if k+1 > sum(#d,s -> d_s-k+1) then return projectiveVariety(N,K);
+    if k+1 > sum(#d,s -> max(d_s-k+1,0)) then return projectiveVariety(N,K);
     t := gensRing(K,apply(d,i -> i+1));
     M := sub(fold((x,y)->x|y,apply(#d,s -> matrix for i to k list for j to d_s-k list t_s_(i+j))),vars ring projectiveVariety(N,K));
     X := projectiveVariety(ideal apply(subsets(numColumns M,k+1),m -> det submatrix(M,m)),MinimalGenerators=>false,Saturate=>false);
@@ -299,7 +299,10 @@ MultiprojectiveVariety#{Standard,AfterPrint} = MultiprojectiveVariety#{Standard,
     << endl;
 );
 
-toString MultiprojectiveVariety := X -> if codim X == 0 then "PP_("|(toString coefficientRing X)|")^"|(toString shape X) else "projectiveVariety("|(toString ring X)|")"; -- this doesn't work well
+toString MultiprojectiveVariety := X -> (
+    if codim X == 0 then return "PP_(" | (toString coefficientRing X) | ")" | (if instance(X,WeightedProjectiveVariety) then toString toSequence flatten degrees ring ideal X else "^" | (toString shape X));
+    "projectiveVariety(" | (toExternalString ring ambient X) | "/" | (toString ideal X) | ")"
+);
 
 ideal MultiprojectiveVariety := X -> X#"idealVariety";
 
@@ -1096,7 +1099,7 @@ EmbeddedProjectiveVariety ! := sumUp EmbeddedProjectiveVariety := X -> (
         -- <<"*** reduction to char "<< p <<" ***"<<endl;
         return (X ** (ZZ/p))!;
     );
-    <<"dim:.................. "<<dim X;<<endl;
+    <<"dim:.................. "<<dim X<<endl;
     <<"codim:................ "<<codim X<<endl;
     if dim X == -1 then return;
     <<"degree:............... "<<degree X<<endl;
@@ -1252,7 +1255,7 @@ sendFewPoints = (X,Y) -> (
     n := X#"dimAmbientSpaces";
     K := coefficientRing X;
     assert(dim X == 0 and dim Y == 0 and degree X == degree Y and #n == 1 and n == Y#"dimAmbientSpaces" and K === coefficientRing Y);
-    dX := decompose X,
+    dX := decompose X;
     dY := decompose Y;
     if not (all(dX|dY,p -> isPoint p) and #dX == degree X and #dY == degree Y) then error("cannot decompose zero-dimensional subscheme of PP^"|toString(n_0)|" into the union of rational points");
     if degree X == n_0+2 then (
@@ -1635,7 +1638,7 @@ multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
     setSource(source Phi,Psi);
     Psi#"image" = Phi#"image";
     if Psi#"image" === Y then Psi#"isDominant" = true;
-    if Phi.cache#?"compositionWithSegreEmbedding" then Psi.cache#"compositionWithSegreEmbedding" = Phi.cache#"compositionWithSegreEmbedding";
+    -- if Phi.cache#?"compositionWithSegreEmbedding" then Psi.cache#"compositionWithSegreEmbedding" = Phi.cache#"compositionWithSegreEmbedding";  -- do not copy: depends on the target
     if Phi#"graph" =!= null then Psi#"graph" = (first graph Phi, multirationalMap(last graph Phi,Y));
     Psi#"multidegree" = Phi#"multidegree";
     Psi#"baseLocus" = Phi#"baseLocus";
@@ -1651,10 +1654,9 @@ strongCheck MultirationalMap := Phi -> (
 );
 
 isWellDefined MultirationalMap := (cacheValue "isWellDefined") (Phi -> (
-    L := apply(factor Phi,super);
-    P := apply(projections target Phi,L,(p,f) -> if target p === target f then p else rationalMap(source p,target f,matrix p,Dominant=>"notSimplify"));
-    for i to #L -1 do if not isSubset(image P_i,image L_i) then return false;
-    return true;
+    if target Phi === ambient target Phi then return true;
+    f := toRingMap(Phi,ring ambient target Phi);
+    f(ideal target Phi) == 0
 ));
 
 check MultirationalMap := o -> Phi -> if isWellDefined Phi then return Phi else error "the target variety is not compatible with the maps";
@@ -1923,7 +1925,7 @@ inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     g := toRingMap(Phi,ring target Phi);
     I := g sub(ideal Z,ring target Phi);
     K := coefficientRing Phi;
-    if K === ZZ/(char K) then F = apply(F,f -> ideal sum(for i to numgens f -1 list random K, f_*, (u,v) -> u*v));
+    if K === ZZ/(char K) and char K > 1000 then F = apply(F,f -> ideal sum(for i to numgens f -1 list random K, f_*, (u,v) -> u*v));
     for f in F do I = saturate(I,f);
     Phi.cache#("inverseImage",Z) = makeSubvariety multisaturate I
 );
@@ -1934,10 +1936,8 @@ MultirationalMap ^^ MultiprojectiveVariety := (Phi,Z) -> (
     -- A fast inverse image but to be used only when Phi is a linear embedding (intended for internal use only)
     if Phi.cache#?("inverseImage",Z) then return Phi.cache#("inverseImage",Z);
     if ring ambient target Phi =!= ring ambient Z then error "expected a projective variety in the same ambient projective space of the target of the map";
+    if not(#(shape source Phi) == 1 and #(shape target Phi) == 1 and codim source Phi == 0 and degreeOfDefiningForms Phi === 1) then error "expected a linear morphism between projective spaces";
     g := toRingMap(Phi,ring target Phi);
-    if not(# (source Phi)#"dimAmbientSpaces" == 1 and # (target Phi)#"dimAmbientSpaces" == 1 and
-           ambient source Phi == source Phi and first max degrees ideal toMatrix g == 1)
-    then error "expected a linear morphism between projective spaces";
     Phi.cache#("inverseImage",Z) = projectiveVariety(g sub(ideal Z,ring target Phi),MinimalGenerators=>true,Saturate=>false)
 );
 
@@ -2572,7 +2572,7 @@ schubertCycle (VisibleList,GrassmannianVariety) := o -> (a,G) -> (
     a = toList a;
     n := n'+1;
     k := #a;
-    if not (all(a,j -> instance(j,ZZ)) and rsort a == a and first a <= n-k and k == k'+1) then error("expected a nonincreasing sequence of "|toString(k'+1)|" nonnegative integers bounded by "|toString(n'-k'));
+    if not (all(a,j -> instance(j,ZZ)) and rsort a == a and first a <= n-k and last a >= 0 and k == k'+1) then error("expected a nonincreasing sequence of "|toString(k'+1)|" nonnegative integers bounded by "|toString(n'-k'));
     a = prepend(null,a);
     V := completeFlag(G,Standard=>o.Standard);
     S := makeSubvariety trim sum for i from 1 to k list idealOfSubvariety tangentialChowForm(V_(n-k+i-a_i),i-1,k-1,SingularLocus=>0_(first V));
@@ -2957,6 +2957,16 @@ VirtualRationalMap MultiprojectiveVariety := (Phi,Z) -> (
     Psi := inverse Phi;
     decZ := if Z.cache#?"Decomposition" then decompose Z else {Z};
     ⋃ for W in decZ list Psi^* W
+);
+
+VirtualRationalMap ^* := (Phi) -> MultiprojectiveVariety := (Z) -> (
+    L := compositionFactors Phi;
+    if #L >= 2 then (
+        for f in reverse L do Z = f^* Z;
+        return Z;
+    );
+    if Phi#"inverse" === null then error "cannot compute the inverse image under a virtual rational map without a known inverse";
+    (inverse Phi) Z
 );
 
 value VirtualRationalMap := (cacheValue "MaterializedVirtualRationalMap") (Phi -> (
@@ -4687,7 +4697,7 @@ MultirationalMap => "Phi" => {TEX///$X \dashrightarrow Y$///},
 MultirationalMap => "Psi" => {TEX///$Y \dashrightarrow Z$///}},
 Outputs => {
 MultirationalMap => {TEX///$X \dashrightarrow Z$///, ", the virtual composition of ",TT"Phi"," and ",TT"Psi"}},
-PARA{TT"Phi @@ Psi"," represents the composition of ",TT"Phi"," and ",TT"Psi"," without computing its defining polynomials. Some operations can be performed directly on the resulting virtual composition; for example, if ",TT"W"," is a subvariety of its source, then ",TT"(Phi @@ Psi) W"," computes the direct image of ",TT"W",". One may attempt to materialize the composition using ",TT"value(Phi @@ Psi)","."},
+PARA{TT"Phi @@ Psi"," represents the composition of ",TT"Phi"," and ",TT"Psi"," without computing its defining polynomials. Some operations can be performed directly on the resulting virtual composition; for example, if ",TT"W"," is a subvariety of its source and ",TT"Z"," is a subvariety of its target, then ",TT"(Phi @@ Psi) W"," and ",TT"(Phi @@ Psi)^* Z"," compute, factor by factor, the direct image of ",TT"W"," and the inverse image of ",TT"Z","; in special position the results may differ from those obtained from the materialized composition. The virtual composition can be materialized using ",TT"value","."},
 PARA{"An ordinary multi-rational map can be virtualized by virtually composing it with the identity, as in ",TT"Phi @@ 1",". This makes it possible to construct a virtual inverse using ",TT"inverse(Phi @@ 1)"," (when no concrete inverse is already known)."},
 EXAMPLE {
 "S = PP_(ZZ/65521)^(2,2);",
@@ -5458,3 +5468,18 @@ stripWebAppTags = s -> replace(concatenate("[",apply((17,18,19,20,28,29,30,14,21
 assert not err
 assert(stripWebAppTags out === exampleOutput)
 ///)
+
+TEST /// -- 21 Nov 2026: fixed a bug in isWellDefined for targets with multiple factors
+K = ZZ/101;
+(t0,t1) = toSequence gens ring PP_K^1;
+(x0,x1,y0,y1) = toSequence gens ring PP_K^{1,1};
+D = projectiveVariety ideal(x0*y1-x1*y0);
+H = Hom(PP_K^1,D);
+Phi = H {{t0,t1},{t1,t0}};
+assert(not isWellDefined Phi)
+Phi' = super Phi;
+assert isWellDefined Phi';
+Phi' = rationalMap(Phi',projectiveVariety ideal(x0*y0-x1*y1));
+assert isWellDefined Phi';
+assert(image Phi' === target Phi')
+///
