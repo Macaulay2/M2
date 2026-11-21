@@ -917,6 +917,23 @@ TEST ///
 ///
 
 TEST ///
+  S = QQ[x,y]
+  assert(not isQuasiIsomorphism map(complex S^1, complex S^0, 0))
+  M = image matrix{{x,y}}
+  C = complex(M, Base => -2)
+  D = C ++ complex(M, Base => -1)
+  j = D_[0]
+  p = D^[0]
+  -- Both maps induce the identity in degree -2. In degree -1, the
+  -- inclusion misses M and the projection kills it.
+  assert(isQuasiIsomorphism(j, Concentration => (-2,-2)))
+  assert(not isQuasiIsomorphism(j, Concentration => (-1,-1)))
+  assert(not isQuasiIsomorphism(p, Concentration => (-1,-1)))
+  assert(isQuasiIsomorphism(p, Concentration => (-2,-2)))
+  assert(isQuasiIsomorphism(j, Concentration => (0,infinity)))
+///
+
+TEST ///
   -- naive truncation
 -*  
   restart
