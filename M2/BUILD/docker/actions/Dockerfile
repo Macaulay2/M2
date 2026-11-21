@@ -20,7 +20,7 @@ RUN apt-get install -y -q --no-install-recommends libboost-stacktrace-dev \
 	libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
 	libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
 	libnauty-dev libnormaliz-dev libsingular-dev singular-data libcdd-dev \
-	cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib libtbb-dev
+	cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib palp libtbb-dev
 
 # Testing with clang-11 compiler
 #RUN apt-get install -y clang-16 llvm-16 libomp-16-dev && apt-get clean

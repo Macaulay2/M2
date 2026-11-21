@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  -- TO "changes made for the next release",
+	  TO "changes, 1.26.11",
 	  TO "changes, 1.26.06",
 	  TO "changes, 1.26.05",
 	  TO "changes, 1.25.11",
@@ -67,6 +68,82 @@ changesHelper List := opt -> pkgnames -> (
 	    << (if opt.Certification then "published" else "added")
 	    << ".\" },"
 	    << endl)))
+
+document {
+    Key => "changes, 1.26.11",
+    UL {
+        LI { "new packages:",
+            UL {
+                LI { TO "CanonicalMaps::CanonicalMaps", ", a package by Gregory G. Smith and Mike Stillman for canonical and standard maps for modules, has been added." },
+                LI { TO "HilbertSchemeStrata::HilbertSchemeStrata", ", a package by Frank Schreyer for computing strata of Hilbert schemes, as used in Schreyer's ", EM "Introduction to Algebraic Geometry", ", has been added." },
+                LI { TO "KoszulFiltrations::KoszulFiltrations", ", a package by Emily Berghofer, Lisa Nicklasson, Peder Thompson, and Thomas Westerbäck for computing with Koszul filtrations, has been added." },
+                LI { TO "NongeneralTypeSurfacesInP4::NongeneralTypeSurfacesInP4", ", a package by Hirotachi Abo, Kristian Ranestad, and Frank-Olaf Schreyer for constructing smooth non-general type surfaces in $\\mathbb{P}^4$, has been added." },
+                LI { TO "PALPInterface::PALPInterface", ", a package by Mike Stillman providing an interface to the PALP software for lattice polytopes, has been added.  PALP is now built and installed with Macaulay2 if it is not found on the system." },
+                },
+            },
+        LI { "improved packages:",
+            UL {
+                LI { TO "A1BrouwerDegrees::A1BrouwerDegrees", " has been updated to version 2.1, fixing a bug in ", TO "A1BrouwerDegrees::getAnisotropicPart", " for forms over the rational numbers and computing square classes modulo primes of arbitrary size." },
+                LI { TO "AdjunctionForSurfaces::AdjunctionForSurfaces", " has been updated to version 1.0 with documentation fixes." },
+                LI { TO "CotangentSchubert::CotangentSchubert", " has been updated to version 0.81 with changes from code review." },
+                LI { TO "ForeignFunctions::ForeignFunctions", " has been updated to version 0.9.  ", TO "ForeignFunctions::foreignFunction", " and ", TO "ForeignFunctions::foreignSymbol", " now accept ", TO null, " as their first argument, which is the same as omitting it." },
+                LI { TO "GameTheory::GameTheory", " has been updated to version 1.1, adding a reference to the accompanying paper and speeding up an example." },
+                LI { TO "LanguageServer::LanguageServer", " has been updated to version 0.2.  The ", CODE "M2-language-server", " program now has ", CODE "--help", " and ", CODE "--version", " options and a manual page, and it now looks for the ", CODE "M2", " executable in its own directory before searching the path." },
+                LI { TO "MatrixFactorizations::MatrixFactorizations", " now preserves internal degrees through Hom, tensor products, constructors, and direct sums, and computes boundary maps, homotopies, and homology correctly for higher-period factorizations." },
+                LI { TO "MultiprojectiveVarieties::MultiprojectiveVarieties", " has been updated to version 2.7.2 with minor updates." },
+                LI { TO "Padic::Padic", " has been updated to version 0.3, adding ", TO texMath, " and ", TO mathML, " methods so that $p$-adic fields display properly in WebApp mode." },
+                LI { TO "PencilsOfQuadrics::PencilsOfQuadrics", " has been updated to version 1.1, adding printing methods and fixing bugs." },
+                LI { TO "PositivityToricBundles::PositivityToricBundles", " has been updated to version 1.10, fixing a bug in ", TO "PositivityToricBundles::isGloballyGenerated", " and ", TO "PositivityToricBundles::separatesJets", " along with minor cleanups." },
+                LI { TO "PushForward::PushForward", " has new ", TO "PushForward::pushforward", " and ", TO "PushForward::pushforward'", " methods for moving elements between a module and its push-forward, and ", TO "PushForward::pushFwd", " and ", TO "PushForward::isModuleFinite", " now support skew commutative polynomial rings and handle towers of rings better." },
+                LI { TO "RInterface::RInterface", " has been updated to version 0.4.  Loading it no longer replaces Macaulay2's signal handlers with R's, so computations may be interrupted as usual." },
+                LI { TO "SpecialFanoFourfolds::SpecialFanoFourfolds", " has been updated to version 2.8.1, adding ", TO "SpecialFanoFourfolds::example", " for retrieving fourfolds saved with ", TO "SpecialFanoFourfolds::store(HodgeSpecialFourfold,String)", ", along with other minor improvements." },
+                },
+            },
+        LI { "functionality added or improved:",
+            UL {
+                LI { "The search bar in the HTML documentation now searches the documentation itself rather than sending queries to Google." },
+                LI { "The new method ", TO center, " computes the center of a ring, and ", TO centerMap, " the inclusion of the center into the ring.  Currently, commutative rings and rings with skew commuting variables, such as exterior algebras, are supported.  The methods for graphs and Lie algebras from the ", TO "Graphs::Graphs", " and ", TO "GradedLieAlgebras::GradedLieAlgebras", " packages are now installed on the same function." },
+                LI { "The new function ", TO isSkewAffineRing, " checks whether a ring is an affine ring containing skew commuting variables." },
+                LI { "There is a new strategy for computing the ", TO2((kernel, RingMap), "kernel"), " of a ring map whose target is skew commutative." },
+                LI { "The ", TO legendreSymbol, " function has been added to Core.  It replaces the much slower version previously exported by ", TO "Parametrization::Parametrization", "." },
+                LI { TO pushForward, " now accepts more ring maps, removing the error ", SAMP "not implemented yet: unexpected degree map of ring map", " in many cases." },
+                LI { TO2((prune, Ring), "Pruning"), " a quotient of a skew commutative polynomial ring now gives a correctly configured ring, and the ", TO [monoid, SkewCommutative], " option is now validated." },
+                LI { "New methods ", TO (mutableMatrix, Number), ", ", TO (mutableMatrix, RingElement), ", and similar have been added for constructing $1 \\times 1$ mutable matrices.  Mutable matrices are now displayed with their ring and size, like ordinary matrices, and ", TO rank, " now raises an error when it is not implemented for a mutable matrix instead of returning -1." },
+                LI { TO GF, " and ", M2CODE "ZZ/n", " now return the same ring when called again with the same arguments, even when ", VAR "n", " is not prime." },
+                LI { TO runLengthEncode, " has been rewritten.  Repeated entries are now encoded before consecutive ones, and a range is only encoded if it has at least three entries." },
+                LI { TO roots, " now accepts univariate polynomials in multivariate polynomial rings." },
+                },
+            },
+        LI { "functionality changed in a way that could break code:",
+            UL {
+                LI { TO (matrix, Vector), " no longer requires the source to be generated in degree 0, so the result is homogeneous of degree 0 when possible.  For example, ", M2CODE "matrix {{x*M_0, x^2*M_0}}", " and ", M2CODE "M/{x*M_0, x^2*M_0}", " are now homogeneous when ", M2CODE "M = (QQ[x])^1", "." },
+                LI { TO coefficient, " now raises an error if the monomial and the polynomial do not belong to the same ring." },
+                },
+            },
+        LI { "bugs fixed:",
+            UL {
+                LI { "Gröbner bases computed using a ", TO2("using a Hilbert hint for a Groebner basis calculation", "Hilbert hint"), " are no longer sometimes incomplete." },
+                LI { "Gröbner bases computed with the ", TO2("Gröbner basis algorithms", "F4 algorithm"), " no longer occasionally contain incorrect generators." },
+                LI { TO GLex, " blocks following another block in a ", TO MonomialOrder, " now have the correct weights." },
+                LI { "Subtracting sparse ", TO2(MutableMatrix, "mutable matrices"), " now gives the correct result and no longer crashes on empty columns." },
+                LI { TO sort, " and ", TO rsort, " no longer ignore errors raised by the comparison method." },
+                LI { TO lift, " now works from a ", TO2(FractionField, "fraction field"), " to its base or coefficient ring." },
+                LI { TO2(substitute, "Substituting"), " zero for a variable appearing in the denominator of a ", TO2([monoid, Inverses], "Laurent polynomial"), " now raises an error." },
+                LI { TO roots, " no longer crashes on elements of ", TO2(FractionField, "fraction fields"), ", nor ", TO coefficients, " over inexact fields, and ", TO factor, " now works correctly over fraction fields." },
+                LI { TO code, " now works for functions defined in multi-line input at the prompt." },
+                LI { "Attempting to ", TO close, " ", TO stdio, " or ", TO stderr, " now raises an error instead of breaking the session." },
+                LI { "Local file paths containing URL fragments (", CODE "#...", ") are now handled correctly when generating links, and errors from ", TO realpath, " are now reported." },
+                },
+            },
+        LI { "Emacs updates:",
+            UL {
+                LI { "The Macaulay2 major mode no longer registers itself with Eglot or lsp-mode automatically.  Add ", CODE "(with-eval-after-load 'eglot (M2-register-eglot))", " or ", CODE "(with-eval-after-load 'lsp-mode (M2-register-lsp))", " to your Emacs configuration to use the ", TO "LanguageServer::LanguageServer", "." },
+                LI { "The ", CODE "M2-language-server", " program is now found next to the ", SAMP "M2-exe", " executable before searching the path, and the new ", SAMP "M2-language-server-command", " variable may be set to run a custom or remote language server." },
+                LI { "Changing ", SAMP "M2-exe", " after the Macaulay2 major mode has loaded now affects the command used to start new Macaulay2 sessions." },
+                },
+            },
+        }
+    }
 
 document {
     Key => "changes, 1.26.06",
