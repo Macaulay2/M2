@@ -239,12 +239,12 @@ makeModule(RingMap, Module) := (f, N) -> (
     (M, pf', pf)
 )
 
--- the pushfwd of any rank one free module can be obtained from the pushfwd of the canonical `module R` by twisting 
--- this method makes a recursive call to compute the pushforward of `module R` which will then be cached for any future such computations
--- the callsite of this method has the guard against infinite recursion - we dont do this reduction step in case we are already computing with `module R`.
+-- the pushFwd of any rank one free module can be obtained from the pushFwd of `module R` possibly with a twist
 makeModuleRankOneFree = (f, N) -> (
-    (R, S) := (target f, source f);
     if not isRankOneFree N then error "expected rank one free module";
+    if isBaseCase N then error "guard against infinite recursion: can't reduce from `module R` case";
+
+    (R, S) := (target f, source f);
     X := pushFwd(f, module R);
     if degreeGroup R == degreeGroup S then (
         auxpfN := X ** S^(degrees N);
@@ -257,7 +257,7 @@ makeModuleRankOneFree = (f, N) -> (
         (
 
             X,
-            -- the following stange pattern is because this cache value is about to be overwritten.
+            -- the following strange pattern is because this cache value is about to be overwritten.
             -- we must preserve it by storing it in local context before we return the function using it.
             (pf' := X.cache#pushforward'; (m) -> map(N, module R, gens N) * pf' m),
             (module R).cache#(pushforward, X)
