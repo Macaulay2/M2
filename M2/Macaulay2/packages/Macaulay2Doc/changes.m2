@@ -5,7 +5,7 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  -- TO "changes made for the next release",
+	  TO "changes made for the next release",
 	  TO "changes, 1.26.06",
 	  TO "changes, 1.26.05",
 	  TO "changes, 1.25.11",
@@ -67,6 +67,27 @@ changesHelper List := opt -> pkgnames -> (
 	    << (if opt.Certification then "published" else "added")
 	    << ".\" },"
 	    << endl)))
+
+document {
+    Key => "changes made for the next release",
+    UL {
+        LI { "improved packages:",
+            UL {
+                LI { TO "SumsOfSquares::SumsOfSquares", " has been updated to version 3.0, a rewrite with the same interface.  ",
+                    "Exact certificates are now rounded in coordinates of the affine space of Gram matrices and checked exactly, ",
+                    "which fixes false certificates for problems with parameters (also through ", TO "SumsOfSquares::sosInIdeal", " and ",
+                    TO "SumsOfSquares::lowerBound", " with constraints).  ",
+                    TO "SumsOfSquares::lowerBound", " of a rational function now certifies the sign of the denominator, ",
+                    "returns simple optima exactly (for instance 26/3 instead of 69/8), and its bound no longer gets worse with larger ", TO "SumsOfSquares::RoundTol", ".  ",
+                    "The semidefinite program sent to the solver no longer depends on ", TO "SumsOfSquares::RoundTol", " (issue #4107), ",
+                    TO "SumsOfSquares::sosInIdeal", " no longer depends on the random seed, and ", TO "SumsOfSquares::recoverSolution", " reads the moment matrix correctly.  ",
+                    "On the benchmark the time is 0.8 of the old time in the geometric mean, and ", TO "SumsOfSquares::sosdecTernary", " of the Harris form is about 4 times faster; ",
+                    TO "SumsOfSquares::lowerBound", " of a rational function is up to 3 times slower, since it now certifies the denominator.  ",
+                    "Certificates are often much smaller." },
+                },
+            },
+        }
+    }
 
 document {
     Key => "changes, 1.26.06",

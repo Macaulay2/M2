@@ -54,7 +54,7 @@ document {
         sol = solveSOS (f, 2);
         sosPoly sol
     ///,
-    "The previous computation gives decomposition with three sums of squares. ",
+    "The previous computation gives a decomposition into three squares. ",
     "See ", TO "TraceObj", " for how to obtain a decomposition with only two squares.",
 
     HEADER4 "Other cool stuff",
@@ -89,6 +89,7 @@ doc /// --coefficient field
     Description
       Text
         The SumsOfSquares package works with two coefficient rings: the rational numbers $\QQ$ and the real numbers $\RR$.
+        Other coefficient rings, such as $\ZZ$ or finite fields, are not supported and give an error.
         Almost all operations in this package rely on a numerical semidefinite programming @TO Solver@.
         When calling such a solver, even if the input was a polynomial with rational coefficients, the result is numerical.
         The package makes some effort to round and return a rational result, but this can fail, independent of whether a rational sum-of-squares decomposition exists or not.
@@ -138,6 +139,7 @@ doc /// --SOSPoly
         $$f = \sum_i d_i g_i^2,$$
         where the $g_i$ are polynomials in $K[x]$ and the $d_i$ are positive weights in $K$.
         This data type stores polynomials as sums of squares.
+        The constructor @TO sosPoly@ rejects negative weights.
         The type is a hash table consisting of the polynomials to be
         squared and summed (the 'generators'), corresponding coefficients,
         and the base ring.
@@ -172,6 +174,8 @@ doc /// --SOSPoly
         s * s
         s == s
       Text
+        A scalar factor must be nonnegative and lie in the coefficient field.
+        Powers $s^k$ are sums of squares for every $k \geq 0$.
         The actual polynomial can be recovered using @TO(value,SOSPoly)@.
       Example
         value s
@@ -211,6 +215,7 @@ doc /// -- SDPResult
         peek sol
       Text
         The fields can be extracted with the operator @TO symbol #@.
+        The field {\tt Parameters} is null if the problem has no parameters.
       Example
         sol#GramMatrix
       Text
@@ -360,6 +365,8 @@ doc /// --solveSOS
         The algorithm first computes a floating point solution,
         and then tries to obtain an exact solution by rounding the numerical result.
         If the rounding fails, the numerical solution is returned.
+        A rational result is always an exact certificate: it is checked exactly.
+        The zero polynomial is the empty sum of squares, with Gram matrix $0$.
       Example
         R = QQ[x,y];
         f = 2*x^4+5*y^4-2*x^2*y^2+2*x^3*y;
@@ -401,6 +408,7 @@ doc /// --solveSOS
       Text
         By default the method tries to obtain rational values of the parameters.
         Since there is a trade-off between rounding and optimality, we specify the @TO2 {RoundTol,"rounding precision"}@ as an optional input argument.
+        If the solver reports the objective function as unbounded, no Gram matrix and no parameters are returned, and the Status says so.
       Code
       Pre
     SeeAlso
@@ -444,10 +452,12 @@ doc /// --solveSOS (quotient ring)
         solveSOS (f, mon)
       Text
         If a degree bound $D$ is given, the method will use the vector of monomials of degree at most $D/2$.
+        (For a form of degree $2e \leq D$ in a polynomial ring, the monomials of degree $e$ suffice, and only these are used.)
       Example
         solveSOS (f, 2)
       Text
         Parametrized sums-of-squares problems can also be solved in quotient rings.
+        The monomials live in the ring of the variables, without the parameters.
       Example
         S = R[t];
         solveSOS(f-t,-t,mon,RoundTol=>12)
@@ -471,7 +481,11 @@ doc /// --solveSOS (quotient ring)
       Example
         R' = ring sosPoly s;
         S = R'/(sub (ideal (x^2 + y^2 - 1), R'))
-        sub (f, S) == sub (sosPoly s, S)
+      Text
+        The comparison must allow for rounding errors.
+      Example
+        d = sub (f, S) - value sub (sosPoly s, S);
+        clean (1e-10, lift (d, R')) == 0
       Code
       Pre
     SeeAlso
@@ -501,7 +515,7 @@ doc /// --sosdecTernary
         algorithm to compute a decomposition of
         $f$ as $f=\frac{\prod_ip_i}{\prod_iq_i}$ where each factor $p_i$
         and $q_i$ is a sum of squares.
-        The method returns null if $f$ is not nonnegative.
+        The method returns (null, null) if no decomposition was found, in particular if $f$ is not nonnegative.
         As an example, consider the homogeneous Motzkin polynomial.
       Example
         R = RR[x,y,z];
@@ -564,7 +578,6 @@ doc /// --sosInIdeal
      Example
         S = R/ideal h;
         sol = sosInIdeal (S, 2);
-        sosPoly sol
         sosPoly sol
     Caveat
         This implementation only works with the @TO2 {Solver,"solvers"}@ "CSDP" and "MOSEK".
@@ -638,6 +651,13 @@ doc /// --lowerBound
         f - bound + h*mult == sosPoly sol
       Text
         {\bf Optimizing rational functions:}
+        For a rational function $f = p/q$ the relaxation is
+        $max \, t$ such that $p - t q$ is SOS, which proves $f \geq t$ where $q > 0$ ([BPT12], Section 3.2.2).
+        So the method first certifies that $q$ is nonnegative (on the variety of $h$, with the same degree bound, raised to the degree of the polynomial certified if necessary) by a sum-of-squares decomposition of $q$, of $(1 + x_1^2 + \dots + x_n^2) q$, or of $(x_1^2 + \dots + x_n^2) q$.
+        If this fails, it uses $p q - t q^2$ instead, which is valid for every denominator;
+        the degree bound is then raised to the degree of this polynomial if necessary.
+        The bound is rational only if both certificates are exact (the Gram matrix in the result may be rational even if the bound is real).
+        Without equations, a denominator that takes both signs at some test points gives no bound, since $f$ is then unbounded below.
         The following is an example of how to optimize a rational function.
       Example
         R = QQ[x];
@@ -673,6 +693,10 @@ doc /// --recoverSolution
         This method attempts to find the optimizing solutions of a sum-of-squares problem
         by checking if the moment matrix is rank one.  In this case it
         factorizes the matrix and returns the defining vector.
+        If the monomial vector contains $1$, the point consists of the moments of degree one divided by the moment of $1$
+        (for a rational function the moment matrix is scaled by the value of the denominator).
+        If the moment matrix is not rank one, a warning is printed and the point might not be optimal.
+        For a result without moment matrix, the empty list is returned.
       Example
         R = RR[x,y];
         mon = matrix {{1},{x},{y}};
@@ -765,11 +789,14 @@ doc /// --library
         library("Scheiderer", R)
       Text
         The Harris polynomial is a ternary form of degree 10 with 30 projective zeros (the largest number known in August 2018).
+        It is not a sum of squares [Har99, Lemma 6.8].
       Example
         library("Harris", R)
       Text
         {\bf References:}
         {\it Some concrete aspects of Hilbert's 17th problem}. B. Reznick. Contemporary mathematics (2000), 253, pp. 251-272.
+
+        [Har99] {\it Real even symmetric ternary forms}. W. R. Harris. Journal of Algebra 222 (1999), pp. 204-245.
       Code
       Pre
     SeeAlso
@@ -840,13 +867,27 @@ doc /// -- RoundTol
     Consequences
     Description
       Text
-        The optional argument {\tt RoundTol} specifies the minimal rounding precision in $d$ binary digits.
+        The optional argument {\tt RoundTol} specifies the rounding precision in $d$ binary digits: the coarsest precision tried first (for optimization problems, see below, the depth of the search).
 
         Sums-of-squares problems are solved numerically using a semidefinite programming solver, and afterwards the package attempts to round the floating point solution to rational numbers.
-        The rounding strategy is guaranteed to work whenever the space of Gram matrices is full dimensional.
+        It rounds the coordinates of the solution in an exact parametrization of the affine space of Gram matrices and parameters,
+        so that the rounded Gram matrix satisfies the linear constraints exactly, and only its positive semidefiniteness has to be checked ([PP], Section 3.2).
+        For a polynomial without parameters, the rounding is guaranteed to succeed at a sufficiently high precision
+        if the numerical Gram matrix returned by the solver is positive definite;
+        this is to be expected when a positive definite Gram matrix exists and @TO TraceObj@ is not used.
+        Every rational result is checked exactly.
+
+        The package tries the precisions $2^{-d}$ for $d$ = {\tt RoundTol}, ..., 32; for {\tt RoundTol} between 33 and 52 it tries only $d$ = {\tt RoundTol}.
+        The numerical solution has double precision, so for {\tt RoundTol} above 52 the rounding is skipped and a warning is printed.
+        If all coefficients of the polynomial (without the parameters) are smaller than 1 in absolute value,
+        the problem is multiplied by a power of two before it is solved, so that the precision is relative to the largest coefficient.
+
         For optimization problems the rounding may cause a loss in optimality.
         The argument {\tt RoundTol} allows to control the trade-off between optimality and simplicity.
-        Higher values of {\tt RoundTol} lead to better solutions.
+        For these problems the parameters are approximated to precision $2^{-d}$, also by fractions whose denominators are not powers of 2
+        (continued fraction convergents with denominator at most $2^d$), so that simple rational optima such as $26/3$ can be found exactly.
+        Once a precision $d$ succeeds, all coarser precisions are tried as well, and the best certified value is returned.
+        So, when the rounding succeeds, a higher value of {\tt RoundTol} never gives a worse bound, but beyond the accuracy of the numerical solver it gives no better one either.
       Example
         R = QQ[x,z];
         f = x^4+x^2+z^6-3*x^2*z^2;
@@ -880,7 +921,7 @@ document { --Verbosity
     "This optional argument indicates how much information should be given to the user.  The possible values are:",
     UL{
       {"0 (default)", " -- no information is printed."},
-      {"1", " -- minimal information (solver used, input/output files, status of the solver)."},
+      {"1", " -- minimal information (solver used, input/output files, status of the solver, for the SDP as it is posed to the solver)."},
       {"2", " -- more detailed information (e.g., progress of the solver)."},
       },
     BR{},
@@ -896,6 +937,7 @@ doc /// --TraceObj
     Description
       Text
         Using the trace as the objective function is a heuristic for obtaining sum-of-squares decompositions with small number of squares.
+        If an objective function of the parameters is given as well, the trace replaces it, and a warning is printed.
         Here we repeat Example 5 from [P05] and recover the shorter solution from that paper.
       Example
         R = QQ[x,y]/ideal(x^2 + y^2 - 1);
@@ -920,4 +962,8 @@ doc /// -- the Solver option is documented in the semidefinite programming docum
       Text
         Macaulay2 has a powerful solver already configured.  If necessary you can use this variable to
         change the semidefinite programming solver used in the background.  See @TO Solver@ for details.
+
+        The defaults differ: @TO solveSOS@ and @TO lowerBound@ use the default solver of @TO SemidefiniteProgramming@,
+        while @TO sosInIdeal@ and @TO sosdecTernary@ use "CSDP", since they only work with the solvers "CSDP" and "MOSEK".
+        If CSDP is not found, use {\tt Solver => "MOSEK"} there.
 ///
