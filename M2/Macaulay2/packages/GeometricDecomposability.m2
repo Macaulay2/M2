@@ -84,7 +84,7 @@ findLexCompatiblyGVDOrders = method(
         )
 findLexCompatiblyGVDOrders(Ideal) := List => opts -> I -> (
 
-        if I == 0 then return {{}};
+        if I == 0 or I == 1 then return {{}};
 
         if isGVDBaseCase I then (
                 if opts.OnlyPrefix then return apply(support I, x -> {x}) else return permutations gens ring I
@@ -134,35 +134,27 @@ findLexGVDOrders(List, List, Number, List) := List => opts -> (ideals, givenSupp
         nontrivialIdeals := select(ideals, I -> not isGVDBaseCase I);
 
         variablesToCheck := givenSupport - set termOrder;
-        oneSteps := new HashTable from apply(variablesToCheck, y -> 
-                {y, apply(nontrivialIdeals, I -> (
-                        oneStep := if not isMember(y, support I) then (true, I) else oneStepGVD(I, y,
-                                CheckUnmixed => opts.CheckUnmixed,
-                                UniversalGB => opts.UniversalGB,
-                                Verbose => opts.Verbose
-                                );
-                        if not first oneStep then break {oneStep};
-                        oneStep
-                        ))}
-                );
+        oneSteps := new HashTable from apply(variablesToCheck, y -> {y, apply(nontrivialIdeals, I -> (
+                oneStep := if not isMember(y, support I) then (true, I) else oneStepGVD(I, y, CheckUnmixed => opts.CheckUnmixed, UniversalGB => opts.UniversalGB, Verbose => opts.Verbose);
+                if not first oneStep then break {oneStep};
+                oneStep
+                ))});
 
         -- for each variable, check whether all of its one-steps were valid
         nextVariables := select(variablesToCheck, y -> all(oneSteps#y, first));
 
         if #nextVariables == 0 then return {};
 
-        return join apply(nextVariables, y -> (
-                findLexGVDOrders(
-                        flatten apply(oneSteps#y, seq -> toList drop(seq, 1)), 
-                        givenSupport, 
-                        maxNumTerms,
-                        join(termOrder, {y}),
-                        CheckUnmixed => opts.CheckUnmixed, 
-                        UniversalGB => opts.UniversalGB,
-                        Verbose => opts.Verbose
-                        )
+        join apply(nextVariables, y -> (findLexGVDOrders(
+                flatten apply(oneSteps#y, seq -> toList drop(seq, 1)), 
+                givenSupport, 
+                maxNumTerms,
+                join(termOrder, {y}),
+                CheckUnmixed => opts.CheckUnmixed, 
+                UniversalGB => opts.UniversalGB,
+                Verbose => opts.Verbose
+                )
             ))
-
         )
 
 
@@ -2184,6 +2176,18 @@ TEST///
 R = QQ[x..z];
 I = ideal(x-y, x-z);
 assert( set findLexCompatiblyGVDOrders(I, OnlyPrefix=>false) == set {{x, y, z}, {x, z, y}, {y, x, z}, {y, z, x}, {z, x, y}, {z, y, x}} )
+///
+
+
+TEST///
+I = ideal 0 
+assert(findLexCompatiblyGVDOrders I == {{}})
+///
+
+
+TEST///
+I = ideal 1
+assert(findLexCompatiblyGVDOrders I == {{}})
 ///
 
 
