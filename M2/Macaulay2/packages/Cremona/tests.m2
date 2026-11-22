@@ -196,17 +196,7 @@ Bl' = ideal source first graph legacyRationalMap map inverse phi;
 assert(sub(Bl,vars ring Bl') == Bl' and sub(Bl',vars ring Bl) == Bl)
 ///
 
-TEST /// -- deprecated synonyms RationalMap and rationalMap (up to version 5.2.1)
-    assert(RationalMap === LegacyRationalMap)
-    assert(toString LegacyRationalMap == "LegacyRationalMap")
-    assert(toString class segre(ZZ/101[x_0,x_1,y_0,y_1,Degrees=>{2:{1,0},2:{0,1}}]) == "LegacyMultihomogeneousRationalMap")
-    assert(set apply(methods legacyRationalMap,m -> drop(m,1)) === set apply(methods rationalMap,m -> drop(m,1)))
-    R = ZZ/33331[x_0..x_3];
-    F = {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2};
-    phi = rationalMap F;
-    assert(instance(phi,LegacyRationalMap) and phi == legacyRationalMap F)
-    psi = rationalMap(F,Dominant=>true);
-    assert(psi#"isDominant" === true and psi == legacyRationalMap(F,Dominant=>true))
-    assert(rationalMap(ideal F,2) == legacyRationalMap(ideal F,2))
-    assert(rationalMap R == legacyRationalMap R)
+TEST /// -- names of the classes (renamed in version 5.3.0)
+assert(toString LegacyRationalMap == "LegacyRationalMap")
+assert(toString class segre(ZZ/101[x_0,x_1,y_0,y_1,Degrees=>{2:{1,0},2:{0,1}}]) == "LegacyMultihomogeneousRationalMap")
 ///
