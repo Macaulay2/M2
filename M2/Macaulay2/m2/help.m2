@@ -126,6 +126,7 @@ initializeReverseOptionTable := () -> (
 isDocumentableThing = method(Dispatch => Thing)
 isDocumentableThing    String :=
 isDocumentableThing  Sequence := key -> false
+isDocumentableThing   Package := key -> true
 isDocumentableThing   Nothing :=
 isDocumentableThing    Symbol := key -> (d := dictionary key) =!= null and not isMutable d and isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableThing     Thing := key -> hasAttribute(key, ReverseDictionary) and isDocumentableMethod getAttribute(key, ReverseDictionary)
