@@ -34,16 +34,7 @@ newPackage(
 	}
 )
 
-requiredMultiprojectiveVarietiesVersion := "2.7.2";
-if MultiprojectiveVarieties.Options.Version < requiredMultiprojectiveVarietiesVersion then (
-    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version "<<requiredMultiprojectiveVarietiesVersion<<" or newer);"<<endl;
-    <<"you can manually download the latest version from"<<endl;
-    <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
-    <<"To automatically download the latest version of MultiprojectiveVarieties in your current directory,"<<endl;
-    <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
-    <<///run "curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2";///<<endl<<endl<<"***"<<endl;
-    error("required MultiprojectiveVarieties package version "|requiredMultiprojectiveVarietiesVersion|" or newer");
-);
+if MultiprojectiveVarieties.Options.Version < "2.7.2" then error "the package MultiprojectiveVarieties is outdated (required version 2.7.2 or newer); see updatePackage";
 
 export{
     "HodgeSpecialFourfold",

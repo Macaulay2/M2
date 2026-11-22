@@ -8,15 +8,15 @@
 *-
 
 newPackage(
-       "Cremona",
-	Version => "5.3.0", 
-        Date => "November 22, 2026",
-    	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
-    	Headline => "rational maps between projective varieties",
-	Keywords => {"Algebraic Geometry"},
-        AuxiliaryFiles => true,
-	PackageImports => {"Varieties"},
-	Certification => {
+    "Cremona",
+    Version => "5.3.0", 
+    Date => "November 22, 2026",
+    Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
+    Headline => "rational maps between projective varieties",
+    Keywords => {"Algebraic Geometry"},
+    AuxiliaryFiles => true,
+    PackageImports => {"Varieties"},
+    Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "A Macaulay2 package for computations with rational maps",
@@ -29,7 +29,7 @@ newPackage(
 	     "volume number" => "8",
 	     "volume URI" => "https://msp.org/jsag/2018/8-1/"
 	     }
-	)
+)
 
 export{
    "ChernSchwartzMacPherson",
@@ -54,8 +54,6 @@ export{
    "specialQuadraticTransformation",
    "LegacyRationalMap",
    "legacyRationalMap",
-   "RationalMap", -- deprecated synonym of LegacyRationalMap
-   "rationalMap", -- deprecated synonym of legacyRationalMap
    "BlowUpStrategy",
    "forceInverseMap",
    "forceImage",
@@ -2189,30 +2187,6 @@ isIsomorphism LegacyRationalMap := Phi -> (
 );
 
 -------------------------------------------------------------------------------
--- Deprecated names, kept for compatibility (they will be removed in a future version).
--- Up to version 5.2.1, the class LegacyRationalMap and its constructor legacyRationalMap
--- were called RationalMap and rationalMap.
--- Here rationalMap is a separate method function, not another name for legacyRationalMap:
--- in this way other packages can install their own methods on rationalMap without altering legacyRationalMap.
-RationalMap = LegacyRationalMap;
-rationalMap = method(Options => {Dominant => null});
-rationalMap RingMap := o -> phi -> legacyRationalMap(phi,Dominant=>o.Dominant);
-rationalMap Matrix := o -> F -> legacyRationalMap(F,Dominant=>o.Dominant);
-rationalMap List := o -> F -> legacyRationalMap(F,Dominant=>o.Dominant);
-rationalMap Ideal := o -> I -> legacyRationalMap(I,Dominant=>o.Dominant);
-rationalMap (Ideal,ZZ) := o -> (I,d) -> legacyRationalMap(I,d,Dominant=>o.Dominant);
-rationalMap (Ideal,List) := o -> (I,d) -> legacyRationalMap(I,d,Dominant=>o.Dominant);
-rationalMap (Ideal,ZZ,ZZ) := o -> (I,d,e) -> legacyRationalMap(I,d,e,Dominant=>o.Dominant);
-rationalMap (PolynomialRing,List) := o -> (R,L) -> legacyRationalMap(R,L,Dominant=>o.Dominant);
-rationalMap LegacyRationalMap := o -> Phi -> legacyRationalMap(Phi,Dominant=>o.Dominant);
-rationalMap LegacyMultihomogeneousRationalMap := o -> Phi -> legacyRationalMap(Phi,Dominant=>o.Dominant);
-rationalMap (Ring,Ring,Matrix) := o -> (R,S,F) -> legacyRationalMap(R,S,F,Dominant=>o.Dominant);
-rationalMap (Ring,Ring,List) := o -> (R,S,L) -> legacyRationalMap(R,S,L,Dominant=>o.Dominant);
-rationalMap (Ring,Ring) := o -> (R,S) -> legacyRationalMap(R,S,Dominant=>o.Dominant);
-rationalMap Ring := o -> R -> legacyRationalMap(R,Dominant=>o.Dominant);
-rationalMap (Ring,Tally) := o -> (R,E) -> legacyRationalMap(R,E,Dominant=>o.Dominant);
-rationalMap Tally := o -> E -> legacyRationalMap(E,Dominant=>o.Dominant);
-rationalMap AbstractRationalMap := o -> Phi -> legacyRationalMap(Phi,Dominant=>o.Dominant);
 -- Up to version 5.2.1, the internal classes LegacyMultihomogeneousRationalMap and LegacyWeightedHomogeneousRationalMap
 -- (not exported) were called MultihomogeneousRationalMap and WeightedHomogeneousRationalMap;
 -- the old names are kept for code that uses them via "debug Cremona" (e.g., older versions of MultiprojectiveVarieties).

@@ -33,24 +33,14 @@ newPackage(
 	 "volume number" => "11",
 	 "volume URI" => "https://msp.org/jsag/2021/11-1/"
 	 }
-    )
+)
 
-requiredCremonaVersion := "5.3.0";
-if Cremona.Options.Version < requiredCremonaVersion then (
-    <<endl<<"Your version of the Cremona package is outdated (required version "<<requiredCremonaVersion<<" or newer);"<<endl;
-    <<"you can manually download the latest version from"<<endl;
-    <<"https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages."<<endl;
-    <<"To automatically download the latest version of Cremona in your current directory,"<<endl;
-    <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
-    <<///(makeDirectory("Cremona"), for f in {"Cremona.m2","Cremona/documentation.m2","Cremona/examples.m2","Cremona/tests.m2"} do run("curl -s -o "|f|" https://raw.githubusercontent.com/Macaulay2/M2/stable/M2/Macaulay2/packages/"|f));///<<endl<<endl<<"***"<<endl;
-    error("required Cremona package version "|requiredCremonaVersion|" or newer");
-);
+if Cremona.Options.Version < "5.3.0" then error "the package Cremona is outdated (required version 5.3.0 or newer); see updatePackage";
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "projectionMaps", "fiberProduct",
        "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "coneOfLines", "sectionalGenus", "sumUp",
-       "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2",
+       "RationalMap", "rationalMap", "baseLocus", "degreeSequence", "inverse2",
        "toLegacyRationalMap",
-       "toRationalMap", -- synonym of toLegacyRationalMap, kept for compatibility
        "∏","⋂","⋃","PP",
        "ambientVariety",
        "GrassmannianVariety", "GG", "schubertCycle", "cycleClass",
@@ -1236,7 +1226,7 @@ line EmbeddedProjectiveVariety := X -> line(X,3);
 
 linearlyNormalEmbedding = method();
 linearlyNormalEmbedding EmbeddedProjectiveVariety := X -> (
-    Phi := multirationalMap X;
+    Phi := 1_X;
     f := first factor Phi;
     d := degreeSequence f;
     if not(#factor Phi == 1 and #d == #(maps f)) then error "internal error encountered";
@@ -1386,19 +1376,19 @@ Fano (EmbeddedProjectiveVariety,Option) := (X,opt) -> (
 Fano EmbeddedProjectiveVariety := X -> Fano(X,AffineChartGrass=>true);
 
 
-MultirationalMap = new Type of MutableHashTable;
+RationalMap = new Type of MutableHashTable;
 
-globalAssignment MultirationalMap;
+globalAssignment RationalMap;
 
-MultirationalMap.synonym = "multi-rational map";
+RationalMap.synonym = "rational map";
 
-WeightedRationalMap = new Type of MultirationalMap; -- this isn't really a subtype
+WeightedRationalMap = new Type of RationalMap; -- this isn't really a subtype
 
 globalAssignment WeightedRationalMap;
 
 WeightedRationalMap.synonym = "weighted-rational map";
 
-netTexDescription MultirationalMap := o -> Phi -> (
+netTexDescription RationalMap := o -> Phi -> (
     if o#"UseName" and hasAttribute(Phi,ReverseDictionary) then return (
         toString getAttribute(Phi,ReverseDictionary),
         texMath getAttribute(Phi,ReverseDictionary)
@@ -1473,15 +1463,15 @@ netTexDescription MultirationalMap := o -> Phi -> (
     (netStr,texStr | "\\end{aligned}")
 );
 
-? MultirationalMap := Phi -> (
+? RationalMap := Phi -> (
     (n,t) := netTexDescription Phi;
     netTexMath(net n,t)
 );
 
-net MultirationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then toString getAttribute(Phi,ReverseDictionary) else net(? Phi);
-texMath MultirationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then texMath getAttribute(Phi,ReverseDictionary) else texMath(? Phi);
+net RationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then toString getAttribute(Phi,ReverseDictionary) else net(? Phi);
+texMath RationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then texMath getAttribute(Phi,ReverseDictionary) else texMath(? Phi);
 
-describe MultirationalMap := Phi -> (
+describe RationalMap := Phi -> (
     baseLocus Phi;
     image Phi;
     if not instance(Phi,WeightedRationalMap) then (
@@ -1504,17 +1494,17 @@ describe MultirationalMap := Phi -> (
     netTexMath(netDescr,texDescr | "\\end{aligned}")
 );
 
-expression MultirationalMap := Phi -> expression first netTexDescription(Phi,"Short"=>true); -- backward compatibility
-shortTeX MultirationalMap := Phi -> shortTeX last netTexDescription(Phi,"Short"=>true);
+expression RationalMap := Phi -> expression first netTexDescription(Phi,"Short"=>true); -- backward compatibility
+shortTeX RationalMap := Phi -> shortTeX last netTexDescription(Phi,"Short"=>true);
 
-MultirationalMap#{Standard,AfterPrint} = MultirationalMap#{Standard,AfterNoPrint} = Phi -> (
+RationalMap#{Standard,AfterPrint} = RationalMap#{Standard,AfterNoPrint} = Phi -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << first netTexDescription(Phi,"Short"=>true) << ")" << endl;
 );
-MultirationalMap#{WebApp,AfterPrint} = MultirationalMap#{WebApp,AfterNoPrint} = Phi -> customWebAppAfterPrint(class Phi, " (", shortTeX Phi, ")");
+RationalMap#{WebApp,AfterPrint} = RationalMap#{WebApp,AfterNoPrint} = Phi -> customWebAppAfterPrint(class Phi, " (", shortTeX Phi, ")");
 
-toString MultirationalMap := Phi -> "multirationalMap("|(toString apply(factor Phi,f -> toString super f))|","|(toString target Phi)|")"; -- this doesn't work well
+toString RationalMap := Phi -> "rationalMap("|(toString apply(factor Phi,f -> toString super f))|","|(toString target Phi)|")"; -- this doesn't work well
 
-multirationalMap = method(TypicalValue => MultirationalMap);
+multirationalMap = method(TypicalValue => RationalMap);
 
 multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
     if not (# L > 0 and all(L,f -> instance(f,LegacyRationalMap) or instance(f,LegacyMultihomogeneousRationalMap))) then error "expected a nonempty list of LegacyRationalMap or LegacyMultihomogeneousRationalMap objects";
@@ -1528,7 +1518,7 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
     then if # m == 1
          then error("expected a subvariety of PP^"|toString(first m))
          else error("expected a subvariety of a product of "|toString(# m)|" projective spaces of dimensions "|(toString toSequence m));
-    Phi := new MultirationalMap from {
+    Phi := new RationalMap from {
         symbol cache => new CacheTable,
         "maps" => L,
         "target" => Y,
@@ -1574,15 +1564,17 @@ multirationalMap List := L -> (
     Phi
 );
 
+rationalMap = method(TypicalValue => RationalMap, Options => {Dominant => null});
+
 rationalMap (List,MultiprojectiveVariety) := o -> (L,Y) -> (
     if o.Dominant =!= null then error "option Dominant is not allowed when you specify the target";
     if all(L,l -> instance(l,RingMap) or instance(l,Matrix) or instance(l,Ideal) or (instance(l,List) and #l>0 and all(l,i -> instance(i,RingElement)))) then L = apply(L,l -> legacyRationalMap(l,Dominant=>"notSimplify"));
     return multirationalMap(L,Y);
 );
 
-rationalMap List := o -> L -> ( -- this redefines a method in Cremona.m2
+rationalMap List := o -> L -> (
     if #L == 0 then error "expected a nonempty list";
-    if all(L,l -> instance(l,RingElement)) then return legacyRationalMap(toMap(L,Dominant=>null),Dominant=>o.Dominant);  -- this is the original definition
+    if all(L,l -> instance(l,RingElement)) then L = {L};
     if all(L,l -> instance(l,RingMap) or instance(l,Matrix) or instance(l,Ideal) or (instance(l,List) and #l>0 and all(l,i -> instance(i,RingElement)))) then L = apply(L,l -> legacyRationalMap(l,Dominant=>"notSimplify"));
     Phi := multirationalMap L;
     if o.Dominant === null then return Phi;
@@ -1593,19 +1585,17 @@ rationalMap List := o -> L -> ( -- this redefines a method in Cremona.m2
     error "invalid value for option Dominant";
 );
 
-rationalMap MultirationalMap := o -> Phi -> (
+rationalMap RationalMap := o -> Phi -> (
     Psi := rationalMap(factor super Phi,Dominant=>o.Dominant);
     setSource(source Phi,Psi)
 );
 
 multirationalMap LegacyRationalMap := phi -> multirationalMap {phi};
-multirationalMap(LegacyRationalMap,LegacyRationalMap) := (phi1,phi2) -> multirationalMap {phi1,phi2};
 multirationalMap LegacyMultihomogeneousRationalMap := phi -> multirationalMap {phi};
-multirationalMap(LegacyMultihomogeneousRationalMap,LegacyMultihomogeneousRationalMap) := (phi1,phi2) -> multirationalMap {phi1,phi2};
-multirationalMap (MultirationalMap,MultirationalMap) := (Phi1,Phi2) -> multirationalMap((factor Phi1)|(factor Phi2));
+rationalMap LegacyRationalMap := rationalMap LegacyMultihomogeneousRationalMap := o -> phi -> rationalMap({phi},Dominant=>o.Dominant);
 
 toLegacyRationalMap = method(TypicalValue => LegacyRationalMap);
-toLegacyRationalMap (MultirationalMap,Boolean) := (Phi,withInverse) -> (
+toLegacyRationalMap (RationalMap,Boolean) := (Phi,withInverse) -> (
     if # factor Phi > 1 then error "expected a multi-rational map whose target is embedded in a single projective space";
     f := legacyRationalMap(toRingMap(Phi,ring target Phi),Dominant=>"notSimplify");
     if Phi.cache#?"toRationalMapFromMultirationalMap" then f = Phi.cache#"toRationalMapFromMultirationalMap" else (
@@ -1623,17 +1613,16 @@ toLegacyRationalMap (MultirationalMap,Boolean) := (Phi,withInverse) -> (
     );
     return f;
 );
-toLegacyRationalMap MultirationalMap := Phi -> toLegacyRationalMap(Phi,true);
-toRationalMap = toLegacyRationalMap; -- old name, kept for compatibility
+toLegacyRationalMap RationalMap := Phi -> toLegacyRationalMap(Phi,true);
 
-matrix MultirationalMap := o -> Phi -> (
+matrix RationalMap := o -> Phi -> (
     if # factor Phi > 1 then error "expected a multi-rational map whose target is embedded in a single projective space";
     matrix first factor Phi
 );
 
-entries MultirationalMap := Phi -> apply(factor Phi,entries);
+entries RationalMap := Phi -> apply(factor Phi,entries);
 
-multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
+multirationalMap (RationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
     if Y === target Phi then return Phi;
     L := factor Phi;
     if Y === ambient target Phi then L = apply(L,super);
@@ -1647,25 +1636,25 @@ multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
     Psi#"baseLocus" = Phi#"baseLocus";
     return Psi;
 );
-rationalMap (MultirationalMap,MultiprojectiveVariety) := o -> (Phi,Y) -> multirationalMap(Phi,Y);
+rationalMap (RationalMap,MultiprojectiveVariety) := o -> (Phi,Y) -> multirationalMap(Phi,Y);
 
 strongCheck = method();
-strongCheck MultirationalMap := Phi -> (
+strongCheck RationalMap := Phi -> (
     if not isMultisaturated ideal source Phi then error "the ideal of the source is not multi-saturated";
     if not isMultisaturated ideal target Phi then error "the ideal of the target is not multi-saturated";
     check Phi
 );
 
-isWellDefined MultirationalMap := (cacheValue "isWellDefined") (Phi -> (
+isWellDefined RationalMap := (cacheValue "isWellDefined") (Phi -> (
     if target Phi === ambient target Phi then return true;
     f := toRingMap(Phi,ring ambient target Phi);
     f(ideal target Phi) == 0
 ));
 
-check MultirationalMap := o -> Phi -> if isWellDefined Phi then return Phi else error "the target variety is not compatible with the maps";
+check RationalMap := o -> Phi -> if isWellDefined Phi then return Phi else error "the target variety is not compatible with the maps";
 
 checkRepresentatives = method();
-checkRepresentatives MultirationalMap := Phi -> (
+checkRepresentatives RationalMap := Phi -> (
    local F;
    for phi in factor Phi do (
        F := phi#"maps";
@@ -1674,7 +1663,7 @@ checkRepresentatives MultirationalMap := Phi -> (
 );
 
 checkAndCompare = method();
-checkAndCompare (MultirationalMap,Boolean) := (Phi,recursive) -> (
+checkAndCompare (RationalMap,Boolean) := (Phi,recursive) -> (
     try (checkRepresentatives Phi; strongCheck Phi) else error "found a wrong map";
     if Phi#"image" =!= null then (if not isMultisaturated ideal image Phi then error "found a wrong ideal for an image");
     if Phi#"inverse" =!= null and recursive then (
@@ -1687,7 +1676,7 @@ checkAndCompare (MultirationalMap,Boolean) := (Phi,recursive) -> (
         checkAndCompare(last graph Phi,true);
         if (first graph Phi) * Phi != last graph Phi then error "found a wrong graph");
 );
-checkAndCompare (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
+checkAndCompare (RationalMap,RationalMap) := (Phi,Psi) -> (
     checkAndCompare(Phi,true);
     checkAndCompare(Psi,true);
     if Phi != Psi then return false;
@@ -1699,20 +1688,20 @@ checkAndCompare (MultirationalMap,MultirationalMap) := (Phi,Psi) -> (
     if Phi#"graph" =!= null and Psi#"graph" =!= null then (if source graph Phi != source graph Psi then error "found wrong value for 'graph'");
     return true;
 );
-MultirationalMap <==> MultirationalMap := (Phi,Psi) -> checkAndCompare(Phi,Psi);
+RationalMap <==> RationalMap := (Phi,Psi) -> checkAndCompare(Phi,Psi);
 
-source MultirationalMap := Phi -> Phi#"source";
+source RationalMap := Phi -> Phi#"source";
 
-target MultirationalMap := Phi -> Phi#"target";
+target RationalMap := Phi -> Phi#"target";
 
-coefficientRing MultirationalMap := Phi -> coefficientRing target Phi;
+coefficientRing RationalMap := Phi -> coefficientRing target Phi;
 
-factor MultirationalMap := o -> Phi -> Phi#"maps";
+factor RationalMap := o -> Phi -> Phi#"maps";
 
-projectionMaps MultirationalMap := (cacheValue "projection maps") (Phi -> apply(projections target Phi,f -> Phi * f));
+projectionMaps RationalMap := (cacheValue "projection maps") (Phi -> apply(projections target Phi,f -> Phi * f));
 
 toRingMap = method();
-toRingMap (MultirationalMap,Ring) := (Phi,R) -> (
+toRingMap (RationalMap,Ring) := (Phi,R) -> (
     F := factor Phi;
     if #F == 1 then if R === target first F then return map first F;
     M := matrix first F;
@@ -1720,13 +1709,13 @@ toRingMap (MultirationalMap,Ring) := (Phi,R) -> (
     map(ring source Phi,R,M)
 );
 
-segre MultirationalMap := (cacheValue "compositionWithSegreEmbedding") (Phi -> (
+segre RationalMap := (cacheValue "compositionWithSegreEmbedding") (Phi -> (
     s := segre target Phi;
     f := toRingMap(Phi,source s);
     legacyRationalMap(f * (map s),Dominant=>"notSimplify")
 ));
 
-compose (MultirationalMap,MultirationalMap) := MultirationalMap => {} >> o -> (Phi,Psi) -> (
+compose (RationalMap,RationalMap) := RationalMap => {} >> o -> (Phi,Psi) -> (
     if Phi.cache#?("composition",Psi) then return Phi.cache#("composition",Psi);
     if ring ambient target Phi === ring ambient source Psi and target Phi == source Psi then (
         f := toRingMap(Phi,ring source Psi);
@@ -1740,14 +1729,14 @@ compose (MultirationalMap,MultirationalMap) := MultirationalMap => {} >> o -> (P
     Phi.cache#("composition",Psi) = compose(Phi',Psi)
 );
 
-MultirationalMap * MultirationalMap := (Phi,Psi) -> compose(Phi,Psi);
+RationalMap * RationalMap := (Phi,Psi) -> compose(Phi,Psi);
 
-MultirationalMap * LegacyMultihomogeneousRationalMap := (Phi,Psi) -> compose(Phi,multirationalMap {Psi});
-MultirationalMap * LegacyRationalMap := (Phi,Psi) -> compose(Phi,multirationalMap {Psi});
-LegacyMultihomogeneousRationalMap * MultirationalMap := (Phi,Psi) -> compose(multirationalMap {Phi},Psi);
-LegacyRationalMap * MultirationalMap := (Phi,Psi) -> compose(multirationalMap {Phi},Psi);
+RationalMap * LegacyMultihomogeneousRationalMap := (Phi,Psi) -> compose(Phi,multirationalMap {Psi});
+RationalMap * LegacyRationalMap := (Phi,Psi) -> compose(Phi,multirationalMap {Psi});
+LegacyMultihomogeneousRationalMap * RationalMap := (Phi,Psi) -> compose(multirationalMap {Phi},Psi);
+LegacyRationalMap * RationalMap := (Phi,Psi) -> compose(multirationalMap {Phi},Psi);
 
-MultirationalMap == MultirationalMap := (Phi,Psi) -> (
+RationalMap == RationalMap := (Phi,Psi) -> (
     if Phi === Psi then return true;
     if ring ideal source Phi =!= ring ideal source Psi or source Phi != source Psi then error "expected multi-rational maps with the same source";
     if ring ideal target Phi =!= ring ideal target Psi or target Phi != target Psi then error "expected multi-rational maps with the same target";
@@ -1759,20 +1748,10 @@ MultirationalMap == MultirationalMap := (Phi,Psi) -> (
     return true;
 );
 
-MultirationalMap == LegacyMultihomogeneousRationalMap := (Phi,Psi) -> Phi == multirationalMap {Psi};
-MultirationalMap == LegacyRationalMap := (Phi,Psi) -> Phi == multirationalMap {Psi};
-LegacyMultihomogeneousRationalMap == MultirationalMap := (Phi,Psi) -> multirationalMap {Phi} == Psi;
-LegacyRationalMap == MultirationalMap := (Phi,Psi) -> multirationalMap {Phi} == Psi;
-
-multirationalMap MultiprojectiveVariety := X -> (
-    I := multirationalMap(projections X,X);
-    setSource(X,I);
-    I#"isDominant" = true;
-    I#"isBirational" = true;
-    I#"baseLocus" = 0_X;
-    I#"inverse" = I;
-    I
-);
+RationalMap == LegacyMultihomogeneousRationalMap := (Phi,Psi) -> Phi == multirationalMap {Psi};
+RationalMap == LegacyRationalMap := (Phi,Psi) -> Phi == multirationalMap {Psi};
+LegacyMultihomogeneousRationalMap == RationalMap := (Phi,Psi) -> multirationalMap {Phi} == Psi;
+LegacyRationalMap == RationalMap := (Phi,Psi) -> multirationalMap {Phi} == Psi;
 
 ZZ _ MultiprojectiveVariety := (n,X) -> (
     if n == 0 then (
@@ -1784,10 +1763,16 @@ ZZ _ MultiprojectiveVariety := (n,X) -> (
         return (ambient X).cache#"emptySubscheme";
     );
     if n =!= 1 then error "expected integer to be 0 or 1";
-    multirationalMap X
+    I := multirationalMap(projections X,X);
+    setSource(X,I);
+    I#"isDominant" = true;
+    I#"isBirational" = true;
+    I#"baseLocus" = 0_X;
+    I#"inverse" = I;
+    I
 );
 
-random MultirationalMap := o -> Phi -> (
+random RationalMap := o -> Phi -> (
     S := ambient source Phi;
     f := rationalMap(apply(entries diagonalMatrix toList(# shape S : 1),shape S,(d,i) -> apply(i+1,j -> random(d,ring S))),S);
     -- assert(isIsomorphism f);
@@ -1798,28 +1783,28 @@ random MultirationalMap := o -> Phi -> (
 );
 
 multirationalMap (MultiprojectiveVariety,MultiprojectiveVariety,Boolean) := (X,Y,b) -> ( --undocumented
-    if X === Y then return multirationalMap X;
-    I := multirationalMap(multirationalMap X,Y);
+    if X === Y then return 1_X;
+    I := multirationalMap(1_X,Y);
     if b then (try return check I else error "not able to define a natural map between the two varieties") else return I;
 );
 multirationalMap (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> multirationalMap(X,Y,true);
 rationalMap (MultiprojectiveVariety,MultiprojectiveVariety) := o -> (X,Y) -> multirationalMap(X,Y);
 
-MultirationalMap == ZZ := (Phi,n) -> (
+RationalMap == ZZ := (Phi,n) -> (
     if n =!= 1 then error "encountered integer other than 1 in comparison with a multi-rational map";
     if source Phi =!= target Phi then error "source and target are different";
-    Phi == multirationalMap source Phi
+    Phi == 1_(source Phi)
 );
-ZZ == MultirationalMap := (n,Phi) -> Phi == n;
+ZZ == RationalMap := (n,Phi) -> Phi == n;
 
-MultirationalMap ^ ZZ := (Phi,j) -> (
-   if j == 0 then if source Phi === target Phi then return multirationalMap(source Phi) else error "expected non-zero integer";
+RationalMap ^ ZZ := (Phi,j) -> (
+   if j == 0 then if source Phi === target Phi then return 1_(source Phi) else error "expected non-zero integer";
    if j < 0 then (Psi := inverse Phi; return (Psi^(-j)));
    Psi2 := Phi; for i from 1 to j-1 do Psi2 = Psi2 * Phi;
    return Psi2;
 );
 
-MultirationalMap MultiprojectiveVariety := (Phi,Z) -> (
+RationalMap MultiprojectiveVariety := (Phi,Z) -> (
     if Phi.cache#?("directImage",Z) then return Phi.cache#("directImage",Z);
     if ring ambient source Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient multi-projective space of the source of the map";
     if not isSubset(Z,source Phi) then error "expected a subvariety of the source of the map";
@@ -1845,7 +1830,7 @@ MultirationalMap MultiprojectiveVariety := (Phi,Z) -> (
     Phi.cache#("directImage",Z) = projectiveVariety(suby' ideal selectInSubring(1,gens gb I),MinimalGenerators=>true,Saturate=>false)
 );
 
-image MultirationalMap := Phi -> (
+image RationalMap := Phi -> (
     if Phi#"image" =!= null then return Phi#"image";
     if Phi#"isDominant" === true then return target Phi;
     Phi#"image" = Phi (source Phi);
@@ -1863,10 +1848,10 @@ directImageStrongInt (MutableHashTable,MultiprojectiveVariety) := (Phi,X) -> (
     makeSubvariety directImageStrongInt(Phi,ideal X)
 );
 
-image (MultirationalMap,ZZ) := (Phi,d) -> projectiveVariety(image(toLegacyRationalMap super Phi,d),MinimalGenerators=>false,Saturate=>false);
-image (ZZ,MultirationalMap) := (d,Phi) -> projectiveVariety(image(d,toLegacyRationalMap super Phi),MinimalGenerators=>false,Saturate=>false);
+image (RationalMap,ZZ) := (Phi,d) -> projectiveVariety(image(toLegacyRationalMap super Phi,d),MinimalGenerators=>false,Saturate=>false);
+image (ZZ,RationalMap) := (d,Phi) -> projectiveVariety(image(d,toLegacyRationalMap super Phi),MinimalGenerators=>false,Saturate=>false);
 
-image (MultirationalMap,String) := (Phi,alg) -> (
+image (RationalMap,String) := (Phi,alg) -> (
     if Phi#"image" =!= null then return Phi#"image";
     if Phi#"isDominant" === true then return target Phi;
     Y := projectiveVariety(image(toLegacyRationalMap super Phi,alg),MinimalGenerators=>false,Saturate=>false);
@@ -1900,7 +1885,7 @@ image (WeightedRationalMap,String) := (Phi,alg) -> (
     Phi#"image"
 );
 
-forceImage (MultirationalMap,MultiprojectiveVariety) := (Phi,X) -> (
+forceImage (RationalMap,MultiprojectiveVariety) := (Phi,X) -> (
     if ring ideal X =!= ring ideal target Phi then error "expected a subvariety of the target of the map";
     if Phi#"image" =!= null then error "not permitted to reassign image of rational map";
     if X === target Phi then (
@@ -1910,15 +1895,15 @@ forceImage (MultirationalMap,MultiprojectiveVariety) := (Phi,X) -> (
     );
     if # shape X > 1 then error "not implemented yet: forceImage for rational maps with target a multi-projective variety";
     f := toLegacyRationalMap Phi;
-    if multirationalMap f =!= Phi then error "internal error: inconsistent LegacyRationalMap-to-MultirationalMap cache";
+    if multirationalMap f =!= Phi then error "internal error: inconsistent LegacyRationalMap-to-RationalMap cache";
     if X === target Phi then return;
     if f#"idealImage" === null then forceImage(f,sub(ideal X,target f));
     multirationalMap f;
-    if Phi#"image" === null then error "internal error: image not propagated from LegacyRationalMap to MultirationalMap";
+    if Phi#"image" === null then error "internal error: image not propagated from LegacyRationalMap to RationalMap";
     if Phi#"image" != X then error "internal error: propagated image does not match the assigned image";
     Phi#"image" = X;
 );
-forceImage (MultirationalMap,ZZ) := (Phi,d) -> forceImage(Phi,image(Phi,d));
+forceImage (RationalMap,ZZ) := (Phi,d) -> forceImage(Phi,image(Phi,d));
 
 inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     if Phi.cache#?("inverseImage",Z) then return Phi.cache#("inverseImage",Z);
@@ -1933,9 +1918,9 @@ inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     Phi.cache#("inverseImage",Z) = makeSubvariety multisaturate I
 );
 
-MultirationalMap ^* := (Phi) -> MultiprojectiveVariety := (Z) -> inverseImageViaMultirationalMapWeak(Phi,Z);
+RationalMap ^* := (Phi) -> MultiprojectiveVariety := (Z) -> inverseImageViaMultirationalMapWeak(Phi,Z);
 
-MultirationalMap ^^ MultiprojectiveVariety := (Phi,Z) -> (
+RationalMap ^^ MultiprojectiveVariety := (Phi,Z) -> (
     -- A fast inverse image but to be used only when Phi is a linear embedding (intended for internal use only)
     if Phi.cache#?("inverseImage",Z) then return Phi.cache#("inverseImage",Z);
     if ring ambient target Phi =!= ring ambient Z then error "expected a projective variety in the same ambient projective space of the target of the map";
@@ -1944,7 +1929,7 @@ MultirationalMap ^^ MultiprojectiveVariety := (Phi,Z) -> (
     Phi.cache#("inverseImage",Z) = projectiveVariety(g sub(ideal Z,ring target Phi),MinimalGenerators=>true,Saturate=>false)
 );
 
-MultirationalMap ^** MultiprojectiveVariety := (Phi,Z) -> (
+RationalMap ^** MultiprojectiveVariety := (Phi,Z) -> (
     if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient multi-projective space of the target of the map";
     -- if not isSubset(Z,target Phi) then error "expected a subvariety of the target of the map";
     -- <<"--warning: the code for ^** must be improved, use instead the method ^*"<<endl;
@@ -2022,7 +2007,7 @@ graphViaKoszul = Phi -> (
     projectiveVariety(quotient trim I,MinimalGenerators=>false,Saturate=>false)
 );
 
-graph MultirationalMap := o -> Phi -> (
+graph RationalMap := o -> Phi -> (
     if Phi#"graph" =!= null then return Phi#"graph";
     if instance(Phi,WeightedRationalMap) then error "not implemented yet: graph of a weighted-rational map";
     local G;
@@ -2046,7 +2031,7 @@ graph MultirationalMap := o -> Phi -> (
 );
 
 reverseGraph = method();
-reverseGraph (MultirationalMap,MultirationalMap) := (p1,p2) -> (
+reverseGraph (RationalMap,RationalMap) := (p1,p2) -> (
     G := source(p1,p2);
     n := apply((target p1)#"dimAmbientSpaces",i -> i+1);
     m := apply((target p2)#"dimAmbientSpaces",i -> i+1);
@@ -2062,12 +2047,12 @@ reverseGraph (MultirationalMap,MultirationalMap) := (p1,p2) -> (
     (p1',p2')
 );
 
-multidegree MultirationalMap := Phi -> (
+multidegree RationalMap := Phi -> (
     if Phi#"multidegree" =!= null then return Phi#"multidegree";
     Phi#"multidegree" = multidegree graph Phi
 );
 
-multidegree (MultirationalMap,MultirationalMap) := (p1,p2) -> (
+multidegree (RationalMap,RationalMap) := (p1,p2) -> (
     P := multidegree source(p1,p2);
     n := (target p1)#"dimAmbientSpaces";
     m := (target p2)#"dimAmbientSpaces";
@@ -2085,7 +2070,7 @@ multidegree (MultirationalMap,MultirationalMap) := (p1,p2) -> (
     reverse for i to k list d_i
 );
 
-source (MultirationalMap,MultirationalMap) := (p1,p2) -> (
+source (RationalMap,RationalMap) := (p1,p2) -> (
     if source p1 =!= source p2 then error "expected the graph of a multi-rational map";
     n := (target p1)#"dimAmbientSpaces";
     m := (target p2)#"dimAmbientSpaces";
@@ -2093,7 +2078,7 @@ source (MultirationalMap,MultirationalMap) := (p1,p2) -> (
     source p1
 );
 
-degree MultirationalMap := Phi -> (
+degree RationalMap := Phi -> (
     if Phi#"isBirational" === true then return 1;
     d := lift((last multidegree Phi)/(degree image Phi),ZZ);
     if (Phi#"isDominant" === true and Phi#"isBirational" === false and d == 1) then error "internal error encountered: obtained an incoherent value for the degree";
@@ -2102,7 +2087,7 @@ degree MultirationalMap := Phi -> (
     d
 );
 
-multidegree (ZZ,MultirationalMap) := (i,Phi) -> (
+multidegree (ZZ,RationalMap) := (i,Phi) -> (
     s := # factor Phi;
     d := toList(s:1);
     Y := ambient target Phi;
@@ -2113,11 +2098,11 @@ multidegree (ZZ,MultirationalMap) := (i,Phi) -> (
     if dim F == i then return degree F else return 0;
 );
 
-multidegree (Nothing,MultirationalMap) := (nu,Phi) -> reverse for i to dim source Phi list multidegree(i,Phi);
+multidegree (Nothing,RationalMap) := (nu,Phi) -> reverse for i to dim source Phi list multidegree(i,Phi);
 
-degree (MultirationalMap,Option) := (Phi,opt) -> (
+degree (RationalMap,Option) := (Phi,opt) -> (
     o := toList opt;
-    if not(#o == 2 and first o === Strategy) then error "Strategy is the only available option for degree(MultirationalMap)";
+    if not(#o == 2 and first o === Strategy) then error "Strategy is the only available option for degree(RationalMap)";
     if last o =!= "random point" and last o =!= "0-th projective degree" then error "available strategies are: \"random point\" and \"0-th projective degree\"";
     if last o == "random point" then (
         F := Phi^* Phi (point source Phi);
@@ -2129,7 +2114,7 @@ degree (MultirationalMap,Option) := (Phi,opt) -> (
     );
 );
 
-projectiveDegrees MultirationalMap := o -> Phi -> (
+projectiveDegrees RationalMap := o -> Phi -> (
     if o.NumDegrees < 0 then return {};
     r := dim source Phi;
     ll := {(r - min(r,o.NumDegrees))..r};
@@ -2143,7 +2128,7 @@ projectiveDegrees MultirationalMap := o -> Phi -> (
     ) else return projectiveDegrees(toLegacyRationalMap Phi,Certify=>o.Certify,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 );
 
-degreeMap MultirationalMap := o -> Phi -> (
+degreeMap RationalMap := o -> Phi -> (
     certificate := "Certify: output certified!"|newline;
     if o.Certify or Phi#"isBirational" === true or (Phi#"multidegree" =!= null and Phi#"image" =!= null) then (
         -- this ignores the option BlowUpStrategy
@@ -2156,7 +2141,7 @@ degreeMap MultirationalMap := o -> Phi -> (
 );
 
 baseLocus = method(TypicalValue => MultiprojectiveVariety);
-baseLocus MultirationalMap := Phi -> (
+baseLocus RationalMap := Phi -> (
     if Phi#"baseLocus" =!= null then return Phi#"baseLocus";
     I := lift(intersect apply(factor Phi,ideal),ring ambient source Phi);
     B := if # (source Phi)#"dimAmbientSpaces" > 1 then projectiveVariety(I,MinimalGenerators=>true,Saturate=>false) else projectiveVariety(I,MinimalGenerators=>true,Saturate=>true);
@@ -2166,14 +2151,14 @@ baseLocus MultirationalMap := Phi -> (
 baseLocus LegacyRationalMap := Phi -> baseLocus multirationalMap {Phi};
 baseLocus LegacyMultihomogeneousRationalMap := Phi -> baseLocus multirationalMap {Phi};
 
-isMorphism MultirationalMap := Phi -> dim baseLocus Phi == -1;
+isMorphism RationalMap := Phi -> dim baseLocus Phi == -1;
 
-inverse (MultirationalMap,Option) := (Phi,opt) -> (
+inverse (RationalMap,Option) := (Phi,opt) -> (
     if Phi#"inverse" =!= null then return Phi#"inverse";
     if Phi#"isBirational" === false or Phi#"isDominant" === false then error "expected a birational map";
     if Phi#"isBirational" === null then if dim source Phi != dim target Phi then (Phi#"isBirational" = false; error "expected a birational map");
     o := toList opt;
-    if not(#o == 2 and first o === Verify) then error "Verify is the only available option for inverse(MultirationalMap)";
+    if not(#o == 2 and first o === Verify) then error "Verify is the only available option for inverse(RationalMap)";
     b := last o;
     if b === false then b = 0 else if b === true then b = 1;
     if not (instance(b,ZZ) and b >= -1) then error "option Verify accepts true or false";
@@ -2224,12 +2209,12 @@ inverse (MultirationalMap,Option) := (Phi,opt) -> (
     return Psi;
 );
 
-inverse MultirationalMap := Phi -> inverse(Phi,Verify=>true);
+inverse RationalMap := Phi -> inverse(Phi,Verify=>true);
 inverse (LegacyMultihomogeneousRationalMap,Option) := (Phi,opt) -> inverse(multirationalMap {Phi},opt);
 inverse LegacyMultihomogeneousRationalMap := Phi -> inverse(Phi,Verify=>true);
 
-inverse2 = method(TypicalValue => MultirationalMap);
-inverse2 (MultirationalMap,Option) := (Phi,opt) -> (
+inverse2 = method(TypicalValue => RationalMap);
+inverse2 (RationalMap,Option) := (Phi,opt) -> (
     if Phi#"inverse" =!= null or Phi#"graph" =!= null then return inverse(Phi,opt);
     G := projectiveVariety(quotient SymmIdeal Phi,MinimalGenerators=>false,Saturate=>false); -- warning: this may not be multi-saturated
     (r,s) := (# (source Phi)#"dimAmbientSpaces", # (target Phi)#"dimAmbientSpaces");
@@ -2254,11 +2239,11 @@ inverse2 (MultirationalMap,Option) := (Phi,opt) -> (
     return Psi;
 );
 
-inverse2 MultirationalMap := Phi -> inverse2(Phi,Verify=>true);
+inverse2 RationalMap := Phi -> inverse2(Phi,Verify=>true);
 inverse2 (LegacyMultihomogeneousRationalMap,Option) := (Phi,opt) -> inverse2(multirationalMap {Phi},opt);
 inverse2 LegacyMultihomogeneousRationalMap := Phi -> inverse2(Phi,Verify=>true);
 
-forceInverseMap (MultirationalMap,MultirationalMap) := (Phi,Psi) -> ( -- to be improved
+forceInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> ( -- to be improved
     if Phi#"inverse" =!= null or Psi#"inverse" =!= null then error "not permitted to reassign inverse rational map";
     if source Phi =!= target Psi or target Phi =!= source Psi then error "incompatible target and source";
     Phi#"isBirational" = true;
@@ -2269,13 +2254,13 @@ forceInverseMap (MultirationalMap,MultirationalMap) := (Phi,Psi) -> ( -- to be i
     Psi#"inverse" = Phi;
 );
 
-isIsomorphism MultirationalMap := Phi -> (
+isIsomorphism RationalMap := Phi -> (
     if dim source Phi != dim target Phi or Phi#"isBirational" === false or Phi#"isDominant" === false then return false;
     if not isMorphism Phi then return false;
     isMorphism inverse(Phi,Verify=>true)
 );
 
-MultirationalMap | MultiprojectiveVariety := (Phi,X) -> (
+RationalMap | MultiprojectiveVariety := (Phi,X) -> (
     if X === source Phi then return Phi;
     if X.cache#?("restrictionOfMap",Phi) then return X.cache#("restrictionOfMap",Phi);
     if ring ideal source Phi =!= ring ideal X then error "expected a subvariety in the ambient space of the source";
@@ -2284,7 +2269,7 @@ MultirationalMap | MultiprojectiveVariety := (Phi,X) -> (
     X.cache#("restrictionOfMap",Phi) = I * Phi
 );
 
-MultirationalMap | List := (Phi,d) -> (
+RationalMap | List := (Phi,d) -> (
     if not(# d == # (source Phi)#"dimAmbientSpaces" and all(d,i->instance(i,ZZ) and i>=0)) then error("expected a list of "|toString(# (source Phi)#"dimAmbientSpaces")|" non-negative integer(s) to indicate the degree of a hypersurface in the source");
     Phi|((source Phi) * projectiveVariety ideal random(d,ring ambient source Phi))
 );
@@ -2292,7 +2277,7 @@ MultirationalMap | List := (Phi,d) -> (
 LegacyRationalMap | MultiprojectiveVariety := (Phi,X) -> (multirationalMap Phi)|X;
 LegacyMultihomogeneousRationalMap | MultiprojectiveVariety := (Phi,X) -> (multirationalMap Phi)|X;
 
-MultirationalMap || MultiprojectiveVariety := (Phi,Y) -> (
+RationalMap || MultiprojectiveVariety := (Phi,Y) -> (
     if Y === target Phi then return Phi;
     if Y.cache#?("corestrictionOfMap",Phi) then return Y.cache#("corestrictionOfMap",Phi);
     X := Phi^* Y;
@@ -2300,7 +2285,7 @@ MultirationalMap || MultiprojectiveVariety := (Phi,Y) -> (
     Y.cache#("corestrictionOfMap",Phi) = multirationalMap(I * Phi,Y)
 );
 
-MultirationalMap || List := (Phi,d) -> (
+RationalMap || List := (Phi,d) -> (
     if not(# d == # (target Phi)#"dimAmbientSpaces" and all(d,i->instance(i,ZZ) and i>=0)) then error("expected a list of "|toString(# (target Phi)#"dimAmbientSpaces")|" non-negative integer(s) to indicate the degree of a hypersurface in the target");
     Phi||((target Phi) * projectiveVariety ideal random(d,ring ambient target Phi))
 );
@@ -2308,28 +2293,28 @@ MultirationalMap || List := (Phi,d) -> (
 LegacyRationalMap || MultiprojectiveVariety := (Phi,Y) -> (multirationalMap Phi)||Y;
 LegacyMultihomogeneousRationalMap || MultiprojectiveVariety := (Phi,Y) -> (multirationalMap Phi)||Y;
 
-super MultirationalMap := Phi -> multirationalMap(Phi,ambient target Phi);
+super RationalMap := Phi -> multirationalMap(Phi,ambient target Phi);
 
 trim LegacyRationalMap := o -> Phi -> legacyRationalMap(gens trim image matrix Phi,Dominant=>"notSimplify");
 trim LegacyMultihomogeneousRationalMap := o -> Phi -> legacyRationalMap(gens trim image matrix Phi,Dominant=>"notSimplify");
-trim MultirationalMap := o -> Phi -> multirationalMap apply(factor Phi,trim);
+trim RationalMap := o -> Phi -> multirationalMap apply(factor Phi,trim);
 
-MultirationalMap | MultirationalMap := (Phi,Psi) -> (
+RationalMap | RationalMap := (Phi,Psi) -> (
     if source Phi =!= source Psi then error "expected multi-rational maps with the same source";
     multirationalMap((factor Phi)|(factor Psi),(target Phi) ** (target Psi))
 );
 
-LegacyRationalMap | MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})|Psi;
-MultirationalMap | LegacyRationalMap := (Phi,Psi) -> Phi|(multirationalMap {Psi});
-LegacyMultihomogeneousRationalMap | MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})|Psi;
-MultirationalMap | LegacyMultihomogeneousRationalMap := (Phi,Psi) -> Phi|(multirationalMap {Psi});
+LegacyRationalMap | RationalMap := (Phi,Psi) -> (multirationalMap {Phi})|Psi;
+RationalMap | LegacyRationalMap := (Phi,Psi) -> Phi|(multirationalMap {Psi});
+LegacyMultihomogeneousRationalMap | RationalMap := (Phi,Psi) -> (multirationalMap {Phi})|Psi;
+RationalMap | LegacyMultihomogeneousRationalMap := (Phi,Psi) -> Phi|(multirationalMap {Psi});
 
 LegacyRationalMap | LegacyRationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
 LegacyMultihomogeneousRationalMap | LegacyRationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
 LegacyRationalMap | LegacyMultihomogeneousRationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
 LegacyMultihomogeneousRationalMap | LegacyMultihomogeneousRationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
 
-MultirationalMap || MultirationalMap := (Phi,Psi) -> (
+RationalMap || RationalMap := (Phi,Psi) -> (
     X := source Phi; Y := source Psi;
     XxY := X ** Y;
     r := # X#"dimAmbientSpaces";
@@ -2340,10 +2325,10 @@ MultirationalMap || MultirationalMap := (Phi,Psi) -> (
     return setSource(XxY,Eta);
 );
 
-LegacyRationalMap || MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})||Psi;
-MultirationalMap || LegacyRationalMap := (Phi,Psi) -> Phi||(multirationalMap {Psi});
-LegacyMultihomogeneousRationalMap || MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})||Psi;
-MultirationalMap || LegacyMultihomogeneousRationalMap := (Phi,Psi) -> Phi||(multirationalMap {Psi});
+LegacyRationalMap || RationalMap := (Phi,Psi) -> (multirationalMap {Phi})||Psi;
+RationalMap || LegacyRationalMap := (Phi,Psi) -> Phi||(multirationalMap {Psi});
+LegacyMultihomogeneousRationalMap || RationalMap := (Phi,Psi) -> (multirationalMap {Phi})||Psi;
+RationalMap || LegacyMultihomogeneousRationalMap := (Phi,Psi) -> Phi||(multirationalMap {Psi});
 
 LegacyRationalMap || LegacyRationalMap := (Phi,Psi) -> (multirationalMap {Phi})||(multirationalMap {Psi});
 LegacyMultihomogeneousRationalMap || LegacyRationalMap := (Phi,Psi) -> (multirationalMap {Phi})||(multirationalMap {Psi});
@@ -2353,10 +2338,10 @@ LegacyMultihomogeneousRationalMap || LegacyMultihomogeneousRationalMap := (Phi,P
 degreeSequence = method();
 degreeSequence LegacyRationalMap := phi -> new Array from apply(maps phi,F -> (u := unique degrees ideal compress toMatrix F; if #u != 1 then error "internal error encountered"; unsequence toSequence first u));
 degreeSequence LegacyMultihomogeneousRationalMap := phi -> new Array from apply(maps phi,F -> (u := unique degrees ideal compress toMatrix F; if #u != 1 then error "internal error encountered"; unsequence toSequence first u));
-degreeSequence MultirationalMap := Phi -> apply(factor Phi,degreeSequence);
+degreeSequence RationalMap := Phi -> apply(factor Phi,degreeSequence);
 
 degreeOfDefiningForms = method();
-degreeOfDefiningForms MultirationalMap := Phi -> (
+degreeOfDefiningForms RationalMap := Phi -> (
     unsequence toSequence for f in factor Phi list (
         d := unique degrees ideal compress matrix f;
         if #d != 1 then return;
@@ -2413,7 +2398,7 @@ NetTexMath == NetTexMath := (x,y) -> toString x == toString y;
 NetTexMath == String := (x,s) -> toString x == s;
 String == NetTexMath := (s,x) -> s == toString x;
 
-show MultirationalMap := Phi -> netTexMath(showMapNet Phi,showMapTex Phi);
+show RationalMap := Phi -> netTexMath(showMapNet Phi,showMapTex Phi);
 show LegacyRationalMap := Phi -> show multirationalMap {Phi};
 show LegacyMultihomogeneousRationalMap := Phi -> show multirationalMap {Phi};
 
@@ -2433,11 +2418,11 @@ rationalMap (PairOfVarieties,List) := o -> (X,l) -> setSource(X#1,multirationalM
 rationalMap (PairOfVarieties,ZZ) := o -> (X,a) -> setSource(X#1,multirationalMap legacyRationalMap(ideal X,a,Dominant=>o.Dominant));
 rationalMap (PairOfVarieties,ZZ,ZZ) := o -> (X,a,b) -> setSource(X#1,multirationalMap legacyRationalMap(saturate (ideal X)^b,a,Dominant=>o.Dominant));
 
-clean MultirationalMap := Phi -> setSource(source Phi,multirationalMap(apply(factor Phi,clean),target Phi));
+clean RationalMap := Phi -> setSource(source Phi,multirationalMap(apply(factor Phi,clean),target Phi));
 clean LegacyRationalMap := phi -> legacyRationalMap(map(source phi,target phi,matrix phi),Dominant=>"notSimplify");
 clean LegacyMultihomogeneousRationalMap := phi -> legacyRationalMap(map(source phi,target phi,matrix phi),Dominant=>"notSimplify");
 
-MultirationalMap ** Ring := (Phi,K) -> (
+RationalMap ** Ring := (Phi,K) -> (
    if not isField K then error "expected a field";
    if (char coefficientRing Phi =!= char K and char coefficientRing Phi =!= 0) then error "characteristic not valid";
    X := (source Phi) ** K;
@@ -2449,7 +2434,7 @@ MultirationalMap ** Ring := (Phi,K) -> (
    return Psi;
 );
 
-MultirationalMap << MultiprojectiveVariety := (Phi,Y) -> (
+RationalMap << MultiprojectiveVariety := (Phi,Y) -> (
     if coefficientRing Phi =!= coefficientRing Y then error "different coefficient rings encountered";
     if not (# shape target Phi == # shape Y and all(shape target Phi,shape Y,(i,j) -> i <= j)) then error "shapes not compatible";
     L := apply(apply(factor Phi,matrix),shape Y,(M,d) -> M|matrix{toList(d+1-(numColumns M) : 0_(ring M))});
@@ -2506,7 +2491,7 @@ GG EmbeddedProjectiveVariety := X -> (
 );
 GG Ring := R -> GG projectiveVariety(R,Saturate=>false);
 
-GG (ZZ,MultirationalMap) := (k,Phi) -> (
+GG (ZZ,RationalMap) := (k,Phi) -> (
     if not(# shape source Phi == 1 and # shape target Phi == 1 and codim source Phi == 0 and codim target Phi == 0 and dim source Phi == dim target Phi and first max degrees ideal matrix Phi == 1)
     then error "expected an automorphism of a projective space";
     A := coefficients toLegacyRationalMap Phi;
@@ -2594,11 +2579,11 @@ completeFlag GrassmannianVariety := o -> G -> (
     return V;
 );
 
-QuadricFibration = new Type of MultirationalMap;
+QuadricFibration = new Type of RationalMap;
 globalAssignment QuadricFibration;
 QuadricFibration.synonym = "quadric fibration";
 quadricFibration = method(TypicalValue => QuadricFibration, Options => {Verify => true});
-quadricFibration MultirationalMap := o -> h -> (
+quadricFibration RationalMap := o -> h -> (
     if o.Verify then (
         if not(instance(target h,EmbeddedProjectiveVariety) and codim target h == 0) then error "expected a rational map to a projective space";
         F := h^* point target h;
@@ -2797,7 +2782,7 @@ RAT MultiprojectiveVariety := (H,Z) -> (
     f := rationalMap(Z_(H.source));
     if H.target === null then f else multirationalMap(f,H.target)
 );
-member (MultirationalMap,RAT) := (f,H) -> (if H.source =!= null then source f === H.source else true) and (if H.target =!= null then target f === H.target else true);
+member (RationalMap,RAT) := (f,H) -> (if H.source =!= null then source f === H.source else true) and (if H.target =!= null then target f === H.target else true);
 DomRAT = new Type of RAT;
 globalAssignment DomRAT;
 DomRAT.synonym = "hom-set";
@@ -2810,10 +2795,10 @@ Hom (MultiprojectiveVariety, Symbol) := Hom (Nothing, Symbol) := opts -> (X, s) 
     }
 );
 DomRAT Thing := (H,T) -> rationalMap(H.parent T,Dominant=>true);
-member (MultirationalMap,DomRAT) := (f,H) -> member(f,H.parent) and image f == target f;
+member (RationalMap,DomRAT) := (f,H) -> member(f,H.parent) and image f == target f;
 
 -- Virtual rational maps
-VirtualRationalMap = new Type of MultirationalMap;
+VirtualRationalMap = new Type of RationalMap;
 globalAssignment VirtualRationalMap;
 VirtualRationalMap.synonym = "virtual rational map";
 
@@ -2835,7 +2820,7 @@ factor VirtualRationalMap := o -> Phi -> error "operation requires a concrete re
 virtualCompose = method(TypicalValue => VirtualRationalMap);
 virtualCompose List := L -> (
     if #L == 0 then error "expected a nonempty list of multi-rational maps";
-    if not all(L, f -> instance(f,MultirationalMap)) then error "expected a list of multi-rational maps";
+    if not all(L, f -> instance(f,RationalMap)) then error "expected a list of multi-rational maps";
     L = flatten apply(L, f -> if instance(f,VirtualRationalMap) then compositionFactors f else f);
     if #L == 1 then return first L;
     -- for i to #L-2 do if target L_i =!= source L_(i+1) then error "maps are not composable: incompatible source and target";
@@ -2847,11 +2832,11 @@ virtualCompose List := L -> (
 );
 
 VirtualRationalMap * VirtualRationalMap :=
-VirtualRationalMap * MultirationalMap :=
-MultirationalMap * VirtualRationalMap := (Phi,Psi) -> virtualCompose {Phi,Psi};
-MultirationalMap @@ MultirationalMap := (Phi,Psi) -> virtualCompose {Phi,Psi};
+VirtualRationalMap * RationalMap :=
+RationalMap * VirtualRationalMap := (Phi,Psi) -> virtualCompose {Phi,Psi};
+RationalMap @@ RationalMap := (Phi,Psi) -> virtualCompose {Phi,Psi};
 
-MultirationalMap @@ ZZ := (Phi,n) -> (
+RationalMap @@ ZZ := (Phi,n) -> (
     if n =!= 1 then error "encountered integer other than 1 in virtualizing a multi-rational map";
     if instance(Phi,VirtualRationalMap) then return Phi;
     Psi := virtualRationalMap(source Phi,target Phi);
@@ -2875,7 +2860,7 @@ super VirtualRationalMap := Phi -> (
 );
 
 virtualInverse = method();
-virtualInverse MultirationalMap := Phi -> (
+virtualInverse RationalMap := Phi -> (
     if Phi#"inverse" =!= null then return Phi#"inverse";
     if Phi#"isBirational" === false or Phi#"isDominant" === false or dim source Phi != dim target Phi then error "expected a (virtual) birational map";
     if not instance(Phi,VirtualRationalMap) then (
@@ -2982,10 +2967,10 @@ beginDocumentation()
 
 document {Key => {MultiprojectiveVarieties},
 Headline => "Multi-projective varieties and multi-rational maps",
-PARA{"This is a package for handling multi-projective varieties, that is, closed subvarieties of products of projective spaces, and rational maps between them (see ",TO MultiprojectiveVariety," and ",TO MultirationalMap,")."},
-PARA{"It extends and supersedes the package ",TO Cremona,", which only treats ",TO2{LegacyRationalMap,"rational maps"}," from multi-projective varieties to ",EM"standard"," projective varieties, ",TEX///$X\subseteq \mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}\dashrightarrow Y\subseteq\mathbb{P}^N$///,". The class ",TO MultirationalMap," replaces the class ",TO LegacyRationalMap," of ",TO Cremona,", which is still used internally by this package to represent the components of multi-rational maps (up to version 5.2.1 of ",TO Cremona,", this class was called ",TT "RationalMap",")."},
+PARA{"This is a package for handling multi-projective varieties, that is, closed subvarieties of products of projective spaces, and rational maps between them (see ",TO MultiprojectiveVariety," and ",TO RationalMap,")."},
+PARA{"It extends and supersedes the package ",TO Cremona,", which only treats ",TO2{LegacyRationalMap,"rational maps"}," from multi-projective varieties to ",EM"standard"," projective varieties, ",TEX///$X\subseteq \mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}\dashrightarrow Y\subseteq\mathbb{P}^N$///,". The class ",TO RationalMap," replaces the class ",TO LegacyRationalMap," of ",TO Cremona,", which is still used internally by this package to represent the components of multi-rational maps (up to version 5.2.1 of ",TO Cremona,", that class was called ",TT "RationalMap",", a name that now denotes the class of rational maps of this package)."},
 PARA{"The simplest way to define a rational map between two multi-projective varieties ",TT"X"," and ",TT"Y"," is to apply the hom-set ",TO2{(Hom,MultiprojectiveVariety,MultiprojectiveVariety),"Hom(X,Y)"}," to the list of the defining forms (see ",TO2{(symbol SPACE,RAT,List),"defining a multi-rational map with Hom"},")."},References => {"ArXiv preprint: ",HREF{"https://arxiv.org/abs/2101.04503","Computations with rational maps between multi-projective varieties"},"."},
-Subnodes => {TO MultiprojectiveVariety,TO MultirationalMap}}
+Subnodes => {TO MultiprojectiveVariety,TO RationalMap}}
 
 document {Key => {MultiprojectiveVariety},
 Headline => "the class of all multi-projective varieties",
@@ -3176,9 +3161,9 @@ document {Key => {segreEmbedding,(segreEmbedding,MultiprojectiveVariety)},
 Headline => "the Segre embedding of the variety",
 Usage => "segreEmbedding X",
 Inputs => {"X" => MultiprojectiveVariety},
-Outputs => {MultirationalMap => {"the Segre embedding of ",TT "X"," (calculated through ",TO segre," ",TO2{(ring,MultiprojectiveVariety),"ring"}," ", TEX///$X$///,")"}},
+Outputs => {RationalMap => {"the Segre embedding of ",TT "X"," (calculated through ",TO segre," ",TO2{(ring,MultiprojectiveVariety),"ring"}," ", TEX///$X$///,")"}},
 EXAMPLE {"X = PP_(ZZ/3331)^({2,1,1},{2,1,3});","segreEmbedding X"},
-SeeAlso => {segre,(segre,MultirationalMap)}}
+SeeAlso => {segre,(segre,RationalMap)}}
 
 document {Key => {(point,MultiprojectiveVariety),(symbol |-, MultiprojectiveVariety)},
 Headline => "pick a random rational point on a multi-projective variety",
@@ -3381,7 +3366,7 @@ Inputs => {
 "psi" => {"another ",TO2{LegacyRationalMap,"morphism"}," ",TEX///$Y\to Z$///,", with the same target ",TEX///$Z$///}},
 Outputs => {
 MultiprojectiveVariety => {"the fiber product ",TEX///$X\times_{Z} Y$///}},
-PARA {"The natural morphisms ",TEX///$X\times_{Z} Y\to X$///," and ",TEX///$X\times_{Z} Y\to Y$///," can be easily obtained using ",TO projections," and ",TO multirationalMap,"."},
+PARA {"The natural morphisms ",TEX///$X\times_{Z} Y\to X$///," and ",TEX///$X\times_{Z} Y\to Y$///," can be easily obtained using ",TO projections," and ",TO rationalMap,"."},
 PARA {"As an example, we calculate the fiber product of the blowing up ",TEX///$\phi:Bl_{C}(\mathbb{P}^3)\to\mathbb{P}^3$///," of ",TEX///$\mathbb{P}^3$///," along a twisted cubic curve ",TEX///$C\subset\mathbb{P}^3$///," and the inclusion ",TEX///$\psi:L\to \mathbb{P}^3$///," of a secant line ",TEX///$L\subset\mathbb{P}^3$///," to ",TEX///$C$///,"."},
 EXAMPLE {
 "ringP3 = ZZ/33331[a..d]; C = ideal(c^2-b*d,b*c-a*d,b^2-a*c), L = ideal(b+c+d,a-d)",
@@ -3391,11 +3376,11 @@ EXAMPLE {
 "describe F",
 "p = projections F;",
 "-- first natural morphism
-phi' = check multirationalMap({p_0,p_1},projectiveVariety source phi);",
+phi' = check rationalMap({p_0,p_1},projectiveVariety source phi);",
 "-- second natural morphism
-psi' = check multirationalMap({p_2},projectiveVariety source psi);",
+psi' = check rationalMap({p_2},projectiveVariety source psi);",
 "assert(phi' * phi == psi' * psi)"},
-SeeAlso => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),(symbol ^**,MultirationalMap,MultiprojectiveVariety)}}
+SeeAlso => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),(symbol ^**,RationalMap,MultiprojectiveVariety)}}
 
 document {
 Key => {(euler,MultiprojectiveVariety)},
@@ -3413,12 +3398,12 @@ EXAMPLE {
 "euler X4"},
 SeeAlso => {EulerCharacteristic,(euler,ProjectiveVariety)}}
 
-document {Key => {MultirationalMap},
+document {Key => {RationalMap},
 Headline => "the class of all multi-rational maps",
-PARA {"A ",EM"multi-rational map"," is a rational map between ",TO2{MultiprojectiveVariety,"multi-projective varieties"},", ",TEX///$$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} .$$///,"Thus, it can be represented by an ",TO2{List,"ordered list"}," of ",TO2{LegacyRationalMap,"rational maps"},TEX///$$\Phi_i = (\Phi:X\dashrightarrow Y)\circ(pr_i:Y\to Y_i\subseteq\mathbb{P}^{s_i}) ,$$///,"for ",TEX///$i=1,\ldots,m$///,". The maps ",TEX///$\Phi_i:X\dashrightarrow Y_i\subseteq\mathbb{P}^{s_i}$///,", since the target ",TEX///$Y_i$///," is a standard projective variety, are implemented internally with the class ",TO LegacyRationalMap," of the package ",TO Cremona," (more properly, when ",TEX///$n>1$///," the class of such maps is called ",TT "LegacyMultihomogeneousRationalMap","); they are returned by ",TO2{(factor,MultirationalMap),"factor"},", but usually one does not need to handle them directly."},
+PARA {"A ",EM"multi-rational map"," is a rational map between ",TO2{MultiprojectiveVariety,"multi-projective varieties"},", ",TEX///$$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} .$$///,"Thus, it can be represented by an ",TO2{List,"ordered list"}," of ",TO2{LegacyRationalMap,"rational maps"},TEX///$$\Phi_i = (\Phi:X\dashrightarrow Y)\circ(pr_i:Y\to Y_i\subseteq\mathbb{P}^{s_i}) ,$$///,"for ",TEX///$i=1,\ldots,m$///,". The maps ",TEX///$\Phi_i:X\dashrightarrow Y_i\subseteq\mathbb{P}^{s_i}$///,", since the target ",TEX///$Y_i$///," is a standard projective variety, are implemented internally with the class ",TO LegacyRationalMap," of the package ",TO Cremona," (more properly, when ",TEX///$n>1$///," the class of such maps is called ",TT "LegacyMultihomogeneousRationalMap","); they are returned by ",TO2{(factor,RationalMap),"factor"},", but usually one does not need to handle them directly."},
 PARA {"The most convenient way to define a multi-rational map is to apply the hom-set ",TO2{(Hom,MultiprojectiveVariety,MultiprojectiveVariety),"Hom(X,Y)"}," to the list of the defining forms (see ",TO2{(symbol SPACE,RAT,List),"defining a multi-rational map with Hom"},")."},
-PARA {"The basic constructor for the class of multi-rational maps is ",TO multirationalMap," (see also ",TO "shortcuts","). It takes as input the list of maps ",TEX///$\{\Phi_1:X\dashrightarrow Y_1,\ldots,\Phi_m:X\dashrightarrow Y_m\}$///,", together with the variety ",TEX///$Y$///,", and returns the map ",TEX///$\Phi:X\dashrightarrow Y$///,"."},
-Subnodes => {TO multirationalMap,TO (rationalMap,List,MultiprojectiveVariety)}}
+PARA {"The basic constructor for the class of multi-rational maps is ",TO rationalMap," (see also ",TO "shortcuts","). It takes as input the list of maps ",TEX///$\{\Phi_1:X\dashrightarrow Y_1,\ldots,\Phi_m:X\dashrightarrow Y_m\}$///,", together with the variety ",TEX///$Y$///,", and returns the map ",TEX///$\Phi:X\dashrightarrow Y$///,"."},
+Subnodes => {TO rationalMap,TO [rationalMap,Dominant]}}
 
 document {Key => {WeightedRationalMap},
 Headline => "the class of all weighted-rational maps",
@@ -3428,220 +3413,223 @@ EXAMPLE {
 "X = PP_K(1,1,3);",
 "Y = PP_K(4,5);",
 "F = (Hom(X,Y)) {random(4,ring X),random(5,ring X)}"},
-PARA {"The functions ",TO legacyRationalMap," (from the package ",TO Cremona,") and ",TO multirationalMap," can also be used. Note that ",TO legacyRationalMap," returns a ",TO2{LegacyRationalMap,"legacy"}," type of rational map: you can always apply ",TO multirationalMap," to its output, and convert back to the legacy type using ",TO toLegacyRationalMap,"."},
+PARA {"The functions ",TO legacyRationalMap," (from the package ",TO Cremona,") and ",TO rationalMap," can also be used. Note that ",TO legacyRationalMap," returns a ",TO2{LegacyRationalMap,"legacy"}," type of rational map: you can always apply ",TO rationalMap," to its output, and convert back to the legacy type using ",TO toLegacyRationalMap,"."},
 EXAMPLE {
 "f = legacyRationalMap(ring X,ring Y,{random(4,ring X),random(5,ring X)})",
-"multirationalMap f"},
+"rationalMap f"},
 Caveat => {"This class is currently experimental and under development."},
-SeeAlso => {WeightedProjectiveVariety,MultirationalMap}}
+SeeAlso => {WeightedProjectiveVariety,RationalMap}}
 
 document {
-Key => {multirationalMap, (multirationalMap,List,MultiprojectiveVariety), (multirationalMap,List)},
+Key => {rationalMap, (rationalMap,List,MultiprojectiveVariety), (rationalMap,List)},
 Headline => "the multi-rational map defined by a list of rational maps",
-Usage => "multirationalMap Phi
-multirationalMap(Phi,Y)",
-Inputs => { "Phi" => {ofClass List," of ",TO2{LegacyRationalMap,"legacy rational maps"},", ",TEX///$\{\Phi_1:X\dashrightarrow Y_1\subseteq\mathbb{P}^{s_1},\ldots,\Phi_m:X\dashrightarrow Y_m\subseteq\mathbb{P}^{s_m}\}$///,", all having the same ",TO2{(source,LegacyRationalMap),"source"}," ",TEX///$X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}$///},
+Usage => "rationalMap Phi
+rationalMap(Phi,Y)",
+Inputs => { "Phi" => {ofClass List," of ",TO2{LegacyRationalMap,"legacy rational maps"},", ",TEX///$\{\Phi_1:X\dashrightarrow Y_1\subseteq\mathbb{P}^{s_1},\ldots,\Phi_m:X\dashrightarrow Y_m\subseteq\mathbb{P}^{s_m}\}$///,", all having the same ",TO2{(source,LegacyRationalMap),"source"}," ",TEX///$X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}$///," (each map can also be replaced by a representative of it, such as a list of forms, a ",TO2{Matrix,"row matrix"},", or a ",TO2{RingMap,"ring map"},")"},
 "Y" => {ofClass MultiprojectiveVariety," ",TEX///$Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," (if omitted, then the ",TO2{(symbol **,MultiprojectiveVariety,MultiprojectiveVariety),"product"}," ",TEX///$Y_1\times\cdots \times Y_m$///," is taken)"}},
-Outputs => {MultirationalMap => {"the unique rational map ",TEX///$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," such that ",TEX///$pr_i\circ\Phi = \Phi_i$///,", where ",TEX///$pr_i:Y\subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} \to Y_i\subseteq \mathbb{P}^{s_i}$///," denotes the i-th projection"}},
-PARA {"This is the basic constructor for the class ",TO MultirationalMap,". It is mainly useful when the maps ",TEX///$\Phi_i$///," are already available as ",TO2{LegacyRationalMap,"legacy rational maps"},", for instance because they have been obtained using the package ",TO Cremona,". Otherwise, it is usually more convenient to use ",TO2{(Hom,MultiprojectiveVariety,MultiprojectiveVariety),"Hom"},", which takes as input directly the defining forms (see ",TO2{(symbol SPACE,RAT,List),"defining a multi-rational map with Hom"},"), or one of the ",TO2{"shortcuts","shortcuts"},"."},
+Outputs => {RationalMap => {"the unique rational map ",TEX///$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m}$///," such that ",TEX///$pr_i\circ\Phi = \Phi_i$///,", where ",TEX///$pr_i:Y\subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} \to Y_i\subseteq \mathbb{P}^{s_i}$///," denotes the i-th projection"}},
+PARA {"This is the basic constructor for the class ",TO RationalMap,". It is mainly useful when the maps ",TEX///$\Phi_i$///," are already available as ",TO2{LegacyRationalMap,"legacy rational maps"},", for instance because they have been obtained using the package ",TO Cremona,". Otherwise, it is usually more convenient to use ",TO2{(Hom,MultiprojectiveVariety,MultiprojectiveVariety),"Hom"},", which takes as input directly the defining forms (see ",TO2{(symbol SPACE,RAT,List),"defining a multi-rational map with Hom"},"), or one of the ",TO2{"shortcuts","shortcuts"},"."},
 EXAMPLE {
 "R = ring PP_(ZZ/65521)^{2,1};",
 "f = legacyRationalMap for i to 3 list random({1,1},R);",
 "g = legacyRationalMap(for i to 4 list random({0,1},R),Dominant=>true);",
 "h = legacyRationalMap for i to 2 list random({1,0},R);",
-"Phi = multirationalMap {f,g,h}",
+"Phi = rationalMap {f,g,h}",
 "describe Phi -- long description",
 "? Phi -- short description",
 "X = projectiveVariety R;",
 "Phi;",
 "Y = target Phi;",
 "Phi;",
-"Z = (image multirationalMap {f,g}) ** target h;",
-"Psi = multirationalMap({f,g,h},Z)",
+"Z = (image rationalMap {f,g}) ** target h;",
+"Psi = rationalMap({f,g,h},Z)",
 "assert(image Psi == image Phi)"},
 PARA {"The same map can be obtained with ",TO2{(Hom,MultiprojectiveVariety,MultiprojectiveVariety),"Hom"},", by passing directly the defining forms:"},
 EXAMPLE {
 "Phi' = (Hom(X,Y)) {entries f,entries g,entries h}",
 "assert(Phi' == Phi)"},
-SeeAlso => {(symbol SPACE,RAT,List),(rationalMap,List,MultiprojectiveVariety),"shortcuts",(factor,MultirationalMap),toLegacyRationalMap,(graph,MultirationalMap),(image,MultirationalMap),(baseLocus,MultirationalMap),(inverse,MultirationalMap)},
-Caveat => {"Be careful when you pass the target ",TT"Y"," as input, because it must be compatible with the maps but for efficiency reasons a full check is not done automatically. See ",TO (check,MultirationalMap),"."}}
+SeeAlso => {(symbol SPACE,RAT,List),[rationalMap,Dominant],"shortcuts",(factor,RationalMap),toLegacyRationalMap,(graph,RationalMap),(image,RationalMap),(baseLocus,RationalMap),(inverse,RationalMap)},
+Caveat => {"Be careful when you pass the target ",TT"Y"," as input, because it must be compatible with the maps but for efficiency reasons a full check is not done automatically. See ",TO (check,RationalMap),"."}}
 
 document {
-Key => {(rationalMap,List,MultiprojectiveVariety),(rationalMap,MultirationalMap)},
-Headline => "the multi-rational map defined by a list of rational maps",
-Usage => "rationalMap Phi
-rationalMap(Phi,Y)",
-Inputs => { "Phi" => {"whose elements are either ",TO2{LegacyRationalMap,"legacy rational maps"}," or representatives of them (e.g., lists of forms, ",TO2{Matrix,"row matrices"}," or ",TO2{RingMap,"ring maps"},")"},
-"Y" => MultiprojectiveVariety => {"optional"}},
-Outputs => {MultirationalMap => {"the same as ",TO "multirationalMap",TT"(Phi,Y)",", or ",TO "multirationalMap",TT" Phi"," (if ",TT"Y"," is not specified)"}},
-SeeAlso => {multirationalMap,"shortcuts",(symbol SPACE,RAT,List)}}
+Key => {[rationalMap,Dominant],(rationalMap,RationalMap)},
+Headline => "replace the target of a multi-rational map with its image",
+Usage => "rationalMap(...,Dominant=>true)
+rationalMap(Phi,Dominant=>true)",
+PARA{"With ",TT"Dominant=>true"," (or ",TT"Dominant=>infinity","), the target of the map returned by ",TO rationalMap," is replaced by the image of the map. Other accepted values are an integer ",TT"d"," (the image is then computed using only equations of degree at most ",TT"d","), ",ofClass Ideal,", or ",ofClass MultiprojectiveVariety," (which is then taken as the target, and must contain the image)."},
+PARA{"If ",TT"Phi"," is ",ofClass RationalMap,", then ",TT"rationalMap Phi"," returns the same map with the ambient space of the target of ",TT"Phi"," as target, while ",TT"rationalMap(Phi,Dominant=>true)"," returns the map onto its image."},
+EXAMPLE {
+"Phi = rationalMap PP_(ZZ/65521)^(1,4)",
+"Psi = rationalMap(Phi,Dominant=>true)",
+"assert(target Psi == image Phi)"},
+SeeAlso => {rationalMap,(image,RationalMap),(rationalMap,RationalMap,MultiprojectiveVariety)}}
 
 document {
-Key => {(check,MultirationalMap)},
+Key => {(check,RationalMap)},
 Headline => "check that a multi-rational map is well-defined",
 Usage => "check Phi",
-Inputs => {MultirationalMap},
-Outputs => {MultirationalMap => {"the same object passed as input, but an error is thrown if the target of the map is not compatible."}},
+Inputs => {RationalMap},
+Outputs => {RationalMap => {"the same object passed as input, but an error is thrown if the target of the map is not compatible."}},
 EXAMPLE {
 "f = legacyRationalMap ideal PP_(ZZ/65521)^(1,4);",
-"Phi = multirationalMap {f}",
+"Phi = rationalMap {f}",
 "check Phi",
 "Y = image Phi",
-"Psi = multirationalMap({f},Y)",
+"Psi = rationalMap({f},Y)",
 "check Psi",
 "p = point Y;",
-"Eta = multirationalMap({f},p);",
+"Eta = rationalMap({f},p);",
 "stopIfError = false;",
 "check Eta"},
-SeeAlso => (isWellDefined,MultirationalMap)}
+SeeAlso => (isWellDefined,RationalMap)}
 
 document {
-Key => {(isWellDefined,MultirationalMap)},
+Key => {(isWellDefined,RationalMap)},
 Headline => "whether a multi-rational map is well-defined",
 Usage => "isWellDefined Phi",
-Inputs => {MultirationalMap},
+Inputs => {RationalMap},
 Outputs => {Boolean => {"whether ",TT"Phi"," is a well-defined map"}},
 EXAMPLE {
 "f = legacyRationalMap ideal PP_(ZZ/65521)^(1,4);",
-"Phi = multirationalMap {f}",
+"Phi = rationalMap {f}",
 "isWellDefined Phi",
 "Y = image Phi",
-"Psi = multirationalMap({f},Y)",
+"Psi = rationalMap({f},Y)",
 "isWellDefined Psi",
 "p = point Y;",
-"Eta = multirationalMap({f},p);",
+"Eta = rationalMap({f},p);",
 "isWellDefined Eta"},
-SeeAlso => (check,MultirationalMap)}
+SeeAlso => (check,RationalMap)}
 
 document {
-Key => {(target,MultirationalMap)},
+Key => {(target,RationalMap)},
 Headline => "the target for a multi-rational map",
 Usage => "target Phi",
 Inputs => {
-MultirationalMap => "Phi"},
+RationalMap => "Phi"},
 Outputs => {
 MultiprojectiveVariety => {"the target of ",TT"Phi"}},
 PARA{"Note that, instead, the ",TO2{(target,LegacyRationalMap),"target"}," of a legacy ",TO2{LegacyRationalMap,"rational map"}," is the coordinate ring of the target variety (this is done mainly for efficiency reasons)."},
-SeeAlso => {(source,MultirationalMap),(entries,MultirationalMap)}}
+SeeAlso => {(source,RationalMap),(entries,RationalMap)}}
 
 document {
-Key => {(source,MultirationalMap)},
+Key => {(source,RationalMap)},
 Headline => "the source for a multi-rational map",
 Usage => "source Phi",
 Inputs => {
-MultirationalMap => "Phi"},
+RationalMap => "Phi"},
 Outputs => {
 MultiprojectiveVariety => {"the source of ",TT"Phi"}},
 PARA{"Note that, instead, the ",TO2{(source,LegacyRationalMap),"source"}," of a legacy ",TO2{LegacyRationalMap,"rational map"}," is the coordinate ring of the source variety (this is done mainly for efficiency reasons)."},
-SeeAlso => {(target,MultirationalMap),(entries,MultirationalMap)}}
+SeeAlso => {(target,RationalMap),(entries,RationalMap)}}
 
 document {
-Key => {(entries,MultirationalMap)},
+Key => {(entries,RationalMap)},
 Headline => "list the defining polynomials of a rational map",
 Usage => "entries Phi",
-Inputs => {"Phi" => MultirationalMap},
+Inputs => {"Phi" => RationalMap},
 Outputs => {List => {"a doubly nested list of the defining polynomials of the map ",TT "Phi"}},
 EXAMPLE {"Phi = inverse first graph segreEmbedding PP_(ZZ/13)^{1,2,1};",
 "entries Phi"},
-SeeAlso => {(source,MultirationalMap),(target,MultirationalMap),(entries,LegacyRationalMap)}}
+SeeAlso => {(source,RationalMap),(target,RationalMap),(entries,LegacyRationalMap)}}
 
 document {
-Key => {(factor,MultirationalMap)},
+Key => {(factor,RationalMap)},
 Headline => "the list of rational maps defining a multi-rational map",
 Usage => "factor Phi",
-Inputs => {MultirationalMap => "Phi"},
+Inputs => {RationalMap => "Phi"},
 Outputs => {{"the ",TO2{List,"list"}," of ",TO2{LegacyRationalMap,"legacy rational maps"}," defining ",TT"Phi"}},
-PARA {"This function is intended for internal use. Use the ",TO2{(projectionMaps,MultirationalMap),"projectionMaps"}," function instead."},
+PARA {"This function is intended for internal use. Use the ",TO2{(projectionMaps,RationalMap),"projectionMaps"}," function instead."},
 EXAMPLE lines ///ZZ/33331[t_0..t_2,u_0..u_1,Degrees=>{3:{1,0},2:{0,1}}];
 f0 = legacyRationalMap {t_0,t_1,t_2}
 f1 = legacyRationalMap {u_0,u_1}
 f2 = legacyRationalMap {t_0*u_1,t_1*u_0}
-Phi = multirationalMap {f0,f1,f2};
+Phi = rationalMap {f0,f1,f2};
 assert(factor Phi === {f0,f1,f2})///,
-SeeAlso => {(target,MultirationalMap),(source,MultirationalMap),(projectionMaps,MultirationalMap)}}
+SeeAlso => {(target,RationalMap),(source,RationalMap),(projectionMaps,RationalMap)}}
 
 document {
-Key => {(projectionMaps,MultirationalMap)},
+Key => {(projectionMaps,RationalMap)},
 Headline => "get the compositions of the multi-rational map with the projections of the target",
 Usage => "projectionMaps Phi",
-Inputs => {MultirationalMap => "Phi"},
-Outputs => {{"the ",TO2{List,"list"}," of ",TO2{MultirationalMap,"rational maps"}," obtained by composing the map with the ",TO2{projectionMaps,"projections"}," of the target"}},
+Inputs => {RationalMap => "Phi"},
+Outputs => {{"the ",TO2{List,"list"}," of ",TO2{RationalMap,"rational maps"}," obtained by composing the map with the ",TO2{projectionMaps,"projections"}," of the target"}},
 EXAMPLE {"Phi = inverse first graph rationalMap PP_(ZZ/33331)^(1,4);", "p = projectionMaps Phi;", "p_0", "p_1"},
-SeeAlso => {(factor,MultirationalMap)}}
+SeeAlso => {(factor,RationalMap)}}
 
 document {
-Key => {(coefficientRing,MultirationalMap)},
+Key => {(coefficientRing,RationalMap)},
 Headline => "the coefficient ring of a multi-rational map",
 Usage => "coefficientRing Phi",
-Inputs => {MultirationalMap => "Phi"},
+Inputs => {RationalMap => "Phi"},
 Outputs => {Ring => {"the coefficient ring of ",TT"Phi"}},
-SeeAlso => {(coefficientRing,MultiprojectiveVariety),(symbol **,MultirationalMap,Ring)}}
+SeeAlso => {(coefficientRing,MultiprojectiveVariety),(symbol **,RationalMap,Ring)}}
 
 document {
-Key => {(image,MultirationalMap)},
+Key => {(image,RationalMap)},
 Headline => "image of a multi-rational map",
 Usage => "image Phi",
-Inputs => {MultirationalMap => "Phi"},
+Inputs => {RationalMap => "Phi"},
 Outputs => {MultiprojectiveVariety => {"the (closure of the) image of ",TT"Phi"}},
 PARA{"Note that, instead, the ",TO2{(image,LegacyRationalMap),"image"}," of a legacy ",TO2{LegacyRationalMap,"rational map"}," is the defining ideal of the image (this is done mainly for efficiency reasons)."},
 EXAMPLE {
 "ZZ/65521[x_0..x_4];",
 "f = legacyRationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2, x_0*x_4, x_1*x_4, x_2*x_4, x_3*x_4, x_4^2};",
 "g = legacyRationalMap {-x_3^2+x_2*x_4, 2*x_2*x_3-2*x_1*x_4, -3*x_2^2+2*x_1*x_3+x_0*x_4, 2*x_1*x_2-2*x_0*x_3, -x_1^2+x_0*x_2};",
-"Phi = multirationalMap {f,g};",
+"Phi = rationalMap {f,g};",
 "Z = image Phi;",
 "dim Z, degree Z, degrees Z"},
 PARA {"Alternatively, the calculation can be performed using the Segre embedding as follows:"},
 EXAMPLE {
 "Z' = projectiveVariety (map segre target Phi) image(segre Phi,\"F4\");",
 "assert(Z == Z')"},
-SeeAlso => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety),(image,LegacyRationalMap),(segre,MultirationalMap)}}
+SeeAlso => {(symbol SPACE,RationalMap,MultiprojectiveVariety),(image,LegacyRationalMap),(segre,RationalMap)}}
 
 document {
-Key => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety),(symbol SPACE,LegacyRationalMap,MultiprojectiveVariety)},
+Key => {(symbol SPACE,RationalMap,MultiprojectiveVariety),(symbol SPACE,LegacyRationalMap,MultiprojectiveVariety)},
 Headline => "direct image via a multi-rational map",
 Usage => "Phi X",
-Inputs => {MultirationalMap => "Phi", MultiprojectiveVariety => "X" => {"a subvariety of the ",TO2{(source,MultirationalMap),"source"}," of ",TT "Phi"}},
+Inputs => {RationalMap => "Phi", MultiprojectiveVariety => "X" => {"a subvariety of the ",TO2{(source,RationalMap),"source"}," of ",TT "Phi"}},
 Outputs => {MultiprojectiveVariety => {"the (closure of the) direct image of ", TT"X", " via ",TT"Phi"}},
 EXAMPLE {
 "ZZ/65521[x_0..x_4];",
 "f = last graph legacyRationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2, x_0*x_4, x_1*x_4, x_2*x_4, x_3*x_4, x_4^2};",
-"Phi = multirationalMap {f,f};",
+"Phi = rationalMap {f,f};",
 "Z = source Phi;",
 "Phi Z;",
 "dim oo, degree oo, degrees oo",
 "Phi (point Z + point Z + point Z)",
 "dim oo, degree oo, degrees oo"},
-SeeAlso => {(image,MultirationalMap), (symbol ^*, MultirationalMap), (symbol SPACE,LegacyRationalMap,Ideal)}}
+SeeAlso => {(image,RationalMap), (symbol ^*, RationalMap), (symbol SPACE,LegacyRationalMap,Ideal)}}
 
 document {
-Key => {(symbol ^**,MultirationalMap,MultiprojectiveVariety), (symbol ^**,LegacyRationalMap,EmbeddedProjectiveVariety), (symbol ^*,MultirationalMap)},
+Key => {(symbol ^**,RationalMap,MultiprojectiveVariety), (symbol ^**,LegacyRationalMap,EmbeddedProjectiveVariety), (symbol ^*,RationalMap)},
 Headline => "inverse image via a multi-rational map",
 Usage => "Phi^** Y
 Phi^* Y",
 Inputs => {
-MultirationalMap => "Phi",
-MultiprojectiveVariety => "Y" => {"a subvariety of the ambient multi-projective space of the ",TO2{(target,MultirationalMap),"target"}," of ",TT "Phi"}},
+RationalMap => "Phi",
+MultiprojectiveVariety => "Y" => {"a subvariety of the ambient multi-projective space of the ",TO2{(target,RationalMap),"target"}," of ",TT "Phi"}},
 Outputs => {
 MultiprojectiveVariety => {"the (closure of the) inverse image of ", TT"Y", " via ",TT"Phi"}},
 EXAMPLE {
 "ZZ/300007[x_0..x_3], f = legacyRationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2}, g = legacyRationalMap {x_1^2-x_0*x_2, x_0*x_3, x_1*x_3, x_2*x_3, x_3^2};",
-"Phi = last graph multirationalMap {f,g};",
+"Phi = last graph rationalMap {f,g};",
 "Y = projectiveVariety ideal(random({1,1},ring target Phi), random({1,1},ring target Phi));",
 "X = Phi^* Y;",
 "dim X, degree X, degrees X"},
-SeeAlso => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety),(symbol ^*,LegacyRationalMap),(symbol ||,MultirationalMap,MultiprojectiveVariety)}}
+SeeAlso => {(symbol SPACE,RationalMap,MultiprojectiveVariety),(symbol ^*,LegacyRationalMap),(symbol ||,RationalMap,MultiprojectiveVariety)}}
 
-document {Key => {(segre,MultirationalMap)},
+document {Key => {(segre,RationalMap)},
 Headline => "the composition of a multi-rational map with the Segre embedding of the target",
 Usage => "segre Phi",
-Inputs => {"Phi" => MultirationalMap},
-Outputs => {LegacyRationalMap => {"the composition of the multi-rational map ",TT"Phi"," with the ",TO2{(segreEmbedding,MultiprojectiveVariety),"Segre embedding"}," of the ",TO2{(target,MultirationalMap),"target"}," of ",TT"Phi"}},
+Inputs => {"Phi" => RationalMap},
+Outputs => {LegacyRationalMap => {"the composition of the multi-rational map ",TT"Phi"," with the ",TO2{(segreEmbedding,MultiprojectiveVariety),"Segre embedding"}," of the ",TO2{(target,RationalMap),"target"}," of ",TT"Phi"}},
 EXAMPLE {"ZZ/65521[x_0..x_4];",
 "f = legacyRationalMap({x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2},Dominant=>true);",
 "g = legacyRationalMap {x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3};",
 "h = legacyRationalMap {-x_3^2+x_2*x_4,2*x_2*x_3-2*x_1*x_4,-3*x_2^2+2*x_1*x_3+x_0*x_4, 2*x_1*x_2-2*x_0*x_3,-x_1^2+x_0*x_2};",
-"Phi = multirationalMap {f,g,h};",
+"Phi = rationalMap {f,g,h};",
 "segre Phi;",
 "describe segre Phi"},
 SeeAlso => {(segreEmbedding,MultiprojectiveVariety)}}
@@ -3650,7 +3638,7 @@ document {Key => {(parametrize,MultiprojectiveVariety)},
 Headline => "try to get a parametrization of a multi-projective variety",
 Usage => "parametrize X",
 Inputs => {"X" => MultiprojectiveVariety => {"a rational ",TEX///$k$///,"-dimensional subvariety of ",TEX///$\mathbb{P}^{r_1}\times\cdots\times\mathbb{P}^{r_n}$///}},
-Outputs => {MultirationalMap => {"a birational map from ",TEX///$\mathbb{P}^k$///," to ",TEX///$X$///," (or an error if it fails)"}},
+Outputs => {RationalMap => {"a birational map from ",TEX///$\mathbb{P}^k$///," to ",TEX///$X$///," (or an error if it fails)"}},
 PARA{"Currently, this function works in particular for linear varieties, quadrics, varieties of minimal degree, Grassmannians, Severi varieties, del Pezzo fivefolds, and some types of Fano fourfolds."},
 EXAMPLE {"K = ZZ/65521;",
 "X = PP_K^{2,4,1,3};",
@@ -3665,17 +3653,17 @@ EXAMPLE {"K = ZZ/65521;",
 "W = projectiveVariety pfaffians(4,A);",
 "parametrize W",
 "parametrize (W ** (point W))"},
-SeeAlso => {(inverse,MultirationalMap),(symbol ===>,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}}
+SeeAlso => {(inverse,RationalMap),(symbol ===>,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}}
 
 document {
-Key => {(graph,MultirationalMap)},
+Key => {(graph,RationalMap)},
 Headline => "the graph of a multi-rational map",
 Usage => "graph Phi",
 Inputs => {
-MultirationalMap => "Phi"},
+RationalMap => "Phi"},
 Outputs => {
-MultirationalMap => {"the first projection from the graph of ",TT"Phi"},
-MultirationalMap => {"the second projection from the graph of ",TT"Phi"}},
+RationalMap => {"the first projection from the graph of ",TT"Phi"},
+RationalMap => {"the second projection from the graph of ",TT"Phi"}},
 PARA{"The equalities ",TT"(first graph Phi) * Phi == last graph Phi"," and ",TT"(first graph Phi)^-1 * (last graph Phi) == Phi"," are always satisfied."},
 EXAMPLE {
 "Phi = rationalMap(PP_(ZZ/333331)^(1,4),Dominant=>true)",
@@ -3693,18 +3681,18 @@ source Phi1 == source Phi2 and target Phi1 == source Phi and target Phi2 == targ
 source Phi21 == source Phi22 and target Phi21 == source Phi2 and target Phi22 == target Phi2 and
 source Phi211 == source Phi212 and target Phi211 == source Phi21 and target Phi212 == target Phi21)",
 "assert(Phi1 * Phi == Phi2 and Phi21 * Phi2 == Phi22 and Phi211 * Phi21 == Phi212)"},
-SeeAlso => {(graph,LegacyRationalMap),(symbol *,MultirationalMap,MultirationalMap),(symbol ==,MultirationalMap,MultirationalMap),(inverse,MultirationalMap)}}
+SeeAlso => {(graph,LegacyRationalMap),(symbol *,RationalMap,RationalMap),(symbol ==,RationalMap,RationalMap),(inverse,RationalMap)}}
 
 document {
-Key => {(symbol *,MultirationalMap,MultirationalMap),(compose,MultirationalMap,MultirationalMap),(symbol *,LegacyRationalMap,MultirationalMap),(symbol *,MultirationalMap,LegacyRationalMap),(symbol ^,MultirationalMap,ZZ)},
+Key => {(symbol *,RationalMap,RationalMap),(compose,RationalMap,RationalMap),(symbol *,LegacyRationalMap,RationalMap),(symbol *,RationalMap,LegacyRationalMap),(symbol ^,RationalMap,ZZ)},
 Headline => "composition of multi-rational maps",
 Usage => "Phi * Psi
 compose(Phi,Psi)",
 Inputs => {
-MultirationalMap => "Phi" => { TEX///$X \dashrightarrow Y$///},
-MultirationalMap => "Psi" => { TEX///$Y \dashrightarrow Z$///}},
+RationalMap => "Phi" => { TEX///$X \dashrightarrow Y$///},
+RationalMap => "Psi" => { TEX///$Y \dashrightarrow Z$///}},
 Outputs => {
-MultirationalMap => { TEX///$X \dashrightarrow Z$///, ", the composition of ",TT"Phi"," and ",TT"Psi"}},
+RationalMap => { TEX///$X \dashrightarrow Z$///, ", the composition of ",TT"Phi"," and ",TT"Psi"}},
 EXAMPLE {
 "ZZ/65521[x_0..x_4];",
 "Psi = last graph rationalMap(projectiveVariety ideal(x_4,x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2),Dominant=>true);",
@@ -3714,33 +3702,33 @@ EXAMPLE {
 SeeAlso => {(symbol *,LegacyRationalMap,LegacyRationalMap)}}
 
 document {
-Key => {(symbol ==,MultirationalMap,MultirationalMap),(symbol ==,LegacyRationalMap,MultirationalMap),(symbol ==,MultirationalMap,LegacyRationalMap),(symbol ==,MultirationalMap,ZZ),(symbol ==,ZZ,MultirationalMap)},
+Key => {(symbol ==,RationalMap,RationalMap),(symbol ==,LegacyRationalMap,RationalMap),(symbol ==,RationalMap,LegacyRationalMap),(symbol ==,RationalMap,ZZ),(symbol ==,ZZ,RationalMap)},
 Headline => "equality of multi-rational maps",
 Usage => "Phi == Psi",
 Inputs => {
-MultirationalMap => "Phi",
-MultirationalMap => "Psi"},
+RationalMap => "Phi",
+RationalMap => "Psi"},
 Outputs => {
 Boolean => {"whether ",TT"Phi"," and ",TT"Psi", " are the same multi-rational map"}},
-SeeAlso => {(symbol ==,LegacyRationalMap,LegacyRationalMap),(symbol <==>,MultirationalMap,MultirationalMap)}}
+SeeAlso => {(symbol ==,LegacyRationalMap,LegacyRationalMap),(symbol <==>,RationalMap,RationalMap)}}
 
 document {
-Key => {(symbol <==>,MultirationalMap,MultirationalMap)},
+Key => {(symbol <==>,RationalMap,RationalMap)},
 Headline => "equality of multi-rational maps with checks on internal data",
 Usage => "Phi <==> Psi",
 Inputs => {
-MultirationalMap => "Phi",
-MultirationalMap => "Psi"},
+RationalMap => "Phi",
+RationalMap => "Psi"},
 Outputs => {
 Boolean => {"whether ",TT"Phi"," and ",TT"Psi", " are the same multi-rational map, by throwing an error if an inconsistency of the internal data is detected."}},
 PARA{"For example, if you have calculated the degree of the two maps before, it will be checked that it is the same for both."},
-SeeAlso => {(symbol ==,MultirationalMap,MultirationalMap)}}
+SeeAlso => {(symbol ==,RationalMap,RationalMap)}}
 
 document {
-Key => {(multidegree,ZZ,MultirationalMap)},
+Key => {(multidegree,ZZ,RationalMap)},
 Headline => "i-th projective degree of a multi-rational map using a probabilistic approach",
 Usage => "multidegree(i,Phi)",
-Inputs => {ZZ => "i", MultirationalMap => "Phi"},
+Inputs => {ZZ => "i", RationalMap => "Phi"},
 Outputs => {
 ZZ => {"the ",TEX///$i$///,"-th projective degree of ",TT"Phi"}},
 PARA{"This is calculated by means of the inverse image of an appropriate random subvariety of the target."},
@@ -3748,134 +3736,131 @@ EXAMPLE {
 "Phi = last graph rationalMap PP_(ZZ/300007)^(1,4);",
 "for i in {4,3,2,1,0} list multidegree(i,Phi)",
 "assert(oo == multidegree Phi)"},
-SeeAlso => {(multidegree,MultirationalMap),(projectiveDegrees,LegacyRationalMap),(degree,MultirationalMap,Option),(symbol ^*,MultirationalMap)},
+SeeAlso => {(multidegree,RationalMap),(projectiveDegrees,LegacyRationalMap),(degree,RationalMap,Option),(symbol ^*,RationalMap)},
 References => {"ArXiv preprint: ",HREF{"https://arxiv.org/abs/2101.04503","Computations with rational maps between multi-projective varieties"},"."}}
 
 document {
-Key => {(multidegree,MultirationalMap),(projectiveDegrees,MultirationalMap)},
+Key => {(multidegree,RationalMap),(projectiveDegrees,RationalMap)},
 Headline => "projective degrees of a multi-rational map",
 Usage => "multidegree Phi",
 Inputs => {
-MultirationalMap => "Phi"},
+RationalMap => "Phi"},
 Outputs => {
 List => {"the list of projective degrees of ",TT"Phi"}},
-PARA{"This calculates the ",TO2{(multidegree,MultiprojectiveVariety),"multidegree"}," of the ",TO2{(graph,MultirationalMap),"graph"}," and converts it to the list of projective degrees."},
+PARA{"This calculates the ",TO2{(multidegree,MultiprojectiveVariety),"multidegree"}," of the ",TO2{(graph,RationalMap),"graph"}," and converts it to the list of projective degrees."},
 EXAMPLE {
 "ZZ/300007[x_0..x_3], f = legacyRationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2}, g = legacyRationalMap {x_1^2-x_0*x_2, x_0*x_3, x_1*x_3, x_2*x_3, x_3^2};",
-"Phi = last graph multirationalMap {f,g};",
+"Phi = last graph rationalMap {f,g};",
 "multidegree Phi",
 "(degree source Phi,degree image Phi)"},
-SeeAlso => {(multidegree,ZZ,MultirationalMap),(multidegree,LegacyRationalMap),(degree,MultirationalMap),(projectiveDegrees,LegacyRationalMap)},
+SeeAlso => {(multidegree,ZZ,RationalMap),(multidegree,LegacyRationalMap),(degree,RationalMap),(projectiveDegrees,LegacyRationalMap)},
 References => {"ArXiv preprint: ",HREF{"https://arxiv.org/abs/2101.04503","Computations with rational maps between multi-projective varieties"},"."}}
 
 document {
-Key => {(degree,MultirationalMap,Option)},
+Key => {(degree,RationalMap,Option)},
 Headline => "degree of a multi-rational map using a probabilistic approach",
 Usage => "degree(Phi,Strategy=>\"random point\")
 degree(Phi,Strategy=>\"0-th projective degree\")",
-Inputs => {MultirationalMap => "Phi", Option => "Strategy"},
+Inputs => {RationalMap => "Phi", Option => "Strategy"},
 Outputs => {
 ZZ => {"the degree of ",TT"Phi",". So this value is 1 if and only if (with high probability) the map is birational onto its image."}},
 EXAMPLE {
 "R = ZZ/33331[x_0..x_4];",
-"Phi = (last graph multirationalMap legacyRationalMap transpose jacobian(-x_2^3+2*x_1*x_2*x_3-x_0*x_3^2-x_1^2*x_4+x_0*x_2*x_4))||projectiveVariety ideal(random(2,R));",
+"Phi = (last graph rationalMap legacyRationalMap transpose jacobian(-x_2^3+2*x_1*x_2*x_3-x_0*x_3^2-x_1^2*x_4+x_0*x_2*x_4))||projectiveVariety ideal(random(2,R));",
 "? Phi",
 "time degree(Phi,Strategy=>\"random point\")",
 "time degree(Phi,Strategy=>\"0-th projective degree\")",
 "time degree Phi"},
 PARA{"Note, as in the example above, that calculation times may vary depending on the strategy used."},
-SeeAlso => {(degree,MultirationalMap),(degreeMap,LegacyRationalMap),(multidegree,ZZ,MultirationalMap),(point,MultiprojectiveVariety),(symbol ^*,MultirationalMap)}}
+SeeAlso => {(degree,RationalMap),(degreeMap,LegacyRationalMap),(multidegree,ZZ,RationalMap),(point,MultiprojectiveVariety),(symbol ^*,RationalMap)}}
 
 document {
-Key => {(degree,MultirationalMap),(degreeMap,MultirationalMap)},
+Key => {(degree,RationalMap),(degreeMap,RationalMap)},
 Headline => "degree of a multi-rational map",
 Usage => "degree Phi",
 Inputs => {
-MultirationalMap => "Phi"},
+RationalMap => "Phi"},
 Outputs => {
 ZZ => {"the degree of ",TT"Phi",". So this value is 1 if and only if the map is birational onto its image."}},
 PARA{"This is just a shortcut for ",TT"(last multidegree Phi)/(degree image Phi)","."},
 EXAMPLE {
 "ZZ/300007[x_0..x_3], f = legacyRationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2}, g = legacyRationalMap {x_1^2-x_0*x_2, x_0*x_3, x_1*x_3, x_2*x_3, x_3^2};",
-"Phi = last graph multirationalMap {f,g};",
+"Phi = last graph rationalMap {f,g};",
 "degree Phi"},
-SeeAlso => {(degree,MultirationalMap,Option),(degree,LegacyRationalMap),(multidegree,MultirationalMap),(degreeMap,LegacyRationalMap)}}
+SeeAlso => {(degree,RationalMap,Option),(degree,LegacyRationalMap),(multidegree,RationalMap),(degreeMap,LegacyRationalMap)}}
 
 document {
-Key => {(isMorphism,MultirationalMap)},
+Key => {(isMorphism,RationalMap)},
 Headline => "whether a multi-rational map is a morphism",
 Usage => "isMorphism Phi",
 Inputs => {
-"Phi" => MultirationalMap},
+"Phi" => RationalMap},
 Outputs => {
 Boolean => {"whether ",TT"Phi"," is a morphism (i.e., everywhere defined)"}},
 EXAMPLE {
 "ZZ/300007[a..e], f = first graph legacyRationalMap ideal(c^2-b*d,b*c-a*d,b^2-a*c,e), g = legacyRationalMap submatrix(matrix f,{0..2});",
-"Phi = multirationalMap {f,g};",
+"Phi = rationalMap {f,g};",
 "isMorphism Phi",
 "Psi = first graph Phi;",
 "isMorphism Psi",
 "assert((not o3) and o5)"},
-SeeAlso => {(isIsomorphism,MultirationalMap),(isMorphism,LegacyRationalMap)}}
+SeeAlso => {(isIsomorphism,RationalMap),(isMorphism,LegacyRationalMap)}}
 
 document {
-Key => {(multirationalMap,MultiprojectiveVariety),(symbol _,ZZ,MultiprojectiveVariety)},
+Key => {(symbol _,ZZ,MultiprojectiveVariety)},
 Headline => "identity map",
-Usage => "1_X
-multirationalMap X",
-Inputs => {MultiprojectiveVariety => "X"},
-Outputs => {MultirationalMap => {"the identity map on ",TT"X"}},
+Usage => "1_X",
+Inputs => {ZZ => {TT"1"}, MultiprojectiveVariety => "X"},
+Outputs => {RationalMap => {"the identity map on ",TT"X"}},
 EXAMPLE {"X = PP_QQ^{2,3,1};", "1_X;"},
 PARA {"The command ",TT "0_X"," returns instead the empty subscheme of ",TT "X","."},
 EXAMPLE {"0_X;"},
-SeeAlso => {(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety)}}
+SeeAlso => {(rationalMap,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document {
-Key => {(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety),(rationalMap,MultiprojectiveVariety,MultiprojectiveVariety)},
+Key => {(rationalMap,MultiprojectiveVariety,MultiprojectiveVariety)},
 Headline => "get the natural inclusion",
-Usage => "multirationalMap(X,Y)
-rationalMap(X,Y)",
+Usage => "rationalMap(X,Y)",
 Inputs => {MultiprojectiveVariety => "X",MultiprojectiveVariety => "Y" => {"with ",TEX///$X\subseteq Y$///," (after identifying the ambient spaces)"}},
-Outputs => {MultirationalMap => {"the natural inclusion of ",TEX///$X$///," into ",TEX///$Y$///}},
+Outputs => {RationalMap => {"the natural inclusion of ",TEX///$X$///," into ",TEX///$Y$///}},
 EXAMPLE {
 "R = ZZ/101[a_0,a_1,b_0..b_2,Degrees=>{2:{1,0},3:{0,1}}], S = ZZ/101[c_0,c_1,d_0..d_2,Degrees=>{2:{1,0},3:{0,1}}]",
 "I = ideal (random({0,1},R),random({1,1},R)), J = sub(I,vars S)",
 "X = projectiveVariety I, Y = projectiveVariety J",
-"multirationalMap(X,ambient X);",
-"multirationalMap(X,Y);",
+"rationalMap(X,ambient X);",
+"rationalMap(X,Y);",
 "stopIfError = false;",
-"multirationalMap(ambient X,X)"},
+"rationalMap(ambient X,X)"},
 SeeAlso => {(symbol _,ZZ,MultiprojectiveVariety)}}
 
 document {
-Key => {(multirationalMap,MultirationalMap,MultiprojectiveVariety),(rationalMap,MultirationalMap,MultiprojectiveVariety)},
+Key => {(rationalMap,RationalMap,MultiprojectiveVariety)},
 Headline => "change the target of a multi-rational map",
-Usage => "multirationalMap(Phi,Y)
-rationalMap(Phi,Y)
-check multirationalMap(Phi,Y)",
-Inputs => {MultirationalMap => "Phi",MultiprojectiveVariety => "Y" => {"which must be compatible with ",TT"Phi"}},
-Outputs => {MultirationalMap => {"defined in the same way as ",TT"Phi"," but with ",TT"Y"," as target"}},
+Usage => "rationalMap(Phi,Y)
+check rationalMap(Phi,Y)",
+Inputs => {RationalMap => "Phi",MultiprojectiveVariety => "Y" => {"which must be compatible with ",TT"Phi"}},
+Outputs => {RationalMap => {"defined in the same way as ",TT"Phi"," but with ",TT"Y"," as target"}},
 EXAMPLE {
-"Phi = multirationalMap {super specialQuadraticTransformation 1}",
+"Phi = rationalMap {super specialQuadraticTransformation 1}",
 "Y = image Phi",
-"Psi = multirationalMap(Phi,Y)"},
-SeeAlso => {(check,MultirationalMap),(symbol <<,MultirationalMap,MultiprojectiveVariety)}}
+"Psi = rationalMap(Phi,Y)"},
+SeeAlso => {(check,RationalMap),(symbol <<,RationalMap,MultiprojectiveVariety)}}
 
 document {
-Key => {(inverse,MultirationalMap)},
+Key => {(inverse,RationalMap)},
 Headline => "inverse of a birational map",
 Usage => "inverse Phi
 Phi^-1
 inverse(Phi,Verify=>true)
 inverse(Phi,Verify=>false)",
-Inputs => {MultirationalMap => "Phi" => {"a birational map"}},
-Outputs => {MultirationalMap => {"the inverse map of ",TT"Phi"}},
-PARA{"This function applies a general algorithm to calculate the inverse map passing through the computation of the ",TO2{(graph,MultirationalMap),"graph"},". Note that by default the option ",TT"Verify"," is set to ",TT"true",", which means that the birationality of the map is verified using ",TO2{(degree,MultirationalMap),"degree"},TT" Phi == 1"," and ",TO2{(image,MultirationalMap),"image"},TT" Phi == ",TO2{(target,MultirationalMap),"target"},TT" Phi","."},
+Inputs => {RationalMap => "Phi" => {"a birational map"}},
+Outputs => {RationalMap => {"the inverse map of ",TT"Phi"}},
+PARA{"This function applies a general algorithm to calculate the inverse map passing through the computation of the ",TO2{(graph,RationalMap),"graph"},". Note that by default the option ",TT"Verify"," is set to ",TT"true",", which means that the birationality of the map is verified using ",TO2{(degree,RationalMap),"degree"},TT" Phi == 1"," and ",TO2{(image,RationalMap),"image"},TT" Phi == ",TO2{(target,RationalMap),"target"},TT" Phi","."},
 EXAMPLE {
 "-- map defined by the quadrics through a rational normal quartic curve
 Phi = rationalMap PP_(ZZ/65521)^(1,4);",
 "-- we see Phi as a dominant map
-Phi = multirationalMap(Phi,image Phi);",
+Phi = rationalMap(Phi,image Phi);",
 "inverse Phi;",
 "Psi = last graph Phi;",
 "inverse Psi;",
@@ -3884,62 +3869,62 @@ Phi = multirationalMap(Phi,image Phi);",
 "assert(Phi * Phi^-1 == 1 and Phi^-1 * Phi == 1)",
 "assert(Psi * Psi^-1 == 1 and Psi^-1 * Psi == 1)",
 "assert(Eta * Eta^-1 == 1 and Eta^-1 * Eta == 1)"},
-SeeAlso => {(graph,MultirationalMap),(symbol *,MultirationalMap,MultirationalMap),(symbol ==,MultirationalMap,MultirationalMap),(degree,MultirationalMap),(image,MultirationalMap),(inverse,LegacyRationalMap),inverse2},
+SeeAlso => {(graph,RationalMap),(symbol *,RationalMap,RationalMap),(symbol ==,RationalMap,RationalMap),(degree,RationalMap),(image,RationalMap),(inverse,LegacyRationalMap),inverse2},
 Caveat => {"If the option ",TT"Verify"," is set to ",TT"false"," (which is preferable for efficiency), then no test is done to check that the map is birational, and if not then often the error is not thrown at all and a nonsense answer is returned."},
 References => {"ArXiv preprint: ",HREF{"https://arxiv.org/abs/2101.04503","Computations with rational maps between multi-projective varieties"},"."}}
 
 document {
-Key => {inverse2,(inverse2,MultirationalMap)},
+Key => {inverse2,(inverse2,RationalMap)},
 Headline => "inverse of a birational map using a faster algorithm for a special class of maps",
 Usage => "inverse2 Phi
 inverse2(Phi,Verify=>true)
 inverse2(Phi,Verify=>false)",
-Inputs => {MultirationalMap => "Phi" => {"a birational map of so-called ",EM"multi-linear type"}},
-Outputs => {MultirationalMap => {"the inverse map of ",TT"Phi"}},
-PARA{"This assumes that the ",TO2{(graph,MultirationalMap),"graph"}," of the input map ",TT"Phi"," is defined by a ",EM "simplified"," system of equations, which may not be true. If the option ",TT"Verify"," is set to ",TT"true",", which is the default choice, then it is verified that the left and right composition of ",TT"Phi"," with the returned map is the identity, throwing an error if this is not the case."},
+Inputs => {RationalMap => "Phi" => {"a birational map of so-called ",EM"multi-linear type"}},
+Outputs => {RationalMap => {"the inverse map of ",TT"Phi"}},
+PARA{"This assumes that the ",TO2{(graph,RationalMap),"graph"}," of the input map ",TT"Phi"," is defined by a ",EM "simplified"," system of equations, which may not be true. If the option ",TT"Verify"," is set to ",TT"true",", which is the default choice, then it is verified that the left and right composition of ",TT"Phi"," with the returned map is the identity, throwing an error if this is not the case."},
 EXAMPLE {
 "K = ZZ/10000019;",
 "-- map defined by the cubics through the secant variety to the rational normal curve of degree 6
-Phi = multirationalMap legacyRationalMap(ring PP_K^6,ring GG_K(2,4),gens ideal PP_K([6],2));",
+Phi = rationalMap legacyRationalMap(ring PP_K^6,ring GG_K(2,4),gens ideal PP_K([6],2));",
 "Psi = inverse2 Phi;",
 "assert(Phi * Psi == 1)",
 "Phi' = Phi || Phi;",
 "Psi' = inverse2 Phi';",
 "assert(Phi' * Psi' == 1)"},
-SeeAlso => {(inverse,MultirationalMap),(symbol <==>,MultirationalMap,MultirationalMap)}}
+SeeAlso => {(inverse,RationalMap),(symbol <==>,RationalMap,RationalMap)}}
 
 document {
-Key => {(isIsomorphism,MultirationalMap)},
+Key => {(isIsomorphism,RationalMap)},
 Headline => "whether a birational map is an isomorphism",
 Usage => "isIsomorphism Phi",
-Inputs => {"Phi" => MultirationalMap},
+Inputs => {"Phi" => RationalMap},
 Outputs => {Boolean => {"whether ",TT"Phi"," is an isomorphism"}},
 EXAMPLE {
 "-- map defined by the quadrics through a twisted cubic curve
 ZZ/33331[a..d]; f = legacyRationalMap {c^2-b*d,b*c-a*d,b^2-a*c};",
-"Phi = multirationalMap {f,f};",
+"Phi = rationalMap {f,f};",
 "isIsomorphism Phi",
 "Psi = first graph Phi;",
 "isIsomorphism Psi",
 "Eta = first graph Psi;",
 "isIsomorphism Eta",
 "assert(o8 and (not o6) and (not o4))"},
-SeeAlso => {(inverse,MultirationalMap),(isMorphism,MultirationalMap)}}
+SeeAlso => {(inverse,RationalMap),(isMorphism,RationalMap)}}
 
 document {
-Key => {baseLocus,(baseLocus,MultirationalMap),(baseLocus,LegacyRationalMap)},
+Key => {baseLocus,(baseLocus,RationalMap),(baseLocus,LegacyRationalMap)},
 Headline => "the base locus of a multi-rational map",
 Usage => "baseLocus Phi",
-Inputs => {MultirationalMap => "Phi"},
+Inputs => {RationalMap => "Phi"},
 Outputs => {MultiprojectiveVariety => {"the base locus of ",TT"Phi",", that is, the locus where it is not defined"}},
 EXAMPLE lines ///t = gens ring PP_(ZZ/33331)^5;
-Phi = multirationalMap {legacyRationalMap {t_0,t_1,t_2},legacyRationalMap {t_3,t_4,t_5}};
+Phi = rationalMap {legacyRationalMap {t_0,t_1,t_2},legacyRationalMap {t_3,t_4,t_5}};
 X = baseLocus Phi;
 describe X
 Psi = inverse(Phi|random(3,baseLocus Phi));
 Y = baseLocus Psi;
 describe Y///,
-SeeAlso => {(isMorphism,MultirationalMap),(ideal,LegacyRationalMap)}}
+SeeAlso => {(isMorphism,RationalMap),(ideal,LegacyRationalMap)}}
 
 document {
 Key => {(projectiveVariety,MultidimensionalMatrix)},
@@ -3961,49 +3946,49 @@ EXAMPLE {
 SeeAlso => {(det,MultidimensionalMatrix),(singularLocus,MultiprojectiveVariety)}}
 
 document {
-Key => {(symbol |,MultirationalMap,MultiprojectiveVariety),(symbol |,LegacyRationalMap,MultiprojectiveVariety),(symbol |,MultirationalMap,List)},
+Key => {(symbol |,RationalMap,MultiprojectiveVariety),(symbol |,LegacyRationalMap,MultiprojectiveVariety),(symbol |,RationalMap,List)},
 Headline => "restriction of a multi-rational map",
 Usage => "Phi | Z",
-Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
+Inputs => {RationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
 MultiprojectiveVariety => "Z" => {"a subvariety of ",TEX///$X$///}},
-Outputs => {MultirationalMap => {"the restriction of ",TEX///$\Phi$///," to ",TEX///$Z$///,", ",TEX///$\phi|_{Z}: Z \dashrightarrow Y$///}},
+Outputs => {RationalMap => {"the restriction of ",TEX///$\Phi$///," to ",TEX///$Z$///,", ",TEX///$\phi|_{Z}: Z \dashrightarrow Y$///}},
 EXAMPLE {
 "ZZ/33331[x_0..x_3], f = legacyRationalMap {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2}, g = legacyRationalMap {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3};",
-"Phi = last graph multirationalMap {f,g};",
+"Phi = last graph rationalMap {f,g};",
 "Z = (source Phi) * projectiveVariety ideal random({1,1,2},ring ambient source Phi);",
 "Phi' = Phi|Z;",
 "source Phi'",
 "assert(image Phi' == Phi Z)"},
 PARA{"The following is a shortcut to take restrictions on random hypersurfaces as above."},
 EXAMPLE {"Phi|{1,1,2};"},
-SeeAlso => {(symbol ||,MultirationalMap,MultiprojectiveVariety),(symbol |,LegacyRationalMap,Ideal),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety)}}
+SeeAlso => {(symbol ||,RationalMap,MultiprojectiveVariety),(symbol |,LegacyRationalMap,Ideal),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document {
-Key => {(symbol ||,MultirationalMap,MultiprojectiveVariety),(symbol ||,LegacyRationalMap,MultiprojectiveVariety),(symbol ||,MultirationalMap,List)},
+Key => {(symbol ||,RationalMap,MultiprojectiveVariety),(symbol ||,LegacyRationalMap,MultiprojectiveVariety),(symbol ||,RationalMap,List)},
 Headline => "restriction of a multi-rational map",
 Usage => "Phi || Z",
-Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
+Inputs => {RationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
 MultiprojectiveVariety => "Z" => {"a subvariety of ",TEX///$Y$///}},
 Outputs => {
-MultirationalMap => {"the restriction of ",TEX///$\Phi$///," to ",TEX///${\Phi}^{(-1)} Z$///,", ",TEX///${{\Phi}|}_{{\Phi}^{(-1)} Z}: {\Phi}^{(-1)} Z \dashrightarrow Z$///}},
+RationalMap => {"the restriction of ",TEX///$\Phi$///," to ",TEX///${\Phi}^{(-1)} Z$///,", ",TEX///${{\Phi}|}_{{\Phi}^{(-1)} Z}: {\Phi}^{(-1)} Z \dashrightarrow Z$///}},
 EXAMPLE {
 "ZZ/33331[x_0..x_3], f = legacyRationalMap {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2}, g = legacyRationalMap {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3};",
-"Phi = last graph multirationalMap {f,g};",
+"Phi = last graph rationalMap {f,g};",
 "Z = projectiveVariety ideal random({1,2},ring target Phi);",
 "Phi' = Phi||Z;",
 "target Phi'",
 "assert(source Phi' == Phi^* Z)"},
 PARA{"The following is a shortcut to take restrictions on random hypersurfaces as above."},
 EXAMPLE {"Phi||{1,2};"},
-SeeAlso => {(symbol |,MultirationalMap,MultiprojectiveVariety),(symbol ||,LegacyRationalMap,Ideal),(symbol ^*,MultirationalMap)}}
+SeeAlso => {(symbol |,RationalMap,MultiprojectiveVariety),(symbol ||,LegacyRationalMap,Ideal),(symbol ^*,RationalMap)}}
 
 document {
-Key => {(symbol |,MultirationalMap,MultirationalMap),(symbol |,LegacyRationalMap,MultirationalMap),(symbol |,MultirationalMap,LegacyRationalMap),(symbol |,LegacyRationalMap,LegacyRationalMap)},
+Key => {(symbol |,RationalMap,RationalMap),(symbol |,LegacyRationalMap,RationalMap),(symbol |,RationalMap,LegacyRationalMap),(symbol |,LegacyRationalMap,LegacyRationalMap)},
 Headline => "product of multi-rational maps",
 Usage => "Phi | Psi",
-Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
-MultirationalMap => "Psi" => { TEX///$\Psi:X \dashrightarrow Z$///}},
-Outputs => {MultirationalMap => {"the rational map ",TEX///$X \dashrightarrow Y\times Z$///," defined by ",TEX///$p\mapsto (\Phi(p),\Psi(p))$///,"; in other words, it is the map defined by the ",TO2{(symbol |,List,List),"join"}," of ",TO2{(factor,MultirationalMap),"factor"},TT" Phi"," with ",TO2{(factor,MultirationalMap),"factor"},TT" Psi"}},
+Inputs => {RationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
+RationalMap => "Psi" => { TEX///$\Psi:X \dashrightarrow Z$///}},
+Outputs => {RationalMap => {"the rational map ",TEX///$X \dashrightarrow Y\times Z$///," defined by ",TEX///$p\mapsto (\Phi(p),\Psi(p))$///,"; in other words, it is the map defined by the ",TO2{(symbol |,List,List),"join"}," of ",TO2{(factor,RationalMap),"factor"},TT" Phi"," with ",TO2{(factor,RationalMap),"factor"},TT" Psi"}},
 EXAMPLE {
 "Phi = rationalMap({veronese(1,2,ZZ/33331)},Dominant=>true);",
 "Psi = rationalMap {veronese(1,3,ZZ/33331)};",
@@ -4012,16 +3997,16 @@ EXAMPLE {
 "Eta | Phi;",
 "Phi | Psi | Eta;",
 "super oo;",
-"multirationalMap(oo,image oo);"},
-SeeAlso => {(symbol ||,MultirationalMap,MultirationalMap),(symbol |,List,List),(factor,MultirationalMap),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(super,MultirationalMap)}}
+"rationalMap(oo,image oo);"},
+SeeAlso => {(symbol ||,RationalMap,RationalMap),(symbol |,List,List),(factor,RationalMap),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(super,RationalMap)}}
 
 document {
-Key => {(symbol ||,MultirationalMap,MultirationalMap),(symbol ||,MultirationalMap,LegacyRationalMap),(symbol ||,LegacyRationalMap,MultirationalMap),(symbol ||,LegacyRationalMap,LegacyRationalMap)},
+Key => {(symbol ||,RationalMap,RationalMap),(symbol ||,RationalMap,LegacyRationalMap),(symbol ||,LegacyRationalMap,RationalMap),(symbol ||,LegacyRationalMap,LegacyRationalMap)},
 Headline => "product of multi-rational maps",
 Usage => "Phi || Psi",
-Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
-MultirationalMap => "Psi" => { TEX///$\Psi:Z \dashrightarrow W$///}},
-Outputs => {MultirationalMap => {"the rational map ",TEX///$\Phi\times\Psi:X\times Z \dashrightarrow Y\times W$///," defined by ",TEX///$\Phi\times\Psi(p,q) = (\Phi(p),\Psi(q))$///}},
+Inputs => {RationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
+RationalMap => "Psi" => { TEX///$\Psi:Z \dashrightarrow W$///}},
+Outputs => {RationalMap => {"the rational map ",TEX///$\Phi\times\Psi:X\times Z \dashrightarrow Y\times W$///," defined by ",TEX///$\Phi\times\Psi(p,q) = (\Phi(p),\Psi(q))$///}},
 EXAMPLE {
 "Phi = rationalMap({veronese(1,4,ZZ/33331)},Dominant=>true);",
 "Psi = last graph rationalMap PP_(ZZ/33331)^(1,3);",
@@ -4030,27 +4015,27 @@ EXAMPLE {
 "Psi || Eta;",
 "Psi || Eta || Phi;",
 "assert(oo == (Psi || Eta) || Phi and (Psi || Eta) || Phi == Psi || (Eta || Phi))"},
-SeeAlso => {(symbol |,MultirationalMap,MultirationalMap)}}
+SeeAlso => {(symbol |,RationalMap,RationalMap)}}
 
 document {
-Key => {(super,MultirationalMap)},
+Key => {(super,RationalMap)},
 Headline => "get the multi-rational map whose target is a product of projective spaces",
 Usage => "super Phi",
-Inputs => {MultirationalMap => "Phi" => {"whose target is a subvariety ",TEX///$Y\subseteq\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}},
-Outputs => {MultirationalMap => {"the composition of ",TT"Phi"," with the inclusion of ",TEX///$Y$///," into ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}},
+Inputs => {RationalMap => "Phi" => {"whose target is a subvariety ",TEX///$Y\subseteq\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}},
+Outputs => {RationalMap => {"the composition of ",TT"Phi"," with the inclusion of ",TEX///$Y$///," into ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}},
 EXAMPLE {
-"Phi = multirationalMap{legacyRationalMap(veronese(1,2,ZZ/33331),Dominant=>true),legacyRationalMap(veronese(1,3,ZZ/33331),Dominant=>true)};",
+"Phi = rationalMap{legacyRationalMap(veronese(1,2,ZZ/33331),Dominant=>true),legacyRationalMap(veronese(1,3,ZZ/33331),Dominant=>true)};",
 "super Phi;",
-"Psi = multirationalMap(Phi,image Phi);",
+"Psi = rationalMap(Phi,image Phi);",
 "super Psi == super Phi"},
-SeeAlso => {(target,MultirationalMap),(ambient,MultiprojectiveVariety),(super,LegacyRationalMap)}}
+SeeAlso => {(target,RationalMap),(ambient,MultiprojectiveVariety),(super,LegacyRationalMap)}}
 
 document {
-Key => {(trim,MultirationalMap),(trim,LegacyRationalMap)},
+Key => {(trim,RationalMap),(trim,LegacyRationalMap)},
 Headline => "trim the target of a multi-rational map",
 Usage => "trim Phi",
-Inputs => {MultirationalMap => "Phi" => {"from ",ofClass MultiprojectiveVariety," ",TEX///$X$///," to ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}},
-Outputs => {MultirationalMap => {"from ",TEX///$X$///," to ",TEX///$\mathbb{P}^{s_1}\times\cdots\times\mathbb{P}^{s_n}$///,", with ",TEX///$s_i\leq k_i$///,", which is isomorphic to the original map, but whose image is not contained in any hypersurface of multidegree ",TEX///$(d_1,\ldots,d_n)$///," with ",TEX///$\sum_{i=1}^n d_i = 1$///}},
+Inputs => {RationalMap => "Phi" => {"from ",ofClass MultiprojectiveVariety," ",TEX///$X$///," to ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}},
+Outputs => {RationalMap => {"from ",TEX///$X$///," to ",TEX///$\mathbb{P}^{s_1}\times\cdots\times\mathbb{P}^{s_n}$///,", with ",TEX///$s_i\leq k_i$///,", which is isomorphic to the original map, but whose image is not contained in any hypersurface of multidegree ",TEX///$(d_1,\ldots,d_n)$///," with ",TEX///$\sum_{i=1}^n d_i = 1$///}},
 EXAMPLE {
 "K = ZZ/33331; C = PP_K^(1,4); -- rational normal quartic curve",
 "Phi = rationalMap C; -- map defined by the quadrics through C",
@@ -4105,7 +4090,7 @@ Headline => "permute the factors of the ambient multi-projective space",
 Usage => "permute(X,s)",
 Inputs => {"X" => MultiprojectiveVariety => {"a subvariety of ",TEX///$\mathbb{P}^{k_0}\times\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_{n}}$///},
 "s" => List => {"a permutation of the set ",TEX///$\{0,1,\ldots,n\}$///}},
-Outputs => {MultirationalMap => {"an isomorphism from ",TEX///$X$///," to a subvariety of ",TEX///$\mathbb{P}^{k_{s(0)}}\times\mathbb{P}^{k_{s(1)}}\times\cdots\times\mathbb{P}^{k_{s(n)}}$///}},
+Outputs => {RationalMap => {"an isomorphism from ",TEX///$X$///," to a subvariety of ",TEX///$\mathbb{P}^{k_{s(0)}}\times\mathbb{P}^{k_{s(1)}}\times\cdots\times\mathbb{P}^{k_{s(n)}}$///}},
 EXAMPLE {
 "X = PP_(ZZ/33331)^{2,3,1};",
 "f = permute(X,{1,0,2});",
@@ -4129,45 +4114,46 @@ EXAMPLE {
 SeeAlso => {(shape,MultidimensionalMatrix)}}
 
 document {
-Key => {(show,MultirationalMap),(show,LegacyRationalMap)},
+Key => {(show,RationalMap),(show,LegacyRationalMap)},
 Headline => "display a multi-rational map",
 Usage => "show Phi",
-Inputs => {"Phi" => MultirationalMap},
+Inputs => {"Phi" => RationalMap},
 Outputs => {{"a formatted description of ",TT"Phi",", displayed as a net or as TeX depending on the interface"}},
 EXAMPLE {
 "Phi = inverse first graph last graph rationalMap PP_(ZZ/33331)^(1,3)",
 "describe Phi",
 "show Phi"},
-SeeAlso => {(describe,MultirationalMap)}}
+SeeAlso => {(describe,RationalMap)}}
 
 document {
-Key => {degreeSequence,(degreeSequence,MultirationalMap),(degreeSequence,LegacyRationalMap)},
+Key => {degreeSequence,(degreeSequence,RationalMap),(degreeSequence,LegacyRationalMap)},
 Headline => "the (multi)-degree sequence of a (multi)-rational map",
 Usage => "degreeSequence Phi",
-Inputs => {"Phi" => MultirationalMap},
-Outputs => {List => {"the list of the degree sequences for the rational maps returned by ",TO2{(factor,MultirationalMap),"factor"},TT" Phi","."}},
+Inputs => {"Phi" => RationalMap},
+Outputs => {List => {"the list of the degree sequences for the rational maps returned by ",TO2{(factor,RationalMap),"factor"},TT" Phi","."}},
 EXAMPLE {
 "Phi = inverse first graph last graph rationalMap PP_(ZZ/33331)^(1,3);",
 "degreeSequence Phi"},
-SeeAlso => {(factor,MultirationalMap)},
+SeeAlso => {(factor,RationalMap)},
 References => {HREF{"https://www.sciencedirect.com/science/article/pii/S0021869304001930","Cremona transformations and some related algebras"},", by A. Simis."}}
 
 document {
-Key => {(describe,MultirationalMap),(symbol ?,MultirationalMap)},
+Key => {(describe,RationalMap),(symbol ?,RationalMap)},
 Headline => "describe a multi-rational map",
 Usage => "describe Phi
 ? Phi",
-Inputs => {"Phi" => MultirationalMap},
+Inputs => {"Phi" => RationalMap},
 Outputs => {{"a description of ",TT"Phi"}},
 PARA{TT"? Phi"," is a lite version of ",TT"describe Phi",". The latter has a different behavior than ",TO (describe,LegacyRationalMap),", since it performs computations."},
 EXAMPLE {
-"Phi = multirationalMap graph rationalMap PP_(ZZ/65521)^(1,4);",
+"g = graph rationalMap PP_(ZZ/65521)^(1,4);",
+"Phi = rationalMap((factor first g)|(factor last g));",
 "? Phi",
 "image Phi;",
 "? Phi",
 "describe Phi",
 "? Phi"},
-SeeAlso => {(describe,MultiprojectiveVariety),(show,MultirationalMap)}}
+SeeAlso => {(describe,MultiprojectiveVariety),(show,RationalMap)}}
 
 document {
 Key => {(describe,MultiprojectiveVariety),(symbol ?,MultiprojectiveVariety)},
@@ -4182,7 +4168,7 @@ EXAMPLE {
 "? X",
 "describe X",
 "? image segre X"},
-SeeAlso => {(describe,MultirationalMap)}}
+SeeAlso => {(describe,RationalMap)}}
 
 document {
 Key => {(symbol !,EmbeddedProjectiveVariety),sumUp,(sumUp,EmbeddedProjectiveVariety)},
@@ -4202,21 +4188,21 @@ X!
 SeeAlso => {(describe,MultiprojectiveVariety),(symbol ?,MultiprojectiveVariety)}}
 
 document {
-Key => {(clean,MultirationalMap),(clean,LegacyRationalMap)},
+Key => {(clean,RationalMap),(clean,LegacyRationalMap)},
 Headline => "clean the internal information of a multi-rational map",
 Usage => "clean Phi",
-Inputs => {"Phi" => MultirationalMap},
-Outputs => {MultirationalMap => {"which is identical to ",TT"Phi",", but new to the system"}},
+Inputs => {"Phi" => RationalMap},
+Outputs => {RationalMap => {"which is identical to ",TT"Phi",", but new to the system"}},
 PARA{"This is only useful for comparing computation times for various algorithms."},
 EXAMPLE {"Phi = 1_(PP_QQ^2);", "Psi = clean Phi;", "Phi == Psi", "Phi === Psi"}}
 
 document {
-Key => {(symbol **,MultirationalMap,Ring)},
+Key => {(symbol **,RationalMap,Ring)},
 Headline => "change the coefficient ring of a multi-rational map",
 Usage => "Phi ** K",
-Inputs => {MultirationalMap => "Phi" => {"defined over a coefficient ring ",TT"F"},
+Inputs => {RationalMap => "Phi" => {"defined over a coefficient ring ",TT"F"},
 Ring => "K" => {"the new coefficient ring (which must be a field)"}},
-Outputs => {MultirationalMap => {"a multi-rational map defined over ",TT"K",", obtained by coercing the coefficients of the multi-forms defining ",TT"Phi", " into ",TT"K"}},
+Outputs => {RationalMap => {"a multi-rational map defined over ",TT"K",", obtained by coercing the coefficients of the multi-forms defining ",TT"Phi", " into ",TT"K"}},
 PARA {"It is necessary that all multi-forms in the old coefficient ring ",TT"F"," can be automatically coerced into the new coefficient ring ",TT"K","."},
 EXAMPLE {
 "Phi = inverse first graph rationalMap PP_QQ^(2,2);",
@@ -4226,7 +4212,7 @@ EXAMPLE {
 "describe Phi'",
 "Phi'' = Phi ** frac(K[t]);",
 "describe Phi''"},
-SeeAlso => {(coefficientRing,MultirationalMap),(symbol **,LegacyRationalMap,Ring),(symbol **,MultiprojectiveVariety,Ring)}}
+SeeAlso => {(coefficientRing,RationalMap),(symbol **,LegacyRationalMap,Ring),(symbol **,MultiprojectiveVariety,Ring)}}
 
 document {
 Key => {(symbol **,MultiprojectiveVariety,Ring)},
@@ -4243,15 +4229,15 @@ EXAMPLE {
 "K = ZZ/65521;",
 "X' = X ** K;",
 "ideal X'"},
-SeeAlso => {(coefficientRing,MultiprojectiveVariety),(symbol **,MultirationalMap,Ring)}}
+SeeAlso => {(coefficientRing,MultiprojectiveVariety),(symbol **,RationalMap,Ring)}}
 
 document {
-Key => {"shortcuts",(rationalMap,MultiprojectiveVariety),(rationalMap,MultiprojectiveVariety,List),(rationalMap,MultiprojectiveVariety,ZZ),(rationalMap,MultiprojectiveVariety,ZZ,ZZ),(multirationalMap,LegacyRationalMap)},
+Key => {"shortcuts",(rationalMap,MultiprojectiveVariety),(rationalMap,MultiprojectiveVariety,List),(rationalMap,MultiprojectiveVariety,ZZ),(rationalMap,MultiprojectiveVariety,ZZ,ZZ),(rationalMap,LegacyRationalMap)},
 Headline => "Some convenient shortcuts for multi-rational maps whose target is an embedded projective variety",
-Usage => "rationalMap X <==> multirationalMap {legacyRationalMap ideal X}
-rationalMap(X,a) <==> multirationalMap {legacyRationalMap(ideal X,a)}
-rationalMap(X,a,b) <==> multirationalMap {legacyRationalMap(ideal X,a,b)}
-multirationalMap f <==> multirationalMap {f}",
+Usage => "rationalMap X <==> rationalMap {legacyRationalMap ideal X}
+rationalMap(X,a) <==> rationalMap {legacyRationalMap(ideal X,a)}
+rationalMap(X,a,b) <==> rationalMap {legacyRationalMap(ideal X,a,b)}
+rationalMap f <==> rationalMap {f}",
 Inputs => {
 "X" => MultiprojectiveVariety,
 "a" => ZZ => {"or ",ofClass List," of integers"},
@@ -4261,23 +4247,23 @@ EXAMPLE {
 "X = PP_QQ^(1,3);",
 "a = 4, b = 2;",
 "phi = rationalMap X;",
-"assert(phi <==> multirationalMap {legacyRationalMap ideal X})",
+"assert(phi <==> rationalMap {legacyRationalMap ideal X})",
 "phi = rationalMap(X,a);",
-"assert(phi <==> multirationalMap {legacyRationalMap(ideal X,a)})",
+"assert(phi <==> rationalMap {legacyRationalMap(ideal X,a)})",
 "phi = rationalMap(X,a,b);",
-"assert(phi <==> multirationalMap {legacyRationalMap(ideal X,a,b)})"},
+"assert(phi <==> rationalMap {legacyRationalMap(ideal X,a,b)})"},
 PARA{"If you want to consider ",TEX///$X$///," as a subvariety of another multi-projective variety ",TEX///$Y$///,", you may use the command ",TT///X_Y///,". For instance, ",TT///rationalMap(X_Y,a)///," returns the rational map from ",TEX///$Y$///," defined by a basis of the linear system ",TEX///$|H^0(Y,\mathcal{I}_{X\subseteq Y}(a))|$///," (basically, this is equivalent to ",TT"trim((rationalMap(X,a))|Y)",")."},
 EXAMPLE {
 "Y = random(3,X);",
 "rationalMap(X_Y,a);",
 "rationalMap X_Y;"},
-SeeAlso => {(legacyRationalMap,Ideal),(legacyRationalMap,Ideal,ZZ),(legacyRationalMap,Ideal,ZZ,ZZ),(symbol <==>,MultirationalMap,MultirationalMap),toLegacyRationalMap}}
+SeeAlso => {(legacyRationalMap,Ideal),(legacyRationalMap,Ideal,ZZ),(legacyRationalMap,Ideal,ZZ,ZZ),(symbol <==>,RationalMap,RationalMap),toLegacyRationalMap}}
 
 document {
-Key => {toLegacyRationalMap,(toLegacyRationalMap,MultirationalMap),symbol toRationalMap},
+Key => {toLegacyRationalMap,(toLegacyRationalMap,RationalMap)},
 Headline => "convert a multi-rational map with embedded projective target to a legacy rational map",
 Usage => "toLegacyRationalMap Phi",
-Inputs => {"Phi" => MultirationalMap => {"whose target is ",ofClass EmbeddedProjectiveVariety}},
+Inputs => {"Phi" => RationalMap => {"whose target is ",ofClass EmbeddedProjectiveVariety}},
 Outputs => {LegacyRationalMap => {"which is mathematically equal to ",TT"Phi"," but represented as an object of the class ",TO LegacyRationalMap," of the package ",TO Cremona}},
 PARA{"This is useful when you need to use tools from the package ",TO Cremona,"."},
 EXAMPLE {
@@ -4286,7 +4272,7 @@ EXAMPLE {
 "f = toLegacyRationalMap Phi;",
 "class f",
 "assert(Phi == f and Phi =!= f)"},
-SeeAlso => {(multirationalMap,LegacyRationalMap)}}
+SeeAlso => {(rationalMap,LegacyRationalMap)}}
 
 document {
 Key => {(variety,EmbeddedProjectiveVariety)},
@@ -4315,7 +4301,7 @@ Key => {linearlyNormalEmbedding,(linearlyNormalEmbedding,EmbeddedProjectiveVarie
 Headline => "get the linearly normal embedding",
 Usage => "linearlyNormalEmbedding X",
 Inputs => {"X" => EmbeddedProjectiveVariety},
-Outputs => {{"an ",TO2{MultirationalMap,"isomorphism"}," from ",TT"X"," to a linearly normal variety, whose inverse is a linear projection"}},
+Outputs => {{"an ",TO2{RationalMap,"isomorphism"}," from ",TT"X"," to a linearly normal variety, whose inverse is a linear projection"}},
 EXAMPLE {"K = ZZ/333331;",
 "X = PP_K^(1,7); -- rational normal curve of degree 7",
 "f = linearlyNormalEmbedding X;",
@@ -4411,7 +4397,7 @@ Headline => "try to find an isomorphism between two projective varieties",
 Usage => "X ===> Y
 Y <=== X",
 Inputs => {"X" => EmbeddedProjectiveVariety,"Y" => EmbeddedProjectiveVariety => {"projectively equivalent to ",TT "X"}},
-Outputs => {MultirationalMap => {"an isomorphism of the ambient spaces that sends ",TT"X"," to ",TT"Y"," (or an error if it fails)"}},
+Outputs => {RationalMap => {"an isomorphism of the ambient spaces that sends ",TT"X"," to ",TT"Y"," (or an error if it fails)"}},
 PARA{"This recursively tries to find an isomorphism between the base loci of the ",TO2{(parametrize,MultiprojectiveVariety),"parameterizations"},"."},
 PARA{"In the following example, ",TEX///$X$///," and ",TEX///$Y$///," are two random rational normal curves of degree 6 in ",TEX///$\mathbb{P}^6\subset\mathbb{P}^8$///,", and ",TEX///$V$///," (resp., ",TEX///$W$///,") is a random complete intersection of type (2,1) containing ",TEX///$X$///," (resp., ",TEX///$Y$///,")."},
 EXAMPLE lines ///K = ZZ/10000019;
@@ -4436,11 +4422,11 @@ show oo///,
 SeeAlso => {(parametrize,MultiprojectiveVariety)}}
 
 document {
-Key => {(symbol <<,MultirationalMap,MultiprojectiveVariety),(symbol <<,MultiprojectiveVariety,MultiprojectiveVariety)},
+Key => {(symbol <<,RationalMap,MultiprojectiveVariety),(symbol <<,MultiprojectiveVariety,MultiprojectiveVariety)},
 Headline => "force the change of the target in a multi-rational map",
 Usage => "Phi << Y",
-Inputs => {MultirationalMap => "Phi" => {"whose image is a subvariety ",TEX///$X\subseteq\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///},MultiprojectiveVariety => "Y" => {"a subvariety of ",TEX///$\mathbb{P}^{l_1}\times\cdots\times\mathbb{P}^{l_n}$///," with ",TEX///$k_i\leq l_i$///," for ",TEX///$i=1,\ldots,n$///}},
-Outputs => {MultirationalMap => {"the composition of ",TT"Phi"," with an inclusion of ",TEX///$X$///," into ",TEX///$Y$///," (if this is possible and easy, otherwise an error is generated)"}},
+Inputs => {RationalMap => "Phi" => {"whose image is a subvariety ",TEX///$X\subseteq\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///},MultiprojectiveVariety => "Y" => {"a subvariety of ",TEX///$\mathbb{P}^{l_1}\times\cdots\times\mathbb{P}^{l_n}$///," with ",TEX///$k_i\leq l_i$///," for ",TEX///$i=1,\ldots,n$///}},
+Outputs => {RationalMap => {"the composition of ",TT"Phi"," with an inclusion of ",TEX///$X$///," into ",TEX///$Y$///," (if this is possible and easy, otherwise an error is generated)"}},
 EXAMPLE {
 "Phi = parametrize PP_(ZZ/65521)^({1,3},{2,1});",
 "X = image Phi;",
@@ -4452,7 +4438,7 @@ PARA{"The inclusion ",TEX///$j:X\to Y$///," such that ",TT"Phi * j == Psi"," can
 EXAMPLE {
 "j = X << Y;",
 "assert(Phi * j == Psi and j == (1_X << Y))"},
-SeeAlso => {(multirationalMap,MultirationalMap,MultiprojectiveVariety)}}
+SeeAlso => {(rationalMap,RationalMap,MultiprojectiveVariety)}}
 
 document {
 Key => {(symbol ++,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)},
@@ -4497,7 +4483,7 @@ Headline => "the conormal variety of a projective variety",
 Usage => "conormalVariety X",
 Inputs => {"X" => EmbeddedProjectiveVariety},
 Outputs => {MultiprojectiveVariety => {"the conormal variety of ",TEX///$X$///}},
-EXAMPLE {"X = PP_QQ^(2,2);", "C = conormalVariety X;", "p2 = multirationalMap last projections C;", "image p2 == dual X"},
+EXAMPLE {"X = PP_QQ^(2,2);", "C = conormalVariety X;", "p2 = rationalMap last projections C;", "image p2 == dual X"},
 SeeAlso => {(dual,EmbeddedProjectiveVariety)}}
 typicalValues#conormalVariety = typValConVar;
 
@@ -4539,7 +4525,7 @@ SeeAlso => {(symbol %,MultiprojectiveVariety,MultiprojectiveVariety),(ambient,Mu
 document {Key => {GrassmannianVariety},
 Headline => "the class of all Grassmannians of linear subspaces of projective spaces",
 PARA{"Objects of this type are created by ",TO GG,"."},
-SeeAlso => {GG,(GG,ZZ,MultirationalMap),schubertCycle,cycleClass,(Fano,ZZ,EmbeddedProjectiveVariety),(tangentialChowForm,EmbeddedProjectiveVariety,ZZ)}}
+SeeAlso => {GG,(GG,ZZ,RationalMap),schubertCycle,cycleClass,(Fano,ZZ,EmbeddedProjectiveVariety),(tangentialChowForm,EmbeddedProjectiveVariety,ZZ)}}
 
 document {
 Key => {GG,(GG,ZZ,EmbeddedProjectiveVariety),(GG,ZZ,ZZ),(GG,Ring,ZZ,ZZ),(GG,Ring),(GG,EmbeddedProjectiveVariety)},
@@ -4550,14 +4536,14 @@ GG Grass(k,n,K,Variable=>\"x\")",
 Inputs => {"k" => ZZ, "P" => EmbeddedProjectiveVariety => {"a projective space of dimension ",TEX///$n$///}},
 Outputs => {GrassmannianVariety => {"which parametrizes the ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///}},
 EXAMPLE {"GG(2,PP_QQ^5)","describe oo"},
-SeeAlso => {(GG,ZZ,MultirationalMap)}}
+SeeAlso => {(GG,ZZ,RationalMap)}}
 
-document {Key => {(GG,ZZ,MultirationalMap),(GG,ZZ,LegacyRationalMap)},
+document {Key => {(GG,ZZ,RationalMap),(GG,ZZ,LegacyRationalMap)},
 Headline => "induced automorphism of the Grassmannian",
 Usage => "GG(k,f)",
 Inputs => {"k" => ZZ => {"to indicate the Grassmannian ", TO GG, TEX///$(k,n)$///, " of ", TEX///$k$///, "-dimensional subspaces of ", TEX///$\mathbb{P}^n$///},
-           "f" => MultirationalMap => {"an automorphism of ", TEX///$\mathbb{P}^n$///}},
-Outputs => {MultirationalMap => {"the induced automorphism of ", TO GG, TEX///$(k,n)$///}},
+           "f" => RationalMap => {"an automorphism of ", TEX///$\mathbb{P}^n$///}},
+Outputs => {RationalMap => {"the induced automorphism of ", TO GG, TEX///$(k,n)$///}},
 EXAMPLE {"K = ZZ/33331;", "f = random 1_(PP_K^4);", "show f", "F = GG(1,f);", "show F", "assert(F^-1 == GG(1,f^-1))"},
 SeeAlso => {GG}}
 
@@ -4583,21 +4569,21 @@ document {Key => {(rationalMap,MultiprojectiveVariety,Tally), (rationalMap,Multi
 Headline => "rational map defined by an effective divisor",
 Usage => "rationalMap(X,D)",
 Inputs => {"X" => MultiprojectiveVariety, "D" => Tally => {"a multiset of pure codimension 1 ",TO2{(symbol %,MultiprojectiveVariety,MultiprojectiveVariety),"subschemes"}," of ",TEX///$X$///," with no embedded components; so that ",TT"D"," is interpreted as an effective divisor on ",TEX///$X$///}},
-Outputs => {MultirationalMap => {"the rational map defined by the complete linear system ",TEX///$|D|$///}},
+Outputs => {RationalMap => {"the rational map defined by the complete linear system ",TEX///$|D|$///}},
 PARA{"In the example below, we take a smooth complete intersection ",TEX///$X\subset\mathbb{P}^5$///," of three quadrics containing a conic ",TEX///$C\subset\mathbb{P}^5$///,". Then we calculate the map defined by the linear system ",TEX///$|2H+C|$///,", where ",TEX///$H$///," is the hyperplane section class of ",TEX///$X$///,"."},
 EXAMPLE {"P5 = PP_(ZZ/65521)^5;", "C = random({{2},3:{1}},0_P5);", "X = random({3:{2}},C);", "H = random(1,0_X); -- it's interpreted as X * H", "D = tally {H, H, C}", "phi = rationalMap(X,D)", "assert(phi == rationalMap(X,tally {X*H, X*H, C}))"},
 PARA{"This function is based internally on the function ",TO (legacyRationalMap,Ring,Tally),", provided by the package ",TO Cremona,"."},
 SeeAlso => {(legacyRationalMap,Ring,Tally),(symbol SPACE,RAT,Tally)}}
 
-document {Key => {(forceImage,MultirationalMap,MultiprojectiveVariety),(forceImage,MultirationalMap,ZZ)},
+document {Key => {(forceImage,RationalMap,MultiprojectiveVariety),(forceImage,RationalMap,ZZ)},
 Headline => "declare which is the image of a multi-rational map",
 Usage => "forceImage(Phi,Y)",
-Inputs => {"Phi" => MultirationalMap, "Y" => MultiprojectiveVariety},
+Inputs => {"Phi" => RationalMap, "Y" => MultiprojectiveVariety},
 Outputs => {Nothing => {TO null}},
 PARA{"This method allows to inform the system about the image of a given multi-rational map without performing any computation. In particular, this can be used to declare that a rational map is dominant."},
 EXAMPLE {///Phi = rationalMap {minors(3,(PP_(ZZ/65521)([6],2)).matrix)};///, "Y = image(Phi,2)", "forceImage(Phi,Y)", "image Phi", ///Psi = rationalMap({minors(3,(PP_(ZZ/65521)([6],2)).matrix)},Dominant=>2);///, "forceImage(Psi,target Psi)", "Psi;"},
 Caveat => {"If the declaration is false, nonsensical answers may result."},
-SeeAlso => {(image,MultirationalMap),(forceImage,LegacyRationalMap,Ideal)}}
+SeeAlso => {(image,RationalMap),(forceImage,LegacyRationalMap,Ideal)}}
 
 document {Key => {RAT},
 Headline => "the hom-sets of rational maps between two multi-projective varieties",
@@ -4608,7 +4594,7 @@ document {Key => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(Hom,Nothi
 Headline => "get the hom-set of rational maps between two multi-projective varieties",
 Usage => "Hom(X,Y)",
 Inputs => {"X" => MultiprojectiveVariety, "Y" => MultiprojectiveVariety},
-Outputs => {RAT => {"the hom-set of ",TO2{MultirationalMap,"rational maps"}," from ",TT"X"," to ",TT"Y"}},
+Outputs => {RAT => {"the hom-set of ",TO2{RationalMap,"rational maps"}," from ",TT"X"," to ",TT"Y"}},
 EXAMPLE {
 "K = ZZ/3;",
 "X = random({1,1},0_(PP_K^{1,1}));",
@@ -4631,26 +4617,26 @@ Usage => "H {F1,F2,...}
 check H {F1,F2,...}",
 Inputs => {RAT => "H" => {"the hom-set of rational maps between two ",TO2{MultiprojectiveVariety,"multi-projective varieties"}," ",TT"X"," and ",TT"Y"},
 List => "F" => {"a list of homogeneous row matrices over the ring of ",TT"X"," of lengths compatible with the ",TO2{(shape,MultiprojectiveVariety),"shape"}," of ",TT"Y"," (these matrices can be replaced by the lists of their entries)"}},
-Outputs => {MultirationalMap => {"the map from ",TT"X"," to ",TT"Y"," defined on coordinates by sending a point ",TT"p"," to the point ",TT"(F1(p),F2(p),...)"}},
-PARA{"This is the recommended way of constructing multi-rational maps: source and target are given explicitly, and there is no need to pass through the ",TO2{LegacyRationalMap,"legacy rational maps"}," required by the function ",TO2{(multirationalMap,List,MultiprojectiveVariety),"multirationalMap"},"."},
+Outputs => {RationalMap => {"the map from ",TT"X"," to ",TT"Y"," defined on coordinates by sending a point ",TT"p"," to the point ",TT"(F1(p),F2(p),...)"}},
+PARA{"This is the recommended way of constructing multi-rational maps: source and target are given explicitly, and there is no need to pass through the ",TO2{LegacyRationalMap,"legacy rational maps"}," used by the function ",TO2{(rationalMap,List,MultiprojectiveVariety),"rationalMap"},"."},
 EXAMPLE {
 "R = ring PP_(ZZ/3)^{1,2};",
 "F = {apply(2,i -> random({1,1},R)), apply(4,i -> random({0,1},R)), apply(3,i -> random({1,0},R))}",
 "H = Hom(PP_(ZZ/3)^{1,2},PP_(ZZ/3)^{1,3,2})",
 "f = H F;",
 "show f"},
-PARA{"The following equality is satisfied for every ",TO2{MultirationalMap,"rational map"}," ",TT"f","."},
+PARA{"The following equality is satisfied for every ",TO2{RationalMap,"rational map"}," ",TT"f","."},
 EXAMPLE {"assert( f == (Hom(source f,target f)) entries f )"},
 PARA{"Here it is shown how to make a dominant rational map."},
 EXAMPLE {"H' = Hom(PP_(ZZ/3)^{1,2},Dominant);", "H' F", "assert(image oo == target oo)"},
-SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(symbol SPACE,RAT,MultiprojectiveVariety),(symbol SPACE,RAT,Tally),(entries,MultirationalMap)}}
+SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),(symbol SPACE,RAT,MultiprojectiveVariety),(symbol SPACE,RAT,Tally),(entries,RationalMap)}}
 
 document {Key => {(symbol SPACE,RAT,Tally)},
 Headline => "rational map defined by an effective divisor",
 Usage => "H D
 check H D",
 Inputs => {"H" => RAT => {"the hom-set of rational maps between two varieties ",TT"X"," and ",TT"Y"}, "D" => Tally => {"a multiset of pure codimension 1 ",TO2{(symbol %,MultiprojectiveVariety,MultiprojectiveVariety),"subschemes"}," of ",TEX///$X$///," with no embedded components; so that ",TT"D"," is interpreted as an effective divisor on ",TEX///$X$///}},
-Outputs => {MultirationalMap => {"the rational map defined by the complete linear system ",TEX///$|D|$///}},
+Outputs => {RationalMap => {"the rational map defined by the complete linear system ",TEX///$|D|$///}},
 PARA{"This is another way of calling ",TO(rationalMap,MultiprojectiveVariety,Tally),"."},
 EXAMPLE {
 "X = random(3,0_(PP_(ZZ/5)^2));",
@@ -4667,7 +4653,7 @@ Usage => "H(Z,d,m)
 H(Z,d)
 H(Z)",
 Inputs => {{"the hom-set of rational maps between two varieties ",TT"X"," and ",TT"Y"}, "Z" => {"a ",TO2{(symbol %,MultiprojectiveVariety,MultiprojectiveVariety),"subvariety"}," of ",TEX///$X$///,"; ",TT"d"," is a (multi-)degree and ",TT"e"," is a multiplicity (by default, ",TT"e=1"," and ",TT"d"," is the maximum degree of the generators)"}},
-Outputs => {MultirationalMap => {"the map ",TEX///$X\dashrightarrow Y$///," defined by the linear system of hypersurfaces of degree ",TEX///$d$///, " having points of multiplicity ",TEX///$e$///," along ",TEX///$Z$///}},
+Outputs => {RationalMap => {"the map ",TEX///$X\dashrightarrow Y$///," defined by the linear system of hypersurfaces of degree ",TEX///$d$///, " having points of multiplicity ",TEX///$e$///," along ",TEX///$Z$///}},
 PARA{"This is another way of calling the method ",TO2{"shortcuts",///(rationalMap,MultiprojectiveVariety,List,ZZ)///},"."},
 EXAMPLE {
 "X = random(3,0_(PP_(ZZ/17)^2));",
@@ -4676,7 +4662,7 @@ EXAMPLE {
 "Z = point X + point X;",
 "H(Z,3,2) -- map defined by the cubics with double points along Z",
 "show oo"},
-PARA {"As always, you can invoke the functions ",TO2{(check,MultirationalMap),"check"}," and ",TO2{(isWellDefined,MultirationalMap),"isWellDefined"}," to check if the map is valid."},
+PARA {"As always, you can invoke the functions ",TO2{(check,RationalMap),"check"}," and ",TO2{(isWellDefined,RationalMap),"isWellDefined"}," to check if the map is valid."},
 EXAMPLE {
 "X = PP_(ZZ/17)^{1,1};",
 "H = Hom(X,image segreEmbedding X);",
@@ -4684,10 +4670,10 @@ EXAMPLE {
 "show oo"},
 SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety),"shortcuts",(legacyRationalMap,Ideal,ZZ,ZZ)}}
 
-document {Key => {(member,MultirationalMap,RAT)},
+document {Key => {(member,RationalMap,RAT)},
 Headline => "test membership in a hom-set of rational maps",
 Usage => "member(Phi,H)",
-Inputs => {MultirationalMap => "Phi", RAT => "H"},
+Inputs => {RationalMap => "Phi", RAT => "H"},
 Outputs => {Boolean => {"whether ",TT"Phi"," is in the hom-set ",TT"H"}},
 EXAMPLE {"s = segreEmbedding PP_(ZZ/13)^{1,2};",
 "(X,Y) = (source s,target s);",
@@ -4698,14 +4684,14 @@ EXAMPLE {"s = segreEmbedding PP_(ZZ/13)^{1,2};",
 "assert(o3 and (not o4) and o5 and o6)"},
 SeeAlso => {(Hom,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
-document {Key => {(symbol @@,MultirationalMap,MultirationalMap),(symbol @@,MultirationalMap,ZZ)},
+document {Key => {(symbol @@,RationalMap,RationalMap),(symbol @@,RationalMap,ZZ)},
 Headline => "virtual composition of multi-rational maps",
 Usage => "Phi @@ Psi",
 Inputs => {
-MultirationalMap => "Phi" => {TEX///$X \dashrightarrow Y$///},
-MultirationalMap => "Psi" => {TEX///$Y \dashrightarrow Z$///}},
+RationalMap => "Phi" => {TEX///$X \dashrightarrow Y$///},
+RationalMap => "Psi" => {TEX///$Y \dashrightarrow Z$///}},
 Outputs => {
-MultirationalMap => {TEX///$X \dashrightarrow Z$///, ", the virtual composition of ",TT"Phi"," and ",TT"Psi"}},
+RationalMap => {TEX///$X \dashrightarrow Z$///, ", the virtual composition of ",TT"Phi"," and ",TT"Psi"}},
 PARA{TT"Phi @@ Psi"," represents the composition of ",TT"Phi"," and ",TT"Psi"," without computing its defining polynomials. Some operations can be performed directly on the resulting virtual composition; for example, if ",TT"W"," is a subvariety of its source and ",TT"Z"," is a subvariety of its target, then ",TT"(Phi @@ Psi) W"," and ",TT"(Phi @@ Psi)^* Z"," compute, factor by factor, the direct image of ",TT"W"," and the inverse image of ",TT"Z","; in special position the results may differ from those obtained from the materialized composition. The virtual composition can be materialized using ",TT"value","."},
 PARA{"An ordinary multi-rational map can be virtualized by virtually composing it with the identity, as in ",TT"Phi @@ 1",". This makes it possible to construct a virtual inverse using ",TT"inverse(Phi @@ 1)"," (when no concrete inverse is already known)."},
 EXAMPLE {
@@ -4717,7 +4703,7 @@ EXAMPLE {
 "assert(image value(f @@ g) == oo)",
 "f @@ 1",
 "inverse(f @@ 1)"},
-SeeAlso => {(symbol *,MultirationalMap,MultirationalMap)}}
+SeeAlso => {(symbol *,RationalMap,RationalMap)}}
 
 undocumented {
 (expression,MultiprojectiveVariety),
@@ -4736,29 +4722,26 @@ undocumented {
 (tangentialChowForm,EmbeddedProjectiveVariety,ZZ,ZZ),
 (degree,WeightedProjectiveVariety),
 (segre,WeightedProjectiveVariety),
-(expression,MultirationalMap),
-(net,MultirationalMap),
-(texMath,MultirationalMap),
-(toString,MultirationalMap),
-(multirationalMap,LegacyRationalMap,LegacyRationalMap), -- Intended for internal use only
-(multirationalMap,MultirationalMap,MultirationalMap), -- Intended for internal use only
-(multidegree,MultirationalMap,MultirationalMap), --  Intended for internal use only
-(multidegree,Nothing,MultirationalMap),
-(toLegacyRationalMap,MultirationalMap,Boolean), -- Intended for internal use only
-(source,MultirationalMap,MultirationalMap), -- Intended for internal use only
-(symbol ^^,MultirationalMap,MultiprojectiveVariety), -- Intended for internal use only
-(inverse,MultirationalMap,Option),
-(inverse2,MultirationalMap,Option),
-(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety,Boolean), -- Intended for internal use only
+(expression,RationalMap),
+(net,RationalMap),
+(texMath,RationalMap),
+(toString,RationalMap),
+(multidegree,RationalMap,RationalMap), --  Intended for internal use only
+(multidegree,Nothing,RationalMap),
+(toLegacyRationalMap,RationalMap,Boolean), -- Intended for internal use only
+(source,RationalMap,RationalMap), -- Intended for internal use only
+(symbol ^^,RationalMap,MultiprojectiveVariety), -- Intended for internal use only
+(inverse,RationalMap,Option),
+(inverse2,RationalMap,Option),
 (symbol ?,MultiprojectiveVariety,MultiprojectiveVariety),
 (Fano,EmbeddedProjectiveVariety,Option),
 (Fano,ZZ,EmbeddedProjectiveVariety,Option),
-(image,MultirationalMap,ZZ),(image,ZZ,MultirationalMap), -- This is dangerous because the defining ideal may not be saturated
-(image,MultirationalMap,String),
-(matrix,MultirationalMap),
-(random,MultirationalMap),
-quadricFibration, (quadricFibration,MultirationalMap), -- to be documented
-(forceInverseMap,MultirationalMap,MultirationalMap), -- to be improved
+(image,RationalMap,ZZ),(image,ZZ,RationalMap), -- This is dangerous because the defining ideal may not be saturated
+(image,RationalMap,String),
+(matrix,RationalMap),
+(random,RationalMap),
+quadricFibration, (quadricFibration,RationalMap), -- to be documented
+(forceInverseMap,RationalMap,RationalMap), -- to be improved
 (expression,RAT),
 (net,RAT),
 (texMath,RAT),
@@ -4773,7 +4756,7 @@ TEST ///
 K = ZZ/333331, R = K[x_0..x_5];
 f = legacyRationalMap for i to 2 list random(1,R);
 g = legacyRationalMap for i to 2 list random(1,R);
-Phi = multirationalMap {f,g};
+Phi = rationalMap {f,g};
 assert(degree Phi == 0 and multidegree Phi == {1, 2, 4, 6, 6, 0});
 assert (apply(decompose baseLocus Phi,o -> ?ideal o) == {"plane in PP^5","plane in PP^5"});
 X = random(3,baseLocus Phi);
@@ -4827,8 +4810,8 @@ texForTest = /// | "///" | ///\begin{aligned}&\text{rational map between project
 R = ZZ/300007[x_0..x_3];
 C3 = ideal(x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2);
 C2 = ideal(x_1^2-x_0*x_2,x_3);
-Phi = last graph multirationalMap(legacyRationalMap C3,legacyRationalMap C2);
-Phi = multirationalMap(Phi,image Phi);
+Phi = last graph rationalMap {legacyRationalMap C3,legacyRationalMap C2};
+Phi = rationalMap(Phi,image Phi);
 -- assert(multidegree(,Phi) == {66, 46, 31, 20}) -- too long time
 assert(multidegree(3,Phi) == 66 and multidegree(2,Phi) == 46);
 assert(multidegree Phi == {66, 46, 31, 20})
@@ -4849,7 +4832,7 @@ Z = {target Phi, random({1,1},0_Y), random({{1,1},{1,1}},0_Y), random({{1,1},{1,
 W = apply(Z,z -> Phi^* z);
 assert(apply(W,w -> (dim w,degree w)) == {(3, 66), (2, 46), (1, 31), (0, 20), (0,1), (0,3)})
 assert(W_5 == Phi^** (last Z))
-Psi = check multirationalMap({legacyRationalMap matrix(2,first factor Phi),legacyRationalMap matrix(1,last factor Phi)},target Phi);
+Psi = check rationalMap({legacyRationalMap matrix(2,first factor Phi),legacyRationalMap matrix(1,last factor Phi)},target Phi);
 assert(apply(factor Phi,f -> first degrees ideal matrix f) == {{0, 1, 0}, {0, 0, 1}})
 assert(apply(factor Psi,f -> first degrees ideal matrix f) == {{1, 0, 1}, {2, 0, 0}})
 assert(Phi == Psi and inverse Phi == inverse Psi and source graph Phi == source graph Psi)
@@ -4862,8 +4845,8 @@ TEST ///
 ringP4 := ZZ/300007[a..e];
 f = legacyRationalMap minors(2,matrix {{a,b,c,d},{b,c,d,e}});
 g = legacyRationalMap(minors(2,matrix{{a,b,c},{b,c,d}}) + ideal e);
-Phi = multirationalMap {f,g};
-Phi = multirationalMap(Phi,image Phi);
+Phi = rationalMap {f,g};
+Phi = rationalMap(Phi,image Phi);
 Psi = inverse(Phi,Verify=>true);
 assert(Phi * Psi == 1 and Psi * Phi == 1)
 (F,G) = graph Phi;
@@ -4894,7 +4877,7 @@ assert(multidegree(,Phi) == multidegree Phi)
 assert(projectiveDegrees Phi == multidegree Phi)
 assert(degree(Phi,Strategy=>"random point") == 1)
 R = ZZ/33331[x_0..x_4];
-Phi = (last graph multirationalMap legacyRationalMap transpose jacobian(-x_2^3+2*x_1*x_2*x_3-x_0*x_3^2-x_1^2*x_4+x_0*x_2*x_4))||projectiveVariety ideal(random(2,R));
+Phi = (last graph rationalMap legacyRationalMap transpose jacobian(-x_2^3+2*x_1*x_2*x_3-x_0*x_3^2-x_1^2*x_4+x_0*x_2*x_4))||projectiveVariety ideal(random(2,R));
 assert(net(? source Phi) == "threefold in PP^4 x PP^4 cut out by 13 hypersurfaces of multi-degrees (0,2)^1 (1,1)^3 (2,1)^8 (4,0)^1 ")
 assert(texMath(? source Phi) == "\\text{threefold}\\text{ in }\\mathbb{P}^{4}\\times\\mathbb{P}^{4}\\text{ cut out by }13\\text{ hypersurfaces of multi-degrees }{\\left(0,\\,2\\right)}^{1}\\ {\\left(1,\\,1\\right)}^{3}\\ {\\left(2,\\,1\\right)}^{8}\\ {\\left(4,\\,0\\right)}^{1}\\ ")
 assert(net(? target Phi) == "quadric hypersurface in PP^4")
@@ -4907,7 +4890,7 @@ assert(degreeMap Phi == 2)
 
 TEST ///
 z = gens ring projectiveVariety({3},ZZ/41)
-phi = multirationalMap legacyRationalMap toMap minors(3,matrix{{-z_1,z_0,-z_1^2+z_0*z_3},{z_0,z_1,z_0^2-z_1*z_2},{0,z_2,z_0*z_1-z_1*z_3},{0,z_3,-z_0*z_1+z_0*z_2}})
+phi = rationalMap legacyRationalMap toMap minors(3,matrix{{-z_1,z_0,-z_1^2+z_0*z_3},{z_0,z_1,z_0^2-z_1*z_2},{0,z_2,z_0*z_1-z_1*z_3},{0,z_3,-z_0*z_1+z_0*z_2}})
 time G := source graph phi;
 time Gs := source graph(clean phi,BlowUpStrategy=>"Syzygies");
 time Gk := source graph(clean phi,BlowUpStrategy=>"Koszul");
@@ -4915,8 +4898,8 @@ assert(G == Gs and Gs == Gk);
 psi = inverse phi;
 assert(phi * psi == 1 and psi * phi == 1);
 
-phi' = phi|multirationalMap(source phi);
-phi' = multirationalMap(phi',image phi');
+phi' = phi|(1_(source phi));
+phi' = rationalMap(phi',image phi');
 time G' := source graph phi';
 time Gs' := source graph(clean phi',BlowUpStrategy=>"Syzygies");
 time Gk' := source graph(clean phi',BlowUpStrategy=>"Koszul");
@@ -5013,7 +4996,7 @@ assert(linearSpan U == fold(U,(x,y)->x++y))
 ///
 
 TEST /// -- inverse2
-Phi = last graph multirationalMap quadroQuadricCremonaTransformation(11,1,ZZ/65521);
+Phi = last graph rationalMap quadroQuadricCremonaTransformation(11,1,ZZ/65521);
 Psi = inverse2 Phi;
 Phi' = clean Phi;
 Psi' = inverse Phi';
@@ -5136,39 +5119,38 @@ V = PP_K^(2,2);
 W = conormalVariety V;
 V' = dual V;
 W' = conormalVariety V';
-assert(V == image multirationalMap first projections W);
-assert(V' == image multirationalMap last projections W);
-assert(V' == image multirationalMap first projections W');
-assert(V == image multirationalMap last projections W');
-j := check multirationalMap(permute(W,{1,0}),W');
+assert(V == image rationalMap first projections W);
+assert(V' == image rationalMap last projections W);
+assert(V' == image rationalMap first projections W');
+assert(V == image rationalMap last projections W');
+j := check rationalMap(permute(W,{1,0}),W');
 assert(isIsomorphism j);
 ///
 
-TEST /// -- conversion between LegacyRationalMap and MultirationalMap
+TEST /// -- conversion between LegacyRationalMap and RationalMap
 X = random(2,0_(PP_(ZZ/65521)^4));
 f = parametrize X;
-assert(instance(f,MultirationalMap) and f#"inverse" =!= null)
-assert(inverse f === multirationalMap inverse toLegacyRationalMap f)
-assert(multirationalMap toLegacyRationalMap f === f)
+assert(instance(f,RationalMap) and f#"inverse" =!= null)
+assert(inverse f === rationalMap inverse toLegacyRationalMap f)
+assert(rationalMap toLegacyRationalMap f === f)
 -- assert(inverse toLegacyRationalMap f === toLegacyRationalMap inverse f) -- this fails (28/08/2022)
 assert(inverse toLegacyRationalMap f == toLegacyRationalMap inverse f)
-assert(multirationalMap inverse toLegacyRationalMap f === multirationalMap toLegacyRationalMap inverse f)
+assert(rationalMap inverse toLegacyRationalMap f === rationalMap toLegacyRationalMap inverse f)
 I = ideal random(2,0_(PP_(ZZ/333331)^4));
 g = legacyRationalMap(parametrize I,Dominant=>true);
 assert(instance(g,LegacyRationalMap) and g#"inverseRationalMap" === null)
 assert(inverse inverse g === g)
-assert(toLegacyRationalMap multirationalMap g === g)
--- assert(inverse multirationalMap g === multirationalMap inverse g)  -- this fails (28/08/2022)
-assert(inverse multirationalMap g == multirationalMap inverse g)
-assert(toLegacyRationalMap inverse multirationalMap g === toLegacyRationalMap multirationalMap inverse g)
--- assert(inverse g === toLegacyRationalMap inverse multirationalMap g) -- this fails (28/08/2022)
-assert(inverse g == toLegacyRationalMap inverse multirationalMap g)
--- assert(inverse inverse (inverse multirationalMap g) === inverse multirationalMap g) -- this fails (28/08/2022)
-assert(inverse inverse (inverse multirationalMap g) == inverse multirationalMap g)
-assert(inverse inverse multirationalMap g === multirationalMap g)
--- assert(toLegacyRationalMap multirationalMap g === g) -- this fails (28/08/2022)
-assert(toLegacyRationalMap multirationalMap g == g)
-assert(toRationalMap === toLegacyRationalMap)
+assert(toLegacyRationalMap rationalMap g === g)
+-- assert(inverse rationalMap g === rationalMap inverse g)  -- this fails (28/08/2022)
+assert(inverse rationalMap g == rationalMap inverse g)
+assert(toLegacyRationalMap inverse rationalMap g === toLegacyRationalMap rationalMap inverse g)
+-- assert(inverse g === toLegacyRationalMap inverse rationalMap g) -- this fails (28/08/2022)
+assert(inverse g == toLegacyRationalMap inverse rationalMap g)
+-- assert(inverse inverse (inverse rationalMap g) === inverse rationalMap g) -- this fails (28/08/2022)
+assert(inverse inverse (inverse rationalMap g) == inverse rationalMap g)
+assert(inverse inverse rationalMap g === rationalMap g)
+-- assert(toLegacyRationalMap rationalMap g === g) -- this fails (28/08/2022)
+assert(toLegacyRationalMap rationalMap g == g)
 ///
 
 TEST /// -- weighted-projective varieties
@@ -5184,7 +5166,7 @@ assert(texMath(? Y) == "\\text{quartic curve}\\text{ in }\\mathbb{P}\\left(2,\\,
 assert(net(? image segreEmbedding Y) == "irreducible conic curve in PP^2")
 assert(texMath(? image segreEmbedding Y) == "\\text{irreducible conic curve}\\text{ in }\\mathbb{P}^{2}")
 psi = legacyRationalMap((gens ideal (2 * point X))|(gens ideal point X));
-Psi = multirationalMap psi;
+Psi = rationalMap psi;
 debug Cremona
 debug MultiprojectiveVarieties
 assert(instance(psi,LegacyWeightedHomogeneousRationalMap) and instance(Psi,WeightedRationalMap));
@@ -5223,14 +5205,14 @@ assert(dim discriminant f == 1 and degree discriminant f == 5)
 C = random(8,0_(PP_(ZZ/65521)(1,1,1,4))); S = random(8,C);
 g = quadricFibration rationalMap((0_S)_S,1);
 assert(dim discriminant g == 1 and degree discriminant g == 8)
-h = quadricFibration multirationalMap first projections random({{1,1},{1,1},{1,2}},0_(PP_(ZZ/3331)^{2,3}));
+h = quadricFibration rationalMap first projections random({{1,1},{1,1},{1,2}},0_(PP_(ZZ/3331)^{2,3}));
 assert(dim discriminant h == 1 and degree discriminant h == 6)
 ///
 
 TEST /// -- projectionMaps
 X = random({1,1},0_(PP_(ZZ/101)^{2,1}));
 p = projectionMaps X;
-assert(#p == 2 and all(p,m -> instance(m,MultirationalMap)));
+assert(#p == 2 and all(p,m -> instance(m,RationalMap)));
 assert(source p_0 === X and source p_1 === X);
 assert(dim target p_0 == 2 and dim target p_1 == 1);
 ///
@@ -5263,7 +5245,7 @@ assert(sectionalGenus projectiveVariety ideal random(3,0_(PP_QQ^2)) == 1);
 
 TEST /// -- degreeSequence
 R = (ZZ/333331)[y_0..y_5];
-Phi = multirationalMap {legacyRationalMap for i to 2 list random(1,R),legacyRationalMap for i to 2 list random(1,R)};
+Phi = rationalMap {legacyRationalMap for i to 2 list random(1,R),legacyRationalMap for i to 2 list random(1,R)};
 d = degreeSequence Phi;
 assert(instance(d,List) and #d == #factor Phi and #d == 2);
 assert(all(d,a -> instance(a,Array)));
@@ -5272,7 +5254,7 @@ assert(all(d,a -> instance(a,Array)));
 TEST /// -- linearlyNormalEmbedding
 X = PP_(ZZ/333331)^(1,4);
 f = linearlyNormalEmbedding X;
-assert(instance(f,MultirationalMap) and isIsomorphism f and source f === X);
+assert(instance(f,RationalMap) and isIsomorphism f and source f === X);
 ///
 
 TEST /// -- coneOfLines
@@ -5293,8 +5275,8 @@ phi = first graph legacyRationalMap C;
 psi = parametrize L;
 F = fiberProduct(phi,psi);
 p = projections F;
-phi' = check multirationalMap({p_0,p_1},projectiveVariety source phi);
-psi' = check multirationalMap({p_2},projectiveVariety source psi);
+phi' = check rationalMap({p_0,p_1},projectiveVariety source phi);
+psi' = check rationalMap({p_2},projectiveVariety source psi);
 assert(phi' * phi == psi' * psi);
 ///
 
@@ -5314,7 +5296,7 @@ H = Hom(PP_K^{1,2},PP_K^{1,3,2});
 assert(class H === RAT);
 F = {apply(2,i -> random({1,1},R)),apply(4,i -> random({0,1},R)),apply(3,i -> random({1,0},R))};
 f = H F;
-assert(instance(f,MultirationalMap) and f == (Hom(source f,target f)) entries f);
+assert(instance(f,RationalMap) and f == (Hom(source f,target f)) entries f);
 ///
 
 TEST /// -- image(WeightedRationalMap,String)
@@ -5388,7 +5370,7 @@ o9 = $\begin{aligned}&amp;\text{rational map between projective varieties}
 \\&amp;\text{dominance: }\texttt{true}
 \\&amp;\text{degree: }1\end{aligned}$
 
-o9 : <samp class="token class-name">MultirationalMap</samp><samp class="token string"> (</samp>$\text{birational map from }\mathbb{P}^{1}\text{ to }\text{curve}\text{ in }\mathbb{P}^{2}$<samp class="token string">)</samp>
+o9 : <samp class="token class-name">RationalMap</samp><samp class="token string"> (</samp>$\text{birational map from }\mathbb{P}^{1}\text{ to }\text{curve}\text{ in }\mathbb{P}^{2}$<samp class="token string">)</samp>
 i10 : f := super parametrize C
 
 o10 = $\begin{aligned}&amp;\text{rational map between projective varieties}
@@ -5396,7 +5378,7 @@ o10 = $\begin{aligned}&amp;\text{rational map between projective varieties}
 \\&amp;\text{source variety: }\mathbb{P}^{1}
 \\&amp;\text{target variety: }\mathbb{P}^{2}\end{aligned}$
 
-o10 : <samp class="token class-name">MultirationalMap</samp><samp class="token string"> (</samp>$\text{rational map from }\mathbb{P}^{1}\text{ to }\mathbb{P}^{2}$<samp class="token string">)</samp>
+o10 : <samp class="token class-name">RationalMap</samp><samp class="token string"> (</samp>$\text{rational map from }\mathbb{P}^{1}\text{ to }\mathbb{P}^{2}$<samp class="token string">)</samp>
 i11 : image f;
 
 o11 : <samp class="token string">ProjectiveVariety, </samp>$\text{curve}\text{ in }\mathbb{P}^{2}$
@@ -5409,12 +5391,12 @@ o12 = $\begin{aligned}&amp;\text{rational map between projective varieties}
 \\&amp;\text{dominance: }\texttt{false}
 \\&amp;\text{image: }\text{irreducible conic curve}\text{ in }\mathbb{P}^{2}\end{aligned}$
 
-o12 : <samp class="token class-name">MultirationalMap</samp><samp class="token string"> (</samp>$\text{rational map from }\mathbb{P}^{1}\text{ to }\mathbb{P}^{2}$<samp class="token string">)</samp>
+o12 : <samp class="token class-name">RationalMap</samp><samp class="token string"> (</samp>$\text{rational map from }\mathbb{P}^{1}\text{ to }\mathbb{P}^{2}$<samp class="token string">)</samp>
 i13 : g = parametrize (p ** C)
 
 o13 = $g$
 
-o13 : <samp class="token class-name">MultirationalMap</samp><samp class="token string"> (</samp>$\text{rational map from }\mathbb{P}^{1}\text{ to }\text{curve}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{2}$<samp class="token string">)</samp>
+o13 : <samp class="token class-name">RationalMap</samp><samp class="token string"> (</samp>$\text{rational map from }\mathbb{P}^{1}\text{ to }\text{curve}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{2}$<samp class="token string">)</samp>
 i14 : describe g
 
 o14 = $\begin{aligned}&amp;\text{rational map between projective varieties}
@@ -5444,7 +5426,7 @@ i16 : g
 
 o16 = $g$
 
-o16 : <samp class="token class-name">MultirationalMap</samp><samp class="token string"> (</samp>$\text{isomorphism from }\mathbb{P}^{1}\text{ to }\text{curve}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{2}$<samp class="token string">)</samp>
+o16 : <samp class="token class-name">RationalMap</samp><samp class="token string"> (</samp>$\text{isomorphism from }\mathbb{P}^{1}\text{ to }\text{curve}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{2}$<samp class="token string">)</samp>
 i17 : inverse g
 
 o17 = $\begin{aligned}&amp;\text{rational map between projective varieties}
@@ -5456,7 +5438,7 @@ o17 = $\begin{aligned}&amp;\text{rational map between projective varieties}
 \\&amp;\text{multidegree: }\left\{2,\:1\right\}
 \\&amp;\text{degree: }1\end{aligned}$
 
-o17 : <samp class="token class-name">MultirationalMap</samp><samp class="token string"> (</samp>$\text{isomorphism from }\text{curve}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{2}\text{ to }\mathbb{P}^{1}$<samp class="token string">)</samp>
+o17 : <samp class="token class-name">RationalMap</samp><samp class="token string"> (</samp>$\text{isomorphism from }\text{curve}\text{ in }\mathbb{P}^{2}\times\mathbb{P}^{2}\text{ to }\mathbb{P}^{1}$<samp class="token string">)</samp>
 i18 : Hom(C,p)
 
 o18 = $\begin{aligned}&amp;\text{Hom-set of rational maps}
@@ -5489,7 +5471,26 @@ Phi = H {{t0,t1},{t1,t0}};
 assert(not isWellDefined Phi)
 Phi' = super Phi;
 assert isWellDefined Phi';
-Phi' = multirationalMap(Phi',projectiveVariety ideal(x0*y0-x1*y1));
+Phi' = rationalMap(Phi',projectiveVariety ideal(x0*y0-x1*y1));
 assert isWellDefined Phi';
 assert(image Phi' === target Phi')
+///
+
+TEST /// -- rationalMap returns objects of the class RationalMap
+K = ZZ/33331; R = K[x_0..x_3];
+F = {x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2};
+f = legacyRationalMap F;
+Phi = rationalMap f;
+assert(instance(Phi,RationalMap) and Phi === rationalMap f and Phi == f)
+Phi' = rationalMap F;
+assert(instance(Phi',RationalMap) and Phi' == Phi)
+Psi = rationalMap(F,Dominant=>true);
+assert(instance(Psi,RationalMap) and target Psi == image Phi)
+assert(instance(rationalMap(f,Dominant=>true),RationalMap))
+g = segre(K[y_0,y_1,z_0,z_1,Degrees=>{2:{1,0},2:{0,1}}]);
+assert(instance(rationalMap g,RationalMap) and rationalMap g === rationalMap g)
+X = projectiveVariety ideal F;
+assert(rationalMap X <==> rationalMap {legacyRationalMap ideal X})
+assert(rationalMap(X,X) == 1_X)
+assert(toString class Phi == "RationalMap")
 ///
