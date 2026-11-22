@@ -56,7 +56,7 @@ rationalSurfaceWithAttachedPlaneInCubicFourfold (EmbeddedProjectiveVariety,Visib
         << "-- from points on the linear span of" << endl;
         << "  -- " << ? C << endl;
     );
-    piLin := if dim linearSpan S > 5 then rationalMap linearSpan apply(dim linearSpan S - 5, i -> point linearSpan C) else rationalMap(ambient S,ambient S);
+    piLin := if dim linearSpan S > 5 then rationalMap linearSpan apply(dim linearSpan S - 5, i -> point linearSpan C) else multirationalMap(ambient S,ambient S);
     if dim target piLin != 5 then error "linear projection failed, target dimension is not 5";
     f := (super parametrize S) * piLin;
     S' := new RationalSurfaceWithAttachedPlaneInCubicFourfold from image f;
@@ -423,7 +423,7 @@ parameterCount DoublySpecialCubicFourfold := o -> X -> (
     if o.Verbose then << endl << "-- moduli count for " << numPts << " points in ℙ²: " << modCountPts << endl;
     dimGrass := (n-5)*(r-n+6); -- dim GG(n-6,PP^r)
     numPts2 := sum toList drop(dj1j2j3,1);
-    m := dim target multirationalMap rationalMap(ring(PP_(coefficientRing X)^2), {first dj1j2j3, numPts2});
+    m := dim target multirationalMap legacyRationalMap(ring(PP_(coefficientRing X)^2), {first dj1j2j3, numPts2});
     if o.Verbose then << "-- dimension of the space of plane curves of degree " << first dj1j2j3 << " passing through " << numPts2 << " general points: " << m << endl;
     if n > 5 and o.Verbose then << "-- dim GG(" << n-6 << "," << r << ") = " << dimGrass << endl;
     dimAutS := max(0, 8 - 2*numPts);

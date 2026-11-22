@@ -150,12 +150,12 @@ beauvilleMap IntersectionOfThreeQuadricsInP7 := X -> (
     A := sub(matrix {L,M,F},for i to 5 list (gens coefficientRing S)_i => u_i);
     Z := projectiveVariety ideal det A;
     Y := projectiveVariety ideal(((map last projections P2xP5) A) * transpose matrix {first P2xP5#"multigens"});
-    fromXtoZ := j * rationalMap(ring X',ring P5,submatrix'(vars R,{0,1}));
+    fromXtoZ := j * legacyRationalMap(ring X',ring P5,submatrix'(vars R,{0,1}));
     if image fromXtoZ != Z then error "something went wrong";
-    fromXtoZ = rationalMap(fromXtoZ,Z);
+    fromXtoZ = multirationalMap(fromXtoZ,Z);
     fromYtoZ := (last projections P2xP5)|Y;
     if image fromYtoZ != Z then error "something went wrong";
-    fromYtoZ = rationalMap(fromYtoZ,Z);
+    fromYtoZ = multirationalMap(fromYtoZ,Z);
     Y.cache#"projection maps" = {quadricFibration first projectionMaps Y, fromYtoZ};
     f := fromXtoZ * inverse fromYtoZ;
     g := fromYtoZ * inverse fromXtoZ;

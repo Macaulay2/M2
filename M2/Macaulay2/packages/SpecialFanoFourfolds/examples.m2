@@ -479,7 +479,7 @@ fanoFourfold (ZZ,ZZ) := o -> (d,g) -> (
                      {-w_8,-w_9,w_6+w_13,w_1,-w_0,0,w_5},
                      {-w_0,-w_1,-w_2,-w_3,-w_4,-w_5,0}};
         Y = Var trim pfaffians(4,M);
-        j = toRationalMap parametrize random({1},0_Y);
+        j = toLegacyRationalMap parametrize random({1},0_Y);
         X = j^* Y;
     );
     if not (dim X == 4 and degree X == d and sectionalGenus X == g) then error("something went wrong while computing random fourfold of degree "|toString(d)|" and sectional genus "|toString(g));
@@ -496,7 +496,7 @@ parametrizeFanoFourfold EmbeddedProjectiveVariety := o -> X -> (
         p := point X;
         C := line(X,p) + line(X,p);
         if degree C != 2 then error "something went wrong while finding conic on fourfold";
-        return inverse3 multirationalMap rationalMap(sub(ideal C,ring X),1);
+        return inverse3 multirationalMap legacyRationalMap(sub(ideal C,ring X),1);
     );
     if o.Strategy =!= 1 then error "strategy not available";
     parametrize X

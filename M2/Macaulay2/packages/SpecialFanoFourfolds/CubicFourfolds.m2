@@ -88,15 +88,15 @@ cubicFourfold (String,Ring) := o -> (str,K) -> (
     );
     if str === "3-nodal septic scroll" or str === "Farkas-Verra C26" then (
         t := gens ring PP_K^2;
-        f := multirationalMap rationalMap(ring PP_K^2,ring PP_K^8,{t_0^5, t_0^4*t_1, t_0^3*t_1^2, t_0^2*t_1^3, t_0^4*t_2, t_0^3*t_1*t_2, t_0^2*t_1^2*t_2, t_0*t_1^3*t_2, t_1^4*t_2});
+        f := multirationalMap legacyRationalMap(ring PP_K^2,ring PP_K^8,{t_0^5, t_0^4*t_1, t_0^3*t_1^2, t_0^2*t_1^3, t_0^4*t_2, t_0^3*t_1*t_2, t_0^2*t_1^2*t_2, t_0*t_1^3*t_2, t_1^4*t_2});
         f = f * rationalMap linearSpan apply(3,i -> point linearSpan {f point source f,f point source f});
         X = cubicFourfold(image f,NumNodes=>3,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = "FarkasVerra";
         return X;
     );
    if str === "one-nodal septic del Pezzo surface" then (
-       g := multirationalMap rationalMap(ring PP_K^2,{3,2});
-       g = g * rationalMap(ring target g,ring PP_K^5,gens ideal linearSpan {point target g,point linearSpan {g point source g,g point source g}});
+       g := multirationalMap legacyRationalMap(ring PP_K^2,{3,2});
+       g = g * legacyRationalMap(ring target g,ring PP_K^5,gens ideal linearSpan {point target g,point linearSpan {g point source g,g point source g}});
        X = cubicFourfold(image g,NumNodes=>1,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
        X.cache#(surface X,"label") = "oneNodalSepticDelPezzoSurfaceC26";
        return X;
@@ -297,7 +297,7 @@ unirationalParametrization (CubicFourfold,EmbeddedProjectiveVariety) := (X,L) ->
     if not(isSubset(L,X) and dim L == 1 and degree L == 1) then error "expected a line in the cubic fourfold";
     ringP5 := ring ambient X;
     K := coefficientRing X;
-    l := toRationalMap parametrize L;
+    l := toLegacyRationalMap parametrize L;
     K' := frac(source l);
     ringP5' := K'[gens ringP5];
     p' := trim minors(2,(vars ringP5')||(matrix l));
@@ -305,7 +305,7 @@ unirationalParametrization (CubicFourfold,EmbeddedProjectiveVariety) := (X,L) ->
     TpX' := trim ideal((vars ringP5') * sub(jacobian X',apply(gens ringP5',flatten entries coefficients parametrize p',(x,s) -> x => s)));
     U := TpX' + ideal(last gens ringP5');
     u := parametrize U;
-    u = rationalMap(Grass(0,3,K',Variable=>"s"),source u) * u;
+    u = legacyRationalMap(Grass(0,3,K',Variable=>"s"),source u) * u;
     e := lcm apply(flatten entries sub(last coefficients matrix u,K'),denominator);
     M := transpose((matrix l)||(e * matrix u));
     ringP1xP3 := (source l) ** K[gens source u];
@@ -313,7 +313,7 @@ unirationalParametrization (CubicFourfold,EmbeddedProjectiveVariety) := (X,L) ->
     r := local r;
     Kr := ringP1xP3[r];
     P := first first entries gens sub(ideal X,apply(gens ringP5,flatten entries(submatrix(sub(M,Kr),{0}) + r*submatrix(sub(M,Kr),{1})),(v,v') -> v => v'));
-    psi := rationalMap(ringP1xP3,ringP5,transpose(coefficient(r^3,P) * submatrix(M,{0}) - coefficient(r^2,P) * submatrix(M,{1})));
+    psi := legacyRationalMap(ringP1xP3,ringP5,transpose(coefficient(r^3,P) * submatrix(M,{0}) - coefficient(r^2,P) * submatrix(M,{1})));
     Psi := multirationalMap({parametrize psi},X);
     if not isSubset(Psi point source Psi,X) then error "internal error encountered";
     Psi
@@ -332,19 +332,19 @@ randomS42data Ring := K -> (
     pr := rationalMap point (j^^ L);
     B := pr(j^^ (image s));
     C := pr(j^^ (image f));
-    phi := toRationalMap rationalMap(C,Dominant=>true);
+    phi := toLegacyRationalMap rationalMap(C,Dominant=>true);
     forceInverseMap(phi,inverseMap phi);
     Bs := baseLocus inverse phi;
     Q := 0_Bs;
     while select(degrees ideal Q,d -> d <= {2}) =!= {{1},{1},{1},{2}} do (
         u := parametrize random({{1},{1}},0_Bs);
-        v := (rationalMap {random(1,ring source u),random(1,ring source u)})|(u^^ Bs);
+        v := (legacyRationalMap {random(1,ring source u),random(1,ring source u)})|(u^^ Bs);
         Q = Q + u support v^*((v (u^^ Bs))\support(v (u^^ Bs)));
     );
     Q = Var trim ideal select(flatten entries gens ideal Q,d -> degree d <= {2});
     if not (dim Q == 2 and degree Q == 2 and dim singularLocus Q == -1) then error "internal error encountered";
     P1xP2 := phi^* Q;
-    w := Var trim lift(phi (rationalMap flatten entries syz gens ideal P1xP2)^-1 (ideal submatrix'(vars ring ambient P1xP2,{0})),ambient target phi);
+    w := Var trim lift(phi (legacyRationalMap flatten entries syz gens ideal P1xP2)^-1 (ideal submatrix'(vars ring ambient P1xP2,{0})),ambient target phi);
     e := super inverse(rationalMap(w%Q),Verify=>false);
     w = e point source e;
     (L1,L2) := toSequence decompose(Q * tangentSpace(w,Q));

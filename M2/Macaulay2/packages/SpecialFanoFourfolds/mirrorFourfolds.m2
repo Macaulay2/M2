@@ -69,7 +69,7 @@ surfaceDeterminingInverseOfFanoMap DoublySpecialCubicFourfold := o -> X -> (
         );
     ) else if Str === "Approximate" then (
         if o.Verbose then << "-- computing approximate inverse of the restricted map..." << endl << flush;
-        eta = multirationalMap approximateInverseMap(toRationalMap mu',Verbose=>o.Verbose,Certify=>false);
+        eta = multirationalMap approximateInverseMap(toLegacyRationalMap mu',Verbose=>o.Verbose,Certify=>false);
         if o.Verbose then << "-- approximate inverse computed: defined by forms of degree " << degreeOfDefiningForms eta << endl << flush;
     ) else (
         error("invalid strategy: '" | toString(Str) | "'; available options are \"Inverse\" or \"Approximate\"");
@@ -109,8 +109,8 @@ surfaceDeterminingInverseOfFanoMap DoublySpecialCubicFourfold := o -> X -> (
 
 refineSurfaceU = (U,verb) -> (
     if verb then << "-- projecting to PP^3 for surface decomposition" << endl;
-    pr := rationalMap for i to 3 list random(1, ring ambient U);
-    Z := projectiveVariety kernel(map toRationalMap(pr|U), SubringLimit=>1);
+    pr := legacyRationalMap for i to 3 list random(1, ring ambient U);
+    Z := projectiveVariety kernel(map toLegacyRationalMap(pr|U), SubringLimit=>1);
     assert(dim Z == 2 and codim Z == 1);
     if verb and degree U != degree Z then << "  -- surface degree (before, after): " << (degree U, degree Z) << endl;
     decZ := decompose Z;

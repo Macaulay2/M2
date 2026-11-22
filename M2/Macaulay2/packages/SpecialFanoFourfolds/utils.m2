@@ -23,15 +23,15 @@ Possible methods are the following:
 );
 
 inverse3 = method();
-inverse3 RationalMap := psi -> (
+inverse3 LegacyRationalMap := psi -> (
     if psi#"inverseRationalMap" =!= null then return psi#"inverseRationalMap";
-    phi := rationalMap map inverseOfMap(map psi,CheckBirational=>false,AssumeDominant=>true,QuickRank=>false,MinorsLimit=>0,Verbosity=>0);
+    phi := legacyRationalMap map inverseOfMap(map psi,CheckBirational=>false,AssumeDominant=>true,QuickRank=>false,MinorsLimit=>0,Verbosity=>0);
     forceInverseMap(phi,psi);
     phi
 );
 inverse3 MultirationalMap := Psi -> (
     if Psi#"inverse" =!= null then return Psi#"inverse";
-    Phi := multirationalMap inverse3 toRationalMap Psi;
+    Phi := multirationalMap inverse3 toLegacyRationalMap Psi;
     if ring source Phi =!= ring target Psi then error "internal error encountered";
     Phi#"source" = target Psi;
     if ring target Phi =!= ring source Psi then error "internal error encountered";
@@ -39,14 +39,14 @@ inverse3 MultirationalMap := Psi -> (
     Phi#"inverse" = Psi;
     Psi#"inverse" = Phi
 );
-inverse3 (RationalMap,Option) := (psi,opt) -> inverse3 psi;
+inverse3 (LegacyRationalMap,Option) := (psi,opt) -> inverse3 psi;
 inverse3 (MultirationalMap,Option) := (Psi,opt) -> inverse3 Psi;
 
 normalization = method(Options => {Verbose => true});
 normalization EmbeddedProjectiveVariety := o -> X -> (
     if X.cache#?"Normalization" then return X.cache#"Normalization";
     if o.Verbose then <<"-- computing normalization of "|toString(? X)<<endl;
-    f := rationalMap icMap ring X;
+    f := legacyRationalMap icMap ring X;
     if o.Verbose then <<"-- got: "|toString(expression f)<<endl;
     X.cache#"Normalization" = f
 );
@@ -71,7 +71,7 @@ inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
     if verb then << "-- inverting normalization map..." << endl << flush;
     Phi := super inverse3 normU;
     if Phi#"image" === null then ( -- forceImage --
-        f := toRationalMap Phi;
+        f := toLegacyRationalMap Phi;
         assert(multirationalMap f === Phi);
         if f#"idealImage" === null then forceImage(f,sub(ideal X,target f));
         multirationalMap f;
@@ -159,7 +159,7 @@ interpolateImage (MultirationalMap,List,ZZ) := o -> (Phi,D,j) -> (
         return Phi#"image";
     ) else return W;
 );
-interpolateImage (RationalMap,List,ZZ) := o -> (Phi,D,j) -> (
+interpolateImage (LegacyRationalMap,List,ZZ) := o -> (Phi,D,j) -> (
     if Phi#"idealImage" =!= null then return Phi#"idealImage";
     W := interpolateImage(multirationalMap Phi,D,j,Verbose=>o.Verbose,cache=>false);
     if o.cache then forceImage(Phi,ideal W);
@@ -203,7 +203,7 @@ DefaultVerbosityInterpolateTop = false;
 verbosityInterpolateTop = v -> v and DefaultVerbosityInterpolateTop;
 
 mapDefinedByDivisor = method();
-mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> rationalMap(R,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
+mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> legacyRationalMap(R,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
 mapDefinedByDivisor (MultiprojectiveVariety,VisibleList) := (X,D) -> rationalMap(X,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
 
 -- sufficient conditions for smoothness ('Y' is assumed to be equidimensional)
@@ -251,7 +251,7 @@ isomorphicProjectionOfSurfaceInP5 EmbeddedProjectiveVariety := X -> (
     if dim X != 2 then error "expected a surface";
     if codim linearSpan X > 0 then X = (parametrize linearSpan X)^^ X;
     if dim ambient X <= 5 then return X;
-    pr := rationalMap apply(6,i -> random(1,ring ambient X));
+    pr := legacyRationalMap apply(6,i -> random(1,ring ambient X));
     Var pr (ideal X)
 );
 
@@ -566,6 +566,10 @@ updatePackage (String,String,List) := (dir,baseURL,singleFilePkgs) -> (
     if member("Cremona", singleFilePkgs) then (
         makeDirectory(dir | "Cremona");
         for F in {"examples", "documentation", "tests"} do downloadSingleFile("Cremona/",F);
+    );
+    if member("CoincidentRootLoci", singleFilePkgs) then (
+        makeDirectory(dir | "CoincidentRootLoci");
+        for F in {"equationsCRL", "equationsDualCRL", "documentation", "tests"} do downloadSingleFile("CoincidentRootLoci/",F);
     );
     << "-- update completed; relaunch M2 to load the new package versions." << endl;
     sleep 2;

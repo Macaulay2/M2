@@ -108,7 +108,7 @@ Inputs => {"i" => ZZ => {"an integer between 1 and 21"}, "K" => Ring => {"the co
 Outputs => {{"a triple of ",TO2{EmbeddedProjectiveVariety,"varieties"},", ",TEX///$(B,V,C)$///, ", which represents a reducible subscheme of ", TEX///$\mathbb{P}^5$///, ", in accordance with the 21 examples listed in Table 2 of the paper ", HREF{"https://arxiv.org/abs/2002.07026", "On some families of Gushel-Mukai fourfolds"}, "."}},
 EXAMPLE {"(B,V,C) := GMtables(1,ZZ/33331)", "B * V == C"},
 PARA{"The corresponding example of fourfold reported in Table 1 of the aforementioned paper can be obtained as follows."},
-EXAMPLE {"psi = rationalMap(ideal B,Dominant=>2);", "X = gushelMukaiFourfold psi ideal V;"},
+EXAMPLE {"psi = legacyRationalMap(ideal B,Dominant=>2);", "X = gushelMukaiFourfold psi ideal V;"},
 PARA{"This is basically the same as doing this:"},
 EXAMPLE {"gushelMukaiFourfold(\"1\",ZZ/33331);"},
 SeeAlso => {(gushelMukaiFourfold,String,Ring),(gushelMukaiFourfold,Array,Array)}}
@@ -273,13 +273,13 @@ document {Key => {(map, CubicFourfold)},
 Headline => "associated cubic map",
 Usage => "map X",
 Inputs => {"X" => CubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///}},
-Outputs => {RationalMap => {"the rational map from ", TEX///$\mathbb{P}^5$///, " defined by the linear system of cubics through ", TEX///$S$///}}}
+Outputs => {LegacyRationalMap => {"the rational map from ", TEX///$\mathbb{P}^5$///, " defined by the linear system of cubics through ", TEX///$S$///}}}
 
 document {Key => {(map, GushelMukaiFourfold)},
 Headline => "associated quadratic map",
 Usage => "map X",
 Inputs => {"X" => GushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///, ", where ", TEX///$Y\subset\mathbb{P}^8$///, " is the unique del Pezzo fivefold containing ", TEX///$X$///}},
-Outputs => {RationalMap => {"the rational map from ", TEX///$Y$///, " defined by the linear system of quadrics through ", TEX///$S$///}}}
+Outputs => {LegacyRationalMap => {"the rational map from ", TEX///$Y$///, " defined by the linear system of quadrics through ", TEX///$S$///}}}
 
 document {Key => {surface, (surface, HodgeSpecialFourfold)},
 Headline => "get the special surface contained in the fourfold",
@@ -305,7 +305,7 @@ EXAMPLE {
 "X = cubicFourfold T;",
 "coefficientRing X",
 "describe X"},
-SeeAlso => {(rationalMap,PolynomialRing,List),(gushelMukaiFourfold,Array,Array)}}
+SeeAlso => {(legacyRationalMap,PolynomialRing,List),(gushelMukaiFourfold,Array,Array)}}
 
 typValSurf := typicalValues#surface;
 typicalValues#surface = Nothing;
@@ -318,7 +318,7 @@ PARA{"The curve ",TEX///$C$///," can be recovered using the function ",TT "curve
 EXAMPLE lines ///K = ZZ/65521;
 C = random PP_K^(1,3); -- random twisted cubic in P^3
 j = parametrize PP_K(1,1,1,4);
-C = (rationalMap(ambient C,source j) * j) C;
+C = (multirationalMap(ambient C,source j) * j) C;
 describe C
 S = random(8,C);
 describe S

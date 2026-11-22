@@ -35,8 +35,8 @@ detectCongruenceInt (EmbeddedProjectiveVariety,HodgeSpecialFourfold) := o -> (p,
     if o.Verbose then <<"number lines contained in the image of the "<<(if a == 2 then "quadratic" else (if a == 3 then "cubic" else ""))<<" map and passing through a general point: "<<degree E<<endl;
     if degree E == 1 then return detectCongruence(X,degree phi^* E);
     pr := rationalMap phip;
-    v := (rationalMap {random(1,ring target pr),random(1,ring target pr)});
-    pr' := toRationalMap((pr * v)|E);
+    v := (legacyRationalMap {random(1,ring target pr),random(1,ring target pr)});
+    pr' := toLegacyRationalMap((pr * v)|E);
     E' := Var kernel(map pr',SubringLimit=>1);
     if not(dim E' == 0 and degree E' == degree E) then error "something went wrong";
     local n; local C;
@@ -83,8 +83,8 @@ congruenceOfCurves (HodgeSpecialFourfold,ZZ) := (X,e) -> (
             return makeSubvariety(D,Y);
         );
         pr := rationalMap phip;
-        v := (rationalMap {random(1,ring target pr),random(1,ring target pr)});
-        pr' := toRationalMap((pr * v)|E);
+        v := (legacyRationalMap {random(1,ring target pr),random(1,ring target pr)});
+        pr' := toLegacyRationalMap((pr * v)|E);
         E' := Var kernel(map pr',SubringLimit=>1);
         if not(dim E' == 0 and degree E' == degree E) then error "something went wrong";
         decE' := select(decompose E',q -> (dim q == 0 and degree q == 1));

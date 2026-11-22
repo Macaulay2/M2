@@ -237,16 +237,16 @@ ambientFivefold HodgeSpecialFourfold := X -> (
 
 associatedMapFromFivefold = X -> (
     if (surface X).cache#?("AssociatedMapFromFivefold",ambientFivefold X) then return (surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X);
-    if dim ambient X == 5 then return (surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X) = rationalMap(ideal surface X,degreeHypersurface X);
+    if dim ambient X == 5 then return (surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X) = legacyRationalMap(ideal surface X,degreeHypersurface X);
     if degreeHypersurface X == 2 then (
         S := ideal surface X;
         J1 := select(S_*,s -> degree s == {1});
         if #J1 > 0 then J1 = (ideal J1) * (ideal vars ring S) else J1 = ideal ring S;
         J2 := select(S_*,s -> degree s == {2});
         if #J2 > 0 then J2 = ideal J2 else J2 = ideal ring S;
-        return (surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X) = rationalMap trim sub(J1+J2,ring ambientFivefold X);
+        return (surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X) = legacyRationalMap trim sub(J1+J2,ring ambientFivefold X);
     );
-    (surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X) = rationalMap(idealOfSubvariety((surface X)%(ambientFivefold X)),degreeHypersurface X)
+    (surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X) = legacyRationalMap(idealOfSubvariety((surface X)%(ambientFivefold X)),degreeHypersurface X)
 );
 
 map HodgeSpecialFourfold := o -> X -> associatedMapFromFivefold X;
@@ -259,7 +259,7 @@ imageOfAssociatedMap HodgeSpecialFourfold := X -> (
     if e === "quinticDelPezzoSurface" or e === "quarticScrollSurface" or e === "FarkasVerra" or e === "planeInPP7" then forceImage(f,image(f,2));
     if e === "C42" then forceImage(f,image(f,3));
     if instance(e,ZZ) and e >= 1 and e <= 21 and e != 3 and e != 21 then forceImage(f,image(f,2));
-    if instance(e,ZZ) and (e == 3 or e == 21) then forceImage(f,trim lift(kernel(map rationalMap(f,Dominant=>2),SubringLimit=>1),ambient target f));
+    if instance(e,ZZ) and (e == 3 or e == 21) then forceImage(f,trim lift(kernel(map legacyRationalMap(f,Dominant=>2),SubringLimit=>1),ambient target f));
     if member(e,{"gushel26''", "hyperplane section of a conic bundle over PP2", "surf-5-6-2-nodal"}) then forceImage(f,trim kernel(map f,SubringLimit=>1));
     ch := char coefficientRing X;
     if (coefficientRing X === ZZ/ch and ch <= 65521) then image(f,"F4") else image f
@@ -502,7 +502,7 @@ surface (VisibleList,Ring,Option,Option) := (L,K,oN,oA) -> (
         makeSubvariety(fC,S,Verify=>true);
         if not (dim fC == 1 and degree fC == D*L_0 - sum(#d,i->(i+1)*d_i)) then error "something went wrong when taking the curve";
         fC.cache#"plane representation" = (D,d);
-        if D <= 2 then fC.cache#"rationalParametrization" = check rationalMap((parametrize C)*f,fC);
+        if D <= 2 then fC.cache#"rationalParametrization" = check multirationalMap((parametrize C)*f,fC);
         return fC;
     ));
     return S;
@@ -556,7 +556,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         toRing Ideal := I -> toString sub(I,vars R);
         toRing EmbeddedProjectiveVariety := S -> "projectiveVariety(" | toRing ideal S | ",MinimalGenerators=>false,Saturate=>false)";
         toRing MultirationalMap := Psi -> toString entries sub(matrix Psi,vars R);
-        toRing RationalMap := psi -> toString flatten entries sub(matrix psi,vars R);
+        toRing LegacyRationalMap := psi -> toString flatten entries sub(matrix psi,vars R);
         (strR,toRing)
     );
     ringP2AlreadyExported := false;
@@ -637,7 +637,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         if N >= 6 and mapFromFivefold#"idealImage" =!= null then (
             (ringTargetMapFromFivefold,toRingTargetMapFromFivefold) := ringStringData(N,K,"u","ringTargetMapFromFivefold");
             s = s | ringTargetMapFromFivefold | newline;
-            s = s | ///S.cache#("AssociatedMapFromFivefold",V) = rationalMap(ring V,ringTargetMapFromFivefold,/// | toRingAmbientX mapFromFivefold | ");" | newline;
+            s = s | ///S.cache#("AssociatedMapFromFivefold",V) = legacyRationalMap(ring V,ringTargetMapFromFivefold,/// | toRingAmbientX mapFromFivefold | ");" | newline;
             s = s | "forceImage(map X," | toRingTargetMapFromFivefold image mapFromFivefold | ");" | newline;
         );
     );
@@ -669,7 +669,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         s = s | ///S.cache#("FanoMapDSCF",T) = mu;/// | newline;
         if not mu.cache#?("surfaceDeterminingInverseOfFanoMap",X) then return s | "X))()";
     ) else (
-        s = s | "mu = toRationalMap mu;" | newline;
+        s = s | "mu = toLegacyRationalMap mu;" | newline;
         s = s | ///(mu#"map").cache#"multiplicityFanoMap" = /// | strFanoMapMult | ";" | newline;
         s = s | ///S.cache#("fanoMap",V) = mu;/// | newline;
         if not S.cache#?("surfaceDeterminingInverseOfFanoMap",ideal X) then return s | "X))()";
@@ -707,7 +707,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         ringAmbNormU := K[z_0..z_dimAmbNormU,Degrees=>degrees ring ambient source normU];
         s = s | "z := local z; ringAmbNormU := K[z_0..z_" | toString dimAmbNormU | ",Degrees=>" | toString degrees ringAmbNormU | "];" | newline;
         s = s | "NormU := projectiveVariety(" | toString sub(ideal source normU,vars ringAmbNormU) | ",Saturate=>false);" | newline;
-        s = s | ///U.cache#"Normalization" = toRationalMap((Hom(NormU,U)) /// | toString entries sub(matrix normU,vars ringAmbNormU) | ");" | newline;
+        s = s | ///U.cache#"Normalization" = toLegacyRationalMap((Hom(NormU,U)) /// | toString entries sub(matrix normU,vars ringAmbNormU) | ");" | newline;
     );
     if U.cache#?"MapToMinimalK3Surface" and (not instance(U.cache#"MapToMinimalK3Surface",WeightedRationalMap)) and instance(target U.cache#"MapToMinimalK3Surface",EmbeddedProjectiveVariety) and (U.cache#"MapToMinimalK3Surface")#"image" =!= null then (
         Psi := U.cache#"MapToMinimalK3Surface";

@@ -101,7 +101,7 @@ gushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
     );
     if str === "K3 surface of genus 8 with class (9,5)" then (
         G15 := Grass replace(1,5,Grass ring G);
-        pr := rationalMap(G15,ring G,select(gens ambient G15,g -> last last baseName g != 5));
+        pr := legacyRationalMap(G15,ring G,select(gens ambient G15,g -> last last baseName g != 5));
         X = gushelMukaiFourfold(pr sub(ideal for i to 5 list random(1,ambient G15),G15),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = 3;
         return X;
@@ -415,8 +415,8 @@ toGrass EmbeddedProjectiveVariety := (cacheValue "toGrass") (X -> (
         y0 := local y0;
         coneG := quotient sub(ideal target j,K[y0,gens ring ambient target j]);
         J := multirationalMap(
-                 rationalMap(ring X,ring X',matrix first factor inverse f) *
-                 rationalMap(ring X',coneG,matrix{{first gens ring ambient X}}|sub(lift(matrix first factor j,ring ambient source j),ring ambient X))
+                 legacyRationalMap(ring X,ring X',matrix first factor inverse f) *
+                 legacyRationalMap(ring X',coneG,matrix{{first gens ring ambient X}}|sub(lift(matrix first factor j,ring ambient source j),ring ambient X))
              );
         if not(source J == X and degree(J,Strategy=>"random point") == 1) then error "internal error encountered";
         return J;
@@ -428,7 +428,7 @@ toGrass EmbeddedProjectiveVariety := (cacheValue "toGrass") (X -> (
         Y := varietyDefinedBylinearSyzygies X;
         psi := toGrass Y;
         if dim singLocus Y == -1 then return psi|X;
-        return psi * rationalMap(ring target psi,ring Y6,submatrix'(vars ring ambient target psi,{0}));
+        return psi * legacyRationalMap(ring target psi,ring Y6,submatrix'(vars ring ambient target psi,{0}));
     );
     error "expected a Gushel-Mukai fourfold, or a del Pezzo fourfold/fivefold/sixfold";
 ));
@@ -438,7 +438,7 @@ toGrass GushelMukaiFourfold := (cacheValue "toGrass") (X -> ( -- for better docu
     psi := toGrass Y;
     if dim singLocus Y == -1 then return psi|X;
     K := coefficientRing X;
-    check multirationalMap((psi|X) * rationalMap(ring target psi,ring GG(K,1,4),submatrix'(vars ring ambient target psi,{0})),GG(K,1,4))
+    check multirationalMap((psi|X) * legacyRationalMap(ring target psi,ring GG(K,1,4),submatrix'(vars ring ambient target psi,{0})),GG(K,1,4))
 ));
 
 isAdmissibleGM = method();
@@ -491,7 +491,7 @@ parameterCount GushelMukaiFourfold := o -> X -> (
 
 sigmaQuadric = method();
 sigmaQuadric GushelMukaiFourfold := X -> (
-    f := toRationalMap toGrass X;
+    f := toLegacyRationalMap toGrass X;
     H := image(f,1);
     Q := ideal random(2,makeSubvariety image f);
     S := trim(Q + tangentialChowForm(chowEquations(H_0),0,1));
@@ -502,7 +502,7 @@ unirationalParametrization GushelMukaiFourfold := (cacheValue "unirationalParame
     K := coefficientRing X;
     S := sigmaQuadric X;
     s := parametrize S;
-    s = rationalMap(Grass(0,2,K,Variable=>"u"),source s) * s;
+    s = legacyRationalMap(Grass(0,2,K,Variable=>"u"),source s) * s;
     K' := frac(K[gens source s]);
     ringP8' := K'[gens ring ambient X];
     p' := trim minors(2,vars ringP8' || sub(matrix s,K'));
@@ -513,18 +513,18 @@ unirationalParametrization GushelMukaiFourfold := (cacheValue "unirationalParame
     P := plucker(W,2); while dim P <= 0 do P = plucker(W,2); P = trim sub(plucker P,vars ring W);
     Q := trim quotient(W,P);
     q := trim minors(2,vars ring W || transpose submatrix(coefficients parametrize(P+Q),,{0}));
-    f := (inverse(rationalMap trim sub(q,quotient Q),Certify=>true)) * j;
+    f := (inverse(legacyRationalMap trim sub(q,quotient Q),Certify=>true)) * j;
     ringP2xP2 := (source s) ** K[gens source f];
     K'' := frac(ringP2xP2);
     ringP8'' := K''[gens ring ambient X];
     X'' := sub(ideal X,ringP8'');
     p'' := sub(p',ringP8'');
     ringP1'' := Grass(0,1,K'',Variable=>"v");
-    l := rationalMap(ringP1'',ringP8'', (vars ringP1'') * (sub(matrix s,K'') || sub(matrix f,K'')));
+    l := legacyRationalMap(ringP1'',ringP8'', (vars ringP1'') * (sub(matrix s,K'') || sub(matrix f,K'')));
     e := parametrize trim quotient(trim (map l) X'',trim (map l) p'');
-    el := rationalMap((map e) * (map l));
-    el = rationalMap(source el,target el,(lcm apply(flatten entries sub(last coefficients matrix el,K''),denominator)) * (matrix el));
-    psi := rationalMap(ringP2xP2,ring ambient X,sub(transpose coefficients el,ringP2xP2));
+    el := legacyRationalMap((map e) * (map l));
+    el = legacyRationalMap(source el,target el,(lcm apply(flatten entries sub(last coefficients matrix el,K''),denominator)) * (matrix el));
+    psi := legacyRationalMap(ringP2xP2,ring ambient X,sub(transpose coefficients el,ringP2xP2));
     Psi := multirationalMap({parametrize psi},X);
     if not isSubset(Psi point source Psi,X) then error "internal error encountered";
     Psi
@@ -533,10 +533,10 @@ unirationalParametrization GushelMukaiFourfold := (cacheValue "unirationalParame
 toGushel = method();
 toGushel GushelMukaiFourfold := X -> (
     if dim singLocus ambientFivefold X >= 0 then return X;
-    j := toRationalMap toGrass X;
+    j := toLegacyRationalMap toGrass X;
     Y := local Y;
-    i := rationalMap(target j,(coefficientRing X)[Y,gens ambient target j],0|vars target j);
-    i = rationalMap(i,Dominant=>sub(ideal target j,target i));
+    i := legacyRationalMap(target j,(coefficientRing X)[Y,gens ambient target j],0|vars target j);
+    i = legacyRationalMap(i,Dominant=>sub(ideal target j,target i));
     S := trim lift((j*i) ideal surface X,ambient target i);
     Sv := intersect(S,ideal submatrix'(vars ambient target i,{0}));
     try H := ideal random({{1},{1}},Var Sv) else error "not able to specialize to Gushel type";
@@ -555,14 +555,14 @@ GMtables = method(Options => {Verify => true});
 GMtables (ZZ,Ring) := o -> (i,K) -> (
     if i < 1 or i > 21 then error "expected an integer between 1 and 21";
     t := gens ring PP_K^2;
-    s := multirationalMap rationalMap(ring PP_K^2,ring PP_K^5,{t_0^2,t_0*t_1,t_1^2,t_0*t_2,t_1*t_2,0});
+    s := multirationalMap legacyRationalMap(ring PP_K^2,ring PP_K^5,{t_0^2,t_0*t_1,t_1^2,t_0*t_2,t_1*t_2,0});
     S := image s;
     p0 := Var ideal(t_0,t_1); -- base point of s
     assert(p0 == baseLocus s);
     x := gens ring PP_K^5;
     L0 := Var ideal(x_0,x_1,x_2,x_5); -- directrix line of S
     u := gens ring PP_K^3;
-    b := multirationalMap rationalMap(ring PP_K^3,ring PP_K^5,{u_0^3*u_1-u_0*u_1^3, u_0^2*u_1^2-u_0*u_1^3+u_0^3*u_2-u_1^3*u_3, u_0^2*u_1*u_2-u_1^3*u_3, -u_0^2*u_1^2+u_0*u_1^3+u_0*u_1^2*u_2-u_1^3*u_3, u_0^2*u_1*u_3-u_1^3*u_3, u_0^2*u_1^2-u_0*u_1^3+u_0*u_1^2*u_3-u_1^3*u_3});
+    b := multirationalMap legacyRationalMap(ring PP_K^3,ring PP_K^5,{u_0^3*u_1-u_0*u_1^3, u_0^2*u_1^2-u_0*u_1^3+u_0^3*u_2-u_1^3*u_3, u_0^2*u_1*u_2-u_1^3*u_3, -u_0^2*u_1^2+u_0*u_1^3+u_0*u_1^2*u_2-u_1^3*u_3, u_0^2*u_1*u_3-u_1^3*u_3, u_0^2*u_1^2-u_0*u_1^3+u_0*u_1^2*u_3-u_1^3*u_3});
     B := image b;
     E := (Var ideal(u_0,u_1), Var ideal(u_3,u_0), Var ideal(u_2,u_1), Var ideal(u_2-u_3,u_0-u_1)); -- base locus of b: E_0 triple line, E_1,E_2,E_3 simple lines
     assert(⋃ {3*E_0,E_1,E_2,E_3} == baseLocus b);
@@ -748,7 +748,7 @@ GMtables (ZZ,Ring) := o -> (i,K) -> (
         v = rationalMap(⋃ p,4) << PP_K^5;
         V = image v;
         j = (inverse rationalMap((p_0)_(random({2},⋃ take(p,5))))) * v;
-        j = rationalMap(j,image j);
+        j = multirationalMap(j,image j);
         (target j).cache#"rationalParametrization" = j;
         D = image j;
         phi = findIsomorphism(D,C,Verify=>o.Verify);
@@ -844,7 +844,7 @@ GMtables ZZ := o -> i -> (
 
 GMtables (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (B,V,C) -> (
     if not ((dim B == 2 or dim B == 3) and degree B == dim B + 1 and dim V == 2 and dim C == 1 and ring ambient C === ring ambient V and ring ambient C === ring ambient B) then error "invalid input for GMtables";
-    psi := rationalMap(ideal B,Dominant=>2);
+    psi := legacyRationalMap(ideal B,Dominant=>2);
     if o.Verify then <<"-- constructing random GM fourfold from the triple..."<<endl;
     X := gushelMukaiFourfold(psi ideal V,InputCheck=>(if o.Verify then 10 else 0),Verbose=>true);
     if o.Verify then <<"-- GM fourfold correctly constructed."<<endl;
@@ -879,7 +879,7 @@ GMtables (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjective
 
 fourfoldFromTriple = method(Options => {InputCheck => 1, Verbose => true});
 fourfoldFromTriple (ZZ,VisibleList) := o -> (i,E) -> (
-    psi := rationalMap(ideal E_0,Dominant=>2);
+    psi := legacyRationalMap(ideal E_0,Dominant=>2);
     X := gushelMukaiFourfold(psi ideal E_1,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     X.cache#(surface X,"label") = i;
     return X;
@@ -913,7 +913,7 @@ makeGMfromCurveOnSurfaceInP6 EmbeddedProjectiveVariety := o -> C -> (
        # select(degs,d -> d == 3) < o.Degrees#3_0 or # select(degs,d -> d == 3) > o.Degrees#3_1
     then error "request on the degrees is not satisfied";
     if o.InputCheck >= 2 then (
-        if isIsomorphism rationalMap(psi|S,V) then (
+        if isIsomorphism multirationalMap(psi|S,V) then (
             if S.cache#?"FiniteNumberOfNodes" and S.cache#"FiniteNumberOfNodes" == 0 then (V.cache#"top" = V; V.cache#"singularLocus" = 0_V);
             if S.cache#?"FiniteNumberOfNodes" and S.cache#"FiniteNumberOfNodes" > 0 then V.cache#"FiniteNumberOfNodes" = S.cache#"FiniteNumberOfNodes";
             V.cache#"euler" = eulerCharacteristic S;
@@ -945,7 +945,7 @@ glueScroll EmbeddedProjectiveVariety := C -> (
         pr := inverse parametrize H;
         g = g * pr;
         j := inverse rationalMap((linearSpan {g point source g,g point source g})_(image g),Dominant=>true);
-        B := image((rationalMap lift(matrix j,ring ambient source j)) * inverse pr);
+        B := image((legacyRationalMap lift(matrix j,ring ambient source j)) * inverse pr);
         if not(dim B == 2 and degree B == 3 and sectionalGenus B == 0 and isSubset(C,B)) then error "something went wrong";
         E = (random(1,0_E) * E ===> B) E;
     );
