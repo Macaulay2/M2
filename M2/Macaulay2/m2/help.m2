@@ -603,11 +603,12 @@ briefDocumentation = key -> (
 	-- TODO: add spaces around :=
 	BinaryOperation{symbol :=, key, describe key},
 	getTechnical(getAttribute(key, ReverseDictionary), key) };
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    -- TODO: should it be getGlobalSymbol or getAttribute?
-    tag := getOption(rawdoc, symbol DocumentTag);
+    tag := makeDocumentTag key;
+    rawdoc := fetchAnyRawDocumentation tag;
+    tag = rawdoc.DocumentTag ?? tag;
     title := getOption(rawdoc, Headline);
     synopsis := getSynopsis(key, tag, rawdoc);
+    -- TODO: should it be getGlobalSymbol or getAttribute?
     try symb := getGlobalSymbol toString key then (
 	waystouse := documentationValue(symb, key);
 	technical := getTechnical(symb, key)) else ();
