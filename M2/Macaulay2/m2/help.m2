@@ -602,7 +602,7 @@ briefDocumentation = key -> (
 	-- TODO: use either "formation" to enhance the result
 	-- or enhance "describe" or "getTechnical" using "formation"
 	-- TODO: add spaces around :=
-	BinaryOperation{symbol :=, key, describe key},
+	M2CODE toString BinaryOperation{symbol :=, key, describe key},
 	getTechnical(getAttribute(key, ReverseDictionary), key) };
     tag := makeDocumentTag key;
     rawdoc := fetchAnyRawDocumentation tag;
