@@ -3,8 +3,8 @@ beginDocumentation()
 document { 
 Key => Cremona, 
 Headline => "package for some computations on rational maps between projective varieties", 
-EM "Cremona", " is a package to perform some basic computations on rational and birational maps between absolutely irreducible projective varieties over a field ",TEX///$K$///,". For instance, it provides general methods to compute degrees and projective degrees of rational maps (see ", TO"degreeMap", " and ", TO"projectiveDegrees",") and a general method to compute the push-forward to projective space of Segre classes (see ",TO"SegreClass","). Moreover, all the main methods are available both in version probabilistic and in version deterministic, and one can switch from one to the other with the boolean option ",TO "Certify",".",
-PARA{BOLD "Legacy status. ","The rational maps of this package are objects of the class ",TO LegacyRationalMap," (constructed with ",TO legacyRationalMap,"). The prefix ",EM "legacy"," means that this class is kept mainly for compatibility: for new code, it is recommended to use the package ",TO "MultiprojectiveVarieties::MultiprojectiveVarieties",", whose class ",TO "MultiprojectiveVarieties::MultirationalMap"," supersedes ",TO LegacyRationalMap," and also handles rational maps between multi-projective varieties. Up to version 5.2.1 of ",EM "Cremona",", the class and its constructor were called ",TT "RationalMap"," and ",TT "rationalMap","; these names are still available as deprecated synonyms (see ",TO rationalMap,")."},
+EM "Cremona", " is a package to perform some basic computations on rational and birational maps between absolutely irreducible projective varieties over a field ",TEX///$K$///,". For instance, it provides general methods to compute degrees and projective degrees of rational maps (see ", TO"degreeMap", " and ", TO"projectiveDegrees",") and a general method to compute the push-forward to projective space of Segre classes (see ",TO"SegreClass","). Moreover, all the main methods are available both in a probabilistic and in a deterministic version, and one can switch from one to the other with the boolean option ",TO "Certify",".",
+PARA{BOLD "Legacy status. ","The rational maps of this package are objects of the class ",TO LegacyRationalMap," (constructed with ",TO legacyRationalMap,"). The prefix ",EM "legacy"," means that this class is kept mainly for compatibility: for new code, it is recommended to use the package ",TO "MultiprojectiveVarieties::MultiprojectiveVarieties",", whose class ",TO "MultiprojectiveVarieties::RationalMap"," supersedes ",TO LegacyRationalMap," and also handles rational maps between multi-projective varieties. Up to version 5.2.1 of ",EM "Cremona",", the class and its constructor were called ",TT "RationalMap"," and ",TT "rationalMap","; these names are now used by the package ",TO "MultiprojectiveVarieties::MultiprojectiveVarieties"," for its class of rational maps and the corresponding constructor (see ",TO "MultiprojectiveVarieties::rationalMap",")."},
 PARA{"Let ",TEX///$\Phi:X \dashrightarrow Y$///," be a rational map from a subvariety ",TEX///$X=V(I)\subseteq\mathbb{P}^n=Proj(K[x_0,\ldots,x_n])$///," to a subvariety ",TEX///$Y=V(J)\subseteq\mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". Then the map ",TEX///$\Phi $///," can be represented, although not uniquely, by a homogeneous ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," of quotients of polynomial rings by homogeneous ideals. These kinds of ring maps, together with the objects of the ",TO LegacyRationalMap," class, are the typical inputs for the methods in this package. The method ", TO toMap," (resp. ",TO legacyRationalMap,") constructs such a ring map (resp. rational map) from a list of ",TEX///$m+1$///," homogeneous elements of the same degree in ",TEX///$K[x_0,...,x_n]/I$///,"."}, 
 PARA{"Below is an example using the methods provided by this package, dealing with a birational transformation ",TEX///$\Phi:\mathbb{P}^6 \dashrightarrow \mathbb{G}(2,4)\subset\mathbb{P}^9$///," of bidegree ",TEX///$(3,3)$///,"."},
 EXAMPLE { 
@@ -83,9 +83,9 @@ Headline => "whether to ensure correctness of output",
 PARA{"If turned on in the methods ", TO inverseMap," and ", TO approximateInverseMap, ", then it will be checked whether the maps in input and output are one the inverse of the other, throwing an error if they are not. Actually, ", TO approximateInverseMap, " will first try to fix the error of the approximation. When turned on in the methods ", TO projectiveDegrees,", ", TO degreeMap, ", ", TO isBirational,", ", TO isDominant, ", ", TO SegreClass, ", ", TO EulerCharacteristic, " and ", TO ChernSchwartzMacPherson, ", it means whether to use a non-probabilistic algorithm."}} 
 
 document { 
-Key => {Dominant, [toMap,Dominant], [legacyRationalMap,Dominant], [rationalMap,Dominant]}, 
+Key => {Dominant, [toMap,Dominant], [legacyRationalMap,Dominant]}, 
 -- Headline => "makes a dominant rational map" , 
-"This is an optional argument for ", TO toMap,". When ", TO true," or ",TO infinity," is passed to this option, the kernel of the returned ring map will be zero."} 
+"This is an optional argument for ", TO toMap," and ", TO legacyRationalMap,". When ", TO true," or ",TO infinity," is passed to this option, the target of the rational map is replaced by its image, so that the kernel of the returned ring map is zero (and the returned rational map is dominant)."} 
 
 document { 
 Key => {NumDegrees, [projectiveDegrees,NumDegrees]}, 
@@ -179,7 +179,7 @@ Inputs => {
 "phi" => LegacyRationalMap => {"a birational map"}}, 
 Outputs => { 
 LegacyRationalMap => {"the inverse map of ",TT"phi"}},
-PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", TO "Parametrization::invertBirationalMap", " in the package ", TO "Parametrization", ". Note that in this case, the analogous method ", TO "RationalMaps::inverseOfMap", " in the package ", TO "RationalMaps"," generally turns out to be faster."},
+PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", TO "Parametrization::invertBirationalMap", " in the package ", TO "Parametrization::Parametrization", ". Note that in this case, the analogous method ", TO "RationalMaps::inverseOfMap", " in the package ", TO "RationalMaps::RationalMaps"," generally turns out to be faster."},
 EXAMPLE { 
 "-- A Cremona transformation of P^20 
 phi = legacyRationalMap map quadroQuadricCremonaTransformation(20,1)", 
@@ -346,11 +346,11 @@ SeeAlso => {(euler,ProjectiveVariety),ChernSchwartzMacPherson,SegreClass}}
 document { 
 Key => {LegacyRationalMap}, 
 Headline => "the class of all (legacy) rational maps between absolutely irreducible projective varieties over a field", 
-PARA{"The class is called ",EM "legacy"," because it is kept mainly for compatibility: for new code, use the class ",TO "MultiprojectiveVarieties::MultirationalMap"," of the package ",TO "MultiprojectiveVarieties::MultiprojectiveVarieties",". Up to version 5.2.1 of ",EM "Cremona",", this class was called ",TT "RationalMap","; the old name is still available as a deprecated synonym."},
+PARA{"The class is called ",EM "legacy"," because it is kept mainly for compatibility: for new code, use the class ",TO "MultiprojectiveVarieties::RationalMap"," of the package ",TO "MultiprojectiveVarieties::MultiprojectiveVarieties",". Up to version 5.2.1 of ",EM "Cremona",", this class was called ",TT "RationalMap","; that name is now used by the package ",TO "MultiprojectiveVarieties::MultiprojectiveVarieties"," for its own class of rational maps."},
 PARA{"An object of the class ",EM "LegacyRationalMap", " can be basically replaced by a homogeneous ring map of quotients of polynomial rings by homogeneous ideals. One main advantage to using this class is that things computed using non-probabilistic algorithms are stored internally (or partially stored)."},
 PARA{"The constructor for the class is ",TO "legacyRationalMap",", which works quite similar to ",TO "toMap",". 
 See in particular the methods: ",TO (legacyRationalMap,RingMap),", ",TO (legacyRationalMap,Ideal,ZZ,ZZ),", ",TO (legacyRationalMap,Tally),", and ",TO (legacyRationalMap,PolynomialRing,List),"."},
-PARA{"In the package ", TO "MultiprojectiveVarieties::MultiprojectiveVarieties",", this class has been extended to provide support to rational maps between multi-projective varieties, see ", TO "MultiprojectiveVarieties::MultirationalMap", "."}}
+PARA{"In the package ", TO "MultiprojectiveVarieties::MultiprojectiveVarieties",", this class has been extended to provide support to rational maps between multi-projective varieties, see ", TO "MultiprojectiveVarieties::RationalMap", "."}}
 
 document { 
 Key => {(symbol ^**,LegacyRationalMap,Ideal),(symbol ^*,LegacyRationalMap)}, 
@@ -694,7 +694,7 @@ Inputs => {
 "I" => Ideal => {"the ideal of a linear variety or of a hyperquadric"}}, 
 Outputs => { 
 LegacyRationalMap => {"a birational map ",TT"phi"," such that ",TT"I == image phi"}},
-PARA{"This function has been improved and extended in the package ", TO "MultiprojectiveVarieties", ", see ", TO "MultiprojectiveVarieties::parametrize(MultiprojectiveVariety)", "."},
+PARA{"This function has been improved and extended in the package ", TO "MultiprojectiveVarieties::MultiprojectiveVarieties", ", see ", TO "MultiprojectiveVarieties::parametrize(MultiprojectiveVariety)", "."},
 EXAMPLE {
 "P9 := ZZ/10000019[x_0..x_9]",
  "L = trim ideal(random(1,P9),random(1,P9),random(1,P9),random(1,P9))",
@@ -785,7 +785,7 @@ Inputs => {
 RingMap => { "or ", ofClass {Matrix,List},", etc."}}, 
 Outputs => { LegacyRationalMap => {"the rational map represented by ",TT"phi"," or by the ring map defined by ",TT"F"}}, 
 PARA{"This is the basic construction for ",ofClass LegacyRationalMap,". The method is quite similar to ",TO toMap,", except that it returns a ", TO LegacyRationalMap," instead of a ",TO RingMap,"."},
-PARA{"Up to version 5.2.1 of ",EM "Cremona",", this method was called ",TT "rationalMap"," (see ",TO rationalMap,"). For new code, it is recommended to use the package ",TO "MultiprojectiveVarieties::MultiprojectiveVarieties","."},
+PARA{"Up to version 5.2.1 of ",EM "Cremona",", this method was called ",TT "rationalMap","; that name now denotes the constructor of the rational maps of the package ",TO "MultiprojectiveVarieties::MultiprojectiveVarieties",", which is recommended for new code (see ",TO "MultiprojectiveVarieties::rationalMap",")."},
 EXAMPLE { 
 "R := QQ[t_0..t_8]", 
 "F = matrix{{t_0*t_3*t_5, t_1*t_3*t_6, t_2*t_4*t_7, t_2*t_4*t_8}}",
@@ -1015,7 +1015,7 @@ SeeAlso => {(image,LegacyRationalMap),forceInverseMap}}
 
 document {Key => {point}, 
 Headline => "pick a random rational point on a projective variety", 
-PARA{"See ", TO "MultiprojectiveVarieties::point(MultiprojectiveVarieties)",
+PARA{"See ", TO "MultiprojectiveVarieties::point(MultiprojectiveVariety)",
 " and ",TO2{(point,QuotientRing),"point(QuotientRing)"},"."}}
 
 undocumented {(point,Ideal),(point,Ideal,Boolean)}
@@ -1027,7 +1027,7 @@ Inputs => {
 QuotientRing => "R" => {"the homogeneous coordinate ring of a closed subscheme ",TEX///$X\subseteq\mathbb{P}^n$///," over a finite ground field"}}, 
 Outputs => { 
 Ideal => {"an ideal in ",TT "R"," defining a point on ",TEX///$X$///}}, 
-PARA{"This function is a variant of the ",TO randomKRationalPoint," function, which has been further improved and extended in the package ", TO "MultiprojectiveVarieties", ", see ", TO "MultiprojectiveVarieties::point(MultiprojectiveVariety)", "."},
+PARA{"This function is a variant of the ",TO randomKRationalPoint," function, which has been further improved and extended in the package ", TO "MultiprojectiveVarieties::MultiprojectiveVarieties", ", see ", TO "MultiprojectiveVarieties::point(MultiprojectiveVariety)", "."},
 PARA{"Below we verify the birationality of a rational map."},
 EXAMPLE { 
 "f = inverseMap specialQuadraticTransformation(9,ZZ/33331);",
@@ -1167,16 +1167,3 @@ EXAMPLE {
 "time ? image(phi,\"F4\")"},
 PARA{"See also the package ", TO "WeilDivisors::WeilDivisors", ", which provides general tools for working with divisors."},
 SeeAlso => {legacyRationalMap,(legacyRationalMap,Ideal,ZZ),(image,LegacyRationalMap,String)}}
-
-document { 
-Key => {rationalMap,(rationalMap,RingMap),(rationalMap,Matrix),(rationalMap,List),(rationalMap,Ideal),(rationalMap,Ideal,ZZ),(rationalMap,Ideal,List),(rationalMap,Ideal,ZZ,ZZ),(rationalMap,PolynomialRing,List),(rationalMap,LegacyRationalMap),(rationalMap,Ring,Ring,Matrix),(rationalMap,Ring,Ring,List),(rationalMap,Ring,Ring),(rationalMap,Ring),(rationalMap,Ring,Tally),(rationalMap,Tally),symbol RationalMap}, 
-Headline => "deprecated synonyms of legacyRationalMap and LegacyRationalMap", 
-Usage => "rationalMap(...)", 
-PARA{"Up to version 5.2.1 of ",EM "Cremona",", the class ",TO LegacyRationalMap," and its constructor ",TO legacyRationalMap," were called ",TT "RationalMap"," and ",TT "rationalMap",". The old names are kept only for compatibility, and they will be removed in a future version: each method of ",TT "rationalMap"," simply calls the corresponding method of ",TO legacyRationalMap,", and ",TT "RationalMap"," is the same class as ",TO LegacyRationalMap,"."},
-PARA{"Other packages may install further methods for ",TT "rationalMap",". In particular, when the package ",TO "MultiprojectiveVarieties::MultiprojectiveVarieties"," is loaded, ",TT "rationalMap"," also accepts the multi-projective varieties of that package, and in that case it returns a ",TO "MultiprojectiveVarieties::MultirationalMap",". To always obtain a ",TO LegacyRationalMap,", use ",TO legacyRationalMap,"."},
-EXAMPLE {
-"R = QQ[t_0..t_2];",
-"phi = rationalMap {t_1*t_2,t_0*t_2,t_0*t_1}",
-"phi == legacyRationalMap {t_1*t_2,t_0*t_2,t_0*t_1}",
-"RationalMap === LegacyRationalMap"},
-SeeAlso => {legacyRationalMap,LegacyRationalMap}}
