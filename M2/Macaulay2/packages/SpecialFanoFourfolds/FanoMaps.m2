@@ -402,8 +402,8 @@ abstractJoinOfRationalSurfaces (EmbeddedProjectiveVariety,EmbeddedProjectiveVari
     JJ := projectiveVariety J';
     if o.Verbose then << "  -- constructing the two projections: p1:..-->PP^2xPP^2 and p2:..-->PP^" << n << endl;
     -- psi := rationalMap(last projectionMaps JJ,target f); -- might cause bugs, forgot details
-    psi := rationalMap(last projectionMaps JJ); psi = psi * multirationalMap(target psi,target f);
-    eta := multirationalMap((projectionMaps JJ)_0 | (projectionMaps JJ)_1, PP_K^{2,2});
+    psi := rationalMap(last projectionMaps JJ); psi = psi * rationalMap(target psi,target f);
+    eta := rationalMap((projectionMaps JJ)_0 | (projectionMaps JJ)_1, PP_K^{2,2});
     S.cache#("abstract join of rational surfaces",P) = (eta,psi)
 );
 

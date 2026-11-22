@@ -147,7 +147,7 @@ map CongruenceOfCurves := o -> f -> (
     mu := fanoMap(X,e);
     e' := (mu#"map").cache#"multiplicityFanoMap";
     if e' =!= e then error("the congruence seems not valid; try the command: detectCongruence(...,"|toString(e')|")");
-    multirationalMap mu
+    rationalMap mu
 );
 
 check (ZZ,CongruenceOfCurves) := o -> (n,f) -> (

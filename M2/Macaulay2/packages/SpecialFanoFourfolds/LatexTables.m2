@@ -231,7 +231,7 @@ parameterCountTex HodgeSpecialFourfold := X -> (
         (x,y,z) = last X.cache#(surface X,"parameterCount");
         w0 = " $" | (toString w) | " = " | toString(w + (x-1) + y - z) | " - (" | (toString y) | " + " | (toString(x-1)) | " - " | (toString z) | ")$ ";
     ) else (
-        x = 1 + dim target multirationalMap map X;
+        x = 1 + dim target rationalMap map X;
     );
     w0 | "& $" | (toString y) | "$ & $" | (toString x) | "$ & $" | (toString z) | "$ "
 );
@@ -239,7 +239,7 @@ parameterCountTex HodgeSpecialFourfold := X -> (
 associatedK3Tex = method();
 associatedK3Tex HodgeSpecialFourfold := X -> (
     if computationStatus X == -1 then return " - & - & - & - ";
-    mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF X else multirationalMap fanoMap X;
+    mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF X else rationalMap fanoMap X;
     W := target mu;
     row := ///$ d_1(\mu) = /// | (toString degreeOfDefiningForms mu) | " $ & ";
     row = row | (if codim W == 0 then /// $W=\mathbb{P}^4$ /// else (/// $\begin{array}{c} W\subset\mathbb{P}^{/// | (toString dim ambient W) | ///} \\ \deg(W)=/// | (toString degree W) | ", g(W)=" | (toString sectionalGenus W) | /// \\ \operatorname{gens\,id.}: /// | (generatorDegreesTex W) | /// \end{array} $ ///));

@@ -43,7 +43,7 @@ describe WeightedSurfaceAssociatedToRationalFourfold := describe SurfaceAssociat
 );
 
 makeSurfaceAssociated = (X,mu,U,C,f) -> (
-    assert(instance(X,HodgeSpecialFourfold) and instance(mu,MultirationalMap) and instance(U,EmbeddedProjectiveVariety) and instance(C,List) and (instance(f,Nothing) or instance(f,MultirationalMap)));
+    assert(instance(X,HodgeSpecialFourfold) and instance(mu,RationalMap) and instance(U,EmbeddedProjectiveVariety) and instance(C,List) and (instance(f,Nothing) or instance(f,RationalMap)));
     S := if f =!= null then image f else projectiveVariety((coefficientRing X)[],Saturate=>false);
     S = if instance(S,WeightedProjectiveVariety) then new WeightedSurfaceAssociatedToRationalFourfold from S else new SurfaceAssociatedToRationalFourfold from S;
     S.cache#"construction of SurfaceAssociatedToRationalFourfold" = (mu,U,C,f);
@@ -104,7 +104,7 @@ associatedK3surface CubicFourfold := associatedK3surface GushelMukaiFourfold := 
     fanoMap(X,Singular=>o.Singular,Verbose=>o.Verbose);
     (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
     U := ambientVariety L;
-    mu := multirationalMap fanoMap X;
+    mu := rationalMap fanoMap X;
     f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>o.Strategy,"ForceNormalization"=>false);
     Utilde := makeSurfaceAssociated(X,mu,U,{L,C},f);
     if o.Verbose then printFinalLog Utilde;

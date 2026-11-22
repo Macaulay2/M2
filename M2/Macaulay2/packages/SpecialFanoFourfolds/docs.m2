@@ -87,7 +87,7 @@ document {Key => {toGrass, (toGrass, GushelMukaiFourfold)},
 Headline => "Gushel morphism from a GM fourfold to GG(1,4)",
 Usage => "toGrass X",
 Inputs => {"X" => GushelMukaiFourfold},
-Outputs => {MultirationalMap => {"a linear morphism from ", TEX///$X$///, " into the ",TO2{GrassmannianVariety,"Grassmannian"}," ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded, which is an embedding when ",TEX///$X$///," is of ordinary type"}},
+Outputs => {RationalMap => {"a linear morphism from ", TEX///$X$///, " into the ",TO2{GrassmannianVariety,"Grassmannian"}," ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded, which is an embedding when ",TEX///$X$///," is of ordinary type"}},
 EXAMPLE {"x := gens ring PP_(ZZ/33331)^8;", "X = gushelMukaiFourfold(ideal(x_6-x_7, x_5, x_3-x_4, x_1, x_0-x_4, x_2*x_7-x_4*x_8), ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8, x_0^2+x_0*x_1+x_1^2+x_0*x_2+2*x_0*x_3+x_1*x_3+x_2*x_3+x_3^2-x_0*x_4-x_1*x_4-2*x_2*x_4-x_3*x_4-2*x_4^2+x_0*x_5+x_2*x_5+x_5^2+2*x_0*x_6+x_1*x_6+2*x_2*x_6+x_3*x_6+x_5*x_6+x_6^2-3*x_4*x_7+2*x_5*x_7-x_7^2+x_1*x_8+x_3*x_8-3*x_4*x_8+2*x_5*x_8+x_6*x_8-x_7*x_8));", "toGrass X", "show oo"},
 SeeAlso => {(toGrass, EmbeddedProjectiveVariety), (symbol ===>, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)}}
 
@@ -95,7 +95,7 @@ document {Key => {(toGrass, EmbeddedProjectiveVariety)},
 Headline => "embedding of an ordinary Gushel-Mukai fourfold or a del Pezzo variety into GG(1,4)",
 Usage => "toGrass X",
 Inputs => {"X" => EmbeddedProjectiveVariety => {"an ordinary Gushel-Mukai fourfold, or a del Pezzo variety of dimension at least 4 (e.g., a sixfold projectively equivalent to ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///,")"}},
-Outputs => {MultirationalMap => {"an embedding of ", TEX///$X$///, " into the ",TO2{GrassmannianVariety,"Grassmannian"}," ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded"}},
+Outputs => {RationalMap => {"an embedding of ", TEX///$X$///, " into the ",TO2{GrassmannianVariety,"Grassmannian"}," ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded"}},
 EXAMPLE {"x = gens ring PP_(ZZ/33331)^8;", "X = projectiveVariety ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8);", "toGrass X", "show oo"},
 SeeAlso => {(toGrass,GushelMukaiFourfold), (symbol ===>, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)}}
 
@@ -186,7 +186,7 @@ document {Key => {(map, CongruenceOfCurves)},
 Headline => "compute the parameter space of a congruence",
 Usage => "map f",
 Inputs => {"f" => CongruenceOfCurves => {"a congruence of curves to a surface inside a variety ", TEX///$Y$///}},
-Outputs => {MultirationalMap => {"a dominant map from ",TEX///$Y$///," to the parameter space of ",TEX///$f$///," whose general fibers are the curves of the congruence"}},
+Outputs => {RationalMap => {"a dominant map from ",TEX///$Y$///," to the parameter space of ",TEX///$f$///," whose general fibers are the curves of the congruence"}},
 EXAMPLE {"S = PP_(ZZ/65521)[2,2];","Y = ambient S;","X = cubicFourfold S;","f = detectCongruence(X,1);","F = map f;","Q = target F","f;","p = point Y;","assert(f p == F^* F p)"},
 SeeAlso => {detectCongruence}}
 
@@ -318,7 +318,7 @@ PARA{"The curve ",TEX///$C$///," can be recovered using the function ",TT "curve
 EXAMPLE lines ///K = ZZ/65521;
 C = random PP_K^(1,3); -- random twisted cubic in P^3
 j = parametrize PP_K(1,1,1,4);
-C = (multirationalMap(ambient C,source j) * j) C;
+C = (rationalMap(ambient C,source j) * j) C;
 describe C
 S = random(8,C);
 describe S
@@ -335,7 +335,7 @@ document {Key => {unirationalParametrization, (unirationalParametrization, Cubic
 Headline => "unirational parametrization",
 Usage => "unirationalParametrization X",
 Inputs => {"X" => CubicFourfold => {"or ", ofClass GushelMukaiFourfold}},
-Outputs => {MultirationalMap => {"a rational map of degree 2 from ",TEX///$\mathbb{P}^4$///," to ",TEX///$X$///}},
+Outputs => {RationalMap => {"a rational map of degree 2 from ",TEX///$\mathbb{P}^4$///," to ",TEX///$X$///}},
 PARA{"The degree of the forms defining the returned map is 10 in the case of cubic fourfolds, and 26 in the case of GM fourfolds."},
 EXAMPLE {"K = ZZ/10000019; S = PP_K^(2,2); -- Veronese surface;", "X = cubicFourfold S;", "f = unirationalParametrization X;", "degreeSequence f", "degree(f,Strategy=>\"random point\")"},
 SeeAlso => {(parametrize, HodgeSpecialFourfold), (parametrize, MultiprojectiveVariety)}}
@@ -344,7 +344,7 @@ document {Key => {(parametrize, HodgeSpecialFourfold)},
 Headline => "rational parametrization",
 Usage => "parametrize X",
 Inputs => {"X" => HodgeSpecialFourfold},
-Outputs => {MultirationalMap => {"a birational map from a rational fourfold to ", TT "X"}},
+Outputs => {RationalMap => {"a birational map from a rational fourfold to ", TT "X"}},
 PARA{"Some Hodge-special fourfolds are known to be rational. In this case, the function tries to obtain a birational map from ", TEX///$\mathbb{P}^4$///, " (or, e.g., from a quadric hypersurface in ", TEX///$\mathbb{P}^5$///, ") to the fourfold."},
 EXAMPLE {"X = specialFourfold surface {3,4};", "phi = parametrize X;", "describe phi"},
 EXAMPLE {"Y = specialFourfold \"tau-quadric\";", "psi = parametrize Y;", "describe psi"},
@@ -367,7 +367,7 @@ Headline => "K3 surface associated to a rational cubic fourfold",
 Usage => "E = associatedK3surface X",
 Inputs => {"X" => CubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///," that admits a ",TO2{CongruenceOfCurves,"congruence"}," of ",TEX///$(3e-1)$///,"-secant curves of degree ",TEX///$e$///}},
 Outputs => {"E" => {"the (minimal) K3 surface associated to ",TEX///$X$///}},
-Consequences => {{{TT"building E"," will return the following four objects:"}, UL{{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:\mathbb{P}^5 \dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$3e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to the minimal K3 surface ",TEX///$\widetilde{U}$///,"."}}}},
+Consequences => {{{TT"building E"," will return the following four objects:"}, UL{{"the dominant ",TO2{RationalMap,"rational map"}," ",TEX///$\mu:\mathbb{P}^5 \dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$3e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{RationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to the minimal K3 surface ",TEX///$\widetilde{U}$///,"."}}}},
 PARA {"For more details and notation, see the papers ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"}," and ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
 EXAMPLE {"X = cubicFourfold \"quartic scroll\";", "describe X", "E = associatedK3surface(X, Verbose=>true);", "describe X", "(mu,U,exCurves,f) = building E; ? mu", "assert(image f == E)"},
 SeeAlso => {(associatedK3surface, GushelMukaiFourfold), detectCongruence, mirrorFourfold, (polarizedK3surface, DoublySpecialCubicFourfold)}}
@@ -377,7 +377,7 @@ Headline => "K3 surface associated to a rational Gushel-Mukai fourfold",
 Usage => "E = associatedK3surface X",
 Inputs => {"X" => GushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///," that admits a ",TO2{CongruenceOfCurves,"congruence"}," of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the ",TO2{ambientFivefold,"ambient fivefold"}," ",TEX///$Y$///," of the fourfold ",TEX///$X$///}},
 Outputs => {"E" => {"the (minimal) K3 surface associated to ",TEX///$X$///}},
-Consequences => {{{TT"building E"," will return the following four objects:"}, UL{{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:Y\dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$2e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to the minimal K3 surface ",TEX///$\widetilde{U}$///,"."}}}},
+Consequences => {{{TT"building E"," will return the following four objects:"}, UL{{"the dominant ",TO2{RationalMap,"rational map"}," ",TEX///$\mu:Y\dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$2e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{RationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to the minimal K3 surface ",TEX///$\widetilde{U}$///,"."}}}},
 PARA {"For more details and notation, see the paper ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
 EXAMPLE {"X = gushelMukaiFourfold \"tau-quadric\";", "describe X", "E = associatedK3surface(X, Verbose=>true);", "describe X", "(mu,U,exCurves,f) = building E; ? mu", "assert(image f == E)"},
 SeeAlso => {(associatedK3surface, CubicFourfold), detectCongruence, mirrorFourfold, (polarizedK3surface, DoublySpecialCubicFourfold)}}
@@ -387,7 +387,7 @@ Headline => "rational parametrization of a prime Fano fourfold of coindex at mos
 Usage => "parametrize X
 parametrizeFanoFourfold(X,Strategy=>...)",
 Inputs => {"X" => EmbeddedProjectiveVariety => {"a prime Fano fourfold ",TEX///$X$///," of coindex at most 3 having degree ",TEX///$d$///," and genus ",TEX///$g$///," with ",TEX///$(d,g)\in\{(2,0),(4,1),(5,1),(12,7),(14,8),(16,9),(18,10)\}$///}},
-Outputs => {MultirationalMap => {"a birational map from ",TEX///$\mathbb{P}^4$///," to ", TEX///$X$///}},
+Outputs => {RationalMap => {"a birational map from ",TEX///$\mathbb{P}^4$///," to ", TEX///$X$///}},
 PARA{"This function is mainly based on results contained in the classical paper ",HREF{"https://link.springer.com/article/10.1007/BF02413916","Algebraic varieties with canonical curve sections"},", by L. Roth. In some examples, more strategies are available. For instance, if ",TEX///$X\subset\mathbb{P}^7$///," is a 4-dimensional linear section of ",TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///,", then by passing ",TT"Strategy=>1"," (which is the default choice) we get the inverse of the projection from the plane spanned by a conic contained in ",TEX///$X$///,"; while with ",TT"Strategy=>2"," we get the projection from the unique ",TEX///$\sigma_{2,2}$///,"-plane contained in ",TEX///$X$///," (Todd's result)."},
 EXAMPLE {"K = ZZ/65521; X = GG_K(1,4) * random({{1},{1}},0_(GG_K(1,4)));","? X", "parametrizeFanoFourfold X"},
 SeeAlso => {fanoFourfold,(parametrize,HodgeSpecialFourfold),unirationalParametrization,(parametrize,MultiprojectiveVariety)}}
@@ -424,7 +424,7 @@ document {Key => {(specialFourfold, String, ZZ)},
 Headline => "load a prebuilt example of fourfold",
 Usage => "specialFourfold(str,i)",
 Inputs => {"str" => String => {"such as \"",TT"prebuilt-example-in-P5","\" or \"",TT"prebuilt-example-in-P7","\"."}, "i" => ZZ},
-Outputs => {HodgeSpecialFourfold => {"the i-th example of fourfold in accordance with some classification (e.g., ",TT"specialFourfold(\"prebuilt-example-in-P5\",i)"," is the same as ",TO2{(source,MultirationalMap),"source"}," ",TO trisecantFlop,TT"(i)","."}},
+Outputs => {HodgeSpecialFourfold => {"the i-th example of fourfold in accordance with some classification (e.g., ",TT"specialFourfold(\"prebuilt-example-in-P5\",i)"," is the same as ",TO2{(source,RationalMap),"source"}," ",TO trisecantFlop,TT"(i)","."}},
 PARA{"This function requires the package ",HREF{"https://github.com/giovannistagliano/TrisecantFlops","TrisecantFlops"},". If not present the user will be asked to automatically install the package."},
 Caveat => {"This function may be deprecated in a future version. Consider importing examples with ", TO2{(store,String),"store"}, " and accessing them with ", TO example, " instead."},
 SeeAlso => {trisecantFlop, (example, String)}}
@@ -511,7 +511,7 @@ Headline => "Castelnuovo surface associated to a rational complete intersection 
 Usage => "E = associatedCastelnuovoSurface X",
 Inputs => {"X" => IntersectionOfThreeQuadricsInP7 => {"containing a surface ", TEX///$S\subset Y$///," that admits a ",TO2{CongruenceOfCurves,"congruence"}," of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the ",TO2{ambientFivefold,"ambient fivefold"}," ",TEX///$Y$///," of the fourfold ",TEX///$X$///}},
 Outputs => {"E" => {"the (minimal) Castelnuovo surface associated to ",TEX///$X$///}},
-Consequences => {{{TT"building E"," will return the following four objects:"}, UL{{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:Y\dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$2e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to the minimal Castelnuovo surface ",TEX///$\widetilde{U}$///,"."}}}},
+Consequences => {{{TT"building E"," will return the following four objects:"}, UL{{"the dominant ",TO2{RationalMap,"rational map"}," ",TEX///$\mu:Y\dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$2e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{RationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to the minimal Castelnuovo surface ",TEX///$\widetilde{U}$///,"."}}}},
 PARA {"For more details, see the paper ",HREF{"https://arxiv.org/abs/2312.01773","On complete intersections of three quadrics in P^7"},"."},
 EXAMPLE {"X = specialFourfold random({5:{1}},0_(PP_(ZZ/33331)^7));", "describe X", "E = associatedCastelnuovoSurface(X, Verbose=>true);", "describe X", "(mu,U,exCurves,f) = building E; ? mu", "assert(image f == E)"},
 SeeAlso => {associatedK3surface, detectCongruence}}
@@ -520,7 +520,7 @@ document {Key => {beauvilleMap, (beauvilleMap, IntersectionOfThreeQuadricsInP7)}
 Headline => "construction of Beauville for complete intersections of three quadrics in P^7",
 Usage => "f = beauvilleMap X",
 Inputs => {"X" => IntersectionOfThreeQuadricsInP7},
-Outputs => {"f" => MultirationalMap => {"a birational map from ",TEX///$X$///," to a fourfold ",TEX///$Y\subset\mathbb{P}^2\times\mathbb{P}^5$///," whose first projection ",TEX///$Y\to\mathbb{P}^2$///," is a quadric surface bundle"}},
+Outputs => {"f" => RationalMap => {"a birational map from ",TEX///$X$///," to a fourfold ",TEX///$Y\subset\mathbb{P}^2\times\mathbb{P}^5$///," whose first projection ",TEX///$Y\to\mathbb{P}^2$///," is a quadric surface bundle"}},
 PARA{"Smooth intersections of three quadrics in ",TEX///$\mathbb{P}^7$///," are birational to quadric surface bundles over ",TEX///$\mathbb{P}^2$///," with discriminant curve of degree 8. This is a construction of Beauville; see e.g. Proposition 6 in the paper ",HREF{"https://www.intlpress.com/site/pub/files/_fulltext/journals/sdg/2017/0022/0001/SDG-2017-0022-0001-a009.pdf", "Intersections of three quadrics in P7"}, ", by B. Hassett, A. Pirutka, and Y. Tschinkel."},
 EXAMPLE {"X = specialFourfold random({5:{1}},0_(PP_(ZZ/33331)^7));", "f = beauvilleMap X;", "Y = target f;", "inverse f;", "first projectionMaps target f;"}}
 

@@ -47,8 +47,8 @@ specialFourfold (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S
     if dim X == 4 and dim ambient X == 8 and degrees X == {({2},6)} and degree X == 10 then return gushelMukaiFourfold(S,X,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     if dim X == 5 and (degrees X == {({2},2)} or degrees X == {({3},1)}) then return specialFourfold(S,X * random(2,S),X,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     if dim X != 4 then error "expected a fourfold";
-    if dim ambient X == 7 and degrees X == {({2},3)} and degree X == 8 then return specialFourfold(S,X,random({{2},{2}},X),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-    if dim ambient X == 6 and degrees X == {({2},1),({3},1)} and degree X == 6 then return specialFourfold(S,X,random(3,X),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    if dim ambient X == 7 and degrees X == {({2},3)} and degree X == 8 then return specialFourfold(S,X,if X.cache#?"AmbientFivefold" then X.cache#"AmbientFivefold" else random({{2},{2}},X),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    if dim ambient X == 6 and degrees X == {({2},1),({3},1)} and degree X == 6 then return specialFourfold(S,X,if X.cache#?"AmbientFivefold" then X.cache#"AmbientFivefold" else random(3,X),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     if dim ambient X == 5 and degrees X == {({4},1)} and degree X == 4 then return specialFourfold(S,X,ambient X,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     if o.InputCheck >= 0 then if not isSubset(S,X) then error "the given surface is not contained in fourfold";
     if o.InputCheck >= 1 then if not isSmooth X then error "expected a smooth fourfold";
@@ -502,7 +502,7 @@ surface (VisibleList,Ring,Option,Option) := (L,K,oN,oA) -> (
         makeSubvariety(fC,S,Verify=>true);
         if not (dim fC == 1 and degree fC == D*L_0 - sum(#d,i->(i+1)*d_i)) then error "something went wrong when taking the curve";
         fC.cache#"plane representation" = (D,d);
-        if D <= 2 then fC.cache#"rationalParametrization" = check multirationalMap((parametrize C)*f,fC);
+        if D <= 2 then fC.cache#"rationalParametrization" = check rationalMap((parametrize C)*f,fC);
         return fC;
     ));
     return S;
@@ -555,7 +555,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         toRing := method();
         toRing Ideal := I -> toString sub(I,vars R);
         toRing EmbeddedProjectiveVariety := S -> "projectiveVariety(" | toRing ideal S | ",MinimalGenerators=>false,Saturate=>false)";
-        toRing MultirationalMap := Psi -> toString entries sub(matrix Psi,vars R);
+        toRing RationalMap := Psi -> toString entries sub(matrix Psi,vars R);
         toRing LegacyRationalMap := psi -> toString flatten entries sub(matrix psi,vars R);
         (strR,toRing)
     );
@@ -651,7 +651,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         if not S.cache#?("fanoMap",V) then return s | "X))()";
         mu = fanoMap X;
         strFanoMapMult := toString (mu#"map").cache#"multiplicityFanoMap";
-        mu = multirationalMap mu;
+        mu = rationalMap mu;
     );
     m := dim ambient target mu;
     (ringAmbientW,toRingAmbientW) := ringStringData(m,K,"y","ringAmbientW");
@@ -701,7 +701,7 @@ toExternalString HodgeSpecialFourfold := X -> (
         s = s | ///U.cache#"birational maps from X to W and from W to X" = (mu',eta);/// | newline;
     );
     if U.cache#?"Normalization" then (
-        normU := multirationalMap normalization U;
+        normU := rationalMap normalization U;
         z := local z;
         dimAmbNormU := dim ambient source normU;
         ringAmbNormU := K[z_0..z_dimAmbNormU,Degrees=>degrees ring ambient source normU];

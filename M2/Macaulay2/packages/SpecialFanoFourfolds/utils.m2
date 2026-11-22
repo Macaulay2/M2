@@ -29,18 +29,18 @@ inverse3 LegacyRationalMap := psi -> (
     forceInverseMap(phi,psi);
     phi
 );
-inverse3 MultirationalMap := Psi -> (
+inverse3 RationalMap := Psi -> (
     if Psi#"inverse" =!= null then return Psi#"inverse";
-    Phi := multirationalMap inverse3 toLegacyRationalMap Psi;
+    Phi := rationalMap inverse3 toLegacyRationalMap Psi;
     if ring source Phi =!= ring target Psi then error "internal error encountered";
     Phi#"source" = target Psi;
     if ring target Phi =!= ring source Psi then error "internal error encountered";
-    Phi = multirationalMap(Phi,source Psi);
+    Phi = rationalMap(Phi,source Psi);
     Phi#"inverse" = Psi;
     Psi#"inverse" = Phi
 );
 inverse3 (LegacyRationalMap,Option) := (psi,opt) -> inverse3 psi;
-inverse3 (MultirationalMap,Option) := (Psi,opt) -> inverse3 Psi;
+inverse3 (RationalMap,Option) := (Psi,opt) -> inverse3 Psi;
 
 normalization = method(Options => {Verbose => true});
 normalization EmbeddedProjectiveVariety := o -> X -> (
@@ -59,7 +59,7 @@ inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
     --     if verb then << "-- experimental normalization failed; falling back to standard method..." << endl;
     -- );
     if verb then << "-- computing normalization of " << strY << "..." << endl << flush;
-    normU := multirationalMap normalization(Y,Verbose=>false);
+    normU := rationalMap normalization(Y,Verbose=>false);
     X := source normU;
     if instance(normU,WeightedRationalMap) then (
         if verb then << "-- warning: normalization of " << strY << " has unsupported type: " << class X << endl;
@@ -72,9 +72,9 @@ inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
     Phi := super inverse3 normU;
     if Phi#"image" === null then ( -- forceImage --
         f := toLegacyRationalMap Phi;
-        assert(multirationalMap f === Phi);
+        assert(rationalMap f === Phi);
         if f#"idealImage" === null then forceImage(f,sub(ideal X,target f));
-        multirationalMap f;
+        rationalMap f;
         if not(Phi#"image" =!= null and Phi#"image" == X) then error "internal error encountered";
         Phi#"image" = X;
     );
@@ -94,7 +94,7 @@ inverseNormalizationMapExperimentalRaw = (Y,strY,expEulOut,verb) -> (
     pr := rationalMap((linearSpan pts)_Y, Dominant=>true);
     if degree target pr != degree Y - (dim ambient Y - 5) then error "something went wrong";
     if verb then << "  -- computing normalization of " << (? target pr) << endl << flush;
-    n := multirationalMap normalization(target pr, Verbose=>false);
+    n := rationalMap normalization(target pr, Verbose=>false);
     if verb then << "  -- inverting normalization map..." << endl << flush;
     local n';
     if instance(n,WeightedRationalMap) then (
@@ -124,7 +124,7 @@ inverseNormalizationMapExperimentalRaw = (Y,strY,expEulOut,verb) -> (
 );
 
 interpolateImage = method(Options => {Verbose => false, cache => true});
-interpolateImage (MultirationalMap,List,ZZ) := o -> (Phi,D,j) -> (
+interpolateImage (RationalMap,List,ZZ) := o -> (Phi,D,j) -> (
     if Phi#"image" =!= null then return Phi#"image";
     if Phi#"isDominant" === true then return target Phi;
     if not all(D,d -> instance(d,ZZ)) then error "expected a list of integers";
@@ -161,7 +161,7 @@ interpolateImage (MultirationalMap,List,ZZ) := o -> (Phi,D,j) -> (
 );
 interpolateImage (LegacyRationalMap,List,ZZ) := o -> (Phi,D,j) -> (
     if Phi#"idealImage" =!= null then return Phi#"idealImage";
-    W := interpolateImage(multirationalMap Phi,D,j,Verbose=>o.Verbose,cache=>false);
+    W := interpolateImage(rationalMap Phi,D,j,Verbose=>o.Verbose,cache=>false);
     if o.cache then forceImage(Phi,ideal W);
     ideal W
 );
@@ -408,7 +408,7 @@ describeMirrorFourfoldAndK3 = method();
 describeMirrorFourfoldAndK3 HodgeSpecialFourfold := X -> (
     s := computationStatus X;
     if s <= 0 then return ("","");
-    mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF(X,Verbose=>true) else multirationalMap fanoMap(X,Verbose=>true); -- already in cache
+    mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF(X,Verbose=>true) else rationalMap fanoMap(X,Verbose=>true); -- already in cache
     W := target mu;
     U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>true); -- already in cache
     (netW,texW) := if isDeformationP2P2 W then (
