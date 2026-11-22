@@ -102,7 +102,7 @@ assert(parameterCount(Y_1,Verbose=>true) == (1, (24, 18, 3)));
 TEST /// -- Test 3 -- 21 examples from GMtables
 X = for i from 1 to 21 list (
    A = GMtables(i,ZZ/65521);
-   time gushelMukaiFourfold((rationalMap(ideal A_0,Dominant=>2)) ideal A_1,InputCheck=>0)
+   time gushelMukaiFourfold((legacyRationalMap(ideal A_0,Dominant=>2)) ideal A_1,InputCheck=>0)
 );
 S = apply(X,x -> surface x);
 assert(apply(X,x -> degree surface x) === {2, 4, 14, 5, 9, 1, 3, 7, 1, 10, 10, 14, 12, 8, 9, 11, 9, 7, 10, 4, 12});

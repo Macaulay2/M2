@@ -126,8 +126,8 @@ exceptionalCurves DoublySpecialCubicFourfold := o -> X -> (
     if o.Verbose then << "-- the result has dimension 1 and degree " << degree E << endl;
     assert(degree E >= 1);
     if o.Verbose then << "-- decomposing U ∩ U' via projection to PP^2..." << endl;
-    prToP2 := (rationalMap apply(3, i -> random(1, ring ambient E))) | E;
-    Z := projectiveVariety kernel(map toRationalMap prToP2,SubringLimit=>1);
+    prToP2 := (legacyRationalMap apply(3, i -> random(1, ring ambient E))) | E;
+    Z := projectiveVariety kernel(map toLegacyRationalMap prToP2,SubringLimit=>1);
     if o.Verbose and degree E != degree Z then << "-- degree mismatch in projection to PP^2 (expected " << degree E << ", obtained " << degree Z << ")" << endl;
     Z1 := {}; Z2 := {};
     for D in decompose Z do if dim D == 1 and degree D == 1 then Z1 = append(Z1,D) else Z2 = append(Z2,D);
@@ -275,7 +275,7 @@ mapFromExceptionalCurves (EmbeddedProjectiveVariety,Sequence) := o -> (U,dab) ->
     (eulerExpVal,strSurf) := if o#"IsK3Type" then (2,"K3") else (4,"Castelnuovo");
     if (not withNorm) and d == 1 and a == 0 and b == 0 then (
         if o.Verbose then << "-- U is already in the target space; defining f as the identity map" << endl;
-        return multirationalMap super toRationalMap(1_U);
+        return multirationalMap super toLegacyRationalMap(1_U);
     );
     toNormU := null;
     if withNorm then (
@@ -377,7 +377,7 @@ contractionMap (EmbeddedProjectiveVariety,HodgeSpecialFourfold) := o -> (U,X) ->
         f = mapFromExceptionalCurves(U,Verbose=>o.Verbose,"Normalization"=>false);
         f = rationalMap(f,Dominant=>true);
         if o.Verbose then << "-- computing normalization of the surface image" << endl;
-        f = multirationalMap super toRationalMap(f * inverse3 normalization(target f,Verbose=>false));
+        f = multirationalMap super toLegacyRationalMap(f * inverse3 normalization(target f,Verbose=>false));
         assert(dim target f == genK3 and f#"image" =!= null);
         if o.Verbose and (not isStandardK3surface image f) then << "-- warning: invariant mismatch for standard K3 surface" << endl;
         return saveAndReturnMap(f,U);
@@ -452,7 +452,7 @@ contractionMap (EmbeddedProjectiveVariety,HodgeSpecialFourfold) := o -> (U,X) ->
             n1 := multirationalMap normalization(U,Verbose=>o.Verbose);
             if o.Verbose then << "-- computing the map f from U to the minimal Castelnuovo surface" << endl;
             h1 := rationalMap(source n1,tally {n1^* (random(1,0_U)),n1^* L},Dominant=>3);
-            f = multirationalMap inverse rationalMap(ring target h1,ring target n1,take(gens ring target h1,5));
+            f = multirationalMap inverse legacyRationalMap(ring target h1,ring target n1,take(gens ring target h1,5));
             if not((f * (inverse f) == 1 and (inverse f) * f == 1)) then error "something went wrong";
             return saveAndReturnMap(f,U);
         ) else (
