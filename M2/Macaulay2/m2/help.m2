@@ -240,10 +240,10 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- other things
     d := toList(set e - set a - set b - set c);
     -- the result
-    DIV nonnull splice (
+    fixup DIV nonnull splice (
 	if #au > 0 then DIV {
 	    SUBSECTION (if #au === 1 then "Author" else "Authors"),
-	    fixup UL apply(au, au -> (
+	    UL apply(au, au -> (
 		    (defs, args) := override(authorDefaults, toSequence au);
 		    LI {
 			if defs.HomePage === null then defs.Name else HREF{defs.HomePage, defs.Name},
@@ -289,7 +289,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	if not isM2Doc and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
 	    DIV { "class" => "exports",
-		fixup UL {
+		UL {
 		    if #b > 0 then LI {"Types",                  smenu b},
 		    -- FIXME: this line is displayed empty for Truncations
 		    if #a > 0 then LI {"Functions and commands", smenu a},
